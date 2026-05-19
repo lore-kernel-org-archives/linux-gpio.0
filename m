@@ -1,92 +1,98 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE332F547F;
-	Tue, 19 May 2026 08:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515F63C5550
+	for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 08:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779179288; cv=none; b=C4YQa72YEptxX4DokYVsedGClh35lDIGqcOWH/clNYdKwW6OnlcYvHbEcDY9ogRenPgsHmrk8zebdW5iJ0X/0t9V+DHpHqngwLm/URWv94bcXVI9V1IFrLdH1aj1zDmDs/1gdIhSMZnWxqGaNXtg2sfThvnGqeyA8fHufQvMf6Y=
+	t=1779179480; cv=none; b=NhVIkadQfbE+VT/S2aJBkJHdQVKN22HPw5urONJWdQMVj2wuK/ncioRNTJIHiLzWH7wAVsicBV8SYUDkLvRIa4RLH7dR4oMuBuUFZMhmcu9JAANcLg7jmK/RYoIiorHQ7j/OtcSk+KYKwlCvjsKdavWU68MZl6m7oiIjqRdm4C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779179288; c=relaxed/simple;
-	bh=JW8DZprdXrp7JBxezgukD36415BfdI7+3ak4LEfheDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8YhI4d52wi961fWH9+5t6+jomP48eWs0nuGvBE8LKF+spthkrUhK/qfcV5nc5sbjz5+vf/yDleZWycdc+iRvhail07IJurRVEgjUTEonx43BrLWa444MNKIXfxkMjZzkAr8giMXaJxaJpiHtOj+OcLApjI5Uj5gDCwgfbNG1n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=batO2f7G; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1779179480; c=relaxed/simple;
+	bh=gYstxcuWc96pDbCmO9hN3d3Df6cw8nt86KfRpF2dMc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hYm/E7M6I8E2cpdKlbSwkheOlqN5BRaLBoPGXip0ZFS+t/wH3+Qq/ooDGhwgqT+eWaCHDYjvChiVscUxuftDa9dZe+v13ErUwsCwWTfaYCOjJ9YCMW7eFBqhmA1TGby/AkuIfnxpd3r7mX8Js5yajTknDfLx5jT3rjBASXzGtTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dcQmoS6G; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="batO2f7G"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1779179287; x=1810715287;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JW8DZprdXrp7JBxezgukD36415BfdI7+3ak4LEfheDc=;
-  b=batO2f7GqDmnLbpOX4g99HWRr7OLkQePFaldLYY1UCk9MlDinNQTU4Pn
-   EKDXyPh8IAfujWk0Q/WeIJ/6Dge0LCFvxYG9PbeCIjrUS1hL/F0iAlTBv
-   ebkMT1mhuOzFw4s12O3Gxwi3sgnmqEDC4tdF+vb5rEcR6e/2x6ciDK40t
-   KfmCiPVCH9wg0It4AXFPEXuPElxYLnZcfkdEb661jHa15KmX6KNo9GlX4
-   veeZ4XFSZnKfVXE/vZnqOM34R5umQ/TDaVerM7RG4tPRu3vn3WeqOu4z7
-   v4RFdLzFSUQzrkjSf4xFBy/GaDfwz1+uVdc9ekjr2tI/owgskWJnF3VD7
-   A==;
-X-CSE-ConnectionGUID: n5RNsGq9Re2lzHGLCs2VXg==
-X-CSE-MsgGUID: mRYN5efpQAaQ8GvUMAX2lw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11790"; a="90744722"
-X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; 
-   d="scan'208";a="90744722"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2026 01:28:06 -0700
-X-CSE-ConnectionGUID: KyYTN/2cQHGz8B/oX1aEkQ==
-X-CSE-MsgGUID: WPsbR1uUT/KD3JwkarIvSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; 
-   d="scan'208";a="243993113"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.150])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2026 01:28:04 -0700
-Date: Tue, 19 May 2026 11:28:00 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Marco Scardovi (scardracs)" <mscardovi95@gmail.com>
-Cc: mika.westerberg@linux.intel.com, brgl@kernel.org, linusw@kernel.org,
-	linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, westeri@kernel.org
-Subject: Re: [PATCH 2/2] gpiolib: acpi: Fix resource leak in OpRegion cleanup
- path
-Message-ID: <agwfEMtEctXYC1oc@ashevche-desk.local>
-References: <20260518103302.GO84797@black.igk.intel.com>
- <20260519070039.9280-1-mscardovi95@gmail.com>
- <20260519070039.9280-3-mscardovi95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dcQmoS6G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 145DEC2BCC6
+	for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 08:31:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1779179480;
+	bh=gYstxcuWc96pDbCmO9hN3d3Df6cw8nt86KfRpF2dMc0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dcQmoS6GLFi2R0yaK0C+WYP8gkJewzayiAjBXzXfT2KcyF9dSeBYIddmtSFZtBWHU
+	 O3DHth1w+2iP4VE1/+TCuDrZtuO/MvbRD+/IeJ7MCnPFz3/JCBhBrKwCjySS/kzVC6
+	 k0UtWCTfrG54Q87sNtpV2drr5qvL+Vh/SJi6BxmRE1hO/6PS9li7m+OvpeFZkNLibk
+	 oiEGK6BoYE7HYf8Q/6oXBtDdmTCTriNYHqCotL0fi4SZ09Wt21k4uNzeoakik30+lm
+	 xp/PeYQgwws2zh+kiQPKBaIpfFuiTkK9T+lvBcznaEzGQRP2vxEJqNZtuvC0yZzG9D
+	 /wIRXTeiCkuNA==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5a74ac8b40aso3737871e87.1
+        for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 01:31:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/8/PkREFxCWbpIaqNTguxUOQhjhc8A3MIqVN5ii18iuKCP5Vyr5tyVOqb3EJVzbqFvBoaBeglZssUW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqla6DhgHOPOyYcA23vBSlR488CGXPonnNF1LJutADttW5f9Wa
+	FTtV+3fvE/VnNus9Cj8ABV3V4b96iNM2miE1UalrANozPY2mQTEdDIckQa1WuOOSD7+6tm1dht5
+	y7uRlyLUa9zcss+9J44Q6Z23lPkrzzoA=
+X-Received: by 2002:a05:6512:1286:b0:5a8:65c8:dd90 with SMTP id
+ 2adb3069b0e04-5aa0e73f4d5mr5272064e87.4.1779179478814; Tue, 19 May 2026
+ 01:31:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260519070039.9280-3-mscardovi95@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20260519-mainline-send-v1-sending-v3-0-3dd7aa125353@alex-min.fr> <20260519-mainline-send-v1-sending-v3-3-3dd7aa125353@alex-min.fr>
+In-Reply-To: <20260519-mainline-send-v1-sending-v3-3-3dd7aa125353@alex-min.fr>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 19 May 2026 10:31:06 +0200
+X-Gmail-Original-Message-ID: <CAD++jLm=BxHsPJ4rgqwY8SvaefZUO+Pfv8E8xizqPsdJZw5weA@mail.gmail.com>
+X-Gm-Features: AVHnY4IFkYYcJkwE7oBtW7Rq4mnePDIoacVSym4JzKnPjR_3OiAFXxYaV2dbJIA
+Message-ID: <CAD++jLm=BxHsPJ4rgqwY8SvaefZUO+Pfv8E8xizqPsdJZw5weA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/8] pinctrl: qcom: Register functions before enabling pinctrl
+To: contact@alex-min.fr
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Guru Das Srinagesh <linux@gurudas.dev>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+	phone-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 19, 2026 at 09:00:31AM +0200, Marco Scardovi (scardracs) wrote:
-> If acpi_remove_address_space_handler() fails, the cleanup function
-> acpi_gpiochip_free_regions() previously returned early. This leaks
-> the connections list and all requested GPIO descriptors.
-> 
-> Remove the early return statement so that connection cleanup and freeing
-> of descriptors are always executed, preventing memory leaks in teardown
-> failure paths.
+Hi Alexandre,
 
-Same problem may happen in the acpi_gpio_adr_space_handler().
-What you need is to split the list and GPIO cleaning into a helper
-which will be used in both cases.
+thanks for your patch!
 
-This might need a Fixes tag.
+On Tue, May 19, 2026 at 9:16=E2=80=AFAM Alexandre MINETTE via B4 Relay
+<devnull+contact.alex-min.fr@kernel.org> wrote:
 
-> Assisted-by: Antigravity:gemini-3-flash
-> Signed-off-by: Marco Scardovi <mscardovi95@gmail.com>
+> From: Alexandre MINETTE <contact@alex-min.fr>
+>
+> pinctrl consumers can request states while the pinctrl core enables the
+> controller. On Qualcomm pinctrl drivers this can happen before the SoC
+> function list has been registered, which leaves the function table
+> incomplete during state lookup.
+>
+> On APQ8064 this can fail while claiming pinctrl hogs:
+>
+>    apq8064-pinctrl 800000.pinctrl: invalid function ps_hold in map table
+>    apq8064-pinctrl 800000.pinctrl: error claiming hogs: -22
+>    apq8064-pinctrl 800000.pinctrl: could not claim hogs: -22
+>
+> Register Qualcomm pinctrl with devm_pinctrl_register_and_init(), add the
+> SoC pin functions, and only then enable the pinctrl device.
+>
+> Signed-off-by: Alexandre MINETTE <contact@alex-min.fr>
 
--- 
-With Best Regards,
-Andy Shevchenko
+I think I've seen this one before, if Bj=C3=B6rn or someone else from Qualc=
+omm
+can review this and test on some other hardware it would be great.
 
+But if there is no reaction I might just merge it so something happens.
 
+Yours,
+Linus Walleij
