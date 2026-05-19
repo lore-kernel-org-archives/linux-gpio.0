@@ -1,95 +1,159 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D996D3E1CFD
-	for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 08:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4ED63EEAF1;
+	Tue, 19 May 2026 08:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779179695; cv=none; b=cMK5TxZsaHJKrBIYbaJwrwqtmxG4OKDBNR1YKpfIQa+ZJ07yj8tRsz79sU2vWck/L5PxEy+q6Ohz4r6mC0zkYREY0symX4fkAENeWB5YHm2g/Y1LCIBSRTspq/Kn3lHnS2x+DXH6Pc9HqdWMutXexv6qqrUDIwjSiN5xzJN7WoA=
+	t=1779180541; cv=none; b=BHng3LO+DCIEzqk7cxOukpeuo3xtlOrHHi+51dgtbcowSh3DFZXNRhfGaqUYbfR7rLiEukD0FYt/hOQmjSu0zmBposB8Axgg/1xIhD+MdnjcfD41SP67WoSmbSrZl/L45+1Duj+OMhbu8id0FXt9NVx5jWHDE8YYXiVSyvySCQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779179695; c=relaxed/simple;
-	bh=TPUWNuFjul6GyDaPo8DNJstqVMEAvTYdB3hPzpRN53I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p8C03TrPRrRfD95V03BlTsQ4rzrqDIiyhIh88xxkHeH93EnGcoKntV/avS2fXFOnsbWuEKdZqq30MS1tI5NrPO2XiSaTLLyQIndlBOyLBZKjXy86I2SytqEBOoEk4TCQ+/qR0LM7DABx91jkLySKaSH4bN8+g2KVMUhv+K5hjH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K251MoNp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1779180541; c=relaxed/simple;
+	bh=0R6tgNs7XNPthelErmwGT4ZGv+aYiUM/RQr+NH310yc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=sOWlVfLCaKSCimr09Y92RDVyWbgZRjP58zA2dBDgeFPjvxujv6grFz5yFfG1+D56vKzJwoeljQ4mGCTC7zO7guEUNyjvMRCgM2Ap0naZRYkCx9VzANVszoxODQzktaZgvCXa8Y7o6DHnnNirSqztF7AjpmrrTpxSAW8EBRfqjk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alex-min.fr; spf=pass smtp.mailfrom=alex-min.fr; dkim=pass (2048-bit key) header.d=alex-min.fr header.i=@alex-min.fr header.b=F85fbw/+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CjZsoEZg; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alex-min.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alex-min.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K251MoNp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 713BFC2BCF5
-	for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 08:34:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779179695;
-	bh=TPUWNuFjul6GyDaPo8DNJstqVMEAvTYdB3hPzpRN53I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=K251MoNpkDLu5l2eL96nXhIPlZQaNoNYOHLGn5rsNLCzx/cGv/VZ7ml720zulDonB
-	 e436dYvsWrVeIejofHZsmkB5fWwt02jQlTukFv1c9kV7+UYVKBT1dRL3PF2zyjJFpf
-	 xTQuLTWv7ubeecdIwjQgri1jIWfehsNt81eBOhyuD+kDeuVxKr8UdvDwVzhE4LDScQ
-	 bQmUDkJ0mK5ppcX0bOCQSxaRLvVnLHqATgzYoEkOneGvX08W06Llk+4TO0a2VkhU5F
-	 uPTdXTquwccTOT3877JzGZlVqmeiEjQW9xo+VNiHFzo6ggl1iY1ktS/qMbjJaJbP21
-	 Gwd6Xso+eyAbg==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5a8738c178dso3069739e87.1
-        for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 01:34:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ84hoparaew3S6vEwNjAWzfbbv+0jBwRGzQfKbdQBquTQ+a0Rcj7xktLmPAoS0YcgAFYj/y5qJ9bYnp@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZBnYjU2/mHv6ziSVsNsYDhQT92IW+zDDjSlL16ryjEPb+uT+5
-	NRob/LrAFixcuxzi7YPbZQehkQIe7QMHadxtyUUapWXI+lx9oSSi5cZd2necCn3XmRkQhHNpdu6
-	4+fFVLpxSqoDtdKJOlsrV3c9a0RKaJ0U=
-X-Received: by 2002:a05:6512:3c91:b0:5aa:b6a:6025 with SMTP id
- 2adb3069b0e04-5aa0e74e16fmr5062857e87.42.1779179694175; Tue, 19 May 2026
- 01:34:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=alex-min.fr header.i=@alex-min.fr header.b="F85fbw/+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CjZsoEZg"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 11560EC026C;
+	Tue, 19 May 2026 04:48:58 -0400 (EDT)
+Received: from phl-imap-03 ([10.202.2.93])
+  by phl-compute-04.internal (MEProxy); Tue, 19 May 2026 04:48:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alex-min.fr; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1779180538;
+	 x=1779266938; bh=abYMyDQFoR6Lu3Pj6ylmgRRpraIjYYCfuZS78X7Ygwo=; b=
+	F85fbw/+3MbXuusQwUxFHgM2k3osbciJPnsFVyZby9969JTmWurDaD9ihx0hdHSS
+	fuKw60kdlipczmZiVm2klmtBoHguwBz3BCzoLO0jXFNp3l1az+fyBJHY0MYYfVCf
+	XRK9V5eS5xZrfCImVrLsyG7FE5GQAMSupeJrU0ycA/E7GjaI5Kvtf3WsbkcXaPrw
+	Vu2BVUhC0zTCbQ7UveUVvIkT54Qrub0/6Hks5XFJ/qWpUKoY0v8IGxp87D793gjt
+	dS0pIWTXeHNnVVgpdI7MYRbLbZHh9SqNBwiwR7rPLO1bVhp2F3XFZwFderGrnEM3
+	qU2Jq6tzwjpgopZRjNCZXw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779180538; x=
+	1779266938; bh=abYMyDQFoR6Lu3Pj6ylmgRRpraIjYYCfuZS78X7Ygwo=; b=C
+	jZsoEZgvwnuZLhr4hEMBxwDyJuDfrNY8HpmA+zGxPztuk3y5yrQrM5RIRWbPaSEb
+	iXF7E22gMg/rhAI/oHprcLbWNSMl8xuqEk/jGPUzfz7SSEOgzql8h5++nvUGiBqw
+	LMRbYnDam0DV/eY2jX/POEJ50dy//qR/nZ/iNBHcUfuf6ZP3I/sMmFgGf6rvlyjo
+	DCwMK4sYlN6QUaor/UaX8tEzy61e7Ybg2utq8tVqeiJpl+C/bM2Kp786c/T0Ycpq
+	cn4d5CaCDm9iSqnKvLmqRvWuuUCuAgtBPY46LZT6wtiNa8v3hjmDfWNN/+RfVEav
+	Zaz7t/o85X6ZBygiZsMRQ==
+X-ME-Sender: <xms:-CMMaoL9vca9oy6TPbFIioD25iTUnMlvqz_nSkWaSrlJBB_lJsHbEg>
+    <xme:-CMMai-QDpwakfTh8BTgfPquqpAGGSzTPOThX0-_28dR6RI_3si85JaSotOfZ7aIv
+    FAO7Y5AeCC6sfgGz8dumM7jrc6NPp4kVQxuf5WupLr3LgyIKoZM4g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddugedufeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdejnecuhfhrohhmpedfoffkpffg
+    vffvgfcutehlvgigrghnughrvgdfuceotghonhhtrggtthesrghlvgigqdhmihhnrdhfrh
+    eqnecuggftrfgrthhtvghrnheptdeutdeftdduudegtdeugfegtdeikeehhfetfedvteeu
+    veehgeehhfefteefjefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomheptghonhhtrggtthesrghlvgigqdhmihhnrdhfrhdpnhgspghrtghpthht
+    ohepvddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjohhroheskegshihtvg
+    hsrdhorhhgpdhrtghpthhtoheprhhosghinhdrmhhurhhphhihsegrrhhmrdgtohhmpdhr
+    tghpthhtoheplhhinhhugiesghhurhhuuggrshdruggvvhdprhgtphhtthhopehgphhitg
+    gtohhlihesihhgrghlihgrrdgtohhmpdhrtghpthhtohepthhonhihrdhluhgtkhesihhn
+    thgvlhdrtghomhdprhgtphhtthhopegrnhguvghrshhsohhnsehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    khgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkohhnrhgrugihsggtihhose
+    hkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:-CMMagIGcaPPLO3RKgklQYCzEFkYTnnAPRANuiJ6ZE0LwZR1hN3zCQ>
+    <xmx:-CMMalBOrmovJhYppY26P1TvvRn1fWSOJZVa50xSwhzRsbiIObGB0w>
+    <xmx:-CMMauRIf_BZAnaDyJpcQjwt1m2l8yHaFlqUFXnfYX1zLY5wwuvVtQ>
+    <xmx:-CMMavewgbgQDoCu-3t9ifQ2kKUJuDjjDZx9WPhh_MUUNUc1x_5L5Q>
+    <xmx:-iMMahzT8EEEBkuqfhMQDMUYmFL5I3oXzTk4vskXSas19CZs7-6X0BHT>
+Feedback-ID: i72694427:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 5E7B918E006C; Tue, 19 May 2026 04:48:56 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260513-gpio-shared-dynamic-voting-v1-1-8e1c49961b7d@oss.qualcomm.com>
-In-Reply-To: <20260513-gpio-shared-dynamic-voting-v1-1-8e1c49961b7d@oss.qualcomm.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 19 May 2026 10:34:41 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=jL=YLOTy2JP8WfXZw-7K8Tf3KoJQz0+e353JCYxBx8Q@mail.gmail.com>
-X-Gm-Features: AVHnY4JBeDGHH3EDJa5H4ja2GxjF7Up3qxUoCexRFThktjKJK3DPSgObi9xbgl8
-Message-ID: <CAD++jL=jL=YLOTy2JP8WfXZw-7K8Tf3KoJQz0+e353JCYxBx8Q@mail.gmail.com>
-Subject: Re: [PATCH] gpio: shared: make the voting mechanism adaptable
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Marek Vasut <marex@nabladev.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: A511MZycEBGs
+Date: Tue, 19 May 2026 10:48:20 +0200
+From: "MINETTE Alexandre" <contact@alex-min.fr>
+To: "Linus Walleij" <linusw@kernel.org>
+Cc: "Bjorn Andersson" <andersson@kernel.org>,
+ "Konrad Dybcio" <konradybcio@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "MyungJoo Ham" <myungjoo.ham@samsung.com>,
+ "Chanwoo Choi" <cw00.choi@samsung.com>,
+ "Guru Das Srinagesh" <linux@gurudas.dev>,
+ "Rob Clark" <robin.clark@oss.qualcomm.com>, "Joerg Roedel" <joro@8bytes.org>,
+ "Will Deacon" <will@kernel.org>, "Robin Murphy" <robin.murphy@arm.com>,
+ "Kees Cook" <kees@kernel.org>, "Tony Luck" <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, iommu@lists.linux.dev,
+ phone-devel@vger.kernel.org
+Message-Id: <298550eb-1bdf-4d7c-8111-8b8f0b5dc056@app.fastmail.com>
+In-Reply-To: 
+ <CAD++jLm=BxHsPJ4rgqwY8SvaefZUO+Pfv8E8xizqPsdJZw5weA@mail.gmail.com>
+References: <20260519-mainline-send-v1-sending-v3-0-3dd7aa125353@alex-min.fr>
+ <20260519-mainline-send-v1-sending-v3-3-3dd7aa125353@alex-min.fr>
+ <CAD++jLm=BxHsPJ4rgqwY8SvaefZUO+Pfv8E8xizqPsdJZw5weA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/8] pinctrl: qcom: Register functions before enabling pinctrl
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 13, 2026 at 11:14=E2=80=AFAM Bartosz Golaszewski
-<bartosz.golaszewski@oss.qualcomm.com> wrote:
+Thanks a lot Linus!
 
-> The current voting mechanism in GPIO shared proxy assumes that "low" is
-> always the default value and users can only vote for driving the GPIO
-> "high" in which case it will remain high as long as there's at least one
-> user voting.
+This patch is required for my Samsung Galaxy S4 GT-I9505 to boot but I a=
+lso
+have confirmation from another contributor that the same pinctrl patch
+helped boot the ASUS Nexus 7 (2013), codenamed flo, which is also based
+on APQ8064.
+
+--=20
+  MINETTE Alexandre
+  contact@alex-min.fr
+
+Mar 19 mai 2026, =C3=A0 10:31, Linus Walleij a =C3=A9crit=E2=80=AF:
+> Hi Alexandre,
 >
-> This makes it impossible to use the automatic sharing management for
-> certain use-cases such as the write-protect GPIOs of EEPROMs which are
-> requested "high" and driven "low" to enable writing. In this case, if
-> the WP GPIO is shared by multiple EEPROMs, and at least one of them
-> wants to enable writing, the pin must be set to "low".
+> thanks for your patch!
 >
-> Modify the voting heuristic to assume the value set by the first user on
-> request to be the "default" and subseqent calls to gpiod_set_value()
-> will constitute votes for a change of the value to the opposite. In the
-> wp-gpios case it will mean that the nvmem core requests the GPIO as
-> "out-high" for all EEPROMs sharing the pin, and when one of them wants
-> to write, the pin will be driven low, enabling it.
+> On Tue, May 19, 2026 at 9:16=E2=80=AFAM Alexandre MINETTE via B4 Relay
+> <devnull+contact.alex-min.fr@kernel.org> wrote:
 >
-> Fixes: e992d54c6f97 ("gpio: shared-proxy: implement the shared GPIO proxy=
- driver")
-> Reported-by: Marek Vasut <marex@nabladev.com>
-> Closes: https://lore.kernel.org/all/20260511163518.51104-1-marex@nabladev=
-.com/
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-
-I like this idea.
-Reviewed-by: Linus Walleij <linusw@kernel.org>
-
-BTW was this "voting" system inspired by the hardware "vote" thing
-that Qualcomm is using for power management? That's the only place
-I've seen it before.
-
-Yours,
-Linus Walleij
+>> From: Alexandre MINETTE <contact@alex-min.fr>
+>>
+>> pinctrl consumers can request states while the pinctrl core enables t=
+he
+>> controller. On Qualcomm pinctrl drivers this can happen before the SoC
+>> function list has been registered, which leaves the function table
+>> incomplete during state lookup.
+>>
+>> On APQ8064 this can fail while claiming pinctrl hogs:
+>>
+>>    apq8064-pinctrl 800000.pinctrl: invalid function ps_hold in map ta=
+ble
+>>    apq8064-pinctrl 800000.pinctrl: error claiming hogs: -22
+>>    apq8064-pinctrl 800000.pinctrl: could not claim hogs: -22
+>>
+>> Register Qualcomm pinctrl with devm_pinctrl_register_and_init(), add =
+the
+>> SoC pin functions, and only then enable the pinctrl device.
+>>
+>> Signed-off-by: Alexandre MINETTE <contact@alex-min.fr>
+>
+> I think I've seen this one before, if Bj=C3=B6rn or someone else from =
+Qualcomm
+> can review this and test on some other hardware it would be great.
+>
+> But if there is no reaction I might just merge it so something happens.
+>
+> Yours,
+> Linus Walleij
