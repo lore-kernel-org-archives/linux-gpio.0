@@ -1,142 +1,118 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B4A3BE162;
-	Tue, 19 May 2026 07:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A84D29B200
+	for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 08:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779175552; cv=none; b=LAK1axvfbDNuSk1HSCBRNsMnfW5NQgtD53N2UqBpNLyePvsNAoe174pO2Aosd9a6/0uQ65YUjOl3+Suq1fNpLA0XOG2C61Re2E3Cz8fJKlAMyl5uzNVs+jHrxZrtamB2UdZXe/zoAwsKnJlxIn2zUj9l0AFzXOH51wRe2FWZwOE=
+	t=1779178831; cv=none; b=b/Ie92NzCbwSZlebMMZjeCf03A0OBwUIIJKa6PaUoLyVia314g67LosIpyCRFbWPkocpkXgj9Y9ej6IU4H5cX4cF0xXJ4VZIs7uv4BYhDTLBbrovIQnKsOtDdRLTISr1sPOw8/Kb/oRAFl3zNJF7ZeLTUU4xPQ8UqBCu4UeDYrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779175552; c=relaxed/simple;
-	bh=58L1KNGX+QIzwXTTzN9x8hSe74UDCFMVIwQ9GyMGH6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dIj7/9/2ull3Z2tiN7nwfHw7UrsZVjd4aPb7Xb/eHRvU/1NlT4KL4lYmsy91jEatuHVZTMd/6pyxycC2HpY/vxaT2/855ZlIDaC+UuWr3ZWEB41Xlyxp7Aa7jxV608Y5vld/HSR+Z65FHOcQsj3JbrhP5bKAvtFRWCCvVIpbjdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JWEO/y6G; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1779178831; c=relaxed/simple;
+	bh=tdlXS4X4Js09e7+y47FWZzFffN4E+l1FKGOV4ZFb2QY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CZJW0qDm82fFsVD0uSgJ+RfVQF/t8TvvDlnDkz2bJQxmYH+17kmBnrN/uI/k1O7ixGMmG73VFTfF9g7ehqGEHm7se2sN8dwmwzhslWw7w7cjd6Rx6K1wWgfNY64WaDjiX2CidCq6VAA80X13C4tVoiUKGZ0/jWnKjp+SZH8XldU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MGEzQ6cY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JWEO/y6G"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1779175551; x=1810711551;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=58L1KNGX+QIzwXTTzN9x8hSe74UDCFMVIwQ9GyMGH6Y=;
-  b=JWEO/y6GgZF64Pdl7wpoEtNefdfUEZ1XDR5K3F6+UtkxTfV1QkWeGo7B
-   ovFmpXnMIACloSc4MQsDY0TNp0IDTMe7qmxgTdMBplPoWtZ0+TrQXPlB5
-   H1I/m7FM0Dn1bXCkgRFDE1CLp/y/Epkkk+KBQSurZ6Pso6VMb5pdZGfzS
-   oMrnNR1WybPG7kjakBNCI8vtXTFgH5fJlhrbMP+7G73gVDZF95Op9egXL
-   7j+l5gxPCwxn2+HY7nX1b3QR+GrllX/q6/vzUvU+1K4xl+d8GEI3nGcQa
-   IYRqKEWEjG+so/Q3NcNO/h7JIPrP7JZBHF+E4k0+MT7vrYC+VHGeP7lFt
-   w==;
-X-CSE-ConnectionGUID: 357Jjl0yRuii7joTaUwruA==
-X-CSE-MsgGUID: jBNrscTbS5SLPNBB8leeLA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11790"; a="97611403"
-X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; 
-   d="scan'208";a="97611403"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2026 00:25:50 -0700
-X-CSE-ConnectionGUID: K6UGEx/1SqWPz0PPPH//3A==
-X-CSE-MsgGUID: uHpzScoZQtamDviB3G0vyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,243,1770624000"; 
-   d="scan'208";a="243979681"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.150])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2026 00:25:48 -0700
-Date: Tue, 19 May 2026 10:25:45 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Marco Scardovi (scardracs)" <mscardovi95@gmail.com>
-Cc: mika.westerberg@linux.intel.com, brgl@kernel.org, linusw@kernel.org,
-	linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, westeri@kernel.org
-Subject: Re: [PATCH 1/2] gpiolib: acpi: Add robust bounds-checking for GPIO
- pin resources
-Message-ID: <agwQeVt3UhhFAUA8@ashevche-desk.local>
-References: <20260518103302.GO84797@black.igk.intel.com>
- <20260519070039.9280-1-mscardovi95@gmail.com>
- <20260519070039.9280-2-mscardovi95@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MGEzQ6cY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2DD2C2BCF5
+	for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 08:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1779178831;
+	bh=tdlXS4X4Js09e7+y47FWZzFffN4E+l1FKGOV4ZFb2QY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MGEzQ6cYEHdEN3fBZpO0WYVqePSzbrchcBK229CqIdgv4P8tGGl7NHgBPGm9CVcOe
+	 pMH0Twb7/nyNwyqRRgnF9yUGc6puOMtyVB8PZ4tUhHedwJD4FtYjpTJFqwp12RIhmJ
+	 uNawKsXW2sU/rOEARikZwSVuhRCPfFX/77mly0n8mG3iZBSWLxVy1wmHv6/gYqHYjG
+	 HQB/9jSefCX5oqdQnRIO8yefFFXQ1DJ30rrHQ99fz4gGxfzbtAzsTSsl8DO3qtD+CR
+	 j0r4ZIHq4L1m5Syb0ZXEoN3eJLvESymg3vWt5OFLeF+qODCJmMsl+7EJiROzrVDrkG
+	 ANoHoRp+Xa1nQ==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-39556b00a85so30013181fa.0
+        for <linux-gpio@vger.kernel.org>; Tue, 19 May 2026 01:20:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ80XAeGf9mJK/DgsxcJoX1QR6+2xrW3vz76NA/fCvQ06k47E9IZr8pxlOo7sU09ftHoMt0e4I8SHrsI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgrgBn5A7oh1kziwPDkB3FK3On9M8avZTLf4ALR7AwAMZ2GD30
+	IbSErf6SiiGVl2yBrlNwTNtbzFPbmPfEx5wqqcpvS75vvUbXfnqicILYZKbB5G0QpCfp+bJRfTT
+	IhZtyhejvWOr2b0xYiQFnFWR9kAMtNyAhFUXF7BkhzQ==
+X-Received: by 2002:a05:651c:4203:b0:38e:a181:9e41 with SMTP id
+ 38308e7fff4ca-39561c9484amr48844421fa.12.1779178829684; Tue, 19 May 2026
+ 01:20:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260519070039.9280-2-mscardovi95@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20260513-gpio-shared-dynamic-voting-v1-1-8e1c49961b7d@oss.qualcomm.com>
+ <3612f5f6-eeca-49e5-9662-72729bb48c9f@nabladev.com>
+In-Reply-To: <3612f5f6-eeca-49e5-9662-72729bb48c9f@nabladev.com>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Tue, 19 May 2026 10:20:17 +0200
+X-Gmail-Original-Message-ID: <CAMRc=Mf_B+=adsEu+4TTBdKHdVSf2uWH+11WH9uz-h4Q0BS-VA@mail.gmail.com>
+X-Gm-Features: AVHnY4KXp0FHGOiTD6CovfJJSgfvg2xySfPPR_2g3nt20lAqMwdn66_evodztbE
+Message-ID: <CAMRc=Mf_B+=adsEu+4TTBdKHdVSf2uWH+11WH9uz-h4Q0BS-VA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: shared: make the voting mechanism adaptable
+To: Marek Vasut <marex@nabladev.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Srinivas Kandagatla <srini@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 19, 2026 at 09:00:30AM +0200, Marco Scardovi (scardracs) wrote:
-> Ensure that the GPIO pin resource arrays are safely bounded before
-> accessing indices. Add bounds checking in acpi_request_own_gpiod(),
-> acpi_gpio_irq_is_wake(), acpi_gpiochip_alloc_event(), and
-> acpi_gpio_adr_space_handler() to prevent out-of-bounds array reads if
-> the ACPI namespace provides malformed or empty pin tables.
+On Tue, May 19, 2026 at 5:59=E2=80=AFAM Marek Vasut <marex@nabladev.com> wr=
+ote:
+>
+> On 5/13/26 11:13 AM, Bartosz Golaszewski wrote:
+> > The current voting mechanism in GPIO shared proxy assumes that "low" is
+> > always the default value and users can only vote for driving the GPIO
+> > "high" in which case it will remain high as long as there's at least on=
+e
+> > user voting.
+> >
+> > This makes it impossible to use the automatic sharing management for
+> > certain use-cases such as the write-protect GPIOs of EEPROMs which are
+> > requested "high" and driven "low" to enable writing. In this case, if
+> > the WP GPIO is shared by multiple EEPROMs, and at least one of them
+> > wants to enable writing, the pin must be set to "low".
+> >
+> > Modify the voting heuristic to assume the value set by the first user o=
+n
+> > request to be the "default" and subseqent calls to gpiod_set_value()
+> > will constitute votes for a change of the value to the opposite. In the
+> > wp-gpios case it will mean that the nvmem core requests the GPIO as
+> > "out-high" for all EEPROMs sharing the pin, and when one of them wants
+> > to write, the pin will be driven low, enabling it.
+>
+> Shouldn't this polarity inversion be handled by DT GPIO_ACTIVE_* flag ?
+>
 
-...
+We could but that would require DT changes, you probably don't want
+this? That's a different thing though too. Here's it's purely logical
+- either we default to high and vote for low or default to low and
+vote for high with at least one vote needed to switch.
 
->  	int polarity = GPIO_ACTIVE_HIGH;
->  	enum gpiod_flags flags = acpi_gpio_to_gpiod_flags(agpio, polarity);
-> -	unsigned int pin = agpio->pin_table[index];
-> +	unsigned int pin;
->  	struct gpio_desc *desc;
+> > Fixes: e992d54c6f97 ("gpio: shared-proxy: implement the shared GPIO pro=
+xy driver")
+> > Reported-by: Marek Vasut <marex@nabladev.com>
+> > Closes: https://lore.kernel.org/all/20260511163518.51104-1-marex@nablad=
+ev.com/
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.co=
+m>
+> > ---
+> > Hi Marek!
+> >
+> > Please see if you can make your setup work with shared GPIOs with this
+> > patch. You need to enable CONFIG_HAVE_SHARED_GPIOS on your platform.
+>
+> Why can this shared GPIO not be enabled generically for any GPIO
+> controller ?
+>
+> [...]
 
-Preserve reversed xmas tree order.
+That's the plan. I enabled it in arm64 defconfig for now (via Qualcomm
+platforms selecting it). It caused quite a lot of fallout and a slew
+of fixes so I'm doing it slowly. But yes - eventually it should be
+enabled for all OF systems and potentially also verify software node
+references as there are some intel systems that have GPIOs shared by
+platform devices described in ACPI *and* software nodes.
 
-...
-
->  static bool acpi_gpio_irq_is_wake(struct device *parent,
->  				  const struct acpi_resource_gpio *agpio)
->  {
-> -	unsigned int pin = agpio->pin_table[0];
-> +	unsigned int pin;
-> +
-> +	if (agpio->pin_table_length == 0)
-> +		return false;
-> +
-> +	pin = agpio->pin_table[0];
-
-This pin is not used...
-
->  	if (agpio->wake_capable != ACPI_WAKE_CAPABLE)
->  		return false;
-
-...in the above condition, so, you can move the check and pin assignment even
-further.
-
-...
-
->  	if (!acpi_gpio_get_irq_resource(ares, &agpio))
->  		return AE_OK;
-
-> +	if (agpio->pin_table_length == 0)
-> +		return AE_OK;
-
-Move this check after the handle assignment.
-
->  	handle = ACPI_HANDLE(chip->parent);
-
->  	pin = agpio->pin_table[0];
->  
-
-While at it, move this blank line to be before pin assignment.
-
-...
-
-> +	if (pin_index >= agpio->pin_table_length) {
-> +		ACPI_FREE(ares);
-> +		return AE_BAD_PARAMETER;
-> +	}
-
-This is bogus. Please, read the code. Do not blindly follow some AI nonsense.
-
->  	length = min(agpio->pin_table_length, pin_index + bits);
->  	for (i = pin_index; i < length; ++i) {
->  		unsigned int pin = agpio->pin_table[i];
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Bart
