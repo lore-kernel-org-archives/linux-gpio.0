@@ -1,277 +1,162 @@
-Received: from ultrarisc.com (unknown [218.76.62.146])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B7F3CF665;
-	Wed, 20 May 2026 08:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.76.62.146
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779266436; cv=none; b=bsW93LbzpBcmtQ/04/k4NUGrW/MPJIu5Ru7f467Fr/zA39AsqjAP3zPHeBWbaIny5nU2UdWsnH5wSbD8/BioBq+QV8uyQKw9DY/ik+kmafDZscPwruE504RRjkRIe7b5VmUxSbbTUbB5/XnXUX0TFKfuDZgUJ39RxVxpKwK4sjE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779266436; c=relaxed/simple;
-	bh=0YfzwFM4TkbuwWH8IkXdR07nKm5GoPXCKV3UI9DD0Ic=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=mfbasAd5Ru3TiOSTCP4bKg5xFVNM5inQg7x40BtZxoOfj8uhO3jZFqhxw7g8YPdysbNgmPcObXAlZa390DpN8erGPyNlyJhOetYBLKTl0Tyo8m9Vml21zyF/5zKpYggoUxP05l2u6Ed5eW2WeEIqdr5saVsW3rz6vCUewGBnB3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com; spf=pass smtp.mailfrom=ultrarisc.com; dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b=KCHYRv4z; arc=none smtp.client-ip=218.76.62.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ultrarisc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b="KCHYRv4z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=ultrarisc.com; s=dkim; h=Received:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
-	References:Date:Message-Id; bh=MEvCnrMS2FHdXOn45fiP0INsUQjEFvQ+z
-	ETMtLv4Bsc=; b=KCHYRv4zZl/h4oUggXkn+pFpePvTSqmjAGevJSCsAmw58SN7W
-	asdo33f8OUJMGmEVfJIjlTFyp1F/cXVeHLtYgaD6eVXVWGiD8pK1HwntH5hdEH2j
-	4EotQiO2gwUtOMnzlpMen7QKyuUD4n7pGKqIVlppTbUJRoJIX/LMeyKMMc=
-Received: from [127.0.0.1] (unknown [192.168.100.1])
-	by localhost.localdomain (Coremail) with SMTP id AQAAfwAnEkOacw1qCu8EAA--.6803S2;
-	Wed, 20 May 2026 16:40:58 +0800 (CST)
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2109.outbound.protection.partner.outlook.cn [139.219.17.109])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE7A36AB49;
+	Wed, 20 May 2026 08:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.109
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779266723; cv=fail; b=jOb35hevNRBXPUXhaOpJShCA3nkJcYmrf5Cwx/9ZhG5jlNr3Tpltbll2XLNU9lJ9GTd9obPOIXEpKD5byXXqBuVtbV1dDRyMznFRqtVH+pRzy6BHtUfZisRO3vVCUn1FAJWuT+VIWN0Ev7fcSLCxsCMEIgAxjLDN0ZIu8iwrn5Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779266723; c=relaxed/simple;
+	bh=7G1rzda794mJ6nOPSBbreEn6FwFW8IKBQv6/EplPHDM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=j7fxpvuoBzskFqZEjxdnPwto4mJ6oISowPT7ZzdvnhTtmT3awOUSMQFKnmHSIOivXMKI1Tx35qBe+4247KP7nTZvwMBLLhC89mwpDA+sDdepIg7/Vpql0lchP6AYRtPP4U2iFxeCV2izPuA2wreO0dLlvG2sibHSBo71Xjd/sqQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lecomputing.com; spf=pass smtp.mailfrom=lecomputing.com; arc=fail smtp.client-ip=139.219.17.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QCQ8y1aLUXGHKdjn1ccKytMwjKL3TcZNP9fF1jHO6gihYhnUEgomO2DK91wCUMl9wFof8At17d9CDGEW6La4ADJ90V+gBt+BQP7fPFgJAKY2QJ2liwwPYWzUckdjcj4YP+ovbzmEYXWSEZaq4SNzDRRfqhKA9eJb60j+uG1vmPPRvcECfAjgAVogwuU+0yCoE85jznaneFNn+A88WnGD4MfX77yBv3buyFJKkyLFt4Rnv5JIflT0NEGzd3YQMyKysxAFMioUdwqJxo4PiF/O/6lDcyRjim4DstmhK9totUWWeFzgWFqqaRcPLH9LCp0yOFr85/TwfuNtCX1VP32OMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YQjQ2G9e5OQyuaJVeMpWCYgkY1ZibpbOZC9b7XLeN6I=;
+ b=jX7f6tfQYSADyriHNiHR4ai9LmbQewjg+hhVq4mb9f5mJZ7caikMKPlEyztSFWhKYHqlJzLq7pLYP4BLO+EQ7qnwD9FW7jI3RZgZHfdm2PsDtGWj2jKQnQT1GIBpX9F145J2xqpfhJqY/VW5zxi9XcWa/nneXad3r0eYFipUeQ0SUyg9/QM/grTyMSCzCz4NMgIMNEl3qry7TDSZwPWNbZWxq+cHcI2IYBK8oW2pnvV8hxxoFSjK4avt2qnbnQ+zZlI72s8nflpcIKqGVksgPoHikobnTRl9n4ortKniLKCLopG/G4YB4PiVbXXBITcQoL6olzkE5f/U1Q//7Vw/Dw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=lecomputing.com; dmarc=pass action=none
+ header.from=lecomputing.com; dkim=pass header.d=lecomputing.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=lecomputing.com;
+Received: from BJSPR01MB0707.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:1f::17) by BJSPR01MB0755.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:1c::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.15; Wed, 20 May
+ 2026 08:11:54 +0000
+Received: from BJSPR01MB0707.CHNPR01.prod.partner.outlook.cn
+ ([fe80::1c61:86e3:3a75:155d]) by
+ BJSPR01MB0707.CHNPR01.prod.partner.outlook.cn ([fe80::1c61:86e3:3a75:155d%4])
+ with mapi id 15.21.0025.023; Wed, 20 May 2026 08:11:54 +0000
+From: Thomas Lin <thomas_lin@lecomputing.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	hoan@os.amperecomputing.com,
+	linusw@kernel.org,
+	brgl@kernel.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	jsd@semihalf.com,
+	andi.shyti@kernel.org,
+	broonie@kernel.org
+Cc: linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	lucas_hao@lecomputing.com,
+	puntar_liu@lecomputing.com,
+	jihua_tao@lecomputing.com,
+	stan_xu@lecomputing.com,
+	lumin_liu@lecomputing.com,
+	notics_zhang@lecomputing.com,
+	braden_zhang@lecomputing.com,
+	harold_wu@lecomputing.com,
+	will_zhang@lecomputing.com,
+	aurora_jiang@lecomputing.com,
+	ryen_lin@lecomputing.com,
+	andy_jiang@lecomputing.com,
+	Thomas Lin <thomas_lin@lecomputing.com>
+Subject: [PATCH v4 1/3] gpio: dwapb: Add ACPI ID LECA0001 for LECARC SoCs
+Date: Wed, 20 May 2026 16:11:34 +0800
+Message-ID: <20260520081140.637637-2-thomas_lin@lecomputing.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260520081140.637637-1-thomas_lin@lecomputing.com>
+References: <20260520081140.637637-1-thomas_lin@lecomputing.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ZQ0PR01CA0024.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:2::19) To BJSPR01MB0707.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:1f::17)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 7/9] riscv: dts: ultrarisc: add Rongda M0 board device
- tree
-From: Jia Wang <wangjia@ultrarisc.com>
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Jia Wang <wangjia@ultrarisc.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>, 
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-In-Reply-To: <20260515-frisbee-clench-4029b6dd8169@wendy>
-References: <20260515-ultrarisc-pinctrl-v1-0-bf559589ea8a@ultrarisc.com>
- <20260515-ultrarisc-pinctrl-v1-7-bf559589ea8a@ultrarisc.com>
- <20260515-frisbee-clench-4029b6dd8169@wendy>
-Date: Wed, 20 May 2026 16:40:17 +0800
-Message-Id: <177926641764.943957.18316342442301070235.b4-reply@b4>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1779266417; l=5372;
- i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
- bh=0YfzwFM4TkbuwWH8IkXdR07nKm5GoPXCKV3UI9DD0Ic=;
- b=SwifmTQo72mWpg5nqGNCxAAX306CBjPWMhjw1/VBtWATJVLAUmB0C57ucVktGk6T7MHlGv/l5
- 0Z4YlPJGTyuCAx8bjASS+zgu4V1HJymF4OV04WVGba3wreWPaAWz5E3
-X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
- pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
-X-CM-TRANSID:AQAAfwAnEkOacw1qCu8EAA--.6803S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCryUAryxGrW7Kw1ruF47XFb_yoW7Gryrpr
-	W7Grs8GF9rXw12k34Sqry5WFnxtF40gFyDuw42ga4UArsxurW8Crs3Kwn5Grn3Xrs8Xr1r
-	ur1UuFWxCwn09aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9G14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wrylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sREPrc3UUUUU==
-X-CM-SenderInfo: pzdqwylld63zxwud2x1vfou0bp/1tbiAQANEWoL3kQAGQAFs6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BJSPR01MB0707:EE_|BJSPR01MB0755:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5bdd58f4-b2a4-41e3-6f31-08deb6477375
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|56012099003|22082099003|18002099003|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	a4yKFHHiD7ia0p1QwBGI+hqNQZ3w5MDwZLhXYTQyj82etu4CzEvOh92DIs8hsz/aq6S0CxbTN5+26KLhdK7JXjJ38CcN2ZmDFMHNb0Q2v0Zb8lD4H43mzg08tPJyHqWhvLTk8dP78Pj+O2TSluXxs5QU9WcHp2TkPAE/ydn3wFRCHdHaGWxWjruhxXKm5txZN4SdziliH1WSHVoIhJI2u0S4oSXLkgnb8VkXTd6jPAoS9SXIgLEFVojMY01Fw3gl1Jfq/XcLWlulH7Hvrp27nFtJN8jmqH67MdpeJGvw9YPR3ivNCttK10/NNWv8uDvhNFP7svM4hIprv+WOP1n7d2y3er4BGSKk1T/f03W0KTu5n8h1AMQIRuEaAIUq0Ya9lfmWXqpgfUHzgIY08ZJvrZath/DnFq4/FagCm5PeHrUoPfiG8ogrRwd+ben4z/jYQreogU4pOuIuK37HlppO7FJ2p2JCNZUzFB3peLwBX+OoN5FsB2qgsr6JuSA7D/HGMvwQiTYcGSePMRr0kNr2/VrOZBemDaf+/T5sQ3at1z8blg4dwcC8Sk6IOnqZEoUFU1wCRXZ5QN/xtaM4KKfAqw==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BJSPR01MB0707.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(56012099003)(22082099003)(18002099003)(38350700014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1KpOfIlOsCw9aw4iJqw6Fi68BWxdtj48juNuShJW1boRpbdNiASkAqWqYgOy?=
+ =?us-ascii?Q?5CjHaGEuznQNcVnpyD7Yj3r0RKdTKwfwlpWFwozbWp5zwYd2We0lGOcMdGrV?=
+ =?us-ascii?Q?H/mpiFd8t46miN7aMHaOtQgHey2W3HDINTV2TAGYbGF+Q3lh5uJlcJln30v2?=
+ =?us-ascii?Q?k9RHk6mhRvOowJZnStS0kzkgA8M5HMhhDyY88+2Q+5boX3ZVOmQGPSHLKruJ?=
+ =?us-ascii?Q?/0LW3FrwC2fW4fmnGr9xkuKqeO8mqjBEaHteSzYEHyyU4OR1yQS3HKzalmKh?=
+ =?us-ascii?Q?Exjtmltr5HMPEQoKo+TS2po+Z9FhidL/mH7cp9Lvytwjrzi+wGERoo0QjRRU?=
+ =?us-ascii?Q?Nlh8jbkDqUlDbzKm6hb4GNmmYgVTuQuv2v67bXoz7WrEI4Jr9Uk3fq6isTRN?=
+ =?us-ascii?Q?VTY/GyZ0uh7pTA/7jXWAflGyBQL7aTLjF1xOlrvAywoXj9MP05zmjnEhhlyq?=
+ =?us-ascii?Q?EuQ2Vr5Le/ZNn8u7YZ3AcHqPR4BZJTJp39XbAHS15A6r99yks0w551SUPJ8p?=
+ =?us-ascii?Q?VlFRTYq0JkDAqlZ8pXPup4zAi5DpBF7H8RsagHP8p23wwCNyoDGYAVCZ/+gr?=
+ =?us-ascii?Q?6hvSRzhfOXolpmIVB+ac9emcSGAoIuD2p0HcyBZBXvoKEKxcPsB3oHuqQW2L?=
+ =?us-ascii?Q?AkIyKTJrqlXd9SgVd0V893YSTfbV+iMicyJc0cSqd5E4QRIhoIdoE23ucSnF?=
+ =?us-ascii?Q?M0saGaqLTwOg4WxQ698chjM16qm9ACMuAjAtwTvLOTVw5OQsAyvU4RItKn8Y?=
+ =?us-ascii?Q?sosT+cBn5LBytIEEniNPUSEuiMpdl7A91ws4gMvt1ES4dIGNsLJg8IXHKUDK?=
+ =?us-ascii?Q?2pkrls+fPaK7MoUAJl5JSg71/AoXlATNV4kmr8Hd0bABddbGHYBxWlA6+TMX?=
+ =?us-ascii?Q?gUdMkX/VRNDF+hXoXZzBYjBOZixvDLQhoILP2KjyOLuvbAalvVgmq+eIUDdN?=
+ =?us-ascii?Q?nX6XnNEE1jo9rVcwQUxC/q4ZOrzknqvw7nahXFatNT70iR79dXtizdz65jir?=
+ =?us-ascii?Q?LhQt4IcsdiqSircg8JT1wTVTOxQbimUMmLl5soCgv+bZI4sncl2Ym8uUC9ns?=
+ =?us-ascii?Q?Ow3cWX+g600/ntOQ8ctPqeYKjCurHDXgnL/jS5r2RA9y5KYE/yImVDe5P7Qm?=
+ =?us-ascii?Q?Mz6jP/siatUN09gdYAYFPwmnJsa6EZ5w1Uyi+AfQ0zRH93SOA8dwdc8/Alkz?=
+ =?us-ascii?Q?+66sOslgaIPFMCU1Cdg3bc5mqSqV37gji9zC5VSGC7d+kLqQv6lujOthGCsR?=
+ =?us-ascii?Q?qEWa2jy2uQxd+z6d+2/7Qd3Ciw3+qo16aBCOj/TyZppwp3J8g6+uG0qiZsZo?=
+ =?us-ascii?Q?jRPz1FTH+QxybnAxD2pbXdmJRPm36CM0TDkerRI7VYKjW+FJ5jAkdE5WAO7S?=
+ =?us-ascii?Q?pSqZL4lEDpzlxMAEDx18sUPXJvegrDgh1tqJOQmbktY4lRbJEdmVttCyqiQi?=
+ =?us-ascii?Q?xK7EM0VIr9V1i9rXEkhQoe3Lk8GM/2hNgoj6+iWa6wXovw+ZRwzO3jjPIcif?=
+ =?us-ascii?Q?0DWYEXtBUvBrpRQr6ZMO+wcn4AvYTePeFew3uwmTa0uv2fUpdCWBAw6b3pHX?=
+ =?us-ascii?Q?0ede0HvWNCtJDueIN+UsD6FJLnjYq9jgqb8v9mmZvA9DnUG2zc4p/e4LNByg?=
+ =?us-ascii?Q?ZHIKb1Ns75FLCJiWoVcDtqilyXwiARLLdRMdBrpDAPQk3s0HIG7uzW5E6dNk?=
+ =?us-ascii?Q?HVhoEkhbXXm0mvu0IliUhe0CqYXbGseUbhOQd5Z+mXlbOsJmxH4L5GVUBzPa?=
+ =?us-ascii?Q?gDQ3bvY681SYQBfG37TKj9rHkctZ8K8=3D?=
+X-OriginatorOrg: lecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5bdd58f4-b2a4-41e3-6f31-08deb6477375
+X-MS-Exchange-CrossTenant-AuthSource: BJSPR01MB0707.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2026 08:11:53.0961
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3591a018-3909-4ea2-aee8-843d5abaed8d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3YYxlItRGg1gCxttnqQn8fHrGbCzxY6H6N95C5mTtv6qTr6zGGMSMiv436TXpjK6kjTwI+KifQWFeSQlS6w6kKNzMx8nBz5mEidZfNclDLY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BJSPR01MB0755
 
-On 2026-05-15 11:28 +0100, Conor Dooley wrote:
-> On Fri, May 15, 2026 at 09:18:03AM +0800, Jia Wang wrote:
-> > Rongda M0 is an mATX motherboard based on the UltraRISC DP1000 SoC.
-> > 
-> > Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
-> > ---
-> >  arch/riscv/boot/dts/Makefile                       |   1 +
-> >  arch/riscv/boot/dts/ultrarisc/Makefile             |   2 +
-> >  .../dts/ultrarisc/dp1000-rongda-m0-pinctrl.dtsi    |  85 ++++++++++++++++
-> >  arch/riscv/boot/dts/ultrarisc/dp1000-rongda-m0.dts | 111 +++++++++++++++++++++
-> >  4 files changed, 199 insertions(+)
-> > 
-> > diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
-> > index 69d8751fb17c..702882974251 100644
-> > --- a/arch/riscv/boot/dts/Makefile
-> > +++ b/arch/riscv/boot/dts/Makefile
-> > @@ -12,3 +12,4 @@ subdir-y += spacemit
-> >  subdir-y += starfive
-> >  subdir-y += tenstorrent
-> >  subdir-y += thead
-> > +subdir-y += ultrarisc
-> > diff --git a/arch/riscv/boot/dts/ultrarisc/Makefile b/arch/riscv/boot/dts/ultrarisc/Makefile
-> > new file mode 100644
-> > index 000000000000..d01a770d3cba
-> > --- /dev/null
-> > +++ b/arch/riscv/boot/dts/ultrarisc/Makefile
-> > @@ -0,0 +1,2 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +dtb-$(CONFIG_ARCH_ULTRARISC) += dp1000-rongda-m0.dtb
-> > diff --git a/arch/riscv/boot/dts/ultrarisc/dp1000-rongda-m0-pinctrl.dtsi b/arch/riscv/boot/dts/ultrarisc/dp1000-rongda-m0-pinctrl.dtsi
-> > new file mode 100644
-> > index 000000000000..101b416b1079
-> > --- /dev/null
-> > +++ b/arch/riscv/boot/dts/ultrarisc/dp1000-rongda-m0-pinctrl.dtsi
-> > @@ -0,0 +1,85 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright(C) 2026 UltraRISC Technology (Shanghai) Co., Ltd.
-> > + */
-> > +
-> > +#include "dp1000.dtsi"
-> > +
-> > +&pmx0 {
-> > +	i2c0_pins: i2c0-pins {
-> > +		pins = "PA12", "PA13";
-> > +		function = "func0";
-> 
-> This is what I meant about func0 btw, and having this be "i2c" etc instead.
+Add ACPI ID "LECA0001" for LECARC SoCs that use the DesignWare
+GPIO controller with V1 register offsets.
 
-Right, agreed. I will use semantic function names instead.
+Signed-off-by: Thomas Lin <thomas_lin@lecomputing.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Bartosz Golaszewski <brgl@kernel.org>
+---
+ drivers/gpio/gpio-dwapb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > diff --git a/arch/riscv/boot/dts/ultrarisc/dp1000-rongda-m0.dts b/arch/riscv/boot/dts/ultrarisc/dp1000-rongda-m0.dts
-> > new file mode 100644
-> > index 000000000000..6f72d60ad55e
-> > --- /dev/null
-> > +++ b/arch/riscv/boot/dts/ultrarisc/dp1000-rongda-m0.dts
-> > @@ -0,0 +1,111 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright(C) 2026 UltraRISC Technology (Shanghai) Co., Ltd.
-> > + */
-> > +
-> > +#include "dp1000-rongda-m0-pinctrl.dtsi"
-> > +#include <dt-bindings/gpio/gpio.h>
-> > +
-> > +/ {
-> > +	model = "Rongda M0 Board";
-> > +	compatible = "rongda,m0", "ultrarisc,dp1000";
-> > +
-> > +	aliases {
-> > +		serial0 = &uart0;
-> > +		serial1 = &uart1;
-> > +		serial2 = &uart2;
-> > +		serial3 = &uart3;
-> > +	};
-> > +
-> > +	chosen {
-> > +		stdout-path = "serial0:115200n8";
-> > +	};
-> > +
-> > +	gpio-poweroff {
-> > +		compatible = "gpio-poweroff";
-> > +		gpios = <&gpio_b 0 GPIO_ACTIVE_HIGH>;
-> > +		active-delay-ms = <100>;
-> > +
-> > +		status = "disabled";
-> 
-> Why bother adding the nodes if they are disabled? What enables them?
-> 
-
-Understood. Since the board uses the OpenSBI SRST extension for
-reset/poweroff, these GPIO nodes are unused and do not need to appear in
-the DTS.
-
-I'll drop them in the next revision.
-
-> > +	};
-> > +
-> > +	gpio-restart {
-> > +		compatible = "gpio-restart";
-> > +		gpios = <&gpio_b 1 GPIO_ACTIVE_HIGH>;
-> > +		active-delay = <100>;
-> > +
-> > +		status = "disabled";
-> > +	};
-> > +};
-> > +
-> > +&i2c0 {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&i2c0_pins>;
-> > +};
-> > +
-> > +&i2c1 {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&i2c1_pins>;
-> > +};
-> > +
-> > +&i2c2 {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&i2c2_pins>;
-> > +
-> > +	rtc@32 {
-> > +		compatible = "whwave,sd3078";
-> > +		reg = <0x32>;
-> > +	};
-> > +};
-> > +
-> > +&i2c3 {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&i2c3_pins>;
-> > +};
-> > +
-> > +&spi0 {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&spi0_pins>;
-> > +};
-> > +
-> > +&spi1 {
-> > +	num-cs = <1>;
-> 
-> Why is num-cs set at the board level here?
->
-
-`num-cs` is set at the board level because it reflects board wiring, not
-the controller capability. On Rongda M0 only one SPI1 CS line is routed,
-so the board DTS restricts `num-cs` to 1.
-
-> > +
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&spi1_pins>;
-> > +};
-> > +
-> > +&uart0 {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&uart0_pins>;
-> > +};
-> > +
-> > +&uart1 {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&uart1_pins>;
-> > +};
-> > +
-> > +&uart2 {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&uart2_pins>;
-> > +};
-> > +
-> > +&ethernet {
-> > +	phy-handle = <&phy0>;
-> > +	/*
-> > +	 * YT8531 RGMII timing on this board requires no PHY internal delays.
-> > +	 * Using "rgmii-id" together with rx/tx-internal-delay-ps results in RX CRC
-> > +	 * errors and no usable traffic, so keep plain "rgmii" here.
-> > +	 */
-> > +	phy-mode = "rgmii";
-> > +
-> > +	mdio {
-> > +		compatible = "snps,dwmac-mdio";
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +
-> > +		phy0: phy@0 {
-> > +			reg = <0x00>;
-> > +		};
-> > +	};
-> > +};
-> > 
-> > -- 
-> > 2.34.1
-> > 
-
-Best Regards,
-Jia Wang
-
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 15cebc8b5d66..c1f3d83a67c1 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -694,6 +694,7 @@ static const struct acpi_device_id dwapb_acpi_match[] = {
+ 	{"APMC0D07", GPIO_REG_OFFSET_V1},
+ 	{"APMC0D81", GPIO_REG_OFFSET_V2},
+ 	{"FUJI200A", GPIO_REG_OFFSET_V1},
++	{"LECA0001", GPIO_REG_OFFSET_V1},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, dwapb_acpi_match);
+-- 
+2.43.0
 
