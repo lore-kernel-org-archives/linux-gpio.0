@@ -1,137 +1,102 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404FA3F54AA;
-	Fri, 22 May 2026 10:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED1A3CD8A4;
+	Fri, 22 May 2026 10:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779445417; cv=none; b=tCg6pkLU/bxL24yQapci48S4UiRIPVbhIBd3f+lnJ4jSmDkGPP46xWFuUytfip6OoxoBcszmCBHeK8VCYMT4ikimdFw1DwN4PF5/HDI7I0EdQYAAdpztpryr7eAYF7NKJX7eiDwkvLWKEmd9Wa3U4Hk2kj0UNOufa55Zph+TYfU=
+	t=1779445424; cv=none; b=eCGX+QJ4GHn7ByRESbvYsHlMyO1diXAdimxa6TaOyN1k6sSlszKxvmwDxKWUI9t0nDlgx7d7qKyS7wD4ecok9nIUUXTCJn/dGnx1wKc0BTqSHhR4H+sbqHvNu9rvI7EIDkryWaeoz2ebTvlVMFrQIM1eFZAR4oy6S+PkQINH16k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779445417; c=relaxed/simple;
-	bh=W9lPTgx6mDxArcLHARU/ZZqLqgXOeySBXq57O5dffOs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SWGCi6tKDzwYC4IGVBTBB04zlenHDZLugup0pzQYK8hXg8O7G4lVuUfgyY/mhsvk8Iupkh1rjTL//VRDaZU0A5CZ5m28yX4KbSXQH1olu0wZ6USIEoJIDmZngmrcB6KTNDlKx6mc/tP9WwmCBuG5HDMVU1u4dTnwQvzT9/c1u7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BaUCIE1k; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779445424; c=relaxed/simple;
+	bh=eUs6YVU2iFtFB2JHUiISX/6iwqnt7Bq1OFgZKZQ0uKg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=AhQvajy98ZXKsPjpDVXFKTePEugevZ9SaM4EAdRSXxns2bwXDiS10UN9NvJba1YUeOpdZdmVd6okAPuYKDhZBlxcPjY3XVuJ3ULig46/S+dAI5XieSgf8rt4oNIz/WajY0OK3hlb0K3dubdt0zS3XYNhlONqtzCXgHkjdxLzxBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXsGOZL8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BaUCIE1k"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D34031F00A3F;
-	Fri, 22 May 2026 10:23:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXsGOZL8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34F3F1F00A3D;
+	Fri, 22 May 2026 10:23:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779445416;
-	bh=6QEWAjHSDHCKnr4dwU2wD6RoMsBK3plNIjm7Iq3i+s8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=BaUCIE1kfn+KGCxtZcLLpv0Y863cq/kKP75/p17kFXApysgQCbjRPhocHhu/IaBFN
-	 3u66CR12I398qeXH123vQMeXsT+Ew+gTqLuQco5rm8IupF5I5mGPQkBfgbXMBRP6x5
-	 Hoig1NUC+STlw353HUNCDqKw916OGcdRq32uXaTCCDek+qt3vO5tahJNeXDa+u4eFD
-	 QFXTjNs8/Q2WozqWzgREVGFySQ7BeVjnk4I1GloLYcqTa6AqANo7q4cWAtWbHv45fP
-	 RFr9AZPd+22TYJP3SWaSsu9Ho4XjnWWWBM0SgyjrMQSxHRVsrnSQ+TXvj5No3yAWde
-	 XOhgQYSCP1Yxg==
-From: Claudiu Beznea <claudiu.beznea@kernel.org>
-To: geert+renesas@glider.be,
-	linusw@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	magnus.damm@gmail.com,
-	wsa+renesas@sang-engineering.com
-Cc: claudiu.beznea@kernel.org,
-	claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 9/9] arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
-Date: Fri, 22 May 2026 13:22:51 +0300
-Message-ID: <20260522102251.1723392-10-claudiu.beznea@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260522102251.1723392-1-claudiu.beznea@kernel.org>
-References: <20260522102251.1723392-1-claudiu.beznea@kernel.org>
+	s=k20260515; t=1779445423;
+	bh=xq2WMGxYrdq7+VpHGko1wAXp02qIJZ5EaLRL0m99YUo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=UXsGOZL8biEqFcm+yDxKBRmmTG7wr1b9UH9iU9EuR6OB5xaigS/PK7iSDw/Vm4W4N
+	 MC2XACcVHcPGTvcWYO6pDoxWAR1GJUvyG+VRTdn4Ow5feS300wzQMk+L2k+6ZxYkkE
+	 nk0Ca2W0d17+0UyKihAUDvBW0QirdOPzWKKWy+jfAddiTYyrRv5dwFgsPT7mQRGu8F
+	 ztEfRFh8KZ6oE4CFg968OvZmhGDY46xnF5TnqX27zGgdcnM/xZ2WyMSSFTuLD0R24Q
+	 JHhnDyOAAAicbO9T3PEfEf4UlW9m4ei9MWEpN7/AeAAzj3OgnIZc+XITt09RJw8N7D
+	 EUnVO+Pny6gKA==
+From: Mark Brown <broonie@kernel.org>
+To: Hoan Tran <hoan@os.amperecomputing.com>, 
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+ Thomas Lin <thomas_lin@lecomputing.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-acpi@vger.kernel.org, linux-spi@vger.kernel.org, 
+ braden_zhang@lecomputing.com, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20260521-lecarc-acpi-ids-v1-0-ae0ae90b2817@lecomputing.com>
+References: <20260521-lecarc-acpi-ids-v1-0-ae0ae90b2817@lecomputing.com>
+Subject: Re: (subset) [PATCH 0/2] Subject: [PATCH v5 0/2] arm64: Add LECARC
+ ACPI IDs for DesignWare GPIO, SPI
+Message-Id: <177935811877.58022.6763569850673857398.b4-ty@b4>
+Date: Thu, 21 May 2026 11:08:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.16-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1320; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=eUs6YVU2iFtFB2JHUiISX/6iwqnt7Bq1OFgZKZQ0uKg=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqEC6sfKu343MptDCXeGNaCumZEVJKfrQjhNA3J
+ 6agdVFSQWqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCahAurAAKCRAk1otyXVSH
+ 0IVRB/4jjzULxCcwXtugQpfoBXaIoe631zWgzVhxI8oyXQwUB/80TUP7HI67KBrsOUr8wlb8/Xn
+ zyKVcIqdisj5cUxOU8D3WcYyauBstYtgBvzhzzQ6IPkc5nwaEPUlttCiI4lcV/DJD7rgeZh3zU7
+ obshP4uzV5gx0Z/X2RqxyfqgzAa04cz1i/872sJv5NwleVQvo7m+32+mDjvgpvlOjsXSjrCYKDR
+ NX1fNyPKHDI9fjDcWN2fN2ktAYoNGa/3iXeO+x0552DrEsEJqbLSxkLtqibKX2+pOBYiODMGuHw
+ 2HOk8JK66w563dovBqPcXl18s/HT2GuIHEsKwOd+0RMaQW2n
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Thu, 21 May 2026 10:34:48 +0800, Thomas Lin wrote:
+> Subject: [PATCH v5 0/2] arm64: Add LECARC ACPI IDs for DesignWare GPIO, SPI
+> 
+> This patch series adds ACPI identification for LECARC SoCs that
+> integrate Synopsys DesignWare peripherals.
+> 
+> LECARC platforms use the following ACPI HIDs:
+> 
+> [...]
 
-The Renesas RZ/G3S SMARC SoM board has a connector for I3C interface.
-Enable I3C.
+Applied to
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi     | 30 +++++++++++++++++++
- .../boot/dts/renesas/rzg3s-smarc-switches.h   |  4 +++
- 2 files changed, 34 insertions(+)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.2
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index b45acfe6288a..370b39b6a33d 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -168,6 +168,15 @@ a0 80 30 30 9c
- 	};
- };
- 
-+&i3c {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&i3c_pins>;
-+	pinctrl-1 = <&i3c_standby_pins>;
-+	i2c-scl-hz = <400000>;
-+	i3c-scl-hz = <12500000>;
-+	status = "okay";
-+};
-+
- &pcie_port0 {
- 	clocks = <&versa3 5>;
- 	clock-names = "ref";
-@@ -302,6 +311,27 @@ mux {
- 		};
- 	};
- 
-+	i3c_pins: i3c {
-+		pins = "I3C_SDA", "I3C_SCL";
-+#if SW_CONFIG4 == SW_ON
-+		power-source = <1200>;
-+#else
-+		power-source = <1800>;
-+#endif
-+		input-enable;
-+		renesas,i3c-standby = <0>;
-+	};
-+
-+	i3c_standby_pins: i3c-standby {
-+		pins = "I3C_SDA", "I3C_SCL";
-+#if SW_CONFIG4 == SW_ON
-+		power-source = <1200>;
-+#else
-+		power-source = <1800>;
-+#endif
-+		renesas,i3c-standby = <1>;
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		data {
- 			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3";
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-index bbf908a5322c..9cccc87da057 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-@@ -25,9 +25,13 @@
-  * @SW_CONFIG3:
-  *	SW_OFF - SD2 is connected to SoC
-  *	SW_ON  - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
-+ * @SW_CONFIG4:
-+ *	SW_OFF - I3C voltage is 1.8V
-+ *	SW_ON  - I3C voltage is 1.2V
-  */
- #define SW_CONFIG2	SW_OFF
- #define SW_CONFIG3	SW_ON
-+#define SW_CONFIG4	SW_OFF
- 
- /*
-  * SW_OPT_MUX[x] switches' states:
--- 
-2.43.0
+Thanks!
+
+[2/2] spi: dw-mmio: Add ACPI ID LECA0002 for LECARC SoCs
+      https://git.kernel.org/broonie/spi/c/019947c49585
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
