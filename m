@@ -1,157 +1,113 @@
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAFE33AD9C
-	for <linux-gpio@vger.kernel.org>; Thu, 21 May 2026 05:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DEA292B4B;
+	Thu, 21 May 2026 06:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779340433; cv=none; b=PR2yoMm12Xh7lC1puQZOzP1SYxj9Hticw6o0b7MWfK6ecQNuoVEX9dgsXWBB3Z2zig9nvkJTc+h1phGOcc0AVN41i7Au8FfE4Ndrx2d+vdRtLFIORj0wuUvcZwJxzWZztN2OJoi9YndrhhF0rj9naAjMMNdNZYPUc+ph70plCfk=
+	t=1779346158; cv=none; b=E9ycAWgGPqIDIBTLocXOmcaKhrG5SDafdzt2nw4nSws+wImg3vefSUDn7xBnoWoynE2OcMpgJ0OKm9H60E0L7oeJ0jxc/06sxWDrpoM54/8s+edrR8xLjHtB9CaySNi5brsoiBd++6HwI+b3B4ixoEwlg8nQYK2OltOTBV/iato=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779340433; c=relaxed/simple;
-	bh=an2XKnw/6oNRYjivHk/fQLnrkcFYlk+CGyiYpwsGnhE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=svxMXtHFq3RMnE8CsLTUDhya8yjvUac2y2ca0K4jQL7tjaI5MyHWnaeyi5UL045BLR39OT5CsROIyyr1cgAJCe1/eSVjDl1TYFPbxuuefoflToHLXFTQMMarhm1fTHlb6lgG91H/fXsRmrN+pn6rnlt2Cmeiz2ZUdPaT/Gvdkyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rGicEzlN; arc=none smtp.client-ip=74.125.82.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1779346158; c=relaxed/simple;
+	bh=DmSirS6VO/RgKJ87630yqWZwCs/jhbQcnVbeTbuGYPc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iAO3aUQp6bbsnRA6eItjLJ+Yz9SErV7LnDZ78bvBkI75ETm1cw0iQX2sFdSSGPpJgtHk4yIeK8Li/R3s9bplo/1nTLgxWIsDu+GXYGf1W1vTTcyllU44uKNDxmNXe5eI1B7qfI0YzqgFlARC5ax8XIR5Kh/oF0N04qKy7t0gku8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=Rk9e6jYn; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rGicEzlN"
-Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-135e88b8e55so5933785c88.0
-        for <linux-gpio@vger.kernel.org>; Wed, 20 May 2026 22:13:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779340428; x=1779945228; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pXtisoK8i0cyvAoaHE4OQcmxs5XHz2jUEn0crM4CfGY=;
-        b=rGicEzlN0+rPvLzs2LJWdzLTUITPl1rN1vFbp0zx6DzbNTMvckrFBzx/F4QPebU/cx
-         FnVXxCqrEHyhWikzXiHKAqbMawHlgObfqzS9NVzlL0uU39hORU6sg7BU3bin87f9OJvR
-         +o4gRlS5rKrZW2AfAv4BszP3A/Geg35oBzi1eT8HCEB4L/yNZeisIWdy3A9gFK5HiLqH
-         hb5WTYZDE5BSbsepGk0b6m+gdkfVKTPt9J0nzZgLhGfhfBauBK6Cof4ATNIujg9OvPtH
-         tz3EyZBea2JcLdK1A7tV9ZTARNx4k9YklHOI4ZDcSu5s8F/jSq3RWblnqdlzsnN/x3hh
-         13Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779340428; x=1779945228;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pXtisoK8i0cyvAoaHE4OQcmxs5XHz2jUEn0crM4CfGY=;
-        b=NwzGlHMV/UXIpE00DtvKNnfyJr9ix+fy5JWCbp+KWuVp5cWheIXas4Ql3jVb+Zc1a5
-         BAHkFOt5fBRaaPs8eSHkjS6i6nqaR0UGIJyypWjSiFY7rG+L51i6NfTtCSXWZHtcr2MW
-         nGcanRm2zHpBS/R0kUYo9DXY0vNwIMuIUje6EB8gujY+Pk//wB4ve729vUSpGxU/GBgm
-         F9xWKzK8iM+6YskDfMvPftEdtEQMYuQp3m9tuArwU8y2pH9iXqHQOXAW6U01QJF0gIMc
-         PqTqFDBFS+EaqkF09nzl0jjTkwyq9CQO9wmK7m41jT8v++8/e158PU18qTsXoYLKrA/9
-         7Ifw==
-X-Forwarded-Encrypted: i=1; AFNElJ87Y5Qqzt23oK/qQZB72FX3PYYCQqbbplLrQLeJ56uEXONXSbfw+enGRDh+FmobN9NlWvvVSk6F44+E@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ4InRD6tnfY3AGq0cTvWFgpT7ib5NhS866OOG+wdQwGBa/MCd
-	+w1x9ZsNGNfz2hojruYNq+SeW+p6LvhqDIkbbf+TTlwNnnS4Boa+JE2wmHsXLA==
-X-Gm-Gg: Acq92OHpAiEPzTFrEMNConQg6aauv+PHHSXvYAU1SrBeZWyfyNBz1PWY3R6jVgSBvxE
-	WI35939Zr9Nl5aJ07nwnQbLLF9uKI3Y4UYHrf1E0TaUX5YM1mll51sc4mmSfpZY3dvm3LMUn9r/
-	J86H/2Lc7aL11DwpVQt+yAFN6OIGWnSN4UcmQk59wtvi/ZhZc9V7q+GLp0czDFwYXPJnn+iL9n7
-	F/z91zxean5jq1a4agWzLF2SZ9bl0XNTNK58GYtYpHQSvO/OXwc6LugyRjpbwY92iU/db+Ks7GN
-	kHL0hnFL9j1563r7gOkg8WiJK915MA8GrOAeOi/3bRM3K0GNMkKD442btRGa6QGKGvXAFXue0/4
-	8oX4RjTp4Mcf2EnkpgYlrOw6AGPVg+Jd4IY5SVaInH1MZI3RSl0dnu9+YdDwbkW+3PIDdEXvof4
-	JRXaR6TPo6JMqedGrx69epyYjkSA3snJhMocnf3RRVQxSSX/U4Nr+KnjXskNNWTlPyKKp9bczGT
-	9AoSbbXuMloxA==
-X-Received: by 2002:a05:7022:61a1:b0:12d:b26f:cafd with SMTP id a92af1059eb24-13632a02cf3mr857042c88.5.1779340423478;
-        Wed, 20 May 2026 22:13:43 -0700 (PDT)
-Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:d457:597:d576:1eb8])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-135e5c0a918sm6231360c88.14.2026.05.20.22.13.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 May 2026 22:13:42 -0700 (PDT)
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 20 May 2026 22:13:18 -0700
-Subject: [PATCH v2 2/5] sh: pfc: attach software node to the GPIO chip
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="Rk9e6jYn"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
+	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=q39DiklZvSpNFdVrcrO1V6lBShlkhniXqdocnefU7Hw=; t=1779346155;
+	x=1779950955; b=Rk9e6jYnKXZk8W6zgFqBjAelbxasC7RO8zrwuOjrqGj1jl02EugN4+jsVfhNA
+	biHC9Q6F3ngnN0KQPOFE3F/iCbDPqb1rwDHAIgsJ7H7ZZfF1OHPbOoqIHthbdFgLGQ6q7w8mENwNE
+	7RnlPptoTl8JoXG3w+qEzO7rHSztIEOVYbVhROlIZqwHKkzpsu7MO6odwPCu4cWKAIMiooIquIIzg
+	4AC+53EwrUU2/a2UAvbTJYsGdfg+8/micFUX1i3N2/M4HcNE1f01vhoo9o85EeVTNLoEDpkB+8oxl
+	m2DKKxfbGvzB714CGAFT5Muv4siMmMzE4W2YQjn3NOOVvISGSw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.99)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1wPxDK-00000002vgw-3F6M; Thu, 21 May 2026 08:49:02 +0200
+Received: from p5b13a134.dip0.t-ipconnect.de ([91.19.161.52] helo=suse-laptop.fritz.box)
+          by inpost2.zedat.fu-berlin.de (Exim 4.99)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1wPxDK-00000000p6R-1lXr; Thu, 21 May 2026 08:49:02 +0200
+Message-ID: <8f918549adce2bbb68fdf3754793b3305f994c23.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 04/10] [v2] sh: select legacy gpiolib interface
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Arnd Bergmann <arnd@kernel.org>, linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Christian
+ Lamparter <chunkeey@googlemail.com>, Johannes Berg
+ <johannes@sipsolutions.net>, Aaro Koskinen	 <aaro.koskinen@iki.fi>, Andreas
+ Kemnade <andreas@kemnade.info>, Kevin Hilman	 <khilman@baylibre.com>, Roger
+ Quadros <rogerq@kernel.org>, Tony Lindgren	 <tony@atomide.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
+ <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>, Dmitry Torokhov	
+ <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek	
+ <pavel@kernel.org>, Matti Vaittinen <mazziesaccount@gmail.com>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, Jonas Gorski
+ <jonas.gorski@gmail.com>, Andrew Lunn	 <andrew@lunn.ch>, Vladimir Oltean
+ <olteanv@gmail.com>, "David S. Miller"	 <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski	 <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, 	linux-wireless@vger.kernel.org,
+ linux-omap@vger.kernel.org, 	linux-arm-kernel@lists.infradead.org,
+ linux-mips@vger.kernel.org, 	linux-sh@vger.kernel.org,
+ linux-input@vger.kernel.org, 	linux-leds@vger.kernel.org,
+ netdev@vger.kernel.org
+Date: Thu, 21 May 2026 08:49:00 +0200
+In-Reply-To: <20260520183815.2510387-5-arnd@kernel.org>
+References: <20260520183815.2510387-1-arnd@kernel.org>
+	 <20260520183815.2510387-5-arnd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.60.1 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260520-rsk7203-properties-v2-2-465f3308021b@gmail.com>
-References: <20260520-rsk7203-properties-v2-0-465f3308021b@gmail.com>
-In-Reply-To: <20260520-rsk7203-properties-v2-0-465f3308021b@gmail.com>
-To: Rich Felker <dalias@libc.org>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Arnd Bergmann <arnd@kernel.org>, linux-sh@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org
-X-Mailer: b4 0.16-dev-6911d
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-With commit e5d527be7e69 ("gpio: swnode: don't use the swnode's name as
-the key for GPIO lookup") gpiolib requires that firmware nodes from the
-GPIO references to match firmware node in gpiochip structure.
+Hi Arnd,
 
-Define a software node for the pfc gpiochip so that it can be referenced
-by boards using static device properties.
+On Wed, 2026-05-20 at 20:38 +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> Many board files on sh reference the legacy gpiolib interfaces that
+> are becoming optional. To ensure the boards can keep building, select
+> CONFIG_GPIOLIB_LEGACY on each of the boards that have one of the
+> hardcoded calls.
+>=20
+> Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> v2: no changes. Adrian said he'll pick it up for 7.2, but so
+>     far the patch is not in linux-next yet, so I'm including it
+>     for completeness here.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- arch/sh/include/cpu-common/cpu/pfc.h |  3 +++
- arch/sh/kernel/cpu/pfc.c             | 20 ++++++++++++++------
- 2 files changed, 17 insertions(+), 6 deletions(-)
+Sorry, I hadn't gotten around to pick the changes for v7.2 yet. I can
+pick it up this weekend as I was planning to review and merge some
+patches this weekend.
 
-diff --git a/arch/sh/include/cpu-common/cpu/pfc.h b/arch/sh/include/cpu-common/cpu/pfc.h
-index 879d2c9da537..d57e38c05bdb 100644
---- a/arch/sh/include/cpu-common/cpu/pfc.h
-+++ b/arch/sh/include/cpu-common/cpu/pfc.h
-@@ -11,6 +11,9 @@
- #include <linux/types.h>
- 
- struct resource;
-+struct software_node;
-+
-+extern const struct software_node pfc_gpiochip_node;
- 
- int sh_pfc_register(const char *name,
- 		    struct resource *resource, u32 num_resources);
-diff --git a/arch/sh/kernel/cpu/pfc.c b/arch/sh/kernel/cpu/pfc.c
-index 062056ede88d..5a8d804d607b 100644
---- a/arch/sh/kernel/cpu/pfc.c
-+++ b/arch/sh/kernel/cpu/pfc.c
-@@ -5,21 +5,29 @@
-  * Copyright (C) 2012  Renesas Solutions Corp.
-  */
- 
-+#include <linux/err.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- 
- #include <cpu/pfc.h>
- 
--static struct platform_device sh_pfc_device = {
--	.id		= -1,
-+const struct software_node pfc_gpiochip_node = {
-+	.name = "sh-pfc",
- };
- 
- int __init sh_pfc_register(const char *name,
- 			   struct resource *resource, u32 num_resources)
- {
--	sh_pfc_device.name = name;
--	sh_pfc_device.num_resources = num_resources;
--	sh_pfc_device.resource = resource;
-+	struct platform_device_info pdev_info = {
-+		.name		= name,
-+		.id		= PLATFORM_DEVID_NONE,
-+		.res		= resource,
-+		.num_res	= num_resources,
-+		.swnode		= &pfc_gpiochip_node,
-+	};
-+	struct platform_device *pdev;
- 
--	return platform_device_register(&sh_pfc_device);
-+	pdev = platform_device_register_full(&pdev_info);
-+	return PTR_ERR_OR_ZERO(pdev);
- }
+I have received quite a lot of patches for SH recently, so it will take
+some time to dig myself through the queue.
 
--- 
-2.54.0.669.g59709faab0-goog
+Adrian
 
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
