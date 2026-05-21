@@ -1,208 +1,95 @@
-Received: from ultrarisc.com (unknown [218.76.62.146])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3074337D116;
-	Thu, 21 May 2026 09:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.76.62.146
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2B93806A6;
+	Thu, 21 May 2026 10:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779357191; cv=none; b=OjpAaYT3bBjD0A/5/DLt34ixKJ8mO+yCOyHj4JJt6Zc9ISE9N2tcG09BGqLp9V1ODXV2y/or0qZc+7vZzKjGhrRulmSVSkdxCmFYK9cfXbU9gylzTLwq3uvSlFSn4aRtjAaMnJkNXKgu3x5zMBPvtDVCr/QbiFVuNjaL2rDHWfM=
+	t=1779359007; cv=none; b=fdY+pjFOYRv8kRJkqqEiyBRlorHRiP2+NN1BTLxJ53/CbR36BCrnno+FDZ7McPCieNfh2ux8cVT70HQyD5MiOal2HYodf0NcdfQUvgDLXA2fC2muAPtRhGQzGnGGPpoM3nkOwTjnSFLRL+XFP43g4u/KvRkLAQN4+JsdhxTsB7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779357191; c=relaxed/simple;
-	bh=oQuciAhPofGRVn6oybq8MD+S9f6md4Z7crcETX1NTeU=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=U8aashk3X34Kypac6ReGsB88WvVzPIer75vqXd+UrYqppS/9bN/DFj/INsuneRaBB4GEonzKxPTB4fKa+P+4s3K/GuwdoEc6pspDM1S5iIbbybaRwkycbiuIQzVFn/RSz/CFQNijHOJncz4m+kk6hjCNdG6Vg75ub1/7s/0JZ1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com; spf=none smtp.mailfrom=ultrarisc.com; dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b=a0paDOav; arc=none smtp.client-ip=218.76.62.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ultrarisc.com
+	s=arc-20240116; t=1779359007; c=relaxed/simple;
+	bh=1XLqmK+7BKBioELVqL+LxlYtx2Up1tgCbtIMoH8w3eI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VB2bqEwW57rTJNZ6tJxQGVlcDvdwoeyDlxynfbKuOb4o6AZRK9TlLpJRllgSXiawNpvgl4tGqYDdiT5xhzY7m2NK8FWufIl+tListfzVmXHYYVS3Lr26OHgpwLEl576okK4ioIb3bF84uSQNrOr+GMFnd2ky+J1z6wn0MwqwgOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WwFAbBK2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b="a0paDOav"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=ultrarisc.com; s=dkim; h=Received:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
-	References:Date:Message-Id; bh=yeSeqiLDR0f7egc07t/OdNUi/rJU7dHEP
-	sFmSaMZ6gU=; b=a0paDOav8lG7Lwvzwtk6z4Z30Ca3tacQvMY1PicBH2DrENQvQ
-	MyylQdyVnCbqX/0gPUoBY376UO0A/CUP+jEqsWKKGPwKkhRQnqwMyWyWk1IYT1fj
-	1O/O5q0fQ5LR60lgQvb4VjuqE9t5I3cQR7Lf47ASjyC1X9L+ThBDG2Sgpk=
-Received: from [127.0.0.1] (unknown [192.168.100.1])
-	by localhost.localdomain (Coremail) with SMTP id AQAAfwA3cUIL1g5qXQgFAA--.7169S2;
-	Thu, 21 May 2026 17:53:15 +0800 (CST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WwFAbBK2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB85C1F000E9;
+	Thu, 21 May 2026 10:23:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779359006;
+	bh=1XLqmK+7BKBioELVqL+LxlYtx2Up1tgCbtIMoH8w3eI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=WwFAbBK2L35QJ8/re4MZfzHQF9H2m72u/cs6v8IxUrZTF8vAYwp6o7UevOuI4IVZh
+	 rwJbqcQPFLl5EWdwmICIi++lFEbSMeUYbzJ41xvzN3Hn2Ilfnd+1wnW/44Yi3aipvs
+	 o1mRIm+dw6AtyjvOqEvh4e9scoQ0g3f5okiOwzGrXTZFH6bVYtaf7X6L7nfvEcO302
+	 rArmtkH3UD9or+ifvfGS/tMhU1dPiAda0zaJjKme7FtKgG2Fohp53zXRh3hHrOwbIx
+	 NDo23AUktY5L6YmWPvcT/Z6u9H7gHCsW/3QH47kQdPZ7eIY7PdOx3iQARRqfvg7RrN
+	 BNWG0mjivn42Q==
+Date: Thu, 21 May 2026 11:23:21 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jia Wang <wangjia@ultrarisc.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@sifive.com>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 0/9] riscv: ultrarisc: add DP1000 SoC DT and pinctrl
+ support
+Message-ID: <20260521-trusting-busybody-15315a5955b7@spud>
+References: <20260515-ultrarisc-pinctrl-v1-0-bf559589ea8a@ultrarisc.com>
+ <20260515-brink-dealer-d0610c0dbc7b@wendy>
+ <177935715446.943957.13292482270209644157.b4-reply@b4>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/9] riscv: ultrarisc: add DP1000 SoC DT and pinctrl
- support
-From: Jia Wang <wangjia@ultrarisc.com>
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Jia Wang <wangjia@ultrarisc.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>, 
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-In-Reply-To: <20260515-brink-dealer-d0610c0dbc7b@wendy>
-References: <20260515-ultrarisc-pinctrl-v1-0-bf559589ea8a@ultrarisc.com>
- <20260515-brink-dealer-d0610c0dbc7b@wendy>
-Date: Thu, 21 May 2026 17:52:34 +0800
-Message-Id: <177935715446.943957.13292482270209644157.b4-reply@b4>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1779357154; l=5927;
- i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
- bh=oQuciAhPofGRVn6oybq8MD+S9f6md4Z7crcETX1NTeU=;
- b=SSpb+MDjxdd6C7Rj9vlOM1y+DLUOhQ8FDQ/MtJWlWgutMQIL9GFLLY3KudiFG40M3FTrcH6T6
- 1Imgfz40EvkDfsxI31VhFiLQTPNVyZV9GSgy4TMO5TSQEYPC0Q7fnsx
-X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
- pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
-X-CM-TRANSID:AQAAfwA3cUIL1g5qXQgFAA--.7169S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3AFWrJw13JFy8Xr17tr1xGrg_yoW7CF1kpF
-	43WF45AFyDJFWfKFWIq3W8C3W3X3WxArW3W3W7t3srJF45Z34UJFykKw45XF4Dur4DXryY
-	yF1jkFyxG3WjvaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9l14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
-	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I
-	8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AK
-	xVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcV
-	AFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8I
-	cIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r
-	4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRNJ5oDUUUU
-X-CM-SenderInfo: pzdqwylld63zxwud2x1vfou0bp/1tbiAQANEWoNL8UAJwADs0
-
-On 2026-05-15 11:05 +0100, Conor Dooley wrote:
-> Hey,
-> 
-> On Fri, May 15, 2026 at 09:17:56AM +0800, Jia Wang wrote:
-> > This series adds initial Devicetree support for the UltraRISC DP1000 RISC-V
-> > SoC and two DP1000-based boards (Milk-V Titan and Rongda M0).
-> > 
-> > The series introduces the required DT bindings, adds the DP1000 pinctrl
-> > driver, and provides the initial SoC/board DTS files.
-> > 
-> > Notes:
-> >   - Clocks are configured and enabled by firmware before Linux boots. Linux
-> >     does not manage clock rates or gating at runtime on this platform.
-> >     Therefore the initial DT only models the fixed clocks required by
-> >     standard drivers, and no clock controller/driver is provided.
-> 
-> I really disagree with this approach. In my experience it never ends up
-> working out and ends up being disruptive, because it is either an over
-> simplification of the clock tree and condenses multiple different clocks
-> into one where rates are similar or because firmware changes mean clock
-> rate changes down the line. I would much rather you modelled the clocks
-> accurately, even if that just means that a read-only clock controller is
-> implemented. Alternatively, if firmware does all of your clock control,
-> you can implement this using rpmi/mpoxy using clk-rpmi.c
-> 
-
-Understood. I'll implement a read-only clock controller in v2.
-
-> >   - The DP1000 pinctrl binding supports two child node styles under the same
-> >     controller compatible:
-> >       * legacy DP1000-specific nodes using phandle-array properties
-> >         "pinctrl-pins" and "pinconf-pins"
-> >       * generic pinctrl nodes using "pins", "function" and generic pin
-> >         configuration properties
-> >     The legacy form is kept for compatibility with existing vendor DTs.
-> 
-> Why would we want "legacy" stuff in mainline when this is a brand new
-> platform? "legacy" vendor devicetrees are not something that mainline
-> cares about, sorry.
-> 
-
-I'll drop the legacy pinctrl node format and keep only the generic pinctrl
-bindings in v2.
-
-> Additionally, these pinctrl patches should be sent standalone to the
-> pinctrl maintainers, they're likely to go through lots of revisions and
-> a different maintainer applies them.
-> 
-
-Just to confirm — for v2, should I completely remove the pinctrl
-binding/driver from this series and send them as a standalone pinctrl
-series, while keeping only the pinctrl references in the DTS?
-
-> >   - The bindings for "ultrarisc,dp1000-uart" and "ultrarisc,dp1000-pcie" are
-> >     being reviewed in separate series, since the DP1000 SoC DTS introduced
-> >     here uses those compatibles:
-> >     * Link: https://lore.kernel.org/lkml/20260429-ultrarisc-serial-v7-3-e475cce9e274@ultrarisc.com/
-> >     * Link: https://lore.kernel.org/lkml/20260427-ultrarisc-pcie-v4-2-98935f6cdfb5@ultrarisc.com/
-> >   - ARCH_ULTRARISC support is being reviewed separately:
-> >     * Link: https://lore.kernel.org/lkml/20260427-ultrarisc-pcie-v4-1-98935f6cdfb5@ultrarisc.com/
-> 
-> IMO, this patch needs to be in this series so that it compiles.
-> 
-
-I’ll move the ARCH_ULTRARISC Kconfig patch into this series. Thanks for
-pointing this out.
-
-> Cheers,
-> Conor.
-> 
-
-Best Regards,
-Jia Wang
-
-> > 
-> > Testing:
-> >   - dt_binding_check and yamllint (all new/modified binding YAMLs)
-> >   - dtbs_check and dtbs (RISC-V, including dp1000-milkv-titan.dtb and
-> >     dp1000-rongda-m0.dtb)
-> >   - Kernel build for RISC-V and boot-tested on DP1000 (Milk-V Titan and
-> >     Rongda M0)
-> > 
-> > Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
-> > ---
-> > Jia Wang (9):
-> >       dt-bindings: vendor-prefixes: add Rongda
-> >       dt-bindings: riscv: cpus: Add UltraRISC CP100 compatible
-> >       dt-bindings: riscv: Add UltraRISC DP1000 bindings
-> >       dt-bindings: pinctrl: Add UltraRISC DP1000 pinctrl bindings
-> >       riscv: dts: ultrarisc: Add initial device tree for UltraRISC DP1000
-> >       pinctrl: ultrarisc: Add UltraRISC DP1000 pinctrl driver
-> >       riscv: dts: ultrarisc: add Rongda M0 board device tree
-> >       riscv: dts: ultrarisc: add Milk-V Titan board device tree
-> >       riscv: defconfig: enable ARCH_ULTRARISC
-> > 
-> >  .../bindings/pinctrl/ultrarisc,dp1000-pinctrl.yaml | 168 ++++
-> >  Documentation/devicetree/bindings/riscv/cpus.yaml  |   1 +
-> >  .../devicetree/bindings/riscv/ultrarisc.yaml       |  27 +
-> >  .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
-> >  MAINTAINERS                                        |  15 +
-> >  arch/riscv/boot/dts/Makefile                       |   1 +
-> >  arch/riscv/boot/dts/ultrarisc/Makefile             |   3 +
-> >  .../dts/ultrarisc/dp1000-milkv-titan-pinctrl.dtsi  | 107 +++
-> >  .../boot/dts/ultrarisc/dp1000-milkv-titan.dts      | 182 +++++
-> >  .../dts/ultrarisc/dp1000-rongda-m0-pinctrl.dtsi    |  85 ++
-> >  arch/riscv/boot/dts/ultrarisc/dp1000-rongda-m0.dts | 111 +++
-> >  arch/riscv/boot/dts/ultrarisc/dp1000.dtsi          | 851 +++++++++++++++++++++
-> >  arch/riscv/configs/defconfig                       |   1 +
-> >  drivers/pinctrl/Kconfig                            |   1 +
-> >  drivers/pinctrl/Makefile                           |   1 +
-> >  drivers/pinctrl/ultrarisc/Kconfig                  |  23 +
-> >  drivers/pinctrl/ultrarisc/Makefile                 |   4 +
-> >  drivers/pinctrl/ultrarisc/pinctrl-dp1000.c         | 112 +++
-> >  drivers/pinctrl/ultrarisc/pinctrl-ultrarisc.c      | 746 ++++++++++++++++++
-> >  drivers/pinctrl/ultrarisc/pinctrl-ultrarisc.h      |  71 ++
-> >  .../dt-bindings/pinctrl/ultrarisc,dp1000-pinctrl.h |  65 ++
-> >  21 files changed, 2577 insertions(+)
-> > ---
-> > base-commit: 50897c955902c93ae71c38698abb910525ebdc89
-> > change-id: 20260316-ultrarisc-pinctrl-efa6e24c4803
-> > 
-> > Best regards,
-> > --  
-> > Jia Wang <wangjia@ultrarisc.com>
-> > 
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qI5PxH+3C51E5Bgx"
+Content-Disposition: inline
+In-Reply-To: <177935715446.943957.13292482270209644157.b4-reply@b4>
 
 
+--qI5PxH+3C51E5Bgx
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, May 21, 2026 at 05:52:34PM +0800, Jia Wang wrote:
+> > Additionally, these pinctrl patches should be sent standalone to the
+> > pinctrl maintainers, they're likely to go through lots of revisions and
+> > a different maintainer applies them.
+> >=20
+>=20
+> Just to confirm =E2=80=94 for v2, should I completely remove the pinctrl
+> binding/driver from this series and send them as a standalone pinctrl
+> series, while keeping only the pinctrl references in the DTS?
+
+IMO yes. And cite a link to the pinctrl patches in your cover letter.
+
+Probably you're better off submitting v2 of pinctrl as a higher priority
+anyway, since a) the biggest changes are needed there and b) the dts
+changes depend on a clock driver/binding being created.
+
+--qI5PxH+3C51E5Bgx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCag7dGAAKCRB4tDGHoIJi
+0pEhAP9G/MtfS0MgoId8t3zIL/SxwWheoiCd4xseOlXWShSEhgEArKIHxRB+JF6M
+YzhEFU7vbS7mw+u51coQ+plNB5d+YQY=
+=esTN
+-----END PGP SIGNATURE-----
+
+--qI5PxH+3C51E5Bgx--
