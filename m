@@ -1,68 +1,67 @@
-Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
+Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0256A339844
-	for <linux-gpio@vger.kernel.org>; Thu, 21 May 2026 05:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAFE33AD9C
+	for <linux-gpio@vger.kernel.org>; Thu, 21 May 2026 05:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779340432; cv=none; b=JOb5UDpTmhrmGOCpp9I9goW6nZcf3Gv3UWHEEWvjr8rWJC4Px93dzDnZZI2uZuYYvIUuHGFW/STYXjvRiMzBOjaL5t9mS8QCdGvlfRgVE/09W5Vh58sX/27bAAaC0PP2FsMXd8uonotoSiVbhRadJPLewBv8VbWYjRb4K7+ZrsU=
+	t=1779340433; cv=none; b=PR2yoMm12Xh7lC1puQZOzP1SYxj9Hticw6o0b7MWfK6ecQNuoVEX9dgsXWBB3Z2zig9nvkJTc+h1phGOcc0AVN41i7Au8FfE4Ndrx2d+vdRtLFIORj0wuUvcZwJxzWZztN2OJoi9YndrhhF0rj9naAjMMNdNZYPUc+ph70plCfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779340432; c=relaxed/simple;
-	bh=84IYOUDRqLdOZnUza+I5M9XOglV9RpLSILXCdsenQOo=;
+	s=arc-20240116; t=1779340433; c=relaxed/simple;
+	bh=an2XKnw/6oNRYjivHk/fQLnrkcFYlk+CGyiYpwsGnhE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rT08Qow5/mGZOkGFbLgFlF4R8CSi/me9sI5nrJtKAXhFfPl75O5XMNuxsFsWbpWt1Wp9SWp4QAShkE9ZcIVZAUSaV1tdEjTYJCZJJ/WtSLFfT9IADdfID+iwhqHdmvD+Tf0m0igPah/okCW3sLCnTHKzxFyt6X+6P9PxFSg2SLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gqgccGcL; arc=none smtp.client-ip=74.125.82.43
+	 In-Reply-To:To:Cc; b=svxMXtHFq3RMnE8CsLTUDhya8yjvUac2y2ca0K4jQL7tjaI5MyHWnaeyi5UL045BLR39OT5CsROIyyr1cgAJCe1/eSVjDl1TYFPbxuuefoflToHLXFTQMMarhm1fTHlb6lgG91H/fXsRmrN+pn6rnlt2Cmeiz2ZUdPaT/Gvdkyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rGicEzlN; arc=none smtp.client-ip=74.125.82.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqgccGcL"
-Received: by mail-dl1-f43.google.com with SMTP id a92af1059eb24-1309f4ee97fso6577793c88.1
-        for <linux-gpio@vger.kernel.org>; Wed, 20 May 2026 22:13:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rGicEzlN"
+Received: by mail-dl1-f41.google.com with SMTP id a92af1059eb24-135e88b8e55so5933785c88.0
+        for <linux-gpio@vger.kernel.org>; Wed, 20 May 2026 22:13:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20251104; t=1779340428; x=1779945228; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dC01VeKjcCopxQgK4IvKVGSUYqXlRoKtYIJqUaE3G8s=;
-        b=gqgccGcL7ikNdfUlba6O0OKe01h8wGXTVdhJwTJjWMeGH+B/tPkwxhkSSNjmbONHn8
-         kG9VeCsGByrR0XeiCjydp+FaObjJbw1b4BHhbrrxHHlrN3cGrwYPCi8f2EA1Bl7WUzzL
-         zHsCl6wMaAPHfHo/72B8i/Ia1VuLkfiuWoD22WMwrI0lhkGCtFnQ86uJ7hg28Xzs2ZDn
-         X7WOiM4aWQg+ztNGr7t01adly3kMGAGAlPvkUNphStKMq1RCnGBCWKZ71vtmtHyunPes
-         NSARwOfNTRxzmKH/EpRlufEPXTXYHNXN6QiQJ0XQW+uwZVoCpn+J87xs4XwOZMQZNtH1
-         KbJQ==
+        bh=pXtisoK8i0cyvAoaHE4OQcmxs5XHz2jUEn0crM4CfGY=;
+        b=rGicEzlN0+rPvLzs2LJWdzLTUITPl1rN1vFbp0zx6DzbNTMvckrFBzx/F4QPebU/cx
+         FnVXxCqrEHyhWikzXiHKAqbMawHlgObfqzS9NVzlL0uU39hORU6sg7BU3bin87f9OJvR
+         +o4gRlS5rKrZW2AfAv4BszP3A/Geg35oBzi1eT8HCEB4L/yNZeisIWdy3A9gFK5HiLqH
+         hb5WTYZDE5BSbsepGk0b6m+gdkfVKTPt9J0nzZgLhGfhfBauBK6Cof4ATNIujg9OvPtH
+         tz3EyZBea2JcLdK1A7tV9ZTARNx4k9YklHOI4ZDcSu5s8F/jSq3RWblnqdlzsnN/x3hh
+         13Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20251104; t=1779340428; x=1779945228;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=dC01VeKjcCopxQgK4IvKVGSUYqXlRoKtYIJqUaE3G8s=;
-        b=JXobI1dvQ/4wfAfqYsnT4jMmwSxyZV9QsqkNsQfVDalFqoEd1HvQgFudmAvAgIkHC+
-         7mPDq68oNbjrWxHKJnDGi0mZuIpTCse4DKZI/XodkfU8Yu9PIM8LUZh4vjlmkCPxdm5Z
-         JWu25kq9say/go/cuW/Dx/H4nnaWI7azBYYpCjbigXt5dU9zHiVFI1FzJkfg+mpQZR3Q
-         iBKJJ3LvR5+qpxyKLzDcNK26dJjLK1cUYbbUZ+B8/sJFOhS7SvWkjL4xtXcyDp3fT3b8
-         aMmE3zVhDkNxEadBJZ4KcLOdxvVUZfzlVbmq81/GBmqyOEDi2x5Ch8wq4GoBdR+9JTJs
-         Sukw==
-X-Forwarded-Encrypted: i=1; AFNElJ9nL6nGT0JoqO7JDvhtksjGIQmjp2ZV8X+DNoSTjktWm+e9v2n7xkqIq8V0MLi2ODdsN1NU4lyM803Z@vger.kernel.org
-X-Gm-Message-State: AOJu0YyraUQ61QNoGczVg/lXr2ejrMepJcN6isyuKDF+3vY1v81HgwSF
-	GjpucNNPZ0qYEH6j2CskwT29flTRL/q61nRufmGrpzycfLNkrGbc5bmE5mr1yA==
-X-Gm-Gg: Acq92OGVIXDqF43cXwMzNxkrHLPOo0HMN5jqozUf8L2ZY54BiDlT4suVvOzb4Qyq1QO
-	c8TqpQmpLNRnKHin9hZ2zamxJcSl/kYqSLvrrHKcaxlgWGUexdcIi0s2SIrbHkYKWnczbDRk2LL
-	LNwUWGzxXgjLPB9LxpG4vUvaufJ2WvPUqizclk0KD+fniRCX59xhUlErd9TD+WHfy3Ib6mquZXH
-	HNP5mHFn1nxyhJZNwCvw9M6RivcX0/hGeuNZ8YXtDX0P9TWfANGTcmXTT8wJJ8xKEqBxrdOAsmy
-	IrimnKob9r+MCpVePvz8+sfrECmcMDncX2Aw+N+0OKgD6SFjXr/csWOxDfgleR1cmfquVxsOyWk
-	N5B0e4Lm/bTouhBSwJFgt/TY0MjWb+ZO7ln/2CAd+R5nJLTk8XIGR/TlOxIRIt6n4NgHS9AYCjo
-	XugJLHf5x7wDjpG93UdQR3aY2gLxEyylfrRQa04+NcG9WE5eQAISjDrg2EBMKIicTwDyznxOF0V
-	R64ixo1a8cC8A==
-X-Received: by 2002:a05:7022:438c:b0:134:a6f0:6f08 with SMTP id a92af1059eb24-13632f60d3amr652796c88.39.1779340428152;
-        Wed, 20 May 2026 22:13:48 -0700 (PDT)
+        bh=pXtisoK8i0cyvAoaHE4OQcmxs5XHz2jUEn0crM4CfGY=;
+        b=NwzGlHMV/UXIpE00DtvKNnfyJr9ix+fy5JWCbp+KWuVp5cWheIXas4Ql3jVb+Zc1a5
+         BAHkFOt5fBRaaPs8eSHkjS6i6nqaR0UGIJyypWjSiFY7rG+L51i6NfTtCSXWZHtcr2MW
+         nGcanRm2zHpBS/R0kUYo9DXY0vNwIMuIUje6EB8gujY+Pk//wB4ve729vUSpGxU/GBgm
+         F9xWKzK8iM+6YskDfMvPftEdtEQMYuQp3m9tuArwU8y2pH9iXqHQOXAW6U01QJF0gIMc
+         PqTqFDBFS+EaqkF09nzl0jjTkwyq9CQO9wmK7m41jT8v++8/e158PU18qTsXoYLKrA/9
+         7Ifw==
+X-Forwarded-Encrypted: i=1; AFNElJ87Y5Qqzt23oK/qQZB72FX3PYYCQqbbplLrQLeJ56uEXONXSbfw+enGRDh+FmobN9NlWvvVSk6F44+E@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ4InRD6tnfY3AGq0cTvWFgpT7ib5NhS866OOG+wdQwGBa/MCd
+	+w1x9ZsNGNfz2hojruYNq+SeW+p6LvhqDIkbbf+TTlwNnnS4Boa+JE2wmHsXLA==
+X-Gm-Gg: Acq92OHpAiEPzTFrEMNConQg6aauv+PHHSXvYAU1SrBeZWyfyNBz1PWY3R6jVgSBvxE
+	WI35939Zr9Nl5aJ07nwnQbLLF9uKI3Y4UYHrf1E0TaUX5YM1mll51sc4mmSfpZY3dvm3LMUn9r/
+	J86H/2Lc7aL11DwpVQt+yAFN6OIGWnSN4UcmQk59wtvi/ZhZc9V7q+GLp0czDFwYXPJnn+iL9n7
+	F/z91zxean5jq1a4agWzLF2SZ9bl0XNTNK58GYtYpHQSvO/OXwc6LugyRjpbwY92iU/db+Ks7GN
+	kHL0hnFL9j1563r7gOkg8WiJK915MA8GrOAeOi/3bRM3K0GNMkKD442btRGa6QGKGvXAFXue0/4
+	8oX4RjTp4Mcf2EnkpgYlrOw6AGPVg+Jd4IY5SVaInH1MZI3RSl0dnu9+YdDwbkW+3PIDdEXvof4
+	JRXaR6TPo6JMqedGrx69epyYjkSA3snJhMocnf3RRVQxSSX/U4Nr+KnjXskNNWTlPyKKp9bczGT
+	9AoSbbXuMloxA==
+X-Received: by 2002:a05:7022:61a1:b0:12d:b26f:cafd with SMTP id a92af1059eb24-13632a02cf3mr857042c88.5.1779340423478;
+        Wed, 20 May 2026 22:13:43 -0700 (PDT)
 Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:d457:597:d576:1eb8])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-135e5c0a918sm6231360c88.14.2026.05.20.22.13.46
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-135e5c0a918sm6231360c88.14.2026.05.20.22.13.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 May 2026 22:13:47 -0700 (PDT)
+        Wed, 20 May 2026 22:13:42 -0700 (PDT)
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date: Wed, 20 May 2026 22:13:21 -0700
-Subject: [PATCH v2 5/5] sh: mach-rsk: rsk7203: convert pin configuration to
- using software nodes
+Date: Wed, 20 May 2026 22:13:18 -0700
+Subject: [PATCH v2 2/5] sh: pfc: attach software node to the GPIO chip
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -71,7 +70,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260520-rsk7203-properties-v2-5-465f3308021b@gmail.com>
+Message-Id: <20260520-rsk7203-properties-v2-2-465f3308021b@gmail.com>
 References: <20260520-rsk7203-properties-v2-0-465f3308021b@gmail.com>
 In-Reply-To: <20260520-rsk7203-properties-v2-0-465f3308021b@gmail.com>
 To: Rich Felker <dalias@libc.org>, 
@@ -85,156 +84,73 @@ Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
  linux-gpio@vger.kernel.org
 X-Mailer: b4 0.16-dev-6911d
 
-Replace legacy gpio_request() calls used to configure function pins
-(SCIF0 TXD/RXD and LAN9118 IRQ) with software nodes describing GPIO
-hogs. These hogs are attached to the PFC gpiochip node, allowing the
-GPIO subsystem to automatically configure these pins when the driver is
-registered.
+With commit e5d527be7e69 ("gpio: swnode: don't use the swnode's name as
+the key for GPIO lookup") gpiolib requires that firmware nodes from the
+GPIO references to match firmware node in gpiochip structure.
 
-Assisted-by: Gemini:gemini-3.1-pro
+Define a software node for the pfc gpiochip so that it can be referenced
+by boards using static device properties.
+
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- arch/sh/boards/mach-rsk/devices-rsk7203.c | 97 +++++++++++++++++++++++++++----
- 1 file changed, 85 insertions(+), 12 deletions(-)
+ arch/sh/include/cpu-common/cpu/pfc.h |  3 +++
+ arch/sh/kernel/cpu/pfc.c             | 20 ++++++++++++++------
+ 2 files changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/arch/sh/boards/mach-rsk/devices-rsk7203.c b/arch/sh/boards/mach-rsk/devices-rsk7203.c
-index f8760a91e2f1..e8a8fc1d2ca9 100644
---- a/arch/sh/boards/mach-rsk/devices-rsk7203.c
-+++ b/arch/sh/boards/mach-rsk/devices-rsk7203.c
-@@ -12,7 +12,6 @@
- #include <linux/smsc911x.h>
- #include <linux/input.h>
- #include <linux/io.h>
--#include <linux/gpio.h>
- #include <linux/gpio/machine.h>
- #include <linux/gpio/property.h>
- #include <asm/machvec.h>
-@@ -131,6 +130,56 @@ static const struct software_node rsk7203_sw3_key_node = {
- 	},
+diff --git a/arch/sh/include/cpu-common/cpu/pfc.h b/arch/sh/include/cpu-common/cpu/pfc.h
+index 879d2c9da537..d57e38c05bdb 100644
+--- a/arch/sh/include/cpu-common/cpu/pfc.h
++++ b/arch/sh/include/cpu-common/cpu/pfc.h
+@@ -11,6 +11,9 @@
+ #include <linux/types.h>
+ 
+ struct resource;
++struct software_node;
++
++extern const struct software_node pfc_gpiochip_node;
+ 
+ int sh_pfc_register(const char *name,
+ 		    struct resource *resource, u32 num_resources);
+diff --git a/arch/sh/kernel/cpu/pfc.c b/arch/sh/kernel/cpu/pfc.c
+index 062056ede88d..5a8d804d607b 100644
+--- a/arch/sh/kernel/cpu/pfc.c
++++ b/arch/sh/kernel/cpu/pfc.c
+@@ -5,21 +5,29 @@
+  * Copyright (C) 2012  Renesas Solutions Corp.
+  */
+ 
++#include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
+ 
+ #include <cpu/pfc.h>
+ 
+-static struct platform_device sh_pfc_device = {
+-	.id		= -1,
++const struct software_node pfc_gpiochip_node = {
++	.name = "sh-pfc",
  };
  
-+/* The base of the function GPIOs in the flat enum */
-+#define SH7203_FN_BASE GPIO_FN_PINT7_PB
-+
-+static const struct software_node rsk7203_pfc_functions_node = {
-+	.name = "functions",
-+	.parent = &pfc_gpiochip_node,
-+};
-+
-+static const struct software_node rsk7203_txd0_hog_node = {
-+	.name = "txd0-hog",
-+	.parent = &rsk7203_pfc_functions_node,
-+	.properties = (const struct property_entry[]) {
-+		PROPERTY_ENTRY_BOOL("gpio-hog"),
-+		PROPERTY_ENTRY_U32_ARRAY("gpios", ((u32[]){
-+			GPIO_FN_TXD0 - SH7203_FN_BASE, GPIO_ACTIVE_HIGH
-+		})),
-+		PROPERTY_ENTRY_BOOL("input"),
-+		PROPERTY_ENTRY_STRING("line-name", "TXD0"),
-+		{ }
-+	},
-+};
-+
-+static const struct software_node rsk7203_rxd0_hog_node = {
-+	.name = "rxd0-hog",
-+	.parent = &rsk7203_pfc_functions_node,
-+	.properties = (const struct property_entry[]) {
-+		PROPERTY_ENTRY_BOOL("gpio-hog"),
-+		PROPERTY_ENTRY_U32_ARRAY("gpios", ((u32[]){
-+			GPIO_FN_RXD0 - SH7203_FN_BASE, GPIO_ACTIVE_HIGH
-+		})),
-+		PROPERTY_ENTRY_BOOL("input"),
-+		PROPERTY_ENTRY_STRING("line-name", "RXD0"),
-+		{ }
-+	},
-+};
-+
-+static const struct software_node rsk7203_irq0_hog_node = {
-+	.name = "irq0-hog",
-+	.parent = &rsk7203_pfc_functions_node,
-+	.properties = (const struct property_entry[]) {
-+		PROPERTY_ENTRY_BOOL("gpio-hog"),
-+		PROPERTY_ENTRY_U32_ARRAY("gpios", ((u32[]){
-+			GPIO_FN_IRQ0_PB - SH7203_FN_BASE, GPIO_ACTIVE_HIGH
-+		})),
-+		PROPERTY_ENTRY_BOOL("input"),
-+		PROPERTY_ENTRY_STRING("line-name", "IRQ0_PB"),
-+		{ }
-+	},
-+};
-+
- static const struct software_node * const rsk7203_swnodes[] __initconst = {
- 	&rsk7203_gpio_leds_node,
- 	&rsk7203_green_led_node,
-@@ -141,6 +190,10 @@ static const struct software_node * const rsk7203_swnodes[] __initconst = {
- 	&rsk7203_sw1_key_node,
- 	&rsk7203_sw2_key_node,
- 	&rsk7203_sw3_key_node,
-+	&rsk7203_pfc_functions_node,
-+	&rsk7203_txd0_hog_node,
-+	&rsk7203_rxd0_hog_node,
-+	&rsk7203_irq0_hog_node,
- 	NULL
- };
- 
-@@ -165,26 +218,46 @@ static const struct platform_device_info rsk7203_devices[] __initconst = {
- 	},
- };
- 
--static int __init rsk7203_devices_setup(void)
-+/*
-+ * The pfc-sh7203 device is registered at arch_initcall level, and the
-+ * sh-pfc driver (registered at postcore_initcall level) probes as soon
-+ * as the device is created.
-+ *
-+ * We need to register our software nodes at postcore_initcall level so
-+ * they are already present in the system when the driver probes and
-+ * tries to apply GPIO hogs.
-+ */
-+static int __init rsk7203_sw_nodes_setup(void)
+ int __init sh_pfc_register(const char *name,
+ 			   struct resource *resource, u32 num_resources)
  {
--	struct platform_device *pd;
- 	int error;
--	int i;
+-	sh_pfc_device.name = name;
+-	sh_pfc_device.num_resources = num_resources;
+-	sh_pfc_device.resource = resource;
++	struct platform_device_info pdev_info = {
++		.name		= name,
++		.id		= PLATFORM_DEVID_NONE,
++		.res		= resource,
++		.num_res	= num_resources,
++		.swnode		= &pfc_gpiochip_node,
++	};
++	struct platform_device *pdev;
  
--	/* Select pins for SCIF0 */
--	gpio_request(GPIO_FN_TXD0, NULL);
--	gpio_request(GPIO_FN_RXD0, NULL);
--
--	/* Setup LAN9118: CS1 in 16-bit Big Endian Mode, IRQ0 at Port B */
--	__raw_writel(0x36db0400, 0xfffc0008); /* CS1BCR */
--	gpio_request(GPIO_FN_IRQ0_PB, NULL);
-+	error = software_node_register(&pfc_gpiochip_node);
-+	if (error && error != -EEXIST) {
-+		pr_err("RSK7203: failed to register PFC software node: %d\n",
-+		       error);
-+		return error;
-+	}
- 
- 	error = software_node_register_node_group(rsk7203_swnodes);
- 	if (error) {
--		pr_err("failed to register software nodes: %d\n", error);
-+		pr_err("RSK7203: failed to register board software nodes: %d\n",
-+		       error);
- 		return error;
- 	}
- 
-+	return 0;
-+}
-+postcore_initcall(rsk7203_sw_nodes_setup);
-+
-+static int __init rsk7203_devices_setup(void)
-+{
-+	struct platform_device *pd;
-+	int error;
-+	int i;
-+
-+	/* Setup LAN9118: CS1 in 16-bit Big Endian Mode, IRQ0 at Port B */
-+	__raw_writel(0x36db0400, 0xfffc0008); /* CS1BCR */
-+
- 	for (i = 0; i < ARRAY_SIZE(rsk7203_devices); i++) {
- 		pd = platform_device_register_full(&rsk7203_devices[i]);
- 		error = PTR_ERR_OR_ZERO(pd);
+-	return platform_device_register(&sh_pfc_device);
++	pdev = platform_device_register_full(&pdev_info);
++	return PTR_ERR_OR_ZERO(pdev);
+ }
 
 -- 
 2.54.0.669.g59709faab0-goog
