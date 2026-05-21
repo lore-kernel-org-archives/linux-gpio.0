@@ -1,93 +1,37 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487DC3D6CD9
-	for <linux-gpio@vger.kernel.org>; Thu, 21 May 2026 12:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C333D524A;
+	Thu, 21 May 2026 12:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779367141; cv=none; b=bT5lG4bFGc9owIQzcDO0YnBi3oCzC+r4SE0IqWH/eyLkCoJ5RjZnXAFydU6O7UkeCaDqkf65xHaaEy4ulC+8GYdsFDs1jc7JxJs+utNuUMPqaykrdHVIpyTcZCTZ9v4lB/0RHwg+i3jREuHZyo1yBaXcYBk+5qlhEGF1szft8EM=
+	t=1779367460; cv=none; b=cOi3LTEAjnBS1+0jKPNZL0g3yh4/BfwLWCknOCCugJjNd1KuYvE8BjNzWqZ+HSlNIpnOIbJx6EcFe23ChhHvSbF4CzD44R+yXq1xCmC1Mf/ss9j4HfFFKcM6uHnDmbsCkzw9K5emO1mdgz8Au24kiwrUmcjNDXQIu5jaKdvwSzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779367141; c=relaxed/simple;
-	bh=KwdI2/6/35j9SEYPy3r5kEWkMfy70mSc06gmD4f3rM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZSNG9BnpIe1dkrp8WfqgNZof5xLcMCogiYgwfUscE8OodtXbrOc9xr1jiqnjR0cEX93ZzzcyYTvvjcEBeihRGtxTT0pMzZr7DWc1O8kkPO9n/0YaiXZsmBf8g9nimyBOFDfTz9/QxeexQr5Y5vx9Nz3JVjI5PHmnrkcXYUTf+TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fp3xkUW4; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=B9at+yoX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1779367460; c=relaxed/simple;
+	bh=cpDukcPxVJzXko/L0eFDwxYderoS/dpMlVO2IjtjjHE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=VA0Y9LdTjxds8kLjfQmTn2qFvPLfhLEQBRv7I3UynExwSaAmjJrXVD+vUBonGcvPpqRMx/me+Nl3MkNvNFK3jg27zb6F/uWqHWviTYyTxjr2yf78tuqfDmE/Rl6fhhu1o5pO1VExeSqzZ0YvygJaaRmfxSvrNCdd8oeCMNnIW00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyPeOPLc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fp3xkUW4";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="B9at+yoX"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64L99x9t517985
-	for <linux-gpio@vger.kernel.org>; Thu, 21 May 2026 12:38:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QXV/4gh+cVu8ZKqM6vonk+5wuL4TSKim/bHkM2Bk7Ew=; b=Fp3xkUW4/MPz1Jqg
-	lNPMK6SvXFvSStrruC9+Ceos8K73C4tG3LFTrfNLPt6oT+OyELDv0hWFgke5/tER
-	wULgUtORQY5ml206FAz2llkaEkbtqgv0mJH7PcJ0IzIelkYggA/6x2NNmEIOsYHB
-	aephDpAW9Pv0lJr8iqdRScXOMVt4Izn0mVyH3YxDVPPE1oco4ePbY8/shxAfXwM0
-	j7kA+/9rs+dKnwH9ixmEuz5VIFoVdBzxNzfNJwo0u0EIAzGwCkNLaB22NHNx9HCf
-	xr+5P11Rv/he+fQ0yW4TxQLRsUJwwXR1htNF1fqWs+8lobTjDwxxbUjlAmsogGac
-	WCk2lg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e9saa282y-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Thu, 21 May 2026 12:38:58 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-51009190feeso187970871cf.2
-        for <linux-gpio@vger.kernel.org>; Thu, 21 May 2026 05:38:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779367137; x=1779971937; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QXV/4gh+cVu8ZKqM6vonk+5wuL4TSKim/bHkM2Bk7Ew=;
-        b=B9at+yoX2oMGZtSzp66KNUk6lhm1kaEFm6XzuCD5sijqj8jJU7jkIXeG8F0IZeSGkd
-         9scTb4MAqiyZyCMiGtkeLNgtVcfTG+V5kKFKPXV6rQuLEBKFvpghDbi9Ia6Q3np4bF0p
-         PeY4wETl307WxTJ2m6l6FLwGNfLjgCxzx7V/YiYbRILAOmmMD/e2sHGWSTt5hhKMQu2T
-         Eatrn+TYgJs2IgymE+OX2Z+eriZte5Ve/isg1k+HN8SLbVr5DhhxjJC7YWO+IkgyYVe3
-         dhZR6xJy3sLVKXhNx8plUVUz7Yk5Lx3uu8wqMUwdCi06NVUnPC3+MbH805YCkPYuVZoH
-         W8Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779367137; x=1779971937;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=QXV/4gh+cVu8ZKqM6vonk+5wuL4TSKim/bHkM2Bk7Ew=;
-        b=d17SzQy96x+oUL3515DPYiotFMHZ4Eu9/kGsnccyHdzOpETDbUAAYkCK3sL/5eVM0a
-         b+FJlE5JGsTwha2E7/cp2xTVQhnKTbjMXL700ckGz9spR3hIr2t9NQ4gM3HwNZ2f0fto
-         pKL1ZvI8A3PUKlKQ5CTR4ueohSknYcD/WvyNKrksUCO0j4drEJL5gmEdZUKBXrE+QfLc
-         fKuhFFiPWK9aEn3OS8y2F/dA+f1V6l4LGu1pBfiM/1L3a1U+VLlG8WKW7JBkc3/FVecy
-         nxyjkiTCgK5WJIJwe8WbSMd2SrkkNPUTW3DRLym5So7AGeoBQMMKBQ7MDO9Yrx4ckKd0
-         jt2g==
-X-Gm-Message-State: AOJu0YwC+BBKV3n5yhr2C/wsAouvrH0vv/NiFWDfbaQWJtO1nnSPUP9z
-	e2qmNH0Ffsz1r++NZtOxw5eWLaG2EXHDXczwFuHX6BhOWI5UZKZuIqrKYSWCARKjuUykFqjBaOT
-	u8jnAgVmxKMU1qio77cN+G/oeoztvGFY5UlbLh6w31v3HNN698/Qw8pVm22wBjIi4G8eAO9q1
-X-Gm-Gg: Acq92OHdQmJYhwOAIXT3KpGL+xdcBO7oIpJxb/sBdk0OJo7E+Fj4/H0Gk+nESXgKEr8
-	bpGI02Yvq4l96TYhmpCL6NpO2J93WRe52FWypWcYdnNIS3NbuhMxA57ykE0uUahOaw6w3oVkB6e
-	ImsEky5wKmRQ4/xZOXWNRR/nj5wl76Ytb2G7Nn48/ghl+shJDTk96q5D78nbTcP6X0Q2o8QpEos
-	9MMvcAGhzD4uIhPzbQ13xWaDzJFvO7j3eLS3bX/UP/FKF8hoS7uF7Wixlq6OwXZ103di9zmtIkc
-	0VgQvfp6wW9wOoJyPWIhTwtB8RXpkXcCEXc9vBDDylVHrxXtbhgGSofyholBr1G9Ree0mgVhfaP
-	htkwCKcUkszejwIaj91CDSlnNtwH66D0Ud5Mx5bPZxl867ha3J3C9KdvuYvXA
-X-Received: by 2002:ac8:5f47:0:b0:50e:5c31:5d56 with SMTP id d75a77b69052e-516c5410521mr36711871cf.6.1779367137301;
-        Thu, 21 May 2026 05:38:57 -0700 (PDT)
-X-Received: by 2002:ac8:5f47:0:b0:50e:5c31:5d56 with SMTP id d75a77b69052e-516c5410521mr36711371cf.6.1779367136858;
-        Thu, 21 May 2026 05:38:56 -0700 (PDT)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:bb10:ae82:b7c3:d15a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49035c4f9e0sm20508815e9.2.2026.05.21.05.38.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 May 2026 05:38:56 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Bartosz Golaszewski <brgl@kernel.org>, Kent Gibson <warthog618@gmail.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] gpio: cdev: check if uAPI v2 config attributes are correctly zeroed
-Date: Thu, 21 May 2026 14:38:46 +0200
-Message-ID: <177936712376.27233.13543791513005861545.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260521-gpio-cdev-attr-padding-check-v3-1-ec3bcbe2e358@oss.qualcomm.com>
-References: <20260521-gpio-cdev-attr-padding-check-v3-1-ec3bcbe2e358@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyPeOPLc"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 63F31C2BCB4;
+	Thu, 21 May 2026 12:44:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1779367460;
+	bh=cpDukcPxVJzXko/L0eFDwxYderoS/dpMlVO2IjtjjHE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=TyPeOPLcrmlaamZuTK7yIhnb/aF4UCajgbAAeuSqS/cFz09Dz3WoEFiJvng1temaa
+	 PMdNLljOuchh0C8CxcY+K/2rRXaks/VOHZeE8I2+MuIpqlIiGJFRm8re5ky58zkRM4
+	 z95vguBuXIvOTUkQdyUND7n9+6xmT8LK5wtaEkAU+R4phYf09jNpgddWRoNrmKwlt1
+	 99TzoJtK0+9whYoBdSbuaKY9cnGDuMX2MbU6DeeBnL7igxm3B9nyUVchis01wZ18Aa
+	 riEQu8H5K8Cr/0sveEBs4uygbym7bsoUbKvWzbgmCwSxXUJsuW1AV45ru6PczC6grt
+	 HXmerCrGah7zQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46207CD4F5E;
+	Thu, 21 May 2026 12:44:20 +0000 (UTC)
+From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
+Date: Thu, 21 May 2026 15:44:07 +0300
+Subject: [PATCH v12 01/22] media: mc: Add INTERNAL pad flag
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -95,46 +39,138 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIxMDEyNiBTYWx0ZWRfXwG+PEdIy94UR
- AVgX6jJMsBI22gs6tlBTAzHQaLoyxR6DKsPp1nVqnBAA0+USLLwYLa5zWieb+A78GF/gQ5/SqFT
- aqiOe8HpRwoCW9osgteiACJEVoKaNQpyKwucts2gEDnWOFyhuQ9xab59aJ5qt7+VWX4qltcwCPA
- 80gzJfFtEhoSE/yPGU/ZoovVdDDbmuDCr7n6qHhL3XkQG1iL51beyqsshtBfZRfDO0VCioOSxHi
- 0inb1Mi7pe8M3Xzvnt+CN8p5HCjIA1p8DuQIRSSvWTXlTgQnw/cQ+0ZJAqOXl7kPyMRcxAAApCr
- Xhqz3IqW6QAzWFZ4taPxEk6jdczNh+msES0LERg4RbJqb+sU8rHwKXHpxUrRIHjHhNIvvtRdmmJ
- LjjOLt4K7IiWV5G5kR2+Ui7CF/DoqnvtjGqlcMpv/VElLsNbfivVCfiNYBesVmb7Ott+6SdMPQQ
- IYWzbSWGA9N48vUthiQ==
-X-Authority-Analysis: v=2.4 cv=Qe9WeMbv c=1 sm=1 tr=0 ts=6a0efce2 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=IuvVgHzGsJ3C2CQBcpoA:9 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-ORIG-GUID: CdH1mWTWe9jB6cwDadUHWxnyhB6UQtdL
-X-Proofpoint-GUID: CdH1mWTWe9jB6cwDadUHWxnyhB6UQtdL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-21_02,2026-05-18_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 adultscore=0 phishscore=0
- suspectscore=0 clxscore=1015 impostorscore=0 bulkscore=0 malwarescore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
- definitions=main-2605210126
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260521-gmsl2-3_serdes-v12-1-b26d92931196@analog.com>
+References: <20260521-gmsl2-3_serdes-v12-0-b26d92931196@analog.com>
+In-Reply-To: <20260521-gmsl2-3_serdes-v12-0-b26d92931196@analog.com>
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Julien Massot <julien.massot@collabora.com>, Rob Herring <robh@kernel.org>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: mitrutzceclan@gmail.com, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+ Martin Hecht <Martin.Hecht@avnet.eu>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1779367457; l=4211;
+ i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
+ bh=j75z8BDeqCgnWrq6GF1INTACeRkTAkS70gXnWGmC/2E=;
+ b=fM10zBIkbzoeBOFLdbhqXebMWk1zWd4Eq3OSHDvp2HCt9SGuVRoOtfV7WTvqyY0DEhj0nc5KT
+ SILjAcT0LFSDOD0FEmFGdsknJ41MtsYzUTQXId3WDVn9QOkmqGO4X0c
+X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
+ pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
+X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
+ with auth_id=140
+X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+Reply-To: dumitru.ceclan@analog.com
 
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-On Thu, 21 May 2026 10:42:16 +0200, Bartosz Golaszewski wrote:
-> We check the padding of other uAPI v2 structures but not that of line
-> config attributes. For used attributes: check if their padding is
-> zeroed, for unused: check if the entire structure is zeroed.
-> 
-> 
+Internal sink pads will be used as routing endpoints in V4L2 [GS]_ROUTING
+IOCTLs, to indicate that the stream begins in the entity. Internal sink
+pads are pads that have both SINK and INTERNAL flags set.
 
-Applied, thanks!
+Also prevent creating links to pads that have been flagged as internal and
+initialising SOURCE pads with INTERNAL flag set.
 
-[1/1] gpio: cdev: check if uAPI v2 config attributes are correctly zeroed
-      https://git.kernel.org/brgl/c/3e6ccd790ed69bedd3d9626d01dd35cf9821c121
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ .../userspace-api/media/mediactl/media-types.rst          |  9 +++++++++
+ drivers/media/mc/mc-entity.c                              | 15 ++++++++++++---
+ include/uapi/linux/media.h                                |  1 +
+ 3 files changed, 22 insertions(+), 3 deletions(-)
 
-Best regards,
+diff --git a/Documentation/userspace-api/media/mediactl/media-types.rst b/Documentation/userspace-api/media/mediactl/media-types.rst
+index 6332e8395263..200c37a1da26 100644
+--- a/Documentation/userspace-api/media/mediactl/media-types.rst
++++ b/Documentation/userspace-api/media/mediactl/media-types.rst
+@@ -361,6 +361,7 @@ Types and flags used to represent the media graph elements
+ .. _MEDIA-PAD-FL-SINK:
+ .. _MEDIA-PAD-FL-SOURCE:
+ .. _MEDIA-PAD-FL-MUST-CONNECT:
++.. _MEDIA-PAD-FL-INTERNAL:
+ 
+ .. flat-table:: Media pad flags
+     :header-rows:  0
+@@ -381,6 +382,14 @@ Types and flags used to represent the media graph elements
+ 	  enabled links even when this flag isn't set; the absence of the flag
+ 	  doesn't imply there is none.
+ 
++    *  -  ``MEDIA_PAD_FL_INTERNAL``
++       -  The internal flag indicates an internal pad that has no external
++	  connections. As they are internal to entities, internal pads shall not
++	  be connected with links.
++
++	  The internal flag may currently be present only in a sink pad where it
++	  indicates that the :ref:``stream <media-glossary-stream>`` originates
++	  from within the entity.
+ 
+ One and only one of ``MEDIA_PAD_FL_SINK`` and ``MEDIA_PAD_FL_SOURCE``
+ must be set for every pad.
+diff --git a/drivers/media/mc/mc-entity.c b/drivers/media/mc/mc-entity.c
+index 3fa0bc687851..7938f785e2e3 100644
+--- a/drivers/media/mc/mc-entity.c
++++ b/drivers/media/mc/mc-entity.c
+@@ -209,11 +209,16 @@ int media_entity_pads_init(struct media_entity *entity, u16 num_pads,
+ 		mutex_lock(&mdev->graph_mutex);
+ 
+ 	media_entity_for_each_pad(entity, iter) {
++		const u32 pad_flags = iter->flags & (MEDIA_PAD_FL_SINK |
++						     MEDIA_PAD_FL_SOURCE |
++						     MEDIA_PAD_FL_INTERNAL);
++
+ 		iter->entity = entity;
+ 		iter->index = i++;
+ 
+-		if (hweight32(iter->flags & (MEDIA_PAD_FL_SINK |
+-					     MEDIA_PAD_FL_SOURCE)) != 1) {
++		if (pad_flags != MEDIA_PAD_FL_SINK &&
++		    pad_flags != (MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_INTERNAL) &&
++		    pad_flags != MEDIA_PAD_FL_SOURCE) {
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+@@ -1118,7 +1123,8 @@ int media_get_pad_index(struct media_entity *entity, u32 pad_type,
+ 
+ 	for (i = 0; i < entity->num_pads; i++) {
+ 		if ((entity->pads[i].flags &
+-		     (MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_SOURCE)) != pad_type)
++		     (MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_SOURCE |
++		      MEDIA_PAD_FL_INTERNAL)) != pad_type)
+ 			continue;
+ 
+ 		if (entity->pads[i].sig_type == sig_type)
+@@ -1148,6 +1154,9 @@ media_create_pad_link(struct media_entity *source, u16 source_pad,
+ 		return -EINVAL;
+ 	if (WARN_ON(!(sink->pads[sink_pad].flags & MEDIA_PAD_FL_SINK)))
+ 		return -EINVAL;
++	if (WARN_ON(source->pads[source_pad].flags & MEDIA_PAD_FL_INTERNAL) ||
++	    WARN_ON(sink->pads[sink_pad].flags & MEDIA_PAD_FL_INTERNAL))
++		return -EINVAL;
+ 
+ 	link = media_add_link(&source->links);
+ 	if (link == NULL)
+diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
+index 1c80b1d6bbaf..80cfd12a43fc 100644
+--- a/include/uapi/linux/media.h
++++ b/include/uapi/linux/media.h
+@@ -208,6 +208,7 @@ struct media_entity_desc {
+ #define MEDIA_PAD_FL_SINK			(1U << 0)
+ #define MEDIA_PAD_FL_SOURCE			(1U << 1)
+ #define MEDIA_PAD_FL_MUST_CONNECT		(1U << 2)
++#define MEDIA_PAD_FL_INTERNAL			(1U << 3)
+ 
+ struct media_pad_desc {
+ 	__u32 entity;		/* entity ID */
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+2.53.0
+
+
