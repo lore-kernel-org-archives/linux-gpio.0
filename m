@@ -1,68 +1,72 @@
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F662F7EF3
-	for <linux-gpio@vger.kernel.org>; Fri, 22 May 2026 20:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6052C234A
+	for <linux-gpio@vger.kernel.org>; Fri, 22 May 2026 20:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779480270; cv=none; b=BCSme5r11Eijb5wlKFELd81/qk7wgy+A2Y8huWS6laz03Lzs65ZzJAZjoAqSnh0IRL0F3IzGkiluWOIcfbDl3z10+3YYnvUJe8C0tg9OGfqiQcG+ilcXnyJfgwUgI37KXLc3k7vlsQppYmWFkVY91UOIuKAP5oG6Sd914xMJ/qg=
+	t=1779480272; cv=none; b=Fz4r1/esNkdb9W5guWQtdEm+CDntsf1WhPLx8Rb5c3veCA+nzNDjIvZT+rIR3+GimH1EAYvwMACnsOTjAgOMoArsXkVrBNScEo166/n0ZhJzVomPs91Pyi8L/he59/RH7fqp8D3K1YOBOdq3FMsHxauCP76QcPpR4IdO1ump63g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779480270; c=relaxed/simple;
-	bh=bhgIFuVvt7LEeOavYuxkDDXFPg2w5sl2KoIqjCPyp+A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fYEg5oqSytid7GGRMRuR8h8PqS8z59F/fWBqAFbgOEewZGm1kiLEzWWoo6WYEBMFL6my2nxVZHNc/ImhG94qMA0of3IloojvS74cr0z3K7EguaBzAtTY7lir3Au6mCJijvDegfcJccEJzDxywLNraeTIGe5p/j/B82A6aPetbHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ORPAvh7I; arc=none smtp.client-ip=209.85.167.178
+	s=arc-20240116; t=1779480272; c=relaxed/simple;
+	bh=zjJRRnSnLCRZhUBQJHPGS+gYkDaOA5MaOPaCaYF02fI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IqK2oadeYAqeeD4le6cb/zaxTbDkZQLfzp7vrSbgRQWOUaVFvBNppDqrdRmXm8cH06dCBdNVEnmES5ew4Hu7jSBUdenLM6g1DISJrkPX1y4CBjb+DGcV6g966jwqdPIp5wwR0YSKTAJT1GK7wq0Ek02pam7JvznPSfB761Bp7X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eg7MgVUE; arc=none smtp.client-ip=209.85.167.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORPAvh7I"
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-485462d9290so1134491b6e.1
-        for <linux-gpio@vger.kernel.org>; Fri, 22 May 2026 13:04:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eg7MgVUE"
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-479d85152c9so2962777b6e.2
+        for <linux-gpio@vger.kernel.org>; Fri, 22 May 2026 13:04:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779480268; x=1780085068; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SRFJjfgWthNGqhIuHVW39mLwoejRtUxkd0avFGwcx6M=;
-        b=ORPAvh7Ie/ooL8yLS5kV/dbRHIu4juOpon/QzOPFIDidB+KxNbkXK7A4vjhApuHcF8
-         XHZs7FzB0GFz42YLKX5avGuVGsI31oXU2A57L7Aopf5Svx9378yRV4fJlhOGNiwQJ0Tx
-         F1GcTbkS5krgXSq1Pp9L74SQK5WGp9xS8CUNKq59/ksToFquHr8Mt3IDZuibebKcX4sJ
-         y4fezAnp8sQHsq2Px6mRxtbppyy8nq7XBuojGCBH6o2rUcXblMVuNYh39YpMkutk92ze
-         mFnJC55da72cSIIJ9ICmG9Wvk6CxWg1SwXrbp07u4RKu61gnv84NNTipClTzTcjKIjGm
-         3VVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779480268; x=1780085068;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1779480270; x=1780085070; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SRFJjfgWthNGqhIuHVW39mLwoejRtUxkd0avFGwcx6M=;
-        b=OKw+gor13CAog5/6+p2lHfj9WFaHlbnoEB/WRAwVMM3RK1gYcVqVDoRdzp4HiAsvrN
-         lrAPo4sK01IN0/DTAbNkOHq8BUFGClxPlD10uV5MMKb06sHRtbufCy8xKkj+E0XeMZ1S
-         +ISCY6rM3rXNkpEcvR0/YuySarChniCc6I7OG/E//T1wuaYExLvYVmTt6ZoLKfTXAGcY
-         Car0Jh7VPaZHmd/XIPBUX2jjV0xO+Xo5scgIhJViMs8F6hJJugkVsQZ1K50svmphFkVx
-         bUDGhRKipeEaa6bH7OVWZQ/tCK3XKcKAoxcQoIFNdpG/NSo6gCTb7Xdmgz3GXz4Zn1kT
-         9wog==
-X-Gm-Message-State: AOJu0Ywz45PLzx4pIKwnr/cGjYDh2OvEbku2CvzrU+5Wp3LkZ8rHmvHL
-	e+bJsILk3D0Cniwy1rwlPOgJoAN3gGgT9bzERo6whrR3cWaIFoyQZfRf6MEO9Q==
-X-Gm-Gg: Acq92OHPZmtc+/blcUv1p1FnEamwOdz9uZYkNkbRrfXC18BQ32FDXP5lBzkHhfcSq00
-	BA/uxECxDX/xB3FQrEFxw9R+u7oaRY3CxhVV4lfhLXEIJGWeMAQX/LcFhx45Gu5sAcj5rUt9IVZ
-	ufGRd3BM4AWKmWm5gwlQyQFvOi46f9M9+31oArDTb0Zdoese+t1IQjSMfKhhO4QZBJ9FfsClmEm
-	NrZGWC5O+vjyDTQ4Sa4tTZY4zY+yiM94HJda3KzoMC/4pBLoZzsj41wJ1KKLxqV8A2uaqk2ZJV9
-	HgQSL5/2UlG1/SNtx1y1pvGQXiAD4iwydijIHzWFb84PYAJPvWZJKTJfc0BDihs0c6bT/a253eP
-	eS1T4U2fcTvCiDytdGTP7kjB7cawx8ve257Wd8Bt6bOBTeXF7njv4AGgXPgXmC2MwVd0Qods4q8
-	Qm0un3s3wXHJlADCs8DvUbejFo//+T20w2Y4Ag9jbydVdMe7zZgoBH+upCIxPHpw==
-X-Received: by 2002:a05:6808:1383:b0:45f:103c:2483 with SMTP id 5614622812f47-4854af52780mr2780539b6e.23.1779480268490;
-        Fri, 22 May 2026 13:04:28 -0700 (PDT)
+        bh=U3/f7jjAt9YUgdDn5iRUlNwA0G3pT/8TfZTADNpfjpM=;
+        b=eg7MgVUEJuR1Kl1FJ/KYso2NJIGUbs5GMVuOYfnDvZdDD/SoculsjeTzeDU+FkxfVq
+         YssPcC88q+kCSBSzXiDlbpP1UeQBsasQ41EhodlwdaOJSFZMtesjohYSkmczY/V3l6IB
+         nduTQSmXKRhnAVwXYUb7rOU1UyQmEH1yV6r3vvfGSHelWBo2PloKV0ywz25kqMt/rYul
+         iArHtnLhfjRGMLhh++SD56JCcZ+lLGbL4dg5wQ14DDDtkNmvRJfLHs7PuvnbZVdp+YJ9
+         bl22ktP72cHFd5iJxbQsNf9WkxDLOd8J6RJucAk+MZulMgk2xcR3S1tEDtJPsNQKZ1G6
+         Rg8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779480270; x=1780085070;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=U3/f7jjAt9YUgdDn5iRUlNwA0G3pT/8TfZTADNpfjpM=;
+        b=hjuwdj9RjoiTr90sQElwW5dq7jbxXuN25AuVOvhrp7qsOAZKn6FO2WxfPnOWovqVt4
+         eHFctIeKn3S2/2+K5eetCXWCuT7D1qmwrKiEs/jF6F9JB/rgfsV2NqiiZPk+Rv+vxKDm
+         HucUytrWcOys/nstmbheCY2X1W7BowCJ9RRQcTC9a4xUWwdj98Pnl5vOJyI4PE+rdyOo
+         RBL6ghjh3mKlGIkW+e1q8SQTsIw5mNkorRUY3vhgtKanTNjobZo7LjWxvXMxD+Lxg1hw
+         toNqDYDwWem4oSDADtRUsoV+/fyIKJnSj56Ecp8uJG4SJIIAWMTZDJejE6TPU/Di27zZ
+         PMWA==
+X-Gm-Message-State: AOJu0Yw99cr32tRHNYVKwYo8RO0KiZv0EhgVbvk+g3hAMQ7oIgb4LyKa
+	UHvuLcjBynZ+TQXgA0fJoldgb7M2050LnyKOiN3PFnYiLS01zsm8Atfv0Qmwng==
+X-Gm-Gg: Acq92OEfAq6Ow4LL4cdkqLuTYfRlItMyf979tuSv67RB+pvmOhHl7UZWZLlos3YicPb
+	C4SJr7cOShu5ZKE8rT/HJx86EQ/ncAahZ3ljc4rhnvVgiwT1ZfKPL/51Z67TehzlLFstCaEaL1Z
+	m7CWUhlcJv0608AM/+bb2fJIfLe9asr/nEcXbqinQHO9J6t8kvVFl+UAnJT1fhVFzyxBi5F7m9p
+	EoRr9Z/VIy4b2E1KFYofaPPXChy06X39Hcptu3FvaufibEA/y+kFmWrEoCn8b0hnZL57Udj1Lqd
+	tmPeQF23GRjDL10Kcy7zw3fNKY99E4EOdVkyn48MlJB81+5vSdot7ytC0QJEG03vsw08TXdY7ct
+	xyBnaagqVOij6Mgh1AjcUOMlAQKjbEJYjbXQ5C5sRQQUIyI9PXOOJecKc0+p+C9VZ29atZL2zet
+	upBUVliWy+PYYCM1HkzAtVac7vzAtl65Uit6yx6FIjqs5f24o0UQJgXXso7mKVMw==
+X-Received: by 2002:a05:6808:6f8e:b0:485:4883:ce51 with SMTP id 5614622812f47-4854a278535mr2938564b6e.22.1779480270301;
+        Fri, 22 May 2026 13:04:30 -0700 (PDT)
 Received: from Zephyrus.localdomain ([131.93.209.211])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-485544e320csm1054591b6e.5.2026.05.22.13.04.27
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-485544e320csm1054591b6e.5.2026.05.22.13.04.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2026 13:04:27 -0700 (PDT)
+        Fri, 22 May 2026 13:04:29 -0700 (PDT)
 From: Vincent Fazio <vfazio@gmail.com>
 To: linux-gpio@vger.kernel.org
 Cc: brgl@kernel.org,
 	Vincent Fazio <vfazio@gmail.com>
-Subject: [libgpiod][PATCH 0/3] bindings: python: add support for free-threaded Python
-Date: Fri, 22 May 2026 15:04:15 -0500
-Message-ID: <20260522200419.105496-1-vfazio@gmail.com>
+Subject: [libgpiod][PATCH 2/3] bindings: python: support free-threaded CPython
+Date: Fri, 22 May 2026 15:04:17 -0500
+Message-ID: <20260522200419.105496-3-vfazio@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260522200419.105496-1-vfazio@gmail.com>
+References: <20260522200419.105496-1-vfazio@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -71,38 +75,149 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This short series adds support for free-threaded Python and adds a new
-test suite to provide some confidence in the suitability of the bindings
-being used within a multi-threaded context.
+PEP 703 [0] discusses making the GIL optional in certain builds of the
+CPython interpreter.
 
-A changelog is also added to keep track of changes between releases.
+This build option was available experiementally in Python 3.13 but has
+since been stabilized in Python 3.14 per PEP 779 [1].
 
-Note:
-The new threaded test suite was run on multiple machines in excess of
-1M+ iterations in an attempt to make sure they were bug free but due
-to the nature of the problem, they may not be absolutely error free.
+According to the porting guide [2], there is no strict requirement that
+C extensions must be thread-safe.
 
-Vincent Fazio (3):
-  bindings: python: tests: add multi-threaded tests
-  bindings: python: support free-threaded CPython
-  bindings: python: add a changelog
+Experiments have shown that no logic changes are required if callers
+use sychronization mechanisms provided by the Python standard library.
 
- bindings/python/CHANGELOG.md             |  44 ++
- bindings/python/MANIFEST.in              |   1 +
- bindings/python/README.md                |   8 +-
- bindings/python/gpiod/ext/module.c       |   5 +-
- bindings/python/pyproject.toml           |   3 +-
- bindings/python/tests/__main__.py        |   1 +
- bindings/python/tests/gpiosim/ext.c      |   3 +
- bindings/python/tests/helpers.py         |   5 +
- bindings/python/tests/meson.build        |   1 +
- bindings/python/tests/system/ext.c       |   3 +
- bindings/python/tests/tests_threading.py | 742 +++++++++++++++++++++++
- docs/python_api.rst                      |   6 +
- 12 files changed, 819 insertions(+), 3 deletions(-)
- create mode 100644 bindings/python/CHANGELOG.md
- create mode 100644 bindings/python/tests/tests_threading.py
+The documentation has been updated to call this out specifically using
+terminology from the porting guide [3].
 
+[0]: https://peps.python.org/pep-0703/
+[1]: https://peps.python.org/pep-0779/
+[2]: https://py-free-threading.github.io/porting/#define-and-document-thread-safety-guarantees
+[3]: https://py-free-threading.github.io/documentation-principles/#free-threading-terminology
+
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+---
+ bindings/python/README.md                | 8 +++++++-
+ bindings/python/gpiod/ext/module.c       | 5 ++++-
+ bindings/python/pyproject.toml           | 2 +-
+ bindings/python/tests/gpiosim/ext.c      | 3 +++
+ bindings/python/tests/system/ext.c       | 3 +++
+ bindings/python/tests/tests_threading.py | 3 +++
+ docs/python_api.rst                      | 6 ++++++
+ 7 files changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/bindings/python/README.md b/bindings/python/README.md
+index 2faa6f4..f3cd77a 100644
+--- a/bindings/python/README.md
++++ b/bindings/python/README.md
+@@ -5,10 +5,16 @@
+ 
+ These are the official Python bindings for [libgpiod](https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/about/).
+ 
++Both GIL-enabled and free-threaded CPython are supported.
++
++The Python bindings, much like the C API they wrap, are not thread-safe and do
++require external synchronization by the caller to serialize access to objects
++shared across threads.
++
+ The gpiod library has been vendored into this package for your convenience and
+ this version of gpiod is independent from your system package.
+ 
+-Binary wheels are not provided. The source package requires python3-dev.
++Binary wheels are provided for some platforms. The source package requires python3-dev.
+ 
+ ## Rationale
+ 
+diff --git a/bindings/python/gpiod/ext/module.c b/bindings/python/gpiod/ext/module.c
+index e567f07..21ea519 100644
+--- a/bindings/python/gpiod/ext/module.c
++++ b/bindings/python/gpiod/ext/module.c
+@@ -188,7 +188,10 @@ static int module_exec(PyObject* module)
+ 
+ static struct PyModuleDef_Slot module_slots[] = {
+ 	{ Py_mod_exec, module_exec },
+-	{ },
++#if PY_VERSION_HEX >= 0x030E0000 && defined(Py_GIL_DISABLED)
++	{Py_mod_gil, Py_MOD_GIL_NOT_USED},
++#endif
++	{0, NULL},
+ };
+ 
+ static PyModuleDef module_def = {
+diff --git a/bindings/python/pyproject.toml b/bindings/python/pyproject.toml
+index 98bb44c..7c4474a 100644
+--- a/bindings/python/pyproject.toml
++++ b/bindings/python/pyproject.toml
+@@ -27,6 +27,7 @@ classifiers = [
+   "Programming Language :: Python :: 3.12",
+   "Programming Language :: Python :: 3.13",
+   "Programming Language :: Python :: 3.14",
++  "Programming Language :: Python :: Free Threading :: 3 - Stable",
+ ]
+ 
+ [project.urls]
+@@ -70,5 +71,4 @@ ignore=[
+ 
+ [tool.cibuildwheel]
+ build = "cp*"
+-skip = "cp31?t-*"  # Do not build free-threaded wheels
+ archs = ["x86_64", "aarch64"]
+diff --git a/bindings/python/tests/gpiosim/ext.c b/bindings/python/tests/gpiosim/ext.c
+index c15ebf5..cc7bd37 100644
+--- a/bindings/python/tests/gpiosim/ext.c
++++ b/bindings/python/tests/gpiosim/ext.c
+@@ -367,6 +367,9 @@ static void free_module_state(void *mod)
+ 
+ static struct PyModuleDef_Slot module_slots[] = {
+ 	{ Py_mod_exec, module_exec },
++#if PY_VERSION_HEX >= 0x030E0000 && defined(Py_GIL_DISABLED)
++	{Py_mod_gil, Py_MOD_GIL_NOT_USED},
++#endif
+ 	{ 0, NULL },
+ };
+ 
+diff --git a/bindings/python/tests/system/ext.c b/bindings/python/tests/system/ext.c
+index 8f451fc..8b307f6 100644
+--- a/bindings/python/tests/system/ext.c
++++ b/bindings/python/tests/system/ext.c
+@@ -68,6 +68,9 @@ static PyMethodDef module_methods[] = {
+ };
+ 
+ static struct PyModuleDef_Slot module_slots[] = {
++#if PY_VERSION_HEX >= 0x030E0000 && defined(Py_GIL_DISABLED)
++	{Py_mod_gil, Py_MOD_GIL_NOT_USED},
++#endif
+ 	{ 0, NULL },
+ };
+ 
+diff --git a/bindings/python/tests/tests_threading.py b/bindings/python/tests/tests_threading.py
+index e9f551f..faaead0 100644
+--- a/bindings/python/tests/tests_threading.py
++++ b/bindings/python/tests/tests_threading.py
+@@ -1,3 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2026 Vincent Fazio <vfazio@gmail.com>
++
+ import errno
+ import fcntl
+ import os
+diff --git a/docs/python_api.rst b/docs/python_api.rst
+index 2c4f59d..57d45ff 100644
+--- a/docs/python_api.rst
++++ b/docs/python_api.rst
+@@ -17,6 +17,12 @@ easily through Python scripts, enabling tasks such as reading input values,
+ setting outputs, monitoring events, and configuring more fine-grained pin
+ options.
+ 
++The Python bindings, much like the C API they wrap, are not thread-safe and do
++require external synchronization by the caller to serialize access to objects
++shared across threads.
++
++The bindings support both GIL-enabled and free-threaded CPython interpreters.
++
+ .. note::
+    Python bindings require python3 support and libpython development files for
+    building from sources.
 -- 
 2.43.0
 
