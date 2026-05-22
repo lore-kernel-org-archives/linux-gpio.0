@@ -1,102 +1,184 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED1A3CD8A4;
-	Fri, 22 May 2026 10:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779445424; cv=none; b=eCGX+QJ4GHn7ByRESbvYsHlMyO1diXAdimxa6TaOyN1k6sSlszKxvmwDxKWUI9t0nDlgx7d7qKyS7wD4ecok9nIUUXTCJn/dGnx1wKc0BTqSHhR4H+sbqHvNu9rvI7EIDkryWaeoz2ebTvlVMFrQIM1eFZAR4oy6S+PkQINH16k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779445424; c=relaxed/simple;
-	bh=eUs6YVU2iFtFB2JHUiISX/6iwqnt7Bq1OFgZKZQ0uKg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AhQvajy98ZXKsPjpDVXFKTePEugevZ9SaM4EAdRSXxns2bwXDiS10UN9NvJba1YUeOpdZdmVd6okAPuYKDhZBlxcPjY3XVuJ3ULig46/S+dAI5XieSgf8rt4oNIz/WajY0OK3hlb0K3dubdt0zS3XYNhlONqtzCXgHkjdxLzxBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXsGOZL8; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FA73C9EF6
+	for <linux-gpio@vger.kernel.org>; Fri, 22 May 2026 10:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779445845; cv=pass; b=PGPdH4s7HSqshiwm81OPt+fUOJFg4yyD+tA2Ot/LTbpp6H+ncym9A2oz/NYNNsGOIHczaTtebPgRGXIP/bqW7AeBOTLJSZmXb8x/IUTSL5EGqy5QUCMFT7T2v3Sf+dYKJow++xgU8xPQxhgjSAcZ/JawxzByPPXCOAxJ/voiAR8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779445845; c=relaxed/simple;
+	bh=K4tbwSbezRfyYr3N4nDa1RB1cSu0UMrrrTf4zcMz2J0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ww6lGdNpDYElUjocVsUROu6LRMmcLyxStVXuurd1+Hvqp8wuRB2foGLIQNbhTGD3fHPG3MTz1ognSVIQxdWs9kRn5vLeWVXs8fdKWt8BCCRb6xjUK0GQW2+WF5uuGgDhl4c9kIOjUMOG4BQm4/e4Sl5BCQ5tcrKeK2R0Q1oRdi4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vq9xH96d; arc=pass smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXsGOZL8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34F3F1F00A3D;
-	Fri, 22 May 2026 10:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779445423;
-	bh=xq2WMGxYrdq7+VpHGko1wAXp02qIJZ5EaLRL0m99YUo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=UXsGOZL8biEqFcm+yDxKBRmmTG7wr1b9UH9iU9EuR6OB5xaigS/PK7iSDw/Vm4W4N
-	 MC2XACcVHcPGTvcWYO6pDoxWAR1GJUvyG+VRTdn4Ow5feS300wzQMk+L2k+6ZxYkkE
-	 nk0Ca2W0d17+0UyKihAUDvBW0QirdOPzWKKWy+jfAddiTYyrRv5dwFgsPT7mQRGu8F
-	 ztEfRFh8KZ6oE4CFg968OvZmhGDY46xnF5TnqX27zGgdcnM/xZ2WyMSSFTuLD0R24Q
-	 JHhnDyOAAAicbO9T3PEfEf4UlW9m4ei9MWEpN7/AeAAzj3OgnIZc+XITt09RJw8N7D
-	 EUnVO+Pny6gKA==
-From: Mark Brown <broonie@kernel.org>
-To: Hoan Tran <hoan@os.amperecomputing.com>, 
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
- Thomas Lin <thomas_lin@lecomputing.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-acpi@vger.kernel.org, linux-spi@vger.kernel.org, 
- braden_zhang@lecomputing.com, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20260521-lecarc-acpi-ids-v1-0-ae0ae90b2817@lecomputing.com>
-References: <20260521-lecarc-acpi-ids-v1-0-ae0ae90b2817@lecomputing.com>
-Subject: Re: (subset) [PATCH 0/2] Subject: [PATCH v5 0/2] arm64: Add LECARC
- ACPI IDs for DesignWare GPIO, SPI
-Message-Id: <177935811877.58022.6763569850673857398.b4-ty@b4>
-Date: Thu, 21 May 2026 11:08:38 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vq9xH96d"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-444826c16ffso6365541f8f.1
+        for <linux-gpio@vger.kernel.org>; Fri, 22 May 2026 03:30:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1779445841; cv=none;
+        d=google.com; s=arc-20240605;
+        b=J/2uZfnkwv5UFm3vhSj12zuvP7iVnLUMOfBEMdojy5zuRogVha8CEufiHHg+WyMqQo
+         Y2SjOAEkbkxxxcpgWihye7GYmbS00d1X7U7n0oP2yfaVTqnPOyffEWH3MNCZYP5u8eUb
+         4LeqynmVKVDDyWwinBthcfqNXCoalF1LtHmeTT30PJKT7ItubnUbxGcUdeFK1RlCqskh
+         U5abf0mgRuIlmmp84KrEo9t717jpupc85ZzIcM2EdlJvOH3NrmRHyE04dmxcPsx2px0+
+         hcI2oXgfLxu98fmTlPgQj7Ri/brKTIFYQF6aqiNUFOLy/VqnI9tZ9feozt+PXoderWKY
+         Ijeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=fuLZLVypG+ddNF7DwTGC3CQ667NPf/CW9RzkmWOYs8E=;
+        fh=ryAwY0C1k5g+i5/WJMlm/9aAYq4bhIwFHZgnYB9CRLU=;
+        b=dATOw23D8X6O8Neg+cQcH7cqOpHQaKkmyHuVWo/c4miia/Y41KylhN/XkDXquOQpUD
+         Xuz1S3FeucleES7XGNAr/pek6bH0y17JovQ9NqrAChSC5S5MI5jIchCpPp9tBBFAnVqu
+         cdMpDd1GzxzO6hHHzyeDpwDl5tXXJAxbH1wlLOw9J5ufwC+e5Dm0i6lmDZ0fxR4X9BeC
+         QDDP+THp5inyBtUQHGXIvTYa7kgOEo7OeDicut3IvRxQj6/D+bwh0a4uJzruW/rgdqyM
+         HdNFR5FAmHkHTxaWbZ+I2WdJFjYeNGozql4PhSxaDZkXVVieEMiVSl929a1WAnqy2pi9
+         0xtA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1779445841; x=1780050641; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fuLZLVypG+ddNF7DwTGC3CQ667NPf/CW9RzkmWOYs8E=;
+        b=Vq9xH96ddkoIW7keT8lSAFlDjLWhXIj6swcqhnDl2XfvdZ/hhC+ZGQHjp1QRSDwLXs
+         8kVx6MKnqJlQT8NrnWA4TebGYq8VTKhNljsn881nd6FZ1QZ7Dw8Q+6ckzoRz/8ttz7mz
+         30vLGcd41QDZEZFr6jXAqcBKzzMZ/bbYarljJgavZAovep7OhboPt3NU7VKY6UuO3aok
+         dSNim6meGannf9U7FdzKYxlN0zVy6FXs9pz6Wo8+2+Dlu1EoLTWr/Kp9O5pp3LySy6ax
+         giRZ1Nt7LmGH2tWw6LA9sAgFZ9US0wSkYt6U0My11a+NEQPitsSyOaFaLQ/70pt0eSj4
+         9fyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779445841; x=1780050641;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=fuLZLVypG+ddNF7DwTGC3CQ667NPf/CW9RzkmWOYs8E=;
+        b=D/oeEZPHKJguM9ES7hlnkKBXvK64z9Z+cdw2bI4SYRWnaF6ysDjT8DqkJB/N8pv7m5
+         SFWZ4wO7307XLe7jphto0PYpVYqB7kFDzOUIHyXqPPXzD/oTMIN754x5OJLsn/4izl2V
+         lxoHF2L1rqcO4EaK3vOPEDBSMgOhTy9+WOTJ31PywrNnk8dlfmnwFP8fO1RYW9X1Zt8x
+         rwo1cB/FLgriKRh79UonweQPMubC4vpS7Ly7a8DBidQMwWr6lc6A4ab0qAAt3G5xdGbM
+         kflBXZCc72bgV4QFMQYCnjTTpb2NCVPT8Cl2pZuzt48X6M43C8ejEMSi1yFLNGl3NX0+
+         ++yA==
+X-Forwarded-Encrypted: i=1; AFNElJ9qWweO68OcOVdtc3Y5WNY344yISSLKWb1Q51TRpeDa8ax9x2M9U/QsHrrl1nnnEoKpc+FFEraHN6D/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWgk5vRKiRuBjF4ZC7JDBHIfpRRQYlbHau9Yadsr3lslZA1s5H
+	c+b/O0PqPA8ZJZkltrgeV6JhwG3js+tEKGpGlobFtwzkkEN4YPF/PAmKbx5nJtz7UBYO88W+bzA
+	M1YMCdU745Nxe2EdNvFO6TIyHiznJ81E=
+X-Gm-Gg: Acq92OEqu/pIDGP/NShQ0uEZOLx6wLiUZZyDf/Z/ZB+VObgAcfy6Nes8l+XjAx9KhDI
+	oJ7P0FPtY0khK+tmiA8DKLt8JR/ktJeLKtBbwNsGAdNc4Qi9rWfMidm8Qbo2lsrElEGZ8Am2Z8o
+	DQ8jJ1kMYmLNuJkFLNXkM7SRIAOGdEglTsgMrU7Wx3EZWV6gzDtn++GWH5FOSiZ/mplwx7iiOGb
+	79QmnT6JqVVJeFklJgGRV+X5kPlpSspyQe9pJmZRGaQGtW1zdwZUqL+dnP3sSWXYAJ6TAh9rVHC
+	WMDGGZRe72qp/vfZp9B5e8PAefEKmhtKdWVnsyQ0ZD1VhY3wVS6yaOC/cm16PjlaXamWNA==
+X-Received: by 2002:adf:e00b:0:10b0:43e:a70d:7622 with SMTP id
+ ffacd0b85a97d-45eb38bafddmr3082407f8f.22.1779445841321; Fri, 22 May 2026
+ 03:30:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.16-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1320; i=broonie@kernel.org;
- h=from:subject:message-id; bh=eUs6YVU2iFtFB2JHUiISX/6iwqnt7Bq1OFgZKZQ0uKg=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBqEC6sfKu343MptDCXeGNaCumZEVJKfrQjhNA3J
- 6agdVFSQWqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCahAurAAKCRAk1otyXVSH
- 0IVRB/4jjzULxCcwXtugQpfoBXaIoe631zWgzVhxI8oyXQwUB/80TUP7HI67KBrsOUr8wlb8/Xn
- zyKVcIqdisj5cUxOU8D3WcYyauBstYtgBvzhzzQ6IPkc5nwaEPUlttCiI4lcV/DJD7rgeZh3zU7
- obshP4uzV5gx0Z/X2RqxyfqgzAa04cz1i/872sJv5NwleVQvo7m+32+mDjvgpvlOjsXSjrCYKDR
- NX1fNyPKHDI9fjDcWN2fN2ktAYoNGa/3iXeO+x0552DrEsEJqbLSxkLtqibKX2+pOBYiODMGuHw
- 2HOk8JK66w563dovBqPcXl18s/HT2GuIHEsKwOd+0RMaQW2n
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20260513115312.1574367-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20260513115312.1574367-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVcgJ=aG2p-9gx+gtUwM0xcFo+D0NEqBJnqOqSmBEM7ZA@mail.gmail.com>
+In-Reply-To: <CAMuHMdVcgJ=aG2p-9gx+gtUwM0xcFo+D0NEqBJnqOqSmBEM7ZA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 22 May 2026 11:30:15 +0100
+X-Gm-Features: AVHnY4LS5ywoMrlxo4hvZxmQoPwrCMDqlROtU2eHtPokP68EWcdOGsLnytqTqcc
+Message-ID: <CA+V-a8sHUF6-sdnj310E7Ta=4kJO7oyTP-zoOTZ6ZZOybFhT6g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: renesas: rzt2h: Skip PFC mode configuration
+ if already set
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Linus Walleij <linusw@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 21 May 2026 10:34:48 +0800, Thomas Lin wrote:
-> Subject: [PATCH v5 0/2] arm64: Add LECARC ACPI IDs for DesignWare GPIO, SPI
-> 
-> This patch series adds ACPI identification for LECARC SoCs that
-> integrate Synopsys DesignWare peripherals.
-> 
-> LECARC platforms use the following ACPI HIDs:
-> 
-> [...]
+Hi Geert,
 
-Applied to
+Thank you for the review.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-7.2
+On Fri, May 22, 2026 at 11:04=E2=80=AFAM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Wed, 13 May 2026 at 13:53, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > In rzt2h_pinctrl_set_pfc_mode(), read the PMC and PFC registers upfront
+> > and skip the pin function configuration if the pin is already in
+> > peripheral mode with the desired function.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+> > +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+> > @@ -188,8 +188,18 @@ static void rzt2h_pinctrl_set_pfc_mode(struct rzt2=
+h_pinctrl *pctrl,
+> >  {
+> >         u64 reg64;
+> >         u16 reg16;
+> > +       u8 pmc;
+> >
+> >         guard(raw_spinlock_irqsave)(&pctrl->lock);
+>
+> Missing blank line.
+Oops.
 
-Thanks!
+>
+> > +       reg64 =3D rzt2h_pinctrl_readq(pctrl, port, PFC(port));
+> > +       pmc =3D (pctrl, port, PMC(port));
+pmc =3D rzt2h_pinctrl_readb(pctrl, port, PMC(port));
 
-[2/2] spi: dw-mmio: Add ACPI ID LECA0002 for LECARC SoCs
-      https://git.kernel.org/broonie/spi/c/019947c49585
+> > +       /* Check if pin is already configured to the desired function *=
+/
+> > +       if (pmc & BIT(pin)) {
+> > +               u8 current_func =3D field_get(PFC_PIN_MASK(pin), reg64)=
+;
+> > +
+> > +               if (current_func =3D=3D func)
+> > +                       return;
+> > +       }
+>
+> I will shrink that to
+>
+>     if ((rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(pin)) &&
+>         field_get(PFC_PIN_MASK(pin), reg64) =3D=3D func)
+>             return;
+>
+> while applying.
+>
+Thanks for taking care of it.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Cheers,
+Prabhakar
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> >
+> >         /* Set pin to 'Non-use (Hi-Z input protection)'  */
+> >         reg16 =3D rzt2h_pinctrl_readw(pctrl, port, PM(port));
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-pinctrl for v7.2.
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
+8k.org
+>
+> In personal conversations with technical people, I call myself a hacker. =
+But
+> when I'm talking to journalists I just say "programmer" or something like=
+ that.
+>                                 -- Linus Torvalds
