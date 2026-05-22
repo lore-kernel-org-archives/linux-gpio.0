@@ -1,184 +1,121 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FA73C9EF6
-	for <linux-gpio@vger.kernel.org>; Fri, 22 May 2026 10:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779445845; cv=pass; b=PGPdH4s7HSqshiwm81OPt+fUOJFg4yyD+tA2Ot/LTbpp6H+ncym9A2oz/NYNNsGOIHczaTtebPgRGXIP/bqW7AeBOTLJSZmXb8x/IUTSL5EGqy5QUCMFT7T2v3Sf+dYKJow++xgU8xPQxhgjSAcZ/JawxzByPPXCOAxJ/voiAR8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779445845; c=relaxed/simple;
-	bh=K4tbwSbezRfyYr3N4nDa1RB1cSu0UMrrrTf4zcMz2J0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ww6lGdNpDYElUjocVsUROu6LRMmcLyxStVXuurd1+Hvqp8wuRB2foGLIQNbhTGD3fHPG3MTz1ognSVIQxdWs9kRn5vLeWVXs8fdKWt8BCCRb6xjUK0GQW2+WF5uuGgDhl4c9kIOjUMOG4BQm4/e4Sl5BCQ5tcrKeK2R0Q1oRdi4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vq9xH96d; arc=pass smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBB43D3D0B;
+	Fri, 22 May 2026 10:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779447445; cv=none; b=NdqOysnTkHVYymSuxUsfAN2ldZkOweKkfQXoiUZZg9IzNiA42JhWGCBLGRedu4UKzkfJqsU/W8jLBtqyGsa35bBranDg+pbRVSgQbBrw/hMSqNvo6Iz/PDHnV9ztU5Slhz7Xg+RwQeZS2kaANK+TPvLF7MwhePO0D/HKayivL+Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779447445; c=relaxed/simple;
+	bh=qdqK1EsGTgN4Ri/xWzDGyKvrTyQWgoARd61f7xRYFag=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gQ5pD+pf1kScq4W/7cgtaVhBNoGTnyVKRqQ9Wv9DOxl0/BrxRy9zZ3yOg9SUFo6QidRQ12fJyhLnmR8kgZWcJr05LM0SZSR1rC6jzkSmZoN39aGtLq+QQHbpfl0j6d+eEQEiClIj9RSnLQyQBvunRKNaOA4kYOxunzn85Pv8WVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EILeOpz5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vq9xH96d"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-444826c16ffso6365541f8f.1
-        for <linux-gpio@vger.kernel.org>; Fri, 22 May 2026 03:30:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779445841; cv=none;
-        d=google.com; s=arc-20240605;
-        b=J/2uZfnkwv5UFm3vhSj12zuvP7iVnLUMOfBEMdojy5zuRogVha8CEufiHHg+WyMqQo
-         Y2SjOAEkbkxxxcpgWihye7GYmbS00d1X7U7n0oP2yfaVTqnPOyffEWH3MNCZYP5u8eUb
-         4LeqynmVKVDDyWwinBthcfqNXCoalF1LtHmeTT30PJKT7ItubnUbxGcUdeFK1RlCqskh
-         U5abf0mgRuIlmmp84KrEo9t717jpupc85ZzIcM2EdlJvOH3NrmRHyE04dmxcPsx2px0+
-         hcI2oXgfLxu98fmTlPgQj7Ri/brKTIFYQF6aqiNUFOLy/VqnI9tZ9feozt+PXoderWKY
-         Ijeg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=fuLZLVypG+ddNF7DwTGC3CQ667NPf/CW9RzkmWOYs8E=;
-        fh=ryAwY0C1k5g+i5/WJMlm/9aAYq4bhIwFHZgnYB9CRLU=;
-        b=dATOw23D8X6O8Neg+cQcH7cqOpHQaKkmyHuVWo/c4miia/Y41KylhN/XkDXquOQpUD
-         Xuz1S3FeucleES7XGNAr/pek6bH0y17JovQ9NqrAChSC5S5MI5jIchCpPp9tBBFAnVqu
-         cdMpDd1GzxzO6hHHzyeDpwDl5tXXJAxbH1wlLOw9J5ufwC+e5Dm0i6lmDZ0fxR4X9BeC
-         QDDP+THp5inyBtUQHGXIvTYa7kgOEo7OeDicut3IvRxQj6/D+bwh0a4uJzruW/rgdqyM
-         HdNFR5FAmHkHTxaWbZ+I2WdJFjYeNGozql4PhSxaDZkXVVieEMiVSl929a1WAnqy2pi9
-         0xtA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779445841; x=1780050641; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fuLZLVypG+ddNF7DwTGC3CQ667NPf/CW9RzkmWOYs8E=;
-        b=Vq9xH96ddkoIW7keT8lSAFlDjLWhXIj6swcqhnDl2XfvdZ/hhC+ZGQHjp1QRSDwLXs
-         8kVx6MKnqJlQT8NrnWA4TebGYq8VTKhNljsn881nd6FZ1QZ7Dw8Q+6ckzoRz/8ttz7mz
-         30vLGcd41QDZEZFr6jXAqcBKzzMZ/bbYarljJgavZAovep7OhboPt3NU7VKY6UuO3aok
-         dSNim6meGannf9U7FdzKYxlN0zVy6FXs9pz6Wo8+2+Dlu1EoLTWr/Kp9O5pp3LySy6ax
-         giRZ1Nt7LmGH2tWw6LA9sAgFZ9US0wSkYt6U0My11a+NEQPitsSyOaFaLQ/70pt0eSj4
-         9fyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779445841; x=1780050641;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=fuLZLVypG+ddNF7DwTGC3CQ667NPf/CW9RzkmWOYs8E=;
-        b=D/oeEZPHKJguM9ES7hlnkKBXvK64z9Z+cdw2bI4SYRWnaF6ysDjT8DqkJB/N8pv7m5
-         SFWZ4wO7307XLe7jphto0PYpVYqB7kFDzOUIHyXqPPXzD/oTMIN754x5OJLsn/4izl2V
-         lxoHF2L1rqcO4EaK3vOPEDBSMgOhTy9+WOTJ31PywrNnk8dlfmnwFP8fO1RYW9X1Zt8x
-         rwo1cB/FLgriKRh79UonweQPMubC4vpS7Ly7a8DBidQMwWr6lc6A4ab0qAAt3G5xdGbM
-         kflBXZCc72bgV4QFMQYCnjTTpb2NCVPT8Cl2pZuzt48X6M43C8ejEMSi1yFLNGl3NX0+
-         ++yA==
-X-Forwarded-Encrypted: i=1; AFNElJ9qWweO68OcOVdtc3Y5WNY344yISSLKWb1Q51TRpeDa8ax9x2M9U/QsHrrl1nnnEoKpc+FFEraHN6D/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWgk5vRKiRuBjF4ZC7JDBHIfpRRQYlbHau9Yadsr3lslZA1s5H
-	c+b/O0PqPA8ZJZkltrgeV6JhwG3js+tEKGpGlobFtwzkkEN4YPF/PAmKbx5nJtz7UBYO88W+bzA
-	M1YMCdU745Nxe2EdNvFO6TIyHiznJ81E=
-X-Gm-Gg: Acq92OEqu/pIDGP/NShQ0uEZOLx6wLiUZZyDf/Z/ZB+VObgAcfy6Nes8l+XjAx9KhDI
-	oJ7P0FPtY0khK+tmiA8DKLt8JR/ktJeLKtBbwNsGAdNc4Qi9rWfMidm8Qbo2lsrElEGZ8Am2Z8o
-	DQ8jJ1kMYmLNuJkFLNXkM7SRIAOGdEglTsgMrU7Wx3EZWV6gzDtn++GWH5FOSiZ/mplwx7iiOGb
-	79QmnT6JqVVJeFklJgGRV+X5kPlpSspyQe9pJmZRGaQGtW1zdwZUqL+dnP3sSWXYAJ6TAh9rVHC
-	WMDGGZRe72qp/vfZp9B5e8PAefEKmhtKdWVnsyQ0ZD1VhY3wVS6yaOC/cm16PjlaXamWNA==
-X-Received: by 2002:adf:e00b:0:10b0:43e:a70d:7622 with SMTP id
- ffacd0b85a97d-45eb38bafddmr3082407f8f.22.1779445841321; Fri, 22 May 2026
- 03:30:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EILeOpz5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F541F000E9;
+	Fri, 22 May 2026 10:57:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779447443;
+	bh=M3QzBpzp8PKSLTs8Fh7VnijRuahgmdSKWCHR05/Qmo0=;
+	h=From:To:Cc:Subject:Date;
+	b=EILeOpz5jzP4wgCwhpNz1A17WwYffeG9Dk6/sv1RODSkr+SJzJaKm6PgwZLR+ad2Y
+	 O1mlfBESXCEzQPhvQcyGwLuPt7O/MNY12VP6/WuMJrOIJKqeUT2R0Rt7VsU/SvetLZ
+	 stobQJ1M1SXodcnvm1kOdfvp/tGKaXCfKEpU+dBLRUg84y+nipwchpvt6vE7emh6Zx
+	 RnKPvhdMDQw/T5gkco8wxA5tPzrzvb5++s8v0AURxtyXv3RWSJDqWeUNuyZUWohSTy
+	 R5gs4WI9lcOkHtqW63OD0Uxu4jNZz0/SGLMmpuulhkHXlm63z3kc+64SAVNm989VZy
+	 a9ZDoyl6/Ej4g==
+From: Claudiu Beznea <claudiu.beznea@kernel.org>
+To: geert+renesas@glider.be,
+	linusw@kernel.org,
+	brgl@kernel.org
+Cc: claudiu.beznea@kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] pinctrl: renesas: rzv2m: Use -ENOTSUPP instead of -EOPNOTSUPP
+Date: Fri, 22 May 2026 13:57:17 +0300
+Message-ID: <20260522105717.1727837-1-claudiu.beznea@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260513115312.1574367-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20260513115312.1574367-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVcgJ=aG2p-9gx+gtUwM0xcFo+D0NEqBJnqOqSmBEM7ZA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVcgJ=aG2p-9gx+gtUwM0xcFo+D0NEqBJnqOqSmBEM7ZA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 22 May 2026 11:30:15 +0100
-X-Gm-Features: AVHnY4LS5ywoMrlxo4hvZxmQoPwrCMDqlROtU2eHtPokP68EWcdOGsLnytqTqcc
-Message-ID: <CA+V-a8sHUF6-sdnj310E7Ta=4kJO7oyTP-zoOTZ6ZZOybFhT6g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: renesas: rzt2h: Skip PFC mode configuration
- if already set
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Walleij <linusw@kernel.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Thank you for the review.
+The pinctrl and GPIO core code make exceptions for the -ENOTSUPP error
+code. One such example is gpio_set_config_with_argument_optional(), which
+returns success when gpio_set_config_with_argument() returns -ENOTSUPP, but
+reports failure for all other error codes.
 
-On Fri, May 22, 2026 at 11:04=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Wed, 13 May 2026 at 13:53, Prabhakar <prabhakar.csengg@gmail.com> wrot=
-e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > In rzt2h_pinctrl_set_pfc_mode(), read the PMC and PFC registers upfront
-> > and skip the pin function configuration if the pin is already in
-> > peripheral mode with the desired function.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-> > +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-> > @@ -188,8 +188,18 @@ static void rzt2h_pinctrl_set_pfc_mode(struct rzt2=
-h_pinctrl *pctrl,
-> >  {
-> >         u64 reg64;
-> >         u16 reg16;
-> > +       u8 pmc;
-> >
-> >         guard(raw_spinlock_irqsave)(&pctrl->lock);
->
-> Missing blank line.
-Oops.
+Returning -EOPNOTSUPP from the pinctrl driver on the unsupported pinctrl
+operation may lead to boot failures when pinctrl drivers implements
+struct gpio_chip::set_config, the system uses GPIO hogs, and the
+struct gpio_chip::set_config implementation returns -EOPNOTSUPP for the
+unsupported operations.
 
->
-> > +       reg64 =3D rzt2h_pinctrl_readq(pctrl, port, PFC(port));
-> > +       pmc =3D (pctrl, port, PMC(port));
-pmc =3D rzt2h_pinctrl_readb(pctrl, port, PMC(port));
+Currently, the driver does not implement struct gpio_chip::set_config().
+To avoid future failures, return -ENOTSUPP from
+rzv2m_pinctrl_pinconf_set().
 
-> > +       /* Check if pin is already configured to the desired function *=
-/
-> > +       if (pmc & BIT(pin)) {
-> > +               u8 current_func =3D field_get(PFC_PIN_MASK(pin), reg64)=
-;
-> > +
-> > +               if (current_func =3D=3D func)
-> > +                       return;
-> > +       }
->
-> I will shrink that to
->
->     if ((rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(pin)) &&
->         field_get(PFC_PIN_MASK(pin), reg64) =3D=3D func)
->             return;
->
-> while applying.
->
-Thanks for taking care of it.
+rzv2m_pinctrl_pinconf_group_get() is used when dumping pinctrl
+configuration. pinconf_generic_dump_one(), which calls it, makes
+exceptions for the -EINVAL and -ENOTSUPP error codes. The documentation
+for struct pinconf_ops::pin_config_group_get states that it "should
+return -ENOTSUPP and -EINVAL using the same rules as pin_config_get()".
+The documentation for struct pinconf_ops::pin_config_get states:
 
-Cheers,
-Prabhakar
+"get the config of a certain pin, if the requested config is not available
+on this controller this should return -ENOTSUPP and if it is available but
+disabled it should return -EINVAL".
 
-> >
-> >         /* Set pin to 'Non-use (Hi-Z input protection)'  */
-> >         reg16 =3D rzt2h_pinctrl_readw(pctrl, port, PM(port));
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-pinctrl for v7.2.
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+Return -ENOTSUPP for the unsupported pinctrl operation.
+
+Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+
+Hi,
+
+As this is not a functional fix I chose to not add a Fixes tag. Please
+let me know otherwise.
+
+Also, this is build tested only.
+
+Thank you,
+Claudiu
+
+ drivers/pinctrl/renesas/pinctrl-rzv2m.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzv2m.c b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
+index 827b3e91a6cc..9029d1947bbb 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzv2m.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzv2m.c
+@@ -661,7 +661,7 @@ static int rzv2m_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+ 		}
+ 
+ 		default:
+-			return -EOPNOTSUPP;
++			return -ENOTSUPP;
+ 		}
+ 	}
+ 
+@@ -711,7 +711,7 @@ static int rzv2m_pinctrl_pinconf_group_get(struct pinctrl_dev *pctldev,
+ 
+ 		/* Check config matches previous pins */
+ 		if (i && prev_config != *config)
+-			return -EOPNOTSUPP;
++			return -ENOTSUPP;
+ 
+ 		prev_config = *config;
+ 	}
+-- 
+2.43.0
+
