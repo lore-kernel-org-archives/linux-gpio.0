@@ -1,114 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F311360ED1;
-	Fri, 22 May 2026 11:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686E63DD50E;
+	Fri, 22 May 2026 11:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779449018; cv=none; b=My6zVTLqf0TsAFWCa8ldodyX0TnFe0orY/Y1X3NBrq7h2nxQbU+sYxF4AHPd/oasXKuYv3pHDqD6DEv4FVz/dFOont7gCX5UkyMkir4V5c9PBwEqIAXXeyBtA7chAz0/UA2/iuxvRdufu2rjK05QHwY3WyivLn4+92YV3rt1vvU=
+	t=1779449242; cv=none; b=K20MF90dA8mP/Kb1ln+M4iKuJIhPxcQWksgcKC0lB3SV5uQTK9IdtD0ffFAo1Gcr1KjlZ4U6iXcy/KOQnIgpKWsEbh898Vq1fxyxdyGxGISZn0SQ1I/ryY/gQ8qIfZZjaYVX6GrvtsdR+LuRjwPpbRy+XDfd7LppYbkSsvhNWYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779449018; c=relaxed/simple;
-	bh=HFtmXz0PCp2aQpnPMnU3L1VxYRn6d9FRpQD2wRgGSq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OW0TE9rnKIAdLC7qwhmNwVePRLYp1Td1/VpidZM671xQJzdvIaCP2SKxGSh1tNfdBgyMgVgKNBgSzJcEGj66YAtpoQJBNEJCulANpjBx8vxLVtSce6Ldw+JZ+YEseemu86fCsEpIwFaTUTNdKwG00z2jXiWRVyFMpmGgJizqLeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVqIVWGS; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1779449242; c=relaxed/simple;
+	bh=b1usLtt6FTm0To+XoEgTuwRhDjFcDzhX+mRL55KQAMA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=WFFiWQW26xtozNb9RuCHsznS2sz0nO2hazUJ1CuY4N35vp1bO6VRfzM0vR/qyR+38t4PQk9prJfRSZ6D9+tjibTlgCGJQTqT1uXWSrEJb+N/2bArBpWaX+11DJF55IQWtLN8Pi9udDvbs8Psfs+7CnE/coz3xUuZTo3cx7Q+ABg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=aBjSySEf; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVqIVWGS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3EAE1F000E9;
-	Fri, 22 May 2026 11:23:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779449016;
-	bh=g0Tk5SjgRMfO81NIuJvLyIjw5gsTSwcbfmCYhvq+Xsc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=jVqIVWGSsTzhxLytj8chbFa3NmrX/sPZxrQrnYwbsVTFyitSFbt/3CUFIkk+Ifozu
-	 vJZJVlhnKBnP/Uo0dS6fOvwNB4LrIdH2PE3OZmaca1FLV2fQHYeGiPaZr4+SLrHMiP
-	 1A0nmndTujTrT9UJnqzHxEvX+085d3mVRZqSznR3ok12fbog1coCUX8NoKG1pNbK7E
-	 HK1ri7I81+nAdwn/bOea31fKfVmqIt71ShcZ1oACMetLosYHONUM41PJoGgSwuvQAL
-	 wXMlEfW5/ECXfIVH0TAeiAj9R8tVFDKDrKm/YHt3Ox0yDFU7CVbgfzUvCLSX95xvm3
-	 PO2G/QuLTWu0Q==
-Date: Fri, 22 May 2026 12:23:22 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Radu Sabau via B4 Relay <devnull+radu.sabau.analog.com@kernel.org>
-Cc: radu.sabau@analog.com, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus Walleij
- <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Philipp Zabel
- <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan
- <skhan@linuxfoundation.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v12 1/6] dt-bindings: iio: adc: add AD4691 family
-Message-ID: <20260522122322.2cd9d4ae@jic23-huawei>
-In-Reply-To: <20260519-ad4692-multichannel-sar-adc-driver-v12-1-5b335162aa51@analog.com>
-References: <20260519-ad4692-multichannel-sar-adc-driver-v12-0-5b335162aa51@analog.com>
-	<20260519-ad4692-multichannel-sar-adc-driver-v12-1-5b335162aa51@analog.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="aBjSySEf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1779449176;
+	bh=OvxAnjWqfX8/3mvrcZM41btS8w192cJEjZBEPQD+Gq8=;
+	h=Mime-Version:Date:Message-Id:From:To:Subject;
+	b=aBjSySEfSdA1oWaXSWJwh9rn41CboTkcRTOZxzkmmD8pCS/6jTLuwNDgIUki07ifm
+	 7I5rZGGOBCOZkPTkViJBkyjXooOQg+uMC4YMUFBL9ezc4vr7z1mTOzjbjiXlM6+0fI
+	 5C1MngXOLAHB468OQ2H0017qEIqYWrxLWZJQotkU=
+X-QQ-mid: zesmtpgz4t1779449175te4f3fae4
+X-QQ-Originating-IP: Mbr/bW5duuFzrge2MVl7tFpLMVUsqkao2DoNemluwGw=
+Received: from = ( [210.3.135.34])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 22 May 2026 19:26:12 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1712237719727841820
+EX-QQ-RecipientCnt: 9
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 22 May 2026 19:26:10 +0800
+Message-Id: <DIP633RAN8PQ.3CCYARBCPZ1Y2@linux.spacemit.com>
+From: "Troy Mitchell" <troy.mitchell@linux.spacemit.com>
+To: "Conor Dooley" <conor@kernel.org>, "Linus Walleij" <linusw@kernel.org>
+Cc: "Conor Dooley" <conor.dooley@microchip.com>, "Yixun Lan"
+ <dlan@kernel.org>, "Troy Mitchell" <troy.mitchell@linux.spacemit.com>,
+ <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-riscv@lists.infradead.org>, <spacemit@lists.linux.dev>
+Subject: Re: [PATCH v2 2/4] pinctrl: add new generic groups/function
+ creation function for pinmux
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20260519-germinate-ageless-631033d22797@spud>
+ <20260519-storm-karma-e457ea68904a@spud>
+In-Reply-To: <20260519-storm-karma-e457ea68904a@spud>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: OK/duGulb+LdcRRoLjUQXebGMLgxBHZHgZ7E4OdvXrZxjy5ezwUkiz4A
+	JXQPqh1viePtlGWTJN66gVO9v35FsRIBqlcgwd+lPJ83jBEb64MOXcWD47IEnWIGD1SAtq1
+	ZR/MQ/DhLfZTGRHgY0IQLb6K+kY/ebg1WQx0Nd4tHZkdgujpSmgO4y1nCMrtmGMWzCoAnPg
+	o4jF2pR3/9IRglVpmJ9AeWfXKgeZclkD8T7Y8ze0XPRRIQ1TL5J1iD+D7fcA1G3xLm3SCep
+	cIW54/AFj4sEkatxOyaP0S6e59R6++eMvP3rxYx8Q3ndCSiKtTQD/FSgQuefH7m/h+zNj1V
+	sD8BJd2pWPagndLY8PaldC7NG2iUmAQgMxlWhhB+xE5CsBpIh0Ar+2nAKIFHIGDVzz/06Io
+	qO6TAjELFq6lxH9nFtKWBWnJj5ikOKT2OyzCohJlz9qPkmX8imXy+qEjfif4oAGb+g87hY5
+	4TRBuFTkITfjlGtQ6yzuCr6F9J/zij720h3foakliNOrp+BG3QFW8psXqr9W3ICT3HD+XMj
+	4u14gshOXOYW37lvCSrIAvqZQ23Uluqe5G2/h4iLBygWYQQUR80amjpH8/pdq6ggW9+sIz8
+	jtSu+I3bZIjwroxGvJxRJ/OVNXpSDkIuQhbhzOmDIERkOP8LtIsbw/jFoLvl31QLtA5c6x5
+	kabmlbA1Gqc2GfBhpJWnrsdZ+julfZCNiKXpfGW4gwB163FLzo2iZ2DtZGHy/gtOI9SjzE1
+	Q6FtI6j99QC9QOWj0KZsF3oSjjt0TY6EwLMhEmZGhDMPyiw6KeKJSwqpptsKmRoJ1B4qA/i
+	PSizcUr56vXt91zr4H3Uczxi1fdo62q+ERB3HAGEXkGHOJKj4cYHicfbXReFM0PqpISY+pN
+	3lk0eGAEDV+Y/ZKHf/KxQN7wpQy6mCeeT9RisK+xlTd/PsIpXVXBG6XGlhNvLOT30kzHDjd
+	Q3Eger/beu/yWz9gkqu+b1Qwt0KwPPxblM4YkG3gXBwA2G+KKpCdt0dIti4ZvAVYSvTOSnp
+	qvB/QgJ19jr3f/Z7WPtFgzQvrjb57kaSGhYfuF8Zq6t7UP5WJv7L7GXwU0oBw=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
+X-QQ-RECHKSPAM: 0
 
-On Tue, 19 May 2026 15:20:22 +0300
-Radu Sabau via B4 Relay <devnull+radu.sabau.analog.com@kernel.org> wrote:
+On Tue May 19, 2026 at 5:37 PM CST, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
 
-> From: Radu Sabau <radu.sabau@analog.com>
-> 
-> Add DT bindings for the Analog Devices AD4691 family of multichannel
-> SAR ADCs (AD4691, AD4692, AD4693, AD4694).
-> 
-> The binding describes the hardware connections:
-> 
-> - Power domains: avdd-supply (required), vio-supply, ref-supply or
->   refin-supply (external reference; the REFIN path enables the
->   internal reference buffer). Digital core VDD is supplied either
->   externally via vdd-supply, or generated by the on-chip LDO fed
->   from ldo-in-supply; the two are mutually exclusive and one must
->   be present.
-> 
-> - Optional PWM on the CNV pin selects CNV Burst Mode; when absent,
->   Manual Mode is assumed with CNV tied to SPI CS.
-> 
-> - An optional reset GPIO (reset-gpios) for hardware reset.
-> 
-> - Up to four GP pins (gp0..gp3) usable as interrupt sources,
->   identified in firmware via interrupt-names "gp0".."gp3".
-> 
-> - gpio-controller with #gpio-cells = <2> for GP pin GPIO usage.
-> 
-> - #trigger-source-cells = <1>: one cell selecting the GP pin number
->   (0-3) used as the SPI offload trigger source.
-> 
-> Two binding examples are provided: CNV Burst Mode with SPI offload
-> (DMA data acquisition driven by DATA_READY on a GP pin), and Manual
-> Mode for CPU-driven triggered-buffer or single-shot capture.
+[...]
 
-Doesn't really matter, but why include so much detail that is easy enough
-seen in the binding?  If there is information we need to capture it better
-be in the binding!
+> +int pinctrl_generic_pinmux_dt_node_to_map(struct pinctrl_dev *pctldev,
+> +					  struct device_node *np,
+> +					  struct pinctrl_map **maps,
+> +					  unsigned int *num_maps)
+> +{
+> +	return pinctrl_generic_dt_node_to_map(pctldev, np, maps, num_maps,
+> +					      &pinctrl_generic_pinmux_dt_subnode_to_map);
+> +};
+Nit: stray semicolon after the closing brace of the function definition.
 
-Not actually worth the effort of changing it though - more something
-for future reference (unless someone else is asking for this levle
-of detail).
+                                  - Troy
+> +EXPORT_SYMBOL_GPL(pinctrl_generic_pinmux_dt_node_to_map);
 
-> 
-> The four variants are not compatible with each other: AD4691/AD4692 have
-> 16 analog input channels while AD4693/AD4694 have 8, and AD4691/AD4693
-> top out at 500 kSPS while AD4692/AD4694 reach 1 MSPS. These differences
-> in channel count and maximum sample rate require distinct compatible
-> strings so the driver can select the correct channel configuration and
-> rate limits.
-This bit indeed belongs here.
-
-> 
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Radu Sabau <radu.sabau@analog.com>
-> ---
