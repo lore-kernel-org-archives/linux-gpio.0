@@ -1,174 +1,118 @@
-Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com [74.125.224.52])
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D5D02472A2
-	for <linux-gpio@vger.kernel.org>; Sun, 24 May 2026 05:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779601235; cv=pass; b=hDjlhN79APxI2qDYjb9ZsiJ0OMq38FU07JEblaDZNzJE+HTBHXL/pVSe1PPV70K9mXr9ZaGgZy5pZdN7/Q6197KwN6jQ8bkvCfgiQXvODW6q9s03gsbZ6K7Sh9Hl9vveyWghAxbH0xyiSDeUbUWF4i4AJ3/SCDHsaUZEksJJLv8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779601235; c=relaxed/simple;
-	bh=FFyU0Agp3duT3812ugXRwk1O62+C0JSc7BoLG3Q5SKY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WWW8wKvvr5He7A/cBHZSFN3SjsN6OXdFFpL79ZqZFDPT9P+a/WxrkIXRBBRscgaMKHzq1PrGTG6aEaqQmmcjgg0xBBxphKwNMMc6XCbe1IlEE+tp0s66mz1GvG1YrNnINjBW/Ln2g86q0/PqapuhR5aYOlKdCtAam2fAmCvDCNo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lKlH/3FR; arc=pass smtp.client-ip=74.125.224.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D11126C02
+	for <linux-gpio@vger.kernel.org>; Sun, 24 May 2026 15:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779637818; cv=none; b=tvmlHf1mvBU6j5Ru25RySLyjvWj+P9dg+hh+qjconQaD3R8MftgdRwqJEP57rQg4O7xm7w4oCsyjtIorO3FnfNRAx3L8LsM7qNRh4WjtVneR40nlZzOUmBqNJf92+lxqzDzeUmfxCUgehDRhNzwcsTc4wzrZkbF4VTYpwiOtEo4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779637818; c=relaxed/simple;
+	bh=8/mjomMcL/tL01rBMy4OoB6MPyHJ2iOSUQhMgcRC5yk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kS6E+SHnRBGBmjX0gfRvf7Firhf4UN+FpW6o6G8cHFo+Yw/8Hg60J3Yuw9o+5r4h3b+nVZ3vBPe70Z+KUUY4HeBcmnpdD/dYY/38P/v/qiVKSPHU7zieeVc+IOBqadFIxC1lcipRHQ99RCavKy3rw3xkTIPdw8OA6Y/S0hHAyFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGmD2IDo; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKlH/3FR"
-Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-6530287803cso8671768d50.1
-        for <linux-gpio@vger.kernel.org>; Sat, 23 May 2026 22:40:30 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779601229; cv=none;
-        d=google.com; s=arc-20240605;
-        b=fZloCuZWfTbB7WwWZQl+5WJ30f+8tGAT/gqgqhtN56yKGd5Dp7bd5xiN8SofIO4c2c
-         4TCMHA8yYszCNMF9KZYz+hLk+gfrQMWQBh5FpdE7vM53RtUWoxyXBQshPo9CZQHBdhZv
-         SJjOSOTe+E6BSxlDa9UdqDLOX0oVvTSy8yghH3WD1rEHcsYV78wpE31Dw0ndLq21sJ+m
-         dOucKHz4cUTp5pkh71s8+SdMjhjZa5J2ONhskpuBGacCIiqa/NBqsSCYeeBKvzNNdFbj
-         o/VSLJXJBI+qlAk4UgtX81D1bzdXipYOUN0XM0nZjeJLdn5hrGDI1oLmj5vZSzw2aIhh
-         Mn6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=PB3ioTsenX/7iD7ox1ZYbQDoqdQdKnSJARyszLFCgQc=;
-        fh=UxcEJQfcoZsW2MZcNaRbruzcGT74MQQ9EJvaxCRd2F0=;
-        b=geGc5qewnHITbGqhlknPX0YnQUXx+IkKOdxGHQoB3U2RnauiaCZc/3CuVfRgVkP1l9
-         HhNRJ4AjqNzJkjnQz12pO0Keue7XprQClvFazmBThZjpMTVbgMAw8udL7iclYSfJwXCt
-         UoZPd26iQpS7AfvCsw6FmNzL6CPSWN7KjAtOojHaIb8hFzOolSbnctlwhhIsiZEPsAtd
-         2PLrzlz8A+pKUb48xT0ORSZNpx7xGbP+O7h1yfOhAprB9ZlmACJeFFWeT64GFnD3cmRO
-         q/Srh3Uq/+FZSOuyXLoCat7RsQKtvw1L64GdmlU0gQZKU5bqwa8ow+kXNMRflIZxTSA4
-         mSGQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGmD2IDo"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-837b39eb078so6104215b3a.2
+        for <linux-gpio@vger.kernel.org>; Sun, 24 May 2026 08:50:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779601229; x=1780206029; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PB3ioTsenX/7iD7ox1ZYbQDoqdQdKnSJARyszLFCgQc=;
-        b=lKlH/3FR62bF+/nZ0Rt8+NRyfmFlviDPsRcURCfwx2j5PC56o5TCzeKle/vPtgbv/8
-         DQEWzLz6WuuZDclc4IR+fmpgKt/adixj+ZonpOGmM+rhMmr1SkWsuTSfXOU22DUcnHyt
-         /J8GgNHFh5HWqxJIc9OZ6ZscodV4bUeUxu3a3l1hZGjo+6Q7Q8qjYRU6x7MgRlngU/SD
-         aQ36H+/XCyMIPPR+ZefQXoMEx4gGE2wY8c7/gMc0OMBTSw2EFClhXOVdJQZvRQPTxLba
-         2hKG+EVFdajRt0IwL5HHbpNV7AgP1DP4sSpKc7NpygiaOl3qopYVVwrRiVtxFKpdkn0j
-         jrYw==
+        d=gmail.com; s=20251104; t=1779637815; x=1780242615; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ReOkgoPLdCaHd6CcEsCAqea7Z9/lGvf+pkF1enOHLhw=;
+        b=CGmD2IDoKBnonh8gG3rhE30QTkqJGjNlPViueoMlrfByHWL/C3F61i6RuG5eN5Pt3C
+         j62OveBck8dtdEpuLt1CenCkuOEVYrPgKQtAF+n8GLk4VSQWU9UE0xE4tFBZBaiOqzGe
+         Mmx3Y7YWEOnSAveptf6ZFkuVGwWuxYMD0r+HGqXhlhCnAailqrFDDOnCFDJ0BJlY3InP
+         Vysva+BLyCedNTmFDzWXySJD77pZbsTeEDIGO9Bekw4YjBv/9OhlL81JJvYKX9ylfTpN
+         m4T2NcVaKhfHkSeeT34eubdvx5glmZMxsqKPCKFkRZKPSX2Q5FBQ68Hb1kfDysoY+o3K
+         ntQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779601229; x=1780206029;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20251104; t=1779637815; x=1780242615;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PB3ioTsenX/7iD7ox1ZYbQDoqdQdKnSJARyszLFCgQc=;
-        b=tDe74GAU7LmpdL5+daGN0baKqUgwHyN153Mu7Lvrbfbbi5QwARwxp20yZgAqfVbSuJ
-         mPe56/CBNno0Skgvq8W1i4M56t9L/0f8+H9fD3zMefbN1i2tcLQRCFBIrDYmr57VQxNn
-         bdo1gVk/lSUeCxo5qoyMblbrfUvpL8YFsPP7wY3/Q+EPDSEFQv/bS2EY7/6xXK3z8Cjf
-         f/E6QHceBhfl7xdc3Otkg66aTC/iqnqgcRKL/bCwLs44v6R5MQ99GGOCQllemw3k8zAz
-         1fZf3wxkGxlZ2ryOK21bPwWbY7zKx17YaHh/w2HJ7/6ptdG/PcIDMLgzfFiau/9pSwTa
-         xHjg==
-X-Forwarded-Encrypted: i=1; AFNElJ99+EMGispFs1Wkw2RjzjTewyZSpuVkBBI5BG49GvcS8RaM/XObV+jRnb+VljuurWMjwCtcQGZC/xoY@vger.kernel.org
-X-Gm-Message-State: AOJu0YynQMX43vC40ZAR/xxU1BIPLSBA2OEKxbzqF+I4U17OKsLSYC5O
-	u2zW+kCV44G2IIo+pyCLMVqu2MUgFsdrxkpR1mLpOJ9uJHXxXYguKQP2dJn3yqlzomPEMmgfG5n
-	qE7NANngHyjlC2U/cIi1yOg7cQrRdNTo=
-X-Gm-Gg: Acq92OFh4f+EeZXV0w6Y0Ze06O18ljRRnpYJ8Ku5LlLiSZ8TvhEhh/wradJNuBEEX0q
-	+vISNhmY6PnjrgSh+bJXKxRRW+7d7NMKPmfzULqMAoQ8yY4ldDaaDSEyiCMGUKwoXaGFVSnth/V
-	cizEcBsPHybPhPEF8ACgsm4tOeYYeIoi1X4tAn02pFeav1g+BHLWYBzGtyofgS7afU2TUABIgDb
-	KsBgySawseVMMw7Cxr3Q8sJcjMa1adv08vJIQlV+uqtWm5xh1X6HlDBnXBr1vzGcZP7EcxpJeBy
-	iGVp1nxOF9BW3pqTER7l0XqYX2P9E+/FtPuqmmPsPXoetx3+/8I3SiIaxxmgmlOSvJ/XNFopyFc
-	DAQr7RjU/66pR6ahVWQXATLywD915kdDBOKeroi7zowrGFXn3+B4I7KEFK4I=
-X-Received: by 2002:a05:690e:d02:b0:64e:f106:60ea with SMTP id
- 956f58d0204a3-65ec9938bb6mr10304651d50.44.1779601229184; Sat, 23 May 2026
- 22:40:29 -0700 (PDT)
+        bh=ReOkgoPLdCaHd6CcEsCAqea7Z9/lGvf+pkF1enOHLhw=;
+        b=EHSzbMj6flysKhsD3Hi3h9KcUeVKsu/d6BozJawMeZe4vjJd92o7jMKVQpTcvKwVzc
+         vF+l5awadqYyXcQFFRqnq9v22vxki4fAECS7WQzU/bHilU4IlDfu4++NlnyjL7FQMIwB
+         CeIRjbN7bkloBjtQKHYBzzqwHL/JDVhNB8zHcxEjoSX5mXFj+CINBuwXNafuVxmybyWr
+         TBUG0n/Yks2eK5nGpN7QQG5nHUTi/FfPwK5UQhI5M5awn2+ik0/dRm2cKVPPAJYaC7zd
+         DQdLYU5I6ghXVfK5F5GwiwsYyp2aCO2yoy3zYzB2E3nIhyWkw37WRo8a2aTGm6Jplho0
+         lYIw==
+X-Forwarded-Encrypted: i=1; AFNElJ8hV6yx8nEKFGwJmItgOYzpaMOnS4/jtEvw0G0dX9cKJ5xHJ6ugZXxbkW0XP0140bopMmXDOXSpcUZO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvGRK5vCws4j/a2LsSSPcMuMWe2sMyIeOx1XXQRB+A6/K+lc/L
+	pyXBBsGrLpVcA3w9gjij6HcreaPvcRSFca6kiI3DoQd3LwJGhAFI1g+f
+X-Gm-Gg: Acq92OEc8TxTYAa270YtxCPTNhf55aXSP6jazLMR7CuFAflTabBop2lr7q5XJLVvbr5
+	SqF+aJFwHWQISsN+qNuJ3yGy6hX+MsgBeL6jKKDFWP5VNONjq8QbKn4J8SXJIsuDFppIRFDvMzh
+	z0wUYUVHcjglPWOwZg5Z/8YTs05klzSQoODopTaYtyFlYFVZBoKUhPZNAY/PaHwYvq0RuzT9+LQ
+	y7CRpxUnJcdlsS4Yh2xFi3cLF2gG7T4f0JkBmsZz0tiqDrVuu7XSoXajgPf1QVNiWu2H2D40fwT
+	YlzrfqgYgSbsgDi8O1h5nhLNGTJ5QpkDOE+L/jlhP7iNvwOTepq5ou4m/7qLdZMc7uYB8+iMw/E
+	9kWSVuV8osmm9DRTud0ry637yICMyalcN8ggZDXhD5vCpSsayGAcZDER1hz0HYsoYz5oZlu9/2e
+	RHfWRjnLkt0WaxzrJFXsDdVczX613Uwa+56IllZTYW5NuyBvv9Aw==
+X-Received: by 2002:a05:6a00:2d25:b0:82f:5051:f024 with SMTP id d2e1a72fcca58-8415f5dcc6fmr10442376b3a.27.1779637814974;
+        Sun, 24 May 2026 08:50:14 -0700 (PDT)
+Received: from arch.localdomain ([2409:8a28:a5f:4fa1:cc65:18c0:209b:38a4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84164ac9b74sm6997716b3a.3.2026.05.24.08.50.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 May 2026 08:50:14 -0700 (PDT)
+From: Jun Yan <jerrysteve1101@gmail.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Jun Yan <jerrysteve1101@gmail.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: gpio: meson-axg: Fix whitespace issue
+Date: Sun, 24 May 2026 23:49:53 +0800
+Message-ID: <20260524154954.385778-1-jerrysteve1101@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260523174440.9629-2-hardikprakash.official@gmail.com> <202605240959.Kcf1lIg4-lkp@intel.com>
-In-Reply-To: <202605240959.Kcf1lIg4-lkp@intel.com>
-From: Hardik Prakash <hardikprakash.official@gmail.com>
-Date: Sun, 24 May 2026 11:10:17 +0530
-X-Gm-Features: AVHnY4KFGm1FRMDp57VE89vJQfBy8s3Xij_f6JIE9wMxIq8ViEfXwrWfjlI0icU
-Message-ID: <CANTFpSWd3ysA7qNurHFuCPmEah1dGSfDTiFJRteU08A3kHE3=w@mail.gmail.com>
-Subject: Re: [PATCH v6 1/1] i2c: designware: defer probe if child GpioInt
- controllers are not bound
-To: kernel test robot <lkp@intel.com>
-Cc: linux-i2c@vger.kernel.org, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org, wsa@kernel.org, 
-	andriy.shevchenko@intel.com, mario.limonciello@amd.com, brgl@bgdev.pl, 
-	basavaraj.natikar@amd.com, linusw@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, May 23, 2026 at 23:27, Mario Limonciello wrote:
-> Is patch 1 still needed with this approach?
+Clean up whitespace misalignment in meson-axg-gpio.h
 
-No. Tested v6 alone (without patch 1) on a tree based on
-63d2059cd665 (the commit immediately before patch 1 in Walleij's
-fixes branch). Touchscreen and stylus fully functional, no arbitration
-errors.
+Signed-off-by: Jun Yan <jerrysteve1101@gmail.com>
+---
+ include/dt-bindings/gpio/meson-axg-gpio.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-This confirms your original concern was correct -- the existing
-amd_gpio_irq_enable() flow works fine once probe ordering is fixed.
-Patch 1's manual IRQ restoration was only necessary because the race
-prevented amd_gpio_irq_enable() from ever being called.
+diff --git a/include/dt-bindings/gpio/meson-axg-gpio.h b/include/dt-bindings/gpio/meson-axg-gpio.h
+index 25bb1fffa97a..a0d42bcd9bd3 100644
+--- a/include/dt-bindings/gpio/meson-axg-gpio.h
++++ b/include/dt-bindings/gpio/meson-axg-gpio.h
+@@ -23,7 +23,7 @@
+ #define GPIOAO_11	11
+ #define GPIOAO_12	12
+ #define GPIOAO_13	13
+-#define GPIO_TEST_N 14
++#define GPIO_TEST_N	14
+ 
+ /* Second GPIO chip */
+ #define GPIOZ_0		0
+@@ -52,7 +52,7 @@
+ #define BOOT_12		23
+ #define BOOT_13		24
+ #define BOOT_14		25
+-#define GPIOA_0	    26
++#define GPIOA_0		26
+ #define GPIOA_1		27
+ #define GPIOA_2		28
+ #define GPIOA_3		29
+-- 
+2.54.0
 
-v6 is sufficient as a standalone fix. Patch 1 in Linus Walleij's tree
-can be reverted if desired.
-
-Also noting that the kernel test robot flagged an unused 'ret' variable
-in check_child_gpioint() -- I have a fix ready and will send v7 once
-the question of patch 1 is settled.
-
-Thanks,
-Hardik
-
-On Sun, 24 May 2026 at 07:18, kernel test robot <lkp@intel.com> wrote:
->
-> Hi Hardik,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on 3812a9e84265a5cdd90d29fe8d97a023e91fb945]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Hardik-Prakash/i2c-designware-defer-probe-if-child-GpioInt-controllers-are-not-bound/20260524-014648
-> base:   3812a9e84265a5cdd90d29fe8d97a023e91fb945
-> patch link:    https://lore.kernel.org/r/20260523174440.9629-2-hardikprakash.official%40gmail.com
-> patch subject: [PATCH v6 1/1] i2c: designware: defer probe if child GpioInt controllers are not bound
-> config: x86_64-randconfig-001-20260524 (https://download.01.org/0day-ci/archive/20260524/202605240959.Kcf1lIg4-lkp@intel.com/config)
-> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260524/202605240959.Kcf1lIg4-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202605240959.Kcf1lIg4-lkp@intel.com/
->
-> All warnings (new ones prefixed by >>):
->
-> >> drivers/i2c/busses/i2c-designware-platdrv.c:192:6: warning: variable 'ret' set but not used [-Wunused-but-set-variable]
->      192 |         int ret;
->          |             ^
->    1 warning generated.
->
->
-> vim +/ret +192 drivers/i2c/busses/i2c-designware-platdrv.c
->
->    187
->    188  static int check_child_gpioint(struct acpi_device *adev, void *data)
->    189  {
->    190          struct gpio_dep_ctx *ctx = data;
->    191          struct list_head res_list;
->  > 192          int ret;
->    193
->    194          INIT_LIST_HEAD(&res_list);
->    195
->    196          ret = acpi_dev_get_resources(adev, &res_list, check_gpioint_resource, ctx);
->    197          acpi_dev_free_resource_list(&res_list);
->    198
->    199          if (ctx->ret < 0)
->    200                  return ctx->ret;
->    201
->    202          return 0;
->    203  }
->    204
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
