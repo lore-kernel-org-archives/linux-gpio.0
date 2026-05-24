@@ -1,81 +1,49 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D11126C02
-	for <linux-gpio@vger.kernel.org>; Sun, 24 May 2026 15:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9373A9D8D;
+	Sun, 24 May 2026 16:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779637818; cv=none; b=tvmlHf1mvBU6j5Ru25RySLyjvWj+P9dg+hh+qjconQaD3R8MftgdRwqJEP57rQg4O7xm7w4oCsyjtIorO3FnfNRAx3L8LsM7qNRh4WjtVneR40nlZzOUmBqNJf92+lxqzDzeUmfxCUgehDRhNzwcsTc4wzrZkbF4VTYpwiOtEo4=
+	t=1779640067; cv=none; b=U5ieFvr3IPywGNJGE2VRDvhKT19AO3wR77ORzKSSUF8/vR3dIAm/9+xvRXIQltmjNaS7ydcrg+hA/5frTT4aHb166MFgL2UBUPqe7xwhfLSQU4iGp9EpPPAe596kSpbYiCHgrK0oppiDJN76OYtO+KTtBSTWIb76xtpyKlzB7bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779637818; c=relaxed/simple;
-	bh=8/mjomMcL/tL01rBMy4OoB6MPyHJ2iOSUQhMgcRC5yk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kS6E+SHnRBGBmjX0gfRvf7Firhf4UN+FpW6o6G8cHFo+Yw/8Hg60J3Yuw9o+5r4h3b+nVZ3vBPe70Z+KUUY4HeBcmnpdD/dYY/38P/v/qiVKSPHU7zieeVc+IOBqadFIxC1lcipRHQ99RCavKy3rw3xkTIPdw8OA6Y/S0hHAyFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGmD2IDo; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1779640067; c=relaxed/simple;
+	bh=LSpXcoetCh+EOSLK7MuJETnM2JpwXe1NgD/gKCS8XqQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y6WWOV4dTPIqcO//wrPUnlD1NWFKE61QaFN0nNG+UJHBinv6cUGcoYWmgd86Z5g3UZzfGySmATQRVoSC2/1X0DbwQTjD/JUeWJFgDOyQeLvzzTGWzH9iKGggEF1U0PDUBfQ4L/dfT2BFilUbb872Mhx+XwDO6bm5zgr62xiIeZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=FbH9EaDk; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGmD2IDo"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-837b39eb078so6104215b3a.2
-        for <linux-gpio@vger.kernel.org>; Sun, 24 May 2026 08:50:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779637815; x=1780242615; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ReOkgoPLdCaHd6CcEsCAqea7Z9/lGvf+pkF1enOHLhw=;
-        b=CGmD2IDoKBnonh8gG3rhE30QTkqJGjNlPViueoMlrfByHWL/C3F61i6RuG5eN5Pt3C
-         j62OveBck8dtdEpuLt1CenCkuOEVYrPgKQtAF+n8GLk4VSQWU9UE0xE4tFBZBaiOqzGe
-         Mmx3Y7YWEOnSAveptf6ZFkuVGwWuxYMD0r+HGqXhlhCnAailqrFDDOnCFDJ0BJlY3InP
-         Vysva+BLyCedNTmFDzWXySJD77pZbsTeEDIGO9Bekw4YjBv/9OhlL81JJvYKX9ylfTpN
-         m4T2NcVaKhfHkSeeT34eubdvx5glmZMxsqKPCKFkRZKPSX2Q5FBQ68Hb1kfDysoY+o3K
-         ntQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779637815; x=1780242615;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ReOkgoPLdCaHd6CcEsCAqea7Z9/lGvf+pkF1enOHLhw=;
-        b=EHSzbMj6flysKhsD3Hi3h9KcUeVKsu/d6BozJawMeZe4vjJd92o7jMKVQpTcvKwVzc
-         vF+l5awadqYyXcQFFRqnq9v22vxki4fAECS7WQzU/bHilU4IlDfu4++NlnyjL7FQMIwB
-         CeIRjbN7bkloBjtQKHYBzzqwHL/JDVhNB8zHcxEjoSX5mXFj+CINBuwXNafuVxmybyWr
-         TBUG0n/Yks2eK5nGpN7QQG5nHUTi/FfPwK5UQhI5M5awn2+ik0/dRm2cKVPPAJYaC7zd
-         DQdLYU5I6ghXVfK5F5GwiwsYyp2aCO2yoy3zYzB2E3nIhyWkw37WRo8a2aTGm6Jplho0
-         lYIw==
-X-Forwarded-Encrypted: i=1; AFNElJ8hV6yx8nEKFGwJmItgOYzpaMOnS4/jtEvw0G0dX9cKJ5xHJ6ugZXxbkW0XP0140bopMmXDOXSpcUZO@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvGRK5vCws4j/a2LsSSPcMuMWe2sMyIeOx1XXQRB+A6/K+lc/L
-	pyXBBsGrLpVcA3w9gjij6HcreaPvcRSFca6kiI3DoQd3LwJGhAFI1g+f
-X-Gm-Gg: Acq92OEc8TxTYAa270YtxCPTNhf55aXSP6jazLMR7CuFAflTabBop2lr7q5XJLVvbr5
-	SqF+aJFwHWQISsN+qNuJ3yGy6hX+MsgBeL6jKKDFWP5VNONjq8QbKn4J8SXJIsuDFppIRFDvMzh
-	z0wUYUVHcjglPWOwZg5Z/8YTs05klzSQoODopTaYtyFlYFVZBoKUhPZNAY/PaHwYvq0RuzT9+LQ
-	y7CRpxUnJcdlsS4Yh2xFi3cLF2gG7T4f0JkBmsZz0tiqDrVuu7XSoXajgPf1QVNiWu2H2D40fwT
-	YlzrfqgYgSbsgDi8O1h5nhLNGTJ5QpkDOE+L/jlhP7iNvwOTepq5ou4m/7qLdZMc7uYB8+iMw/E
-	9kWSVuV8osmm9DRTud0ry637yICMyalcN8ggZDXhD5vCpSsayGAcZDER1hz0HYsoYz5oZlu9/2e
-	RHfWRjnLkt0WaxzrJFXsDdVczX613Uwa+56IllZTYW5NuyBvv9Aw==
-X-Received: by 2002:a05:6a00:2d25:b0:82f:5051:f024 with SMTP id d2e1a72fcca58-8415f5dcc6fmr10442376b3a.27.1779637814974;
-        Sun, 24 May 2026 08:50:14 -0700 (PDT)
-Received: from arch.localdomain ([2409:8a28:a5f:4fa1:cc65:18c0:209b:38a4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84164ac9b74sm6997716b3a.3.2026.05.24.08.50.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 May 2026 08:50:14 -0700 (PDT)
-From: Jun Yan <jerrysteve1101@gmail.com>
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="FbH9EaDk"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 44E4C271BF;
+	Sun, 24 May 2026 18:27:42 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id HPoWx70mT-VQ; Sun, 24 May 2026 18:27:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1779640061; bh=LSpXcoetCh+EOSLK7MuJETnM2JpwXe1NgD/gKCS8XqQ=;
+	h=From:To:Cc:Subject:Date;
+	b=FbH9EaDk/3b5G2wqPw24JYF+gJB/bXpqI0ZbT776yOP70RUVq61s2Id1MSnTiuNZ2
+	 P+YgWX4Fnelx8XRrRJfZiQ/O1kPAzA2OnSzhkkvnxHdOJj9eRZyT9xH1TQDwR2ilxX
+	 2N4756oCcDnJVwXshP/+vVqos0r4IFKq/e6iJ327izBi7eW/pd+Lg7yFFxcMnETWNZ
+	 kNIAi8/xmfZc5nqd9Vayhiu7awSdEv1Q0ykNVc9EifZ4n4skrW3kfxAegeF4Ud+xfE
+	 V03CsWQmo9kmmanBPrQ6DkfVUw+KLR8R/nLJmcfz8zxmb4RzPISdfIMzbc+HtVutv/
+	 ItvpgC7FenPnQ==
+From: "Marco Scardovi (scardracs)" <scardracs@disroot.org>
 To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Jun Yan <jerrysteve1101@gmail.com>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: Tzung-Bi Shih <tzungbi@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: gpio: meson-axg: Fix whitespace issue
-Date: Sun, 24 May 2026 23:49:53 +0800
-Message-ID: <20260524154954.385778-1-jerrysteve1101@gmail.com>
-X-Mailer: git-send-email 2.54.0
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Marco Scardovi (scardracs)" <scardracs@disroot.org>
+Subject: [PATCH 0/2] gpio: core: fix const-correctness and remove UAF FIXMEs
+Date: Sun, 24 May 2026 18:27:06 +0200
+Message-ID: <20260524162708.62949-1-scardracs@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -84,35 +52,60 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Clean up whitespace misalignment in meson-axg-gpio.h
+This series addresses legacy "FIXME Cannot use gpio_chip_guard due to
+const desc" comments and open-coded SRCU locks scattered throughout the
+gpiolib core and backend lookup paths.
 
-Signed-off-by: Jun Yan <jerrysteve1101@gmail.com>
----
- include/dt-bindings/gpio/meson-axg-gpio.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I am aware of the ongoing work to replace the gpio_chip_guard architecture
+entirely (see the "revocable objects" patchset discussion at
+https://lore.kernel.org/linux-gpio/20260513091043.6766-1-tzungbi@kernel.org/).
+While that broader refactoring is being iterated upon, this patch series
+provides a simple, completely type-safe fix utilizing the existing SRCU
+guard infrastructure. It can be merged today to eliminate the FIXMEs
+without conflicting conceptually with future revocable objects.
 
-diff --git a/include/dt-bindings/gpio/meson-axg-gpio.h b/include/dt-bindings/gpio/meson-axg-gpio.h
-index 25bb1fffa97a..a0d42bcd9bd3 100644
---- a/include/dt-bindings/gpio/meson-axg-gpio.h
-+++ b/include/dt-bindings/gpio/meson-axg-gpio.h
-@@ -23,7 +23,7 @@
- #define GPIOAO_11	11
- #define GPIOAO_12	12
- #define GPIOAO_13	13
--#define GPIO_TEST_N 14
-+#define GPIO_TEST_N	14
- 
- /* Second GPIO chip */
- #define GPIOZ_0		0
-@@ -52,7 +52,7 @@
- #define BOOT_12		23
- #define BOOT_13		24
- #define BOOT_14		25
--#define GPIOA_0	    26
-+#define GPIOA_0		26
- #define GPIOA_1		27
- #define GPIOA_2		28
- #define GPIOA_3		29
+For clarity during review, the series relies on the following guarantees:
+
+1. Deep Const-Correctness is Preserved:
+Updating DEFINE_CLASS(gpio_chip_guard, ...) to accept a `const struct
+gpio_desc *desc` does not drop const qualifiers. In C, const-propagation
+does not implicitly const-qualify deep pointers. The `desc->gdev` evaluation
+yields a mutable `struct gpio_device *`, making the internal guard
+assignment perfectly legal and safe for fast-path read operations.
+
+2. Identical SRCU Lifetime Scope:
+The DEFINE_CLASS macro's GNU C compound statement `({ ... })` relies
+on strict sequence points. Thus, `srcu_read_lock()` is fully acquired
+prior to executing `srcu_dereference()`. The guard's lifetime remains
+identically bound to the block scope, exactly mirroring the open-coded
+`guard(srcu)(&gdev->srcu)` it replaces.
+
+3. Lookup UAF FIXMEs are Architecturally Obsolete:
+The FIXME comments removed in the ACPI and swnode backend lookup paths
+(warning about dropping the device reference) are functionally obsolete.
+By design, `gpiod_find_and_request()` wraps the entire backend lookup
+operation inside the global `gpio_devices_srcu` read lock. The lookup
+functions are entirely safe to drop their temporary references since the
+caller subsequently takes its own permanent references without ever leaving
+the SRCU read-side critical section.
+
+Please note that while this patch provides a good solution to clean up the
+existing codebase, I fully understand the necessity of deeper and more
+radical modifications to robustly secure the subsystem's future.
+
+Assisted-by: Antigravity:gemini-3.5-flash
+Signed-off-by: Marco Scardovi <scardracs@disroot.org>
+
+Marco Scardovi (scardracs) (2):
+  gpio: core: fix const-correctness of gpio_chip_guard
+  gpio: remove obsolete UAF FIXMEs from lookup paths
+
+ drivers/gpio/gpiolib-acpi-core.c |  4 ----
+ drivers/gpio/gpiolib-swnode.c    |  4 ----
+ drivers/gpio/gpiolib.c           | 28 ++++++++--------------------
+ drivers/gpio/gpiolib.h           |  2 +-
+ 4 files changed, 9 insertions(+), 29 deletions(-)
+
 -- 
 2.54.0
 
