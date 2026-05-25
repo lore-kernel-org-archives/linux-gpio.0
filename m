@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB44038BF61;
-	Mon, 25 May 2026 13:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71583876DF;
+	Mon, 25 May 2026 14:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779717542; cv=none; b=Ygi97Eo9M/6Qd0ycSdFwhIdDtbDLrNnhEYP7Zx5z4tgXMbd6wfuvEJkq6tb0wVwEBk+cY+4GAarUDBzNgubCLMIxBB3mSSloaXjCePvHibElAY+cJ756TXh4uzMwZucbs3rxk5nX92Baklo1Isinai9S7uOQizFdUo+kzo0ujzs=
+	t=1779717627; cv=none; b=Ns+7Av2uuHDuj/mFUBJZwzUSsUBwdD2c/YeUEZfaYad+wvn85TJ/TxICbN7XuAvhLa7a5fwAz67UMUlPdwQvWC/K4pDSdBQlqLLVzbgGPpVPpxok/DRwJjSsgT1+I5eszmjZ3N4+h5XYSYrnI16Isf77rWLj6Bp+NyOEcR01ikQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779717542; c=relaxed/simple;
-	bh=/nekPcgiCdMONtDQJKxEQhsv6fTSSicHCDRtL3YenQg=;
+	s=arc-20240116; t=1779717627; c=relaxed/simple;
+	bh=AHC/DtX/47mroppjma6l3/8R/uoB9k1+uHayLq+sKcA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fA7yvumE5Ux4cWGwuTQ4f0aUtVzYvpewd/4pB8qVahZdkQCIahVz7KzsNIFPwCuLbr+FSwLT7x68Qa4MfgBj5sC83WG9JcegoPK7xLqUqgIS3gUwU0t6Z1es0QFusSxhITQsVUC25AbYzMjpJEUEY9sNuIvQ9SCif6c0LN9ut8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/XL+iiY; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=DREugmqWLIZkOmo7nZTHbhNi2ZJn8tktWotvG2vLk8YT1ulWK2cx6wrHVy1olphh3327pvPbt2daGYJp1wQzybVFNmuYQO6RSnriu5M4tg7vQUtndsUn1mtkD3D1QDZihIxs9UQ09TinD2qDSuzqP8e1NhVabGKKGZqmRTgA7Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X0/xnwk/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/XL+iiY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34EA51F000E9;
-	Mon, 25 May 2026 13:58:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0/xnwk/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 166AF1F000E9;
+	Mon, 25 May 2026 14:00:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779717540;
-	bh=RIUWmMygyhldSJFbC7rHQlnc7wlI1UHEtpSHfrxKi7A=;
+	s=k20260515; t=1779717626;
+	bh=g5oYXv2b6VWLtIK2iS3P4ZRH+VT0xnxpOXO2zb2Mwn4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=M/XL+iiYZ0OMXe/bFiUvmEm014iVSeMltcW8yFcQDqZu2yti8DRmktyo2ORzST9b9
-	 b7SniUKgrt+4d+K/kKBLwEbY6TzNHYwVlyw2mhWpD1bGBYuJ6Z2hOI6tlvUnnE9KQt
-	 7mX0E/t+oIXDOb9L/6gVxo1eOppzipL9M9gvvA5G8qETNwMk+EErfWoAJY+Tzci/nm
-	 jrhnoq8NzWeZLPH2DxbBbXnjhQ2mnTempSZw0a1/0A0mc93gcOo5DtK5Q1pyTeP6ND
-	 0iTajM8kfILya2yOb/3oBDgmTgnV0vBErJ9p08tQPR2g32VXNFV67Oq81Fjl3hRVg7
-	 2gimDWbOZqYXw==
-Message-ID: <64a8ba7e-f044-4f51-8619-9419ec7dfc27@kernel.org>
-Date: Mon, 25 May 2026 15:58:52 +0200
+	b=X0/xnwk/nDGlpyNWKtOfNmiJlNNFYI7lNsr2OxC2holR3uVFyOXpIzD/pOU2QG6iB
+	 DVIWOwQNE/PJ5hwhf7Rnq1WBaiDvzalPiCEEO/RZP3bpAj4TDh+RyoNetC5z+sF9tG
+	 O16YZHQ3oHVoybQKKEPOaJNPX0f6hO9zoRVGlQyInOhYtR1giRXfGDB33PJZq5uigG
+	 uTPzejogswCFHFzWlK9zmWjOooJJ1CcZmUdAWNQM73vcXqdVR/Mz4AfdnoZj/guLIS
+	 jH9ZGnFRcXxH6a5JsNEbe2oRXTlnB589NSj5J6nZTPfFchbOuBX4VJVmrA/APrMV70
+	 pBnkJgRHbtMAQ==
+Message-ID: <c38c3c96-a775-45a9-b2e0-64ed5d0a49d4@kernel.org>
+Date: Mon, 25 May 2026 16:00:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: i3c: add Realtek RTS490x I3C HUB
+Subject: Re: [PATCH v2 2/2] staging: i3c: add Realtek RTS490x I3C HUB driver
 To: zain_zhou@realsil.com.cn, linux-staging@lists.linux.dev,
  linux-i3c@lists.infradead.org, devicetree@vger.kernel.org
 Cc: gregkh@linuxfoundation.org, alexandre.belloni@bootlin.com,
@@ -43,6 +43,7 @@ Cc: gregkh@linuxfoundation.org, alexandre.belloni@bootlin.com,
  linusw@kernel.org, brgl@kernel.org, linux-gpio@vger.kernel.org,
  linux-kernel@vger.kernel.org, wei_wang@realsil.com.cn
 References: <20260525125128.297-1-zain_zhou@realsil.com.cn>
+ <20260525125128.297-2-zain_zhou@realsil.com.cn>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,96 +89,46 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260525125128.297-1-zain_zhou@realsil.com.cn>
+In-Reply-To: <20260525125128.297-2-zain_zhou@realsil.com.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 25/05/2026 14:51, zain_zhou@realsil.com.cn wrote:
 > From: Yin Zhou <zain_zhou@realsil.com.cn>
 > 
-> Add DT binding schema for Realtek RTS490x series I3C HUB devices.
+> Add driver for Realtek RTS490x series I3C HUB devices.
 > 
-> The binding describes configuration properties for:
->   - LDO enable/disable and voltage level per port group
->   - Pull-up resistance per port group
->   - IO driver strength per port
->   - Per target-port mode (I3C/SMBus/GPIO/disabled), pull-up,
->     IO mode, SMBus clock frequency and polling interval
->   - Hub network always-I3C mode
->   - Hardware identification via CSEL pin (id) and CP1 pins (id-cp1)
+> The driver supports:
+>   - Device Tree based configuration of LDO, pull-up, IO strength
+>     and per-port mode (I3C/SMBus/GPIO/disabled)
+>   - Logical I3C bus registration per target port
+>   - SMBus agent functionality with IBI and polling modes
+>   - GPIO chip with IRQ support
+>   - DebugFS interface for register access and DT config inspection
+>   - IBI (In-Band Interrupt) handling
+> 
+> The driver is placed in staging as it has known issues to be resolved
+> before mainlining; see drivers/staging/rts490x/TODO for details.
 > 
 > Signed-off-by: Yin Zhou <zain_zhou@realsil.com.cn>
 > 
 > Changes in v2:
-
-Messed patch. DCO is always the last. And this should tell you that
-changelog does not belong here - goes under ---.
-
-Anyway, did you test the binding this time or we expect another failures?
-
-
-> - Rework binding per Krzysztof Kozlowski's review:
->   add realtek, vendor prefix to all custom properties; use boolean
->   for enable flags; use u32 with unit suffixes (-microvolt, -ohms)
->   for voltage/resistance; change to unevaluatedProperties: false;
->   fix title, maintainer name, description, $nodename pattern
-> - Consolidate examples; add dt-bindings/i2c/i2c.h include
+> - Update driver to match v2 DT binding: parse physical values
+>   directly via of_property_read_bool/u32; drop string enum lookup
+>   tables; update property names with realtek, prefix and unit suffixes
+> - Fix maintainer name; move MAINTAINERS entry to driver patch
+> - Code style: rename TPn_* macros to TPN_*; rename SMBus frequency
+>   constants to UPPER_CASE; add mutex field comments
 > ---
->  .../bindings/i3c/realtek,rts490x-i3c-hub.yaml | 263 ++++++++++++++++++
->  1 file changed, 263 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/i3c/realtek,rts490x-i3c-hub.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/i3c/realtek,rts490x-i3c-hub.yaml b/Documentation/devicetree/bindings/i3c/realtek,rts490x-i3c-hub.yaml
-> new file mode 100644
-> index 000000000000..851a433abcd3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/i3c/realtek,rts490x-i3c-hub.yaml
-> @@ -0,0 +1,263 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/i3c/realtek,rts490x-i3c-hub.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Realtek RTS490x I3C HUB
-> +
-> +maintainers:
-> +  - Yin Zhou <zain_zhou@realsil.com.cn>
-> +
-> +description:
-> +  The Realtek RTS490x is an I3C HUB device that provides voltage level
-> +  translation between I3C controller and target devices, bus capacitance
-> +  isolation, address conflict isolation, I3C port expansion (up to 8
-> +  target ports), simultaneous dual-controller port support, and per-port
-> +  mode selection (I3C, SMBus, GPIO, or disabled).
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^hub@[0-9a-f]+(,[0-9a-f]+)*$"
-> +
-> +  compatible:
-> +    const: realtek,rts490x-i3c-hub
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description:
-> +      Encodes the static I2C address, manufacturer ID, and part/instance ID
-> +      as defined by the I3C specification.
-> +
-> +  assigned-address:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0x1
-> +    maximum: 0xff
-> +    description:
-> +      Dynamic I3C address to assign to this device.
-> +
-> +  dcr:
+>  MAINTAINERS                                |    6 +
+>  drivers/staging/Kconfig                    |    2 +
+>  drivers/staging/Makefile                   |    1 +
+>  drivers/staging/rts490x/Kconfig            |   16 +
+>  drivers/staging/rts490x/Makefile           |    2 +
+>  drivers/staging/rts490x/TODO               |   35 +
 
-Where is the property defined?
-
-Read carefully writing bindings doc and DTS101 slides. I finished review
-here. You still did not implement things we asked - to follow other
-bindings style.
+So this is staging driver? Then why do you send us bindings? We don't
+need them. You must follow staging rules then.
 
 Best regards,
 Krzysztof
