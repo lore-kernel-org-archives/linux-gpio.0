@@ -1,50 +1,49 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FF037FF53;
-	Mon, 25 May 2026 12:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D916931ED7D;
+	Mon, 25 May 2026 12:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779713709; cv=none; b=Ei4/WIQuabQxiU3kdF2VIdVkWgm+X4U5jK0eKvxXfEZzAN1m3fBytK5GHnjsOLP4tFLQeqLiZQsJkk8Mm3UeKfI4AspqAkMqk8OGQEbOSWGuUjKntok9WEc6V+i+Udi6/HbwmgFuSqTAx8enxFwx2KmMl+G1mdblTy3dIuD40T8=
+	t=1779713932; cv=none; b=MVWYPt4NSb9juYy88J2+h5hg4KXXAtq9oPHe59yBc0dL0t79PfbyZ//CKIGu1C2WU4AB+AWL+UPk1D6RoRo7lZd2Wlzo+PXcVoCq1Rf3kKXInouaphda1JcNQ3/DgK1PexxyyaMlZ5mtY9i3anWsR7RfwvvC8ETdi5g4GM0MfK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779713709; c=relaxed/simple;
-	bh=Dobp+8XPRNGUvZqXv7EUCJ4nA2PN4VPudIxcDeZbQb4=;
+	s=arc-20240116; t=1779713932; c=relaxed/simple;
+	bh=QqDPJG6+HCasqnKgequ5m0+RP/Q+QlX9y4hLkzYWFOk=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Y0flmIUJbFboIk3rMHqy7dLhoFz/rVkKP/hPJfXJU6LIRMta6OiBPIGrTIVTFxjMuOJujpSsD0k26o1q/wgEnZVui/Be2rB0iju9cDp80vFyPZSlwIhe/qL9w1HKQeNQBgh1JnxLiw4SU0eNP5jOTiilVIJX7qT8HgLpcx7uKG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realsil.com.cn; spf=pass smtp.mailfrom=realsil.com.cn; dkim=pass (2048-bit key) header.d=realsil.com.cn header.i=@realsil.com.cn header.b=goLKnkLg; arc=none smtp.client-ip=211.75.126.72
+	 Content-Type:MIME-Version; b=prnlLRjuti54pjCC5PsBxlXvr9dtEV0xnFdFm8m0WfZzD5CmDk71lZIKvjkewPeXL8Wwjs+2Tb7FlAApoSznmM9hMRE9SSTZKWQASFSZmfH3EH5rEDjbkicvdpq5esCYpTeMs8x67YIHAsCvfLUvHqGtUQVipilCrpd8XyuPhjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realsil.com.cn; spf=pass smtp.mailfrom=realsil.com.cn; dkim=pass (2048-bit key) header.d=realsil.com.cn header.i=@realsil.com.cn header.b=Pi4fVRx9; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realsil.com.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realsil.com.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realsil.com.cn header.i=@realsil.com.cn header.b="goLKnkLg"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 64PCsqeP71059474, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realsil.com.cn header.i=@realsil.com.cn header.b="Pi4fVRx9"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 64PCwXwrD1060387, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
-	s=dkim; t=1779713693;
-	bh=Dobp+8XPRNGUvZqXv7EUCJ4nA2PN4VPudIxcDeZbQb4=;
+	s=dkim; t=1779713914;
+	bh=QqDPJG6+HCasqnKgequ5m0+RP/Q+QlX9y4hLkzYWFOk=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=goLKnkLgJqbMTkBApizRUnmPxHU1FwJiLYOD0k/fkYrZEJor/knhkhv5vih+Wn7KY
-	 vGW+JdpoO+SDOMAIFJAB5Rv9dL6AsnWjwYBeVi9pg6Eq1zY5x2XgCUNLABhza0H2tc
-	 z30rGKxDQIBUXopjSOmz7V2+T2O6oQGcprjLZe1ZqqhmOAysuUy+uUatTH9TjT/PUM
-	 KBHZBbtPmtHWSbGTHOkRY1NPSBFAJ/4Dr+EJoI46+EVKmxUPxrLSrksSiW6v6mcDvn
-	 9wntm0/DsUUlwIjeVk4xyQQt6Olj2tfSnGMsk5lhBf/uWR0PIhVWhoABwsBemIlqHP
-	 NzS7ermyr9Xtg==
-Received: from RS-EX-MBS1.realsil.com.cn ([172.29.17.101])
-	by rtits2.realtek.com.tw (8.15.2/3.28/5.94) with ESMTPS id 64PCsqeP71059474
+	b=Pi4fVRx9c+osONZzIgXdLvEZkDTLEP8laVjcov9t0fiA8MrL0K5/xK+otUD7PvGo+
+	 rC2k3sPhZGK06oRpcGFq4VX03X/YJJsLbeixbF/rimemWTDiYCtrNRhMDLPWtSBeBj
+	 dxTniR+xT7i4+nyrmO/+G/eYDYfpCVJaq7If4Fjg6dYRHxGX14ENODh5KIZ1FAhck6
+	 a2Jx+svRun1d9h67v5i4DLd6kVsq8bosghzlx06SnWtYLcW4BM6XSJYYqZ+K7RoZdc
+	 /R2MQS++OxyDnxDIUz6Nt36tKgL5YysX+5NmO88XNdd8UhwPqk8AAAT/CaJh/Bp1aI
+	 oP1RW2llAeeEA==
+Received: from RS-EX-MBS2.realsil.com.cn ([172.29.17.102])
+	by rtits2.realtek.com.tw (8.15.2/3.28/5.94) with ESMTPS id 64PCwXwrD1060387
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 25 May 2026 20:54:53 +0800
+	Mon, 25 May 2026 20:58:34 +0800
 Received: from RS-EX-MBS2.realsil.com.cn (172.29.17.102) by
- RS-EX-MBS1.realsil.com.cn (172.29.17.101) with Microsoft SMTP Server
+ RS-EX-MBS2.realsil.com.cn (172.29.17.102) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 25 May 2026 20:54:52 +0800
+ 15.2.2562.17; Mon, 25 May 2026 20:58:33 +0800
 Received: from RS-EX-MBS2.realsil.com.cn ([fe80::a797:6c5d:dfd:80aa]) by
  RS-EX-MBS2.realsil.com.cn ([fe80::a797:6c5d:dfd:80aa%9]) with mapi id
- 15.02.2562.017; Mon, 25 May 2026 20:54:52 +0800
+ 15.02.2562.017; Mon, 25 May 2026 20:58:33 +0800
 From: =?utf-8?B?5ZGo5a+F?= <zain_zhou@realsil.com.cn>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "linux-staging@lists.linux.dev"
-	<linux-staging@lists.linux.dev>, "linux-i3c@lists.infradead.org"
-	<linux-i3c@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
+	"linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
 	"alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
 	"Frank.Li@nxp.com" <Frank.Li@nxp.com>, "robh@kernel.org" <robh@kernel.org>,
 	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
@@ -53,15 +52,15 @@ CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
 	<linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
 	<linux-kernel@vger.kernel.org>, =?utf-8?B?546L54Kc?=
 	<wei_wang@realsil.com.cn>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggMS8yXSBkdC1iaW5kaW5nczogaTNjOiBhZGQgYmluZGluZyBmb3IgUmVhbHRlayBSVFM0OTB4IEkzQyBIVUI=?=
-Thread-Topic: [PATCH 1/2] dt-bindings: i3c: add binding for Realtek RTS490x
- I3C HUB
-Thread-Index: AQHc2JrXcMCnLUwHnkiPRbUzP688hrX4ZM2AgCZ0w6A=
-Date: Mon, 25 May 2026 12:54:52 +0000
-Message-ID: <9ce3eeed6ec344b88cc7f488493a78ff@realsil.com.cn>
+Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggMi8yXSBzdGFnaW5nOiBpM2M6IGFkZCBSZWFsdGVrIFJUUzQ5MHggSTNDIEhVQiBkcml2ZXI=?=
+Thread-Topic: [PATCH 2/2] staging: i3c: add Realtek RTS490x I3C HUB driver
+Thread-Index: AQHc2Jrbqbpl5NdpHESZuLYaRhWZD7X9bHOAgCFtvPA=
+Date: Mon, 25 May 2026 12:58:33 +0000
+Message-ID: <1a79b9c3c6c64e5ba65292efa2f0472f@realsil.com.cn>
 References: <20260430121354.6253-1-zain_zhou@realsil.com.cn>
- <a75d18d5-1637-45ec-ba78-01867089a2af@kernel.org>
-In-Reply-To: <a75d18d5-1637-45ec-ba78-01867089a2af@kernel.org>
+ <20260430121354.6253-2-zain_zhou@realsil.com.cn>
+ <2026050412-bush-rosy-959d@gregkh>
+In-Reply-To: <2026050412-bush-rosy-959d@gregkh>
 Accept-Language: en-US, zh-CN
 Content-Language: zh-CN
 Content-Type: text/plain; charset="utf-8"
@@ -73,7 +72,9 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-VGhhbmsgeW91IGZvciB0aGUgcmV2aWV3LiBBbGwgaXNzdWVzIGhhdmUgYmVlbiBhZGRyZXNzZWQg
-aW4gdjIuDQoNCkJlc3QgUmVnYXJkc++8jA0KWmFpbiBaaG91IOWRqOWvhQ0KUmVhbHNpbCBNaWNy
-b2VsZWN0cm9uaWNzIENPLiBMVEQuDQpFLW1haWzinIkgOiB6YWluX3pob3VAcmVhbHNpbC5jb20u
-Y24NCg0KDQoNCg==
+VGhhbmsgeW91IGZvciB0aGUgcmV2aWV3Lg0KDQpXZSBub3RpY2VkIHRoYXQgdGhlIE5YUCBQM0gy
+eDR4IHNlcmllcyAodjEwKSBpbnRyb2R1Y2VzIGEgZ2VuZXJpYw0KSTNDIGh1YiBmcmFtZXdvcmsu
+IFdvdWxkIHlvdSByZWNvbW1lbmQgd2FpdGluZyBmb3IgdGhhdCB0byBsYW5kDQpiZWZvcmUgcmVz
+dWJtaXR0aW5nIHRvIHRoZSBwcm9wZXIgbG9jYXRpb24/DQoNCg0KQmVzdCBSZWdhcmRz77yMDQpa
+YWluIFpob3Ug5ZGo5a+FDQpSZWFsc2lsIE1pY3JvZWxlY3Ryb25pY3MgQ08uIExURC4NCkUtbWFp
+bOKciSA6IHphaW5femhvdUByZWFsc2lsLmNvbS5jbg0K
