@@ -1,81 +1,71 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D48F14E2F2;
-	Mon, 25 May 2026 13:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BE61B4223;
+	Mon, 25 May 2026 13:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779714482; cv=none; b=A6GAigUp5JUVMpQdQHcru1P4TznL0e/2E24K/4D1OWAasGTwTI2zJhpEv0CHj0fFBDXf0jyxMEnnpDq+24m+ZnVy1NmyasVeylaQTC2DgCcp8xC8UM8/GDdV0J8w/F7gbm7SFoaMmhTG8IAqlJmTIUk5gd3qJRSdXkZzCGxjCBU=
+	t=1779714974; cv=none; b=bhi2vWCXTOGiK+J5Wpo0nd23OyWtR5IoUfQDvPgB1LRDBrOCehbCp3+sgRQ1mqgxd1uZhAE2elYzTPTvaCpoJHd0oUOwnHj2hg3I/BydHQ82ATkwD7ss4/jcL70x7bubb833iBynnISbziSVwO0Sm/MbFEvPavN/Cy47yDrkJQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779714482; c=relaxed/simple;
-	bh=RToh+6gSjpe+Jlt7aGEVqRli78mk+c1io2CsQwG8XyI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qFwZE00FtF+9Re1aUjgefrYorI2EHKdLJ+kQTi7xiP7Btab0gqxNKVOg/x+8fPD9ucZHnjwqRGaJoienUqZUsYUJhHp9KgaA1q4LHpkXtttfx1CJxy/MkiJg1l6xOXDduINdenOHIDfAckmZVqosRd+fSJmAY302ueD5Y0fELbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realsil.com.cn; spf=pass smtp.mailfrom=realsil.com.cn; dkim=pass (2048-bit key) header.d=realsil.com.cn header.i=@realsil.com.cn header.b=EBCtgRBv; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realsil.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realsil.com.cn
+	s=arc-20240116; t=1779714974; c=relaxed/simple;
+	bh=CiHfOFWBBVlGq3ebj4AHhQdzY89mtfr/b9jzInJKPEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PQFCHS2VC0WH4vk8YiXCYyf01yWZJ4JlD8wVQvA4uUBGp2EFcDeXCWWvCHbxJGgXRWm2zCJTEBt288d65nc9Z+qOfUw1paH/j2Rn0eoiGvmlPuuFCTUfAeWwOwBRZ7sEwHKEXsCjiVf7XHoeR1ISGE2z9OQYvbX1n3PQP/9uNkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbmlAnIs; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realsil.com.cn header.i=@realsil.com.cn header.b="EBCtgRBv"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 64PD7dszE1063728, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realsil.com.cn;
-	s=dkim; t=1779714460;
-	bh=RToh+6gSjpe+Jlt7aGEVqRli78mk+c1io2CsQwG8XyI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=EBCtgRBvKk5TY2TjH8mGuly/JI6u4PJmCNjdRb5qkuvdxDeRinR2ufy22WNou16XM
-	 B5Jup5NWd6k2Np9R42FgJ2EDOpk4XR3Psd0iEGCzmESEqTsOPg5oat1LRrNxwHAYkV
-	 YaZvsbBinMfXvqgDeK+hoVgo8n9/nku3ns927nDxoTj7mOAvAIsv9fXbPcBl+7wVqr
-	 YgQ4Mly0n+9nKm2Nko5LR0kWC3UkY7Jm7YeUYdvCmFUYuILaum6FlRSRFZ8hGsi4P8
-	 yNtRZSEm2IDRIoOZCH7RERWtKugKu03QjEMy1RCusq4JqLDSc3q9odLcTiiIaiQ3tV
-	 IyUsEOeCA2Nkw==
-Received: from RS-EX-MBS4.realsil.com.cn ([172.29.17.104])
-	by rtits2.realtek.com.tw (8.15.2/3.28/5.94) with ESMTPS id 64PD7dszE1063728
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 25 May 2026 21:07:40 +0800
-Received: from RS-EX-MBS2.realsil.com.cn (172.29.17.102) by
- RS-EX-MBS4.realsil.com.cn (172.29.17.104) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 25 May 2026 21:07:39 +0800
-Received: from RS-EX-MBS2.realsil.com.cn ([fe80::a797:6c5d:dfd:80aa]) by
- RS-EX-MBS2.realsil.com.cn ([fe80::a797:6c5d:dfd:80aa%9]) with mapi id
- 15.02.2562.017; Mon, 25 May 2026 21:07:39 +0800
-From: =?utf-8?B?5ZGo5a+F?= <zain_zhou@realsil.com.cn>
-To: Frank Li <Frank.li@nxp.com>
-CC: "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
-	"linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"linusw@kernel.org" <linusw@kernel.org>, "brgl@kernel.org" <brgl@kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	=?utf-8?B?546L54Kc?= <wei_wang@realsil.com.cn>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggMS8yXSBkdC1iaW5kaW5nczogaTNjOiBhZGQgYmluZGluZyBmb3IgUmVhbHRlayBSVFM0OTB4IEkzQyBIVUI=?=
-Thread-Topic: [PATCH 1/2] dt-bindings: i3c: add binding for Realtek RTS490x
- I3C HUB
-Thread-Index: AQHc2JrXcMCnLUwHnkiPRbUzP688hrX902GAgCEKCSA=
-Date: Mon, 25 May 2026 13:07:39 +0000
-Message-ID: <871742681d2047c794f0a46c03620dcb@realsil.com.cn>
-References: <20260430121354.6253-1-zain_zhou@realsil.com.cn>
- <afkCvVaPb-NrLs2P@lizhi-Precision-Tower-5810>
-In-Reply-To: <afkCvVaPb-NrLs2P@lizhi-Precision-Tower-5810>
-Accept-Language: en-US, zh-CN
-Content-Language: zh-CN
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbmlAnIs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3A401F000E9;
+	Mon, 25 May 2026 13:16:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779714973;
+	bh=6UIuQRfv+UYVJqZIp+HBt5FvsWW0qcjFFZ8GAxI7t2o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=nbmlAnIs/faHTIuHHvV8JMFp7Y8b+haaZfFACz0NX5xAK6EBWpj29zYMTUO0S+pod
+	 L7hcxEQgwyAv76oCXL93o8572ihIT4ByXDYsuuqGDEZyJXxSIfBz6rQP7mw8J7c9cW
+	 0b0yv2zLCm0gIFsVEvZYoSoNfsRhWWnhonqSC+ZVMqSMr/zXnfro0wND67FWuHCUbC
+	 FOo9ezmMvGjXTPdEL4X+LRvyc2bZ2Rni6zGeZ1H+fhnp89mhH38CWIh6QUrGQD9sUf
+	 R0MGaQ69wMyuDvl8La0qb+e19htvquteiXtB2BqZ2ew9VX4GQEbOraR/SIdJ/mNgpO
+	 0fMrX1r08x5dg==
+Date: Mon, 25 May 2026 13:16:09 +0000
+From: Yixun Lan <dlan@kernel.org>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Han Gao <gaohan@iscas.ac.cn>,
+	Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>,
+	Anand Moon <linux.amoon@gmail.com>,
+	Junhui Liu <junhui.liu@pigmoral.tech>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Han Gao <rabenda.cn@gmail.com>
+Subject: Re: [PATCH] pinctrl: spacemit: fix NULL check in
+ spacemit_pin_set_config
+Message-ID: <20260525131609-GKA3748271@kernel.org>
+References: <20260519164007.122574-1-gaohan@iscas.ac.cn>
+ <20260519232154-GKA3708537@kernel.org>
+ <CAD++jL=gAXc0oRg3RJCuaH0_oDXJ39aShAXtQz0tpt339mFB5Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD++jL=gAXc0oRg3RJCuaH0_oDXJ39aShAXtQz0tpt339mFB5Q@mail.gmail.com>
 
-SGkgRnJhbmssDQoNCiAgVGhhbmtzIGZvciB0aGUgdXBkYXRlIOKAlCBncmVhdCB0byBoZWFyIHRo
-ZSBOWFAgaTNjIGh1YiBmcmFtZXdvcmsgaXMgbmVhcmx5IGRvbmUhDQoNCiAgV2UgcGxhbiB0byBy
-ZWJhc2Ugb24gdGhlIGdlbmVyaWMgZnJhbWV3b3JrIG9uY2UgdGhlIFAzSDJ4NHggc2VyaWVzIGlz
-IG1lcmdlZCwgYW5kIG1vdmUgdGhlIGRyaXZlciBvdXQgb2Ygc3RhZ2luZyBhdCB0aGF0IHBvaW50
-Lg0KDQogIExvb2tpbmcgZm9yd2FyZCB0byBpdCBsYW5kaW5nIHVwc3RyZWFtLg0KDQpCZXN0IFJl
-Z2FyZHPvvIwNClphaW4gWmhvdSDlkajlr4UNClJlYWxzaWwgTWljcm9lbGVjdHJvbmljcyBDTy4g
-TFRELg0KRS1tYWls4pyJIDogemFpbl96aG91QHJlYWxzaWwuY29tLmNuDQo=
+Hi Linus,
+
+On 10:48 Mon 25 May     , Linus Walleij wrote:
+> On Wed, May 20, 2026 at 1:21 AM Yixun Lan <dlan@kernel.org> wrote:
+> 
+> > Can you take this as a fix for v7.1 cycle?
+> 
+> Only if you can provide proof that it is a regression, i.e crashes
+> systems that were working with v7.0.
+> 
+Ok, I'm fine with it applied as noncritical fixes, as the problem exist
+in v7.0 and can't say it's a regression, it shouldn't cause crashes but
+only fail to configure pin when id equal to 0.
+-- 
+Yixun Lan (dlan)
