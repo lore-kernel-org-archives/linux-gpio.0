@@ -1,189 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023098.outbound.protection.outlook.com [52.101.127.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876DE3603D7;
-	Mon, 25 May 2026 10:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779703821; cv=none; b=hrghl4pcrBRDQcALSsUYFS2w3Jy99dEXrsP+2DAFs9fyNvCFvfLk1MkwrvsT6SsqXeYErvBKQ4+KYp3UrI1aH8SiGbcY2RYQM7qiUTaqxC55/24ZMog550MhWpj+Vwj1HXqkIsHS2QAMYRmfuqWIA/s7eqLriOGUPyMUyPz27Nw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779703821; c=relaxed/simple;
-	bh=KdtIfmhq05z9fBW2m0ZIuFdT/M1fVWkqxLAbgZntfrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WEmfIjPjJqD1Z5v8SbvkXXGHgyG2IWtnUf1deD+MuW4cOTcRUiCQ0yrtyH4lTyyyW/c4rlZyN5Q/g/xHLFdjHXukhAR1LbPEfnMinUKkc8QwEVPvrpjmthN4s3uhHtpeNVpDVoTz148iMF79ueP+PN2PH608IVls0OtO+qg1o4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d1n1s8yb; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44094343D91;
+	Mon, 25 May 2026 11:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.98
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779707790; cv=fail; b=mIBQc3vu7eA8HBrS6QLhJtm22Vdhp8r7HuUWw/qYg+eR05oNS/w8D3greiS7XO27YOd261eHZ4MSO+rl0MDp8MAYaQIBme2pTpr6+NPU5N/uNSWGaQypMibeh+lmcZjAeYGFJgF06z5hYJjd+HxToxvGxqEnXxc4d9SmC/VOB70=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779707790; c=relaxed/simple;
+	bh=AVXxnMfW1UAimGiDkywQx4V/HSlKfA3dFjKLYH6bOb8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UbSUxAeA5nD9EWNqdunHyGp0TDvbkKdoCv6QSXMNE7dXg40oCEOq6YM+UzSooViYkQW3/xh05OER5JCTUGUWjDW5twhfvzeDDPgn35vSNoen2ReAxNw3DZ+sma7zrIV7ZJYit5JL/WpogXk0Ubm07jvLdXrkz3HTvgPGJ+JlXH0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=yA63Ic6a; arc=fail smtp.client-ip=52.101.127.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d1n1s8yb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1547B1F000E9;
-	Mon, 25 May 2026 10:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779703819;
-	bh=xepSjUPRIqLRRJ/OWlpwXBGT3LoLJe7x1ZHwasvLII8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=d1n1s8ybHiFmpE/jDM9SMgg/VBdiJyOVb7mFUtWuXU2JpOYXzDsKxTgMsGx7yhZEt
-	 ASVlrZirZ25NJ7EHV2xowvHE/0QZFZjHgi29otVHBraLzGy2KddQWmrgg2ai57Eccz
-	 eI2LqNliXg/xYvHzVlSrPgrShAPQc/x6CeKc7zMzZqcw3q+dyRrUfXG+LitbGYhE5c
-	 PGlm79UPAF3bAWKpvLhFWzhuhZCeLBcnrkEWi4OlUjWSVb3kBmlZzYbj4kxUdDeGD/
-	 y6KiUFyhEqbJmk7D4mvJ5it69E/sfnbXDDmSyg9WCd9aK8ygRs2RMzscg6Sxq+39vO
-	 AE4TDsOMrioZQ==
-Date: Mon, 25 May 2026 11:10:13 +0100
-From: Conor Dooley <conor@kernel.org>
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="yA63Ic6a"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=m1wPMonr74smnEQZuu8OU/Bay8QZwUmOOzDhL7cNqjvU+pgL1CM4tJ3heXDywHYtwAwHH2jE0xZNt9FY64SwAnCn6Ig9C9SMt2Lbonjx1vcPuqbJeV/U07sGZie4gPczSLrZrcALCpPphZoSd/6g6/ygSiz47CwwA/n9aJhFUHVYWsspRpjDeHSryTTXM/JOFAEU2WWHJ+QXVDX6Requ4Y1gcRCTMc/8mYrObd46w6ylKkD6f7kwaObnomR7UbLYf2gzFGKc5L+Ubsdt2ybDzQj/GYKE39CpFRsI5pRdit1v4+0sqKpjahU9FrkzzBVBE4I8TE/1xhp4G+bcTf+ZVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WBTeDLxSfPCU7MCkI9n5aRDqk0p8Y8vXwxFwJy7nE54=;
+ b=KGCMKQgyM8ZcEC9EP823y93PpZKPObdoN/3+CZAk/MhdVjbMalEuGrn/5mg1ukSydk+k8kTDMoSFZL1UNrS0LYn8+Q3Wvxzy7tRORrycmBUoSLn3z9VZrbsbUpFGwha0bFdL8XPHyQaBGFQS0HGKE8XA2mkZvZa5tDLxSTbXtdhvxa6w/Xg2Bc/9jNVqfKPl8hwC3bWzXSwKMAw7Q1i1KhuDvyVx2gO/Iths7RHMwTAsszmD1ZL1yWMIojFAE1QXLyrz4x1upLjsOu5PyS8l2/u/XV+TcMjrFK2fzgL36HC1JvN1Xe4NejA3CVXWFxqMDTxszWlnQeiWzmKbohupYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WBTeDLxSfPCU7MCkI9n5aRDqk0p8Y8vXwxFwJy7nE54=;
+ b=yA63Ic6a17H6wTcpBVMdOiBcgGc37XcDa2dLWo7BkirDiPwrIA+tAnlwvGzZkyOgUk31u3vrQy4QGsTgOz+tAwd7ij48woch4kt4YKkdnPJV3rUvrscuLQj1ST3Mts3WSYIdHahUI5EFRwLq/Z/TTH8Vjm+xN4I1WfIRO/gbmcrmjBN+58JghdT/2yfzrJPvVKuu4zOaHOe7tPfSmZ8Q/tBPbyXqDIsJwchGyncG+JD75LlLApdnSvP3GPFus+IhED66kT2AXj6zHTTFmDQObOhvbnrBTqes6uh/PEF7VW0I0FFA1t8jHlH4Mk+Q6WmLHHLiBKJakE1Fl2LioMJAsQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
+ by TY0PR03MB6582.apcprd03.prod.outlook.com (2603:1096:400:21a::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.10; Mon, 25 May
+ 2026 11:16:24 +0000
+Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::78d4:9dee:2e32:d1e4]) by TYZPR03MB6896.apcprd03.prod.outlook.com
+ ([fe80::78d4:9dee:2e32:d1e4%3]) with mapi id 15.21.0071.010; Mon, 25 May 2026
+ 11:16:24 +0000
+Message-ID: <0ea637d9-6d79-4c8f-8c45-68cfdd84c262@amlogic.com>
+Date: Mon, 25 May 2026 19:16:20 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: meson: amlogic-a4: fix gpio output glitch
+Content-Language: en-US
 To: Linus Walleij <linusw@kernel.org>
-Cc: wangjia@ultrarisc.com, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@sifive.com>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 6/9] pinctrl: ultrarisc: Add UltraRISC DP1000 pinctrl
- driver
-Message-ID: <20260525-turbojet-theorize-3a7b49f41af0@spud>
-References: <20260515-ultrarisc-pinctrl-v1-0-bf559589ea8a@ultrarisc.com>
- <20260515-ultrarisc-pinctrl-v1-6-bf559589ea8a@ultrarisc.com>
- <CAD++jLn=RX2rZ33kD427wR1KBo=YPzCqFaaSot22nJL4Emn_=A@mail.gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20260518-fix-set-value-glitch-v1-1-d350732dc934@amlogic.com>
+ <CAD++jLkmm4BbOMZCbJD4H4xfa8nHfExczbXCyF7SapHzQwRZFg@mail.gmail.com>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+In-Reply-To: <CAD++jLkmm4BbOMZCbJD4H4xfa8nHfExczbXCyF7SapHzQwRZFg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TPYP295CA0037.TWNP295.PROD.OUTLOOK.COM
+ (2603:1096:7d0:7::16) To TYZPR03MB6896.apcprd03.prod.outlook.com
+ (2603:1096:400:289::14)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="H2L51F3zrIwPda2w"
-Content-Disposition: inline
-In-Reply-To: <CAD++jLn=RX2rZ33kD427wR1KBo=YPzCqFaaSot22nJL4Emn_=A@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|TY0PR03MB6582:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44827a75-a906-463f-89c1-08deba4f0ec4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|366016|6133799003|4143699003|3023799007|11063799006|22082099003|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	bWq+Pn0dJ639r/lktb9Qp6rjoJQkbmcWvdEZDWRnyatQm7EI9TwsArzHlfCLtb0F1l2FKk+tw21vjA/2gGNO/6pYq32RW6EFxzi1Ztb8txs3XYjKfTb2TsJUKr1Ci0Dsnp7bI60t3y6wjsjyI+gfS9OO2r8ZZzcSd0TEjkNnpdgGo0Z7+AmixX7AN9qpTzetjIGx/PPCL7suajaUjZRXTq9Pf7+YF9+ef6NsrgkYgw8ouRfWwTH//n2dkzsuJAJVy5VUbHx/F5JzxLiSy3G251y16HMcw+ansa6m78sy1lXYH8wrZYidM4KS+L2NG5s3T2cBDjGfsZEW63y8VYzD3ihd0XVTWYISfMjdyAmWUs+6abF1dfzjL2TRzHU/hpIwat+0q/DevVOJuEf2BBCGbPZ4mVP97JZebfpdk8QgybvKjHj470694tjZe5MKzDF+Ek1FFUrhAyUO+f4Inu42qwe5dvUXSyKVKf4DHGXfIKzmtKsJUgdNtTOt2nHltBElFDW4Uex0mZ4c+rwrkEgsU1fDmbHi3Jwr0IRmbPk5qQDyH/tuT85lPSIAzcJnZpvzpy/MKS4oMUWROy5dOZDXDxn7vKAf3lBTOm0TN6UHRqpF82XSWXHJJgvjckPtio5LJcUIorL4DTT76zaA+cI8vaYQrCj5tWCTBkBS62pVfAfWxxYNFDl17R3grejmez6/
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(6133799003)(4143699003)(3023799007)(11063799006)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Y0w1dExOZjVsMzR2U3dsWjBvdm5keWo0K1l6cm9VWHc2bkNzUWlUOHRBVC9Q?=
+ =?utf-8?B?Q09OK04waGIwM1dwMWZnYVFWdnNUS1JuckYwVVJhaDlwS0R6ck1qeXZXWWhL?=
+ =?utf-8?B?UG9nbVJRTUR4YnlHSk80eGFIdnNBdmNiL3BiMWNXNHFDbEd3YWZWVzk5V2Nn?=
+ =?utf-8?B?VDBidmR5S0VOVmhybXRscHpKVDBwekZEeUk1Smx5QkNOVmI0SW96QUZLekhY?=
+ =?utf-8?B?RWx3UG14SzhPU3NiUHBiQmRTeHU5VmFTQVl0Zm9XejlTbkZzUkpSK3B3eXVC?=
+ =?utf-8?B?MTN2TDdKYmRUQTM5dERHcGhQTkFxL2NQQnBqUkRQbEFmcnhxem9VdWRGcTlX?=
+ =?utf-8?B?YTR4cVg0bXAzZzNETm1yUUpheUdOZlJ2cW10Qk12V0VPWGowVzRqcVhWaWJC?=
+ =?utf-8?B?NG5vWlBmU1hnalRDbUtyR3YzSnJUL1Z3TlJxVWtScUsrcU1DcEVyS0t4c3h4?=
+ =?utf-8?B?UHpWQUJweDJuL3FNWWxjYXpiWXp2aU1VWUZsZjhVRzZraHczUlJubUFXNUdx?=
+ =?utf-8?B?WlhpWGJ4T050cERQdzdOV0I5K09vRTdvK09vQUE3S0I3N05zS0FHWEdLQ0lZ?=
+ =?utf-8?B?VlY0eFpOTXdMWUpkd1oxZ3NmSzNXQ0RXL0lid1N0YWlxSmdzMHorU3ViVEVM?=
+ =?utf-8?B?UGdCT1NBVmJGbkx0V3BrcUQ5TGlvMjVLVEFyY2w3ODhzcVVHa2Q2Y1lCM3ZZ?=
+ =?utf-8?B?NVRKcmpvS1lNd2Y4eFI0TXVkRHVtemhTRjZmQjY3MWdFSmFmUnY4aWYvQmxk?=
+ =?utf-8?B?eFFQV1RmTVdpWlNWeUpMM2UrWDVwUGpJZWxSN3gxdnMzVmpGZFZ1bjEvWThV?=
+ =?utf-8?B?U1QxRUp6MG1sZ05FTTVoWkIxSXNEZitzWk5ZZFU2TDVZVWlnLzhzREZ5bnp1?=
+ =?utf-8?B?MnpIcThWcXNSbHV0NGo5NDVGekVBSzVlM3ZEbDJWSmcwWkcrNEc0ZnZqeC9h?=
+ =?utf-8?B?dXJsTkYwRkMzZHY3MFc0d3JYdWtHbUg5TzFMWGdUYWkyM1cwYnpKbjR3S2Fz?=
+ =?utf-8?B?SmxndURVOWhubmhCZStVZFBudUlzQ1l1c0x6WkM3ZmpDWm1VZlBNQkovYk5r?=
+ =?utf-8?B?ajU4bVFWdjZJb1NtU0JvaXlYZElXb3A3TTF5VGppUU9FanpiYnkwU0czam9y?=
+ =?utf-8?B?UU5vR2ppTzNHaGNjQmdLenFnaytwWExXUXJsUnlOZDhSMXlyNTBrUmkwanBa?=
+ =?utf-8?B?RWF3K09ma2xjTUIySDBjbWVNZHpUd29mQS9XdGx3TU0yTEQzN01xT3dNRUpt?=
+ =?utf-8?B?ZjNVTHAzYlBRWGpZbU1wYk5ERytpTGY2dmg0MmVHZGcwYncrcDMwSkhoV0Uz?=
+ =?utf-8?B?UmFYTXpmbnc0bitEKzRwZTZRWEV3OGNWZ1o4aGJMRUFqNXpGTXpic3lRaFNv?=
+ =?utf-8?B?UTNubllWdkp1cU85Sk5lYkJ3UlhHOUNsWHlHZVFIQ2VuYVJvYUFkWUkrSW1E?=
+ =?utf-8?B?NHhoT3VUSmM0OWJMUU9hMGlxN2tlbnFqdHJKMG9YOEU5MWJRaENmQjBlUnRD?=
+ =?utf-8?B?L1o4RzJ6UTU3TktqS2swekNYODFXL3lnbC9WTERaWldIVFZkQnZuUUtkajZj?=
+ =?utf-8?B?VkRZb0tSWFErdVlhQlFtM29Lbm1UL1FscnFCakFBYUIwTm13WDEzY0wzK1dn?=
+ =?utf-8?B?WnU2TlBwejdYTkJobjJSVWFaaEZ3UUw5YVF6Z2F5cUU3a1B5R3BDL0Nhd2FJ?=
+ =?utf-8?B?cm0wSzdhWkVkQ05JbzRJbU9lc1p6Zmd1YlQzMG4rYU90TVZvNGNKNUpoaGNv?=
+ =?utf-8?B?RjRoYjRlTEMzdWpUVVdLSEpTMkR0VWdUNFd1c1UzS3h1VmFaUE4vRUxHQzFa?=
+ =?utf-8?B?Yk1URk11RkY2MDdJVjBrSmZrMW85ZkNkbUJ0R1ZJeDJaRUEvT3ZJdUtGbFpp?=
+ =?utf-8?B?bDRLbHlueEpoYTVpM1ByU1ZJcFVieGxsd0Y2Z09qTzFtWGRRV2dteG5rZEM1?=
+ =?utf-8?B?eUFrYzk4amxxVWxQTDhJaXUyZ1M5T09RTkNJa1BadUNpT2UvSG5TMkFZalNZ?=
+ =?utf-8?B?WkpJT3pFY2xHeW5yZ0pPN1hMdzA0SU8yQk1TYklydDNjWkZQZUU1KzBtNlV5?=
+ =?utf-8?B?OHgzWXFzYzJCaGpHSG13SVZZcnNVQnRJeUJnOXk1K1Q2UGZ2azVhN0xWZXk4?=
+ =?utf-8?B?Q2lNK25DejlqSzhudnhTR2dUUFdBRHhnTVRVVFdleVU4YTZOc0dFWFc1MW92?=
+ =?utf-8?B?Zk5jQVhuajNLSTNsdXJmZXVIN3pFVHp2U09vYjdPQS9Xb0tPZEJWL1ZlWlBP?=
+ =?utf-8?B?cUc1TW1QRWthMFRFdis0SVpvNjZjVmd2VWEvOU5NUloxU1JYYmkzRmtBNk1H?=
+ =?utf-8?B?M0J5ZktxOWErTk5RdWNxZlNCZW9tTTl1NVUzNnRwUzNOYzVlU3RtZz09?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44827a75-a906-463f-89c1-08deba4f0ec4
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2026 11:16:24.7627
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: E4eX2YHO4nnH5KjKdLwSXu3Tt1K5SFzWeQsQbIDXaChXYjxYl6Z5QWyQI5CJCVeh0QGsExCYx775Zkexn/U6vzu6ByNG+8jcBemvMa0b/rg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR03MB6582
 
+Hi Linus,
+    Thanks for your review.
 
---H2L51F3zrIwPda2w
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2026/5/25 16:34, Linus Walleij wrote:
+> On Mon, May 18, 2026 at 10:26 AM Xianwei Zhao via B4 Relay
+> <devnull+xianwei.zhao.amlogic.com@kernel.org>  wrote:
+> 
+>> From: Xianwei Zhao<xianwei.zhao@amlogic.com>
+>>
+>> When the system transitions from bootloader to kernel, the GPIO is
+>> expected to keep driving high.
+>>
+>> However, the Linux kernel first configures the pin direction and then
+>> sets the output value. This may cause a brief low-level glitch on the
+>> GPIO line, which can be problematic for regulator control.
+>>
+>> By configuring the output value before switching the pin direction to
+>> output, the glitch can be avoided.
+>>
+>> This commit fixes the issue by swapping the configuration order.
+>>
+>> Fixes: 6e9be3abb78c ("pinctrl: Add driver support for Amlogic SoCs")
+>> Signed-off-by: Xianwei Zhao<xianwei.zhao@amlogic.com>
+> Is this a regression? I.e. does it cause problems on a supported
+> system with mainline?
+> 
+> Linus (the big penguin) is unhappy with too many non-critical fixes
+> so I wanna check this before this goes into fixes.
+> 
 
-On Mon, May 25, 2026 at 11:28:51AM +0200, Linus Walleij wrote:
-> On Fri, May 15, 2026 at 3:18=E2=80=AFAM Jia Wang via B4 Relay
-> <devnull+wangjia.ultrarisc.com@kernel.org> wrote:
+The issue only occurs when the critical power supply uses GPIO control. 
+Otherwise, it is not significant.
 
-> > +static int ur_legacy_parse_prop(struct pinctrl_dev *pctldev,
-> > +                               struct device_node *np,
-> > +                               const char *propname,
-> > +                               struct ur_legacy_prop_data *prop)
-> > +static const char *ur_legacy_get_function_name(const struct ur_pinctrl=
-_match_data *match_data,
-> > +                                              u32 mode)
-> > +static int ur_legacy_conf_to_configs(struct pinctrl_dev *pctldev, u32 =
-conf,
-> > +                                    unsigned long **configs,
-> > +                                    unsigned int *num_configs)
-> > +static int ur_legacy_add_pinconf_maps(struct pinctrl_dev *pctldev,
-> > +                                     struct pinctrl_map **map,
-> > +                                     unsigned int *reserved_maps,
-> > +                                     unsigned int *num_maps,
-> > +                                     const struct ur_legacy_prop_data =
-*prop)
-> > +static int ur_legacy_dt_node_to_map(struct pinctrl_dev *pctldev,
-> > +                                   struct device_node *np,
-> > +                                   struct pinctrl_map **map,
-> > +                                   unsigned int *num_maps)
->=20
-> What's up with all this legacy stuff?
->=20
-> What is this a legacy of?
->=20
-> I thought this was a *new* driver so how can it be "legacy"?
-
-Jia already agreed to drop this stuff :)
-
->=20
-> > +static int ur_generic_dt_node_to_map(struct pinctrl_dev *pctldev,
-> > +                                    struct device_node *np_config,
-> > +                                    struct pinctrl_map **map,
-> > +                                    unsigned int *num_maps)
-> > +{
-> > +       return pinconf_generic_dt_node_to_map(pctldev, np_config, map, =
-num_maps,
-> > +                                             PIN_MAP_TYPE_INVALID);
-> > +}
->=20
-> Hm I think Conor has new helpers for this so you don't need to wrap
-> it like this.
-
-Yeah, although "more importantly" the new helpers mean that drivers
-shouldn't need to do things like calling these home-rolled functions in
-probe, just so that they can try to use pinconf_generic_dt_node_to_map():
-| static int ur_add_pin_groups(struct ur_pinctrl *pctldata)
-| {
-| 	for (u32 i =3D 0; i < pctldata->match_data->npins; i++) {
-| 		int ret;
-|=20
-| 		pctldata->group_names[i] =3D pctldata->match_data->pins[i].name;
-| 		pctldata->group_pins[i] =3D pctldata->match_data->pins[i].number;
-|=20
-| 		ret =3D pinctrl_generic_add_group(pctldata->pctl_dev, pctldata->group_n=
-ames[i],
-| 						&pctldata->group_pins[i], 1, NULL);
-| 		if (ret < 0)
-| 			return dev_err_probe(pctldata->dev, ret,
-| 					     "failed to add pin group %s\n",
-| 					     pctldata->group_names[i]);
-| 	}
-|=20
-| 	return 0;
-| }
-|=20
-| static int ur_add_functions(struct ur_pinctrl *pctldata)
-| {
-| 	for (u32 i =3D 0; i < pctldata->match_data->num_functions; i++) {
-| 		const struct ur_function_desc *desc =3D &pctldata->match_data->function=
-s[i];
-| 		struct pinfunction func =3D desc->gpio ?
-| 			PINCTRL_GPIO_PINFUNCTION(desc->name, pctldata->group_names,
-| 						 pctldata->match_data->npins) :
-| 			PINCTRL_PINFUNCTION(desc->name, pctldata->group_names,
-| 					    pctldata->match_data->npins);
-| 		int ret;
-|=20
-| 		ret =3D pinmux_generic_add_pinfunction(pctldata->pctl_dev, &func, (void=
- *)desc);
-| 		if (ret < 0)
-| 			return dev_err_probe(pctldata->dev, ret,
-| 					     "failed to add function %s\n",
-| 					     desc->name);
-| 	}
-|=20
-| 	return 0;
-| }
-(If I had more time, I would probably go looking to see if there are
-more candidates for conversion)
-
-Jia, the helper in question is pinctrl_generic_pins_functions_dt_node_to_ma=
-p().
-
-Cheers,
-Conor.
-
-Also worth pointing out that this driver has match data but only one
-supported device:
-+static const struct of_device_id ur_pinctrl_of_match[] =3D {
-+	{ .compatible =3D "ultrarisc,dp1000-pinctrl", .data =3D &ur_dp1000_match_=
-data, },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ur_pinctrl_of_match);
-
-
---H2L51F3zrIwPda2w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCahQgBQAKCRB4tDGHoIJi
-0s10AP9DTgDQcti5DfRcBrsfVAhmbyZJcFpxIALZVJmWqj3/+QEA3os5UcG4ag4v
-A3KeBR7PJTVp79ebj+O8iH6oCK3i2wE=
-=UpOj
------END PGP SIGNATURE-----
-
---H2L51F3zrIwPda2w--
+> Yours,
+> Linus Walleij
