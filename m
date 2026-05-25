@@ -1,121 +1,104 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980203F65EB;
-	Mon, 25 May 2026 16:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DCC379EF2;
+	Mon, 25 May 2026 18:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779727370; cv=none; b=RH3MSOMCoXwDx79uB6Fy9SBLTiAbpE8lAsui5ewCI+8AJKi0c1Vs/zTIlSN8b7VJN6oyFy4eFahh9bm/9zZ/zujgxCWlW3uiXBB7NNVDaRl78LQnNKfLOdulpHsdPrOWyPde6fkf+r/5MdiriQxcFUga4vwcD9ETze5Mbb1V36Q=
+	t=1779734717; cv=none; b=uC2LJzmElGThkjKSWPU61k6ZO6J1EPA4yefTI1UJwxhMFWJqdtoh8dt3rYyI6Dh1REQWnxLXUhVrD5ggVpEGi1Q5hfHAWD8POBxEUU2xNbAGUR8p4bVG/fpjYkMxJleYzrdx9MjxxrerHb0yrtogvXLAlOgX+kASXPqcwP72DrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779727370; c=relaxed/simple;
-	bh=2OF8js3j011GkbvGK5yHUNv8z+itCdsM0bZhVVbT3Gs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=paE075nEThYHzb0qG0jOgorE3/oUMaN2OAsOUblJtZyRsXfmtCKW2d4bMApJwB4Fymrz0/LLgLnOXWqZlT61WMbtyr6KeAcCGlHR1YjSATjjeIuMSCcREeU+VcGQYGrRBv1htNwo9leQgGjWeaSytrOmRxQxgUe3JJSu0P2jQ5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=jyx8dljb; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1779734717; c=relaxed/simple;
+	bh=03Un+L4U/WbKGCEwwjeTdw4zVgtXpZk1M28Ig4TLEr8=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=V5t0D+HAFSY/OzCnmzHLAlSzxPvF4NaCtsHAGXXol2E3M4SbBqC3h/c9QvStYNOZYN0Sive4fRsvdFH3YiwED5S2SsdLKnLCsKxYm7o5wX3EPVydzpCEY7hcr2t2JqK9SELqGN+t2fCMFhumZ/14FkCJYJxVkSGCda4BW8b0ySY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgybNK8e; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="jyx8dljb"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 56D8D271DC;
-	Mon, 25 May 2026 18:42:46 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id ZOP0gYfiY2U5; Mon, 25 May 2026 18:42:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1779727365; bh=2OF8js3j011GkbvGK5yHUNv8z+itCdsM0bZhVVbT3Gs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=jyx8dljb0o9X2Zu8q11qd/9fDwiFed/WZj5YPpRnlTa5LWwS92gCuM8dPAVnNa2qs
-	 W2I/M6J7OoYAidzZAURRqswTyyYX9lHiyZdA9k7vQpZF4fd+HgOoIdDANwQwtV6aH5
-	 AN3ZganVnzUAZl/EZ+zvlcrYqjSQTTKiRkpd4viPHE3ZQNw1Nj4CLeBJwcXyICboG5
-	 QVVEyRi5cEg8EYV/F121Y2bahwrO9Glgyr9hJ+GWSLEdDbf3tzWbl+a2n9TvG4DBhG
-	 vTDdjMI8UlDY6FuvpaqU0/zBxEJLYBa1SsLwd86C7FLKOPzIWu62QInGQd1pxpQBgT
-	 rpNAZrzE/Nuxg==
-From: "Marco Scardovi (scardracs)" <scardracs@disroot.org>
-To: linusw@kernel.org,
-	brgl@kernel.org,
-	heiko@sntech.de
-Cc: linux-gpio@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	"Marco Scardovi (scardracs)" <scardracs@disroot.org>
-Subject: [PATCH 1/2] gpio: rockchip: convert bank->clk to devm_clk_get_enabled()
-Date: Mon, 25 May 2026 18:39:38 +0200
-Message-ID: <20260525164230.43307-2-scardracs@disroot.org>
-In-Reply-To: <20260525164230.43307-1-scardracs@disroot.org>
-References: <20260525164230.43307-1-scardracs@disroot.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgybNK8e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E281F000E9;
+	Mon, 25 May 2026 18:45:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779734715;
+	bh=64e79zTo0Q/3LTOxcKMi6PmSR/wzB/guSZphOxF/gzg=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject;
+	b=MgybNK8e0qDHzldZoTzHC4seiisEWAeA9YkqVlO80OC3g5EwZK2bBSsVmE3ZKoFdz
+	 UNygU6b5ZqVG/6WJkRDh9Mse/ZjObjuaWU/45K+K8DCy5maEZyOGGgX9hpA+f1rx06
+	 arEWKWJQ/hKGPpprOvUZMK5NIJmNvTKPWmzdCCFOFCBfarBJz91XRVTPqy/ysv/S5r
+	 TRB0wfVzXVW6izyDUKvqUiKPgsJo+jN/yHIuVm3aGMGp9Tir+moBdS7N9lkX0rNGVX
+	 wpONYLWinFang3PCQk20mbS9aN+zOpjObtCM8Yl2bjtY7itoLzBUFeFogtvBhTQBq5
+	 jvVGgwfFosk7Q==
+Date: Mon, 25 May 2026 13:45:14 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: krzk+dt@kernel.org, linux-staging@lists.linux.dev, 
+ gregkh@linuxfoundation.org, devicetree@vger.kernel.org, 
+ alexandre.belloni@bootlin.com, Frank.Li@nxp.com, conor+dt@kernel.org, 
+ linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ brgl@kernel.org, linux-gpio@vger.kernel.org, linusw@kernel.org, 
+ wei_wang@realsil.com.cn
+To: zain_zhou@realsil.com.cn
+In-Reply-To: <20260525125128.297-1-zain_zhou@realsil.com.cn>
+References: <20260525125128.297-1-zain_zhou@realsil.com.cn>
+Message-Id: <177973471463.4085017.2026764711842557373.robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: i3c: add Realtek RTS490x I3C HUB
 
-The bank->clk was previously obtained via of_clk_get() and manually
-prepared/enabled. However, it was missing a corresponding clk_put() in
-both the error paths and the remove function, leading to a reference leak.
 
-Convert the allocation to devm_clk_get_enabled(), which also properly
-propagates failures from clk_prepare_enable() that were previously ignored.
+On Mon, 25 May 2026 20:51:27 +0800, zain_zhou@realsil.com.cn wrote:
+> From: Yin Zhou <zain_zhou@realsil.com.cn>
+> 
+> Add DT binding schema for Realtek RTS490x series I3C HUB devices.
+> 
+> The binding describes configuration properties for:
+>   - LDO enable/disable and voltage level per port group
+>   - Pull-up resistance per port group
+>   - IO driver strength per port
+>   - Per target-port mode (I3C/SMBus/GPIO/disabled), pull-up,
+>     IO mode, SMBus clock frequency and polling interval
+>   - Hub network always-I3C mode
+>   - Hardware identification via CSEL pin (id) and CP1 pins (id-cp1)
+> 
+> Signed-off-by: Yin Zhou <zain_zhou@realsil.com.cn>
+> 
+> Changes in v2:
+> - Rework binding per Krzysztof Kozlowski's review:
+>   add realtek, vendor prefix to all custom properties; use boolean
+>   for enable flags; use u32 with unit suffixes (-microvolt, -ohms)
+>   for voltage/resistance; change to unevaluatedProperties: false;
+>   fix title, maintainer name, description, $nodename pattern
+> - Consolidate examples; add dt-bindings/i2c/i2c.h include
+> ---
+>  .../bindings/i3c/realtek,rts490x-i3c-hub.yaml | 263 ++++++++++++++++++
+>  1 file changed, 263 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i3c/realtek,rts490x-i3c-hub.yaml
+> 
 
-The GPIO bank device uses the same OF node as the previous of_clk_get()
-call, so devm_clk_get_enabled(dev, NULL) correctly resolves the same
-clock provider entry.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-This change fixes the reference leak and simplifies the code by removing
-the manual clk_disable_unprepare() calls in the probe error paths and
-in the remove function.
+yamllint warnings/errors:
 
-Assisted-by: Antigravity:gemini-3.5-flash
-Signed-off-by: Marco Scardovi <scardracs@disroot.org>
----
- drivers/gpio/gpio-rockchip.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/i3c/realtek,rts490x-i3c-hub.example.dtb: /example-0/i3c-master@d040000/hub@70,4ba00000000/target-port@1/i2c@10: failed to match any schema with compatible: ['i2c-slave-mqueue']
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 44d7ebd12724..33580093a4e7 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -656,11 +656,10 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
- 	if (!bank->irq)
- 		return -EINVAL;
- 
--	bank->clk = of_clk_get(bank->of_node, 0);
-+	bank->clk = devm_clk_get_enabled(bank->dev, NULL);
- 	if (IS_ERR(bank->clk))
- 		return PTR_ERR(bank->clk);
- 
--	clk_prepare_enable(bank->clk);
- 	id = readl(bank->reg_base + gpio_regs_v2.version_id);
- 
- 	switch (id) {
-@@ -672,7 +671,6 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
- 		bank->db_clk = of_clk_get(bank->of_node, 1);
- 		if (IS_ERR(bank->db_clk)) {
- 			dev_err(bank->dev, "cannot find debounce clk\n");
--			clk_disable_unprepare(bank->clk);
- 			return -EINVAL;
- 		}
- 		break;
-@@ -751,7 +749,6 @@ static int rockchip_gpio_probe(struct platform_device *pdev)
- 
- 	ret = rockchip_gpiolib_register(bank);
- 	if (ret) {
--		clk_disable_unprepare(bank->clk);
- 		mutex_unlock(&bank->deferred_lock);
- 		return ret;
- 	}
-@@ -792,7 +789,6 @@ static void rockchip_gpio_remove(struct platform_device *pdev)
- {
- 	struct rockchip_pin_bank *bank = platform_get_drvdata(pdev);
- 
--	clk_disable_unprepare(bank->clk);
- 	gpiochip_remove(&bank->gpio_chip);
- }
- 
--- 
-2.54.0
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.kernel.org/project/devicetree/patch/20260525125128.297-1-zain_zhou@realsil.com.cn
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
