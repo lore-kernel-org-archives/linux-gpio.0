@@ -1,96 +1,109 @@
-Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7216C28AB0B;
-	Tue, 26 May 2026 06:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
+Received: from ultrarisc.com (unknown [218.76.62.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CE13A75AC;
+	Tue, 26 May 2026 07:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.76.62.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779777317; cv=none; b=c+UaeDZm+899m+IdIxe/NZcCeVNr7hRYvdTC6+s+F1prL5AGsnIzyqAYNSQtditDM0Ild5wi/wWO+sg14ub6Yp6o3DRAZ0sOjCTaIZfRRtyRim4j28KzsxnHetUntRDrCLB+MdfcnB2BY/O9mva6zNCkXRiQZ0Iq8I0M4BdJyNg=
+	t=1779779549; cv=none; b=KTkGaGtFB73Q2dPe9HUyigRM7EBtPa+AQT8VfZeVj1Flkvi/V4IZG5JLlIodyTUwPMp/vsO17gmxzy+6K7ia/QnCEcOpoR63jFql9lRJWEwBFyOCC5k9FKMffENIGciTz7QMXnAG+Xa4Cy0AiygptmMgpjyAToVrxbHohiRGZoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779777317; c=relaxed/simple;
-	bh=CaLvchRh+cAb75odnSAuhIj7RvFwy9J548OwtsuKPKQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qGXyIYLaDSCgE+SUa3FUqPlRhcqJOqiQ9Sp0mWDN3+CeYyI/EoxvSxeMLGuSnSJifj2Ol12lgHgQiQscMoUwhv3py2ASW86H9nC9VfcMeLekMhniacByJbzuFVXJnAdiVEHG+mbl2SEqIzsD86ObH44hAk7TNGRYvSsPavXczlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=dZbanJMn; arc=none smtp.client-ip=188.40.3.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1779779549; c=relaxed/simple;
+	bh=Kxhh7KR6iwJWM3QD/Mg3E6gH0ENEw3j5HM3LIkiOX8M=;
+	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
+	 References:Date:Message-Id; b=U4muMWHPYZDaucfP7IFMXu9HZ5hYH8HriB/wtO5lP944uj5/jZceLouctwhfLhdSrODCReQRWVK94i+BH6DXcd2lSg/pa1lm6abLWNAlcIPP4DijdIoa6++4DawJpJCQC6vseZYFFrfbQ47PUs0Rc1Tqwvn6tisWbojcpsLs8Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com; spf=pass smtp.mailfrom=ultrarisc.com; dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b=ExW3m2pT; arc=none smtp.client-ip=218.76.62.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ultrarisc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ultrarisc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="dZbanJMn"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=iMAQ2Ix3QgyDqVbt9aR2ni6uTgGtueQYhU6I2JuwKhA=; b=dZbanJMn1AcH2bnvtD/EO4+2Yv
-	uewuVCipuGcTTpSKtXl8cXg0QhR3A5gvsXk7kqwpDUYTrXOoaZAVp0+EcabfYs9+TWZYgUVJ16Y1E
-	FcGrS6+tY6kBF2WvuW3ymbLHQCoDQqmENmY6//r8TO/vkCdxvqCWhAEhbPjf3xwVNdU0RbU5FVZI/
-	w7AuUOy81AlkXcrRmki3MELqJ8jWzbLa17jqdDG7tgwcgB+1CldM8FejAi473MWOw7yHWyOivp1Jx
-	dSO6ENU3MfJmkHkqS55bb0grWB7CQRqYJecum/7QNgV3+ji5t+P/HIPf3qgxrBnz2qhe4R3oKtBVK
-	bwHUMlLg==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <alexander.stein@ew.tq-group.com>)
-	id 1wRlNa-000Dvm-2J;
-	Tue, 26 May 2026 08:35:06 +0200
-Received: from localhost ([127.0.0.1])
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <alexander.stein@ew.tq-group.com>)
-	id 1wRlNZ-000M6u-1f;
-	Tue, 26 May 2026 08:35:06 +0200
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-gpio@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] gpio: mxc: fix irq_high handling
-Date: Tue, 26 May 2026 08:35:01 +0200
-Message-ID: <20260526063504.25916-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (1024-bit key) header.d=ultrarisc.com header.i=@ultrarisc.com header.b="ExW3m2pT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=ultrarisc.com; s=dkim; h=Received:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Subject:From:To:Cc:In-Reply-To:
+	References:Date:Message-Id; bh=xdLV9XCgYqsM5OHnHy0sw5i8Vew1uihlr
+	uMczZDwmYg=; b=ExW3m2pTqQLrnnqiAOLQ7nd6qeE6M0/6cZS8n2SwH18A73SCx
+	xV0UUjkrV4+HKQ/R50qrxcs8t/Z3kerAs9VWGT4S0JJ1KMNt76pZgynWVG2Ou8Lr
+	FvLVNXW/3owW5zRIOfARplQUdiYb5crOWkGHaRusrQnoovFBVegW3hgIGg=
+Received: from [127.0.0.1] (unknown [192.168.100.1])
+	by localhost.localdomain (Coremail) with SMTP id AQAAfwAnEkPrRxVq0gMGAA--.7913S2;
+	Tue, 26 May 2026 15:12:43 +0800 (CST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: Clear (ClamAV 1.4.3/28011/Mon May 25 08:24:46 2026)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/9] dt-bindings: vendor-prefixes: add Rongda
+From: Jia Wang <wangjia@ultrarisc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: wangjia@ultrarisc.com, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@sifive.com>, Conor Dooley <conor@kernel.org>, 
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+In-Reply-To: <51dfcffa-1f8f-4a51-afc4-2999748421a7@kernel.org>
+References: <20260515-ultrarisc-pinctrl-v1-0-bf559589ea8a@ultrarisc.com>
+ <20260515-ultrarisc-pinctrl-v1-1-bf559589ea8a@ultrarisc.com>
+ <51dfcffa-1f8f-4a51-afc4-2999748421a7@kernel.org>
+Date: Tue, 26 May 2026 15:12:03 +0800
+Message-Id: <177977952368.1243441.14554680726787022592.b4-reply@b4>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1779779524; l=686;
+ i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
+ bh=Kxhh7KR6iwJWM3QD/Mg3E6gH0ENEw3j5HM3LIkiOX8M=;
+ b=ti5d/XWaly+TePGbcsCTGPdS7xDmz9VMatjcxDzr3AFRI03LMtglkK2UiKuL0YX97CaHPaMxu
+ y//z916nWBTAQHrrludAf8B9sIy+WZ6mx5fAakXRmQJ9nwSKCeCZmTw
+X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
+ pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
+X-CM-TRANSID:AQAAfwAnEkPrRxVq0gMGAA--.7913S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JF47XryUCr4xWw4xWrWrGrg_yoWxArg_ur
+	Z0y3sIva4DXFs3tan3AFs3G345tFsYvryY9348Xwn7C347Ary8uw4kCr4akwn3XF4UW3W2
+	kr4Svayq93W3ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb-AFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
+	1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r4a6rW5MxkIecxEwVCm-wCF04k20xvY0x0EwIxGrwCFx2
+	IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v2
+	6r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67
+	AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IY
+	s7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr
+	0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
+X-CM-SenderInfo: pzdqwylld63zxwud2x1vfou0bp/1tbiAQAOEWoOgUUACgASsm
 
-If port->irq_high is -1 (fsl,imx21-gpio compatible) and gpio_idx is >= 16
-enable_irq_wake() is called with -1 which is wrong.
+On 2026-05-21 22:51 +0200, Krzysztof Kozlowski wrote:
+> On 15/05/2026 03:17, Jia Wang via B4 Relay wrote:
+> > From: Jia Wang <wangjia@ultrarisc.com>
+> > 
+> > Add Shenzhen Rongda Computer Co., Ltd. to the vendor prefixes.
+> > 
+> > Link: http://www.shenrongda.com/
+> 
+> So your prefix is shenrongda.
+>
 
-Fixes: 5f6d1998adeb ("gpio: mxc: release the parent IRQ in runtime suspend")
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
----
-I don't have hardware to test. I just noticed this by code review.
+Thanks for the clarification.
 
-Changes in v2:
-* Collected Frank's R-b
+I'll update the vendor prefix to "shenrongda" and adjust the compatible
+accordingly in the next version.
 
- drivers/gpio/gpio-mxc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+As discussed with Conor, this patchset will retain only the pinctrl binding
+and driver. The DTS and the related bindings will be split out and submitted
+separately. 
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 647b6f4861b74..12f11a6c96653 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -469,7 +469,7 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 		 * the handler is needed only once, but doing it for every port
- 		 * is more robust and easier.
- 		 */
--		port->irq_high = -1;
-+		port->irq_high = 0;
- 		port->mx_irq_handler = mx2_gpio_irq_handler;
- 	} else
- 		port->mx_irq_handler = mx3_gpio_irq_handler;
--- 
-2.43.0
+> Best regards,
+> Krzysztof
+> 
+
+Best regards,
+Jia Wang
+
 
