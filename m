@@ -1,145 +1,159 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sphereful.davidgow.net (sphereful.davidgow.net [203.29.242.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A0C39C63E
-	for <linux-gpio@vger.kernel.org>; Tue, 26 May 2026 08:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F353CF977;
+	Tue, 26 May 2026 08:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.242.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779785774; cv=none; b=KeA1RPq/N6aRonDmB9s3cK5oILKj4kdT3wH+HwF64nWoWM8JHmZ9g9oyZeYHBLgueENTj8whVGxtERyw+FHvYv56qWwF0Zhqe6prn8hh3Y6dhrEJRmQVoSVgkiaS+YMPLcmYj+tjhRuF0qhdnEtXGFRz7VSSSIML6jnYwjoF4do=
+	t=1779785908; cv=none; b=WqmQB315wO3p7pTryKthjaBXQiaS8bmO/APiB92o2g7yJt7QVaqZV9NoGnh2DiYhKMibzepu7qD+vs5JJn1of9H7BScv6fHpr64C6cpxJIUxXAEqek2ryhBFssnMrfPlOQsop3EH6WoEh1tMTb1o1T5AKqriOr9NuSkHwRrhsG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779785774; c=relaxed/simple;
-	bh=1ap6y8o9oyVcdCWwsAbS0cTcNPtt3eHvQyoqxGjazcw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i5Uk31Ss+z8b9C0LEHlU1K5JB8tNYARcKZU/gYRKYGytp4POMJjiGeJjsk15I4W+hCBmLkG+EZgBpy1sitLNlo/QwDVAx7mBLFv0NWf58yyVjRVQ3iqFsQEoKn0vQ9KFwMe2rL+HsCJUpOzjzUamGSsuxPs+sCgRRWB0EOlJ1nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a0+HbphA; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=W3jbMqN7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1779785908; c=relaxed/simple;
+	bh=guwTm8bxZuaxydze++XtyW1fa8TPK+AZU64MhCcABdk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qXUZ+iMl8E7mbtkxqFRpq6d4pu4qpYyGUofcJcHSxCYAVg29CduO5+IeEjAVDK7eb3rPRl5hjrNdjUPdfpgNsyqL+Amh/m/OdJa6z/74LGSgjq6YJrIi7tlXJDyhe6Bfv/DjT+kht5hvujYoqkdOz3vsYcOuEa1RfvwRAhC6118=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=davidgow.net; spf=pass smtp.mailfrom=davidgow.net; dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b=o+27EDdQ; dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b=hyBF1euP; arc=none smtp.client-ip=203.29.242.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=davidgow.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=davidgow.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a0+HbphA";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="W3jbMqN7"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64Q60kEB1763808
-	for <linux-gpio@vger.kernel.org>; Tue, 26 May 2026 08:56:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZfBFuM2BQGha1qkVK1SHFkDMe0t+0JXX5ZiL7JYSC10=; b=a0+HbphAgysNZnM2
-	rAGmv/YmaR8zR5JxsoFrNXrZxFWXITqYaoHB9q4IAtuJCbTDmrpZ33xkkvt1gP6g
-	kTnML9rFqzD7jnINGq/6Yzinbl8LpM+F1JQ2B1RO+GwnIhZtxAK1WdgxI20Tikis
-	pHCPE8UkoTPaX6IKMA2tZsn24RcOhfcHHrpiIBa5hU1pyW7PnfPnHxOwkyp5lmuT
-	q1evMwHHWc2TfJTmhU5oRSK6XDOwK2bHlQjJ6W0qaZ2DOq3Xb3oFAR8wT/kzC8SX
-	+VDHPS0vZZgY5oyyUIcjjCMdVavf164/fEhPJZu7xQrgc+M+V3L0RD3Ik5ZX63qb
-	bR1Ujg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ed5vggpqc-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Tue, 26 May 2026 08:56:10 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-50fb3403e99so41043211cf.2
-        for <linux-gpio@vger.kernel.org>; Tue, 26 May 2026 01:56:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779785770; x=1780390570; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZfBFuM2BQGha1qkVK1SHFkDMe0t+0JXX5ZiL7JYSC10=;
-        b=W3jbMqN77EMexwdhD5Pmn+Z6Fixhu15z0HL1QSGuJVgh0vpx8roeD4SK9ePGXoE1Y6
-         dLvV0SxhUeohul7PiVgIF3ctIDVUggItFRVHUaV4EMFkHEopL8AypuQiBKL8fTReLuNd
-         nr41iN3AKbdaaoN4w+MmpyU5U+761yTwGnC/KKtshZQ782rzyY4mOt05Cr7xu2NBkMK+
-         EcXKDVJIuLkcO00SdrInziSL5BFazXPh51Mu/OB74Wc+dQaPlMDQM+tDbPHusQw6oDsF
-         Y80HlMo27p9KU67HHlnLe5FgxDSVKctE02mJ6qF5LGfDjqcJMTEq/umURLHUCQFuEHnS
-         WwEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779785770; x=1780390570;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=ZfBFuM2BQGha1qkVK1SHFkDMe0t+0JXX5ZiL7JYSC10=;
-        b=FRDhEIOWDicNqq5Xk8ER2NO3N9Nh7L08y9rsNvfShIoh6w5igpV/Jffyqor4ahkqF1
-         0xxVydXDa3TdjkL/OC9XeUTerI34NuE8Tf+h8ty5fxUIAE+qoJBji2k//gSNktHrHZA1
-         DWoNAbrz0jlNfvo7Txo35N4OLftMEfQXM4ErN1XDmKm8YdX4TWtC2MhtuoSQa31aoLx8
-         0qMIH+5Ic/b1m6P/bROmtb9nWekviYRqIs4UXRFaULjOu9td0niZbNd8YAXpctU/Y08e
-         5stpqMezhyJlDODjmiq9F4x7V9AZI8uxaU7vlYTP+W1rMqTSZzvPIVFQgV1vmEVUqkSr
-         QrFg==
-X-Forwarded-Encrypted: i=1; AFNElJ+3N/zb3T7WMNFkfBa0Z4m/Kxqkk3r4vn2n2ep9nFIY/V2+MdaXWks3BgPWfjqUlzRgCWr1xnQ9rpgS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA3u0U7EEtDhKHuAhRPLvkfsgJdai/TC/VJlxvZlXiuefsCmnH
-	b6JAdg87bqmI4dF1m1A7DWH8m3Z0/9U1WCk50qWxLIDPZa1MCpwm3bhz1ekYav1UaFxrsgcNHjv
-	pbfiKTFH9spYSd527VOYQFdV/Fk43u+RJoN4jI8k1kHrsBfx+7Hoo1u34G2x6K0awt2lRUVna
-X-Gm-Gg: Acq92OHg/v03jNIP42uYk1yY2bvPLhIDlbsCuo2xHUdM2H5lWEtP+RmedEsZIY4KpzF
-	JSmWytHizFdUw0D/bWxuTYltZ3h9n61WK7eAU984Z4pjMz51x/45iuXaXiYI9IEbG6Fr/OctwHc
-	uB3cpIQPMIhQl7YREoA1TPhvOfbivxhFtMPlfO4F2jA4BzW49vV0bDZGWmOE7h200LeFQgOVFVU
-	kgM52TPvJNZLe4HE2iD0ALntqryGu/SCyl12oW8FW6mN0Sq6MrkH1k1uc+RvE3LHlvcHpXgYOSO
-	kZP8SQXpFUaAMkHBbP9Yx70iIfmT3t3J9cgtkDG57xGud9c0pmzgERpauX46k4O2KfO9Ufx7bJy
-	IbvLKZ+GsHj6kXXtJHiMUQtHAVpyaqwEDPZPDR4eSEK7rtchaUA==
-X-Received: by 2002:a05:622a:4887:b0:516:e033:f5ae with SMTP id d75a77b69052e-516e033f8cemr193795931cf.44.1779785770467;
-        Tue, 26 May 2026 01:56:10 -0700 (PDT)
-X-Received: by 2002:a05:622a:4887:b0:516:e033:f5ae with SMTP id d75a77b69052e-516e033f8cemr193795751cf.44.1779785770034;
-        Tue, 26 May 2026 01:56:10 -0700 (PDT)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:77fb:9b68:d26a:48e6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49042ae1ec0sm104144275e9.26.2026.05.26.01.56.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2026 01:56:09 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-        Len Bao <len.bao@gmx.us>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: Mark gpio_devt, gpiolib_initialized and gpio_stub_drv as __ro_after_init
-Date: Tue, 26 May 2026 10:56:07 +0200
-Message-ID: <177978576487.20055.12051910255098467917.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260516105737.45174-1-len.bao@gmx.us>
-References: <20260516105737.45174-1-len.bao@gmx.us>
+	dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b="o+27EDdQ";
+	dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b="hyBF1euP"
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=davidgow.net;
+	s=201606; t=1779785900;
+	bh=guwTm8bxZuaxydze++XtyW1fa8TPK+AZU64MhCcABdk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=o+27EDdQdWFJtgj9qI9iH5ScEcJI+CJ8iqM12gxyl/QoUHT8ADGyTuq+Lpn1/ZVWS
+	 iNZTc3vdlKPT0jsN2sSy22v+8ok3t/AWwXPlswkQz9/Bkb0XkZMhGL106nT8XlCP+S
+	 5hrGENlMt86ykIClEJhQxDrgrWgYsNVRYV0YTll3G3cTmty0Bzh1ayklj5rujGq1ri
+	 6/tCifXurjvNrTsc+38SPsUEyzXMqe+KwFj8ez9pnxqsbEWTej66LaORDg8h26GQcv
+	 jgkQPaRuKVYbnQ/963+m0GGdEs0V04+/l/eDWbbM1nYDFuQwGvRQB5vS6dR/VSHyvu
+	 OZ9Bl0+EkBCWWQxJbsQ9hkSDcD6y98RqpoYltCr7/UuMNuX9jB2ir1XPTISgzgf3j9
+	 sFuPFo/6WkXvukON8+ZW3mBeBB/H0f1hjT/AYUFPNj7Na+YPkZ5pXgmLv2IRl2IWSB
+	 y7VQkooypkSiB6hWZUQLW1090lss7xF+dfgeYv376+rlEym+ce4GnPEqKYlIKG0YYA
+	 pOgelvXD+9eCoDVgjXBKAASgTkW7n+v2351zjM5VgRauO9TCSMwEFz8tmqd/ISuMfp
+	 IDklCu8tvQYapUNtLhkhAeAXZ62KB1ABFtY6E0iR+XhRdLBXWLjnw2hm9dTnfXCSlo
+	 IB0nQB6hforuTEAnlV6javAQ=
+Received: by sphereful.davidgow.net (Postfix, from userid 119)
+	id 05FF81E9C6E; Tue, 26 May 2026 16:58:20 +0800 (AWST)
+X-Spam-Level: 
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=davidgow.net;
+	s=201606; t=1779785898;
+	bh=guwTm8bxZuaxydze++XtyW1fa8TPK+AZU64MhCcABdk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hyBF1euPNFKqd88dtMoy4z3ERNIgntT5PnDoJtDPZ7XzMnOrMUa2nbh3fKcrtRIwG
+	 xYLtY61JWipCwZhGvOtHTUXR5Ar+HfsDloSqiVbmpyqgUPAJj0H6SLh6TwRB8HmI67
+	 UhIkwk/VbC7PZSh5k+nlwTUXOmjNtTIDn60JyuCdo8pPGFf5k2akwMT1ht29uku3Gn
+	 HIBvXTUibx5zhThhppWIpvvgZ601kGbgLP9ZRPWHGc0BApDd2LYNmUhi1DbgFK1dSq
+	 9PduB4FtiRwcSfG+5IZgsRBsWY9ZrcHSD1CvuSGaHXCJs9PBhY23DvJ6EzZKg8YzK2
+	 hX3rlnoT8TpJWdcuTN+uWv/5FE9BELOHFEo1jt/t+po6WzIB2QRNhVsqE/cztNT712
+	 K4wfwoWKb+95zkTr/2pD+i36DO9q/wgGGu0EkAgW+TO0XwTraKmQhHQq0b9hRtjSn/
+	 w4RnMqRoS8Vl+2g3OgUp2UrcdtLKcUuaIAgIzki6BbOE1YZMB9whFzVkJhI/+b2hQB
+	 UrbuqPgFFagG7ts2vfyoREavfC8EJnwIkfDe19FI3KNj6YhBShWORZduQzc/PxLoho
+	 WVlRNGL7oCk2dRsExxnh+VR6BwrL7B7C2XE99gD9zK0XXK1zSxftI2ytTseDTgjmZx
+	 tDlkQiowIkjGY2YXoIUf8+yQ=
+Received: from [IPV6:2001:8003:8810:ea00:ed87:ca88:5326:e11d] (unknown [IPv6:2001:8003:8810:ea00:ed87:ca88:5326:e11d])
+	by sphereful.davidgow.net (Postfix) with ESMTPSA id 3F2AA1E9C63;
+	Tue, 26 May 2026 16:58:18 +0800 (AWST)
+Message-ID: <ece5ebd2-136c-4479-bd31-714d9707ecdd@davidgow.net>
+Date: Tue, 26 May 2026 16:58:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] kunit: provide kunit_platform_device_unregister()
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <raemoar63@gmail.com>,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20260522-gpiolib-kunit-v3-0-b15fe6987430@oss.qualcomm.com>
+ <20260522-gpiolib-kunit-v3-2-b15fe6987430@oss.qualcomm.com>
+From: David Gow <david@davidgow.net>
+Content-Language: fr
+In-Reply-To: <20260522-gpiolib-kunit-v3-2-b15fe6987430@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=IrYutr/g c=1 sm=1 tr=0 ts=6a15602a cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=z3OEfAWllt80OVZftIUA:9 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-ORIG-GUID: 0893hPvyVTpxiHl0i975pMpOwyAGWNzx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI2MDA3NyBTYWx0ZWRfXzrtEelU1OVHK
- 9q+yKM9nfbBk+WfNKPl+FYMYkfzowUwb6ZMsxaHgG73i0uViLGCCZbIPBg7dFfkoYJspmAVAfwr
- LZE9Loji6iPIie1TXWTYzJnQJSrnhQ8Qz96fOE9rlHgHw2+h4AbN59jg0zm9S38tUWfMcIyx3K/
- qiBtOwqs8gDK222kLgkiOwvwRa8HacrCGp/LE8ciaabqZNUu/eo52u2jyAGMXxuUUuAcH++hJR1
- Bf1/0fvzgyNhvIKXI7jbVQRcbLNRQw7OVIUkf0NODgSUbKwVzeNNJOu5hYVOGtDeeuY33KSYrnJ
- bKpZCnJRxZ7Lx1pWrIq/8XOQ5E7YE9mca2a/KQByzahlrc9JDfsWKJw5nFHI/fOcsr107/Uk7lL
- DseXWchbwUmSCzwuwF7sCJsEvSD1LPEjt8poFLuqnEq7IOM6w1j+d1wt0YxOB6pU3sT5T8KL4vw
- /vFgvMD9hIP1s0tkPHQ==
-X-Proofpoint-GUID: 0893hPvyVTpxiHl0i975pMpOwyAGWNzx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-26_02,2026-05-18_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 spamscore=0 phishscore=0 priorityscore=1501
- clxscore=1015 suspectscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605260077
 
-
-On Sat, 16 May 2026 10:57:34 +0000, Len Bao wrote:
-> The 'gpio_devt' and 'gpiolib_initialized' variables are initialized only
-> during the init phase in the 'gpiolib_dev_init' function and never
-> changed. So, mark these as __ro_after_init.
+Le 22/05/2026 à 9:42 PM, Bartosz Golaszewski a écrit :
+> Tests may want to unregister a platform device as part of the test case
+> logic. Using the regular platform_device_register() with kunit
+> assertions may result in a platform device leak or otherwise requires
+> cumbersome error handling. Provide a function that unregisters a
+> kunit-managed platform device and drops the release action from the
+> test's list.
 > 
-> The 'gpio_stub_drv' variable is initialized only in the declaration and
-> never changed. So, this variable could be 'const', but using the
-> 'driver_register' and 'driver_unregister' functions discards the 'const'
-> qualifier. Therefore, as an alternative, mark it as a __ro_after_init.
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> ---
+
+Looks good, thanks.
+
+Reviewed-by: David Gow <david@davidgow.net>
+
+Cheers,
+-- David
+
+>  include/kunit/platform_device.h |  2 ++
+>  lib/kunit/platform.c            | 33 +++++++++++++++++++++++++++++++++
+>  2 files changed, 35 insertions(+)
 > 
-> [...]
+> diff --git a/include/kunit/platform_device.h b/include/kunit/platform_device.h
+> index 8cad6e1c3e7efba862862b579089f2f317784a73..eee565d5d1d35c1d1bc82b45eb91d21d00c68428 100644
+> --- a/include/kunit/platform_device.h
+> +++ b/include/kunit/platform_device.h
+> @@ -14,6 +14,8 @@ int kunit_platform_device_add(struct kunit *test, struct platform_device *pdev);
+>  struct platform_device *
+>  kunit_platform_device_register_full(struct kunit *test,
+>  				    const struct platform_device_info *pdevinfo);
+> +void kunit_platform_device_unregister(struct kunit *test,
+> +				      struct platform_device *pdev);
+>  
+>  int kunit_platform_device_prepare_wait_for_probe(struct kunit *test,
+>  						 struct platform_device *pdev,
+> diff --git a/lib/kunit/platform.c b/lib/kunit/platform.c
+> index 583b50b538c79599ebbf33e261fe2e9ced35efa9..737758d710b2839fab29c5cbcf3bc5ba00e20094 100644
+> --- a/lib/kunit/platform.c
+> +++ b/lib/kunit/platform.c
+> @@ -161,6 +161,39 @@ kunit_platform_device_register_full(struct kunit *test,
+>  }
+>  EXPORT_SYMBOL_GPL(kunit_platform_device_register_full);
+>  
+> +static bool
+> +kunit_platform_device_add_match(struct kunit *test, struct kunit_resource *res,
+> +				void *match_data)
+> +{
+> +	struct platform_device *pdev = match_data;
+> +
+> +	return res->data == pdev && res->free == kunit_platform_device_add_exit;
+> +}
+> +
+> +/**
+> + * kunit_platform_device_unregister() - Unregister a KUnit-managed platform device
+> + * @test: test context
+> + * @pdev: platform device to unregister
+> + *
+> + * Unregister a test-managed platform device and cancel its release action.
+> + */
+> +void kunit_platform_device_unregister(struct kunit *test,
+> +				      struct platform_device *pdev)
+> +{
+> +	struct kunit_resource *res;
+> +
+> +	res = kunit_find_resource(test, kunit_platform_device_add_match, pdev);
+> +	if (res) {
+> +		res->free = NULL;
+> +		kunit_put_resource(res);
+> +	} else {
+> +		kunit_remove_action(test, platform_device_unregister_wrapper, pdev);
+> +	}
+> +
+> +	platform_device_unregister(pdev);
+> +}
+> +EXPORT_SYMBOL_GPL(kunit_platform_device_unregister);
+> +
+>  struct kunit_platform_device_probe_nb {
+>  	struct completion *x;
+>  	struct device *dev;
+> 
 
-Applied, thanks!
-
-[1/1] gpiolib: Mark gpio_devt, gpiolib_initialized and gpio_stub_drv as __ro_after_init
-      https://git.kernel.org/brgl/c/b12e12ee4138e30d786eda02223e87044c989bb1
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
