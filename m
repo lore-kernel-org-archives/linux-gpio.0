@@ -1,74 +1,62 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A9A28541A
-	for <linux-gpio@vger.kernel.org>; Mon, 25 May 2026 22:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE55C284B3B;
+	Tue, 26 May 2026 06:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779746506; cv=none; b=cHn/N0gMHhp4cyJJ0yAlH1gZobic4Vq4l1SSNIXaVu/1d0Ov5e5HznrmJf19Dho0TAkwCX3qdSZS8/cKrFmFJ9oj49/ql9EM8TDvsaXtBwZSWxuNLw9obQKIV26f2EQY9QKn+NF1YHexNKG1ciswyoMmAw8Y/45HUJ8UYww0S44=
+	t=1779777316; cv=none; b=kEKv/KMcx3XP8p2bfXvmnwOgo3VRFpFnd9acJM876H1BjORmxp/R3KXGpyUYJpALbPW7DaivKhhvQaPlAu0BkZqg5dwi/vtPhrlHlhNT9698RJHDdBpKTFpmcYcsYU6Jz91zw54vez7arUlyCJfJzRUngnhPfSftu8O9VAblEm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779746506; c=relaxed/simple;
-	bh=6uBZcvpHVG9ghMmyfS/bczxD/gV3gurTm4gN5EMIuSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AX05HBSZcZHPpyQwIHIhNBhIE/PjyJJDf0Nemfx9pqKKecdo+YEnaZXMgO+OD0RwtT+JdidO9RVfhRbH03SyP+yMy67JdkiUnieobDaJV8S3Myk/qa9Bfr+lRX9C6Hkkdp+yhYwF44y/nTakPNkx3Gbg0y0dwY4Oz79arVSC1xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kV3BwLVn; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1779777316; c=relaxed/simple;
+	bh=+DPhe0f9n/BdhOA+tCs0kwl815jMEZvP20htrUqfg+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=edAZHgcI9Ck2QKhIarGBFlJIAwV4qDbtUYA8YSoxECLK1tm3oHbESrwfFMnMldHkVVxLiSPnEepxOFoBYLAkq/FZX2Gp1AABk6V3qnduI4fUg0WTHKRZ8Gx8NQ5bnvVVHOqRj4iGBP0HZwHUXZSmJAylimoIFDVBm/TQDRQUYKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=KDGebqiS; arc=none smtp.client-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kV3BwLVn"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-c827313dac0so4865805a12.1
-        for <linux-gpio@vger.kernel.org>; Mon, 25 May 2026 15:01:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779746504; x=1780351304; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k7NKAW/ulkmG6NXCszZo+vmmRfLFaqedn1kwzn4OXVM=;
-        b=kV3BwLVnXBHkc5dV9v8ZhShidwKIw4trhK21aU+r8aMcWxJfhVaPuykG1dTU8WdSNy
-         c+ChPnUbdm1Px8fq76YiD8pnaDaiD+cegr9bDrkjFD0gPmBPJhlU/xDhRw+e7qyocUXT
-         kI5btX1p5kv4c5CC8jEgvlt9FhTLA+9gqwAW1x6sHojzBFSJwnvr7NCDY3AQEYvW3XqW
-         9OBQUqAIoMu7QtO4iKWyKT3eZTnWcECeYMMlGrjkgkDGF/xDrOtQl9QE9Clo2zfk6c11
-         GNXKO8OZ/K9tybQTxDmW6zY+FNiJn6yBi5hCslwR/whwd36sPhkD0mAn2ghxCvNRo7Uy
-         IvYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779746504; x=1780351304;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k7NKAW/ulkmG6NXCszZo+vmmRfLFaqedn1kwzn4OXVM=;
-        b=PSsMPL53FOi0waMIDw/FTBVs2cFfFYbFuJcr3kFQQRJOMOfzUZQsZJTQmRUzMWRUNx
-         5O5YIpoge9uDQbjGPMQX90FNdenMFWunUhrCu5uploYMjY8A+Rnr21NOEFOAZeVzD1j7
-         wTa15e9cDRba7HQopNN224H69K8IsxXJzI/IadM/nrfvUQHpahW/ajjmUBarimIOGqHa
-         Vm2hfUDoVkQ8j58PkdTrLN2/N5N66DP1t5ZhOjUT59QzT4ea0ytGp7FIoC7yaU0vPDPB
-         rvzGX5gplIJDWY5MJVViZSt8qlnZNaNxJZCmxs2Dzcy/oiFZStNkYCLASZ/tkz9tVtz+
-         alQA==
-X-Gm-Message-State: AOJu0YwE8BFmT68UMelW9pLfDGj7BhbKbTT0GwAV+ETTi9jiyIsGsufz
-	eC9xtl79CBB1mAfJjDjnoTduUKtxiiy1Z6vOwNctQc9ECvtkdtQqy6XPESeP4w==
-X-Gm-Gg: Acq92OGvIdlh77Bc2gvGdCYs7zwNe0oXxeBmv+c+oGIsNpzmKBwJaZbHtpy+ip93J1T
-	/Sd5mNXU6lCBWyq6/XvGp7ULSEMLls7cI4qOw/WEB7SBo0hgRGQFFCGa8gxhOi5ttlXso0yWQdO
-	9NyXXX3iQslux288KqNpMp8ZddEq3ZanRivAe3FlMM4EqSPSsV8QiRiEi/Pg7y7DAkKwvWQKlya
-	h8nXqJOn/2g67C6r1rO31PDGDwXt/1d0yiv8ZxRfOgAp9AsMcOjtzezz/+lWW6Ajg8xK1oZrpSa
-	lcCtKGdHLUwgE77CeXddUp3DwlqME5cC5U2p/DVDwMWIdqg9f3FFErikLBLgqzxvT1vZBdPQ2G7
-	+KkA5s5PzLWbGhDpiFFli2EObhVALuQNbr6WDDFpc4OCAs4F2gJKscqyvrau0Bobk8DC4PjxjyC
-	FvZt04YbSosF8rlu0l8+TTIUrLTyHRF+dLGD0UBQ72Z02YO7cKLMhiuQbhikbrQK5m4U5pUJddT
-	s4RZ2PD+t1XwPcbxhKQ6iQj2X5LSDWe4co=
-X-Received: by 2002:a05:6a20:d80f:b0:3a3:128f:1c77 with SMTP id adf61e73a8af0-3b329541ab3mr12825168637.12.1779746503829;
-        Mon, 25 May 2026 15:01:43 -0700 (PDT)
-Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84164fe0bb8sm9526514b3a.51.2026.05.25.15.01.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 May 2026 15:01:43 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	linusw@kernel.org,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-renesas-soc@vger.kernel.org (open list:PIN CONTROLLER - RENESAS),
-	linux-kernel@vger.kernel.org (open list),
-	linux-hardening@vger.kernel.org (open list:KERNEL HARDENING (not covered by other areas):Keyword:\b__counted_by(_le|_be|_ptr)?\b)
-Subject: [PATCH] pinctrl: rza2: embed pins in the priv struct
-Date: Mon, 25 May 2026 15:01:26 -0700
-Message-ID: <20260525220126.93990-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="KDGebqiS"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=ew.tq-group.com; s=default2602; h=Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=8XVBgfioNoFF3XKmhaeZO33+RcBSbm4amlt4C5V5yD4=; b=KDGebqiSbDLX4U8zIhDPAPmY0v
+	xT4XZltu+uzeO9efqmny5UcqLSX89y7V0fKqiWd5zcigYhi1Dv2RgJWVVpCyGgOwGVwLGHsR8flx/
+	fSmTSPFWxjIAVz9Nq+bencsVzin5awLvYm/4KBqigF5pQ1/uJhWK2FFB3wsn3xBxwCNjdvaGV/x91
+	HgZEx+VLT5ktrxo3bClz6JgcLlcQlerhEB2e2ncQoP77Ukej43mGODy+53b7Z/t0mvyyooemWcEcm
+	BzYoy6rBwhXi52O4vTwZLwALGAYKB2Xp+ZIgw7nuYFqJQx+f+wBqSFwhpOtH8CztUSXMZNVNTbQTv
+	CBZ+rIFA==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1wRlNb-000Dvn-0K;
+	Tue, 26 May 2026 08:35:07 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1wRlNZ-000M6u-2q;
+	Tue, 26 May 2026 08:35:06 +0200
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-gpio@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] gpio: mxc: use BIT() macro
+Date: Tue, 26 May 2026 08:35:02 +0200
+Message-ID: <20260526063504.25916-2-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260526063504.25916-1-alexander.stein@ew.tq-group.com>
+References: <20260526063504.25916-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -76,93 +64,40 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: Clear (ClamAV 1.4.3/28011/Mon May 25 08:24:46 2026)
 
-Turn the separately allocated pinctrl_pin_desc array into a flexible
-array member of struct rza2_pinctrl_priv, annotated with
-__counted_by(npins). The pin count is now computed before allocation so
-struct_size() can size the combined object, collapsing two allocations
-into one.
+Replace the open-code with the BIT() macro.
 
-Assisted-by: Claude:Opus-4.7
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rza2.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+Changes in v2:
+* Improved commit message as suggested by Frank
+* Collected Frank's
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rza2.c b/drivers/pinctrl/renesas/pinctrl-rza2.c
-index 8618f32ed26a..42c228b860a4 100644
---- a/drivers/pinctrl/renesas/pinctrl-rza2.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rza2.c
-@@ -44,12 +44,12 @@ struct rza2_pinctrl_priv {
- 	struct device *dev;
- 	void __iomem *base;
- 
--	struct pinctrl_pin_desc *pins;
- 	struct pinctrl_desc desc;
- 	struct pinctrl_dev *pctl;
- 	struct pinctrl_gpio_range gpio_range;
- 	int npins;
- 	struct mutex mutex; /* serialize adding groups and functions */
-+	struct pinctrl_pin_desc pins[] __counted_by(npins);
- };
- 
- #define RZA2_PDR(port)		(0x0000 + (port) * 2)	/* Direction 16-bit */
-@@ -289,21 +289,17 @@ static int rza2_gpio_register(struct rza2_pinctrl_priv *priv)
- 
- static int rza2_pinctrl_register(struct rza2_pinctrl_priv *priv)
- {
--	struct pinctrl_pin_desc *pins;
-+	struct pinctrl_pin_desc *pin;
- 	unsigned int i;
- 	int ret;
- 
--	pins = devm_kcalloc(priv->dev, priv->npins, sizeof(*pins), GFP_KERNEL);
--	if (!pins)
--		return -ENOMEM;
--
--	priv->pins = pins;
--	priv->desc.pins = pins;
-+	priv->desc.pins = priv->pins;
- 	priv->desc.npins = priv->npins;
- 
- 	for (i = 0; i < priv->npins; i++) {
--		pins[i].number = i;
--		pins[i].name = rza2_gpio_names[i];
-+		pin = &priv->pins[i];
-+		pin->number = i;
-+		pin->name = rza2_gpio_names[i];
+ drivers/gpio/gpio-mxc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index 12f11a6c96653..7e2690d92df6f 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -330,13 +330,13 @@ static int gpio_set_wake_irq(struct irq_data *d, u32 enable)
+ 			ret = enable_irq_wake(port->irq_high);
+ 		else
+ 			ret = enable_irq_wake(port->irq);
+-		port->wakeup_pads |= (1 << gpio_idx);
++		port->wakeup_pads |= BIT(gpio_idx);
+ 	} else {
+ 		if (port->irq_high && (gpio_idx >= 16))
+ 			ret = disable_irq_wake(port->irq_high);
+ 		else
+ 			ret = disable_irq_wake(port->irq);
+-		port->wakeup_pads &= ~(1 << gpio_idx);
++		port->wakeup_pads &= ~BIT(gpio_idx);
  	}
  
- 	ret = devm_pinctrl_register_and_init(priv->dev, &priv->desc, priv,
-@@ -482,12 +478,17 @@ static const struct pinmux_ops rza2_pinmux_ops = {
- static int rza2_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct rza2_pinctrl_priv *priv;
-+	int npins;
- 	int ret;
- 
--	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-+	npins = (int)(uintptr_t)of_device_get_match_data(&pdev->dev) *
-+		      RZA2_PINS_PER_PORT;
-+
-+	priv = devm_kzalloc(&pdev->dev, struct_size(priv, pins, npins), GFP_KERNEL);
- 	if (!priv)
- 		return -ENOMEM;
- 
-+	priv->npins = npins;
- 	priv->dev = &pdev->dev;
- 
- 	priv->base = devm_platform_ioremap_resource(pdev, 0);
-@@ -498,9 +499,6 @@ static int rza2_pinctrl_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, priv);
- 
--	priv->npins = (int)(uintptr_t)of_device_get_match_data(&pdev->dev) *
--		      RZA2_PINS_PER_PORT;
--
- 	priv->desc.name		= DRIVER_NAME;
- 	priv->desc.pctlops	= &rza2_pinctrl_ops;
- 	priv->desc.pmxops	= &rza2_pinmux_ops;
+ 	return ret;
 -- 
-2.54.0
+2.43.0
 
