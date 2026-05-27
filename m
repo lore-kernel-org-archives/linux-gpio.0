@@ -1,58 +1,59 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061A140C5CC
-	for <linux-gpio@vger.kernel.org>; Wed, 27 May 2026 13:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1021A407CE5
+	for <linux-gpio@vger.kernel.org>; Wed, 27 May 2026 13:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779887743; cv=none; b=OldKaXR5ZrhEGUuCnXh4LrdxvYg6DwB3njovFWe29sJMbmQh280XQYYBG2JntBKJtLhM5Ws6SxcDdLLset2isSSToke4/Qmc3JGU3jaUn463uHXMfN6KuZSxKrEvd8FSCeqnULR0zTcZNcIAjtRUvf/B7Xjhb6DTTFEiWwbOtM0=
+	t=1779887797; cv=none; b=t4fFzPCg7f5waaBL7nte5dj8s7TWogSJc5suckqu8ONIgYXPl2vwSit2DPdawj2i0bXo0O32KhNTcrLGUDDs3ztHVi3B8d/RJ2ItkGewjPd6feRI5D8z7vhIG9tNItsr+gXiLhw1sAJ3sdRHnsCQOnog9oZ0xR4Y/DbbrlT8W8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779887743; c=relaxed/simple;
-	bh=0kBtW3eK/5g2kLvivBtuqbvM+kYyF2/OS9Ez33b5HOA=;
+	s=arc-20240116; t=1779887797; c=relaxed/simple;
+	bh=vL4NlyK6MPiwhS/+QILyLISkt+l2RWDPpZ3wIG7sAs0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eimeX2a+ZBeKQXl6z41ngEW6OKGuR1fLh1TolWql5PqZufnE2X+Tg3mwzrcTvvgPTciTE/RKuvhPoB85OtHrGb4zAeEXM0Ejy25KD3DzKkb3cA4WBlp/4zkKjirvXOKI3snpjA9pasGvJTVvdPzNiTmrJPiZ9/l/F1prPqd2iUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRGPurKd; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=bPbj2e6udM4NZtXuesPrzfjgV7Ny5zB+hUxCw+hhrB8G3Dh6/PnoI1SDYB3RYX2O51WY8KOcNT9p4uq09man7zdDdqWlHgj73Kxt66X4PA7rdNvrUnFIuugv3HoD3x9VDKT9O/cr6k9CnNlTl8KSHlfeWxE2fyfa7LBKR4j00Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7WnMQxX; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRGPurKd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F4D1F000E9
-	for <linux-gpio@vger.kernel.org>; Wed, 27 May 2026 13:15:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7WnMQxX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A9EB1F000E9
+	for <linux-gpio@vger.kernel.org>; Wed, 27 May 2026 13:16:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779887741;
-	bh=0kBtW3eK/5g2kLvivBtuqbvM+kYyF2/OS9Ez33b5HOA=;
+	s=k20260515; t=1779887794;
+	bh=vL4NlyK6MPiwhS/+QILyLISkt+l2RWDPpZ3wIG7sAs0=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=XRGPurKdDfdIWGQ0RUPsNJ8xhRjyGxAJlYknp6FP2tLICM9P0a9msA6OKbk2YLmZB
-	 8btINQ4C3mkJh+QoBQ28wHCscfV8PNb40oacXdjunIV2YKHIbZz/RyPG9WOIT4VFSO
-	 BzPR7iWR7+AbAoupdfltmPZDhZFPnZciiNOvYH9X20o26otyMNzGO604CWfZy+RG3x
-	 bjzDWZH2zqcHnQVKP1zY37PA8rxSGmJtfV38QXEnGqcPZ7g1YzAg+Y34fthMtTEBMl
-	 eTgIBkR8lrH/D4zlOlg0cj9Htqt/P0pwj/+VZcQhWBL5Z5WWG2tSDJJIWmtb8LiXEE
-	 N6RItRXQ+G3/g==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5a8721851e2so13091517e87.0
-        for <linux-gpio@vger.kernel.org>; Wed, 27 May 2026 06:15:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ+rIS5/luRDzuuJMh37g6RT+LEt8oDYxBt0eoWgiGid4xCRDzGYPTyNXTWS85HUWPq1v8t0mfk9QCFF@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQXDCeVw7Mo/up5WZrwhd7mvendxg3P+/6IbFTyO2jBVmOnnCg
-	1UHR5SoE4bMl6X0fa8q+wQR1qENXTeNT31okZ6TVrVzW61Idxhx1Y0bpVHJJBdkn14S4q8G46OP
-	NtX1lv6+arwpzCjEj+t1S9XyMXdavvOI=
-X-Received: by 2002:ac2:4839:0:b0:5a4:1add:c56e with SMTP id
- 2adb3069b0e04-5aa32328fd2mr4719434e87.11.1779887740531; Wed, 27 May 2026
- 06:15:40 -0700 (PDT)
+	b=h7WnMQxXODnPy8Wm6rKm/4cpE+nxrmmZUQjVuXFnmZWOmIygeMf6qRYtSRXIycAvC
+	 D7k5T1hyoJ6Fk4iHvcq4r+d1exmr9bAXWDT03VpBJDKHqkMSor9QguN17ci5lPGV8d
+	 OeDNdQhf9wdJDtecUlcqIziAfQvaClC80pimY5+WhufVTGK2jhYm+DP+y/qK9SbGGW
+	 ANdJ017mux9kVOcS4EBpF4qEBzr4pFsRSDZJOzS6s1bKB4FblqbrYLLEyuPwffsw3Q
+	 SjWzzySe6Uot57sCW4J/rmHC55UvnPKlxjeea+38mY785Bn8In/X0Rn9fs1vUqZRxz
+	 fW//eLd4HdSMA==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5a8721851e2so13092608e87.0
+        for <linux-gpio@vger.kernel.org>; Wed, 27 May 2026 06:16:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9b+irrO6bOY6Kt1P1Mr3AvYI5XGflzcTV0ZLpIeVwI/7ULaoqsII5Fm1Fizqid8wV3iZGyvUnvyh58@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww34dBhwJ9ncNipa5g7fGHDk/HLzqwVstzlA1QZk6VaoArJXm7
+	US8zta1MwAKh1Qxlb/geqmQrKIjGS12DN0Z4+mIVeiEzOBz3IcF+nexnrqEAaKyZGuV/SKFzcyU
+	LQ9pvT4guWxWyiHgbUvbGcRwo+KA3hYE=
+X-Received: by 2002:ac2:4435:0:b0:5a8:e61c:371c with SMTP id
+ 2adb3069b0e04-5aa32377c91mr6204628e87.26.1779887792892; Wed, 27 May 2026
+ 06:16:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260511183002.228520-1-kmayur809@gmail.com>
-In-Reply-To: <20260511183002.228520-1-kmayur809@gmail.com>
+References: <20260511183017.228595-1-kmayur809@gmail.com>
+In-Reply-To: <20260511183017.228595-1-kmayur809@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 27 May 2026 15:15:28 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=OfkGMJMsevYRex_85pm=-xMN5-DjbbCgXAXtkfpPjZQ@mail.gmail.com>
-X-Gm-Features: AVHnY4JrPo3eLZQHa8Kr4qpK50Dnd5cujP8cExxfw-lR9epeKnnn0hWheRnamH8
-Message-ID: <CAD++jL=OfkGMJMsevYRex_85pm=-xMN5-DjbbCgXAXtkfpPjZQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: actions: fix SPDX comment style in header
+Date: Wed, 27 May 2026 15:16:18 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkTW4R=d0Kb-8zVtGLRHW2xi-6Ya0ii86njQyO1Us5xpw@mail.gmail.com>
+X-Gm-Features: AVHnY4LXQhHna9KsXNe5wSmgS-A9cyLoUH6bq0dDmcU4a9FEAF7f5O6WXxdpc3g
+Message-ID: <CAD++jLkTW4R=d0Kb-8zVtGLRHW2xi-6Ya0ii86njQyO1Us5xpw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] pinctrl: mediatek: fix SPDX comment style in header
 To: Mayur Kumar <kmayur809@gmail.com>
-Cc: afaerber@suse.de, mani@kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+Cc: sean.wang@kernel.org, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, linux-mediatek@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -60,7 +61,7 @@ On Mon, May 11, 2026 at 8:30=E2=80=AFPM Mayur Kumar <kmayur809@gmail.com> w=
 rote:
 
 > Header files should use the C-style '/*' block comment for SPDX
-> license identifiers. Correct the style in pinctrl-owl.h
+> license identifiers. Correct the style in pinctrl-mtk-mt8365.h
 > to satisfy checkpatch requirements.
 >
 > Signed-off-by: Mayur Kumar <kmayur809@gmail.com>
