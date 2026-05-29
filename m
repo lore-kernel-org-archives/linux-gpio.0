@@ -1,73 +1,74 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7ED329E79
-	for <linux-gpio@vger.kernel.org>; Fri, 29 May 2026 20:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45DE2E7377
+	for <linux-gpio@vger.kernel.org>; Fri, 29 May 2026 20:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780087602; cv=none; b=tlsEuhtGwnzrPDmTtmzL7KYxMXRoCpxqUcgLTmC4ql9QAuldWQbesHxdLIoP0V3X8cFgGPDFMLDpEFoHbECb7TY8yPfVyBGdj67j3tQyWmo7d46d6EPnL59+O2u94Qq/Xe0qsxMcvDeblbIM+pdBm9rH1T02iWrJ8fmbWxvczeU=
+	t=1780087717; cv=none; b=FZOJwvbRWpQeBUJBMqGkglygPiMaMQr4b2id0JLa7NzYMHl956Oa57U3UGyezpW9f9hNaC2NEHOY+T2fs1CUf9wPZHgVy0w0BR6gPO4hTDCjGI1+igi5vnGSfe1qph7WR4/Pj0zLX8MLWTAmERY2UdZ+7VC9LJxOI7LMFB1ufSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780087602; c=relaxed/simple;
-	bh=Hu990MXFDmsHaml1m3y26LLBAUFsB4ATxoDsDS/egKs=;
+	s=arc-20240116; t=1780087717; c=relaxed/simple;
+	bh=xYc9LAVWTOK0QKRc6fKihxk0QguYA7yyQkNW5fWBkNo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ga6HbeZlsKzzktceZKSWaoCNOT7f81YgfjToEaoz84zqNG7dO3NPgIhhshmSn2KlBZUGmNEi5R9UYxc6bLNrqt7ccRbJegTqdskyXj1gw41+HnFWOtz9B+Nzc0EzNpSfCfeRFJ527AxXGq4Qhu3VI/K4ctU78BCwWG0aqQ4Y/Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ac6t8HID; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=SYtMy+CVf4dUBgq/V06KUZoMV7GE2tJGwLQ1ZXm6u7n0KVuhxT910MdQeR+fDcehOF9kg0hVp6i0E0elZ8a2jAli5f8LzQ5hfaGC1Lv90B3Y65mkz/9T/6OfgTcsnU95fkmriTqX1f++Aubzp+eAC6eOuGkHlONOEHgzeyOFYVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qg3STj7J; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ac6t8HID"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CE411F008A1
-	for <linux-gpio@vger.kernel.org>; Fri, 29 May 2026 20:46:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qg3STj7J"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A93911F008A1
+	for <linux-gpio@vger.kernel.org>; Fri, 29 May 2026 20:48:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780087601;
-	bh=Hu990MXFDmsHaml1m3y26LLBAUFsB4ATxoDsDS/egKs=;
+	s=k20260515; t=1780087716;
+	bh=xYc9LAVWTOK0QKRc6fKihxk0QguYA7yyQkNW5fWBkNo=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ac6t8HIDWIPDQS2t26VON6npElemBina3b7Pb3pWArkFEq6obvKdGtFMbjLItfppj
-	 eppu4ZtIuO0L6we9kCEzXNHvMw2UaujMXtTVWG0fzMb9JPQberLiAHpmvcHobZWiGY
-	 WE8ckH8hOOvoNIXHnsDIxWqP19NIRziLtNhf4S/7ydcvM3Umo0w1u96NKBdPOWejSC
-	 SYE/nxcyVJM7UNtwpWaopomey2oI8zL22JXh3cei8YFwAcSif+iwmczTq+2tlclFbX
-	 wIwYqzKRIZFinQl+AEehFOFzOf282Vaj41fFzJQ64kTWNzt8mn3EvMlCzWL7rCSU8R
-	 1bAN4pm0YinoQ==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5aa61503fdaso219011e87.0
-        for <linux-gpio@vger.kernel.org>; Fri, 29 May 2026 13:46:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/hemgtIRk4dc/9fxf8l2UymbqU0wATzsgkW410Zu8AFqzrYUbWA6OsMcXQYkGJM12Ltmau7vY+6U7w@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTMbCG9L2Nr9hb/wqsAvbljBqvzxu5MLLnYWzFvGvudshAsmMf
-	6TcY83TMKCYw+/qNi29ZV9bqFZdk8A7vsllT0p1XHh+1aIH/hQKE6Isr/7cT7EtQgW49VYBjpRb
-	ZUpHAXZjy9hP6lKoWBaCdGlwaLt/UM9w=
-X-Received: by 2002:a05:6512:b9b:b0:5a7:46f9:be3b with SMTP id
- 2adb3069b0e04-5aa614260c0mr232192e87.14.1780087600222; Fri, 29 May 2026
- 13:46:40 -0700 (PDT)
+	b=Qg3STj7J2z+JAmrN5ej68KKqpli7AJbvRS1gvVEJ7U6l388/4i3UQ4CrFAwTe1IDq
+	 rKycGyEzpTqskVJHRJVnFjKtoeJQgD/gSdHHBJMkWqLXxiRJp3pvVBYxEoJx0cURct
+	 WCFndU9SUSWPVIfQvxEjNCYmYhvQCHCjmYw+jgSXxLh5mL896TGEl6inF0a1nz2DpL
+	 xn8a62SnNU4Oai2qcMJ8EqNBzi56W/wg3AVGR23d2AYMh8YIXu79nem3k0t+nCLu3Y
+	 dTcIlKhw/HHXl/lL/jCmmUZHfWx2kO8dO6PlwVLRWjg+PgCvozyVMVyIbBwqnMBg2D
+	 QOkX+rqo+NfnA==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-39394e1e8f3so129398081fa.1
+        for <linux-gpio@vger.kernel.org>; Fri, 29 May 2026 13:48:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/hJpj3reJ2WFjLNZ+HmZoNovV6Nd6k+2U/SjKCLy0Yoy5979pXqbYqJ8HJk1jaqGs4eelsn3DcKYde@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO9/9xxiqV4XJK6dBqa8YwdrXz0k1P+GkLFZRatqWs6Pwf7hPG
+	Ht60WgLhzL5CCPJJekMmFMxu4V1X7KBd5UeW9kwIMWc7Dldp9W91V96+5+BbpyoWAeiFPLgiDdv
+	wI/v0bdgRX3bTyyER0KE+BQ+pKGL2Hfk=
+X-Received: by 2002:a05:6512:1048:b0:5a3:6731:910a with SMTP id
+ 2adb3069b0e04-5aa607be49dmr451085e87.11.1780087715443; Fri, 29 May 2026
+ 13:48:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260529100838.8896-1-hardikprakash.official@gmail.com>
- <20260529100838.8896-3-hardikprakash.official@gmail.com> <ahml-rVa2PIA5DDC@shikoro>
-In-Reply-To: <ahml-rVa2PIA5DDC@shikoro>
+References: <cover.1779896151.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <cover.1779896151.git.u.kleine-koenig@baylibre.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 29 May 2026 22:46:28 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmWV9WizdqXfwvTUCbJDisurLBa7sAC6DH1BehDTHZDYA@mail.gmail.com>
-X-Gm-Features: AVHnY4LikLXubPACR1IQvbYvGs8DVaKgCis8LOnURnh9gKeda2OwXHTi-bVfjZM
-Message-ID: <CAD++jLmWV9WizdqXfwvTUCbJDisurLBa7sAC6DH1BehDTHZDYA@mail.gmail.com>
-Subject: Re: [PATCH v8 2/2] i2c: designware: defer probe if child GpioInt
- controllers are not bound
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Hardik Prakash <hardikprakash.official@gmail.com>, linux-i2c@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, wsa@kernel.org, andriy.shevchenko@intel.com, 
-	mario.limonciello@amd.com, brgl@bgdev.pl, basavaraj.natikar@amd.com, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
-	"Mario Limonciello (AMD)" <superm1@kernel.org>, kernel test robot <lkp@intel.com>
+Date: Fri, 29 May 2026 22:48:23 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmi48Vzg0MkpFys11aTEAofSbdoyosmq_fCRe6ZxZ0rQg@mail.gmail.com>
+X-Gm-Features: AVHnY4LSQW0p7WEVsPI_87eZk0RifHappy19Y6jZ6wxQZaYafcHFoEXTk66u3jY
+Message-ID: <CAD++jLmi48Vzg0MkpFys11aTEAofSbdoyosmq_fCRe6ZxZ0rQg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] pinctrl: Use named initializers for
+ platform_device_id arrays
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+Cc: David Rhodes <david.rhodes@cirrus.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, 
+	Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 29, 2026 at 4:43=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
+On Wed, May 27, 2026 at 5:43=E2=80=AFPM Uwe Kleine-K=C3=B6nig (The Capable =
+Hub)
+<u.kleine-koenig@baylibre.com> wrote:
 
-> In case this goes in via some other tree:
->
-> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> this series targets to use named initializers for platform_device_id
+> arrays. In general these are better readable for humans and more robust
+> to changes in the respective struct definition.
 
-I queued the revert in the pinctrl fixes, you can take this one (2/2).
+Patches applied!
 
 Yours,
 Linus Walleij
