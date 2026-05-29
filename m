@@ -1,1163 +1,224 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82123CFF4F
-	for <linux-gpio@vger.kernel.org>; Fri, 29 May 2026 11:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780053316; cv=none; b=C0er/Ina+6eOLKbYq4fm2JqOeuKlEQZVrc979sWvdxSBmlr9AWIfWkZEJwvJo/WI8YG0+MkhrkEv8XqspMgCoaBpnO3XspfcRpRyvbljKaab5xhc6MwQLBvSn8rN0eSZV21uDhrDloRMxiRwzLUd7kaDS0DR0K52No4TJQzXSrY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780053316; c=relaxed/simple;
-	bh=mSnr50PamQTUdTLeHGSpb4YPvAb9owFYXAyhnhD2ZNA=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=ZhDqrjgGXoXGEn+YbIkPnxEU8N+Up3j5Lao5UZFUZzPChnqXaqEofb1EsD1IANHbNAIishj8jOw18iXpW4sP5yM2M3eDd7Uq2I8SlCFF6vNEFzWscENmDuJZjA7hMuTzgdrR61D4dr65iQjbLtxsLKy5kxKBEr7uV0i0arwhhVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XyQZ6UYL; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166EF3CFF72;
+	Fri, 29 May 2026 11:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.135.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780053454; cv=fail; b=YGWhI1ujICSY0yWCz3gxPYpvTE1rTvlPAH5doMc9lT9FRJuFU0EVFBSdOkq6jQRr2801SEIMKUAhcWsA/3qTyfwgs7r9tBFmYDtXJEP4hkrFTZzSDUFaxWKkvT2oIAGZ8bRkro6wHA+OluPwRJ5IgA3tYyRek6Lo+i0/5smxVnA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780053454; c=relaxed/simple;
+	bh=VDV3DR8RkqtO8qseOoAg0IqWKyI6GUEME0EFA9niYzw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=l8pRLWtE987kukU8DIUL05BDKRcW0NT4RTjeCndYNEYP0D60GmfOcqBjEJm13TGk8UXjE6hbnX8gyLRQw4yfGMECoD/YKtVKsWiLj/5SxjbzVxarIL7HeTdqaCZCLJSLNvEassvW0svMTRACc9Sposl1XqMPJ7zl6qJZuv9LjXw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=S/NuuInR; arc=fail smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XyQZ6UYL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1780053312; x=1811589312;
-  h=date:from:to:cc:subject:message-id;
-  bh=mSnr50PamQTUdTLeHGSpb4YPvAb9owFYXAyhnhD2ZNA=;
-  b=XyQZ6UYLT9P25AJV4Klde3URMOt5toybgB3Z2El/oFG1Qcxy5KjrYc0V
-   b8pmQrJW+teV86eytw2pcYZPDU+94QbcmaSHtM6GRCOF627CQo0TpSdh1
-   Brx9V9ZW6jxIyqLjmMeiKPjlFsip3WfNNrsaLNOIr6yxivBM+LPFIiIRC
-   fkObSTze+LI5CnLO+skedcvjAgNrP0RhvTnn9PECeey7w0EBR/mBrgv5x
-   pF/SSdOySRzJRy2rMYVEaIE+kF2SyIGcpO0p1fDVyNURqcwVTID9gpZ67
-   BcxqbknSR4pugs1Le8HYEl+SxBdXtj/VrKuryNI5lTsv+uSawaWPTrmEN
-   Q==;
-X-CSE-ConnectionGUID: VDXpxxf2RCOd3CrNCG5i6A==
-X-CSE-MsgGUID: 2SEYOK3FRHKBnFSYwkGWCA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11800"; a="98476140"
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; 
-   d="scan'208";a="98476140"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 May 2026 04:15:11 -0700
-X-CSE-ConnectionGUID: xTWi7UJNQy68/bA9qpGGWw==
-X-CSE-MsgGUID: rwTGvIxkQN2s01gKZ5n2Dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,175,1774335600"; 
-   d="scan'208";a="280945191"
-Received: from lkp-server01.sh.intel.com (HELO f0d55cb201f0) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 29 May 2026 04:15:09 -0700
-Received: from kbuild by f0d55cb201f0 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wSvBC-0000000078s-2S2D;
-	Fri, 29 May 2026 11:15:06 +0000
-Date: Fri, 29 May 2026 19:14:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS WITH WARNING
- 0524a508b2cf7a3819406cd10d43d6e30fa31004
-Message-ID: <202605291905.ZbIigdMK-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="S/NuuInR"
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64T8tlsD651287;
+	Fri, 29 May 2026 06:06:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=VDV3D
+	R8RkqtO8qseOoAg0IqWKyI6GUEME0EFA9niYzw=; b=S/NuuInRcDlfY4g9o4BVo
+	AGWxNbh0fF0zYB1YxN19119ZeWHOLtoe+MtpmRzxDoqbx8o48CpPrIJYOT5X3nwj
+	vtz0IeOQqcMCrBYPgeeFihpNQXuRdGn+Ly04VjfaxzI1VkbCZLuqVx//L/cGq62I
+	WjT3Ox4AIpxJaJI9ThSgdqEZlvDnVqE8ieDvVcaYR1ScZY+mWl4cTBDbA+BvtUcJ
+	QVRiflj5vpYsJ8NaAool1VVSKxU5ROo4UcZw0/kjBcbcWn2v1V75mCziFmVfFVtS
+	ywFM7Mnvt0XoKJ55Hz/+p9S20uj2iH0+d4hQL+zB1zgamzjmauzhjW4RkyYBIYCZ
+	g==
+Received: from bl2pr02cu003.outbound.protection.outlook.com (mail-eastusazon11011022.outbound.protection.outlook.com [52.101.52.22])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 4ee7x46u5j-2
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 29 May 2026 06:06:47 -0400 (EDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f8CC8D64BeTkDuD1dZ9yQ6VIBTz4dpCTS453jiGBnB7oKTpnRgmVbj/dOEo7jCsDwcgHXoGV8YXSVtdcsHSlfLWJ+8pk7jvk4B+Jy6zeWZk/jEIChaHeF1fB6ym7JMziqFz2bEROIV/PHhGx1/Jdwkz6uo2A08SiOEMqBGyrqiKrACOISgsASsliMcUhLw/Gi/h5GVSPJrDInniGVLbJY295yu3oINu0Qiu4PQDxPrChLIda9kpRijuJJKh1WDbExJUlmz8ySLrnzQjl/wKh92HPgbDBZHu7JuL1z8mr2mw5J2Qa/3aUZYZ+tvMDBYTCnnDqgFBeR0r8KYgl6MqrXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VDV3DR8RkqtO8qseOoAg0IqWKyI6GUEME0EFA9niYzw=;
+ b=pwRkXVk3Xb5BNgA3TvTddE2g5c/n8W9EeBqC+9B2Oi3SjiPhObjo9RDMsBIGPbgtea75zf14H/VsG+gnOkiLTHUDGmQaIxlOxjrtfBP4gc8y5PKbAwk4aOCeM88s2H8j6rLjFQLw+lgzxUcavFn3i9a3f1+7xY6VGISJRrwabcL+cqqwZ1ScmkxK3A2w+OtjpsF2nHU7Z++sZ+7uwKXi1bAlHQEMpPWUBsAkzTobFQ1t+YBv0CXW+Wf50VvXA5slXINrFXztpSKSUtje62Nh6XLhhsIeKCxBxHspMX9Zy5bdFcTt4ZqQeH2dafxxE8ydsKWLQErTdAuwvLUlLV9e3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
+Received: from LV9PR03MB8414.namprd03.prod.outlook.com (2603:10b6:408:367::23)
+ by IA1PR03MB8358.namprd03.prod.outlook.com (2603:10b6:208:59f::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.15; Fri, 29 May
+ 2026 10:06:44 +0000
+Received: from LV9PR03MB8414.namprd03.prod.outlook.com
+ ([fe80::d661:7c16:d052:cc81]) by LV9PR03MB8414.namprd03.prod.outlook.com
+ ([fe80::d661:7c16:d052:cc81%6]) with mapi id 15.21.0071.010; Fri, 29 May 2026
+ 10:06:43 +0000
+From: "Sabau, Radu bogdan" <Radu.Sabau@analog.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+        Radu Sabau via B4 Relay
+	<devnull+radu.sabau.analog.com@kernel.org>
+CC: Lars-Peter Clausen <lars@metafoo.de>,
+        "Hennerich, Michael"
+	<Michael.Hennerich@analog.com>,
+        David Lechner <dlechner@baylibre.com>,
+        "Sa,
+ Nuno" <Nuno.Sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?=
+	<ukleinek@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+	<broonie@kernel.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski
+	<brgl@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jonathan Corbet
+	<corbet@lwn.net>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: RE: [PATCH v13 2/6] iio: adc: ad4691: add initial driver for AD4691
+ family
+Thread-Topic: [PATCH v13 2/6] iio: adc: ad4691: add initial driver for AD4691
+ family
+Thread-Index: AQHc7C6ynrrMRrFpuUKd6Qi0SnLr+LYiLuyAgAKd49A=
+Date: Fri, 29 May 2026 10:06:43 +0000
+Message-ID:
+ <LV9PR03MB8414155D0BA8AAAD6A66EB71F7162@LV9PR03MB8414.namprd03.prod.outlook.com>
+References:
+ <20260525-ad4692-multichannel-sar-adc-driver-v13-0-1b7626d3b35c@analog.com>
+	<20260525-ad4692-multichannel-sar-adc-driver-v13-2-1b7626d3b35c@analog.com>
+ <20260527190713.1cba1e89@jic23-huawei>
+In-Reply-To: <20260527190713.1cba1e89@jic23-huawei>
+Accept-Language: en-US
+Content-Language: en-GB
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV9PR03MB8414:EE_|IA1PR03MB8358:EE_
+x-ms-office365-filtering-correlation-id: 812d74f4-1706-4d63-8b76-08debd69fc86
+x-ld-processed: eaa689b4-8f87-40e0-9c6f-7228de4d754a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016|4143699003|11063799006|6133799003|56012099006|22082099003|18002099003|38070700021;
+x-microsoft-antispam-message-info:
+ 4z0ZqgBDhg949eCRkCh3ZaGSnAPC/pit1epETLiEKq0cMckUFii3a8fzbLhoHQ/1BC5CAQzVR4T22A7+onZwnh6A/tXSNYgMK6a+2jaMw2ebb0XLLR1tKmjqrbuOE+B3z0I3qFKUxquMAAIN1Z9Gd1Anwuv+9E/+fvqfJxxZeMsTivAOFQO9O5bHkEv1FfgKBr/6XfZjlEinMyf8rB7AzXBLU8NmhKXUhfhlcxjuyWi45OqJDpJUnUTs6e/JWQELnv+vWJhf2sIs7akc5YTY92M0+l/37mQr5sh0YmEsvLJcok7VrZHuijr8JTDAGaI4Cw4YxaycHgPMKXjoQ2wvTuLb9t0xZk/TTK3hibt9Va2/NXBUeXOX8UHFS3y0wrXm1ecoI1FORT5lXwXxS8mJgRnIatjXNTSMaWl6n+lJFJNm2rR369WPejKv3Nrbfd6TEHz9erPhaEcfUqEd2FueeTctnvUJBcPlSXf+RHqrOjfw8QSoymWqOUR5ho7W2S7HMXSjuibkwOfjn4Jjr63OeKxY/truIY/ziE6No3/vrVobdvm91GWkA3YbK0DVELRZMfpnZWVHzBUdzLKCd0hfC9kisKGkIcN4L4p8wXjGcLmjbMgDk8nCCIbZ942AIfWLE9aGP+QKrZI5J5tmU9fyX49kM8NeJB177GaS+bNhWC78Rh7L9VSyIX39t8pC5yO3TG5oElqnkETdHffPG0hQxx0JWYHJHp34bU8cteXIACxr/eOeImVmdZMQrveJke5p
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV9PR03MB8414.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(4143699003)(11063799006)(6133799003)(56012099006)(22082099003)(18002099003)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?QkQ4YzFYOUNRZVBiOHk5eG0zT1JLRUtpNEduUC93VkYxTGFmQ0JrRUtYTUhn?=
+ =?utf-8?B?UFFGZnhIVUtWSEkwMmhCaE9mdDJ0UnNkUHFodTJ4d0dacWJzRFliRjB5c2dF?=
+ =?utf-8?B?V1lEV3VpTlk4bEQ0K1hWajROVkw2dmlwbE82UzJ2d3I5VU1rdHVDc1FpbXhn?=
+ =?utf-8?B?M3Z5OW01amFVRjlKdlFtWnNjK1dOR200U0U3UjBxK09WaVhnRTFJWVY1MlhZ?=
+ =?utf-8?B?d0dRRDcrMlZ1dUxzaXNpNm5jRE9Jamx6Ymt5bGgzaDErZk5kNlViYVVRdTkw?=
+ =?utf-8?B?b09Sak8xdmpXc1ZBL0pjRm5ILzN4UFd5K01ycnppN0FVV200OXhMQUw3UzF6?=
+ =?utf-8?B?T29rYUFrQ0pMSWRWL2tqaGJEU01EQ0RYcjh6bWJIRHJ3aW1hNmJkSzE0UWhl?=
+ =?utf-8?B?cHN6YzdtR3FKR09ud0tmT0ZSUS8wMGUzZUV6bWFOL05kUTU0MEozSHhUMTZF?=
+ =?utf-8?B?SytZMXo2NTFKVGFTL1NxSGRXSnpSODBKUGtGUy9EV2MwYXBNVlF1d05BeHVN?=
+ =?utf-8?B?TEliS2NLU0x5STlTWWhGR01iVlpSSmJzaDNZdFp4VElXMllEZEkrSDVmU3Fi?=
+ =?utf-8?B?V2QxTW5YTkE5S3k5MWl5c2FVNU1KTTNmK2JoUDgzNGM4TVlGQy8vc2NGQ2VC?=
+ =?utf-8?B?NTZTYWEwNFNJRHNjV2hDVmVVVEpQTVIvTUZPM1dKcmFzQVIyVEVUcTFiTGNh?=
+ =?utf-8?B?QW0wNVJsSTZFOFBPMkRZbkZYSFliT3E1bFk3WW9jbmJhMHNaVFR4VkhyQTI5?=
+ =?utf-8?B?eWxDRFhxNGd5V0RnVDFuaTZjVGoyMFYvTHdQS0Z1NWhhOVZMWkNuYW5TTFV3?=
+ =?utf-8?B?KzF4VGZwZzRZb01pcERWNkVzLzNibS9yUTVTcFFrOTlaaGptUVR4SklFTUdB?=
+ =?utf-8?B?aDkrUzBWa1BieXduWlJHVVI0NWJsMEl3cXdNRHp0MndQckpqZmdyM2EvTloz?=
+ =?utf-8?B?MWpYZUViVVBzZ2ZNdXFGV3JjUnhYSUc3K054WkV1Z0VRRHZiWDBzNmlzalVO?=
+ =?utf-8?B?V2ZqdEV2VTBXazR0SGFNeUxsNFk1Z3dKK0hpekIzeHVEQ1RxUmxXV3hOUFpO?=
+ =?utf-8?B?dkZIV2E4U2x0RnpvREVXcThyMGhaQTNoWHd3NENpUFNlV3UrSC9nU3pYMk8y?=
+ =?utf-8?B?RVpScnhMNDBVeDliNm51R0lSK3p2bDFnblZuM0JES3ZRL2Y3elN2VHJmc29P?=
+ =?utf-8?B?MUZYWWg2NFBPYTJRWVdjbFJSQ3RLbkRQVzExdTFKZURTTjZoNVNEaXErS0dC?=
+ =?utf-8?B?NTA0ZWRnZ2xjdEpnb1hUVkFqeUZYOUVPNEZUQWtoQnpwOHpXTnZKbmVCb01K?=
+ =?utf-8?B?ZkhIaXN6cWpoeDlBUmVHY2wxUHNYU09QR0NaRmkxOUFGYWxoT2pDWmdnWXFX?=
+ =?utf-8?B?d3ZrWkcxY1ZlUlIwSEtXenJ1MTIzYVphblRtQTNBV2RQNGRWNHFBYlo1UEFB?=
+ =?utf-8?B?c0M1bnFraGJHR2p5Q21iTG5pSnpFeDVqZUJqUjdLbDd5VGF0UEZrWmNaQ1pw?=
+ =?utf-8?B?TmxGWVBaWk14Mmw0SzZqRGZyTFc5U292aFI4RUFKTlJOV3dCUG8rSW1CMFk1?=
+ =?utf-8?B?VVUwNzNERjd2Y01qQi9uY2FsTmY5ZHFNU1FzTU96dzNWeER6RUFwMldodjZS?=
+ =?utf-8?B?QzVQd2MyUEhzWC95WStueUQ4Yi90N0lNcGRJblNzN3VMSlhobVdOZCtyUzha?=
+ =?utf-8?B?dEpETlVvS2dzUGhxRnNreWlQSkh6TUIwSVVGcjN5czZkWmFueW4xUnNzSThs?=
+ =?utf-8?B?K1hhemxYOFdrYmhUdjA1VGtIUTV2aUxjUW85eEM2eU1FRHQzRGNVVzY5WUF1?=
+ =?utf-8?B?TEozV0dDMm9ScG1RQWVqSFNoanNnS0xsMG9RL1R5dEZVZFVMaFQvMXhoSHpI?=
+ =?utf-8?B?STB3SVRNUzNUbWxHRGhSUnhUYnplYUpaMCtlTUF0aC9MeTdkOWQ5SllEY0Zl?=
+ =?utf-8?B?cGNVVnJCc0NCa2ozc2pqRElHM1Q5WlRva0NQMVByZGtINVQzZk9RbnpoSWI2?=
+ =?utf-8?B?YnpuL0JqN1VpcUFSL1I0K0dGZkJPcHZSL0daT0I1NVpyT0JHWml1V0VVMUEr?=
+ =?utf-8?B?MjhnSnRzMUJpSEY0VHllaVU3ME5FNzlWS0FWWURPQlptelNkem16Wm12amc2?=
+ =?utf-8?B?VFFOeGdGVmtGamMwN3B6ZmUvQ3JUZmhjSXhLdXZzTXEvZnFxdVNWYlF3OS82?=
+ =?utf-8?B?MUxBWDh3YVRlUStzM05BeWpzMkh0bEgycmNDOE80Z3BFTXlja0FqdFRkajVJ?=
+ =?utf-8?B?TnZ4Qytrb3dCdWNzcU5adGYyRlRucWx6QWtGSmJSL0JNbjJ6QXZTMUp5emVs?=
+ =?utf-8?B?QmF6VnVmREdudWQ1QkVOUldNL21nQzlhclM0Ni93RWRvSENMaEQ1UT09?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked:
+	CE/q9x6mTxB0+ftf3tEnE0Z2D2fkiv0UNagWdC40uub0FeiUNWhBbMcy+B/ilSRJlbLkJM2uu0vRM5TP+qR9laRPNIM1W9vhJAKe4fwJsKc3zHWS1tolwKxCZic59lvx/IKC+YANKoCwyh0TeMI2sgkUEfw7YE6SVklmHzMTOzi53oy7FuupYkmtJDWAvMN4nWwPGuHkotJ6vz4FNLz4YdkJU5gC9n5HlJmxv834JjdFf3Uh5tL5SafQm5YE3EGiYGB9xWpZegPFauEeYwTmoVO7lKFJxosgqYZcz9l7HIrlTgYCdUMR2TjueTWuFqF2kCeGiXKA2arnbQWLNPGSuQ==
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV9PR03MB8414.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 812d74f4-1706-4d63-8b76-08debd69fc86
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2026 10:06:43.9038
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NLgADJwh7PCyFi+E7qEHdkkaTmnJyzmT8cXj5pxG9Av4UkgVkCIqg4H+MqeZF4MDRCceobqRsH5ED+eNYqUxNw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR03MB8358
+X-Authority-Analysis: v=2.4 cv=X8pi7mTe c=1 sm=1 tr=0 ts=6a196537 cx=c_pps
+ a=3RjCkzAZQHL7PUncwJf+GQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22 a=0sLvza09kfJOxVLZPwjg:22
+ a=N--XFCr6TIEc_64PeIT2:22 a=VwQbUJbxAAAA:8 a=p-bT5JZeb4596wWgEYYA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI5MDEwMCBTYWx0ZWRfXwplyORUebPvi
+ k5abFE05FU8+HJYQB4Q3CZ9W8BpaX1XFgWFZxrJPsk4jb6nSJmt4iSXn/5Kz6D9RZ+t5SUpRBt3
+ DsGytfeCwEO6pGYIdtul44J5JeZOPliM8vap7NuxOORokG/jGvuRtfDVR2DfFMcvo9PR4ti1A2+
+ myKThZ8VR/XIIXCj65qwcNKdwuNu5TKQ/ej2lJqMl0xuN3FP5GePPJ6EDv0ZhT/VIk0bRd6WAEK
+ 8D3j16nRnHcekK0a5Ghy2y7fXPPAncD3gvMxwbZ9rfMoe6IJL2h62dAIuGKlWYFIXFeh9D64pFn
+ ZcMDVArGD2cHj/l7cXQX5JpRasY0H+6Vv4mHWKsO/mMXOJoLOQ7DHCt+KwG7Po/6/C5pU/FKcZX
+ l/nFTvofnxxeG6fxEDpchnQdomy39b4y6/BdVEgv0CcKqnXV8XzDJv57EABPsdhRPZmPW8rwlJI
+ yHMnPI4iynzFFkUPBjg==
+X-Proofpoint-ORIG-GUID: AA0XYdQQcD8I9AemKPm9P_2v3K6BHwaS
+X-Proofpoint-GUID: AA0XYdQQcD8I9AemKPm9P_2v3K6BHwaS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-05-29_03,2026-05-28_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 spamscore=0 bulkscore=0 malwarescore=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 impostorscore=0 adultscore=0
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605210000
+ definitions=main-2605290100
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: 0524a508b2cf7a3819406cd10d43d6e30fa31004  pinctrl: qcom: sm6115: Add egpio support
-
-Warning (recently discovered and may have been fixed):
-
-    https://lore.kernel.org/oe-kbuild-all/202605282107.qMTvFj61-lkp@intel.com
-    https://lore.kernel.org/oe-kbuild-all/202605290016.yjxpI0nU-lkp@intel.com
-
-    drivers/pinctrl/ns' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctegra/pinctrl-tegra238.c:1125:27: warning: unused variable 'soc_gpio77_pgg0_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1077:27: warning: 'soc_gpio49_pee2_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1077:27: warning: unused variable 'soc_gpio49_pee2_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1081:27: warning: 'soc_gpio82_pee3_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1081:27: warning: unused variable 'soc_gpio82_pee3_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1085:27: warning: 'soc_gpio50_pee4_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1085:27: warning: unused variable 'soc_gpio50_pee4_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1089:27: warning: 'soc_gpio83_pee5_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1089:27: warning: unused variable 'soc_gpio83_pee5_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1093:27: warning: 'soc_gpio69_pff0_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1093:27: warning: unused variable 'soc_gpio69_pff0_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1097:27: warning: 'soc_gpio70_pff1_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1097:27: warning: unused variable 'soc_gpio70_pff1_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1101:27: warning: 'soc_gpio71_pff2_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1101:27: warning: unused variable 'soc_gpio71_pff2_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1105:27: warning: 'soc_gpio72_pff3_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1105:27: warning: unused variable 'soc_gpio72_pff3_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1109:27: warning: 'soc_gpio73_pff4_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1109:27: warning: unused variable 'soc_gpio73_pff4_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1113:27: warning: 'soc_gpio74_pff5_pidrivers/pinctrl/tegra/pinctrl-tegra238.c:1077:27: warning: unused variable 'soc_gpio49_pee2_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1113:27: warning: 'soc_gpio74_pff5_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1113:27: warning: unused variable 'soc_gpio74_pff5_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1117:27: warning: 'soc_gpio80_pff6_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1117:27: warning: unused variable 'soc_gpio80_pff6_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1121:27: warning: 'soc_gpio76_pff7_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1121:27: warning: unused variable 'soc_gpio76_pff7_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1125:27: warning: 'soc_gpio77_pgg0_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1125:27: warning: unused variable 'soc_gpio77_pgg0_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1129:27: warning: 'soc_gpio84_pgg1_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1129:27: warning: unused variable 'soc_gpio84_pgg1_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1133:27: warning: 'uart2_tx_pgg2_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1133:27: warning: unused variable 'uart2_tx_pgg2_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1137:27: warning: 'uart2_rx_pgg3_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1137:27: warning: unused variable 'uart2_rx_pgg3_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1141:27: warning: 'uart2_rts_pgg4_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1141:27: warning: unused variable 'uart2_rts_pgg4_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1145:27: warning: 'uart2_cts_pgg5_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1145:27: warning: unused variable 'uart2_cts_pgg5_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1149:27: warning: 'soc_gpio85_pgg6_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1149:27: warning: unused variable 'soc_gpio85_pgg6_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1153:27: warning: 'uart5_tx_pgg7_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1153:27: warning: unused variable 'uart5_tx_pgg7_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1157:27: warning: 'uart5_rx_phh0_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1157:27: warning: unused variable 'uart5_rx_phh0_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1161:27: warning: 'uart5_rts_phh1_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1161:27: warning: unused variable 'uart5_rts_phh1_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1165:27: warning: 'uart5_cts_phh2_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1165:27: warning: unused variable 'uart5_cts_phh2_pins' [-Wunused-const-variable]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1169:27: warning: 'soc_gpio86_phh3_pins' defined but not used [-Wunused-const-variable=]
-    drivers/pinctrl/tegra/pinctrl-tegra238.c:1169:27: warning: unused variable 'soc_gpio86_phh3_pins' [-Wunused-const-variable]
-    trl-tegra238.c:1169:27: warning: 'soc_gpio86_phh3_pins' defined but not used [-Wunused-const-variable=]
-
-Warning ids grouped by kconfigs:
-
-recent_errors
-|-- alpha-allyesconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- arc-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- arm-allyesconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- arm64-defconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- csky-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- csky-randconfig-r064-20260529
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- hexagon-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio49_pee2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio50_pee4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio69_pff0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio70_pff1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio71_pff2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio72_pff3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio73_pff4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio74_pff5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio76_pff7_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio77_pgg0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio80_pff6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio82_pee3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio83_pee5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio84_pgg1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio85_pgg6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio86_phh3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_cts_pgg5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rts_pgg4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rx_pgg3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_tx_pgg2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_cts_phh2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rts_phh1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rx_phh0_pins
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_tx_pgg7_pins
-|-- i386-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- i386-allyesconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- m68k-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- m68k-allyesconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- microblaze-allyesconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- mips-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- mips-allyesconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- nios2-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- nios2-randconfig-r051-20260529
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- openrisc-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- parisc-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- parisc-allyesconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- powerpc-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- riscv-allyesconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio49_pee2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio50_pee4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio69_pff0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio70_pff1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio71_pff2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio72_pff3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio73_pff4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio74_pff5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio76_pff7_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio77_pgg0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio80_pff6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio82_pee3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio83_pee5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio84_pgg1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio85_pgg6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio86_phh3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_cts_pgg5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rts_pgg4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rx_pgg3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_tx_pgg2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_cts_phh2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rts_phh1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rx_phh0_pins
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_tx_pgg7_pins
-|-- s390-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio49_pee2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio50_pee4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio69_pff0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio70_pff1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio71_pff2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio72_pff3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio73_pff4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio74_pff5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio76_pff7_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio77_pgg0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio80_pff6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio82_pee3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio83_pee5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio84_pgg1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio85_pgg6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio86_phh3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_cts_pgg5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rts_pgg4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rx_pgg3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_tx_pgg2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_cts_phh2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rts_phh1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rx_phh0_pins
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_tx_pgg7_pins
-|-- s390-allyesconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- sh-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- sh-allyesconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- sparc64-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio49_pee2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio50_pee4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio69_pff0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio70_pff1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio71_pff2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio72_pff3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio73_pff4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio74_pff5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio76_pff7_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio77_pgg0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio80_pff6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio82_pee3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio83_pee5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio84_pgg1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio85_pgg6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio86_phh3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_cts_pgg5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rts_pgg4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rx_pgg3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_tx_pgg2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_cts_phh2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rts_phh1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rx_phh0_pins
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_tx_pgg7_pins
-|-- um-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio49_pee2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio50_pee4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio69_pff0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio70_pff1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio71_pff2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio72_pff3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio73_pff4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio74_pff5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio76_pff7_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio77_pgg0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio80_pff6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio82_pee3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio83_pee5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio84_pgg1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio85_pgg6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio86_phh3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_cts_pgg5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rts_pgg4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rx_pgg3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_tx_pgg2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_cts_phh2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rts_phh1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rx_phh0_pins
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_tx_pgg7_pins
-|-- um-allyesconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-|-- x86_64-allmodconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio49_pee2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio50_pee4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio69_pff0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio70_pff1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio71_pff2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio72_pff3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio73_pff4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio74_pff5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio76_pff7_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio77_pgg0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio80_pff6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio82_pee3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio83_pee5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio84_pgg1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio85_pgg6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio86_phh3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_cts_pgg5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rts_pgg4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rx_pgg3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_tx_pgg2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_cts_phh2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rts_phh1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rx_phh0_pins
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_tx_pgg7_pins
-|-- x86_64-allyesconfig
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio49_pee2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio50_pee4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio69_pff0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio70_pff1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio71_pff2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio72_pff3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio73_pff4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio74_pff5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio76_pff7_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio77_pgg0_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio80_pff6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio82_pee3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio83_pee5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio84_pgg1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio85_pgg6_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-soc_gpio86_phh3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_cts_pgg5_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rts_pgg4_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_rx_pgg3_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart2_tx_pgg2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_cts_phh2_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rts_phh1_pins
-|   |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_rx_phh0_pins
-|   `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:unused-variable-uart5_tx_pgg7_pins
-`-- xtensa-allyesconfig
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio49_pee2_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio50_pee4_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio69_pff0_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio70_pff1_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio71_pff2_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio72_pff3_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio73_pff4_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio74_pff5_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio76_pff7_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio77_pgg0_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio80_pff6_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio82_pee3_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio83_pee5_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio84_pgg1_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio85_pgg6_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:soc_gpio86_phh3_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_cts_pgg5_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rts_pgg4_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_rx_pgg3_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart2_tx_pgg2_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_cts_phh2_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rts_phh1_pins-defined-but-not-used
-    |-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_rx_phh0_pins-defined-but-not-used
-    `-- drivers-pinctrl-tegra-pinctrl-tegra238.c:warning:uart5_tx_pgg7_pins-defined-but-not-used
-
-elapsed time: 2469m
-
-configs tested: 252
-configs skipped: 6
-
-tested configs:
-alpha                             allnoconfig    gcc-15.2.0
-alpha                            allyesconfig    gcc-15.2.0
-alpha                               defconfig    gcc-15.2.0
-arc                              allmodconfig    clang-16
-arc                              allmodconfig    gcc-15.2.0
-arc                               allnoconfig    gcc-15.2.0
-arc                              allyesconfig    gcc-15.2.0
-arc                                 defconfig    gcc-15.2.0
-arc                   randconfig-001-20260529    clang-23
-arc                   randconfig-001-20260529    gcc-14.3.0
-arc                   randconfig-002-20260529    clang-23
-arc                   randconfig-002-20260529    gcc-10.5.0
-arm                               allnoconfig    clang-23
-arm                               allnoconfig    gcc-15.2.0
-arm                              allyesconfig    clang-16
-arm                              allyesconfig    gcc-15.2.0
-arm                                 defconfig    gcc-15.2.0
-arm                   randconfig-001-20260529    clang-23
-arm                   randconfig-001-20260529    gcc-14.3.0
-arm                   randconfig-002-20260529    clang-23
-arm                   randconfig-002-20260529    gcc-8.5.0
-arm                   randconfig-003-20260529    clang-23
-arm                   randconfig-003-20260529    gcc-13.4.0
-arm                   randconfig-004-20260529    clang-23
-arm                           spitz_defconfig    gcc-15.2.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.2.0
-arm64                               defconfig    gcc-15.2.0
-arm64                 randconfig-001-20260529    clang-23
-arm64                 randconfig-001-20260529    gcc-8.5.0
-arm64                 randconfig-002-20260529    clang-23
-arm64                 randconfig-003-20260529    clang-23
-arm64                 randconfig-004-20260529    clang-23
-arm64                 randconfig-004-20260529    gcc-15.2.0
-csky                             allmodconfig    gcc-15.2.0
-csky                              allnoconfig    gcc-15.2.0
-csky                                defconfig    gcc-15.2.0
-csky                  randconfig-001-20260529    clang-23
-csky                  randconfig-001-20260529    gcc-15.2.0
-csky                  randconfig-002-20260529    clang-23
-csky                  randconfig-002-20260529    gcc-15.2.0
-hexagon                          allmodconfig    clang-17
-hexagon                          allmodconfig    gcc-15.2.0
-hexagon                           allnoconfig    clang-23
-hexagon                           allnoconfig    gcc-15.2.0
-hexagon                             defconfig    gcc-15.2.0
-hexagon               randconfig-001-20260529    clang-23
-hexagon               randconfig-001-20260529    gcc-8.5.0
-hexagon               randconfig-002-20260529    clang-23
-hexagon               randconfig-002-20260529    gcc-8.5.0
-i386                             allmodconfig    clang-20
-i386                              allnoconfig    gcc-14
-i386                              allnoconfig    gcc-15.2.0
-i386                             allyesconfig    clang-20
-i386                             allyesconfig    gcc-14
-i386        buildonly-randconfig-001-20260529    gcc-12
-i386        buildonly-randconfig-002-20260529    clang-20
-i386        buildonly-randconfig-002-20260529    gcc-12
-i386        buildonly-randconfig-003-20260529    gcc-12
-i386        buildonly-randconfig-004-20260529    gcc-12
-i386        buildonly-randconfig-004-20260529    gcc-14
-i386        buildonly-randconfig-005-20260529    gcc-12
-i386        buildonly-randconfig-005-20260529    gcc-14
-i386        buildonly-randconfig-006-20260529    gcc-12
-i386        buildonly-randconfig-006-20260529    gcc-14
-i386                                defconfig    gcc-15.2.0
-i386                  randconfig-001-20260529    gcc-14
-i386                  randconfig-002-20260529    gcc-12
-i386                  randconfig-002-20260529    gcc-14
-i386                  randconfig-003-20260529    clang-20
-i386                  randconfig-003-20260529    gcc-14
-i386                  randconfig-004-20260529    clang-20
-i386                  randconfig-004-20260529    gcc-14
-i386                  randconfig-005-20260529    gcc-14
-i386                  randconfig-006-20260529    clang-20
-i386                  randconfig-006-20260529    gcc-14
-i386                  randconfig-007-20260529    gcc-12
-i386                  randconfig-007-20260529    gcc-14
-i386                  randconfig-011-20260529    clang-20
-i386                  randconfig-011-20260529    gcc-14
-i386                  randconfig-012-20260529    clang-20
-i386                  randconfig-012-20260529    gcc-14
-i386                  randconfig-013-20260529    clang-20
-i386                  randconfig-013-20260529    gcc-14
-i386                  randconfig-014-20260529    clang-20
-i386                  randconfig-014-20260529    gcc-14
-i386                  randconfig-015-20260529    gcc-14
-i386                  randconfig-016-20260529    clang-20
-i386                  randconfig-016-20260529    gcc-14
-i386                  randconfig-017-20260529    gcc-13
-i386                  randconfig-017-20260529    gcc-14
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-23
-loongarch                         allnoconfig    gcc-15.2.0
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20260529    gcc-15.2.0
-loongarch             randconfig-001-20260529    gcc-8.5.0
-loongarch             randconfig-002-20260529    gcc-15.2.0
-loongarch             randconfig-002-20260529    gcc-8.5.0
-m68k                             allmodconfig    gcc-15.2.0
-m68k                              allnoconfig    gcc-15.2.0
-m68k                             allyesconfig    clang-16
-m68k                             allyesconfig    gcc-15.2.0
-m68k                                defconfig    clang-19
-m68k                                defconfig    gcc-15.2.0
-microblaze                        allnoconfig    gcc-15.2.0
-microblaze                       allyesconfig    gcc-15.2.0
-microblaze                          defconfig    clang-19
-microblaze                          defconfig    gcc-15.2.0
-mips                             allmodconfig    gcc-15.2.0
-mips                              allnoconfig    gcc-15.2.0
-mips                             allyesconfig    gcc-15.2.0
-nios2                            alldefconfig    gcc-11.5.0
-nios2                            allmodconfig    clang-23
-nios2                             allnoconfig    clang-23
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    clang-19
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20260529    gcc-8.5.0
-nios2                 randconfig-002-20260529    gcc-8.5.0
-openrisc                         allmodconfig    clang-23
-openrisc                         allmodconfig    gcc-15.2.0
-openrisc                          allnoconfig    clang-23
-openrisc                          allnoconfig    gcc-15.2.0
-openrisc                            defconfig    gcc-15.2.0
-parisc                           allmodconfig    gcc-15.2.0
-parisc                            allnoconfig    clang-23
-parisc                            allnoconfig    gcc-15.2.0
-parisc                           allyesconfig    clang-19
-parisc                              defconfig    gcc-15.2.0
-parisc                randconfig-001-20260529    clang-19
-parisc                randconfig-001-20260529    gcc-8.5.0
-parisc                randconfig-002-20260529    clang-19
-parisc                randconfig-002-20260529    gcc-8.5.0
-parisc64                            defconfig    clang-19
-parisc64                            defconfig    gcc-15.2.0
-powerpc                          allmodconfig    gcc-15.2.0
-powerpc                           allnoconfig    clang-23
-powerpc                           allnoconfig    gcc-15.2.0
-powerpc               randconfig-001-20260529    clang-19
-powerpc               randconfig-001-20260529    gcc-12.5.0
-powerpc               randconfig-002-20260529    clang-19
-powerpc64             randconfig-001-20260529    clang-19
-powerpc64             randconfig-001-20260529    gcc-15.2.0
-powerpc64             randconfig-002-20260529    clang-19
-riscv                            allmodconfig    clang-23
-riscv                             allnoconfig    clang-23
-riscv                             allnoconfig    gcc-15.2.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-23
-riscv                               defconfig    gcc-15.2.0
-riscv                 randconfig-001-20260529    gcc-15.2.0
-riscv                 randconfig-001-20260529    gcc-8.5.0
-riscv                 randconfig-002-20260529    gcc-15.2.0
-riscv                 randconfig-002-20260529    gcc-9.5.0
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-23
-s390                             allyesconfig    gcc-15.2.0
-s390                                defconfig    clang-23
-s390                                defconfig    gcc-15.2.0
-s390                  randconfig-001-20260529    gcc-15.2.0
-s390                  randconfig-001-20260529    gcc-8.5.0
-s390                  randconfig-002-20260529    clang-23
-s390                  randconfig-002-20260529    gcc-15.2.0
-sh                               allmodconfig    gcc-15.2.0
-sh                                allnoconfig    clang-23
-sh                                allnoconfig    gcc-15.2.0
-sh                               allyesconfig    clang-19
-sh                                  defconfig    gcc-14
-sh                                  defconfig    gcc-15.2.0
-sh                    randconfig-001-20260529    gcc-15.2.0
-sh                    randconfig-002-20260529    gcc-15.2.0
-sparc                             allnoconfig    clang-23
-sparc                             allnoconfig    gcc-15.2.0
-sparc                               defconfig    gcc-15.2.0
-sparc                 randconfig-001-20260529    gcc-8.5.0
-sparc                 randconfig-002-20260529    gcc-15.2.0
-sparc64                          allmodconfig    clang-23
-sparc64                             defconfig    clang-20
-sparc64                             defconfig    gcc-14
-sparc64               randconfig-001-20260529    gcc-11.5.0
-sparc64               randconfig-002-20260529    gcc-8.5.0
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-23
-um                               allyesconfig    gcc-14
-um                               allyesconfig    gcc-15.2.0
-um                                  defconfig    clang-23
-um                                  defconfig    gcc-14
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20260529    gcc-14
-um                    randconfig-002-20260529    gcc-14
-um                           x86_64_defconfig    clang-23
-um                           x86_64_defconfig    gcc-14
-x86_64                           allmodconfig    clang-20
-x86_64                            allnoconfig    clang-20
-x86_64                            allnoconfig    clang-23
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20260529    gcc-14
-x86_64      buildonly-randconfig-002-20260529    gcc-14
-x86_64      buildonly-randconfig-003-20260529    gcc-14
-x86_64      buildonly-randconfig-004-20260529    clang-20
-x86_64      buildonly-randconfig-004-20260529    gcc-14
-x86_64      buildonly-randconfig-005-20260529    clang-20
-x86_64      buildonly-randconfig-005-20260529    gcc-14
-x86_64      buildonly-randconfig-006-20260529    gcc-14
-x86_64                              defconfig    gcc-14
-x86_64                                  kexec    clang-20
-x86_64                         randconfig-001    gcc-14
-x86_64                randconfig-001-20260529    clang-20
-x86_64                randconfig-001-20260529    gcc-14
-x86_64                         randconfig-002    gcc-14
-x86_64                randconfig-002-20260529    clang-20
-x86_64                         randconfig-003    clang-20
-x86_64                randconfig-003-20260529    clang-20
-x86_64                randconfig-003-20260529    gcc-14
-x86_64                         randconfig-004    clang-20
-x86_64                randconfig-004-20260529    clang-20
-x86_64                         randconfig-005    gcc-14
-x86_64                randconfig-005-20260529    clang-20
-x86_64                         randconfig-006    clang-20
-x86_64                randconfig-006-20260529    clang-20
-x86_64                randconfig-011-20260529    clang-20
-x86_64                randconfig-011-20260529    gcc-14
-x86_64                randconfig-012-20260529    clang-20
-x86_64                randconfig-012-20260529    gcc-14
-x86_64                randconfig-013-20260529    clang-20
-x86_64                randconfig-014-20260529    clang-20
-x86_64                randconfig-015-20260529    clang-20
-x86_64                randconfig-015-20260529    gcc-14
-x86_64                randconfig-016-20260529    clang-20
-x86_64                randconfig-071-20260529    clang-20
-x86_64                randconfig-071-20260529    gcc-14
-x86_64                randconfig-072-20260529    clang-20
-x86_64                randconfig-073-20260529    clang-20
-x86_64                randconfig-074-20260529    clang-20
-x86_64                randconfig-074-20260529    gcc-14
-x86_64                randconfig-075-20260529    clang-20
-x86_64                randconfig-075-20260529    gcc-14
-x86_64                randconfig-076-20260529    clang-20
-x86_64                randconfig-076-20260529    gcc-14
-x86_64                               rhel-9.4    clang-20
-x86_64                           rhel-9.4-bpf    gcc-14
-x86_64                          rhel-9.4-func    clang-20
-x86_64                    rhel-9.4-kselftests    clang-20
-x86_64                         rhel-9.4-kunit    gcc-14
-x86_64                           rhel-9.4-ltp    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    clang-23
-xtensa                            allnoconfig    gcc-15.2.0
-xtensa                           allyesconfig    clang-23
-xtensa                randconfig-001-20260529    gcc-11.5.0
-xtensa                randconfig-002-20260529    gcc-8.5.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKb25hdGhhbiBDYW1lcm9uIDxq
+aWMyM0BrZXJuZWwub3JnPg0KPiBTZW50OiBXZWRuZXNkYXksIE1heSAyNywgMjAyNiA5OjA3IFBN
+DQoNCi4uLg0KDQo+ID4gK3N0YXRpYyBib29sIGFkNDY5MV92b2xhdGlsZV9yZWcoc3RydWN0IGRl
+dmljZSAqZGV2LCB1bnNpZ25lZCBpbnQgcmVnKQ0KPiA+ICt7DQo+ID4gKwlzd2l0Y2ggKHJlZykg
+ew0KPiA+ICsJY2FzZSBBRDQ2OTFfU1RBVFVTX1JFRzoNCj4gPiArCWNhc2UgQUQ0NjkxX0NMQU1Q
+X1NUQVRVUzFfUkVHOg0KPiA+ICsJY2FzZSBBRDQ2OTFfQ0xBTVBfU1RBVFVTMl9SRUc6DQo+ID4g
+KwljYXNlIEFENDY5MV9HUElPX1JFQUQ6DQo+ID4gKwljYXNlIEFENDY5MV9BQ0NfU1RBVFVTX0ZV
+TEwxX1JFRyAuLi4NCj4gQUQ0NjkxX0FDQ19TVEFUVVNfU0FUMl9SRUc6DQo+ID4gKwljYXNlIEFE
+NDY5MV9BQ0NfU0FUX09WUl9SRUcoMCkgLi4uDQo+IEFENDY5MV9BQ0NfU0FUX09WUl9SRUcoMTUp
+Og0KPiA+ICsJCXJldHVybiB0cnVlOw0KPiA+ICsJZGVmYXVsdDoNCj4gPiArCQlicmVhazsNCj4g
+PiArCX0NCj4gPiArDQo+ID4gKwkvKg0KPiA+ICsJICogTXVsdGktYnl0ZSByZWdpc3RlcnMgaGF2
+ZSBub24tdW5pdCBzdHJpZGVzOyBvbmx5IGFjY2VwdCBiYXNlDQo+ID4gKwkgKiBhZGRyZXNzZXMg
+dG8gcHJldmVudCBkZWJ1Z2ZzIGZyb20gdHJpZ2dlcmluZyByZWFkcyB0aGF0IGNyb3NzDQo+ID4g
+KwkgKiByZWdpc3RlciBib3VuZGFyaWVzLg0KPiBXaGF0IGRvZXMgdGhpcyBoYXZlIHRvIGRvIHdp
+dGggcHJldmVudGluZyBkZWJ1Z2ZzIGZyb20gZG9pbmcgYW55dGhpbmcuDQo+IEl0IHNob3VsZCBh
+bGxvdyByZWFkaW5nIG9mIHZvbGF0aWxlIHJlZ2lzdGVycy4gV2h5IGlzIGl0IG5vdCBlbm91Z2gg
+dG8NCj4gbWFrZSB0aGUgbm9uIGJhc2UgYWxpZ25lZCByZWdpc3RlcnMgbmVpdGhlciByZWFkYWJs
+ZSBub3Igd3JpdGVhYmxlPw0KPiANCg0KWW91J3JlIHJpZ2h0LCB0aGUgY29tbWVudCBpcyB3cm9u
+ZyBhbmQgdGhlIHN0cmlkZSBsb2dpYyBpcyBtaXNwbGFjZWQuDQpyZWFkYWJsZV9yZWcgaXMgd2hh
+dCBnYXRlcyBkZWJ1Z2ZzIGFjY2Vzcywgc28gdGhlIHN0cmlkZSBjaGVja3MgaW4NCnZvbGF0aWxl
+X3JlZyBhcmUgcmVkdW5kYW50IGFuZCB0aGUgY29tbWVudCBpcyBpbmNvcnJlY3QuDQoNCg==
