@@ -1,94 +1,152 @@
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B388733A00C;
-	Fri, 29 May 2026 10:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5095351C3B
+	for <linux-gpio@vger.kernel.org>; Fri, 29 May 2026 10:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780049050; cv=none; b=CSuhA1wuqFduUKBeuUsu1n4jLRLHbXY//p9vGtimm81Lz2RRCDNtWVegKchfg1XMUEGwZEB9yqGOUWtrKLZhvePzo6GRsnjIiSEmzeMKFfPiaaSasYdlFScFr3jdskT2XUUlHdMN1wIwPhod40njmcg+F2Bh/rC9i6JmZnkszN8=
+	t=1780049342; cv=none; b=GEetAHJWbgbL0XLF3IMYksFyVI6Z/vGBB5ye19EreXLaR1dCRXJ/d72nHwAHN2vmNEZS2JURn7qGxifPeip+HNNqTB9QQCFPfCLJ7StaU3WrYfHdBcMVRX86VVjvVA1Jf0EkS9LFn7QPPxWnG3BKrgd/IVPvieTh3uE67qhdTfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780049050; c=relaxed/simple;
-	bh=/vmrKk2beBz3O7mQP0UlMlm/vuaqBKuNKe7FQmX3g/g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FK3iNRWILm0a6+JU3nZb9d6tkUphUkuoimOcElhPOZpVgPB2z4Qtm7QWKaTK/EsHCZGF6lPQVlnvvyPpn1o7OAIMOAjbtj7cZWiClmAFdacAu99+G1JVh8Ox98K7uWAbvb4J9vqysDn3Q7qUO/LrBEoZp8VU1gHq5kB52TS+7t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=mjtGL7NN; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+	s=arc-20240116; t=1780049342; c=relaxed/simple;
+	bh=Yz4wKUO7mRoNaZIugtu9UsGT2PX6SXaZekLqVb3l5ZE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YaNyr69umTHLkh+cRtDFWX6K2DyfOh1rh0mf+27GQQoNeRs2ygrWKkHO7GnGl4WRxflOwOn/7CXGvZETgHKJx+BedBSsnXTYJNEDRXpfaaPXaDm6ek2PI7cRS9f1UXiL/nub5ENL2nQ+ZoxFWTukF3TfNTous1lLXJZz1FAA+cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W4calMsD; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="mjtGL7NN"
-X-UUID: b7737e4a5b4511f1b1788b6acf885367-20260529
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=bpBRYje8PFwQWANH98rSqO/HPHv/oZ2k0pnYJxe+62g=;
-	b=mjtGL7NNIhZaFAJi9Al7ghBnD0Qk7hgXknQiT2Z1iycP4qGD+J5oFG+1SnU8pBiPTFNMoG64uAmhyqBdPDstUW1PbPziBD7TtiMIJpGCWQ2VDnTi0u+Oh+zTwf03BKhuHZvOmzmtM0l9gRUNJp3X42F9Tq66hGSqx0ov/QbZfBs=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.15,REQID:8650c792-ebf1-4934-a1ce-3eb08b519cec,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:e276073,CLOUDID:fd26c54a-0449-4a87-afcf-cdef1b1bea20,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|865|888|898,TC:-5,Cont
-	ent:0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:-1,COL:0
-	,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: b7737e4a5b4511f1b1788b6acf885367-20260529
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <justin.yeh@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 284704824; Fri, 29 May 2026 18:04:01 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Fri, 29 May 2026 18:03:59 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.2562.29 via Frontend Transport; Fri, 29 May 2026 18:03:59 +0800
-From: Justin Yeh <justin.yeh@mediatek.com>
-To: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Justin Yeh <justin.yeh@mediatek.com>
-Subject: [PATCH 2/2] pinctrl: mediatek: mt8189: Add MODULE_LICENSE declaration
-Date: Fri, 29 May 2026 18:02:42 +0800
-Message-ID: <20260529100308.51271-3-justin.yeh@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20260529100308.51271-1-justin.yeh@mediatek.com>
-References: <20260529100308.51271-1-justin.yeh@mediatek.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4calMsD"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2ba3e3c4f87so143045935ad.3
+        for <linux-gpio@vger.kernel.org>; Fri, 29 May 2026 03:09:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780049341; x=1780654141; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=H8hXh27TAg8GvayKzSm4qP6Yj601eapfE8Ty44/peic=;
+        b=W4calMsDFc7B+ziecRpLGRxJHvowzifbv+xIemf4X+TyFCJZi/MXTXs1HJwfRm465A
+         QXKEc4AZCygkXppVPv4ArC9Gqs9asnKCpxLzIh7kARf0c9vZEhrzB59Fbb6ZYPusaX5d
+         4Ln5LZ5icHuvyWsEH/O4YXR7dOsf7Ya++WM9r88ZhpfvdUfFWTdCseH/37kF7ZAyR46K
+         DPq1Mj5+BcBuG5V5UE1k2uw92KFX+HJvxHJgnTzyBVcMItizmrFvQx5EUOe0ZXJZ9fM3
+         hak/Qq0+10jpSgo+lGNhCk1e42XU0ZyNTdhhJfgi37FiWdkxpaSY58sBebLpbq0nYjDZ
+         X7ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780049341; x=1780654141;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H8hXh27TAg8GvayKzSm4qP6Yj601eapfE8Ty44/peic=;
+        b=jPazD2gUkcplaUwzmAtqzIx64g0l8TLB6uN1U63QTxJ5Afbz66oZgN/gSZLHTTk5Gj
+         m+bDz4pMDSR+9WOyPutuQ/ONgFQqPgDmwrAfMgz+VsZ524lR0Nk6d3Vy92s5ArlDy1DT
+         tscq70/Bv2OAVbMEjoLxeMNuznEt/BA2Q9d9sd2O4MtogXbDiRg6oubLsGlZ48eiffoo
+         +qKWUt0sz0mOl0nYznU7jiytmliKEXuNNHNX7FUbeKpTGHXPAY619TRShaD8bImjQEJt
+         o+WQ8vKLmyC2xH0duO7j1bGlO7fvzu5puF/ctFBdMA0hsEPrxDZ2e3WwexHycVPSvp0h
+         TSdw==
+X-Gm-Message-State: AOJu0YzsJlI1po0kKnxve2vZgNevso1psTkvIJliRDJLwnkOQ7W+ebni
+	Uqw8PDgrNimTgUt3sZJm2KE6HA1R/u6tpZLis1o0V/0lnVkCddZF8fPP
+X-Gm-Gg: Acq92OHDDR450yy0XsAhR3qquz43nnaCEqiJ4jgwOm1EfvVtQgRfF5HgIgZjytI6o7e
+	uHgKxKcMQPqepXsZuqpt45ns+5kMEDvQLaShnqvMZ/wmJ8PKyoUtJKrquNUqi8HfWL4KGdq4+c9
+	7lPsaz1n1jiYhtPQRNIVJYqs9fHScZ56/M9kj6GaLp+8KD90jOqD+dud2H8g1qmVqSNwMcttPaG
+	VzXuRY+wN/Ov/Gm+wLRnvipLtMhZXuNHBhnuio6SMqBppOSZYqtyjd6mFYvOIGIUO2aGROLFUMO
+	I8xEyzkEoo75UCnzAkErdqlw1uR26FhoHLSS1qn4M4mGpghvRDcxgLAMx6aPjbJsf4gs7VntQNr
+	jtusK6KgAuNJlk+O5p+VcuZ2VRq3bn2FxwxCogmM5781CatlDBzeWVpC5YKVWvJHEI88eczzYjy
+	wkdsr1O4Ak6uW3rqf43bUwz/q8PU4Q6rOtOsBhWhJFfAFDQ1fsLB/L7EkOJ5AZT4Hf6r6sS8kqy
+	NbQq/2JeEDT+oP6Hv/FQXhxySrb37GplgJoG0NGDKlKbxfyoNBbvvx4WFt9QXcrr67YL+pVMb8D
+	MUsidpbWByoEryX+l2UpOSY=
+X-Received: by 2002:a17:902:ce87:b0:2bf:281f:19ec with SMTP id d9443c01a7336-2bf281f1c27mr12163095ad.24.1780049340822;
+        Fri, 29 May 2026 03:09:00 -0700 (PDT)
+Received: from hardik-yoga.oryx-cobra.ts.net ([2401:4900:1c22:2195:3f68:8568:1e68:2087])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bf23b0122asm16051225ad.46.2026.05.29.03.08.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 May 2026 03:09:00 -0700 (PDT)
+From: Hardik Prakash <hardikprakash.official@gmail.com>
+To: linux-i2c@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	wsa@kernel.org,
+	andriy.shevchenko@intel.com,
+	mario.limonciello@amd.com,
+	brgl@bgdev.pl,
+	basavaraj.natikar@amd.com,
+	linusw@kernel.org,
+	Hardik Prakash <hardikprakash.official@gmail.com>
+Subject: [PATCH v8 0/2] i2c: designware: fix WACF2200 touchscreen probe ordering
+Date: Fri, 29 May 2026 15:38:35 +0530
+Message-ID: <20260529100838.8896-1-hardikprakash.official@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
 
-Add missing MODULE_LICENSE("GPL v2") macro to fix modpost error during
-kernel module build. The license identifier matches the SPDX header
-(GPL-2.0) at the top of the file.
+This series fixes the non-functional WACF2200 touchscreen on Lenovo
+Yoga 7 14AGP11 by:
 
-This fixes the following build error:
-  ERROR: modpost: missing MODULE_LICENSE() in pinctrl-mt8189.o
+1. Reverting the earlier DMI-specific GPIO IRQ quirk (patch 1 of the
+   original series, already in Torvalds' tree) which is no longer
+   needed.
 
-Signed-off-by: Justin Yeh <justin.yeh@mediatek.com>
----
- drivers/pinctrl/mediatek/pinctrl-mt8189.c | 1 +
- 1 file changed, 1 insertion(+)
+2. Adding a generic probe deferral in i2c-designware that walks ACPI
+   child devices, finds GpioInt resources, and defers probe until the
+   referenced GPIO controllers are fully bound.
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8189.c b/drivers/pinctrl/mediatek/pinctrl-mt8189.c
-index cd4cdff309a1..a9c128c514a4 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8189.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8189.c
-@@ -1696,3 +1696,4 @@ static int __init mt8189_pinctrl_init(void)
- arch_initcall(mt8189_pinctrl_init);
- 
- MODULE_DESCRIPTION("MediaTek MT8189 Pinctrl Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.45.2
+Testing confirms patch 2 alone is sufficient — the existing
+amd_gpio_irq_enable() flow works correctly once probe ordering is
+fixed, making the manual IRQ restoration in the reverted patch
+unnecessary.
 
+The probe ordering race was confirmed via dynamic debug tracing:
+
+  0.285952  amd_gpio_probe: registering gpiochip  <- GPIO chip visible
+  0.287121  amd_gpio_probe: requesting parent IRQ <- probe still running
+  0.301454  AMDI0010:02 dw_i2c_plat_probe: start  <- races here
+  2.348157  lost arbitration
+
+Tested on Lenovo Yoga 7 14AGP11 (83TD), Fedora 44, kernel 7.1.0-rc5+.
+
+v8:
+ - Add revert of now-unnecessary patch 1 (Mario Limonciello)
+ - Collect Acked-by (Bartosz Golaszewski) and Reviewed-by (Mario Limonciello)
+
+v7:
+ - Fix unused 'ret' variable in check_child_gpioint() (kernel test robot)
+ - Replace BugLink: with Link: (Bartosz Golaszewski)
+ - Add Reported-by and Closes tags for kernel test robot warning
+
+v6:
+ - Replace DMI-specific deferral with generic GpioInt dependency check
+   walking ACPI child devices (suggested by Mario Limonciello)
+
+v5:
+ - Add blank line before #include <linux/acpi.h> (Bartosz Golaszewski)
+ - Use scoped_guard(device, gpio_dev) (Bartosz Golaszewski)
+
+v4:
+ - Rebase onto Linus Walleij's tree
+ - Use --base so series is correctly 1/1 (Andy Shevchenko)
+
+v3:
+ - Fix variable declaration style (Andy Shevchenko)
+ - Add BugLink tag (Andy Shevchenko)
+ - CC AMD engineers (Andy Shevchenko)
+
+v2:
+ - Replace custom HID/UID lookup with acpi_dev_get_first_match_dev()
+ - Use device_is_bound() under device_lock() with explanatory comments
+ - Add Assisted-by tags per coding-assistants.rst
+
+Kernel bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=221494
+Related: https://bugzilla.kernel.org/show_bug.cgi?id=221454
+
+Hardik Prakash (2):
+  Revert "pinctrl-amd: enable IRQ for WACF2200 touchscreen on Lenovo
+    Yoga 7 14AGP11"
+  i2c: designware: defer probe if child GpioInt controllers are not
+    bound
+
+ drivers/i2c/busses/i2c-designware-platdrv.c | 156 ++++++++++++++++++++
+ drivers/pinctrl/pinctrl-amd.c               |  35 -----
+ 2 files changed, 156 insertions(+), 35 deletions(-)
+
+base-commit: 8fde5d1d47f6
