@@ -1,230 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795203AA502;
-	Mon,  1 Jun 2026 09:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7304438D6AD
+	for <linux-gpio@vger.kernel.org>; Mon,  1 Jun 2026 10:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780307881; cv=none; b=HyQ+gJXJr/u76oLVhCTzBnWI4vPBeY5IJIQ1de2UhXOarvvXHZo3eUCiJdNdviJnNS8KGf6PzLyYWWIDkZUEub8OG8gviv7iFEIc/ItudOHEQl1i9UtKDluGvB+XWBNTzVy0csIryavgeZP4cIdqU9k8ltsgJ6VvdSp2MDGCSx4=
+	t=1780311468; cv=none; b=Oie1DuoZXp5Gn1OhViI5I3fw9Gp7hzG0hAiI4FUS+Kj0lsPzSXs/glmqwSqaknw1VRsznDrvzwWdWgYDhp2Tb6vZnPKM3oEklNHpwHun++Ex4EsiWTfvQ+Q3qFeb5d3WMJB6R+9kKbvwEOSgLIn2HIOq3MoAV8m6na/E6gaIQbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780307881; c=relaxed/simple;
-	bh=jFuDhcQjyETk/sxbWvMISVQlGDomjKblYcTiu2iIPek=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DBixTSgbEkCyqBxZHBg6t3+OmWAQ1jvf9YfY3BZHYRDkdBuXkyLlalHk5/ZkFl8siy+qQCl+e5WCEo6sNLwrpt5bxlxVruWZazDWhH1odExNxfWr7wbSNHnJuKaihIc7/cjJL2bH34wy4tkaWxKIkH21WFujqYcgh8y+xDhiF5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKtGJYoL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1780311468; c=relaxed/simple;
+	bh=vCurQUndleDK5XtXIdBJ1dAuH2Q3hMPjns7dgBUaNVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TwX4avF3odd4OX34SsZlk+RG1HofBPA5reXD/g3YaHv8foSEMR78qnABH938YqayIe6mfJaSC4vx1xubUFoNp6vt8NYncjmubzf18GWCD7rZPLN7blTYCogR86f7t1AYd1krdNRE2ufkVxLqEWYC1RQYkEy2igoLcEUw3KJo7Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fywMzrkn; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKtGJYoL"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EE873C2BCC6;
-	Mon,  1 Jun 2026 09:58:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1780307881;
-	bh=jFuDhcQjyETk/sxbWvMISVQlGDomjKblYcTiu2iIPek=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=VKtGJYoL9xHFLsrf/u+H/OpCZ7WOOQXF8KWPIycavZxy3y7EvQ4VSl4fSpiBiQAXI
-	 omd50915RgWuAR10+MLPAaogGXnQB5dxfIOUYTqj453a/eCLL6meolsntGo8QhyYsT
-	 rVjM1pc3kYa7vt3+TWnzvSE4GEPHbze5ZjVipELGAtMFnb7RWAR7zo6ZGi9FU0XJwT
-	 ycR+KN6wpsTs1coLHZyMnKbvDMeDnVazJ+IZ0RpkuQ6AbVVSgnWeSdREfyE+CRiEds
-	 Z1kgFSo5xucoHzfhsvpUgKaF2cnrIdmdY/AtwovKEi8YnOUEhjKx9GpqR4CZp5CDmA
-	 vCsQTxQmy8cRw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D42CFCD6E56;
-	Mon,  1 Jun 2026 09:58:00 +0000 (UTC)
-From: Jia Wang via B4 Relay <devnull+wangjia.ultrarisc.com@kernel.org>
-Date: Mon, 01 Jun 2026 17:56:34 +0800
-Subject: [PATCH v2 1/2] dt-bindings: pinctrl: Add UltraRISC DP1000 pinctrl
- controller
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fywMzrkn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1780311467; x=1811847467;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=vCurQUndleDK5XtXIdBJ1dAuH2Q3hMPjns7dgBUaNVs=;
+  b=fywMzrknquUeD2gEkQ3MAiZ3On3kmB2QXWMuSu4mki6Kvo8UU1pPqN3+
+   NNAk7TtpRSG4tFM8DY6iQ8E31FpQ6a7T7G78HxG76LtSmdQx2PmD9n5l3
+   rQtzo0qZcailUiHmR+fpa2DSRnR4AjcoFuXrzcnfCqC27NfZ0+ZNo/Axr
+   lHksozqB69/S94OZyI9w28ROkhePDOrHksrMMNe9kiqUTeRkxlOOz/BZw
+   0o5jDWpYJlrZHxH8qg0qpLaoMVO89+FzUX0yeMxCzBIPJ+QyKx52l9Sh+
+   rYtmgwzfQZTlaVY+C8Djje+Fe0Og0ebgTcQdT7C0M56V5/JmMSL0j6Y8I
+   A==;
+X-CSE-ConnectionGUID: 6Y5dVATDS7aniw2FEopdRw==
+X-CSE-MsgGUID: /XD7yqDTTq++mj/a7xW7PQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11803"; a="80099471"
+X-IronPort-AV: E=Sophos;i="6.24,181,1774335600"; 
+   d="scan'208";a="80099471"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2026 03:57:47 -0700
+X-CSE-ConnectionGUID: ZYxdRy6DQ5CAnqGUVlcwFw==
+X-CSE-MsgGUID: OuJSlqiPQfetVHQFLHTMNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,181,1774335600"; 
+   d="scan'208";a="267185975"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa002.fm.intel.com with ESMTP; 01 Jun 2026 03:57:46 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 029F595; Mon, 01 Jun 2026 12:57:44 +0200 (CEST)
+Date: Mon, 1 Jun 2026 12:57:44 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linux pin control <linux-gpio@vger.kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>
+Subject: [GIT PULL] intel-pinctrl for 7.2-1
+Message-ID: <ah1lqC1yscn5x5dN@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260601-ultrarisc-pinctrl-v2-1-07ac5130a96d@ultrarisc.com>
-References: <20260601-ultrarisc-pinctrl-v2-0-07ac5130a96d@ultrarisc.com>
-In-Reply-To: <20260601-ultrarisc-pinctrl-v2-0-07ac5130a96d@ultrarisc.com>
-To: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jia Wang <wangjia@ultrarisc.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1780307879; l=4423;
- i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
- bh=QbsxCQTIuyBKTJOUlammUU+55ZwaJc2BlpF5Um24hcM=;
- b=y6iuw9elfpivfVlw3O1dOm1WFyTsHFra73s30p3h5CsTovk3B7bdvhVosE4fbUgLAhd9ssjfe
- nbe0/ytDazJBpvloIeCP1nzofeVUTyCwxJBtv8QXUW3UiQ4PCBEOKFf
-X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
- pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
-X-Endpoint-Received: by B4 Relay for wangjia@ultrarisc.com/20260515 with
- auth_id=779
-X-Original-From: Jia Wang <wangjia@ultrarisc.com>
-Reply-To: wangjia@ultrarisc.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Jia Wang <wangjia@ultrarisc.com>
+Hi Linux pin control  maintainers,
 
-Add doc for the pinctrl controllers on the UltraRISC DP1000 RISC-V SoC.
+A tiny development in Intel pin control area. A single patch that has been in
+Linux Next for a couple of weeks without reported issues. Please, pull.
 
-Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
----
- .../bindings/pinctrl/ultrarisc,dp1000-pinctrl.yaml | 128 +++++++++++++++++++++
- MAINTAINERS                                        |   6 +
- 2 files changed, 134 insertions(+)
+Thanks,
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/ultrarisc,dp1000-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/ultrarisc,dp1000-pinctrl.yaml
-new file mode 100644
-index 000000000000..5100033c18c3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/ultrarisc,dp1000-pinctrl.yaml
-@@ -0,0 +1,128 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/ultrarisc,dp1000-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: UltraRISC DP1000 Pin Controller
-+
-+maintainers:
-+  - Jia Wang <wangjia@ultrarisc.com>
-+
-+description: |
-+  UltraRISC RISC-V SoC DP1000 pin controller.
-+  The controller manages ports A, B, C, D and LPC. Ports A-D default to
-+  GPIO and provide additional SPI, UART, I2C, and PWM mux functions.
-+  LPC pins default to the LPC interface and can be muxed to eSPI.
-+  All pins also support pin configuration, including drive strength,
-+  pull-up, and pull-down settings.
-+
-+properties:
-+  compatible:
-+    const: ultrarisc,dp1000-pinctrl
-+
-+  reg:
-+    items:
-+      - description: pin controller registers
-+
-+required:
-+  - compatible
-+  - reg
-+
-+patternProperties:
-+  '.*-pins$':
-+    type: object
-+    unevaluatedProperties: false
-+    allOf:
-+      - $ref: /schemas/pinctrl/pincfg-node.yaml#
-+      - $ref: /schemas/pinctrl/pinmux-node.yaml#
-+      - if:
-+          properties:
-+            pins:
-+              contains:
-+                pattern: '^LPC([0-9]|1[0-2])$'
-+        then:
-+          properties:
-+            function:
-+              enum:
-+                - lpc
-+                - espi
-+
-+    properties:
-+      pins:
-+        description: List of pins affected by this state node.
-+        minItems: 1
-+        uniqueItems: true
-+        items:
-+          type: string
-+          oneOf:
-+            - pattern: '^PA([0-9]|1[0-5])$'
-+            - pattern: '^PB[0-7]$'
-+            - pattern: '^PC[0-7]$'
-+            - pattern: '^PD[0-7]$'
-+            - pattern: '^LPC([0-9]|1[0-2])$'
-+
-+      function:
-+        description: |
-+          Mux function to select for the listed pins. Supported functions
-+          depend on the selected pins and match the DP1000 hardware mux
-+          table.
-+        enum:
-+          - gpio
-+          - i2c0
-+          - i2c1
-+          - i2c2
-+          - i2c3
-+          - pwm0
-+          - pwm1
-+          - pwm2
-+          - pwm3
-+          - spi0
-+          - spi1
-+          - uart0
-+          - uart1
-+          - uart2
-+          - uart3
-+          - lpc
-+          - espi
-+
-+      bias-disable: true
-+      bias-high-impedance: true
-+      bias-pull-up: true
-+      bias-pull-down: true
-+
-+      drive-strength:
-+        description: Output drive strength in mA.
-+        enum: [20, 27, 33, 40]
-+
-+    required:
-+      - pins
-+      - function
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    soc {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
-+
-+      pinctrl@11081000 {
-+        compatible = "ultrarisc,dp1000-pinctrl";
-+        reg = <0x0 0x11081000 0x0 0x1000>;
-+
-+        i2c0-pins {
-+          pins = "PA12", "PA13";
-+          function = "i2c0";
-+          bias-pull-up;
-+          drive-strength = <33>;
-+        };
-+
-+        uart0-pins {
-+          pins = "PA8", "PA9";
-+          function = "uart0";
-+          bias-pull-up;
-+          drive-strength = <33>;
-+        };
-+      };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 461a3eed6129..6fd7ce6365fb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -27356,6 +27356,12 @@ S:	Maintained
- F:	drivers/usb/common/ulpi.c
- F:	include/linux/ulpi/
- 
-+ULTRARISC DP1000 PINCTRL DRIVER
-+M:	Jia Wang <wangjia@ultrarisc.com>
-+L:	linux-gpio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/pinctrl/ultrarisc,dp1000-pinctrl.yaml
-+
- ULTRATRONIK BOARD SUPPORT
- M:	Goran Rađenović <goran.radni@gmail.com>
- M:	Börge Strümpfel <boerge.struempfel@gmail.com>
+With Best Regards,
+Andy Shevchenko
+
+The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
+
+  Linux 7.1-rc1 (2026-04-26 14:19:00 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/intel.git tags/intel-pinctrl-v7.2-1
+
+for you to fetch changes up to 2b9ef70d3abe1eaa9b37253fd7765cf40ff2a5ad:
+
+  pinctrl: intel: move PWM base computation past feature check (2026-05-18 09:01:17 +0200)
+
+----------------------------------------------------------------
+intel-pinctrl for v7.2-1
+
+* Tidy up the PWM base computation to avoid false positive *SAN warnings
+
+----------------------------------------------------------------
+Stepan Ionichev (1):
+      pinctrl: intel: move PWM base computation past feature check
+
+ drivers/pinctrl/intel/pinctrl-intel.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
 
 
