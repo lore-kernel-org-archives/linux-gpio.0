@@ -1,138 +1,112 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249C93546E7;
-	Mon,  1 Jun 2026 06:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4523806C2;
+	Mon,  1 Jun 2026 06:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780295499; cv=none; b=NbcoFnnsNoVbvHbUOxpBkVJwr3JE6j8zjKH4uLsTwHvOPJDbt2uZIKM6IYBTncHWAuzvYVZALGzKKqXTJOgujUfKe8aMNSypphXwu63K6RyV6mjnj6DbM0/h79+RLF64j6zxAJ2YScwBYVtzbup/2qMKr1oFLWaqok1raLX/jG8=
+	t=1780297140; cv=none; b=QiiO4BA1rsAVqwrmlROSyGcIg0DsHnAj9aXWu8dzebAltwGRr9DOtxFpJKKXbicp3ZDndrwiGWBPKGNyLbs6mrRQ96Nn5s758fSCvopnG3vCZ0KC8/EpefMqdj+uTdHgio9CS+RH1C/d35S6YVCD6UlfGUG1sgpp+an9Xk39jo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780295499; c=relaxed/simple;
-	bh=A9tyDmGWPXvFOaV/jXMsq20WZaTkGaA1XVM/dRk/f6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XfqtfXpz9daT04RIytmK5TdRF5dLdNpMs/Fb9EHQXEqsjlWOuNNIgnR57BekDGd+khtcnoXxuFL5t8yQQWG30qUalY2CKb+yrF6kRvcs2+PgdIuQA+vCu2usQ0nfGSMzQ+M641s7WeTBSa6Ge4MyYKaTW8nEdpE+y4tA671fTac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=XodwgwdM; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1780297140; c=relaxed/simple;
+	bh=WBKKuhdxx/bAE1oVCnOlclgROzjpYuF6S3zJuCPlCuI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WH9asSGasYeqMLK0vu7EHkFEVe4Ry7KAgfT80GEceQzXZmyliX9gXC7KKnoV2a5gB+EecU7TRmFKRRw1cOHczhXFH1ekNErwtnEIVDzOQHhicVrmtX1DJ2WOOdwGzvgUBXlF3Js0vyoOhmqynozFXsQ7FIThM8zE1t3bHr7mdO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HQBfHFbh; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="XodwgwdM"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 65DFD266E7;
-	Mon,  1 Jun 2026 08:31:34 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 2QQlFJmI-a1V; Mon,  1 Jun 2026 08:31:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1780295493; bh=A9tyDmGWPXvFOaV/jXMsq20WZaTkGaA1XVM/dRk/f6Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=XodwgwdMoRm2pThB/ela+S2hLD/oeFWz6dxBv1YZzM0fsv3HVXrMxBeRKcO+F+jvN
-	 r1ZEnrwxOg62Sl84kMcQBDBTxWmwb9b54300EoKg4qjGLybgmroqTA8m+pFoCyUsJo
-	 sA4h9BC3eQkBdPf3lTzdNgm69L5VcDTpv69WaDGINSh9qMZkk0nxKS4QwAJ9HQ4KIf
-	 OgCEuntwz5TKixCnKQnfmK6uKhidWtObkWKT3zJ6UbC8D4avbJQVtXWsBXHkIwcdQW
-	 FSQytkSD0cPY24txRrmkNIWT05T7v0457YEkJ4dR9sYnGJhg/dk+lbb2IAkXj7R87j
-	 dtk42QnOfKSOg==
-From: Marco Scardovi <scardracs@disroot.org>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Mika Westerberg <westeri@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH 2/2] gpiolib: acpi: fix out-of-bounds pointer arithmetic in
- acpi_gpio_package_count
-Date: Mon, 01 Jun 2026 08:31:16 +0200
-Message-ID: <n2_NwWYBRGa8ixTcAQysQw@disroot.org>
-In-Reply-To: <20260601051735.GN3102@black.igk.intel.com>
-References:
- <20260530094012.184276-1-scardracs@disroot.org>
- <20260530094012.184276-3-scardracs@disroot.org>
- <20260601051735.GN3102@black.igk.intel.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HQBfHFbh"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id B63B41A378F;
+	Mon,  1 Jun 2026 06:58:55 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 7D9CC602AB;
+	Mon,  1 Jun 2026 06:58:55 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 10E1110888CCD;
+	Mon,  1 Jun 2026 08:58:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1780297133; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=mIIouX9atwC8TO7vo2wcLgAJzq/cTaHoTN8DO5/T+0Q=;
+	b=HQBfHFbhqkjsF4pCV3oiBNQaeiPV0l/QdDp1DfBvD4+AlikHlQ0c1ENujAD7kqhbiXt15J
+	KM0NSuc3onfrGwhRq2qpaIY1OCeASQkJMl29QvQ8eJLCab4THNCEzm9I78Hs4LTONYY9Ai
+	440QtMOWoPVqQ7wOxY5TW0MIO+2RJ0NmUXhVKy8JSl17UmJGfWwmWx8VenwiCp5ESB915T
+	6Rysm7UilOxHXF38ffSIzePeikeaqumzH5jT2U2FEwVDiPuy99pq4ACd5uSHFsHDPC1b/7
+	C+jZQgL9Ry69ECOdwhNnAXHZIbJdVe8aeVsQiq6SlMDaNusrvR1gdQtmw7A4mA==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Jun Yan <jerrysteve1101@gmail.com>, linusw@kernel.org,
+ dmitry.baryshkov@oss.qualcomm.com, Lee Jones <lee@kernel.org>, Pavel
+ Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn
+ Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>,
+ Vincent Knecht <vincent.knecht@mailoo.org>, Grant Feng <von81@163.com>,
+ Andre Przywara <andre.przywara@arm.com>, Baruch Siach <baruch@tkos.co.il>,
+ Shawn Guo <shawnguo@kernel.org>, Paul Barker <paul.barker@sancloud.com>,
+ Robert Marko <robert.marko@sartura.hr>
+Cc: Jun Yan <jerrysteve1101@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Wei Xu <xuwei5@hisilicon.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, Patrice Chotard
+ <patrice.chotard@foss.st.com>, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] arm64: dts: marvell: armada-7040-mochabin: Fix
+ is31fl3199 shutdown GPIO polarity
+In-Reply-To: <20260525144629.498630-7-jerrysteve1101@gmail.com>
+References: <20260525144629.498630-1-jerrysteve1101@gmail.com>
+ <20260525144629.498630-7-jerrysteve1101@gmail.com>
+Date: Mon, 01 Jun 2026 08:58:43 +0200
+Message-ID: <8733z621cs.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-Last-TLS-Session-Version: TLSv1.3
 
-In data luned=C3=AC 1 giugno 2026 07:17:35 Ora legale dell=E2=80=99Europa c=
-entrale, Mika=20
-Westerberg ha scritto:
-> On Sat, May 30, 2026 at 11:40:12AM +0200, Marco Scardovi wrote:
-> > When counting GPIOs in an ACPI package, encountering a reference or
-> > string causes the element pointer to be advanced by 3 (element +=3D 3)
-> > and then by 1 (element++).
-> >=20
-> > If a malformed ACPI package contains fewer than 4 remaining elements
-> > when a reference or string is processed, this pointer arithmetic
-> > advances the element pointer past the end of the package elements
-> > array. This results in undefined behavior and can cause out-of-bounds
-> > reads.
->=20
-> How can it cause out-of-bounds reads? We increase "element" but the next
-> iteration checks that it is still inside "end" and it's never dereference=
-d.
-> Maybe I'm missing something?
+Hello,
+
+> The is31fl3199 shutdown pin is active-low [1]. Correct the GPIO flags
+> from GPIO_ACTIVE_HIGH to GPIO_ACTIVE_LOW to match the hardware.
 >
-Hi Mika,
-
-I agree that `element` is not dereferenced after the loop exits.
-
-My main concern is the parser logic rather than the pointer arithmetic
-itself.
-
-A GPIO connection is defined to consist of 4 package elements
-(a reference/string followed by 3 integers), but the loop condition only
-checks whether at least one element remains:
-
-```
-element < end
-```
-
-As a result, a malformed package containing fewer than 4 remaining elements
-can still be processed as if it were a complete GPIO entry. This can lead
-to a GPIO connection being accounted for even though the descriptor is
-structurally incomplete.
-
-Such truncated descriptors should be rejected with `-EPROTO` rather than
-being accepted as valid input.
-
-Ensuring sufficient remaining elements before entering the loop also
-guarantees that pointer arithmetic stays within the defined bounds of the
-package, but the primary issue is the acceptance of incomplete GPIO entries.
+> [1] https://lumissil.com/assets/pdf/core/IS31FL3199_DS.pdf
 >
-> > Fix this by ensuring at least 4 elements remain in the package before
-> > advancing the element pointer, returning -EPROTO if the package
-> > structure is invalid.
-> >=20
-> > Signed-off-by: Marco Scardovi <scardracs@disroot.org>
-> > ---
-> >=20
-> >  drivers/gpio/gpiolib-acpi-core.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >=20
-> > diff --git a/drivers/gpio/gpiolib-acpi-core.c
-> > b/drivers/gpio/gpiolib-acpi-core.c index 049e4cbc14ed..494dcd166aef
-> > 100644
-> > --- a/drivers/gpio/gpiolib-acpi-core.c
-> > +++ b/drivers/gpio/gpiolib-acpi-core.c
-> > @@ -1310,6 +1310,8 @@ static int acpi_gpio_package_count(const union
-> > acpi_object *obj)>=20
-> >  		switch (element->type) {
-> >  		case ACPI_TYPE_LOCAL_REFERENCE:
-> >=20
-> >  		case ACPI_TYPE_STRING:
-> > +			if (end - element < 4)
-> > +				return -EPROTO;
-> >=20
-> >  			element +=3D 3;
-> >  			fallthrough;
-> >  	=09
-> >  		case ACPI_TYPE_INTEGER:
+> Fixes: 737929191283 ("arm64: dts: marvell: add Globalscale MOCHAbin")
+> Signed-off-by: Jun Yan <jerrysteve1101@gmail.com>
 
+What happens if this patch is merged before the driver LED patch? Will
+it break something?
 
+Gregory
 
+> ---
+>  arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts b/arch/=
+arm64/boot/dts/marvell/armada-7040-mochabin.dts
+> index 6bdc4f1e6939..cf690a85cc2a 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts
+> +++ b/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts
+> @@ -236,7 +236,7 @@ leds@64 {
+>  		#size-cells =3D <0>;
+>  		pinctrl-names =3D "default";
+>  		pinctrl-0 =3D <&is31_sdb_pins>;
+> -		shutdown-gpios =3D <&cp0_gpio1 30 GPIO_ACTIVE_HIGH>;
+> +		shutdown-gpios =3D <&cp0_gpio1 30 GPIO_ACTIVE_LOW>;
+>  		reg =3D <0x64>;
+>=20=20
+>  		led1_red: led@1 {
+> --=20
+> 2.54.0
+>
 
+--=20
+Gr=C3=A9gory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
