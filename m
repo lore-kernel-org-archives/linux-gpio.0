@@ -1,91 +1,108 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E013330F815
-	for <linux-gpio@vger.kernel.org>; Tue,  2 Jun 2026 11:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AE03DB62A;
+	Tue,  2 Jun 2026 11:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780400136; cv=none; b=bi51eJ8PZ2Ydoc9bKBpwMwiqxS/MGj/u2CtOFyvu89JWWjbd4RwgDoUwkVMGDdXltfc2J4AnDf6sWDzP2H8s89/X5per/1zHyb+WFKXaMn0HHsxPT5DhhAHTy+EnlfwGbZpSJLc5wJ0Zv/LRab9CDm+PPUDtbVW+i5BWrkyiv9A=
+	t=1780400149; cv=none; b=bqXuGtiK2UeYPNo5rPOpkPuuHEOsENPcD5lb1smNei9R21U3Y9UU7fuE8jEXdDmB7qedEyRQQMvm5ck+8Era4JBAxv3h//bQE4Y6cC9opD2tUn5wgjnW/E61MR1VQk2euVHE2GBktDIB1mypji4BQTbMSLK0iPqwA9i8dJiOFr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780400136; c=relaxed/simple;
-	bh=uOdOyMhlg/4ykCMFkIgB5lwtIu2oTbxNUE3TfrLThMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BPD70ljcjd6FwjLFfsNNQpEyBAPi25dQ/54xjGpG8E/BPs9m3cF12MVjFSifjc6xkaVTejN+2Br+mvfXte+xrJ4/bUQ+Fl4/C7eGq2QdAqaXvOjenLekSUf8Ml8uoZUqPaLW8K698zh0ZvZjxWFdGAtgFool21lvtOyERKTV7Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=AwxgrlLm; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1780400149; c=relaxed/simple;
+	bh=TjwWVdwib0ZQBloSbHHqWYju7lPBY5ugZ3j4GxE6If4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YAeHDe8zGRO+TTed8MNviuScmhuMlF0S7C/eSUTFnYJwsttck1TfphzXS6JSb+iEltOZgDxbR81Mcgscnsr8xWXmhVDxghTUAKhCCcXEZbfRRy9tXiHcpvWRBzCLYxnf5JONGExCrhQL2HL3+VzkvrpTCdRdA51DCGte66/2VVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=XMzVwmgK; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="AwxgrlLm"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=uOdO
-	yMhlg/4ykCMFkIgB5lwtIu2oTbxNUE3TfrLThMY=; b=AwxgrlLmHrIS8S4p9Kc+
-	/oEr7YS9Tlpm2YEc3jKVAg8GgqmE6hVboRKuwKphSImcLQKfv2t2fVdFz9HhMsZi
-	d144HwCyM1hcfLUZXrp3GvrFb5kQWEkTJIDmIerLhOcwWw67m/DbHn/FzkGOhfNw
-	d6Z+VvDP5rT6T06/TApfxwXjD639FnGaXn/oMH+nd+uUilnR937oBggjM/F3RUuA
-	q2KJLlswFG6AWwJ9q21EoqVhXnVevzfKaiww80e7FKU2HJUlBzSptQiPHVXMhEMV
-	8tRvIEwi6s5Nh43W4M/nkWWS2Mnybk4RpeYNfpMbaoy5YvQ/dbfCK1ExnAgyp6fO
-	Sw==
-Received: (qmail 2867990 invoked from network); 2 Jun 2026 13:35:30 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Jun 2026 13:35:30 +0200
-X-UD-Smtp-Session: l3s3148p1@DSxWtUNTzK4ujnv7
-Date: Tue, 2 Jun 2026 13:35:30 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu Beznea <claudiu.beznea@kernel.org>
-Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v2 0/7] pinctrl: renesas: rzg2l: Add support for RZ/G3S
- I3C
-Message-ID: <ah7AAgK0plmNfL5C@ninjato>
-References: <20260528080439.615958-1-claudiu.beznea@kernel.org>
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="XMzVwmgK"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 4AD18276E9;
+	Tue,  2 Jun 2026 13:35:43 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id AitEPwiF-lhp; Tue,  2 Jun 2026 13:35:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1780400142; bh=TjwWVdwib0ZQBloSbHHqWYju7lPBY5ugZ3j4GxE6If4=;
+	h=From:To:Cc:Subject:Date;
+	b=XMzVwmgK4EDZItKjUMOkHJaipWVN3otcIrySfky3gJI/EM+rFHMKU/RTy8kCcthnv
+	 IHBFBqUOTC/BdvK7u4PRZQ28bUFHmVvhf+fpnrWhBNcH/QeYUQdhnMUDNLrXrY9beB
+	 E2DfICV3yxXkMdQEUb8FZ8NM7Opxe49Cx1Sq3csF1W3GQN62IiJrfkLVFkq2nP8cdi
+	 9j2FMSPbbSfdZREWlN38eGprgelDP3/SKcBzwB0CNAQ84bZmw/+nzB/0H++VReykm6
+	 zwWebq73l5mYDYAf2aDIIjYEbZ6zI9MVAp5npLev6VRjJ3EuRtpNRo1fOsTbddMPSI
+	 151fAtdHVK/Hg==
+From: Marco Scardovi <scardracs@disroot.org>
+To: andriy.shevchenko@linux.intel.com,
+	mika.westerberg@linux.intel.com
+Cc: brgl@kernel.org,
+	linusw@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/2] gpiolib: acpi: Add bounds-checking and address validation
+Date: Tue,  2 Jun 2026 13:32:18 +0200
+Message-ID: <20260602113529.52570-1-scardracs@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rsfaeCIwtI8MyDA2"
-Content-Disposition: inline
-In-Reply-To: <20260528080439.615958-1-claudiu.beznea@kernel.org>
+Content-Transfer-Encoding: 8bit
 
+Hi all,
 
---rsfaeCIwtI8MyDA2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+after some thinking and following Mika and Andy's reviews I've come up with
+a new version of the series.
 
+This series adds defensive hardening in the ACPI GPIO path, focusing on
+bounds checking and safe handling of GPIO resources and ACPI addresses.
 
-> Series adds pinctrl support for the I3C on Renesas RZ/G3S SoC. For a
-> clean I3C support, cleanup patches for the pinctrl driver were also
-> included.
+Drop the previously proposed GPIO connection handling changes in the ACPI
+OperationRegion path, following review feedback.
 
-I am ready to test but this series doesn't apply on neither master nor
--next of today. Could you kindly push a branch to pull from somewhere?
-That would be great. Thank you!
+This also closes the old threads completely and drop my @gmail account
+as it is not related to my linux stuffs.
 
+Changes in v5:
 
---rsfaeCIwtI8MyDA2
-Content-Type: application/pgp-signature; name="signature.asc"
+* Add bounds checking for GPIO pin resource accesses in ACPI GPIO helpers
+  to prevent out-of-bounds access on malformed or empty pin tables.
+* Validate ACPI address in acpi_gpio_adr_space_handler() before converting
+  it to a GPIO index, preventing truncation-induced wraparound.
+* Improve type safety and overflow handling in length calculation and loop
+  bounds in the OperationRegion handler.
 
------BEGIN PGP SIGNATURE-----
+Changes in v4:
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmoev/4ACgkQFA3kzBSg
-Kbbliw//RSqgU2ZakkJblEOhzJXnCpeLCL8GlK+fDNm548nuABjDL/ujlZQKWCdr
-+3BZrVwp690+PXOYhqeL8HU5aQqXKNLsijj973wc+ybCuuvZWoAM6QcWxUDCrD1D
-LsF5dLBByVQalpDDcGD1E4KNTWhr3J8WD+MvAGdhBXEd0qUgbNekH4zDLteID1cv
-m08qO6K5IZ4H/O69pK+nAn2vpe19+0H9cLyqVDxPZmcl7aNtxH7ZJWRhDczG4qry
-RWI3UhPa0EjGlY1kU9wfV1vGxPg6/rcu4E4U8GmfKijt8W+MFt6Mx8nRrk9TqNwz
-o3/mrYINCNXjHO0cf9+vri5VvjPUJY5FBxq3S0IBhF+M1otSO3BFmY4XEXYIzdzf
-UwmbMxqbyYR0668vfxzISzgHCwqkLcf47m9cnHKtbyNg1CcGCsnDzM/2HEbQJ5TF
-IrSeL74lxHNAdrc0kHyoJCIH5v6+UDppzLjv4ItNqeJdYWKaFo/18C+fa+qJdGZv
-LSbl9L+4OgclqNL7CIN99hlj09VGEJIkMC/BDoE5aYjiz5OuFR8MkpNkTQue9A4M
-bC+naTZdZ6xz3EHYZttBhA5FIiN77fFmxo6VQljIivslrH+u/+ANT7/C20n3YKL+
-peALgijaD3xQ3PmH7IMeI77Q4wXR4BsOh2DI5Hl9a8f90SUVllw=
-=5DZw
------END PGP SIGNATURE-----
+* Dropped connection resource leak fix to keep focus on validation.
+* See v4 series at:
+  https://lore.kernel.org/linux-gpio/20260531120816.17255-1-scardracs@disroot.org/
 
---rsfaeCIwtI8MyDA2--
+Changes in v3:
+
+* Fixed global over-cleanup bug in OpRegion error path.
+* See v3 series at:
+  https://lore.kernel.org/linux-gpio/20260520074955.55443-1-mscardovi95@gmail.com/
+
+Changes in v2:
+
+* Dropped gpiolib-acpi-core.c modularization (out of scope).
+* Split series into bounds checking and address truncation fixes.
+* See v2 series at:
+  https://lore.kernel.org/linux-gpio/20260519070039.9280-1-mscardovi95@gmail.com/
+
+Changes in v1:
+
+* Initial ACPI GPIO hardening series.
+
+Marco Scardovi (2):
+gpiolib: acpi: Add robust bounds-checking for GPIO pin resources
+gpiolib: acpi: prevent address truncation in OperationRegion handler
+
+drivers/gpio/gpiolib-acpi-core.c | 40 +++++++++++++++++++++++++-------
+1 file changed, 32 insertions(+), 8 deletions(-)
+
+--
+2.54.0
+
