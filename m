@@ -1,109 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22B938D018
-	for <linux-gpio@vger.kernel.org>; Tue,  2 Jun 2026 20:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CAB1DF73C
+	for <linux-gpio@vger.kernel.org>; Tue,  2 Jun 2026 20:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780433495; cv=none; b=q1uSvUMDbCck8g691fHmdA9D8nBB/gaC+zobO+khHrPuU6KdDMt0NquN5gxRhMSgKyT4luG+C0qfNYtl3rTc8wDw5nZ0cup32Zfcml/gXVDOANqVb4WPfTGyZDHwlYWtBfmd5c5QN5z+5HJad3eE6whWN1K/gd0F9+cSTTvIsaE=
+	t=1780433615; cv=none; b=nQeB4MJ1GyWBVVIz2SfkwJT3Wjek8IPGtNoyCLqHIHlYP0V0GKWFEaqU8XGDHl72HX2YNj7KOnREVEQq+kUF6S/n9og+f7iORW6Z9PGgyywFqokzeSiYb3Aq8xzAmSM35RMRArgoGlpy3JAt0u4bzlGMG/+uqpp6f0laQ2HhUds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780433495; c=relaxed/simple;
-	bh=KRGTT4AQ+Oey7inw8PS07TanUxbhPBY4tf+cjHXWYBI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GtysF4BKAuLuvdt4yk1cL5i0ScEd7ZhqyuQL7L81Fkko78pnaGdvPWt7li2PMu5VpJ3BTAlGuxFixWRC/YXUyxzf3Ty2j5ps5dhWv8oFA0UBLUexBuqVuOdlOUzDHEkAmglEXBqfeuobfX4brkkYz3CHwYiEue2dpKoo/dJM5PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WsQo944G; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780433615; c=relaxed/simple;
+	bh=GG3yd9a/ofQvxgRx7PTZU6BVVGmdh7Cf50F3OjopV9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r4ngZ980sJ9Ca4ak6Bwda6/GeJcFCgBty2F2r8FU1jgZr0Ji1v/aofdwT7JqtcW7gx+N1LHD1+s5zX0Yqq/+xbUAA6ISNEMfn9TpIIETR7s+fPCZZm8TqFXUdEIWQbnGz0pG16t5SMwgGZg0CneMZQ5JCq01ZrwDGb7yoQ/5miE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hAeuQM4x; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WsQo944G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B94881F00A05
-	for <linux-gpio@vger.kernel.org>; Tue,  2 Jun 2026 20:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780433494;
-	bh=G6rZ7t6/DhXfpQVj0UlyYqS4gIMH66eg2Oc1gFXbhJ0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=WsQo944GDchg/wLfBxF995MDsIQlWR94qpNUGNWfmtj0cc9Cm6IAvLYK49Jz+sub+
-	 cCz9hX3qvk2i7XzqttjMLfpB2FTj81X0WI8T9GOEFst61x7uetTvHoQlZHBhkw3wj+
-	 pWEXAl35dtpSL5N9q+XzcWkaBdzolGpamWnG3Ut+8eiWiblT+djxuby3gRu3VBbNTW
-	 b5gX5xDdjGnEk3Uf3Rhjs7eEYv4grJDMr3ZOHMMp2kabifDBAot1ZDAITd3RH9n/oV
-	 ENGlOonCAxXOF1Zy8Nr8B/0OQsXqHHxsvHFgQOc4sUtBFr0j9jX5I0vS+C7g/hnM3X
-	 sTT2vS+XYtAaA==
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7e2cb01a974so38861467b3.1
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Jun 2026 13:51:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/lLQpcyINdvLXt9CJv79C7Y22iXiS9UirSqwG6Sc4U2fCVHQFN+l9ZW36iyIf15P6KLxRmSndB5P/c@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR6O2HXjYUD0n2K1EEQzq0q0AuxgSohckEbKuYypTu/dPzXdc6
-	WcMObpUmB3sgXmS8iq8y/TALsRxKR+02bz6SC3zp2ktmT3Wya3DosZIuXLZzy7vtUrfF13cBuvp
-	WsKqsqhge/RpZbYCDJ4qQA3b8oMDNzRQ=
-X-Received: by 2002:a05:690c:620f:b0:7b3:edc7:9b97 with SMTP id
- 00721157ae682-7ea4400dc8fmr7795367b3.0.1780433493990; Tue, 02 Jun 2026
- 13:51:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hAeuQM4x"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=GG3y
+	d9a/ofQvxgRx7PTZU6BVVGmdh7Cf50F3OjopV9Q=; b=hAeuQM4xm+KSg56kcXSl
+	L0AtObz7ir3xfDpo0b+26uC19GQsbCBiHG50HQN0mPq2ghch1lnEHDnpwzlA+5zn
+	asiwJ54xapW/vf2e2tJEijBowd5mzbqBlAbiLP1BH2tGmkrHi7CtYdHd7FgCQLAh
+	YzdtND+y76FfoLvB5bgQOTS+hpRiO1fxIGxdli1arvqx+q+30JQqS00Bu8N5CMqQ
+	3KabSkMfcaaz9WZtk8Nqfo0VAV5yhgsRTGJYJqOhOq3ulP5YlzFrYHNeq5C4nw5W
+	V8U/yGD1RBdPiGUVbCmZ2NuRpth5ym/kW2tW94vsAJnYmQoa8Gj/uU9gqADZSpF1
+	tQ==
+Received: (qmail 3020695 invoked from network); 2 Jun 2026 22:53:31 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Jun 2026 22:53:31 +0200
+X-UD-Smtp-Session: l3s3148p1@jAL2gEtTXpMujnv7
+Date: Tue, 2 Jun 2026 22:53:30 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Claudiu Beznea <claudiu.beznea@kernel.org>
+Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 7/7] arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
+Message-ID: <ah9Cypt70WLMYLEF@ninjato>
+References: <20260528080439.615958-1-claudiu.beznea@kernel.org>
+ <20260528080439.615958-8-claudiu.beznea@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260304-gpio-of-kconfig-v1-0-d597916e79e7@oss.qualcomm.com> <20260304-gpio-of-kconfig-v1-7-d597916e79e7@oss.qualcomm.com>
-In-Reply-To: <20260304-gpio-of-kconfig-v1-7-d597916e79e7@oss.qualcomm.com>
-From: Timur Tabi <timur@kernel.org>
-Date: Tue, 2 Jun 2026 15:50:57 -0500
-X-Gmail-Original-Message-ID: <CAOZdJXXetr-FPZUSX_nzS5nZc+bbv5b1m78sCcZzrDJi7C05vw@mail.gmail.com>
-X-Gm-Features: AVHnY4IltjGxIj5Fh6-JK6uSKIHTP0yZBU085pIyp8WmlCvLfmlYl2sow6Y3Jn0
-Message-ID: <CAOZdJXXetr-FPZUSX_nzS5nZc+bbv5b1m78sCcZzrDJi7C05vw@mail.gmail.com>
-Subject: Re: [PATCH 07/14] pinctrl: Kconfig: drop unneeded dependencies on OF_GPIO
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Alexey Brodkin <abrodkin@synopsys.com>, Vineet Gupta <vgupta@kernel.org>, Scott Wood <oss@buserror.net>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, 
-	Wells Lu <wellslutw@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Sebastian Reichel <sre@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
-	linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-leds@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-staging@lists.linux.dev, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lxJajlOGLMQkz4kx"
+Content-Disposition: inline
+In-Reply-To: <20260528080439.615958-8-claudiu.beznea@kernel.org>
+
+
+--lxJajlOGLMQkz4kx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 4, 2026 at 3:07=E2=80=AFAM Bartosz Golaszewski
-<bartosz.golaszewski@oss.qualcomm.com> wrote:
->
-> @@ -557,7 +549,6 @@ config PINCTRL_ST
->  config PINCTRL_STMFX
->         tristate "STMicroelectronics STMFX GPIO expander pinctrl driver"
->         depends on I2C
-> -       depends on OF_GPIO
->         depends on HAS_IOMEM
->         select GENERIC_PINCONF
->         select GPIOLIB_IRQCHIP
+On Thu, May 28, 2026 at 11:04:39AM +0300, Claudiu Beznea wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> The Renesas RZ/G3S SMARC SoM board has a connector for I3C interface.
+> Enable I3C.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-This change causes the following warning on builds:
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-WARNING: unmet direct dependencies detected for MFD_STMFX
-Depends on [n]: HAS_IOMEM [=3Dy] && I2C [=3Dy] && OF [=3Dn]
-Selected by [m]:
-- PINCTRL_STMFX [=3Dm] && PINCTRL [=3Dy] && I2C [=3Dy] && HAS_IOMEM [=3Dy]
 
-WARNING: unmet direct dependencies detected for MFD_STMFX
-Depends on [n]: HAS_IOMEM [=3Dy] && I2C [=3Dy] && OF [=3Dn]
-Selected by [m]:
-- PINCTRL_STMFX [=3Dm] && PINCTRL [=3Dy] && I2C [=3Dy] && HAS_IOMEM [=3Dy]
+--lxJajlOGLMQkz4kx
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I believe the proper fix is to have PINCTRL_STMFX depend on CONFIG_OF,
-since this driver actually does depend on CONFIG_OF.  The warning
-comes because if CONFIG_OF is disabled, PINCTRL_STMFX can still be
-enabled, but in doing so it selects MFD_STMFX which does depend on
-CONFIG_OF.
+-----BEGIN PGP SIGNATURE-----
 
-Adding "depends on OF" to "config PINCTRL_STMFX" seems to fix the
-problem, but I'm not familiar with this driver so I'm not sure this is
-the right fix.  I'll post a patch.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmofQsoACgkQFA3kzBSg
+KbYY9BAApIlsHQkUMd81mi8lYST6dKvVcboNq6UEvMvJ5Zwz70YRw8SYioLhuGjr
+sQ1VQ/TryoRGmkh80Qn2pO0rM3F/iwpHGC28CQhAbm3XoX6h5cC4v3LIj2Co3HLx
+exOImd4qMtntzIoFHpmOhqekwiGmAum2gJcytoIyI7TrniXAEM0kTcMC4nb7Zk5g
+KRFgoK4hW9M0aTaF7iexARkk1OK/vVB/smL3bRFuPaFzFvShYKdlZl/pxzBdmo0J
+TaZHVWAlDHpDKrsaWgVYME3+UMci3QOC5OQHBmylgV/gqdfChxMEI+FbMZitu65P
+HvxafQigU/a6InUo8hfBu87xA1nSEK3kXWtTUgnyoVI2pa5EYIm4Im5RREszoOUa
+QoFrfiXZ5BUQxHbCBlHk4ngxsC9ak9kAv03m5hO00gITornj1x9uPwEs/zo7R20N
+bO4J6IRiIQGKxcYDlJbJFzfJVx4mvRnzx6uL0R6+w8pMd0GX+MfZhybKO43nyuWU
+ZxetzG3oxl6OdHauhNKQOYBb1d4qI1Zw5Wl4YW2m2CLEIhQpHgmRT4uDy1v10Qfx
+CCYFbM6Hfv1tJIlJkxcdt9aL3qBbbh/e17OFrOoX0ZfU9moVlLW/Q9iuqJ3epXtZ
+woJ9unaJgcZNIBHUFQESK9NJfqsoPIDYnAaO4tpbbndzEka00IM=
+=VAsA
+-----END PGP SIGNATURE-----
+
+--lxJajlOGLMQkz4kx--
