@@ -1,98 +1,109 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450AE3859D9
-	for <linux-gpio@vger.kernel.org>; Tue,  2 Jun 2026 20:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22B938D018
+	for <linux-gpio@vger.kernel.org>; Tue,  2 Jun 2026 20:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780433463; cv=none; b=F24OgTE1UNRj/rG9cZqnIKYPFWltfBqxiVmOn6Dsw+2+3GecTj6vtO9tlXk+26qGp35zXlhZ31xuABFt+mscQU8dxNhOyRhDcS9PkyW9FmYMlTFltFwcZepgvNcq+c3YPMlqxdiCLTTLoO2AQ/1+wJMM5Q0hwF7Lay6AK5a/b8o=
+	t=1780433495; cv=none; b=q1uSvUMDbCck8g691fHmdA9D8nBB/gaC+zobO+khHrPuU6KdDMt0NquN5gxRhMSgKyT4luG+C0qfNYtl3rTc8wDw5nZ0cup32Zfcml/gXVDOANqVb4WPfTGyZDHwlYWtBfmd5c5QN5z+5HJad3eE6whWN1K/gd0F9+cSTTvIsaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780433463; c=relaxed/simple;
-	bh=t0XhOPPzbBBjRUYZlPIVdjtdSD7UwN/nSJ/GWX223zY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ujPsmOkU1ieDPFaXA/RBGQgM078xa27fXKkw6U4L5A+RcS9oUSnC3PzZUUbgtFnmqGFtWlgj3zjuXsb/hkUrNzS7g2k2tdgkCjbQgLEM0nbaMna/gkECexXgYZcujOIt8SBttZyOeQVoZGqj0laxzZ0OznZC13aIGoWoSC9vQu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=EwbirL4/; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1780433495; c=relaxed/simple;
+	bh=KRGTT4AQ+Oey7inw8PS07TanUxbhPBY4tf+cjHXWYBI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GtysF4BKAuLuvdt4yk1cL5i0ScEd7ZhqyuQL7L81Fkko78pnaGdvPWt7li2PMu5VpJ3BTAlGuxFixWRC/YXUyxzf3Ty2j5ps5dhWv8oFA0UBLUexBuqVuOdlOUzDHEkAmglEXBqfeuobfX4brkkYz3CHwYiEue2dpKoo/dJM5PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WsQo944G; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="EwbirL4/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=t0Xh
-	OPPzbBBjRUYZlPIVdjtdSD7UwN/nSJ/GWX223zY=; b=EwbirL4/E/LMUEqYs5MC
-	6GJqZiSm7DByKw3SeKwV89eAzSJE+iB/kWeoBxqSmNJq0OSGWZFevIGtZY9xu+gU
-	0Q58OGabcdGMLcl82xOVtbxVPjd6ugoOv5oIh7q646XY2O5/wdr0ouowSxrMvcfX
-	+D+mnglUDnIYdpMhA+ThL/XoDK5Y0n6gkA2e3HmrZL2NnllifPQS0xgwooprlabh
-	GET+zjQcBUcXl9KjXIF0AO9oiujZAK72pa64Ixh458+IMJXq7wp54qqNV+4hgDZ1
-	zYPek4kzwESDaB15CDyAfwnhAzs/7WM6hazhnlszpzALA1tDn8oyop+Kvhfi0XYy
-	4Q==
-Received: (qmail 3020255 invoked from network); 2 Jun 2026 22:51:00 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Jun 2026 22:51:00 +0200
-X-UD-Smtp-Session: l3s3148p1@+uHud0tTItkujnv7
-Date: Tue, 2 Jun 2026 22:50:59 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu Beznea <claudiu.beznea@kernel.org>
-Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v2 6/7] pinctrl: renesas: rzg2l: Add RZ/G3S support for
- selecting the I3C power source
-Message-ID: <ah9CMwvwU-5-xGxx@ninjato>
-References: <20260528080439.615958-1-claudiu.beznea@kernel.org>
- <20260528080439.615958-7-claudiu.beznea@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WsQo944G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B94881F00A05
+	for <linux-gpio@vger.kernel.org>; Tue,  2 Jun 2026 20:51:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780433494;
+	bh=G6rZ7t6/DhXfpQVj0UlyYqS4gIMH66eg2Oc1gFXbhJ0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=WsQo944GDchg/wLfBxF995MDsIQlWR94qpNUGNWfmtj0cc9Cm6IAvLYK49Jz+sub+
+	 cCz9hX3qvk2i7XzqttjMLfpB2FTj81X0WI8T9GOEFst61x7uetTvHoQlZHBhkw3wj+
+	 pWEXAl35dtpSL5N9q+XzcWkaBdzolGpamWnG3Ut+8eiWiblT+djxuby3gRu3VBbNTW
+	 b5gX5xDdjGnEk3Uf3Rhjs7eEYv4grJDMr3ZOHMMp2kabifDBAot1ZDAITd3RH9n/oV
+	 ENGlOonCAxXOF1Zy8Nr8B/0OQsXqHHxsvHFgQOc4sUtBFr0j9jX5I0vS+C7g/hnM3X
+	 sTT2vS+XYtAaA==
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-7e2cb01a974so38861467b3.1
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jun 2026 13:51:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/lLQpcyINdvLXt9CJv79C7Y22iXiS9UirSqwG6Sc4U2fCVHQFN+l9ZW36iyIf15P6KLxRmSndB5P/c@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR6O2HXjYUD0n2K1EEQzq0q0AuxgSohckEbKuYypTu/dPzXdc6
+	WcMObpUmB3sgXmS8iq8y/TALsRxKR+02bz6SC3zp2ktmT3Wya3DosZIuXLZzy7vtUrfF13cBuvp
+	WsKqsqhge/RpZbYCDJ4qQA3b8oMDNzRQ=
+X-Received: by 2002:a05:690c:620f:b0:7b3:edc7:9b97 with SMTP id
+ 00721157ae682-7ea4400dc8fmr7795367b3.0.1780433493990; Tue, 02 Jun 2026
+ 13:51:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qQeUdzF8kAPxjjhC"
-Content-Disposition: inline
-In-Reply-To: <20260528080439.615958-7-claudiu.beznea@kernel.org>
-
-
---qQeUdzF8kAPxjjhC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20260304-gpio-of-kconfig-v1-0-d597916e79e7@oss.qualcomm.com> <20260304-gpio-of-kconfig-v1-7-d597916e79e7@oss.qualcomm.com>
+In-Reply-To: <20260304-gpio-of-kconfig-v1-7-d597916e79e7@oss.qualcomm.com>
+From: Timur Tabi <timur@kernel.org>
+Date: Tue, 2 Jun 2026 15:50:57 -0500
+X-Gmail-Original-Message-ID: <CAOZdJXXetr-FPZUSX_nzS5nZc+bbv5b1m78sCcZzrDJi7C05vw@mail.gmail.com>
+X-Gm-Features: AVHnY4IltjGxIj5Fh6-JK6uSKIHTP0yZBU085pIyp8WmlCvLfmlYl2sow6Y3Jn0
+Message-ID: <CAOZdJXXetr-FPZUSX_nzS5nZc+bbv5b1m78sCcZzrDJi7C05vw@mail.gmail.com>
+Subject: Re: [PATCH 07/14] pinctrl: Kconfig: drop unneeded dependencies on OF_GPIO
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Alexey Brodkin <abrodkin@synopsys.com>, Vineet Gupta <vgupta@kernel.org>, Scott Wood <oss@buserror.net>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, 
+	Wells Lu <wellslutw@gmail.com>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Sebastian Reichel <sre@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-leds@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 28, 2026 at 11:04:38AM +0300, Claudiu Beznea wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> The Renesas RZ/G3S I3C pins can be powered at either 1.8V or 1.2V. The
-> pin controller provides a register to select between these two options.
-> Update the Renesas RZ/G2L pin controller driver to allow selecting the
-> I3C power source on RZ/G3S SoC.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Wed, Mar 4, 2026 at 3:07=E2=80=AFAM Bartosz Golaszewski
+<bartosz.golaszewski@oss.qualcomm.com> wrote:
+>
+> @@ -557,7 +549,6 @@ config PINCTRL_ST
+>  config PINCTRL_STMFX
+>         tristate "STMicroelectronics STMFX GPIO expander pinctrl driver"
+>         depends on I2C
+> -       depends on OF_GPIO
+>         depends on HAS_IOMEM
+>         select GENERIC_PINCONF
+>         select GPIOLIB_IRQCHIP
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This change causes the following warning on builds:
 
-I don't have 1.2V targets here, but my 1.8V setup works fine.
+WARNING: unmet direct dependencies detected for MFD_STMFX
+Depends on [n]: HAS_IOMEM [=3Dy] && I2C [=3Dy] && OF [=3Dn]
+Selected by [m]:
+- PINCTRL_STMFX [=3Dm] && PINCTRL [=3Dy] && I2C [=3Dy] && HAS_IOMEM [=3Dy]
 
+WARNING: unmet direct dependencies detected for MFD_STMFX
+Depends on [n]: HAS_IOMEM [=3Dy] && I2C [=3Dy] && OF [=3Dn]
+Selected by [m]:
+- PINCTRL_STMFX [=3Dm] && PINCTRL [=3Dy] && I2C [=3Dy] && HAS_IOMEM [=3Dy]
 
---qQeUdzF8kAPxjjhC
-Content-Type: application/pgp-signature; name="signature.asc"
+I believe the proper fix is to have PINCTRL_STMFX depend on CONFIG_OF,
+since this driver actually does depend on CONFIG_OF.  The warning
+comes because if CONFIG_OF is disabled, PINCTRL_STMFX can still be
+enabled, but in doing so it selects MFD_STMFX which does depend on
+CONFIG_OF.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmofQjMACgkQFA3kzBSg
-Kbb/xg//a8+JvrsX08NvY6X6rc5nFsZd8qfjokKYeieark5f6L5XhWBqPbMDxTX6
-7CdGJJ/lga2n4SiiO+l/rq8e97khKXix2psIdhOx8x+5KlMNySD1ZDiEBiHr9pSc
-jtxx6jTUHSvuhchZI7oEL3WVZcJo/yiTCiuNx7pZas1xvGQlOMONANkaajNqmHTf
-jHgxi2YS0biE25h2AvgmQaoVWCQFse6o+FsqsuGfmw7t9NsHDyBBj+DpW16gs9P3
-chAWyniV8zyjQbMdiVl3mEkOBxB4TrdbVUciKzW37qB3MVfvmuop2rHDy16oGDGz
-r8f6g5AzK/ogwtG9FwKfq1QVuGxjUDeAYz6UShkls7xAhqpMwO0Y0qJ2rs6nl44m
-4fsrxN4TZFttbgK6MdkR2ha9IJdgVFyo0L78QddLBCu/UzL8L673qY4mSk1Z/HWD
-pu2a0HRSRugtjpNl6/sLV1ntkkDnFTmzd30TxWgv6RMlKvMIqB3X1CNxPeYuJd7C
-yUcVc5YXmhBiUPH4/kYKwrgs4m3bU62By5JyPOQNMeNgAAH1uyFtMdbtKTCS1QkX
-NTik/iLPqs32gJdaqE62J18E/JIGmf+gpVbNNYcBjWPT3eT5IPgEDF/1u7oNq48k
-VcoraWXlpTsCf/7BmWZtxX7xLOZU+/usMA9d5OqiPSISPJ3D4G4=
-=RDpf
------END PGP SIGNATURE-----
-
---qQeUdzF8kAPxjjhC--
+Adding "depends on OF" to "config PINCTRL_STMFX" seems to fix the
+problem, but I'm not familiar with this driver so I'm not sure this is
+the right fix.  I'll post a patch.
