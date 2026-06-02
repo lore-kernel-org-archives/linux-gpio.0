@@ -1,77 +1,63 @@
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEB139A061
-	for <linux-gpio@vger.kernel.org>; Tue,  2 Jun 2026 22:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FC73BCD39;
+	Tue,  2 Jun 2026 22:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780437982; cv=none; b=X4xZE06JKSupIk7qN7esqY/ezaCSuknk2gcyCWVXjLNorg6adgLZPclE0FgEHzVvy2GcRJw4Zk5JOFynl0mf3cF8lCA4qzi58PgLSqI5UtJl6LtQTODS9piGOP+TR84KMToRRJ7c+T7VZi1h9vJl8zZHlQHAPbDxp6gooq//AH4=
+	t=1780440123; cv=none; b=lXSYnSP0V6/AaSscpXA5g1l/YVRHqcljuGuMy5IA4Pk+MtXkqOrfCAUfNlEZ6SPh31K9v3+fQkYzr3kCloQlI5n557fEK+VKob7sQpjXXvfUNG3QJnE8cqhzY4ED6eqdaMI/KZO+tUh9DGDApk8VyKvmALgOtfrO8bPllT+wd9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780437982; c=relaxed/simple;
-	bh=6bFM7RnBqOusxScs1N1KTjygnjpRTHNuBBIsjnLMCIE=;
+	s=arc-20240116; t=1780440123; c=relaxed/simple;
+	bh=2DYMignZYp9XmLJImBkxpRdBQWs+ZVRSTXRKOKBvszs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G2IdFineSoAl9uMmQTJzc98UE2ZThLmLW8Ted0z3UnZ/SiDVjbVUKGprOzKIXiUrFNbz2gFVnsItjhpGNiOHDlg6XJ6DGCh1CEJzkrBpbfASpk47blamtn1j1dQJ/OThme0Ka/HK06l2mwnWmPMq7uWSfF7JRhErwYLMiN7VCY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H33pAmsi; arc=none smtp.client-ip=74.125.82.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=R6iuppb5cl7nV3kIhMB+uIkLZXfaT/c5ze/3DQdk3iKTQGXfBZyJ2qucQUhGSB1h2UOJNlhpLlrbDNOEqeBQDSpPhjRhJcNtVZJn58yBcoSabz1RG/YSLom5CmBAT4kDv1Qv2RpUYs4FuJboLnIXoqO5Bu+F1ZM3mB+ujz8p0I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TjRi2IQX; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H33pAmsi"
-Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-304cf518c9dso8690240eec.1
-        for <linux-gpio@vger.kernel.org>; Tue, 02 Jun 2026 15:06:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780437979; x=1781042779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=83NdS9WzqEj31Fng8v49SeEyE/axOdCOAa4Coh7yKjE=;
-        b=H33pAmsisBQDRPLsbYm0cVUb/O53TYIcxuMSb+61rFH3b0zvPP6/PnioK97SW5iJnV
-         4YvyXFmdo9/4eqMSyeQ88KLMwpLE7iVwCRq0qJ0ibhzhJz22slGn4EI+ZGCkQrir8sd5
-         AhmkwAuwn4e+z2Yjm2lwkTUDfcowl62HYkiK5MB2uioh8RzWfD9m+iyw/WfhiUHrYBiB
-         9OKyGq64X/VZxOmCgupXrtPi3frs16O2ypOwKmi9vxRDf+onlDy1Nm9of8ioiaVA69Z3
-         aGFpWyazAIHu5LceGB9vdQXSGlqGwn3Y6WvMTWogCJzmcrcrAktKSQVxCg7Vl+3s4kfz
-         Yslw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780437979; x=1781042779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=83NdS9WzqEj31Fng8v49SeEyE/axOdCOAa4Coh7yKjE=;
-        b=FnZMPkorSXNyEoAxD2kAxSn9g1f/p82qMzqF1th+Sawp6mGmxKdCY+YcqFvQjo6d4j
-         5eVWdTPiF3OB91peLXtacBPw2dzm85OkB8YHOmbCliwoTZmB4jeBA80BruMEenKjYyxs
-         bRrhVxHgt4uCPlxtXK2oQpttPL3cG4VME8ExwIHxK+nncX4eRmhOdqRDgRM5F+jPULQN
-         SCVsHf4LOCMT8PKwYecUFjX2kLoXOXJA6nLJZGYs3px6YxiTWoam1EfCDli0Blnr+i+C
-         oIVuDgD1fFuL09WzU+IWvNlSeo5k16YbFDzEcZp0upO8r8tFQKI/bkkUmiFtCAQ4c/P3
-         DVfw==
-X-Forwarded-Encrypted: i=1; AFNElJ+H7VwG8Rx5vq/L74Py4LWWTraupPajoKbgMLLB6iHYsi3rkN1V2RcMrfEM0407JVWZjSumoB+LQ3c/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW6KgPr9rFhZCWPYuHwPBxhyljQMHOKhHKPbjIoUOKY2SJUkmp
-	Z1YIlJFSXQKpNm26NPpHyD0829cTFFkq0Ltf9ONCrtd08ASm1lT3D06m
-X-Gm-Gg: Acq92OFSwJa2z6OTlSK1g9Bbx44K0UVIzP8KWQJsm5hifd4MCMmnW+t8Q6Bs9R4jEOB
-	yqa1DRYkQa79v5PHYMmOSDlBAd31tR8+vEV/4FkwZHMQQahkONdqqAl3ieVTNPyMJMn7PJTQ6DV
-	Amk72Fioxe2S2XkLeqMppJpYYvdl5GiwzFIODz+zcuSABShzzDx6Ma0bTADxPDwFET0gMoK+42f
-	3FX+ww+G6E1nlofFKuSKpuBENLCvTOG8RxqGtBYYrf31p4xF13kGHOUSIYhD4mmRIPHBxJWvd28
-	WXL+a7azdqWguiQh1cKucDpi913lk0opshOdZq+2qkX2QbbMvaOgcLn4JqHtWK+mNIAy2jmbTZQ
-	drCYW0SD5Zexo2CxqXF9fxmSoihSjsamY5rn3t0Nx4+6lgp0fFJVnXGeD5ouaN91Y36bZokFhHY
-	I4UKf0LSfknV2tPVGAvOlMqvVlrYBbNL6J6bhMkd8PAuS3ndd58usbQr8Eg/UYVdmitIx82HWJE
-	ZI=
-X-Received: by 2002:a05:7300:7252:b0:2e2:4979:eb5 with SMTP id 5a478bee46e88-3074fa79f08mr317280eec.10.1780437978893;
-        Tue, 02 Jun 2026 15:06:18 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:c4f4:520b:1304:b259])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3074dfa3a2asm1102723eec.31.2026.06.02.15.06.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jun 2026 15:06:18 -0700 (PDT)
-Date: Tue, 2 Jun 2026 15:06:14 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@kernel.org>, linux-sh@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] sh: mach-rsk: rsk7203: use static device
- properties for LEDs and GPIO buttons
-Message-ID: <ah9TXCcBPNh77Ut5@google.com>
-References: <20260520-rsk7203-properties-v2-0-465f3308021b@gmail.com>
- <20260520-rsk7203-properties-v2-3-465f3308021b@gmail.com>
- <ah9TEJ_jrfcJwrb9@ashevche-desk.local>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TjRi2IQX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1780440121; x=1811976121;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2DYMignZYp9XmLJImBkxpRdBQWs+ZVRSTXRKOKBvszs=;
+  b=TjRi2IQX12I4QlDolasgxU8yeWD5GYRuDtFSE7pppDXCYDIP9VKBJ3JF
+   nwdPAzuVDWECqWUNFcBT30dk0uvn7s35g8Vv0hiBkQ5S8Kl01VN2n1s0u
+   1bxkbBtNyQiMZE2NTmqbr6FGhX9nph4IUvohmPU1rvx7lekQqQ0o0VqrW
+   SoZCgVKA40Oa9rZVxMLwuI4iEqmKhaAyedLWJ6z0F1/MZ+BB5ueNmRiFk
+   iBcLQ2BTNjRYi61cBK67O1Adk1NtN70MrCn84FltHrmbe7P0IL7iPhCc1
+   tnDSOVtCqfNa//XhL2SGnGSru36JUvgeEsu1iyiwL67x6BAQmNSZ8wks8
+   A==;
+X-CSE-ConnectionGUID: sRVGZ1E4SZGtPNyWcd+giA==
+X-CSE-MsgGUID: rjhLBqC+RuKdyuhtabNg6A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11805"; a="103897661"
+X-IronPort-AV: E=Sophos;i="6.24,184,1774335600"; 
+   d="scan'208";a="103897661"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 15:42:00 -0700
+X-CSE-ConnectionGUID: GGyx08JTQhK7BKMuMdJRIA==
+X-CSE-MsgGUID: +NGymqfMTAaC7d3/RmPNUw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,184,1774335600"; 
+   d="scan'208";a="239881535"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.116])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 15:41:58 -0700
+Date: Wed, 3 Jun 2026 01:41:55 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Hardik Prakash <hardikprakash.official@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+	wsa@kernel.org, brgl@bgdev.pl, basavaraj.natikar@amd.com,
+	linusw@kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v8 2/2] i2c: designware: defer probe if child GpioInt
+ controllers are not bound
+Message-ID: <ah9cMwTQXe-ILXDv@ashevche-desk.local>
+References: <20260529100838.8896-1-hardikprakash.official@gmail.com>
+ <20260529100838.8896-3-hardikprakash.official@gmail.com>
+ <4de80fd6-007e-484f-a7c9-17838ee5b1da@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -80,24 +66,64 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ah9TEJ_jrfcJwrb9@ashevche-desk.local>
+In-Reply-To: <4de80fd6-007e-484f-a7c9-17838ee5b1da@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Jun 03, 2026 at 01:02:56AM +0300, Andy Shevchenko wrote:
-> On Wed, May 20, 2026 at 10:13:19PM -0700, Dmitry Torokhov wrote:
-> > Convert the board to use static device properties instead of platform
-> > data to describe LEDs and GPIO-connected buttons on the board, so
-> > that support for platform data can be removed from gpio-keys and other
-> > drivers, unifying their behavior.
-> 
-> ...
-> 
-> > +	for (i = 0; i < ARRAY_SIZE(rsk7203_devices); i++) {
-> 
-> 	for (unsigned int i = 0; i < ARRAY_SIZE(rsk7203_devices); i++) {
-> 
-> ...and drop the above definition of i.
+On Fri, May 29, 2026 at 12:12:31PM +0200, Mario Limonciello wrote:
+> On 5/29/26 12:08, Hardik Prakash wrote:
+> > I2C controllers may have child devices with GpioInt resources that
+> > depend on GPIO controllers to be fully initialized. If the I2C
+> > controller probes and enumerates children before the referenced GPIO
+> > controller has completed probe, GPIO interrupts may not be properly
+> > configured, leading to device failures.
+> > 
+> > On Lenovo Yoga 7 14AGP11, the WACF2200 touchscreen (child of
+> > AMDI0010:02) has a GpioInt resource pointing to GPIO 157 on the
+> > pinctrl-amd controller (AMDI0030:00). When i2c-designware probes
+> > AMDI0010:02 before pinctrl-amd finishes initializing, I2C transactions
+> > occur before the GPIO IRQ quirk in amd_gpio_probe() has run, causing:
+> > 
+> >    i2c_designware AMDI0010:02: i2c_dw_handle_tx_abort: lost arbitration
+> > 
+> > Add a generic dependency check in i2c-designware that walks ACPI child
+> > devices, identifies any GpioInt resources, resolves the referenced GPIO
+> > controllers, and defers probe if those controllers are not yet bound.
+> > 
+> > This ensures GPIO controllers complete initialization (including IRQ
+> > setup and quirks) before I2C child enumeration begins, fixing the race
+> > without device-specific quirks or DMI matching.
+> > 
+> > The probe ordering race was confirmed via dynamic debug tracing:
+> > 
+> >    0.285952  amd_gpio_probe: registering gpiochip  <- GPIO chip visible
+> >    0.287121  amd_gpio_probe: requesting parent IRQ <- probe still running
+> >    0.301454  AMDI0010:02 dw_i2c_plat_probe: start  <- races here
+> >    2.348157  lost arbitration
+> > 
+> > Suggested-by: Mario Limonciello <mario.limonciello@amd.com>
+> > Signed-off-by: Hardik Prakash <hardikprakash.official@gmail.com>
+> > Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> > Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+> > Assisted-by: Claude:claude-sonnet-4-6
+> > Assisted-by: GPT-Codex:gpt-5.2-codex
 
-Why? I do not see coding style suggesting this. 
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202605240959.Kcf1lIg4-lkp@intel.com/
+
+This patch definitely wasn't the result of the above report. These two tags are
+misused.
+
+> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=221494
+
+> Fixes: 3812a9e84265a ("pinctrl-amd: enable IRQ for WACF2200 touchscreen on
+> Lenovo Yoga 7 14AGP11")
+
+Must be oneline.
+
 
 -- 
-Dmitry
+With Best Regards,
+Andy Shevchenko
+
+
