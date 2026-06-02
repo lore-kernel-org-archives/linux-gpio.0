@@ -1,63 +1,63 @@
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9DA24EAB1
-	for <linux-gpio@vger.kernel.org>; Tue,  2 Jun 2026 05:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3C21A681B
+	for <linux-gpio@vger.kernel.org>; Tue,  2 Jun 2026 05:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780376528; cv=none; b=pHGgfR+ZPs4yaXKlLqO9SLOWDktqJ9BfU9JdEF2YZj8YEMriaNvhWCJWXbry1cKBuWIrPJn5uHSlWi6qMU3D8IX4CkTHRgZ3Bog9vKjBqYC4QOnp8b+AuWPgEPmPgqzmkGJQ/gwlgoqDdEk64BM/xat7xCVfSmO7jMgl5kxaTrY=
+	t=1780376528; cv=none; b=Vp9NfJIX+eetKV3v2XeknmkxTsD1Lq/of6vHcayZUA7lpMNLgyxWI+px3OLeraUYssRNVGm+tPXyqEvRR1Xsi/9ciPOTlWgesD6V8WiSRYFmqXP809sYYyiLuVDTg8/7BOFRs1T7E+ewF553qwqsQiYZ9TjQjytB2eb5P7PLLbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1780376528; c=relaxed/simple;
-	bh=PkS84usnPdqdxgf1CnilQiWCG1S+vb0BnjAvWxF/mYk=;
+	bh=YvQLjBWJRjLxKpMXlc55gK1BvM98fsTCqmx+fq/wk7U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h/3powTZYp0F/xVWV68yilBXqT8wYVL5FBV1HmUA2rysQWKDhxOi6Gu9DQ1Ab+zmlSeZxHzMBSdH+1uC9xUxjZI32KOgqwQ7qx1lyc4fCW4lozyTTD8A3CS8F3RR7FCNfLWkZnKi90pyVeIIQUMXdQT4GDyqRYm2KELhuDtkDOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iy/law28; arc=none smtp.client-ip=209.85.216.41
+	 MIME-Version; b=NlxA7dwKb23gfG7DogYtOwNj89FXdnrEI67bAFsUqZ+GfoIeOEnec0avWWvDlj8DS749Nr9q6kHMTVYTZ1olKLLJBYCjRwQSdpbP68lTG3Ik35BwzU8zakSGmxq1SkA2mb5EaYUO0NhwCWSAKHZ1atAxATPU9aIEZzO2zgorbHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cQ9xQXz4; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iy/law28"
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-36baec934b6so2143635a91.0
-        for <linux-gpio@vger.kernel.org>; Mon, 01 Jun 2026 22:02:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQ9xQXz4"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-36ba3ea5c46so2432128a91.1
+        for <linux-gpio@vger.kernel.org>; Mon, 01 Jun 2026 22:02:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780376524; x=1780981324; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1780376522; x=1780981322; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gM2FIUryBRQiEGRMHtydSbfKjl7tClJ0BToQ5C2TWsg=;
-        b=iy/law28fQAONKO5YrlDt8AxBky93H9ogiI2Lh2pJKpJkI8BqHP9paX8JKcgFnTlpb
-         y3hly9kPS6tx+MU7PKFAL4WHt7Cokz3W1a25Tn9iId8i0ABZt0WET/0fOQAYUq1HXhiw
-         Sx/dZmo8qU/l1zqtPWroCGa154Cy6NI6CK9uvwdQNE3lhKh0ecG4od9e0g3zBhPJ7wiV
-         7u9l28k1yWJ6bIX67SnVgIE8qvsdGmMKl7S8uxqM972XWILVLvwY+pZu4NvET4voXzBs
-         VUu+nD6x2OM5h0Fw59rPzJTMIj7Rkdfh748RkT2GTEqpSynsEVdf6rT4EJihygRNq9wZ
-         6Rlg==
+        bh=p3KbSzoRI/icX/VWbVUw16WYqo0/swLg71aVPGe0bc4=;
+        b=cQ9xQXz4fsmKfPrQwcnPY5ceEz1IfoRepnqIwQbhoMCPg0B2kEZY7aq947ryErH/im
+         Dmw+l4nv0rmSksv8qFrVgJloBPD2jU2yIhwN49oIi2MiAYlr+67bFRN7JsrZfmRJYiUL
+         hxTl4N0kyE0hagXbtn+cHiA8E2vMWlaS8R6jU16nx2iqCnt62eT19JZ3J0PfJZuxOMU3
+         ApigeYtiVdHREJkc8iR+CLzEUpv/SmLT5P7duYM1RGSB3wA9DDdDlB6p1htBD6hc5iIh
+         r1PZkAfM+fJC7ks/Aq5x+rqvD1Vvtv1bDTppfXJtMDBYxnY15l8LFpKOwxsEq0w+DbRw
+         i5ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780376524; x=1780981324;
+        d=1e100.net; s=20251104; t=1780376522; x=1780981322;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=gM2FIUryBRQiEGRMHtydSbfKjl7tClJ0BToQ5C2TWsg=;
-        b=oZTKg3ppdLCkF2qHWlrIwyBnKoLhl0uq/fChnp470NuaRNcDESwqbuzhJWu4JV/WdZ
-         uPSzC91B5gJ5xiy2o5Gp/sXSGdNmSYKomQBbxjO5bhO4hql2JAdOq2rgQOVGdf25Rm4o
-         bynxF3Ee1U80mfnhOmRahnOd0yPfYInm12FYeAjazsk5u6tiTT9PccYpbSPx1l6iwYCq
-         UxvfZcv7WlBbWJFlQnevN3Zdv8eTpsP5i7rsnzpaK5rl2wM4lkVjFhODcuyItmiPgJ8h
-         IVO7gx4N/LPSanYN7dJKEMKZ732suWPH6S8PnT/O+JsWM+oEFuGAz6DgcbhD5C4TK42z
-         oBVA==
-X-Gm-Message-State: AOJu0YyXs1i+JQzWdiC6yPwBrQI+hGqdO1mY8Hsa/KQb3UFjRErZpjVl
-	FMGgGCX/HLYLgaANCgTXLR0wlYiFeeN/qiM0gEdjW4eXsIRaVPB9jJpBjwGEdVoq
-X-Gm-Gg: Acq92OFKSwR3ty9Yn//e+h5j0tONvmoTu+aqba4LjreyxIiQc5AJNeHvgWAaolJ96bE
-	LHrcQzsNfrTJauINj1/M+BSDOhbeUTxi+DyX4+YwSUnBONxDpTDcQqI+3T++26cCy8MN3Qcoa9A
-	kulr5Shp641Q1T+pELq06LU2aODepeeiXFyoLUiZfHeKe6gXLDr8icSj7CaEBqdyeZzWiB1dmle
-	+NutrMFlrux6XBjjEnfg1Jj9XQec7ExpGcu2u+RZDJwVh3iMcH6rYKhH8y8LGYlvGC+GA5k7EWt
-	pLC9les3ld5oH24PiHd1WhHea5+hqft/4bOT0yLDL9QMvt8hZ2ywTI4MXs78ZbKtVyuWlucAqzX
-	aytcXhEmvdzuMwtCDWb9ln+UHR7ueBefZgMJQ837qFu8VpOoxbjBgg4daihGhogn1xPEuCbnAdh
-	KiYvKLMi4pbsH0dKMUHuIQP1159es0xAhhrEvNzqLe+rpAKASrwkDYKqJuQa1aIFEWEINwFr1JW
-	XNrZoxk7LKuQyU7SUSKfCS/TGl3k6Xr2f1t3FlC59KM0Q==
-X-Received: by 2002:a05:6a20:c998:b0:3a2:d53f:691c with SMTP id adf61e73a8af0-3b478d11b1bmr2304417637.26.1780376524097;
-        Mon, 01 Jun 2026 22:02:04 -0700 (PDT)
+        bh=p3KbSzoRI/icX/VWbVUw16WYqo0/swLg71aVPGe0bc4=;
+        b=ssHBYfSHGaFcKBmwMsWctfp5pQ3GnI9+DMqOj9p6doGemQBg1HwJZ+G6lyXs6Lowqw
+         5uY49uHs6bYlfPcnZXE+0h8r0OqibjSu8h18oqsC+FOhinrxCAdMAQiV26bycaiSh+jN
+         Lg3raCoKa/Y4oROeLorwjyz4o+LvJYvWQ/kR03nKpiPvvG3Rj1GihgK/smLf2OLCutfH
+         XQtATf/kxQ/OuHnUpHxzfUmNvfkVEp9jEpC704LgFI1h7qB0f6L7jcbScqtlArpV6hz7
+         5/8DZ7Bp158sUhn4mFrHfYDlwoit9Imbn01mt7e3ZrYlzk43TTQmJ/tJWAox81YGKs/g
+         ZZBw==
+X-Gm-Message-State: AOJu0Yw1aGEa/eMJS8SYGas4GbQjiLWMTASoqcKioXLjvnE/1yIslZ89
+	VPs6N5a0Klsh3owtxr6ZCqltrdrCKw/q7DRkAd5IxdXALTsOoOdCDRufpTM17Bk8
+X-Gm-Gg: Acq92OHK8Uiqw5b38CxGwkj9Of84brNvLOPhCMc7DiiiCVUZGv5o18KaQjLOm0qxMkL
+	nhMf7RrJhLdPbJr01jmvrn8m+haPmnC1zSyv6vquS0j6GZArQHFvqxYoAgaqwFEyAejvT5WGjv6
+	BpyL4JkFs1iilD1Q6Cu2wpYBI5n8Q4M2003pHN+WLlo/0nzLvo4NCpgKOrnpcNTDvcSMvpC24Mt
+	s3OkagTufJy2uSsMIddOF3tYkKM0LMQ2QEyHcCg3s9U/H3G71t5ov62+1KhwS9D3VkXFbLPMHqh
+	4KAN7sjlyFheoE9WVVswSRY2o0Q1Ec0u3OKjMSFJ/npAO3xQqzQBsDs7hEpYeublKEF4dYi7evU
+	QXTNLleliQ08bTE5QrUqEGIf3ZICeuHBPw2Ggy9nsiC5ycDxtBLb3VFTa8fiCpDVwWnb/b0ZyZF
+	390WXlNSlJ7W9C4L4msgNerpfkSCFtX/2isViczMP0S5Cg7B1z9Ov3ptg2DKDWCafLfbKLBSnpl
+	8rCdWxzZHPwbyMk9w4eydsbrCXUhp1791oqlEtZ0qQoNA==
+X-Received: by 2002:a05:6a20:748d:b0:3a3:a55f:405d with SMTP id adf61e73a8af0-3b427c572e9mr15361175637.13.1780376522535;
+        Mon, 01 Jun 2026 22:02:02 -0700 (PDT)
 Received: from ryzen ([2601:644:8000:5b5d:7285:c2ff:fe45:8a32])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c8589d055c7sm8958467a12.9.2026.06.01.22.02.02
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c8589d055c7sm8958467a12.9.2026.06.01.22.02.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jun 2026 22:02:03 -0700 (PDT)
+        Mon, 01 Jun 2026 22:02:01 -0700 (PDT)
 From: Rosen Penev <rosenp@gmail.com>
 To: linux-gpio@vger.kernel.org
 Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
@@ -68,9 +68,9 @@ Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
 	Bartosz Golaszewski <brgl@kernel.org>,
 	linuxppc-dev@lists.ozlabs.org (open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)),
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 6/7] gpio: ppc44x: drop PPC-specific IO helpers and rename to ppc44x
-Date: Mon,  1 Jun 2026 22:01:30 -0700
-Message-ID: <20260602050131.856789-7-rosenp@gmail.com>
+Subject: [PATCH 5/7] gpio: ppc44x: Convert GPIO to generic MMIO
+Date: Mon,  1 Jun 2026 22:01:29 -0700
+Message-ID: <20260602050131.856789-6-rosenp@gmail.com>
 X-Mailer: git-send-email 2.54.0
 In-Reply-To: <20260602050131.856789-1-rosenp@gmail.com>
 References: <20260602050131.856789-1-rosenp@gmail.com>
@@ -82,236 +82,204 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace PPC-specific clrbits32()/setbits32() with local helpers using
-ioread32be()/iowrite32be() which are equivalent on PPC since commit
-894fa235eb4c ("powerpc: inline iomap accessors"). This allows the
-driver to be compiled on any architecture with COMPILE_TEST.
+Use gpio_generic_chip_init() to set up the PPC44x GPIO chip
+instead of open-coding the basic get, set, locking and state handling.
 
-- Changed Kconfig dependency to depends on 44x || COMPILE_TEST
+Keep the PPC44x-specific direction callbacks because they still need to
+program ODR and the OSR/TSR registers around the generic data and
+direction registers.
 
-Assisted-by: opencode:big-pickle
+Assisted-by: Codex:GPT-5.5
 Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- drivers/gpio/Kconfig       |  3 +-
- drivers/gpio/gpio-ppc44x.c | 88 ++++++++++++++++++++++----------------
- 2 files changed, 53 insertions(+), 38 deletions(-)
+ drivers/gpio/gpio-ppc44x.c | 82 +++++++++++++++++---------------------
+ 1 file changed, 36 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 77991da43ec1..7374f82b7040 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -595,9 +595,8 @@ config GPIO_POLARFIRE_SOC
- 
- config GPIO_PPC44X
- 	tristate "PPC44x GPIO support"
--	depends on 44x
-+	depends on 44x || COMPILE_TEST
- 	select GPIO_GENERIC
--	select GPIOLIB
- 	help
- 	  Enable gpiolib support for ppc440 based boards.
- 
 diff --git a/drivers/gpio/gpio-ppc44x.c b/drivers/gpio/gpio-ppc44x.c
-index 6b4814ed12b5..cc7796e0cfbd 100644
+index b30ca357ab74..6b4814ed12b5 100644
 --- a/drivers/gpio/gpio-ppc44x.c
 +++ b/drivers/gpio/gpio-ppc44x.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * PPC4xx gpio driver
-+ * PPC44x gpio driver
-  *
-  * Copyright (c) 2008 Harris Corporation
-  * Copyright (c) 2008 Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
-@@ -22,7 +22,7 @@
- #define GPIO_MASK2(gpio)	(0xc0000000 >> ((gpio) * 2))
+@@ -11,10 +11,9 @@
  
- /* Physical GPIO register layout */
--struct ppc4xx_gpio {
-+struct ppc44x_gpio {
- 	__be32 or;
- 	__be32 tcr;
- 	__be32 osrl;
-@@ -43,11 +43,27 @@ struct ppc4xx_gpio {
- 	__be32 isr3h;
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+-#include <linux/spinlock.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+-#include <linux/gpio/driver.h>
++#include <linux/gpio/generic.h>
+ #include <linux/types.h>
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
+@@ -45,9 +44,8 @@ struct ppc4xx_gpio {
  };
  
--struct ppc4xx_gpio_chip {
-+struct ppc44x_gpio_chip {
- 	struct gpio_generic_chip chip;
+ struct ppc4xx_gpio_chip {
+-	struct gpio_chip gc;
++	struct gpio_generic_chip chip;
  	void __iomem *regs;
+-	spinlock_t lock;
  };
  
-+static inline void ppc44x_clrbits32(void __iomem *addr, u32 mask)
-+{
-+	u32 val = ioread32be(addr);
-+
-+	val &= ~mask;
-+	iowrite32be(val, addr);
-+}
-+
-+static inline void ppc44x_setbits32(void __iomem *addr, u32 mask)
-+{
-+	u32 val = ioread32be(addr);
-+
-+	val |= mask;
-+	iowrite32be(val, addr);
-+}
-+
  /*
-  * GPIO LIB API implementation for GPIOs
-  *
-@@ -55,9 +71,9 @@ struct ppc4xx_gpio_chip {
+@@ -56,55 +54,35 @@ struct ppc4xx_gpio_chip {
+  * There are a maximum of 32 gpios in each gpio controller.
   */
  
- static inline void
--__ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
-+__ppc44x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- {
+-static int ppc4xx_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+-{
 -	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
-+	struct ppc44x_gpio_chip *chip = gpiochip_get_data(gc);
- 	struct gpio_generic_chip *gen_gc = &chip->chip;
+-	struct ppc4xx_gpio __iomem *regs = chip->regs;
+-
+-	return !!(in_be32(&regs->ir) & GPIO_MASK(gpio));
+-}
+-
+ static inline void
+ __ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+ 	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
+-	struct ppc4xx_gpio __iomem *regs = chip->regs;
++	struct gpio_generic_chip *gen_gc = &chip->chip;
  
  	if (val)
-@@ -68,29 +84,29 @@ __ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
- 	gpio_generic_write_reg(gen_gc, gen_gc->reg_set, gen_gc->sdata);
+-		setbits32(&regs->or, GPIO_MASK(gpio));
++		gen_gc->sdata |= GPIO_MASK(gpio);
+ 	else
+-		clrbits32(&regs->or, GPIO_MASK(gpio));
+-}
++		gen_gc->sdata &= ~GPIO_MASK(gpio);
+ 
+-static int ppc4xx_gpio_set(struct gpio_chip *gc, unsigned int gpio, int val)
+-{
+-	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&chip->lock, flags);
+-
+-	__ppc4xx_gpio_set(gc, gpio, val);
+-
+-	spin_unlock_irqrestore(&chip->lock, flags);
+-
+-	pr_debug("%s: gpio: %d val: %d\n", __func__, gpio, val);
+-
+-	return 0;
++	gpio_generic_write_reg(gen_gc, gen_gc->reg_set, gen_gc->sdata);
  }
  
--static int ppc4xx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
-+static int ppc44x_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ static int ppc4xx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
  {
--	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
-+	struct ppc44x_gpio_chip *chip = gpiochip_get_data(gc);
- 	struct gpio_generic_chip *gen_gc = &chip->chip;
--	struct ppc4xx_gpio __iomem *regs = chip->regs;
-+	struct ppc44x_gpio __iomem *regs = chip->regs;
+ 	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
++	struct gpio_generic_chip *gen_gc = &chip->chip;
+ 	struct ppc4xx_gpio __iomem *regs = chip->regs;
  	unsigned long flags;
  
- 	gpio_generic_chip_lock_irqsave(gen_gc, flags);
+-	spin_lock_irqsave(&chip->lock, flags);
++	gpio_generic_chip_lock_irqsave(gen_gc, flags);
  
  	/* Disable open-drain function */
--	clrbits32(&regs->odr, GPIO_MASK(gpio));
-+	ppc44x_clrbits32(&regs->odr, GPIO_MASK(gpio));
+ 	clrbits32(&regs->odr, GPIO_MASK(gpio));
  
  	/* Float the pin */
--	clrbits32(&regs->tcr, GPIO_MASK(gpio));
-+	ppc44x_clrbits32(&regs->tcr, GPIO_MASK(gpio));
- 	gen_gc->sdir &= ~GPIO_MASK(gpio);
+ 	clrbits32(&regs->tcr, GPIO_MASK(gpio));
++	gen_gc->sdir &= ~GPIO_MASK(gpio);
  
  	/* Bits 0-15 use TSRL/OSRL, bits 16-31 use TSRH/OSRH */
  	if (gpio < 16) {
--		clrbits32(&regs->osrl, GPIO_MASK2(gpio));
--		clrbits32(&regs->tsrl, GPIO_MASK2(gpio));
-+		ppc44x_clrbits32(&regs->osrl, GPIO_MASK2(gpio));
-+		ppc44x_clrbits32(&regs->tsrl, GPIO_MASK2(gpio));
- 	} else {
--		clrbits32(&regs->osrh, GPIO_MASK2(gpio));
--		clrbits32(&regs->tsrh, GPIO_MASK2(gpio));
-+		ppc44x_clrbits32(&regs->osrh, GPIO_MASK2(gpio));
-+		ppc44x_clrbits32(&regs->tsrh, GPIO_MASK2(gpio));
+@@ -115,7 +93,7 @@ static int ppc4xx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ 		clrbits32(&regs->tsrh, GPIO_MASK2(gpio));
  	}
  
- 	gpio_generic_chip_unlock_irqrestore(gen_gc, flags);
-@@ -99,32 +115,32 @@ static int ppc4xx_gpio_dir_in(struct gpio_chip *gc, unsigned int gpio)
- }
+-	spin_unlock_irqrestore(&chip->lock, flags);
++	gpio_generic_chip_unlock_irqrestore(gen_gc, flags);
  
- static int
--ppc4xx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
-+ppc44x_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ 	return 0;
+ }
+@@ -124,10 +102,11 @@ static int
+ ppc4xx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
  {
--	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
-+	struct ppc44x_gpio_chip *chip = gpiochip_get_data(gc);
- 	struct gpio_generic_chip *gen_gc = &chip->chip;
--	struct ppc4xx_gpio __iomem *regs = chip->regs;
-+	struct ppc44x_gpio __iomem *regs = chip->regs;
+ 	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
++	struct gpio_generic_chip *gen_gc = &chip->chip;
+ 	struct ppc4xx_gpio __iomem *regs = chip->regs;
  	unsigned long flags;
  
- 	gpio_generic_chip_lock_irqsave(gen_gc, flags);
+-	spin_lock_irqsave(&chip->lock, flags);
++	gpio_generic_chip_lock_irqsave(gen_gc, flags);
  
  	/* First set initial value */
--	__ppc4xx_gpio_set(gc, gpio, val);
-+	__ppc44x_gpio_set(gc, gpio, val);
- 
- 	/* Disable open-drain function */
--	clrbits32(&regs->odr, GPIO_MASK(gpio));
-+	ppc44x_clrbits32(&regs->odr, GPIO_MASK(gpio));
+ 	__ppc4xx_gpio_set(gc, gpio, val);
+@@ -137,6 +116,7 @@ ppc4xx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
  
  	/* Drive the pin */
--	setbits32(&regs->tcr, GPIO_MASK(gpio));
-+	ppc44x_setbits32(&regs->tcr, GPIO_MASK(gpio));
- 	gen_gc->sdir |= GPIO_MASK(gpio);
+ 	setbits32(&regs->tcr, GPIO_MASK(gpio));
++	gen_gc->sdir |= GPIO_MASK(gpio);
  
  	/* Bits 0-15 use TSRL, bits 16-31 use TSRH */
  	if (gpio < 16) {
--		clrbits32(&regs->osrl, GPIO_MASK2(gpio));
--		clrbits32(&regs->tsrl, GPIO_MASK2(gpio));
-+		ppc44x_clrbits32(&regs->osrl, GPIO_MASK2(gpio));
-+		ppc44x_clrbits32(&regs->tsrl, GPIO_MASK2(gpio));
- 	} else {
--		clrbits32(&regs->osrh, GPIO_MASK2(gpio));
--		clrbits32(&regs->tsrh, GPIO_MASK2(gpio));
-+		ppc44x_clrbits32(&regs->osrh, GPIO_MASK2(gpio));
-+		ppc44x_clrbits32(&regs->tsrh, GPIO_MASK2(gpio));
+@@ -147,7 +127,7 @@ ppc4xx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ 		clrbits32(&regs->tsrh, GPIO_MASK2(gpio));
  	}
  
- 	gpio_generic_chip_unlock_irqrestore(gen_gc, flags);
-@@ -134,14 +150,14 @@ ppc4xx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 	return 0;
- }
+-	spin_unlock_irqrestore(&chip->lock, flags);
++	gpio_generic_chip_unlock_irqrestore(gen_gc, flags);
  
--static int ppc4xx_gpio_probe(struct platform_device *ofdev)
-+static int ppc44x_gpio_probe(struct platform_device *ofdev)
- {
+ 	pr_debug("%s: gpio: %d val: %d\n", __func__, gpio, val);
+ 
+@@ -159,33 +139,43 @@ static int ppc4xx_gpio_probe(struct platform_device *ofdev)
  	struct device *dev = &ofdev->dev;
  	struct device_node *np = dev->of_node;
--	struct ppc4xx_gpio_chip *chip;
-+	struct ppc44x_gpio_chip *chip;
- 	struct gpio_generic_chip_config config;
+ 	struct ppc4xx_gpio_chip *chip;
++	struct gpio_generic_chip_config config;
  	struct gpio_chip *gc;
--	struct ppc4xx_gpio __iomem *regs;
-+	struct ppc44x_gpio __iomem *regs;
- 	int ret;
++	struct ppc4xx_gpio __iomem *regs;
++	int ret;
  
  	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-@@ -169,8 +185,8 @@ static int ppc4xx_gpio_probe(struct platform_device *ofdev)
+ 	if (!chip)
+ 		return -ENOMEM;
  
- 	gc = &chip->chip.gc;
+-	spin_lock_init(&chip->lock);
+-
+-	gc = &chip->gc;
++	chip->regs = devm_platform_ioremap_resource(ofdev, 0);
++	if (IS_ERR(chip->regs))
++		return PTR_ERR(chip->regs);
+ 
+-	gc->parent = dev;
++	regs = chip->regs;
++	config = (struct gpio_generic_chip_config) {
++		.dev = dev,
++		.sz = 4,
++		.dat = &regs->ir,
++		.set = &regs->or,
++		.dirout = &regs->tcr,
++		.flags = GPIO_GENERIC_BIG_ENDIAN |
++			 GPIO_GENERIC_BIG_ENDIAN_BYTE_ORDER,
++	};
++
++	ret = gpio_generic_chip_init(&chip->chip, &config);
++	if (ret)
++		return ret;
++
++	gc = &chip->chip.gc;
  	gc->fwnode = dev_fwnode(dev);
--	gc->direction_input = ppc4xx_gpio_dir_in;
--	gc->direction_output = ppc4xx_gpio_dir_out;
-+	gc->direction_input = ppc44x_gpio_dir_in;
-+	gc->direction_output = ppc44x_gpio_dir_out;
+-	gc->base = -1;
+-	gc->ngpio = 32;
+ 	gc->direction_input = ppc4xx_gpio_dir_in;
+ 	gc->direction_output = ppc4xx_gpio_dir_out;
+-	gc->get = ppc4xx_gpio_get;
+-	gc->set = ppc4xx_gpio_set;
  
  	gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
  	if (!gc->label)
-@@ -179,20 +195,20 @@ static int ppc4xx_gpio_probe(struct platform_device *ofdev)
+ 		return -ENOMEM;
+ 
+-	chip->regs = devm_platform_ioremap_resource(ofdev, 0);
+-	if (IS_ERR(chip->regs))
+-		return PTR_ERR(chip->regs);
+-
  	return devm_gpiochip_add_data(dev, gc, chip);
  }
  
--static const struct of_device_id ppc4xx_gpio_match[] = {
-+static const struct of_device_id ppc44x_gpio_match[] = {
- 	{
- 		.compatible = "ibm,ppc4xx-gpio",
- 	},
- 	{},
- };
--MODULE_DEVICE_TABLE(of, ppc4xx_gpio_match);
-+MODULE_DEVICE_TABLE(of, ppc44x_gpio_match);
- 
--static struct platform_driver ppc4xx_gpio_driver = {
--	.probe		= ppc4xx_gpio_probe,
-+static struct platform_driver ppc44x_gpio_driver = {
-+	.probe		= ppc44x_gpio_probe,
- 	.driver		= {
--		.name	= "ppc4xx-gpio",
--		.of_match_table	= ppc4xx_gpio_match,
-+		.name	= "ppc44x-gpio",
-+		.of_match_table	= ppc44x_gpio_match,
- 	},
- };
- 
--module_platform_driver(ppc4xx_gpio_driver);
-+module_platform_driver(ppc44x_gpio_driver);
 -- 
 2.54.0
 
