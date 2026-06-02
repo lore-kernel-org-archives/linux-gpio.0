@@ -1,129 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7158353EF7;
-	Tue,  2 Jun 2026 11:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E013330F815
+	for <linux-gpio@vger.kernel.org>; Tue,  2 Jun 2026 11:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780399879; cv=none; b=SOcuNp2MSDcYMFuGcOL2wXAmoIwiqob8CeF25+46h5Z9ibbVkovyDgIt47Nn0402qnIsaB5uVdYeRll292A5g3Ha0Yi9PzjpWdPxr7NrVH1/eVjCMtzS58cDv1GQMQldYeJM01tpw6Pq3XSfPKxsWf2xTSMe+HCwDbaY4NUtHjs=
+	t=1780400136; cv=none; b=bi51eJ8PZ2Ydoc9bKBpwMwiqxS/MGj/u2CtOFyvu89JWWjbd4RwgDoUwkVMGDdXltfc2J4AnDf6sWDzP2H8s89/X5per/1zHyb+WFKXaMn0HHsxPT5DhhAHTy+EnlfwGbZpSJLc5wJ0Zv/LRab9CDm+PPUDtbVW+i5BWrkyiv9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780399879; c=relaxed/simple;
-	bh=6+dWOqnd9c1BE5bGfb/wthkoPSDCs4oRcAmaXUeBPNo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KAMoO0DYeuiU5VjHkT1vNqm8XwFmFDsEm/FfZir5SSksal6dFK6AsFuz8NbGue4TJc7eJcKCYzde9bZDMgXVax7ag56cLjlmT++l/O1bYVdNjbNbIZgrF9cqoMcjjPtQc9zek08IBiRiSxE3KjI0ALBfcS5TCduMzZv6QXoomTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFilqPPX; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780400136; c=relaxed/simple;
+	bh=uOdOyMhlg/4ykCMFkIgB5lwtIu2oTbxNUE3TfrLThMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BPD70ljcjd6FwjLFfsNNQpEyBAPi25dQ/54xjGpG8E/BPs9m3cF12MVjFSifjc6xkaVTejN+2Br+mvfXte+xrJ4/bUQ+Fl4/C7eGq2QdAqaXvOjenLekSUf8Ml8uoZUqPaLW8K698zh0ZvZjxWFdGAtgFool21lvtOyERKTV7Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=AwxgrlLm; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFilqPPX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ECE71F00893;
-	Tue,  2 Jun 2026 11:31:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780399875;
-	bh=ZB07DdKg3yuyLDzmzNSyPfVJ3JxJRqsXpsqIrEV4rXw=;
-	h=From:To:Cc:Subject:Date;
-	b=WFilqPPXSDNsQxfOiJielADezOD6iopvX1ADjfj6Rpxg0fTxlVKE5AUHi3acHue6T
-	 5ezvIXq7Z9jXfZB7ZrKXVhagZIo/uJ4yfedXc1dFZEicO7LAyO3sZmPnGRwFBycwoQ
-	 K4Ln2nArU5n2nFuYmACXZpnGTpoK7rxZHXgCs9U//g7rImpirVNe9mgXoqq17RdYiX
-	 q1bO6kqn8gYs9VlRO1Ezo1UuESpK2sP2vzTSGz2uVIhQ/5jlho4YLOYqqeOyCBiuKB
-	 JKtjys2U4dJbkZVCpmn03OeRP1lzPsjuebbkJx+pPAdjdhV+ufWV6+KwvvDJeIxhcT
-	 Gy05DKTE+vpjA==
-From: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-To: PRAT Maximilien <maximilien.prat@cs-soprasteria.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] gpiolib: Remove big fat warning in gpiochip_get_direction()
-Date: Tue,  2 Jun 2026 13:30:16 +0200
-Message-ID: <63487206f6e5a93eaf9f41784317fe99d394312f.1780399750.git.chleroy@kernel.org>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="AwxgrlLm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=uOdO
+	yMhlg/4ykCMFkIgB5lwtIu2oTbxNUE3TfrLThMY=; b=AwxgrlLmHrIS8S4p9Kc+
+	/oEr7YS9Tlpm2YEc3jKVAg8GgqmE6hVboRKuwKphSImcLQKfv2t2fVdFz9HhMsZi
+	d144HwCyM1hcfLUZXrp3GvrFb5kQWEkTJIDmIerLhOcwWw67m/DbHn/FzkGOhfNw
+	d6Z+VvDP5rT6T06/TApfxwXjD639FnGaXn/oMH+nd+uUilnR937oBggjM/F3RUuA
+	q2KJLlswFG6AWwJ9q21EoqVhXnVevzfKaiww80e7FKU2HJUlBzSptQiPHVXMhEMV
+	8tRvIEwi6s5Nh43W4M/nkWWS2Mnybk4RpeYNfpMbaoy5YvQ/dbfCK1ExnAgyp6fO
+	Sw==
+Received: (qmail 2867990 invoked from network); 2 Jun 2026 13:35:30 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Jun 2026 13:35:30 +0200
+X-UD-Smtp-Session: l3s3148p1@DSxWtUNTzK4ujnv7
+Date: Tue, 2 Jun 2026 13:35:30 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Claudiu Beznea <claudiu.beznea@kernel.org>
+Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 0/7] pinctrl: renesas: rzg2l: Add support for RZ/G3S
+ I3C
+Message-ID: <ah7AAgK0plmNfL5C@ninjato>
+References: <20260528080439.615958-1-claudiu.beznea@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3821; i=chleroy@kernel.org; h=from:subject:message-id; bh=6+dWOqnd9c1BE5bGfb/wthkoPSDCs4oRcAmaXUeBPNo=; b=owGbwMvMwCV2d0KB2p7V54MZT6slMWTJ7bv97xeXZ03LoV/aqv51bx0ezTmrIq8oIxuwbk7Sh bZi8fMyHaUsDGJcDLJiiizH/3PvmtH1JTV/6i59mDmsTCBDGLg4BWAixdMYGbYVSze+6d3yV57p MXOC4K5V92KTl24u3+cTPoftpt88LWOGf1bNnyoUj8wTVskV83ps0q2/3nSL4EOGw+ukuw5WOU1 15wMA
-X-Developer-Key: i=chleroy@kernel.org; a=openpgp; fpr=10FFE6F8B390DE17ACC2632368A92FEB01B8DD78
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rsfaeCIwtI8MyDA2"
+Content-Disposition: inline
+In-Reply-To: <20260528080439.615958-1-claudiu.beznea@kernel.org>
 
-Since kernel v6.15 the following big fat warning is encountered when
-reading /sys/kernel/debug/gpio, leading to kernel latency while
-emiting the warning, and panicing on systems configured to panic on
-warnings.
 
-  ------------[ cut here ]------------
-  WARNING: drivers/gpio/gpiolib.c:423 at gpiochip_get_direction+0x3c/0x48, CPU#0: cat/12531
-  CPU: 0 UID: 0 PID: 12531 Comm: cat Tainted: G        W           7.0.10-gitc72c39~-01802-g28c351659258 #27 PREEMPT
-  Tainted: [W]=WARN
-  Hardware name: MIAE 8xx 0x500000 CMPC885
-  NIP:  c043c2f8 LR: c043d740 CTR: 00000000
-  REGS: ca89bc20 TRAP: 0700   Tainted: G        W            (7.0.10-gitc72c39~-01802-g28c351659258)
-  MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24004884  XER: 00000302
+--rsfaeCIwtI8MyDA2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  GPR00: c043f3f0 ca89bce0 c3278000 c20b5f20 0000000d 00000002 00000000 c0a76208
-  GPR08: 00000001 00000000 cccccccd c313d830 84004884 100d815e c0a76208 c0a761f8
-  GPR16: c0a761f4 c0a76278 1048834c 10488350 c21c0b04 c21c0d93 c0a5fb74 c313d848
-  GPR24: c20b5f20 c21c0d94 00000000 00000000 c21c0d94 00000000 c21c0c00 c21c0b04
-  NIP [c043c2f8] gpiochip_get_direction+0x3c/0x48
-  LR [c043d740] gpiod_get_direction+0xa0/0x170
-  Call Trace:
-  [ca89bce0] [c28157e8] 0xc28157e8 (unreliable)
-  [ca89bd10] [c043f3f0] gpiolib_seq_show+0x370/0x524
-  [ca89bd90] [c021dd1c] seq_read_iter+0x174/0x618
-  [ca89bdd0] [c021e260] seq_read+0xa0/0xd0
-  [ca89be40] [c031063c] full_proxy_read+0x80/0xc4
-  [ca89be70] [c01df3e0] vfs_read+0xb4/0x35c
-  [ca89bee0] [c01e0180] ksys_read+0x8c/0x15c
-  [ca89bf10] [c000dc94] system_call_exception+0x88/0x154
-  [ca89bf30] [c00110a8] ret_from_syscall+0x0/0x28
-  ---- interrupt: c00 at 0xfc629e8
-  NIP:  0fc629e8 LR: 0fc62a34 CTR: 00000000
-  REGS: ca89bf40 TRAP: 0c00   Tainted: G        W            (7.0.10-gitc72c39~-01802-g28c351659258)
-  MSR:  0000d032 <EE,PR,ME,IR,DR,RI>  CR: 28004884  XER: 00000302
 
-  GPR00: 00000003 7f8df6a0 77e37540 00000003 7f8df6e8 00001000 00000000 00000000
-  GPR08: 00000000 7f8e3efc 00000000 7f8e06f0 7f8e3efc 100d815e 7fe70e10 100d0000
-  GPR16: 100d0000 00000001 1048834c 10488350 22000882 77e3fe68 1000596c 77e40b28
-  GPR24: 00000000 28004884 01000000 00001000 7f8df6e8 00000003 0fde36a0 00000000
-  NIP [0fc629e8] 0xfc629e8
-  LR [0fc62a34] 0xfc62a34
-  ---- interrupt: c00
-  Code: 9421fff0 7c0802a6 90010014 7d2903a6 4e800421 2c030001 40810008 3860ffcc 80010014 38210010 7c0803a6 4e800020 <0fe00000> 3860ffa1 4e800020 81230020
-  ---[ end trace 0000000000000000 ]---
+> Series adds pinctrl support for the I3C on Renesas RZ/G3S SoC. For a
+> clean I3C support, cleanup patches for the pinctrl driver were also
+> included.
 
-This is due to a WARN_ON() added by commit ec2cceadfae7 ("gpiolib:
-normalize the return value of gc->get() on behalf of buggy drivers")
-when the gpiochip doesn't implement get_direction() function. But
-according to the documentation in <linux/gpio/driver.h> implementing
-get_direction() is only a recommendation, not a requirement. And
-regarless, WARN_ON() has no added value here, dumping all CPU
-registers doesn't give any useful information for that case.
+I am ready to test but this series doesn't apply on neither master nor
+-next of today. Could you kindly push a branch to pull from somewhere?
+That would be great. Thank you!
 
-Lower it to a simple warn_on_once() message.
 
-Fixes: ec2cceadfae7 ("gpiolib: normalize the return value of gc->get() on behalf of buggy drivers")
-Signed-off-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
----
- drivers/gpio/gpiolib.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+--rsfaeCIwtI8MyDA2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 1e6dce430dca..6c0a5db443cb 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -426,8 +426,10 @@ static int gpiochip_get_direction(struct gpio_chip *gc, unsigned int offset)
- 
- 	lockdep_assert_held(&gc->gpiodev->srcu);
- 
--	if (WARN_ON(!gc->get_direction))
-+	if (!gc->get_direction) {
-+		pr_warn_once("%s: GPIO %s has no get_direction()\n", __func__, gc->label);
- 		return -EOPNOTSUPP;
-+	}
- 
- 	ret = gc->get_direction(gc, offset);
- 	if (ret < 0)
--- 
-2.54.0
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmoev/4ACgkQFA3kzBSg
+Kbbliw//RSqgU2ZakkJblEOhzJXnCpeLCL8GlK+fDNm548nuABjDL/ujlZQKWCdr
++3BZrVwp690+PXOYhqeL8HU5aQqXKNLsijj973wc+ybCuuvZWoAM6QcWxUDCrD1D
+LsF5dLBByVQalpDDcGD1E4KNTWhr3J8WD+MvAGdhBXEd0qUgbNekH4zDLteID1cv
+m08qO6K5IZ4H/O69pK+nAn2vpe19+0H9cLyqVDxPZmcl7aNtxH7ZJWRhDczG4qry
+RWI3UhPa0EjGlY1kU9wfV1vGxPg6/rcu4E4U8GmfKijt8W+MFt6Mx8nRrk9TqNwz
+o3/mrYINCNXjHO0cf9+vri5VvjPUJY5FBxq3S0IBhF+M1otSO3BFmY4XEXYIzdzf
+UwmbMxqbyYR0668vfxzISzgHCwqkLcf47m9cnHKtbyNg1CcGCsnDzM/2HEbQJ5TF
+IrSeL74lxHNAdrc0kHyoJCIH5v6+UDppzLjv4ItNqeJdYWKaFo/18C+fa+qJdGZv
+LSbl9L+4OgclqNL7CIN99hlj09VGEJIkMC/BDoE5aYjiz5OuFR8MkpNkTQue9A4M
+bC+naTZdZ6xz3EHYZttBhA5FIiN77fFmxo6VQljIivslrH+u/+ANT7/C20n3YKL+
+peALgijaD3xQ3PmH7IMeI77Q4wXR4BsOh2DI5Hl9a8f90SUVllw=
+=5DZw
+-----END PGP SIGNATURE-----
+
+--rsfaeCIwtI8MyDA2--
