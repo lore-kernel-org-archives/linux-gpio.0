@@ -1,103 +1,72 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984EE3D6471;
-	Tue,  2 Jun 2026 12:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DF62765DF;
+	Tue,  2 Jun 2026 12:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780402541; cv=none; b=NUVv0J+hbK/OQZCq3hnuIISTgT97Q+Uhr+j7qcgX57bmodUYcDqyp49BFVrWXK+YxbYh4Cfx/ydBiRVhXH008dm7g7jWo+8Aj3ZzIjh+fxLVLU5MveT+B3moLgua/6ggMoUV50ZARUpPK1PG54HdqBaOxk2vbbV/3ZFW9O1twhU=
+	t=1780404487; cv=none; b=hYkK8nwCQoHh3Nl5OvjL8Q+CXTCMN8e01FWWfS71eRyBXUpIABd4jr4IdJ82VgmOtdwlp6+uzUWxum+GXGyqap/EeMLslDBD/WnjRgGvIzhH9Z0crf4wnueb6Ril3qsv/0yweEsQfFS/xrEuD3tVlipp1sb5cV+NMlGWKguIMgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780402541; c=relaxed/simple;
-	bh=DALm11u0DP3CuOZchTDgz8esDk71Sl3LZkAYh+SokpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pt6s7aGJyccBnbxQDIPrTOsp1wF2EnGwk39IiqpK7x5FUXd65gXjlXFcpGHbad6ex2HPPLAXsbpE6MHMBgDfNWFd8sT1oLcLKdaaIoNpaodAbKmf0F61zMnjc1ptzhbEECkyPbiF0Q2wQupoQ9+ziVmQyWiI14BTEZUi5nUZXz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e5IgM09v; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1780404487; c=relaxed/simple;
+	bh=hxB82OwR/c2b5AF1j39uyClP13FSUWRKhi3oip7J4bo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kkXP6yucm3B3ruUOY3TSuhOKRYDDx6XI2/HyZXs/696DKGoWTSrhq+8K5NrBD5GZYuclOg0don/AQc36pM6nP+gFVC5rYOY3xIphlNSAZ78HBYM99sS3OIHqQUai3nL1AILZyHipK6rNnO1oDpu684F0PHSFhXMRBeaj6i1PIWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BZcnb3Ne; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e5IgM09v"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1780402539; x=1811938539;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DALm11u0DP3CuOZchTDgz8esDk71Sl3LZkAYh+SokpM=;
-  b=e5IgM09vZ1SjPihLp5VYKUhLMlpDphbKWJiYSnwHM+WoyCIRPBrHz+EZ
-   nT2nWmu9w8R1jlTKp6hAdZLBR6FKTRwgUHGAKSdRPqI7yt/QxdZh0aGst
-   0uPc0X4fv6ZobL1f/aq/l74mWVfA0fodRpP9v5AlFQbTHv0Pt4OJ+3E5+
-   vhPxW7rTgyZZTLaKdqy+XRLyVROEly8UkqM+FTl/Sq9+A8jOEZp0WfkD/
-   YRTt4GBeybbji+r/C6eoY6UyjmucPUI2g8GmtW0jZaYaWk2FwgForDfVu
-   OSz57L/bmMAAkZ9DM/qnCWawziSWwyzUWoiv1IQqOaZfhXeNy1Pzw4Ifg
-   Q==;
-X-CSE-ConnectionGUID: hSR7wQmoQjCsJJXCN9IVsA==
-X-CSE-MsgGUID: UMSdTBiPSNCcu7JA1EX71w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11804"; a="91491714"
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
-   d="scan'208";a="91491714"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jun 2026 05:15:38 -0700
-X-CSE-ConnectionGUID: jdLtT0NPTeKWIIyumi3AFg==
-X-CSE-MsgGUID: RPv7fYVBTlqHnepjq+9Xcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,183,1774335600"; 
-   d="scan'208";a="248177461"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa004.jf.intel.com with ESMTP; 02 Jun 2026 05:15:37 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 001E995; Tue, 02 Jun 2026 14:15:35 +0200 (CEST)
-Date: Tue, 2 Jun 2026 14:15:35 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Marco Scardovi <scardracs@disroot.org>
-Cc: andriy.shevchenko@linux.intel.com, brgl@kernel.org, linusw@kernel.org,
-	linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] gpiolib: acpi: prevent address truncation in
- OperationRegion handler
-Message-ID: <20260602121535.GC2990@black.igk.intel.com>
-References: <20260602113529.52570-1-scardracs@disroot.org>
- <20260602113529.52570-3-scardracs@disroot.org>
- <20260602114540.GB2990@black.igk.intel.com>
- <vzcrnFOfR861L-H21KjtDQ@disroot.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZcnb3Ne"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7B511F00898;
+	Tue,  2 Jun 2026 12:48:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780404486;
+	bh=iCZKbEEGJwyGjbTw3VbjcJ0aH82ATivE84+H+5iwvjg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=BZcnb3Nebu4GuTulLEBMCdckbcc/FKFhUO0BIPGuDrQOmqVvI8dStqzOjSmXLa3iG
+	 tx3jsarm7muLQB16y2j3nsqkJZg6Yz4OWd+FkHIEFRQlIS6SIfBqL3ZAYxl9EAtbUt
+	 O3W7Eu5jsGe4DnXmxCUmCBnJdd9SlJcp2Ejpa2W+aYFLWpwiWb/UYRO547pWB5gKYQ
+	 Z0QIopr89UhlZKfVHYSMT3C7ubCMMrDWH1u0AeDkLlH4tP/izVMZybkt5fBHzvfgXB
+	 6+MyaFn3LSS/CHwSGtZ441/6z+tiCUcrQpnhSWcaGO0J2yp+uaZkNmEmIPAnm+2Yjm
+	 zNKPlBVpvb49g==
+Message-ID: <385c0e3c-f131-4d38-8d82-0e0b4ab8e96a@kernel.org>
+Date: Tue, 2 Jun 2026 15:48:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <vzcrnFOfR861L-H21KjtDQ@disroot.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] pinctrl: renesas: rzg2l: Add support for RZ/G3S
+ I3C
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev,
+ linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20260528080439.615958-1-claudiu.beznea@kernel.org>
+ <ah7AAgK0plmNfL5C@ninjato>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea@kernel.org>
+In-Reply-To: <ah7AAgK0plmNfL5C@ninjato>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
 
-On Tue, Jun 02, 2026 at 01:59:36PM +0200, Marco Scardovi wrote:
-> Hi Mika,
+On 6/2/26 14:35, Wolfram Sang wrote:
 > 
-> On Tue, Jun 02, 2026 at 01:45:40PM +0200, Mika Westerberg wrote:
-> > How in practice this can be done given that the GPIO resource has only 2
-> > bytes for the index?
+>> Series adds pinctrl support for the I3C on Renesas RZ/G3S SoC. For a
+>> clean I3C support, cleanup patches for the pinctrl driver were also
+>> included.
 > 
-> The 2-byte limitation is in the GPIO resource descriptor representation of the 
-> pin table, not in the ACPI address space handler interface itself.
+> I am ready to test but this series doesn't apply on neither master nor
+> -next of today. Could you kindly push a branch to pull from somewhere?
+> That would be great. Thank you!
 > 
-> The acpi_gpio_adr_space_handler() receives the access offset as a 64-bit 
-> acpi_physical_address from ACPICA. This value is generated when AML
-> accesses a Field within the GPIO OperationRegion, and it is not constrained
-> by the GPIO resource descriptor's pin_table_length.
 
-Yes, but you access it from AML like this:
+I pushed it at [1] along with the v2 that I'm preparing for the i3c driver.
 
-Field(\_SB.GPI2.GPO2, ByteAcc, NoLock, Preserve)
-{
-	Connection (GpioIo(Exclusive, PullUp, , , , "\\_SB.GPI2") {7}),
-	STAT, 1,           // e.g. Status signal from the device
-	Connection (GpioIo (Exclusive, PullUp, , , , "\\_SB.GPI2") {9}),
-	RSET, 1            // e.g. Reset signal to the device
-}
+Thank you for checking this,
+Claudiu
 
-In other words it still uses GPIO resource descriptor (so 2 bytes per pin),
-nothing else is accepted as far as I understand.
-
-The example is here: 
-
-https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.html#declaring-generalpurposeio-fields
+[1] https://github.com/claudiubeznea/linux/commits/next-20260601%2Bi3c-upstream-v2/
