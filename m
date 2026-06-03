@@ -1,136 +1,154 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8AA3D6CAE;
-	Wed,  3 Jun 2026 15:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C10039A063;
+	Wed,  3 Jun 2026 15:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780499842; cv=none; b=cU4JKaNUKLZ8n/PQ0oH4t01OD0EARZm4jlg2W1WBjui0g4qj2tfI+1X5lEegpqfmy6A+QRuLI0OGR4iHucnBKBEsHq1CzgA3B5BiDkqJOlCTs2pjRPnO9gQguqDJkHPRI+Xrcx932futVoa0Te0aFY820eDHWIye9LnwTIe5w3M=
+	t=1780499913; cv=none; b=sT3wDcMZy1cmkh1Dh7n9N1nzIaqpoJB4xkdN79UkPvp2/s1i8QICSCunBkMx4/6NgtYWU725kY4DcvCb4cFW5Gbpf7HoNXglO3T6+LuC45OFjwspzwN+MWTGgicXr0kEq3M3VrhdXsgYU2QyvHq8I2C6DIo2Ze3Gdm3y5WH+nDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780499842; c=relaxed/simple;
-	bh=5dQdT8sFOwJOLDSBxKJKCSW0yGjLmAHWOVYrFPkQKaI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=m5jx1zGuCfte10ZpIXLlzP5E+1CLXzEgoewq+ZPYg49jU/Zo/vu7y/XBHnMHRkerto87O1vb76jR3o2MjXaI/GMofGzct2liag8CK+I23q6WJaxBI3cUOTU5Z72FNZ/6JRFUUeIaRsHKAE8h1/orqNsE+1CZmOhYkBlmUUPdzkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FARz/q6Z; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780499913; c=relaxed/simple;
+	bh=ILeO4hImKBexRl/fKhTwLPIU3nPhZ/CXs2vCp2xpNsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/E/PSFCTsswMOGt9d476Wd+HsyvzQUuXr14oJWyqzUniOFJOxaeOgkZrlv9Qqk2l1r2Il9bSmVQfPf7yRLU4DmGEQuVU2O4BWz2yUOznWzEkhjjoUt7KtZIQ+YGOcAYKEnUE+DhqVzWRFr5GmAyOEwLUllNF2O+CEJOyHs2MIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRiwEnU0; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FARz/q6Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67EDC1F0089A;
-	Wed,  3 Jun 2026 15:17:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRiwEnU0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 138891F00893;
+	Wed,  3 Jun 2026 15:18:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780499840;
-	bh=oFlq/AL3VtP+pSmrs/29Y1Po0Fraz2VgZagy0oAiduE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=FARz/q6Z3xhstGpddt3FEA0rKUlNDsU0dhaBY0QtG4qO01rJZ7emsK9tDvbw5xAoe
-	 r+kmQzbuAG37qIsEnIn4D/+xeJXiD6EadgRNMhK12ted7X5wI6k0pri+4cS3H9YWiu
-	 bg9GJe5YbpaVu554UYBamACJu0cIfMhzE8CEJmDQTuWOlk0ohG/C5mQXXi4TA3LrXO
-	 E2sKmGckHnYTraI6NvnG4GBINAP55nA2Y1vqpg8bf9mKv7Qw+MXylJATOwlrbdoAWU
-	 jdFxf36YJyNru8lcF159nDiI+swm8SSdQVNu1lycHMn+zHx2wapDvYJ8VcEDP3v/Fz
-	 zJzleLPJTOnfQ==
-From: Claudiu Beznea <claudiu.beznea@kernel.org>
-To: geert+renesas@glider.be,
-	linusw@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	magnus.damm@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	biju.das.jz@bp.renesas.com
-Cc: claudiu.beznea@kernel.org,
-	claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 6/6] arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
-Date: Wed,  3 Jun 2026 18:16:42 +0300
-Message-ID: <20260603151642.4075678-7-claudiu.beznea@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260603151642.4075678-1-claudiu.beznea@kernel.org>
-References: <20260603151642.4075678-1-claudiu.beznea@kernel.org>
+	s=k20260515; t=1780499912;
+	bh=gqLubRzDZskEA9R3dJXzcbqYgA5a+l8atiBeOr7IMyo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=GRiwEnU0BcFdjpGIldWYYQNw1LEa2mwix99tP6yfOXlV79rEJOB706J70/mTY05WO
+	 Fz1N4FnNxlXkC8iT00hRocwYuYiQ5TdCqPT2sydp/zX7/EtIjkEamLOgG9Uf6fdbpb
+	 oGi23KdbA4opEgs1lk7n5Jsa/6NUpOWTCPx9yFQxztl221UC/bIjG7AsWjvK/b7p03
+	 c0KELW386SW/8QhA+/m2JjqAXvzwZN1LOmyw6K7ZLMi6AZwX2CAimlJaxAS1Rs5ilf
+	 z+BLZBYg6nT7r0qb+eKhvwVVyI/Tcz5OsTOaLIn0fMWIWeofmdWBCvnXIsEfctLaEW
+	 VftYIXSfp4npQ==
+Date: Wed, 3 Jun 2026 16:18:27 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
+Subject: Re: [PATCH v3 02/21] pinctrl: pinconf-generic: Add property
+ 'input-debounce-ns'
+Message-ID: <20260603-sinless-mooing-48a37d3d05ea@spud>
+References: <20260603055347.66845-1-changhuang.liang@starfivetech.com>
+ <20260603055347.66845-3-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UxFbr67Tboxoi01J"
+Content-Disposition: inline
+In-Reply-To: <20260603055347.66845-3-changhuang.liang@starfivetech.com>
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The Renesas RZ/G3S SMARC SoM board has a connector for I3C interface.
-Enable I3C.
+--UxFbr67Tboxoi01J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+Linus,
 
-Changes in v3:
-- collected tags
+On Tue, Jun 02, 2026 at 10:53:28PM -0700, Changhuang Liang wrote:
+> Add 'input-debounce-ns' to the generic parameters used for parsing DT
+> files, along with the corresponding configuration parameter
+> PIN_CONFIG_INPUT_DEBOUNCE_NS. This allows debounce time to be specified
+> in nanoseconds as an alternative to the existing 'input-debounce'
+> property which uses microseconds
+>=20
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> ---
+>  drivers/pinctrl/pinconf-generic.c       | 2 ++
+>  include/linux/pinctrl/pinconf-generic.h | 5 +++++
+>  2 files changed, 7 insertions(+)
+>=20
+> diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-=
+generic.c
+> index 64ed28309788..9d67e2d26e28 100644
+> --- a/drivers/pinctrl/pinconf-generic.c
+> +++ b/drivers/pinctrl/pinconf-generic.c
+> @@ -43,6 +43,7 @@ static const struct pin_config_item conf_items[] =3D {
+>  	PCONFDUMP(PIN_CONFIG_DRIVE_STRENGTH, "output drive strength", "mA", tru=
+e),
+>  	PCONFDUMP(PIN_CONFIG_DRIVE_STRENGTH_UA, "output drive strength", "uA", =
+true),
+>  	PCONFDUMP(PIN_CONFIG_INPUT_DEBOUNCE, "input debounce", "usec", true),
+> +	PCONFDUMP(PIN_CONFIG_INPUT_DEBOUNCE_NS, "input debounce", "nsec", true),
+>  	PCONFDUMP(PIN_CONFIG_INPUT_ENABLE, "input enabled", NULL, false),
+>  	PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT, "input schmitt trigger", NULL, fals=
+e),
+>  	PCONFDUMP(PIN_CONFIG_INPUT_SCHMITT_UV, "input schmitt threshold", "uV",=
+ true),
+> @@ -185,6 +186,7 @@ static const struct pinconf_generic_params dt_params[=
+] =3D {
+>  	{ "drive-strength", PIN_CONFIG_DRIVE_STRENGTH, 0 },
+>  	{ "drive-strength-microamp", PIN_CONFIG_DRIVE_STRENGTH_UA, 0 },
+>  	{ "input-debounce", PIN_CONFIG_INPUT_DEBOUNCE, 0 },
+> +	{ "input-debounce-ns", PIN_CONFIG_INPUT_DEBOUNCE_NS, 0 },
+>  	{ "input-disable", PIN_CONFIG_INPUT_ENABLE, 0 },
+>  	{ "input-enable", PIN_CONFIG_INPUT_ENABLE, 1 },
+>  	{ "input-schmitt", PIN_CONFIG_INPUT_SCHMITT, 0 },
+> diff --git a/include/linux/pinctrl/pinconf-generic.h b/include/linux/pinc=
+trl/pinconf-generic.h
+> index a5d4b2d8633a..1df63c732b99 100644
+> --- a/include/linux/pinctrl/pinconf-generic.h
+> +++ b/include/linux/pinctrl/pinconf-generic.h
+> @@ -71,6 +71,10 @@ struct pinctrl_map;
+>   *	which means it will wait for signals to settle when reading inputs. T=
+he
+>   *	argument gives the debounce time in usecs. Setting the
+>   *	argument to zero turns debouncing off.
+> + * @PIN_CONFIG_INPUT_DEBOUNCE_NS: this will configure the pin to debounc=
+e mode,
+> + *	which means it will wait for signals to settle when reading inputs. T=
+he
+> + *	argument gives the debounce time in nsecs. Setting the
+> + *	argument to zero turns debouncing off.
+>   * @PIN_CONFIG_INPUT_ENABLE: enable the pin's input.  Note that this doe=
+s not
+>   *	affect the pin's ability to drive output.  1 enables input, 0 disables
+>   *	input.
+> @@ -143,6 +147,7 @@ enum pin_config_param {
+>  	PIN_CONFIG_DRIVE_STRENGTH,
+>  	PIN_CONFIG_DRIVE_STRENGTH_UA,
+>  	PIN_CONFIG_INPUT_DEBOUNCE,
+> +	PIN_CONFIG_INPUT_DEBOUNCE_NS,
+>  	PIN_CONFIG_INPUT_ENABLE,
+>  	PIN_CONFIG_INPUT_SCHMITT,
+>  	PIN_CONFIG_INPUT_SCHMITT_ENABLE,
 
-Changes in v2:
-- dropped pinctrl sleep state
+Should this grow a mutual exclusion check in parse_fw_cfg()?
+Part of me says yes for consistency, but also as this is a new property
+that's going to have had exclusion in the binding from the start part of
+me says that it is unnecessary to add that.
 
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi      | 18 ++++++++++++++++++
- .../boot/dts/renesas/rzg3s-smarc-switches.h    |  4 ++++
- 2 files changed, 22 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index b45acfe6288a..af7357fe4655 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -168,6 +168,14 @@ a0 80 30 30 9c
- 	};
- };
- 
-+&i3c {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i3c_pins>;
-+	i2c-scl-hz = <400000>;
-+	i3c-scl-hz = <12500000>;
-+	status = "okay";
-+};
-+
- &pcie_port0 {
- 	clocks = <&versa3 5>;
- 	clock-names = "ref";
-@@ -302,6 +310,16 @@ mux {
- 		};
- 	};
- 
-+	i3c_pins: i3c {
-+		pins = "I3C_SDA", "I3C_SCL";
-+#if SW_CONFIG4 == SW_ON
-+		power-source = <1200>;
-+#else
-+		power-source = <1800>;
-+#endif
-+		input-enable;
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		data {
- 			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3";
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-index bbf908a5322c..9cccc87da057 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-@@ -25,9 +25,13 @@
-  * @SW_CONFIG3:
-  *	SW_OFF - SD2 is connected to SoC
-  *	SW_ON  - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
-+ * @SW_CONFIG4:
-+ *	SW_OFF - I3C voltage is 1.8V
-+ *	SW_ON  - I3C voltage is 1.2V
-  */
- #define SW_CONFIG2	SW_OFF
- #define SW_CONFIG3	SW_ON
-+#define SW_CONFIG4	SW_OFF
- 
- /*
-  * SW_OPT_MUX[x] switches' states:
--- 
-2.43.0
 
+--UxFbr67Tboxoi01J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaiBFwgAKCRB4tDGHoIJi
+0shdAQDVn1y7zJ5GetjXm2OW2sQdptXIBXriOfUWzTJBsBzXhAEAqbwd03uZvPIu
+EdG/j/Pj6pCWlzrc4wAopEkRvGV20gs=
+=uhlk
+-----END PGP SIGNATURE-----
+
+--UxFbr67Tboxoi01J--
