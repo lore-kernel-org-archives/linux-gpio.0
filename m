@@ -1,280 +1,284 @@
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2102.outbound.protection.partner.outlook.cn [139.219.17.102])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFD1305662;
-	Wed,  3 Jun 2026 06:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780468059; cv=fail; b=EJWuml9kMpinYwVvBqoJYRHj/KDnMhuwbs9wRchwvDz1fCMz+uUSl2Y9ARTyLppHo+JCzntQFs5kUAxPlCSluRJuW1qFSzwsl9IRxrmiGQPWPiRL7cUrYT5vzbUhbsinfwDJ0hPBP+NNU/zG9eKlv8pi8qDz7gR+GUbtBzu1U8k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780468059; c=relaxed/simple;
-	bh=VhMjsyauWsWta9QHsGBm9/U40FDRow5CvXV2Fo3MenQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Xs+Ij0Jr1ueKryzLqWgK4NtUewxEMy2OXwb1DjFNZfwbS0euFYbxuPDfrohP4mJPIDSoYBj/SOb73TcinMtHYZUhwqKSVNr/4sDGa6WHgVabPeSU5tSCL3k42n7BsibVABX/7dbQvA1wG1ebY0n/oDBg8forLqPD1SgHUAS7Tf8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RYEdU+FP4ELoDrEam1AY6bTBa1u4xrAHdlclgM4iGkR6RAnvPLhmM/ss3tEtnSWldCENY/Fqt/RS9yhS9k3MqdAqW/HDTdDA0UxfsnPcmEhIqo9yNQnyNT6JNUKCsciKycc7Qvcfo2smahpbnS2IY91DVagApbYE8Ly5ORl9ZShv61v/sKbCagprKpT1+fSAwtGJ2s6c8XwQg0k/XyZoDssn3cYIvbTZ+L57zbgwjpClTZqrIQ66OEnH4PA7hDQSDodaWBEmrlJm1hfky9J7D+gtLvHNrE7ZyWQiQ8Ok3A/EpdldM+HBwomjje50nuWNcIjkV75bWiE9rKCu4yEh6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+y664snwcNOdRJMs9N6HdldGQYkJVBWduxyJc3itTuM=;
- b=gWK+tOJf3NdkzLExdzt2AeU9DohldIUW2V3EXpFnbMt7CErx0vCbDknE8xD6i04OiCJ/04lQloOkL2wOjagqUTo+WRIUP06yJw31zuOUmMoeIHi5MBJjWUyKmC/nOIu+FwsX8j04VT7jWuNNX9RNv5X/pxGT2Lee+0PDZ8+0F2Q+JCPoOifBOpJw79czWE052zJJ2ijYLfhXD7FmUV23SQsYRWghilxcb0VgOW8H0vkcMPw9yXnqOHN7CTf5ExPFIfxFAZ6JlJZ/mwlv6Al95OYZ/3nL92rvv4iDVwk6uDdRa7m1yVncts5hts8zAIN0mGg/JQXSz8pCUPxiwq0GaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6) by ZQ4PR01MB1154.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.7; Wed, 3 Jun 2026
- 05:54:23 +0000
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- ([fe80::e7d4:256c:b066:850d]) by
- ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%5])
- with mapi id 15.21.0092.006; Wed, 3 Jun 2026 05:54:23 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Paul Walmsley <pjw@kernel.org>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740EF3F8ED2
+	for <linux-gpio@vger.kernel.org>; Wed,  3 Jun 2026 06:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780469865; cv=none; b=C0b02hg7CJt1TmAtdnDuxxstPyeMNkQpSJ0qXjSiqbQdEbv3V0R5AZVBPEWw5Dl8pL8M3QjCHayhm3L/HmT4iiEkCEBHWrs+5j6tuVvc+6d24t05/atBhPdGVKmKsGmThWc+sp0TpCcobexDlb5z0mA8NOtHnpUHMwnHc3Z6izc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780469865; c=relaxed/simple;
+	bh=ArdiZoAGQwpoWZVY4IF7DJ2u/oPUbMOICOHzmdTTGZw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FS6AGED660pO9WTXeKFgK8KLYJspGzlZXlmAwyKqbdwLtcCNS01TQmDKUh2848ZyhIX2zgWpPUzfnFzl8zK4j4M/41oXhyO9sigsc6jgiC3NEMm8SKd0LDxfsttYmncnR8p5nypaZIJdHbafuosK/60y0I1lVSzEF1PCPQjQ5PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AKqH74tA; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AKqH74tA"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-49068493267so71717935e9.1
+        for <linux-gpio@vger.kernel.org>; Tue, 02 Jun 2026 23:57:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1780469859; x=1781074659; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fFGZrHmncLri6kV222EUMVc1OpR6lKxmRgI9L0qpQa0=;
+        b=AKqH74tAaDlLHLL6DnrHvqODLOEXjer2nKJ/UGh+lq3pAF9ElGuZQDwbToFF2aGwAC
+         krKekBKuUclEAKSs4nQemXE9MZSE43QR2IAD5refiJCbpoOn8vEuXVCDueOydBpybANd
+         fLOg2RjWBVLiiKpF9P17KxM/YLAWmz7jv1Y6yDiARgymCUOXKVhygYqPGOnzFkIPOU5S
+         iQR+4qmRpyB4k3bZ9mihBGySFQXw+VmcyI51gYwKjrufhMfiokBKwn5Uwm7sn48O7JzV
+         DQN+GQpc83xJRUNzNBujj9tU+UmtSI8KDKUPx/vszfwFmUGXCuE3TqL5apNXFkQtKJq5
+         wZSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780469859; x=1781074659;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=fFGZrHmncLri6kV222EUMVc1OpR6lKxmRgI9L0qpQa0=;
+        b=qh3ZCglRkeOW3BCFxIkjwNqokkS3IOsj4MB54zNdHm1FgZKfxARmc0SdZoBGAQykYQ
+         j/0yEWkZlIoGy+nDJE+sn/xqIANI/k79x7O7LNJqCtHdXyB2bKpgBZrdhHEOQjlJENzZ
+         SmFaPWZKq+tapSaBG2vXIHPvWj9FuWP3a9BPOO5yWe7kN5LuNRngnUgf2P9a/jtges29
+         LdaH1tYtaOcoxQRCF3QCg8uSN1PA2NBGvSGlEEDRXT/ivk8tcVkauzVunlrz8KMk3gzx
+         hd4WFf46aAzd+Zj7QTZSP+fI4BLWV/u4BvxUBTOuomcTZ0NtbEIbHswR9pOiJmZl+zNk
+         OXJw==
+X-Forwarded-Encrypted: i=1; AFNElJ+D9FCYKaeK7vvjWgPuivyzwWQ6pDmEflJVLjqbNVDCAqtw3Jhw0vig8RNR0Ezl07+QkmvIzE7TztY4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF4SBSgnbgKgNXAbWPQl0DI9q0fs6VXKT+IF4o0OvtfGYwzmio
+	lwEDa8VGmVJGPbSSa9NBJbZpATFxh9s53wNnWW7qwFDf5+aqQvwJo/sI
+X-Gm-Gg: Acq92OFDYqySaEFfS/dBuFoY19XKPnehwbhkUXOLgjW9CGlRv5ALsqTVFoBahUbkbVC
+	YlNYg8h0iRw/sDvs36h5WoPshPAqhFgiuJsLTYe2f33W5jboDztVxdAWZKIiUJnaEq1LSvrpmnZ
+	5kARvlN3VfcK2H7rTzgzuO26l1Cfq7qm2LKAVeiDd9n6roBjAsxVZZYM0+3euogmViUqImQqWio
+	FkvvjY6fdEx5gYKi/FCmDlot9tb9hfNcY/MNUhol7zPmyxxLsDS3dzhO5tAkvSPRv78RBGWfoOc
+	zJpjOGeFB49E/frcrlRyeRnr8awt3IsWEixm5/jFKzSSsmbBdxQwIVMU+NK2IRfkLLV0+aRDdmP
+	5bCz4I9zZb4r5LhVmskOF93vj9To8P08danTbwrNDMHjGD3zNzc7hk5FRYmy5m3swV3Pts48IWb
+	cEtwS6tEFXlaGyjJPCK0Ht0p4TbM1ZOf7MbWlOOfIE98Ob2lA9+LNXEpYZFeA=
+X-Received: by 2002:a05:600c:1e0f:b0:490:3ff5:737f with SMTP id 5b1f17b1804b1-490b5ed6353mr27425655e9.18.1780469858808;
+        Tue, 02 Jun 2026 23:57:38 -0700 (PDT)
+Received: from localhost.localdomain ([2a00:23c4:a700:7301:179c:89ab:19f6:9ba4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490b79d90bdsm9001855e9.0.2026.06.02.23.57.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Jun 2026 23:57:38 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linusw@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>
-Subject: [PATCH v3 18/21] pinctrl: starfive: Add StarFive JHB100 per2pok controller driver
-Date: Tue,  2 Jun 2026 22:53:44 -0700
-Message-Id: <20260603055347.66845-19-changhuang.liang@starfivetech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260603055347.66845-1-changhuang.liang@starfivetech.com>
-References: <20260603055347.66845-1-changhuang.liang@starfivetech.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SH0PR01CA0002.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:5::14) To ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6)
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v17 03/17] pinctrl: renesas: rzg2l: Add SD channel POC support for RZ/G3L
+Date: Wed,  3 Jun 2026 07:57:03 +0100
+Message-ID: <20260603065731.93243-4-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260603065731.93243-1-biju.das.jz@bp.renesas.com>
+References: <20260603065731.93243-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1154:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2b1d6816-1c73-42e8-3614-08dec1349021
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|52116014|366016|3023799007|22082099003|18002099003|6133799003|5023799004|56012099006|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	5UXB+nqutnDhQ4KwtgA+oTu3H29GWZ7zrp5bjlGMgBPALKWnxqZpNKN2h0JSQZnkZwR1L4ROE5+QxIi2bgXbX18YZYHHV69mfLfltc/qxc7URL4oj6JE9uEe7h35TYktElRfCOxtplW6oGOSMfTxpefE/AFWQuc9HoIO0Qju25RjNwnqVDbdhXqOLKU5nSOKc+K456mJlT8n4C+MDHk4j1Ki8/eh3FtqJuKPG0CuKcdx0diSLKGq0XlJtP+KeVsaRiQ0IqX2lKCj0Be0tQkd7bKX4KBnub9e9AASzsv1po5ZhbJGa24tN8tKohDgnHGrCMxZNKWDgvvWvLjDstDkj3uzHiOOT7xBMEhPtDuVj8vsbRraHcFMG0zv6ztbFB4PFjeUK3BPW/G48LfWoMgtl38aEfynlhm25rtTaomqAoUrYHlXpMt0ZRXh/Bcn8D2Y2q94YbhDkQsLyAE2J6Tv3ipapeZbxhCvGQuxbOojh8Jh1IC9fqJWAS2vh3o3BLh/koqgvhvQr2Wdp1gyF85JaCHdRDPH9WJkJWuhgenKiZe7eHD+QFUUVswD1k5OVbHjvaQhdTMZTimEGsZAC+fVhw==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(52116014)(366016)(3023799007)(22082099003)(18002099003)(6133799003)(5023799004)(56012099006)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9ap/JlCS05+9kJ5aO6Do9HAT9VC4LerG6l7zYKbhGb58gLzNObDih1RJbgiS?=
- =?us-ascii?Q?i9VgVA2b0RFLYC61RATxeVWA9Zd7RBBl2LTOCr4ln4JXdDVvHZF0kcF/x1WL?=
- =?us-ascii?Q?3bHU6l2WcWffs7jvjmpCpBhFE9P2N7Gc3gL6boUiXXHWenghRXt3ygkkWi3Y?=
- =?us-ascii?Q?BTp16Agytosf8Q5F0Mbqfazeq7KY3ZALN21Vj46TgqK6mUpIdZjeS2YHH8LW?=
- =?us-ascii?Q?pUKXAN6FOcgkId9yzp5VdYPtqJRWSpoRgnuwZQ3ey5+OPkldW1uDpWOF8KXB?=
- =?us-ascii?Q?4zRg0wndEiLoR/UqCh5BmTfLYPQYRi8UYsIYW9UVj/4hoA6TcBju6LrFn/Na?=
- =?us-ascii?Q?KOaQqykGqaT9R02zYPInUlYUvnq3e6R8CxAMkYM+yMPglDaOKwTNWZISmHT+?=
- =?us-ascii?Q?K2cGr2kk56z8v/jwc3JclVCBG6tEvOSOpGA0tp49QCfeMC0LTKkywYnKHDb/?=
- =?us-ascii?Q?5GB24QYf28cX/QJ/WIY8I4j87E3PjNuX7dO52FlZ8oqbGfuaED+k2U7QDits?=
- =?us-ascii?Q?UDAMQG7Ljm/xTxmo6Ul6aecqV4FJ30YT576ooTNnH2CWfDdK32PmmELuOoAW?=
- =?us-ascii?Q?1Oy1Giey0SC5zBWfnT+rEqgeQyQKYUKXEPh9oy8VRBQRBdBZKJb4dvIya1NZ?=
- =?us-ascii?Q?Tuvq///Qf2qaQWnmtHYFpdOiSjIM9QCoJN6PzGGIWOHllGaRWQzYVLtATHME?=
- =?us-ascii?Q?pmIKPH1Pe6hXJp/eLI4p4ChK6LF6Jvccue7MM8rOtc6gLX5x8sIzDv+Tmcnj?=
- =?us-ascii?Q?636brIeGZxOkBLf8gk6HrOSuj05sg76sXwIlMhy9mnWdWhbh59ecs36VrCRF?=
- =?us-ascii?Q?5oGFEUBSdvbI70ewRORgfvXUTqE5g05tu1JfJFljKidj6utuPT471dxAc6tQ?=
- =?us-ascii?Q?dbxYP4Erud8yeT0ute+OwngkVdx7jx2HU3RxH0rIOEAiqMUmPTAcEIHld/cv?=
- =?us-ascii?Q?knFXOJa0i1wgZesKNf6V8FAR+T6RuAvxN/iUpjvwo1K0xd7z8TtoI/YZ3oUh?=
- =?us-ascii?Q?xdN7qlwwXUV3+1CDmwBKiif/QVUn8unCfM+GRhx1jH1Wo0hTAAxyvBp6RLlF?=
- =?us-ascii?Q?XG2Zbad3FKk1O6b5HxcLT8jja00tCB/7BgifcbWEmQ3F3Df8ZKY3cyqmdPYa?=
- =?us-ascii?Q?WE+DVYwA1tdkXV93fPX/wnUGX1xkcvuUggct1yU3g2YrykGnS/oqQN8lqufZ?=
- =?us-ascii?Q?snFOfHzFcK75S+EjGsu7FMIG7Bmw6MCFiZUCqXXlIQkzdq7ytli7RwedR+WL?=
- =?us-ascii?Q?mU6ud4mbUcMi4HYXTVbx/A5bIJrXTPLLYRxFmLDTs2Ai1Nh3//RwU9IJrUtR?=
- =?us-ascii?Q?qs5x87vdYHhj690aNLZCL8OKaPDHQ3q4sl2fNlwjfxm3MF2Bva5QbRLGNA3I?=
- =?us-ascii?Q?IUX+THoAnoMHw0QCHuFXP308DmsgsZE2ZRg7kwlDzDOpWVzdIuq76ipl8GJQ?=
- =?us-ascii?Q?pk8935PbGPGmYf6Jmqe+C6x8HP7DK9y8FISzwyLfebro+TNHz1A1SOV/sRs8?=
- =?us-ascii?Q?Iue95gnPnHrOfheHZBbfxcQQcG5vmAlWM/tdlaakAK35N6GHYN4WS4togNId?=
- =?us-ascii?Q?d5NYvFUWwYIPVZ0cBn6VnJqtzqeHrIdSs+EKw9belcQONsS1kzdhyunylXo9?=
- =?us-ascii?Q?WyOlWJ5JjZy3JRyQDBlPL8iLkzo4xb1iJZCkOaQH9p4HHW7FY/B9pHSFD8RF?=
- =?us-ascii?Q?G8m+M+cN3ktMoHahA78e2JYNgk3XtT4Ck1lB4a0dPkTBPT2kUUlPR9LJkR1Z?=
- =?us-ascii?Q?9Ds+UPsdNDW0SWNTsEVvIb5QzNlsne3a7bznkBt+HtONapKm1Dvn?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b1d6816-1c73-42e8-3614-08dec1349021
-X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2026 05:54:23.4461
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5NUhsU16roayPxStoIcwcemPHMc21Fgrn9zj7ByyyhDsXU/h6bBW9Z8F2ywzS7Bh2YqM+fs3szJvftcBicF/3qBQi14NJvYxRV2o7Ax+TONgbqyXqWtL0aA2AdceE2ZG
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1154
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add pinctrl driver for StarFive JHB100 SoC Peripheral-2 Power OK
-(per2pok) pinctrl controller.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Co-developed-by: Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
-Signed-off-by: Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
-Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+Add power-on control (POC) support for SD channels 1 and 2 on the RZ/G3L
+SoC (r9a08g046).
+
+Introduce PIN_CFG_IO_VMC_SD2 capability flag (bit 22) and SD_CH2_POC
+register offset (0x3024). Extend rzg2l_caps_to_pwr_reg() to return
+SD_CH2_POC when PIN_CFG_IO_VMC_SD2 is set.
+
+Replace RZG3L_MPXED_PIN_FUNCS() with RZG2L_MPXED_COMMON_PIN_FUNCS() for
+port PG and PH pins, dropping PIN_CFG_SOFT_PS which is inappropriate for
+SD pins, and annotate them with PIN_CFG_IO_VMC_SD1 and PIN_CFG_IO_VMC_SD2
+respectively.
+
+Annotate all RZ/G3L SD0 dedicated pins (CLK, CMD, RST#, DS, DAT0–DAT7)
+with PIN_CFG_IO_VMC_SD0 so that power-source register lookups work
+correctly for those pins.
+
+Add sd_ch2 field to rzg2l_register_offsets and rzg2l_pinctrl_reg_cache to
+save and restore the SD_CH2_POC register across suspend/resume cycles.
+
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pinctrl/starfive/Kconfig              | 12 +++
- drivers/pinctrl/starfive/Makefile             |  1 +
- .../pinctrl-starfive-jhb100-per2pok.c         | 97 +++++++++++++++++++
- 3 files changed, 110 insertions(+)
- create mode 100644 drivers/pinctrl/starfive/pinctrl-starfive-jhb100-per2pok.c
+v1->v2:
+ * No change.
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 74 +++++++++++++++++--------
+ 1 file changed, 50 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/pinctrl/starfive/Kconfig b/drivers/pinctrl/starfive/Kconfig
-index edc3b6d9c8d7..bf5915e0a5f2 100644
---- a/drivers/pinctrl/starfive/Kconfig
-+++ b/drivers/pinctrl/starfive/Kconfig
-@@ -91,6 +91,18 @@ config PINCTRL_STARFIVE_JHB100_PER2
- 	  peripherals supporting inputs, outputs, configuring pull-up/pull-down
- 	  and interrupts on input changes.
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 83c61dcb24b1..b1d4b2b9e176 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -69,6 +69,7 @@
+ #define PIN_CFG_PVDD1833_OTH_AWO_POC	BIT(19) /* known on RZ/G3L only */
+ #define PIN_CFG_PVDD1833_OTH_ISO_POC	BIT(20) /* known on RZ/G3L only */
+ #define PIN_CFG_WDTOVF_N_POC		BIT(21) /* known on RZ/G3L only */
++#define PIN_CFG_IO_VMC_SD2		BIT(22) /* known on RZ/G3L only */
  
-+config PINCTRL_STARFIVE_JHB100_PER2POK
-+	tristate "StarFive JHB100 SoC Peripheral-2 Power OK pinctrl and GPIO driver"
-+	depends on ARCH_STARFIVE || COMPILE_TEST
-+	depends on OF
-+	select PINCTRL_STARFIVE_JHB100
-+	default ARCH_STARFIVE
-+	help
-+	  Say yes here to support Peripheral-2 Power OK pin control on the StarFive JHB100 SoC.
-+	  This also provides an interface to the GPIO pins not used by other
-+	  peripherals supporting inputs, outputs, configuring pull-up/pull-down
-+	  and interrupts on input changes.
+ #define RZG2L_SINGLE_PIN		BIT_ULL(63)	/* Dedicated pin */
+ #define RZG2L_VARIABLE_CFG		BIT_ULL(62)	/* Variable cfg for port pins */
+@@ -258,6 +259,7 @@ static const struct pin_config_item renesas_rzv2h_conf_items[] = {
+  * @oen: OEN register offset
+  * @qspi: QSPI register offset
+  * @other_poc: OTHER_POC register offset
++ * @sd_ch2: SD_CH2_POC register offset
+  */
+ struct rzg2l_register_offsets {
+ 	u16 pwpr;
+@@ -266,6 +268,7 @@ struct rzg2l_register_offsets {
+ 	u16 oen;
+ 	u16 qspi;
+ 	u16 other_poc;
++	u16 sd_ch2;
+ };
+ 
+ /**
+@@ -372,6 +375,7 @@ struct rzg2l_pinctrl_pin_settings {
+  * @oen: Output Enable register cache
+  * @other_poc: OTHER_POC register cache
+  * @qspi: QSPI registers cache
++ * @sd_ch2: SD_CH2_POC registers cache
+  */
+ struct rzg2l_pinctrl_reg_cache {
+ 	u8	*p;
+@@ -390,6 +394,7 @@ struct rzg2l_pinctrl_reg_cache {
+ 	u8	oen;
+ 	u8	other_poc;
+ 	u8	qspi;
++	u8	sd_ch2;
+ };
+ 
+ struct rzg2l_pinctrl {
+@@ -474,20 +479,32 @@ static const u64 r9a08g046_variable_pin_cfg[] = {
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PE, 5, RZG3L_MPXED_ETH_PIN_FUNCS(ETH1)),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PE, 6, RZG3L_MPXED_ETH_PIN_FUNCS(ETH1)),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PE, 7, RZG3L_MPXED_ETH_PIN_FUNCS(ETH1)),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 0, RZG3L_MPXED_PIN_FUNCS(B)),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 1, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 2, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 3, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 4, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 5, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 0, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IO_VMC_SD1),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 1, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 2, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 3, RZG2L_MPXED_COMMON_PIN_FUNCS(B) | PIN_CFG_IEN |
++				    PIN_CFG_IO_VMC_SD1),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 4, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 5, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD1),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 6, RZG3L_MPXED_PIN_FUNCS_POC(B, ISO)),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PG, 7, RZG3L_MPXED_PIN_FUNCS_POC(B, ISO)),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 0, RZG3L_MPXED_PIN_FUNCS(B)),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 1, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 2, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 3, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 4, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
+-	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 5, RZG3L_MPXED_PIN_FUNCS(B) | PIN_CFG_IEN),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 0, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IO_VMC_SD2),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 1, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 2, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 3, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 4, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
++	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PH, 5, RZG2L_MPXED_COMMON_PIN_FUNCS(B) |
++				    PIN_CFG_IEN | PIN_CFG_IO_VMC_SD2),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PJ, 0, RZG3L_MPXED_PIN_FUNCS(A) | PIN_CFG_IEN),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PJ, 1, RZG3L_MPXED_PIN_FUNCS(A)),
+ 	RZG2L_VARIABLE_PIN_CFG_PACK(RZG3L_PJ, 2, RZG3L_MPXED_PIN_FUNCS(A)),
+@@ -1053,6 +1070,8 @@ static int rzg2l_caps_to_pwr_reg(const struct rzg2l_register_offsets *regs,
+ 		return SD_CH(regs->sd_ch, 0);
+ 	if (caps & PIN_CFG_IO_VMC_SD1)
+ 		return SD_CH(regs->sd_ch, 1);
++	if (caps & PIN_CFG_IO_VMC_SD2)
++		return regs->sd_ch2;
+ 	if (caps & PIN_CFG_IO_VMC_ETH0)
+ 		return ETH_POC(regs->eth_poc, 0);
+ 	if (caps & PIN_CFG_IO_VMC_ETH1)
+@@ -2677,28 +2696,28 @@ static const struct rzg2l_dedicated_configs rzg3l_dedicated_pins[] = {
+ 	  (PIN_CFG_IOLH_A | PIN_CFG_PUPD | PIN_CFG_PVDD1833_OTH_AWO_POC)) },
+ 	{ "SCIF0_TXD", RZG2L_SINGLE_PIN_PACK(0x6, 1,
+ 	  (PIN_CFG_IOLH_A | PIN_CFG_PUPD | PIN_CFG_PVDD1833_OTH_AWO_POC)) },
+-	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x9, 0, PIN_CFG_IOLH_B) },
++	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x9, 0, PIN_CFG_IOLH_B | PIN_CFG_IO_VMC_SD0) },
+ 	{ "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x9, 1,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
+-	{ "SD0_RST#", RZG2L_SINGLE_PIN_PACK(0x9, 2, PIN_CFG_IOLH_B) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
++	{ "SD0_RST#", RZG2L_SINGLE_PIN_PACK(0x9, 2, PIN_CFG_IOLH_B | PIN_CFG_IO_VMC_SD0) },
+ 	{ "SD0_DS", RZG2L_SINGLE_PIN_PACK(0x9, 5,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT0", RZG2L_SINGLE_PIN_PACK(0x0a, 0,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT1", RZG2L_SINGLE_PIN_PACK(0x0a, 1,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT2", RZG2L_SINGLE_PIN_PACK(0x0a, 2,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT3", RZG2L_SINGLE_PIN_PACK(0x0a, 3,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT4", RZG2L_SINGLE_PIN_PACK(0x0a, 4,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT5", RZG2L_SINGLE_PIN_PACK(0x0a, 5,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT6", RZG2L_SINGLE_PIN_PACK(0x0a, 6,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ 	{ "SD0_DAT7", RZG2L_SINGLE_PIN_PACK(0x0a, 7,
+-	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD)) },
++	  (PIN_CFG_IOLH_B | PIN_CFG_IEN | PIN_CFG_PUPD | PIN_CFG_IO_VMC_SD0)) },
+ };
+ 
+ static const u32 r9a08g046_clone_channel_data[] = {
+@@ -3672,6 +3691,9 @@ static int rzg2l_pinctrl_suspend_noirq(struct device *dev)
+ 			cache->eth_poc[i] = readb(pctrl->base + ETH_POC(regs->eth_poc, i));
+ 	}
+ 
++	if (regs->sd_ch2)
++		cache->sd_ch2 = readb(pctrl->base + regs->sd_ch2);
 +
- config PINCTRL_STARFIVE_JHB100_SYS0
- 	tristate "StarFive JHB100 SoC System-0 pinctrl and GPIO driver"
- 	depends on ARCH_STARFIVE || COMPILE_TEST
-diff --git a/drivers/pinctrl/starfive/Makefile b/drivers/pinctrl/starfive/Makefile
-index 33213bd1919f..213002da9cdd 100644
---- a/drivers/pinctrl/starfive/Makefile
-+++ b/drivers/pinctrl/starfive/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_PINCTRL_STARFIVE_JHB100)		+= pinctrl-starfive-jhb100.o
- obj-$(CONFIG_PINCTRL_STARFIVE_JHB100_PER0)	+= pinctrl-starfive-jhb100-per0.o
- obj-$(CONFIG_PINCTRL_STARFIVE_JHB100_PER1)	+= pinctrl-starfive-jhb100-per1.o
- obj-$(CONFIG_PINCTRL_STARFIVE_JHB100_PER2)	+= pinctrl-starfive-jhb100-per2.o
-+obj-$(CONFIG_PINCTRL_STARFIVE_JHB100_PER2POK)	+= pinctrl-starfive-jhb100-per2pok.o
- obj-$(CONFIG_PINCTRL_STARFIVE_JHB100_SYS0)	+= pinctrl-starfive-jhb100-sys0.o
- obj-$(CONFIG_PINCTRL_STARFIVE_JHB100_SYS0H)	+= pinctrl-starfive-jhb100-sys0h.o
- obj-$(CONFIG_PINCTRL_STARFIVE_JHB100_SYS1)	+= pinctrl-starfive-jhb100-sys1.o
-diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jhb100-per2pok.c b/drivers/pinctrl/starfive/pinctrl-starfive-jhb100-per2pok.c
-new file mode 100644
-index 000000000000..abeeee2e7a00
---- /dev/null
-+++ b/drivers/pinctrl/starfive/pinctrl-starfive-jhb100-per2pok.c
-@@ -0,0 +1,97 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Pinctrl / GPIO driver for StarFive JHB100 SoC Peripheral-2 Power OK domain
-+ *
-+ * Copyright (C) 2024 StarFive Technology Co., Ltd.
-+ * Author: Alex Soo <yuklin.soo@starfivetech.com>
-+ *
-+ */
+ 	if (regs->qspi)
+ 		cache->qspi = readb(pctrl->base + regs->qspi);
+ 	cache->oen = readb(pctrl->base + pctrl->data->hwcfg->regs.oen);
+@@ -3724,6 +3746,9 @@ static int rzg2l_pinctrl_resume_noirq(struct device *dev)
+ 	rzg2l_oen_write_with_pwpr(pctrl, cache->oen);
+ 	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+ 
++	if (regs->sd_ch2)
++		writeb(cache->sd_ch2, pctrl->base + regs->sd_ch2);
 +
-+#include <dt-bindings/pinctrl/starfive,jhb100-pinctrl.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/platform_device.h>
-+
-+#include "pinctrl-starfive-jhb100.h"
-+
-+static const struct jhb100_pin_layout_desc jhb100_per2pok_pl_desc[] = {
-+	{ .pin_start = 0, .pin_cnt = 10, .name = "gpio", .gpio_func_sel = 0 },
-+	{ .pin_start = 10, .pin_cnt = 8, .name = "pwm_channel", .gpio_func_sel = 1 },
-+	{ 0xff },
-+};
-+
-+static struct config_reg_layout_desc jhb100_per2pok_pinctrl_rl_desc[] = {
-+	{
-+		.pin_start			= 0,
-+		.pin_cnt			= 18,
-+		.drive_strength_2bit		= { .shift = 0, .width = 2 },
-+		.input_enable			= { .shift = 2, .width = 1 },
-+		.pull_down			= { .shift = 3, .width = 1 },
-+		.pull_up			= { .shift = 4, .width = 1 },
-+		.slew_rate			= { .shift = 5, .width = 1 },
-+		.schmitt_trigger_select		= { .shift = 6, .width = 1 },
-+		.reserved			= { .shift = 7, .width = 8 },
-+		.debounce_width			= { .shift = 15, .width = 17 },
-+	},
-+	{ 0xff },
-+};
-+
-+struct starfive_pinctrl_regs jhb100_per2pok_pinctrl_regs = {
-+	.func_sel		= { .reg = 0x58, .width_per_pin = 2 },
-+	.config			= 0x04,
-+	.output			= 0x4c,
-+	.output_en		= 0x50,
-+	.gpio_status		= 0x54,
-+	.irq_en			= 0x60,
-+	.irq_status		= 0x64,
-+	.irq_clr		= 0x68,
-+	.irq_trigger		= 0x6c,
-+	.irq_level		= 0x70,
-+	.irq_both_edge		= 0x74,
-+	.irq_edge		= 0x78,
-+};
-+
-+static const struct jhb100_pinctrl_func_maps jhb100_func_maps_per2pok[] = {
-+	{ .func = "can",		.val = 1 },
-+	{ .func = "gpio",		.val = 0,
-+	  .max_pin = JHB100_FUNC_MAPS_MAX_PIN(PADNUM_PER2POK_GPIO_D40) },
-+	{ .func = "gpio",		.val = 1,
-+	  .max_pin = JHB100_FUNC_MAPS_MAX_PIN(PADNUM_PER2POK_GPIO_D48) },
-+	{ .func = "host0_port80",	.val = 2 },
-+	{ .func = "host1_port80",	.val = 3 },
-+	{ .func = "passthru",		.val = 2,
-+	  .max_pin = JHB100_FUNC_MAPS_MAX_PIN(PADNUM_PER2POK_GPIO_D36) },
-+	{ .func = "passthru",		.val = 1,
-+	  .max_pin = JHB100_FUNC_MAPS_MAX_PIN(PADNUM_PER2POK_GPIO_D40) },
-+	{ .func = "pwm",		.val = 0 },
-+};
-+
-+static const struct jhb100_pinctrl_domain_info jhb100_per2pok_pinctrl_info = {
-+	.name			= "jhb100-per2pok",
-+	.pl_desc		= jhb100_per2pok_pl_desc,
-+	.crl_desc		= jhb100_per2pok_pinctrl_rl_desc,
-+	.regs			= &jhb100_per2pok_pinctrl_regs,
-+	.fmaps			= jhb100_func_maps_per2pok,
-+	.num_maps		= ARRAY_SIZE(jhb100_func_maps_per2pok),
-+};
-+
-+static const struct of_device_id jhb100_per2pok_pinctrl_of_match[] = {
-+	{
-+		.compatible = "starfive,jhb100-per2pok-pinctrl",
-+		.data = &jhb100_per2pok_pinctrl_info,
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, jhb100_per2pok_pinctrl_of_match);
-+
-+static struct platform_driver jhb100_per2pok_pinctrl_driver = {
-+	.probe = jhb100_pinctrl_probe,
-+	.driver = {
-+		.name = "starfive-jhb100-per2pok-pinctrl",
-+		.of_match_table = jhb100_per2pok_pinctrl_of_match,
-+	},
-+};
-+module_platform_driver(jhb100_per2pok_pinctrl_driver);
-+
-+MODULE_DESCRIPTION("Pinctrl driver for StarFive JHB100 SoC Peripheral-2 Power OK domain");
-+MODULE_AUTHOR("Alex Soo <yuklin.soo@starfivetech.com>");
-+MODULE_LICENSE("GPL");
+ 	for (u8 i = 0; i < 2; i++) {
+ 		if (regs->sd_ch)
+ 			writeb(cache->sd_ch[i], pctrl->base + SD_CH(regs->sd_ch, i));
+@@ -3794,6 +3819,7 @@ static const struct rzg2l_hwcfg rzg3l_hwcfg = {
+ 		.eth_poc = 0x3010,
+ 		.oen = 0x3018,
+ 		.other_poc = OTHER_POC,
++		.sd_ch2 = 0x3024,
+ 	},
+ 	.iolh_groupa_ua = {
+ 		/* 1v8 power source */
 -- 
-2.25.1
+2.43.0
 
