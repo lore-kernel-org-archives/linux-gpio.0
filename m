@@ -1,181 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D192540913C;
-	Wed,  3 Jun 2026 08:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C194E421A02;
+	Wed,  3 Jun 2026 08:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780474993; cv=none; b=u/D5wxChU91PV9NGMwROLT2Zny6Jd4bMI6lkbAAaLc+fxNy8ESRJ73mHV/BUpnIlKuV7evVCMXq+TZXYlnsjo70H6UwT4Wq/hlVDF4R58SF8M/iLvgCrT2eg65T2kQmrr+nfQAoiyFyXAzDKuCdnn746VDwhghUzopUPIAiJa3A=
+	t=1780475176; cv=none; b=m5Q4Q5h/Q7rbiQ0VhyilN7hG2rEe5QZgXa4YV/lLwPiqrN66J9oKNuKh1HTQFm6DEbV5DXPsTgRUSjXkCQagBqTxJSbAXtyAMgdN+SPPtHgH7hrTLAe5CHB/FWyk3SJhTs6Z6OVUFMtks8okmNCQQf/RxFackt6rrmk4eKGvi6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780474993; c=relaxed/simple;
-	bh=lsDa8bcyL/weB227DDTHB3UWrYz4tq4iEuxgOqLYjJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cK2IwLfTGD4Wnb4ZXLKMdBa08wRNzKrgSDrhHYEwWIbdi+COH26BQOsYNwyEdHgybpcm5JeAo/ZTW44NS/1bCmA0WWvtPIg+XhzIlIuTPemeMYhEUVEuWE2jlesG4soIsiaKQF++SQqLl7ATW0+ACAlqUjlkfUJqIvsvWdt6aH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UDE3Hajx; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780475176; c=relaxed/simple;
+	bh=HnDoJc1wVP1qFgJjnEmr1/CMX1uh1tn18/Vyj8exdoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=djm4fZvb0aHz32klY55EjiJy5J7b4RAtJUGcWBhG/SXvczZk3WVXnOUQKxA9walLGFOCU1+MHSscIE7b1Ak95wm8LUY2ABRdRiAUGdyjUWkbEk4TqqlfEZYoM2zP0/Pa9hguJrdHe4CDB8C1zd1G62XP3n9jzc2WrVAsDPPBX2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=kd/m92Jt; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDE3Hajx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F9D51F00893;
-	Wed,  3 Jun 2026 08:23:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780474991;
-	bh=7T9hB45nEUAMnqC9Be3PzNhtHY4KvHFd+RrPaHZ6pDU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=UDE3HajxGV1AEr7ckHI4uoOTzFrcsbc+wm2PLS8Zfy0g3MIqMVlDLmXBYYXJ14oZ8
-	 7vjSN+CLdkFxzo+V4fKKKxeQGQIT9DBa413jRN6BTIQ7u5EiL1eYx9SDa6o+A9PGeE
-	 mvRp5KWSIyogwjHF+vy2HUlrMddDB0YyBExSrTgCwz1O2WLoBRVnwnUCaOpAT5fOao
-	 9qJpmI2v/yswoFNZ4gmSKgbx1f8Ct8e7CB51ocI9OpBqPrblniosTabqiBPtPvk+qC
-	 cvTV937q9GD0oSF/U5v1k73lYgZxMiP46U2ZQL6LPxhQhxRpHf38WMdTPH0iVK+/YE
-	 5BrA9Xsd4KEkQ==
-Message-ID: <5ce415f7-5a21-44b2-bdfe-a6040f5392a5@kernel.org>
-Date: Wed, 3 Jun 2026 10:23:08 +0200
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="kd/m92Jt"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 1591327155;
+	Wed,  3 Jun 2026 10:26:13 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id MmAZXT24dWYo; Wed,  3 Jun 2026 10:26:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1780475172; bh=HnDoJc1wVP1qFgJjnEmr1/CMX1uh1tn18/Vyj8exdoM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=kd/m92JtkMmtgc+g+DEyyJgaXgJ2nr/I5S26A3qqTubRB+HYycNk9kvAZFegLtAdF
+	 IgY73f3aRMasf1EY2wlNvSJwzDk2fIDRo5sdmE2Dodxp+Q4PSnhiMm4Xc6tR4gZNMl
+	 k09mf4AieZ4A28J3M+1cQht7guLuyjH4RlCGlYZ1IJP3eNyxlMeuKQz/Bf9WfPB0As
+	 w0v3Kok7GaPQKfuXnnpYxHXDUy/alvXjYvEyAEdSiQRJEWNw7Rf4QGkiK6pruHtk7B
+	 DDKo93r+sgeruhgsjUSG74V9MkOzCldcCa73ZRBcQkO6SkeR9ZqIGM59Lx6qHitCBa
+	 PbNTLMex7Go6Q==
+From: Marco Scardovi <scardracs@disroot.org>
+To: mika.westerberg@linux.intel.com
+Cc: andriy.shevchenko@linux.intel.com,
+	brgl@kernel.org,
+	linusw@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	scardracs@disroot.org
+Subject: Re: [PATCH v5] gpiolib: acpi: prevent address truncation in OperationRegion handler
+Date: Wed,  3 Jun 2026 10:25:50 +0200
+Message-ID: <20260603082550.11989-1-scardracs@disroot.org>
+In-Reply-To: <20260602121535.GC2990@black.igk.intel.com>
+References: <20260602121535.GC2990@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpiolib: Remove big fat warning in
- gpiochip_get_direction()
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: PRAT Maximilien <maximilien.prat@cs-soprasteria.com>,
- Linus Walleij <linusw@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <63487206f6e5a93eaf9f41784317fe99d394312f.1780399750.git.chleroy@kernel.org>
- <CAMRc=MdngQbJVQTZXvPKzFjcLOPs4=-6Jtf4Ua4AU0D+sUb9bw@mail.gmail.com>
- <24500088-9849-46e9-b32f-3f08c2ae6261@kernel.org>
- <CAMRc=Mf9-+MCWANv5hS5g7U7jPBYzS=uQpWXSCKS1JO56uSPqA@mail.gmail.com>
-Content-Language: fr-FR
-From: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-In-Reply-To: <CAMRc=Mf9-+MCWANv5hS5g7U7jPBYzS=uQpWXSCKS1JO56uSPqA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Hi Mika,
 
+Thanks for the clarification.
 
-Le 03/06/2026 à 10:11, Bartosz Golaszewski a écrit :
-> On Tue, 2 Jun 2026 23:40:22 +0200, "Christophe Leroy (CS GROUP)"
-> <chleroy@kernel.org> said:
->>
->>
->> Le 02/06/2026 à 18:13, Bartosz Golaszewski a écrit :
->>> On Tue, Jun 2, 2026 at 1:31 PM Christophe Leroy (CS GROUP)
->>> <chleroy@kernel.org> wrote:
->>>>
->>>> Since kernel v6.15 the following big fat warning is encountered when
->>>> reading /sys/kernel/debug/gpio, leading to kernel latency while
->>>> emiting the warning, and panicing on systems configured to panic on
->>>> warnings.
->>>>
->>>>     ------------[ cut here ]------------
->>>>     WARNING: drivers/gpio/gpiolib.c:423 at gpiochip_get_direction+0x3c/0x48, CPU#0: cat/12531
->>>>     CPU: 0 UID: 0 PID: 12531 Comm: cat Tainted: G        W           7.0.10-gitc72c39~-01802-g28c351659258 #27 PREEMPT
->>>>     Tainted: [W]=WARN
->>>>     Hardware name: MIAE 8xx 0x500000 CMPC885
->>>>     NIP:  c043c2f8 LR: c043d740 CTR: 00000000
->>>>     REGS: ca89bc20 TRAP: 0700   Tainted: G        W            (7.0.10-gitc72c39~-01802-g28c351659258)
->>>>     MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24004884  XER: 00000302
->>>>
->>>>     GPR00: c043f3f0 ca89bce0 c3278000 c20b5f20 0000000d 00000002 00000000 c0a76208
->>>>     GPR08: 00000001 00000000 cccccccd c313d830 84004884 100d815e c0a76208 c0a761f8
->>>>     GPR16: c0a761f4 c0a76278 1048834c 10488350 c21c0b04 c21c0d93 c0a5fb74 c313d848
->>>>     GPR24: c20b5f20 c21c0d94 00000000 00000000 c21c0d94 00000000 c21c0c00 c21c0b04
->>>>     NIP [c043c2f8] gpiochip_get_direction+0x3c/0x48
->>>>     LR [c043d740] gpiod_get_direction+0xa0/0x170
->>>>     Call Trace:
->>>>     [ca89bce0] [c28157e8] 0xc28157e8 (unreliable)
->>>>     [ca89bd10] [c043f3f0] gpiolib_seq_show+0x370/0x524
->>>>     [ca89bd90] [c021dd1c] seq_read_iter+0x174/0x618
->>>>     [ca89bdd0] [c021e260] seq_read+0xa0/0xd0
->>>>     [ca89be40] [c031063c] full_proxy_read+0x80/0xc4
->>>>     [ca89be70] [c01df3e0] vfs_read+0xb4/0x35c
->>>>     [ca89bee0] [c01e0180] ksys_read+0x8c/0x15c
->>>>     [ca89bf10] [c000dc94] system_call_exception+0x88/0x154
->>>>     [ca89bf30] [c00110a8] ret_from_syscall+0x0/0x28
->>>>     ---- interrupt: c00 at 0xfc629e8
->>>>     NIP:  0fc629e8 LR: 0fc62a34 CTR: 00000000
->>>>     REGS: ca89bf40 TRAP: 0c00   Tainted: G        W            (7.0.10-gitc72c39~-01802-g28c351659258)
->>>>     MSR:  0000d032 <EE,PR,ME,IR,DR,RI>  CR: 28004884  XER: 00000302
->>>>
->>>>     GPR00: 00000003 7f8df6a0 77e37540 00000003 7f8df6e8 00001000 00000000 00000000
->>>>     GPR08: 00000000 7f8e3efc 00000000 7f8e06f0 7f8e3efc 100d815e 7fe70e10 100d0000
->>>>     GPR16: 100d0000 00000001 1048834c 10488350 22000882 77e3fe68 1000596c 77e40b28
->>>>     GPR24: 00000000 28004884 01000000 00001000 7f8df6e8 00000003 0fde36a0 00000000
->>>>     NIP [0fc629e8] 0xfc629e8
->>>>     LR [0fc62a34] 0xfc62a34
->>>>     ---- interrupt: c00
->>>>     Code: 9421fff0 7c0802a6 90010014 7d2903a6 4e800421 2c030001 40810008 3860ffcc 80010014 38210010 7c0803a6 4e800020 <0fe00000> 3860ffa1 4e800020 81230020
->>>>     ---[ end trace 0000000000000000 ]---
->>>>
->>>> This is due to a WARN_ON() added by commit ec2cceadfae7 ("gpiolib:
->>>> normalize the return value of gc->get() on behalf of buggy drivers")
->>>> when the gpiochip doesn't implement get_direction() function. But
->>>> according to the documentation in <linux/gpio/driver.h> implementing
->>>> get_direction() is only a recommendation, not a requirement. And
->>>> regarless, WARN_ON() has no added value here, dumping all CPU
->>>> registers doesn't give any useful information for that case.
->>>>
->>>> Lower it to a simple warn_on_once() message.
->>>>
->>>> Fixes: ec2cceadfae7 ("gpiolib: normalize the return value of gc->get() on behalf of buggy drivers")
->>>> Signed-off-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
->>>> ---
->>>
->>> Please use scripts/get_maintainers.pl.
->>
->> That's what I did, what is the problem ?
->>
->> $ ./scripts/get_maintainer.pl --nom --nor --nomultiline --norolestats
->> --nogit --nogit-fallback
->> tmp/0001-gpiolib-Remove-big-fat-warning-in-gpiochip_get_direc.patch
->> Dmitry Torokhov <dmitry.torokhov@gmail.com>, Linus Walleij
->> <linusw@kernel.org>, Bartosz Golaszewski
->> <bartosz.golaszewski@oss.qualcomm.com>, linux-gpio@vger.kernel.org,
->> linux-kernel@vger.kernel.org
->>
-> 
-> I would expect my brgl@kernel.org address to show up, the -nom option removes
-> it.
+After looking again at the ACPI specification, I agree that AML accesses
+GPIO fields through Connection() resources, so the offset used by the
+handler is derived from the GPIO resource descriptor itself.
 
-Ah .. I see. Thanks for the notice.
+Therefore, describing this as a truncation issue is not accurate. The
+actual issue is that the address argument is used as an index into
+agpio->pin_table without first validating that it is within
+agpio->pin_table_length.
 
-Indeed I use two calls, first one to populate the To:
+I'll update the description accordingly and focus on the missing bounds
+check rather than truncation or wrap-around.
 
-./scripts/get_maintainer.pl --nol --nomultiline --norolestats --nogit 
---nogit-fallback
+If You or anyone else haven't any more suggestions/reviews I'll post it
+later today/tomorrow as a v6.
 
-then second one to populate the Cc:
-
-./scripts/get_maintainer.pl --nom --nor --nomultiline --norolestats 
---nogit --nogit-fallback
-
-Then I saw same names appearing in second result in addition to mailing 
-lists so I took only the second result, overlooking that your adress was 
-different between the two results.
-
-Indeed the second result was initially supposed to only provide the 
-mailing lists, but since some time now it also provides names and I have 
-to manually compare the two results to avoid duplicates. I need to look 
-into that more deeply.
-
-
-> 
->>>
->>> What driver are you using?
->>
->> I have the following ones declared in the device tree:
->>
->> 			CPM1_PIO_A: gpio-controller@950 {
->> 				#gpio-cells = <2>;
->> 				compatible = "fsl,cpm1-pario-bank-a";
->> 				reg = <0x950 0x10>;
->> 				gpio-controller;
->> 			};
-> 
-> I'll send a patch shortly implementing get_direction() for it.
-
-Thanks
-
-Christophe
+Thanks,
+Marco
