@@ -1,79 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DE53B47CF;
-	Wed,  3 Jun 2026 15:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED812D238F;
+	Wed,  3 Jun 2026 16:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780500987; cv=none; b=hMcfzwGGWTuUf7+b4CpKef2D4JcTnlyLV4uRiM5/of9/UTXnJ35g7rhORYliPh+uvGi1Xzh8KDG4LFKSLv1/7UDvCpkaPN87tIWkFuQQS3t6Hp21AfZwi/hFW4aZlQUFaN7P8bEK79yKmRPeRiPNlGyLgZTg+jCctIWjpJnvLSA=
+	t=1780504998; cv=none; b=IfZxZq6zHigkd+1hqyCt3AZYrGnerD9pjshzDhgrviiSPDxBr4csX94Prd+kxiOQdy1J73mmyJuakv3Sa5wnVZg4axkDrf/vsk64T65Y/eFMeZKDX3Pp6Pw0gax3hR54xJ9vyHo+Y3N9lCQMafPEcUsKTodRis3rnlNLXpatCag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780500987; c=relaxed/simple;
-	bh=WWl0wCb3pfPSLTyKbZGLBc+OPYdYxOFfCypVd82uDUk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VQWmtvwy726Xw3nsv0QsjErA2RGCCxyQ78h0ujnn7MXaVGBEiWMAGXBoaw549FbeGawaj69XhlYpNs3oTdhl5pdPIMkPBGW87C6ZK8QvLnNkeetZxmyQ8AlijdwIARpoCgHeTJyRpH0xwgNJUPugtwOEuufXzGkr0N2GIgUJJFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHrV/x+P; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780504998; c=relaxed/simple;
+	bh=dntpDrMGqALzXTr+vxV/nyexYipxCv7gzTVl+1ltPdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FEzLPK5XYO27U2sc3gCEfAUW4FGGBtfQkLJf8IZ9gUf0kSGQ7mphJ3vUQpaztMPclUqamrEu/uT5jGpLAJaXsh8YxHCJl8XWwso7ieLBDL83/Tl2jUk/HEJxoPp0ybOledT+madGOmxkGp/DJr6HjR4sQRx1hCD9Iny2zNnqwyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C7BrbTck; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHrV/x+P"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E2391F00893;
-	Wed,  3 Jun 2026 15:36:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C7BrbTck"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 955271F00898;
+	Wed,  3 Jun 2026 16:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780500985;
-	bh=SAkb5V6NtcCPmSvzm4+V97K1xoD0UopH40bZ8VjeIHw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date;
-	b=hHrV/x+PdTiushR0xNqUS/JtV+j0xltOIxRB/FiBKo8zKJqcILCvPurAh/xvON40n
-	 u+c9irCJKkqd+80iJHfmqbSmgruuIYUJ6jA3gzKSiQ+HIU9g7EN5I4JILM3K6Tb4Ck
-	 eztfJYNQ24L9nQfdBXFuMi1Pah/sGCuxpRBR19+Roiq9lg5ixmMBlL2TSZHBeQ5I3s
-	 T40/FZMFy8rSO8qe08cLSvV+N7zXUEqtJlo6d81GCQMIPLthC0ygGDF7u6ghhPkeoE
-	 nQOiXUrlRIx+YayPEXXy1EuwT3xdMSqguvCuFgOoOGke8omCS7ONP6mAW0oec1Jxnf
-	 IEW/cmQKGPNqQ==
-From: Thomas Gleixner <tglx@kernel.org>
-To: Maulik Shah <maulik.shah@oss.qualcomm.com>, Bjorn Andersson
- <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Sneh Mankad
- <sneh.mankad@oss.qualcomm.com>, Maulik Shah <maulik.shah@oss.qualcomm.com>
-Subject: Re: [PATCH v2 5/8] irqchip/qcom-pdc: Configure PDC to pass through
- mode
-In-Reply-To: <20260526-hamoa_pdc-v2-5-f6857af1ce91@oss.qualcomm.com>
-References: <20260526-hamoa_pdc-v2-0-f6857af1ce91@oss.qualcomm.com>
- <20260526-hamoa_pdc-v2-5-f6857af1ce91@oss.qualcomm.com>
-Date: Wed, 03 Jun 2026 17:36:22 +0200
-Message-ID: <87zf1b63gp.ffs@fw13>
+	s=k20260515; t=1780504996;
+	bh=Z4JstCrvgUHq+IUxWBlO/QMKc5rWKAgnPJ1UKfXNnss=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=C7BrbTckQvXcWoV7k+AEBCsEVHxBwBKyRVbQMNUucK6Up4k+mlR/D2B+ty9bTqLC6
+	 TXyYpg2iAmZbYrcSf/IMx42niQl+mHUvOCBb0t+zktt8WMQQcFeeZ+L8BsSY4TYrFe
+	 SMxLlsrDm6jSETCY+mtmezh1ig1ZWzqM8StHwFWddZgXGWQRMy7Lzaz1dLLvobS5Ii
+	 dA0lkSooslWUAphAp8eOjJTAjX54a8pnk1nPZ0IJK6im27QMOvdGhM7NfhvaKPvaXt
+	 s7dJq2RJ1BZSMP41cVQv4yxHtDPtyuHL388CA2+C9GMN7wvIH310E7UgCTsSDcd20Z
+	 it1IkgBNDLRfQ==
+Date: Wed, 3 Jun 2026 17:43:11 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
+Subject: Re: [PATCH v3 03/21] dt-bindings: pinctrl: Add
+ starfive,jhb100-sys0-pinctrl
+Message-ID: <20260603-groin-valid-a1d4445f7a6b@spud>
+References: <20260603055347.66845-1-changhuang.liang@starfivetech.com>
+ <20260603055347.66845-4-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nFVpdkwrvTMCfj3J"
+Content-Disposition: inline
+In-Reply-To: <20260603055347.66845-4-changhuang.liang@starfivetech.com>
 
-On Tue, May 26 2026 at 16:24, Maulik Shah wrote:
- 
-> +static inline bool pdc_pin_uses_seconary_mode(int pin_out)
-> +{
-> +	if (pdc->mode == PDC_SECONDARY_MODE && pin_out >= pdc->num_spis)
-> +		return true;
 
-  return pdcc>mode == ... && ...;
+--nFVpdkwrvTMCfj3J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Perhaps?
+On Tue, Jun 02, 2026 at 10:53:29PM -0700, Changhuang Liang wrote:
 
-> +static void qcom_pdc_ack(struct irq_data *d)
-> +{
-> +	if (pdc_pin_uses_seconary_mode(d->hwirq) && !irqd_is_level_type(d))
-> +		pdc->clear_gpio(d->hwirq);
-> +}
-> +
-> +static void qcom_pdc_gic_eoi(struct irq_data *d)
-> +{
-> +	if (pdc_pin_uses_seconary_mode(d->hwirq) && irqd_is_level_type(d))
-> +		pdc->clear_gpio(d->hwirq);
-> +
-> +	irq_chip_eoi_parent(d);
-> +}
+> +          slew-rate:
+> +            enum: [ 0, 1 ]
+> +            default: 0
+> +            description: |
+> +                0: slow (half frequency)
 
-Not that I care about the performance of your SoC, but those
-conditionals can be completely avoided with separate irq chips.
+Half frequency? Slew rates are usually measured in volts per second, not
+hertz. Do you know what the slew rates actually are and could put them
+in here as the real units? Or is it just "slow" and "fast" in your docs
+with no precise numbers?
 
+I've got no questions other than this, so once this question is sorted,
+I'll be happy to ack all the bindings provided they're effectively the
+same.
+
+> +                1: fast
+
+--nFVpdkwrvTMCfj3J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHQEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaiBZnwAKCRB4tDGHoIJi
+0vpAAPiFQ0YARyxgZCQaUynrtzsvBAbt0yy5kxy2vpklo/C5AQDWjzznOIi1/0El
+tLNQlHJKrwJ3v5PG6RXO8m1+IwCdBA==
+=GdZR
+-----END PGP SIGNATURE-----
+
+--nFVpdkwrvTMCfj3J--
