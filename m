@@ -1,51 +1,51 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FB64968F1;
-	Thu,  4 Jun 2026 17:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F13032ED21
+	for <linux-gpio@vger.kernel.org>; Thu,  4 Jun 2026 20:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780593207; cv=none; b=LI3N3CK0RHP54onuPTx2VOa/V56iXA0JNXKnDzMLQLf71vWewakaiZ7blCi2VPcvOD0koSYWcOVIu55cBaXeKZNScKJK3mdggAamy3dFEAm7WMjQ+i1hgrOApnLEPoaVhJ8NgM+3CJPjmRgBu10unpKieXpfQGhNgrl+jR2UkQw=
+	t=1780604276; cv=none; b=qRxIR/hTSIikffyrHNr4pQAq3tENbaCtd4W9B9/oCBqJvcAi1LPrlQeWRFQ41NCXHXdINTzWRFaadk9gxYACNtAKwfzdk+DOBlMk/fy3XdckjCJ7rerXgp/TgPrzCw8Tb6GlUXvUGXsYYM/Q6QScxLM45cHLajdbJs8or7+g0eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780593207; c=relaxed/simple;
-	bh=M9HqPMUgUTrZJq/Oda3TrjUQxjZBJ4y86DavhVAAMKI=;
+	s=arc-20240116; t=1780604276; c=relaxed/simple;
+	bh=5USPnixnroDY2Ii176W0lkmp5qUYAY3f8YiS24Bm3zM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ReWA4/jEsw5YrOHx0vHlFbjfGhxbz/RJg8P+eY5Jke76ILwTaZI8bEi8OFq1G5AmZr+FjzEenKNnGvC7aWJqAaoE8xDDDJXge7Na+riLnlm8wEgfu+iNQjr1yyNKc6Vjh4kHgukpGWxEMTLOLvhiE2E7B9XcjVNmX2uPJKXrm+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PVJyKJwi; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=UaVXD65+IRZoEH0Eq/AoqKnnbFg8LN9BaLUZpz0ZNNfmmHH0DB/x4TcT3898YmBZVhbq3ronTASi43U/6EN7K66mI7d1mSOhYIoCe/M/gtVYyXnhTGMV9kx77sMqLePw75OegwUOaSjglFJSlJowx5Jc98+xCNOT5feTbIfW6/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XJAO3cPT; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVJyKJwi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 231EA1F00893;
-	Thu,  4 Jun 2026 17:13:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780593204;
-	bh=3mNke4DPpjdjtMGcSKZlm7XTAekMgE3bOVU/KndyzOI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PVJyKJwiKn4E+C2SFTGIzj7eZ0Pfz8EP9cwAr4kKCEOszyGFgTbErgFQUsdUm56hr
-	 j4MFUxmPCMVR7CuieAhrJEFRlowxFkZK21I/gA2ohkxEJq5SLxSpEMVUWu4/NmhmVF
-	 cB6zsftZUDCZyqbsRSepsPxbeYMHsKriG96aznk/2a8vNPE1V59Y+W81M40xOmjqkT
-	 u/Oc5IwDzDJ6UG5bt2ih+hx4v87eP8j7JimkOqJDMi2fyiPZBEVJ/nVCWMUB7YhSmK
-	 sKZxiO2rUIqnz6hdvX+x9kjlD+sZpM0ykNqMkj2qqDERYLCUGKRzBNmdxJG3nUiXEK
-	 qo5+YOx6oJ5hQ==
-Date: Thu, 4 Jun 2026 18:13:19 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
-Subject: Re: [PATCH v3 09/21] dt-bindings: pinctrl: Add
- starfive,jhb100-sys2-pinctrl
-Message-ID: <20260604-veggie-constrain-16a72066e82f@spud>
-References: <20260603055347.66845-1-changhuang.liang@starfivetech.com>
- <20260603055347.66845-10-changhuang.liang@starfivetech.com>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XJAO3cPT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=DqGT
+	LZeMUHe7mZh6wHehvpuUwVazb5ezhmruKOpiiHY=; b=XJAO3cPTK5IeKDlxxO3u
+	/+NCKM+BH+aIl115LTWq8jeE1E8t3P7eTKbitOBNMrdKcz/S6wCP/RHgsxMK+lVl
+	Z2b+hZ8j/O6V0ANbtxmyk4c6fFnx800qxFqlv3y0JMkcAA3VUn8Uv9o0wVjyNSmL
+	KigfcB2wsoiRCwSZcpCq539Zv4JNFuj52qLzSdsKt1ug7sMk8EszDrNVsB5fMdXH
+	h51z819ReIxPeZJ+SikU/ucFGz7a6Fy/iycGtQbKYsZsqdTgn9Ujt/o9HT2v3C0b
+	wmQraQ12JJN3muH9cFM/3FgF06YDvgVw6ZAuzrkrLJu1eya+y3E27buWs7hNYriy
+	WA==
+Received: (qmail 3752435 invoked from network); 4 Jun 2026 22:17:49 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Jun 2026 22:17:49 +0200
+X-UD-Smtp-Session: l3s3148p1@pGDrPHNToLxtKDDL
+Date: Thu, 4 Jun 2026 22:17:48 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Claudiu Beznea <claudiu.beznea@kernel.org>
+Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+	claudiu.beznea@tuxon.dev, linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 9/9] arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
+Message-ID: <aiHdbC2wxXpdqBd9@shikoro>
+References: <20260522102251.1723392-1-claudiu.beznea@kernel.org>
+ <20260522102251.1723392-10-claudiu.beznea@kernel.org>
+ <ahBMKWrKQDko3cG8@shikoro>
+ <fb892151-33e5-4bb2-9a01-9abebe0f3b39@kernel.org>
+ <ahXQnt4MTVoBB9bF@shikoro>
+ <dc1c2c1c-73f1-43a9-a157-7cd362faf89f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -53,34 +53,46 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7KP5dV2MCZU0dpPN"
+	protocol="application/pgp-signature"; boundary="qvGIMNYVtV8rCBXY"
 Content-Disposition: inline
-In-Reply-To: <20260603055347.66845-10-changhuang.liang@starfivetech.com>
+In-Reply-To: <dc1c2c1c-73f1-43a9-a157-7cd362faf89f@kernel.org>
 
 
---7KP5dV2MCZU0dpPN
+--qvGIMNYVtV8rCBXY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Jun 02, 2026 at 10:53:35PM -0700, Changhuang Liang wrote:
-> +          power-source:
-> +            enum: [ 0, 2 ]
-> +            description: |
-> +                0: power supply of 3.3V
-> +                2: power supply of 1.8V
+Hi Claudiu,
 
-I'd rather these were given in e.g. microvolts, rather than what look
-like register values, that have no meaning when looking at the dts.
+> Standby mode is not intended for power consumption control, but rather for
+> placing the I2C interface into a standby (non-communicating) state.
 
---7KP5dV2MCZU0dpPN
+As I suspected before, to hide from the bus. Linux doesn't support that,
+so we can skip this bit IMHO.
+
+Happy hacking,
+
+   Wolfram
+
+
+--qvGIMNYVtV8rCBXY
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaiGyLwAKCRB4tDGHoIJi
-0qJ/AQCQ/vPUMhGA0s99RrlfmIhY43MmG9ypad6INnfVMc+/ogD/XOOCyrLph3nG
-xf3MOhu5OXndhUYDq+Zw0JVREEKimwI=
-=gfH/
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmoh3WEACgkQFA3kzBSg
+KbZD8g/6AsqOQ+LHt+PVp68Wk6LgkRF901h/EvOexy/tREHjWUtSAKQjaM4RUIzk
+F80+yoBROP5T8gRFl7l9qsrGR12fwHRc4zX0YiCHisyhE1uTEYQLJfoJX8Roy2YS
+Ou4XiKl0G5ytkYHIR9YDeyt5021P6eEvbASZs5P7/2hPNEax7KVXrKRVopjERWqe
+hzgbWqC8flqQTOBCSsZPnyunG9Ed70x/iIWwEIFgNDlOcKSZXItLYJc2fz+xNhL9
+F3l7kgE7jBKSHqbT/ayyO8FamPIISvnZ2Yl/i10HKpgjDEQW7Iqfefh10nTw7IOh
+RnewP3edmULxOzy2DeeOHuteCeVqQmaWyVhXBxWoyBhLQY7mg1ZPFlt9xP5G9RGo
+zS0nIcpD89ttlWqkjTY59j0eIrquKjVK+R2DuExv5I98GPi97G9WHLaaqHp7mAQ3
+8M35UHwBjLV3qS8g/Z30r+NGRSNBTZyjzMH795B1MnPlnhFh1sAiAot+5ta9vwkS
+ZMsWciBIQeD1qQSPfPHyfZLnPTG2dTESHx/vXYQt/1sAecC206Ns3OBzguZLn0e+
+/d4QF060IG3Bp6szVGpO6DIjew+9tpKpxeBnDdOe9l8zZxQ/zjnbyL7zyvxJ23F4
+gEePXhggiXCmRo9U/RrGqGVvSXmhYdqxMQP1bt58ZkMMRkLjQoE=
+=9Shs
 -----END PGP SIGNATURE-----
 
---7KP5dV2MCZU0dpPN--
+--qvGIMNYVtV8rCBXY--
