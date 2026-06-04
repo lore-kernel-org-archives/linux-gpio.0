@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F86D48125F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8B7481A88;
 	Thu,  4 Jun 2026 14:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780582444; cv=none; b=B8Cyem6wWVGFcjRUFJxYbpIgeYbjVJXiK9TlECKCfiClgHzI9UiscpXw5+y3IjPefAgk8W2mnrZ/aDSql6PKHctuCEWX+gBcA28Dw1DlJ6zlNa1uFHBbGw2ob3tHnIkHCp3g3q9kcL3Hq7DUUh7kUztSC91GbdYDa5pY/bddkJ4=
+	t=1780582444; cv=none; b=UVvo8/sTFKb/o8pvhyRFV8ysxrCdRO2F2jw6jwLldvhlcyJsQXp94FI3+NY/j3nFqVd3qBTX9JC46sE2N7ed1UpENWp/94lszEyo8RoLFDyHwHWLfbf9zJefaTdDgkOoHFWZIFPmksxb4Th0ZP0eJ6FKf5Xh6PBmrp+DppsDM3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1780582444; c=relaxed/simple;
-	bh=IVMjQPi6cuXsnNOAOBqZV5+FmGTZcU/k97taVGCOIoE=;
+	bh=8TupqbovUH4f8Ft7S3k5VMJFfXq22X6CyPw4uwxsut8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NBfEv4l0a6CjyuirhbbgptX0AbOMmsqEEIYtBw9fd7kiekpjdSeQ40ACWFHi1+SBxH0aHhRLN+wuWjxsRUIPhEgX+3o/GxK+yn+BbRHv7NSLFL12RsQY78Jn6qYzn3ZrvywwINUHH0Cl1+7zT94CwqZMYvsPa89XTztdSW9Ya5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNx4zx59; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=WuwwLzbOP7aAXoZE4Vsn+NdjFJy7CZzK0aop5ke5zRqCls8650dCaDm+UBDzmXvE9Ueec1PmifcD3giymEX5gTfApXtLxKdNxw1vSuVuE4nznJsGbmGRsfLzDeRJTM+6hdwkRkgkK8VgDfEhwCNXyis69iw/a1E26lITyYs1360=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pyFTvzKE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNx4zx59"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E65E4C2BCF4;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyFTvzKE"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B9FF1C2BCFB;
 	Thu,  4 Jun 2026 14:14:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1780582444;
-	bh=IVMjQPi6cuXsnNOAOBqZV5+FmGTZcU/k97taVGCOIoE=;
+	s=k20201202; t=1780582443;
+	bh=8TupqbovUH4f8Ft7S3k5VMJFfXq22X6CyPw4uwxsut8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=CNx4zx59FUXsnC2yPN7SVwMk12nYD+30fxFW2ZjEVhEcv8gE+i/0mP+9kRZ1wdmI0
-	 0ipcQQbAw008XoAUhGDEVpGeX0EHIWxQjlmzFGxbQdXZV6anfpQtOEa3mfnmNgRUJ1
-	 Vm3AGXPw0/bBX0HshVdLbBcOaSgjt70P/K4S0A4GHfDrqTBfQI6VNFBHYU6Gt4tw6E
-	 ZcvJ6sppHll2t3gg8m4Jy0Axa2Yzlp3cQsjWvMP3JE4gG/Pep2Ug0yh0rESYVBKqfK
-	 aJCRcDD3eiD4rKNujRwAG8mHs6u5tXJDF/M26ncjrgACjU++gmGRXlnXsdWQCXsBNL
-	 v4n6st6oVDitg==
+	b=pyFTvzKERNEvdJ1RqxQ6VyQs/N+eA6XnydRC17F62dcPjTh9iDjtRlUnW5ke9iZed
+	 otaThiq5R2UFQYOr2C255K5Md2NMFLJQzaFd5tOVWcDJf0xwHD1rkFare9NODbpTBr
+	 +KjhzSfNQBW3upgOT+vY9DfjWFmbaFsyEe0YDdixeTb1PkPxenEgfrVrOXhMFfxCLn
+	 3Q+l7peTAyNdKInnKJk1cEQ7HE0HKgE4QwQAX3inC+U8/it/TCiUpERgUTkKR3eJSN
+	 x9oeP9NrFnU0paTBp/VqaYzeMBy63qec4GNvasa2/3oHmAfsArslRSqE+1jQBfIy2C
+	 oWQupOh2orThw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E12D7CD6E75;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E62CD6E4A;
 	Thu,  4 Jun 2026 14:14:03 +0000 (UTC)
 From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Thu, 04 Jun 2026 17:13:56 +0300
-Subject: [PATCH v13 09/22] dt-bindings: media: i2c: max96712: add support
- for MAX96724F/R
+Date: Thu, 04 Jun 2026 17:13:53 +0300
+Subject: [PATCH v13 06/22] dt-bindings: media: i2c: max96712: use pattern
+ properties for ports
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260604-gmsl2-3_serdes-v13-9-9d8a4919983b@analog.com>
+Message-Id: <20260604-gmsl2-3_serdes-v13-6-9d8a4919983b@analog.com>
 References: <20260604-gmsl2-3_serdes-v13-0-9d8a4919983b@analog.com>
 In-Reply-To: <20260604-gmsl2-3_serdes-v13-0-9d8a4919983b@analog.com>
 To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
@@ -58,11 +58,11 @@ Cc: mitrutzceclan@gmail.com, linux-media@vger.kernel.org,
  Martin Hecht <Martin.Hecht@avnet.eu>, 
  Cosmin Tanislav <demonsingur@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1780582440; l=1289;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1780582440; l=2057;
  i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=ZSTakNbBz4Qus1NiPPbe76vFnVEQ3NLtF7fl+Vgxvf8=;
- b=O4bJ0upT6OS+Y+B76GAjepaPSnDWnCJxgcrQBDyL/A2b/+pFRflWgAZQpA7cGe+cWMFsgg2ZE
- I3jGjEEXSHLAfCr5/9Lq4lZeg3ASL3vqMqlHmdDLBUvJ9gbBn3e4RtN
+ bh=I52ZK89SDidgv9Kh0KUq2eBXwlYMLSWhPo+aSFUbLXE=;
+ b=J2DtQqDAiTf0BrlnoFsTCMMVjvdJhZazCU1ZI+udvtwIAVFkmx11avu53ueQDU+hFMLjJS+J9
+ 2BK3XB7PUoUCXE3NLEAgp4bwjkcqBWB66wwtrdM9lLah1Z/Ue3U2iwB
 X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
  pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
 X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
@@ -72,38 +72,69 @@ Reply-To: dumitru.ceclan@analog.com
 
 From: Cosmin Tanislav <demonsingur@gmail.com>
 
-MAX96724F/MAX96724R are a lower capability variant of the MAX96724 which
-only support a fixed rate of 3Gbps in the forward direction.
+The MAX96712 and MAX96724 support up to 4 separate PHYs, depending on
+the selected PHY configuration. Use patternProperties to document this.
+
+The input ports are all the same, use patternProperties for them.
 
 Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../bindings/media/i2c/maxim,max96712.yaml         | 29 ++++++++--------------
+ 1 file changed, 10 insertions(+), 19 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
-index d2dd72f2e924..161d40acdd28 100644
+index 26f85151afbd..583bbd60157c 100644
 --- a/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
 +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
-@@ -23,12 +23,17 @@ description: |
-   MAX96712 can be paired with first-generation 3.12Gbps or 1.5Gbps GMSL1
-   serializers or operate up to 3.12Gbps with GMSL2 serializers in GMSL1 mode.
+@@ -39,27 +39,15 @@ properties:
+   ports:
+     $ref: /schemas/graph.yaml#/properties/ports
  
-+  MAX96724F and MAX96724R only support a fixed rate of 3Gbps in the forward
-+  direction.
-+
- properties:
-   compatible:
-     items:
-       - enum:
-           - maxim,max96712
-           - maxim,max96724
-+          - maxim,max96724f
-+          - maxim,max96724r
+-    properties:
+-      port@0:
++    patternProperties:
++      '^port@[0-3]$':
+         $ref: /schemas/graph.yaml#/properties/port
+-        description: GMSL Input 0
++        description: GMSL Input ports 0-3
  
-   reg:
-     description: I2C device address
+-      port@1:
+-        $ref: /schemas/graph.yaml#/properties/port
+-        description: GMSL Input 1
+-
+-      port@2:
+-        $ref: /schemas/graph.yaml#/properties/port
+-        description: GMSL Input 2
+-
+-      port@3:
+-        $ref: /schemas/graph.yaml#/properties/port
+-        description: GMSL Input 3
+-
+-      port@4:
++      '^port@[4-7]$':
+         $ref: /schemas/graph.yaml#/$defs/port-base
+         unevaluatedProperties: false
+-        description: CSI-2 Output
++        description: CSI-2 Output port 0-3
+ 
+         properties:
+           endpoint:
+@@ -77,8 +65,11 @@ properties:
+               - data-lanes
+               - bus-type
+ 
+-    required:
+-      - port@4
++    anyOf:
++      - required: [port@4]
++      - required: [port@5]
++      - required: [port@6]
++      - required: [port@7]
+ 
+ required:
+   - compatible
 
 -- 
 2.53.0
