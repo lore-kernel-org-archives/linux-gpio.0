@@ -1,69 +1,227 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3404C77B1;
-	Fri,  5 Jun 2026 09:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AC63C9899;
+	Fri,  5 Jun 2026 09:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780650937; cv=none; b=S/0dBhp2ab0tS/Y12doZ1qxKU3s110xh/ocKyvCZ6D694xGMpwOCh22xKb9zKBLo0hOPgQ7xOrHI769YX/XkT6ZdgUVecrBhMD4drfEteMlBs09jgKfDIH1MWnSTB1kGVAkapaoOl+Tb8tVDYZftANe/NauzF7Ep/H9UFBpcIGM=
+	t=1780652949; cv=none; b=e5DdRbDUKAauvmmPch3GfnHBq96EvleMsLi9H8ZCy3ikXFDTRwpjRTuV49fne+9WDg2eTbpcGKldzlv4O8AFmdmQ/6y94YDP1Tll0DpXQAS6jm9miBxbWOlsCgpR488bgmoCHq53+oYDYd82ygjb6dHTHkEa3xaL84p84ROGELM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780650937; c=relaxed/simple;
-	bh=KRbZa4yH9SD5oC00vvBSsN4H15VKW/BBINcxhBiwbDE=;
+	s=arc-20240116; t=1780652949; c=relaxed/simple;
+	bh=S3KZKPAnneAoOAnB/MhPOA61xMlh9d7epNjqr5MIpGY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=svvYVVRI/zM3NwIiDUdZQstwCqYLNlPhuWidqw6BU8FM+2f0s+d8nKWVROuHqSipJ6g3KdxYM8qnh2+MHVp2TamiYxGd69RcNs9jF7PFlRhcZD9iC2SUQgVbF/bVIBoYwz8sGp1FI2VMXylSmNl29y6+ILHBOYrlm79d0Zvyh08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xr/7eR4F; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=VIkLsYWzEFPTPgsPUAUzT6oMN0qNtcF07DSKjqqnrF0Lt33PVTu93KM9Lsw0zb9x/IidLy2MMeq+JA8k7nfXQNrsfLJnVlOxzvNVadrp0XioSAebn8/ex1ZvyXsl4rNxgGRW2Hqz8BJ9EtdssoqFomc/t1JI+MHNZkifNT/8E8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CW2B9+X+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xr/7eR4F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 654561F00899;
-	Fri,  5 Jun 2026 09:15:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CW2B9+X+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B9BB1F00893;
+	Fri,  5 Jun 2026 09:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780650936;
-	bh=KRbZa4yH9SD5oC00vvBSsN4H15VKW/BBINcxhBiwbDE=;
+	s=k20260515; t=1780652947;
+	bh=gXhoT+leVZI4/Qk+p2/PqLCrckwgEEZ0sHMv/uivWco=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Xr/7eR4FHFeVm/KiiQc65+cj13HnmMsHTNwzlHRrAdR25oNAAiwTpqp2qER4FIGKW
-	 dPhnDLHRLzc4QYZyZ4TDyZO9RAPgT/3ENrggbVyuqi11t0TipDTBtwnTbgOfoPAuEM
-	 AJePO1eNtA+evMRgUbNjXXEZzjfTfWdCEVYKvDhL5LNDgoc8T8lWsaVols9F4lT255
-	 K5nhV+71mWP0jJN1sPD0lUl+U1brmu8xOzIAez5hIhYJSX5aKO24WFXHBPXzAVGX9v
-	 uZ7J/akRTDI4S7VgHrLhAEcqbXlUgnpqHN0ZswNvkkqIdRlf13jfF6vypyVM69br8v
-	 LIwGHd+sXWIRA==
-Date: Fri, 5 Jun 2026 11:15:31 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Wolfram Sang <wsa@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jie Li <jie.i.li@nokia.com>
-Subject: Re: [GIT PULL] Immutable branch between the GPIO and I2C trees for
- v7.2-rc1
-Message-ID: <aiKTSrD7GYCwrVDX@zenone.zhora.eu>
-References: <20260511123042.64315-1-bartosz.golaszewski@oss.qualcomm.com>
+	b=CW2B9+X+lFeJtyK7dxmKS6/9ORWHnsrNM8oAf2l//Jd9wPtMy8fPexwyMJeWgh7oZ
+	 qdbPb6OmRTZi4i/Aj+NTw65n9Ku7NSTTSvS7WBWzyJhp2nrY7u8REEeM9BmX1nbrfg
+	 deC9NLM6ZgWSXLidGNkHTaqWpuVMO+PhHJFhu+GPl2ryXx5Syym3mX7t581VX5zUyV
+	 iFM8xpCoXE9ROHFWXuhThEbnbQFtfeCH/qm72VnZbspIwzJqwI7j3JGKXpR2tmpbzd
+	 sleeG+lEE46waKVkgtC7+0GTnFlsT8zvDQv9xTnTzZt2qoYPZEVrrOaJkZguaSlm5L
+	 qZXmL4T3jnafA==
+Date: Fri, 5 Jun 2026 11:49:05 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Linus Walleij <linusw@kernel.org>, Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] pinctrl: Move Airoha driver to dedicated directory
+Message-ID: <aiKbkVvJ9-GDqZqY@lore-desk>
+References: <20260605071233.28873-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="q1A43My8ot58uOeO"
+Content-Disposition: inline
+In-Reply-To: <20260605071233.28873-1-ansuelsmth@gmail.com>
+
+
+--q1A43My8ot58uOeO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260511123042.64315-1-bartosz.golaszewski@oss.qualcomm.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Bartosz,
+> In preparation for additional SoC support, move the Airoha pinctrl driver
+> for AN7581 SoC to a dedicated directory.
+>=20
+> This is to tidy things up and keep code organized without polluting the
+> Mediatek driver directory.
+>=20
+> The driver doesn't depend on any generic or common code from the Mediatek
+> codebase so it can be safely moved without any modification.
+>=20
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
-> Please pull the following changes adding the gpiod_is_single_ended() helper
-> for v7.2-rc1.
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-merged to i2c/i2c-host. Thanks!
+> ---
+>  MAINTAINERS                                   |  2 +-
+>  drivers/pinctrl/Kconfig                       |  1 +
+>  drivers/pinctrl/Makefile                      |  1 +
+>  drivers/pinctrl/airoha/Kconfig                | 20 +++++++++++++++++++
+>  drivers/pinctrl/airoha/Makefile               |  3 +++
+>  .../{mediatek =3D> airoha}/pinctrl-airoha.c     |  0
+>  drivers/pinctrl/mediatek/Kconfig              | 17 +---------------
+>  drivers/pinctrl/mediatek/Makefile             |  1 -
+>  8 files changed, 27 insertions(+), 18 deletions(-)
+>  create mode 100644 drivers/pinctrl/airoha/Kconfig
+>  create mode 100644 drivers/pinctrl/airoha/Makefile
+>  rename drivers/pinctrl/{mediatek =3D> airoha}/pinctrl-airoha.c (100%)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 21c0ef0b9ce5..38bf92149a15 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21024,7 +21024,7 @@ M:	Lorenzo Bianconi <lorenzo@kernel.org>
+>  L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/pinctrl/airoha,en7581-pinctrl.yaml
+> -F:	drivers/pinctrl/mediatek/pinctrl-airoha.c
+> +F:	drivers/pinctrl/airoha/pinctrl-airoha.c
+> =20
+>  PIN CONTROLLER - AMD
+>  M:	Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+> diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+> index 03f2e3ee065f..e0babad31445 100644
+> --- a/drivers/pinctrl/Kconfig
+> +++ b/drivers/pinctrl/Kconfig
+> @@ -679,6 +679,7 @@ config PINCTRL_RP1
+>  	  multi function device.
+> =20
+>  source "drivers/pinctrl/actions/Kconfig"
+> +source "drivers/pinctrl/airoha/Kconfig"
+>  source "drivers/pinctrl/aspeed/Kconfig"
+>  source "drivers/pinctrl/bcm/Kconfig"
+>  source "drivers/pinctrl/berlin/Kconfig"
+> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+> index f7d5d5f76d0c..36c55858801f 100644
+> --- a/drivers/pinctrl/Makefile
+> +++ b/drivers/pinctrl/Makefile
+> @@ -66,6 +66,7 @@ obj-$(CONFIG_PINCTRL_ZYNQMP)	+=3D pinctrl-zynqmp.o
+>  obj-$(CONFIG_PINCTRL_ZYNQ)	+=3D pinctrl-zynq.o
+> =20
+>  obj-y				+=3D actions/
+> +obj-y				+=3D airoha/
+>  obj-$(CONFIG_ARCH_ASPEED)	+=3D aspeed/
+>  obj-y				+=3D bcm/
+>  obj-$(CONFIG_PINCTRL_BERLIN)	+=3D berlin/
+> diff --git a/drivers/pinctrl/airoha/Kconfig b/drivers/pinctrl/airoha/Kcon=
+fig
+> new file mode 100644
+> index 000000000000..03adaeae8fc3
+> --- /dev/null
+> +++ b/drivers/pinctrl/airoha/Kconfig
+> @@ -0,0 +1,20 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +menu "Airoha pinctrl drivers"
+> +	depends on ARCH_AIROHA || COMPILE_TEST
+> +
+> +config PINCTRL_AIROHA
+> +	tristate "Airoha EN7581 pin control"
+> +	depends on OF
+> +	depends on ARM64 || COMPILE_TEST
+> +	select PINMUX
+> +	select GENERIC_PINCONF
+> +	select GENERIC_PINCTRL_GROUPS
+> +	select GENERIC_PINMUX_FUNCTIONS
+> +	select GPIOLIB
+> +	select GPIOLIB_IRQCHIP
+> +	select REGMAP_MMIO
+> +	help
+> +	  Say yes here to support pin controller and gpio driver
+> +	  on Airoha EN7581 SoC.
+> +
+> +endmenu
+> diff --git a/drivers/pinctrl/airoha/Makefile b/drivers/pinctrl/airoha/Mak=
+efile
+> new file mode 100644
+> index 000000000000..a25b744dd7a8
+> --- /dev/null
+> +++ b/drivers/pinctrl/airoha/Makefile
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +obj-$(CONFIG_PINCTRL_AIROHA)		+=3D pinctrl-airoha.o
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-airoha.c b/drivers/pinctrl/=
+airoha/pinctrl-airoha.c
+> similarity index 100%
+> rename from drivers/pinctrl/mediatek/pinctrl-airoha.c
+> rename to drivers/pinctrl/airoha/pinctrl-airoha.c
+> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/=
+Kconfig
+> index 4819617d9368..97980cc28b9c 100644
+> --- a/drivers/pinctrl/mediatek/Kconfig
+> +++ b/drivers/pinctrl/mediatek/Kconfig
+> @@ -1,6 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  menu "MediaTek pinctrl drivers"
+> -	depends on ARCH_MEDIATEK || ARCH_AIROHA || RALINK || COMPILE_TEST
+> +	depends on ARCH_MEDIATEK || RALINK || COMPILE_TEST
+> =20
+>  config EINT_MTK
+>  	tristate "MediaTek External Interrupt Support"
+> @@ -126,21 +126,6 @@ config PINCTRL_MT8127
+>  	select PINCTRL_MTK
+> =20
+>  # For ARMv8 SoCs
+> -config PINCTRL_AIROHA
+> -	tristate "Airoha EN7581 pin control"
+> -	depends on OF
+> -	depends on ARM64 || COMPILE_TEST
+> -	select PINMUX
+> -	select GENERIC_PINCONF
+> -	select GENERIC_PINCTRL_GROUPS
+> -	select GENERIC_PINMUX_FUNCTIONS
+> -	select GPIOLIB
+> -	select GPIOLIB_IRQCHIP
+> -	select REGMAP_MMIO
+> -	help
+> -	  Say yes here to support pin controller and gpio driver
+> -	  on Airoha EN7581 SoC.
+> -
+>  config PINCTRL_MT2712
+>  	bool "MediaTek MT2712 pin control"
+>  	depends on OF
+> diff --git a/drivers/pinctrl/mediatek/Makefile b/drivers/pinctrl/mediatek=
+/Makefile
+> index ae765bd99965..6dc17b0c23f9 100644
+> --- a/drivers/pinctrl/mediatek/Makefile
+> +++ b/drivers/pinctrl/mediatek/Makefile
+> @@ -8,7 +8,6 @@ obj-$(CONFIG_PINCTRL_MTK_MOORE)		+=3D pinctrl-moore.o
+>  obj-$(CONFIG_PINCTRL_MTK_PARIS)		+=3D pinctrl-paris.o
+> =20
+>  # SoC Drivers
+> -obj-$(CONFIG_PINCTRL_AIROHA)		+=3D pinctrl-airoha.o
+>  obj-$(CONFIG_PINCTRL_MT7620)		+=3D pinctrl-mt7620.o
+>  obj-$(CONFIG_PINCTRL_MT7621)		+=3D pinctrl-mt7621.o
+>  obj-$(CONFIG_PINCTRL_MT76X8)		+=3D pinctrl-mt76x8.o
+> --=20
+> 2.53.0
+>=20
 
-> ----------------------------------------------------------------
-> Immutable branch betweeb the GPIO and I2C trees for v7.2-rc1
+--q1A43My8ot58uOeO
+Content-Type: application/pgp-signature; name=signature.asc
 
-/betweeb/between/
+-----BEGIN PGP SIGNATURE-----
 
-> - add the gpiod_is_single_ended() helper function
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaiKbkQAKCRA6cBh0uS2t
+rD8RAQCTqvwpjOmFdqe/mEXBddI5QVje6dYvxn4UEeu5m/9ffQD+NC30clolCJqz
+Y7UYWFyqWHg0ayUEETtXdvzZphkMHAQ=
+=7riA
+-----END PGP SIGNATURE-----
 
-...
-
-BTW, your signature in kernel.org doesn't contain your Qualcomm
-e-mail.
-
-Andi
+--q1A43My8ot58uOeO--
