@@ -1,36 +1,37 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4F3329C57;
-	Sun,  7 Jun 2026 23:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6983D28690;
+	Sun,  7 Jun 2026 23:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780873528; cv=none; b=pMDdIiX24Q4g2af9mSCyl2tebPzHCYRvDpTXDqARcwiHrZpj40de2ECRByahCM7fjujcs46cjB7VEvksMzcajd92glozO9PxtuCNP7ODUhP+HPBeZl+Ul1ebd540lx31QcJA8XQrvxRUhjhlOkBDaDPUODdwmWKmGbO/HBCc/7Q=
+	t=1780873528; cv=none; b=DERjEi3FlyFG3wA9H+HOug3g3e9iKJWz+IssPORMSs7zROt+hcQ3HzoVC9iFDoThnnyweQo/UBnD3iJBfcxASr1mOrpOqXRBhvAQv0LOktIhqgdFPTUTkY2JjeBCZUedppFgWtap6MdAc1FySV9nBfwXNIILfYoh/1v6OvhP7U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1780873528; c=relaxed/simple;
-	bh=Y6ZqthY0/KmfwbT+mbcPRxThag2E4h/avLxT8wpSRmE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IB+Vk5HOeGAFEx8ZRNs2T5yJhnHLI3iIlJD9F2thXN5LjtE2+vryT/6A0AOs2G6AlZcA22c452lmx1lKx6o7sBfkVwREQgPNG2HwI3ybj7zREUY3jxtoonXZEHqjh14gKWFIvJm9bQgQpNsQFkBEBvmlI8Xiagfi2q22k+96QDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=EJjtLYkw; arc=none smtp.client-ip=178.21.23.139
+	bh=9KdW77VqNR0noyJraGKncMh9TbDUKb8mBPe4vbpDVjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bo8XzFdeLn4QGXnT+6A20/a8JusM3gia5CwWfxcHf4HJo8MLQbcftkDXwfYmiwq1HoM8lg305N+eordH/VSRGnrJJOwn9tjR/bJ/fXDLFTdreEv5FX0TNI+REXwpE6ngC6GteXa2XZZ45HOKZ2Di13/hsALKr0C6+llFkRSGe/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=YXhOGjDy; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="EJjtLYkw"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="YXhOGjDy"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 5998427740;
-	Mon,  8 Jun 2026 01:05:18 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 2C9FF2763D;
+	Mon,  8 Jun 2026 01:05:20 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id OapcbgyAuZT4; Mon,  8 Jun 2026 01:05:17 +0200 (CEST)
+ id annWcSptkWLZ; Mon,  8 Jun 2026 01:05:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1780873517; bh=Y6ZqthY0/KmfwbT+mbcPRxThag2E4h/avLxT8wpSRmE=;
-	h=From:To:Cc:Subject:Date;
-	b=EJjtLYkwO+t6DDJH7escbwwh0r1yL3RwRmB269vydRugTEsH7/hhpUWgvwY/xXNeA
-	 MEdwG3EP8zMcv2TyjqoEsVa4Igr5iwmnZOQvUMik4Omt9CWj/Oi58+QdcYuLdWUyce
-	 1MVWyfvRUlKGYc+wyZnEKZa/pWBiEwkDFSqCjW7ZhbowI5vhFwHc/bJmAORqmNihwj
-	 ecjF4p68zB87E3RhlMSJGzQb1T5+9w7qG2F8MNYvGYqVzJANUrzR/DaOwTJlK2eBb1
-	 9xdhzwtHz5GH80ReQPAPMFsIb65yV4VsPbFwYhNnpqzAo4Yad96JbTPCvpsG77Wubu
-	 KveugGp5d7IGA==
+	t=1780873519; bh=9KdW77VqNR0noyJraGKncMh9TbDUKb8mBPe4vbpDVjs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=YXhOGjDyM6n2YKjLbZ4dIqumOAWBzKD4nZjQLzdPu6SKKeLX0XRFNPyi5lFRDr0Wf
+	 YMBAcUHph1W3ivcIbgQ2pOX5G4lx3C3Jra7xb7obCmMWDZJHrO4xsScU4LSS7/+2gA
+	 /qL/Gc5OEvXSsc3gvDGyPUM05CoEq0640SQzNoDuhsCjUA7krNZ05k5OSG3M1zilQa
+	 iY12+x9x1DZi8/2M2z5CFQXFJLqB8Z6/SBxCS+HIvJr4CbcU9+IswWA6gBAAVt7fHh
+	 WpE4Cn72pga5vADXEYHhC3b+7dkqX66XJnsnGaVEbppXrU0mEcgfE3QwnrTK3CsRaj
+	 GaJuSuHfJfJpw==
 From: Marco Scardovi <scardracs@disroot.org>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
@@ -40,9 +41,11 @@ Cc: Heiko Stuebner <heiko@sntech.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] gpio: rockchip: Fix generic IRQ chip leak and modernize resource mapping
-Date: Mon,  8 Jun 2026 01:05:01 +0200
-Message-ID: <20260607230504.35392-1-scardracs@disroot.org>
+Subject: [PATCH 3/3] gpio: rockchip: use platform_get_irq() to retrieve interrupt
+Date: Mon,  8 Jun 2026 01:05:04 +0200
+Message-ID: <20260607230504.35392-4-scardracs@disroot.org>
+In-Reply-To: <20260607230504.35392-1-scardracs@disroot.org>
+References: <20260607230504.35392-1-scardracs@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -51,26 +54,36 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi all,
+The driver currently uses irq_of_parse_and_map() to parse and map the
+GPIO bank interrupt from the device tree node. Since the bank device is
+represented by a platform_device, use the standard platform_get_irq()
+API instead. This integrates cleanly with the platform device framework
+and ensures proper error propagation (such as -EPROBE_DEFER).
 
-This series fixes a generic IRQ chip leak in the gpio-rockchip driver
-and performs two small cleanups to use standard platform device helper APIs.
+Assisted-by: Antigravity:gemini-3.5-flash
+Signed-off-by: Marco Scardovi <scardracs@disroot.org>
+---
+ drivers/gpio/gpio-rockchip.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Patch 1 fixes a leak caused by generic IRQ chips not being removed before
-IRQ domain teardown.
-
-Patch 2 converts register mapping to use devm_platform_ioremap_resource().
-
-Patch 3 converts interrupt retrieval to use platform_get_irq().
-
-Marco Scardovi (3):
-gpio: rockchip: fix generic IRQ chip leak on remove
-gpio: rockchip: use devm_platform_ioremap_resource() to map registers
-gpio: rockchip: use platform_get_irq() to retrieve interrupt
-
- drivers/gpio/gpio-rockchip.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 8647d006d103..77b239a9a601 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -654,9 +654,10 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+ 	if (IS_ERR(bank->reg_base))
+ 		return PTR_ERR(bank->reg_base);
+ 
+-	bank->irq = irq_of_parse_and_map(bank->of_node, 0);
+-	if (!bank->irq)
+-		return -EINVAL;
++	ret = platform_get_irq(pdev, 0);
++	if (ret < 0)
++		return ret;
++	bank->irq = ret;
+ 
+ 	bank->clk = devm_clk_get_enabled(bank->dev, NULL);
+ 	if (IS_ERR(bank->clk))
 -- 
 2.54.0
 
