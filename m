@@ -1,37 +1,37 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6983D28690;
-	Sun,  7 Jun 2026 23:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A47F322B88;
+	Sun,  7 Jun 2026 23:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780873528; cv=none; b=DERjEi3FlyFG3wA9H+HOug3g3e9iKJWz+IssPORMSs7zROt+hcQ3HzoVC9iFDoThnnyweQo/UBnD3iJBfcxASr1mOrpOqXRBhvAQv0LOktIhqgdFPTUTkY2JjeBCZUedppFgWtap6MdAc1FySV9nBfwXNIILfYoh/1v6OvhP7U4=
+	t=1780873529; cv=none; b=uABKNQzSxzMyaYAw7v4qJapf3GBcyVCGIv+kawIXU0+GeIdy9DlDewDZdILz+kHphfehewMGEvcvO8DrYlymAfXPwhuFL7nKi5AhPn6x8yCReIg6JYhbRFRcfpm4MKwkzzsSa8zX3S60wZ49zsmDYSmq99Q7UhfLXa+Xalj8NRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780873528; c=relaxed/simple;
-	bh=9KdW77VqNR0noyJraGKncMh9TbDUKb8mBPe4vbpDVjs=;
+	s=arc-20240116; t=1780873529; c=relaxed/simple;
+	bh=q711bc1/xpTpKSaH1HBhtc+S33ctQC0+VT1Zj2JwGp4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bo8XzFdeLn4QGXnT+6A20/a8JusM3gia5CwWfxcHf4HJo8MLQbcftkDXwfYmiwq1HoM8lg305N+eordH/VSRGnrJJOwn9tjR/bJ/fXDLFTdreEv5FX0TNI+REXwpE6ngC6GteXa2XZZ45HOKZ2Di13/hsALKr0C6+llFkRSGe/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=YXhOGjDy; arc=none smtp.client-ip=178.21.23.139
+	 MIME-Version; b=V9pjWcDXFE1FKWeQTYOZLB+WYjebJJDQJL7gOY/4BYD9veJuNtvOW1eZ34lbczTBZi0ALY3bhkjUAFQUMY/ruEc3LK8Z1g4nrOVnIZVzM4VJAtpQuZs68tw8kgIef3Pm0lckeI/vY/g+6esjzXX8q+CbeMKFe6cM4R6SQB3xGyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=YLYpjYIo; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="YXhOGjDy"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="YLYpjYIo"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 2C9FF2763D;
-	Mon,  8 Jun 2026 01:05:20 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 9137026F45;
+	Mon,  8 Jun 2026 01:05:19 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id annWcSptkWLZ; Mon,  8 Jun 2026 01:05:19 +0200 (CEST)
+ id mqCzfUV42IwC; Mon,  8 Jun 2026 01:05:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1780873519; bh=9KdW77VqNR0noyJraGKncMh9TbDUKb8mBPe4vbpDVjs=;
+	t=1780873519; bh=q711bc1/xpTpKSaH1HBhtc+S33ctQC0+VT1Zj2JwGp4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=YXhOGjDyM6n2YKjLbZ4dIqumOAWBzKD4nZjQLzdPu6SKKeLX0XRFNPyi5lFRDr0Wf
-	 YMBAcUHph1W3ivcIbgQ2pOX5G4lx3C3Jra7xb7obCmMWDZJHrO4xsScU4LSS7/+2gA
-	 /qL/Gc5OEvXSsc3gvDGyPUM05CoEq0640SQzNoDuhsCjUA7krNZ05k5OSG3M1zilQa
-	 iY12+x9x1DZi8/2M2z5CFQXFJLqB8Z6/SBxCS+HIvJr4CbcU9+IswWA6gBAAVt7fHh
-	 WpE4Cn72pga5vADXEYHhC3b+7dkqX66XJnsnGaVEbppXrU0mEcgfE3QwnrTK3CsRaj
-	 GaJuSuHfJfJpw==
+	b=YLYpjYIogdESisH1zKL+54WfCLantKUKayYbq+XAdDaTaYB9FA1f3JbOItzaJFWvT
+	 CsAyTE148AdWQs/KQe2pH/VF6BU7yaE0IyiECm/URwA/Q6SVkdOAxIzdH77h0e3rgd
+	 VO4sd2GqJoWNHVqroVV724sBrvJ+KPb/mbiJjNxPTS+XhvktyQ59tiaj5pzI186Sve
+	 NBMkhduG4/oNZw4A5WRtck4acT8qO7DPRuryf0WmDp7W46RRFZ3XvoHMfpIg12i8cQ
+	 yK8FLdrlPmH0yyMiuCfFuYhTJePgdy4ngy0y5de85s//2V5l1Slq9YfyR1DsFgYC5v
+	 f0x5pm0yDsvVQ==
 From: Marco Scardovi <scardracs@disroot.org>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
@@ -41,9 +41,9 @@ Cc: Heiko Stuebner <heiko@sntech.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] gpio: rockchip: use platform_get_irq() to retrieve interrupt
-Date: Mon,  8 Jun 2026 01:05:04 +0200
-Message-ID: <20260607230504.35392-4-scardracs@disroot.org>
+Subject: [PATCH 2/3] gpio: rockchip: use devm_platform_ioremap_resource() to map registers
+Date: Mon,  8 Jun 2026 01:05:03 +0200
+Message-ID: <20260607230504.35392-3-scardracs@disroot.org>
 In-Reply-To: <20260607230504.35392-1-scardracs@disroot.org>
 References: <20260607230504.35392-1-scardracs@disroot.org>
 Precedence: bulk
@@ -54,36 +54,41 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The driver currently uses irq_of_parse_and_map() to parse and map the
-GPIO bank interrupt from the device tree node. Since the bank device is
-represented by a platform_device, use the standard platform_get_irq()
-API instead. This integrates cleanly with the platform device framework
-and ensures proper error propagation (such as -EPROBE_DEFER).
+Currently, the driver retrieves the memory resource with
+of_address_to_resource() and maps it with devm_ioremap_resource().
+
+Since the bank device is a platform_device, simplify and modernize the
+code by using devm_platform_ioremap_resource(). This also removes the
+need for the local struct resource variable.
 
 Assisted-by: Antigravity:gemini-3.5-flash
 Signed-off-by: Marco Scardovi <scardracs@disroot.org>
 ---
- drivers/gpio/gpio-rockchip.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpio/gpio-rockchip.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 8647d006d103..77b239a9a601 100644
+index 9478a58f1caa..8647d006d103 100644
 --- a/drivers/gpio/gpio-rockchip.c
 +++ b/drivers/gpio/gpio-rockchip.c
-@@ -654,9 +654,10 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+@@ -647,15 +647,10 @@ static void rockchip_clk_put(void *data)
+ 
+ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+ {
+-	struct resource res;
++	struct platform_device *pdev = to_platform_device(bank->dev);
+ 	int id = 0, ret;
+ 
+-	if (of_address_to_resource(bank->of_node, 0, &res)) {
+-		dev_err(bank->dev, "cannot find IO resource for bank\n");
+-		return -ENOENT;
+-	}
+-
+-	bank->reg_base = devm_ioremap_resource(bank->dev, &res);
++	bank->reg_base = devm_platform_ioremap_resource(pdev, 0);
  	if (IS_ERR(bank->reg_base))
  		return PTR_ERR(bank->reg_base);
  
--	bank->irq = irq_of_parse_and_map(bank->of_node, 0);
--	if (!bank->irq)
--		return -EINVAL;
-+	ret = platform_get_irq(pdev, 0);
-+	if (ret < 0)
-+		return ret;
-+	bank->irq = ret;
- 
- 	bank->clk = devm_clk_get_enabled(bank->dev, NULL);
- 	if (IS_ERR(bank->clk))
 -- 
 2.54.0
 
