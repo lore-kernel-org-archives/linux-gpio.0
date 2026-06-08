@@ -1,85 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC0A3B388A
-	for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2026 22:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2723B42D0
+	for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2026 22:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780958637; cv=none; b=Qx5076memgOmiqq7iGiej5vr7kOqgiyR1VjdMnmU/aCotBR5ZeHTRohhth5TZpujpxi6gocBJS9H30pPDCjK2uo8ap3ONhDAXe0NGtNMCd7xluWfc5CvJVvoS85kPS38uYpoOjdv8FYFKtCReM0r/ySF2J0V110jTpLm1Tm7tSY=
+	t=1780958717; cv=none; b=SHhavrjBe1O4iN3VnM6K08+m6KJTK+Y0Y8o2jbXgFuV7VlOdDFFUgOkrqn7LjZQJ2wTby3N+KPAztRk9JD8Ro0JaPApGfQLSrbyWFg3gJmE7PsELeNOrx/rIv2GDNKHLNqOnVaUiXKrNPIKKvuj18DvK8aUkmyr7oXJUUWtgEVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780958637; c=relaxed/simple;
-	bh=A0aMEuooSpehlxvLLcCYGZi3/rId/udlnvg3u80kiOo=;
+	s=arc-20240116; t=1780958717; c=relaxed/simple;
+	bh=7ovR92x8Z/N/u3SFG32f5HpKTxDqeJiLi9zXPvC0kQs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q8HBQGL7ewvAFwDhpOZjVPcEcSIBlGgjRtWcWxVhky2xuDrnh5hl8mXSMRor8F6E4ojfHjyoonQUZiflyD9GtaGFoF2Z6qvWngy4XfsM7RC5/YVqFwgEaQGoW9a/okxmWrS5RKkD2wNdaieezb0ubxkJdCKNVbLzZ+2ambPgiKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GV5Su1Br; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=ub7ufDk3MYsWaoG0jp/gkZ5CzC1fUNx3nlkrdLSFf8bdUlau0TmoNDEOUjgb9R17ZfH3+9LdvALLuE860aTdl+4bkdTyJxPPmMBekYKgEchiuVEgn0AZyfuQS4CPRYZKsfNrY7rjD2ljR8SW4jb6+kPaVW4gWE50bYd0ugliYmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7Xlsmbg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GV5Su1Br"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 008D61F00898
-	for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2026 22:43:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7Xlsmbg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E61351F00898
+	for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2026 22:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780958636;
-	bh=yO33fZb1LjugzRw+G0ggE1zSXDOM86JcqH727KoL53Q=;
+	s=k20260515; t=1780958714;
+	bh=7ovR92x8Z/N/u3SFG32f5HpKTxDqeJiLi9zXPvC0kQs=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=GV5Su1Br5SvCs/rJNXXZeLpyhUFI3jQikNovCcx5qQfodSUdXRHSVw7DWxNCJL3KT
-	 Ou1iT5jrVoWXlUuZ2Gvf+gJ9/3gVWTc42TyvGOdXuAir8y1XTOQGaUMi6Cwxw5zqkj
-	 MWv2oDZUFskzYtIx4Qk/BmlliyCwfAld4Us+jiDYSGykz5OxNPICZnBG6Mlqf+Ymzt
-	 omLwRHUBR72YpNwsMTp6K0HaG5OxXpCoK7fb36r1AMVz4EqT4uHJMwXb5m10bBmQsW
-	 wefup+Aa0hpns1Hue0lbWvYs8BdM1RjR6gbkmq6De1rCAuFKglyfGY74YQOGd1yaDG
-	 +dYmx5GlgXleg==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3965f215817so43660971fa.3
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2026 15:43:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ8j8Ti86Ndq6Jvl9L0BKnK1xgA9N3KdwaXH21DL14jJJWCaoAWTLyP+rujhysevplKeRsGstnQi3ENl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3FotlCpjA4F6if3q/8TqK8H1zHkiMAjLwfHFoZ7kNGuH5yair
-	svdnLxeVLY9Nu+YyXr381IPXN03pSpIb6lPZV5bLuxumjqjWKN2Tcw11MV5iaTo9S2GZY1Bl57J
-	M+I5eD43KUmkOhGfMAAjK4QZHrx0N/6E=
-X-Received: by 2002:a2e:a715:0:b0:396:b398:5990 with SMTP id
- 38308e7fff4ca-396d0802544mr31409431fa.10.1780958634795; Mon, 08 Jun 2026
- 15:43:54 -0700 (PDT)
+	b=a7Xlsmbgu4/3/LK06mzCdWtQcCpzmSJNgUihCh9+PCHXwM+gy63hjqgiIfEjkMSBB
+	 Yu6L23L28BzyENB4OtAJqnAw8AdSkG2bYnd8UH0R68KGGBF7jfGFG5FJqIklGNsH7n
+	 eaC6MuVt1jezbLQgtNoVmo+AwQLtx+/h4WOn/SOFb82teqVP8zraDEuyuH5Dvx+FQx
+	 yzg60UXqT9exhiOigd9weocZ3lphry7HyPIFEuOmwj5xjharM91cYQs95h454949OR
+	 mI7DYUYASmKYjCUp+5jEeCLJFHCtrSFjKIgGIdc5PMJDfLpUCu1C3tlXPvBezjC5xi
+	 ChP3qb6zXUfZA==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5aa624ff3cbso4846418e87.3
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2026 15:45:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8E9qf6wVeVUrU8VLwcUmigzYrY01FxIrEmSWhvkmTcB+AaH4exJn35B9Ggnzp1qZwSn3/vHqykZZ1l@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPcb/dfDWR0dgPwMP+tZpK7ZNyuro+roubYWTAu7UnXiQ/N2Ta
+	Id9fKzK0Cz2HHtTE1iJejCS/xE6EY0NiJpU7sr1Iq4B3bl+b9b17zLo64gxQC9fZ1K5qTgaAzk6
+	DsBV2eXXU2rXA++RucBnnpUHBm4m86x4=
+X-Received: by 2002:ac2:4e10:0:b0:5aa:6cfc:771e with SMTP id
+ 2adb3069b0e04-5aa87b8dcb5mr5032062e87.2.1780958713709; Mon, 08 Jun 2026
+ 15:45:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260602-pdm_clk_gp_mnd_v1-v1-0-1522662b6c53@oss.qualcomm.com> <20260602-pdm_clk_gp_mnd_v1-v1-3-1522662b6c53@oss.qualcomm.com>
-In-Reply-To: <20260602-pdm_clk_gp_mnd_v1-v1-3-1522662b6c53@oss.qualcomm.com>
+References: <20260602-b4-serial-max310x-gpio-get-direction-v1-1-23bf84e8ee14@vaisala.com>
+In-Reply-To: <20260602-b4-serial-max310x-gpio-get-direction-v1-1-23bf84e8ee14@vaisala.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 9 Jun 2026 00:43:42 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnqCipTxkOhiwQhKFymOxu1HOTbHzLbNrGTOkCO33y8Vg@mail.gmail.com>
-X-Gm-Features: AVVi8CdznhrC7lojiEVCZUJLtYjgr49qwHSYBFLmYEj8dqSmxJu9YBHItYZ4E9Y
-Message-ID: <CAD++jLnqCipTxkOhiwQhKFymOxu1HOTbHzLbNrGTOkCO33y8Vg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] pinctrl: qcom: Add gp_mn mux function for QCS8300,
- SA8775P and SC7280
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Ajit Pandey <ajit.pandey@oss.qualcomm.com>, Imran Shaik <imran.shaik@oss.qualcomm.com>, 
-	Jagadeesh Kona <jagadeesh.kona@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	netdev@vger.kernel.org
+Date: Tue, 9 Jun 2026 00:45:01 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=2a6UxD95r2wMMtaXsrQXVxRHWqw=jJKLsZRxMivObmQ@mail.gmail.com>
+X-Gm-Features: AVVi8CdYZC_LNrT4lj-okPc6TIwG-u_u2wJAN03mvE0tz4MJaSgzc0ZXmRT8C0k
+Message-ID: <CAD++jL=2a6UxD95r2wMMtaXsrQXVxRHWqw=jJKLsZRxMivObmQ@mail.gmail.com>
+Subject: Re: [PATCH] serial: max310x: implement gpio_chip::get_direction()
+To: Tapio Reijonen <tapio.reijonen@vaisala.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 2, 2026 at 5:22=E2=80=AFPM Taniya Das <taniya.das@oss.qualcomm.=
-com> wrote:
+On Tue, Jun 2, 2026 at 12:02=E2=80=AFPM Tapio Reijonen
+<tapio.reijonen@vaisala.com> wrote:
 
-> Add the gp_mn pin mux function to the TLMM pin controllers for the
-> QCS8300, SA8775P and SC7280 SoCs. This function exposes the GP M/N
-> divider clock output on a dedicated GPIO pin, allowing the clock signal
-> to be routed externally.
+> It's strongly recommended for GPIO drivers to always implement the
+> .get_direction() callback - even when the direction is tracked in
+> software. The GPIO core emits a warning when the callback is missing
+> and a user reads the direction of a line, e.g. via
+> /sys/kernel/debug/gpio.
 >
-> - QCS8300: gpio32
-> - SA8775P: gpio35
-> - SC7280:  gpio60
+> The MAX310X keeps the GPIO direction in the GPIOCFG register (a set bit
+> selects output), which the existing direction_input/output callbacks
+> already program, so the current direction can be read back directly.
 >
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> Fixes: f65444187a66 ("serial: New serial driver MAX310X")
+> Signed-off-by: Tapio Reijonen <tapio.reijonen@vaisala.com>
 
-This looks all right and no-one is saying anything about it, should
-I just apply this one patch to the pin control tree? It doesn't seem
-to have any dependencies.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
