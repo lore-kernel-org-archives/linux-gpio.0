@@ -1,78 +1,74 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2723B42D0
-	for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2026 22:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB0A3B42FB
+	for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2026 22:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780958717; cv=none; b=SHhavrjBe1O4iN3VnM6K08+m6KJTK+Y0Y8o2jbXgFuV7VlOdDFFUgOkrqn7LjZQJ2wTby3N+KPAztRk9JD8Ro0JaPApGfQLSrbyWFg3gJmE7PsELeNOrx/rIv2GDNKHLNqOnVaUiXKrNPIKKvuj18DvK8aUkmyr7oXJUUWtgEVA=
+	t=1780958790; cv=none; b=VBxT8uDPD6uPAOn+d12oJA5D4XtpEVmDl8JOXtTuNMPJg1ZZ25ZgsnZ/T2o2Wy+1x20arxACApX0eROWH+L8fmTf5tUfttVrNCDRrXEMjY/zqBvXV5uEJowK9suqsZJO/QVXkmLF3jUGFwd2Tb0GePhJ4ctbxhbelGYp0JvhCh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780958717; c=relaxed/simple;
-	bh=7ovR92x8Z/N/u3SFG32f5HpKTxDqeJiLi9zXPvC0kQs=;
+	s=arc-20240116; t=1780958790; c=relaxed/simple;
+	bh=B3T4j7OBsymsUW8sk7AIgEhfmNfH3xykTHDf4YdxftU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ub7ufDk3MYsWaoG0jp/gkZ5CzC1fUNx3nlkrdLSFf8bdUlau0TmoNDEOUjgb9R17ZfH3+9LdvALLuE860aTdl+4bkdTyJxPPmMBekYKgEchiuVEgn0AZyfuQS4CPRYZKsfNrY7rjD2ljR8SW4jb6+kPaVW4gWE50bYd0ugliYmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a7Xlsmbg; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=hN0tr7CvetIpL6qfoyvqiBh4ci/ILgoJwr1LiaJ8x9VW2I9aNvr1yKgvfcFPaUfyPnDnn0ocwJVGP8c8wD+7ipzQQhQNGk9/lcLmk//wgq36eio2TUO5bF5EN/0ryjtCULWiEYMvakaK2KgRKviFDhSfvBKdwRxMiKOLLQvKDd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SPcmg9gS; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a7Xlsmbg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E61351F00898
-	for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2026 22:45:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPcmg9gS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77EEA1F008A2
+	for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2026 22:46:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780958714;
-	bh=7ovR92x8Z/N/u3SFG32f5HpKTxDqeJiLi9zXPvC0kQs=;
+	s=k20260515; t=1780958788;
+	bh=B3T4j7OBsymsUW8sk7AIgEhfmNfH3xykTHDf4YdxftU=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=a7Xlsmbgu4/3/LK06mzCdWtQcCpzmSJNgUihCh9+PCHXwM+gy63hjqgiIfEjkMSBB
-	 Yu6L23L28BzyENB4OtAJqnAw8AdSkG2bYnd8UH0R68KGGBF7jfGFG5FJqIklGNsH7n
-	 eaC6MuVt1jezbLQgtNoVmo+AwQLtx+/h4WOn/SOFb82teqVP8zraDEuyuH5Dvx+FQx
-	 yzg60UXqT9exhiOigd9weocZ3lphry7HyPIFEuOmwj5xjharM91cYQs95h454949OR
-	 mI7DYUYASmKYjCUp+5jEeCLJFHCtrSFjKIgGIdc5PMJDfLpUCu1C3tlXPvBezjC5xi
-	 ChP3qb6zXUfZA==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5aa624ff3cbso4846418e87.3
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2026 15:45:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ8E9qf6wVeVUrU8VLwcUmigzYrY01FxIrEmSWhvkmTcB+AaH4exJn35B9Ggnzp1qZwSn3/vHqykZZ1l@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPcb/dfDWR0dgPwMP+tZpK7ZNyuro+roubYWTAu7UnXiQ/N2Ta
-	Id9fKzK0Cz2HHtTE1iJejCS/xE6EY0NiJpU7sr1Iq4B3bl+b9b17zLo64gxQC9fZ1K5qTgaAzk6
-	DsBV2eXXU2rXA++RucBnnpUHBm4m86x4=
-X-Received: by 2002:ac2:4e10:0:b0:5aa:6cfc:771e with SMTP id
- 2adb3069b0e04-5aa87b8dcb5mr5032062e87.2.1780958713709; Mon, 08 Jun 2026
- 15:45:13 -0700 (PDT)
+	b=SPcmg9gSpqzLhPQ4DUxzeLr6C6gvQ+2sHHktTS9Sq3n8C9ba1o423+s2T+OkBEwee
+	 NSQhMGqUYw0rMBAxx6zzm+3AvPSldX5QtCcGfRRWGN4JyDAEvCCSLm9fXFa8YO3I1j
+	 IEUGelLtoIcqdmVt5XMkMY+qWrxP+xt+QR8Ez5I3Unk3FYBCWZNiEaP2Ul6eI7EtVX
+	 boGc/VxU6fOvh4VTJ3kMyrBFktC1OmwKyMhVu5iXK5JqpCo/nNIXbqYkO4uEW/Cacr
+	 3kDyx/ZB0e4gD6WlcKK3mmzmWoMB3VedIKGX7OCznQL8kMlssvJFRnRH8l43cEBW8r
+	 J8Pp2U7c1fD6w==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5aa61e3d3f3so4685224e87.0
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2026 15:46:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ/nreGA1m6qxjbvoRcugH4yyOZC7OtqE8LY4JBmOOg9gKXFSxdQER2CCIWb7j07FWnBY+gw/W/N0QeT@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIJp/i/dQwnT4TbBENuByrWyiZz1Fq6W4NMo2IMr1yYgkHmxZO
+	+LYg/wVIteu9cipoOVjrWAbkYcYo4IKRg/jAx0yGAqhtW0pa0f1Ff7r/b9fpHfNBYwJ04bWDiKa
+	6mtDVK8LUfR75GcyLTtTaPVsuJkQvaRU=
+X-Received: by 2002:a05:6512:15a4:b0:5aa:6eca:f382 with SMTP id
+ 2adb3069b0e04-5aa87b76dc4mr5708333e87.11.1780958787136; Mon, 08 Jun 2026
+ 15:46:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260602-b4-serial-max310x-gpio-get-direction-v1-1-23bf84e8ee14@vaisala.com>
-In-Reply-To: <20260602-b4-serial-max310x-gpio-get-direction-v1-1-23bf84e8ee14@vaisala.com>
+References: <20260601152707.29039-1-l.scorcia@gmail.com>
+In-Reply-To: <20260601152707.29039-1-l.scorcia@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 9 Jun 2026 00:45:01 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=2a6UxD95r2wMMtaXsrQXVxRHWqw=jJKLsZRxMivObmQ@mail.gmail.com>
-X-Gm-Features: AVVi8CdYZC_LNrT4lj-okPc6TIwG-u_u2wJAN03mvE0tz4MJaSgzc0ZXmRT8C0k
-Message-ID: <CAD++jL=2a6UxD95r2wMMtaXsrQXVxRHWqw=jJKLsZRxMivObmQ@mail.gmail.com>
-Subject: Re: [PATCH] serial: max310x: implement gpio_chip::get_direction()
-To: Tapio Reijonen <tapio.reijonen@vaisala.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Alexander Shiyan <shc_work@mail.ru>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-gpio@vger.kernel.org
+Date: Tue, 9 Jun 2026 00:46:14 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkFGZ4YYwDrtWsirRF238+K5TiDBeczz-FOZtq-MBA3Kw@mail.gmail.com>
+X-Gm-Features: AVVi8Cdb81KyiQYHN3WaKg4cCLnATFx4zGUZo2-MGBsT-bnCL_TrgRbJJGbJYZo
+Message-ID: <CAD++jLkFGZ4YYwDrtWsirRF238+K5TiDBeczz-FOZtq-MBA3Kw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: mediatek: mt6795: document the
+ slew-rate property
+To: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+Cc: linux-mediatek@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 2, 2026 at 12:02=E2=80=AFPM Tapio Reijonen
-<tapio.reijonen@vaisala.com> wrote:
+On Mon, Jun 1, 2026 at 5:27=E2=80=AFPM Luca Leonardo Scorcia
+<l.scorcia@gmail.com> wrote:
 
-> It's strongly recommended for GPIO drivers to always implement the
-> .get_direction() callback - even when the direction is tracked in
-> software. The GPIO core emits a warning when the callback is missing
-> and a user reads the direction of a line, e.g. via
-> /sys/kernel/debug/gpio.
+> The driver for MT6795 pinctrl already supports the slew-rate property.
+> Add its description to the documentation.
 >
-> The MAX310X keeps the GPIO direction in the GPIOCFG register (a set bit
-> selects output), which the existing direction_input/output callbacks
-> already program, so the current direction can be read back directly.
->
-> Fixes: f65444187a66 ("serial: New serial driver MAX310X")
-> Signed-off-by: Tapio Reijonen <tapio.reijonen@vaisala.com>
+> Signed-off-by: Luca Leonardo Scorcia <l.scorcia@gmail.com>
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Patch applied!
 
 Yours,
 Linus Walleij
