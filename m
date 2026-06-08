@@ -1,75 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F38439D6FD
-	for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2026 21:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0AA3B14A5
+	for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2026 22:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780955783; cv=none; b=mHI+1CibWRxxPbZ17rMwZb10S4cSmd+1BxDvplTFY7XwVtFXW7ZkYDkpsJbTi2FLx9kVG/xZHnZbK7A1rPHtzNMThlhb+3U21LrZVKitKcfHpliNsbAzRDzP/5UliYf4REWvBgzHfYyEqK1fOTup67RFx7Fd7bIzft13+0EAY2M=
+	t=1780956237; cv=none; b=AnkKxk1tiTevOsOEfENCSmFBxJrzBfIXWqr3OIdIsV+XO2e4Nxgft3ICvHDMzUfMZlnVHQ3FuLx4srAncv4AGbkU/Z/33gLyIKIOkvLl1TXhBS6sRcs9hpd6Zto9hZr4oDHu9AjmzDYe5e3ms/aRdsu0M5PGwX9NJcVy8Bwg4Vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780955783; c=relaxed/simple;
-	bh=0TDTgI6ajCuMM2ET04h05guwpbF+9TqbCtf0yb5X4O4=;
+	s=arc-20240116; t=1780956237; c=relaxed/simple;
+	bh=cEEsVG560z/n8AQ7XRIDrWf46jHSXN7lQT2SF1BMXG0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FrJHfJWruKymbVQNo2uAS4uosbRoMGlT3k2qjI+qYwKmvtQ/pIQbSnIe4v1jackFvC9HSZ7Z5VK+w6iFvCpvYujkE3grPKA13bjfxsHjbQd6mRMs6EQqncQHnidHkmycXOdb0U4MRzUOEDfindSNJt4rd0zd7IVHBJUuL1AYUbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAIgMewm; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=JZJCIULd/Af/HJvahYtllR93f9if53yLg4LhZ2NIa5rI6t74FcanHtshQtaGKE+aB+IFY/I7mw85axPSgEh6SDAv0OMiibwXeTZbwX+M7kQyY3uHtOZ3CcYfAUQYyRKK/LzepVOKROsmpYEVXk0mFfs4aGsbuYCck3q0BfuCw8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CA15y1NJ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAIgMewm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 691F01F0089F
-	for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2026 21:56:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CA15y1NJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 254441F00899
+	for <linux-gpio@vger.kernel.org>; Mon,  8 Jun 2026 22:03:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780955782;
-	bh=0TDTgI6ajCuMM2ET04h05guwpbF+9TqbCtf0yb5X4O4=;
+	s=k20260515; t=1780956236;
+	bh=Aij36kGKLQgOKTKFOm0ZH4SZ9YXAanS6oRbQ1zStX6Q=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=lAIgMewmy2AqrOVitnE3g9ROOWy6QFMGahxL4x3X7AiV48Y1UoVpFJDP2+8f3sQlQ
-	 bidlXC38fBDBzNMHM9EpBriCsyujrcWYkwZ7+Pnqu0d74mwIKoABVhELattqYP6hdA
-	 wHWVHVyrNBHSNMfy0ZeoBBG5RnH/DGAcfMg+0whFVCW0mFBCVD9NW2VkuZpWdcfGyr
-	 eo5ZVAWVl4qWeZTT1SoIG50hnNAbkN4228k1svyNX2pXkIn2kiNiQ44qbVn1MvucV5
-	 ECAHPP6gBC/GcVy7AiMWI0QIp99nwBTKQT+4vyN2POXnS+VYzZbmzZGJz3KpNG3lEc
-	 HZjcNQmMENbgA==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5aa61503fdaso5053218e87.0
-        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2026 14:56:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ8xwfON73E1xOLygz2BgaO23FvbC7IEqNGL6Kt77RODZuZIAUiEuTta/pl2nVNEQSKiuGnyoAJj7Bix@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy++Wu/yCpleXMWGzemCcPaWj1r2/m01l+L4aEbStIhtfX6+GWm
-	o3RO+SRg9KzYdzO+eBWJC04kxam5x0h/f5e/MREmgP4V7DbrzYQChHRkpxnVh/pNJFjmgm9HMMs
-	fIxYz6L+V6eInlLxodE3CI2LKuo76wjQ=
-X-Received: by 2002:ac2:51d2:0:b0:5aa:6a11:3a29 with SMTP id
- 2adb3069b0e04-5aa8865d774mr3483769e87.3.1780955781186; Mon, 08 Jun 2026
- 14:56:21 -0700 (PDT)
+	b=CA15y1NJElmg80HYv5sLM/kfa2jCdjk+qTyxpdOme8OofQZk+zipxPEdBIIInb/ke
+	 DVur/hT3xjxpA9aK2+/jI2emXiTgUU0esjLW0xkEhufnGnLEhkgDD5MmVDa2tYACuD
+	 lPfjr796FmKbOgwArLNtt/L/o3fhBWHA7A/teDhKLQ4n0RlPbbm/aySxJuA6cLmBsO
+	 rQlM9HqoSQ3R+6ZlRZVXXL4Cq8w+a1TflL09poUsMsi8/xecxlvq1t1jA8hOsaG5QA
+	 4KT4WynYGyBn4o+8rPXJ4NFJFjZdA5K6REgY0ahGLL9vbCFu39Pbd0XGTDK0xyYVfh
+	 Wcag2S1XXVYxg==
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-39664fe2dd8so40395321fa.3
+        for <linux-gpio@vger.kernel.org>; Mon, 08 Jun 2026 15:03:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9Gi47S5tJsxHiMQ2Rkz3oLboLGSBBZuhKoPDBjDA2Rm24UPfHBnnRuh4HxH8JRZs71yajJWAErXCWY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN1ryk61+R7bDzz1f2TaPLczHqbrRR2ArIiStfM9gy9IbIrw6P
+	wwxrOYN3bkPJHyYstvvG5azwmnv6PzuIVmdVnYlsru227DT6AmnEO7fQTwEXERX3f+aJbnQ2/9W
+	hFEV8lCytBDO+hppKmIUUv5gMA8/wjqQ=
+X-Received: by 2002:a05:6512:1153:b0:5aa:61ef:2bd8 with SMTP id
+ 2adb3069b0e04-5aa87b406e4mr6283189e87.4.1780956234723; Mon, 08 Jun 2026
+ 15:03:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260531162340.5326-1-l.scorcia@gmail.com>
-In-Reply-To: <20260531162340.5326-1-l.scorcia@gmail.com>
+References: <20260525144629.498630-1-jerrysteve1101@gmail.com> <20260525144629.498630-3-jerrysteve1101@gmail.com>
+In-Reply-To: <20260525144629.498630-3-jerrysteve1101@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 8 Jun 2026 23:56:09 +0200
-X-Gmail-Original-Message-ID: <CAD++jLn+5N53QkGppboN+e4YKa4=proo6PJxrbEUndCtB=zAJg@mail.gmail.com>
-X-Gm-Features: AVVi8Cchkr8o6T0GxWTVM7rSwLob_b-bRRivY5EIJqXqcLMh2ZhFlagIXrN1y7M
-Message-ID: <CAD++jLn+5N53QkGppboN+e4YKa4=proo6PJxrbEUndCtB=zAJg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mediatek: mt8167: Fix Schmitt trigger register
- offset of pins 34-39
-To: Luca Leonardo Scorcia <l.scorcia@gmail.com>
-Cc: linux-mediatek@lists.infradead.org, Sean Wang <sean.wang@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Fabien Parent <fparent@baylibre.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date: Tue, 9 Jun 2026 00:03:42 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkyvwnrmBQ+YFo+UDvuMpMM+Z4fXyVOFXUvSNrnrCEsQw@mail.gmail.com>
+X-Gm-Features: AVVi8CfrtViog8K60lVsdBejVduUSaoCk-bta_dOARz0lgQKhvxczOmqxd4dt3E
+Message-ID: <CAD++jLkyvwnrmBQ+YFo+UDvuMpMM+Z4fXyVOFXUvSNrnrCEsQw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] leds: is31fl319x: Fix shutdown GPIO initial state
+ and remove redundant startup pulse
+To: Jun Yan <jerrysteve1101@gmail.com>
+Cc: dmitry.baryshkov@oss.qualcomm.com, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Vincent Knecht <vincent.knecht@mailoo.org>, Grant Feng <von81@163.com>, 
+	Andre Przywara <andre.przywara@arm.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Florian Fainelli <f.fainelli@gmail.com>, 
+	Robert Marko <robert.marko@sartura.hr>, Pavel Machek <pavel@ucw.cz>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Michal Simek <michal.simek@amd.com>, Heiko Stuebner <heiko@sntech.de>, linux-leds@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 31, 2026 at 6:23=E2=80=AFPM Luca Leonardo Scorcia
-<l.scorcia@gmail.com> wrote:
+Hi Jun,
 
-> The correct Schmitt trigger register offset for pins 34-39 is 0xA00. Valu=
-e
-> was verified with SoC data sheet.
->
-> Signed-off-by: Luca Leonardo Scorcia <l.scorcia@gmail.com>
-> Fixes: 82d70627e94a ("pinctrl: mediatek: Add MT8167 Pinctrl driver")
+thanks for your patch!
 
-Patch applied.
+On Mon, May 25, 2026 at 4:47=E2=80=AFPM Jun Yan <jerrysteve1101@gmail.com> =
+wrote:
+
+> -       is31->shutdown_gpio =3D devm_gpiod_get_optional(dev, "shutdown", =
+GPIOD_OUT_HIGH);
+> +       /* Driving this GPIO line low (in fact high) takes the chip out o=
+f shutdown,
+> +        * as it is flagged as GPIO_ACTIVE_LOW in provider (such as the d=
+evice tree).
+> +        */
+> +       is31->shutdown_gpio =3D devm_gpiod_get_optional(dev, "shutdown", =
+GPIOD_OUT_LOW);
+
+This is fine but only if you also add a quirk to
+drivers/gpio/gpiolib-of.c in of_gpio_try_fixup_polarity()
+that will enforce the GPIOD_OUT_LOW property on the line.
+Follow the examples.
+
+This solves the API breakage.
+
+It should probably be part of the same patch for bisectability.
 
 Yours,
 Linus Walleij
