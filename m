@@ -1,217 +1,121 @@
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB132D7DC6
-	for <linux-gpio@vger.kernel.org>; Tue,  9 Jun 2026 21:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4BA403B1E
+	for <linux-gpio@vger.kernel.org>; Tue,  9 Jun 2026 22:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781040722; cv=none; b=m2kjeIGeLze8PsT36Cxdrsf56xWxrPKhmnKRcY1eX7YQ432CV1GnP0rnXrjuQvh5fForliLZWpjsuX4X6QQS6Wyni+dBzUI4mRfNtCcTmvFNhtL5a2ZamiElAPM4ph5R+zOlYNj1yaz2sGUlK6+srD2vnOZgbq63cY8H5xChuIs=
+	t=1781043958; cv=none; b=mfLMCOijcHKFS463+LBg0NNHTKRIayvz6w+YWEDsKye7WuV2OpxDxuULA1MNNx22h1Deg8AwzajyBI9wqFmjGgB9XtRQVyVsP6vGvvnKmfaeRwG9yvlargxRj8rUcnfHt1nuz/rJNW50HhdUc31PFSbKhbq9cR0CaMIYtkpYXxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781040722; c=relaxed/simple;
-	bh=WAiXRaxAM4Z1bZ828ygiu2QGKA8btwndyvH6LWkBmvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WnRKuHM3bQt8RYYiZBsaZf4ji8yOAOVVUR7FDs5ig5/cyH1/tWBs+CSSSSZl2JG2G3/l9j2ykzrUWSISObDB9CLaBdluHlwmRNd0tbjpPz0fxFgzHDKT0SbK8jf1cNaNe3d8qqAuPxM18yuVfwyz7zPm8xAUNvLZY/XIZWxA6jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20251104.gappssmtp.com header.i=@riscstar-com.20251104.gappssmtp.com header.b=uoS8Wc2e; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1781043958; c=relaxed/simple;
+	bh=gC5RijoMreJ37E+ZXnO6sSCfWOZUThbmrEidBKcTv9A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=O6mw5X9aQkNIQ3AMWtSm71yMIj3+5VaX4tZrLiGYNgZdiYFgDGP7b9AjDycIJxzjonwIJtRX2CBpo6TPck1BiJDCT4RJEarSKvWSyICbo88eZAsnjyp+LfJ3cGb7zYFD/a9eAIN5y/hJdjdg/QuHIT4nqVgBMaVFvttE9jlqTpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Ckt5g5mh; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20251104.gappssmtp.com header.i=@riscstar-com.20251104.gappssmtp.com header.b="uoS8Wc2e"
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-486503ae8f0so4496832b6e.0
-        for <linux-gpio@vger.kernel.org>; Tue, 09 Jun 2026 14:31:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Ckt5g5mh"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2bf22d29dabso40821505ad.2
+        for <linux-gpio@vger.kernel.org>; Tue, 09 Jun 2026 15:25:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20251104.gappssmtp.com; s=20251104; t=1781040718; x=1781645518; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kQKbERiB0ntPOS/R2wMXRwGJAn2HHwIq3s8Tu7uVMO4=;
-        b=uoS8Wc2e1VeGoY7G1XUBEHm43nmS5gaWrdYwUmiNUbR6nAUt8w6us5wXqa8zvD0j8H
-         pElFvyvcXDwQRbA7XsXg25ZJRHvM8K6goHxTNObZ69eH7g4DY9o3ebLH0iTTxx0j3y5M
-         VKauDGWMkjgBFheiP8YjscG+JfsiNeZJp9RizPBwnWb2BY01EYdCMVKjHh58PXuq6py0
-         aKLhGhGkk7vUvFMeaqQ3OwEj7d8vo+rsKGKph1+Ix/B9kDz3fL8ZlaUpliFLu5oek+3b
-         oYjsUvyheB3NSko8ugKmu0mQq0yhwZCWmxtPvlx7+eF5c3u1n/XFljjOak4mPeOyK6q4
-         D2YA==
+        d=baylibre.com; s=google; t=1781043956; x=1781648756; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6D7duqRcD3fdsTRow2UhPRWiLjw5TIDW3U11ZLjAtzg=;
+        b=Ckt5g5mhS8YR2cizTWbJ5Fwk8gGj6VebB+0OEJgvf02706OxaHIh/MLoWUZkdc8W2v
+         tDVO9ou14uqgirHWrZKF4TT22SL8Kw6c9cIfwgHoNv09ym9tEccqMSP/b5lQeWoqDES9
+         4Y/1fE4bs5q1c26wMjvtkzwBbmD6R5ZssJo+Ql4XeIs+Yw9IhdJtj3WObSFvTKV2NsRh
+         KdAHyJOP9ZzIAXpBIl9bEt8fkARYApQC8HuCBb+LFcyPHM7jM2nhfg7jU3w/egVF/fFg
+         eqBE7VWfKHsswmA0XGrVNRgAu6OAU+Z/4WuvEPeIm2Pew6bt4mI47RFHA/Njj5qWoKdw
+         N24g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781040718; x=1781645518;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kQKbERiB0ntPOS/R2wMXRwGJAn2HHwIq3s8Tu7uVMO4=;
-        b=Q6OYCdCV5cLxKfXwr86I11FXz41sGWZjoUb4gsTQE57eeMzMFUlkN/uT6im5skjd0l
-         xDSBMvxqwdJ3OSxY8oaOev8r/GsUhVdBjE+MZk09pBeZE+VNQSsh7mVIjxPDX8pDqHee
-         Wp0WQWUw9SfXyZYNT5+j/z6GKeHBNQQttYoB0oPK3QEkO6WqRUXwbg6QZqyR2n3hOO3K
-         2Oqa0T8vjS0Zw80cn0J+S8GWWbVfgQQICHn0Khv3CZQXeuREvsKm4aZi3H76Crgsh66r
-         xhGsIxlKuz3sf1kudu/PrhKRh+Y8xrFp0m4y2k2uhOFJ5JFoaBW84bHIEj8zZeIsAy1J
-         Q+1g==
-X-Forwarded-Encrypted: i=1; AFNElJ/KmZDYwdLEj1CFLBiUF5+j/hz+JiGntqwV8ulMyC4kpTE6AkuIHz31SY5ljDfmfDDi5Wmvxk8fUe03@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe9+WCjqxv834un9wOumJNW9HWnz3TXSqsPdyHxMMkB6Lxfhh+
-	fRUzvBeQxWAzaG1akYsnJnnjz4PZuETaKIeDUoqqlZdvalFYAit6HoASAu291PJYyBc=
-X-Gm-Gg: Acq92OHL1/FEdDC/hV2SgJdnE0Un17iMTXnnsi1EXZ4MsENXEVRw2pt8A+Kb0HaW6kC
-	fnACFiVIfmiK+vbfi98JXKefixiInV+m2coZfKQGDtX89A0G1lZk6JT31fESu3fQot1uEGTIVHj
-	DhBsL91E2PnCzZ//UG3dwUzNcyNsQT25pKk3Vy1CbEtWWN/6m1HBBnkOSZnRtQE8+RxBUebZde8
-	xrGM5pPSmTKZ0gMfEesAEiovG5umVyWSp6pFo5V0bso3WZL5NNqb2cyZoPiw8nIsxYBPBwRN4Yn
-	pqHcxQEMvQofncblpeIYtVAPFuskqI3oZlhcM35+eAPA5VUVZz5pzJB6F5YAi2ukNKIfUzFEfAX
-	b+2tYFTmQJjemioWur0lvEhinQ63BzGBwZqXygTySFpp5m9FLy5BZWjbRbJTMjAyCIQViRlpjSt
-	AF6s9MUjfWMbVod5s7V8l2nPNNuyr5HWf6K+aJIxxSMWrJ
-X-Received: by 2002:a05:6808:4fe2:b0:485:a9b2:5457 with SMTP id 5614622812f47-4868df63ae3mr15052790b6e.35.1781040718541;
-        Tue, 09 Jun 2026 14:31:58 -0700 (PDT)
-Received: from [172.22.22.28] ([73.62.185.64])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4865b5a5a64sm17024127b6e.4.2026.06.09.14.31.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jun 2026 14:31:58 -0700 (PDT)
-Message-ID: <b89fe088-496f-4281-9d27-7f8b0b3f38cb@riscstar.com>
-Date: Tue, 9 Jun 2026 16:31:55 -0500
+        d=1e100.net; s=20251104; t=1781043956; x=1781648756;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=6D7duqRcD3fdsTRow2UhPRWiLjw5TIDW3U11ZLjAtzg=;
+        b=az3cuRBT4FUP4Ftv4QrWu67kUll2i8UIDYSd3cMS2A56cqX4OI/pFb8y00zU1aySXb
+         8Cj1dFHs3dBcoAL5a5sW96N087CWPB6HdX4hZ6StfIwWsfkD86+WGlcI2oM5e9L884Cc
+         Q8KZ5aIFKxYt05CMNjs6LhTt02LRWRo0UnJB22b0Kv8AGjF1+zKqQwvUZ3X5ZuRz6h1Z
+         MYYWZZ8zUzzH8B/+Sf4FWWG2usEW7gZLOziyUfT0i9v17qG+b4+AOXWgXihdu3I03828
+         tXxmTeHDKZTRro6fuIwEG75ARqukq7Ldh9a3MGjBolwlMjC8XDn/XURS1Nx8SgndalQU
+         zYCQ==
+X-Gm-Message-State: AOJu0YzAM1eJ9zwtISCB2NtME1NdpcC8wcd0fa7IV0cErEDPwtF3y5LI
+	ukywxQDU6yHv2T5BKhuuR459EsKpjx51qL1HvCTd72q9GEaYalvzErMc4OIW6oQ3FxQ=
+X-Gm-Gg: Acq92OEC2ikT95WuN/99+AQ4f0t1FMOewDvX4fbA4l1EFmdnKwSMUpRUkgNSIl1pUEd
+	QKNev9zAVGW5zY/9OKUCYI2SlTUcznXmnktxhm1WYfYbnHT7Hopchz9fP9LVKTF+OZlq0BV1CMS
+	e28kI8QJuP7IObgwTQQ94Hqny+21+AeKL3IY++fpvrxrSpKh9H+WvWmK1bWTrOxpyML/4s6kw7I
+	4kg4JmBHJ8alFvPqh+TBP9hHWKt2MaqFHhunE+vDNDOLNkA35Nn2ycbBHO4S7D6VeN7bCFgLMS5
+	+aGplwVcKa9oIRVqj05hjIsEzFWzbOztIIulXyVYPnU0QkRRIZENA+iEDMYE/kDBFYAKKZRrBeK
+	rNHfPenc2IeX5VUTgLyO5li+ZoCz+jdA+7DxywlWKcMtFwBODJCZsvi1/XzXqt1I5apXcHb1xFC
+	SGDoyWAFvhfaaxanlxw0vTGzOYiRYisrc=
+X-Received: by 2002:a17:903:2381:b0:2c2:27be:39a7 with SMTP id d9443c01a7336-2c2a1c9ac2emr57718625ad.29.1781043956535;
+        Tue, 09 Jun 2026 15:25:56 -0700 (PDT)
+Received: from localhost ([71.212.202.210])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2c164f6e2adsm238181875ad.5.2026.06.09.15.25.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jun 2026 15:25:56 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: linux-gpio@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+ Christian Lamparter <chunkeey@googlemail.com>, 
+ Johannes Berg <johannes@sipsolutions.net>, 
+ Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Roger Quadros <rogerq@kernel.org>, 
+ Tony Lindgren <tony@atomide.com>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
+ Pavel Machek <pavel@kernel.org>, Matti Vaittinen <mazziesaccount@gmail.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Jonas Gorski <jonas.gorski@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+ Vladimir Oltean <olteanv@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ linux-wireless@vger.kernel.org, linux-omap@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+ linux-sh@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-leds@vger.kernel.org, netdev@vger.kernel.org
+In-Reply-To: <20260520183815.2510387-1-arnd@kernel.org>
+References: <20260520183815.2510387-1-arnd@kernel.org>
+Subject: Re: (subset) [PATCH v2 00/10] gpiolib: fence off legacy interfaces
+Message-Id: <178104395573.234140.4413143072350533512.b4-ty@b4>
+Date: Tue, 09 Jun 2026 15:25:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 13/14] net: stmmac: tc956x: add TC956x/QPS615
- support
-To: Rob Herring <robh@kernel.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, maxime.chevallier@bootlin.com,
- rmk+kernel@armlinux.org.uk, andersson@kernel.org, konradybcio@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linusw@kernel.org, brgl@kernel.org,
- arnd@arndb.de, gregkh@linuxfoundation.org,
- Daniel Thompson <daniel@riscstar.com>, mohd.anwar@oss.qualcomm.com,
- a0987203069@gmail.com, alexandre.torgue@foss.st.com, ast@kernel.org,
- boon.khai.ng@altera.com, chenchuangyu@xiaomi.com, chenhuacai@kernel.org,
- daniel@iogearbox.net, hawk@kernel.org, hkallweit1@gmail.com,
- inochiama@gmail.com, john.fastabend@gmail.com, julianbraha@gmail.com,
- livelycarpet87@gmail.com, mcoquelin.stm32@gmail.com, me@ziyao.cc,
- prabhakar.mahadev-lad.rj@bp.renesas.com, richardcochran@gmail.com,
- rohan.g.thomas@altera.com, sdf@fomichev.me, siyanteng@cqsoftware.com.cn,
- weishangjuan@eswincomputing.com, wens@kernel.org, netdev@vger.kernel.org,
- bpf@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20260605010022.968612-1-elder@riscstar.com>
- <20260605010022.968612-14-elder@riscstar.com>
- <20260605144758.GB3659201-robh@kernel.org>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20260605144758.GB3659201-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15.2
 
-On 6/5/26 9:47 AM, Rob Herring wrote:
-> On Thu, Jun 04, 2026 at 08:00:20PM -0500, Alex Elder wrote:
->> From: Daniel Thompson <daniel@riscstar.com>
->>
->> Toshiba TC956x is an Ethernet AVB/TSN bridge and is essentially a
->> small and highly-specialized SoC. TC956x includes an "eMAC" subsystem
->> that can be accessed, along with several other peripherals, via two
->> PCIe endpoint functions. There is a main driver for the endpoint that
->> decomposes things and creates auxiliary bus devices to model the SoC.
->>
->> The eMAC consists of a Designware XGMAC, XPCS and PMA. Each eMAC is
->> supported by an MSIGEN that bridges TC956x level interrupts to PCIe
->> MSIs.
->>
->> Add a driver for the eMAC/MSIGEN combination.
->>
->> Co-developed-by: Alex Elder <elder@riscstar.com>
->> Signed-off-by: Alex Elder <elder@riscstar.com>
->> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
+
+On Wed, 20 May 2026 20:38:05 +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> The order is wrong here unless you worked on it and then Daniel took
-> over. Tags should be chronological order.
-
-I think this was a dumb reorder I did to address a complaint
-from checkpatch, but in any case I'll fix this.  Yes, my
-signoff should "wrap" the others.
-
->> ---
->>   MAINTAINERS                                   |   2 +
->>   drivers/net/ethernet/stmicro/stmmac/Kconfig   |  14 +
->>   drivers/net/ethernet/stmicro/stmmac/Makefile  |   2 +
->>   .../ethernet/stmicro/stmmac/dwmac-tc956x.c    | 818 ++++++++++++++++++
->>   4 files changed, 836 insertions(+)
->>   create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-tc956x.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 0439607d1155f..418537cbefbbb 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -27059,6 +27059,8 @@ S:	Maintained
->>   F:	Documentation/devicetree/bindings/net/toshiba,tc956x-dwmac.yaml
->>   F:	drivers/gpio/gpio-tc956x.c
->>   F:	drivers/misc/tc956x_pci.c
->> +F:	drivers/net/ethernet/stmicro/stmmac/dwmac-tc956x.c
->> +F:	include/soc/toshiba/tc956x-dwmac.h
->>   
->>   TOSHIBA WMI HOTKEYS DRIVER
->>   M:	Azael Avalos <coproscefalo@gmail.com>
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
->> index e3dd5adda5aca..8d247e033e356 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
->> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
->> @@ -404,6 +404,20 @@ config DWMAC_MOTORCOMM
->>   	  This enables glue driver for Motorcomm DWMAC-based PCI Ethernet
->>   	  controllers. Currently only YT6801 is supported.
->>   
->> +config DWMAC_TC956X
->> +	tristate "Toshiba TC956X DWMAC support"
->> +	depends on PCI
->> +	depends on COMMON_CLK
->> +	depends on TOSHIBA_TC956X_PCI
->> +	default TOSHIBA_TC956X_PCI
->> +	select GENERIC_IRQ_CHIP
->> +	help
->> +	  This selects the Toshiba TC956X (and Qualcomm QPS615) support in the
->> +	  stmmac driver.
->> +
->> +	  This provides support for the ethernet controllers found on these
->> +	  devices.
->> +
->>   config STMMAC_PCI
->>   	tristate "STMMAC PCI bus support"
->>   	depends on PCI
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
->> index a1cea2f57252e..e8e7f95dbe3e8 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/Makefile
->> +++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
->> @@ -51,4 +51,6 @@ obj-$(CONFIG_STMMAC_PCI)	+= stmmac-pci.o
->>   obj-$(CONFIG_DWMAC_INTEL)	+= dwmac-intel.o
->>   obj-$(CONFIG_DWMAC_LOONGSON)	+= dwmac-loongson.o
->>   obj-$(CONFIG_DWMAC_MOTORCOMM)	+= dwmac-motorcomm.o
->> +obj-$(CONFIG_TC956X_PCI)	+= tc956x-pci.o
->> +obj-$(CONFIG_DWMAC_TC956X)	+= dwmac-tc956x.o
->>   stmmac-pci-objs:= stmmac_pci.o
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tc956x.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tc956x.c
->> new file mode 100644
->> index 0000000000000..c77585e4a50e6
->> --- /dev/null
->> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tc956x.c
->> @@ -0,0 +1,818 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +/*
->> + * Copyright (C) 2026 by RISCstar Solutions Corporation.  All rights reserved.
->> + *
->> + * Derived from code having the following copyrights:
->> + * Copyright (C) 2011-2012  Vayavya Labs Pvt Ltd
->> + * Copyright (C) 2025 Toshiba Electronic Devices & Storage Corporation
->> + */
->> +
->> +#include <linux/auxiliary_bus.h>
+> This is an update of all the patches that are still required before
+> we can actually turn off CONFIG_GPIOLIB_LEGACY for most platforms
+> in the final patch of this series.
 > 
-> Based on the block diagram, these are PCI devices. Auxiliary bus is the
-> wrong thing to use here.
-
-As I said in the other message, I'm going to rearrange this
-to use pci-ep-bus and platform drivers.  Most of the core
-code should be stay the same but the overall structure will
-change.
-
-Thanks for your suggestions.
-
-					-Alex
-
+> I originally posted this as a series in
+> https://lore.kernel.org/all/20250808151822.536879-1-arnd@kernel.org/
 > 
-> Rob
+> [...]
+
+Applied, thanks!
+
+[09/10] ARM: dts: omap2: add stlc4560 spi-wireless node
+        commit: c5a0ac76b364bbd1d4fb7e440edabcd2a369343c
+
+Best regards,
+-- 
+Kevin Hilman (TI) <khilman@baylibre.com>
 
