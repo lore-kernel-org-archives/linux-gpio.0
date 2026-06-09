@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6AD1DF25C;
-	Tue,  9 Jun 2026 03:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7F01A9F90;
+	Tue,  9 Jun 2026 04:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780975567; cv=none; b=IZqHvYuRovWewQ1qKGZ2vhjbdn9qsiDYXWBWcsynDLo7GL3I6vNP6f9ksfKNEhnm1ShPvIx12igUExKYkfqyY47jxxDIL7sloq7CLflsj4bxgK8TE5+3pmWdJ2XCA4ilrJwWZnlTENYh+IP1eg5wJfXQ+vOvAU+EOX1p2t8xBTM=
+	t=1780978660; cv=none; b=ks4QfKRjN5YjEwb2OHpsAfpF79kz3FU8PdeLzPt5Gy98sebLWTVyd4tTaVNlPrzJrCzf0lADefUk//COxfxfH5heIvko+uCtCNYPIz+npwNRzc4hwlOQ7gg8GMWOoFg4o+2b5xXvH/7NOcA2eBsK3US7DNbWDU3ErIoFxcrhLrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780975567; c=relaxed/simple;
-	bh=ttVqp3RcfN2X0ogQApPD1BVoMIAm1VF9QckaMahgyPs=;
+	s=arc-20240116; t=1780978660; c=relaxed/simple;
+	bh=6t46VKG7KFnxFCNrUZLTQ1Fo6crd2P6NO2NQsVE2PgA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eHMrVX36XWfN7/8g0jEkbuVXl5EAZIbmSEnwKeuRfcphVopwePcUFa3hTSIWluhNoe5mnD/sM6MNCmzWFaS3tKgfB3drDZkwBUO55N5fQuSP0nFPNIT5RasmveI2zlJTa74v3OZU9U9J6PXc+qg7AYK0wzyM4IcNsTrhteloW0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iFmxC3Rk; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=WJv6SekJ+PF5PTgvNWWOUI2Qk3yzIl1eiObwz4S8feZ01k4ed1hTPCwP2g9dHj/mIvGsj8fb0iUTraKCQvZdS1LE4BMsDvtVvlyxg9k/3h9AkqbGnvMBKffsQVIiUBz8gAIaF1B2QCep+u7/jIKVHT1+BeGJgtcPc1nrQetXfDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PjG9L5kI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iFmxC3Rk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B731F00893;
-	Tue,  9 Jun 2026 03:26:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PjG9L5kI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 251481F00893;
+	Tue,  9 Jun 2026 04:17:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780975566;
-	bh=DTwyV+49fLCBDx2v0KMlJ6TqGe0qDGgv9OAfvSH0tYE=;
+	s=k20260515; t=1780978659;
+	bh=4/Ifnzy+i2GJg0cvs6T4Vau8bHcoPyc7f0xcmVw8DhE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=iFmxC3RkKrUAh3QAMl5gVzb8HdROjdH5oT0UbWEJI/omLbuPjezupcvYRxHysTALW
-	 PwBym09KYsmIImspBm9kvoe39DehTn/5wtF7q1Io3gED0Cnmmlvjb8E2ctQSAEz04x
-	 S1jJSWnl+tOFBaMa4X8sI12BBltgG1aA1kjT9IIN/BxI4czNurrj8HWr6lzvroPith
-	 u4asF+F3VomimsF7xgZzwEF0OOZ30gNyvRVyJwKN8Gk5Zh/sAgDNGWVNEACoAeXGnQ
-	 ydNvQXYNvRuEnUaMI6AyrlDvqlBmnbAsReI7IN5Gap0o4bCQSzO/kz+3QF/vogd6Is
-	 M56LbLVzROnmQ==
-Date: Mon, 8 Jun 2026 20:26:04 -0700
+	b=PjG9L5kIoMIxAs+d4+r0Rr3uPbfTciXU4Ls0+SI6JF3tAJudlSpLAopxQHkjE0ebe
+	 YAxBDaUPs492cLN3lFx9sL+8+LWKPoe2VbO8zq8v+RthKELA0CFUqBBwy0usR7mFfg
+	 OstadHjKQQ6VIDpeoqXg5Ps4i3Y4lXVrHra7sO7QdKKXo1NfPt/OzPADXQFJEpthsK
+	 gtaWg9Gf78U4XLRFCztpDPnP1ZwEAuA1sTWotC0aMcNmB5BSXxkg9bSUvGHm+OMwaq
+	 BhKoFqf/rlyb/BSoF/NlKVQjwAEBdBML68q25jard/X4ZfOBia5CCzbz1Oh/OU6tvs
+	 s7QaPVz/NOL0A==
+Date: Mon, 8 Jun 2026 21:17:37 -0700
 From: Drew Fustini <fustini@kernel.org>
 To: Icenowy Zheng <zhengxingda@iscas.ac.cn>
 Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
@@ -45,11 +45,9 @@ Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
 	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org,
 	linux-usb@vger.kernel.org, Icenowy Zheng <uwu@icenowy.me>,
 	Han Gao <rabenda.cn@gmail.com>, Yao Zi <ziyao@disroot.org>
-Subject: Re: [PATCH 01/12] dt-bindings: clock: thead: add TH1520 MISC subsys
- clock controller
-Message-ID: <aieHzC76oys5ejWT@thelio>
+Subject: Re: [PATCH 00/12] Add TH1520 USB support
+Message-ID: <aieT4WmWK9416M9E@thelio>
 References: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
- <20260507081710.4090814-2-zhengxingda@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -58,22 +56,33 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260507081710.4090814-2-zhengxingda@iscas.ac.cn>
+In-Reply-To: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
 
-On Thu, May 07, 2026 at 04:16:59PM +0800, Icenowy Zheng wrote:
-> TH1520 has a subsystem clock controller called MISC_SUBSYS in its
-> manual, mainly controlling clocks for USB and MMC/SD in non-TEE
-> environment.
+On Thu, May 07, 2026 at 04:16:58PM +0800, Icenowy Zheng wrote:
+> This patchset adds support for T-Head TH1520's USB functionality, and
+> enabled it on the Lichee Pi 4A board.
 > 
-> Add device tree binding for it.
+> The first 3 patches add support for the MISC subsystem clock
+> contrtoller, which contains some USB clocks.
 > 
-> Signed-off-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
-> ---
->  .../devicetree/bindings/clock/thead,th1520-clk-ap.yaml |  5 +++--
->  include/dt-bindings/clock/thead,th1520-clk-ap.h        | 10 ++++++++++
->  2 files changed, 13 insertions(+), 2 deletions(-)
+> The next 2 patches add support for the USB PHY of T-Head TH1520, which
+> is a wrapped Synopsys USB3.0 FemtoPHY with a little integration quirk;
+> the controller itself is a properly configured DWC3 controller with sane
+> default register values set.
+> 
+> Then one patch adds the USB PHY and controller nodes to the TH1520 DTSI
+> file.
+> 
+> The remaining half of this patchset dedicates to enablement of USB on
+> TH1520, because of the onboard hub of that board -- its USB2 signals are
+> behind a switch that needs to be toggled on, and Vbus supplies for both
+> the hub itself and downstream ports are managed via I2C-expanded GPIOs
+> (because the SoC does not have enough GPIO pins).
 
-Thanks for working on USB and sorry for the delay in reviewing this series.
+Hi, thanks for working on USB. I tried to apply it to next-20260601 and
+several of the dts patches no longer apply cleanly. Could you rebase?
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>
+In the meantime, I'll apply to 7.1-rc7 for testing.
 
+Thanks,
+Drew
