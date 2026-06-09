@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AB02DB798;
-	Tue,  9 Jun 2026 06:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC6A2E7391;
+	Tue,  9 Jun 2026 06:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780985742; cv=none; b=TeCDBLtNjUUaeFbepHahON22ARvrBvXBdp4ypp/QGKnqMUbcU97V9arC5QqzUKmoVG3ISjew/17ztgMpDN6z/eUpZm0KMTiQ3qhAp7jcNXWGyoCnxG1j9dNz4HZZUMr6SkjUNchFWJ4nTg3U8q6ZBYOiaFkmFMDJMjhTUMMnln4=
+	t=1780985773; cv=none; b=WL2y4VXjUaJuFUNxpiY+fIYt/gPHIHS+Fn8NYh0evploJF//U10eh+0Hst37/YLEKU1iKg/IF+kl11Is1BpIghegs1kV4z5vAcCpUu80Q2oplu9pFUVolgfCnkmHVrq2voLSTsJXGeszEQWIcpAr3lttNpsEsCPmqPq/5RDGBVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780985742; c=relaxed/simple;
-	bh=OA9+vXUeZ+UQccVDXQoE6wVX3AVKLvo/5iHGD9Xu3xM=;
+	s=arc-20240116; t=1780985773; c=relaxed/simple;
+	bh=gZ1kkCFzmNSbTCDKfw8Q0P/VBoZB9c/r9Yianq/IU14=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V3mzf5Ntf0m7a+hSTsO2bmAEO0+O+OzScSLOUoj3uByxh2g+OxUSkrZ1C0GRpER0SrhdbNga+zznDj4oC50zYFTVHESARb1NhcEBt+0QqkAYIwJdZ5GwOAEO5T/3feMc242qCPIg/6V5Ldb4MPiGZjM16D246Xt49Xcgh2f7WXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4jOmEGM; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=MYl40FhjOJShObgIk+KMjFgaKC+t3HKHCKiK//uDGrUr75N9Tm9xnhfSUBjTFlgXuazJnMlSBPosWc9P9djR3hWqZXvmgn8lo9BO7qbudAnUBwuNLqIZvFeNUMnOUa9kspGtle/uEzurlgxBJqQMfpr/ROSeg+J3g9QR+exQDOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnkwVPhQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4jOmEGM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6038B1F00893;
-	Tue,  9 Jun 2026 06:15:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnkwVPhQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22A581F00893;
+	Tue,  9 Jun 2026 06:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780985740;
-	bh=7zbhbgbor1E1JAoHOKXANvflw7c5UsmJuOJ1lQkpXPs=;
+	s=k20260515; t=1780985772;
+	bh=GRmx4DwqEvH8Sj/Hh6Skbn6x441MCdzscjye44bXYhE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=L4jOmEGMLdZbnUFC91Xcv90XokSk4w+AGxkV6H8bmHE4evsewi07htRX2eJZgwXM/
-	 aGC1buDENkv8iOVsrg/REQRMHn1/elvJuUYp+yLamckNGNo6UBOsBuAP+m0kZliTZp
-	 B1bvXI33G7e54G3jA89KZTR3sgUkC2fnk29FIbpH5HsQddeE1wVPLdAjZFujnew6cr
-	 JscsRfG4+lZQ0t9rCzSZXM63QWHupcbc/k8p4Elc0jgbqw08TXLhsOsjNp1gsQtXmn
-	 4FFtM23t72nByckqY8ucUnFBtckMF8tt3VCcgqWif8gjJdXapIr0WVZtXSRLAlSCDS
-	 loS6WtMFeNCag==
-Date: Mon, 8 Jun 2026 23:15:39 -0700
+	b=gnkwVPhQb1ZwNiquck1wvt/I4u7Xwi7KfygraCnUeVOcnNjZoHwgzswIY7tGx4q21
+	 9xqTDQdDBnROooohabC/eJx7QexicCmG6FBAPHdY5lC7YXSGxW/AM8t+XAVWxjkLgQ
+	 f5HCzHfyyLcNsmqOf+WPOHLJANZnbEuvwb1vjdJiABe1OFQuXv2W/0UURrRaIVk4na
+	 gaNBLcthN5C57QLJajeCAn8uMU+eq6ohIfBWseszie91vLW2b8SbBmPrnqMFHLR3Iz
+	 Ocj0FlWFqf2FqQEWX7v82OtzUcllX4I+cnPg1oNqK+xZyxvrGyKK6/6fvh5OMcTubt
+	 eupEoMmaF6uvA==
+Date: Mon, 8 Jun 2026 23:16:11 -0700
 From: Drew Fustini <fustini@kernel.org>
 To: Icenowy Zheng <uwu@icenowy.me>
 Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
@@ -45,13 +45,13 @@ Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
 	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org,
 	linux-usb@vger.kernel.org, Han Gao <rabenda.cn@gmail.com>,
 	Yao Zi <ziyao@disroot.org>
-Subject: Re: [PATCH 02/12] clk: thead: th1520-ap: add support for MISC subsys
- clocks
-Message-ID: <aievi0s-3SO8hV6a@thelio>
+Subject: Re: [PATCH 03/12] riscv: dts: thead: add device tree node for MISC
+ clock controller
+Message-ID: <aievq4dae3GHHq0c@thelio>
 References: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
- <20260507081710.4090814-3-zhengxingda@iscas.ac.cn>
- <aier9XppLeCkJydw@thelio>
- <93b867c1b7f5526cc25cb04f838432cd752f5981.camel@icenowy.me>
+ <20260507081710.4090814-4-zhengxingda@iscas.ac.cn>
+ <aiehUzl-qZeZDjXP@thelio>
+ <67790d90737c13127100510020262d6921810e34.camel@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -61,51 +61,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <93b867c1b7f5526cc25cb04f838432cd752f5981.camel@icenowy.me>
+In-Reply-To: <67790d90737c13127100510020262d6921810e34.camel@icenowy.me>
 
-On Tue, Jun 09, 2026 at 02:01:43PM +0800, Icenowy Zheng wrote:
-> 在 2026-06-08一的 23:00 -0700，Drew Fustini写道：
-> > On Thu, May 07, 2026 at 04:17:00PM +0800, Icenowy Zheng wrote:
-> > > The TH1520 SoC contains a MISC_SUBSYS clock controller, which
-> > > allows
-> > > controlling of USB related clocks and MMC/SD controller AHB bus
-> > > clocks.
+On Tue, Jun 09, 2026 at 01:35:11PM +0800, Icenowy Zheng wrote:
+> 在 2026-06-08一的 22:14 -0700，Drew Fustini写道：
+> > On Thu, May 07, 2026 at 04:17:01PM +0800, Icenowy Zheng wrote:
+> > > The MISC_SUBSYS clock controller on TH1520 SoC is a clock
+> > > controller
+> > > mainly controlling USB-related clocks (which isn't utilized yet)
+> > > and
+> > > MMC/SD controllers' AHB bus clocks.
 > > > 
-> > > Add support for this clock controller, in order to enable USB
-> > > support.
-> > > 
-> > > Signed-off-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
-> > > ---
-> > >  drivers/clk/thead/clk-th1520-ap.c | 64
-> > > +++++++++++++++++++++++++++++++
-> > >  1 file changed, 64 insertions(+)
-> > > 
-> > > diff --git a/drivers/clk/thead/clk-th1520-ap.c
-> > > b/drivers/clk/thead/clk-th1520-ap.c
-> > > index 3a6847f1c950f..24f785f0b329a 100644
-> > > --- a/drivers/clk/thead/clk-th1520-ap.c
-> > > +++ b/drivers/clk/thead/clk-th1520-ap.c
-> > [...]
-> > > @@ -1609,6 +1663,12 @@ static int th1520_clk_probe(struct
-> > > platform_device *pdev)
-> > >  			return ret;
-> > >  	}
-> > >  
-> > > +	if (plat_data == &th1520_ap_platdata) {
-> > > +		ret = devm_clk_hw_register(dev,
-> > > &usb_suspend_div_clk.hw);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +	}
+> > > Add the device tree node for it along with the missing bus clock
+> > > references for MMC/SD controllers.
 > > 
-> > Should usb_suspend_div_clk.hw instead be registered under
-> > 'if (plat_data == &th1520_ap_platdata)'?
+> > Is there a functional reason to modify the mmc nodes in this series?
 > 
-> Do you mean misc_platdata?
-> 
-> Yes, this is an copy-n-paste error that deserves a fix.
+> When the clock isn't referenced, Linux will disable it unless
+> `clk_ignore_unused` parameter is passed.
 
-Hah, yes, I also had a typo :)
+Ah ok, thanks for explaining.
 
-Thanks,
 Drew
