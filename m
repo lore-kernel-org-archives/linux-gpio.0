@@ -1,109 +1,99 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521A83DD512
-	for <linux-gpio@vger.kernel.org>; Tue,  9 Jun 2026 07:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC45E3E835E;
+	Tue,  9 Jun 2026 08:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780990402; cv=none; b=GOBmcTEGabcR//JQgkuEcWQw5zdVBgvVWL4yI8rMv6TwrSt1bYpJ96qNM645olTy1sganLwiVx3eylQdq/7J2OQ03t1tAHlaTL5iWfnQPw8BdIPQO5r/1lUyS7+GEj/ebKryFnJEDAge0h/Y4CfIBkzT+ClPVAZY0wM8dSEGjYs=
+	t=1780992836; cv=none; b=sPVlX9Ccvw7cfjk6dEPU3c4UWrRm8YmNLWRLJPRHS+CRJ6zCUuJmrRdUokZGxLBeKSYqzKtHt33Eec144HxtqHE/fQOOXEW5wOnZX/DvFQD02D2AwSsP5KNqYHTQ18oxeul2uIqLtgwIcKV3SQR5E+CKJAPEnxYlacCzAS5CnKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780990402; c=relaxed/simple;
-	bh=RWkA0L6Q2phcYPLAt9VvFae3fkF5zlose9aOWTUDao0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oE1Rg9wGZFRWo5mET69jsxNuDJNenRm1OFz3yaxOAWZ5nVZBGdgPGgc/OmFOyORPig3HHU7+FZroNDYTimLQSVCMv1GlbZGBDbltlY7yLSulp+wWc97jyDzJqAPxf/19rkeU5hHm60yE2n71L6E0Kz9DiaYcvhnGLxPakYEnWl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HqMYSfVS; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1780992836; c=relaxed/simple;
+	bh=UQADokhMMs9ijQx/8MIvZTTkJpSOxP4ort4y3prZCtk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=drmOWsHSDKaVIpoDRNia07+jKnXY1V2ltahuzJ7Mmvr28fkYt9BZf2XJJ+Gb2846MRVekiygwfc3yIZ7f7JlthYcvXnIT71/EbPVr9OZHfqU8iGkaY84/keviYJ5wx69eb3tZ/nO8KJGlHUFaWpCPob2f+RURUgk3iKzKybIqN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2Gyq1ot; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqMYSfVS"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-842264dde84so3038962b3a.0
-        for <linux-gpio@vger.kernel.org>; Tue, 09 Jun 2026 00:33:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1780990400; x=1781595200; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EZxhU2iD6PdOyojyjLvdXFMxCVOPuNzGVXqMgxsvNpE=;
-        b=HqMYSfVSjYbnFcQNHI7CGVcdGJkSxy77f5Ip2TId1N1c9/PYkZPZ4aNLH5b+PCzCZw
-         lL7LjQFQOi/QgKh/kH7AKcCRVU1TFsR+PTLiVLNCZas+1wfJq1+i5xDVjneVHfOtX+PB
-         Ryx1b9pXxkk3iVNsguhSuN6RhD6/0nXxcdc5CYal/dRL/nQXVMHLE7wEtV2kVLWKj23E
-         Bu86DZgZf6JiCfIKeTXhn+XsxkajKBPEnHP2qLbzDD+6jE/WeHh1mGyo/8fTMzNKp93Z
-         nPoXt5rcodkFO3CUi2cqUvQhT2VOmq6SCTpEuHDzgg/jkpltiJIrySfBZxZ0wTRNdegH
-         IDQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780990400; x=1781595200;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EZxhU2iD6PdOyojyjLvdXFMxCVOPuNzGVXqMgxsvNpE=;
-        b=rZ66Vo/1VyH54EBd2IHgg506S0eVmLbu+OsoeuYp1/GtQyPY94f9vvVgeM4P1VeLwm
-         sZwgkpNKEv4fqsUg3+IXeQV1WU/Gomej5dPPCBam1k3x46/7sJVvlkZ9vKgrV7Hk3nPt
-         xTxTvVq0EBrq/gdLyqYCvSesakofR/DfF9b2kJccVSVjS1kV1Z9+c4MybWXRa5L+UI88
-         ZXy4eoZn91Z3E2dtjL+mm7ButLMTuJfq7UlQiXF1cu+l5A5Ixbn68s7jyvv3CHIKtDXb
-         hW8wBb2EcKrPDHx/3Z3tBYhd3CGZuQ/Bt6IV+QalQ0rg7uiF5pEB9XDNQBXy2LORmpn4
-         kH4A==
-X-Forwarded-Encrypted: i=1; AFNElJ+FA3ZLsDo8jyBP5gb/1EnGA5hKbDM57E/YpRgh8De6sGx5oH5d17YaRTn+Z1pBBBI1Et1UaOdQX+ZP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg5puQGXY3fsfLVzpJkQMHRFfiGctX90n5iPg8jvzCerWaLnlu
-	E1FtL32lpLIAhD/lam1HzXbqdJPB0kP/dU4tXB0dBPzJ2dVjLGCqeeON
-X-Gm-Gg: Acq92OF9jDN0zxs/kJRIcAPS7mJRsSTxav5RmNS3kdvMHAdCiQzlFvHZg6/LWtD8mFv
-	G9WJSQ1b5C3ala+hQIIO8mZ582SYzr9HHejDvu6iIMvWK5+TMK7fe7y5SRJ+/C1NLi5xCtS96gF
-	UxXPEczuJALk2Lauk4PN3J473DgWcVp5hywZ/KvD0HcAzzuOuG+Wp7Ut1q7ALasKNsNp9tq3uZb
-	GXPitaHP7VZLLqhi+nGBhKuRH5383v0fnPtj0EtZVgaugf8uak9SrnLMDWTOCMYl49vNs+6qNpU
-	OX4poqi8q692fXWjFqjvztHUMqu2H/uOGblrs35uMKS5o9PuYrVDwJEjt/mOF5x8fq8SHJWApOB
-	xjKeQfoDgNfIhLM+qHw0z6x6tS2BNcDWuN8b/RoKUX5oVELb9EYAvnRBaHqB16ygB53LI20WWcH
-	GVuM2MvumT6xCR4cO4nxIxGRmxtf7ebMMfJ9xE/RqpKKnhQtaGEFL9Yw==
-X-Received: by 2002:a05:6a21:7a9b:b0:3b2:86a4:acbd with SMTP id adf61e73a8af0-3b4d39ff987mr15436890637.2.1780990399495;
-        Tue, 09 Jun 2026 00:33:19 -0700 (PDT)
-Received: from haichao.tail057a43.ts.net ([2001:da8:e000:1206:37c9:44fa:729b:6aaa])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c85df034a2csm17670712a12.3.2026.06.09.00.33.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2026 00:33:19 -0700 (PDT)
-From: Ruoyu Wang <ruoyuw560@gmail.com>
-To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: Harini Katakam <harini.katakam@xilinx.com>,
-	Soren Brinkmann <soren.brinkmann@xilinx.com>,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ruoyu Wang <ruoyuw560@gmail.com>
-Subject: [PATCH] gpio: zynq: fix runtime PM leak on remove
-Date: Tue,  9 Jun 2026 15:33:13 +0800
-Message-ID: <20260609073313.5-1-ruoyuw560@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2Gyq1ot"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 424B7C2BCB4;
+	Tue,  9 Jun 2026 08:13:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1780992836;
+	bh=UQADokhMMs9ijQx/8MIvZTTkJpSOxP4ort4y3prZCtk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=c2Gyq1otZ/yySsQw9ulQoVWns/Gl20Ud6rFtvfVm/cexzcNcYHXVGXTNgTC1UVaVq
+	 xjXEi29t23V7C580LQ6WChscGuyuJvyIhjvg6rCrsfMvC4BG5B1ypM1M0aN7JkML/u
+	 Y0Lv01sZl4qBRTPt+uuraPi+qp52s4thX4LZ6DF30SwQA7MRtmt0ceSF4WlmvHmxBE
+	 H4IVO0LzKvRekXvODxIy5LqEdN4R0bPgMijQnJkHkzSpXTp9MUBCK/jky2hqDH35GL
+	 OPPSVRLspZDpsC+IalmC7nA71lNLi+NI8BXaqxun/XibqROoFIbuTGJ38M47578IOU
+	 6t1bjej40S4og==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 289D5CD8CAD;
+	Tue,  9 Jun 2026 08:13:56 +0000 (UTC)
+From: Alexandre MINETTE via B4 Relay <devnull+contact.alex-min.fr@kernel.org>
+Date: Tue, 09 Jun 2026 10:13:44 +0200
+Subject: [PATCH v4 1/6] dt-bindings: arm: qcom: Add Samsung Galaxy S4
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260609-mainline-send-v1-sending-v4-1-83768fbf404d@alex-min.fr>
+References: <20260609-mainline-send-v1-sending-v4-0-83768fbf404d@alex-min.fr>
+In-Reply-To: <20260609-mainline-send-v1-sending-v4-0-83768fbf404d@alex-min.fr>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Guru Das Srinagesh <linux@gurudas.dev>, Linus Walleij <linusw@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, Kees Cook <kees@kernel.org>, 
+ Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ phone-devel@vger.kernel.org, Alexandre MINETTE <contact@alex-min.fr>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1780992834; l=854;
+ i=contact@alex-min.fr; s=20260421; h=from:subject:message-id;
+ bh=Lrgs0k4d0tyivYZbLbwfL0EK902GKco2rWAQQHTAiDQ=;
+ b=iG960oqpG5Gws+WwzouqzOgwg0yO/ydb451Lct7m2qqXkK6j/9yNPVS2AiPGC3iSmOHyygAN6
+ VNfxO5HAzpdBankvatXefIZzsLlQROSAzrKV9sHFmTZUsrAcXjYyzxt
+X-Developer-Key: i=contact@alex-min.fr; a=ed25519;
+ pk=KOCaxY4v16ptaT0uk1FRkuaDF2n1JhmnYwLiqWD76M4=
+X-Endpoint-Received: by B4 Relay for contact@alex-min.fr/20260421 with
+ auth_id=743
+X-Original-From: Alexandre MINETTE <contact@alex-min.fr>
+Reply-To: contact@alex-min.fr
 
-pm_runtime_get_sync() increments the runtime PM usage counter even when it
-returns an error. zynq_gpio_remove() uses it to keep the controller active
-while removing the GPIO chip, but never drops the usage counter again.
+From: Alexandre MINETTE <contact@alex-min.fr>
 
-Balance the get with pm_runtime_put_noidle() after disabling runtime PM.
+Add the compatible for the Qualcomm APQ8064-based Samsung Galaxy S4,
+codenamed jflte.
 
-Fixes: 3242ba117e9b ("gpio: Add driver for Zynq GPIO controller")
-Signed-off-by: Ruoyu Wang <ruoyuw560@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Signed-off-by: Alexandre MINETTE <contact@alex-min.fr>
 ---
- drivers/gpio/gpio-zynq.c | 1 +
+ Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
-index 571e366624d2a..fafca91128b2e 100644
---- a/drivers/gpio/gpio-zynq.c
-+++ b/drivers/gpio/gpio-zynq.c
-@@ -1014,6 +1014,7 @@ static void zynq_gpio_remove(struct platform_device *pdev)
- 	gpiochip_remove(&gpio->chip);
- 	device_set_wakeup_capable(&pdev->dev, 0);
- 	pm_runtime_disable(&pdev->dev);
-+	pm_runtime_put_noidle(&pdev->dev);
- }
- 
- static struct platform_driver zynq_gpio_driver = {
+diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+index b4943123d2e4..b7e186ed2efc 100644
+--- a/Documentation/devicetree/bindings/arm/qcom.yaml
++++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+@@ -39,6 +39,7 @@ properties:
+           - enum:
+               - asus,nexus7-flo
+               - lg,nexus4-mako
++              - samsung,jflte
+               - sony,xperia-yuga
+               - qcom,apq8064-cm-qs600
+               - qcom,apq8064-ifc6410
+
 -- 
-2.51.0
+2.43.0
+
 
