@@ -1,85 +1,88 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7771233D6C1;
-	Tue,  9 Jun 2026 14:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB01C3546ED
+	for <linux-gpio@vger.kernel.org>; Tue,  9 Jun 2026 14:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781015112; cv=none; b=J0uy/XO2KLB0zFiDAUsCTdocmIVauvVv4JRd+fwWKhw6/GjFi5ChST5qp/DvWe28SN5IPp/APBy1dteoYm/RO+mwQ5BhpdladTD4+btfciyFQ7InvIQ9Mf8zDO2hSONQhoAs7nalAcfmG6Qd69a5UEp5ZcLj36Z7NWCfD2DvGtk=
+	t=1781015616; cv=none; b=twNPsY2k/3cMyN53V2cUthK8aey2EtnLNFDze0X159L0fzuxjwMBxNWWLzMRDs6fhFHsH1q/4tFqC8BzJXIt2FwwKQkgu3E0ylWzaBW/kswULgVF7hix6epkNJURSqPOSX8beoxmT7pyryul6m3o/Imq2ZH4R/OKwMl16oIvHDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781015112; c=relaxed/simple;
-	bh=vZHJjjVhkfMhSV0vi7yJg5GrjlR9OQZXMgbLR2vpUHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oBnLpvow+iLn5+4qZT01PkQ0RAqe4l4LuMbidgTpJHbZ5fQKGNe+rzc/AxmfRjsJbuw3s4AIx+IacfkKn/iC5Qf5Z8A8N3yqH/sVx837Ty9OsaBQRr2ktEMWs0Hk2H3JI/J9+OfZWDhlsMysGrvHfEBDq5xkXpXbqS8x9+7883Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UxEfHweL; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1781015616; c=relaxed/simple;
+	bh=XrP8U0HXQw19/wYVBZXTbx1cKpUrl6kfyD4WIdWc5O8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GbgEqbct6DEZlnnyQT5R1+xDjxOWUJigy2UkJF0O64h90t1IUz4NxuvZ/Ys9QZbjnBj5BR0gHP5510IF8IdtXnVoXXtX3P4X/qlwQF3rfGyWji8Io51xO0y/5JCWO3cusmn7QPMQkTfcBiSTDjAck1dd3jKTUc39zX2mkmSBCZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kbOFPCqp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UxEfHweL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1781015111; x=1812551111;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vZHJjjVhkfMhSV0vi7yJg5GrjlR9OQZXMgbLR2vpUHk=;
-  b=UxEfHweLetAs6HAD/Z1TnhdlW/q9xvKdn4E8mLv7mlK8It7HNEZ25RSy
-   XD+qyhmysbXZUp8ER0Kf9hYdfwElZsm5lCoynBCU2bDE3c0gUlewMefsX
-   4s3CU8JfAdDOmYudalrovhM5xyRUYaVJYs85og+npQ9+2uISMJvsS3DUc
-   C2STJFVk47G4cXiv6OR+cKkh1qK1hjzujw8BEM03FIT+3OFCJpLHAdBTb
-   eqtla4O1dZfHXWH7i0IciSPuRib9iWmQGNOZboCEexsk7Ate6Mt3TpNgH
-   YiS5URwgKMO1LFeqFliKzrZIzWLyAjHKJEsvwFkwPcVXLuFs6GG+vif4O
-   g==;
-X-CSE-ConnectionGUID: lcGFCrydS6y843UkelpH6A==
-X-CSE-MsgGUID: PG82r8oTQ2qQUY9BqWMI0A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11812"; a="93162267"
-X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; 
-   d="scan'208";a="93162267"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2026 07:25:11 -0700
-X-CSE-ConnectionGUID: oGoW6R6ISdqwUR/wKYRxyw==
-X-CSE-MsgGUID: 7a3ICwf+QfSnveObx5SGGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; 
-   d="scan'208";a="247737030"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.162])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2026 07:25:09 -0700
-Date: Tue, 9 Jun 2026 17:25:07 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] gpio: fix cleanup path on hog failure
-Message-ID: <aigiQ-KR-YHiult_@ashevche-desk.local>
-References: <20260609-gpio-hogs-fixes-v1-0-b4064f8070e7@oss.qualcomm.com>
- <20260609-gpio-hogs-fixes-v1-2-b4064f8070e7@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kbOFPCqp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B28F71F0089D
+	for <linux-gpio@vger.kernel.org>; Tue,  9 Jun 2026 14:33:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781015615;
+	bh=LteObBa2V8d+xpLZ3yqKeignRB3Orc8aH9VSuH4O6y8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=kbOFPCqpPjq7gILXJtgxYK9k+hs471wEhMPu8fIwQWflQK/GzRdjd4RaviZdo7DnF
+	 0pHof95OKqtqS+FhW9gh7Gou1d0ls1dZcQ4weIXZ1Ux0bQAEN6v+gs+a/FioBWT5fK
+	 N7zFgw9Cnx2qfiMJP4EA724unzu2mmb2pzVlBzySZu/Q0Lhxkj5gZqMZuvbmbwN27g
+	 BeyH0NvD9ozfO/z+11nFyBL+5W75gGB8jnPi21feXjGlZBfRbsKD1sc4sr6IXyXkx2
+	 Rx9uSpZuuKl1ssMlf3afFMLdEaXC9/0bl1W8KHvUQIS6tBAc1Ye0PlBcabSv6qRXR9
+	 iui8S5Wc3oavQ==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5aa624ff3cbso5689556e87.3
+        for <linux-gpio@vger.kernel.org>; Tue, 09 Jun 2026 07:33:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ8WQSUMP5TFJ2mGRpgJKVVgSlBqkyEeW09r7l9tmBQ6lOv9/lFdUZ6991Dx/Z8/oq75XlS9lTReI1XD@vger.kernel.org
+X-Gm-Message-State: AOJu0YywOxADuQON4tipzhTL1eohLw8NvPwXswlVoMWx5m6JcM4nDYBl
+	AQW/bUcguCJYTcquIjSfXwSe0Nfy2UNKKz9HfY0L5x03B7VXUIaXNN797Rd4ByPbppGDS56DLM3
+	gdnwHS2AXsI/MOVJFPDZlgk1Yg6IwQS+KY1QLDX0/tQ==
+X-Received: by 2002:a05:6512:150a:10b0:5a3:6731:910a with SMTP id
+ 2adb3069b0e04-5aa87babed3mr4198593e87.11.1781015614307; Tue, 09 Jun 2026
+ 07:33:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260609-gpio-hogs-fixes-v1-2-b4064f8070e7@oss.qualcomm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20260609-gpio-hogs-fixes-v1-0-b4064f8070e7@oss.qualcomm.com>
+ <20260609-gpio-hogs-fixes-v1-1-b4064f8070e7@oss.qualcomm.com> <aiggRCmJ8FQEMDib@ashevche-desk.local>
+In-Reply-To: <aiggRCmJ8FQEMDib@ashevche-desk.local>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Tue, 9 Jun 2026 16:33:22 +0200
+X-Gmail-Original-Message-ID: <CAMRc=MdAH2GHhv_AeqYaiETy63X+kRu_nmoxzQxZrdNGgp7iUg@mail.gmail.com>
+X-Gm-Features: AVVi8Cfq45nZjW1wJPTvefNquqHUgN-fIin7DvLlZJYeM-1MLGATBTRxPG8ebog
+Message-ID: <CAMRc=MdAH2GHhv_AeqYaiETy63X+kRu_nmoxzQxZrdNGgp7iUg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: don't process hogs on disabled nodes
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 09, 2026 at 02:17:50PM +0200, Bartosz Golaszewski wrote:
-> If gpiochip_hog_lines() successfully processes some hogs but fails on
-> a later one, the error handling path in gpiochip_add_data_with_key()
-> jumps directly to err_remove_of_chip. This leaks resources allocated
-> earlier for ACPI, interrupts and hogs that were successfully processed.
-> Use the right label in error path.
+On Tue, Jun 9, 2026 at 4:16=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Tue, Jun 09, 2026 at 02:17:49PM +0200, Bartosz Golaszewski wrote:
+> > The core hogging logic uses device_for_each_child_node_scoped(), which
+> > iterates over all child firmware nodes without checking their
+> > availability. Before the code was moved to the GPIO core, it correctly
+> > used for_each_available_child_of_node_scoped() to skip disabled nodes.
+> > Check if the node is available and skip it if not.
+>
+> ...
+>
+> >       device_for_each_child_node_scoped(&gc->gpiodev->dev, fwnode) {
+> > -             if (!fwnode_property_present(fwnode, "gpio-hog"))
+> > +             if (!fwnode_device_is_available(fwnode) ||
+> > +                 !fwnode_property_present(fwnode, "gpio-hog"))
+> >                       continue;
+>
+> Red herring. the device_for_each_child_node*() is already "available".
+>
+> So, teach Sashiko to stop on this, not the first time...
+> https://elixir.bootlin.com/linux/v7.1-rc7/source/drivers/of/property.c#L1=
+132
+>
 
-This seems legit, but there is still a problem with implementation of
-gpiochip_hog_lines(). Ideally it should clean up the crap it left when it
-poops. With that, this one will require a brand new label just before
-acpi_gpiochip_remove().
+Ah, dang it. Need to look more carefully at sashiko reports. I've seen
+many false-positives lately.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Bart
