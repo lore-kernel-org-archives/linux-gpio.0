@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC45E3E835E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4F43EA960;
 	Tue,  9 Jun 2026 08:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780992836; cv=none; b=sPVlX9Ccvw7cfjk6dEPU3c4UWrRm8YmNLWRLJPRHS+CRJ6zCUuJmrRdUokZGxLBeKSYqzKtHt33Eec144HxtqHE/fQOOXEW5wOnZX/DvFQD02D2AwSsP5KNqYHTQ18oxeul2uIqLtgwIcKV3SQR5E+CKJAPEnxYlacCzAS5CnKI=
+	t=1780992836; cv=none; b=mBa9eSaadpI2xj+47ZKasSaSL6yPFNKTDPNmo9WtbcVlAFAyJvxnFaUzK+sC3FI1bNELrMeHwv1gIQ4LzP0bSEABK4j15U9f//LuTz8TxCWc8KsABVrc1x2aqub9P93PMcn4RNu8J6MmkXauRnPmtZwhEunUlJNRHp2LM08PXSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1780992836; c=relaxed/simple;
-	bh=UQADokhMMs9ijQx/8MIvZTTkJpSOxP4ort4y3prZCtk=;
+	bh=7DeREkHBuy3CC/OxlxoJowva/HyNWfGd+W2ZNWZknP8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=drmOWsHSDKaVIpoDRNia07+jKnXY1V2ltahuzJ7Mmvr28fkYt9BZf2XJJ+Gb2846MRVekiygwfc3yIZ7f7JlthYcvXnIT71/EbPVr9OZHfqU8iGkaY84/keviYJ5wx69eb3tZ/nO8KJGlHUFaWpCPob2f+RURUgk3iKzKybIqN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2Gyq1ot; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=ug1H/a3BqrZ1vwF5GGwIPXCNJrEki9g/nX7+NlNGhvmgTB4d5Jzyf5iGvyfWp8f2YLS5BX8W0XGLd95I39EbahQHtUN+8xFxpXXhWZNTKDw6eBHLkVI6VAHCdr4YpKUdUmY0a4Wu7Kdr1BEwmpE9r9QEcOrPCLQ4e9dtW7pU27w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CWOELbB8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2Gyq1ot"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 424B7C2BCB4;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CWOELbB8"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 54473C4AF14;
 	Tue,  9 Jun 2026 08:13:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1780992836;
-	bh=UQADokhMMs9ijQx/8MIvZTTkJpSOxP4ort4y3prZCtk=;
+	bh=7DeREkHBuy3CC/OxlxoJowva/HyNWfGd+W2ZNWZknP8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=c2Gyq1otZ/yySsQw9ulQoVWns/Gl20Ud6rFtvfVm/cexzcNcYHXVGXTNgTC1UVaVq
-	 xjXEi29t23V7C580LQ6WChscGuyuJvyIhjvg6rCrsfMvC4BG5B1ypM1M0aN7JkML/u
-	 Y0Lv01sZl4qBRTPt+uuraPi+qp52s4thX4LZ6DF30SwQA7MRtmt0ceSF4WlmvHmxBE
-	 H4IVO0LzKvRekXvODxIy5LqEdN4R0bPgMijQnJkHkzSpXTp9MUBCK/jky2hqDH35GL
-	 OPPSVRLspZDpsC+IalmC7nA71lNLi+NI8BXaqxun/XibqROoFIbuTGJ38M47578IOU
-	 6t1bjej40S4og==
+	b=CWOELbB8IQffBpp32Xxy7uNHNgdX5kV9vYYSX0s1dXb8DpvPE3LdZO5E0JDYXgEB7
+	 rD4w/6bhh+0JCZ97PTbzLciQUZrZzv8QtC63aWGiJQuj+Pj+COYdE279k9PdTIdyU7
+	 Z9XRWmdM8G0lDiIIp4uEpKGaqrlb8UNkOgCdMSo0cYETDvMVnVU4ho2yu+VLz7O8w+
+	 J+itGKcbMj5wJgwM40fVQG/PSVu7/kWo7o+rQa/PnV2cTw+YGy+XUrjOS/IRWCbHGj
+	 ANnHMbz+CsLkfZ7zPXkVGGEo1+gn/zN/NMxpsIJGp6SCzbsIDK64p2B267FUojhyQB
+	 a/uILlsKYsepg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 289D5CD8CAD;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46302CD8CBD;
 	Tue,  9 Jun 2026 08:13:56 +0000 (UTC)
 From: Alexandre MINETTE via B4 Relay <devnull+contact.alex-min.fr@kernel.org>
-Date: Tue, 09 Jun 2026 10:13:44 +0200
-Subject: [PATCH v4 1/6] dt-bindings: arm: qcom: Add Samsung Galaxy S4
+Date: Tue, 09 Jun 2026 10:13:45 +0200
+Subject: [PATCH v4 2/6] pinctrl: qcom: Register functions before enabling
+ pinctrl
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260609-mainline-send-v1-sending-v4-1-83768fbf404d@alex-min.fr>
+Message-Id: <20260609-mainline-send-v1-sending-v4-2-83768fbf404d@alex-min.fr>
 References: <20260609-mainline-send-v1-sending-v4-0-83768fbf404d@alex-min.fr>
 In-Reply-To: <20260609-mainline-send-v1-sending-v4-0-83768fbf404d@alex-min.fr>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -54,14 +55,13 @@ To: Bjorn Andersson <andersson@kernel.org>,
  "Guilherme G. Piccoli" <gpiccoli@igalia.com>
 Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
- phone-devel@vger.kernel.org, Alexandre MINETTE <contact@alex-min.fr>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+ phone-devel@vger.kernel.org, Alexandre MINETTE <contact@alex-min.fr>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1780992834; l=854;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1780992834; l=2004;
  i=contact@alex-min.fr; s=20260421; h=from:subject:message-id;
- bh=Lrgs0k4d0tyivYZbLbwfL0EK902GKco2rWAQQHTAiDQ=;
- b=iG960oqpG5Gws+WwzouqzOgwg0yO/ydb451Lct7m2qqXkK6j/9yNPVS2AiPGC3iSmOHyygAN6
- VNfxO5HAzpdBankvatXefIZzsLlQROSAzrKV9sHFmTZUsrAcXjYyzxt
+ bh=gqK5qmgCceA2ln5R06RBqAB8HOklQ9gk21qwB8S51xo=;
+ b=oBXpglylxTL8r10fHries+jj6sz0vvWF+pd91bThspg4YbX+vsu5D/py2VN/VVL2saD7OMEIs
+ tTcEhnLN/F2BihmfHOaQaRt8roOJubzk8/A0jBBIY2YOXy41lsUczPl
 X-Developer-Key: i=contact@alex-min.fr; a=ed25519;
  pk=KOCaxY4v16ptaT0uk1FRkuaDF2n1JhmnYwLiqWD76M4=
 X-Endpoint-Received: by B4 Relay for contact@alex-min.fr/20260421 with
@@ -71,27 +71,58 @@ Reply-To: contact@alex-min.fr
 
 From: Alexandre MINETTE <contact@alex-min.fr>
 
-Add the compatible for the Qualcomm APQ8064-based Samsung Galaxy S4,
-codenamed jflte.
+pinctrl consumers can request states while the pinctrl core enables the
+controller. On Qualcomm pinctrl drivers this can happen before the SoC
+function list has been registered, which leaves the function table
+incomplete during state lookup.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+On APQ8064 this can fail while claiming pinctrl hogs:
+
+   apq8064-pinctrl 800000.pinctrl: invalid function ps_hold in map table
+   apq8064-pinctrl 800000.pinctrl: error claiming hogs: -22
+   apq8064-pinctrl 800000.pinctrl: could not claim hogs: -22
+
+Register Qualcomm pinctrl with devm_pinctrl_register_and_init(), add the
+SoC pin functions, and only then enable the pinctrl device.
+
 Signed-off-by: Alexandre MINETTE <contact@alex-min.fr>
 ---
- Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/qcom/pinctrl-msm.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-index b4943123d2e4..b7e186ed2efc 100644
---- a/Documentation/devicetree/bindings/arm/qcom.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-@@ -39,6 +39,7 @@ properties:
-           - enum:
-               - asus,nexus7-flo
-               - lg,nexus4-mako
-+              - samsung,jflte
-               - sony,xperia-yuga
-               - qcom,apq8064-cm-qs600
-               - qcom,apq8064-ifc6410
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 45b3a2763eb8..a2a1e0835735 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -1593,11 +1593,11 @@ int msm_pinctrl_probe(struct platform_device *pdev,
+ 	pctrl->desc.pins = pctrl->soc->pins;
+ 	pctrl->desc.npins = pctrl->soc->npins;
+ 
+-	pctrl->pctrl = devm_pinctrl_register(&pdev->dev, &pctrl->desc, pctrl);
+-	if (IS_ERR(pctrl->pctrl)) {
+-		dev_err(&pdev->dev, "Couldn't register pinctrl driver\n");
+-		return PTR_ERR(pctrl->pctrl);
+-	}
++	ret = devm_pinctrl_register_and_init(&pdev->dev, &pctrl->desc,
++					     pctrl, &pctrl->pctrl);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Couldn't register pinctrl driver\n");
+ 
+ 	for (i = 0; i < soc_data->nfunctions; i++) {
+ 		func = &soc_data->functions[i];
+@@ -1607,6 +1607,11 @@ int msm_pinctrl_probe(struct platform_device *pdev,
+ 			return ret;
+ 	}
+ 
++	ret = pinctrl_enable(pctrl->pctrl);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "Couldn't enable pinctrl driver\n");
++
+ 	ret = msm_gpio_init(pctrl);
+ 	if (ret)
+ 		return ret;
 
 -- 
 2.43.0
