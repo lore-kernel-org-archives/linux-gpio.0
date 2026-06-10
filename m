@@ -1,57 +1,57 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003031E492D
-	for <linux-gpio@vger.kernel.org>; Tue,  9 Jun 2026 23:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E176220F3E
+	for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2026 01:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781048957; cv=none; b=HHkG7g7+bGQliRMcvlTdVFvUV+RS7CytYigKwZjLlJ1uouCtGOP2K1FS5bpqazsWN1gKOR0McyKspsWfbBjTlom3D5q6Bvh6g6hgacCMMQa3sR9yeV/cFaI4lWOevPpo+UC69EC1siCLmbTH99pngXxPT8FdelhRnJ/I7tM66tc=
+	t=1781053375; cv=none; b=JYJTfysOsyUJ5UR5D7H5EFAC+ht8BZEXdAfmuOB286p0Tx/32Qlxs5ZkrAGk089pRn0aIxEmHPB8vgSSCaVwcP2A5/FuUC4VjLvaZEASZqQy6rJouWsgfifoDjgofGxWnfIGhgKptrt+rO7yHfySlp9/FyIbgTeXOUKpTF5lQtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781048957; c=relaxed/simple;
-	bh=vM9IrRqmaWUfGDQjw2b1fbGBDxEmFK4ltdxM1LYaX4U=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=BtlvXVXYGlJjlgcTl0ojKx30LpKizE8CXwAFxvC9O1rOpoP+fCnUb7XkKYqXL+/b7lD/Tbl+qWkctkAjnOSP5t3DhTz3xxzgC65a946eXCzD2tIfILvlvFa58soR12IKgctq4Poir7M0uX6ekUGeJv+3clKrJBQbXOF/dHZahxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J1T3Dtxx; arc=none smtp.client-ip=198.175.65.19
+	s=arc-20240116; t=1781053375; c=relaxed/simple;
+	bh=CqtNOmRj5Q9hsMChhQjbxDb9+/M+5FwdTo1kwp+SogQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=ZyQpiBfworOIQ/uDXq4konL6QwV3g668+MeiE0mEE03AQRDckF4XxNMnCvK9iASPUVXgoTt/nzke5yNYCEil95BZKwrDBcBN/SsOm9fKke+CZnXBNHJoCTpz72114/9ESBAVd5RVEd1SeO+O2Q9g/sS3OpzWDTqBOyPT0rW8DhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MUgMzBdP; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J1T3Dtxx"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MUgMzBdP"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1781048956; x=1812584956;
+  t=1781053375; x=1812589375;
   h=date:from:to:cc:subject:message-id;
-  bh=vM9IrRqmaWUfGDQjw2b1fbGBDxEmFK4ltdxM1LYaX4U=;
-  b=J1T3DtxxWaPXi2C2Hz2gI491e6Ct3m+ExSR76JZRYjbO8JSpMZ6Qg5w+
-   X+p/7M9yDh+vJVJM299JrOnCTF4UHChmgufRJMBEWL+/6FHcK9LOFNK1V
-   mo+COXIkG3harRIzJnJ4OCe5iqe9pjvKuQbYGvde/Ty0D/SpHBPKF8eQx
-   +uebmUPEUpUNihwzpKJvcT6oaFe5wa2qv4NzBEjaHgZulQRQsy3Ol2OMu
-   rFhjgKfzYS3FIxSlcWHXrLwiQXuv9DadWKJQNleG8e+C+YesRUQmf7Hhn
-   2xBLq5VNL6XBEHPHTw/H2owEz69eR2G+98TSt7p7ILb4GwnwfoRZYxbL/
-   w==;
-X-CSE-ConnectionGUID: tYb7P6miQu6jqvv8AFCZBA==
-X-CSE-MsgGUID: QrFVciauQKGEv+XJeQdkVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11812"; a="81808148"
-X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; 
-   d="scan'208";a="81808148"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2026 16:49:16 -0700
-X-CSE-ConnectionGUID: mriqxxhySgGJGSAd51sQVA==
-X-CSE-MsgGUID: 0cyWZYCPRkSGo2V1G8TrEA==
+  bh=CqtNOmRj5Q9hsMChhQjbxDb9+/M+5FwdTo1kwp+SogQ=;
+  b=MUgMzBdPh6JVWBHsIEvD812QFrzayjsYC6nJPA3S80oeFmqpaL9s00Xz
+   irSr88gUiKw+FLMhmkzquieVGG8W8dfs6Gz+xM2WcfMYsTQHg0oxJIU4e
+   PPUWjiqbf9VxPxI1emvjsuHwPE4msZPFAQX3z0T6nDNiSskdTN2aSFlWv
+   t0a+9qRT5YF/MGhs98Nvoi8KolDU2ua6kfqPs/p7v/wxJX8WklXqyA0SC
+   A3eYHXgGEJfB7yxYIjXBxPFE01M4E9rWtrs/8mVo2VkOM7PnQD+KXcRxy
+   pWWXFf5HcM979Asp53lLDzeGwx/T9lE3XrPQCZhss97AWrrodPV8WHr3j
+   Q==;
+X-CSE-ConnectionGUID: lrbF5G9YQuW7MRyRoFYGmg==
+X-CSE-MsgGUID: 2gbHhQBsSoyJxwQsQcO+vA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11812"; a="92942743"
+X-IronPort-AV: E=Sophos;i="6.24,197,1774335600"; 
+   d="scan'208";a="92942743"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jun 2026 18:02:54 -0700
+X-CSE-ConnectionGUID: uf3959LFTsW4N72SCmnxig==
+X-CSE-MsgGUID: mmJSfUmqSiG5qpCL6nM6sQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,196,1774335600"; 
-   d="scan'208";a="241570180"
+X-IronPort-AV: E=Sophos;i="6.24,197,1774335600"; 
+   d="scan'208";a="243047021"
 Received: from lkp-server01.sh.intel.com (HELO f0d55cb201f0) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 09 Jun 2026 16:49:14 -0700
+  by fmviesa007.fm.intel.com with ESMTP; 09 Jun 2026 18:02:52 -0700
 Received: from kbuild by f0d55cb201f0 with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1wX6Bz-00000000KgY-3hAT;
-	Tue, 09 Jun 2026 23:49:11 +0000
-Date: Wed, 10 Jun 2026 07:48:45 +0800
+	id 1wX7LF-00000000Kks-3rkY;
+	Wed, 10 Jun 2026 01:02:49 +0000
+Date: Wed, 10 Jun 2026 09:01:58 +0800
 From: kernel test robot <lkp@intel.com>
-To: Linus Walleij <linusw@kernel.org>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- 9fdab50b31bc9c8c01ea08032b0cdb0d9ff6bd95
-Message-ID: <202606100736.j6X7YEku-lkp@intel.com>
+Subject: [brgl:gpio/for-next] BUILD SUCCESS
+ a46f2e5720f5670feda145709d1f0d20be5c7263
+Message-ID: <202606100949.QrB12x8t-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -59,13 +59,13 @@ List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: 9fdab50b31bc9c8c01ea08032b0cdb0d9ff6bd95  Merge tag 'renesas-pinctrl-for-v7.2-tag3' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers into devel
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+branch HEAD: a46f2e5720f5670feda145709d1f0d20be5c7263  gpio: mt7621: fix interrupt banks mapping on gpio chips
 
-elapsed time: 1402m
+elapsed time: 769m
 
-configs tested: 166
-configs skipped: 2
+configs tested: 181
+configs skipped: 3
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -77,7 +77,6 @@ alpha                               defconfig    gcc-16.1.0
 arc                              allmodconfig    clang-23
 arc                               allnoconfig    gcc-16.1.0
 arc                              allyesconfig    clang-23
-arc                          axs101_defconfig    gcc-16.1.0
 arc                                 defconfig    gcc-16.1.0
 arc                   randconfig-001-20260610    gcc-8.5.0
 arc                   randconfig-002-20260610    gcc-8.5.0
@@ -115,6 +114,13 @@ i386        buildonly-randconfig-004-20260610    gcc-14
 i386        buildonly-randconfig-005-20260610    gcc-14
 i386        buildonly-randconfig-006-20260610    gcc-14
 i386                                defconfig    gcc-16.1.0
+i386                  randconfig-001-20260610    gcc-14
+i386                  randconfig-002-20260610    gcc-14
+i386                  randconfig-003-20260610    gcc-14
+i386                  randconfig-004-20260610    gcc-14
+i386                  randconfig-005-20260610    gcc-14
+i386                  randconfig-006-20260610    gcc-14
+i386                  randconfig-007-20260610    gcc-14
 i386                  randconfig-011-20260610    gcc-14
 i386                  randconfig-012-20260610    gcc-14
 i386                  randconfig-013-20260610    gcc-14
@@ -137,18 +143,18 @@ microblaze                          defconfig    clang-23
 mips                             allmodconfig    gcc-16.1.0
 mips                              allnoconfig    gcc-16.1.0
 mips                             allyesconfig    gcc-16.1.0
+mips                       lemote2f_defconfig    gcc-16.1.0
 nios2                            allmodconfig    clang-20
-nios2                            allmodconfig    gcc-11.5.0
 nios2                             allnoconfig    clang-23
 nios2                               defconfig    clang-23
 nios2                 randconfig-001-20260610    clang-22
 nios2                 randconfig-002-20260610    clang-22
 openrisc                         allmodconfig    clang-20
-openrisc                         allmodconfig    gcc-16.1.0
 openrisc                          allnoconfig    clang-23
 openrisc                            defconfig    gcc-16.1.0
 parisc                           allmodconfig    gcc-16.1.0
 parisc                            allnoconfig    clang-23
+parisc                           allyesconfig    clang-17
 parisc                           allyesconfig    clang-23
 parisc                              defconfig    gcc-16.1.0
 parisc                randconfig-001-20260610    gcc-8.5.0
@@ -167,19 +173,27 @@ riscv                            allmodconfig    clang-23
 riscv                             allnoconfig    clang-23
 riscv                            allyesconfig    clang-23
 riscv                               defconfig    gcc-16.1.0
+riscv                          randconfig-001    gcc-16.1.0
 riscv                 randconfig-001-20260610    gcc-16.1.0
+riscv                          randconfig-002    gcc-16.1.0
 riscv                 randconfig-002-20260610    gcc-16.1.0
+s390                             allmodconfig    clang-17
 s390                             allmodconfig    clang-23
 s390                              allnoconfig    clang-23
 s390                             allyesconfig    gcc-16.1.0
 s390                                defconfig    gcc-16.1.0
+s390                           randconfig-001    gcc-16.1.0
 s390                  randconfig-001-20260610    gcc-16.1.0
+s390                           randconfig-002    gcc-16.1.0
 s390                  randconfig-002-20260610    gcc-16.1.0
 sh                               allmodconfig    gcc-16.1.0
 sh                                allnoconfig    clang-23
+sh                               allyesconfig    clang-17
 sh                               allyesconfig    clang-23
 sh                                  defconfig    gcc-14
+sh                             randconfig-001    gcc-16.1.0
 sh                    randconfig-001-20260610    gcc-16.1.0
+sh                             randconfig-002    gcc-16.1.0
 sh                    randconfig-002-20260610    gcc-16.1.0
 sparc                             allnoconfig    clang-23
 sparc                               defconfig    gcc-16.1.0
@@ -189,6 +203,7 @@ sparc64                          allmodconfig    clang-20
 sparc64                             defconfig    gcc-14
 sparc64               randconfig-001-20260610    gcc-14.3.0
 sparc64               randconfig-002-20260610    gcc-14.3.0
+um                               allmodconfig    clang-17
 um                               allmodconfig    clang-23
 um                                allnoconfig    clang-23
 um                               allyesconfig    gcc-16.1.0
