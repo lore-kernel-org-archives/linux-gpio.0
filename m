@@ -1,159 +1,173 @@
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84183BD225
-	for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2026 09:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70D93BB13A
+	for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2026 09:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781082026; cv=none; b=WoX4hNLlh1kFUOwv0/1SUrHq+qXBcs6tjov3ccThZ5bClEFUqL76qOcrhQBCWIbxHACyULBQfI2vgyUFscA/oxsqksrcbU16ZpoiabXLFlKfDAFkIW0KWpV5Lw+uMh/2Xsrjf/C6wxhzYQRVWWjN7sJWS+rzXfQD3BSN34X/4XE=
+	t=1781082894; cv=none; b=OQ3t6PSLCU2KoUSjCR27JUQzzDeMPDKTOx481jATIWFJqi0pX46iSvkjZibs5sNDe5BiI4aX87m1TEqc58k6tMwGedAeSNexAhnqAFP4pqrMlATP+mTFK2GHvw+1wyBeROzAl1wiAn1SdsLbLhmXcsrJLrS8Bjkp5/yU0VbmON0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781082026; c=relaxed/simple;
-	bh=UVsYCrTgabPt3+1KO398dNio5IWM0Bffio+EXkZMC24=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KU/7D4oZslI+mpHmIxbJmUS95X/8Es1L9UCD7STCf1Gxb6IbSucWIGbE8UMFLrsPJR4NVEwzH63QtlRd74tWQk0cnmNniw3p2sM1/mxPa5pDoFRNQNd+yj5S6jkxJEScNHxLnFNcV1UEqeG4p1+uc6/W6csrY5jYzfOKLAfouVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ADdhmcdR; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1781082894; c=relaxed/simple;
+	bh=+3Oey1WWs5aR95mQcQBU7xyu2mXS3uTyCEBbqJb8qu8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XagxsOP7tg7RGd3MBdakOEPi9acSxaq5s6nRlFd5Jrx8TB0hlfqOUwhWpBhQpBbCi1hAtzwGZEKz9zEB4LQPvxa90ykq1N0isuLo7Sr7qTAW5cBsZSmJHvRqxQk/XP9MbgeYiphmEv4p8wzQPM9jbDFGSZ9vScrHs3909IWwb1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nLVn6rlp; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=d95lrpSv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ADdhmcdR"
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-36da8439078so5766281a91.2
-        for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2026 02:00:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nLVn6rlp";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="d95lrpSv"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65A7htUa531342
+	for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2026 09:14:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	N6BysjMJ/71Lcvntk0+U+p4cz371ihNxbLf/Gr/x7fI=; b=nLVn6rlpvacqkfb8
+	xl8mVCl47/jMHJJCxTc9ECH+9JYmS2d8y7mPZkGLIMx4sLwwCL2UBe264kZG1m+E
+	5SqgVEqnH3b4QQU7Z0ZbHKMyAn8S+VSBYi86tvM8HddOMSleeSDBoqOxaYbDpyIU
+	LL+QgTtGE0B9cFqMgVtFnkLaG3DnLzTlEN2cl7whoyVMnJlpKHy0FAWdRPJBZUCr
+	krFGOK7k/FgEwOKrLBofNd7vuD3QkCAgYS2lyqxFyLKxXMGw3vRq4756iRZnBgds
+	4PdJStD/fNVwsM3r6J3RAuUdQweeedZK5RFdiVEs20ah4R6rJkT7ZZ2BUNu3DTnP
+	hGqDTw==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4epwnh1qn4-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2026 09:14:50 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-36bc54005a7so8631002a91.0
+        for <linux-gpio@vger.kernel.org>; Wed, 10 Jun 2026 02:14:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781082024; x=1781686824; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qRIQSXlzENM4jEBupLB81DONFaVdzlOx+4/Y850SEjk=;
-        b=ADdhmcdRFzAI9coxhRoMF1PBQIZAbSJoE+UbroGoyp/Crl+2TErSVmQaTciNJB/Qjm
-         Me2QX20TFnfY4FsCWySATaKpDeS+Y85iTRZfXBQXQ5kU1OZwXLedC1cZ26n8yggIKW2x
-         cAI0cD04MnZpJlDKVebOpE0rDRFsgPvytQl3tQ+iGpv91FSqga82QHn6Hk84WVAgGnAF
-         Bed7ef4IX33pZ9in0dynS4ZJGqDOPVbOv/BAMepWaqZ1R3bL7N+hYFpwNN12Kq5vBx8r
-         AuPis6Mrbq3YA6A9BOtMOynA457WC2SdMJSSX5JeQeNXZzH0xrC/piOX5B3nm7SomSA5
-         ZQYg==
+        d=oss.qualcomm.com; s=google; t=1781082890; x=1781687690; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N6BysjMJ/71Lcvntk0+U+p4cz371ihNxbLf/Gr/x7fI=;
+        b=d95lrpSvdeXk9Db56WMk/3nlPAuxWdEjy+03GktsVYkPS85prSaJ7YiEXtbzrv0BZQ
+         g3iHBL2caPp97MkQZYMcwBaCLi+cA2Cn3BBMovyx2dbDVHyI5y2N8/3MXGlGYPRylHxO
+         ymigqxgecpa/Qqh3qKWNcFTHQpOvsMwHyOHLDTmHW/Ug4neDPA6EbDZt7U0P/LQvO4Y7
+         VoqGvPlSJSGvCv0WEry7G78Q2rfioF6GYpXbkwB8rDt6lVT7qF5j8nfpLUXwo1uWJENf
+         c2BBNwjt6mkEKuwK/9LWYoW7Nf8SEEv8354+MT+K75gILmveIQgAuh6KG3E8vkmrwt9n
+         9ayA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781082024; x=1781686824;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qRIQSXlzENM4jEBupLB81DONFaVdzlOx+4/Y850SEjk=;
-        b=WRvXQzhfQdc2mfWYA6zmhZE861hYcNc45vjjtEZ3oJ202eWW8ZaNITlj9bGeZJz9/D
-         +l2ilK9nDer2NE/shXc2t1oGnR8eXAyE3COUGYJPYm5qaT6xcM0R0pur/ePSublseKF9
-         94w5EMyXGEFYbU8W3KYryk6FkJVWd927HfBvUpD7Z1DF8gaoVFE4JoX6k15z/4UpLCFc
-         dtcOFPGJzBiWivC2jq5Ern0xGy6f8bqMWj8rG4af2l6iGf84gkTGixXdn1xN8gCjyOXs
-         dMg/aAlEHAOYChpo+GcoS833jf1oyyVYxPV0t8aE41y1CRDnjksMZaNNCh6owVWUaOdU
-         EKSg==
-X-Forwarded-Encrypted: i=1; AFNElJ9h5sWEN8A1T3rHXPYZ1BiEz95Fdvry5uETT39+agIaOuOyNVrXSgqWS9c7qg8nXmadVfCvYbHAxJnr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkYka84WBYUZ5CjHrGPUzXVdhQnkVyUC1KtWYKsN99kNkeWllD
-	oSzkwVIR7Du8BDmacxesw3b5IxZFhw1OYHoDlFj2PFz+tWs75T1pdquL
-X-Gm-Gg: Acq92OFTp8qin4yRB2ehGV+mjuCas9lO7kw5TdyR0KJ2ZG7DW66mhZg102uk55bdrZD
-	SO9eTR2leUkqBIbwFK1jrNXFvyXY+mzZ9HXKN/pm62bW1vY9aNzSdfYyekz3OTJYuuvixYOKmOf
-	Wmg753tThU2r+7RGs8BHnoU/FSOAZIjzWeOKjuodCExxblM2gTLxb0AeMf2COJRJTY5e1CTmQsk
-	4JxEefOvHCDnSx6xNcjNBnkyWWW+otaeKepYeslA1k1G2KlXu0REEzqDNVnnQIEjp3f+6QID15J
-	hExgm4nPnZt1io8hwWiecvuayi8qzuJ3rxSnukSLG9Ko9+CCQCm/thBdGyPgKUgWEVdQL518hq3
-	m6Z61nLuztGYeskocyRVmWoCo6ZntaSeq6EQpvlMpELDO4+cjbF6X/9/vc8ZGTg9ImblqDNf61n
-	NOXZY+ssaW29Txae1CYklSBxJyvhRA8KM=
-X-Received: by 2002:a17:90a:d40f:b0:36a:a16b:5f65 with SMTP id 98e67ed59e1d1-370ef1f3d01mr26131246a91.11.1781082023870;
-        Wed, 10 Jun 2026 02:00:23 -0700 (PDT)
-Received: from [127.0.1.1] ([150.117.174.129])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-376465ca306sm1308995a91.2.2026.06.10.02.00.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2026 02:00:23 -0700 (PDT)
-From: GaryWang <is0124@gmail.com>
-Date: Wed, 10 Jun 2026 16:34:24 +0800
-Subject: [PATCH 2/2] pinctrl: upboard: add device id INTC1055 based UP
- boards support
+        d=1e100.net; s=20251104; t=1781082890; x=1781687690;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N6BysjMJ/71Lcvntk0+U+p4cz371ihNxbLf/Gr/x7fI=;
+        b=JIfuHrpNN6IOUX7I0Cuwxs5dbBujUZJ7p6yxb/DyOU9n68kjUBZ/6pt0pSNiQfN5Ca
+         OfyG2KPeVS1KJW7F1XngqHWIOh2a+/qA02CVMF0vlRZ+jPiSfbvhdTfJ06GRr8Le9XN8
+         7QXhOCZZHo/w69rJ0M1+ul5C7HKE1rwysOkHkW/bDRdUcYRH4UrX09nAbiKGKLG7b0Y8
+         EtvxAxw27bWXlwwBhyz2s4BwnOZpUUJKoEg4/KL5nM8HF7o5WAKkMcL/jn5zQENwFrk5
+         RNZb76Qu3/ykDEvWQD5pFNKoUiERxjSur4sgMx9ImEslk6/Ha1svIt3ETSEiVebET8y/
+         ooEg==
+X-Forwarded-Encrypted: i=1; AFNElJ/IffXgnrtVx/eaelkrs84UBVCHdMB0ep/yY4A9Jk6ea2fMdHiCZmWNH30SpxQkbH+80OBialsMg6yP@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIptq3SeMldruGMYCmIAdKoZc6vAsYunKwJ5PeFLbU9vC96C3J
+	OIlZD1hZLEXacb0YWwO38EgTR9XEnqORlK7tI6L/n4sAWFrt0i/JtrwgYGk477huyx5jWK9lSTc
+	HP9zspcj/izN1LxTZaYQFAqfRbXBSKLINNAZjcm1RQrBK+pNEBsFUVHz2co7aT38P
+X-Gm-Gg: Acq92OH49g+ShPgQxi6gwHSWSNnkEhv6VQ3ixNNj9ceIThOlzWkF5KQzr5g2n49ZlCn
+	HaqbLiae/ZJhQrLkx4bvtAVdh2WmxBm3Ji1+/H5FPMvMa23b45qY7UriUNSWTkn30E5AZsOQCRK
+	rSboeHRtcQgIkHZr48P6ivvptbBc52G2U+I8WAwV87swpvArMGEo3TJE/cL9+36lHTuY7DyuZTa
+	6NDipD5WCNwZpOq4Acm8hzHqldAlBFkvwVCFH/nsqA4f9oSM+DCDv3WuSfSI0r7Heg2DvXgOINF
+	/PS8hXQKoHL5Mbt1JtscUR7Kx8Guex2VEXVF5I1AKU/FZ/p41PuwFoijZzv71PIcUFXfD9mRoyr
+	Wil3YBwTJ/4YSND9q9LQ1xrgep7kmyxlWBENRXslAVr7bAlgIrKabQl0fN3xv
+X-Received: by 2002:a17:90b:280c:b0:36a:f612:e6a3 with SMTP id 98e67ed59e1d1-370f0095b7bmr27502265a91.17.1781082890279;
+        Wed, 10 Jun 2026 02:14:50 -0700 (PDT)
+X-Received: by 2002:a17:90b:280c:b0:36a:f612:e6a3 with SMTP id 98e67ed59e1d1-370f0095b7bmr27502244a91.17.1781082889858;
+        Wed, 10 Jun 2026 02:14:49 -0700 (PDT)
+Received: from [10.218.18.193] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3762514be1bsm2796226a91.17.2026.06.10.02.14.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jun 2026 02:14:49 -0700 (PDT)
+Message-ID: <661e2c15-0528-4cdc-a7ed-ddced32f7ddd@oss.qualcomm.com>
+Date: Wed, 10 Jun 2026 14:44:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] pinctrl: qcom: lpass-lpi: drop unused runtime-PM write
+ helper
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linusw@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20260610080809.2588640-1-ajay.nandam@oss.qualcomm.com>
+ <f03850f6-186d-4988-a450-e6e95f24a551@kernel.org>
+ <0fc4d9d4-2943-4ed8-a8ea-014e83c74e5c@oss.qualcomm.com>
+ <f77f6d28-b3fa-46f3-a6c1-fd0093cbb458@kernel.org>
+Content-Language: en-US
+From: Ajay Kumar Nandam <ajay.nandam@oss.qualcomm.com>
+In-Reply-To: <f77f6d28-b3fa-46f3-a6c1-fd0093cbb458@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260610-upboard-pinctrl-add-upboard-intc1055-support-v1-2-8185d2abbfb1@gmail.com>
-References: <20260610-upboard-pinctrl-add-upboard-intc1055-support-v1-0-8185d2abbfb1@gmail.com>
-In-Reply-To: <20260610-upboard-pinctrl-add-upboard-intc1055-support-v1-0-8185d2abbfb1@gmail.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, 
- Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Thomas Richard <thomas.richard@bootlin.com>
-Cc: Daniele Cleri <danielecleri@aaeon.eu>, 
- JunYingLai <junyinglai@aaeon.com.tw>, Louis Chen <louischen@aaeon.com.tw>, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- GaryWang <is0124@gmail.com>
-X-Mailer: b4 0.13.0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjEwMDA4NyBTYWx0ZWRfXx0Hh2B4rUwc4
+ C5C3jVyXLwB19jJVtE8msEW+/n6olEy6iBLxq6WEwxW2zDZwmQSByJqBTnpa0nbEnyojpM1vqwE
+ fWRlVyGVC8pIV17/1B/7t6opTn4Lmo+zlg4julqjvUyavWrU/0YX1s47Gmhs/Wo4+hwLH25+jrY
+ Y6eYf5hOSDalmYQ7iql1kCOxd67Bxm7GpcLAdoV7SmB+EvIE7T/MiAQTYIvrgVPWvpOM6zRnon2
+ uHMqRkyC3dwTf/FQWU0s6lQIO7EV91ObLXEkJB7mR7ZGyYv3ma7IbJAbK3SrRIzjCneQTohwpq7
+ 34xQ9i1kdGkVyx2B4UJNwe6ic42pcB+pAc7ikdDwEYIPdnMXldPMRyQY5MnC3YAEaOTpQJ0xI//
+ 7pbk+VNKmlwTC2JWTmvgHHEr0Byl/Q6Xi2ebA1Dh5uteGNXjUsnTF0y542IXSJURIS60soOUtsE
+ PEtX2aAUNw8hPaMo5xQ==
+X-Authority-Analysis: v=2.4 cv=Xce5Co55 c=1 sm=1 tr=0 ts=6a292b0a cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=VwQbUJbxAAAA:8 a=NdOHzJ4ck5ORsDkasxEA:9 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-ORIG-GUID: Jzsd6dCInpqPYaf-q75d4W7OQ8l9oQqx
+X-Proofpoint-GUID: Jzsd6dCInpqPYaf-q75d4W7OQ8l9oQqx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-10_02,2026-06-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 suspectscore=0 bulkscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605210000 definitions=main-2606100087
 
-Add support "UP Xtreme i12", "UP Squared Pro 7000", "UP Squared i12",
- "UP 7000" boards and I2C/PWM/UART/SPI pins mapping data.
 
-Signed-off-by: GaryWang <is0124@gmail.com>
----
- drivers/pinctrl/pinctrl-upboard.c | 45 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
 
-diff --git a/drivers/pinctrl/pinctrl-upboard.c b/drivers/pinctrl/pinctrl-upboard.c
-index f8c8b9d84990..09018b665ee3 100644
---- a/drivers/pinctrl/pinctrl-upboard.c
-+++ b/drivers/pinctrl/pinctrl-upboard.c
-@@ -912,6 +912,19 @@ static const struct upboard_pinctrl_map upboard_pinctrl_map_apl01 = {
- 	.nmaps = ARRAY_SIZE(pinctrl_map_apl01),
- };
- 
-+static const struct pinctrl_map pinctrl_map_adl[] = {
-+	PIN_MAP_MUX_GROUP_DEFAULT("upboard-pinctrl", "INTC1055:00", "i2c0_grp", "i2c0"),
-+	PIN_MAP_MUX_GROUP_DEFAULT("upboard-pinctrl", "INTC1055:00", "i2c1_grp", "i2c1"),
-+	PIN_MAP_MUX_GROUP_DEFAULT("upboard-pinctrl", "INTC1055:00", "pwm0_grp", "pwm0"),
-+	PIN_MAP_MUX_GROUP_DEFAULT("upboard-pinctrl", "INTC1055:00", "uart1_grp", "uart1"),
-+	PIN_MAP_MUX_GROUP_DEFAULT("upboard-pinctrl", "INTC1055:00", "ssp2_grp", "ssp2"),
-+};
-+
-+static const struct upboard_pinctrl_map upboard_pinctrl_map_adl = {
-+	.maps = &pinctrl_map_adl[0],
-+	.nmaps = ARRAY_SIZE(pinctrl_map_adl),
-+};
-+
- static const struct dmi_system_id dmi_platform_info[] = {
- 	{
- 		/* UP Squared */
-@@ -921,6 +934,38 @@ static const struct dmi_system_id dmi_platform_info[] = {
- 		},
- 		.driver_data = (void *)&upboard_pinctrl_map_apl01,
- 	},
-+	{
-+		/* UP Xtreme i12 */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AAEON"),
-+			DMI_EXACT_MATCH(DMI_BOARD_NAME, "UPX-ADLP01"),
-+		},
-+		.driver_data = (void *)&upboard_pinctrl_map_adl,
-+	},
-+	{
-+		/* UP Squared Pro 7000 */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AAEON"),
-+			DMI_EXACT_MATCH(DMI_BOARD_NAME, "UPN-ADLN01"),
-+		},
-+		.driver_data = (void *)&upboard_pinctrl_map_adl,
-+	},
-+	{
-+		/* UP Squared i12 */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AAEON"),
-+			DMI_EXACT_MATCH(DMI_BOARD_NAME, "UPS-ADLP01"),
-+		},
-+		.driver_data = (void *)&upboard_pinctrl_map_adl,
-+	},
-+	{
-+		/* UP 7000 */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AAEON"),
-+			DMI_EXACT_MATCH(DMI_BOARD_NAME, "UP-ADLN01"),
-+		},
-+		.driver_data = (void *)&upboard_pinctrl_map_adl,
-+	},
- 	{ }
- };
- 
+On 6/10/2026 2:30 PM, Krzysztof Kozlowski wrote:
+> On 10/06/2026 10:57, Ajay Kumar Nandam wrote:
+>>> So why do we need __lpi_gpio_write()?
+>>
+>> Hi Krzysztof,
+>>
+>> Thanks, good point.
+>>
+>> I will respin with:
+>> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> 
+> 
+> And checkpatch.
+> 
+>>
+>> About __lpi_gpio_write(): it is still needed for the in-callers path
+>> where runtime PM is already held and we only need the raw MMIO helper.
+>> The unused wrapper is lpi_gpio_write(), so this fix removes only that
+>> dead function.
+> 
+> No. Why did you have to add __ prefix? Why do we need function named
+> with such style?
 
--- 
-2.43.0
+Hi Krzysztof,
+
+The __ prefix was introduced during refactoring to distinguish the raw 
+MMIO helper from lpi_gpio_write(). After the wrapper became unused and 
+was removed, the naming is less clear.
+
+Do you recommend renaming these helpers to regular/raw names (without 
+__) while keeping behavior unchanged?
+
+Thanks,
+Ajay
+
+
+> 
+> Best regards,
+> Krzysztof
 
