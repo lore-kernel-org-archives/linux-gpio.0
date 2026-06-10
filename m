@@ -1,32 +1,30 @@
 Received: from mx.adeep.su (mx.adeep.su [185.250.0.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AFA3E9C1F;
-	Wed, 10 Jun 2026 15:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C02344D01C;
+	Wed, 10 Jun 2026 15:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.250.0.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781105679; cv=none; b=arSkigSz/vz53S+a1tm8+mn7qegNwH/A7GLJjQTtOM6MnMkLpX0rVKJRs2hYYjskgknNi2B/xJe7DKtumgvzX3Vkj9yfFwQ/tiemAY7As368A1K8arPq1EiXz/Fj+9N/o5p/uvE7AbhMb+8PDoUXGGl+NPsiEPrlCCutGgZTIo0=
+	t=1781106074; cv=none; b=aeTAcr5ZYXNnoX1zy1rNfJ2K99cCtHvl7W8LhjqTpGzYOdAePPo3gGhmsH0/087otQYgdzS/0oCZCkHYUF5nn39Z72vFbXJWAFGgdmLwOqc8UIMPwzZplzIbdQZBxjJ3Ysp+aP/2hb95x4+fu7cSVB4YPAksQN9D5dKwnqJ0q78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781105679; c=relaxed/simple;
-	bh=YsdvJcGUHS+XdA/J7Hb8nCGweWTaO6RIQHL07ueXIJM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pr942kjWM6RNH8ZL/ZPWCAzpxMEzquB2Ev65K/zPS5yLhkWlC/aGOI7ug+FwMctQt6R1bEHR6nTC5xbFqKtty06Cf+4ODgozx/VCavkEZhxLGvQ58r3GUg30bnlDkyvKvKMoVUEB+TaqJyBI+Zqc7Bw4O6Mpp0/5G4pf6r5tju0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=baodeep.com; spf=pass smtp.mailfrom=baodeep.com; dkim=fail (2048-bit key) header.d=baodeep.com header.i=@baodeep.com header.b=rPBrzQAh reason="signature verification failed"; arc=none smtp.client-ip=185.250.0.168
+	s=arc-20240116; t=1781106074; c=relaxed/simple;
+	bh=7ub1gbQwZ/d1m6aycEJFfGiUqHJ1vkgBlNcGdzDmHt4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SH3IvQk3t1m4DlsivH8pJWOeKpb2ND5b/iC21L0J4tbsYUmmFMXyHsOPH1EZ2ByCK4L283lYlvc3SP1VMYu+cMUeiNKXnXLmblww6qB3U8l417qYGR7xRPbRH5FVItoK5Tm2Ho3VyK4rBlWjaIaHseCHZyFjkBgSmxrF++ulclo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=baodeep.com; spf=pass smtp.mailfrom=baodeep.com; dkim=fail (2048-bit key) header.d=baodeep.com header.i=@baodeep.com header.b=V6EMpbO2 reason="signature verification failed"; arc=none smtp.client-ip=185.250.0.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=baodeep.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baodeep.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baodeep.com header.i=@baodeep.com header.b="rPBrzQAh"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2FA14176A4E;
-	Wed, 10 Jun 2026 18:34:27 +0300 (MSK)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baodeep.com header.i=@baodeep.com header.b="V6EMpbO2"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 003B6176A2A;
+	Wed, 10 Jun 2026 18:34:03 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=baodeep.com; s=dkim;
-	t=1781105675; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=LaXsQyCAP4gFiFFUxqAjDQuXyDetzIk5A6HbOjXl79U=;
-	b=rPBrzQAhI7sIJSm/VbEUy8m4NQdwlKi4aq7hGmcYTc1ZAoY7gJyQT7dZ8X4HjbB5HBh0Zb
-	RzFsB3X/fTHt7McYqV3r9dHKeR562E2AUpCREJSNrL+vzsD2w249st0gRiMk2hQVb1p9ul
-	Gk9CouqxPtNGjennSKUy8l5K2OFVbNXjO8ZtXZg7E8fMz+vds8so53bE+Sg+X02QmsZz+2
-	YXU5MRCavCERdNRU2FGPFs3dHiZmnFyWy1GufZb9msYl583o1UI63K6txkNP09eYsGo+aZ
-	PY0ZC6hi3CqJMaytDOYTqJibqOfnHwKa5aXRXoE3fMaVNIdyJAFfSQbFNZlQIA==
+	t=1781105658; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=wWnMIfRoPEPairQ9ngOUWFlbPHVSKvx5vY/dr6ad4k4=;
+	b=V6EMpbO2Bb3ARZsvqwyY97TkfCoZYL2xO4Iz0o5bbtiiWbHYw+4vzh4fHA2v9Zj8JxnkaE
+	csPVm7SSVcH1F1blcmNBUPk1cbWnbYDxEI8vXymB0LmwlQqE3Sq+bEyRJ67yUaYuPdBGUR
+	nGLQa9sx1/+II/MlFDB0zLxoXkBIqUp1N8g/PzqOX4saB+OHoMztZ6lPgpF0vDnzT4ghmb
+	NBqObMmumjBlCRpBz54Rvib3JeK0UA4AyUKd7mSWLX8TcEhQLsxW+pKXJESHIXOzEBHAaA
+	cqtXXMLEwMl66oBXWzu65atkZPN/bv9SYPcE0ALQZK51hXLxVzDtUgzP7v8TSg==
 From: Viacheslav Bocharov <v@baodeep.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
@@ -41,12 +39,10 @@ Cc: Neil Armstrong <neil.armstrong@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-amlogic@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] pinctrl: meson: restore non-sleeping GPIO access
-Date: Wed, 10 Jun 2026 18:32:11 +0300
-Message-ID: <20260610153329.937833-3-v@baodeep.com>
+Subject: [PATCH 0/2] gpio: fix sleeping-in-atomic in shared-proxy; restore meson non-sleeping
+Date: Wed, 10 Jun 2026 18:32:09 +0300
+Message-ID: <20260610153329.937833-1-v@baodeep.com>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260610153329.937833-1-v@baodeep.com>
-References: <20260610153329.937833-1-v@baodeep.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -56,58 +52,53 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Commit 28f240683871 ("pinctrl: meson: mark the GPIO controller as
-sleeping") set gpio_chip.can_sleep = true to work around
-gpio-shared-proxy holding a spinlock across a sleeping pinctrl config
-path. That locking bug is now fixed in the shared-proxy itself ("gpio:
-shared-proxy: always serialize with a sleeping mutex"), so the
-controller-wide workaround is no longer needed; the meson GPIO
-controller does not sleep.
+gpio-shared-proxy chooses its descriptor lock (mutex vs spinlock) from
+the underlying chip's can_sleep, but under that lock it calls config and
+direction ops that reach sleeping pinctrl paths. On a controller with
+non-sleeping MMIO value ops the lock is a spinlock, so a sleeping call
+runs from atomic context:
 
-meson_gpio_get/set/direction_* access MMIO through regmap. The
-regmap_mmio bus uses fast I/O (spinlock) locking, so these value
-callbacks do not contain sleeping operations. Since gpio_chip.can_sleep
-describes the get/set value path, restore can_sleep = false.
+  BUG: sleeping function called from invalid context
+    ... pinctrl_gpio_set_config <- gpiochip_generic_config
+    <- gpio_shared_proxy_set_config (voting spinlock held)
+    <- ... <- mmc_pwrseq_simple_probe
 
-Marking the controller sleeping also broke atomic value consumers such
-as w1-gpio (1-Wire bitbang): w1_io.c runs its read time slot under
-local_irq_save() and uses the non-cansleep gpiod_set_value() /
-gpiod_get_value(), which with can_sleep=true trigger WARN_ON(can_sleep)
-in gpiolib on every transferred bit (from w1_gpio_write_bit() /
-w1_gpio_read_bit() via w1_reset_bus() and w1_search()). The printk and
-stack dump inside the IRQs-off, microsecond-scale time slot destroy the
-bit timing, so reset/presence detection and ROM search fail: the bus
-master registers but w1_master_slave_count stays at 0 and no devices
-are found. Verified on an Amlogic A113X board (DS18B20 on GPIOA_14):
-with can_sleep restored to false the warnings are gone and the sensor
-is detected and read again.
+This was reported on Khadas VIM3 and worked around for Amlogic by
+commit 28f240683871 ("pinctrl: meson: mark the GPIO controller as
+sleeping"), which marked the whole meson controller sleeping. That
+workaround broke atomic value-path consumers: w1-gpio (1-Wire bitbang)
+no longer detects devices, because its IRQ-disabled read slot calls the
+non-cansleep gpiod_*_value() and now hits WARN_ON(can_sleep) per bit.
 
-This must not be applied or backported without the shared-proxy locking
-fix above; otherwise the original Khadas VIM3 splat returns on boards
-that genuinely share a meson GPIO.
+Patch 1 fixes the proxy locking generically (always a sleeping mutex).
+Patch 2 then restores meson can_sleep=false, fixing 1-Wire.
 
-Fixes: 28f240683871 ("pinctrl: meson: mark the GPIO controller as sleeping")
-Link: https://lore.kernel.org/all/20260105150509.56537-1-bartosz.golaszewski@oss.qualcomm.com/
-Signed-off-by: Viacheslav Bocharov <v@baodeep.com>
----
+Patch 1 has a trade-off: a proxied GPIO becomes sleeping, so consumers
+gating on gpiod_cansleep() change behaviour. No current device needs
+atomic (non-cansleep) value access on a shared GPIO -- every report
+(Khadas VIM3, ODROID-M1, my test on JetHub D1+) is a shared reset line
+(eMMC/SDIO pwrseq or PCIe reset) driven through the cansleep accessors,
+which is what the proxy exists to vote on. An alternative that keeps
+atomic value access (split locking) is possible but adds a second lock
+and new race windows. I went with the simpler, verified approach and
+would appreciate guidance on whether the atomic value path must be
+preserved.
 
+The two are a unit: patch 2 must not be applied without patch 1,
+otherwise the original VIM3 splat returns on boards that share a meson
+GPIO -- please keep the order. I have not Cc'd stable; I will request
+stable backports separately once both patches have landed.
 
- drivers/pinctrl/meson/pinctrl-meson.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Viacheslav Bocharov (2):
+  gpio: shared-proxy: always serialize with a sleeping mutex
+  pinctrl: meson: restore non-sleeping GPIO access
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
-index 4507dc8b5563..18295b15ecd9 100644
---- a/drivers/pinctrl/meson/pinctrl-meson.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson.c
-@@ -619,7 +619,7 @@ static int meson_gpiolib_register(struct meson_pinctrl *pc)
- 	pc->chip.set = meson_gpio_set;
- 	pc->chip.base = -1;
- 	pc->chip.ngpio = pc->data->num_pins;
--	pc->chip.can_sleep = true;
-+	pc->chip.can_sleep = false;
- 
- 	ret = gpiochip_add_data(&pc->chip, pc);
- 	if (ret) {
+ drivers/gpio/gpio-shared-proxy.c      | 43 ++++++---------------------
+ drivers/gpio/gpiolib-shared.c         |  9 ++----
+ drivers/gpio/gpiolib-shared.h         | 31 ++++++++-----------
+ drivers/pinctrl/meson/pinctrl-meson.c |  2 +-
+ 4 files changed, 24 insertions(+), 61 deletions(-)
+
 -- 
 2.54.0
 
