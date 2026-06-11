@@ -1,76 +1,76 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C123101C8
-	for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 12:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096B23ED5D0
+	for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 12:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781180692; cv=none; b=Kbmf9IxwGHXNQp2oxAUVmnHnPggwtrbanQr1RgfESW9wo3+hnGw4n10+85E6hwxqnRiHALb4tmfBzb9nTfGy5mBtg8Rek/+I8jwRaYpieBxzS0R3/Y0016SurWEUQ7b2uBYTREgBTafUYp0CsGQYIemmlP/8uKEfYKVP7KeWsdg=
+	t=1781180779; cv=none; b=RHJvzhGk5sB4OINE/mJHT/JupyGgnGxkJocbJMp4KFfWSfBd3/RGU4nefd6AhbX17tkbdqIRv+wzIeHMD6WMMH2VTDULMkOTV7z8StxXEi54lA7US7YKw0V75c4pgXKPatpaWjQ5JgvGsxwak1nS3d+UtuZQPr+wHzYQ6vbQ85c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781180692; c=relaxed/simple;
-	bh=+GWDGGbtT20VSu+vCSgxyZGvak1PFsiVLn78RBoQ0lQ=;
+	s=arc-20240116; t=1781180779; c=relaxed/simple;
+	bh=g/VnuIKvkGWSAajf8vvIgUd13LyTGZr4shl0aUhfam8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sHUIx4jeOYFt7dsLH/MXKwcFL6b8SGZ+9bv4YUE+87mXNk+jU3soui09uacY0noN+Qf5ejRNHqkoqgbHA0gGJHMSJSmA/TDnPfmm+DGyEo2bCOBAZ/Z68879+eOd/mKUp4SFdAXFYtkxEL+/vLUFuC5Pcq7urOwhCxKKgw7qvos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lea+n4Mi; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=ugda573iv/aYWExjsYHVHewDLreOWvCJ4Zclcb0TQGyMHaV4QpgF+vlZ85EiTgmo+Vkuf/0xxZkUFNoGUUuQsQBxPImrlRrcxe5gCinV3Dp2FE3OjwHpB5462tqa8bfClLGOhVc39ajl7s6aCmM/k1fGngPS7npFs0xXlldjNqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SnlHs3vu; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lea+n4Mi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB19F1F0089F
-	for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 12:24:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SnlHs3vu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D099F1F008A0
+	for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 12:26:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781180692;
-	bh=+GWDGGbtT20VSu+vCSgxyZGvak1PFsiVLn78RBoQ0lQ=;
+	s=k20260515; t=1781180777;
+	bh=Nj6I30dESBei2Zmp1z0LfF/1I7GCQA0Q3yZdhfFji1I=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=lea+n4MiGpc3ia1zomqQ656poeaB1nyGP3gj0AHbZIHtnxSC6hJP/+2MBvxcwHaOs
-	 CJl1LrUfZh6hYVUxDIUxOnWco4cZQGMA4pnP0TKgQGqRnC+P3mxRnlltRrVEhqNj35
-	 YAFWpTh/PvKjJyH3wDvNuO19PCkG7DXO/um/Sm+9/sWpPuTNwWWNnP+E0j0aM3IlPl
-	 Qj5Y9QPLfoMo87kmf557TQ9x89lm/WOHjCDHueUzZueNnSx4yV/78C8wfcosNkNLUL
-	 3oj/meoKOPd6E46XzEHu0cm871i53XH1t+SlZau0JZ+53CMNRAX5ueYo+4iHp52f1s
-	 yuhutDMf/+fyQ==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5aa6cdebc33so7247051e87.2
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 05:24:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/w5LG+MDlg5blHOuWF/bbBSNg6XVCRK0u5pW+2ShlDPYYez8LZnYtfFo+qZnIlinpcXC4oyp6F85Jt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUiWtS0bSVWiBmvZ4NnHRgoYQTiSF7KOcziJ/n8nT1TE9l5SkA
-	TMgpuDW5h20jshduJAueMD21e9X8LFdyWVbCUe7bCrkDVkLeajfN/zF6Nl7LvZdf3NN1X7h5ILL
-	3/9l+6rFJ95hhMGxtb+uhIdO3PBki+xM=
-X-Received: by 2002:a05:6512:3985:b0:5aa:6585:1ba4 with SMTP id
- 2adb3069b0e04-5ad27fb5d65mr737232e87.41.1781180690702; Thu, 11 Jun 2026
- 05:24:50 -0700 (PDT)
+	b=SnlHs3vuJPcJW75myJnz3dI4AwoX607x4PnuASHDNWxd28IFxcdcFVf/1P7kLzdvu
+	 DvJpAMullkHv6B4OijQvNEyBpRxRTaPYwpIGPlzdSOvNsFGSBlsb0kVjrqTxuWeXVw
+	 xtBOpjHiysyHhBYOpwaP2X54HdpJaahbYXByLRHb8wbf3A4hqIjolX6auq26e2Fv3s
+	 CFJ1Wrc+j1E/XRsDyAiJg05zC/44qa+5k+yWpYSdnL2o3n5USwz8jyfEMvJ1ExZ5WY
+	 pkg7EyKleS4vpAiYz1qIMTf/AOpycZwOJCC+YthxdPuZAVI+QdWQxunCzgxIqXZnpo
+	 T3c3vBBCX0sbw==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3967717c951so84450431fa.1
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 05:26:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ9QJJUOGi+uS+OgfQ8n1KREr+D4HNgTyR07QaEiSRwK60AB0AhQtfMgZnfepuNyetczauNAxNj9sKNV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbZOeTDA0WZ5RRf+96c1JrBqq+Pnc3RQt6pT0+wXSIse9cscRz
+	PN4NZcG1QWoqRSK07EVAQgwE05BShj/g58pAc1zjnYfxwX6GC9aFGl+xnIL2GTnJmmwbGTU+5tB
+	epqoWfQyawUIILLjp9AJRU9ywm0vIvzw=
+X-Received: by 2002:a05:6512:1282:b0:5a8:8db6:b3d with SMTP id
+ 2adb3069b0e04-5ad27ae3258mr738931e87.24.1781180776604; Thu, 11 Jun 2026
+ 05:26:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260610-ultrarisc-pinctrl-v4-0-b7e9b2a8ed84@ultrarisc.com>
-In-Reply-To: <20260610-ultrarisc-pinctrl-v4-0-b7e9b2a8ed84@ultrarisc.com>
+References: <20260610-pmg1110-gpio-v1-0-a9c50cd8b5d9@oss.qualcomm.com>
+In-Reply-To: <20260610-pmg1110-gpio-v1-0-a9c50cd8b5d9@oss.qualcomm.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 11 Jun 2026 14:24:37 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=m6++zOfq2gP4-y4N7U6nx1buVM5KMoxWJ_9PM6RVV8A@mail.gmail.com>
-X-Gm-Features: AVVi8Cfk_Nb67GqHhEaC43czvNZSfeYaRUO8eNFAOjUIKcFR1-C3mQUmgjkvIvI
-Message-ID: <CAD++jL=m6++zOfq2gP4-y4N7U6nx1buVM5KMoxWJ_9PM6RVV8A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] pinctrl: ultrarisc: add DP1000 pinctrl support
-To: wangjia@ultrarisc.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>
+Date: Thu, 11 Jun 2026 14:26:03 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=SSUOZTyE29C_z0Gj_1iKgdLnqWaMQc5BKdsY1h5OAUQ@mail.gmail.com>
+X-Gm-Features: AVVi8CeqWNRQFQ5gUdmKUsibk9c4XCoQP1UEG8vW5TTxaputcf1j1B_Elc7vDYQ
+Message-ID: <CAD++jL=SSUOZTyE29C_z0Gj_1iKgdLnqWaMQc5BKdsY1h5OAUQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] EDITME: cover title for pmg1110-gpio
+To: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	David Collins <david.collins@oss.qualcomm.com>, 
+	Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>, 
+	Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>, kernel@oss.qualcomm.com, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 10, 2026 at 7:29=E2=80=AFAM Jia Wang via B4 Relay
-<devnull+wangjia.ultrarisc.com@kernel.org> wrote:
+On Wed, Jun 10, 2026 at 9:05=E2=80=AFAM Fenglin Wu <fenglin.wu@oss.qualcomm=
+.com> wrote:
 
-> This series adds the devicetree schema and the pinctrl driver for the
-> DP1000 controller using generic pinctrl bindings.
->
-> Compared with v1, this series is narrowed down to the pinctrl binding
-> and driver only. v1 patches 1, 2, 3, 5, 7, 8, and 9 (vendor prefix,
-> CPU/SoC bindings, DTS files, and defconfig update) are not included in
-> v2 and will be sent separately.
+> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+> ---
+> Fenglin Wu (2):
+>       dt-bindings: pinctrl: qcom,pmic-gpio: Document PMG1110 GPIO support
+>       pinctrl: qcom: spmi-gpio: Add PMG1110 GPIO support
 
-This is a very good looking driver so I applied the patches!
-
-If there are any more snags they can certainly be fixed in-tree.
+The series:
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
