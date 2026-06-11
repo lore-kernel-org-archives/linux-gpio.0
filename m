@@ -1,77 +1,232 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B893C4562
-	for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 09:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348173CAA49
+	for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 10:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781171653; cv=none; b=ZVX7reUsnLOrE6WMh93Ws+tUgVxnKYI4OwPQRCD+GoXm+0TY8f43J6IMTsXuwduohYBIgTr9FlmsOyg3+757Ot9joK6MOxU+dqVBUsIdEVi48Ix7pxdbW4wkO+wSOjYytKWsc+02e0wMKK4MNDoq2+tqE5x5u9/bUFNNLCXlA6c=
+	t=1781174211; cv=none; b=KjjSlR5vOvVZTT9ORqTxOETF5wbqcCiBN/IzGLdwwDlsrrwMsJnM9sbp2mdRJquijnBFK5bYZefTqj+iNvNkgpx7q88TbnGvwGVsJcUFOugOVe8ta24ShWuPjEL71apMaZ3nQC/sCZr8Onnhz6SBco96uNaciEl+c4+6bJFKdY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781171653; c=relaxed/simple;
-	bh=mOT5MTEYP2VQ8u5u+7KQbLwcVHJ/p6qpOrVUi3vksxk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZKPJbP4nM1Z59lyoKK/7Dry03THjioJJFgUsLkauYLMpARFU+uVPsHFISrz2OabwwYqGl46n8PFP4qlUx9cMWPzUsq4MZDHhCsQo+h9JfGFb7F+om62gDOSsCZt9BIgok2nZqcWmtmmrdohrzuCu+lvWMov3COminMizRaAgmac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZRm3bw48; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781174211; c=relaxed/simple;
+	bh=wbQLUAzVBUhhiK5N3Wwqo+NsDf+9mw4irZ+wa8g4/5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nh44BCWcEYpEUUwDu5u67Wi3TUHcAXLrS+6rPkAvS5vHiDxnyGqUon+gZe4jIH4LiuNpQcah0twFGohIVDvQhDlVm1tB0J5NH6hrXvIg2JkXOmunoEHrTVUg/7YEtv1AOZagXsex6qDsjkK10NBg7wzvPHv8av3v5Xi0XQKJGaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=b4up0xld; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Bb9MsRah; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRm3bw48"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99EE1F008A3
-	for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 09:54:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781171651;
-	bh=mOT5MTEYP2VQ8u5u+7KQbLwcVHJ/p6qpOrVUi3vksxk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ZRm3bw48nyZdy6jSQHF9fr7IpkIExOLwjSSAUD0RqvU72X7hPdp4ARaYgUGeJ9z/O
-	 pfGQNFyasstinZCJiQUqNOPKKVxHuITz/1Oq4s6uEntiV5NINFLpplyvD9GBZq2c/Z
-	 Dd+cuTwggmcFoEosPQe9Auv6vsL0YlMislROqRt0G2YowOCBDOMgheUFWgcBGxzlkM
-	 ZYaFjc84wgnpNJ2rWTcbBr5G8+vWoHiVLONT/1c5w+wN7uHWERD3tYLBtxWcXPLRaI
-	 O0Z3NE9oNM+rPDqMSLB+8KBc2pEMfT9NmBJripLGcG+U+yh15Ctc7NB9tFv9TQ9CKj
-	 41CU6XgfL5adg==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-39661f81eacso7680681fa.0
-        for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 02:54:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/R6T9ZqbGQcIqQhoA5lsy30a/+gNUpGKdK+YeJ56F4wQd/s5Rg6jWzWMfgOkmTgVh1ldiO0rKmL1b0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrJmeGt/gCR3sK0kcIqcL3Jn5HnOvzbprr6Kil/Se0r4sfrtHL
-	+ioec397U4mOdP2lE9PvAkr4dYn5WGTmVARnvr/KN/yClEH4YUEBXIOpAfImstvltb99rXjZ+DJ
-	ThVzihqi7VGsXse9jUhVN1GmBAD8IJ9yQ5yjFOlj3Fw==
-X-Received: by 2002:a05:651c:210f:b0:393:cbfb:6f1c with SMTP id
- 38308e7fff4ca-3991a4754d2mr4407831fa.14.1781171650553; Thu, 11 Jun 2026
- 02:54:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="b4up0xld";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Bb9MsRah"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65B9xGTx242841
+	for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 10:36:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mv4KppXr2RPw18HcNjCs9EUos8UhpHx6TTozk/GPXOk=; b=b4up0xldvTfdFm3p
+	Isp8OhJeJZbZ5s2HvTMBUOOT8/KQx5eLYvLaRQViW0Zov2dWhUymjl0rPhkWDZnc
+	JY6+7c10nENZXC1AZxp1s4ZLMNYfXgv8lLXmKDIcWKfd1pcZYs3eEYhjn/vL2ueO
+	MqjaZKVLzW+EJIgtuTqsaBRycxbOEEzXdefc6cPEYaFb89OtG8/jj1nbovcLRKy0
+	WRgHSqZbxBKvLIEhcHAT9m0mGUXXoskaK7W/+/aj6VDg9Ukc/lrPhMYXMsURPEfU
+	FX11GDveGRmwD/XQvVya5xoFZrR+Ho6dyLgHbFhBWAA4e4wgZhbpygHSs7iAPHfA
+	rzw88w==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eqe7030jw-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 10:36:49 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-9157b3e5182so97719885a.1
+        for <linux-gpio@vger.kernel.org>; Thu, 11 Jun 2026 03:36:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1781174208; x=1781779008; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mv4KppXr2RPw18HcNjCs9EUos8UhpHx6TTozk/GPXOk=;
+        b=Bb9MsRahfAsb4NeL4ZZt+H4CM8BYNWhPZrLzCkxFoeU3RFUW9HOtH5WM8g4U7MEhFH
+         nAAKNndNdiHD8qT0weol028pC3uXd6xe4ouvriDq8V6hIBqy2w5zGi+gbe/x/jmEKWw2
+         Ac0EyGwWn/jJqWTcMHr3zW71A+rj24S2KCcX0hnfxZKJ3Yv6J54MPplv7wshNCpsBXYq
+         sH8WDPtiyDwxpqrlVltmcYrFKyzS9HuBnsAwIO4LSYiUcbbmSnZHv11fvdR+ousx6aLT
+         593HHT6qyRhnnUotMz9BktBU5FMuDD1psRc1pEvKH69LE7SN7sLDp8xyUvU3VVRh+8gz
+         hdQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781174208; x=1781779008;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mv4KppXr2RPw18HcNjCs9EUos8UhpHx6TTozk/GPXOk=;
+        b=bpBQUXRG2GTW9FSA3Ou1ywZde4gsgK6BHLMRby9pJS6FvaCPgrrxX2yOLkaL6ccJ0R
+         D1FUNqAmfQyiXLTd3Dr+b+zXvfAyVdFsxSHfo+y3bTZRSueE6XmYoJIrkn4ZRpodxj4n
+         aCgoMx8/QaH4LIBYaCYUUH9V0RRFYJFL27mTIVApR7+QVCoz/7cibyPaSt1DuwUTLuFv
+         qD3g/CWRZfeeduCi7DSUSbV5fIfDmpP0TEB/LBnlaTbM1tg+KhGwncQyJpBbsvYYSLYr
+         TfMha4LLj7osTHgs0zHfNNjtuNUJ5jBcYSyqH6bHXb5MzTxvj4NXMsfLjxSNr63AhxYN
+         n6zA==
+X-Forwarded-Encrypted: i=1; AFNElJ83HVcTb6PqfjGXpollqQD+TpR7YuSJgCpg9xPEeq/y0utLtHTBJpd3kAV2ZnOjGX7uzszf6sGTSo0l@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7lD+wXI9KS9gS3HHtxGfJkBJWIMYr2Ajw84jU9elCFIc6NPPE
+	PvYrzsUN9jHhCI6w3aVgPLIcMIXU1x3NOP2EPrPTXBKK7bngmCLZkPSQ3GJp6QrQ3pzhfmtSrqO
+	D1lQb/yqhi7ndBgMyBIWD6lxdCTfpBIxlNe1eSoZlwcdD6OuBlIbXzEiUlhyQHuL7
+X-Gm-Gg: Acq92OGVlUHWoWIngf3wpEMck+Zdvqs7Nj9PWz86ThGUvhtMvJBAhMJ2t/pDPlSp/wi
+	D2VnyXPfT0aLOYUmYuWdkCnLZU89fL+ieSMnVofMfueILtoxGBYuHwbBj1PRPtVxOj3ROjEQH45
+	UNtxd+SAHuYxr4LhA12WUOhzRQT9UEbvGmU9fOsYPzEXcCaBqu5DGlR4Zl3AQ7mgq08OMKXms+l
+	aqMw1YjPbfsT3ENjJXqAdqyZxiSCvMMc8vlJ08bt4cIXz2gFU5uCTUwUvKCOAWKGQvRmAcZiD0F
+	Ujjtad0lP3Ncnr6EzVHTFH3KsXBlwExcJffZxhr4iHHWRO8uWzAVlV0n4WAQxvLABotPQIDx9Xo
+	i8tQ+YiSBn/RF+wNQdcPTNh3Q7hbibzUd6nPZC2E9xXxd4/Ig4HJKk/j1
+X-Received: by 2002:a05:620a:3911:b0:8ee:f43a:bb63 with SMTP id af79cd13be357-9160a4fd651mr193141185a.0.1781174208353;
+        Thu, 11 Jun 2026 03:36:48 -0700 (PDT)
+X-Received: by 2002:a05:620a:3911:b0:8ee:f43a:bb63 with SMTP id af79cd13be357-9160a4fd651mr193137085a.0.1781174207841;
+        Thu, 11 Jun 2026 03:36:47 -0700 (PDT)
+Received: from [192.168.120.170] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-68e6595c72esm10431210a12.23.2026.06.11.03.36.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jun 2026 03:36:46 -0700 (PDT)
+Message-ID: <4edaf745-d24f-4ce0-9605-e3971f067b68@oss.qualcomm.com>
+Date: Thu, 11 Jun 2026 12:36:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260610153329.937833-1-v@baodeep.com>
-In-Reply-To: <20260610153329.937833-1-v@baodeep.com>
-From: Bartosz Golaszewski <brgl@kernel.org>
-Date: Thu, 11 Jun 2026 11:53:58 +0200
-X-Gmail-Original-Message-ID: <CAMRc=MercPNLWJd7JkGKQh85wwK+58KGqUgAKAYZhXvkC1Nu8g@mail.gmail.com>
-X-Gm-Features: AVVi8CcwekiXclIHT_cfijbWQy4UuN-Z1t4Dxk2kC1U7yH7ZQNm0xbbc-JVeInw
-Message-ID: <CAMRc=MercPNLWJd7JkGKQh85wwK+58KGqUgAKAYZhXvkC1Nu8g@mail.gmail.com>
-Subject: Re: [PATCH 0/2] gpio: fix sleeping-in-atomic in shared-proxy; restore
- meson non-sleeping
-To: Viacheslav Bocharov <v@baodeep.com>
-Cc: Linus Walleij <linusw@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Diederik de Haas <diederik@cknow-tech.com>, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] soc: qcom: rpmh: Allow non-child devices to issue
+ write commands
+To: Fenglin Wu <fenglin.wu@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        David Collins <david.collins@oss.qualcomm.com>,
+        Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
+        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+        Maulik Shah <maulik.shah@oss.qualcomm.com>, kernel@oss.qualcomm.com,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20260528-pinctrl-level-shifter-v2-0-3a6a025392bf@oss.qualcomm.com>
+ <20260528-pinctrl-level-shifter-v2-1-3a6a025392bf@oss.qualcomm.com>
+ <4ac5hjmr6divqs4myhcw5sveuboj265sw2jwslbivrfwh5e7ce@6d7ajvgikkgt>
+ <18235340-cd42-4d88-bfdb-19aecdd63d68@oss.qualcomm.com>
+ <9927f5d7-1eca-4936-b38c-678e76ac11cb@oss.qualcomm.com>
+ <vmk6b6cd4jolhisfphgai35eznr5d5uwrhx2qktdwd2qayxwm5@fb2js7bw4dca>
+ <837dc7e2-4db8-4a7d-a19f-e53ddbcc9cf6@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <837dc7e2-4db8-4a7d-a19f-e53ddbcc9cf6@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjExMDEwNiBTYWx0ZWRfX8da3SgWqoz9u
+ RgMiku3cOtVMyj8sFxL6DdkfJO5H7EPOyic3LNgQcVm5t1JFhLVIqi7o1whLa0SGHswQJx2J0/Y
+ Gh8P3CPfr6illNnwINGqEgAmQiBiEzIfpmo8608QqKq6iDE00JZHEdFeP+SiaNskRRzmN2dv/9J
+ uvBiSzG4e9KRE4cw4786VUI8Bc/9tjhOde53OOv60E8eqsmgrl//yOyIZB8oXvDaWXzMMEVt+bn
+ HVOP5Jdb2rs3900txGvS5dxFsBEIK0N7GroHMWw1y1K3UYBty/ryNd2TpvWll5zY1Gxh4kmuRcy
+ Fonnf9MzbOwP4vb/nbb+Xcne3b0h6xpZhagML3Q4eUPdMVh+3ygYCoRc1kjW4hf5g8WaAyLIZHu
+ HPoVwlstDtmED16yHLBTdGwYwBugN44HV5WALXJtZSH76LePfus3kfQhDmBTjSnnIoomwUBkfns
+ Ted2/mKbtxQIP8HaVug==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjExMDEwNiBTYWx0ZWRfXyl2qhywFO1d+
+ U2drJ9PXN5Fkd1pIxVEpnVyT4AneVZdS5/KR4NYx0HSgktIofESLBXQBlXXLAxUyXj4ohFAT1KF
+ 5iZXzv5u6URH4G58rIBQydVctXvlcA8=
+X-Proofpoint-GUID: 2fHF5AkCsVoJKiVC6tuX4NbdDiDVvCkN
+X-Proofpoint-ORIG-GUID: 2fHF5AkCsVoJKiVC6tuX4NbdDiDVvCkN
+X-Authority-Analysis: v=2.4 cv=Z5Tc2nRA c=1 sm=1 tr=0 ts=6a2a8fc1 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=V0-bULfdxerEnfIzaLIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-11_02,2026-06-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 bulkscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ spamscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606040000 definitions=main-2606110106
 
-On Wed, Jun 10, 2026 at 5:41=E2=80=AFPM Viacheslav Bocharov <v@baodeep.com>=
- wrote:
->
-> gpio-shared-proxy chooses its descriptor lock (mutex vs spinlock) from
-> the underlying chip's can_sleep, but under that lock it calls config and
-> direction ops that reach sleeping pinctrl paths. On a controller with
-> non-sleeping MMIO value ops the lock is a spinlock, so a sleeping call
-> runs from atomic context:
->
+On 6/9/26 3:28 AM, Fenglin Wu wrote:
+> 
+> On 6/8/2026 5:21 AM, Dmitry Baryshkov wrote:
+>> On Thu, Jun 04, 2026 at 10:02:43AM +0800, Fenglin Wu wrote:
+>>> On 6/2/2026 3:29 PM, Fenglin Wu wrote:
+>>>> On 6/1/2026 9:37 PM, Dmitry Baryshkov wrote:
+>>>>> On Thu, May 28, 2026 at 06:05:35PM -0700, Fenglin Wu wrote:
+>>>>>> Currently, the RPMH driver only allows child devices of the RPMH
+>>>>>> controller to issue commands, as it assumes dev->parent points to the
+>>>>>> RSC device.
+>>>>>>
+>>>>>> There is a possibility that certain devices which are not children of
+>>>>>> the RPMH controller want to send commands for special control at the
+>>>>>> RPMH side. For example, in PMH0101 PMICs, there are bidirectional
+>>>>>> level shifter (LS) peripherals, and each LS works with a pair of PMIC
+>>>>>> GPIOs. The control of the LS, which is combined with the GPIO
+>>>>>> configuration, is handled by RPMH firmware for sharing the resource
+>>>>>> between different subsystems. From a hardware point of view, the LS
+>>>>>> functionality is tied to a pair of PMIC GPIOs, so its control is more
+>>>>>> suitable to be added in the pinctrl-spmi-gpio driver by adding the
+>>>>>> level-shifter function. However, the pinctrl-spmi-gpio device is a
+>>>>>> child device of the SPMI controller, not the RPMH controller.
+>>>>> This replicates the story of the PMIC regulators. There are two drivers,
+>>>>> one SPMI and one RPMh. Why don't we add a separate, RPMh-based GPIO
+>>>>> driver targeting only those paired GPIOs (and we don't even need to
+>>>>> represent them as a pair, it might be just one pin).
+>>>> Thanks for the suggestion.
+>>>>
+>>>> I agree that adding a separate, RPMh-based GPIO driver would be more
+>>>> straightforward from RPMh control perspective. It makes the new device
+>>>> as a child of the RSC device then it can naturally use the APIs for RPMh
+>>>> commands. The main challenge here is, we need to make the level-shifter
+>>>> mutually exclusive with other GPIO functions when the GPIO pairs are
+>>>> used in level-shifter function, which means we need to write SPMI
+>>>> commands to disable the associated GPIO modules. I am not sure if AOP
+>>>> already handles this; as far as I know, AOP only manages the
+>>>> BIDIR_LVL_SHIFTER module registers. Let me double check on this
+>>>> internally, if the GPIO modules could be controlled along
+>>>> with BIDIR_LVL_SHIFTER module registers at AOP side, and get back.
+>>>>
+>>> I checked on this internally, AOP only handles BIDIR_LVL_SHIFTER module
+>>> registers, it doesn't disable the associated GPIO modules. Also, I still
+>>> have no idea how could we make the "level-shifter" function to be mutually
+>>> exclusive with other GPIO functions after moved it into a separate driver.
+>>> Do you have further suggestions?
+>> So, for my understanding, we still need to write SPMI registers to
+>> configure the pins and only then AOP can handle the level shifter?
+>>
+>> I was thinking of using gpio-reserved-ranges to prevent those GPIOs from
+>> being used by the normal SPMI driver.
+> 
+> More background: "level-shifter" module is actually an independent hardware which is not part of the GPIO module. However, they are sharing the physical pins. Which means, from PMIC chip perspective, these pins can be configured to either a GPIO function or the "level-shifter" function. So in PMIC base dtsi file, for example, pmh0101.dtsi, these pins should not be restricted in the GPIO nodes in "gpio-reserved-ranges".
+> 
+> Also, we need to make the GPIO modules are disabled when the "level-shifter" is enabled, to ensure that the "level-shifter" circuitry is not impacted by the GPIO modules internal circuitry. So it is supposed to write GPIO EN_CTL register (offset 0x46) to 0 through SPMI bus when the "level-shifter" is enabled.
+> 
+> That's why we have the requirement to access both RPMh and SPMI bus in the same driver.
 
-Why am I seeing three versions of this in my inbox? Which one should I revi=
-ew?
+I was thinking about other ways to solve it.. maybe someting like:
 
-Bartosz
+&pmh0101_gpios {
+	pmh0101_ls_pins1_2: foo-bar {
+		pins = "gpio1", "gpio2";
+		// appropriate pinctrl config
+	};
+};
+
+&rpmh_rsc {
+	// should this be a gpio controller? a mux provider?
+	// is there another class that would better suit this?
+	rpmh_level_shifter: rpmh-foo-bar {
+		pinctrl-0 = <&>;
+		pinctrl-names = "default";
+	};
+};
+
+// but where would it make sense to describe?
+// fixed-regulator or something akin to that?
+&some_consumer {
+	someclass = <&rpmh_level_shifter 1>;
+};
+
+i.e. the "rpmh level shifter" driver would consume a reference to the
+pins, configure them as necessary (just like any other pinctrl consumer)
+upon request
+
+Konrad
