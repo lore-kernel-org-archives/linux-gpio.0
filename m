@@ -1,96 +1,312 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964B5263C8F;
-	Sat, 13 Jun 2026 16:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE50519992C;
+	Sat, 13 Jun 2026 18:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781369333; cv=none; b=XO4TeijJ9LCJnqSaKKDsl/JfL4cagaF2hSYTyZpvPNawCS5iU//Y95oL22C7CoylimU2ZVJ6XN20017EWWoHvteZkST6xA/nriEgbIj/2TEtvLgLzlt/IwwuxSqw5qiHK+5fFlJ/yXLRfyW3a84uKTp3lfR0XIXb1TuFUNSJg5w=
+	t=1781376895; cv=none; b=KLhBo5Qo4QPK0XpWeexiLV3kjP650SQUVfx4N5IAtqOkFr9juqE2gl2BwYBeOh+cWWKEe8cjzVPNWCCJsP7BfE2yBJKEJD53UXtJ3O/rtHGTLcOX7t6VT+2crIhEFtuErjpF6BB1GCG43xC3N9m41fGz8jwQX1bdQvCQqIWyDHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781369333; c=relaxed/simple;
-	bh=u18l/tEe4VipANnKG2MxfkxQ+FFaXOgq5noVLMuBeTo=;
+	s=arc-20240116; t=1781376895; c=relaxed/simple;
+	bh=jJ8rBGiy2dxWpalW8Igex5kuuAOnmPEKi3aJno92Np0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=de2qjcRBSbnRfffSS9edfnkkjh05TTXDiqwoXnEuKwCSZPbNFcjuGKfLGPJjPlla4lBZz1lrQqfo1GOd2NZrzVJONrWV7ePiHMPX4zXAJ4mlbpssJjYwiPHoCGUAwVr+DgNeAeS+dhUG/fx0c+bWpBUDiw9/xXehleRYhOBewpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KPBm6DbR; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=VnjddLFO4vkMxgIfCpsgweE4cwsMOjGeHL8fYUwzxyUa6eqg1kyImos6ZJxAgSWYNDrkXEshgWXMWeAdfW3hi7qBxByUh+doVjaPLgjAg8n8TzJJxKCWVlF4bETposku1DPE+R2CAVZT/7Kkq+Qm2I+Qxu0gbiu8nVExh4fafZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZsvjLy2P; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KPBm6DbR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C4701F000E9;
-	Sat, 13 Jun 2026 16:48:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZsvjLy2P"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8FE91F000E9;
+	Sat, 13 Jun 2026 18:54:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781369332;
-	bh=LVBnyWkL2409t5kbHwLTU6uhwAAVAlV9g1CqOb0LOcE=;
+	s=k20260515; t=1781376894;
+	bh=9aRCDqgGSH3iD0ZnGIWR6w5F4sdtrQYSDqoyBQWRMJo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KPBm6DbRE1k0T7fGnKCHKz0da1JpXeBiGifUPNrTt6HWQ4OV2OpvCJjogPVNtWwBF
-	 O+ra2mqYG6V8v7EkkWo3rnupvm1l1+FShOdChM9+ZG5vtWjlvgxtamWLGn6C8MGiDe
-	 H6Y8H4Gav87X4AsxK6uquK/MUGdMhztce/HTsiUo4KEeo+kde+k6mTERTpsldoq8Pq
-	 XrEBWkPyWYdGY1ZygqtqW1OZd8P5kQlDjDkDyg0hgVxKsbWhFY1bd1vRFoiorKma7e
-	 U5ittcyxp5BgM1+d6VmC5rRJBP7a2G3q6Z1xjdeQ3LXEz9B/BIwQWQBVMnibur1XAz
-	 FqInFbyPkG6hQ==
-Date: Sat, 13 Jun 2026 12:48:47 -0400
-From: Nathan Chancellor <nathan@kernel.org>
-To: Jia Wang <wangjia@ultrarisc.com>, Linus Walleij <linusw@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] pinctrl: ultrarisc: Add UltraRISC DP1000 pinctrl
- driver
-Message-ID: <20260613164847.GA3152104@ax162>
-References: <20260610-ultrarisc-pinctrl-v4-0-b7e9b2a8ed84@ultrarisc.com>
- <20260610-ultrarisc-pinctrl-v4-2-b7e9b2a8ed84@ultrarisc.com>
+	b=ZsvjLy2PpWDpdPKRgfJzopHlrckWK4SqIsQkBitrTw5KOzdvpzBIkCYRTwIc31E/L
+	 PVDy2FK+fKoqeV6cUoPpsFt1gLJd+ySD9ciHLXmjHMObSfI7ZqHoWHJNXXAVjno/Cg
+	 HJhzOrE0R7CmvGaTgImH8ybUiQGbOnZXHX0fc/Y2CoKyqXH/iEhxXTX+qvrBmekY58
+	 4EorCWj9M3yj7p256c7hugcC39sKtG9q/lshgs6BXGLuZAIWJTXt/lKclibqMEISHh
+	 HWLvwPUiHaWPgkZmpaq7H9WxnUdJ9YJcYspFcI+Yrz9gHKoXPtqVrgDtUrEb0Nzpiz
+	 pLLnyye8yNsSA==
+Date: Sat, 13 Jun 2026 20:54:51 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kurt Borja <kuurtb@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: iio: adc: Add TI ADS126x ADC family
+Message-ID: <20260613-loyal-azure-goldfish-cf6d54@quoll>
+References: <20260612-ads126x-v1-0-894c788d03ed@gmail.com>
+ <20260612-ads126x-v1-1-894c788d03ed@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260610-ultrarisc-pinctrl-v4-2-b7e9b2a8ed84@ultrarisc.com>
+In-Reply-To: <20260612-ads126x-v1-1-894c788d03ed@gmail.com>
 
-On Wed, Jun 10, 2026 at 01:29:56PM +0800, Jia Wang wrote:
-> diff --git a/drivers/pinctrl/ultrarisc/pinctrl-ultrarisc.c b/drivers/pinctrl/ultrarisc/pinctrl-ultrarisc.c
-> new file mode 100644
-> index 000000000000..8fb5b0ea5b93
-> --- /dev/null
-> +++ b/drivers/pinctrl/ultrarisc/pinctrl-ultrarisc.c
-...
-> +static bool ur_function_is_gpio(struct pinctrl_dev *pctldev,
-> +				unsigned int selector)
-> +{
-> +	const struct function_desc *function;
+On Fri, Jun 12, 2026 at 05:46:19PM -0500, Kurt Borja wrote:
+> +  ti,neg-refmux:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Selects the negative voltage reference input:
+> +      0: Internal 2.5 V reference
+> +      1: AIN1 pin
+> +      2: AIN3 pin
+> +      3: AIN5 pin
+> +      4: AVSS pin
+> +    minimum: 0
+> +    maximum: 4
+> +    default: 0
 > +
-> +	function = pinmux_generic_get_function(pctldev, selector);
-> +	if (!function)
-> +		return false;
+> +  ti,vbias:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description: Enables the level-shift voltage on the AINCOM pin.
+> +    default: false
+
+There is no such syntax, drop.
+
 > +
-> +	for (u32 i = 0; i < function->func->ngroups; i++) {
-> +		const char *func_name;
-> +		int group_selector;
+> +  ti,idac1-pin:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Selects the analog input pin to connect IDAC1:
+> +      0: AIN0
+> +      1: AIN1
+> +      2: AIN2
+> +      3: AIN3
+> +      4: AIN4
+> +      5: AIN5
+> +      6: AIN6
+> +      7: AIN7
+> +      8: AIN8
+> +      9: AIN9
+> +      10: AINCOM
+> +      11: No Connection
+> +    minimum: 0
+> +    maximum: 11
+> +    default: 11
 > +
-> +		group_selector = pinctrl_get_group_selector(pctldev,
-> +							    function->func->groups[i]);
-> +		if (group_selector < 0)
-> +			return false;
+> +  ti,idac1-microamp:
+> +    description: Selects the current values of IDAC1.
+> +    enum: [0, 50, 100, 250, 500, 750, 1000, 1500, 2000, 2500, 3000]
+> +    default: 0
 > +
-> +		func_name = ur_get_group_function(pctldev, group_selector, 0);
-> +		if (!func_name || strcmp(func_name, "gpio"))
-> +			return false;
-> +	}
+> +  ti,idac2-pin:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: |
+> +      Selects the analog input pin to connect IDAC2:
+> +      0: AIN0
+> +      1: AIN1
+> +      2: AIN2
+> +      3: AIN3
+> +      4: AIN4
+> +      5: AIN5
+> +      6: AIN6
+> +      7: AIN7
+> +      8: AIN8
+> +      9: AIN9
+> +      10: AINCOM
+> +      11: No Connection
+> +    minimum: 0
+> +    maximum: 11
+> +    default: 11
 > +
-> +	return true;
-> +}
+> +  ti,idac2-microamp:
+> +    description: Selects the current values of IDAC2.
+> +    enum: [0, 50, 100, 250, 500, 750, 1000, 1500, 2000, 2500, 3000]
+> +    default: 0
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  '#io-channel-cells':
+> +    const: 1
+> +
+> +  '#gpio-cells':
+> +    const: 2
+> +
+> +  gpio-controller: true
+> +
+> +  adc:
+> +    $ref: /schemas/iio/adc/ti,ads1263-adc2.yaml#
 
-The usage of pinctrl_get_group_selector() in this function breaks the
-build when this driver is a module because pinctrl_get_group_selector()
-is not exported for modules:
+Not a separate device node. Fold into the parent... or explain in
+commit msg. You have entire commit msg to explain odd things.
 
-  ERROR: modpost: "pinctrl_get_group_selector" [drivers/pinctrl/ultrarisc/pinctrl-ultrarisc.ko] undefined!
+In that binding description you call it "independent", so it should have
+its own SPI chip select? Why "independent" and part of this binding?
+Maybe not independent, so basically part of this device?
 
-Also reported by the robots:
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - avdd-supply
+> +  - dvdd-supply
+> +  - '#address-cells'
+> +  - '#size-cells'
+> +
+> +unevaluatedProperties: false
+> +
+> +patternProperties:
 
-  https://lore.kernel.org/202606130210.ytVPxHlm-lkp@intel.com/
+patternProps always follow properties. Please open example-schema for
+template.
 
--- 
-Cheers,
-Nathan
+> +  "^channel@[0-9]+$":
+> +    $ref: /schemas/iio/adc/adc.yaml#
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+> +
+> +      diff-channels:
+> +        description: |
+> +          Selects the analog input configuration for this channel. The first
+> +          value is the positive input and the second is the negative input.
+> +          The following values are available:
+> +          0: AIN0 pin
+> +          1: AIN1 pin
+> +          2: AIN2 pin
+> +          3: AIN3 pin
+> +          4: AIN4 pin
+> +          5: AIN5 pin
+> +          6: AIN6 pin
+> +          7: AIN7 pin
+> +          8: AIN8 pin
+> +          9: AIN9 pin
+> +          10: AINCOM pin
+> +          11: Temperature sensor monitor
+> +          12: Analog power supply monitor
+> +          13: Digital power supply monitor
+> +          14: TDAC test signal
+> +          15: Float (open connection)
+> +        items:
+> +          minimum: 0
+> +          maximum: 15
+> +
+> +      ti,chop-mode:
+> +        $ref: /schemas/types.yaml#/definitions/flag
+> +        description:
+> +          When enabled, the ADC performs two internal conversions to cancel the
+> +          input offset voltage. The first conversion is taken with normal input
+> +          polarity. The ADC reverses the internal input polarity for the second
+> +          conversion. The difference of the two conversions is computed to yield
+> +          the final corrected result with the offset voltage removed.
+> +        default: false
+> +
+> +      ti,idac-rotation-mode:
+> +        $ref: /schemas/types.yaml#/definitions/flag
+> +        description:
+> +          The rotation mode automatically swaps the IDAC1 and IDAC2 connections
+> +          of alternate conversions. The ADC averages the alternate conversions
+> +          to eliminate IDAC mismatch.
+> +        default: false
+> +
+> +      ti,pga-bypass:
+> +        $ref: /schemas/types.yaml#/definitions/flag
+> +        description: Bypass the Programmable Gain Amplifier (PGA).
+> +        default: false
+> +
+> +      ti,rev-vref-pol:
+> +        $ref: /schemas/types.yaml#/definitions/flag
+> +        description:
+> +          The reference polarity can be negative, but the ADC requires a
+> +          positive voltage reference. In this case, the reference
+> +          polarity-reversal switch changes the reference polarity from negative
+> +          to positive.
+> +        default: false
+> +
+> +      ti,sbias-connection:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: |
+> +          Selects the sensor bias current source connection:
+> +          0: Sensor bias connected to ADC1 mux out
+> +          1: Sensor bias connected to ADC2 mux out
+
+Use string enum.
+
+> +        minimum: 0
+> +        maximum: 1
+> +        default: 0
+> +
+> +      ti,sbias-polarity:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: |
+> +          Selects the sensor bias current source polarity:
+> +          0: Sensor bias pull-up
+> +          1: Sensor bias pull-down
+> +        minimum: 0
+> +        maximum: 1
+> +        default: 0
+
+Use string enum.
+
+> +
+> +      ti,sbias-magnitude:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description: |
+> +          Selects the sensor bias magnitude:
+> +          0: No sensor bias current or resistor
+> +          1: 0.5-uA sensor bias current
+> +          2: 2-uA sensor bias current
+> +          3: 10-uA sensor bias current
+> +          4: 50-uA sensor bias current
+> +          5: 200-uA sensor bias current
+> +          6: 10-Mohm resistor
+> +        minimum: 0
+> +        maximum: 6
+> +        default: 0
+> +
+> +    required:
+> +      - reg
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        adc@0 {
+> +            compatible = "ti,ads1263";
+> +            reg = <0>;
+> +            spi-max-frequency = <8000000>;
+> +            spi-cpha;
+> +            avdd-supply = <&avdd>;
+> +            dvdd-supply = <&dvdd>;
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            reset-gpios = <&gpio 18 GPIO_ACTIVE_LOW>;
+> +
+> +            /* AINP: 0 - AINN: AINCOM */
+> +            channel@0 {
+> +                reg = <0>;
+> +                diff-channels = <0x0 0xA>;
+> +            };
+> +
+> +            /* Temperature sensor monitor */
+> +            channel@1 {
+> +                reg = <1>;
+> +                diff-channels = <0xB 0xB>;
+> +            };
+> +
+> +            adc {
+> +                compatible = "ti,ads1263-adc2";
+
+Heavily incomplete... Drop the sub node.
+
+Best regards,
+Krzysztof
+
