@@ -1,30 +1,30 @@
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BE73BFAE0;
-	Mon, 15 Jun 2026 09:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DD9353EEB;
+	Mon, 15 Jun 2026 09:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781515165; cv=none; b=IuA1i7QwZEghAG4EkKXTAAqdVwcqBjbHWQq37QrjmXLBZYipq8TrNaX6OdK2bmU3OgvE5yu2PcNfY1n0+e7o1/2lXsrDxRS6sKRQe15c9dVyljA5erbZFqtmiwidZvCNCy+VBsdN8iLwrHLrKSrFQxcQ+TykekadNNMwd+uxJc0=
+	t=1781515299; cv=none; b=oBNUIgFdczC3Mmt/ElsmFsYWuzF1cYqVRrgLdzoJNQLh7XbWtPfVMJjZoJIkwrQrCcDzk5jheMokM8kjk2/oiUBn7gcErsUMhgvyn+KgqWE2V+jBZ7MlTOB2nYp7QvQD4BTeLEWudGKJae/a0Gmi7nY2Gtz2PVWYhLTmDlEy0Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781515165; c=relaxed/simple;
-	bh=+G2MgC4kqz8KaDEzKT4BHZoqmEhuC6zVwSx8BkcPq8c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aPW2CwztdOvVbmkLeTqfprqL1gngcrSsuZ83TVFnXvUaYEw/NSbtB+KytIkL5MF1/zH1oZTkEX1KHLBFruRxvhBHo+zHWDXHP+5Aw4xq7nefB9yqoaG3Gf7KAcZkpE75wfC+HxKOgpRVXKKfZD4OLDDLZBdaF8xWNfE90jdJOlI=
+	s=arc-20240116; t=1781515299; c=relaxed/simple;
+	bh=PHuK3ZEQJmweT4mfoLb8gGJ66xshPj82YvCDCHPnECo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jnNEv3ls2QeyjaDBtpXWo8QLleLKYJnMJqZfzVSoiQjN3ppF+vXMay/71Kf0AytfBLDcOvaeLUXSkuNRHYr8tPk4oRVVQxp1MTtGaqlEuim2hP8krVMrcx/Zm3zEK0v5UwgqVxUATYQjkb/YkKdYlJ68uI69q0SZ3+okvnU6SjQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
 Received: from localhost.localdomain (unknown [111.196.245.140])
-	by APP-03 (Coremail) with SMTP id rQCowACXt96Xwy9q1JDLFA--.28919S2;
-	Mon, 15 Jun 2026 17:19:19 +0800 (CST)
+	by APP-03 (Coremail) with SMTP id rQCowADX4McfxC9qZ53LFA--.950S2;
+	Mon, 15 Jun 2026 17:21:35 +0800 (CST)
 From: Pengpeng Hou <pengpeng@iscas.ac.cn>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>
-Subject: [PATCH] gpio: mlxbf3: fail probe if gpiochip registration fails
-Date: Mon, 15 Jun 2026 17:19:18 +0800
-Message-ID: <20260615091918.43333-1-pengpeng@iscas.ac.cn>
+Subject: [PATCH] gpio: mvebu: fail probe if gpiochip registration fails
+Date: Mon, 15 Jun 2026 17:21:19 +0800
+Message-ID: <20260615092120.54741-1-pengpeng@iscas.ac.cn>
 X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -33,10 +33,10 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACXt96Xwy9q1JDLFA--.28919S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKr4xtryfZr1fKrWUGrWxJFb_yoWfuwc_K3
-	WrZw4Dtr1vyF4DXr17AFyavrySvFsruF18ZFn7t3y3Jr93Xr4UWFW8ur1Syw4UXrWxCF1Y
-	9348Zr47CrW3CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+X-CM-TRANSID:rQCowADX4McfxC9qZ53LFA--.950S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruw1xKrWUZFWxKryxXF4UCFg_yoWDCwbEk3
+	4F9r4UK34UtF4qvw17A3yavrWSyF1DuFn2vr4kKwsxAryDurn5uryqvFW3GrWrXr4xKFyD
+	Ca95ur4rZ39xCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
 	9fnUUIcSsGvfJTRUUUb4kFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
 	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
 	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
@@ -52,32 +52,33 @@ X-Coremail-Antispam: 1UD129KBjvdXoWrKr4xtryfZr1fKrWUGrWxJFb_yoWfuwc_K3
 	UUU
 X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-mlxbf3_gpio_probe() logs a devm_gpiochip_add_data() failure but still
-returns success. That leaves the platform device bound even though the
-GPIO chip was not registered.
+The MVEBU GPIO probe path ignores the return value from
+devm_gpiochip_add_data(). If gpiochip registration fails, probe still
+continues into optional PWM and IRQ-domain setup as if the GPIO provider
+had been registered successfully.
 
-Return the registration error so probe failure matches the missing
-gpiochip state.
+Propagate the gpiochip registration error and stop probing in that case.
 
 Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
 ---
- drivers/gpio/gpio-mlxbf3.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-mvebu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-mlxbf3.c b/drivers/gpio/gpio-mlxbf3.c
-index 4770578269ba..566326644a2c 100644
---- a/drivers/gpio/gpio-mlxbf3.c
-+++ b/drivers/gpio/gpio-mlxbf3.c
-@@ -255,7 +255,8 @@ static int mlxbf3_gpio_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index c030d1f00abc..50dc8179cf73 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -1221,7 +1221,9 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
+ 		BUG();
+ 	}
  
- 	ret = devm_gpiochip_add_data(dev, gc, gs);
- 	if (ret)
--		dev_err_probe(dev, ret, "Failed adding memory mapped gpiochip\n");
-+		return dev_err_probe(dev, ret,
-+				     "Failed adding memory mapped gpiochip\n");
+-	devm_gpiochip_add_data(&pdev->dev, &mvchip->chip, mvchip);
++	err = devm_gpiochip_add_data(&pdev->dev, &mvchip->chip, mvchip);
++	if (err)
++		return err;
  
- 	return 0;
- }
+ 	/* Some MVEBU SoCs have simple PWM support for GPIO lines */
+ 	if (IS_REACHABLE(CONFIG_PWM)) {
 -- 
 2.50.1 (Apple Git-155)
 
