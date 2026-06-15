@@ -1,57 +1,44 @@
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68CB339708;
-	Mon, 15 Jun 2026 10:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462843E2AD7;
+	Mon, 15 Jun 2026 11:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781520233; cv=none; b=Wjx44uOUfGTiO/ScBM2daqEhP2iMZ4U8YWXHWYI//BwUKdeezdBwW8/d1cmpI7cdd8I69+KW6r79F1tfzm7Cp6IaFRBO+yHw3qks733VD6lwMqRu1CxR3GoIDtB00suL3z0HfyutBPnpeJ3NxKeYjmH64rUIxWRAiApUywcraBo=
+	t=1781521667; cv=none; b=iU/VL6zw2htzT0hBNJ0juWMyUIosxNUinY8886UdEkXNQDXN4GufVzGKDUykUgA3Fg0NPwGylqu7slvziSGXe+jIzuXMMgV5hNGdYsws+JYwSEtz+LB3ChInZGmcxDJ3ZH4dIN7SfHZIVxUWrchtPrWb1Ta9otlpGs30pG8LuY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781520233; c=relaxed/simple;
-	bh=oVfd44ufR+op111XMW1UXh0Dk/Avy9DCMpoW+by1up8=;
+	s=arc-20240116; t=1781521667; c=relaxed/simple;
+	bh=5IsDVMKoPJvLpvptuX1lpJHY6wn9dp8hACNCowdF2AU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a6zf9w9OuO0ugr/TjXFDSh5Y4SxKLIEX/GMLUaJEbqkkssPP0Llz++56hJTFP7yDlJWpfxshz4qShW/zG9shhgGixEb+48gGo4W6AzeDw6lLByT4Vzgxz4JmXXSrJJ33iJlUTmm859M9SfQKzZYUV9B+uecB/UN6xGQxZdlp55A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1wZ4ey-0000JJ-00; Mon, 15 Jun 2026 12:35:16 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id C060CC084D; Mon, 15 Jun 2026 12:33:22 +0200 (CEST)
-Date: Mon, 15 Jun 2026 12:33:22 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Lamparter <chunkeey@googlemail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jonas Gorski <jonas.gorski@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-wireless@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	linux-sh@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org, netdev@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH 05/10] [v2] mips: select legacy gpiolib interfaces where
- used
-Message-ID: <ai_U8j3uOoIzoYrJ@alpha.franken.de>
-References: <20260520183815.2510387-1-arnd@kernel.org>
- <20260520183815.2510387-6-arnd@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r1NvIeB5eb1e8B/BQ/QqYJH3pze4hTh/t2vLKGr8ZyERa6G9v3d+twHTsxds64k8tdagrvUbSEmLVad1gOquHGFkePaSF1s6/iyTeAoKtG0dbhVAaE/v06WeYnmroNAlGmf1xmef78qMLbccpFssSsK2t67e/pVkRRxT4a2fc/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z45vdnCP; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z45vdnCP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 168C21F000E9;
+	Mon, 15 Jun 2026 11:07:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781521666;
+	bh=UO3rpfvYBBfuE5Ibo3k4HDGQ/cgjzFJy9qYSUkcP7I8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Z45vdnCP/DIFOtMyTiQHaC/jwY7RguxR3orCHgTJj7TjBJmOai+rw+wMalmWzYFLx
+	 iWF7txnOF962LrHydjZH6GEaEFbOJEqFmbFdBhJZmj1fk2czHvsX2wMD0+GQ25DPa9
+	 hauKuHV7W91vADi22vqSYS/vfXtnnyfEMWqneDypF+xe2bD5F6Xl8ud44l/8QjB/9r
+	 RloRpAuitmV/+psivHebPD8SvKrblMbMKSvCA1wOkZv3/zdTcNpU2BmvICCfQ+c6n7
+	 eUWR/qDQdLQKKlZY1gKIHmC34WH87uIjrjFV16TQpVxpng/bTkgMUMNiIxIWa9wBET
+	 Z0gJYbhPY17aA==
+Date: Mon, 15 Jun 2026 13:07:41 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Hardik Prakash <hardikprakash.official@gmail.com>, 
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, wsa@kernel.org, 
+	mario.limonciello@amd.com, brgl@bgdev.pl, basavaraj.natikar@amd.com, linusw@kernel.org, 
+	nathan@kernel.org, chaitanya.kumar.borah@intel.com
+Subject: Re: [PATCH] Revert "i2c: designware: defer probe if child GpioInt
+ controllers are not bound"
+Message-ID: <ai_cAd41W3iX1ic-@zenone.zhora.eu>
+References: <20260610083701.18663-1-hardikprakash.official@gmail.com>
+ <ai8jhK9hUGHpojB5@zenone.zhora.eu>
+ <ai_PwNWnMZB01AYU@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -60,45 +47,29 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260520183815.2510387-6-arnd@kernel.org>
+In-Reply-To: <ai_PwNWnMZB01AYU@ashevche-desk.local>
 
-On Wed, May 20, 2026 at 08:38:10PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> A few old machines have not been converted away from the old-style
-> gpiolib interfaces. Make these select the new CONFIG_GPIOLIB_LEGACY
-> symbol so the code still works where it is needed but can be left
-> out otherwise.
-> 
-> This is the list of all gpio_request() calls in mips:
-> 
->   arch/mips/alchemy/devboards/db1000.c:           gpio_request(19, "sd0_cd");
->   arch/mips/alchemy/devboards/db1000.c:           gpio_request(20, "sd1_cd");
->   arch/mips/alchemy/devboards/db1200.c:   gpio_request(215, "otg-vbus");
->   arch/mips/bcm47xx/workarounds.c:        err = gpio_request_one(usb_power, GPIOF_OUT_INIT_HIGH, "usb_power");
->   arch/mips/bcm63xx/boards/board_bcm963xx.c:              gpio_request_one(board.ephy_reset_gpio,
->   arch/mips/txx9/rbtx4927/setup.c:        gpio_request(15, "sio-dtr");
-> 
-> Most of these should be easy enough to change to modern gpio descriptors
-> or remove if they are no longer in use.
-> 
-> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: no changes. There was no discussion on this, but the patch
->     has so far not made it into the linux-mips tree, so I'm including
->     it for completeness.
-> ---
->  arch/mips/Kconfig         | 5 +++++
->  arch/mips/alchemy/Kconfig | 1 -
->  arch/mips/txx9/Kconfig    | 1 +
->  3 files changed, 6 insertions(+), 1 deletion(-)
+Hi Andy,
 
-applied to mips-next
+> > > This reverts commit ef76a3a28c79b628890431aa344af633e892035b.
+> > 
+> > Is this in your branch?
+> 
+> $ git tag --contains ef76a3a28c79b6288
+> next-20260601
+> next-20260602
+> next-20260603
+> next-20260604
+> next-20260605
+> next-20260608
+> next-20260609
+> next-20260610
+> next-20260611
 
-Thomas.
+Yes, but I'm not finding out how it got there. I only see it in
+one of Wolfram's branches, but I don't think it came in that way.
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+I can merge this revert as well, but only after the original
+patch hits mainline.
+
+Andi
