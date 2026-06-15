@@ -1,104 +1,101 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2510723395F;
-	Mon, 15 Jun 2026 09:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7BB3DDDBD;
+	Mon, 15 Jun 2026 10:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781516864; cv=none; b=F89wsWwoc4XSXyBGX/3RV/pFXxLvWnXO2gzZDjpT4zvJvRxVzLDLc2wQGz8iSclKxHlbku0BGAz1Yv7NhYe9KTenmWq27Cw0gegf9a6OvFYCg9BP5km11HLA/zy8MowGWBQhJtCc7pVPVV+bAI/5r2Yb9C/7XpTzNSUTj1UidTI=
+	t=1781518287; cv=none; b=Mya0t+QP0z/KNJ8J/Y6O5spqk67SUdQi44kcOvc88wA59wkro0maegKJ+DQGTh8Lj0fn5gSrE5fd55HIJhjBVfVucbrvuJDcrmHphwKbvZLEMUHa5PC/ycGxU/j1Qu3AyraHalcXrrQ6RHK1tsfK0uDR5ca8c+lipAvK6HaRIyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781516864; c=relaxed/simple;
-	bh=mE4PuJIymmjeGEqXUP/JEMsaFx5532dilIo4+r9yDzk=;
+	s=arc-20240116; t=1781518287; c=relaxed/simple;
+	bh=+pe7I+pGcuEyQuV3pMocPIz86SRmDdG4odXqqYhA4Co=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYAjmDITwP5lnCHrhZQNvH7HEgk/dt4clMS3DvAsWYHA+/JRpAco5v8Ed24Nh7WK5jfAxv4c955gbQoqqlD8ua/c7Rk2Sym4Xf+bybqk4JqIdzD4AvPXJ77LZc3g7aW9iAh4eF/tZrlGw6KHyimI3fXqI21cZtGT2IIHG1gLSm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cmKZM4Ms; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=oEmwna8tFpVKJAMyaLe6IzkwT0OLEyP+2c5hU+NbCDcqwBJNXZBiinrqE/Pceh40CnLUOkZw4LS0G7yjAj3Wnj4h1goYlrTR7tmS1simLjQmq80aMPhtGh/FOej5O+PXLcwpflpYk8v2LrkKuo4qWw/lwwYIUsqxNsaK9yPEGHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GiXflqdq; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cmKZM4Ms"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GiXflqdq"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1781516862; x=1813052862;
+  t=1781518279; x=1813054279;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=mE4PuJIymmjeGEqXUP/JEMsaFx5532dilIo4+r9yDzk=;
-  b=cmKZM4MsoNb1g0vTsgqQsd0hN7gbMaFCNoelFBxWu6d43vcdfLyeE156
-   15utEO1Ua9x/tmAiKvVlRAfxq0jmF1jAU1MYEgnPdQQNrYqSOXovwAHas
-   EtXiVyn5idv8izer+0GEhE86WCOu4q5pVHdje5fd12+cqKS1eFzn6DROt
-   e9Y/uoVtkMtGMGC/p9AIBKv/nT44thsNJBizvarVlEwGNdILyL8UxbMAt
-   CHs5B1Au49EMMzoXXH4ZqGmYEnzUkDLIC6DS4P/cZ5OuzO8uI+mRi39tC
-   wdE+4xF0XGYh3z7erv6CjkBHnArgRBCdQo3Z6yXVocCoGMUGcaSG/Qw6g
-   w==;
-X-CSE-ConnectionGUID: Xbj0Gk/pR3anv0mCOcgtVg==
-X-CSE-MsgGUID: MY7JX2/KSjOhNenJ2aXDZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11817"; a="82316205"
+  bh=+pe7I+pGcuEyQuV3pMocPIz86SRmDdG4odXqqYhA4Co=;
+  b=GiXflqdqVuaaN3mIhxIut3WtlbeT4/35tT4m3GbsATV8ov6fI/QJu1gF
+   0ZKOAeBg236c7EW5QGZTf/+JX3lrLYEat0YuzW8sFpS7QFxAe/GZSyvJ6
+   NZq0MRtBN4I/py9RnOXtydVR/00Z1Z3OwTH7i+Jo2a6TBoH56UBytMBBx
+   exS8+S1A73P/Tt6AAdwNMKmsVwNhSnA7+C0o17H+smFsl7z2CPZF6VV3z
+   qIAhEUBwE/Ob+yT6PPNpjybXc93OyZPKwyeFkU7hAgc9d+fyW9OA2Sfj/
+   XpjYTEJxRhXh03Qiz7qFPpJJbrN2ajC2VAlvxpT9sd7j92/3SyUk7Q5Sx
+   Q==;
+X-CSE-ConnectionGUID: tdQ8d960S2yYCLX/CslZag==
+X-CSE-MsgGUID: iVCY9xikQUy+acjqC5KDXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11817"; a="82101607"
 X-IronPort-AV: E=Sophos;i="6.24,206,1774335600"; 
-   d="scan'208";a="82316205"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2026 02:47:42 -0700
-X-CSE-ConnectionGUID: obSS9mz8Rq2RRL+/R+qgRA==
-X-CSE-MsgGUID: QHR3KKA/QHyOCpL1QvE9iw==
+   d="scan'208";a="82101607"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2026 03:11:18 -0700
+X-CSE-ConnectionGUID: 3tky9ysbQXa3ipU940FJuQ==
+X-CSE-MsgGUID: ASWpRmhqQfCA+w1mjafYDw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.24,206,1774335600"; 
-   d="scan'208";a="252382427"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa005.jf.intel.com with ESMTP; 15 Jun 2026 02:47:40 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 45A7F95; Mon, 15 Jun 2026 11:47:38 +0200 (CEST)
-Date: Mon, 15 Jun 2026 11:47:38 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: GaryWang <is0124@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	Daniele Cleri <danielecleri@aaeon.eu>,
-	JunYingLai <junyinglai@aaeon.com.tw>,
-	Louis Chen <louischen@aaeon.com.tw>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] upboard pinctrl support for device id INTC1055
-Message-ID: <20260615094738.GA2990@black.igk.intel.com>
-References: <20260612-upboard-pinctrl-add-upboard-intc1055-support-v2-0-4111b256c840@gmail.com>
- <20260615043536.GZ2990@black.igk.intel.com>
- <CANYHO6rT6pPSZAts80YsFmZ8vCNyzmEm94sSheE-0NbUdZ_=OA@mail.gmail.com>
+   d="scan'208";a="246542293"
+Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.235])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2026 03:11:15 -0700
+Date: Mon, 15 Jun 2026 13:11:12 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Hardik Prakash <hardikprakash.official@gmail.com>,
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+	wsa@kernel.org, mario.limonciello@amd.com, brgl@bgdev.pl,
+	basavaraj.natikar@amd.com, linusw@kernel.org, nathan@kernel.org,
+	chaitanya.kumar.borah@intel.com
+Subject: Re: [PATCH] Revert "i2c: designware: defer probe if child GpioInt
+ controllers are not bound"
+Message-ID: <ai_PwNWnMZB01AYU@ashevche-desk.local>
+References: <20260610083701.18663-1-hardikprakash.official@gmail.com>
+ <ai8jhK9hUGHpojB5@zenone.zhora.eu>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANYHO6rT6pPSZAts80YsFmZ8vCNyzmEm94sSheE-0NbUdZ_=OA@mail.gmail.com>
+In-Reply-To: <ai8jhK9hUGHpojB5@zenone.zhora.eu>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Jun 15, 2026 at 03:01:23PM +0800, GaryWang wrote:
-> On Mon, 15 Jun 2026 at 12:35, Mika Westerberg
-> <mika.westerberg@linux.intel.com> wrote:
-> >
-> > Hi,
-> >
-> > On Fri, Jun 12, 2026 at 06:13:31PM +0800, GaryWang wrote:
-> > > Add missing groups and functions in Tigerlake's pinctrl driver for INTC1055.
-> > > Add support "UP Xtreme i12", "UP Squared Pro 7000", "UP Squared i12", "UP 7000" boards.
-> > >
-> > > The pinctrl-upboard is provide additional driving power & pin mux function
-> > >  through native SOC pins -> FPGA/CPLD -> hat  pins for flexable board level
-> > >  applications. it's probe from ACPI device id AANT0F01 & AANT0F04.
-> > >
-> > > Signed-off-by: GaryWang <is0124@gmail.com>
-> > > ---
-> > > Changes in v2:
-> > > - Add brief introduction pinctrl-upboard architecture in cover content.
-> > > - Add more detail explaining for pinctrl-tigerlake commit message.
-> > > - Link to v1: https://lore.kernel.org/r/20260610-upboard-pinctrl-add-upboard-intc1055-support-v1-0-8185d2abbfb1@gmail.com
-> > >
-> > > ---
-> > > GaryWang (2):
-> > >       pinctrl: tigerlake: add some pin groups and functions for INTC1055
-> > >       pinctrl: upboard: add device id INTC1055 based UP boards support
-> >
-> > Both,
-> Sorry, I am unclear what Both?
+On Sun, Jun 14, 2026 at 11:56:55PM +0200, Andi Shyti wrote:
+> Hi Linus,
+> 
+> On Wed, Jun 10, 2026 at 02:07:01PM +0530, Hardik Prakash wrote:
+> > This reverts commit ef76a3a28c79b628890431aa344af633e892035b.
+> 
+> Is this in your branch?
 
-Both patches :)
+$ git tag --contains ef76a3a28c79b6288
+next-20260601
+next-20260602
+next-20260603
+next-20260604
+next-20260605
+next-20260608
+next-20260609
+next-20260610
+next-20260611
 
-> >
-> > Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > The patch causes boot regressions on multiple machines. A NULL pointer
+> > dereference occurs when agpio->resource_source.string_ptr is NULL (i.e.
+> > when string_length is 0), and a probe deferral loop causes CPU starvation
+> > leading to kernel panic on Intel CI machines.
+> > 
+> > The patch needs a proper rewrite addressing these issues before resubmission.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
