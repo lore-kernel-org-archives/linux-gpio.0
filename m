@@ -1,105 +1,134 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F8E3E2AC8
-	for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 11:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781521902; cv=none; b=upogzXu/VHdltUmiMn+KyA2JndwVkTNH6B2Mew1Ed3cGqAwdF6ry8YQ8HQOwR9ZPIFE1v9bwq9PO0+tE1o/cru/cU4binnOqJYIfUXfy9EJ3CcH/iNT9RZYlp0Airvdp6nz1SQegheOENGcqpAJ8/WRPBZFQz/1JFoJKyHbxJqk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781521902; c=relaxed/simple;
-	bh=6FH+xx6Z7YPdj2RrLpbKFD4oGi7nrYVvErb7BKuKDds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LEOQ35Rdyl8fFALXtUcHgdCDvqOiPzX1BelSW/KmHIeA+209NoclM0D2W6DDCh6jyKXrpLbmPMrqT1G7AXvfR4+7tu5tXJVLuekbD83CZFEGqG3d89bgwuAfekQoLx7DIhjB653H8lux8/I7MA5YkgpngHdQ7hqIOxPP9v2Z3w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=B1bDwx8F; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F373E4519
+	for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 11:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.221.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781522623; cv=pass; b=PF8CNlk+NuLllDWXAhntWE9942VpX3ApoECQIdocli7kW6Gu1BGr1NLG8Bh3FFDdJK8LOz3mgrHTcA3O65V1UH6FvqqEDk0dCwO+GRseP47AIGSiqglx3eDZgPmrvOc4kHQ5Pm4ZCvFM554MeN8btfHiCjUv/rqNPL2mZSLgR78=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781522623; c=relaxed/simple;
+	bh=fxowNdtIkrFrYf00pH9M/s9vwagygSDXwOzJaRFd58E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CPbsIQUpc4GlMpBDztj1jT09ZFOo11uKqURr5jp7PNhDSXsaqUMwzlitkSQPnYaBhiqRB5vt2Zbfuyh1mS57iJ3dTZsTxboj0Fk9QaS2CVvxL6G1whyn+6RMllbg7xudNZ/YNOCbfqF3s59WxQOnkGQRrToBxBaaOWsQ6n2oe4k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sOeRt+Lg; arc=pass smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="B1bDwx8F"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=6FH+
-	xx6Z7YPdj2RrLpbKFD4oGi7nrYVvErb7BKuKDds=; b=B1bDwx8FrlnximT1BR2Y
-	TvJIHZBSYaCGeAcFmDWWO2c1ZGnupT1Bbijrz0APANzn0vhd8IOXGO5u7mO2C932
-	Z6xxFGLbxwbapLSguCzmqlij5YCMAURyTufpn1xmJXOb2ZAEj0BkitWps2UsnAus
-	2OFbtvk6lkGKBnVk6qGjYnHkoif5uf1NZqfObHIZodozZv0fz4iQp6wKwY6adCzl
-	3HIc+VlV6LlYklY0hEwJl4/iRhBVxWT50RmmzAsotCFMgfmvwLgE9OA7RLhw1y4m
-	SmxbYaP0W7xMeJfi9OHni4nyM37rPOYS+LuKdXGc8qs9jiyQ28P4ubiuLFgsCENz
-	tg==
-Received: (qmail 3514068 invoked from network); 15 Jun 2026 13:11:29 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Jun 2026 13:11:29 +0200
-X-UD-Smtp-Session: l3s3148p1@Wrxh40hUOLsujntF
-Date: Mon, 15 Jun 2026 13:11:29 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Hardik Prakash <hardikprakash.official@gmail.com>,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	wsa@kernel.org, mario.limonciello@amd.com, brgl@bgdev.pl,
-	basavaraj.natikar@amd.com, linusw@kernel.org, nathan@kernel.org,
-	chaitanya.kumar.borah@intel.com
-Subject: Re: [PATCH] Revert "i2c: designware: defer probe if child GpioInt
- controllers are not bound"
-Message-ID: <ai_d4eIId8Ml9g7I@ninjato>
-References: <20260610083701.18663-1-hardikprakash.official@gmail.com>
- <ai8jhK9hUGHpojB5@zenone.zhora.eu>
- <ai_PwNWnMZB01AYU@ashevche-desk.local>
- <ai_cAd41W3iX1ic-@zenone.zhora.eu>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sOeRt+Lg"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-45eec22fab7so1362147f8f.3
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 04:23:41 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781522620; cv=none;
+        d=google.com; s=arc-20240605;
+        b=hnrJSSF4hwX90WX/gfBOYXo0aN8vv6GboUPV6Oc9+nyDtmJOiWqOoIRfUiwhad+kot
+         9EfgP2ogZes5bm2fsYACbLKLc9Vx9dnu3nIzykSkQQdvaZdqmDNGXe7seVqD7YseyqNJ
+         9aODnTNREB0XeWE8/Wt+2UCshY0EHEcLXFpqHYt9xwIUOAoZ4S9pQbcQDXP5fOP1WaI7
+         bmjQK6k28sc1P5jZcUoGQj3aNOtbKz2inwvU21iUrp+XgZXV+g0gU2C5E2REEA3nNow1
+         5Cd3Kd3JPNtv9PY4KubCqM/yFOb8rNo/9BpkynuHVr+UQwAoDSyjTC7tt0sqxTrwt0Gy
+         zZnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=iqpedztH8Jz5dzHLUTPJjvFLbJqLYfgVCuwziBxTSGc=;
+        fh=t0qpBYbDBf46Fj418Xrc5rzYu7cs0ERdKNFpAM21Wdo=;
+        b=hGAUjiKsG6Qn4Ho/53jjlBUPSM0m42Ee4KCZNm6OtzYXgZ1NIsjybB1gkhRGcavKc2
+         /U4V1UWg2sFkTFlSM9kv1Y7KPYWjSHWT/aoYUyJkrWHIYa8oLVVlUPmIlfXiqeHsEs91
+         h4xGT2HhcB5vo8xHk6+DSPQ6cuM8KmnBbmuAkaONHaJgw4Zqe4nOAmP5YOw0bydiZNPl
+         SuaMYOTfJJtSFp6wb0J+sfGRk432BQDN5SGWhXSOrrBoVKM8wKQbt0qgpiROhfM+asYH
+         v5z+pHlRJi9AeyC1mLRCMJIpadDIU0LSJGCFxBo4wbSt4Qpgv/H1Dhvu6P6Lqnn2apLJ
+         Lb5Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781522620; x=1782127420; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iqpedztH8Jz5dzHLUTPJjvFLbJqLYfgVCuwziBxTSGc=;
+        b=sOeRt+Lg3LRZ1zng41oakOO/uimedm3UtGYqfjtflNKxGPE6h0UMyU4LjV3IlSIfNZ
+         7y6dR8DK4KUrlOjvDZcgQf4ditDs2cxcoPogiLMxMpdLeL73mB1IjqImnZAF9Qs61QyJ
+         KVdIBgtHYcZkl14U/qlUBy31tVIicNzW27fbSsbz+XJpYK6xLdQhtPLzIf7j6lbqhE+g
+         UNE6SZDg4b46r/qTBM56tXmDVxNIDUKNydTThQODGAU3jsPiKEP/0pKHWaikt2uPiZoZ
+         p/DJxnrJNYQN1wPmbw1loDrCJMWdZIUp1zaTYXrQs5EMmbon3wodTrel/visxnDNZFF/
+         0iaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781522620; x=1782127420;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iqpedztH8Jz5dzHLUTPJjvFLbJqLYfgVCuwziBxTSGc=;
+        b=ge5m6JJMCdhHSN8IoxrCezFJQP1c0IL5erNj5Ax2BbeMl2r6kOtjMXbP779j02i2PV
+         unOqfg6S+yXhc0BzUkBfCb3oNqT9BeWYGByqmp1BQ3R1hnGyVXm2wr+0q0fLUexxJ1no
+         QLgGgBmvFbZWxwKp6q9B1w1twv/6A9gaa+V8aVujSB5vbomvaSPtvtIFl+I3jiQvGUpt
+         un9SVUzcuiGTqH7w77GMdRtn9aFDcsRBZbWiL/6c18L3ulA/bqj7C3jz1Q8G/lTo73Cb
+         67dTvJNBHxJZykrZZT8Qn1dvqnuf+ibgt6NYl7kv3CCicUcyEUK+gw0c6ov1TgQuypmB
+         zSng==
+X-Forwarded-Encrypted: i=1; AFNElJ9Cnr/GGxXMwI2E+4D6SnWigki68y5anA+/3CxaBWEuQ2OJkejiK3f+2cOGsUNE1Y3c5OrjKC8O83tI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiiR1Ve8VxiJpLf+1rYwtT6fTqKzlm9aF8baK3EeA1FVPo9goH
+	tBFBnZDAlKYkO2Vo5vHPJLvocuPJl0w4hn4cBuSCcQeZlq6RvonrGsmZTwioaEAWbgyytPiX5/y
+	4kKgwW7Ap+YJWmcTuIoFjjZnCTv6wXSY=
+X-Gm-Gg: Acq92OGdtlI+uPHi81JNQFs+L84xXLCzF7fkCa67aeF36zlmelgcw6zJWcT9ZITPJFd
+	ur/EiiKC+IHVscIOEevvSuMhmrgXnQQyHJoJ4s/GTqID8J5m4scN+x6AqpPlDJoAvLvO6eFjx2j
+	guT7XZUwN08qOhO/oAkdsRCzm5TalYt63TdpeEPKHyz/iB2RK1HKc7HqVD0th6GW6bnxz5TtocQ
+	uuqXJIavKqw6pV07QSYoMzgSACOATGBTAHd9zg6Ri5XOthwhScZDIgvGiNt3aJBgJjrilW4uOFZ
+	ZYKnsii/iQ==
+X-Received: by 2002:a05:6000:43c6:20b0:460:e4d:bd46 with SMTP id
+ ffacd0b85a97d-4606dbc679dmr14093969f8f.21.1781522620534; Mon, 15 Jun 2026
+ 04:23:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="t3wNYid5tlrNlIDZ"
-Content-Disposition: inline
-In-Reply-To: <ai_cAd41W3iX1ic-@zenone.zhora.eu>
+References: <20260612-upboard-pinctrl-add-upboard-intc1055-support-v2-0-4111b256c840@gmail.com>
+ <20260612-upboard-pinctrl-add-upboard-intc1055-support-v2-2-4111b256c840@gmail.com>
+ <d6453a9c-d2f1-4aef-8caf-e351c210d6bb@bootlin.com> <cb694725-b3f3-40a3-94c7-0c1606aaea94@bootlin.com>
+In-Reply-To: <cb694725-b3f3-40a3-94c7-0c1606aaea94@bootlin.com>
+From: GaryWang <is0124@gmail.com>
+Date: Mon, 15 Jun 2026 19:23:28 +0800
+X-Gm-Features: AVVi8CfXkkorPhlZsi3ReZla8Kw3JPYZT7CoXWJqLH6ghfI4BsD9VWEc0ltwplc
+Message-ID: <CANYHO6qQituEPwAgb6YNRmsK0PbPxzKvSqSEHJApVw5xAzuHbg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: upboard: add device id INTC1055 based UP
+ boards support
+To: Thomas Richard <thomas.richard@bootlin.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Daniele Cleri <danielecleri@aaeon.eu>, 
+	JunYingLai <junyinglai@aaeon.com.tw>, Louis Chen <louischen@aaeon.com.tw>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 15 Jun 2026 at 17:37, Thomas Richard <thomas.richard@bootlin.com> wrote:
+>
+> Gary,
+>
+> On 6/15/26 10:01 AM, Thomas Richard wrote:
+> > Hello Gary,
+> >
+> > On 6/12/26 12:13 PM, GaryWang wrote:
+> >> Add support "UP Xtreme i12", "UP Squared Pro 7000", "UP Squared i12",
+> >>  "UP 7000" boards and I2C/PWM/UART/SPI pins mapping data.
+> >>
+> > Reviewed-by: Thomas Richard <thomas.richard@bootlin.com>
+> >
+> > Best Regards,
+> > Thomas
+>
+> I did test your series on UP Squared Pro 7000 and pinctrl driver does
+> not probe. Pinctrl device INTC1055:00 does not exist on this board.
+>
+> [   12.818773] upboard-pinctrl upboard-pinctrl: unknown pinctrl device
+> INTC1055:00 in map entry, deferring probe
+> [   12.818795] upboard-pinctrl upboard-pinctrl: error -EPROBE_DEFER:
+> Failed to select pinctrl
+> [   12.818801] upboard-pinctrl upboard-pinctrl: Driver upboard-pinctrl
+> requests probe deferral
+> [   12.818834] platform upboard-pinctrl: Added to deferred list
+> [   12.818894] platform upboard-pinctrl: deferred probe pending:
+> upboard-pinctrl: Failed to select pinctrl
+>
+> Did you test your series on all boards?
+>
+Let me know your BIOS version, we;ll check internally, thanks.
 
---t3wNYid5tlrNlIDZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-
-> > $ git tag --contains ef76a3a28c79b6288
-> > next-20260601
-> > next-20260602
-> > next-20260603
-> > next-20260604
-> > next-20260605
-> > next-20260608
-> > next-20260609
-> > next-20260610
-> > next-20260611
->=20
-> Yes, but I'm not finding out how it got there. I only see it in
-> one of Wolfram's branches, but I don't think it came in that way.
-
-IIRC I asked Linus Walleij to handle this via the GPIO tree because the
-proper fix landed there and the I2C addition was a mere cleanup from a
-previous attempt to fix the issue.
-
-
---t3wNYid5tlrNlIDZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmov3eEACgkQFA3kzBSg
-KbbEUw/+KttoUvU/VSVAEAZrdXls61HpaewzkGZG5CK+qIAzDVeBHSzr5TlfOlbn
-/cdqaWcFt9AkVvkT+Xg2yd3Cv+I5KOJePiMbNkFAeEfUJGCgpA1QUb5Pn9WYG6lm
-pCedUZCTQ5GN55wOUW2vgpls9utrSAcmWvO+Db+XcNAlIOJkdpdye1Th0T475j1I
-PXcUTpfFV0vzQFsoyTVxZ+LlC3c9JS6Pry+LkCMJV4jVjnWfGlJx4P+Vw4O6L3xH
-14MA6pVRcoUA5v9VcPBtEBg8RmoCAmMKxon9Gue6z73D+LnaFhA+XtVywDtqa67k
-F84zATe8STszZkyLnHV/Qkom6FLs8ARnMzOSwqA8Kc+loUIaBjYZRt3lypNob87N
-LzHXDsS93RBstxmE5PEywE4vN88LY8e87+TL2sQhpTe64mVnypdVwOKsu6hl6IJV
-kjn2O2OAs0BES8FxKDfd1kXiQl8VdUUEuhlsT2Mq/bAMaLMuC8Ax5H9pUc1riOwa
-eA2O7kcB6pfETs95UN1OV/Cf5GDtV7SqpU+bUzfsl5SIaYk4feZc1CapbLi/FRZ2
-4Xc1UCQav7laON1uIXT1Gf+ztCSHnxtfxzKKM90NdA2UBHwj/YDLqmqvrQrqAxxv
-xAriVjCsE/U2MuTcl8mWY4cCiO0CHP4l39OOAz7n3CFJXedjgRs=
-=L9NH
------END PGP SIGNATURE-----
-
---t3wNYid5tlrNlIDZ--
+> Best Regards,
+> Thomas
