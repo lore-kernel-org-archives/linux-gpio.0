@@ -1,113 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D12E25A2B5
-	for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 12:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88703F410B
+	for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 12:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781526494; cv=none; b=OnfKQ3sfhsz9//n9JnSS5DhiAxpeJZHY6z28MFuyCiYa/CCFr5nBjrFcn1y5bEeZAuOG9Jy//VCL4VztxJF5pwfwMi2dsYro3JE+WzY1RWqrchmCJsV4lJTos6ogNt/8Wx0NKfSCYpAUloU08Ksyy/Dt2K/ViIpPF1SWTUVY5q4=
+	t=1781526790; cv=none; b=RQZreFT/b8WKXyIazLFmLjOLejcOq4k0ivU9wlbyltY3ux9SDUv0adx+d9qc8+NMmmiLZlwZLpK1yUItnmZimog3mOGvw+9Q9PYAdwBcIslpMQXjOQcm1KlQ6Og2DiCr4DTPY41kvu9uB2NjrUqG8P7iRTypZfa7NL6026gtZyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781526494; c=relaxed/simple;
-	bh=B9rTf3/BlFOUK1QJIvQpEXPOLdZpvp4LEaXqgjWvAwk=;
+	s=arc-20240116; t=1781526790; c=relaxed/simple;
+	bh=JkzLGFYF5wthZZS+ia3UdT2LVznklUVYah/o2Gc1PjE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XpmW/3RjVljXnl2ja23dxnTWoMmziOAkXk0QVRO0xQ3xeYOtvgaNVeas2+vPEq1B3SeeBarCyA4ce6T2jQtjoAgRSP0VHU77pRB/yVOrq0eoU7pmCII2h+x61AxCgXFqObRxrUCj4rlFTxV7kCq9ZGX3oNneLSGgO5NNM3Wtva8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WithE66X; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=oj99XFsrajk0TCJv9k3PnXsDgJKyz9ulMZGWR54eDaV5dLcNEZTj0O/vhJBPu8mq4XGCix45Hz0fvISHApJ9hR8GLSz9tKOwA1DK5026b6iWfo59v+jJbO2nHuECeNgxsd+XQKOG7aN29zfQfUWPBzG2ls72SvyHJ31Xwn+yYM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqlkVlPB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WithE66X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9E21F00A3E
-	for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 12:28:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqlkVlPB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A921F00A3F
+	for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 12:33:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781526493;
-	bh=+Zi1kQd7pvph0FBDfOvULN27dZfP4EN5iU0jWaN6/jM=;
+	s=k20260515; t=1781526786;
+	bh=CvRCEfFbYKVX9NjE8/CKLBfPcnBzf+v+nPciyYIQM9E=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=WithE66XO27LKGbhHABjjqjzHdDRheldLDMByeI7si6kM9PG6By8dR7wft7PXpatU
-	 bQqOgVxlkS7p3GpvCndVyB8vztYx91J9rQq97NfKAApLlFweBiIap86BPnZQ9HajmL
-	 k0ORNx3Ea7njzVFIE+XTgwjFwMHQcq31Y08my/Ln+mmd2kHrp66TLivjqx4n6sVVTb
-	 FeHSpbOVf8/oNiSWWhHiGPmpdW+MUuP3kKszM1kNQH1vchgBAMrGsgsYCMfZgwZR6K
-	 SLxQle5Xj/rhp6vrsXGvGeVgZHxJ2cFEH9kctDbVgBobAgppJExbh6pvyvUOZQTooN
-	 yXGdb9Y1f7Ueg==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5aa612bf6efso2888488e87.3
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 05:28:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/LwtiXlWV+fBAgqxA/SVLwIFUJKhXGPUalA/hjV9WJpdqmf2fi4RwG73d7xnHPG9gOL8kDR1xnAQJM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI/V3/8JdU+COJ+B6+Pvy1A9X3IPROQlkwER6YnRs1W28G0KZa
-	FtJbwtCaRXZaWfMnQOYp5MmA3gD6IoWeJrppgb3I3PcF1xi2MbZEE0DIU32T65k9zkAaVngKOAY
-	eIAFHRCA2pbe0okiIf7O97f6fbUmLV8E=
-X-Received: by 2002:a05:6512:33d2:b0:5aa:64cb:9589 with SMTP id
- 2adb3069b0e04-5ad30da2a94mr2482474e87.4.1781526491916; Mon, 15 Jun 2026
- 05:28:11 -0700 (PDT)
+	b=lqlkVlPBeLLvHC+XxEANSntqLg+pgOA0DIljDhF3BYxNms036yjm5FLhX5i50rb8/
+	 1V9hIuM0mJuYtrj+KIGLo7oj8pPOV588O8ykFuo5Tba8FkW+IjVO0Brma7ln3OPz4W
+	 nZC/7DYOaSDFkYVZgPtQZH1VTVDkKUJVhLJ+dbxjGMj/WDRuYA+oFl+I8MxFI50XFi
+	 6kziCGIX5U/8ij4GJpgMZQ/+ZHMYy3k0FDKk3sdqJqMTk/+QuZ3XH9hDHumB6EWh10
+	 KxJYpHG+ZK+31cspueEpBoZpYDHk6fsYH3FA2QiyyBxK3+GmS3KFnHO2L/6oW0ZL5i
+	 aYJHOYTAixhPw==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5aa6c66e6c5so2117076e87.2
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 05:33:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AFNElJ94wKbHr/GB0Yem0B3lUIgvOa8qHZJ6Fziwu650agzRKv+tsKOQISPZSPawbwr9u6dagR0vPRov6rqm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx46fXJd+S0BYX0P1O1wpGogBMlWn3PSrlyFaQmJvsLEysjbwG7
+	Mwtbnu0GH3Mezt7mE4ZnwHIPrdl/lktl11dMFS/SPcmLjgHHNPGjJOcF7pZq7uZRtEbha6X5T9k
+	a7eQW5v5YlrYqvGPPJ49oOO7MWTT0aDI=
+X-Received: by 2002:ac2:4247:0:b0:5aa:7770:8fc2 with SMTP id
+ 2adb3069b0e04-5ad2db5c41emr2856886e87.32.1781526784894; Mon, 15 Jun 2026
+ 05:33:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260613-export-get-group-selector-v1-1-fc4451a9ff0e@kernel.org> <ai_QMNydoXXoOFmB@monoceros>
-In-Reply-To: <ai_QMNydoXXoOFmB@monoceros>
+References: <20260612-upboard-pinctrl-add-upboard-intc1055-support-v2-0-4111b256c840@gmail.com>
+In-Reply-To: <20260612-upboard-pinctrl-add-upboard-intc1055-support-v2-0-4111b256c840@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 15 Jun 2026 14:27:59 +0200
-X-Gmail-Original-Message-ID: <CAD++jLm+rv+Tm-WxvD51ynKeDUrPMAG=nfTNxRbf8FvSNy+dGQ@mail.gmail.com>
-X-Gm-Features: AVVi8CdoT766luO7StBGs-cVI9SljLXF6JYh3L6fFUXLmgtOKT5d98c0M3OMMvc
-Message-ID: <CAD++jLm+rv+Tm-WxvD51ynKeDUrPMAG=nfTNxRbf8FvSNy+dGQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: Export pinctrl_get_group_selector()
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Jia Wang <wangjia@ultrarisc.com>, 
-	linux-gpio@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
-	kernel test robot <lkp@intel.com>
+Date: Mon, 15 Jun 2026 14:32:51 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmFKz19CRp-E=JcUnNkxNzKtSow6T8_9jDpR-wTrs9Ptw@mail.gmail.com>
+X-Gm-Features: AVVi8CdfAW9s5sgRANpPXt8QrdknCspcSqJgRQz8kxnesuf5cZFXyiy1GzbrKNY
+Message-ID: <CAD++jLmFKz19CRp-E=JcUnNkxNzKtSow6T8_9jDpR-wTrs9Ptw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] upboard pinctrl support for device id INTC1055
+To: GaryWang <is0124@gmail.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, 
+	Thomas Richard <thomas.richard@bootlin.com>, Daniele Cleri <danielecleri@aaeon.eu>, 
+	JunYingLai <junyinglai@aaeon.com.tw>, Louis Chen <louischen@aaeon.com.tw>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 15, 2026 at 12:16=E2=80=AFPM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@baylibre.com> wrote:
+On Fri, Jun 12, 2026 at 12:13=E2=80=AFPM GaryWang <is0124@gmail.com> wrote:
 
-> On Sat, Jun 13, 2026 at 10:02:30PM +0200, Linus Walleij wrote:
-> > The recently added UltraRISC DP1000 is using this symbol, and in
-> > a reasonable way as well, so export it.
-> >
-> > Reported-by: Nathan Chancellor <nathan@kernel.org>
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202606130210.ytVPxHlm-lkp=
-@intel.com/
-> > Fixes: cb7037924836 ("pinctrl: ultrarisc: Add UltraRISC DP1000 pinctrl =
-driver")
-> > Signed-off-by: Linus Walleij <linusw@kernel.org>
+> Add missing groups and functions in Tigerlake's pinctrl driver for INTC10=
+55.
+> Add support "UP Xtreme i12", "UP Squared Pro 7000", "UP Squared i12", "UP=
+ 7000" boards.
 >
-> I stumbled over this one, too, and see that
+> The pinctrl-upboard is provide additional driving power & pin mux functio=
+n
+>  through native SOC pins -> FPGA/CPLD -> hat  pins for flexable board lev=
+el
+>  applications. it's probe from ACPI device id AANT0F01 & AANT0F04.
 >
-> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git =
-for-next
->
-> already has that patch. Checkpatch criticises:
->
->         WARNING: Reported-by: should be immediately followed by Closes: o=
-r Link: with a URL to the report
->         #9:
->         Reported-by: Nathan Chancellor <nathan@kernel.org>
->         Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: GaryWang <is0124@gmail.com>
 
-Now that is just checkpatch being silly, because what in in next looks
-like this:
+LGTM
+Acked-by: Linus Walleij <linusw@kernel.org>
 
-    Reported-by: Nathan Chancellor <nathan@kernel.org>
-    Reported-by: kernel test robot <lkp@intel.com>
-    Closes: https://lore.kernel.org/oe-kbuild-all/202606130210.ytVPxHlm-lkp=
-@intel.com/
-    Fixes: cb7037924836 ("pinctrl: ultrarisc: Add UltraRISC DP1000
-pinctrl driver")
-    Signed-off-by: Linus Walleij <linusw@kernel.org>
-
-Certainly it doesn't matter which order the tags are in.
-(And if it does, I don't feel it's important...)
-
-> . Not sure if you consider this relevant to fix (i.e. add:
->
->         Link: https://lore.kernel.org/linux-gpio/20260613164847.GA3152104=
-@ax162/
->
-> ), but if you do, feel free to also add:
->
-> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-
-I added it, the more the merrier!
+Since these touch Tigerlake, I expect Andy to queue and send me
+the patches from his tree.
 
 Yours,
 Linus Walleij
