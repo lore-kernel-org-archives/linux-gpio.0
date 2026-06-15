@@ -1,122 +1,120 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AFD3A3E8C;
-	Mon, 15 Jun 2026 12:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DE23E6DC3
+	for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 12:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781525626; cv=none; b=hfR9F6XuAOe2yUIk+wqPO5UPR+IWI7zzabfV8OtpAgkU8N1lMG9lF8feEyN8jJS0NR8FVZ/dm6dQSg9O2Pn1dVMBwEXW00MDlTVrU3zFhvqMLVVQZKJYjQGgyzPO9K8wNiVVRjnnYhoey20N6swzVwyaQOJozjd6A6xcESxNjCI=
+	t=1781525968; cv=none; b=H+wb2F6GYqgKiuu2+WrgQYNXFyLP6vG4nKoxP3WgLmDEk9YDoTihbf+eFQUqomaSSFk3zRuejuXf659Teer6tQ0fUYMOepz7BpJp4rYmQ/WvPqtMhC5GjQk/RmB0OUWfgfZrOY572ylbq65AY4ju7u0KVtOcD9m61MX+s/YRiVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781525626; c=relaxed/simple;
-	bh=ah18erX1lPjNnXTDiNLLtMXTFi6HUavcUGelWfS1d34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gujfvz3BBujjvmienizhVHg1t2Kwdi9fdhuKoIv0pN0R8xzBgKZB2XyHmzPVGEBuTwcSRUv0DOgnBMyJm3IXnlH2ph1pVcnkXlZ346hr1/fp5m11iOreXuTD+Bv7LnNK4i6Fm6U+z+VacIp9Jq1vIWjd4H6KjL0LUJxusosNt7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=uuwScwxL; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1781525968; c=relaxed/simple;
+	bh=fBO2hJf4+rPrkOp74SVXocT1M+hIBpxOon9pkP770BM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bgas9IF4D0P48j99Bo7Ype59TLAOVNjSiEiuVPwpg8m/eeO1CwCAv9PVvQePjJnXhoZmD7wn35pdt1OK5nuOidmDcqArAXKan4Li6SqG//FekLDmM316yVIIQS1eJBDBel7UMlrCF7MB1r2ZaSxEh4TiYh+26GhOWshjd7MOWl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yjmew9QS; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="uuwScwxL"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id B5CD64E42F04;
-	Mon, 15 Jun 2026 12:13:40 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8397260015;
-	Mon, 15 Jun 2026 12:13:40 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 12963106C9386;
-	Mon, 15 Jun 2026 14:13:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1781525619; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=sns3BeHrco36Ohu4fMN21gbBwl//31RMnhSI/Pm9fUM=;
-	b=uuwScwxLr7YjVkbeQD2ArIHF/JvBfpRXGf2MS1bS1NKj3dqj7NuRuOzjrjo8v8e7vWskpE
-	o4nniOt+UKpU+1lnHnzTNrQn2AJr5K5L4CA8/e8HR61l4zALluuVZT470FFrYTbhB5HtoR
-	yXZfAvojbxbrK8yjYhnacHwkZpv0+bD7WgrTFXGUpsxEblz1OZVW1znmBBBxJB4UBfENne
-	SGnojUtmYqK6pOxZG7RIE/rHi6q+QUiebUUhd+/0+3kNBdEx7q3FvWjJN7p9x/lfgqlkju
-	arPnrVIrFF6mlzBV4ejfS+YIuioaEOGaquzwWZTZ+U6rpk5RlC1S/jnBhuksnw==
-Message-ID: <ec871376-3ada-413d-8be2-25b117eca213@bootlin.com>
-Date: Mon, 15 Jun 2026 14:13:34 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yjmew9QS"
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-5178a42caa3so34152401cf.1
+        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 05:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781525966; x=1782130766; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4ZBzvTGg5RXWxT981zetPvdIqY02XPOz3n0/R5VS1+w=;
+        b=Yjmew9QSovj+Gv8k1T854IGf/12+JinUw11DK6RSF7W9n4aCMc/YwA1tYGlKcItWvE
+         AbU72v7UHCxAW3snmUXOmRdayDtgTUppa7hLGOBo6bxv39Hd4aNnZu32x3+1THuwWubD
+         0jUt79H6VTs0fx9SciXc3Qi9NxSyO8YOviBF/a0T0oXHwNFkDeyi5MCG/lHIlXvqdNW2
+         /bAbqGiZqTBSBZB/EC8h+KoW3pOi6KfP90wSVoGOt3HVdY83ogkBwVJ8IYTeeNFeKJyf
+         zwtSrYrUrgSL9b9sZiQxuKn9glvOEZWtCCacxTx8A7Lm/w3E9p2tuhsOJ+J9/dPZ/Sht
+         7Dsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781525966; x=1782130766;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ZBzvTGg5RXWxT981zetPvdIqY02XPOz3n0/R5VS1+w=;
+        b=Q9MgjmLDWSIReuke2HY1LWoFQDFZYOw8gdMfFaJddgl8bpf0EVxDNlD8KONdAedxM/
+         7sf5sxSDet80pDPPBka+JLA8HPj2LT/3V65neyHiW8pp4RRnxK5TJshSoeZK9LYvVMTP
+         ZDI7naNLe8mff5mI+UHBqZP+PPIb1jZV7/60SkAdmsu7F8tDweB5gaKDOqtFxIzwMgxE
+         nCk1Ku3/ybtFbxSbQw/UQWXskit44VJ2lCcWUiccQslWWAxu457p85iQ7+o7yyX+T2Ya
+         RXtnksPIXNeCABIr6l8K/7eaQV7BT9nPtxGfVW9GzgDOfUy/TOQC1zk7u+mW+thhxHWK
+         +AsQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9RW1vjCJ0TjLOWz+yQR5XYKt0RoG2jw3l7lkTK0KcfF5esS4tm02DrLHMUntjqL+NZfI4LhHlAKxEB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvPEVKoWBE+BWUckWsoHA9qGwhQYUs7IS11dazIajc+x1PFeeN
+	JCelzsf4NBsQczqkgFiGSwgcZpRnDMO+VIxVMYbodfMK08nHehj/1/I0
+X-Gm-Gg: Acq92OF5WS1yKchiaYuqH/GfRtrWCmt5rD8XE5fOJBujLGCEFiEy6Iem0Ce8FTCNZ4X
+	j/eQzG9ARjEltvKJpujZ8iWnaXKwj9fLrSrXPHnfSzAW0nmY/GHhxdx6v4iD/+3XdaV38S3bZuN
+	0PnDXFfeFO/VeZGQ3qopcN9is/Jl8otWuCGE9rCtHeKodHuYNIv+xMksI5fUBE0tvkJmjABJH+o
+	YIduRhyt0FeH/LiAjPQFQRYXQTGr+cUy5G2AoZcGZrkQ9IpIIb3KcAlZ3112RWe9P/i7/JWVLof
+	FuxmmmOV8nv5Vhcnr2JTNeberslDsv1QR1bQy1CkLjdgZLYMB8QcnckHab+eILPWETQd2dNzlae
+	UAAAsHs329Gpm7tAJibKET/FnxLtpQGjRXv3ESSkCG7oc54+xWEC9lbA0AfNN9F/Tfrp7OjA0Ru
+	4gW5xpUDoSkwkZRSv1EIjp8slFF3A=
+X-Received: by 2002:a05:622a:1819:b0:517:5bc6:b575 with SMTP id d75a77b69052e-517fbc898cfmr190512591cf.4.1781525965791;
+        Mon, 15 Jun 2026 05:19:25 -0700 (PDT)
+Received: from localhost ([43.225.189.75])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-517fb7a3c4asm106505581cf.14.2026.06.15.05.19.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jun 2026 05:19:24 -0700 (PDT)
+Date: Mon, 15 Jun 2026 15:19:18 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: dumitru.ceclan@analog.com,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Julien Massot <julien.massot@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	mitrutzceclan@gmail.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org,
+	Martin Hecht <Martin.Hecht@avnet.eu>,
+	Cosmin Tanislav <demonsingur@gmail.com>,
+	Cory Keitz <ckeitz@amazon.com>
+Subject: Re: [PATCH v13 17/22] media: i2c: maxim-serdes: add MAX96724 driver
+Message-ID: <ai_txjwLPHsSKsJI@stanley.mountain>
+References: <20260604-gmsl2-3_serdes-v13-0-9d8a4919983b@analog.com>
+ <20260604-gmsl2-3_serdes-v13-17-9d8a4919983b@analog.com>
+ <20260610144242.GF2948@ragnatech.se>
+ <ail9bHXL_NV2DZK5@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] pinctrl: upboard: add device id INTC1055 based UP
- boards support
-To: GaryWang <is0124@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Daniele Cleri <danielecleri@aaeon.eu>, JunYingLai <junyinglai@aaeon.com.tw>,
- Louis Chen <louischen@aaeon.com.tw>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260612-upboard-pinctrl-add-upboard-intc1055-support-v2-0-4111b256c840@gmail.com>
- <20260612-upboard-pinctrl-add-upboard-intc1055-support-v2-2-4111b256c840@gmail.com>
- <d6453a9c-d2f1-4aef-8caf-e351c210d6bb@bootlin.com>
- <cb694725-b3f3-40a3-94c7-0c1606aaea94@bootlin.com>
- <CANYHO6qQituEPwAgb6YNRmsK0PbPxzKvSqSEHJApVw5xAzuHbg@mail.gmail.com>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <CANYHO6qQituEPwAgb6YNRmsK0PbPxzKvSqSEHJApVw5xAzuHbg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ail9bHXL_NV2DZK5@stanley.mountain>
 
-On 6/15/26 1:23 PM, GaryWang wrote:
-> On Mon, 15 Jun 2026 at 17:37, Thomas Richard <thomas.richard@bootlin.com> wrote:
->>
->> Gary,
->>
->> On 6/15/26 10:01 AM, Thomas Richard wrote:
->>> Hello Gary,
->>>
->>> On 6/12/26 12:13 PM, GaryWang wrote:
->>>> Add support "UP Xtreme i12", "UP Squared Pro 7000", "UP Squared i12",
->>>>  "UP 7000" boards and I2C/PWM/UART/SPI pins mapping data.
->>>>
->>> Reviewed-by: Thomas Richard <thomas.richard@bootlin.com>
->>>
->>> Best Regards,
->>> Thomas
->>
->> I did test your series on UP Squared Pro 7000 and pinctrl driver does
->> not probe. Pinctrl device INTC1055:00 does not exist on this board.
->>
->> [   12.818773] upboard-pinctrl upboard-pinctrl: unknown pinctrl device
->> INTC1055:00 in map entry, deferring probe
->> [   12.818795] upboard-pinctrl upboard-pinctrl: error -EPROBE_DEFER:
->> Failed to select pinctrl
->> [   12.818801] upboard-pinctrl upboard-pinctrl: Driver upboard-pinctrl
->> requests probe deferral
->> [   12.818834] platform upboard-pinctrl: Added to deferred list
->> [   12.818894] platform upboard-pinctrl: deferred probe pending:
->> upboard-pinctrl: Failed to select pinctrl
->>
->> Did you test your series on all boards?
->>
-> Let me know your BIOS version, we;ll check internally, thanks.
-So I tested all boards of the series. It is okay for "UP Xtreme i12" and
-"UP Squared i12".
+On Wed, Jun 10, 2026 at 06:06:20PM +0300, Dan Carpenter wrote:
+> On Wed, Jun 10, 2026 at 04:42:42PM +0200, Niklas Söderlund wrote:
+> > Hi,
+> > 
+> > Thanks for your work.
+> > 
+> > This patch gives me new compiler warnings, can they be avoided?
+> > 
+> >   .../max96724.c:402 max96724_log_phy_status() warn: subtract is higher precedence than shift
+> >   .../max96724.c:409 max96724_log_phy_status() warn: subtract is higher precedence than shift
+> >   .../max96724.c:588 max96724_init_phy() warn: subtract is higher precedence than shift
+> >   .../max96724.c:756 max96724_set_pipe_remap() warn: subtract is higher precedence than shift
+> >   .../max96724.c:796 max96724_set_pipe_phy() warn: subtract is higher precedence than shift
+> >   .../max96724.c:818 max96724_set_pipe_stream_id() warn: subtract is higher precedence than shift
+> >   .../max96724.c:830 max96724_set_pipe_link() warn: subtract is higher precedence than shift
+> >   .../max96724.c:942 max96724_set_link_version() warn: subtract is higher precedence than shift
+> > 
+> 
+> These are Smatch warnings.  I appologize for them.  I know about them
+> but I haven't looked at them.  I'll fix them by the end of the week.
 
-For "UP 7000" and "UP Squared Pro 7000" I have the same error,
-INTC1055:00 does not exist. Pinctrl device is INTC1057:00.
-Please find BIOS version for both boards below.
+I've pushed a fix for these to the devel branch of Smatch.
 
-UP 7000:
-# cat /sys/devices/virtual/dmi/id/bios_version
-UPASAM10
-# cat /sys/devices/virtual/dmi/id/bios_release
-5.26
-# cat /sys/devices/virtual/dmi/id/bios_date
-04/23/2024
+regards,
+dan carpenter
 
-UP Squared Pro 7000:
-# cat /sys/devices/virtual/dmi/id/bios_version
-UNADAM21
-# cat /sys/devices/virtual/dmi/id/bios_release
-5.26
-# cat /sys/devices/virtual/dmi/id/bios_date
-04/18/2023
-
-Best Regards,
-Thomas
