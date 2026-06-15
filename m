@@ -1,92 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0AE3C13F0
-	for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 08:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BE73BFAE0;
+	Mon, 15 Jun 2026 09:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781513162; cv=none; b=LHk3ua4fh9wf7jA3buQcFm7+ySrIFx18XTPeCJCF5WqUKuciZ1HydOvVRQY/VAyhOURBHVlZ9b/H8eaehJL0qg86m1RloML4FrR7jjzhipH1mDsd2XROQ1+xTgctGSLswgltNFF3h2E6rbSM9pDCS3V+6jYHajZXA+YgF/PBK7o=
+	t=1781515165; cv=none; b=IuA1i7QwZEghAG4EkKXTAAqdVwcqBjbHWQq37QrjmXLBZYipq8TrNaX6OdK2bmU3OgvE5yu2PcNfY1n0+e7o1/2lXsrDxRS6sKRQe15c9dVyljA5erbZFqtmiwidZvCNCy+VBsdN8iLwrHLrKSrFQxcQ+TykekadNNMwd+uxJc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781513162; c=relaxed/simple;
-	bh=2n+rqqEQk9Dgk9v85PEmZctuQJcL5Aft8l5cRPlN33w=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=en357WUsCL5kQqiNBA30cgP1ZCMXoBBMTzUJuL7LHvAheBUHt9QHRpeDI/+6Vj29JkwI3bWPbG1ibxJA+cPbsyQCJ9lRipP6LfWSWQC5WovkWhwIbp/1PjEgDKXCCvL9f9OlsjYbcswgxiQYNHy99dNcyeTulgT5HPYwntB19ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4d9Z9CU; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4d9Z9CU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23F191F000E9
-	for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 08:46:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781513160;
-	bh=OBe0ITxGv6gOrcKtGcU3uQ6eRRXWDLj4lG7UY0EX+8M=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=n4d9Z9CUbwfC8ON3UfMZ9ZMsmHnha2OANu1VYlBLWr/Pb78deiFwVZ52DIk8A0HnV
-	 YybM+99jnHM6piBa8xn8tW8BrI1ekvyxRVQwpraLcuNirlcNVviWvYluF827lCznb1
-	 IlhW6qBIH1KfSwVto3YJFZcTc4hqYI8Y3pe/yw3sWpwL5L+JkeNI/6LlZ50N3ycSeM
-	 iU7PMYjIq5I0Zx9hk4+74OW+hnckt1VjBi40THiiBlEcCTbsY4lIE8hJG1zgnf1BjC
-	 k9SCantWf/K1TH7oXGXG6poGUkVu6tezGLFQvH3CMfP2W+azOk9vxZA/X5tjVxtiz0
-	 EQzAR8ECJrfVg==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5aa68d9d4a3so3407161e87.2
-        for <linux-gpio@vger.kernel.org>; Mon, 15 Jun 2026 01:46:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AFNElJ/DSH10oyFb11sJa0SlvtprzC1KeHFBYMsMAOeEjM/MvrlMLPKm1T/5nIr8oYphDo42I0OGMHcXPPgJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnE8mKmM5UrQ0umv4FknethSIjYwW4gwCYo3TYQppjQAkVpahQ
-	KuNti3SGVN4eVw+0wD98E6HzTWBvx0Yf1UTzB4csTn/SxJVRbUvzBxuTKhBGkE2uFqSKy3KweyH
-	AGW8XVjiKnIqvLTsLhNylinOVtNEQWJyicOCWqcIc1w==
-X-Received: by 2002:ac2:4341:0:b0:5aa:6e86:55e1 with SMTP id
- 2adb3069b0e04-5ad2db1f44emr2789666e87.16.1781513158741; Mon, 15 Jun 2026
- 01:45:58 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 15 Jun 2026 01:45:56 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 15 Jun 2026 01:45:56 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260615-b4-serial-max310x-gpio-get-direction-v2-1-4704ba2b181a@vaisala.com>
+	s=arc-20240116; t=1781515165; c=relaxed/simple;
+	bh=+G2MgC4kqz8KaDEzKT4BHZoqmEhuC6zVwSx8BkcPq8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aPW2CwztdOvVbmkLeTqfprqL1gngcrSsuZ83TVFnXvUaYEw/NSbtB+KytIkL5MF1/zH1oZTkEX1KHLBFruRxvhBHo+zHWDXHP+5Aw4xq7nefB9yqoaG3Gf7KAcZkpE75wfC+HxKOgpRVXKKfZD4OLDDLZBdaF8xWNfE90jdJOlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [111.196.245.140])
+	by APP-03 (Coremail) with SMTP id rQCowACXt96Xwy9q1JDLFA--.28919S2;
+	Mon, 15 Jun 2026 17:19:19 +0800 (CST)
+From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Subject: [PATCH] gpio: mlxbf3: fail probe if gpiochip registration fails
+Date: Mon, 15 Jun 2026 17:19:18 +0800
+Message-ID: <20260615091918.43333-1-pengpeng@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260615-b4-serial-max310x-gpio-get-direction-v2-1-4704ba2b181a@vaisala.com>
-Date: Mon, 15 Jun 2026 01:45:56 -0700
-X-Gmail-Original-Message-ID: <CAMRc=Mc2WAo0mEFazT=S0R_fYaX=B52AhE+aiuLKei36B1QV5Q@mail.gmail.com>
-X-Gm-Features: AVVi8CdTwdnJuiJVu0N2jnzm1Xm_R8Lp-KFeKEhnreTnrWdRHPV4v96weeSz6II
-Message-ID: <CAMRc=Mc2WAo0mEFazT=S0R_fYaX=B52AhE+aiuLKei36B1QV5Q@mail.gmail.com>
-Subject: Re: [PATCH v2] serial: max310x: implement gpio_chip::get_direction()
-To: Tapio Reijonen <tapio.reijonen@vaisala.com>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Alexander Shiyan <shc_work@mail.ru>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACXt96Xwy9q1JDLFA--.28919S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKr4xtryfZr1fKrWUGrWxJFb_yoWfuwc_K3
+	WrZw4Dtr1vyF4DXr17AFyavrySvFsruF18ZFn7t3y3Jr93Xr4UWFW8ur1Syw4UXrWxCF1Y
+	9348Zr47CrW3CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4kFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfU089NUU
+	UUU
+X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-On Mon, 15 Jun 2026 08:38:40 +0200, Tapio Reijonen
-<tapio.reijonen@vaisala.com> said:
-> It's strongly recommended for GPIO drivers to always implement the
-> .get_direction() callback - even when the direction is tracked in
-> software. The GPIO core emits a warning when the callback is missing
-> and a user reads the direction of a line, e.g. via
-> /sys/kernel/debug/gpio.
->
-> The MAX310X keeps the GPIO direction in the GPIOCFG register (a set bit
-> selects output), which the existing direction_input/output callbacks
-> already program, so the current direction can be read back directly.
->
-> Fixes: f65444187a66 ("serial: New serial driver MAX310X")
-> Signed-off-by: Tapio Reijonen <tapio.reijonen@vaisala.com>
-> ---
-> Found and HW-tested on an i.MX6 SoloX board with a MAX14830 over SPI:
-> without this, "cat /sys/kernel/debug/gpio" triggers the gpiolib.c:429
-> WARNING (tainting the kernel W) on each queried MAX14830 line; with it
-> applied the lines report their in/out direction and the WARNING is gone.
-> ---
-> Changes in v2:
-> - Address Hugo Villeneuve's review: use BIT(offset % 4) and put the
->   return statement on a single line.
-> - Rebase onto v7.1-rc7.
-> - Link to v1: https://lore.kernel.org/r/20260602-b4-serial-max310x-gpio-get-direction-v1-1-23bf84e8ee14@vaisala.com
-> ---
+mlxbf3_gpio_probe() logs a devm_gpiochip_add_data() failure but still
+returns success. That leaves the platform device bound even though the
+GPIO chip was not registered.
 
-I've already left my tag under this.
+Return the registration error so probe failure matches the missing
+gpiochip state.
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+---
+ drivers/gpio/gpio-mlxbf3.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-mlxbf3.c b/drivers/gpio/gpio-mlxbf3.c
+index 4770578269ba..566326644a2c 100644
+--- a/drivers/gpio/gpio-mlxbf3.c
++++ b/drivers/gpio/gpio-mlxbf3.c
+@@ -255,7 +255,8 @@ static int mlxbf3_gpio_probe(struct platform_device *pdev)
+ 
+ 	ret = devm_gpiochip_add_data(dev, gc, gs);
+ 	if (ret)
+-		dev_err_probe(dev, ret, "Failed adding memory mapped gpiochip\n");
++		return dev_err_probe(dev, ret,
++				     "Failed adding memory mapped gpiochip\n");
+ 
+ 	return 0;
+ }
+-- 
+2.50.1 (Apple Git-155)
+
