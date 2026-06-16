@@ -1,125 +1,107 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5371A682B
-	for <linux-gpio@vger.kernel.org>; Tue, 16 Jun 2026 15:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781623977; cv=pass; b=NIBAw59EhDhQ5oJ4xfEbA95vdXmc+a1VIdBQeUvks/Mzv0ER0BPw6mj+nxfmyod9DTWFvs8lCDXvVdhHBKc7BZogFKIjHGIfY91vIsevjCXI65SVuwvnZucLFggZ+AckRGBoi7zMZ9ddOx6AJS7AN+y8ftXzSjJBhnof8fbkObw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781623977; c=relaxed/simple;
-	bh=9ryEeEKN34qoxZ5iOwtkmdOLrQqqwl0md2Lu6yLAkww=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZuvRuqqpxDvzpxnECpy1DrFhGR+Mul5gIP87mo3HhLBCpknLQ2vV8FafqDRXj6BNZq1vxO9DfqSBKVwJqbM0EyVSegBhPvDZjjXjVbUJXzKAXLRyh1ZlnVz0P31UFa5iC3wBEv16XLk/ZZR7b7DLcF8reW4G2c2o6UoqT/3O604=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Onak4tcL; arc=pass smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C144449EB8;
+	Tue, 16 Jun 2026 15:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1781624165; cv=none; b=tKKjTYwKoeNt7hV6npHP/tVncqS1z4wgjtUTT/PFM81XjE+rs1N5Okl4D6r+EXfuIZEvQsCkKVApaHKviHeYLNZrVQsLAnnXPvOtUW3fjOxmOwYZFpZeJPKFV5HjFeebL+t8pi5+R1o+nVbgax0bxO/lIeG8y1S6gIM0ueU9P+I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1781624165; c=relaxed/simple;
+	bh=Wd2qjQayVtYNCQpH6/G5M3DjEU7LR4pWOUMSd4iiR2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EWTEOaZWmK0hONTk4pwy+YfeHoHSCy/E16uXZqFDrfkGQHXHPFMyOw8fHj2xJ2zJUg4f4de4PI1GlTT7YFKjdMHewPfamRcyc09V+GGFTTg1sQLK2qxGgR+pa/gwB7soqGCVjs7fArU3/hYnCMlMddDqEvGyTB37nT6lrdb1YPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PUqKcTgJ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Onak4tcL"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-68d23396ed3so8003846a12.1
-        for <linux-gpio@vger.kernel.org>; Tue, 16 Jun 2026 08:32:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1781623975; cv=none;
-        d=google.com; s=arc-20240605;
-        b=RGgXGMFH3wvuKM6Oduqd4OCy4RBcMUA00XOYG0QneCT9sW375gwCgQMZTmKl284uA+
-         j+RZ9y7wByruGzAI4H9LudYgxh05MVd7QC7dnkTj8MvJycdopb2rpsbfoq0JxB7u4szb
-         H5mD3YdW4Yl+bX5V6rwCVgNTj9awEKqWstN81ysFJ/y3GhPbg9nIux8qxXeZcDydC4Z5
-         9GvC+EHx7eGYf0jB1vF4oZZ1PXvmZ8H9HjbOC4mhCsTb2IHpSb1LgRsQ51T30W4en8SB
-         2iRXEBRpURsav3ag05+K0BTQORXblKD8qLIXffCdPsET8+ToVP+VHTRhTF/MlSW4Dd1r
-         AiNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=pfw1ICkm7+kbiLyNwGHlM24bHrY+azb4TocUjKCxBR0=;
-        fh=6AjcysqtCoJF014T7jGSO4TiBEIoDTzO6tNbYyAU8F0=;
-        b=fFo4d7Z1ZgK0YUJClt/rEce11t66mYre+Kf8usjOstQXMqylBUguL5qxJb9SBV3Yan
-         ROX7DJIgjj8zi78uF9rall92UvoSGxvatJUKUw3CtHAZXOkuFLPmR04nngIUAm6qnp4A
-         Cekzd7kuGuV3sUpdcQsLq23J5ocRkR/mx3Pd2kWRmH8lmh8gJlIHDXK+sRs+RxlbXwRh
-         Z0iA5cSDlt1aaCUeUHU4ePkZ1FubWmILawhGsscFn6+C3PYH2SVu1sYQ4cHwNmbJj9iU
-         dxRaF1AFyNow76Dg1iLS0MPCfVYVYJRBZqKJxHBEUznfPGku2AppHz6bnMHjPsgNb0g7
-         6ZwA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1781623975; x=1782228775; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pfw1ICkm7+kbiLyNwGHlM24bHrY+azb4TocUjKCxBR0=;
-        b=Onak4tcL5vSFVX9zbAMb5EL2enSwZMolN7dPWdBSvZ1YfGpRrRAmfSvARvhFef6wof
-         cC1Y57VJB8c+fnIbL1ggRxC/ShwE7AfDkiBBgip58TToDiFW3fA3wUAG661aMIgBZy5E
-         SvYJygCDWsbciA7gnkRjAf0+6qbp5J+oDrUfJJ5CuV89vaDeClKgzEYShVIN39M5na9F
-         MtV6ZOalGVHYMCzSzsjn8b7nV/wOPpSRMDIDsiqHMOOnPd5gw80xGoQ7oxiDqIn59UeP
-         HaACvImgUJGUu0jZ1c9ookZx7k8MQ1W9qy14X226sVAmTI1chWtEuNtxtyZhbUXP+Wvc
-         exyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781623975; x=1782228775;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pfw1ICkm7+kbiLyNwGHlM24bHrY+azb4TocUjKCxBR0=;
-        b=p6A60prHZaWmCyR4hvFgvNkOku6nWKaeoVYjb8ynW8JMin6VWGPBu29R23kUBKzpbb
-         UwHZ4l6lvemTZ/Hxc39Z8Go33FGhQBMK4VaqbUUoZEoulQKKntw+TVOfCjXg0+OVCmcE
-         lQSgbsh5t2e0NdwX4cuxiXXU3eAcyKfySQvdLvW/96z79QmZCrE4mkQqtiuNpHYeDm85
-         HBkmrGsxmEcr9E+hY3xv+PvLpm28iDYxOiJmxy6vPxKmSL3LGUT2sThbmLj1UmtZ79T7
-         o20ggErMc9l6LZwKKZCijQvVNXpoy2ReWfugB3e+sra6aB9JvWigi34se/8V6MGAxBwH
-         LBTg==
-X-Forwarded-Encrypted: i=1; AFNElJ9op1y8Vg7u1x/1gD1v4+orHxmtSwHeCMYsL5oHgkpBLWbbp6Bb4B6lXde4Oi5gxl7gAFvHYy4wuX+p@vger.kernel.org
-X-Gm-Message-State: AOJu0YyERq/u1A87iUPUjWKtQQgr2KRqjdVAWmqHgsNClqD7+Ymk7NdC
-	d81tu8KI3IVnitihTlXrUWqVYs6f5POUxoXBnoP+gdOY9xv+3/XIc7VlY5QpvdLFSpbmI26KBNe
-	8OOetA8GXs894yu+CYs9lU+ngFEtpixU=
-X-Gm-Gg: Acq92OFOcBsk27zdhcUL4IXozPghE+fm02hXF2psdVqVAxQOQHzZiV0zugB41KD6df9
-	A4BuI2A4ET/ELhQilwifwF7XH8cwxjgQlOyeBTJXrdqqkpYdq4bPq/hy3Aeu99c4gy4bSR4Phd3
-	jYuspdo1/wT40ghj12m2AdhyXWxVR7Akp0nZz2Pn4o6ha7Z5zyR89UNtsRf7fwbDcnsM9JhFITX
-	8kiOIuEqyIwRWZ9GeSntPDwmBMwgnH12I4Fxe0TmgrhfzxXk/5sFELLnY1AiGjnZLsGbpMRVKQ1
-	5Wq58g==
-X-Received: by 2002:a05:6402:3488:b0:68a:c8c8:bf70 with SMTP id
- 4fb4d7f45d1cf-6950875d069mr2423072a12.26.1781623973864; Tue, 16 Jun 2026
- 08:32:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUqKcTgJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92D661F000E9;
+	Tue, 16 Jun 2026 15:35:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781624164;
+	bh=Wd2qjQayVtYNCQpH6/G5M3DjEU7LR4pWOUMSd4iiR2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=PUqKcTgJZJNNJ7C+53ifL2iwOd38k3YrP1gTidtlMc9Icth6gYhdyVFBP/4mDKfyD
+	 zo+JQmSCKriy01gBjLYH8/j9DZ9kb+Z+wRQztrEc/VuBwShcvKN3Ztd9ia1ClnLDeU
+	 BI5zUz/xNuZ6ql3jlFLL8qz0VpXBDI6SkT3aw5zLrfJhNaNUhKyKGUZ420uGKnOJs4
+	 hRW6loKmVZCGvJovvzqlHiO0TgtmRS6tk2XcSwqwnjwln2r2aZUhEie38QPvL0mVdI
+	 mMHbSfwtaiSV20BbCUdTf6unkjr1nJ0iqWJFG8hEWHOgpuYs1mOdgG9y3C8OgvIrjz
+	 dvJhAME73YU9Q==
+Date: Tue, 16 Jun 2026 16:35:57 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+Cc: linux-mediatek@lists.infradead.org, Fabien Parent <parent.f@gmail.com>,
+	Val Packett <val@packett.cool>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Julien Massot <julien.massot@collabora.com>,
+	Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
+	Akari Tsuyukusa <akkun11.open@gmail.com>,
+	Chen Zhong <chen.zhong@mediatek.com>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v6 1/7] dt-bindings: mfd: mt6397: Add MT6392 PMIC
+Message-ID: <20260616-awaken-gills-d341ee5c2dd0@spud>
+References: <20260612200717.361018-1-l.scorcia@gmail.com>
+ <20260612200717.361018-2-l.scorcia@gmail.com>
+ <20260615-palatable-aerobics-3091229b6ada@spud>
+ <CAORyz2+4EquYcUHEnoq0N_p7vCmDpPONEhVrmAfO1eX_RNMYbQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260615071836.362883-1-l.scorcia@gmail.com> <20260615071836.362883-10-l.scorcia@gmail.com>
- <20260616133918.GA2335264-robh@kernel.org>
-In-Reply-To: <20260616133918.GA2335264-robh@kernel.org>
-From: Luca Leonardo Scorcia <l.scorcia@gmail.com>
-Date: Tue, 16 Jun 2026 17:32:43 +0200
-X-Gm-Features: AVVi8CcxGgSJDcwyWDi8AM7eUTYUD6802ufCx2_1yb4EtV-skFio6HexhMd5f18
-Message-ID: <CAORyz2LiMHnaTK6QnsLxJDtw0fZ_N9LELw0iCorOZwHuWXus0g@mail.gmail.com>
-Subject: Re: [PATCH v7 9/9] arm64: dts: mediatek: Add MediaTek MT6392 PMIC dtsi
-To: Rob Herring <robh@kernel.org>
-Cc: linux-mediatek@lists.infradead.org, Val Packett <val@packett.cool>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>, 
-	Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>, 
-	Julien Massot <julien.massot@collabora.com>, Fabien Parent <parent.f@gmail.com>, 
-	Akari Tsuyukusa <akkun11.open@gmail.com>, Chen Zhong <chen.zhong@mediatek.com>, 
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="A1YEOfPW2EWY+SaK"
+Content-Disposition: inline
+In-Reply-To: <CAORyz2+4EquYcUHEnoq0N_p7vCmDpPONEhVrmAfO1eX_RNMYbQ@mail.gmail.com>
 
-> >  arch/arm64/boot/dts/mediatek/mt6392.dtsi | 75 ++++++++++++++++++++++++
->
-> Nothing is using this so it is a dead file that doesn't get tested.
 
-Hi, it's not referenced as the dtsi inclusion was removed in the
-original patch from 2019 for an easier merging of support for mt8516
-pumpkin boards [1][2].
-If you prefer in the next revision I can add another patch to readd it
-to the existing pumpkin board.
+--A1YEOfPW2EWY+SaK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I am working on a few boards with MT8167 (Xiaomi Mi Smart Clock,
-Lenovo Smart Clock 2, Sony Playstation Classic) that reference it and
-these have been used to test it locally too.
+On Mon, Jun 15, 2026 at 07:09:39PM +0200, Luca Leonardo Scorcia wrote:
+> Hi,
+> yes, sorry about that, series v6 has been superseded by v7 (I replied
+> to the thread and marked it as archived in patchwork, please let me
+> know if I have to do something else to mark it as obsolete).
+> Sashiko was correct, the regulators node is required for this device.
 
-[1] https://lore.kernel.org/linux-mediatek/20190323211612.860-25-fparent@baylibre.com/
-[2] https://lore.kernel.org/linux-mediatek/20200229170401.1287324-2-fparent@baylibre.com/
+I have no idea what regulator node you're referring to here or what
+patchwork. Please don't delete context when you reply.
+If it's the devicetree patchwork I don't you need to do anything.
 
-Thank you
-Luca
+> Sashiko also has suggestions for v7, a few pre existing issues and a
+> few nits here and there but some are actual improvements. One bit that
+> caught my eye is the use of the modeset register in the
+> mt6392_ldo_get_mode function. I have to double check that with the
+> data sheet and the android kernel sources. Not sure if I can do that
+> before next week though.
+>=20
+> Is there any way I can trigger a Sashiko review before sending patches
+> to the ML?
+
+I don't know sorry.
+
+--A1YEOfPW2EWY+SaK
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCajFtXQAKCRB4tDGHoIJi
+0uJ3AP4l5qgb9a67VOWooa8/C0IiEUjhucKSkZe27ZRd032Q4AD/SBEgsH9truaa
+XQXPJ0QL5mTdmrYt2N205j+jwOitVAI=
+=xinJ
+-----END PGP SIGNATURE-----
+
+--A1YEOfPW2EWY+SaK--
