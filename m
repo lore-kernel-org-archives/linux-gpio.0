@@ -1,23 +1,24 @@
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263FF481226;
-	Wed, 17 Jun 2026 15:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15E02DB78B;
+	Wed, 17 Jun 2026 15:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781711171; cv=none; b=pFDdvAgHLmlhISwZhJCHeJPUWgD3uIEe0GFN1sdRMw/Djp02fggmVQU6hf9id++d8E2STTAG/RhOfJy98ET1f5XJPmy9GHzB0fHRmV+Qxryh0jpggItZzQJD4a+Jq8jClqv/GLn/DIGDOdLsMQCt9OhTayQhuek2UYjodzf/YgQ=
+	t=1781711174; cv=none; b=c6UqGLUivlcl666x3b+Juh4Q6wodLnckFTuzm9qA1BAHZf8Kzu0n+u1UlhRwf+hyqRwMYvhaBwXiD82HSq8TV+9fiF59ovFNDr7pRG/5ANbD55bl4JRb6MHH1bnLBzCknFJ2PPXledXPogOV3rQKo1RUcL8wK0696DGEB0ZkfGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781711171; c=relaxed/simple;
-	bh=/cUP8qiDwMFPXMJ07+t7pi0dWpyopD+eP2Yi5ET34pI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rUg84DByYCvXXiZI0STVf+SZ7UPc7Brm7jiXSmfsbAd330zGPhELw2lZBBJ4hrBLLwR4BL2AHwet7IYTuFrolePozQuFQn7y5JOEruDKxmlzKRAKNToOzjL1Yz6ECzbQvx2RmDNoOWdDU/tQPvn77Tlb0GUblvEzQPsv1IEjo0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=Gb/FqZ+I; arc=none smtp.client-ip=45.254.49.198
+	s=arc-20240116; t=1781711174; c=relaxed/simple;
+	bh=gZsgf9CSI8qPFaId3CVmbRXvECtzu0WvLLGRZZPsblc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OFxSZP+Ln9xMauFZot3nhVQdK+aJCo6h4klNcgY6OsW2bPcix+E7ach7uSNl7yON9bQ8FRY0FM336J53yNmarvmzmcy6YzZK4/W1bvyJfT47UcbIemRRF6pKhV+zYmdk0T1qAo273ehoLc+M1fj7hxl3REXiKmDHSX4Ov55+lxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=PqFO2DyC; arc=none smtp.client-ip=45.254.49.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="Gb/FqZ+I"
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="PqFO2DyC"
 Received: from PC-202605011814.localdomain (unknown [58.241.16.34])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 42c786665;
-	Wed, 17 Jun 2026 23:40:43 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 42c786668;
+	Wed, 17 Jun 2026 23:40:47 +0800 (GMT+08:00)
 From: Runyu Xiao <runyu.xiao@seu.edu.cn>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
@@ -33,11 +34,14 @@ Cc: Orson Zhai <orsonzhai@gmail.com>,
 	linux-rt-devel@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	jianhao.xu@seu.edu.cn,
-	runyu.xiao@seu.edu.cn
-Subject: [PATCH 0/2] gpio: use raw spinlocks in irq startup paths
-Date: Wed, 17 Jun 2026 23:40:33 +0800
-Message-Id: <20260617154035.1199948-1-runyu.xiao@seu.edu.cn>
+	runyu.xiao@seu.edu.cn,
+	stable@vger.kernel.org
+Subject: [PATCH 2/2] gpio: eic-sprd: use raw_spinlock_t in the irq startup path
+Date: Wed, 17 Jun 2026 23:40:35 +0800
+Message-Id: <20260617154035.1199948-3-runyu.xiao@seu.edu.cn>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260617154035.1199948-1-runyu.xiao@seu.edu.cn>
+References: <20260617154035.1199948-1-runyu.xiao@seu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -45,42 +49,89 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9ed63dec9403a1kunme39bd4ec7353b
+X-HM-Tid: 0a9ed63dfd0d03a1kunme39bd4ec73543
 X-HM-MType: 10
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkaTEJPVhhPGhkeQ0oeGUMdHlYeHw
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCQ0pJVkkZQkwaH0kZSU0ZHVYeHw
 	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
 	xVSktLVUpCS0tZBg++
 DKIM-Signature: a=rsa-sha256;
-	b=Gb/FqZ+IjVPGhiGasMk5wIQKUqgwywBh4ygHk3qwhFjX1Zcuk8nYG+uCxDg3mGwGOxqnZv3gTfiDb0F6Zu2Ny63ZNjmxmlHhHId2IsZIBsmbvo9o76G+UcdLUEZcJx/h/7FlhgmQLPWUxuk7S1ScVnVHOFDo8NInP2XTZQmsD7I=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=0UJyhmAnyClFs0OH2R0752mdmhXxf0o0IrDtwIqU2zU=;
+	b=PqFO2DyCd2+ou5UuxCRNHhXD0rct1b8uzgXurQ/nEKCDWDhcwcSOpeiQ58irLV6xHcjP3vQ+q0rGXLEQjlqfGNXCceYmL5vnE8012Rtqqmjsidd9rohfoqbB5OQZ2QYADZML/9TLWzQCuOsd0Y+7/8hsUjp/8HnlXxYqZm7uPHI=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=yS/tYNIKF3Aog6YmKLVyBA3FfHxocs6U5z3LjxhgPaM=;
 	h=date:mime-version:subject:message-id:from;
 
-This 2-patch series fixes two GPIO irqchip paths where IRQ startup or
-unmask can update controller state under a regular spinlock.  On
-PREEMPT_RT, that lock can sleep while irq_startup() is running in a
-non-sleepable context.
+sprd_eic_irq_unmask() enables the GPIO IRQ and then updates controller
+state through sprd_eic_update(), which takes sprd_eic->lock with
+spin_lock_irqsave().  The callback can be reached from irq_startup()
+while setting up a requested IRQ.  That path is not sleepable, but on
+PREEMPT_RT a regular spinlock_t becomes a sleeping lock.
 
-Both issues were found by our static analysis tool and then manually
-reviewed against the current tree.  The grounded PoCs kept the
-request_threaded_irq() -> __setup_irq() -> irq_startup() carriers and
-Lockdep reported "BUG: sleeping function called from invalid context" on
-the corresponding driver update helpers.
+This issue was found by our static analysis tool and then manually
+reviewed against the current tree.
 
-Convert the affected register locks to raw_spinlock_t.  The locked
-sections only serialize MMIO register access and irqchip state updates,
-so they should remain non-sleeping.  The conversion does not move any
-sleepable operation under a raw lock; it preserves the existing short
-register-critical sections while making their non-sleeping requirement
-explicit for PREEMPT_RT.
+The grounded PoC kept the request_threaded_irq() -> __setup_irq() ->
+irq_startup() -> sprd_eic_irq_unmask() -> sprd_eic_update() carrier and
+used the original spin_lock_irqsave(&sprd_eic->lock) edge.  Lockdep
+reported:
 
-Runyu Xiao (2):
-  gpio: sch: use raw_spinlock_t in the irq startup path
-  gpio: eic-sprd: use raw_spinlock_t in the irq startup path
+  BUG: sleeping function called from invalid context
+  hardirqs last disabled at ... __setup_irq.constprop.0 ... [vuln_msv]
+  sprd_rt_spin_lock_irqsave+0x1c/0x30 [vuln_msv]
+  sprd_eic_update.constprop.0+0x48/0x90 [vuln_msv]
+  sprd_eic_irq_unmask.constprop.0+0x35/0x50 [vuln_msv]
+  __setup_irq.constprop.0+0xd/0x30 [vuln_msv]
 
- drivers/gpio/gpio-eic-sprd.c |  8 ++++----
- drivers/gpio/gpio-sch.c      | 32 ++++++++++++++++----------------
- 2 files changed, 20 insertions(+), 20 deletions(-)
+Convert the Spreadtrum EIC controller lock to raw_spinlock_t.  The
+locked section only serializes MMIO register updates and does not contain
+sleepable operations, so keeping it non-sleeping is appropriate for the
+irqchip callbacks.
 
+Fixes: 25518e024e3a ("gpio: Add Spreadtrum EIC driver support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Runyu Xiao <runyu.xiao@seu.edu.cn>
+---
+ drivers/gpio/gpio-eic-sprd.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+index 50fafeda8d7e..3b7ebcf12fe7 100644
+--- a/drivers/gpio/gpio-eic-sprd.c
++++ b/drivers/gpio/gpio-eic-sprd.c
+@@ -95,7 +95,7 @@ struct sprd_eic {
+ 	struct notifier_block irq_nb;
+ 	void __iomem *base[SPRD_EIC_MAX_BANK];
+ 	enum sprd_eic_type type;
+-	spinlock_t lock;
++	raw_spinlock_t lock;
+ 	int irq;
+ };
+ 
+@@ -149,7 +149,7 @@ static void sprd_eic_update(struct gpio_chip *chip, unsigned int offset,
+ 	unsigned long flags;
+ 	u32 tmp;
+ 
+-	spin_lock_irqsave(&sprd_eic->lock, flags);
++	raw_spin_lock_irqsave(&sprd_eic->lock, flags);
+ 	tmp = readl_relaxed(base + reg);
+ 
+ 	if (val)
+@@ -158,7 +158,7 @@ static void sprd_eic_update(struct gpio_chip *chip, unsigned int offset,
+ 		tmp &= ~BIT(SPRD_EIC_BIT(offset));
+ 
+ 	writel_relaxed(tmp, base + reg);
+-	spin_unlock_irqrestore(&sprd_eic->lock, flags);
++	raw_spin_unlock_irqrestore(&sprd_eic->lock, flags);
+ }
+ 
+ static int sprd_eic_read(struct gpio_chip *chip, unsigned int offset, u16 reg)
+@@ -628,7 +628,7 @@ static int sprd_eic_probe(struct platform_device *pdev)
+ 	if (!sprd_eic)
+ 		return -ENOMEM;
+ 
+-	spin_lock_init(&sprd_eic->lock);
++	raw_spin_lock_init(&sprd_eic->lock);
+ 	sprd_eic->type = pdata->type;
+ 
+ 	sprd_eic->irq = platform_get_irq(pdev, 0);
 -- 
 2.34.1
