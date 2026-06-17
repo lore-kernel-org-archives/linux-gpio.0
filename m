@@ -1,119 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99E13C870E;
-	Wed, 17 Jun 2026 08:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C46C311C1B;
+	Wed, 17 Jun 2026 08:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781685894; cv=none; b=XySXgupR4SUc+i6SPi8uOySgk6vZi/TEe5EP1d8fPqtXdPuOOUwCnocSrD79nJuZIj6jnVJt7ugXjXGJECZQe7CAyU/Q6KXMeRgJSMJhzmNLcFnLTclodtDcByEb5uiG1RMSmEP3R9Sl5Ps5sBiclBrLrIfMfqI/bttIvlqVDWU=
+	t=1781686342; cv=none; b=giWOtFwVvcyok1BZgOSZOSvxMiXXFmggEB+NuKu2YVxU+h2IAK5rD96dRsmsTWaCG6TDfvcju9e97LTnc6J2RauJ4ilQgIiWAwGJaOU+2S39B0M5Kwd5/gsQl85rQNVIIVcp2ZSIPyt1S6OPTrNUQPXVqoS9n99Q5l1ne4Xi0yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781685894; c=relaxed/simple;
-	bh=q+cUJZOydKXdWDpZXEceW0s0RozWR5kA7NjUSuPBp1M=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=Q0T4QoefJEfuZ3dHbmdcR3ksROo0c5UAybpCLgD8sqSrIrji8Mf1Ycaiz6PD4adZGGgImCULpO2sLwWPrPxl+zZGF2pHtgWDS40VKcRuCPvWbbEIINtv9pUto9cfQDrdlBdCmTjm+SNZV+nBbm/T0IPBvOYyAiszVUUVx4BjHp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJqsmqL5; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781686342; c=relaxed/simple;
+	bh=SBhFBik6Q8jsMrDc/brKC2mrnipQabc3lq2zmQMLUtk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CLDVrNIe2Nc3GRhRrHu9hDK/nbhCfmdAjLRzhNBf8SY9WqjIV4jK+BLG1PMX2zEKf4MgLCjU89tCVTmN629oL5zB+gk6OPf8Xj3rGbXWrU0UMS/4LPVL6Ed6m7Pg7sNy+Gf3dq7K3/FUBhrZZk949qQqVY2qD/hjin8ygkOPElU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=H0ozDqsH; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJqsmqL5"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 4CC831F0155C;
-	Wed, 17 Jun 2026 08:44:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781685888;
-	bh=q+cUJZOydKXdWDpZXEceW0s0RozWR5kA7NjUSuPBp1M=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To;
-	b=fJqsmqL5tZ/r2VH0IDbyLmtJ/fMTxFUKdxTuwnVob95x+LB24GU7YsTTyi0kN1dQF
-	 HKvf3Emei2d/BcrOnOP1KutEq1B6Ic8FXQLLNstMBnQ+vCB8arEO2UAMlNqolz/yZz
-	 O1kzRxFmtv4oway1kQfPzAixZQxuVvW5lPcAxfoVBRkLr7dAcJk5KhyqqGFNwKnQ5x
-	 M2TjnNUC1yfK5Xx+cZjrGR6UTDHD3Mf/1vySIaaSQ45uQIs/+wxJeaNRDB5oCGkTYW
-	 TdWIw29fD8sraD3l/V4vuCaOUGHPF7BaCUrbPm+XkwJkxx1+9hAO8VomFrq08nyW0R
-	 eo3cPgfwBLH5g==
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="H0ozDqsH"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 7DDB4262BE;
+	Wed, 17 Jun 2026 10:52:17 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id uDX0bK4BAT47; Wed, 17 Jun 2026 10:52:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1781686337; bh=SBhFBik6Q8jsMrDc/brKC2mrnipQabc3lq2zmQMLUtk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=H0ozDqsHs0e0fHmZjPi/T/PAd8NzLu7y++GhJD9DLAradDeb83obBXbeHL6fC92rA
+	 PQSCd6NCMc8W1zOF6WJ3lfqcYOLR2oQ1onwUQOWQCAYqVs9Lc7dcr1GuM1JDll4VQA
+	 2/A2Sb5doESCY+6xdcWHn2vGD/QEqVthlRDxMZXlW7ZPiRkFFISn7fh/BbBXOMpl8H
+	 TP9Xcu7hA4HS49kOIPtbOCTeYefY0snhZgdge+fodhy0vKBlRyOADPCVYZyY80G89s
+	 pxFJzGl4Wn3RT39hLN0BmIv4kKoWu/hD24o+4BWwG1Kn1smDxJj32qGApqKZQKtINu
+	 b+h792K5Sm0Ig==
+From: Marco Scardovi <scardracs@disroot.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Mika Westerberg <westeri@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>, linux-gpio@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: acpi: Add quirk for ASUS ROG Strix G614 series
+Date: Wed, 17 Jun 2026 10:51:53 +0200
+Message-ID: <cnSvmmfhTJSP4OtS9WWGJA@disroot.org>
+In-Reply-To: <ajEtpY101OpZdtaF@ashevche-desk.local>
+References:
+ <20260616090824.5967-1-scardracs@disroot.org>
+ <KW1oy3-UQRW73tAAP5-cWQ@disroot.org> <ajEtpY101OpZdtaF@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=ae7d6270ac9333222e92442123309da8a5c3fc1e7564e8b96e096513da81;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Wed, 17 Jun 2026 10:44:44 +0200
-Message-Id: <DJB6XO07EC8Q.1X9P752MLFB4N@kernel.org>
-Subject: Re: [PATCH v3 2/7] gpio: regmap: add gpio_regmap_get_gpiochip()
- accessor
-Cc: "linusw@kernel.org" <linusw@kernel.org>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>, "afaerber@suse.com"
- <afaerber@suse.com>, "wbg@kernel.org" <wbg@kernel.org>,
- "mathieu.dubois-briand@bootlin.com" <mathieu.dubois-briand@bootlin.com>,
- "lars@metafoo.de" <lars@metafoo.de>, "Michael.Hennerich@analog.com"
- <Michael.Hennerich@analog.com>, "jic23@kernel.org" <jic23@kernel.org>,
- "nuno.sa@analog.com" <nuno.sa@analog.com>, "andy@kernel.org"
- <andy@kernel.org>, "dlechner@baylibre.com" <dlechner@baylibre.com>,
- =?utf-8?b?VFlfQ2hhbmdb5by15a2Q6YC4XQ==?= <tychang@realtek.com>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-realtek-soc@lists.infradead.org"
- <linux-realtek-soc@lists.infradead.org>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, =?utf-8?b?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?=
- <cy.huang@realtek.com>, =?utf-8?b?U3RhbmxleSBDaGFuZ1vmmIzogrLlvrdd?=
- <stanley_chang@realtek.com>, =?utf-8?b?SmFtZXMgVGFpIFvmiLTlv5fls7Bd?=
- <james.tai@realtek.com>
-From: "Michael Walle" <mwalle@kernel.org>
-To: =?utf-8?b?WXUtQ2h1biBMaW4gW+ael+elkOWQm10=?= <eleanor.lin@realtek.com>,
- "Bartosz Golaszewski" <brgl@kernel.org>, "Andy Shevchenko"
- <andriy.shevchenko@intel.com>
-X-Mailer: aerc 0.20.0
-References: <20260512033317.1602537-1-eleanor.lin@realtek.com>
- <20260512033317.1602537-3-eleanor.lin@realtek.com>
- <agMM9soiqpG-TRSb@ashevche-desk.local>
- <adff3a2d21a64d3ea3b408d62157ee1e@realtek.com>
- <ah92oEavMu4QRn8y@ashevche-desk.local>
- <CAMRc=MdA24z-tB_D8CTw68Di8e4OVQJ1QH4+rDskFzq=xjJ5BQ@mail.gmail.com>
- <DJ3QVMZ6XLW9.1M9W541O92QWJ@kernel.org>
- <39de4d4ada5446e7a33e48c43f410439@realtek.com>
-In-Reply-To: <39de4d4ada5446e7a33e48c43f410439@realtek.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
---ae7d6270ac9333222e92442123309da8a5c3fc1e7564e8b96e096513da81
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-Hi,
-
-On Wed Jun 17, 2026 at 10:36 AM CEST, Yu-Chun Lin [=E6=9E=97=E7=A5=90=E5=90=
-=9B] wrote:
->>>>> Without an accessor like gpio_regmap_get_gpiochip(), we cannot=20
->>>>> retrieve the gpio_chip instantiated inside gpio-regmap.c to fulfill=
-=20
->>>>> these requirements in our
->>>>> map() function.
->>
->> Why is gpiochip_irq_reqres() called in the first place? Isn't that only
->> called if the irq handling is set up via gc->irq.chip and not via=20
->> gpiochip_irqchip_add_domain() like in gpio-regmap?
->>
+> 
+> Okay, perhaps this all needs to be elaborated and summarized in the commit
+> message.
+> > Sidenote
+> > Personally I'd wait for Mario for further info: after all it's him the
+> > maintainer for AMD side and surely knows more than me.
+> 
+> Sure, I am with you on this.
 >
-> The panic was caused by my driver including 'GPIOCHIP_IRQ_RESOURCE_HELPER=
-S',
-> which forced the call to 'gpiochip_irq_reqres()' and crashed.
 
-But why did you use it if your irq domain isn't managed by the
-gpiolib, but rather your own irq domain? Before going with option #3
-I'd double check if that is correct in your driver.
+What I'm saying below is purely based on my own speculations but it's the
+most plausible thing I can think as for now.
 
--michael
+When I tested Mario's patch back in April it totally used to work on my 
+device: I have an idea that the value probably happened to be equal 1, like 
+requested on the patch and making it working as intended.
 
---ae7d6270ac9333222e92442123309da8a5c3fc1e7564e8b96e096513da81
-Content-Type: application/pgp-signature; name="signature.asc"
+In the meantime I updated the BIOS (from 310 to 315, released in May),
+changing the value from 1 to 0 and breaking the boot time again (as said it's 
+my own speculation, I'm not sure if it is actually possible).
 
------BEGIN PGP SIGNATURE-----
+I didn't test the patch after the BIOS update 'cause I had the
+gpiolib_acpi.run_edge_events_on_boot=0 option enabled and didn't think it 
+would stop working again.
 
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCajJefRIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/hggAGA48SYycuQ31SATiLygkbvb0W1zefVePET
-gk6JbWW8iIuoG0dOdIPsod0/pPg692m9AYDoGRmD/J1tvhi2B28P6PCSOkTa7yRs
-HmpBeIQ/pXUXteE59FADrOs+i7f7s0N8AxU=
-=kuX1
------END PGP SIGNATURE-----
 
---ae7d6270ac9333222e92442123309da8a5c3fc1e7564e8b96e096513da81--
