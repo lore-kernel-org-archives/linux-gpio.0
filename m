@@ -1,123 +1,148 @@
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C9E3264CA
-	for <linux-gpio@vger.kernel.org>; Thu, 18 Jun 2026 16:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AFD32FA2B;
+	Thu, 18 Jun 2026 16:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781800803; cv=none; b=NH4PFd1lyRfudghlhQU2ajcRbiwxvgH3D6p6VokKisHFpsnVg26r0rNxrj/er0dT6j4LNp9A1+WwLfQZZEGAG51QSBga1YWt+6MGj6WWsDNvwewrs7N+Bo8GUEaHL+rCQ/g5VGH1wKjE+iiT/rQ4mbaL4XU0vt7olUUtQ2tBkgA=
+	t=1781801974; cv=none; b=B3w28VNTBkXakC70mHZID2M1MGif8+Oa2vPF4/+G0zTJz738zqvk92mTU007z4MVVW5sEckzWG/XCnnZbGtSLZrND8xIyU0Eiw33eeNoZ8uoFUPQ1W36RcBoc1js6aNFGrZqZJwqXDSMP5B6GCakCbM6qNMm8vDqqQHIhuOyZKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781800803; c=relaxed/simple;
-	bh=gvDtyKKRc5B9UEF59xuKQspNmOi26PAt5LZIsgw98KI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hwBZT6DNyP7oxaQjCmBdZsWAw5ctfRovfSQyY0s+IdEKUOU2wf9H/MBsAy1cjYPo/KQO6zhTOMqMl6GC8SvK9pCfySPSI0sNtjwzsLbQKRy3q1LPKKPyc05w25gRmDhgpDN6HP8c1+RJKfu6QA4Xf98reNpDION3eV7krFl0O7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; dkim=pass (2048-bit key) header.d=0leil.net header.i=@0leil.net header.b=g0fPEter; arc=none smtp.client-ip=84.16.66.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=0leil.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
+	s=arc-20240116; t=1781801974; c=relaxed/simple;
+	bh=Wdyv/fy8mjZRvLWLgCqmD/pF7OqosNL4SS3AGh0FZ+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cMQHBn+go3iWGM261hVtHCwfZaOulHC6TB00lGfmfSLqewdrpvzNqK0QA0rpWm6VEeJL7obj8oaSJ8dCtN5Nw2f40+WPMbjPC34HOR6y7DdRdYEO9P720gTIswBptOoHZG/ivgg7VlDvWJw5RpJ/k16Obq3iuSs0l5AGhLU4qDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=G392+JfL; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=0leil.net header.i=@0leil.net header.b="g0fPEter"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gh5sP0BjJzsWs;
-	Thu, 18 Jun 2026 18:34:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0leil.net;
-	s=20231125; t=1781800456;
-	bh=hqg/IL1ba3qKpxYFJe4fZUb6gzeztPvCmhL1/+z0Agg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=g0fPEterWrHYmuncwppr6AtO1Tqkkw1wkedjki0bDLgYY/DFDgd7DQQSypVng2U57
-	 LdGGQ4AN37FLMRrW+sg8ZxCGOafLdiRRBwf9S3/ODXMdWPQnK4r6mX5wVv/wzAvO6X
-	 h7LVNYuGos303oWf1ENLjnkszKvFRrSllAWdEDNSYWuYnJ+iWR6scjS2b5G3eKmmaq
-	 oYPtITgWqbTXQqDXZ9zOZwfZiXagILDazfUQ9hvjjKvD/aDjO4SacFTB26hxtXTmPO
-	 fFImLWrCuqXC59ug++wbe6KNmYiLjjSCnOL81oIN7OxLhAKWTQfkl3n3NC3Wq7C9lG
-	 5qXAjLseo8PRA==
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4gh5sN1694zhxm;
-	Thu, 18 Jun 2026 18:34:16 +0200 (CEST)
-From: Quentin Schulz <foss+kernel@0leil.net>
-Date: Thu, 18 Jun 2026 18:34:01 +0200
-Subject: [PATCH 6.12.y v2 1/3] gpiolib: Extract gpiochip_choose_fwnode()
- for wider use
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="G392+JfL"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id C08AB27885;
+	Thu, 18 Jun 2026 18:59:29 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id juxMx-yPPXUx; Thu, 18 Jun 2026 18:59:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1781801969; bh=Wdyv/fy8mjZRvLWLgCqmD/pF7OqosNL4SS3AGh0FZ+o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=G392+JfLBc5P49Oa8y0vQkrW4q6XOZWScWVcP3lp6uChpyaU3Wfeyj61MvvGZhBhB
+	 hqbTnIZthZ85gMzAV5/TLGX/NU1luNOO4rMRmcuNoNayZH2Ygl2gcjUIAP0GU/I2UJ
+	 JZ0Jorp2ewCMH3uJO9VbNFcZlUK/eJhvvMPknooeZX7FH5voXk6dECMWNcw3SMkziL
+	 b2C4H1EDcK4MbrcIIugF1Dz9resHbEjKOLiynazdenqt/EXfv2FEF50YS7NTUT2OOZ
+	 ykluPdUB4kSj0f6TNAZFb+Etkh4LiI5gLfZHVQIiMN9I2mly6bT/aiVa/64XiALc7L
+	 jKNDJqbFqWObA==
+From: Marco Scardovi <scardracs@disroot.org>
+To: Basavaraj Natikar <bnatikar@amd.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: w_armin@gmx.de, brgl@kernel.org, linusw@kernel.org,
+ linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mario.limonciello@amd.com, westeri@kernel.org
+Subject:
+ Re: [PATCH v2 0/1] gpiolib: acpi: Add quirk for ASUS ROG Strix G16 G614
+ series
+Date: Thu, 18 Jun 2026 18:59:15 +0200
+Message-ID: <AeA8zl9ySbqIYxvm7aBj4Q@disroot.org>
+In-Reply-To: <ajQCOQzWEmNkzCVc@ashevche-desk.local>
+References:
+ <0e6ea9d5-68ac-4d18-b40a-25e70216b288@gmx.de>
+ <b259a3a3-0440-4da6-a3bb-d840f5242ce2@amd.com>
+ <ajQCOQzWEmNkzCVc@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260618-6-12-cve-2026-31732-v2-1-42cc54b7bf04@cherry.de>
-References: <20260618-6-12-cve-2026-31732-v2-0-42cc54b7bf04@cherry.de>
-In-Reply-To: <20260618-6-12-cve-2026-31732-v2-0-42cc54b7bf04@cherry.de>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- stable@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-X-Mailer: b4 0.15-dev-47773
-X-Infomaniak-Routing: alpha
 
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Thu, Jun 18, 2026 at 16:35:37 CEST, Andy Shevchenko wrote:
+> On Thu, Jun 18, 2026 at 06:46:28PM +0530, Basavaraj Natikar wrote:
+> > On 6/18/2026 4:44 AM, Marco Scardovi wrote:
+> > > On Wed, Jun 17, 2026 at 10:33 PM, Armin Wolf wrote:
+> ...
+>=20
+> > > I have extracted and decompiled the ACPI tables (DSDT and SSDTs) from
+> > > acpidump. You can find the raw acpidump.out and the decompiled ASL
+> > > tables in the following Google Drive folder:
+> > > https://drive.google.com/drive/folders/1aTqLAnUhrTsPdpA8tfOFyRopG3P3D=
+Gnc
+> > > ?usp=3Ddrive_link
+> > >=20
+> > > As far as I can see/understand there is no _DSM method defined under =
+the
+> > > GPIO controller device (AMDI0030) or the \_SB.GPIO scope.
+> > >=20
+> > > Under the _AEI method (defined in SSDT9 line 188-193), pin 21 (0x15) =
+and
+> > > pin 24 (0x18) are defined as:
+> > >=20
+> > > GpioInt (Edge, ActiveBoth, ExclusiveAndWake, PullNone, 0x0000,
+> > >=20
+> > >      "\\_SB.GPIO", 0x00, ResourceConsumer, ,
+> > >      )
+> > >      {
+> > >     =20
+> > >          0x0015 // Pin 21 (Touchpad attention line)
+> > >     =20
+> > >      }
+> > >=20
+> > > When triggered, they evaluate the _EVT method which calls:
+> > > Case (0x15)
+> > > {
+> > >=20
+> > >      \_SB.PCI0.SBRG.HNC0 (0x15, Zero)
+> > >=20
+> > > }
+> > >=20
+> > > Since Arg1 is Zero, HNC0 executes the Else branch, invoking M009 and
+> > > ATKM/ADTM, which stalls synchronously for ~36 seconds when executed
+> > > during the probe path at boot time.
+> >=20
+> > I traced the _EVT for pin 21 through the dumps:
+> >=20
+> > _EVT(0x15) =E2=86=92 \_SB.PCI0.SBRG.HNC0(0x15, Zero). With Arg1=3D=3D0 =
+it takes the
+> > Else branch: M009(), then Notify(^^GPP0.PEGP, 0x81) "Information Change"
+> > to the dGPU, then ATKM(0xC0)/ADTM().
 
-[ Upstream commit 375790f18396b2ba706e031b150c58cd37b45a11 ]
+It seems I have much more to study about ACPI Tables. Sorry for the confusi=
+on
+and thank you for checking it out.
 
-Extract gpiochip_choose_fwnode() for the future use in another function.
+> >=20
+> > So this _AEI event is dGPU/graphics=E2=80=91related (it notifies PEGP),=
+ not the
+> > touchpad =E2=80=94 the earlier "touchpad" characterization is incorrect=
+=2E The
+> > touchpad (TPD0, _HID "ASUE1416", _CID "PNP0C50") has its own GpioInt() =
+in
+> > its _CRS on a different line (pin 0x08, Level/ActiveLow).
+> >=20
+> > The ~36 s stall is consistent with these synchronous MMIO reads + dGPU
+> > notify \running in the boot probe path while the GPU isn't ready
+> > (no explicit Sleep in the path; a trace_method_name on HNC0/M049 would
+> > confirm the exact blocking access).
+> > Either way, running this AML synchronously at boot is the firmware issue
+> > the no_edge_events_on_boot quirk works around.
+> >=20
+> > Could you update the commit message accordingly =E2=80=94 in particular=
+, drop the
+> > "touchpad" wording, since pin 21's _AEI event is the dGPU notify path, =
+not
+> > the touchpad?
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Reviewed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Link: https://lore.kernel.org/r/20250213195621.3133406-2-andriy.shevchenko@linux.intel.com
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Stable-dep-of: 16fdabe143fc ("gpio: Fix resource leaks on errors in gpiochip_add_data_with_key()")
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
----
- drivers/gpio/gpiolib.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+I'll do it. Let also me know for @Andy request below.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 5c8cd81656963..d48a57b899f79 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -883,6 +883,21 @@ void *gpiochip_get_data(struct gpio_chip *gc)
- }
- EXPORT_SYMBOL_GPL(gpiochip_get_data);
- 
-+/*
-+ * If the calling driver provides the specific firmware node,
-+ * use it. Otherwise use the one from the parent device, if any.
-+ */
-+static struct fwnode_handle *gpiochip_choose_fwnode(struct gpio_chip *gc)
-+{
-+	if (gc->fwnode)
-+		return gc->fwnode;
-+
-+	if (gc->parent)
-+		return dev_fwnode(gc->parent);
-+
-+	return NULL;
-+}
-+
- int gpiochip_get_ngpios(struct gpio_chip *gc, struct device *dev)
- {
- 	u32 ngpios = gc->ngpio;
-@@ -942,14 +957,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 	gc->gpiodev = gdev;
- 	gpiochip_set_data(gc, data);
- 
--	/*
--	 * If the calling driver did not initialize firmware node,
--	 * do it here using the parent device, if any.
--	 */
--	if (gc->fwnode)
--		device_set_node(&gdev->dev, gc->fwnode);
--	else if (gc->parent)
--		device_set_node(&gdev->dev, dev_fwnode(gc->parent));
-+	device_set_node(&gdev->dev, gpiochip_choose_fwnode(gc));
- 
- 	gdev->id = ida_alloc(&gpio_ida, GFP_KERNEL);
- 	if (gdev->id < 0) {
+> Thanks for the details! The crucial and most important question here, is =
+AMD
+> going to push OEM(s) to fix firmware accordingly?
 
--- 
-2.54.0
+It seems ASUS released a new BIOS update 2 days ago specifically for my dev=
+ice.
+You can find the new acpidump here:
+https://drive.google.com/drive/folders/1PYmF1R9n-6vHJVSH8bzEPZhRgdmBBJlT?us=
+p=3Dsharing
+
 
