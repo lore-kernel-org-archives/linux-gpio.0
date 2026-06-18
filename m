@@ -1,104 +1,144 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C172E370D45;
-	Thu, 18 Jun 2026 06:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6FF19D065;
+	Thu, 18 Jun 2026 06:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781764919; cv=none; b=Wp+pq7BobzGSS/u3FWpTSjnZi3z6FXeMwM+0dSDtwZsI7gyfV0reR4VzhnPT00wZnZSLFvLSxbA1glqIy/nK/PttIxdYYhT/FdVM2dVvESPwas09vfL4ecSRit5jdeurDngPmv2iI6m4+CCuYlmTBuKx/evN3wSiRow1i2vIZMo=
+	t=1781765564; cv=none; b=bPBIb7e+/3AwP0J1O7sfex78aSvphhu5E8cQ5pwwla0OLOwoNqxs7lIFB5uFKu4ZamA1dT14jlgg9Aw1FmYwTf+XccUFUPVqkWP6LBgFpeE1eaCcji2ciO82PN/ZrGbx9VBin6IH/xJql5Q/6PhLmcdRL3c+dvM5pnZtfaPwp1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781764919; c=relaxed/simple;
-	bh=lSsjKccp0ITIjYiN0WTMFkwAMTj8W2DyDIzfocqv2g4=;
+	s=arc-20240116; t=1781765564; c=relaxed/simple;
+	bh=dulbe39ZlX0nZuPRQuNqykVgjNgct4pUYR6VqyXcnN4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VJ8FrF2exwcCtIiHEnUhPnpgRBL8gtD4GDaQUMn4nrtrzY3ZcKmW/2NJaLKkbMZ439as6d00i6YWM7vx87hunrt+kuDYTL0y5PRWPCO7B+WpFarbuhVN0SI/nfuyt/IHzlAzgN55tretdDv8IAIu8+6o8B5P0pZaNLLCwXzu/2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PQOEOGPr; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=pkeYwzXKqRnCr1KPNpluqjWXmLdKzQpCvGIxJpPuajcSGXNOD8AeuVIToqqQKtHve2Iz79LjeCrCaZztOtIOw7xapyp4Br+snm0l5Ikvx0SxFcB5lVPHUgupcp2inon0kYMgGpZ0VRQLC+muKUzfawf8rNZsZpzi5/W9N2SrP4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjBYHkhX; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PQOEOGPr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1781764917; x=1813300917;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=lSsjKccp0ITIjYiN0WTMFkwAMTj8W2DyDIzfocqv2g4=;
-  b=PQOEOGPrbuLtLphozZx+XrC5D0NUmNaBnhN4XEW1B3eNRvmhM2QYcgIZ
-   3hZ51xaFXg1GVhQ9Q5JcYlumCm4LDASN+PSRPQ8xVy5LIzXP+qJ8QGOpe
-   w2sfBGPkPpzvo7PWBR/+y/fTN8cI5xAyiVpUhI/eCAiEdlNMXZBpE3FnM
-   jlVOEIizqnTNpeIGKwOsJ/vD0lrrihw0KfyjDkWPw8gggFxGhjfd1xvW5
-   XluBPXp2uYELwrlHA4C5Fh4VHohASPVsqO4dWUxl2jr0FbU0y1S4+MTiS
-   x3ntGKiqmZq16gmMr6m3aFazrIRelXb8gNOPRPFQlwQB9S7iPnxS27ahy
-   Q==;
-X-CSE-ConnectionGUID: c2eTg7CrR8KOtiESos+6wA==
-X-CSE-MsgGUID: Zte37BeqQ92DGqF7eKmRtw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11820"; a="82787474"
-X-IronPort-AV: E=Sophos;i="6.24,211,1774335600"; 
-   d="scan'208";a="82787474"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2026 23:41:56 -0700
-X-CSE-ConnectionGUID: JhEk7TCVQ/GVc0lVgZueGA==
-X-CSE-MsgGUID: NZSjF6MDSJGiA315TB5EQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,211,1774335600"; 
-   d="scan'208";a="271975710"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.10])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jun 2026 23:41:52 -0700
-Date: Thu, 18 Jun 2026 09:41:50 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Runyu Xiao <runyu.xiao@seu.edu.cn>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Jan Kiszka <jan.kiszka@siemens.com>, linux-gpio@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] gpio: sch: use raw_spinlock_t in the irq startup path
-Message-ID: <ajOTLrrUCBxsy5jf@ashevche-desk.local>
-References: <20260617154035.1199948-1-runyu.xiao@seu.edu.cn>
- <20260617154035.1199948-2-runyu.xiao@seu.edu.cn>
- <20260618062839.4o1ewdEn@linutronix.de>
- <ajOS2UR9pw_pUBxr@ashevche-desk.local>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjBYHkhX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E51341F000E9;
+	Thu, 18 Jun 2026 06:52:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781765563;
+	bh=wPQAZTGMjJDD8OGjHuPC2oUHLj4eq/xesViaAz2X9SQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IjBYHkhXvRrDUfEFVhzvAXRNYtmDiTaih5W2+l3QC9WixFqKW3S++s762AxxpZqQF
+	 u6z6WHWgNMCRrfNfCTHifbReE94FuilxxhPkL5j6r87T08Vfgq66ebcb4rLA/HBBWK
+	 Z95w08fxc1HFGgQFI7r4wymQS2D7dTkq1t0NImOzhShP5rsMlGROOXiPpPNWEQkKWp
+	 ojLjuawIja6ixVhvZ7B3e4MQNI+yzxI3j9SoFc6uKyqG2APBUjVi/q1ijHEEimIcNw
+	 pxIzy1gNhsiYOheF+/JlcCliMlW1YZYKOanNNeiwjqKI4AwLBS7TbJNtYiDaJq/741
+	 H+8pMDvMdtvZw==
+Date: Thu, 18 Jun 2026 08:52:40 +0200
+From: Thierry Reding <thierry.reding@kernel.org>
+To: Runyu Xiao <runyu.xiao@seu.edu.cn>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jianhao.xu@seu.edu.cn
+Subject: Re: Question: GPIO direction callbacks calling pinctrl in atomic
+ paths
+Message-ID: <ajOUGyBCBwmAHpbE@orome>
+References: <20260618030609.958831-1-runyu.xiao@seu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="76gqvsuxv5xqgfxy"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ajOS2UR9pw_pUBxr@ashevche-desk.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Thu, Jun 18, 2026 at 09:40:31AM +0300, Andy Shevchenko wrote:
-> On Thu, Jun 18, 2026 at 08:28:39AM +0200, Sebastian Andrzej Siewior wrote:
-> > On 2026-06-17 23:40:34 [+0800], Runyu Xiao wrote:
-> > > sch_irq_unmask() enables the GPIO IRQ and then updates the controller
-> > > state through sch_irq_mask_unmask(), which takes sch->lock with
-> > > spin_lock_irqsave().  The callback can be reached from irq_startup()
-> > > while setting up a requested IRQ.  That path is not sleepable, but on
-> > > PREEMPT_RT a regular spinlock_t becomes a sleeping lock.
-…
-> > > Fixes: 7a81638485c1 ("gpio: sch: Add edge event support")
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Runyu Xiao <runyu.xiao@seu.edu.cn>
-> > 
-> > Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> 
-> There is already a v2.
-
-Or not... I might have been confused with other patch that got two versions
-in a row.
-
--- 
-With Best Regards,
-Andy Shevchenko
+In-Reply-To: <20260618030609.958831-1-runyu.xiao@seu.edu.cn>
 
 
+--76gqvsuxv5xqgfxy
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: Question: GPIO direction callbacks calling pinctrl in atomic
+ paths
+MIME-Version: 1.0
+
+On Thu, Jun 18, 2026 at 11:06:09AM +0800, Runyu Xiao wrote:
+> Hi,
+>=20
+> While auditing GPIO direction callbacks, our static analysis tool flagged
+> several drivers whose direction_input/direction_output paths call into
+> the pinctrl core even though the GPIO chip is registered as non-sleeping.
+> We then manually reviewed the findings against the current tree.
+>=20
+> The class of path we looked at is:
+>=20
+>   gpiod_direction_output_raw_commit()
+>     -> <driver>_gpio_direction_output()
+>        -> pinctrl_gpio_direction_output()
+>        -> pinctrl_get_device_gpio_range()
+>        -> mutex_lock(&pctldev->mutex)
+>=20
+> That can be reached from shared GPIO users while a per-line spinlock is
+> still held.  A minimal Lockdep reproducer preserving this direction path
+> reports:
+>=20
+>   BUG: sleeping function called from invalid context
+>   #0: ... (&global_shared_desc.spinlock) ...
+>   pinctrl_get_device_gpio_range
+>   <driver>_gpio_direction_output
+>   [ BUG: Invalid wait context ]
+>=20
+> My first draft for this class was to mark the affected gpio_chip as
+> can_sleep, but that looks like the wrong contract.  gpio_chip::can_sleep
+> describes whether get()/set() may sleep, while the problematic operation
+> here is not MMIO value access but an extra pinctrl direction round-trip.
+> Rockchip history seems to support that concern: after the controller was
+> marked sleeping, a follow-up change stopped calling pinctrl for
+> set_direction because whole-chip can_sleep caused atomic get/set
+> warnings.
+>=20
+> For PXA and Tegra, I am considering a small series that removes the
+> pinctrl_gpio_direction_input/output() calls from the GPIO direction
+> callbacks and leaves direction programming on the drivers' existing MMIO
+> paths.
+>=20
+> For PXA, the driver already updates GPDR directly in
+> pxa_gpio_direction_input/output().  The proposed change would drop the
+> additional pinctrl direction call on variants where pxa_gpio_has_pinctrl()
+> currently returns true.
+>=20
+> For Tegra, the GPIO driver already programs the GPIO controller direction
+> registers directly.  The Tegra pinmux ops appear to provide GPIO
+> request/free handling, but no gpio_set_direction hook, so the
+> pinctrl_gpio_direction_input/output() call seems to enter the pinctrl core
+> without adding a Tegra-specific direction operation.  The proposed change
+> would keep pinctrl involvement in request/free but not in GPIO direction.
+
+I looked into this, and yes, we don't provide gpio_set_direction
+callbacks for the Tegra pinctrl driver, so what you're proposing looks
+fine.
+
+However, I'm on the fence about this because I think conceptually it is
+correct to call into the pinctrl subsystem to set the direction. The
+GPIO driver should be oblivious to the fact that it isn't strictly
+necessary.
+
+Thierry
+
+--76gqvsuxv5xqgfxy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmozlbgACgkQ3SOs138+
+s6EpxxAAgB/s8O5wDTVax61SHGH9+PmtoN9p2Tly3hpJHS7MDjVTE5XCq+LLNbXj
+lTBt/TDj8AVed9u8FMlnMx7YGXk4k1FE+JU4tms5w/JvjnvBXsgwX+PGcZSpuaAl
+p3UzA8B/pltQPyaW4CncZ2BPogj87WPS2i0itgDkGBQMz/y/y8dg1yZh/j/htl9h
+ERfwGteCOIko8QUxfFWS3Xn/NakCH9cQxJHQOdudOY6wn8YW3l+jbVssIFc52H6B
+GX7ED64Ot8VzztfoIsrvzFWCdtbOcW4vdD1xGihQkYOo/YDpTqY5N1L/qSwDQrc6
+XcO/bbMfUVRD7SNNhAmwRpkASywNZKuWzTgdF5iJI6yGoEsovhaGia9e3oqms9rO
+GUQx7tnDnnAM3ap6w51M+WaQO6M5brT7TIewNE1RBzJpmiffgdTPThg2t8ys92SG
+xjKmUI7aptcbn6sybcITHUvQ/DTfd3izkw+xmvmOXCwXfnj1ggJhJ3Y5LlaZ22Yi
+g0VOxQAvXY2DBLUMWl+AqXXSmyDL/P6DpHiCkcq5jkvN1YfiTav+Ho53pMG4kFbY
+DRZG/wLy7ech+UTK8CrA1TaOK1Nn3bAlNauSH54iXGJ28GKI4WMvqLG90za26HI5
+3VGlWFVlj/rpZ6ZIYw3CNft3rIyRcWVgtZNr3JdNE3BTnJQJeiI=
+=+cNP
+-----END PGP SIGNATURE-----
+
+--76gqvsuxv5xqgfxy--
