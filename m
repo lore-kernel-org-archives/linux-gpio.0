@@ -1,280 +1,103 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1BA367F36
-	for <linux-gpio@vger.kernel.org>; Thu, 18 Jun 2026 08:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B2738E5EF;
+	Thu, 18 Jun 2026 08:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781770724; cv=none; b=PezHDcybLyeuZwLTpiVuNVxdNna5ERBxiedSonJp5x7g2HULhLzfh8jt4VSavggkBL17vwTKhKqpqCXMJT4gcQFlXuad1yAaKNEiTDDwBsEDntB/wFdaC628p+ceJzmsH+Z7PC5y0oyFE+ceFNv9Rna2zsfupkKn4X/h5aZv7o0=
+	t=1781770726; cv=none; b=l4LehJfiFjsoTFPrFhvLIs2/5a8YLUFdGzAX3GmoYVPFP5aClY7gvXH15+hC43142f3kKtrgOBPAZhdfvL9dUjIsmH9X9fEUnoh/81P5thJiTgIRbYtaXkcUYz2a+9OUmQJJYJZjk+wRi6Ob5+l2RAjdOFJ61RArCU2hAy9DmTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781770724; c=relaxed/simple;
-	bh=gFzDwyt2X6xvExVhZeoNS5S99hvPwFohVyXgPPfmGQY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i3/FrHYyX8TVPUgMAzqzUcbGj1Qh5cfJl4hX+0jVpDAXu0hVahJklFz1gBA+JPoufTIZvk5IAoYTXpSKHKJAZ7Syss+08mNMdTEN62rlsZh5EmcwezcgUmtubG6A4LluKjHJM86vraToGD884xdLcOB3NLDPsVkwXO89GvWWpcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=G/MAbkOQ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Y03NhVTB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1781770726; c=relaxed/simple;
+	bh=QWZAgUG33sDVoOYvsZHlVsv36qxjPW2xLkggJ9D40hM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n+vYC9FOSp7vD6oZMDJCAPJ2rDdd7CkJZT5O5BiGNq6kroLWLo9XVFgCQEqorlWskGZ16gFmfF/GN+yJPHUhjI/IRdC1MkUTiAc1gRCoUAkwlGz/S6sXFduiflqNkT0z5iClKWW2peDGxdNQ8vjqJCLTSRfoKykhMO+RyfBgYuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bgpoXraC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+PAOCBZ6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="G/MAbkOQ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Y03NhVTB"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65I8Desw620030
-	for <linux-gpio@vger.kernel.org>; Thu, 18 Jun 2026 08:18:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nZj09S/BPA0LGOpjmWXCjddpOq0twXITRnAhohphPiU=; b=G/MAbkOQ9ABuri01
-	qfZODnVGS3de2ZDM46Q0ZfNBPCMShSg2etQl/aIrPcceDEYl95YCVUKh6Bp4j3Uq
-	HEmLY/pj0MEV+c3DBc1Svr+uTdlOqk1ToEVINzPjvwkyva1bOqz/Lv+FOLfbY0fp
-	IoUPEQ6w2JI2fFSI/s1S/iXElYi+GQKTty4y7AEeofFdX7qmTUaNbk95ftjRlG9h
-	WYtyeTPXfLOjDmc0WoD9TxfLGqkvnGKc8wA2cSCsAzDq8Qd/Bf+YtCO5sLgctC4m
-	LIRqrTrR86p0WRizVthuAdGqIfKg6fBq3bTa0cZVyfnCZDLDc7cblYh7+r4AsZQY
-	r7VloA==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ev199jde1-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Thu, 18 Jun 2026 08:18:39 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-9160006de85so21692885a.2
-        for <linux-gpio@vger.kernel.org>; Thu, 18 Jun 2026 01:18:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781770718; x=1782375518; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nZj09S/BPA0LGOpjmWXCjddpOq0twXITRnAhohphPiU=;
-        b=Y03NhVTB8FsUqBbYTRQQWLL+wxRbOXh//wB+edE6Lu1Zbu8rbda/HcExXWruFh1d6B
-         c6S4eOosyOOPvLBwYfNGL7VzLl5liKnUlG3XV0sXU0+OmUzPTNPXmeFKqcpIU+huaEkH
-         OxQa8z0c5K16SFJSTXh5sXkeKpVsjU+6E7wQYsPrywi1C51KZSIN8h9uH2tw17w3GWY1
-         BXaaY0I81rBE2Y2+C7zhWWUIRLsCE7HUJ//xUJVvv7/fSW5oihe3A88DxXhbhlV5j/Os
-         kFs6+byJqW695WsUaq8z3oiR5fyK8fDFcaoNxZ4w5ZOeIRNz1Y4tT3/kH87kZh8ZHPwD
-         tzNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781770718; x=1782375518;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nZj09S/BPA0LGOpjmWXCjddpOq0twXITRnAhohphPiU=;
-        b=QfqE0cbXRq0HjilPykiKu+KeceHnpfDhlWOCLRPiFiDC+AwbtmTRzZ9/O4I6u+r7Su
-         V76zTSSPrMovjSgx7z6/8jyqX6n2AvFbDMAtnJ2GvPE+kUbqP+B+T4V74tw2OcraDc3t
-         d6OR8L3no7ObNZCJLxflshBr9GEt4rwgFH201e/KjpdEZMAkdUTvPC9rreRULunwHjIN
-         4FuqxLv1yJg7q+XbJJAUrTqaU2w2pdJnmSbXq4f81ZvFN6Byww8utfDNZLzfGjQCYhgT
-         ZROA1P82qLpELaX/IZHg1WOVLUbw7KhW+JVUqdhreOS0C76+ggvh3aCESsPVI65jHZf0
-         wi2Q==
-X-Forwarded-Encrypted: i=1; AFNElJ9Y2mwKxPK4veWmHSfwMZu3kPA1bSe6ilSmatxvE7iUzMmo5EXOQLhOJcn4AzRaQT6UX04IBvcFP4cA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhlP2wis7SOkroyoAHbw+hqGodY3CvbrJlV1JThrjMauBjubMK
-	5NprUUpjgccKFkvhDw9q5sG+RGiDIDgqZQ/qva1SjUH76WExJdjcIDSH1L2cK4NjO1iOGl4GZ9G
-	qRWwaCYwl4+uw1m38l9iHMnn5KmymnxnMnDJrzrVg3mAJslMcvvZA9x1jL8a/j5mx
-X-Gm-Gg: Acq92OFSoICco2q2VWESqhqcnFtcD0Ij3+EZ+BcUhLf6WNkvbAKK2f4VhioYxsxgnfb
-	NdDz98EagGd9AjgOPrDA0sJCudwdz+JctjEZwddI/ME/ve4HJaSfwvU6HCwO/U0+lwevpHCiQAg
-	QNTzf7+fViFF+P8hbw0qx0HV1vFRablineriQnhAQplsNRJV+86hCJ/E2cg46JBpSDc9T7zfrgn
-	xRemgA++S36qfaAaWaXHVIS5mksm3/E7faFNCWBpnavdo6FfjnArNRnB3srPe9/VqQS/b5n4SAO
-	UP9nRH3vu/OUogIFemuEjtWv2gtOZ3yc362ESkFXy+EmnbjgRuPKkR5AZf6stA4AMJOmUvdw8xX
-	uyNtv4SyskST1LY+DgveyiWijzB8iifT9AgE=
-X-Received: by 2002:a05:620a:3721:b0:8f1:9e59:2208 with SMTP id af79cd13be357-91f2a1e4688mr233824185a.4.1781770718360;
-        Thu, 18 Jun 2026 01:18:38 -0700 (PDT)
-X-Received: by 2002:a05:620a:3721:b0:8f1:9e59:2208 with SMTP id af79cd13be357-91f2a1e4688mr233822685a.4.1781770717871;
-        Thu, 18 Jun 2026 01:18:37 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6955acc7597sm1902928a12.9.2026.06.18.01.18.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jun 2026 01:18:37 -0700 (PDT)
-Message-ID: <e513bc4c-ddeb-43b3-aa05-59051136ba4e@oss.qualcomm.com>
-Date: Thu, 18 Jun 2026 10:18:34 +0200
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bgpoXraC";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+PAOCBZ6"
+Date: Thu, 18 Jun 2026 10:18:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1781770722;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=esNCyoPGjThitgO/ONZd6FII4CTw4WW+HhHMD7dROhE=;
+	b=bgpoXraCqEcTq/A1VHEfomvk7NjTwbH52o92fLD0lTRIqkRAEopghmZJIgYaX0rO7SRcfP
+	7N5y3xITSWfAigN+yUpqrRZltUGQ1uXFo0VCAE4MpRuwjpuFNGqbNhpqqT05W1YdAzdTz1
+	Z3px8lS1RoJE4mx/3/KQMc5YyJEVhtJ56cu6g6FErAW6i6ob53ydVsGq/0obmxAJ9WcxCk
+	m+7RjQ3eKdovQ6vN299Awepf22cjql56wSwGk+KLZBoShc/lAPryI8WLmwPtDbebw8J8Tl
+	uf8lUIg3Nffr1bn9h+yDo69xFLqd/O05CynGpM42SCnQP9XqN9v2fXMHqC2E/w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1781770722;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=esNCyoPGjThitgO/ONZd6FII4CTw4WW+HhHMD7dROhE=;
+	b=+PAOCBZ6krTyj3cKO28sUF+z9qnobDQbrowNq7D7oCQD31FisaxSCZhWTNTc4azTwf3SM6
+	LVas/zdYRlOgSpDg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Runyu Xiao <runyu.xiao@seu.edu.cn>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>, linux-gpio@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+	jianhao.xu@seu.edu.cn, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] gpio: sch: use raw_spinlock_t in the irq startup path
+Message-ID: <20260618081841.QBWh0eV5@linutronix.de>
+References: <20260617154035.1199948-1-runyu.xiao@seu.edu.cn>
+ <20260617154035.1199948-2-runyu.xiao@seu.edu.cn>
+ <20260618062839.4o1ewdEn@linutronix.de>
+ <ajOS2UR9pw_pUBxr@ashevche-desk.local>
+ <ajOTLrrUCBxsy5jf@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/8] irqchip/qcom-pdc: Configure PDC to pass through
- mode
-To: Maulik Shah <maulik.shah@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
-        Linus Walleij <linusw@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Sneh Mankad <sneh.mankad@oss.qualcomm.com>
-References: <20260616-hamoa_pdc_v3-v3-0-4d8e1504ea75@oss.qualcomm.com>
- <20260616-hamoa_pdc_v3-v3-5-4d8e1504ea75@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260616-hamoa_pdc_v3-v3-5-4d8e1504ea75@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: ETu8eu2WGRUe6q7LJuWAgn6UZUK3oVTP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE4MDA3NSBTYWx0ZWRfXyuNNGQICmvux
- tUSmfCaegYVagOOoNP3mR+PiTlYKAaIDrkhiHBs25HNoqGQDLUau7vELMkoTpMrPZoOSfi3o3d2
- vJnQM1Mb/Pvv2zxGZ7sRX+cDJqIP08vbRV6mLuNu1XWTKQNRHA+Yux78lmvrY8YLA3VkkX+CqwZ
- I2VxG6yT21U0F4fYojegm396fIZIyA/Kq7oGD1R7ZRoMyMPQm/YyKYJk07K4qYaB3Txqxzy7YCJ
- 1E4QVdMFBghccHUlbquoJ9axtFFl9n4VsOfFvX9h69MN5ZFf94zreQCFzvYI3UO6uGMm19PScz+
- RKE0rRVOH35VRRI7utAKBmBfmS2LYqhUA+gTre+2aqf5URD32TjPaqqHeeuG5Q9rx9AiglaOTmD
- LWImOo6DKSsMhBSOYjdpqST8A1wlolI3+EF3obpZHDxZ5KJLme7F2sZ/pYxvtD26hC65d2Nj3ZL
- +qaEWqWuSF1sT5XswEQ==
-X-Proofpoint-GUID: ETu8eu2WGRUe6q7LJuWAgn6UZUK3oVTP
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE4MDA3NSBTYWx0ZWRfX3pHn+jOQLUQo
- HPkHkeV5lOsmKreQXhU3q7K4SdWKQ63vqsAI37QMV4X4YurjAbGCdq7AYbOKK9NAdEJLkbsnGG/
- owvnjNaCbyq3iuRyPNrNEC1EEq9G+SI=
-X-Authority-Analysis: v=2.4 cv=U42iy+ru c=1 sm=1 tr=0 ts=6a33a9df cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
- a=EUspDBNiAAAA:8 a=83jgrZZgdiTdjN6bNP8A:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-18_01,2026-06-17_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 impostorscore=0 spamscore=0 adultscore=0 bulkscore=0
- clxscore=1015 phishscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2606180075
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ajOTLrrUCBxsy5jf@ashevche-desk.local>
 
-On 6/16/26 11:25 AM, Maulik Shah wrote:
-> All PDC irqchip supports pass through mode in which both Direct SPIs and
-> GPIO IRQs (as SPIs) are sent to GIC without latching at PDC.
-> 
-> Newer PDCs (v3.0 onwards) also support additional secondary controller mode
-> where PDC latches GPIO IRQs and sends to GIC as level type IRQ. Direct SPIs
-> still works same as pass through mode without latching at PDC even in
-> secondary controller mode.
-> 
-> All the SoCs so far default uses pass through mode with the exception of
-> x1e. x1e PDC may be set to secondary controller mode for builds on CRD
-> boards whereas it may be set to pass through mode for IoT-EVK boards.
-> The mode configuration is done in firmware and initially shipped windows
-> firmware did not have SCM interface to read or modify the PDC mode.
-> Later only write access is opened up for non secure world.
-> 
-> Using the write access available add changes to modify the PDC mode to
-> pass through mode via SCM write. When the write fails (on older firmware)
-> assume to work in secondary mode.
-> 
-> In secondary mode set the separate irqchip for the GPIOs to perform
-> additional operations only for the GPIO irqs.
-> 
-> Co-developed-by: Sneh Mankad <sneh.mankad@oss.qualcomm.com>
-> Signed-off-by: Sneh Mankad <sneh.mankad@oss.qualcomm.com>
-> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
-> ---
+On 2026-06-18 09:41:50 [+0300], Andy Shevchenko wrote:
+> On Thu, Jun 18, 2026 at 09:40:31AM +0300, Andy Shevchenko wrote:
+> > On Thu, Jun 18, 2026 at 08:28:39AM +0200, Sebastian Andrzej Siewior wro=
+te:
+> > > On 2026-06-17 23:40:34 [+0800], Runyu Xiao wrote:
+> > > > sch_irq_unmask() enables the GPIO IRQ and then updates the controll=
+er
+> > > > state through sch_irq_mask_unmask(), which takes sch->lock with
+> > > > spin_lock_irqsave().  The callback can be reached from irq_startup()
+> > > > while setting up a requested IRQ.  That path is not sleepable, but =
+on
+> > > > PREEMPT_RT a regular spinlock_t becomes a sleeping lock.
+> =E2=80=A6
+> > > > Fixes: 7a81638485c1 ("gpio: sch: Add edge event support")
+> > > > Cc: stable@vger.kernel.org
+> > > > Signed-off-by: Runyu Xiao <runyu.xiao@seu.edu.cn>
+> > >=20
+> > > Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> >=20
+> > There is already a v2.
+>=20
+> Or not... I might have been confused with other patch that got two versio=
+ns
+> in a row.
 
-[...]
+I am catching up so I wouldn't be surprised ;) And it is entirely
+possible that sashiko came up with the pre-existing condition worth
+fixing ;)
 
-> +static int qcom_pdc_gic_secondary_set_type(struct irq_data *d, unsigned int type)
-> +{
-> +	enum pdc_irq_config_bits pdc_type;
-> +	enum pdc_irq_config_bits old_pdc_type;
-> +	int ret;
-> +
-> +	switch (type) {
-> +	case IRQ_TYPE_EDGE_RISING:
-> +		pdc_type = PDC_EDGE_RISING;
-> +		break;
-> +	case IRQ_TYPE_EDGE_FALLING:
-> +		pdc_type = PDC_EDGE_FALLING;
-> +		break;
-> +	case IRQ_TYPE_EDGE_BOTH:
-> +		pdc_type = PDC_EDGE_DUAL;
-> +		break;
-> +	case IRQ_TYPE_LEVEL_HIGH:
-> +		pdc_type = PDC_LEVEL_HIGH;
-> +		break;
-> +	case IRQ_TYPE_LEVEL_LOW:
-> +		pdc_type = PDC_LEVEL_LOW;
-> +		break;
-> +	default:
-> +		WARN_ON(1);
-> +		return -EINVAL;
-> +	}
-> +
-> +	old_pdc_type = pdc_reg_read(pdc->regs->irq_cfg_reg, d->hwirq);
-> +	pdc_type |= (old_pdc_type & ~pdc->cfg_fields->irq_type);
-> +	pdc_reg_write(pdc->regs->irq_cfg_reg, d->hwirq, pdc_type);
-> +
-> +	type = IRQ_TYPE_LEVEL_HIGH;
-
-
-Please carry your comment from the previous revision:
-
-/*
- * PDC forwards GPIOs as level high to GIC in secondary
- * mode. Update the type and clear any previously latched
- * phantom interrupt at PDC.
- */
-
-> +	pdc->clear_gpio(d->hwirq);
-> +
-> +	ret = irq_chip_set_type_parent(d, type);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * When we change types the PDC can give a phantom interrupt.
-> +	 * Clear it.  Specifically the phantom shows up when reconfiguring
-> +	 * polarity of interrupt without changing the state of the signal
-> +	 * but let's be consistent and clear it always.
-> +	 *
-> +	 * Doing this works because we have IRQCHIP_SET_TYPE_MASKED so the
-> +	 * interrupt will be cleared before the rest of the system sees it.
-> +	 */
-> +	if (old_pdc_type != pdc_type)
-> +		irq_chip_set_parent_state(d, IRQCHIP_STATE_PENDING, false);
-
-This bit and the switch statement above are common between the two paths..
-I'm debating whether we should factor them out as static inline void, but
-neither solution is perfect.. so, up to you
-
-[...]
-
-> @@ -385,20 +547,37 @@ static int qcom_pdc_alloc(struct irq_domain *domain, unsigned int virq,
->  	if (hwirq == GPIO_NO_WAKE_IRQ)
->  		return irq_domain_disconnect_hierarchy(domain, virq);
->  
-> -	ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq,
-> -					    &qcom_pdc_gic_chip, NULL);
-> -	if (ret)
-> -		return ret;
-> +	/*
-> +	 * PDC secondary chip is only set for the GPIO interrupts as SPIs.
-> +	 * Direct SPI interrupts are still in pass through mode (no latching
-> +	 * at PDC).
-> +	 */
-> +	if (pdc->mode == PDC_PASS_THROUGH_MODE || !pdc_pin_is_gpio(hwirq)) {
-> +		ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq,
-> +						    &qcom_pdc_gic_chip,
-> +						    NULL);
-> +		if (ret)
-> +			return ret;
->  
-> -	region = get_pin_region(hwirq);
-> -	if (!region)
-> -		return irq_domain_disconnect_hierarchy(domain->parent, virq);
-> +		if (type & IRQ_TYPE_EDGE_BOTH)
-> +			type = IRQ_TYPE_EDGE_RISING;
->  
-> -	if (type & IRQ_TYPE_EDGE_BOTH)
-> -		type = IRQ_TYPE_EDGE_RISING;
-> +		if (type & IRQ_TYPE_LEVEL_MASK)
-> +			type = IRQ_TYPE_LEVEL_HIGH;
-> +	} else {
-> +		ret = irq_domain_set_hwirq_and_chip(domain, virq, hwirq,
-> +						    &qcom_pdc_gic_secondary_chip,
-> +						    NULL);
-> +		if (ret)
-> +			return ret;
->  
-> -	if (type & IRQ_TYPE_LEVEL_MASK)
-> +		/* Secondary mode converts all interrupts to LEVEL HIGH type */
->  		type = IRQ_TYPE_LEVEL_HIGH;
-> +	}
-
-nit: (pdc->mode == PDC_SECONDARY_MODE && pdc_pin_is_gpio(hwirq))
-could be the primary case to better communicate intent
-
-Konrad
+Sebastian
