@@ -1,39 +1,40 @@
 Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628EB343882
-	for <linux-gpio@vger.kernel.org>; Thu, 18 Jun 2026 16:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C181343D8F
+	for <linux-gpio@vger.kernel.org>; Thu, 18 Jun 2026 16:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781798599; cv=none; b=OF7CtYF0yOmX8QwdLXIYZ8flShvSP7Bywdg0WH909yWzKsoxLO+BZdsdN5JrSwz5EA3dHE1duRtzfSaHv09BA5Ob1sRT2M48Kxym300wf3b0nuHXVrGhIEVSnXUmW4FIZQvtf4pqqPOLfKvhvuDF7t5ARdl5rTdRzrHpvPzhWEI=
+	t=1781798599; cv=none; b=VQgiBcAvAi/k/vfpayIh6R87O/4fqSXqlwULCUzcr3r5YMMQfH30mI7KT8PMmXn0YApZl7ra7CMxsLXnK79WyXCJ4RooiBdboIX92UI1+S4gFQwdbJA2bMfXzVpgVfXP0rNLi/82owtitwnJkYJQCDIgSUB708BAfMlU1pfLEXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1781798599; c=relaxed/simple;
-	bh=4NhTXoOQZEs4cN6xbmxVzuH8Qf9Bn1i/4b+0+fEoDcM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l/a2Ndt48yA9gmE3bJJEZBpHHiEFYyyPaltGol7Y8JNPdK6clTT5/9kMmMDqbQjZZlWa4xx0VvfKVgGk3tv+JI5a7km7HPosm5vIR4D1KzKlXwmdAj5X89ykAHCyaUhARI2WaTUDD8pjgNtGGFssF/7WWRYyN8j+yyw/MNNUHm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; dkim=pass (2048-bit key) header.d=0leil.net header.i=@0leil.net header.b=X1/Emyvh; arc=none smtp.client-ip=185.125.25.9
+	bh=ME3ZcMKS/hWLtou4vdCJXrzxiRlawZIdnuFhqaSkM/4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GeBhV+p/VkYcxjYphB+HduFQxCbo6hoB2ifxZzN2L7naxFwQPj9mjs7cgrYqFtDQ2cmdGAxLr7gVcWy2QKUIecVHnsBFCVEV3ivXFs8vCvw7zbXo6bpiaybi4d1PAGouBZZhN8lL3eGrInFU741pC/Ij7XhmOx/WmlA5UFqVNT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; dkim=pass (2048-bit key) header.d=0leil.net header.i=@0leil.net header.b=nuCLaIXo; arc=none smtp.client-ip=185.125.25.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=0leil.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=0leil.net header.i=@0leil.net header.b="X1/Emyvh"
+	dkim=pass (2048-bit key) header.d=0leil.net header.i=@0leil.net header.b="nuCLaIXo"
 Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gh59T6yfWzd18;
-	Thu, 18 Jun 2026 18:03:09 +0200 (CEST)
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4gh59W16XtzcvF;
+	Thu, 18 Jun 2026 18:03:11 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0leil.net;
-	s=20231125; t=1781798589;
-	bh=CvD9z9YN4M+/vOXsi6tXS5UgQCp5qSoTR48bj8emK8g=;
-	h=From:Subject:Date:To:Cc:From;
-	b=X1/EmyvhD6ujMlv6Aeg26+976pX8f0ZRNDzK7W1azwHh1H5FOXxH3/DjRA/PF2eN5
-	 mrcBorvPsqDeO4GurIPVIZIEF8tubwbcnwCFLT4yUPka0seUnUpBNos/dcgNzoBo+s
-	 rQV+oP8ZSOTLFKvrm1FK+AioA1kjBA7Z9N2Ut9Gw9etU13gI1O7UZoEBzH8wNiv8fg
-	 28r1MR/5vWy2I1nZSd9nEKGC7nYM+ic6Ffw2ddf5Jdy8oCQCx3hACc5iMDYpa6b+n/
-	 ZTZCoACU7ZJMQ6XnqQWhtwG7hhoHqhcSJWwgoB8dsQ17oxGZYXXWAHqnHkW2emTWUx
-	 opTTwGgNhvIjw==
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4gh59S03xCz5nn;
-	Thu, 18 Jun 2026 18:03:07 +0200 (CEST)
+	s=20231125; t=1781798590;
+	bh=TkQ3lby2jZ3TWGL6H0BK6IVgs2BEGZiYajsHidsHN40=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=nuCLaIXo82a/fyUAtltQywsaNkiV/tIhfC2GoMuoSzrOstcKCPd6+CRshI3XTZrcN
+	 BzldNxnnpD0fA77J+ruJTYskdC0LinVkwCIZVpetGKBJSTjlamRQ/9g55NqJXX75BW
+	 c2P/pjJ2jEBdmLHBbtpwBIKMmjOKwgAhcOGv1Kvw+MJNDQOMxMQLYVBYCccUQcMq/d
+	 8nRUo2IgUwGVnz3FuGmeasn46eNEcb+cpjBv4G9XZq1tFmpdV9mcEkTttmeKDG/xzN
+	 zU53dSq9jS5rcRSAOGZ1OmtDaLOX8Ol5UX/rkzChZZxscD/Eghe5Z8gvW2KNfF01iZ
+	 f70gV3AXxzbSA==
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4gh59V2Pp4z4kl;
+	Thu, 18 Jun 2026 18:03:10 +0200 (CEST)
 From: Quentin Schulz <foss+kernel@0leil.net>
-Subject: [PATCH 6.12.y 0/3] gpiolib: backport 16fdabe143fc
-Date: Thu, 18 Jun 2026 18:02:50 +0200
-Message-Id: <20260618-6-12-cve-2026-31732-v1-0-7ca0d0b906b0@cherry.de>
+Date: Thu, 18 Jun 2026 18:02:52 +0200
+Subject: [PATCH 6.12.y 2/3] gpiolib: Remove redundant assignment of return
+ variable
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -42,86 +43,85 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWMQQ6CMBAAv0L27JLuNmyNXzEepCywHtC0SCSEv
- 1v0OJPMbJA1mWa4VBskXSzbcypApwrieJ8GResKAzsWJ3RGQWKMi+Jh0FPwjOJdkK4hCeyglK+
- kvX1+1ytITVyvcPv7/G4fGudjCfv+BZVCl2x/AAAA
-X-Change-ID: 20260618-6-12-cve-2026-31732-63076d516720
+Message-Id: <20260618-6-12-cve-2026-31732-v1-2-7ca0d0b906b0@cherry.de>
+References: <20260618-6-12-cve-2026-31732-v1-0-7ca0d0b906b0@cherry.de>
+In-Reply-To: <20260618-6-12-cve-2026-31732-v1-0-7ca0d0b906b0@cherry.de>
 To: Linus Walleij <linus.walleij@linaro.org>, 
  Bartosz Golaszewski <brgl@bgdev.pl>, 
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
  Quentin Schulz <quentin.schulz@cherry.de>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>, 
- Tzung-Bi Shih <tzungbi@kernel.org>, stable@vger.kernel.org, 
- Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 X-Mailer: b4 0.15-dev-47773
 X-Infomaniak-Routing: alpha
 
-Backport 16fdabe143fc ("gpio: Fix resource leaks on errors in
-gpiochip_add_data_with_key()") to 6.12.y. To make the git diff more
-similar with the upstream commit, also backport 375790f18396 ("gpiolib:
-Extract gpiochip_choose_fwnode() for wider use") and 550300b9a295
-("gpiolib: Remove redundant assignment of return variable").
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-The changes between 16fdabe143fc and the third patch of this series is
-(according to git-range-diff):
+[ Upstream commit 550300b9a295a591e0721a31f8c964a4bc08d51c ]
 
-"""
-      ## drivers/gpio/gpiolib.c ##
-     @@ drivers/gpio/gpiolib.c: static const struct device_type gpio_dev_type = {
-    @@ drivers/gpio/gpiolib.c: int gpiochip_add_data_with_key(struct gpio_chip *gc, voi
-     +	}
-     +
-     +	gdev->can_sleep = gc->can_sleep;
-    -+	rwlock_init(&gdev->line_state_lock);
-    -+	RAW_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
-    ++	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
-     +	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->device_notifier);
-     +#ifdef CONFIG_PINCTRL
-     +	INIT_LIST_HEAD(&gdev->pin_ranges);
-    @@ drivers/gpio/gpiolib.c: int gpiochip_add_data_with_key(struct gpio_chip *gc, voi
-     -	gdev->ngpio = gc->ngpio;
-     -	gdev->can_sleep = gc->can_sleep;
-     -
-    --	rwlock_init(&gdev->line_state_lock);
-    --	RAW_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
-    +-	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
-     -	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->device_notifier);
-     -
-     -	ret = init_srcu_struct(&gdev->srcu);
-    @@ drivers/gpio/gpiolib.c: int gpiochip_add_data_with_key(struct gpio_chip *gc, voi
-     @@ drivers/gpio/gpiolib.c: int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
-      		ret = gpiodev_add_to_list_unlocked(gdev);
-      		if (ret) {
-    - 			gpiochip_err(gc, "GPIO integer space overlap, cannot add chip\n");
-    + 			chip_err(gc, "GPIO integer space overlap, cannot add chip\n");
-     -			goto err_cleanup_desc_srcu;
-     +			goto err_put_device;
-      		}
-"""
+In some functions the returned variable is assigned to 0 and then
+reassigned to the actual value. Remove redundant assignments.
 
-s/gpiochip_err/chip_err/ aside, the rest of the diff comes from feature
-commits which do not fit the rules for backporting to stable.
+In one case make it more clear that the assignment is not needed.
 
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Link: https://lore.kernel.org/r/20250416095645.2027695-9-andriy.shevchenko@linux.intel.com
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Stable-dep-of: 16fdabe143fc ("gpio: Fix resource leaks on errors in gpiochip_add_data_with_key()")
 Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
-Andy Shevchenko (2):
-      gpiolib: Extract gpiochip_choose_fwnode() for wider use
-      gpiolib: Remove redundant assignment of return variable
+ drivers/gpio/gpiolib.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-Tzung-Bi Shih (1):
-      gpio: Fix resource leaks on errors in gpiochip_add_data_with_key()
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index d48a57b899f79..97a32e6f901fc 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -939,7 +939,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 	struct gpio_device *gdev;
+ 	unsigned int desc_index;
+ 	int base = 0;
+-	int ret = 0;
++	int ret;
+ 
+ 	/*
+ 	 * First: allocate and populate the internal stat container, and
+@@ -959,11 +959,10 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+ 
+ 	device_set_node(&gdev->dev, gpiochip_choose_fwnode(gc));
+ 
+-	gdev->id = ida_alloc(&gpio_ida, GFP_KERNEL);
+-	if (gdev->id < 0) {
+-		ret = gdev->id;
++	ret = ida_alloc(&gpio_ida, GFP_KERNEL);
++	if (ret < 0)
+ 		goto err_free_gdev;
+-	}
++	gdev->id = ret;
+ 
+ 	ret = dev_set_name(&gdev->dev, GPIOCHIP_NAME "%d", gdev->id);
+ 	if (ret)
+@@ -2882,7 +2881,7 @@ EXPORT_SYMBOL_GPL(gpiod_direction_output);
+  */
+ int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags)
+ {
+-	int ret = 0;
++	int ret;
+ 
+ 	VALIDATE_DESC(desc);
+ 
+@@ -2915,7 +2914,7 @@ EXPORT_SYMBOL_GPL(gpiod_enable_hw_timestamp_ns);
+  */
+ int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags)
+ {
+-	int ret = 0;
++	int ret;
+ 
+ 	VALIDATE_DESC(desc);
+ 
 
- drivers/gpio/gpiolib.c | 156 +++++++++++++++++++++++++------------------------
- 1 file changed, 79 insertions(+), 77 deletions(-)
----
-base-commit: 1d3a00d3bacff25652c96e1527610c69e91f7c38
-change-id: 20260618-6-12-cve-2026-31732-63076d516720
-
-Best regards,
---  
-Quentin Schulz <quentin.schulz@cherry.de>
+-- 
+2.54.0
 
