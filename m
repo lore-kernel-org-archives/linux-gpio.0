@@ -1,34 +1,38 @@
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB3A140E5F;
-	Fri, 19 Jun 2026 15:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E0E3A7F51;
+	Fri, 19 Jun 2026 15:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781883465; cv=none; b=ogccFUPQLP1X+oUpkA3tVtbZ0LjHhZnjBJyYv2cKuW4d7m9qVvSlxeUyDEZSDDUDfLlk5HAa5LkiOC0U9XVAHTBeiziqop/tEIGQsE+8ajUt4mT88v3Wz9/L0Mk/my4oabgDkJEiPX1tRU6LrRZ0BoTsamPr2d1jwlTIiTu+WdY=
+	t=1781883517; cv=none; b=h4XtVpEH6RbC8K1PjYAeBQ7RAGZstAI8CqA4JmvS6qt9AGKzAciCvG73fz5NLrMvJ9rLPtsmUgtPlVg4Pc06oOru0bO/22ZO+zBf0snFj6Tu97NHIqX0X7Ldwe4nZThhWSgTGSsybgBtyfVu+Dh2pEh3cmZptlwUtciTNvta6PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781883465; c=relaxed/simple;
-	bh=FJkKS4V1O1bdiGBNCve3cEqDXU6ZSWjP9NtbLXKKmFM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FBC9Bs5W4F/bRyy73ej+5+CM+TOjd9wvzlFnjgxoCEz2Yp6LHK1wD9h6/3TMW/G9bDAt6oVHva7vytsdyLODpBC6kfiYWx6/ygYma4NJSAE0xvSeOFc6dmtLW3SbchZMDIcDehhv2ag8PNvcmYVwdgJXIdnk6ZWrSCNvrgzgoM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=WybuJjcV; arc=none smtp.client-ip=101.71.155.101
+	s=arc-20240116; t=1781883517; c=relaxed/simple;
+	bh=489liCLgEEuHE6CcO9Jekc2c1nt+/xWDmrZtEhSA278=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kGqRaIIQWjHrm4ivH9KpehdV3XpTCryEgRIBujxUwM9uYv7jL3sTumBQeKO7AQ0JOVKHo5a/dkYL1oviv8PwFerT9VKTiFl6dyRb5spDWJA6CWRcIDfsOJbCL/Khp+sg9e+ESvx1t6bm5fwt2cJZ9fy6jieMtmetAF6p1cPqQpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=j8k23FN9; arc=none smtp.client-ip=45.254.49.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="WybuJjcV"
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="j8k23FN9"
 Received: from PC-202605011814.localdomain (unknown [222.191.246.242])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 430a44e58;
-	Fri, 19 Jun 2026 23:32:30 +0800 (GMT+08:00)
+	by smtp.qiye.163.com (Hmail) with ESMTP id 430a44e5e;
+	Fri, 19 Jun 2026 23:33:22 +0800 (GMT+08:00)
 From: Runyu Xiao <runyu.xiao@seu.edu.cn>
-To: Robert Jarzmik <robert.jarzmik@free.fr>,
+To: Uwe Kleine-Konig <ukleinek@kernel.org>,
 	Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
 Cc: Runyu Xiao <runyu.xiao@seu.edu.cn>,
 	Jianhao Xu <jianhao.xu@seu.edu.cn>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+	Jason Cooper <jason@lakedaemon.net>,
+	linux-pwm@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Question: pxa GPIO direction callbacks and pinctrl_gpio_direction_*()
-Date: Fri, 19 Jun 2026 23:32:20 +0800
-Message-Id: <20260619153220.1351480-1-runyu.xiao@seu.edu.cn>
+Subject: Question: mvebu GPIO can_sleep and pinctrl direction helpers
+Date: Fri, 19 Jun 2026 23:33:18 +0800
+Message-Id: <20260619153318.1366604-1-runyu.xiao@seu.edu.cn>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -37,51 +41,44 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9ee0831ec903a1kunm037ca621d2e78
+X-HM-Tid: 0a9ee083eb3003a1kunmdab15f0fd2ed3
 X-HM-MType: 10
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDGEgaVkxCH0sYTx1ITBpCSlYeHw
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkZH0JCVksdGU4eQk9CGE8dH1YeHw
 	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlJSUlVSkJKVUlPTVVJT0lZV1kWGg8SFR0UWUFZT0tIVUpLSE
 	pPSExVSktLVUpCS0tZBg++
 DKIM-Signature: a=rsa-sha256;
-	b=WybuJjcVNj9iFdLVX0/pH7pGC2lyK1D1hPR+ftdqaM5KWmVvxM8baC57b6rwLGLTyGXeRcC1oa6I6NCreEt2hLQxgj0aeB8CsQp5W1nlDMQEpI5q6k1QsGl5xDhTniFCJAadx8BrWvgIfkbSiT0y5u0PFf8KfD7RK/7MpGvy8f8=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=FJkKS4V1O1bdiGBNCve3cEqDXU6ZSWjP9NtbLXKKmFM=;
+	b=j8k23FN9gGTQ+GEBu2cTqzZZBGB7z3GFrcv5ch/m1r8KmEu9iyP6HaUvHHbWvqH+lh7m8TbIYTXo6J5EUMWMDWe0zj8h+GqlSjZHRGfd3mUYh8Ao1D0ampC8AIUbMHlIPXXv2whD4EFWiXfVbfsyaUv7WBTuwBZ+rS3eRFTywJI=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=489liCLgEEuHE6CcO9Jekc2c1nt+/xWDmrZtEhSA278=;
 	h=date:mime-version:subject:message-id:from;
 
 Hi,
 
-I found a possible sleep-in-atomic problem in the PXA GPIO direction
-callbacks and would like to check the intended driver contract before
+I found a possible sleep-in-atomic problem in the MVEBU GPIO direction
+callbacks and would like to check the intended gpio_chip contract before
 sending a patch.
 
-The driver registers a normal MMIO gpio_chip without setting can_sleep.
-On PXA variants where pxa_gpio_has_pinctrl() is true,
-pxa_gpio_direction_input() and pxa_gpio_direction_output() first call
-pinctrl_gpio_direction_input/output(). That path can reach the pinctrl
-core and take pctldev->mutex.
+mvebu_gpio_probe() currently registers the GPIO controller with
+mvchip->chip.can_sleep = false. At the same time,
+mvebu_gpio_direction_input() and mvebu_gpio_direction_output() call
+pinctrl_gpio_direction_input/output(), and that helper path can reach the
+pinctrl core and take pctldev->mutex.
 
 This was found by our static analysis tool and then confirmed by manual
-review of pxa_init_gpio_chip(), pxa_gpio_has_pinctrl(), and the direction
-callbacks. I also used a directed runtime validation that preserves the
-non-sleeping gpio_chip registration and drives the direction callback
-through the pinctrl direction helper. Lockdep reports a sleep-in-atomic
-warning with pxa_gpio_direction_output(), pinctrl_gpio_direction_output()
-and pinctrl_get_device_gpio_range() on the stack.
+review of mvebu_gpio_probe() and the direction callbacks. I also used a
+directed runtime validation that preserves the non-sleeping gpio_chip
+registration and drives the direction callback through the pinctrl
+direction helper. Lockdep reports a sleep-in-atomic warning with
+mvebu_gpio_direction_output(), pinctrl_gpio_direction_output() and
+pinctrl_get_device_gpio_range() on the stack.
 
-The part I would like to confirm is the intended fix. Commit a770d946371e
-("gpio: pxa: add pin control gpio direction and request") says that when a
-pinctrl driver is available, pinctrl should control the GPIO direction so
-that only one driver controls the direction. Because of that, simply
-removing the pinctrl_gpio_direction_*() calls from the GPIO direction
-callbacks may be too broad even though the GPIO driver also updates GPDR
-itself.
+Before sending a fix, I would like to confirm which contract is preferred
+for this driver. Should the controller be marked can_sleep because its
+direction callbacks may sleep, or would that be too broad for an otherwise
+MMIO-backed GPIO controller whose get/set paths are fast register accesses?
 
-Would the preferred fix be to keep the pinctrl direction path and mark the
-chip as sleeping, or is it acceptable to keep direction changes on the
-existing GPDR path and remove the pinctrl direction round-trip? If there is
-another preferred way to preserve the PXA pinctrl contract without
-advertising the direction callbacks as atomic-safe, I can prepare a patch
-in that direction.
+If marking the whole chip as sleeping is too broad, would it be preferable
+to avoid or restructure the pinctrl direction round-trip instead?
 
 Thanks,
 Runyu
