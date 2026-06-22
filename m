@@ -1,47 +1,46 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2756739479F;
-	Mon, 22 Jun 2026 09:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF55439C631;
+	Mon, 22 Jun 2026 09:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782120865; cv=none; b=Dm8Sd7201wWbtrDFvmQSd8jkj4u5m1IOUeJehCWlShhUFqqvQLFI4LEAG+lTEDWUWb3lQbYLbWOnKDGiawpHHXkVWsNrDZxPGJjqTUu+bAyKmx+GF2PRs2iT1PM9cjAuraY5HGDvEvAw90H2xgOztY9vi4lKdH4blrA4g5ycSqo=
+	t=1782120867; cv=none; b=jVHQWEZBCfZIY5qvC72uOEYvF2ym8Sv5RHWuKHPkAf3AFawe9B2iTKP7Aai9N85voM04PM70K/67VpFWjArm0a6t1lV++sEWYUgwlih5CCykFY0M4qpC9W8cB6m68cUVbmlRqXcm2F7fKqNdv9HJ3tq34SkLvXL4GM7NAxPbt3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782120865; c=relaxed/simple;
-	bh=4Re2c8rM/TE+j1XS23DSjHwh/fP1KAiyddqcjfiZQQM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LErwrovk722rn3n+fR/tPxltJnWt9TRUP2q/nIRyUBAoJdau2yAzViinfMiPytl+f3XN/wa/AsvZ30e7QEeaXuPEv/Oa46EOV6seq2tkp7DUMASt0xkRnmIelqNOBX517p0URWitEax1HjwO7uWnStuYVnuAmn/jFvXo5VZZfgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=CKXEtWzL; arc=none smtp.client-ip=211.75.126.72
+	s=arc-20240116; t=1782120867; c=relaxed/simple;
+	bh=9h95Ko7XMrCEnx9w5cWPQ04NkIDJqJBYijtbOgwg0ZI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KSEuQu2TriM8rg2cDtO6CkJr7w9K4Ei6DJg2mS3P0iFhvNytHbsmNyeqd0lIZtqi2PkpPuxDpbOJFbWtLGbsfbyxgcly7px6Uqgf5ziRIKdpXTTcXwwI+B2GargAoFyGeebqMw5rxMfrrwrvnCKbK+UnVOWWB12DMS86bvtIgqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=RSX8kepe; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="CKXEtWzL"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 65M9NbEkA2430969, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="RSX8kepe"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 65M9NacgE2430966, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1782120217; bh=JAvMWp3yV0UTP12dgfv3/z2EdSGGYSGEiFSysn5LsLY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=CKXEtWzLLLYhjKHD7r1SKkJ+3IAGbLPs+QJLE2jeouEb3+MmdQwSLZwS/LzZKm/ZW
-	 fKikilddzEuDwVE9LoJFqbIb3wp3b9uiL29QgvtilD3ih3N7yHff2zUHXy5LMQyJH7
-	 ko5zahpSNrwksFBJWnmqAgQoqC0EnIAYg9gRbVervhpQGJCjdTZLcv19sfAqNrIdCj
-	 P9svMI6OnWiyfRYo14hCwjykdS8x5QSvNIrO5Ol3MjxecyzcIEWy/WnznxjQjdPpvs
-	 hCOey+Rxr8ENC8jD/M6UIClDvgMs82ssVY4A5JUR3eBiFE7FRa0y4C3lz7TstO+wTQ
-	 j83HVPFxqauKA==
-Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 65M9NbEkA2430969
+	t=1782120216; bh=v9oY5AW6XlPO/ybdItXeUT9so7n8GVoEcj/SAny4ynQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=RSX8kepe6vWf3+/ZuOAKsU0NLhflzTlQNdchZDTiflmk8XDzgJMRbr6SRg8znzAI9
+	 LfxykmBUueBpw0PpMYr+OV6OmsuLzrWGZ0aFvhFIJz1lrGzkZGzHIQwMSyNbng47W+
+	 PhmMBv1mgUMH0CmDTV1vbDTjzORHhIQ8rjkeWWkSdeg9iNi6vKJnTLSwW+3xRk7mFY
+	 VxDNbGyxPsGORyhspGR3lfJE2717Coq+pAOYi063Pro+mc8E28R10uRfEtPWnJSz79
+	 dMAW1VRLoUHkoxxNT+bR/zgqNESjmNp2nHwf9PDUQl0Dx/BDMhMQemoGsUyAahUAXC
+	 LkgrOW5gz4oBA==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 65M9NacgE2430966
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 22 Jun 2026 17:23:37 +0800
-Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+	Mon, 22 Jun 2026 17:23:36 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.2562.17; Mon, 22 Jun 2026 17:23:37 +0800
 Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
+ RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Mon, 22 Jun 2026 17:23:37 +0800
+ 15.2.2562.17; Mon, 22 Jun 2026 17:23:36 +0800
 Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS05.realtek.com.tw
  (10.21.1.55) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 22 Jun 2026 17:23:37 +0800
+ Transport; Mon, 22 Jun 2026 17:23:36 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
 To: <linusw@kernel.org>, <brgl@kernel.org>, <robh@kernel.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <afaerber@suse.com>,
@@ -51,12 +50,10 @@ CC: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-realtek-soc@lists.infradead.org>, <cy.huang@realtek.com>,
 	<stanley_chang@realtek.com>, <eleanor.lin@realtek.com>,
 	<james.tai@realtek.com>
-Subject: [PATCH v4 2/4] gpio: Replace "default y" with "default ARCH_REALTEK" in Kconfig
-Date: Mon, 22 Jun 2026 17:23:33 +0800
-Message-ID: <20260622092335.1166876-3-eleanor.lin@realtek.com>
+Subject: [PATCH v4 0/4] gpio: realtek: Add support for Realtek DHC RTD1625
+Date: Mon, 22 Jun 2026 17:23:31 +0800
+Message-ID: <20260622092335.1166876-1-eleanor.lin@realtek.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260622092335.1166876-1-eleanor.lin@realtek.com>
-References: <20260622092335.1166876-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -66,30 +63,56 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Replace "default y" with "default ARCH_REALTEK" to avoid bloating the build
-for non-Realtek platforms when COMPILE_TEST is enabled on other platforms.
+This series adds GPIO support for the Realtek DHC RTD1625 SoC.
 
-Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+Unlike the existing driver (gpio-rtd.c) which uses shared bank registers,
+the RTD1625 features a per-pin register architecture where each GPIO line
+is managed by its own dedicated 32-bit control register. This distinct
+hardware design requires a new, separate driver.
+
+Best Regards,
+Yu-Chun Lin
 ---
+Patches 1-3 (fix, dt-bindings, and driver) are targeted for the GPIO tree.
+Patch 4 (dts) will be taken via the Realtek SoC tree later. It is included
+here for context.
+
 Changes in v4:
-- None.
----
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+- Reverted to the v2 approach (without gpio-regmap integration).
+As a result, dropped patches 2, 3, and 4 from the v3 series.
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 28cf6d2e83c2..ed2bc3113374 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -646,7 +646,7 @@ config GPIO_ROCKCHIP
- config GPIO_RTD
- 	tristate "Realtek DHC GPIO support"
- 	depends on ARCH_REALTEK || COMPILE_TEST
--	default y
-+	default ARCH_REALTEK
- 	select GPIOLIB_IRQCHIP
- 	help
- 	  This option enables support for GPIOs found on Realtek DHC(Digital
+Changes in Patch 3 (driver) since v2:
+- IRQ handling fixes:
+  - Added enum rtd1625_irq_index with named constants.
+  - Documented the hardware quirk.
+- Code cleanup and coding style improvements.
+- Included the <linux/cleanup.h> header.
+- Updated the copyright year.
+- Retained Linus Walleij's Reviewed-by tag from v1, as the recent updates are
+cleanups and fixes rather than major feature changes.
+(Linus, please let me know if you have any concerns regarding this).
+
+v3: https://lore.kernel.org/lkml/20260512033317.1602537-1-eleanor.lin@realtek.com/
+v2: https://lore.kernel.org/lkml/20260408025243.1155482-1-eleanor.lin@realtek.com/
+v1: https://lore.kernel.org/lkml/20260331113835.3510341-1-eleanor.lin@realtek.com/
+
+Tzuyi Chang (2):
+  dt-bindings: gpio: realtek: Add realtek,rtd1625-gpio
+  gpio: realtek: Add driver for Realtek DHC RTD1625 SoC
+
+Yu-Chun Lin (2):
+  gpio: Replace "default y" with "default ARCH_REALTEK" in Kconfig
+  arm64: dts: realtek: Add GPIO support for RTD1625
+
+ .../bindings/gpio/realtek,rtd1625-gpio.yaml   |  71 ++
+ arch/arm64/boot/dts/realtek/kent.dtsi         |  39 ++
+ drivers/gpio/Kconfig                          |  14 +-
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-rtd1625.c                   | 611 ++++++++++++++++++
+ 5 files changed, 735 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/realtek,rtd1625-gpio.yaml
+ create mode 100644 drivers/gpio/gpio-rtd1625.c
+
 -- 
 2.43.0
 
