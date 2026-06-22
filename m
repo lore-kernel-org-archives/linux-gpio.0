@@ -1,124 +1,148 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782CC27603C;
-	Mon, 22 Jun 2026 10:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2813655DD
+	for <linux-gpio@vger.kernel.org>; Mon, 22 Jun 2026 10:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782124523; cv=none; b=eRsQHMRbAsB83A5aQ13bKG1ij8Y0OwDiwgi8erIeAAbr95CYpohBcXKIZxs16av+Ra0UbHXYblfnWAeoDiss6FAnFoe0OZhkZtTzjyqCj+S+Vs278Euo+k1psbrFKfxzEojDj7zi9LDHHjj8AujZMRpxzYA3mvP6YSHgjpRVuVQ=
+	t=1782124767; cv=none; b=QfWAysrXU73k5nICF5KWS/oOfTMebSFEwRxzi995aF23K9bAdx/bNbPD/sVG5XH3nQ4m+15WsapX6usNq2FPjuX+RkUMSCq6wOKpqzikA7xGIXCQp8x+slc7UbURz1J7eWSBTjvw1qNespDdpcHKuJG2c6TTJ4jWljoOh2hFyw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782124523; c=relaxed/simple;
-	bh=nKS4zwQM+VFl+KcVzgjEHYMtbkj7E74mVR7te08Yyu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MOMOnXHulxvImCALD4O/QGUnGTWho3kI8ieO8OCsS6+h0Xq9hKMvn/bKdrhNrq3k4dm5LVh2TKwcXVJdKdF5+dn9Zt6GW6msgSzFlFLJRhFtoVnGGxLph9GpxUs1ezaP3ZSJI7ezUxKsDPjjVBaR4xpM8TpGgrTud434DcH562E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OnulI88y; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OnulI88y"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1782124521; x=1813660521;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=nKS4zwQM+VFl+KcVzgjEHYMtbkj7E74mVR7te08Yyu8=;
-  b=OnulI88yX0QSSucq/j1BKh6psinhnzMa+6iVYioE4Byy50/FLIQH92q3
-   7TwrS8eFCNYEiUQgejlf/nrXeO5xlnXj9QNlj2mZC7qZrZMz5ZeymbLY7
-   98QwhURC83bAFsOHX5T+hQ0yWG0O3r083PFeR0j2RAo/0HWSEGh9tHQ+P
-   vYeab96A84CETpnVaj1lHm/W4HLimqiaKWNMrFfafkqbdxqbnv4ILckCN
-   TnqszfxD3RDc5Jf/nywPs6W37AyuUC1/Y2ACN4tiClyZ7CVA6j3OU2Qr8
-   nS/InqYaBtxmHsBfxwNfxZhLlOKX7Qjlq2c8HBflJE3PKDGoZ/7d1hFkX
-   w==;
-X-CSE-ConnectionGUID: fCFYSwzLQhqRaWQ7XDJeMA==
-X-CSE-MsgGUID: fZkXNCwMTri+69p6CGQqPg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11824"; a="70365448"
-X-IronPort-AV: E=Sophos;i="6.24,218,1774335600"; 
-   d="scan'208";a="70365448"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2026 03:35:21 -0700
-X-CSE-ConnectionGUID: NiAuEHaXRFyoiUSZMBV95Q==
-X-CSE-MsgGUID: pwp5A8wfRVaZLysDxupkNQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.24,218,1774335600"; 
-   d="scan'208";a="248046762"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.152])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jun 2026 03:35:15 -0700
-Date: Mon, 22 Jun 2026 13:35:12 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Michael Walle <mwalle@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"afaerber@suse.com" <afaerber@suse.com>,
-	"wbg@kernel.org" <wbg@kernel.org>,
-	"mathieu.dubois-briand@bootlin.com" <mathieu.dubois-briand@bootlin.com>,
-	"lars@metafoo.de" <lars@metafoo.de>,
-	"Michael.Hennerich@analog.com" <Michael.Hennerich@analog.com>,
-	"jic23@kernel.org" <jic23@kernel.org>,
-	"nuno.sa@analog.com" <nuno.sa@analog.com>,
-	"andy@kernel.org" <andy@kernel.org>,
-	"dlechner@baylibre.com" <dlechner@baylibre.com>,
-	=?utf-8?B?VFlfQ2hhbmdb5by15a2Q6YC4XQ==?= <tychang@realtek.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-realtek-soc@lists.infradead.org" <linux-realtek-soc@lists.infradead.org>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	=?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
-	Stanley =?utf-8?B?Q2hhbmdb5piM6IKy5b63XQ==?= <stanley_chang@realtek.com>,
-	James Tai =?utf-8?B?W+aItOW/l+WzsF0=?= <james.tai@realtek.com>,
-	Yu-Chun Lin =?utf-8?B?W+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
-Subject: Re: [PATCH v3 2/7] gpio: regmap: add gpio_regmap_get_gpiochip()
- accessor
-Message-ID: <ajkP4DHN4JPjr6yb@ashevche-desk.local>
-References: <20260512033317.1602537-1-eleanor.lin@realtek.com>
- <20260512033317.1602537-3-eleanor.lin@realtek.com>
- <agMM9soiqpG-TRSb@ashevche-desk.local>
- <adff3a2d21a64d3ea3b408d62157ee1e@realtek.com>
- <ah92oEavMu4QRn8y@ashevche-desk.local>
- <CAMRc=MdA24z-tB_D8CTw68Di8e4OVQJ1QH4+rDskFzq=xjJ5BQ@mail.gmail.com>
- <DJ3QVMZ6XLW9.1M9W541O92QWJ@kernel.org>
- <CAD++jLncD2ZjH3aedOkGNYP3FyZ=i7Pb0OcKKZKuMOPGNjM_nQ@mail.gmail.com>
+	s=arc-20240116; t=1782124767; c=relaxed/simple;
+	bh=CTQXMUV+/UBVnNjzgtkJO88wjy6FOPIwK3y5DrpmBBk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rrq/dN1cNap3EkjUN2qdOmeYpt/gsMTBhB+6O/NB4UsU6JXNaZbMIXywYNOzVeKE2HpS2TLkggT6GC68NYPjMuwBC9U82ubb4182aVMs0dd5hRT+mdgne9RfZakrQk63VM9Mpfw5VtdQyWB8qu/4BXoe3snqpkEo6apTgZjCrxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-84236f9b638so1819358b3a.2
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Jun 2026 03:39:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782124765; x=1782729565;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6sEwup8vrGtzg0eQ+zIA6Kd2oTy+XBY9jxS2BNcFzC0=;
+        b=LvDaxSjRvLxRRVSnV5kvRiGdpnieICPK64iiVjE7+0PhAhyxmk1MHYeeyhUzG7/ntR
+         vCww8yZb3qxnNYQHw8puXatvuU7wk+NAs7LeTMvUiPTmZ4TNgS3sHlB0GSbmt9E6H7OM
+         knawZQBY7v6YOo+DAsx6aXCHD+JniNvJsC0crzaxXBOy9GK1jAZC+iiF/0gaRJe+8nuO
+         WklYKmmwUMAR/PmXAU2mhr81T4RKU84DARPTfxwt7tmtC9ae95+LrrBr4SiZjUHzygpG
+         MuTXNEAZncRsu9ib2F5qCZAdlHSkZvyYgy4ZjPN9UXLgSLF1MU2dJ2k8bUXmyuiVUDmf
+         gkuA==
+X-Forwarded-Encrypted: i=1; AFNElJ+ooEgsjPRlWWBr1IiY+VqIFMIgwIgzjSn5oa1dVXV3+3hivprQsxnJqtNjiRnYu1+op+W3OV68PI/7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqDHsl/wCr7TokqQXSrHFghM6DLtMOkpoFHo3mpfqzt/jMy7uK
+	m8fgymbewy8fzmumfuXWnw0Bg1+O0DTeKXTdK4KrDrATH9pSTzjkpj4/VO3a1O8V
+X-Gm-Gg: AfdE7clRlMHGrC7DTh7FOB0TJMLpH64uOtk7YRRXdl2MLi+YrOXTQdVHE6rxYKS7gTX
+	3Z5ygOJqt3ljS++53wOw1UA6IWFgnT6ko0EmHAVQz03xHa0FrtLombWsUAqCdXbz/1sJJJjltRa
+	IxbTE8xmBXiJirnZIZcv4/PpCLZB80wba8E5Y1cdA1Xzu/zSvuRdHDTvv6MZnTIwyTbMGHZXpky
+	SAMq3mSvw9uNinv9e+Rl3Aunb8yYER5qpNTYsTAB2/LUMgbr28/RDi09k5hvdmxoeecTmRF8D2S
+	cdqGDzRD9EqSQIRPkcFcmlnseUZNqY0N25PqG755fmsj9ntZBubT90Fmpw/sqTYLgMa8HvcfDcd
+	hc1XzrNXNJK42HJN4zT1f68C2DFNaGFeQHJUdsqsR1BfGWrOxCz07LVMsA2pQW9AttxAEZNQPWj
+	yKsq0Go99bjWS8woaZ51yrCAOSsWKRpeLGq0A1JlKYweSPHmXj9oZg
+X-Received: by 2002:a05:6a00:94e7:b0:837:f79d:909 with SMTP id d2e1a72fcca58-845508f23bamr15084507b3a.39.1782124765129;
+        Mon, 22 Jun 2026 03:39:25 -0700 (PDT)
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com. [74.125.82.179])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84564ecd784sm7407626b3a.54.2026.06.22.03.39.24
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jun 2026 03:39:24 -0700 (PDT)
+Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-30b9e755555so9407218eec.1
+        for <linux-gpio@vger.kernel.org>; Mon, 22 Jun 2026 03:39:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrEoq+U9rQLnF7bgvc6yQhdL0s3Bf6IeFUWpO+PCg0aBIjsffDPCo2cJOKmMTcfuFqgGE1k7UtvaeFC@vger.kernel.org
+X-Received: by 2002:a05:6102:3314:b0:6ef:f6cf:1b32 with SMTP id
+ ada2fe7eead31-72a043c9af3mr8022945137.27.1782124344043; Mon, 22 Jun 2026
+ 03:32:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD++jLncD2ZjH3aedOkGNYP3FyZ=i7Pb0OcKKZKuMOPGNjM_nQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20260622101606.485961-3-krzysztof.kozlowski@oss.qualcomm.com> <20260622101606.485961-4-krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20260622101606.485961-4-krzysztof.kozlowski@oss.qualcomm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 22 Jun 2026 12:32:09 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWw4+-YZRx2icp_t3OQt3cb9osjac7gziiyRZcHa3zMbQ@mail.gmail.com>
+X-Gm-Features: AVVi8CeRh5uGKoGdWXUVe0e4sYYTgs7H91cw7cP665l5Rz_E8v79r8eSiiAY4SE
+Message-ID: <CAMuHMdWw4+-YZRx2icp_t3OQt3cb9osjac7gziiyRZcHa3zMbQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: Drop incorrect usage of double '::'
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Inki Dae <inki.dae@samsung.com>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, Georgi Djakov <djakov@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Ulf Hansson <ulfh@kernel.org>, Peter Rosin <peda@lysator.liu.se>, 
+	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Linus Walleij <linusw@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Sebastian Reichel <sre@kernel.org>, 
+	Javier Martinez Canillas <javier@dowhile0.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Jonathan Marek <jonathan@marek.ca>, 
+	Taniya Das <quic_tdas@quicinc.com>, Robert Marko <robimarko@gmail.com>, 
+	Christian Marangi <ansuelsmth@gmail.com>, Stephan Gerhold <stephan@gerhold.net>, 
+	Adam Skladowski <a_skl39@protonmail.com>, Sireesh Kodali <sireeshkodali@protonmail.com>, 
+	Barnabas Czeman <barnabas.czeman@mainlining.org>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Sricharan Ramabadhran <quic_srichara@quicinc.com>, Anusha Rao <quic_anusha@quicinc.com>, 
+	Luo Jie <quic_luoj@quicinc.com>, Tomasz Figa <tomasz.figa@gmail.com>, 
+	Chanho Park <chanho61.park@samsung.com>, Sunyeal Hong <sunyeal.hong@samsung.com>, 
+	Shin Son <shin.son@samsung.com>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>, Jaehoon Chung <jh80.chung@samsung.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Alina Yu <alina_yu@richtek.com>, 
+	Andy Gross <agross@kernel.org>, =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+	Wesley Cheng <quic_wcheng@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-i2c@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jun 19, 2026 at 11:08:30PM +0200, Linus Walleij wrote:
-> On Mon, Jun 8, 2026 at 4:41 PM Michael Walle <mwalle@kernel.org> wrote:
-> 
-> > >>> Without an accessor like gpio_regmap_get_gpiochip(), we cannot retrieve the
-> > >>> gpio_chip instantiated inside gpio-regmap.c to fulfill these requirements in our
-> > >>> map() function.
-> >
-> > Why is gpiochip_irq_reqres() called in the first place? Isn't that
-> > only called if the irq handling is set up via gc->irq.chip and not
-> > via gpiochip_irqchip_add_domain() like in gpio-regmap?
-> 
-> Not really, the gpiochip_irq_reqres() is called to mark that a
-> GPIO line is used for IRQ, so the gpiolib cannot turn this
-> GPIO into an output line, gpiod_direction_out() will fail
-> on lines used for IRQ. So it's a failsafe.
-> 
-> You can live without it of course, but then you don't get
-> this failsafe.
+On Mon, 22 Jun 2026 at 12:16, Krzysztof Kozlowski
+<krzysztof.kozlowski@oss.qualcomm.com> wrote:
+> There is no use of double colon '::' in YAML. OTOH, the literal style
+> block, e.g. using '|' treats all characters as content [1] therefore
+> single use of ':' in descriptions is perfectly fine, whenever '|' is
+> used.
+>
+> Cleanup existing code, so the confusing style won't be re-used in new
+> contributions.
+>
+> Link: https://yaml.org/spec/1.2.2/#literal-style [1]
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+>
+> ---
+>
+> Intention for this patch is to go via Rob's tree.
 
-So, when we instantiate our own domain in regmap GPIO, we should have those
-callbacks be defined somewhere?
+>  .../bindings/power/renesas,rcar-sysc.yaml     |  2 +-
+>  .../bindings/soc/renesas/renesas-soc.yaml     |  4 ++--
+
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
