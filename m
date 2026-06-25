@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9973E2ADA;
-	Thu, 25 Jun 2026 12:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD443E3169;
+	Thu, 25 Jun 2026 12:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782389996; cv=none; b=CaB0Wc04I2ZLL7TePqr8X/xTS1tLC4TkRmSeKtVsqB7cqT6onJQgBK8zA+I1D1mqzXhHvJ8+QGq0l5FlGJU1A+bLLppTQHNyQrmjvXwMOcD+K0RZt4mqe+Oqy4OUEaQI/Ezha93d3tP/q5azMVgqWhfCq6I0iJpYe0OhbdeOPEs=
+	t=1782389998; cv=none; b=YNH6ANJvFLCLYb13IxAvjLf8U4sRuX3Qi4RYplS3hRj5yI3lym9FZ0VOhaRHqjVCwMgBt0uPSQ9GR5EjqgoAURXnZf2vC9Xz0SrHDXQhRu+Ri6mVR5FZx8jdl/Am/sCgiaJrG2g/sbeqD4eCTyBLoXRO9CAA9d/B9Qsc2cBNzxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782389996; c=relaxed/simple;
-	bh=upjm9w+/wSI8676/e4fSBgvD1BczjdUW8PBvux1DzMY=;
+	s=arc-20240116; t=1782389998; c=relaxed/simple;
+	bh=9DSld4lgL7o828qX9kJ1vnSpchduhTfDbvK94xAkwZQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ctZ1f5iRlb25hqTB4iWpHLZWECZFKZNbcML+ftZa8XOD7uQTvRJNV/YulfW0nLc3p+G3n+6rV/XXxhxrK9jLhFzGEnNC7o/FLsxxKZMzIOnB9GA9VCcIC4Z8+j4kUnOIpeZnuuTEaMgTM2s/8mYUM5/E4FlIdwmjWMAwJPdlZuA=
+	 MIME-Version; b=sXTwMl5h4xjiHBqgKoZsCxJLIJXfa85K3Czi8prQuBG7bacxg3V+viPZLIGV/z2ogRO/GdZnQbIgVldc11VXzF+TxBYHuScdcUZKCluJk1Th8wmqK6A4taA/Mcf3WJjpLOTf1WhkRes44ORZ1JZ67M1XyUbjumDc2Mn0L2zPLzI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 556871F000E9;
-	Thu, 25 Jun 2026 12:19:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F6411F00A3A;
+	Thu, 25 Jun 2026 12:19:55 +0000 (UTC)
 From: Geert Uytterhoeven <geert@linux-m68k.org>
 To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
 	Linus Walleij <linusw@kernel.org>,
@@ -23,9 +23,9 @@ Cc: linux-mips@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH 8/9] MIPS: TXX9: Convert gpio_txx9 to dynamic GPIO base allocation
-Date: Thu, 25 Jun 2026 14:19:29 +0200
-Message-ID: <f2c0f31691c2e6157146e08ebd8cfe5960a03072.1782389357.git.geert@linux-m68k.org>
+Subject: [PATCH 9/9] MIPS: TXX9: Clean up txx9_iocled_init()
+Date: Thu, 25 Jun 2026 14:19:30 +0200
+Message-ID: <1b51ebc5e63ab41070e099bcc4ec1e8d9b85add5.1782389357.git.geert@linux-m68k.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1782389357.git.geert@linux-m68k.org>
 References: <cover.1782389357.git.geert@linux-m68k.org>
@@ -37,69 +37,84 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Static allocation of GPIO base is deprecated, use dynamic allocation.
+The sole caller already uses dynamic GPIO base allocation, so drop
+support for static allocation.
+While at it, drop the no longer used "lowactive" parameter.
 
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
- arch/mips/include/asm/txx9pio.h | 3 +--
- arch/mips/kernel/gpio_txx9.c    | 5 ++---
- arch/mips/txx9/rbtx4927/setup.c | 4 ++--
- 3 files changed, 5 insertions(+), 7 deletions(-)
+ arch/mips/include/asm/txx9/generic.h |  3 +--
+ arch/mips/txx9/generic/setup.c       | 12 ++++--------
+ arch/mips/txx9/rbtx4927/setup.c      |  2 +-
+ 3 files changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/arch/mips/include/asm/txx9pio.h b/arch/mips/include/asm/txx9pio.h
-index 3d6fa9f8d5135411..c33a977244005479 100644
---- a/arch/mips/include/asm/txx9pio.h
-+++ b/arch/mips/include/asm/txx9pio.h
-@@ -23,7 +23,6 @@ struct txx9_pio_reg {
- 	__u32 maskext;
+diff --git a/arch/mips/include/asm/txx9/generic.h b/arch/mips/include/asm/txx9/generic.h
+index 5ce5b8579a444ec3..653315fb6ca559a7 100644
+--- a/arch/mips/include/asm/txx9/generic.h
++++ b/arch/mips/include/asm/txx9/generic.h
+@@ -79,8 +79,7 @@ static inline unsigned int __fls8(unsigned char x)
+ 	return r;
+ }
+ 
+-void txx9_iocled_init(unsigned long baseaddr,
+-		      int basenum, unsigned int num, int lowactive,
++void txx9_iocled_init(unsigned long baseaddr, unsigned int num,
+ 		      const char *color, char **deftriggers);
+ 
+ void __init txx9_aclc_init(unsigned long baseaddr, int irq,
+diff --git a/arch/mips/txx9/generic/setup.c b/arch/mips/txx9/generic/setup.c
+index 32246f5f78f5070c..5f66236038c8f468 100644
+--- a/arch/mips/txx9/generic/setup.c
++++ b/arch/mips/txx9/generic/setup.c
+@@ -625,8 +625,7 @@ static struct gpiod_lookup_table txx9_iocled_table = {
+ 	},
  };
  
--int txx9_gpio_init(unsigned long baseaddr,
--		   unsigned int base, unsigned int num);
-+int txx9_gpio_init(unsigned long baseaddr, unsigned int num);
- 
- #endif /* __ASM_TXX9PIO_H */
-diff --git a/arch/mips/kernel/gpio_txx9.c b/arch/mips/kernel/gpio_txx9.c
-index 96ac40d20c238018..b2e73263d94c8419 100644
---- a/arch/mips/kernel/gpio_txx9.c
-+++ b/arch/mips/kernel/gpio_txx9.c
-@@ -76,13 +76,12 @@ static struct gpio_chip txx9_gpio_chip = {
- 	.label = "TXx9",
- };
- 
--int __init txx9_gpio_init(unsigned long baseaddr,
--			  unsigned int base, unsigned int num)
-+int __init txx9_gpio_init(unsigned long baseaddr, unsigned int num)
+-void __init txx9_iocled_init(unsigned long baseaddr,
+-			     int basenum, unsigned int num, int lowactive,
++void __init txx9_iocled_init(unsigned long baseaddr, unsigned int num,
+ 			     const char *color, char **deftriggers)
  {
- 	txx9_pioptr = ioremap(baseaddr, sizeof(struct txx9_pio_reg));
- 	if (!txx9_pioptr)
- 		return -ENODEV;
--	txx9_gpio_chip.base = base;
-+	txx9_gpio_chip.base = -1;
- 	txx9_gpio_chip.ngpio = num;
- 	return gpiochip_add_data(&txx9_gpio_chip, NULL);
+ 	struct txx9_iocled_data *iocled;
+@@ -652,14 +651,12 @@ void __init txx9_iocled_init(unsigned long baseaddr,
+ 	iocled->chip.direction_input = txx9_iocled_dir_in;
+ 	iocled->chip.direction_output = txx9_iocled_dir_out;
+ 	iocled->chip.label = "iocled";
+-	iocled->chip.base = basenum;
++	iocled->chip.base = -1;
+ 	iocled->chip.ngpio = num;
+ 	if (gpiochip_add_data(&iocled->chip, iocled))
+ 		goto out_unmap;
+-	if (basenum < 0)
+-		basenum = iocled->chip.base;
+ 
+-	pdev = platform_device_alloc("leds-gpio", basenum);
++	pdev = platform_device_alloc("leds-gpio", iocled->chip.base);
+ 	if (!pdev)
+ 		goto out_gpio;
+ 	iocled->pdata.num_leds = num;
+@@ -689,8 +686,7 @@ void __init txx9_iocled_init(unsigned long baseaddr,
+ 	kfree(iocled);
+ }
+ #else /* CONFIG_LEDS_GPIO */
+-void __init txx9_iocled_init(unsigned long baseaddr,
+-			     int basenum, unsigned int num, int lowactive,
++void __init txx9_iocled_init(unsigned long baseaddr, unsigned int num,
+ 			     const char *color, char **deftriggers)
+ {
  }
 diff --git a/arch/mips/txx9/rbtx4927/setup.c b/arch/mips/txx9/rbtx4927/setup.c
-index 618f6a6ab3de08f1..5b69bff99510e214 100644
+index 5b69bff99510e214..51c06c5090f1abcd 100644
 --- a/arch/mips/txx9/rbtx4927/setup.c
 +++ b/arch/mips/txx9/rbtx4927/setup.c
-@@ -178,7 +178,7 @@ static void __init rbtx4927_gpio_init(void)
- 
- static void __init rbtx4927_arch_init(void)
- {
--	txx9_gpio_init(TX4927_PIO_REG & 0xfffffffffULL, 0, TX4927_NUM_PIO);
-+	txx9_gpio_init(TX4927_PIO_REG & 0xfffffffffULL, TX4927_NUM_PIO);
- 
- 	rbtx4927_gpio_init();
- 
-@@ -187,7 +187,7 @@ static void __init rbtx4927_arch_init(void)
- 
- static void __init rbtx4937_arch_init(void)
- {
--	txx9_gpio_init(TX4938_PIO_REG & 0xfffffffffULL, 0, TX4938_NUM_PIO);
-+	txx9_gpio_init(TX4938_PIO_REG & 0xfffffffffULL, TX4938_NUM_PIO);
- 
- 	rbtx4927_gpio_init();
+@@ -370,7 +370,7 @@ static void __init rbtx4927_device_init(void)
+ 		tx4938_aclc_init();
+ 	}
+ 	platform_device_register_simple("txx9aclc-generic", -1, NULL, 0);
+-	txx9_iocled_init(RBTX4927_LED_ADDR - IO_BASE, -1, 3, 1, "green", NULL);
++	txx9_iocled_init(RBTX4927_LED_ADDR - IO_BASE, 3, "green", NULL);
+ 	rbtx4927_gpioled_init();
+ }
  
 -- 
 2.43.0
