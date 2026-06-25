@@ -1,48 +1,31 @@
-Received: from mx.adeep.su (mx.adeep.su [185.250.0.168])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EBD3B2FDD;
-	Thu, 25 Jun 2026 12:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.250.0.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953903DE44C;
+	Thu, 25 Jun 2026 12:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782389293; cv=none; b=ToxZV0UjJ2XsCCJF+Zb+fx2lTFawLzYfGZJ6T9cS3+goNqSzabbibCXtPuIW+MNHyPmfVcaFnnsNcN9waG14wJhxksBHzuVZFX84UN/hePchiiyDuJWkJC/ZBc4RBugLNxeCRb8ZGURSTa+9QtmE5/Xwax0H6okhJYvcYInTej8=
+	t=1782389979; cv=none; b=jj0k3tD4apmiy7dg7721abo253ZaJylKg1Z9TuhoJN8IemCVIMFdDUbxzYBpjN38+HIM1wLLIY2eWxK9AEs7XJ8l/u3wAEQe9SxVQbqMInRveJvZpmrQKdbp7vt7zszGjONYz/mMjBl1Uk2C90TKyxhcDKKkVdO4G+w0aoXW9Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782389293; c=relaxed/simple;
-	bh=OsyQ+vo7enYntqm19GlzFbD+ElNCoozlJdx4rCJfqIE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K1YuSMNDtsL0W7szSZx5C/iA0gCdw/ffuHjKG1bqgJPWykjt5UkypWUA8CnSmU+0O2hGt1Hj+654Qmae0oR+vJb0kh3mkaSx9z6MM97lhjzBZkDMYpAdT2S4HdLDAeBRaYgrjvR6Hx2kQCQo9JjB+K/LlSmqCZ+6w49Qh6rZHhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=baodeep.com; spf=pass smtp.mailfrom=baodeep.com; dkim=fail (2048-bit key) header.d=baodeep.com header.i=@baodeep.com header.b=FVwLDUQg reason="signature verification failed"; arc=none smtp.client-ip=185.250.0.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=baodeep.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baodeep.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baodeep.com header.i=@baodeep.com header.b="FVwLDUQg"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E8734170204;
-	Thu, 25 Jun 2026 14:57:48 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=baodeep.com; s=dkim;
-	t=1782388682; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=00CUa1hLOxEqnOirfYovjxZeJiCqa/8wDLtlYF68e/4=;
-	b=FVwLDUQg38OHClWg9cUHgYBGktXMqDZPZCwwoJ9oX7Qt88x+OESMSiKIn7T/LMKJhdmMoG
-	dfaJgroBqEsxQ5NoRGrKXR7wvMyIh1PEpA00xDqGKI0NBfYSQCya4iw8TI9PS/BUeDWDpe
-	FJ9a5xU6+owdAoVcMT29AbK2vuY7rMA+xOcbpfxBbHrrvC85n0zfSplNogiTMs5SrnuVXo
-	47LbZadKDKaEZ409wu/jERSTth437wrdLdodtjYISi20O07ynWp6w488Rbxf9G8iVDvs0G
-	yAwUAeZnQxJ+MIPyebGomtI0WUxWBa3vPJQSTANN8qGdJwt/eXiTLJ5VXgnwdA==
-From: Viacheslav Bocharov <v@baodeep.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Diederik de Haas <diederik@cknow-tech.com>,
+	s=arc-20240116; t=1782389979; c=relaxed/simple;
+	bh=rSZuza9IN4f3rMWWjX7mw1XsrJeN0BE3IO0x4BMFRVk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q9ssVdFUJbPMNL1cBDyb3LQtxAZ6UkNCX7UdOe8Ow3IxAbc8NLz8A/WF3WozXU3L4oRukxUa28NMkHY4xnlVkzeJuQrX3LZO/9tMGkLrsxEmKvT2mqBqaaLkmapMuUCLZyVcJuFQpxdGLVUW3s3IeVCFmtNkbgs/txKOqkEGJAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F91F1F000E9;
+	Thu, 25 Jun 2026 12:19:36 +0000 (UTC)
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: linux-mips@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] gpio: fix sleeping-in-atomic in shared-proxy; restore meson non-sleeping
-Date: Thu, 25 Jun 2026 14:57:16 +0300
-Message-ID: <20260625115718.1678991-1-v@baodeep.com>
-X-Mailer: git-send-email 2.54.0
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH 0/9] MIPS: TXX9: Legacy GPIO interfaces cleanup
+Date: Thu, 25 Jun 2026 14:19:21 +0200
+Message-ID: <cover.1782389357.git.geert@linux-m68k.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -50,65 +33,46 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-gpio-shared-proxy chooses its descriptor lock (mutex vs spinlock) from
-the underlying chip's can_sleep, but under that lock it calls config and
-direction ops that reach sleeping pinctrl paths. On a controller with
-non-sleeping MMIO value ops the lock is a spinlock, so a sleeping call
-runs from atomic context:
+	Hi all,
 
-  BUG: sleeping function called from invalid context
-    ... pinctrl_gpio_set_config <- gpiochip_generic_config
-    <- gpio_shared_proxy_set_config (voting spinlock held)
-    <- ... <- mmc_pwrseq_simple_probe
+This patch series gets rid of legacy GPIO interface usage on the MIPS
+RBTX4927 development board, preceded and followed by some cleanups.
+No blinky LEDs were harmed during the production of this series.
 
-This was reported on Khadas VIM3 and worked around for Amlogic by
-commit 28f240683871 ("pinctrl: meson: mark the GPIO controller as
-sleeping"), which marked the whole meson controller sleeping. That
-workaround broke atomic value-path consumers: w1-gpio (1-Wire bitbang)
-no longer detects devices, because its IRQ-disabled read slot calls the
-non-cansleep gpiod_*_value() and now hits WARN_ON(can_sleep) per bit.
+Thanks for your comments!
 
-Patch 1 fixes the proxy locking generically (always a sleeping mutex).
-Patch 2 then restores meson can_sleep=false, fixing 1-Wire.
+Geert Uytterhoeven (9):
+  MIPS: TXX9: Remove tx4938_spi_init() and txx9_spi_init()
+  MIPS: TXX9: Remove txx9_7segled_*() forward declarations
+  MIPS: TXX9: rbtx4927: Use GPIO lookup table for SIO DTR
+  MIPS: TXX9: rbtx4927: Use GPIO lookup table for TXx9 LEDs
+  MIPS: TXX9: Reduce TXX9_IOCLED_MAXLEDS to 3
+  MIPS: TXX9: Use GPIO lookup table for iocled LEDs
+  MIPS: TXX9: Drop GPIOLIB_LEGACY select
+  MIPS: TXX9: Convert gpio_txx9 to dynamic GPIO base allocation
+  MIPS: TXX9: Clean up txx9_iocled_init()
 
-Patch 1 has a trade-off: a proxied GPIO becomes sleeping, so consumers
-gating on gpiod_cansleep() change behaviour. No current device needs
-atomic (non-cansleep) value access on a shared GPIO -- every report
-(Khadas VIM3, ODROID-M1, my test on JetHub D1+) is a shared reset line
-(eMMC/SDIO pwrseq or PCIe reset) driven through the cansleep accessors,
-which is what the proxy exists to vote on; bit-banging that needs atomic
-access cannot work through voting anyway. An alternative that keeps
-atomic value access (split locking) is possible but adds a second lock
-and new race windows, so this series takes the simpler mutex-only
-approach.
+ arch/mips/include/asm/txx9/generic.h  |  9 +-----
+ arch/mips/include/asm/txx9/tx4938.h   |  1 -
+ arch/mips/include/asm/txx9pio.h       |  3 +-
+ arch/mips/kernel/gpio_txx9.c          |  5 ++-
+ arch/mips/txx9/Kconfig                |  1 -
+ arch/mips/txx9/generic/setup.c        | 45 ++++++++++-----------------
+ arch/mips/txx9/generic/setup_tx4938.c |  6 ----
+ arch/mips/txx9/rbtx4927/setup.c       | 36 ++++++++++++++++-----
+ 8 files changed, 49 insertions(+), 57 deletions(-)
 
-The two are a unit: patch 2 must not be applied without patch 1,
-otherwise the original VIM3 splat returns on boards that share a meson
-GPIO -- please keep the order. I have not Cc'd stable; I will request
-stable backports separately once both patches have landed.
+-- 
+2.43.0
 
-Changes since v1:
-- gpio: shared-proxy: open-code the descriptor mutex; drop the
-  gpio_shared_desc_lock guard and the gpio_shared_lockdep_assert()
-  helper, move the mutex rationale to the can_sleep assignment. No
-  functional change.
+Gr{oetje,eeting}s,
 
-v1: https://lore.kernel.org/linux-gpio/20260610153329.937833-1-v@baodeep.com/
+						Geert
 
-Viacheslav Bocharov (2):
-  gpio: shared-proxy: always serialize with a sleeping mutex
-  pinctrl: meson: restore non-sleeping GPIO access
-
- drivers/gpio/gpio-shared-proxy.c      | 66 +++++++++++----------------
- drivers/gpio/gpiolib-shared.c         |  9 +---
- drivers/gpio/gpiolib-shared.h         | 28 +-----------
- drivers/pinctrl/meson/pinctrl-meson.c |  2 +-
- 4 files changed, 30 insertions(+), 75 deletions(-)
-
-
-base-commit: 840ef6c78e6a2f694b578ecb9063241c992aaa9e
 --
-2.54.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
