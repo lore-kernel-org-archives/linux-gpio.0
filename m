@@ -1,119 +1,156 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE92537F737
-	for <linux-gpio@vger.kernel.org>; Thu, 25 Jun 2026 22:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70601A95E;
+	Fri, 26 Jun 2026 01:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782425849; cv=none; b=G0h1mqKQFWBlL4bvJ+1cg+Pxxp9zu3qvybSAjHYAMgsBOpPmVCiifvTPi5KKPoTzZYva4zRsM6Shm5LS7yrMrTEkG0nBnGfchnVmBsUJTYinVZcHF7B8HpGQA0FJ2hww3vtVV0Bx0tgumndY1NsScjRx2lMPFeIT2ptLwTLfloA=
+	t=1782437564; cv=none; b=Z+gSEjyvNk8Lx9jtl/dTvp9Tx9Q9iKZzugaefOmzylRg+HGc8RREGDXSS7LRXoVGq0NJW36TgAqw8Fy5THRxM3ewkZ+S9s7RBUoCSEds2+0XLi+5VmwD50obl4ocDZnzq71uc8syl3gG6y5y5YIo5BLc1lDPdBUKA0YD+JXTEBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782425849; c=relaxed/simple;
-	bh=I1cXCOm745RXm5RvaDuUdNXcHFBmJV3+a5GoFtpPT64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZOJX40LUDf6k2tCMQlONtvhrduHq5NW384tRl9W7bhzc/gwGXuFKaraCqhUCr+yo80qwTn1SXnL3R5lDxV/h74k8XqMRLBdh9vNs9whOoaH+BWLJzU8CtoE8Snf+YKYzW7znz9ZvSMxW9jqyvoZnVhDMgiVPzCqvMFqnypwTObE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IQjv/q6+; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1782437564; c=relaxed/simple;
+	bh=q+f8jRnhMWj2OiIaRA+f1d+dvjPUS8fIBm/zxwkHb8I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hnKUvQbY+VtDc+YYQumKJ7Xb0yyvNQC5NxaHMqob3JioELQdpngpQ+Ixhs5mkyivAsMP7jq85Z6rT8p8SXVaoVWAjGHhec1xu+rP7yxlWcdDxowy1OhNboWrZOzW/RgyQZNv42mtsyJ22fF+0fiCc8HPz9K81zWab7RBoMP29rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PIk+zKAv; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQjv/q6+"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-46e30429b10so153294f8f.1
-        for <linux-gpio@vger.kernel.org>; Thu, 25 Jun 2026 15:17:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782425846; x=1783030646; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=k+3GoXf2mrfA1KP6AU6rLpBytQHse5+WqLmVOpgycR4=;
-        b=IQjv/q6+cojMJE/yhxKTyVcvV93ZMis9dlZnEhA6/LoC2VDkWG0ep65QfyfbesVY2D
-         bf4bHOa0IIWUCD3ELozuhDHKqMtv4+afGNAH/FtyVonBA92mPuEf44PcB2HczpgUyITx
-         CgrO8yO36NX0Ca/0SfeDEPbjvBfICOO/ZdJWduDTAeaYGxCBnl6+x282fQSCT/8azcZr
-         JLZf6cei5Djr+O/CWi91js1lVLAvUfBy9ffDIoeB8i2VuwvLvsIsDw1ZFAdj5AuOSz95
-         5UCS+qSnPXl1GImqtCw/ePNbkf9EO/4MZDmr/IbKNWH223UgOmuqBXLEDyROZAdhIPIM
-         ih3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782425846; x=1783030646;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k+3GoXf2mrfA1KP6AU6rLpBytQHse5+WqLmVOpgycR4=;
-        b=NXLkG+zzIWtnM2C+RXQtw3LUjoJ7ebg9PIbL8QYcKN8t7lSnN2/+nOmqh2b/JuqZxZ
-         DcR2A7Nf8Q2NG1uNf5lW5n1ZEXX/ex0Oo7aa2F+GqiQoYFHp74RoNupk3UJnPlK521h7
-         Iwv85RhZ4IwnqA4+SLgsnKIeGbyfRTKovrjhzyDOc0N6KcgEUyY4uZEQEBLwY4qeMe4M
-         da10S1Erx2Fn29ow/mVc5knBH1WKB7lGrMruZuB424SsSUA36KLahQK72iF96RB5QbDB
-         wkWbITTIIMv7FsXJSRrac+MUY2iqOQwqys6BU5HkvOLYaBgd3JBbBPrkhc8PupRa2yP1
-         zFNQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/8EbK/wgmGA774v4pOPlbfI6dam1YAyfXgqzhPtt4rSwq7XutE1bsjdLgRk4ywfRxdCNz5z19NRVIy@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUDMMOnkdybE/5kzeqZ9oYZiCoOfG54s1AIFnDJEsp2qUvH16H
-	V65kbahQ66+VAwC5APtezU6kZ1JWUQYUdZpQ1XsnMi5IRni0bcpOdXgr
-X-Gm-Gg: AfdE7ckQZqEMfndzL893OpJ1VcjfNEAAFNUJjshtJXuXtmc8yu3I+vXMbY0kWIyFSkF
-	cHyAKu1kTakgwiZdTkac7Gy4OKFrnaJkkfFinbtp/EcT/SOZeKx6+oB/zoOK8HAeOF0PpO3Zb8n
-	GxDrSwesa7WRKgffiNRf4h7VtjTaYvoA5k+cHwKUkQOn8XShMOuOYax2GK35PtGnWRByh9ewWwJ
-	bqSis/W6qEGnIjledcF9GfAPADu59vXLQxeHLM+HjLmrad8LdHIJfos+kAhK9ppvVmEyFVLNFNg
-	cDIeW2B0zWdpfRIbpHXH1VTMXUUOJHbyVaUP2wiYyv4PWbxDqSIh1Jg7R7thfIxH5oRaUgR9vBB
-	x2RP443F4WL5NAwzexGneRFakiW6T2fvbYopYl7PlyVSoouLOxhxs1b6rNLwU4zuaoc8cMC2QtI
-	jANqPUcmGunoEDhfKtiBw2IcDaMxAvAo5yD05K6P9g3UzN3MlxC7Xd935kte+2RnN7UUC9g+uUx
-	AXkuCQk
-X-Received: by 2002:a05:600c:3549:b0:492:4363:e7eb with SMTP id 5b1f17b1804b1-492668acc8cmr62424645e9.32.1782425845982;
-        Thu, 25 Jun 2026 15:17:25 -0700 (PDT)
-Received: from [10.128.11.131] (195-23-151-163.net.novis.pt. [195.23.151.163])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49269071e49sm27961115e9.10.2026.06.25.15.17.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jun 2026 15:17:23 -0700 (PDT)
-Sender: Julian Braha <julian.braha@gmail.com>
-Message-ID: <4a35af81-8dc5-4c13-93cc-52585f84372b@gmail.com>
-Date: Thu, 25 Jun 2026 23:17:21 +0100
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PIk+zKAv"
+X-UUID: e4e270ec70fe11f1b1788b6acf885367-20260626
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=EfICKHTjhqIjX6+sgXjXVPSSuSx8S4+s/vgscnmXaAs=;
+	b=PIk+zKAvnSLi/dvqLEY9o0dAlaGLXrkOXMlXnXLuoTMPs4dXGzzzbt6sklu+quXg1ptB2f9HVl6nEKnXt1WHF1neTMMzxrbcadG1lHz31vmJWcIDJbZbO55fV3tLjPTkqhT4nLfTDcB3uZZBp/rSTegoY9Wo9JEK9/u8arXHoDs=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.17,REQID:c7cab090-f8af-4e67-8112-773de04f4967,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:d497b38,CLOUDID:1b09baf7-0b89-48e7-aff3-7b92a9556644,B
+	ulkID:nil,BulkQuantity:0,SF:102|136|836|865|888|898,TC:-5,Content:0|15|50,
+	EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:-1,COL:0,OSI:0,OSA:0
+	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: e4e270ec70fe11f1b1788b6acf885367-20260626
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
+	(envelope-from <justin.yeh@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1149426772; Fri, 26 Jun 2026 09:32:28 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Fri, 26 Jun 2026 09:32:27 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.2562.29 via Frontend Transport; Fri, 26 Jun 2026 09:32:27 +0800
+From: Justin Yeh <justin.yeh@mediatek.com>
+To: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	Justin Yeh <justin.yeh@mediatek.com>
+Subject: [PATCH v2 00/32] pinctrl: mediatek: Enable module build support for all drivers
+Date: Fri, 26 Jun 2026 09:31:26 +0800
+Message-ID: <20260626013217.2373808-1-justin.yeh@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 4/5] gpio: rpmsg: add generic rpmsg GPIO driver
-To: Shenwei Wang <shenwei.wang@oss.nxp.com>, Linus Walleij
- <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>,
- Peng Fan <peng.fan@nxp.com>, devicetree@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
- Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, b-padhi@ti.com,
- Andrew Lunn <andrew@lunn.ch>, Bartosz Golaszewski <brgl@bgdev.pl>
-References: <20260625155432.815185-1-shenwei.wang@oss.nxp.com>
- <20260625155432.815185-5-shenwei.wang@oss.nxp.com>
-Content-Language: en-US
-From: Julian Braha <julianbraha@gmail.com>
-In-Reply-To: <20260625155432.815185-5-shenwei.wang@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-Hi Shenwei,
+This series enables all MediaTek pinctrl drivers to be built as loadable
+kernel modules. This is required for Android GKI (Generic Kernel Image) +
+vendor_dlkm deployments where vendor-specific drivers must be kept separate
+from the GKI vmlinux.
 
-On 6/25/26 16:54, Shenwei Wang wrote:
-> +config GPIO_RPMSG
-> +	tristate "Generic RPMSG GPIO support"
-> +	depends on OF && REMOTEPROC
-> +	select GPIOLIB_IRQCHIP
-> +	default REMOTEPROC
-> +	help
-> +	  Say yes here to support the generic GPIO functions over the RPMSG
-> +	  bus. Currently supported devices: i.MX7ULP, i.MX8ULP, i.MX8x, and
-> +	  i.MX9x.
-> +
-> +	  If unsure, say N.
+Each patch adds MODULE_LICENSE("GPL") and MODULE_DESCRIPTION() macros where
+missing, and changes the Kconfig option from bool to tristate. This allows
+these drivers to be properly packaged as vendor kernel modules while
+maintaining the existing built-in option.
 
-You've got GPIO_RPMSG defaulting to REMOTEPROC, which is also a
-dependency, so it's effectively the same as using 'default y'.
+Changes in v2:
+  * Squash MODULE_LICENSE and tristate changes into single patch per driver
+  * Extend fix to all MediaTek pinctrl drivers (32 total), not just MT8189
+  * Add Android GKI + vendor_dlkm context to cover letter
+  * Add MODULE_DESCRIPTION() where it was missing
+  * Add Fixes: tags referencing the original commits that added each driver
 
-But then you've got "If unsure, say N" in the help text. Usually this is
-used when the default is N.
+Justin Yeh (32):
+  pinctrl: mediatek: mt8189: Enable module build support
+  pinctrl: mediatek: mt6878: Enable module build support
+  pinctrl: mediatek: mt6893: Enable module build support
+  pinctrl: mediatek: mt7622: Enable module build support
+  pinctrl: mediatek: mt7981: Enable module build support
+  pinctrl: mediatek: mt7986: Enable module build support
+  pinctrl: mediatek: mt7988: Enable module build support
+  pinctrl: mediatek: mt8167: Enable module build support
+  pinctrl: mediatek: mt8173: Enable module build support
+  pinctrl: mediatek: mt8183: Enable module build support
+  pinctrl: mediatek: mt8186: Enable module build support
+  pinctrl: mediatek: mt8188: Enable module build support
+  pinctrl: mediatek: mt8192: Enable module build support
+  pinctrl: mediatek: mt8195: Enable module build support
+  pinctrl: mediatek: mt8196: Enable module build support
+  pinctrl: mediatek: mt8365: Enable module build support
+  pinctrl: mediatek: mt8516: Enable module build support
+  pinctrl: mediatek: mt2701: Enable module build support
+  pinctrl: mediatek: mt7623: Enable module build support
+  pinctrl: mediatek: mt7629: Enable module build support
+  pinctrl: mediatek: mt8135: Enable module build support
+  pinctrl: mediatek: mt8127: Enable module build support
+  pinctrl: mediatek: mt7620: Enable module build support
+  pinctrl: mediatek: mt7621: Enable module build support
+  pinctrl: mediatek: mt76x8: Enable module build support
+  pinctrl: mediatek: rt2880: Enable module build support
+  pinctrl: mediatek: rt305x: Enable module build support
+  pinctrl: mediatek: rt3883: Enable module build support
+  pinctrl: mediatek: mt6397: Enable module build support
+  pinctrl: mediatek: mt2712: Enable module build support
+  pinctrl: mediatek: mt6795: Enable module build support
+  pinctrl: mediatek: mt6797: Enable module build support
 
-- Julian Braha
+ drivers/pinctrl/mediatek/Kconfig          | 64 +++++++++++------------
+ drivers/pinctrl/mediatek/pinctrl-mt2701.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt2712.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt6397.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt6795.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt6797.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt6878.c |  1 +
+ drivers/pinctrl/mediatek/pinctrl-mt6893.c |  1 +
+ drivers/pinctrl/mediatek/pinctrl-mt7620.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt7621.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt7622.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt7623.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt7629.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt76x8.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt7981.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt7986.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt7988.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt8127.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt8135.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt8167.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt8173.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt8183.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt8186.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt8188.c |  1 +
+ drivers/pinctrl/mediatek/pinctrl-mt8189.c |  1 +
+ drivers/pinctrl/mediatek/pinctrl-mt8192.c |  1 +
+ drivers/pinctrl/mediatek/pinctrl-mt8195.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-mt8196.c |  1 +
+ drivers/pinctrl/mediatek/pinctrl-mt8365.c |  1 +
+ drivers/pinctrl/mediatek/pinctrl-mt8516.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-rt2880.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-rt305x.c |  3 ++
+ drivers/pinctrl/mediatek/pinctrl-rt3883.c |  3 ++
+ 33 files changed, 114 insertions(+), 32 deletions(-)
+
+-- 
+2.45.2
+
