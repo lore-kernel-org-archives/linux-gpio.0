@@ -1,30 +1,30 @@
 Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED62B3033C6;
-	Fri, 26 Jun 2026 01:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E7330BF67;
+	Fri, 26 Jun 2026 01:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782437573; cv=none; b=NWJaQBydkFtHCz0Xjf1c3HZZFNxD/mBTI4X26xPnj/R4/Q8PfZN7RV/x/SUTYtigA5h+i3R/L/nyTYJaP/5boRag2FAY7hybvJDinpSaAshB8zWACaDBBNftuQ+DgEMleueQ49xAQ7FcvOE7E6EkbDvCi/eROceVCd8asnKIcdI=
+	t=1782437573; cv=none; b=c97nn1s5KKy3poVbXvuSBffDG80dpkrtsSZlsOSTScDYEGfhb2WIsgLKHFmUg9ECwlTmLTVSGLWRcE4E4L0ZOac5fomx7EML6z1CvBzpy+8vaoU+K0mI+xdlSv9qVePvt1VvOTHqofMgkeAwH8gA1sQO1ZoEHUT3foT4LmTEmRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1782437573; c=relaxed/simple;
-	bh=Dy9ewNNkZJJyAANzb6w7+y4+6CVJGI8wrG1oypUy6+Q=;
+	bh=QwpBfTG9zKb4PdR9/47OuA8pL9aqf0jO5ejPC+ur0+w=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p+9xVf6FnTSclc08QnERMDoqrlCEpmU3gG/e2qnaGwIrRhUf1Scp8IMPNySrBTsZ0SurdYgGfeY8guZnLsKlJ8g5+QsEohU1LWB5eOaO3FZGraf2Z0v1GLL7BbVxqSmKjYKh/a3VIno4FHCQQ+9mzUt1M6uO7ezbohDsIGwsAsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=l4OyxZaY; arc=none smtp.client-ip=60.244.123.138
+	 MIME-Version:Content-Type; b=XdXOAUTbnitVrHCDG3rhrFEtHCEjxL4AWdENud940vRQ1nxmPncn46D13gxfaDR8E8FWpbM1xNfBf5A2O75UuvpY1KsnHdCWzkn8/tqhDJYJk4NzZuqXiDT1VEPpJHLCq2dWbLiQyrFGpxt72TnWlHVD01bph5zgtRGOOt9JrF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=EIN1weKD; arc=none smtp.client-ip=60.244.123.138
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="l4OyxZaY"
-X-UUID: ede483e270fe11f1b1788b6acf885367-20260626
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="EIN1weKD"
+X-UUID: ec0399aa70fe11f1b1788b6acf885367-20260626
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=L0cqa7Gw7fTKkzicFRMFC+aNduU2fBc2Ea6mYXwQXHE=;
-	b=l4OyxZaYk1Pq3IuNRBO5PDfTvlugU/t4uldPdL6jIx1cYhIvPthK8L6y7VimsFFZ1PaFGxDcH75tf1drRwT+biZxNcrNVq9JUmQD7g3rM6gHcC2R83UFXSnXR50ogCEUnbBbMDzuJJLeQv+lWIwJSWmc6n6MCpLHnPCfcG9UMKU=;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Ld9Gd51wxokxPcLKAVROr1Uhnd5+N3AuT5D1O29Za3s=;
+	b=EIN1weKDZfe+m3dgy8readn4yTkZwSSrSvxyrUXflTi081rl6+vrOwAPh4dguZzRyDWIK7rLDx7wP9gXK7WkqX8HafuRg6eiosxqnIGhSGp49Uf+/q4M2NV2L/z7I4FCM4X8W2SQ1n46ljkZJv2U9W10oNd8bVjWfVMOwgfSOAY=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.17,REQID:52e46bf2-b0fd-4430-933b-c2eb7cb2150e,IP:0,U
+X-CID-O-INFO: VERSION:1.3.17,REQID:d5dd54ed-05c8-4523-83c2-bf94268fc003,IP:0,U
 	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
 	release,TS:0
-X-CID-META: VersionHash:d497b38,CLOUDID:3fe1bc53-4902-453d-ab3a-e0854d5c03df,B
+X-CID-META: VersionHash:d497b38,CLOUDID:37f61fee-45e6-4692-a476-3f71842ee83b,B
 	ulkID:nil,BulkQuantity:0,SF:81|82|102|136|836|865|888|898,TC:-5,Content:0|
 	15|50,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:-1,COL:0,OSI:0
 	,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
@@ -32,18 +32,18 @@ X-CID-BVR: 2,SSN|SDN
 X-CID-BAS: 2,SSN|SDN,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR
 X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: ede483e270fe11f1b1788b6acf885367-20260626
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+X-UUID: ec0399aa70fe11f1b1788b6acf885367-20260626
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
 	(envelope-from <justin.yeh@mediatek.com>)
 	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1919528985; Fri, 26 Jun 2026 09:32:44 +0800
+	with ESMTP id 1150101727; Fri, 26 Jun 2026 09:32:40 +0800
 Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Fri, 26 Jun 2026 09:32:42 +0800
+ 15.2.2562.29; Fri, 26 Jun 2026 09:32:40 +0800
 Received: from mtksitap99.mediatek.inc (10.233.130.16) by
  mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.2562.29 via Frontend Transport; Fri, 26 Jun 2026 09:32:42 +0800
+ 15.2.2562.29 via Frontend Transport; Fri, 26 Jun 2026 09:32:40 +0800
 From: Justin Yeh <justin.yeh@mediatek.com>
 To: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linusw@kernel.org>,
 	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
@@ -52,9 +52,9 @@ CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
 	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	Justin Yeh <justin.yeh@mediatek.com>
-Subject: [PATCH v2 31/32] pinctrl: mediatek: mt6795: Enable module build support
-Date: Fri, 26 Jun 2026 09:31:57 +0800
-Message-ID: <20260626013217.2373808-32-justin.yeh@mediatek.com>
+Subject: [PATCH v2 12/32] pinctrl: mediatek: mt8188: Enable module build support
+Date: Fri, 26 Jun 2026 09:31:38 +0800
+Message-ID: <20260626013217.2373808-13-justin.yeh@mediatek.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20260626013217.2373808-1-justin.yeh@mediatek.com>
 References: <20260626013217.2373808-1-justin.yeh@mediatek.com>
@@ -74,36 +74,34 @@ bool to tristate to allow building as a loadable kernel module.
 This is required for Android GKI + vendor_dlkm deployments where
 vendor-specific drivers must be kept separate from the GKI vmlinux.
 
-Fixes: 2e1ccc6a75cc ("pinctrl: mediatek: add mt6795 support")
+Fixes: 11b918d90aeb ("pinctrl: mediatek: add mt8188 driver")
 Signed-off-by: Justin Yeh <justin.yeh@mediatek.com>
 ---
  drivers/pinctrl/mediatek/Kconfig          | 2 +-
- drivers/pinctrl/mediatek/pinctrl-mt6795.c | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/pinctrl/mediatek/pinctrl-mt8188.c | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index 85639e0a1460..b0989157b1c8 100644
+index 2a4c5d5555dd..c62024d75593 100644
 --- a/drivers/pinctrl/mediatek/Kconfig
 +++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -168,7 +168,7 @@ config PINCTRL_MT6779
- 	  map specific eint which doesn't have real gpio pin.
+@@ -258,7 +258,7 @@ config PINCTRL_MT8186
+ 	select PINCTRL_MTK_PARIS
  
- config PINCTRL_MT6795
--	bool "MediaTek MT6795 pin control"
-+	tristate "MediaTek MT6795 pin control"
+ config PINCTRL_MT8188
+-	bool "MediaTek MT8188 pin control"
++	tristate "MediaTek MT8188 pin control"
  	depends on OF
  	depends on ARM64 || COMPILE_TEST
  	default ARM64 && ARCH_MEDIATEK
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6795.c b/drivers/pinctrl/mediatek/pinctrl-mt6795.c
-index ee3ae3d2fa7e..7729dbb96f10 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt6795.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt6795.c
-@@ -622,3 +622,6 @@ static int __init mtk_pinctrl_init(void)
- 	return platform_driver_register(&mt6795_pinctrl_driver);
- }
- arch_initcall(mtk_pinctrl_init);
-+
-+MODULE_DESCRIPTION("MediaTek MT6795 Pinctrl Driver");
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8188.c b/drivers/pinctrl/mediatek/pinctrl-mt8188.c
+index 3975e99d9cf4..cc55c28671f8 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt8188.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt8188.c
+@@ -1671,3 +1671,4 @@ static int __init mt8188_pinctrl_init(void)
+ arch_initcall(mt8188_pinctrl_init);
+ 
+ MODULE_DESCRIPTION("MediaTek MT8188 Pinctrl Driver");
 +MODULE_LICENSE("GPL");
 -- 
 2.45.2
