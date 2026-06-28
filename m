@@ -1,96 +1,99 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com [74.125.82.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EC732ED5C
-	for <linux-gpio@vger.kernel.org>; Sat, 27 Jun 2026 16:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A8E3101A7
+	for <linux-gpio@vger.kernel.org>; Sun, 28 Jun 2026 05:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782579271; cv=none; b=tjGNNyT+vYNYFb7OQqEmyUJrz75NRqIM/kBsem3PfwUBVIi4ZgbZLICALp1rl/85EwvwDgtoC8xfgXvBATWPqNAAPDBgNs1bjAYyes+c91IHBExXrP/n2yWmlWJjhabIAkAkY7hHsQgHow3H76BtKqaaE+LOzZnOCPAkolWWp1c=
+	t=1782625377; cv=none; b=t22vbLWD12712dfa1P3tyoHqK7/u5upuZnuPufwNmSpTit7WaeQJ8EKv6KjCGp2++ACsVevCz4HaCqw/9KV+572xqWBZDlRaFfAmauKgDaxZb1XRY5ts1KTdMjTVKYzQaZKdkNH5IWRTe+ljU1cK3wWV/EX2KG7Yb18Beno1l9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782579271; c=relaxed/simple;
-	bh=zOvpCGxnOBwIn7/1Q6QthKUpouyCF7ymszHTTQz3WRM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=iCvOTtP865AVjT5B8v8h03sm/4ZVyzHk/be5zVjnTWOeorZsgMBn3XAC0ogmnI5euyUWE512mtlDyukvYB/0smGe7i2ofl70D7a218tdUvHAPK+Z0Hsi1xxQgpbAaqv79Ps0MWdj/wMP7/bnkLKJbgOfoXM5fCHosuWJbBe/a6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CgzCXiNb; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1782625377; c=relaxed/simple;
+	bh=wEU6RlzMmPj3vwHyeVijBCf2GYxX5FBc6kTWl/OvW7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OL8CMJxvV1OkVX6N1VgKJrgLv/Bdm98xMymKQyIKwRn8xZEW6GIv9J4rYG+J/lX4CK7TisXQsGoEm0Ta9xLV8fH3V582YD2uJOEAQfZJWDO9i/xAY5eJ0AFnZs9KfpVw+bTaURN716CbS2Sd1309yKsDk7EMfO62WAn9fQD2O5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=emyEE5Re; arc=none smtp.client-ip=74.125.82.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CgzCXiNb"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20260627165421epoutp04f8f6379eba510908d15b2b2692dd1303~8-mTNcNm_1358713587epoutp04c
-	for <linux-gpio@vger.kernel.org>; Sat, 27 Jun 2026 16:54:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20260627165421epoutp04f8f6379eba510908d15b2b2692dd1303~8-mTNcNm_1358713587epoutp04c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1782579261;
-	bh=iQEM45cUDwzTclb54MpqDmkDTdasaCWNzzB5ndoZ5hw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CgzCXiNbBY7afAs9Rz6wzTErLB0EPUPnsSphfdPBetip8v8lvNbE9CJaDA7Nsrri1
-	 zTnwcDMwoDzdoVXFKQOjpbXJZkgDk7NCrFa8RzhPgmHhDHO2KfKbr/24xQQFu5LvCo
-	 0fj5noaISbLE3dIZ5JYzLtnLpeBCken7ZTr+VBBk=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20260627165420epcas5p2a98425aae406907f36200cb0b2fbc36d~8-mR9BoM31145411454epcas5p2c;
-	Sat, 27 Jun 2026 16:54:20 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.91]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4gndtM187Fz3hhT3; Sat, 27 Jun
-	2026 16:54:19 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20260627165418epcas5p1186eea5f8dc54d16a88b8298f6cfcf61~8-mQkK3DH2446024460epcas5p1b;
-	Sat, 27 Jun 2026 16:54:18 +0000 (GMT)
-Received: from bose.samsungds.net (unknown [107.108.83.9]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20260627165417epsmtip1bbc6f887bbb317ca61edaeaa30afe067~8-mPGgazx2364623646epsmtip1K;
-	Sat, 27 Jun 2026 16:54:16 +0000 (GMT)
-From: Alim Akhtar <alim.akhtar@samsung.com>
-To: krzk@kernel.org, peter.griffin@linaro.org, robh@kernel.org,
-	conor+dt@kernel.org, linusw@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	hajun.sung@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH v3 4/6] dt-bindings: pinctrl: samsung: Add
- exynos8855-wakeup-eint compatible
-Date: Sat, 27 Jun 2026 22:42:26 +0530
-Message-Id: <20260627171228.2687857-5-alim.akhtar@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260627171228.2687857-1-alim.akhtar@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="emyEE5Re"
+Received: by mail-dy1-f175.google.com with SMTP id 5a478bee46e88-30bbe98c3f0so5866189eec.0
+        for <linux-gpio@vger.kernel.org>; Sat, 27 Jun 2026 22:42:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1782625376; x=1783230176; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=n4q3s0iq058f2mfiICzcmbq2srXPnTFy8iFai1LrYro=;
+        b=emyEE5ReDRBJvCqb1JBjsjOE9F/EItV6CGiP4YZ/6B7ET8b1lPG90L1/DJB7WRX42B
+         qlP5yMZ8+WbGp/ilcS6bUjxSUClD7Wt9WHOzXlKdzCzzVNOX7ea3ANSfB6/yzBmCzyRt
+         fRpKZvJ9fS3BSVxB1N7xpd5pgn/EPrBAoNe5gJ/0BEXyFczpwNtouDbJaZs7thPh4Vmm
+         xwXVeL6X2XeF1fhCMEI83MbRqhrEMe39LLkb88xHpUYz97v6+b6ATM95gENiG8PZK5il
+         JXQg/r/hxH4Y7UkPN7XWE2L3rx3jmxaz1adlcr+h9BxWX5YfwPYE1Guo2/8Nde32JdXj
+         bCjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782625376; x=1783230176;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n4q3s0iq058f2mfiICzcmbq2srXPnTFy8iFai1LrYro=;
+        b=ke+Pqc6Y42LYX7siAoMLOXTigqHTytklwY4wFv3NUM9tAjs9dyns44K+of9CvQhyOv
+         Qfo8ENcJEdgnXwjQiN1HPp+sX+b0K7AlpohPGWYeQxJ0AmFZeb8H6bkOTk6Y4Cnho7od
+         ONXFj/GMJQoETZ2Ox4sAqhXkYqYVgIVPtiZWFIU6SlKONjnRYKqEZQ1uDTe4M0JzsoLY
+         Lr2V4VSaG0hwST7O8m3rgxgqbX0wKxDLCwWdjmlpWJVs4xsSVRLOhYT+TKJNZpDm4dT7
+         tmYHlIfp4slIUOs7AgAc9XPWGfClXIz5hkYbF+Su06PCT4qokfloqv/T5bAnJ7516hmB
+         8JaA==
+X-Forwarded-Encrypted: i=1; AHgh+RrHDFktbv6zMcDOaMzIenYgYLtsJYC62ly4hX/jF7pvHhR05u8igpBiRRdQSXVsyh5HAlEA5c7AKUpb@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCUSQoSx4dwfQ/9/VaoQafv3NQVZQ62TzXv6lgChdwUEZ+Da5n
+	zJFz2L7cj//6Qy3CCXQpffdROBpnNGSUXGs6WZpMvS1Dp3E3Bh6KyGe5
+X-Gm-Gg: AfdE7cnx7Z+u6LXuDJ89GB/rYNJYoOyAJj7ta3mWhSnEBxiEm7XmXeL1EUdGIHmRYzP
+	0VFA32opsjvzSKlAOjArHe2D1Kcc9uv2Pg8CctkDph104xw/uRUQnak3k+YGVqmWHq8D5ZIe9Wk
+	MYVbe5ywMjp+y7Y44YK4nchNIYwNyPFL5+OAYELEUk7LyJWg/eGvDJQ9trskEx/BWqM/8iXVlOy
+	b0lDuT21xbVa04HaHDcg7Xp8vAkPwqhR+E6KX3jW2jrt6jm/n+fijncqyO6vZNVDH8UVzehRsnr
+	L1tUxGcc5I8d6LneMfsr4NR9jcC92ykFwNWqV4b5M6dtTVv+Tnf0mtjgn4UkvlrpdjK2IRyoP5J
+	lLZU0ZmdhtJJ1diEZXn+laotFQ2hOKOIFWbCk4rLJBwpximHoAC6g2XjXsNbJjpC7sHuKnY7D96
+	J+v0DjfYn/B1lmdFPJ+7o+vOAD1LUXxyRB59lIi6uSTtvmuHUmoq9PRg==
+X-Received: by 2002:a05:7300:8b15:b0:304:e72a:d4d9 with SMTP id 5a478bee46e88-30c84d0d612mr12847847eec.19.1782625375757;
+        Sat, 27 Jun 2026 22:42:55 -0700 (PDT)
+Received: from google.com ([2a00:79e0:2ebe:8:977e:876b:dc75:9723])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30c7c570b7bsm32451677eec.12.2026.06.27.22.42.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Jun 2026 22:42:52 -0700 (PDT)
+Date: Sat, 27 Jun 2026 22:42:50 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Tj <tj.iam.tj@proton.me>, 
+	"Enrico Weigelt, metux IT consult" <info@metux.net>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Walleij <linusw@kernel.org>
+Subject: Re: [PATCH] gpio: amd-fch: switch to guard() notation
+Message-ID: <akCz48E0i6jqzmiC@google.com>
+References: <aZarCgDvMUta4Viq@google.com>
+ <CAD++jL=tK7w=vpCN9JBOmnqR99cX=rG5QKqqBKyRdztg9kSy1w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20260627165418epcas5p1186eea5f8dc54d16a88b8298f6cfcf61
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-543,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20260627165418epcas5p1186eea5f8dc54d16a88b8298f6cfcf61
-References: <20260627171228.2687857-1-alim.akhtar@samsung.com>
-	<CGME20260627165418epcas5p1186eea5f8dc54d16a88b8298f6cfcf61@epcas5p1.samsung.com>
+In-Reply-To: <CAD++jL=tK7w=vpCN9JBOmnqR99cX=rG5QKqqBKyRdztg9kSy1w@mail.gmail.com>
 
-Add a dedicated compatible for the exynos8855-wakeup-eint node, which
-is compatible with Exynos7 implementation.
+On Thu, Feb 19, 2026 at 06:26:25PM +0100, Linus Walleij wrote:
+> On Thu, Feb 19, 2026 at 7:46 AM Dmitry Torokhov
+> <dmitry.torokhov@gmail.com> wrote:
+> 
+> > guard() is more concise and ensures that lock is released at the end of
+> > the scope.
+> >
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> 
+> That looks right!
+> Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- .../bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml       | 1 +
- 1 file changed, 1 insertion(+)
+Bartosz, do you need me to resubmit?
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
-index 2b88f25e80a6..802911e23aff 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung,pinctrl-wakeup-interrupt.yaml
-@@ -41,6 +41,7 @@ properties:
-               - samsung,exynos7870-wakeup-eint
-               - samsung,exynos7885-wakeup-eint
-               - samsung,exynos850-wakeup-eint
-+              - samsung,exynos8855-wakeup-eint
-               - samsung,exynos8890-wakeup-eint
-               - samsung,exynos8895-wakeup-eint
-           - const: samsung,exynos7-wakeup-eint
+Thanks.
+
 -- 
-2.34.1
-
+Dmitry
