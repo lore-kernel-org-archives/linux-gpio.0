@@ -1,118 +1,91 @@
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC46374E41;
-	Mon, 29 Jun 2026 14:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12ED4377EA9;
+	Mon, 29 Jun 2026 14:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782742057; cv=none; b=NQfxLHn1yAQBFMf/hh2V3yydHDQadi73pHYDoapOlZNG/tTCIaK72mPX6iMxXW71ykVsiyJQw85Ai5QLHjRbrimiOPBKO4tf5adq8cij31PO5bIl3nXrp9qqm8vur8odN/wzTTpMWGqfW8W2vSWuPB/0BTi93yj2JPjD6FdcRS8=
+	t=1782742149; cv=none; b=ZkwUyBhW5i/JO/LLbzyF73rm0KWbD8kzJ4buUfzfN+GOkuGaeH3um18l6xGBj5Eaj0YsAQPnp46lkKadF+7c3EJjR8OHr9Qm2OcOpNzQ4EkFX+EyGUP1fo7n5Qc6tf4OP4msVppJr+qoFUataiiP9Vam+/85rapgfy3CQZvhC18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782742057; c=relaxed/simple;
-	bh=eJJqdpWhIb8dSg0ENNfRnI/GvwL/7vreEYrgL2mouk0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=EE4RzPlZR9Ay34urRZWovOaKtV0agC0LNTxzYdhJuPzlxTiIzObi3JqmEFI4mDRHkxuJlKjMPE8MaQs/kf1a6d+Mlf5DGYkq1p+AJiX1W6plvpisdkBXA9UjIeCZLbBZ8X97jXmGuL9jiela1zxUTKiVv3H2jgd5KnpGOLXBZJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lPoIgIPn; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lPoIgIPn"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 2B783C5145F;
-	Mon, 29 Jun 2026 14:07:36 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 098725FF96;
-	Mon, 29 Jun 2026 14:07:26 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E2E2E106F1853;
-	Mon, 29 Jun 2026 16:07:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1782742045; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=hA7qKBZwTBum/9Ky5FOFj95Riz4OEVcRaDc4KyeAR2c=;
-	b=lPoIgIPnnZJZrN9cjgVWhw11mk9E6uLfELG6e8Ov0Ktj68CedhTo4FUHbHk/gUjvcg6pUm
-	93Zwf5TndypzLeglig4kBOvmm6/hy2KeEtbWgXCC/Vh2AqdFEYlOq3nggt9/E2xLudBZJN
-	ZdG9pf/lZ/zEeAfVLaG0hpqQTCdk0G5+KWh1tFS155BKRBGaLVQ4DpHxWKfn6hcKsTXbV5
-	lcxNZx/iFocBzfrEHnCU8xFnIi59Kyy3HJTXs4q4yroKoaCjfBWw+AUyxvP8E+jxSdhZmD
-	63oHUXz+Cy3zh3pGnhACj7Qj6nr2TgeNwfuLotBCAVNaI3UqNDFEx66ZUzUriQ==
-From: Paul Louvel <paul.louvel@bootlin.com>
-Date: Mon, 29 Jun 2026 16:07:02 +0200
-Subject: [PATCH] gpio-f7188x: Add support for NCT6126D version B
+	s=arc-20240116; t=1782742149; c=relaxed/simple;
+	bh=g9dFPNs9RCiJ30PbQ83xQiLIkKE/aoKc7Ch+A3Ps5Fg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ha9GhqP0Hgtd3pKbOvoi+quZWFtEDEc2ohwpM+m0EjfVM2wX/2wbZqb3aRk9ixfkuQz83jzB7WjN02Dys6TON4NGH9mqjmLokOYX5Ri/BDNesjO3v6ECXv9DvCUmZPzU44V5NIUekgTUZ6r8G7UlxYg/s+XHXueN2Pdjrq3RIME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=212.18.0.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.9])
+	by mail-out.m-online.net (Postfix) with ESMTP id 4gpnxf56FLz1r5hc;
+	Mon, 29 Jun 2026 16:01:10 +0200 (CEST)
+Received: from frontend03.mail.m-online.net (unknown [192.168.6.182])
+	by mail-out.m-online.net (Postfix) with ESMTP id 4gpnxc5SYXz1r5hL;
+	Mon, 29 Jun 2026 16:01:08 +0200 (CEST)
+Received: from localhost (dynscan3.mnet-online.de [192.168.6.87])
+	by mail.m-online.net (Postfix) with ESMTP id 4gpnxb4V3wz1qqlS;
+	Mon, 29 Jun 2026 16:01:07 +0200 (CEST)
+X-Virus-Scanned: amavis at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.6.182])
+ by localhost (dynscan3.mail.m-online.net [192.168.6.87]) (amavis, port 10024)
+ with ESMTP id 0SnzNWDJyvXI; Mon, 29 Jun 2026 16:01:01 +0200 (CEST)
+X-Auth-Info: MEDGnkGkok4HHiiAHx6Yp9YpyEe4vG/D2GYhM3WXSTA4/H/l6K4jcFYiosjPmxQG
+Received: from hawking (unknown [80.255.5.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.mnet-online.de (Postfix) with ESMTPSA;
+	Mon, 29 Jun 2026 16:01:01 +0200 (CEST)
+From: Andreas Schwab <schwab@linux-m68k.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-gpio@vger.kernel.org,  Arnd Bergmann <arnd@arndb.de>,  Bartosz
+ Golaszewski <brgl@kernel.org>,  Andrew Lunn <andrew@lunn.ch>,  Sebastian
+ Hesselbarth <sebastian.hesselbarth@gmail.com>,  Gregory Clement
+ <gregory.clement@bootlin.com>,  Frank Li <Frank.Li@nxp.com>,  Robert
+ Jarzmik <robert.jarzmik@free.fr>,  Krzysztof Kozlowski <krzk@kernel.org>,
+  Greg Ungerer <gerg@linux-m68k.org>,  Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>,  Hauke Mehrtens <hauke@hauke-m.de>,
+  =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>,  Yoshinori Sato
+ <ysato@users.sourceforge.jp>,
+  John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,  Linus Walleij
+ <linusw@kernel.org>,  Dmitry Torokhov <dmitry.torokhov@gmail.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Dominik
+ Brodowski <linux@dominikbrodowski.net>,  linux-kernel@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
+  patches@opensource.cirrus.com,  linux-m68k@lists.linux-m68k.org,
+  linux-mips@vger.kernel.org,  linux-sh@vger.kernel.org,
+  linux-input@vger.kernel.org,  linux-media@vger.kernel.org,
+  netdev@vger.kernel.org,  linux-sunxi@lists.linux.dev,
+  linux-phy@lists.infradead.org,  linux-rockchip@lists.infradead.org,
+  linux-sound@vger.kernel.org
+Subject: Re: [PATCH 00/13] treewide: replace linux/gpio.h
+In-Reply-To: <20260629132633.1300009-1-arnd@kernel.org> (Arnd Bergmann's
+	message of "Mon, 29 Jun 2026 15:26:20 +0200")
+References: <20260629132633.1300009-1-arnd@kernel.org>
+Date: Mon, 29 Jun 2026 16:01:00 +0200
+Message-ID: <mvmik71win7.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260629-gpio-f7188x-nct6126d-version-b-v1-1-a06226c02a2d@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXNQQ6DIBCF4auYWTuJ0HQKvYrpQmC00wUaUGNiv
- HtRl9/i/W+HzEk4w7vaIfEqWcZYoOoK/LeLA6OEYtCNpoa0xWGSEfuXMmbD6GdSmgKunM4hOuz
- Mw4cnkbHOQolMiXvZroP2czsv7sd+PqtwHH9EN33lggAAAA==
-X-Change-ID: 20260629-gpio-f7188x-nct6126d-version-b-a83cd56689b9
-To: Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, 
- Henning Schild <henning.schild@siemens.com>, 
- Simon Guinot <simon.guinot@sequanux.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, stable@vger.kernel.org, 
- Paul Louvel <paul.louvel@bootlin.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1782742043; l=1746;
- i=paul.louvel@bootlin.com; s=20260313; h=from:subject:message-id;
- bh=eJJqdpWhIb8dSg0ENNfRnI/GvwL/7vreEYrgL2mouk0=;
- b=8X2YJtcLB54HkwALYM3TTZfe3aJNCEA60EVo5wUxVlFwlS8HgqWH/33V35CB+kSa6LY1cjfcW
- fZpBgOOH4IiCJLtAvLfeXab7DVe9xR3PfTKcKEfm66UKurva+yCrhmX
-X-Developer-Key: i=paul.louvel@bootlin.com; a=ed25519;
- pk=eLW50NT18UAvUT5cAcYf88zNbBCZDLFXuptpyLVhVIU=
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain
 
-The Nuvoton NCT6126D Super-I/O is available in two hardware revisions.
-According to the manufacturer datasheet revision 2.4, version A reports
-chip ID 0xD283, while version B reports chip ID 0xD284.
+On Jun 29 2026, Arnd Bergmann wrote:
 
-The driver currently only recognizes only the version A ID. Version B
-only contains hardware fixes unrelated to the GPIO functionality, so it
-can be supported by simply adding its chip ID without any other driver
-changes.
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The linux/gpio.h header used to be the global definition for the gpio
+> interfaces, with 1100 users back in linux-3.17. In linux-7.2, only about
+> 130 of those remain, so this series cleans out the rest.
+>
+> In each subsystem, we can replace the header either with
+> linux/gpio/consumer.h for users of the modern gpio descriptor interface,
 
-Fixes: 3002b8642f01 ("gpio-f7188x: fix chip name and pin count on Nuvoton chip")
-Cc: stable@vger.kernel.org
+A few of them already used <linux/gpio/consumer.h>, and is duplicated
+now.
 
-Signed-off-by: Paul Louvel <paul.louvel@bootlin.com>
----
- drivers/gpio/gpio-f7188x.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-f7188x.c b/drivers/gpio/gpio-f7188x.c
-index 4d5b927ad70f..fb007b978729 100644
---- a/drivers/gpio/gpio-f7188x.c
-+++ b/drivers/gpio/gpio-f7188x.c
-@@ -48,7 +48,8 @@
- /*
-  * Nuvoton devices.
-  */
--#define SIO_NCT6126D_ID		0xD283  /* NCT6126D chipset ID */
-+#define SIO_NCT6126D_VER_A_ID		0xD283  /* NCT6126D version A chipset ID */
-+#define SIO_NCT6126D_VER_B_ID		0xD284  /* NCT6126D version B chipset ID */
- 
- #define SIO_LD_GPIO_NUVOTON	0x07	/* GPIO logical device */
- 
-@@ -564,7 +565,8 @@ static int __init f7188x_find(int addr, struct f7188x_sio *sio)
- 	case SIO_F81865_ID:
- 		sio->type = f81865;
- 		break;
--	case SIO_NCT6126D_ID:
-+	case SIO_NCT6126D_VER_A_ID:
-+	case SIO_NCT6126D_VER_B_ID:
- 		sio->device = SIO_LD_GPIO_NUVOTON;
- 		sio->type = nct6126d;
- 		break;
-
----
-base-commit: 028ef9c96e96197026887c0f092424679298aae8
-change-id: 20260629-gpio-f7188x-nct6126d-version-b-a83cd56689b9
-
-Best regards,
---  
-Paul Louvel, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+-- 
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
