@@ -1,49 +1,49 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7A043C07D;
-	Mon, 29 Jun 2026 15:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D3143C05F;
+	Mon, 29 Jun 2026 15:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782748154; cv=none; b=RTm6o9wokvPeE3rDQDYXQEKeoh9CX7fYiRl72CKBOEcWEXtzF/l57zxAtzGMhz3zkozt4wpwULPM79IO71goTGAcV4km8Utybt4iJ7wizCkKpPFM+SPQsxZS/KxmCqwmb1eKK4FGnjk1PKGY6+g69MWen0psV8BpZJwriYnlNe8=
+	t=1782748704; cv=none; b=Q2KWWPKCUEvA28wBCKuQNRpORNeWDGPjvoxBUGpZx4k0wgXjzQU7KJevf3K66CTpn2Rm/EzQ/RvR/bXrnyDEE1OyQEz8GF3A28yKjHRZKZPvSZfVj6i8YT0zCVupqvobh1PWrERPUDtowKs5YVRhlKqz04Qo+6vaG6MGFa3kW90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782748154; c=relaxed/simple;
-	bh=Ag/eJAqyGGN2jk5s2m6mqJmP8X5lDT8ty8B5rzYFAzk=;
+	s=arc-20240116; t=1782748704; c=relaxed/simple;
+	bh=6KGEFAPBIUveS9Bm7GjYL9PASDK/Ym91e/0ppgM5eJg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p44q5eyIcsqR8aZRAHZmvm5q9lJXnSf+pYhKp8Tp6FrpxxrWrshLpijFW1WK9p8gtabP3Xyb1DskWgmk0jH/8+I/V1/h5MoQ+ORrS+Ja6Dr1nIsftIMazvUuWpGfnFGFryS2UqPYrG5SoPlm/A+CbqWeDs8cZI/9dO1s8N1oGp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d7uv2OAu; arc=none smtp.client-ip=198.175.65.12
+	 Content-Type:Content-Disposition:In-Reply-To; b=ik9Fdhn6n9xOAYTlpM/K+mfq9kkWJdizKc1fLNRfjXtTv7HCxADnD0FtPi4lj7T3U0CmyhF6ORT1fDseuj/HA0cmd9QFG5LpGscR9z6xCHO+vnQv77iZ+u6AjEpVYQqJmhmCs7Y053lvsdvEVhOjSFDu8gnNui1/qXsMwhd2VCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=goTAYLvT; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d7uv2OAu"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="goTAYLvT"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1782748154; x=1814284154;
+  t=1782748703; x=1814284703;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=Ag/eJAqyGGN2jk5s2m6mqJmP8X5lDT8ty8B5rzYFAzk=;
-  b=d7uv2OAu/LeiGU5p0gqNl3IXGjEOrvbE0mSjNSnLkKzK1eqTc72oERxB
-   kn4idgf+MqIsKi4QEsFc7LoKhq5vX08HcrP2SDUUgtIMk2AxHkM1w3cne
-   oQ4P1R5BqbKfJwmHcFtUZqX1ED7pIwWC5VXMgDcMPkDiD6UH+R2fMjYKF
-   Uea5M0Fe08Nc3YnBvICEeYcFzu+zkxMEPEYVuiGV02B6dKWerNs0HeC08
-   v+loXKxuH8tiKWfWZIbiUgsFa6xuFN70fWNNEtnJ12nw2o6rh6uU+aeRZ
-   7QpY5YSqfwjLCMej7eNlcYDvHVeOUrkOeeWVdbpOxmo9Eg1t1Rn/guvCK
+  bh=6KGEFAPBIUveS9Bm7GjYL9PASDK/Ym91e/0ppgM5eJg=;
+  b=goTAYLvTTnNWsxH9ZXjtMEEqgZ6gsFHcye4zWNh1G/rBwjOY9ngvHT/V
+   BHjs2Kja5Pi87XReTPkvf8JgzQlnnBYzUa9aGeJXkS0adtDDNwuQ3Glm0
+   brrbCAnCrootX4E6KX7oL2/vz1RPFzyGgEgePimTB1UZDhXqITSwNvNc2
+   B/HM+a/Fz1gK9QUBbzS3x40Zh8oJpgnp6TjufJAtD66OAAkeUbfgOI3HJ
+   f1bSFAQLbBusdleD0uv2RChW4AEqTqW6LXlhijD9OU60TcIhfMTOXP1L0
+   lnntOb9RM8tX1bLdEbBGJzPpg9Qnzmnislk0kqjQv2OLapjUAn93yeQKd
    w==;
-X-CSE-ConnectionGUID: q+4NgxrITQKIGNM1DLQGNQ==
-X-CSE-MsgGUID: 3x1S+t/rQimB8er04oY43Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11832"; a="94934703"
+X-CSE-ConnectionGUID: szqlGKgVSOibSZPkZNrB+w==
+X-CSE-MsgGUID: AEnXeWjoQU2BKYUL1diajw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11832"; a="83318640"
 X-IronPort-AV: E=Sophos;i="6.24,232,1774335600"; 
-   d="scan'208";a="94934703"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2026 08:49:13 -0700
-X-CSE-ConnectionGUID: O3ZfXutsRSmdIJ7hbEEtqg==
-X-CSE-MsgGUID: wti4M/4/SgWgrQDz+5m2yA==
+   d="scan'208";a="83318640"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2026 08:58:22 -0700
+X-CSE-ConnectionGUID: fpjnY+FrQxa8CCgxZbqjyw==
+X-CSE-MsgGUID: P0HZsrF6QIWQTHFaQDuBBQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.24,232,1774335600"; 
-   d="scan'208";a="249364328"
+   d="scan'208";a="248020780"
 Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.207])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2026 08:49:09 -0700
-Date: Mon, 29 Jun 2026 18:49:06 +0300
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2026 08:58:18 -0700
+Date: Mon, 29 Jun 2026 18:58:16 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Cc: Brendan Higgins <brendan.higgins@linux.dev>,
@@ -60,10 +60,11 @@ Cc: Brendan Higgins <brendan.higgins@linux.dev>,
 	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
 	kunit-dev@googlegroups.com, linux-acpi@vger.kernel.org,
 	driver-core@lists.linux.dev, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 3/5] software node: add kunit tests for fw_devlink support
-Message-ID: <akKT8q5TjkMkZkmB@ashevche-desk.local>
+Subject: Re: [PATCH 5/5] gpio: kunit: add test cases verifying swnode devlink
+ support
+Message-ID: <akKWGNpGmHjWYdfX@ashevche-desk.local>
 References: <20260629-swnode-fw-devlink-v1-0-b90058b41839@oss.qualcomm.com>
- <20260629-swnode-fw-devlink-v1-3-b90058b41839@oss.qualcomm.com>
+ <20260629-swnode-fw-devlink-v1-5-b90058b41839@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -72,222 +73,111 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260629-swnode-fw-devlink-v1-3-b90058b41839@oss.qualcomm.com>
+In-Reply-To: <20260629-swnode-fw-devlink-v1-5-b90058b41839@oss.qualcomm.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Jun 29, 2026 at 12:52:08PM +0200, Bartosz Golaszewski wrote:
-> Add a kunit test suite for fw_devlink support for software nodes.
+On Mon, Jun 29, 2026 at 12:52:10PM +0200, Bartosz Golaszewski wrote:
+> The software node fw_devlink support already has its own kunit suite, but
+> that verifies the fwnode links in isolation. Add GPIO tests that prove
+> the ordering works in a real-life use-case: a GPIO consumer that
+> references its provider via a software node.
 > 
-> Most cases call add_links() directly and inspect the resulting fwnode
-> supplier/consumer lists: a single reference, multiple references, a
-> reference to an unregistered node, a "remote-endpoint" reference and a
-> reference array. The last case is end-to-end - it registers real consumer
-> and supplier platform devices together with their drivers, adds the
-> consumer first and checks that fw_devlink defers its probe until the
-> supplier has been bound.
+> The first suite registers the provider's software node, adds the consumer
+> device first and checks that fw_devlink defers its probe until the
+> provider has been added and bound. The second covers the fallback:
+> with the provider's software node not yet registered no supplier link is
+> created, so the consumer probes, devm_gpiod_get() returns -EPROBE_DEFER
+> and the consumer only binds once the provider shows up.
+> 
+> While at it: the existing gpio_unbind_with_consumers() test keeps the
+> consumer bound while the provider goes away and then operates the orphaned
+> descriptor. With software nodes now being covered by fw_devlink that would
+> instead force-unbind the consumer along with the provider, so opt it out
+> by setting FWNODE_FLAG_LINKS_ADDED.
 
 ...
 
-> ---
->  drivers/base/test/Kconfig               |   5 +
->  drivers/base/test/Makefile              |   3 +
->  drivers/base/test/swnode-devlink-test.c | 336 ++++++++++++++++++++++++++++++++
++ cleanup.h // guard()()
++ err.h // IS_ERR()
 
-+ MAINTAINERS.
+>  #include <linux/platform_device.h>
+>  #include <linux/property.h>
 
-...
++ types.h // bool
 
-
->  CFLAGS_property-entry-test.o += $(DISABLE_STRUCTLEAK_PLUGIN)
-> +
-> +obj-$(CONFIG_DRIVER_SWNODE_KUNIT_TEST) += swnode-devlink-test.o
-> +CFLAGS_swnode-devlink-test.o += $(DISABLE_STRUCTLEAK_PLUGIN)
-
-Is it the case for this?
+> +#include <kunit/fwnode.h>
+>  #include <kunit/platform_device.h>
+>  #include <kunit/test.h>
 
 ...
 
-> +#include <linux/device.h>
-> +#include <linux/fwnode.h>
+> +	properties[1] = (struct property_entry){ };
 
-+ list.h
-
-> +#include <linux/platform_device.h>
-> +#include <linux/property.h>
-> +#include <linux/types.h>
-> +#include <linux/wait.h>
+Just zero the whole array at the definition time.
 
 ...
 
-> +static int swnode_count_suppliers(struct fwnode_handle *fwnode)
-> +{
-> +	struct fwnode_link *link;
-> +	int ret = 0;
+> +	pdevinfo = (struct platform_device_info){
 
-Why signed? Also it's not 'ret' semantically it's 'count'.
+It's better to have a space after ).
 
-> +	/*
-> +	 * The suppliers and consumers lists should typically only be accessed
-> +	 * with the fwnode_link_lock taken but it's private to the driver core.
-> +	 *
-> +	 * These are tests and at this point nobody should be modifying them so
-> +	 * let's just access the list.
-> +	 */
-> +	list_for_each_entry(link, &fwnode->suppliers, c_hook)
-> +		ret++;
-> +
-> +	return ret;
-> +}
-
-...
-
-> +/* A single reference creates exactly one supplier link, on both list ends. */
-> +static void swnode_devlink_test_single_ref(struct kunit *test)
-> +{
-> +	static const struct software_node supp_swnode = {
-> +		.name = "swnode-devlink-test-supplier"
-
-Keep trailing comma.
-
+> +		.name = GPIO_PROBE_ORDER_TEST_CONSUMER,
+> +		.id = PLATFORM_DEVID_NONE,
+> +		.data = &gpio_probe_order_pdata_template,
+> +		.size_data = sizeof(gpio_probe_order_pdata_template),
+> +		.properties = properties,
 > +	};
 
-> +
-
-Redundant blank line.
-
-> +	struct fwnode_handle *cons_fwnode, *supp_fwnode;
-> +	int ret;
-> +
-> +	const struct property_entry props[] = {
-> +		PROPERTY_ENTRY_REF("supplier", &supp_swnode),
-> +		{ }
-> +	};
-> +
-> +	supp_fwnode = kunit_software_node_register(test, &supp_swnode);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, supp_fwnode);
-> +
-> +	cons_fwnode = kunit_fwnode_create_software_node(test, props, NULL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cons_fwnode);
-> +
-> +	ret = fwnode_call_int_op(cons_fwnode, add_links);
-> +	KUNIT_EXPECT_EQ(test, ret, 0);
-> +
-> +	KUNIT_EXPECT_EQ(test, swnode_count_suppliers(cons_fwnode), 1);
-> +	KUNIT_EXPECT_TRUE(test, swnode_has_link(cons_fwnode, supp_fwnode));
-> +}
-
 ...
 
-> +/* Multiple distinct references create multiple supplier links. */
-> +static void swnode_devlink_test_multiple_refs(struct kunit *test)
-> +{
-> +	static const struct software_node supp1_swnode = {
-> +		.name = "swnode-devlink-test-supplier-1"
-
-Keep comma.
-
-> +	};
-> +	static const struct software_node supp2_swnode = {
-> +		.name = "swnode-devlink-test-supplier-2"
+> +	pdevinfo = (struct platform_device_info){
 
 Ditto.
 
-> +	};
-> +	static const struct software_node *supp_nodes[] = {
-> +		&supp1_swnode, &supp2_swnode, NULL
-
-Here it's fine.
-
+> +		.name = GPIO_TEST_PROVIDER,
+> +		.id = PLATFORM_DEVID_NONE,
+> +		.swnode = &gpio_test_provider_swnode,
 > +	};
 
-> +
+...
 
-Redundant blank line.
+> +struct gpio_probe_defer_pdata {
+> +	int probe_count;
 
-> +	const struct property_entry props[] = {
-> +		PROPERTY_ENTRY_REF("foo", &supp1_swnode),
-> +		PROPERTY_ENTRY_REF("bar", &supp2_swnode),
-> +		{ }
-> +	};
-> +
-> +	struct fwnode_handle *fwnode;
-> +	int ret;
-> +
-> +	ret = kunit_software_node_register_node_group(test, supp_nodes);
-> +	KUNIT_ASSERT_EQ(test, ret, 0);
-> +
-> +	fwnode = kunit_fwnode_create_software_node(test, props, NULL);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, fwnode);
-> +
-> +	ret = fwnode_call_int_op(fwnode, add_links);
-> +	KUNIT_EXPECT_EQ(test, ret, 0);
-> +
-> +	KUNIT_EXPECT_EQ(test, swnode_count_suppliers(fwnode), 2);
-> +	KUNIT_EXPECT_TRUE(test, swnode_has_link(fwnode, software_node_fwnode(&supp1_swnode)));
-> +	KUNIT_EXPECT_TRUE(test, swnode_has_link(fwnode, software_node_fwnode(&supp2_swnode)));
-> +}
+Why is this signed?
+
+> +	int gpio_err;
+> +};
 
 ...
 
-> +static void swnode_devlink_test_unregistered_ref(struct kunit *test)
-
-Same comments as per above.
-
-...
-
-> +static void swnode_devlink_test_remote_endpoint_excluded(struct kunit *test)
-
-Ditto.
-
-...
-
-> +static void swnode_devlink_test_ref_array(struct kunit *test)
-
-Ditto.
-
-...
-
-> +#define SWNODE_DEVLINK_TEST_TIMEOUT_MS	2000
-
-(2 * MSEC_PER_SEC) ?
-(will require time.h).
-
-...
-
-> +static int swnode_test_record_probe(struct platform_device *pdev)
+> +static int gpio_probe_defer_consumer_probe(struct platform_device *pdev)
 > +{
-> +	struct swnode_test_probe_order *order = platform_get_drvdata(pdev);
-> +
-> +	if (order && order->count < ARRAY_SIZE(order->probed)) {
+> +	struct device *dev = &pdev->dev;
+> +	struct gpio_probe_defer_pdata *pdata = dev_get_platdata(dev);
+> +	struct gpio_desc *desc;
 
-+ array_size.h
+> +	pdata->probe_count++;
 
-> +		order->probed[order->count++] = dev_name(&pdev->dev);
-> +		wake_up_interruptible(&order->wq);
+Even in case of error?
+
+> +	desc = devm_gpiod_get(dev, "foo", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(desc)) {
+> +		pdata->gpio_err = PTR_ERR(desc);
+> +		return pdata->gpio_err;
 > +	}
+> +
+> +	pdata->gpio_err = 0;
 > +
 > +	return 0;
 > +}
 
 ...
 
-> +static void swnode_devlink_test_probe_order(struct kunit *test)
+> +static void gpio_swnode_probe_defer_on_unregistered(struct kunit *test)
 
-As per above comments.
-
-...
-
-> +static struct kunit_suite swnode_test_suite = {
-> +	.name = "software-node-links",
-> +	.test_cases = swnode_test_cases,
-> +};
-
-> +
-
-Redundant blank line.
-
-> +kunit_test_suite(swnode_test_suite);
+As per above.
 
 -- 
 With Best Regards,
