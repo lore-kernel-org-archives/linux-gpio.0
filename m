@@ -1,142 +1,161 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E3B3E1204
-	for <linux-gpio@vger.kernel.org>; Mon, 29 Jun 2026 08:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5F33C1973
+	for <linux-gpio@vger.kernel.org>; Mon, 29 Jun 2026 08:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782721663; cv=none; b=qxME9Fxa9v88DJIyqQ9Ue4sStb3steKQvaLlHVeumoGuXV143GtJoMsQz1rWQivSoXAm5CwGtuibfDNCqh6djX5FAzhq4mKKwmgTRZcDnZXn63pUIR8DMlAwXEAUfH4hJejG980VMMLhiQlKOFAZebf4fb7qFnJQo4WITgHagVQ=
+	t=1782722323; cv=none; b=pG/h4wCm+6oPs1JUerKzoyxw0oVReOT2FmTvSawi2Q/vMRPYi31Hyf5DqtH7xXJ2rUnKm/BmZEltRmQMnMEf3Bn86Ug3seyWMdMZx0w2htPT1Vg7HNQupOqDuXZ6YJj5FPR5V3EB75RIEyenDK3IFQBen/KNPt4npoih8HaAU/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782721663; c=relaxed/simple;
-	bh=vMQjBfC/OWZBgKjmyU+WQjdsNhMA4u2BaHAA+/UVx5Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fEh8hBAg1Nz9uYXEjOd9TS7o1f8suoLjbuoMxykp/W9b/dLOR5sV4lzziRGTbQGMgwIpQqg/kzyRV/Qp8py/H6gBVRij7FCpx56qmVihbFQKlJ7Hz72W3zG7APoJVbDf10mLnzNVofWlfaZROwJHJwLSjkr5aCKPdMKKRGZlUOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nFbug/Tn; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JYdb65nx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nFbug/Tn";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JYdb65nx"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65T7Dner2188693
-	for <linux-gpio@vger.kernel.org>; Mon, 29 Jun 2026 08:27:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YqMB/wKzwY9IgSZT0/cVTkXyIwT9eLN6vwNFsTqwevI=; b=nFbug/Tn5bf1KtJi
-	1FZ3vyWEI+yR0qPO6/OfZgHWLFSdzqEoeuBj1NcXrMDZEBz0xUiDA83Zx9CCLvXv
-	u0Kbv4+yhUmHGeEYWSWADNNoevlAkMSuH01Cp40PjYJqqwKszJoVEaA35rnoB6+d
-	x1mFsHkP757mI+nqK9emIxqurptIrniJoUitL+vBpJloUBdHo80OqxEWBP9YYHUX
-	vtO54DFZmL7ZEiYxC8FQ+bcQVC24VkUrFH+7IQaTGSkO3LzBynjm6wzO5MroQXJm
-	7bkrhOshKV1tQxPaEa7ADk4gCxuqQMh8Yx5QhcEPOJC8MJoctzqF2B6ZZUvX5mrR
-	miJdyg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f3m4tr9g0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Mon, 29 Jun 2026 08:27:41 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-51a86f8d945so16187641cf.3
-        for <linux-gpio@vger.kernel.org>; Mon, 29 Jun 2026 01:27:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1782721660; x=1783326460; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YqMB/wKzwY9IgSZT0/cVTkXyIwT9eLN6vwNFsTqwevI=;
-        b=JYdb65nxwb87cFACgRhAywBNiB/TJsrM5ONpb9HgeBWuEjSyZT1vb6chH2iN6I5D9R
-         //9rV0kDcOrgwaN7pHWX5NAXNhLH9BzvwYfJUtYjXiUV6Lm6f/nO7ILhsK5QSEfqfJZN
-         8zvEmB/jK6g49Cf614u69XUgi39FUifVjNUXePPRv5OhFdwf25TF+VBdNGBMnaOzRMkW
-         DePYTYCAGrF+XTPvfdtWJHrIRqs5GUaqR+PQgDfgIxb3uorpT8h7KBxJ3BGrd9PGc704
-         hRPYHPvFnrrpIZe0y0VqKQ31a+RIB7He4v0zz57g7YHwYugZbuwyugwb4HZxNqXFAgKC
-         p4bw==
+	s=arc-20240116; t=1782722323; c=relaxed/simple;
+	bh=S2YOaxtQdi6QG/AVmwNg6keinWl60WoxMa9xPYTPTjM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OvJYo96SdEjggMTienbsDHoagVg8KQnqlfSrvFwpNyCrwSl8AqWEwamgHMn5LVsYMWFLTed4dYdqz/M/W6GWtCnJOSrSp3zaIaap3Fzz2NfR1wbbukWol+ImcjN4c3BbFvdg6dqeSlhwOc392Gm7oiGsvn+X+7B4Hae/o82sn5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-7387ac7d28cso213459137.1
+        for <linux-gpio@vger.kernel.org>; Mon, 29 Jun 2026 01:38:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782721660; x=1783326460;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20251104; t=1782722320; x=1783327120;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=YqMB/wKzwY9IgSZT0/cVTkXyIwT9eLN6vwNFsTqwevI=;
-        b=Z/IFVvqde3q9c1Wq7g5UX1i3LqMEJn0BLgk5sIf3bnAB1ddmtyEYIZJFtkYcz8Yctk
-         R8IaTRpzvARzuTRRUTDnk9BA9seYzRbl3xbF87khjeqS2lfQk0DWui8jrDM6u/C3uLOU
-         bnEbK3ouilY/ORVkRTGkDojnbQz1Db3veNXWrsrmQQGVNZ3wso9MBu1MvE8+UjprcCkh
-         XkrikmQcmjNd7afBs3eyD2TJqOtj0Ada1kymY4iUCrAtHzXnkHOJg+RTQgD7zIr8hWyc
-         D2GHr+Je3nWASvNoLPzujpefQAGsmbieofyrQGdsMBcLUWzbwaZAi9RzyX81zf4UzyYW
-         /kVQ==
-X-Gm-Message-State: AOJu0YxXDV0KsY9k4XIuReKkbOZFx1uw7o0CbuXs4a4jMQhs7BP1KNHz
-	7NdYCopBzO0gxGCIlsjuYd51S0wuotQDRS611GG5I99jkS7UCMQzMeyVIETcmfftOgnW843XJG1
-	n8lFAFPaiWd/y95CpLKKBysx5Rye547i3Jb7l2oQGDPGhYTza9Q/MsP/HXRy2Q/3M
-X-Gm-Gg: AfdE7cm+oxH96jR//mbn270H4HZNRk1EnbVhhCb6UdSxVeZIWyxcnF6crCXcjzKteRE
-	OT2c5CMJPdihvGUzzVVKQXWSkJQBEo40DP/im5kXPdUM9Q/TllsKSr868XtmHCVjI5tqPSRwPp9
-	/P3QTQo/ljHXJt3J+I4SBrPmsNfVNPkPDFFVllfND3AhaQTPFCxe7lK/KLOn7d4qACO5vmHRoZi
-	QxhkTTv7TmAWvrpRtc2kRISxkaWU+hD1vIFJ/7WkYsucWG2oZNNrtasW0ml9IrZwZw9F+VJpBC2
-	KBuvgYVEe8v5YG2OxSAg6MosDpP/YCM7OyhJYtFtbQiGT127ZRyI7cY+9pfeHG1bFk9UHqERmOd
-	shVkbuocHqujox4A+lAHWDQE+8OtZl2qgYL0Df4k=
-X-Received: by 2002:a05:622a:38d:b0:51a:8bc9:2915 with SMTP id d75a77b69052e-51bf23b9434mr59375371cf.8.1782721660305;
-        Mon, 29 Jun 2026 01:27:40 -0700 (PDT)
-X-Received: by 2002:a05:622a:38d:b0:51a:8bc9:2915 with SMTP id d75a77b69052e-51bf23b9434mr59375271cf.8.1782721659946;
-        Mon, 29 Jun 2026 01:27:39 -0700 (PDT)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:4640:d76a:6126:9b65])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493b5e39fccsm10256745e9.1.2026.06.29.01.27.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2026 01:27:39 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] gpio: kunit: add test cases for software node hogs
-Date: Mon, 29 Jun 2026 10:27:37 +0200
-Message-ID: <178272165481.7578.1690490654683189623.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260610-gpio-kunit-swnode-hog-v1-0-37b3bf37096c@oss.qualcomm.com>
-References: <20260610-gpio-kunit-swnode-hog-v1-0-37b3bf37096c@oss.qualcomm.com>
+        bh=04ii8yk8L2rC2i4LLn0g5pk2Zun6f5/ExAFsCusWtvM=;
+        b=MeFz5wWJFKgHM+Eot9Ac8pqmn+fmXOicV52/OwkAfI3sNTetxWWaiiMtslzTWJCH69
+         1HGMkN3hXRgqcCdt8dHg3INq8VzZ2kUPYpSZIQZHPx34dWRZI2I2F7zpJfbTFJ5BCACY
+         1humYxb0gJ1AeLSpquVz3lJ4/xtIzJ1JcZIB6XlgV+TnioTBWuZMEgujx35uMUxjgHlI
+         X2wgSB4a06PU7Ppznm28T6mQo/Ig73dEJhekZ0t3+slVLSQ89LTTnxiC6tKb7Bn2L8PD
+         /Xa7BD8F27rZ1WfTVHdAyG7jgODp2+0FLZpnaJyhv9mtRY+IldKql3YtrbmCWk604CxL
+         fUyA==
+X-Forwarded-Encrypted: i=1; AHgh+Rqz2c1l2qXjJkYVr4DWePqgdtWoHXwBuy5jnyIqwaktcLsyH6ce5WGo/sk4nWSm7i9Tg5GCvVjvxtLx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFnk2VrWXEQUC2oAEZNnxWa/9jGvPz89Ltong8uPa/uOOeS7+C
+	yENf9t3/uAN/P4bP05R6lOlKEA76qm3EzLbtfMyx0uyel0dFmFQhCm9ADx1sGU2a
+X-Gm-Gg: AfdE7ckBSAbYgrHkmviJ4yVhs6gq9sFHBprULB43mK3RKFhxZOPppkEZRhBA2F1nIzb
+	gj/pKuy8X9o8Qlf0xlHRhPY7XzHedV1p1gH2u5H7mpBh/fGJ1WZ48ut0zFdae9nNuXupPt3fi4a
+	zM9yv1yjUTa9v25WOt5q60eTHbYJqbE0tKku3+gYpq4TCB7GEJBWhKJTMJGRu2NS1dD8HXbuQBE
+	W8iddWiwwNq+HUwsn7F74tuaTcavfQUjdebNyB4Ka74Cn9KPMTAYiPoAnrmIlhtGo8cJIgD1MMF
+	3p2chSDEt3V6KFk72PyRot5PWCzl56Rd4ZO3IRaTnZvg5D407UyhelxVwGMRio192oweqqkhqbU
+	C724OG/aI8J4yP37kdhIIy4BoahVpCDieL0qKrL9Pf1MTVYZ2NiWzymZUiUEHs5wsjI3lKVIg4J
+	znMAulXaadeD524DM6SllZfVWyKNUdOF5WmkXOi8koOGoRaV4YtyRRe3G8Ek/3
+X-Received: by 2002:a05:6102:5715:b0:6d3:aad5:6d17 with SMTP id ada2fe7eead31-734366c9316mr6326116137.19.1782722320519;
+        Mon, 29 Jun 2026 01:38:40 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-738f72b4cf2sm881297137.7.2026.06.29.01.38.39
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jun 2026 01:38:39 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-96758e83292so787651241.3
+        for <linux-gpio@vger.kernel.org>; Mon, 29 Jun 2026 01:38:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpH6HbT01jiZrXbblFMrWRW3McoykmJeuiYQpopvXSyV9zzVwhdARbRkqfwO4Wrokro5RjgtizNJRAK@vger.kernel.org
+X-Received: by 2002:a05:6102:d89:b0:632:88f6:d6ae with SMTP id
+ ada2fe7eead31-734367c8106mr6364001137.22.1782722318721; Mon, 29 Jun 2026
+ 01:38:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjI5MDA2NiBTYWx0ZWRfXwQ7F814UfluX
- Z/JeRcYomwuYWogyq6Syf22Fa2f3JET9eQynDcpU0dfscWLoTBHFBtoFYjpdo8l/xD7ORwnNjkl
- eXM8CCEkOMrhtOfrtV/pgJWHooec3PzR1XChwjr3V/eq0P3htf4L0+Mu4U6Q6pamKu5nBu8u3G3
- 3RrUMNMc5Gbq1louG32QBxzB+IO724yRfxUuUmDPhp2LsZFaglh/kgVWP1eZP9WheL0h8gs3ADE
- kX6ThlfRb+i5Fu/ww3Hv4/0QbTPq4NVoAqAuVRz73tJlT4hH27f9gZd5xeI6PqTrqE3HONYEjje
- N3zLPe7RPdTZS2ZsXeN9AuxGu6wcYkjnwj+Nm4BT9b27I6CMMk/3/ygLhY2lmIQkKOfZD3G/dp7
- 27hXgujSCA8l7wedfLRMvabxzd80GXaF1FVOsEKzUY+vUw9ZkPej+gXpVtusuqWcU1eppdM2lym
- Vxveeo67ceDk57QcH6g==
-X-Authority-Analysis: v=2.4 cv=R58z39RX c=1 sm=1 tr=0 ts=6a422c7d cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=ub2zVgbGV4pip65LcfAA:9 a=QEXdDO2ut3YA:10
- a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjI5MDA2NiBTYWx0ZWRfX52fj6+9WmNYf
- I+3PyhX85Fe8j16rZ5vR//v/9mmfEFJMUxB5a/aS2wH+BwAE6YLZY52FbGjeJan6ETqZMZHi6d0
- jY63fc6JD6VUdy1JLDEZoxEOyH84IdM=
-X-Proofpoint-ORIG-GUID: wsOgsmWjVfhvtYG_H3V4c_F9GuR08eaJ
-X-Proofpoint-GUID: wsOgsmWjVfhvtYG_H3V4c_F9GuR08eaJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-29_02,2026-06-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 suspectscore=0 phishscore=0 clxscore=1015
- adultscore=0 malwarescore=0 priorityscore=1501 bulkscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606290066
+References: <cover.1782389357.git.geert@linux-m68k.org> <3615eba18ff6a9351ecb11d9f5a0c86ef7b0e670.1782389357.git.geert@linux-m68k.org>
+ <tencent_58921190AD10FFE0501A235142CA54786B09@qq.com>
+In-Reply-To: <tencent_58921190AD10FFE0501A235142CA54786B09@qq.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 29 Jun 2026 10:38:27 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVWfYCZwgX1Wv00ZALpk4GNSSnEMwZjo1zWL=5_H3OyQQ@mail.gmail.com>
+X-Gm-Features: AVVi8CdpnUH32hqaglQnMeq_k6Bf99DAuybF4xeX8lRDAL_aN0eHjy9ZZecfqJ0
+Message-ID: <CAMuHMdVWfYCZwgX1Wv00ZALpk4GNSSnEMwZjo1zWL=5_H3OyQQ@mail.gmail.com>
+Subject: Re: [PATCH 4/9] MIPS: TXX9: rbtx4927: Use GPIO lookup table for TXx9 LEDs
+To: XIAO WU <xiaowu.417@qq.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-mips@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Xiao,
 
-On Wed, 10 Jun 2026 15:29:16 +0200, Bartosz Golaszewski wrote:
-> This series adds test cases for software node based GPIO hogs and also
-> contains a small code shrink in existing tests.
-> 
-> 
+On Sun, 28 Jun 2026 at 21:23, XIAO WU <xiaowu.417@qq.com> wrote:
+> I came across the Sashiko AI review of this series and reproduced the
+> use-after-free that it flagged in rbtx4927_gpioled_init() =E2=80=94 a KAS=
+AN
+> slab-use-after-free triggers when platform_device_add() fails on the
+> error path.
+>
+> The Sashiko review is at:
+> https://sashiko.dev/#/patchset/cover.1782389357.git.geert@linux-m68k.org
+>
+> In rbtx4927_gpioled_init() (arch/mips/txx9/rbtx4927/setup.c), this
+> patch introduces a GPIO lookup table that references the platform
+> device name.  The error path looks like:
+>
+> ```c
+> pdev =3D platform_device_alloc("leds-gpio", 0);
+> if (!pdev)
+>      return;
+> pdev->dev.platform_data =3D &pdata;
+> if (platform_device_add(pdev))
+>      platform_device_put(pdev);       // frees pdev on error!
+> rbtx4927_gpioled_table.dev_id =3D dev_name(&pdev->dev);  // UAF!
+> ```
+>
+> If platform_device_add() fails (e.g., because a device with the same
+> name already exists in the platform bus), platform_device_put() drops
+> the last reference and frees the struct platform_device.  The code then
+> unconditionally calls dev_name(&pdev->dev) on the freed pointer, and
+> assigns the dangling pointer into the global GPIO lookup table.
+>
+> This is a classic use-after-free: the freed memory can be reallocated
+> and overwritten, and the GPIO lookup table will later dereference a
+> dangling or corrupted dev_id pointer.
 
-Applied, thanks!
+Thanks, I will fix that in v2.
 
-[1/2] gpio: kunit: shrink initialization code
-      https://git.kernel.org/brgl/c/069547f9d8f817d5d0ba7a8276b0ddefd22222ee
-[2/2] gpio: kunit: add test cases for software node hogs
-      https://git.kernel.org/brgl/c/a05cfd98c5eca766a4a127bde6278095fc367442
+>
+> For comparison, the iocled equivalent introduced in patch 6 handles
+> this correctly with a goto:
+>
+> ```c
+> if (platform_device_add(pdev))
+>      goto out_pdev;   // skips dev_name()
+> txx9_iocled_table.dev_id =3D dev_name(&pdev->dev);
+> ...
+> out_pdev:
+>      platform_device_put(pdev);
+> ```
+>
+> =3D=3D=3D Reproduction =3D=3D=3D
+>
+> Kernel: 7.1.0-next-20260623-gaca8efd71d03-dirty #3 PREEMPT(full)
+> Arch:   x86_64 (QEMU Standard PC Q35 + ICH9, 2009)
+> Config: CONFIG_KASAN=3Dy
+>
+> The UAF pattern is reproduced via a kernel module that mirrors the
+> same platform_device_add / dev_name error path sequence.  The module
+> loads at boot via late_initcall.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+[...]
+
+> Build: insert into kernel tree and build with CONFIG_POC_UAF=3Dm
+> Run:   insmod poc_uaf.ko (twice, so the second load hits -EEXIST)
+
+Thanks for verifying! But TBH, I think writing a PoC for this is a
+bit over the top...
+
+And if the platform_device_add() in rbtx4927_gpioled_init() would
+ever fail, that would be due to out-of-memory, and the system would
+be dead anyway.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
