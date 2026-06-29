@@ -1,102 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B52C40911B;
-	Mon, 29 Jun 2026 13:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C92940DFDE;
+	Mon, 29 Jun 2026 13:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782738251; cv=none; b=Xm+eKCZIdz/V+HBi286Vw1QuItWq6koo4am3TJ3swni8wk75F58bvuN8VSR8Mzi85VtGwVYjONag/S9T9rH9/gERbSiLw5DRpQVBCF8Uyt1cyXehb8/t1o4YW5bw/5AeD5J/CoWJUr4H7i6uAgUAh4LQX0zdoAR+fCDHZ8lSOJc=
+	t=1782738646; cv=none; b=Pb3mudgwYMSI6MrhZ13d6Qgt2anJ9Jj8OZaPV/TUneWOthlCf8fTcdEfykdkbL1eJf9xE6EsrY5ycKSK0H21GRxpaI6x8/EMUZdKFp5Q1j2NGR+3XBlldSEaWJNY4UszUXkKeyXE3qa8gRyS7iHRBsuiZzxOxeMIYrf9wcxoY3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782738251; c=relaxed/simple;
-	bh=OnyIiJ9k1Mnjn+nNQezceY2xDapKkl2m9lsvWrbueBQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iOv4FZsR7cFe+7X1HgyRr1HZsk+xrGlfdzSaJg5JJGXpshxlVDrxPWfq2A2ebS7+i1/n8L704JDp/f3wk4VBaTuzBS7bMXe7fvJ2P5Cc8GINQUwUQC3bB4ao5COFH519uv4Tip0BQB4RnZm149xnMBxu1Lm5W+GTXsQhtJt5YDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUEolJ1L; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782738646; c=relaxed/simple;
+	bh=+SZHj6c3TR75LKCepf8zLyR5T3pu8Wtz4kCpkODb+oY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gd+8HoEMigDoqDtCS5fFi6dzgZIc9wHlYT9ZVzCUA5gaFNGPG9rlH7hYvSlf8ZCJy+OIqTZrHqKKpgXmsCLTNfWb2vxsn8Muf543FbBEC9jeBlpi+RGcm54Y9rGvTUlfRS//5rtnFzqGUcYNK0sOQnFrsLawR+31g5U+6fforw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HzsTFNc2; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUEolJ1L"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA3B1F00A3A;
-	Mon, 29 Jun 2026 13:04:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782738250;
-	bh=dEG+ZoyZP8nWtf9r5C9gt2EU40Cd6Cp+knZSd7mv5p0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=GUEolJ1LbqpAJJD0x3b8UiAcFk5ozZn23C+0EdVPSJDI4smSsn8/N3kzb72XBQwCG
-	 gMA6sLVeIK86vzN4REHb9mK6rglOwFm4xtX2hHiKlYOWQpUdiiTew4p4rueYxpl3NV
-	 ZfSggrLAEXqssFya5mT/X8DilVz8vBifnReULr9hGVUsrNaQm5jTQYdTp3znRPOyhf
-	 LpWr4c6T2WCqBv6riE2EN550P4ERy5qgHPGR4vK3GEmyhpCsGy/H7pQdhXrWY+aInP
-	 Rk1eKjTYGIC/KAqAKv2z6jfcuLrxGveCDnTItUFRdSjJ0YD8gZA4g8Vypkb7YbMX/z
-	 /haD9GYzFe/7A==
-From: Arnd Bergmann <arnd@kernel.org>
-To: linux-gpio@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Linus Walleij <linusw@kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HzsTFNc2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1782738646; x=1814274646;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+SZHj6c3TR75LKCepf8zLyR5T3pu8Wtz4kCpkODb+oY=;
+  b=HzsTFNc2vtdtrnz6AzF1u/FOJ7pzqMZuJkwS2Hpdj7eDAT4dOlezFVhB
+   uEbLjqAMME7OVE6/n0T2IGVT/gqHtnh0buNYy8shwLkG+F5bqpWHl96hl
+   L0IJUQJMczFHkY0dK7J8DwebNRMIkj3b9uuLT/lop8otTArJQD1J86RxO
+   JC3kNdQIcQ6QGVFQP/uSqGRaEezSbf17x0jOkVHx317NZn6hl0ydFGkYj
+   2biwZwXBURfea1RXQJpX9SZkXrREWA7LgeJKwvt2Aa58RjK0NaBCVNQPg
+   LKFYc6LK1Bi8zUdBEVvM9PxuPWc/dxhEdBw9Dda0oTRF8TUFqRV5cKIOK
+   Q==;
+X-CSE-ConnectionGUID: d3bDQ6ENR4+LxPKimBx6Bg==
+X-CSE-MsgGUID: LrLb7Uz3RveiqoEoSize1A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11831"; a="83431957"
+X-IronPort-AV: E=Sophos;i="6.24,232,1774335600"; 
+   d="scan'208";a="83431957"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2026 06:10:45 -0700
+X-CSE-ConnectionGUID: Rc8lBtZURA+PGR7GzXT3tg==
+X-CSE-MsgGUID: bbzexMOpTAWn+oUvR3iO6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,232,1774335600"; 
+   d="scan'208";a="245592396"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.207])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2026 06:10:42 -0700
+Date: Mon, 29 Jun 2026 16:10:40 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
 	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	linux-sh@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: [PATCH 6/6] [v5] gpiolib: turn off legacy interface by default
-Date: Mon, 29 Jun 2026 15:03:29 +0200
-Message-Id: <20260629130329.1291953-7-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20260629130329.1291953-1-arnd@kernel.org>
-References: <20260629130329.1291953-1-arnd@kernel.org>
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: swnode: remove deprecated lookup mechanism
+Message-ID: <akJu0EFRFUjxaq34@ashevche-desk.local>
+References: <20260629-gpio-swnode-drop-label-matching-v1-1-db1af36cf883@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260629-gpio-swnode-drop-label-matching-v1-1-db1af36cf883@oss.qualcomm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Mon, Jun 29, 2026 at 12:54:58PM +0200, Bartosz Golaszewski wrote:
+> GPIO software node lookup should rely exclusively on matching the
+> addresses of the referenced firmware nodes. Commit e5d527be7e69 ("gpio:
+> swnode: don't use the swnode's name as the key for GPIO lookup") tried to
+> enforce this but had to be reverted: it broke existing users who abused
+> the software node mechanism by creating "dummy" software nodes named
+> after the device they want to get GPIOs from, without ever attaching them
+> to the actual GPIO devices. Those users relied on GPIOLIB matching the
+> label of the GPIO controller against the name of the software node rather
+> than on a real firmware node link.
+> 
+> All such users have now been coverted to using attached software nodes
+> via the fwnode address lookup path and the kernel documentation has been
+> updated to recommend it as the correct approach. This allows us to remove
+> the old behavior.
+> 
+> This will allow us to leverage the upcoming support for fw_devlink for
+> software nodes in GPIO core.
 
-All users of the legacy interface now select CONFIG_GPIOLIB_LEGACY,
-so it can be turned off by default and only get built on platforms
-that still have one unconverted driver.
+I am in favour of this,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+(but I prefer cleaner diff, see below).
 
-Allow turning it on manually for compile testing, in order to keep
-the build coverage of the legacy drivers in allmodconfig and
-randconfig.
+...
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v5: added patch, now that we are getting closer to completing
-    the series
----
- drivers/gpio/Kconfig | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+>  fwnode_lookup:
+> -	gdev = gpio_device_find_by_fwnode(fwnode);
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 28cf6d2e83c2..f063bdfd111b 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -4,7 +4,14 @@
- #
- 
- config GPIOLIB_LEGACY
--	def_bool y
-+	bool "Legacy GPIO interfaces" if COMPILE_TEST
-+	help
-+	  There are a few legacy platforms that use the traditional GPIO
-+	  number based interfaces instead of GPIO descriptors.
-+	  Say Y here to enable build testing drivers that are specific
-+	  to those platforms.
-+
-+	  If unsure, say N.
- 
- config HAVE_SHARED_GPIOS
- 	bool
+> -	return gdev ?: ERR_PTR(-EPROBE_DEFER);
+
+
+Can we simply leave these two instead?
+
 -- 
-2.39.5
+With Best Regards,
+Andy Shevchenko
+
 
