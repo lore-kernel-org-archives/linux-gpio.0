@@ -1,162 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E5337F8A5
-	for <linux-gpio@vger.kernel.org>; Mon, 29 Jun 2026 17:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57483283C93;
+	Mon, 29 Jun 2026 17:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782752824; cv=none; b=es6nrBevU1AZ/UuVly1Jpgn0u/WBL1E5ZVZojJyw6ZVWiNm3Ne54n2nacExEyxztfaTR2XdKBGf51DhAY8/9mNmbexZ8gXuOXDDLJlNgfydM05ECSS/EGuBc7pyRyGjsZ+AuHSF7XvxTC3pvik9pDPpzY1KaLFj68PR9fB4OTD0=
+	t=1782754790; cv=none; b=E2Rkh4arjrTjSEGop9kCF2q3rIw7FKuAaFTZEYkbEjLqMkIBXQfaaT1zU4gy+XiRLY0HtGNKKH4J1ml+Ft4jREyMgES/gdLBZolw6mcFvL79BMh0aHE3NUS0XNsStFmlnw9l+4oMfIfCuN+H97N69uGPCOLqdYJ3UvNWlLAEwro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782752824; c=relaxed/simple;
-	bh=iYf31nvEv14euCo/bLXTi3/WkhtdASg9KgXlPFWoU8s=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FPQhTRhr4d6oRNa9BXdRHYvUFLs0kU/DsSFVb9+DxzczaoaD15DoM6/itdzs1ZHfHISNUtjrsGwuPJkF8DWByeKL6ZYAMeYPjDwYjBWLZQlKjjIByUeUEl9Xp6CNfPamuKyXuB5Zr1V2bXjem99xm4ksTqN7/sUBBKK+dE21g2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yrxvbo4X; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782754790; c=relaxed/simple;
+	bh=UR6jWLH7xJZvqZ+7LW3JOJHFIJ5aBB7dgb1k5wzphIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DloOC+rYGvIZvqADFj/BcO3L6sZ4hJzT71svhHnSUJsyPyLRpstFmtkQqsroU7h5NwS0El+eK5x2/IzHMcz0r6K+PkYsGTAeYGZDLXzcIHmfvuSgVf0jfoXvMgWj/yieW/8cPb6K5+WTt5caaazpXMhyLRfHOos+QyMmowQk59k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fm8fW3iU; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yrxvbo4X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80FE11F00ACA
-	for <linux-gpio@vger.kernel.org>; Mon, 29 Jun 2026 17:07:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782752822;
-	bh=CU8TMB46KVquqb6NZE+mjswOyduzrIxQL/Z45liuHG4=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=Yrxvbo4XVFc+tkKdK7ym6mYWtieEBKFP4ZF/LfZmsMd+Q2sbjIohStqMyffYbb58m
-	 fo2OjtDduxdHXaWy+Bev1CZcc8KNmm1GFXx+PhNrm7ZYumddHmBPQdHAbWbk70xjTA
-	 AYXXm5/9uFyV1BJu5nILEbmvwZ5k2KrYToZBRfhRAUKYhvDT1mIDIZ1Rgvh3Jyc3s6
-	 G6uFpkq84Tnqzhx50fgN0Zqmv+hftyHBlT9H1sVzLfpQXniz7880NHZEmkrJ2b9aL6
-	 GyNQ2WIkGDusVbegI6YLTwu73CQV2IVb4o4/cnaVVQxgbH1FGChiBRSv3jBYoTpVog
-	 MD9GRaLjSTOPA==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-39af6402933so21179611fa.2
-        for <linux-gpio@vger.kernel.org>; Mon, 29 Jun 2026 10:07:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoYCKAWGQn/cMFLvKe+ud1/6B6OSTunwwOBnetV0RxVEQJlvQP9w265MTf4P3uzObYL21EI7/qrFqSH@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvTpsz913PG6qZSxtYKUjOghEgPAfNYRbxyjst3MSI84qjP7Af
-	LNWYYqkD3yOleKTv3fzynEgM7xWXXc9wO85mMmvMLWHUZD73V+QwPYeYyHi//kNMqwAALu9SyC6
-	KEOvwI6w1nogJPny841x321bCZA3OpjsaYYZV/VQHHw==
-X-Received: by 2002:a05:651c:158c:b0:399:83a4:4f2c with SMTP id
- 38308e7fff4ca-39b1daae071mr107701fa.18.1782752821184; Mon, 29 Jun 2026
- 10:07:01 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 29 Jun 2026 10:06:59 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 29 Jun 2026 10:06:59 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260625115718.1678991-2-v@baodeep.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fm8fW3iU"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1782754789; x=1814290789;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=UR6jWLH7xJZvqZ+7LW3JOJHFIJ5aBB7dgb1k5wzphIY=;
+  b=Fm8fW3iU3a5iqYSY0ccA09frOFzTxF0y9nnN426DGroHzdCwvw4759+L
+   7JzWs7KD9E/r3ze8Wrt43Mq331CniVrCUAi08BHXM+RvtlY0mdoD4ptUe
+   qK5LCSgFdi9WTXl1JtOjwKVS8kre72P8V3QW0NuJcdi+kpq5FBIS1FN7h
+   Q+n42V+oYykSuUBUa9YoUfjRKXQx3wW5GEvw1mCltj/v4KLB6fAtfx3SJ
+   Irwvi/Nk5XwQ4fpHCjJa52dLyZpMnfh/FPqTnMiOFLS2hHV7A8pZjMhma
+   zzOJXL/SBGWBG/5TECFpmbRbdvG1dEKrwcphE9jtdLTwlxWUgAS1qs6Yr
+   g==;
+X-CSE-ConnectionGUID: hQRAdcacRfaTH9E8DjexuQ==
+X-CSE-MsgGUID: Tbuzs9TiTn6YiJCOQOyEMg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11832"; a="87145438"
+X-IronPort-AV: E=Sophos;i="6.24,232,1774335600"; 
+   d="scan'208";a="87145438"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2026 10:39:49 -0700
+X-CSE-ConnectionGUID: 2xY5WwNiT/mLx8dYdK3kxA==
+X-CSE-MsgGUID: kDCSAKzXT62VPYog1qHKgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,232,1774335600"; 
+   d="scan'208";a="256940635"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.207])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2026 10:39:46 -0700
+Date: Mon, 29 Jun 2026 20:39:44 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: GaryWang <is0124@gmail.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Daniele Cleri <danielecleri@aaeon.eu>,
+	JunYingLai <junyinglai@aaeon.com.tw>,
+	Louis Chen <louischen@aaeon.com.tw>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] upboard pinctrl support for device id INTC1055
+Message-ID: <akKt4PV5E6lYpEZV@ashevche-desk.local>
+References: <20260610-upboard-pinctrl-add-upboard-intc1055-support-v1-0-8185d2abbfb1@gmail.com>
+ <ailxCrCYXPkrKqi-@ashevche-desk.local>
+ <CAD++jLkRW+wmf_oFVmmn8bN0ZbS=8vZvV8nWJyy9Zb4O3LP-dg@mail.gmail.com>
+ <aircdlL323BTioZE@ashevche-desk.local>
+ <CANYHO6rUVm=6WQSemJhMoVV5owPAL=4Nw4cFxULaKmq3fG36=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260625115718.1678991-1-v@baodeep.com> <20260625115718.1678991-2-v@baodeep.com>
-Date: Mon, 29 Jun 2026 10:06:59 -0700
-X-Gmail-Original-Message-ID: <CAMRc=McgB0gYfvE1KMXkNFnMgx6ahKoMFb2pi0_AF03m4BDk_g@mail.gmail.com>
-X-Gm-Features: AVVi8Cex4Km60qsC3nmt5H_9iHFU4BjDrOYA0iDy91F4RstIOAhIA0emnN3RoSU
-Message-ID: <CAMRc=McgB0gYfvE1KMXkNFnMgx6ahKoMFb2pi0_AF03m4BDk_g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] gpio: shared-proxy: always serialize with a
- sleeping mutex
-To: Viacheslav Bocharov <v@baodeep.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Diederik de Haas <diederik@cknow-tech.com>, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANYHO6rUVm=6WQSemJhMoVV5owPAL=4Nw4cFxULaKmq3fG36=A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, 25 Jun 2026 13:57:17 +0200, Viacheslav Bocharov <v@baodeep.com> said:
-> The shared GPIO descriptor used either a mutex or a spinlock, chosen at
-> runtime from the underlying chip's can_sleep:
->
-> 	shared_desc->can_sleep = gpiod_cansleep(shared_desc->desc);
-> 	... if (can_sleep) mutex_lock(); else spin_lock_irqsave();
->
-> can_sleep describes only the value path (->get/->set). Under the same
-> lock, however, the proxy may call gpiod_set_config() and
-> gpiod_direction_*(), which can reach pinctrl paths that take a mutex
-> (e.g. gpiod_set_config() -> gpiochip_generic_config() ->
-> pinctrl_gpio_set_config()), independent of can_sleep. On a controller
-> with non-sleeping MMIO value ops the descriptor lock was a spinlock, so
-> the sleeping pinctrl call ran from atomic context. Reproduced on an
-> Amlogic A113X board with the workaround from commit 28f240683871
-> ("pinctrl: meson: mark the GPIO controller as sleeping") reverted; the
-> original Khadas VIM3 report hit the same path:
->
-> 	BUG: sleeping function called from invalid context
-> 	  __mutex_lock
-> 	  pinctrl_get_device_gpio_range
-> 	  pinctrl_gpio_set_config
-> 	  gpiochip_generic_config
-> 	  gpiod_set_config
-> 	  gpio_shared_proxy_set_config   <- voting spinlock held
-> 	  ...
-> 	  mmc_pwrseq_simple_probe
->
-> The spinlock existed to take the value vote from atomic context, but the
-> vote and the (possibly sleeping) control operations share the same state
-> and lock, so this scheme cannot serialize config under a mutex and still
-> offer atomic value access. Always serialize the shared descriptor with a
-> mutex instead and mark the proxy a sleeping gpiochip, driving the
-> underlying GPIO through the cansleep value accessors: those are valid
-> for both sleeping and non-sleeping chips, so value access keeps working
-> on fast controllers, at the cost of no longer being atomic.
->
-> This is observable: consumers gating on gpiod_cansleep() take their
-> sleeping branch on a proxied GPIO (mmc-pwrseq-emmc skips its
-> emergency-restart reset handler; its normal reset is unaffected), and
-> consumers that reject sleeping GPIOs (pwm-gpio, ps2-gpio, ...) would
-> fail to probe. Such atomic users do not share a pin through the proxy,
-> whose purpose is voting on shared reset/enable lines. The same narrowing
-> already applies on Amlogic since that workaround, and rockchip
-> addressed the identical splat per-driver in commit 7ca497be0016 ("gpio:
-> rockchip: Stop calling pinctrl for set_direction"); fixing the proxy
-> addresses the locking error once, for every controller.
->
-> The lock type was added by commit a060b8c511ab ("gpiolib: implement
-> low-level, shared GPIO support"); the sleeping call under it arrived with
-> the proxy driver.
->
-> Fixes: e992d54c6f97 ("gpio: shared-proxy: implement the shared GPIO proxy driver")
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Closes: https://lore.kernel.org/all/00107523-7737-4b92-a785-14ce4e93b8cb@samsung.com/
-> Signed-off-by: Viacheslav Bocharov <v@baodeep.com>
-> ---
-> v1 -> v2: open-code the descriptor mutex; drop the gpio_shared_desc_lock
->           guard and the gpio_shared_lockdep_assert() helper, use
->           guard(mutex) and lockdep_assert_held() directly; move the
->           mutex rationale from the header to the can_sleep assignment in
->           probe.
->
-> v1: https://lore.kernel.org/linux-gpio/20260610153329.937833-2-v@baodeep.com/
->
->  drivers/gpio/gpio-shared-proxy.c | 66 +++++++++++++-------------------
->  drivers/gpio/gpiolib-shared.c    |  9 +----
->  drivers/gpio/gpiolib-shared.h    | 28 +-------------
->  3 files changed, 29 insertions(+), 74 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-shared-proxy.c b/drivers/gpio/gpio-shared-proxy.c
-> index 6941e4be6cf1..0cd52015b731 100644
-> --- a/drivers/gpio/gpio-shared-proxy.c
-> +++ b/drivers/gpio/gpio-shared-proxy.c
-> @@ -9,8 +9,10 @@
->  #include <linux/err.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/gpio/driver.h>
-> +#include <linux/lockdep.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
-> +#include <linux/mutex.h>
->  #include <linux/string_choices.h>
->  #include <linux/types.h>
->
-> @@ -32,7 +34,7 @@ gpio_shared_proxy_set_unlocked(struct gpio_shared_proxy_data *proxy,
+On Fri, Jun 12, 2026 at 01:05:35AM +0800, GaryWang wrote:
+> On Fri, Jun 12, 2026 at 12:04 AM Andy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Thu, Jun 11, 2026 at 02:30:00PM +0200, Linus Walleij wrote:
+> > > On Wed, Jun 10, 2026 at 4:13 PM Andy Shevchenko
+> > > <andriy.shevchenko@intel.com> wrote:
+> > > > On Wed, Jun 10, 2026 at 04:34:22PM +0800, GaryWang wrote:
 
-I was about to apply it but then realized that it can be simplified further.
-The set_func() argument in gpio_shared_proxy_set_unlocked() is no longer
-needed and can be replaced with a direct call to gpiod_set_value_cansleep().
+...
 
-Would you mind sending a v3 with that included?
+> > > > I can take both via Intel pin control tree, just waiting for Mika's and Linus' acks.
+> > > > Then I can send PR to Linus to (try to) include this to v7.2-rc2 as it seems close
+> > > > enough to the category of adding new HW support without breaking anything else.
+> > >
+> > > Excellent, thanks.
+> > > Acked-by: Linus Walleij< linusw@kernel.org>
+> >
+> > Thanks! I consider that for both patches. Gary, please send a v2 with all tags
+> > and elaborated commit messages and cover letter to address Mika's questions and
+> > concerns.
 
-Thanks,
-Bartosz
+> yeah, no problem to send patch V2 ASAP.
+
+Did I miss v2? If not, now is a good time for it.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
