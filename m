@@ -1,115 +1,92 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFDA2D3A7C
-	for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2026 07:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543D53DCD85
+	for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2026 07:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782805556; cv=none; b=kaP4s8Lp4zlJABaqRZvLuLhlsIOn3Ifb5ZJFl62+azW3o1sCby9CyKirhUWd5JklXtdotp0imFlyjiB8CC47Qz+r5yRmQqQLkPI9oEvinY4dLORbf5QYPkeHBFlzkWDl05l2tgadxPlc+27Tz+/dx0tnXDgayU62tGyHUScAs+g=
+	t=1782805646; cv=none; b=aTya2BzuUg0sX1lgwCHwPIXpQI5DN9gWQ5OKiz5cvpLvQSacuDQ+B19uNPfna/pi2D0sqBNFxAoFNaUd+4+I/Bmzjva5Fc4VSHn/Wv46OQTP8c0VNubzNrn8xmyNWjrSdZ+XjphYEsQtqYNXAy6UVWREfLot9dgQz8j75E6tURE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782805556; c=relaxed/simple;
-	bh=VSp9DnnhxfAiiMCrNdSPJPx7Y8RqEh6z+slDdu2WdxI=;
+	s=arc-20240116; t=1782805646; c=relaxed/simple;
+	bh=O8UtlWA2/ymbY3Pi5cr1VAwTiB4Ay3GNCozA5qseyXE=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CY28qGhxl3sjWfpx2U2+R2dEQFWa9Qkkvh5M4Rq0CYdbBfg15lneIVVW7hClNXrDcKravQ31aKgXhjKgdpXVLSqXvoZdU7I/R8jeus2rbjTPmLeRkV21nPVVRlc+ak7kaTteWnwgbg24pgUnQFQT7yt8NoEQbXD0BgdFcKYMFIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=auGxdCLz; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=fHdexgZl1954rDk1DGBwZlq++NtWkYcWFiPkyxJoUlo+tTzqNFg5RJrd6L2nvXd5ZXUfcCMi04xae4ZJVt7iGxLiuT1HoUr/9FsEH6s6pqN1hJcWZgkNpFIjQdi4IzlN9sqYILgBUBhXQEJaxuwyTJutwG1F9p8/DDPNoG+ee9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5JY/iSB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="auGxdCLz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75FBA1F00A3F
-	for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2026 07:45:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5JY/iSB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3004A1F0155D
+	for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2026 07:47:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782805555;
-	bh=LBg8gQ42IeE8kt+1uV3VSZ3Pjow8BaIMuFcOC4tqsqk=;
+	s=k20260515; t=1782805645;
+	bh=D0vA91JCy6e3U4Zy4A7u6z+5xLKwz9OO6mJyFAEDjWo=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=auGxdCLzzRBPdI7qqIXCDzGuJT4Ug4CmFS8b3aIq8nDE/nBtjZxS4Cp0TXo8Wsefl
-	 sz3lGTXCxWDAQz1Vz/xdPnvpHouEJl1javnzgRc9ihEalfd8mj9kOYUrwAhZSYYltL
-	 mNsd6FTUPkIZ9AWGAqCYchfZhtD+0cbxjTmE0968de0sZhLz75W/dfLQNM91PDVBYu
-	 ZSt4gXhMR7v4lUSpvQoyPJYxoZXV/cgQIg6DbyWiOs7ZIzIn5CPuYw/7xJ1q+M/iHx
-	 N0Bfxb+OOXXUINAPSO7TD1uu7RF1JcAsWRQt/jt6BHa4gC9shuOhJMhfrVcWeVNkke
-	 AZfxO5jSPQclg==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-39b1eb7bde5so4567381fa.2
-        for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2026 00:45:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RryJbyijO83x3RsY8X4Y47AMjFnHB/oSDwiseN7CWHUDfLQZViTPK1vLTJxa2qxCpbhmAcOb+KLkqAL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9pSKIeeSY1o67zlbt78KxKzW/V68wPyHaYKGvAkx00z0dChNh
-	W5RG9DRnT77FngYXIGpGxY2ATAf7l2e0gCpW6Lkgn1flfGVXo6G7k1E9NUU4L2NRvdeTxGjykMm
-	xqulIWck/ObcC0TK8qJVx8fjTd0V7zFaChdXVXGrOTg==
-X-Received: by 2002:a2e:a99a:0:b0:39b:2323:b700 with SMTP id
- 38308e7fff4ca-39b2323c4abmr2941181fa.10.1782805554039; Tue, 30 Jun 2026
- 00:45:54 -0700 (PDT)
+	b=X5JY/iSBvE5bIvOcIm0YQO9+bwx9WFalRg8XAdM/Dy7q/Oxzbe5Lkdbglu5fv0OUK
+	 fJYCmcrcJ4/g5E3FdwKdBPnaotBLNmXbb9CFrnUr/E7ro+IoDK0sXIOJqsF5jzvDxC
+	 u+4wKW4E9nCYz3WkKxgbil4glsu3fn7RvqeVrNXIkyRolwRwMM1hkhdCyiD3jWHJYw
+	 kwCPOdcOxX8X4XTiAtrhb54ePGhfALetVicbqlcx76vjApOHgz18CZe3D6FHPSjES6
+	 9AjqebUwzzoVRWUFStflre7HZDVvMAmy1dTZPWhBVKqjyv1iE3P3xynnO7atbg0hPR
+	 0bEvjEPk8WHxQ==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-39b14a7e53aso14236471fa.2
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2026 00:47:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqpWqriWzJjS9R+K2PLtzTUwOXqfHRjD3g/L4FevT4lDek/XBjjp0XbjDtTE+N4XVsBqT8NliGkZGro@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRb+gjjWQyTOVmBjSvwNlBfkSUEVcU19fzqJbhqYd9LeTypEn/
+	iv8uUU8NuEzapLt/AbFBvLeUJg9rliQtfboQts2aKS0oFzm4WSxU9wpno/zhIdtNSq1rPzviKC7
+	+CpU5QrjY6UXsYpSEuimv8OzKwRReA0jJDSza9WpKNQ==
+X-Received: by 2002:a05:651c:50a:b0:39b:695:32a3 with SMTP id
+ 38308e7fff4ca-39b1ddd1aa2mr5206931fa.13.1782805643902; Tue, 30 Jun 2026
+ 00:47:23 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 30 Jun 2026 07:45:52 +0000
+ HTTPREST; Tue, 30 Jun 2026 00:47:22 -0700
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 30 Jun 2026 07:45:52 +0000
+ HTTPREST; Tue, 30 Jun 2026 00:47:22 -0700
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260630-loongson-gpio-v1-1-576908831fa0@gmail.com>
+In-Reply-To: <31477953aace52bb6594461e82ddf99493af2329.camel@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260630-loongson-gpio-v1-1-576908831fa0@gmail.com>
-Date: Tue, 30 Jun 2026 07:45:52 +0000
-X-Gmail-Original-Message-ID: <CAMRc=MdtRj6c3Bg72QMaAEMPovNyUdqWL_qDPGb1p=Cu=cETvA@mail.gmail.com>
-X-Gm-Features: AVVi8Cf2IFweTBnhLCHHWzNG_tKwGlyzQxYlAjT3uMoAeW7u7IpDxzdVv20tLXo
-Message-ID: <CAMRc=MdtRj6c3Bg72QMaAEMPovNyUdqWL_qDPGb1p=Cu=cETvA@mail.gmail.com>
-Subject: Re: [PATCH RFC] gpio: loongson-64bit: Add back the support for gsi_idx_map
-To: shankerwangmiao@gmail.com
-Cc: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>, 
-	Huacai Chen <chenhuacai@kernel.org>, Jianmin Lv <lvjianmin@loongson.cn>, 
-	WANG Xuerui <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-gpio@vger.kernel.org, 
-	Yinbo Zhu <zhuyinbo@loongson.cn>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Hongchen Zhang <zhanghongchen@loongson.cn>, 
-	Liu Peibao <liupeibao@loongson.cn>, Juxin Gao <gaojuxin@loongson.cn>, 
-	Mika Westerberg <westeri@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20260408-dev-b4-aaeon-mcu-driver-v5-0-ad98bd481668@bootlin.com>
+							 <b4396f57-3501-4e89-9cf3-8dc5d7cad9b7@roeck-us.net> <31477953aace52bb6594461e82ddf99493af2329.camel@bootlin.com>
+Date: Tue, 30 Jun 2026 00:47:22 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MdJJnRTOSEecqpX-EddJRAzWc_1a-cg3wrW8m0jR2Fihw@mail.gmail.com>
+X-Gm-Features: AVVi8CeaJi7AWd-H-Al7farjl69e4bGemX_zfvWwe4vajt3tOcP7qfQEh_ha7H0
+Message-ID: <CAMRc=MdJJnRTOSEecqpX-EddJRAzWc_1a-cg3wrW8m0jR2Fihw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] Add support for AAEON SRG-IMX8P MCU
+To: Thomas Perrot <thomas.perrot@bootlin.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, 
+	=?UTF-8?B?SsOpcsOpbWllIERhdXRoZXJpYmVz?= <jeremie.dautheribes@bootlin.com>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Lee Jones <lee@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 29 Jun 2026 23:05:28 +0200, Miao Wang via B4 Relay
-<devnull+shankerwangmiao.gmail.com@kernel.org> said:
-> From: Miao Wang <shankerwangmiao@gmail.com>
+On Mon, 29 Jun 2026 18:04:59 +0200, Thomas Perrot
+<thomas.perrot@bootlin.com> said:
+> Hello Guenter,
 >
-> This patch adds back the support for gsi_idx_map, which is used in the
-> ACPI DSDT table to describe the mapping between the GPIO line number to
-> the index of the interrupt number in the declared interrupt resources.
+> On Sat, 2026-04-11 at 17:12 -0700, Guenter Roeck wrote:
+>> snip
+>>
+>> Sashiko has some interesting feedback that might be worth looking
+>> into.
+>>
+>> https://sashiko.dev/#/patchset/20260408-dev-b4-aaeon-mcu-driver-v5-0-ad98bd481668%40bootlin.com
+>>
 >
-> This property was removed in Loongson CPU Universal Specification for
-> Interface Between PC/Server System Firmware and Kernel v4.1 in November,
-> 2023, but still in use in firmwares released this year. A sample of
-> an affected DSDT entry from a 3C6000 board I'm currently using is:
+> Thanks for the pointer. I went through all findings and addressed the
+>   valid ones in v6:
 >
-> Device (GPO1) {
->   Name (_HID, "LOON000F")
->   Name (_CRS, ResourceTemplate () {
->     QWordMemory ( // Omitted, not related
->     )
->     Interrupt (ResourceConsumer, Level, ActiveHigh, Exclusive, ,, ) {
->       0x00000010, 0x00000011, 0x00000012, 0x00000013,
->       0x00000014, 0x00000015, 0x00000016, 0x00000017,
->     }
->   Name (_DSD, Package (0x02) {
->     ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301")
->     Package (0x03) {
->       Package (0x02) { "gpio_base", 0x50 } // Ignored by the driver
->       Package (0x02) { "ngpios", 0x20 }
->       Package (0x02) { "gsi_idx_map", Package (0x20) {
->         0, 1, 2, 3, 4, 5, 6, 7,
->         0, 1, 2, 3, 4, 5, 6, 7,
->         0, 1, 2, 3, 4, 5, 6, 7,
->         0, 1, 2, 3, 4, 5, 6, 7,
->       }}
->     }
->   }
-> }
->
-> As can be seen in the DSDT entry, the mapping is essential for obtaining
-> the IRQ number from a GPIO line number. Otherwise, when IRQ is requested
-> for the line numbers largers than 7, it will fail with -ENXIO.
->
-> The code in this patch is mostly picked from the version 5 of Yinbo's
-> original patch.
->
-> Fixes: 7944d3b7fe86 ("gpio: loongson: add gpio driver support")
-> Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
 
-Cc'ing ACPI GPIO maintainers.
+Did I miss anything? I don't see the v6 neither in my inbox nor on lore.
 
 Bart
