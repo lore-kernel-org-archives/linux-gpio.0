@@ -1,151 +1,81 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC10421A0A
-	for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2026 13:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345CA40911F
+	for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2026 13:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782825907; cv=none; b=FFPLqEtHVgsZzGW23ToH2XtAXMiKCBSBjykq6lpuCSOUC/YXmPd9e7GrK0sUT2V+6VOBkVdKvjubzEXOUvpjv1UidML+e0YNzmH+VSWtsh/ME5WQ7eoHT5o/OGRlZHWUVAjUe1WMBIYGGBTSSY4uN6lzlaqHtX29MG2e+6HXXx0=
+	t=1782825978; cv=none; b=Pt2PkxnoKDLZUxg5kCjdBusyTF4S/9/yAYIAqL5BcC9MJkXn3+zf8iQGY8tkEl85Tl/Ife2MlaTmPeR/6aQ5ySmZeWJYNrQVreCds4WQb9OlefHZXihWwXRpgnbFblZqyXTQt4cnYYjURR30Ny8xXzyfX5iCBwdAO2me6WBk710=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782825907; c=relaxed/simple;
-	bh=M3sGTFQyxhf710EoXPL7ZgKgQDTu94F/o5gJOr5YAFU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IKYzAjfCyxPl1c6QiCuxezcBUhinLuNvHsoREtCfcuRNpfSoymCPRihLV0dRuCYKrTD0K6HjGyAdy/oLdT80TWPGgtwvY7VZAiNB9e3F3EjRp4bIZ4Qqh3Y7RNg0mnbxn3vkUlsXHHvi12xZ3s5f7jMgwwCAa/HhzgsCSM7STRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NCUS11JP; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1782825978; c=relaxed/simple;
+	bh=PHCkKadEKt4yRgpoPFyBrfwAuMsh0mdSIVRR430t+2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sPSXW+UAJBW0YZmfzENjLxGunE4qBbTymcGwAa/DBWif+uzD/3Tb3QLxdcyx/sBRn+2ucklmzxuTus0F8DHdLQ2wy16h1Jf/pWIjAqstOmTmW8tAdHtGfZhA86ODfLhYLslfXJdcGnueczTH2EakE05z/1Kt0hdv5j7h7uxPxeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmgyYO+r; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NCUS11JP"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 621FF4E40B9B;
-	Tue, 30 Jun 2026 13:25:02 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 21ECA6025A;
-	Tue, 30 Jun 2026 13:25:02 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4772B106F1825;
-	Tue, 30 Jun 2026 15:24:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1782825900; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references:autocrypt;
-	bh=M3sGTFQyxhf710EoXPL7ZgKgQDTu94F/o5gJOr5YAFU=;
-	b=NCUS11JPwA+J9uH1x6EmuZisSfg1N27jNVUGA4+oa/XrDXtnkh4+PfNiHe//NHF5uGkybc
-	9+HzyGP4ac6GG5KxdH4NAJK5NdKZxUql9EA1nFOu1T+dCxsZNyttEaM2yG32VZdfKCHQFM
-	vgPE95AAKipzasMHwuemjGRQuXi7VoZS4faa+PFGQv5pg3/jE1+CvYGfcMA95ELVTcS66R
-	qfCFRQQ4IaqqpAooacmWlmq7u2uY0D/kO707c6wt9zwr9+vmpm6xKuOaiGjn7Q30J/B57m
-	yZsNdyBincX/LrhiZxs1iYC/It6uz8gTYDAal7G70TqkQ+1pQg5PtY1g0o9qlQ==
-Message-ID: <984d68f4288c225bb4bbb2db88f29098ebaa0ccc.camel@bootlin.com>
-Subject: Re: [PATCH v5 0/5] Add support for AAEON SRG-IMX8P MCU
-From: Thomas Perrot <thomas.perrot@bootlin.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: thomas.perrot@bootlin.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- imx@lists.linux.dev, 	linux-arm-kernel@lists.infradead.org,
- linux-watchdog@vger.kernel.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Conor Dooley
- <conor.dooley@microchip.com>,  Bartosz Golaszewski
- <bartosz.golaszewski@oss.qualcomm.com>, Guenter Roeck <linux@roeck-us.net>,
- Rob Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley	 <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Shawn Guo	 <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
- <festevam@gmail.com>, =?ISO-8859-1?Q?J=E9r=E9mie?= Dautheribes
- <jeremie.dautheribes@bootlin.com>, Wim Van Sebroeck
- <wim@linux-watchdog.org>, Lee Jones	 <lee@kernel.org>
-Date: Tue, 30 Jun 2026 15:24:54 +0200
-In-Reply-To: <CAMRc=MdJJnRTOSEecqpX-EddJRAzWc_1a-cg3wrW8m0jR2Fihw@mail.gmail.com>
-References: <20260408-dev-b4-aaeon-mcu-driver-v5-0-ad98bd481668@bootlin.com>
-								 <b4396f57-3501-4e89-9cf3-8dc5d7cad9b7@roeck-us.net>
-	 <31477953aace52bb6594461e82ddf99493af2329.camel@bootlin.com>
-	 <CAMRc=MdJJnRTOSEecqpX-EddJRAzWc_1a-cg3wrW8m0jR2Fihw@mail.gmail.com>
-Autocrypt: addr=thomas.perrot@bootlin.com; prefer-encrypt=mutual;
- keydata=mQGNBF+/ZOUBDAC2DghCjZvmgYcve02OG7dGZ7Iy58uEwne3LB7w7nRwdAxKw7ZaiVqwY
- O+yNGVi+GVx7oA6Wn4pv46z+QDRLQiq6OseuXhkSGCg7U/yBCUq12B/GRGO1Qt2Qi1mJJT1s+1qZ5
- Gxv6Nypz9qKVn94GM2bR1hXBga0t87vBpebThOHmX5d/0dqIcVxRCM7onNb0dDyRoVgLS5rBhQzrL
- CMrJaCy39xZUy0J1SOlH4Mgk6EhJIPYY4wlzikGX6urg+Tc9EjGd78ry0e0p5U5qgjFR5QGJDy1Gn
- U3CfwbT9sowdCASDbQDUoltlv2iWJCLa0xl97KVchCa0pr7HKbFA3J5SLKqFYUBCkFL+5WudYlz2n
- XxiUgyviMQxyK+ij66kEi6/2zFDAecd43pHV7790ptqZBC3Jc67Emj7Vo3ShX6RXPPxxbeCTOF2uk
- I45aJ9XcVFH/MFE96NjXj8uahnIsiTPyuCUoJu8tj7TSQyue874qJqVQvqlFyt2aZYJZ8ruq8AEQE
- AAbQpVGhvbWFzIFBlcnJvdCA8dGhvbWFzLnBlcnJvdEBib290bGluLmNvbT6JAc4EEwEIADgCGwMF
- CwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQSHQHfGpqMKIwOoEiGfwAsFcf4K7QUCX79mdwAKCRCfw
- AsFcf4K7fhbC/wP0kSl6id2E/K3+UdXk6CLMVRbCFLCREzQs5WFpQ6l/I0WGOamhrOgegdszheiVF
- orlUP8d37XSpFAqydhKGaN78V5Dps0Wmwm4lIlS4MtQXJtSLUHXDJLIZLW0pw8tiPLKsd1o/yDkXE
- dnpsjJTRG6SdDSHnyOB2/gh4p+yTaLytFdARk/r4/P26+L+FiH0fFl+RnBt19LPklfKgeDc7GwIif
- ja+nIWpp3W23DAUuI6xduEut25Q89yu7Ci8CliLfAiLy9bIGjBQWU2Y+1/j/7KuPj6VbBsZWLTZY0
- hUmpJSTnWAqc9SMsNxo7NSQuddgviz5e2tqucaRqxP02FGzNa8U4NAKdWaXrlHG5Dglj9XH0DK+SH
- +c96qqFewYD8VPQ6XAGxQcXbrtJmiMor1R2DfziispLRvJcfYs8xqabbCtoS3ouXB9XRi8hn7A2kh
- ME1ryS+Oh63JshXHnw6bmjCpVd/p+fGLIGU6A47pJOpviKR4jEO84pl2ejtDZ3Tc=
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-9X53wTzqLt2/ZcqSFvOL"
-User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmgyYO+r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3ECC1F00ACA
+	for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2026 13:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1782825976;
+	bh=pXygJ/RMTPQNrcPVAiG6RR6YqxRwAnw6sxAPhTT6WAQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=dmgyYO+r/cqtUF5r6CPFKYWEvoAeyK/FSjcn+dry/Y41At+kX7GtDMuHKEZvta2hP
+	 BexWcZI3mbV6524/BbhQPJD2T5IV+I2WBJ0U7PyNYY2m70b8cTetFZ3CcuqHaYR8+6
+	 qV0vZvmnFmUs8pQpn3RoaM6q0snZsxjfKOKYyimMcU8VFDBQlJtNt31H0UzfDuDUuC
+	 hh+iqyi1nPhfmqyLcQhslNQ65XBXgRL4G7KHo8EtXetzpVyN9OAzGRAwgVEn6h28hj
+	 FnzI/7sXqIFIwEAZYdIe41KOl1qVK3A/INI51/ndogFTFvyNqUGX6cNf6MRHYHeXOR
+	 /8dd44xkBBM9w==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-39b237fb695so4457481fa.2
+        for <linux-gpio@vger.kernel.org>; Tue, 30 Jun 2026 06:26:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpX8/A3/NcY28MTli+pxvoTSzHL8+f7976CSzMCglK/hgSxu4ZhoyoPsqAx+RKDdgdXPiKooOzQYISX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqPDvTMSnQKHBxXUV7HqKOr/4oKLMcGlZlOaNwNWyiwxCJZv1V
+	CqF3IIAsplusGwbS/74BsLbK6YSa0MDnQ1580mUDnmXXAz233x/5i48EnknTgbQKABN8NWs4AZj
+	L01UjX4yF5/BIo/CngcrzRH3xhWIw3j8=
+X-Received: by 2002:a05:6512:a354:b0:5ae:b270:505e with SMTP id
+ 2adb3069b0e04-5aebdb7d428mr680479e87.1.1782825975726; Tue, 30 Jun 2026
+ 06:26:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
-
-
---=-9X53wTzqLt2/ZcqSFvOL
+References: <20260617043654.2790253-1-mikhail.kshevetskiy@iopsys.eu> <CAD++jLmY6Ase3hPC00z_kAJe+vJBUyrEHZEAOcWqkiuFnRGCcA@mail.gmail.com>
+In-Reply-To: <CAD++jLmY6Ase3hPC00z_kAJe+vJBUyrEHZEAOcWqkiuFnRGCcA@mail.gmail.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 30 Jun 2026 14:26:02 +0100
+X-Gmail-Original-Message-ID: <CAD++jL=W6oTH6SszTXzESrQfbnb4=MDhGa2MwFZJTxtfZWrL1Q@mail.gmail.com>
+X-Gm-Features: AVVi8CdMqlD-NNESA5p_L_MjCXc2S_nvvYlYGQu1Hdjs5hWQXyMGqa8I_zRSf2c
+Message-ID: <CAD++jL=W6oTH6SszTXzESrQfbnb4=MDhGa2MwFZJTxtfZWrL1Q@mail.gmail.com>
+Subject: Re: [PATCH v4 00/14] pinctrl: airoha: split driver on shared code and
+ SoC specific drivers, add supporf of en7523
+To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Christian Marangi <ansuelsmth@gmail.com>, 
+	Benjamin Larsson <benjamin.larsson@genexis.eu>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	Markus Gothe <markus.gothe@genexis.eu>, 
+	Matheus Sampaio Queiroga <srherobrine20@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Bartosz,
+On Tue, Jun 30, 2026 at 1:09=E2=80=AFPM Linus Walleij <linusw@kernel.org> w=
+rote:
+> On Wed, Jun 17, 2026 at 5:37=E2=80=AFAM Mikhail Kshevetskiy
+> <mikhail.kshevetskiy@iopsys.eu> wrote:
+>
+> > This patchset
+> >  * fixes more airoha pinctrl issues
+> >  * split combined driver on common code and several SoC specific driver=
+s
+> >  * improves an7583 pinctrl support
+> >  * adds support of en7523 SoC
+>
+> No comments for two weeks so patches applied.
 
-On Tue, 2026-06-30 at 00:47 -0700, Bartosz Golaszewski wrote:
-> On Mon, 29 Jun 2026 18:04:59 +0200, Thomas Perrot
-> <thomas.perrot@bootlin.com> said:
-> > Hello Guenter,
-> >=20
-> > On Sat, 2026-04-11 at 17:12 -0700, Guenter Roeck wrote:
-> > > snip
-> > >=20
-> > > Sashiko has some interesting feedback that might be worth looking
-> > > into.
-> > >=20
-> > > https://sashiko.dev/#/patchset/20260408-dev-b4-aaeon-mcu-driver-v5-0-=
-ad98bd481668%40bootlin.com
-> > >=20
-> >=20
-> > Thanks for the pointer. I went through all findings and addressed
-> > the
-> > =C2=A0 valid ones in v6:
-> >=20
->=20
-> Did I miss anything? I don't see the v6 neither in my inbox nor on
-> lore.
+I realized there is v5 and v6 which are still being discussed so I backed
+these out.
 
-I just submitted it. I was waiting for the tests to finish.
-
-Kind regards,
-Thomas Perrot
-
->=20
-> Bart
-
---=20
-Thomas Perrot, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
-
---=-9X53wTzqLt2/ZcqSFvOL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCAAdFiEEh0B3xqajCiMDqBIhn8ALBXH+Cu0FAmpDw6YACgkQn8ALBXH+
-Cu3Z4QwAtYCULW7li/8c+W51thD4TA+XAWl/WlY9Ygahvsw/16ifn5pstgFNxRvz
-LavDMxiMsym+2YAcZ8Y3UaAWhOdTU18j6LA4mLqb+NUrq7jN2TGepGqcZme5pPdZ
-5NnBdflkVEYlBVcKZp5O+o3TsCKNlgiN7LYpIQ7AZWRlzdNxsdStBUbsK3SZJtUi
-RSKYrjYj5nT11lAMlWWnucJd+9EfIQR+sLUyrkd8nf8NaUWaOH25ltkmhmaeSC9v
-0rsELJYKjWi+xvripQsCgwF9mgY7vTMfVNgnfbw4w8ZYN/4avpqSwZwnDJEB25T7
-NIoNsKoMmbiw/AADZ4yqxNPe0RqGw7+JZ7G9chtrpcoRDAhhYOLHhaxGZxyHZjcS
-1jHcL4KDExhlR8U7WNj7ooJO+Scg1Yq9hlP/p15W7JJ/yLLXNhKrb5VNeWh8P4LY
-tZ2oQvt5yiZThaoh6mSbQYa9u4MENm1tEk9hilHvJLcS60MtXrINYK8PrXK9jw9W
-kpiTGMur
-=CcQS
------END PGP SIGNATURE-----
-
---=-9X53wTzqLt2/ZcqSFvOL--
+Yours,
+Linus Walleij
