@@ -1,40 +1,42 @@
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB4D379973;
-	Wed,  1 Jul 2026 16:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB091E1E12;
+	Wed,  1 Jul 2026 16:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782925026; cv=none; b=jzELGpGiCioYI+CxCeQcBgMCyfnk5zCnKCunjQCxKikU8N7HHy2alVvqvRVMoEY4oYkNoo7kyudUcDedTusmSsE+rlGVf/pVPpziErM+IEGQDwUfXkPV5H54uq9tkjud0xen5S0jEb5NCWQINWsGet3TXFI22Liv+NDnqOCNvyo=
+	t=1782925026; cv=none; b=aFpVmRuKlTryFjvs0kymbvjlAPjztQJFn+Qenb0YUPXQyL3ys/dd41HP/FersSIlEUMGFzUBRAXRsFfJ03uyDsJ70vICa0dtMvT7CS+AzMOkUNFujR7YM5NBmVwrIRtMpds+LaBNrCmHCZyeMiYsSfvzfCg8kxbir1aiiZnJTXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1782925026; c=relaxed/simple;
-	bh=ADwWwcVnrV8ObUT08vo3t/6SUomiEgdOjDvCi/KbaHE=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=t7V3DJOmIOJ6s3pjsL40jpd0rNexQOrfh4dscZW3XRpMDGHHbJuA9W7sj4ZlYXEKwlADW2ykjXyhc4/A//qrfkiFL8V/txG2uJDv0xwOPJB8nvouGtYzC6WrFynIzzIMM/NaSezTwc4PlgDnDHisjPCPkD5EAK6aBtD+/UZ0fpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MPWi01YJ; arc=none smtp.client-ip=185.246.84.56
+	bh=IiN0xWJqJja1dE2Bcqsqgz/vkXxRozCtG+9Wfrp6VQg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=KdjIRRPh1jFjiik9kuoANTdskqekdzZxOX0WPAr088uWls+Vgc7C5c9o81cCq6ZxWSg5VFSrqHvF65UoGcsJHDkqa+ayKqI6zHzNQdcuBGjHLXKzVUDdErI5Bpn5gbAS52jnIOgNNwa6RsqBzDgylUtaTqoyH8uuyjZEKnS0fTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gt9ENIli; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MPWi01YJ"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gt9ENIli"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 4B9A81A0DC1;
-	Wed,  1 Jul 2026 16:57:02 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id CCDD31A0DC3;
+	Wed,  1 Jul 2026 16:57:03 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1B09B5FD9D;
-	Wed,  1 Jul 2026 16:57:02 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 98BE6104C948E;
-	Wed,  1 Jul 2026 18:56:59 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 99AFA5FD9D;
+	Wed,  1 Jul 2026 16:57:03 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 95C8C104C9688;
+	Wed,  1 Jul 2026 18:57:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1782925021; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=qkCj0ssMPm11qG6AeK/H9md/QP+Ow5ktlfNd4bttAYU=;
-	b=MPWi01YJ/a2z7k+SKa73J1razqKGCbFJjgW9wCVhWIoEpcZ1ohbb3OWPoms4pVfqMVxDAi
-	h8Fc8spvRXuo9t00jWjYILUK7QMp2zlOe9AxtsFS1o+FFUe+OK2eM2/Uys5THU1C01JuRb
-	fPdmys2wKVNo+uV8owlZu8nKEUdabBRvoy0LP6Vk+BXWniOc2pbffA8i/ltS1ebUrRz5gx
-	zJCguZnHBNb6yveL8ABGuJqpUnVNxSilfFtoR7orrVEC247AEUo7B+Qy4OZfIiHOjH7wNJ
-	nvqTQVn/JVU25Qk5TieiY1gwVTl+sdoPinwAulFpE/8DsQmoRAClamHIJpQxWw==
+	t=1782925022; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=o2O8g8Db5b5I21/nPDlKVMMKnQYMRRmUA/SB/cdxABs=;
+	b=gt9ENIliZ32mgrUzE2kwt9mfwxdjDm71T12KARKTSEp8bhrL9fpEMQIKD5ZIXaRx+qqqkZ
+	ceJKpnUY94E4E8m0jY/KcmB7FeVL/OsKEh4T/KnCw5A0iHjUqQUdxfOwH/0HRvAXaALqk1
+	j3n9iC/FGve3lFSa5sfatvQy2C7eY+qBe/1XTmJKGQII9BWnh7a0e02S5cjj48XNONk+d8
+	/wFXgDx5Mcmz69CMsWL2WMSwwmSdMyoUY3x1WV8tyc2PD41tjl1WdQTEbCt8OGY/ZVStE0
+	eV6SKk9ILOgGbuJFo5dCxC7Ck12WjCMshVdhtflyFWaJ5DivsMdgHlhwTnBeyQ==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: [PATCH 0/5] gpio: nomadik: silence boot log
-Date: Wed, 01 Jul 2026 18:56:57 +0200
-Message-Id: <20260701-gpio-nomadik-silent-v1-0-644d10316cef@bootlin.com>
+Date: Wed, 01 Jul 2026 18:56:58 +0200
+Subject: [PATCH 1/5] gpio: nomadik: convert nmk_gpio_populate_chip() to
+ goto cleanup
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -43,10 +45,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQqDMBBG4avIrB1ILGjpVcRF1F87rSaS0VIQ7
- 95ol9/ivZ0UUaD0yHaK+IhK8Ak2z6h7Oj+CpU+mwhSlqYzlcZHAPsyulzerTPArl9XdtQ6wuIF
- SuUQM8r2udfO3bu0L3Xqu6Dh+LRDl7HcAAAA=
-X-Change-ID: 20260701-gpio-nomadik-silent-678abaee1e3e
+Message-Id: <20260701-gpio-nomadik-silent-v1-1-644d10316cef@bootlin.com>
+References: <20260701-gpio-nomadik-silent-v1-0-644d10316cef@bootlin.com>
+In-Reply-To: <20260701-gpio-nomadik-silent-v1-0-644d10316cef@bootlin.com>
 To: Linus Walleij <linusw@kernel.org>, 
  Bartosz Golaszewski <brgl@kernel.org>, 
  Philipp Zabel <p.zabel@pengutronix.de>
@@ -61,40 +62,116 @@ Cc: Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
 X-Mailer: b4 0.15.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-Currently, on EyeQ5, we might get those error logs:
-
-[    0.544230] nomadik-gpio 1400000.gpio: failed getting reset control: -EPROBE_DEFER
-[    0.544274] nomadik-gpio 1400000.gpio: could not populate nmk chip struct
-
-Then on successful probe we get:
-
-[    0.976838] nomadik-gpio 1400000.gpio: chip registered
-
-First line is because we don't use the appropriate dev_err_probe()
-helper. Second line is redundant to populate chip dev_err() calls and
-shall be dropped. Third line should be dropped.
-
-That's done in patches 3+4+5. Patches 1+2 prepare the terrain.
-
-Have a nice day,
-Théo
+Remove duplicate teardown code that is found in all error if
+statements. Replace by goto-based cleanup labels.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
-Théo Lebrun (5):
-      gpio: nomadik: convert nmk_gpio_populate_chip() to goto cleanup
-      gpio: nomadik: add missing dev_err() call on chip populate failure
-      gpio: nomadik: drop duplicate probe error line
-      gpio: nomadik: use dev_err_probe()
-      gpio: nomadik: drop "chip registered" log on probe success
+ drivers/gpio/gpio-nomadik.c | 44 +++++++++++++++++++++++---------------------
+ 1 file changed, 23 insertions(+), 21 deletions(-)
 
- drivers/gpio/gpio-nomadik.c | 64 ++++++++++++++++++++++-----------------------
- 1 file changed, 32 insertions(+), 32 deletions(-)
----
-base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
-change-id: 20260701-gpio-nomadik-silent-678abaee1e3e
+diff --git a/drivers/gpio/gpio-nomadik.c b/drivers/gpio/gpio-nomadik.c
+index e22b713166d7..f25f251f4757 100644
+--- a/drivers/gpio/gpio-nomadik.c
++++ b/drivers/gpio/gpio-nomadik.c
+@@ -527,15 +527,15 @@ struct nmk_gpio_chip *nmk_gpio_populate_chip(struct fwnode_handle *fwnode,
+ 
+ 	if (device_property_read_u32(gpio_dev, "gpio-bank", &id)) {
+ 		dev_err(dev, "populate: gpio-bank property not found\n");
+-		platform_device_put(gpio_pdev);
+-		return ERR_PTR(-EINVAL);
++		ret = -EINVAL;
++		goto err_put_pdev;
+ 	}
+ 
+ #ifdef CONFIG_PINCTRL_NOMADIK
+ 	if (id >= ARRAY_SIZE(nmk_gpio_chips)) {
+ 		dev_err(dev, "populate: invalid id: %u\n", id);
+-		platform_device_put(gpio_pdev);
+-		return ERR_PTR(-EINVAL);
++		ret = -EINVAL;
++		goto err_put_pdev;
+ 	}
+ 	/* Already populated? */
+ 	nmk_chip = nmk_gpio_chips[id];
+@@ -547,8 +547,8 @@ struct nmk_gpio_chip *nmk_gpio_populate_chip(struct fwnode_handle *fwnode,
+ 
+ 	nmk_chip = devm_kzalloc(dev, sizeof(*nmk_chip), GFP_KERNEL);
+ 	if (!nmk_chip) {
+-		platform_device_put(gpio_pdev);
+-		return ERR_PTR(-ENOMEM);
++		ret = -ENOMEM;
++		goto err_put_pdev;
+ 	}
+ 
+ 	if (device_property_read_u32(gpio_dev, "ngpios", &ngpio)) {
+@@ -569,16 +569,16 @@ struct nmk_gpio_chip *nmk_gpio_populate_chip(struct fwnode_handle *fwnode,
+ 	res = platform_get_resource(gpio_pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(base)) {
+-		platform_device_put(gpio_pdev);
+-		return ERR_CAST(base);
++		ret = PTR_ERR(base);
++		goto err_put_pdev;
+ 	}
+ 	nmk_chip->addr = base;
+ 
+ 	/* NOTE: do not use devm_ here! */
+ 	clk = clk_get_optional(gpio_dev, NULL);
+ 	if (IS_ERR(clk)) {
+-		platform_device_put(gpio_pdev);
+-		return ERR_CAST(clk);
++		ret = PTR_ERR(clk);
++		goto err_put_pdev;
+ 	}
+ 	clk_prepare(clk);
+ 	nmk_chip->clk = clk;
+@@ -586,12 +586,9 @@ struct nmk_gpio_chip *nmk_gpio_populate_chip(struct fwnode_handle *fwnode,
+ 	/* NOTE: do not use devm_ here! */
+ 	reset = reset_control_get_optional_shared(gpio_dev, NULL);
+ 	if (IS_ERR(reset)) {
+-		clk_unprepare(clk);
+-		clk_put(clk);
+-		platform_device_put(gpio_pdev);
+-		dev_err(dev, "failed getting reset control: %pe\n",
+-			reset);
+-		return ERR_CAST(reset);
++		dev_err(dev, "failed getting reset control: %pe\n", reset);
++		ret = PTR_ERR(reset);
++		goto err_unprepare_clk;
+ 	}
+ 
+ 	/*
+@@ -601,18 +598,23 @@ struct nmk_gpio_chip *nmk_gpio_populate_chip(struct fwnode_handle *fwnode,
+ 	 */
+ 	ret = reset_control_deassert(reset);
+ 	if (ret) {
+-		reset_control_put(reset);
+-		clk_unprepare(clk);
+-		clk_put(clk);
+-		platform_device_put(gpio_pdev);
+ 		dev_err(dev, "failed reset deassert: %d\n", ret);
+-		return ERR_PTR(ret);
++		goto err_put_reset;
+ 	}
+ 
+ #ifdef CONFIG_PINCTRL_NOMADIK
+ 	nmk_gpio_chips[id] = nmk_chip;
+ #endif
+ 	return nmk_chip;
++
++err_put_reset:
++	reset_control_put(reset);
++err_unprepare_clk:
++	clk_unprepare(clk);
++	clk_put(clk);
++err_put_pdev:
++	platform_device_put(gpio_pdev);
++	return ERR_PTR(ret);
+ }
+ 
+ static void nmk_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
 
-Best regards,
---  
-Théo Lebrun <theo.lebrun@bootlin.com>
+-- 
+2.55.0
 
