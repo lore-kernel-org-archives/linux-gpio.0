@@ -1,58 +1,59 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3440036A354
-	for <linux-gpio@vger.kernel.org>; Wed,  1 Jul 2026 07:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FEB23C060F
+	for <linux-gpio@vger.kernel.org>; Wed,  1 Jul 2026 07:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782892211; cv=none; b=rrPgs0R6YBYXRw/GK6Ro22bGfTdG/XQpMPQoy1ieHaPtX+t4UWSwULbaL0Pz3Lu5CgUOY2sPPz3Tq3FeceRe87KIQlOZgCGMHSQeMSTrAOzltSJW5Zgp3oTdE6iPE35SFdieUqlP6qGicydSByfM7HZCQK1XTk9MvWpWG6xCtX4=
+	t=1782892227; cv=none; b=lpIDqF9TBLSU3Ol/xJjW4hpLUqF0C/k2WIsYQoGxG2UCjrfj8Wy+9rvSQte3ZB48+D6771+PDs0wHywMKrowrDqqjXLRlcakzCAqC5t7w1pm1j8RPyapvwH7fxfKo8Susg4D/cc6u6Ku9+lIDQ1QCw0R2tvzJ0g14L4V2FeCCJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782892211; c=relaxed/simple;
-	bh=dx1O75jqKMARjEbw4xneNk7aG4r2yfuJioWVDgA4Lp0=;
+	s=arc-20240116; t=1782892227; c=relaxed/simple;
+	bh=KbUG/Lzj94CuSVCXFQWc1VZGNfdldF0klrQbP7ulC9g=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PLfg5qDWuzs3DBG8DLVVxJdQvCmoMmJm+pOKrWscPw6udRpOdi2BrdGUI+tQ8kIW1mWDbdpFNAl7n4BE9JudUidAJZwL5eR0qKy5noHAiYG2BmlxudC7gGephegeaWccfgDD44EwBQpKTV7etsnSsuLamft2+StaSWXUPZrItwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2DcNdYd; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=InSRCzkiKE+emItY47Iwnh25lKxWFzgksJYrhauh2J9ldkheBVHEqugHioCUQLXMOYi8P8fPKqWMXJfT0h8cxRoemFNeoCnZh+EDKOtyCAbrAUtp/uclCoeqGkxIkJ7gWjud9QOKW0zlx6s9ycOdAgvobLEbD82imy+yRM/tQ7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DczjMUBv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2DcNdYd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A5B71F01558
-	for <linux-gpio@vger.kernel.org>; Wed,  1 Jul 2026 07:50:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DczjMUBv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA1901F01566
+	for <linux-gpio@vger.kernel.org>; Wed,  1 Jul 2026 07:50:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782892210;
-	bh=dx1O75jqKMARjEbw4xneNk7aG4r2yfuJioWVDgA4Lp0=;
+	s=k20260515; t=1782892225;
+	bh=xWoQa8RFTTk84aEoAC07qJog4uQPcmRTcxfNGLNDxJg=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=j2DcNdYdADDJu+D3REmFeOGs5cw/wVRDCtpWACgDuKjqrOOLm2M4y5DN23480AZ1+
-	 vdbHErYbb2InVSGUdjvxGuamb9E+yPRsBVjhCVCiXyKaOxignCJrhJJ+sCulqREuj2
-	 JZxBrhhL8M2bGYMeKhgzQoRiW4OCC68fnAE12cgLy2w3/40ruKeTVw7/mHAPBTxFXf
-	 MW3RIJTIy2p3JhCAAmsgmH3SkxgQcdyu4tbovvpGx2pi551ZcwYmfASnsbjb8Sy5Am
-	 u1HrtfRlZkc2/+8NNkXk6EuHohgDRlqIW5fn+gweETKl82yJ2QHYPWNfZQsisst93n
-	 oOXXzvbJsIhvQ==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-39b14a7e53aso3399311fa.2
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Jul 2026 00:50:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RogPppgLU49z13LsszOePf0rOa+4tdqQreRyZT4EffiKdBUl9pL4AmoS7uNpoE3u81Q2BlKe67iVPsi@vger.kernel.org
-X-Gm-Message-State: AOJu0YytHPvXRZcfkoVzRpT/6NcPHWrJ+fpZfHvhRf40HSuIzliYMwtE
-	eQXMzi2f1IJqwletdRYkCV+PsyPJiovH5YN85hK/H3MtHMYUpXW0Si/Bcj7nwwljPGYnZVnsq8A
-	VjkhU4K0z+yRMhMnlVPok5/PZDWo3x90wCOXydv9mLQ==
-X-Received: by 2002:a05:651c:1593:b0:39a:f75e:a147 with SMTP id
- 38308e7fff4ca-39b340d882dmr882981fa.34.1782892208779; Wed, 01 Jul 2026
- 00:50:08 -0700 (PDT)
+	b=DczjMUBvKfp5CMbsOROhYOGCOLsZpYRnR4v/M3FcrVtZ7ab5uweJIGfIFRAulsUab
+	 RQyOOY9042JI8cfD+xhwBMIrVwgaBGnKuFFEiapdo11rUNdUrRqaRmffpzzfxieieI
+	 T/0aqk0CcKZjuzJTm6sbYauBENXBRGY1J8L3MfLT06EoG8bIya0xqXHaeiMrDG4LLF
+	 xrtfqYoz2mUp/RMDIxrUwEZMdoaPLaT4/4z9gVNtlYguLbrghReud4/Ano4SYiJ4pb
+	 qJM7A0Nz8PrS5WA1ceOhrWNQoO0p6gPnjjQgD0YxRt0AWSQA9wQsBDEMNZUwVXRDpY
+	 t+ceRvuSwytlg==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-39b2be45e8cso3076831fa.1
+        for <linux-gpio@vger.kernel.org>; Wed, 01 Jul 2026 00:50:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqKs8tTZhUWLu4bh4kkEOsFJ9s++caKlOWmME4RX6uyKSibNAOewILM2xeGYiuQrJACkMdkUcyURyty@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU3Qw6vYmarQ2wNCoP3ywbAGHo9tW0pNusA8JUyQjBpe1XPN2g
+	dLgAky6EFP4j10tgTkpzoYx+AehfWuis2KKKw/ClCd2KtzsU3syXIOTYLaexnuSAsHY8Ov7cU+R
+	N5UqAp0RZ4sFQV7wXjJ5MnvxFdi3nKEtGMZhAvgsrxQ==
+X-Received: by 2002:a2e:864f:0:b0:393:6934:6104 with SMTP id
+ 38308e7fff4ca-39b340ed172mr905801fa.19.1782892224586; Wed, 01 Jul 2026
+ 00:50:24 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 1 Jul 2026 00:50:07 -0700
+ HTTPREST; Wed, 1 Jul 2026 03:50:23 -0400
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 1 Jul 2026 00:50:07 -0700
+ HTTPREST; Wed, 1 Jul 2026 03:50:23 -0400
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260630125403.546375-6-khristineandreea.barbulescu@oss.nxp.com>
+In-Reply-To: <20260630125403.546375-7-khristineandreea.barbulescu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260630125403.546375-1-khristineandreea.barbulescu@oss.nxp.com> <20260630125403.546375-6-khristineandreea.barbulescu@oss.nxp.com>
-Date: Wed, 1 Jul 2026 00:50:07 -0700
-X-Gmail-Original-Message-ID: <CAMRc=McZEw4P3LS9HzaS5W1qonGWkdvCYaEvFiY8m6sm98aWjA@mail.gmail.com>
-X-Gm-Features: AVVi8Ce65ZHRsdwHuQE2lkQelFQAZtLRoTaOMFpaCpGigaio81APEbQW62eUHbc
-Message-ID: <CAMRc=McZEw4P3LS9HzaS5W1qonGWkdvCYaEvFiY8m6sm98aWjA@mail.gmail.com>
-Subject: Re: [PATCH v12 5/6] pinctrl: s32cc: implement GPIO functionality
+References: <20260630125403.546375-1-khristineandreea.barbulescu@oss.nxp.com> <20260630125403.546375-7-khristineandreea.barbulescu@oss.nxp.com>
+Date: Wed, 1 Jul 2026 03:50:23 -0400
+X-Gmail-Original-Message-ID: <CAMRc=MfQDX7qNzmYP99RqvYtwVa9KsxKu4qq+8TD5Vz5FvrKOg@mail.gmail.com>
+X-Gm-Features: AVVi8Cf_I55n91eLuPB2Yr4k-M3SBY1DoYVILdNZ89grAvuz-pPqlnv6xDy3sRA
+Message-ID: <CAMRc=MfQDX7qNzmYP99RqvYtwVa9KsxKu4qq+8TD5Vz5FvrKOg@mail.gmail.com>
+Subject: Re: [PATCH v12 6/6] arm64: dts: s32g: describe GPIO and EIRQ
+ resources in SIUL2 pinctrl node
 To: Khristine Andreea Barbulescu <khristineandreea.barbulescu@oss.nxp.com>
 Cc: Alberto Ruiz <aruizrui@redhat.com>, Christophe Lizzi <clizzi@redhat.com>, devicetree@vger.kernel.org, 
 	Enric Balletbo <eballetb@redhat.com>, Eric Chanudet <echanude@redhat.com>, imx@lists.linux.dev, 
@@ -70,36 +71,29 @@ Cc: Alberto Ruiz <aruizrui@redhat.com>, Christophe Lizzi <clizzi@redhat.com>, de
 	Srinivas Kandagatla <srini@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 30 Jun 2026 14:54:02 +0200, Khristine Andreea Barbulescu
+On Tue, 30 Jun 2026 14:54:03 +0200, Khristine Andreea Barbulescu
 <khristineandreea.barbulescu@oss.nxp.com> said:
-> From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> Update the SIUL2 pinctrl node to describe the additional register
+> ranges and DT properties used by the updated SIUL2 driver.
 >
-> The updated SIUL2 block groups pinctrl, GPIO data access
-> and interrupt control within the same hardware unit.
-> The SIUL2 driver is therefore structured as a monolithic
-> pinctrl/GPIO driver.
+> Besides the MSCR and IMCR ranges used for pinmux and pin
+> configuration, the SIUL2 block also provides PGPDO and
+> PGPDI registers for GPIO output and input operations,
+> as well as an EIRQ register window for external interrupt configuration.
 >
-> GPIO data access and direction handling are implemented using the
-> gpio-regmap library backed by a virtual regmap. The virtual regmap
-> translates the gpio-regmap register model to the underlying SIUL2
-> registers: MSCR for direction, PGPDI for input values and PGPDO for
-> output values.
+> The driver supports both legacy pinctrl-only DTs and
+> extended DTs with GPIO and IRQ.
 >
-> The existing pinctrl GPIO callbacks are used for the request/free path:
-> they switch the pad to GPIO mode on request and restore the previous
-> MSCR configuration when the GPIO is released.
+> Reflect these resources in the SIUL2 pinctrl node by adding:
+>   - the PGPDO and PGPDI register ranges
+>   - the EIRQ register range
+>   - gpio-controller, #gpio-cells and gpio-ranges
+>   - interrupt-controller, #interrupt-cells and interrupts
 >
-> This change came as a result of upstream review in the
-> following series:
-> https://lore.kernel.org/linux-gpio/20260120115923.3463866-4-khristineandreea.barbulescu@oss.nxp.com/T/#m543c9edbdde74bdc68b6a2364e8b975356c33043
-> https://lore.kernel.org/all/20260504131148.3622697-7-khristineandreea.barbulescu@oss.nxp.com/
+> Keep the hardware description aligned with the updated SIUL2
+> driver, where pinctrl, GPIO data access and the EIRQ register
+> block are described under the same device node.
 >
-> Support both SIUL2 DT layouts:
-> - legacy pinctrl-only binding
-> - extended pinctrl/GPIO/irqchip binding
->
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
 > Signed-off-by: Khristine Andreea Barbulescu <khristineandreea.barbulescu@oss.nxp.com>
 > ---
 
