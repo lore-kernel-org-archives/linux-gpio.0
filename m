@@ -1,313 +1,306 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F3E3E3165
-	for <linux-gpio@vger.kernel.org>; Wed,  1 Jul 2026 08:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF7238656D
+	for <linux-gpio@vger.kernel.org>; Wed,  1 Jul 2026 09:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782896191; cv=none; b=KBXWR1O/vOgEuLjOKfOydReIP21TpEx++k5g88wNfioqrTeB2Ovym1kkXdQi9ku0xbS7ZBJROynG4oXtJSei0VjxfIbk9aWzws6b11xfaaRPYbHnhAwXa6WvH7ZDPDbRv+bQViEr0gWUI8xzWT1/4YGll4XkC3SnBj2JwCLpa7U=
+	t=1782897769; cv=none; b=SNf8D0gGxfhLGnH2NTbO9FHQnD0dd25LuxrOr34YSBwHLAv+axDHEFOb4MQ/nb9OWALRtyh/pwafXkzvM6fuJIauOxyhhI19yTFdk4728v/FDJtBjuIwHczZbQyjrv5G8lLNHdtQXT1kh57Rkwj73+EWD2FDnEmQuk2EE9/QwjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782896191; c=relaxed/simple;
-	bh=Q/Ee8UEosH5HcKcdYgBTh0JMMmQuw7yAsR/IJXwVX1A=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=u0L2Wiex2rXuY1eMYwweA3F04hB/2/awU9Y+RSiipDjosWOJSdeuZZtGsbGAhTVjfb7YVTrSOdQAXQvsNfIla6HWaOm/jMAPGbY3KNq2oECMJo8PmStI2RoA2xORR5LpqAQpr5qunjpQz2MRygK+hJnBof65TaTXLY4QbUmYCyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YLurAXhn; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1782897769; c=relaxed/simple;
+	bh=w/hAdWkXjPDKLqpIIwZCCSQfAwJbBgaOdOKdFmv/mAM=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Wm/bFBVcSgmDiuz3UMrIoxZ3PLh9I7m7LV5k+4MOTcVTz52dB87pq6JOjr57WZ1YVoeH8ViAJL/P2+XcfB7ZxxQG4m0gMIjtG+PPGNphLXIfJphBbvGJppiZn46ZWsdQ/wOdQNuUzKLHgcKCkKogsVjS6NCHpNBPyqUhzL3XR+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WdLTZd/7; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YLurAXhn"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2c99db7f763so653935ad.1
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Jul 2026 01:56:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782896189; x=1783500989; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=7b1kRHluAn2Yg95eVnJuMF1lRPMgONF4R7PVAPCSBmQ=;
-        b=YLurAXhnUiuXKGgIcP36WhbFj34z8L1by1YXCh5KEwFU8OCRtWEIOAsDZTaITLYzCm
-         fVLzrauE7x2mD/SxV0tfT96L00JN8OHLDmfLck+roKpuYv5iR/fL65ap1lJo32SfSJdB
-         hj6CKfVzLS73UQXmprrKvrMCUjziIZLdWEvtE8EG0SYUDr79XX9W+TrThMZBzD3SKEg7
-         wULHuUht4Vb4QHa9IG2/ty4QtlNs+C6keq+CWE3hJpXccgfZp5nP1Q22zRv9OVHDmotx
-         JxbfaEOO8NqBI4INANfEVxQAggI0QQwMn9qE8bQUs1emsoqOHSk7UXiXuN8fUsheKu5U
-         e0Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782896189; x=1783500989;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=7b1kRHluAn2Yg95eVnJuMF1lRPMgONF4R7PVAPCSBmQ=;
-        b=JtqFYpf2Sogtd/n2E5tCGhWYA3GNnqyOU4kKjo5JT3HNVHmawuuvpPQ8epAlENwh2N
-         X8DMffz0wEhoDBN3DCHkeeyGk9VHLE206TM8OA43qihE3hlKIRYW6BbqE8JRNrZ6NwGC
-         9jhjnaFKsPHSt9SuRrF55DWNT11zdsnBBxuwtbbCh+yY323m2jCscayE5ex8WwSHasyY
-         zV7m24xc9n5fKMrJV/NsEkoqDC4iF3sAJksqg8WSH9iK9217J3kp5duRf60Er+2GDLdG
-         SxJwyv2dEGRSrbjUFgfL0wWKh9s4qm/4obu09ADRSfjXu2b8X6GvM5Chml3P3lIVKTd8
-         zDSg==
-X-Forwarded-Encrypted: i=1; AFNElJ8+YjcfurS8tbyUvo5KEl1tSjqq7vqmnnjm6+CWCNMq5iPrfCiAdSVpBWVHR5q4CMAIOO8pZrKi4z+G@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJu+SxBVTsTUWt9FDakEI2e5OFXmSL6rWMl85OvJw1B/A/hI14
-	++DX2Em6NwANqf4aG5DwJSLfJQ2rSqtnhNahCnQa5C9qxdz90C4vmDI4
-X-Gm-Gg: AfdE7ckgNnv6k2/yyL50CI/5HIq6j73AMput6KVrwsWWP8XnhcsaUQbZDmldMR6qYME
-	LgxClDzcmxpYepD02wnMduhPJsSk7MXUmQX29CLUXmgMiEjgtAoyytPIWynY8AZQzWgr0Nc972F
-	c33qebq9kOp7YSgo5UNHqoiXDj/GChmwfMdQuvDw0CfQOAwSCkCyfgTIyp8CxuVGuQL8YRU0vb/
-	RfQ0GlyyntPBBruj0kNo5NB3VWfKG0D+VpR1kWiIQNh+OwZ/egu2tcoWFHWYRERkKLnGEyQtNJu
-	7WE0wnNMdd5Eufkz1Ug8ZTTK6SPdnTmUzEZJyqITsAhMia0tHbOmrSPSHE5t8dQDTE93J4Fy1MN
-	K3XPcN1h0mYVrxcPxuR1Mk7IyHUb0EGitaCBK1cpOttSDxfpc19d4Cbku605GtFFfkEB+JHhBa9
-	JXYv0Yu0MJAucUhuQKQ335gi0=
-X-Received: by 2002:a05:6a00:2da5:b0:845:3ffb:ac1d with SMTP id d2e1a72fcca58-847c0690f59mr413240b3a.2.1782896189258;
-        Wed, 01 Jul 2026 01:56:29 -0700 (PDT)
-Received: from smtpclient.apple ([2406:4440:0:105::41:a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-847a02ced41sm3546555b3a.36.2026.07.01.01.56.24
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Jul 2026 01:56:28 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WdLTZd/7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1782897769; x=1814433769;
+  h=date:from:to:cc:subject:message-id;
+  bh=w/hAdWkXjPDKLqpIIwZCCSQfAwJbBgaOdOKdFmv/mAM=;
+  b=WdLTZd/7HVN/BRDXUC7KjS/8raXqbuoOJRHUDdbGDCt8w/d4at2rQ6yk
+   Z3oyQodD7T+UX6seY5e/8adixYq3HMa5wWSR/gk8jcIXfVLp7Fc0ojTa1
+   3uGGscvBnIND1cc7QFI52SUgbShK05gm52TaWJDkB5JZYD8R9L2UTfNqY
+   2116zm26OOBRKJXS02wi8WSeAgpXEI9GdDRRSiCHMeyxZAAXAVoSNE8Nk
+   NKzMa43pc2apW6bXpvXB8BZBq45J7YHsea4ZQiX6WKpylYKZg8r8+QAKY
+   nH2jJw8UY2wSj86KhG6C6hBjqkD1g93S2580tSmZMcGe1zKN8/uj6XPvF
+   g==;
+X-CSE-ConnectionGUID: t9i4WiJ+TRm8UK8iY/U6xQ==
+X-CSE-MsgGUID: Ov2gllj5TM6IBrtR20Fgng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11833"; a="82612339"
+X-IronPort-AV: E=Sophos;i="6.24,235,1774335600"; 
+   d="scan'208";a="82612339"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2026 02:22:48 -0700
+X-CSE-ConnectionGUID: f44vHlzBRP6J9cMBsTJkRQ==
+X-CSE-MsgGUID: TbZlADhPT1yXEuaPpAz2WQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.24,235,1774335600"; 
+   d="scan'208";a="249151555"
+Received: from lkp-server02.sh.intel.com (HELO ea128546eb3d) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 01 Jul 2026 02:22:46 -0700
+Received: from kbuild by ea128546eb3d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wer9V-0000000097T-2kPu;
+	Wed, 01 Jul 2026 09:22:41 +0000
+Date: Wed, 01 Jul 2026 17:18:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:b4/tb10x] BUILD SUCCESS
+ 430af65f7d5b8271b53955da90198ba63817e2cd
+Message-ID: <202607011721.q4YTiCwI-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.8\))
-Subject: Re: [PATCH RFC] gpio: loongson-64bit: Add back the support for
- gsi_idx_map
-From: Miao Wang <shankerwangmiao@gmail.com>
-In-Reply-To: <akTRyQqXuSU6pl71@ashevche-desk.local>
-Date: Wed, 1 Jul 2026 16:56:11 +0800
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
- Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>,
- Jianmin Lv <lvjianmin@loongson.cn>,
- WANG Xuerui <kernel@xen0n.name>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>,
- linux-gpio@vger.kernel.org,
- Yinbo Zhu <zhuyinbo@loongson.cn>,
- Linus Walleij <linusw@kernel.org>,
- Hongchen Zhang <zhanghongchen@loongson.cn>,
- Liu Peibao <liupeibao@loongson.cn>,
- Juxin Gao <gaojuxin@loongson.cn>,
- Mika Westerberg <westeri@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <AA7111AC-196F-41F7-A47B-E5118F7D26F2@gmail.com>
-References: <20260630-loongson-gpio-v1-1-576908831fa0@gmail.com>
- <CAMRc=MdtRj6c3Bg72QMaAEMPovNyUdqWL_qDPGb1p=Cu=cETvA@mail.gmail.com>
- <akOxdBR_-rOweHXB@ashevche-desk.local>
- <B77A4E49-774C-4DB2-9CA6-FFBE14F1EF94@gmail.com>
- <akTDj-YJjuDOBc0i@ashevche-desk.local>
- <A12FA264-0A0B-4CB3-BBCC-51380591F0E1@gmail.com>
- <akTRyQqXuSU6pl71@ashevche-desk.local>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-X-Mailer: Apple Mail (2.3826.700.81.1.8)
 
-Hi,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git b4/tb10x
+branch HEAD: 430af65f7d5b8271b53955da90198ba63817e2cd  pinctrl: tb10x: Mark base as __iomem
 
-> 2026=E5=B9=B47=E6=9C=881=E6=97=A5 16:37=EF=BC=8CAndy Shevchenko =
-<andriy.shevchenko@linux.intel.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Wed, Jul 01, 2026 at 04:07:43PM +0800, Miao Wang wrote:
->>> 2026=E5=B9=B47=E6=9C=881=E6=97=A5 15:36=EF=BC=8CAndy Shevchenko =
-<andriy.shevchenko@linux.intel.com> =E5=86=99=E9=81=93=EF=BC=9A
->>> On Tue, Jun 30, 2026 at 08:42:43PM +0800, Miao Wang wrote:
->>>>> 2026=E5=B9=B46=E6=9C=8830=E6=97=A5 20:07=EF=BC=8CAndy Shevchenko =
-<andriy.shevchenko@linux.intel.com> =E5=86=99=E9=81=93=EF=BC=9A
->>>>> On Tue, Jun 30, 2026 at 07:45:52AM +0000, Bartosz Golaszewski =
-wrote:
->>>>>> On Mon, 29 Jun 2026 23:05:28 +0200, Miao Wang via B4 Relay
->>>>>> <devnull+shankerwangmiao.gmail.com@kernel.org> said:
->=20
-> ...
->=20
->>>>>>> This patch adds back the support for gsi_idx_map, which is used =
-in the
->>>>>>> ACPI DSDT table to describe the mapping between the GPIO line =
-number to
->>>>>>> the index of the interrupt number in the declared interrupt =
-resources.
->>>>>>>=20
->>>>>>> This property was removed in Loongson CPU Universal =
-Specification for
->>>>>>> Interface Between PC/Server System Firmware and Kernel v4.1 in =
-November,
->>>>>>> 2023, but still in use in firmwares released this year. A sample =
-of
->>>>>>> an affected DSDT entry from a 3C6000 board I'm currently using =
-is:
->>>>>=20
->>>>> Oh my gosh, can somebody actually try to consult first with the =
-Linux kernel
->>>>> developers before adding non-standard and wrongly named =
-properties, please?
->>>>=20
->>>> Inferred from the time when gsi_idx_map was removed from the spec, =
-I believe
->>>> that the removal might be because the maintainers suggestion =
-against introducing
->>>> gsi_idx_map. However, the firmwares "in the wild" have not followed =
-the change.
->>>=20
->>> But what is the outcome of not using that mapping. Do you have =
-something wrong
->>> or not working?
->>=20
->> Yes. As shown in the DSDT entry, when the mapping is given by the =
-firmware, the
->> number of given interrupts in _CRS does not equal to ngpios. In my =
-example,
->> ngpios is 32, but the number of interrupts given in _CRS is 8, and =
-the request
->> for irq on gpio lines whose number larger than 8 will fail with =
--ENXIO. To
->> clarify, the entry is taken from the firmware I am currently using, =
-and the
->> firmware is released on February this year.
->=20
-> Right, so with the given example everything can be done without using =
-the (now)
-> unspecified property. Do you have more examples of DSDT of these =
-platforms?
+elapsed time: 754m
 
-Sorry, I only possess limited number of loongarch devices.
+configs tested: 229
+configs skipped: 2
 
->>>>>>> Device (GPO1) {
->>>>>>> Name (_HID, "LOON000F")
->>>>>>> Name (_CRS, ResourceTemplate () {
->>>>>>>  QWordMemory ( // Omitted, not related
->>>>>>>  )
->>>>>>>  Interrupt (ResourceConsumer, Level, ActiveHigh, Exclusive, ,, ) =
-{
->>>>>>>    0x00000010, 0x00000011, 0x00000012, 0x00000013,
->>>>>>>    0x00000014, 0x00000015, 0x00000016, 0x00000017,
->>>>>>>  }
->>>>>>> Name (_DSD, Package (0x02) {
->>>>>>>  ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301")
->>>>>>>  Package (0x03) {
->>>>>>>    Package (0x02) { "gpio_base", 0x50 } // Ignored by the driver
->>>>>=20
->>>>> Yes, it's non-standard property. It's a broken one in terms of the =
-style.
->>>>> See DT binding documentation.
->>>>=20
->>>> To clarify, I agree that this property should be redundant and =
-ignored by
->>>> the driver and global gpio numbers should be assigned dynamically =
-by the
->>>> kernel.
->>>>=20
->>>>>>>    Package (0x02) { "ngpios", 0x20 }
->>>>>>>    Package (0x02) { "gsi_idx_map", Package (0x20) {
->>>>>>>      0, 1, 2, 3, 4, 5, 6, 7,
->>>>>>>      0, 1, 2, 3, 4, 5, 6, 7,
->>>>>>>      0, 1, 2, 3, 4, 5, 6, 7,
->>>>>>>      0, 1, 2, 3, 4, 5, 6, 7,
->>>>>>>    }}
->>>>>>>  }
->>>>>>> }
->>>>>>> }
->>>>>>>=20
->>>>>>> As can be seen in the DSDT entry, the mapping is essential for =
-obtaining
->>>>>>> the IRQ number from a GPIO line number. Otherwise, when IRQ is =
-requested
->>>>>>> for the line numbers largers than 7, it will fail with -ENXIO.
->>>>>=20
->>>>> This doesn't look good. Why can't we simply hardcode the proper =
-behaviour based
->>>>> on the _HID? The gsi_idx_map seems quite regular and periodic, do =
-you have some
->>>>> other examples with different mapping?
->>>>=20
->>>> According to the manual, the gpio controllers in HID LOON0007 and =
-LOON000F are
->>>> actually embedded into the CPU chip and the interrupt lines are =
-hard wired so
->>>> that all the gpio lines of the gpio controller share in total 8 =
-irqs such that
->>>> the i-th line is wired to the (i%8)-th irq. So the mapping for =
-these two models
->>>> are fixed. I have no idea about the behavior of other kinds of =
-controllers, which
->>>> should be answered by Loongson personales.
->>>=20
->>> OK.
->>>=20
->>>> So far, there are known to be 2 styles of DSDT entries. One is =
-defined by
->>>> the latest Firmware Spec, to list all the irq numbers in _CRS, e.g. =
-Name (_CRS,
->>>> ResourceTemplate () { Interrupt () { 0x10, 0x11, .., 0x17, 0x10, =
-0x11, ..., 0x17,
->>>> ... (in total ngpios entries) } }). The other is defined by the =
-previous Firmware
->>>> spec, to use the property `gsi_idx_map` to map the gpio line number =
-to the irq
->>>> number listed in the ResourceTemplate. The former should now be =
-compatible with
->>>> the current implementation of the driver in the kernel, while the =
-later not. I
->>>> believe that although being abandoned by the spec, the later should =
-also be
->>>> considered and supported by the driver, since it is used by the =
-firmwares in the
->>>> wild.
->>>=20
->>> This is clear. What's unclear is the necessity of adding this =
-mapping. Is that
->>> mapping shuffled in an arbitrary way?
->>=20
->> According to the partial information I currently have, I don't think =
-the mapping
->> would shuffle arbitrarily.
->>=20
->>> Second question, why one can't update firmware to fix this to follow =
-the
->>> specification? =46rom above DSDT I do *not* see the need in this =
-mapping.
->>> Everything can be simply deducted from the number of Interrupt() =
-resources
->>> and ngpios at run-time without touching the property.
->>=20
->> I have no idea why on the firmware side the spec was not followed for =
-three
->> years. When ignoring this mapping, there would be a problem if the =
-number
->> of given Interrupt() resources is less than ngpios. When this mapping =
-is
->> referred, there will be a ground truth for which irq number a gpio =
-line
->> belongs to. To be specific, suppose the number of Interrupt() =
-resources
->> is m and ngpios is n. In the current spec, where m equals to n, such =
-ground
->> truth also exists. However, when m is less than n and this mapping is
->> ignored, the mapping will become ambiguous. Should the irq number be =
-i%m
->> for gpio line i, or i%8 and reject the irq requests when m is less =
-than 8?
->=20
-> My suggestion is to restore the logic in the code for the above-like =
-mappings.
->=20
-> You count Interrupt() resources, you have 'ngpios' property. Now, when =
-you
-> do need to map an IRQ line, you simply do it in a way of
->=20
-> IRQ line % amount of Interrupt() resources
->=20
-> It will give you the same without reading that property. I believe =
-that's why
-> the specification removed the need, because in this case it's not =
-needed and
-> may be easily derived from the existing information.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Yes, but actually from the hardware specs, the mapping between gpio =
-lines and
-the irq lines is actually taking modulo of 8. If the given number of =
-Interrupt()
-is 8, this will be right. What if the given number of Interrupt() is not =
-8, say
-9 or anything else? I think to be fail-safe, when the amount of =
-Interrupt()
-resources is less than ngpios, we should only allow 8 Interrupt()'s =
-given.
+tested configs:
+alpha                             allnoconfig    gcc-16.1.0
+alpha                            allyesconfig    gcc-16.1.0
+alpha                               defconfig    gcc-16.1.0
+arc                              allmodconfig    clang-23
+arc                               allnoconfig    gcc-16.1.0
+arc                              allyesconfig    clang-23
+arc                                 defconfig    gcc-16.1.0
+arc                   randconfig-001-20260701    gcc-12.5.0
+arc                   randconfig-002-20260701    gcc-12.5.0
+arm                               allnoconfig    gcc-16.1.0
+arm                              allyesconfig    clang-23
+arm                                 defconfig    gcc-16.1.0
+arm                   randconfig-001-20260701    gcc-12.5.0
+arm                   randconfig-002-20260701    gcc-12.5.0
+arm                   randconfig-003-20260701    gcc-12.5.0
+arm                   randconfig-004-20260701    gcc-12.5.0
+arm64                            allmodconfig    clang-23
+arm64                             allnoconfig    gcc-16.1.0
+arm64                               defconfig    gcc-16.1.0
+arm64                 randconfig-001-20260701    gcc-12.5.0
+arm64                 randconfig-002-20260701    gcc-12.5.0
+arm64                 randconfig-003-20260701    gcc-12.5.0
+arm64                 randconfig-004-20260701    gcc-12.5.0
+csky                             allmodconfig    gcc-16.1.0
+csky                              allnoconfig    gcc-16.1.0
+csky                                defconfig    gcc-16.1.0
+csky                  randconfig-001-20260701    gcc-12.5.0
+csky                  randconfig-002-20260701    gcc-12.5.0
+hexagon                          allmodconfig    gcc-16.1.0
+hexagon                           allnoconfig    gcc-16.1.0
+hexagon                             defconfig    gcc-16.1.0
+hexagon                        randconfig-001    gcc-11.5.0
+hexagon               randconfig-001-20260701    clang-23
+hexagon               randconfig-001-20260701    gcc-11.5.0
+hexagon                        randconfig-002    gcc-11.5.0
+hexagon               randconfig-002-20260701    clang-23
+hexagon               randconfig-002-20260701    gcc-11.5.0
+i386                             allmodconfig    clang-22
+i386                              allnoconfig    gcc-16.1.0
+i386                             allyesconfig    clang-22
+i386        buildonly-randconfig-001-20260701    clang-22
+i386        buildonly-randconfig-002-20260701    clang-22
+i386        buildonly-randconfig-003-20260701    clang-22
+i386        buildonly-randconfig-004-20260701    clang-22
+i386        buildonly-randconfig-005-20260701    clang-22
+i386        buildonly-randconfig-006-20260701    clang-22
+i386                                defconfig    gcc-16.1.0
+i386                           randconfig-001    clang-22
+i386                  randconfig-001-20260701    clang-22
+i386                           randconfig-002    clang-22
+i386                  randconfig-002-20260701    clang-22
+i386                           randconfig-003    clang-22
+i386                  randconfig-003-20260701    clang-22
+i386                           randconfig-004    clang-22
+i386                  randconfig-004-20260701    clang-22
+i386                           randconfig-005    clang-22
+i386                  randconfig-005-20260701    clang-22
+i386                           randconfig-006    clang-22
+i386                  randconfig-006-20260701    clang-22
+i386                           randconfig-007    clang-22
+i386                  randconfig-007-20260701    clang-22
+i386                           randconfig-011    gcc-14
+i386                  randconfig-011-20260701    gcc-14
+i386                           randconfig-012    gcc-14
+i386                  randconfig-012-20260701    gcc-14
+i386                           randconfig-013    gcc-14
+i386                  randconfig-013-20260701    gcc-14
+i386                           randconfig-014    gcc-14
+i386                  randconfig-014-20260701    gcc-14
+i386                           randconfig-015    gcc-14
+i386                  randconfig-015-20260701    gcc-14
+i386                           randconfig-016    gcc-14
+i386                  randconfig-016-20260701    gcc-14
+i386                           randconfig-017    gcc-14
+i386                  randconfig-017-20260701    gcc-14
+loongarch                        allmodconfig    clang-23
+loongarch                         allnoconfig    gcc-16.1.0
+loongarch                           defconfig    clang-23
+loongarch                loongson32_defconfig    clang-18
+loongarch                      randconfig-001    gcc-11.5.0
+loongarch             randconfig-001-20260701    clang-23
+loongarch             randconfig-001-20260701    gcc-11.5.0
+loongarch                      randconfig-002    gcc-11.5.0
+loongarch             randconfig-002-20260701    clang-23
+loongarch             randconfig-002-20260701    gcc-11.5.0
+m68k                             allmodconfig    gcc-16.1.0
+m68k                              allnoconfig    gcc-16.1.0
+m68k                             allyesconfig    clang-23
+m68k                                defconfig    clang-23
+microblaze                        allnoconfig    gcc-16.1.0
+microblaze                       allyesconfig    gcc-16.1.0
+microblaze                          defconfig    clang-23
+mips                             allmodconfig    gcc-16.1.0
+mips                              allnoconfig    gcc-16.1.0
+mips                             allyesconfig    gcc-16.1.0
+mips                         db1xxx_defconfig    clang-23
+mips                            gpr_defconfig    clang-23
+mips                          rb532_defconfig    clang-23
+nios2                            allmodconfig    clang-20
+nios2                             allnoconfig    clang-23
+nios2                               defconfig    clang-23
+nios2                          randconfig-001    gcc-11.5.0
+nios2                 randconfig-001-20260701    clang-23
+nios2                 randconfig-001-20260701    gcc-11.5.0
+nios2                          randconfig-002    gcc-11.5.0
+nios2                 randconfig-002-20260701    clang-23
+nios2                 randconfig-002-20260701    gcc-11.5.0
+openrisc                         allmodconfig    clang-20
+openrisc                          allnoconfig    clang-23
+openrisc                            defconfig    gcc-16.1.0
+parisc                           allmodconfig    gcc-16.1.0
+parisc                            allnoconfig    clang-23
+parisc                           allyesconfig    clang-17
+parisc                           allyesconfig    gcc-16.1.0
+parisc                              defconfig    gcc-16.1.0
+parisc                randconfig-001-20260701    clang-17
+parisc                randconfig-002-20260701    clang-17
+parisc64                            defconfig    clang-23
+powerpc                          allmodconfig    gcc-16.1.0
+powerpc                           allnoconfig    clang-23
+powerpc                     asp8347_defconfig    clang-23
+powerpc               randconfig-001-20260701    clang-17
+powerpc               randconfig-002-20260701    clang-17
+powerpc64             randconfig-001-20260701    clang-17
+powerpc64             randconfig-002-20260701    clang-17
+riscv                            allmodconfig    clang-23
+riscv                             allnoconfig    clang-23
+riscv                            allyesconfig    clang-23
+riscv                               defconfig    gcc-16.1.0
+riscv                          randconfig-001    clang-23
+riscv                 randconfig-001-20260701    clang-23
+riscv                          randconfig-002    clang-23
+riscv                 randconfig-002-20260701    clang-23
+s390                             allmodconfig    clang-17
+s390                             allmodconfig    clang-23
+s390                              allnoconfig    clang-23
+s390                             allyesconfig    gcc-16.1.0
+s390                                defconfig    gcc-16.1.0
+s390                           randconfig-001    clang-23
+s390                  randconfig-001-20260701    clang-23
+s390                           randconfig-002    clang-23
+s390                  randconfig-002-20260701    clang-23
+sh                               allmodconfig    gcc-16.1.0
+sh                                allnoconfig    clang-23
+sh                               allyesconfig    clang-17
+sh                               allyesconfig    gcc-16.1.0
+sh                                  defconfig    gcc-14
+sh                             randconfig-001    clang-23
+sh                    randconfig-001-20260701    clang-23
+sh                             randconfig-002    clang-23
+sh                    randconfig-002-20260701    clang-23
+sh                           se7206_defconfig    gcc-16.1.0
+sh                   secureedge5410_defconfig    gcc-16.1.0
+sparc                             allnoconfig    clang-23
+sparc                               defconfig    gcc-16.1.0
+sparc                          randconfig-001    gcc-13.4.0
+sparc                 randconfig-001-20260701    gcc-13.4.0
+sparc                          randconfig-002    gcc-13.4.0
+sparc                 randconfig-002-20260701    gcc-13.4.0
+sparc64                          allmodconfig    clang-20
+sparc64                             defconfig    gcc-14
+sparc64                        randconfig-001    gcc-13.4.0
+sparc64               randconfig-001-20260701    gcc-13.4.0
+sparc64                        randconfig-002    gcc-13.4.0
+sparc64               randconfig-002-20260701    gcc-13.4.0
+um                               allmodconfig    clang-17
+um                                allnoconfig    clang-23
+um                               allyesconfig    gcc-16.1.0
+um                                  defconfig    gcc-14
+um                             i386_defconfig    gcc-14
+um                             randconfig-001    gcc-13.4.0
+um                    randconfig-001-20260701    gcc-13.4.0
+um                             randconfig-002    gcc-13.4.0
+um                    randconfig-002-20260701    gcc-13.4.0
+um                           x86_64_defconfig    gcc-14
+x86_64                           allmodconfig    clang-22
+x86_64                            allnoconfig    clang-23
+x86_64                           allyesconfig    clang-22
+x86_64               buildonly-randconfig-001    clang-22
+x86_64      buildonly-randconfig-001-20260701    clang-22
+x86_64               buildonly-randconfig-002    clang-22
+x86_64      buildonly-randconfig-002-20260701    clang-22
+x86_64               buildonly-randconfig-003    clang-22
+x86_64      buildonly-randconfig-003-20260701    clang-22
+x86_64               buildonly-randconfig-004    clang-22
+x86_64      buildonly-randconfig-004-20260701    clang-22
+x86_64               buildonly-randconfig-005    clang-22
+x86_64      buildonly-randconfig-005-20260701    clang-22
+x86_64               buildonly-randconfig-006    clang-22
+x86_64      buildonly-randconfig-006-20260701    clang-22
+x86_64                              defconfig    gcc-14
+x86_64                                  kexec    clang-22
+x86_64                randconfig-001-20260701    gcc-14
+x86_64                randconfig-002-20260701    gcc-14
+x86_64                randconfig-003-20260701    gcc-14
+x86_64                randconfig-004-20260701    gcc-14
+x86_64                randconfig-005-20260701    gcc-14
+x86_64                randconfig-006-20260701    gcc-14
+x86_64                randconfig-011-20260701    gcc-14
+x86_64                randconfig-012-20260701    gcc-14
+x86_64                randconfig-013-20260701    gcc-14
+x86_64                randconfig-014-20260701    gcc-14
+x86_64                randconfig-015-20260701    gcc-14
+x86_64                randconfig-016-20260701    gcc-14
+x86_64                         randconfig-071    gcc-14
+x86_64                randconfig-071-20260701    gcc-14
+x86_64                         randconfig-072    gcc-14
+x86_64                randconfig-072-20260701    gcc-14
+x86_64                         randconfig-073    gcc-14
+x86_64                randconfig-073-20260701    gcc-14
+x86_64                         randconfig-074    gcc-14
+x86_64                randconfig-074-20260701    gcc-14
+x86_64                         randconfig-075    gcc-14
+x86_64                randconfig-075-20260701    gcc-14
+x86_64                         randconfig-076    gcc-14
+x86_64                randconfig-076-20260701    gcc-14
+x86_64                               rhel-9.4    clang-22
+x86_64                           rhel-9.4-bpf    gcc-14
+x86_64                          rhel-9.4-func    clang-22
+x86_64                    rhel-9.4-kselftests    clang-22
+x86_64                         rhel-9.4-kunit    gcc-14
+x86_64                           rhel-9.4-ltp    gcc-14
+x86_64                          rhel-9.4-rust    clang-22
+xtensa                            allnoconfig    clang-23
+xtensa                           allyesconfig    clang-20
+xtensa                         randconfig-001    gcc-13.4.0
+xtensa                randconfig-001-20260701    gcc-13.4.0
+xtensa                         randconfig-002    gcc-13.4.0
+xtensa                randconfig-002-20260701    gcc-13.4.0
 
-> Can somebody from Loongson shed a light on what's going on here?
->=20
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
