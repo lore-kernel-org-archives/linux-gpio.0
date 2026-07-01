@@ -1,123 +1,148 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC91F426EAE;
-	Wed,  1 Jul 2026 10:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029DA421A13;
+	Wed,  1 Jul 2026 10:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782902547; cv=none; b=XpJRj/vsyHoud5n7fAs86KhUfwOaTUiOBdfAi60JbCG6++jfXXpmgGIngwLVtUQJhqwq9VtBgG8sFn2T1SQ++xPZm7CFGfavpstBGokC62GQud9Cn/ZqQPrPRaIb92BoQFMVm/XxP6xVdAGdkNE3TU7EXP95mQxHqkb13e9TE/U=
+	t=1782903326; cv=none; b=QcCS8sh/4swluh75QECeyWEWw9Rvs9tQixGfK/215qXyWBJZDurhRv0pq/wmPKxVNP+YiJyCaTfZwT/cVCuj9hulRcKwYbsQVbwB/8/Mn1+aVgAAiVeHu0SLWa4BpIqZ/17orWoOmxCy4/9CoNL174uzjUKAeDWQ/1/srdw9wek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782902547; c=relaxed/simple;
-	bh=zY2o5dWEAvddugmQW/vs6ACDRe9NBEJocX+1e1hRgcw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dsD+eMeUVrT0SbPCxLeDdo+gHBQR4SO5QzIeVyi8ilJnX1WPmFqsPwhgmDC3MaRYYbIyQdenoRz+Ym9l6JA6moCxb0YG+hTJeTJ6m33wgpfBwg4Nco+mRJZSkfGuVLIAzPPgQHQoQSCZpumvQjLMmg/HMhnR9pNhi8DluQkWdHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=fptQfysD; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1782903326; c=relaxed/simple;
+	bh=ZjS6liPi1NdySjNIcGtNItMWzhUoGpTQ0kusW/xwebI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hR7TVhvyIaxz7M79if9E1DZ9uDHw7hjbYb5fcZsyNq4CQpihQFPfSYqpXP94ii8A7ygHJY2XWFqPmnyd9oeZsr+AMprPS0OSpftqMY7A/sJTyxKz38fiXIb1dcqa6g7jnbTfXldxSZixZU8x3F0uFZqlqi6+O5mhpQ3Wa6IEKys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZgjFkdN5; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="fptQfysD"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 661AVSAL01060427, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1782901888; bh=zY2o5dWEAvddugmQW/vs6ACDRe9NBEJocX+1e1hRgcw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=fptQfysDkOaqFFxM3SYMPybfkJ4BveTUE/3J/VPXssmowtbicMhcPH4AeImK6gKAE
-	 srgAU5pBFXxxkkAgf749/dEpJDU+Nb3oxq/9sqpQTzWW4M0zTjzi6R+EMRunMrEpl/
-	 PaXLYedqPmiRl7MfIBNObrkdgSClVOhqLqBgDwH27yR7+cU5WbwUKGrrQbr8h5ogBO
-	 8g98+bXalDNJU6UJ/wHLZDouVVUUKXcuRMB8iOWQLq6/916OYAhKh5nOvO3nlW67eg
-	 URtqpJSk375FtZv8I6CqaXD2euQ/bUkK/BsV70Jt8JqHaIfCUaTtMCxRRVdL1SvwP7
-	 bKN2vhpXgaFAg==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 661AVSAL01060427
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 1 Jul 2026 18:31:28 +0800
-Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 1 Jul 2026 18:31:29 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 1 Jul 2026 18:31:28 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::e6fd:5a3f:8946:92c4%10]) with mapi id
- 15.02.2562.017; Wed, 1 Jul 2026 18:31:28 +0800
-From: =?utf-8?B?WXUtQ2h1biBMaW4gW+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
-To: Linus Walleij <linusw@kernel.org>
-CC: "brgl@kernel.org" <brgl@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "afaerber@suse.com" <afaerber@suse.com>,
-	"mwalle@kernel.org" <mwalle@kernel.org>, "andriy.shevchenko@intel.com"
-	<andriy.shevchenko@intel.com>, =?utf-8?B?VFlfQ2hhbmdb5by15a2Q6YC4XQ==?=
-	<tychang@realtek.com>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	"linux-realtek-soc@lists.infradead.org"
-	<linux-realtek-soc@lists.infradead.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZgjFkdN5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1782903322; x=1814439322;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ZjS6liPi1NdySjNIcGtNItMWzhUoGpTQ0kusW/xwebI=;
+  b=ZgjFkdN5dnG2WqJqpfN/iHc6GCfvmK8GCgtfPjJ/WuFtlItGq5FXHHrR
+   1w3RhEIz1t9PtaYylQ5sHVrCf6ux7Qr2wpq6AQeC+5yQ0CiIMa12UvRqt
+   oNe3gCKgRSArxw7dRTGI+fRqaU8t44kDgJmc9M0XJfXTkPFzz0kwFrsIp
+   hf9wZDwTgIk6FpfMzHdR/OEo9oagCaVQyqGuwmTxgabccVMgBMoLWAWpN
+   11o7WQX9nZC7LE2bSNhXql7CcEiN/6jtl4haLw3Ire9RnN19YCrjkCzFt
+   x4fcDuz7zNOzqAlDfr1fkBVcDCkIKk+nGh99mOlckHiLPFdwKOHLTvLGf
+   A==;
+X-CSE-ConnectionGUID: rU4yg8+sTiyDHZY4U0ZDzg==
+X-CSE-MsgGUID: jl5hVJ+TQ0u/xA83yeV7qQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11833"; a="106422865"
+X-IronPort-AV: E=Sophos;i="6.25,141,1779174000"; 
+   d="scan'208";a="106422865"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2026 03:55:20 -0700
+X-CSE-ConnectionGUID: ci0GyTkQQvCRryiMH+9o2g==
+X-CSE-MsgGUID: GVB/dza0RKCoTJodXYYUyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,141,1779174000"; 
+   d="scan'208";a="252114244"
+Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.65])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jul 2026 03:55:14 -0700
+Date: Wed, 1 Jul 2026 13:55:11 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Michael Walle <mwalle@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"afaerber@suse.com" <afaerber@suse.com>,
+	"wbg@kernel.org" <wbg@kernel.org>,
+	"mathieu.dubois-briand@bootlin.com" <mathieu.dubois-briand@bootlin.com>,
+	"lars@metafoo.de" <lars@metafoo.de>,
+	"Michael.Hennerich@analog.com" <Michael.Hennerich@analog.com>,
+	"jic23@kernel.org" <jic23@kernel.org>,
+	"nuno.sa@analog.com" <nuno.sa@analog.com>,
+	"andy@kernel.org" <andy@kernel.org>,
+	"dlechner@baylibre.com" <dlechner@baylibre.com>,
+	=?utf-8?B?VFlfQ2hhbmdb5by15a2Q6YC4XQ==?= <tychang@realtek.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-realtek-soc@lists.infradead.org" <linux-realtek-soc@lists.infradead.org>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
 	=?utf-8?B?Q1lfSHVhbmdb6buD6Ymm5pmPXQ==?= <cy.huang@realtek.com>,
-	=?utf-8?B?U3RhbmxleSBDaGFuZ1vmmIzogrLlvrdd?= <stanley_chang@realtek.com>,
-	=?utf-8?B?SmFtZXMgVGFpIFvmiLTlv5fls7Bd?= <james.tai@realtek.com>, "Krzysztof
- Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: RE: [PATCH v4 1/4] dt-bindings: gpio: realtek: Add
- realtek,rtd1625-gpio
-Thread-Topic: [PATCH v4 1/4] dt-bindings: gpio: realtek: Add
- realtek,rtd1625-gpio
-Thread-Index: AQHdAijOAwCaZwN04Eyh2gkxEUiUVrZWmzIAgAHmnoA=
-Date: Wed, 1 Jul 2026 10:31:28 +0000
-Message-ID: <56be68cba7d9461d9a1ec66ed1a1417a@realtek.com>
-References: <20260622092335.1166876-1-eleanor.lin@realtek.com>
- <20260622092335.1166876-2-eleanor.lin@realtek.com>
- <CAD++jL=6pqEA0-vs_J57MnhmLmLwrTj7-syOL8E7PLYW-vUBvg@mail.gmail.com>
-In-Reply-To: <CAD++jL=6pqEA0-vs_J57MnhmLmLwrTj7-syOL8E7PLYW-vUBvg@mail.gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	Stanley =?utf-8?B?Q2hhbmdb5piM6IKy5b63XQ==?= <stanley_chang@realtek.com>,
+	James Tai =?utf-8?B?W+aItOW/l+WzsF0=?= <james.tai@realtek.com>,
+	Yu-Chun Lin =?utf-8?B?W+ael+elkOWQm10=?= <eleanor.lin@realtek.com>
+Subject: Re: [PATCH v3 2/7] gpio: regmap: add gpio_regmap_get_gpiochip()
+ accessor
+Message-ID: <akTyDzdrt949VnWK@ashevche-desk.local>
+References: <20260512033317.1602537-1-eleanor.lin@realtek.com>
+ <20260512033317.1602537-3-eleanor.lin@realtek.com>
+ <agMM9soiqpG-TRSb@ashevche-desk.local>
+ <adff3a2d21a64d3ea3b408d62157ee1e@realtek.com>
+ <ah92oEavMu4QRn8y@ashevche-desk.local>
+ <CAMRc=MdA24z-tB_D8CTw68Di8e4OVQJ1QH4+rDskFzq=xjJ5BQ@mail.gmail.com>
+ <DJ3QVMZ6XLW9.1M9W541O92QWJ@kernel.org>
+ <CAD++jLncD2ZjH3aedOkGNYP3FyZ=i7Pb0OcKKZKuMOPGNjM_nQ@mail.gmail.com>
+ <DJN3PDTPJ3L6.24P71OQFB6C98@kernel.org>
+ <CAHp75VeTp4eYQ4QBoeH2VyVhUivxNn1CaC9jskmeg-1zTAOYLQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VeTp4eYQ4QBoeH2VyVhUivxNn1CaC9jskmeg-1zTAOYLQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-SGkgTGludXMsDQoNCj4gSGkgWXUtQ2h1biwNCj4gDQo+IHRoYW5rcyBmb3IgeW91ciBwYXRjaCEN
-Cj4gDQo+IE9uIE1vbiwgSnVuIDIyLCAyMDI2IGF0IDEwOjMz4oCvQU0gWXUtQ2h1biBMaW4gPGVs
-ZWFub3IubGluQHJlYWx0ZWsuY29tPg0KPiB3cm90ZToNCj4gDQo+ID4gRnJvbTogVHp1eWkgQ2hh
-bmcgPHR5Y2hhbmdAcmVhbHRlay5jb20+DQo+ID4NCj4gPiBBZGQgdGhlIGRldmljZSB0cmVlIGJp
-bmRpbmdzIGZvciB0aGUgUmVhbHRlayBESEMgKERpZ2l0YWwgSG9tZSBDZW50ZXIpDQo+ID4gUlRE
-MTYyNSBHUElPIGNvbnRyb2xsZXJzLg0KPiA+DQo+ID4gVGhlIFJURDE2MjUgR1BJTyBjb250cm9s
-bGVyIGZlYXR1cmVzIGEgcGVyLXBpbiByZWdpc3RlciBhcmNoaXRlY3R1cmUNCj4gPiB0aGF0IGRp
-ZmZlcnMgc2lnbmlmaWNhbnRseSBmcm9tIHByZXZpb3VzIGdlbmVyYXRpb25zLiBJdCB1dGlsaXpl
-cw0KPiA+IHNlcGFyYXRlIHJlZ2lzdGVyIGJsb2NrcyBmb3IgR1BJTyBjb25maWd1cmF0aW9uIGFu
-ZCBpbnRlcnJ1cHQgY29udHJvbC4NCj4gPg0KPiA+IFJldmlld2VkLWJ5OiBLcnp5c3p0b2YgS296
-bG93c2tpDQo+ID4gPGtyenlzenRvZi5rb3psb3dza2lAb3NzLnF1YWxjb21tLmNvbT4NCj4gPiBT
-aWduZWQtb2ZmLWJ5OiBUenV5aSBDaGFuZyA8dHljaGFuZ0ByZWFsdGVrLmNvbT4NCj4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBZdS1DaHVuIExpbiA8ZWxlYW5vci5saW5AcmVhbHRlay5jb20+DQo+ICguLi4p
-DQo+IA0KPiA+ICsgIGludGVycnVwdC1jb250cm9sbGVyOiB0cnVlDQo+ID4gKw0KPiA+ICsgICIj
-aW50ZXJydXB0LWNlbGxzIjoNCj4gPiArICAgIGNvbnN0OiAyDQo+ID4gKw0KPiA+ICsgIGdwaW8t
-cmFuZ2VzOiB0cnVlDQo+ID4gKw0KPiA+ICsgIGdwaW8tY29udHJvbGxlcjogdHJ1ZQ0KPiA+ICsN
-Cj4gPiArICAiI2dwaW8tY2VsbHMiOg0KPiA+ICsgICAgY29uc3Q6IDINCj4gDQo+IEFmdGVyIGxv
-b2tpbmcgYXQgdGhlIGRyaXZlciBJIG11c3QgY2hhbGxlbmdlIHRoaXMgYmluZGluZy4NCj4gDQo+
-IFlvdXIgZHJpdmVyIGlzIGZ1bGwgb2YgKG9mZnNldCAlIDMyKSBhbmQgZXZlbiAob2Zmc2V0ICUg
-MzIpICo0IHRvIGp1c3Qgd29yayBhcm91bmQNCj4gdGhlIGZhY3QgdGhhdCB0aGUgaGFyZHdhcmUg
-aW5oZXJlbnRseSBoYXMgMzItcGluIGJhbmtzLg0KPiANCj4gSW5zdGVhZCBvZiB1c2luZyB0d29j
-ZWxsIEdQSU8gYW5kIGlycXMsIGp1c3QgdXNlIHRocmVlY2VsbCwgaW50ZXJydXB0LWNlbGxzIGFu
-ZA0KPiBncGlvLWNlbGxzIDMuDQo+IA0KPiBGaXJzdCBjZWxsIGlzIGJhbmssIHNlY29uZCBjZWxs
-IGlzIG9mZnNldCBpbnNpZGUgZWFjaCBiYW5rLg0KPiANCj4gRm9yIExpbnV4IHNwZWNpZmljYWxs
-eSB0aGVyZSBhcmUgaGVscGVycyBmb3IgZGVhbGluZyB3aXRoIHRoaXMgaW4gZ3Bpb2xpYiwgYW5k
-DQo+IGZ1cnRoZXIgeW91IHdpbGwgYmUgYWJsZSB0byB1c2UgdGhlIEdQSU9fR0VORVJJQyBsaWJy
-YXJ5LCB3aGlsZSB0aGlzIGlzIGJlc2lkZQ0KPiB0aGUgcG9pbnQgZm9yIHRoZSBiaW5kaW5nIGl0
-c2VsZi4NCj4gDQo+IFlvdXJzLA0KPiBMaW51cyBXYWxsZWlqDQoNClRvIGNsYXJpZnkgdGhlIGhh
-cmR3YXJlIGRlc2lnbjogdGhpcyBTb0MgZG9lcyBub3QgdXNlIGEgYmFua2VkIEdQSU8NCmFyY2hp
-dGVjdHVyZS4NCg0KRWFjaCBHUElPIHBpbiBoYXMgaXRzIG93biBkZWRpY2F0ZWQgMzItYml0IGNv
-bnRyb2wgcmVnaXN0ZXIgdGhhdCBoYW5kbGVzDQpib3RoIEdQSU8gY29uZmlndXJhdGlvbiBhbmQg
-aW50ZXJydXB0IHNldHRpbmdzIChlLmcuLCBlZGdlL2xldmVsIGVuYWJsZSkuDQpUaGUgb25seSBl
-eGNlcHRpb24gaXMgdGhlIGludGVycnVwdCBzdGF0dXMgcmVnaXN0ZXIsIHdoaWNoIGlzIGdyb3Vw
-ZWQgaW50bw0KMzItYml0IHdvcmRzLg0KDQpTaW5jZSBwaHlzaWNhbCBHUElPIGJhbmtzIGRvIG5v
-dCBleGlzdCwgdXNpbmcgYSAzLWNlbGwgPGJhbmsgb2Zmc2V0IGZsYWdzPg0KZm9ybWF0IHdvdWxk
-IG1pc3JlcHJlc2VudCB0aGUgaGFyZHdhcmUuIFRoZXJlZm9yZSwNCmtlZXBpbmcgI2dwaW8tY2Vs
-bHMgPSA8Mj4gYW5kICNpbnRlcnJ1cHQtY2VsbHMgPSA8Mj4gaXMgdGhlIG1vc3QgYWNjdXJhdGUN
-CnJlZmxlY3Rpb24gb2YgdGhlIGFjdHVhbCBzaWxpY29uLg0KDQpCZXN0IFJlZ2FyZHMsDQpZdS1D
-aHVuDQo=
+On Wed, Jul 01, 2026 at 01:01:10PM +0300, Andy Shevchenko wrote:
+> On Wed, Jul 1, 2026 at 11:44 AM Michael Walle <mwalle@kernel.org> wrote:
+> > On Fri Jun 19, 2026 at 11:08 PM CEST, Linus Walleij wrote:
+> > > On Mon, Jun 8, 2026 at 4:41 PM Michael Walle <mwalle@kernel.org> wrote:
+> > >
+> > >> >>> Without an accessor like gpio_regmap_get_gpiochip(), we cannot retrieve the
+> > >> >>> gpio_chip instantiated inside gpio-regmap.c to fulfill these requirements in our
+> > >> >>> map() function.
+> > >>
+> > >> Why is gpiochip_irq_reqres() called in the first place? Isn't that
+> > >> only called if the irq handling is set up via gc->irq.chip and not
+> > >> via gpiochip_irqchip_add_domain() like in gpio-regmap?
+> > >
+> > > Not really, the gpiochip_irq_reqres() is called to mark that a
+> > > GPIO line is used for IRQ, so the gpiolib cannot turn this
+> > > GPIO into an output line, gpiod_direction_out() will fail
+> > > on lines used for IRQ. So it's a failsafe.
+> > >
+> > > You can live without it of course, but then you don't get
+> > > this failsafe.
+> >
+> > Thanks for the explanation! So did I make a mistake years ago by
+> > adding the gpiochip_irqchip_add_domain(), see commit 6a45b0e2589f
+> > ("gpiolib: Introduce gpiochip_irqchip_add_domain()")
+> >
+> > As Yu-Chun found, gpiochip_irq_reqres() expect the irq chip data
+> > to be a gpio_chip, which isn't the case (in general) for an
+> > externally allocated domain, is it?
+> 
+> So the whole issue comes from the fact that the IRQ chip is not marked
+> as immutable. For immutable IRQ chips (which all GPIO provides should
+> have) there is no such issue to begin with, id est there is no
+> gpiochip_irq_reqres() callback assigned (and respective _relres).
+
+Ah, for immutable chips we put either custom ones or
+GPIOCHIP_IRQ_RESOURCE_HELPERS which actually refers to those callbacks.
+
+So, if the domain is external, it should also provide irq_request_resources
+and release callbacks. In the custom case we can wrap gpiochip_reqres_irq()
+and gpiochip_relres_irq() respectively.
+
+But we need to have a struct gpio_chip pointer for them. And note, the
+IRQ chip data can be anything in that case, so it's not a requirement.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
