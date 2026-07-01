@@ -1,115 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EFF3368BA;
-	Wed,  1 Jul 2026 00:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49FE224FA
+	for <linux-gpio@vger.kernel.org>; Wed,  1 Jul 2026 01:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782864031; cv=none; b=kAmhrsAfXa2uhnckYz5DNAchoVcC3xbZzLhkn6nxhmDPK6bBDWEXxfUFe0ZDA47Heq8kqNbOLRsdcUc7xTbVtpsJSkrIQ/06q+SfbotZ/FDDfkYp52qMRAYdU404cIIPotnJqgaDhpmxqbC07i8hpbnr7Ey1epy98vAZl6tegTI=
+	t=1782867779; cv=none; b=KoNzWOOTglYPvxqa+EHtdXVS4NJKhLfag4WTMDbE+4EN6yQVFoE4StASaFJA4O2Rq5l+xR9LLolir9a48EDOhsQiUf2x0J+KUJ3NtMWlK/Hx4cgfO0H0Fub6NAivxApS9eZ49DT3I4LXVOWvNANfFkYX/khLEnY9hgoFvOFTC14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782864031; c=relaxed/simple;
-	bh=aDd6xnbNXHwGM13+mfbTZqc1/QPJzS5RFcPsKU4bTP0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ON6lalgqWpigkeE+34eEtYwKoVpDjGEUwiMsQRde93WjmswqazBCrM1J4s+KxX+dd3BGVI0ohp0yBXBq93Bof4kdff6g57vS78uAfBt91dTUu0HIs3A7fCNN8d+LrSdz6mvMCeyUjLAAkOjm00+L39weykoIsAzKOversISGP0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D2aridIB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1782867779; c=relaxed/simple;
+	bh=f1Kfdp/24l27Z3g7GGBJKSuUuNkpzYfD1zD06/Xg+po=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CX89+IHEF+FnKNT7GEG61eSfpAIYZ4QT6AfWXhsUkivQL4l4Rwa4SLXKGODfsYEx/gJWtlm8qooweJ0gz/qs04A5DSuf4xLLkc+jnefpbLtkj50742p6HvTxubUrUowibXTjkQtnTnNgiJ8D8HpJIhiiRJJy9yx1HPzeZTYJDj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=HLMzTxRo; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2aridIB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A0A91F000E9;
-	Wed,  1 Jul 2026 00:00:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782864029;
-	bh=/q/M4iftPwXwOXkuB442nTPnYH/p2eAZGJdhwDTouz8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc;
-	b=D2aridIB3ZeNJJR3QUrliEur8twz15o6NHQ3r4VfEqZ4ETR7iR4Pcmpw5QOls9KWg
-	 ltdTxZYZRZUW7G04XshPf1tQrDKzMzGzkUSCpoRrq01HHBFl6KI1ZNg+A0EihUDQ85
-	 Nn9/j5cFtBd93A8542gMmvRvLNPhVlsZlGm/unA5oSqjRfx0Sssw6SyErZ08s5sS0r
-	 wdXiV9NryfEhhimef0etZQj0seb/z8TTI9ZjY0OFngTzUGWG5UiWq5EZlaVgH5tvzo
-	 7uagUhv9ei4cRcZc7VrB0c2q7hSjQx6n5p1nbz8XvvSHDY8gNuo7YLSf228yTJeONP
-	 M3PWol6eIbbXA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 939E5393A963;
-	Wed,  1 Jul 2026 00:00:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="HLMzTxRo"
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 982842C01F0;
+	Wed,  1 Jul 2026 13:02:54 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1782867774;
+	bh=iZTYzu5o/YiQslM99gSKLg5tc25ewlHM95x3h+EO8KY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HLMzTxRoL3EMvGpVu3cBA5tqJMrUg+Tt+0VX/aGFnDxnLEvH/3rKN13o2i8qRRZmQ
+	 pTMIQ3dFijZAQSqamKMG5o6re9GarMKaaALEDvvtv5a1zMz7jQ4zRnOhUUzvKbHVPQ
+	 DCsAvYfndb+Pw4LFlEbDk0YtTPAZ2mGpDpO6OVD4k53Q11hGn5/2IUmL955vd+glFs
+	 +6xDn6JFmiSGOS2ZTeEF84LaZUEMFC9lztkMQl1HZ3eMlsS2vJvMNgMhg2zjBx1cgn
+	 4F8MyYIm1vQE++BTKGqDsRzWyWky1jQ9d0e5EHXy/uDajrAUnlticWaalw318MQq07
+	 /rBk+xAEW08wQ==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6a44673e0000>; Wed, 01 Jul 2026 13:02:54 +1200
+Received: from markto-dl.ws.atlnz.lc (markto-dl.ws.atlnz.lc [10.33.23.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 6A18E13EC4E;
+	Wed,  1 Jul 2026 13:02:54 +1200 (NZST)
+Received: by markto-dl.ws.atlnz.lc (Postfix, from userid 1155)
+	id 67C11406AE; Wed,  1 Jul 2026 13:02:54 +1200 (NZST)
+From: Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
+To: linusw@kernel.org,
+	brgl@kernel.org,
+	ian.ray@gehealthcare.com
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
+Subject: [PATCH] gpio: pca953x: fix pca953x_irq_bus_sync_unlock regmap lock
+Date: Wed,  1 Jul 2026 13:02:28 +1200
+Message-ID: <20260701010228.1605573-1-mark.tomlinson@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 00/13] treewide: replace linux/gpio.h
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <178286401313.341356.16335263979724856348.git-patchwork-notify@kernel.org>
-Date: Wed, 01 Jul 2026 00:00:13 +0000
-References: <20260629132633.1300009-1-arnd@kernel.org>
-In-Reply-To: <20260629132633.1300009-1-arnd@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-gpio@vger.kernel.org, arnd@arndb.de, brgl@kernel.org,
- andrew@lunn.ch, sebastian.hesselbarth@gmail.com, gregory.clement@bootlin.com,
- Frank.Li@nxp.com, robert.jarzmik@free.fr, krzk@kernel.org,
- gerg@linux-m68k.org, tsbogend@alpha.franken.de, hauke@hauke-m.de,
- zajec5@gmail.com, ysato@users.sourceforge.jp, glaubitz@physik.fu-berlin.de,
- linusw@kernel.org, dmitry.torokhov@gmail.com, kuba@kernel.org,
- pabeni@redhat.com, linux@dominikbrodowski.net, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- patches@opensource.cirrus.com, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-sh@vger.kernel.org,
- linux-input@vger.kernel.org, linux-media@vger.kernel.org,
- netdev@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-phy@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-sound@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=TI3mSEla c=1 sm=1 tr=0 ts=6a44673e a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=RAioF0-LDSMA:10 a=HDTP818q5T4t6XSuYIMA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Hello:
+Locking is disabled in the regmap config as this driver uses its own
+lock. This means that all calls to regmap functions (read or write) must
+hold the i2c_lock. The function pca953x_irq_bus_sync_unlock() did not do
+this, and it was therefore possible that multiple threads could cause an
+incorrect register to be read/written.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+A previous patch partly fixed this, but only protected the write to the
+interrupt mask register, and not the read from the direction register.
 
-On Mon, 29 Jun 2026 15:26:20 +0200 you wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The linux/gpio.h header used to be the global definition for the gpio
-> interfaces, with 1100 users back in linux-3.17. In linux-7.2, only about
-> 130 of those remain, so this series cleans out the rest.
-> 
-> In each subsystem, we can replace the header either with
-> linux/gpio/consumer.h for users of the modern gpio descriptor interface,
-> or linux/gpio/legacy.h for the few remaining users of the old number
-> based interface.
-> 
-> [...]
+Signed-off-by: Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>
+---
+ drivers/gpio/gpio-pca953x.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-Here is the summary with links:
-  - [01/13] ARM: replace linux/gpio.h inclusions
-    (no matching commit)
-  - [02/13] m68k/coldfire: replace linux/gpio.h inclusions
-    (no matching commit)
-  - [03/13] mips: replace linux/gpio.h inclusions
-    (no matching commit)
-  - [04/13] sh: replace linux/gpio.h inclusions
-    (no matching commit)
-  - [05/13] mfd: replace linux/gpio.h inclusions
-    (no matching commit)
-  - [06/13,net-next] net: replace linux/gpio.h inclusions
-    https://git.kernel.org/netdev/net-next/c/a53d1872f2be
-  - [07/13] ASoC: replace linux/gpio.h inclusions
-    (no matching commit)
-  - [08/13] pcmcia: replace linux/gpio.h inclusions
-    (no matching commit)
-  - [09/13] phy: replace linux/gpio.h inclusions
-    (no matching commit)
-  - [10/13] media: replace linux/gpio.h inclusions
-    (no matching commit)
-  - [11/13] Input: matrix_keyboard - replace linux/gpio.h inclusion
-    (no matching commit)
-  - [12/13] gpib: gpio: replace linux/gpio.h inclusion
-    (no matching commit)
-  - [13/13] gpiolib: remove linux/gpio.h
-    (no matching commit)
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 2ee35e855e4d..9689e3f3c517 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -605,20 +605,27 @@ static int pca953x_read_regs(struct pca953x_chip *c=
+hip, int reg, unsigned long *
+ 	return 0;
+ }
+=20
+-static int pca953x_gpio_direction_input(struct gpio_chip *gc, unsigned o=
+ff)
++static int _pca953x_gpio_direction_input(struct gpio_chip *gc, unsigned =
+off)
+ {
+ 	struct pca953x_chip *chip =3D gpiochip_get_data(gc);
+ 	u8 dirreg =3D chip->recalc_addr(chip, chip->regs->direction, off);
+ 	u8 bit =3D pca953x_get_bit_mask(chip, off);
+=20
+-	guard(mutex)(&chip->i2c_lock);
+-
+ 	if (PCA_CHIP_TYPE(chip->driver_data) =3D=3D TCA6418_TYPE)
+ 		return regmap_update_bits(chip->regmap, dirreg, bit, 0);
+=20
+ 	return regmap_update_bits(chip->regmap, dirreg, bit, bit);
+ }
+=20
++static int pca953x_gpio_direction_input(struct gpio_chip *gc, unsigned o=
+ff)
++{
++	struct pca953x_chip *chip =3D gpiochip_get_data(gc);
++
++	guard(mutex)(&chip->i2c_lock);
++
++	return _pca953x_gpio_direction_input(gc, off);
++}
++
+ static int pca953x_gpio_direction_output(struct gpio_chip *gc,
+ 		unsigned off, int val)
+ {
+@@ -856,9 +863,10 @@ static void pca953x_irq_bus_sync_unlock(struct irq_d=
+ata *d)
+ 	DECLARE_BITMAP(reg_direction, MAX_LINE);
+ 	int level;
+=20
++	guard(mutex)(&chip->i2c_lock);
++
+ 	if (chip->driver_data & PCA_PCAL) {
+ 		DECLARE_BITMAP(latched_inputs, MAX_LINE);
+-		guard(mutex)(&chip->i2c_lock);
+=20
+ 		/* Enable latch on edge-triggered interrupt-enabled inputs */
+ 		bitmap_or(latched_inputs, chip->irq_trig_fall, chip->irq_trig_raise, g=
+c->ngpio);
+@@ -880,7 +888,7 @@ static void pca953x_irq_bus_sync_unlock(struct irq_da=
+ta *d)
+=20
+ 	/* Look for any newly setup interrupt */
+ 	for_each_andnot_bit(level, irq_mask, reg_direction, gc->ngpio)
+-		pca953x_gpio_direction_input(&chip->gpio_chip, level);
++		_pca953x_gpio_direction_input(&chip->gpio_chip, level);
+=20
+ 	mutex_unlock(&chip->irq_lock);
+ }
+--=20
+2.54.0
 
