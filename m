@@ -1,72 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EDD266581
-	for <linux-gpio@vger.kernel.org>; Wed,  1 Jul 2026 08:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2583E364927
+	for <linux-gpio@vger.kernel.org>; Wed,  1 Jul 2026 08:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782893634; cv=none; b=sjYsFFl6y2RzSE1DlggdFJvK0Gklm38yJ+YGp0mJX98H9DQCbMoQiTAERVNN3vAGH9tYBDOETfqV8Wj5qQwk+fPs9bxglPNX7Hf2d1nr2bor1cgxuZ+RJEbgL6p2s6GOohqhb4Z+c4qoVM0FyvGnXIeKeiaAUKzuy/wXoDrD9XU=
+	t=1782893861; cv=none; b=hK6eGnZyKHgeR/OVLDz8NkOC8bEbyB35fTIq4NiNPCKEyvUKJ5x55C4uzF8u1IsEzA3ngM7TYkTNQQi4UDziYpTccz21onNo8gT91+k75Nn+Or3hxW2Ry530Ra76tfIr5v4E/Mr1ExvGawi9QGFeLnk69JfhT3hPdUSvnrRMrkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782893634; c=relaxed/simple;
-	bh=fjCZdFCveQTTkO4Ttsuztq2MpSrFX5/twjfddssFiUE=;
+	s=arc-20240116; t=1782893861; c=relaxed/simple;
+	bh=7ZzAF3yeVyhvS1C8NOqosE3dLLNvqUJdcQifyae1v4o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BqGNGzB2nNBDYOngqVEZypwrXBW0iiIQrlrxJCEfoFKErWJ99mWQlkhf6n19cTpxYrGmn2E7+1vBmkkqGn9NAwN63J0HTsmbBF7FUWr8+JzTwK12kVwEEoUq4rjaXdyldTQwckrJR3VpLnSlLYlSBI7OTCj+05BxgGTXGhQKJ2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mPIiKMt0; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=IE2w2bDtuOLlUaHvUXLsiQu64XWJRE2R8v2sWUR6bcjljj7ddPlWDoMM2S6XvTaswgJqhd83bb99covtIhlFaP4eJ3WNJxbmZhWuvKyRRdNoF0uKsnLo9srPpCC0/WkdkCDFQKiCFaWK2weX5mV27xEuL+fmanVO31ohiv7yBnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qw2aAMsQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mPIiKMt0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0744A1F000E9
-	for <linux-gpio@vger.kernel.org>; Wed,  1 Jul 2026 08:13:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qw2aAMsQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D85251F00AC4
+	for <linux-gpio@vger.kernel.org>; Wed,  1 Jul 2026 08:17:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782893631;
-	bh=fjCZdFCveQTTkO4Ttsuztq2MpSrFX5/twjfddssFiUE=;
+	s=k20260515; t=1782893859;
+	bh=7ZzAF3yeVyhvS1C8NOqosE3dLLNvqUJdcQifyae1v4o=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=mPIiKMt0KgvQW8M8PQ8E2RhTRO46N4xi+7ifMfOmPK+FOjYd93Q0TPqPJeu2go9NX
-	 GPGqUrsQ+4B96Ez9R5R3cq+4kucvGG2Jo9lS/CzvlTZFeTZTC8ryK6WFSAe1WNBveK
-	 Ma2pZgGVzjWVLUZ7pyuKwdMS4MpDH8vmF/VodxGnJ/bBjTf9gLcmQDZydg2ftryBbN
-	 PeIjho5dGT4rTTJLpmy7OFhSzveWi59yagIdCSyMZtjpCm6wp4KpJrjp042oIjRRkq
-	 TIWj1e13kvvt967gmbtl4bfiPe3oHBiuT075LajwqBmBE7Vt6pZN2tjp6QMYQMA5aF
-	 0wYkzzdMZ8uQg==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5aeba1a36dfso253432e87.2
-        for <linux-gpio@vger.kernel.org>; Wed, 01 Jul 2026 01:13:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpznMgPVbHtiyCMOG4Nb7UEhxVXgmyKI+rqMTC6WRvi119rJ68ZJYNrb8Kmz9963eKL2DgqtkHJmWyU@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywoko3dpsIzei4djXbOuIiKI8lqgb08s7THhafW8a4RaAZBj2T+
-	qQ8p11Tt1ju3azYFGoFC6pjb5p9/FmbDG6X2gZKtFV0vM/y79vVEBFVP4iDqi2fLPTNBKcTOxEX
-	VWcGSVGb3uNX0nefp1mAXYSnbs2+gGTs=
-X-Received: by 2002:a05:6512:3d19:b0:5aa:671d:9960 with SMTP id
- 2adb3069b0e04-5aec6797473mr151000e87.6.1782893629862; Wed, 01 Jul 2026
- 01:13:49 -0700 (PDT)
+	b=Qw2aAMsQo1zbo7CWVV8LG5hkkCeONghjAjG5/A47Z3GCjfdBEXVM3XCLQmvPJ2XZs
+	 bnQm2OrvIkG8DGShSUa+q6EqCdSxMzHJx8b0XuxxwwwZ9oOPX9ELUcfMz9Zo/Jvsvg
+	 lUVaPLVk2Lxgmnp/W5T/RVlx4Nj7mO5DdzJJgGh6zYosqwGaEaGOq6jGZEkcEu71e8
+	 isb3fp1hPye1ExpVtJDwhAnGgL5dGmOQsq8cIDNrDW6EXiH65JSo9zprN2iA2zl/d0
+	 Z5NANaB5LFSeOvxUiQv1SrqHvbdCiheX3qpdQOr7+M7Hd4I5r/1RjJ7WFZkrbUzxcC
+	 pFdGjmwLXuMiw==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5aebd52488cso371218e87.2
+        for <linux-gpio@vger.kernel.org>; Wed, 01 Jul 2026 01:17:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rq81rBSb83eB893SzOzc2tf47hL7jDizL3/EH1yWWcMmB75sSwiMM8O+QuGGRssKy+oM3RB7Sd9wHgk@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4MdsFgo4brncn/cOG6ciNUHpQGKjEk7XpsbNb6XF5YYnp+rz7
+	Hpd2EK57RIMA381uYrEQcPqgpUcjg103fKdVyZZbc7eqaO8+I7BrOOna3LRXzFVoMclKxOZUKku
+	P1Hx+eXjaplUEL/3qcP0EKZz4faO7r5Q=
+X-Received: by 2002:a05:6512:138e:b0:5ae:bcf6:b07c with SMTP id
+ 2adb3069b0e04-5aec6795a7fmr143250e87.4.1782893858641; Wed, 01 Jul 2026
+ 01:17:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260629060526.3638272-1-jgross@suse.com> <20260629060526.3638272-25-jgross@suse.com>
-In-Reply-To: <20260629060526.3638272-25-jgross@suse.com>
+References: <20260629-gpio-swnode-drop-label-matching-v1-1-db1af36cf883@oss.qualcomm.com>
+In-Reply-To: <20260629-gpio-swnode-drop-label-matching-v1-1-db1af36cf883@oss.qualcomm.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 1 Jul 2026 10:13:37 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=D81BED5g36JRZ-+-rYwszsMmUhi1vLeby0KZVjbr00Q@mail.gmail.com>
-X-Gm-Features: AVVi8CccVa_1F4RDbQXXMJraKayHgWNxS8q3tHXtAkDgD4gkSOSBN9CB4qpjx5c
-Message-ID: <CAD++jL=D81BED5g36JRZ-+-rYwszsMmUhi1vLeby0KZVjbr00Q@mail.gmail.com>
-Subject: Re: [PATCH 24/32] drivers/gpio: Stop using 32-bit MSR interfaces
-To: Juergen Gross <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <brgl@kernel.org>
+Date: Wed, 1 Jul 2026 10:17:25 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnGTQQ5wHeWjxju245P__eMjL+yXeu69JRcWS1K6Yc2ZQ@mail.gmail.com>
+X-Gm-Features: AVVi8CcRnR8C05DDeiFKIRK6VYenfHJh4p5GtavyLsyqgQL7_wooc_56sUvYIFQ
+Message-ID: <CAD++jLnGTQQ5wHeWjxju245P__eMjL+yXeu69JRcWS1K6Yc2ZQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: swnode: remove deprecated lookup mechanism
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi J=C3=BCrgen,
+On Mon, Jun 29, 2026 at 12:55=E2=80=AFPM Bartosz Golaszewski
+<bartosz.golaszewski@oss.qualcomm.com> wrote:
 
-On Mon, Jun 29, 2026 at 8:07=E2=80=AFAM Juergen Gross <jgross@suse.com> wro=
-te:
-
-> The 32-bit MSR interfaces rdmsr() and wrmsr() are planned to be
-> removed. Use the related 64-bit variants instead.
+> GPIO software node lookup should rely exclusively on matching the
+> addresses of the referenced firmware nodes. Commit e5d527be7e69 ("gpio:
+> swnode: don't use the swnode's name as the key for GPIO lookup") tried to
+> enforce this but had to be reverted: it broke existing users who abused
+> the software node mechanism by creating "dummy" software nodes named
+> after the device they want to get GPIOs from, without ever attaching them
+> to the actual GPIO devices. Those users relied on GPIOLIB matching the
+> label of the GPIO controller against the name of the software node rather
+> than on a real firmware node link.
 >
-> Signed-off-by: Juergen Gross <jgross@suse.com>
+> All such users have now been coverted to using attached software nodes
+> via the fwnode address lookup path and the kernel documentation has been
+> updated to recommend it as the correct approach. This allows us to remove
+> the old behavior.
+>
+> This will allow us to leverage the upcoming support for fw_devlink for
+> software nodes in GPIO core.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-Is this something the subsystem maintainera are supposed to apply
-directly on a per-subsystem basis? I was under that impression.
+Nice, I like it.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
