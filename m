@@ -1,54 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DD13D170C
-	for <linux-gpio@vger.kernel.org>; Thu,  2 Jul 2026 07:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8AA409610
+	for <linux-gpio@vger.kernel.org>; Thu,  2 Jul 2026 08:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782979197; cv=none; b=f6UeUoO2xjZhIphd7+v/btLHMsSCfYSng6QFcEVzcs1GoMDGO5Mc4dRP71CaP2SzOXrgRnMzWdCG50rBHPfWvRsPxu2Y9cjrzPodyS2fCFh2NZMnX0BFQyzQC6MzecrGCrvfuOS3R1IKgGmplJvGDevwqnqjnchKVIqeTXfLrno=
+	t=1782979259; cv=none; b=R3AXd+2HB9j17rPumEvHInRySIP9vBsmjqmMe2NYDz2VLpw5dKtOLX7NXNNGLFKzzMUL+Wl2jWJpvxchWxSMWaC8hcfKZWQvNz5IocoSGxQ2ju8ryjTA9LszhBL7W6aDmxu4I3dj2coBi1jt0eiFsxdFA0qrDi47fJl2+Wu4iS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782979197; c=relaxed/simple;
-	bh=+pOyUj3j+WJbAk+4QDGPQikSBUBnu5OmWPd6GlRmAic=;
+	s=arc-20240116; t=1782979259; c=relaxed/simple;
+	bh=v5zNFEg+D8ZtpeEyPbGGNU5KeLegUrcxuf7iPsC017Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E/Q7XhhLiX3rsbALV8/fc5lKwrRWGRq/yazVOdCm1ORi76TmB3SEKtM4cBTT2cgCPWa/DydhArE9vaSnz8XiOdPTaP/qTaC6iRTH2B+GXdj0BDNg/5eJoSZmAjiO4XDx0ubxHOVfOgm2lTSD1TchjFdUAP+23ezmtOXQyWE5KTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6849HXj; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=uwx2y2RWMO0TxAKpq+BpyqfGBWpCTqtVe4m6i/Ayb6CLvFpNaweoHzYw4++BnCJz325DjZezwhGy2TO6W6rTxfPnEail2UdXylFJabygYEU3VH5bVrYzcEurkiB3nhohUM7cetiMCcyAp7k5hhAEXnEF9j7Jp1BTLfyji4EgWZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0Hg0GC9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6849HXj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E4151F00A3F
-	for <linux-gpio@vger.kernel.org>; Thu,  2 Jul 2026 07:59:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0Hg0GC9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31CD61F00A3E
+	for <linux-gpio@vger.kernel.org>; Thu,  2 Jul 2026 08:00:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782979196;
-	bh=1h+3Fpyke2tX7ZFvdKHeQ4JdNdIQdnDKWaAKP31G/a8=;
+	s=k20260515; t=1782979258;
+	bh=v5zNFEg+D8ZtpeEyPbGGNU5KeLegUrcxuf7iPsC017Q=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=S6849HXj9O8LKKQpSF70YZh+9LnvgLiloLIXi3sEDCfC+KICtsoGW3N0tkxc5Q/jJ
-	 clOLMlBFcOTIWDnfiVrOkNyUXMduvxZLZ29m2iHF/b7TazlLMBXWn+SerOBlGmdViH
-	 rckRTbr1lq2FcoCBZ4jxxxCNBDjej9tsKf1I/S0zA6WNEv59Brhfi9k1nn3QRheH3b
-	 zsH4CD6rfskE90P5QQ6z85O5EojsIFh4dBgaz9BfJQ+4fEyoFO5fPxc7j7tNE3dHWx
-	 GtLev8wny4rNPOTrTJim86RaIPoLmLZKYxNQhWErp1ikuaDakAXxP5PBM7cIQll7Ex
-	 OnoAHNztJ8rKg==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5aeb11c7347so1237896e87.0
-        for <linux-gpio@vger.kernel.org>; Thu, 02 Jul 2026 00:59:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rr+aHYkCQyU2yiNo+j2AuZ8/tnj34xILghARXvMqVEwqkrYTHJj/EaXY6rkwsYDtAI9gbquFpq+dKn6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4WQz4TZdr4Z/JJmoZqYK6B02tN5qGZDrrE3hZyNUS6Xs78uPn
-	w2UbYJkf5xRkXmS1gIgF345SzYEdhdJWesW6DnToVI9ORyF22Nad5sEcwmsxckvA3ndwpUgp6zT
-	AOYax4fQfPZHQ8It+ayaBU2tM59imct0=
-X-Received: by 2002:a05:6512:6482:b0:5ae:a3c3:f123 with SMTP id
- 2adb3069b0e04-5aec67aa697mr1289406e87.25.1782979194864; Thu, 02 Jul 2026
- 00:59:54 -0700 (PDT)
+	b=I0Hg0GC9mLILA1x81dAzDZnpnuxMIy1mIHlXC3C0nndWjNFgQy581ZRvefQUQpHba
+	 /YSAq65D91CgmIIucDiLXaoSHutryAQJISrU7iQRPqga3khgSt8PFmoSnpqGJhPYVC
+	 sBW/4NnKuKPD4iyHcpZ8YHfhQTwF43Nu93THXgvvmAi0s6znKFaL1++HEXwodlAr8E
+	 E8mytCSUhSVNSHjiQY1HBe2fPkrY5fG77LdemDVR9L0jESg9Ecatw5b4yK7PZ4oW8R
+	 /oOXduoKlk9ZaRI1L4zjNEwJDCqN/VNGfE9dcUeF32OZ93ju1M4ZwT0Tt/AfY3s/wp
+	 LLoz9/wSmZMmw==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5aec201b582so1564328e87.1
+        for <linux-gpio@vger.kernel.org>; Thu, 02 Jul 2026 01:00:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rp5hcqIMUynafxt84vL4uuRAbDxpDbXDX4uYMq0k+5/JGkRSLbOQDjEL+i5qQpQHj4JzFBTu3fY8f/G@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVy2HTNoKcUfsuXSOrcT+rl7VCIw8XP5H3eo9qEWfEFVCtNoQk
+	ndhLhhUbxP+cQWUS3wgy9FRHU+z1MMfHJurBw9YsQ5zlKXZkPIe0st6V6KRsyUhbimnXoXp/2H7
+	Uqv0eXe63ZDWFHSuvOD/qRED419J2jG8=
+X-Received: by 2002:a05:6512:8386:b0:5ae:b886:3ddf with SMTP id
+ 2adb3069b0e04-5aec67a4216mr860841e87.14.1782979256991; Thu, 02 Jul 2026
+ 01:00:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260701-gpio-nomadik-silent-v1-0-644d10316cef@bootlin.com> <20260701-gpio-nomadik-silent-v1-4-644d10316cef@bootlin.com>
-In-Reply-To: <20260701-gpio-nomadik-silent-v1-4-644d10316cef@bootlin.com>
+References: <20260701-gpio-nomadik-silent-v1-0-644d10316cef@bootlin.com> <20260701-gpio-nomadik-silent-v1-5-644d10316cef@bootlin.com>
+In-Reply-To: <20260701-gpio-nomadik-silent-v1-5-644d10316cef@bootlin.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 2 Jul 2026 09:59:42 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkOspcOBG9DU+OD-++M3kNEviq7pY109Pqpd6V=RoKUEA@mail.gmail.com>
-X-Gm-Features: AVVi8CcU8tKaRId_dejrARm-i_U9g0OluvkGMZwVqH98hTd5N0_d2-ckQ2U3Yr8
-Message-ID: <CAD++jLkOspcOBG9DU+OD-++M3kNEviq7pY109Pqpd6V=RoKUEA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] gpio: nomadik: use dev_err_probe()
+Date: Thu, 2 Jul 2026 10:00:44 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmmHXBC9ni0pcVoB2HNK+osBzgirxH7vLHZaANmoe-tpQ@mail.gmail.com>
+X-Gm-Features: AVVi8CeDzqdb95Trp9mVGCMUsgcjERwSWLH6yqQYBpwrUE23KOmffYp25QhDWhI
+Message-ID: <CAD++jLmmHXBC9ni0pcVoB2HNK+osBzgirxH7vLHZaANmoe-tpQ@mail.gmail.com>
+Subject: Re: [PATCH 5/5] gpio: nomadik: drop "chip registered" log on probe success
 To: =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>
 Cc: Bartosz Golaszewski <brgl@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
 	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
@@ -62,20 +62,13 @@ Content-Transfer-Encoding: quoted-printable
 On Wed, Jul 1, 2026 at 6:57=E2=80=AFPM Th=C3=A9o Lebrun <theo.lebrun@bootli=
 n.com> wrote:
 
-> gpio-nomadik depends on a few resources. In one case the reset is taking
-> time to show up leading to a boot log containing:
->
-> [    0.544230] nomadik-gpio 1400000.gpio: failed getting reset control: -=
-EPROBE_DEFER
->
-> Fix by replacing all dev_err() calls that might be made at probe with
-> dev_err_probe().
->
-> On nomadik platforms, the nmk_gpio_populate_chip() log calls might
-> attach their reasons to the gpio or pinctrl device depending on boot
-> order.
+> Successful driver probing should be silent. Drop unconditional
+> dev_info() call that is done at nmk_gpio_probe() exit.
 >
 > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+
+I actually don't generally agree, but you are using this driver more than
+me now so let's go with your minimalist dmesg style for this driver.
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
