@@ -1,165 +1,269 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91FB477E43;
-	Thu,  2 Jul 2026 09:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8F43C76A6;
+	Thu,  2 Jul 2026 09:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782982926; cv=none; b=Gismw+bRRVCoM2ex+f3jll/vrYZtxsra4J4Kfxc3aX52nUpmgNeSN8E7ZMArFIZHuwnhaL5NaHGm2TcJxewKLPvN5PuYvZsHK1bcWOojG4ZDSmTbOJqtzzJo3eKb8vUSwCfxjhVWWT57q3IMFGQfc+5WyMw0CJeXJevdtvTLT2k=
+	t=1782984141; cv=none; b=D7E78HsOQcTEAQ0q3C7AL9Qg9MhHVid2YdSmzwEjczHrRLdi/94f13KJZOC/IZwum/ZKbAetDzrCyY5X46hXg4QVBa3w5bmQ+Tl4VeIwbLN3KBVW27/TjNQN0pH2HxRO5h3nETyLnAudVir1FfV7CxI/lRN4M9xB8ahaUn1vB8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782982926; c=relaxed/simple;
-	bh=EhlRFh2BDaoz1geWgLdcLwQxLNfFxyn3mEmmrQ/pnMY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tuYfxsoZQrs5ZGsp7ex0uE9uM7n5IgYM69Ra1Q8bwz8gpzLdqz3Y6eDmMHyyTIuvX2jxMfvZ5RTI341Zsls8W6DIoTjqOZXNRZaA3KhhTy0S93LG2LutjW6Ms6purhs5HUQLLR2XTK/P8Wx2yAgQZqT/6YoL8fg+XSgfbXTtVLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=D5Ty5PWl; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1782984141; c=relaxed/simple;
+	bh=qJQUxyQa/oV7ooLCRsSCWRp4f3xDW+JXpn7CbBbE75M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WqwsCf0WQd6kLuoayYZI9Bg5oBEil0D4080c8/SZp8mJxBzBmOy3yHz3B4KUcMicKSuyUCbf+qOKVdjutJ1NS9vAHJf/+QUviq6mKYwvz6pSTjFpdX4TAqNcRswE0NEpacNe9hVfBas5yxP91D4LGho8+Hi+Nz3Ivh7nL16hh4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXu5sLwd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="D5Ty5PWl"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 66291GYZ01817127, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1782982876; bh=N/jJq83KWKt0QCWjI+OidApVFhXZRn6PdIkpN8WZmB4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=D5Ty5PWl6LZA9BnV7NKrp9PU9jXGYQWUxQxELBmTbZ+j0k+E5qqU8zSWDkLJmcLzq
-	 GkAcC92UfBQQ377koFU4P352AwLj2IbwHrLewVzwolmwHCJe+3QjsCUbfHgZbQlFIP
-	 Hi1Y3+L9CriR6WtfTjU4OXr2LDuT3VjIlbDQedDSrQfV/vooxDTxYSiVYPr7HYAfwD
-	 T2z25w6PZ7F0k/Wj5nPJzyLPQ+BWt1pR5iMVvQXLVlHC4eRBAParDYv1wsHdNDCA6c
-	 pvW50XJdXkR6tFIlxVwyyIudyhypn8jxinoEpASGSusWp21oR4IQu7wOqVSVUaZiT8
-	 xqq7/2zDkRz8Q==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 66291GYZ01817127
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 2 Jul 2026 17:01:16 +0800
-Received: from RTKEXHMBS03.realtek.com.tw (10.21.1.53) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 2 Jul 2026 17:01:16 +0800
-Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS03.realtek.com.tw
- (10.21.1.53) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 2 Jul 2026 17:01:16 +0800
-From: Yu-Chun Lin <eleanor.lin@realtek.com>
-To: <linusw@kernel.org>, <brgl@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <afaerber@suse.com>,
-	<mwalle@kernel.org>, <andriy.shevchenko@intel.com>, <tychang@realtek.com>
-CC: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-realtek-soc@lists.infradead.org>, <cy.huang@realtek.com>,
-	<stanley_chang@realtek.com>, <eleanor.lin@realtek.com>,
-	<james.tai@realtek.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@oss.qualcomm.com>
-Subject: [PATCH v5 1/4] dt-bindings: gpio: realtek: Add realtek,rtd1625-gpio
-Date: Thu, 2 Jul 2026 17:01:12 +0800
-Message-ID: <20260702090115.2564318-2-eleanor.lin@realtek.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260702090115.2564318-1-eleanor.lin@realtek.com>
-References: <20260702090115.2564318-1-eleanor.lin@realtek.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXu5sLwd"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4F1ACC19425;
+	Thu,  2 Jul 2026 09:22:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1782984141;
+	bh=qJQUxyQa/oV7ooLCRsSCWRp4f3xDW+JXpn7CbBbE75M=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=uXu5sLwdqji51Ounzg+P9IO/LRDlquF6RDS10QKkkaQ0KdytfIa879BsV6ZogSGXv
+	 8lBS8/NsHS7Pgd/7/gyY1Xcpj766I8zFLGxq9wEphlPbXScVIIJP5nV2MHRcgWR1ao
+	 iZ9qd9UypTbHCToaGIeEIDE3IwPx+ZP+0j6Gu+tlZGo5zE1s2ltN2v48lTtZVy3Pb5
+	 Gd/dwrF4KtIbsT9WJj4WXjP5flFedVbOUaFIfEqyZBPa6EHWhsghs/LSHzJSWK9Jf+
+	 WF2yW+l2fujMScwTuYJFgIKtCZz4p/01VI40Mfk6dqevlnjaKMNIcqnWV2RMXbjeBF
+	 IGk6w5HKS/+4w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E092C43602;
+	Thu,  2 Jul 2026 09:22:21 +0000 (UTC)
+From: Jia Wang via B4 Relay <devnull+wangjia.ultrarisc.com@kernel.org>
+Date: Thu, 02 Jul 2026 17:22:12 +0800
+Subject: [PATCH v2] gpio: dwapb: Defer clock gating until noirq
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260702-gpio-dwapb-wakeup-v2-1-203f2f33429f@ultrarisc.com>
+X-B4-Tracking: v=1; b=H4sIAMMtRmoC/32Nyw6CMBBFf8XM2jF9IIor/8OwKGWA8UGbloeG8
+ O8C7l2e5NxzJ4gUmCJcdhMEGjiyaxdQ+x3YxrQ1IZcLgxIqFanKsPbssByNL3A0D+o96sSI47l
+ KrVYJLDsfqOL31rzlP459cSfbraHVaDh2Lny200Gu3r/+IFGi1llSCaXlqTTX/tkFEzjag3Uvy
+ Od5/gIgL20KyAAAAA==
+X-Change-ID: 20260629-gpio-dwapb-wakeup-34a058f6c324
+To: Hoan Tran <hoan@os.amperecomputing.com>, 
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Hoan Tran <hotran@apm.com>, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jia Wang <wangjia@ultrarisc.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1782984139; l=6676;
+ i=wangjia@ultrarisc.com; s=20260515; h=from:subject:message-id;
+ bh=dMMlFbMBw/FgK1r8G+xumrGpTK12lk2fghvVWpUDRmc=;
+ b=OoPDnO4Y0AGJSlLsEmOAAm7r3MLgVr+q1AdTFlKr1ShCqzDluLIBnQ3+L/u9MSfnILoYU0hpb
+ 6rM9vZmIA6YAPeB1gy8m+tdXoOgrtGuUAf4T/yRc5glXjiJ99E4FtDB
+X-Developer-Key: i=wangjia@ultrarisc.com; a=ed25519;
+ pk=wGVm18siRScehKOkOz0WKxgxDy7IezHEszhnN4/TUCY=
+X-Endpoint-Received: by B4 Relay for wangjia@ultrarisc.com/20260515 with
+ auth_id=779
+X-Original-From: Jia Wang <wangjia@ultrarisc.com>
+Reply-To: wangjia@ultrarisc.com
 
-From: Tzuyi Chang <tychang@realtek.com>
+From: Jia Wang <wangjia@ultrarisc.com>
 
-Add the device tree bindings for the Realtek DHC (Digital Home Center)
-RTD1625 GPIO controllers.
+GPIO consumers such as gpio-keys can enable IRQ wake and adjust the wake
+trigger type from their suspend callbacks. If the DWAPB controller suspends
+first, masking interrupts and disabling its clocks in the normal suspend
+phase prevents that late wake configuration from reliably reaching the
+hardware. Systems with real DWAPB bus clocks then fail to wake from s2idle
+through GPIO keys.
 
-The RTD1625 GPIO controller features a per-pin register architecture
-that differs significantly from previous generations. It utilizes
-separate register blocks for GPIO configuration and interrupt control.
+Save the register context in the normal suspend callback, but defer IRQ
+masking and clock gating until suspend_noirq. At that point all consumers
+have finished configuring wake IRQs, so keep the clocks enabled when wake
+lines are armed and only gate them when no wake source is active.
+Resume_noirq reenables clocks, if they were gated, before the normal resume
+path restores registers.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Signed-off-by: Tzuyi Chang <tychang@realtek.com>
-Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+Propagate wake requests to the parent irqchip while keeping the local wake
+mask in sync with failures.
+
+Fixes: 6437c7ba69c3 ("gpio: dwapb: Add wakeup source support")
+Signed-off-by: Jia Wang <wangjia@ultrarisc.com>
 ---
-Changes in v5:
-- None.
----
- .../bindings/gpio/realtek,rtd1625-gpio.yaml   | 71 +++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/realtek,rtd1625-gpio.yaml
+This one-patch series fixes system wakeup for DesignWare APB GPIO
+controllers that have real APB/debounce clocks.
 
-diff --git a/Documentation/devicetree/bindings/gpio/realtek,rtd1625-gpio.yaml b/Documentation/devicetree/bindings/gpio/realtek,rtd1625-gpio.yaml
-new file mode 100644
-index 000000000000..f13c910b73c6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/realtek,rtd1625-gpio.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+# Copyright 2023 Realtek Semiconductor Corporation
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/realtek,rtd1625-gpio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+The driver currently masks interrupts and disables its clocks from the
+normal suspend callback. That is too early for GPIO consumers such as
+gpio-keys, which may still enable IRQ wake or adjust the wake trigger type
+from their own suspend callbacks. Once the DWAPB clocks are disabled, those
+late wake updates cannot reliably reach the controller, and GPIO-key wake
+from s2idle can fail.
+
+Move the final interrupt masking and clock gating to suspend_noirq, after
+consumers have completed their wake configuration. If at least one wake
+line is armed, leave the clocks running and mark the device as part of the
+wakeup path. Otherwise, gate the clocks in noirq and re-enable them from
+resume_noirq before restoring the saved register state.
+
+The patch also propagates aggregate wake enable/disable state to the
+parent irqchip so a wake-capable parent interrupt is armed only while the
+DWAPB controller has at least one local wake source.
+
+Based on v7.2-rc1.
+---
+Changes in v2:
+- Fix !CONFIG_IRQ_DOMAIN_HIERARCHY builds by guarding parent wake handling.
+- Link to v1: https://patch.msgid.link/20260629-gpio-dwapb-wakeup-v1-1-3394f02317da@ultrarisc.com
+
+To: Hoan Tran <hoan@os.amperecomputing.com>
+To: Linus Walleij <linusw@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Hoan Tran <hotran@apm.com>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/gpio/gpio-dwapb.c | 79 ++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 67 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index c1f3d83a67c1..f06f1915e6cc 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -118,6 +118,7 @@ struct dwapb_gpio {
+ 	unsigned int		flags;
+ 	struct reset_control	*rst;
+ 	struct clk_bulk_data	clks[DWAPB_NR_CLOCKS];
++	bool			clocks_on_for_wake;
+ 	struct dwapb_gpio_port	ports[] __counted_by(nr_ports);
+ };
+ 
+@@ -365,11 +366,24 @@ static int dwapb_irq_set_wake(struct irq_data *d, unsigned int enable)
+ 	struct dwapb_gpio *gpio = to_dwapb_gpio(gc);
+ 	struct dwapb_context *ctx = gpio->ports[0].ctx;
+ 	irq_hw_number_t bit = irqd_to_hwirq(d);
++	u32 wake_en = ctx->wake_en;
+ 
+ 	if (enable)
+-		ctx->wake_en |= BIT(bit);
++		wake_en |= BIT(bit);
+ 	else
+-		ctx->wake_en &= ~BIT(bit);
++		wake_en &= ~BIT(bit);
 +
-+title: Realtek DHC RTD1625 GPIO controller
++#ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
++	if (d->parent_data && !!ctx->wake_en != !!wake_en) {
++		int err;
 +
-+maintainers:
-+  - Tzuyi Chang <tychang@realtek.com>
++		err = irq_chip_set_wake_parent(d, enable);
++		if (err)
++			return err;
++	}
++#endif
 +
-+description: |
-+  GPIO controller for the Realtek RTD1625 SoC, featuring a per-pin register
-+  architecture that differs significantly from earlier RTD series controllers.
-+  Each GPIO has dedicated registers for configuration (direction, input/output
-+  values, debounce), and interrupt control supporting edge and level detection
-+  modes.
++	ctx->wake_en = wake_en;
+ 
+ 	return 0;
+ }
+@@ -750,6 +764,8 @@ static int dwapb_gpio_suspend(struct device *dev)
+ 	int i;
+ 
+ 	scoped_guard(gpio_generic_lock_irqsave, gen_gc) {
++		gpio->clocks_on_for_wake = false;
 +
-+properties:
-+  compatible:
-+    enum:
-+      - realtek,rtd1625-iso-gpio
-+      - realtek,rtd1625-isom-gpio
+ 		for (i = 0; i < gpio->nr_ports; i++) {
+ 			unsigned int offset;
+ 			unsigned int idx = gpio->ports[i].idx;
+@@ -771,11 +787,38 @@ static int dwapb_gpio_suspend(struct device *dev)
+ 				ctx->int_pol = dwapb_read(gpio, GPIO_INT_POLARITY);
+ 				ctx->int_type = dwapb_read(gpio, GPIO_INTTYPE_LEVEL);
+ 				ctx->int_deb = dwapb_read(gpio, GPIO_PORTA_DEBOUNCE);
++			}
++		}
++	}
 +
-+  reg:
-+    maxItems: 1
++	return 0;
++}
 +
-+  interrupts:
-+    items:
-+      - description: Interrupt number of the assert GPIO interrupt, which is
-+                     triggered when there is a rising edge.
-+      - description: Interrupt number of the deassert GPIO interrupt, which is
-+                     triggered when there is a falling edge.
-+      - description: Interrupt number of the level-sensitive GPIO interrupt,
-+                     triggered by a configured logic level.
++static int dwapb_gpio_suspend_noirq(struct device *dev)
++{
++	struct dwapb_gpio *gpio = dev_get_drvdata(dev);
++	struct gpio_generic_chip *gen_gc = &gpio->ports[0].chip;
++	bool wake_enabled = false;
++	int i;
 +
-+  interrupt-controller: true
++	scoped_guard(gpio_generic_lock_irqsave, gen_gc) {
++		for (i = 0; i < gpio->nr_ports; i++) {
++			unsigned int idx = gpio->ports[i].idx;
++			struct dwapb_context *ctx = gpio->ports[i].ctx;
+ 
+-				/* Mask out interrupts */
++			if (idx == 0) {
++				wake_enabled = ctx->wake_en;
+ 				dwapb_write(gpio, GPIO_INTMASK, ~ctx->wake_en);
++				break;
+ 			}
+ 		}
 +
-+  "#interrupt-cells":
-+    const: 2
++		gpio->clocks_on_for_wake = wake_enabled;
++	}
 +
-+  gpio-ranges: true
++	if (wake_enabled) {
++		device_set_wakeup_path(dev);
++		return 0;
+ 	}
+ 
+ 	clk_bulk_disable_unprepare(DWAPB_NR_CLOCKS, gpio->clks);
+@@ -783,18 +826,27 @@ static int dwapb_gpio_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int dwapb_gpio_resume(struct device *dev)
++static int dwapb_gpio_resume_noirq(struct device *dev)
+ {
+ 	struct dwapb_gpio *gpio = dev_get_drvdata(dev);
+-	struct gpio_chip *gc = &gpio->ports[0].chip.gc;
+-	struct gpio_generic_chip *gen_gc = to_gpio_generic_chip(gc);
+-	int i, err;
++	int err;
 +
-+  gpio-controller: true
++	if (gpio->clocks_on_for_wake)
++		return 0;
+ 
+ 	err = clk_bulk_prepare_enable(DWAPB_NR_CLOCKS, gpio->clks);
+-	if (err) {
++	if (err)
+ 		dev_err(gpio->dev, "Cannot reenable APB/Debounce clocks\n");
+-		return err;
+-	}
 +
-+  "#gpio-cells":
-+    const: 2
++	return err;
++}
 +
-+required:
-+  - compatible
-+  - reg
-+  - gpio-ranges
-+  - gpio-controller
-+  - "#gpio-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    gpio@89100 {
-+      compatible = "realtek,rtd1625-isom-gpio";
-+      reg = <0x89100 0x30>;
-+      interrupt-parent = <&iso_m_irq_mux>;
-+      interrupts = <0>, <1>, <2>;
-+      interrupt-controller;
-+      #interrupt-cells = <2>;
-+      gpio-ranges = <&isom_pinctrl 0 0 4>;
-+      gpio-controller;
-+      #gpio-cells = <2>;
-+    };
--- 
-2.43.0
++static int dwapb_gpio_resume(struct device *dev)
++{
++	struct dwapb_gpio *gpio = dev_get_drvdata(dev);
++	struct gpio_chip *gc = &gpio->ports[0].chip.gc;
++	struct gpio_generic_chip *gen_gc = to_gpio_generic_chip(gc);
++	int i;
+ 
+ 	guard(gpio_generic_lock_irqsave)(gen_gc);
+ 
+@@ -828,8 +880,11 @@ static int dwapb_gpio_resume(struct device *dev)
+ 	return 0;
+ }
+ 
+-static DEFINE_SIMPLE_DEV_PM_OPS(dwapb_gpio_pm_ops,
+-				dwapb_gpio_suspend, dwapb_gpio_resume);
++static const struct dev_pm_ops dwapb_gpio_pm_ops = {
++	SYSTEM_SLEEP_PM_OPS(dwapb_gpio_suspend, dwapb_gpio_resume)
++	NOIRQ_SYSTEM_SLEEP_PM_OPS(dwapb_gpio_suspend_noirq,
++				  dwapb_gpio_resume_noirq)
++};
+ 
+ static struct platform_driver dwapb_gpio_driver = {
+ 	.driver		= {
+
+---
+base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
+change-id: 20260629-gpio-dwapb-wakeup-34a058f6c324
+
+Best regards,
+--  
+Jia Wang <wangjia@ultrarisc.com>
+
 
