@@ -1,91 +1,91 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D437B3C73F7;
-	Thu,  2 Jul 2026 08:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0FD3C553A;
+	Thu,  2 Jul 2026 09:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782982559; cv=none; b=T0Qwg53MiSU06865iWTCEoUeccGTU4WqEIKctZvq43/zqcIBe8VThlXFFKh9I/fSrjf6FRUGGPsE9BNCOZshFrZIfsYUM6yACfqgvO6LE+pDxY9oaFDC2v8vKHFV308auZ3iHvLwGvazI0WMpM5fMUTlTILN8ZSOKbkFILxMt4A=
+	t=1782982923; cv=none; b=pME0fZLz4gPZK3/fvZhLCFgmyab4ePZ0XdauXS7JBavMHpm7SUSbID+zPS5U4y2DXkue6QKGyIrHjTP7lLfrIXUy+16DLP/A/XuVvcmbPm3HC/w7kW667pbY9L7BHm3VJ47xr2Oq7AKor76xfJDdzEypDaXKc9nU5esEkZbsSQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782982559; c=relaxed/simple;
-	bh=hDpmiqPBtRKVXqTxhAFqcbRY5eWJ267eKOS2nw9o3JI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O6pK2bTRG0gAvwENJvUgt9DsDh69MuoS2sputWjDtDKWgou99JQCnQ5Y5R6zc8Z9fwsGQ7FllOq0NeITLDlTrM8Cuq49Sk4m1IMhnW/TpouNKo7cmKmIsc8srRQ9raPTLbB4K43WCtY21ee1MD9eaa8Nh5N9rn1AYCsSwL6UNPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GcAADfa2; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1782982923; c=relaxed/simple;
+	bh=DVpsDdzrOHMA6LdjFsvJac779QssSsmuWMu/jA5SmSs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kOL9Rk07McyqOJpnSiTMhKnhwBM/NreMubVphkfMhIlChsqViZX0qBtCcIgSlmN3yiGO+HiaBEEnEFlrlB9iLZZPQBhlSqJiWsHoZZrDA03Ngb8X+Tw8tKw8IguGK4SP8yjzWjVaexDwNkrhMfXeTy5g4w7dlAeQXeH+e2nW+MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=TgE+OIyM; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GcAADfa2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1782982558; x=1814518558;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hDpmiqPBtRKVXqTxhAFqcbRY5eWJ267eKOS2nw9o3JI=;
-  b=GcAADfa21wHxxqoybMUktZkrJw4DuzrSIcsPMRup281Y1Gc19I3kslND
-   Lrz4HVAXwTWHH75NVHabIMMMx0LpCO0b3Nu4lKPuFTP9+BXz86GoZoQCC
-   +Dx3ocwPbXU2Wd99atB/K71qVp4yRK+psW1zLdpA3eCyqMPm4WCuJFWiH
-   J4eZLwrNOB0+W6sw2WAjDWgNGOT0WoWbTNNnC/2emvwfsPA+Mu4tM/EhV
-   pBqWa/4676Inas/kbHEWURqlVWtmhITBNG+PReOmP1fMyz17OvPNiAAHu
-   5USD4zUHipYzbJiEopY0eHQQc9/5L4Iddv7v60npbUHzQJyZnog4rb5Xq
-   A==;
-X-CSE-ConnectionGUID: RSPcuZH4QkeoQ/6htXwnKA==
-X-CSE-MsgGUID: 6ye009nPQyWi/Xzmxoz66A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11834"; a="101271983"
-X-IronPort-AV: E=Sophos;i="6.25,143,1779174000"; 
-   d="scan'208";a="101271983"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2026 01:55:57 -0700
-X-CSE-ConnectionGUID: YXNgbGFuQRexWYihLBTsHg==
-X-CSE-MsgGUID: s8YT+l/2T+qfkOFT8aZGBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,143,1779174000"; 
-   d="scan'208";a="251755133"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.213])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jul 2026 01:55:54 -0700
-Date: Thu, 2 Jul 2026 11:55:52 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: GaryWang <is0124@gmail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	Daniele Cleri <danielecleri@aaeon.eu>,
-	JunYingLai <junyinglai@aaeon.com.tw>,
-	Louis Chen <louischen@aaeon.com.tw>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] pinctrl: tigerlake: add some pin groups and
- functions for INTC1055
-Message-ID: <akYnmNdvTXTffNbH@ashevche-desk.local>
-References: <20260702-upboard-pinctrl-add-upboard-intc1055-support-v3-0-e6bda3032914@gmail.com>
- <20260702-upboard-pinctrl-add-upboard-intc1055-support-v3-1-e6bda3032914@gmail.com>
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="TgE+OIyM"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 66291GYc81817127, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1782982876; bh=SGullVisBxHPtHXU0eHR73ezsi7O9eK9w2hPnqkLNfM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	b=TgE+OIyMFlN+uSJvtM4qql8GfW+eq0G3JdQbOs+qaYad03MzACCopqyPxjcKtmlS2
+	 C7rvGnDJH9RFyOoZD+0rY2aZZNW31BjRrLN147CvVLQLV7kXHJ4bN+f2GRub9pZyJ2
+	 njqwRG7k7TVssEUuJI5vVoM7UgkziuS6rsqW8JVfQdjrenhQqeWLLSdeoF7Q9qVUKQ
+	 8GLxYASQrn1YbUUdXXvlzTdXm5NH0G1HxMpcxPD7Br3W7OsfpAHzE4/0UEHpDnaecU
+	 ST2iSP2x4W3vNJw13WZqIfYBLO+jc/J538pfEtq/BmcCRDqJKYfjyjKxRS17tX6WE/
+	 hX8jmXVBXkvZQ==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 66291GYc81817127
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 2 Jul 2026 17:01:16 +0800
+Received: from RTKEXHMBS03.realtek.com.tw (10.21.1.53) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 2 Jul 2026 17:01:16 +0800
+Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS03.realtek.com.tw
+ (10.21.1.53) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 2 Jul 2026 17:01:16 +0800
+From: Yu-Chun Lin <eleanor.lin@realtek.com>
+To: <linusw@kernel.org>, <brgl@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <afaerber@suse.com>,
+	<mwalle@kernel.org>, <andriy.shevchenko@intel.com>, <tychang@realtek.com>
+CC: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-realtek-soc@lists.infradead.org>, <cy.huang@realtek.com>,
+	<stanley_chang@realtek.com>, <eleanor.lin@realtek.com>,
+	<james.tai@realtek.com>
+Subject: [PATCH v5 2/4] gpio: Replace "default y" with "default ARCH_REALTEK" in Kconfig
+Date: Thu, 2 Jul 2026 17:01:13 +0800
+Message-ID: <20260702090115.2564318-3-eleanor.lin@realtek.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260702090115.2564318-1-eleanor.lin@realtek.com>
+References: <20260702090115.2564318-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260702-upboard-pinctrl-add-upboard-intc1055-support-v3-1-e6bda3032914@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Jul 02, 2026 at 03:10:38PM +0800, GaryWang wrote:
-> Add i2c0, i2c1, pwm0, uart1, ssp2 pin groups & functions in tgllp_soc_data
->  for device id INTC1055.
-> The pinctrl-upboard driver set the correct pin function corresponding to
->  these data.
+Replace "default y" with "default ARCH_REALTEK" to avoid bloating the build
+for non-Realtek platforms when COMPILE_TEST is enabled on other platforms.
 
-Please, fix the indentation and wrapping issues here. For example, you can
-use the following version.
+Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+---
+Changes in v5:
+- None.
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Add i2c0, i2c1, pwm0, uart1, ssp2 pin groups & functions in tgllp_soc_data
-for device id INTC1055. The pinctrl-upboard driver set the correct pin
-function corresponding to these data.
-
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 28cf6d2e83c2..ed2bc3113374 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -646,7 +646,7 @@ config GPIO_ROCKCHIP
+ config GPIO_RTD
+ 	tristate "Realtek DHC GPIO support"
+ 	depends on ARCH_REALTEK || COMPILE_TEST
+-	default y
++	default ARCH_REALTEK
+ 	select GPIOLIB_IRQCHIP
+ 	help
+ 	  This option enables support for GPIOs found on Realtek DHC(Digital
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
