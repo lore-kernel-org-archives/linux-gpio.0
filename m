@@ -1,91 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F2B349B0A
-	for <linux-gpio@vger.kernel.org>; Fri,  3 Jul 2026 21:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90547367B6F;
+	Fri,  3 Jul 2026 21:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783113931; cv=none; b=YtsOQfaB5jGIoYzXJAgtZYhSdNY9jgBAkweUfIuQxTrjZsl//cCPIIbDKmHmaxwkMQAGMo6RsXfaOu27LrV8btOOtcLH5jdgOQD7FfqylLCmQLGchN0SFdU1VZyLYbEhip4hsdPt22+i4Ox0rk8CycRWTp1WfrHqGNZYaglS738=
+	t=1783114114; cv=none; b=reLQbIt4/eH6ISLMJVljZfVyxNfSYqvx7myQom0jDsCigUiiMkQwP7ga0LAvPFER9MLak0QbNJkIF/Q7KAdaiF1WfGPag7518DL0I/9zHj+0UWfLubNuKa0G0m/IpCgxbqAMBN4uMNKfN3SHHIBDCg5tpncP1F420TvGCm+R16A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783113931; c=relaxed/simple;
-	bh=ZIo9hYtnwoa4lpPa7Xwa4If21J3/Cxx76B0qA8S5lPI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tlslHqUB+bvdocGkziJYbczJgYFTG7SpE1St9EUBSTgk3e1oJKooFAvhjEPr+/CMWkZM54v4e7qd3SJlxZThmCaJfoUg/3DsIgvKoVoUqoP8zj96rvcf9v72rtK+SPNJzo/bnz3Y9iVPJHO1F94afxvExGx+Uu8Y/gvh23Okw7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KqTeeiLt; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783114114; c=relaxed/simple;
+	bh=RuTC3mNSYKGmnhJjG2Zp2sDRf6wakXblt2A6yEH4/TA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LPA4u99IRFI6ijjK87FvfKVdAyfCbWo5BjWxgs20CJcYhgBNYUfLGkCCJfbgdDTXoG3BdC+LwnqdnQ6SIlCshZUHm1C0qRsvz+Jz9jfJVNEbbZ0MbEanf4nq8mo/PTRGiWhA1ICFRiZrSDHWeUxZJM9ImBK35oiEBqnhzBWQ62w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j28NUzn8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KqTeeiLt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 439F61F00ACF
-	for <linux-gpio@vger.kernel.org>; Fri,  3 Jul 2026 21:25:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j28NUzn8"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 9F16D1F000E9;
+	Fri,  3 Jul 2026 21:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783113930;
-	bh=ZIo9hYtnwoa4lpPa7Xwa4If21J3/Cxx76B0qA8S5lPI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=KqTeeiLt9q8my1JaabPQ4d0g9Esh/J3maPLu+iK7H1hO6K1bqE4EWchsDK412VC0Q
-	 AZJv9cefjhqGy7A5jBCzKTWrd+YztayeCJEYkC4+44uxzAPj0DWrG+GwW7KMSX2bHY
-	 2h4PbCSfDxlpz3ry1H/ru/U6XpBJEhje/zlG/vldx4ItSl7IhSc8nZSlw5Cmg9AT/8
-	 gG5oq+fcBsjn/Vj6ihJY8R2eZTpPuZjZ1A6201KwXwkW4fGLEYt2k56381tpXcREge
-	 +NWJSMquxweh3jlcC1zPd2QXUnCqx5kyRWbFNscbyOdTfQlJKnxOR4JhaRrqnAHR+5
-	 6cNGCeA+tugJQ==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5aec5675c46so963974e87.1
-        for <linux-gpio@vger.kernel.org>; Fri, 03 Jul 2026 14:25:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpAQ08F5Eco3gI9IkJBUYXp8njQilNZcdBt41/qJg7OyTea4X/rzovq9M8KH4mhcU/1lhKsWIeW/keE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBP1ps6oToUYVtvzWLK+xHeQ17DsdfOFH8sjxN5Iqbw2yJunoC
-	XVJdxbVH7KPe4LrJWVbNoqdWTMAw2Rhv2mEMQaBevZpOwq0grkrppNJjSIzmIMaJPTKwElbG6sM
-	hTCCQx5QVpZuRRpjntXJai5gEqMCXlXw=
-X-Received: by 2002:a05:6512:3f1a:b0:5ae:b0ea:d32f with SMTP id
- 2adb3069b0e04-5aed4f7f8e1mr85238e87.7.1783113929001; Fri, 03 Jul 2026
- 14:25:29 -0700 (PDT)
+	s=k20260515; t=1783114113;
+	bh=RuTC3mNSYKGmnhJjG2Zp2sDRf6wakXblt2A6yEH4/TA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=j28NUzn80G9T70umEMpoP2e/A6AakmpQN0QB0ImFbgMCHLCkhbmzDhQgbLX8r2lTW
+	 8M3uItjP/yRK9IV1dfJdQBMUl7gAXY3G74JoINSW/FJ2K0YeU9jdFOoZrrYfEjXJX9
+	 SS2LzprSdbFe588SIM2tVJbHXGNL5v/4RQc1SYkJWL5jyrfANx5C8xLCA0w3erKPoy
+	 tusDTanrFn7PUPXeA+rHS/5gy9HVmfjvIdOKDG1m2ZM/E2nDynqHlQeejpoksp5ipS
+	 mFxr00M5S5unFI0BkhKLwy2lHtuH8HP8L3EXhwf/ySQ+JSjZZM1RG4xYvHgAI+ewKU
+	 yLltTcx7wlQ0w==
+Date: Fri, 3 Jul 2026 23:28:29 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: linux-pwm@vger.kernel.org
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] pwm: Use named initializers for platform_device_id
+ arrays
+Message-ID: <akgpIQp7QJQQ1yUv@monoceros>
+References: <b515eb1644e793d019163fd2a717d3fccef857f5.1781689255.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260313000652.11470-1-andre.przywara@arm.com>
- <a4cfb10e4701da0649ef648136496a962be5870d.camel@icenowy.me>
- <20260315014205.471d6834@ryzen.lan> <CAMRc=MeorQJvA8TBosjnDU+x-FD6GhkbXwXOjCD0nmCs16ERfQ@mail.gmail.com>
- <72ccedfb-742c-4af7-8439-0f37fff2853d@arm.com>
-In-Reply-To: <72ccedfb-742c-4af7-8439-0f37fff2853d@arm.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 3 Jul 2026 23:25:16 +0200
-X-Gmail-Original-Message-ID: <CAD++jLn0BSwS1CZ22CbZQnY4mKzikRwJrfO4sV=WVsSG93WzJg@mail.gmail.com>
-X-Gm-Features: AVVi8Cd-QlFZ2O4JbrCfo1X6e86n1ZAPD4Rw27tfv8nva12GIn1LhD3kssPEbgU
-Message-ID: <CAD++jLn0BSwS1CZ22CbZQnY4mKzikRwJrfO4sV=WVsSG93WzJg@mail.gmail.com>
-Subject: Re: [RFC PATCH] pinctrl: sunxi: convert to GPIO_GENERIC
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Icenowy Zheng <uwu@icenowy.me>, Jerome Brunet <jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pzxgbsidxo7x6grs"
+Content-Disposition: inline
+In-Reply-To: <b515eb1644e793d019163fd2a717d3fccef857f5.1781689255.git.u.kleine-koenig@baylibre.com>
+
+
+--pzxgbsidxo7x6grs
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1] pwm: Use named initializers for platform_device_id
+ arrays
+MIME-Version: 1.0
 
-On Fri, Jul 3, 2026 at 3:53=E2=80=AFPM Andre Przywara <andre.przywara@arm.c=
-om> wrote:
+Hello,
 
-> Hi Bartosz, Linus,
->
-> so I wanted to come back to this, posting a A733 v2, with this patch
-> included, and was wondering what the consensus on this matter would be?
-(...)
-> So personally I am leaning towards doing the change: most users can
-> typically adapt - or they don't care because they don't update their
-> kernels (beyond stable revisions). And to address the naming
-> ambiguities, we could push for more gpio-line-names. That would make
-> finding a GPIO much safer and easier, and works either way.
+On Wed, Jun 17, 2026 at 11:41:50AM +0200, Uwe Kleine-K=F6nig (The Capable H=
+ub) wrote:
+> Named initializers are better readable and more robust to changes of the
+> struct definition. This robustness is relevant for a planned change to
+> struct platform_device_id replacing .driver_data by an anonymous union.
+>=20
+> While touching these arrays drop a comma after a list terminator.
+>=20
+> Signed-off-by: Uwe Kleine-K=F6nig (The Capable Hub) <u.kleine-koenig@bayl=
+ibre.com>
 
-I agree.
+Applied to
 
-> But if this patch's ABI breakage is a showstopper, I would need to know,
-> so that I can rebase the A733 pinctrl patches without this one being the
-> first patch in the series.
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
 
-I am *FOR* this change.
+Best regards
+Uwe
 
-Wikipedia has some policy like "avoid copyright paranoia", and
-some days I feel we need an "avoid ABI paranoia" policy.
-Rough consensus and running code.
+--pzxgbsidxo7x6grs
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yours,
-Linus Walleij
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpIKXsACgkQj4D7WH0S
+/k649Qf/ZMspAQd8n9bWTBQtzrOhW3oJlDoo2L6GDITnCVEzsztTPRhV//AZUkbc
+r0BkxW/TnsJD0DhOA40sOzfCLPnFssF7FWxkNzA58FVnkFkTnMxq7LE/7Lj9hi6c
+jTZ8QGFhKao68ygZCb1z3Iwsuc0erT8PVu8oCotKR7Q71DMfJTtlxWAP1f6twWEI
+ehzXe0zVnX5ZAIbHYKghNHBxhYYPv/1xZQFhcRrbpKZXkQbOqbCJZly6U+TINv0Q
+gENRe1EBRvS1+kejI313LuuGvnJBQ1ipoU5BtWfNZdSwfkUVHIx4r5wzXX2pYZJ5
+FvMFmIShgZbEoa3JqE5UV0Iv0Hxz2A==
+=0lBf
+-----END PGP SIGNATURE-----
+
+--pzxgbsidxo7x6grs--
