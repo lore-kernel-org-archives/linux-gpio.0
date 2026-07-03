@@ -1,41 +1,41 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0223D1AB9;
-	Fri,  3 Jul 2026 13:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96F63DA7DD;
+	Fri,  3 Jul 2026 13:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783085454; cv=none; b=sPDx+TKNdhx6eI43/oVbEu50GL+jsdGQ69I2a/IqHG2iprjDB+3O32F7j7OBxTGs2ob5p0n4Z3Jr/be7bVtgVA25W9IkRObfAa1DH6HkxRG/B9UGct0h+9UFTG2upls5mf7BgR0vBjMTHpjN4ZOsKolf6GvmXwFJDZxFKHj22qw=
+	t=1783085456; cv=none; b=u9gJzcmavaUDfEsHn/HMoh5tMS3SYEAjUlOAkhEQhVb+V/9iZWy7UroTg8BdU86bDZ0Vdias6x3s4gGHLlFvz9u8JUKH8MgSCnKWX+w/ML5CAwjNaHWQTzSKHAS1G7XFfuF2XaQgnU5Shbm8+OMeZ1gFFFSQIlbFJnDh7FZF5mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783085454; c=relaxed/simple;
-	bh=KQ/8zR92O33jF8u7KItWauZlD5mu9z5Gq4G8xVUNdy8=;
+	s=arc-20240116; t=1783085456; c=relaxed/simple;
+	bh=lV6ixfVQUU+h5OFc6ks1zgWp1h40IUo5QKv+Bi6rpy4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=G753wEqnzjUPHqj5koMLLx8afvYplM+7ijadBxGjSrQvB8O8f2yx07OXntmA8ZoxeeleQVfqJrccjz5v/H6dy/wKoP1HmZ2pPJjXRt06cQQaeKCgH63+XdcAKwxGiVHgOf9DGR02KoOKK4yi4+Q1wrVTdPaabVux0h35LGqAFEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=uS9Up6Nh; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=gfZl+xefdHiAMwQr4LcLjnSYDO0epryaNitRLcp4c5n7RvnLZpr5UTNK/Z6xB9DcLp9TcSzJxQ0i1kk/cNURXZvuWXdl+vrOgmpwbb2lMDZ3Bm+7EVjib2V4nIJwXJjH64n0mZb8jAdiDZXL5NJd9uEccRghKTcq9HdSegKwGWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TPFDubIO; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="uS9Up6Nh"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TPFDubIO"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 04F994E40C6F;
-	Fri,  3 Jul 2026 13:30:45 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 01BD11A0E2D;
+	Fri,  3 Jul 2026 13:30:50 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C5F9E60300;
-	Fri,  3 Jul 2026 13:30:44 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 09D26104C95A9;
-	Fri,  3 Jul 2026 15:30:41 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id CB6FA60300;
+	Fri,  3 Jul 2026 13:30:49 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A2806104C95AB;
+	Fri,  3 Jul 2026 15:30:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1783085443; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1783085448; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=x0twSIpE7m4cPj3Ig88g1zIACZePCnPv6bKNCD++fr8=;
-	b=uS9Up6NhEfglz7sia9B2B1y50iyxi4yn1pKfYp0g3FKsaHuOB/ETRKhSTX+Aa83ZKqUbKz
-	TWt/TopuxusBfVwkb4gamT0LQ2CaCt5W/Eb1VzC5RdUkRo9n0hrqexHsIEsfQ8k2WtDEHu
-	GubKMy0XTbuOLRiamCv7DcCotTR2K9LgGhv930WQOBGm8a47xxET1GjhykWSyAabZ0nOr1
-	9B4Bq4Bgd5w6OFbzxyURdObSxsbRspPJbsDYoAoAXv55Odadctm86cDUkhG1KCh++NNLIv
-	6MOwL0TTpxcaZBg24553aX+fwXbaGOdEInJyJpqlPrJt0jrzRO1tqwoANFqxtg==
+	bh=DYiPuRvE6Nwnxm1ayjjfGRCixDjRGX9XFfBMaqcehNo=;
+	b=TPFDubIOOd12n77ZxYKru+sNA7xfghnI7Q5u0bwp4fAQxtAEOXWdCwOjBuUJ6H/lVmev8p
+	At01ZX3W66RGbqXG6frB42AukdRbTiqgf9Ne3YC5tw1lFV81K1EcbqbimuX1VgsLsFsJWn
+	RgL3pNdq/GHpFeAJ7uzls9MGOI5yNN76s/TXzF09XOf0LcnI4uvnQqgvmkfrEwZXtNhtng
+	F9iI2hXF9H/6d6dtDGHA1MZRs9g1pnlYftrTHfaN8Tm4mLwIG1GTtftPFd6+jRiN/ninp7
+	+/TeZllHOaEtIknkmkI0euNQrkn31XiYid5PZ4uVeX2/UaR7O6aPY0+apyckgA==
 From: Paul Louvel <paul.louvel@bootlin.com>
-Date: Fri, 03 Jul 2026 15:30:16 +0200
-Subject: [PATCH 08/12] soc: fsl: qe: Convert to generic IRQ chip
+Date: Fri, 03 Jul 2026 15:30:19 +0200
+Subject: [PATCH 11/12] soc: fsl: qe: Remove useless struct member
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -44,7 +44,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260703-qe-pic-gpios-v1-8-6c3e706e27dc@bootlin.com>
+Message-Id: <20260703-qe-pic-gpios-v1-11-6c3e706e27dc@bootlin.com>
 References: <20260703-qe-pic-gpios-v1-0-6c3e706e27dc@bootlin.com>
 In-Reply-To: <20260703-qe-pic-gpios-v1-0-6c3e706e27dc@bootlin.com>
 To: Qiang Zhao <qiang.zhao@nxp.com>, 
@@ -60,226 +60,64 @@ Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
  linux-gpio@vger.kernel.org, Paul Louvel <paul.louvel@bootlin.com>, 
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1783085423; l=6648;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783085423; l=1530;
  i=paul.louvel@bootlin.com; s=20260313; h=from:subject:message-id;
- bh=KQ/8zR92O33jF8u7KItWauZlD5mu9z5Gq4G8xVUNdy8=;
- b=85BWRIYuoXfDZLoVu0OK8zlBEh3fbHEO5zRJByLQkj0tGo2xkWJXC01UjyzuRp/rGU3daP2h0
- 13nPcFA5bk/BxtAcGA2K93qcsHjBQnEEvHZLgvImuiJkRt/FcnWIVp3
+ bh=lV6ixfVQUU+h5OFc6ks1zgWp1h40IUo5QKv+Bi6rpy4=;
+ b=GTd53N1L6mieV9LlVEep06QMzjN/ESane6rFL5nBaGQzPhkH7cvOjjXeGy3noJBEpv8mlEyJD
+ 09JzWIAKFqZATFJ0g3rY981zqaR5bWzMCKPO8dxQ09la/CBBR6EG1Kf
 X-Developer-Key: i=paul.louvel@bootlin.com; a=ed25519;
  pk=eLW50NT18UAvUT5cAcYf88zNbBCZDLFXuptpyLVhVIU=
 X-Last-TLS-Session-Version: TLSv1.3
 
-The generic IRQ chip framework is available to handle IRQ chips. Using
-this framework for the QE interrupt controller allows to simplify the
-driver. Indeed, the framework internally handles operations coded
-directly in the driver.
-
-Add a select dependency to GENERIC_IRQ_CHIP in the PPC platform Kconfig.
+The reg member from the struct qepic_data is no longer needed, since it
+is now embedded in reg_base of struct irq_chip_generic. Remove it.
 
 Signed-off-by: Paul Louvel <paul.louvel@bootlin.com>
 ---
- arch/powerpc/platforms/Kconfig   |   1 +
- drivers/soc/fsl/qe/qe_ports_ic.c | 103 ++++++++++++++++++++++++++-------------
- 2 files changed, 70 insertions(+), 34 deletions(-)
+ drivers/soc/fsl/qe/qe_ports_ic.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/platforms/Kconfig b/arch/powerpc/platforms/Kconfig
-index c4e61843d9d9..b0b3a80f8cde 100644
---- a/arch/powerpc/platforms/Kconfig
-+++ b/arch/powerpc/platforms/Kconfig
-@@ -232,6 +232,7 @@ config QE_GPIO
- 	bool "QE GPIO support"
- 	depends on QUICC_ENGINE
- 	select GPIOLIB
-+	select GENERIC_IRQ_CHIP
- 	help
- 	  Say Y here if you're going to use hardware that connects to the
- 	  QE GPIOs.
 diff --git a/drivers/soc/fsl/qe/qe_ports_ic.c b/drivers/soc/fsl/qe/qe_ports_ic.c
-index c8b73b0aa233..d022aa224f6d 100644
+index 1bf2af087b78..6cf23a721ff3 100644
 --- a/drivers/soc/fsl/qe/qe_ports_ic.c
 +++ b/drivers/soc/fsl/qe/qe_ports_ic.c
-@@ -20,63 +20,65 @@ struct qepic_data {
- 	void __iomem *reg;
- 	struct irq_domain *host;
- 	int irq;
-+	struct irq_chip_generic *gc;
- };
+@@ -17,7 +17,6 @@
+ #define CEPICR		0x14
  
- static void qepic_mask(struct irq_data *d)
- {
--	struct qepic_data *data = irq_data_get_irq_chip_data(d);
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct irq_chip_type *ct = irq_data_get_chip_type(d);
- 
--	clrbits32(data->reg + CEPIMR, 1 << (31 - irqd_to_hwirq(d)));
-+	clrbits32(gc->reg_base + ct->regs.mask, d->mask);
- }
- 
- static void qepic_unmask(struct irq_data *d)
- {
--	struct qepic_data *data = irq_data_get_irq_chip_data(d);
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct irq_chip_type *ct = irq_data_get_chip_type(d);
- 
--	setbits32(data->reg + CEPIMR, 1 << (31 - irqd_to_hwirq(d)));
-+	setbits32(gc->reg_base + ct->regs.mask, d->mask);
- }
- 
- static void qepic_end(struct irq_data *d)
- {
--	struct qepic_data *data = irq_data_get_irq_chip_data(d);
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct irq_chip_type *ct = irq_data_get_chip_type(d);
- 
--	out_be32(data->reg + CEPIER, 1 << (31 - irqd_to_hwirq(d)));
-+	out_be32(gc->reg_base + ct->regs.eoi, d->mask);
-+}
-+
-+static void qepic_calc_mask(struct irq_data *d)
-+{
-+	d->mask = 1 << (31 - irqd_to_hwirq(d));
- }
- 
- static int qepic_set_type(struct irq_data *d, unsigned int flow_type)
- {
--	struct qepic_data *data = irq_data_get_irq_chip_data(d);
--	unsigned int vec = (unsigned int)irqd_to_hwirq(d);
-+	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
-+	struct irq_chip_type *ct = irq_data_get_chip_type(d);
- 
- 	switch (flow_type & IRQ_TYPE_SENSE_MASK) {
- 	case IRQ_TYPE_EDGE_FALLING:
--		setbits32(data->reg + CEPICR, 1 << (31 - vec));
-+		setbits32(gc->reg_base + ct->regs.type, d->mask);
- 		return 0;
- 	case IRQ_TYPE_EDGE_BOTH:
- 	case IRQ_TYPE_NONE:
--		clrbits32(data->reg + CEPICR, 1 << (31 - vec));
-+		clrbits32(gc->reg_base + ct->regs.type, d->mask);
- 		return 0;
- 	}
- 	return -EINVAL;
- }
- 
--static struct irq_chip qepic = {
--	.name = "QEPIC",
--	.irq_mask = qepic_mask,
--	.irq_unmask = qepic_unmask,
--	.irq_eoi = qepic_end,
--	.irq_set_type = qepic_set_type,
--};
--
- static void qepic_cascade(struct irq_desc *desc)
- {
- 	struct qepic_data *data = irq_desc_get_handler_data(desc);
-+	struct irq_chip_type *ct = data->gc->chip_types;
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
- 	unsigned long event, bit;
- 
- 	chained_irq_enter(chip, desc);
- 
--	event = in_be32(data->reg + CEPIER);
-+	event = in_be32(data->gc->reg_base + ct->regs.eoi);
- 	if (!event) {
- 		handle_bad_irq(desc);
- 		goto out;
-@@ -89,33 +91,64 @@ static void qepic_cascade(struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
--static int qepic_host_map(struct irq_domain *h, unsigned int virq, irq_hw_number_t hw)
-+static int qepic_chip_init(struct irq_chip_generic *gc)
- {
--	irq_set_chip_data(virq, h->host_data);
--	irq_set_chip_and_handler(virq, &qepic, handle_fasteoi_irq);
-+	struct irq_chip_type *ct = gc->chip_types;
-+
-+	ct->regs.mask = CEPIMR;
-+	ct->chip.irq_mask = qepic_mask;
-+	ct->chip.irq_unmask = qepic_unmask;
-+	ct->regs.eoi = CEPIER;
-+	ct->chip.irq_eoi = qepic_end;
-+	ct->regs.type = CEPICR;
-+	ct->chip.irq_set_type = qepic_set_type;
-+	ct->chip.irq_calc_mask = qepic_calc_mask;
-+
- 	return 0;
- }
- 
--static const struct irq_domain_ops qepic_host_ops = {
--	.map = qepic_host_map,
--};
-+static int qepic_domain_init(struct irq_domain *d)
-+{
-+	struct qepic_data *data = d->host_data;
- 
--static void qepic_remove(void *res)
-+	irq_set_chained_handler_and_data(data->irq, qepic_cascade, data);
-+
-+	return 0;
-+}
-+
-+static void qepic_domain_exit(struct irq_domain *d)
- {
--	struct qepic_data *data = res;
-+	struct qepic_data *data = d->host_data;
- 
- 	irq_set_chained_handler_and_data(data->irq, NULL, NULL);
--	irq_domain_remove(data->host);
- }
- 
- static int qepic_probe(struct platform_device *pdev)
- {
-+	struct irq_domain_chip_generic_info dgc_info = {
-+		.name		= "QEPIC",
-+		.handler	= handle_fasteoi_irq,
-+		.irqs_per_chip	= 32,
-+		.num_ct		= 1,
-+		.init		= qepic_chip_init,
-+	};
-+	struct irq_domain_info d_info = {
-+		.fwnode		= of_fwnode_handle(pdev->dev.of_node),
-+		.domain_flags	= IRQ_DOMAIN_FLAG_DESTROY_GC,
-+		.size		= 32,
-+		.hwirq_max	= 32,
-+		.ops		= &irq_generic_chip_ops,
-+		.dgc_info	= &dgc_info,
-+		.init		= qepic_domain_init,
-+		.exit		= qepic_domain_exit,
-+	};
+ struct qepic_data {
+-	void __iomem *reg;
+ 	int parent_irq;
+ 	struct irq_domain *domain;
+ 	struct irq_chip_generic *gc;
+@@ -144,15 +143,16 @@ static int qepic_probe(struct platform_device *pdev)
+ 	};
  	struct device *dev = &pdev->dev;
  	struct qepic_data *data;
++	void __iomem *reg;
  
  	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
  	if (!data)
  		return -ENOMEM;
-+	d_info.host_data = data;
+ 	d_info.host_data = data;
  
- 	data->reg = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(data->reg))
-@@ -125,14 +158,16 @@ static int qepic_probe(struct platform_device *pdev)
- 	if (data->irq < 0)
- 		return data->irq;
+-	data->reg = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(data->reg))
+-		return PTR_ERR(data->reg);
++	reg = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(reg))
++		return PTR_ERR(reg);
  
--	data->host = irq_domain_create_linear(dev_fwnode(dev), 32, &qepic_host_ops, data);
--	if (!data->host)
--		return -ENODEV;
-+	data->host = devm_irq_domain_instantiate(dev, &d_info);
-+	if (IS_ERR(data->host))
-+		return PTR_ERR(data->host);
+ 	data->parent_irq = platform_get_irq(pdev, 0);
+ 	if (data->parent_irq < 0)
+@@ -165,7 +165,7 @@ static int qepic_probe(struct platform_device *pdev)
+ 	data->gc = irq_get_domain_generic_chip(data->domain, 0);
+ 	if (!data->gc)
+ 		return -ENODEV;
+-	data->gc->reg_base = data->reg;
++	data->gc->reg_base = reg;
  
--	irq_set_chained_handler_and_data(data->irq, qepic_cascade, data);
--
--	return devm_add_action_or_reset(dev, qepic_remove, data);
-+	data->gc = irq_get_domain_generic_chip(data->host, 0);
-+	if (!data->gc)
-+		return -ENODEV;
-+	data->gc->reg_base = data->reg;
- 
-+	return 0;
+ 	return 0;
  }
- 
- static const struct of_device_id qepic_match[] = {
 
 -- 
 2.55.0
