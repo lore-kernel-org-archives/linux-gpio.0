@@ -1,70 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D602877F7
-	for <linux-gpio@vger.kernel.org>; Fri,  3 Jul 2026 21:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B342DFA4A
+	for <linux-gpio@vger.kernel.org>; Fri,  3 Jul 2026 21:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783112658; cv=none; b=adpJPKcOjFLFPNS1cjlYRPU1AMtgbAavlCjKDlU9CU0kRctGFTFgImkT8C2P6RQ4rZYCmZ9qhc3oLgWme3Vt3BbZoPjJWZr88P+kAywlTC8jrl+Q1OC7wUyotBnIktFY84gaD4FbWT99WlXHgPtuBwBvFY0TBkRLhC2DJqW174M=
+	t=1783112685; cv=none; b=MsMobGuzWLF6qN9H4khVBw6rlo77latX52KsYnnIIth1kpGDsoYeSJm9DsvffKgyHFCh6lpq1pIeWdvsxJjW6hPj+yu2gaAGtXh8tIJ/tktMFnFkGvnTxFmZO9bnmtYyZ2uBKyj2cGdZ+J3jsVDwQgkEdHpMoL+AJ1CJJe0RvY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783112658; c=relaxed/simple;
-	bh=057Zy9OBNEVAmmErkRANAIhVeUwl/UkARFKpq+4xQ5c=;
+	s=arc-20240116; t=1783112685; c=relaxed/simple;
+	bh=TEismEukrc5he8i/ANzlclwqKUU39GroifuaymWI34s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ri+IaEWpGwmMt0Zzr0g/DAR+WYECuNwIlto010DiXJlXeonZED1lEicnLxpmK6t3J4H7QQ4Bs10X0O743/AEURTMalzhV9M1QWdfAiLFFzEWgQcO11NPHNy5+XFiFJe5aa26m8UkBRfUv/B+EQHlyvm1n4MEOTXua+UySMcal+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVPZG9WZ; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=iZu29LUGShZnHh9SsjuqCD51ERSCuQ/7FS1ovUjIKTnpyzWWgjAiAiYS6b413acJ4Qba45yOPTMmrMiSEep7oMGpHz3VPss4vQdwcHUtxiVcv/joC1IVMcADyuBgokGlCYxJBtTdsSGN6DSZL8X3gaMha/YBCbbVFOw3uDBjoaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3/VQwin; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVPZG9WZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 129B91F00A3E
-	for <linux-gpio@vger.kernel.org>; Fri,  3 Jul 2026 21:04:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3/VQwin"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 320D21F00A3A
+	for <linux-gpio@vger.kernel.org>; Fri,  3 Jul 2026 21:04:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783112657;
-	bh=057Zy9OBNEVAmmErkRANAIhVeUwl/UkARFKpq+4xQ5c=;
+	s=k20260515; t=1783112684;
+	bh=xWcBqU+ZcCLNHJJGa428QRtsa/t/TQLn1rK/qQI176E=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=mVPZG9WZWetiuUBQBQcNKKAVmZqIdOPlkulglymkdujUkySjI5GzGt05vOJ0HuIK/
-	 h8WmGozV76kUvSzOPgDE0V7wzFDe/RKMOLQ10Jc37DosdcnEBPUoLl0javX5eRWm5k
-	 I44FfYvnvOwVUzBDxeRTTUu12IqYD3IDOyAPZtIMURyInQ3WipdncvIa3gDpKMduQ1
-	 TTHD5E3Xw8bRMgXmr9DYligCt/h3E03ZAubyHVZmJIgsjZyx3ZXYvR7VJOlRqXnI8x
-	 2uRKThWhM5rz4YZuAbefx1vfNCuD02NZob/JzwXuvzj8Z/YN1GWkBTUWl1NvvNJ0tm
-	 te6KdL94iPkww==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5aeae350e0aso844478e87.1
-        for <linux-gpio@vger.kernel.org>; Fri, 03 Jul 2026 14:04:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqXAvYPzxm62xNUjZDWKiqicF65CUMgaI0+DKPdzKXe7jCX1+0Gc2UbtcmZtHSD3w+hVNc5KneRzlUm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7pEydSs5QLd8sazHwbI6/9s/G6W8vds/72an7lxkhLdS7dbw2
-	C6UPF3vnE/De+0+6V2jFCU36VBrHZIPnU0h/ndHoCPk+4fHp9IkGuTV2b6cJ9579T0k+0EZBGeE
-	Hfti7wwPpQqXLuoxo0EA48T8g8H+Z6UM=
-X-Received: by 2002:a05:6512:244:b0:5ae:b764:3ba5 with SMTP id
- 2adb3069b0e04-5aed50bf5cbmr58705e87.64.1783112655874; Fri, 03 Jul 2026
- 14:04:15 -0700 (PDT)
+	b=j3/VQwinBjdgOnq3NrA/wXbUM61997sNxKkEvoUhq1FDD7AMG8iwqaaqy460q8MRH
+	 OhIIzgq38VY2kvrHO9ZMVWS57zDo7OOp5eMfZIee5z3Fkomr4Agdeu4SDeQ0HZ1Pud
+	 tJcOU7KwkG7z/zqV2pjLPRPX5rlSwCMfgaMa9Vy4pR48xRQS3EpwC4hMYGGa/sxgv5
+	 +iHoqQjC3HDwjm2CItfEzcSXzyxcn8Qsbp+/XunEdMlTBXy1BwOBKt/5A6F8karTRJ
+	 VShqR+7bvxu2niMXkF2r51ERzX3UIxpfxs+f5q1N2SElidFfjOBrBYaRXcsqagUJVx
+	 WV7b0DVqyqb2Q==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5aebc8cb5bcso652914e87.2
+        for <linux-gpio@vger.kernel.org>; Fri, 03 Jul 2026 14:04:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rpp6Z2PkE9ZMrCqBCopXtZq1JdS23oo6JU/XOPNq/JSPjpJBciAZOUjsam0Oa2MQHOX8gN9ftauWc31@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFCvO85aP/72v9NVYByXhKW0keD0kxtmv29Itpytp6pK/bhpKE
+	twYJQqjA2toSj8ABx9JPcYLLcRYCtt6Jk2OErnX2KIMk0J/VFraWYVMOTI3OSIvZJxwH/DIzbDe
+	UqXGK4kU+6M+iMHTN/wdvedJa9EMC7HU=
+X-Received: by 2002:a05:6512:6411:b0:5ae:b981:3390 with SMTP id
+ 2adb3069b0e04-5aed508f6b3mr72582e87.13.1783112682973; Fri, 03 Jul 2026
+ 14:04:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260703073029.2588960-1-ravi.hothi@oss.qualcomm.com>
-In-Reply-To: <20260703073029.2588960-1-ravi.hothi@oss.qualcomm.com>
+References: <20260703-palmas-getdirection-v1-1-046c155961c4@kemnade.info>
+In-Reply-To: <20260703-palmas-getdirection-v1-1-046c155961c4@kemnade.info>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 3 Jul 2026 23:04:03 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnmyZauNi11xdPYUXZMA+X_Ztg6TNxkKrK+ATZTP=W7_w@mail.gmail.com>
-X-Gm-Features: AVVi8CfrQpkfG73YJB3yBFkLAI4xFHb3eiNzbFOQ7XgJ7pxmuRx31N4Mgw7eoz4
-Message-ID: <CAD++jLnmyZauNi11xdPYUXZMA+X_Ztg6TNxkKrK+ATZTP=W7_w@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] pinctrl: qcom: Add Eliza LPASS LPI support
-To: Ravi Hothi <ravi.hothi@oss.qualcomm.com>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Luca Weiss <luca.weiss@fairphone.com>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mohammad.rafi.shaik@oss.qualcomm.com, 
-	ajay.nandam@oss.qualcomm.com
+Date: Fri, 3 Jul 2026 23:04:30 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=XhJc0TDJjG=rOT-TOH-ED4OBbVfcQdBb+R-b7i_HMUw@mail.gmail.com>
+X-Gm-Features: AVVi8CcLAvXCg2XYAadz5UQ5l_9Y6OCJgP89EyBNFQjHzoJL9eg7rMuBdH1b-hU
+Message-ID: <CAD++jL=XhJc0TDJjG=rOT-TOH-ED4OBbVfcQdBb+R-b7i_HMUw@mail.gmail.com>
+Subject: Re: [PATCH] gpios: palmas: add get_direction op
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ravi,
+On Fri, Jul 3, 2026 at 7:21=E2=80=AFAM Andreas Kemnade <andreas@kemnade.inf=
+o> wrote:
 
-we are in a bit of maintainer transition for Qcom stuff,
-Bartosz will apply and coordinate qcom pin control
-patches!
+> Accessing debug/gpio is quite noisy without a get_direction()
+> implementation.  To calm that down add an implementation.
+>
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 
-Acked-by: Linus Walleij <linusw@kernel.org>
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
