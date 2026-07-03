@@ -1,162 +1,116 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAB2331EB6
-	for <linux-gpio@vger.kernel.org>; Fri,  3 Jul 2026 08:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82D5318EDA;
+	Fri,  3 Jul 2026 08:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783066860; cv=none; b=HSdNhUvSvlUtVBqLDnav6OAHOhn+dSiaEnW6Uv2P6JbXX/y7u3LhEspJZ0JeKsmAV8k7D9RbJ/B27ZflDQhMZZpsBlKEil5k0DmPxFHYjfpGpAQ/EuTJeiaNkzq8y51twdgaN0Sbq2+9vF/O3PNhxebbp8zp1bZ4SsQknenOcvo=
+	t=1783067246; cv=none; b=m6SdwtMmmYiPRWsWZPKjuV0qgawmqy16bVU0Zk+FvxwgM70a79TTe0ZQdoIc3DrWWfiRrmd2ccL6hIx5eBbzrZK0Vng/LVKeqahouuM0TzLPgJsSl7BpqKNkNXPjadwzolPpwM0bGWWwhfyMw3ZLa6G+0fYm+PpmZiAsJVlo8Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783066860; c=relaxed/simple;
-	bh=HbHpHSY9NsPk9W35hmKvEGRZPRI3Z5ug0TTg3TXplZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U+8AvgVmVu2GaJ59wqGKpHNLxmZdc93tyF05oTbbARGF0AmA5Ycz5WnTRQZk5Guuv4DDdMpGH0WBAR1bJgsTsHyA3lckqp9Xhcpxf5+k5dnWgeWI/gv6/O0NtW/NCeCh7BiMbtj8+DKhZBg36MQ/gx7GR59nPun1MGEHzInwBaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BECsprnV; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Ce+w9h3y; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1783067246; c=relaxed/simple;
+	bh=tHkSW3aoO+AfImEN3aJtccdWDZbhGz/juQGcD1gsN9E=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BsJ88o8PLUDY6ljC1dxgznm3/w0BexHKrQMOQugaCK0TYVN6uQ18sdlrtAwYRwnecbyBOvAj7wOIuCsMUYY4malZ6hZINiJlxPxWDgjF9AsgCA4PtzLEA2Xmr4ZXL6YV8/jOaWw1y637pFdxqO9O64fEJDRgOqRcff+duPbO2g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=por4sV+q; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BECsprnV";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Ce+w9h3y"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6635rsI13147562
-	for <linux-gpio@vger.kernel.org>; Fri, 3 Jul 2026 08:20:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MevWA27iUr+PqW2XLoVtzDgSJt/tlvlfQxk/aVUgRkY=; b=BECsprnV4e8eciNC
-	vZ0Gvyo2mJYE9MB5ZPCb3lHH/ALHqw7R2tb2eAK9PgXz7LAiz+ZkkFbA8RjWxdUY
-	5Iv5erJhlQGuRrc7jNuEcpmPyTQOcQzNp3wOhzYs5BV7nyVPqz3r9Z9zSXeQeN8j
-	GQNpsxGkvd2qbD23Pqih4FpZMnnKSWzFmRNh9p5dlQ9bX58TDrhTBPCtSwfTCWXO
-	i6Yl8QUjBUQZgobZYqXfLF+hIJy4sYnMRuMRFzN7Tl9TvQ3Yfg34qy8soU8hwvtg
-	+SiItcxqnSJbuxyAzOeiiIANAsUAFr3nOoZsypnbT/ZPKww7Ep2bJ7RL8Ijofyf4
-	O743tw==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f5mvww84k-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 03 Jul 2026 08:20:58 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-92e5fc4c7e9so27982285a.3
-        for <linux-gpio@vger.kernel.org>; Fri, 03 Jul 2026 01:20:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783066857; x=1783671657; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=MevWA27iUr+PqW2XLoVtzDgSJt/tlvlfQxk/aVUgRkY=;
-        b=Ce+w9h3y4sdY++lNKIecFQtE0Jrzpd3snNsVKksEaS3wc9Mh88usFhMuLeEKSh7d+5
-         maovxqpE1AKW6HdMJROq4tmb+HI4JwL9PeLpEnCKiKefPYgCbNNy6ZoFOsQrsc+52qTG
-         2xNhGqLHq8E9YC1d27FU1kdqpiZKZL0F2RfGF56ropN5LFm4D/+StcnPyftourIAtOzQ
-         XVvWcZ7IG6N8+ZFaXtHakaS4K8gxbnvUbaB3Z9G+MldvWznCi6O+O6VKAPJyEykCQ7uu
-         EMkuWG+cbL/b7LEJg12Rm1gmi+psxBp5zhFpu7qEZSL/y4+eAITN3FMOZuf1XpbDpOU6
-         mgLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783066857; x=1783671657;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MevWA27iUr+PqW2XLoVtzDgSJt/tlvlfQxk/aVUgRkY=;
-        b=lZ7CnW7sbCgWzV42jO8Ko03O4R7JCgIsvFx5bHgJMU+HbrlbBNLRkC4xvNZBHrzXbl
-         yEVPNMKEVeXsZ5ZsVIIP51BJLCcHUCBH+vhRqMTzXwAn30Lx2GevRsvX0dlBd7JbrDSG
-         RTdbgioIPQOpEYl6gITwQtlEAWJqaFH2AzYBtiV1I22gDA6xQ8Y4w1/vNaLbqHlRmyOp
-         cMP4X+HKbUGjx9El18V3iZGYwYJCIsJzj5f3mrtTySnYy+N44fxgKnx26k/I2YUrjo/K
-         Rkjw3LkvIylnvvQCLw4JThvPR0BeLMOuRXLM1TOZfHmlEyfpvh5Ybr11IlZ/5XdzkJMP
-         e9tg==
-X-Forwarded-Encrypted: i=1; AFNElJ8SxY7nUmlor4cInDV7kW+iXLvHov8eGTvy2rCLHuZtzXIFvKTXDhIWdWn3e0Gea6gab+pT3g2MsZt7@vger.kernel.org
-X-Gm-Message-State: AOJu0YycwgUbYDpG5ai6YDnzcvqy/1GsvRsF1T47egq9rUsAayyUNOcb
-	aq+2ihJAtJFuvVqlc23e+8dAbi/w/RKWKozmy04pso57wEIAMVOh8AKOQ8qYg+yMCk/gV52gAcw
-	NDJdWqll7KgY9cjLBVBV3Gjz3eAIUKyct0zTIu0yBHMTzxMwkayd3QSKNvhsKU5Eh
-X-Gm-Gg: AfdE7cmA85SwEhUfTIrIzY8eDTdp0h7iGJnF7uXJb+MNsOyXqQNIBKGZDvnpf58zihh
-	KhzTlb7W6kr5w/fPTMoSoJ4QXcJseatr2UpifXn4z/fJMopqt/aKC3hVyXO+9HCXyvOyfLoL+ko
-	TCg623ICKKp0I5+qe+B3BLyMt+piPs6rXieYxeySlEX68UigPDsH0Rc+Znzxj7XBcOTnV6xE2at
-	Ezk6QSpplf1NpDiRozpGkdliWUVF5Y19nZmRtTc3mr6RRBv3MdQwrZ/mEsxz4CP3Bz8RkJwlfO+
-	GrokWdb0kmrecFFzFJerxi+qXDgY3F5oNEGc8rrb1SPXoF0hmRHxFOC5zD9lFN6XvkLAQM1za7u
-	yauSyqTdputVGcfyuvektc4YIMfp4Vyd0QDKDf+w=
-X-Received: by 2002:a05:620a:44ca:b0:92e:7319:7365 with SMTP id af79cd13be357-92e7b042c9amr1098936485a.26.1783066857371;
-        Fri, 03 Jul 2026 01:20:57 -0700 (PDT)
-X-Received: by 2002:a05:620a:44ca:b0:92e:7319:7365 with SMTP id af79cd13be357-92e7b042c9amr1098932185a.26.1783066856791;
-        Fri, 03 Jul 2026 01:20:56 -0700 (PDT)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:b934:1281:e054:26d2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493cce1a844sm30038455e9.15.2026.07.03.01.20.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 01:20:55 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@bootlin.com>,
-        Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] gpio: nomadik: silence boot log
-Date: Fri,  3 Jul 2026 10:20:54 +0200
-Message-ID: <178306685093.6924.3082461604910448071.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260701-gpio-nomadik-silent-v1-0-644d10316cef@bootlin.com>
-References: <20260701-gpio-nomadik-silent-v1-0-644d10316cef@bootlin.com>
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="por4sV+q"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 6638H5JV02547732, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1783066625; bh=tHkSW3aoO+AfImEN3aJtccdWDZbhGz/juQGcD1gsN9E=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=por4sV+qFN/zM91tIEwpwI6axSMcLuqkClnV8z4AtL3dowJA1ra5pkLO7aJWdIiRG
+	 VdgNWVYN8gyXYEp9HLMxFPhY9sOA4TR/Dgm5EjiV5C4YKA3sJGmLJVg4Oy8kLFj7cu
+	 24gXxygT15+A5bRrseNd2Ou1ytQ8Ne59th+Lr9XK2wibZAU6MGfn5JtuM1JnBlnsjs
+	 d/XA8HFWhUYDGTaKnvPQEZTGwYzndnb5BQPSiFlvqSP3u2QMq72ZKwBnijv+KKWhqL
+	 j43CmL9YpGoVE1pBVO1oNazHTN0FtnM0oLugS54gUoOm7isACVidYYsrx1FUx7wDCp
+	 j5G/+s7EXV8Ag==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 6638H5JV02547732
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 3 Jul 2026 16:17:05 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 3 Jul 2026 16:17:04 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::e6fd:5a3f:8946:92c4%10]) with mapi id
+ 15.02.2562.017; Fri, 3 Jul 2026 16:17:04 +0800
+From: =?big5?B?WXUtQ2h1biBMaW4gW6pMr6enZ10=?= <eleanor.lin@realtek.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mark Brown
+	<broonie@kernel.org>, Mathieu Dubois-Briand
+	<mathieu.dubois-briand@bootlin.com>, Bartosz Golaszewski <brgl@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"driver-core@lists.linux.dev" <driver-core@lists.linux.dev>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Linus Walleij
+	<linusw@kernel.org>, Michael Walle <mwalle@kernel.org>, "William Breathitt
+ Gray" <wbg@kernel.org>, =?big5?B?Q1lfSHVhbmdbtsDgsq7LXQ==?=
+	<cy.huang@realtek.com>, =?big5?B?U3RhbmxleSBDaGFuZ1up96h8vHdd?=
+	<stanley_chang@realtek.com>, =?big5?B?SmFtZXMgVGFpIFvAuafTrnBd?=
+	<james.tai@realtek.com>, =?big5?B?VFlfQ2hhbmdbsWmkbLZoXQ==?=
+	<tychang@realtek.com>
+Subject: RE: [PATCH v1 0/4] gpio: regmap: Keep tracking IRQ requests and
+ releases
+Thread-Topic: [PATCH v1 0/4] gpio: regmap: Keep tracking IRQ requests and
+ releases
+Thread-Index: AQHdCiQKzeh3cCu86UShMtVfIwgPZ7Zbc8Hw
+Date: Fri, 3 Jul 2026 08:17:04 +0000
+Message-ID: <dfe56aa625c54f95ab4baf2fff2776ae@realtek.com>
+References: <20260702130903.1790633-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20260702130903.1790633-1-andriy.shevchenko@linux.intel.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="big5"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: o3OxAjXc6a3cwqiKOb4uuW9Idl8ncq9r
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzAzMDA3OCBTYWx0ZWRfX0B7r5gyfXc5H
- i+4Yqj/gmiu61sYdGq6mgNe9lf1lBbsdpkoO78h1mWZxLA+jpWO2BW9opIP+eJMVh84xJRPq2jC
- PJfZsHb4wLosj+O003mqgFDYWQ+NmW6xY1fqG3zGmojGq2kxFN1C7c3RCOJhJjedWTH2APX2kav
- oGJqj9OJmPBlvHJTEV8bndxsdJBe4escdun78Ty20UO/bxXQj7QuWUPuutUSrS77f0pZ6sbSbJo
- 2cLofuDnZLzqaQcEQP4LDdBU8fBdZssCRSs8tZUHiCc0AjxDLN+n+GCy1wXSMb5TDGxdUV/AuKf
- jax9sCt0ror1zuDo8fNEcCMMHXDqu+ZZ1qCzgBEpCWBxLNHyIu5bugUD1htiCbXoAWzVisalvw6
- AadAMqrre2XpJmyZbN8cADGTxqE9yMqAk3W+67/y1dxNBECGXRBIxJroqqm4TAqzGZCkirNCnGy
- 5wfrsOl6K8eGpGxTihA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzAzMDA3OCBTYWx0ZWRfX07zVaKXI/0Cu
- IUEizEZjRuwkAK5EUx2pyN8/QDDEk5mnrX/9NyWBcZn5QQUr8FQ4CbgNmUrnNcnN5eK69HeCiLL
- PWMII6ZKueBAxBOdlsC3HAERga1pwDc=
-X-Authority-Analysis: v=2.4 cv=N+UZ0W9B c=1 sm=1 tr=0 ts=6a4770ea cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=QoyTEntUziiQsqKmZ_8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-ORIG-GUID: o3OxAjXc6a3cwqiKOb4uuW9Idl8ncq9r
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-07-03_02,2026-06-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 spamscore=0
- priorityscore=1501 phishscore=0 adultscore=0 malwarescore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607030078
 
-
-On Wed, 01 Jul 2026 18:56:57 +0200, Théo Lebrun wrote:
-> Currently, on EyeQ5, we might get those error logs:
-> 
-> [    0.544230] nomadik-gpio 1400000.gpio: failed getting reset control: -EPROBE_DEFER
-> [    0.544274] nomadik-gpio 1400000.gpio: could not populate nmk chip struct
-> 
-> Then on successful probe we get:
-> 
-> [...]
-
-Applied, thanks!
-
-[1/5] gpio: nomadik: convert nmk_gpio_populate_chip() to goto cleanup
-      https://git.kernel.org/brgl/c/6dd9672a16bfbe59427aa0694fdb94553e7949f4
-[2/5] gpio: nomadik: add missing dev_err() call on chip populate failure
-      https://git.kernel.org/brgl/c/2123813511d495b99b605abe4db167793698e0c5
-[3/5] gpio: nomadik: drop duplicate probe error line
-      https://git.kernel.org/brgl/c/b0901d4dc17e37edbc928c01dced21ea86da87f2
-[4/5] gpio: nomadik: use dev_err_probe()
-      https://git.kernel.org/brgl/c/56716e37447a5bd4f9fbd6e314acacce191e313f
-[5/5] gpio: nomadik: drop "chip registered" log on probe success
-      https://git.kernel.org/brgl/c/edbcefc9b0d5925f8be4227fc180a92cd49d126e
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+SGkgQW5keSwNCg0KVGhhbmtzIGZvciB5b3VyIHBhdGNoZXMhDQoNCj4gRHVyaW5nIHRoZSByZXZp
+ZXcgb2YgdGhlIHYzIFsxXSBvZiB0aGUgc2VyaWVzIHRoYXQgYWRkcyBhIGRyaXZlciBmb3IgUmVh
+bHRlayBESEMNCj4gUlREMTYyNSBTb0MgR1BJTyB0aGUgZ2FwIGluIHRoZSBHUElPIHJlZ21hcCBp
+bXBsZW1lbnRhdGlvbiBoYXMgYmVlbg0KPiBkaXNjb3ZlcmVkLCBpZCBlc3QgdGhlIElSUSBjaGlw
+IHRoYXQgaXMgY3JlYXRlZCBieSByZWdtYXAgSVJRIGRvZXNuJ3QgaGF2ZSBJUlENCj4gcmVxdWVz
+dCBhbmQgcmVsZWFzZSBjYWxsYmFja3MgYW5kIGhlbmNlIGluIHRlcm1zIG9mIEdQSU8gZG9lcyBu
+b3QgdHJhY2sgaWYgYW55DQo+IGxpbmUgaXMgbG9ja2VkIGFzIElSUS4gVGhpcyBtaWdodCBsZWFk
+IHRvIHVuZGVzaXJlZCBhbmQgbW9zdCBsaWtlbHkgZmF1bHR5DQo+IGJlaGF2aW91ci4gVGhpcyBz
+ZXJpZXMgaXMgdG8gZmlsbCB0aGF0IGdhcC4gQ3VycmVudGx5IGl0IG9ubHkgZml4ZXMgdGhlIG9u
+bHkgdXNlciBvZg0KPiB0aGUgYXV0b21hdGljIElSUSBjaGlwIGNyZWF0aW9uIGZhY2lsaXR5IHBy
+b3ZpZGVkIGJ5IEdQSU8gcmVnbWFwLCBidXQgYWxzbw0KPiBwcm92aWRlcyB0aGUgZXhwb3J0ZWQg
+Y2FsbGJhY2tzIGZvciBvdGhlcnMgdG8gYmUgcG9zc2libGUgdG8gY2FsbCB0aGVtIGZyb20NCj4g
+Y3VzdG9taXNlZCB2ZXJzaW9ucyBvZiB0aGUgY2FsbGJhY2tzIGluIHRoZSByZXNwZWN0aXZlIGRy
+aXZlcnMuDQo+IA0KPiBNb3N0IG9mIHRoZSBhZmZlY3RlZCBkcml2ZXJzIGlmIEkgYW0gbm90IG1p
+c3Rha2VuIGFyZSB0aGUgSW5kdXN0cmlhbCBQQzEwNCBvbmVzLA0KPiBoZW5jZSBJIENjJ2VkIFdp
+bGxpYW0gdG8gbG9vayBhdCB0aGlzIGFuZCBwZXJoYXBzIGV2ZW4gdGVzdC4NCj4gDQo+IFl1LUNo
+dW4sIGNhbiB5b3UgZ2l2ZSBhIHRyeSB3aXRoIHlvdXIgdjMgYmFzZWQgb24gdGhpcyBzZXJpZXM/
+IEkgYmVsaWV2ZSB3ZSBjYW4NCj4gdXNlIHJlZ21hcCBhcHByb2FjaCBhZnRlciBhbGwuDQo+IA0K
+DQpJIHRlc3RlZCB0aGVtIG9uIHRoZSBydGQxNjI1IFNvQyBib2FyZCBhbmQgaXQgbG9va3MgZ29v
+ZC4gSWYgbm8gb25lIGVsc2UNCmhhcyBhbnkgaXNzdWVzIHdpdGggQW5keSdzIHBhdGNoIHNlcmll
+cywgSSdsbCBzZW5kIG91dCB2Niwgd2hpY2ggd2lsbCBiZQ0KYmFzZWQgb24gbXkgdjMgYW5kIHRo
+aXMgc2VyaWVzLg0KDQpCZXN0IFJlZ2FyZHMsDQpZdS1DaHVuDQoNCj4gVGhlIG1lcmdlIHN0cmF0
+ZWd5IGlzIHRvIGdvIHZpYSBHUElPIHRyZWUgd2l0aCB0aGUgaW1tdXRhYmxlIGJyYW5jaCBvciB0
+YWcNCj4gcHJvdmlkZWQgZm9yIHRoZSBmaXJzdCBwYXRjaCB0aGF0IGNhbiBiZSBkb25lIGJ5IHJl
+Z21hcCB0cmVlIGZvciBvdGhlcnMgdG8NCj4gY29uc3VtZS4gT2YgY291cnNlLCB0aGVyZSBhcmUg
+cG9zc2libGUgb3B0aW9ucywgSSdtIGFsbCBlYXJzIGlmIHlvdSB0aGluayBpdCB3aWxsDQo+IGJl
+IGJldHRlciBpbiBhbnkgb3RoZXIgd2F5Lg0KPiANCj4gTGluazoNCj4gaHR0cHM6Ly9sb3JlLmtl
+cm5lbC5vcmcvYWxsLzIwMjYwNTEyMDMzMzE3LjE2MDI1MzctMS1lbGVhbm9yLmxpbkByZWFsdGVr
+LmNvDQo+IG0vIFsxXQ0KPiANCj4gQW5keSBTaGV2Y2hlbmtvICg0KToNCj4gICByZWdtYXAtaXJx
+OiBQcm92aWRlIElSUSByZXNvdXJjZSByZXF1ZXN0IGFuZCByZWxlYXNlIGNhbGxiYWNrcw0KPiAg
+IGdwaW86IHJlZ21hcDogUHJvdmlkZSBkZWZhdWx0IElSUSByZXNvdXJjZSByZXF1ZXN0IGFuZCBy
+ZWxlYXNlDQo+ICAgICBjYWxsYmFja3MNCj4gICBncGlvOiByZWdtYXA6IEFwcGx5IGRlZmF1bHQg
+cmVzb3VyY2UgY2FsbGJhY2tzIGZvciByZWdtYXAgSVJRIGNoaXANCj4gICBncGlvOiByZWdtYXA6
+IE9yZGVyIGtlcm5lbC1kb2MgZGVzY3JpcHRpb25zIHdpdGggdGhlIGFjdHVhbCBhcHBlYXJhbmNl
+DQo+IA0KPiAgZHJpdmVycy9iYXNlL3JlZ21hcC9yZWdtYXAtaXJxLmMgfCAyMiArKysrKysrKysr
+KysrKysrKysrKysrDQo+ICBkcml2ZXJzL2dwaW8vZ3Bpby1tYXg3MzYwLmMgICAgICB8ICA3ICsr
+KystLS0NCj4gIGRyaXZlcnMvZ3Bpby9ncGlvLXJlZ21hcC5jICAgICAgIHwgMjUgKysrKysrKysr
+KysrKysrKysrKysrKysrKw0KPiAgaW5jbHVkZS9saW51eC9ncGlvL3JlZ21hcC5oICAgICAgfCAy
+MSArKysrKysrKysrKystLS0tLS0tLS0NCj4gIGluY2x1ZGUvbGludXgvcmVnbWFwLmggICAgICAg
+ICAgIHwgIDIgKysNCj4gIDUgZmlsZXMgY2hhbmdlZCwgNjUgaW5zZXJ0aW9ucygrKSwgMTIgZGVs
+ZXRpb25zKC0pDQo+IA0KPiAtLQ0KPiAyLjUwLjENCg0K
