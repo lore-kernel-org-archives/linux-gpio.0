@@ -1,42 +1,41 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD003D953B
-	for <linux-gpio@vger.kernel.org>; Fri,  3 Jul 2026 13:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D27D3D891C;
+	Fri,  3 Jul 2026 13:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783085453; cv=none; b=IjANfTEHJ5BGY/ecmNl8lfi5vI1KusgrjmOZjnGb/U2SDHlCsXEOGfI87l1g1eqC60B77QY/ED7OTBXDCxwswYoiSzO+fo5x8eD5BikVruRTx3HIRWJNznS2U2oq+qpJKmL8bb/pomqbetxDQXPqeQg2vAchMRjd1MeiUgc+mHQ=
+	t=1783085454; cv=none; b=EbCKuqU9RygIQaL6XZyd+iM6q4cvaeHZGI0EOkx61JZuH6NtandqW1CZ3lykNrzRz6nWMcoa+yX2UQdxgXtrKDgCky2z6IsPNBVyvoEPdP3iWEEcyyyOguTEczJCEJ20MNA5i9VeXVkeTlj4NWEqFtN9wbokk+0YKOVdSjtZ9Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783085453; c=relaxed/simple;
-	bh=Q1LU98vM9HHOAM5h2e8fS0MJIEHJs/m4IozHvGGHGHk=;
+	s=arc-20240116; t=1783085454; c=relaxed/simple;
+	bh=qLX9DQ6US1jLkaxEAOSY64aDksPeerbbEeIDbPKoJVA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EdY4l7kXyClna/bH9KTBLIUERJIFToRgWsD1iXhfwMT0GwtOf9jiyTBgsjTTQI6Ea7WD7yyrRVXTnIo2RlUH/RjoxsK5Tvhwd9ZKBGzvjQkdatNQn1wbM4rz00/TGFdYoSZSTZlJXaamr4zLhucCHO/Gdl4lc9x43ZXMMUKCkGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SXF3aul5; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=qqqChXsWdJDhi86mogcmLhckk6EaJn0ohTQUcQqzbP88v/fy50+x2ivIjjxhpDF+kJNlQpTuhSGlzhaQkMT2gT0ec1Eo/qZl1WWkjDJhiR9RzufPff+tBhfSUu4IvF9eYr+CwKuQ6MxkvJviU47qG3UVVp2nJPIez3wGWc/gm6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K7eo9h3B; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SXF3aul5"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K7eo9h3B"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 6F35C4E40C72;
-	Fri,  3 Jul 2026 13:30:48 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id B9DD61A0E2A;
+	Fri,  3 Jul 2026 13:30:46 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 3DD5560300;
-	Fri,  3 Jul 2026 13:30:48 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DDC72104C95AA;
-	Fri,  3 Jul 2026 15:30:45 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8ED9160300;
+	Fri,  3 Jul 2026 13:30:46 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 12473104C9464;
+	Fri,  3 Jul 2026 15:30:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1783085447; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1783085445; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=XVGgD3fb+eKy4BrLSrfxqR3z72o1xfjS9b0bDJoQno0=;
-	b=SXF3aul57hCaFh0VwEkkDSj/4nrSy/i+RyZiUelCBbEO0WRhxrx+wugPe+O262Q2RWPryr
-	01Eiw2vI4D/H3JB+8zNIL8FqyLZBEpO4/3liT+fx6v7WXY3gMAbltcVDycJRIPQTdr9XYH
-	XFWLhhvSZ4fS/9qRWpaeMc+CNki8if6Ye5TOHvpe2uHyU91dLmlfIBslkemMLn9mCgeY7+
-	65kQO32lqKDNuVFd3MmtqUeLMn8ybqiC0BL3poSdGzag7F8TcFFQxEeVJZOyRvUmr2jcjp
-	si/yh8hhQrTg0pIwce3HfF6eSOHmv4Frt6TZPw3ppPswb92XhaNILGjHOc1x/g==
+	bh=RGZOL8C2TkmYpdoDmtcWAQyhNiUWAQ2nkK1kVx5QS1A=;
+	b=K7eo9h3BUEmCk/xosCZC6V6++51tqWU4cMERDXId5OyY53HOByjSQGLNUQ65mFwhXwx+cI
+	9ebFPdIipeNTq/kb6e+ddxnpSpJNKVtm2ucrRIoU6G2CTdQAf01lJmhxD+Tc9r0RKQbcgK
+	id6i2RQR+dw6P80YvEcsjIRhjsckMTBPEIpgamXYWV5pHCkbofgTKGMDRjoIOlImLoK/MX
+	hEFNBy3lQVHCYmLp0KnaljRc3aeT7A/2MmwP6hi+lB0SzM2bd3Kk4QzqxyGOrbD4NX+CO4
+	jQbehgzGYkmCHMsiBvPzMd0X5lLNh9gTfxKa7zXRr+gLgkeDlxcHU/VzLKJQbA==
 From: Paul Louvel <paul.louvel@bootlin.com>
-Date: Fri, 03 Jul 2026 15:30:18 +0200
-Subject: [PATCH 10/12] soc: fsl: qe: Rename host member to domain in struct
- qepic_data
+Date: Fri, 03 Jul 2026 15:30:17 +0200
+Subject: [PATCH 09/12] soc: fsl: qe: Rename irq variable to parent_irq
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -45,7 +44,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260703-qe-pic-gpios-v1-10-6c3e706e27dc@bootlin.com>
+Message-Id: <20260703-qe-pic-gpios-v1-9-6c3e706e27dc@bootlin.com>
 References: <20260703-qe-pic-gpios-v1-0-6c3e706e27dc@bootlin.com>
 In-Reply-To: <20260703-qe-pic-gpios-v1-0-6c3e706e27dc@bootlin.com>
 To: Qiang Zhao <qiang.zhao@nxp.com>, 
@@ -61,17 +60,18 @@ Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
  linux-gpio@vger.kernel.org, Paul Louvel <paul.louvel@bootlin.com>, 
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1783085423; l=1508;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783085423; l=1714;
  i=paul.louvel@bootlin.com; s=20260313; h=from:subject:message-id;
- bh=Q1LU98vM9HHOAM5h2e8fS0MJIEHJs/m4IozHvGGHGHk=;
- b=3ByUpPIH3v8ySIFn0+aNMFaKPQFIWVsopDzpFPZIneWR1GFcygDi4tPD47xYf/IimB0uOiwhP
- 8Xx53Iyu7rDBu4rrgnyFLfvF61fEsYOCObL3lJRFukRrLA7p86s6HlX
+ bh=qLX9DQ6US1jLkaxEAOSY64aDksPeerbbEeIDbPKoJVA=;
+ b=55d1Hq2Gudzpk5/2MD3gVD6YluwwZMFeAdM8hRfZB6IhTnjsBdCCzYQupJ+SZ+NKhsMhxSrNd
+ +8uV2+zFd8iA8VY7KuXYZ2cT7dPQ/IkFTCHlmkWjcCrdxG1Uf24axWX
 X-Developer-Key: i=paul.louvel@bootlin.com; a=ed25519;
  pk=eLW50NT18UAvUT5cAcYf88zNbBCZDLFXuptpyLVhVIU=
 X-Last-TLS-Session-Version: TLSv1.3
 
-Rename the host field to domain to match the common kernel naming
-convention for irq_domain pointers.
+Rename the local variable holding the platform IRQ to parent_irq, which
+better describes its role as the upstream/chained interrupt in the
+hierarchy.
 
 Signed-off-by: Paul Louvel <paul.louvel@bootlin.com>
 ---
@@ -79,44 +79,49 @@ Signed-off-by: Paul Louvel <paul.louvel@bootlin.com>
  1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/soc/fsl/qe/qe_ports_ic.c b/drivers/soc/fsl/qe/qe_ports_ic.c
-index 718703dab024..1bf2af087b78 100644
+index d022aa224f6d..718703dab024 100644
 --- a/drivers/soc/fsl/qe/qe_ports_ic.c
 +++ b/drivers/soc/fsl/qe/qe_ports_ic.c
-@@ -18,8 +18,8 @@
- 
+@@ -19,7 +19,7 @@
  struct qepic_data {
  	void __iomem *reg;
--	struct irq_domain *host;
- 	int parent_irq;
-+	struct irq_domain *domain;
+ 	struct irq_domain *host;
+-	int irq;
++	int parent_irq;
  	struct irq_chip_generic *gc;
  };
  
-@@ -85,7 +85,7 @@ static void qepic_cascade(struct irq_desc *desc)
- 	}
+@@ -111,7 +111,7 @@ static int qepic_domain_init(struct irq_domain *d)
+ {
+ 	struct qepic_data *data = d->host_data;
  
- 	for_each_set_bit(bit, &event, 32)
--		generic_handle_domain_irq(data->host, 32 - bit);
-+		generic_handle_domain_irq(data->domain, 32 - bit);
+-	irq_set_chained_handler_and_data(data->irq, qepic_cascade, data);
++	irq_set_chained_handler_and_data(data->parent_irq, qepic_cascade, data);
  
- out:
- 	chained_irq_exit(chip, desc);
-@@ -158,11 +158,11 @@ static int qepic_probe(struct platform_device *pdev)
- 	if (data->parent_irq < 0)
- 		return data->parent_irq;
+ 	return 0;
+ }
+@@ -120,7 +120,7 @@ static void qepic_domain_exit(struct irq_domain *d)
+ {
+ 	struct qepic_data *data = d->host_data;
  
--	data->host = devm_irq_domain_instantiate(dev, &d_info);
--	if (IS_ERR(data->host))
--		return PTR_ERR(data->host);
-+	data->domain = devm_irq_domain_instantiate(dev, &d_info);
-+	if (IS_ERR(data->domain))
-+		return PTR_ERR(data->domain);
+-	irq_set_chained_handler_and_data(data->irq, NULL, NULL);
++	irq_set_chained_handler_and_data(data->parent_irq, NULL, NULL);
+ }
  
--	data->gc = irq_get_domain_generic_chip(data->host, 0);
-+	data->gc = irq_get_domain_generic_chip(data->domain, 0);
- 	if (!data->gc)
- 		return -ENODEV;
- 	data->gc->reg_base = data->reg;
+ static int qepic_probe(struct platform_device *pdev)
+@@ -154,9 +154,9 @@ static int qepic_probe(struct platform_device *pdev)
+ 	if (IS_ERR(data->reg))
+ 		return PTR_ERR(data->reg);
+ 
+-	data->irq = platform_get_irq(pdev, 0);
+-	if (data->irq < 0)
+-		return data->irq;
++	data->parent_irq = platform_get_irq(pdev, 0);
++	if (data->parent_irq < 0)
++		return data->parent_irq;
+ 
+ 	data->host = devm_irq_domain_instantiate(dev, &d_info);
+ 	if (IS_ERR(data->host))
 
 -- 
 2.55.0
