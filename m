@@ -1,67 +1,30 @@
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817B9354AEB;
-	Sat,  4 Jul 2026 15:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FE83BCD33;
+	Sat,  4 Jul 2026 15:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783178162; cv=none; b=i1v5JESW0yNiAaEBimDyi6ilLRoC8orN8kzt9Kb99eQmYEgqwd878XIR5ZNbkNQ8tsUGPIoyakYdHp3cM5u0RynFW3abX3edfjz1Bj3NgO1vyOu2J0Yx9CCKa57/sNiU9rdVVhCtB+LEGSzMi4XUM/h2HzESUuiLEQkuXUgmGsM=
+	t=1783178557; cv=none; b=gpeXOblUN/DilawNZZYTkAl2APi3KfGtOxRk51u43AusmCVflvB03WD7yU1RCXSasiuue9X3a+1wJdpyx3hnvZRICFw4E4TvXQn9Ld1A39pZhQup2wBkxf923ROWWS6OLY/jGPyO97WN3A2n/OrUqhIBeK0J5UBTUQBmbSDdIAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783178162; c=relaxed/simple;
-	bh=t2XSViw8g5I44hw5ZTRZV1GsnGHC+PyrbVWH/ARCbF0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AjgYPdr4TD/76P+9R8HBuO/y6/qr21Gppy79Uae57b+KSMeUFGzcNyxU8IF74F4COj/oPeVAvXXQUrG11GlT0qcrXX6D17GYGj0jTuIu9fjrCN1FSCyCEG5KeFmQL20fTf6M+gRB0TK0I7UPtF5eK6jYNWixG4f22zGvcMg4Ork=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Ng5NxX/B; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=DwjZMeli; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Ng5NxX/B";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="DwjZMeli"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4gsvM83ms4z8txS;
-	Sat, 04 Jul 2026 17:15:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783178132;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=aVYDH2vqPaP3hCMKt4dvygtRtrkfJZDruGx3t8+yqIM=;
-	b=Ng5NxX/BvIYtJluodO+sFdbdB2csvQRAscJ4WJIg2ESMmL5wYADHwRKcrmoirKfLI1PxSD
-	Wtt/x9vNoVkKQsIfzNjAyBAbtLr2gehU2xoKdWJjSv1MKUSmKwEp1cEi1CckCKy0pA0J3y
-	EpLtefXwhZ3ndQggk8KfDR+kTl9P+TzBqZMynMv2nKO3pgRaH6cr2cHllNdV5AuZCyNOlD
-	aHEZ+qwZtgxhTxcSNX1YRtsZ6HHiACu5ZYI00tbtvd8df9yur4GidMdqduyyd4owwk4Kmr
-	hyLe8zRgvsjFwsiZzwMgZGc+KxKToa4K/5USVkhHpPVdekewFOMwqljYSWH3tg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=DwjZMeli;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783178131;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=aVYDH2vqPaP3hCMKt4dvygtRtrkfJZDruGx3t8+yqIM=;
-	b=DwjZMeliuo1H8LN0LWZza6vDO8cD/iBGhsOEUx/sggB6Qk6C7CUwjlwW28LD5KzvdAofgh
-	JiFSJv48bJYExHjwqtmk/9MEi0FeQaBiQf4z0XfpXpV9SlG92wbw53lnCSHdlNcXMxrxfD
-	zVzHLaOo360+72GmntVuMF1T2zL1HLk3+m8Cf5zrVRmK/NZ77Js2896wE5+ZjnATFAOMTF
-	n3aQw78Xn3VhERrAUGE6WziYFka1cpjzsYXZ2hohSJYOryxbd1/uBlmpid4QCxktOTC0i+
-	ZWHKF0i39yV+d7qWdAH3fPX+SPfFfjfhR9/eYsoVc2EL315fauCF/C4njp5mlA==
-To: linux-gpio@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: gpio: renesas,rcar-gpio: Document R-Car X5H (R8A78000) support
-Date: Sat,  4 Jul 2026 17:13:46 +0200
-Message-ID: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org>
+	s=arc-20240116; t=1783178557; c=relaxed/simple;
+	bh=4dXcGftPS8Uk4ET7RN1Jq0qYBhUtT6VhUQk8/CodcTE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fUIDgUYRqmQ2DJFp6mfo5R/I4I0hcOJxxG3pSHDCUy6lmAxfdNMTN31KK6IR5QbU1ikSSSnFTQ41w0Wn5XPxZjSosTf4URC8F4txkm2iHYzncPI2hRRozQNCCjVQcO065Q3ECqp3Ad/xK3Qy/uLLyLPwjC1je0Rt4QUjPOPPMBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [111.196.245.140])
+	by APP-05 (Coremail) with SMTP id zQCowABX7RA3JUlqsKzbFg--.64868S2;
+	Sat, 04 Jul 2026 23:22:32 +0800 (CST)
+From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: sx150x: add missing MODULE_DEVICE_TABLE()
+Date: Sat,  4 Jul 2026 23:22:30 +0800
+Message-ID: <20260704152230.51188-1-pengpeng@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -69,45 +32,52 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: fku6tys71wipxjjc8waxta3i6nk5wqwj
-X-MBO-RS-ID: 63f46f6472a1d86063a
-X-Rspamd-Queue-Id: 4gsvM83ms4z8txS
+X-CM-TRANSID:zQCowABX7RA3JUlqsKzbFg--.64868S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JFWktrWrZr4UtryUKw4fGrg_yoWkCFbEkF
+	y8ZrZrury093sagry3tr1ruFySka1xuFyktryvgas09a47Xw17JFWkGr9xZ3s5Gr1UtFy5
+	JryDWF1rGr42yjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbzkFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF0xvEx4A2jsIEc7Cj
+	xVAFwI0_Cr1j6rxdYxBIdaVFxhVjvjDU0xZFpf9x0JUdpnPUUUUU=
+X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-Document support for the GPIO controller blocks in the
-Renesas R-Car X5H (R8A78000) SoC.
+The driver has a match table for the i2c bus wired into its driver
+structure, but the table is not exported with MODULE_DEVICE_TABLE().
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Add the missing MODULE_DEVICE_TABLE() entry so module alias information
+is generated for automatic module loading.
+
+This is a source-level fix.  It does not claim dynamic hardware
+reproduction; the evidence is the driver-owned match table, its use by
+the driver registration structure, and the missing module alias
+publication.
+
+Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
 ---
-Cc: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- .../devicetree/bindings/gpio/renesas,rcar-gpio.yaml          | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/pinctrl/pinctrl-sx150x.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-index d32e103a64aac..95f5175c7a9da 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-@@ -56,6 +56,11 @@ properties:
-               - renesas,gpio-r8a779h0     # R-Car V4M
-           - const: renesas,rcar-gen4-gpio # R-Car Gen4
+diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
+index 1d6760ffe809..f1647d9114e3 100644
+--- a/drivers/pinctrl/pinctrl-sx150x.c
++++ b/drivers/pinctrl/pinctrl-sx150x.c
+@@ -850,6 +850,7 @@ static const struct i2c_device_id sx150x_id[] = {
+ 	{"sx1509q", (kernel_ulong_t) &sx1509q_device_data },
+ 	{}
+ };
++MODULE_DEVICE_TABLE(i2c, sx150x_id);
  
-+      - items:
-+          - enum:
-+              - renesas,gpio-r8a78000     # R-Car X5H
-+          - const: renesas,rcar-gen5-gpio # R-Car Gen5
-+
-   reg:
-     maxItems: 1
- 
+ static const struct of_device_id sx150x_of_match[] = {
+ 	{ .compatible = "semtech,sx1501q", .data = &sx1501q_device_data },
 -- 
 2.53.0
 
