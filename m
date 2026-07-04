@@ -1,128 +1,82 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0A439E18E;
-	Sat,  4 Jul 2026 08:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9E43A6EF1;
+	Sat,  4 Jul 2026 12:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783154479; cv=none; b=YgeUCnmOXQ8o59aRp3I12tPgQ1vjgEJeVN0/rDoE0DeZb+6cPzRmYANaAAansqfZ8AaM7QX33R3jKK4EsNyeJwiQEx+HFhZHNPPkEdTZd0AG31vvArF7Sv/L2hy9FviiVzV4NmAoJLZVbUF0nQo+95aEyXq1URceLxJ8damQvPM=
+	t=1783167696; cv=none; b=tp5AKc96oVU6OULa/s/NcUIkOJQ+O0QWyoV5bLlEi3TIbDPSU1pYHzBTvJjOnmZoTKjWtWimU3ihFHTSBusG5ZE5pBPzgUk7Ejgr8HMZx44bkYjpwrih1kObhesEJXQ91doSzupgktC9ZkoUoJUk2xRchYVOsKQ8YUKGPerdBd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783154479; c=relaxed/simple;
-	bh=LoAQGQx1nOKBdu36DWA9epVCvUN1aDJ6wWrFVe89Z40=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y8V1+sNoFWgOWox3Q7EdetCvA1xvxM7HkT39khQd1elYPToG5f53/4LeWZ0EtDAOXqH7/55/M0dnz9ENtVLshF1Kj83Eozmszd8f7M9+y1E3vUGG78XdIHWul+VV9rxYjhKmOW4u4fh5kUK+k/sW/UXCL6Qqsdo/c3vc0A+IaFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=ERr1QZNC; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="ERr1QZNC"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:To:Subject:From:Reply-To:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=V41pSvo0YeLVFGkk+99Snc9WzkqH5EUfSjSfk1PM8ck=; t=1783154478; x=1784364078; 
-	b=ERr1QZNCPDBl5LLEBOlvqhjyXXW8WxBPchGoGsp3n1vX13IARP4fXGfYGwelpxlu8v6xwefCnHg
-	akaUcJKQ7KD8WYOCFpLjVcZ39WnIhDKuZuyWRD+/P9CBrQpV3xCmwRPaXd5eRMSglgBBdjxXbFfLp
-	ZCrf0Kgn4lcM6oowKChg8zeQDx8bhifXwqRf4nAxyh+pTaaUj7dYiAnFr3jCC4RyuG5QVF/PLI4iP
-	Y9u50SvSHCVTubzmNY2ayLmVgiS/cPCvFdKIYTzfHJLIM1WFLZmTDNBUobeN0yv6zkHrhN6eLfkFw
-	g13ryenJ5UK/tG+QW7NokoHp4AtIDdTFKQkw==;
-From: Andreas Kemnade <andreas@kemnade.info>
-Date: Sat, 04 Jul 2026 10:40:54 +0200
-Subject: [PATCH v2] gpios: palmas: add get_direction op
+	s=arc-20240116; t=1783167696; c=relaxed/simple;
+	bh=U5ninCy/7FJ6ArX3lj2NsuLqGhdHRPjv72I2HuyQrKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cC2XFCsBquDkioU8CBtt/wpaBCdvPyh5bvdDLHXTZ6rjV/YjAUc4ThnM9v5pLDm8fMutcPgiWVmju7HGkP43YUiqzmJrl8KIaR742xB16s2Iqc7Z6gr8y9DfPOLLQI1Cl56z2J2pBN8NbMPIyd0XPX0IObm4MM/jpculKcgfJzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [111.196.245.140])
+	by APP-03 (Coremail) with SMTP id rQCowABXL5bF+khqiQ_WFg--.11271S2;
+	Sat, 04 Jul 2026 20:21:25 +0800 (CST)
+From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: vf610: add missing MODULE_DEVICE_TABLE()
+Date: Sat,  4 Jul 2026 20:21:23 +0800
+Message-ID: <20260704122123.73004-1-pengpeng@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260704-palmas-getdirection-v2-1-2fd85fee3832@kemnade.info>
-X-B4-Tracking: v=1; b=H4sIABXHSGoC/32Nyw6CMBBFf4XM2popL4Mr/sOwKO0Ao9KSFomG8
- O8W3Ls8ybnnrhDIMwW4Jit4WjiwsxHSUwJ6ULYnwSYypJiWeMFMTOo5qiB6mg170nP0RSVzMqb
- LsEWEuJw8dfw+qrfmx+HV3qO9p3Zj4DA7/zluF7l7/x8WKaTAvNSyKKpS6rx+0GiVoTPbzkGzb
- dsX7/DPIcsAAAA=
-X-Change-ID: 20260703-palmas-getdirection-914eddf30b00
-To: Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-omap@vger.kernel.org, stable@vger.kernel.org, 
- Andreas Kemnade <andreas@kemnade.info>, 
- Laxman Dewangan <ldewangan@nvidia.com>, 
- Samuel Ortiz <sameo@linux.intel.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2393; i=andreas@kemnade.info;
- h=from:subject:message-id; bh=LoAQGQx1nOKBdu36DWA9epVCvUN1aDJ6wWrFVe89Z40=;
- b=kA0DAAoWF+d09HUlhtwByyZiAGpIxx2jaSNojyj7duhY4ModwW4gye8ZO8dOH9gSIPtXs/34z
- Ih1BAAWCgAdFiEE+jsgRvIk5m1TlVg/F+d09HUlhtwFAmpIxx0ACgkQF+d09HUlhty5jQD9E73p
- siyiPfdBmRrKwm8EBlfk1dJCb1S0qyPb3r3CxGoBAPz4mi33F44uyKmTZ92oGbGRSB0Fj8R3Ujt
- uKYG99/UP
-X-Developer-Key: i=andreas@kemnade.info; a=openpgp;
- fpr=EEC0DB858E66C0DA70620AC07DBD6AC74DE29324
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABXL5bF+khqiQ_WFg--.11271S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtr45uw1rurW7Aw4DuryrtFb_yoWDurg_Cr
+	ykZrsrXr1ruryv9F1ak39IvryIyw1Dur95t3WkKr1aqw17Xw13CrZrWwnYq348Wr1UGF98
+	Zw1DWr18CF429jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4kFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWxJVW8Jr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F4j6r4U
+	JwCI42IY6I8E87Iv6xkF7I0E14v26F4UJVW0obIYCTnIWIevJa73UjIFyTuYvjfUODGOUU
+	UUU
+X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-Accessing debug/gpio is quite noisy without a get_direction()
-implementation.  To calm that down add an implementation.
+The driver has an OF match table wired to .of_match_table, but does
+not export the table with MODULE_DEVICE_TABLE().
 
-Fixes: 3d50a2785271 ("gpio: palmas: Add support for Palmas GPIO")
-Cc: stable@vger.kernel.org
-Reviewed-by: Linus Walleij <linusw@kernel.org>
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Add the missing MODULE_DEVICE_TABLE(of, ...) entry so module alias
+information is generated for OF based module autoloading.
+
+This is a source-level fix.  It does not claim dynamic hardware
+reproduction; the evidence is the driver-owned match table, its use by
+the platform driver, and the missing module alias publication.
+
+Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
 ---
-Changes in v2:
-- add a proper fixes tag
-- Link to v1: https://patch.msgid.link/20260703-palmas-getdirection-v1-1-046c155961c4@kemnade.info
+ drivers/gpio/gpio-vf610.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-To: Linus Walleij <linusw@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/gpio/gpio-palmas.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/gpio/gpio-palmas.c b/drivers/gpio/gpio-palmas.c
-index e377f6dd4ccf..e64ee0487718 100644
---- a/drivers/gpio/gpio-palmas.c
-+++ b/drivers/gpio/gpio-palmas.c
-@@ -116,6 +116,24 @@ static int palmas_gpio_input(struct gpio_chip *gc, unsigned offset)
- 	return ret;
- }
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index aa8586d8a787..adfa2c2d5873 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -83,6 +83,7 @@ static const struct of_device_id vf610_gpio_dt_ids[] = {
+ 	{ .compatible = "fsl,imx8ulp-gpio",	.data = &imx8ulp_data, },
+ 	{ /* sentinel */ }
+ };
++MODULE_DEVICE_TABLE(of, vf610_gpio_dt_ids);
  
-+static int palmas_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct palmas_gpio *pg = gpiochip_get_data(gc);
-+	struct palmas *palmas = pg->palmas;
-+	unsigned int val;
-+	unsigned int reg;
-+	int ret;
-+	int gpio16 = (offset/8);
-+
-+	offset %= 8;
-+	reg = (gpio16) ? PALMAS_GPIO_DATA_DIR2 : PALMAS_GPIO_DATA_DIR;
-+	ret = palmas_read(palmas, PALMAS_GPIO_BASE, reg, &val);
-+	if (ret)
-+		return ret;
-+
-+	return (val & BIT(offset)) ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
-+}
-+
- static int palmas_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+ static inline void vf610_gpio_writel(u32 val, void __iomem *reg)
  {
- 	struct palmas_gpio *pg = gpiochip_get_data(gc);
-@@ -165,6 +183,7 @@ static int palmas_gpio_probe(struct platform_device *pdev)
- 	palmas_gpio->gpio_chip.can_sleep = true;
- 	palmas_gpio->gpio_chip.direction_input = palmas_gpio_input;
- 	palmas_gpio->gpio_chip.direction_output = palmas_gpio_output;
-+	palmas_gpio->gpio_chip.get_direction = palmas_gpio_get_direction;
- 	palmas_gpio->gpio_chip.to_irq = palmas_gpio_to_irq;
- 	palmas_gpio->gpio_chip.set	= palmas_gpio_set;
- 	palmas_gpio->gpio_chip.get	= palmas_gpio_get;
-
----
-base-commit: dc59e4fea9d83f03bad6bddf3fa2e52491777482
-change-id: 20260703-palmas-getdirection-914eddf30b00
-
-Best regards,
---  
-Andreas Kemnade <andreas@kemnade.info>
 
