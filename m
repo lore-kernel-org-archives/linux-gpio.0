@@ -1,63 +1,69 @@
 Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E3D25B098;
-	Sat,  4 Jul 2026 15:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593C635DA7F;
+	Sat,  4 Jul 2026 15:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783177871; cv=none; b=C0gzJZQbqK6vxAq7MjOLRd4sh8/HU7yUBRdNBuoIy3SqlvMTa89kmJX3cPiWk+UjYFumAxFz+kV6gFB9ifTZ1n/NPdvDogD1q+rlV1PA857VTBsy8xZYm5p1Et2+BVXIbUitxHhZ+LvplQUYcIrDfvmrspiXKN8rJnV9BuDPD1M=
+	t=1783178149; cv=none; b=MHXC5hCAm359734JhbA/nSTPjaiLeaIJvMfM8xVHofSsVwjcujZ/Vd9CdAGQ0XqFmEatCf6tPiz8X889O8I4iDghaTZnaLvmBQ/N3i4uPJyptIFu+6SoLhQp4N5jDBop8C4wO6BXiZRyoLJ4R/e3AlWqWobQghkVFiq8E14iXq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783177871; c=relaxed/simple;
-	bh=CbTXr+lA4+EPkNUM/++a0Ubhfu8sVpy8bIFu2D+yz6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sygye0l3hZtrrxKXcWE13Khxh2YerxfFnXaXAWNbAg+8ZiDHkYlZrtB6FUZYhOSPxz2KQwFiDsznF3ov2XVO0Alp9egen7v2Dmgt165/4iSsPPDKb5yDZ6jWsvrA1nbapjs7/XVjvhB1/ZSOAa0iahfcbhkNTJQUlbrQc6UOQh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=wzVBOJOT; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=SZJMitZ4; arc=none smtp.client-ip=80.241.56.152
+	s=arc-20240116; t=1783178149; c=relaxed/simple;
+	bh=VX9EksxBnbq2GrUQJTSEi9rVGmclI8+xnc31hAmTEtY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=A9J8uLonysVQCFjAiakbPP22CV7Ii0DD5/btwXsP5TQJZfkrWjvMLgMBs/YQPo8/n24wouZCNT++ih3mnQtMfnq3N9lJYvFxRN+wCh4EIo+aoo9WxeHZGCECeNpdGhFye4lEUi/ksiG78td24mHGVgAbovKDFjwFqDNqjH8ccoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=X0v4DRUy; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=tY79+LLs; arc=none smtp.client-ip=80.241.56.152
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="wzVBOJOT";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="SZJMitZ4"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="X0v4DRUy";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="tY79+LLs"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4gsvFv5tyqz9v9T;
-	Sat,  4 Jul 2026 17:10:59 +0200 (CEST)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4gsvMC4BNQz9vCX;
+	Sat,  4 Jul 2026 17:15:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783177859;
+	t=1783178135;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=fr/TUoC8EfrwMuHjPOSvC9Rv2R/dV+pzUOtY34nMog4=;
-	b=wzVBOJOT+VmzkSsRTirGdi/cwm8et+WdiEMEOoGAC03ekxLM4B5LiK7PTHv9OIq1+orggF
-	dL7fTxjoES5QOde39uAZUcAUoC6+Z9X5IXyn8pnjnCXdyyRK3YCDl6pH63QDujkZ/xHV56
-	8+pNPrr6M33HB8I9K8PKTi2sz95w8TFvmPQchWj8Md6jldGaGvL0oMA6PhGBAYEzTUhAQJ
-	6KUvG783gzu3JrpmAakevkZ9SRhjwXs5ApxUke+ty/W5QP+388e3SR8Hg+dgXC4qcMNw9k
-	fBN8bmLj9l1boZEHpThrd53WRtG1MNKdh2nLlZ/x0guk2WeRCPY560WZfj2pxg==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=SZJMitZ4;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PE29dZpCaxKqRSw/w3IwZJZkkAzbhBe5GREsJCk9pHE=;
+	b=X0v4DRUy++cZ13/PgA5W2sLEf00SuGBv6H6usKPlvqudoyQtx6q9yZHPD5fDQ4Tncau8xr
+	sk0csfL5hfIHSbFwDOAbAjsilbyVc7wqlJ40jbs+FsyTG1OZkR+J1VXvw9Ix4TGHXMfVS1
+	00Us8Ed6s7MMpBDXlctgao8tDJw/lYtWLbciDyJccu669kj5CeWgf9PhFGYefpY38oPFIY
+	3Q2SNP1LDWGuDV5bg9LWXElBPA6JdyUrg8BF+T+g6Qoapol+z7SmWvxDijz4PE++fGosP6
+	WyauRkJ4CS5kcdRu6AyMKdm8+SFWMwsCcN6BFuRxFkJj2Gahr21f25hmRzzGQw==
 From: Marek Vasut <marek.vasut+renesas@mailbox.org>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1783177858;
+	t=1783178134;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=fr/TUoC8EfrwMuHjPOSvC9Rv2R/dV+pzUOtY34nMog4=;
-	b=SZJMitZ41o1izVh+2jEjK1jI65MtztHTTBGSAJdWq5UsE5XI+O5U8/JM0RF52mo7MjCCxn
-	UQ/CEuD+FMRQdZlxa6MmlcbocEUZPedX0kMuFQzTVawlaIHvSQipDs8+kFTw3kI/+SN5+x
-	gci/w5BamU8xF+Rfo2P3hC3uuUfmGri9PV8zLvc0gUGCwFjXnoiyIWR4VBo8HFrrB/moYd
-	2lcWupwTm1iu/E7ByXBcbmHCnjPxEF2DtsqHWuteSfQkC34J2TNMkfoGJtzaL1EU1n8FAt
-	UcZrQxU3wd8p4OlU+g4bJEcbW8kHP9bf8Nu+g8urzAUUtTkErUq8Rbr86+RMVg==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PE29dZpCaxKqRSw/w3IwZJZkkAzbhBe5GREsJCk9pHE=;
+	b=tY79+LLsxrr8uPC84V2NyJZwapCuUl1BqsJTu9gwfhzVP1ILDX/fZ5kZwrcJ+unfrszklf
+	Fq5YotvV4NkjmS5bjsBlrctJctVjXIVxjR89BDTpZkfVokrGZGB7JNaIlWelTQzeKLcBi4
+	lFttJgwxxdw7TqI0KmRj15MCeBLdi+HaX1U6CMR7br27NbultFwy/NkKiccJicbn9GY3Fq
+	5whUF/Rb6HOPmXSTVHXG+EOeZ0VvryyQlgiYXg4ss3ZQkqb+FKebi56e8WcqUD91flBxIs
+	HAIi44hKgmCZEQ5qMIL3o50m8jaZ0nPVZc/kn0u2wLYVYsIIDOr9RiST+3GQQg==
 To: linux-gpio@vger.kernel.org
 Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] gpio: rcar: Drop unused FILONOFF macro
-Date: Sat,  4 Jul 2026 17:10:39 +0200
-Message-ID: <20260704151055.211082-1-marek.vasut+renesas@mailbox.org>
+Subject: [PATCH 2/2] gpio: rcar: Add R-Car X5H (R8A78000) support
+Date: Sat,  4 Jul 2026 17:13:47 +0200
+Message-ID: <20260704151521.211335-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org>
+References: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -65,37 +71,159 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 86rwpi8u415zy666a4odkgak59ew146f
-X-MBO-RS-ID: e08292fc3d51beaf01c
-X-Rspamd-Queue-Id: 4gsvFv5tyqz9v9T
+X-MBO-RS-META: uk8n5i7h33rhjyu96fy5pa34d46nogs7
+X-MBO-RS-ID: 5d8af0c748bd7cc1393
 
-The FILONOFF macro is never used in the driver, drop it.
-No functional change.
+R-Car X5H (R8A78000) is the first member of the R-Car Gen5 family.
+Add support for R-Car X5H, which has slightly different GPIO block
+register layout compared to previous generations. Introduce offset
+remap function which performs 1:1 remap for R-Car Gen1..4 and a bit
+more complex remap for R-Car Gen5.
+
+The GPIO block register offsets on R-Car Gen5 changed and the change
+can be divided into five groups, registers which remained at the
+same offset, INDT register shifted by +0x10, OUTDTSEL register
+shifted by -0x34, INEN register shifted by -0x38 and the rest of
+the registers used by the driver shifted by +0x70 .
 
 Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 ---
 Cc: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
 Cc: Linus Walleij <linusw@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
 Cc: linux-gpio@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-renesas-soc@vger.kernel.org
 ---
- drivers/gpio/gpio-rcar.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpio/gpio-rcar.c | 61 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
 diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 86777e097fd87..09bebde5c4260 100644
+index 09bebde5c4260..a22112d9dce0f 100644
 --- a/drivers/gpio/gpio-rcar.c
 +++ b/drivers/gpio/gpio-rcar.c
-@@ -59,7 +59,6 @@ struct gpio_rcar_priv {
- #define MSKCLR		0x1c	/* Interrupt Mask Clear Register */
- #define POSNEG		0x20	/* Positive/Negative Logic Select Register */
- #define EDGLEVEL	0x24	/* Edge/level Select Register */
--#define FILONOFF	0x28	/* Chattering Prevention On/Off Register */
- #define OUTDTSEL	0x40	/* Output Data Select Register */
- #define BOTHEDGE	0x4c	/* One Edge/Both Edge Select Register */
- #define INEN		0x50	/* General Input Enable Register */
+@@ -36,6 +36,7 @@ struct gpio_rcar_info {
+ 	bool has_both_edge_trigger;
+ 	bool has_always_in;
+ 	bool has_inen;
++	bool has_layout_gen5;
+ };
+ 
+ struct gpio_rcar_priv {
+@@ -65,14 +66,59 @@ struct gpio_rcar_priv {
+ 
+ #define RCAR_MAX_GPIO_PER_BANK		32
+ 
++static inline int gpio_rcar_remap_offset(struct gpio_rcar_priv *p, int *offs)
++{
++	/* R-Car Gen4 and older do not need any offset remap. */
++	if (!p->info.has_layout_gen5)
++		return 0;
++
++	/*
++	 * R-Car Gen5 register layout is slightly different and the offsets
++	 * that have to be added to or subtracted from each register offset
++	 * can be divided into five groups, listed below.
++	 */
++	switch (*offs) {
++	case IOINTSEL...OUTDT:
++		return 0;
++	case INDT:
++		*offs += 0x10;
++		return 0;
++	case INTDT...EDGLEVEL:
++		fallthrough;
++	case BOTHEDGE:
++		*offs += 0x70;
++		return 0;
++	case OUTDTSEL:
++		*offs -= 0x34;
++		return 0;
++	case INEN:
++		*offs -= 0x38;
++		return 0;
++	default:
++		/*
++		 * This here must never be reached, if this is reached, that
++		 * means there is a catastrophic failure in the driver. Skip
++		 * any IO read/write to prevent further damage.
++		 */
++		WARN_ON(1);
++		return -EINVAL;
++	}
++}
++
+ static inline u32 gpio_rcar_read(struct gpio_rcar_priv *p, int offs)
+ {
++	if (gpio_rcar_remap_offset(p, &offs))
++		return 0;
++
+ 	return ioread32(p->base + offs);
+ }
+ 
+ static inline void gpio_rcar_write(struct gpio_rcar_priv *p, int offs,
+ 				   u32 value)
+ {
++	if (gpio_rcar_remap_offset(p, &offs))
++		return;
++
+ 	iowrite32(value, p->base + offs);
+ }
+ 
+@@ -399,6 +445,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
+ 	.has_both_edge_trigger = false,
+ 	.has_always_in = false,
+ 	.has_inen = false,
++	.has_layout_gen5 = false,
+ };
+ 
+ static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
+@@ -406,6 +453,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
+ 	.has_both_edge_trigger = true,
+ 	.has_always_in = false,
+ 	.has_inen = false,
++	.has_layout_gen5 = false,
+ };
+ 
+ static const struct gpio_rcar_info gpio_rcar_info_gen3 = {
+@@ -413,6 +461,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen3 = {
+ 	.has_both_edge_trigger = true,
+ 	.has_always_in = true,
+ 	.has_inen = false,
++	.has_layout_gen5 = false,
+ };
+ 
+ static const struct gpio_rcar_info gpio_rcar_info_gen4 = {
+@@ -420,6 +469,15 @@ static const struct gpio_rcar_info gpio_rcar_info_gen4 = {
+ 	.has_both_edge_trigger = true,
+ 	.has_always_in = true,
+ 	.has_inen = true,
++	.has_layout_gen5 = false,
++};
++
++static const struct gpio_rcar_info gpio_rcar_info_gen5 = {
++	.has_outdtsel = true,
++	.has_both_edge_trigger = true,
++	.has_always_in = true,
++	.has_inen = true,
++	.has_layout_gen5 = true,
+ };
+ 
+ static const struct of_device_id gpio_rcar_of_table[] = {
+@@ -438,6 +496,9 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+ 	}, {
+ 		.compatible = "renesas,rcar-gen4-gpio",
+ 		.data = &gpio_rcar_info_gen4,
++	}, {
++		.compatible = "renesas,rcar-gen5-gpio",
++		.data = &gpio_rcar_info_gen5,
+ 	}, {
+ 		.compatible = "renesas,gpio-rcar",
+ 		.data = &gpio_rcar_info_gen1,
 -- 
 2.53.0
 
