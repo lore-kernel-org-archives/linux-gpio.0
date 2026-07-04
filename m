@@ -1,83 +1,70 @@
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mailgw1029-46.conoha.ne.jp (mailgw1029-46.conoha.ne.jp [160.251.132.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FE83BCD33;
-	Sat,  4 Jul 2026 15:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C11B1D130E
+	for <linux-gpio@vger.kernel.org>; Sat,  4 Jul 2026 16:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.251.132.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783178557; cv=none; b=gpeXOblUN/DilawNZZYTkAl2APi3KfGtOxRk51u43AusmCVflvB03WD7yU1RCXSasiuue9X3a+1wJdpyx3hnvZRICFw4E4TvXQn9Ld1A39pZhQup2wBkxf923ROWWS6OLY/jGPyO97WN3A2n/OrUqhIBeK0J5UBTUQBmbSDdIAE=
+	t=1783182752; cv=none; b=UxHJUV0ii7soJN4QAdvbg0L60eU7vznt2ZvrkINl+57fAa9ZmyASVmwM3XSiHoSMNtLuCzWgX1ESIf0emVWlm5TFpzctFmafSgpRtdBF42shl1z9K828BFRpXqoMdZSnBI4FvbNvuX8WVxKkczlwuN9Y0HRYUW6wB+aAaFdGmCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783178557; c=relaxed/simple;
-	bh=4dXcGftPS8Uk4ET7RN1Jq0qYBhUtT6VhUQk8/CodcTE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fUIDgUYRqmQ2DJFp6mfo5R/I4I0hcOJxxG3pSHDCUy6lmAxfdNMTN31KK6IR5QbU1ikSSSnFTQ41w0Wn5XPxZjSosTf4URC8F4txkm2iHYzncPI2hRRozQNCCjVQcO065Q3ECqp3Ad/xK3Qy/uLLyLPwjC1je0Rt4QUjPOPPMBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [111.196.245.140])
-	by APP-05 (Coremail) with SMTP id zQCowABX7RA3JUlqsKzbFg--.64868S2;
-	Sat, 04 Jul 2026 23:22:32 +0800 (CST)
-From: Pengpeng Hou <pengpeng@iscas.ac.cn>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: sx150x: add missing MODULE_DEVICE_TABLE()
-Date: Sat,  4 Jul 2026 23:22:30 +0800
-Message-ID: <20260704152230.51188-1-pengpeng@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1783182752; c=relaxed/simple;
+	bh=C7rnouymnSHx9Xj92DImDUBUJOZ67EDRrB12y+CBw/4=;
+	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type; b=S05kf0JNdCMO8fGepn08O0rvcKfwNN/rHDHF0VTJHc5aJjhGr8oKattfin59KzB879iqsGZNV2CKMRQmJTvvz91pcZQPhJ4ZRy+i1K27gYBRRsqkHFancRWgOqGbI8Yeu/3beU/6S8tybRDuq/GZoCtmkE8MgiMgh0Q52D/C1r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=naruto-cycle.com; spf=pass smtp.mailfrom=naruto-cycle.com; dkim=pass (2048-bit key) header.d=naruto-cycle.com header.i=@naruto-cycle.com header.b=pB6XBWhi; arc=none smtp.client-ip=160.251.132.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=naruto-cycle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=naruto-cycle.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=naruto-cycle.com header.i=@naruto-cycle.com header.b="pB6XBWhi"
+Received: from mail1007.conoha.ne.jp (unknown [172.22.44.62])
+	by mailgw1029.conoha.ne.jp (Postfix) with ESMTP id 9FDCE10041990
+	for <linux-gpio@vger.kernel.org>; Sat,  4 Jul 2026 20:47:01 +0900 (JST)
+Received: from www.naruto-cycle.com (www1021.conoha.ne.jp [160.251.148.51])
+	by mail1007.conoha.ne.jp (Postfix) with ESMTPSA id 949202409D6D4
+	for <linux-gpio@vger.kernel.org>; Sat,  4 Jul 2026 20:47:01 +0900 (JST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=naruto-cycle.com;
+	s=default; t=1783165621; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=cSKWvbdGpiqcggrVKS2eObDfrSPa1WKkcb0lo5p14sk=;
+	b=pB6XBWhie6ZMKJZStDxnpAbMLKxi1Uat6jltJyg6yo6Ftv9JcdMxDGdV8aiJBeyXXmqxhI
+	jk7/oc6dTaD43gN22Ie8aikD0UR82fMSFBGAXAls2n5Kus4HnGbG0Sig0i8HeaxQ4sosrG
+	r4gzuYb5/HYfeSvKFTNfsKbN/z/BkH0YTXz9d4AXzRW1hoUpjB426BEJnQljwb68+5yEdJ
+	L4UXBk4RV1essMPNigOaW5X02RsVg6ceFRrVccmgcobd2iVD18r7FnRFouRhim8qCF7UHD
+	u+UM8zO70k3kHCkHfvXMdlAxsVwuC5AaTBj8dl+G4FPGCUFRe0Fi0bwy1Pe1nQ==
+Authentication-Results: mail1007.conoha.ne.jp;
+	auth=pass smtp.auth=hash.cycling@naruto-cycle.com smtp.mailfrom=hash.cycling@naruto-cycle.com
+Date: Sat, 4 Jul 2026 11:47:01 +0000
+To: linux-gpio@vger.kernel.org
+From: =?UTF-8?B?44Gq44KL44Go44K144Kk44GP44KL44Gj44Go77yB?= <hash.cycling@naruto-cycle.com>
+Reply-To: hash.cycling@naruto-cycle.com
+Subject: =?UTF-8?B?44Gq44KL44Go44K144Kk44Kv44Or44Gj44Go77yBICI/Pz8/Pz8i?=
+Message-ID: <N424PoJbRTI1wRgKFlptKectPlRuw8d3kDwdgqwXqI@www.naruto-cycle.com>
+X-Mailer: WPMailSMTP/Mailer/smtp 3.7.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABX7RA3JUlqsKzbFg--.64868S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JFWktrWrZr4UtryUKw4fGrg_yoWkCFbEkF
-	y8ZrZrury093sagry3tr1ruFySka1xuFyktryvgas09a47Xw17JFWkGr9xZ3s5Gr1UtFy5
-	JryDWF1rGr42yjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbzkFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF0xvEx4A2jsIEc7Cj
-	xVAFwI0_Cr1j6rxdYxBIdaVFxhVjvjDU0xZFpf9x0JUdpnPUUUUU=
-X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-The driver has a match table for the i2c bus wired into its driver
-structure, but the table is not exported with MODULE_DEVICE_TABLE().
+※このメールはシステムからの自動返信です。
 
-Add the missing MODULE_DEVICE_TABLE() entry so module alias information
-is generated for automatic module loading.
+Meceelderi様
 
-This is a source-level fix.  It does not claim dynamic hardware
-reproduction; the evidence is the driver-owned match table, its use by
-the driver registration structure, and the missing module alias
-publication.
+この度はお問い合わせいただきありがとうございます。
 
-Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
----
- drivers/pinctrl/pinctrl-sx150x.c | 1 +
- 1 file changed, 1 insertion(+)
+以下の内容でお問い合わせを受付いたしました。
+今しばらくお待ちくださいませ。
 
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index 1d6760ffe809..f1647d9114e3 100644
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -850,6 +850,7 @@ static const struct i2c_device_id sx150x_id[] = {
- 	{"sx1509q", (kernel_ulong_t) &sx1509q_device_data },
- 	{}
- };
-+MODULE_DEVICE_TABLE(i2c, sx150x_id);
- 
- static const struct of_device_id sx150x_of_match[] = {
- 	{ .compatible = "semtech,sx1501q", .data = &sx1501q_device_data },
--- 
-2.53.0
+▼お問い合わせ内容▼
+-------------------------------------------
+Photos for my escort application are uploaded.   
+Let me know if the quality is good.   
+Preview: https://tinyurl.com/5n8cu8ep#xFst2P
+
+-------------------------------------------
+
+このメールは なるとサイクルっと！ (https://www.naruto-cycle.com) のお問い合わせフォームから送信されました
 
