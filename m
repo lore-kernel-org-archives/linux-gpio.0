@@ -1,69 +1,69 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EADD9433E8C
-	for <linux-gpio@vger.kernel.org>; Sun,  5 Jul 2026 07:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68E618BBAE
+	for <linux-gpio@vger.kernel.org>; Sun,  5 Jul 2026 07:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783234967; cv=none; b=Ndx38dQp+gZhHjT3wDTl2IU+VprmQBzYzbh+Q+n1sp6StBPwasJLB1fRBxkK/LvBmxSnKFFj6s9vnEO4WHbFYcHhaNe1hI2ewlnsjx4m653w9dZx3x9qFvpMRis2bDoX5/8D0mZPTVTbt/5cVYrUeUumNIgdwWhXzAfEJKnhJtA=
+	t=1783235095; cv=none; b=VDTTqcO3WGbTSjrYtNK6GRM+TaXpHPD4VegZeWD7R/EQs7cyHBgBA47BKUxzjIQ0kL7lWzs0apeVQvbfGoF47VHiw52P/2O3RaiYYUSMCI8NQaN8fYYrX8/A9fytjujpHpYsHRpyVFsVzYRNcSypCMsKUx1x0sEizkm92uMlcOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783234967; c=relaxed/simple;
+	s=arc-20240116; t=1783235095; c=relaxed/simple;
 	bh=rVUEl79PoXlXUwAmZC2UErhUtKZCSu0B1xf6Wz6IFuw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R258uOPuP9xX/yOCKfuhRhUWj/t6Q2BaxMrlKylFrknB1AIwL/c8K6TcGiDzTy2ZKo6fJpJGal87HhGLAKf21nNoiKveMmihPP50w5bg++mF7TNcdmgDBtWPvVuNXq+4sLD4/w5M0sQT4OVyHMmCdgaXwiM0YtzoDqZyVK17A2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FD4MP3xm; arc=none smtp.client-ip=209.85.210.171
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dcc3hYYJS6rw0YhhfotBGWIIRDhKoI14pQqaSgU2CdLOPrXa0AR/OsUv5h5WUvBDB9N2yqK38hbCuS+Lm3GOA6VwkDsFUFcQzx43r+22Rq10+329KRYeha+YfDSvOQhCJJGZq53bRygnIrQsphXuIOlWJ7hcifbOMmq1dVYduXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=otsbk5at; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FD4MP3xm"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-8454160043aso1858819b3a.3
-        for <linux-gpio@vger.kernel.org>; Sun, 05 Jul 2026 00:02:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="otsbk5at"
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-84536ecfc5bso1921911b3a.2
+        for <linux-gpio@vger.kernel.org>; Sun, 05 Jul 2026 00:04:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783234965; x=1783839765; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1783235094; x=1783839894; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
         bh=wwuaRcvZpvE517elMjV7huVW3y2374lD/GTgCqXZOsI=;
-        b=FD4MP3xmf2amGYa88Zwhd1TZbi9eFbJsmiWocjcfOc56atZkS+hH9c4Rx54/JaAB2+
-         +Doi6k5lXinca5pDR2QdoGc8dxTVUAlc02WNZQRJDwP2LP5O9Zb2NnCMmnWlxsFg1Gz2
-         8C6/4ZZcS3T6jZWHhugWIn0ofOPaTidWmw81804ukzpl6/yUQ1P/DWjfTVNZjqZJd7Iy
-         2D08oVbaEQJ6d2GmzC1Ez8lo0jwkEQz4Aam8HWD853ps3m8TA28vua+W2tNYrnmJHnfV
-         as82UAJHVkkzsVIPl6NHvwH4gwkIFlMU8hSxKLorjRTBD2FT+IYUIQ4LJMW57gyNc6GU
-         po1g==
+        b=otsbk5atf66UubxH+brOs/j3GW8dAEIbsHYGvvNLRt5K2KYQuNzJOnDQ3pqigI97WU
+         vhMW1pkZzU6ZEzDz/gfpTDZw/forUg2LDY4vEtqZRJxNyLqi08kmtt8enheiKEujVgSQ
+         E+pHy4a7X/D6EHxVr0vFguyEGNOMwYi9vZUHTyAfyjdB5Ck8kO6s74KP3FjhEMPfxLaM
+         rgpbSIW/jvEVzfDlXOujm2LYlVOnAMhVd9EXpBAvdS0EAHZPXDnUTTEHyGpPxgB4FfRe
+         edKN1wTHGIwhmBUm8sHMWpBjW3/f2sJmzZIRfPnlWdxIcGff9TfGsunjz4ENmOrCHFpq
+         aW+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783234965; x=1783839765;
+        d=1e100.net; s=20251104; t=1783235094; x=1783839894;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
         bh=wwuaRcvZpvE517elMjV7huVW3y2374lD/GTgCqXZOsI=;
-        b=ZBZGR64VXo8BtP9O6cw5BjJ3RraXKWNpEn331f0B/+3JXA6qsqLPXFllQz0vniUTFG
-         rXLrFPVtOLw+r06aYiekNwvKrC/2O/wahkxb3e2B0BYgIQlOZIqrmZcMAOCLkQNGQ8P5
-         9IpNsBloQAGu8bOGQJizalzB62pO0IxhuoOb4o+MLVjBA/c26KZM7BbFrAJuWZQyyIMX
-         gOEuLmuSGwrdQHQrMVAP2vMIom4pGgSdwqw7k1fJ0KZ6D8ORoeme46nGrmTBdcguAFsg
-         gbtduVAzeIlZjc6I+46MvNzjmNk3StW7g2KWM13gM54AfNKy0/aFg9oGmAeSI4tky0+0
-         +CuA==
-X-Gm-Message-State: AOJu0Yw6sfau2WVcOaKZKIXPBTjuD9jVcIoXnEQAgYbmVi2+989TKmKW
-	Lgpnq71DlEWx3hECP51CV1DxS//LrWbGsn717DI57AXGhBIuB4M2hS+xHPxohuELtnRh1w==
-X-Gm-Gg: AfdE7cn73Dc/qp7/m1Ta5Ky+8fxGWBRCaYyrgzwMCsX1KUWFINsfV6rfXQUQrle+uVZ
-	+NliMl9tLJrpnK0A9OKvDLuPj3PGud0nTiy61mHHMni2CPCrs8xUEff3bEUcdTNsExWocmxQsIC
-	pPj0auJ5tL0FdaVhk0754b1ihpwft0Z0kGM+gUsAi24+VtqFFTJolzO78618Ql7Vzz71N16gyQf
-	CDmCnYW3A60XCK6VoitxdwRf2WFd5Z4TbgpcAmbx/i1cbIAQRS5RwbeSN6fh++3a6pZNumEPkYy
-	7IBd89gbPq4Ny9o0PdZHNgQ05NeoDsGySfpngZtNqMCGyT1E8zptKhJMELSyjKM7cknr5/Zl34F
-	HUWHqfEYTZyVRJOvVJUiosWK5pjs8MLBsIgDB/GYGdCqwGZOtTGXlwjDXc0s8Kr4HxBOpeQ+87z
-	vIXSKjqXFMIMPLnIT53fR7
-X-Received: by 2002:a05:6a00:3c88:b0:847:9aa8:d3bb with SMTP id d2e1a72fcca58-847f6d6785cmr5452983b3a.12.1783234965144;
-        Sun, 05 Jul 2026 00:02:45 -0700 (PDT)
+        b=Jf01wsCoDIc8adYUuzW+coWjmPCC2CtJMLv5oQ4P4QEt3cW+QxJ3zYBEhxAyQruVzq
+         0d7Sd4rpJkjkp/iecZolB3pX/xbVoiwPaZLys7y0g2mVPDm7WkRfiSocGScrtKm8bBS+
+         35kjKaCVtEGkfIHb3aslmoZ9BpFk7MF7GXgkH+U5xS/nde7cnq+ZIFTTS/rV7+azxdWl
+         rngtrk7y56YeE8yJiRYNzc553vqD7hC2gv5sbgDUbwrh69N4kg1ofWPFcpvSEOBKxktI
+         1lCEeZKrBLU3+qDQnq3gYKbexOP6PA7UTIIDuoLWOIKm7659XVzU6rgeECIRDX1D2iTZ
+         5XTg==
+X-Gm-Message-State: AOJu0Yzn+bGtXPx8p2hVmZA2qnb2uKJMDwBJFRqSQb9IFwmH5zw0eO4R
+	ojo5IDKBhR1YJfyKBGSiyeGYvcUJQIEPGQt6dJab7z4BOCCxr8pBa+Bze8kPNJP1cRHBwg==
+X-Gm-Gg: AfdE7ckHT3oV/WCm6XF0jXDbFMRzoqJoWEOM5QH2YBdgFN9uv3QHq1aB6Gezfzdutn/
+	EHEpZZqOfrXmAiSjcOEhf7/LQz6/6UU1NYJ3llg7CVxmc9NBIh2r9HVOoXiNMuFMhFeOzUyoj8C
+	MYHG11GS2hwCTpCeNTySZScwDoyR5UQuzsPs1KOTFLO4y6gyQ0gpTh4+qOjBh+ZkTZNlJW9JPtB
+	Lg7/fNgvEAs+6BVbSO/efVFgGZbvzrY0AZxJP4W5qhDLy+1trzIUPIzBTYOSH2k44rIwJD91tHF
+	wO1+Xcqn/7HSsC1hpCVwFW3zr+wHrJKyPcGb279QBdLr0xxXqEd0IloMpnSyfpjSEudKaxO7f10
+	fI/dmkFSfowtdwCfbW8AdQUnPdA0lmH7gTnXwbdpMaNvmAw0ipsaar9DicW/BdJIPk7SA4kQhBX
+	lY74qzCzAqWL7ONb+scfCT
+X-Received: by 2002:a05:6a00:189e:b0:847:973b:3d04 with SMTP id d2e1a72fcca58-847f6d67be4mr5897810b3a.10.1783235094116;
+        Sun, 05 Jul 2026 00:04:54 -0700 (PDT)
 Received: from localhost.localdomain ([138.199.21.246])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-847f6d7a96fsm1998071b3a.46.2026.07.05.00.02.42
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-847f6bcf03bsm2012675b3a.26.2026.07.05.00.04.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jul 2026 00:02:44 -0700 (PDT)
+        Sun, 05 Jul 2026 00:04:53 -0700 (PDT)
 From: Yuhong Cheng <ceohunk@gmail.com>
-To: linus.walleij@linaro.org,
+To: linusw@kernel.org,
 	corbet@lwn.net
 Cc: linux-gpio@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	Yuhong Cheng <ceohunk@gmail.com>
 Subject: [PATCH] docs: driver-api: pin-control: fix spelling of below
-Date: Sun,  5 Jul 2026 15:02:12 +0800
-Message-ID: <20260705070212.1123-1-ceohunk@gmail.com>
+Date: Sun,  5 Jul 2026 15:04:22 +0800
+Message-ID: <20260705070422.764-1-ceohunk@gmail.com>
 X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
