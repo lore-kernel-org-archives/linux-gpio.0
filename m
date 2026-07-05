@@ -1,308 +1,72 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A63D37DEBB
-	for <linux-gpio@vger.kernel.org>; Sun,  5 Jul 2026 13:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10883322533;
+	Sun,  5 Jul 2026 14:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783257934; cv=none; b=lzX6X+ELiMw2U38sH/xDmTTZ70H4RML2hl+jqNBjp47rr4QzL0xao7mTNk1jHhizB50DxRkWvkIVDiPeNV/757q0kBPdXuVCEE+IMG8UjTCE6CiDjvx4PhR1v6RjvDgebXWZQ2ip2iaegKNsUGQ/r9UxHFxg5FjHUVOVn8/nU0U=
+	t=1783262412; cv=none; b=l2NAxXWlb9T7Yp3G0r9dmViK3rd266f2iFA3uKocTJhYTAKj01G6iOfCq3LWvLezESQIGFxIbC61+0t+UniSPQw0S4alsJKpe6GYS+oMi0IGL/IBvBWE/OgejfqL1/x9+xIpzGeZG73prlfGmY0a30ZH1umt4M6gscCNbz3noZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783257934; c=relaxed/simple;
-	bh=2n+9kHjJ+NgQUCaJGlzIGcRg5Y9SXBiYR+V2oD3Q67I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WIlBYUjkcLQ6WR9D+RSAvtiQklUnE9pKVkiMCoNfYHTxTmRLCa8J7BR2NAKN3H8E/bBDf1fCj+/Mptc1YRK7YOFb/ejloA/l84AXvbSYGWrORXAHhsrAi0ABen4Co+01q3X2E0pdu1dHa8e/sOnPYJcSyepJ2MzAQ/El6q43lKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMQ4r7Uz; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1783262412; c=relaxed/simple;
+	bh=BwKl9eMFvBj2osYggeywwCFY0L9kYCh5LIP7hc+VV10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qcE2scOGwiquAC+yFVZM55nMlk+Y6rZzuiqR73Rn0MlmgCIlgW8hu3LxLGgZMMZ59GhlXdp61UyRf22ReJgaZpwuTdJN9GW1hVXTqF9pYU18w2dHwxotvR2aN47F7QVglpqkbx68CrwJKYLFS66vI4epABewwKdmkAsvHfIDJJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqJAyhuq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMQ4r7Uz"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-37d55e8d3e3so1254888a91.0
-        for <linux-gpio@vger.kernel.org>; Sun, 05 Jul 2026 06:25:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783257932; x=1783862732; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yCUQEdLKr3eavP6cJqECO8YF71F1Siq9zhvu6pN/EkA=;
-        b=CMQ4r7UzvpJxkxJ3rwhxsUSIW9NkpRU/7jdXdSZEa66j2VZgvmeO7C12bVF55vmmnb
-         S/W40bYyi/p2xRXy5yIju0MeF/zBFH+4UvhwZE7k0CekLwLJa1ahsCimYMJ8AbSEWQ2H
-         VthGjw4+Ie+B3yVYRxwzMXPri1ibyORcXx23vmJrd8i/liOZhSs106H0w1+7fVYcIszz
-         6RsvYyLXPscf+6zoxSf4g+9s4QBMZn12aEiBharbIhkUPPrjJVlIRJ6YqB/HWm+Ud5Dg
-         PbHa4uA5t2ZbHwHBw2pIiLIE0pwDhK9X0ucs8T19c+K0VjZ1vTORkTxL8eQCD/4vMlM+
-         a0Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783257932; x=1783862732;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yCUQEdLKr3eavP6cJqECO8YF71F1Siq9zhvu6pN/EkA=;
-        b=N16ZB2TcE3E5QZqeJ+tkisJgRIRWki4w5j9C2N+LDRezjqI4kRTG6mQpXwWWQqHErE
-         M95FUkVBr/sTYGmOJv2fQNF33Olqzk2GbeBHAYjr64eZHCbYPn5ro5wCzlAGqyKoyD/6
-         ce1lpWShdSJOxxpd8oC1Q7OGoZbuLT4RyAfg2+gpScN+ID8wzsbEfUDUdoUpgnmNJN8F
-         /w7Bf0qRbVIWNtYAlydU0ueTiGJgPjPs3h7AifEJJMsxh70eHszN9SYfIZe2JN2G5o3j
-         Wf6gFKGJpbeLSfdbGykkYXnGbI+7XPYR5E7cE9L1/BTQPtv17LW6rlcO7bfJkej47Bro
-         lr/A==
-X-Forwarded-Encrypted: i=1; AHgh+Ro2HSo04VFTwiN42y21+CQLpf0b31ZWfV/U3MkyLcvJY6dO/YCr69WxxmFG/9BaAhcMy5wbxEl21Sdp@vger.kernel.org
-X-Gm-Message-State: AOJu0YyACPKprsdQLG/YI1/vOvxspNxF7ydsQRgobu2ZBCWfev1wp7VR
-	lE2/aoyXIxy7LVfU6xiTG8kxwlfvtY5U76seqeN8w/iIsCZgV2d2D6B1
-X-Gm-Gg: AfdE7cmEnr//4mZB1IbBMXAmMCoRnb4OcsXlWV20AiRQLIa5zS//mLJqOGM9RpXuoFH
-	peeVXangaovTxguQreSnaKRimm6VoU1JeqNi6k6XsWGMTmP3RE45zMR7gGTvbW3VLXZmU/P5k5D
-	zVm1OTM4tSkHD6OwhTu5QL4CJf8UZh2Tb8qUfxTLvsedrow44f2RtLdj/4jhYsbFD7ZYGyowviK
-	ygzjP4+j06QLZeewmxIRzD7BBRbxOWZA3jkVmT5PZjOe/oFDeo3EqpkUrLR2tsKF04bTCEzGDot
-	2m5Y1GqZCRH/Nw6xGqbA1o/9NkSn2qmtXdAySDAcRTcnP/WNZH60d9CN/Pp0l/q31AbRXKVkByB
-	Z1TpDjn9cNN87PpAvKPiIRV83J1Y1F65dztH+9hs7Qqqm72cLRa8DRWLCZ3n74mNIl90J9lzIcy
-	H/bnql8Ns4llgHJv7dT06EJWyPL5JPT9ScsMWKkvPIYg==
-X-Received: by 2002:a17:90a:da83:b0:380:9052:f4b9 with SMTP id 98e67ed59e1d1-381122ebe5amr11898566a91.11.1783257932301;
-        Sun, 05 Jul 2026 06:25:32 -0700 (PDT)
-Received: from inhnjlux1020.ls.ege.ds ([49.204.165.177])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30f4453996csm18659165eec.17.2026.07.05.06.25.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jul 2026 06:25:31 -0700 (PDT)
-From: Udaya Kiran Challa <challauday369@gmail.com>
-To: linusw@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: skhan@linuxfoundation.org,
-	me@brighamcampbell.com,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Udaya Kiran Challa <challauday369@gmail.com>
-Subject: [PATCH] dt-bindings: pinctrl: microchip,pic32mzda-pinctrl: Convert to DT schema
-Date: Sun,  5 Jul 2026 18:55:21 +0530
-Message-Id: <20260705132521.159522-1-challauday369@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqJAyhuq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7CC1F000E9;
+	Sun,  5 Jul 2026 14:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783262410;
+	bh=BwKl9eMFvBj2osYggeywwCFY0L9kYCh5LIP7hc+VV10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=WqJAyhuqBiLYHCzO847uhFl2ZcRvAwHUrPn4aD9iwmwmVPr+JJM4SK21TGh4Sg/+2
+	 GxaPbvsMQenTd5e/K/o2pJs+xHOvdwxfV1ENX0Bh9VPr3xi/MaOdzxESRLNJqJ6Gbr
+	 EXS/rQopGjuzVCzU501QtaYS1SbBaLfvlMme6arz6PbpH4NcyoDbIta6TpL1Rql21S
+	 R0hdAQwo8m4jP6R/rpl9VMsW1Cnm3gB0zmhFMWFTl8g5CR2wXy7dFu5MnthIKWA38l
+	 ktdwMhCqWYY7nkjHbORAhnpQF/nuWGZNM4fT17qMRPMaKHNXOtzSu78J/kDd+fmcXz
+	 YNnW494n7neuw==
+Date: Sun, 5 Jul 2026 15:40:06 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: gpio: renesas,rcar-gpio: Document R-Car
+ X5H (R8A78000) support
+Message-ID: <20260705-bonded-zen-203d1a3e5c6a@spud>
+References: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+Un3OC9OyrYdULEP"
+Content-Disposition: inline
+In-Reply-To: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org>
 
-Convert Microchip PIC32 Pin Controller devicetree binding
-from legacy text format to DT schema.
+--+Un3OC9OyrYdULEP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Udaya Kiran Challa <challauday369@gmail.com>
----
- .../pinctrl/microchip,pic32-pinctrl.txt       |  60 --------
- .../pinctrl/microchip,pic32mzda-pinctrl.yaml  | 141 ++++++++++++++++++
- 2 files changed, 141 insertions(+), 60 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,pic32-pinctrl.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,pic32mzda-pinctrl.yaml
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/microchip,pic32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/microchip,pic32-pinctrl.txt
-deleted file mode 100644
-index 51efd2085113..000000000000
---- a/Documentation/devicetree/bindings/pinctrl/microchip,pic32-pinctrl.txt
-+++ /dev/null
-@@ -1,60 +0,0 @@
--* Microchip PIC32 Pin Controller
--
--Please refer to pinctrl-bindings.txt, ../gpio/gpio.txt, and
--../interrupt-controller/interrupts.txt for generic information regarding
--pin controller, GPIO, and interrupt bindings.
--
--PIC32 'pin configuration node' is a node of a group of pins which can be
--used for a specific device or function. This node represents configurations of
--pins, optional function, and optional mux related configuration.
--
--Required properties for pin controller node:
-- - compatible: "microchip,pic32mada-pinctrl"
-- - reg: Address range of the pinctrl registers.
-- - clocks: Clock specifier (see clock bindings for details)
--
--Required properties for pin configuration sub-nodes:
-- - pins: List of pins to which the configuration applies.
--
--Optional properties for pin configuration sub-nodes:
------------------------------------------------------
-- - function: Mux function for the specified pins.
-- - bias-pull-up: Enable weak pull-up.
-- - bias-pull-down: Enable weak pull-down.
-- - input-enable: Set the pin as an input.
-- - output-low: Set the pin as an output level low.
-- - output-high: Set the pin as an output level high.
-- - microchip,digital: Enable digital I/O.
-- - microchip,analog: Enable analog I/O.
--
--Example:
--
--pic32_pinctrl: pinctrl@1f801400{
--	#address-cells = <1>;
--	#size-cells = <1>;
--	compatible = "microchip,pic32mzda-pinctrl";
--	reg = <0x1f801400 0x400>;
--	clocks = <&rootclk PB1CLK>;
--
--	pinctrl_uart2: pinctrl_uart2 {
--		uart2-tx {
--			pins = "G9";
--			function = "U2TX";
--			microchip,digital;
--			output-low;
--		};
--		uart2-rx {
--			pins = "B0";
--			function = "U2RX";
--			microchip,digital;
--			input-enable;
--		};
--	};
--};
--
--uart2: serial@1f822200 {
--	compatible = "microchip,pic32mzda-uart";
--	reg = <0x1f822200 0x50>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_uart2>;
--};
-diff --git a/Documentation/devicetree/bindings/pinctrl/microchip,pic32mzda-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/microchip,pic32mzda-pinctrl.yaml
-new file mode 100644
-index 000000000000..87ac5aace5e3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/microchip,pic32mzda-pinctrl.yaml
-@@ -0,0 +1,141 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/microchip,pic32mzda-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Microchip PIC32 Pin Controller
-+
-+maintainers:
-+  - Linus Walleij <linusw@kernel.org>
-+
-+description: |
-+  PIC32 pin configuration node is a node of a group of pins which can be used
-+  for a specific device or function. This node represents configurations of
-+  pins, optional function, and optional mux related configuration.
-+
-+properties:
-+  compatible:
-+    const: microchip,pic32mzda-pinctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 1
-+
-+patternProperties:
-+  '^[a-z0-9]+[_-].*$':
-+    type: object
-+    description: |
-+      Pin configuration node with pin muxing and configuration properties.
-+      Can be either a direct pin configuration node or a container node
-+      with child pin configuration nodes.
-+
-+    properties:
-+      pins:
-+        description: |
-+          List of pins to which the configuration applies.
-+        items:
-+          type: string
-+        minItems: 1
-+
-+      bias-pull-up: true
-+      bias-pull-down: true
-+      input-enable: true
-+      output-low: true
-+      output-high: true
-+
-+      microchip,digital:
-+        description: Enable digital I/O.
-+        type: boolean
-+
-+      microchip,analog:
-+        description: Enable analog I/O.
-+        type: boolean
-+
-+    patternProperties:
-+      '^[a-z]+[0-9]+-[a-z]+$':
-+        type: object
-+        description: |
-+          Child pin configuration node.
-+
-+        properties:
-+          pins:
-+            items:
-+              type: string
-+            minItems: 1
-+
-+          function:
-+            description: |
-+              A string containing the name of the function to mux pin.
-+            enum: [ U2TX, U2RX, U4TX, U4RX ]
-+
-+          bias-pull-up: true
-+          bias-pull-down: true
-+          input-enable: true
-+          output-low: true
-+          output-high: true
-+
-+          microchip,digital:
-+            description: Enable digital I/O.
-+            type: boolean
-+
-+          microchip,analog:
-+            description: Enable analog I/O.
-+            type: boolean
-+
-+        required:
-+          - pins
-+
-+        additionalProperties: false
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/microchip,pic32-clock.h>
-+
-+    pic32_pinctrl: pinctrl@1f801400 {
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+        compatible = "microchip,pic32mzda-pinctrl";
-+        reg = <0x1f801400 0x400>;
-+        clocks = <&rootclk PB1CLK>;
-+
-+        pinctrl_uart2: pinctrl_uart2 {
-+            uart2-tx {
-+                pins = "G9";
-+                function = "U2TX";
-+                microchip,digital;
-+                output-low;
-+            };
-+
-+            uart2-rx {
-+                pins = "B0";
-+                function = "U2RX";
-+                microchip,digital;
-+                input-enable;
-+            };
-+        };
-+    };
-+
-+    uart2: serial@1f822200 {
-+        compatible = "microchip,pic32mzda-uart";
-+        reg = <0x1f822200 0x50>;
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&pinctrl_uart2>;
-+    };
--- 
-2.34.1
+--+Un3OC9OyrYdULEP
+Content-Type: application/pgp-signature; name=signature.asc
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCakpsxgAKCRB4tDGHoIJi
+0tEQAP97T9HhU5jtAU/UofNCxdWT+VF/390G/n/9FSpRmxum6AEAw9CENBOsBSdE
+77+QdJ/tEk/Istd5cPG8WFhEnNZKyQg=
+=dNlk
+-----END PGP SIGNATURE-----
+
+--+Un3OC9OyrYdULEP--
