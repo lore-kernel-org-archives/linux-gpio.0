@@ -1,91 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719A13B71D9;
-	Mon,  6 Jul 2026 15:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783353418; cv=none; b=GXlJ2qSINgAZpGMjrlnaGVG2RsKnwrC66Kl6oltefyqy4j0wnh79w9Yhc9wLWoAnnHBFnD9lBBev6nddkeXmIeTSvyDyXyUXYV6ApLX+WJ9MKQhJLVnbDfYQKmQHpE6SGvtRDT2kGrvAtzGX3f9XvYJ7f+AQXd7tx3ThVzzsrBU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783353418; c=relaxed/simple;
-	bh=2kFLrfr2SmRE0cZj3dKv067Bp9MA9JMZgbktTc+AwTI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=edDbP43ipe/+ida80wutd1SVO7H1f3DObdy5IW3GZo72I9u7G1Ue+WAiKYHITtpo+dSI76AJn5MGbuy1Ah74MjffN1yZ+DYhkoeOOO12wCkpRoyQj8SJJ4VUzGyJnbfsuS4G9B0iRE9FbUKnGPvGHwsQMea7UhB5o8mOFT2pYkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MqT1GJ1b; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0D742F6EF
+	for <linux-gpio@vger.kernel.org>; Mon,  6 Jul 2026 15:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783353481; cv=pass; b=GQ12QxodXg9EeICjOxXMu9psMEy3cPc5yExKpLGkwy/5XsSDb1d8GIIx04viKlzOJa042KZT4E3PsOU3qyefZwzCKK/mcAd5Pt58tqiR9mgzvbyj3hdvqP90Tbq4QDpIzeSAz6Pu5oplBhbeHeYmHZsMcEKdbv4yEe+pBpGlIGA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783353481; c=relaxed/simple;
+	bh=gCs9HokUb+6ZMGzRlYcfJL9jBr5oqoU0ENUXdBhbWys=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UoxfwRCADJwTwsSx9D8VPEir9A3ZzjUjQozN9JHZdEMyYVXM4W+9deCEoXXOSnMjg+RlSFpLtmQs2Iq/H0pPJFcluGNM4idDMe19VNqKems4o3FqzvteHfU+dctXz5X8+xZWtXij2LDsjTqtvjEtSpM8uUt5IqUnVAEay9Ol1u4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z+/eLfFN; arc=pass smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MqT1GJ1b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2D5A1F000E9;
-	Mon,  6 Jul 2026 15:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783353416;
-	bh=nzzdP7uvLDDy9UL4t9qBVucGAuCunMPD4JQqpl+vDcM=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=MqT1GJ1bJRdM9xmfUyrkptepYB8rQuP58TiM3OO3GSgwI0hO57MQJRVIh/NqXA5vq
-	 IJfhTHqLw0HdmpR1kRDKlTWFING2AWZd7K26eRvJ2lpENh+rL9adpv9IDSluwTowmM
-	 E6nQsSQq3KqCWB4o6UEtBkp6gPxIQvI4NHfRbWgj0UIctg4Zy8T3U6OOBrgp9j5WYC
-	 GA6ChGEn7i9OnVvagil2o/rXxBbv8WLdewrAXRKnj2veT5/lYJMmNC4B+W3T3FtvvN
-	 hFhsEkzzz/RRtca2rnmoWn9TGOqNmxmntnszm3uIXoS1KWFTqxWHVEoWCB4HznaYCl
-	 5koCKuiYNrGGQ==
-Date: Mon, 06 Jul 2026 10:56:56 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z+/eLfFN"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6983f20a8bfso5360820a12.1
+        for <linux-gpio@vger.kernel.org>; Mon, 06 Jul 2026 08:57:59 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1783353478; cv=none;
+        d=google.com; s=arc-20260327;
+        b=k/q7F5wfBBsYEFrOuQo4/4NSxqxKtgxJl3iHGe8wPagGHPG5r2GlFB4OlydGH0rfO0
+         JY+P0pRddn9oeW/LwLSNORbKZZfeQR496fY1LMuoIe9RWDeKs2D0wS71JsWAExtd60Es
+         QpRmTCHiCSQLEcLMv7IuCZHiwrg3YgwfEQ8iLUW/hEYEGBLqtsedHI/Vq+vyPGGF2cHj
+         w4czJHbSKh0NBj5DEThixekTkL4x2nNsIFWUkW6H6hbt8UQxXvUFVu5k6wF/VckBxqnh
+         +wSQDG+zlpiWIznFWHZVs73wA2CcN+4K66+fnuEiov0xXWuJI646JX3nEgVXSmSXZ2rq
+         RlOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=lGxnHQcUvM+Wk9iuDAhV9iKJOnzCJXCRMoquKntthQc=;
+        fh=g6pZh81ixD3tOJQaQbdPBHG/TdDKrYNrlFINxrZpbt8=;
+        b=ezSlOUKbfzU4f9INMVTO722qospbBrm2GjwvTFZwj/ueHWA0Qf+X62F1zEp+ZU2jDV
+         EnLvFtvtpVWeEW2oFjP31tb9z3fhCn13q7U/zdi3PvGa50nq9D5Oa6PfS7QiqEhq8VSS
+         ax8QihOE/JXQ8JRJUMuHb1fxWLxSUSywATtBBflg7SSgEpTyi+TgQfCUKBZOxEChx65l
+         cGDAFRmWTF8eVLLyLp4lEqDe9CKZ6qJgGaAUkTnCLmYyelL4nmSA+LcKpATSRT1rvc/h
+         9umRd4Ev15T+Ksdwjewdrzaqkl4NQLoMkFiLjbHcJ7MkYzPnsKhyEVj2jmubzVTUfZue
+         FPVg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1783353478; x=1783958278; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lGxnHQcUvM+Wk9iuDAhV9iKJOnzCJXCRMoquKntthQc=;
+        b=Z+/eLfFN6xCQ/JXzVDa72FWOBSmvZ2SHuV4SdsDbvXjEyKc7QtkRbACuGnlZmMG1kS
+         21xIPFkDIo19WZWh4MCGa4sk2CXpayXD+H7uysfPymrkR11lVhaYQsy9vLo9bLKb8A6Y
+         J7RgKGvrNJf78fC8qhM7hy4ya+8hxs5TsxX7lhtYNglg6SzH2zpVinycyfn84YPIu6H5
+         s0TrKrmW0KzxtTjJuha8xi0nxCtR5aqldd/QyCQfIfdFotfXtR3TKSAdS6pRs9vAXOZm
+         d8f1EjuuZdwgNaLvS6tH4uHhS9ttCCosKo2FD8YrHuH4jO28GtDw3mVpSPdp8lR97Dso
+         z2ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783353478; x=1783958278;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=lGxnHQcUvM+Wk9iuDAhV9iKJOnzCJXCRMoquKntthQc=;
+        b=SAvbAh39/MZzVHltCfh/6T27TxMnZA7OB1ZoqOc02esKUGmA+lwnmfFS0rl5woMazu
+         qTG4I8Su5bY8gyB9FX1nKXTpZxgh6XQR5LeznoToEXEN6nTiuRmrY6vs+jhxjxtt6ndL
+         aWFP1Jz2YTWuw4KwKMDYzkl5x76RhWakmD75cSqstOnkQJ9OWmT34JK2Ttxs11aUwxDr
+         U2DhqejIb25rMES5BXLa6nkcKFajodgVAaBKQISksbhL4cARHMcxj7j3eJthKu8KRPmW
+         rmYxVEpBpEEwfEwTCvoGoJEQitU5CohPmwvVCUp9bM1VKTg3Qjto5x61Epn37saEdksk
+         PRkg==
+X-Forwarded-Encrypted: i=1; AHgh+Roq4RJAwH12P09VAV8sYsiUtb1ns70L+6Cy6zlGy53oy+bI0P/RxNN6X5SGJ5yoNaOKF65UvAyeIqYD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhFAsdbi4ayzimVqWVJYvkBwY+9H39vdKoM4zIeZrYCuGddwjI
+	+/e0FFwTcVcsSwHmTtSQm2bKXFnCzi0G/6N0nTt6QT6UJLGHXZ2EqyUk8ziTVWOOCicJOfPjxPh
+	UkvTQzm1Nh4uTyB0TJSeGnlYaOVHG2VobtaPc2o9I8w==
+X-Gm-Gg: AfdE7clJIoY58p0CcquGRK2MM/nl4dZeTD7RcXOW3MpInvrXCeBinZkPGp6Jf8Jywiv
+	8fa0TdDoRUXFLQYLuQEozburj+tO2TLcVSrSasC9eBclSQJ0qm7TBXxM/JMlWKVjgXcPmt4GrHp
+	/4NlmSoNS1zs30kjI2Bz25LPQ/VNIrWyOFcov+nliSDXexv5OfOQJF5ihZXj3M/aLw2qF/i+of2
+	1LQV0rfCCqB1xRXaERAh1tWm3izqcMU4y7KGJ/H7CWRHABrmD0zWiyIS+Hr4HO16acCQyH9pFjt
+	3K5K4+zGAXs+x7QVqG/YFgWoGNhJ
+X-Received: by 2002:a17:906:3ce:b0:c12:992b:16d4 with SMTP id
+ a640c23a62f3a-c15a68cf56fmr47982566b.41.1783353478105; Mon, 06 Jul 2026
+ 08:57:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: me@brighamcampbell.com, skhan@linuxfoundation.org, linusw@kernel.org, 
- linux-kernel@vger.kernel.org, conor+dt@kernel.org, 
- devicetree@vger.kernel.org, krzk+dt@kernel.org, linux-gpio@vger.kernel.org
-To: Udaya Kiran Challa <challauday369@gmail.com>
-In-Reply-To: <20260705132521.159522-1-challauday369@gmail.com>
-References: <20260705132521.159522-1-challauday369@gmail.com>
-Message-Id: <178335341606.6594.1044367992969150438.robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: pinctrl: microchip,pic32mzda-pinctrl:
- Convert to DT schema
+References: <20260625155432.815185-1-shenwei.wang@oss.nxp.com> <PAXPR04MB91855056638F0028BCC5F9EF89F12@PAXPR04MB9185.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB91855056638F0028BCC5F9EF89F12@PAXPR04MB9185.eurprd04.prod.outlook.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 6 Jul 2026 09:57:47 -0600
+X-Gm-Features: AVVi8CfCK8RZVsOnom89zz62dC_eh8WB0dnPwnnTYPsAfwJakdAft3ffWaiSkNg
+Message-ID: <CANLsYkxmf=QfNUe=BLrrP7kBtZKq2Z1BkQDLnzmcQsW-kYzTPQ@mail.gmail.com>
+Subject: Re: [PATCH v14 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
+To: "Shenwei Wang (OSS)" <shenwei.wang@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Frank Li <frank.li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, 
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>, 
+	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, "b-padhi@ti.com" <b-padhi@ti.com>, 
+	Andrew Lunn <andrew@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, 6 Jul 2026 at 09:40, Shenwei Wang (OSS)
+<shenwei.wang@oss.nxp.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Shenwei Wang (OSS)
+> > Sent: Thursday, June 25, 2026 10:55 AM
+> > To: Linus Walleij <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel=
+.org>;
+> > Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysz=
+tof
+> > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjo=
+rn
+> > Andersson <andersson@kernel.org>; Mathieu Poirier
+> > <mathieu.poirier@linaro.org>; Frank Li <frank.li@nxp.com>; Sascha Hauer
+> > <s.hauer@pengutronix.de>
+> > Cc: Shuah Khan <skhan@linuxfoundation.org>; linux-gpio@vger.kernel.org;=
+ linux-
+> > doc@vger.kernel.org; linux-kernel@vger.kernel.org; Pengutronix Kernel T=
+eam
+> > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Shenwei
+> > Wang <shenwei.wang@nxp.com>; Peng Fan <peng.fan@nxp.com>;
+> > devicetree@vger.kernel.org; linux-remoteproc@vger.kernel.org;
+> > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org; dl-linux-imx=
+ <linux-
+> > imx@nxp.com>; Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>; b-
+> > padhi@ti.com; Andrew Lunn <andrew@lunn.ch>
+> > Subject: [PATCH v14 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
+> >
+> > From: Shenwei Wang <shenwei.wang@nxp.com>
+> >
+> > Support the remote devices on the remote processor via the RPMSG bus on=
+ i.MX
+> > platform.
+> >
+> > Changes in v14:
+> >  - Update gpio-rpmsg.rst per Mathieu=E2=80=99s feedback.
+>
+> Hi Mathieu,
+>
+> Could you please let me know if you have any further comments on this ver=
+sion?
 
-On Sun, 05 Jul 2026 18:55:21 +0530, Udaya Kiran Challa wrote:
-> Convert Microchip PIC32 Pin Controller devicetree binding
-> from legacy text format to DT schema.
-> 
-> Signed-off-by: Udaya Kiran Challa <challauday369@gmail.com>
-> ---
->  .../pinctrl/microchip,pic32-pinctrl.txt       |  60 --------
->  .../pinctrl/microchip,pic32mzda-pinctrl.yaml  | 141 ++++++++++++++++++
->  2 files changed, 141 insertions(+), 60 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,pic32-pinctrl.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,pic32mzda-pinctrl.yaml
-> 
+I intend to review your patches but other people's work is ahead of yours.
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/microchip,pic32mzda-pinctrl.example.dtb: serial@1f822200 (microchip,pic32mzda-uart): 'oneOf' conditional failed, one must be fixed:
-	'interrupts' is a required property
-	'interrupts-extended' is a required property
-	from schema $id: http://devicetree.org/schemas/serial/microchip,pic32mzda-uart.yaml
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/microchip,pic32mzda-pinctrl.example.dtb: serial@1f822200 (microchip,pic32mzda-uart): 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/serial/microchip,pic32mzda-uart.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/20260705132521.159522-1-challauday369@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+>
+> Thanks,
+> Shenwei
+>
+> >  - Align the rpmsg-gpio driver with the revised gpio-rpmsg.rst.
+> >  - Modify rpmsg-core to enable prefix-based matching of RPMSG device ID=
+s.
+> >
+> > Changes in v13:
+> >  - drop the support for legacy NXP firmware.
+> >  - remove the fixed_up hooks from the rpmsg gpio driver.
+> >  - code cleanup.
+> >
+>
