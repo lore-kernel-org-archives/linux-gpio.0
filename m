@@ -1,137 +1,107 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDB93DB321
-	for <linux-gpio@vger.kernel.org>; Mon,  6 Jul 2026 10:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C42F3BBA09;
+	Mon,  6 Jul 2026 11:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783334227; cv=none; b=KKGOh80+wwEPwqPcbOPa0UQxwL6O/tBchGaV6cUOqlGgeUxYLGnaSRZDu8/Bo3thoAcd1vDsiyxeqgvw1u+9hpyDPYxaRonr0Z5WQSNoJzN/9WuNZuJtYQe+v3CdxNOhTCh7lSxL5IqsxnjJ69toLrD6qzu+Hkl8QJ0ye6UvpSw=
+	t=1783336969; cv=none; b=Vc2l93cdI2s4IrXf5yVrPPzI/OLurFdu4rDA+lXmejTDX3OYRne7qcupJ9K8bEpIyAfOm+iOaWq24DXOxluQHztt3cOxx9Fg3NU4UPWusXb0cvWTVS8HPreICS30JnV92dS2QzAonKz7mRDB6c+Sou2vnsbGn5f4pc1TS/C20ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783334227; c=relaxed/simple;
-	bh=/uSUtu9UrBkRqJc8DzNPUEjuHfk+c4v6jKsiFoMOWIE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jGNnV4k8ycly29XRyIsWjYlvs223A3KwJEBaQs5uYtGMIIhsPg1Dx47ZJef1TUYPwblDzGP7jxAt5k2x6QRmSlcdxpIh1R/L2KrfIVIXcl01+1oxwh3JT7DZmIrew9YmOonz9ACTp4ccFknuggOy1Ru6RVAbMTlej55xaf2d9Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UflmA6zO; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UflmA6zO"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2caea3f742bso37872485ad.0
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Jul 2026 03:37:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783334225; x=1783939025; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gQCFHiPUtrzx9M/KDBHAndVk82sYPvwu/95Z/S9ygn0=;
-        b=UflmA6zOZc/aCrFSbKqpvZ2Duv+Snmms6UI4tqvbtxq22WMDHETNGan9dPT+uteoqF
-         BE36TWmeTHqdjlpfCG0MT7D6VGM0IuaFfrzr+aaIUa/LBzrahf+Z3xxRnJufBE0AFJ/b
-         8MRQB52qbeWPJeEmVXkRD8xv7Wlg6J9QGHn9VPZbXZ6zdA4F9RB3oBbNmFAvKk9jWwWg
-         qE4skWBOhOwsoeJwhOQy7RgqxFZu5AKpShVN0UDbsbkO/J4skihvDb6nJxNU4xXpFXYn
-         7jNosZdTgZJ3f6Bv/G22PFpRwY3RP5xuZg+v8MjKSXCoOEgM4/J3QqD2JRC8xQ7ZNowA
-         eGTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783334225; x=1783939025;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gQCFHiPUtrzx9M/KDBHAndVk82sYPvwu/95Z/S9ygn0=;
-        b=ZOJczsF3JjS56cCoMRzSQS2f5CmRieFRrhX40bQvMF0eMAa7rMrUbwzY7y0nn0y0jN
-         cFM3T97DP+fgKGn57Vn3K3ZjkuFjXABk8so/Kz0/mslF6yC0JODfMT3ksV0xp9rq6GcE
-         9V7U4ustJQB6uUEa3fdR6Nsxj/h7kamtUJCEbZAhEXaXP0eb/I51n1FMary833t79pkw
-         IBjG/EQtO+m/8vSwDCp74IHnZohb137YyOP8s7i/ZxU4pXNvci79dkmOhqqXZXXURCx/
-         qYPNY09/SsmOHXQttGr+8fIFgG8Y4/g6pH2wlRAzU4/UBGQ5a6G2Tas01cP3gfRkjK2l
-         rcmg==
-X-Forwarded-Encrypted: i=1; AHgh+Rr+8qVfwAwWO/Xs1pPc+NHSZV3Mw7or1aE9ZD+r/9cUUciIlV887ujrKnPrHhPisZq7nw2IqloRuvHu@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg0+wIkaqwUdKA+2vPvXLarN8h7sPSxhjq6dWvCz3DvOI24uAf
-	aA9zt/WUCjgx2bQdiM8FgPMrp8uzkqxpfdhe3FuN7xW9vkcPJcNfJWFi
-X-Gm-Gg: AfdE7cnqv0SzSGBesJA5ofUPZLvpq9qmDUDk080S3EGaD2LfDzenI+bsrVSf6tHZGUt
-	u/iAQaKv0r/qxKuSWhxZzyPY5zxyF0VHaLYZIlwrFO5VrZ542eeRtFagFZezd2oPOGzbaWdaD5R
-	/9MIYz5ETG44TKm8DTb5l9ETOfC009zX/Ormg/7DYoao5WVq6lao8F9tm2Qk/SlhRyuPLUYDg+j
-	bIAzUmJxJryoiIyVC7Z6/wmnbni2h4egIn+4z+TD54L6d5nzxwIaNUogyVRaTs0O3V7B13qQ6OY
-	wtBo0emQXe5bIdemDEvWh2P5g+C2LP+QfjwU/zmW9w4m4GEuTRhNyURCzpYQi3OVb4FJDCAETm3
-	uN4TT2lEA+gtSyCxK1I+7qY3fAO6pZzpgFYzymD52iACiz83weJ0tlkJ44LigzrIeOfWBHA2oRN
-	lW1TgJf+Jsuw==
-X-Received: by 2002:a17:902:f54b:b0:2cb:3f5b:6663 with SMTP id d9443c01a7336-2cbb74fe932mr98149235ad.11.1783334225585;
-        Mon, 06 Jul 2026 03:37:05 -0700 (PDT)
-Received: from [127.0.1.1] ([150.117.174.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cb3f5b7090sm36802845ad.26.2026.07.06.03.37.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2026 03:37:05 -0700 (PDT)
-From: Gary Wang <is0124@gmail.com>
-Date: Mon, 06 Jul 2026 18:36:35 +0800
-Subject: [PATCH v4 2/2] pinctrl: upboard: add device id INTC1055 based UP
- boards support
+	s=arc-20240116; t=1783336969; c=relaxed/simple;
+	bh=3tTscb60GKkcPzjo6FgKQtHk7WdLrkm1CZCNBHbu3Y0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NU3NeDFRcLIJYUTLoFtOoU8cClWT+7W1WsiDv0Jz2rKObVkwB9mbb7ym6rxKvRfULNAkeSZAPlCO/F72Gl5ZttpMEGhFGYSyLPyYuckpA9G6FQOpQ4YkZiwF+K/QNL3IHJJ6k5ppjRpDY9krsuBB99aqlzfUXD+Rztxp8HQJguc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9140E1F000E9;
+	Mon,  6 Jul 2026 11:22:40 +0000 (UTC)
+Message-ID: <95b20f95-37c4-49a6-8952-e023597d9fd3@linux-m68k.org>
+Date: Mon, 6 Jul 2026 21:22:35 +1000
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/13] m68k/coldfire: replace linux/gpio.h inclusions
+To: Arnd Bergmann <arnd@kernel.org>, linux-gpio@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Bartosz Golaszewski <brgl@kernel.org>,
+ Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Gregory Clement <gregory.clement@bootlin.com>, Frank Li <Frank.Li@nxp.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
+ <zajec5@gmail.com>, Yoshinori Sato <ysato@users.sourceforge.jp>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ Linus Walleij <linusw@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Dominik Brodowski <linux@dominikbrodowski.net>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, patches@opensource.cirrus.com,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-sh@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-media@vger.kernel.org, netdev@vger.kernel.org,
+ linux-sunxi@lists.linux.dev, linux-phy@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-sound@vger.kernel.org
+References: <20260629132633.1300009-1-arnd@kernel.org>
+ <20260629132633.1300009-3-arnd@kernel.org>
+Content-Language: en-US
+From: Greg Ungerer <gerg@linux-m68k.org>
+In-Reply-To: <20260629132633.1300009-3-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260706-upboard-pinctrl-add-upboard-intc1055-support-v4-2-cedce0802d3d@gmail.com>
-References: <20260706-upboard-pinctrl-add-upboard-intc1055-support-v4-0-cedce0802d3d@gmail.com>
-In-Reply-To: <20260706-upboard-pinctrl-add-upboard-intc1055-support-v4-0-cedce0802d3d@gmail.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>, 
- Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Thomas Richard <thomas.richard@bootlin.com>
-Cc: Daniele Cleri <danielecleri@aaeon.eu>, 
- JunYingLai <junyinglai@aaeon.com.tw>, Louis Chen <louischen@aaeon.com.tw>, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Gary Wang <is0124@gmail.com>
-X-Mailer: b4 0.13.0
 
-Add support "UP Xtreme i12" and I2C/PWM/UART/SPI pins mapping data.
+Hi Arnd,
 
-Signed-off-by: Gary Wang <is0124@gmail.com>
-Reviewed-by: Thomas Richard <thomas.richard@bootlin.com>
-Acked-by: Linus Walleij <linusw@kernel.org>
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/pinctrl/pinctrl-upboard.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+On 29/6/26 23:26, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> linux/gpio.h should no longer be used, convert these instead to
+> linux/gpio/legacy.h for coldfire.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/drivers/pinctrl/pinctrl-upboard.c b/drivers/pinctrl/pinctrl-upboard.c
-index f8c8b9d84990..de1920a3387d 100644
---- a/drivers/pinctrl/pinctrl-upboard.c
-+++ b/drivers/pinctrl/pinctrl-upboard.c
-@@ -912,6 +912,19 @@ static const struct upboard_pinctrl_map upboard_pinctrl_map_apl01 = {
- 	.nmaps = ARRAY_SIZE(pinctrl_map_apl01),
- };
- 
-+static const struct pinctrl_map pinctrl_map_adl[] = {
-+	PIN_MAP_MUX_GROUP_DEFAULT("upboard-pinctrl", "INTC1055:00", "i2c0_grp", "i2c0"),
-+	PIN_MAP_MUX_GROUP_DEFAULT("upboard-pinctrl", "INTC1055:00", "i2c1_grp", "i2c1"),
-+	PIN_MAP_MUX_GROUP_DEFAULT("upboard-pinctrl", "INTC1055:00", "pwm0_grp", "pwm0"),
-+	PIN_MAP_MUX_GROUP_DEFAULT("upboard-pinctrl", "INTC1055:00", "uart1_grp", "uart1"),
-+	PIN_MAP_MUX_GROUP_DEFAULT("upboard-pinctrl", "INTC1055:00", "ssp2_grp", "ssp2"),
-+};
-+
-+static const struct upboard_pinctrl_map upboard_pinctrl_map_adl = {
-+	.maps = &pinctrl_map_adl[0],
-+	.nmaps = ARRAY_SIZE(pinctrl_map_adl),
-+};
-+
- static const struct dmi_system_id dmi_platform_info[] = {
- 	{
- 		/* UP Squared */
-@@ -921,6 +934,14 @@ static const struct dmi_system_id dmi_platform_info[] = {
- 		},
- 		.driver_data = (void *)&upboard_pinctrl_map_apl01,
- 	},
-+	{
-+		/* UP Xtreme i12 */
-+		.matches = {
-+			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "AAEON"),
-+			DMI_EXACT_MATCH(DMI_BOARD_NAME, "UPX-ADLP01"),
-+		},
-+		.driver_data = (void *)&upboard_pinctrl_map_adl,
-+	},
- 	{ }
- };
- 
+For the ColdFire changes, LGTM:
 
--- 
-2.43.0
+Reviewed-by: Greg Ungerer <gerg@linux-m68k.com>
+
+Regards
+Greg
+
+
+
+> ---
+>   arch/m68k/coldfire/device.c     | 2 +-
+>   arch/m68k/include/asm/mcfgpio.h | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/device.c
+> index 1420bae0964f..9a0258acd998 100644
+> --- a/arch/m68k/coldfire/device.c
+> +++ b/arch/m68k/coldfire/device.c
+> @@ -12,7 +12,7 @@
+>   #include <linux/init.h>
+>   #include <linux/io.h>
+>   #include <linux/spi/spi.h>
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/legacy.h>
+>   #include <linux/fec.h>
+>   #include <linux/dmaengine.h>
+>   #include <asm/traps.h>
+> diff --git a/arch/m68k/include/asm/mcfgpio.h b/arch/m68k/include/asm/mcfgpio.h
+> index 7103cfa4edb6..29726aa40eb6 100644
+> --- a/arch/m68k/include/asm/mcfgpio.h
+> +++ b/arch/m68k/include/asm/mcfgpio.h
+> @@ -16,7 +16,7 @@ int __mcfgpio_request(unsigned gpio);
+>   void __mcfgpio_free(unsigned gpio);
+>   
+>   #ifdef CONFIG_GPIOLIB
+> -#include <linux/gpio.h>
+> +#include <linux/gpio/legacy.h>
+>   #else
+>   
+>   /* our alternate 'gpiolib' functions */
 
