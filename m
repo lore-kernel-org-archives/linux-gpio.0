@@ -1,143 +1,121 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E553EE1EA
-	for <linux-gpio@vger.kernel.org>; Mon,  6 Jul 2026 09:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B783B3BFE
+	for <linux-gpio@vger.kernel.org>; Mon,  6 Jul 2026 09:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783328628; cv=none; b=PfokYjvEXET7m6PWi6sbGbxaqgC6z68GLEfrUi7yk3sTEQoWk5WcVvfsr6yS+6f/XHuV2AbVgm4gIpCvMf2mqYG/QmpRRZfas82bK8+DgfQIgrC3Pk3pyxPqBPpirAcxLjg9XqggyR5Wzsg1Auvozq33ECXgtspqz6bpHokKvPw=
+	t=1783328635; cv=none; b=L7OPSuUiiiNyHpVcqCzeLw0o7AQrjt6JHh/fBSBqDp75zA/G7oQL4JfN4x5ZftTcXxmWbqoSsnhs6KufBTg0L2iEqkBzXyzdsC/SRPIFzU8udXAWnvXAO7E/EFDd6UmPf6xUONvayeAkrcjKzE2AK/PDjq5fqFPT8OTjitqLXLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783328628; c=relaxed/simple;
-	bh=2yFtuP4uolgk6P6sMJciI+eJU85KzFMUV0pG/C/hxH8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LCmp7r/mnt0jQVu712IWfJ8CldoNkplbBVyN6oMkBUmfGdC/5yCxP57Y4OALlgcT8u2SMwH9I4VlXsNjm1tSidPfnUVP1jLvViifJ3y4UowtUV906i3hr8ZBf4/pH4gCJtPpHrfJJLmVKv40PLfaYVHhogvM1GWznE3h5lraV5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IlXGC5K2; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=B/k1pl54; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1783328635; c=relaxed/simple;
+	bh=2D34RYxVtpQLJYURr06irwa2SoBgHUUijQRKQS57PE4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=pmSbnRy3Mtn86kbhG7iKGxMu/9dgeLUcF1TjwBgwGGcIDblBXw9alrjtAkbsH9faL3xrLx4/+u95y/Pxc74SD+c0iaJDcWwNF9LebAYIlmJ1/1X23tnikpFdkebHp8BxcZM4yufhB3AddW/W8XMAkrweveYMXXLC1o48qrMCirs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WIuz54pu; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IlXGC5K2";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="B/k1pl54"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66684wme4006757
-	for <linux-gpio@vger.kernel.org>; Mon, 6 Jul 2026 09:03:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LcZou8yJindkdX/uM+YTZ39Lojw6W5Ga1aU4638LE5s=; b=IlXGC5K2iQNLKl9l
-	cSly72ZF9ePOiX/Ss1akJplsaWNkadeYVyEx791uidhfCQjW9TYKqo2kQvk2No6l
-	TqWmz/XbPbRPdHr2Mf/uhJxNDdXN42Qz1nsC1MngBifCcr0ZVEehOhLoD1k+F4ih
-	8BiX3acJM+3ZlbsUBmwPntg23ld3ywXdVamjrSOo5E7GyhtwsteXq4BaGjTYX47c
-	PqEz5KkYukQhEwmxOgzrFEVdOKdbwTtdR+nCotP8vmigzBrd79imqqsDmkF0lNgt
-	01/r2ceAu0ev3OJGe7FPWSPkCLIALFbcpetiROjTBiRIcMJKileMvPa+r5w6OMGi
-	lpi30g==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f88hs88bw-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Mon, 06 Jul 2026 09:03:39 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-92e4f27f49bso211068385a.0
-        for <linux-gpio@vger.kernel.org>; Mon, 06 Jul 2026 02:03:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783328619; x=1783933419; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LcZou8yJindkdX/uM+YTZ39Lojw6W5Ga1aU4638LE5s=;
-        b=B/k1pl54CeHxLCZYotXzj+b163oGbn5xf22jAwmpNpCwz19s7trJSgcJcfpx6eGYeP
-         kDxEodDNZ1jmebHRinri6XKVQ4Ji0gMrCGdqwEF53lQOD+Hb/tt1q0gCRRwF669vyS9d
-         3EqoT/zGcPScdyfp+hbICuCCtop+EE3276Uq7V+xmF/h59rB0ZvEQm6F6b9LTGoQTBB4
-         K63vHEXw6qGjNn2aKWWiT43OGiyw83zYid6p2RXdCO2LvyZIgX/538hfDiTKgDZ1iCl5
-         AWgGB6H6HZ/MllTwao4SpxqGgKFOz19h5/8ZxE9YYq4JHP7x4szXM+uEokZ80t82TSoN
-         pLAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783328619; x=1783933419;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=LcZou8yJindkdX/uM+YTZ39Lojw6W5Ga1aU4638LE5s=;
-        b=VnYGGwH0o+MaeLlGmy4XGqPsuqQez8ztkN4Q1nErcSc4r8JgCH6eqTvw+8om4BgX3P
-         k0Ap+vPqADvxytX/1NkArWTHQab2KhHoFq+cXMtRq+UEn/3S+3TIyi0xXezapWcqh9jv
-         HGfpEpyZNUkWgWljgXNOhIQIt6YAL2/WW5QkONquM2ONgfKR+8x8zk23oykmZAvgHEAW
-         CMAFQwPxYbxw0S2YDUddDtt0uSL4ng0RRjhBqtqacy4upIJZNxZHCylj/4yEjC9ApzOc
-         fI1z3nK1jaG93EK+qk3BFD1ai3hlyWjH/2t5AA9ck4aUi7TJ9DijkgekkSJ9EoKtRawf
-         73vA==
-X-Forwarded-Encrypted: i=1; AHgh+Rpz4p7wkqpDufuYg/rmyKOaJAV7U5xYTmnyP1+tDPfklAlsWsbJyFjqNLc4EyFgvje48+6TBUceB02i@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoSY7j5CmDaAzidEvChyjv1rQblmVULZB0qzRLCQo3bkOh/U3F
-	dmoLQ1S1p+Q40Zh/IAGgDU1aGfkqEIyTep99mS/pUpc3kzz0qazzKn4+3spR7Tv4uMYFHQ/TYJW
-	UPaZy10iGOT5hWXiUbFuSuxt6JGLYX1q+6vIh1vpRPxGhXhwJBM1+K8E+zqW7Y0It
-X-Gm-Gg: AfdE7cnY0MQMeYTuPCDu/w/V1Q3F98wKSVrqFPUDHZMskuygje3NVyakRdQC8cJhV4M
-	YTiFmPt0mG08I5nFxygooqZJLWjjHIyslNZZV3uzX3VvXaJQVkuY2CCOucEQDmB3AZkYjZZRmWh
-	chZDVbobwD3UHvE3pYcnLr8MlE6A+1W2bcZA7zpmnMmWC69VM2JqxWDL9y3uo2+KQFDcWqA5Fb5
-	4QvoAWhKAN7V3wtzyCET42HxR6dDuBk5ARwlkDdFeLfbIdV9cvWCJF/aCGePqJMCb/wwezYJt61
-	5f3ci+6uqc+m553ANqhT9c049z4rbFeXEM8veiqnjguyjkDJJP2kSr2lwlqs5+8ff9uWC19xJ0P
-	Tw+BrpoB5/MQGBVt1JFoOItqH6UnwrED7cZuaHCs=
-X-Received: by 2002:a05:620a:44c3:b0:927:a87b:7abc with SMTP id af79cd13be357-92e9a48e73emr1194799085a.50.1783328619079;
-        Mon, 06 Jul 2026 02:03:39 -0700 (PDT)
-X-Received: by 2002:a05:620a:44c3:b0:927:a87b:7abc with SMTP id af79cd13be357-92e9a48e73emr1194796285a.50.1783328618595;
-        Mon, 06 Jul 2026 02:03:38 -0700 (PDT)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:86f0:c42b:ef4c:d3bb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493bef23feasm326998025e9.2.2026.07.06.02.03.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2026 02:03:37 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Bartosz Golaszewski <brgl@kernel.org>, Kent Gibson <warthog618@gmail.com>,
-        phucduc.bui@gmail.com
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: cdev: Drop redundant nonseekable_open() return check
-Date: Mon,  6 Jul 2026 11:03:31 +0200
-Message-ID: <178332860255.18708.5813708689955494780.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260703020947.8010-1-phucduc.bui@gmail.com>
-References: <20260703020947.8010-1-phucduc.bui@gmail.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WIuz54pu"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 97C4BC8EC67;
+	Mon,  6 Jul 2026 09:03:58 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6142F601A2;
+	Mon,  6 Jul 2026 09:03:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 91CB311BB9D70;
+	Mon,  6 Jul 2026 11:03:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1783328624; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=EzXpYPV0PFB6TX9ZDcqY7ctXsxYzZyik5uIt1kgj5dk=;
+	b=WIuz54puOIXvKsy0eg8hrSFIjyHK/usc7xVOrM0SNdZJgw12G3lKlHqewYnbWQemzWZMkt
+	/II90sH6P0vbNirv6FCXYhRej6fzQU8Fc/UkcuengFjODFKvrQQZxobS8ssaQuzaKQ4zXa
+	JMxB0yGF8nyVXi5OBQS4EZUXkUIcuMfrMp08oeRMPF73D4WLEo+HBEinnD+Gq4Qf2szNi+
+	kR3dCEPtfXTAeXiuUh7UmXx99vauQZkyFHOgz0Qzo0vbNt0z3K3W7885eviRaI2SRAp9y0
+	uRX5EZxDHaOWHj5kh80o0rtJCECCug1X7xc239ItstJdjNdLjPkp+u0i2wOVQw==
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: aW8L2EiZvc_LggOncQrUuqtARHUWPSXi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA2MDA5MCBTYWx0ZWRfX5PE6SPdMui91
- lfPfoi503l7QI/vCyeSqnXRDlo4dblRfnjKDXfDXRUXqf8x7bPLk5W3BlasWXes+5g+8SkX2OZ8
- T3r6P2bBRLz1SepfrIkpeRw8fdCGwYOVq7x8iPyZcJT2dqRWhxRSHKOmk+pqTeboyxpDQXi6CRF
- tp87Wz5klcrsO7ir5kpjU02kzd7N5VQszzFfCf0bh1kRv5C+wRuvDzlZ0D2DvzJYlxIdCMjprH5
- UeMCQR6vp6a0QNmSelhtSzI47yGtmigGixKZoNYDJpio7499LVk3totSmUTAqJLoWbSCCa8uTvi
- vE0lTDsA//1GZvRVI4trXKP9jNmiHHF+FAEwbVFNv78JAmeJQEiPkG9IgGgASNSm9SGM0/dACN1
- mk/lo2V4VZMBVsa63SOtPiG6+ytZcTLxDOzZ+sjfO9SnjwWJrFP3L+2cqlEi5dhMekrkdRgoM/r
- w4VGRuaZh84HBy036FA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA2MDA5MCBTYWx0ZWRfX5CY4S2D6IA+1
- WqhibFKc8Fq5Gaf5s0pAdgPmbodE7sMjQI6krvrU0hqbPxIYXcvycSZsjcGID/VS99D0SN1o65J
- LmU1b8u28BMpTq/vsY4JoGZxdImihig=
-X-Authority-Analysis: v=2.4 cv=XIwAjwhE c=1 sm=1 tr=0 ts=6a4b6f6b cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22 a=VwQbUJbxAAAA:8
- a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=rZ2YoADrP8nBYB8rJmQA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-GUID: aW8L2EiZvc_LggOncQrUuqtARHUWPSXi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-07-05_02,2026-07-03_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 bulkscore=0 priorityscore=1501 impostorscore=0
- malwarescore=0 lowpriorityscore=0 spamscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607060090
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 06 Jul 2026 11:03:40 +0200
+Message-Id: <DJRD8IJUMKXJ.20CSZPRGGL3KE@bootlin.com>
+Cc: "Qiang Zhao" <qiang.zhao@nxp.com>, "Christophe Leroy (CS GROUP)"
+ <chleroy@kernel.org>, "Thomas Gleixner" <tglx@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Linus Walleij" <linusw@kernel.org>,
+ "Bartosz Golaszewski" <brgl@kernel.org>, "Madhavan Srinivasan"
+ <maddy@linux.ibm.com>, "Michael Ellerman" <mpe@ellerman.id.au>, "Nicholas
+ Piggin" <npiggin@gmail.com>, <linuxppc-dev@lists.ozlabs.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-gpio@vger.kernel.org>, "Thomas
+ Petazzoni" <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 03/12] dt-bindings: soc: fsl: qe: Convert QE GPIO to DT
+ schema
+From: "Paul Louvel" <paul.louvel@bootlin.com>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Paul Louvel"
+ <paul.louvel@bootlin.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20260703-qe-pic-gpios-v1-0-6c3e706e27dc@bootlin.com>
+ <20260703-qe-pic-gpios-v1-3-6c3e706e27dc@bootlin.com>
+ <20260706-piquant-arboreal-panda-b810f2@quoll>
+In-Reply-To: <20260706-piquant-arboreal-panda-b810f2@quoll>
+X-Last-TLS-Session-Version: TLSv1.3
+
+Hi Krzysztof,
+
+On Mon Jul 6, 2026 at 8:48 AM CEST, Krzysztof Kozlowski wrote:
+> On Fri, Jul 03, 2026 at 03:30:11PM +0200, Paul Louvel wrote:
+>> diff --git a/Documentation/devicetree/bindings/gpio/fsl,mpc8323-qe-pario=
+-bank.yaml b/Documentation/devicetree/bindings/gpio/fsl,mpc8323-qe-pario-ba=
+nk.yaml
+>> new file mode 100644
+>> index 000000000000..1af99339ff40
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpio/fsl,mpc8323-qe-pario-bank.y=
+aml
+>> @@ -0,0 +1,45 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/gpio/fsl,mpc8323-qe-pario-bank.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Freescale QUICC Engine Parallel I/O (QE PARIO) GPIO Bank
+>> +
+>> +maintainers:
+>> +  - Christophe Leroy <christophe.leroy@csgroup.eu>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - items:
+>> +          - enum:
+>> +              - fsl,mpc8360-qe-pario-bank
+>> +              - fsl,mpc8569-qe-pario-bank
+>
+> None of these were in the old binding. You need to mention and
+> explain (WHY) the changes you are doing to the binding during the
+> conversion.
+
+Ok.
+
+>
+>> +          - const: fsl,mpc8323-qe-pario-bank
+>> +      - const: fsl,mpc8323-qe-pario-bank
+>
+> Best regards,
+> Krzysztof
+
+Thanks,
+Paul.
 
 
-On Fri, 03 Jul 2026 09:09:46 +0700, phucduc.bui@gmail.com wrote:
-> nonseekable_open() never fails, so the error check is unnecessary.
-> Remove the dead error handling path.
-> 
-> 
+--=20
+Paul Louvel, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Applied, thanks!
-
-[1/1] gpio: cdev: Drop redundant nonseekable_open() return check
-      https://git.kernel.org/brgl/c/44d75ed98ddde54edc55e9300bb70ea9a7c62f4b
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
