@@ -1,92 +1,81 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466B241C303;
-	Tue,  7 Jul 2026 13:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B43E3F4123
+	for <linux-gpio@vger.kernel.org>; Tue,  7 Jul 2026 13:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783431112; cv=none; b=mWJ3Y7febxNvgzSSRYEXHiBk3gqJConwCAgbDR+ZXuyHzpPA5f3i++EteXylzYvuIC7kxwcKlRMwPXFkxj9BhAnWzwYyocx4E6xBcpox2+/XnWcdi7BA80gT7ZF7QbGIn49l4jLTvhgFdb1Xp244no5li+YmYNZ35+JN37FycRA=
+	t=1783432125; cv=none; b=XOrGSHvz1jRs/dLVFFFzkU4PusU/GGArL4GLgMviVBh+uDoqnp7cZrKNSk/WeAQsykRQGAbnC98ILWIeLxy3OhHndenwF3djOFnyXkl1oxO1nS83OSvn736UAMRouvB/PpzEp6LuMmrxiqtldOXOOJmXIohqWtA8cqCOohuSqeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783431112; c=relaxed/simple;
-	bh=hi/Y+A3iq1QCnEQaABM1Al+dWo3tQdQQkvsTHsJHAPA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=oOjl/TFlga9oKp9dpijiF7bH7diVEvxZC5TWdScLKWDRHuR9ITdV8MFdl0Z+KeVFrGrhHvdUl+W4XRBytdhaZJeY4tGOjqT8UqyP1Jn9lCvQmsjaJKjnJP6egk62/10mh9MXEgYc/tFC0LA8TfNWE8PyleWdBuer7IDzzYtXNnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DrkBnN6j; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783432125; c=relaxed/simple;
+	bh=1Yo7u0z6k8U7Mbjer68rrWV0r8Sh5LFdbkY5Y5c3Jrw=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d4ZfaroqGo+z7SPRnyOmLyP4sZVQS6Pi6fKerpgFFNvwVYeQRywgrWa0xc0WHL8ZFfWUVt4v5AURo57tbbCbzdfPl/4T3BspVw1d8sX6lmv8KM8Wzx/wNl6jAU/itoF0EUf2r5omD9QCpqFGVX91DZ2ux2vu1yTCvSciFDUKltA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ky5eOcvl; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DrkBnN6j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD9E41F000E9;
-	Tue,  7 Jul 2026 13:31:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ky5eOcvl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35B2F1F000E9
+	for <linux-gpio@vger.kernel.org>; Tue,  7 Jul 2026 13:48:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783431110;
-	bh=ECOtrfboglA7MkJelsbi7HV7rJGyEpwDPz5UHei8RS8=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=DrkBnN6jqvpb8+cx21YZaMG8fQmC584kQsNB2GTUBNe6ad8k6jjfxmX67n3DBmhuy
-	 AdlO0ojwGgFnJgRZhegI7+/V+K2BPKuz0jd5ih8BDy6UTTzWr4ez3VdKvK0ujffn5T
-	 IqBIQtiDPpd4XIWtrM8AsG92dkXtG6zzMHe6PjxdCDA93fJeJrBjY6I5dPswrpaB0a
-	 V35WD4/2vuucynF7HGlRyMe2OD60yLnGRSq3pFi/LHhlnwxDN6rhSzx57wG8hzSlMs
-	 75/orX+wl3LNSKDTks1QSHUAJ6dg+VoZXRllohql0W1+FnMtX8wM2y/JzelOiwLIMT
-	 sGB7y5SOGUzSw==
-Date: Tue, 07 Jul 2026 08:31:50 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20260515; t=1783432124;
+	bh=1Yo7u0z6k8U7Mbjer68rrWV0r8Sh5LFdbkY5Y5c3Jrw=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=ky5eOcvlo1aG8xccfEkbFOgotVrnusNUxMziffYcBHfzWQzs6NwkX0Dunzgto7Lgm
+	 Gyqtadeuv3h5j31G2mhSatHoV3Si5/XG8yPT7JvObHDCD0ihbMp8T1Q77e2PEQozms
+	 I7cwvIOXxcdvBoe7dVx4MihFK0lbB5jKx1qYSX+BPMtH3WMAIYr+zGSolxLfi3URwo
+	 36a2WDOyJ6DHUO6dBd31YLvN6AmZFNVkKHkTwApFm7XUluWDRMwk3BO9lY42rBmkuJ
+	 +GADJy43YEzgdus/GdGI87WI23+1vVQlb7wenPUhrKBCRBVzkO1e26/l03mzqW6Lcp
+	 TXWGdCUmVfUBQ==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-39b3931e259so35082471fa.2
+        for <linux-gpio@vger.kernel.org>; Tue, 07 Jul 2026 06:48:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrIDYWhGT2tyCTiDPV+NojUKFI6JlcQCPICK/T51sY0tReDvICNQMX5iZxGA5HIKB919Fr1CRf2T0Go@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOr40BGDoIQmzcWctrXbZJ/Y1F6SvgxBKr6aY4v4h+Z5fZ6rqp
+	kUDRgav9yGDizpICqjz+pt97iCw84jWHG1AzgfJ8o9W2glwy2DbhQbHhW0VjZKWJ9EBuuy+pDkq
+	j6hi/NPGOGx5d/2fuRebkgUlafCam+Hcps8rMVQjgEg==
+X-Received: by 2002:a05:651c:e15:b0:39b:d76:5cb3 with SMTP id
+ 38308e7fff4ca-39c60015570mr11010031fa.29.1783432122399; Tue, 07 Jul 2026
+ 06:48:42 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 7 Jul 2026 06:48:40 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 7 Jul 2026 06:48:40 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <edc7505e-1103-42d7-b88d-013ca10753b3@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- mohammad.rafi.shaik@oss.qualcomm.com, linux-kernel@vger.kernel.org, 
- ajay.nandam@oss.qualcomm.com, Luca Weiss <luca.weiss@fairphone.com>
-To: Ravi Hothi <ravi.hothi@oss.qualcomm.com>
-In-Reply-To: <20260703073029.2588960-2-ravi.hothi@oss.qualcomm.com>
-References: <20260703073029.2588960-1-ravi.hothi@oss.qualcomm.com>
- <20260703073029.2588960-2-ravi.hothi@oss.qualcomm.com>
-Message-Id: <178343111013.2437204.2936966826993460040.robh@kernel.org>
-Subject: Re: [PATCH v1 1/2] dt-bindings: pinctrl:
- qcom,milos-lpass-lpi-pinctrl: Add Eliza pinctrl
+References: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org>
+ <20260704151521.211335-2-marek.vasut+renesas@mailbox.org> <CAMRc=MeyKGv75rTLauZuGxSfgjCPXVE_r=A7uNduRr6kAd43aA@mail.gmail.com>
+ <edc7505e-1103-42d7-b88d-013ca10753b3@mailbox.org>
+Date: Tue, 7 Jul 2026 06:48:40 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MegYyuqMVkG4_E_TF4hzoy1PVx=omXgZUPvnARd-Eh+7Q@mail.gmail.com>
+X-Gm-Features: AVVi8CfTXb7a9CnF1kG_J33U_VZ0A1Fo3nvdJCm7SCTOOAtgiE9VDcYDyKYQeEg
+Message-ID: <CAMRc=MegYyuqMVkG4_E_TF4hzoy1PVx=omXgZUPvnARd-Eh+7Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: rcar: Add R-Car X5H (R8A78000) support
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 6 Jul 2026 15:06:01 +0200, Marek Vasut <marek.vasut@mailbox.org> said:
+> On 7/6/26 11:19 AM, Bartosz Golaszewski wrote:
+>
+> Hello Bartosz,
+>
+>>> +static inline int gpio_rcar_remap_offset(struct gpio_rcar_priv *p, int *offs)
+>>> +{
+>
+> I am hoping to get some input on this remap function.
+>
 
-On Fri, 03 Jul 2026 13:00:28 +0530, Ravi Hothi wrote:
-> Document compatible for Qualcomm Eliza SoC LPASS LPI pin controller.
-> Eliza has the same pin mux functions as Milos but uses a different
-> slew rate register layout where the slew rate field is in the same
-> GPIO config register rather than a separate dedicated register. As a
-> result, Eliza only has a single reg entry instead of two.
-> 
-> Signed-off-by: Ravi Hothi <ravi.hothi@oss.qualcomm.com>
-> ---
->  .../pinctrl/qcom,milos-lpass-lpi-pinctrl.yaml | 22 +++++++++++++++----
->  1 file changed, 18 insertions(+), 4 deletions(-)
-> 
+You mean its potential impact on performance or the implementation? In any
+case, as Geert said: a table of function pointers could help to improve it.
+I don't mind it in its current form if it works for you.
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/qcom,milos-lpass-lpi-pinctrl.yaml: properties:compatible:oneOf: [{'const': 'qcom,milos-lpass-lpi-pinctrl'}, {'const': 'qcom,eliza-lpass-lpi-pinctrl'}] should not be valid under {'items': {'propertyNames': {'const': 'const'}, 'required': ['const']}}
-	hint: Use 'enum' rather than 'oneOf' + 'const' entries
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/20260703073029.2588960-2-ravi.hothi@oss.qualcomm.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Bart
