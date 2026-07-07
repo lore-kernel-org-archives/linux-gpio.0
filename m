@@ -1,144 +1,154 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CDD3A0E8E
-	for <linux-gpio@vger.kernel.org>; Tue,  7 Jul 2026 19:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E4E2D978A;
+	Tue,  7 Jul 2026 19:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783450866; cv=none; b=n9zKPQ+ikrK9FIh+wJyqh57ia4qER6MiVlwg6ytk7wKL+Us8zW11YDGCfuLeZmFh3DPqLZmLtNCOAUq1Jx/MF8wSPvf3Pb1OscqtQeKLFxMG7iWrHQXdBYM8PflvxOZcSBnilOTziw7j45tAy3go8QW6Eguk1C5y+hBH8h0RG80=
+	t=1783452255; cv=none; b=GIYpdZRmOXVPXCE+HMHy9Xk6ytcaA1xq7m4TmUUNbNdYjw9xAynbuAT8hfOq7prQ2RtKVl5R5c4w9SFhKdxtvDEuObNrUy8yccNw1Ldyml/NVxcfUFyea3GYOjHoqCdn4rq4CREV5OZKNhuoCnY+c+kt/0JzUAM/peyGBm9ObD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783450866; c=relaxed/simple;
-	bh=IwcMHfwnLLFVSsitBehmP/d9zkapDiPSC74fJVhWDKU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bl3mdUxGWEQq+b+CaEzv0qvoCjxJ1sYIloMaV/Wat6MbE+6RCJtxsK0Lb8YOLD4D2Tyr71AZA46KyfBTqlzsMlE6xvOzOwnbRlqQ+zVObQLphi/T5rSFaxKN9ACDdv4xnCijQdf5ENTZMGweQPvx+Ckf3s5j8YZ8ZsIg2bY1AEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VW6kuO7v; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1783452255; c=relaxed/simple;
+	bh=o50sVtMB7LdmtYLOmm7CDhb/Pz/gS4soxIf+LumvGdY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=uA5FHKIdpjEpU3E/PzGww7Ph2MUov3F7o2ziSoPvfoxcIHCRrBkkJbTCUyOOB1+CPAgCPHA2d50ydokXCtY5M/nCygkm4c991NFXmDoIp3D7JHFX/Ib6DWax7LBpYjJiZSS4wEZanKXQ4F/xauGE4lI51BrJi+J7lQnb/8aur64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVoUxcRP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VW6kuO7v"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-493c52cde9eso44382745e9.3
-        for <linux-gpio@vger.kernel.org>; Tue, 07 Jul 2026 12:01:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783450863; x=1784055663; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=9U+Mm7+UlibCZMW00t912Atja0ya4M2ty/S6lVSlezQ=;
-        b=VW6kuO7vIsosZGAPrZvJUoT+aOdwmwXLQF4BP9aXD+/MNZapccZic9rAIk3JzjzgJu
-         HYs+2Y69Ps+YM81PTyVPEb8dLiOsTouN+NJL8P8dFzgJPbQZENYIX24NKPmKT8Sf9Gyq
-         jFP/Xj/t/JjKZ0v/XdC4lwbZSS7gXfxPS3G3uWKUrf44yezxOsPwYWWjbzTThtprmgUw
-         h9GzS4TqR7UyYIeMdZRIZpwDr/oKRTpas9mi6/UaJpaSp7Uh+VSfDmg+xCwBtI1PaF98
-         oJXcmf/EM7VSDtZb6XAuaT5DvoFdgzycit1O7wNRpAwqVyILoLddczUnzkiZt/XUu+Nr
-         PMkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783450863; x=1784055663;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=9U+Mm7+UlibCZMW00t912Atja0ya4M2ty/S6lVSlezQ=;
-        b=c//vBkqOLEarm++LjC8Xr5EYiLZP2qUbNtZDN72pUazQrmWHHZ7LPR7kZCALZEqbFX
-         HkLRcLsQ0GzJGAIfuSZh6TOcoC5HQJ/ofCEZZJq/DlUH5RRxhd9WdhxHmngwQ7Yx6lFO
-         tySj89AWXMpEsgeXxEuXjgt9UsOlmIXBdr3k6gvf8Ifsjo/ENlBFygB+zJ+WRMM3gmvN
-         +KTAGoVmyH45BgfCzWeM1Q12Yp1hynh5GvFUj7r9GkJBC0dcS+JSpIs7UOInjdYHHu9M
-         1v+p6hSmim4kk0cQxDkX3arcLKoIbN1/+48YC+wQsrYWFPQdCWad0/NPPck7tHmFOgxe
-         1UAw==
-X-Forwarded-Encrypted: i=1; AHgh+RpLW89vIQN8XSuph5DBdrALwKlmtIoB+pT+qS79+RuXq2RfewAiHp8JJmfPLGpKU4fTMt0w08wEz1EJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWjwP8q/0C5CiiRJdGUl+QLdWxhbikfNrbgFhB45dmVdolroFz
-	H6AQJ3jcObjqPJPD+ckDa1+JsrsHZBRZINe6iFHxtqpgREVtfwb/KMcU
-X-Gm-Gg: AfdE7cmxnHiRUN7K9odJ4lW9+hbzn1elI7iKAyOkLS3Yzhfd9uOLGHyeCzPyTYBttjq
-	QoVPtSgVD5/qY9ZwZ/QgL4abY4/knq5DwVB9tmjSsbXU0bTCPQ9ohS+jwGZtrj5I0I0uvI9o9bY
-	/jo63z72E7et+XtiLVuqk3HctUyiZUFCtrUa9K10z0jYYfSVDz4IOIt3eu5nwzoi+ijV28n86rn
-	lwRlfdPNDol2yTn0IrtHrH8g99wbwh31PYEA1jLqBHuoXUfQMmte5fPMLtzRJq36ITM/B6NA11G
-	XetuJrGExn/WfYrjyjQmtBsW2svJVx34D4D6YUxctqShN+dKENo85bhgZ1SyL+NspOE3EoznbiX
-	WfyGVTLNlYRXMzPPSae9oGJaMyo0+sGZgZb5l+j4W5GjfsGLjPFHrMhWikM4YFDSp0uc8njWCj/
-	eC6pWdcDDqlNy9Kj6XuwlOqHjA
-X-Received: by 2002:a05:600c:8b6c:b0:492:4a50:41fe with SMTP id 5b1f17b1804b1-493df092ac5mr73198175e9.22.1783450862462;
-        Tue, 07 Jul 2026 12:01:02 -0700 (PDT)
-Received: from [192.168.1.10] ([95.43.220.235])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-493e0f5bc78sm90260455e9.14.2026.07.07.12.01.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jul 2026 12:01:01 -0700 (PDT)
-Message-ID: <81a7e0f6-8731-4bae-b06c-932f5c57d4dc@gmail.com>
-Date: Tue, 7 Jul 2026 22:01:00 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVoUxcRP"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1F250C2BCF4;
+	Tue,  7 Jul 2026 19:24:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1783452255;
+	bh=o50sVtMB7LdmtYLOmm7CDhb/Pz/gS4soxIf+LumvGdY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=cVoUxcRPxhlkvZVtbuEYEYZdP/8o+oEC1L3hj025G/qjflH4PPsg/Ve0gq2ICAm8W
+	 eocUMqFhW+j/zow9KOcJcMb2ypVoHBKG7Cjde+h0Uvhau/plABht3RE69IVxzHiHVf
+	 gCai92HyRKzQ+Yq8LlAucUztHJNuQhzuZd7P5cgjXOm5vLA3FjCGEc65SR68PawHKn
+	 0qvocLblVslWL8WZW7VzA1Iwfph8HA42gwYwpLW+6xBtPlEZnPJWzZmObqPtMZ8esl
+	 BYWeoaraewR3rxDDV5hrP1it2tb67Qu3fIVz/ewpP4fJw7YDaoikTKpBDW64ERT71r
+	 QvXuTGpZ2XBEQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FC1C43602;
+	Tue,  7 Jul 2026 19:24:14 +0000 (UTC)
+From: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>
+Date: Wed, 08 Jul 2026 03:24:02 +0800
+Subject: [PATCH RFC 1/5] mfd: ls2kbmc: make a copy when parsing mode string
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: phy: motorola,cpcap-usb: add chrg_det
- interrupt
-To: Conor.Dooley@microchip.com, conor@kernel.org
-Cc: vkoul@kernel.org, neil.armstrong@linaro.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, aaro.koskinen@iki.fi,
- andreas@kemnade.info, khilman@baylibre.com, rogerq@kernel.org,
- tony@atomide.com, linusw@kernel.org, brgl@kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <20260705101105.1798069-1-ivo.g.dimitrov.75@gmail.com>
- <20260705101105.1798069-2-ivo.g.dimitrov.75@gmail.com>
- <20260706-visitor-calorie-b805ac5af970@spud>
- <2b192691-54d8-4449-a18c-b87266c6c73c@gmail.com>
- <dad556ba-5965-42a0-b78a-2d417b2f6837@microchip.com>
-Content-Language: en-GB
-From: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
-In-Reply-To: <dad556ba-5965-42a0-b78a-2d417b2f6837@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260708-ls2kbmc-mod-v1-1-c344bf5defa3@gmail.com>
+References: <20260708-ls2kbmc-mod-v1-0-c344bf5defa3@gmail.com>
+In-Reply-To: <20260708-ls2kbmc-mod-v1-0-c344bf5defa3@gmail.com>
+To: Binbin Zhou <zhoubinbin@loongson.cn>, 
+ Chong Qiao <qiaochong@loongson.cn>, Lee Jones <lee@kernel.org>, 
+ Huacai Chen <chenhuacai@kernel.org>, Corey Minyard <corey@minyard.net>, 
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>, 
+ Yinbo Zhu <zhuyinbo@loongson.cn>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+ mfd@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, Miao Wang <shankerwangmiao@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2387;
+ i=shankerwangmiao@gmail.com; s=20250715; h=from:subject:message-id;
+ bh=d6uhdZv7x5iOz3ifWFtBF4oUUkQDTINp64mnSnuoNJE=;
+ b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqTVJb4QTwB1OpvJ4G88AI6IC3MNIFvGsmIJjKn
+ sBXXUXy1bGJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCak1SWwAKCRCwMePKe/7Z
+ br5YD/9+RIERHl2TJwF1ydYg4FhOaUq2+oLu1kDgE7FYsi4GCjXO9tnc8R8tzEMrgNzOfg+WEx4
+ DC/WHV933JiFJnH7Rmfwi2YPwwgP3/Tfu558v0QTGI7qsA+Cr4b/SPDmaD8R6GUsHSOXNbnx4dq
+ IQC75Z4NauIVQ/royOtrMhDy2wUq3QfmDI7FB4+OgX5GTuNdfNnYtxICLC48H4wWyDsQydXWmrO
+ lkCeqGF2545CsOSUC3s1oCaYCLt64ZeX3RY9Z0WDtloX4xqVYrSUYROTs4iMDLmN2fvhgXVewJz
+ /hXWrM93uFydUUNZlGzYJ+TS422yWo+YY3rVeCGtKOtTo92HlcUHbgHZrZvDiuxXgB9F+gdTou5
+ QoQI3lH5EoJxc55Sn/mO5zWF+9c32CPrjyDszN1R5FBCwwOcnsGqb8QSzq+nIMwe8xjOWZtsmZf
+ +Z2nQ5DAiRhR1Fq6rCm3IKWRdcMGD8un1Terq5WCI8l3md9hvitg68eQbboNEKy2EAV3CyfTBAc
+ Pkv7roh0BYPQ3e7/UgR5vIGh8a2M3dT1s6Uyu+ASDj9b344aZaM+b2eDPml4peg34w9MKXZljr1
+ 6wIhuIAuIZ6ZFJ+ivQvMgwCBYH5OXruI1RnOOP4x6N+R9UZNgWJdqYXweHAox4L0kOmYJYZhHNR
+ 62i+gDzCy23uSzA==
+X-Developer-Key: i=shankerwangmiao@gmail.com; a=openpgp;
+ fpr=6FAEFF06B7D212A774C60BFDFA0D166D6632EF4A
+X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/20250715
+ with auth_id=462
+X-Original-From: Miao Wang <shankerwangmiao@gmail.com>
+Reply-To: shankerwangmiao@gmail.com
+
+From: Miao Wang <shankerwangmiao@gmail.com>
+
+When parsing the mode string from BMC, the string is manipulated
+in-place with strsep(), preventing from parsing it again. Make a copy of
+the original string and manipulate the copy instead to fix this.
+
+Fixes: 0d64f6d1ffe9 ("mfd: ls2kbmc: Introduce Loongson-2K BMC core driver")
+Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
+---
+ drivers/mfd/ls2k-bmc-core.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
+index 408056bfb2fe757a5bde43775a483a48352e706d..30b275bc48794a22249aeb8ba805ef78772d3466 100644
+--- a/drivers/mfd/ls2k-bmc-core.c
++++ b/drivers/mfd/ls2k-bmc-core.c
+@@ -427,34 +427,53 @@ static int ls2k_bmc_init(struct ls2k_bmc_ddata *ddata)
+  */
+ static int ls2k_bmc_parse_mode(struct pci_dev *pdev, struct simplefb_platform_data *pd)
+ {
+-	char *mode;
++	/* Assume 1024 bytes is enough for the resolution string */
++	char mode_buf[1024];
++	char *mode = mode_buf;
++	const void __iomem *mode_base;
+ 	int depth, ret;
+ 
+ 	/* The last 16M of PCI BAR0 is used to store the resolution string. */
+-	mode = devm_ioremap(&pdev->dev, pci_resource_start(pdev, 0) + SZ_16M, SZ_16M);
+-	if (!mode)
++	mode_base = devm_ioremap(&pdev->dev, pci_resource_start(pdev, 0) + SZ_16M,
++				 sizeof(mode_buf));
++	if (!mode_base)
+ 		return -ENOMEM;
++	memcpy(mode_buf, mode_base, sizeof(mode_buf) - 1);
++	mode_buf[sizeof(mode_buf) - 1] = '\0';
++	devm_iounmap(&pdev->dev, (void __iomem *)mode_base);
+ 
+ 	/* The resolution field starts with the flag "video=". */
+ 	if (!strncmp(mode, "video=", 6))
+ 		mode = mode + 6;
++	else
++		goto invalid_mode;
+ 
+ 	ret = kstrtoint(strsep(&mode, "x"), 10, &pd->width);
+ 	if (ret)
+ 		return ret;
++	if (mode == NULL)
++		goto invalid_mode;
+ 
+ 	ret = kstrtoint(strsep(&mode, "-"), 10, &pd->height);
+ 	if (ret)
+ 		return ret;
++	if (mode == NULL)
++		goto invalid_mode;
+ 
+ 	ret = kstrtoint(strsep(&mode, "@"), 10, &depth);
+ 	if (ret)
+ 		return ret;
++	if (mode == NULL)
++		goto invalid_mode;
+ 
+ 	pd->stride = pd->width * depth / 8;
+ 	pd->format = depth == 32 ? "a8r8g8b8" : "r5g6b5";
+ 
+ 	return 0;
++
++invalid_mode:
++	dev_err(&pdev->dev, "Invalid resolution string: %s\n", mode_buf);
++	return -EINVAL;
+ }
+ 
+ static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+
+-- 
+2.49.0
 
 
-
-On 7.07.26 г. 12:58 ч., Conor.Dooley@microchip.com wrote:
-> On 06/07/2026 22:25, Ivaylo Dimitrov wrote:
->>
->> Hi,
->>
->> On 6.07.26 г. 20:14 ч., Conor Dooley wrote:
->>> On Sun, Jul 05, 2026 at 01:11:02PM +0300, Ivaylo Dimitrov wrote:
->>>> The CPCAP USB PHY driver uses the CPCAP charger detection interrupt
->>>> for DCP detection.
->>>
->>> This is not currently true, the driver does not look for this interrupt
->>> at the time of this patch.
->>>
->>
->> Right, this is bad wording caused by the fact that initially the driver
->> patch came before the binding patch.
->>
->>>> Update the binding and example DTS to use the corresponding
->>>> "chrg_det" interrupt name.
->>>
->>> Sounds to me like this new interrupt is optional, since until now it has
->>> not been needed? The patch however makes it mandatory. I think your
->>> driver patch also makes it mandatory, which will break older
->>> devicetrees.
->>>
->>
->> Oh, it is indeed not needed for proper DCP/SDP detection, after some
->> experiments I was able to teach the driver to do proper detection by
->> using current interrupts only.
->>
->>> What makes this ABI break okay?
->>>
->>
->> Will send new series with schema/DT patches dropped.
-> 
-> I think the devicetree patches are fine, provided you add
-> a minItems of N-1 so that the new interrupt is optional.
-> Dropping them would mean that the documentation for this device
-> remains incomplete since that interrupt does exist.
-> 
-
-Ok, will add that change in the next version, however, I will still
-change the driver patch to not use chrg_det interrupt.
-
-Thanks and Regards,
-Ivo
-
-> Cheers,
-> Conor.
-> 
