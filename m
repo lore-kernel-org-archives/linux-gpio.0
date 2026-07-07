@@ -1,72 +1,153 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C573DD525;
-	Tue,  7 Jul 2026 20:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F83302767;
+	Tue,  7 Jul 2026 21:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783456428; cv=none; b=AF8lW/FAtLtNN524oK7jNPSHnnN/Zx7bWQiryTyMx7yQjW6WnGHliAjLNXJqvs9hiDcRwBW8c7SCZo2J8OEbyJVMK9bVixvF6qNYDhBwTThw9cY8JTsYEo1s/8fxxmCxOVAJcZByp9mmg0tkN6JwzQcHwYOEmSXqp0ENCk7++Ys=
+	t=1783459001; cv=none; b=C3x5F/ARFBDeRhNwZPQUaoRVGUrEgY7O86TmOqWCxIcjIIWNqIvktCt6VYW056bMr4oeW/43kCSk5yDUgbnzRrpNAp/LgntRo+YnxghFIk32idnWgVMpHdDFdnWafesfX6N1X6I3m4cBleRtNcth7Sn+SHXHnPSsN5y/WhQn07Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783456428; c=relaxed/simple;
-	bh=IcWjbsEIwU3ATPx7AA2jXxDrMnVX/LXycwmQTN5/3IU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GZoJNWteJHdNei/3LkUOTc1CE/S0EYHhuTJjatTyq4mJ5ngor/KfvqOw8yhMw9lWIYNsSxMynHx4hk9Qj2snryjiOU2aUszl/ZhD3Yd7Xk5TiGe8ZxtoJd0PfLxR64ISY5r2r7n98e6Yq+RuUaRJ7vQZ0IQVKWHRdH2zD5dhInk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B7QjtPHT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783459001; c=relaxed/simple;
+	bh=eWYs8ArN3BgCXHvDn3pG5mwVx4+aWWujqeQU5EaY0zw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=kQyme359V2/RQVHyo9C5OSC62FQTc8WDXBfzTQh49/+ymNP8giddqjckaDMIYdr9D2LiE+mGXbOo5GMTNU8yzTgl7enA8QiYGtBaF4uuWAzAKilgsAJ/3ZKg42+vR6GWYWCHW0F3DQlhJ+Le4joMQI9qkyid4OyjKwTAtYRUP/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsS+/lvD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B7QjtPHT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B461F000E9;
-	Tue,  7 Jul 2026 20:33:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783456426;
-	bh=Q1iXExOfsaeotgqpoEZPdnsrpxa5ipbsTkZFMXWtLPc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date;
-	b=B7QjtPHTANQ/D+ZCE14wB8SxQkuTEv21wgFFB0gIZiYJGOqMDFOMgG94r2FEoncSB
-	 iRroQ2HDEuh2RGrlRePBaDxaQhnh/oP/U5/2ceBrQdezbmLkxpmJw5gDCXNMkpR0B6
-	 Gfd9cqZ8JkSrfgZQV6TNy7LpVJUKd/zrma8IzoPdEKp3lZxLjohCJ9ik2u0gsBGRMu
-	 4LXeOab51Eu/20gaPy1JLdP20f1iBZPYhGodN1eOW0mRVwj7v3ihi3w4414uCUXXQ8
-	 6PVEFGqxic8w0nAETziEEtOhoRTcs+nYGertLBXqwx0kOiSlZlh5Kerz94g46wEqzI
-	 cx2LGcU3BOT2g==
-From: Thomas Gleixner <tglx@kernel.org>
-To: Maulik Shah <maulik.shah@oss.qualcomm.com>, Bjorn Andersson
- <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, Bartosz
- Golaszewski <brgl@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, Sneh Mankad
- <sneh.mankad@oss.qualcomm.com>, Maulik Shah
- <maulik.shah@oss.qualcomm.com>, Konrad Dybcio
- <konrad.dybcio@oss.qualcomm.com>, Stephan Gerhold
- <stephan.gerhold@linaro.org>
-Subject: Re: [PATCH v4 0/7] x1e80100: Enable PDC wake GPIOs and deepest idle
- state
-In-Reply-To: <20260707-hamoa_pdc_v3-v4-0-dfd1f4a3ae89@oss.qualcomm.com>
-References: <20260707-hamoa_pdc_v3-v4-0-dfd1f4a3ae89@oss.qualcomm.com>
-Date: Tue, 07 Jul 2026 22:33:44 +0200
-Message-ID: <87qzlesfo7.ffs@fw13>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsS+/lvD"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 01F80C2BCF4;
+	Tue,  7 Jul 2026 21:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1783459001;
+	bh=eWYs8ArN3BgCXHvDn3pG5mwVx4+aWWujqeQU5EaY0zw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=bsS+/lvDqrFPXwn1E5nJqrqV3JECp5wnc4p1VnJlLQooP+DYewjBi+a27R4ckpXtJ
+	 fKLJl6pmvTeZ1FX2SNZ6eGnI+t5GHkIoG6FrAZq2pmXHc+6ZXHv5ffNo/1X2sUdyCq
+	 R8dm6XDnCwouIPVYIDwzbugv413q39MoA6PZQOJfy/GyOGRpEwqnQxmXZts1HNEu/j
+	 m1Tuc2Qt2ZF9Wib63U30C/PRSxxDL5vfjwcxlyvRRQYX137d8bPKxc3AkiFV4az1OY
+	 QjSg6JTpbB6tq8sdCgrLqMErfKTeFN/n7hsIMCoN6qgTFY+bnXBLu8AWc9gGMtNkqb
+	 4Cs/ODI6+FDog==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D74FAC44503;
+	Tue,  7 Jul 2026 21:16:40 +0000 (UTC)
+From: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>
+Date: Wed, 08 Jul 2026 05:16:26 +0800
+Subject: [PATCH RFC v2 2/7] mfd: ls2kbmc: Sanity check for the connected
+ pci port
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260708-ls2kbmc-mod-v2-2-2afdd1741766@gmail.com>
+References: <20260708-ls2kbmc-mod-v2-0-2afdd1741766@gmail.com>
+In-Reply-To: <20260708-ls2kbmc-mod-v2-0-2afdd1741766@gmail.com>
+To: Binbin Zhou <zhoubinbin@loongson.cn>, 
+ Chong Qiao <qiaochong@loongson.cn>, Lee Jones <lee@kernel.org>, 
+ Huacai Chen <chenhuacai@kernel.org>, Corey Minyard <corey@minyard.net>, 
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>, 
+ Yinbo Zhu <zhuyinbo@loongson.cn>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+ mfd@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
+ Miao Wang <shankerwangmiao@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2629;
+ i=shankerwangmiao@gmail.com; s=20250715; h=from:subject:message-id;
+ bh=No2dp/27RmGGcRyar1/5K91t4kgdhfDKTp+IZPk/ZDE=;
+ b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqTWy17cBPz+Jt3b6qtwXjg5eSBXXWxqXQuY4LJ
+ 6XYbBB2UtGJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCak1stQAKCRCwMePKe/7Z
+ brNZEACIOnwoJju5hxO6Gyd5YUIo7dsbTlH5rJx0U69xILYeuI5LRBpZhkFK76pRSe6/LmxXOJt
+ 0Ymq/hrXkIJyJH9YcGIEE7H4IyIbjxvGosDeLtcuy5VEjr/ZESDJnVGgerauhu8U35amzB3Mpuc
+ cRIJ5KkN5n2VsyC3NlfMzPMe2zDAX0u6PLQ6BxMx1bwa+KTG7lU8ZAD5QCr661fNUreQgMy8MF6
+ Pn02dQa1/AXUKxYOvxHMMZ6LJWe3GEFfu5GSdeYDFSGRcuqdfaIRkvUh2YJKSN0n5a3iV4rD4Gc
+ crkPRchHEGpH8M1UeC2L6RoKw4pVk4lbvp3yhvHDN4hoKv0hhXgHbHVESpQ/MpM+Kr5yyoRfLwb
+ OJbDwCzJX1s2H2OaP5lq/VRFunaZhaAaQU6S2j0apo7Bp2u/tckaZ8r24dWMOjQdayOwKpNIdOu
+ RrdLVCw0+vYqOFxrr1W1Q2NI2zQ0N3ndA/IlcQuh+djPUrqVae9KLE4jJfwwn4VM1JcQ1ZuA1Rq
+ XC/Verqd09bFAKjxT35enZ7mVh8AzmuFF2JcsB2xymH+PRLtbMYIaqD3ixYqX+YwGCD1L4pePT1
+ KqRkZTsFlMwXNOEAHDqHkaXVCpiMQ0LHXZu05z157uCfPn4aiEQN5fj5p85JV6wYZx4XTiyZEnM
+ MnySiGC09JgU8Og==
+X-Developer-Key: i=shankerwangmiao@gmail.com; a=openpgp;
+ fpr=6FAEFF06B7D212A774C60BFDFA0D166D6632EF4A
+X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/20250715
+ with auth_id=462
+X-Original-From: Miao Wang <shankerwangmiao@gmail.com>
+Reply-To: shankerwangmiao@gmail.com
 
-On Tue, Jul 07 2026 at 14:51, Maulik Shah wrote:
-> The series has been tested on x1e80100 CRD with both old and new firmware
-> and also on kaanapali. Test conducted with tlmm-test module after
-> applying [3] as test module needed to be fixed first.
->
-> All 17/17 passes in pass through mode and 16/17 passes in secondary mode.
-> Failing test tlmm_test_rising_while_disabled seems to be because when in
-> irq disabled state PDC is not latching the edge interrupt.
+From: Miao Wang <shankerwangmiao@gmail.com>
 
-I've merged the first four patches and tagged them as promised for
-consumption by the GPIO tree:
+When the bmc resets, the recovery procedure require to reconfigure the
+parent device. The driver assumes that the parent device should be LS7A.
+Add a sanity check on initialization to ensure this and prevent from
+accidentally operating on non-LS7A ports.
 
-   git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-chip-qcom-pdc-for-gpio-07-07-26
+Fixes: d952bba3fbb5 ("mfd: ls2kbmc: Add Loongson-2K BMC reset function support")
+Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
+---
+ drivers/mfd/ls2k-bmc-core.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Thanks,
+diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
+index 27f6e096404d67459038a0607378057ec7ef69ab..b02e4955e9b04f517892a18b2ef103b5e481a238 100644
+--- a/drivers/mfd/ls2k-bmc-core.c
++++ b/drivers/mfd/ls2k-bmc-core.c
+@@ -35,6 +35,15 @@
+ #define LS2K_IPMI3_RES_START		(LS2K_IPMI2_RES_START + LS2K_IPMI_RES_SIZE)
+ #define LS2K_IPMI4_RES_START		(LS2K_IPMI3_RES_START + LS2K_IPMI_RES_SIZE)
+ 
++/* LS7A port Device IDs */
++#define DEV_LS7A1K_PCIE_PORT0	0x7a09
++#define DEV_LS7A1K_PCIE_PORT1	0x7a19
++#define DEV_LS7A1K_PCIE_PORT2	0x7a29
++#define DEV_LS7A2K_PCIE_PORT0	0x7a39
++#define DEV_LS7A2K_PCIE_PORT1	0x7a49
++#define DEV_LS7A2K_PCIE_PORT2	0x7a59
++#define DEV_LS7A2K_PCIE_PORT3	0x7a69
++
+ #define LS7A_PCI_CFG_SIZE		0x100
+ 
+ /* LS7A bridge registers */
+@@ -477,6 +486,24 @@ static int ls2k_bmc_parse_mode(struct pci_dev *pdev, struct simplefb_platform_da
+ 	return -EINVAL;
+ }
+ 
++static const struct pci_device_id ls7a_ports[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A1K_PCIE_PORT0) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A1K_PCIE_PORT1) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A1K_PCIE_PORT2) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A2K_PCIE_PORT0) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A2K_PCIE_PORT1) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A2K_PCIE_PORT2) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A2K_PCIE_PORT3) },
++	{ }
++};
++
++static bool ls2k_check_parent(struct pci_dev *dev)
++{
++	struct pci_dev *parent = dev->bus->self;
++
++	return parent && pci_match_id(ls7a_ports, parent) != NULL;
++}
++
+ static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ {
+ 	struct simplefb_platform_data pd;
+@@ -488,6 +515,11 @@ static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	if (ret)
+ 		return ret;
+ 
++	if (!ls2k_check_parent(dev)) {
++		dev_err(&dev->dev, "Expected to be connected to LS7A PCI-E port\n");
++		return -ENODEV;
++	}
++
+ 	ddata = devm_kzalloc(&dev->dev, sizeof(*ddata), GFP_KERNEL);
+ 	if (!ddata)
+ 		return -ENOMEM;
 
-        tglx
-     
+-- 
+2.49.0
+
+
