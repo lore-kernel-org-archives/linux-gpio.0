@@ -1,133 +1,105 @@
-Received: from xry111.site (xry111.site [89.208.246.23])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481B12DC357;
-	Wed,  8 Jul 2026 13:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F027A4CB5B;
+	Wed,  8 Jul 2026 13:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783516509; cv=none; b=Gxl934IaqM1xXvIHVgkNjcdsJufsRph3Hzys9YhFDlXiynO+b3NZnKx5WChd+csW3f7gR+TONTjewFJopEO1YGHtxqOM4MKpm21/CEDQQZ994cTWkFiqlaaAdLzlkswPzRQ/LEqGKLKngayTt2PyFPysUuQyg/CZyiJoLC4Lh5M=
+	t=1783518263; cv=none; b=YxubggQkcZoJoiZdJWCgIf72N46TcpYRyw+cVEpFA2L6j6+TnzYvcM1atjQCah2rzDTfXygf6HfOVwO2hGmUlmybXJpFNELcTmccuqBd13HTEVQCL9fITu/PikMBWlaYMs0WFfNw3eEsA5sEtX/2abQTAFkA83oAabuZCLRSr5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783516509; c=relaxed/simple;
-	bh=sOuqEYYHQDCEuA2C73P3cqgemRRwUb/kvCIKRtAVH7g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CYCjxog1m7/UXFEqpHajDu0BeikdApPjtJ/3LMTjMFUYKzXPuiR2tcGyIfp1tdZ082UuepEGDszoEATFQQzzhm4+v0n2pbG8nkwNs6mIpeXykkwwggb/Hudwd8swCciAWfCMEWnsh+iFwXt/Z5cdFtiILyzRUExXjM1UUqlBJl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=na3hcZ8d; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+	s=arc-20240116; t=1783518263; c=relaxed/simple;
+	bh=BF6Vb9hnwvSdbolPZGWPh9gCFlsO3dx2jY2KJay9g4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EdcgR631xG/6dFTuwtcsVWUpmf5Xtlk6N/UM5tDgBTPH6nvabnJtVViKUmn5ECcoBimReyALRPRt0TDWTWL0RdrllXc7cCo9yUcoEE8Je99Mj0OIqizOPK/U5QWtulvHQKwXphv0vtPsNendXpfs5W3CwrsiPBtGq9qzwVrEUjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sc1Wd/9Z; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="na3hcZ8d"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1783516495;
-	bh=gvNr/i0jNH/uOH958Tf3Nzf7g2z9m+IQXZLfN53ggCU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=na3hcZ8dCq0bLPxytHpH0mSACiCBt6WzKKjL5QYoNZvgk3BMlKTaTjMKkIM2t5dXp
-	 Ca+ZuiX0gK1c7IOgMYxESfShn6u0/gexpatlkf3M5E40C0cpaszUhRbDN5H9JjfurF
-	 EvvjgZKuf1yaGBsC+HZLNWjzgXUEvuPonxlpD7j4=
-Received: from [127.0.0.1] (2607-8700-5500-e873-0000-0000-0000-1001.16clouds.com [IPv6:2607:8700:5500:e873::1001])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 2E95765982;
-	Wed,  8 Jul 2026 09:14:53 -0400 (EDT)
-Message-ID: <5d6ea500e983035a2e5748e1bbf8ed6c26ac6f4b.camel@xry111.site>
-Subject: Re: [PATCH RFC v2 7/7] mfd: ls2kbmc: Capture the reset event of BMC
- through GPIO
-From: Xi Ruoyao <xry111@xry111.site>
-To: shankerwangmiao@gmail.com, Binbin Zhou <zhoubinbin@loongson.cn>, Chong
- Qiao	 <qiaochong@loongson.cn>, Lee Jones <lee@kernel.org>, Huacai Chen	
- <chenhuacai@kernel.org>, Corey Minyard <corey@minyard.net>, Linus Walleij	
- <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
- Jiaxun Yang <jiaxun.yang@flygoat.com>, mfd@lists.linux.dev,
- linux-kernel@vger.kernel.org, 	linux-gpio@vger.kernel.org,
- openipmi-developer@lists.sourceforge.net
-Date: Wed, 08 Jul 2026 21:14:51 +0800
-In-Reply-To: <20260708-ls2kbmc-mod-v2-7-2afdd1741766@gmail.com>
-References: <20260708-ls2kbmc-mod-v2-0-2afdd1741766@gmail.com>
-	 <20260708-ls2kbmc-mod-v2-7-2afdd1741766@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.60.2 
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sc1Wd/9Z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1783518262; x=1815054262;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BF6Vb9hnwvSdbolPZGWPh9gCFlsO3dx2jY2KJay9g4I=;
+  b=Sc1Wd/9ZvrAMUc833ySY9byGEgJ4Y8EEgKcmDk1PeVZb6E5x50REJvA6
+   mdgNAVaJFaRRhB0xuDKBHetbLqPUnZXAJs+flqDlfSCtvDOUAqxpHq7S3
+   fi4YO5LCBceXT7nePrHyz/KK3XdxkgKkArdw2etUVEIdkQzuqNhdTnsgH
+   yIe5HvKfPgYJ0yRc681xn+jspmKHRegFHtSUx960CjskNo+n5fydoGwRA
+   uZ6aZ+Zi3XUcofJkZz8c2YVZxq42k6JVoYpsqw4yPqfX3xZ0BLFDAkGw7
+   WtzVRUgfW607obSnjRctEPuAQluAsTEQzQP8N2X7uyHRoEtkTAjz+eG8V
+   A==;
+X-CSE-ConnectionGUID: wl5Ff1axQZWCrOoIzaHuJQ==
+X-CSE-MsgGUID: eUaoH71LSW6ypai1h9y4ng==
+X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="95336394"
+X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; 
+   d="scan'208";a="95336394"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2026 06:44:21 -0700
+X-CSE-ConnectionGUID: Gx8sd6jtTYa87WSIeMFO5A==
+X-CSE-MsgGUID: DQCjphV1SfCz7AcSJLEtNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,153,1779174000"; 
+   d="scan'208";a="249847324"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.100])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2026 06:44:16 -0700
+Date: Wed, 8 Jul 2026 16:44:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <david@davidgow.net>, Rae Moar <raemoar63@gmail.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-acpi@vger.kernel.org,
+	driver-core@lists.linux.dev, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] gpio: kunit: add test cases verifying swnode
+ devlink support
+Message-ID: <ak5ULrwZfvA4hdsP@ashevche-desk.local>
+References: <20260706-swnode-fw-devlink-v2-0-f39b09d50112@oss.qualcomm.com>
+ <20260706-swnode-fw-devlink-v2-5-f39b09d50112@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260706-swnode-fw-devlink-v2-5-f39b09d50112@oss.qualcomm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, 2026-07-08 at 05:16 +0800, Miao Wang via B4 Relay wrote:
-> From: Miao Wang <shankerwangmiao@gmail.com>
->=20
-> The reset event of BMC is captured through GPIO. However, this driver
-> bypasses the GPIO framework and directly accesses the GPIO controller
-> through the fixed address. When the same GPIO controller is also
-> exposed through ACPI and probed by the corresponding GPIO driver,
-> there would be a conflict between the two drivers.
->=20
-> This patch will try to find the GPIO through declared GPIO pin in the
-> _CRS resources of the ACPI node. If no such delaration is found, the
-> driver will fall back to search for the correct GPIO controller and pin
-> according to the fixed address and pin number. A possible DSDT
-> declaration for the GPIO pin might be as follows:
->=20
-> =C2=A0=C2=A0=C2=A0 Device (BMC0) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Name (_ADR, ...) // Match the =
-PCI address of the BMC device
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 // \_SB.GPO1 is the ACPI path =
-of the GPIO controller
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Name (_CRS, ResourceTemplate (=
-) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 GpioIn=
-t (Edge, ActiveLow, Exclusive, PullNone, 0,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "\\_SB.GPO1", 0) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 14 // 14 is the GPIO pin number
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> =C2=A0=C2=A0=C2=A0 }
+On Mon, Jul 06, 2026 at 02:54:12PM +0200, Bartosz Golaszewski wrote:
+> The software node fw_devlink support already has its own kunit suite, but
+> that verifies the fwnode links in isolation. Add GPIO tests that prove
+> the ordering works in a real-life use-case: a GPIO consumer that
+> references its provider via a software node.
+> 
+> The first suite registers the provider's software node, adds the consumer
+> device first and checks that fw_devlink defers its probe until the
+> provider has been added and bound. The second covers the fallback:
+> with the provider's software node not yet registered no supplier link is
+> created, so the consumer probes, devm_gpiod_get() returns -EPROBE_DEFER
+> and the consumer only binds once the provider shows up.
+> 
+> While at it: the existing gpio_unbind_with_consumers() test keeps the
+> consumer bound while the provider goes away and then operates the orphaned
+> descriptor. With software nodes now being covered by fw_devlink that would
+> instead force-unbind the consumer along with the provider, so opt it out
+> by setting FWNODE_FLAG_LINKS_ADDED.
 
-I think this is a proposal without real implementation yet?  If so...
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-/* snip */
-
-> +	adev =3D to_acpi_device_node(fwnode);
-> +	if (!adev)
-> +		goto out;
-> +
-> +	INIT_LIST_HEAD(&resource_list);
-> +
-> +	ret =3D acpi_dev_get_memory_resources(adev, &resource_list);
-> +	if (ret < 0)
-> +		goto out;
-> +	rentry =3D list_first_entry_or_null(&resource_list, struct resource_ent=
-ry, node);
-> +	if (!rentry)
-> +		goto free_resource_list;
-> +	if (rentry->res->start =3D=3D start_addr)
-> +		found =3D 1;
-> +
-> +free_resource_list:
-> +	acpi_dev_free_resource_list(&resource_list);
-
-... consider adding a _DSD method to label (like "bmc-reset") the GPIO
-for the proposed BMC0 device so you can use devm_gpiod_get to get the
-GPIO, instead of using the hand-brew code to parse the ACPI node.=20
-See=C2=A0https://www.kernel.org/doc/html/latest/firmware-guide/acpi/gpio-pr=
-operties.html.
-
-Combining this with Bartosz's comment, the logic would be like:
-
-  if (missing the ACPI node)
-    assign a swnode to label "gpio14" as "bmc-reset";
-
-  gpio_desc =3D devm_gpiod_get(&dev, "bmc-reset", GPIOD_IN);
-
-And such a proposal will need to be discussed with Loongson.  Yes I know
-people may hate the "control" from the vendor, but having some
-effectively dead code (i.e. supporting some non-exist firmware) in the
-kernel is worse.
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---=20
-Xi Ruoyao <xry111@xry111.site>
