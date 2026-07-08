@@ -1,146 +1,180 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E97338E8A8;
-	Wed,  8 Jul 2026 10:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC9739A05C
+	for <linux-gpio@vger.kernel.org>; Wed,  8 Jul 2026 10:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783505111; cv=none; b=EOctpBw2e+en3fPqvUgtZLMlQ/AO6m9wm7ypHPD0RmWVkfj+s7cBnN38VMYBH48xpS/EcOlyyqaCQNil36HAZbS2pKfB13riDwatI8MpL0YpXoBTF8mS03n28NPNK6WKMt29U59k86iKJq1So0j1oGpa2cBu48N3HVOZO+UiE10=
+	t=1783505751; cv=none; b=FeyxVHSg/idp9AtnEk9cElx/8HjnMuvCztzhk++YBHeK6YTmJuY4AydLmG3VqS3FshpQTnvAJ30Bzpbi3ScHHV9ykKv804iJ5xCR0A4PBNZE6Wh0tLcl+DLW/Z8F8L1CxShMcmd0nouHFq9659z96vCQAQicK7BnLbFaNp2hi40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783505111; c=relaxed/simple;
-	bh=ZO3CPaachQ9of39ED6ljme0Gb2h+6QSksq8qavKxWy4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iOfZ5XUZHmc/W/5imp08mKiIapQfbYpria8tPNFJCEmgBo2H58V3KSrs8dPyYDQ8sN+5w9s7gp49YsaMogJB+ZV9hB9J7dQd3qtkagOJTiSF2Al/QHDEV4FKIVzyp7pes6kL1onY36n56HOysXzZlc7ztL9Bl8Edxosi99ETUZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QhcocFqC; arc=none smtp.client-ip=185.246.85.4
+	s=arc-20240116; t=1783505751; c=relaxed/simple;
+	bh=3mw24PdZ/MnLAdgaavO1HCjV8HURiuVJHNRuMIows9s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VwnaijsEjvTpKh//5sE6aVc20M7NxpLejvfXcwLQazuSgxNJMevzyB74A4DMfMSA1Yf17nWETtV+zXO7kkmxQsLiJIlF8JAq7+9a1ZNPDXMNGaUjvWZNkxtZlyKxbfZIk0bTrA8/LyXy7wM09CNWaxizji2gNMETddBb4sAD+lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jlFd1uYn; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QhcocFqC"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jlFd1uYn"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id F076C4E40CF2;
-	Wed,  8 Jul 2026 10:05:08 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 3270FC8F448;
+	Wed,  8 Jul 2026 10:16:01 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C2AE060337;
-	Wed,  8 Jul 2026 10:05:08 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6FB2A11BC31A3;
-	Wed,  8 Jul 2026 12:05:03 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 47BE760337;
+	Wed,  8 Jul 2026 10:15:47 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EFF6711BC3422;
+	Wed,  8 Jul 2026 12:15:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1783505106; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=HajgvDDuiFnLBfzyeG/8/2SdD3nFHBqBhyDSk8qlAuc=;
-	b=QhcocFqCwf9aMgYOOdLLHbS2EESzmWJYXMtFZGeca7Zw2orGBoBmJg46Hb5XTXiLxbVpJN
-	nVjcHnLSDOZRHZQNUIFYXXCu0O0jdL/86ds7jqHoZHm2iO4c+xkw07Bw0vADdCXU3DhaI7
-	osafN+Qkfp4ZikOAGJAuJcGmuVh/5qFbnF7HojPc/KYaFlgmRoJs0h9biO47dMK7QfUyXx
-	WA5pl3GcqRJ+9dbc7PAY/hyuidfDf+OLIcB/BvREQcXmjiPHZdzMhzfBkANi9UvdwvXEYq
-	tqeyez8fTmM7kHBkWHqoYu1OzqVHd+6tCP8QlXraPib7OOGT+y9ouG4ob5bHkA==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Richard Cheng <icheng@nvidia.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dan Williams <djbw@kernel.org>,
-	Ira Weiny <iweiny@kernel.org>,
-	Li Ming <ming.li@zohomail.com>,
-	Lizhi Hou <lizhi.hou@amd.com>,
-	Herve Codina <herve.codina@bootlin.com>
-Cc: driver-core@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v9 9/9] PCI: of: Remove fwnode_dev_initialized() call for a PCI root bridge node
-Date: Wed,  8 Jul 2026 12:02:59 +0200
-Message-ID: <20260708100302.517792-10-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260708100302.517792-1-herve.codina@bootlin.com>
-References: <20260708100302.517792-1-herve.codina@bootlin.com>
+	t=1783505745; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=vAvPgJKH8E5PMa+rzxmboQbVEpCqkKMOdwuf26Tm0K8=;
+	b=jlFd1uYn2yV2CPBYgVByiNDZQVn+1Kpebd2p4SHFTj/6APevVxQac56sRg/ftHrvki0SEk
+	TPL0Vm8+WFLZJ/9LRiQcWKjwwV8MXGDrrN2uJUQzLeOXI4Sa2niDSKYsa04pTn5CIMUoD0
+	KyFhOHEOcIzvJK+2+p9NigRBDv1pMDuC/O1TZGyKiHWXyHtTD6+tj0tbCHWvdKY1dVXdNA
+	m5yfzIufseA2G4jO+M1T08/49wubZ37ZJtZY8uzqnSqGB1zKoxWCrpuVdxZJfCNcPYZKCc
+	bmOrBuoLbYuI+hGHHB6L8fgLDpLAyMR4uv1TYZg38DPmwPnTS+cHUQ3HBLm3pA==
+From: Paul Louvel <paul.louvel@bootlin.com>
+Subject: [PATCH v2 00/10] soc: fsl: qe: QE PIC improvement and add support
+ of IRQs to QUICC ENGINE GPIOs
+Date: Wed, 08 Jul 2026 12:15:13 +0200
+Message-Id: <20260708-qe-pic-gpios-v2-0-1972044cfbd1@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/23OQQ6CMBAF0KuYrq1pp9BWV97DuKBl0DFKkSLRG
+ O4uxY2iy5/M+3+eLGJLGNlm8WQt9hQp1GOA5YL5Y1EfkFM5ZgYCtMil4lfkDXl+aChELoxCsJm
+ WeaHYSJoWK7pPdbv9O8ebO6HvUke6OFLsQvuY9nqZ7t7VWsyqe8kFr5T1CJUAi9nWhdCdqV75c
+ ElNEzN/mfYKjdAIpvRfLP3Uw+dqNuOQ+LpwKKWtysz9cvXJ8xlXI7cCtZPOlA7UNx+G4QWo3SB
+ mcQEAAA==
+X-Change-ID: 20260513-qe-pic-gpios-073e284615a3
+To: Qiang Zhao <qiang.zhao@nxp.com>, 
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, 
+ Thomas Gleixner <tglx@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, 
+ Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, Paul Louvel <paul.louvel@bootlin.com>, 
+ Herve Codina <herve.codina@bootlin.com>, stable@kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Christophe Leroy <chleroy@kernel.org>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783505738; l=4530;
+ i=paul.louvel@bootlin.com; s=20260313; h=from:subject:message-id;
+ bh=3mw24PdZ/MnLAdgaavO1HCjV8HURiuVJHNRuMIows9s=;
+ b=pdrtt4GhhaY6xcboT+i0fyq42dyNHqHy5xcjYiq0zPAb3adp1yM5GcBdpgFU3U49Vj4rHUtvJ
+ kK9jcVgfRkGDRqsTyU6D3iVuO+6kFpBIrtSULIyzkr4pYqa6fna31Ta
+X-Developer-Key: i=paul.louvel@bootlin.com; a=ed25519;
+ pk=eLW50NT18UAvUT5cAcYf88zNbBCZDLFXuptpyLVhVIU=
 X-Last-TLS-Session-Version: TLSv1.3
 
-During the instantiation of devices described by a device-tree overlay
-applied on a PCI device, devlink displays the following kind of debug
-messages instead of creating the expected links:
-   'Not linking xxxx - might never become dev'
+This series modernizes the QUICC Engine Port Interrupt Controller (QE
+PIC) driver and adds the ability for QE GPIO pins to generate interrupts
+through the QE PIC, completing Christophe Leroy's prior work [1].
 
-Without those expected links, the device removal order cannot be
-correct.
+Christophe's series was partially merged; patches 4, 6 and 7 did not
+make it to mainline.
 
-Those debug traces are printed by fw_devlink_create_devlink(). In our
-use case, they are all printed because the supplier of the link has at
-least one of its ancestor with its fwnode flag FWNODE_FLAG_INITIALIZED
-set.
+The series is organized in three parts:
 
-The culprit ancestor is the PCI root bridge.
+1) Add missing chained_irq_{enter,exit}() calls
 
-The fwnode related to the PCI root bridge is created dynamically by the
-of_pci_make_host_bridge_node() function. During this creation
-fwnode_dev_initialized() is called which set the FWNODE_FLAG_INITIALIZED
-flag.
+   - In a chained handler, the parent controller need to mask and ack
+     the interrupt source.
 
-Calling fwnode_dev_initialized() tells devlink that the device related
-to this node is handled out of the driver core. This is not correct in
-our case. Indeed the device related to this firmware node is handled
-using driver core mechanisms and is fully compliant devlink
-expectations.
+2) DT binding updates
 
-Simply remove the fwnode_dev_initialized() call. With that done, the
-devlink debug messages are no more displayed and links that were missing
-are correctly created.
+   - Update #interrupt-cells from 1 to 2 in the QE PIC binding so
+     consumers can encode the interrupt type (falling-edge or
+     both-edges).
 
-Fixes: 1f340724419e ("PCI: of: Create device tree PCI host bridge node")
-Cc: stable@vger.kernel.org
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+   - Convert the QE GPIO binding from freeform text to DT schema.
+
+   - Extend the QE GPIO binding with an interrupt-map (nexus node) that
+     maps GPIO lines to parent QE PIC interrupts.  This approach was
+     suggested by Rob Herring [2] as an alternative to using compatible
+     strings and driver data to specify which pins support interrupts in
+     a given bank.
+
+3) QE PIC driver refactoring
+
+   - The QE PIC is a perfect fit to use the generic irq framework
+     instead. Perform the necessary changes to the driver to convert it.
+
+   - Minor cleanups.
+
+4) QE GPIO interrupt support
+
+   - Add a to_irq() method to the QE GPIO driver that perform the
+     mapping of the GPIO pin to the parent interrupt domain, allowing
+     GPIO pins to be used as interrupt sources through the QE PIC via
+     gpio_to_irq().
+
+[1] https://lore.kernel.org/all/cover.1758212309.git.christophe.leroy@csgroup.eu/
+[2] https://lore.kernel.org/all/20250919152414.GB852815-robh@kernel.org/
+
+Signed-off-by: Paul Louvel <paul.louvel@bootlin.com>
+
 ---
- drivers/pci/of.c | 1 -
- 1 file changed, 1 deletion(-)
+Changes in v2:
+- Applied Christophe two patches before this series [3] [4].
+- Fix a miscalculation in patch 6 when iterating over bits set in
+  CEPIER. Old ffs() is 1-indexed, but for_each_set_bit() is 0-indexed.
+- Add in patch 3 commit message more info about the changes introduced
+  by the conversion to DT schema.
+- In patch 4, keep the existing example without any IRQ supports, and
+  add only one new example. Also fix the DTS coding style that was wrong.
+- Add raw spinlock guard to mask and unmasking hook since multiple CPUs
+  can modify different IRQs concurrently. Also add it to set_type hook.
+- Drop usage of register offset in irq_chip_type. It requires additional
+  load instruction with no real benefit since irq_gc_* functions are not
+  used.
+- A race condition can occurs if an interrupt fires immediately after
+  the domain is initialised, because gc is NULL.
+  Instead, do not carry gc in the struct qepic_data. Add the domain in
+  the handler data, and retrieve gc with irq_data_get_irq_chip_data() in
+  hook functions.
+  Because of this modification, patch 10 and 11 are dropped.
+- Link to v1: https://patch.msgid.link/20260703-qe-pic-gpios-v1-0-6c3e706e27dc@bootlin.com
 
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index ca83006b7c7e..cb2470ca592f 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -813,7 +813,6 @@ void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
- 	 */
- 	of_node_set_flag(np, OF_POPULATED);
- 	fw_devlink_set_device(&np->fwnode, &bridge->dev);
--	fwnode_dev_initialized(&np->fwnode, true);
- 
- 	ret = of_changeset_apply(cset);
- 	if (ret)
--- 
-2.54.0
+[3] https://lore.kernel.org/all/b08f76c1d8ff864774246f1e2c2158c223c001be.1783435914.git.chleroy@kernel.org/
+[4] https://lore.kernel.org/all/cd46aec4b325745d38ac7992e4d3d5b4f4c4e95f.1783435914.git.chleroy@kernel.org/
+
+---
+Christophe Leroy (1):
+      dt-bindings: soc: fsl: qe: Convert QE GPIO to DT schema
+
+Paul Louvel (9):
+      soc: fsl: qe: Add chained_irq_{enter,exit}() calls in cascade handler
+      dt-bindings: soc: fsl: qe: Set #interrupt-cells to 2 to support interrupt type encoding
+      dt-bindings: soc: fsl: qe: Add support of IRQ in QE GPIO
+      soc: fsl: qe: Use generic_handle_domain_irq()
+      soc: fsl: qe: Iterate over all pending interrupts in cascade handler
+      soc: fsl: qe: Handle spurious interrupts
+      soc: fsl: qe: Convert to generic IRQ chip
+      soc: fsl: qe: Rename irq variable to parent_irq
+      soc: fsl: qe: Add support of IRQs in QE GPIO
+
+ .../bindings/gpio/fsl,mpc8323-qe-pario-bank.yaml   |  84 ++++++++++++
+ .../interrupt-controller/fsl,qe-ports-ic.yaml      |   4 +-
+ .../bindings/soc/fsl/cpm_qe/qe/par_io.txt          |  26 +---
+ drivers/soc/fsl/qe/Kconfig                         |   1 +
+ drivers/soc/fsl/qe/gpio.c                          |  28 +++-
+ drivers/soc/fsl/qe/qe_ports_ic.c                   | 145 +++++++++++++--------
+ 6 files changed, 208 insertions(+), 80 deletions(-)
+---
+base-commit: c34b47a17bc566c7113679e6ae095d5510b4f1c6
+change-id: 20260513-qe-pic-gpios-073e284615a3
+
+Best regards,
+--  
+Paul Louvel, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
