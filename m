@@ -1,143 +1,100 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A6D430CC7;
-	Wed,  8 Jul 2026 11:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B0C425CCB
+	for <linux-gpio@vger.kernel.org>; Wed,  8 Jul 2026 11:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783511397; cv=none; b=bWBajN6VkNr69j0ofWbqDzKEFdoBV6pQ4bQImX5ZTwz2t7angmqfeCtaKc42bEFpc/na0C7sIUYrGVQxJC5utYERO/1smUhCCTihGBEtOaGNH8ckriY11FNoVSTa0EEkhj8CVTLu5TheIUpSi0coSK1VJfAmxck4EehIGCOHKLY=
+	t=1783511607; cv=none; b=QoMR6trhJSrJoSD2KlywRfLB3dTELQu+DezpARuG1+9CMUBtpgXu2NGEO64vvoGmTXFY+rddQ8Rh20RABPwRuhAlNQk5UJqCNj0Nt7TAzDgYiK5rkUcLvhidZsq3BfF2ifq1qNlM1WPY6koSHWYHGeWdfJS2OnwWtT2rGKLxxs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783511397; c=relaxed/simple;
-	bh=wWCRXggrWDmsE9IrP7JqCRf7lnxFLWS+E1KEYhyF2sI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pC9se/wDv+ywQwFthPYm6Raa5DDZe+80gFrRurqJefZxazT+SCMxkKv61trhe2tSlWgYaYql/imAcejeDQ5H8oRF8/Tx6quY2UWRmpuWGABLth3YRtxOs7rUU9PC1BbHzMQuIMAtN7+jNCnAkmL/7dTtzJ4SMC80BUab+MJFnPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aI1hxgBA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+	s=arc-20240116; t=1783511607; c=relaxed/simple;
+	bh=NS08+CH1NF3r1i+ndhWxKlqPkO4E3pMhpftFbmd5FhA=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GTMkJjZp9nRwFNYy8xEG1WiIB+Iv03Ut9uWpPwAFYcHG+hPUlwglNBzmkmwlSYZDTxtU9+h3BTB813YOoBkuFwKXsAXhLTKn2YFzI69T42U/QXetM/A0hPoDrqH1aCl1x2sHgNIYYYvuiPKxmAE3deZiomTBeFj3Auafr+ppuh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/jeC5Wf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aI1hxgBA"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 668BSoYb2675542;
-	Wed, 8 Jul 2026 11:49:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=/eNY1lIHK8r
-	6SkSI0Z+/2I2QhlwGeS+jfnPk+LwhKY0=; b=aI1hxgBAOVCw+w06G3K1CHd1Xwi
-	uW0eAB9JmUbybOyGtlpMKyBBaw3tjldHIf+qZ7eSEOHKBo7nesPSoM0P090Nj/WF
-	m0Wc4tkUpT3SetBRd0c9+3iM6yX05dH7bR1UOv/fOQGPLulqiQHhS/C9ZzIyt2y4
-	2RX5T006cQ2i3iyky8efQ1icowvIgXPfnuzdaUwZSp332wV6N2hdrK13tdkv9hSs
-	DZvJz9rH/D4itYi4XCLGPXFsZty3jxqhXNHPH2MkXrtfDpN9xTW9/kF+J80JD40y
-	sgwG/V/q774PROuHBOxmu+o46DWDKwxPYE64QRtivWodNivAMlHTURyFUPg==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f9g7hhfs1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Jul 2026 11:49:31 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.7/8.18.1.7) with ESMTP id 668BnRG1026287;
-	Wed, 8 Jul 2026 11:49:27 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4f6u8k3yj7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Jul 2026 11:49:27 +0000 (GMT)
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 668BnRDE026259;
-	Wed, 8 Jul 2026 11:49:27 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.147.245.204])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 668BnRPx026252
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Jul 2026 11:49:27 +0000 (GMT)
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3914174)
-	id 423723D8; Wed,  8 Jul 2026 17:19:26 +0530 (+0530)
-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sound@vger.kernel.org
-Subject: [PATCH v1 1/4] ASoC: dt-bindings: qcom: add LPASS LPR vote clock ID
-Date: Wed,  8 Jul 2026 17:19:21 +0530
-Message-Id: <20260708114924.1069239-2-prasad.kumpatla@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260708114924.1069239-1-prasad.kumpatla@oss.qualcomm.com>
-References: <20260708114924.1069239-1-prasad.kumpatla@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/jeC5Wf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFBAE1F000E9
+	for <linux-gpio@vger.kernel.org>; Wed,  8 Jul 2026 11:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783511606;
+	bh=EEjeSWVLmYigGFTt5vdFVp2s74c9GXtFU/ulAsDbzAI=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=R/jeC5WfgOjoamcbelehgI66GH+wI+mHS4qvvkrPeGRNn6PLLx9jdGMGd9YfNWwTU
+	 rjTkAfQkO3rHP7/NeuRDQa9BQFjJtFpluTzbNjIvEOCEVNrid45ftIwLtvT94LlF6e
+	 dzHIRcLrZxiY5m7YNXmzEqotAxjgvBWrOCtmXhIDnQKQS0xjzVhUwnGZEHfQuP5cZb
+	 9bjrv3nBVQAtYKr7VJUMSrKM/khI3C8eAPyL2Cr82NtMX4UMCx1eWWDGeSeR9UxpHd
+	 6+t2o3jje+qX3AD1P5SNu/pnEhaA+O/GGpi0tDJR3qkx2Kn4LPwT18GfUgDDG7YJWw
+	 RAve7Sp/Up0kw==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5b00d083818so1003582e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 08 Jul 2026 04:53:25 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yx6ZdXQIZhfVo/REKhTFWtb8CY8BPofi2D73mVmhjQGRV3YTNDE
+	CD1iS6pbJ3iGeZAQxKaFKG8FnDyZgbHqx4ESEUdFfYyJPP0/DoZIYvnMIkyXZ+WSNDeUeBUwCYw
+	g2PTU811KE/f4OnjYvu4nBmVVnt9jzsqqPk/Sgq3fuA==
+X-Received: by 2002:a05:6512:3e0d:b0:5ae:d72d:1000 with SMTP id
+ 2adb3069b0e04-5b00ac66f9cmr1414467e87.1.1783511604715; Wed, 08 Jul 2026
+ 04:53:24 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 8 Jul 2026 04:53:22 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 8 Jul 2026 04:53:22 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260707160030.385137-1-dbgh9129@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA4MDExNSBTYWx0ZWRfX8XVNwwTVUqwm
- 1IGrd9nQZZMc4Vw79bJDVWlnf3Ff9nVqreUU2Obi29BqfxTQlDjmj8/FIlul9CdN/XSfZYFOZep
- xlialxyPMqhN9DQhynzLVGPd8gQRuiSq15OvnA35z2StNBtBNtrleGfa4UKi8n5W03HTLhqbFXF
- /6E70t2MuBFxIatXRFvD6X4nCvLXzLNGPNmlfhnfqXwvQ+JKfvn39juIzt8ghOKQPQGnThgP3TX
- sFJnCy/mHv+wRWL5btlUVbmCmbYxpdwL9otctIt2SbCqt9z7Ziwt98aRFTS3uOd447ijJLttZWJ
- odF30U00m6k7aJ30R2gn0+TDGBwD7+1fUziB4XNaETTs1fj11AroYdM/kVdIJh567IiucanUc+J
- VqpVy4DVsODlzJnylZ3DZLhO5oKsBOGmvmKUMyNAxROX1wwfM1Xwg0kkoINcq0Nm8T67HMN5tz0
- ATuzDXo5V8WxafOGcbQ==
-X-Proofpoint-GUID: p6Fp0iCX8TBFhAu2_m0nVhKaQKsrPwwd
-X-Authority-Analysis: v=2.4 cv=TMp1jVla c=1 sm=1 tr=0 ts=6a4e394b cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=RAioF0-LDSMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=yOCtJkima9RkubShWh1s:22 a=EUspDBNiAAAA:8 a=LqfxHgX1jWeFuUILl3YA:9
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA4MDExNSBTYWx0ZWRfX9sor8ggwrMjE
- MFeMVA0narA/tD2kuuTbita+83P6Iw8TAIqLjTp4EAcwN32SIKiY9DDDzIIRHe2tMU7CmpQXRQ9
- 6cvcDs2b+maje4IanzbnxbtEIz7XXkc=
-X-Proofpoint-ORIG-GUID: p6Fp0iCX8TBFhAu2_m0nVhKaQKsrPwwd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-08_01,2026-07-08_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 suspectscore=0 adultscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 phishscore=0 spamscore=0
- clxscore=1011 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2607080115
+References: <20260707160030.385137-1-dbgh9129@gmail.com>
+Date: Wed, 8 Jul 2026 04:53:22 -0700
+X-Gmail-Original-Message-ID: <CAMRc=Me4Pg=TA2BPPVQSoPCwZff2s6MFNAyDWW6zXr_tXZekNQ@mail.gmail.com>
+X-Gm-Features: AVVi8CdtEMhhNshsurz9MieMyDYCMN2kM4GUVh2AFzoXcqC2spLG_bf_Dj5F3S4
+Message-ID: <CAMRc=Me4Pg=TA2BPPVQSoPCwZff2s6MFNAyDWW6zXr_tXZekNQ@mail.gmail.com>
+Subject: Re: [PATCH v1] gpio: mvebu: Fix optional clock enable handling
+To: Yuho Choi <dbgh9129@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Add a new clock ID, LPASS_HW_LPR_VOTE, to represent the LPASS low-power
-resource (LPR) vote through the PRM interface.
+On Tue, 7 Jul 2026 18:00:30 +0200, Yuho Choi <dbgh9129@gmail.com> said:
+> mvebu_gpio_probe() ignores clk_prepare_enable() failures and has no
+> matching disable path for later probe failures.
+>
+> Use devm_clk_get_optional_enabled() so clock lookup and enable failures
+> are reported, and so devres disables the clock on cleanup. Reject PWM
+> setup when the optional clock is absent.
+>
 
-The LPASS PRM supports a resource voting mechanism to control low-power
-states via PARAM_ID_RSC_CPU_LPR. Exposing this as a q6prm clock ID allows
-clients to request the LPR vote using the existing qcom,q6prm clock
-provider interface.
+That last sentance is not clear. Which code changes "reject PWM setup" exactly?
 
-This functionality is required on newer platforms (e.g. Hawi) where LPASS
-clients need to explicitly manage LPR resource voting via PRM.
+Bart
 
-Also update Q6AFE_MAX_CLK_ID to account for the newly added clock ID.
-
-Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
----
- include/dt-bindings/sound/qcom,q6dsp-lpass-ports.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/include/dt-bindings/sound/qcom,q6dsp-lpass-ports.h b/include/dt-bindings/sound/qcom,q6dsp-lpass-ports.h
-index 45850f2d4..06ca2c287 100644
---- a/include/dt-bindings/sound/qcom,q6dsp-lpass-ports.h
-+++ b/include/dt-bindings/sound/qcom,q6dsp-lpass-ports.h
-@@ -236,8 +236,9 @@
- #define LPASS_HW_AVTIMER_VOTE		101
- #define LPASS_HW_MACRO_VOTE		102
- #define LPASS_HW_DCODEC_VOTE		103
-+#define LPASS_HW_LPR_VOTE		104
- 
--#define Q6AFE_MAX_CLK_ID			104
-+#define Q6AFE_MAX_CLK_ID			105
- 
- #define LPASS_CLK_ATTRIBUTE_INVALID		0x0
- #define LPASS_CLK_ATTRIBUTE_COUPLE_NO		0x1
--- 
-2.34.1
-
+> Fixes: de88747f514a ("gpio: mvebu: Add clk support to prevent lockup")
+> Signed-off-by: Yuho Choi <dbgh9129@gmail.com>
+> ---
+>  drivers/gpio/gpio-mvebu.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+> index c030d1f00abc..c63cdaa78ac1 100644
+> --- a/drivers/gpio/gpio-mvebu.c
+> +++ b/drivers/gpio/gpio-mvebu.c
+> @@ -1152,10 +1152,10 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
+>  		return id;
+>  	}
+>
+> -	mvchip->clk = devm_clk_get(&pdev->dev, NULL);
+> +	mvchip->clk = devm_clk_get_optional_enabled(&pdev->dev, NULL);
+>  	/* Not all SoCs require a clock.*/
+> -	if (!IS_ERR(mvchip->clk))
+> -		clk_prepare_enable(mvchip->clk);
+> +	if (IS_ERR(mvchip->clk))
+> +		return PTR_ERR(mvchip->clk);
+>
+>  	mvchip->soc_variant = soc_variant;
+>  	mvchip->chip.label = dev_name(&pdev->dev);
+> --
+> 2.43.0
+>
+>
