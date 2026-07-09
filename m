@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861B9397338;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862E742669E;
 	Thu,  9 Jul 2026 17:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783617885; cv=none; b=okbIQGQ8m359bc5YUQTD9PCbcakglPyQcZ8PCJcDdt04V+hjfPXaMEoeTrh/HdC5yrp7hHuFH1Of2NyPJySKUtMd/BUK8PfkcF2IuPGZIRTHB1jHybmwnA21BkT9IXJLSfSZAYApvroRX1HR+LNK9DVy7MaVSG8yQKe6E5twFJQ=
+	t=1783617885; cv=none; b=P+CVdPVDxd5qb08ZN1QkeEoWb6wjgISuMnwpObY25wkVWyVPzb/8iBphn4pXljPeJYawwq4+QLgPxcxNmHzzzLe31/HaqAOgpDwVgQ+d2Ztg2eLdHGC6wBC3NYZyBnq3tKfB+198PACuyXF1HAckHfyKiWXggrkLkpwRgcBrYd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1783617885; c=relaxed/simple;
-	bh=sukWlxC8McdyMqbXOPPFAxKItWB1p7RLYeJjYFSvLwg=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=euI2mQ20sP8YL8/umtuTIuX5z9uJJPTY5svwmCm00Y2qxyMuYt1a7qCM2KXYjAAB0UxSBY0JeKUpetHMfZAmeqyQIb2J8WU2HCD0IUBwDqC6ntt+osRqTYJ8/JiG2DndNpTwmYvP4F9eI5oIGmlHaNcwnaaiyePnCGBV2VCPyFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=figBezG3; arc=none smtp.client-ip=10.30.226.201
+	bh=eWYs8ArN3BgCXHvDn3pG5mwVx4+aWWujqeQU5EaY0zw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=odiKqPXenjjAKPQ91E2Bm91DiaqHpTwNGjminWUg5vMVybEv7TPotWuaoNjZr34qujhjiMN0x8BJbucSmPL8woWhzJJntuYcTZcyX2a/+NdSw7rMhRic1Tew9vkLtMIsvRpsEx/i8WD/F8dEFspKgvY41jDkhaH68+6bwB/E2os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aD90MvHz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="figBezG3"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 162D9C2BCB7;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aD90MvHz"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2B45FC2BCC7;
 	Thu,  9 Jul 2026 17:24:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1783617885;
-	bh=sukWlxC8McdyMqbXOPPFAxKItWB1p7RLYeJjYFSvLwg=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=figBezG3wTtQim8kE3xdouyCCbLtWVze1YMIW4FmvLhHUTG8N0UnLHD+fN/UrYlqc
-	 gRjgClNiDjeB7Y9ZqcM/mvpwGF5XuGBQMdbziag2oBCf8fM/yL6i4/8hcWL1oUOGt/
-	 roIFmKL6dPEyUK+i9amP/S3X+rOlaE3xehoICqcU5mQ/oL1OAwwMaiC7oDrCA3RtdD
-	 klrEEerttAe6vdoer9fEHeXFyLTdCgMrxvfIEted9WOK1WvwN+1rGj9cjv7VV/PR2M
-	 JR4po7ZRnsJfi1z7Qg7L24uh+tPP0F+WsdhFkrcneV6NGjRE4Xzqa/3m3gi7GYrxLl
-	 XYozHlJsfyGrg==
+	bh=eWYs8ArN3BgCXHvDn3pG5mwVx4+aWWujqeQU5EaY0zw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=aD90MvHzlD5EO/xnd6Q3UAtoNGa/5EO8BwE9/eJ0FNCTsM0DWDtr8hLjm8rTdbdTG
+	 /qesht+/CDazCTsnCUrIM6Hly3ytMdPFMqbNFzqrbsvjGfoEQdmDTCeIaYAbiyUECE
+	 SAVVgKccudTIKvdZA/+H+mjWWTV68cIxsGmIQ+wx2Q0jZRM2iUXSYh9jfaF9XqRZIA
+	 Ht0e8R90pXou2Pqdt0ZcpxZA7eKS0QcTe6jJjm7571KLyCDGzDt98UnCvWFC8pImD5
+	 7Q0C52GIRT/lu2muG0LXWEx/S7amUh8ri8hsSa310ISsmiWdnO1Pq3B9cMD4wcHlUX
+	 z7HobgKkSUC9w==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AA7C43458;
-	Thu,  9 Jul 2026 17:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC60C44507;
+	Thu,  9 Jul 2026 17:24:45 +0000 (UTC)
 From: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>
-Subject: [PATCH RFC v3 0/7] mfd: ls2kbmc: multiple fixes for this driver
-Date: Fri, 10 Jul 2026 01:24:16 +0800
-Message-Id: <20260710-ls2kbmc-mod-v3-0-ef718636e78e@gmail.com>
+Date: Fri, 10 Jul 2026 01:24:18 +0800
+Subject: [PATCH RFC v3 2/7] mfd: ls2kbmc: Sanity check for the connected
+ pci port
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,11 +41,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEDZT2oC/32NywrCMBREf0Xu2khy06bWlSD4AW7FRZpHG2waS
- aQopf9uyEo3LmeGc2aBZKIzCQ6bBaKZXXJhyoFvN6AGOfWGOJ0zIEVBBQoyJrx3XhEfNKmRtqz
- llLYdQiYe0Vj3KrYrXM4nuOVycOkZ4rs8zKxMRdbQ/Y9sZoQSxauqs7U2VvJj76Ubdyr44pnxD
- 4uZRWm1Zk3FGiG+2XVdPzlMtBnnAAAA
-X-Change-ID: 20260626-ls2kbmc-mod-5209193009b2
+Message-Id: <20260710-ls2kbmc-mod-v3-2-ef718636e78e@gmail.com>
+References: <20260710-ls2kbmc-mod-v3-0-ef718636e78e@gmail.com>
+In-Reply-To: <20260710-ls2kbmc-mod-v3-0-ef718636e78e@gmail.com>
 To: Binbin Zhou <zhoubinbin@loongson.cn>, 
  Chong Qiao <qiaochong@loongson.cn>, Lee Jones <lee@kernel.org>, 
  Huacai Chen <chenhuacai@kernel.org>, Corey Minyard <corey@minyard.net>, 
@@ -55,21 +54,21 @@ Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
  linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
  Miao Wang <shankerwangmiao@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3331;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2629;
  i=shankerwangmiao@gmail.com; s=20250715; h=from:subject:message-id;
- bh=sukWlxC8McdyMqbXOPPFAxKItWB1p7RLYeJjYFSvLwg=;
- b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqT9lKe2UhEAclLxvizAebe3Mw+jE5JzpCIBFl1
- do84oJt6RmJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCak/ZSgAKCRCwMePKe/7Z
- boFoD/4zNd1tNOwcPbcH8RsMUhxL3Z/D3tQHNXN8Vh/sMxjtT8QVk1W9incgMg0CxrFUW9q09XQ
- lzHakKOaZQ0vKGFcfiU3zKYl1WBTNkSTvKiyrpIa0bFUYAx5T2QcngzDxvLUR0pbMCw0SIdcPEp
- dy4ws/UYwgiFLca3LsybyE8wOcEDPARul3qPQrwWZEGapgw+FQbsU2o6tXN9lb9+9egv+6KMjxO
- 2RnOp7av1CLIyONHVBEs7cxxw5DzO/suYSZ5Uu0adPiIRsNA7t5pH9A4EvniLC7+VMzMMdS8bcX
- 96wSMZOdZIInmBop0j4sV8SVW27Q0vfpULsBiB5NTVG2ROiG8AjdV9aIcS5kiVJVD3OynUpigTe
- dixWQU8RaCwd43mqkjvqILJpMTkp8UwJoaERKiWcPcmt4OeNj8Om1yb/7Sr+AC4Bvomz8rvMhzh
- XLuTmtCmmLPzxxITNU4hDKaBCWbgmUd06rQovgmqq5PrgeeA8vaGd//4c2kUhyj2WZtHEHSQt2s
- 0UZaCIwTduI0cWKXH+wJ5m0vCqVMaPQFR9taDkLW9lqkFehFOytNLqSCKTIvo9yevBpy7UBJSkz
- /5/AxUOebWjB2ab8LGq3LabHltqwwa/mRVHbHeXBLUonpdd/G86EBFWBk5isoi1rciOOf6EdfOB
- aIHX8caxYgUcSbA==
+ bh=No2dp/27RmGGcRyar1/5K91t4kgdhfDKTp+IZPk/ZDE=;
+ b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqT9laGySTMXTc/aNOkcP0IjD5esHoWaEKeulK1
+ wyDFgjfDBuJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCak/ZWgAKCRCwMePKe/7Z
+ bhPfEAC90IBdBEXUf5ZguyzkKCCqDLOArEwqV3O5M4k95REjlpjQOq78RxHpJ6SJ+gJ9efVchD4
+ ghyiqvxFHvV4oEMOCURxC/o54Ufz2UoyWiPmCphv70227bBTW98rD3M5KGbVwm5CWjE291yWO1/
+ 4STettJ3v7q+ZRnQYjTXJYngPYs87FH5GnV1sWQmn8f7OBEf/bKR7Mrbuw0m1twcTsJMIMaK6ZL
+ m+tHD99mW7dvuRzk1dUhrWohpcaXJfQMlL/t2TWxPlYll8mN3OxwBCvXrQvHEzX+xf3zR7oZK2i
+ g4jcZOAmSpzL7rIwQQXivx6WEBjcdmdTPU8bVrPXHP+GkDVOyRDcR7yhfwhqAjeeYYx/TxJ7skp
+ mRxObv0t5pjiCosMNljOCdXvfUeQl+T2YTCwx9RhtxhXkUYYs8CyJy+hSimPaJjLHULJ8HgbWe2
+ 3oTdpcUS5n6ueFRXjXmtRgCHy2jcROMfnXFD1oMedrmK3cvFfxgKPd1FMcrcXIULESC5Q/2IBNi
+ VdwShz13M6UHA3YZeuQeopnnfxgmjVLAWjmCvALAHXzugWn0J/7kBc+N99FfHQFe7myxs+7lnqi
+ av13nM5A1BtJN61JN2PBRotYPpixBD7n3DQAD6JYErAOQt91T+WMFik70EeWQ/63g5rZ8ne+Gfl
+ eErAxLMkMaSaWpQ==
 X-Developer-Key: i=shankerwangmiao@gmail.com; a=openpgp;
  fpr=6FAEFF06B7D212A774C60BFDFA0D166D6632EF4A
 X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/20250715
@@ -77,77 +76,78 @@ X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/20250715
 X-Original-From: Miao Wang <shankerwangmiao@gmail.com>
 Reply-To: shankerwangmiao@gmail.com
 
-Previously, the driver has been introduced to support the Loongson 2K
-BMC running on the Loongson Servers, which is essential to prevent
-the system from hanging when the BMC is being reset and the default
-efi-framebuffer is being used. However, there are some drawbacks in the
-driver.
+From: Miao Wang <shankerwangmiao@gmail.com>
 
-Firstly, the driver tries to read and write to the connected PCI-E host
-controller registers, assuming that the BMC is connected to LS7A PCI-E
-host controller. This assumption should be true for real products, but
-to prevent from accidentally reading and writing to the wrong PCI-E host
-controller, this driver should be modified to check this before
-accessing the registers.
+When the bmc resets, the recovery procedure require to reconfigure the
+parent device. The driver assumes that the parent device should be LS7A.
+Add a sanity check on initialization to ensure this and prevent from
+accidentally operating on non-LS7A ports.
 
-Secondly, the driver uses non-exported functions to tell the vt
-subsystem to redraw the screen, preventing the driver from being
-compiling as a module. This can be fixed by using the exported
-functions instead.
-
-Thirdly, the driver directly accesses the GPIO controller registers
-using hard-coded addresses, which might conflict with the loaded GPIO
-controller driver for the same GPIO controller. This is fixed in this
-series by using the GPIO subsystem APIs instead. However, legacy GPIO
-APIs have to be used in this fixed to correctly request a GPIO
-descriptor from the GPIO subsystem, which might be further discussed
-to find a better solution.
-
-Finally, there is a minor issue in the driver where it changes the
-mode string describing the screen resolution during probing, which
-prevents the device from being probed again if -EPROBE_DEFER is
-returned by the probe function.
-
-I have tested the changes in this series on a single-socket Loongson
-3C6000 server with a Loongson 2K BMC, and the driver works as expected
-when the corresponding GPIO driver is additionally loaded.
-
+Fixes: d952bba3fbb5 ("mfd: ls2kbmc: Add Loongson-2K BMC reset function support")
 Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
 ---
-Changes in v3:
-- Check the return value of devm_add_action_or_reset when registering
-  the cleanup hook of the work queue
-- Use swnode to create the link between the device to the GPIO chip,
-  and prevent borrowing the legacy GPIO APIs
-- Link to v2: https://lore.kernel.org/r/20260708-ls2kbmc-mod-v2-0-2afdd1741766@gmail.com
+ drivers/mfd/ls2k-bmc-core.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Changes in v2:
-- Several fixes suggested by the Sashiko AI review bot
-- Add a cleanup function for the wq on removal of the device
-- Relax the reverse dependency from CONFIG_IPMI_LS2K to
-  CONFIG_MFD_LS2K_BMC_CORE to allow the driver to be built as a module
-- Link to v1: https://lore.kernel.org/r/20260708-ls2kbmc-mod-v1-0-c344bf5defa3@gmail.com
+diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
+index 27f6e096404d67459038a0607378057ec7ef69ab..b02e4955e9b04f517892a18b2ef103b5e481a238 100644
+--- a/drivers/mfd/ls2k-bmc-core.c
++++ b/drivers/mfd/ls2k-bmc-core.c
+@@ -35,6 +35,15 @@
+ #define LS2K_IPMI3_RES_START		(LS2K_IPMI2_RES_START + LS2K_IPMI_RES_SIZE)
+ #define LS2K_IPMI4_RES_START		(LS2K_IPMI3_RES_START + LS2K_IPMI_RES_SIZE)
+ 
++/* LS7A port Device IDs */
++#define DEV_LS7A1K_PCIE_PORT0	0x7a09
++#define DEV_LS7A1K_PCIE_PORT1	0x7a19
++#define DEV_LS7A1K_PCIE_PORT2	0x7a29
++#define DEV_LS7A2K_PCIE_PORT0	0x7a39
++#define DEV_LS7A2K_PCIE_PORT1	0x7a49
++#define DEV_LS7A2K_PCIE_PORT2	0x7a59
++#define DEV_LS7A2K_PCIE_PORT3	0x7a69
++
+ #define LS7A_PCI_CFG_SIZE		0x100
+ 
+ /* LS7A bridge registers */
+@@ -477,6 +486,24 @@ static int ls2k_bmc_parse_mode(struct pci_dev *pdev, struct simplefb_platform_da
+ 	return -EINVAL;
+ }
+ 
++static const struct pci_device_id ls7a_ports[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A1K_PCIE_PORT0) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A1K_PCIE_PORT1) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A1K_PCIE_PORT2) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A2K_PCIE_PORT0) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A2K_PCIE_PORT1) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A2K_PCIE_PORT2) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A2K_PCIE_PORT3) },
++	{ }
++};
++
++static bool ls2k_check_parent(struct pci_dev *dev)
++{
++	struct pci_dev *parent = dev->bus->self;
++
++	return parent && pci_match_id(ls7a_ports, parent) != NULL;
++}
++
+ static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ {
+ 	struct simplefb_platform_data pd;
+@@ -488,6 +515,11 @@ static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	if (ret)
+ 		return ret;
+ 
++	if (!ls2k_check_parent(dev)) {
++		dev_err(&dev->dev, "Expected to be connected to LS7A PCI-E port\n");
++		return -ENODEV;
++	}
++
+ 	ddata = devm_kzalloc(&dev->dev, sizeof(*ddata), GFP_KERNEL);
+ 	if (!ddata)
+ 		return -ENOMEM;
 
----
-Miao Wang (7):
-      mfd: ls2kbmc: Make a copy when parsing mode string
-      mfd: ls2kbmc: Sanity check for the connected pci port
-      mfd: ls2kbmc: Redraw using exported functions
-      mfd: ls2kbmc: Cancel the work queue on removal
-      ipmi: ls2k: Relax the dependency to its mfd driver
-      mfd: ls2kbmc: Able to be compiled as a module
-      mfd: ls2kbmc: Capture the reset event of BMC through GPIO
-
- drivers/char/ipmi/Kconfig   |   2 +-
- drivers/mfd/Kconfig         |   2 +-
- drivers/mfd/ls2k-bmc-core.c | 235 ++++++++++++++++++++++++++++++++++----------
- 3 files changed, 184 insertions(+), 55 deletions(-)
----
-base-commit: 0e35b9b6ec0ffcc5e23cbdec09f5c622ad532b53
-change-id: 20260626-ls2kbmc-mod-5209193009b2
-
-Best regards,
 -- 
-Miao Wang <shankerwangmiao@gmail.com>
+2.49.0
 
 
