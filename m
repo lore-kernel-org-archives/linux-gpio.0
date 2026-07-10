@@ -1,114 +1,136 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1263A543A
-	for <linux-gpio@vger.kernel.org>; Fri, 10 Jul 2026 09:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300843FAE0C
+	for <linux-gpio@vger.kernel.org>; Fri, 10 Jul 2026 09:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783674670; cv=none; b=rOoGM/95PcH4FuDPaD/Yacd+/+GUrg0RcoOMw7scCkuOiouPZpqmFrNK5cj+3FPp0MhcwICkCuR/m8pTbRSquf0tbA4oxj6Y9Ij6NNH5GC2fUkLkix2/LJCJWwjGf8Tq51IEM8H6SXjhFPjcWh814s6sI7C0SY2eKts313k7dG8=
+	t=1783677371; cv=none; b=CLZqxA8Zlfdoy1hAD0RpTsNTlKrcdNCQEMzVplI5ELZMUDJoRC6rukqb1xaYrerub2O3RqoYQY986a7S2c8nj4DP894jmHSFTSazzMFFySAW/Pkd/ItiKkClZxHKV9VEXOT1QfEvPmP7lainO3FAgt/Uo8buYmmMI/NZWDER27E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783674670; c=relaxed/simple;
-	bh=AQ/1Ml1fy2EQimOdFGuslZWUrorLkTv1gplV6Lo8R9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ligk9sgO1iFuNO0zK63IO6Oqwm7zRxTB3v3itSSkv14L3TAWwJPIpI0mvXkzK/MnkMvw3Z9vejjVrK0MxqS+a0zlm4L/z4iM4kMd0oQHkt5e07bRZkyV3EDKcH1et0T0TBihLZkHCx488fuqHn7JTRSixYWvOcmzK9DKs4VD8tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d3gr3SGs; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1783677371; c=relaxed/simple;
+	bh=B3VU4yJiypPcN5IOxk0Ji0Cz6QjkMxN92TfqPAqYXcc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=lYyfOkWa95MDqOYqi08nOgm8Gbm18HgzgJ9PuiRw5FUQvZ4bMAOltIXeqCu/Q6xRPXqnZERH545Q6FVKUmN+R97QhXI+os5s++B8KrTCcqGgCmFgcoxouBh6qTvSxrM/SjEpiA41yV4SDdfWHogQAO9KGw4BtWPhOUHMI0DVoG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XxL419zM; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d3gr3SGs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1783674669; x=1815210669;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=AQ/1Ml1fy2EQimOdFGuslZWUrorLkTv1gplV6Lo8R9M=;
-  b=d3gr3SGsVdjHp7Me51sr2OBX8aeIymA6SwV6Y/kkrYSRtYK4r3SWKBev
-   uwXS8HWMJxX3RVL5ofWZUuFGESn7vM9exfGE0p2ap7lYRVyd39VUC9ffO
-   DWPyY6Yfw+fJevEkyBsmgdoUAw/H9EN3EKGNIbOD9jmac5X+Yp5n0nm/X
-   rMrXym7llrzGHz4FmC3xaDRdy3MVjz0xToJFqC+mk/8DnMtuiIyvTqhkg
-   I4/7TLX+dhXJnMnubr6tiJFb0+oX+hhTZR1mF1hd0tUiejCL/bJThlNuV
-   eVAbhVpdKQWrSYm57ihE5n0wbKMVvRCy9VRnkjtB1NF1kgd90+so9QPZg
-   A==;
-X-CSE-ConnectionGUID: v35DN4gYTmSVKFMeKgI1Tg==
-X-CSE-MsgGUID: Q/dzdNCHS8aubsMpUKKzXg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11841"; a="95744708"
-X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; 
-   d="scan'208";a="95744708"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2026 02:11:09 -0700
-X-CSE-ConnectionGUID: Cxu9AuANSXKsIYBSVvwYJg==
-X-CSE-MsgGUID: 6MSdp6eoT7y5AF8uN7dYIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,154,1779174000"; 
-   d="scan'208";a="253721377"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.100])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2026 02:11:07 -0700
-Date: Fri, 10 Jul 2026 12:11:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: GaryWang <is0124@gmail.com>
-Cc: JunYingLai <junyinglai@aaeon.com.tw>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	linux-gpio@vger.kernel.org,
-	JasonHuang =?utf-8?B?6buD5LuB5p2w?= <JasonHuang@aaeon.com.tw>
-Subject: Re: Up Squared Pro 7000 (UPN-ADLN01) broken BIOS?
-Message-ID: <alC3Kc2BcjkmUVwV@ashevche-desk.local>
-References: <alAJJr5ATEZdHBBA@ashevche-desk.local>
- <CANYHO6rgn19uxjmc+1xv-pmadZQ1EaePmwvC3Kfy-E6ckwcYqA@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XxL419zM"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20260710095559epoutp04ad9795f9d2eaa04413d01d844a211b32~A5Ruxx0gg1456814568epoutp04O
+	for <linux-gpio@vger.kernel.org>; Fri, 10 Jul 2026 09:55:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20260710095559epoutp04ad9795f9d2eaa04413d01d844a211b32~A5Ruxx0gg1456814568epoutp04O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1783677359;
+	bh=8vAKTnmdmvmDA1Ji9vn6HcRCE7MwnlpFhJBq71EW0FY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=XxL419zMc9u7ltGjbVEM2cBn1NvUNjNB3ocsZk2M73L7wixtQhd2OaEmGRhb1Mwq6
+	 eukaAtTV0oohx7p5a5Ory9sX3M59g3e8i8bDF0H3CVBS84oV9xst0a3543vHqdRILE
+	 9dE9MXXKlqtdVZPbqsk3L8Jlzyoaead1OkQ2V0E0=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
+	20260710095558epcas5p21f700629a4fd59103c125552625cb9d1~A5RuO9rFU2279422794epcas5p24;
+	Fri, 10 Jul 2026 09:55:58 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.86]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4gxRzd6cFjz6B9m8; Fri, 10 Jul
+	2026 09:55:57 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20260710095557epcas5p3d8f4859aa37f6b868f937233f72ad4a9~A5Rs2Pu851894318943epcas5p3C;
+	Fri, 10 Jul 2026 09:55:57 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20260710095556epsmtip1449243a9c0c08a8f924b7b1eded2af93~A5Rrgdz121520515205epsmtip1P;
+	Fri, 10 Jul 2026 09:55:55 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Peter Griffin'" <peter.griffin@linaro.org>
+Cc: <krzk@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+	<linusw@kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <hajun.sung@samsung.com>
+In-Reply-To: <CADrjBPqYSTDExrBrYYf2z=23Ci8VqF9zXvbc+njDm1d4Ojrjrg@mail.gmail.com>
+Subject: RE: [PATCH v3 5/6] arm64: dts: exynos: add initial support for
+ Samsung Exynos8855 smdk
+Date: Fri, 10 Jul 2026 15:25:54 +0530
+Message-ID: <14cf01dd1052$4de88670$e9b99350$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANYHO6rgn19uxjmc+1xv-pmadZQ1EaePmwvC3Kfy-E6ckwcYqA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQCQM7wiCxtRwyhZTDec7lkhalOHFwIex+rgAd5cQHMByjDVPrjSAgjg
+Content-Language: en-us
+X-CMS-MailID: 20260710095557epcas5p3d8f4859aa37f6b868f937233f72ad4a9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20260627165422epcas5p4e4c6bce0e2daa6d08a9ec18afde9ce0e
+References: <CGME20260627165422epcas5p4e4c6bce0e2daa6d08a9ec18afde9ce0e@epcas5p4.samsung.com>
+	<20260627171228.2687857-1-alim.akhtar@samsung.com>
+	<20260627171228.2687857-6-alim.akhtar@samsung.com>
+	<CADrjBPqYSTDExrBrYYf2z=23Ci8VqF9zXvbc+njDm1d4Ojrjrg@mail.gmail.com>
 
-On Fri, Jul 10, 2026 at 04:37:56PM +0800, GaryWang wrote:
-> Add AAEON software JunYing.
 
-Thanks, waiting for the response!
 
-> yeah the ACPI flag should not set for HAT pins, JunYin knows it,
-> They clear the ACPI flag from the driver now, their BIOS uses the default
-> from CRB, but they should fix it from the BIOS to match the right usage.
-
-How do they clean it from the driver? IIRC the ownership registers are locked
-when BIOS hands over to the OS. Technically any pin that marked as GPIO input
-must not be owned by ACPI to allow users to connect whatever they want there
-and get an interrupts. Many of them also have "Locked full" permissions,
-that's also may not be convenient. Another thing is the absence of bi-di GPIO
-configuration (or did I miss that?), which people may want to have (my
-use case, for instance).
-
-In any case I have latest and greatest BIOS version (r3.5 of this year) and
-problem still persists. Can AAEON share a BIOS for testing? (Note, if you
-want, it can be done under our Intel-AAEON existing NDA, I believe.)
-
-> On Fri, Jul 10, 2026 at 4:48 AM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
+> -----Original Message-----
+> From: Peter Griffin <peter.griffin=40linaro.org>
+> Sent: Thursday, July 9, 2026 7:20 PM
+> To: Alim Akhtar <alim.akhtar=40samsung.com>
+> Cc: krzk=40kernel.org; robh=40kernel.org; conor+dt=40kernel.org;
+> linusw=40kernel.org; linux-samsung-soc=40vger.kernel.org; linux-
+> kernel=40vger.kernel.org; devicetree=40vger.kernel.org; linux-
+> gpio=40vger.kernel.org; hajun.sung=40samsung.com
+> Subject: Re: =5BPATCH v3 5/6=5D arm64: dts: exynos: add initial support f=
+or Samsung
+> Exynos8855 smdk
+>=20
+> On Sat, 27 Jun 2026 at 17:54, Alim Akhtar <alim.akhtar=40samsung.com> wro=
+te:
 > >
-> > Since I have been playing with the $Subject board, I wondering if I miss
-> > something or the BIOS configuration is utterly broken. The problem what
-> > I see is that most of the pins on the SoC are marked with [ACPI] if you
-> > look at the debugfs 'pins' file for INTC1057:00 device instance.
+> > Add initial devicetree support for Samsung smdk board using
+> > Exynos8855 SoC.
+> > This SoC has Octa-core CPU with tri cluster architecture, a custom GPU
+> > and a NPU supporting up to 14.7 TOPS apart from other supporting
+> > peripheral and IPs.
 > >
-> > This means *none* of them (which are user visible via HAT connector) may
-> > serve as an interrupt resource to the OS. How the OS should request interrupts
-> > on those pins?
+> > Commercially this SoC is also known as Exynos1580 =5B1=5D
 > >
-> > As far as I understand that the BIOS does initial settings of CPLD and
-> > basically I can use transparently the pins as per their configuration done
-> > in BIOS. Right?
+> > =5B1=5D
+> > https://semiconductor.samsung.com/processor/mobile-processor/exynos-15
+> > 80/
 > >
-> > Btw, do we have any contacts to engineers in AAEON or whoever who does these
-> > UP boards nowadays?
+> > Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
+> > ---
+> >  arch/arm64/boot/dts/exynos/Makefile           =7C   1 +
+> >  .../boot/dts/exynos/exynos8855-pinctrl.dtsi   =7C 574 ++++++++++++++++=
+++
+> >  .../arm64/boot/dts/exynos/exynos8855-smdk.dts =7C  32 +
+> >  arch/arm64/boot/dts/exynos/exynos8855.dtsi    =7C 204 +++++++
+> >  4 files changed, 811 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
+> >  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855.dtsi
+> > +       =7D;
+=5Bsnip=5D
+> > +
+> > +       oscclk: clock-oscclk =7B
+> > +               compatible =3D =22fixed-clock=22;
+> > +               clock-output-names =3D =22oscclk=22;
+> > +               =23clock-cells =3D <0>;
+> > +       =7D;
+>=20
+> Small nit, but I believe oscclk node should be ordered alpha-numerically =
+by the
+> node name. See https://docs.kernel.org/devicetree/bindings/dts-coding-
+> style.html
+>=20
+Thanks, will update in v4=20
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+> Peter
+>=20
 
