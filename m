@@ -1,19 +1,19 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FCF420E62;
-	Fri, 10 Jul 2026 11:37:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F3141B36C;
+	Fri, 10 Jul 2026 11:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783683429; cv=none; b=jRkhhf95EeHg/tZxu1yyiTlhn3nM5nrBwQJ5xKzGrbMmzlGFfijez5KPd6v4otjEzntjJvhBoMWcgZJ+CsvYyChrgcPCs01oNr21HdUBsP7deQjBz/r30Hhb4/9EgzwC36aV71xQf6FbeCL3KK8IcSCUJpjGon9KESYFChv6pPM=
+	t=1783683434; cv=none; b=fQTkx9Cz/SnyLLDOGJbkz1ci7BUbMODLfhJUk9D7jV+hqCmtGYdb+9Mx7LIn+DpiCDoZVQuuXwNeQxNibb9vAU7IDjFQ8DKQwByyz/9zm41GPlczCDhG/YOVOwBNE045OuracMvwVrgoi+uJasfZcZ1qYWDqNYUYkcEwQh6qfhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783683429; c=relaxed/simple;
-	bh=QZZvrero1iSCFyrcpqaqfp70RvDsSjgnbhSzsrrj9UU=;
+	s=arc-20240116; t=1783683434; c=relaxed/simple;
+	bh=KoH731d0FxPObGazQqE64DaFoe33P7bf2ZoYEp44Z4M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DmuMORytlIMzhFOYgdG9mywuMlolQOwbSDmncsun1NimRSGT01jz13vX+ooPQAmuJbKwceKXRKoDlPfnWSoJge6D63vT9h1JyP+LkEQDh3RBSJXs2G+rcEj3KvHyovREKyTAhm5ilHXn7DIepzTTXwF3SsOu+BS/ONLxqH2Csj4=
+	 MIME-Version; b=QsAW8kVzkRQc21/91L7AwulJ0JblB96rtE+MLA5rzIN7yTmhwoWaqyPRIbq1nYZqZjXq+ZaLZxqjWtIPEllRY4GPFcuSzczxV9RK4HtrLQoIAV70J4Hokt9zTI93SVw9B3iKL9XyNiQ2b+cqSJEqfgi9BW8WYO3xgHXacfWVnhk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90C431F00A3A;
-	Fri, 10 Jul 2026 11:36:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D52221F00AC4;
+	Fri, 10 Jul 2026 11:36:50 +0000 (UTC)
 From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
 To: geert+renesas@glider.be,
 	linusw@kernel.org,
@@ -27,10 +27,11 @@ Cc: claudiu.beznea@tuxon.dev,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v4 5/5] arm64: dts: renesas: rzg3s-smarc-som: Enable I3C
-Date: Fri, 10 Jul 2026 14:36:37 +0300
-Message-ID: <20260710113637.1328000-6-claudiu.beznea+renesas@tuxon.dev>
+Subject: [PATCH v4 3/5] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Document the missing I3C power source option
+Date: Fri, 10 Jul 2026 14:36:35 +0300
+Message-ID: <20260710113637.1328000-4-claudiu.beznea+renesas@tuxon.dev>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260710113637.1328000-1-claudiu.beznea+renesas@tuxon.dev>
 References: <20260710113637.1328000-1-claudiu.beznea+renesas@tuxon.dev>
@@ -44,11 +45,11 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The Renesas RZ/G3S SMARC SoM board has a connector for I3C interface.
-Enable I3C.
+The I3C pins on the Renesas RZ/G3S SoC can be powered at either 1.2V or
+1.8V. Document the missing 1.2V power source option.
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
@@ -59,66 +60,24 @@ Changes in v3:
 - collected tags
 
 Changes in v2:
-- dropped pinctrl sleep state
+- collected tags
 
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi      | 18 ++++++++++++++++++
- .../boot/dts/renesas/rzg3s-smarc-switches.h    |  4 ++++
- 2 files changed, 22 insertions(+)
+ .../devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index b45acfe6288a..af7357fe4655 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -168,6 +168,14 @@ a0 80 30 30 9c
- 	};
- };
- 
-+&i3c {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i3c_pins>;
-+	i2c-scl-hz = <400000>;
-+	i3c-scl-hz = <12500000>;
-+	status = "okay";
-+};
-+
- &pcie_port0 {
- 	clocks = <&versa3 5>;
- 	clock-names = "ref";
-@@ -302,6 +310,16 @@ mux {
- 		};
- 	};
- 
-+	i3c_pins: i3c {
-+		pins = "I3C_SDA", "I3C_SCL";
-+#if SW_CONFIG4 == SW_ON
-+		power-source = <1200>;
-+#else
-+		power-source = <1800>;
-+#endif
-+		input-enable;
-+	};
-+
- 	sdhi0_pins: sd0 {
- 		data {
- 			pins = "SD0_DATA0", "SD0_DATA1", "SD0_DATA2", "SD0_DATA3";
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-index bbf908a5322c..9cccc87da057 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
-@@ -25,9 +25,13 @@
-  * @SW_CONFIG3:
-  *	SW_OFF - SD2 is connected to SoC
-  *	SW_ON  - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
-+ * @SW_CONFIG4:
-+ *	SW_OFF - I3C voltage is 1.8V
-+ *	SW_ON  - I3C voltage is 1.2V
-  */
- #define SW_CONFIG2	SW_OFF
- #define SW_CONFIG3	SW_ON
-+#define SW_CONFIG4	SW_OFF
- 
- /*
-  * SW_OPT_MUX[x] switches' states:
+diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+index fb1fe1ea759f..32864c9add4a 100644
+--- a/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+@@ -129,7 +129,7 @@ additionalProperties:
+           enum: [ 33, 50, 66, 100 ]
+         power-source:
+           description: I/O voltage in millivolt.
+-          enum: [ 1800, 2500, 3300 ]
++          enum: [ 1200, 1800, 2500, 3300 ]
+         slew-rate: true
+         gpio-hog: true
+         gpios: true
 -- 
 2.43.0
 
