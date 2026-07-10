@@ -1,87 +1,104 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6647A4071E2;
-	Fri, 10 Jul 2026 10:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7034218A1;
+	Fri, 10 Jul 2026 11:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783679322; cv=none; b=RPsXDEuWpnQ7uagg6xJ9V3/c5IK85OvwLXG3OTZ4KwxDRjO3294JGzXOHa80Uk0210+oX6rTISpYpj+eLVMVvqIGM46YB40SqW0iND0c42MnhrYByZNwI2Ea76tpMqHOMTtstQl9wOXH9e7fWu8TVcVPKtJBvsdCsyWEkCjR5vU=
+	t=1783683425; cv=none; b=Xf6wCXQP1Rw7a8lGhqYtBfeSWga9nsCo9KcOdIuN8dP6J4BuBg5Ri4p/nhob6+Rkq50lrrftFKNe4iZwOLDleljUhAAhg6q+EDCGG0Tp667tKhRD+NBGC9jmgPnxr3CwWJawSP1M4cO4apCI45/0Iit1jX5gUrcOaHSbuWaIQcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783679322; c=relaxed/simple;
-	bh=rpgmiohzFdxwDRPM5FW/4/Q3zF/zUimx18sWUjRCBp8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MrXU7uVCScKEjXMiBrlV+0QgpRX6AUe0tRlV+/LpVU6i0Cc4k9B4U04sbUPYmogZhRKdyexHuh1RhgJ+zC8cN8jHCt+3MOLLvnvB1HhkLemdd/ULXLWi7ZdLpWVQqietRl4gQh03P3OZvwsg/serIxO2vUeP4NG6BUKIgtcPTMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPUq2UNY; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPUq2UNY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 670D81F000E9;
-	Fri, 10 Jul 2026 10:28:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783679321;
-	bh=7MUfl+qwpC1o7BVjkJfwBEdwVKVSN/Dl3tD+mqKLJFw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FPUq2UNYbkh7tvmcQ2svWUONIrBGEKCCzMCYNSDjhxFO0BtceBRYDuFQL/okwRfIn
-	 7OdwRxfzEu/SweNWxSmYDocZDwNJzxgk50ivjVWoU6bgty6yqcJT6gY+kQMy9M60c0
-	 ks9scJ+DDJtOvbDxW7r9s4kZpJr4+l6A2/50KPRJtac9VFcAoyYvuOESeR1uYNJIXN
-	 HO6U1H6IMJ6jrgd7/Vd0XAPWgdjwKI4PIYFXZZA8833xGFlCKy4i78s8+ctYGAevHk
-	 WVQ2tp6jMY9eKdBt96hZtQ5edJyOPjXw4l2yu6h6oFONU70wqRwI0uQqNv2nuBzI+v
-	 jmQIGugLOB4VA==
-Date: Fri, 10 Jul 2026 12:28:37 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Paul Louvel <paul.louvel@bootlin.com>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>, 
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, Thomas Gleixner <tglx@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Herve Codina <herve.codina@bootlin.com>
-Subject: Re: [PATCH v2 04/10] dt-bindings: soc: fsl: qe: Add support of IRQ
- in QE GPIO
-Message-ID: <20260710-accurate-cherry-toad-5d20c3@quoll>
-References: <20260708-qe-pic-gpios-v2-0-1972044cfbd1@bootlin.com>
- <20260708-qe-pic-gpios-v2-4-1972044cfbd1@bootlin.com>
+	s=arc-20240116; t=1783683425; c=relaxed/simple;
+	bh=LnHiaJ0FF8v4ELbfJv6Qp6fGtll9sNg5X3yNYMjVg/0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WcqqmkU6/MUNYqt6yHhrpECyeJDktjT89D5xvqBbtBim0Kn6H0GT9Gk+yR8hxCj6/UMq/xdGOZkf26eiY0heM0OEhdxSrM8C7B+2N/LNJwEVJ3E8sb8lk0JMQWiR2eFKKhBWjta47DlYaN/RQOpXwFiyqlLpWJrX1e46tiG45vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4C9C1F00A3F;
+	Fri, 10 Jul 2026 11:36:47 +0000 (UTC)
+From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+To: geert+renesas@glider.be,
+	linusw@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v4 2/5] pinctrl: renesas: rzg2l: Drop defines present in struct rzg2l_hwcfg
+Date: Fri, 10 Jul 2026 14:36:34 +0300
+Message-ID: <20260710113637.1328000-3-claudiu.beznea+renesas@tuxon.dev>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260710113637.1328000-1-claudiu.beznea+renesas@tuxon.dev>
+References: <20260710113637.1328000-1-claudiu.beznea+renesas@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260708-qe-pic-gpios-v2-4-1972044cfbd1@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 08, 2026 at 12:15:17PM +0200, Paul Louvel wrote:
-> Some QE GPIO pins have an associated interrupt line in the QE PIC to
-> signal state changes on the pin.  Add the corresponding
-> interrupt-controller / nexus properties to the QE GPIO binding.
-> 
-> Because the GPIO controller does not perform any interrupt handling
-> itself, a nexus node (interrupt-map) is used to map each GPIO line
-> supporting IRQ to the parent QE PIC interrupt domain.
-> 
-> As the QE PIC can be configured to generate an interrupt on either a
-> high-to-low transition or any change in signal state, three
-> interrupt-map entries are needed per GPIO pin that can yield an
-> interrupt (falling, both, and the "none" case which defaults to both in
-> QE PIC).  This overhead is necessary because the interrupt-map-pass-thru
-> property is not part of the DT specification.
-> 
-> The interrupt-map property is optional: it is not required for GPIO
-> banks that have no interrupt capable GPIO line (e.g. port D on MPC8323),
-> or when interrupt functionality is not used.
-> 
-> Update the example to show a scenario where each bank supports a
-> different numbers of IRQs, or no IRQs at all.
-> 
-> Signed-off-by: Paul Louvel <paul.louvel@bootlin.com>
-> ---
->  .../bindings/gpio/fsl,mpc8323-qe-pario-bank.yaml   | 39 ++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Drop the QSPI and OTHER_POC register defines, which are SoC specific and
+accessible through struct rzg2l_hwcfg::{qspi, other_poc}. While at it
+move the assignement of rzg2l_hwcfg->regs->qspi upper to have the
+initializations as sorted (by offsets) as possible.
 
-Best regards,
-Krzysztof
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
+
+Changes in v4:
+- none
+
+Changes in v3:
+- updated patch description
+- collected tags
+
+Changes in v2:
+- none
+
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 6f3760851460..b52a85066f63 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -180,8 +180,6 @@
+ #define SMT(off)		(0x3400 + (off) * 8)
+ #define SD_CH(off, ch)		((off) + (ch) * 4)
+ #define ETH_POC(off, ch)	((off) + (ch) * 4)
+-#define QSPI			(0x3008) /* known on RZ/{G2L,G2LC,G2UL,Five} only */
+-#define OTHER_POC		(0x3028) /* known on RZ/G3L only */
+ 
+ #define PVDD_2500		2	/* I/O domain voltage 2.5V */
+ #define PVDD_1800		1	/* I/O domain voltage <= 1.8V */
+@@ -3816,9 +3814,9 @@ static const struct rzg2l_hwcfg rzg2l_hwcfg = {
+ 	.regs = {
+ 		.pwpr = 0x3014,
+ 		.sd_ch = 0x3000,
++		.qspi = 0x3008,
+ 		.eth_poc = 0x300c,
+ 		.oen = 0x3018,
+-		.qspi = QSPI,
+ 	},
+ 	.iolh_groupa_ua = {
+ 		/* 3v3 power source */
+@@ -3835,7 +3833,7 @@ static const struct rzg2l_hwcfg rzg3l_hwcfg = {
+ 		.sd_ch = 0x3004,
+ 		.eth_poc = 0x3010,
+ 		.oen = 0x3018,
+-		.other_poc = OTHER_POC,
++		.other_poc = 0x3028,
+ 	},
+ 	.masks = {
+ 		.other_poc_pvdd1833_oth_awo_poc = BIT(0),
+-- 
+2.43.0
 
