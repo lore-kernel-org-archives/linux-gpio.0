@@ -1,37 +1,37 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3A928373;
-	Fri, 10 Jul 2026 18:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6782A37BE8A;
+	Fri, 10 Jul 2026 18:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783708523; cv=none; b=FdX27dTV6CCixdxA4+U/lRtWVTH6rNINRf9NbAj1758k3Lfv+99RHYXwczEk3MLkBWLNBo9E0J8ekG/F07QQKNL1t3Fh9ADvE6XQaBUUqQeZFj/jBA/3IC65OSuVVonRiJXiierouRV0Qf4djVJslEfTh8dKEiL2IS+LpcilfMs=
+	t=1783708527; cv=none; b=G2STDQH1UEz+YC1gV4w0V5SPC4sf82o+6FwZtGoFaL9js1KCwRSu/a9m0D3HCqOPGmJO+rxesOvc5W/FpJQRZ6vy58F3CjEmxBGzXsz6wdgY7Mh3Es5letGL4UiNBcVc1R1Im7fzb4hUTTjmqbMl2Mdk3H7DREDJHPNl0EWEyWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783708523; c=relaxed/simple;
-	bh=OJFOEtomlUKrob8c1WEjI4Vz2MMTWoh83CnazceU5x0=;
+	s=arc-20240116; t=1783708527; c=relaxed/simple;
+	bh=LSnFkMmnJVATavNQ1RJtAhcHSM2vJrSwfz/wz78HcKg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WXMQah+u8YNoym6vB8CnOhLb4rwWK4yzTNE55fQ9zJrliRLYDKjyz9CqYTNrIQivFa7hADsCI5jyd1un6xV+iZjf2w8g9cfFxUuje0gFF4tduTcBqmQK5LORbe4e5C+2ipK4olesf83pGOfiQURvTeDJMHg+mOEhqk6SA9gHR5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=czhy6zBn; arc=none smtp.client-ip=178.21.23.139
+	 MIME-Version; b=QfVE/RycMlbfYaMOWs5AFY5j8vK06QywiNq4MtrT2/dApQje7Q6QehY+ZUWt+txZ085/Oetq+emuDPlqdNwjwrMUqG+oYcbvnREl9quPl8dKqHKg+te4lSveSKVwQqSHrj+HKxgSrYAdjamL/I/Nfzoj75oT61mSgHpQZ92rfoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=kqI+XB0z; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="czhy6zBn"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="kqI+XB0z"
 Received: from mail01.layka.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id EEA0D86012;
-	Fri, 10 Jul 2026 20:35:18 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 0B09D8430C;
+	Fri, 10 Jul 2026 20:35:25 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id LK6z6iB-4mhU; Fri, 10 Jul 2026 20:35:18 +0200 (CEST)
+ id xkjyqZjBYSTs; Fri, 10 Jul 2026 20:35:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1783708518; bh=OJFOEtomlUKrob8c1WEjI4Vz2MMTWoh83CnazceU5x0=;
+	t=1783708524; bh=LSnFkMmnJVATavNQ1RJtAhcHSM2vJrSwfz/wz78HcKg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=czhy6zBnHVttfSJI25skbQgzi4ZJV63lS1OB9/Iykxuguoy5GA+jWBh2Sedh226ZG
-	 rXvH1QgYvSXu6SCGucIdHjkmccmI5Ss/mpBQZQ3cy2uOGnJ/DnCTCyodeoYp0IRRfH
-	 xSlR2LgQ9AhgK2CSP6kvV0ZIjDC9P32VaANckJU99gT5LmuVNB2erfu6AGHI7+7/Fi
-	 CGPZAMCi5QEZ2tKZh/lhcYqlSkceCFd+SUYj6iCEq8dAQRJljgQ9n30WblcgxGYTlH
-	 o0npjUS2iQvTZdxKjbfnZMt0gCXiCyOaKz+nJs6b/eYZKBngEPhaBL55GRoaILX8ix
-	 XsLEJSdDX8jbw==
+	b=kqI+XB0zOAP5txR0Ql7qK9KZ6ZXzWnqmYrRzLuF1RTnUQBDMqBH6vbwNwCdyoJ+z9
+	 LNm60MqcAQ0lsTBUMm2D+Qv51IF/bw31jNeosxpk0xavBqgcNCwBtZIdXHu+dV6n5w
+	 k1LwQtyaXvLWMpSkT4PsfQ/eE4f3c1g57mZqjkEpImXfmhcU1vGc4gwR/qWSR45YBP
+	 K9+WMWHBq85hnmyyMY0iIJT7aeAYkqD4T7+ZB5/Nx0u14TegkhsEen1Fo/IrJ/8Nwu
+	 zVs5E8CcQntuWuwO8CmxJVEil2ZAfay7IxmdnWXdgQsG0c8J/hXrpdlGijuy1+Safh
+	 0T8grdWCvnnjA==
 From: Rustam Adilov <adilov@disroot.org>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
@@ -39,9 +39,9 @@ To: Linus Walleij <linusw@kernel.org>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Rustam Adilov <adilov@disroot.org>
-Subject: [PATCH 1/2] gpio: realtek-otto: use __raw_readl/writel in realtek_gpio_update_line_imr()
-Date: Fri, 10 Jul 2026 23:34:38 +0500
-Message-ID: <20260710183439.996923-2-adilov@disroot.org>
+Subject: [PATCH 2/2] gpio: realtek-otto: decide bank_read/write by device endianness
+Date: Fri, 10 Jul 2026 23:34:39 +0500
+Message-ID: <20260710183439.996923-3-adilov@disroot.org>
 In-Reply-To: <20260710183439.996923-1-adilov@disroot.org>
 References: <20260710183439.996923-1-adilov@disroot.org>
 Precedence: bulk
@@ -52,36 +52,49 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for upcoming changes to how bank reads and writes
-are defined in this driver, change the ioread32 and iowrite32 to
-their __raw variants. The realtek_gpio_update_line_imr() function
-is used by all devices regardless of GPIO_PORTS_REVERSED flag and
-thus this is the only place where there shouldn't be any byte
-swapping whether SWAP_IO_SPACE config is enabled or not and that
-is only possible with __raw_readl and __raw_writel.
+In order to have a working gpio controller with SWAP_IO_SPACE,
+the way bank_read and bank_write are defined must be changed and
+separated from GPIO_PORTS_REVERSED flag. That also includes the
+flags parameter used by gpio_generic_chip_config.
+
+To achieve it, use the device_is_big_endian() to decide the
+bank_read/write parameter and the flag.
 
 Signed-off-by: Rustam Adilov <adilov@disroot.org>
 ---
- drivers/gpio/gpio-realtek-otto.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-realtek-otto.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpio/gpio-realtek-otto.c b/drivers/gpio/gpio-realtek-otto.c
-index 4a606bad5848..491fde846d46 100644
+index 491fde846d46..f96072fbce92 100644
 --- a/drivers/gpio/gpio-realtek-otto.c
 +++ b/drivers/gpio/gpio-realtek-otto.c
-@@ -176,10 +176,10 @@ static void realtek_gpio_update_line_imr(struct realtek_gpio_ctrl *ctrl, unsigne
- 	u32 reg_val;
+@@ -393,16 +393,19 @@ static int realtek_gpio_probe(struct platform_device *pdev)
  
- 	reg += 4 * (line_shift / 32);
--	reg_val = ioread32(reg);
-+	reg_val = __raw_readl(reg);
- 	reg_val &= ~(REALTEK_GPIO_IMR_LINE_MASK << shift);
- 	reg_val |= (irq_type & irq_mask & REALTEK_GPIO_IMR_LINE_MASK) << shift;
--	iowrite32(reg_val, reg);
-+	__raw_writel(reg_val, reg);
- }
+ 	raw_spin_lock_init(&ctrl->lock);
  
- static void realtek_gpio_irq_ack(struct irq_data *data)
+-	if (dev_flags & GPIO_PORTS_REVERSED) {
+-		gen_gc_flags = 0;
+-		ctrl->bank_read = realtek_gpio_bank_read;
+-		ctrl->bank_write = realtek_gpio_bank_write;
++	if (dev_flags & GPIO_PORTS_REVERSED)
+ 		ctrl->line_imr_pos = realtek_gpio_line_imr_pos;
+-	} else {
++	else
++		ctrl->line_imr_pos = realtek_gpio_line_imr_pos_swapped;
++
++	if (device_is_big_endian(dev)) {
+ 		gen_gc_flags = GPIO_GENERIC_BIG_ENDIAN_BYTE_ORDER;
+ 		ctrl->bank_read = realtek_gpio_bank_read_swapped;
+ 		ctrl->bank_write = realtek_gpio_bank_write_swapped;
+-		ctrl->line_imr_pos = realtek_gpio_line_imr_pos_swapped;
++	} else {
++		gen_gc_flags = 0;
++		ctrl->bank_read = realtek_gpio_bank_read;
++		ctrl->bank_write = realtek_gpio_bank_write;
+ 	}
+ 
+ 	config = (struct gpio_generic_chip_config) {
 -- 
 2.55.0
 
