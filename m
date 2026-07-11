@@ -1,32 +1,32 @@
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C163264F6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CCA3264F9;
 	Sat, 11 Jul 2026 21:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783803723; cv=none; b=Fv9+RLWFEylEF2zm28LK0zgdGGndgLtGAGoNRMewzVCbmKlgx2BM1QllUzoxwCU1C9/Lia1K0OD0UT7i3puus2BibRsUOJTkFWzXQmAnNWNGEzY0y98Sq8mwk+/tj/4bvirdaXRBYOes8RaiqogrmoHoDZ6XrriwhHOecr8KWsc=
+	t=1783803723; cv=none; b=NyTpGroQORBPuAdN4YoWoMc9bcNWtINBvY9PwB/brKAOWYJDOco38xtUo6PTRoVloQYTYV3HiRJmwiUtvnP6Dd71msabHD5rpxqOq/RNyAB9EP9CEkTGCqMC7K/FUPLctmpa266CAmi/AImv6Uq5BjjmeggSsI15A8Erm08JMxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1783803723; c=relaxed/simple;
-	bh=HI+0VwoX6NSOf0cZ3ucA69VcKxi64Um+l0I7RARKxTI=;
+	bh=fiGGP7+boZ5fNArVDsQpxEAyNpeG7J8n7rk6dbd2UU8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ecVjQkWILn5B63/VKx5kT++OqfiaTBU7FGQPzFQNJ7snEEL7rppodkd0+27YThQkpa/IMb/aZ29DTDyOVkdIdiSSvdWMj55uQK1pVW9nHd4POp10K4UthX+xangCZefLtM65qhQ2BB4hRrBaDuKKSk4YBtRz1/8uoguscjIqoqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=b6nquMRo; arc=none smtp.client-ip=178.251.229.89
+	 MIME-Version; b=pLWTZt6EgfkD7DqHk70eXpfrag4Iqbjb5JzbqlBkyIukTCeuu/5yU+eD8YsrR43oTZRg/lDiYR6YGFasozi+eDQZ+5pdNVOcVSrIu/e3QSFgR60U7K1d8FLCVUFYC9tusOMmURMbqMF56nYgxuN20OrizFprNYHyWw1tnvmU+ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=RdIv06CH; arc=none smtp.client-ip=178.251.229.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="b6nquMRo"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BA05711984F;
-	Sat, 11 Jul 2026 23:01:50 +0200 (CEST)
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="RdIv06CH"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id AD60C11984A;
+	Sat, 11 Jul 2026 23:01:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1783803711; h=from:subject:date:message-id:to:cc:mime-version:
+	s=dkim; t=1783803712; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=sLCyXf4fSaul0KJMCLi1kEMoFgnLRGwVU3DVuKnCCcU=;
-	b=b6nquMRojWyPdQHGg8IzliPYNnFVNTXutLtEoMZb5Kg34ut3o5p2yVHL23YoHDwxVlCO9z
-	UNNxud59Y2/3I8o2oPxjNMVYlbnmgOs5HSZgHfombumdoKMFef3kPI4chfWZWtEqSoPGcz
-	0L9X7omWlNj1sZHcTBdCvyCuyTzmp+e/dZT66POo5p9AgilTriMehuWUonKpI6+7bF0eJK
-	HSu1CpDxEvL/l3RNihtoFnLxxbypRexIPJzK074RV4wBOUZqMKVVpA2kspHN3fTQvtOwuv
-	y1d9AqZdSeryGUFU005rC9td1Ftr52wfqIOa2GriT/PwhAAmXyJBTZK7Zn+doA==
+	bh=t0igColYo8lf+okIQ7LIWkFdSL6QQu6yk+YXD+uc4qQ=;
+	b=RdIv06CHjXkGHg4lVtdHGd5P8wnNDCQNQba4sFYO5e/XXVW8O90bcJup672QCDCHUf+okz
+	qULDII9zXOPSHtSr3wDsDqKeAyHTjHHQ5uzTmksq9KEOye3IujAebG0CRYj6Y1y+5Qx779
+	kv96adXO+pg1q1Ho4vLzRCmhGVHW2Hqo9zvuznTnhMoSzL+812Q8ndYsSqXHxPvwR16EXD
+	S6EzENnzBLiQSmc3gWVVYM6o00KzOFyr0EFWUoijAz2PFzgL9dlWQlH06s0xn2hqz/P+pq
+	CPzQNsDnAkzi7K3u318VAuXkLAgN9oTLM8lRy0EHxSFYAT0DNcUf2wyr/j3HPg==
 From: Marek Vasut <marex@nabladev.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marex@nabladev.com>,
@@ -41,9 +41,9 @@ Cc: Marek Vasut <marex@nabladev.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH 05/10] arm64: dts: st: Add SDMMC2 and SDMMC3 nodes on stm32mp231
-Date: Sat, 11 Jul 2026 22:59:34 +0200
-Message-ID: <20260711210131.236025-6-marex@nabladev.com>
+Subject: [PATCH 06/10] arm64: dts: st: Add SDMMC2 and SDMMC3 nodes on stm32mp251
+Date: Sat, 11 Jul 2026 22:59:35 +0200
+Message-ID: <20260711210131.236025-7-marex@nabladev.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260711210131.236025-1-marex@nabladev.com>
 References: <20260711210131.236025-1-marex@nabladev.com>
@@ -73,14 +73,14 @@ Cc: linux-gpio@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-stm32@st-md-mailman.stormreply.com
 ---
- arch/arm64/boot/dts/st/stm32mp231.dtsi | 30 ++++++++++++++++++++++++++
+ arch/arm64/boot/dts/st/stm32mp251.dtsi | 30 ++++++++++++++++++++++++++
  1 file changed, 30 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp231.dtsi b/arch/arm64/boot/dts/st/stm32mp231.dtsi
-index a9de9fc5eb411..d70812f094142 100644
---- a/arch/arm64/boot/dts/st/stm32mp231.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp231.dtsi
-@@ -730,6 +730,36 @@ sdmmc1: mmc@48220000 {
+diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+index 66f3f83b8731f..6e985f115b195 100644
+--- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
++++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+@@ -1667,6 +1667,36 @@ sdmmc1: mmc@48220000 {
  				status = "disabled";
  			};
  
