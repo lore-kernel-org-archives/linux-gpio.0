@@ -1,32 +1,32 @@
 Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCA12BE7BA;
-	Sat, 11 Jul 2026 21:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F402BEC55;
+	Sat, 11 Jul 2026 21:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783803717; cv=none; b=TKOaHZAj3wenbDhyYxu3ITZreiKUNpTHuW/FobbqT5E6ip3fDcGWjosyBqVfPwN1KIDbVZtQhylyD8HpAmUxGydPKUToLaPW8mnFRVPUGFM8VT29e4BpDmX4eEpGlE0ZZcNwNvTFHDYZuerSXCJ1MjSxbntqtMb+MRHGncgazKU=
+	t=1783803717; cv=none; b=P7/Nz6VxxGTqlNymqb3dq2brny8yO/kFmHeRojSPzQRGFln1rwcpr4rwbNoAxPvhUuElsiGcjImR+nWj0ePQsAB0ntyqWWt7Pp+FJ33FXf+pY7YR4vnWGOQPNcDMDiCjCoTcNqRNdHnjcvDu5dueniPKLm/QAC6/WEAIzBZQKnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1783803717; c=relaxed/simple;
-	bh=MzqgoMuJIdGP189HE9PGMmOiYz8iwUT82y8AbS4CGZM=;
+	bh=jlk3MmdIEJG0iGI4EF13F74a/8PcEG55kBpycnwrl+4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AQopnC4EJ9NjopUW+qdzLP0yFy8gtSnpasisgHcRrQfOz2De7QDQV7C2+rc36BvzMy1ckTmUOzsXxqd9FQoFLTp7/0yLRf6+obzzuZpjWeRx0Xm8VEMDnqTWtKmNEIDwRU/C658tNWUyD7e4o49pjfYfHoKJE4+8CFOxSGD2FKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=LHmh6EZp; arc=none smtp.client-ip=178.251.229.89
+	 MIME-Version; b=HyGpMCBszOVqVt4rvDmIZwY9JUMkCYuF6OvYmiKkY9Cz7gaY2srkGqIHx0N+Bf5YHTdh4Mu7JQihMotosdSgviaxpE+R6JeLJYWmF166dV9ymv2GdAM43NX1LjWGGCd0drUtC9aAdn3uG0VhxKSu8ChahuJeSnBhpq09lzOAyXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=OKYLE/VV; arc=none smtp.client-ip=178.251.229.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="LHmh6EZp"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5581A119823;
-	Sat, 11 Jul 2026 23:01:47 +0200 (CEST)
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="OKYLE/VV"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4C983119826;
+	Sat, 11 Jul 2026 23:01:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1783803707; h=from:subject:date:message-id:to:cc:mime-version:
+	s=dkim; t=1783803708; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=2eerO83FR9XLVJDLYJUhN9olbnCS8UH6ub1IdYOkeRY=;
-	b=LHmh6EZpP36TorzqAJRec9nu4MuXA3Ib02qlFKHh/CKqDTtfKCvwv1lpmJ4Gf+pc0/ndjN
-	sRLAkTQgtn0xPJCBpr+6GrTQwPqi0LWqUly8VpB0RQ831jGPwBOmGjFqB8/YTgA/Wxmna2
-	HGYYA5tvT7YjeHaPfqn0Q2lbxcMjDU3GFy58uXcj88X7j4A0aRdKt+fNQIosw3hIPNKT5F
-	4jpV+lYTd9uFrntsOMEp8+8Rbc4avOG1lRpdzumtxc7o19IUaxQ3JBekob0it8QbOvDzXg
-	l03Oekbdw4dzgaKSKYAJ878xaIPJTn0A5fVWkLS4oFGqD+Plt0RlK+47d72Ccg==
+	bh=IQ/2jO9kY86PBveaA7H07jnCAULpl2h71VwR4VV58eY=;
+	b=OKYLE/VVcOkNBDQn2Yd4FgbE+2flqHj5p4DN0VcY+B4XF0gEyGkfvODqgGNUlrT9QqzxQU
+	0hqzG2VUxj4bbpUNS1cXmLtvaaGZ2r5ZSNy1XSsB1O7/dlGSpHP/24m7f7EZfC0G9zaLVW
+	GmlJYO2VqdTqEiMzZhKQukhXp2McDoiV2khX766HzS+uDeE+kLp6SGaXky8M53Vqkb45oJ
+	8s1Ackks7Tyoi8KCVyOXXKJYYykLVPocsGjGZirKcGf4vQgbanMpt739gsn2AQ0MfpRI3t
+	E4ymYcHNTo5aiAzli4NpwtlkIU2hGT8tGxFO/X0fYYvTDkgjUnm/PjrY7UwTVg==
 From: Marek Vasut <marex@nabladev.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: Marek Vasut <marex@nabladev.com>,
@@ -41,9 +41,9 @@ Cc: Marek Vasut <marex@nabladev.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH 01/10] dt-bindings: arm: stm32: Document STM32MP23xx/STM32MP25xx DHCOS SoM and Breakout Board and DHSBC
-Date: Sat, 11 Jul 2026 22:59:30 +0200
-Message-ID: <20260711210131.236025-2-marex@nabladev.com>
+Subject: [PATCH 02/10] dt-bindings: gpio: pca95xx: Document Kinetic KTS1622
+Date: Sat, 11 Jul 2026 22:59:31 +0200
+Message-ID: <20260711210131.236025-3-marex@nabladev.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260711210131.236025-1-marex@nabladev.com>
 References: <20260711210131.236025-1-marex@nabladev.com>
@@ -56,28 +56,11 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-This stm32mp25xx-dhcos-bb board is a stack of DHCOS SoM based on
-STM32MP25xx SoC (1200MHz / crypto capabilities) populated on SoM
-Breakout Board, the stm32mp255c-dhcos-dhsbc is the SoM populated
-on DHSBC carrier board. The stm32mp23xx-dhcos-bb is a stack with
-STM32MP23xx SoC.
-
-The SoM contains the following peripherals:
-- STPMIC (power delivery)
-- 4GiB LPDDR4 memory
-- eMMC and SDIO WiFi module
-
-The Breakout Board carrier board contains the following peripherals:
-- USB-C peripheral port, power supply plug
-
-The DHSBC carrier board contains the following peripherals:
-- Two RGMII Ethernet ports
-- MicroSD slot
-- LVDS connector
-- MIPI CSI2 connector
-- USB-A Host port, USB-C power supply plug
-- USB-C / DP port
-- Expansion connector
+The Kinetic Technologies KTS1622 is a 16-bit general-purpose I/O
+expander via the I2C bus for microcontrollers when additional I/Os
+are needed while keeping interconnections to the minimum. Datasheet
+comparison suggests that it is compatible with TCAL6416, add the
+compatible string and TCAL6416 as a fallback compatible.
 
 Signed-off-by: Marek Vasut <marex@nabladev.com>
 ---
@@ -94,45 +77,23 @@ Cc: linux-gpio@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-stm32@st-md-mailman.stormreply.com
 ---
- .../devicetree/bindings/arm/stm32/stm32.yaml   | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-index c6af3a46364fc..2045dc2e54a60 100644
---- a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-+++ b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
-@@ -196,6 +196,18 @@ properties:
-           - const: ultratronik,stm32mp157c-ultra-fly-sbc
-           - const: st,stm32mp157
- 
-+      - description: DH STM32MP251 DHCOS SoM based Boards
-+        items:
-+          - const: dh,stm32mp251a-dhcos-bb
-+          - const: dh,stm32mp251a-dhcos-som
-+          - const: st,stm32mp251
-+
-+      - description: DH STM32MP255 DHCOS SoM based Boards
-+        items:
-+          - const: dh,stm32mp255c-dhcos-dhsbc
-+          - const: dh,stm32mp255c-dhcos-som
-+          - const: st,stm32mp255
-+
-       - description: ST STM32MP257 based Boards
-         items:
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
+index 4f955f855e1ab..4631388a7d914 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
++++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
+@@ -22,6 +22,9 @@ properties:
+       - items:
+           - const: diodes,pi4ioe5v6534q
+           - const: nxp,pcal6534
++      - items:
++          - const: kinetic,kts1622
++          - const: ti,tcal6416
+       - items:
            - enum:
-@@ -203,6 +215,12 @@ properties:
-               - st,stm32mp257f-ev1
-           - const: st,stm32mp257
- 
-+      - description: DH STM32MP231 DHCOS SoM based Boards
-+        items:
-+          - const: dh,stm32mp231a-dhcos-bb
-+          - const: dh,stm32mp231a-dhcos-som
-+          - const: st,stm32mp231
-+
-       - description: ST STM32MP235 based Boards
-         items:
-           - enum:
+               - exar,xra1202
 -- 
 2.53.0
 
