@@ -1,88 +1,48 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6903112C1
-	for <linux-gpio@vger.kernel.org>; Sat, 11 Jul 2026 20:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009161D95A3;
+	Sat, 11 Jul 2026 21:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783802578; cv=none; b=r7T4TKj5PvJGQMoLiwTFo2IP99mgvictzvS5EaxTTEUvabCK86AZ/mpuJjejaMDqSceAOwUcPmb62gTgpmN1A9amXZPsx5IbnDJOonwL+n3mq+pTlREqYKAHsAFN6tzhgVDZMvZgFmnU2HfV1+ubg+TN22wQHXEwF8lAeImdtoI=
+	t=1783803717; cv=none; b=q5LR4WJCWnReTqQ/zHyygM0CuAei+kdl656PJV+xnXPA6XwRUByct3ncREumJnfvo07/HVztGX9Ehhsx90eAuc456Aqmb3rSpohTjsTJGtI5YQone8q7ZP3CROP4b1FKBxpKvbjHiqO5L2T8UEL5ILbeCdu9BM3uTt4zkMDzWj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783802578; c=relaxed/simple;
-	bh=8gu660Q0u7C0W8t7xo2+vLeynZsPh27OtCchUb5pAFU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=keCYkaLvrEVfi38IyYzx2jW6gWmNchxhRbYoDP1hpJkn7LO77voDZV5ZEU0Gvns4s4mlIzCavaEkB3v8pjWqq59w8haWwCkatnnOcqdC2iH1koUdNXLFh9Y8GyYcbwqhln2+aKjdRpQEc/ZX0nFtR3ceHXT5d+LR2j6lNNp+zsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iS96HQZy; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1783803717; c=relaxed/simple;
+	bh=d2TbjcNG+rAGinbwS7nExGx6R+2yw7dFXBna0/jmTW4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T6cQbI4WdUQPdp3zP0bH6UVW3bsubBa9gXpSaPeI3aaKX7HAGLT4ZffjCb7wtlPVw/LDU/BdeNxM4FYO30ug55bggxIBSk52qqFBUvz3vfIs+rVws532KD57G0+8+zpg5SjNMzGYhBkAb7yMLeTvq4/zMD2iNzjCau26LjoQzls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=caKqo02X; arc=none smtp.client-ip=178.251.229.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iS96HQZy"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-493b1710405so9299575e9.2
-        for <linux-gpio@vger.kernel.org>; Sat, 11 Jul 2026 13:42:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783802570; x=1784407370; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=PhreuQjpg77ctdkAec2a78pglE74GvXVMC9BSorqz4I=;
-        b=iS96HQZyK9MD0DIMczLE88UgFLmh8RFub/m6jV8+7uQ17og/euMZEFinDx9d4tHl2P
-         BtB2XQ1TBcSxf1oNIEvHR80BIE2fS4/YkIx0G9jA5ExGqGkDnq50I20j+mspbnI5Zro5
-         KlKdaNAxFtCC6fhtgLfK+VGlQaHeJBWvmSF65wKo0/+t7mQb03nP3YCaGd8qtfkvB18S
-         F19W+bDYQa6FI+/TzuXKwR9bOIdBuv3CRfB5Ut2s5sWnzdtHJmUgpMVOqjT3GOrRKaoH
-         qXBCfcbMcZkYj1OknkknyEreOaFPKM8iOksbeklfuqG659LNDedp46y59hP462LF5905
-         7SLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783802570; x=1784407370;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=PhreuQjpg77ctdkAec2a78pglE74GvXVMC9BSorqz4I=;
-        b=ZBpaLiO7OI7b4YXPyGmEmoizUPrIDY0HNsJpJUCF2t382MZWVXxcu2H/ixtqGrTEqr
-         4UEQHTf+a66J/GjJwtOIgC6Lx/G+xFvwhPeHQDev3thDYcacH5dxe4k22yYOEx2qGg7j
-         p9h4g+zJa0b5yxt+4fQBQiV0dVI+ndbEC2SNwZpFKjqp4QmUybQNa4SbOVjfd67E3iuX
-         oZoaLkXzYe898v/rANoBNvTb0CDseS4VqpOitW9CsBESUUbkYIrHkyJXtoENsGcsu0+9
-         4K8HuQ36xlEXD+TDbYPqYO78TgYql8NbfbWTx025M/Y4z2I7E2A9zjuTzXD+nkbuF0J7
-         QSBQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqsmFgbVLMHJMfQSlUPVcpWdbw8XKwoeHLRSkgkw6hsvdLt2PiAjXFd1RTBtIvlkI41ZKun/Sc0qQVS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZhCI3nSoOZ3fSJRZzYAd9el5IOgwRpIN3m9EGfDQcPyHiV8/Y
-	vXjxlSlVVu9QTIuifDWXRbGnxGfMcIcJvfN9QJwvc3iIsVJT5+yNYtBl
-X-Gm-Gg: AfdE7cmp8jP64OIX8vuPdMY5UEfnJ11dDrojrrTSy62xgJyVts8y/AfNWVsI5LGPVt3
-	U4Fgm2INphQhkE9JSavZESjWZC/WP8SLIMbXFxhiWh2Kz6FOiA3TVHM/naF9q5CLAW1uUPeygyG
-	IH2/60kZH/6+WUrMfrvMrJgDbHVYwgcMfDOCELVtemYA0im/KgC2/CUJEynE6avi/eZTaigdoRh
-	QnJ+DQyMyXXj6JMhn3bv3bctMhBsU/A2SSZodLT69BKlhS81b6F0YhmKaiGTIpt9nAMSSwStvxH
-	5ZgxiwVv1/HeSoxaGKP5mmPRamgvqfNmWLkAYYycpmhepcD/Gz9u4+fssgmF1CGORPNaH1f+3jf
-	lHACE/PgRwKoKkZaogzgbWv+fD7Z6JkZRk2ki1QSCuaF8mVY1At4uMZzphLqj18YDnGmt14zj8J
-	BxwRPAwM5ZoMtx3LEgDlWXH6Fw+jTRN83Mag==
-X-Received: by 2002:a05:600c:8b05:b0:493:e4cd:def1 with SMTP id 5b1f17b1804b1-493f87e9ba7mr41987295e9.11.1783802569796;
-        Sat, 11 Jul 2026 13:42:49 -0700 (PDT)
-Received: from localhost.localdomain ([95.43.220.235])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493f2d97527sm172704725e9.2.2026.07.11.13.42.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Jul 2026 13:42:49 -0700 (PDT)
-From: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
-	Linus Walleij <linusw@kernel.org>,
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="caKqo02X"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B0EDA11955F;
+	Sat, 11 Jul 2026 23:01:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1783803706; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=Rj799asYESt2ZmvriKsA91s4jrkLenTh+VOfuk6Qwy8=;
+	b=caKqo02Xhwa5z3geI79f/1mpYhZ8RaxILEV+m24lrur9xhFIWkYGbtXT4N2ZDOi2WEihi1
+	/eT3e4HNKMxb8p5u19XO0y0YQ/JCH8axaTWfEB+b8PWbIXHY7FgcNNg9qsjT880iVGupwj
+	b7riLwpThRoOXlpF2ZaXBU+ZjKV8obL/lqBtQsyiD8DNlZLdbu5u7z6ej3EDqBZ8v0wQGE
+	bkL9PvjjFUow6Gs9DNVVVMCTm44vKenFMxgC8GId2NH2UsYrUaT1woqq4Rf06cH6MLXhii
+	gRqZGMOQfLjA3rlRIuOhhlfpB/3kE6cHXjC9mBdkXl5vu/+SrrS+q0a6AgZ0Zw==
+From: Marek Vasut <marex@nabladev.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marex@nabladev.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
 	Bartosz Golaszewski <brgl@kernel.org>,
-	--cc=linux-phy@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	devicetree@vger.kernel.org,
+	kernel@dh-electronics.com,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Cc: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
-Subject: [PATCH v5 6/7] ARM: dts: ti: cpcap-mapphone: add charger detection interrupt for CPCAP USB PHY
-Date: Sat, 11 Jul 2026 23:42:09 +0300
-Message-Id: <20260711204210.197144-7-ivo.g.dimitrov.75@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260711204210.197144-1-ivo.g.dimitrov.75@gmail.com>
-References: <20260711204210.197144-1-ivo.g.dimitrov.75@gmail.com>
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH 00/10] arm64: dts: st: Add support for DH electronics STM32MP23xx/STM32MP25xx DHCOS SoM and Breakout Board and DHSBC
+Date: Sat, 11 Jul 2026 22:59:29 +0200
+Message-ID: <20260711210131.236025-1-marex@nabladev.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -90,35 +50,87 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Update the CPCAP USB PHY interrupt mapping to use the charger
-detection interrupt and corresponding "chrg_det" interrupt name.
+This stm32mp25xx-dhcos-bb board is a stack of DHCOS SoM based on
+STM32MP25xx SoC (1200MHz / crypto capabilities) populated on SoM
+Breakout Board, the stm32mp255c-dhcos-dhsbc is the SoM populated
+on DHSBC carrier board. The stm32mp23xx-dhcos-bb is a stack with
+STM32MP23xx SoC.
 
-Signed-off-by: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+The SoM contains the following peripherals:
+- STPMIC (power delivery)
+- 4GiB LPDDR4 memory
+- eMMC and SDIO WiFi module
+
+The Breakout Board carrier board contains the following peripherals:
+- USB-C peripheral port, power supply plug
+
+The DHSBC carrier board contains the following peripherals:
+- Two RGMII Ethernet ports
+- MicroSD slot
+- LVDS connector
+- MIPI CSI2 connector
+- USB-A Host port, USB-C power supply plug
+- USB-C / DP port
+- Expansion connector
+
+Marek Vasut (10):
+  dt-bindings: arm: stm32: Document STM32MP23xx/STM32MP25xx DHCOS SoM
+    and Breakout Board and DHSBC
+  dt-bindings: gpio: pca95xx: Document Kinetic KTS1622
+  arm64: dts: st: Fix SDMMC1 indent on stm32mp231
+  arm64: dts: st: Fix SDMMC1 indent on stm32mp251
+  arm64: dts: st: Add SDMMC2 and SDMMC3 nodes on stm32mp231
+  arm64: dts: st: Add SDMMC2 and SDMMC3 nodes on stm32mp251
+  arm64: dts: st: Add OMM node on stm32mp231
+  arm64: dts: st: Add pinmux nodes for DH electronics
+    STM32MP23xx/STM32MP25xx DHCOS SoM and Breakout Board
+  arm64: dts: st: Add support for DH electronics STM32MP23xx/STM32MP25xx
+    DHCOS SoM and Breakout Board and DHSBC
+  MAINTAINERS: Add DH electronics DHCOS SoM entry and fix email address
+
+ .../devicetree/bindings/arm/stm32/stm32.yaml  |  18 +
+ .../bindings/gpio/gpio-pca95xx.yaml           |   3 +
+ MAINTAINERS                                   |   3 +-
+ arch/arm64/boot/dts/st/Makefile               |  10 +
+ arch/arm64/boot/dts/st/stm32mp231.dtsi        |  86 ++-
+ arch/arm64/boot/dts/st/stm32mp23xc.dtsi       |   7 +
+ .../boot/dts/st/stm32mp23xx-dhcos-bb.dts      |  15 +
+ .../boot/dts/st/stm32mp23xx-dhcos-som.dtsi    |  51 ++
+ arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi | 564 ++++++++++++++++++
+ arch/arm64/boot/dts/st/stm32mp251.dtsi        |  32 +-
+ ...mp255c-dhcos-dhsbc-overlay-imx219-x10.dtso | 111 ++++
+ .../boot/dts/st/stm32mp255c-dhcos-dhsbc.dts   | 189 ++++++
+ arch/arm64/boot/dts/st/stm32mp25xc.dtsi       |   7 +
+ .../boot/dts/st/stm32mp25xx-dhcos-bb.dts      |  15 +
+ .../boot/dts/st/stm32mp25xx-dhcos-som.dtsi    |  51 ++
+ .../boot/dts/st/stm32mp2xxx-dhcos-som.dtsi    | 442 ++++++++++++++
+ 16 files changed, 1601 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/st/stm32mp23xc.dtsi
+ create mode 100644 arch/arm64/boot/dts/st/stm32mp23xx-dhcos-bb.dts
+ create mode 100644 arch/arm64/boot/dts/st/stm32mp23xx-dhcos-som.dtsi
+ create mode 100644 arch/arm64/boot/dts/st/stm32mp255c-dhcos-dhsbc-overlay-imx219-x10.dtso
+ create mode 100644 arch/arm64/boot/dts/st/stm32mp255c-dhcos-dhsbc.dts
+ create mode 100644 arch/arm64/boot/dts/st/stm32mp25xc.dtsi
+ create mode 100644 arch/arm64/boot/dts/st/stm32mp25xx-dhcos-bb.dts
+ create mode 100644 arch/arm64/boot/dts/st/stm32mp25xx-dhcos-som.dtsi
+ create mode 100644 arch/arm64/boot/dts/st/stm32mp2xxx-dhcos-som.dtsi
+
 ---
- arch/arm/boot/dts/ti/omap/motorola-cpcap-mapphone.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: kernel@dh-electronics.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
 
-diff --git a/arch/arm/boot/dts/ti/omap/motorola-cpcap-mapphone.dtsi b/arch/arm/boot/dts/ti/omap/motorola-cpcap-mapphone.dtsi
-index 6b1195c2a768..51a858021541 100644
---- a/arch/arm/boot/dts/ti/omap/motorola-cpcap-mapphone.dtsi
-+++ b/arch/arm/boot/dts/ti/omap/motorola-cpcap-mapphone.dtsi
-@@ -125,11 +125,13 @@ cpcap_usb2_phy: phy {
- 			interrupts-extended =
- 				<&cpcap 15 0>, <&cpcap 14 0>, <&cpcap 28 0>,
- 				<&cpcap 19 0>, <&cpcap 18 0>, <&cpcap 17 0>,
--				<&cpcap 16 0>, <&cpcap 49 0>, <&cpcap 48 0>;
-+				<&cpcap 16 0>, <&cpcap 49 0>, <&cpcap 48 0>,
-+				<&cpcap 13 0>;
- 			interrupt-names =
- 				"id_ground", "id_float", "se0conn",
- 				"vbusvld", "sessvld", "sessend",
--				"se1", "dm", "dp";
-+				"se1", "dm", "dp",
-+				"chrg_det";
- 			mode-gpios = <&gpio2 28 GPIO_ACTIVE_HIGH>,
- 				     <&gpio1 0 GPIO_ACTIVE_HIGH>;
- 			io-channels = <&cpcap_adc 2>, <&cpcap_adc 7>;
 -- 
-2.39.5
+2.53.0
 
