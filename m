@@ -1,87 +1,71 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDB83770B
-	for <linux-gpio@vger.kernel.org>; Sun, 12 Jul 2026 09:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC9A194A6C
+	for <linux-gpio@vger.kernel.org>; Sun, 12 Jul 2026 09:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783848444; cv=none; b=aFpn06aEn90U37rgyI6wgkqiXk5e962KNYjxtP/1W+ZaMDSFddtSu4Hyj5j1tqPnCHrXjhvYYR1GU4z3Xs7QOaPMS2fkSjPXxHYgzAJEY7wfg+lL1HJRsCABU9VF1ivZ56OOtRf4uPNjZYclb5OHT/WeBeeqJjRdWLfay1rd3Fo=
+	t=1783848718; cv=none; b=tvOOb+qu/FQO4nIApFCodXayXC8Rzch4IUDSM8Qh4F3CDUTPi9NToul5WyAfKOA1TU0/iBN4ZsOCKXUY2VoepUL4TP/AruDQoaTW4nIBhMlYNqFH6XNF5rCtOCnm4cg8Y+hXPmEeBDgs1Bt3Qj4SojfxioKh+hrzuESzzEYGlTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783848444; c=relaxed/simple;
-	bh=HGEhgo6nwKWERdeZN3j/7g/1mXMipMryk6U50sgalao=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IZqeIj8gSsPL8yo/klAwICag/VEj5uRSJjKs9xdYKhWu9JiASukrrRrAobONcCXfhKyVY3B7gy4nLehPhcM4zviEqGQ6tCLXzEZ47Ef9Umce7eubjzdOcBxzZRodUA2lYfPJRRWUzxsvsuxrD/ZDCO/j1bmsFIti2oxiRrIq6Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=D76ALQco; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1783848718; c=relaxed/simple;
+	bh=uOHV6GeWeJxMoeQVeCFfwBjwXBS8G4Vko/F0a3VyftI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LY6r/6BGJ5O2mimMZ+eEGoghPsWkem2YmxU/15mBa1mQWvhHeDsjfeE65/fHbeObu0T14oAPytjS9gIwuqEoEJTF7YH4X+GG+0kLSIcL9CjXxmVzCwEbqEizUSXX2/POayZ2rmq1/D4QM4p1Nt64Bb3VFyRQP1R+Huhj/U8f8NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jUt1TQwl; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="D76ALQco"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jUt1TQwl"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=HGEh
-	go6nwKWERdeZN3j/7g/1mXMipMryk6U50sgalao=; b=D76ALQcoJrmzHsBZ846w
-	8FTMwX8JWXTp/Sfkp2m6wroXM5+NdcxFrmNi/ohaHaeSgPHn6VgnU9eohuDx8oY+
-	SWMRE+8Wcai9u0XACKHVdTKmAIc1oGc6CPGT1TW9eNbA6WuGmoCVLD4WWGhX7sY+
-	/cOYxTwJxvkyqzK5SrI933+ZnJ9ai4Ru9cmLBjl9blUFdgKUsEZ8CyKt/EvEmqWG
-	/uU8bpIHl40ia5Xr6D5dXor4b4cmNwL8C9Dg581NA0CQQChtI4ed+YMN1PK8Hm5l
-	uYCY6txvzmMJPfeB2ufwrB1On26Bw1AZ1zIKJnH46uW+k8mtqQwRUHrOh63AHlxv
-	qQ==
-Received: (qmail 2178118 invoked from network); 12 Jul 2026 11:27:20 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jul 2026 11:27:20 +0200
-X-UD-Smtp-Session: l3s3148p1@vpaWlGZWwLQujnun
-Date: Sun, 12 Jul 2026 11:27:19 +0200
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=9dKe0bFkJgWBTt
+	ums8uQV2GtI1zJa6OLV0ZzK7az+n4=; b=jUt1TQwlfiVUC4OOgHT9ygj5aLEsWx
+	K2kl13ki180b5MAfAcyR/STJbM/Z2fj093J0go4OB7an6+ajijab1S7aw/W8eVyC
+	ZsT3tnqGXTQEIu14yoqypWJoooI0WLJMOByjhmfGoWTy/+r3V9qdOZSs1k90vonY
+	OnriMp/JroQ1zC1oXKhr0tLA4FRKeWabOK50l549xnIZHDru4Io2C1SgqTgYzFlM
+	6K6IWMTqxBwHLPqvAX1bRj7wu0BsI54LZFfc5pVgDXLbQTSo8rzbjzXM74B1+Ib0
+	gG37DFBbXF1itQD4UekWPhV0PL7bRseK54s4qaAFAgt9cFpXSEjjarCQ==
+Received: (qmail 2179342 invoked from network); 12 Jul 2026 11:31:53 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jul 2026 11:31:53 +0200
+X-UD-Smtp-Session: l3s3148p1@/ifqpGZWnpAujnun
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Abdun Nihaal <nihaal@cse.iitm.ac.in>
-Cc: linusw@kernel.org, brgl@kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: sloppy-logic-analyzer: Fix memory leak in
- gpio_la_poll_probe()
-Message-ID: <alNd92hOOETILWG-@ninjato>
-References: <20260710064838.153528-1-nihaal@cse.iitm.ac.in>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Abdun Nihaal <nihaal@cse.iitm.ac.in>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH] gpio: sloppy-logic-analyzer: add a comment explaining the buffer init
+Date: Sun, 12 Jul 2026 11:31:48 +0200
+Message-ID: <20260712093148.21446-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CDHTHxDTxpMC5KsV"
-Content-Disposition: inline
-In-Reply-To: <20260710064838.153528-1-nihaal@cse.iitm.ac.in>
+Content-Transfer-Encoding: 8bit
 
+To avoid more false positive reports of "leaking memory" when
+fops_buf_size_set() returns an error.
 
---CDHTHxDTxpMC5KsV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/gpio/gpio-sloppy-logic-analyzer.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Fri, Jul 10, 2026 at 12:18:36PM +0530, Abdun Nihaal wrote:
+diff --git a/drivers/gpio/gpio-sloppy-logic-analyzer.c b/drivers/gpio/gpio-sloppy-logic-analyzer.c
+index 2bbd308ca08e..6748ddce3c19 100644
+--- a/drivers/gpio/gpio-sloppy-logic-analyzer.c
++++ b/drivers/gpio/gpio-sloppy-logic-analyzer.c
+@@ -237,6 +237,7 @@ static int gpio_la_poll_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	/* Initially allocate a buffer. It currently is NULL */
+ 	fops_buf_size_set(priv, GPIO_LA_DEFAULT_BUF_SIZE);
+ 
+ 	priv->descs = devm_gpiod_get_array(dev, "probe", GPIOD_IN);
+-- 
+2.47.3
 
-> The memory allocated for priv->blob.data is not freed in the error paths
-> that follow the fops_buf_size_set() call in gpio_la_poll_probe(), as
-> well as in the remove function.
-
-There is no memory allocated at that time. Hmm, maybe I should add a
-comment explaining it.
-
-
---CDHTHxDTxpMC5KsV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpTXfcACgkQFA3kzBSg
-Kbbm8w/7BuU3C2v20yqERaoi5yj/MvUjL3d6rsVNj3Q6ubRu8306g7nh4DzbVEvM
-64AAl9HXU74qAxrZ5Le/4GFXTSkLpEbxxbitCCIXRNB7eug3/RX1EGbM7XO2LzKl
-3n+yAMsZM9YID95TrxEBsA4d2o0wkkjBH60DicOOITJfw9f8cxMU3Pne3UqXCOS4
-edQwjKDdpjNsvKL1DQgV8c8+P/f22odgPhY521APFEJzBAWDULXGc1mt/PQd+Ftb
-oB5sp/MsDN2Vjypt2f2TWZzPL7B5rObvWT+21aNj+phrxfQerCyjngftaAoqsONE
-/qwrEoWwzDGauoPWIQt/T85TtZ2LMdkFhJDe4PX+XczXATEggaEq0wI6oPra+EvE
-YFD6lCvkCLocn67dRtOUJCgKCGqeuofhn373v39c+py96jFrYnNftazqFMZl3DVg
-rcxgFCu+3COsyBqb5x79uwVSHgBtE1b+OdHdnU8e/tx78eNPublExKhmnKOrwnTO
-IxdJKYV06RIlgxx3nEEaMzxKSJ7kxeMqP8SMKa3Sx2yBKfxHXNQzQouaizZMdUfl
-qnEDWmzZU6BbhIMr9sAO/N+Azy5AycPJobfrnBXWWJhlncDPJPqJ9XE87YInxZ90
-OGy0dqQJPZZXlwJCvWlXP46mp3iHYDIyXR2KuzN5PspObWFurUA=
-=0WDL
------END PGP SIGNATURE-----
-
---CDHTHxDTxpMC5KsV--
