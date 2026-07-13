@@ -1,185 +1,245 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E719B409283
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 12:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8192441A6
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 12:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783944961; cv=none; b=N0tP59OMZ7EEJxqYmfjYEa3yTriGGd4/kIcC1SE8goh/NFWUV9bCHSvO1gSHvfhT9+8bdOvdQWzAuS3REvHDx42UVG+lNWf8PK3tHHGK7e+e6E6nZ3vqJFjEn3+oZRE1k+WlH31xpgtfXAtF25wNqNQiKlkE8oPwdlqqlHoj5+Y=
+	t=1783946598; cv=none; b=ITia/QuoMSUV8GrYj7NfnRsgrUKaqlous+ZljBSqTd1A9La/adrnF2arjJPWFA9uQeNi+79YsZkU+nuUSpMapZpGtLqi4p3Z0TWEu+w3wvcA/J2pfclDEZZppLux5KMvyK7gchr+8nSS5yVlHOrdY1jPzUjjV/keuTGWHF3Af5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783944961; c=relaxed/simple;
-	bh=ATDTQm/UciDupErPXbLk2PXIysxu2045xUz/FTQHuFA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eXVGrPS9TJ6hE33BXwm06DGcuKOEI5XWwiz5peGsIZiSOEga4yXlW/bq0Si5KzlQDFcfHfrdBvOjLvZlDqzx51Pw1rTAA42JKlYXyWCFWUNBV3ZkaDDtnrB5gCUGCaoAYEeVs43PKsiWpQJScOO2tBanPiYOP7zZdyFhZegf5pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Log/pXES; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VactPLZu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1783946598; c=relaxed/simple;
+	bh=CEpKfsyg1Tl3SeFdN8fnBQI+KQ/x6gXRgjkpeD0m8Xs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hHjY+ASA3B1rHg/Mqar+VI2qhU+mI/uMj8K6G98QNlbAek/geuuCWGvlwK0sSqH5NYOkyXaVoJaF9WqiBbcCekF2NCTQkkW7VrYEyMGYW0HYFZp0u+pQZsm1H1CAx3JEg/+amYqcSmpXYBSka98ndhjSAHvNxu66N65dsyNPSZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iq71VKox; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Log/pXES";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VactPLZu"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66DCEPNw1333692
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 12:15:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=MzYXLnYT5ku
-	894dEiDm0f+KTYSxqZgOOFQaKri3Z3Co=; b=Log/pXESPSqp/g/HBd2hP7Kd06b
-	3rAjkTQvScrB6ON+OfEgsuk4u6GwVSUBvlH2Q6g/050UDDcqUD2PIcDavKB2Pxcv
-	aFiyfG0CqpDsjzNOuCZ7gBseBDKZtaW9AWXAW4RUvyLL67skvpX9woo0WwONUnFM
-	jV/IPuqbkhg1BH+tHGqSwt+iPW6iMO78GemNTeB/HDqzk2vfRsJuitOR1RTxsurQ
-	xVdPZhFJOb6sBMe7MGCAz21Gv2lXGIOsTB58qQsLFP4yS9RCDdTaybuPVzFAzeNv
-	2ibS3D5VJgua7mLJzC5kEw2q5a+zXTpFlpQ2SjmQqa1wwxi+ZfkERJNMYFQ==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fctc8hdym-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 12:15:45 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3811ae55313so2927634a91.3
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 05:15:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iq71VKox"
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-ca53979f8e8so221804a12.2
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 05:43:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783944945; x=1784549745; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=MzYXLnYT5ku894dEiDm0f+KTYSxqZgOOFQaKri3Z3Co=;
-        b=VactPLZuUO8hNXlQv9nRkHSWM7bA8YB59w+lSkl2A3aXoIsLJYdd67odtTz86uIGlO
-         VHPIge5LI7iIVKThuDp+3kyzrYM22mYAkk42TTsWVDtDMUWf0RKseH31Th+zhYAeQvDo
-         zU0T4vJjxoH94CRetfBa5iIfzbYo8+gT5q1+k5JJ21Rghwsa/1lDiCqFeZb4sQTR2/ty
-         JmTDhbSM6wd/cGBuDaGx+7fVZswnS1xX1ZtSXlpNwEN4V/t5zs7pVgv9Er1ksCpG3DoW
-         0YN1MpLOCrLLRSI1j3sro4rmwyTciqRGE/yIJ2mkEPzBeuy5GyL0y23aDTpf/T4VsDe8
-         zaGg==
+        d=gmail.com; s=20251104; t=1783946596; x=1784551396; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=AmGigREwFUDRKnrZJH2JhdOBNjH+to7SqwWlffJ4Rh0=;
+        b=iq71VKoxNGcwUZlUcsyAT2B8yYBX4pnXHeHD0FIENI6Nc9/OWtmeB+T16MebK8NuVM
+         Ho4jLWvZ+pSLiiKfOMsv9h483VdWtEEW+IpnUC+k9lCMrYdSLQ13cqFzshnmIeVl/zMK
+         Xn6i9dtcmYMmSjSg1GfPyOsqf7vNIF67KJcYn5QQsd8Sx0RIvZx5eAxDMbQ++LWMQNbF
+         3y5B+I0fVtnQF/MNVq1IJz641+6ktXlvwhSUPz1IZpO99h3bX/nr7qCkHRiLE41uyFj6
+         uEIEv1H7i2k0bvBjb6BRKVXpPM5J9khvAK/hhWzDeYq5rQit0gbnPXbkYgcybUoFF51S
+         FFJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783944945; x=1784549745;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=MzYXLnYT5ku894dEiDm0f+KTYSxqZgOOFQaKri3Z3Co=;
-        b=mZ2QRs7wxANZoefS+ua55Pzi6L2Iu7Cm45fyXEzO7Oa9g0yBTB0lJdA/tp4obB1ilH
-         heXmNmiUBnHWxqvloYt6aqcGh8XkP3Br4RGbTmBbIMemGdRIYO+Xd+MW2JXNne0Oi+Mo
-         xIUOGVtd7Q9CcAv2zlGZqF3kGp6c9MzkeWv51wywtpbWYBSgrtJJ7jCLEbs3Js6KiV6D
-         Zd8ULgBZUn4UohSWFKnJBrfsEzsWopSYvP8g3QWbCPCB59/l/7/0JthDKQ+ldI2RUZPT
-         bF8HrPhKTM2mUwmdq9mC/fNEF65xiWU4CMINbVF1Sb60yoCXdGF7Be3k9ohK5A/eQ2Jd
-         FFYw==
-X-Forwarded-Encrypted: i=1; AHgh+Rrr9e3risoB7JeVDXuz49n0zBn2d2d91K+d0pK+IhwmViRl/HmvI/371q37sa0hBxBbRPx2r6MI/Wbg@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgUe9k6B1B08wEl3nYz4R+igOJjUrHrRORCleGCNRooRBuAuCM
-	G/jWvDZg/N221DzUc6OSQVaKDpfEzom1MTjmHaT0F+n1l0Oh1NfLdMQhiuMC/UudFQZk9ZcPz/W
-	5bk49125okJGtqnd41JnZoxoBf2l25qdGhutOwSqJm2OxffTW3GFAsRLzz3WbbhoW
-X-Gm-Gg: AfdE7ckmOJYhetI2zMWDtAFss3gsd6wIgxwJU8sbn9MIp1OJeen6lum8klln/Iz7nHb
-	zK0++GrpfLm3m+BFs/xHkVmXVwGbBdkZMAN2juA+KvMn3qNhT3uAyUIdL+fvz4mNbDb2ox9/rVZ
-	Yph6NNGKEQAHlqEyHFMroHUXsDYb3GbfrvfqFTjsiK+b8a5tW1g8uyEcHCygD5LGULr4cwRcfsh
-	WKU3Ub/M9e8Sy7VozfOTb5NNl26yLHLt+llq2VL4G7H2TpfOiOYh/o/ik6NlHoh+9zHkAw4hhZ6
-	M+JXmeDyzWz54kJx+6zEzBQ95IeAhsy2ohWPKfzUS6/7dZm+8ssKADNlIkeaYOPEZeUcopNs1wr
-	nV2jxfHdLenzfIoEfAG6HfwUkcwreEQdN77c4iM6I
-X-Received: by 2002:a17:90b:5830:b0:38c:cf7a:5fec with SMTP id 98e67ed59e1d1-38dc78489camr8927966a91.13.1783944944939;
-        Mon, 13 Jul 2026 05:15:44 -0700 (PDT)
-X-Received: by 2002:a17:90b:5830:b0:38c:cf7a:5fec with SMTP id 98e67ed59e1d1-38dc78489camr8927941a91.13.1783944944502;
-        Mon, 13 Jul 2026 05:15:44 -0700 (PDT)
-Received: from hu-raviravi-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-313b9ca880fsm28069425eec.23.2026.07.13.05.15.40
+        d=1e100.net; s=20251104; t=1783946596; x=1784551396;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=AmGigREwFUDRKnrZJH2JhdOBNjH+to7SqwWlffJ4Rh0=;
+        b=A1/h+Tmowc9xEREQ2gU5LI3HKYIcC1qvzHDIkf6tlWk3AL4DiG69QNv90oBBIsI2UT
+         zJiNBwb8c+Zrqeki5FZo8DekjOkRFQABbThpFHpDZGJOzPRz7zg3kGEPzXgHz3fDwZk+
+         nr/cPjGzQuV5yORtNo/o9mOyxUkdndaxxXHCe+2RHrW6mjwVhhwq4eFiIqwh/62u07Na
+         nuMMAJtPjpqTz5gP/LyDzcs+4dprDVHZsIyuyzcqtBbMu3PmGPnbZmz1pScqVNwBr1uC
+         Nlz/sovSd12HnbWg7NkDpWVnXmqbUkDcs+Gd4EefoCwzZ08E9h8eW74hDO/fr5vfyEQm
+         3Dmw==
+X-Gm-Message-State: AOJu0YwAeV13Mdk8plzbv+DBSKSzj+bQ3SAE4xDlzap/w5jGBMRD2v1v
+	/4cZsFiyNkmHmaYjRs19cmMkL8CjkO2/YJBRpwuXd7I7VKjsbxehkjfX63OPHg==
+X-Gm-Gg: AfdE7cmui9sK2XEqDjODcY4zbpRXRnG1hs9vBGt9ZQxKIkIf5z5nRuMqKzUjGtcVf6n
+	HlHEWOp1VRQU5/QPpueod+C8tYMyRBvRb4BA97kBZ6otF06Ls/Sdapu4A+1xpNoQuLKDXDfjQe0
+	apLlwdQYX5rKQC6MVAedSJpVM/kC2YIzSXBPkivRfXg24uGcNSlXMeA39EwYU81KIJZ7Mc0NW8L
+	yIyX1dSvpG9oSInnaK+h9x0Z3L5VWYWfspkRoAALlgTI7rXm7dvawFMExPXoS0CNXvtjRCXZf7b
+	QBtbDY/oydN/1O/8/lN6/litCnx4xzACS4ocrZO1sIA01n6lt9BngOI5c2zR+56ABPEMxC8icTm
+	6yf6pBmxIQmu4BmApCvsbeXmv3Lz6YyDYvxtoQKMzB/rGsMxyyeYocf+RZO5nPbiLuJMqRH7RzY
+	Ii9yHYSyRmDgcpTLRQU92MGQ==
+X-Received: by 2002:a17:90b:51cc:b0:381:6cf0:d5f5 with SMTP id 98e67ed59e1d1-38dc780f503mr7033696a91.5.1783946596463;
+        Mon, 13 Jul 2026 05:43:16 -0700 (PDT)
+Received: from [192.168.1.2] ([2401:4900:881f:4446:b692:9244:2734:87f6])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-313b9ca880fsm28219139eec.23.2026.07.13.05.43.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2026 05:15:44 -0700 (PDT)
-From: Ravi Hothi <ravi.hothi@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Luca Weiss <luca.weiss@fairphone.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mohammad.rafi.shaik@oss.qualcomm.com, ajay.nandam@oss.qualcomm.com,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH v2 1/2] dt-bindings: pinctrl: qcom,milos-lpass-lpi-pinctrl: Add Eliza pinctrl
-Date: Mon, 13 Jul 2026 17:45:17 +0530
-Message-Id: <20260713121518.2724474-2-ravi.hothi@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260713121518.2724474-1-ravi.hothi@oss.qualcomm.com>
-References: <20260713121518.2724474-1-ravi.hothi@oss.qualcomm.com>
+        Mon, 13 Jul 2026 05:43:16 -0700 (PDT)
+From: Bhargav Joshi <j.bhargav.u@gmail.com>
+Date: Mon, 13 Jul 2026 18:12:59 +0530
+Subject: [PATCH] dt-bindings: pinctrl: ti,dra7-iodelay: Convert to DT
+ schema
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: sJu2lE5k5IsQYrz5OfUaBo-zZA-RSxmN
-X-Proofpoint-ORIG-GUID: sJu2lE5k5IsQYrz5OfUaBo-zZA-RSxmN
-X-Authority-Analysis: v=2.4 cv=UtRT8ewB c=1 sm=1 tr=0 ts=6a54d6f1 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22 a=VwQbUJbxAAAA:8
- a=QyXUC8HyAAAA:8 a=EUspDBNiAAAA:8 a=AILnUmMEF99VWB6qR_8A:9
- a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzEzMDEyOCBTYWx0ZWRfX/CV3cqKJ8AB7
- zxBR3S1q7mgghIZ/FDB9tBgDVjLx3ZTo796YAIULc3fsz6cGvP75F6sBXDS6fLWItsWDDrCPfiz
- 8xvrbOoxsTIiEzFl9XI2Sm2NFb7M90I=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzEzMDEyOCBTYWx0ZWRfX3/G+8zbvzq5w
- t863vt68EB+SIJVbLa2L+dvSQ5w8CZ+MIPTzyfq/KgT2xaARfj6Dd2p1fI7XWCCwIvSu0+sUtre
- yQ4wql6gUJYVpBfT+vGJVx5+9ZtKLzjyEHF6lyXtb1oqi+ohEtjJguvMP9dd05Buq6PP9mXdHmz
- 4aVcKHl13oE604ZoMDIwuCFiR8zWXGdPuIdqde8Fc+yi7uXKYfmTyaOWDh6UEXVkbs49A9yYHxA
- +AhCcR0FgtRoL3T6e0lxYOv/14itpj+K9QKc/NMn1CAzvABKJZfqYYyjyULIJTIVGPr83437hBy
- jL7aWrNEyK6me3u3neSN3SMA/St/QEhbBU7GRPy9noQukKHHz8bA9nWd1yFD6XHfwILXS48W3vX
- jN7j8BvttF/SF/BbZEZOWC6nnWn3AqZpOBKL5aDN6+IzPWoKux+bP69eaiBjX1+ynvqfFCsT0oV
- Gno8Nm/TQCnWyq5u3cQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-13_03,2026-07-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 suspectscore=0 bulkscore=0 clxscore=1015
- impostorscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607130128
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260713-ti-iodelay-v1-1-5f06d36c4aac@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDcwMz3ZJM3cz8lNScxEpdI7M0c0uztGSTNLM0JaCGgqLUtMwKsGHRsbW
+ 1AKQaNXhcAAAA
+X-Change-ID: 20260706-ti-iodelay-26f796fc4f6f
+To: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, goledhruva@gmail.com, m-chawdhry@ti.com, 
+ daniel.baluta@gmail.com, simona.toaca@nxp.com, j.bhargav.u@gmail.com
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783946592; l=5158;
+ i=j.bhargav.u@gmail.com; h=from:subject:message-id;
+ bh=CEpKfsyg1Tl3SeFdN8fnBQI+KQ/x6gXRgjkpeD0m8Xs=;
+ b=IRLIDsFRi7FQ1RUdvOYAiQYLKaTDrlPSIJpsjsiLTq/R0zLehPKs0XyIqGD1ZRYtySDFiTkYR
+ U3G6qBouEZHB6KKkd5j+tp2bHeWzDi0a2xgyOZVmUrnlPSMCVTRTMVS
+X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
+ pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
 
-Document compatible for Qualcomm Eliza SoC LPASS LPI pin controller.
-Eliza has the same pin mux functions as Milos but uses a different
-slew rate register layout where the slew rate field is in the same
-GPIO config register rather than a separate dedicated register. As a
-result, Eliza only has a single reg entry instead of two.
+Convert TI IODELAY controller from text to DT schema. Document child
+properties missing from text bindings for proper validation.
 
-Signed-off-by: Ravi Hothi <ravi.hothi@oss.qualcomm.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202607032107.RMly13RH-lkp@intel.com/
+Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
 ---
- .../pinctrl/qcom,milos-lpass-lpi-pinctrl.yaml  | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ .../bindings/pinctrl/ti,dra7-iodelay.yaml          | 78 ++++++++++++++++++++++
+ .../devicetree/bindings/pinctrl/ti,iodelay.txt     | 47 -------------
+ 2 files changed, 78 insertions(+), 47 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,milos-lpass-lpi-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,milos-lpass-lpi-pinctrl.yaml
-index 73e84f188591..c81cac1a9740 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,milos-lpass-lpi-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,milos-lpass-lpi-pinctrl.yaml
-@@ -15,9 +15,12 @@ description:
- 
- properties:
-   compatible:
--    const: qcom,milos-lpass-lpi-pinctrl
-+    enum:
-+      - qcom,milos-lpass-lpi-pinctrl
-+      - qcom,eliza-lpass-lpi-pinctrl
- 
-   reg:
-+    minItems: 1
-     items:
-       - description: LPASS LPI TLMM Control and Status registers
-       - description: LPASS LPI MCC registers
-@@ -74,6 +77,19 @@ $defs:
- allOf:
-   - $ref: qcom,lpass-lpi-common.yaml#
- 
-+  - if:
-+      properties:
-+        compatible:
-+          const: qcom,eliza-lpass-lpi-pinctrl
-+    then:
-+      properties:
-+        reg:
-+          maxItems: 1
-+    else:
-+      properties:
-+        reg:
-+          minItems: 2
+diff --git a/Documentation/devicetree/bindings/pinctrl/ti,dra7-iodelay.yaml b/Documentation/devicetree/bindings/pinctrl/ti,dra7-iodelay.yaml
+new file mode 100644
+index 000000000000..a399946ae817
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/ti,dra7-iodelay.yaml
+@@ -0,0 +1,78 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/ti,dra7-iodelay.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- required:
-   - compatible
-   - reg
++title: Pin configuration for TI IODELAY controller
++
++maintainers:
++  - Bhargav Joshi <j.bhargav.u@gmail.com>
++
++description:
++  TI dra7 based SoCs such as am57xx have a controller for setting the IO delay
++  for each pin. For most part the IO delay values are programmed by the
++  bootloader, but some pins need to be configured dynamically by the kernel such
++  as the MMC pins.
++
++properties:
++  compatible:
++    const: ti,dra7-iodelay
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  '#pinctrl-cells':
++    const: 2
++
++patternProperties:
++  ^mmc.*_conf$:
++    type: object
++    additionalProperties: false
++    properties:
++      pinctrl-pin-array:
++        $ref: /schemas/types.yaml#/definitions/uint32-array
++        description: |
++          An array of 32-bit integers defining the pin delay configuration.
++
++required:
++  - compatible
++  - reg
++  - '#address-cells'
++  - '#size-cells'
++  - '#pinctrl-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/pinctrl/dra.h>
++
++    padconf@4844a000 {
++        compatible = "ti,dra7-iodelay";
++        reg = <0x4844a000 0x0d1c>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++        #pinctrl-cells = <2>;
++
++        mmc2_iodelay_3v3_conf {
++            pinctrl-pin-array = <
++            0x18c A_DELAY_PS(0) G_DELAY_PS(120) /* CFG_GPMC_A19_IN */
++            0x1a4 A_DELAY_PS(265) G_DELAY_PS(360) /* CFG_GPMC_A20_IN */
++            0x1b0 A_DELAY_PS(0) G_DELAY_PS(120) /* CFG_GPMC_A21_IN */
++            0x1bc A_DELAY_PS(0) G_DELAY_PS(120) /* CFG_GPMC_A22_IN */
++            0x1c8 A_DELAY_PS(287) G_DELAY_PS(420) /* CFG_GPMC_A23_IN */
++            0x1d4 A_DELAY_PS(144) G_DELAY_PS(240) /* CFG_GPMC_A24_IN */
++            0x1e0 A_DELAY_PS(0) G_DELAY_PS(0) /* CFG_GPMC_A25_IN */
++            0x1ec A_DELAY_PS(120) G_DELAY_PS(0) /* CFG_GPMC_A26_IN */
++            0x1f8 A_DELAY_PS(120) G_DELAY_PS(180) /* CFG_GPMC_A27_IN */
++            0x360 A_DELAY_PS(0) G_DELAY_PS(0) /* CFG_GPMC_CS1_IN */
++            >;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/pinctrl/ti,iodelay.txt b/Documentation/devicetree/bindings/pinctrl/ti,iodelay.txt
+deleted file mode 100644
+index c3ed1232b6a3..000000000000
+--- a/Documentation/devicetree/bindings/pinctrl/ti,iodelay.txt
++++ /dev/null
+@@ -1,47 +0,0 @@
+-* Pin configuration for TI IODELAY controller
+-
+-TI dra7 based SoCs such as am57xx have a controller for setting the IO delay
+-for each pin. For most part the IO delay values are programmed by the bootloader,
+-but some pins need to be configured dynamically by the kernel such as the
+-MMC pins.
+-
+-Required Properties:
+-
+-  - compatible: Must be "ti,dra7-iodelay"
+-  - reg: Base address and length of the memory resource used
+-  - #address-cells: Number of address cells
+-  - #size-cells: Size of cells
+-  - #pinctrl-cells: Number of pinctrl cells, must be 2. See also
+-    Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+-
+-Example
+--------
+-
+-In the SoC specific dtsi file:
+-
+-	dra7_iodelay_core: padconf@4844a000 {
+-		compatible = "ti,dra7-iodelay";
+-		reg = <0x4844a000 0x0d1c>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		#pinctrl-cells = <2>;
+-	};
+-
+-In board-specific file:
+-
+-&dra7_iodelay_core {
+-	mmc2_iodelay_3v3_conf: mmc2_iodelay_3v3_conf {
+-		pinctrl-pin-array = <
+-		0x18c A_DELAY_PS(0) G_DELAY_PS(120)	/* CFG_GPMC_A19_IN */
+-		0x1a4 A_DELAY_PS(265) G_DELAY_PS(360)	/* CFG_GPMC_A20_IN */
+-		0x1b0 A_DELAY_PS(0) G_DELAY_PS(120)	/* CFG_GPMC_A21_IN */
+-		0x1bc A_DELAY_PS(0) G_DELAY_PS(120)	/* CFG_GPMC_A22_IN */
+-		0x1c8 A_DELAY_PS(287) G_DELAY_PS(420)	/* CFG_GPMC_A23_IN */
+-		0x1d4 A_DELAY_PS(144) G_DELAY_PS(240)	/* CFG_GPMC_A24_IN */
+-		0x1e0 A_DELAY_PS(0) G_DELAY_PS(0)	/* CFG_GPMC_A25_IN */
+-		0x1ec A_DELAY_PS(120) G_DELAY_PS(0)	/* CFG_GPMC_A26_IN */
+-		0x1f8 A_DELAY_PS(120) G_DELAY_PS(180)	/* CFG_GPMC_A27_IN */
+-		0x360 A_DELAY_PS(0) G_DELAY_PS(0)	/* CFG_GPMC_CS1_IN */
+-		>;
+-	};
+-};
+
+---
+base-commit: 1e9cdc2ea15adf4a821eefedabf6c0c8cf0b6a55
+change-id: 20260706-ti-iodelay-26f796fc4f6f
+
+Best regards,
 -- 
-2.34.1
+Bhargav
 
