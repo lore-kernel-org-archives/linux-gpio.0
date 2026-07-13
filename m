@@ -1,112 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7FF3E6DF4
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 10:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DC83E7BB5
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 10:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783938023; cv=none; b=JXITnsnjiJ0LTzhwoYqzxTL8qgD70bbSGg2e8ArHQLajUZU2gjKgj6GYPN90/ShajAQ9BsaiaVJK7EgevAGG9YuZoYrQf659eeYBW0Zrpnr28rt/JT66KmaIU3lnyJ48uhrR/7h4eFKblDAjx6O8SZcjK4Wo37oLtGy8yNLoUuc=
+	t=1783938278; cv=none; b=f6hRKd5XzJfB9uNthKUHFIfp6OpQ/A6WoaZCbyaEghS2Ru298F2Gh+jM4CeN7VoJ2GDwEVWwWiEwJFLyipdw7xFyC6NbceME54KwqYlQDTLrM3p8Izh8lEffRv6zmLOmFOgZNO7sExtxTqwAYM8cqQO/8jWHMVBkPIDQ54Xk3nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783938023; c=relaxed/simple;
-	bh=kcn99Xy/3DudcybC0jtllxbvzn7qC6YvN7bxjIIy5So=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JmVI/KboB34rbl0KwFpe/IlJ5/j4iO7//7W2OKStsN0Q7BbKBIQw/U2fjGhzqompNLdL4MILgn58HXP44B73CIwZMPyCNuFwH2GWbhFcjTjDbguRYwkNz/gatjFenLJtkLUIhgkruL+VZQvB69HYfttm4GXTLAG68nbI1FP/QEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aMDcQjjz; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMDcQjjz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13DF31F0155B
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 10:20:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783938022;
-	bh=E2Il11/mxE78nQhBlWi8jSDcSjyK2Ic0zf6JqsJx93g=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=aMDcQjjzxgyz6L1l1vKncvg0VU97aYa5TYl7MEJh2Wejjzx5XKjG8B76IFoQIL3fF
-	 Jt1o7SG9tpt4lAYpHppI1K0hy7zcGM7xTMWgwRxW0qaW+eWzBAL/w0xSnYccy8dQQW
-	 WYtqJe4eJaHNvgEpW1wfdNBQMmJwwzOd91cEjO7vXmq8xYhFRfcO1Lqwzs+LC5WH4M
-	 43q1j3TxCZnbJUBas5EodkGh7jCrRh3+g3BRyK1yDZa1FwLDeoOo0IMDsPenWHP9dv
-	 R8fYcXDif6La+dl4qmWlqf1aDxRlZx0V9wlxzfFvylaBj3nKIp+JvPrUTGmL4hpEIa
-	 SkvwP9+IRLkdg==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-39c7ef2b1e2so23984681fa.1
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 03:20:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoftWlFjAE+lSN1Y4/greQ4UROuzNxlPt/1ubnlhaZr37QA4CIGU5CgcZoDqUHp07330KhgJnYJw43R@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj/o70IGEQ6IIGQQmiqUPtFuhAA6vGsIFnrsw+CsS+jlJJOA4j
-	uVQz+jIp5A6FLN6R4HVKszFw/oOiR39/g9CeOTUrQl84CdqhlNMat4CIEptQGhPsFOT/LBSgxkj
-	aEg8fWKxAHyxlPsj8ScB/KREF8Bj95FNyEkHJvi8a5w==
-X-Received: by 2002:a2e:b8c3:0:b0:39c:6d3a:2dc6 with SMTP id
- 38308e7fff4ca-39caa806714mr17361151fa.15.1783938020444; Mon, 13 Jul 2026
- 03:20:20 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 13 Jul 2026 03:20:18 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 13 Jul 2026 03:20:18 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <CAMRc=MeW_pjczz-5L+p2tqPw4TfgVPmB7t_hXdtb9cX0BDSHuA@mail.gmail.com>
+	s=arc-20240116; t=1783938278; c=relaxed/simple;
+	bh=gnOONJI/FttYdj/hlauLNnplmzplZ3jAon5ohLlODbc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bOwBT8B+RGYwDieR4uuEivEerp8NGn5bPhtzFWR5pyE7biuJgVflZSqPjgIRJgOjVCS3+pBxcaQ5HOGnC9Fojsfg2jcQSh0rsUEKKhPqTMLNzUnDXIAQzJFR3/dQVzv1Zn2TtHldMyWKKOfyVrQbfQGSA3VIsXuMQLiTCmieX8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-69531108f25so4831380a12.2
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 03:24:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783938275; x=1784543075;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=tbIGIghWWKNfDdw1F8tz0OtxhskaJuOiI918laGeFvQ=;
+        b=huEKst9s3ZJHLzqmGmCTjZujAnyy0zooH4cjvNS3pJhMweUtif2Xrirb3fULn1PT7Q
+         o9ob+zk1ox1rS7tlPbIxjhMsJC22f6RWoKf/8jWWjkO+q+OmCzZVNTZTKlRYYUwkON7M
+         PtG4eUpM9rrPRf6hFfmIMxC7pLQFh548XqK4rRP6DEXbi/fOMyoSuiqYUVkbiN+8QcIc
+         zdUD8OJEsUIZ9BQyc+EJFtvqpfmTnoEPHu+SNKrh10ryZ9HeHWtXBn9q2HaGF9cIlVwV
+         EX6CpcbHQYoyBHPOnefF6LbBdkeAUa0dqb974+qa7psue9zIx4fhsT5wOw8Q464SYmhc
+         HhNA==
+X-Forwarded-Encrypted: i=1; AHgh+RqlmSAEiByzQO5sQ313jycOg6SjruwblC4gPlO9Pejxj6B4XmroNN5ipSeKkVbbpkF8+eHX7THiYG1e@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8osJTNdxT9/Wk0oLomtKyQGiOUu3irE4xR1Ht0AOEpTiVeAei
+	usZdhkNO+RF0PAYBRSDVfnvLOr//t6RcOFRag+WoQZtwnvL1V5xe8Qr7WyRMOXhOgDM=
+X-Gm-Gg: AfdE7cloZWGigxa/TcUu3ivAu29FJ3eKF9/dsAsqZBEPPk9Chrjh8sJHsYLjVhmUtwk
+	xyPJS+qpRfZ1ZuRV2ZwRWnzlDN9ptEDWUw2Rf6nM4YuqsnUJJPlknacF9DIbhZbAH8eTQZCszTP
+	WxgDa4XIDBmO9A1+6c98yZFOE7i9BPckZe8JGcGMb79GZh1bAQN1GxIqg5ZF26umwhV7JzPR68w
+	GRzKy6dkOVGmRUQb8tnNXdcQdwCckwXWAoQ82LIwtA7rnNvJ/XlrUF0fSYJqaqAzD/bNnwBv4a0
+	6S91HgjZlp2SVQ2FMIBFr8DwEXokcQkTK1Gvqo6NFpf7OQ8Lgkqr8THl4pB0gF8jV/rumHhtW3D
+	Xaw2hD62UydJfOpjZehURW5OtE2RgKhR9Td65LYYJneW7oC+hB5ASK9FQXhxfIQ0y43xxU7fMz7
+	o5jbCuCLI3s2YKCijLvzjH3rgb6Y+Q200IUz/3voYWMLuB4raBIw==
+X-Received: by 2002:a05:6402:1473:b0:698:585c:f07b with SMTP id 4fb4d7f45d1cf-69c5f0c7993mr3589409a12.3.1783938274498;
+        Mon, 13 Jul 2026 03:24:34 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-69a19cd87d6sm14798854a12.6.2026.07.13.03.24.33
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jul 2026 03:24:33 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-69531108f25so4831338a12.2
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 03:24:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqjS8n4G6h08Ac5KQlX31KgB5Rq7DIk07YcbClTHXduR71dlBF0ZHUyFpgOFfe8OQceZVq7EwtPCebx@vger.kernel.org
+X-Received: by 2002:a05:6402:a513:10b0:69c:72e2:5b5 with SMTP id
+ 4fb4d7f45d1cf-69c72e2091dmr2025764a12.19.1783938273267; Mon, 13 Jul 2026
+ 03:24:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260710-swnode-fw-devlink-v3-0-993f31874e40@oss.qualcomm.com>
- <DJWR3RYAWYAI.LQC41HSN2I94@kernel.org> <CAMRc=MeW_pjczz-5L+p2tqPw4TfgVPmB7t_hXdtb9cX0BDSHuA@mail.gmail.com>
-Date: Mon, 13 Jul 2026 03:20:18 -0700
-X-Gmail-Original-Message-ID: <CAMRc=Mc7f7BDp5o-36ik6yHZSMQg3f2MNEpjurJ2x--BKga0Hw@mail.gmail.com>
-X-Gm-Features: AVVi8CclRsLtPY2fK5pxv1kXXcH67GXVTmR40NKDXmnFg0VoXAkCK1k3ECh2mL4
-Message-ID: <CAMRc=Mc7f7BDp5o-36ik6yHZSMQg3f2MNEpjurJ2x--BKga0Hw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] software node: provide support for fw_devlink
+References: <20260712093148.21446-2-wsa+renesas@sang-engineering.com>
+ <CAMuHMdV415V23a9E2QM77iQdGePOoZYNk=+v0Hms6uxugKBu5g@mail.gmail.com> <CAMRc=Mce7WXrme_z_ZoUCHqYUAdP+Ee6rHB8TmRdeZ18kBH1Tw@mail.gmail.com>
+In-Reply-To: <CAMRc=Mce7WXrme_z_ZoUCHqYUAdP+Ee6rHB8TmRdeZ18kBH1Tw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Jul 2026 12:24:19 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXD0EyaimogRnvbWg1HC91kE1EdEZtV7ct8s-JY9ho52w@mail.gmail.com>
+X-Gm-Features: AUfX_mw0RXrcJVfmTIefgb2UHhGLLjrZR9uzD_wnzzRTLlX3FQIauo0umSvX6WE
+Message-ID: <CAMuHMdXD0EyaimogRnvbWg1HC91kE1EdEZtV7ct8s-JY9ho52w@mail.gmail.com>
+Subject: Re: [PATCH] gpio: sloppy-logic-analyzer: add a comment explaining the
+ buffer init
 To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <david@davidgow.net>, Rae Moar <raemoar63@gmail.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-acpi@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-renesas-soc@vger.kernel.org, Abdun Nihaal <nihaal@cse.iitm.ac.in>, 
+	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 13 Jul 2026 11:45:17 +0200, Bartosz Golaszewski <brgl@kernel.org> said:
-> On Sun, 12 Jul 2026 18:59:04 +0200, Danilo Krummrich <dakr@kernel.org> said:
->> On Fri Jul 10, 2026 at 3:51 PM CEST, Bartosz Golaszewski wrote:
->>
->>  static struct kunit_case swnode_test_cases[] = {
->> diff --git a/drivers/gpio/gpiolib-kunit.c b/drivers/gpio/gpiolib-kunit.c
->> index ad961cf97aee..7798f8a8e602 100644
->> --- a/drivers/gpio/gpiolib-kunit.c
->> +++ b/drivers/gpio/gpiolib-kunit.c
->> @@ -449,6 +449,9 @@ static void gpio_swnode_probe_defer_on_unregistered(struct kunit *test)
->>
->>         pdata = dev_get_platdata(&cons->dev);
->>         KUNIT_ASSERT_EQ(test, pdata->gpio_err, 0);
->> +
->> +       /* Tear down the consumer before the provider to free the GPIO. */
->> +       kunit_platform_device_unregister(test, cons);
->>  }
->>
->>  static int gpio_swnode_probe_order_test_init(struct kunit *test)
->> @@ -614,9 +617,17 @@ static struct kunit_case gpio_unbind_with_consumers_tests[] = {
->>         { }
->>  };
->>
->> +static int gpio_unbind_test_init(struct kunit *test)
->> +{
->> +       device_link_wait_removal();
->
-> Interestingly I noticed this in the GPIO test cases but not here...
->
-> I also think that we should call device_link_wait_removal() *before* and
-> *after* these cases to not affect other test suites - as pointed out by
-> sashiko too.
->
+Hi Bartosz,
 
-Huh, that won't work because suite->exit() runs *before* kunit_cleanup(). Isn't
-it wrong? We do suite->init(), then schedule actions inside the test, it would
-make sense to then first call the release callbacks for resources and only
-after that call suite->exit()?
+On Mon, 13 Jul 2026 at 11:46, Bartosz Golaszewski <brgl@kernel.org> wrote:
+> On Mon, 13 Jul 2026 11:20:02 +0200, Geert Uytterhoeven
+> <geert@linux-m68k.org> said:
+> > On Sun, 12 Jul 2026 at 11:32, Wolfram Sang
+> > <wsa+renesas@sang-engineering.com> wrote:
+> >> To avoid more false positive reports of "leaking memory" when
+> >> fops_buf_size_set() returns an error.
+> >
+> > But who is freeing priv->blob.data when fops_buf_size_set() succeeds?
+>
+> In case I was too eager picking it up, let me drop it from my tree before I
+> pushed it out and wait for Wolfram's response.
 
-Anyway, that's material for another series.
+Sorry for being unclear: the issue is pre-existing.
+I don't object to this patch.
 
-Bart
+I don't see how "people" would come up with these bug reports,
+but probably I am not smart enough to understand the logic of the AI ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
