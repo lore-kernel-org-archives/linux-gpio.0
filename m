@@ -1,455 +1,108 @@
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89A33B6C0C;
-	Mon, 13 Jul 2026 08:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB2A3E00A9
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 09:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783931913; cv=none; b=qY5obSPATD9obUX27+uK0v8ED3x9yYlPhiXutxckxVZPaX4LKgYLaTvW5hHN+RY3xQwW6l+qC8J5Z7rvGLpQEw5473uLmmJf8AknjlBajGM8s/1Fs5RkZod9MMejO7cr+qD3LP8nr7JEiiKHnPWhKpotYquUu8SmORvmphmlHFs=
+	t=1783934419; cv=none; b=jCam81Ye6xbvm2dCvI53fr7qvewGEbnNgcsbZAf8BoO0fkkWPyUPq76Jafrqx/Kl984BydgkVBSIfoZYwPfIUW88mfw4NH6DuFgYHDr0DenOr2RBEJXOcwGW8ezmuUVoiV4mUNNsW1L87CrVGBO5cArCvBM0/DNHrZ0maZXSof4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783931913; c=relaxed/simple;
-	bh=C5IJi6htYp1wVyhQdlss1bE1iNcq0tIZf5Rv68DAmFE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NLhqzuIo+mPOsKApK1Zw3GdqA2QszEzBPubKymrjOrUouIeQC9caP5KaLUGJ3gXVsYfiqsoU2snAT+YQv75ycXQDuxz79s0q0VK12QxugLoTRwTVPpPMzjrt2ji0oSF0y44BzG4tp5Aa+QKNrXp8tj2n2iD+WGWTXgLUcQlrRwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pKrzbiPa; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pKrzbiPa"
-X-UUID: 30af232c7e9611f1b1788b6acf885367-20260713
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=sAdnFvyfBKPaRzVFOl9q5U0tA2qKj/ZNso5TYX/8hMQ=;
-	b=pKrzbiPaZWIy6Rvnoix6x7xgNW+qFT00AvqBRYXVJAh+IJByHEihiSuSRh6HrFKD5ac5JkQlyqQG3KIPfE7d6Iy4e6nDPhCemodmzY2NnYKTQqnxmElfO+ylucXUkELfwJIiHeE2EQAqffdDU234lINlPV/LCVNF3sVvXcaMWPY=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.17,REQID:889cd99c-cb1d-444d-b085-cd177a0b550c,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:d497b38,CLOUDID:9f2046f9-4b72-4a52-91ca-f4585405c3b0,B
-	ulkID:nil,BulkQuantity:0,SF:81|82|102|836|865|888|898,TC:-5,Content:0|15|5
-	0|99,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:-1,COL:0,OSI:0,
-	OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 30af232c7e9611f1b1788b6acf885367-20260713
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
-	(envelope-from <justin.yeh@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1819862535; Mon, 13 Jul 2026 16:38:15 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Mon, 13 Jul 2026 16:38:13 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.2562.29 via Frontend Transport; Mon, 13 Jul 2026 16:38:13 +0800
-From: Justin Yeh <justin.yeh@mediatek.com>
-To: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Justin Yeh <justin.yeh@mediatek.com>
-Subject: [PATCH v6 3/5] pinctrl: mediatek: allow common drivers to be built as modules
-Date: Mon, 13 Jul 2026 16:37:55 +0800
-Message-ID: <20260713083808.168957-4-justin.yeh@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20260713083808.168957-1-justin.yeh@mediatek.com>
-References: <20260713083808.168957-1-justin.yeh@mediatek.com>
+	s=arc-20240116; t=1783934419; c=relaxed/simple;
+	bh=zgIM9UCa3XkWmd6kqFFWou+UXKAbWYBBdjA28fRvpGw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VTwCoBQuHgQKG1sN5qg7bISW3VJIq8nOik3XkHHKpl0PaPEOgMyoHemhoM8ymDEbWCHEBPWHtrbTacQWPDc14fo/qlBnjEq7+kFNd6RisRDAw5OIDNVDwgfppBpJFJ2Ga7NuDC2G6q9P12Z/riSUBFDhF9CuQ1dTsCbA2aGlH0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-7391d5504b5so1883840137.3
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 02:20:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783934415; x=1784539215;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=FudjopChxRShNl2EKXmfpQ4D5dQDLukS5DHJwD71hIo=;
+        b=nvw0YD6WKT3OMiqg+kO6Ld5xks7vsM0Hc10EzmlHVM9X/E6fYH+nzQqKXlyID8X6Ud
+         gwwwxCWXyQ4g756JMugjl0nAUDUTzB2/wXKvV967RdVi0ebYBFlPSukdR8Wb1iRdE5//
+         Z4hIf2hocx7D6CxC49fp7kOsFGCIfY5VWnLa+1nk1x+Rl0VJmRwE45QaBB1PcvRtHYld
+         z/Wdtqd7yq7hW2AsaUaehYSDcDi64c/ICTy1xpDdPO28SHXbEyYHRfoeUSMhDSzennqV
+         UhtRpzkdMcj5wTJzbUf9QV/6ySfTiK2dHm/4irgaqQZo4rFhtE5iZsETAvO5EmwxHwaw
+         W8/A==
+X-Forwarded-Encrypted: i=1; AHgh+RoAMBXX6IPivSrQD9s2Vsa+l+vm5Moc+qP9YBmmyv7CzlvWGgrJjJjkir5JnH4jCKS6iGCXtMu+EY4t@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXqauptHHagaNGSgvx3j7BkXEF2C4bKXTnHtNog+SJERQbWco9
+	3nJAFd5r0JMGSjkD98HG4m8DZpNfo5788JeEOEDAhdkt3u1i4NZcS9Hd0HoZ3O1l
+X-Gm-Gg: AfdE7clbWBRrmoxFS/f+ovc6bPF73XRvzH+JYPl6N45JzbhdcQy/nS15kRuZqr/8p9u
+	4pvbIIfeXrV8JMdDvbZj3lEmc1wQkvadjqSvgq1BsJumQgQ5sDzPdcOB5/cjf0it7j58UZYDUFx
+	xjJqyCaTKBrUUr0tkmZSbYk79CfRXZzD/vkK6m1G2pA0X0CIeaWPmLWdbXnoJpruk1o8tAcFx+p
+	MTCnVcpgPamOafVP5ppKKJ9/Fdh1LrLd6E2JXlGaplKXRiLebp3CxKmalWybySp/Qi2bnYkTezo
+	zEWhSEAfDG+ocIiwaAz0YLl95CyAL64ZVIqEO9FxcOqm0rPbjarXfGavoJPAV0ACvZSDHIXA1hx
+	Wxa8iBnhEScxXk3MIfL6hqgXjAwEc7HyQki3Ps7zrfHRwCZnqsV8yO2jphPtaYlXWF2YSR5ulwG
+	iWcE2QGATkHYgHcxgydz1Ry4ocbrtqMRQ25LFIY+kLcS8CkBWoEQ==
+X-Received: by 2002:a05:6102:8017:b0:738:c9e1:c58 with SMTP id ada2fe7eead31-74533e9fcc5mr5592664137.28.1783934414851;
+        Mon, 13 Jul 2026 02:20:14 -0700 (PDT)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-744d6e38e25sm8570960137.11.2026.07.13.02.20.14
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jul 2026 02:20:14 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-7391d5504b5so1883829137.3
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 02:20:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rqv1q3SzE+StGpziBZ3jpRa79xXCjOKlabPqhOz93mRSK9o85tenaBnJVNoEAp7XHtkz0DHnp+gR6rV@vger.kernel.org
+X-Received: by 2002:a05:6102:5a88:b0:737:8ff4:147f with SMTP id
+ ada2fe7eead31-74533d96437mr5149659137.17.1783934414002; Mon, 13 Jul 2026
+ 02:20:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+References: <20260712093148.21446-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260712093148.21446-2-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 13 Jul 2026 11:20:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV415V23a9E2QM77iQdGePOoZYNk=+v0Hms6uxugKBu5g@mail.gmail.com>
+X-Gm-Features: AUfX_mzy589jps_1O1AtmCocHbl-UiTW35zpb0NKjYk3J02kC89IR38oMnQCTrQ
+Message-ID: <CAMuHMdV415V23a9E2QM77iQdGePOoZYNk=+v0Hms6uxugKBu5g@mail.gmail.com>
+Subject: Re: [PATCH] gpio: sloppy-logic-analyzer: add a comment explaining the
+ buffer init
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Abdun Nihaal <nihaal@cse.iitm.ac.in>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The MediaTek SoC pinctrl drivers link against the shared implementations
-in pinctrl-mtk-common.c (v1), pinctrl-moore.c and pinctrl-mtmips.c. These
-were built-in only: their Kconfig symbols were bool, they did not export
-their entry points and they carried no MODULE_LICENSE().
+Hi Wolfram,
 
-To let the individual SoC drivers be built as loadable modules (required
-for Android GKI + vendor_dlkm, where vendor drivers must live outside the
-GKI vmlinux), the shared code they depend on has to be modular too.
-Otherwise selecting a SoC driver as =m forces the common symbol to =y and
-the resulting module fails to link against the unexported common entry
-points.
+Thanks for your patch!
 
-Convert PINCTRL_MTK, PINCTRL_MTK_MOORE and PINCTRL_MTK_MTMIPS to
-tristate, export the entry points used by the SoC drivers, and add
-MODULE_DESCRIPTION()/MODULE_LICENSE() to the three common files.
+On Sun, 12 Jul 2026 at 11:32, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> To avoid more false positive reports of "leaking memory" when
+> fops_buf_size_set() returns an error.
 
-The v2 common code (PINCTRL_MTK_V2) is already modular, but mtk_rmw() was
-never exported. It is called directly by SoC drivers such as mt7623, so
-export it as well to keep those drivers linking once they are modular.
+But who is freeing priv->blob.data when fops_buf_size_set() succeeds?
 
-Rather than exporting these shared symbols into the global namespace,
-export them in the "MTK_PINCTRL" symbol namespace with
-EXPORT_SYMBOL_NS_GPL() so they are only visible to drivers that opt in.
-Each SoC driver that uses them therefore declares
-MODULE_IMPORT_NS("MTK_PINCTRL").
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Justin Yeh <justin.yeh@mediatek.com>
----
- drivers/pinctrl/mediatek/Kconfig                 | 6 +++---
- drivers/pinctrl/mediatek/pinctrl-moore.c         | 5 +++++
- drivers/pinctrl/mediatek/pinctrl-mt2701.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt2712.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt6397.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt7620.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt7621.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt7622.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt7623.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt7629.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt76x8.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt7981.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt7986.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt7988.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt8127.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt8135.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt8167.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt8173.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mt8365.c        | 1 +
- drivers/pinctrl/mediatek/pinctrl-mt8516.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c | 1 +
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c    | 8 ++++++++
- drivers/pinctrl/mediatek/pinctrl-mtmips.c        | 4 ++++
- drivers/pinctrl/mediatek/pinctrl-rt2880.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-rt305x.c        | 2 ++
- drivers/pinctrl/mediatek/pinctrl-rt3883.c        | 2 ++
- 26 files changed, 62 insertions(+), 3 deletions(-)
+> --- a/drivers/gpio/gpio-sloppy-logic-analyzer.c
+> +++ b/drivers/gpio/gpio-sloppy-logic-analyzer.c
+> @@ -237,6 +237,7 @@ static int gpio_la_poll_probe(struct platform_device *pdev)
+>         if (ret)
+>                 return ret;
+>
+> +       /* Initially allocate a buffer. It currently is NULL */
+>         fops_buf_size_set(priv, GPIO_LA_DEFAULT_BUF_SIZE);
+>
+>         priv->descs = devm_gpiod_get_array(dev, "probe", GPIOD_IN);
 
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index 97980cc28b9c..864e7ffc6044 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -11,7 +11,7 @@ config EINT_MTK
- 	default PINCTRL_MTK_PARIS
- 
- config PINCTRL_MTK
--	bool
-+	tristate
- 	depends on OF
- 	select PINMUX
- 	select GENERIC_PINCONF
-@@ -22,13 +22,13 @@ config PINCTRL_MTK_V2
- 	tristate
- 
- config PINCTRL_MTK_MTMIPS
--	bool
-+	tristate
- 	depends on RALINK
- 	select PINMUX
- 	select GENERIC_PINCONF
- 
- config PINCTRL_MTK_MOORE
--	bool
-+	tristate
- 	depends on OF
- 	select GENERIC_PINCONF
- 	select GENERIC_PINCTRL_GROUPS
-diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
-index 38f15dbe9a28..fdfbe007b84f 100644
---- a/drivers/pinctrl/mediatek/pinctrl-moore.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
-@@ -10,6 +10,7 @@
- 
- #include <dt-bindings/pinctrl/mt65xx.h>
- #include <linux/gpio/driver.h>
-+#include <linux/module.h>
- 
- #include <linux/pinctrl/consumer.h>
- 
-@@ -743,3 +744,7 @@ int mtk_moore_pinctrl_probe(struct platform_device *pdev,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_NS_GPL(mtk_moore_pinctrl_probe, "MTK_PINCTRL");
-+
-+MODULE_DESCRIPTION("MediaTek Pinctrl Common Driver V2 Moore");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt2701.c b/drivers/pinctrl/mediatek/pinctrl-mt2701.c
-index 6b1c7122b0fb..d262f810e40b 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt2701.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt2701.c
-@@ -542,3 +542,5 @@ static int __init mtk_pinctrl_init(void)
- 	return platform_driver_register(&mtk_pinctrl_driver);
- }
- arch_initcall(mtk_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt2712.c b/drivers/pinctrl/mediatek/pinctrl-mt2712.c
-index bb7394ae252b..aa8f9650c157 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt2712.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt2712.c
-@@ -591,3 +591,5 @@ static int __init mtk_pinctrl_init(void)
- }
- 
- arch_initcall(mtk_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6397.c b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
-index 03d0f65d7bcc..be691edf3e65 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt6397.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt6397.c
-@@ -59,3 +59,5 @@ static struct platform_driver mtk_pinctrl_driver = {
- };
- 
- builtin_platform_driver(mtk_pinctrl_driver);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7620.c b/drivers/pinctrl/mediatek/pinctrl-mt7620.c
-index d2624b9b5bc4..e5d368530247 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7620.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7620.c
-@@ -135,3 +135,5 @@ static int __init mt7620_pinctrl_init(void)
- 	return platform_driver_register(&mt7620_pinctrl_driver);
- }
- core_initcall_sync(mt7620_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7621.c b/drivers/pinctrl/mediatek/pinctrl-mt7621.c
-index b18c1a47bbeb..b337936e5c18 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7621.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7621.c
-@@ -115,3 +115,5 @@ static int __init mt7621_pinctrl_init(void)
- 	return platform_driver_register(&mt7621_pinctrl_driver);
- }
- core_initcall_sync(mt7621_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-index d5777889448a..38830f6dc5fd 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-@@ -893,3 +893,5 @@ static int __init mt7622_pinctrl_init(void)
- 	return platform_driver_register(&mt7622_pinctrl_driver);
- }
- arch_initcall(mt7622_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7623.c b/drivers/pinctrl/mediatek/pinctrl-mt7623.c
-index 69c06c2c0e21..a36124036daa 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7623.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7623.c
-@@ -1440,3 +1440,5 @@ static int __init mtk_pinctrl_init(void)
- 	return platform_driver_register(&mtk_pinctrl_driver);
- }
- arch_initcall(mtk_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7629.c b/drivers/pinctrl/mediatek/pinctrl-mt7629.c
-index cc0694881ac9..57868f73fce2 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7629.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7629.c
-@@ -449,3 +449,5 @@ static int __init mt7629_pinctrl_init(void)
- 	return platform_driver_register(&mt7629_pinctrl_driver);
- }
- arch_initcall(mt7629_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt76x8.c b/drivers/pinctrl/mediatek/pinctrl-mt76x8.c
-index 2bc8d4409ca2..9c064bf94935 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt76x8.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt76x8.c
-@@ -247,3 +247,5 @@ static int __init mt76x8_pinctrl_init(void)
- 	return platform_driver_register(&mt76x8_pinctrl_driver);
- }
- core_initcall_sync(mt76x8_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7981.c b/drivers/pinctrl/mediatek/pinctrl-mt7981.c
-index 22c8f2480346..69b16b01b4b3 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7981.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7981.c
-@@ -1058,3 +1058,5 @@ static int __init mt7981_pinctrl_init(void)
- 	return platform_driver_register(&mt7981_pinctrl_driver);
- }
- arch_initcall(mt7981_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7986.c b/drivers/pinctrl/mediatek/pinctrl-mt7986.c
-index 5dda4b7467fd..ca468115765b 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7986.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7986.c
-@@ -1009,3 +1009,5 @@ static int __init mt7986b_pinctrl_init(void)
- 
- arch_initcall(mt7986a_pinctrl_init);
- arch_initcall(mt7986b_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7988.c b/drivers/pinctrl/mediatek/pinctrl-mt7988.c
-index fd3a7ff0a04d..d90456c55c0b 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7988.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7988.c
-@@ -1544,3 +1544,5 @@ static int __init mt7988_pinctrl_init(void)
- 	return platform_driver_register(&mt7988_pinctrl_driver);
- }
- arch_initcall(mt7988_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8127.c b/drivers/pinctrl/mediatek/pinctrl-mt8127.c
-index f5030a9ea40b..34d840c1cc6a 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8127.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8127.c
-@@ -307,3 +307,5 @@ static int __init mtk_pinctrl_init(void)
- 	return platform_driver_register(&mtk_pinctrl_driver);
- }
- arch_initcall(mtk_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8135.c b/drivers/pinctrl/mediatek/pinctrl-mt8135.c
-index 77c6ac464e86..635048f9d1f2 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8135.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8135.c
-@@ -336,3 +336,5 @@ static int __init mtk_pinctrl_init(void)
- 	return platform_driver_register(&mtk_pinctrl_driver);
- }
- arch_initcall(mtk_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8167.c b/drivers/pinctrl/mediatek/pinctrl-mt8167.c
-index c812d614e9d4..3bd8288795e4 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8167.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8167.c
-@@ -343,3 +343,5 @@ static int __init mtk_pinctrl_init(void)
- 	return platform_driver_register(&mtk_pinctrl_driver);
- }
- arch_initcall(mtk_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8173.c b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
-index b214deeafbf1..20dd324eb152 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8173.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8173.c
-@@ -356,3 +356,5 @@ static int __init mtk_pinctrl_init(void)
- 	return platform_driver_register(&mtk_pinctrl_driver);
- }
- arch_initcall(mtk_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8365.c b/drivers/pinctrl/mediatek/pinctrl-mt8365.c
-index c20b9e2e02dd..73849ae569c9 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8365.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8365.c
-@@ -495,3 +495,4 @@ arch_initcall(mtk_pinctrl_init);
- 
- MODULE_DESCRIPTION("MediaTek MT8365 Pinctrl Driver");
- MODULE_AUTHOR("Zhiyong Tao <zhiyong.tao@mediatek.com>");
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8516.c b/drivers/pinctrl/mediatek/pinctrl-mt8516.c
-index 68d6638e7f4b..62084d0cc4c9 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt8516.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt8516.c
-@@ -343,3 +343,5 @@ static int __init mtk_pinctrl_init(void)
- 	return platform_driver_register(&mtk_pinctrl_driver);
- }
- arch_initcall(mtk_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-index 4918d38abfc2..802f780120bf 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-@@ -69,6 +69,7 @@ void mtk_rmw(struct mtk_pinctrl *pctl, u8 i, u32 reg, u32 mask, u32 set)
- 
- 	spin_unlock_irqrestore(&pctl->lock, flags);
- }
-+EXPORT_SYMBOL_NS_GPL(mtk_rmw, "MTK_PINCTRL");
- 
- static int mtk_hw_pin_field_lookup(struct mtk_pinctrl *hw,
- 				   const struct mtk_pin_desc *desc,
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index 791eddd7a2c6..1a977acd6883 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/io.h>
- #include <linux/gpio/driver.h>
-+#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_irq.h>
- #include <linux/pinctrl/consumer.h>
-@@ -190,6 +191,7 @@ int mtk_pconf_spec_set_ies_smt_range(struct regmap *regmap,
- 	regmap_write(regmap, reg_addr, bit);
- 	return 0;
- }
-+EXPORT_SYMBOL_NS_GPL(mtk_pconf_spec_set_ies_smt_range, "MTK_PINCTRL");
- 
- static const struct mtk_pin_drv_grp *mtk_find_pin_drv_grp_by_pin(
- 		struct mtk_pinctrl *pctl,  unsigned long pin) {
-@@ -297,6 +299,7 @@ int mtk_pctrl_spec_pull_set_samereg(struct regmap *regmap,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_NS_GPL(mtk_pctrl_spec_pull_set_samereg, "MTK_PINCTRL");
- 
- static int mtk_pconf_set_pull_select(struct mtk_pinctrl *pctl,
- 		unsigned int pin, bool enable, bool isup, unsigned int arg)
-@@ -1149,6 +1152,7 @@ int mtk_pctrl_init(struct platform_device *pdev,
- 
- 	return 0;
- }
-+EXPORT_SYMBOL_NS_GPL(mtk_pctrl_init, "MTK_PINCTRL");
- 
- int mtk_pctrl_common_probe(struct platform_device *pdev)
- {
-@@ -1160,3 +1164,7 @@ int mtk_pctrl_common_probe(struct platform_device *pdev)
- 
- 	return mtk_pctrl_init(pdev, data, NULL);
- }
-+EXPORT_SYMBOL_NS_GPL(mtk_pctrl_common_probe, "MTK_PINCTRL");
-+
-+MODULE_DESCRIPTION("MediaTek Pinctrl Common Driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtmips.c b/drivers/pinctrl/mediatek/pinctrl-mtmips.c
-index efd77b6c56a1..b2d7a79ff9cc 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtmips.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtmips.c
-@@ -349,3 +349,7 @@ int mtmips_pinctrl_init(struct platform_device *pdev,
- 
- 	return PTR_ERR_OR_ZERO(dev);
- }
-+EXPORT_SYMBOL_NS_GPL(mtmips_pinctrl_init, "MTK_PINCTRL");
-+
-+MODULE_DESCRIPTION("MediaTek MIPS Pinctrl Common Driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-rt2880.c b/drivers/pinctrl/mediatek/pinctrl-rt2880.c
-index e0366721a515..a9c4acdc6766 100644
---- a/drivers/pinctrl/mediatek/pinctrl-rt2880.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-rt2880.c
-@@ -59,3 +59,5 @@ static int __init rt2880_pinctrl_init(void)
- 	return platform_driver_register(&rt2880_pinctrl_driver);
- }
- core_initcall_sync(rt2880_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-rt305x.c b/drivers/pinctrl/mediatek/pinctrl-rt305x.c
-index 77bd4d1f6122..93788ec49ed0 100644
---- a/drivers/pinctrl/mediatek/pinctrl-rt305x.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-rt305x.c
-@@ -138,3 +138,5 @@ static int __init rt305x_pinctrl_init(void)
- 	return platform_driver_register(&rt305x_pinctrl_driver);
- }
- core_initcall_sync(rt305x_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
-diff --git a/drivers/pinctrl/mediatek/pinctrl-rt3883.c b/drivers/pinctrl/mediatek/pinctrl-rt3883.c
-index eeaf344c3647..afe705a0ddf6 100644
---- a/drivers/pinctrl/mediatek/pinctrl-rt3883.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-rt3883.c
-@@ -106,3 +106,5 @@ static int __init rt3883_pinctrl_init(void)
- 	return platform_driver_register(&rt3883_pinctrl_driver);
- }
- core_initcall_sync(rt3883_pinctrl_init);
-+
-+MODULE_IMPORT_NS("MTK_PINCTRL");
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.45.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
