@@ -1,81 +1,82 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C355409298
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 12:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525F540B389
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 12:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783944950; cv=none; b=ps8SucRsr5ve3Tfncw51ac4tZjyhWiEBjbcn9HKa/a948Z7GLeGdBWJPF400HpbDSjxEUKTVTh7Hr/lGnS5ygG5XMk8GDLI0RkWA9tOD3tnFC9DvybBPzLwkdw6VCa64c7c/7hAX9/qGjNsHhwWCneGIILV6obj7plidXR+TviE=
+	t=1783944962; cv=none; b=K4rEib5sdXtA3DzHmvQpQ0Hrop68b+Y1luyZRlLO/Gd3lCO0YIRhJla1yKIbEFRZBYMr3co2YOjGSM8IhE1GYLUwJGGJ6gxvFl7kFIIPleeSyG1dxYX6gD2opHKvjZuKKomGiPQ+YmelNiuQQf3vF6z6rrJ8UxM40xdBL1sSUww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783944950; c=relaxed/simple;
-	bh=Idmip/nOu5noW8nkQdg4s/Q7R9FjoaKZkmQtwHukCcI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=MihR848Ayi7haCyeWzJTeHLfuSC04Ja8ao+Bm5XO8c3OK7gz0NMRr3DGDEtIXaPy8qPxAFQl+HVxqsIUB4GTsebi9MIYkO3xOshr54/7YggwN42v5IdfsDtZ68QJATlPlnAbzpaEvgwywgBN3H2r3bzG6iLGTj6ZGT9MDG0pXFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=R1NtvZHR; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gZj75XqA; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1783944962; c=relaxed/simple;
+	bh=qs6ppqp0UOUiNfmIFg/KcxO7swqckHjrNOVvOglkL5w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OPngnsYQ7qg6keo2LWNAdlBs74xL6Fnj5w2zBCOCzmG+fN+9glt0L15HwUcz+durhBsGGw69CH0WuWNcqhHVFuASmTZACiJiN4x5/uux8fU2jiToyRm71evIq+gdKkVYAIcLCRtV0PYBWS5kBdQii+UW9d2Rd5PF+JhTpodbtho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fy/3QSY8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SEokuNUf; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="R1NtvZHR";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gZj75XqA"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66DCE0Mk1210044
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 12:15:40 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fy/3QSY8";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SEokuNUf"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66DCDwsM1494447
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 12:15:50 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=wqxzQNuOSLpI4zoQgw9QEO
-	mxgTQJ9nfCSI9GvtFZtCY=; b=R1NtvZHRN2zBl+YO+eLtZ2AFgLjLSMON6Rtoxn
-	J2vHGn0nyaNu4n748w+J0ZRghA8LNGoAp1+BUgL3unYQPX0xXHFYvpMMc+IKfgBJ
-	x+GwJ5Y0nvTRyUoLHRsoNVn8+Srqm48jv/ssgNl0SP1uUAVNIC/GM3Ep8p1UDKxn
-	3m8Etn+6lnnfyWQEz6O7WMYcKfvAZsZysLOy650G8B9ziFny/uEkEbKbnvKv0MzG
-	+hOtUbCm2jFOx0r2xT50sj6VEAW/Bx763l8iOhFbp5+t/dd3CRWncpFfqinXrkdq
-	r/rx7dfY4/EybFFrtAvIw+b/WlzyL0TY22CnfFGFNEuTVtJw==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fcw4qrn91-1
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=42z1nSf/EWm
+	6LuhbTC0i8/U8edmuxc2/Z3d6SzAsweA=; b=fy/3QSY8y3JOVan+88LMAMVKCsy
+	DMSsrh/+NiAytIIjJAQQB/QsLvk5vnrHJPfkhBA3WG4745145JSoZz96Yh2bbXwz
+	PyrqLqblPFYMU71oFgc/WjnsCWlmTzOVKL3n6XKjskD6Tdq2p6y+T2RA3Ubb8wEc
+	OJnb2c04KuNbaOrv/C8tNiuk6W/20iwW37Xkm5aVrf7HhD11Y3A3CupbSZGe6CXV
+	cEDGMAZ/lgPmDS/LfKe2kSBmRqTe+8kxh6NQkXDuVYiEsAdl5EzY4mVmsKuM2G7R
+	SWKBDPk899HG9Q8euu4p4PelsEcRrZhEeHVvMdiSblPWF/uib7c1eWMG3eA==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fcjnm2f7s-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 12:15:40 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-38dad28e86eso4845695a91.0
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 05:15:40 -0700 (PDT)
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 12:15:50 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-38dbf293831so4349212a91.3
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 05:15:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783944940; x=1784549740; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=wqxzQNuOSLpI4zoQgw9QEOmxgTQJ9nfCSI9GvtFZtCY=;
-        b=gZj75XqAoJ8eLfwsEHoeSAITHzdey7i057jnjhZFrCtk8AzfdnWpK5VTTnITk0ombb
-         p2b2Lmj2ypD7XuwreGdCmCdPFdyvB52nsiMkrG7oXWM/KnDVC866kNDcfQJ3MbIi139t
-         5cIPG6g8Lr0MReThAztio0bldmwVUUamDSGormNhxHFIhpz1hPaz0I4lqlvFBFj0DqrW
-         kEOd+OON9989uo9e3cvC1juhGKJGSHoFLbO0qOa4cNK09ErnJkkuPe5H6R3c9DEYwJQq
-         JJDi9+iwOnHwRD00to20K5QoYXt/QUj/aZmfm/cGJNNcJMCTr8gr/DYXD3XRmZo0MSiz
-         TCTg==
+        d=oss.qualcomm.com; s=google; t=1783944950; x=1784549750; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=42z1nSf/EWm6LuhbTC0i8/U8edmuxc2/Z3d6SzAsweA=;
+        b=SEokuNUfPzgVx8drMtYw5Jtaz1nHKxQRGpTzN5pkMyut81yjhiaEbuSspihKIcA3Pz
+         Qh0qfL73nx2jnLeImMersO2p1JriP7aY8x08iPBFo2zOQ/zzJV353+PrfArCbML4EhQ/
+         zX0zkHEryF56T/QA2K71uHwLPU7kXKk0fivFt6hp4ysAdT9fBxJWl2EHkIFiahMaoQvD
+         qWXyB4RK3npbeMNQ7qc5IcJeMM95bMIi72WshGbuj2K/ZH7xAO96ecCuKffogOoDIQ+x
+         cWwL0isF8tstP0WVVwUHw1bbYHBYb1TkwI4zIXQQ4zDw7D72GBaIOV6+gjcaP8U4qdK8
+         hAfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783944940; x=1784549740;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=wqxzQNuOSLpI4zoQgw9QEOmxgTQJ9nfCSI9GvtFZtCY=;
-        b=HYVUNINQ7B4NQ7iaYAmTnGL0c/J6V7SQueya8kvZJpm6i4r+0Q6sEG3UKatktBfQgN
-         bSfs2Jbh28URWbiKOT0+8sxxU4GO3ndZzicqG+u4oc7vrC2pFeHxVxMC8Jh7NBXsFUqU
-         IqG0oYtr5bMj7od7YdsKpEtRLv1Hxq7I/71C0eL1a7LzFO/TrVjEEAF9jD1Vh13VjMlw
-         HHSEfAOACCUsaOjdEexQKbLoNIwN0tnTD+v7stCntm3HDr7NCTZ8OijyVCtHOri7MaZT
-         SvBOoa1eU8Y2MsqRUZXVNNuYB0/wzfSC7JnW7DxfHaGWZcg1osaHcmKMTFNzv3//Mdzp
-         Zd5g==
-X-Forwarded-Encrypted: i=1; AHgh+Rphnzvp1+SEQab2zaou6EIR5sn/RiN7w/GiFyr1hM/B/sj7cnKx20BqDq4wyVbTVWqmunkb1R55LPyp@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYoJrnsba2NyH6wtBKzi44igO5Ma5h2uWAGnvaalKH4CYbl7IO
-	ZsCKbF57W1Xyu23YxVq0Po3ts4+qT+krVWchDiChIyE+a6DG5qHj19psKmEbtKk7e0IrdXXgl1d
-	9OgiGl4/JnFaqtDKlQVl1oKwnINQfP8JKh9g18J1Kl4W2bF9k+RrAEjCQIMZdsqnELgdNHg+A
-X-Gm-Gg: AfdE7cn3h57EiJ6bxAAFtik4xsYW7nNMvnU9xwFawZetgkdcTOL8EYw98yJBkX4uKSa
-	fI5JxWvRfX1PmQP3FeRN5jbj2n0QQ5aAtpXPXZGp2do8i5bIBYafzLrpv2+VcvIWo1rFe2Gjj7R
-	Mnmlvo0NX+N8aRdmMRhroQ/po7fPkwxMtJLZIoP/QcDxwYaud44PnRQuNbEbUI8rdxtcJKJAmi4
-	+oD2PVVSddb5btwA/9+YX4q8Nkir2mxNR3301w6aewXwwlQ8ESiTnImTMFMzvyBMxvyVQTtry64
-	WTZkRuUoSEcbNacPDeBDzxbVFwvB2kOFhiubOIYe4b6tWv1d5bkQ/MplNIudg1KP5uTEj5p+0V7
-	vP5Ew1VxVszWrkhmj6zqp6EEh0bsNcjRdxmKpimCp
-X-Received: by 2002:a17:90b:3b89:b0:387:e0db:3fad with SMTP id 98e67ed59e1d1-38dc7778aedmr8357979a91.38.1783944940021;
-        Mon, 13 Jul 2026 05:15:40 -0700 (PDT)
-X-Received: by 2002:a17:90b:3b89:b0:387:e0db:3fad with SMTP id 98e67ed59e1d1-38dc7778aedmr8357959a91.38.1783944939599;
-        Mon, 13 Jul 2026 05:15:39 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783944950; x=1784549750;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=42z1nSf/EWm6LuhbTC0i8/U8edmuxc2/Z3d6SzAsweA=;
+        b=TSGLJ5zn+T1MYaYBYHXzBlinRMR7awZHmIDW5/+meXGju58ir0QHghvAemznD1sWj8
+         zITsR4hfBlQoiQfN07a6FaDDxhph0FibOmPqIVMYjF4uOV07VwgaAkiBR5Ox3riQv52T
+         nbYJG6lJR6FKTt+EBC7++x7aHgXopcjRHv4GOxWkxtdsjPWeZmII3I/OlBS9ujbq/xfP
+         5kZ1fBq1Zl1PgROMRhI7BcSDkAOQTy1gHj+nfr15oFZGS4xDLAlZBPBoWQ/48FF2Z6o2
+         eK/isexvLvQ1K6ZmIUEH1XC4dBffR4GcrrU4mf/yhC4Svhoe+JaoIll6zOhv8Ej2S+Xh
+         ratg==
+X-Forwarded-Encrypted: i=1; AHgh+RqJ8MkVngSM0HrNkZxj8a22uRTiENDPb223XjZe0STyYHM8v4wR1M+hJ6J7zLRnVatxv8OyRPmgaHv2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNgZKLj+b2s9wq+Hn7MOlcaq1e2eICFtZCJI75fA/fb2aj+01C
+	EOMakB3+Blm0ObhbtfuGLfUtyWjNsPulbVOCuBJ/bD3a82QGcRxb0ddstCZ4GMfayV++If80nhl
+	DmiXMvkJYHKxLwDEfU6xc4qWiBhOYAl8eeDiLqfeYFp+6il/5jGWjnfzwUo4KedyA
+X-Gm-Gg: AfdE7cl+Gb0LvVxxSX/CJd0p0q3Cxqk7Vm8WewlpN2IxmjlYVQgqxuyv200Z/7Rgc17
+	tf01htKTPJMbEidAwtyFEvgHoAb/Rl+NgXpdR7pCfN9pmBQwWW+tH6KpTwZSmCW1ouirtF9UCui
+	f08wkyRcGHGzR3VkxNBFDPDuAW+Ldv0+gNo7GSYYhU+px/7Xxzzv//csFOC56VL6mtaB/UAx9G8
+	dM0dZO2Dp/7jpU6xvr9eUKZt4BnXlyLJG1ZyQV+mXTrh1HtjHQo5eUCYIhy+DwFczSSqYvhgiMC
+	TJJKlGLGlpFKFqPARE5mhi6rJoOBLYvWsM+QokHfRoYTdrdBKPoxVpzGK8QLrThWVl4WvpKPYUF
+	Z7SobTLpEEhIg7bUdULR6FYDGK1IDNqoPsE8xQz6S
+X-Received: by 2002:a17:90b:2d4e:b0:380:fead:448d with SMTP id 98e67ed59e1d1-38dc74cf95bmr9012338a91.13.1783944949823;
+        Mon, 13 Jul 2026 05:15:49 -0700 (PDT)
+X-Received: by 2002:a17:90b:2d4e:b0:380:fead:448d with SMTP id 98e67ed59e1d1-38dc74cf95bmr9012311a91.13.1783944949430;
+        Mon, 13 Jul 2026 05:15:49 -0700 (PDT)
 Received: from hu-raviravi-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-313b9ca880fsm28069425eec.23.2026.07.13.05.15.35
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-313b9ca880fsm28069425eec.23.2026.07.13.05.15.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2026 05:15:39 -0700 (PDT)
+        Mon, 13 Jul 2026 05:15:49 -0700 (PDT)
 From: Ravi Hothi <ravi.hothi@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Bartosz Golaszewski <brgl@kernel.org>,
@@ -85,80 +86,121 @@ To: Bjorn Andersson <andersson@kernel.org>,
         Luca Weiss <luca.weiss@fairphone.com>
 Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mohammad.rafi.shaik@oss.qualcomm.com, ajay.nandam@oss.qualcomm.com
-Subject: [PATCH v2 0/2] pinctrl: qcom: Add Eliza LPASS LPI support
-Date: Mon, 13 Jul 2026 17:45:16 +0530
-Message-Id: <20260713121518.2724474-1-ravi.hothi@oss.qualcomm.com>
+        mohammad.rafi.shaik@oss.qualcomm.com, ajay.nandam@oss.qualcomm.com,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: [PATCH v2 2/2] pinctrl: qcom: milos-lpass-lpi: Add Eliza LPASS LPI TLMM
+Date: Mon, 13 Jul 2026 17:45:18 +0530
+Message-Id: <20260713121518.2724474-3-ravi.hothi@oss.qualcomm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260713121518.2724474-1-ravi.hothi@oss.qualcomm.com>
+References: <20260713121518.2724474-1-ravi.hothi@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzEzMDEyOCBTYWx0ZWRfX8hNFXi/twaNd
- +nb/2dlFkekVgmCty70G4AN8q+lMEj4rQ8ArS4Y8eWdugcz9euYp/MUhe2uZI55/XWhrZjpOhdM
- tDQFQMOW4pdneNZaSqmiSVfR8mWFMiJhwF0EnbJmRHkpnESayncSNaImO0STDPvkjHYkHOj0str
- l49YBM3ZqOkO8pzOU5jn2lFAaMx4RJyoBpJKHSBfizm6+3f03voPbY49YGnzi5E0MbPi5+tnELW
- nIHGA/n+dsNKSqtwXdkpkvwEgR5qWecc6wgOaxMi80B9zsCSwBATx/V6KmCKbpdgWFg3fqjtsQK
- cAeB3RUbtCsIJkeBhiUJ6JkVHWykmIBMaYyGHWhWnWWhU0IzOUW1iwFKn+Svm6/5LAtOaOWqfqr
- lecTQw+NXBLSsRfO8VcwnZRsFO9j2VKDyOoePQq19GUz6x+RRKPejBuT2lH9TavSV2EQ1gKL07N
- AHAgoOXhSgH1CDAA9SQ==
-X-Authority-Analysis: v=2.4 cv=HJrz0Itv c=1 sm=1 tr=0 ts=6a54d6ec cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=QyXUC8HyAAAA:8 a=2gB7WEHjjayKgNmZduoA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-GUID: Ffa625i9vBGb6XNEWObbAmwmx7qlQ6LP
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzEzMDEyOCBTYWx0ZWRfX3NmI8+Gluhbd
- RgcQuYKqEFxCfFJz19VByi0GCGwd+OZuIVbb3ST8omG998rRg4jTx8Pa9avV2EH8uqOJf9BsG4H
- Ad/srlHY9J//dMMTb3uOfDb+iz1YA2I=
-X-Proofpoint-ORIG-GUID: Ffa625i9vBGb6XNEWObbAmwmx7qlQ6LP
+X-Proofpoint-ORIG-GUID: 2Y_dW5t7a30p4v0R7fEtjdsp0y6X70eu
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzEzMDEyOCBTYWx0ZWRfXwpInZhR7tyOc
+ rZ/nEnFWxXe67Nt6F50xL6RHIGfC50qDGoO4RbwQN2hOq834Wt3wMslgu0+xoF3DuR4CIFSQ8Nv
+ OeVq76nUWwTgDyIHPrqrzG7M2o/EYxGH641pm0618aNEJnQhOZ0JknZgWeiiusDX5LFlF+LtRMh
+ YRHpm29Hs9YyPzizJS+MyWAqaDW5+2qnZqUmIYTWcxtRtjL9ZT9PnWkRZ5P0J8PoswSOXmQrH+2
+ GxcdhKlf5a5jgdzLJnimhdAyFgSfsFsBc/iGh85Czce9rZQKbZDzBsxQI4wBdsCEtSm+3uC06Zc
+ aozczoMq9L9nBDqY5dwBf/Zsfe6oSr0VHIfEwIgYoo19JcUpgBWEbeT22SSpo9SZYkMsVqke8hR
+ XE9huRQOcQ9zNRF6rPzhsS2deKn3moJbfSO8pz3M4DBIH8xLnb4GI+oHAeNgn9bsZ3AxFmgDDAJ
+ +5JNxOXnYZRCsqOggLw==
+X-Proofpoint-GUID: 2Y_dW5t7a30p4v0R7fEtjdsp0y6X70eu
+X-Authority-Analysis: v=2.4 cv=AfmB2XXG c=1 sm=1 tr=0 ts=6a54d6f6 cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=EUspDBNiAAAA:8
+ a=a4EVYJI0Z6-OStE7xvQA:9 a=O8hF6Hzn-FEA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzEzMDEyOCBTYWx0ZWRfXw/bWVIngWb04
+ P3CEalwWuDNmXDjr6OoxVjgqmEtBmCpsd4TAQKHxjWJbRlag1nea0HrohOA6vW6X4VpDEMUyGmc
+ 4evx5qzXmM4aCOPJ2FuG4hrALIcB3Ig=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-07-13_03,2026-07-10_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
- clxscore=1015 malwarescore=0 priorityscore=1501 suspectscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607130128
+ spamscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ impostorscore=0 malwarescore=0 clxscore=1015 suspectscore=0 adultscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2607130128
 
-Eliza is a Qualcomm SoC that uses the same LPASS LPI pin mux
-functions as Milos. The key difference is the slew rate register
-layout — on Eliza the slew rate field lives in the same GPIO config
-register rather than a separate dedicated register.
+Eliza SoC has the same LPASS LPI pin mux functions as Milos but the
+slew rate control is in the same GPIO config register rather than a
+separate register. Add a new variant data struct with updated slew
+offsets and LPI_FLAG_SLEW_RATE_SAME_REG flag, reusing the existing
+pin descriptors and function table from Milos.
 
-This series adds support for the Eliza LPASS LPI pin controller by
-extending the existing Milos driver with a new variant data struct
-that uses the correct slew offsets and sets LPI_FLAG_SLEW_RATE_SAME_REG.
-The pin descriptors and function table are shared with Milos since
-they are identical.
-
-Patch 1 updates the binding to document the new compatible and the
-single reg entry used by Eliza.
-Patch 2 adds the driver support.
-
-Changes in v2:
-- Use 'enum' instead of 'oneOf' + 'const' for compatible property
-  (Reported-by: Rob Herring (Arm) <robh@kernel.org>,
-   kernel test robot <lkp@intel.com>)
-- Restore 'items' descriptions for reg property, drop redundant maxItems
-  (Reported-by: Sashiko AI review)
-- Link to v1: https://lore.kernel.org/all/20260703073029.2588960-1-ravi.hothi@oss.qualcomm.com/
-
-Ravi Hothi (2):
-  dt-bindings: pinctrl: qcom,milos-lpass-lpi-pinctrl: Add Eliza pinctrl
-  pinctrl: qcom: milos-lpass-lpi: Add Eliza LPASS LPI TLMM
-
- .../pinctrl/qcom,milos-lpass-lpi-pinctrl.yaml | 18 ++++++++-
+Signed-off-by: Ravi Hothi <ravi.hothi@oss.qualcomm.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
  .../pinctrl/qcom/pinctrl-milos-lpass-lpi.c    | 40 +++++++++++++++++++
- 2 files changed, 57 insertions(+), 1 deletion(-)
+ 1 file changed, 40 insertions(+)
 
-
-base-commit: bee763d5f341b99cf472afeb508d4988f62a6ca1
+diff --git a/drivers/pinctrl/qcom/pinctrl-milos-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-milos-lpass-lpi.c
+index 72b8ffd97860..cb4934cd6f75 100644
+--- a/drivers/pinctrl/qcom/pinctrl-milos-lpass-lpi.c
++++ b/drivers/pinctrl/qcom/pinctrl-milos-lpass-lpi.c
+@@ -148,6 +148,33 @@ static const struct lpi_pingroup milos_groups[] = {
+ 	LPI_PINGROUP(22, LPI_NO_SLEW, i2s3_data, dmic4_data, ext_mclk1_e, _),
+ };
+ 
++static const struct lpi_pingroup eliza_groups[] = {
++	LPI_PINGROUP(0, 11, swr_tx_clk, i2s0_clk, _, _),
++	LPI_PINGROUP(1, 11, swr_tx_data, i2s0_ws, _, _),
++	LPI_PINGROUP(2, 11, swr_tx_data, i2s0_data, _, _),
++	LPI_PINGROUP(3, 11, swr_rx_clk, i2s0_data, _, _),
++	LPI_PINGROUP(4, 11, swr_rx_data, i2s0_data, _, _),
++	LPI_PINGROUP(5, 11, swr_rx_data, ext_mclk1_c, i2s0_data, _),
++	LPI_PINGROUP(6, LPI_NO_SLEW, dmic1_clk, i2s1_clk, _, _),
++	LPI_PINGROUP(7, LPI_NO_SLEW, dmic1_data, i2s1_ws, _, _),
++	LPI_PINGROUP(8, LPI_NO_SLEW, dmic2_clk, i2s1_data, _, _),
++	LPI_PINGROUP(9, LPI_NO_SLEW, dmic2_data, i2s1_data, ext_mclk1_b, _),
++	LPI_PINGROUP(10, 11, wsa_swr_clk, i2s2_clk, _, _),
++	LPI_PINGROUP(11, 11, wsa_swr_data, i2s2_ws, _, _),
++	LPI_PINGROUP(12, LPI_NO_SLEW, dmic3_clk, i2s2_data, _, _),
++	LPI_PINGROUP(13, LPI_NO_SLEW, dmic3_data, i2s2_data, ext_mclk1_a, _),
++	LPI_PINGROUP(14, 11, swr_tx_data, ext_mclk1_d, _, _),
++	/* gpio15 - gpio18 do not really exist */
++	LPI_PINGROUP(15, 11, _, _, _, _),
++	LPI_PINGROUP(16, 11, _, _, _, _),
++	LPI_PINGROUP(17, LPI_NO_SLEW, _, _, _, _),
++	LPI_PINGROUP(18, LPI_NO_SLEW, _, _, _, _),
++	LPI_PINGROUP(19, LPI_NO_SLEW, i2s3_clk, slimbus_clk, qca_swr_clk, _),
++	LPI_PINGROUP(20, LPI_NO_SLEW, i2s3_ws, slimbus_data, qca_swr_data, _),
++	LPI_PINGROUP(21, LPI_NO_SLEW, i2s3_data, dmic4_clk, _, _),
++	LPI_PINGROUP(22, LPI_NO_SLEW, i2s3_data, dmic4_data, ext_mclk1_e, _),
++};
++
+ static const struct lpi_function milos_functions[] = {
+ 	LPI_FUNCTION(gpio),
+ 	LPI_FUNCTION(dmic1_clk),
+@@ -196,8 +223,21 @@ static const struct lpi_pinctrl_variant_data milos_lpi_data = {
+ 	.nfunctions = ARRAY_SIZE(milos_functions),
+ };
+ 
++static const struct lpi_pinctrl_variant_data eliza_lpi_data = {
++	.pins = milos_lpi_pins,
++	.npins = ARRAY_SIZE(milos_lpi_pins),
++	.groups = eliza_groups,
++	.ngroups = ARRAY_SIZE(eliza_groups),
++	.functions = milos_functions,
++	.nfunctions = ARRAY_SIZE(milos_functions),
++	.flags = LPI_FLAG_SLEW_RATE_SAME_REG,
++};
++
+ static const struct of_device_id lpi_pinctrl_of_match[] = {
+ 	{
++		.compatible = "qcom,eliza-lpass-lpi-pinctrl",
++		.data = &eliza_lpi_data,
++	}, {
+ 		.compatible = "qcom,milos-lpass-lpi-pinctrl",
+ 		.data = &milos_lpi_data,
+ 	},
 -- 
 2.34.1
 
