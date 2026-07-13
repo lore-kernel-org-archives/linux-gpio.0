@@ -1,204 +1,118 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F1335AC03
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 21:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9386F2773E5;
+	Mon, 13 Jul 2026 23:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783978897; cv=none; b=Dt3qrAypwE1OsRx8L4ygLttqhuN4QFykvFlQRrdgthMU3i2LdWSy1/nJbBJfZAbLjqD/jZwCEHDL2s/Gv2zSgF3UJm+fKKV3RFcjPrNvtS0ICPjm48dOIK4Iam332cvGZNC0p6J158VJweFJuCBYNjYWcM8CZWiy/okzuK97iqo=
+	t=1783985090; cv=none; b=Tg+vapfOh4qNCo0Bw+Utd5ZzTcU+s8uFSIMMi6GHTYGHSHQI/IueH5zzEuXUCZcv/HEbIJEY1j+3golBvtNpf2uXEs0KjULhAYKzU9uhvZmQVvBS2qNJaAGOLHA1Hu14z8l7EUCwU7lGbcBLxBav1JX0uNCcCR73fJu7dGN8AAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783978897; c=relaxed/simple;
-	bh=W+EwZnLFKVj1h1rZe5PgiDii2PS5+D3kv689Az0HHns=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HJplkz2Qrq0CXTlBnAUdn+DUMAzBypou1kxr6t7ECPkAkIFiqV2S/caNJajJx6Elf0NMtrOdO9Jm0bdfLLMtR5cEbtnrm2z+aBUQByIbf7/2rntapw6B0Sdcivp2RRJzKzpNG+RR7BddBJqOIl79tHH4xZpsMF3pWdFXhquLqSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bxhAkBTg; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1783985090; c=relaxed/simple;
+	bh=AR+ygJAN1X8s8PvIme5xSYlKh0EeUNREH4C2ayUe8WQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C5gVsDg0X4ogmpzkSwY8WhTSNXxdAOvay2Nb+z3tSPT1dOHPFj19UxM0p+L7vC0MTGjH1SVP9MiGzdtPRscbkwCPtChnxn/ufV0pRNKlqeg8STwVN7Gzb2PTpIWe0c8c/22tiC8Cnxh0sAjE2xOadGg7egokl5o/Y5jMfZl4Avk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=U5795kMQ; arc=none smtp.client-ip=178.251.229.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bxhAkBTg"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2cacb8416a1so2449895ad.1
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 14:41:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1783978895; x=1784583695; darn=vger.kernel.org;
-        h=content-disposition:content-type:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=v+T9ncXsQofNw87dQE5f2mF+cWycslyRRbsUPole34o=;
-        b=bxhAkBTgM1Mx7Bf736Hc1nC1egZvJeLXvKmQMFLJo+3SPFTYwFf/VaJt8XH0OYTyM+
-         +JfmQxiBQQzmHXTkrAw6f1kXNMTG8/eJkZCKcs2pBgMxnPUFbEGtESTM3i/R+mff8zhV
-         zxSy2gBju6ZGkobXHvJD11Q8MRW6TgAvRzFMDEKx/A4/Xl1e2WqZb/yKG6/t1YOA+GsK
-         ZjK84TSR7RS1gKf69dqNJqIr+E5lD+Nkm3MGF+8jqAcph1PbWMeOtrPC7wREaMJgy01n
-         o/CpfbtM0Q9pKQ3pwzJ+uItyiWGWoor6VdKhN4XCErlqVtz2JVOjiPPcoxtLwij8xcaj
-         0jkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783978895; x=1784583695;
-        h=content-disposition:content-type:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=v+T9ncXsQofNw87dQE5f2mF+cWycslyRRbsUPole34o=;
-        b=k3zjgbcPxjSsADI72vBwSqDvP0jyPsOj/rGQgp2WsNRjHEQpGuPUBBSQ6MiUHOXvWH
-         aCN4P8AMlmGHdIqJV+XFtIHTyFuHO8BFh07Ht1rF6SLUFIBFtt/H+qQs7ej1Gvy/oP6d
-         +RY7iImcjXCluHz/C1A22FEV5NeqV2IOJS1GbCwq5HI6jY7/zEDupvPCISrWtcKxc6Wo
-         sHMoKprexSpCkx9fec/WAMDbmbEsR3mVd0sTLqLRzq/jdZu0p1UtFZms/p5oZvNu7kJd
-         BU2JR2KRQNmbGpv8ZEGD1bJ9Kie6XQ9b94Ln8KWqb7aLGG+BHczeCZkBeac9/Che2/WR
-         OxZQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rp+AQbe4xyZPeXF+euD3Q/XSutjiYDyXiu+gpMFvhV3nxAh5wN+fkecF9EMmfhC+LNdIImiiOTio3Db@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVtZx0cAe/sRQCKsdgmt0pGtfpDcWMOA04Oe56egRnYudpSMYu
-	TtHCAH6pxwCCeiYmzOyQi66tPanWiERF1uSUTQgZDAmulVRFbdC2bhzm8nDmXQ==
-X-Gm-Gg: AfdE7cmyiTX5Trgr12oi2bka7xYxxBxEPMny0+6Ild1RBCTB4oq6tLx78HPALKqiaLN
-	qRy5qGQuHMb3e6YaACDrlywCA7GcroDq2c4GEF+0Jx0AE0Kdap0ELTTprAmvMhogJRDQwO+xotK
-	WMay/Si93OwL05UACQ7oSPv7J9rarRW5DITdRdM+Ri/XJDY+diBf/tdOMS5gwTCbiRORCBggxTD
-	BbwuUuW1z6sqs6j7HLZnbNDSf9Q4a4QBDmjtQpotdOrF98K3DCPna8s8U3KUHim4SN4XgtJME3N
-	P9+Z5NQm9LtjRmADPtrrEVKGedwGkLhu8rn+tRUEF/wsoWY1glGX6OmzZdQrdaoYe6+YgPZMgcI
-	6B7L7juxnBN2Cfn5uXQ8ZV184Lt8kbwox2oqI4e7b07CsLlWBnWmZHeaLkKUr9m0cuWNVdiISFp
-	9soFBNEsgWyNbB2/c8lmXIcjyyhk4jATXa9hngN26C3/yv6h65HLyxJHQtOWbiwcnJ
-X-Received: by 2002:a05:6a20:431b:b0:3a3:327:c5c8 with SMTP id adf61e73a8af0-3c10fc4dac7mr11212239637.0.1783978895328;
-        Mon, 13 Jul 2026 14:41:35 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:e15f:5d5f:580b:f2e9])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3118389d9bcsm62379929eec.20.2026.07.13.14.41.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2026 14:41:34 -0700 (PDT)
-Date: Mon, 13 Jul 2026 14:41:31 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Mark Brown <broonie@kernel.org>, jacopo mondi <jacopo@jmondi.org>, linux-sh@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [RESEND PATCH] sh: ecovec24: use static device properties to
- describe the touchscreen
-Message-ID: <alUyZ2zVWCPhyHHX@google.com>
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="U5795kMQ"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 561171196C5;
+	Tue, 14 Jul 2026 01:24:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1783985085; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=D6FpAA0f5GvH9oji0ZuMNzR+AIzfJerxYl2OMl3rvs4=;
+	b=U5795kMQb/YxqVlP+VrW8AAHX91phweIR9P+oF5Zi4J2ZNwbVFi/W9JQIiIa5M2T7pwcII
+	2FmHPVyl7Ga4sGFUcqU6k0GvhOQJLj/OoBFJ7ayu/vtgkzMD5HYzwu0alcS72yuUebP45m
+	dnDLHYNbeJunqcRatGdBHgTNKUpvQxDcf81SJXkh+BS2AFyXiB8nFSFPK/Sh2HMpYQycxd
+	BGzx8rzweg+pilbP6CvVEy9baJHrv1AOL2AXOP/ddmiI4YLKifucKp9MwkKH2e7x+k62vH
+	x77xyTVztxhxFSQILYN4IZy4lJCU/jm+uQBp3osJ4dVT9NSQBZQCkz+R/5vaQw==
+From: Marek Vasut <marex@nabladev.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marex@nabladev.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	kernel@dh-electronics.com,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH] dt-bindings: arm: stm32: Sort the document
+Date: Tue, 14 Jul 2026 01:24:14 +0200
+Message-ID: <20260713232440.120352-1-marex@nabladev.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Convert the board to use static device properties instead of platform
-data to describe the touchscreen, so that support for platform data can
-be removed from tsc2007 driver (ecovec24 is the last board using this
-mechanism of describing tsc2007).
+Sort the document, place STM32MP21 before STM32MP23, and STM32MP23
+before STM32MP25 . No functional change.
 
-Device properties do not allow custom board methods, so the method for
-getting "pen down" state was removed (the driver is capable of working
-without it). If this functionality is needed proper pin control/gpio
-support needs to be implemented so that the same pin can serve as an
-input GPIO and an interrupt.
-
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Marek Vasut <marex@nabladev.com>
 ---
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: kernel@dh-electronics.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+---
+ .../devicetree/bindings/arm/stm32/stm32.yaml       | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-This is a resend of the patch I sent in August of 2024. My fault of not
-noticing reply from Adrian inquiring about potential negative impact
-from not having GPIO-based "pen down" detection. I believe this is fine,
-the "pen down" is an optional feature and the driver can detect the
-touches even when it is not specified. Additionally, this is an
-evaluation board, so user impact should be negligible.
-
-However the bigger question is whether ecovec24 board still relevant.
-According to my research it has the following regressions currently
-unfixed:
-
-5716fb9bd9c6 ("mmc: spi: Convert to use GPIO descriptors")
-  - MMC SPI device naming broken (broke SD fallback mode)
-
-9fda6693335c ("spi: sh-msiof: Convert to use GPIO descriptors")
-  - SPI CS polarity inverted (broke initialization on the MSIOF0 SPI bus)
-
-c2f9b05fd5c1 ("media: arch: sh: ecovec: Use new renesas-ceu camera driver")
-  - Camera array sentinel missing (causes out-of-bounds reads and
-    potentially kernel panics)
-  - Camera standby polarity inverted (enadvertently keeps cameras
-    permanently powered off)
-  - Camera disabled iby default (board defconfig points to a deleted
-    driver)
-
-They are ~6 years old, so I wonder: do people actually *actively* use
-this board with modern kernels? Should it simply be removed?
-
-Thanks!
-
- arch/sh/boards/mach-ecovec24/setup.c | 38 ++++++++--------------------
- 1 file changed, 11 insertions(+), 27 deletions(-)
-
-diff --git a/arch/sh/boards/mach-ecovec24/setup.c b/arch/sh/boards/mach-ecovec24/setup.c
-index a641e26f8fdf..110a77f903b5 100644
---- a/arch/sh/boards/mach-ecovec24/setup.c
-+++ b/arch/sh/boards/mach-ecovec24/setup.c
-@@ -26,6 +26,7 @@
- #include <linux/platform_data/tmio.h>
- #include <linux/platform_data/tsc2007.h>
- #include <linux/platform_device.h>
-+#include <linux/property.h>
- #include <linux/regulator/fixed.h>
- #include <linux/regulator/machine.h>
- #include <linux/sh_eth.h>
-@@ -589,39 +590,21 @@ static struct platform_device keysc_device = {
- /* TouchScreen */
- #define IRQ0 evt2irq(0x600)
+diff --git a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+index c6af3a46364fc..af87661ccca41 100644
+--- a/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
++++ b/Documentation/devicetree/bindings/arm/stm32/stm32.yaml
+@@ -193,28 +193,28 @@ properties:
  
--static int ts_get_pendown_state(struct device *dev)
--{
--	int val = 0;
--	gpio_free(GPIO_FN_INTC_IRQ0);
--	gpio_request(GPIO_PTZ0, NULL);
--	gpio_direction_input(GPIO_PTZ0);
--
--	val = gpio_get_value(GPIO_PTZ0);
--
--	gpio_free(GPIO_PTZ0);
--	gpio_request(GPIO_FN_INTC_IRQ0, NULL);
--
--	return val ? 0 : 1;
--}
--
--static int ts_init(void)
--{
--	gpio_request(GPIO_FN_INTC_IRQ0, NULL);
--	return 0;
--}
-+static const struct property_entry tsc2007_properties[] = {
-+	PROPERTY_ENTRY_U32("ti,x-plate-ohms", 180),
-+	{ }
-+};
+       - description: Ultratronik STM32MP1 SBC based Boards
+         items:
+           - const: ultratronik,stm32mp157c-ultra-fly-sbc
+           - const: st,stm32mp157
  
--static struct tsc2007_platform_data tsc2007_info = {
--	.model			= 2007,
--	.x_plate_ohms		= 180,
--	.get_pendown_state	= ts_get_pendown_state,
--	.init_platform_hw	= ts_init,
-+static const struct software_node tsc2007_swnode = {
-+	.name = "tsc2007",
-+	.properties = tsc2007_properties,
- };
+-      - description: ST STM32MP257 based Boards
++      - description: ST STM32MP215 based Boards
+         items:
+           - enum:
+-              - st,stm32mp257f-dk
+-              - st,stm32mp257f-ev1
+-          - const: st,stm32mp257
++              - st,stm32mp215f-dk
++          - const: st,stm32mp215
  
- static struct i2c_board_info ts_i2c_clients = {
- 	I2C_BOARD_INFO("tsc2007", 0x48),
- 	.type		= "tsc2007",
--	.platform_data	= &tsc2007_info,
- 	.irq		= IRQ0,
-+	.swnode		= &tsc2007_swnode,
- };
+       - description: ST STM32MP235 based Boards
+         items:
+           - enum:
+               - st,stm32mp235f-dk
+           - const: st,stm32mp235
  
- static struct regulator_consumer_supply cn12_power_consumers[] =
-@@ -1242,8 +1225,9 @@ static int __init arch_setup(void)
- 		gpio_direction_output(GPIO_PTF4, 1);
+-      - description: ST STM32MP215 based Boards
++      - description: ST STM32MP257 based Boards
+         items:
+           - enum:
+-              - st,stm32mp215f-dk
+-          - const: st,stm32mp215
++              - st,stm32mp257f-dk
++              - st,stm32mp257f-ev1
++          - const: st,stm32mp257
  
- 		/* enable TouchScreen */
--		i2c_register_board_info(0, &ts_i2c_clients, 1);
-+		gpio_request(GPIO_FN_INTC_IRQ0, NULL);
- 		irq_set_irq_type(IRQ0, IRQ_TYPE_LEVEL_LOW);
-+		i2c_register_board_info(0, &ts_i2c_clients, 1);
- 	}
+ additionalProperties: true
  
- 	/* enable CEU0 */
+ ...
 -- 
-2.55.0.795.g602f6c329a-goog
+2.53.0
 
-
--- 
-Dmitry
