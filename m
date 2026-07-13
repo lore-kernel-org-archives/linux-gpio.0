@@ -1,75 +1,66 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D95369208;
-	Mon, 13 Jul 2026 07:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFE437BE71;
+	Mon, 13 Jul 2026 07:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783927267; cv=none; b=J026giuZV8ag1XjyasCJiRFtZu+E8rIWGdWYbGcfuidntBePkHWbRWIlX9Q6H4GEfj99xPhqn+7FG6a5qZHUL3NJxfvfZAN2hFNqiWxxJJFBizueaNfHULwQvUbuwaVSajnW++AR9Vakj0lICscutPW57ELJVoyUw56nYlNd8g4=
+	t=1783928117; cv=none; b=amTk1+IIx5b3L6hLl3CTGzcaC9vTcrcVx/6qLJxOxjbE5sm8MPd/sBPyb5dc17GJUP7zau3hy76IgAbOxSIqN1uuq8QMqLjh1RvW5LE7P++zHKkfshz40yqcNbUq8FacMkCOpLdEROpvIaIKfoXeAg17mNpUZHOtyVrMe9iLGgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783927267; c=relaxed/simple;
-	bh=bh+yWpaolJOY4sNtQpKR1RIVMCXF1XcI2rvHN1xdAFE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=F0S6+6rwao0cX2WAngDMw/21WYDF4AxvWH8FxtxRisKxusSIchO0ECNnSLYCJ5vQ0bItCZukJD6mC5QKLxS0NftVFYao9BJOcPaLKY+jgClf46Du81MJ6JxqPCND0M/osXenkggkEEeUA4qoELISV+O8/tafNBZYhrIUuwT+Yyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDUzqBkr; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783928117; c=relaxed/simple;
+	bh=yMw0NCgwjTkpMczVj1/nRmFXG7mAF/3to9PqyCZ2BVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ManjoePH6hqVZ1jrIOrtO8NmoOYeU5xpYeWqUSw5ywsMgr+Upqv+hur4/lpf5Hri8O3m/2reqKTHkxecCEjv3hLzP8EqDlWb68SKx8f3B0szwex9xp8P/F/MJPp30QGvYWXlF/KOacG+IdjZKujHYIDcDYilElZe5Ex4vmXE2+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CSZqzrV7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDUzqBkr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11DFA1F00A3A;
-	Mon, 13 Jul 2026 07:21:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CSZqzrV7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1F6F1F00A3D;
+	Mon, 13 Jul 2026 07:35:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783927265;
-	bh=9kh43brSP66vzmTm95XDdhXt8cQARCKIA1zAbg8pOVM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=WDUzqBkrtCpK6dx62PadWwp7PdY5wC7lf0VjbjmJK4tvqJx75MzyAy0mZqQOcOjdI
-	 aCn7dPFajLxErrr+E9spI5pjB4T8pE8nNrqjP0c/Bwv4Ky3f37mhUu/rikPQ6tzWKM
-	 WDU0JAU4t4AJSzjSGFEm/y5uekRIs5mwyGhPQFqUivv1ED97uD8VaJeRlZzTR6/mv3
-	 yFy2oBa9iB/ufr+aGIplCjWMumy6f1qHDS7EySrxExjixdVCABjq0+Y/OOc2pmkfXQ
-	 mazTF43ahrtGVU5DJA3YnNii5uCWbgi8ZhrcRchZY/HUqXbpzq04atSsniG9pkl6oi
-	 q7VTkZyLPCX+g==
+	s=k20260515; t=1783928115;
+	bh=EIw2BCcTyrAqvybZP6qCfsnARhDfIWS5/tpUpJJR3CY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=CSZqzrV7G2b5txZPBXw/5gEKu5V8zJeTh/qAVraJT7A8/OagkLNYIGIQRNhKZI4PA
+	 j0zKeQ2Jylb4EVdjfow1luPl/VsFGKWaUvlcBEuMmYVYKpCvbWUlg/q1XoP0xkSbBX
+	 421dggl0kNTWQV8CkMwCryXAuV7To21EwND7YKIDINYVv96CrzmXVEGsCfgTUgTlnh
+	 jr/GXPxAoFOPuMXr6TEFh7uKQkpBwg2DQhiR8fL0aoWV3L83FSTMTTShH8uCmAvbzD
+	 ssZASH2hr4jcY1MQeqPoWT/rSxZnC15EVZWi4xzz1+xEK7299xS/EHvvOrYWh/nDsG
+	 KRQ9JBX8aEUZg==
+Date: Mon, 13 Jul 2026 09:35:11 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: peter.griffin@linaro.org, robh@kernel.org, conor+dt@kernel.org, 
- linusw@kernel.org, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
- hajun.sung@samsung.com
-In-Reply-To: <20260627171228.2687857-1-alim.akhtar@samsung.com>
-References: <20260627171228.2687857-1-alim.akhtar@samsung.com>
-Subject: Re: (subset) [PATCH v3 0/6] Add minimal Exynos8855 SoC support
-Message-Id: <178392726162.27536.18104050175290327938.b4-ty@b4>
-Date: Mon, 13 Jul 2026 09:21:01 +0200
+To: Nikolai Burov <nikolai.burov@jolla.com>
+Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@kernel.org>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Nikolai Burov <nikolai.burov+review@abscue.de>
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: mediatek: Add MT6858
+Message-ID: <20260713-gifted-loyal-labradoodle-a54aef@quoll>
+References: <20260710-mt6858-pinctrl-v1-0-f75ab558f0df@jolla.com>
+ <20260710-mt6858-pinctrl-v1-1-f75ab558f0df@jolla.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260710-mt6858-pinctrl-v1-1-f75ab558f0df@jolla.com>
 
-
-On Sat, 27 Jun 2026 22:42:22 +0530, Alim Akhtar wrote:
-> This series adds initial support for the Exynos8855 SoC and also
-> initial SMDK board support.
+On Fri, Jul 10, 2026 at 06:00:23PM +0300, Nikolai Burov wrote:
+> Add new DT bindings for the pin controller found in the MT6858
+> (MediaTek Dimensity 7100) SoC.
 > 
-> Exynos8855 is octa-core CPUs, a combination of Cortex-A720 and Cortex-A520,
-> arranged in 3 clusters. And other peripheral for mobile application.
-> 
-> This initial support consists of CPUs, pinctrl and related nodes
-> needed for initial kernel boot.
-> 
-> [...]
+> Signed-off-by: Nikolai Burov <nikolai.burov@jolla.com>
+> ---
+>  .../bindings/pinctrl/mediatek,mt6858-pinctrl.yaml  | 190 +++++++++++++++++++++
+>  1 file changed, 190 insertions(+)
 
-Applied, thanks!
-
-[1/6] dt-binding: ARM: samsung: Add Samsung Exynos8855
-      https://git.kernel.org/krzk/linux/c/4b4a2ce19af5badef165c109d0d6d9f7c102914a
-[5/6] arm64: dts: exynos: add initial support for Samsung Exynos8855 smdk
-      https://git.kernel.org/krzk/linux/c/f03058d3768c3ec4af0fab7a36d0631423cb3cf5
-[6/6] MAINTAINERS: Add entry for Samsung Exynos8855 SoC
-      https://git.kernel.org/krzk/linux/c/a87d503a0ab077b0d9892290ab7dbec29f922eb1
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzk@kernel.org>
+Krzysztof
 
