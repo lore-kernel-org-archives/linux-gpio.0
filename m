@@ -1,91 +1,116 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0612937E2E1
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 11:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A793B3EB81B
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 11:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783942057; cv=none; b=ou4fdJqK5L6hDmjW0zadpn4NfncYimLTFykcCt60jz7wZbieWonLEaXbVcQI8+Rt1TGIGRqNDSl1Nrefe1Vsg7/3rM3EDcfH5z1uTJN/Daqiq2sRRUWDn+CLqLLX37ssN36s1p5s3bNYIlEgZpG65OHRW7c3bSswQCxbtF4ooTA=
+	t=1783943175; cv=none; b=cCWOlbBqnH9jChujStlvzu8nOmFkGk4Afd6wc5RNt5NzzYRtDYct4io0TVIa+VXqBKKhX0eCWh1UnFIqAFeMyCxfmwHxZGnjmZt3ZSV3piCT+5JLBBNx8dS5/c9/TbqEBCEByzwVBr2bS2wq4gRLz8+MIm3bisU2MT1c9FOkHMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783942057; c=relaxed/simple;
-	bh=cGCZivSYY3mYxmlVwhY9ctax57eOdgb/k+UbxMjtflU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oo2qEOgRICKKiwwZsr7FnkpTc6l8/u/nYIyDY442KfsS9DYKd288b8K7nH42CC4sisQO254xHra0Xezhg35kFxFx7FXTssiVmXcqxUV02DSbl/skwFkWJPQUSxjNN8cHDqpmZ3vWfIN6m90EcbcGypNVlLiIrv3QSfgEkq08Jkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=YdmBiNe6; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1783943175; c=relaxed/simple;
+	bh=pUgson4YtjyZJkYXfgKrgDqqtbvolnDsUl0y7l6996A=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DPkbasUptf146UoCGzI8kpT7y3yAVcwGTBpndnBdN00L83/aECeTD3tyaWvE8RT7m6BcHbmB/16pP0mO7aqIthLeF8El1HtdpQN0M8xeDQXMbV2piViUIhF0nTilTDCoDz3aVKBx+aBan7dkuxBrhIBAITjmoJMz0Z9cgBzU9UA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWdUAQf9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="YdmBiNe6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=cGCZ
-	ivSYY3mYxmlVwhY9ctax57eOdgb/k+UbxMjtflU=; b=YdmBiNe6j2/J9y02JRuj
-	51OfxRlQTjOH59+FSs0QzbwdTlThHDgQAOiRAVnsedt8KOd7XHs4VJn5p7796iJ/
-	ngxSScttwTpEgckiEF/s4edaWE5Wnikarc7MIgJdgnS2hm4tLFB6sYYhgtUgaR4V
-	951WrM6b8yVg2JmX56cjR0XoszVVsNLojkAb7luRaVrVamTmUYILdH0Lky/TrQxn
-	DABSNo2KptSEK5SUqKGLMbE6tXFnjmLjHWgYcwVLgpY9Nm3v+DSUhvoOYZIjbWSQ
-	zYdph3DMP1q6usWYc+K7yt9O/CLv5ouS3cbxA98WOqhVwxfvnn8u6fVCoLp1bTKD
-	KA==
-Received: (qmail 2606867 invoked from network); 13 Jul 2026 13:27:29 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jul 2026 13:27:29 +0200
-X-UD-Smtp-Session: l3s3148p1@p34jYHxWBpoujntq
-Date: Mon, 13 Jul 2026 13:27:28 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-renesas-soc@vger.kernel.org,
-	Abdun Nihaal <nihaal@cse.iitm.ac.in>,
-	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] gpio: sloppy-logic-analyzer: add a comment explaining
- the buffer init
-Message-ID: <alTLoNmDmPulfm6D@ninjato>
-References: <20260712093148.21446-2-wsa+renesas@sang-engineering.com>
- <CAMuHMdV415V23a9E2QM77iQdGePOoZYNk=+v0Hms6uxugKBu5g@mail.gmail.com>
- <CAMRc=Mce7WXrme_z_ZoUCHqYUAdP+Ee6rHB8TmRdeZ18kBH1Tw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWdUAQf9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 544B01F0155E
+	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 11:46:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783943174;
+	bh=pUgson4YtjyZJkYXfgKrgDqqtbvolnDsUl0y7l6996A=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=VWdUAQf9e6z492iLHTwF+zgr6Ghfv/3cx9kFuDR2CjswLfeiSSZKe4dW1HNqeaaU0
+	 pwYzbh0doLqMPrygIGXaKjATRIrp/HjlL06eI9vW2wLfYqW8KZTxZbL067vfY1GGL7
+	 HQvoyfQah/iXxpQF7uNQPSRcBEqjfeHK0A61mJuMQwUgAJmlMiUp6x68UfRNsxckvP
+	 t8sB8BwcCo9qdTMhCdPGAly5kv2+2i/aLE8z+JXpNpzCsSttO3bHCTMYQfTj/chkMB
+	 uDskYEPDGHYialWRG31dezVS87X6wDaFRELIraWcw7p4FIRf6Bqe26fC+4ICDHrEgs
+	 G7AYfGwVYcqhA==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-39c7fd45465so25354991fa.1
+        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 04:46:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Ro+S4u5IKjYzX+wvRYyxf+PSrel6yIUYsIF554GnYoWyqsPrEQsXyvtqY0s2/eva/TEUo2+taM9hIan@vger.kernel.org
+X-Gm-Message-State: AOJu0YzphE0c+w018rf9qzUYFcaEaowWBmrGA6HYKHYXqoqo9dyTUtOQ
+	OjkrffPjkg14fUEFMohA4BgzTgYf+Sdm8cQYgyfpa7X3CX83IJBAvCrOlrSkzoxbq/kPiANU8UD
+	aK9cRkHL304xxvEhEa4vFcB9bNRc9L6x1m+OR4szvHg==
+X-Received: by 2002:a05:6512:3d1a:b0:5ae:b7ce:9ca5 with SMTP id
+ 2adb3069b0e04-5b023664aedmr2156671e87.18.1783943172928; Mon, 13 Jul 2026
+ 04:46:12 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 13 Jul 2026 04:46:11 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 13 Jul 2026 04:46:11 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260713-swnode-fw-devlink-v4-0-d4f2dee27ad9@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="c91XIKf/FrLfUXZD"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=Mce7WXrme_z_ZoUCHqYUAdP+Ee6rHB8TmRdeZ18kBH1Tw@mail.gmail.com>
+References: <20260713-swnode-fw-devlink-v4-0-d4f2dee27ad9@oss.qualcomm.com>
+Date: Mon, 13 Jul 2026 04:46:11 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MfePNuHT8U2_mkH2akEZJJqbEOuXeQvT_NBiSXJsSEZBQ@mail.gmail.com>
+X-Gm-Features: AVVi8CfiAl3cJkdaaeyXnzNXa4IO8bwcddx2O2htTa3UP3J0TA6NO-proBdoNRQ
+Message-ID: <CAMRc=MfePNuHT8U2_mkH2akEZJJqbEOuXeQvT_NBiSXJsSEZBQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] software node: provide support for fw_devlink
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-acpi@vger.kernel.org, 
+	driver-core@lists.linux.dev, linux-gpio@vger.kernel.org, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <david@davidgow.net>, 
+	Rae Moar <raemoar63@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 13 Jul 2026 13:14:43 +0200, Bartosz Golaszewski
+<bartosz.golaszewski@oss.qualcomm.com> said:
+> Currently only devicetree systems have their devices' probe ordered
+> against their suppliers automatically by fw_devlink. Software nodes have
+> lately been used extensively treewide to describe references to resource
+> suppliers: most notably, the GPIO subsystem uses it in many places. Now
+> that the conversion of "dangling" GPIO chip software nodes to using real
+> links is almost done, it makes sense to ensure no needless probe
+> deferrals by implementing the add_links() callback from the fwnode
+> interface.
+>
+> This series extends software node support to use fw_devlink and adds test
+> coverage for the new behaviour.
+>
+> Patch 1 adds new kunit helpers that will be used later on for test
+> cases.
+>
+> Patch 2 implements software_node_add_links() modelled on
+> of_fwnode_add_links(): for every reference property it resolves the
+> supplier and links to it. There's no allowlist like in DT - a software
+> node only carries a reference when its author explicitly wants one, so
+> every reference is an intentional supplier dependency. Graph
+> "remote-endpoint" references, unregistered supplier software nodes and
+> self-references are skipped. It also mirrors the device pointer onto a
+> secondary software node so fw_devlink can find the supplier device, and
+> purges the fwnode links on release.
+>
+> Patches 3 and 5 add the tests: a kunit suite for the add_links() op
+> itself and GPIO tests for a real-life use-case: a GPIO consumer
+> referencing its provider via a software node.
+>
+> Patch 4 proposes to add myself as a reviewer of software nodes.
+>
+> Caveats: a supplier software node must be registered before the consumer
+> device is added, If the swnode is registered after the consumer was added,
+> add_links() has already run and set FWNODE_FLAG_LINKS_ADDED, so the late
+> supplier is missed. Graph/remote- endpoint ordering is left out for now as
+> well as there are no known users.
+>
+> Merging strategy: with an Ack from Kunit maintainers, the entire series
+> can go through the driver core tree.
+>
 
---c91XIKf/FrLfUXZD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Just a clarification: patch 5/5 will conflict with current gpio/for-next so
+this one would have to go through the GPIO tree. An immutable branch with
+commits 1-4 would be great.
 
-
-> >> To avoid more false positive reports of "leaking memory" when
-> >> fops_buf_size_set() returns an error.
-> >
-> > But who is freeing priv->blob.data when fops_buf_size_set() succeeds?
-
-This might be a separate issue. Will look later into it. The comment
-added here still makes sense AFAICS.
-
-
---c91XIKf/FrLfUXZD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpUy50ACgkQFA3kzBSg
-KbYGdRAApfSy+wo+zSbPAkPmVdRBhbeBOEMFOJB25PRZxGfLddniKLkjq0BScl/4
-JZ0Rwbo0Cp+Mh9djnSRwbU6hutdEnHl1kRqPhi8iBRxwwQnu9ZNQjbMtKy1MQsCU
-ZorXstbssP2ZUPM2Pb9E4Dzmy5xg4XAxqY7KYfnJl7a4ClrSjTT79gCFZaFA/c3o
-Vmt4tVFxnu0fP7ACSN//2aiV77cjQl3Nep7jTWrA9da7vJN3LkAuiuGchNFmRwDI
-VadeMoZDDR5YxMfNF1tHawtTIyft4YPKZ95dMwyan4od4zwBo+CNTWwP/oH2CjlS
-MAWncBKqZJHZ0CdscHCkT8KVFlb1yY4gj0uLx0sv+S5eZM6+dTNMqnjjmS/MFdGp
-27xCOvxS6caf+ZE70cvYz+qEpA1lL1T/LDsONFD/RdT7VVoXlCI5wBp2kwhOe75g
-RrZS4yalU0Jyna40t2gLeyMW5wZ1ycySG1eIkKy04AdQoCLBYxmappFxoDDifvzr
-w0PIhL42I3OhKiOB6DsEsT+NJAeFf7t51JjWe0JrT3TwsKOae7R3Hg6X2WozyEtr
-KV9mLnWgKloGTLCt34dwLTBMdd4QWOEjBmSRNqJ5qkmTdCp0DsxUeCMVsRCDJvT3
-VK4t/Sj38XRESapDzGL1GuV82YdKEJr+mBr9fh5kYHL4vka8BKs=
-=P/7l
------END PGP SIGNATURE-----
-
---c91XIKf/FrLfUXZD--
+Bart
