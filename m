@@ -1,143 +1,171 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F418A3B3BF1
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 08:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399683B5837;
+	Mon, 13 Jul 2026 08:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783931808; cv=none; b=GhWle8/UZodxQQotFl+l3WEMVmkgiPUigmnhMReZYi4MmIfuDhYpifgcoy+aN0cBPqPiDMhVQ8P6+zSLIA3zEn9yACEK4EzwhBYNBxNF5aNm926PKfJq+tE3ik0adRdqQ5kXXK+5An2vFx28y25BUxG9NE05JI5ltj/IAtzYUcw=
+	t=1783931904; cv=none; b=BKDMkwWX3yt713i7+3AfiGc6UrbIt89vGMZ/jF52iFjB1LOKjs6NbBKwkw0IGPaKYD4gY6aGcmE/oNpYZhFCM93wjvSUpTsDFLHiaGdnPiXEU7Y7UGT++CymO4oxywEBl5wInUz848S+Vgw02vqXO4ABRR9DQxRp5sRL4YGUb00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783931808; c=relaxed/simple;
-	bh=MEuCQaKRK2OCSg8z1iZ2XH/k0/fcxzSJg5RBF3JnQCM=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tdaGTh+tC/0fIZEgbmevmIp7ZoVmu5sJ7WReVomRCDX//2SJQX9e5KQ0t+MoUzddNcq1hazoMQn0WcL+/1Hreg8NGOLqR4sz3rHx91n/By+W5YirWaqAaMnUop8yVtYN9v2qWeqUzXVe7JSAmHKFWHMWdNwL6H3yrbMrY93Mu2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K3Hr9zRM; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1783931904; c=relaxed/simple;
+	bh=ZVDJmuFMKz0DC3PvrMlK7WoZjGCAQIAawo3qSpVtMuo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N9rGz/BZxNGWqLVRXqct42RCy6TXLtAgm6UczV07atgSokwBRNvfp6ct8SDaTy45vxrju+BOnwgjgP4PvFVVXF8vWXsP1uo9ikheifKA4VVzAwTyJqxZw2eZWc1WKalSMuGIhFBeZRFn0e1rB/xvdQzkBBZFoOhqjbg7PANQFxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=HlDCpqMp; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K3Hr9zRM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4A521F01558
-	for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 08:36:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783931806;
-	bh=QBeUwJIXJms3/6Tic9aQZqS3Njj0/svqOV1cGNy95II=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=K3Hr9zRMcNTI5GjZ6L5a+cFlj1T79JGXmuZhghDtZz1YX2Kjd9j4LLCbJucd+qW4d
-	 +m3Y4Vp1p8diMdQ5Vl/sKFGNomnYNJSFGf6F6+YrXs7jDmvLE2DA3XTVdrXbCJnvLO
-	 MbE/s0YO/xAuZZiVobtI/6Q2LHAMS6k4TbSNH98rGL0/8CM5sW1LBn9e5DMqpMTogj
-	 VntKmvGKI3EQLLqmopls/eDDjzX7WaM0pttTLxLLr2+H627GNunRSkG6kZLuja5lhM
-	 uRYIe3rg4rCrlGIA764FX3le5ZuGsPVWEmxExJDcq7rC+mVjYMfVtkZigwy3e9Ainv
-	 UAvxi1xb5WazQ==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-39c86945164so22132761fa.1
-        for <linux-gpio@vger.kernel.org>; Mon, 13 Jul 2026 01:36:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpLfyfX4OZlbV9ktWyuWmwPTjJM1wg12es7LSzuZtPiOuSVuKSo2kBEvTU+UHjt0vNIQjoKxkz3JJed@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOxd5AfrJR2V0YitOlw27q5emZ7lmOjR0OS6gaTCicYnKShmvd
-	ciOkzT9rjOg180CcOcsMUzFk2wX8xaphC+sRD78uiGgV8gVa8ZgjGZ+O+sDaacZAXyXK38u+Ixv
-	Cv1bmOYUERXdLm2r/Gf3KCZWzTghFJB0wbj0A8mnaQg==
-X-Received: by 2002:a05:651c:154d:b0:391:1570:b6c6 with SMTP id
- 38308e7fff4ca-39ca78e3b6dmr17345291fa.2.1783931805473; Mon, 13 Jul 2026
- 01:36:45 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 13 Jul 2026 01:36:44 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 13 Jul 2026 01:36:44 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260711210131.236025-3-marex@nabladev.com>
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="HlDCpqMp"
+X-UUID: 307ec97a7e9611f18dc8c9802ae25ab1-20260713
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=kl7+mc2oAYcNRZ648KTKzRhgvWfW5JNgBpw4aDm/2MQ=;
+	b=HlDCpqMpWTFK7j4RiUERh4RszOrI5mOX1oKL74yjglrCxQ0RWuoDp7yHPYX7qgCwVR08F4gm0qJMVfqwTI9PvZzYHx+iSN1BkE7Qv6zLA1kIhQDqVzNzRW1X68XPQU7Y32Pl5U3fxElsws3T0ezVHZM1SkKem649NVcTAxqm62Q=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.17,REQID:e3f8023e-9396-4c05-9c1b-5866906490dc,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:d497b38,CLOUDID:73b2a255-f38b-430b-a6f2-741debd53b1f,B
+	ulkID:nil,BulkQuantity:0,SF:81|82|102|836|865|888|898,TC:-5,Content:0|15|5
+	0|99,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:-1,COL:0,OSI:0,
+	OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 307ec97a7e9611f18dc8c9802ae25ab1-20260713
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <justin.yeh@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 2048954005; Mon, 13 Jul 2026 16:38:14 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Mon, 13 Jul 2026 16:38:13 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.2562.29 via Frontend Transport; Mon, 13 Jul 2026 16:38:13 +0800
+From: Justin Yeh <justin.yeh@mediatek.com>
+To: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	Justin Yeh <justin.yeh@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
+Subject: [PATCH v6 1/5] pinctrl: mediatek: use devm_gpiochip_add_data() for GPIO chip
+Date: Mon, 13 Jul 2026 16:37:53 +0800
+Message-ID: <20260713083808.168957-2-justin.yeh@mediatek.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20260713083808.168957-1-justin.yeh@mediatek.com>
+References: <20260713083808.168957-1-justin.yeh@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260711210131.236025-1-marex@nabladev.com> <20260711210131.236025-3-marex@nabladev.com>
-Date: Mon, 13 Jul 2026 01:36:44 -0700
-X-Gmail-Original-Message-ID: <CAMRc=Mds7FAg=e-JGWxK=9vn5A0sdYDhpZ7Wvo3eCKV1tyNpKw@mail.gmail.com>
-X-Gm-Features: AVVi8Cfsa0ItDBiNodG26S3_9jGGx3yuP-hiAD8ff_raWb2IPrBsLFiM5IVJVOQ
-Message-ID: <CAMRc=Mds7FAg=e-JGWxK=9vn5A0sdYDhpZ7Wvo3eCKV1tyNpKw@mail.gmail.com>
-Subject: Re: [PATCH 02/10] dt-bindings: gpio: pca95xx: Document Kinetic KTS1622
-To: Marek Vasut <marex@nabladev.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	kernel@dh-electronics.com, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Sat, 11 Jul 2026 22:59:31 +0200, Marek Vasut <marex@nabladev.com> said:
-> The Kinetic Technologies KTS1622 is a 16-bit general-purpose I/O
-> expander via the I2C bus for microcontrollers when additional I/Os
-> are needed while keeping interconnections to the minimum. Datasheet
-> comparison suggests that it is compatible with TCAL6416, add the
-> compatible string and TCAL6416 as a fallback compatible.
->
-> Signed-off-by: Marek Vasut <marex@nabladev.com>
-> ---
-> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> Cc: Bartosz Golaszewski <brgl@kernel.org>
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Linus Walleij <linusw@kernel.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: devicetree@vger.kernel.org
-> Cc: kernel@dh-electronics.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-> index 4f955f855e1ab..4631388a7d914 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-> @@ -22,6 +22,9 @@ properties:
->        - items:
->            - const: diodes,pi4ioe5v6534q
->            - const: nxp,pcal6534
-> +      - items:
-> +          - const: kinetic,kts1622
-> +          - const: ti,tcal6416
->        - items:
->            - enum:
->                - exar,xra1202
-> --
-> 2.53.0
->
->
+The gpio_chip is allocated with device-managed memory but registered with
+the non-managed gpiochip_add_data(). This was harmless while the drivers
+were built-in, but once they can be built as modules and unbound/rmmod'd,
+devm frees the gpio_chip's memory while it is still registered, causing a
+use-after-free.
 
-I applied this. I would have sent a b4 notification but got this instead:
+Register it with devm_gpiochip_add_data() so it shares the same
+device-managed lifecycle, which also lets the manual gpiochip_remove()
+error paths go away.
 
-$ b4 ty -all
-Auto-thankanating commits in gpio/for-next
-Found 9 of your commits since 1.week
-Calculating patch hashes, may take a moment...
-  Located: [PATCH 00/10] arm64: dts: st: Add support for DH
-electronics STM32MP23xx/STM32MP25xx DHCOS SoM and Breakout Board and
-DHSBC
+Fixes: a6df410d420a ("pinctrl: mediatek: Add Pinctrl/GPIO driver for mt8135.")
+Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
+Fixes: e78d57b2f87c ("pinctrl: mediatek: add pinctrl-moore that implements the generic pinctrl dt-bindings")
+Signed-off-by: Justin Yeh <justin.yeh@mediatek.com>
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
-Generating 1 thank-you letters
-  Writing: ./marex_nabladev_com_patch_00_10_arm64_dts_st_add_support_for_dh_electronics_stm32mp23xx_stm32mp25xx_dhcos_som_and_breakout_board_and_dhsbc.thanks
-Traceback (most recent call last):
-  File "/usr/bin/b4", line 8, in <module>
-    sys.exit(cmd())
-             ~~~^^
-  File "/usr/lib/python3/dist-packages/b4/command.py", line 417, in cmd
-    cmdargs.func(cmdargs)
-    ~~~~~~~~~~~~^^^^^^^^^
-  File "/usr/lib/python3/dist-packages/b4/command.py", line 113, in cmd_ty
-    b4.ty.main(cmdargs)
-    ~~~~~~~~~~^^^^^^^^^
-  File "/usr/lib/python3/dist-packages/b4/ty.py", line 681, in main
-    auto_thankanator(cmdargs)
-    ~~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/usr/lib/python3/dist-packages/b4/ty.py", line 386, in auto_thankanator
-    send_messages(applied, wantbranch, cmdargs)
-    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3/dist-packages/b4/ty.py", line 452, in send_messages
-    with open(outfile, 'wb') as fh:
-         ~~~~^^^^^^^^^^^^^^^
-OSError: [Errno 36] File name too long:
-'./marex_nabladev_com_patch_00_10_arm64_dts_st_add_support_for_dh_electronics_stm32mp23xx_stm32mp25xx_dhcos_som_and_breakout_board_and_dhsbc.thanks'
+ drivers/pinctrl/mediatek/pinctrl-moore.c      |  6 ++----
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 14 ++++----------
+ drivers/pinctrl/mediatek/pinctrl-paris.c      |  2 +-
+ 3 files changed, 7 insertions(+), 15 deletions(-)
 
-Bart
+diff --git a/drivers/pinctrl/mediatek/pinctrl-moore.c b/drivers/pinctrl/mediatek/pinctrl-moore.c
+index 17e30f83dc19..38f15dbe9a28 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-moore.c
++++ b/drivers/pinctrl/mediatek/pinctrl-moore.c
+@@ -594,7 +594,7 @@ static int mtk_build_gpiochip(struct mtk_pinctrl *hw)
+ 	chip->base		= -1;
+ 	chip->ngpio		= hw->soc->npins;
+ 
+-	ret = gpiochip_add_data(chip, hw);
++	ret = devm_gpiochip_add_data(hw->dev, chip, hw);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -608,10 +608,8 @@ static int mtk_build_gpiochip(struct mtk_pinctrl *hw)
+ 	if (!of_property_present(hw->dev->of_node, "gpio-ranges")) {
+ 		ret = gpiochip_add_pin_range(chip, dev_name(hw->dev), 0, 0,
+ 					     chip->ngpio);
+-		if (ret < 0) {
+-			gpiochip_remove(chip);
++		if (ret < 0)
+ 			return ret;
+-		}
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+index dd2c8aa03938..791eddd7a2c6 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
+@@ -1130,30 +1130,24 @@ int mtk_pctrl_init(struct platform_device *pdev,
+ 	pctl->chip->parent = &pdev->dev;
+ 	pctl->chip->base = -1;
+ 
+-	ret = gpiochip_add_data(pctl->chip, pctl);
++	ret = devm_gpiochip_add_data(&pdev->dev, pctl->chip, pctl);
+ 	if (ret)
+ 		return -EINVAL;
+ 
+ 	/* Register the GPIO to pin mappings. */
+ 	ret = gpiochip_add_pin_range(pctl->chip, dev_name(&pdev->dev),
+ 			0, 0, pctl->devdata->npins);
+-	if (ret) {
+-		ret = -EINVAL;
+-		goto chip_error;
+-	}
++	if (ret)
++		return -EINVAL;
+ 
+ 	/* Only initialize EINT if we have EINT pins */
+ 	if (data->eint_hw.ap_num > 0) {
+ 		ret = mtk_eint_init(pctl, pdev);
+ 		if (ret)
+-			goto chip_error;
++			return ret;
+ 	}
+ 
+ 	return 0;
+-
+-chip_error:
+-	gpiochip_remove(pctl->chip);
+-	return ret;
+ }
+ 
+ int mtk_pctrl_common_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index 23f04b24fd65..09098b68f725 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -957,7 +957,7 @@ static int mtk_build_gpiochip(struct mtk_pinctrl *hw)
+ 	chip->base		= -1;
+ 	chip->ngpio		= hw->soc->npins;
+ 
+-	ret = gpiochip_add_data(chip, hw);
++	ret = devm_gpiochip_add_data(hw->dev, chip, hw);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-- 
+2.45.2
+
