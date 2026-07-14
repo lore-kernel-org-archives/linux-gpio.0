@@ -1,126 +1,85 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261643FAE10;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3233FBB6D;
 	Tue, 14 Jul 2026 08:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784017438; cv=none; b=il2/m2TgtzSbTTJpakrp86kgkGUOADGSjFsgMYsXXNBE1OPgKx8URHgcdZQd+ankb8sYbph4AvItqD2brgcE4kPKkn9g+3U1shgtwbRHmn5q95yuE8A3JOqW3iqiRA9W3+9Mq/aSjv9PqLfUoBQKjpz2F6iT82pHKj0DA5faHk8=
+	t=1784017440; cv=none; b=KRq150ZYWX3VHW1FwuOS/TCnWrz6QdzOh0TB22IQpOgwnydKtaDoj8JDB1xSzvuLg8drAc90Vf8rR/x3j+6zt7WBTAwPD5B/JEth8I1FCzObVVOMBcM/9L/fGLdfquj1BhaAl45GN7yEklIgs1ANBhJmHeuad0N7D32Hv1vQ7V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784017438; c=relaxed/simple;
-	bh=oFRTq4b5voEJqxJgna9sANZNAoovJN0WoH/xes8V0Kc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ciqrJ66ufumkRmmfG863VHR2qlQ6q+I14Dw9vWvjVsOzwmMvodoThVszZQrqx+ipln5sLTf6KN8SKXxRqRKXCIURNyz6xZqR0d+X5NeItVeyvpNb7+v2cQujeh7PDFYy+X4Gdppr5Tr67QTQCDnxSZm9mbKsHus8UUwnh/0Ghbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=St5oIaUh; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1784017440; c=relaxed/simple;
+	bh=P/hsEp30A55bn738peV2azQ9Sq9APHBY5LiVcEcyrCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZ9zB2TPcmym/T0uxudelTdCIQBP7X3m3WumHEcaJDBGvNbygguRf8epO8yI6k3nLPnrgdOtUFC+cLT2nV33YK5Twvz3U2Wp99DOtrQ3PHuz4K60BR498qqs6TdJksUOxFEWLr0UvmX9r8EAhDSFmIwpH4qTBX728dPP9nR4pPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S9VkOn4H; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="St5oIaUh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1784017429;
-	bh=oFRTq4b5voEJqxJgna9sANZNAoovJN0WoH/xes8V0Kc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=St5oIaUhZcFpc4P3NLXsjrMgq49P8PiKUtjQ7t6YdtDl4YkxNBA/Dd/QIKZM5DLoj
-	 1ABY+6QaJP3jupVTbAwDTNulrDya9AKCJBDkBQOZRhUZMae0bJ74ftxF5N4RDI9ySG
-	 EHzW+gwDxJVFrrclWEFuAl5Iw1tCdJuo6vl7G55WGP8nYfegFGpy43yWww7onOdIQd
-	 9tMj4mk7CzkwKyOPbp2T9KhhPz5hs058cU9yRvQbADigZnWfz5OOacqWHKdLLu+xli
-	 /y8KwgPBV62Cd3leuq3iQYY2oNuB0hcE9d4kuwrREQGjHgpMUmIG+RZiNaI7TeOv0E
-	 cyk/GjYqDxejA==
-Received: from [100.64.1.21] (unknown [100.64.1.21])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A354F17E010F;
-	Tue, 14 Jul 2026 10:23:48 +0200 (CEST)
-Message-ID: <0cd526b9-aff5-40e6-b209-750f83fa0fd0@collabora.com>
-Date: Tue, 14 Jul 2026 10:23:48 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S9VkOn4H"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1784017433; x=1815553433;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=P/hsEp30A55bn738peV2azQ9Sq9APHBY5LiVcEcyrCY=;
+  b=S9VkOn4H1DBDKnIpnNqN4XBA2lGdRh8/q6QhZ5x8dRd1B4/1hPwLwaJQ
+   ihudKs1GeVVw8XLpip1uoqDDyMnuVlC1jgletsQnNaWfKDJ29hTwzrT+E
+   u+FQcFdtXhHeLgl4MTafP/TLa2EUtzciSzZRoay2eyf9FBCoatG7U7jta
+   xO8NDOxwePTy4jDNPRkcIitb0WpE2sPkZhgh/x9WwhaLqkovv8nVFee9o
+   pvSwMX1hWxJ+k6VaBPL2K/+ql3aIJkW8TRyLOH4/fhu4lOqMioy6H3efZ
+   I0Vu5FO0VH5Eq9Fj6fhKPD2w4W4JuhU4f/f6n/yDCrSzcAuseInxXmgN+
+   g==;
+X-CSE-ConnectionGUID: Mep8YzpFR8K+KdAUFCBQeQ==
+X-CSE-MsgGUID: U88ozrlMS8adDwwr2vUKpw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11846"; a="84514228"
+X-IronPort-AV: E=Sophos;i="6.25,163,1779174000"; 
+   d="scan'208";a="84514228"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:23:48 -0700
+X-CSE-ConnectionGUID: 5irz21dzQCGgHOUt1xV9gQ==
+X-CSE-MsgGUID: 35Y00WJ4RVS2/ImC0Y0qTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,163,1779174000"; 
+   d="scan'208";a="280215758"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.189])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:23:46 -0700
+Date: Tue, 14 Jul 2026 11:23:44 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v1 09/20] gpio: Add missing dmi module annotations
+Message-ID: <alXyEPWUS5cJg6Jb@ashevche-desk.local>
+References: <cover.1784013063.git.u.kleine-koenig@baylibre.com>
+ <eb1fdcce0f07e274e5590b8821d9dd7835f1ce0a.1784013063.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] pinctrl: mediatek: Add MT6858 support
-To: nikolai.burov@jolla.com, Linus Walleij <linusw@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Sean Wang <sean.wang@kernel.org>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Nikolai Burov <nikolai.burov+review@abscue.de>,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260713-mt6858-pinctrl-v2-0-1bd072e3206c@jolla.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20260713-mt6858-pinctrl-v2-0-1bd072e3206c@jolla.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <eb1fdcce0f07e274e5590b8821d9dd7835f1ce0a.1784013063.git.u.kleine-koenig@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 7/13/26 17:06, Nikolai Burov via B4 Relay wrote:
-> Add support for GPIO and pin configuration on the MT6858 (MediaTek
-> Dimensity 7100) SoC.
-> 
-> Signed-off-by: Nikolai Burov <nikolai.burov@jolla.com>
+On Tue, Jul 14, 2026 at 09:24:10AM +0200, Uwe Kleine-König (The Capable Hub) wrote:
+> A driver module matching devices using an dmi device id table is
+> supposed to declare that in the module's metadata. Add this information
+> for two drivers that failed to declare these.
 
-Whole series is
+No, it is not supposed. Why?
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+...
 
-Cheers,
-Angelo
-
-> ---
-> Changes in v2:
-> - dt-bindings: Change reg-names and descriptions as suggested by Angelo
-> - Remove incorrect slew rate field from register table
-> - Fix hole in the EINT table by including pins without EINT support
-> - Add missing pm_sleep_ptr() and /* sentinel */ comment
-> - Link to v1: https://patch.msgid.link/20260710-mt6858-pinctrl-v1-0-f75ab558f0df@jolla.com
-> 
-> To: Linus Walleij <linusw@kernel.org>
-> To: Rob Herring <robh@kernel.org>
+These are quirks and enumerating by quirks sounds weird.
 
 -- 
-AngeloGioacchino Del Regno
-Senior Software Engineer
+With Best Regards,
+Andy Shevchenko
 
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
-Registered in England & Wales, no. 5513718
-> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> To: Conor Dooley <conor+dt@kernel.org>
-> To: Matthias Brugger <matthias.bgg@gmail.com>
-> To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> To: Nikolai Burov <nikolai.burov@jolla.com>
-> To: Sean Wang <sean.wang@kernel.org>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-mediatek@lists.infradead.org
-> 
-> ---
-> Nikolai Burov (3):
->        dt-bindings: pinctrl: mediatek: Add MT6858
->        pinctrl: mediatek: Add driver for MT6858
->        arm64: dts: mediatek: mt6858: Add pinmux macro header file
-> 
->   .../bindings/pinctrl/mediatek,mt6858-pinctrl.yaml  |  190 ++
->   arch/arm64/boot/dts/mediatek/mt6858-pinfunc.h      | 1335 +++++++++++
->   drivers/pinctrl/mediatek/Kconfig                   |   10 +
->   drivers/pinctrl/mediatek/Makefile                  |    1 +
->   drivers/pinctrl/mediatek/pinctrl-mt6858.c          | 1407 ++++++++++++
->   drivers/pinctrl/mediatek/pinctrl-mtk-mt6858.h      | 2378 ++++++++++++++++++++
->   6 files changed, 5321 insertions(+)
-> ---
-> base-commit: bee763d5f341b99cf472afeb508d4988f62a6ca1
-> change-id: 20260708-mt6858-pinctrl-917ad9097023
-> 
-> Best regards,
-> --
-> Nikolai Burov <nikolai.burov@jolla.com>
-> 
-> 
+
