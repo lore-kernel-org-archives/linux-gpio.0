@@ -1,86 +1,126 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929DA3FB7F2;
-	Tue, 14 Jul 2026 08:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261643FAE10;
+	Tue, 14 Jul 2026 08:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784017351; cv=none; b=Mu7xXdlkoRMoanavJCBgp2p5+qU3bOGNcwCgjSrJmW3mzPy/q5F317NM+pX0elqCOQK5y2lzPG/pwtd6MpGapRYl/+8/bpePdNeC93y15ZGa9iwor9Xx26a7rZEb61Xv/Gn+xq6Mp5tKZ+xtfK4Hnsw/WjtXjAGKOD+GMjrs5j0=
+	t=1784017438; cv=none; b=il2/m2TgtzSbTTJpakrp86kgkGUOADGSjFsgMYsXXNBE1OPgKx8URHgcdZQd+ankb8sYbph4AvItqD2brgcE4kPKkn9g+3U1shgtwbRHmn5q95yuE8A3JOqW3iqiRA9W3+9Mq/aSjv9PqLfUoBQKjpz2F6iT82pHKj0DA5faHk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784017351; c=relaxed/simple;
-	bh=7UwLK+REoWPC5QyjVTl/tTquK3kF5ZeLwwW6mmQ/+Ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gwCchgdueR6Ac6FtHI+Tt/8HFX/TtQo6BhB4lHIk2DJrV4Qa06UG+RIrq7kDAywjomGYTWvRqZCRaFaZvE9dLO2piVu7ls7rPzwQoQZ3dGCEI0FIaDwVzyov+jzk3Ompt62PDvZlgc08Ae1a5BFo3wYcupsFerJPX7D18FUiI3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=krzAGk1Z; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1784017438; c=relaxed/simple;
+	bh=oFRTq4b5voEJqxJgna9sANZNAoovJN0WoH/xes8V0Kc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ciqrJ66ufumkRmmfG863VHR2qlQ6q+I14Dw9vWvjVsOzwmMvodoThVszZQrqx+ipln5sLTf6KN8SKXxRqRKXCIURNyz6xZqR0d+X5NeItVeyvpNb7+v2cQujeh7PDFYy+X4Gdppr5Tr67QTQCDnxSZm9mbKsHus8UUwnh/0Ghbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=St5oIaUh; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="krzAGk1Z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1784017346; x=1815553346;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=7UwLK+REoWPC5QyjVTl/tTquK3kF5ZeLwwW6mmQ/+Ns=;
-  b=krzAGk1ZuSWqzAzfaBkaDo4U9yze79vdhLpp0zze7bCvlVljYW3QJBYm
-   IFeZ/OzDUJKeVQLP+aEmND8yAxHZTLOadfqvTDTjz3E3R5HnoUw9IA4Im
-   gEwYydqn7mbnsFzcTO6uSILt2WQIIBN4Zc3epalgG7jVp/kETYc15dap0
-   2WMlyVt/Guq77If6GGPVHo1zhxw1jgclwYPrKGhibK8W7nA6d6v4qNZfN
-   XC3jTrkVKwe1Kw71KogH5R5qA8oL0hbhSJK20M1c9vRg7ymPbUYqmUKfq
-   3q4UwHhlBgna/tQDhlk+hvdgNL1FMZog2D2vX83+qCs5j74QAEUULJh6z
-   g==;
-X-CSE-ConnectionGUID: iOQ0BQsYRq6W0WkQp06Twg==
-X-CSE-MsgGUID: lyuSyBP3Sge4JhAxkChkjg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11846"; a="84414527"
-X-IronPort-AV: E=Sophos;i="6.25,163,1779174000"; 
-   d="scan'208";a="84414527"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:22:21 -0700
-X-CSE-ConnectionGUID: t6g0GdSQQiiVRRh0QXBjzQ==
-X-CSE-MsgGUID: PJdBzF7wSqmJirbShV+8uQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,163,1779174000"; 
-   d="scan'208";a="256444730"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.189])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:22:20 -0700
-Date: Tue, 14 Jul 2026 11:22:17 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 06/20] gpio: sodaville: Add missing pci module
- annotations
-Message-ID: <alXxuTVdAP7agxzS@ashevche-desk.local>
-References: <cover.1784013063.git.u.kleine-koenig@baylibre.com>
- <40ab40117c9df840de84ccf0365044cf4f87d37d.1784013063.git.u.kleine-koenig@baylibre.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="St5oIaUh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1784017429;
+	bh=oFRTq4b5voEJqxJgna9sANZNAoovJN0WoH/xes8V0Kc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=St5oIaUhZcFpc4P3NLXsjrMgq49P8PiKUtjQ7t6YdtDl4YkxNBA/Dd/QIKZM5DLoj
+	 1ABY+6QaJP3jupVTbAwDTNulrDya9AKCJBDkBQOZRhUZMae0bJ74ftxF5N4RDI9ySG
+	 EHzW+gwDxJVFrrclWEFuAl5Iw1tCdJuo6vl7G55WGP8nYfegFGpy43yWww7onOdIQd
+	 9tMj4mk7CzkwKyOPbp2T9KhhPz5hs058cU9yRvQbADigZnWfz5OOacqWHKdLLu+xli
+	 /y8KwgPBV62Cd3leuq3iQYY2oNuB0hcE9d4kuwrREQGjHgpMUmIG+RZiNaI7TeOv0E
+	 cyk/GjYqDxejA==
+Received: from [100.64.1.21] (unknown [100.64.1.21])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A354F17E010F;
+	Tue, 14 Jul 2026 10:23:48 +0200 (CEST)
+Message-ID: <0cd526b9-aff5-40e6-b209-750f83fa0fd0@collabora.com>
+Date: Tue, 14 Jul 2026 10:23:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <40ab40117c9df840de84ccf0365044cf4f87d37d.1784013063.git.u.kleine-koenig@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] pinctrl: mediatek: Add MT6858 support
+To: nikolai.burov@jolla.com, Linus Walleij <linusw@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, Sean Wang <sean.wang@kernel.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org,
+ Nikolai Burov <nikolai.burov+review@abscue.de>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260713-mt6858-pinctrl-v2-0-1bd072e3206c@jolla.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20260713-mt6858-pinctrl-v2-0-1bd072e3206c@jolla.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 14, 2026 at 09:24:07AM +0200, Uwe Kleine-König (The Capable Hub) wrote:
-> A driver module matching devices using a pci device id table is
+On 7/13/26 17:06, Nikolai Burov via B4 Relay wrote:
+> Add support for GPIO and pin configuration on the MT6858 (MediaTek
+> Dimensity 7100) SoC.
+> 
+> Signed-off-by: Nikolai Burov <nikolai.burov@jolla.com>
 
+Whole series is
 
-PCI
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-> supposed to declare that in the module's metadata. Add this information
-> to the sodaville driver.
+Cheers,
+Angelo
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> ---
+> Changes in v2:
+> - dt-bindings: Change reg-names and descriptions as suggested by Angelo
+> - Remove incorrect slew rate field from register table
+> - Fix hole in the EINT table by including pins without EINT support
+> - Add missing pm_sleep_ptr() and /* sentinel */ comment
+> - Link to v1: https://patch.msgid.link/20260710-mt6858-pinctrl-v1-0-f75ab558f0df@jolla.com
+> 
+> To: Linus Walleij <linusw@kernel.org>
+> To: Rob Herring <robh@kernel.org>
 
 -- 
-With Best Regards,
-Andy Shevchenko
+AngeloGioacchino Del Regno
+Senior Software Engineer
 
-
+Collabora Ltd.
+Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
+Registered in England & Wales, no. 5513718
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Matthias Brugger <matthias.bgg@gmail.com>
+> To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> To: Nikolai Burov <nikolai.burov@jolla.com>
+> To: Sean Wang <sean.wang@kernel.org>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-mediatek@lists.infradead.org
+> 
+> ---
+> Nikolai Burov (3):
+>        dt-bindings: pinctrl: mediatek: Add MT6858
+>        pinctrl: mediatek: Add driver for MT6858
+>        arm64: dts: mediatek: mt6858: Add pinmux macro header file
+> 
+>   .../bindings/pinctrl/mediatek,mt6858-pinctrl.yaml  |  190 ++
+>   arch/arm64/boot/dts/mediatek/mt6858-pinfunc.h      | 1335 +++++++++++
+>   drivers/pinctrl/mediatek/Kconfig                   |   10 +
+>   drivers/pinctrl/mediatek/Makefile                  |    1 +
+>   drivers/pinctrl/mediatek/pinctrl-mt6858.c          | 1407 ++++++++++++
+>   drivers/pinctrl/mediatek/pinctrl-mtk-mt6858.h      | 2378 ++++++++++++++++++++
+>   6 files changed, 5321 insertions(+)
+> ---
+> base-commit: bee763d5f341b99cf472afeb508d4988f62a6ca1
+> change-id: 20260708-mt6858-pinctrl-917ad9097023
+> 
+> Best regards,
+> --
+> Nikolai Burov <nikolai.burov@jolla.com>
+> 
+> 
