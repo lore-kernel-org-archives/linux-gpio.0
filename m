@@ -1,68 +1,60 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C023F5BD8;
-	Tue, 14 Jul 2026 08:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929DA3FB7F2;
+	Tue, 14 Jul 2026 08:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784016782; cv=none; b=ORTuajJ/ZFAG/WvI80PgnVmFb8fjTYj/T6zZW6B3X0LPAqPIbu1PpEZ9fAili5qbsYlAh6hwHMEV7QOCMmwlZQV6MHwYwsfICo9ukM1qjnr3p1W01aYSLJfI8PZJUOTEyLDDjx1M8rrQQ6YzV5R30p4DiKyYc5rUjD7zg9qmEuM=
+	t=1784017351; cv=none; b=Mu7xXdlkoRMoanavJCBgp2p5+qU3bOGNcwCgjSrJmW3mzPy/q5F317NM+pX0elqCOQK5y2lzPG/pwtd6MpGapRYl/+8/bpePdNeC93y15ZGa9iwor9Xx26a7rZEb61Xv/Gn+xq6Mp5tKZ+xtfK4Hnsw/WjtXjAGKOD+GMjrs5j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784016782; c=relaxed/simple;
-	bh=KYCEkPEjMD+eAmCIEVEDBEseQ70VdOm4bme0Qa3NvLM=;
+	s=arc-20240116; t=1784017351; c=relaxed/simple;
+	bh=7UwLK+REoWPC5QyjVTl/tTquK3kF5ZeLwwW6mmQ/+Ns=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=favk2C2v9gQpsqtSHbl9aDlxjdR/EYKHFMIDv+5s6+ZiyX00qRL6g6ImOuNSx0GwSIWkiuJAvNt8FMelT7Mo4zu6dof45Z+T4sJA2A7BV/C1d/ymT0zh6zu2T2wFAciDIP10XJCgqwuWRqcTsNOSownMBOUGE86P2i64QR9dGnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gwDiIVWa; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=gwCchgdueR6Ac6FtHI+Tt/8HFX/TtQo6BhB4lHIk2DJrV4Qa06UG+RIrq7kDAywjomGYTWvRqZCRaFaZvE9dLO2piVu7ls7rPzwQoQZ3dGCEI0FIaDwVzyov+jzk3Ompt62PDvZlgc08Ae1a5BFo3wYcupsFerJPX7D18FUiI3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=krzAGk1Z; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gwDiIVWa"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="krzAGk1Z"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1784016780; x=1815552780;
+  t=1784017346; x=1815553346;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:content-transfer-encoding:in-reply-to;
-  bh=KYCEkPEjMD+eAmCIEVEDBEseQ70VdOm4bme0Qa3NvLM=;
-  b=gwDiIVWaz9uBInb9xk8rpcklaVQzTnVwB/SmVSQJzxgmkWeC81Sy+hXN
-   BYTpKXXFrE3ivMrA88uZzRpozxV3qc7f3bO/fWeJe7DAJ8Xmp45CVqeYO
-   KCFzY5sDbEO8sAhhF2rQT+CQE6WkZdY9MzMGmmr4cVa34JGsoqy8DnKV2
-   I6pGiipqx8NUm/hivcvcm/jDHtTyK8C+o9pSwk124ihSwfcLGUls6RONy
-   /VZPCWtARmefQG6aQGzLqY7gIcMgxU21vIQTSt0V/ISN2sPoqrSaEdyW9
-   7rl4ADYkT3ERURgctzii1HhymkIMBrS5a0dbIecqqjJx068/lTP3cTlrW
-   Q==;
-X-CSE-ConnectionGUID: XzFJaQl5Q3iNPKO66NZP8w==
-X-CSE-MsgGUID: 3U5+JLjRQPGQF+DBFrE1Dw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11846"; a="84513157"
+  bh=7UwLK+REoWPC5QyjVTl/tTquK3kF5ZeLwwW6mmQ/+Ns=;
+  b=krzAGk1ZuSWqzAzfaBkaDo4U9yze79vdhLpp0zze7bCvlVljYW3QJBYm
+   IFeZ/OzDUJKeVQLP+aEmND8yAxHZTLOadfqvTDTjz3E3R5HnoUw9IA4Im
+   gEwYydqn7mbnsFzcTO6uSILt2WQIIBN4Zc3epalgG7jVp/kETYc15dap0
+   2WMlyVt/Guq77If6GGPVHo1zhxw1jgclwYPrKGhibK8W7nA6d6v4qNZfN
+   XC3jTrkVKwe1Kw71KogH5R5qA8oL0hbhSJK20M1c9vRg7ymPbUYqmUKfq
+   3q4UwHhlBgna/tQDhlk+hvdgNL1FMZog2D2vX83+qCs5j74QAEUULJh6z
+   g==;
+X-CSE-ConnectionGUID: iOQ0BQsYRq6W0WkQp06Twg==
+X-CSE-MsgGUID: lyuSyBP3Sge4JhAxkChkjg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11846"; a="84414527"
 X-IronPort-AV: E=Sophos;i="6.25,163,1779174000"; 
-   d="scan'208";a="84513157"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:13:00 -0700
-X-CSE-ConnectionGUID: JekA+nGISxSozST9p3Wy1Q==
-X-CSE-MsgGUID: arA99Ow/QV6BiW3ChyyflQ==
+   d="scan'208";a="84414527"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:22:21 -0700
+X-CSE-ConnectionGUID: t6g0GdSQQiiVRRh0QXBjzQ==
+X-CSE-MsgGUID: PJdBzF7wSqmJirbShV+8uQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,163,1779174000"; 
-   d="scan'208";a="280214627"
-Received: from klitkey1-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.245])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:12:57 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 38A6C11F8D1;
-	Tue, 14 Jul 2026 11:12:56 +0300 (EEST)
-Date: Tue, 14 Jul 2026 11:12:56 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+   d="scan'208";a="256444730"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.189])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:22:20 -0700
+Date: Tue, 14 Jul 2026 11:22:17 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
 To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
 Cc: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
-	Lixu Zhang <lixu.zhang@intel.com>,
-	"Enrico Weigelt, metux IT consult" <info@metux.net>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Mika Westerberg <westeri@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v1 20/20] gpio: Unify style of various *_device_id arrays
-Message-ID: <alXviNrPTBmwgYnN@kekkonen.localdomain>
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 06/20] gpio: sodaville: Add missing pci module
+ annotations
+Message-ID: <alXxuTVdAP7agxzS@ashevche-desk.local>
 References: <cover.1784013063.git.u.kleine-koenig@baylibre.com>
- <1f2d39342995533857417eb890628f7643b9a159.1784013063.git.u.kleine-koenig@baylibre.com>
+ <40ab40117c9df840de84ccf0365044cf4f87d37d.1784013063.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -72,28 +64,23 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1f2d39342995533857417eb890628f7643b9a159.1784013063.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <40ab40117c9df840de84ccf0365044cf4f87d37d.1784013063.git.u.kleine-koenig@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Jul 14, 2026 at 09:24:21AM +0200, Uwe Kleine-König (The Capable Hub) wrote:
-> Update the various *_device_id arrays to conform to the most used and
-> generally recommended coding style. That is:
-> 
->  - no comma after the list terminator;
->  - a comma after an initializer if (and only if) the closing } is not
->    directly following;
->  - no explicit zeros in the list terminator;
->  - a space after an opening { and before a closing }, a single space in
->    the list terminator;
-> 
-> Adapt the few offenders accordingly.
-> 
-> Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
-> ---
->  drivers/gpio/gpio-ljca.c           | 2 +-
+On Tue, Jul 14, 2026 at 09:24:07AM +0200, Uwe Kleine-König (The Capable Hub) wrote:
+> A driver module matching devices using a pci device id table is
 
-For gpio-ljca:
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+PCI
+
+> supposed to declare that in the module's metadata. Add this information
+> to the sodaville driver.
+
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 
 -- 
-Sakari Ailus
+With Best Regards,
+Andy Shevchenko
+
+
