@@ -1,64 +1,68 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437AA3EDE63;
-	Tue, 14 Jul 2026 08:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C023F5BD8;
+	Tue, 14 Jul 2026 08:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784016728; cv=none; b=PgMRc+L2JnBrh8gBh0w9TxJZjS5uxqB/3ZD7qESUizz4FJXU6vTA4nir2ssFq/ansfBo7ep2KMaZmLvIjOURY87XWhKawuNceqHgBf0cGbaF/xKqWeogejrth3iVx1Pz7SS2MctwtDFk/pTn+T3jUKVUFQXHI26FqPn1oPAkwgg=
+	t=1784016782; cv=none; b=ORTuajJ/ZFAG/WvI80PgnVmFb8fjTYj/T6zZW6B3X0LPAqPIbu1PpEZ9fAili5qbsYlAh6hwHMEV7QOCMmwlZQV6MHwYwsfICo9ukM1qjnr3p1W01aYSLJfI8PZJUOTEyLDDjx1M8rrQQ6YzV5R30p4DiKyYc5rUjD7zg9qmEuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784016728; c=relaxed/simple;
-	bh=rfTOXgTDXwpw/9PssHmYPPTjvOKznc5I4kBnHY+qN4A=;
+	s=arc-20240116; t=1784016782; c=relaxed/simple;
+	bh=KYCEkPEjMD+eAmCIEVEDBEseQ70VdOm4bme0Qa3NvLM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jIsGxK/xnmYNv4tnTgdCwx7XDf/W+30klkZVo/1V9iN8ZGXymF2RuN3TzjZSYqoP5Ur++Udpv6vp4TzA/+rxw8tg8mFpb1ni6m3worXBTX3NrOAtFqc3f6q+LqQBUYD0i8haToACV5x/anYWpkIV8COt2OLKGGkU316mWh4x5HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a2LD4ttM; arc=none smtp.client-ip=192.198.163.12
+	 Content-Type:Content-Disposition:In-Reply-To; b=favk2C2v9gQpsqtSHbl9aDlxjdR/EYKHFMIDv+5s6+ZiyX00qRL6g6ImOuNSx0GwSIWkiuJAvNt8FMelT7Mo4zu6dof45Z+T4sJA2A7BV/C1d/ymT0zh6zu2T2wFAciDIP10XJCgqwuWRqcTsNOSownMBOUGE86P2i64QR9dGnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gwDiIVWa; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a2LD4ttM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gwDiIVWa"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1784016726; x=1815552726;
+  t=1784016780; x=1815552780;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:content-transfer-encoding:in-reply-to;
-  bh=rfTOXgTDXwpw/9PssHmYPPTjvOKznc5I4kBnHY+qN4A=;
-  b=a2LD4ttM+YMyz3RDUGSvDmr/xkjA7QQG4Frr45iBd/FV2IZBfa2iULBn
-   seY7LKvCPEtsFU/Ctb9fOQmrDQlYMgIgM5gFt1VCbI1yYEKPq/j0by7Hf
-   RzU/gfPjRrq0cUSZAYAdhTLQQcWQonWyF4upYmp6t4AiB1eKtOW9JmSLB
-   cYn5o6lyew/Gn1Zh3c5wz7pz/oYHW8531j6CrdnoBWHqG0h/T3pgxfolk
-   RN2M/bllTJhZJOCJbNZPYn72+Du0gp1lcJYjZ2o5MPBPsugBI/RL/xdyf
-   A9I8hI4g38cJXKOY55bT3nVGifVZ/t55J9UaqdbjjAt3IIB4HT8VPo6S3
-   A==;
-X-CSE-ConnectionGUID: /NL2A3nMT/alr0Ikf14UiQ==
-X-CSE-MsgGUID: KtGk8KA8TNKeGaGLELY12Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11846"; a="88456315"
+  bh=KYCEkPEjMD+eAmCIEVEDBEseQ70VdOm4bme0Qa3NvLM=;
+  b=gwDiIVWaz9uBInb9xk8rpcklaVQzTnVwB/SmVSQJzxgmkWeC81Sy+hXN
+   BYTpKXXFrE3ivMrA88uZzRpozxV3qc7f3bO/fWeJe7DAJ8Xmp45CVqeYO
+   KCFzY5sDbEO8sAhhF2rQT+CQE6WkZdY9MzMGmmr4cVa34JGsoqy8DnKV2
+   I6pGiipqx8NUm/hivcvcm/jDHtTyK8C+o9pSwk124ihSwfcLGUls6RONy
+   /VZPCWtARmefQG6aQGzLqY7gIcMgxU21vIQTSt0V/ISN2sPoqrSaEdyW9
+   7rl4ADYkT3ERURgctzii1HhymkIMBrS5a0dbIecqqjJx068/lTP3cTlrW
+   Q==;
+X-CSE-ConnectionGUID: XzFJaQl5Q3iNPKO66NZP8w==
+X-CSE-MsgGUID: 3U5+JLjRQPGQF+DBFrE1Dw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11846"; a="84513157"
 X-IronPort-AV: E=Sophos;i="6.25,163,1779174000"; 
-   d="scan'208";a="88456315"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:12:05 -0700
-X-CSE-ConnectionGUID: l7HM4br3RIO/0VjdUfEKEA==
-X-CSE-MsgGUID: Qynqno7xTcmEHZVIqWSk4Q==
+   d="scan'208";a="84513157"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:13:00 -0700
+X-CSE-ConnectionGUID: JekA+nGISxSozST9p3Wy1Q==
+X-CSE-MsgGUID: arA99Ow/QV6BiW3ChyyflQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,163,1779174000"; 
-   d="scan'208";a="251844829"
+   d="scan'208";a="280214627"
 Received: from klitkey1-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.245])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:12:02 -0700
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:12:57 -0700
 Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 0A19711F8D1;
-	Tue, 14 Jul 2026 11:12:01 +0300 (EEST)
-Date: Tue, 14 Jul 2026 11:12:01 +0300
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 38A6C11F8D1;
+	Tue, 14 Jul 2026 11:12:56 +0300 (EEST)
+Date: Tue, 14 Jul 2026 11:12:56 +0300
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
 From: Sakari Ailus <sakari.ailus@linux.intel.com>
 To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
 Cc: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
-	Lixu Zhang <lixu.zhang@intel.com>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 04/20] gpio: ljca: Drop unused assignment of
- auxiliary_device_id driver data
-Message-ID: <alXvUWDNXqK1gb-F@kekkonen.localdomain>
+	Lixu Zhang <lixu.zhang@intel.com>,
+	"Enrico Weigelt, metux IT consult" <info@metux.net>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v1 20/20] gpio: Unify style of various *_device_id arrays
+Message-ID: <alXviNrPTBmwgYnN@kekkonen.localdomain>
 References: <cover.1784013063.git.u.kleine-koenig@baylibre.com>
- <0ae42630bcf5e07ad7db5568f3e87a8196f69c84.1784013063.git.u.kleine-koenig@baylibre.com>
+ <1f2d39342995533857417eb890628f7643b9a159.1784013063.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -68,23 +72,28 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0ae42630bcf5e07ad7db5568f3e87a8196f69c84.1784013063.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <1f2d39342995533857417eb890628f7643b9a159.1784013063.git.u.kleine-koenig@baylibre.com>
 
-Hi Uwe,
-
-On Tue, Jul 14, 2026 at 09:24:05AM +0200, Uwe Kleine-König (The Capable Hub) wrote:
-> The driver explicitly sets the .driver_data member of struct
-> auxiliary_device_id to zero without relying on that value. Drop this
-> unused assignment.
+On Tue, Jul 14, 2026 at 09:24:21AM +0200, Uwe Kleine-König (The Capable Hub) wrote:
+> Update the various *_device_id arrays to conform to the most used and
+> generally recommended coding style. That is:
 > 
-> This patch doesn't modify the compiled array, only its representation
-> in source form benefits.
+>  - no comma after the list terminator;
+>  - a comma after an initializer if (and only if) the closing } is not
+>    directly following;
+>  - no explicit zeros in the list terminator;
+>  - a space after an opening { and before a closing }, a single space in
+>    the list terminator;
+> 
+> Adapt the few offenders accordingly.
 > 
 > Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+> ---
+>  drivers/gpio/gpio-ljca.c           | 2 +-
+
+For gpio-ljca:
 
 Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
 -- 
-Kind regards,
-
 Sakari Ailus
