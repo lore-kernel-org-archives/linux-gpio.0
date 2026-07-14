@@ -1,59 +1,61 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3233FBB6D;
-	Tue, 14 Jul 2026 08:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D593FC5A7;
+	Tue, 14 Jul 2026 08:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784017440; cv=none; b=KRq150ZYWX3VHW1FwuOS/TCnWrz6QdzOh0TB22IQpOgwnydKtaDoj8JDB1xSzvuLg8drAc90Vf8rR/x3j+6zt7WBTAwPD5B/JEth8I1FCzObVVOMBcM/9L/fGLdfquj1BhaAl45GN7yEklIgs1ANBhJmHeuad0N7D32Hv1vQ7V0=
+	t=1784017548; cv=none; b=ohoA4ae1o4E4DcQY8XQK87Jhe3TicJREwxycPIEhhAMn5q3eO0GDZ1oGSQLjtEiijri3u4nmyJp48xvx2VfoLhEbKPHoY57BwbOPdV/93V/LUT30rVggt617yd0K16exoBxGYOE2723KWegKxOYJamUya5LjKyqYMBuUM3NBuoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784017440; c=relaxed/simple;
-	bh=P/hsEp30A55bn738peV2azQ9Sq9APHBY5LiVcEcyrCY=;
+	s=arc-20240116; t=1784017548; c=relaxed/simple;
+	bh=bohSTv4Hd4p8Aj4YJb0k5hN+JbvNu7/TNktJf/auPCQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nZ9zB2TPcmym/T0uxudelTdCIQBP7X3m3WumHEcaJDBGvNbygguRf8epO8yI6k3nLPnrgdOtUFC+cLT2nV33YK5Twvz3U2Wp99DOtrQ3PHuz4K60BR498qqs6TdJksUOxFEWLr0UvmX9r8EAhDSFmIwpH4qTBX728dPP9nR4pPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S9VkOn4H; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=jjalIjmIqXNk5F5+fsCFG5qUJx9mVAwd4Uv1b7ZssiQPnKxBQR1y5PVl4R35XSM5Ep+slM969jwQvEJAkuNatEko+7sZsArkagRHKgZR/2rZX8+cD/onkBKWHIHfxq3tQftisuL3c24OPCYSzclqgUr3LVt4A/9EXdm0PL8+zGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HZDGOI/t; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S9VkOn4H"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HZDGOI/t"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1784017433; x=1815553433;
+  t=1784017542; x=1815553542;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:content-transfer-encoding:in-reply-to;
-  bh=P/hsEp30A55bn738peV2azQ9Sq9APHBY5LiVcEcyrCY=;
-  b=S9VkOn4H1DBDKnIpnNqN4XBA2lGdRh8/q6QhZ5x8dRd1B4/1hPwLwaJQ
-   ihudKs1GeVVw8XLpip1uoqDDyMnuVlC1jgletsQnNaWfKDJ29hTwzrT+E
-   u+FQcFdtXhHeLgl4MTafP/TLa2EUtzciSzZRoay2eyf9FBCoatG7U7jta
-   xO8NDOxwePTy4jDNPRkcIitb0WpE2sPkZhgh/x9WwhaLqkovv8nVFee9o
-   pvSwMX1hWxJ+k6VaBPL2K/+ql3aIJkW8TRyLOH4/fhu4lOqMioy6H3efZ
-   I0Vu5FO0VH5Eq9Fj6fhKPD2w4W4JuhU4f/f6n/yDCrSzcAuseInxXmgN+
-   g==;
-X-CSE-ConnectionGUID: Mep8YzpFR8K+KdAUFCBQeQ==
-X-CSE-MsgGUID: U88ozrlMS8adDwwr2vUKpw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11846"; a="84514228"
+  bh=bohSTv4Hd4p8Aj4YJb0k5hN+JbvNu7/TNktJf/auPCQ=;
+  b=HZDGOI/tKGk72vBSdll37Rn/BP5PassItE6nBTQ4chFaVckyHtdHfDdV
+   pUA4zTEA4gvAfjxxJxZPTL4J13nuTztw8T417rZBmWimFSyMRMrCNx60y
+   0TQHbATFg9vO88h2PScBPSs7eXkYKW5C4c9voPOWMWmBLEZit8uGzF2xV
+   1Zj27Skf2F2kyObg2jRlYkp9rgL+8FlKb4ev4p0+zXnn3Sj3Sw4jCy87v
+   YaNz+CxDudxnP67Xe9ZmzFEqrOtx7naYe9hCeOIfKyj/n1aFf3yiDtcFS
+   SI5FhTRBEdDSCEPPPmwx2m2r4RnvN9DwJlsHepNfO1pMMK3QjVJE6VwA9
+   A==;
+X-CSE-ConnectionGUID: adJTFaI0Sz2fcpzPo22VSg==
+X-CSE-MsgGUID: 1fkBDs+VSnisiSyCejk8Ag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11846"; a="102186450"
 X-IronPort-AV: E=Sophos;i="6.25,163,1779174000"; 
-   d="scan'208";a="84514228"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:23:48 -0700
-X-CSE-ConnectionGUID: 5irz21dzQCGgHOUt1xV9gQ==
-X-CSE-MsgGUID: 35Y00WJ4RVS2/ImC0Y0qTA==
+   d="scan'208";a="102186450"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:25:38 -0700
+X-CSE-ConnectionGUID: fwkBa+8ZQjuE/O3OhJyuEQ==
+X-CSE-MsgGUID: 9RlNIxPJTOaBEAXgpFgupw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,163,1779174000"; 
-   d="scan'208";a="280215758"
+   d="scan'208";a="279057034"
 Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.189])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:23:46 -0700
-Date: Tue, 14 Jul 2026 11:23:44 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2026 01:25:35 -0700
+Date: Tue, 14 Jul 2026 11:25:33 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
 To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
 Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Mika Westerberg <westeri@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v1 09/20] gpio: Add missing dmi module annotations
-Message-ID: <alXyEPWUS5cJg6Jb@ashevche-desk.local>
+	Bartosz Golaszewski <brgl@kernel.org>, Michael Buesch <m@bues.ch>,
+	Andy Shevchenko <andy@kernel.org>,
+	William Breathitt Gray <wbg@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 19/20] gpio: Unify style of pci_device_id arrays
+Message-ID: <alXyfR6BKsW6tEAo@ashevche-desk.local>
 References: <cover.1784013063.git.u.kleine-koenig@baylibre.com>
- <eb1fdcce0f07e274e5590b8821d9dd7835f1ce0a.1784013063.git.u.kleine-koenig@baylibre.com>
+ <125cf664a060ff58d11f4a21e8df182cd8f15eff.1784013063.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -63,20 +65,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <eb1fdcce0f07e274e5590b8821d9dd7835f1ce0a.1784013063.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <125cf664a060ff58d11f4a21e8df182cd8f15eff.1784013063.git.u.kleine-koenig@baylibre.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Jul 14, 2026 at 09:24:10AM +0200, Uwe Kleine-König (The Capable Hub) wrote:
-> A driver module matching devices using an dmi device id table is
-> supposed to declare that in the module's metadata. Add this information
-> for two drivers that failed to declare these.
+On Tue, Jul 14, 2026 at 09:24:20AM +0200, Uwe Kleine-König (The Capable Hub) wrote:
+> Update the various of_device_id arrays to conform to the most used and
+> generally recommended coding style. That is:
+> 
+>  - no comma after the list terminator;
+>  - a comma after an initializer if (and only if) the closing } is not
+>    directly following;
+>  - no explicit zeros in the list terminator;
+>  - a space after an opening { and before a closing }, a single space in
+>    the list terminator;
+>  - at most one entry per line;
+> 
+> Adapt the few offenders accordingly.
 
-No, it is not supposed. Why?
-
-...
-
-These are quirks and enumerating by quirks sounds weird.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 
 -- 
 With Best Regards,
