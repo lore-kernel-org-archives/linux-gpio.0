@@ -1,99 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F573ED5C9;
-	Tue, 14 Jul 2026 19:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62933412BED;
+	Tue, 14 Jul 2026 20:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784058653; cv=none; b=F/lx1X6T8WHHFRkF8T0dIycq30Wph2LpdM5W0Y3E7nTbpS2cyIh1Yr9zZk6QanIbfnxSsPDf6cn3h5eNsa4edNFVPJAMdEsRwepPndVa7zy8brQMGDCn4AuzIRnAhzN2IQt4vDrqWsTerJMNCC/DcV4ZvwqjB45PvxTF6jgPwIA=
+	t=1784060013; cv=none; b=mBs3GiHpFQKCKLcuUvzHo7Wm4+capB8bU9YsqpYrSHNOiP1z4Gz6wPYcO5An0YyzhVHLyA1ZGx7WhS3JakrM384fbyDIGw5Gri1KkBJDaqa2FVShG5RbquPGQamrjtZc/A0Ta5Cw+upZBUZj9XuPRkGpbUD+DLLY9XNhbnsrewg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784058653; c=relaxed/simple;
-	bh=Xd6HvhT7dw6Wgmk94tnTYJUmFvZeh8MhbSfiMJLGYks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lt9tFHpK3L0ggUu/QPBV6K3b7B36xX1JcQji2JgYquBKgQKLa1tda8GDkL86Mm2ga+oHEWWanCXzYj7u2b6u3xXNDY/ov8ABj0H7nhwVJZqQLOGPWXgy4I3XOlFmrWyppf16rX4KxfTf8mmYgf/DusuPYKceys1vtZ32De43Bd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOKbhNSm; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784060013; c=relaxed/simple;
+	bh=u+5POPI/BtTyXAnp0z7wIeJABK6jmiOfa+id3WMDL+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CX+HE/syb5PlRxWpyUpPeL9Z7a5ZYX6/vDz7rXWhHFhXXotxVeYvfdwHE0WqokBS4O7DNse2chAkYJGlk2yoGHLl5cJZgoIX4TCOOszWKMu/gDd3NaFl1CdlKrWhehd6wU22kV1Ppr3HrLL+IHzaNVSWMcNgRrMAiy3zt9KDcOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pDJ4GOG2; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOKbhNSm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F11941F00A3A;
-	Tue, 14 Jul 2026 19:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784058651;
-	bh=cMuxhfaknBq5QjhLYVGrFXr0U+Y0NiHMcVJiOgD3Vkw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=TOKbhNSmby1ttQf6TaPpN5uWolvANg04bDbsf/ppCud8DtfTX/2x+jayxhmL8GHOF
-	 mEOueQIWBC8dkXo9sBmFZGphDd5Hzko6mOov+uPOUh4GCML09iX2QtubjbAjeQDrzE
-	 +qKPOgBGibQuLc5MKjnpDYOAshWSqTtL7NpgX9nbT7YL77TLpb9lIwaq2Er66m5ti4
-	 TsqPv9j/MFs3aylUX1baQ+wQCmsuhyT+e7vpL31zuenbqSlHqwEOLmPPHXs0Yc7vId
-	 770PdPa/vdKgc3ewCTbTWtpkW6jrOgnmsQbWYO1WPBmB3G2K2s/59ilmFsNiNT+7SC
-	 qXwc4A2YzJDpg==
-Message-ID: <cd9da9aa-6e91-4534-a86c-a4421aafbd38@kernel.org>
-Date: Tue, 14 Jul 2026 21:50:45 +0200
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pDJ4GOG2"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=GZnKgW+PTI85uwSvBTZx6tE/LVkjSY/LHRD2fDPNzO0=; b=pDJ4GOG290nNbD7p9pehUqbd6J
+	liRP7KZdmFIUYrnPXVRorJ+btZrptsNhTyOE6IcMio8Z7W0/PkmCvK/jiRDtGbzxLi5Rm1ihsYGcP
+	D6XqGXjWUEYD1ptZjY+ed8cKUhRvmUeZyVFvFrqTJk3NuFUrKT/o+vUrikzcxituPc94=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1wjjVG-00CFLL-Bi; Tue, 14 Jul 2026 22:13:18 +0200
+Date: Tue, 14 Jul 2026 22:13:18 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Shenwei Wang (OSS)" <shenwei.wang@oss.nxp.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>, Frank Li <frank.li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	dl-linux-imx <linux-imx@nxp.com>,
+	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+	"b-padhi@ti.com" <b-padhi@ti.com>
+Subject: Re: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver over
+ rpmsg bus
+Message-ID: <680d0633-cdec-4545-9114-79bfd6eaac41@lunn.ch>
+References: <20260625155432.815185-1-shenwei.wang@oss.nxp.com>
+ <20260625155432.815185-2-shenwei.wang@oss.nxp.com>
+ <alUdg9iTysXCFUa5@p14s>
+ <PAXPR04MB91852808D2C7491AEF98CF1589F92@PAXPR04MB9185.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/10] dt-bindings: arm: apple: Add M4 based devices
-To: Yureka Lilian <yureka@cyberchaos.dev>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>,
- Thomas Gleixner <tglx@kernel.org>, Wim Van Sebroeck
- <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>,
- Hector Martin <marcan@marcan.st>, Linus Walleij <linusw@kernel.org>,
- Mark Kettenis <kettenis@openbsd.org>, Andi Shyti <andi.shyti@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Sasha Finkelstein <k@chaosmail.tech>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-pwm@vger.kernel.org
-References: <20260705-apple-m4-initial-devicetrees-v1-0-e5655ee56523@cyberchaos.dev>
- <20260705-apple-m4-initial-devicetrees-v1-9-e5655ee56523@cyberchaos.dev>
-Content-Language: en-US
-From: Sven Peter <sven@kernel.org>
-In-Reply-To: <20260705-apple-m4-initial-devicetrees-v1-9-e5655ee56523@cyberchaos.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB91852808D2C7491AEF98CF1589F92@PAXPR04MB9185.eurprd04.prod.outlook.com>
 
+> > 1) You did not include messages that mask and unmask interrupts at the driver
+> > side.
+> 
+> Interrupt masking and unmasking are handled entirely on the local processor.
+> 
+> When an interrupt occurs, the remote system masks the interrupt and then sends a notification 
+> to Linux. After Linux processes the notification, it sends a SET_IRQ_TYPE message back to the 
+> remote system, which then unmasks the interrupt.
 
+Masking and unmasking an interrupt are orthogonal to the interrupt
+type.
 
-On 7/5/26 15:17, Yureka Lilian wrote:
-> The Apple devices with the t8132 SoC (M4) are very similar to their M3
-> predecessors.
->
-> In addition to the MacBook Pro and the various MacBook Air and iMac
-> variants, a Mac mini is offered again with the M4.
->
-> Signed-off-by: Yureka Lilian <yureka@cyberchaos.dev>
-> ---
->   Documentation/devicetree/bindings/arm/apple.yaml | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/apple.yaml b/Documentation/devicetree/bindings/arm/apple.yaml
-> index e49403c73f9d..3262292252d2 100644
-> --- a/Documentation/devicetree/bindings/arm/apple.yaml
-> +++ b/Documentation/devicetree/bindings/arm/apple.yaml
-> @@ -315,6 +315,18 @@ properties:
->             - const: apple,t8122
->             - const: apple,arm-platform
+When the interrupt fires, the interrupt core calls the irq_mask()
+operation on the interrupt. That should mask the interrupt. Once the
+handler has finished, the interrupt core, will call irq_unmask() to
+unmask the interrupt.
 
-Please also add M4 to the top of the binding in the description.
->   
-> +      - description: Apple M4 SoC based platforms
-> +        items:
-> +          - enum:
-> +              - apple,j604  # MacBook Pro (14-inch, M4, 2024)
-> +              - apple,j623  # iMac (24-inch, 2x USB-C, M4, 2024)
-> +              - apple,j624  # iMac (24-inch, 4x USB-C, M4, 2024)
-> +              - apple,j713  # MacBook Air (13-inch, M3, 2025)
-> +              - apple,j715  # MacBook Air (15-inch, M3, 2025)
-Copy/paste errors: these two should be M4 as well and I think the ones 
-at the top should be 2025 instead of 2024, shouldn't they?
+Edge, level, high, low, raising, falling has nothing to do with
+masking. Please don't mix concepts which Linux keeps separate.
 
-
-Best,
-
-Sven
+	 Andrew
