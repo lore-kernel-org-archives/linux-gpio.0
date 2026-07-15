@@ -1,78 +1,82 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C4B4BC005
-	for <linux-gpio@vger.kernel.org>; Wed, 15 Jul 2026 16:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D390A4BC025
+	for <linux-gpio@vger.kernel.org>; Wed, 15 Jul 2026 16:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784134593; cv=none; b=D/js8X3HyZwzBLpe7EnHw5Ryz4cAa89Seyp/GufegkthkSXS5AGlZi821gx33sEiEnD+FX+encqLqL2agJqpYrYi0myH3HCVseW4uGBFd6RLpeho8hpFSzJ6GQUlcuhpJAsOf7La67nsAIaOeox1tFK5VxSc3r/o70pqxMLWZOA=
+	t=1784134594; cv=none; b=Qox4PnHC4GNc4KUjkVbwCaMdTaZUVTqC/1ktLMan9hn5wPggZHnhQI0KOtSQHLVytZER20cVU38Bjabw7BG6YIpcwN7Gpjj6Lia3kbExnuy8plORKXdUeoT6ZYyuzXdYR9k5aWN1peSea5M+wJnf9i42iz54lSrFdPqgjXNicAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784134593; c=relaxed/simple;
-	bh=xop2FbBj5tuNPwvd//uvsdP3YavOUZbUCVxoOGfcP5c=;
+	s=arc-20240116; t=1784134594; c=relaxed/simple;
+	bh=qeMqNCPR4JZWZmIFkke1fRMQtsN1pMrftafnXla94ZI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JRn5AaIj+SjA4s8pEMEF/Hry4KOx2kNFZn6s/7hk89P97jZHRvG9zk6fG43k9yE90//fWcC3JeKf0wYqt4GwI8ULLpIqPm6cvsldjGk4eMgWWFrbK8FtRufpj10fzwRyaCDafd3K/po9BRZhi4PJNa892lLQ0mvsLc9vkvVviO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=QCOX3W3s; arc=none smtp.client-ip=209.85.221.46
+	 MIME-Version:Content-Type; b=I+A4h2FJWGIT4c+gjwi3U7bFEJNySOl1aTmBq5L4tBBChbDnVG5V8NhhyJysjv5uHSSoPPvTW6NM9aAdDcHkL2hSiImxagJ/04aevEdyqqt4bLqA2JmWVNqH8y/lSo4SlOEqy6SoNtr898hFWTyH1HXQ+04J/XBgnL58knYmwPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Dl6D7QSB; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="QCOX3W3s"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-47defd0c1c5so1854059f8f.3
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Jul 2026 09:56:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Dl6D7QSB"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-47ddf7b09e5so2123756f8f.1
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Jul 2026 09:56:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784134589; x=1784739389; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1784134591; x=1784739391; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=pAFIavaPW7p+32R+45SYEoxpX/bETeA1cTox7VP4+MM=;
-        b=QCOX3W3sYE/sjv2h4TEcN8n3+mcDf6qSXQTDZgtZf2JAirkWSsSAVEXebnjmLVWSEU
-         fP+nYsxpBgcuin70tJ92rcmP3Qz1bVeLiKx/Zc9gSUkCufpXyKEdXQYHpSBNoQ9arSyK
-         evEhjFYO3LI4VA4DcGU3oPa05fTY8TdP4fki69jWjvcgfxzVQ+eR8+ZKqtHazvFd0Ysk
-         nUjV1hFgM8BMpk6YJJI0oaAO/DJAOqyFnLcjxMaVsRJPp2AocAD4jBHXKv2Eu4DYlZTL
-         q/C8CprFmLK6TJxDIZEABmZpHr+bOQD26GnrDnzQpWObwvBI0zSAAbigtZkiNSaT0Ssw
-         pAvA==
+        bh=0YbKISqvDXzDxXFBLILdiprJK/dXdWku3hILu+bMdhE=;
+        b=Dl6D7QSBJXz0wwLN/j1UJisnYjrNgkYUb9bNiSA+MuWJPuQW7tcFHi1pytl2DOsGxp
+         A5f5ldhAEPaPhbclexDzVV1RAtvWMqlYxY3OQVW1PV1lZH0PKkYupkYxLCN/csqEt9n4
+         kcv+GdK37iEE+V8QRTuc+XAFm29Ivb+15Ws+jf5lqCU//6OE3Bs19kTu5fWQDm2wzpoc
+         WYscaQd3CKXgzQMFvZWSSEeRlsPy7hXu15SIowrQ0RQ0ETyddWqr7L6nQFw1zdFnqJYB
+         Jdh+hGGvhCd2qXiDzu+P/wPoEwPrY5Nx3g0wMPyd4mYzo5Zc48zPxHdL/Yf14oZz1EeG
+         lTYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784134589; x=1784739389;
+        d=1e100.net; s=20251104; t=1784134591; x=1784739391;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=pAFIavaPW7p+32R+45SYEoxpX/bETeA1cTox7VP4+MM=;
-        b=aO744pt75JJzBJhpxZjn8/WMNi9Ojs2JwKEhuOjIeX4GdrjKMWG9YqyFGi36j/LPXI
-         tNW8i97nBu+KSJTrpjhm82+4UtfUefgFmUOAyKWqnVhfG9Fo6QxjlWqNFwXjOLQ5SG8U
-         qZEkypUNMamYSyOk6OXqo0CauEshsaytun+salVyq8b0/IyNqiOfZvenabYhhVPvVFcj
-         XuGg8ZNAHLBSiGUSg5cIWh9bk7Ydz439jAQ9k7CzlnTyhmfI7RXokDa6SvW+L6FVrvUJ
-         bq09OOOSOORthdeqLKPpPIG9xyVFB3U0tyTUJz+7gLrp2lRRJbZRG+YZ2nABbW/yuS2t
-         H/3w==
-X-Forwarded-Encrypted: i=1; AHgh+RpM/OU2tb/7i0szCWWvrnJpuy+tpF5Ye3jD5PdDj697z9lEIfWSrQHfWOEdfR599mAspAiQj6gF9yCP@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKU7MtiTUlTdCKnA4v/uKI7DEJlt+4CRLJ5K/umznwJOy+hDzN
-	QnK6bs3F/TSmwR9ljjlBWa3lTdxO3+z001WUbUWcG7SZAw8gEFRTIswEOekak8a3jWc=
-X-Gm-Gg: AfdE7ckDls79TltfCbNJ3b962I7ElUt0te9JRDRqrWXNDu7ikyXM3pJCJCWVES31BNG
-	kmIOR1fXorrZ91Y0ROC25y0WfzeXy6WSVJxMwhJT2n2icGmZNg7sjsaqdMIQ3rJVBye0WcYlFV+
-	YuvR8n1rXjGE6pgQ4im0p4sMXCCaiKXAg3UVinGX6aeKS3CbwTf+Mku8WHn6IetNESYRjINgi/p
-	mVv2oTjYLLcMa7pUKtFnwM3DJFEf7CSOyBr2TCv5y0trDuXH3Ul7k+7MlxtU39Vh2iofFCCb9GZ
-	bBa/jxdUgbs0L3q/S8GZzo4oUWEOIThPd9+Y/+zCCdTdscNpYvXqja83i3H9r3JrRfJZ3AHVp7z
-	dXuUktXPc5Fe9rSJQuMRdKEd2XnECC/leGWafbxlJTnNQReV1l5lsEJQuC13ta939we/0Z7NzMx
-	ofyErZGdFIc0Binv45fT1KzBKG51v8+NZsvspZrGPfmmh/eCF2etERjhUwGsJ3p+hyS1+52rZWW
-	Gc=
-X-Received: by 2002:a05:600c:4f8a:b0:493:e947:b24a with SMTP id 5b1f17b1804b1-493f87e72a8mr189426985e9.14.1784134589586;
-        Wed, 15 Jul 2026 09:56:29 -0700 (PDT)
+        bh=0YbKISqvDXzDxXFBLILdiprJK/dXdWku3hILu+bMdhE=;
+        b=PJG7XQobSMwmbqXpYs38lNJ/cyTlcPojH8L7su20cIlHkvBRqfVZkx7GXC0+BvvBTf
+         0nkg3BxxIekqdfRW/slKTz98J3nGGDt3aSH/nSA6e/X3gOZAj16QVKvRYxAVnZ3fEI4o
+         oFLtUlDhtshDGalqHNOqXomWh3ypOarwe/bCGU+O3X+BF1d9YFNeN5o9UM1c1STyWIpZ
+         +wvrdCu78YULTVtSMqKIB4n5YYcReOIliCb9qcqcQLqXXUdRHA+sn80kkFDvjhE2E1Iu
+         wx8faAjhPTTgleWGD+r+GKIxtP/ulAOZobhc+pSt85V+MeZxhlmXupjvHN8PI3mGIy3t
+         cd5Q==
+X-Forwarded-Encrypted: i=1; AHgh+RqOsChD9ejUfQR3fHCZ8kLl9fM5U5haJRmt2ZzNXKcGtXIdNf+1xQU+ytnpWQboudZaOO4sGSUMHvcG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2kuCHWsuKrxABlbMUHxcBMdv0J/UqAqY/FLOQaZ9gYN5k4VLk
+	BpG9qEZ3PNphdrCPkntjvFhroBJxSuli6srQu7gR45EfzBkxlkXl0NA9Z/9ycPwEnG8=
+X-Gm-Gg: AfdE7ck0gHeF8+hStIvFnFe1ur2aODXX1TNJpVWBFRwuyXjV3rh9pvvUtDvj0AZoWyU
+	apdiZn3Gm+SGukI42KcnWBR9tlKTrLWnTbBrjgbOXnCHgrRaBgEuVVQ5Xy13lPUD647tzqnob3J
+	lMuXZw+tc5Yx+vSAvmiFuEXJoJVlWh11b6zYc6BBNKC/FTKjZbVOqQPZSlf7qagJM/N+EokGVwI
+	d0GGE1eNAuYjKiEvLCByOzWkYgoDW2mO3/N/kUHE1MSQ6fXVSRsoqus6r4xf5hTPqdMWe2vOCXX
+	uJWWi/WOp6zK83Gm3+qEfr83jVbaTHbQtJXFDBro2A+Fhs+Lby2P0RRfqrYRR6XpzBQrTKxRig3
+	hYIPaZb4jDjIOSxbV10X6tLB1E2LZikBF1SbAGL7ecNXvrGWgwNlCVHOWnMALV1yO+QJcEWA6Im
+	FEU8TOG2LzgxDMZKpiMXP8SVn7WSws7cKpoMHSh2mJ4Rq8UW0sHiOObJkepPCwUYajhhxVhpf7u
+	ds=
+X-Received: by 2002:a5d:5f45:0:b0:475:f100:35fb with SMTP id ffacd0b85a97d-47f2dd42e56mr22174405f8f.56.1784134590979;
+        Wed, 15 Jul 2026 09:56:30 -0700 (PDT)
 Received: from localhost (p200300f65f47db04249e031dea91a10d.dip0.t-ipconnect.de. [2003:f6:5f47:db04:249e:31d:ea91:a10d])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4953c70f99dsm51162975e9.2.2026.07.15.09.56.28
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47f464d6fa7sm17882394f8f.37.2026.07.15.09.56.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2026 09:56:29 -0700 (PDT)
+        Wed, 15 Jul 2026 09:56:30 -0700 (PDT)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
-Cc: Michael Buesch <m@bues.ch>,
-	Andy Shevchenko <andy@kernel.org>,
-	William Breathitt Gray <wbg@kernel.org>,
-	Robert Richter <rric@kernel.org>,
+Cc: Lixu Zhang <lixu.zhang@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	"Enrico Weigelt, metux IT consult" <info@metux.net>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: [PATCH v2 20/21] gpio: Unify style of pci_device_id arrays
-Date: Wed, 15 Jul 2026 18:55:25 +0200
-Message-ID:  <a5c6484f2ff045068b667e3c08e8f98fd31cbbc6.1784133987.git.u.kleine-koenig@baylibre.com>
+	virtualization@lists.linux.dev,
+	linux-acpi@vger.kernel.org,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH v2 21/21] gpio: Unify style of various *_device_id arrays
+Date: Wed, 15 Jul 2026 18:55:26 +0200
+Message-ID:  <74f18045a53d99047c5c2cc83d970b5b429dd14c.1784133987.git.u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.55.0.11.g153666a7d9bb
 In-Reply-To: <cover.1784133987.git.u.kleine-koenig@baylibre.com>
 References: <cover.1784133987.git.u.kleine-koenig@baylibre.com>
@@ -83,11 +87,11 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4653; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=xop2FbBj5tuNPwvd//uvsdP3YavOUZbUCVxoOGfcP5c=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqV7uZ05xxLN83oiLEZddzG96QXCZOBkro/Ph9s mDUlRNb6TmJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCale7mQAKCRCPgPtYfRL+ TpPRCACxkhWRGX9dtEMeKnqIaekeFpTdLTKEO3opwqQle/dkW2EG1qWJZSohmCWOJj4yI3j6bbS euuLd4Q2+AuSOqT+w6xe2ym+gfK33DR0RFjigoPCbMPraXXoE9HgKd2MUXTVdV21lsQg7gTW+Mr zFF5kJzOZ8Nj/tkXa8Du63LMMxvsm77cBPha/YjrYtvW9a2JTq073OJnE/w7+YkCcDHxyoHSgPV EMJRzgWMlPSOT/Woke3jCTD7UH5G7raBIQk7R5FcoVuIqhx74A26xCSkya2oyK2DeOcY3Xj54ct cdEVCnswS0n9K+2SO5W/kHD0VCSgx2msXHnTVlJeBvla0sm9
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3442; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=qeMqNCPR4JZWZmIFkke1fRMQtsN1pMrftafnXla94ZI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqV7uch2g9AnBq1MR+kOpC5ck2xFfv/uUZWPUsd dNPkiBW/PqJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCale7nAAKCRCPgPtYfRL+ ToM0CACLAvIimVfXS8xTho2bAKb8xdVegyIEW1xqvduBfKnWYNQHbpxbenrwDf69EjXN9Yp3/Ca +Mg5ERVlDCQemWelrhbq3sq/MCemWG2YnPB6Uqo+96bx4RG3YUzxi0poqp8VHZqjhETsBmvbbyP r8rKwus6aIFV6pbAm/f4BE1MhP8yxnm3TEMvUpUK28jcJxbpCIT69TKqwZGnrM4V7sbC4ClMtMA UJR9JO5nFu9Pn+bp/5TMBiJX6+WvokZmkDKNgH1PjKl0qX3MI6L5WZ6daFTkkFlCR54I0lQF9JL qEMgBzYaSdfrXDpvYi5Zjbtttg7vqYMoTs7wtT2QKc04sGzb
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Update the various of_device_id arrays to conform to the most used and
+Update the various *_device_id arrays to conform to the most used and
 generally recommended coding style. That is:
 
  - no comma after the list terminator;
@@ -96,122 +100,89 @@ generally recommended coding style. That is:
  - no explicit zeros in the list terminator;
  - a space after an opening { and before a closing }, a single space in
    the list terminator;
- - at most one entry per line;
 
 Adapt the few offenders accordingly.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
 ---
- drivers/gpio/gpio-amd8111.c      | 2 +-
- drivers/gpio/gpio-bt8xx.c        | 2 +-
- drivers/gpio/gpio-ml-ioh.c       | 2 +-
- drivers/gpio/gpio-pci-idio-16.c  | 3 ++-
- drivers/gpio/gpio-pcie-idio-24.c | 8 +++++---
- drivers/gpio/gpio-sodaville.c    | 2 +-
- drivers/gpio/gpio-thunderx.c     | 3 +--
- 7 files changed, 12 insertions(+), 10 deletions(-)
+ drivers/gpio/gpio-ljca.c           | 2 +-
+ drivers/gpio/gpio-mpsse.c          | 3 +--
+ drivers/gpio/gpio-pca953x.c        | 2 +-
+ drivers/gpio/gpio-virtio.c         | 2 +-
+ drivers/gpio/gpiolib-acpi-quirks.c | 2 +-
+ 5 files changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpio/gpio-amd8111.c b/drivers/gpio/gpio-amd8111.c
-index 8078b5d7b80c..25ad6d82f708 100644
---- a/drivers/gpio/gpio-amd8111.c
-+++ b/drivers/gpio/gpio-amd8111.c
-@@ -60,7 +60,7 @@
-  */
- static const struct pci_device_id pci_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_8111_SMBUS) },
--	{ },	/* terminate list */
-+	{ }	/* terminate list */
+diff --git a/drivers/gpio/gpio-ljca.c b/drivers/gpio/gpio-ljca.c
+index ad5dc9a3a119..d9d7394d8b95 100644
+--- a/drivers/gpio/gpio-ljca.c
++++ b/drivers/gpio/gpio-ljca.c
+@@ -473,7 +473,7 @@ static void ljca_gpio_remove(struct auxiliary_device *auxdev)
+ 
+ static const struct auxiliary_device_id ljca_gpio_id_table[] = {
+ 	{ "usb_ljca.ljca-gpio" },
+-	{ /* sentinel */ },
++	{ /* sentinel */ }
  };
- MODULE_DEVICE_TABLE(pci, pci_tbl);
+ MODULE_DEVICE_TABLE(auxiliary, ljca_gpio_id_table);
  
-diff --git a/drivers/gpio/gpio-bt8xx.c b/drivers/gpio/gpio-bt8xx.c
-index 324eeb77dbd5..07bb3557a42a 100644
---- a/drivers/gpio/gpio-bt8xx.c
-+++ b/drivers/gpio/gpio-bt8xx.c
-@@ -264,7 +264,7 @@ static const struct pci_device_id bt8xxgpio_pci_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROOKTREE, PCI_DEVICE_ID_BT849) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROOKTREE, PCI_DEVICE_ID_BT878) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_BROOKTREE, PCI_DEVICE_ID_BT879) },
--	{ 0, },
-+	{ }
- };
- MODULE_DEVICE_TABLE(pci, bt8xxgpio_pci_tbl);
- 
-diff --git a/drivers/gpio/gpio-ml-ioh.c b/drivers/gpio/gpio-ml-ioh.c
-index 6576e5dcb0ee..75e75a53219e 100644
---- a/drivers/gpio/gpio-ml-ioh.c
-+++ b/drivers/gpio/gpio-ml-ioh.c
-@@ -509,7 +509,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(ioh_gpio_pm_ops, ioh_gpio_suspend, ioh_gpio_resu
- 
- static const struct pci_device_id ioh_gpio_pcidev_id[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_ROHM, 0x802E) },
--	{ 0, }
-+	{ }
- };
- MODULE_DEVICE_TABLE(pci, ioh_gpio_pcidev_id);
- 
-diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio-16.c
-index 9d28ca8e1d6f..ddb644be92ac 100644
---- a/drivers/gpio/gpio-pci-idio-16.c
-+++ b/drivers/gpio/gpio-pci-idio-16.c
-@@ -98,7 +98,8 @@ static int idio_16_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- }
- 
- static const struct pci_device_id idio_16_pci_dev_id[] = {
--	{ PCI_DEVICE(0x494F, 0x0DC8) }, { 0 }
-+	{ PCI_DEVICE(0x494F, 0x0DC8) },
-+	{ }
- };
- MODULE_DEVICE_TABLE(pci, idio_16_pci_dev_id);
- 
-diff --git a/drivers/gpio/gpio-pcie-idio-24.c b/drivers/gpio/gpio-pcie-idio-24.c
-index 80c0ba0afa67..1caec692f68d 100644
---- a/drivers/gpio/gpio-pcie-idio-24.c
-+++ b/drivers/gpio/gpio-pcie-idio-24.c
-@@ -382,9 +382,11 @@ static int idio_24_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- }
- 
- static const struct pci_device_id idio_24_pci_dev_id[] = {
--	{ PCI_DEVICE(0x494F, 0x0FD0) }, { PCI_DEVICE(0x494F, 0x0BD0) },
--	{ PCI_DEVICE(0x494F, 0x07D0) }, { PCI_DEVICE(0x494F, 0x0FC0) },
--	{ 0 }
-+	{ PCI_DEVICE(0x494F, 0x0FD0) },
-+	{ PCI_DEVICE(0x494F, 0x0BD0) },
-+	{ PCI_DEVICE(0x494F, 0x07D0) },
-+	{ PCI_DEVICE(0x494F, 0x0FC0) },
-+	{ }
- };
- MODULE_DEVICE_TABLE(pci, idio_24_pci_dev_id);
- 
-diff --git a/drivers/gpio/gpio-sodaville.c b/drivers/gpio/gpio-sodaville.c
-index 9f4cd23c872f..5544fcc27228 100644
---- a/drivers/gpio/gpio-sodaville.c
-+++ b/drivers/gpio/gpio-sodaville.c
-@@ -239,7 +239,7 @@ static int sdv_gpio_probe(struct pci_dev *pdev,
- 
- static const struct pci_device_id sdv_gpio_pci_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_SDV_GPIO) },
--	{ 0, },
-+	{ }
- };
- MODULE_DEVICE_TABLE(pci, sdv_gpio_pci_ids);
- 
-diff --git a/drivers/gpio/gpio-thunderx.c b/drivers/gpio/gpio-thunderx.c
-index be96853063ba..d7d60d6044e0 100644
---- a/drivers/gpio/gpio-thunderx.c
-+++ b/drivers/gpio/gpio-thunderx.c
-@@ -589,9 +589,8 @@ static void thunderx_gpio_remove(struct pci_dev *pdev)
- 
- static const struct pci_device_id thunderx_gpio_id_table[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, 0xA00A) },
--	{ 0, }	/* end of table */
-+	{ }	/* end of table */
+diff --git a/drivers/gpio/gpio-mpsse.c b/drivers/gpio/gpio-mpsse.c
+index a859deab2bca..7ca06bdb2c4b 100644
+--- a/drivers/gpio/gpio-mpsse.c
++++ b/drivers/gpio/gpio-mpsse.c
+@@ -77,10 +77,9 @@ static struct mpsse_quirk bryx_brik_quirk = {
+ static const struct usb_device_id gpio_mpsse_table[] = {
+ 	{ USB_DEVICE(0x0c52, 0xa064) },   /* SeaLevel Systems, Inc. */
+ 	{ USB_DEVICE(0x0403, 0x6988),     /* FTDI, assigned to Bryx */
+-	  .driver_info = (kernel_ulong_t)&bryx_brik_quirk},
++	  .driver_info = (kernel_ulong_t)&bryx_brik_quirk },
+ 	{ }                               /* Terminating entry */
  };
 -
- MODULE_DEVICE_TABLE(pci, thunderx_gpio_id_table);
+ MODULE_DEVICE_TABLE(usb, gpio_mpsse_table);
  
- static struct pci_driver thunderx_gpio_driver = {
+ static DEFINE_IDA(gpio_mpsse_ida);
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 918cadc2db07..7db33477faf1 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -175,7 +175,7 @@ static const struct dmi_system_id pca953x_dmi_acpi_irq_info[] = {
+ 			DMI_EXACT_MATCH(DMI_BOARD_NAME, "GalileoGen2"),
+ 		},
+ 	},
+-	{}
++	{ }
+ };
+ #endif
+ 
+diff --git a/drivers/gpio/gpio-virtio.c b/drivers/gpio/gpio-virtio.c
+index 42871db05ec1..062c70fe4671 100644
+--- a/drivers/gpio/gpio-virtio.c
++++ b/drivers/gpio/gpio-virtio.c
+@@ -647,7 +647,7 @@ static void virtio_gpio_remove(struct virtio_device *vdev)
+ 
+ static const struct virtio_device_id id_table[] = {
+ 	{ .device = VIRTIO_ID_GPIO, .vendor = VIRTIO_DEV_ANY_ID },
+-	{},
++	{ }
+ };
+ MODULE_DEVICE_TABLE(virtio, id_table);
+ 
+diff --git a/drivers/gpio/gpiolib-acpi-quirks.c b/drivers/gpio/gpiolib-acpi-quirks.c
+index a0116f004975..7c5817a3157e 100644
+--- a/drivers/gpio/gpiolib-acpi-quirks.c
++++ b/drivers/gpio/gpiolib-acpi-quirks.c
+@@ -392,7 +392,7 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
+ 			.ignore_wake = "VEN_0488:00@355",
+ 		},
+ 	},
+-	{} /* Terminating entry */
++	{ } /* Terminating entry */
+ };
+ 
+ static int __init acpi_gpio_setup_params(void)
 -- 
 2.55.0.11.g153666a7d9bb
 
