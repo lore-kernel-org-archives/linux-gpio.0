@@ -1,85 +1,116 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from luna.linkmauve.fr (82-65-109-163.subs.proxad.net [82.65.109.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D390A4BC025
-	for <linux-gpio@vger.kernel.org>; Wed, 15 Jul 2026 16:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05AE492180;
+	Wed, 15 Jul 2026 17:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.65.109.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784134594; cv=none; b=Qox4PnHC4GNc4KUjkVbwCaMdTaZUVTqC/1ktLMan9hn5wPggZHnhQI0KOtSQHLVytZER20cVU38Bjabw7BG6YIpcwN7Gpjj6Lia3kbExnuy8plORKXdUeoT6ZYyuzXdYR9k5aWN1peSea5M+wJnf9i42iz54lSrFdPqgjXNicAM=
+	t=1784137980; cv=none; b=NUY/ezLr3HSaIRlrSNEKrHWHPczVSvMgJrD0d2k9vNCb4TIfz+ja1VxdutrtwKGvAmkpg2ptlJMXYu+qpOmTVrhRwcLevWfRKTtXJLJ5PTf+9R7ZXwegIrgpqmWx4FzL0lK3iJ27lhoPtqHsF+0zm/XZuKO/Y4UPnJS7wvfJPrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784134594; c=relaxed/simple;
-	bh=qeMqNCPR4JZWZmIFkke1fRMQtsN1pMrftafnXla94ZI=;
+	s=arc-20240116; t=1784137980; c=relaxed/simple;
+	bh=e2X4aAIB35tnuNFFrR/sMDVNB8hl9ij7Uv+uzc+FvF0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I+A4h2FJWGIT4c+gjwi3U7bFEJNySOl1aTmBq5L4tBBChbDnVG5V8NhhyJysjv5uHSSoPPvTW6NM9aAdDcHkL2hSiImxagJ/04aevEdyqqt4bLqA2JmWVNqH8y/lSo4SlOEqy6SoNtr898hFWTyH1HXQ+04J/XBgnL58knYmwPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Dl6D7QSB; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Dl6D7QSB"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-47ddf7b09e5so2123756f8f.1
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Jul 2026 09:56:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784134591; x=1784739391; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=0YbKISqvDXzDxXFBLILdiprJK/dXdWku3hILu+bMdhE=;
-        b=Dl6D7QSBJXz0wwLN/j1UJisnYjrNgkYUb9bNiSA+MuWJPuQW7tcFHi1pytl2DOsGxp
-         A5f5ldhAEPaPhbclexDzVV1RAtvWMqlYxY3OQVW1PV1lZH0PKkYupkYxLCN/csqEt9n4
-         kcv+GdK37iEE+V8QRTuc+XAFm29Ivb+15Ws+jf5lqCU//6OE3Bs19kTu5fWQDm2wzpoc
-         WYscaQd3CKXgzQMFvZWSSEeRlsPy7hXu15SIowrQ0RQ0ETyddWqr7L6nQFw1zdFnqJYB
-         Jdh+hGGvhCd2qXiDzu+P/wPoEwPrY5Nx3g0wMPyd4mYzo5Zc48zPxHdL/Yf14oZz1EeG
-         lTYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784134591; x=1784739391;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=0YbKISqvDXzDxXFBLILdiprJK/dXdWku3hILu+bMdhE=;
-        b=PJG7XQobSMwmbqXpYs38lNJ/cyTlcPojH8L7su20cIlHkvBRqfVZkx7GXC0+BvvBTf
-         0nkg3BxxIekqdfRW/slKTz98J3nGGDt3aSH/nSA6e/X3gOZAj16QVKvRYxAVnZ3fEI4o
-         oFLtUlDhtshDGalqHNOqXomWh3ypOarwe/bCGU+O3X+BF1d9YFNeN5o9UM1c1STyWIpZ
-         +wvrdCu78YULTVtSMqKIB4n5YYcReOIliCb9qcqcQLqXXUdRHA+sn80kkFDvjhE2E1Iu
-         wx8faAjhPTTgleWGD+r+GKIxtP/ulAOZobhc+pSt85V+MeZxhlmXupjvHN8PI3mGIy3t
-         cd5Q==
-X-Forwarded-Encrypted: i=1; AHgh+RqOsChD9ejUfQR3fHCZ8kLl9fM5U5haJRmt2ZzNXKcGtXIdNf+1xQU+ytnpWQboudZaOO4sGSUMHvcG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2kuCHWsuKrxABlbMUHxcBMdv0J/UqAqY/FLOQaZ9gYN5k4VLk
-	BpG9qEZ3PNphdrCPkntjvFhroBJxSuli6srQu7gR45EfzBkxlkXl0NA9Z/9ycPwEnG8=
-X-Gm-Gg: AfdE7ck0gHeF8+hStIvFnFe1ur2aODXX1TNJpVWBFRwuyXjV3rh9pvvUtDvj0AZoWyU
-	apdiZn3Gm+SGukI42KcnWBR9tlKTrLWnTbBrjgbOXnCHgrRaBgEuVVQ5Xy13lPUD647tzqnob3J
-	lMuXZw+tc5Yx+vSAvmiFuEXJoJVlWh11b6zYc6BBNKC/FTKjZbVOqQPZSlf7qagJM/N+EokGVwI
-	d0GGE1eNAuYjKiEvLCByOzWkYgoDW2mO3/N/kUHE1MSQ6fXVSRsoqus6r4xf5hTPqdMWe2vOCXX
-	uJWWi/WOp6zK83Gm3+qEfr83jVbaTHbQtJXFDBro2A+Fhs+Lby2P0RRfqrYRR6XpzBQrTKxRig3
-	hYIPaZb4jDjIOSxbV10X6tLB1E2LZikBF1SbAGL7ecNXvrGWgwNlCVHOWnMALV1yO+QJcEWA6Im
-	FEU8TOG2LzgxDMZKpiMXP8SVn7WSws7cKpoMHSh2mJ4Rq8UW0sHiOObJkepPCwUYajhhxVhpf7u
-	ds=
-X-Received: by 2002:a5d:5f45:0:b0:475:f100:35fb with SMTP id ffacd0b85a97d-47f2dd42e56mr22174405f8f.56.1784134590979;
-        Wed, 15 Jul 2026 09:56:30 -0700 (PDT)
-Received: from localhost (p200300f65f47db04249e031dea91a10d.dip0.t-ipconnect.de. [2003:f6:5f47:db04:249e:31d:ea91:a10d])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47f464d6fa7sm17882394f8f.37.2026.07.15.09.56.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2026 09:56:30 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: Lixu Zhang <lixu.zhang@intel.com>,
+	 MIME-Version:Content-Type; b=av9vGnhkGI02PA8xsG38ojIRNrcF4KLJgWG3Mg58GvaJGfxMxs/TIVntlOgQ9/y9y0XspK4GT+q+b3FdZGflBQZiITlMe94JGns7TXKwGFfvfjsg2mrC4uP3mJ3ndPYys2S0AThkiMpUkJHXQtuHF5FJDYVNcTWtf4OomjQFewQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linkmauve.fr; spf=pass smtp.mailfrom=linkmauve.fr; arc=none smtp.client-ip=82.65.109.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linkmauve.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linkmauve.fr
+Received: by luna.linkmauve.fr (Postfix, from userid 1000)
+	id D52EEF40D22; Wed, 15 Jul 2026 19:52:45 +0200 (CEST)
+From: Link Mauve <linkmauve@linkmauve.fr>
+To: Srinivas Kandagatla <srini@kernel.org>
+Cc: Link Mauve <linkmauve@linkmauve.fr>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
 	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	"Enrico Weigelt, metux IT consult" <info@metux.net>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Mika Westerberg <westeri@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Lee Jones <lee@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	"Vaibhaav Ram T.L" <vaibhaavram.tl@microchip.com>,
+	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Praveen Teja Kundanala <praveen.teja.kundanala@amd.com>,
+	Kalyani Akula <kalyani.akula@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Joshua Kinard <linux@kumba.dev>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Boqun Feng <boqun@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Tamir Duberstein <tamird@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Ronald Claveau <linux-kernel-dev@aliel.fr>,
+	Salah Triki <salah.triki@gmail.com>,
+	Yury Norov <ynorov@nvidia.com>,
+	David Carlier <devnexen@gmail.com>,
+	Achim Gratz <Achim.Gratz@Stromeko.DE>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Patrick Wicki <patrick.wicki@siemens.com>,
+	Markus Heidelberg <m.heidelberg@cab.de>,
+	Markus Perkins <markus@notsyncing.net>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>,
+	Chen Ni <nichen@iscas.ac.cn>,
+	Kees Cook <kees@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	linux-acpi@vger.kernel.org,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH v2 21/21] gpio: Unify style of various *_device_id arrays
-Date: Wed, 15 Jul 2026 18:55:26 +0200
-Message-ID:  <74f18045a53d99047c5c2cc83d970b5b429dd14c.1784133987.git.u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.55.0.11.g153666a7d9bb
-In-Reply-To: <cover.1784133987.git.u.kleine-koenig@baylibre.com>
-References: <cover.1784133987.git.u.kleine-koenig@baylibre.com>
+	linux-iio@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	mfd@lists.linux.dev,
+	linux-i2c@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-rtc@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	rust-for-linux@vger.kernel.org
+Subject: [PATCH 5/8] iio: pressure: bmp280: make reg_write callback take const void *
+Date: Wed, 15 Jul 2026 19:52:21 +0200
+Message-ID: <20260715175229.24672-6-linkmauve@linkmauve.fr>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260715175229.24672-1-linkmauve@linkmauve.fr>
+References: <20260715175229.24672-1-linkmauve@linkmauve.fr>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -87,102 +118,43 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3442; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=qeMqNCPR4JZWZmIFkke1fRMQtsN1pMrftafnXla94ZI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBqV7uch2g9AnBq1MR+kOpC5ck2xFfv/uUZWPUsd dNPkiBW/PqJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCale7nAAKCRCPgPtYfRL+ ToM0CACLAvIimVfXS8xTho2bAKb8xdVegyIEW1xqvduBfKnWYNQHbpxbenrwDf69EjXN9Yp3/Ca +Mg5ERVlDCQemWelrhbq3sq/MCemWG2YnPB6Uqo+96bx4RG3YUzxi0poqp8VHZqjhETsBmvbbyP r8rKwus6aIFV6pbAm/f4BE1MhP8yxnm3TEMvUpUK28jcJxbpCIT69TKqwZGnrM4V7sbC4ClMtMA UJR9JO5nFu9Pn+bp/5TMBiJX6+WvokZmkDKNgH1PjKl0qX3MI6L5WZ6daFTkkFlCR54I0lQF9JL qEMgBzYaSdfrXDpvYi5Zjbtttg7vqYMoTs7wtT2QKc04sGzb
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Update the various *_device_id arrays to conform to the most used and
-generally recommended coding style. That is:
+The previous commit switched from a pointer to mutable data to a pointer
+to immutable data, so let’s fix all users of the nvmem_config API.
 
- - no comma after the list terminator;
- - a comma after an initializer if (and only if) the closing } is not
-   directly following;
- - no explicit zeros in the list terminator;
- - a space after an opening { and before a closing }, a single space in
-   the list terminator;
-
-Adapt the few offenders accordingly.
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+Signed-off-by: Link Mauve <linkmauve@linkmauve.fr>
 ---
- drivers/gpio/gpio-ljca.c           | 2 +-
- drivers/gpio/gpio-mpsse.c          | 3 +--
- drivers/gpio/gpio-pca953x.c        | 2 +-
- drivers/gpio/gpio-virtio.c         | 2 +-
- drivers/gpio/gpiolib-acpi-quirks.c | 2 +-
- 5 files changed, 5 insertions(+), 6 deletions(-)
+ drivers/iio/pressure/bmp280-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ljca.c b/drivers/gpio/gpio-ljca.c
-index ad5dc9a3a119..d9d7394d8b95 100644
---- a/drivers/gpio/gpio-ljca.c
-+++ b/drivers/gpio/gpio-ljca.c
-@@ -473,7 +473,7 @@ static void ljca_gpio_remove(struct auxiliary_device *auxdev)
+diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+index 990340a9b10c..0a39c5f39378 100644
+--- a/drivers/iio/pressure/bmp280-core.c
++++ b/drivers/iio/pressure/bmp280-core.c
+@@ -2261,11 +2261,11 @@ static int bmp580_nvmem_read(void *priv, unsigned int offset, void *val,
+ 	return ret;
+ }
  
- static const struct auxiliary_device_id ljca_gpio_id_table[] = {
- 	{ "usb_ljca.ljca-gpio" },
--	{ /* sentinel */ },
-+	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(auxiliary, ljca_gpio_id_table);
+-static int bmp580_nvmem_write_impl(void *priv, unsigned int offset, void *val,
++static int bmp580_nvmem_write_impl(void *priv, unsigned int offset, const void *val,
+ 				   size_t bytes)
+ {
+ 	struct bmp280_data *data = priv;
+-	u16 *buf = val;
++	const u16 *buf = val;
+ 	int ret, addr;
  
-diff --git a/drivers/gpio/gpio-mpsse.c b/drivers/gpio/gpio-mpsse.c
-index a859deab2bca..7ca06bdb2c4b 100644
---- a/drivers/gpio/gpio-mpsse.c
-+++ b/drivers/gpio/gpio-mpsse.c
-@@ -77,10 +77,9 @@ static struct mpsse_quirk bryx_brik_quirk = {
- static const struct usb_device_id gpio_mpsse_table[] = {
- 	{ USB_DEVICE(0x0c52, 0xa064) },   /* SeaLevel Systems, Inc. */
- 	{ USB_DEVICE(0x0403, 0x6988),     /* FTDI, assigned to Bryx */
--	  .driver_info = (kernel_ulong_t)&bryx_brik_quirk},
-+	  .driver_info = (kernel_ulong_t)&bryx_brik_quirk },
- 	{ }                               /* Terminating entry */
- };
--
- MODULE_DEVICE_TABLE(usb, gpio_mpsse_table);
+ 	guard(mutex)(&data->lock);
+@@ -2322,7 +2322,7 @@ static int bmp580_nvmem_write_impl(void *priv, unsigned int offset, void *val,
+ 	return ret;
+ }
  
- static DEFINE_IDA(gpio_mpsse_ida);
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 918cadc2db07..7db33477faf1 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -175,7 +175,7 @@ static const struct dmi_system_id pca953x_dmi_acpi_irq_info[] = {
- 			DMI_EXACT_MATCH(DMI_BOARD_NAME, "GalileoGen2"),
- 		},
- 	},
--	{}
-+	{ }
- };
- #endif
- 
-diff --git a/drivers/gpio/gpio-virtio.c b/drivers/gpio/gpio-virtio.c
-index 42871db05ec1..062c70fe4671 100644
---- a/drivers/gpio/gpio-virtio.c
-+++ b/drivers/gpio/gpio-virtio.c
-@@ -647,7 +647,7 @@ static void virtio_gpio_remove(struct virtio_device *vdev)
- 
- static const struct virtio_device_id id_table[] = {
- 	{ .device = VIRTIO_ID_GPIO, .vendor = VIRTIO_DEV_ANY_ID },
--	{},
-+	{ }
- };
- MODULE_DEVICE_TABLE(virtio, id_table);
- 
-diff --git a/drivers/gpio/gpiolib-acpi-quirks.c b/drivers/gpio/gpiolib-acpi-quirks.c
-index a0116f004975..7c5817a3157e 100644
---- a/drivers/gpio/gpiolib-acpi-quirks.c
-+++ b/drivers/gpio/gpiolib-acpi-quirks.c
-@@ -392,7 +392,7 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
- 			.ignore_wake = "VEN_0488:00@355",
- 		},
- 	},
--	{} /* Terminating entry */
-+	{ } /* Terminating entry */
- };
- 
- static int __init acpi_gpio_setup_params(void)
+-static int bmp580_nvmem_write(void *priv, unsigned int offset, void *val,
++static int bmp580_nvmem_write(void *priv, unsigned int offset, const void *val,
+ 			      size_t bytes)
+ {
+ 	struct bmp280_data *data = priv;
 -- 
-2.55.0.11.g153666a7d9bb
+2.55.0
 
