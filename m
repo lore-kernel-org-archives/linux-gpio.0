@@ -1,50 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5841947ECDE;
-	Wed, 15 Jul 2026 18:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A66400990;
+	Wed, 15 Jul 2026 18:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784141490; cv=none; b=mCDv3ekumAmlGQe83bEfr7xmnhomgdEdid+GnSysmGIrgOyJ9C3ItXYa3RzZApwZB0d2ufNQ67MRzvoJQz/rJZ94GlkXULsO8wpuBUoCE7kLgh1XWHa3x5hijG8L6Yk+k2lmtcWDfmEzg0FmyysbRKlz+bYBvTPr55hYtl5V7yM=
+	t=1784141491; cv=none; b=NHcJXvCJAge6YWA4rtC2JeJu7V80id4SnM3e6HHE5QqFfRyepP2sNWI/5GFg2iT6mXiU//Gy8vw/kRvOKSZgW1n9BrG0f81lYvr4+4CzqHbJ5Qcd8txhpq07nZvq9gAr/qi70Ln+dXtIvbnREY1CbWdyiokgUsm5QseyBh4+iCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784141490; c=relaxed/simple;
-	bh=JwEf2B0/taqBgVcAFv7SQawwrLtkBIODJnPpyfPpuQ8=;
+	s=arc-20240116; t=1784141491; c=relaxed/simple;
+	bh=c6hpNb2JXzDFRlDVnT3j7w6ZUzrfVzvezdxIsX1aXGo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ovdHxw7MJ4/GQzRtkINi8ltiXiabzmmRZSIeMRhAFJL5n3jPTZVCh0XpJt1g4XAeaC4UpKTJOkNAMxJdsc0ojGZuVHe5ch43ke5yiLW1sr/1CEbq10KM4i7jk7pDqVPz+abR/qC7MuBaa4oo4CkKi/Ua9M2v09mVr9Ajys1rQqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mh5SFI97; arc=none smtp.client-ip=198.175.65.18
+	 MIME-Version; b=edQqYbHEcoP8V4rkzTHNrPtyTRVcKtrUaD0roJzPoYEW2bzoxC77NWhR9oSAKI3OqTh7WfCSaQIq+pHKZPosM9UpVo2yDgIH75fAiiSivLWd/SMyuyRq2VA8pbYTbbynIgqUXz5l8tNXzw7NyTFZteAhcchIoLwwFXmfV6qVAmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cTWaAcwc; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mh5SFI97"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cTWaAcwc"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1784141487; x=1815677487;
+  t=1784141488; x=1815677488;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=JwEf2B0/taqBgVcAFv7SQawwrLtkBIODJnPpyfPpuQ8=;
-  b=mh5SFI97wR9LCkSQ922XRECL58IiQ+7v7z0qtyZ2LePiUO6jcEEr9pbw
-   IKxtYrXv7xZctGCzHzp8r0lGEOT8J77jZLN8qnreMUPBnV3+FUFFupT4y
-   HgIXAQyWmiRSDZHM1RKccfalqVh/IYo6h5tw6KdkrakNu0XaZ6v9RlagS
-   jIbAbOmKnjEjZX/jE9g4xnYcwdpYZy1UvbojBuaWKN8yT5ZCLNVPIJY2/
-   IbAtotr+0dPQ0lAl0wkUhnMLswA/4EEVSx7uwzxtTxwykR5Gb/IfpM05G
-   CIo3BVv8W8Jm8MrU4/UYQK91ZyNYxl90LQDbeZg0bUg6v+tuHHVFAsAVh
-   Q==;
-X-CSE-ConnectionGUID: 611ZIsu0SL+2nAM2L619ZQ==
-X-CSE-MsgGUID: vY3Z5qKtTqekt+QaST2Fwg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11847"; a="84887495"
+  bh=c6hpNb2JXzDFRlDVnT3j7w6ZUzrfVzvezdxIsX1aXGo=;
+  b=cTWaAcwc07qqDXBshm5F546ngnFEDILpKmwLiri1zoOy6PTo8Vva8vjf
+   8ZUoAiWV4y1UPrLcgCx2NFwGvmYYOlCh3jBeXHE0GsC7kU6undS15tZ+/
+   YHDUc5+9LJqyXHoQ9iiaD5iMaOkplz6w60gbVf2VF2VcvFR4+KFtMnrXy
+   ReGU+wkbuHA38P1Kp7KIbnHq0d0Tw53s+hJdp0Hcigh8sGycfflFpyylc
+   wHQoYBa0s9tl3vBuUIcxv3yk8bMj2vBDVz7KlKfXu2QCjL8Gv7AFJC5dY
+   qKvJrshl5N+2zRLp/W7bxKgLKfi+DoRHJb/8doQDeb1w0wbJQN34LJANo
+   g==;
+X-CSE-ConnectionGUID: 78bUg6S4RfO6eT+/Z4n4pw==
+X-CSE-MsgGUID: EseFElmiTfm9+SwwYaVLfg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11847"; a="96308587"
 X-IronPort-AV: E=Sophos;i="6.25,166,1779174000"; 
-   d="scan'208";a="84887495"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2026 11:51:21 -0700
-X-CSE-ConnectionGUID: OrV9bNQNTGWJhH0jJhKgFg==
-X-CSE-MsgGUID: 8rEnzpPOQHC01JImubDiYg==
+   d="scan'208";a="96308587"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2026 11:51:26 -0700
+X-CSE-ConnectionGUID: IBaGDHu7QKeuyExlv8l9Uw==
+X-CSE-MsgGUID: 9Rn3eEowS7mtmEOv0en++Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,166,1779174000"; 
-   d="scan'208";a="280700292"
+   d="scan'208";a="294491681"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa001.fm.intel.com with ESMTP; 15 Jul 2026 11:51:17 -0700
+  by orviesa001.jf.intel.com with ESMTP; 15 Jul 2026 11:51:21 -0700
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id EA4F198; Wed, 15 Jul 2026 20:51:15 +0200 (CEST)
+	id 1125CA2; Wed, 15 Jul 2026 20:51:16 +0200 (CEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Bradford Love <brad@nextdimension.cc>,
@@ -66,9 +66,9 @@ Cc: Linus Walleij <linusw@kernel.org>,
 	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
 	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
 	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH v1 1/7] ARM: pxa: spitz: Open code gpio_request_one()
-Date: Wed, 15 Jul 2026 20:46:41 +0200
-Message-ID: <20260715185112.1323510-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 7/7] gpiolib: Get rid of not used anymore gpio_request_one()
+Date: Wed, 15 Jul 2026 20:46:47 +0200
+Message-ID: <20260715185112.1323510-8-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260715185112.1323510-1-andriy.shevchenko@linux.intel.com>
 References: <20260715185112.1323510-1-andriy.shevchenko@linux.intel.com>
@@ -80,28 +80,96 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Open code the gpio_request_one() call to be able to kill that API
-in the follow changes.
+No more users.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- arch/arm/mach-pxa/spitz_pm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/driver-api/gpio/consumer.rst |  2 +-
+ drivers/gpio/gpiolib-legacy.c              | 31 ----------------------
+ include/linux/gpio/legacy.h                |  8 ------
+ 3 files changed, 1 insertion(+), 40 deletions(-)
 
-diff --git a/arch/arm/mach-pxa/spitz_pm.c b/arch/arm/mach-pxa/spitz_pm.c
-index 03b4b347f11a..f46a3fb7e07c 100644
---- a/arch/arm/mach-pxa/spitz_pm.c
-+++ b/arch/arm/mach-pxa/spitz_pm.c
-@@ -108,7 +108,8 @@ static void spitz_presuspend(void)
- 	PGSR2 |= GPIO_bit(SPITZ_GPIO_KEY_STROBE0);
+diff --git a/Documentation/driver-api/gpio/consumer.rst b/Documentation/driver-api/gpio/consumer.rst
+index bb3366047fad..03edd9472f07 100644
+--- a/Documentation/driver-api/gpio/consumer.rst
++++ b/Documentation/driver-api/gpio/consumer.rst
+@@ -463,7 +463,7 @@ and vice-versa::
+ The GPIO number returned by desc_to_gpio() can safely be used as a parameter of
+ the gpio\_*() functions for as long as the GPIO descriptor `desc` is not freed.
+ All the same, a GPIO number passed to gpio_to_desc() must first be properly
+-acquired using e.g. gpio_request_one(), and the returned GPIO descriptor is only
++acquired using e.g. gpio_request(), and the returned GPIO descriptor is only
+ considered valid until that GPIO number is released using gpio_free().
  
- 	pxa2xx_mfp_config(&gpio18_config, 1);
--	gpio_request_one(18, GPIOF_OUT_INIT_HIGH, "Unknown");
-+	gpio_request(18, "Unknown");
-+	gpio_direction_output(18, 1);
- 	gpio_free(18);
+ Freeing a GPIO obtained by one API with the other API is forbidden and an
+diff --git a/drivers/gpio/gpiolib-legacy.c b/drivers/gpio/gpiolib-legacy.c
+index ef3f2ef30cf2..c2b04605b203 100644
+--- a/drivers/gpio/gpiolib-legacy.c
++++ b/drivers/gpio/gpiolib-legacy.c
+@@ -21,37 +21,6 @@ void gpio_free(unsigned gpio)
+ }
+ EXPORT_SYMBOL_GPL(gpio_free);
  
- 	PRER = GPIO_bit(SPITZ_GPIO_KEY_INT);
+-/**
+- * gpio_request_one - request a single GPIO with initial configuration
+- * @gpio:	the GPIO number
+- * @flags:	GPIO configuration as specified by GPIOF_*
+- * @label:	a literal description string of this GPIO
+- *
+- * **DEPRECATED** This function is deprecated and must not be used in new code.
+- *
+- * Returns:
+- * 0 on success, or negative errno on failure.
+- */
+-int gpio_request_one(unsigned gpio, unsigned long flags, const char *label)
+-{
+-	int err;
+-
+-	err = gpio_request(gpio, label);
+-	if (err)
+-		return err;
+-
+-	if (flags & GPIOF_IN)
+-		err = gpio_direction_input(gpio);
+-	else
+-		err = gpio_direction_output(gpio, !!(flags & GPIOF_OUT_INIT_HIGH));
+-
+-	if (err)
+-		gpio_free(gpio);
+-
+-	return err;
+-}
+-EXPORT_SYMBOL_GPL(gpio_request_one);
+-
+ /*
+  * **DEPRECATED** This function is deprecated and must not be used in new code.
+  */
+diff --git a/include/linux/gpio/legacy.h b/include/linux/gpio/legacy.h
+index 557ef635935e..d4273162ed13 100644
+--- a/include/linux/gpio/legacy.h
++++ b/include/linux/gpio/legacy.h
+@@ -82,8 +82,6 @@ static inline int gpio_to_irq(unsigned gpio)
+ 	return gpiod_to_irq(gpio_to_desc(gpio));
+ }
+ 
+-int gpio_request_one(unsigned gpio, unsigned long flags, const char *label);
+-
+ int devm_gpio_request_one(struct device *dev, unsigned gpio,
+ 			  unsigned long flags, const char *label);
+ 
+@@ -104,12 +102,6 @@ static inline int gpio_request(unsigned gpio, const char *label)
+ 	return -ENOSYS;
+ }
+ 
+-static inline int gpio_request_one(unsigned gpio,
+-					unsigned long flags, const char *label)
+-{
+-	return -ENOSYS;
+-}
+-
+ static inline void gpio_free(unsigned gpio)
+ {
+ 	might_sleep();
 -- 
 2.50.1
 
