@@ -1,92 +1,95 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B473CC334
-	for <linux-gpio@vger.kernel.org>; Wed, 15 Jul 2026 08:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5621A3CB918;
+	Wed, 15 Jul 2026 08:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784104096; cv=none; b=n19t3Rw1xg9JVdObCxP4e0IJbrjAzp2VZRC+ehKw1d6lhtRtmdBL8GiYP6ZGvj9hLoPzGIQ/blGXAiF8ci3TPHeLm0T3vB1YCrznP85n9WZKGPFJ0jbKlYjb3Yj6B/s1G+VBlGkYeyhyT+qChzNgYz4qT21wlQHqAwd9fHM1AIU=
+	t=1784104592; cv=none; b=WaGKZUPO67k0amF/pzjvZO32VdTx348lgMCkqQRq149xtU0lg4xaB3Nae4qkSFQvazheQxJe98vtgySz7bYAd/7SeblEmVLOAW6CBhKPsUWEIG5VmEFezBSeTVD1zJswBem/Qjxn+7IRUb8oz/TskgymyVkYk1mgU5gh/5soemg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784104096; c=relaxed/simple;
-	bh=oS0yShL8lH7iApDc19SUZV793vxVBGx2UPG+ZpRgp2Y=;
+	s=arc-20240116; t=1784104592; c=relaxed/simple;
+	bh=OXZt351X18XpFF4Kqe9OL3cHjVZSPvqUvDwCYU4v1Lo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LA60Yu/MqAr7GvrBAJA0D13wfJvUHYb2rz6RJxbe+uDnNojRHpsIiwF9fMBXjcdMEPUMB/8/eeqKOuABt0Yqkq7kUgMPoSzR9KzVrp+QbKaPVsBck5x5xF5wPRCLkBRwRszWtNMmU9knv9XPxNRnt10t3KYR+q84nIVMZ1oOAFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HAy2Tc7H; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=KL2Iha7yWJNFwD+iDIdRQ2wKFoPC1hdmjGSfi9HRKeHCPNyghWfgUFD97+qclXKeBgHjrCOdID20HqOK4DPFglynOs9CqPeKSDbIfkLmosUbQFea7P9INEj5rkqf33YPexl8z6Rkb1B+Rd+gBqQPoVyMLZ0NTVeZwgsdWdkuHIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RkGFKicQ; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HAy2Tc7H"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=oS0y
-	ShL8lH7iApDc19SUZV793vxVBGx2UPG+ZpRgp2Y=; b=HAy2Tc7HlOfXgTlKjMGU
-	jSeMPN9D4EcuOOb0N/J4NJHBnOB3sLtXl8p/Hh61C+ONL3HpdKmod7ceF9AE5QJ8
-	5ghFsh698cguiGtnfyQdZsGaOn7BBqa25o8G2N6hobkTcVdSZGQhaT9sWtg4wjxI
-	evDBTjtlyE54w1Cd5mMeu/Ul2n3mSlK5htyyGpYqdWbmDgs995Gj8n/DY4lHHeKL
-	2cRcS9JvDApl7PKLH19TNf/osWIYakM4UiufoFoWiIYKSJMgV2Ja1PuXByDtCxVd
-	vdzMkVbiIjlHSORUdqT5omXpRSnf5xD+aMh92aImiFnzHhLQ6BgsHAtYQhhiPm2Z
-	Tw==
-Received: (qmail 603824 invoked from network); 15 Jul 2026 10:28:09 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Jul 2026 10:28:09 +0200
-X-UD-Smtp-Session: l3s3148p1@gM56GqJWcs4ujntW
-Date: Wed, 15 Jul 2026 10:28:08 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Abdun Nihaal <nihaal@cse.iitm.ac.in>
-Cc: linusw@kernel.org, brgl@kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] gpio: sloppy-logic-analyzer: Fix memory leak in
- gpio_la_poll_probe()
-Message-ID: <aldEmLvO97NbAxlW@shikoro>
-References: <20260715075311.527753-1-nihaal@cse.iitm.ac.in>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RkGFKicQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1784104591; x=1815640591;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OXZt351X18XpFF4Kqe9OL3cHjVZSPvqUvDwCYU4v1Lo=;
+  b=RkGFKicQXKV2XmH8trACAOxvTR2Km+X9r1je976KK+uA4NkAi8T6zPY4
+   W6O5Gsqb1N4yhc2C0DBvTVDA0ipZ8E3c0O6Yxlw+6Qbs9GnBmqZam1C3t
+   uqRQweEJJhMEsmV1VsdotmSoMXqGH+Rfb4EvWLtTvH6IGnorgJ0sjIcmX
+   Gvuv2H8+rjDxl49Hn83Xyrli1LTNm3PzN0XquZsgWq6N9RSG/Io6Xdkef
+   GGdy0uTRpghfi7aQXPOhGdbM34/v/tSpfbm7plbFNlZub2URiXqCYDQ2H
+   iJtqLWs2f6bB79iKbZvyEsFpWIcfAGTGqHC/+YREPXyLsmIrxugOaAd35
+   w==;
+X-CSE-ConnectionGUID: 9/Wm8G85QfGtTl1oKe712A==
+X-CSE-MsgGUID: jO2lb2azRXGjiPWjGs3+Kg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11847"; a="95879950"
+X-IronPort-AV: E=Sophos;i="6.25,165,1779174000"; 
+   d="scan'208";a="95879950"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2026 01:36:27 -0700
+X-CSE-ConnectionGUID: 2hvGbn2YRe2kqd8lBpOmoA==
+X-CSE-MsgGUID: m0errHZCRpaO4EGo+/tjYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,165,1779174000"; 
+   d="scan'208";a="253495438"
+Received: from mkosciow-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.129])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2026 01:36:25 -0700
+Date: Wed, 15 Jul 2026 11:36:22 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] gpiolib: remove trailing comma from sentinel in
+ GPIO_LOOKUP_SINGLE
+Message-ID: <aldGhpswOfyjd8vO@ashevche-desk.local>
+References: <alV0wIgZAY_InGYV@google.com>
+ <alX2Q3OcJHVmamWM@ashevche-desk.local>
+ <CAMRc=MckJVi5bPtBh9p9D3SHaJcyvf19B2J-u7fbDiTA=CLdJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7s5ErWSDxXaa8lyn"
-Content-Disposition: inline
-In-Reply-To: <20260715075311.527753-1-nihaal@cse.iitm.ac.in>
-
-
---7s5ErWSDxXaa8lyn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAMRc=MckJVi5bPtBh9p9D3SHaJcyvf19B2J-u7fbDiTA=CLdJA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Jul 15, 2026 at 01:23:08PM +0530, Abdun Nihaal wrote:
-> The memory allocated for priv->blob.data is not freed in the error paths
-> that follow the fops_buf_size_set() call in gpio_la_poll_probe(), as
-> well as in the remove function. Fix that by using device managed action
-> to free the memory on remove.
->=20
-> Fixes: 7828b7bbbf20 ("gpio: add sloppy logic analyzer using polling")
-> Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
+On Wed, Jul 15, 2026 at 08:11:06AM +0000, Bartosz Golaszewski wrote:
+> On Tue, 14 Jul 2026 10:41:39 +0200, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> said:
+> > On Mon, Jul 13, 2026 at 04:29:16PM -0700, Dmitry Torokhov wrote:
+> >> The GPIO_LOOKUP_SINGLE macro defines a lookup table with a single entry
+> >
+> > GPIO_LOOKUP_SINGLE()
+> 
+> I fixed it when applying.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Thanks!
 
-Thank you for tackling this!
+> >> followed by an empty sentinel entry. The sentinel entry has a trailing
+> >> comma which is unnecessary. Remove it.
+> >
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> I queued it but I do consider it a bit of a needless churn TBH.
+
+You should really be against Uwe's patches then! :-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---7s5ErWSDxXaa8lyn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpXRJMACgkQFA3kzBSg
-KbYBqQ//VQuc71tG/flGNxpUhjj6jVGBhQpJbQhQu+1Yj/M2JKsUdWqBqCMhCmIr
-qZtNkF4U0pHuYaQJ2WvuRREXUVVWlFA9eLDaGFHgOuOWzmkJ3YcvBMWf5+IOZAvt
-EUGqjSyOCrUxyrBZ4bWnG8pzgMPRP6MnshjgE0Hjcd3VyTt057JlALAm3thEDuF2
-6tfm2szDDGcppCks+gGng0iyASCsG6j+V5DArk5YQPkKd87I6L7aWPB5ad8k5U28
-ZvzKXYyc2IC56bYfRQ34ijEc6EyZAXKGIXJDQJjG4DGrjkTMEnCq97Eg+/JEiWhC
-ep4rcdjCEBTgXhR5v7XSkceGt/XKzdqVKhR3bmXC1k22b3bfDBLDvGP9HhcCSF5n
-53XhfUKq2ubjoDiEV6d1Rk8p0ugJdWTdl2LtUWn3LRn/XE+6C0SJX1Hi9d93qRD2
-CYIHxcMgUXBgTY/Lwn0xbzhxkmypmVJDY/XY/2i29xTvKF0HLtLY0mjKmirkN7Mv
-yB+7cW0IClwcZiWg6eiZnwE6whyK4lGAB/ujbITT002IHVMx9qwO9JVjKEg9bLVR
-veQlnPkuWAfC5AdkYUp6GV4LKDdvTQMw+XnSW7K1TFNQkyI0XGtPL+HpsHEm88f+
-TnttErJ/zI8vdUVHqsxlkLlw/OsM9PTJQBKFEuBPyZnsaZLKGII=
-=1WKO
------END PGP SIGNATURE-----
-
---7s5ErWSDxXaa8lyn--
