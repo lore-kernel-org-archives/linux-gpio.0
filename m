@@ -1,128 +1,84 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AE939CCED
-	for <linux-gpio@vger.kernel.org>; Wed, 15 Jul 2026 20:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825E43CF1FE;
+	Wed, 15 Jul 2026 21:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784147809; cv=none; b=l0soPQfLXDGZIKGb6+QJwL7tVCCdSpLNbmH2LfnKAz0WEm5G5NgBlB0z+HpSERVrLTHj/2vMMLC4uzIMaEqN3wz5/RQEmpS1pyp737y1hUiuACg+RAfy6x92t3eYVPuJScXCK1VlLtHfB7tvFYs7mG0pu3Kw2px9PjaTe9JEhb4=
+	t=1784150925; cv=none; b=BnSrkJztLUnKtuP4q/Zqbga8HCrJh+EewuJ7ijCOJcI7KGBm4bNiAZHi2d/kZ+EFcMbNOMfnfjKF+Du4xhw6wMR9Z6Jfs/5x91rM+OM7VXLJO8TEMpvZdS/NwPTLliOY6quDH+BcIm5Plkm9xqrSsMSL4H86PI/0WFo0GkovqVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784147809; c=relaxed/simple;
-	bh=d/SAu9eeFjJTHVvPtRFAShOn0hrgA+W4jlbm76we9dg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G+OxQKlYrlvOlZvIddhBQ4P1t0XO0sWdo5DAICArvl5oUjOFbyltGIBnAtlz1OBpQ+55H9WZ7n5ItTKHMDZSgLofxy4Tezm5EpV8TQYAzPcF59m2QWQt/HkJ01hPfRRDWikRuZow1bvzTRLKv/YvFPCZLuJ9d5kLgKtullxc0Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=acGYbqyw; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1784150925; c=relaxed/simple;
+	bh=s3Ge4+fSFCDwtgFoKa8ImetG2itv/ZDt3XeSWSuI/Mg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HN/is+n5KoZTdqsSUsfhWZKZpPY4Wf2okN/1Ey0zxoEey2SDSPsQwx9d+nfOVjO/otljs1Pf5LHA0vxhlzUc74lkPyUHAWeZ5xyyzyRDz8xe5U2aK+25g4I/7ep2IK/y+pM06mW5ih8nYa87uuxUmyNUWWsxWsxHy0IWAhrMQvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNzy/ypj; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="acGYbqyw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=IfIx
-	pL5Jul1cTgZPJL2qQ4xUgTwI9XsjtS8e70Z9mZs=; b=acGYbqywQYmHt8/tsSnj
-	7UHU2PtWBXD3Dr63zfMDnhFWSDV9CKBZHp8ibdUrmer82lWjZQBMBkV1rN2LpalB
-	kQmIelt81y9ydoaFm8rL86iAI/SOpnpj1JzqIYH5Jl/xgdm0LxeD2E/J+5pCdheV
-	1OnheETvXohJ2bAMhE7OccU62jS/ljPc0LnbREehAjFQ7ye0zcqpo4XtZOwlhMVF
-	1W0FsMq1CKnqYkB9Ws6kydaEHfZksxxgkHpF4FEI3LMYr3B0qpkQ8hP/n6azXP3e
-	Ajy5jwFveMF3riDWT9uP/Q0sa6FCIw3TbUri/skfm4BaXxu6xqzpIz82VlPhGYPv
-	+w==
-Received: (qmail 807219 invoked from network); 15 Jul 2026 22:36:45 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Jul 2026 22:36:45 +0200
-X-UD-Smtp-Session: l3s3148p1@LCUpSKxWPK0ujntW
-Date: Wed, 15 Jul 2026 22:36:45 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Markus Stockhausen <markus.stockhausen@gmx.de>
-Cc: andi.shyti@kernel.org, linusw@kernel.org, brgl@kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNzy/ypj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679C81F000E9;
+	Wed, 15 Jul 2026 21:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784150924;
+	bh=shaHQ4Lz/IBXQgGLMQHW0qqVCSHZvCrD9EU2rqp1+t4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=DNzy/ypjuooC/fSIYQfKn1PDOjjnJ7+Mqz3fnbqeHq0mJ0rkwr0tlv9t/4PX5Wj4s
+	 esWIt3wuzSuok/NXiSaDuqf9Qj+lsgJlWG46ykdzAD+a0M+Rt3faK9mYmupCnqDmWU
+	 dSx7WBK4kSL0VQ4S63XKMJR/sHTzdSifWeLJE+dbke9xd9sgp6/EbHmhiNN42pazNC
+	 Z84UE/u8fu2fY0IOYNbrrrdgVf7rDN3hxNg4jtLpQSHp9uwJ3y5n8A1soksA6zFqdw
+	 k9zXUAVyaxqCjCkftA7vOw4NQfQpzKKMSSVG4b11Iy82Di55SvL4bkjzxuf4KxDbGo
+	 0wEnJTivqqEng==
+From: Danilo Krummrich <dakr@kernel.org>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <david@davidgow.net>,
+	Rae Moar <raemoar63@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	Sander Vanheule <sander@svanheule.net>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH v7 2/2] i2c: i2c-gpio: Enhance driver for buses with
- shared SCL
-Message-ID: <alfvXUq_lNXhKQZk@ninjato>
-References: <20260714162915.3018703-1-markus.stockhausen@gmx.de>
- <20260714162915.3018703-3-markus.stockhausen@gmx.de>
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	linux-acpi@vger.kernel.org,
+	driver-core@lists.linux.dev,
+	linux-gpio@vger.kernel.org
+Subject: Re: (subset) [PATCH v4 0/5] software node: provide support for fw_devlink
+Date: Wed, 15 Jul 2026 23:28:30 +0200
+Message-ID: <20260715212830.3077100-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260713-swnode-fw-devlink-v4-0-d4f2dee27ad9@oss.qualcomm.com>
+References: <20260713-swnode-fw-devlink-v4-0-d4f2dee27ad9@oss.qualcomm.com>
+X-Patch-Reply: applied
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xUYWHdNOCWTi42o1"
-Content-Disposition: inline
-In-Reply-To: <20260714162915.3018703-3-markus.stockhausen@gmx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On Mon, 13 Jul 2026 13:14:43 +0200, Bartosz Golaszewski wrote:
+> [PATCH v4 0/5] software node: provide support for fw_devlink
 
---xUYWHdNOCWTi42o1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied, thanks!
 
-On Tue, Jul 14, 2026 at 06:29:15PM +0200, Markus Stockhausen wrote:
-> Some lower end hardware (especially Realtek based switches) are
-> designed with multiple I2C buses that share a single clock line.
-> E.g. the D-Link DGS-1250-28X realizes 4 I2C SFP busses with 5 GPIOs.
->=20
-> Enhance the i2c-gpio driver so it can handle such hardware designs.
->=20
-> - Detect shared SCL GPIOs that are used by multiple I2C buses in the
->   devicetree by using a "unique identifier". This is basically the
->   phandle and all additional cells.
->=20
-> - The first probing instance allocates and requests the shared SCL
->   GPIO with an associated rt_mutex. Subsequent instances detect the
->   existing entry via the identifier and increment a reference count
->   to reuse the descriptor.
->=20
-> - All data transfers are serialized via custom lock_ops that handle
->   both the standard adapter bus lock and the shared SCL mutex. This
->   ensures mutual exclusion across adapters sharing the clock line.
->=20
-> - This shared SCL detection works only for dts based systems where
->   the GPIO node has at least one cell (usually the pin). GPIOs in
->   legacy systems without devicetree will be handled individudally
->   as before.
->=20
-> This patch was successfully tested on Linksys LGS310C that has two
-> SFP slots with two GPIO based I2C buses that share a single SCL.
-> Test environment: OpenWrt snapshot ported to kernel 6.19.14
-> including CONFIG_GPIO_SHARED=3Dy and CONFIG_GPIO_SHARED_PROXY=3Dy.
->=20
-> Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
-> Tested-by: Sander Vanheule <sander@svanheule.net>
-> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+  Branch: topic/swnode
+  Tree:   git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+[1/5] kunit: provide a set of fwnode-oriented helpers
+      commit: 9fdbdb528488
+[2/5] software node: add fw_devlink support
+      commit: 37e586675993
+[3/5] software node: add kunit tests for fw_devlink support
+      commit: eecba5978729
+[4/5] MAINTAINERS: add myself as reviewer of software node support
+      commit: 122630406245
 
-Cool stuff! It took a bit of handling gory details, but I could not only
-check that there are no regression with non-SCL-shared busses. I could
-also try two busses with shared SCL and it worked like a charm.
-Congrats!
-
-Andi, from my side, you can pick up these two patches. I will put them
-also in my 'for-andi' branch to increase their visibility.
-
-
---xUYWHdNOCWTi42o1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpX71wACgkQFA3kzBSg
-KbZzBQ//ScYdJvdIg65ub4h25ib+LfEuCwpSdHrUwnU9IgJv3PFL76qInl+7x0Si
-+3X/HOhRtwkn0mvYAZPCw9WzLavPRMAFfUaz2vh8eh8V3FqLcZC1e3KaHlWrZtBB
-JEqA6ap/Mt9XOJeA1OIesDpwd1KEEWUMkYJ4iwUFNutMvnPljoeL5K5QjJb44Hmv
-V7mg8AhyURHYCdz0+0CbqyytR/IWkXoIR0NI27VW7oTgh0H7f2ik8OdhdFZl2ZeZ
-9XiwMLZXHF2fSifrL3pnBHZw/+ik92eiD8T5cKguyhuQcfsVn7UrWkxSdZ1deR3e
-35620OpS1hHpA8dDnyQ+TngdLVG+0mqC67jG78ZHP3Lm5Pti+YdU12nhgUIK63wS
-9C2fGtkvwDMbOi4sZhSBpDjbb0rEr71sQp1PBx4srJwp0b3wZ3AtZk+ZBFxaDIvi
-tWDIgz5HQpqwUD13r9pxDDoGn8rZUEtaimNapxcDbaDrQy3xe3wXPlt5bmxdMDFI
-WqUyJYcCczZRPmkdl/obp22VMhI9osFi3g7EEKYCpilPljlSPmObo6ejWSjj3ZkL
-wJc6pErNh+WxKZD1WpFu/gNhnAGSUgYB7UGhFIKUBw1qgw5lLu5i8VZMk1VTnCy0
-j6j4fPU/76lLk9RwljAkAnyIQE2TrGQorgZTotbByYu/KlRpQmg=
-=2y6S
------END PGP SIGNATURE-----
-
---xUYWHdNOCWTi42o1--
+The patches are in the topic/swnode topic branch and will be merged into the
+corresponding target branch soon.
