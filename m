@@ -1,398 +1,212 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from luna.linkmauve.fr (82-65-109-163.subs.proxad.net [82.65.109.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438A24A2E0A
-	for <linux-gpio@vger.kernel.org>; Wed, 15 Jul 2026 17:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784138147; cv=pass; b=mHq04mDzqY4i5BAjAyxiAdZYbOF3aQcNcbuzQhwJsTtYrv+3RUv8wx7OI5RqR9T9p4hQCegKtH9JuDz6jUybtjBOWfgdgQu3VXoOwIWGwR2kp6kMA+oGDAmHbO6Kz6o/a1Z+H9t02TZuz8OrjyC44FJPpQf1BQvJy+Jx6Ugl5bE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784138147; c=relaxed/simple;
-	bh=t0NQOLYqHWDz9VsRSjuVoji+SI41r96ungAAD1Kanl0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ISxD0tBD9blA6PGqu5VTkogGtiy8BN2zgKTm7ViqxaQWKMF2oMtahaMQ6N/fyOi659FyI/oew4QiTorNWfqAjP6fSUNYVlMPd98FuyXG4j4cV3PICxTyshIgeDq1ZRyAbFcLmX/fZ1+jonw70+dnPXXLghoA+AMd7YezFec5GYc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lgKv2/1A; arc=pass smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lgKv2/1A"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6983f20a8bfso8825835a12.1
-        for <linux-gpio@vger.kernel.org>; Wed, 15 Jul 2026 10:55:45 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784138143; cv=none;
-        d=google.com; s=arc-20260327;
-        b=M8aLuVpR1s0PEWJn7RCRjMD6Z9erwVVA2xJg0ZLWdDb/JWg6S/bF7AGiQPymqO1Xu9
-         hIsxXxnP3/gu27YZ8x+BbxhDyNmp5y+hNsxcWBzwkH9xqk7HvVZPSuyYGpz34axnW8aO
-         dVQWjrzCaVSiSuUCCzEJJZHhcgbpaidCTFZ0rUMONZsk2VFoSqPe3aGkZNOC5TuqB1FR
-         sl/uQgUj/3zy3XD97ZA1kRKEzkQ4lEwHFH2QYDv5LpN1uytP3p+2IB39e6kibJe5y+6r
-         XAanOPqC8egTG/uTcsxMj9u313m9tzoN+J4RivOdWWOkk6h/bbv1XN/qBecJUJNbERnG
-         R0ow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=B1fLH5vkVlaT9TAQEnaHfQcEDTexVsSO83pCVpu+qHI=;
-        fh=Fq+4iKTz05I7QABSgGfn05J+B2m66Yjr8Y9Ppkj3XF8=;
-        b=DRzvS/09KmCtUlUNiHGnW4bODGs1vvq0b+wouSk1on8L4gUjW5hUJZMI6BbYq79An5
-         59mBxv9th0RxcaT9ek6tKYRVL7Ab4B7qbnObAivf/74raQl1bdn+e4DZG5IrEW2YZg+F
-         R2kfoniR8zIIE2NVrXh1EBFdsfyls8dVOz1qwUBO5fMaujtDpdrGiVDaDoww/jjrqkM+
-         x7v+jRV1l2LBZfsUmbXqV7X+pWh11ggD7iLVZJyl1urwfqGech5HkMnIzyl0rgHakvYd
-         z+ISKWKdJNVrNa2lF420MHjAk2oaotBUHpsbrp0zlNOT+nGTmYh4+rs55x87tUQ1XT25
-         Nrow==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1784138143; x=1784742943; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=B1fLH5vkVlaT9TAQEnaHfQcEDTexVsSO83pCVpu+qHI=;
-        b=lgKv2/1A3Qpu3dh33l55DhDZ2WtOfRur9GvjsEMwzA9HDB+dUvz/FuSaGvWaOvO5+j
-         FlXO74Majb2FoMEPFvHMYKxiHP4LXOJLt/kFFOt/dzDbaWvKWhQ+yah0PJkEJBLiyUoB
-         /QeLjS2mnBxfuV4BC/qkivLafCM65Tg33yAbx724+nWPUeTnZs9gi9ewYNNHUHpve9QS
-         sbrVAAdE9muwlAs73JW2WhIewcVXhmWzqO715dlQfju5fvQtRozsJnjzSPbHDzdy5AHl
-         Osxv5MGrJz8w9EH97sSBZHzBkGx38AiKZKD4xFyQcMP9i76iF8GzqzP0c+RxH7midKxc
-         9Ubw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784138143; x=1784742943;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=B1fLH5vkVlaT9TAQEnaHfQcEDTexVsSO83pCVpu+qHI=;
-        b=n16poBOj3D69TGAOD2K8HATROac7uVQs+mTsj2Vr2iHbxWRvrc3EPIjq0JHbyqYfUs
-         LyH8mYKSRF3arWEFbGY2CWhY4ZfN1Co+Hh3H5MRrXcZSydf/Xux4eTkWJeh0pb7Sw55+
-         54SZ8msqU/3J/7dUM3kz+EIWQhtw5bwjXyZ+Tt3KDNYFj5Z0y7HuIaLy1+QS9lYcjdn8
-         VAEOsk9fET5xGJ+SuOtj3BWfgbNxEeP4uFWy+eKlrYbpyPgH3JCeC3YAnwVrdbv7RvLB
-         gB6I7/Skiqg3K0x0JjHGkCreLp5VUxpj9TdOkxBdML6Z1S04PxIAk0OvcyRxKRUUVKqr
-         dJfw==
-X-Forwarded-Encrypted: i=1; AHgh+Rpri9HbECvpVH17FFil34gtQKyyJ4pmY7Efl6FIBafsRt8odMsBrmtBHMuQeWhOQoiMoY/vLkVZ4HwQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4S1UD78L+CG0omfF0pvulfuJdqxQGSO2ed18KA4MQZeFyoA0a
-	oQkcVmlZI4QBNNuOtsiwIOeqkxXad7KSTsMExyvq5JUKphhHCAgXMdaBfxkF9417aZ2TDAlYUUd
-	rjh/fDkFtn7k2fkZ1NpuCAK2obsa8+E8b+qYzRwjwAg==
-X-Gm-Gg: AfdE7clkvYTeBuaoIAMm76G51nXPAUnfiRwtxtU0fkw+uaw68jczKqdQsAzu4wQ0cP5
-	3at+aKlEvl0UzKBfz94QtAylvf3JQCNUc1gt3G74ze3e2X3VeGm5etg6YXLIZc8P082ZZ3CW1N4
-	EDE4Kkz6Yfg9Ncx3d8TtSKTrQ4co+4dazdmfUAhLcf1I+rSmBrGPKdO/jioIrYUgzmNQLgevpv9
-	ELdoMw3xsh8R+RuHi8cMgXbavMOlM+TE+nGEObEPG4qwrtM8pI+IvNhzHFbJ9Gr44UgGB5jHrgs
-	EYmelV2MJynKy5AKRGRbrrMT+v2hcqY=
-X-Received: by 2002:a05:6402:1588:b0:69c:7567:cf5c with SMTP id
- 4fb4d7f45d1cf-69cd6ddfb91mr4781134a12.41.1784138143408; Wed, 15 Jul 2026
- 10:55:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48AE41A565;
+	Wed, 15 Jul 2026 18:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.65.109.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784138588; cv=none; b=kF2EkRK6nIbAPacjxo2fcJorg1hOQfDO6gdJdpJoLu49fjMezorS5A0PKAwuGRiN0ooP1QEDUv7oxHrt4ZXh+H9dGF1nHl7gI96l+yYxISohG/LM6hbbsLZZ4kvr9DcI5qNFzE55lTB8c8iHti5eXQXZWMuX5Zwj4hZdD5YmFBI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784138588; c=relaxed/simple;
+	bh=ke3E5EttLeWiiEpEeXKV5/D2Jy1tJKCKfZGCrohPCjA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RHm1hShlkK/xIIEjVHtHkJmfxMveNY6488VEUJkgPW0QkclbI6zFfDUdg90QLU0txGhWd+BBdfGyb53X7wJCufddzjT7NwUgMU7QktB3ppBCgtipmrTGmSLyUGKPGtjBLOKWAyCsp2zAK67rHaDbbIaIceUG47nEoBcfEnxjYT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linkmauve.fr; spf=pass smtp.mailfrom=linkmauve.fr; arc=none smtp.client-ip=82.65.109.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linkmauve.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linkmauve.fr
+Received: by luna.linkmauve.fr (Postfix, from userid 1000)
+	id E9559F40D1B; Wed, 15 Jul 2026 19:52:33 +0200 (CEST)
+From: Link Mauve <linkmauve@linkmauve.fr>
+To: Srinivas Kandagatla <srini@kernel.org>
+Cc: Link Mauve <linkmauve@linkmauve.fr>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Lee Jones <lee@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	"Vaibhaav Ram T.L" <vaibhaavram.tl@microchip.com>,
+	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Praveen Teja Kundanala <praveen.teja.kundanala@amd.com>,
+	Kalyani Akula <kalyani.akula@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Joshua Kinard <linux@kumba.dev>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Boqun Feng <boqun@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Tamir Duberstein <tamird@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Ronald Claveau <linux-kernel-dev@aliel.fr>,
+	Salah Triki <salah.triki@gmail.com>,
+	Yury Norov <ynorov@nvidia.com>,
+	David Carlier <devnexen@gmail.com>,
+	Achim Gratz <Achim.Gratz@Stromeko.DE>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Patrick Wicki <patrick.wicki@siemens.com>,
+	Markus Heidelberg <m.heidelberg@cab.de>,
+	Markus Perkins <markus@notsyncing.net>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>,
+	Chen Ni <nichen@iscas.ac.cn>,
+	Kees Cook <kees@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	mfd@lists.linux.dev,
+	linux-i2c@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-rtc@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	rust-for-linux@vger.kernel.org
+Subject: [PATCH 0/8] nvmem: make reg_write() take a const void *
+Date: Wed, 15 Jul 2026 19:52:16 +0200
+Message-ID: <20260715175229.24672-1-linkmauve@linkmauve.fr>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260625155432.815185-1-shenwei.wang@oss.nxp.com>
- <20260625155432.815185-2-shenwei.wang@oss.nxp.com> <alUdg9iTysXCFUa5@p14s>
- <PAXPR04MB91852808D2C7491AEF98CF1589F92@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <alZlZvQQwq-g6VL3@p14s> <PAXPR04MB9185B1A3F16D82E8C0C76EE689F92@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <alemgbM2ktRLE9wT@p14s> <PAXPR04MB9185DC31980327326D289C4C89F82@PAXPR04MB9185.eurprd04.prod.outlook.com>
-In-Reply-To: <PAXPR04MB9185DC31980327326D289C4C89F82@PAXPR04MB9185.eurprd04.prod.outlook.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 15 Jul 2026 11:55:32 -0600
-X-Gm-Features: AUfX_mzC-pSYEjUJ9BYRTa4GlO7TcNO2B0DY7O1_KieZEYL7x6Ya_ZTaPmF0Y3w
-Message-ID: <CANLsYkww_2d_eFGCTrTvoSavdkfOh41joKHypDnW-z0XUonR1Q@mail.gmail.com>
-Subject: Re: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver over
- rpmsg bus
-To: "Shenwei Wang (OSS)" <shenwei.wang@oss.nxp.com>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Frank Li <frank.li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>, 
-	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, "b-padhi@ti.com" <b-padhi@ti.com>, 
-	Andrew Lunn <andrew@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, 15 Jul 2026 at 09:55, Shenwei Wang (OSS)
-<shenwei.wang@oss.nxp.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > Sent: Wednesday, July 15, 2026 10:26 AM
-> > To: Shenwei Wang (OSS) <shenwei.wang@oss.nxp.com>
-> > Cc: Linus Walleij <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.org>;
-> > Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof
-> > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjorn
-> > Andersson <andersson@kernel.org>; Frank Li <frank.li@nxp.com>; Sascha Hauer
-> > <s.hauer@pengutronix.de>; Shuah Khan <skhan@linuxfoundation.org>; linux-
-> > gpio@vger.kernel.org; linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> > <festevam@gmail.com>; Shenwei Wang <shenwei.wang@nxp.com>; Peng Fan
-> > <peng.fan@nxp.com>; devicetree@vger.kernel.org; linux-
-> > remoteproc@vger.kernel.org; imx@lists.linux.dev; linux-arm-
-> > kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>; Arnaud
-> > POULIQUEN <arnaud.pouliquen@foss.st.com>; b-padhi@ti.com; Andrew Lunn
-> > <andrew@lunn.ch>
-> > Subject: Re: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver over rpmsg
-> > bus
-> >
-> > On Tue, Jul 14, 2026 at 06:43:30PM +0000, Shenwei Wang (OSS) wrote:
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > > > Sent: Tuesday, July 14, 2026 11:36 AM
-> > > > To: Shenwei Wang (OSS) <shenwei.wang@oss.nxp.com>
-> > > > Cc: Linus Walleij <linusw@kernel.org>; Bartosz Golaszewski
-> > > > <brgl@kernel.org>; Jonathan Corbet <corbet@lwn.net>; Rob Herring
-> > > > <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor
-> > > > Dooley <conor+dt@kernel.org>; Bjorn Andersson
-> > > > <andersson@kernel.org>; Frank Li <frank.li@nxp.com>; Sascha Hauer
-> > > > <s.hauer@pengutronix.de>; Shuah Khan <skhan@linuxfoundation.org>;
-> > > > linux- gpio@vger.kernel.org; linux-doc@vger.kernel.org;
-> > > > linux-kernel@vger.kernel.org; Pengutronix Kernel Team
-> > > > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Shenwei
-> > > > Wang <shenwei.wang@nxp.com>; Peng Fan <peng.fan@nxp.com>;
-> > > > devicetree@vger.kernel.org; linux- remoteproc@vger.kernel.org;
-> > > > imx@lists.linux.dev; linux-arm- kernel@lists.infradead.org;
-> > > > dl-linux-imx <linux-imx@nxp.com>; Arnaud POULIQUEN
-> > > > <arnaud.pouliquen@foss.st.com>; b-padhi@ti.com; Andrew Lunn
-> > > > <andrew@lunn.ch>
-> > > > Subject: Re: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio
-> > > > driver over rpmsg bus
-> > > >
-> > > > On Tue, Jul 14, 2026 at 02:29:12PM +0000, Shenwei Wang (OSS) wrote:
-> > > d
-> > > > > > > +  - 3: Both edge trigger
-> > > > > > > +  - 4: High level trigger
-> > > > > > > +  - 8: Low level trigger
-> > > > > >
-> > > > > > I'm in agreement with cmd 3, 4, 5 and 6.
-> > > > > >
-> > > > >
-> > > > > How about cmd 2?
-> > > >
-> > > > Yes, I forgot cmd 2.
-> > > >
-> > > > >
-> > > > > > > +
-> > > > > > > +**Reply:**
-> > > > > > > +
-> > > > > > > +.. code-block:: none
-> > > > > > > +
-> > > > > > > +   +------+--------+--------+
-> > > > > > > +   | 0x00 |  0x01  |  0x02  |
-> > > > > > > +   |   1  | status |    0   |
-> > > > > > > +   +------+--------+--------+
-> > > > > > > +
-> > > > > > > +- **status**:
-> > > > > > > +
-> > > > > > > +  - 0: Ok
-> > > > > > > +  - 1: Error
-> > > > > > > +
-> > > > > > > +SET_WAKEUP (Cmd=16)
-> > > > > > > +~~~~~~~~~~~~~~~~~~~
-> > > > > >
-> > > > > > I already commented on messages that are not part of the
-> > > > > > virtio-gpio specification.
-> > > > > >
-> > > > >
-> > > > > I don't believe virtio-gpio needs a SET_WAKEUP command.
-> > > > >
-> > > > > In the RPMSG case, SET_WAKEUP is required because it performs an
-> > > > > operation on the remote processor, so the remote side must be
-> > > > > explicitly
-> > > > notified.
-> > > >
-> > > > What operations would that be?
-> > > >
-> > >
-> > > The operation is enabling the line as a wakeup source. In practice,
-> > > this involves configuring hardware-specific wakeup settings (e.g.,
-> > > register bits) on the remote processor, so the remote side must be explicitly
-> > notified through SET_WAKEUP.
-> > >
-> >
-> > As I said before, we are not enhancing the virtio-gpio specification.  If the
-> > functionality is not part of the specification, it is not part of this protocol.
-> >
->
-> It's about the functionality, not the specification.
->
+This callback used to take a mutable void * for no reason, which causes
+the compiler to be unaware that the val buffer should never be modified
+by the callback.
 
-No, it's about the specification.
+This was found while drafting the nvmem-provider Rust abstraction.
 
-> Without SET_WAKEUP, a virtio-GPIO line can still be used as a wakeup source, but
-> an RPMSG implementation cannot because the remote processor is never notified
-> to configure its wakeup settings.
->
-> So both implementations may follow the same virtio-gpio specification, but they do
-> not provide the same wakeup functionality.
->
+I’ve split this series based on the subsystem each patch affects, but I
+think it should go through the nvmem tree in one go after gathering the
+acks from the other subsystem maintainers.
 
-No.  The kernel treats rpmsg-gpio the same way as virtio-gpio - they
-need to provide exactly the same functionality.
+I’ve been told previously to not include too many maintainers in Cc, but
+I don’t know which ones to remove from the get_maintainers.pl output, so
+I’ve still included everyone, sorry about that.
 
-> Anyway, if you want to drop the function, the command can be removed.
->
-> Shenwei
->
-> > >
-> > > > >
-> > > > > For virtio-gpio, however, everything is handled locally. The other
-> > > > > side does not need to perform any action, so sending a SET_WAKEUP
-> > > > > command
-> > > > appears unnecessary.
-> > > >
-> > > > What is "everything"?
-> > > >
-> > >
-> > > I mean masking, unmasking, and marking the interrupt as a wakeup
-> > > source. All of these operations are handled on local processor.
-> >
-> > There may be enough capability in your remote processor to do all that, but we
-> > can't assume the same applies to all implementations.  rpmsg-gpio is not about
-> > inventing a new protocol or delegating actions to the remote processor.  It is
-> > about carrying virtio-gpio packets on top of RPMSG.  It needs to operate
-> > _exactly_ the same way as virtio-gpio.
-> >
-> > >
-> > > Shenwei
-> > >
-> > > > >
-> > > > >
-> > > > > > > +
-> > > > > > > +**Request:**
-> > > > > > > +
-> > > > > > > +.. code-block:: none
-> > > > > > > +
-> > > > > > > +   +------+------+------+------+------+------+------+------+
-> > > > > > > +   | 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 | 0x07 |
-> > > > > > > +   |      1      |    line     |           value           |
-> > > > > > > +   +------+------+------+------+------+------+------+------+
-> > > > > > > +
-> > > > > > > +- **value**: Wakeup enable.
-> > > > > > > +
-> > > > > > > +  The remote system should always aim to stay in a
-> > > > > > > + power-efficient state by  shutting down or clock-gating the
-> > > > > > > + GPIO blocks that aren't in use. Since  the remoteproc driver
-> > > > > > > + is responsible for managing the power states of the  remote
-> > > > > > > + firmware, the GPIO driver does not require to know the
-> > > > > > > + firmware's
-> > > > running states.
-> > > > > > > +
-> > > > > > > +  When the wakeup bit is set, the remote firmware should
-> > > > > > > + configure the line  as a wakeup source. The firmware should
-> > > > > > > + send the notification message to  Linux after it is woken from the GPIO
-> > line.
-> > > > > > > +
-> > > > > > > +  - 0: Disable wakeup from GPIO
-> > > > > > > +  - 1: Enable wakeup from GPIO
-> > > > > > > +
-> > > > > > > +**Reply:**
-> > > > > > > +
-> > > > > > > +.. code-block:: none
-> > > > > > > +
-> > > > > > > +   +------+--------+--------+
-> > > > > > > +   | 0x00 |  0x01  |  0x02  |
-> > > > > > > +   |   1  | status |    0   |
-> > > > > > > +   +------+--------+--------+
-> > > > > > > +
-> > > > > > > +- **status**:
-> > > > > > > +
-> > > > > > > +  - 0: Ok
-> > > > > > > +  - 1: Error
-> > > > > > > +
-> > > > > > > +Notification Message
-> > > > > > > +--------------------
-> > > > > >
-> > > > > > "Interrupt Messages"
-> > > > > >
-> > > > > > > +
-> > > > > > > +Notifications are sent by the remote core and they have
-> > > > > > > +**Type=2 (GPIO_RPMSG_NOTIFY)**:
-> > > > > > > +
-> > > > > > > +When a GPIO line asserts an interrupt on the remote
-> > > > > > > +processor, the firmware should immediately mask the
-> > > > > > > +corresponding interrupt source and send a notification
-> > > > > > > +message to the Linux. Upon completion of the interrupt
-> > > > > > > +handling on the Linux side, the driver should issue a command
-> > > > > > > +**SET_IRQ_TYPE** to the firmware to
-> > > > unmask the interrupt.
-> > > > > > > +
-> > > > > > > +A Notification message can arrive between a SEND and its
-> > > > > > > +REPLY message, and the driver is expected to handle this scenario.
-> > > > > > > +
-> > > > > > > +.. code-block:: none
-> > > > > > > +
-> > > > > > > +   +------+------+--------+
-> > > > > > > +   | 0x00 | 0x01 |  0x02  |
-> > > > > > > +   |   2  | line | trigger|
-> > > > > > > +   +------+------+--------+
-> > > > > >
-> > > > > > 2 things here:
-> > > > > >
-> > > > > > 1) You did not include messages that mask and unmask interrupts
-> > > > > > at the driver side.
-> > > > >
-> > > > > Interrupt masking and unmasking are handled entirely on the local
-> > processor.
-> > > > >
-> > > > > When an interrupt occurs, the remote system masks the interrupt
-> > > > > and then sends a notification to Linux. After Linux processes the
-> > > > > notification, it sends a SET_IRQ_TYPE message back to the remote
-> > > > > system,
-> > > > which then unmasks the interrupt.
-> > > >
-> > > > This is the kind of information that should be part of this documentation.
-> > > >
-> > > > >
-> > > > > Thanks,
-> > > > > Shenwei
-> > > > >
-> > > > > >
-> > > > > > 2) We are carrying virtio-gpio messages on top of RPMSG and as
-> > > > > > such, this whole protocol should be about thar:
-> > > > > >
-> > > > > > +------+------+--------+--------
-> > > > > > | 0x00 |       payload         |
-> > > > > > |  Q   |                       |
-> > > > > > +------+------+--------+--------
-> > > > > >
-> > > > > > Q = 0 requestq
-> > > > > > Q = 1 eventq
-> > > > > >
-> > > > > > The "payload" part is simply the format of the messages as found
-> > > > > > in the virtio- gpio specification.  From there, the only thing
-> > > > > > left to mention is which messages are not supported, i.e get line names.
-> > > > > >
-> > > > > > > +
-> > > > > > > +- **line**: The GPIO line (pin) index of the port.
-> > > > > > > +
-> > > > > > > +- **trigger**: Optional parameter to indicate the trigger event type.
-> > > > > >
-> > > > > > Not part of the spec - remove.
-> > > > > >
-> > > > > > Given the refactoring work that is still needed, I will not look
-> > > > > > at the implementation.
-> > > > > >
-> > > > > > Thanks,
-> > > > > > Mathieu
-> > > > > >
-> > > > > > > +
-> > > > > > > diff --git a/Documentation/driver-api/gpio/index.rst
-> > > > > > > b/Documentation/driver-api/gpio/index.rst
-> > > > > > > index bee58f709b9a..e5eb1f82f01f 100644
-> > > > > > > --- a/Documentation/driver-api/gpio/index.rst
-> > > > > > > +++ b/Documentation/driver-api/gpio/index.rst
-> > > > > > > @@ -16,6 +16,7 @@ Contents:
-> > > > > > >     drivers-on-gpio
-> > > > > > >     bt8xxgpio
-> > > > > > >     pca953x
-> > > > > > > +   gpio-rpmsg
-> > > > > > >
-> > > > > > >  Core
-> > > > > > >  ====
-> > > > > > > --
-> > > > > > > 2.43.0
-> > > > > > >
+Thanks,
+
+Link Mauve (8):
+  nvmem: core: make reg_write() take a const void *
+  nvmem: make all reg_write callbacks take const void *
+  rtc: make all reg_write callbacks take const void *
+  misc: make all reg_write callbacks take const void *
+  iio: pressure: bmp280: make reg_write callback take const void *
+  firmware: meson_sm: make reg_write callback take const void *
+  mfd: twl-core: make reg_write callback take const void *
+  media: ov2740: remove NULL reg_write callback
+
+ drivers/firmware/meson/meson_sm.c                 | 2 +-
+ drivers/iio/pressure/bmp280-core.c                | 6 +++---
+ drivers/media/i2c/ov2740.c                        | 1 -
+ drivers/mfd/twl-core.c                            | 2 +-
+ drivers/misc/ds1682.c                             | 2 +-
+ drivers/misc/eeprom/at24.c                        | 4 ++--
+ drivers/misc/eeprom/at25.c                        | 2 +-
+ drivers/misc/eeprom/eeprom_93xx46.c               | 4 ++--
+ drivers/misc/eeprom/m24lr.c                       | 2 +-
+ drivers/misc/keba/cp500.c                         | 2 +-
+ drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c | 8 ++++----
+ drivers/nvmem/bcm-ocotp.c                         | 4 ++--
+ drivers/nvmem/core.c                              | 2 +-
+ drivers/nvmem/imx-ocotp-scu.c                     | 4 ++--
+ drivers/nvmem/imx-ocotp.c                         | 4 ++--
+ drivers/nvmem/lan9662-otpc.c                      | 4 ++--
+ drivers/nvmem/lpc18xx_eeprom.c                    | 4 ++--
+ drivers/nvmem/max77759-nvmem.c                    | 2 +-
+ drivers/nvmem/meson-efuse.c                       | 4 ++--
+ drivers/nvmem/qcom-spmi-sdam.c                    | 2 +-
+ drivers/nvmem/qfprom.c                            | 4 ++--
+ drivers/nvmem/rave-sp-eeprom.c                    | 4 ++--
+ drivers/nvmem/snvs_lpgpr.c                        | 2 +-
+ drivers/nvmem/sprd-efuse.c                        | 4 ++--
+ drivers/nvmem/stm32-bsec-optee-ta.c               | 2 +-
+ drivers/nvmem/stm32-bsec-optee-ta.h               | 4 ++--
+ drivers/nvmem/stm32-romem.c                       | 6 +++---
+ drivers/nvmem/zynqmp_nvmem.c                      | 4 ++--
+ drivers/rtc/rtc-abx80x.c                          | 4 ++--
+ drivers/rtc/rtc-cmos.c                            | 2 +-
+ drivers/rtc/rtc-ds1305.c                          | 4 ++--
+ drivers/rtc/rtc-ds1307.c                          | 2 +-
+ drivers/rtc/rtc-ds1343.c                          | 2 +-
+ drivers/rtc/rtc-ds1511.c                          | 2 +-
+ drivers/rtc/rtc-ds1553.c                          | 4 ++--
+ drivers/rtc/rtc-ds1685.c                          | 4 ++--
+ drivers/rtc/rtc-ds1742.c                          | 4 ++--
+ drivers/rtc/rtc-ds3232.c                          | 2 +-
+ drivers/rtc/rtc-isl12026.c                        | 4 ++--
+ drivers/rtc/rtc-isl1208.c                         | 2 +-
+ drivers/rtc/rtc-m48t59.c                          | 4 ++--
+ drivers/rtc/rtc-m48t86.c                          | 2 +-
+ drivers/rtc/rtc-max31335.c                        | 2 +-
+ drivers/rtc/rtc-meson.c                           | 2 +-
+ drivers/rtc/rtc-omap.c                            | 4 ++--
+ drivers/rtc/rtc-pcf2127.c                         | 2 +-
+ drivers/rtc/rtc-pcf85063.c                        | 2 +-
+ drivers/rtc/rtc-pcf85363.c                        | 4 ++--
+ drivers/rtc/rtc-rp5c01.c                          | 4 ++--
+ drivers/rtc/rtc-rv3028.c                          | 6 +++---
+ drivers/rtc/rtc-rv3029c2.c                        | 2 +-
+ drivers/rtc/rtc-rv3032.c                          | 4 ++--
+ drivers/rtc/rtc-rv8803.c                          | 4 ++--
+ drivers/rtc/rtc-rx8581.c                          | 4 ++--
+ drivers/rtc/rtc-s35390a.c                         | 4 ++--
+ drivers/rtc/rtc-stk17ta8.c                        | 4 ++--
+ drivers/rtc/rtc-sun6i.c                           | 4 ++--
+ drivers/rtc/rtc-ti-k3.c                           | 2 +-
+ drivers/rtc/rtc-twl.c                             | 2 +-
+ include/linux/firmware/meson/meson_sm.h           | 2 +-
+ include/linux/mfd/twl.h                           | 4 ++--
+ include/linux/nvmem-provider.h                    | 2 +-
+ 62 files changed, 100 insertions(+), 101 deletions(-)
+
+-- 
+2.55.0
+
