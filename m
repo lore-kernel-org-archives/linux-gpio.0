@@ -1,114 +1,211 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8753912D1F1
-	for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2026 08:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6313E2ADD;
+	Thu, 16 Jul 2026 08:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784189713; cv=none; b=fX43vKs/bip2UI3ytnWC8mhyE9EikwoTsyQZ/U8FTCCs1fewgxplCphh4w0b7AukFIAzTuX5U0OvirJtJk38uHiyZzURTt0NnKF5nZCxCvMGA8laM2vhr5Np84okR+0Bmg3uv6FlEPgSHHXohlJKMeBJx6QGxen7kPNdcq7hHpo=
+	t=1784190445; cv=none; b=fF+5cbsg/lpqkPmRQwXEDmRZ/2UX2HU/BueVaL5mL6vSrPJVLW9wDwlJ+RkRptQkVHPi4fFxd/mJNmdGp2CehikMKTGdrlVhLlfbGPCoauI2SVVtG4Js51AQgqQKdCkAHsMd31CWfRLn+4XTXizOitlH8Xw/U3hVFqrtMBpasF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784189713; c=relaxed/simple;
-	bh=XDd/+K1zkY4FTWnThxNADCvpfXb2R+7V2D39IHLWg9E=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i5fMM2/67d1MGNVS87uqLmM5K6NcdkHacVqxDTZavACpCoxAgIkCKxBsNEhek8zTvafYvpBaRFcTvjiw3YF1EKlXfuOy7nfDpt08zDT/HK4cWt2zsX/9RQi/mgqHsBS5n6iD3uX80tyOiRh4sxHh4fsIGQy1xtRxeC/iW4GJkDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OkkypRup; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784190445; c=relaxed/simple;
+	bh=5oa/5XioJ8flc5AgybunsF5G261OjV++bUe/mqwllp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EbY4RWsPb932JUBX8/E43gJQ04OTyVv2z88ETWIWbAkySufPPWbIet4US1gsVQqtyvdL5rx9zmrt4rZ+hCMJlAFvpphxjGVZk+0bN1eNaLuJ0UkS35TzFUqTNxi/Wvov0tuH3v66H62TlbLWbpfkqzeKP6yI2/q9FIg+UCkey/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LbLBWoW9; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OkkypRup"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69AFD1F00ACA
-	for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2026 08:15:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784189711;
-	bh=0e+2foSrfB089LQxMuUAQFzuyTGSAoL1QCbe9PtC7oc=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=OkkypRupH9CKZtHqUPclf3Dnj+VRoB7vpwwlQ0RSJiHR9R/s6Ybjljfzn1vgeGirS
-	 mtU9U0l41Y+ZmK6UNZnGCfZbKNyg4OV6IIMmUQqDFg/iIqKl/fBMX+/MHjGJ8UGrpr
-	 HEY1eWmKyj0lYpaBi0G7AAQbg8d+FR5eKU6Af6UF5PODST9Ct1zl6ANwht7Dhxpqm8
-	 E1OS3lQ+mKH12tmB8qSdqlsayt3INCZOHnKDuMzYOodcKGVgzaZYLSHpOCjPS4BCEj
-	 fNa5CYOStgmrE3wPpotyhFFkforsYaXDZf36yv0ocxNHVoJSzBhuMehOCNNDJOuit9
-	 EcX/QUSzYOE2A==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-39c86945164so53774181fa.1
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2026 01:15:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Ro0YzfF6XY+Zw0El4zG52JMuVOx32xvjJ/6D2z6KcoaXZxgTVInMxbaO4bGpQUtJTloA5pIU0sBKIfh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYYUqwg6oJh2sFgXPC/qovES/JhREZ3qLkaxiy1ZxJ6QRBJfpe
-	85UlL7lRKQf1SWQfj2WK32jP9XuO3vZGkQ/P0zJ3n07SqwsGHpWpsC/iZmWIiIeAIshEPkRBnr9
-	OCwceK+Kc973Z8HSUOgt6ihfmmYx48wCXAN0K4rselA==
-X-Received: by 2002:a2e:be8f:0:b0:39b:1272:25d3 with SMTP id
- 38308e7fff4ca-39db6d52233mr13287271fa.27.1784189710108; Thu, 16 Jul 2026
- 01:15:10 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 16 Jul 2026 01:15:08 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 16 Jul 2026 01:15:08 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260714162915.3018703-2-markus.stockhausen@gmx.de>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LbLBWoW9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1784190443; x=1815726443;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5oa/5XioJ8flc5AgybunsF5G261OjV++bUe/mqwllp4=;
+  b=LbLBWoW9hYteGJO1g6kb+rNXvnzHotpWxJAQyKv6r+PzITlLRzpRnO3V
+   aLnaMeMLwq6OYQSaBgsvCSqCXhbrEq9S66yV6Ma/G8eKjoNnlOxj0QA4p
+   BR04vcTY3pLurBhUSIQjd4/lBUMT6WTYqSYc/s8s5nQg+fs9IAVNzPESI
+   2u5eeRw/UMzi86WXgQmpnOaaFteyt1GqugfOUaKwhgm4KNQ8BlS3gS7+2
+   5TwKEbowRF6e9mq5CiUH87GergTBEx0oL1q1/idk2oNmIpu6jZ8MrTokt
+   sYHducRI9kbHfIT7NyAxqAbYF219fN12yg3UsOrxHRDjxFfNjNk910Ol/
+   g==;
+X-CSE-ConnectionGUID: h2w9YV7GQRKEI+wCoWcAtw==
+X-CSE-MsgGUID: ogzYXKXyQoumUmo0B/p3CQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11847"; a="83826036"
+X-IronPort-AV: E=Sophos;i="6.25,167,1779174000"; 
+   d="scan'208";a="83826036"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2026 01:27:22 -0700
+X-CSE-ConnectionGUID: 43hHWRy4SXmvtkTrwMjpSw==
+X-CSE-MsgGUID: stKbAuGLSyOVXOgq7dl9xA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,167,1779174000"; 
+   d="scan'208";a="279701626"
+Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.245.26])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2026 01:27:16 -0700
+Date: Thu, 16 Jul 2026 11:27:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Yu-Chun Lin <eleanor.lin@realtek.com>
+Cc: Michael.Hennerich@analog.com, afaerber@suse.com, andy@kernel.org,
+	brgl@kernel.org, conor+dt@kernel.org, cy.huang@realtek.com,
+	devicetree@vger.kernel.org, dlechner@baylibre.com,
+	james.tai@realtek.com, jic23@kernel.org, krzk+dt@kernel.org,
+	lars@metafoo.de, linus.walleij@linaro.org, linusw@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-realtek-soc@lists.infradead.org,
+	mathieu.dubois-briand@bootlin.com, mwalle@kernel.org,
+	nuno.sa@analog.com, robh@kernel.org, stanley_chang@realtek.com,
+	tychang@realtek.com, wbg@kernel.org
+Subject: Re: [PATCH v3 3/7] gpio: regmap: Add gpio_regmap_operation and
+ write-enable support
+Message-ID: <aliV4u6_xzx9D9Aq@ashevche-desk.local>
+References: <d301ba0cd45d49d59e6a014188306ec9@realtek.com>
+ <20260716062614.1507243-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260714162915.3018703-1-markus.stockhausen@gmx.de> <20260714162915.3018703-2-markus.stockhausen@gmx.de>
-Date: Thu, 16 Jul 2026 01:15:08 -0700
-X-Gmail-Original-Message-ID: <CAMRc=McE=mW8OLXRrSRCEUoQsheXgW2TtspF7VaC4wX_8-qvfg@mail.gmail.com>
-X-Gm-Features: AUfX_mzOxzY--a9P9xlg7SeH5TFj3Zw505PiKCa5vVVRxhQ0FS1n4gwtMNi9M-8
-Message-ID: <CAMRc=McE=mW8OLXRrSRCEUoQsheXgW2TtspF7VaC4wX_8-qvfg@mail.gmail.com>
-Subject: Re: [PATCH v7 1/2] i2c: algo: bit: Allow to skip bit test
-To: Markus Stockhausen <markus.stockhausen@gmx.de>
-Cc: wsa+renesas@sang-engineering.com, andi.shyti@kernel.org, linusw@kernel.org, 
-	brgl@kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260716062614.1507243-1-eleanor.lin@realtek.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, 14 Jul 2026 18:29:14 +0200, Markus Stockhausen
-<markus.stockhausen@gmx.de> said:
-> An I2C bus can make use of shared resources. E.g. two GPIO based buses
-> that share a single SCL line. To synchronize access to the bus the driver
-> might use locking with the help of i2c_lock_operations(). While this
-> works for normal transfers it is not available during initialization.
->
-> Especially if i2c-algo-bit module is loaded with parameter bit_test
-> it will issue some basic sanity checks that will access the bus without
-> locking. This might interfere badly with concurrent transfers. Even
-> if these are well synchronized via locks.
->
-> Allow the consumer of an algorithm to override if the bit_test is allowed
-> or not. For this add a new boolean attribute named skip_bit_test to
-> i2c_algo_bit_data. If set the test is not run.
->
-> Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
-> ---
->  drivers/i2c/algos/i2c-algo-bit.c | 2 +-
->  include/linux/i2c-algo-bit.h     | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/i2c/algos/i2c-algo-bit.c b/drivers/i2c/algos/i2c-algo-bit.c
-> index d1d9a6c1a1e2..7ca565cbff5b 100644
-> --- a/drivers/i2c/algos/i2c-algo-bit.c
-> +++ b/drivers/i2c/algos/i2c-algo-bit.c
-> @@ -639,7 +639,7 @@ static int __i2c_bit_add_bus(struct i2c_adapter *adap,
->  	struct i2c_algo_bit_data *bit_adap = adap->algo_data;
->  	int ret;
->
-> -	if (bit_test) {
-> +	if (bit_test && !bit_adap->skip_bit_test) {
->  		ret = test_bus(adap);
->  		if (bit_test >= 2 && ret < 0)
->  			return -ENODEV;
-> diff --git a/include/linux/i2c-algo-bit.h b/include/linux/i2c-algo-bit.h
-> index 7fd5575a368f..c4c43aec1e67 100644
-> --- a/include/linux/i2c-algo-bit.h
-> +++ b/include/linux/i2c-algo-bit.h
-> @@ -34,6 +34,7 @@ struct i2c_algo_bit_data {
->  				   maximum 50 us for SMBus */
->  	int timeout;		/* in jiffies */
->  	bool can_do_atomic;	/* callbacks don't sleep, we can be atomic */
-> +	bool skip_bit_test;	/* override bit_test module parameter */
->  };
->
->  int i2c_bit_add_bus(struct i2c_adapter *);
-> --
-> 2.54.0
->
->
+On Thu, Jul 16, 2026 at 02:26:14PM +0800, Yu-Chun Lin wrote:
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+...
+
+> >> > -     ret = gpio->reg_mask_xlate(gpio, base, offset, &reg, &mask);
+> >> > +     ret = gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_DIR_OP, base,
+> >> offset, &reg, &mask);
+> >> > +     if (ret)
+> >> > +             return ret;
+> >> > +
+> >> > +     ret = gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_DIR_WREN_OP,
+> >> base, offset, &reg,
+> >> > +                                &wren_mask);
+> >> 
+> >> What constrains these two to provide the same value back for reg?
+> >> To me it seems like the write enable might well be in a different register.
+> >> 
+> >> >       if (ret)
+> >> >               return ret;
+
+...
+
+> >> > -     return regmap_update_bits(gpio->regmap, reg, mask, val);
+> >> > +     return regmap_update_bits(gpio->regmap, reg, mask | wren_mask,
+> >> > + val | wren_mask);
+> >> >  }
+> >> >
+> >> >  static int gpio_regmap_direction_input(struct gpio_chip *chip,
+> >
+> > My initial design indeed assumed that the WREN mask and Data mask reside in
+> > the same register.
+> >  
+> > Regarding WREN support, especially if WREN and Data use separate registers, I
+> > came up with three ideas. Which direction do you prefer?
+> >  
+> > Approach 1: Provide Custom Callbacks in config (Let consumer driver handle it)
+> > We can add '.set' and '.set_direction' function pointers in
+> > 'struct gpio_regmap_config'. If a driver requires WREN, it can implement these
+> > callbacks itself.
+> > 
+> > static void gpio_regmap_set(struct gpio_chip *chip, unsigned int offset, int val)
+> > {
+> >         struct gpio_regmap *gpio = gpiochip_get_data(chip);
+> >  
+> >         /* If the driver provides a custom set (to handle WREN), delegate to it */
+> >         if (gpio->set) {
+> >                 gpio->set(chip, offset, val);
+> >                 return;
+> >         }
+> >         /* ... existing generic regmap logic ... */
+> > }
+> >
+> > Pros: Clean core, no need to touch existing drivers' xlate signature. The consumer
+> > driver handles its own locking for different registers.
+> > Cons: It feels a bit strange and inconsistent to expose only '.set' and
+> > '.set_direction' overrides while keeping other operations entirely abstracted.
+> >  
+> > Approach 2: Handle separate WREN register in the core (with locking concerns)
+> > We keep the 'XX_WREN_OP' in 'xlate'. If someone needs WREN and 'wren_reg != reg',
+> > we write to both.
+> >  
+> > static int gpio_regmap_set(struct gpio_chip *chip, unsigned int offset,
+> >                            int val)
+> > {
+> >         /* skip */
+> >         ret = gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_WREN_OP, base, offset, &wren_reg,
+> >                                    &wren_mask);
+> >         if (ret == -ENOTSUPP)
+> >                 has_wren = false;
+> >         else if (ret)
+> >                 return ret;
+> > 
+> >        ret = gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_OP, base, offset, &reg, &mask);
+> > 
+> >        if (has_wren && reg == wren_reg) {
+> >                mask |= wren_mask;
+> >                mask_val |= wren_mask;
+> >                has_wren = false;
+> >        }
+> > 
+> >        if (has_wren)
+> >                ret = regmap_set_bits(gpio->regmap, wren_reg, wren_mask); 
+> > 
+> >         /* ignore input values which shadow the old output value */
+> >         if (gpio->reg_dat_base == gpio->reg_set_base)
+> >                 ret = regmap_write_bits(gpio->regmap, reg, mask, mask_val);
+> >         else
+> >                 ret = regmap_update_bits(gpio->regmap, reg, mask, mask_val);
+> >  
+> >         return ret;
+> > }
+> >  
+> > Pros: Keeps all WREN logic unified inside the core framework.
+> > Cons: Introduces a locking issue. writing to 'wren_reg' and then 'reg' requires an
+> > external lock to be atomic, which seems to defeat the purpose of relying on regmap's
+> > internal lock. 
+> > 
+> > Approach 3: Assume WREN and Data always share the same register
+> > 
+> > static int gpio_regmap_set(struct gpio_chip *chip, unsigned int offset, int val)
+> > {
+> >         /* ... */
+> >         ret = gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_WREN_OP, base, offset, &reg, &wren_mask);
+> >         if (ret == -ENOTSUPP)
+> >                 wren_mask = 0;
+> >         else if (ret)
+> >                 return ret;
+> >  
+> >         ret = gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_OP, base, offset, &reg, &mask);
+> >  
+> >         ret = regmap_update_bits(gpio->regmap, reg, mask | wren_mask, mask_val | wren_mask);
+> >         return ret;
+> > }
+> >  
+> > Regarding this approach, I would like to ask from your experience: Is it
+> > actually common for hardware designs to place WREN and Data bits in completely
+> > different registers for GPIO operations?
+> > 
+> > If they practically always share the same register, this simpler approach might
+> > suffice.
+> 
+> If there are no further concerns, I will proceed with the third approach and
+> send out v6.
+
+From the above list I tend to the approach 2, but this might require to have
+GPIO regmap level of locking. I'm a bit lost in the context, though. I assume
+we need a fresh start, id est issue a v6 with approach 2 or 3 in place and
+summarize the choices in the cover letter, so we can understand what has been
+considered.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
