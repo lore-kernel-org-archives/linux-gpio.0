@@ -1,145 +1,146 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4953AA1A9;
-	Thu, 16 Jul 2026 17:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23C6446854
+	for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2026 18:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784224608; cv=none; b=WRARRWsr+fRbbpdBzge23OUQ2eB61tc4FcBCO65vMd3DmFiUk4SrsV4+PBYzYHYwgGBI1z3+6wHIDvPWtjqemJdKn+YAYGWU8J6d0mnYfLxB1+gaqo+56h/Scrzp02lNYrjuyzU18kZiKJbAiro98vTGNwIfWM5YlK6w9G3V1zY=
+	t=1784225811; cv=none; b=i3hQBnRHITzpG2gZEadZQBB9HLKb1g+VRmk9a56xQzYSmojyIm4JSuOFNcuOin64gr1G+/Lnz7k4BLUTtHhJF0YDzVyUyJ2WYLTD3dwcxaxUBA2a3cTbDG2qZCQDq2f7i983ysZ0L/jQ9fNt8GUthtEW0+ZcxgTuoy4BNVtKNPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784224608; c=relaxed/simple;
-	bh=JOhrs1OFvboDcLOeh8gPY/kmKk14v0E8LAeuat6Eybc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pUa2sztQqEIGVDOHaDqWiUha+3Df1Xs7RgjUL6F9gS2jtWdi4ibeF24pyr01McT4Q1Q8zRjbKfBnZWCpjTzNRXiMCspoqnysf8aAn+GAc9ff/4X6Pn8t/EqVYSnkDNzDfM53e5BVtlNXhaUH2EIZRcbB2xOa5RRqyC41FMMeC2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N3QQioGr; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1784225811; c=relaxed/simple;
+	bh=Efbsu1xIE7s436CBwuioeeP26PbwIsZHvSLfo8w9864=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jQeV5yJQ/BUnXxgbGPjlK3t5anC31z9avyz7A2qAfmGn26eUo1Uf5OIy1fdGuHZkjxC6xERW3cgUHsJyLZcsXyu/Osem92VXt8DeNhsQ0izP4fqPbdnTfmtJ6l1g3JP7T3XYYWjyWQ5RNWaWKI93UXLbNYBhGibYeHbbKX57+dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SIYH58kw; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N3QQioGr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1784224607; x=1815760607;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JOhrs1OFvboDcLOeh8gPY/kmKk14v0E8LAeuat6Eybc=;
-  b=N3QQioGrTSDloysBhVhyIN3cOQkH7KtemlGcFh8tqhlgKiIgjEX6VUUb
-   F04crWcoFVlhiilPb3zUQEGUDt7PNDZkriFXTWfN2rAVXvJKKIfGqUg4S
-   oHObyIN8KG0I7qUbNIsAkSy53Hv2w09Wu0Y/FHhlFC8K2R9ObDTBvDWU1
-   w9jxwjhjJinghVpv94sdNSzAOp9MGxvC2cnnNjPvhL8p5bx2Q48bqBl9k
-   sd1hPBLK83YyIgpXY5vLOKg9V5GlrFasNOYvpS85PS/tPVxLHMJWe8r75
-   dPLyAwDlBstRKEbxAvILdcQk85FyYAJqVmJyNy79/zi3vq4NpIRrO+avL
-   A==;
-X-CSE-ConnectionGUID: uLGBj/ynQeKZkv/QU2Cfwg==
-X-CSE-MsgGUID: yUu7GqxkSRmTmlp69bhLZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11848"; a="96029970"
-X-IronPort-AV: E=Sophos;i="6.25,167,1779174000"; 
-   d="scan'208";a="96029970"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2026 10:56:47 -0700
-X-CSE-ConnectionGUID: o44G+L4dSBaDIU9Jshoh0g==
-X-CSE-MsgGUID: dUnJTDUlRJ2uULcA2u/yFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,167,1779174000"; 
-   d="scan'208";a="260160330"
-Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.245.26])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2026 10:56:40 -0700
-Date: Thu, 16 Jul 2026 20:56:38 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Yu-Chun Lin <eleanor.lin@realtek.com>, Michael.Hennerich@analog.com,
-	afaerber@suse.com, andy@kernel.org, brgl@kernel.org,
-	conor+dt@kernel.org, cy.huang@realtek.com,
-	devicetree@vger.kernel.org, dlechner@baylibre.com,
-	james.tai@realtek.com, jic23@kernel.org, krzk+dt@kernel.org,
-	lars@metafoo.de, linus.walleij@linaro.org, linusw@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-realtek-soc@lists.infradead.org,
-	mathieu.dubois-briand@bootlin.com, nuno.sa@analog.com,
-	robh@kernel.org, stanley_chang@realtek.com, tychang@realtek.com,
-	wbg@kernel.org
-Subject: Re: [PATCH v3 3/7] gpio: regmap: Add gpio_regmap_operation and
- write-enable support
-Message-ID: <alkbVkB5KNNR7ffN@ashevche-desk.local>
-References: <d301ba0cd45d49d59e6a014188306ec9@realtek.com>
- <20260716062614.1507243-1-eleanor.lin@realtek.com>
- <aliV4u6_xzx9D9Aq@ashevche-desk.local>
- <DJZVLZ4LLD9E.3MPLYYXT1VQ9R@kernel.org>
- <alim_HGTD5RCupav@ashevche-desk.local>
- <DJZXVOGZ3ZTH.20P8NY7DON0X7@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SIYH58kw"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2cee9b74ee1so35323805ad.3
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2026 11:16:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784225806; x=1784830606; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=80kzqQxDPzxzS+os3KIXMK4OJKPHHq+HrsLNx95GDVs=;
+        b=SIYH58kwT+roGRuHK9TQFe6Qf8JXnWaQcVxlhVhUsKEmQjTm6TpwwSP26aYcw6GUOQ
+         opeKvbiohlKNMQUUTsEJoJhUGGlFFAUn99QIc5s6+9Sx47tFqCdAT/6TJj+q99u+Co6S
+         2Ls3g99pf2mBbUZUJItkOjZ/SamZTTUhlerIIN35vtKQfchLFhDFTrBUvfhpa6G9ntRP
+         KXFTlykip/MYViGEUm9urM67wE10SjwC0otJUfEyswHlhu0ZeB+K/ctYtmDnMZJTREQA
+         y5lwk3glFeW5Cf06vh/HXu64JvOxzptvekrHmnChOkFGeP0Jf/1Oyff4iMjnV8wmwXJj
+         JaGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784225806; x=1784830606;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=80kzqQxDPzxzS+os3KIXMK4OJKPHHq+HrsLNx95GDVs=;
+        b=HdNPh69a0aLSzG+klplUorUv5zpHFlhHN7Bb0dNkd9VIMasv81sA4cxXEtCE8gb1U2
+         cqAyqtUrPspbiylEuhvC4IYY/SvgLYmDKjUWZkmrfC9z1ET7fW8mR+ia/INCEmNbKSs2
+         urLb6AQdbs2gD5WvpEtkhj/StBkujTaCQ0K98hXe8ms1w4DLbiENK68c/gzUA/wh69uc
+         xkM9cwKnltrXFKMkswEhScI6VdoE4qaxpjkV5DgAEKwyceHCDQEfLHgxvSfGn+augt8o
+         njvbgdNAgHrSVS5q1MOr90odG3pQUmRUvC+kyixjCzl2619kr1DKLFUu8CbK6Y6GKR4D
+         BNCA==
+X-Gm-Message-State: AOJu0YxhpIfH6xH9DHlhw76eXUi/SG3oT9unb6At0LKTZf79lzDVA6G1
+	0YgjaAefxrGmLWwd/g71wAPFUDpv1XSd2gtvvyguphPlvTwtdRvsCvMHLnJlDQ==
+X-Gm-Gg: AfdE7cnnBrkIZ/+vLBHZ/PRnFW10s4qtSnDHeBWzf351FaxV7SXWHG/zfG9HK8fNux7
+	VMip03GgIENcEnRAaW7ApaO8Av1w6QxkfYb1tRVLm6jnKmKrCP5K66J9jhLyDx3WhzBNi+Ucqn0
+	7hMdWJ3QVobDBqGKWk2QF0iTO5TnNvKORo6gupJGBfjp1TOI2YoHVk48Ij+clGwCu07kh4a10tk
+	J4Sr/sarTdxGVm6zHLRAGF2hqwq2/7kBIpszopAJPJnFfeF2F6VgYYa3+uRFV2GfkpGY1oErzze
+	Cg/qEL03c17jOqS2N++tiBZAZ+TsAv7AFortE7EMrsJ6yPOOEak7/rk++hCKBsSV4TQO8NHazJV
+	CsDxBGSLYjdSwtFXStw8z8M8M+a6CnGHIBgUy4wd+6TR/UJ5VHKbzrfwes/rK6W8Wh+2C/9OQlV
+	aOG/JqIp70rpnVxqsdaan+VZL07IjKKk+Po86cW+HehqCYi2di4B4DAwdCaAen9HsjHYGQx6eqf
+	dKPgdHSNieOasIpubSCdQrSGdKqslsdw+We53jl/Odf3NEkSz0Pp3I=
+X-Received: by 2002:a17:903:1aee:b0:2c2:bd0d:3cf0 with SMTP id d9443c01a7336-2cf03d9dba9mr87376235ad.25.1784225806229;
+        Thu, 16 Jul 2026 11:16:46 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8000:7a86::e35])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf1055de4fsm24689575ad.44.2026.07.16.11.16.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jul 2026 11:16:45 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-kernel@vger.kernel.org (open list),
+	llvm@lists.linux.dev (open list:CLANG/LLVM BUILD SUPPORT:Keyword:\b(?i:clang|llvm)\b)
+Subject: [PATCHv2] gpio: logicvc: use devm_platform_get_and_ioremap_resource()
+Date: Thu, 16 Jul 2026 11:16:44 -0700
+Message-ID: <20260716181644.101450-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DJZXVOGZ3ZTH.20P8NY7DON0X7@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 16, 2026 at 12:55:37PM +0200, Michael Walle wrote:
-> On Thu Jul 16, 2026 at 11:40 AM CEST, Andy Shevchenko wrote:
-> > On Thu, Jul 16, 2026 at 11:08:55AM +0200, Michael Walle wrote:
-> >> On Thu Jul 16, 2026 at 10:27 AM CEST, Andy Shevchenko wrote:
-> >> > On Thu, Jul 16, 2026 at 02:26:14PM +0800, Yu-Chun Lin wrote:
+In the regmap fallback path, replace of_address_to_resource() plus
+devm_ioremap_resource() with devm_platform_get_and_ioremap_resource(),
+which looks up the resource and maps it in one call. The helper returns a
+pointer to the resource, so update resource_size() to dereference it.
 
-...
+Drop the now-unused linux/of_address.h include; of_node is still used by
+syscon_node_to_regmap() and platform_get_resource() resolves the same MEM
+resource that of_address_to_resource(of_node, 0) did.
 
-> >> > From the above list I tend to the approach 2, but this might require to have
-> >> > GPIO regmap level of locking. I'm a bit lost in the context, though. I assume
-> >> > we need a fresh start, id est issue a v6 with approach 2 or 3 in place and
-> >> > summarize the choices in the cover letter, so we can understand what has been
-> >> > considered.
-> >> 
-> >> I don't really like approach 3. You'd need to check if the regs of
-> >> both xlate calls are the same. With the sample code above, you
-> >> silently drop the first xlate'd reg.
-> >
-> > If I rank the proposals, the worst is #1, the best is #2.
-> >
-> >> And honestly, it really seems like a one-off. What controllers, are
-> >> there that need a write enable bit. The real problem seems to be
-> >> the assumption that we operate on just one bit. IOW we either set
-> >> mask or don't set mask in gpio_regmap_set().
-> >
-> > Yes, we should KISS.
-> 
-> But IMHO #2 and #3 are not KISS. Approach 2 is just a way of adding
-> some kind of pre op to a gpio set. Just tying it to a write enable
-> feature. That kinda bothers me. It might also be useful for other
-> things, too. So don't tie it to just write enable. And who is doing
-> a write disable if it's not self clearing for example. Probably Some
-> kind of post op :)
-> 
-> Approach 3 is a way to change the value of the written value - in
-> a restricted way, as is is just doing a OR with both values.
-> 
-> Also approach 2 might not even work if the hardware requires the
-> write enable bit set in the *same* write as the gpio set bit. Thus,
-> we might need both anyway in the future.
-> 
-> >> For a more generic solution, we should be able to control the
-> >> written value. We could add another .value_xlate().
-> >
-> > Maybe not now?
-> 
-> But if not now, then when? I wouldn't add the write enable feature
-> and later a more generic solution which also covers the write enable
-> feature.
+Built for ARM (multi_v7_defconfig + CONFIG_GPIO_LOGICVC) with LLVM=1;
+drivers/gpio/gpio-logicvc.o compiles cleanly.
 
-Taking into account how it's done in HW, I think the whole approach can
-be folded to just a boolean flag  (or a simply bit shift) in the config.
-Wouldn't it work?
+Assisted-by: opencode:hy3-free
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ v2: remove unused ret.
+ drivers/gpio/gpio-logicvc.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-> > As per IPs, Synopsys IPs (not exactly GPIO) likes to
-> > have that kind of "protection". So, from HW perspective it's kinda
-> > pattern, and it might be possible to see more IPs (including GPIO)
-> > that follow it in some cases.
+diff --git a/drivers/gpio/gpio-logicvc.c b/drivers/gpio/gpio-logicvc.c
+index cb9dbcc290ad..697370f43002 100644
+--- a/drivers/gpio/gpio-logicvc.c
++++ b/drivers/gpio/gpio-logicvc.c
+@@ -8,7 +8,6 @@
+ #include <linux/gpio/driver.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/syscon.h>
+@@ -91,7 +90,6 @@ static int logicvc_gpio_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *of_node = dev->of_node;
+ 	struct logicvc_gpio *logicvc;
+-	int ret;
 
--- 
-With Best Regards,
-Andy Shevchenko
+ 	logicvc = devm_kzalloc(dev, sizeof(*logicvc), GFP_KERNEL);
+ 	if (!logicvc)
+@@ -102,20 +100,14 @@ static int logicvc_gpio_probe(struct platform_device *pdev)
 
+ 	/* Grab our own regmap if that fails. */
+ 	if (IS_ERR(logicvc->regmap)) {
+-		struct resource res;
++		struct resource *res;
+ 		void __iomem *base;
+
+-		ret = of_address_to_resource(of_node, 0, &res);
+-		if (ret) {
+-			dev_err(dev, "Failed to get resource from address\n");
+-			return ret;
+-		}
+-
+-		base = devm_ioremap_resource(dev, &res);
++		base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+ 		if (IS_ERR(base))
+ 			return PTR_ERR(base);
+
+-		logicvc_gpio_regmap_config.max_register = resource_size(&res) -
++		logicvc_gpio_regmap_config.max_register = resource_size(res) -
+ 			logicvc_gpio_regmap_config.reg_stride;
+
+ 		logicvc->regmap =
+--
+2.55.0
 
