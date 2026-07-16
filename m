@@ -1,64 +1,61 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC60372ED6;
-	Thu, 16 Jul 2026 17:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D1426FD97;
+	Thu, 16 Jul 2026 17:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784223683; cv=none; b=JfFN6Acp6tNRG0yukcQ0WnRHLZhDhaYD2CWuq5tEnkxeoq1uGlwGkzKQ2OZHU4kXMETIbVNLlJphAvxoQrip6TsAm4WZ2Sf5vk0C4hN0BDxexm38MLEcoRao0pMljfebd3hI8tUY99irkGqJpnLINtCddQ6tJw2MDMy0S9mg57M=
+	t=1784223770; cv=none; b=e5I/yqSEd2Az5QPjg6DHR55oL3Ay5gn57h0n8dTbamWhXGxx4KMXyXxSWuHAXL0WFHiFgGM/RaMT1JbJ75MmIo/bLinUILifO1LaDEoyAumRQBj9+V6TU2985vNFmCBDMYVLdb/Sg6U4sps6H79o4E4sRsd6dWCZUTbRA8Fu6T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784223683; c=relaxed/simple;
-	bh=AhcgpeIxBz6bShne9XdLh65vxC/ELRu5M6D77TKILvQ=;
+	s=arc-20240116; t=1784223770; c=relaxed/simple;
+	bh=4Fde0zH8j0vJcSOWD8DgKoqdkh+Uq+VIoVGlR1HjS7M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fOa81Tbu19Puq5rZpm81FW1XGShAXiakMgqqUrhqM7xkpBDbG+UZmlvFwg+I0QiMo+WjNeSuLp14jJEuB2kw1Daf/TpqDDcsENWpAEK7Gs3IljxG/qCmeCpcPm6Eu2/EM0fjo0zi2/4rCe/wMRvEY8Vo36jOnRtjejn6+ln00CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FlmY+0F9; arc=none smtp.client-ip=198.175.65.19
+	 Content-Type:Content-Disposition:In-Reply-To; b=KuEpFo1JBNtQmwGbWKB0w14OpAXyxGHtObyc8WFH6Oe/U7G+t2A2nqw8TzASNXs81KVPhJuN/XjLRJ93pSu0DXo/f26vo3pRM5zJAW/BQk4hbgnMyuvaDpbWZbUMlvWugRR0W/ZrWih7cwDitpVnd+MtrRFC5a6c4jgLPXSle44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hkyxlwac; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FlmY+0F9"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hkyxlwac"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1784223681; x=1815759681;
+  t=1784223769; x=1815759769;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:content-transfer-encoding:in-reply-to;
-  bh=AhcgpeIxBz6bShne9XdLh65vxC/ELRu5M6D77TKILvQ=;
-  b=FlmY+0F9jLyXBJI2q2TZnink8g5uW+mfFtNSj1M7JnGXpF2+maj9fWlG
-   c8FEDACkKjhWg2Em9wh9KNXA2/ADXrxBLq6GcTs+DMVUUr/XlIJZMjCoO
-   fYXDt0dSeExdxOeHCieagcw1I5HrpnH168Kc+EsodxwCgHUnzOCqOYeBc
-   /QOkH0QTRG1Zz7ayxGhHtqtp1MpqkfCY4exFxkFOyPXX5q3Q905qxcOU3
-   lEhYcmAz3lJDDLssc+mUqpPIdn/cUps7wzdPGtFOXDDdDIJBUAHaEvMGp
-   9ma7OsNv3w88chgN0Xwhe5mb/YZ04IWKOVdwEri592x90bcBKC2mla3Ur
-   w==;
-X-CSE-ConnectionGUID: ik/jQD+ZQHaRXaRwCbHLxg==
-X-CSE-MsgGUID: s4NFuV7qRvyQ94qfoPZBGw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11848"; a="84852773"
+  bh=4Fde0zH8j0vJcSOWD8DgKoqdkh+Uq+VIoVGlR1HjS7M=;
+  b=hkyxlwacezvrjJHmD6d6jRZgg8vS4exeg4ZgRouQ3wWumENDuzLfLiJj
+   cvbMfSP2Crqxd/bGC8Yw8W6ydNRYjrNClWdRIwymQ6Z6FTac0K/YMQqxd
+   bPkW21/OEnZEKW9MI9aRzuyK17p5r/3Lw0zH14Juggx0OH5xss2Tik9iF
+   zRFeESZTuHQr8+R8sLNuq7u2pQJnwxGYdAirBD5gpt6Vb2olIeHY4fSUG
+   wCFKSKwtvMgvx9HvLV8Uf2ANzD67keyloSGUHZ7vLfQEYLCNvNmhMmmJB
+   4bZO9Np0NyI460RPyBJ1o2V11rxBq8w6Ovq9unGes7ZfRBpwlFRK2HkZF
+   Q==;
+X-CSE-ConnectionGUID: HV0Z99LETQ64nzDVCLbYsg==
+X-CSE-MsgGUID: VaTwpokFRu+a1Cu7TrhxcA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11848"; a="83877126"
 X-IronPort-AV: E=Sophos;i="6.25,167,1779174000"; 
-   d="scan'208";a="84852773"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2026 10:41:21 -0700
-X-CSE-ConnectionGUID: 5nnamH3ISFm155IdQLTEfg==
-X-CSE-MsgGUID: w9pg/V9uQo+6he2yjtW8+A==
+   d="scan'208";a="83877126"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2026 10:42:48 -0700
+X-CSE-ConnectionGUID: 85mIzpyiTuGierS4TaWEow==
+X-CSE-MsgGUID: jEZkAGURRrGr75I645e1pA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,167,1779174000"; 
-   d="scan'208";a="255412480"
+   d="scan'208";a="256023104"
 Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.245.26])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2026 10:41:17 -0700
-Date: Thu, 16 Jul 2026 20:41:15 +0300
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2026 10:42:46 -0700
+Date: Thu, 16 Jul 2026 20:42:44 +0300
 From: Andy Shevchenko <andriy.shevchenko@intel.com>
 To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
 Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Hoan Tran <hoan@os.amperecomputing.com>,
-	Andy Shevchenko <andy@kernel.org>, Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 16/21] gpio: Unify style of acpi_device_id arrays
-Message-ID: <alkXuxYdLKn14rKZ@ashevche-desk.local>
+	Bartosz Golaszewski <brgl@kernel.org>, Michael Buesch <m@bues.ch>,
+	Andy Shevchenko <andy@kernel.org>,
+	William Breathitt Gray <wbg@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 20/21] gpio: Unify style of pci_device_id arrays
+Message-ID: <alkYFLPlMOT-8EH1@ashevche-desk.local>
 References: <cover.1784133987.git.u.kleine-koenig@baylibre.com>
- <bf617dc2c662e80833406bd3a3f23cecdde071e4.1784133987.git.u.kleine-koenig@baylibre.com>
+ <a5c6484f2ff045068b667e3c08e8f98fd31cbbc6.1784133987.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -68,26 +65,30 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bf617dc2c662e80833406bd3a3f23cecdde071e4.1784133987.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <a5c6484f2ff045068b667e3c08e8f98fd31cbbc6.1784133987.git.u.kleine-koenig@baylibre.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Jul 15, 2026 at 06:55:21PM +0200, Uwe Kleine-König (The Capable Hub) wrote:
-> Update the various acpi_device_id arrays to conform to the most used and
+On Wed, Jul 15, 2026 at 06:55:25PM +0200, Uwe Kleine-König (The Capable Hub) wrote:
+> Update the various of_device_id arrays to conform to the most used and
+
+OF?!
+
+I guess you messed up with the patches in this series. Two mistakes I can only
+explain with some bad rebase happened or alike.
+
 > generally recommended coding style. That is:
+> 
+>  - no comma after the list terminator;
+>  - a comma after an initializer if (and only if) the closing } is not
+>    directly following;
+>  - no explicit zeros in the list terminator;
+>  - a space after an opening { and before a closing }, a single space in
+>    the list terminator;
+>  - at most one entry per line;
+> 
+> Adapt the few offenders accordingly.
 
-...
-
->  static const struct acpi_device_id dwapb_acpi_match[] = {
-> -	{ .id = "HISI0181", .driver_data = GPIO_REG_OFFSET_V1 },
->  	{ .id = "APMC0D07", .driver_data = GPIO_REG_OFFSET_V1 },
->  	{ .id = "APMC0D81", .driver_data = GPIO_REG_OFFSET_V2 },
->  	{ .id = "FUJI200A", .driver_data = GPIO_REG_OFFSET_V1 },
-> +	{ .id = "HISI0181", .driver_data = GPIO_REG_OFFSET_V1 },
->  	{ .id = "LECA0001", .driver_data = GPIO_REG_OFFSET_V1 },
->  	{ }
-
-Why this churn? It simply should be folded to the previous patch.
 
 -- 
 With Best Regards,
