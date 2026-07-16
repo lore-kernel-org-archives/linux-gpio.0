@@ -1,225 +1,145 @@
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E559439CD01;
-	Thu, 16 Jul 2026 07:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12F73BB11C
+	for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2026 07:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784186140; cv=none; b=Q+QOd5Lxy34qYVJWgJdK5op3tgfipCC4n763q9tXzorBWDWLZvnSNp/+37XF5MphzH+J4w2DRdRk0rjgPcuc47Ryt9AVg9C0xWY5llZaDctcS9eYy1mMB9mFkdugMMAKlqFQ4SpivAZN15KXtfJ5wfTRHc71iOHPXqbd77ktyIg=
+	t=1784188730; cv=none; b=fST/bvmMiZzJ4gLGuebDY0t1PROvWt8TeTOvPlvWJoZauBSOCEWU+q4Ka6UHGPE3+yNfeSpPctebWa7Q9r4Wu4m6b8OmdaS5Y56UCENU6yXEitMOYUjfZygPJR+zx+wRVP4LRzmD5HIsQTuJYeIXFAsITdc6z+lCudMQATbjxi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784186140; c=relaxed/simple;
-	bh=WG82U4sThSimZ8pJp8bKDS4TEGZ6pt0UEc6gUospZ7w=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=G4xtxooYEJx/wPUFZo22UhVObMgciEKP/AYZBX2piDsMkrnXGhmo16VHDhVo00DB7jeHKYTXbc/4feKhbuVV4GY7G2pAdXLvO496I69xirW5aWwRqtIy+y+e8ukAp6YNWel2g7kOS4Dq+ykfPf2n+cxd+1ne1/3LbNMslqxdjEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4320:1000:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 0BBAC282;
-	Thu, 16 Jul 2026 09:15:30 +0200 (CEST)
+	s=arc-20240116; t=1784188730; c=relaxed/simple;
+	bh=xkj3CbNtpsQQELF6vqywDuYoJlhxgXl2aCyhWd1IOiY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BlYWrjsfvij4jmdKy4WKHe+qvU4nqLcJL+OUSkJn2tc2lbhDfhT3klyIpPYuEF9hOXHHhiJRqNtG2AjrnT9yrj1C7x7PfbH5/Cd5Up6Rt0X7c+jkIoLuC12G9JOAx26gh6HqQkRr/AKURv4LDMf168iZABYll6kGXhNV9W1y1wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hQcy2Nur; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SoNPppXc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hQcy2Nur";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SoNPppXc"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66G7DxiU2115330
+	for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2026 07:58:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RAdwQyzglCbMhJebgMRFMHDqAC+jZDAVHlge28Q8bBI=; b=hQcy2Nurynypdna2
+	+WeKTTBMeDvhyILnrDiGCJBejeLVrFwiBMz+tmywAEIXfPbp8OyLnpI5ZPFfbi0A
+	IoPb5rfz8s469uYTO2d22fRv+jhTTNLVnbBMUmcM/JbilNMEtjnaF+8KqzqrV7jg
+	3K1xs/tMyJAN2zJ6JoSJxQyLTTw9Q3DW/C1RB6CJUNKJEdMDxZ8rwQY3PcWvdvvZ
+	PWdNHePYQATjpNj+T4LHIiE9esoYjHBjZukdjsm1VNh89x60i8LMvfViuesShPsA
+	JVB8ttyhrMNC6gmqzf23kBXET1/ivyU239FQbYzfXukNaDXeylTP2RK7EJmEsioo
+	HCzN0w==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4feeg1jpxr-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2026 07:58:47 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-51a8b0a08d2so87566671cf.0
+        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2026 00:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1784188727; x=1784793527; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=RAdwQyzglCbMhJebgMRFMHDqAC+jZDAVHlge28Q8bBI=;
+        b=SoNPppXctUx8N74oRu5FybQfri+nkVThBaMv6OVeIaPs6Shk/g8qz4u2AA+HZ+DGx5
+         b607AHBBrPmn92UdJvf1c7tIFrBMSZriXc3LT113MFYrBhXRGElX1kYTJ0ehBRSv18/X
+         Fo00oNTulGuwIgdNFqJPXOkdvzizbGbr3wCKtvpVjrJLEwL93zUEfkmkJOJ2MdZafNn9
+         uXRWp5j007areQAbe4OFkiIEydCh8M91WQnCisHqO59niRlH5RRj8Rs8OFlnJN4S396N
+         4dj26uSKrlnMehn3UqMjnQg4VVRCWK2Hh99jY1jjoeRkO0gHZq4ca6sP/Dd+3Xg6mpTd
+         HpxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784188727; x=1784793527;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=RAdwQyzglCbMhJebgMRFMHDqAC+jZDAVHlge28Q8bBI=;
+        b=Pvt6pzaJRV0ffMSCwMz+6BSnQMJeNGCJz6+0GMo6RMMvF+HjpDOtpPSNK0dgO5lqGN
+         wPRNvJuANhEmyC8Ye2p4W/rRm8HeZuj/dj1mh6mapbVABvRUhhX7z+E5+opU4AWlcxUX
+         xK3wBbqEy/0QERhvfT6M/jMR/Wl7g2650m4h1HTJFCJyPv+vIARQVCuvbbLva5as+kfr
+         2+QeO+x/aNC6HUm79NzDsKKhKyiMSi6OruGADMMViFjSIBl9C4cor7IpKQQLTef2onic
+         NfYUMefmibiCu+sZHJgZGmeLdBHCow7GEbnOSDDyVddzItnqFcGG6W7BlTuzC8ZNyasD
+         nBZw==
+X-Forwarded-Encrypted: i=1; AHgh+RpgvIDSCBxuJtGNESfgsi64+ozJmDRrTBgRwWesuacUuzgI0XPxc4P1v4QFihvQqb0+r/xcvnSBMmlq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6fd1LBwB3alSDajBXUxSZJbEdz2YJ0DEuZ/D9xTq65FFRO+X8
+	CyByU2yI2L8u+cWpVBwT0w8Q/4n7Fg3t3gohjyod68y8FqgLoQq1jcxEq3Mfo660SdyEM5Vk0u3
+	ZPEEQrwTLbDAazXFvEztbuIXCDVHb/LG9lNnijRFWfgm07nTw9pLLDA12wdjx9ZId
+X-Gm-Gg: AfdE7cm3xbM5x9LOVTumt257ULhVY1yaynpfhG/QRg8qXpxQl5r0jv+UaQaVEw9etZl
+	VCSjvuesEousSZrvDUUoLJ8P+a1y1V0FrjNoAJ9fgfxH5NycYSf1BKZSiTB1wnuf8beAOMi6PZn
+	6IfS8sM+HXnDNQ54NNTfAkhA6GYqelPWXwwY766MSL7Q4uneDqHGwk1G4u1U8O7qWIe/hFxUETq
+	r+sONa2C2vGq0zIR45LDB+iwYPZPi3H40svt9ctMrb1gGaQtAg3qhHXeeJmtSlhHZBm3pmE4PL2
+	N5HUW8hoRb/28UOwatyTNqqHxxmOxNpQGVSmOPEKUEYjqGhEIP2oohg0eSjg5Kyh0SzsmEJx82Z
+	lRSQ1AKVx6YIQnYNgB0qLwRRmUQ==
+X-Received: by 2002:a05:622a:1aa5:b0:51c:504:2ef7 with SMTP id d75a77b69052e-51e3c33baeamr114404241cf.67.1784188727272;
+        Thu, 16 Jul 2026 00:58:47 -0700 (PDT)
+X-Received: by 2002:a05:622a:1aa5:b0:51c:504:2ef7 with SMTP id d75a77b69052e-51e3c33baeamr114404021cf.67.1784188726809;
+        Thu, 16 Jul 2026 00:58:46 -0700 (PDT)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:76f:d108:485:5b34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f4635a63esm22876616f8f.9.2026.07.16.00.58.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jul 2026 00:58:45 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+        Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+        Colin Ian King <colin.i.king@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] gpio: bd72720: make read-only const arrays regs static
+Date: Thu, 16 Jul 2026 09:58:41 +0200
+Message-ID: <178418869934.4524.16365988098606564304.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260714170258.186766-1-colin.i.king@gmail.com>
+References: <20260714170258.186766-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 16 Jul 2026 09:15:29 +0200
-Message-Id: <DJZT74OCHTA2.3LLOKE9Y2SBXO@kernel.org>
-Subject: Re: [PATCH v3 3/7] gpio: regmap: Add gpio_regmap_operation and
- write-enable support
-Cc: <Michael.Hennerich@analog.com>, <afaerber@suse.com>, <andy@kernel.org>,
- <brgl@kernel.org>, <conor+dt@kernel.org>, <cy.huang@realtek.com>,
- <devicetree@vger.kernel.org>, <dlechner@baylibre.com>,
- <james.tai@realtek.com>, <jic23@kernel.org>, <krzk+dt@kernel.org>,
- <lars@metafoo.de>, <linus.walleij@linaro.org>, <linusw@kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-realtek-soc@lists.infradead.org>,
- <mathieu.dubois-briand@bootlin.com>, <nuno.sa@analog.com>,
- <robh@kernel.org>, <stanley_chang@realtek.com>, <tychang@realtek.com>,
- <wbg@kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Yu-Chun Lin" <eleanor.lin@realtek.com>
-X-Mailer: aerc 0.20.0
-References: <d301ba0cd45d49d59e6a014188306ec9@realtek.com>
- <20260716062614.1507243-1-eleanor.lin@realtek.com>
-In-Reply-To: <20260716062614.1507243-1-eleanor.lin@realtek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE2MDA4MSBTYWx0ZWRfX/BDZNpYntPF8
+ Uq6T3cZPuQi/t7Wrd+N6usCP9v34CqxbvXmz80aRix3FWU1b7UVaVq9VSNQKvP1kBKBTnydU3Ql
+ YleZsoUOpYdLGac5EaLanzUBxI1FcHaXlhoSxA18g0DT+sDQuXtPoRAV6mNsM6iZ4tWJnovjor3
+ rYRJLPUBczDukmZ1eTfwpaSFJ9q2pGUDQwt1naJwSzR2DqINz4qmH7ltYKsEk6fsGpjzHTAOAz7
+ O9k7FM4anJXBJVGLUaEiAzOvxnNjiAetJi450lvORXaj/xz4/kskYFTDLaIdgRsbwdG51kBvkJi
+ gMHaZbvg7AXkfBYaBK839aM9PqZTK0NrBYtAe0QD4u48jrgwCdlP+9MqkEzSiEwOGqPr5YkTQNO
+ GwG5xqUrJSxjevnCg6xABp+7yuQYzgVUxfIrKnrjSaHtOsjGUa/EYtM/addiW5fC5aa6dh/iIBF
+ IHce/L7OcxpcdUL2Ssg==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE2MDA4MSBTYWx0ZWRfX6z0A+NB/VktD
+ +MQXXekAYAj/Tw3mIyYB/r+7FNcZlGdw5IdIHtasEFoXt5fQjYZuTgREeCfl9jGTpwhdrXVJvAr
+ 4xtD1dS2uft1yREyscPG0MlXAdW6OxY=
+X-Proofpoint-GUID: Ai8xfxRsqVnCSSb4vq7qGXTmYbQPrSHm
+X-Proofpoint-ORIG-GUID: Ai8xfxRsqVnCSSb4vq7qGXTmYbQPrSHm
+X-Authority-Analysis: v=2.4 cv=SsOgLvO0 c=1 sm=1 tr=0 ts=6a588f37 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=5Y_hXDp08lPRMBJS8ZsA:9 a=QEXdDO2ut3YA:10
+ a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-16_03,2026-07-15_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
+ malwarescore=0 spamscore=0 impostorscore=0 adultscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607160081
 
-Hi,
 
-On Thu Jul 16, 2026 at 8:26 AM CEST, Yu-Chun Lin wrote:
->>> > @@ -185,7 +218,7 @@ static int gpio_regmap_set_direction(struct
->>> gpio_chip *chip,
->>> >                                    unsigned int offset, bool output)
->>> > {
->>> >       struct gpio_regmap *gpio =3D gpiochip_get_data(chip);
->>> > -     unsigned int base, val, reg, mask;
->>> > +     unsigned int base, val, reg, mask, wren_mask;
->>> >       int invert, ret;
->>> >
->>> >       if (gpio->reg_dir_out_base) {
->>> > @@ -198,7 +231,12 @@ static int gpio_regmap_set_direction(struct
->>> gpio_chip *chip,
->>> >               return -ENOTSUPP;
->>> >       }
->>> >
->>> > -     ret =3D gpio->reg_mask_xlate(gpio, base, offset, &reg, &mask);
->>> > +     ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_DIR_OP, base=
-,
->>> offset, &reg, &mask);
->>> > +     if (ret)
->>> > +             return ret;
->>> > +
->>> > +     ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_DIR_WREN_OP,
->>> base, offset, &reg,
->>> > +                                &wren_mask);
->>>=20
->>> What constrains these two to provide the same value back for reg?
->>> To me it seems like the write enable might well be in a different regis=
-ter.
->>>=20
->>> >       if (ret)
->>> >               return ret;
->>> >
->>> > @@ -207,7 +245,7 @@ static int gpio_regmap_set_direction(struct
->>> gpio_chip *chip,
->>> >       else
->>> >               val =3D output ? mask : 0;
->>> >
->>> > -     return regmap_update_bits(gpio->regmap, reg, mask, val);
->>> > +     return regmap_update_bits(gpio->regmap, reg, mask | wren_mask,
->>> > + val | wren_mask);
->>> >  }
->>> >
->>> >  static int gpio_regmap_direction_input(struct gpio_chip *chip,
->>
->> My initial design indeed assumed that the WREN mask and Data mask reside=
- in
->> the same register.
->> =20
->> Regarding WREN support, especially if WREN and Data use separate registe=
-rs, I
->> came up with three ideas. Which direction do you prefer?
->> =20
->> Approach 1: Provide Custom Callbacks in config (Let consumer driver hand=
-le it)
->> We can add '.set' and '.set_direction' function pointers in
->> 'struct gpio_regmap_config'. If a driver requires WREN, it can implement=
- these
->> callbacks itself.
->>=20
->> static void gpio_regmap_set(struct gpio_chip *chip, unsigned int offset,=
- int val)
->> {
->>         struct gpio_regmap *gpio =3D gpiochip_get_data(chip);
->> =20
->>         /* If the driver provides a custom set (to handle WREN), delegat=
-e to it */
->>         if (gpio->set) {
->>                 gpio->set(chip, offset, val);
->>                 return;
->>         }
->>         /* ... existing generic regmap logic ... */
->> }
->>
->> Pros: Clean core, no need to touch existing drivers' xlate signature. Th=
-e consumer
->> driver handles its own locking for different registers.
->> Cons: It feels a bit strange and inconsistent to expose only '.set' and
->> '.set_direction' overrides while keeping other operations entirely abstr=
-acted.
->> =20
->> Approach 2: Handle separate WREN register in the core (with locking conc=
-erns)
->> We keep the 'XX_WREN_OP' in 'xlate'. If someone needs WREN and 'wren_reg=
- !=3D reg',
->> we write to both.
->> =20
->> static int gpio_regmap_set(struct gpio_chip *chip, unsigned int offset,
->>                            int val)
->> {
->>         /* skip */
->>         ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_WREN_OP, base=
-, offset, &wren_reg,
->>                                    &wren_mask);
->>         if (ret =3D=3D -ENOTSUPP)
->>                 has_wren =3D false;
->>         else if (ret)
->>                 return ret;
->>=20
->>        ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_OP, base, offs=
-et, &reg, &mask);
->>=20
->>        if (has_wren && reg =3D=3D wren_reg) {
->>                mask |=3D wren_mask;
->>                mask_val |=3D wren_mask;
->>                has_wren =3D false;
->>        }
->>=20
->>        if (has_wren)
->>                ret =3D regmap_set_bits(gpio->regmap, wren_reg, wren_mask=
-);=20
->>=20
->>         /* ignore input values which shadow the old output value */
->>         if (gpio->reg_dat_base =3D=3D gpio->reg_set_base)
->>                 ret =3D regmap_write_bits(gpio->regmap, reg, mask, mask_=
-val);
->>         else
->>                 ret =3D regmap_update_bits(gpio->regmap, reg, mask, mask=
-_val);
->> =20
->>         return ret;
->> }
->> =20
->> Pros: Keeps all WREN logic unified inside the core framework.
->> Cons: Introduces a locking issue. writing to 'wren_reg' and then 'reg' r=
-equires an
->> external lock to be atomic, which seems to defeat the purpose of relying=
- on regmap's
->> internal lock.=20
->>=20
->> Approach 3: Assume WREN and Data always share the same register
->>=20
->> static int gpio_regmap_set(struct gpio_chip *chip, unsigned int offset, =
-int val)
->> {
->>         /* ... */
->>         ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_WREN_OP, base=
-, offset, &reg, &wren_mask);
->>         if (ret =3D=3D -ENOTSUPP)
->>                 wren_mask =3D 0;
->>         else if (ret)
->>                 return ret;
->> =20
->>         ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_OP, base, off=
-set, &reg, &mask);
->> =20
->>         ret =3D regmap_update_bits(gpio->regmap, reg, mask | wren_mask, =
-mask_val | wren_mask);
->>         return ret;
->> }
->> =20
->> Regarding this approach, I would like to ask from your experience: Is it
->> actually common for hardware designs to place WREN and Data bits in comp=
-letely
->> different registers for GPIO operations?
+On Tue, 14 Jul 2026 18:02:58 +0100, Colin Ian King wrote:
+> Don't populate the read-only const arrays regs on the stack at run
+> time, instead make them static.
+> 
+> 
 
-I'd say that such a write enable bit by itself is pretty uncommon
-for a gpio controller, regardless if it's in the same register or in
-a different one.
+Applied, thanks!
 
->> If they practically always share the same register, this simpler approac=
-h might
->> suffice.
+[1/1] gpio: bd72720: make read-only const arrays regs static
+      https://git.kernel.org/brgl/c/a8e59e3ac9f7f7154e0e80f45933799da8b4dc89
 
-It seems, that your hardware has it in one register. Why do you need
-a separate mask anyway? Why can't the xlate callback just set the
-bit in addition to the gpio bit? It looks like in the end you're
-doing a "mask |  wren_mask" anyway. What am I missing here?
-
--michael
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
