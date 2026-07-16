@@ -1,124 +1,176 @@
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010019.outbound.protection.outlook.com [52.101.61.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397023B2D39;
-	Thu, 16 Jul 2026 13:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784208115; cv=none; b=ZL/cPBov+KZnAvHmkc5XQLo6YNt5ySUOWoi508APApqOi5UVTcIq9r0z6D+5H5ykuH+TXQVqj+wAvFX0k1Dv5MeFeRpGEG/zHeRhz7agDey377tvNJiGrVe9/VjoMVevUBNpF93I+xAA8FCgvnB79IoJ4DMLCiyltY0KOthZUy4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784208115; c=relaxed/simple;
-	bh=SL4pY/1hpVjydxLiVT7wjPjnmaQBwI1uzvzemPcSZgc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=D6DzYC4oZ/EjhuLHZVCcft1WE7cL6lR6fRPI/6gBzd89Cfw09aMJnpt+FRjufDqQqmudKUCD4gPgCZ0azI5sJj9bRc+7TDhSQvWDny/inBfci7/kroS66UjLN7COWmuMm6itKLUeXkPWmHIzDZSZ2E+XA8Km9wReaEg1SYCZG7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=UyWeVBpU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HdL5r+xv; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310FA424642;
+	Thu, 16 Jul 2026 13:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784208609; cv=fail; b=Yjg/1UVnaWRd2D7o4rjGbQrZdG9ODfolpO0DAD4Xp5ssQVNnqr666NpmmMEQAoRi4T0GqqFShFeJ5kspSJXmJsw0+KpE2fzsLc13267UmBtAkoMy/KoE8u8J33nSBp457SEu2kyna1taea6q+QBrvm+2NlUsKYRDOKFbjPrI0Wg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784208609; c=relaxed/simple;
+	bh=vE2BnyoWjH8SgQHD1Vogy1YG7Q6+wY8fLXhuqFLxQhE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=a/6yhbdRYXBCHGkCwEP84IQr7S7ey7mopeWkG05aWQSluEAaOrR1C/bTaFtxlODXib3W1MbivaL4jDF0FzhV+X4bPPZsf70GfAD0efErpsYnztviT2hRM0iPRi0kC4HnVjIK0wVvsX1WO0QWARNehIvjOG9V9aAaINeLewKj3xs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EOc4Ac/6; arc=fail smtp.client-ip=52.101.61.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="UyWeVBpU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HdL5r+xv"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 197807A00FE;
-	Thu, 16 Jul 2026 09:21:53 -0400 (EDT)
-Received: from phl-imap-05 ([10.202.2.95])
-  by phl-compute-04.internal (MEProxy); Thu, 16 Jul 2026 09:21:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1784208112;
-	 x=1784294512; bh=EKb+YqsjzwVHOkXmtfECh0kI3dN6sHS/zWWw72sTgR0=; b=
-	UyWeVBpUtmv4CB2vN2mTrqJfhgK1e5kBUbeYag3sn4kq6J0H/ep0IRCksm+u3Tmf
-	qvN+0HTTp+pzhENMEFThOxHfASn3dXT6o6V+UnihxZgDDb265psIJA+gP0IxMyIj
-	m6DZ9zXMNlmeBhYkK65ClZaFo9qWptKosRQ538FeLvgJxCV1Ds9YjutWNBrTxngR
-	ye4ia/b596MlCBRAGeLQO58J5c6XNdR+zcnTepsty113CwV82eRjv8sXo6lrwB0z
-	VdUNpLg3hkn9K1BbGWY8xHXCwxhoS9jVuQ7RdkKgqNcbDkqaroWpR9y9lng7qllL
-	yXXEnS5t0R3W/lufrudEqg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784208112; x=
-	1784294512; bh=EKb+YqsjzwVHOkXmtfECh0kI3dN6sHS/zWWw72sTgR0=; b=H
-	dL5r+xvE++any7hRk5B2/WWQZV7RrCkJtrBrMBMLGJUGmABgoJdmwLrRX7/LrhaE
-	2YrvgfobOQLppBJKQepWTXX8vffjjNHEW1xBzKhi6X1Ux4j0ES5awspr0C/ivbSK
-	PKPG9PUZTHffdYNlUdplYhRZIuTTx6pjcdIVMl+7DvtV0xbvRLvdO0l9+nHtSuo8
-	5eKxVndJln4Hr7zAXb3yMX1No5vUIHf6VuBCMDiX7sNcm6n9irqVKP8Mm6STlkPc
-	HC5mSwTwTIyv0HjBu2n3jqfXrS7nSZIOPUytllrUxaQR3lxWyryrImvkEOmgT3Up
-	hzyj8A2PwBUHD3dPCol9A==
-X-ME-Sender: <xms:8NpYak4xnmfAHAwiwkYl97kOEUFaJqqYkB8x99XSaS0_95hetNGoHw>
-    <xme:8NpYagvmHTIJWokO2V98AEu2RWnhwSEOUSAQ5kqZl06WiPr-OrP3BsqGKtIdEShlc
-    6cgGqcCE4D-Ggxjvmhsmbb7_tY6592aIQS_ZTZIEcPWqLFfftBRjwQ>
-X-ME-Proxy-Cause: dmFkZTFi2a10SvmurOlV4SjaRdFdNQwzJ7zM4umP+t371P532feLW43sykKsSdFflv03nJ
-    ihAJzJmpo3Zy96+BcPdLottpldIC+g3eKSyeRJFSOIOPQa5GORsmCBZzOh9vEyR08QLoF1
-    HQHQJxDQrkePbOrAg2EvwC2o7heXZ9ptQh6CebLCKwqTWX7bb0GjGb+OKhRMflTsM3WS75
-    9v549U+f825sTij6xoeSXPm9tiI0IBJSx83IpJmx6B9SIm6MF2m+lH1qPemxB2ZLsAaYl0
-    uOtpMcyQhVZT1OigmJ7WJR/XdMSPdMc9ZvCTqnTT0LKtz2pFSOlPdaxNyfn9jyxmZVdXq6
-    KCSjT1jMur4sOU58HeOjW7gUaXRs9FYmCGFksRjFZbnOf88ZuFqBS+dtfVEoi+k8hyKUIL
-    +bsQ0bWo/F7U8e5eEEFnPQ7g+nR7SLoDeZFL6zBgyU3T6qE3tmTjjRzVAZNQrZ4LtWJePv
-    FgW8wk9HnZidvKmHe8SRhR/YGLv6v/lAlbcvSdnHAvX6aVjILvPm2I7LVP7bKfGbX6PQOm
-    ZM1Pwz5CKDhUoC7Gj2OWMtVQlD2tDMkEL6eO+h7HV0/gCrthlQXVyQwlhr44rE+WwLG0xJ
-    VyrgRI/48kqjewBKj2qS2SXq+FeiI+F0+8fhS4XwdvIJ8Y8hOHVcYTciAfgg
-X-ME-Proxy: <xmx:8NpYatLkxRAuGM_9mTmLey67fvXDQMEOWIFRuCsuLE1y7ggQhdR7OQ>
-    <xmx:8NpYaliZTz7Uox9CZFd_krmfELtc98hn2H_2GlYXb3JV3QK-biVHRQ>
-    <xmx:8NpYaqLrhPsbijcHOJecz3bQcSUP1bvXpRP6oV95o5omYKQlVc1LxA>
-    <xmx:8NpYasj02L84aLClJtaSmziTm9c3CXAXh-vwBlks6JodgzHJVjVMwg>
-    <xmx:8NpYauHpC7C_xfeKQzMGx28UuiWo63C0KQQD_BidUevINdQ24zXCQY30>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 88918182007E; Thu, 16 Jul 2026 09:21:52 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EOc4Ac/6"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VLSs3d0vRDL/vo+HwwAbBWxB8KGmnDXc0H4OOhHqUQOl5s/K3xkAkXlTiSHNlLPI+/z8uD3PcB+5JmbdSKgjuWf6L9cYU8EPuaA0XED4ZWxcCrkWNTtnr9K6RWJBWveM8lYhBCuvSfDzQzRIkV8zE3E7ptyvyqGMTDB5lbnfQKTf56LTQRTXuZ8kVC8fVDxMujXyO46+td8HBycnCakiRFhcIVFK8phr/vSyp0zvqCOqne01noF7/wMXnRElI/+iwLFVbNYFFw5yY5DWFO1gc/kTGtks7J3cl18TJ8PsPgLhfmZCsijbXtWSVM6ZcSurpD7wK6IlV4BempCmhw/g5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lVduMacOxzK0rJm3Juf3cGXh/Ts2YBo+gJCLEftmEb0=;
+ b=UcSGnAzdXkUmFsWCG3S0WH8/z/EoBPrr/iHvMUkN5ixFL+gSRZQg5A+mkgmt0wD9sgtLRXGXQuLJLSp+rOuPzDZY1WN+o6KaEVh/ua/Tz9LTz9idF3YdswsIHi/eWNK+UEKuNH17kShdlxksLW9tWcQ92W7JbJqL7c6QOEMA+3iSJiHOubAaApxjMBpGgnO756eNi0Wzv64MWM4B56ROJLJyjEQJ/nbNhVKuZnhuSq3whDnPwHcsj/GhQ9rpV0z8UbE8Dw3iplbrnJo/1OJ87+rbOjKj5P6IUCUVgq1+pctVkPjfAO/LKfjwUahQ2L7XiWCGElh9Cf/IM2crbXBIFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lVduMacOxzK0rJm3Juf3cGXh/Ts2YBo+gJCLEftmEb0=;
+ b=EOc4Ac/61+VRYELrj4Gkc/PClyL53w+Tsecst42PpbSAuIWYFj2+xuOlGKtLdbRK7QURb2dJ6IyJ4wPoA94p8nNRBRmGt8tFzWgbaAQP/hI2/5X6SRGxlzUn86ehe+Q9161VPiqp2CmlyKymX29lAw67eiFHttCmAFZhAEGS6HFNItTU+w9M83pGI1drCxeqT5XLd5RPCf+2KDvslQ9g1yM5FNY/4WfMVHF+OU12Qe9/mgQXiRNl+Eof53Tncp5fhAMBzA82hLiPOUBBaStA4bJVpFADYSF8d9dyGMMQ7YOGqYM3Nap7wvgAYN3PhqP8n9hWz9OPcAymUSwZxQn5xg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ1PR12MB6051.namprd12.prod.outlook.com (2603:10b6:a03:48a::18)
+ by CYYPR12MB8939.namprd12.prod.outlook.com (2603:10b6:930:b8::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.12; Thu, 16 Jul
+ 2026 13:29:58 +0000
+Received: from SJ1PR12MB6051.namprd12.prod.outlook.com
+ ([fe80::96e1:b300:7b78:d3a9]) by SJ1PR12MB6051.namprd12.prod.outlook.com
+ ([fe80::96e1:b300:7b78:d3a9%4]) with mapi id 15.21.0223.011; Thu, 16 Jul 2026
+ 13:29:58 +0000
+Message-ID: <85cdd521-5817-40c3-a3ad-20271c1721f8@nvidia.com>
+Date: Thu, 16 Jul 2026 14:29:52 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: tegra264: fix DAP2 DIN/DOUT mux functions
+To: Prathamesh Shete <pshete@nvidia.com>, linusw@kernel.org,
+ thierry.reding@kernel.org
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, u.kleine-koenig@baylibre.com, dakr@kernel.org,
+ bhelgaas@google.com
+References: <20260715101636.547305-1-pshete@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20260715101636.547305-1-pshete@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MI1P293CA0013.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:2::15) To DM4PR12MB6063.namprd12.prod.outlook.com
+ (2603:10b6:8:b1::19)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AQRSor3DlODN
-Date: Thu, 16 Jul 2026 15:21:32 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Julian Braha" <julianbraha@gmail.com>,
- "Linus Walleij" <linusw@kernel.org>,
- "Andrea della Porta" <andrea.porta@suse.com>
-Cc: "Phil Elwell" <phil@raspberrypi.com>,
- "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>,
- iivanov@suse.de, joshua.henderson@microchip.com,
- "Lee Jones" <lee@kernel.org>, amelie.delaunay@st.com,
- "Ray Jui" <rjui@broadcom.com>, "Scott Branden" <sbranden@broadcom.com>,
- yrdreddy@broadcom.com,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Message-Id: <64117177-84e6-497a-9c3e-4361a11c4922@app.fastmail.com>
-In-Reply-To: <20260716131626.103199-1-julianbraha@gmail.com>
-References: <20260716131626.103199-1-julianbraha@gmail.com>
-Subject: Re: [PATCH v2] pinctrl: fix unmet dependencies from missing GPIOLIB
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR12MB6051:EE_|CYYPR12MB8939:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6933ed6-53f7-4dd6-cd44-08dee33e543d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|366016|376014|1800799024|10067099003|18002099003|22082099003|56012099006|11063799006|6133799003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	1tHUdnuysrIdl6M75/rCL3L2xhyO2TtJnB614tWMfnFxTUZ9ZC9QQ/IBwFqojNVZvNFUcHsG2Y2Ue9tbtdhRiTwwsgPdbRuPpbmVJKMARG87NYQQlItwM1pYX83LcortTu8WjNmi8atlXso1h80tl+2oZLLMQIWxD5XdsnX4vo/aECTNHwsf5/b8ENPYfSxLEZpkqcVXDCk5lFhNS/8v+fBsCQXSD0C7ehs9tepA/HxxhzNfBNq+1VpOyg+bAlx3ofHxeRqXwww8iiryI6agzB8xBmZl/m66RhL62EonwnhulDl6uEZ3P5lK/mGzzrj7tZ1QLB4DAUKry2jaJ/1lyG5RoLDpKBOpOnMt1dh4W+bGqYkNKb+ONKDdJb12oIrOgK4JxHZrX8rCdfP/FMmnAltua1kIAKRnJUfDkCGvewLgk9SoW2SADrK4kFnMplR9kADGzEIv98XdD8czk/vrADlVwqEqZhV1lEWfwSUhvgnrgn6IjGDlKlfYmVxaCtD5Ree+c1p1sfthTjdjMDRqwTCAm72CAz9HainZpUvCvKLsa42w47EopYqzECer0HMnzREL/WYa+a408QAOCUBf97m5JixMDWkGDwFQFpZ2SBtLrTGGF7AU5XmuKiWFCeIY50ydAXBzuJdm7kOsUEUrPehtOh9GLQJof0gze9G5+i0=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6051.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(376014)(1800799024)(10067099003)(18002099003)(22082099003)(56012099006)(11063799006)(6133799003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RFFJMG40U013VzR3NTV6cVRkR3NPMjhaRmJ3NzVZL2VRdXJhQkFuaVVEY2hO?=
+ =?utf-8?B?OExTY1lNaTAvWGllVlZDQmNhSkFTQ3ZkWm44Ni9JK2NvYzJXQ2kzMWJzZmNQ?=
+ =?utf-8?B?aGlBN0dabzZJVEFqSzFoVGw4R1JWN0J2VDE4RzRhWW9qdGQrZGliWGlOR0JX?=
+ =?utf-8?B?QUtXYkNqNk5ZZjVpVU9mTU9SdW1IUENadDhLeUZRbC90Y2MvaEJBaFlkVklW?=
+ =?utf-8?B?ZDlVYzVrZjNBUzArMENsRXhxSE5DdmxkRW8rTlJHekd4YXBuaFFFR2pvanF0?=
+ =?utf-8?B?aExDcmVTVlExT2hYTk9rNXdtenJwMWZwWlhlQnRtTisvWHVOc1ROSWN6SEdM?=
+ =?utf-8?B?cjFDRmozV3ZzTkJnZW9JaDlNdGpYZGs4MEd6SVM1TkdCMjZzck5wMWFZb3Rm?=
+ =?utf-8?B?d2wySXZWd2szRXFHbWdvaUsyenlxK0xyRVNjV3dmOFJsaW45SDBnQzliNWZv?=
+ =?utf-8?B?ZHZ5UzBrb1grNDRBWjJkQVBVQ3laVlBPc1pSV0dMWTk1Mjl1bFV4L1VESnhQ?=
+ =?utf-8?B?YkVHL2hXZ3VIWXZqdWt1eWpnVEc4UndKYkNDOWNFU29uaVAzc0RwL21CWm1w?=
+ =?utf-8?B?SWhpVVBHUEFsVzAxM2xaYithR0lIdkdtNkl6d3IvL1JGcDFQMFhuU0FjdS9F?=
+ =?utf-8?B?RHpwaldwTm8wSWNCcTYxNmNZaURkeXowbmhZZUVSc21xV1E2dktQaVJ0WFZ5?=
+ =?utf-8?B?RlRWTVliOVpYd0R1eDVJYXBwMm1CNkgyMXdwUzM1anpCRFpVTGZRMVZQQ29Y?=
+ =?utf-8?B?S084K21kaDFWemFaMmc4N0p1b1NXUDZZcEVaRG9wcHgxMkdZK0JWdzFIRDFk?=
+ =?utf-8?B?c0gvWDNLUTB2Yk5Hb2VnS2U3Vk5udXpuSVRSVFZFUTdlTmUybkNYSmNEcCtL?=
+ =?utf-8?B?dVI2ckRuLzQ0YzBjNEJiNm1CY3ZpMUN1b2V1UzE0YTB1Qzk5RDQ4RFR6eEcz?=
+ =?utf-8?B?bm1VbWhwM2w4MERqUEtFUWpwVFN0akhNOXgxWVpuWDJ2Wk1VeSsvMG44UzFk?=
+ =?utf-8?B?bTRBaEt5UDNGRG9HQ3NVcGQ4eks2enBrbUFiQ1pISTh5ZXBDRFdDZ3VoSEhu?=
+ =?utf-8?B?SUxzMG05ZDNHZFdlc3ViNjRTTkUxbE1VS1hMMEFsdWl3MVN5SkhiQWFsNnlr?=
+ =?utf-8?B?VEJVVDRqT21EdENQVmZrNlNBTVRKZVlrcmV0dU1McjVRWE91ZlpHcWxadTNY?=
+ =?utf-8?B?K2JLemplOVFiajd1T3MwS2hDZmNNWVlvU2VhdFdYdHJMN2pPMDdKM2hCOHR2?=
+ =?utf-8?B?VUdiNy8rR0d3QjhCMVR1S3MycmZWQWRXOUhuWDdWeXdIOXg2SlJBSkN1aHdy?=
+ =?utf-8?B?SlEwQXErb0NtUk05U1dwc0h4Z2J4ckgybVF4ZTJ3WTNISHRmbG5KYmtFLzJ5?=
+ =?utf-8?B?L2Vuc3VGVXRBYXpaQUpGYnJzYm93MUFkL0F3MWxmRFplNlV3ZjZRUkhsYWgz?=
+ =?utf-8?B?Yk51TXpoYlJEdHFYb2pLYzVTbW9RK2FTVXVoc1hpUG9iTWc2TXNxVlBqOW5L?=
+ =?utf-8?B?TWg0a2hqbXlzSzNoc1VYais5ZXNZL0lBTFBnQmdQa01TeW55SVhDL3g4SmZa?=
+ =?utf-8?B?NFdmVmh0Tlh0Q29Td1dtcGVqcFdEcVRha0VrRExsL0dOcjJqdkE3OXNndUpt?=
+ =?utf-8?B?YnI1TzZJNStRZmV2WGMxRXl0SU1PQjhDRkxTNlB4MEFSWUV5RmhrMVEwbXEw?=
+ =?utf-8?B?bHU5SHpuV0w4eUxER2lrVCtmQW04Z0hURmpkazhKQVhob2QzNW9XVVBpdlN0?=
+ =?utf-8?B?TE1vMUQzVlVjY0xCeVUxb0dtSEFQUHMvQWNVV3NHclJpUUh4eFBrSmNiTGNF?=
+ =?utf-8?B?ekUwSW11MDZYWGw5d0NNU3pKZ0F1K3FzaVRrZWJXOXBYL3J5eHI4QTN3VXlt?=
+ =?utf-8?B?Yi9sb00wWnhjenkxWGhGWjZVQ2xnVnBFQ0o0VFhmWVRqbndGNkxpR3JmWmdV?=
+ =?utf-8?B?ZTFHNzB4cW9WZGxCaTlZbjFucU1NQVUyeitvalZCS0d6NWQxbkJ3V3ZWMGRn?=
+ =?utf-8?B?YUJaSnhMU25zRW9nWGdIOThZai9QZXkrV2VBVTZNcU9mM3VRcTZqazF5Sy9P?=
+ =?utf-8?B?ZmhlVWQ4L1pCak01S2pmUmEwM3dSZm4zdFh0c1cydFlvYTRlV2JBcStjaVg5?=
+ =?utf-8?B?R01WSEhBOHFRYzQ2SkpNemJNV3U0dEErY1JsUlg0bjlKUXJlNUVuaEFCZmxV?=
+ =?utf-8?B?OFVXV1VsalZGcnhhOWFHSUcxVnFiREtaQlZZbEltREtJWThoTEZCcTNMVjFu?=
+ =?utf-8?B?WjJsaHF2R1lZd3VqMDVQQkdCZ1RwUElsdWVPSXBJUWd0blVMdnloL1I3bjk2?=
+ =?utf-8?B?aFJ2N2FsVjlwMUZtZ3pYSSs1cTIzYmttVlNUZzNxbEtNMFlwL2x2dz09?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6933ed6-53f7-4dd6-cd44-08dee33e543d
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6063.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2026 13:29:58.5706
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Bo9zq96Cg2HhoPLV3ttCSqx0BZd4chlMfu+Jw0Oh7FoKyj5mQYZhHPrhbAU6rlgQLaflP/KyabGanFLiyhJl2g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8939
 
-On Thu, Jul 16, 2026, at 15:16, Julian Braha wrote:
-> These 4 options, PINCTRL_PIC32, PINCTRL_STMFX, PINCTRL_IPROC_GPIO, and
-> PINCTRL_NSP_GPIO all select GPIOLIB_IRQCHIP without ensuring GPIOLIB is
-> enabled, causing unmet dependencies, such as:
->
-> WARNING: unmet direct dependencies detected for GPIOLIB_IRQCHIP
->   Depends on [n]: GPIOLIB [=n]
->   Selected by [y]:
->   - PINCTRL_PIC32 [=y] && PINCTRL [=y] && OF [=y] && (MACH_PIC32 || 
-> COMPILE_TEST [=y])
->
-> Similar options in this subsystem select GPIOLIB, so let's do the same here.
->
-> These unmet dependency bugs were found by kconfirm, a static analysis tool for
-> Kconfig.
->
-> Fixes: 2ba384e6c381 ("pinctrl: pinctrl-pic32: Add PIC32 pin control 
-> driver")
-> Fixes: 1490d9f841b1 ("pinctrl: Add STMFX GPIO expander Pinctrl/GPIO 
-> driver")
-> Fixes: b64333ce769c ("pinctrl: cygnus: add gpio/pinconf driver")
-> Fixes: 8bfcbbbcabe0 ("pinctrl: nsp: add gpio-a driver support for 
-> Broadcom NSP SoC")
-> Signed-off-by: Julian Braha <julianbraha@gmail.com>
+
+On 15/07/2026 11:16, Prathamesh Shete wrote:
+> The dap2_din_pv7 and dap2_dout_pw0 pin groups were assigned swapped
+> primary mux functions: dap2_din_pv7 (data input) was muxed to
+> I2S2_SDATA_OUT and dap2_dout_pw0 (data output) to I2S2_SDATA_IN. As a
+> result the I2S2 data-in and data-out signals were routed to the wrong
+> pins, breaking DAP2 audio.
+> 
+> Correct the functions so dap2_din_pv7 uses I2S2_SDATA_IN and dap2_dout_pw0
+> uses I2S2_SDATA_OUT. The register offsets and drive-group macros are
+> already correct and are left unchanged.
+> 
+> Fixes: c98506206912 ("pinctrl: tegra: Add Tegra264 pinmux driver")
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 > ---
+>   drivers/pinctrl/tegra/pinctrl-tegra264.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra264.c b/drivers/pinctrl/tegra/pinctrl-tegra264.c
+> index be64fba34dce..3802e480d39e 100644
+> --- a/drivers/pinctrl/tegra/pinctrl-tegra264.c
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra264.c
+> @@ -2051,8 +2051,8 @@ static const struct tegra_pingroup tegra264_main_groups[] = {
+>   	PINGROUP(gen1_i2c_sda_pw3, I2C1_DAT, RSVD1, RSVD2, RSVD3, 0x6018, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+>   	PINGROUP(dap2_fs_pw1, I2S2_LRCK, RSVD1, RSVD2, RSVD3, 0x6040, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+>   	PINGROUP(dap2_clk_pv6, I2S2_SCLK, RSVD1, RSVD2, RSVD3, 0x6048, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+> -	PINGROUP(dap2_din_pv7, I2S2_SDATA_OUT, RSVD1, RSVD2, RSVD3, 0x6050, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+> -	PINGROUP(dap2_dout_pw0, I2S2_SDATA_IN, RSVD1, RSVD2, RSVD3, 0x6058, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+> +	PINGROUP(dap2_din_pv7, I2S2_SDATA_IN, RSVD1, RSVD2, RSVD3, 0x6050, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+> +	PINGROUP(dap2_dout_pw0, I2S2_SDATA_OUT, RSVD1, RSVD2, RSVD3, 0x6058, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+>   	PINGROUP(pwm10_pv1, GP_PWM10, SDMMC1_CD, I2S7_LRCK, RSVD3, 0x6060, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+>   	PINGROUP(soc_gpio170_pu0, RSVD0, I2S7_SDATA_IN, CCLA_LA_TRIGGER_MUX, RSVD3, 0x6068, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+>   	PINGROUP(soc_gpio171_pu1, RSVD0, SPI4_SCK, RSVD2, RSVD3, 0x6070, 0, Y, 5, 7, 6, 8, -1, 10, 11),
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+
+This is still not correct. The ball numbers for these pads are switched. 
+It should be dap2_din_pw0 and dap2_dout_pv7. Please fix.
+
+Thanks!
+Jon
+
+-- 
+nvpublic
+
