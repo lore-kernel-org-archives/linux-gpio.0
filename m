@@ -1,128 +1,108 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A017343D75
-	for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2026 19:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1848A233937;
+	Thu, 16 Jul 2026 21:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784231946; cv=none; b=TuyVuQQWGOomkjY1kH5+kDopsNv7Y9mCHWq0S2wMksknx+JP4JkqRs6NcqvpWPFndaNyehLAqFoENnhhsrGLrNEQADcMhy8RLr4X5JkjDMLwHFYcnaabKaXSspq8/fCARMN/qKLK1HrbqSYidfKkyMTt+TkZSB6LkY3rVcziVg8=
+	t=1784236107; cv=none; b=ENwkEXg53EVXdgOxYzbGky22rZN5GApt0ENGaVyzJ8Qkcbg6lxBfmC/bjsAn2N8gq7ouujnwFWeyc2tCI/pQfQAo/p8jz8wfmls8GYbTwrfuaC3hcjMCis4WE247RdqOf9Cv5SlnLiHCUD9zG9nIzcoLQjpEZJdVKz6aS+sVMxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784231946; c=relaxed/simple;
-	bh=R1baLxCQCKRPO/bG+l1tOT3SxEBoZkIFD+lf/R0Dxvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hWOBpAhBuFqDIYNCh2On/hIOgzW4c2ec7PJWiOxq2iGugdlth7PcsD//pzKJ4+24AOi57FYh3WvojyP+DMYN8XBSlr4AYS4MPrkHaOcP4qmtajItZCnEq6aWT7lNpD0psHu1vIaIp7AiSPR3zKMojeHOMlWhpxG5H2OT5hGLIZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=SgD34G+P; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1784236107; c=relaxed/simple;
+	bh=rtGkXQexkYv9ZmQtD+3zWF0NUNOe9RB2B8crxulao9o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d+7hmZtHY5hKdC4Q5k04JP2zLOVcQ2rJXtzdhvjZzGIKtpW3UHNkSXHYTA9jphwaKi2IgCvba79gM8mT4f2GAZXNy8aEKmAuePNGatPeS7g95H9jDGSf5zvtlW30ayD3Xyfrs1naIxyWxod/7uaWTpkyXJjwhR1HncNPBtgWmRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=Eq5KPGTo; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="SgD34G+P"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-493b966dd74so28766665e9.3
-        for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2026 12:59:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784231943; x=1784836743; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=R1baLxCQCKRPO/bG+l1tOT3SxEBoZkIFD+lf/R0Dxvw=;
-        b=SgD34G+PYcxQDN55MTr/JyNJMk2ZhdQLZM4Fhwhvv6un5u0OVWeO8Vu4e9zPSnz78J
-         3M8H90JsaaCpgL0CaGMOW+HJCrnWCxpA+W7bV1O0k8/Iz5zUPaqg9IlsluyFHFfo2mqy
-         9UzjD5HFERFcH7wPR4dpGibK0grCp3v93rBm05kj2hFh9eNHk6cUq+dDIdImYWvFCIqM
-         ilKPaQax1fkEHf1cjUGYIDGwZvKIsBIUj7oKwF+MCzUwZEHBkhodKtIUZg5VtM9qpJt7
-         Zsvk5zid4GOr56ajMSt/Gg9Pq4pxgV1LDlCeC4CXyjkoGE9RS/0QSsemVoU6ytROfE7p
-         RvHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784231943; x=1784836743;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=R1baLxCQCKRPO/bG+l1tOT3SxEBoZkIFD+lf/R0Dxvw=;
-        b=gJbH//CXRi6tTBQAdTRzmMnYj23knNXp2kR4URsmyqWqOuvMabYQnMJreXpNisqUGk
-         PEZ/9/FmdHNSlwf4g5PnILskRtlWzo23Md2C5JzxTNpqT3zG8MOkzlK4gSMLTjW+iPSk
-         q+LSHnh3p78S6H1GbRDYmKQDExjE1IJScXy9MbPR5L8OdwgeSEJ5HGlT008DbkE8qEjw
-         SiIqI2QenX9Q0HzHOjSiFsNti2Ylg8TkOyWxDKxqYfHHDYG2ZkigLYRHzTc/Erl9KA//
-         VjsLk6g+/d242fHStcGfz0qAwN/BxIkVsqGJbulK803RKuR5NI3dbaek3P6Ofh8bg58H
-         vNjg==
-X-Forwarded-Encrypted: i=1; AHgh+Rqp86OycO7FjT+zXQZ2Sl2lzP9liIXlUqt8YOq/juqAQk132H86RgsFajFtYABbfqv+3FipVS5iAvbo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpHXUt9x4sEo2qqCimPPectLOcPsfm0jr+5imEzQ/6pYiDZIDI
-	fGg6cP+kmflo/X1IiHDxzDtbih5k3LAG/YnxHcFvtQNnS9h7si+xlE/RGgx7hIY6OGY=
-X-Gm-Gg: AfdE7ckUxEIsptISCszxlSz9T7pRT99EnDK1szZU78c7q+ajKzJUw/8PkV0rzB/ETFy
-	o2q+/B4dDkjvOwQ4KNLPVVRHW6drMth86xEizk7MKK0DeKgliIiL7uZKr0ZlN1ZDP/fUSOev/JP
-	dMT8LbEfw6OoXJjhBZeZQmgHbkMwiBcYw+0MXgspWudj+fK4zOihQ/2V44n05aGPcaeQD7bpspr
-	Oksg4u24fU8dWpd+MfVUFjrUDVnPWMvGSiqGQYhzIxG/xc6nULInfiiWXcEuUBBjQIKBjybbYJ1
-	gouomr0kWLpZ70FSSAWC+W1+Qof2E2mPZ7yo9JS+OyseV90cdOZnDyGGBVay5NAKfSu8fq7z9gD
-	5JyJ1IBFMAhZRAHBcIiRlQoHgeb/sNv5hTWp5gvxewurRQSejkc5bvegvA10utF5e3kXq4CYjbV
-	NfnHDtqKM=
-X-Received: by 2002:a05:600c:6b67:b0:495:699:84ca with SMTP id 5b1f17b1804b1-4953c28b651mr72345965e9.28.1784231943123;
-        Thu, 16 Jul 2026 12:59:03 -0700 (PDT)
-Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4953c70f99dsm112399255e9.2.2026.07.16.12.59.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2026 12:59:02 -0700 (PDT)
-Date: Thu, 16 Jul 2026 21:59:01 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Michael Buesch <m@bues.ch>, Andy Shevchenko <andy@kernel.org>, 
-	William Breathitt Gray <wbg@kernel.org>, Robert Richter <rric@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 20/21] gpio: Unify style of pci_device_id arrays
-Message-ID: <alk3rVVM6bqsJEu_@monoceros>
-References: <cover.1784133987.git.u.kleine-koenig@baylibre.com>
- <a5c6484f2ff045068b667e3c08e8f98fd31cbbc6.1784133987.git.u.kleine-koenig@baylibre.com>
- <alkYFLPlMOT-8EH1@ashevche-desk.local>
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="Eq5KPGTo"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:subject:date:message-id:reply-to;
+	bh=VCC/qc2nJRIPHa4QMA3MLvQ+dzby8MDD0oDkuZVuXqA=; b=Eq5KPGTotP00OPVx14H87+ky8U
+	lEBaEZqF7ueJkDMY+GwulgNKKT7YbS0VblPKEoBjeRLPqk2l5XnKUMJUiGGeUmJolbiD1MfOu9lvE
+	m3eNkZ/CLhrzno056nC0ahQDbaM31jAw8NfRi6uKOj+avzny/jvaEUjct2xTDKm0PoV8=;
+Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61] helo=pettiford.lan)
+	by mail.hugovil.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <hugo@hugovil.com>)
+	id 1wkTJX-000000007iG-1u9o;
+	Thu, 16 Jul 2026 17:08:15 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jon Ringle <jringle@gridpoint.com>
+Cc: hugo@hugovil.com,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	stable@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH] serial: sc16is7xx: implement gpio get_direction() callback
+Date: Thu, 16 Jul 2026 17:08:09 -0400
+Message-ID: <20260716210813.2582826-1-hugo@hugovil.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r2gzgalo44cdbe5b"
-Content-Disposition: inline
-In-Reply-To: <alkYFLPlMOT-8EH1@ashevche-desk.local>
+Content-Transfer-Encoding: 8bit
+X-Spam_score: -1.0
+X-Spam_bar: -
 
+From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
---r2gzgalo44cdbe5b
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 20/21] gpio: Unify style of pci_device_id arrays
-MIME-Version: 1.0
+It's strongly recommended for GPIO drivers to always implement the
+.get_direction() callback - even when the direction is tracked in
+software. The GPIO core emits a warning when the callback is missing
+and a user reads the direction of a line, e.g. via
+/sys/kernel/debug/gpio.
 
-On Thu, Jul 16, 2026 at 08:42:44PM +0300, Andy Shevchenko wrote:
-> On Wed, Jul 15, 2026 at 06:55:25PM +0200, Uwe Kleine-K=F6nig (The Capable=
- Hub) wrote:
-> > Update the various of_device_id arrays to conform to the most used and
->=20
-> OF?!
->=20
-> I guess you messed up with the patches in this series. Two mistakes I can=
- only
-> explain with some bad rebase happened or alike.
+Fixes: dfeae619d781 ("serial: sc16is7xx")
+Cc: stable@kernel.org
+Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+---
+Inspired by a similar patch for max310x: commit a483b1a91b33
+("serial: max310x: implement gpio_chip::get_direction()").
+---
+ drivers/tty/serial/sc16is7xx.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Hihi, this was already wrong in v1 and it didn't stop you to send a
-review tag: https://lore.kernel.org/lkml/alXyfR6BKsW6tEAo@ashevche-desk.loc=
-al
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index 2498f9da2bf77..943be318de410 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -1273,6 +1273,17 @@ static int sc16is7xx_gpio_set(struct gpio_chip *chip, unsigned int offset,
+ 	return 0;
+ }
+ 
++static int sc16is7xx_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
++{
++	struct sc16is7xx_port *s = gpiochip_get_data(chip);
++	struct uart_port *port = &s->p[0].port;
++	unsigned int val;
++
++	val = sc16is7xx_port_read(port, SC16IS7XX_IODIR_REG);
++
++	return val & BIT(offset) ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
++}
++
+ static int sc16is7xx_gpio_direction_input(struct gpio_chip *chip,
+ 					  unsigned offset)
+ {
+@@ -1350,6 +1361,7 @@ static int sc16is7xx_setup_gpio_chip(struct sc16is7xx_port *s)
+ 	s->gpio.parent		 = dev;
+ 	s->gpio.label		 = dev_name(dev);
+ 	s->gpio.init_valid_mask	 = sc16is7xx_gpio_init_valid_mask;
++	s->gpio.get_direction	 = sc16is7xx_gpio_get_direction;
+ 	s->gpio.direction_input	 = sc16is7xx_gpio_direction_input;
+ 	s->gpio.get		 = sc16is7xx_gpio_get;
+ 	s->gpio.direction_output = sc16is7xx_gpio_direction_output;
 
-Will fix in v3 of course.
+base-commit: da7b5fd4e17f8e44c5590f2d603c01d499f056e6
+-- 
+2.47.3
 
-Best regards
-Uwe
-
---r2gzgalo44cdbe5b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpZOAIACgkQj4D7WH0S
-/k4uJwgAsy+kffBwD+5pLPj9Aj+1HOmL7H8T6Q9GQEWzGj2gZ1R9ytrmsknPUkDZ
-pQlWa8wYf4zJMn5lqVIdeOlcQy4gBJGF76hjVr1MGo1DLsK6DYcHKoI1y4GJi5h4
-lw5qBJKk1vkPq9SxwFFo1yx8kN0EjVN6wLJJii6yHyErGJvXu+cW/CJg7r2gf6x/
-9ynLqIXEpye38Q5p/xWLbk1OKCypYZBamwZKhTNWeTBkcd9ldugk+i5wV1Rj8JwF
-9/reCQ3rUCKp6gimRazQPstwKpyGebPAWK/uy3wBPg4i0GbF10tNfms+GlL1j+kC
-ax9fP2qeysiVdbKVVE2HlXcGJzRwdQ==
-=kvqJ
------END PGP SIGNATURE-----
-
---r2gzgalo44cdbe5b--
