@@ -1,338 +1,225 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D09B30274D;
-	Thu, 16 Jul 2026 07:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E559439CD01;
+	Thu, 16 Jul 2026 07:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784185383; cv=none; b=asnt/sCyn+XfZYa+7VPCtm2ZdBgX05hGXDP9WsfOCTTYumG19FUhVCipWauJ+C/wIAgomXB5G1zE3ndbK+KiuPSjTYobA+/4Fmqw8lYYzIQmRguA/DuItg4lqhLBwKFGGLv0KWTk8fKAXhlu6vnxT6zJbjcnF89iJtE5AjUFwhk=
+	t=1784186140; cv=none; b=Q+QOd5Lxy34qYVJWgJdK5op3tgfipCC4n763q9tXzorBWDWLZvnSNp/+37XF5MphzH+J4w2DRdRk0rjgPcuc47Ryt9AVg9C0xWY5llZaDctcS9eYy1mMB9mFkdugMMAKlqFQ4SpivAZN15KXtfJ5wfTRHc71iOHPXqbd77ktyIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784185383; c=relaxed/simple;
-	bh=UJuRDBMkimoGr8tdAvZJiI+C7gbzOM2S6oiD9Cv/mZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZrRK59rR1lRJzNio0BeJ11WefriOjRWcwKqdhsRNUNXMhsnNDNyB7LWtQWNB7ZbHxGJaPUO+YNpQ2AjA8eDJybgsWRHylHrD6xsfA4v5G3+x48kOS1p4Nn/ArulC+sTbKRVSuVWvsr9S1W8C8hmLM7dl42bv+m9Eg5qjFPY0O3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNtlpbDG; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNtlpbDG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DC6E1F000E9;
-	Thu, 16 Jul 2026 07:02:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784185382;
-	bh=FFNUu0XXRGHNtH40B1tomItE0NdjZli+GhoQ7HxIkQY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=MNtlpbDGcyUioUCN12h0sq/BaPNYcp3CTPfrl3k4yclHMwUiT0FKbToKL0v1p9GF1
-	 A4Qe73qDyOWUrWqlxv7XeaAa/kMufIqD9W/sXZ1Dya/gML2/ABdtcyc+5qyVQlTY+u
-	 KWt3XeJQ9HdwS2PpOiQefYOHtLvffdn6FUKXu3Yz32FhClnnzX8EIXgVkvHC6vKXJn
-	 hO/AnRBwTqRxsg//fzq68A0dksQpiNHhMxys6I7ANN2swVPTyc52dmGqUe0h6VMgMu
-	 1ms+hEojgD+9pEYegFTWYOyWVxG2xI9egyHr+D5WPU66s1QzzHVzejah5of6iifxWz
-	 4KgTCPF6Rhbbw==
-Date: Thu, 16 Jul 2026 09:02:39 +0200
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, maxime.chevallier@bootlin.com, 
-	rmk+kernel@armlinux.org.uk, andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linusw@kernel.org, brgl@kernel.org, 
-	arnd@arndb.de, gregkh@linuxfoundation.org, daniel@riscstar.com, 
-	mohd.anwar@oss.qualcomm.com, a0987203069@gmail.com, alexandre.torgue@foss.st.com, 
-	ast@kernel.org, boon.khai.ng@altera.com, chenchuangyu@xiaomi.com, 
-	chenhuacai@kernel.org, daniel@iogearbox.net, hawk@kernel.org, hkallweit1@gmail.com, 
-	inochiama@gmail.com, john.fastabend@gmail.com, julianbraha@gmail.com, 
-	livelycarpet87@gmail.com, mcoquelin.stm32@gmail.com, me@ziyao.cc, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, richardcochran@gmail.com, rohan.g.thomas@altera.com, 
-	sdf@fomichev.me, siyanteng@cqsoftware.com.cn, weishangjuan@eswincomputing.com, 
-	wens@kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 12/14] gpio: tc956x: add TC956x/QPS615 support
-Message-ID: <dhnylud7o5dhaaq6kvbes4vkml3ppa5ev542j2lyxdijibknzg@pfcy22wz6jav>
-References: <20260605010022.968612-1-elder@riscstar.com>
- <20260605010022.968612-13-elder@riscstar.com>
+	s=arc-20240116; t=1784186140; c=relaxed/simple;
+	bh=WG82U4sThSimZ8pJp8bKDS4TEGZ6pt0UEc6gUospZ7w=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=G4xtxooYEJx/wPUFZo22UhVObMgciEKP/AYZBX2piDsMkrnXGhmo16VHDhVo00DB7jeHKYTXbc/4feKhbuVV4GY7G2pAdXLvO496I69xirW5aWwRqtIy+y+e8ukAp6YNWel2g7kOS4Dq+ykfPf2n+cxd+1ne1/3LbNMslqxdjEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [IPv6:2a02:810b:4320:1000:4685:ff:fe12:5967])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id 0BBAC282;
+	Thu, 16 Jul 2026 09:15:30 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260605010022.968612-13-elder@riscstar.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 16 Jul 2026 09:15:29 +0200
+Message-Id: <DJZT74OCHTA2.3LLOKE9Y2SBXO@kernel.org>
+Subject: Re: [PATCH v3 3/7] gpio: regmap: Add gpio_regmap_operation and
+ write-enable support
+Cc: <Michael.Hennerich@analog.com>, <afaerber@suse.com>, <andy@kernel.org>,
+ <brgl@kernel.org>, <conor+dt@kernel.org>, <cy.huang@realtek.com>,
+ <devicetree@vger.kernel.org>, <dlechner@baylibre.com>,
+ <james.tai@realtek.com>, <jic23@kernel.org>, <krzk+dt@kernel.org>,
+ <lars@metafoo.de>, <linus.walleij@linaro.org>, <linusw@kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-realtek-soc@lists.infradead.org>,
+ <mathieu.dubois-briand@bootlin.com>, <nuno.sa@analog.com>,
+ <robh@kernel.org>, <stanley_chang@realtek.com>, <tychang@realtek.com>,
+ <wbg@kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Yu-Chun Lin" <eleanor.lin@realtek.com>
+X-Mailer: aerc 0.20.0
+References: <d301ba0cd45d49d59e6a014188306ec9@realtek.com>
+ <20260716062614.1507243-1-eleanor.lin@realtek.com>
+In-Reply-To: <20260716062614.1507243-1-eleanor.lin@realtek.com>
 
-On Thu, Jun 04, 2026 at 08:00:19PM -0500, Alex Elder wrote:
-> Toshiba TC956x is an Ethernet-AVB/TSN bridge and is essentially
-> a small and highly-specialized SoC.  TC956x includes a GPIO block that
-> can be accessed, alongside several other peripherals, via two PCIe
-> endpoint functions.  The PCIe function driver creates an auxiliary
-> device for the GPIO block, and that device gets bound to this auxiliary
-> device driver.
-> 
-> This driver is implemented using the generic regmap-based GPIO driver.
-> 
+Hi,
 
-While the regmap over the switch BAR works for GPIO access post-enumeration,
-there is a blocker in using these GPIOs to control the power to endpoints.
+On Thu Jul 16, 2026 at 8:26 AM CEST, Yu-Chun Lin wrote:
+>>> > @@ -185,7 +218,7 @@ static int gpio_regmap_set_direction(struct
+>>> gpio_chip *chip,
+>>> >                                    unsigned int offset, bool output)
+>>> > {
+>>> >       struct gpio_regmap *gpio =3D gpiochip_get_data(chip);
+>>> > -     unsigned int base, val, reg, mask;
+>>> > +     unsigned int base, val, reg, mask, wren_mask;
+>>> >       int invert, ret;
+>>> >
+>>> >       if (gpio->reg_dir_out_base) {
+>>> > @@ -198,7 +231,12 @@ static int gpio_regmap_set_direction(struct
+>>> gpio_chip *chip,
+>>> >               return -ENOTSUPP;
+>>> >       }
+>>> >
+>>> > -     ret =3D gpio->reg_mask_xlate(gpio, base, offset, &reg, &mask);
+>>> > +     ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_DIR_OP, base=
+,
+>>> offset, &reg, &mask);
+>>> > +     if (ret)
+>>> > +             return ret;
+>>> > +
+>>> > +     ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_DIR_WREN_OP,
+>>> base, offset, &reg,
+>>> > +                                &wren_mask);
+>>>=20
+>>> What constrains these two to provide the same value back for reg?
+>>> To me it seems like the write enable might well be in a different regis=
+ter.
+>>>=20
+>>> >       if (ret)
+>>> >               return ret;
+>>> >
+>>> > @@ -207,7 +245,7 @@ static int gpio_regmap_set_direction(struct
+>>> gpio_chip *chip,
+>>> >       else
+>>> >               val =3D output ? mask : 0;
+>>> >
+>>> > -     return regmap_update_bits(gpio->regmap, reg, mask, val);
+>>> > +     return regmap_update_bits(gpio->regmap, reg, mask | wren_mask,
+>>> > + val | wren_mask);
+>>> >  }
+>>> >
+>>> >  static int gpio_regmap_direction_input(struct gpio_chip *chip,
+>>
+>> My initial design indeed assumed that the WREN mask and Data mask reside=
+ in
+>> the same register.
+>> =20
+>> Regarding WREN support, especially if WREN and Data use separate registe=
+rs, I
+>> came up with three ideas. Which direction do you prefer?
+>> =20
+>> Approach 1: Provide Custom Callbacks in config (Let consumer driver hand=
+le it)
+>> We can add '.set' and '.set_direction' function pointers in
+>> 'struct gpio_regmap_config'. If a driver requires WREN, it can implement=
+ these
+>> callbacks itself.
+>>=20
+>> static void gpio_regmap_set(struct gpio_chip *chip, unsigned int offset,=
+ int val)
+>> {
+>>         struct gpio_regmap *gpio =3D gpiochip_get_data(chip);
+>> =20
+>>         /* If the driver provides a custom set (to handle WREN), delegat=
+e to it */
+>>         if (gpio->set) {
+>>                 gpio->set(chip, offset, val);
+>>                 return;
+>>         }
+>>         /* ... existing generic regmap logic ... */
+>> }
+>>
+>> Pros: Clean core, no need to touch existing drivers' xlate signature. Th=
+e consumer
+>> driver handles its own locking for different registers.
+>> Cons: It feels a bit strange and inconsistent to expose only '.set' and
+>> '.set_direction' overrides while keeping other operations entirely abstr=
+acted.
+>> =20
+>> Approach 2: Handle separate WREN register in the core (with locking conc=
+erns)
+>> We keep the 'XX_WREN_OP' in 'xlate'. If someone needs WREN and 'wren_reg=
+ !=3D reg',
+>> we write to both.
+>> =20
+>> static int gpio_regmap_set(struct gpio_chip *chip, unsigned int offset,
+>>                            int val)
+>> {
+>>         /* skip */
+>>         ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_WREN_OP, base=
+, offset, &wren_reg,
+>>                                    &wren_mask);
+>>         if (ret =3D=3D -ENOTSUPP)
+>>                 has_wren =3D false;
+>>         else if (ret)
+>>                 return ret;
+>>=20
+>>        ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_OP, base, offs=
+et, &reg, &mask);
+>>=20
+>>        if (has_wren && reg =3D=3D wren_reg) {
+>>                mask |=3D wren_mask;
+>>                mask_val |=3D wren_mask;
+>>                has_wren =3D false;
+>>        }
+>>=20
+>>        if (has_wren)
+>>                ret =3D regmap_set_bits(gpio->regmap, wren_reg, wren_mask=
+);=20
+>>=20
+>>         /* ignore input values which shadow the old output value */
+>>         if (gpio->reg_dat_base =3D=3D gpio->reg_set_base)
+>>                 ret =3D regmap_write_bits(gpio->regmap, reg, mask, mask_=
+val);
+>>         else
+>>                 ret =3D regmap_update_bits(gpio->regmap, reg, mask, mask=
+_val);
+>> =20
+>>         return ret;
+>> }
+>> =20
+>> Pros: Keeps all WREN logic unified inside the core framework.
+>> Cons: Introduces a locking issue. writing to 'wren_reg' and then 'reg' r=
+equires an
+>> external lock to be atomic, which seems to defeat the purpose of relying=
+ on regmap's
+>> internal lock.=20
+>>=20
+>> Approach 3: Assume WREN and Data always share the same register
+>>=20
+>> static int gpio_regmap_set(struct gpio_chip *chip, unsigned int offset, =
+int val)
+>> {
+>>         /* ... */
+>>         ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_WREN_OP, base=
+, offset, &reg, &wren_mask);
+>>         if (ret =3D=3D -ENOTSUPP)
+>>                 wren_mask =3D 0;
+>>         else if (ret)
+>>                 return ret;
+>> =20
+>>         ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_SET_OP, base, off=
+set, &reg, &mask);
+>> =20
+>>         ret =3D regmap_update_bits(gpio->regmap, reg, mask | wren_mask, =
+mask_val | wren_mask);
+>>         return ret;
+>> }
+>> =20
+>> Regarding this approach, I would like to ask from your experience: Is it
+>> actually common for hardware designs to place WREN and Data bits in comp=
+letely
+>> different registers for GPIO operations?
 
-We have a design [1] where the GPIOs from the switch are used to control power
-and PERST# signals to the EP. With this current design, during the initial PCI
-bus scan, the switch will get enumerated, but the EP will not. Because, power to
-the EP depends on the GPIO Aux driver that will get probed only after the switch
-enumeration.
+I'd say that such a write enable bit by itself is pretty uncommon
+for a gpio controller, regardless if it's in the same register or in
+a different one.
 
-But this creates a chicken-and-egg problem with the PCI Pwrctrl design.
-pcie-qcom driver uses the Pwrctrl framework to power on the PCI endpoints before
-the initial PCI bus scan. It calls pci_pwrctrl_create_devices() and
-pci_pwrctrl_power_on_devices() APIs to create the platform device for all PCI
-devices defined in DT (that require pwrctrl support), waits for their respective
-pwrctrl drivers to get probed and then power ON all of them. This step is
-required because in DT platforms, many Root Ports are not hotplug capable and
-also BIOS doesn't assign bridge windows during boot. So all the devices has to
-appear during the initial PCI bus scan so that the PCI core can allocate the
-resources properly.
+>> If they practically always share the same register, this simpler approac=
+h might
+>> suffice.
 
-Now the issue with this Aux driver design is that, if an EP makes use of the
-switch GPIO for PERST# or power, like:
+It seems, that your hardware has it in one register. Why do you need
+a separate mask anyway? Why can't the xlate callback just set the
+bit in addition to the gpio bit? It looks like in the end you're
+doing a "mask |  wren_mask" anyway. What am I missing here?
 
-	tc9563: pcie@0,0 {
-		compatible = "pci1179,0623";
-		reg = <0x10000 0x0 0x0 0x0 0x0>;
-		...
-
-		pcie@1,0 {
-			compatible = "pciclass,0604";
-			reg = <0x20800 0x0 0x0 0x0 0x0>;
-			#address-cells = <3>;
-			#size-cells = <2>;
-
-			device_type = "pci";
-			ranges;
-			bus-range = <0x3 0xff>;
-
-			reset-gpios = <&tc9563 5 GPIO_ACTIVE_LOW>;
-		};
-	...
-
-	};
-
-Then the pwrctrl driver (pci/pwrctrl/generic.c) will try to acquire the GPIO
-controller during its probe, but will fail with -EPROBE_DEFER as the GPIO
-controller won't be available at that time. So the whole PCIe instance will
-probe defer as the driver requires all pwrctrl drivers to be probed before
-starting the initial bus scan.
-
-So we need to make sure that the GPIO controller driver is available before
-enumerating the switch device. One way to achieve is by creating the GPIO Aux
-device in the pci/pwrctrl/pci-pwrctrl-tc9563.c driver and let the GPIO
-controller driver use I2C communication for setting up the GPIOs. Thankfully,
-the switch allows both I2C and BAR MMIO configurations for internal GPIOs.
-
-With this change, the GPIO driver will get probed by the time the pwrctrl
-generic driver acquires the 'reset-gpios' and will turn ON the EP.
-
-Let me know your thoughts!
-
-- Mani
-
-[1] https://lore.kernel.org/linux-pci/e2inl7k5gsjj6oomv2k5ximuzpb3gfiz66ufet3b4hvov7zqt4@qz4pifbos7yf/
-
-> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
-> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  MAINTAINERS                |   1 +
->  drivers/gpio/Kconfig       |  12 ++++
->  drivers/gpio/Makefile      |   1 +
->  drivers/gpio/gpio-tc956x.c | 130 +++++++++++++++++++++++++++++++++++++
->  4 files changed, 144 insertions(+)
->  create mode 100644 drivers/gpio/gpio-tc956x.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0924f7ec43cb0..0439607d1155f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -27057,6 +27057,7 @@ M:	Alex Elder <elder@kernel.org>
->  M:	Daniel Thompson <danielt@kernel.org>
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/net/toshiba,tc956x-dwmac.yaml
-> +F:	drivers/gpio/gpio-tc956x.c
->  F:	drivers/misc/tc956x_pci.c
->  
->  TOSHIBA WMI HOTKEYS DRIVER
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 020e51e30317a..36631ca722fa3 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -743,6 +743,18 @@ config GPIO_TB10X
->  	select GPIO_GENERIC
->  	select GENERIC_IRQ_CHIP
->  
-> +config GPIO_TC956X
-> +	tristate "Toshiba TC956X GPIO support"
-> +	depends on TOSHIBA_TC956X_PCI
-> +	select GPIO_REGMAP
-> +	default m
-> +	help
-> +	  This enables support for the GPIO controller embedded in the Toshiba
-> +	  TC956X (and Qualcomm QPS615).  This device connects to the host
-> +	  via PCIe port, which is the upstream port on an internal PCIe
-> +	  switch.  On some platforms, a few of the GPIO lines are used to
-> +	  manage external resets.
-> +
->  config GPIO_TEGRA
->  	tristate "NVIDIA Tegra GPIO support"
->  	default ARCH_TEGRA
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index b267598b517de..c3584e7cba9b4 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -178,6 +178,7 @@ obj-$(CONFIG_GPIO_SYSCON)		+= gpio-syscon.o
->  obj-$(CONFIG_GPIO_TANGIER)		+= gpio-tangier.o
->  obj-$(CONFIG_GPIO_TB10X)		+= gpio-tb10x.o
->  obj-$(CONFIG_GPIO_TC3589X)		+= gpio-tc3589x.o
-> +obj-$(CONFIG_GPIO_TC956X)		+= gpio-tc956x.o
->  obj-$(CONFIG_GPIO_TEGRA186)		+= gpio-tegra186.o
->  obj-$(CONFIG_GPIO_TEGRA)		+= gpio-tegra.o
->  obj-$(CONFIG_GPIO_THUNDERX)		+= gpio-thunderx.o
-> diff --git a/drivers/gpio/gpio-tc956x.c b/drivers/gpio/gpio-tc956x.c
-> new file mode 100644
-> index 0000000000000..0dc6b1028d970
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-tc956x.c
-> @@ -0,0 +1,130 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Copyright (C) 2026 by RISCstar Solutions Corporation.  All rights reserved.
-> + */
-> +
-> +/*
-> + * The Toshiba TC956X implements a PCIe Gen 3 switch that connects an
-> + * upstream x4 port to two downstream PCIe x2 ports.  It incorporates
-> + * an internal endpoint on a internal PCIe port that implements two
-> + * Synopsys XGMAC Ethernet interfaces.
-> + *
-> + * 35 GPIOs are also implemented by an embedded GPIO controller.  Three
-> + * registers control the first 32 GPIOs (other than 20 and 21, which are
-> + * reserved).  Three other registers control GPIOs 32 through 36. GPIOs
-> + * 22-24, 27-28, 31, and 34 are treated as "input only".
-> + *
-> + * There is a TC956X PCI power controller driver that accesses the
-> + * direction and output value registers for GPIOs 2 and 3.  These
-> + * GPIOs control the reset signal for the two downstream PCIe ports.
-> + * Their values will never change during operation of this driver, and
-> + * this driver reserves these two GPIOS.
-> + */
-> +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
-> +#include <linux/gpio/regmap.h>
-> +
-> +#define DRIVER_NAME		"tc956x-gpio"
-> +
-> +#define TC956X_GPIO_COUNT	37	/* Number of GPIOs (20-21 reserved) */
-> +
-> +/* The GPIO offsets are relative to 0x1200 in TC956X SFR space. */
-> +#define GPIO_IN0_OFFSET		0x00		/* Input value (0-31) */
-> +#define GPIO_EN0_OFFSET		0x08		/* 0: out; 1: in (0-31) */
-> +#define GPIO_OUT0_OFFSET	0x10		/* Output value (0-31) */
-> +
-> +/*
-> + * There are two sets of registers, each representing (up to) 32 GPIOs with a
-> + * stride of 4 bytes (IN1 is 4 bytes past IN0, EN1 is 4 bytes past EN0, etc.).
-> + */
-> +#define GPIO_PER_REG		32
-> +#define GPIO_REG_STRIDE		4
-> +
-> +static int tc956x_gpio_init_valid_mask(struct gpio_chip *gc,
-> +				       unsigned long *valid_mask,
-> +				       unsigned int ngpios)
-> +{
-> +	/*
-> +	 * GPIOs 2 and 3 are used by the PCI power control driver, and
-> +	 * we don't allow them to be used.  GPIOs 20 and 21 are reserved
-> +	 * (and not usable).
-> +	 */
-> +	bitmap_fill(valid_mask, ngpios);
-> +	bitmap_clear(valid_mask, 2, 2);
-> +	bitmap_clear(valid_mask, 20, 2);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tc956x_gpio_probe(struct auxiliary_device *adev,
-> +			     const struct auxiliary_device_id *id)
-> +{
-> +	DECLARE_BITMAP(zeroes, TC956X_GPIO_COUNT);
-> +	DECLARE_BITMAP(fixed, TC956X_GPIO_COUNT);
-> +	struct gpio_regmap_config config = { };
-> +	struct gpio_regmap *gpio_regmap;
-> +	struct device *dev = &adev->dev;
-> +
-> +	/* We need the regmap pointer, stored in our platform data */
-> +	if (!dev->platform_data)
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * Only some of our GPIOs are fixed direction:
-> +	 *	22, 23, 24, 27, 28, 31, and 34	(all input-only)
-> +	 * Set up the fixed bitmap to indicate which are fixed.
-> +	 */
-> +	bitmap_zero(fixed, TC956X_GPIO_COUNT);
-> +	bitmap_set(fixed, 22, 3);
-> +	bitmap_set(fixed, 27, 2);
-> +	set_bit(31, fixed);
-> +	set_bit(34, fixed);
-> +
-> +	/* All fixed GPIOs are input; the zeroes bitmap indicates that. */
-> +	bitmap_zero(zeroes, TC956X_GPIO_COUNT);
-> +
-> +	config.parent = dev;
-> +	config.regmap = dev->platform_data;
-> +	config.label = DRIVER_NAME;
-> +	config.ngpio = TC956X_GPIO_COUNT;
-> +	config.reg_dat_base = GPIO_REGMAP_ADDR(GPIO_IN0_OFFSET);
-> +	config.reg_set_base = GPIO_REGMAP_ADDR(GPIO_OUT0_OFFSET);
-> +	config.reg_dir_in_base = GPIO_REGMAP_ADDR(GPIO_EN0_OFFSET);
-> +	config.reg_stride = GPIO_REG_STRIDE;
-> +	config.ngpio_per_reg = GPIO_PER_REG;
-> +	config.init_valid_mask = tc956x_gpio_init_valid_mask;
-> +	config.fixed_direction_mask = fixed;
-> +	config.fixed_direction_output = zeroes;
-> +
-> +	gpio_regmap = devm_gpio_regmap_register(dev, &config);
-> +	if (IS_ERR(gpio_regmap))
-> +		return PTR_ERR(gpio_regmap);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct auxiliary_device_id tc956x_gpio_ids[] = {
-> +	{ .name = "tc956x_pci.tc9564-gpio", },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(auxiliary, tc956x_gpio_ids);
-> +
-> +static struct auxiliary_driver tc956x_gpio_driver = {
-> +	.name		= DRIVER_NAME,
-> +	.probe          = tc956x_gpio_probe,
-> +	.id_table       = tc956x_gpio_ids,
-> +	.driver = {
-> +		.name		= DRIVER_NAME,
-> +		.owner		= THIS_MODULE,
-> +		.probe_type	= PROBE_PREFER_ASYNCHRONOUS,
-> +	},
-> +};
-> +module_auxiliary_driver(tc956x_gpio_driver);
-> +
-> +MODULE_DESCRIPTION("Toshiba TC956X PCIe GPIO Driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("auxiliary:" DRIVER_NAME);
-> -- 
-> 2.51.0
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+-michael
