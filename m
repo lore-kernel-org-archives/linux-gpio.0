@@ -1,84 +1,162 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DF7344D88;
-	Wed, 15 Jul 2026 21:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E3E2D322E
+	for <linux-gpio@vger.kernel.org>; Thu, 16 Jul 2026 00:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784151033; cv=none; b=Ags1ZaTCROimugRHPU9JL95AOGZ3cpWRBBKd5/U1xEuDl5qqj+3cnoQZELATTyzqrLp3SnK4dW/Iu8iX6eLxVr5JJaWqX8KzjbZXfzok0iDKbAPR1rmHTKRBoSY53dJ2HxrxiXVaZbJoqac+NvzER9bjIzYOOxHwyXY8dKAxFFg=
+	t=1784161746; cv=none; b=SOWnTa/X77TBBqZdf4zwcxIuADoDmR++nLnMsyhHYIQmk+NvW15pdPXCag5X0MEj6u/5f0zyA/ilOO/+c8RBREIFewtllTaEtODULYV1n89Va8SJkJ973oRUzOda7XlW+Bw3fYD/4uTKiBBEGC48ezLi4mryyXKQRh7CDqL3lOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784151033; c=relaxed/simple;
-	bh=3PABS9NH5iuy84zHvN34brW4BF2bACsa7KXSX5fZj7U=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=jQLP7lYUNTqis3sOCyrIz5DtIekSOqLe2JvMQV+rSW1FTJIZ/2CkM0eVRBv36Aa7SBTzFp4BsT9NwhBj/mFFTmOPFa/TJZxqnui5btRwrtTTzVBBbt4j+i0HWP5PNOHD2PoGwLZhkkoEwGww/4XatI2iCQhyeKzLeMFqdkJs32k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zu4Gyp8T; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784161746; c=relaxed/simple;
+	bh=Pn412DYiAzxCT+4OPjStksFO/tbSj/zMlkHkGBtPatE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Efv0+Pg/7P9epfAmB5IKSHYtsFboliFJ1eJ+HsjERCRfzrKToxSnwspOOb52EnG3vc0Zb4JEieHWuQd+BoCdlk16bZu8bDXSqqXO0B5Qgi2Mrtu1GL92PSGIu9G/q6wBOZWAx++4xrTvqzQsd1YjxF9FPn+Z8JolXbYtM1sexMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmd+edKm; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zu4Gyp8T"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DBEF1F000E9;
-	Wed, 15 Jul 2026 21:30:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784151031;
-	bh=SaZ9nC0EEMsH/yfZRMmBPzfK5fZuUVlcMCSC2gKRBKg=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To;
-	b=Zu4Gyp8TaOmVKv3nexwqoez9Ui3RD1dY/HZD8Td0pOQLmvoPMTbKlyswud/isDCz5
-	 Rwy9DGIC2b92lIYw+BjThrocKJzcKrJJ2Mg64pPatfaODPtTYft//KKVMbG9HKq5KQ
-	 2nWkR/SJCOOsSFZPBnPzrx5j02T6b4TiGfWv2mNIZvfJFOtoZQD9auxSeH1chYPvmS
-	 Ap76054PGRWxSrvLhhXuLdD57emrgmlIjxF/N/SvCabNk3NTskV5mx97e/Dhu2doit
-	 3wbn5rm9TRsK2ADPAs6/kwfOtT5Av5zG2LP90uTgjmy8HB0k82sPsf1scSIPjNSiQd
-	 ge4cLVFJiOaJA==
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmd+edKm"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2c6b67d5fa1so100374665ad.2
+        for <linux-gpio@vger.kernel.org>; Wed, 15 Jul 2026 17:29:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784161744; x=1784766544; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=OGQ6x2eWb0kXOAnv/GgXof7PDNge2C09gVvctRHhkCQ=;
+        b=cmd+edKmzKMPZggls0FDrWBDODabc9rJtrdobsoPsNoxEc9BKSZfGXCLzcTJq0+cHK
+         e1WfPqWDtA3jFpxSy+obtSQv5BrATtpz6kjW8Qlt29gcpr1uuZCKHtWtIWif0ceuh67Q
+         Zflci0J8UK88Ldd3y09dIo2emaskL5z+h+oLZarokmgaHnO4ZDq0XV0bTq8UxG07/ofk
+         rbNeLajf8Uz0xN0EZPtmTXjB86HFwRehGK6o+RhddP/xtNshX8tAKvwkl02w+ewCQqKy
+         iTZBcCh8uaalgOUBAfBdvSkGpIWTqXHmME8X1X0waha3N9gNd3m96MqQp49luQ/q/Udf
+         UWYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784161744; x=1784766544;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=OGQ6x2eWb0kXOAnv/GgXof7PDNge2C09gVvctRHhkCQ=;
+        b=qhQjUX6TCaFk6bktkpMxRRAIoDHg4xLmxJb8gwy19nLWxarf93NqibfVsew+/ge/WB
+         XM6YmyYYFIdsi5idUmFsGUteCX4zUU5Oq3SMBkfiyG7lCCnMS2vgaStlaOvdtv+0AD3P
+         /qP4ek1PB5tm4BB6KQS9Q9Y82KbJDq+srTr87u3q7H+09A4bRmZgVbkG8/YW0ba+NWXV
+         a/Lb7Uls47OUrsaeJHfOjSWNMfFFgO7gmN3sgQcvdwZUNMpG83DXKJ8Fop/ThJZ4r7Ze
+         ZluTGcaaWdc5sCwKDLibMjbTVAt2EQV0sZuY+bqZt3CQfNe7ZTHsqZMunLZSGceTelmQ
+         /N1w==
+X-Forwarded-Encrypted: i=1; AHgh+RpuaVUSUjHqvBp68/5JI7+yBkkS2Jav11m/1frQRFML8HpaJz/LQDUbwbgOfCK+60UBlHKhNxlqP2+v@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLCFpacJXXmMxMa6I6g1T1Mgo6wsF7ENP4/rlAspdvlOy7Hvkj
+	UgFoByeLvYAEOOR+yJIkSye/7TuM+tKS8RHgoCvlL0XrXWhdiMMop2Jy
+X-Gm-Gg: AfdE7clruX1hejKV2l1jEEj7HgU72AgRCRoAGclHvzOBlnxuh6uFAVui554jBSP31Gl
+	hH9ACm7ynBeXZ4RYWaS3x1LfWvw/4LGu3bNpgnRHu2VaEidF+BWO58g5QUWz4PDyJ1FGYaBjt+5
+	HPLuCyOkxZl1Hy8w3z0YDKAsaBHey7czhXYNZ3C0SbT0wZug653vT6u/1sYy9i1QxCNiIFeMdUe
+	oZOonptGBEehk8RPQFOLPGGBFXVc1+io73jMmbxR9yP0AGq2np55OEJLxVNyiWgKVJmYmr8A4Wg
+	iV1g3rrovqX8B4FEQQPNSQ7np1icm/K+n4ggtQCGbBBGtPJ4O8Tsd8FhAU5neWNKhGF8jnx8e+q
+	CW7atFiOFbhn0lRTKlDJ5tANLSblRD15hetVU30mD4ZO1nEffwyNVgR3BQbIW3wlKR3ZfMpRvPe
+	FRtpcrYLF3Ij7GHqUdukzcmHfFXmy+ETgjEVVuZoPaNEyD+FxC96k=
+X-Received: by 2002:a17:902:f683:b0:2ca:1479:d9dc with SMTP id d9443c01a7336-2cef1326596mr78291255ad.12.1784161744012;
+        Wed, 15 Jul 2026 17:29:04 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf10591d3dsm10278195ad.56.2026.07.15.17.29.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jul 2026 17:29:03 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <b7171173-aa64-4393-b9cf-77d92f2ec932@roeck-us.net>
+Date: Wed, 15 Jul 2026 17:29:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 15 Jul 2026 23:30:26 +0200
-Message-Id: <DJZGR6NV2WK5.2ZRW7VZIRO3LD@kernel.org>
-Subject: Re: (subset) [PATCH v4 0/5] software node: provide support for
- fw_devlink
-Cc: "Brendan Higgins" <brendan.higgins@linux.dev>, "David Gow"
- <david@davidgow.net>, "Rae Moar" <raemoar63@gmail.com>, "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>, "Daniel Scally" <djrscally@gmail.com>,
- "Heikki Krogerus" <heikki.krogerus@linux.intel.com>, "Sakari Ailus"
- <sakari.ailus@linux.intel.com>, "Bartosz Golaszewski" <brgl@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J . Wysocki"
- <rafael@kernel.org>, "Linus Walleij" <linusw@kernel.org>, "Dmitry Torokhov"
- <dmitry.torokhov@gmail.com>, <linux-kernel@vger.kernel.org>,
- <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
- <linux-acpi@vger.kernel.org>, <driver-core@lists.linux.dev>,
- <linux-gpio@vger.kernel.org>
-To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20260713-swnode-fw-devlink-v4-0-d4f2dee27ad9@oss.qualcomm.com>
- <20260715212830.3077100-1-dakr@kernel.org>
-In-Reply-To: <20260715212830.3077100-1-dakr@kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/8] Add Advantech EIO Hardware Monitor driver
+To: Ramiro Oliveira <ramiro.oliveira@advantech.com>,
+ Lee Jones <lee@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Daniel Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+ Helge Deller <deller@gmx.de>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-kernel@vger.kernel.org, mfd@lists.linux.dev,
+ linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-fbdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-pm@vger.kernel.org, Wenkai Chung <wenkai.chung@advantech.com.tw>,
+ Francisco Aragon-Trivino <francisco.aragon-trivino@advantech.com>,
+ Hongzhi Wang <hongzhi.wang@advantech.com>,
+ Mikhail Tsukerman <mikhail.tsukerman@advantech.com>,
+ Thomas Kastner <thomas.kastner@advantech.com>
+References: <20260714-upstream-v2-v2-0-76e5e41026db@advantech.com>
+ <20260714-upstream-v2-v2-3-76e5e41026db@advantech.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20260714-upstream-v2-v2-3-76e5e41026db@advantech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed Jul 15, 2026 at 11:28 PM CEST, Danilo Krummrich wrote:
-> On Mon, 13 Jul 2026 13:14:43 +0200, Bartosz Golaszewski wrote:
->> [PATCH v4 0/5] software node: provide support for fw_devlink
->
-> Applied, thanks!
->
->   Branch: topic/swnode
->   Tree:   git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/drive=
-r-core.git
->
-> [1/5] kunit: provide a set of fwnode-oriented helpers
->       commit: 9fdbdb528488
-> [2/5] software node: add fw_devlink support
->       commit: 37e586675993
-> [3/5] software node: add kunit tests for fw_devlink support
->       commit: eecba5978729
-> [4/5] MAINTAINERS: add myself as reviewer of software node support
->       commit: 122630406245
->
-> The patches are in the topic/swnode topic branch and will be merged into =
-the
-> corresponding target branch soon.
+On 7/14/26 08:54, Ramiro Oliveira wrote:
+> This driver controls the Hardware Monitor block of the Advantech EIO chip.
+> 
+> There is a separate driver for the thermal device driver
+> since it's a use case we support currently, but if it's
+> really necessary we can move it to the same driver.
+> 
+> Signed-off-by: Ramiro Oliveira <ramiro.oliveira@advantech.com>
 
-I will provide a signed tag once I have the 0-day result.
+Normally there would be a hwmon driver instantiating the thermal zone(s)
+using HWMON_C_REGISTER_TZ. If the driver actively controls thermal zones
+since it also handles fans, that would be instantiated from the hwmon driver.
+
+Since you have both thermal temperature and thermal fan drivers, I am very
+concerned that there is functionality overlap andor even conflicts. You
+should drop this driver and configure the thermal temperature driver
+to instantiate a hwmon device from it if so desired.
 
 Thanks,
-Danilo
+Guenter
+
