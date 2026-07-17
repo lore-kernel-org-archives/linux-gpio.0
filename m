@@ -1,119 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991CB3ACA45;
-	Fri, 17 Jul 2026 09:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EFF3D25A6;
+	Fri, 17 Jul 2026 10:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784281147; cv=none; b=BppLtsdbXnrvN3EeaWvCdpumpa0i064v7ADu84UoFdYpnNDe540PNeFJ0AgE7hZlw/t7cQaOEg6iTquG5dd/truYzpbuP/Kruoj+vyZ8vJKI8Q08GGvaESbNv2Aa65cEE8sOOe/HLoMrBZ205DJh4kTZNZIWFsTlN3Umq7m+PkM=
+	t=1784283823; cv=none; b=WpVi3LX72TUO0GNdEIgu4Lo5S2NEqBD5k8j9W1bJmlZgb5mDwMrqWCVyODQTY3RmBmiK7P0x05S38iXPc7pN+hK8rDXatOiizX9qbui+vDSb8ODkLiV4G6ZfEX5yLuFT8RknbJ3zC9LFtvWzi52/jgAIGC4LFmGjllF6rEWckQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784281147; c=relaxed/simple;
-	bh=65klr4rI+ewfuz2XA3kQiuQwXfZjPhKrVWT8lVLWR8I=;
+	s=arc-20240116; t=1784283823; c=relaxed/simple;
+	bh=tGvidDqf6jtkfzTcLaP8DnYMHTXgmGClLCAu67eKaQY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0RymUj99nzxLCeDyaYLLyGNWrWq0KIEm6Q/KiGdssx0jPhOwH+7rSQQYUaXdxsS000d3Y4NXf5xpwVlh7XpHk4G5P9uG56DuIKwUAVn/W2/4nWsDo+cDfZEEPdY0wMp/S+4Niwm0tWVkcfu99qfgImihHAnJS1yLAp0JE9auzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjJUoV11; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=MfQ25/7hgeTqr1u5WbGncskB2GHKMfaIBIC446lMfc4iZK6L+I9Ed8UN1gNqQgmYq53j98HYsvH/EYyLOqyrKczfmj2OS078TxeZYYDjXg2oXqy7OFxmt/56YEflJLMdBzdCsyl10OxHvrY1cWcalpu7CXL279xbOa4JdXsFprg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dwjeFEh+; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjJUoV11"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 583FD1F00A3A;
-	Fri, 17 Jul 2026 09:38:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784281146;
-	bh=+qglHjGyDrUKXlad/2R3jZv9/pC2LefY+KO7XkEkSko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=SjJUoV11rwuT+5AizqR6Ts6eoKb6FIGre1Dux163GhMlqZlyOXajtWZ4fayfgVpH9
-	 m9cgU5vVhldyF6Xw1Kb8rVhViKflUSonqgQ1XE4NCnm2BVJY+TnbSkh9Z3rIVPhd6s
-	 zU7mHk1ONLaADnjIxp+I5dcB3ZX2ynHffnRRVYklEoaeIIz/ZSYdwAkj3wzibEUx9o
-	 HnS12bG6z8ihRuFocqmHyHuXUYtM9fOcbFkvkQ/W/8UHnOkWe7OeZRKXrCxZZCA9nQ
-	 s6WCpg4YrH/mKvwpz01fi9YDCJ3Uu05lBNYlNAvTtCCufAR6IHv/1e4r2yoFLfOqhY
-	 leqJTK6WbuRqA==
-Date: Fri, 17 Jul 2026 11:38:45 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Juergen Gross <jgross@suse.com>
-Cc: Sean Christopherson <seanjc@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	x86@kernel.org, linux-acpi@vger.kernel.org, kvm@vger.kernel.org,
-	linux-coco@lists.linux.dev, linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-ide@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	linux-hyperv@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-mtd@lists.infradead.org,
-	platform-driver-x86@vger.kernel.org,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	"lukasz.luba@arm.com" <lukasz.luba@arm.com>,
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>, Len Brown <lenb@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Pu Wen <puwen@hygon.cn>, Bjorn Helgaas <bhelgaas@google.com>,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>, Dave Airlie <airlied@redhat.com>,
-	Helge Deller <deller@gmx.de>, linux-geode@lists.infradead.org,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Linus Walleij <linusw@kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dwjeFEh+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1784283822; x=1815819822;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tGvidDqf6jtkfzTcLaP8DnYMHTXgmGClLCAu67eKaQY=;
+  b=dwjeFEh+1V7ytPYzCuiqX4FWeqbfCx8D9cw46bZ6+Qh9xsLtM8Lfir0R
+   e2PVqEzEcsZKE7J42hwccsKu94Sj/GUWlAHW6jPRNYGbRPxWRz7vo5rIo
+   jUK/RFHL3tsNDeJ9TUg7qQkqGgDDq1RsMiyh5dw8tcbHLMGWVTDw31n31
+   5uYlI7GPdt0Xb3sPYQsbKp/gxNd+PiQAsfbLKVwsp9BmdFhyVGsd+dKch
+   WGB+2egtENWIKA44Evr23UwC6vWbdyc+765A1T8NIr1h8J23K44L+5djv
+   cCnkHgIfhMveiTEvA6c6UQ5JWvfSW8H5Tqcoc6zr5nmQMCsrJ3lvR+zSk
+   w==;
+X-CSE-ConnectionGUID: yFeYlnnQS0yHPK+BL7dpmA==
+X-CSE-MsgGUID: MubOQTJSSm+DPSbMvzavJg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11848"; a="95555312"
+X-IronPort-AV: E=Sophos;i="6.25,169,1779174000"; 
+   d="scan'208";a="95555312"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2026 03:23:41 -0700
+X-CSE-ConnectionGUID: HwnTdJuoTTmMif+Zc0HdWA==
+X-CSE-MsgGUID: Bz+8y56PT0i4xLSMqjGqew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,169,1779174000"; 
+   d="scan'208";a="258745095"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.143])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2026 03:23:35 -0700
+Date: Fri, 17 Jul 2026 13:23:32 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Pan Chuang <panchuang@vivo.com>
+Cc: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Long Li <longli@microsoft.com>, Guenter Roeck <linux@roeck-us.net>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Huang Rui <ray.huang@amd.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>,
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
-	Artem Bityutskiy <dedekind1@gmail.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Ashok Raj <ashok.raj.linux@gmail.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
-	David E Box <david.e.box@intel.com>, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH 00/32] x86/msr: Drop 32-bit MSR interfaces
-Message-ID: <aln4JYxRgdpC3Wse@gmail.com>
-References: <20260629060526.3638272-1-jgross@suse.com>
- <d7c1db52-529a-43cc-ac7d-38b52627e8bc@app.fastmail.com>
- <c1608c48-13c2-4290-826b-28b5ca51eaf7@suse.com>
- <7332feff-2649-496c-8e49-b0a19eb54a32@app.fastmail.com>
- <akJUz0kYkEBdLSZ3@gmail.com>
- <akQR9YMtMHReJTfB@google.com>
- <akY4U0jUZm4HOGZ_@gmail.com>
- <99228803-b8b7-47a3-b77c-6fdf3b785730@suse.com>
+	Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Ming Yu <tmyu0@nuvoton.com>, Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Yixun Lan <dlan@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/RISC-V/RENESAS ARCHITECTURE" <linux-renesas-soc@vger.kernel.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <linux-riscv@lists.infradead.org>,
+	"open list:RISC-V SPACEMIT SoC Support" <spacemit@lists.linux.dev>,
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>
+Subject: Re: [PATCH] gpio: Remove redundant dev_err()/dev_err_probe()
+Message-ID: <aloCpCgDYjps9yQu@ashevche-desk.local>
+References: <20260717083037.284134-1-panchuang@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -122,40 +82,72 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <99228803-b8b7-47a3-b77c-6fdf3b785730@suse.com>
+In-Reply-To: <20260717083037.284134-1-panchuang@vivo.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
+
+On Fri, Jul 17, 2026 at 04:30:33PM +0800, Pan Chuang wrote:
+> Since commit 55b48e23f5c4 ("genirq/devres: Add error handling in
+> devm_request_*_irq()"), devm_request_irq() and devm_request_threaded_irq()
+> automatically log detailed error messages on failure. Remove the
+> now-redundant driver-specific dev_err() and dev_err_probe() calls.
 
 
-* Juergen Gross <jgross@suse.com> wrote:
+...
 
-> On 02.07.26 12:07, Ingo Molnar wrote:
-> > 
-> > * Sean Christopherson <seanjc@google.com> wrote:
-> > 
-> > > > Note that the individual patches are IMO significantly easier to review
-> > > > through the actual 32-bit => 64-bit variable assignment changes done
-> > > > in isolation (which sometimes include minor cleanups), while
-> > > > the Coccinelle semantic patch:
-> > > > 
-> > > >     { a(b,c) => c = a(b) }
-> > > > 
-> > > > which changes both the function signature and the order of terms as
-> > > > well, is just a single add-on treewide patch.
-> > > 
-> > > Is the plan for subsystem maintainers to pick up the relevant patches,
-> > > and then do the treewide change one release cycle later?
-> > 
-> > I'll try to keep the patches in a single tree (tip:x86/msr)
-> > in the hope of not prolonging the pain two cycles - but it's
-> > of course fine for maintainers to pick up the patches too
-> > (most of them are standalone), we'll sort it all out in the end.
-> 
-> Ingo, would you be fine with me posting patch updates just as replies to the
-> original patch emails? This would speed things up, as I wouldn't need to wait
-> for more review input of all the patches before sending out new versions.
+> -	if (err != 0) {
+> -		dev_err(chip->parent, "can't request IRQ#%d: %d\n",
+> -			adnp->client->irq, err);
+> +	if (err != 0)
 
-Sure, that works for me too. I've picked up a couple of -v2 patches
-already.
+This style is discouraged, so while at it, please replace with
 
-Thanks,
+	if (err)
 
-	Ingo
+>  		return err;
+> -	}
+>  
+>  	return 0;
+
+...
+
+> +++ b/drivers/gpio/gpio-brcmstb.c
+> @@ -489,10 +489,8 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+>  					       IRQF_SHARED,
+>  					       "brcmstb-gpio-wake", priv);
+>  
+> -			if (err < 0) {
+> -				dev_err(dev, "Couldn't request wake IRQ");
+> +			if (err < 0)
+
+This style might be okay, but has no sense, we know that there is no positive
+out from this function, so, please also replace with
+
+			if (err)
+
+>  				goto out_free_domain;
+> -			}
+>  		}
+>  		priv->irq_chip.irq_set_wake = brcmstb_gpio_irq_set_wake;
+>  	}
+
+...
+
+> +++ b/drivers/gpio/gpio-max77620.c
+> @@ -356,10 +356,8 @@ static int max77620_gpio_probe(struct platform_device *pdev)
+>  	ret = devm_request_threaded_irq(&pdev->dev, gpio_irq, NULL,
+>  					max77620_gpio_irqhandler, IRQF_ONESHOT,
+>  					"max77620-gpio", mgpio);
+> -	if (ret < 0) {
+> -		dev_err(&pdev->dev, "failed to request IRQ: %d\n", ret);
+> +	if (ret < 0)
+>  		return ret;
+> -	}
+
+Ditto. And so on...
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
