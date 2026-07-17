@@ -1,207 +1,181 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011055.outbound.protection.outlook.com [52.101.62.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5A23F9F3D
-	for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2026 12:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784291867; cv=none; b=OdwaC+5JGt+sqwSwN306AH7Ltk/tXhk72HA7ehRCFZaA67DNv2msWJHdA1WvW6AWKgYQ4VgwSxuYZcB6HTP35EgLdUdxKkjulErzuP7ypAKxWTOc5O2GvH8993C/ihWySjIEG1/Z0bQigobecBgzBbWo7m+Z2h5tWCEEZyJlyhw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784291867; c=relaxed/simple;
-	bh=PRB3b1r4OhZFmM+47mBZHtJkpZi09jzr/2fCoY7Emw0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fmd+w+0PdNuBzYhZiz0ti430O437OmA2EbRp9TJU5pthgYWRhIUgvMbH1mTX+UQYdtjlSKJlkBBBAdOQ3g8HfC1MOgvD7yOWE4QkmETjFFCg+c/2o/iZO95tD0hSt3vpjTQwJTLtCbFK5EP/bqAiJeDzGNtnOwzl4LY23ts5Ln4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NYpcpL9t; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gEGLUlgo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FD73FDBE5;
+	Fri, 17 Jul 2026 13:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784294686; cv=fail; b=jHz53Ckk+HOn+Lfe+dEyXOhUTdTWrwnrH51bOzc9vWaTGyt8K2qFIIMK4UJtTHdeAM9l5h73WavBJg932pdIcol3J0+L3S+WMrUOAeRVMX/lSksmJR2ZTGfAoPnT0ubOzWK59kbuPRimRDI6JhBoBMocSyFGdV9jt462UM/atNM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784294686; c=relaxed/simple;
+	bh=YcCASvpTDNpiBr0GWwEIWY+ePQzbmuxg8cvpy6YNRNo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gsQnxlN+OnU6ZxKPd/nNRSJOKmShjJNL33eJ50Q5SJI6Y3SAPIIO3wqWawm9aiLq1YjfPRMW7bP6sz5FTQlzSeTOxvYwNnHZtqv6lmzVQ1g45jIRmvgeXyafv6QlESrM77u8wiDzHRJCtqp5zdwiAkwYm+k35M15UDf6Sz5FpIA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ntj9NKKY; arc=fail smtp.client-ip=52.101.62.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NYpcpL9t";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gEGLUlgo"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66HCSrbw1456490
-	for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2026 12:37:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=K8IiVcphKVOk4mAKsawWGh
-	vDjA+imzypOQ24DCAyYJU=; b=NYpcpL9tunhWWjTm8d5rNOToJ8DOmSD8oQ5Mdj
-	2lksEf0uDr5rYodhzDdSebsyp6FA55KHpv0DlIfsgB/UOP4ucCxHaejB4TT5KMWx
-	QZl7/y97gVzoPwjqljbY2SSBuRIJvWDASeEnk5teS0bryyAOmIibfBj7AuU50ZM9
-	nHObZhqt2d1Tdqxf/jZndJzT52P9f+dq7hs5AfbbWmLgt6z7l2//3imYBcnDE2rW
-	zJGmf89covY4zh2DRawmZs7bBeFt1bcRZoD8BZotGsMc7HpbyFRg7/SWWQBLhB7n
-	3pWNmM12cBVS/rwmIo1TkGkai80vNu6nmzqZiu/Aog3kHsQg==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ffj78rh95-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2026 12:37:43 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-8ec3314f65fso149233446d6.3
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2026 05:37:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784291862; x=1784896662; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=K8IiVcphKVOk4mAKsawWGhvDjA+imzypOQ24DCAyYJU=;
-        b=gEGLUlgobX9L/3JbWW5Ems6qJWF6WT2rr0W5f4QP4L9jxeS1Xxn3jiU9xreIcS2hqQ
-         p+YiBQknYb9GbRgEqD7lyGQq0HWG4klJ7bulMTjSXGfC7GIGntBtQEm/lM5SLc0s8j7C
-         fi2FgWTeROLT2BjrDZMsvGiUl2re9gFshFKo/Lf2awTbE3QZwcxzogAgEnkj16lRz8s7
-         QGpUs1O/1s72oEtEC+3j4gbaL4uy1DCOuFByhJQCvse17/3cNlkZ31QgwQzV8RXqi7zW
-         K/mJoTTW8jky50nN3Ok1wyOvf0E3luhk2iID17zRg2uwlcmlBCv1Jew38TfozVa2AGbw
-         nVBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784291862; x=1784896662;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=K8IiVcphKVOk4mAKsawWGhvDjA+imzypOQ24DCAyYJU=;
-        b=T11ZAJrnS+50hh+mf9sFJW32n1qVMzCt6jYoqyzCZsQ462iSjxHKtwowbsgAfzFD2g
-         66sdoH9XuwfitL5RD5iRKDQKrEJb2/9+VI+to7zAU4flfpYnpfa36ht2MUBCu3EsTAY0
-         hx+4V8k3gQkM92/5ppwveuJePywRYyYShLcr/szIMfrUQI14cJVQluANRlx8F9pd5Tyj
-         DG7ug7Eh0baehLPeOzBsQhIl7T1q4nqNPofhhFoitMcmHYyLc5d2P2bZN9PsH0V+32CZ
-         HPjNxXjshCA5SkQlAWBlDuWYiTAZ/72uvnv7oTh00/MyCtdzearUAbiGX3Abv4IWlm2u
-         7awg==
-X-Gm-Message-State: AOJu0YzlOfE/WQplF3cW3T2A0KI11/LuW6M3aN1ylIrRRR5c5HIUy/Qe
-	pQwElMnWKh6BTdkmIc7wwda5MjnVRYoKCdtwMkH8u2Z4qffkJEII0knXmVPyR7mdsO/wgGcJnUN
-	O+kUn1lNb2rVIgbxbKA9C8M5CqVNb5zVyiX9GASVZaVYC8hCIBkmYbMJI3k8vbxyQ
-X-Gm-Gg: AfdE7clzhBGgIjcX47E3ry/VE5YlbZEqnM+8I5nTm/X0f05F8LG+z2HDBd4Busi0WkW
-	uET3SjFtmytbSMUZb02iYFuT9N46Mu7meZOJFEakbLgoc+xz7CSFjbTLui7TZMXkF4+J0el7jRe
-	PQ0iVaGcsWQMHKtXfjn4et0HZbwEMe0mcEovAXrqT0wX8tEj2v58zW33Vl/vhvgxHzDhv8dgEX8
-	8J1mpMdSlX31Hi8Yk0BiVRT4w1N5TD8jydAYNfT0E/shMxFpIGFTN4cjV7jukvhpdf30DRolVXu
-	iW+mJXHI+V2hYQ8sKzO+NGq0XDbugVZ6SRAdpRXHdfMjn2BHuD8h/QsSkKn8ERIsGqUnX9Q7whe
-	q/LehZVwdsYdzVNo3rdRUwv9G4xi1Cw==
-X-Received: by 2002:ac8:584c:0:b0:51c:9e6:ec42 with SMTP id d75a77b69052e-5213dba3846mr21597151cf.57.1784291862151;
-        Fri, 17 Jul 2026 05:37:42 -0700 (PDT)
-X-Received: by 2002:ac8:584c:0:b0:51c:9e6:ec42 with SMTP id d75a77b69052e-5213dba3846mr21596851cf.57.1784291861614;
-        Fri, 17 Jul 2026 05:37:41 -0700 (PDT)
-Received: from brgl-qcom.local ([2a01:cb1d:dc:7e00:dc44:5b1b:5396:79d6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4954a2e83ddsm42074215e9.10.2026.07.17.05.37.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 05:37:40 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Date: Fri, 17 Jul 2026 14:37:31 +0200
-Subject: [PATCH] gpiolib: unduplicate the pointer used for storing GPIO
- chip data
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ntj9NKKY"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FWNHa3w1VfHKqoLX2P7kB+Wbxoe6m+a/8V7wS6jUaWRwkirKX9Nw32pue/M4kTIlNKF4WPBSxu3uOiTQ6B+C2Rbg16gEsVjnz3nNJiRcz2qzeJUMz1jokoJ6DQ/pIcbI9jOJgM/4G7+y2vKdQunBpMc/V2q0cnSQ3YUOyyGWE4nINM1CNDcaO47C7BOMKFN5raAJYL5fciNzviZYOLOvFgn31hR5ePWQZIWZuDIb2fiX703aC8PfYuet6h9mI9J6RbcDAZZCAsDyoBfSCz7SV9sx7Mt0LYSdafzviriLQNK4agNvBQXbwjXmU6paUNqqG4js/RdF/0yie5ULUHLSWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iEoBgZBLV/nMUl+ZPlc/rpVgbx+orhtVo97xvT7AGxg=;
+ b=RNyTLas35V8hmP0iZc/xjYDiyiL35QM00hB/fP2uA+awdOdy8GDuD/21HWrwuqcJXx5ne+1BAty3i9Papj+TLlAyWF80Pvl+5G91f1Ch/K2PcAU9s/GrbRRKNtL/tmqnLem09rMvB+tPWtWPEgxl+DmMXAXoJWT0/xp1kPAsFinDjA4yNetmEyb+P7R8mvRdX04U73I+7LuFi0rDRpFGfJmA6v3RXzhH53dO8TItM2kj8rKHilnh2E1R9OQFuDGp1V3NIme2dAdUxvN5HbL0budohQGuuf93+TnJaPm4ObnbVq5lpG3M9+uP5vetG4E3Mbp0DrJhlxZExh0pEvbLEA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iEoBgZBLV/nMUl+ZPlc/rpVgbx+orhtVo97xvT7AGxg=;
+ b=Ntj9NKKYYiw9rSngkrR3QRH74SKYpF7sU1tb3KJufuWj8hckiOa4Mc/WvvdZ/Gw+hLViWMkXVtgjmkMx4nWb4/Mstx0g3ncFSlcaR5Vw7TXC8mz7CbXaPcchjvDzr8nJLYKpgMw6DPodF2xy8U1JhXRZDMhC96Gcz95QL693Nx6GLwtdCBnV+Y7evNx2+zGkMwlU9dblOwYEpWybioeGdVz6uwZxjA+gw3rNWbodMUqxhZO/3+fQegdSIdCS64w4GVRXjjNbVBaYuzu7ni8kmtFFH6JKG9kageZ5V2ecLUEBsBQbro7bm0T7kZlQxVCWHfpLxfKex6Zi6sYNEykFpA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ1PR12MB6051.namprd12.prod.outlook.com (2603:10b6:a03:48a::18)
+ by SN7PR12MB7418.namprd12.prod.outlook.com (2603:10b6:806:2a5::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.12; Fri, 17 Jul
+ 2026 13:24:41 +0000
+Received: from SJ1PR12MB6051.namprd12.prod.outlook.com
+ ([fe80::96e1:b300:7b78:d3a9]) by SJ1PR12MB6051.namprd12.prod.outlook.com
+ ([fe80::96e1:b300:7b78:d3a9%4]) with mapi id 15.21.0223.012; Fri, 17 Jul 2026
+ 13:24:41 +0000
+Message-ID: <5aabe234-6c85-472a-8be4-f6cbea7172bd@nvidia.com>
+Date: Fri, 17 Jul 2026 14:24:35 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: tegra264: fix DAP2 DIN/DOUT
+ pin names
+To: Prathamesh Shete <pshete@nvidia.com>, linusw@kernel.org,
+ thierry.reding@kernel.org
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, u.kleine-koenig@baylibre.com, dakr@kernel.org,
+ bhelgaas@google.com
+References: <20260717113210.599463-1-pshete@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20260717113210.599463-1-pshete@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0121.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b9::19) To SJ1PR12MB6051.namprd12.prod.outlook.com
+ (2603:10b6:a03:48a::18)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260717-gpio-dev-drvdata-v1-1-401b0cbd4d70@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAAoiWmoC/x3MQQqAIBBA0avIrBsYBZO6SrSQnGo2FhoSiHdPW
- r7F/xUyJ+EMs6qQuEiWK3boQcF2+ngwSugGQ2Ykpx0et1wYuGBIJfjHI5E1etpo9MZCz+7Eu7z
- /cllb+wAmB2NVYgAAAA==
-X-Change-ID: 20260717-gpio-dev-drvdata-005219c06a25
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2440;
- i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
- bh=PRB3b1r4OhZFmM+47mBZHtJkpZi09jzr/2fCoY7Emw0=;
- b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBqWiINOK5vx4IGweX+JdAuNRr0vGzy3M/ewtqK6
- Pi1yZvLm3GJAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCaloiDQAKCRAFnS7L/zaE
- w/QtD/4oVhNAu7GzizaphPicI4kP2Hz87q47h/X6kuUJm8u3KRdO8h5TuAI5yXSd/xAqebiJ6+b
- ggC8uzFlsoSV/8WRIvEUJ2wImVv1iIchWZRBlWOLmoDZGWJeV2iqpR8KWgtVHJh0qqnR24tCAfy
- 0YdtOQ9StpkZf9JZuDa1mCqx/oX9X4uNvtiAFL0/UiDZpgHhG9+KbASDwqoQSKj7lO43y0cokuz
- 0EXrCPiQZTFqdhk1DJyC3UJEQ3LZGwp+PcdLnS271M8O1y7Ljh01lkdhxXX6OUXK/ajARs5n9gc
- NMbIbNFWutjoud5TyzPoq3cVmYmlvTF+GgFYgBeCoHhCzxtZjHsNVqrKZxaOSs5ZYdUo9H6AfrB
- D+F0Qyqu+PdpI4n8aG/Ckrj3F/e/OR52F0a3MKQ12+R29MwfnGef+PP/ev5MdQfJcNHmGlA/Htv
- 9752UKYRlB8NG4rQyFk7tVtSS1WXWX/Wj5p2Pl6A0+dyEQvv/Mg/zV7l6Vf15z7erpAJhLTzRiV
- ks3xc8W3dl78YYPTiNRqMw96IkDSQPeQWWJuXMfOksUVFHlTB6VQHqQFMp+fW85P3ja21oYYH3e
- ECg/D5sgED5aJa7ypaXEUjc/FlmzIDZtQGGvNRW9radlz61VAa3z5RcQJVdk60yhGG1r967Kb6L
- xfxAeJIMXmb60hw==
-X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE3MDEyOSBTYWx0ZWRfX/vL+Z3U8iC6V
- sa8g0/E4/hovHXRe0U8tNZlUosihpM/w0fEa27mAUJKez/qcPDwXcdMvYQgD90tfNS7ypRC4sYm
- LG/3eUmwmJVjf5q9tWSifE+6Zk3Uen6wmIvlCIM+BMDF3l5E+kIBy2pyRMGuljZQNAmYZkB5DXO
- cev0ovk/jVWxRIiR8oSkk76hp3JIAXLbJb8muYR3OIR5AjHlSz1X6NfKzPvtH8cmmcnKe7bCgHo
- paghYWYNPuF/hQYO2rQBPFsDdGqbRbxyjE9MM/f3/av8coc7QOUyujCgcOavCtt3QfBj4WsFouq
- hpAaDdmdxDC9NRekRGv+zEhKuEck0iHoyMPvc0TisBaWs385j6VEQdSsG1qiutoxbJ+j4nNIvPj
- dG1w0UX+YRpIoHD0XJAXKxCPTEXPVO+9ik6TpqvaV6Om6q0CYxSgCXn/9LgDfz+0l9XuUAy7VP/
- eRtIDOzFUtN+iNJAsbg==
-X-Proofpoint-ORIG-GUID: mKi7RjeVbqCSkIwzweKV4pZ0fSKxWyZZ
-X-Authority-Analysis: v=2.4 cv=U9Ciy+ru c=1 sm=1 tr=0 ts=6a5a2217 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=EUspDBNiAAAA:8
- a=yt508o4TUAWRhPDqOYEA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-GUID: mKi7RjeVbqCSkIwzweKV4pZ0fSKxWyZZ
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE3MDEyOSBTYWx0ZWRfXwvtADzx8Wf4a
- A7rm40V9JuoGQcP6kFPbdDAw3lSwFOI9zIrW6xbsZetrGL+9ztZgrHE1xmWidJ9yS7yULeMcYMF
- 0TVCCwb4qgTGxLFNtQtHHJHQyU0l384=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-17_03,2026-07-17_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 suspectscore=0 phishscore=0 spamscore=0 lowpriorityscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607170129
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR12MB6051:EE_|SN7PR12MB7418:EE_
+X-MS-Office365-Filtering-Correlation-Id: 583e703d-8758-43d6-5f19-08dee406c250
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|23010399003|376014|10070799003|18002099003|22082099003|10067099003|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	EghBUuPfO8QJFnZMMaWREP1iiapAn+6cMcHOtyO6+L7w+2pVAHYKUInl0509d35jutsvwzPOtjx7MhPWS4SFvm03LhzqpS6iuTqdrTBFuXxGqgsym8hZ2a7xMuEgIbvftgzte425HSf47ti8ms8sagmCHUfpAU0v3/Nn00CC1F/6iyxNHBBSKO7fb5TLUiSI09hxRCi4thfCHZ4RmUpQLAaOYusuGHknW1o5E6bsHeWq6wr8k6Z7PjQJlVIQ9M5PAOa1hTonxOnkVMJAiikHLWTWmji2a60JPFq5LT0eQFEJjx56F3bw1+KCUq1LNEEbDhb8Wi9+MYvJ4wE1OgovXu7+Z9bfLHHzru5AwRKLQYf2MsM1IopBNy2O81HstGdHAMjakiOEqvKkN7uCzs8rFJQ8GSNB0KFUmDDF2UBuFNTXEn81hVxXAa8Pr3nEhDVnu6RREBrpTxYNvER8ztrRvIArLx+bjUqiM2l6UipRoDrXMz+Hc9V+Fo4PjPPkvh9Q9+yHjOq0WTAdM0U7/Sc+V5BM6MZwrIBoxKTvJ9EuDIfJ7t13AlI6ilFglPr4PKHFLTWL347vC0wGMFvKDF66DUf9JFW3YTtkFs2vxYroWUkOrqBsSclNmk+pC4pWNSiW+vwu2IxpDLqmkBSbmYveLTHWTmxMrIO6gpsbQeuncqo=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6051.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(23010399003)(376014)(10070799003)(18002099003)(22082099003)(10067099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aXZDa1Yvczh5MkJLOW9uYjVjbmoxQTh2My9HY0V6WVNPQTJ3djA2RG55NERa?=
+ =?utf-8?B?RlpDMFRPVjdpYjBpdXhJdUZXS3Uya1Q4REFMdGRiR1hrRTlsaDZCN1UwdjFr?=
+ =?utf-8?B?NUVqRE02RVEyeDBacDEyK2VUVEJlTkhlZFhzaTNvWlo5c1I2TGhxYU9QRDk2?=
+ =?utf-8?B?OTZKdXo3Sm5LQ0tLVlpsQm5IMlRTazBmTG5BZ05UVUllMDhmRWN5dk4rVEhE?=
+ =?utf-8?B?OHJUR1RqcnJGQVVjM3Nwb24wOUxXYkY1NzUwOUxSN1F4MXIrWGhJZE4rRks2?=
+ =?utf-8?B?dHZlN203TG41RkhlQ29qbCtGZjUwaEE1TXQ3RDRsVVdYMjdsbitTNERoWVpK?=
+ =?utf-8?B?TVFjV3E5VEU5d29WTW9iWFpVbzBBU0xwOWtKcTdpZzNZS21LL25iZlFBZTRH?=
+ =?utf-8?B?cDlSRGRPRkczK3JNL3YrV212MFRTUCtYeWlhNjk5S2g4VXFFcTRYa1BjR3U2?=
+ =?utf-8?B?S0Qwdy9nbFNSNzZJbmNDRTB5cmh2NFN5bmdSR2RvMFREeHc5M3VWbWhONjJk?=
+ =?utf-8?B?R2lURnZZZHRYNEN6bnQyNlpKTVdWS09FT3Ezc0FqOUxtWDg2QjlzZ1BNZ25G?=
+ =?utf-8?B?RjMvRUlDd2NmUEV4aTA4MFBJM3g1NFZPTU0xK0ttK0RSbVJaVkx1c2txV3hk?=
+ =?utf-8?B?SmhoRWtGdGVBdW5CT3N4VDYrdXNoMVVLL3dTeFFGUVRsNVlKZEhqM1NHZ2No?=
+ =?utf-8?B?OXJnVnZ0aGJYY3g3OFZWZll5eXpnV1FCSVEvTmJ3TlJ6bloxeHNTU0JsVGR0?=
+ =?utf-8?B?YnlVeEVGUkRoSSsvemJqbDh3NFlYc2hVSXdnSThLeC96ZnBua0pETjgrN3VI?=
+ =?utf-8?B?bXJQOUxWRjlNL2xEcjVIamVObkV4RzQ2Z1RVVXFIT0F3eEl3dFI4TEplRi94?=
+ =?utf-8?B?Q3k5RkFUM0cySS9PYmdPNEdNVEFPMm1zZVlmK2M5UVB0V2c3RDJjSndvdm42?=
+ =?utf-8?B?ZGt3TGdxeGY3SHRKRmZ4UG1nc2RtMmtDVTcweXA4R3dmSlRlNmFXNkg3Q3Rv?=
+ =?utf-8?B?Y0d0ZjN3a1hNRUFJS0VIdFlGNDMrQlFRUFNNQlFkdWN4ZVZsYzd1YmZROU4r?=
+ =?utf-8?B?TTJxT2lnTCt2RGtqTDdHYTFrUlBkRjgzK29vK05FWGNaUEQ3YTdsWHp6dGpv?=
+ =?utf-8?B?am9KMlRETnRhMEJ3cnVZT3VNZ1htSmZVVENHR3MwNDNLSHViN093MHFpZFh4?=
+ =?utf-8?B?anBsWWpBeFpRVzByTlVEckFkNUFKYU9rQWUyaGk4ZmFOMHhoNWN3V1g5VC9i?=
+ =?utf-8?B?bVF2Z2J1STRmMitoTHJVc3FhbHg1N1NxV1J5MXhGYXE3aXE3ZUxSTjZoRkE2?=
+ =?utf-8?B?OWxyeThyclZpVEdzdk40TkI0bzBoeERybEVrQ0NPenovdUdJRVVqcUVIN1lj?=
+ =?utf-8?B?QTBTZWRYZmZkZm5sWEtUTXh3YjZjWHcxakdvdk1sQmNORE9IWjZmekNqRVBi?=
+ =?utf-8?B?c2swL2k0NzRCNjl0WUllckhTbEZ4NEkrbjVxMSt6NE5NQUxRNnlWZERmdm5z?=
+ =?utf-8?B?alhmNmx3eXBkTVFqakRJUkF4NnRKemFTaXNmYkFxZ0tiV3VycHJHejZDd1lZ?=
+ =?utf-8?B?THJzVGJiWEFkeVJ3Nm42cE04dHlYeWlDYmVGS3BYSEN6a0YveUFPN201Z2Vp?=
+ =?utf-8?B?SWRqNzZBN1EwODcwdDZOSWpBeGdERTJ6QjdjVW9rU1g0RWZZcVh3MnQ2UFhQ?=
+ =?utf-8?B?QWFEYmFMWDNjY1NtNURZWFY5ZjFBeFdFZGtsaWJRZVh0ZEpTNVo2RUl5ci9B?=
+ =?utf-8?B?NEZhaHhLVWE1U3J3UDV3WmJ1WUd0elRnMUEvalFCOUdpUzFySUJ4SG90QWoz?=
+ =?utf-8?B?NVA0SmtHRjQ2RCtac1V1ekIvdUppL2x5cnpPMUFZK0V4QXBQNU9jYzQ1R3pM?=
+ =?utf-8?B?NTNjd0dMNkpjOWp0OXVibExidWp1UnNDOUJmcHREUkNhQ1VZUURkVGxBQlBi?=
+ =?utf-8?B?S25PK3IzZGttOXQ4TUFmaVFTVUNHVFRDODFzL2NLbWxjSFJFSVNIOGczQ1N6?=
+ =?utf-8?B?ekJsUWtMZ2tZVzFEcjN5L2hPdWVveTVJSnN4OTRWbmZGeEpVbU55ZGNVYytN?=
+ =?utf-8?B?YkI2KyttYUc5Nk53UTN1ZVB0dzJJOXNJL24vM0IzR0t6MjJwOVVINHByKzR0?=
+ =?utf-8?B?ZkV2cU43bEtiT0dHU0xwakxTNkpTbEk4dXVibzFaSGJrNGZ1Yys0azFkYXZB?=
+ =?utf-8?B?VHdrVUZUWSt4V1BPOWhXN0FlWlRWdElqOXVLMFpJclFHMzdsYk9wNjQxb1pO?=
+ =?utf-8?B?UExrdlE5NEhzbi85WnZsZGFtc3dyclJvRHpLTk12bjRac2IwQlplN3VHZktD?=
+ =?utf-8?B?LzF6VHRBSVVReUxUU0JCQnRuV2dyU3JpKytEZWlieW1XWUgvVlBEMWtibTg4?=
+ =?utf-8?Q?JtkXGCm1KHj77LCi5QiCtyJw50WBc/pHhqV/tv+jN9uo4?=
+X-MS-Exchange-AntiSpam-MessageData-1: XKGNLMMEBb0CKQ==
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 583e703d-8758-43d6-5f19-08dee406c250
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6051.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2026 13:24:41.5250
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: a23kJo/5QUyBI611t2SJSgVs4MxO+zIGjKMjYS5V3ToaYuzAgrhXyMgoTn8bTOyYDBfFDyG1ZoczeEQGH6ceLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7418
 
-We currently carry a dedicated pointer inside struct gpio_device for
-storing the driver data. However: struct gpio_device already embeds a
-struct device which is not accessed by anyone other than GPIO core and
-also has a dedicated driver data pointer which is currently unused.
-Convert gpiochip_set/get_data() to calling dev_set/get_drvdata() on the
-GPIO device's struct device and remove the duplicated pointer from
-struct gpio_device.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
----
- drivers/gpio/gpiolib.c | 4 ++--
- drivers/gpio/gpiolib.h | 2 --
- 2 files changed, 2 insertions(+), 4 deletions(-)
+On 17/07/2026 12:32, Prathamesh Shete wrote:
+> The DAP2_DIN and DAP2_DOUT pins were listed with swapped ball suffixes:
+> DAP2_DIN as PV7 and DAP2_DOUT as PW0. On silicon DAP2_DIN is on ball PW0
+> and DAP2_DOUT is on ball PV7. Correct the pin and drive group names to
+> dap2_din_pw0 and dap2_dout_pv7.
+> 
+> Fixes: 30a9d5162f25 ("dt-bindings: pinctrl: Document Tegra264 pin controllers")
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> ---
+>   .../bindings/pinctrl/nvidia,tegra264-pinmux-main.yaml       | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra264-pinmux-main.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra264-pinmux-main.yaml
+> index c40409d3263c..01db762e82bc 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra264-pinmux-main.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra264-pinmux-main.yaml
+> @@ -44,7 +44,7 @@ patternProperties:
+>                       soc_gpio173_pu3, soc_gpio174_pu4, soc_gpio175_pu5,
+>                       soc_gpio176_pu6, soc_gpio177_pu7, soc_gpio178_pv0,
+>                       pwm10_pv1, uart4_tx_pv2, uart4_rx_pv3, uart4_rts_n_pv4,
+> -                    uart4_cts_n_pv5, dap2_clk_pv6, dap2_din_pv7, dap2_dout_pw0,
+> +                    uart4_cts_n_pv5, dap2_clk_pv6, dap2_din_pw0, dap2_dout_pv7,
+>                       dap2_fs_pw1, gen1_i2c_scl_pw2, gen1_i2c_sda_pw3,
+>                       gen0_i2c_scl_pw4, gen0_i2c_sda_pw5, pwr_i2c_scl_pw6,
+>                       pwr_i2c_sda_pw7, soc_gpio138_pp0, soc_gpio139_pp1,
+> @@ -111,8 +111,8 @@ patternProperties:
+>                       drive_soc_gpio351_ps1, drive_gen0_i2c_scl_pw4,
+>                       drive_gen0_i2c_sda_pw5, drive_gen1_i2c_scl_pw2,
+>                       drive_gen1_i2c_sda_pw3, drive_dap2_fs_pw1,
+> -                    drive_dap2_clk_pv6, drive_dap2_din_pv7,
+> -                    drive_dap2_dout_pw0, drive_pwm10_pv1,
+> +                    drive_dap2_clk_pv6, drive_dap2_din_pw0,
+> +                    drive_dap2_dout_pv7, drive_pwm10_pv1,
+>                       drive_soc_gpio170_pu0, drive_soc_gpio171_pu1,
+>                       drive_soc_gpio172_pu2, drive_soc_gpio173_pu3,
+>                       drive_soc_gpio174_pu4, drive_soc_gpio175_pu5,
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index c433a095907fe6ea0fb0a3e1234bcf1f37042cde..723953f909c6159218cad73ecb3ca0dc9acb4c29 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1103,7 +1103,7 @@ static void gpiochip_setup_devs(void)
- 
- static void gpiochip_set_data(struct gpio_chip *gc, void *data)
- {
--	gc->gpiodev->data = data;
-+	dev_set_drvdata(&gc->gpiodev->dev, data);
- }
- 
- /**
-@@ -1115,7 +1115,7 @@ static void gpiochip_set_data(struct gpio_chip *gc, void *data)
-  */
- void *gpiochip_get_data(struct gpio_chip *gc)
- {
--	return gc->gpiodev->data;
-+	return dev_get_drvdata(&gc->gpiodev->dev);
- }
- EXPORT_SYMBOL_GPL(gpiochip_get_data);
- 
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 650a702741dfb938fbdf11db65a46ac85b6af512..cdf64785280e95e43f8d8b3645b93fb970347238 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -45,7 +45,6 @@ struct fwnode_handle;
-  * at device creation time.
-  * @label: a descriptive name for the GPIO device, such as the part number
-  * or name of the IP component in a System on Chip.
-- * @data: per-instance data assigned by the driver
-  * @list: links gpio_device:s together for traversal
-  * @line_state_notifier: used to notify subscribers about lines being
-  *                       requested, released or reconfigured
-@@ -75,7 +74,6 @@ struct gpio_device {
- 	u16			ngpio;
- 	bool			can_sleep;
- 	const char		*label;
--	void			*data;
- 	struct list_head        list;
- 	struct raw_notifier_head line_state_notifier;
- 	rwlock_t		line_state_lock;
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
 
----
-base-commit: 1a1757b76427f6201bfe0bf1bea9f7574f332a93
-change-id: 20260717-gpio-dev-drvdata-005219c06a25
+Thanks!
+Jon
 
-Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+nvpublic
 
