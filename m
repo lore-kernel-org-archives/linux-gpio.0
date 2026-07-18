@@ -1,120 +1,94 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11D25733E
-	for <linux-gpio@vger.kernel.org>; Sat, 18 Jul 2026 00:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E1525B0AD
+	for <linux-gpio@vger.kernel.org>; Sat, 18 Jul 2026 02:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784334139; cv=none; b=BtNL4U1XbLFkwEtCOiayWSGgLsOdDRLOy29mtf6SWTbOwDILBKi+ShskPB7bY+Acn3/qF1lgsM8QXCtjBfpvbRQTXgyx/WPR1Qp7nhZ/nOFtkNZNpL0FbWyLamaPo7faBZHM4hv1r11Wj3WSq1yImzyuHEw2S4epN9VQXwX+Q5I=
+	t=1784342739; cv=none; b=YAkVZdbJb6BxJwA+ENzvY3K0aQGI1ouAYJ0xTtWPOJBzp6LBic8G/8PFEq26/3jr9lf8XyPU1hZrIKfZDPHW+Rah+sQEOm2RwFlwbzMe9J+LkzBV5TrZpLf0oTksIK5HJzUkhDjDZgsmD/IjDGujUY38XFdwCSw/o3SQDmfOfNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784334139; c=relaxed/simple;
-	bh=csB9LW5WHw0un70nxzrglTex95/RRB8IvOAAZHtG94s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QK8+RotGZYHHSmvb4pzaFGwLzj0bo0ORkUx2u69LfwzJfDgrCmHvLU0XHmVzkkz0zUTt+jFiBHrC8KVZsocHu5olI7kdidSlWrDg/jl0nEIHIuKocbz+cLcbfqBvx/ctG3mVF3jY2wUyNxZ8gcutCfJviqOU4L9kgWXsTNhSBjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l+8I9D8Q; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784342739; c=relaxed/simple;
+	bh=pg9bddlaEe+AQxzoNPbsjYm/Sjc5l8Sf/cTRySJy7Ds=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=DhDFfNFzLQpRTk93JN4RqCRiBswjLOlDVpye6VmZJwcSHdFPK5+7kdAMv8zjvQj9lO23Fm3miQ1VZHSYPUFdIf0TRtubO6lGfPyDCnbIW/E+/n+pp+a+3A7myWALNrDcyfyNVRNOvntAM/FTOLrStU+tVtJMLy/mvFmv0l7vPTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hwMQGlOO; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+8I9D8Q"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-47122683cf3so4901084f8f.0
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2026 17:22:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784334136; x=1784938936; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=zZebbFaWsy8eWuCYvjuH4LuGSdt8lE+CXg5X68CJPwI=;
-        b=l+8I9D8Qz79dvYxf1e9jG9Sb9esgjOCkgi25Nn5G9duE5Gpe6ZFqqti+HZ4pFfawA3
-         CamTKFPF4zhFbjGMtpDdJuHt+bpKsuPeGmYM2myCxFpUgLOpoOyKDWNIKG3CWDeZEqYB
-         AqNGiV7OEZS6bso/MnDE4TB8CZalmoszXmxEjNuwbBczXWXsZYQu1aCPKySGxOT0RPRC
-         I1lyi/hS1Zfj9Qlq9WB/VBlTDSEuIP+D8nBk1o835oF0XBiYjcCNyzRc11PJiTeEkptX
-         juGkryJ/SFTu6u7/6HUD5BlOlz+473HAvXsnjjfbNMCsps2ZAqI0WAJ5Eji1FNFwjXTi
-         LVnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784334136; x=1784938936;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=zZebbFaWsy8eWuCYvjuH4LuGSdt8lE+CXg5X68CJPwI=;
-        b=kMLZJ0nU/QO90nNqHeZ+Ti8rGODkGB/mVn0o5rWRkMwK3YiVtWI/SW6bukuGyklUar
-         8dEyJyv54OKtmvgyrBsaI7fVqobwQtgnp41azVZd8lCbekBSKJbs1uLDaOF4q2CiWrSa
-         OfgIoYbJfQbBESYjm731jFEJubLR5+ajTwdxCcwumR3OQpfZnmfTGOlSS51+6y4Lf04s
-         NyZWwBEwTRcvYwfRiRRuacYP3XIOUhgatOIL2C4+FZdMccmwQsvGtbey8QmjRXPSyGt8
-         kBy4qXolJ5regCqEd/xPzV4I9ruVeiUs4HHHRR6/EgxDTAoY6FR8mQA8js55bHRrm1a/
-         IVHQ==
-X-Forwarded-Encrypted: i=1; AHgh+RrULXOn4LyXgWb9O+8cIkH7UN2ylu7bhZm7hdEoYLdA/y5lPcSM4Goal08lv/fKC1fDcJWDFAckd1bb@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvODFuQDvpjUERmpSjazwPR9y7RdDfwDFmHYeSK9NsJuPuhOY4
-	QkJ4BVHDcC2Gz7kj+NF6qY8Luvq/BMQev1l0uwaofWHurYFpW5TR/tEk
-X-Gm-Gg: AfdE7cmGtsxkNe52y64iKah+KlHmmmji87D7S2HkPLiz3h409DJNf/SgPCvvGC4wx8v
-	e9b+lW5N1jK43JkFRP5iZxZiLTN8IqwsknfDFqCbPQh3VhG4jzbBk5AE9xurqEg9XkBWe5uK7D+
-	g+HJ77OMI93UwTr4r/R665ntziR5sUk5EFC0I6n6OU04J1VJfuSJAXXY7WNgFyWpWLjz3Uk7/Zt
-	SWU4cMDzc/2ldKmnWPMjXggZzzh3f0v9zp3/n4pKWt0gKexIob+y0PGZrKE/snAPTWEsoG26aCJ
-	VaBNBZvd29KqZGZW3mRyldlUGoVAHTP3P/jvU4eaUnIN/D1mQgVKVHuGcYBFBQ2aUcf5UvKXSL/
-	i2t8jQvJ61lBMsWVMqEAhrdAeGnNxm/MmovFALIz/ZenADJKP2tsHZfZkPFvSELNO1f76JtNSVe
-	69FAHc+vtJ6Hnw/FoHISoKfBEJ3XNSuBXOYWM7pGm8LqbddrbWbEK+SeWUq/WBxLhI6MfLZDA8H
-	jHjP9dT9SSkuHwtc5lspj9D/3GKp8MBsUnKfGGlkyNdksumBnhGew==
-X-Received: by 2002:a05:6000:2412:b0:47f:6103:e0c2 with SMTP id ffacd0b85a97d-47f623270efmr6122555f8f.35.1784334135843;
-        Fri, 17 Jul 2026 17:22:15 -0700 (PDT)
-Received: from spaceship.tailf1107e.ts.net ([2a00:1d36:1938:ea00:6509:ca16:7c02:4e47])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f63eea8afsm8504757f8f.33.2026.07.17.17.22.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 17:22:13 -0700 (PDT)
-From: Taceddin Sancak <ts.solidarity@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Linus Walleij <linusw@kernel.org>
-Cc: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Taceddin Sancak <ts.solidarity@gmail.com>
-Subject: [PATCH] pinctrl: qcom: ipq9650: fix audio_sec_mclk_in1/out1 group pins
-Date: Sat, 18 Jul 2026 03:21:46 +0300
-Message-ID: <20260718002146.698973-1-ts.solidarity@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hwMQGlOO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1784342735; x=1815878735;
+  h=date:from:to:cc:subject:message-id;
+  bh=pg9bddlaEe+AQxzoNPbsjYm/Sjc5l8Sf/cTRySJy7Ds=;
+  b=hwMQGlOOU+l9MSW2p0V7cJK2UX54teNmSIbaKpGXFR6Qu74UIE7P1Z2J
+   lnxBKqfm7kkXsnPfvWrS5p6qRgWAoFnpx7ZUyedJneEwQ4R/wzWS+X3KN
+   iEd6Fehvr5c7qYx9YAASIQJxE9f7SvyavzO3w/JxlPcq0a7OWgaPzTByF
+   OxyzrNyzQOr8cyYJrUfZwX5Yu/srg5cbSTvUHdwoUh40ZARu+mLcJ0mYS
+   TIN29/Rt6eY2NXResRN7TLMAwEbYklBlz13OnfK7ygZuvQWEOyZx46FEy
+   nEDcLEGdDD3uVszto/9Bu/PQfetAfxLbnIZKijCJmv/tpXnoQhO1vZ7vT
+   Q==;
+X-CSE-ConnectionGUID: YUzkcTcySRavn4URU1n8eg==
+X-CSE-MsgGUID: Fv8tkuoGSji6+xjz0ytu5w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11849"; a="84963782"
+X-IronPort-AV: E=Sophos;i="6.25,170,1779174000"; 
+   d="scan'208";a="84963782"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2026 19:45:34 -0700
+X-CSE-ConnectionGUID: Zq80ID76SnCv8o1xWT1FZw==
+X-CSE-MsgGUID: 8KdsPjeFSE2910YnVBDu9g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,170,1779174000"; 
+   d="scan'208";a="260506426"
+Received: from lkp-server02.sh.intel.com (HELO ea128546eb3d) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 17 Jul 2026 19:45:33 -0700
+Received: from kbuild by ea128546eb3d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wkv3S-00000000TOd-0Efi;
+	Sat, 18 Jul 2026 02:45:30 +0000
+Date: Sat, 18 Jul 2026 10:44:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org
+Subject: [brgl:pinctrl-qcom/for-next] BUILD SUCCESS
+ 82c3edf8701154e2768973ebd4c0d2f3bd29621e
+Message-ID: <202607181021.L7ukOxqc-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The audio_sec_mclk_in1 and audio_sec_mclk_out1 groups both list
-"gpio37", but in the pingroup table those functions are muxed on
-gpio39, while gpio37 provides the audio_sec_mclk_in0/out0 variants.
-This makes both functions unusable: selecting them on gpio39 is
-rejected by the pinmux core because the group is not listed for the
-function, and selecting them on gpio37 trips the WARN_ON() in
-msm_pinmux_set_mux() and fails with -EINVAL because that group
-cannot mux them.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git pinctrl-qcom/for-next
+branch HEAD: 82c3edf8701154e2768973ebd4c0d2f3bd29621e  pinctrl: qcom: milos-lpass-lpi: Add Eliza LPASS LPI TLMM
 
-Point both groups at gpio39, matching the pingroup table. This also
-mirrors the primary audio MCLK pair, where the mclk0 and mclk1
-variants live on separate pins (gpio53 and gpio51 respectively).
+elapsed time: 1985m
 
-Fixes: 3c8e7ba0e399 ("pinctrl: qcom: Introduce IPQ9650 TLMM driver")
-Assisted-by: Claude:claude-fable-5
-Signed-off-by: Taceddin Sancak <ts.solidarity@gmail.com>
----
- drivers/pinctrl/qcom/pinctrl-ipq9650.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+configs tested: 17
+configs skipped: 0
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-ipq9650.c b/drivers/pinctrl/qcom/pinctrl-ipq9650.c
-index 64e443aa31b2..5399d7ad934c 100644
---- a/drivers/pinctrl/qcom/pinctrl-ipq9650.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ipq9650.c
-@@ -310,11 +310,11 @@ static const char *const audio_sec_mclk_out0_groups[] = {
- };
- 
- static const char *const audio_sec_mclk_in1_groups[] = {
--	"gpio37",
-+	"gpio39",
- };
- 
- static const char *const audio_sec_mclk_out1_groups[] = {
--	"gpio37",
-+	"gpio39",
- };
- 
- static const char *const audio_sec_groups[] = {
--- 
-2.43.0
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha          allnoconfig    gcc-16.1.0
+alpha         allyesconfig    gcc-16.1.0
+alpha            defconfig    gcc-16.1.0
+arc           allmodconfig    gcc-16.1.0
+arc           allyesconfig    gcc-16.1.0
+arm        u8500_defconfig    gcc-16.1.0
+csky          allmodconfig    gcc-16.1.0
+i386          allmodconfig    gcc-14
+loongarch        defconfig    clang-24
+nios2         allmodconfig    gcc-11.5.0
+nios2          allnoconfig    gcc-11.5.0
+parisc        allmodconfig    gcc-16.1.0
+parisc        allyesconfig    gcc-16.1.0
+parisc           defconfig    gcc-16.1.0
+sh               defconfig    gcc-16.1.0
+x86_64               kexec    clang-22
+x86_64        rhel-9.4-bpf    gcc-14
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
