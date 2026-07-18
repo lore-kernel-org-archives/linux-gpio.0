@@ -1,44 +1,65 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83FE327BF93;
-	Sat, 18 Jul 2026 18:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA9970836;
+	Sat, 18 Jul 2026 21:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784400625; cv=none; b=jurOosEEIMf2a3/jEhcQLbRENi3HoCLjFz5BJJCmbEkn6hA5g3RFufWnxDorudni8buxFtkhj72baFOkkpFbkM/bR+fpXG/QA8WUIHk3G65oDMirnBRixsQNHt2vB5kwJty8cDRubMjxNKGMUVG3gjV93LR9kzOnMh5TCSOx+nA=
+	t=1784410709; cv=none; b=N2K2TnhEJaZl7gxRtEhxFzpaZklDMDp43Nt/8OKwf1mRFySRnssLo7E3E38Z/v68M+ZjVGGlENEjri3zr3POMwNS/Dj3tFDiAPjL7gQeZzD/Cx0Ayc7YdfPMijrMPkbg6wGkXp4BEXGvuoIlyBzdDT5nKru43nZmrPUex0iWTz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784400625; c=relaxed/simple;
-	bh=KX0FaptwyX0fR8xig0zo+7MI0fyiUy3B3tH/sosrbhc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MTJQLdmNr65jaE46cptGMoz7EIQCjvQBgEtKnCczCATUXjhNEUmPy98RZf4NhREIiz5cx8xcE1xRbc9waFmaYCWYGghrCk5cQ+9HZ83X9uQl860zK9eINdrHoHeFgLGqTdBpOsNrXg8hmvy459POZ2dZM98+0C0KsKiIelS6YpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ipy12Q50; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1784410709; c=relaxed/simple;
+	bh=OTfzyKQ7+oCD1jpnlmlq0O1dWNXiT6pkFts+V4CBv7w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z75AZnH7CnSkGUVjk5jvXbn0ylK/y0+p1mTWp5ctfYcGd3tC3drk0OUboga+xl1OF/VqTrYOC+veraQsLzrLMsY89EvuIr0+ljkIOkTYTyGRsEPUBFMYyV8tMhMRd0BeBkJBi25EMYGFYzJ+lXmJTUAygtvy8/dqjLq/IYNiuNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=bx/4U/R6; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=D5mzjP1h; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ipy12Q50"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=9jEDxHMaQ9g/HTmOHqW3yML6Bi+LCB5FFqij4/H9TTw=; b=Ipy12Q50T1uutQRTfafmQtXMiJ
-	FrQHDlPCqjquLiOkHLi6rp4gDZxe+Ysr5h84zkmHukh53bMq0aW9uTgo5Q3JJKAecakK1NpLvnOLV
-	RPeuqfm1pYI/+62x9CYUJczgntf7PICoVmjswJoMn5VZnHU03oYQya6P0fwP2X7Vkz/r6Cjz0bMyn
-	wCkntP6yUDQwJ8yymNwU6LPtNfSE1n6lkMp/Ttj3zua+sLU3YIo7bSASkj2TeGR4Me49gl7ncCvzf
-	ChJazEUN39TSpt+NTQ06ASSUpJ07kOBtVbWQNDWVcaLn0eoNKqozZ0NOc+GINEP6jfRDFevE5Tojs
-	sn2WjPhQ==;
-Received: from [50.53.43.113] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wlA79-00000004SJl-1slF;
-	Sat, 18 Jul 2026 18:50:19 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Jim Cromie <jim.cromie@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH] chardev: GPIO common access methods: repair non-kernel-doc comment
-Date: Sat, 18 Jul 2026 11:50:18 -0700
-Message-ID: <20260718185018.1857536-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="bx/4U/R6";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="D5mzjP1h"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA512)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4h2gBT4jMczKq6c;
+	Sat, 18 Jul 2026 23:38:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1784410705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2sznBgGicK/LYhOMmvPfuquDqZpSQCSAOYd1pIJIztU=;
+	b=bx/4U/R6TOJZKLu0+buETkLFlv+J8dn32nZA3eJGDCGtzuujt4pE0kwz2XPGxiQF02zRHw
+	nQpzFDBb5jHnZ4N0nbKxnyTzQelgx3M4VKEeUy6D44NqAsNRSyWFwi8CfTPsIfJ2/QYULG
+	txYoHQu03rBpcOLgr8UDyOjm4pbAe4+Lba1sA3UxdSyRBSwIT4fCj8dLFuDlXFkDufiENw
+	xFdh2JodyXyiQ2BrPVNLb4fWeBZmBa61foyE0eExoqUib6hBCcoARFmszfOJgeE9jzla99
+	nWOubtnCqXp2BulveV/z6P2NjLUkFbvFKTD/3GloOwQzfjUo48mElbHXlrxEQQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=D5mzjP1h;
+	spf=pass (outgoing_mbo_mout: domain of bennib@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=bennib@mailbox.org
+From: Benjamin Boortz <bennib@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1784410704;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2sznBgGicK/LYhOMmvPfuquDqZpSQCSAOYd1pIJIztU=;
+	b=D5mzjP1h/j5S2y7G2aqguBhTjY2wmFsZGTnKvmsxWhB/0sgJGYo7ZbCGqHGB77cfqw4rRs
+	hbQKd7gqrvexe/VOfqX0sLGVM0s4vuor9ZXheI56N8weDPvqARtfneNe2uRZBaGPPMosTo
+	iq4APGJVreK3eNTOx6KzCJGa66TEkLF4dEEPQQM6cZKmAtOfhqQibZxpi6yLUcQixk26ex
+	r+mN6vGBD6CUMllqWL+TL7t1fMAM8amxL+nAvaU+HFQo2a4mKx6Xv3Qzf+tcc9MvcKyW0q
+	cIhnQ9Zb1MvIxnZAg95/+vhBVz7Cdc7CWVbNYxcHd1/2jnvfc9g/pK4RZkG6Sw==
+To: linusw@kernel.org,
+	lee@kernel.org,
+	vladimir.oltean@nxp.com,
+	colin.foster@in-advantage.com,
+	andy.shevchenko@gmail.com
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Benjamin Boortz <bennib@mailbox.org>
+Subject: [PATCH] pinctrl: microchip-sgpio: add missing select REGMAP_MMIO
+Date: Sat, 18 Jul 2026 23:35:15 +0200
+Message-ID: <20260718213738.2470294-1-bennib@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -46,33 +67,57 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: ed84a9c939c8868e3ea
+X-MBO-RS-META: beiuuyrqrmnu7seahqze71diiu15kkfm
+X-Rspamd-Queue-Id: 4h2gBT4jMczKq6c
 
-Change a "/**" non-kernel-doc comment to a plain C comment "/*"
-to avoid 21 warnings like these:
+The driver calls ocelot_regmap_from_resource() via <linux/mfd/ocelot.h>,
+which internally uses devm_regmap_init_mmio() and requires REGMAP_MMIO.
+The Kconfig entry does not select REGMAP_MMIO, causing a build failure
+when no other driver in the config happens to pull in REGMAP_MMIO:
 
-Warning: ./include/linux/nsc_gpio.h:2 Cannot find identifier on line:
-   nsc_gpio.c
-Warning: ./include/linux/nsc_gpio.h:4 Cannot find identifier on line:
-   National Semiconductor GPIO common access methods.
-Warning: ./include/linux/nsc_gpio.h:6 Cannot find identifier on line:
-   struct nsc_gpio_ops abstracts the low-level access
+  include/linux/mfd/ocelot.h:19:51: warning: 'struct regmap_config'
+    declared inside parameter list will not be visible outside of this
+    definition or declaration
+  include/linux/mfd/ocelot.h:34:24: error: implicit declaration of
+    function 'devm_regmap_init_mmio'
+  drivers/pinctrl/pinctrl-microchip-sgpio.c:910:16: error: variable
+    'regmap_config' has initializer but incomplete type
+  drivers/pinctrl/pinctrl-microchip-sgpio.c:911:18: error: 'struct
+    regmap_config' has no member named 'reg_bits'
 
-Fixes: fe3a168a2ce1 ("[PATCH] chardev: GPIO for SCx200 & PC-8736x: add gpio-ops vtable")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Found by randconfig testing on arm64; tinyconfig reproducer below.
+
+Fixes: 68c873363a78 ("pinctrl: microchip-sgpio: add ability to be used in a non-mmio configuration")
+Cc: stable@vger.kernel.org
+Signed-off-by: Benjamin Boortz <bennib@mailbox.org>
 ---
-Cc: Jim Cromie <jim.cromie@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-gpio@vger.kernel.org
+Reproducer (tinyconfig, arm64, without patch):
 
- include/linux/nsc_gpio.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- tinyconfig
+  scripts/config --enable CONFIG_PINCTRL
+  scripts/config --enable CONFIG_GPIOLIB
+  scripts/config --enable CONFIG_PINCTRL_MICROCHIP_SGPIO
+  make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- olddefconfig
+  make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
+      drivers/pinctrl/pinctrl-microchip-sgpio.o
+  -> CONFIG_REGMAP_MMIO absent, build fails as shown above.
 
---- linux-next-20260717.orig/include/linux/nsc_gpio.h
-+++ linux-next-20260717/include/linux/nsc_gpio.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--/**
-+/*
-    nsc_gpio.c
- 
-    National Semiconductor GPIO common access methods.
+ drivers/pinctrl/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index c2cdd7b2c49b..23ea76dc6261 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -426,6 +426,7 @@ config PINCTRL_MICROCHIP_SGPIO
+ 	select GENERIC_PINCONF
+ 	select GENERIC_PINCTRL_GROUPS
+ 	select GENERIC_PINMUX_FUNCTIONS
++	select REGMAP_MMIO
+ 	help
+ 	  Support for the serial GPIO interface used on Microsemi and
+ 	  Microchip SoCs. By using a serial interface, the SIO
+-- 
+2.55.0
+
