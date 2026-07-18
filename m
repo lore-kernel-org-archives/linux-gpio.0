@@ -1,71 +1,71 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C1A282F3F
-	for <linux-gpio@vger.kernel.org>; Sat, 18 Jul 2026 04:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AA672618
+	for <linux-gpio@vger.kernel.org>; Sat, 18 Jul 2026 04:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784348002; cv=none; b=Ae9ZMsEhOlKmq2WB/2kmLKkhAttSwzhCuKX+cU4W+8wsIPxvlxO+baVrX+LUIbwp60eOeh1UCCeeuXPAdVrBWXmjuEQ5p6rLx91DKnCt/qnrl2jTYGSBgiIob4HQWEkFiKwcB0mNTeOQLF1g/RMRv2dpYl/1UytUolslj2Z+QjQ=
+	t=1784348005; cv=none; b=o2s0hdPNqJV27E2JQ9zyPKAN08lAYvK7ojcsMa+r028J14n7qJ3+xonQbm0QkTxaUoLxPdM1M4B6cSX8Ahxc1Ov1x9OItLC8VmKFR9C23INZDwd9olrifNGLTUtG4YDdbCvk7YOSGlV4pyiwkVt0eI05Sji/PlezhMyygE+pW24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784348002; c=relaxed/simple;
-	bh=W+RDstnb+d0nIXwyYz5P4d1fMKP2EWQOaub4TisuCME=;
+	s=arc-20240116; t=1784348005; c=relaxed/simple;
+	bh=+uOYVVqYSVF49V3ivMdPmt1gR/QDDpfL74KRQtf71V0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aKmyHzWcDhquJllRfyATwpm8vYN8uIBk00ihOHYcpv0PAuupayKQFQnfFlCtCm9sQ3qIwR/1uuNxZa73oBrjaXi+vCQPPx9cNX65XJ0/xUOI7zOEKGsnwjVpPXrltUVbffJbhKwnsyzoaFsG3TmLxvhOd7P1LhlEaRIfZrIFCZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGrGhxkp; arc=none smtp.client-ip=209.85.210.178
+	 MIME-Version; b=UKBQhdNO/zqtj8vZy1KKTNEioOJ5dpjZPE6jke8GmhKp3cCiboEQpGCsVTa5eeuMcYyQlG4M51SF++JgWLzJiF0ZAaeM9nDqN5lwwIhGu/mrorUMW1Lsjut9yBFH54HZEcWdFs3bFhvOU/ZofMQgy9z5O01odr+AnHKlz6OUh8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lOQ6C3Ef; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGrGhxkp"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-8453427d3f4so7834367b3a.3
-        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2026 21:13:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lOQ6C3Ef"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-38e1a9d9105so4288568a91.1
+        for <linux-gpio@vger.kernel.org>; Fri, 17 Jul 2026 21:13:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784348001; x=1784952801; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784348004; x=1784952804; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=/ItLwNwYf/ktBrsVr7LkeZLMNAmknWOTehFVxX5Sr9Q=;
-        b=nGrGhxkp7tUoiuzcsamNuibChkq2j2E0iMoiVImSyALj27Voby/Df/F4NJQXXVyKzl
-         qHxthwnUIAq+t0l/Bnn5dnOTkJUBiuSMq+SFVAQ++dSJt62BbVusvhQou1OU/aiWsmBu
-         9Dr/Xp5q2RqQDKi4f4uzx/6Vi8rSGmjSfEgAPQyhDlxdZAfypzod5YHDw8UdruZSKdfK
-         rzbtEOxqcPxTImJFzuPqry0CTF5058M2mDbvjz0fiOTov2wa5o+Hjo+uUpublyRZ7AD5
-         hsLG3voJf9PkZDhU1EfPdWQNfuWBwj0dXTJ8BWRrO7rvWFRKgp2uKZ9t6sPKlwGIXa1Y
-         dJrw==
+        bh=PiD18qvQiDb3f+7zvIPLMish2fN1UCqqfWGwuyBWBb4=;
+        b=lOQ6C3EfQDLB7ddktWk5nI+zpRaXtBbx7izNNsZlnbtdrwG/QRJFMnYvfeao/AqiST
+         PnyZF2g2kLyQaAIi6PZUGtLs+JtNKe6wHEEaUjMcpg6OneAeekrqnHnEkDUD8W4ylNvz
+         qV/eUsP90k1U954gY78Lm8jSlp6qLiGt2scsN4XC7gVnLtRzJUxY6jBBwolDQ72toYws
+         Tx92tsr2mTs8jOG3GR3pQCyxwbqAehZSceAPc+grloI76v/RbXD1gczDy7MZHfLrYk+9
+         tNlEu49O+oNLi09NGDtyJRo7LTL4GzDjcMsMIces9OcL5BWKKlxEgcVxj31+CGUsn0Rb
+         bugA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784348001; x=1784952801;
+        d=1e100.net; s=20251104; t=1784348004; x=1784952804;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=/ItLwNwYf/ktBrsVr7LkeZLMNAmknWOTehFVxX5Sr9Q=;
-        b=GyVssya20xDaCVObhESrmyuXEklV+BspoY8T5u2qb5vL5zwrVsM+Vm8XQnD56kYvI5
-         +prOW7THqQxWRzxOCVoeQr+2UtiLHCl5f1FxouE5aaqQtlW+lStEVJMKTYf02lPn0m62
-         eXNJBzYNPfl10A4bx+UffO2zUQQeejS7O+vjhI95HkKBi37H+AXDCa/fW8FDFayIwoyk
-         tn32iYX2dNX/61UOvLpdMFInO80W/5XsN/YkP5tUiGoCOVbcrCbTVtNTQmWesa5KtU0s
-         wCc9DaS5hv3lm5CDW6EDAjtm6sNKSGvbmoov4NzJ5fHDIR6XWXWRvfPTMKwQ5BEGGUtD
-         3Gag==
-X-Gm-Message-State: AOJu0YzpEtlEQ6hxZ40LAnBX+jJGqU33L9B4Bf+W59R2+xyc0OzimahV
-	BjP59bYsjY8Ht1PkWFDBrm/OkGwI2tNp04ViQ4H5lK/ggYJA58Q2/Xsn
-X-Gm-Gg: AfdE7cnBov2hjtG18hveA21Gi85tqwNFYMp1+KI2mw07raPKHMCOYScTBviVIObLjJ7
-	ZnhztgDXZzdA1LaKLw9Nlvg7uDp/eS/rOOAyhI6FK8+ubBEUfac+Dej8Ea6JDKJYY1M6y4mWn6r
-	qfIrNK6LOD5FYB03q8aSswUMRyD8WIxTDEH5mm7YhvZpfFtuQ109Sv6jdTjgHC7JnUXceqDe7Zr
-	DD1y2Zy0XTnwijpjseoyxaoYsVn+Wiid5afhR13oAO/rVXRXhmq0csZ8kr0xndH8dl26m6QfHNq
-	aEJh0Ob35vv0hbxKwp9sV2uPQ8cTHIZ5r5eFgWsD/UaxbA+67Kkm8zoZeGtvyPfEX+aS53dyPGk
-	4WEptCx8vBiIuZ1yJUyEt3ynYJGyxHn4cJJWKO0lw2BFo90Epp6jdrr3tUuyS2QOAvvntmX5Dmz
-	GL7YzFjY1Jv6zu1vTfc3uOm2Q1uGdzhc9JmpdY+8wy97jEijIg5AevxVLMGkd1O3TN0RxhluWVt
-	tqc
-X-Received: by 2002:a05:6a20:d529:b0:3b4:731e:6f95 with SMTP id adf61e73a8af0-3c3ad947d7fmr5548096637.39.1784348000845;
-        Fri, 17 Jul 2026 21:13:20 -0700 (PDT)
+        bh=PiD18qvQiDb3f+7zvIPLMish2fN1UCqqfWGwuyBWBb4=;
+        b=rN4iJbzoLKdQvllMYn5vDbzYUwOrh+vOVMm30BbR1XMnYShj0/AP8bvICiKCjCe+VW
+         G8kqmmyOcXTQXN6nLC7/XUqMPnFzOKMee1PwApxAIMemBFrfhABQFZHW4nkjD30FmQOy
+         PEpyvlDaHFTaWEup8pAcSQ8373nvp4JVH007RN9jhZsI2dSg5UlGYHsWgR+hlfMwG3ZU
+         coi8tOrhXByURtK2bwFtt2Zjjj/ukaM4ccwR3vidyVlxRjubPLtixcc3bi/z/Plr9gNn
+         SI7/MIv3Ck19xRcVcQocqmYw/76HEWi9w6eJZA+TOcHZNrikP92cxxbs2bTm5oLTeuAZ
+         nasg==
+X-Gm-Message-State: AOJu0YysNjzJFC55ja4HVhcybm8vktLma27bawvasxGIIUodc9CudQiz
+	NdYHqbxcQgzO0AH42gp0I214If6RTwoLINU+5EdHiPHTt2I/DmuqC3+yqG6Mdw==
+X-Gm-Gg: AfdE7cmT0+qlUFYngOqhuXVnEftHC+TlgLAzUy/d9OmQsECgK9F4Z/dLV1dFfV6XydL
+	S54UUzorQwtKLZbqM1+D4YvBU8pVpwfmX8WLfPqtY6kzCWCnfWsz6v+dJPQq29Ty6katoSz7uS/
+	buXbW3yB1faWyWl076GpKSqGarWOnK3x6SxeZYuw+67vD86fB11d0IoW10jqUtRwDu+42bvQYDY
+	JObNw6mhMlsJvmBL8GJ98tFQoJisCAMz+A8dTqBZya6KEISRnUrK30hyaapBzNYlUvYjjyc9e/m
+	i+I+/tSrnetA7oVBF+d/b1a/oLJRl9TqiVdIy4YMGj3f+LTO48tuP0TlDmn6aZ2PVXygE+jp69Y
+	yTroN51nnGcej9OfdNBewHX8zQu20A6bL8BapSt5b+VJ1XTreGgAfIBCPVWMHIQvxWC3sg4Oslt
+	G785xNwWug308OnCDEhrjhmVNfVkynZF/8H8TC7pC2dutNNX6eOfVRiaWYK/dYfeboPUVVxMFke
+	ttg
+X-Received: by 2002:a17:90b:2496:b0:38e:6497:ca45 with SMTP id 98e67ed59e1d1-38e6497d57cmr305776a91.39.1784348003684;
+        Fri, 17 Jul 2026 21:13:23 -0700 (PDT)
 Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:7638:3cbc:f1c5:2eeb])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3142a1bbaf6sm11052109eec.17.2026.07.17.21.13.18
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3142a1bbaf6sm11052109eec.17.2026.07.17.21.13.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2026 21:13:18 -0700 (PDT)
+        Fri, 17 Jul 2026 21:13:21 -0700 (PDT)
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To: Bartosz Golaszewski <brgl@kernel.org>,
 	Linus Walleij <linusw@kernel.org>
 Cc: linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] gpiolib: of: add a quirk for legacy name for TWL4030 external mute GPIO
-Date: Fri, 17 Jul 2026 21:13:07 -0700
-Message-ID: <20260718041311.2605172-3-dmitry.torokhov@gmail.com>
+Subject: [PATCH 4/4] gpiolib: of: clean up formatting to pass checkpatch
+Date: Fri, 17 Jul 2026 21:13:08 -0700
+Message-ID: <20260718041311.2605172-4-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.55.0.229.g6434b31f56-goog
 In-Reply-To: <20260718041311.2605172-1-dmitry.torokhov@gmail.com>
 References: <20260718041311.2605172-1-dmitry.torokhov@gmail.com>
@@ -77,70 +77,146 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The legacy property name specifying external mute GPIO of TWL4030 audio
-coded is "ti,hs_extmute_gpio". To allow converting the driver to gpiod
-API that requires names ending with "-gpios" suffix, add a quirk to
-gpiolib.
+Clean up parameter alignment, line wrapping, and parenthesis formatting
+in drivers/gpio/gpiolib-of.c to make the module pass checkpatch --strict
+without warnings or checks. This helps when one has checkpach configured
+as a linter for their editor.
 
-Note that we a custom conversion routine is used as compatible check is
-needed on the parent node, and name of the node ("codec") is also
-validated.
-
+Assisted-by: Antigravity:gemini-3.5-flash
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
- drivers/gpio/gpiolib-of.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/gpio/gpiolib-of.c | 46 +++++++++++++++++----------------------
+ 1 file changed, 20 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index f4ea7ca27296..67a36e3851a4 100644
+index 67a36e3851a4..fb3b362744ec 100644
 --- a/drivers/gpio/gpiolib-of.c
 +++ b/drivers/gpio/gpiolib-of.c
-@@ -676,6 +676,35 @@ static struct gpio_desc *of_find_trigger_gpio(struct device_node *np,
+@@ -135,8 +135,8 @@ of_find_gpio_device_by_xlate(const struct of_phandle_args *gpiospec)
  }
- #endif
  
-+#if IS_ENABLED(CONFIG_SND_SOC_TWL4030)
-+static struct gpio_desc *of_find_twl4030_gpio(struct device_node *np,
-+					      const char *con_id,
-+					      unsigned int idx,
-+					      enum of_gpio_flags *of_flags)
-+{
-+	const char *legacy_id = "ti,hs_extmute_gpio";
-+	struct gpio_desc *desc;
-+
-+	if (!con_id || strcmp(con_id, "ti,hs_extmute"))
-+		return ERR_PTR(-ENOENT);
-+
-+	if (!of_node_name_eq(np, "codec"))
-+		return ERR_PTR(-ENOENT);
-+
-+	struct device_node *parent __free(device_node) = of_get_parent(np);
-+	if (!parent)
-+		return ERR_PTR(-ENOENT);
-+
-+	if (!of_device_is_compatible(parent, "twl4030-audio"))
-+		return ERR_PTR(-ENOENT);
-+
-+	desc = of_get_named_gpiod_flags(np, legacy_id, 0, of_flags);
-+	if (!gpiod_not_found(desc))
-+		pr_info("%s is using legacy gpio name '%s' instead of '%s-gpios'\n",
-+			of_node_full_name(np), legacy_id, con_id);
-+	return desc;
-+}
-+#endif
+ static struct gpio_desc *of_xlate_and_get_gpiod_flags(struct gpio_chip *chip,
+-					struct of_phandle_args *gpiospec,
+-					enum of_gpio_flags *flags)
++						      struct of_phandle_args *gpiospec,
++						      enum of_gpio_flags *flags)
+ {
+ 	int ret;
  
- typedef struct gpio_desc *(*of_find_gpio_quirk)(struct device_node *np,
- 						const char *con_id,
-@@ -688,6 +717,9 @@ static const of_find_gpio_quirk of_find_gpio_quirks[] = {
- #endif
- #if IS_ENABLED(CONFIG_LEDS_TRIGGER_GPIO)
- 	of_find_trigger_gpio,
-+#endif
-+#if IS_ENABLED(CONFIG_SND_SOC_TWL4030)
-+	of_find_twl4030_gpio,
- #endif
- 	NULL
- };
+@@ -333,7 +333,7 @@ static void of_gpio_set_polarity_by_property(const struct device_node *np,
+ 		if (of_device_is_compatible(np_compat, gpios[i].compatible) &&
+ 		    !strcmp(propname, gpios[i].gpio_propname)) {
+ 			active_high = of_property_read_bool(np_propname,
+-						gpios[i].polarity_propname);
++							    gpios[i].polarity_propname);
+ 			of_gpio_quirk_polarity(np, active_high, flags);
+ 			break;
+ 		}
+@@ -415,7 +415,8 @@ static void of_gpio_flags_quirks(const struct device_node *np,
+  * in flags for the GPIO.
+  */
+ static struct gpio_desc *of_get_named_gpiod_flags(const struct device_node *np,
+-		     const char *propname, int index, enum of_gpio_flags *flags)
++						  const char *propname, int index,
++						  enum of_gpio_flags *flags)
+ {
+ 	struct of_phandle_args gpiospec;
+ 	struct gpio_desc *desc;
+@@ -425,7 +426,7 @@ static struct gpio_desc *of_get_named_gpiod_flags(const struct device_node *np,
+ 					     &gpiospec);
+ 	if (ret) {
+ 		pr_debug("%s: can't parse '%s' property of node '%pOF[%d]'\n",
+-			__func__, propname, np, index);
++			 __func__, propname, np, index);
+ 		return ERR_PTR(ret);
+ 	}
+ 
+@@ -967,8 +968,8 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 		 * This is why we parse chip->of_gpio_n_cells + 1 cells
+ 		 */
+ 		ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges",
+-				chip->of_gpio_n_cells + 1,
+-				index, &pinspec);
++						       chip->of_gpio_n_cells + 1,
++						       index, &pinspec);
+ 		if (ret)
+ 			break;
+ 
+@@ -993,7 +994,7 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 		 * right instance.
+ 		 */
+ 		if (chip->of_node_instance_match &&
+-		    (chip->of_gpio_n_cells == 3) &&
++		    chip->of_gpio_n_cells == 3 &&
+ 		    !chip->of_node_instance_match(chip, pinspec.args[0]))
+ 			continue;
+ 
+@@ -1006,12 +1007,11 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 		if (count) {
+ 			/* npins != 0: linear range */
+ 			if (has_group_names) {
+-				of_property_read_string_index(np,
+-						group_names_propname,
+-						index, &name);
++				of_property_read_string_index(np, group_names_propname,
++							      index, &name);
+ 				if (strlen(name)) {
+ 					pr_err("%pOF: Group name of numeric GPIO ranges must be the empty string.\n",
+-						np);
++					       np);
+ 					break;
+ 				}
+ 			}
+@@ -1028,41 +1028,35 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 			if ((offset + count) > chip->ngpio)
+ 				count = chip->ngpio - offset;
+ 
+-			ret = gpiochip_add_pin_range(chip,
+-					pinctrl_dev_get_devname(pctldev),
+-					offset,
+-					pin,
+-					count);
++			ret = gpiochip_add_pin_range(chip, pinctrl_dev_get_devname(pctldev),
++						     offset, pin, count);
+ 			if (ret)
+ 				return ret;
+ 		} else {
+ 			/* npins == 0: special range */
+ 			if (pin) {
+-				pr_err("%pOF: Illegal gpio-range format.\n",
+-					np);
++				pr_err("%pOF: Illegal gpio-range format.\n", np);
+ 				break;
+ 			}
+ 
+ 			if (!has_group_names) {
+ 				pr_err("%pOF: GPIO group range requested but no %s property.\n",
+-					np, group_names_propname);
++				       np, group_names_propname);
+ 				break;
+ 			}
+ 
+-			ret = of_property_read_string_index(np,
+-						group_names_propname,
+-						index, &name);
++			ret = of_property_read_string_index(np, group_names_propname,
++							    index, &name);
+ 			if (ret)
+ 				break;
+ 
+ 			if (!strlen(name)) {
+ 				pr_err("%pOF: Group name of GPIO group range cannot be the empty string.\n",
+-				np);
++				       np);
+ 				break;
+ 			}
+ 
+-			ret = gpiochip_add_pingroup_range(chip, pctldev,
+-						offset, name);
++			ret = gpiochip_add_pingroup_range(chip, pctldev, offset, name);
+ 			if (ret)
+ 				return ret;
+ 		}
 -- 
 2.55.0.229.g6434b31f56-goog
 
