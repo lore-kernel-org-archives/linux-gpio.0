@@ -1,64 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E2B37F748;
-	Sun, 19 Jul 2026 11:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849BB392C50
+	for <linux-gpio@vger.kernel.org>; Sun, 19 Jul 2026 12:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784459533; cv=none; b=sLS7g40JSRlr4wEBjym5Aj5H14ZD5gYMa4WA6FykZDGc1cjxzRxxIMoh2SWehVOKBwZ/H0Q/BrWkUkvzIN20Q2RcAVZxF3j/z7iBV/+JKg6T9RYMtGQ6x7gkAwIjNOwx8jgjN1vVDNbi9ml3on/6zZZ8NRF10xpONz9hAarON4s=
+	t=1784463114; cv=none; b=klSyoStz2GtAsjPkqzxVEXe/Y8+ctH6orDG8Nri69bjSW6dgIa30mybIAcJOxWPGXORK1eXEAkQc1QFDiyydiWMLnKOcRaALJiR6Pt1KO2YIMJYorKowPl2kUNTCCbA6LdET4SFz4QQMvv/nY5xlc+HedwmZ6EMI7DKOwu3X0Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784459533; c=relaxed/simple;
-	bh=k6CIM3h4u3IW0sKeDMa17WuuqDBxdV965YXRTCD3yUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=igjOzbYMn2uzSa6lyx5VDVz5HFV8wtciD15Fkqj/YKRzRGXg7PFPdJmXl0SmjKzU3r073cuAbdA+DKD01Fvpk8eHsWVBmXxf9G5btvBkPxyzjnDs6bm8iP+PmO7lbvdS5D5UxYLm0ZD7LFEmE0oIVYcTOPTJWj+57m0NCpTeg3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=whYQVlam; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784463114; c=relaxed/simple;
+	bh=5VMovNs5r6OHs/wcX2aDD1qfvLwXJxRv8Jf5x/+peMc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kqr5RuV9fqAF158z+tGaHcXD4qrYNSl1UiJ/AyZKXfsQlNx0GzKKHFlo+0vaROdaI7SCrBg81kAF5H1FcK//JNwiuzEt9aG/NgRBsYRLd45b0mOxKtl/u6ZLfAhJbo4GJvIRm9xeOmtKJ0ejF3OEV+5lOENoeHQLHtQ1/7iNG9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OTk6X1rN; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="whYQVlam"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43AD91F000E9;
-	Sun, 19 Jul 2026 11:12:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1784459531;
-	bh=Fssr1hC/wyohS7EgaFKOmAoGhQMtCZKMSS+sxtKouXc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=whYQVlam7ITPJhlnKiByCJE+l/bUgSjw/Iapy4ZIHDZL3ZonzhiSTJG49fK9aJcNO
-	 K4X3aAdaxcLZEZEq+3EVx7Z9IbKpTbjb3qU8BoyXqz+6sM8RnXUf4GByXystpmZBHy
-	 LaWpUT3P6912LSicfT75GO/KfMPjfMmAZuKw4xUA=
-Date: Sun, 19 Jul 2026 13:12:03 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Metehan =?iso-8859-1?Q?G=FCnen?= <metehangnen@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 2/4] drivers/misc: add Goodix GXFP5130 eSPI fingerprint
- sensor driver
-Message-ID: <2026071938-referable-sharpness-700a@gregkh>
-References: <2026071828-blunt-survivor-834f@gregkh>
- <6a5cac9a.b39440a8.65068.2953@mx.google.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTk6X1rN"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-493f75f7172so71878965e9.1
+        for <linux-gpio@vger.kernel.org>; Sun, 19 Jul 2026 05:11:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784463111; x=1785067911; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=DogqYPGisrMHm1D/3xJuw8fk3DrWTbuaVsByeLIrnm8=;
+        b=OTk6X1rNgNDGEnrF/sXouhIGXU/re7R5PHMbQtY/Jh7jRGNa0DJRMLjrlT54GwCXLO
+         1PfDb8ZUJ0X0mpjhv+t6ox36jK63loZ6L64vOyriJ5qlbjXq7PjqMy4/kwDN+z6/UkVB
+         D0jfJcICYiLi9Xcj6go6pkyHp2HI3pqniDvtBa1XC4iwCBMbn7B1GgbK9LGsbyfCTHTw
+         mWO3AO4DYnmVXhWbMPsUym9Z2QcCV17+qsiDfpuKvIc2ByH0OqS1jgXyL2CfIEz1yQnK
+         OEWVkDBJK4YV2cqL75RLUX+cOwfQE1jYpxMZSPz8Xs9cboLfKUQpbtPOXhjxslJAq0Cf
+         RThw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784463111; x=1785067911;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=DogqYPGisrMHm1D/3xJuw8fk3DrWTbuaVsByeLIrnm8=;
+        b=gJt8InHVh/Yqvrx7igmaEScI7qpgyWy82/NqVNwDRlo+1TLF7ZL3gN2OwtNHLjzr2Q
+         i4e7ECd3ouuekEww5mje8WFV7bpp/PsENDiGx+LxTKsGQYoHhhXhgiG7iOf9IWmIypWr
+         /4D4mV2QU4wSkufvg3SQ+KZLVDF6LULMZjF3HeTtZXpZYfygLSqDpZV+P7k/VHIZPbeW
+         +xNzy98fgRmRyfBBcaF9CWsXBQm4pHvHE2uoYB2gBVTpk/XtX1Z2x8DFa2Oi8s6CA83u
+         f8Wcw431fvYWBLV9mwbIQaA1NuCh0AbYTuatv1/x/nVHENwadhl5bA+H1uCLVgvIk+Mo
+         9RVg==
+X-Forwarded-Encrypted: i=1; AHgh+RpPhobGruZbbcEyyTxSlUqpDt8bK/VQ5hNGxhbptYouLfBD0Tkhresn+l8RQZ2v3mEAWOeTN9H3JiR4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzzfi1Uy9e5qutz9/vPNFUNVpYajs19zf64d6LLQpzDIXwvaTkn
+	PAyeYCUcNr9qNaSFlEcwLHJ+C1w+dtha0v+I7ym7exPOMOfrob7wzFcx
+X-Gm-Gg: AfdE7clWI7cvlwCvdFIMDw8y2C+3KpEk/H803vcrRExVZDrzKeYumd6Bbztx0g59J1h
+	Uxx+eFEtgY/a12sfHgdSxtdGSFiZzOqfB+eckRDjEtSSBpvx3/Bldb6lMQmjdQbhOGW6LyY+wZY
+	woSWvMOxOt5h4Tthppl8DJp+OeL8EPmxTcsYX93QJsHahMolgcZc0ZhXAdp3v7C4fNsldGFreZg
+	Mdm9YffC0NmA1IV93XyHO7uXPsFId4fd0RAU98+MckkHYmG9+hGNZeaQUGcvB6CuMXPL0KbS9F4
+	+6NEmTK/L3vf1METx7yYvnHiWRL3rXlH5GxlFMWWOOFf8iEoXVI+fxykOomDu9BJKcllBDf8dXR
+	n6hal5NyUEnvip3CtRrdNahw+XerVQtztnAgDdxo2xgBzV534KyBcKbWAwPl9rHtx6qEmpYiA65
+	icjVnNbABn/BwmLQeujdWy74FePXmbQKFLUY6Z2Mq87bPfsGwwrnby9Dr4iBZWYbTXWeK/Uki8J
+	K0Xqc8GkGGLVBoxFQXxaBNXoxEcLV+ENzGVAPehg3cRVY1yjJOSJiD7nDERLK1BLZ9mVEeexqe5
+	ocSkUZrBCg==
+X-Received: by 2002:a05:600c:1382:b0:495:699:5c8b with SMTP id 5b1f17b1804b1-4954a3e206dmr104802035e9.7.1784463110404;
+        Sun, 19 Jul 2026 05:11:50 -0700 (PDT)
+Received: from localhost.localdomain (dynamic-2a02-3100-aeaf-bd01-78a0-2a2d-507f-c97c.310.pool.telefonica.de. [2a02:3100:aeaf:bd01:78a0:2a2d:507f:c97c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f63ed1911sm21750744f8f.22.2026.07.19.05.11.49
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 19 Jul 2026 05:11:49 -0700 (PDT)
+From: Karl Mehltretter <kmehltretter@gmail.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Karl Mehltretter <kmehltretter@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] pinctrl: devicetree: don't free uninitialized dev_name on error path
+Date: Sun, 19 Jul 2026 14:11:40 +0200
+Message-Id: <20260719121140.28730-1-kmehltretter@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <6a5cac9a.b39440a8.65068.2953@mx.google.com>
 
-On Sun, Jul 19, 2026 at 03:53:14AM -0700, Metehan Günen wrote:
-> On Sat, Jul 18, 2026 at 11:09:43AM +0200, Greg KH wrote:
-> > Why add this extra line?
-> > Same here, why the extra line?
-> 
-> Script artifact — the patch generation script added a spurious blank
-> line before both the source and obj entries. Will fix in v2.
-> 
-> > Please do not roll your own tracing functions, use the in-kernel ones
-> > instead.
-> 
-> Agreed. The entire gxfp_trace module will be removed in v2 and replaced
-> with dev_dbg() calls throughout, which integrate with the kernel's
-> dynamic debug infrastructure.
+dt_remember_or_free_map() duplicates dev_name for each map entry. If
+kstrdup_const() fails, dt_free_map() frees dev_name in all num_maps
+entries, including entries that have not been initialized.
 
-Or you can use the normal traceing infrastructure if you really want
-trace log messages instead of dev_dbg() ones.  Your call.
+Some pinctrl drivers, including pinctrl-imx, allocate the map with
+kmalloc() and leave dev_name for the core to initialize. The untouched
+entries therefore contain uninitialized data which is passed to
+kfree_const().
 
+Reproduced on qemu's mcimx6ul-evk (pinctrl-imx) with failslab injection
+while binding the pinctrl-consuming device, under KASAN:
+
+  BUG: KASAN: double-free in dt_free_map+0x34/0xa4
+  Free of addr c425a900 by task init/1
+   kfree from dt_free_map+0x34/0xa4
+   dt_free_map from dt_remember_or_free_map+0x184/0x198
+   dt_remember_or_free_map from pinctrl_dt_to_map+0x33c/0x4c8
+   pinctrl_dt_to_map from create_pinctrl+0x9c/0x5c0
+
+Initialize all dev_name fields to NULL before duplicating the device
+name, making the full-map cleanup safe after a partial failure.
+
+Fixes: be4c60b563ed ("pinctrl: devicetree: Avoid taking direct reference to device name string")
+Cc: stable@vger.kernel.org
+Assisted-by: Claude:claude-fable-5
+Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+---
+ drivers/pinctrl/devicetree.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/pinctrl/devicetree.c b/drivers/pinctrl/devicetree.c
+index 02a271dd292f..465b43092eb7 100644
+--- a/drivers/pinctrl/devicetree.c
++++ b/drivers/pinctrl/devicetree.c
+@@ -69,6 +69,10 @@ static int dt_remember_or_free_map(struct pinctrl *p, const char *statename,
+ 	int i;
+ 	struct pinctrl_dt_map *dt_map;
+ 
++	/* Initialize dev_name before any allocation can fail */
++	for (i = 0; i < num_maps; i++)
++		map[i].dev_name = NULL;
++
+ 	/* Initialize common mapping table entry fields */
+ 	for (i = 0; i < num_maps; i++) {
+ 		const char *devname;
+-- 
+2.53.0
