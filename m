@@ -1,33 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96658353EDF;
-	Mon, 20 Jul 2026 13:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9272F257827
+	for <linux-gpio@vger.kernel.org>; Mon, 20 Jul 2026 14:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784555690; cv=none; b=F1oJ3VR33ZJDAVMK8f28zN0u48UQw6ZK885XAXI20JZSg43OHqKuPr0usNq/FIK/JWdsgh/Z7Rni4h8JPCImaK+Y0Pg/6bz5/etfu9jAlUCORAZsLDAqw5kCJNZpBnbt0uI7jWGZIpmclK4rA3D46UuQvEJdH3dE04TqF3/hmXU=
+	t=1784556033; cv=none; b=PZzUivsSydsRqBEF/+PiQNs9xumR3+bAABzJfNxATkaGL0eu+Qed+KNfNtxEFeFJNeRnLtIMvqdCmZOXcvH+PxWllWY8LpwF1OXAnIjIqmr0khAL3gnyMYYFF2PkFGYpk9X91bsJbpM3JQe/642CUo00o0CYClUeWzojDbgxe48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784555690; c=relaxed/simple;
-	bh=DfUO5w0eGZAxJGLC6driOdswr6zt8DtITXW6kI57na8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oyzffEAX8K27OP+yUexMiDumXIepQxA7LADO4jTXemAvcN09qvhwCJLnAp/xnkVf0ay1NJBV91hJamlLqLtNkNi40SLRhzQGGMAvbGIy/Rl+/pSSe+ja08Ly8ZGY4PlWh8lk4s2Wmd4/61rf5P8xjYsCc3M5AUP0iK4Z6SQrfTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kz/Yb2rq; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784556033; c=relaxed/simple;
+	bh=ibO8HrzFGnu/FbI+Jv85vcjMmuwSEhYP9jqINubWEak=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=l1pWsRotKFZZYzLzMtK07uNBYjpRaXOkucU99jUtYXbjxWo9JnXYktvJCZecEp33jXRCcHx33qVKbnTbqg32p/9WWkmz924fmO6vKaDpjgKEOSqip3iKi044QGbL5sg9p1/f4hv7Gt8WP54Z1C+qvGa9FirqQXGXZenI69NBTGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NN4xQ3Ez; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kz/Yb2rq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82CD11F000E9;
-	Mon, 20 Jul 2026 13:54:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784555689;
-	bh=2e4JlFLyKN9wo6YUvrmYI0rCFdNq/NCuMYtES0ROEic=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=kz/Yb2rqyPWn5uvHMQHfk0c9r2AtKUvSwr/aK7PkTmOoVZp+1mhu2zv6gIATRgGxN
-	 yYPfmvatlxFO4rMOvq3wy7Qfy7r8LcoNlXlQGESQtK9Xu3yNz7n6TCOBSDmmMC2BJe
-	 oxUzSo2fmG584wbrAAxIwCkR67FhM3FvpPg5BeBIWcbVLZw/Je9PMSup3j/ofeqJUo
-	 Y9W0TY2brdPYziG5lPttU2gwmXHpP2uu6cbNXaYKp50HtnRPxs4dMfX7CWNvLnM3b/
-	 2UMAPK4lcctCEscGYG2FJOmUdeiE6z1hjz19JzIhE+kJrfmq0tJCvIZZXsPmaB7JrI
-	 thfycVv0ZrKBg==
-Message-ID: <44ee60ff-c7f8-4ca7-ad65-7b610ad13d24@kernel.org>
-Date: Mon, 20 Jul 2026 15:54:41 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NN4xQ3Ez"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c15ba3a2b4bso1254478566b.1
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Jul 2026 07:00:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784556030; x=1785160830; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=7XWyfB00Rok/PjZ5UHAUkTiQrGyYkPnkRtIuDzoxupg=;
+        b=NN4xQ3EzJUcEDIBjZYig4zs/xtggJJFuRxCFip4KzMpyhYCtOwL+BbH7hYqM5mKTHE
+         s7yLQzp6MzAWSL5bKPu2137t+KeLT6kwBKqMLlo+TWRpk/L7zCrrkILwJAGeZrSza1gV
+         wBelRJ9HhOaNnE6kxWgMpumc/gvwynV1VIWj7qjoJPzrohfP7/56hL/uJsiTIbkJedHo
+         ELJ4l11ffh4SVZgTfXm1Ni+0g4pKSfWMENy3drnty1eJeYgGi1aAfzHo4+i1/bg+oH8r
+         lqoxXb7Z2tFmH8BgUGjEY3lQ1k+1lZLBTX9vqzxroyjwsrVi0XOtmTP4hQ2HvKuVTW8i
+         ulhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784556030; x=1785160830;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=7XWyfB00Rok/PjZ5UHAUkTiQrGyYkPnkRtIuDzoxupg=;
+        b=pEDkvDDBQ0tDSwR5i2OX88e9YYc0Z5ECGKWXK6ukhLGGTGo8sH55qd1Y3Yl3k4VSHD
+         J4eIZC1mI+Elky+C5rWBj5E9U2h3FiT4dor5FC4rdPvixiEBTNaK6wBgiudJ+Zg860L1
+         RkP3+I94Fa4XtJPmlN66vOloeIA59516BKs+q6lYrtvYU0mLo29Pe185bCaL59u+5PZQ
+         tphQwEQVzv/WfzsraPPSjwcbiLy8r0h3g97glHo6fnUc0y9RAoo9paXmY8xQhKwTXIEG
+         RcLvgdTzN4KDqq7rgn43c3jbAic7n4yjBEua+Fldo6a3m3jLk47j04V5AAh7iZo97C9U
+         tlog==
+X-Forwarded-Encrypted: i=1; AHgh+Rr6HwC4TZdNeWeInwnbPdL5zSkE1upBbmGimM76B53TdvBHRipd1jvkOqSx+dBfPRK2ZlGpvoFDzNeP@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVjrCHFm5acv0Mz0vwAEdbqEwO+brVPC0BV0O2w9GEzR+wLPIV
+	tcF5497JeZHQ1kU+soQ9DDz8ZzbO2uawCfpCqTRxyoSf0xxl0H2DNB7u
+X-Gm-Gg: AfdE7ckopJLM6bNLO9y0JxkLnAK4kb48ravTwI+rYqtn0k3Xw+BpeTCwcNO4oZowbgT
+	2TThghacn6z+rrMvAeGXt+CL21ON0Q7W48XoGJPV7H3mDHZH/eNpuwq9sk4+XD1og4QxyMyVuRI
+	7lLUWeVMTuHMwN0aa06/OwWtBPNqr0bsemD+XZ60Bqhw4ywvwJc5p9EEV/fHlN7izOoNn+53xww
+	g8YoWav8X5jyxxNlSey+Q4EO1JCLiY0LS/0PlIMwrEHmAkpEkccxkJMam98td+ThVfb+nTyyt6E
+	N/JXUAV1K+tIZOVEzg0pDqt9V8eNsA6Cxk/k7iwj8va6Or6OxFMwqzkrCtG/MAe55W4rz30eqzb
+	kSe2Sy6EdEldp6fjhiiKpkSXlc7WMPpGl3k5DTU+hUaOyeEhlA+Qa7s4VbH1gcjI2Na/FkCUJTM
+	knKAdRLTz8WvEIFRZVZ9DRgF+XQ/mxonLPStkRILmjYs7FMQICuub6Z4zRXrUOE+FXg9bMz1Y=
+X-Received: by 2002:a17:907:3e98:b0:c12:4cb8:a826 with SMTP id a640c23a62f3a-c16b457b1abmr614064366b.6.1784556029502;
+        Mon, 20 Jul 2026 07:00:29 -0700 (PDT)
+Received: from [172.24.138.145] (dynamic-176-002-111-253.176.2.pool.telefonica.de. [176.2.111.253])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c17009ae00asm464388366b.7.2026.07.20.07.00.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jul 2026 07:00:28 -0700 (PDT)
+Message-ID: <9dd16bb5-7a30-4024-88a7-4a4bf47c35e8@gmail.com>
+Date: Mon, 20 Jul 2026 16:00:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,90 +68,76 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] ASoC: qcom and pinctrl: add LPASS LPR voting and
- Hawi LPASS LPI TLMM
-To: Bartosz Golaszewski <brgl@kernel.org>,
- Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
- linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-References: <20260720130511.493295-1-prasad.kumpatla@oss.qualcomm.com>
- <CAMRc=MfvfVvJ4anwY5WZUr5K8fSGkcvejah72fUDLc7ZC59jNw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Janani Sunil <jananisunil.dev@gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: iio: adc: Add AD7768
+To: David Lechner <dlechner@baylibre.com>,
+ Janani Sunil <janani.sunil@analog.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <skhan@linuxfoundation.org>
+Cc: linux@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20260709-ad7768-driver-v1-0-44e1194fd96a@analog.com>
+ <20260709-ad7768-driver-v1-1-44e1194fd96a@analog.com>
+ <36df7c4f-82ea-4ed5-a4f9-3a29c75dc99a@baylibre.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <CAMRc=MfvfVvJ4anwY5WZUr5K8fSGkcvejah72fUDLc7ZC59jNw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <36df7c4f-82ea-4ed5-a4f9-3a29c75dc99a@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 20/07/2026 15:42, Bartosz Golaszewski wrote:
-> On Mon, 20 Jul 2026 15:05:07 +0200, Prasad Kumpatla
-> <prasad.kumpatla@oss.qualcomm.com> said:
->> This series adds support for LPASS low-power resource (LPR) voting
->> through PRM and introduces LPASS LPI TLMM pinctrl support for newer
->> platforms such as Hawi.
->>
->> On such platforms, LPASS requires LPR resource voting via PRM to keep
->> the subsystem active. This is handled by adding a new clock ID and
->> support for PARAM_ID_RSC_CPU_LPR in q6prm.
->>
->> Additionally, a new LPASS LPI TLMM block is introduced, requiring a
->> dedicated DT binding and pinctrl driver.
-> 
-> What is the merging strategy? Is an Ack from Mark required and the series
-> should go together through the pinctrl tree?
 
-Why would an ack be needed? Cover letter is very explicit on that
-through complete silence that there is no dependency (except that it is
-not true) so why would you take ASoC bits?
+On 7/9/26 17:43, David Lechner wrote:
+> On 7/9/26 3:50 AM, Janani Sunil wrote:
+>> Devicetree Bindings for AD7768-4 (4 channel) and AD7768 (8 channel)
+>> simultaneous sampling ADC
+>>
+>> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
+>> ---
+>>   
+>>
+>> +
+>> +  adi,power-mode:
+>> +    $ref: /schemas/types.yaml#/definitions/string
+>> +    enum:
+>> +      - low
+>> +      - median
+>> +      - fast
+>> +    description:
+>> +      Power mode selection.
+> Unless there are pins that control this, it seems like it should be
+> left up to the driver to decide how to set this.
+>
+> In this case, it looks like the power mode also influences sample rate
+> which is normally something controlled at runtime.
 
-Best regards,
-Krzysztof
+Hi David,
+
+The reason we'd like to retain power mode control is that certain ODRs 
+are supported across all three power modes (low/median/fast), and the 
+RMS noise and power consumption differ significantly between them at the 
+same ODR.
+
+The higher the power mode, the better the noise performance, but power 
+consumption nearly doubles for every ~3 dB improvement in dynamic range. 
+Silently selecting one power mode in the driver would remove a 
+meaningful hardware tradeoff from the user.
+
+We'd like to propose the following instead:
+- Remove adi,power-mode from the DT as suggested.
+- Expose power mode as a per-device sysfs attribute.
+- in_voltage<N>_sampling_frequency_available dynamically reflects only 
+the ODRs valid for the currently selected power mode.
+
+This keeps the DT clean while still giving the user explicit control 
+over the noise versus power trade off. Would this approach be acceptable?
+
+Thanks,
+Jan
+
+
