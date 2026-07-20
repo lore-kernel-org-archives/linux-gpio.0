@@ -1,102 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E943F54AC;
-	Mon, 20 Jul 2026 11:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A3A417D71;
+	Mon, 20 Jul 2026 12:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.64.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784545974; cv=none; b=JzImLFbSrsR1nBh+iajllkwOQnJrHQnEie7ZWs+PrpMKiLYZBrtt3YnmQO35DsxMTJiI31kkZmmGz9ThyaZWlQ2+2/3CkaYKyLFABlV16c+q7aZFERhCgEe1Z4KxiEZesGlMLtCA0Cc2ygaynCGzKesokgykPfoCUiKFSRok7BM=
+	t=1784550718; cv=none; b=ekNK/KWNg8Il/uVfZX28hDB+PgxlLyUE0kzgKNezhYBV6hadIrt1/PGvtyvH7x3bvv3K7RbHoNtIwMseOZ3heOw7gexRL50QmLtTeFcLRvkznpf78SOdLgqwzVZNsLZLWFEfn6QYxiL3jo3VConqUtJ5WYQATSPuDJeXjlj/YK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784545974; c=relaxed/simple;
-	bh=SdzoBqTDWx2IfWao4BpS6SyJYgHhshP6od3YGkG05E4=;
+	s=arc-20240116; t=1784550718; c=relaxed/simple;
+	bh=mpzeQFeBiZtBhhEHtYlPNFCKYBTEvp7YO2yAx1Er92o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q9IQKjUn1W2PO3CFY1MA2vWHn/VMHI/QDsL4re4E/LvngMlBnru/ZRyHYp5VYdKf0+YbBb5Cf6NYcETddLvJb4o8l57+XxNYLMsn9BwfafnXaZepneyb58GAOburLdPQx0XYW+OnxC1oQJbOFzntdNujcfHlBp+10FBUZiw7cv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLchMXO/; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=PBRgUft0IDGjfSCdcOONkEMe1oIPb+0fXxgAN4rcAbWnbGdNBQ6B7mIIF8gcRhNrCZztG+tCNNuilh5KvKS5aDpfjM20SzuLyJeSidoCUHznvCCNOCdr28ND8UVWVjmxEU/KcqRxY+DSwSzwUno9+3FwoetVrkO9uC3lULlcL1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rere.qmqm.pl; spf=pass smtp.mailfrom=rere.qmqm.pl; dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b=rOiZ/TDN; arc=none smtp.client-ip=91.227.64.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rere.qmqm.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rere.qmqm.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLchMXO/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9717B1F000E9;
-	Mon, 20 Jul 2026 11:12:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784545973;
-	bh=QWpd+DeC6GUGcC5xnH0y84cDRG939JqQXdR158A4ElA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=oLchMXO/tq6thxzwrqZ9dMIfF8YfuNtT/LlXTQpygEtpaWmsd2TMVjpkOX4AyMW/l
-	 2zNiLFbGe4xBqwjyhTLysbWtfeAD9P4josELC011UC9b+8i90aWGpurRKnKDxxdKAP
-	 fhvGdDIW9tT7a26dPaI6MS4GFGmUUgfmCRg04AaSQCbW1IrCEa4ETPut1/sK1oSUUV
-	 tMdgVmbsr/2EuZt2sLbSB9+suR8RtzvHm9p0IWtpOQlDjpXe7hwIeSqNv/xxjGI3zi
-	 +y+VuX3RPKtAGQ03aYxrnPwHVSgrxzuW2OQi/0ykD0IgLNWkd5c3N41Wg6y5RPZxtZ
-	 O4ay8JJeIZXzw==
-Date: Mon, 20 Jul 2026 13:12:50 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Pan Chuang <panchuang@vivo.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	"moderated list:PIN CONTROLLER - AIROHA" <linux-mediatek@lists.infradead.org>,
-	"open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] pinctrl: airoha: Remove redundant dev_err()
-Message-ID: <al4CsgKsPOjLbMOG@lore-desk>
-References: <20260717105847.131359-1-panchuang@vivo.com>
- <20260717105847.131359-2-panchuang@vivo.com>
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="rOiZ/TDN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+	t=1784550093; bh=mpzeQFeBiZtBhhEHtYlPNFCKYBTEvp7YO2yAx1Er92o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rOiZ/TDNVYhrYWlHPrF4vSoQjuhgrl8oQCOhNZSl/8jcZyMJSJYa+irgnfSe/G2d9
+	 K0KssMuPsJtQHjl3muCZi3beTLlP600jcWK89EtM8k1svtVJGpUIYPf0siKsMeRpo3
+	 ae96Id6W9cEOn3Z+6MCMOTuxeM/XrhjZCb9sjN48tkyp2F+aSFyKJJ/pwzJz/34Xs3
+	 +TYnMljB8pAgRmY7z/O5i3pehQvoDmUQHonI8wLwWHPgCHg6KbXZL3VyT2STE2XvAu
+	 aB+9UFWdtSBrBnqvMj+JzTLfZzzxhfHKocZaenXaUVgtu91NQC1wqyCulC5+k6t2/h
+	 ApXF3UxNlgudA==
+Received: from remote.user (localhost [127.0.0.1])
+	by rere.qmqm.pl (Postfix) with ESMTPSA id 4h3fkz14Dpz3C;
+	Mon, 20 Jul 2026 14:21:31 +0200 (CEST)
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 1.4.3 at mail
+Date: Mon, 20 Jul 2026 14:21:29 +0200
+From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To: Uwe =?iso-8859-2?Q?Kleine-K=F6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Scott Branden <scott.branden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Keng-Yu Lin <keng-yu.lin@hpe.com>,
+	"Vaibhaav Ram T.L" <vaibhaavram.tl@microchip.com>,
+	Kumaravel Thiagarajan <kumaravel.thiagarajan@microchip.com>,
+	Alexander Usyskin <alexander.usyskin@intel.com>,
+	Vamsi Attunuru <vattunuru@marvell.com>,
+	Alexander Graf <graf@amazon.com>,
+	The AWS Nitro Enclaves Team <aws-nitro-enclaves-devel@amazon.com>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Andrew Donnellan <andrew+kernel@donnellan.id.au>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof =?iso-8859-2?Q?Wilczy=F1ski?= <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Frank Li <Frank.Li@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Bryan Tan <bryan-bt.tan@broadcom.com>,
+	Vishnu Dasa <vishnu.dasa@broadcom.com>,
+	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+	Akshay Gupta <Akshay.Gupta@amd.com>, Kees Cook <kees@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 12/12] misc: Unify code style for various *_device_id
+ arrays
+Message-ID: <al4SyY2G8eD5O9Ms@qmqm.qmqm.pl>
+References: <cover.1784299069.git.u.kleine-koenig@baylibre.com>
+ <583653bc7b9ae19707bc28be69a20e66b8c3720a.1784299069.git.u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SXE91GLyrT1/fSSM"
+Content-Type: text/plain; charset=iso-8859-2
 Content-Disposition: inline
-In-Reply-To: <20260717105847.131359-2-panchuang@vivo.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <583653bc7b9ae19707bc28be69a20e66b8c3720a.1784299069.git.u.kleine-koenig@baylibre.com>
 
---SXE91GLyrT1/fSSM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-> Since commit 55b48e23f5c4 ("genirq/devres: Add error handling in
-> devm_request_*_irq()"), devm_request_irq() automatically logs
-> detailed error messages on failure. Remove the now-redundant
-> driver-specific dev_err() calls.
->=20
-> Signed-off-by: Pan Chuang <panchuang@vivo.com>
-
-Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
-
+On Fri, Jul 17, 2026 at 04:50:58PM +0200, Uwe Kleine-König (The Capable Hub) wrote:
+>  - Add a trailing comma for initializers unless the closing brace is on
+>    the same line and for the list terminator;
+>  - Use a single space in the list terminator;
+>  - A space after an opening { and before a closing };
+>  - Use the PCI_DEVICE* macro in two drivers for pci_device_id entry
+>    which is usual for these arrays
+>  - No explicit zeros in the list terminator;
+> 
+> None of these changes introduces changes to the compiled result.
+> 
+> Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
 > ---
->  drivers/pinctrl/airoha/pinctrl-airoha.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/ai=
-roha/pinctrl-airoha.c
-> index 04b4424c688b..abfb018f207e 100644
-> --- a/drivers/pinctrl/airoha/pinctrl-airoha.c
-> +++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
-> @@ -2519,10 +2519,8 @@ static int airoha_pinctrl_add_gpiochip(struct airo=
-ha_pinctrl *pinctrl,
-> =20
->  	err =3D devm_request_irq(dev, irq, airoha_irq_handler, IRQF_SHARED,
->  				dev_name(dev), pinctrl);
-> -	if (err) {
-> -		dev_err(dev, "error requesting irq %d: %d\n", irq, err);
-> +	if (err)
->  		return err;
-> -	}
-> =20
->  	return devm_gpiochip_add_data(dev, gc, pinctrl);
->  }
-> --=20
-> 2.34.1
->=20
+...
+>  drivers/misc/cb710/core.c                     |   5 +-
 
---SXE91GLyrT1/fSSM
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCal4CsgAKCRA6cBh0uS2t
-rHN/AP9WOMMqAKBkonIPmZJjNZHnygVO1hiEz0O2OzJGOpC/rQD/VbXrG4odBVqc
-+qAQn+JF55oPPslgw2SiHZTDmMgpDQs=
-=0x8e
------END PGP SIGNATURE-----
-
---SXE91GLyrT1/fSSM--
+Acked-by: Micha³ Miros³aw <mirq-linux@rere.qmqm.pl>
