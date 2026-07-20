@@ -1,107 +1,148 @@
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011051.outbound.protection.outlook.com [52.101.52.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65712DECDF
-	for <linux-gpio@vger.kernel.org>; Mon, 20 Jul 2026 16:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784564255; cv=none; b=FDdFSMRVPaaz1kZem2GM0aZ2Mre+pT52X7d1OalQS4U/Z4iP7ETIvZkojfjPVf/EZvTZrD04TGgGkgUC7W/PMwfDrx3t+ShLrs2WXemLLZXyODkBsvmHGDD81C9ELd5L1GuEE3VB2yPsrID2yIDHIj3ooUgD34LOpdWN/QmgydE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784564255; c=relaxed/simple;
-	bh=pwEE6fibC3x6lQyfDb+v+RGRyll+J5mMBnA1XQCUdSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cn2074osgk3lm1CvFcLBs5lgYByYhGphxQ61QOq2OeMaAb7W6dop5yPCR0R2qSAWccnfvDqKSUdNqTpzu7paLJXuip5zGHQtVCCP6qkyCk6KsS/QH7SR6KO40l0rPO3TxPxD4FDlhvavWJLKKAslRPjmIT8Vz3VDpICslqXqpHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=glK0Koa5; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5F33E8C55
+	for <linux-gpio@vger.kernel.org>; Mon, 20 Jul 2026 16:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784564970; cv=fail; b=pwgmarlTerSvVvRAa1SMyewWUPb0Z7dm84SSyURP9sOs6GIYwiC+YEDszVYYbtAXMFumWM3LlsIKx6YLQ71/+S5/3iHIy1vyfkkZzMNdfQaSJMcC9LMLJ3BFoHxyEm7eLzpjlfhVfDddQVlrLFng7FKezla2dJ8bH8cWn5u/JzI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784564970; c=relaxed/simple;
+	bh=rbhZ75QIpJXMA/dBRNhQqe9TTFMhJTZN3sHrl2O+QFY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HuoTI7OHtJAO95+gxCVtQlH0wNFiLZOceiI9bPjJe4fciSO7XD7oirfIYWLxTLcsmOScdeioUAWUj785ArzlrFeSByrNKeNyZCKzgb2tzgMXAEUEfhF7+RwTGUBd4p5FP+cBto4Jp2J045T+/3Sb3e7QhhimWAmy5ZPmCFay/Z4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QF6sER9p; arc=fail smtp.client-ip=52.101.52.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="glK0Koa5"
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-caf707e3a70so2368174a12.1
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Jul 2026 09:17:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784564252; x=1785169052; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:sender:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=bgWQqTl41PqRe7SjquS4u/1d/gci4UsHSjvtso+pedQ=;
-        b=glK0Koa5XRPklCAw9KD4v+TkkXZHYNHYgtVvDcS00F45H4CLkHqOlXa3ZY0ypll8fo
-         z1YjR7qang0FdqOLx82+ZMFV5KsAyd0TuA/FG7tZO700YEtlmv0edx+qyK/BA8sgBuaH
-         zFjmGibc3q6FRpaVLTJwUiCcsXyJ5vbBRgJEthI44QUc7Th6j0bfkIPc0DG3fxpqPWSF
-         c15aJVIGmpQ8OujJKOanW7PfJ2hyGIs5XtM7O8vOHYiJvbpHtbj9i8wWsT2IhtHRfjJp
-         r4kjhECS+OmOJ74TCvlcDo+SQTY3sqEV4U2kcMc2it9OERzs979Ts6/uUQvpvAS50vFP
-         WTdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784564252; x=1785169052;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:sender:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bgWQqTl41PqRe7SjquS4u/1d/gci4UsHSjvtso+pedQ=;
-        b=k05UZjeAKzFoRAL/A1d1JdhP6k2ZxrNTwJ8dZp4cBIFOZO3qY5+OVZIWTrwWa9TFuT
-         ht1mf40GxKPgC+0Q3CzKOZvv/K7SwjR0PEH9/83b2ByTAyAkUlz7qBDO9FuqtnasUj6/
-         6XY4RIjr3QQSrFej9EaTUqeQdXk6VrpxsmNwFQcFj8APbrb63NU7GWkQ64DxV8EVyH4N
-         ANjiLZeJrS6/pTMeCxMMNKq7KdKJD/LshpxqIHiyYo0oAILc8FFA74ZL97CVE+PNPqBC
-         ZFhCtroBKZuF2t8UTJ03xXT2YhicOTWAx/Q77e9vCGNPTckWpR5JS4yTGEymhr4w6vDO
-         4SbA==
-X-Forwarded-Encrypted: i=1; AHgh+RoOyqyRD2gNZaqhtGmMmz8eRpuTRQHbSOdqlwHpYGj9flyYArXKk+t7gww3GRWaS+0ADsKppB9a6eQF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+Xf0vkIe7+W4hM34SKO5x6aN9o+g31U4TpeBvqRZ5G+kcZDzA
-	9cnsNLfTNuG6RvIZ02+pUDj//wR42icbqwQczSYdQ6CcgCoMqZGMpna+
-X-Gm-Gg: AfdE7cn/N8UzInGbNnfUYpx3U+VVvc2a2NP0JZTM5cW/32lYAlpSb7rExbirbZxMUL+
-	6FeJV+Q45NrJAcbqg8YSVneV1tH+JWfUBoi9sowNr8ZsHPh32MIAiJaMC/CxlMizvkxc72SbmOW
-	G3nq0D5bgMlJ9l2TfcyPKrFH6PmaHd6BsEgk0KDBRAbSBGHLEfmWgsD3jUOWxFRJucXB9J1h+OS
-	Js6hwpss8Sv2hrkQpPOGLMe25CChCIflFqUCmrL2p4UtmWuwu7WLBNs7X7m59AHIB9Lnz76RY2Y
-	toGUZO1vaMxcoBUyjMFlEHuQmdB+3AWkGmmZrSshxzsWRBg7f5DSDy3eL99NM3p4nzKzHEx2C9h
-	TUeYwxGS0RIn4spkHjolweNaahqANePS/5bqWNRbjdFc4nlhk4VWOv8qStEUduWxZd5ZnzN33g0
-	t+J7c5qjlVNab3NaRvSM0561hSLg==
-X-Received: by 2002:a05:6a20:939f:b0:3bf:ecf8:abe with SMTP id adf61e73a8af0-3c38d512647mr21472934637.0.1784564246909;
-        Mon, 20 Jul 2026 09:17:26 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3142a1ddeb6sm43145565eec.20.2026.07.20.09.17.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jul 2026 09:17:26 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 20 Jul 2026 09:17:25 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Janne Grunau <j@jannau.net>
-Cc: Sven Peter <sven@kernel.org>, Neal Gompa <neal@gompa.dev>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Mark Kettenis <kettenis@openbsd.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Sasha Finkelstein <k@chaosmail.tech>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 06/11] dt-bindings: watchdog: apple,wdt: Add t6030 and
- t6031 compatibles
-Message-ID: <f0d4a047-5dd3-484b-9fb0-89c12bd93ad0@roeck-us.net>
-References: <20260709-apple-t603x-initial-devices-v1-0-55b305833123@jannau.net>
- <20260709-apple-t603x-initial-devices-v1-6-55b305833123@jannau.net>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QF6sER9p"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nIoq2doc2Pq33fXgb5jF/FlzNgbsmZed+3JTqNspLrg2+4Fz4G3L85B4w3tNwY7DKjn+bwhdojgPovRZZHOvl/UGK5rBtR7eVfYobitdwxPW9MnNXjZubbSRdWmutZwKOCAyofu+sbyJ5teX7D1N1S4tqszSirud/YfvCUJD2mPx1ZIIleisv+6/57LOpZt1ZhJkPzDKTS5A4Ca5VTurUy7tAMVZJxJoSo2GF4eMcASNXathjFdTAvX7vHHHLCNRC7pDpGfqIRIYKIEKDTKP/IHEVJVCP4AJ1q8uFxg1q/zfqH5/jasY/6cAxZoJfqZ+SruP5KIA1LJnDaOtIeWyBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=56okOScC3jM84+8SlDxi30z0duNsntOjZtK04Nc4Fd0=;
+ b=B/MBHa1Bo2L3715VTLi0e7wsZuqfiYPCyyEqUfqNPpOCbM33V4krxhVunILr5tTSc8Ov/eRGaTHqRYf8vLKY6123prQnircEkZf6gkonCwlSdatjnVaebFEi1frE9RXuR8pQrDFkZup28hTUoFxJYFIKY95LHnRzMeldCs7YyZ/np3E2KrWBg6RdTyqz1i1yD1NLOtpSiOJrsBc/HcyrgqbutMA20JR3qmhkVWyyEFjBiVNHz5avDbaosKJcnyp4+yeHYd2w9kbpHe6XMf37a7AirfiTAbfI0ci45N4d1wUgg4jkYx7G9dSoVoQfwe4tiAOi9yVHu78XsHLc7YOUAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=56okOScC3jM84+8SlDxi30z0duNsntOjZtK04Nc4Fd0=;
+ b=QF6sER9p0bWMCINSMHx3vyVe5nj7nvB/lA9pUUhDN2H5TLtcTamjYn07Ej4P9aYUEDUittU1PbWPwR9HbVLxAwGRZPK7M4evCs76zvSKBxBFbRV9X3SF2PKrqId2z9+Ot/ohyqPBj863DwQchoYU5MXtC4BSUeKdKRGiOxoVPSU=
+Received: from CH0PR03CA0437.namprd03.prod.outlook.com (2603:10b6:610:10e::17)
+ by DS0PR12MB7703.namprd12.prod.outlook.com (2603:10b6:8:130::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.18; Mon, 20 Jul
+ 2026 16:29:16 +0000
+Received: from CH1PEPF0000AD78.namprd04.prod.outlook.com
+ (2603:10b6:610:10e:cafe::77) by CH0PR03CA0437.outlook.office365.com
+ (2603:10b6:610:10e::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.223.18 via Frontend Transport; Mon,
+ 20 Jul 2026 16:29:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CH1PEPF0000AD78.mail.protection.outlook.com (10.167.244.56) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.245.5 via Frontend Transport; Mon, 20 Jul 2026 16:29:16 +0000
+Received: from ausmlimonci-lx1.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Mon, 20 Jul
+ 2026 11:29:16 -0500
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: <Basavaraj.Natikar@amd.com>, <Shyam-sundar.S-k@amd.com>,
+	<linusw@kernel.org>, <mario.limonciello@amd.com>
+CC: <linux-gpio@vger.kernel.org>
+Subject: [PATCH] pinctrl-amd: Don't clear S4 wake bits at probe
+Date: Mon, 20 Jul 2026 11:28:44 -0500
+Message-ID: <20260720162853.173801-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260709-apple-t603x-initial-devices-v1-6-55b305833123@jannau.net>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD78:EE_|DS0PR12MB7703:EE_
+X-MS-Office365-Filtering-Correlation-Id: 24898071-ca27-4d82-4735-08dee67c0b09
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700016|1800799024|23010399003|376014|18002099003|10067099003|56012099006|11063799006|5023799004|6133799003;
+X-Microsoft-Antispam-Message-Info:
+	+6EtYu2pL9KYEPveXjPvsbAz1GCxMEafjSQBWbJZfY6bo7afqAiqdL1+JnjKNhgI2+pLnENfRKTmVFIrmX7rGgeH8Dmoo2xKYNZ01fHHOKI3e5kSULJNPBrhraXiVh4DwCc735WKlErj4Z2A/PPxEV1Dslv9OWDzYlvtdZjYU56zSKX+ZlOLtQ09/EG3QGxjEXvSRh5OyOP++pu1S4igo7o9RY7CeFItHUdKuiJmst/V2gFMSZAraizIoZv1iBvXoIpJOyOZNN+IGhMo+sBUN5e/m6OiERQmroqSmJvYa3CZtDL1ft97UAaqOLrmjf+kVdmGJTVG3by6d7HNXYX6/5LwQr14YxLNhRZ+IG41oXzH1CwtAETK02HeXVwd0eT3lSa3fHXtqqgMyY+98/+Wo1zl+Dh4bLczUzlLmObt57kg52GnZWo78IT49XWCI8PlkjQ+aGHTft9QO5u3GKxt9t4aUdGboZxNaHKSaRhYxrh+Id8XZtmwD0D78MIkAJzs5XInQjeESAF8omw8cbQo/UL1C+nXqj8eKThEfr9HHvnYxJ6mtJyYi+UHjyeYyIe5ZZW88H5pkdOwOT3AAUSSY1iDemvReBzpQEYX89sKFhH7wgBGR9Rjqz32N5e8af0Rnu30H+eiC69KVu+VEy2NMvwH+d54ORGlVDalSEAGGBzd4EH9Ewa1H9zb1KRFzZKwt7CqHU3NzFEZLw5UUZ9U6w==
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(1800799024)(23010399003)(376014)(18002099003)(10067099003)(56012099006)(11063799006)(5023799004)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	YIEedbuN/WWz9cC6NX3GcqGtGsuIA1ttjqHDNZER7RWjPMXL+87gVYjGx6o6kWbcJ3tIro0Q1tJi8lhGPcNdaARhz6u1t4mRIiZ68A1VpFvdRwWqfdK/NNvwthfD4hHLa4nzd7DDOPYDf/rITDYLOeCYk49UDj6E1ajwZ8uAUDuQDWKUZBJ+Hxan0HlybG3ITpC25dr06GYVNQrHOtqvVSMYIy0KViji/mabD2kCR/RdenhhKTOLr1xpaH8BUD+7NtavDudycZhTb79QY6T+Ky+iooLpenrIK/C0e6zC/G1RZcmmIfbKHS2nBT2psPfzv4usNTn97VrWTm9oh5I6kGGumlgrx+efEKSGUy+BMZlmT14LRtDwaIrTJ6Z4RhQmxAJYxpZoNsbo6t6wvEj+2B1ewRRS5iAoObLdKTVUdMfgGcFAQ8twB1It1hF1ye7v
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jul 2026 16:29:16.8142
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 24898071-ca27-4d82-4735-08dee67c0b09
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD78.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7703
 
-On Thu, Jul 09, 2026 at 09:30:52AM +0200, Janne Grunau wrote:
-> The watchdog on Apple silicon M3 Pro, Max and Ultra SoCs is compatible
-> with the t8103 (M1) one. Add "apple,t6030-wdt" for M3 Pro and
-> "apple,t6031-wdt" for M3 Max and Ultra as per-SoC compatibles.
-> 
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+commit 6bc3462a0f5e ("pinctrl: amd: Mask wake bits on probe again")
+introduced a regression where Wake-on-LAN no longer works after suspend
+or shutdown on some AMD platforms.
 
-Applied.
+Firmware-programmed S4 wake bits for devices like PCIe NICs using PCI
+PME are cleared at probe, but nothing restores them. Unlike S0i3/S3 wake
+sources that use enable_irq_wake() -> amd_gpio_irq_set_wake(), PCIe PME
+does not use GPIO IRQ infrastructure and relies on firmware configuration.
 
-Thanks,
-Guenter
+The original intent of commit 6bc3462a0f5e ("pinctrl: amd: Mask wake
+bits on probe again") was to clear spurious wake bits left by firmware
+to prevent unwanted wakeups. However, S4 wake bits are used for
+hardware-level wake sources like WoL that bypass the kernel's IRQ wake
+API.
+
+Fix by preserving S4 wake bits at probe and only clearing S0i3/S3 bits:
+- Firmware-configured S4 wake sources (WoL) continue working
+- Kernel maintains control of S3/S0i3 wake policy via set_wake()
+- S3-only wake sources work correctly per commit f31f33dbb3ba ("pinctrl:
+  amd: Take suspend type into consideration which pins are non-wake")
+
+The trade-off is that firmware-programmed spurious S4 wake bits remain
+set, but this is less problematic than breaking WoL.
+
+Fixes: 6bc3462a0f5e ("pinctrl: amd: Mask wake bits on probe again")
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/pinctrl/pinctrl-amd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index e3128b0045d22..15a398bb3be23 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -884,8 +884,7 @@ static void amd_gpio_irq_init(struct amd_gpio *gpio_dev)
+ 	u32 pin_reg, mask;
+ 	int i;
+ 
+-	mask = BIT(WAKE_CNTRL_OFF_S0I3) | BIT(WAKE_CNTRL_OFF_S3) |
+-		BIT(WAKE_CNTRL_OFF_S4);
++	mask = BIT(WAKE_CNTRL_OFF_S0I3) | BIT(WAKE_CNTRL_OFF_S3);
+ 
+ 	for (i = 0; i < desc->npins; i++) {
+ 		int pin = desc->pins[i].number;
+-- 
+2.43.0
+
