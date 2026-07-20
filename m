@@ -1,153 +1,183 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D530534DCE0
-	for <linux-gpio@vger.kernel.org>; Mon, 20 Jul 2026 14:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E9C42E8DF
+	for <linux-gpio@vger.kernel.org>; Mon, 20 Jul 2026 14:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784556044; cv=none; b=PaHaS3vGT6hndedrb4mRpA+t9SZw2UBQBqFOp1Uf979lgtIOEsYEfD798UJfBlCbXV6yLAlTuHK2SVlVP1Wr3eDB07SeyXKff+4DD8jF7yrXr3TdWAfJIKUeJlb7nWxkxstv8aEqtkjXX2Mj5jvbc5umyPpo3GoaIWSd+qCz0S8=
+	t=1784558612; cv=none; b=QlctQdBumYGiZLu3XIhh3IaxV3qkZ3baxjB7Mu4oAE4ByUKyu0H3eY79bMVr8XDZVw70v91Ldmv9omEE7Jdr2zV3slBzQscV/+YkCWPcj3TjGY46yGNA255TWdmcnzhF6u1OeehREiOduOHsUkioCnXDBxKdw5ipA4CUL8sZ+DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784556044; c=relaxed/simple;
-	bh=3hl70xUiwlqoqAP+LQrWDbHD5OO5ikke1mIBKgo084M=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SJsxkecSSh9P0clv6c/houuj4+Ev8gcVP9zTlZaw4XTJJ/OHap4JH0kLyq0LhZFX1toi851Ris6xlmP8WwWB8EhONDiAFvpXv1zAjafPDYNXPJVvhEt6Tzjbb2WTX8Aq3LxoRPVH9lnFo1zKQwZbH+sX1uIYzQzqUXV0IhWWFwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHyG53ue; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784558612; c=relaxed/simple;
+	bh=z4xNGYkf4fETdRDY/WXmkgQmHnFeScnUkN9aeJpb0+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JkzZZ7XK4tJOm+qJQgnY0YSnBobY1VYvXpgoVeaZv3tG6ho3bVEfW4qgxKqeTPSWZOB8Uap3j9+Tb4YNQdiQYxD1fxjDONf4l3wnroA73sb6s3JcxbfyycomWEgZgWMs1qjCfElO8DxhPb6uF/PzvKh4sp7A7P92cV2TUXrRh4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ylz9mDKR; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHyG53ue"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 888A71F000E9
-	for <linux-gpio@vger.kernel.org>; Mon, 20 Jul 2026 14:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784556042;
-	bh=PsTWikTtRDt5GcemR6ONSNO7lWHcGKg/zeNYCLWPl/8=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=VHyG53ueUOJkP2XOICOijM9NhtHef8LWq7zd45q9JVMSlLDRJ7ygz+3aqiuJwRf3O
-	 2NqWQLrldSu7sjYWhpxOelKwiX6djdfud455SUhuBxg2oIEdK6NN1se1ED7pl9LVvC
-	 w4vZOOckv+x11gkzPUvOvMVRV49CQA0A416kYwa43W6noweZESqh7AeczelCK/Sub2
-	 mZ5YWzCt6hl1tVhC/+cPURQHh5fybx08fEG5zxLuftezx819PH0ZxhPEV0xdRl4wpV
-	 Ca1teP2qFfZNf+ZdiZ2E1Df/S9bFOzDIkacQMmne2r9HVu3be9ulJpR/pkx4OUfpYz
-	 XfstCsA0Js86g==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5b14d1f9315so8847134e87.2
-        for <linux-gpio@vger.kernel.org>; Mon, 20 Jul 2026 07:00:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpnCU/qA+5SBgQYyc/HHD5L/BsGSgKLcBvZeewEGyoPKYyLs4D/JpcA0i3UXjV8nup8YUu7qh0oiwln@vger.kernel.org
-X-Gm-Message-State: AOJu0YzarwWj2phouOQhtylgKr3JMZmwWYjFv3EBim/MmvN7bzP63jlh
-	sS5a0KyMIvRcePNqLmTMU2QNPv82hGVn5LFIQ8yAqxQ2IJXp7R9J9oztv022yUAHbxgp9bSlfjg
-	0+7MsRYTIt/dMtNu63ZqFyKluy+FOLRB9ka47LLbLMg==
-X-Received: by 2002:a05:6512:61d3:20b0:5ae:b135:64de with SMTP id
- 2adb3069b0e04-5b28f9ac22amr2255666e87.31.1784556041206; Mon, 20 Jul 2026
- 07:00:41 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 20 Jul 2026 10:00:39 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 20 Jul 2026 10:00:39 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <ba21d405fd51a7dccd9ca5eacc0385bf@disroot.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ylz9mDKR"
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-ca97d139d8dso4075471a12.2
+        for <linux-gpio@vger.kernel.org>; Mon, 20 Jul 2026 07:43:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784558609; x=1785163409; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=YRPQsRwj+n1ng0H+WDG2QV9LkRG40/jMmpAbf3NOmNY=;
+        b=Ylz9mDKRMe6O4vjS+eQwOXJiakIAaEobGKbnFVNCh0Wek9nIDGMhVCXE0joTv1/Sgh
+         txhsTjkpV2mveGVg5L57b7HM6BUD6LsYgvckzclc1Hlmh3hY8/fv+rR5YqUNnS6F2juW
+         Nu0U4rggrOgtrxaiX8c31rkeT2cCIozh764BKKipQaNlFOdgPl/p+7mEOfbGAjSW+W2V
+         6cMoXsz4vh+ZaAbN+ZFyra1VqkImhvfjbyvJZAfm32cLpiauPZEjvWp2JCCz+cFalAVR
+         7vFBqZ7jKAlbUiFbf3LTLgdSHfGLvQuoPyFKnRdl190kQBr8DIDWb9ktMwguCnCGOvPB
+         tTNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784558609; x=1785163409;
+        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=YRPQsRwj+n1ng0H+WDG2QV9LkRG40/jMmpAbf3NOmNY=;
+        b=ilnecQz2PiCHmrV2SiYwm5htor5HJxqgEAsDMYW0sSKil14eEqZeNjyKFu3kgRHjdN
+         2nzwjgG1gDYxg7S5wN0mRgN9tEVMbjEtjxxfPB1QzXGiukG3obI/EbtyHbk/DpKe+6+t
+         pWNmsjpKNogsrkTJ4AMkglm7XYQjKf3Au1DL1wF9jU4k7t63lMtBx0XetIEzA6+mkq3S
+         yJBw8wpGKRPmoFB9+HP6XDppE91k/wjq7c66tvtNQljtJL41svgAVJgPsKfVp7Q2BaDd
+         XnhUvUNlaoJBIG/DFxsGDHsZXM6eZ8j+rdcSRwniwVBxkKVwkeOIFEyaQx5UvYb3/9Hi
+         Z6NA==
+X-Forwarded-Encrypted: i=1; AHgh+RqiWULUT34rbD7UZ/Rlyg1pG3SxP2kgxBtCKF0sI8lSg4GJqvJd1j+yo1gFPJWFe9lImcuuOb8iA37s@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh3IxmzqQQWHDwBCJ47PnhRJx4+bkBfpUlW/nWwtzZfqa9egBi
+	UWxT7BECuiiN0ZTej/9qq8SE9sYPYfSCfx/mtSU2JRp9ksW1fY+9SbE0
+X-Gm-Gg: AfdE7clzmOtesmoVzDPKLmMtyrfajRZa8YMN9YVk51b7Rkw4g7r/0zFttq2YiBwdHZC
+	PrGKTsP6vMo6tcAkX/H6IR9IwqrnQ4cF2pFNynKh50Pv+708AkBAS6doRm+LRPttms2oH1QRHyI
+	FeWyqwilmxdTvLazq9YwxXsc480s1NJj8bXq6XoKc/St+Kph8+912vCi2daoRAMeCqGMgH+ahtG
+	q0lY6ZQV5FsoNxLWVvZODboLB8qXAgSQqTCjitw2K64cW3ODotXa5imtdnMWdk4UE0sH6nPoOGF
+	b+rNUsBPeKQqzn4B1Vy6W0sODGp2Dd85b4Q6EbWX6nmfKPOFPvGkV1jS15mn8CdpSMhfspzOUDU
+	NQaUAypjUws1TrBVrn7ZpUXIQQHW4jCPKU4N0XTVG4gG607gW+GqyYgvC1OKngju4FJDbI+1d6q
+	eyofkZVLlW6RvMUe+HlLbAdkO58/DotfKEkzDcFN/ckEGG4ZpfNdk=
+X-Received: by 2002:a05:6a21:3981:b0:3c0:adec:b3bd with SMTP id adf61e73a8af0-3c3ad9646afmr16051848637.49.1784558608970;
+        Mon, 20 Jul 2026 07:43:28 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31429f9bb62sm35894013eec.2.2026.07.20.07.43.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jul 2026 07:43:28 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <612e3496-2917-4d4c-8794-69c3b5b27c5c@roeck-us.net>
+Date: Mon, 20 Jul 2026 07:43:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260710183439.996923-1-adilov@disroot.org> <20260710183439.996923-3-adilov@disroot.org>
- <CAMRc=MddZxoi_=QCFYp1PM8OwsWbz-Tsmoa7TMkQ1bh+qf-pdA@mail.gmail.com>
- <3d6b8d6ab53aadef56e68c925030dd3b@disroot.org> <CAMRc=MeKB-rH35Jw0Z7vKVuk9=d3M0x5a-LJwgim3fuUW26xWQ@mail.gmail.com>
- <ba21d405fd51a7dccd9ca5eacc0385bf@disroot.org>
-Date: Mon, 20 Jul 2026 10:00:39 -0400
-X-Gmail-Original-Message-ID: <CAMRc=McQnKRLXh6898gdSHnWnBC8vhM2kdoKgganj+ptVUyU2w@mail.gmail.com>
-X-Gm-Features: AUfX_mwvJHnZfQIlqVxlPeVnDrQmJHcCvTQEdaQk_CoU1pVs50mb7IV__2s9uww
-Message-ID: <CAMRc=McQnKRLXh6898gdSHnWnBC8vhM2kdoKgganj+ptVUyU2w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: realtek-otto: decide bank_read/write by device endianness
-To: Rustam Adilov <adilov@disroot.org>
-Cc: Linus Walleij <linusw@kernel.org>, Sander Vanheule <sander@svanheule.net>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] firmware: scmi: Make SCMI arch independent
+To: Ulf Hansson <ulf.hansson@oss.qualcomm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>
+Cc: Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
+ monstr@monstr.eu, git@amd.com, vincent.guittot@linaro.org,
+ Souvik.Chakravarty@arm.com, Alex Shi <alexs@kernel.org>,
+ Andy Shevchenko <andy@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Brian Masney <bmasney@redhat.com>, David Lechner <dlechner@baylibre.com>,
+ Dongliang Mu <dzm91@hust.edu.cn>, Fabio Estevam <festevam@gmail.com>,
+ Frank Li <Frank.Li@nxp.com>, Jonathan Cameron <jic23@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Len Brown <lenb@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linusw@kernel.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Mark Brown <broonie@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Pavel Machek <pavel@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan
+ <skhan@linuxfoundation.org>, Stephen Boyd <sboyd@kernel.org>,
+ Sudeep Holla <sudeep.holla@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Yanteng Si <si.yanteng@linux.dev>,
+ arm-scmi@vger.kernel.org,
+ "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+ linux-arm-kernel@lists.infradead.org,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ "open list:HARDWARE MONITORING" <linux-hwmon@vger.kernel.org>,
+ "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+ "open list:ENERGY MODEL" <linux-pm@vger.kernel.org>
+References: <d7f7e8c9589d937b60e43168845ab4fda15037a3.1783603600.git.michal.simek@amd.com>
+ <ak_Eu_eQKalPMwo-@pluto>
+ <CAPx+jO9KMcxnmt-wT5jaApj9p7s11B6eSG6K08Jt9J=-vXxjhA@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <CAPx+jO9KMcxnmt-wT5jaApj9p7s11B6eSG6K08Jt9J=-vXxjhA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, 19 Jul 2026 06:17:01 +0200, Rustam Adilov <adilov@disroot.org> said:
-> On 2026-07-17 10:39, Bartosz Golaszewski wrote:
->> On Wed, 15 Jul 2026 21:00:45 +0200, Rustam Adilov <adilov@disroot.org> said:
->>> Hello,
->>> On 2026-07-15 09:39, Bartosz Golaszewski wrote:
->>>> On Fri, 10 Jul 2026 20:34:39 +0200, Rustam Adilov <adilov@disroot.org> said:
->>>>> In order to have a working gpio controller with SWAP_IO_SPACE,
->>>>> the way bank_read and bank_write are defined must be changed and
->>>>> separated from GPIO_PORTS_REVERSED flag. That also includes the
->>>>> flags parameter used by gpio_generic_chip_config.
->>>>>
->>>>> To achieve it, use the device_is_big_endian() to decide the
->>>>> bank_read/write parameter and the flag.
->>>>>
->>>>> Signed-off-by: Rustam Adilov <adilov@disroot.org>
->>>>> ---
->>>>>  drivers/gpio/gpio-realtek-otto.c | 15 +++++++++------
->>>>>  1 file changed, 9 insertions(+), 6 deletions(-)
->>>>>
->>>>> diff --git a/drivers/gpio/gpio-realtek-otto.c b/drivers/gpio/gpio-realtek-otto.c
->>>>> index 491fde846d46..f96072fbce92 100644
->>>>> --- a/drivers/gpio/gpio-realtek-otto.c
->>>>> +++ b/drivers/gpio/gpio-realtek-otto.c
->>>>> @@ -393,16 +393,19 @@ static int realtek_gpio_probe(struct platform_device *pdev)
->>>>>
->>>>>  	raw_spin_lock_init(&ctrl->lock);
->>>>>
->>>>> -	if (dev_flags & GPIO_PORTS_REVERSED) {
->>>>> -		gen_gc_flags = 0;
->>>>> -		ctrl->bank_read = realtek_gpio_bank_read;
->>>>> -		ctrl->bank_write = realtek_gpio_bank_write;
->>>>> +	if (dev_flags & GPIO_PORTS_REVERSED)
->>>>>  		ctrl->line_imr_pos = realtek_gpio_line_imr_pos;
->>>>> -	} else {
->>>>> +	else
->>>>> +		ctrl->line_imr_pos = realtek_gpio_line_imr_pos_swapped;
->>>>> +
->>>>> +	if (device_is_big_endian(dev)) {
->>>>>  		gen_gc_flags = GPIO_GENERIC_BIG_ENDIAN_BYTE_ORDER;
->>>>>  		ctrl->bank_read = realtek_gpio_bank_read_swapped;
->>>>>  		ctrl->bank_write = realtek_gpio_bank_write_swapped;
->>>>> -		ctrl->line_imr_pos = realtek_gpio_line_imr_pos_swapped;
->>>>> +	} else {
->>>>> +		gen_gc_flags = 0;
->>>>> +		ctrl->bank_read = realtek_gpio_bank_read;
->>>>> +		ctrl->bank_write = realtek_gpio_bank_write;
->>>>>  	}
->>>>>
->>>>>  	config = (struct gpio_generic_chip_config) {
->>>>> --
->>>>> 2.55.0
->>>>>
->>>>>
->>>>
->>>> Can you look at the sashiko report? I think it's right about this change
->>>> possibly breaking existing devicetrees. Can we keep big-endian as the
->>>> default?
->>>>
->>>> Bart
->>>
->>> Oh i didn't know sashiko was looking after this subsystem too.
->>> But yes, it does require the rtl8380-gpio, rtl8390-gpio, rtl9310-gpio
->>> to append big-endian or native-endian (as they are all big endian chips).
->>>
->>> I was thinking earlier whatever it is appropriate to make changes to
->>> the arch/mips/boot/dts/realtek in this commit because it is different
->>> subsystem entirely but i guess this (previous sentence) answers the
->>> question, doesn't it.
->>>
+On 7/14/26 06:16, Ulf Hansson wrote:
+> On Thu, Jul 9, 2026 at 5:56 PM Cristian Marussi
+> <cristian.marussi@arm.com> wrote:
 >>
->> That's irrelevant as there may be devicetrees out in the wild and we can't
->> just break them.
->
-> So, what is the solution then? Cause relying on device tree property the
-> driver did not rely on before would break stuff, though realistically it
-> is only relevant to OpenWrt and here. If we instead just create a flag
-> in the driver like PORTS_REVERSED, then we would have to patch it again
-> when SWAP_IO_SPACE is selected in the future and that is more hassle than
-> simply changing device tree property. Unless i am missing something, these
-> are the only possible ways of going about it that i can think of.
->
+>> On Thu, Jul 09, 2026 at 03:27:00PM +0200, Michal Simek wrote:
+>>> On heterogenious systems like AMD/Xilinx FPGA there is a need to talk to
+>>> SCMI server from different architectures than ARM that's why remove
+>>> ARM/ARM64 Kconfig dependency with also remove ARM from description and
+>>> rename folder to reflect it.
+>>
+>> While I understand dropping the dependency on ARM (I always wanted to do
+>> that and test if it worked at all on some otehr archs with QEMU), I am
+>> not sure about the whole renaming party ? why is needed just for
+>> cosmetic reasons ? it is at the end an arm originated protocol so I dont
+>> see it as a being wrong to be named as such even though used by other
+>> archs...I have not really strong opinion on this...
+> 
+> This is certainly not my call to make, but I have to admit that I
+> fully agree with the above.
+> 
+> Usually we don't rename files that indicate a legacy platform name,
+> just because a new company/platform wants to make use of it.
+> 
 
-I don't know the details of this use case. In general: devicetree support is
-considered stable ABI. If a driver ever supported a certain property in any
-release it must do so indefinitely. Any changes you propose must retain the
-same behavior for existing users - even if they are missing certain DT flags,
-even if they're out of tree. We don't care about breaking the code of
-out-of-tree drivers but we *do* care about breaking out-of-tree devicetrees.
+I agree.
 
-Bart
+Guenter
+
