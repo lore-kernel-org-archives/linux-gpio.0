@@ -1,93 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE8544331D;
-	Tue, 21 Jul 2026 08:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2D13C4B94
+	for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2026 09:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784621630; cv=none; b=Fk4m9tKKA5zL5WdAjnQxM//K3ck/RqcZJaOi6Kbuz6ysO4SRYLqwQczleSddLc+CjMxeVMOjxX0E4vxe5GK84qB0aU3eSrnnrsqAuVoQdbUV1rZ16Whmdhy2lCKcfUP1XGPpfSh7fIIc+lOxkvwF+x37ok9sxRfBP9cRP29suN0=
+	t=1784625122; cv=none; b=aAjgYA1yOmPos2vfSiAKJ8h9ym5H75eYpfZdtM/eAZdbG+9+vl6JA9YmP209S68SxX6cFhgvQmx5nVNdOSp6xvr2id9NdnC7/Qmc2dYg7bIZmFhzUmtd43JSmJJ3lo6hVuIP14neBG8KYJIpa9KzgcBhxiGe3Qow2kek9cczCdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784621630; c=relaxed/simple;
-	bh=34EDIy9PGVf70W7f/HasRN1+TvPSdO2b2+vbEuWRqnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YomZwsdYoXGk029HIKjb1PoMsY7RN3aHspfbN6cRrVgT4agoS3lc8u6MKObuo1/YjLJRcuWbwJeOmuL/qKoxXdUl7zPDjKJ1SUHIHQ6jm3bZC27x5VECxxAg+r0mGcSr+MqiB1yTtXd7BiDjcNOBkZmJcTb2Uh5qUXBu4NtYBNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tk4ddljR; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784625122; c=relaxed/simple;
+	bh=owGjS9GEb6JZAL9yeS9UGk88aYVHU6W0zz47VKrfioU=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R17ihXmW+mU6Dy3Z0o6PyAnYyJEJldAJurUZk+z4SXDQB3GwfNurLoNqx3JqcapQaasQRgkMmWkhu00PJQjJKySmNpF3j7NGcq9124hwA0HMxGegIEaVTn0jLbV7RL0pgBsafqKEzLO1UWr5tqera/VoAThKLRgusuFjhZKXv+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YiPHC8zb; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tk4ddljR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E04611F000E9;
-	Tue, 21 Jul 2026 08:13:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YiPHC8zb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E42C41F00ACA
+	for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2026 09:12:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784621621;
-	bh=z++pE21nLJXJJg1BIOPJk+S2n/QJjhsEu8ZSVPIm7QU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Tk4ddljRsI3lpF1DgL57KFZuV4kwZIn7ytSSPu0mjH1bcHJ49WNl6D5Qmxso3lMQB
-	 hssk6K3t7jSSIboRGq5KNSnPLJVAWHnwtW7OfRQR7QwfmPcH0zRJqK3g+uHWetYFwQ
-	 GNfArEOkYEr6Vx8JG7fl8RdUi4QUDrJ5kcM6HArbokaBzr1OMaOMIxLY/Vlq3seYyy
-	 D/mVUanA9EQtGthgqcsf8I1so2I4qCGlc2TT9vkuBFsU4SSQPTlbpWXsB30I8xRZZb
-	 MESngIpSoVSfx8U+vcau76QKjzbxXIbeIOGhx9HMmTFuKbjIewV3V4ss3EKs1uWJro
-	 mwMko09/Y6y5g==
-Date: Tue, 21 Jul 2026 10:13:38 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Simon Glass <sjg@chromium.org>
-Cc: Linus Walleij <linusw@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Rob Herring <robh@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	Bartosz Golaszewski <brgl@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: gpio: rockchip,gpio-bank: Add
- rockchip,grf property
-Message-ID: <20260721-ambrosial-raccoon-of-glee-6219dd@quoll>
-References: <20260714192535.2082729-1-sjg@chromium.org>
- <20260714132531.v2.1.d04a89a3849323a0dcee2c701cba43adbb0523b2@changeid>
+	s=k20260515; t=1784625120;
+	bh=owGjS9GEb6JZAL9yeS9UGk88aYVHU6W0zz47VKrfioU=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=YiPHC8zb+pExl6ZEXHE+3iy3gQmHX2ikNmew/jFcwvkRziWguGcxfAADe0WtSoI7A
+	 8ZkFHjxiWrVOiJ1pIwmkl9706O2lhpWQQmxcZWB76DjDfuyCbP3nRqGQFeRYgz/hEv
+	 oXsXCD9Z/47mZknKOjuv4pCxVaawZ1OBmgeCudZDFaqE8neLUQ3i5Tb6lbQVi/eYlJ
+	 9LC80MKibo4W/itfwbS0AH44tHcz1/AmU/RzIhpNmPX3VEGVf3TIvAgo0lIL4pvIbE
+	 PW2OF+IE2d54dmKR9SkzCSEcMhrsoy2r/cp1B1CX819eEua+f6uyM+ZSTwSfFLdo2Y
+	 8a8nkkv9XHpLA==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-39c8dbf4ef0so100084461fa.2
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2026 02:12:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpdnWw3KXmMzqHwUKQPnZ1x3jWcAKfZ+w4a1kdVlmL7uvomepARahY2qPuRBOnHLwBXh8jIzMKCxWSJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO95g2tFluxpDCjA3nMuFyvXQSPquxpUDo9pDzui+5isXgMM3h
+	MioduLV8PG2DpC9yaN1k7wfpzANVunEc8pODSsvQp9UM56hkFRdSRXh9iWZWUNgOagKVQRGjGvQ
+	mRqog6EBteGrosDZCfLWYYObTDwyqCo8t8D+1058w9Q==
+X-Received: by 2002:a2e:be27:0:b0:39e:a64f:d7a9 with SMTP id
+ 38308e7fff4ca-39eb274e864mr35869361fa.2.1784625119589; Tue, 21 Jul 2026
+ 02:11:59 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 21 Jul 2026 02:11:57 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Tue, 21 Jul 2026 02:11:57 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <0337442c-0278-48e7-9a69-9f11d7325f1f@axiado.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260714132531.v2.1.d04a89a3849323a0dcee2c701cba43adbb0523b2@changeid>
+References: <20260716-upstream-axiado-ax3005-upstream-v3-0-c429095143ec@axiado.com>
+ <20260716-upstream-axiado-ax3005-upstream-v3-2-c429095143ec@axiado.com>
+ <20260717-prudent-indefinable-labradoodle-fcaa9e@quoll> <0337442c-0278-48e7-9a69-9f11d7325f1f@axiado.com>
+Date: Tue, 21 Jul 2026 02:11:57 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MdfUXBAm54RyCQXiPMxCp9pLR5mPfM5hnC6_X6O9UhyTg@mail.gmail.com>
+X-Gm-Features: AUfX_mwH0TpNMo9EZd0P-t0js313q4iPqh8W5BqP6DPj-e4tX6QwH3FcJB6hj2U
+Message-ID: <CAMRc=MdfUXBAm54RyCQXiPMxCp9pLR5mPfM5hnC6_X6O9UhyTg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/8] dt-bindings: gpio: cdns: add Axiado AX3005 GPIO variant
+To: Swark Yang <syang@axiado.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Harshit Shah <hshah@axiado.com>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jan Kotas <jank@cadence.com>, 
+	Michal Simek <michal.simek@amd.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	=?UTF-8?Q?Przemys=C5=82aw_Gaj?= <pgaj@cadence.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, 
+	Boris Brezillon <bbrezillon@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Mathias Nyman <mathias.nyman@intel.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-i3c@lists.infradead.org, linux-serial@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 14, 2026 at 01:25:29PM -0600, Simon Glass wrote:
-> Some Rockchip SoCs, such as the RV1106, give each GPIO bank its own
-> IO control (IOC) register block rather than grouping the registers of
-> all banks into a shared GRF region. Add an optional rockchip,grf
-> property to the gpio-bank binding so that each bank node can reference
-> the syscon for its own IOC block.
-> 
-> Signed-off-by: Simon Glass <sjg@chromium.org>
-> ---
-> 
-> Changes in v2:
-> - Add new patch for the per-bank IOC reference
-> 
->  .../devicetree/bindings/gpio/rockchip,gpio-bank.yaml       | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml b/Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml
-> index bdd83f42615c..774e9c7de606 100644
-> --- a/Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/rockchip,gpio-bank.yaml
-> @@ -44,6 +44,13 @@ properties:
->    power-domains:
->      maxItems: 1
->  
-> +  rockchip,grf:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      The phandle of the syscon node managing the IO control registers
-> +      of this bank, on SoCs such as the RV1106 where each GPIO bank has
-> +      its own IOC block.
+On Tue, 21 Jul 2026 05:35:42 +0200, Swark Yang <syang@axiado.com> said:
+> On 7/17/2026 4:33 PM, Krzysztof Kozlowski wrote:
+>>
+>> This should stay enum which would also make your diff easier to read.
+>>
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>
+> Hi Krzysztof,
+>
+> Agreed on the enum, and thanks for the tags.
+>
+> Since Bartosz already applied this to the GPIO tree, should I send an
+> incremental patch to fix the formatting, or is it fine as-is?
+>
 
-I do not see usage of it in patchset linked in cover letter with DTS.
+Feel free to send a separate follow-up patch.
 
-I have doubts that whil having one GRF region you have GPIO banks
-pointing to different GRF regions.
-
-It's possible if you would have multiple GRFs, but you do not. You have
-one GRF, right?
-
-Best regards,
-Krzysztof
-
+Bart
