@@ -1,163 +1,271 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011022.outbound.protection.outlook.com [52.101.52.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE4243636B
-	for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2026 08:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784621011; cv=none; b=Ek75xBH9EoPtzNognKHK5UUsE4emI763U0lEmbiuekwDsoDDPHvzvgUJ8flajlYQoPdzVxRbqHmYWYEkaOVRjVNQdGtkq3ApmblbtqVMjxU8V3x86SJtvyzO3RKal5+m0Jef69+r6TzQpruHu3+QHwisVFd8wVDk8mlzeFbmRGs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784621011; c=relaxed/simple;
-	bh=0Cbw2gXFjpOIEPOY/4kVuvN9KhzVSRPu/bEgNQbmbnU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ui+uT77PNF3avq8zfPkKNB9hltsm2fuif6BiuAGEz80dLGwItDVuJNGUszrkhNbHWKPa8oXyNW59kl0OLd7aEehn7AHAT1kRAyqF4a8w0TgTNUaGOulc3PQgIc+wgVVt3e2TmbWErEsaEJs+SUmGmDTjuPNzTBsB/J/Et8maTbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JgLCOL/n; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8B734A794;
+	Tue, 21 Jul 2026 08:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784621531; cv=fail; b=uKr55jQz9UTe2gKQgcFFquT78j2tjsvkabHxlOOiwLDAKoJWEafCTBCwcA/a3Fo4MjBgX8S1DQQkqrXbSHDm7covHI/F8xMwXd3alZ3usaJtiCQ/zMQ3UUkPUnkZ6cCKxdkd9DrkdUXxj050M2IXeItMMUEnIEj2vAj3N8cdgKQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784621531; c=relaxed/simple;
+	bh=GUUA3re34p/Hf+IVkTRYk1xTtWagftqrJ4+6LF5nhJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GQ5ZrsP0fUhWAFce6dsB8YYqCsssa9UxKuYY93Y1EkLOzrYdYRqx9ZNeS1zcrmqsu7fh34KxU413oUrNozt4jYLu+L5G2oX6cZu+MU/x7fDInKk1bRxlQPXrWPNqIKc5rbUrYvaaPUcGb3cONAc5rvqyWj7zWncbmCDS5yI6hP4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=fail (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Wzv1oeBX reason="signature verification failed"; arc=fail smtp.client-ip=52.101.52.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JgLCOL/n"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-47f73d9c177so1844037f8f.3
-        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2026 01:03:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784621008; x=1785225808; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=FQW9nOmQRNCmAQpN47AcJCe9kdEEIZC5I+8m11r1HjA=;
-        b=JgLCOL/nXI26OSR7/+twJ6V9h3yG7vvwqbLYx3My9qGzF51G+2RJAmJ8pVT3vDgB8T
-         jqiiLMPPiWcC/CyMpV7I3ES9+7OaG7b7KdHYBeoz9KI7/mHQyXthek5bHzjRFbAzzujV
-         dg9WXtd7D5pSh1rRFHycGozTs24CC2C/CxqcDMxVdzzBD530SNXZqsMF4axEf6XRaTp4
-         nNHwJEz+TeaclqflbaDM0YWyS0QGydkH/CH3uCwN2oeqQ9K/uf/A+VShlJJ0zouwQtHQ
-         SutVVUA/4wWzlnbvXl9PcI1Lo5IUXVgxGb13yyIUAIx5Iys6fEyBeFyW9zhAAEGS1aA2
-         zdyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784621008; x=1785225808;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=FQW9nOmQRNCmAQpN47AcJCe9kdEEIZC5I+8m11r1HjA=;
-        b=XMZsg4ZwYCUAkGATt3/7CXWRK79z+VOqtR9xGOrgSEyHfT1GKwr0xsaniLAUsPISKs
-         NyUCJBvsQOQ2Cu/wWb0alvgx0xgK9ScUcfymIfi+l4rLg6+CF3U6R5InM8z8LrcjqWzj
-         0mQRoEo2yVy/M160XxW5dVf9SiLpn7bFkwwtcy0/yyiVi/yd8sUrV5UbtYgBwdyb4pYN
-         Q72oUNhUwzgdBtkPC1kyrKTnxPCEMyNaVGsHRLsTzxJSlce1J7jPic7u027YqCX0hMED
-         BQly9faJ6/qhcrL0oHCFGwSR44Iyh97rcDVWxphOhrlVqJKYPkh4S5QBwsDfW+89B3ZB
-         pNHw==
-X-Forwarded-Encrypted: i=1; AHgh+RpceEpKNalK+/wSDA6KcI7alW6MkcPeYha5VIKZBzXt989EbyKsRLWvls0ytMpjtkBdXYOOnViPMALr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8JKk+Wk6WetiNRPTdsx3BY8xIlZW50Xiab4HswkpEiJbjtPpt
-	X2skMHs5/Twim29+szKszgER9iy/VkTEzribX+StFlX9xDoNJ/QKEyYO
-X-Gm-Gg: AR+sD11n4r1vLGqdZH99Ai+5mJzSXFM7x4k0E+iFIFGK9uT0LtUdr2atnTdms6OfrSR
-	Hio5yqr/RkPZYfw3LZK+6wMocJls23TAnj/1I3X3lSZSxO1rmWB2K4YxzT8BmolOMl7bZvYJ4Bl
-	qiLZI9swQOiSlUpipVBo/0UbjXuYGIIXB40oSVOxzf+uYO8ty57/GxPZE6+08g+LxkNuT/lwUk2
-	h2G6THtoAAioRCtaKRzv4EsC/SYd197JEgaFXHpotMnvVrNYkLmOamLu/4nv3gJhXKJmxZb8Jiz
-	AF6mYZfj/YKzFD1cBLALCTnuJ51bziPLYHUoES33IhxR70uFMt/yjZZ7rqoBqA8lxTd/sy7YcPZ
-	PjI3gT5RApjSQxMGoB8opMpVqDlvHFhgIPjeI3EwHhkzzm+biuu1pU4RXvcwMZJ7KZ21ppdnfhW
-	Wp3GLPGAfJj6ELpfUg04gIdCWp9ALp4/+/VNGBCEAh+kM26pHVG2yJOJYwWwu4Xa/WY5SA9d6YG
-	capkrMILYNZbch9MbY=
-X-Received: by 2002:adf:e195:0:b0:475:a4ae:e630 with SMTP id ffacd0b85a97d-47f623364bfmr20547113f8f.37.1784621008290;
-        Tue, 21 Jul 2026 01:03:28 -0700 (PDT)
-Received: from [172.24.138.145] (ipservice-092-208-246-161.092.208.pools.vodafone-ip.de. [92.208.246.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f63eeece9sm35822439f8f.37.2026.07.21.01.03.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jul 2026 01:03:27 -0700 (PDT)
-Message-ID: <d159cae0-b11e-49e9-a546-023ed61b900e@gmail.com>
-Date: Tue, 21 Jul 2026 10:03:26 +0200
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Wzv1oeBX"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D7iCm3oYn7a5xEYhvGTNYpwjbwSlJ8cR2EVMWl7Oa5Ea3+c+7r7NinEEJelomH8a1HvX4z5yPKH8qr4WaC7bX1DDqLADHum9SPZzR7s9KmKewzCfQya88lIp1zdvxWKEpHOOXrfMqti353BdsHGPqtlVWekGwofiO3KIMxNQ9zeXq2j5ZnPYMw0iJLCHIvv3oqXSgyq/YzBBGAwOl02Y2A4lS1hJcg9zoarvQ9p+O7KtmHQfltLVSWkugSw8zOKx0D1maRpvs/GY+RFuWyzn726qXYP3Tm97j3L1KcIgbY8R5KcAAbR2tD+G9Psojl9rBqCeL8qTBRiIKfZ11SF/IQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oDSPHcCMguPhfG1g4QOLoYOVo8FWY7i2kSRjTNadU7g=;
+ b=mWl2ablrwKuQWxXviD6i0+Cw3DxjrjfdcM6ojsNGTcc/wtsPzPrJ2Kg09+cNl7J9HoQGTulhcYbHcMze0v0e9INpiTeGVGOgJa9whBS9f2TOccQyjR1GtUF+PxOgP3yVMFZfxWkESZlUmVU+PpfRODF4Couj0iWo7jFFLktScb+fLHYZNmIkvVDg9JrnYM1Gq1rbAcFvUXLAvor7O1zpKkefPDHV7rBykQ7tq5DbIjn0qT/cLJnaIZgttBwezM+Skei1XZN72/Evm6qgsCFUCTAIFgn/I7nqHmNRmJmPgTzXkPp+yglc7mcNZg50vr5wnVfVYglUrl/nrVgk8yYRTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oDSPHcCMguPhfG1g4QOLoYOVo8FWY7i2kSRjTNadU7g=;
+ b=Wzv1oeBXjxWTdp4aNzoOZOZLFgWPEYiIVpz6oi7i+YTE+xjZLUoiEMgMrTJPj0JMD4MmY/MPtCSICMUHe/Wsw/pj1EoJMnR58wCA3W9tpndYTzX4mgOHleRK0znQdeLESpd2+GTeLEwwuI5jKUrsKpCcVhA6TsPg7QB1wkBz1nltTp25Y1Y+orNRbenzmk8Bcy62P6XozW8b1YjAKMTYOYxFbU+MzLDm4WW0LmU8aisrPElpfNmPEnIURG6YkbXeVzwyboq/a3xTSG4EhNC1xUMpjv/PBwG66XQpBAfkimIPlbxGuIDLTEOpB7UhGOEDO3gNaBmAFVs/kGrYLJ/CZw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BL0PR12MB2370.namprd12.prod.outlook.com (2603:10b6:207:47::27)
+ by SA0PR12MB4349.namprd12.prod.outlook.com (2603:10b6:806:98::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.10; Tue, 21 Jul
+ 2026 08:12:06 +0000
+Received: from BL0PR12MB2370.namprd12.prod.outlook.com
+ ([fe80::86cf:c3ec:2cf5:74c8]) by BL0PR12MB2370.namprd12.prod.outlook.com
+ ([fe80::86cf:c3ec:2cf5:74c8%5]) with mapi id 15.21.0223.017; Tue, 21 Jul 2026
+ 08:12:05 +0000
+Date: Tue, 21 Jul 2026 16:12:01 +0800
+From: Richard Cheng <icheng@nvidia.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, David Rhodes <david.rhodes@cirrus.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
+	Linus Walleij <linusw@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jic23@kernel.org>, 
+	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dan Williams <djbw@kernel.org>, Ira Weiny <iweiny@kernel.org>, 
+	Li Ming <ming.li@zohomail.com>, Lizhi Hou <lizhi.hou@amd.com>, driver-core@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-cxl@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, Daniel Machon <daniel.machon@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v10 00/10] lan966x pci device: Add support for SFPs, PCI
+ part
+Message-ID: <al8ppbyhnmTyjxKN@MWDK4CY14F>
+References: <20260717145147.823749-1-herve.codina@bootlin.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260717145147.823749-1-herve.codina@bootlin.com>
+X-ClientProxiedBy: TP0P295CA0015.TWNP295.PROD.OUTLOOK.COM
+ (2603:1096:910:2::13) To BL0PR12MB2370.namprd12.prod.outlook.com
+ (2603:10b6:207:47::27)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dt-bindings: iio: adc: Add AD7768
-To: David Lechner <dlechner@baylibre.com>,
- Janani Sunil <janani.sunil@analog.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <skhan@linuxfoundation.org>
-Cc: linux@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20260709-ad7768-driver-v1-0-44e1194fd96a@analog.com>
- <20260709-ad7768-driver-v1-1-44e1194fd96a@analog.com>
- <36df7c4f-82ea-4ed5-a4f9-3a29c75dc99a@baylibre.com>
- <9dd16bb5-7a30-4024-88a7-4a4bf47c35e8@gmail.com>
- <e791f4f9-63dd-40f5-aec4-5b540bcee5ff@baylibre.com>
-Content-Language: en-US
-From: Janani Sunil <jananisunil.dev@gmail.com>
-In-Reply-To: <e791f4f9-63dd-40f5-aec4-5b540bcee5ff@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL0PR12MB2370:EE_|SA0PR12MB4349:EE_
+X-MS-Office365-Filtering-Correlation-Id: f7078971-03fd-4c95-5fe7-08dee6ffc080
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|23010399003|6133799003|11063799006|13003099007|10067099003|56012099006|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	16xWH5SkeIGg27/wXyWxtlumq820r3FODJeXY6Fv2hlMVZusrzJPUID0tlok7GAGEjffAWg7Vnl2EnSZdIxSVMUV6F83uHhVcCoNgXFAAZEXOe1iDWXR/ZxgiazG9g73sfhDmk3WaWg67vEvm2K6KxLXdeDl4C5GoOD8e69YiyyUJryEmjaBVhn0149auaBy70zjtTZjFcEZFmT4IZZzhL3MVyFLEfC/bewaB8q2Zz6BtX/w6pBmRxdjCKVYp5Q65cJbiPoBlnMTaBwHRnEHx0eX6o/UnF4wYJYJwMuok/Z42/9T4tgQdX2vOx9T7pF3LHKQwJfkIcMv5WbKHkvXpCGFu9fRkfwxijwCjclY8ZplK4P8qRXx05iDjBE1gM1eamtMAFWft68pAzSS3a56NBETPdaHERvjE1X1bg8OHyHouI3Rka9iUmvGn3pzsg01xJOeoYpwHbEDmkx7dceEvgCSn70H1N39Hmv7tT1r5AES+IcSTiPG/DllwQVpyHLk2PfQu5abP3Lbs3AhiyCjVnSgz1oMCL1wT/tDBVwkSx7EXhuCg1ScAteY8vf1jhJzrNkC852472lrGG2j3g8F95UlT+wfECu3qY9vkHKJ2d7WuYmiblwdYngbw8fac3iWpVUdm71g2PM6jOz+yZGV4ANz1C2ge6AaYggioOJkOJ4=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR12MB2370.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(23010399003)(6133799003)(11063799006)(13003099007)(10067099003)(56012099006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?Wn/MHurUakLrdNPzAAqh2mhFiCKQKpm2xU851QnDHoDqgvz6/WcV9MZs1a?=
+ =?iso-8859-1?Q?JpWyVUoIMm7U4tl6ATg9jFd4UkMC+PUWtoJXHpmgKACsiCeOJ2XBLdc9tW?=
+ =?iso-8859-1?Q?9yzkNN/42EnnUG+Q6WbkoKQTiskC8KeensChdvOLgFXR0T0M65WtUOugVm?=
+ =?iso-8859-1?Q?Xdd+2jhA593+IELp2uK5ItM2DeSO5VnX5mtx3+0o0FBW9lcBmNmVOQTvr8?=
+ =?iso-8859-1?Q?ijPibLbKUxbRz8fHQwiRmRtqjuZsnEBSOYAVqYJ8zdJ3hXZcrjwmiN2mhp?=
+ =?iso-8859-1?Q?VdmygHB792a8B+MF+zZrPZjc076jB32Rp6VGG/c6PR8cs/MtKb0hAKB7If?=
+ =?iso-8859-1?Q?gp5VaLv+eMPXBKYy7rAX9Sfv51lL/oBr+T84QmhOIPJakQxfsKsEo6hf5m?=
+ =?iso-8859-1?Q?HcjuMNLQ/WYSz3EyOSBbTpO+ZOdUctlPDg4c17w2brIAvcrReE4n50qv/5?=
+ =?iso-8859-1?Q?xSOKTgJOsdlCHearUyWdJXeiEHc5H032TdR1JtEQZGI4Z/j2H/4dxWMAaW?=
+ =?iso-8859-1?Q?8hTW5gfVwb/jHLJ2NjcHfI3DA81i9dFGldLLAkQrgnq4imwmQvtxn8ikEK?=
+ =?iso-8859-1?Q?jF7jYGYuOCODFErelOi3g0Jv7RTkdR8d0h0fFIw0wa5hm1Y6EnjrgnKLlh?=
+ =?iso-8859-1?Q?NyI4by0oxP6rwF3iWukUMa7qx8Qz65wA8ZlHe66Wnv1mYGzoHBYjOTDdwN?=
+ =?iso-8859-1?Q?rNR3Ku/8ScVi5eBjV4+4xrptFhEqG71P2pNKDZmAw+0s8jSN/g+bqr0uhO?=
+ =?iso-8859-1?Q?cIOxl+dRl1SNfDnRBqJCJkwpybsAFNs5mkQJMX+6tkS6+k6d2F7pxPvVhm?=
+ =?iso-8859-1?Q?vv1C/CTieoj44yFcjj95E8KWI74UhBohPjKjHMzceu6gqSrOAwyj3/k6KE?=
+ =?iso-8859-1?Q?XGikmR+KcT8J4BCtl42EPzD4itRsi2OJKDg6WBomlhLAyn3N6bHHFAd6Ik?=
+ =?iso-8859-1?Q?wR+o1/OnrXHKYkvsR5JCX9wMTwo7rqyhwqp0IYleVL4zV4u8oCcrq828tT?=
+ =?iso-8859-1?Q?pJJqZxGIZyCeJqivxxPdaI+wZzuQvjFmAYijRXVzTwNhUYwHSbNhjjp6qR?=
+ =?iso-8859-1?Q?0qZoKSeUn9x0xZPBP0oO/y0hRp/EHYMi32BE+bA7P7FcYQZvBYi0e8/9PS?=
+ =?iso-8859-1?Q?hfubWUxA4PYgpFdcYJzvfN+mHDfcYcX4Rt1/VML2hK05uNi+aB9evqLtiD?=
+ =?iso-8859-1?Q?8XVd89cVWpAFbpddtz2294NnTTIylOyVCTnI279KmrYJECKalRnjT0Bwwi?=
+ =?iso-8859-1?Q?hm5KSumPX8ZGLaDmDDRWHx2bYmcJ47o0UpQQcyhjSUy8KLfCXPB4ObN0zc?=
+ =?iso-8859-1?Q?DhquPYp/k4uTBV0u1UrbjBNcxbGZlwhVkZYJBIcS/GEG3SyuO5dU/SKf6u?=
+ =?iso-8859-1?Q?0zlbufWTOyfHOuld4g044M0NOYXyRHb4J9PJ4wic4fo0yBjQwbuq7LRB6O?=
+ =?iso-8859-1?Q?sjoduG81U4jZfIhEVKm7IkixXZl4/iz6Fo5o0OagN7+saGx1h/4r1vU+TA?=
+ =?iso-8859-1?Q?74AH15x8746zjgUpwX+qI4Bm8tpvxHrlztRmB2ZGhflw6xRZLJSb19RZl2?=
+ =?iso-8859-1?Q?C4SSJNRB78YTdvZvPTOIzssuQAZvX61viZhXh2OasLBhUR57MxqcEUaRcD?=
+ =?iso-8859-1?Q?/EmLCs2Q14Qm0alDMjCiZbof6gCgwOsMam+8LgNc3SgNfwfPmtmAKLSYa3?=
+ =?iso-8859-1?Q?liUOnSrMv9/L9NVz3BFOzkd6kJ5PAXMC7ipggdkzePdAYLvuUuhs0VMEPw?=
+ =?iso-8859-1?Q?iODS/4X1th+g0+isQox3k3QyX+qv6T5mHuPlxRQ93+e2H21P2zCYVqmIay?=
+ =?iso-8859-1?Q?reE7pUpgbg=3D=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f7078971-03fd-4c95-5fe7-08dee6ffc080
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR12MB2370.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2026 08:12:05.6943
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oUlIchG5XamWKNEOeUOSLEnTitJpFzmrTFb8Le0oKng9HQ8ZgNultywUqr11aINU+pvG8m24IufnkAloE1Q66w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4349
 
-
-On 7/21/26 03:39, David Lechner wrote:
-> On 7/20/26 9:00 AM, Janani Sunil wrote:
->> On 7/9/26 17:43, David Lechner wrote:
->>> On 7/9/26 3:50 AM, Janani Sunil wrote:
->>>> Devicetree Bindings for AD7768-4 (4 channel) and AD7768 (8 channel)
->>>> simultaneous sampling ADC
->>>>
->>>> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
->>>> ---
->>>>   
->>>> +
->>>> +  adi,power-mode:
->>>> +    $ref: /schemas/types.yaml#/definitions/string
->>>> +    enum:
->>>> +      - low
->>>> +      - median
->>>> +      - fast
->>>> +    description:
->>>> +      Power mode selection.
->>> Unless there are pins that control this, it seems like it should be
->>> left up to the driver to decide how to set this.
->>>
->>> In this case, it looks like the power mode also influences sample rate
->>> which is normally something controlled at runtime.
-> Looking at this again, there is also an MCLK divider that influences
-> sample rate, so sampling_frequency to power mode is not straight-forward
-> anyway.
+On Fri, Jul 17, 2026 at 04:51:35PM +0800, Herve Codina wrote:
+> Hi,
+> 
+> Previously, I sent a big picture series adding support for SFP ports
+> available on the LAN966x PCI device [0].
+> 
+> In this series patches touch several parts and sub-system in the kernel.
+> Reviews have be done and it makes sense to split the series and send
+> parts separately.
+> 
+> This current series is the extraction of patches related to issues in
+> the PCI subsystem. It has to be seen as a continuation of the big
+> picture series but related to this specific core part.
+> 
+> Patches 1 to 6 introduce and use fw_devlink_set_device() in already
+> existing code. No functional change but the introduction of the
+> fw_devlink_set_device() wrapper.
+> 
+> Patch 7 avoid a dangling pointer.
+> 
+> Patches 8 and 9 fix fw_devlink issues specific to PCI and the
+> device-tree nodes created during enumeration.
+> 
+> Patch 10 adds a guards to prevent incorrect node removal.
+> 
+> [0] https://lore.kernel.org/all/20260325143555.451852-1-herve.codina@bootlin.com/
+> 
+> Best regards,
+> Herv�
 >
->> Hi David,
->>
->> The reason we'd like to retain power mode control is that certain ODRs are supported across all three power modes (low/median/fast), and the RMS noise and power consumption differ significantly between them at the same ODR.
->>
->> The higher the power mode, the better the noise performance, but power consumption nearly doubles for every ~3 dB improvement in dynamic range. Silently selecting one power mode in the driver would remove a meaningful hardware tradeoff from the user.
->>
->> We'd like to propose the following instead:
->> - Remove adi,power-mode from the DT as suggested.
->> - Expose power mode as a per-device sysfs attribute.
->> - in_voltage<N>_sampling_frequency_available dynamically reflects only the ODRs valid for the currently selected power mode.
->>
->> This keeps the DT clean while still giving the user explicit control over the noise versus power trade off. Would this approach be acceptable?
->>
->> Thanks,
->> Jan
->>
->>
-> Jonathan usually pushes back against userspace power controls. We do have
-> this for accelerometers, but not ADCs currently.
->
-> If we can't think of anything better, maybe we could use this. It only
-> has low_noise and low_power options though, so the driver would still
-> need to chose the best power mode of the 3 based on the other requested
-> parameters. E.g. always make all sampling_frequency available  and just
-> pick the highest power or lowest power mode that can provide that rate
-> based on the power_mode attribute.
->
-> I wanted to suggest maybe adding some kind of noise attribute instead,
-> but I'm not sure how we could do that in a way using SI units since the
-> value would depend on so many things (at least V_REF voltage, filter type,
-> temperature and even the physical input).
 
-We considered the low_power/balanced/low_noise approach, but the customers typically use the datasheet alongside the driver and the datasheet explicitly uses the terms "low power", "median" and "fast" for the three modes. Abstracting them with different names in the sysfs attribute would create a confusion- the users would have to mentally translate between the two naming conventions.
-The noise attribute would not actually configure anything on a register level- it would purely be informational. Furthermore, noise performance is not solely determined by the power mode. There are other parameters (eg. filter mode) that has a significant impact. A power_mode attribute directly configures the hardware register and has a deterministic effect on the device.
+Hello Herve,
 
-Jonathan, could we keep the power_mode as an attribute in this case?
+Just a small question in patch 10.
 
+Otherwise, LGTM.
+
+Reviewed-by: Richard Cheng <icheng@nvidia.com>
+
+Best regards,
+Richard Cheng.
+ 
+> Changes:
+> 
+> v9 -> v10
+>   v9: https://lore.kernel.org/all/20260708100302.517792-1-herve.codina@bootlin.com/
+> 
+>   - Patches 1 to 6
+>     No changes
+> 
+>   - Patch 7
+>     Clear fwnode->dev also on error path.
+> 
+>   - Patch 8
+>     Clear fwnode->dev also on error path.
+> 
+>   - Patch 9
+>     No changes
+> 
+>   - Patch 10 (New patch in v10)
+>     Guard against node removal with incorrect np->data.
+> 
+> v8 -> v9
+>   v8: https://lore.kernel.org/all/20260630102804.413563-1-herve.codina@bootlin.com/
+> 
+>   - Patch 7 (new patch in v9)
+>     Clear fwnode->dev during root bridge node removal (avoid a dangling
+>     pointer).
+> 
+>   - Patch 8 (patch 7 in v8)
+>     Clear fwnode->dev during PCI device node removal.
+> 
+> v7 -> v8
+>   v7: https://lore.kernel.org/all/20260511155930.34604-1-herve.codina@bootlin.com/
+> 
+>   Rebase on top of v7.2-rc1
+> 
+>   - patches 4 and 5
+>     Add 'Reviewed-by: Andy Shevchenko'
+> 
+>   - Other Patches
+>     No other changes
+> 
+> v6 -> v7
+> 
+>   Rebase on top of v7.1-rc1
+> 
+>   - Patch 1
+>      Add Cc stable. Needed for patches 11 and 12
+> 
+>   - Patches 2 to 5
+>     No changes
+> 
+>   - Patch 6
+>      Add Cc stable. Needed for patch 13
+>      Add 'Acked-by: Bjorn Helgaas'
+> 
+>   - Patch 7
+>      Fix a typo in commit log
+>      Add Fixes tag + Cc stable
+>      Add 'Acked-by: Bjorn Helgaas'
+> 
+>   - Patch 8
+>      Add Fixes tag + Cc stable
+>      Add 'Acked-by: Bjorn Helgaas'
+> Older iterations:
+>   Patches 6 to 13 in the big picture series
+>   https://lore.kernel.org/all/20260325143555.451852-1-herve.codina@bootlin.com/
+> 
+> Herve Codina (10):
+>   driver core: fw_devlink: Introduce fw_devlink_set_device()
+>   drivers: core: Use fw_devlink_set_device()
+>   pinctrl: cs42l43: Use fw_devlink_set_device()
+>   cxl/test: Use device_set_node()
+>   cxl/test: Use fw_devlink_set_device()
+>   PCI: of: Use fw_devlink_set_device()
+>   PCI: of: Clear fwnode->dev during root bridge node removal and error
+>     path
+>   PCI: of: Set fwnode device of newly created PCI device nodes
+>   PCI: of: Remove fwnode_dev_initialized() call for a PCI root bridge
+>     node
+>   PCI: of: Guard against node removal with incorrect np->data
+> 
+>  drivers/base/core.c                      |  4 ++--
+>  drivers/pci/of.c                         | 24 ++++++++++++++++++------
+>  drivers/pinctrl/cirrus/pinctrl-cs42l43.c |  2 +-
+>  include/linux/fwnode.h                   |  6 ++++++
+>  tools/testing/cxl/test/cxl.c             |  4 ++--
+>  5 files changed, 29 insertions(+), 11 deletions(-)
+> 
+> -- 
+> 2.55.0
+> 
