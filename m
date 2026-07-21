@@ -1,324 +1,139 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5465845BD4E;
-	Tue, 21 Jul 2026 14:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360B94C9567
+	for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2026 14:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784645021; cv=none; b=iD49Hb03yHewhg6+/QnObidwN665pGsDBCy5xUCKw1eF/ckoZIiGJF28juPLfsvNgxN0Y8M8utyu9wxhcKbp9wSPH+wocOtgSqEsla9uuUz7epmRc5hs8bmH1ncORacHlksz09GZxOZWge1GQFB703V40sH+eJuuqTvKXTV/gtc=
+	t=1784645948; cv=none; b=Pf2XhU7hzZuPfe2kuBTwdN7aPVVQyJ95istTAFGU47iVFw3bsKsygnzSn6t318nXLbhnA7fxHWWdFWHraQxZBHX4M2kuDk2rr47llwaxUJhtMLEzvqrwv9/h9viRoOtduROOS6OA6vlhzSI8Vk+5dCkKGi7TaB5EL241cE1lAig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784645021; c=relaxed/simple;
-	bh=YBZobvZulref+ytTGCBwwhnpwe8D9jv2O4bavxMo9xE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZzoTZUGvZTH7TW5F5AGhPBARyavok2L6ygKwPVaTnjsh5AUK8OdLQW/dlLS3pRqxM1LgFJ2SD0w7ZHK3pX7dRz41zlbjkgp+G1Ux5rq2Md0CkJQU5nwzbRMj3ILo05oiI6giHxr7HB0bGCOFxXyDkEq5qRjzP9Hx/rDmsGvLLP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeOg9MZY; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784645948; c=relaxed/simple;
+	bh=1Bg3inej69xF/ATfisr13qBYcR7cPKaQKb8o1z72B8o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oO9SOmiCClgjqg0blfjmn5iZ4IOGoL5FSRztba6HyhPoXNB3u9z7z3KJPxdDV8qNiojhYTa22Q9IWlBCfcAvxP7nIL5U8hRdEld1fMApDYHlctjWlZOtULr0adsBGKKniWd6qEmzU9+BMojaAtJ1qNjjH6YWlXoiZsVhltI81So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W9VBH5Dg; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeOg9MZY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E61801F00A3A;
-	Tue, 21 Jul 2026 14:43:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784645020;
-	bh=CoaJ4JQlhsur87M2sZ8MdbclmParip6HqlDhl36M69U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=OeOg9MZYHYWJk+8RJHJix30NLs9DXIocVM1NhRW2AdZJLU6vA3hHVT612wLqtbX8R
-	 pwkB2YKfda1RWLYiNPG/xmj2cuuaXRZAhDzS994W2WYP1tUBPS46eXvbYafY/w7bIX
-	 CbKz2xTJGlr0V2lUJbG4WEtfyWnODdpjU6PKMVBSS6Uh6/MA3eH4M4unDcTSpMm+4Z
-	 4URNsbhjOZNdtN1tztSY1KqM+hc3Qz0HnzI85kWU6EDt24ViMdoagUeVrYfvQB6Zvi
-	 INTBpBmafSWqclWPSZMwJSHU+wQLfyIvo6YERDxfIGqV0b5aKaNNb4dvTr/PXOjgva
-	 4/swDgOdawG2g==
-Date: Tue, 21 Jul 2026 16:43:21 +0200
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, maxime.chevallier@bootlin.com, 
-	rmk+kernel@armlinux.org.uk, andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linusw@kernel.org, brgl@kernel.org, 
-	arnd@arndb.de, gregkh@linuxfoundation.org, daniel@riscstar.com, 
-	mohd.anwar@oss.qualcomm.com, a0987203069@gmail.com, alexandre.torgue@foss.st.com, 
-	ast@kernel.org, boon.khai.ng@altera.com, chenchuangyu@xiaomi.com, 
-	chenhuacai@kernel.org, daniel@iogearbox.net, hawk@kernel.org, hkallweit1@gmail.com, 
-	inochiama@gmail.com, john.fastabend@gmail.com, julianbraha@gmail.com, 
-	livelycarpet87@gmail.com, mcoquelin.stm32@gmail.com, me@ziyao.cc, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, richardcochran@gmail.com, rohan.g.thomas@altera.com, 
-	sdf@fomichev.me, siyanteng@cqsoftware.com.cn, weishangjuan@eswincomputing.com, 
-	wens@kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 12/14] gpio: tc956x: add TC956x/QPS615 support
-Message-ID: <z6fllvxd5r7bln6t6o5cacf2k35c47mnavvkmda6l4gnjaanin@52o34je2alxw>
-References: <20260605010022.968612-1-elder@riscstar.com>
- <20260605010022.968612-13-elder@riscstar.com>
- <dhnylud7o5dhaaq6kvbes4vkml3ppa5ev542j2lyxdijibknzg@pfcy22wz6jav>
- <df217d83-272a-4d4c-8aba-a87e4b8869fc@riscstar.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W9VBH5Dg"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6984169c126so772718a12.1
+        for <linux-gpio@vger.kernel.org>; Tue, 21 Jul 2026 07:59:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784645945; x=1785250745; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=3WKmer3uqjgZGaTDqjRAjLU77woVMUtTbyfOFW4Hj+g=;
+        b=W9VBH5DgBsqYIa+BZhLYKlyCQpcVh3WEyu6lfpw2hVAfSflFePwbZJVH2GJuzgFf9F
+         7l+CZEXVafefpVWbjgOm4CY2UbNBsnXjgm7/VPHQTvk8nmY8jvAwpbXV3DgEQQjad2H9
+         reB7AZlsTvBBNANfq1q6ue0n4gnIv1n97QIOLwnYZy6AkBsPGAfl8RgWYuITsiyyx98N
+         BHbVsrqT2lfJ/HdAYD8kVE0XtwmFldDKgORsKTjIOL3590LZVtC3x7CYNMg1BSzZEgyR
+         5t1uOvAWSg3srd2V9zP4i/jfNF/o950hLJpMJRCB3Nu0RtBpjzBZrJY9vPMAWQjfAkPt
+         p16A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784645945; x=1785250745;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=3WKmer3uqjgZGaTDqjRAjLU77woVMUtTbyfOFW4Hj+g=;
+        b=k7tJoeDwpGmTlRBntNGhGubPL8jMXCn5A1Ve6knANLwZNxZKaL+2qlwrzfZXGc+Lsm
+         nWx3H3P+P8apO4TKe+N0v58/j9SQmbDnPyyRSXLZKNcbf6jRWC85EtvOBnlaqUh1luTk
+         Pr1errZsrU8u07RthiKV7cu6Lm8BarpfUfSfAeHtqqVVfvVxCa35yvmRmMhVuhworwXg
+         T8/FA5hQ9PaW5F20mGofZU2MxWq1/FKBREYhKZ8JGqH5TOOaakPQxcFwtJXHE2S2V9Ts
+         s6HE8e6G9O64Si+Udkm1AfhTRjgfLweUMA58tkH6T9l4udqehksBOexcw0l5cjvYXulV
+         OeAA==
+X-Gm-Message-State: AOJu0YzobPvy07o5fe+7vxmEBoQrNUY2QZ8R5ZQvwW/7B3e/6usRKhcY
+	4exRsEbDAyi6pwNgWHzuuw9wtJPGviYRAwVTYp81xqmRv4L7yUhpd41m
+X-Gm-Gg: AR+sD12h6HnAq51AC6wFtbbmb5AUnudHkTL4g3fgqghWt6aPuCiddB+13RJTmU46grQ
+	KHdagwweJ+B+IbFClZc5firraZSt8M8hdC0j6HZyJ5jbR7TTZHdpOqa3TVNAt3YxSR0iHMX4Tqq
+	FYTYWJVMNn/65O8jooDWt5PF9fKHCN4AIhhJ6XQuF3ZISNr34echKaaMueWUN5v4QzUvKEDg3wG
+	ZwcP3UwKFAPJMJ/xKHBrw1tDaqMTFThQP7LYiBhmr9DJuGmUxv7jTv1eTD2HiqfSn3T+CQSZ3PY
+	zQtPiB3Jru63B5PzEBLTOnDMsiDuKWlUT8iWQU3McLoWx95EIDahRun3zwJu7lsREo302pNOMwo
+	Ji7bRjYx8xsZ+fYMErR2c+VNhMcj7CkGCoBW0DbXq5ikj4VrcMiQhiHKpVq0yTzgYvQQX44K3RA
+	XzPcsI2WXP
+X-Received: by 2002:a05:6402:40ce:b0:69c:2fc1:d4dc with SMTP id 4fb4d7f45d1cf-69e6532a1e9mr7211815a12.39.1784645945343;
+        Tue, 21 Jul 2026 07:59:05 -0700 (PDT)
+Received: from [192.168.136.254] ([94.232.27.38])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-69e6fee248asm6113634a12.1.2026.07.21.07.59.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jul 2026 07:59:04 -0700 (PDT)
+Message-ID: <816442c5-88fe-49b6-92a3-cf924c056ae8@gmail.com>
+Date: Tue, 21 Jul 2026 19:48:04 +0500
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <df217d83-272a-4d4c-8aba-a87e4b8869fc@riscstar.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] pinctrl: rockchip: add support for RK3308B SoC
+To: Hugo VALTIER <hugo@ahdrone.com>
+Cc: linux-gpio@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+ Dmitry Yashin <dmt.yashin@gmail.com>
+References: <20260717075918.1869879-1-hugo@ahdrone.com>
+ <20260717075918.1869879-4-hugo@ahdrone.com>
+From: Dmitry Yashin <dmt.yashin@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20260717075918.1869879-4-hugo@ahdrone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 16, 2026 at 11:24:15AM -0500, Alex Elder wrote:
-> On 7/16/26 2:02 AM, Manivannan Sadhasivam wrote:
-> > On Thu, Jun 04, 2026 at 08:00:19PM -0500, Alex Elder wrote:
-> > > Toshiba TC956x is an Ethernet-AVB/TSN bridge and is essentially
-> > > a small and highly-specialized SoC.  TC956x includes a GPIO block that
-> > > can be accessed, alongside several other peripherals, via two PCIe
-> > > endpoint functions.  The PCIe function driver creates an auxiliary
-> > > device for the GPIO block, and that device gets bound to this auxiliary
-> > > device driver.
-> > > 
-> > > This driver is implemented using the generic regmap-based GPIO driver.
-> > > 
-> > 
-> > While the regmap over the switch BAR works for GPIO access post-enumeration,
-> > there is a blocker in using these GPIOs to control the power to endpoints.
-> 
-> We're aware of the power control driver and its use of these GPIOs.
-> 
-> I think the point you're making is not about the specific way we
-> are using GPIOs, but that someone could try to use this GPIO
-> controller in a way that would lead to a circular dependency
-> (between the controller and the PCIe device it depends on).
-> 
 
-This not a future problem, but a present one :)
+On 7/17/26 12:59, Hugo VALTIER wrote:
+> The RK3308B is a revision of the RK3308 including different iomux
+> register layout.
+> Several pins (GPIO2_A2, GPIO2_A3, GPIO2_C0, GPIO3_B2, GPIO3_B3)
+> have 3-bit mux fields in new GRF registers (SOC_CON13 at 0x608 and
+> SOC_CON15 at 0x610) that override the standard 2-bit fields.
+> I believe the bootloader sets the sel_src_ctrl bits to activate these
+> new registers, which causes the kernel's writes to the old 2-bit iomux
+> registers to be silently ignored.
+> 
+> Without this patch, SPI1, I2C3, and other peripherals that depend on
+> these pins are completely non-functional on my RK3308B boards.
+> 
+> Detect the SoC variant at runtime by reading the chip_id register at GRF
+> offset 0x800 (0xcea = RK3308, 0x3308/0x3308c = RK3308B), as requested
+> by reviewers of the earlier series.
+> When RK3308B is detected, swap in the correct mux_recalced and mux_route
+> tables and write the sel_src_ctrl bits to ensure the 3-bit mux registers
+> are active.
+> 
+> This is a rework of Dmitry Yashin's series [1] which used a separate
+> device tree compatible string ("rockchip,rk3308b-pinctrl") to
+> distinguish the variants.
+> Reviewers Luca Ceresoli and Heiko Stuebner agreed that runtime detection
+> was preferable since boards are manufactured with both RK3308 and RK3308B
+> using the same device tree.
+> 
+> Jonas Karlman implemented runtime detection based on the GRF_CHIP_ID
+> register [2]. Reviewers asked for more changes (constifying some
+> arrays), but the series was never resubmitted and was dropped.
+> 
+> I run this patch on my Rock Pi S boards, the newer ones I've got in
+> 2024 use the RK3308B. And thanks to runtime detection we should still
+> be compatible with older devices (but I couldn't test on RK3308 as I
+> don't have any).
+> 
+> [1] https://lore.kernel.org/all/20240515121634.23945-1-dmt.yashin@gmail.com/
+> [2] https://lore.kernel.org/all/20240604141020.21725-1-dmt.yashin@gmail.com/
+> 
+> Signed-off-by: Hugo VALTIER <hugo@ahdrone.com>
+> ---
 
-> And you suggest a GPIO driver that uses I2C (and would be
-> used by the pwrctrl driver as well), and I think it's a pretty
-> reasonable suggestion.
-> 
-> > We have a design [1] where the GPIOs from the switch are used to control power
-> > and PERST# signals to the EP. With this current design, during the initial PCI
-> > bus scan, the switch will get enumerated, but the EP will not. Because, power to
-> > the EP depends on the GPIO Aux driver that will get probed only after the switch
-> > enumeration.
-> 
-> Yes, on the RB3gen2 platform, reset signals (PERST#) for two of
-> the TC9563 PCIe switch ports (downstream 1 and downstream 2) are
-> managed by the GPIO controller that resides within the TC9563
-> itself.  The pwrctl driver takes special care to ensure the GPIO
-> controller is functional (powered) before trying to use it.
-> 
-> The TC9563 *chip* gets powered when its embedded PCIe switch is
-> probed--that is, when its upstream port begins its enumeration.
-> (It's a little unclear to me which of the supplies are required
-> for the various non-PCIe components on the chip, including I2C
-> and GPIO, to be functional.)
-> 
+Hi Hugo.
 
-Well, the TC9563 should get powered ON when its pwrctrl driver gets probed and
-the pci_pwrctrl_power_on_device() is called. There is no dependency with the
-upstream port enumeration AFAIK.
+Thanks for re-sending the series!
+Applied patches to multiple boards and it fixes pinmux
+issues for rk3308b-s based boards too (since the approach 
+kept the same as in v3 series)
 
-> And so until the switch gets probed (and its pwrctl driver used),
-> the GPIO controller can't work.  So nothing internal to the TC956x should be
-> dependent on any of the GPIOs supplied by this controller.
-> (Except the pwrctrl driver, which enables power before using GPIO.)
-> 
-> 
-> Two things to note:
-> - We are working with TC9564 (and there are other successors in
->   the TC956x series).
-> - Downstream port 3 (which we are using) on the switch does not
->   have such a distinct controlled reset line.
-> 
-> > But this creates a chicken-and-egg problem with the PCI Pwrctrl design.
-> > pcie-qcom driver uses the Pwrctrl framework to power on the PCI endpoints before
-> > the initial PCI bus scan. It calls pci_pwrctrl_create_devices() and
-> > pci_pwrctrl_power_on_devices() APIs to create the platform device for all PCI
-> > devices defined in DT (that require pwrctrl support), waits for their respective
-> > pwrctrl drivers to get probed and then power ON all of them.
-> 
-> The way I understood it was that certain parameters for the PCIe
-> links needed to be set before using them, and the pwrctrl framework
-> made that possible.  (I summarize what that driver does at the end
-> of this message.)
-> 
-
-Yeah, it does handle both power ON and some configuration for stable operation.
-
->  This step is
-> > required because in DT platforms, many Root Ports are not hotplug capable and
-> > also BIOS doesn't assign bridge windows during boot. So all the devices has to
-> > appear during the initial PCI bus scan so that the PCI core can allocate the
-> > resources properly.
-> 
-> This part I didn't know before.  Yes, the bridge windows are
-> allocated by Linux rather than by firmware.  And if this host
-> bridge doesn't support hotplug, then yes, to correctly assign
-> address space, all PCIe devices must be available to report
-> their required memory space.
-> 
-> Are you saying that "setting those parameters" wouldn't be
-> needed if this particular root port supported hotplug?  (I'm
-> just curious; it's not relevant to the point you're making.)
->
-
-Yeah, more or less. If the Root Port is hotplug capable, PCI core will allocate
-more resources like bridge windows and bus numbers in anticipation of devices
-getting attached to it after boot. But that also sometimes becomes insufficient
-if a resource hungry device like GPU gets plugged in later, as the PCI core can
-only guess the memory for hotplug capable Root Port.
- 
-> > Now the issue with this Aux driver design is that, if an EP makes use of the
-> > switch GPIO for PERST# or power, like:
-> > 
-> > 	tc9563: pcie@0,0 {
-> > 		compatible = "pci1179,0623";
-> > 		reg = <0x10000 0x0 0x0 0x0 0x0>;
-> > 		...
-> > 
-> > 		pcie@1,0 {
-> > 			compatible = "pciclass,0604";
-> > 			reg = <0x20800 0x0 0x0 0x0 0x0>;
-> > 			#address-cells = <3>;
-> > 			#size-cells = <2>;
-> > 
-> > 			device_type = "pci";
-> > 			ranges;
-> > 			bus-range = <0x3 0xff>;
-> > 
-> > 			reset-gpios = <&tc9563 5 GPIO_ACTIVE_LOW>;
-> > 		};
-> > 	...
-> > 
-> > 	};
-> > 
-> > Then the pwrctrl driver (pci/pwrctrl/generic.c) will try to acquire the GPIO
-> > controller during its probe, but will fail with -EPROBE_DEFER as the GPIO
-> > controller won't be available at that time. So the whole PCIe instance will
-> > probe defer as the driver requires all pwrctrl drivers to be probed before
-> > starting the initial bus scan.
-> 
-> The only GPIOs we're using are for asserting reset on the two
-> Ethernet PHYs.  That doesn't occur until after the embedded
-> endpoint functions are probed, so this should be OK.
-> 
-> However you're right, the lines on this GPIO controller should
-> be restricted to avoid this circular dependency.
-> > So we need to make sure that the GPIO controller driver is available before
-> > enumerating the switch device. One way to achieve is by creating the GPIO Aux
-> > device in the pci/pwrctrl/pci-pwrctrl-tc9563.c driver and let the GPIO
-> > controller driver use I2C communication for setting up the GPIOs. Thankfully,
-> > the switch allows both I2C and BAR MMIO configurations for internal GPIOs.
-> 
-> Daniel and I have talked about this solution exactly, but opted
-> not to propose using it just yet (not unless someone like you
-> suggested it...).  Our solution for now was just to have the
-> (PCIe BAR-based) GPIO driver reserve the two GPIO lines used by
-> the pwrctrl driver, and rely on the fact that the pwrctrl driver
-> will only touch those shared registers at times the "real" GPIO
-> driver does not.
-> 
-
-Yeah. If those GPIO lines are not used to power up any endpoint devices, then
-there should be no issues. But this is something we cannot control as the board
-designers can do whatever they want.
-
-> 
-> We could instead implement a "proper" I2C-based GPIO controller
-> driver.  This would be used by the pwrctrl driver (rather than
-> that driver just updating the registers directly), as well as
-> the Ethernet PHY for reset control, and for any other uses on
-> future platforms.
-> 
-
-Sounds like a plan.
-
-> All uses so far are for managing resets, so the higher I2C
-> latency wouldn't be much of an issue.
-> 
-> > With this change, the GPIO driver will get probed by the time the pwrctrl
-> > generic driver acquires the 'reset-gpios' and will turn ON the EP.
-> 
-> One thing I'll point out is that the next version of this
-> code will define "pci-ep-bus" nodes, and will not use the
-> auxiliary bus model.  However the issue you raise remains
-> in that model too.
-> 
-
-Please do CC me on the upcoming versions as well.
-
-> Thank you very much for raising this Mani.  Please see my
-> questions a little further below.
-> 
-> 					-Alex
-> 
-> > Let me know your thoughts!
-> > 
-> > - Mani
-> > 
-> > [1] https://lore.kernel.org/linux-pci/e2inl7k5gsjj6oomv2k5ximuzpb3gfiz66ufet3b4hvov7zqt4@qz4pifbos7yf/
-> 
-> 
-> Here's what the pwrctrl driver does:
-> 
-> In drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c, the registers at
-> offset 0x1208 and 0x1210 from the base of the "SFR" address space
-> are updated to assert/deassert these two reset signals.  It does
-> so using the I2C interface--out of band from access via PCI BARs.
-> The reset signals are GPIO02 (for downstream endpoint 1 on the
-> switch) and GPIO03 (for endpoint 2), which are controlled by
-> bits 2 and 3 in the two registers, respectively.
-> 
-> The pwrctrl driver enables a set of regulators defined in the
-> devicetree node for the upstream port of the TC9564 embedded
-> PCIe switch.  It then asserts the main RESX (chip) reset signal,
-> and after a short delay asserts these other two resets.
-> 
-> At that point it uses properties defined in devicetree to
-> configure five "ports":  upstream, downstream 1-3, and Ethernet.
-> (I have some questions related to this--but I put them below.)
-> The properties configured are:  ASPM L0s entry delay; ASP L1 entry
-> delay; TX amplitude; Number of Fast Training Sequences (NTFS); and Decision
-> Feedback Equalization (DFE).
-> 
-
-The driver confuses between ports and endpoint. TC9563_ETHERNET is not a port,
-but an integrated endpoint. I've identified some issues while reviewing it now.
-Will try to fix them asap.
-
-> Finally, the two resets and the main RESX reset are deasserted,
-> and the driver reports that the device is now ready, with:
->   devm_pci_pwrctrl_device_set_ready();
-> 
-> 
-> 
-> Questions related to the "ports" configured by the pwrctrl driver:
-> - Given that downstream port 3 connects to the internal, embedded
->   PCIe endpoint, does it still require these settings programmed?
-> 
-
-Not all of the settings are applicable to all ports. Only ASPM and N_FTS are
-applicable to all ports and endpoints, but the rest are optional. But the driver
-treats all properties mandatory for all ports/endpoint, and safeguards itself by
-having some absurd checks. This is something I'm going to fix.
-
-> - Does the TC9563 chip have only *one* function on its embedded
->   endpoint, supporting just one Ethernet?
->     - If so, this driver will have to be modified to support
->       the second embedded function and Ethernet controller.
-> 
-
-The driver assumes only one endpoint, but the binding lists 2. So the driver is
-not complying with its own binding now :/
-
-So technically, the driver supports 2 integrated endpoints.
-
-> - Why is "Ethernet" configured like the PCIe ports, *in addition*
->   to the downstream port 3 that it sits behind?
-> 
-
-Both ASPM and N_FTS properties are applicable to ports and integrated endpoints
-as well. But other 2, DFE and Tx Amplitude are only applicable to ports only,
-excluding DSP3.
-
-- Mani
+Tested-by: Dmitry Yashin <dmt.yashin@gmail.com>
 
 -- 
-மணிவண்ணன் சதாசிவம்
+Dmt-Y
+
