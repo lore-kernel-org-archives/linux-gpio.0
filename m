@@ -1,51 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9252445DF46;
-	Wed, 22 Jul 2026 15:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77482473C8F;
+	Wed, 22 Jul 2026 15:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784734212; cv=none; b=bTFiqdO++ZyGWyBe/XECtqOsiZ9Dl9aBugXWHknyM/xHchMeu3WHs+sY0Wx+kJqMbjtt4BlUFOErdzmBVjQFi3bunWnjluTa527ZQ5w7mwUuWqoesgGQRx/9fCbLgSrCf18T8QlgZkiX83VyaZKwSenT0r5TU39bNF2UvifUVrU=
+	t=1784734310; cv=none; b=r5aGbIIZU88QyzdDLhFMKxuxS3V7NxdNcnb7U3xCC9dSXDDZIm+kZbVFCToBzcAagDN/n2d3PHI33YDhdAmxssqYGli8BbHaK7VMDCELcir+Jk4r45A8T3jfC5Z0oaTWYkbkvM+kaYD7QrxORvr2YqW0WqeitJCjyLWUwc+vrDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784734212; c=relaxed/simple;
-	bh=bof1UXbN9s+UThAJ5mqZwNPiuCvCvCsBlvl0XlHq9LQ=;
+	s=arc-20240116; t=1784734310; c=relaxed/simple;
+	bh=0pMysZB2TLYoHUJ8ggDxOicbwXFfmDiU6A4FhFu4QrA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CfAjmHD7oZXSDS4MyVVPdB+p0n0L6tUSWZbuX9PwFyeaQub5vQ4e0QMuf2y4olv3uEOD8DpI3S7BiOHGKSAhoz2BQLl+nZWShFkVp1YQrXAxsr7fOnyJzti1jRHwyMoixZsSEuyLrfHERahF2Bqi0T2y8/DPcXdRnYU1INreOm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LCC4R1v0; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=I8U67tAg1RUWQXkHt/sHkBS98VjAhPjnUT25AOR79yV1pAyJOpU+D2z+2rvQB/Egn5KoHue4wuFL3VhWMJnRGhKBZhckacmad2r+5qFdfeZU9J1Kb8Za1GbqCHK4URWIb6azc55MGVlKkKuiPhSzGGZVssdZrARfaBzuPehHcso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n+340JMP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCC4R1v0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6371A1F000E9;
-	Wed, 22 Jul 2026 15:29:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+340JMP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2C301F000E9;
+	Wed, 22 Jul 2026 15:31:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784734191;
-	bh=MiQon9B13JCqJ0ZBlba87Lc4HaPjX/zchUwplkS+IdU=;
+	s=k20260515; t=1784734309;
+	bh=GIyxzcyxu4KX8Kz+gSWClSAe1DI+cNRMQZqfJq0aSs8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=LCC4R1v0jWUsMNFaS+5KjDDT5n6lfO+NQiaCp6DGdH/9ttyBE8R7oW8Di/T1K26D6
-	 NHL1ntBZsVBOj4HBGUptwxozE8WItQ56Xt8C8/hayvKKTmuDdfdaBWMFhQTGVoQATN
-	 PfV4nB4XbnSa35JCZWL3GDknVu+0UKlTHGEF5ZFyE0vTmoJhTbJDcxY3QGib247hdO
-	 lctF+SW9X1YfFB8ZwE50VK53NKjXNBiYGWtBSsys24ymDGfnI2cw6DQi69r3+3iL7s
-	 fnLPfn/ZBXiPxVMlQbkaCvHMYHJQQk1zpR3LAugohRIdnWuIRd5/H8xKC1sRFljfpF
-	 5A1HeLvUar2Og==
-Date: Wed, 22 Jul 2026 10:29:49 -0500
+	b=n+340JMPz/zTCAh5G/JqDfLBZUH2uIZvcYJqmXeoeSYOUvEnNmO7OqyT5NDw+0p6e
+	 9Qsm5FGpI049dzqa+orfFdWQ6A2neWodoftVuqU6dmX4q+6PCwk3ojSq74aCyn3Q2m
+	 EYYPRbA2KlSOjTOKmKgcsfx7CVWNjpAK48jzG2PdnYCzu7epepfZvG1Yi31hZnNSoo
+	 t1Wx7EYsuut7tejcms0vK6w00eXUbKyXjOsYkyN+xhsgDktMQC5ThtmZLURtFqqoR7
+	 gvJojV+goKw0euj96kaaEUATb2Ypzcz/QHaAEcy8Js6oM09YzOARHmks2fupKjqmq8
+	 YAI4FuFhg7d6g==
+Date: Wed, 22 Jul 2026 10:31:46 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>, Bartosz Golaszewski <brgl@kernel.org>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Roger Quadros <rogerq@kernel.org>,
+To: Marek Vasut <marex@nabladev.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	Conor Dooley <conor+dt@kernel.org>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>, linux-omap@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Linus Walleij <linusw@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH v5 2/7] dt-bindings: phy: motorola,cpcap-usb-phy: add
- optional safe pinctrl state
-Message-ID: <178473416255.967931.16569030812535097273.robh@kernel.org>
-References: <20260711204210.197144-1-ivo.g.dimitrov.75@gmail.com>
- <20260711204210.197144-3-ivo.g.dimitrov.75@gmail.com>
+	linux-stm32@st-md-mailman.stormreply.com,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	kernel@dh-electronics.com, Linus Walleij <linusw@kernel.org>
+Subject: Re: [PATCH] dt-bindings: arm: stm32: Sort the document
+Message-ID: <178473430598.971819.5105666655246477441.robh@kernel.org>
+References: <20260713232440.120352-1-marex@nabladev.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -54,17 +48,31 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260711204210.197144-3-ivo.g.dimitrov.75@gmail.com>
+In-Reply-To: <20260713232440.120352-1-marex@nabladev.com>
 
 
-On Sat, 11 Jul 2026 23:42:05 +0300, Ivaylo Dimitrov wrote:
-> Document the optional "safe" pinctrl state for the CPCAP USB PHY.
+On Tue, 14 Jul 2026 01:24:14 +0200, Marek Vasut wrote:
+> Sort the document, place STM32MP21 before STM32MP23, and STM32MP23
+> before STM32MP25 . No functional change.
 > 
-> Signed-off-by: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+> Signed-off-by: Marek Vasut <marex@nabladev.com>
 > ---
->  .../devicetree/bindings/phy/motorola,cpcap-usb-phy.yaml      | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> Cc: Bartosz Golaszewski <brgl@kernel.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Linus Walleij <linusw@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: kernel@dh-electronics.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-stm32@st-md-mailman.stormreply.com
+> ---
+>  .../devicetree/bindings/arm/stm32/stm32.yaml       | 14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
