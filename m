@@ -1,128 +1,130 @@
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D18331EB2;
-	Wed, 22 Jul 2026 21:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EFF395AE9
+	for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2026 21:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784755503; cv=none; b=bRUDHwuQ05hTIauzF/DKNMVSx1T2q4tqJCHDlTfapwCKJkFh1+rnFQZ6B4/oVuWLwYwMLi7kj2m9CShzXFvBc2gbEnQAHj2Ez/Jc088zuFqT1JQqfp4LIqB6ijE40e6vn6PPiWf+rEOa7oGBSsDPERUcVYlfMCFF5FMBoJ/P2/w=
+	t=1784756001; cv=none; b=UojmYuq1Use/TjhQ3NlQUC/8SoXIs0XMlgMuwAG9VDKe48NGGTeelCYgIDT378QWx05vAt2zg2sAvzcEbrtJhMTWtkqbrZnDYykA15l6Oaby6xHl2u+ibU3Wj577bhKag9dxTO2H6oBnbsrczT2p9gyOFubo/6hDgK0b6vZMbeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784755503; c=relaxed/simple;
-	bh=+lXhyzGKuSy0eK/8F4lDyf0y1rWD4DywFVxZ2jjJg5U=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=WJ3rPgiIbRQ2n2cHPTjpgMMlnQ8yo9m92a8evhAaY4xoTSJ9kfACHmhCgyxpn0CNFBP+431154DxevMoJNORJoJlQ3yOt7KdsP1YtxSOzdduu177B8m12uSKtbqJMa6S3mpBjLx3k+Ts5OXaOaTmzDktt1nZvCgWnZApYeR8JKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=LFB3Hbae; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OIwpBdVQ; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1784756001; c=relaxed/simple;
+	bh=2e0xDu2AW5V3cBofm7LJsyVwm3nbqAjS6LPFU7pq7Rk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VxA4FNkw87XVrmL/kjbeGWSf6g0QezIhPfXc0zRfhE6/FgYKcXl5h2S45S2ktzf/712sUWEBakR3LMG5r//H56NkPbY4nPTFgIDiy3Eg0shSRWoFsWKvwyCOIo+gM9V4NdW60H/N1wrslJ5IcP5ISoz2TSxF1ZPN8EXEOM4BrVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i3thHppy; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="LFB3Hbae";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OIwpBdVQ"
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 19A081D000D7;
-	Wed, 22 Jul 2026 17:25:00 -0400 (EDT)
-Received: from phl-imap-05 ([10.202.2.95])
-  by phl-compute-04.internal (MEProxy); Wed, 22 Jul 2026 17:25:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1784755499;
-	 x=1784841899; bh=/oXthBgWL2WsyuAw9FODkIMrZHNZHIEdWRRRjhViSb8=; b=
-	LFB3Hbaey8wfBM4nEgYXtjmLBFIkk6ubkbye9yy+9erM/UcUC6yanHhCr7hxbDa7
-	zQqi1u1PCXadnIEQszDalgibelIdMbCzazTOMp7bQ2L/nsPURX/4mlnphytPA2NT
-	BlbBSuEi/cIByuiGVOdgzenSEsTfoYhP2cMHrOvJvmP07aFggEb6Eiy2LimOmodr
-	CRowxoj9AxJdukQLchZCxE0aM7rNKKQk6xiy0Mf6QaU03hmt6RPQur9GwKv6BMQs
-	bYg3NhwhX7vkbS6jnpIaXylroZSACGPQm9hRv9Q+DczPXRuX+QP1PQiZkanCahr8
-	UGtHX1lVO1zt+UFp/280tg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784755499; x=
-	1784841899; bh=/oXthBgWL2WsyuAw9FODkIMrZHNZHIEdWRRRjhViSb8=; b=O
-	IwpBdVQFsnAlZoDqWzvNP47zSL8Xx0wn63ZWP+W87T2Avrze9ph+9opnBNu1K4Qm
-	WWSIU8s6KcFWFgZodbB1HN1QIHgl2jAuurIz4WX82TdwOt/vjuMplj9fpgVBK5jY
-	tOGZDaQWiCHPda1wj3ztkGRITrKzvYThN2w0uedRV2QuZil5H/N3jf/Dm/r3hM8P
-	flmHcpmu7je+wU1Q1tAFr5zJMO9rEcZNfr3G1JUAfzqAL5f4IX0nnYsMJI5vZ4tN
-	L4IdiHbtpsSwoau8+2rh9hAZLsGOnLeyGCiy11CELAm7ZW2nvIFBbNENNeXeOms8
-	E0ob1ICB/k/WN2pQlMXTQ==
-X-ME-Sender: <xms:KzVhajLpMWVGPAfhER6bO7pcF-0ylf8rBUQfnkR0WMuiulUY3auOlA>
-    <xme:KzVhah8Kah-H-o67cJatdYxpSh8vghQ4IC1TVNqLNUJtAxR8KqfoVGTih6xKb_Ink
-    euiiarn83CvJ6hY7Ox965aXXGZEl8G3l2Xrkbl5cb29YwV4fmCImMc>
-X-ME-Proxy-Cause: dmFkZTEjr22xFxlfckGcwF7Su7O+DsLlQ5Omj7gXCdykkIBKLgg28rpAqcXQxb688gYgT0
-    z03ettfMzUuLoc6jSk88XwUpqZndfbz6c7Yam9whwvnvx9NzbC1oVGsyefS/3CoFkkbxFw
-    /LCjgUHpV2NQ5TO6TOCgscTo3xegFADEYU3ChCN4Bh/8cK4HpiKLuGgOlUrsTNJH6dM96X
-    XiSI9u7iQYKUuhe8LZL3+gjMR3xha1J1++t8YgsDG1GIW/+ZZ43cTBX2tXFzCFgbiJzp4c
-    vd7lB/5dsHhJFxWVfIwmbe/aw8M93n1wdPJf/7ogEtJXXizM+X/m1eb+F6J3rCSXksRvFM
-    vIU5pNjUwSH/tBm1e/Y96K4NSu/z81eXUJJsRUHOv37WBDxnd7j2GejRFUWz3GcTBwhd2O
-    FIJX1wgQkiRdfbPrfme97FpWdEdpDsDXRrgESLLJwhrRbhRRzaByC7p7TzpBODeMLtn4zx
-    mJ5RZzucGKz2mgD1/bipNphOE8BEpn/bSlJJBx+C/H+MADw5l9u/HKNpRi8VHgh4QWS5Ig
-    K8j/kj+Gk9xc5V07AyVobl87smo5fJjmDG2YUDloipU7ZHzO1R4r/TC1P+NHUdVDl5EY/Z
-    NnH06qDReDIxPxootHWmql9n2DGBuwwDEvc3bha1ossde1QbdXIk/Kdcyytg
-X-ME-Proxy: <xmx:KzVhapeZezwZoba39T-jbZAqgG2FRtacA5u8fgbjlHA-2B3bBp9E2Q>
-    <xmx:KzVhaomm7LfK9hOnS_fewr2DdEDyzQkRKe2I2D_Jw66yXPma2SN0Jw>
-    <xmx:KzVhary9ZN22I9rBpB33P2NCa30SQlSb3dOm_opNFPeCW0zqLTpk0Q>
-    <xmx:KzVharNnortpdlyjnrXs2nnZC_bFlKVRkAuiXyIgmZKDiBsy8bVSfw>
-    <xmx:KzVhap9keECPjgSAJVUNOHW8W9w4aBadPAz-mZoU7yyhXfVKP6HM0qjd>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 54B9B1820082; Wed, 22 Jul 2026 17:24:59 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3thHppy"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-49558ce01afso33243085e9.1
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2026 14:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784755998; x=1785360798; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=vCob+FZUcKF6Rewr+4ZqyG5zkKuKpbnhgU0UJDlmA24=;
+        b=i3thHppyVMULgMGrrc6fcUik/ZKU0j1kL7ZhFyVZ5HWINrdMqWxyCv2gOy+Xrfy30t
+         rbp1LA2QqXIVzmyIKQvUh8J/Wm4Tbr2aFo7u9DEd73n8lgBdZNOXrb/Xw8bp65CrhNM4
+         mxgBYhdmNqLL/gbJMj5KQ6vH3B7a9Fy35AZ7oYCDY8UZA9FQnHIcIUmC8UcCBBnt8RbE
+         FwHSwB3vaN8tm5WkkqJBta87OYRGOuuBP78l/g42ceQv/Zzjl2tYJPyzoj5ywkdB+qpC
+         8tjyRvcoY29hPobnH93swMKYc+itgFz+c7tbjPThAcHh0jvQFBZ2eR8YDVvWvqCO2M/Z
+         KgMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784755998; x=1785360798;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=vCob+FZUcKF6Rewr+4ZqyG5zkKuKpbnhgU0UJDlmA24=;
+        b=l4JhpJ2O0qMDDtEnYbHNKsAbHaLuhCSZeo3bggLuHu5SUIngjzavbe94TW4T9ht5/s
+         UECuR10uU5ACfUSLvT6mVUL+4EVxshoZFw4olNmw2XU3dtzh9h/QeHZBK7swfwPB602B
+         xJYQ8akj5dOVeyR63pt1Oxe2Qx+3u2+MW/ITKNyb18WKrAPKYX9AelAZV+0L76FYXzJw
+         LmmGbD7lQ5pIDJnisnyVMOSz/mWxT1i2Ir1DCF0OW6m+cZVNX2vglBJmESZOn1366OX8
+         jtVQrhJcwhho/n748gJZ443AxjuLyB3zcc1+p8Cz6MStsLug5S+ZUGLnNEuh1PBPWucy
+         me8Q==
+X-Forwarded-Encrypted: i=1; AHgh+Rr0EJzosYXBDMM3tdUEtfC7Df6vrMOn66l2XHwipfSYfLL/qjNWLXzZAE35Vr08lD1sGHDKxegzp4HX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz1rXJWlSPbueGHgrqcnkC1w5wc9qa9SU0Zs1c15eAotZ9uO1l
+	+JSePP7bdH5iT6w8lTz70L8jS5Q5P4d2sWBhGtOHjDMIUjwf9YxPTOzz
+X-Gm-Gg: AR+sD12KmXmyahvPp6z4UneZ1ufvP70WH7sci2HyYLgKxIXX849xc7K1N516lhtOt99
+	7ji3j193N8pau8avgVobTNuyevnqzHhWyaHmdlrniHN5ks4V/U3KkXJKIomvGdaaxMxhS92ou3o
+	A0kLOhx+QdmR+9P394EJohqMzOMU9guUjD6mES7BTeFVkUFRUBD03U5ImyAYoAyKcFf/4M8xQSq
+	45hFfBywxRDonv8UyO2sew3GDQlU0TVky1SgmNqdCSGJwqzeSk/61pK3HzpZ6kRtwUobz1HITkH
+	xeTA8lgCYBkHMvU9HUKgXkHX7ZFh4I7iS2Rbzl4SYVV/+xRVZvuRsWRgdgCpKogtDJjKDwhLQ4x
+	0OwW9u3vIGfXNfaV/851e0qn10WN1Q2d4iyuFt5Qi4D6uHiB4XEGh6vjif80Uf4d7P+og/t2ltQ
+	a7U1Rc/CCbbbDuj+S/kBZa74SAJQate8Wc6S/Dmo93u8TByapsSnJeHUEP1F03KDZjdQ==
+X-Received: by 2002:a05:600c:4ed1:b0:495:5d6d:9cb3 with SMTP id 5b1f17b1804b1-49573d13756mr3467475e9.37.1784755997906;
+        Wed, 22 Jul 2026 14:33:17 -0700 (PDT)
+Received: from nixos-office (195-23-151-163.net.novis.pt. [195.23.151.163])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85c7880dsm9358636f8f.37.2026.07.22.14.33.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jul 2026 14:33:17 -0700 (PDT)
+Sender: Julian Braha <julian.braha@gmail.com>
+From: Julian Braha <julianbraha@gmail.com>
+To: aisheng.dong@nxp.com,
+	festevam@gmail.com,
+	Frank.Li@nxp.com,
+	ping.bai@nxp.com,
+	linusw@kernel.org
+Cc: chester62515@gmail.com,
+	mbrugger@suse.com,
+	ghennadi.procopciuc@oss.nxp.com,
+	s32@nxp.com,
+	kernel@pengutronix.de,
+	bartosz.golaszewski@oss.qualcomm.com,
+	andrei.stefanescu@oss.nxp.com,
+	khristineandreea.barbulescu@oss.nxp.com,
+	arnd@arndb.de,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Julian Braha <julianbraha@gmail.com>
+Subject: [PATCH v2] pinctrl: s32cc: fix unmet dependency for PINCTRL_S32CC
+Date: Wed, 22 Jul 2026 22:33:14 +0100
+Message-ID: <20260722213314.155310-1-julianbraha@gmail.com>
+X-Mailer: git-send-email 2.54.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AURDlYaRfEWV
-Date: Wed, 22 Jul 2026 23:24:39 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Julian Braha" <julianbraha@gmail.com>,
- "Aisheng Dong" <aisheng.dong@nxp.com>, "Fabio Estevam" <festevam@gmail.com>,
- "Frank Li" <Frank.Li@nxp.com>, "Jacky Bai" <ping.bai@nxp.com>,
- "Linus Walleij" <linusw@kernel.org>
-Cc: "Chester Lin" <chester62515@gmail.com>,
- "Matthias Brugger" <mbrugger@suse.com>,
- "Ghennadi Procopciuc" <ghennadi.procopciuc@oss.nxp.com>,
- "NXP S32 Linux Team" <s32@nxp.com>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>,
- "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>,
- "Andrei Stefanescu" <andrei.stefanescu@oss.nxp.com>,
- "Khristine Andreea Barbulescu" <khristineandreea.barbulescu@oss.nxp.com>,
- linux-kernel@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org
-Message-Id: <6d67c0f8-3e2a-436d-afe4-89a856ffd0f0@app.fastmail.com>
-In-Reply-To: <9b2d40b1-a21e-4ccb-a80b-27f1a24afc82@gmail.com>
-References: <20260722202638.135277-1-julianbraha@gmail.com>
- <0a99e10e-b4c4-4a64-bcb4-fee8d777d0b7@app.fastmail.com>
- <9b2d40b1-a21e-4ccb-a80b-27f1a24afc82@gmail.com>
-Subject: Re: [PATCH] pinctrl: s32cc: fix unmet dependency for PINCTRL_S32CC
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 22, 2026, at 23:14, Julian Braha wrote:
-> On 7/22/26 21:39, Arnd Bergmann wrote:
->> The patch looks fine, but I'm curious about what type of rule found
->> the mistake. Is this a heuristic that found that drivers/pinctrl/*
->> overwhelmingly uses select instead of depends, or did kconfirm
->> find a circular dependency that was caused by inconsistent
->> rules?
->
-> Not a heuristic, kconfirm-smt is the first complete SMT solver for
-> Kconfig (as in, all semantics of the Kconfig language are used to
-> automatically encode all Kconfig files as SMT constraints).
+Currently, PINCTRL_S32G2 selects PINCTRL_S32CC which needs GPIOLIB, without
+selecting or depending on GPIOLIB.
 
-Ok, thanks for your detailed explanation. It turns out that there
-is a typo in your patch description, and I further misread it:
+However, other similar options in this subsystem actually select GPIOLIB
+instead of depending, so I think we can do the same here.
 
-| Currently, PINCTRL_S32CC selects PINCTRL_S32CC which needs GPIOLIB,
-| without selecting or depending on GPIOLIB.
+This unmet dependency was found by kconfirm, a static analysis tool for
+Kconfig.
 
-Clearly, this should have said
+Fixes: 94cb9e8f2707 ("pinctrl: s32cc: implement GPIO functionality")
+Signed-off-by: Julian Braha <julianbraha@gmail.com>
+---
+v2: fix typo in commit message PINCTRL_S32CC -> PINCTRL_S32G2
+Link to v1:
+https://lore.kernel.org/all/20260722202638.135277-1-julianbraha@gmail.com/
+---
+ drivers/pinctrl/nxp/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-| ... PINCTRL_S32G2 selects PINCTRL_S32CC ...
+diff --git a/drivers/pinctrl/nxp/Kconfig b/drivers/pinctrl/nxp/Kconfig
+index 711c0fe11565..fab725f250ab 100644
+--- a/drivers/pinctrl/nxp/Kconfig
++++ b/drivers/pinctrl/nxp/Kconfig
+@@ -1,10 +1,11 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config PINCTRL_S32CC
+ 	bool
+-	depends on ARCH_S32 && OF && GPIOLIB
++	depends on ARCH_S32 && OF
+ 	select GENERIC_PINCTRL_GROUPS
+ 	select GENERIC_PINMUX_FUNCTIONS
+ 	select GENERIC_PINCONF
++	select GPIOLIB
+ 	select GPIO_REGMAP
+ 	select REGMAP_MMIO
+ 
+-- 
+2.54.0
 
-to explain the actual bug. ;-)
-
-      Arnd
