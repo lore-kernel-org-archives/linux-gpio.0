@@ -1,75 +1,76 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955AE3B994A;
-	Wed, 22 Jul 2026 12:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9069017A31C
+	for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2026 12:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784722320; cv=none; b=mx4xyw9DOZWz7A+poWI6R7YDaBdYujNTrOApdkH01Hg8wOxDHqlFiOwqyV9p4clXvot5dXPAtPBZC4i6ahfLCQ1ZISgepoN9mKy7QvmV9+ryJCBOsRC51BsF0zZL9vy9p+lZFJKJZ7EaqYoQWtCuo7iAsB9ZrhzOvm/ND80kjss=
+	t=1784723596; cv=none; b=UfaWyMdPDi7ajH64UbUNWBExDTxSOIsZxSbMJhyqzBjwsYdhR6Ai9Cq6qVCPvM4Uhq/pn72do5szq7bBfk9o3VVJpgO3Ove0PM7/6EETU3uE8UW8kbcDYclkNZW9Q2DrKHYQ4LwMKZ1C907fLSiKqSJzBD34tpNvp75MX6+nruw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784722320; c=relaxed/simple;
-	bh=wETEMVUUn3cqT0N5rzG+JWF3qRKrr0LvQm9ujivrpV0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=u335+DZauGpS2hKTZsmqMXOGqygnnglsjWE384B6HnvzQxrEUCAcJDZgixoK4actNiwYERcwQ/TABrJLi+eUqMeunM20USaxob3XYcfNrVZP70a6W7OSdrGTLHM98SL+u7ZH6Lq/TVsMvzkpyWlQdJw6rhCY1giSAdRqDNlvtwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hI7fxh8E; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+	s=arc-20240116; t=1784723596; c=relaxed/simple;
+	bh=t90Nz4neymx/A5iQaaKtBeqiRFzxIMQkYqzWqPUtugY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fCIc2ZfhW2RKnQVlZztxOtBB03bmSlCOx8oasPOyLYW2POobQ2ExNDtfs+YioBeLc1xBDhtaZuKhI8GM9U3RncgSKdQ4ZQSB2D+07vD/fZSBaoisdYNQ1XGG0ZNUg283ayJ86pFuMHIpHweLAqWiEzX2vDyZREvTuByzJaQu7zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kQCjqFRH; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hI7fxh8E"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66M8x9e7401202;
-	Wed, 22 Jul 2026 12:11:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=en7fkzazS5l
-	h29S+a3oR9DKE2ehDeoRw9xRNNFQCKr0=; b=hI7fxh8EafAAFbCaiu6ZXb8OMeY
-	u2WLP6t2C9OoBPLfGqueFFJIgIOFZaNAd8msxqrvxl/xS6pc43WnK9LsypyI0EQz
-	pJSaDdeqmhwL0uEDNY5FZF64PUrstxEvsNKPPeVF53oY7rbJ99MpMjEs0vkhxUJ8
-	imb0lv+ht2zoGxpURNmkbfVKAT8d0Htz4b2cOmQTEWd7/4yhkXp+D00Q/JEbYgas
-	U9Hzym0f54dyIOX1hpEkDV/k0QqMXBqOv1Hc9dww/Qf6CpZ2Mpu84QXBzpahUWq/
-	GkCR3wFKQ3VdVe5BUkrTkQai0XnUhZToANKH7sVLLttYuvM7rkEe6SJYgPw==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fjt798x1a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Jul 2026 12:11:47 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.7/8.18.1.7) with ESMTP id 66MCBhrG015002;
-	Wed, 22 Jul 2026 12:11:43 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4fgj54dv4k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Jul 2026 12:11:43 +0000 (GMT)
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 66MCBh8p014974;
-	Wed, 22 Jul 2026 12:11:43 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.147.245.204])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 66MCBg8I014969
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 22 Jul 2026 12:11:43 +0000 (GMT)
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3914174)
-	id 8F2DFC09; Wed, 22 Jul 2026 17:32:21 +0530 (+0530)
-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-To: Bartosz Golaszewski <brgl@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sound@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v5 4/4] pinctrl: qcom: hawi-lpass-lpi: add Hawi LPASS LPI TLMM
-Date: Wed, 22 Jul 2026 17:32:17 +0530
-Message-Id: <20260722120217.3609506-5-prasad.kumpatla@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kQCjqFRH"
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-c981c2c37cbso7421978a12.0
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2026 05:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784723594; x=1785328394; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=A4iZ+Vbnw+vy5ic15MZIpwcvb+7jpLOoQeZZoMRgySY=;
+        b=kQCjqFRHdF0XDOuwHH3Q3/8tMj7R3eGUjuzFsjVaTrQzopzwtRG7hChkvG+3mWmbY0
+         f0j8ONdgR3NfCOAmbzdH4jKuftlceXmpfGh0Vc8bhV4byTQaAiRVFqrqwDS8gjfgK0eS
+         HExu4pKCDEt7sLmPAbI57WvJGz9rn7N0uxDEa0Gyj1Qwrhm48JlKuhmWgx5YuuXXGJw4
+         qWSYvGxkFD9126hK4WzWJ5O5hH4275DkavF0Rz55iFIamj3XeOdH+n0jJRDszlGJl4Yr
+         copK+asFmkNTup+4X6m5p2uiO9618gxe9b4tNTUBrdaRUAD4WALN7owAMExE7FIMbJSH
+         +ghA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784723594; x=1785328394;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=A4iZ+Vbnw+vy5ic15MZIpwcvb+7jpLOoQeZZoMRgySY=;
+        b=hqLYwjX4SxYkXJm1q1ZZHq6RtGZ0Hwm4fz9DyeayRUfdTJmfDz4WJI34ndclyA9erV
+         EVqxQJqOuSY58xm5vviaioeAJsQ+lCVketfLR5IIZQ0wL/nO8nUajlbMAPBBuqEcJg93
+         m3yNKmgO/C9ekVwXIZaND+jPiNAlI5B1ZuvVIRPOgVLEjDC9uQ2LAa8jHVFEuX9D9igr
+         pxnoTVljFly+EoWKHxBwvtl998E3oKsCFJs326DuMDFvB0eJmNocoSIN6n7GAw6f3Fvp
+         AXtysEeIsdXOyepqhGg2hazQfDHAlz2bWLaMq2codlYNaFzVBh9pfIIlqMUScfQZkRQd
+         eHbg==
+X-Forwarded-Encrypted: i=1; AHgh+RqwQrlhAy4ihNJ/Sq7z0ownYqRJSDjkDQO/nnyr/QEFeupOSQz0n5F243R0vgir2D3R/iHQ6yn766bS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo4ECOaS2J/rmHuqA6OYpZ/nvgzLtj+rR3FKuT4FoUKe/3UUyq
+	pRouTtCj2efTQDfe5eNkLWMpIwSRmu6sw6mskA55jUt1XrIax8AwiuPA
+X-Gm-Gg: AR+sD12XbpxW1XCq700ko1XxRSWWFpcYIsx/VsINB+Y386ho4NY//3xG/BHJIk85XKQ
+	fU/DCnjlYRi1l1Sd7oZAak3P24xY1RmHnujrztbd3l4vxs4PsXrxaVEe2fhGCrWBEYEFd/RIAma
+	PijMspmFw9eMRTJ5Yam5tyzjerO00fJ8EsL5useTEQW16PN8pB9vpRG9O4vGfGaHvurK4/+kRtl
+	KQ7V9ziNXpmR8PFpsou+yTosPbudEF1N6obNGS3lM8CtIP34+Wlg1UhAJUvJscTBiUOGBIyTp4y
+	9tPoIwFbixXGYsriXrl1iUz/u0X2UoFbcJ7289jNkHRXBFmfoa8BREN2yyoIin0yWnHerjxwEsR
+	o4PxATs2IRm4THyhNVADIYhtAS9XRHgYACkODAccqzt8HbVN2VWCLM+3LR2NSAxPzlsgd5MbfZ0
+	IWcoPyQEl5Z+oGqf9QoOEwhV8AFol+MOo=
+X-Received: by 2002:a05:6a21:a8d:b0:3c3:954d:278d with SMTP id adf61e73a8af0-3c3ad5aed77mr24600477637.9.1784723593491;
+        Wed, 22 Jul 2026 05:33:13 -0700 (PDT)
+Received: from inhnjlux1020.ls.ege.ds ([117.231.200.50])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cbb8f0d872bsm1097186a12.7.2026.07.22.05.33.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jul 2026 05:33:12 -0700 (PDT)
+From: Udaya Kiran Challa <challauday369@gmail.com>
+To: linusw@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: skhan@linuxfoundation.org,
+	me@brighamcampbell.com,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Udaya Kiran Challa <challauday369@gmail.com>
+Subject: [PATCH v4] dt-bindings: pinctrl: microchip,pic32mzda-pinctrl: Convert to DT schema
+Date: Wed, 22 Jul 2026 18:02:43 +0530
+Message-Id: <20260722123243.341346-1-challauday369@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260722120217.3609506-1-prasad.kumpatla@oss.qualcomm.com>
-References: <20260722120217.3609506-1-prasad.kumpatla@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -77,366 +78,227 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Authority-Analysis: v=2.4 cv=Sr6gLvO0 c=1 sm=1 tr=0 ts=6a60b383 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=RAioF0-LDSMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
- a=3WHJM1ZQz_JShphwDgj5:22 a=EUspDBNiAAAA:8 a=RGdtN6rq-GqljJF8V3QA:9
- a=O8hF6Hzn-FEA:10
-X-Proofpoint-ORIG-GUID: vt6eiyoM7pe4eA9mbpy-1AYxacLqkjep
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzIyMDExOSBTYWx0ZWRfXz2/7ApesgdBs
- g8z8aQhBonG36ZzhuY6kI6Glf+5p7Qn5iurbjKyBbY/nZhHb8rOCGrgfw7wy4tcEvpNxSl33y6I
- bMwfBevebyxjT4XMD9ZM9yJ+87N7Od2DXioyJggX6T7c+pTXKiIvHkRD6CYP4i2FstQ3rs3Hp3N
- v3KU5/hu6nwshNUdJ+Gs8kKGb9621v70OM2Wy8pJjJOqNQL5N3q0vaZS2h7J8+9p5jzeyYvCHag
- bYq/ahR9/NlvgoltE4BCAHThfPOLBsdbooALe1UiUUn/32uL2LDO/plEC9iDzq+QyDCpXi98Wln
- 3SJw0WV0f+l/O+A+dEXDZYVExvLlILtl0cMEdfF0rrfClxIRFgfs11rewSLVCIc4/ImxgKx7CxL
- qLmH6nO/OAzSqycJ/M0u6y1GoN6QoElbl6XBA4SVTeELsGRH88/42CvlBs1xvkMMU68iIBDoLAp
- uDqYYqjTsVSTcaAKsgA==
-X-Proofpoint-GUID: vt6eiyoM7pe4eA9mbpy-1AYxacLqkjep
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzIyMDExOSBTYWx0ZWRfX66dr/zFXhDm0
- J6ocupOeZDzTogaMumbFCx6YUmTUT/uoDoRA90auP+i/iYIgSi/yaCUDp6IObQxx/3yGokZHG9N
- Gc0BZNmIkCbldg250mpPYuNBgzVzwaA=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-22_03,2026-07-21_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0
- adultscore=0 clxscore=1015 impostorscore=0 phishscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607220119
 
-Add pin controller driver for the Low Power Audio SubSystem (LPASS)
-Low Power Island (LPI) of Qualcomm Hawi SoC.
+Convert Microchip PIC32 Pin Controller devicetree binding
+from legacy text format to DT schema.
 
-The controller has 23 GPIOs with SoundWire, I2S, DMIC, VA I2S,
-ext_mclk1 and slimbus mux functions.
-
-Two pins (gpio13, gpio22) require 6 mux slots due to a test_bus
-entry occupying a middle hardware slot. Add LPI_PINGROUP6 macro
-to pinctrl-lpass-lpi.h to support pins with 5 alternate functions.
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+Signed-off-by: Udaya Kiran Challa <challauday369@gmail.com>
 ---
- drivers/pinctrl/qcom/Kconfig                  |  10 +
- drivers/pinctrl/qcom/Makefile                 |   1 +
- drivers/pinctrl/qcom/pinctrl-hawi-lpass-lpi.c | 244 ++++++++++++++++++
- drivers/pinctrl/qcom/pinctrl-lpass-lpi.h      |  17 ++
- 4 files changed, 272 insertions(+)
- create mode 100644 drivers/pinctrl/qcom/pinctrl-hawi-lpass-lpi.c
+Changelog:
+Changes since v3:
+- Drop "|" from description fields
+- Remove '#address-cells' and '#size-cells' properties from the schema
+- Consolidate repeated pin-node property definitions into a single
+  $defs/pin-node entry
+- Replace the two patternProperties blocks with additionalProperties
+  using oneOf to allow either:
+  - container nodes holding nested pin configuration nodes, or
+  - direct pin configuration nodes.
+- Update $ref to use the absolute schema path
+  /schemas/pinctrl/pinmux-node.yaml#
 
-diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-index 18db35022..707067b92 100644
---- a/drivers/pinctrl/qcom/Kconfig
-+++ b/drivers/pinctrl/qcom/Kconfig
-@@ -62,6 +62,16 @@ config PINCTRL_LPASS_LPI
- 	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
- 	  (Low Power Island) found on the Qualcomm Technologies Inc SoCs.
- 
-+config PINCTRL_HAWI_LPASS_LPI
-+	tristate "Qualcomm Technologies Inc Hawi LPASS LPI pin controller driver"
-+	depends on ARM64 || COMPILE_TEST
-+	depends on PINCTRL_LPASS_LPI
-+	help
-+	  This is the pinctrl, pinmux, pinconf and gpiolib driver for the
-+	  Qualcomm Technologies Inc LPASS (Low Power Audio SubSystem) LPI
-+	  (Low Power Island) found on the Qualcomm Technologies Inc Hawi
-+	  platform.
-+
- config PINCTRL_MILOS_LPASS_LPI
- 	tristate "Qualcomm Milos LPASS LPI pin controller driver"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/pinctrl/qcom/Makefile b/drivers/pinctrl/qcom/Makefile
-index 43ecd246a..987a79f9d 100644
---- a/drivers/pinctrl/qcom/Makefile
-+++ b/drivers/pinctrl/qcom/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_PINCTRL_APQ8084)	+= pinctrl-apq8084.o
- obj-$(CONFIG_PINCTRL_ELIZA)	+= pinctrl-eliza.o
- obj-$(CONFIG_PINCTRL_GLYMUR)	+= pinctrl-glymur.o
- obj-$(CONFIG_PINCTRL_HAWI)	+= pinctrl-hawi.o
-+obj-$(CONFIG_PINCTRL_HAWI_LPASS_LPI) += pinctrl-hawi-lpass-lpi.o
- obj-$(CONFIG_PINCTRL_IPQ4019)	+= pinctrl-ipq4019.o
- obj-$(CONFIG_PINCTRL_IPQ5018)	+= pinctrl-ipq5018.o
- obj-$(CONFIG_PINCTRL_IPQ8064)	+= pinctrl-ipq8064.o
-diff --git a/drivers/pinctrl/qcom/pinctrl-hawi-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-hawi-lpass-lpi.c
+Link to v3:https://lore.kernel.org/all/20260719183431.124061-1-challauday369@gmail.com/
+
+Changes since v2:
+- Add container node for grouped pin configuration sub-nodes
+- Correct regex patterns of direct and nested child nodes
+- Fix interrupts values in uart2 example
+
+Link to v2:https://lore.kernel.org/all/20260707144223.120417-1-challauday369@gmail.com/
+
+Changes since v1:
+- Add interrupts and clocks to uart2 example to satisfy uart schema validation
+- Corect regex patterns to accept standard DT node naming conventions
+- Add function property to top-level pin configuration nodes
+- Remove restrictive enum from function property to support all mux functions
+
+Link to v1:https://lore.kernel.org/all/20260705132521.159522-1-challauday369@gmail.com/
+---
+ .../pinctrl/microchip,pic32-pinctrl.txt       |  60 ----------
+ .../pinctrl/microchip,pic32mzda-pinctrl.yaml  | 107 ++++++++++++++++++
+ 2 files changed, 107 insertions(+), 60 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,pic32-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,pic32mzda-pinctrl.yaml
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/microchip,pic32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/microchip,pic32-pinctrl.txt
+deleted file mode 100644
+index 51efd2085113..000000000000
+--- a/Documentation/devicetree/bindings/pinctrl/microchip,pic32-pinctrl.txt
++++ /dev/null
+@@ -1,60 +0,0 @@
+-* Microchip PIC32 Pin Controller
+-
+-Please refer to pinctrl-bindings.txt, ../gpio/gpio.txt, and
+-../interrupt-controller/interrupts.txt for generic information regarding
+-pin controller, GPIO, and interrupt bindings.
+-
+-PIC32 'pin configuration node' is a node of a group of pins which can be
+-used for a specific device or function. This node represents configurations of
+-pins, optional function, and optional mux related configuration.
+-
+-Required properties for pin controller node:
+- - compatible: "microchip,pic32mada-pinctrl"
+- - reg: Address range of the pinctrl registers.
+- - clocks: Clock specifier (see clock bindings for details)
+-
+-Required properties for pin configuration sub-nodes:
+- - pins: List of pins to which the configuration applies.
+-
+-Optional properties for pin configuration sub-nodes:
+-----------------------------------------------------
+- - function: Mux function for the specified pins.
+- - bias-pull-up: Enable weak pull-up.
+- - bias-pull-down: Enable weak pull-down.
+- - input-enable: Set the pin as an input.
+- - output-low: Set the pin as an output level low.
+- - output-high: Set the pin as an output level high.
+- - microchip,digital: Enable digital I/O.
+- - microchip,analog: Enable analog I/O.
+-
+-Example:
+-
+-pic32_pinctrl: pinctrl@1f801400{
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-	compatible = "microchip,pic32mzda-pinctrl";
+-	reg = <0x1f801400 0x400>;
+-	clocks = <&rootclk PB1CLK>;
+-
+-	pinctrl_uart2: pinctrl_uart2 {
+-		uart2-tx {
+-			pins = "G9";
+-			function = "U2TX";
+-			microchip,digital;
+-			output-low;
+-		};
+-		uart2-rx {
+-			pins = "B0";
+-			function = "U2RX";
+-			microchip,digital;
+-			input-enable;
+-		};
+-	};
+-};
+-
+-uart2: serial@1f822200 {
+-	compatible = "microchip,pic32mzda-uart";
+-	reg = <0x1f822200 0x50>;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_uart2>;
+-};
+diff --git a/Documentation/devicetree/bindings/pinctrl/microchip,pic32mzda-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/microchip,pic32mzda-pinctrl.yaml
 new file mode 100644
-index 000000000..7036bf4c6
+index 000000000000..a1ecae3b1cd8
 --- /dev/null
-+++ b/drivers/pinctrl/qcom/pinctrl-hawi-lpass-lpi.c
-@@ -0,0 +1,244 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+ */
++++ b/Documentation/devicetree/bindings/pinctrl/microchip,pic32mzda-pinctrl.yaml
+@@ -0,0 +1,107 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/microchip,pic32mzda-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/gpio/driver.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_clock.h>
-+#include <linux/pm_runtime.h>
++title: Microchip PIC32 Pin Controller
 +
-+#include "pinctrl-lpass-lpi.h"
++maintainers:
++  - Linus Walleij <linusw@kernel.org>
 +
-+enum lpass_lpi_functions {
-+	LPI_MUX_dmic1_clk,
-+	LPI_MUX_dmic1_data,
-+	LPI_MUX_dmic2_clk,
-+	LPI_MUX_dmic2_data,
-+	LPI_MUX_dmic3_clk,
-+	LPI_MUX_dmic3_data,
-+	LPI_MUX_dmic4_clk,
-+	LPI_MUX_dmic4_data,
-+	LPI_MUX_ext_mclk1_a,
-+	LPI_MUX_ext_mclk1_b,
-+	LPI_MUX_ext_mclk1_c,
-+	LPI_MUX_ext_mclk1_d,
-+	LPI_MUX_ext_mclk1_e,
-+	LPI_MUX_i2s0_clk,
-+	LPI_MUX_i2s0_data,
-+	LPI_MUX_i2s0_ws,
-+	LPI_MUX_i2s1_clk,
-+	LPI_MUX_i2s1_data,
-+	LPI_MUX_i2s1_ws,
-+	LPI_MUX_i2s2_clk,
-+	LPI_MUX_i2s2_data,
-+	LPI_MUX_i2s2_ws,
-+	LPI_MUX_i2s3_clk,
-+	LPI_MUX_i2s3_data,
-+	LPI_MUX_i2s3_ws,
-+	LPI_MUX_lpass_lpi_dbg_clk,
-+	LPI_MUX_qca_swr_clk,
-+	LPI_MUX_qca_swr_data,
-+	LPI_MUX_slimbus_clk,
-+	LPI_MUX_slimbus_data,
-+	LPI_MUX_swr_rx_clk,
-+	LPI_MUX_swr_rx_data,
-+	LPI_MUX_swr_tx_clk,
-+	LPI_MUX_swr_tx_clk1,
-+	LPI_MUX_swr_tx_data,
-+	LPI_MUX_va_i2s0_clk,
-+	LPI_MUX_va_i2s0_data,
-+	LPI_MUX_va_i2s0_ws,
-+	LPI_MUX_wsa2_swr_clk,
-+	LPI_MUX_wsa2_swr_data,
-+	LPI_MUX_wsa_swr_clk,
-+	LPI_MUX_wsa_swr_data,
-+	LPI_MUX_gpio,
-+	LPI_MUX__,
-+};
++description:
++  PIC32 pin configuration node is a node of a group of pins which can be used
++  for a specific device or function. This node represents configurations of
++  pins, optional function, and optional mux related configuration.
 +
-+static const struct pinctrl_pin_desc hawi_lpi_pins[] = {
-+	PINCTRL_PIN(0, "gpio0"),
-+	PINCTRL_PIN(1, "gpio1"),
-+	PINCTRL_PIN(2, "gpio2"),
-+	PINCTRL_PIN(3, "gpio3"),
-+	PINCTRL_PIN(4, "gpio4"),
-+	PINCTRL_PIN(5, "gpio5"),
-+	PINCTRL_PIN(6, "gpio6"),
-+	PINCTRL_PIN(7, "gpio7"),
-+	PINCTRL_PIN(8, "gpio8"),
-+	PINCTRL_PIN(9, "gpio9"),
-+	PINCTRL_PIN(10, "gpio10"),
-+	PINCTRL_PIN(11, "gpio11"),
-+	PINCTRL_PIN(12, "gpio12"),
-+	PINCTRL_PIN(13, "gpio13"),
-+	PINCTRL_PIN(14, "gpio14"),
-+	PINCTRL_PIN(15, "gpio15"),
-+	PINCTRL_PIN(16, "gpio16"),
-+	PINCTRL_PIN(17, "gpio17"),
-+	PINCTRL_PIN(18, "gpio18"),
-+	PINCTRL_PIN(19, "gpio19"),
-+	PINCTRL_PIN(20, "gpio20"),
-+	PINCTRL_PIN(21, "gpio21"),
-+	PINCTRL_PIN(22, "gpio22"),
-+};
++properties:
++  compatible:
++    const: microchip,pic32mzda-pinctrl
 +
-+static const char * const gpio_groups[] = {
-+	"gpio0", "gpio1", "gpio2", "gpio3", "gpio4", "gpio5", "gpio6", "gpio7",
-+	"gpio8", "gpio9", "gpio10", "gpio11", "gpio12", "gpio13", "gpio14",
-+	"gpio15", "gpio16", "gpio17", "gpio18", "gpio19", "gpio20", "gpio21",
-+	"gpio22",
-+};
++  reg:
++    maxItems: 1
 +
-+static const char * const swr_tx_clk_groups[] = { "gpio0" };
-+static const char * const i2s0_clk_groups[] = { "gpio0" };
-+static const char * const swr_tx_data_groups[] = { "gpio1", "gpio2", "gpio14" };
-+static const char * const i2s0_ws_groups[] = { "gpio1" };
-+static const char * const swr_rx_clk_groups[] = { "gpio3" };
-+static const char * const i2s0_data_groups[] = { "gpio2", "gpio3", "gpio4", "gpio5" };
-+static const char * const swr_rx_data_groups[] = { "gpio4", "gpio5" };
-+static const char * const ext_mclk1_c_groups[] = { "gpio5" };
-+static const char * const dmic1_clk_groups[] = { "gpio6" };
-+static const char * const va_i2s0_clk_groups[] = { "gpio6" };
-+static const char * const dmic1_data_groups[] = { "gpio7" };
-+static const char * const va_i2s0_ws_groups[] = { "gpio7" };
-+static const char * const dmic2_clk_groups[] = { "gpio8" };
-+static const char * const va_i2s0_data_groups[] = { "gpio8", "gpio9" };
-+static const char * const dmic2_data_groups[] = { "gpio9" };
-+static const char * const ext_mclk1_b_groups[] = { "gpio9" };
-+static const char * const i2s1_clk_groups[] = { "gpio10" };
-+static const char * const wsa_swr_clk_groups[] = { "gpio10" };
-+static const char * const i2s1_ws_groups[] = { "gpio11" };
-+static const char * const wsa_swr_data_groups[] = { "gpio11", "gpio21" };
-+static const char * const dmic3_clk_groups[] = { "gpio12" };
-+static const char * const i2s3_clk_groups[] = { "gpio12" };
-+static const char * const dmic3_data_groups[] = { "gpio13" };
-+static const char * const i2s3_ws_groups[] = { "gpio13" };
-+static const char * const ext_mclk1_a_groups[] = { "gpio13" };
-+static const char * const lpass_lpi_dbg_clk_groups[] = { "gpio13" };
-+static const char * const swr_tx_clk1_groups[] = { "gpio14" };
-+static const char * const ext_mclk1_d_groups[] = { "gpio14" };
-+static const char * const i2s1_data_groups[] = { "gpio15", "gpio16", "gpio21", "gpio22" };
-+static const char * const wsa2_swr_clk_groups[] = { "gpio15" };
-+static const char * const wsa2_swr_data_groups[] = { "gpio16", "gpio22" };
-+static const char * const dmic4_clk_groups[] = { "gpio17" };
-+static const char * const i2s3_data_groups[] = { "gpio17", "gpio18" };
-+static const char * const dmic4_data_groups[] = { "gpio18" };
-+static const char * const i2s2_clk_groups[] = { "gpio19" };
-+static const char * const slimbus_clk_groups[] = { "gpio19" };
-+static const char * const qca_swr_clk_groups[] = { "gpio19" };
-+static const char * const i2s2_ws_groups[] = { "gpio20" };
-+static const char * const slimbus_data_groups[] = { "gpio20" };
-+static const char * const qca_swr_data_groups[] = { "gpio20" };
-+static const char * const i2s2_data_groups[] = { "gpio21", "gpio22" };
-+static const char * const ext_mclk1_e_groups[] = { "gpio22" };
++  clocks:
++    maxItems: 1
 +
-+static const struct lpi_pingroup hawi_groups[] = {
-+	LPI_PINGROUP(0, 11, swr_tx_clk, i2s0_clk, _, _),
-+	LPI_PINGROUP(1, 11, swr_tx_data, i2s0_ws, _, _),
-+	LPI_PINGROUP(2, 11, swr_tx_data, i2s0_data, _, _),
-+	LPI_PINGROUP(3, 11, swr_rx_clk, i2s0_data, _, _),
-+	LPI_PINGROUP(4, 11, swr_rx_data, i2s0_data, _, _),
-+	LPI_PINGROUP(5, 11, swr_rx_data, ext_mclk1_c, i2s0_data, _),
-+	LPI_PINGROUP(6, LPI_NO_SLEW, dmic1_clk, va_i2s0_clk, _, _),
-+	LPI_PINGROUP(7, LPI_NO_SLEW, dmic1_data, va_i2s0_ws, _, _),
-+	LPI_PINGROUP(8, LPI_NO_SLEW, dmic2_clk, va_i2s0_data, _, _),
-+	LPI_PINGROUP(9, LPI_NO_SLEW, dmic2_data, va_i2s0_data, ext_mclk1_b, _),
-+	LPI_PINGROUP(10, 11, i2s1_clk, wsa_swr_clk, _, _),
-+	LPI_PINGROUP(11, 11, i2s1_ws, wsa_swr_data, _, _),
-+	LPI_PINGROUP(12, LPI_NO_SLEW, dmic3_clk, i2s3_clk, _, _),
-+	LPI_PINGROUP6(13, LPI_NO_SLEW, dmic3_data, i2s3_ws, ext_mclk1_a, _, lpass_lpi_dbg_clk),
-+	LPI_PINGROUP(14, 11, swr_tx_data, swr_tx_clk1, ext_mclk1_d, _),
-+	LPI_PINGROUP(15, 11, i2s1_data, wsa2_swr_clk, _, _),
-+	LPI_PINGROUP(16, 11, i2s1_data, wsa2_swr_data, _, _),
-+	LPI_PINGROUP(17, LPI_NO_SLEW, dmic4_clk, i2s3_data, _, _),
-+	LPI_PINGROUP(18, LPI_NO_SLEW, dmic4_data, i2s3_data, _, _),
-+	LPI_PINGROUP(19, LPI_NO_SLEW, i2s2_clk, slimbus_clk, qca_swr_clk, _),
-+	LPI_PINGROUP(20, LPI_NO_SLEW, i2s2_ws, slimbus_data, qca_swr_data, _),
-+	LPI_PINGROUP(21, 11, i2s2_data, _, wsa_swr_data, i2s1_data),
-+	LPI_PINGROUP6(22, 11, i2s2_data, ext_mclk1_e, _, i2s1_data, wsa2_swr_data),
-+};
++$defs:
++  pin-node:
++    type: object
++    $ref: /schemas/pinctrl/pinmux-node.yaml#
 +
-+static const struct lpi_function hawi_functions[] = {
-+	LPI_FUNCTION(gpio),
-+	LPI_FUNCTION(dmic1_clk),
-+	LPI_FUNCTION(dmic1_data),
-+	LPI_FUNCTION(dmic2_clk),
-+	LPI_FUNCTION(dmic2_data),
-+	LPI_FUNCTION(dmic3_clk),
-+	LPI_FUNCTION(dmic3_data),
-+	LPI_FUNCTION(dmic4_clk),
-+	LPI_FUNCTION(dmic4_data),
-+	LPI_FUNCTION(ext_mclk1_a),
-+	LPI_FUNCTION(ext_mclk1_b),
-+	LPI_FUNCTION(ext_mclk1_c),
-+	LPI_FUNCTION(ext_mclk1_d),
-+	LPI_FUNCTION(ext_mclk1_e),
-+	LPI_FUNCTION(i2s0_clk),
-+	LPI_FUNCTION(i2s0_data),
-+	LPI_FUNCTION(i2s0_ws),
-+	LPI_FUNCTION(i2s1_clk),
-+	LPI_FUNCTION(i2s1_data),
-+	LPI_FUNCTION(i2s1_ws),
-+	LPI_FUNCTION(i2s2_clk),
-+	LPI_FUNCTION(i2s2_data),
-+	LPI_FUNCTION(i2s2_ws),
-+	LPI_FUNCTION(i2s3_clk),
-+	LPI_FUNCTION(i2s3_data),
-+	LPI_FUNCTION(i2s3_ws),
-+	LPI_FUNCTION(lpass_lpi_dbg_clk),
-+	LPI_FUNCTION(qca_swr_clk),
-+	LPI_FUNCTION(qca_swr_data),
-+	LPI_FUNCTION(slimbus_clk),
-+	LPI_FUNCTION(slimbus_data),
-+	LPI_FUNCTION(swr_rx_clk),
-+	LPI_FUNCTION(swr_rx_data),
-+	LPI_FUNCTION(swr_tx_clk),
-+	LPI_FUNCTION(swr_tx_clk1),
-+	LPI_FUNCTION(swr_tx_data),
-+	LPI_FUNCTION(va_i2s0_clk),
-+	LPI_FUNCTION(va_i2s0_data),
-+	LPI_FUNCTION(va_i2s0_ws),
-+	LPI_FUNCTION(wsa2_swr_clk),
-+	LPI_FUNCTION(wsa2_swr_data),
-+	LPI_FUNCTION(wsa_swr_clk),
-+	LPI_FUNCTION(wsa_swr_data),
-+};
++    properties:
++      pins:
++        description: List of pins to which the configuration applies.
++        items:
++          type: string
++        minItems: 1
 +
-+static const struct lpi_pinctrl_variant_data hawi_lpi_data = {
-+	.pins = hawi_lpi_pins,
-+	.npins = ARRAY_SIZE(hawi_lpi_pins),
-+	.groups = hawi_groups,
-+	.ngroups = ARRAY_SIZE(hawi_groups),
-+	.functions = hawi_functions,
-+	.nfunctions = ARRAY_SIZE(hawi_functions),
-+	.flags = LPI_FLAG_SLEW_RATE_SAME_REG,
-+};
++      function: true
 +
-+static const struct of_device_id lpi_pinctrl_of_match[] = {
-+	{
-+		.compatible = "qcom,hawi-lpass-lpi-pinctrl",
-+		.data = &hawi_lpi_data,
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, lpi_pinctrl_of_match);
++      bias-pull-up: true
++      bias-pull-down: true
++      input-enable: true
++      output-low: true
++      output-high: true
 +
-+static const struct dev_pm_ops lpi_pinctrl_pm_ops = {
-+	RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
-+};
++      microchip,digital:
++        description: Enable digital I/O.
++        type: boolean
 +
-+static struct platform_driver lpi_pinctrl_driver = {
-+	.driver = {
-+		.name = "qcom-hawi-lpass-lpi-pinctrl",
-+		.of_match_table = lpi_pinctrl_of_match,
-+		.pm = pm_ptr(&lpi_pinctrl_pm_ops),
-+	},
-+	.probe = lpi_pinctrl_probe,
-+	.remove = lpi_pinctrl_remove,
-+};
++      microchip,analog:
++        description: Enable analog I/O.
++        type: boolean
 +
-+module_platform_driver(lpi_pinctrl_driver);
-+MODULE_DESCRIPTION("Qualcomm Hawi LPI GPIO pin control driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
-index 6ba0c4eba..056c4a774 100644
---- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
-+++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.h
-@@ -92,6 +92,23 @@ struct pinctrl_pin_desc;
- 		.pin_offset = 0,				\
- 	}
- 
-+#define LPI_PINGROUP6(id, soff, f1, f2, f3, f4, f5)		\
-+	{							\
-+		.pin = id,					\
-+		.slew_offset = soff,				\
-+		.slew_base_spare_1 = false,			\
-+		.funcs = (int[]){				\
-+			LPI_MUX_gpio,				\
-+			LPI_MUX_##f1,				\
-+			LPI_MUX_##f2,				\
-+			LPI_MUX_##f3,				\
-+			LPI_MUX_##f4,				\
-+			LPI_MUX_##f5,				\
-+		},						\
-+		.nfuncs = 6,					\
-+		.pin_offset = 0,				\
-+	}
++    required:
++      - pins
 +
- /*
-  * Slew rate control is done in the same register as rest of the
-  * pin configuration.
++    unevaluatedProperties: false
++
++additionalProperties:
++  oneOf:
++    - additionalProperties:
++        $ref: '#/$defs/pin-node'
++    - $ref: '#/$defs/pin-node'
++
++required:
++  - compatible
++  - reg
++  - clocks
++
++examples:
++  - |
++    #include <dt-bindings/clock/microchip,pic32-clock.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    pic32_pinctrl: pinctrl@1f801400 {
++        compatible = "microchip,pic32mzda-pinctrl";
++        reg = <0x1f801400 0x400>;
++        clocks = <&rootclk PB1CLK>;
++
++        pinctrl_uart2: pinctrl_uart2 {
++            uart2-tx {
++                pins = "G9";
++                function = "U2TX";
++                microchip,digital;
++                output-low;
++            };
++
++            uart2-rx {
++                pins = "B0";
++                function = "U2RX";
++                microchip,digital;
++                input-enable;
++            };
++        };
++    };
++
++    uart2: serial@1f822200 {
++        compatible = "microchip,pic32mzda-uart";
++        reg = <0x1f822200 0x50>;
++        interrupts = <145 IRQ_TYPE_LEVEL_HIGH>,
++                     <146 IRQ_TYPE_LEVEL_HIGH>,
++                     <147 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&rootclk PB2CLK>;
++        pinctrl-names = "default";
++        pinctrl-0 = <&pinctrl_uart2>;
++    };
 -- 
 2.34.1
 
