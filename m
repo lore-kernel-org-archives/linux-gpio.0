@@ -1,40 +1,40 @@
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB8A46EC9C;
-	Wed, 22 Jul 2026 08:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DDD33D6F0;
+	Wed, 22 Jul 2026 08:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784709153; cv=none; b=KmqE0vAyHNY0y2SeH7mCrh8O0v/JiprlUCoJVSAp/5ov+PGXrrkv3od9tQkwB2fikKJvQmY01AvPjSm+KjYZED+6eTlGUiLaZ+gOBejix84R64QMRxdN606SdvxTGut8LokuxL9qKNas+yyfSqBqiAbROV9tY/9kDzD01/gDA6I=
+	t=1784709358; cv=none; b=sgEfbwACSYVgcOtN71lBUfhXp+fQanas6VKK9rGtlhw4VCYCF6X/6+KChXsdBbQzY28eHUCFQjqphGlbDt20ACRUw5IKUPZ8xYtoB0NfFOSRJHooxmsh65297HpjIdJhfpGb+4VUQGqV4QCuTZkNul2k5uwh4qcO22i0yaKzw1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784709153; c=relaxed/simple;
-	bh=4FQG/3+PCJnRx6AG47GAfXdpziU9nwJtfPlED+L0aX4=;
+	s=arc-20240116; t=1784709358; c=relaxed/simple;
+	bh=WD6MXlBWYlF2tyZhCnQGVXS5jehdKt/r6vLrLtoVMrU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JPB24qIpfZV4jsHR1aFbzCWekvaZeatAlSqxSS1EvO36wgmEOgRjCjFGXnv8sjkgLa1L3U1Dm0hjydzEWt0Jex15Pky5BGC9HIMtzfK7jwMvBmQJnLWf6Jyfz3lTvuBpOozCoOtn3kWoixdbxLT/7nE1ERQz5RHM5CzdErWl6/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=h+rOqmhM; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=b+DLg3KHMruUIxWMHA8SnQVZXTahk77zLodB9Mk+3IM7aoushy78x+ZvVvPF1UrPb+5WMq3CliK3u+QDrSwBZPY7Vbxr7yXlNar2m5lypDuuRYb88AK7BVIz9gGCw7Ka/rEUm4KHmrHwyByWxgpxFROEcTKQpKRNtrEgFNhLii4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EtOzt6ln; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="h+rOqmhM"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EtOzt6ln"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1784709149;
-	bh=4FQG/3+PCJnRx6AG47GAfXdpziU9nwJtfPlED+L0aX4=;
+	s=mail; t=1784709355;
+	bh=WD6MXlBWYlF2tyZhCnQGVXS5jehdKt/r6vLrLtoVMrU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h+rOqmhMZRj+4zyyfjXhCZeF0HGWVVXAYkiC2/cPAUtTlHEMIBach5jj1K8xgK46V
-	 kDkL/8w/kbJ0EfFJabNgK6Lk6iOIp0o4OEMb9CGFx8ZBOgclYnY0XxVszS9EggTf/b
-	 QW0FYpqGNIRUaoG9J58rwWu7y1ZJlc37zX7tJ9NSM75Z8qsHxwK0HVrmwZQN9AWSZD
-	 CQmq4bXDiKO6sP5ZQxrLLaLWcEQH/s2S1g6iiQ5qumjvyZ8/hqYIFRcejkd9m8fBD5
-	 04xvO57R6EiJHDv2EkqYgwnpCchgQ3f900jqSClQ0LLgIuiST40SzF9DY9Cfai2DvE
-	 d4x0a5Yld0O6w==
+	b=EtOzt6lnh2uAXYLGiDylE9t8kz52gJ/syahT09WiSvMnliHyFv8xYcuembWrrlKiY
+	 mnJWwxyzjfgmppCcGdT1JJ1hAt1iWH/zW71UoYhqdbmFhvPwM4OIIQHlmF8X0OXX/U
+	 2I3EAXJrwuW4vdndh5q5974a6qm7U1rMzq7d2Iv0dK3HSGOMcZv/h5iX7KKTbLtmx9
+	 v+djWb5Wh6g+kQydacjSE7QMZMuzsNAGId+Q9lUc6KoQJ1/d8FR3QnGFiv795oRpiV
+	 n9N0AC2r12gAEkEmlls8TWoRMSKYRpHQN+N5i96x93O/jCJgliyu/270SELHeqWMPj
+	 bOv2C34Bd/Q8Q==
 Received: from [100.64.1.21] (unknown [100.64.1.21])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange x25519)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2693917E0177;
-	Wed, 22 Jul 2026 10:32:29 +0200 (CEST)
-Message-ID: <a642b843-b828-4bb0-96d9-0f0d7466e29d@collabora.com>
-Date: Wed, 22 Jul 2026 10:32:28 +0200
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A1A8017E0FA2;
+	Wed, 22 Jul 2026 10:35:54 +0200 (CEST)
+Message-ID: <10f4ec41-5f90-4b19-a59a-26a76f533a77@collabora.com>
+Date: Wed, 22 Jul 2026 10:35:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -42,96 +42,59 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] pinctrl: mediatek: free EINT resources on unbind
+Subject: Re: [PATCH v6 3/5] pinctrl: mediatek: allow common drivers to be
+ built as modules
 To: Justin Yeh <justin.yeh@mediatek.com>, Sean Wang <sean.wang@kernel.org>,
  Linus Walleij <linusw@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
 Cc: Project_Global_Chrome_Upstream_Group@mediatek.com,
  linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20260713083808.168957-1-justin.yeh@mediatek.com>
- <20260713083808.168957-3-justin.yeh@mediatek.com>
+ <20260713083808.168957-4-justin.yeh@mediatek.com>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20260713083808.168957-3-justin.yeh@mediatek.com>
+In-Reply-To: <20260713083808.168957-4-justin.yeh@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 7/13/26 10:37, Justin Yeh wrote:
-> mtk_eint_do_init() creates an IRQ domain, populates it with a mapping for
-> every EINT line and installs a chained handler on the parent interrupt,
-> but none of these are ever released. This was harmless while the drivers
-> were built-in, but now that they can be built as modules and
-> unbound/rmmod'd it leaves behind a dangling IRQ domain, interrupt mappings
-> whose chip data points at freed memory, and a chained handler that keeps
-> firing into that freed data.
+> The MediaTek SoC pinctrl drivers link against the shared implementations
+> in pinctrl-mtk-common.c (v1), pinctrl-moore.c and pinctrl-mtmips.c. These
+> were built-in only: their Kconfig symbols were bool, they did not export
+> their entry points and they carried no MODULE_LICENSE().
 > 
-> The plain allocations in mtk_eint_do_init() already use the device-managed
-> devm_*() helpers, so tear the remaining resources down the same way:
-> register a devm action that detaches the chained handler, disposes of the
-> per-line mappings and removes the IRQ domain. This mirrors the
-> device-managed lifecycle adopted for the GPIO chip and keeps the whole
-> EINT setup self-cleaning on unbind.
+> To let the individual SoC drivers be built as loadable modules (required
+> for Android GKI + vendor_dlkm, where vendor drivers must live outside the
+> GKI vmlinux), the shared code they depend on has to be modular too.
+> Otherwise selecting a SoC driver as =m forces the common symbol to =y and
+> the resulting module fails to link against the unexported common entry
+> points.
 > 
-> Fixes: e46df235b4e6 ("pinctrl: mediatek: refactor EINT related code for all MediaTek pinctrl can fit")
+> Convert PINCTRL_MTK, PINCTRL_MTK_MOORE and PINCTRL_MTK_MTMIPS to
+> tristate, export the entry points used by the SoC drivers, and add
+> MODULE_DESCRIPTION()/MODULE_LICENSE() to the three common files.
+> 
+> The v2 common code (PINCTRL_MTK_V2) is already modular, but mtk_rmw() was
+> never exported. It is called directly by SoC drivers such as mt7623, so
+> export it as well to keep those drivers linking once they are modular.
+> 
+> Rather than exporting these shared symbols into the global namespace,
+> export them in the "MTK_PINCTRL" symbol namespace with
+> EXPORT_SYMBOL_NS_GPL() so they are only visible to drivers that opt in.
+> Each SoC driver that uses them therefore declares
+> MODULE_IMPORT_NS("MTK_PINCTRL").
+> 
 > Signed-off-by: Justin Yeh <justin.yeh@mediatek.com>
+
+Some of the pinctrl drivers are missing
+       MODULE_DEVICE_TABLE(of, [match_array])
+
+...therefore module build will fail.
+
+Have you tested compiling the kernel with *all of the MediaTek pinctrl drivers*
+set as module??? :-)
+
+Cheers,
+Angelo
+
 > ---
->   drivers/pinctrl/mediatek/mtk-eint.c | 21 ++++++++++++++++++++-
->   1 file changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
-> index 47ac92ea98c2..7cd4c4a9fc77 100644
-> --- a/drivers/pinctrl/mediatek/mtk-eint.c
-> +++ b/drivers/pinctrl/mediatek/mtk-eint.c
-> @@ -12,6 +12,7 @@
->    */
->   
->   #include <linux/delay.h>
-> +#include <linux/device.h>
->   #include <linux/err.h>
->   #include <linux/gpio/driver.h>
->   #include <linux/io.h>
-> @@ -509,6 +510,24 @@ int mtk_eint_find_irq(struct mtk_eint *eint, unsigned long eint_n)
->   }
->   EXPORT_SYMBOL_GPL(mtk_eint_find_irq);
->   
-> +static void mtk_eint_teardown(void *data)
-> +{
-> +	struct mtk_eint *eint = data;
-> +	unsigned int i, virq;
-> +
-> +	/* Detach the demux handler so it can no longer reference freed data. */
-> +	irq_set_chained_handler_and_data(eint->irq, NULL, NULL);
-
-add here:
-
-synchronize_irq(eint->irq);
-
-...so that we don't risk race conditions when tearing down.
-
-after which:
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-> +
-> +	/* Dispose of all child mappings before the domain is removed. */
-> +	for (i = 0; i < eint->hw->ap_num; i++) {
-> +		virq = irq_find_mapping(eint->domain, i);
-> +		if (virq)
-> +			irq_dispose_mapping(virq);
-> +	}
-> +
-> +	irq_domain_remove(eint->domain);
-> +}
-> +
->   int mtk_eint_do_init(struct mtk_eint *eint, struct mtk_eint_pin *eint_pin)
->   {
->   	unsigned int size, i, port, virq, inst = 0;
-> @@ -601,7 +620,7 @@ int mtk_eint_do_init(struct mtk_eint *eint, struct mtk_eint_pin *eint_pin)
->   	irq_set_chained_handler_and_data(eint->irq, mtk_eint_irq_handler,
->   					 eint);
->   
-> -	return 0;
-> +	return devm_add_action_or_reset(eint->dev, mtk_eint_teardown, eint);
->   
->   err_eint:
->   	for (i = 0; i < eint->nbase; i++) {
-
