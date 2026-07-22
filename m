@@ -1,127 +1,123 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BA2439908
-	for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2026 20:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33ED31AA8F;
+	Wed, 22 Jul 2026 20:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784752009; cv=none; b=MxZxVOBylBvLA+/b6Ab6pmDysrQnbMn0WRM8+NtHqZN5IM9tMjkHtQcZTcPJfW1fJLWj+0YUQnqM0FcTHFqACqi156nFQzbRBr4EHpzQME6A9Noe5KjnT5j5qT5O1Ml0qKshZjSFXAaIJJJNVAj2Qac7G3mBDY4N7dziRFpD8+g=
+	t=1784752786; cv=none; b=OmxG4EebPrmIzYaN2I52TVTwkPVsjgWxEZHCBLQUFCvdhoo5/umM2NIjkBkTdZYxHUO8MAeLcEsboJ1QyJw+3OyiFZPDxvSAtgOdYlpX5DlmojzayceBDWpui1hM64rLjBWDQX7csN8FJtmi/fhierm2lUSxD4zlfy8VXo3neyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784752009; c=relaxed/simple;
-	bh=HJyqMn58xeGtBFeowGIJeKvlVPUhHhLHPtCf//wwweM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OnE64h6qld3FXj2hce1b/u6g1nTGlWNO8ksgFVjT1bcKCFYRb/jYvV/+DdHTY9fOkgG2oN9kXOLF2qMhe5LrKv6ZPveFQ1xQxcJ+tb5TRC2E/DrTwzYNmuYkC/hvpYMrTnMX6Zj7sWdPr4C7R5IFG20zArfg3RpWc+wRQ4t6fo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kWho8Xcs; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784752786; c=relaxed/simple;
+	bh=x1PS7Fo9NTXv58DvUFzHrRKqJFAjkWlNjYN52aL/OBg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=EM3mFaSZ2RRmLBR+P7jvnOvXe+zcFGRgrfEmsCy75W9fWpPXYk0syAOyGXYmnAWbe8FedHfA2D2dIPZeSTiF7TZCrQGFIiYfb1u15UhtgxdbcwKdnZIVGwlnewSPd6Xn0BpOCnqabiQNE+Vsfhw7T6rXVi2aC/z1OGAHqlHcH+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PG3xCcFX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GZntU8Uu; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kWho8Xcs"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-495437bb891so54884715e9.1
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2026 13:26:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784752007; x=1785356807; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=oPdGdJt7xb9LixsBJFZMtoQVAiedhCyeSG6TkYspQU0=;
-        b=kWho8XcszC1LaDMZrxue7wR6tWT7qKH9yuvLGrwRozFTkgkIUslssJm/PR0i1sEGpf
-         BV6fPufEmAk/84EACyFuwbgzz1pIKDzGyepYzSFoOYeUBvM5oahZLlx1ArikgNxaEtTS
-         qgSEy3lbmwi5ghhCEQU5lCGN4wTRaKLhiQQM38k/nHFz8nbLxiBZ0ezMxcf3w7wk68EO
-         Sn822snEQQs07Dnza+wfc/os9rqbCtY2Flwl91Sjwq0RoY3pxTYxKhzoBq/V/o+ASYhT
-         ZrgJIAUqDoV1uoAiJCX9qcAcIlYtL0oPkpziMgly9mIpnKx6Q4V1jmS7dXrxKXskzlse
-         vzrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784752007; x=1785356807;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=oPdGdJt7xb9LixsBJFZMtoQVAiedhCyeSG6TkYspQU0=;
-        b=OJmQaOdrg0kjYnfBlmdUTE3t3dF3p3JdNg5iGqvmBbCA2D2ZyMt28vYbKINscykQD5
-         /+K9zJC1VsGgpDfUyMYnDZhwmvXHRgxHERRAhbzYCyUYw7BhayGvRflc5yen0RGsQhWR
-         DObMucb+FayjR6nG7FcFoaZ2/20tStO26LOwyRJJyohp+eQdys6uPv0jNKhTnusW3hXQ
-         dUeEtaIgf//pt2VnXuoLJ/Q52H3X/0iajSkK7ms5nRZukJCmtGOodAoXyLCSycbnIHnw
-         BHnZxkA7nqca4MViDjIWh+OnXm+EXW4IHQJlzw8YcgYOSaLKCZlCHYIwJi9aYuKFdRwL
-         XR6w==
-X-Forwarded-Encrypted: i=1; AHgh+RpEY1V3oD1bET5/OH90Mr88UZrZC7ny6l2Q2EILWBwu/xyaTqeobXa+VmlKLNgJ0Kvu1RMk3VzO5XC3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFMLfwPUT1vUhQh3HscY6c75EccfBBxQlCnIcBkqUMEEEf9Iyb
-	gxRaB5ZADXqxGG88CfRP1lmHw1tIUd2FGL1v6JXoZLEn9SdN4pfHhvXk
-X-Gm-Gg: AR+sD11vZXv6OG4I2rBl9W0kqg7C+1J5lP1La/U3c/cf6VwRrP/M10KtvabzP2b0hTx
-	lsY7KVwH0iAQFZ7P4q+gYuA91s7kss2KVAuQtL6uuLxf/4plDj+xdIJbXtHz2uDfguKe0MpLqw+
-	H8Gt4VkcpHyB7y6OfCQsIetaejv3kN3RpEH5/uTsa+lW1+gHr3PYt/X1IUgaSr3YO2cgV7b9Qs8
-	W28Z0UEZmlOMTMdJgEksbrrG2NPgEd901JL9Wj7QZERks57y7VSCA6BeMylJdz4yv/PFw1pcJ26
-	0BANkFdwARLM8gBf49Bz/JIXeaAu9F3ifBBpSIBHy2MldmDMCu7sCS9kBc+x4bUULXiBt1Kt8lh
-	cFY9t2iBvx7hsOYPWc3he02PwS7hpnLTs65AXD3kCafPvni92CGPm0TnLoIHz46IdD8/Goeq7XX
-	B0vJYV3Neo4Gpl8g12LKme7zmVqny/q7qKRAdU6gR4X/KBfdvguqFmaE7FtV0ko+LIDTvjf+/Vz
-	j5S
-X-Received: by 2002:a05:600d:117:b0:495:549f:8a86 with SMTP id 5b1f17b1804b1-4956a631813mr47293275e9.17.1784752006510;
-        Wed, 22 Jul 2026 13:26:46 -0700 (PDT)
-Received: from nixos-office (195-23-151-163.net.novis.pt. [195.23.151.163])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85c631fdsm8705649f8f.28.2026.07.22.13.26.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 13:26:45 -0700 (PDT)
-Sender: Julian Braha <julian.braha@gmail.com>
-From: Julian Braha <julianbraha@gmail.com>
-To: aisheng.dong@nxp.com,
-	festevam@gmail.com,
-	Frank.Li@nxp.com,
-	ping.bai@nxp.com,
-	linusw@kernel.org
-Cc: chester62515@gmail.com,
-	mbrugger@suse.com,
-	ghennadi.procopciuc@oss.nxp.com,
-	s32@nxp.com,
-	kernel@pengutronix.de,
-	bartosz.golaszewski@oss.qualcomm.com,
-	andrei.stefanescu@oss.nxp.com,
-	khristineandreea.barbulescu@oss.nxp.com,
-	arnd@arndb.de,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Julian Braha <julianbraha@gmail.com>
-Subject: [PATCH] pinctrl: s32cc: fix unmet dependency for PINCTRL_S32CC
-Date: Wed, 22 Jul 2026 21:26:38 +0100
-Message-ID: <20260722202638.135277-1-julianbraha@gmail.com>
-X-Mailer: git-send-email 2.54.0
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PG3xCcFX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GZntU8Uu"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 714581D000FA;
+	Wed, 22 Jul 2026 16:39:43 -0400 (EDT)
+Received: from phl-imap-05 ([10.202.2.95])
+  by phl-compute-04.internal (MEProxy); Wed, 22 Jul 2026 16:39:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1784752783;
+	 x=1784839183; bh=AgV3CfQUwCOxKpQCcZeddgank8+lUGwPj10cL5YRgn8=; b=
+	PG3xCcFXHJQpgThFFaE/ZZQONEdI23t1R+9LPtodbMydg3Tynges1uH6KswJhLSf
+	XbbK7/Qu9+KkVAlm2FUgHX5G10xMTO2ko6JzxeL5jGZIyrxihltyfuJfJK+VNVFW
+	2ozox8N5x8WCN68bsqebNlrGpPnx+D/aaxY53BbO2o++RD8p9H7fnCX86pBtBmey
+	BV1K+XXK1Lnko+7l52VKUkhhLwugVwd5RzOQsuWC4d3bhdQqeqEkPM6vRCPYylc2
+	aMkoqioDdFjqkH4okICAjI8u5tX8Wpzzlra4TkKv3ihWVEqm2sYGggLJlFP7UfZD
+	xU3LXoKWX/DATwWSW5oRsg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784752783; x=
+	1784839183; bh=AgV3CfQUwCOxKpQCcZeddgank8+lUGwPj10cL5YRgn8=; b=G
+	ZntU8UuZe/gOWBKUr6Q8GltNzwN1EHOH8UyN1e2Lg/ZaD5ihKrpTcM4mo6cpJiC9
+	4Pz9SndFN9PART1bKjHcCyoicG+RGYNbwpLLUgcEjxlNRKRc4nhw6z+E8mJDA2vw
+	COMLAFkcXejsS1S2Yw14gSX+jaKpkwvoqtzL4Cvm0oR6uUzxYGmc3PvYVQr33koO
+	tM0pgCXJkWRQZT6Vm4TMgt/byKJx4nno3v57NkcvtfZSG0F76IYR1szBaotmKGRq
+	wxMplHzv2enOzjUvRTSuTwRSdXmakq5dXywK17FPAanD6NQC+tSuRpRSvYQ/o2gO
+	SKOxhoxuRkagzEkCyDIug==
+X-ME-Sender: <xms:jiphal-KIIvCiIQffsya-AcKwckBuJH2uIrSnEh0kCzW-iFi5Z8-rg>
+    <xme:jiphakgYT0YedyasEwwOldfz4EcS-DY2Z_Jz2Nl0ATO5bTEz4yYMRjVTGxdzyE3VP
+    jCfNtp5nZo7zik9Cw8L9ddusy7mRLvhzp2kYwiajIp_c5nnhrUH3k0>
+X-ME-Proxy-Cause: dmFkZTEFxCd0Ea8kWsgVnw2Dbt/3aQul2rC2oAV6UkFHegQJsFFS0R4+O+23+sWjXW74qd
+    ePkg3xRl7tl77bd/rGjW954UW3Vcaseypa3jbIyxKpf0fmw5I5NKFEVzrjB47TVttFHAL8
+    C4SM7VR6hqDjL7fpVJOmuHWDbaJYE0apCr0EGxLLw3+dWsNVvUD7YW9L39WCGoMrVZDNJm
+    iAO9A4exeTTC8kh6ScvNsHTYlr87owabfxsuHZs4wKPxQ5JxSH1QXkUtoBkaZpsVCauzwL
+    /YTEEdNfogzTkPhu77LGWBE10pL9t+0AFBJ8VtCdE0eABkqx/4sgJYlv0136aUcpn91rVn
+    gI8gNyaNKpeqZu7GiGU5GRCGPG0rG3322Lwa4EA43BL4OnElaDK/c4ZeSLz8udGc+liGJn
+    C2y5CI4R64DsC6E90z5Zbdwr0omvP8qZ+Z4xVyNzzIgLu+smgt5LZmS4MC0ayZRyoVpAi3
+    STCCfeNIbcOi6IsRfiSoel/LlxaVPTk8YFk5XtgvFP/oGcO2r+UZzrVeNuQO1iROylpLcT
+    XhsuGppc6GulX5EZjy0H91z/jL3iRJHVSK6z0hazQP/w+dayfOy3uvvv/a7GrUbhTZ4G6d
+    3cHsQ4t2fWJNnHmsw9a0DSiNBVjJ6yHB4mYoJ1kFqHwBRiI5ZSl9DmDWwAGg
+X-ME-Proxy: <xmx:jiphahyoO8icTS5nw-v-LVNH0718-Wa9hihwtBFUi34YhTUIP1fHqQ>
+    <xmx:jiphaipTWn7oIZdNQLIQzCIpdftpAA2eczpYYeCRVZ4FiWLSOtlEHg>
+    <xmx:jiphaknkm6UIwhS404H9W7esUgfF3vopRZEtG-fr6mzpDYvK_wQ6ag>
+    <xmx:jipharx_vFe6PeYZs3AhMsWAng6SGYKGjQGttMaX0lHCBG-kLNLM5w>
+    <xmx:jyphahwiTPgnuolJuli_AvFbDS2cSxw605l3qtwe9neRrXz4AHj6DA8S>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A119D1820082; Wed, 22 Jul 2026 16:39:42 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: AURDlYaRfEWV
+Date: Wed, 22 Jul 2026 22:39:22 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Julian Braha" <julianbraha@gmail.com>,
+ "Aisheng Dong" <aisheng.dong@nxp.com>, "Fabio Estevam" <festevam@gmail.com>,
+ "Frank Li" <Frank.Li@nxp.com>, "Jacky Bai" <ping.bai@nxp.com>,
+ "Linus Walleij" <linusw@kernel.org>
+Cc: "Chester Lin" <chester62515@gmail.com>,
+ "Matthias Brugger" <mbrugger@suse.com>,
+ "Ghennadi Procopciuc" <ghennadi.procopciuc@oss.nxp.com>,
+ "NXP S32 Linux Team" <s32@nxp.com>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>,
+ "Andrei Stefanescu" <andrei.stefanescu@oss.nxp.com>,
+ "Khristine Andreea Barbulescu" <khristineandreea.barbulescu@oss.nxp.com>,
+ linux-kernel@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org
+Message-Id: <0a99e10e-b4c4-4a64-bcb4-fee8d777d0b7@app.fastmail.com>
+In-Reply-To: <20260722202638.135277-1-julianbraha@gmail.com>
+References: <20260722202638.135277-1-julianbraha@gmail.com>
+Subject: Re: [PATCH] pinctrl: s32cc: fix unmet dependency for PINCTRL_S32CC
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Currently, PINCTRL_S32CC selects PINCTRL_S32CC which needs GPIOLIB, without
-selecting or depending on GPIOLIB.
+On Wed, Jul 22, 2026, at 22:26, Julian Braha wrote:
+> Currently, PINCTRL_S32CC selects PINCTRL_S32CC which needs GPIOLIB, without
+> selecting or depending on GPIOLIB.
+>
+> However, other similar options in this subsystem actually select GPIOLIB
+> instead of depending, so I think we can do the same here.
+>
+> This unmet dependency was found by kconfirm, a static analysis tool for
+> Kconfig.
+>
+> Fixes: 94cb9e8f2707 ("pinctrl: s32cc: implement GPIO functionality")
+> Signed-off-by: Julian Braha <julianbraha@gmail.com>
 
-However, other similar options in this subsystem actually select GPIOLIB
-instead of depending, so I think we can do the same here.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-This unmet dependency was found by kconfirm, a static analysis tool for
-Kconfig.
+The patch looks fine, but I'm curious about what type of rule found
+the mistake. Is this a heuristic that found that drivers/pinctrl/*
+overwhelmingly uses select instead of depends, or did kconfirm
+find a circular dependency that was caused by inconsistent
+rules?
 
-Fixes: 94cb9e8f2707 ("pinctrl: s32cc: implement GPIO functionality")
-Signed-off-by: Julian Braha <julianbraha@gmail.com>
----
- drivers/pinctrl/nxp/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/nxp/Kconfig b/drivers/pinctrl/nxp/Kconfig
-index 711c0fe11565..fab725f250ab 100644
---- a/drivers/pinctrl/nxp/Kconfig
-+++ b/drivers/pinctrl/nxp/Kconfig
-@@ -1,10 +1,11 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config PINCTRL_S32CC
- 	bool
--	depends on ARCH_S32 && OF && GPIOLIB
-+	depends on ARCH_S32 && OF
- 	select GENERIC_PINCTRL_GROUPS
- 	select GENERIC_PINMUX_FUNCTIONS
- 	select GENERIC_PINCONF
-+	select GPIOLIB
- 	select GPIO_REGMAP
- 	select REGMAP_MMIO
- 
--- 
-2.54.0
-
+    Arnd
