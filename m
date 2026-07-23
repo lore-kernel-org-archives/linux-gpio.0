@@ -1,78 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B243A439004;
-	Thu, 23 Jul 2026 13:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB334C77BE;
+	Thu, 23 Jul 2026 13:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784812132; cv=none; b=c5qWIDoPZVoCqF05JNT+j7TYCGfZQW+XBPjeWvK9LYlTT+UwlqP9Gc+HfPFwDUlMxd8VFGj+ro7UxYbIOOXlBwhAilUGngEu0/3L7IExM2Eeui0z9VfzGsw2NJ7rFkuMltsn6bgFzkM9tqtdZSQNBmuqxc3krsCS/hboVS9nU1A=
+	t=1784812219; cv=none; b=TN2JE/jCJWJeHJPRD7aKjZKi5Ka4GHXl7iHBCg5Aahhc04NSTqHtC917KHv92WQLVF2/qJ1S4Smw8J38GG7QFKwyFS+didemWYnqp/c4TnPrifAZz2HFvM8Jai3HqX97f7b/WnzfRtgNV+ttSJrBgmdk7f6anPwynflkqOTAvPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784812132; c=relaxed/simple;
-	bh=w9AIHzf7LFF59gxBCBHzIraohlYaZHVMBRfXRZKzW8w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RO240lNCDjAmpN4J4LQ42PjJlrB2umx0YKTSjBZ2sgUcJXqLh6ZdvOuWm25fdFFbbf+h0HcKYSynVmaeQAdstXDuGAB1wEtp6vQL18RFmv92471pYomCudCTmAY6mwCeOgYqNbXPgFQHRLNNoEld+KHoIUXSlbrCKvJTeppH97o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oKSsPoFM; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKSsPoFM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A6F51F000E9;
-	Thu, 23 Jul 2026 13:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784812131;
-	bh=wad4Pd8/YVNnivX2PPnlTUYq3rt95UA1cJctIX6KXhQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=oKSsPoFMGIAz2QwZ4sgl1uImujsUSAr92lYs7/sRMp1RnaABmQUvbg1kQC2/5E+8C
-	 0cZY/4yFd8/NYTw8lP8tqCVI5niiCobHz1pCqZh/1rQ5XVOqDBmBB76990m0wfXJYv
-	 0UH5pEoJZQ/E1mpnyGpduULD2GEm0qhckOeUMiyeyTu0F6VLh4bn+aSwOMbvFTk+r1
-	 W7fl811ItHFurMft7QWdKbvRDnEK3vj0ACIZu3/IJ1TQXBi4TSHeXDoqMkhj+8xLjJ
-	 tv91qgeHGp8j6p9zUSt0B9yBeGR4BjoecI14mvsukiLN3iVaJVNQ0WLAEovF7ZOz4Z
-	 bXZMsw6pKUXdw==
+	s=arc-20240116; t=1784812219; c=relaxed/simple;
+	bh=pOvxQOpYtUtLAYxIH+6d6cOe14toLz5qDMDQSHER2WY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KQXZunGi/RWCZwEp1Q0eARB5Jvc9MTRmM+PknQ5jnTTfFR/pBCr04HroT1GVRjeUT0Wnr+KxQIrvX9GHnTA+9DD9u3nM6psfMLB9glxU4IX8tMQ6A+8p4oMK8PUCsBjhyNG3c3mNiHPMDWcy+4PAmlCWiISRfU2b4tGfGJwuI5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DA671F00A3A;
+	Thu, 23 Jul 2026 13:10:12 +0000 (UTC)
+Date: Thu, 23 Jul 2026 14:10:08 +0100
 From: Lee Jones <lee@kernel.org>
-To: linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, linux-sh@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-leds@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20260710211854.1371746-4-arnd@kernel.org>
-References: <20260710211854.1371746-4-arnd@kernel.org>
-Subject: Re: (subset) [PATCH 3/6] [v6] leds: gpio: make legacy gpiolib
- interface optional
-Message-Id: <178481212701.3434788.4491931763676610326.b4-ty@b4>
-Date: Thu, 23 Jul 2026 14:08:47 +0100
+To: Miao Wang <shankerwangmiao@gmail.com>
+Cc: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>,
+	Binbin Zhou <zhoubinbin@loongson.cn>,
+	Chong Qiao <qiaochong@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Corey Minyard <corey@minyard.net>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
+	Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, mfd@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net
+Subject: Re: [PATCH RFC v3 1/7] mfd: ls2kbmc: Make a copy when parsing mode
+ string
+Message-ID: <20260723131008.GK3363113@google.com>
+References: <20260710-ls2kbmc-mod-v3-0-ef718636e78e@gmail.com>
+ <20260710-ls2kbmc-mod-v3-1-ef718636e78e@gmail.com>
+ <20260723112940.GC3363113@google.com>
+ <034E7CC0-47AA-40A3-BCB8-B9BEA2190DCA@gmail.com>
+ <2FF2A15C-6170-49A3-9E9F-F5CAAEC67AE4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.16-dev-ad80c
+In-Reply-To: <2FF2A15C-6170-49A3-9E9F-F5CAAEC67AE4@gmail.com>
 
-On Fri, 10 Jul 2026 23:18:51 +0200, Arnd Bergmann wrote:
-> There are still a handful of ancient mips/armv5/sh boards that use the
-> gpio_led:gpio member to pass an old-style gpio number, but all modern
-> users have been converted to gpio descriptors.
+On Thu, 23 Jul 2026, Miao Wang wrote:
+
 > 
-> While the CONFIG_GPIOLIB_LEGACY option that guards devm_gpio_request_one()
-> and related helpers is currently turned on in all kernel builds,
-> the plan is to only enable it on the few platforms that actually
-> pass gpio numbers in any platform_data.
 > 
-> [...]
+> > 2026年7月23日 20:02，Miao Wang <shankerwangmiao@gmail.com> 写道：
+> > 
+> > Hi,
+> > 
+> >> 2026年7月23日 19:29，Lee Jones <lee@kernel.org> 写道：
+> >> 
+> >> Why is this v3 set still RFC?  What comment are you requesting?
+> > 
+> > The reason why this is still in RFC is that I am still waiting
+> > for response and discussion from Loongson personals on the
+> > proposal that adding a DSDT entry for the ls2kbmc device that
+> > describes the GPIO pin associated with the device to signal
+> > the reset event of that BMC device. As pointed by Ruoyao,
+> > such a proposal will need to be discussed with Loongson. I have
+> > CC-ed the patch to the relevant maintainers from Loongson but
+> > failed to receive any response.
+> > 
+> > Moreover, I am also in need of comments on the backup method
+> > of searching the GPIO device and pin when such a DSDT entry
+> > is not available.
+> > 
+> 
+> To complement, the part that I'm in need of comments is the
+> 7-th patch of this series. The first 6 patches are focusing on
+> fixing the existing issues in this driver. I thought that they
+> could be managed to be applied altogether so that the driver
+> would become a good, ready-to-use state. If the first 6 patches
+> are good to be applied and we still receive no response from
+> Loongson personnels, can I split the series into 2 parts?
 
-Applied, thanks!
+I don't see any reason why not.
 
-[3/6] leds: gpio: make legacy gpiolib interface optional
-      commit: 98c5c7b0d4269ecabfc86b8b49ffcfa47979e99d
-
---
-Lee Jones [李琼斯]
-
+-- 
+Lee Jones
