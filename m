@@ -1,136 +1,211 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9B33CBE6D
-	for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 06:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8022E8B67;
+	Thu, 23 Jul 2026 06:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784788387; cv=none; b=kqVNAHCN8Mxwfbi3/u4Z+ZsB7RN+mhdtzkzshKyLVWhTOIqGcvhwhsrqy4KcZHckYwxl8R6ChjhVFvpWlaMcpQSvKj7k6f/TzLq7R2PVmSXFaABKmEyNRKd/YSjSAq96gDitQLR3PNa8hDUclCznKn14kAF7FKKdCgWD0khUcpA=
+	t=1784789519; cv=none; b=G192liU6wjMvX8wXMqO7I6a9l+wRLsn5mg8RuH6ZNV+kaa9Gi4HnbahnaMybtmCewPMBDhW2S6dAwX/6vBKiQIdiv9qvo+SUeCfeQpzKyvA4oJ1l7vHq4kgROArYNprQmXtAeZHiLeCiihRIxCqzj1waSICe7DgMDLUEWwFAV9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784788387; c=relaxed/simple;
-	bh=sDQfXgRKI/MoYauIBPUhxS7ErHC3UJ7F2mE+sueO31E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dfvYKbFVX7TDKO8U1RVU5MF8u9xw6p3btz/IQggP35dWERGPWckgD5jRdscL0ArVCaAHC+19pls4B5fARun9JueTfBbnNYzh5ZalghlfFWoXe1Vj15FlU0tws4n9l6p4fXlUx5fA7cBXFtCeHIlvViq4vK3KyVJCdxLDQ+pAFU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=f4OU0Hvo; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1784789519; c=relaxed/simple;
+	bh=DQVG00EgF2O/I17ObhnJeyMOH1S/vh4pVPnhNXIELYI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=gBYmBSTgdvv4A2yMRL5mdn439uw7mVfIEfnS5mh0JPjhh2/aX5zXtIy92YRN0bodYJrpH18OS4beA3LsClS0QSTo2g7askFNZ3j/G4DeDtgw/W6+WA3sJSMHdVxJR7KrW8SOgziwVxCbiWJ2ee4WDCVKgxOEkgIbZN2n7sdXv3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QG6nPpiL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="f4OU0Hvo"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-495590ba856so2101605e9.2
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2026 23:33:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1784788384; x=1785393184; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=YX5OGenWV0xhnlGLLMQnc7kob7nrOP85c/FXvIqG0JY=;
-        b=f4OU0Hvom8wddjN+ULWj9NrvyHQRUbHFPDvk/QVlVwr1b9E4N2E807/xjgpctqYv3s
-         TIpzMV2nn1nphNkq0HUPSh2XFofxJM9Hq9y3cOJy584rcvF5Ivir+JZgrX02XVNFA9TI
-         PRbYny5px5GXCx8Ky1Kcdac5jZ4w0JDbb++wUCmbqoKiNRwDVUP7cfjza5AHz94vCtAs
-         z3LJ1P+ghbfgKwFNdtoUMDYe46kAb2wUOEdiYlJhDjjsgS5MBj/xNSBKMEVL8FpkBitW
-         uJdwuwFW/YcvPlyCWSk4gLysrq4gmjrljIt2y0x/2EiKUJ9PfmV+9ZVR3Ub0ikbVJ+qC
-         S7LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784788384; x=1785393184;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=YX5OGenWV0xhnlGLLMQnc7kob7nrOP85c/FXvIqG0JY=;
-        b=A+NZ/GlZE1RyifKc6/e94G16GhXEAiAZcHwQ3mTt/VFMiqR8+HtjPG31najcf0uOkW
-         eXXMU06cehOL5nSw0uBySaAX2CSiYIXrB8i2pUBzczCN3GLJUxGUb3zn90uKxXN8UXS1
-         w1PsfSpsTxdDLfT4M5HsW5NAlB7oQuzS1nh94fMopbP1sAvjSjJSHx7JfACyk7xw1o+N
-         Zx1dxPDGG/z7TOjXZMnPtMXfPZ7axcCsdnvPxaVAMgwH15vjjD0OOBPnMEdmf4DD8TId
-         d9al2U8soSLduTrB3O69gXJytPlTgzLQ3q5Byh9C2okpyxdyYpljk6UBZ5cWApQCB4ql
-         glPg==
-X-Forwarded-Encrypted: i=1; AHgh+RqooqQkQGbtGxA2lp+/Gs+3uD68QonvMPYtb03uBngzEUTK9BI8uehfRLlR7EtuW2xSA4Z1/RHDWvSi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw44rpn9We9/tflH4CcljHlNo8EvbuflCcS//NL1CD+TFmMeJnJ
-	bYb4S6ooBic5ULsyHcnD0LudrjakwvOzTUa0kKF2DWO4kUPrb7hlxZfqRK9iACJWFbM=
-X-Gm-Gg: AR+sD11DnhAoaJDnODP+Tvoa5Xg5NricCKCklU6d09nSbCIaBGuQc5aFbs0QnbkdESF
-	Sry6BDXW/GTI9zXAXY83mFqLU8WYQX9OSzVpQc04AFKHF80Uy7Yet9plyZxuJg+Od5goNlEMvr+
-	vREl97dq9WNmCI+hbQXWNRdl73+M3dZDNjtuZYnR69i4gMkOEubItV71UbS57spT6NbmHKhi8Zj
-	jm33Ft5sHtxvlCfyLJZLBbjqY5mVuq6JS2CVe5okL3ArdeqwUoVZQxMxAF0xqwmyKqsoHKsSnGD
-	0sOcTXX/3uK1I2x9gOWKEziH2zqskAvk161onWr5q56Qo+wAJiJHWEN3merj1sPH87IE+rhJ4YN
-	eqGYTnG8vqk3vMPJxFdd1ZESbHVX11BV0ZTBDkn1Q1AomoTEqHmNh+RZPX2UCoiqAKzzkbrRhSo
-	Iid+4zSko=
-X-Received: by 2002:a05:600c:c08f:b0:495:71fc:3a64 with SMTP id 5b1f17b1804b1-49573cfd688mr15528255e9.25.1784788384211;
-        Wed, 22 Jul 2026 23:33:04 -0700 (PDT)
-Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47f85c531basm12160604f8f.19.2026.07.22.23.33.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 23:33:03 -0700 (PDT)
-Date: Thu, 23 Jul 2026 08:33:02 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Shenwei Wang <shenwei.wang@oss.nxp.com>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, 
-	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v15 4/5] gpio: rpmsg: add generic rpmsg GPIO driver
-Message-ID: <amG07XSER0tqQTDs@monoceros>
-References: <20260721204704.400781-1-shenwei.wang@oss.nxp.com>
- <20260721204704.400781-5-shenwei.wang@oss.nxp.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QG6nPpiL"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 34DB51F000E9;
+	Thu, 23 Jul 2026 06:51:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784789517;
+	bh=CYoQpAqMXC45ZUj0eFccRj+tXXcqIDKOcY5u7SGq3WY=;
+	h=Date:Subject:Cc:From:To:References:In-Reply-To;
+	b=QG6nPpiLhMWhzq3rj3VeZwvuQ8KpsUYWvlvqwypVdmVDZ5ufRA+mNItY8lYaYTebE
+	 T4Pnp5iXgE1Hn+CN2GNeAIR8OA7ol4qt30Ib1K8qGWE6dwyjoj2rX9N00cIQPq9lW6
+	 SaQ7i2V/+QzFxzLiRxTdaGT7dcAQgw/ZxLWHsKymilu2YGf1LMb4dYz96Dy3AuMZIz
+	 MLj8w+vuKly8eNoaS2wQblPvp//BgbXZT55SB3VWTvaAw1cObOUAfAW8nRuNIyhGBm
+	 xZ82i+o7VbkowcC31Uc4Rf444meV7D6IPvTwuWfSpMim5r7cYxIUOshhRkxUxWC7w/
+	 T7dvxXvI23oyQ==
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3tnjgjfvpvmj54rn"
-Content-Disposition: inline
-In-Reply-To: <20260721204704.400781-5-shenwei.wang@oss.nxp.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=0f763f9ede22b7e25f10bdb6133ab419b1fbae607d63309a94d201f57326;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Thu, 23 Jul 2026 08:51:53 +0200
+Message-Id: <DK5R2VCAK468.2GAEC7VG8OJBZ@kernel.org>
+Subject: Re: [PATCH v7 5/9] gpio: regmap: Add gpio_regmap_operation to
+ extend reg_mask_xlate callback
+Cc: <dlechner@baylibre.com>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux@analog.com>,
+ <linux-iio@vger.kernel.org>, <cy.huang@realtek.com>,
+ <james.tai@realtek.com>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Yu-Chun Lin" <eleanor.lin@realtek.com>, <linusw@kernel.org>,
+ <andriy.shevchenko@intel.com>, <brgl@kernel.org>, <tychang@realtek.com>,
+ <wbg@kernel.org>, <mathieu.dubois-briand@bootlin.com>,
+ <nuno.sa@analog.com>, <Michael.Hennerich@analog.com>, <jic23@kernel.org>,
+ <andy@kernel.org>, <u.kleine-koenig@baylibre.com>, <dakr@kernel.org>,
+ <bhelgaas@google.com>, <o-takashi@sakamocchi.jp>
+X-Mailer: aerc 0.20.0
+References: <20260723034237.2501507-1-eleanor.lin@realtek.com>
+ <20260723034237.2501507-6-eleanor.lin@realtek.com>
+In-Reply-To: <20260723034237.2501507-6-eleanor.lin@realtek.com>
 
+--0f763f9ede22b7e25f10bdb6133ab419b1fbae607d63309a94d201f57326
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
---3tnjgjfvpvmj54rn
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v15 4/5] gpio: rpmsg: add generic rpmsg GPIO driver
-MIME-Version: 1.0
+On Thu Jul 23, 2026 at 5:42 AM CEST, Yu-Chun Lin wrote:
+> Extend the reg_mask_xlate callback with an operation type parameter
+> (enum gpio_regmap_operation) to allow drivers to return different
+> register/mask combinations depending on the specific GPIO operation.
+>
+> Consequently, update all existing drivers utilizing the gpio-regmap
+> framework (across drivers/gpio, drivers/iio, and drivers/pinctrl)
+> to accommodate the new reg_mask_xlate function signature.
+>
+> Suggested-by: Linus Walleij <linusw@kernel.org>
+> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> ---
 
-Hello,
+...
 
-On Tue, Jul 21, 2026 at 03:46:47PM -0500, Shenwei Wang wrote:
-> +#include <linux/mod_devicetable.h>
-> [...]
-> +#include <linux/rpmsg.h>
+> @@ -71,7 +73,7 @@ static int gpio_regmap_simple_xlate(struct gpio_regmap =
+*gpio,
+>  static int gpio_regmap_get(struct gpio_chip *chip, unsigned int offset)
+>  {
+>  	struct gpio_regmap *gpio =3D gpiochip_get_data(chip);
+> -	unsigned int base, val, reg, mask;
+> +	unsigned int base, val, reg, mask, dir_mask;
+>  	int ret;
+> =20
+>  	/* we might not have an output register if we are input only */
+> @@ -80,7 +82,18 @@ static int gpio_regmap_get(struct gpio_chip *chip, uns=
+igned int offset)
+>  	else
+>  		base =3D gpio_regmap_addr(gpio->reg_set_base);
+> =20
+> -	ret =3D gpio->reg_mask_xlate(gpio, base, offset, &reg, &mask);
+> +	ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_GET_OP, base, offset, &r=
+eg, &dir_mask);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D regmap_read(gpio->regmap, reg, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (val & dir_mask)
+> +		ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_OUT, base, offset, &reg=
+, &mask);
+> +	else
+> +		ret =3D gpio->reg_mask_xlate(gpio, GPIO_REGMAP_IN, base, offset, &reg,=
+ &mask);
 
-<linux/rpmsg.h> includes <linux/device-id/rpmsg.h> and thus provides
-rpmsg_device_id already. So please drop the include for
-<linux/mod_devicetable.h> which will go away soon.
+What's going on here? Looks like I've missed this in the previous
+patches. All the other drivers we are now reading the value twice.
+In the regmap_read() above and the one that follows just after this
+hunk.
 
-> +static struct rpmsg_device_id rpmsg_gpio_channel_id_table[] = {
-> +	{ .name = CHAN_NAME_PREFIX },
-> +	{ },
+Has the gpio controller two different bits, one for output and one
+for input? Are you sure, the input bit doesn't reflect the output
+bit if it's configured as an output?
 
-no trailing comma after the list terminator please.
+IMHO this shouldn't be part of the core. rtd1625_reg_mask_xlate()
+should either return RTD1625_GPIO_IN or RTD1625_GPIO_OUT depending
+on the mode, if that's needed at all. I'd guess RTD1625_GPIO_IN
+will just work fine and will actually fetch the actual line state.
 
+-michael
+
+>  	if (ret)
+>  		return ret;
+> =20
+...
+
+> =20
+> +/**
+> + * enum gpio_regmap_operation - Operation type for reg_mask_xlate callba=
+ck
+> + *
+> + * Traditionally, the operation type was inferred from the base register=
+.
+> + * However, that approach does not always work =E2=80=94 for example, wh=
+en all control
+> + * bits of a single GPIO reside in the same register. This enum allows t=
+he
+> + * reg_mask_xlate callback to explicitly distinguish between operation t=
+ypes.
+> + * The user is free to choose which method to use.
+> + *
+> + * Value operations:
+> + * @GPIO_REGMAP_GET_OP: Mask for reading direction to detect if GPIO is =
+input or
+> + *			output. Used in gpio_regmap_get() to determine the GPIO
+> + *			direction.
+
+This is also not very intuitive. I'd expect there is only one
+operation for the gpio_regmap_get and that is exactly this one.
+
+> + * @GPIO_REGMAP_IN: Mask for reading input value. Used when GPIO is conf=
+igured as
+> + *			input.
+> + * @GPIO_REGMAP_OUT: Mask for reading output value. Used when GPIO is co=
+nfigured as
+> + *			output.
+> + *
+> + * Output operations:
+> + * @GPIO_REGMAP_SET_OP: Mask for setting GPIO output value.
+> + *
+> + * Direction operations:
+> + * @GPIO_REGMAP_GET_DIR_OP: Mask for reading GPIO direction (input/outpu=
+t).
+> + * @GPIO_REGMAP_SET_DIR_OP: Mask for setting GPIO direction (input/outpu=
+t).
+> + */
+> +enum gpio_regmap_operation {
+> +	GPIO_REGMAP_GET_OP,
+> +	GPIO_REGMAP_SET_OP,
+> +	GPIO_REGMAP_GET_DIR_OP,
+> +	GPIO_REGMAP_SET_DIR_OP,
+> +	GPIO_REGMAP_IN,
+> +	GPIO_REGMAP_OUT,
 > +};
+> +
+>  /**
+>   * struct gpio_regmap_config - Description of a generic regmap gpio_chip=
+.
+>   * @parent:		The parent device
+> @@ -104,9 +138,9 @@ struct gpio_regmap_config {
+>  	unsigned long regmap_irq_flags;
+>  #endif
+> =20
+> -	int (*reg_mask_xlate)(struct gpio_regmap *gpio, unsigned int base,
+> -			      unsigned int offset, unsigned int *reg,
+> -			      unsigned int *mask);
+> +	int (*reg_mask_xlate)(struct gpio_regmap *gpio, enum gpio_regmap_operat=
+ion,
+> +			      unsigned int base, unsigned int offset,
+> +			      unsigned int *reg, unsigned int *mask);
+> =20
+>  	int (*init_valid_mask)(struct gpio_chip *gc,
+>  			       unsigned long *valid_mask,
 
-Best regards
-Uwe
 
---3tnjgjfvpvmj54rn
+--0f763f9ede22b7e25f10bdb6133ab419b1fbae607d63309a94d201f57326
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmphtZsACgkQj4D7WH0S
-/k7/awgAj2vySxmy5vP1QwUkRZfLQnnTNKmx1EuDKoXg/nw4qRoyCtymTNF6iUvm
-bSf7sZlRAqszzyqHR6g/qzf5yiGVUiAQAfxOlSYgB3SkP/7geaQXcPhlxzHxYU/8
-aSWjMJ047hhilAq0C6ntgCbsBuUbHyGKC354E+EZYMESs0gKbdk1cWlNuay34k4A
-Akaf2SEW/aZ/E/X1znyI/vRJyIqv1QBeI4+coopWyFigk2eNA1adyWif2iunnxtt
-Z7EV690/VGZmcpQwDl/IAevcLh4cg2nhiEh2J5iIpJsvbmiDLQng0G5V7BQxJ9OO
-7GNNyk0IGXtulJ1RztaEG5a7Kvc/3g==
-=H5Si
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCamG6CRIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/j/8QF+MscjlU8Sr3zp+NgiNBUJvCVyP8/tzErf
+IxBB/IHT+q67OBwib8y6HrvboYKuJWJfAX9SUD8iebYkI5Lui5jTFMlIPIoiVDrO
+7vbU8b2W9xiMiABeddeUJEApcU4UNJtxg+Y=
+=C68y
 -----END PGP SIGNATURE-----
 
---3tnjgjfvpvmj54rn--
+--0f763f9ede22b7e25f10bdb6133ab419b1fbae607d63309a94d201f57326--
