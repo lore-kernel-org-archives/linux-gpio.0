@@ -1,86 +1,62 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EFF395AE9
-	for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2026 21:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2592931DE;
+	Thu, 23 Jul 2026 01:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784756001; cv=none; b=UojmYuq1Use/TjhQ3NlQUC/8SoXIs0XMlgMuwAG9VDKe48NGGTeelCYgIDT378QWx05vAt2zg2sAvzcEbrtJhMTWtkqbrZnDYykA15l6Oaby6xHl2u+ibU3Wj577bhKag9dxTO2H6oBnbsrczT2p9gyOFubo/6hDgK0b6vZMbeI=
+	t=1784770943; cv=none; b=naB3cNYGpfFfvteQXN7uqHmwmnJdJxHzQpqNgiBb3q45MWZgQwhUH91qVs1+fpt5Mn+qF+gsvHT7wfCvY2UTNOm3ALPqAo632jmZeQFzjQpHEZv24mUtnQuFZwcZRxsgaBGs+hOfBtiqfK0lQJoBL0DiX5oXoofamRxjj8sFsHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784756001; c=relaxed/simple;
-	bh=2e0xDu2AW5V3cBofm7LJsyVwm3nbqAjS6LPFU7pq7Rk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VxA4FNkw87XVrmL/kjbeGWSf6g0QezIhPfXc0zRfhE6/FgYKcXl5h2S45S2ktzf/712sUWEBakR3LMG5r//H56NkPbY4nPTFgIDiy3Eg0shSRWoFsWKvwyCOIo+gM9V4NdW60H/N1wrslJ5IcP5ISoz2TSxF1ZPN8EXEOM4BrVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i3thHppy; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784770943; c=relaxed/simple;
+	bh=mNQeiHLtOE2eI3Wxy8SjxSE1jvCa/k2zMJRQl+78QXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=myuxomCOpXwXlxdhpOhRJ3dmxO3usPcbnQglrakaa6xcYsdEr2TmonCJcc/tUw/4S1hTnxx02UGyaydoDsq/DS21cEkskYDZEN2KVkGUfUpW8M/cLDKWIXFiDwV10QqckkkLyB6YRlqlaMTUKYtiYgt+MGFTTzuLMZ7yIglEfgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eotv/Bt7; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3thHppy"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-49558ce01afso33243085e9.1
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2026 14:33:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784755998; x=1785360798; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=vCob+FZUcKF6Rewr+4ZqyG5zkKuKpbnhgU0UJDlmA24=;
-        b=i3thHppyVMULgMGrrc6fcUik/ZKU0j1kL7ZhFyVZ5HWINrdMqWxyCv2gOy+Xrfy30t
-         rbp1LA2QqXIVzmyIKQvUh8J/Wm4Tbr2aFo7u9DEd73n8lgBdZNOXrb/Xw8bp65CrhNM4
-         mxgBYhdmNqLL/gbJMj5KQ6vH3B7a9Fy35AZ7oYCDY8UZA9FQnHIcIUmC8UcCBBnt8RbE
-         FwHSwB3vaN8tm5WkkqJBta87OYRGOuuBP78l/g42ceQv/Zzjl2tYJPyzoj5ywkdB+qpC
-         8tjyRvcoY29hPobnH93swMKYc+itgFz+c7tbjPThAcHh0jvQFBZ2eR8YDVvWvqCO2M/Z
-         KgMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784755998; x=1785360798;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=vCob+FZUcKF6Rewr+4ZqyG5zkKuKpbnhgU0UJDlmA24=;
-        b=l4JhpJ2O0qMDDtEnYbHNKsAbHaLuhCSZeo3bggLuHu5SUIngjzavbe94TW4T9ht5/s
-         UECuR10uU5ACfUSLvT6mVUL+4EVxshoZFw4olNmw2XU3dtzh9h/QeHZBK7swfwPB602B
-         xJYQ8akj5dOVeyR63pt1Oxe2Qx+3u2+MW/ITKNyb18WKrAPKYX9AelAZV+0L76FYXzJw
-         LmmGbD7lQ5pIDJnisnyVMOSz/mWxT1i2Ir1DCF0OW6m+cZVNX2vglBJmESZOn1366OX8
-         jtVQrhJcwhho/n748gJZ443AxjuLyB3zcc1+p8Cz6MStsLug5S+ZUGLnNEuh1PBPWucy
-         me8Q==
-X-Forwarded-Encrypted: i=1; AHgh+Rr0EJzosYXBDMM3tdUEtfC7Df6vrMOn66l2XHwipfSYfLL/qjNWLXzZAE35Vr08lD1sGHDKxegzp4HX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz1rXJWlSPbueGHgrqcnkC1w5wc9qa9SU0Zs1c15eAotZ9uO1l
-	+JSePP7bdH5iT6w8lTz70L8jS5Q5P4d2sWBhGtOHjDMIUjwf9YxPTOzz
-X-Gm-Gg: AR+sD12KmXmyahvPp6z4UneZ1ufvP70WH7sci2HyYLgKxIXX849xc7K1N516lhtOt99
-	7ji3j193N8pau8avgVobTNuyevnqzHhWyaHmdlrniHN5ks4V/U3KkXJKIomvGdaaxMxhS92ou3o
-	A0kLOhx+QdmR+9P394EJohqMzOMU9guUjD6mES7BTeFVkUFRUBD03U5ImyAYoAyKcFf/4M8xQSq
-	45hFfBywxRDonv8UyO2sew3GDQlU0TVky1SgmNqdCSGJwqzeSk/61pK3HzpZ6kRtwUobz1HITkH
-	xeTA8lgCYBkHMvU9HUKgXkHX7ZFh4I7iS2Rbzl4SYVV/+xRVZvuRsWRgdgCpKogtDJjKDwhLQ4x
-	0OwW9u3vIGfXNfaV/851e0qn10WN1Q2d4iyuFt5Qi4D6uHiB4XEGh6vjif80Uf4d7P+og/t2ltQ
-	a7U1Rc/CCbbbDuj+S/kBZa74SAJQate8Wc6S/Dmo93u8TByapsSnJeHUEP1F03KDZjdQ==
-X-Received: by 2002:a05:600c:4ed1:b0:495:5d6d:9cb3 with SMTP id 5b1f17b1804b1-49573d13756mr3467475e9.37.1784755997906;
-        Wed, 22 Jul 2026 14:33:17 -0700 (PDT)
-Received: from nixos-office (195-23-151-163.net.novis.pt. [195.23.151.163])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85c7880dsm9358636f8f.37.2026.07.22.14.33.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 14:33:17 -0700 (PDT)
-Sender: Julian Braha <julian.braha@gmail.com>
-From: Julian Braha <julianbraha@gmail.com>
-To: aisheng.dong@nxp.com,
-	festevam@gmail.com,
-	Frank.Li@nxp.com,
-	ping.bai@nxp.com,
-	linusw@kernel.org
-Cc: chester62515@gmail.com,
-	mbrugger@suse.com,
-	ghennadi.procopciuc@oss.nxp.com,
-	s32@nxp.com,
-	kernel@pengutronix.de,
-	bartosz.golaszewski@oss.qualcomm.com,
-	andrei.stefanescu@oss.nxp.com,
-	khristineandreea.barbulescu@oss.nxp.com,
-	arnd@arndb.de,
-	linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eotv/Bt7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1784770942; x=1816306942;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mNQeiHLtOE2eI3Wxy8SjxSE1jvCa/k2zMJRQl+78QXQ=;
+  b=Eotv/Bt7mya+xOvdKOEEPlsR1gbjaahGWokiu8RSpsRO1oVw7uNNIwGq
+   z3Sl78A4q/797R5r1I+DhyUWx270ypHSXJAos/URoWVKdJUykOWeM4tvG
+   aEIJ6RijwfZeOlvRXLGCbzut4GI3RKEIgRo2y25AJpx/XlSo1dBkS0iW6
+   2mO4il3D504qHMJvfSSNL0y7sv2aTQshoi6GNNwL1tT5ffv8bupKtyPS6
+   CNso+83jv7aGyEl9EHIepGaTLfb9Y4+H4rb8kqo8g479q6M14pPrSTlxN
+   gVf0LtbHn6P8zxSBiBDXyLMi/09B4TLteoOREhp/xOXSt3/dKd9Ltydkz
+   A==;
+X-CSE-ConnectionGUID: 2ycLmh+nQA2wcbFR/OfBBw==
+X-CSE-MsgGUID: j7hnnam1RIyzoNDrEHR65A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11854"; a="96790315"
+X-IronPort-AV: E=Sophos;i="6.25,179,1779174000"; 
+   d="scan'208";a="96790315"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2026 18:42:21 -0700
+X-CSE-ConnectionGUID: J98Z6do+T8SXY+bGVZNySQ==
+X-CSE-MsgGUID: 3WHpnddbSiOHybu9ZDoe0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,179,1779174000"; 
+   d="scan'208";a="257028835"
+Received: from junjie-desk-dev.bj.intel.com (HELO junjie-desk-dev.tail2c02c1.ts.net) ([10.238.152.71])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2026 18:42:18 -0700
+From: Junjie Cao <junjie.cao@intel.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
 	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Julian Braha <julianbraha@gmail.com>
-Subject: [PATCH v2] pinctrl: s32cc: fix unmet dependency for PINCTRL_S32CC
-Date: Wed, 22 Jul 2026 22:33:14 +0100
-Message-ID: <20260722213314.155310-1-julianbraha@gmail.com>
-X-Mailer: git-send-email 2.54.0
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: [PATCH] gpio: pch: use raw_spinlock_t for the register lock
+Date: Thu, 23 Jul 2026 09:41:29 +0800
+Message-ID: <20260723014129.1129730-1-junjie.cao@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -89,42 +65,168 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, PINCTRL_S32G2 selects PINCTRL_S32CC which needs GPIOLIB, without
-selecting or depending on GPIOLIB.
+pch_irq_type() is registered as the irq_chip .irq_set_type callback and
+takes chip->spinlock with spin_lock_irqsave().  This callback is reached
+from __setup_irq() -> __irq_set_trigger() -> chip->irq_set_type() while
+the caller holds desc->lock, a raw_spinlock_t, with hardirqs disabled.
+That context is not sleepable, but on PREEMPT_RT a regular spinlock_t is
+an rtmutex-backed sleeping lock, so acquiring it there is invalid.
 
-However, other similar options in this subsystem actually select GPIOLIB
-instead of depending, so I think we can do the same here.
+This was confirmed on a PREEMPT_RT kernel with lockdep
+(PROVE_RAW_LOCK_NESTING and DEBUG_ATOMIC_SLEEP).  A grounded PoC mirrored
+pch_irq_type()'s locking and drove it through the real genirq carrier
+irq_set_irq_type() -> __irq_set_trigger() -> chip->irq_set_type(), i.e.
+the same __irq_set_trigger() edge that __setup_irq() takes for a
+requested IRQ.  With the original spin_lock_irqsave() edge lockdep
+reported an invalid wait context, immediately followed by:
 
-This unmet dependency was found by kconfirm, a static analysis tool for
-Kconfig.
+  BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+  in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 95, name: insmod
+  hardirqs last disabled at (3784): _raw_spin_lock_irqsave+0x4f/0x60
+   rt_spin_lock+0x3a/0x1c0
+   repro_irq_set_type+0x64/0xa0 [pch_repro]
+   __irq_set_trigger+0x69/0x140
+   irq_set_irq_type+0x78/0xd0
 
-Fixes: 94cb9e8f2707 ("pinctrl: s32cc: implement GPIO functionality")
-Signed-off-by: Julian Braha <julianbraha@gmail.com>
+Switching the mirrored lock to raw_spinlock_t made both splats go away.
+
+Convert the register lock to raw_spinlock_t.  The same lock also
+serializes the GPIO direction/value callbacks and the suspend/resume
+register save/restore, but all of those critical sections only perform
+MMIO register accesses (ioread32()/iowrite32()) and
+irq_set_handler_locked(); none of them contain sleepable operations.
+Keeping this register lock non-sleeping is therefore appropriate for the
+irqchip callbacks and does not change the GPIO-side locking contract.
+
+This is the same class of issue and fix as recently addressed for other
+GPIO controllers, e.g. commit 286533cb14a3 ("gpio: sch: use raw_spinlock_t
+in the irq startup path") and commit 90f0109019e6 ("gpio: eic-sprd: use
+raw_spinlock_t in the irq startup path").
+
+Fixes: 38eb18a6f92d ("gpio-pch: Support interrupt function")
+Cc: stable@vger.kernel.org
+Signed-off-by: Junjie Cao <junjie.cao@intel.com>
 ---
-v2: fix typo in commit message PINCTRL_S32CC -> PINCTRL_S32G2
-Link to v1:
-https://lore.kernel.org/all/20260722202638.135277-1-julianbraha@gmail.com/
----
- drivers/pinctrl/nxp/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-pch.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pinctrl/nxp/Kconfig b/drivers/pinctrl/nxp/Kconfig
-index 711c0fe11565..fab725f250ab 100644
---- a/drivers/pinctrl/nxp/Kconfig
-+++ b/drivers/pinctrl/nxp/Kconfig
-@@ -1,10 +1,11 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config PINCTRL_S32CC
- 	bool
--	depends on ARCH_S32 && OF && GPIOLIB
-+	depends on ARCH_S32 && OF
- 	select GENERIC_PINCTRL_GROUPS
- 	select GENERIC_PINMUX_FUNCTIONS
- 	select GENERIC_PINCONF
-+	select GPIOLIB
- 	select GPIO_REGMAP
- 	select REGMAP_MMIO
+diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
+index 4ffa0955a9e3..07a5617b314b 100644
+--- a/drivers/gpio/gpio-pch.c
++++ b/drivers/gpio/gpio-pch.c
+@@ -96,7 +96,7 @@ struct pch_gpio {
+ 	struct pch_gpio_reg_data pch_gpio_reg;
+ 	int irq_base;
+ 	enum pch_type_t ioh;
+-	spinlock_t spinlock;
++	raw_spinlock_t spinlock;
+ };
  
+ static int pch_gpio_set(struct gpio_chip *gpio, unsigned int nr, int val)
+@@ -105,7 +105,7 @@ static int pch_gpio_set(struct gpio_chip *gpio, unsigned int nr, int val)
+ 	struct pch_gpio *chip =	gpiochip_get_data(gpio);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(&chip->spinlock, flags);
+ 	reg_val = ioread32(&chip->reg->po);
+ 	if (val)
+ 		reg_val |= BIT(nr);
+@@ -113,7 +113,7 @@ static int pch_gpio_set(struct gpio_chip *gpio, unsigned int nr, int val)
+ 		reg_val &= ~BIT(nr);
+ 
+ 	iowrite32(reg_val, &chip->reg->po);
+-	spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
+ 
+ 	return 0;
+ }
+@@ -133,7 +133,7 @@ static int pch_gpio_direction_output(struct gpio_chip *gpio, unsigned int nr,
+ 	u32 reg_val;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(&chip->spinlock, flags);
+ 
+ 	reg_val = ioread32(&chip->reg->po);
+ 	if (val)
+@@ -147,7 +147,7 @@ static int pch_gpio_direction_output(struct gpio_chip *gpio, unsigned int nr,
+ 	pm |= BIT(nr);
+ 	iowrite32(pm, &chip->reg->pm);
+ 
+-	spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
+ 
+ 	return 0;
+ }
+@@ -158,12 +158,12 @@ static int pch_gpio_direction_input(struct gpio_chip *gpio, unsigned int nr)
+ 	u32 pm;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(&chip->spinlock, flags);
+ 	pm = ioread32(&chip->reg->pm);
+ 	pm &= BIT(gpio_pins[chip->ioh]) - 1;
+ 	pm &= ~BIT(nr);
+ 	iowrite32(pm, &chip->reg->pm);
+-	spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
+ 
+ 	return 0;
+ }
+@@ -265,7 +265,7 @@ static int pch_irq_type(struct irq_data *d, unsigned int type)
+ 		return 0;
+ 	}
+ 
+-	spin_lock_irqsave(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(&chip->spinlock, flags);
+ 
+ 	/* Set interrupt mode */
+ 	im = ioread32(im_reg) & ~(PCH_IM_MASK << (im_pos * 4));
+@@ -277,7 +277,7 @@ static int pch_irq_type(struct irq_data *d, unsigned int type)
+ 	else if (type & IRQ_TYPE_EDGE_BOTH)
+ 		irq_set_handler_locked(d, handle_edge_irq);
+ 
+-	spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
+ 	return 0;
+ }
+ 
+@@ -374,7 +374,7 @@ static int pch_gpio_probe(struct pci_dev *pdev,
+ 	chip->ioh = id->driver_data;
+ 	chip->reg = chip->base;
+ 	pci_set_drvdata(pdev, chip);
+-	spin_lock_init(&chip->spinlock);
++	raw_spin_lock_init(&chip->spinlock);
+ 	pch_gpio_setup(chip);
+ 
+ 	ret = devm_gpiochip_add_data(dev, &chip->gpio, chip);
+@@ -407,9 +407,9 @@ static int pch_gpio_suspend(struct device *dev)
+ 	struct pch_gpio *chip = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(&chip->spinlock, flags);
+ 	pch_gpio_save_reg_conf(chip);
+-	spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
+ 
+ 	return 0;
+ }
+@@ -419,11 +419,11 @@ static int pch_gpio_resume(struct device *dev)
+ 	struct pch_gpio *chip = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(&chip->spinlock, flags);
+ 	iowrite32(0x01, &chip->reg->reset);
+ 	iowrite32(0x00, &chip->reg->reset);
+ 	pch_gpio_restore_reg_conf(chip);
+-	spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
+ 
+ 	return 0;
+ }
 -- 
-2.54.0
+2.43.0
 
