@@ -1,64 +1,63 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE243603F7;
-	Thu, 23 Jul 2026 03:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD3F2E2663;
+	Thu, 23 Jul 2026 03:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784778210; cv=none; b=T1ZUzL+1ke16n2QLybtFe0Y5dprhNhX6n9Vy9CgeYWFkF6+yFyDcEELNyIwUICoF+n4zq2xcjx4MCopT+hENKbyFZp1arxQg4HeozNGNdI+8UefjySZrHexwe/zvwEgzfAG//le8rXtkY0T1wHGl5iOU4+R5GZlUn1BLLG7/ap8=
+	t=1784779116; cv=none; b=BUfDA89T9Pyyg53c4gP7WeY2P9ozmauQGY1Qp7mHV2k/+3zyOOVSkNfWCdUw6Cxh36HSNYJzqj0zG0OnALEMtBE2E8ZWrG4z9NlkSL5sezVTxnjYevfCLMh4/F3c9aZqyO0s4wa7MGj2RtnGuzL+UWDmMa78KBUw+2cDso1+Ta0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784778210; c=relaxed/simple;
-	bh=lONco79yVIqhaNK5BuyksPdJ8FLmobNK8TnIVKTe7c8=;
+	s=arc-20240116; t=1784779116; c=relaxed/simple;
+	bh=/+UZDeEgCJT8LkE0ipsaNWZCfsAI5TC4kqDuiGFGSds=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PFSToB1WDJ8KP0ybH+1p9s2lJIB7QNPV0GE59XywtU2rPvZRdIsOt81SKRsd16nALUyCMf+2HbFBejExV0LmW+6wrIYNp8Tp/UT2wJT3bD2EPygmAPJosyW1rKSbZXHSv/zB9CxlXJUNHPQk52NX7CZuZujXZHynhL97yq1Z5Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=HjzdOOqp; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	 MIME-Version:Content-Type; b=AV4Z5eWZyyZjv8cQ4sJU7Xj8u66Zxj7z3vKl2GjKf/bXtFPy1M7FLosA5Qu1jEBqzmvji15fDOYMrRNmOzLD71HO/gRGNBQEqnWBiO8xI4kfgGNHVTI+o76t1tY4eKEt5q+yQM3L6ySjz71pKZ6QbxWE8rezhcT2CiKX0FL0rN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=WwSY6fM+; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="HjzdOOqp"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 66N3h3njD179846, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1784778183; bh=+oXi6xpu3Bp0JTaZnzlVJTHhCpkBsjVyaNuCaZ8f8Ao=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=HjzdOOqpnssn/HxwC5nhEBwQ6MhEB6m6BCvKc7FGQoWiCiGF8mlnk4GSDDlFmJHtM
-	 AIhmYOnUE11UMiq3BNwTgwLyXFxEWM4AL9171aF4sIjVoSa7HdQ/ZBNhhmhIStZdw8
-	 0/YGmD6QzwVfocHXBsxdy5Xn2lEVkkET1PNrwzT5nglpk2BcyBKjaXehVU9/Pd1IWn
-	 7enzadfv7G2TspmywEqp2HyHjBFzZi3+fC4X5igf7AUJ8bJ5GD+KWaMancgdpsTvgL
-	 JajLOLsF/zw6BAty9rbpEgiPP2Y/DRVBGUC7iynbPdaPCYKuqfquB/XXCGG6o4ubt1
-	 eIuSiufPyt8xQ==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 66N3h3njD179846
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 23 Jul 2026 11:43:03 +0800
-Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="WwSY6fM+"
+X-UUID: c25e3838864a11f1b1788b6acf885367-20260723
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=N1W2wqKCJbOZw8CgB2iZJKooo+2PL+bi2PCu+HXC33g=;
+	b=WwSY6fM+V6TgJcb1OlPQMZPdBVyksImgLXkJ7a7ZU8dE62BMzgZ7cXfXap8NmOJi8S63W0CDBhNrYDZJzT0aEOGEFEuZabDrV9GoDLse0y+pgOvZiWnkUiJhsbUfkDgEKkdsuwLVVpvN/JutvsU1zHOPpeHTvJXd+q+xv/wqjFE=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.18,REQID:059ac388-fd18-4150-8fbd-126ced8ff6ec,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:8a735a6,CLOUDID:468e3454-ba59-46c6-b844-86065e9edbd3,B
+	ulkID:nil,BulkQuantity:0,SF:81|82|102|836|865|888|898,TC:-5,Content:0|15|5
+	0|99,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:-1,COL:0,OSI:0,
+	OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: c25e3838864a11f1b1788b6acf885367-20260723
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+	(envelope-from <justin.yeh@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 812183994; Thu, 23 Jul 2026 11:58:27 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 23 Jul 2026 11:43:04 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 23 Jul 2026 11:42:59 +0800
-Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
- (10.21.1.56) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 23 Jul 2026 11:42:59 +0800
-From: Yu-Chun Lin <eleanor.lin@realtek.com>
-To: <linusw@kernel.org>, <andriy.shevchenko@intel.com>, <mwalle@kernel.org>,
-	<brgl@kernel.org>, <tychang@realtek.com>, <wbg@kernel.org>,
-	<mathieu.dubois-briand@bootlin.com>, <nuno.sa@analog.com>,
-	<Michael.Hennerich@analog.com>, <jic23@kernel.org>, <andy@kernel.org>,
-	<u.kleine-koenig@baylibre.com>, <dakr@kernel.org>, <bhelgaas@google.com>,
-	<o-takashi@sakamocchi.jp>
-CC: <eleanor.lin@realtek.com>, <dlechner@baylibre.com>,
-	<linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux@analog.com>, <linux-iio@vger.kernel.org>, <cy.huang@realtek.com>,
-	<james.tai@realtek.com>
-Subject: [PATCH v7 9/9] gpio: realtek: Add driver for Realtek DHC RTD1625 SoC
-Date: Thu, 23 Jul 2026 11:42:26 +0800
-Message-ID: <20260723034237.2501507-10-eleanor.lin@realtek.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260723034237.2501507-1-eleanor.lin@realtek.com>
-References: <20260723034237.2501507-1-eleanor.lin@realtek.com>
+ 15.2.2562.29; Thu, 23 Jul 2026 11:58:25 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.2562.29 via Frontend Transport; Thu, 23 Jul 2026 11:58:25 +0800
+From: Justin Yeh <justin.yeh@mediatek.com>
+To: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	Justin Yeh <justin.yeh@mediatek.com>, Chen-Yu Tsai <wenst@chromium.org>
+Subject: [PATCH v7 4/5] pinctrl: mediatek: mt7986: register both platform drivers from a single initcall
+Date: Thu, 23 Jul 2026 11:58:15 +0800
+Message-ID: <20260723035823.2041832-5-justin.yeh@mediatek.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20260723035823.2041832-1-justin.yeh@mediatek.com>
+References: <20260723035823.2041832-1-justin.yeh@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -67,751 +66,60 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-MTK: N
 
-From: Tzuyi Chang <tychang@realtek.com>
+The MT7986 driver registers two separate platform drivers (mt7986a and
+mt7986b) and used to call arch_initcall() twice, once for each.
 
-Add support for the GPIO controller found on Realtek DHC RTD1625 SoCs.
+This is fine while the driver is built-in, but a single translation unit
+can only provide one module_init(). Since arch_initcall() expands to
+module_init() when built as a module, having two of them would break the
+module build with a redefinition of init_module()/__inittest().
 
-Unlike the existing Realtek GPIO driver (drivers/gpio/gpio-rtd.c),
-which manages pins via shared bank registers, the RTD1625 introduces
-a per-pin register architecture. Each GPIO line now has its own
-dedicated 32-bit control register to manage configuration independently,
-including direction, output value, input value, interrupt enable, and
-debounce. Therefore, this distinct hardware design requires a separate
-driver.
+Fold both platform drivers into a single driver array and register them
+from one initcall using platform_register_drivers(), matching the shape of
+the other MediaTek pinctrl SoC drivers. platform_register_drivers() also
+rolls back the first registration if the second one fails.
 
-The RTD1625 GPIO controller has a hardware quirk where both 'assert'
-and 'de-assert' interrupts are fired simultaneously on any edge toggle.
-The driver works around this quirk to correctly handle edge interrupts.
+No functional change for built-in builds; this is a preparatory cleanup
+for enabling module builds.
 
-Interrupt support is optional for this device, matching the dt-bindings.
-If the interrupts property is not provided, the driver simply skips IRQ
-initialization and operates purely as a basic GPIO controller.
-
-Signed-off-by: Tzuyi Chang <tychang@realtek.com>
-Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
-Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+Signed-off-by: Justin Yeh <justin.yeh@mediatek.com>
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
-Changes in v7:
-- Replace break with return 0 in functions that only consist of a switch-case
-statement.
-- Add a comment for 'platform_get_irq_optional()'.
-- Update rtd1625_gpio_set_config() to align with the newly revised set_config
-signature.
-- Replace 'irq_domain_create_linear()' and 'devm_add_action_or_reset' with
-'devm_irq_domain_instantiate()'.
----
- drivers/gpio/Kconfig        |  14 +
- drivers/gpio/Makefile       |   1 +
- drivers/gpio/gpio-rtd1625.c | 662 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 677 insertions(+)
- create mode 100644 drivers/gpio/gpio-rtd1625.c
+ drivers/pinctrl/mediatek/pinctrl-mt7986.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index ed2bc3113374..3b402ac505f1 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -656,6 +656,20 @@ config GPIO_RTD
- 	  Say yes here to support GPIO functionality and GPIO interrupt on
- 	  Realtek DHC SoCs.
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7986.c b/drivers/pinctrl/mediatek/pinctrl-mt7986.c
+index ca468115765b..d7c7591ed231 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mt7986.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mt7986.c
+@@ -997,17 +997,16 @@ static struct platform_driver mt7986b_pinctrl_driver = {
+ 	.probe = mt7986b_pinctrl_probe,
+ };
  
-+config GPIO_RTD1625
-+	tristate "Realtek DHC RTD1625 GPIO support"
-+	depends on ARCH_REALTEK || COMPILE_TEST
-+	default ARCH_REALTEK
-+	select GPIOLIB_IRQCHIP
-+	select GPIO_REGMAP
-+	select REGMAP_MMIO
-+	help
-+	  This option enables support for the GPIO controller on Realtek
-+	  DHC (Digital Home Center) RTD1625 SoC.
-+
-+	  Say yes here to support both basic GPIO line functionality
-+	  and GPIO interrupt handling capabilities for this platform.
-+
- config GPIO_SAMA5D2_PIOBU
- 	tristate "SAMA5D2 PIOBU GPIO support"
- 	depends on OF
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 4d0e900402fc..fa14581e3995 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -160,6 +160,7 @@ obj-$(CONFIG_GPIO_REALTEK_OTTO)		+= gpio-realtek-otto.o
- obj-$(CONFIG_GPIO_REG)			+= gpio-reg.o
- obj-$(CONFIG_GPIO_ROCKCHIP)	+= gpio-rockchip.o
- obj-$(CONFIG_GPIO_RTD)			+= gpio-rtd.o
-+obj-$(CONFIG_GPIO_RTD1625)		+= gpio-rtd1625.o
- obj-$(CONFIG_ARCH_SA1100)		+= gpio-sa1100.o
- obj-$(CONFIG_GPIO_SAMA5D2_PIOBU)	+= gpio-sama5d2-piobu.o
- obj-$(CONFIG_GPIO_SCH311X)		+= gpio-sch311x.o
-diff --git a/drivers/gpio/gpio-rtd1625.c b/drivers/gpio/gpio-rtd1625.c
-new file mode 100644
-index 000000000000..5bb4fc91b24e
---- /dev/null
-+++ b/drivers/gpio/gpio-rtd1625.c
-@@ -0,0 +1,662 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Realtek DHC RTD1625 gpio driver
-+ *
-+ * Copyright (c) 2023-2026 Realtek Semiconductor Corp.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/bitops.h>
-+#include <linux/cleanup.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/gpio/regmap.h>
-+#include <linux/interrupt.h>
-+#include <linux/irqchip.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
-+#include <linux/spinlock.h>
-+#include <linux/types.h>
-+
-+#define RTD1625_GPIO_DIR BIT(0)
-+#define RTD1625_GPIO_OUT BIT(2)
-+#define RTD1625_GPIO_IN BIT(4)
-+#define RTD1625_GPIO_EDGE_INT_DP BIT(6)
-+#define RTD1625_GPIO_EDGE_INT_EN BIT(8)
-+#define RTD1625_GPIO_LEVEL_INT_EN BIT(16)
-+#define RTD1625_GPIO_LEVEL_INT_DP BIT(18)
-+#define RTD1625_GPIO_DEBOUNCE GENMASK(30, 28)
-+#define RTD1625_GPIO_DEBOUNCE_WREN BIT(31)
-+
-+#define RTD1625_GPIO_WREN(x) ((x) << 1)
-+
-+/* Write-enable masks for all GPIO configs and reserved hardware bits */
-+#define RTD1625_ISO_GPIO_WREN_ALL 0x8000aa8a
-+#define RTD1625_ISOM_GPIO_WREN_ALL 0x800aaa8a
-+
-+#define RTD1625_GPIO_DEBOUNCE_1US 0
-+#define RTD1625_GPIO_DEBOUNCE_10US 1
-+#define RTD1625_GPIO_DEBOUNCE_100US 2
-+#define RTD1625_GPIO_DEBOUNCE_1MS 3
-+#define RTD1625_GPIO_DEBOUNCE_10MS 4
-+#define RTD1625_GPIO_DEBOUNCE_20MS 5
-+#define RTD1625_GPIO_DEBOUNCE_30MS 6
-+#define RTD1625_GPIO_DEBOUNCE_50MS 7
-+
-+#define GPIO_CONTROL(gpio) ((gpio) * 4)
-+
-+static struct lock_class_key rtd1625_gpio_irq_lock_class;
-+static struct lock_class_key rtd1625_gpio_irq_request_class;
-+
-+enum rtd1625_irq_index {
-+	RTD1625_IRQ_ASSERT,
-+	RTD1625_IRQ_DEASSERT,
-+	RTD1625_IRQ_LEVEL,
-+	RTD1625_MAX_IRQS
+-static int __init mt7986a_pinctrl_init(void)
+-{
+-	return platform_driver_register(&mt7986a_pinctrl_driver);
+-}
++static struct platform_driver * const mt7986_pinctrl_drivers[] = {
++	&mt7986a_pinctrl_driver,
++	&mt7986b_pinctrl_driver,
 +};
-+
-+/**
-+ * struct rtd1625_gpio_info - Specific GPIO register information
-+ * @num_gpios: The number of GPIOs
-+ * @irq_type_support: Supported IRQ types
-+ * @base_offset: Offset for GPIO controller register
-+ * @gpa_offset: Offset for GPIO assert interrupt status register
-+ * @gpda_offset: Offset for GPIO deassert interrupt status register
-+ * @level_offset: Offset of level interrupt status register
-+ * @write_en_all: Write-enable mask for all configurable bits
-+ */
-+struct rtd1625_gpio_info {
-+	unsigned int num_gpios;
-+	unsigned int irq_type_support;
-+	unsigned int base_offset;
-+	unsigned int gpa_offset;
-+	unsigned int gpda_offset;
-+	unsigned int level_offset;
-+	unsigned int write_en_all;
-+};
-+
-+struct rtd1625_gpio {
-+	struct gpio_regmap *gpio_reg;
-+	const struct rtd1625_gpio_info *info;
-+	struct regmap *regmap;
-+	unsigned int irqs[RTD1625_MAX_IRQS];
-+	raw_spinlock_t lock;
-+	struct irq_domain *domain;
-+	unsigned int *save_regs;
-+};
-+
-+static unsigned int rtd1625_gpio_gpa_offset(struct rtd1625_gpio *data, unsigned int offset)
-+{
-+	return data->info->gpa_offset + ((offset / 32) * 4);
-+}
-+
-+static unsigned int rtd1625_gpio_gpda_offset(struct rtd1625_gpio *data, unsigned int offset)
-+{
-+	return data->info->gpda_offset + ((offset / 32) * 4);
-+}
-+
-+static unsigned int rtd1625_gpio_level_offset(struct rtd1625_gpio *data, unsigned int offset)
-+{
-+	return data->info->level_offset + ((offset / 32) * 4);
-+}
-+
-+static int rtd1625_reg_mask_xlate(struct gpio_regmap *gpio, enum gpio_regmap_operation op,
-+				  unsigned int base, unsigned int offset, unsigned int *reg,
-+				  unsigned int *mask)
-+{
-+	/* Each GPIO has its own dedicated 32-bit register */
-+	*reg = base + offset * 4;
-+
-+	switch (op) {
-+	case GPIO_REGMAP_IN:
-+		*mask = RTD1625_GPIO_IN;
-+		return 0;
-+
-+	case GPIO_REGMAP_OUT:
-+		*mask = RTD1625_GPIO_OUT;
-+		return 0;
-+
-+	case GPIO_REGMAP_SET_OP:
-+		*mask = RTD1625_GPIO_OUT;
-+		return 0;
-+
-+	case GPIO_REGMAP_GET_OP:
-+	case GPIO_REGMAP_GET_DIR_OP:
-+	case GPIO_REGMAP_SET_DIR_OP:
-+		*mask = RTD1625_GPIO_DIR;
-+		return 0;
-+
-+	default:
-+		return -ENOTSUPP;
-+	}
-+}
-+
-+static int rtd1625_value_xlate(struct gpio_regmap *gpio,
-+			       enum gpio_regmap_operation op,
-+			       unsigned int base, unsigned int offset,
-+			       unsigned int reg, unsigned int *mask,
-+			       unsigned int *val)
-+{
-+	switch (op) {
-+	case GPIO_REGMAP_SET_OP:
-+		*val |= RTD1625_GPIO_WREN(RTD1625_GPIO_OUT);
-+		*mask |= RTD1625_GPIO_WREN(RTD1625_GPIO_OUT);
-+		return 0;
-+
-+	case GPIO_REGMAP_SET_DIR_OP:
-+		*val |= RTD1625_GPIO_WREN(RTD1625_GPIO_DIR);
-+		*mask |= RTD1625_GPIO_WREN(RTD1625_GPIO_DIR);
-+		return 0;
-+
-+	default:
-+		return -ENOTSUPP;
-+	}
-+}
-+
-+static int rtd1625_gpio_set_debounce(struct rtd1625_gpio *data, unsigned int offset,
-+				     unsigned int debounce)
-+{
-+	u8 deb_val;
-+	u32 val;
-+
-+	switch (debounce) {
-+	case 1:
-+		deb_val = RTD1625_GPIO_DEBOUNCE_1US;
-+		break;
-+	case 10:
-+		deb_val = RTD1625_GPIO_DEBOUNCE_10US;
-+		break;
-+	case 100:
-+		deb_val = RTD1625_GPIO_DEBOUNCE_100US;
-+		break;
-+	case 1000:
-+		deb_val = RTD1625_GPIO_DEBOUNCE_1MS;
-+		break;
-+	case 10000:
-+		deb_val = RTD1625_GPIO_DEBOUNCE_10MS;
-+		break;
-+	case 20000:
-+		deb_val = RTD1625_GPIO_DEBOUNCE_20MS;
-+		break;
-+	case 30000:
-+		deb_val = RTD1625_GPIO_DEBOUNCE_30MS;
-+		break;
-+	case 50000:
-+		deb_val = RTD1625_GPIO_DEBOUNCE_50MS;
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	val = FIELD_PREP(RTD1625_GPIO_DEBOUNCE, deb_val) | RTD1625_GPIO_DEBOUNCE_WREN;
-+
-+	guard(raw_spinlock_irqsave)(&data->lock);
-+
-+	return regmap_write(data->regmap, data->info->base_offset + GPIO_CONTROL(offset), val);
-+}
-+
-+static int rtd1625_gpio_set_config(struct gpio_regmap *gpio, struct gpio_chip *chip,
-+				   unsigned int offset, unsigned long config)
-+{
-+	struct rtd1625_gpio *data = gpio_regmap_get_drvdata(gpio);
-+	u32 debounce;
-+
-+	if (pinconf_to_config_param(config) == PIN_CONFIG_INPUT_DEBOUNCE) {
-+		debounce = pinconf_to_config_argument(config);
-+		return rtd1625_gpio_set_debounce(data, offset, debounce);
-+	}
-+
-+	return gpiochip_generic_config(chip, offset, config);
-+}
-+
-+static void rtd1625_gpio_irq_handle(struct irq_desc *desc)
-+{
-+	unsigned int (*get_reg_offset)(struct rtd1625_gpio *gpio, unsigned int offset);
-+	struct rtd1625_gpio *data = irq_desc_get_handler_data(desc);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	unsigned int irq = irq_desc_get_irq(desc);
-+	struct irq_domain *domain = data->domain;
-+	unsigned int reg_offset, i, j, val;
-+	irq_hw_number_t hwirq;
-+	unsigned long status;
-+	u32 irq_type;
-+
-+	if (irq == data->irqs[RTD1625_IRQ_ASSERT])
-+		get_reg_offset = &rtd1625_gpio_gpa_offset;
-+	else if (irq == data->irqs[RTD1625_IRQ_DEASSERT])
-+		get_reg_offset = &rtd1625_gpio_gpda_offset;
-+	else if (irq == data->irqs[RTD1625_IRQ_LEVEL])
-+		get_reg_offset = &rtd1625_gpio_level_offset;
-+	else
-+		return;
-+
-+	chained_irq_enter(chip, desc);
-+
-+	for (i = 0; i < data->info->num_gpios; i += 32) {
-+		reg_offset = get_reg_offset(data, i);
-+		regmap_read(data->regmap, reg_offset, &val);
-+
-+		status = val;
-+
-+		/*
-+		 * Hardware quirk: The controller fires both "assert" and "de-assert"
-+		 * interrupts simultaneously on any edge toggle.
-+		 * We must pre-clear edge interrupts here. If we drop an unwanted
-+		 * de-assert interrupt below, it will never reach the IRQ core
-+		 * (generic_handle_domain_irq), meaning ->irq_ack() won't be called.
-+		 * Failing to clear it here leads to an interrupt storm.
-+		 */
-+		if (irq != data->irqs[RTD1625_IRQ_LEVEL])
-+			regmap_write(data->regmap, reg_offset, status);
-+
-+		for_each_set_bit(j, &status, 32) {
-+			hwirq = i + j;
-+			irq_type = irq_get_trigger_type(irq_find_mapping(domain, hwirq));
-+
-+			/*
-+			 * Filter out the hardware-forced de-assert interrupt unless
-+			 * the user explicitly requested IRQ_TYPE_EDGE_BOTH.
-+			 */
-+			if (irq == data->irqs[RTD1625_IRQ_DEASSERT] &&
-+			    irq_type != IRQ_TYPE_EDGE_BOTH)
-+				continue;
-+
-+			generic_handle_domain_irq(domain, hwirq);
-+		}
-+	}
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static void rtd1625_gpio_ack_irq(struct irq_data *d)
-+{
-+	struct rtd1625_gpio *data = irq_data_get_irq_chip_data(d);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+	u32 irq_type = irqd_get_trigger_type(d);
-+	u32 bit_mask = BIT(hwirq % 32);
-+	int reg_offset;
-+
-+	if (irq_type & IRQ_TYPE_LEVEL_MASK) {
-+		reg_offset = rtd1625_gpio_level_offset(data, hwirq);
-+		regmap_write(data->regmap, reg_offset, bit_mask);
-+	}
-+}
-+
-+static void rtd1625_gpio_enable_edge_irq(struct rtd1625_gpio *data, irq_hw_number_t hwirq)
-+{
-+	int gpda_reg_offset = rtd1625_gpio_gpda_offset(data, hwirq);
-+	int gpa_reg_offset = rtd1625_gpio_gpa_offset(data, hwirq);
-+	u32 clr_mask = BIT(hwirq % 32);
-+	u32 val;
-+
-+	guard(raw_spinlock_irqsave)(&data->lock);
-+
-+	regmap_write(data->regmap, gpa_reg_offset, clr_mask);
-+	regmap_write(data->regmap, gpda_reg_offset, clr_mask);
-+	val = RTD1625_GPIO_EDGE_INT_EN | RTD1625_GPIO_WREN(RTD1625_GPIO_EDGE_INT_EN);
-+	regmap_write(data->regmap, data->info->base_offset + GPIO_CONTROL(hwirq), val);
-+}
-+
-+static void rtd1625_gpio_disable_edge_irq(struct rtd1625_gpio *data, irq_hw_number_t hwirq)
-+{
-+	u32 val;
-+
-+	guard(raw_spinlock_irqsave)(&data->lock);
-+
-+	val = RTD1625_GPIO_WREN(RTD1625_GPIO_EDGE_INT_EN);
-+	regmap_write(data->regmap, data->info->base_offset + GPIO_CONTROL(hwirq), val);
-+}
-+
-+static void rtd1625_gpio_enable_level_irq(struct rtd1625_gpio *data, irq_hw_number_t hwirq)
-+{
-+	int level_reg_offset = rtd1625_gpio_level_offset(data, hwirq);
-+	u32 clr_mask = BIT(hwirq % 32);
-+	u32 val;
-+
-+	guard(raw_spinlock_irqsave)(&data->lock);
-+
-+	regmap_write(data->regmap, level_reg_offset, clr_mask);
-+	val = RTD1625_GPIO_LEVEL_INT_EN | RTD1625_GPIO_WREN(RTD1625_GPIO_LEVEL_INT_EN);
-+	regmap_write(data->regmap, data->info->base_offset + GPIO_CONTROL(hwirq), val);
-+}
-+
-+static void rtd1625_gpio_disable_level_irq(struct rtd1625_gpio *data, irq_hw_number_t hwirq)
-+{
-+	u32 val;
-+
-+	guard(raw_spinlock_irqsave)(&data->lock);
-+
-+	val = RTD1625_GPIO_WREN(RTD1625_GPIO_LEVEL_INT_EN);
-+	regmap_write(data->regmap, data->info->base_offset + GPIO_CONTROL(hwirq), val);
-+}
-+
-+static void rtd1625_gpio_enable_irq(struct irq_data *d)
-+{
-+	struct rtd1625_gpio *data = irq_data_get_irq_chip_data(d);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+	u32 irq_type = irqd_get_trigger_type(d);
-+
-+	gpio_regmap_enable_irq(data->gpio_reg, hwirq);
-+
-+	if (irq_type & IRQ_TYPE_EDGE_BOTH)
-+		rtd1625_gpio_enable_edge_irq(data, hwirq);
-+	else if (irq_type & IRQ_TYPE_LEVEL_MASK)
-+		rtd1625_gpio_enable_level_irq(data, hwirq);
-+}
-+
-+static void rtd1625_gpio_disable_irq(struct irq_data *d)
-+{
-+	struct rtd1625_gpio *data = irq_data_get_irq_chip_data(d);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+	u32 irq_type = irqd_get_trigger_type(d);
-+
-+	if (irq_type & IRQ_TYPE_EDGE_BOTH)
-+		rtd1625_gpio_disable_edge_irq(data, hwirq);
-+	else if (irq_type & IRQ_TYPE_LEVEL_MASK)
-+		rtd1625_gpio_disable_level_irq(data, hwirq);
-+
-+	gpio_regmap_disable_irq(data->gpio_reg, hwirq);
-+}
-+
-+static int rtd1625_gpio_irq_set_level_type(struct irq_data *d, bool level)
-+{
-+	u32 val = RTD1625_GPIO_WREN(RTD1625_GPIO_LEVEL_INT_DP);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+	struct rtd1625_gpio *data;
-+	int ret;
-+
-+	data = irq_data_get_irq_chip_data(d);
-+	if (!(data->info->irq_type_support & IRQ_TYPE_LEVEL_MASK))
-+		return -EINVAL;
-+
-+	if (level)
-+		val |= RTD1625_GPIO_LEVEL_INT_DP;
-+
-+	scoped_guard(raw_spinlock_irqsave, &data->lock) {
-+		ret = regmap_write(data->regmap, data->info->base_offset + GPIO_CONTROL(hwirq), val);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	irq_set_handler_locked(d, handle_level_irq);
-+
-+	return 0;
-+}
-+
-+static int rtd1625_gpio_irq_set_edge_type(struct irq_data *d, bool polarity)
-+{
-+	struct rtd1625_gpio *data = irq_data_get_irq_chip_data(d);
-+	u32 val = RTD1625_GPIO_WREN(RTD1625_GPIO_EDGE_INT_DP);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+	int ret;
-+
-+	if (!(data->info->irq_type_support & IRQ_TYPE_EDGE_BOTH))
-+		return -EINVAL;
-+
-+	if (polarity)
-+		val |= RTD1625_GPIO_EDGE_INT_DP;
-+
-+	scoped_guard(raw_spinlock_irqsave, &data->lock)
-+		ret = regmap_write(data->regmap, data->info->base_offset + GPIO_CONTROL(hwirq), val);
-+
-+	if (ret)
-+		return ret;
-+
-+	irq_set_handler_locked(d, handle_edge_irq);
-+
-+	return 0;
-+}
-+
-+static int rtd1625_gpio_irq_set_type(struct irq_data *d, unsigned int type)
-+{
-+	switch (type & IRQ_TYPE_SENSE_MASK) {
-+	case IRQ_TYPE_EDGE_RISING:
-+		return rtd1625_gpio_irq_set_edge_type(d, 1);
-+
-+	case IRQ_TYPE_EDGE_FALLING:
-+		return rtd1625_gpio_irq_set_edge_type(d, 0);
-+
-+	case IRQ_TYPE_EDGE_BOTH:
-+		return rtd1625_gpio_irq_set_edge_type(d, 1);
-+
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		return rtd1625_gpio_irq_set_level_type(d, 0);
-+
-+	case IRQ_TYPE_LEVEL_LOW:
-+		return rtd1625_gpio_irq_set_level_type(d, 1);
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int rtd1625_gpio_irq_request_resources(struct irq_data *d)
-+{
-+	struct rtd1625_gpio *data = irq_data_get_irq_chip_data(d);
-+
-+	return gpio_regmap_reqres_irq(data->gpio_reg, d->hwirq);
-+}
-+
-+static void rtd1625_gpio_irq_release_resources(struct irq_data *d)
-+{
-+	struct rtd1625_gpio *data = irq_data_get_irq_chip_data(d);
-+
-+	gpio_regmap_relres_irq(data->gpio_reg, d->hwirq);
-+}
-+
-+static struct irq_chip rtd1625_iso_gpio_irq_chip = {
-+	.name = "rtd1625-gpio",
-+	.irq_ack = rtd1625_gpio_ack_irq,
-+	.irq_mask = rtd1625_gpio_disable_irq,
-+	.irq_unmask = rtd1625_gpio_enable_irq,
-+	.irq_set_type = rtd1625_gpio_irq_set_type,
-+	.flags = IRQCHIP_IMMUTABLE | IRQCHIP_SKIP_SET_WAKE,
-+	.irq_request_resources = rtd1625_gpio_irq_request_resources,
-+	.irq_release_resources = rtd1625_gpio_irq_release_resources,
-+};
-+
-+static int rtd1625_gpio_setup_irq(struct platform_device *pdev, struct rtd1625_gpio *data)
-+{
-+	unsigned int num_irqs;
-+	int irq;
-+
-+	/* IRQ is optional; operate as basic GPIO if absent */
-+	irq = platform_get_irq_optional(pdev, 0);
-+	if (irq == -ENXIO)
-+		return 0;
-+	if (irq < 0)
-+		return irq;
-+
-+	num_irqs = (data->info->irq_type_support & IRQ_TYPE_LEVEL_MASK) ? 3 : 2;
-+
-+	for (unsigned int i = 0; i < num_irqs; i++) {
-+		irq = platform_get_irq(pdev, i);
-+		if (irq < 0)
-+			return irq;
-+
-+		data->irqs[i] = irq;
-+		irq_set_chained_handler_and_data(data->irqs[i], rtd1625_gpio_irq_handle, data);
-+	}
-+
-+	return 0;
-+}
-+
-+static int rtd1625_gpio_irq_map(struct irq_domain *domain, unsigned int irq,
-+				irq_hw_number_t hwirq)
-+{
-+	struct rtd1625_gpio *data = domain->host_data;
-+
-+	irq_set_chip_data(irq, data);
-+
-+	irq_set_chip_and_handler(irq, &rtd1625_iso_gpio_irq_chip, handle_bad_irq);
-+
-+	irq_set_noprobe(irq);
-+
-+	irq_set_lockdep_class(irq, &rtd1625_gpio_irq_lock_class,
-+			      &rtd1625_gpio_irq_request_class);
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops rtd1625_gpio_irq_domain_ops = {
-+	.map = rtd1625_gpio_irq_map,
-+	.xlate = irq_domain_xlate_twocell,
-+};
-+
-+static const struct regmap_config rtd1625_gpio_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+#ifndef CONFIG_DEBUG_GPIO
-+	.disable_locking = true,
-+#endif
-+};
-+
-+static int rtd1625_gpio_probe(struct platform_device *pdev)
-+{
-+	struct gpio_regmap_config config = {};
-+	struct irq_domain_info d_info = {};
-+	struct device *dev = &pdev->dev;
-+	struct gpio_regmap *gpio_reg;
-+	struct rtd1625_gpio *data;
-+	void __iomem *irq_base;
-+	int ret;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->info = device_get_match_data(dev);
-+	if (!data->info)
-+		return -ENODATA;
-+
-+	irq_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(irq_base))
-+		return PTR_ERR(irq_base);
-+
-+	data->regmap = devm_regmap_init_mmio(dev, irq_base, &rtd1625_gpio_regmap_config);
-+	if (IS_ERR(data->regmap))
-+		return PTR_ERR(data->regmap);
-+
-+	raw_spin_lock_init(&data->lock);
-+	platform_set_drvdata(pdev, data);
-+
-+	data->save_regs = devm_kcalloc(dev, data->info->num_gpios, sizeof(*data->save_regs),
-+				       GFP_KERNEL);
-+	if (!data->save_regs)
-+		return -ENOMEM;
-+
-+	config.parent = dev;
-+	config.regmap = data->regmap;
-+	config.ngpio = data->info->num_gpios;
-+	config.reg_dat_base = data->info->base_offset;
-+	config.reg_set_base = data->info->base_offset;
-+	config.reg_dir_out_base = data->info->base_offset;
-+
-+	config.reg_mask_xlate = rtd1625_reg_mask_xlate;
-+	config.set_config = rtd1625_gpio_set_config;
-+	config.value_xlate = rtd1625_value_xlate;
-+
-+	d_info.fwnode = dev_fwnode(&pdev->dev);
-+	d_info.size = data->info->num_gpios;
-+	d_info.hwirq_max = data->info->num_gpios;
-+	d_info.ops = &rtd1625_gpio_irq_domain_ops;
-+	d_info.host_data = data;
-+
-+	data->domain = devm_irq_domain_instantiate(dev, &d_info);
-+	if (IS_ERR(data->domain))
-+		return PTR_ERR(data->domain);
-+
-+	ret = rtd1625_gpio_setup_irq(pdev, data);
-+	if (ret)
-+		return ret;
-+
-+	config.irq_domain = data->domain;
-+	config.drvdata = data;
-+
-+	gpio_reg = devm_gpio_regmap_register(dev, &config);
-+	if (IS_ERR(gpio_reg))
-+		return PTR_ERR(gpio_reg);
-+
-+	data->gpio_reg = gpio_reg;
-+
-+	return 0;
-+}
-+
-+static const struct rtd1625_gpio_info rtd1625_iso_gpio_info = {
-+	.num_gpios        = 166,
-+	.irq_type_support = IRQ_TYPE_EDGE_BOTH,
-+	.base_offset      = 0x100,
-+	.gpa_offset       = 0x000,
-+	.gpda_offset      = 0x020,
-+	.write_en_all     = RTD1625_ISO_GPIO_WREN_ALL,
-+};
-+
-+static const struct rtd1625_gpio_info rtd1625_isom_gpio_info = {
-+	.num_gpios        = 4,
-+	.irq_type_support = IRQ_TYPE_EDGE_BOTH | IRQ_TYPE_LEVEL_LOW |
-+			    IRQ_TYPE_LEVEL_HIGH,
-+	.base_offset      = 0x20,
-+	.gpa_offset       = 0x00,
-+	.gpda_offset      = 0x04,
-+	.level_offset     = 0x18,
-+	.write_en_all     = RTD1625_ISOM_GPIO_WREN_ALL,
-+};
-+
-+static int rtd1625_gpio_suspend(struct device *dev)
-+{
-+	struct rtd1625_gpio *data = dev_get_drvdata(dev);
-+	const struct rtd1625_gpio_info *info = data->info;
-+	int ret;
-+
-+	for (unsigned int i = 0; i < info->num_gpios; i++) {
-+		ret = regmap_read(data->regmap, data->info->base_offset + GPIO_CONTROL(i),
-+				  &data->save_regs[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int rtd1625_gpio_resume(struct device *dev)
-+{
-+	struct rtd1625_gpio *data = dev_get_drvdata(dev);
-+	const struct rtd1625_gpio_info *info = data->info;
-+	int ret;
-+
-+	for (unsigned int i = 0; i < info->num_gpios; i++) {
-+		ret = regmap_write(data->regmap, data->info->base_offset + GPIO_CONTROL(i),
-+				   data->save_regs[i] | info->write_en_all);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static DEFINE_NOIRQ_DEV_PM_OPS(rtd1625_gpio_pm_ops, rtd1625_gpio_suspend, rtd1625_gpio_resume);
-+
-+static const struct of_device_id rtd1625_gpio_of_matches[] = {
-+	{ .compatible = "realtek,rtd1625-iso-gpio", .data = &rtd1625_iso_gpio_info },
-+	{ .compatible = "realtek,rtd1625-isom-gpio", .data = &rtd1625_isom_gpio_info },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, rtd1625_gpio_of_matches);
-+
-+static struct platform_driver rtd1625_gpio_platform_driver = {
-+	.driver = {
-+		.name = "gpio-rtd1625",
-+		.of_match_table = rtd1625_gpio_of_matches,
-+		.pm = pm_sleep_ptr(&rtd1625_gpio_pm_ops),
-+	},
-+	.probe = rtd1625_gpio_probe,
-+};
-+module_platform_driver(rtd1625_gpio_platform_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Realtek Semiconductor Corporation");
-+MODULE_DESCRIPTION("Realtek DHC SoC RTD1625 gpio driver");
+ 
+-static int __init mt7986b_pinctrl_init(void)
++static int __init mt7986_pinctrl_init(void)
+ {
+-	return platform_driver_register(&mt7986b_pinctrl_driver);
++	return platform_register_drivers(mt7986_pinctrl_drivers,
++					 ARRAY_SIZE(mt7986_pinctrl_drivers));
+ }
+-
+-arch_initcall(mt7986a_pinctrl_init);
+-arch_initcall(mt7986b_pinctrl_init);
++arch_initcall(mt7986_pinctrl_init);
+ 
+ MODULE_IMPORT_NS("MTK_PINCTRL");
 -- 
-2.43.0
+2.45.2
 
