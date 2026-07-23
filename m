@@ -1,127 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB8844E673;
-	Thu, 23 Jul 2026 16:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217D12F39C2;
+	Thu, 23 Jul 2026 16:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784822983; cv=none; b=YLKeWO/BTZ+tgqN3hgfgGI4r+D2VUtwvW3pwIpbApiiA+TrG+viHSCx9ixh+RiU5TJNECLlehHyrMlnJpiPAUA0G9HyLOP9XjACy+Y4L4csShA0Xoe/OWyDwZUU+MA448PTaPjvW1DZmVja77zBRJswbJR+cJjVGF02ISj7VQik=
+	t=1784823781; cv=none; b=UwwTR+73KivihJABv0oZNSd8FPhSOSheITcm4hRFAdk0fI2+AVoRNcZpNOxhosvLPdvIoH/k1ik2B4Z/tmwS6HPOyFRMHrWNe1J69/9RVeUKmTOeKOUQMnrh7hElRWjs+R2vSchmNag3c73p8HHl5sK6vH3p3jIQFCZDrwHvR60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784822983; c=relaxed/simple;
-	bh=YOF2JRGGWtjEehzpg7p0oT5mqjZwqIGVErmwoc7xegQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hsdGjvtCtyRKxM6nEhcaHv7Wj4W5APTTqm6hn1uFGA/fOCRC4cWxE5yxIjEwIyloQTeULgbJGvnCGWACglh+sp9PNDp96h0WAEZTDYlP8AvPI5dANj1gNxGHw6bEsX/YXbaNhKgUO0rTXsG4j/1b9i2KiDWaOvbFlURh9VhRZjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQ9obW/q; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784823781; c=relaxed/simple;
+	bh=Z5ri1e7p0GBMcGQRKmcWT/Ohx1/Nc4ixnJm6BsQJtYo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=sZnc2shhToDGT6nq/ZO3NGCdBTZgVfGk2OalzxP4p+zLBWyLfN4d4ZGXEDzlTUQA7t8qulUQk0PRWspXSIbZOge2yxJAdOyx48RhnKjxtb/39VYK/V5a+ZTrWVWKvkamcT2cyCubiSJBNYZprr1WJx+dXZdl82GcncDEJ8+wXCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BT+JG3zK; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQ9obW/q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A9A71F000E9;
-	Thu, 23 Jul 2026 16:09:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784822981;
-	bh=HJi66KtxyLe2LRiVlDYerzBcPkeznw3DkhUnpM3KNzY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EQ9obW/qrw+YZKZpwx4Kw+5+IOrs16/voCVos7NDTdJqSEJbrjTjtD5IeWXayAa49
-	 gYeTz/8EkyojvQSAPrsE1KlwOEozel3w5CA0jvFEVbjYbgKFEu5f97GgkB9IFZGtzs
-	 d4WjmDTlITEWdG2ge+U/wKPaPjba6b30bqIwTll5TuFeBDO9FmQhKJjxrg4/tcoq40
-	 wak+gByzQx/Jv1cHrxAjGcw7cW223mdPFAfZIaTICxOLBlDuifj6q9S9yfNLhPbTnu
-	 pZSUg0kMjHvviwpozsFpQgCm2ko06qXwesD6H+ifHyUPakmNjzWkmigwF06SwkAp26
-	 AqGXUwOSm/vfQ==
-Date: Thu, 23 Jul 2026 17:09:33 +0100
-From: Lee Jones <lee@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-gpio@vger.kernel.org, David Jander <david@protonic.nl>
-Subject: Re: [PATCH v15 2/6] platform: misc: add NXP MC33978/MC34978 core
- driver
-Message-ID: <20260723160933.GD3526803@google.com>
-References: <20260710101358.2606941-1-o.rempel@pengutronix.de>
- <20260710101358.2606941-3-o.rempel@pengutronix.de>
- <20260723145300.GO3363113@google.com>
- <amItd-189DyfS52Y@pengutronix.de>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BT+JG3zK"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 7F4131A118D;
+	Thu, 23 Jul 2026 16:22:54 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4FB0D6038D;
+	Thu, 23 Jul 2026 16:22:54 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 162FC11C111F8;
+	Thu, 23 Jul 2026 18:22:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1784823773; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=P9FjUcSgxHdEsXMburt0XM1gJPAJd7G58Z7kpvKR4BA=;
+	b=BT+JG3zKFc9b2QG4EFyMoTUIsGOTnYiKwfSWNhqsITpOPdBro9YvKAUZPqptOifCf2IOKV
+	rczJfSkuIbN9v2oB6s/ROmZHMWzKXQPOY3ld9saf0SNKVllzkp1ZZjdvN6a7qlM8V0+j1E
+	ZCd67EY2vLwamdsqCxxR+icVDdULNu5iX/2IhpBTQVaDDbi7ExCAyA1RSB/bR/8CgIEq5B
+	3fqQKol1rl4z0cfvRwoSh7TlJ30VesZ8EtrAoThhRuCbRC3iJTTvl3YComTRguzwE4EXmh
+	x/97kBvpa8VoWrLvAryDpetdUpc4HB+VgiDpxVmv81J3gzFqhx53HUCNZrbVwg==
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <amItd-189DyfS52Y@pengutronix.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 23 Jul 2026 18:22:47 +0200
+Message-Id: <DK637ZCIRBUN.2YESFM7RFP8PM@bootlin.com>
+Subject: Re: [PATCH v7 9/9] gpio: realtek: Add driver for Realtek DHC
+ RTD1625 SoC
+Cc: <dlechner@baylibre.com>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux@analog.com>,
+ <linux-iio@vger.kernel.org>, <cy.huang@realtek.com>,
+ <james.tai@realtek.com>
+From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
+To: "Yu-Chun Lin" <eleanor.lin@realtek.com>, <linusw@kernel.org>,
+ <andriy.shevchenko@intel.com>, <mwalle@kernel.org>, <brgl@kernel.org>,
+ <tychang@realtek.com>, <wbg@kernel.org>, <nuno.sa@analog.com>,
+ <Michael.Hennerich@analog.com>, <jic23@kernel.org>, <andy@kernel.org>,
+ <u.kleine-koenig@baylibre.com>, <dakr@kernel.org>, <bhelgaas@google.com>,
+ <o-takashi@sakamocchi.jp>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20260723034237.2501507-1-eleanor.lin@realtek.com>
+ <20260723034237.2501507-10-eleanor.lin@realtek.com>
+In-Reply-To: <20260723034237.2501507-10-eleanor.lin@realtek.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, 23 Jul 2026, Oleksij Rempel wrote:
+On Thu Jul 23, 2026 at 5:42 AM CEST, Yu-Chun Lin wrote:
 
-> On Thu, Jul 23, 2026 at 03:53:00PM +0100, Lee Jones wrote:
-> > On Fri, 10 Jul 2026, Oleksij Rempel wrote:
-> > 
-> > > Add the core support module for the NXP MC33978 and MC34978 Multiple
-> > > Switch Detection Interfaces (MSDI).
-> > > 
-> > > The MC33978/MC34978 devices provide 22 switch detection inputs, analog
-> > > multiplexing (AMUX), and comprehensive hardware fault detection.
-> > > 
-> > > This core module handles:
-> > > - SPI communications via a custom regmap bus to support the device's
-> > >   pipelined two-frame MISO response requirement.
-> > > - Interrupt demultiplexing, utilizing an irq_domain to provide 22 virtual
-> > >   IRQs for switch state changes and 1 virtual IRQ for hardware faults.
-> > > - Inline status harvesting from the SPI MSB to detect and trigger events
-> > >   without requiring dedicated status register polling.
-> > > 
-> > > It exports mc33978_core_init(), called by the MFD driver added in the
-> > > following patch. CONFIG_MC33978_CORE carries no prompt and is selected
-> > > by CONFIG_MFD_MC33978, so this patch alone builds nothing new.
-> > > 
-> > > Note: The device currently lacks suspend/resume power management
-> > > callbacks. If the system enters a sleep state cutting power to
-> > > VDDQ/VBATP, the device will wake up in POR state with hardware interrupt
-> > > masks reset. Power management support is intentionally deferred for now.
-> > > 
-> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > > ---
-> > > changes v15:
-> > > - Split out of the MFD patch, as requested by Lee Jones. The register
-> > >   definitions in include/linux/mfd/mc33978.h are carried here rather than
-> > >   with the MFD driver because this module includes them, keeping every
-> > >   commit individually buildable.
-> > 
-> > I can't help feeling that this is a hack.
-> > 
-> > When I suggested moving the functional parts out, I meant properly
-> > separating off and compartmentalising.  Instead, a huge slice has been
-> > taken out of the initial submission's MFD driver and dumped into the
-> > wild west that is drivers/platform.  Worse still; we're masquerading as
-> > the MFD since the MFD's 'dev' pointer is being passed through so
-> > everything here is operating as though it's the parent device.  You've
-> > created half library / half MFD.
-> > 
-> > I get that we're on v15 and there's still a lot to do, but I guess
-> > that's what happens when 3500 lines of code is submitted at the same
-> > time.
-> > 
-> > My suggestion is to return to first principles; what lives where?
-> > 
-> > Allocating of shared resources, including the various regmaps, IRQs and
-> > domains should live in the MFD subsystem - that's literally what it's
-> > for. 
-> 
-> This is exactly, what you suggest do move to the separate location.
-> 
-> > Anything that does-a-thing, should be allocated a proper subsystem
-> > and platform drivers should be created.
-> 
-> Every thing you suggest to move is making regmap and irq work in
-> the first place.
+Hi,
 
-Let me know if the above doesn't make sense and I'll try to find another
-way to put it.  Essentially slicing the code out and simply relocating
-it, but still operating as the same (MFD) platform device, is not an
-acceptable strategy.  When I suggested that it should be moved, I meant
-properly separated, not just sliced and shifted.
+> From: Tzuyi Chang <tychang@realtek.com>
+> +static void rtd1625_gpio_irq_handle(struct irq_desc *desc)
+> +{
+> +	unsigned int (*get_reg_offset)(struct rtd1625_gpio *gpio, unsigned int =
+offset);
+> +	struct rtd1625_gpio *data =3D irq_desc_get_handler_data(desc);
+> +	struct irq_chip *chip =3D irq_desc_get_chip(desc);
+> +	unsigned int irq =3D irq_desc_get_irq(desc);
+> +	struct irq_domain *domain =3D data->domain;
+> +	unsigned int reg_offset, i, j, val;
+> +	irq_hw_number_t hwirq;
+> +	unsigned long status;
+> +	u32 irq_type;
+> +
+> +	if (irq =3D=3D data->irqs[RTD1625_IRQ_ASSERT])
+> +		get_reg_offset =3D &rtd1625_gpio_gpa_offset;
+> +	else if (irq =3D=3D data->irqs[RTD1625_IRQ_DEASSERT])
+> +		get_reg_offset =3D &rtd1625_gpio_gpda_offset;
+> +	else if (irq =3D=3D data->irqs[RTD1625_IRQ_LEVEL])
+> +		get_reg_offset =3D &rtd1625_gpio_level_offset;
+> +	else
+> +		return;
+> +
+> +	chained_irq_enter(chip, desc);
+> +
+> +	for (i =3D 0; i < data->info->num_gpios; i +=3D 32) {
+> +		reg_offset =3D get_reg_offset(data, i);
+> +		regmap_read(data->regmap, reg_offset, &val);
+> +
+> +		status =3D val;
 
--- 
-Lee Jones
+Can the regmap_read() fail here? We are not checking its return, so
+maybe status will contain garbage?
+
+Thanks,
+Mathieu
+
+--=20
+Mathieu Dubois-Briand, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
