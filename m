@@ -1,968 +1,114 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7492747F2C4
-	for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 12:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784808898; cv=pass; b=VBsZoaDV9pFf/pJidSD7bG5yobnm7t/bJx8d+USO7rwi9RbJ13ohNvPX7o20Y8IScleUDDt/vLmx28h3e5bVIbgdRhDtH4VFg/4pWAuZ7LkL/gy/m/47V7jX8oqRN6QvOimiJRbqaM8tJurDpstJDssc4dr86MLIxpVtQ1q29Ac=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784808898; c=relaxed/simple;
-	bh=PNpa7UBnWJrPWSVe+I6P10UM5prlXE3CiMLCucrHEJw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mdhxNCAawFQlb2ZAbiVtTineXEyfBlxeb81qSNVeRTZfeOVC9b+NQtF3aJfH0T7FlCLT6Ek2VjjzOtim38Ke82tfNHVk90VDDk7CTG1XYfAxenPspbgD8TejmwLhdVmx6pNT/+yfwYUYk0BsZ7dmOV14D5YA2E3nMCOV3W5wS88=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CHculerd; arc=pass smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D734E47B438;
+	Thu, 23 Jul 2026 12:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784808982; cv=none; b=Ke1261YmOAna01EKXREVjogwZb2va49Qka2Ik+rBSgtenS3qkALix/bsiGnzQI08BZy8E2I8s4lsZZRkrNC7Jm0kfJKoyclKhZ/4QfYj+p8tonEdilXuRmeWysZbodlDfemOA1oIce4V41D9T3v2cwcvrIsoxGXw1BK1ryZ7z0o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784808982; c=relaxed/simple;
+	bh=acq9QW+tCPQn2F9KVZyz2gGwmTePtG0W0d6OAWN/S7o=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=hXdqRvJ/7hHDxhsL47j89m0EBFg6NXts6yp3i8g7QhMLNsEeHai2+LSEjtFRzKABG0enSz22CesflKJta3Qd9uZKi7rPQmTZW6hZHwGfoYh12MC1lqNve2i1PJ0WTb8YxE9NGn5dWLpTpiJWw4RerXbUTOKUltVh7k/Q4d0/hwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Cb9wKw27; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y8oEfnvp; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CHculerd"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-698aa7ba3e6so946432a12.1
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 05:14:53 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784808891; cv=none;
-        d=google.com; s=arc-20260327;
-        b=QQXOOX65KeW4mUWDyO6MZNM+G3LJdf/K//uAEHgHRv0E1wieh9lyaP+z+hIevQuYXd
-         /5Ev7FmiJNWLRFRng7/ABV8o7gTFs6tA4ScsKI8jIffiFOlNF3LlT+hYnEIf25zS5qt8
-         291VOh+hcSsTf8F9v51472LLzkC9ENzXaVQ69NYn361kxUjZxQuqmI5GSYJ6DRYqMNUJ
-         Y8eXLmPc4cRA8MdGWXwIMmIQttIG/DSB5I5cSSf4AaqCMv7RWiq0E/1AEpi+UEOjL3Y7
-         TtycOoYXAXXs+5Z3uEj/ulhcgfgr93+R4r2aLJ6PTL1d86Jf84KmWfSvtoOuYADysu9l
-         QMMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=87JDpxU7wWz5t+Fbx4Cp5YJ1m59hVHmfKijZmjgZ1YY=;
-        fh=1BDXGt1rT/E2rE3v4zldp+1FPh8i+1bWcEGM6y/Tzs8=;
-        b=d+iT1g8aSp4rb7CxsZTPILKKGzXr1SafK/TLY/j1RbGilXPHCoDYBzBNEX3qakL0LF
-         u1/J49fjNba9kckhbFPQ2l/dCA2UnE5jQSJqCVmq528N3Kg73N6XXf7wq0ozqh0AeEK4
-         GlRiUkIsKdQeTOnOd2HzbXwYJV97hXCjcBekDW/Lc6bSbec0ApuQjBd1D0ZqjDSwIW6v
-         a9Fd38VbK2j57wh6I2TXnnWKYrymWbm1bGg0Hz4n5Cxg59LvjayNA5n4uyOCNnh59cz2
-         syn1DaFfEPCO5qu9Kc6yLi2cII//sVGZTsSbr3MzVeXRbieYnllM076nUA0CsjnLM1pF
-         WObw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1784808891; x=1785413691; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=87JDpxU7wWz5t+Fbx4Cp5YJ1m59hVHmfKijZmjgZ1YY=;
-        b=CHculerdhKIKyJmbgHKsEC8Vz8qu6uqlMnlwUNQnMVVeNg30/MQLxxplMt/tJT8UcL
-         9a+5D07qX/2oeWDbDlPEX+GKYA8VhfiOvyx2etLj2FRIMIrbyP46X25EJRFjZdQ7aXMd
-         0xQ0h8mURdX8bxbe+aOV4mx2avhqjPuigFB83Qn0DmhY7uACcl7MleKMFpkirQEp0saP
-         BGmNAlUAWmT045FSqiNSL23/h3IHwUYdOI+eIiBL2ItoMi1v8abhAUR40bx8WuaZkHLZ
-         DBi4j0lz6UI7W2eXFoqCCuQv6EWkkIXQcd5UDnxGcIzPyeWqsxlfA1zNssmFNimoj5M5
-         OytQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784808891; x=1785413691;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=87JDpxU7wWz5t+Fbx4Cp5YJ1m59hVHmfKijZmjgZ1YY=;
-        b=cpDLpFSfEXCawLcqJyaPiZ38nq4cdXwA964hHZ0+nj6KAS3zjLZlNtJcKaq4CyCrRO
-         NXQAF0WTd5urGlsBxPwDCOLxoVgTK8v7Jzbs+i9bNbkem3Lx3dJ2n814hwiShwEyxAhp
-         1+yOEiwb93SSmIS6LvwNwVXyIGfGsA1aC3ROG9IDscowOdi4+l4voZ3ej4ULdQKtu6BJ
-         Wy3xvza9ZJH98CCkWwQsbCAYFSUPPBfF+vZ+dgs5kXo9oO4LtKJwCulvJKdKFeca0lFj
-         o50oS0VbuuQgsEWqWl8jeHoillllIIVCSg3EaPvL7KtHAZTVlFHyBP5IA7G0qsGacvok
-         TJjw==
-X-Forwarded-Encrypted: i=1; AHgh+RplV0pMs1bbHqS6hCZRHQi+q1SYCTg3quXLH3N+lg/wdF8+7ZkeHUL51YxkwHiiNIq7yPZjVPaom2X6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZnkgiXO+/s2loaXjQoFn/uEIdWHfaxicJEtbGcYcdPYPu3sXy
-	KF6g+6HJhl4JXTy/WwN/47/drsC4FzDI9fd8BP50ATgNCkIffNcVIlZazQ+PVjW8rM7+LFETMs2
-	++xXA3sm9eBLL5TTuqVJWnM88hpnnmpon4vGtA7wf5A==
-X-Gm-Gg: AR+sD10GdogzD+LwQt6yfI5/V7b0WQzj+abwMm5qhlnzYSRdcgRwH8DnY7NFJQ/gCOw
-	Wb5fMQBsSpEj6zfyJ7xICOt4GlW5tgSrHdw/yhnW5d2Nn28joRrSGJdWXfPOgMys5aCUaaIHz6u
-	sHOJy3RaRqSSHPQ/Q1VogdoLstgLp4/UOR/N/9dz2UmUwhqapcHhGxdqrTyoajP26UVJC5rp52J
-	dRwaje6u/30iYGG4I+t94rIQSfEp3jyoD9HR3BRJkmn5ZGwPGIUju1HJuPCYNUd552CAONG2IFP
-	PC6PvTArgBp448egdnjX
-X-Received: by 2002:a05:6402:528a:b0:698:76b8:e552 with SMTP id
- 4fb4d7f45d1cf-69f6bc1a1eamr1066118a12.2.1784808891200; Thu, 23 Jul 2026
- 05:14:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Cb9wKw27";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y8oEfnvp"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 599EB7A011B;
+	Thu, 23 Jul 2026 08:16:16 -0400 (EDT)
+Received: from phl-imap-05 ([10.202.2.95])
+  by phl-compute-04.internal (MEProxy); Thu, 23 Jul 2026 08:16:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1784808976;
+	 x=1784895376; bh=14t1TMjpilEolEOjic5EqK38UqnN04B3EYUwaj3d87M=; b=
+	Cb9wKw27mVzrxMFrlU4fyVHuF+S2gETLiFEsK+pMgEoJ9LWyKrCqmXgvP7E9As43
+	j5yYnVJRkTRHKmJHFzld883AEq38VL70oQEPkpj1dl4FMLZ8DZ5W+x+7/QLHgdQ4
+	XLJSWX+gz9eijQu5+tipUJquuJtWCpYBgBvFGoG10EikEAguXJVD0aNXpOOSwThe
+	sYQDNkQ0B+c6r7ercUzdN32h4FQDJJce4RLTpKaxB4HCKJ/bAdZRAyT7zcClwmd8
+	xG7rCTmeYKwU6HjMNJmH9x9/M7uiVgnTh7BU4V7brswwfA/lLvrGcpEahWJ+L1ZV
+	AvSZX4TvNJ6iSbdYihlrbQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1784808976; x=
+	1784895376; bh=14t1TMjpilEolEOjic5EqK38UqnN04B3EYUwaj3d87M=; b=Y
+	8oEfnvpgVhxyu3UK7FO2qxvMsTow68OmxmJZeOl/Kyc5041IXfJii8Hjs3MGIVbo
+	fxcsWyZ5CEcADix++OGI9yhoIWtoffH0khbnybkTDyLSMFSehkv3JFXMrXyczidI
+	3PMSllmBVTWbFMBbEKtQUvGcR46hkNAx8UL+NWksDc8LvvP7SdZtlmTuyZhpBSmQ
+	hesWwvaHsDNLwV9h3BrBIrf85Dj7c8S2ZRabljl/bDP//KD0+SzTefVh3ERi4W+E
+	ZwHvJBAcZgjb4yu8cJZbbeXQk86qTXrRAsG1BPrD1YIVpxLfYmt5LYjHS1rowWjm
+	alzlAZM7ycsYiff+pM7dQ==
+X-ME-Sender: <xms:DwZiajWo49ll-8k1pScNhkNWd_w-_8V4xd7aQilAfgqdoK4SXKNdZg>
+    <xme:DwZiamYQeTG3g4jRv9vxey5YsKVKrPDkxckHpC8JeGN_9kC2DmHJ2f6vQxzf45sQA
+    ZUELL-D1-cJgV9s2uBjBy2vJESsbdsimIewVfqmq3_og8mMSmsTgw>
+X-ME-Proxy-Cause: dmFkZTGolp6pP6uLBUPW9eYTPUJ1Al3jJBVJgTCYLowGe3BUjsCn/s7NVePCr6l4BHwKKh
+    BCKTY8DQoFb0j4Gkgnz1c0H/rT51jisr3iR0e7xuxyjVus6hCEA4uTbA4VybZoowj75P2O
+    oBUsqw5DNxCXdFRRmNdRpkFjQ5Vww58ppvmty0/U3Ktx9XPF+0M3dgsoAyiK45mCRmqZTf
+    aA8Tr3EK9wrsNR72sdhXo7W5B2t33K8p89SOVVjySSaRVjpClcThz5oVqjH5QU84nxfsnK
+    /TyAR2Kgy9gEblFCWLGYi8l+ymCPObp90D0LYFGsIcCEiz8zzttzC5sTcCLXVe5ZXXodCJ
+    JaEz2ZAxe+dsElqu1q37hSCuvp1Xq5g8R3pE7oyAlu/b+ivmgA4zJ7yEAbPjQiIYOMg5M+
+    LLDTriYxG/iWV4TodUBsHGIk16fHlk+hTmPWYtZCC2YkO0M00vZ2g3QguGBSvCwRqFQi9R
+    vucUlc9wvojzUbeKLlKS+vXRQUjfcKF/xSlGGOZ2XsZCy76tfSJeO0zESECEzyC/HKLG0h
+    oW1wHvjMc9dvWsssjSboolk427q7mC09vDC1u/aybJw60HBrAuSL2kcEbEvZVeYxHX06Qn
+    wo47gHARjgcawkGTKm8oQg+WstnEqMsqqVnhTxxPUJMaGscTQPrH1686rLxA
+X-ME-Proxy: <xmx:DwZiaqH58u8u-O0Ta3wy492IALWYOnZjxwTLVvXZdaq9oCXVgiCxrA>
+    <xmx:DwZiary2k1BQoGq--nBa9M7Coom7YdIBHcMc2sgrQBGho18MkRaPqQ>
+    <xmx:DwZiapn5H1eNB0NcMabLo519JgZP2abrjsoPlzSozkoGWHC2PZmXSA>
+    <xmx:DwZiaiATIbCAjw8L6jsyL9v9qplFDAKDWge6M7E6xW_aO7GyG8Y5kQ>
+    <xmx:EAZiauxjKgivSxsmrlW3rPOtgrjizYqm7zuKuZQoDomwOyyp4ce3a2MP>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 35272182007E; Thu, 23 Jul 2026 08:16:15 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20260627165422epcas5p4e4c6bce0e2daa6d08a9ec18afde9ce0e@epcas5p4.samsung.com>
- <20260627171228.2687857-1-alim.akhtar@samsung.com> <20260627171228.2687857-6-alim.akhtar@samsung.com>
-In-Reply-To: <20260627171228.2687857-6-alim.akhtar@samsung.com>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 23 Jul 2026 13:14:39 +0100
-X-Gm-Features: AUfX_mylIIp57pq2dVVawDA3TT7Con7Vrq-wOf02o52EvH981AjzpqF-98L5kFo
-Message-ID: <CADrjBPrjM-eZC+GxQG68fVTQfOX_i+_EA41zBzGd8-_R1r9Erg@mail.gmail.com>
-Subject: Re: [PATCH v3 5/6] arm64: dts: exynos: add initial support for
- Samsung Exynos8855 smdk
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: krzk@kernel.org, robh@kernel.org, conor+dt@kernel.org, linusw@kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	hajun.sung@samsung.com
-Content-Type: text/plain; charset="UTF-8"
+X-ThreadId: Ahg3N6R0HDM7
+Date: Thu, 23 Jul 2026 14:14:51 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Lee Jones" <lee@kernel.org>, "Arnd Bergmann" <arnd@kernel.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ "Linus Walleij" <linusw@kernel.org>, "Bartosz Golaszewski" <brgl@kernel.org>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Thomas Gleixner" <tglx@kernel.org>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ "Pavel Machek" <pavel@kernel.org>, linux-sh@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-leds@vger.kernel.org,
+ "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Message-Id: <f3d89b2d-c56e-49e8-8fdb-8749ca2cf09f@app.fastmail.com>
+In-Reply-To: <20260723114045.GE3363113@google.com>
+References: <20260710211854.1371746-1-arnd@kernel.org>
+ <20260710211854.1371746-4-arnd@kernel.org>
+ <20260723114045.GE3363113@google.com>
+Subject: Re: [PATCH 3/6] [v6] leds: gpio: make legacy gpiolib interface optional
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sat, 27 Jun 2026 at 17:54, Alim Akhtar <alim.akhtar@samsung.com> wrote:
->
-> Add initial devicetree support for Samsung smdk board using
-> Exynos8855 SoC.
-> This SoC has Octa-core CPU with tri cluster architecture, a custom GPU
-> and a NPU supporting up to 14.7 TOPS apart from other supporting peripheral
-> and IPs.
->
-> Commercially this SoC is also known as Exynos1580 [1]
->
-> [1] https://semiconductor.samsung.com/processor/mobile-processor/exynos-1580/
->
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
+On Thu, Jul 23, 2026, at 13:40, Lee Jones wrote:
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+>> ---
+>>  drivers/leds/leds-gpio.c | 52 +++++++++++++++++++++++++++-------------
+>>  include/linux/leds.h     |  2 ++
+>>  2 files changed, 37 insertions(+), 17 deletions(-)
+>
+> Any deps?
 
->  arch/arm64/boot/dts/exynos/Makefile           |   1 +
->  .../boot/dts/exynos/exynos8855-pinctrl.dtsi   | 574 ++++++++++++++++++
->  .../arm64/boot/dts/exynos/exynos8855-smdk.dts |  32 +
->  arch/arm64/boot/dts/exynos/exynos8855.dtsi    | 204 +++++++
->  4 files changed, 811 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos8855.dtsi
->
-> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-> index 76cc23acb9b2..8c48ce2e02e5 100644
-> --- a/arch/arm64/boot/dts/exynos/Makefile
-> +++ b/arch/arm64/boot/dts/exynos/Makefile
-> @@ -14,6 +14,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
->         exynos7870-on7xelte.dtb         \
->         exynos7885-jackpotlte.dtb       \
->         exynos850-e850-96.dtb           \
-> +       exynos8855-smdk.dtb             \
->         exynos8895-dreamlte.dtb         \
->         exynos9810-starlte.dtb          \
->         exynos990-c1s.dtb               \
-> diff --git a/arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi
-> new file mode 100644
-> index 000000000000..b65f1698cd74
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos8855-pinctrl.dtsi
-> @@ -0,0 +1,574 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung's S5E8855 SoC pin-mux and pin-config device tree source
-> + *
-> + * Copyright (c) 2023 Samsung Electronics Co., Ltd.
-> + *             http://www.samsung.com
-> + *
-> + * Samsung's S5E8855 SoC pin-mux and pin-config options are listed as device
-> + * tree nodes are listed in this file.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include "exynos-pinctrl.h"
-> +
-> +&pinctrl_alive {
-> +       gpa0: gpa0-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpa1: gpa1-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-> +                            <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpq0: gpq0-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +       };
-> +
-> +       gpq1: gpq1-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +       };
-> +
-> +       gpc0: gpc0-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc1: gpc1-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc2: gpc2-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc3: gpc3-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc4: gpc4-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc5: gpc5-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc6: gpc6-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc7: gpc7-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc8: gpc8-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc9: gpc9-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc10: gpc10-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc11: gpc11-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc12: gpc12-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc13: gpc13-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpc14: gpc14-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpj0: gpj0-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpj1: gpj1-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpj2: gpj2-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +};
-> +
-> +&pinctrl_cmgp {
-> +       gpm0: gpm0-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm1: gpm1-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm2: gpm2-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm3: gpm3-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm4: gpm4-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm5: gpm5-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm6: gpm6-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm7: gpm7-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm8: gpm8-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm9: gpm9-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm10: gpm10-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm11: gpm11-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm12: gpm12-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm13: gpm13-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm14: gpm14-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm15: gpm15-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm16: gpm16-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm17: gpm17-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm18: gpm18-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm19: gpm19-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm20: gpm20-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +
-> +       gpm21: gpm21-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>;
-> +       };
-> +};
-> +
-> +&pinctrl_hsi_ufs {
-> +       gpf3: gpf3-gpio-bank{
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +};
-> +
-> +&pinctrl_peric {
-> +       gpp0: gpp0-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpp1: gpp1-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpp2: gpp2-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpg0: gpg0-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpg1: gpg1-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpb0: gpb0-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpb1: gpb1-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +};
-> +
-> +&pinctrl_pericmmc {
-> +       gpf2: gpf2-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +};
-> +
-> +&pinctrl_usi {
-> +       gpp3: gpp3-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpp4: gpp4-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpg2: gpg2-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpg3: gpg3-gpio-bank {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +};
-> diff --git a/arch/arm64/boot/dts/exynos/exynos8855-smdk.dts b/arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
-> new file mode 100644
-> index 000000000000..792d52affc61
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos8855-smdk.dts
-> @@ -0,0 +1,32 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung Exynos8855 SMDK board device tree source
-> + *
-> + * Copyright (C) 2023 Samsung Electronics Co., Ltd.
-> + *
-> + * Device tree source file for Samsung SMDK board which is based on
-> + * Exynos8855 SoC.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "exynos8855.dtsi"
-> +
-> +/ {
-> +       model = "Samsung Exynos8855 SMDK board";
-> +       compatible = "samsung,exynos8855-smdk","samsung,exynos8855";
-> +
-> +       chosen {
-> +       };
-> +
-> +       memory@80000000 {
-> +               device_type = "memory";
-> +               reg = <0x0 0x80000000 0x80000000>;
-> +       };
-> +
-> +};
-> +
-> +&oscclk {
-> +       clock-frequency = <76800000>;
-> +};
-> +
-> diff --git a/arch/arm64/boot/dts/exynos/exynos8855.dtsi b/arch/arm64/boot/dts/exynos/exynos8855.dtsi
-> new file mode 100644
-> index 000000000000..9d82fceb5130
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos8855.dtsi
-> @@ -0,0 +1,204 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Samsung Exynos8855 SoC device tree source
-> + *
-> + * Copyright (C) 2023 Samsung Electronics Co., Ltd.
-> + *
-> + * Samsung Exynos8855 SoC device nodes are listed in this file.
-> + * Exynos8855 based board files can include this file and provide
-> + * values for board specific bindings.
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/ {
-> +       compatible = "samsung,exynos8855";
-> +       #address-cells = <2>;
-> +       #size-cells = <1>;
-> +
-> +       interrupt-parent = <&gic>;
-> +
-> +       aliases {
-> +               pinctrl0 = &pinctrl_alive;
-> +               pinctrl1 = &pinctrl_cmgp;
-> +               pinctrl2 = &pinctrl_hsi_ufs;
-> +               pinctrl3 = &pinctrl_peric;
-> +               pinctrl4 = &pinctrl_pericmmc;
-> +               pinctrl5 = &pinctrl_usi;
-> +       };
-> +
-> +       oscclk: clock-oscclk {
-> +               compatible = "fixed-clock";
-> +               clock-output-names = "oscclk";
-> +               #clock-cells = <0>;
-> +       };
-> +
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               cpu-map {
-> +                       cluster0 {
-> +                               core0 {
-> +                                       cpu = <&cpu0>;
-> +                               };
-> +                               core1 {
-> +                                       cpu = <&cpu1>;
-> +                               };
-> +                               core2 {
-> +                                       cpu = <&cpu2>;
-> +                               };
-> +                               core3 {
-> +                                       cpu = <&cpu3>;
-> +                               };
-> +                       };
-> +
-> +                       cluster1 {
-> +                               core0 {
-> +                                       cpu = <&cpu4>;
-> +                               };
-> +                               core1 {
-> +                                       cpu = <&cpu5>;
-> +                               };
-> +                               core2 {
-> +                                       cpu = <&cpu6>;
-> +                               };
-> +                       };
-> +
-> +                       cluster2 {
-> +                               core0 {
-> +                                       cpu = <&cpu7>;
-> +                               };
-> +                       };
-> +               };
-> +
-> +               cpu0: cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a520";
-> +                       reg = <0x0>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu1: cpu@100 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a520";
-> +                       reg = <0x100>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu2: cpu@200 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a520";
-> +                       reg = <0x200>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu3: cpu@300 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a520";
-> +                       reg = <0x300>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu4: cpu@400 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a720";
-> +                       reg = <0x400>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu5: cpu@500 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a720";
-> +                       reg = <0x500>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu6: cpu@600 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a720";
-> +                       reg = <0x600>;
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu7: cpu@700 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a720";
-> +                       reg = <0x700>;
-> +                       enable-method = "psci";
-> +               };
-> +       };
-> +
-> +       psci {
-> +               compatible = "arm,psci-1.0";
-> +               method = "smc";
-> +       };
-> +
-> +       soc: soc@0 {
-> +               compatible = "simple-bus";
-> +               #address-cells = <1>;
-> +               #size-cells = <1>;
-> +               ranges = <0x0 0x0 0x0 0x20000000>;
-> +
-> +               gic: interrupt-controller@10200000 {
-> +                       compatible = "arm,gic-v3";
-> +                       #interrupt-cells = <3>;
-> +                       interrupt-controller;
-> +                       reg = <0x10200000 0x10000>,
-> +                             <0x10240000 0x140000>;
-> +                       interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +               };
-> +
-> +               pinctrl_alive: pinctrl@11850000 {
-> +                       compatible = "samsung,exynos8855-pinctrl";
-> +                       reg = <0x11850000 0x1000>;
-> +
-> +                       wakeup-interrupt-controller {
-> +                               compatible = "samsung,exynos8855-wakeup-eint",
-> +                                            "samsung,exynos7-wakeup-eint";
-> +                       };
-> +               };
-> +
-> +               pinctrl_cmgp: pinctrl@12030000 {
-> +                       compatible = "samsung,exynos8855-pinctrl";
-> +                       reg = <0x12030000 0x1000>;
-> +                       interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
-> +               };
-> +
-> +               pinctrl_usi: pinctrl@15030000 {
-> +                       compatible = "samsung,exynos8855-pinctrl";
-> +                       reg = <0x15030000 0x1000>;
-> +                       interrupts = <GIC_SPI 440 IRQ_TYPE_LEVEL_HIGH>;
-> +               };
-> +
-> +               pinctrl_peric: pinctrl@15440000 {
-> +                       compatible = "samsung,exynos8855-pinctrl";
-> +                       reg = <0x15440000 0x1000>;
-> +                       interrupts = <GIC_SPI 394 IRQ_TYPE_LEVEL_HIGH>;
-> +               };
-> +
-> +               pinctrl_pericmmc: pinctrl@154f0000 {
-> +                       compatible = "samsung,exynos8855-pinctrl";
-> +                       reg = <0x154f0000 0x1000>;
-> +                       interrupts = <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>;
-> +               };
-> +
-> +               pinctrl_hsi_ufs: pinctrl@17040000 {
-> +                       compatible = "samsung,exynos8855-pinctrl";
-> +                       reg = <0x17040000 0x1000>;
-> +                       interrupts = <GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
-> +               };
-> +       };
-> +
-> +       timer {
-> +               compatible = "arm,armv8-timer";
-> +               /* Hypervisor Virtual Timer interrupt is not wired to GIC */
-> +               interrupts =
-> +                    <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-> +                    <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-> +                    <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-> +                    <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-> +       };
-> +};
-> +
-> +#include "exynos8855-pinctrl.dtsi"
-> --
-> 2.34.1
->
+No, linux-7.1 is enough as a base.
+
+     Arnd
