@@ -1,136 +1,105 @@
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD60647CC74;
-	Thu, 23 Jul 2026 14:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B211344DA0;
+	Thu, 23 Jul 2026 14:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784817250; cv=none; b=CmNQyjkZxuUJqXb0hWrUy1QI2/Dweo6JAFrN5W/ZnL0PUrh8PQoArD4z6m0oiA7yvJr5MhGkmnawOX0W9fL8Ih8QQmrKqptezbvIgEZjdLW098QJBiZk1dppzIO32FKYG7D+/uwb0tsZoFI4N/MR4vqU5T66SNGlEFYhZbUgPLs=
+	t=1784818401; cv=none; b=UUFm925Kn21fXtj3/weTVrkC1dqcepdK7yG+fdW2Ur4mdlCOGScSg3k7XWDRCWIdyEDqa4QSRy2sKBtVXpFZ3Fxax2E9uTQKVd5nTZNTCQVD2Sn9bi4cJaHF0+yeLm7wTZjs0/PK+6ewI7ukPm5hT2wHetOCtsUz2V4XZt1BO/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784817250; c=relaxed/simple;
-	bh=rnzS3t2OB9mXDKCdXxoAM7rMpi7xvwiWGRBta5UVvXE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EcaAyn79OI8k9n+VDUcznDz1X1J3b1w0gLJgE3i8te3b5bLeLo4QDI/nQrCFloGwvWCTjMoGvEpbJKGQobyfz1pEIbnqYD4WWQPsIipA9E7qbQLTONNBdtVEYZam7/V82bynGMZPdnUvLZf2JaUlxJ8s0HHLMnsWu2t3lW4aDZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf12.hostedemail.com (lb01a-stub [10.200.18.249])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 9876C804F4;
-	Thu, 23 Jul 2026 14:34:00 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 056E717;
-	Thu, 23 Jul 2026 14:33:13 +0000 (UTC)
-Date: Thu, 23 Jul 2026 10:33:36 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>, acpica-devel@lists.linux.dev,
- bpf@vger.kernel.org, coresight@lists.linaro.org, kvm@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-gpio@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, mptcp@lists.linux.dev,
- netdev@vger.kernel.org, platform-driver-x86@vger.kernel.org,
- virtualization@lists.linux.dev, Adrian Hunter <adrian.hunter@intel.com>,
- Alex Mastro <amastro@fb.com>, Alex Williamson <alex@shazbot.org>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Alexei Starovoitov
- <ast@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Andrew Morton
- <akpm@linux-foundation.org>, Andrii Nakryiko <andrii@kernel.org>, Ankur
- Arora <ankur.a.arora@oracle.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Bobby Eshleman
- <bobbyeshleman@meta.com>, Christian =?UTF-8?B?Qm9ybnRyw6RnZXI=?=
- <borntraeger@linux.ibm.com>, Christophe Leroy <chleroy@kernel.org>,
- Chun-Tse Shao <ctshao@google.com>, Claudio Imbrenda
- <imbrenda@linux.ibm.com>, Costa Shulyupin <costa.shul@redhat.com>, Crystal
- Wood <crwood@redhat.com>, Daniel Borkmann <daniel@iogearbox.net>, Daniel
- Lezcano <daniel.lezcano@kernel.org>, David Hildenbrand <david@kernel.org>,
- David Matlack <dmatlack@google.com>, "David S. Miller"
- <davem@davemloft.net>, Donald Hunter <donald.hunter@gmail.com>, Eduard
- Zingerman <eddyz87@gmail.com>, Emil Tsalapatis <emil@etsalapatis.com>, Eric
- Dumazet <edumazet@google.com>, Gabriele Monaco <gmonaco@redhat.com>,
- Geliang Tang <geliang@kernel.org>, Ian Rogers <irogers@google.com>, Ingo
- Molnar <mingo@redhat.com>, Ivan Pravdin <ipravdin.official@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, James Clark <james.clark@linaro.org>,
- Janosch Frank <frankja@linux.ibm.com>, Jason Xing
- <kerneljasonxing@gmail.com>, Jiri Olsa <jolsa@kernel.org>, Joe Damato
- <joe@dama.to>, John Garry <john.g.garry@oracle.com>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Kaushlendra Kumar <kaushlendra.kumar@intel.com>,
- Kent Gibson <warthog618@gmail.com>, Kumar Kartikeya Dwivedi
- <memxor@gmail.com>, Len Brown <lenb@kernel.org>, Leo Yan
- <leo.yan@linux.dev>, Lukasz Luba <lukasz.luba@arm.com>, Madhavan Srinivasan
- <maddy@linux.ibm.com>, Mark Rutland <mark.rutland@arm.com>, Martin KaFai
- Lau <martin.lau@linux.dev>, Masami Hiramatsu <mhiramat@kernel.org>, Mat
- Martineau <martineau@kernel.org>, Matthieu Baerts <matttbe@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Mike Leach <mike.leach@arm.com>,
- Mina Almasry <almasrymina@google.com>, Mykyta Yatsenko <yatsenko@meta.com>,
- Nam Cao <namcao@linutronix.de>, Namhyung Kim <namhyung@kernel.org>,
- Nicholas Piggin <npiggin@gmail.com>, Paolo Abeni <pabeni@redhat.com>, Paolo
- Bonzini <pbonzini@redhat.com>, Pawel Chmielewski
- <pawel.chmielewski@intel.com>, Peter Zijlstra <peterz@infradead.org>,
- Quentin Monnet <qmo@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Raghavendra Rao Ananta <rananta@google.com>, Saket Dumbre
- <saket.dumbre@intel.com>, Shuah Khan <shuah@kernel.org>, Simon Horman
- <horms@kernel.org>, Song Liu <song@kernel.org>, Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>, Stanislav Fomichev
- <sdf@fomichev.me>, Stefano Garzarella <sgarzare@redhat.com>, Suzuki K
- Poulose <suzuki.poulose@arm.com>, Swapnil Sapkal <swapnil.sapkal@amd.com>,
- Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <linux@weissschuh.net>, Tomas Glozar
- <tglozar@redhat.com>, Vipin Sharma <vipinsh@google.com>, Wander Lairson
- Costa <wander@redhat.com>, Will Deacon <will@kernel.org>, Willem de Bruijn
- <willemdebruijn.kernel@gmail.com>, Willy Tarreau <w@1wt.eu>, Yonghong Song
- <yonghong.song@linux.dev>, Zhang Chujun <zhangchujun@cmss.chinamobile.com>,
- Zhang Rui <rui.zhang@intel.com>, LKML <linux-kernel@vger.kernel.org>,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] tools: Use fputc() calls in some functions
-Message-ID: <20260723103336.6593118b@gandalf.local.home>
-In-Reply-To: <amIbVOIsOeZgcBZF@tassilo>
-References: <48f2d61f-d468-49b7-881e-f00777db073f@web.de>
-	<amIbVOIsOeZgcBZF@tassilo>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1784818401; c=relaxed/simple;
+	bh=zYaA0BR0Vwo/A3nMghadgnD3/zM+LKKV9PgIRD76Bys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=poeO4vFbYju7T1EOy+aUq3kmQOJRxd4RDpil8vCsj35Gx9Mth8gp+9g5gWCQRdpfPrmnjzCrWeo/iGiFgJKOjqa/MjEQ1zfbS+Xw6MrMQIz/SEUAiZ41Pd6hICFaheUNX9hn81yUGQMXE3vlwMKUND6fvFFMFQQm+0W63guXEqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F16951F000E9;
+	Thu, 23 Jul 2026 14:53:14 +0000 (UTC)
+Date: Thu, 23 Jul 2026 15:53:00 +0100
+From: Lee Jones <lee@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-gpio@vger.kernel.org, David Jander <david@protonic.nl>
+Subject: Re: [PATCH v15 2/6] platform: misc: add NXP MC33978/MC34978 core
+ driver
+Message-ID: <20260723145300.GO3363113@google.com>
+References: <20260710101358.2606941-1-o.rempel@pengutronix.de>
+ <20260710101358.2606941-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: ncsjbmpq4hct7p4sj4iefr1r53tacukj
-X-Rspamd-Server: rspamout02
-X-Rspamd-Queue-Id: 056E717
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+f7u83oRUulG9XwKl2P+q3kHYGrSLtLJ0=
-X-HE-Tag: 1784817193-538669
-X-HE-Meta: U2FsdGVkX19mSJrQ4yCgpa5T21s3DOyupJQtrDkbhb4BdFNkpGoXwq/ibfVmVhXFNmqX8uwKJldaBwfXYwLpcFxk6WAoDZEXT/gOP4/87ir9dCPM++yAwBRZudspVL4fEcLJ8BQR+IIioDSpRN3BUfGiJrTRVS7/uta9AmYBpm0bV/zvbFblUCnE1I0vyxTsAPHkh0LX+JrCxO4Fb8yldd7jKVRG3hDwMmD/y539S+5vq64BAxIp9RMpMFz5panzgBl/T6DnlC5NF2X6cBflLJ9t5of1YaVukjrextWC1Mkdf4ypcuVGdK7IR4N2F6BEhF3E+awXwxrLnbww9pI6GrXPJih6633rwSWNy/mC4FmaOinac79jHA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260710101358.2606941-3-o.rempel@pengutronix.de>
 
-On Thu, 23 Jul 2026 06:47:00 -0700
-Andi Kleen <ak@linux.intel.com> wrote:
+On Fri, 10 Jul 2026, Oleksij Rempel wrote:
 
-> > The source code was transformed by using the Coccinelle software.  
+> Add the core support module for the NXP MC33978 and MC34978 Multiple
+> Switch Detection Interfaces (MSDI).
 > 
-> gcc already does this transformation automatically.
+> The MC33978/MC34978 devices provide 22 switch detection inputs, analog
+> multiplexing (AMUX), and comprehensive hardware fault detection.
+> 
+> This core module handles:
+> - SPI communications via a custom regmap bus to support the device's
+>   pipelined two-frame MISO response requirement.
+> - Interrupt demultiplexing, utilizing an irq_domain to provide 22 virtual
+>   IRQs for switch state changes and 1 virtual IRQ for hardware faults.
+> - Inline status harvesting from the SPI MSB to detect and trigger events
+>   without requiring dedicated status register polling.
+> 
+> It exports mc33978_core_init(), called by the MFD driver added in the
+> following patch. CONFIG_MC33978_CORE carries no prompt and is selected
+> by CONFIG_MFD_MC33978, so this patch alone builds nothing new.
+> 
+> Note: The device currently lacks suspend/resume power management
+> callbacks. If the system enters a sleep state cutting power to
+> VDDQ/VBATP, the device will wake up in POR state with hardware interrupt
+> masks reset. Power management support is intentionally deferred for now.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+> changes v15:
+> - Split out of the MFD patch, as requested by Lee Jones. The register
+>   definitions in include/linux/mfd/mc33978.h are carried here rather than
+>   with the MFD driver because this module includes them, keeping every
+>   commit individually buildable.
 
-Yep, I showed this in my talk[1] that looked at what printf("Hello World!")
-does. Doing an objdump of:
+I can't help feeling that this is a hack.
 
-#include <stdio.h>
+When I suggested moving the functional parts out, I meant properly
+separating off and compartmentalising.  Instead, a huge slice has been
+taken out of the initial submission's MFD driver and dumped into the
+wild west that is drivers/platform.  Worse still; we're masquerading as
+the MFD since the MFD's 'dev' pointer is being passed through so
+everything here is operating as though it's the parent device.  You've
+created half library / half MFD.
 
-int main(void) {
-	printf("Hello World!\n");
-	return 0;
-}
+I get that we're on v15 and there's still a lot to do, but I guess
+that's what happens when 3500 lines of code is submitted at the same
+time.
 
-has:
+My suggestion is to return to first principles; what lives where?
 
-0000000000001139 <main>:
-    1139:       55                      push   %rbp
-    113a:       48 89 e5                mov    %rsp,%rbp
-    113d:       48 8d 05 c0 0e 00 00    lea    0xec0(%rip),%rax        # 2004 <_IO_stdin_used+0x4>
-    1144:       48 89 c7                mov    %rax,%rdi
-    1147:       e8 e4 fe ff ff          call   1030 <puts@plt>  <<<--- puts and not printf
-    114c:       b8 00 00 00 00          mov    $0x0,%eax
-    1151:       5d                      pop    %rbp
-    1152:       c3                      ret
+Allocating of shared resources, including the various regmaps, IRQs and
+domains should live in the MFD subsystem - that's literally what it's
+for.  Anything that does-a-thing, should be allocated a proper subsystem
+and platform drivers should be created.
 
--- Steve
+Complicated platform / embedded-controller type work (events,
+conditions, bespoke messaging, etc) that truly cannot live anywhere else
+can live in drivers/platform, but perhaps don't invent a new
+sub-sub-system here or create an extended MFD device here - it should be
+a separate entity.
 
-[1] https://www.youtube.com/watch?v=JRyrhsx-L5Y
+Take a look to see how the other drivers/platform dumpers work.
+
+-- 
+Lee Jones
