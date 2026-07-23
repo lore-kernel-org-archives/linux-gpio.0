@@ -1,91 +1,141 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+Received: from pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.245.243.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F04F3515D1;
-	Thu, 23 Jul 2026 16:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A844D14883F;
+	Thu, 23 Jul 2026 17:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.245.243.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784824587; cv=none; b=X42rxR6tUZ7B130ol/3IeOBYacmEb5L+xQCuz2yn1EB7GGchUvV45mcFmVywWdGeckz6+HfPyg1q2yJs+ubGWP8zXNvkyI+pwimm/fMINIAKgy3bfIaxdvkHJHlrhCMHCHnPL7qhj0FqH7uB0QSfojL5nTjW1U7QxjjZC6wlgvE=
+	t=1784829220; cv=none; b=GipYwANZIMFcauOSoMWjn2WzQR6N81UBePsQfnu7Ef3+V/oVdlisSrlGpivrwnbWbJFM+tpJgiwNHs455oYOzjijRlBIrg66gri0cBDkxzHkyZZfHikF5StD7+nJmu8rG7hAcEwZ5bbFaXmt7ldul3ocHZozuonyKke4LxBEfkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784824587; c=relaxed/simple;
-	bh=IK4V4tyrHqAPbaxwCsfj1Q64qT/ir0zkjHndOGoJwE4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=O+9dVyTcLmHjBXzNJM2O8v8HsymEr/pz9ZYIcHYK0jLnriDix06kSxNPzrMM+A53sKuTOWSnfsbl3ezAq/yeWNvlJiBUn4XBt3khkguHom1PvhUrqJxYj2Ws4TCEtbW+RD+76B+rHYhADt7EJskt1nc1670ge7TYgBgsmhOq9w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=knYM/b8W; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1784829220; c=relaxed/simple;
+	bh=uoZoVwOPdmdlUK8IwvU+L50ZgJrmKaIJlodOtkreFrc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GfmOh/0xXWSierIBZyHSlANwFsoUjGOZSkGMP0qDAeS0/RRhMsggVIXfdOYvulM2TvQhpSsWZ3Hd32hzCoMHSfRSrf1A95+ZvKd2+5HeZAUFxUdkXnbn4mKlhVWzQ+TpAcqP1f0ESbHtzxDO6dEoGrT8MtPIcmEuMO4PgL93Dlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=dC6kr7E0; arc=none smtp.client-ip=44.245.243.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="knYM/b8W"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 8CEDF4E40EDB;
-	Thu, 23 Jul 2026 16:36:24 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 47DC36038D;
-	Thu, 23 Jul 2026 16:36:24 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 98DC111C11240;
-	Thu, 23 Jul 2026 18:36:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1784824583; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=IK4V4tyrHqAPbaxwCsfj1Q64qT/ir0zkjHndOGoJwE4=;
-	b=knYM/b8W1D8bEIQHmZIYg9RyKb5pKpyOO1NrBobLcd3o19rSlKjySNR8PVYrt6RBpF1EAe
-	65GP6iEdzZHOOT5ovRt3/UO5mWRg0uJcalthkTKBc7kREveiuIteJiGmbhIJrUY9ZccJRn
-	VDgNePiqrzd48xi4/b/uzXkEwulXGH6KV9gYP9qg7E7fdntHOfIAhfDYOAmEyRjE5gJ7Ec
-	XDxVAzLp8BU52HhfdwQsZ80CDGO5jXNJ8r6ivEnsv0u+OC9n1fW8nr1Ts9fM7u0j4iUHI6
-	8MrF47b5xdJ//RF6oenZjLB1giRic/dFR918RvLAC7KtcB4LjPgMzUBCKUp1Rw==
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="dC6kr7E0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1784829219; x=1816365219;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=VRR830S5Crc5qLMak5M08xcwDHqS7wix0djaEazdHfc=;
+  b=dC6kr7E0n/VMEE6xMPkyZeNAmTvIE6MJVjUKR/5Xc0suOaR31qgAi4gl
+   pd+eQZ9SyQROOgZdrqjRmMPWOJco0C5cfupPlnT7JqYEddw+MERIQAsqC
+   2QnM7S9x3D4q3ZHtbr4aApWwWHlE9L65S3zzj0uk9AXgBQE1loKqQ05uZ
+   /A1VOz7vOLm2iZzwqObYTnHseppTxF1vD7W3b6H+DhLWJI7loyCBpnktg
+   1YHQjWxMJpUsatzVjW8bzMklVkuPJ8W0G9DBGSD8zGAjCBNA0UWIVHILl
+   GAT7V7W6e3rn7V6Ixhw+wLhT8sgbysst5SbRRup/kXxLqpSg+PSJM0JZn
+   w==;
+X-CSE-ConnectionGUID: hQH62+quTTKqUPCe8dab8g==
+X-CSE-MsgGUID: 5eTgeY77QKWhwQVb6PB5Nw==
+X-IronPort-AV: E=Sophos;i="6.25,181,1779148800"; 
+   d="scan'208";a="23748203"
+Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
+  by internal-pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2026 17:53:36 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [205.251.233.234:5323]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.12.152:2525] with esmtp (Farcaster)
+ id 630eda6d-2947-4491-9f8d-3b91b305424a; Thu, 23 Jul 2026 17:53:36 +0000 (UTC)
+X-Farcaster-Flow-ID: 630eda6d-2947-4491-9f8d-3b91b305424a
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.43;
+ Thu, 23 Jul 2026 17:53:36 +0000
+Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
+ (172.19.116.181) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.43; Thu, 23 Jul 2026
+ 17:53:31 +0000
+From: Eliav Farber <farbere@amazon.com>
+To: <rafael@kernel.org>, <tony.luck@intel.com>, <bp@alien8.de>,
+	<guohanjun@huawei.com>, <mchehab@kernel.org>, <xueshuai@linux.alibaba.com>,
+	<lenb@kernel.org>, <laurent.pinchart@ideasonboard.com>, <linusw@kernel.org>,
+	<brgl@kernel.org>, <orsonzhai@gmail.com>, <baolin.wang@linux.alibaba.com>,
+	<zhang.lyra@gmail.com>, <jic23@kernel.org>, <dlechner@baylibre.com>,
+	<nuno.sa@analog.com>, <andy@kernel.org>, <dmitry.torokhov@gmail.com>,
+	<hansg@kernel.org>, <ilpo.jarvinen@linux.intel.com>, <W_Armin@gmx.de>,
+	<ukleinek@kernel.org>, <fabio.m.de.francesco@linux.intel.com>,
+	<kaihengf@nvidia.com>, <ankita@nvidia.com>, <leitao@debian.org>,
+	<farbere@amazon.com>, <jason@os.amperecomputing.com>, <pedro.pbg@usp.br>,
+	<paulmck@kernel.org>, <frederic@kernel.org>, <kees@kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+	<linux-iio@vger.kernel.org>, <linux-input@vger.kernel.org>,
+	<platform-driver-x86@vger.kernel.org>
+Subject: [PATCH 00/12] notifier: add device-managed registration APIs and convert drivers
+Date: Thu, 23 Jul 2026 17:53:13 +0000
+Message-ID: <20260723175325.37397-1-farbere@amazon.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 23 Jul 2026 18:36:18 +0200
-Message-Id: <DK63IBW41HRJ.30G4KQWDK6LFX@bootlin.com>
-Subject: Re: [PATCH v7 3/9] gpio: regmap: Apply default resource callbacks
- for regmap IRQ chip
-Cc: <dlechner@baylibre.com>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux@analog.com>,
- <linux-iio@vger.kernel.org>, <cy.huang@realtek.com>,
- <james.tai@realtek.com>, "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: "Yu-Chun Lin" <eleanor.lin@realtek.com>, <linusw@kernel.org>,
- <andriy.shevchenko@intel.com>, <mwalle@kernel.org>, <brgl@kernel.org>,
- <tychang@realtek.com>, <wbg@kernel.org>, <nuno.sa@analog.com>,
- <Michael.Hennerich@analog.com>, <jic23@kernel.org>, <andy@kernel.org>,
- <u.kleine-koenig@baylibre.com>, <dakr@kernel.org>, <bhelgaas@google.com>,
- <o-takashi@sakamocchi.jp>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20260723034237.2501507-1-eleanor.lin@realtek.com>
- <20260723034237.2501507-4-eleanor.lin@realtek.com>
-In-Reply-To: <20260723034237.2501507-4-eleanor.lin@realtek.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D031UWC002.ant.amazon.com (10.13.139.212) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Thu Jul 23, 2026 at 5:42 AM CEST, Yu-Chun Lin wrote:
-> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->
-> When GPIO regmap creates an IRQ chip on behalf of the user, it also
-> takes an ownership of the respective callbacks and driver data.
-> With that being done, apply default resource callbacks that keep
-> tracking the IRQ requests and releases.
->
-> Reviewed-by: Michael Walle <mwalle@kernel.org>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
-> ---
+Many drivers repeat the same boilerplate when registering notifiers with
+device lifetime:
 
-Reviewed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
+  1. Register the notifier with *_notifier_chain_register()
+  2. Check for error
+  3. Register a devm action to unregister on teardown
+  4. Implement a per-driver static unregister callback
 
-I also tested this specifically on MAX7360, everything is still behaving
-as expected.
+This series adds devm_atomic_notifier_chain_register(),
+devm_blocking_notifier_chain_register(), and
+devm_raw_notifier_chain_register() that automatically unregister the
+notifier when the device is unbound, then converts 11 drivers to use
+them.
 
-Thanks,
-Mathieu
+Each conversion eliminates a per-driver unregister callback and the
+associated devm_add_action_or_reset() call, reducing code by ~15 lines
+per driver.
 
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+The implementation follows the established devres pattern used by other
+device-managed kernel APIs.
+
+Checkpatch reports 6 CHECKs (0 errors, 0 warnings) on patch 1:
+- "extern prototypes should be avoided in .h files"
+- "Alignment should match open parenthesis"
+
+Both are intentional to match the existing coding style in notifier.h,
+where all declarations use 'extern' and tab-indented continuation lines.
+
+Eliav Farber (12):
+  notifier: add device-managed registration APIs
+  pwm: iqs620a: use devm_blocking_notifier_chain_register()
+  iio: light: iqs621-als: use devm_blocking_notifier_chain_register()
+  iio: position: iqs624: use devm_blocking_notifier_chain_register()
+  gpio: adp5585: use devm_blocking_notifier_chain_register()
+  platform/x86: bitland-mifs-wmi: use
+    devm_blocking_notifier_chain_register()
+  Input: adp5585: use devm_blocking_notifier_chain_register()
+  ACPI: APEI: GHES: use devm_blocking_notifier_chain_register()
+  platform/x86: uniwill-wmi: use devm_blocking_notifier_chain_register()
+  gpio: eic-sprd: use devm_atomic_notifier_chain_register()
+  gpio: gpiolib-kunit: use devm_blocking_notifier_chain_register()
+  reboot: use devm_blocking_notifier_chain_register()
+
+ drivers/acpi/apei/ghes.c                   |  15 +-
+ drivers/gpio/gpio-adp5585.c                |  20 +--
+ drivers/gpio/gpio-eic-sprd.c               |  17 +--
+ drivers/gpio/gpiolib-kunit.c               |  14 +-
+ drivers/iio/light/iqs621-als.c             |  24 +---
+ drivers/iio/position/iqs624-pos.c          |  24 +---
+ drivers/input/keyboard/adp5585-keys.c      |  18 +--
+ drivers/platform/x86/bitland-mifs-wmi.c    |  17 +--
+ drivers/platform/x86/uniwill/uniwill-wmi.c |  17 +--
+ drivers/pwm/pwm-iqs620a.c                  |  21 +--
+ include/linux/notifier.h                   |  10 ++
+ kernel/notifier.c                          | 151 +++++++++++++++++++++
+ kernel/reboot.c                            |  24 +---
+ 13 files changed, 191 insertions(+), 181 deletions(-)
+
+-- 
+2.47.3
 
