@@ -1,181 +1,237 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B18B3DAAB3;
-	Thu, 23 Jul 2026 07:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C523F1660
+	for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 08:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784790084; cv=none; b=KgJQ++lecYPDCkAcvSVeFisBM26/l0vAe1Vintj0NaSUrudG58N7E3I2LDiVjWgbULHTcZYCwvDCVygSuX7c/WESKzINgl44Z2hFCSMoo9qRgVk6RWzxRpAeQu5MyRIqTGVCkgEVhYwBCm1NcAYzSrvawiyZGN9QgLkMaJEVqGk=
+	t=1784794445; cv=none; b=l0w8nBG22Ijep9oAXo/XsCBspDzMI/Y16xbkRd9m2a7dIBj8kk3Bfwgg118VBy34X1bV6K2CbzRgPUlqgtGla7dqq6aaWZeUAcaTyVugG7VTRy4SaI5whvuFRiHBM3f0aRIirtJsiLIJbPt8gFlxjwnZYsPzQwOiD3fiQ3sPGcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784790084; c=relaxed/simple;
-	bh=aS/fBbjg83mav+KytDq83xMsXwhBGHkjtWGiCgDZCsQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=SEeIAho00xGItQ1bdYDip07Z9BU3edz6doVkBcwAigw7rBcTZD1k55D7RljTvn1xnWSHPxTvqGi4niCY1EPatJ3AvpSzX05gOAlrHNF431HeqVR3W1jE3q7oGhh04GtuZ9qibtwCCrbgPql9mNYUY/o48qlFrDdF31OaLe6eZEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i4UZcyv1; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784794445; c=relaxed/simple;
+	bh=ISLsYJiL/67AfFmjcKz7YdESqyE7QAUlfd/yb4LqNzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S1XMHGMpVorlQDXTNh/1k4z9jW9BfYp0vJ2F4J8LXM5ZPMYBzuCX2ogZzF3qCeGvLCo9JYgvZ51bocDcPdkCOn1m1nwoM6PwxJx08gD840+nCqt3YY+5mTtIRSF2AFClUxEEMkP8bnZoul384y+CnEHVFn+NxGXm4EdydNDXK44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QAogqfv5; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4UZcyv1"
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id E62201F000E9;
-	Thu, 23 Jul 2026 07:01:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784790079;
-	bh=ClegPzyNZwWSn6yCoo0Y2iOyijfqcjOrfdtObvriJPk=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To;
-	b=i4UZcyv1a/AfJLgU4hXTNvZSN4gZAi8SKMv3smVK8TBpU3vVmAofRV6WOgU8MpLQ9
-	 xdoJ1Tw9aL8cJECqY7uuMQDOg2eu8ZbbOQwtClXFKFb4kLl8Z25JQt0GI96bPY2A4U
-	 oABxtJgjRmy/DpvQ2SBy7FZPpRiY3+l6gxs7RUuJc6MUxeJDjoqykABZev79HaGEQR
-	 bxgOYEgAFFfADAcxubM/O+yDqbQrvxMZKvzwNOUYMU7OqrDmc0Oa2CagAB5XTVO1Z5
-	 yGmeISejPNnTjL61JUTI9e/u+I+2nATUd5r1jVRGEmwR1o/7Mp/vO20j0JoaisbFpn
-	 vEUkss+T2LH5g==
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAogqfv5"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-47f703a9e5dso142069f8f.0
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 01:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784794441; x=1785399241; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Pn6G1rW8AyYA5lkxWJxsOAx4+gkV20aFWEjqPOavvWg=;
+        b=QAogqfv5QCL6qnClmfF1+j7/7weBhZPgXeCxV0+XnNTKKwp6czdN5L4iyG8FEqXAob
+         lAYG6ZV/8Q0FhrkIkY/PVxTACnSrbsAZ8a5ywlEeK66UiNXikNJXxmZyWQ1zk+G2r0zz
+         XeLUAnTR6PbvK4lA/mJrvT1WbU+j0GSJfagxfrXe+b8UVHWRkpMPIVFgjnIcdKhZlCpO
+         N4+AOsr+gmbWxENQ41gWIBJYSrBh5hCugH3A2s4zJXf/z418fkPpzNVxSuI5avePQbrb
+         +GWT+uaz8U8UX/hUurc4q+EJCpHiH1HD5XrfSiqz7py8sgPMA5kfByJUGRYFjOBS6wXb
+         tPXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784794441; x=1785399241;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=Pn6G1rW8AyYA5lkxWJxsOAx4+gkV20aFWEjqPOavvWg=;
+        b=L1xBOiPRo0AIbxTR9N+062Tcjq9BB/Mz8tEFdF6RihQZCvg5MseeaP3E0TlAt0BLHa
+         4bOZNUCP5ImbtYxx+HJNA24w+bF0NqnIDJVViXnYeu3FXhXmaJrPNvFQ+QBNVOHUk30J
+         GYvzCLSlhgLGjmMmIOZIjDYo9q9KByQXgzpQ9gDQRGwotxN4PBrUUZVd4X7e/5T9R7ha
+         H/xC+DWySUFDbcH5IUwv9Twao/k+L/6QSi+Tb7HFA910S0tFTeOD9riApvpdr5v74s4J
+         5dPOq+qidrMW5uYCe7t9wfC9JKJqCJ1r83oyCf2CsJ1CkcEufbW1ijrKOluFpsOmse7R
+         7NQg==
+X-Forwarded-Encrypted: i=1; AHgh+RpQicBl+GeuStFJY4j1jiny9R6RFuplTfomRIjut8tMaltfVG9OfQQ7dm80EvnzDNIkIFdSD97F9YyO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6QndHhzHybo8rRVBYPRTTwNgN2LZ9mAP5Kx7Yp2GvqwNaYwXt
+	jrCTS9Z7/OcdKFbW8M/YzZzzpjaV+P+i+GR0G7gBh+sWOZ9P2GmenlwG
+X-Gm-Gg: AR+sD13gtjtqOnfu+Y6+Wly9KCZNnS2STWkR9namFg0STPMZ6rlWXhIkt/uRkRbWT5v
+	MEYIEQqFsAKZuQMnOHpQzntJdmdggIQL/3exzerPTOv7fjpzsIMuOakMyuO68GBF/v//M3D5Inc
+	60fuTEEw/n2aiOHKcwuU/iXhzwzzMcSpMngM/7eY8kNWZg5euFx3W62/7karzrF+XM/tuXUHXOc
+	/yYcnMLwX5OJW6WiaBdyRpZf0IDD11v5CwrgwDbZKKSS8ieaqlcDHcFVHN28tvBkBZNdaof5P4f
+	9Odw8SqqEYwyXo5MUnk1F0H3eCNQff+Bp+SUVjI1dEEji0G8LNnRGkn5L3F9bmSOUKLfJp9sceb
+	+/qkRrtb+VAu83TQZ3OALADde5h1DXzQ89VkgL6+UzQchZGFH6r1n0xmBTH+h0N6XsYqB1g==
+X-Received: by 2002:a05:6000:25c3:b0:475:f0f0:9ef7 with SMTP id ffacd0b85a97d-47f8d76ee04mr2371195f8f.60.1784794440915;
+        Thu, 23 Jul 2026 01:14:00 -0700 (PDT)
+Received: from nsa ([148.63.225.166])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85c63bd3sm12591725f8f.27.2026.07.23.01.13.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jul 2026 01:14:00 -0700 (PDT)
+Date: Thu, 23 Jul 2026 09:15:08 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Janani Sunil <jananisunil.dev@gmail.com>, 
+	David Lechner <dlechner@baylibre.com>, Janani Sunil <janani.sunil@analog.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Olivier Moysan <olivier.moysan@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, linux@analog.com, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: iio: adc: Add AD7768
+Message-ID: <amHLZK46lxqSZIC8@nsa>
+References: <20260709-ad7768-driver-v1-0-44e1194fd96a@analog.com>
+ <20260709-ad7768-driver-v1-1-44e1194fd96a@analog.com>
+ <36df7c4f-82ea-4ed5-a4f9-3a29c75dc99a@baylibre.com>
+ <9dd16bb5-7a30-4024-88a7-4a4bf47c35e8@gmail.com>
+ <e791f4f9-63dd-40f5-aec4-5b540bcee5ff@baylibre.com>
+ <d159cae0-b11e-49e9-a546-023ed61b900e@gmail.com>
+ <20260722025853.6ca3961d@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=bcdbb4f5b86540f5f638637f481de919ca5fbee71c85807e04e08ee05a86;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Thu, 23 Jul 2026 09:01:15 +0200
-Message-Id: <DK5RA1LUEMJ1.2UP4SW9DDADHK@kernel.org>
-Subject: Re: [PATCH v7 7/9] gpio: regmap: Add set_config callback
-Cc: <dlechner@baylibre.com>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux@analog.com>,
- <linux-iio@vger.kernel.org>, <cy.huang@realtek.com>,
- <james.tai@realtek.com>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Yu-Chun Lin" <eleanor.lin@realtek.com>, <linusw@kernel.org>,
- <andriy.shevchenko@intel.com>, <brgl@kernel.org>, <tychang@realtek.com>,
- <wbg@kernel.org>, <mathieu.dubois-briand@bootlin.com>,
- <nuno.sa@analog.com>, <Michael.Hennerich@analog.com>, <jic23@kernel.org>,
- <andy@kernel.org>, <u.kleine-koenig@baylibre.com>, <dakr@kernel.org>,
- <bhelgaas@google.com>, <o-takashi@sakamocchi.jp>
-X-Mailer: aerc 0.20.0
-References: <20260723034237.2501507-1-eleanor.lin@realtek.com>
- <20260723034237.2501507-8-eleanor.lin@realtek.com>
-In-Reply-To: <20260723034237.2501507-8-eleanor.lin@realtek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260722025853.6ca3961d@jic23-huawei>
 
---bcdbb4f5b86540f5f638637f481de919ca5fbee71c85807e04e08ee05a86
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Wed, Jul 22, 2026 at 02:58:53AM +0100, Jonathan Cameron wrote:
+> On Tue, 21 Jul 2026 10:03:26 +0200
+> Janani Sunil <jananisunil.dev@gmail.com> wrote:
+> 
+> > On 7/21/26 03:39, David Lechner wrote:
+> > > On 7/20/26 9:00 AM, Janani Sunil wrote:  
+> > >> On 7/9/26 17:43, David Lechner wrote:  
+> > >>> On 7/9/26 3:50 AM, Janani Sunil wrote:  
+> > >>>> Devicetree Bindings for AD7768-4 (4 channel) and AD7768 (8
+> > >>>> channel) simultaneous sampling ADC
+> > >>>>
+> > >>>> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
+> > >>>> ---
+> > >>>>   
+> > >>>> +
+> > >>>> +  adi,power-mode:
+> > >>>> +    $ref: /schemas/types.yaml#/definitions/string
+> > >>>> +    enum:
+> > >>>> +      - low
+> > >>>> +      - median
+> > >>>> +      - fast
+> > >>>> +    description:
+> > >>>> +      Power mode selection.  
+> > >>> Unless there are pins that control this, it seems like it should
+> > >>> be left up to the driver to decide how to set this.
+> > >>>
+> > >>> In this case, it looks like the power mode also influences sample
+> > >>> rate which is normally something controlled at runtime.  
+> > > Looking at this again, there is also an MCLK divider that influences
+> > > sample rate, so sampling_frequency to power mode is not
+> > > straight-forward anyway.
+> > >  
+> > >> Hi David,
+> > >>
+> > >> The reason we'd like to retain power mode control is that certain
+> > >> ODRs are supported across all three power modes (low/median/fast),
+> > >> and the RMS noise and power consumption differ significantly
+> > >> between them at the same ODR.
+> > >>
+> > >> The higher the power mode, the better the noise performance, but
+> > >> power consumption nearly doubles for every ~3 dB improvement in
+> > >> dynamic range. Silently selecting one power mode in the driver
+> > >> would remove a meaningful hardware tradeoff from the user.
+> > >>
+> > >> We'd like to propose the following instead:
+> > >> - Remove adi,power-mode from the DT as suggested.
+> > >> - Expose power mode as a per-device sysfs attribute.
+> > >> - in_voltage<N>_sampling_frequency_available dynamically reflects
+> > >> only the ODRs valid for the currently selected power mode.
+> > >>
+> > >> This keeps the DT clean while still giving the user explicit
+> > >> control over the noise versus power trade off. Would this approach
+> > >> be acceptable?
+> > >>
+> > >> Thanks,
+> > >> Jan
+> > >>
+> > >>  
+> > > Jonathan usually pushes back against userspace power controls. We
+> > > do have this for accelerometers, but not ADCs currently.
+> > >
+> > > If we can't think of anything better, maybe we could use this. It
+> > > only has low_noise and low_power options though, so the driver
+> > > would still need to chose the best power mode of the 3 based on the
+> > > other requested parameters. E.g. always make all sampling_frequency
+> > > available  and just pick the highest power or lowest power mode
+> > > that can provide that rate based on the power_mode attribute.
+> > >
+> > > I wanted to suggest maybe adding some kind of noise attribute
+> > > instead, but I'm not sure how we could do that in a way using SI
+> > > units since the value would depend on so many things (at least
+> > > V_REF voltage, filter type, temperature and even the physical
+> > > input).  
+> > 
+> > We considered the low_power/balanced/low_noise approach, but the
+> > customers typically use the datasheet alongside the driver and the
+> > datasheet explicitly uses the terms "low power", "median" and "fast"
+> > for the three modes. Abstracting them with different names in the
+> > sysfs attribute would create a confusion- the users would have to
+> > mentally translate between the two naming conventions. The noise
+> > attribute would not actually configure anything on a register level-
+> > it would purely be informational. Furthermore, noise performance is
+> > not solely determined by the power mode. There are other parameters
+> > (eg. filter mode) that has a significant impact. A power_mode
+> > attribute directly configures the hardware register and has a
+> > deterministic effect on the device.
+> > 
+> > Jonathan, could we keep the power_mode as an attribute in this case?
+> 
+> My really strong resistance to 'mode' type controls is they are
+> meaningless to general purpose software.  It has no idea how to
+> set them correctly. The purpose of IIO is to provide general abstractions
+> and power modes are never that.
+> 
 
-On Thu Jul 23, 2026 at 5:42 AM CEST, Yu-Chun Lin wrote:
-> Add a new set_config callback to allow drivers to implement
-> hardware-specific configuration such as debounce settings, or other
-> platform-specific GPIO properties.
->
-> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
-> ---
-> Changes in v7:
-> - Drop the reviewed by tag from Andy due to the signature changes.
-> - Add 'struct gpio_regmap' as the first parameter to the set_config callb=
-ack.
-> - Add wrapper to bridge gpio_chip to gpio_regmap.
-> ---
->  drivers/gpio/gpio-regmap.c  | 16 ++++++++++++++++
->  include/linux/gpio/regmap.h |  6 ++++++
->  2 files changed, 22 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-> index 8f58b272b870..98cfdd890069 100644
-> --- a/drivers/gpio/gpio-regmap.c
-> +++ b/drivers/gpio/gpio-regmap.c
-> @@ -51,6 +51,9 @@ struct gpio_regmap {
->  			   unsigned int reg, unsigned int *mask,
->  			   unsigned int *val);
-> =20
-> +	int (*set_config)(struct gpio_regmap *gpio, struct gpio_chip *chip,
-> +			  unsigned int offset, unsigned long config);
-> +
->  	void *driver_data;
->  };
-> =20
-> @@ -317,6 +320,15 @@ static int gpio_regmap_direction_output(struct gpio_=
-chip *chip,
->  	return gpio_regmap_set_direction(chip, offset, true);
->  }
-> =20
-> +static int gpio_regmap_set_config(struct gpio_chip *chip,
-> +				  unsigned int offset,
-> +				  unsigned long cfg)
-> +{
-> +	struct gpio_regmap *gpio =3D gpiochip_get_data(chip);
-> +
-> +	return gpio->set_config(gpio, chip, offset, cfg);
-> +}
-> +
->  int gpio_regmap_reqres_irq(struct gpio_regmap *gpio, unsigned int offset=
-)
->  {
->  	return gpiochip_reqres_irq(&gpio->gpio_chip, offset);
-> @@ -386,6 +398,7 @@ struct gpio_regmap *gpio_regmap_register(const struct=
- gpio_regmap_config *config
->  	gpio->reg_clr_base =3D config->reg_clr_base;
->  	gpio->reg_dir_in_base =3D config->reg_dir_in_base;
->  	gpio->reg_dir_out_base =3D config->reg_dir_out_base;
-> +	gpio->set_config =3D config->set_config;
-> =20
->  	chip =3D &gpio->gpio_chip;
->  	chip->parent =3D config->parent;
-> @@ -455,6 +468,9 @@ struct gpio_regmap *gpio_regmap_register(const struct=
- gpio_regmap_config *config
-> =20
->  	gpio->value_xlate =3D config->value_xlate;
-> =20
-> +	if (config->set_config)
-> +		chip->set_config =3D gpio_regmap_set_config;
-> +
+Unfortunately lot's of apps engineers for these parts just like to
+control it all and don't care about generic interfaces (given typically
+these the devices are the only ones they care). So we also have some pain
+trying to explain all of the advantages :).
 
-Please keep both settings together. i.e.
+> Hence we put a lot of effort into mapping them to controls or measures
+> that have precise meaning.
+> 
+> I can't remember how I got talked into allowing the accelerometer
+> ones either :(  It was way back in 2013 and we have only one user.
+> I should shift that ABI doc to a driver specific one so as not tempt
+> more users.
+> 
+> To give a firmer opinion I guess I'll go read the datasheet at somepoint
+> but it's not a small one so that may take a little while.  I do see
+> that there is a recommendation for each power setting to only cover
+> one range of f_mod.  Maybe that gives us a route to a control that
+> it at least numerically meaningful (For those who know what effect
+> the modulator frequency has in a sigma delta modulator! Which
+> doesn't include me ;()
+> 
+> Any chance we can kick this into the future and get a useful base
+> driver ready for upstream?  It is a lot easier to have these discussions
+> when they are the only topic related to a thread.  One path to move
+> on would be to decide to default (only option for now) to the
+> best noise option.  Later we can add controls that result in that
+> initial default changing,
 
-if (config->set_config) {
-	gpio->set_config =3D config->set_config;
-	chip->set_config =3D gpio_regmap_set_config;
-}
+Yeah, those were my internal 2 cents. Not sure if this is exactly what
+you're proposing but what also came to my mind was to have a RMS lookup
+table (same as in DS) and for the overlapping frequencies, just go with
+the one with better RMS figure. My assumptions is that most users will
+prefer that. If not else better comes, we can have a driver argument to
+override the prefered mode (same way we do for some ADIS IMU devices).
+And yes, I know module arguments are not very encouraged...
 
-With that fixed:
-Reviewed-by: Michael Walle <mwalle@kernel.org>
+Or given this also looks like a system level decision (I don't think this
+is something one wants to change at runtime) maybe DT (acting as an override)
+would not be off the table.
 
--michael
+- Nuno Sá
 
->  	ret =3D gpiochip_add_data(chip, gpio);
->  	if (ret < 0)
->  		goto err_free_bitmap_output;
-> diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
-> index b77d6371cd9c..4bf4319ec12e 100644
-> --- a/include/linux/gpio/regmap.h
-> +++ b/include/linux/gpio/regmap.h
-> @@ -93,6 +93,9 @@ enum gpio_regmap_operation {
->   *			mask before writing. This allows driver-specific logic
->   *			to append additional bits (like write-enable masks)
->   *			dynamically based on the current operation.
-> + * @set_config:		(Optional) Callback for setting GPIO configuration such
-> + *			as debounce, drive strength, or other hardware specific
-> + *			settings.
->   * @drvdata:		(Optional) Pointer to driver specific data which is
->   *			not used by gpio-remap but is provided "as is" to the
->   *			driver callback(s).
-> @@ -154,6 +157,9 @@ struct gpio_regmap_config {
->  			   unsigned int base, unsigned int offset, unsigned int reg,
->  			   unsigned int *mask, unsigned int *val);
-> =20
-> +	int (*set_config)(struct gpio_regmap *gpio, struct gpio_chip *chip,
-> +			  unsigned int offset, unsigned long config);
-> +
->  	void *drvdata;
->  };
-> =20
-
-
---bcdbb4f5b86540f5f638637f481de919ca5fbee71c85807e04e08ee05a86
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCamG8OxIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/jdMAGA6vdWDAfPlpbMRlL8bcVeH0J9ggUGO3k3
-KKaE4tKNSFlTM5PlV39WvlxwxbB8MXX0AYCoD8206H984cP/OldL5d+dk/ye/hYn
-/QlgWY+LBTrRVzH9V3kko106NbPt0pdn8uw=
-=sqQX
------END PGP SIGNATURE-----
-
---bcdbb4f5b86540f5f638637f481de919ca5fbee71c85807e04e08ee05a86--
+> 
+> Jonathan
+> 
+> 
+> 
+> > 
+> 
