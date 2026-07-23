@@ -1,106 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828BB3E44F8
-	for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 21:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C340401494
+	for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 21:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784843476; cv=none; b=ZuQh+nXHVjWB/9bevzy9nby93Xt0knWIm4Vs0btrjcHE9+LiqZXCwCua8E9K7hTXd+UCtELO76Qa+qNrHU+3Sk6OcAYnpFh6g3VZcBbY0V9pZBl8agH+lmhc7yREp6Jo9F/gr2TkphVXfgcrxCckfoFcRBmeWx7rqhpJ1ttZmJE=
+	t=1784843916; cv=none; b=my1J6zY0SgKSmO67dZ6CuhZIuopfZ3krG5me0KIFbC7wjkDczQ5KNiF10TAqzEn8F6z2Zxs+esjkwvks6OOaB4XWVEpUS0ibE9qCdChFPJMq3eRb7UA3IM3Ed1UxyeOR15LfUkhiN3YxlurVtJU97pgYPTgF1YrUkqzUaVaeK7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784843476; c=relaxed/simple;
-	bh=Tn9db3Psohc2Vn6vUrjLCi1TrXQ/5hpT556cjaRcoXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iuSGsWwVwzcI1iLd0Bo9EFLD7xbk7KaTyoH/7oqPz640mBHFZx6GjZLOlWw7fIkkZA1I0pB8+boXbCif7cUNUVRsh3x2dxrVNw2T95Trf2upD75/LtooML8cjURIbmdF4BbsKRwZKcGtzwvd+PVZQA9nv4WQJgkJh5uK33pB0I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PS73xx6g; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784843916; c=relaxed/simple;
+	bh=6f79sbA5nfTpY98bqD9k4KCZXyJjapdhSkgU3+eBOmc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ohbOd/WhIl+hayogVYbQN/deqfW1WWbmGdswBhMJ0HXr1pjd3FvQaQgob4LyRoXT3pR62b6+ju/95TzUXOz1qUIySjraBTLYY2Zljvbr2yW+Mt4SzDn32sXgfuOq7mrxDdNtYD/7LJAkOXQNLk8snauwxrzbW6Ov6x1UNxUDNrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MpEftS63; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PS73xx6g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39FF71F01558
-	for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 21:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784843474;
-	bh=Tn9db3Psohc2Vn6vUrjLCi1TrXQ/5hpT556cjaRcoXE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=PS73xx6grw1a1ccZiB7M0JW4YjHIFkESGRljs8NtMG2djGErIx/5mvP/xSo1f8CC6
-	 lxzjRoO1yRby/r00gNR0TKtaLe2KidkY509VHt1m9GL8YNJO65vl+7yow15J+wcbkn
-	 LyLkNvwJ2Yo7sxENJtQzNdA0tT35xFXiklXzQwMqailG6ulIZ7rFXrh7yPZXjfwcTq
-	 w/lM1/RrMgIrXi3JJoA84lHqxmFiXlx/JnONMnfwThTVhbrPub38+APIGIfbeZGwlD
-	 uE8T+RJB3q3l9KJpPJBpj8/k6hgX2XdGiMLPRIuH4TOI2D9h3HZEl50idyw5+nN/Hn
-	 dUklT+Iyl4lMw==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5b2a8e4c77eso1176401e87.1
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 14:51:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rpr+QAAOKNyZlMv0MYhMAofq7AUkRPbDCCozIswvGcA2Xl8sxCRWI5zx2PFHYPHGiv1j9PRceo8FPUm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0iXWebl69jr9Daskwoz/+hF6nryX0bIQzAkuB2+02oiLq3PAE
-	BMIytilRQTB2zJno2aElDpQQuow2w/zltzpw0pr/+nYG2M6k8sSZj/gtMF+t9kBkDv3KCvQsZCe
-	mofShQKtaQ5e9UBYNgMKQRIuKiLitXRU=
-X-Received: by 2002:ac2:44cc:0:b0:5b0:bc3:dc11 with SMTP id
- 2adb3069b0e04-5b2b2e59e63mr664600e87.22.1784843472973; Thu, 23 Jul 2026
- 14:51:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MpEftS63"
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-ca957432c7fso869981a12.1
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 14:58:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784843912; x=1785448712; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=9+8eCFfIFOiymdCrrKAG5J0qjb2XOXmK+uwpPgsZyCM=;
+        b=MpEftS63fwY7dVgpixr5ULLFvC/VFZYr8JbuOTyIr2/7ER2qONK1QoGGXGD3EnOfHl
+         8Vds4llHKHXLmVNqGcAYrjlsNKCGGmM0/PJfwn1VG1Yq9HPiNMKI17kh+gJiBo2l5o6N
+         p3A1kwDtKudj8U3gx8Wz1+o4oi3MXeptK1TwqMeUOM+PF9l5lyGc/EW1SXZWSADbsXII
+         CRuSkHAuhLUL2OXNj1pgjBRwOdH9T4dr3HyP+eVMM2LZlv0hnMPNxZWa6L3D3Gl/izPp
+         AJ2Chq3uxCs6QBqp+HZYfcQeUGe0TMfG9xkqjMf45KcxTXgZ2mjNhHcSwbWiqVgl4jIo
+         SA7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784843912; x=1785448712;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=9+8eCFfIFOiymdCrrKAG5J0qjb2XOXmK+uwpPgsZyCM=;
+        b=ngBPfcAMzvnfgzVmvSqHlxEDZrMWdEcZANmY8n11dLH23tTGqJlI+YacY3yCV2lzaT
+         mjZNos/J+dUHP7RrTHSZQ5RUzapTwA+LHOaXLgcj/dCz7dRXMAHG6Lk4nqt34jopm1AF
+         BivXkKu6FtN60PG+Nmf8HDsQZ7KcbjWZbYFjVZZnlJk7Z2aAvdsy45KfHRogU7hw5Pgv
+         Ver3U97ucYQZAx/iJchmImSLmPtsgk6VmmSymvPJNPgzQGhcS/Qaxna/CVlAmOQcII++
+         4esxsJ2LRfV+oH2StdW5uUJpSi48Ig8Pirl+PGqP9m2hA9Nx+w2Y6VNRavVoZPE830AT
+         Vx2Q==
+X-Forwarded-Encrypted: i=1; AHgh+RomSLVWIgeaiDdLxp2zSoZzJ6W5t3s3GSxjTyP4C5KBx4HS3jBxNGDc0WbIQr7unUNA3wGmdCKdIhKV@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCefzfv7tSXZclbnJocAG8b9bGAFTnorkD78dlJficv7zwOmBM
+	mdyE9f7c9Yx5Noq10rzcarJgknRiQqbgL5Mu/YrTxa33VHk0INBwJT2c
+X-Gm-Gg: AR+sD12RLiWB+yQ3HU1rr6q6D65XD87vmBKubROQpmgkUbDpexhsWuSfXX9PO0JdNIa
+	2MGEHoWOW+XgsiOyxgjEIp/tf+KNiZxavxnfrk8Lx5vxO4Lf/L720Ofi2bttKt++U6WsSFbPphC
+	eDsNRavlpWUG4l0X9Si6Ce84pe2Augd49fKG+RjB3bBXaLmQV06bXMeXsVHb3ReJTD/tkoX59m+
+	DoIpEIULyEwDfx2SKPQqtFspYHYkg4F71BtMMEcrAtF8qrF6jJYP0k4qpj/CCew2UhvG/W2S+78
+	XgDDHc65j0POxCdvi3oasQ7Ooij9v9H44kTBItxS9HrWNuANGzGhV0GXmBf0NNSYSK9RiEAwSuB
+	E2W8Ae/aR2XJyjfvH3GSwurBf37J1PCccUS4HNlHSGernok5o349qQE+QITm4+6WafoSt+VlgU2
+	Q2CiLClE2bP5DwIliUSQUiZJ0+KAlWVghg/cCgSkky8FMcpj2IJhPp
+X-Received: by 2002:a05:6a20:e291:b0:3bf:6acf:2940 with SMTP id adf61e73a8af0-3c44af77533mr5350478637.11.1784843911763;
+        Thu, 23 Jul 2026 14:58:31 -0700 (PDT)
+Received: from google.com ([2a00:79e0:2ebe:8:f5d:dfe5:9bb9:71ad])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3147e1cf8fasm24297371eec.31.2026.07.23.14.58.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jul 2026 14:58:30 -0700 (PDT)
+Date: Thu, 23 Jul 2026 14:58:25 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Eliav Farber <farbere@amazon.com>
+Cc: rafael@kernel.org, tony.luck@intel.com, bp@alien8.de, 
+	guohanjun@huawei.com, mchehab@kernel.org, xueshuai@linux.alibaba.com, lenb@kernel.org, 
+	laurent.pinchart@ideasonboard.com, linusw@kernel.org, brgl@kernel.org, orsonzhai@gmail.com, 
+	baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, hansg@kernel.org, ilpo.jarvinen@linux.intel.com, 
+	W_Armin@gmx.de, ukleinek@kernel.org, fabio.m.de.francesco@linux.intel.com, 
+	kaihengf@nvidia.com, ankita@nvidia.com, leitao@debian.org, 
+	jason@os.amperecomputing.com, pedro.pbg@usp.br, paulmck@kernel.org, frederic@kernel.org, 
+	kees@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 07/12] Input: adp5585: use
+ devm_blocking_notifier_chain_register()
+Message-ID: <amKOW9ILpWd7w15Q@google.com>
+References: <20260723175513.39849-1-farbere@amazon.com>
+ <20260723175513.39849-3-farbere@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260520-rsk7203-properties-v2-0-465f3308021b@gmail.com>
- <akyJOW79W0xvI-P9@google.com> <CAD++jL=Wx=mHORGDU_=PgGrOCdTSVes63jgSL2xQX+rCE2uaMw@mail.gmail.com>
- <f9fc5cb2ae36593db9db8faf7ebcdc224842f9a0.camel@physik.fu-berlin.de>
-In-Reply-To: <f9fc5cb2ae36593db9db8faf7ebcdc224842f9a0.camel@physik.fu-berlin.de>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 23 Jul 2026 23:51:00 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnC0eZbJa4hyTQkeJ214miahcAFhH42X+JkxxTbDo=5TA@mail.gmail.com>
-X-Gm-Features: AUfX_mw7o27tts3KuJc2fCs-iddo5AVh_y2fbuI1x_FFI7tnJrpKdy_91LnZLqw
-Message-ID: <CAD++jLnC0eZbJa4hyTQkeJ214miahcAFhH42X+JkxxTbDo=5TA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] rsk7203: switch to using static device property,
- drop legacy gpio API
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rich Felker <dalias@libc.org>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Arnd Bergmann <arnd@kernel.org>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260723175513.39849-3-farbere@amazon.com>
 
-On Sat, Jul 11, 2026 at 7:15=E2=80=AFAM John Paul Adrian Glaubitz
-<glaubitz@physik.fu-berlin.de> wrote:
+On Thu, Jul 23, 2026 at 05:55:08PM +0000, Eliav Farber wrote:
+> Replace the blocking_notifier_chain_register() +
+> devm_add_action_or_reset() pattern with a single call to
+> devm_blocking_notifier_chain_register(), removing the
+> adp5585_keys_unreg_notifier() callback.
+> 
+> Signed-off-by: Eliav Farber <farbere@amazon.com>
 
-> I'm sorry, but I wasn't aware that this was an urgent patch. I'm doing th=
-is
-> as a hobbyist and I'm working on my own pace as I cannot always spend tim=
-e
-> working on kernel maintenance.
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-That's OK, I'm helping out by rerviewing and at times like this
-also merging code.
+Feel free to merge with the rest of the series.
 
-> What I don't understand, why did you choose to use an immutable tree? Is =
-there
-> really a need for such an escalation? I find that a bit rude.
+Thanks.
 
-I think you don't understand what an immutable branch is.
-
-An immutable branch is something offerered to other maintainers
-so they can pull it to their trees so the patches will share the same
-commit chain and SHA checksum in both trees. In this case, this
-is offered to the Super-H maintainer, I guess you?
-
-In this case the patches touches both sh and pinctrl and the two
-subsystems should ideally use an immutable branch to share
-the commits.
-
-The word "immutable" in immutable branch does not mean it can't
-be dropped or reverted...
-
-If you see a technical problem with the code or really want to queue
-it *only* in the sh tree I can revert it (or maybe just drop it) from the
-pinctrl tree.
-
-If not, you can git pull it in to get the same patches that are
-already in the pinctrl tree, this is customary, we do it all the time.
-
-git pull git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl=
-.git
-ib-rsk7204
-
-Yours,
-Linus Walleij
+-- 
+Dmitry
