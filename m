@@ -1,120 +1,106 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CAD387569
-	for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 21:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828BB3E44F8
+	for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 21:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784842966; cv=none; b=EioXs60C1Rc/MtcQFLDIoqNYq2CEvSFEOzUy8tO20hcts1a9fjginDzmjsnqVf/VSPJ+6VEPBKsQ6ueTX3CB/zy3w0XCK6SuoEVB4m7vG2tcQvW8WELHaAsIDOhqdAy3YxytL41eBYcr+okm6GB0pqFtGsr74rsndpgs853vwlM=
+	t=1784843476; cv=none; b=ZuQh+nXHVjWB/9bevzy9nby93Xt0knWIm4Vs0btrjcHE9+LiqZXCwCua8E9K7hTXd+UCtELO76Qa+qNrHU+3Sk6OcAYnpFh6g3VZcBbY0V9pZBl8agH+lmhc7yREp6Jo9F/gr2TkphVXfgcrxCckfoFcRBmeWx7rqhpJ1ttZmJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784842966; c=relaxed/simple;
-	bh=cMVH30seVxDqGNU+JXO7CI9A1iWOcqfw3kUyY5cSpXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G59E+1RZwUEOuQVyrEEaHcPbkBi4Os8cGZ7B5ZsHVufGPZVkhytypnfNb8CavyKrpUFV7rcuMKAZYt/CkVZ9BcY8rVUBRMTCScdQC4BF71Q/c8RRDCBSxIXA65jzK9BH9pmgCiD95xWR6cGXG81koPKTZOhLRIahzTIk8xbPpTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GX/8PCT4; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784843476; c=relaxed/simple;
+	bh=Tn9db3Psohc2Vn6vUrjLCi1TrXQ/5hpT556cjaRcoXE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iuSGsWwVwzcI1iLd0Bo9EFLD7xbk7KaTyoH/7oqPz640mBHFZx6GjZLOlWw7fIkkZA1I0pB8+boXbCif7cUNUVRsh3x2dxrVNw2T95Trf2upD75/LtooML8cjURIbmdF4BbsKRwZKcGtzwvd+PVZQA9nv4WQJgkJh5uK33pB0I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PS73xx6g; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GX/8PCT4"
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-8486672f03cso1188944b3a.0
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 14:42:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784842964; x=1785447764; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:sender:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=IPzjE3FNOTGqvDB3QZeC9AMUwCIrsHLR+NHAqkuuNKg=;
-        b=GX/8PCT4gj44Hoz7vIJxUbVp28tJd0yDDNPY4GD83psjqXwEta24C5bviRZYCwFaei
-         E91nBXJWb7sv3khiPzJ1cmjZeBcHDPbGc1nhFbw3m/sKbhITGco+dSEJAsE8uQ+JGo1R
-         b1ZS9n6o0ANZA8HGrIRK8e57evntrGmHWRiINx1kNlPVGIKte8jzJZQW1RWi3hBaK6Zb
-         0XqW8xqEF88ikau0EV3oyl7FvLgGgio2s4/aEzzvga/TDoOFQ+/9WU6JZgWv7bEc1Und
-         8t/hBcl7zH2UdzG2MC1axazphFnVQK8yxWhIpmwGf2Rsq9q8RhObZFsuHcyXX1lBtq+H
-         MBHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784842964; x=1785447764;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:sender:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=IPzjE3FNOTGqvDB3QZeC9AMUwCIrsHLR+NHAqkuuNKg=;
-        b=IsOyFI98MYltOX4XfXJM8sbCGlBSw6dvUGF8GqkiGpln4VaoAjxZ6CMaGhL0+EuPp3
-         o4/lmrCziBd8+t8tlPLWpMrYWhJYgVg9ZfYvC18ThdIfSk/GFDiG9etTaAOHJod93bOz
-         gguvaa2Ts6vomQ6B7IXq9xESQhTa5C8s7LbNMbG8pASTFs4kyJn/AeDaJf3nOGYuy7PB
-         iVyvYF62qmhgtf0189BI3qmaCJ+B5oMhL6SFTs+y9hM/7KakaU+9xZnB/XhOHAoSe+6r
-         0r2LO/YNRaTc8X59JRhS6wjeXwdvoxcDk9n8KeTGPqkXlpqTLKJnfcptNe8GAzu+KmC3
-         azNA==
-X-Forwarded-Encrypted: i=1; AHgh+RqGDKur/MBIMG31Sfp8bEsyfpGFLqjuw3g4Fds2c9C89FvTohi3oRoTmUU/CPVkWpZSRH26NTg/WLLO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9qyNuEeooIN4u6QWYiGHHULiU8wYYjRZhOZqwUh5xMU4e8PDE
-	mlUOELqpCF/0TElgojWT2M5ThI1tqLPo2Epw/XeKHvz1NekUHfBOE5Sg
-X-Gm-Gg: AR+sD10eq8sVH7il4ylbVAgtIL0wqLdE6c8KUszyzqwei2qF3EoArp6CW9X8u5guDUN
-	ujGWAuJWii0jQMCy2aGn/8FtULeAM4lA9LLO5pWVphNFXaRf+xRZl1qXh7rlpR4Stc4oNx6lnN1
-	L/dqJnIfc4of9110I9l25jn1zcKT5/1VfIpiuW63QaQV0tQzPbXWSWVr20X7lM6TBoeDOIsVvEV
-	Edi6flOx5IP0wpe0Ro4DFWBkGsT0IU8YvZpvh6l/tAKkMDCo9oLN1B4ZRjxdpoSEgt5GrOd3huG
-	DXalok/Vne387aD6KNsM1pfi2GEci9oYI2NXP0GpdSvUkShq/upR+ZpLplMj2K1tM9p+bkTnH1X
-	+l7pMH/XQT/qGXPLx80dkOf2q905T8Y2wi8uQ8tTl4k48JIpzOxfR4366xG4bPbPddgnFfR+Pjt
-	/vQabcYgXajH6xVGY=
-X-Received: by 2002:a05:6a00:3c94:b0:848:4859:a45 with SMTP id d2e1a72fcca58-84e2b7ca651mr5747181b3a.2.1784842963810;
-        Thu, 23 Jul 2026 14:42:43 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84e17237c32sm3663216b3a.6.2026.07.23.14.42.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 14:42:42 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 23 Jul 2026 14:42:42 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: kr494167@gmail.com
-Cc: nuno.sa@analog.com, linux-hwmon@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: ltc4283: add missing MODULE_DEVICE_TABLE for OF
- match table
-Message-ID: <7e86e321-aab2-460c-a864-e6aa7c108bab@roeck-us.net>
-References: <20260721055022.34629-1-kr494167@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PS73xx6g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39FF71F01558
+	for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 21:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784843474;
+	bh=Tn9db3Psohc2Vn6vUrjLCi1TrXQ/5hpT556cjaRcoXE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=PS73xx6grw1a1ccZiB7M0JW4YjHIFkESGRljs8NtMG2djGErIx/5mvP/xSo1f8CC6
+	 lxzjRoO1yRby/r00gNR0TKtaLe2KidkY509VHt1m9GL8YNJO65vl+7yow15J+wcbkn
+	 LyLkNvwJ2Yo7sxENJtQzNdA0tT35xFXiklXzQwMqailG6ulIZ7rFXrh7yPZXjfwcTq
+	 w/lM1/RrMgIrXi3JJoA84lHqxmFiXlx/JnONMnfwThTVhbrPub38+APIGIfbeZGwlD
+	 uE8T+RJB3q3l9KJpPJBpj8/k6hgX2XdGiMLPRIuH4TOI2D9h3HZEl50idyw5+nN/Hn
+	 dUklT+Iyl4lMw==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5b2a8e4c77eso1176401e87.1
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 14:51:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rpr+QAAOKNyZlMv0MYhMAofq7AUkRPbDCCozIswvGcA2Xl8sxCRWI5zx2PFHYPHGiv1j9PRceo8FPUm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0iXWebl69jr9Daskwoz/+hF6nryX0bIQzAkuB2+02oiLq3PAE
+	BMIytilRQTB2zJno2aElDpQQuow2w/zltzpw0pr/+nYG2M6k8sSZj/gtMF+t9kBkDv3KCvQsZCe
+	mofShQKtaQ5e9UBYNgMKQRIuKiLitXRU=
+X-Received: by 2002:ac2:44cc:0:b0:5b0:bc3:dc11 with SMTP id
+ 2adb3069b0e04-5b2b2e59e63mr664600e87.22.1784843472973; Thu, 23 Jul 2026
+ 14:51:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260721055022.34629-1-kr494167@gmail.com>
+References: <20260520-rsk7203-properties-v2-0-465f3308021b@gmail.com>
+ <akyJOW79W0xvI-P9@google.com> <CAD++jL=Wx=mHORGDU_=PgGrOCdTSVes63jgSL2xQX+rCE2uaMw@mail.gmail.com>
+ <f9fc5cb2ae36593db9db8faf7ebcdc224842f9a0.camel@physik.fu-berlin.de>
+In-Reply-To: <f9fc5cb2ae36593db9db8faf7ebcdc224842f9a0.camel@physik.fu-berlin.de>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 23 Jul 2026 23:51:00 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnC0eZbJa4hyTQkeJ214miahcAFhH42X+JkxxTbDo=5TA@mail.gmail.com>
+X-Gm-Features: AUfX_mw7o27tts3KuJc2fCs-iddo5AVh_y2fbuI1x_FFI7tnJrpKdy_91LnZLqw
+Message-ID: <CAD++jLnC0eZbJa4hyTQkeJ214miahcAFhH42X+JkxxTbDo=5TA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] rsk7203: switch to using static device property,
+ drop legacy gpio API
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rich Felker <dalias@libc.org>, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Arnd Bergmann <arnd@kernel.org>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 21, 2026 at 11:20:22AM +0530, kr494167@gmail.com wrote:
-> From: surendra <kr494167@gmail.com>
-> 
-> The driver registers ltc4283_of_match as the platform driver's
-> .of_match_table so the kernel probes the device when a DT node with
-> compatible "adi,ltc4283" is present, but the corresponding
-> MODULE_DEVICE_TABLE(of, ...) call is absent.
-> 
-> Without it the module alias table (modules.alias) does not contain an
-> "of:N*T*Cadi,ltc4283" entry, so udev / kmod cannot auto-load the
-> module when the DT node appears, breaking modules-based deployments
-> while built-in configurations happen to work by accident.
-> 
-> Add the missing MODULE_DEVICE_TABLE() to fix module auto-loading.
-> 
-> Fixes: dd63353a0b5e ("hwmon: ltc4283: Add support for the LTC4283 Swap Controller")
-> Signed-off-by: surendra <kr494167@gmail.com>
+On Sat, Jul 11, 2026 at 7:15=E2=80=AFAM John Paul Adrian Glaubitz
+<glaubitz@physik.fu-berlin.de> wrote:
 
-Applied.
+> I'm sorry, but I wasn't aware that this was an urgent patch. I'm doing th=
+is
+> as a hobbyist and I'm working on my own pace as I cannot always spend tim=
+e
+> working on kernel maintenance.
 
-Thanks,
-Guenter
+That's OK, I'm helping out by rerviewing and at times like this
+also merging code.
 
-> ---
->  drivers/hwmon/ltc4283.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/hwmon/ltc4283.c b/drivers/hwmon/ltc4283.c
-> index 9b85293ea664..9ec409bc2648 100644
-> --- a/drivers/hwmon/ltc4283.c
-> +++ b/drivers/hwmon/ltc4283.c
-> @@ -1772,6 +1772,7 @@ static const struct of_device_id ltc4283_of_match[] = {
->  	{ .compatible = "adi,ltc4283" },
->  	{ }
->  };
-> +MODULE_DEVICE_TABLE(of, ltc4283_of_match);
->  
->  static const struct i2c_device_id ltc4283_i2c_id[] = {
->  	{ "ltc4283" },
+> What I don't understand, why did you choose to use an immutable tree? Is =
+there
+> really a need for such an escalation? I find that a bit rude.
+
+I think you don't understand what an immutable branch is.
+
+An immutable branch is something offerered to other maintainers
+so they can pull it to their trees so the patches will share the same
+commit chain and SHA checksum in both trees. In this case, this
+is offered to the Super-H maintainer, I guess you?
+
+In this case the patches touches both sh and pinctrl and the two
+subsystems should ideally use an immutable branch to share
+the commits.
+
+The word "immutable" in immutable branch does not mean it can't
+be dropped or reverted...
+
+If you see a technical problem with the code or really want to queue
+it *only* in the sh tree I can revert it (or maybe just drop it) from the
+pinctrl tree.
+
+If not, you can git pull it in to get the same patches that are
+already in the pinctrl tree, this is customary, we do it all the time.
+
+git pull git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl=
+.git
+ib-rsk7204
+
+Yours,
+Linus Walleij
