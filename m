@@ -1,62 +1,61 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2592931DE;
-	Thu, 23 Jul 2026 01:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67F43546C0;
+	Thu, 23 Jul 2026 03:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784770943; cv=none; b=naB3cNYGpfFfvteQXN7uqHmwmnJdJxHzQpqNgiBb3q45MWZgQwhUH91qVs1+fpt5Mn+qF+gsvHT7wfCvY2UTNOm3ALPqAo632jmZeQFzjQpHEZv24mUtnQuFZwcZRxsgaBGs+hOfBtiqfK0lQJoBL0DiX5oXoofamRxjj8sFsHY=
+	t=1784778193; cv=none; b=tN2WH8sQnWjTv5ckoTh1evuHEV3qPjtPk3Yb8S3vJV8cIi/5/1dFNV/uxwiC6gIrRnVMx05GODqulvLTxew7gtqBCoLz3BeZEW7Jv1IICkFxWz+U7Pvx9dcacvM6Mj/nO6GxMAKA9WBEt8PEKbL0wDU9GvY3qhvQTNeUhjXApm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784770943; c=relaxed/simple;
-	bh=mNQeiHLtOE2eI3Wxy8SjxSE1jvCa/k2zMJRQl+78QXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=myuxomCOpXwXlxdhpOhRJ3dmxO3usPcbnQglrakaa6xcYsdEr2TmonCJcc/tUw/4S1hTnxx02UGyaydoDsq/DS21cEkskYDZEN2KVkGUfUpW8M/cLDKWIXFiDwV10QqckkkLyB6YRlqlaMTUKYtiYgt+MGFTTzuLMZ7yIglEfgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eotv/Bt7; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1784778193; c=relaxed/simple;
+	bh=ralsew4SE6BU05qKQRCZfQ0YQBoR9l/lf8YHo5n7YFA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CoO9sIxVYdAMAcANtKqTQ+cATMkHv6mKrvRomrbkzYeFYmFNP76+WbU5o9DMu4HRfuV3xmG8Bx9EHrNYN4IMvjOm9sJkQvGvfvi43xcsjEx4/z+IbkmdW5xUyfTR1u9TuxKXpv28h+J7zxBW6TuHQWnYuE8P2L0jJG13OGy19QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=Skt1GfjF; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eotv/Bt7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1784770942; x=1816306942;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=mNQeiHLtOE2eI3Wxy8SjxSE1jvCa/k2zMJRQl+78QXQ=;
-  b=Eotv/Bt7mya+xOvdKOEEPlsR1gbjaahGWokiu8RSpsRO1oVw7uNNIwGq
-   z3Sl78A4q/797R5r1I+DhyUWx270ypHSXJAos/URoWVKdJUykOWeM4tvG
-   aEIJ6RijwfZeOlvRXLGCbzut4GI3RKEIgRo2y25AJpx/XlSo1dBkS0iW6
-   2mO4il3D504qHMJvfSSNL0y7sv2aTQshoi6GNNwL1tT5ffv8bupKtyPS6
-   CNso+83jv7aGyEl9EHIepGaTLfb9Y4+H4rb8kqo8g479q6M14pPrSTlxN
-   gVf0LtbHn6P8zxSBiBDXyLMi/09B4TLteoOREhp/xOXSt3/dKd9Ltydkz
-   A==;
-X-CSE-ConnectionGUID: 2ycLmh+nQA2wcbFR/OfBBw==
-X-CSE-MsgGUID: j7hnnam1RIyzoNDrEHR65A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11854"; a="96790315"
-X-IronPort-AV: E=Sophos;i="6.25,179,1779174000"; 
-   d="scan'208";a="96790315"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2026 18:42:21 -0700
-X-CSE-ConnectionGUID: J98Z6do+T8SXY+bGVZNySQ==
-X-CSE-MsgGUID: 3WHpnddbSiOHybu9ZDoe0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,179,1779174000"; 
-   d="scan'208";a="257028835"
-Received: from junjie-desk-dev.bj.intel.com (HELO junjie-desk-dev.tail2c02c1.ts.net) ([10.238.152.71])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2026 18:42:18 -0700
-From: Junjie Cao <junjie.cao@intel.com>
-To: Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: [PATCH] gpio: pch: use raw_spinlock_t for the register lock
-Date: Thu, 23 Jul 2026 09:41:29 +0800
-Message-ID: <20260723014129.1129730-1-junjie.cao@intel.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="Skt1GfjF"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 66N3gb0N3179457, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1784778158; bh=xNunaMgWB2S+YDoubksZRc57aBU05ZLT9WdN+nxaBhM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=Skt1GfjFSAVh90zEK0/ORh0vmyoinQqvSfwDnRyRu0a48zUEkeKDB98Jw8Za2Eq8C
+	 3e14XSz6knXu6vL5BUEoq9plqdpKZluzKukOr/f27rgLepPYoKST33dMkeSN5sqgZr
+	 6BXE1GFXREwF9R7xlka+zuRMleeazkGcQkRvumRV1wIjrbq3/s1iPpwJ5xzM8aWclg
+	 ZcYVNOpXo61bmi9eXIOvQ95il2DMtMhokx3qCo9zUlM/ZDc7YwdxENZKwnrhyV9bcz
+	 uuVF09EJbxm5igvq/lA9izcAJkfZCNnpCIGrRSM+vyqseRSFKY3tgYuJM3BBLpURN9
+	 sDJ/kOqJygANg==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 66N3gb0N3179457
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 23 Jul 2026 11:42:37 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 23 Jul 2026 11:42:38 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 23 Jul 2026 11:42:38 +0800
+Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
+ (10.21.1.56) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 23 Jul 2026 11:42:37 +0800
+From: Yu-Chun Lin <eleanor.lin@realtek.com>
+To: <linusw@kernel.org>, <andriy.shevchenko@intel.com>, <mwalle@kernel.org>,
+	<brgl@kernel.org>, <tychang@realtek.com>, <wbg@kernel.org>,
+	<mathieu.dubois-briand@bootlin.com>, <nuno.sa@analog.com>,
+	<Michael.Hennerich@analog.com>, <jic23@kernel.org>, <andy@kernel.org>,
+	<u.kleine-koenig@baylibre.com>, <dakr@kernel.org>, <bhelgaas@google.com>,
+	<o-takashi@sakamocchi.jp>
+CC: <eleanor.lin@realtek.com>, <dlechner@baylibre.com>,
+	<linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<linux@analog.com>, <linux-iio@vger.kernel.org>, <cy.huang@realtek.com>,
+	<james.tai@realtek.com>
+Subject: [PATCH v7 0/9] gpio: realtek: Add support for Realtek DHC RTD1625
+Date: Thu, 23 Jul 2026 11:42:17 +0800
+Message-ID: <20260723034237.2501507-1-eleanor.lin@realtek.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -64,169 +63,96 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-pch_irq_type() is registered as the irq_chip .irq_set_type callback and
-takes chip->spinlock with spin_lock_irqsave().  This callback is reached
-from __setup_irq() -> __irq_set_trigger() -> chip->irq_set_type() while
-the caller holds desc->lock, a raw_spinlock_t, with hardirqs disabled.
-That context is not sleepable, but on PREEMPT_RT a regular spinlock_t is
-an rtmutex-backed sleeping lock, so acquiring it there is invalid.
+For better review flow, this series includes Andy Shevchenko's
+gpio-regmap fix patches [1] as a prerequisite. The first patch
+reverts the previously applied patch from Bartosz Golaszewski.
 
-This was confirmed on a PREEMPT_RT kernel with lockdep
-(PROVE_RAW_LOCK_NESTING and DEBUG_ATOMIC_SLEEP).  A grounded PoC mirrored
-pch_irq_type()'s locking and drove it through the real genirq carrier
-irq_set_irq_type() -> __irq_set_trigger() -> chip->irq_set_type(), i.e.
-the same __irq_set_trigger() edge that __setup_irq() takes for a
-requested IRQ.  With the original spin_lock_irqsave() edge lockdep
-reported an invalid wait context, immediately followed by:
+This series then adds GPIO support for the Realtek DHC RTD1625 SoC.
 
-  BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-  in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 95, name: insmod
-  hardirqs last disabled at (3784): _raw_spin_lock_irqsave+0x4f/0x60
-   rt_spin_lock+0x3a/0x1c0
-   repro_irq_set_type+0x64/0xa0 [pch_repro]
-   __irq_set_trigger+0x69/0x140
-   irq_set_irq_type+0x78/0xd0
+Unlike the existing driver (gpio-rtd.c) which uses shared bank
+registers, the RTD1625 features a per-pin register architecture where
+each GPIO line is managed by its own dedicated 32-bit control register.
+This distinct hardware design requires a new, separate driver.
 
-Switching the mirrored lock to raw_spinlock_t made both splats go away.
-
-Convert the register lock to raw_spinlock_t.  The same lock also
-serializes the GPIO direction/value callbacks and the suspend/resume
-register save/restore, but all of those critical sections only perform
-MMIO register accesses (ioread32()/iowrite32()) and
-irq_set_handler_locked(); none of them contain sleepable operations.
-Keeping this register lock non-sleeping is therefore appropriate for the
-irqchip callbacks and does not change the GPIO-side locking contract.
-
-This is the same class of issue and fix as recently addressed for other
-GPIO controllers, e.g. commit 286533cb14a3 ("gpio: sch: use raw_spinlock_t
-in the irq startup path") and commit 90f0109019e6 ("gpio: eic-sprd: use
-raw_spinlock_t in the irq startup path").
-
-Fixes: 38eb18a6f92d ("gpio-pch: Support interrupt function")
-Cc: stable@vger.kernel.org
-Signed-off-by: Junjie Cao <junjie.cao@intel.com>
+Link: https://lore.kernel.org/lkml/20260702130903.1790633-1-andriy.shevchenko@linux.intel.com/ [1]
 ---
- drivers/gpio/gpio-pch.c | 28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+Changes in v7:
+Patch 1:
+- Add Acked-by tag from Andy.
 
-diff --git a/drivers/gpio/gpio-pch.c b/drivers/gpio/gpio-pch.c
-index 4ffa0955a9e3..07a5617b314b 100644
---- a/drivers/gpio/gpio-pch.c
-+++ b/drivers/gpio/gpio-pch.c
-@@ -96,7 +96,7 @@ struct pch_gpio {
- 	struct pch_gpio_reg_data pch_gpio_reg;
- 	int irq_base;
- 	enum pch_type_t ioh;
--	spinlock_t spinlock;
-+	raw_spinlock_t spinlock;
- };
- 
- static int pch_gpio_set(struct gpio_chip *gpio, unsigned int nr, int val)
-@@ -105,7 +105,7 @@ static int pch_gpio_set(struct gpio_chip *gpio, unsigned int nr, int val)
- 	struct pch_gpio *chip =	gpiochip_get_data(gpio);
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(&chip->spinlock, flags);
- 	reg_val = ioread32(&chip->reg->po);
- 	if (val)
- 		reg_val |= BIT(nr);
-@@ -113,7 +113,7 @@ static int pch_gpio_set(struct gpio_chip *gpio, unsigned int nr, int val)
- 		reg_val &= ~BIT(nr);
- 
- 	iowrite32(reg_val, &chip->reg->po);
--	spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
- 
- 	return 0;
- }
-@@ -133,7 +133,7 @@ static int pch_gpio_direction_output(struct gpio_chip *gpio, unsigned int nr,
- 	u32 reg_val;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(&chip->spinlock, flags);
- 
- 	reg_val = ioread32(&chip->reg->po);
- 	if (val)
-@@ -147,7 +147,7 @@ static int pch_gpio_direction_output(struct gpio_chip *gpio, unsigned int nr,
- 	pm |= BIT(nr);
- 	iowrite32(pm, &chip->reg->pm);
- 
--	spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
- 
- 	return 0;
- }
-@@ -158,12 +158,12 @@ static int pch_gpio_direction_input(struct gpio_chip *gpio, unsigned int nr)
- 	u32 pm;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(&chip->spinlock, flags);
- 	pm = ioread32(&chip->reg->pm);
- 	pm &= BIT(gpio_pins[chip->ioh]) - 1;
- 	pm &= ~BIT(nr);
- 	iowrite32(pm, &chip->reg->pm);
--	spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
- 
- 	return 0;
- }
-@@ -265,7 +265,7 @@ static int pch_irq_type(struct irq_data *d, unsigned int type)
- 		return 0;
- 	}
- 
--	spin_lock_irqsave(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(&chip->spinlock, flags);
- 
- 	/* Set interrupt mode */
- 	im = ioread32(im_reg) & ~(PCH_IM_MASK << (im_pos * 4));
-@@ -277,7 +277,7 @@ static int pch_irq_type(struct irq_data *d, unsigned int type)
- 	else if (type & IRQ_TYPE_EDGE_BOTH)
- 		irq_set_handler_locked(d, handle_edge_irq);
- 
--	spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
- 	return 0;
- }
- 
-@@ -374,7 +374,7 @@ static int pch_gpio_probe(struct pci_dev *pdev,
- 	chip->ioh = id->driver_data;
- 	chip->reg = chip->base;
- 	pci_set_drvdata(pdev, chip);
--	spin_lock_init(&chip->spinlock);
-+	raw_spin_lock_init(&chip->spinlock);
- 	pch_gpio_setup(chip);
- 
- 	ret = devm_gpiochip_add_data(dev, &chip->gpio, chip);
-@@ -407,9 +407,9 @@ static int pch_gpio_suspend(struct device *dev)
- 	struct pch_gpio *chip = dev_get_drvdata(dev);
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(&chip->spinlock, flags);
- 	pch_gpio_save_reg_conf(chip);
--	spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
- 
- 	return 0;
- }
-@@ -419,11 +419,11 @@ static int pch_gpio_resume(struct device *dev)
- 	struct pch_gpio *chip = dev_get_drvdata(dev);
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(&chip->spinlock, flags);
- 	iowrite32(0x01, &chip->reg->reset);
- 	iowrite32(0x00, &chip->reg->reset);
- 	pch_gpio_restore_reg_conf(chip);
--	spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
- 
- 	return 0;
- }
+Patch 2:
+- Add Reviewed-by tag from Michael.
+
+Patch 3:
+- Add Reviewed-by tag from Michael.
+
+Patch 4:
+- Add Reviewed-by tag from Michael.
+- Fix indentation by replacing spaces with a tab.
+
+Patch 5 & 6:
+- Create patch 6 and move value_xlate changes into patch 6.
+- Add background context to kernel-doc comment for
+'enum gpio_regmap_operation'.
+
+Patch 7:
+- Drop the reviewed by tag from Andy due to the signature changes.
+- Add 'struct gpio_regmap' as the first parameter to the set_config callback.
+- Add wrapper to bridge gpio_chip to gpio_regmap.
+
+Patch 8:
+- Add Reviewed-by tags from Michael and Andy.
+
+Patch 9:
+- Replace break with return 0 in functions that only consist of a switch-case
+statement.
+- Add a comment for 'platform_get_irq_optional()'.
+- Update rtd1625_gpio_set_config() to align with the newly revised set_config
+signature.
+- Replace 'irq_domain_create_linear()' and 'devm_add_action_or_reset' with
+'devm_irq_domain_instantiate()'.
+
+v6: https://lore.kernel.org/lkml/20260721065802.689530-1-eleanor.lin@realtek.com/
+v5: https://lore.kernel.org/lkml/20260702090115.2564318-1-eleanor.lin@realtek.com/
+v4: https://lore.kernel.org/lkml/20260622092335.1166876-1-eleanor.lin@realtek.com/
+v3: https://lore.kernel.org/lkml/20260512033317.1602537-1-eleanor.lin@realtek.com/
+v2: https://lore.kernel.org/lkml/20260408025243.1155482-1-eleanor.lin@realtek.com/
+v1: https://lore.kernel.org/lkml/20260331113835.3510341-1-eleanor.lin@realtek.com/
+
+Andy Shevchenko (3):
+  gpio: regmap: Provide default IRQ resource request and release
+    callbacks
+  gpio: regmap: Apply default resource callbacks for regmap IRQ chip
+  gpio: regmap: Order kernel-doc descriptions with the actual appearance
+
+Tzuyi Chang (1):
+  gpio: realtek: Add driver for Realtek DHC RTD1625 SoC
+
+Yu-Chun Lin (5):
+  Revert "gpio: realtek: Add driver for Realtek DHC RTD1625 SoC"
+  gpio: regmap: Add gpio_regmap_operation to extend reg_mask_xlate
+    callback
+  gpio: regmap: Add value_xlate callback
+  gpio: regmap: Add set_config callback
+  gpio: regmap: Add IRQ enable/disable helpers
+
+ drivers/gpio/Kconfig                  |   2 +
+ drivers/gpio/gpio-104-idi-48.c        |   7 +-
+ drivers/gpio/gpio-i8255.c             |   4 +-
+ drivers/gpio/gpio-idio-16.c           |   6 +-
+ drivers/gpio/gpio-max7360.c           |   8 +-
+ drivers/gpio/gpio-pcie-idio-24.c      |   6 +-
+ drivers/gpio/gpio-regmap.c            | 116 +++++++-
+ drivers/gpio/gpio-rtd1625.c           | 389 +++++++++++++++-----------
+ drivers/iio/adc/ad7173.c              |   8 +-
+ drivers/iio/addac/stx104.c            |   6 +-
+ drivers/pinctrl/bcm/pinctrl-bcm63xx.c |   1 +
+ drivers/pinctrl/pinctrl-tps6594.c     |   1 +
+ include/linux/gpio/regmap.h           |  80 +++++-
+ 13 files changed, 422 insertions(+), 212 deletions(-)
+
 -- 
 2.43.0
 
