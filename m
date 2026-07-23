@@ -1,114 +1,136 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A7F379974
-	for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 06:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9B33CBE6D
+	for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 06:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784788224; cv=none; b=sudojbZwH50PAHrXCPlP/w4hv6/bLspoeJBIpdHwXW2tX5FPghfPbaLBUrtF1M7wr92nNHB7M1ELv2mjbakBoQRkHxvhAIuiddtdnd85AN6RYdzbkmrrArryoO5DbY/YWGEqNP3SNIVABxz9OUmZCEuFt6cfmBmtXbQiKzIJigI=
+	t=1784788387; cv=none; b=kqVNAHCN8Mxwfbi3/u4Z+ZsB7RN+mhdtzkzshKyLVWhTOIqGcvhwhsrqy4KcZHckYwxl8R6ChjhVFvpWlaMcpQSvKj7k6f/TzLq7R2PVmSXFaABKmEyNRKd/YSjSAq96gDitQLR3PNa8hDUclCznKn14kAF7FKKdCgWD0khUcpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784788224; c=relaxed/simple;
-	bh=AzSKbAAZKfeNQ1HT28MWXZxKnH0qroQebjSFyz/rxH0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T63E8XY37T3WBVo3YMOiUMjFG1AUJ58FGMet82yBicWOSjuMhimG2tpMmD8k6cBI+gCUyWc2n5FmXvAksYd92Uw91Mtcu1u2BTNOiFgsLPvBKdk788kv7F7GpJQAhNK5yjqOvkCaxlsnSo0KUlhVY6VH528w1LOsgfXtLYOAEcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7q8Zz6F; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784788387; c=relaxed/simple;
+	bh=sDQfXgRKI/MoYauIBPUhxS7ErHC3UJ7F2mE+sueO31E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dfvYKbFVX7TDKO8U1RVU5MF8u9xw6p3btz/IQggP35dWERGPWckgD5jRdscL0ArVCaAHC+19pls4B5fARun9JueTfBbnNYzh5ZalghlfFWoXe1Vj15FlU0tws4n9l6p4fXlUx5fA7cBXFtCeHIlvViq4vK3KyVJCdxLDQ+pAFU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=f4OU0Hvo; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7q8Zz6F"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-c981c2c37cbso260629a12.0
-        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2026 23:30:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="f4OU0Hvo"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-495590ba856so2101605e9.2
+        for <linux-gpio@vger.kernel.org>; Wed, 22 Jul 2026 23:33:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784788223; x=1785393023; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=XC15jWYbuvDmoIqvdzDT8TSGK//n7vzWKt/n11W5bYk=;
-        b=Q7q8Zz6FgWcjoKZS8KooUt6aWeOi+maEx2+KHBKUOxf42damY83ZJJvyUeCb1tE6S1
-         vJZp3yMK7wpr/fu75IHW9JoL037LfpYddVnDxHDZ9IhcS44OzOygMKMBoAnmnuxIwka/
-         AVRgdpvOzTP2BwRs69N6PzbY3gyPnuGmylIPzo9lFacLRUxMXMZiQLRcdjL6pvr0myB6
-         DcwCmwvUjqUqP5ysJoHTU7jzPqQAdZW9dxzp5teOw1uxQeqGJz+zlgWTV+H3N+zlwgyz
-         vd4xXZeavFqBNW33NKWvQZMCLvtUJneU1VnY8+VeKk0vYS/RcfKAnQXHT/2enkeFs5Bl
-         SUhQ==
+        d=baylibre.com; s=google; t=1784788384; x=1785393184; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=YX5OGenWV0xhnlGLLMQnc7kob7nrOP85c/FXvIqG0JY=;
+        b=f4OU0Hvom8wddjN+ULWj9NrvyHQRUbHFPDvk/QVlVwr1b9E4N2E807/xjgpctqYv3s
+         TIpzMV2nn1nphNkq0HUPSh2XFofxJM9Hq9y3cOJy584rcvF5Ivir+JZgrX02XVNFA9TI
+         PRbYny5px5GXCx8Ky1Kcdac5jZ4w0JDbb++wUCmbqoKiNRwDVUP7cfjza5AHz94vCtAs
+         z3LJ1P+ghbfgKwFNdtoUMDYe46kAb2wUOEdiYlJhDjjsgS5MBj/xNSBKMEVL8FpkBitW
+         uJdwuwFW/YcvPlyCWSk4gLysrq4gmjrljIt2y0x/2EiKUJ9PfmV+9ZVR3Ub0ikbVJ+qC
+         S7LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784788223; x=1785393023;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=XC15jWYbuvDmoIqvdzDT8TSGK//n7vzWKt/n11W5bYk=;
-        b=NacZRwC/C9HX0/BCgaphzSOB6IcXSeV3ImbO3X9Jl+fhfSz4bU6YOvwMVy+ljtV7Rh
-         M/ZY0ZHbpvR4Cka1K+jLldU4haDnS4lLp9iJ6OheW9H0oC7udMHoflB3J4LBdzncfTGY
-         V9Rg7/9qAqXMXs69/+UXhsm3lzQ4a+yQEZkrY9yV1XJGM7Xr7bS307bHLxXE5ovxRmhG
-         QxKXZrbPQBwgrepGs3dNvqrAy/31SxtUdWZDJyR6m2Obnkr1FRx2LgivzELhJ+2nNy7O
-         OcbVcgOSpx2vXzNNYgekFlzJKlVCuG5c+iWQo2EUM/GN8yDprdd0v00EiTw2p5Qu2Hi5
-         FtJA==
-X-Forwarded-Encrypted: i=1; AHgh+RroieQeTRhzgG5EbQcbQMEtXUzx0tRHZ13gR4vulHSr6ZkeCOqiV1nsIczsNxxm050bv29DK5lV2/1r@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPBGdmCSk7pa7uu58gFajlQ7s88XvQV3vaLHR9od0jXFSG4f17
-	GWMMKiHzhZcTMz5veo2oOH1svKdH7E8OxWiXsRyHTkAp9UCknatVzAs=
-X-Gm-Gg: AR+sD11EQu8FDur9OLbCPEQ4eANy4E1YZOXS9VVgpzN5+NyUwPe49zesV303HwPgL+3
-	teYhCIn39qotQudfBlpChQTwLvgfVwzioHdmFxYEMaCFHvtEcbofWqs+vREK3I4FtdHiqhvgUKF
-	B2GRcSsegsLKWqoDx5zQ71aagMBnPaoCo4wVGWHDkYcB0vWuT1uxDp6D9Vr/xhQJbmEDFck+Vnb
-	OW+4ok9RFY0x6aQ/VA4T6Uf3qQN64gGbsX/q0bzaihr+5uJ68/rBCvR8N3ppQzG17YBHSFDadY5
-	AkodchkaxxXzfwrSlzgIeOU1Vqbzdm/lin7yt2q+rp0Et7sm0gzPfwkD+QxKIyH6kVpPA/rUoke
-	ipzw95vNjlWe8ZQL3lqk4MwZ2h5TwJRjQuBbds7bVW9apicPic+dG0aUQcumQYl1zY6Ztaapqe9
-	GXimgTRj2KOnXbtEPr5AzTgoJSBIs=
-X-Received: by 2002:a05:6a21:7002:b0:3c3:954d:278d with SMTP id adf61e73a8af0-3c44afb7068mr1953767637.9.1784788222447;
-        Wed, 22 Jul 2026 23:30:22 -0700 (PDT)
-Received: from t-rex ([2401:4900:adb2:94cc:845c:fa20:f252:6fa2])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3147df09a9dsm15712805eec.19.2026.07.22.23.30.18
+        d=1e100.net; s=20251104; t=1784788384; x=1785393184;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=YX5OGenWV0xhnlGLLMQnc7kob7nrOP85c/FXvIqG0JY=;
+        b=A+NZ/GlZE1RyifKc6/e94G16GhXEAiAZcHwQ3mTt/VFMiqR8+HtjPG31najcf0uOkW
+         eXXMU06cehOL5nSw0uBySaAX2CSiYIXrB8i2pUBzczCN3GLJUxGUb3zn90uKxXN8UXS1
+         w1PsfSpsTxdDLfT4M5HsW5NAlB7oQuzS1nh94fMopbP1sAvjSjJSHx7JfACyk7xw1o+N
+         Zx1dxPDGG/z7TOjXZMnPtMXfPZ7axcCsdnvPxaVAMgwH15vjjD0OOBPnMEdmf4DD8TId
+         d9al2U8soSLduTrB3O69gXJytPlTgzLQ3q5Byh9C2okpyxdyYpljk6UBZ5cWApQCB4ql
+         glPg==
+X-Forwarded-Encrypted: i=1; AHgh+RqooqQkQGbtGxA2lp+/Gs+3uD68QonvMPYtb03uBngzEUTK9BI8uehfRLlR7EtuW2xSA4Z1/RHDWvSi@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw44rpn9We9/tflH4CcljHlNo8EvbuflCcS//NL1CD+TFmMeJnJ
+	bYb4S6ooBic5ULsyHcnD0LudrjakwvOzTUa0kKF2DWO4kUPrb7hlxZfqRK9iACJWFbM=
+X-Gm-Gg: AR+sD11DnhAoaJDnODP+Tvoa5Xg5NricCKCklU6d09nSbCIaBGuQc5aFbs0QnbkdESF
+	Sry6BDXW/GTI9zXAXY83mFqLU8WYQX9OSzVpQc04AFKHF80Uy7Yet9plyZxuJg+Od5goNlEMvr+
+	vREl97dq9WNmCI+hbQXWNRdl73+M3dZDNjtuZYnR69i4gMkOEubItV71UbS57spT6NbmHKhi8Zj
+	jm33Ft5sHtxvlCfyLJZLBbjqY5mVuq6JS2CVe5okL3ArdeqwUoVZQxMxAF0xqwmyKqsoHKsSnGD
+	0sOcTXX/3uK1I2x9gOWKEziH2zqskAvk161onWr5q56Qo+wAJiJHWEN3merj1sPH87IE+rhJ4YN
+	eqGYTnG8vqk3vMPJxFdd1ZESbHVX11BV0ZTBDkn1Q1AomoTEqHmNh+RZPX2UCoiqAKzzkbrRhSo
+	Iid+4zSko=
+X-Received: by 2002:a05:600c:c08f:b0:495:71fc:3a64 with SMTP id 5b1f17b1804b1-49573cfd688mr15528255e9.25.1784788384211;
+        Wed, 22 Jul 2026 23:33:04 -0700 (PDT)
+Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-47f85c531basm12160604f8f.19.2026.07.22.23.33.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 23:30:21 -0700 (PDT)
-From: kr494167@gmail.com
-To: linusw@kernel.org
-Cc: Frank.Li@nxp.com,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Surendra Singh Chouhan <kr494167@gmail.com>
-Subject: [PATCH] pinctrl: generic-mux: free maps on pinctrl_generic_to_map() failure
-Date: Thu, 23 Jul 2026 12:00:11 +0530
-Message-ID: <20260723063011.27145-1-kr494167@gmail.com>
-X-Mailer: git-send-email 2.55.0
+        Wed, 22 Jul 2026 23:33:03 -0700 (PDT)
+Date: Thu, 23 Jul 2026 08:33:02 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Shenwei Wang <shenwei.wang@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, 
+	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v15 4/5] gpio: rpmsg: add generic rpmsg GPIO driver
+Message-ID: <amG07XSER0tqQTDs@monoceros>
+References: <20260721204704.400781-1-shenwei.wang@oss.nxp.com>
+ <20260721204704.400781-5-shenwei.wang@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3tnjgjfvpvmj54rn"
+Content-Disposition: inline
+In-Reply-To: <20260721204704.400781-5-shenwei.wang@oss.nxp.com>
 
-From: Surendra Singh Chouhan <kr494167@gmail.com>
 
-mux_pinmux_dt_node_to_map() calls pinctrl_generic_to_map() to parse DT
-configuration and allocate pinctrl maps.
+--3tnjgjfvpvmj54rn
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v15 4/5] gpio: rpmsg: add generic rpmsg GPIO driver
+MIME-Version: 1.0
 
-If pinctrl_generic_to_map() returns an error, *maps may contain partial
-map entries allocated by pinctrl_utils_reserve_map(). Returning the error
-directly without calling pinctrl_utils_free_map() leaks the allocated
-mapping memory.
+Hello,
 
-Fix this by calling pinctrl_utils_free_map() when pinctrl_generic_to_map()
-fails.
+On Tue, Jul 21, 2026 at 03:46:47PM -0500, Shenwei Wang wrote:
+> +#include <linux/mod_devicetable.h>
+> [...]
+> +#include <linux/rpmsg.h>
 
-Fixes: 34acc5a8adfb ("pinctrl: add generic board-level pinctrl driver using mux framework")
-Signed-off-by: Surendra Singh Chouhan <kr494167@gmail.com>
----
- drivers/pinctrl/pinctrl-generic-mux.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+<linux/rpmsg.h> includes <linux/device-id/rpmsg.h> and thus provides
+rpmsg_device_id already. So please drop the include for
+<linux/mod_devicetable.h> which will go away soon.
 
-diff --git a/drivers/pinctrl/pinctrl-generic-mux.c b/drivers/pinctrl/pinctrl-generic-mux.c
-index da5a5ec01583..927c7aa616f5 100644
---- a/drivers/pinctrl/pinctrl-generic-mux.c
-+++ b/drivers/pinctrl/pinctrl-generic-mux.c
-@@ -58,8 +58,10 @@ mux_pinmux_dt_node_to_map(struct pinctrl_dev *pctldev,
- 				     num_maps, &num_reserved_maps, group_names,
- 				     0, &np_config->name, NULL, 0);
- 
--	if (ret)
-+	if (ret) {
-+		pinctrl_utils_free_map(pctldev, *maps, *num_maps);
- 		return ret;
-+	}
- 
- 	ret = pinmux_generic_add_function(pctldev, np_config->name, group_names,
- 					  1, function);
--- 
-2.55.0
+> +static struct rpmsg_device_id rpmsg_gpio_channel_id_table[] = {
+> +	{ .name = CHAN_NAME_PREFIX },
+> +	{ },
 
+no trailing comma after the list terminator please.
+
+> +};
+
+Best regards
+Uwe
+
+--3tnjgjfvpvmj54rn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmphtZsACgkQj4D7WH0S
+/k7/awgAj2vySxmy5vP1QwUkRZfLQnnTNKmx1EuDKoXg/nw4qRoyCtymTNF6iUvm
+bSf7sZlRAqszzyqHR6g/qzf5yiGVUiAQAfxOlSYgB3SkP/7geaQXcPhlxzHxYU/8
+aSWjMJ047hhilAq0C6ntgCbsBuUbHyGKC354E+EZYMESs0gKbdk1cWlNuay34k4A
+Akaf2SEW/aZ/E/X1znyI/vRJyIqv1QBeI4+coopWyFigk2eNA1adyWif2iunnxtt
+Z7EV690/VGZmcpQwDl/IAevcLh4cg2nhiEh2J5iIpJsvbmiDLQng0G5V7BQxJ9OO
+7GNNyk0IGXtulJ1RztaEG5a7Kvc/3g==
+=H5Si
+-----END PGP SIGNATURE-----
+
+--3tnjgjfvpvmj54rn--
