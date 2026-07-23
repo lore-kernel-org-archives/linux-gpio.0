@@ -1,124 +1,127 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3478C47CA7F
-	for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 15:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB8844E673;
+	Thu, 23 Jul 2026 16:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784821326; cv=none; b=pr1tuPfueB9rUapV61nlZg4ucTgZly6HxtqXGYaSbkR709z8FxnA2GAxfFTGtJ+BSoiZWBTDqp7bzdwx+p3KtwARLgMY+wLnM7x2zL82l5IyIU6LKjyJtxph3pwqy4nFE/BsxLoUs3OZ/SBQ9QsFc0WLdc1Rs/KX65akE7tD2t8=
+	t=1784822983; cv=none; b=YLKeWO/BTZ+tgqN3hgfgGI4r+D2VUtwvW3pwIpbApiiA+TrG+viHSCx9ixh+RiU5TJNECLlehHyrMlnJpiPAUA0G9HyLOP9XjACy+Y4L4csShA0Xoe/OWyDwZUU+MA448PTaPjvW1DZmVja77zBRJswbJR+cJjVGF02ISj7VQik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784821326; c=relaxed/simple;
-	bh=Uxpyi86QWWWez51vf9h7G/S/w9n6MkT4D426+4rpJH8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XMkiUNU+ATiGV6WM5Qzi98PRwh7h5u+aI5u2neSQIBGq4xAnG+OOGWELNhhLWDPQGwsfN5ULNz30TZDitGyG0MBjiCJkZNswhV+OXMvqiG+s3rxRmbN5rrI2p/+yaFvcYAKfA5fEiR1XA07VX+oqd4QuW5Kj+conh90tKCkOzJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rzIOaUsv; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784822983; c=relaxed/simple;
+	bh=YOF2JRGGWtjEehzpg7p0oT5mqjZwqIGVErmwoc7xegQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hsdGjvtCtyRKxM6nEhcaHv7Wj4W5APTTqm6hn1uFGA/fOCRC4cWxE5yxIjEwIyloQTeULgbJGvnCGWACglh+sp9PNDp96h0WAEZTDYlP8AvPI5dANj1gNxGHw6bEsX/YXbaNhKgUO0rTXsG4j/1b9i2KiDWaOvbFlURh9VhRZjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQ9obW/q; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rzIOaUsv"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4953de5be0aso5698235e9.0
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 08:41:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784821317; x=1785426117; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=hcx+fOflZhetg37fsdgPkibtdUAllraHzQaa5Oytmww=;
-        b=rzIOaUsvEWaERn/tDq7djqpVnpwI/l3GT24GyroBX64CCwkSkZ9vkZMF96LXyCHBrw
-         nWysjIoYmWnQMhDwZHfOj/Vw9aPAcre32bj59AKZDHgojllXZdd76LXNH95YwSFoqgLt
-         fYpCL0cYA5foX9JalgY/oHHb/yQo/MmYmCqLFXcMXJCFRNaCZd04TZShVjfCDIS6uMl+
-         Lc/EpS/M2s4WaAjDbhk5QEN80fugbU00B7Wg8rbPzH14ob5JdOWLliXqU+ObbjkNMHwn
-         vifr3/+C5sIPuZYP9ZRrKOuIxhd5Sq8MhVzKITUYN5pfpTe7P89ThUsJ0NNr8eoEYcTr
-         aaqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784821317; x=1785426117;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=hcx+fOflZhetg37fsdgPkibtdUAllraHzQaa5Oytmww=;
-        b=D+CoTsyhQbG/JWl0dbQzCqsqptkUmmEDtlzMharT8c7fHPjCozXDjB5fm0x5EfrUHn
-         ou8qWEHgt5kv+P3ructcD8V85HZRNcVPuH4diV1q2hNOfKvJRFd3+Zv/LL50reAjLOso
-         PlwBWu//PGyCx7KnvY1mSijVZpjiUhMv+Fvdg3hldiLCIeow++kzF7Hm8ZePOPgA74dj
-         IR3Q4L85QxHF5bwo1WGDMDIjkjuq2SdYMI2N400tV6fpSy/9QFiLPQrv1qgn18GWxW1f
-         kOzpY/fJRtnnSfyz4t7KPhNpK4V7G80gJ4wkZ/iDLjuqA9e2IZDlwP3zx5LAsl5FpIfd
-         eofg==
-X-Forwarded-Encrypted: i=1; AHgh+RruMua+OeNvv63/vdPZj+0X9PDbBAV7L5gVZhg76xbGQhLBlCO/JwbMVSkVRgAQXNmuhhgjdw4PsPxA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyExWzoX9EUQdHNlSkz/yF8b5YliBFZRB6mVCN0AA1Euhvsoqqb
-	fDfFBh4syTJhihyzbqnnErfV9Jx04GqgFaESa3RiKwcVnHEOEmEGzmhu
-X-Gm-Gg: AR+sD13j4px8gIf3EzqygzlVSwDIDbaijop3Q4dDZgMZD7JalhX9mnRfN4/p7f/P0kt
-	4GvowSPO+ggttiYnriabOiG4hB21cEOEHJYM/nV5PQ4PqvSi5hM3AOtow77Q2a3I/+pubVUbczr
-	FFkbHDBucFjuW/nLgvWpGwUctIfxuEPUM0qjMikz/a0pp03MoeGWDsBou7ZD2mKoe7SbQHoTbz2
-	HxTITiYynt4dKKzhn9Af9ZMfsODYmIf3JLLBdXsiqgmmmkZb7dZETrH2Inzj2gsCsXJ4eIYhPSY
-	pZq7ZYAcfr4PHJu7Vf2o+YYIPPpVcECRg8LC2Cvrl8vLSWayCIpo/9A/I5WeZ7qzOeWM748XbsC
-	89ONVdULODpBWfY+Of3bUaF1ESMne6Q9wFMk5NHZM6de7OVFaGfp66rUaTV/6YsncLHTeQts4aS
-	SgnNHdTSruok/0xgL5mqWx03D2VAvynW4WxDdJ1A==
-X-Received: by 2002:a05:600c:474a:b0:495:5a91:8027 with SMTP id 5b1f17b1804b1-49573c8d444mr42787565e9.5.1784821317042;
-        Thu, 23 Jul 2026 08:41:57 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:23c4:a702:d301:f073:32ed:a057:cd3d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4957af5d3c2sm3411345e9.1.2026.07.23.08.41.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 08:41:56 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQ9obW/q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A9A71F000E9;
+	Thu, 23 Jul 2026 16:09:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784822981;
+	bh=HJi66KtxyLe2LRiVlDYerzBcPkeznw3DkhUnpM3KNzY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=EQ9obW/qrw+YZKZpwx4Kw+5+IOrs16/voCVos7NDTdJqSEJbrjTjtD5IeWXayAa49
+	 gYeTz/8EkyojvQSAPrsE1KlwOEozel3w5CA0jvFEVbjYbgKFEu5f97GgkB9IFZGtzs
+	 d4WjmDTlITEWdG2ge+U/wKPaPjba6b30bqIwTll5TuFeBDO9FmQhKJjxrg4/tcoq40
+	 wak+gByzQx/Jv1cHrxAjGcw7cW223mdPFAfZIaTICxOLBlDuifj6q9S9yfNLhPbTnu
+	 pZSUg0kMjHvviwpozsFpQgCm2ko06qXwesD6H+ifHyUPakmNjzWkmigwF06SwkAp26
+	 AqGXUwOSm/vfQ==
+Date: Thu, 23 Jul 2026 17:09:33 +0100
+From: Lee Jones <lee@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linusw@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v19 0/4] Add SDHI support for RZ/G3L SoC
-Date: Thu, 23 Jul 2026 16:41:46 +0100
-Message-ID: <20260723154154.319674-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	Conor Dooley <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-gpio@vger.kernel.org, David Jander <david@protonic.nl>
+Subject: Re: [PATCH v15 2/6] platform: misc: add NXP MC33978/MC34978 core
+ driver
+Message-ID: <20260723160933.GD3526803@google.com>
+References: <20260710101358.2606941-1-o.rempel@pengutronix.de>
+ <20260710101358.2606941-3-o.rempel@pengutronix.de>
+ <20260723145300.GO3363113@google.com>
+ <amItd-189DyfS52Y@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <amItd-189DyfS52Y@pengutronix.de>
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+On Thu, 23 Jul 2026, Oleksij Rempel wrote:
 
-This series adds pin control and device tree support for the three
-SDHI (SD/MMC host interface) controllers on the Renesas RZ/G3L SoC
-(r9a08g046), and enables them on the RZ/G3L SMARC EVK platform.
+> On Thu, Jul 23, 2026 at 03:53:00PM +0100, Lee Jones wrote:
+> > On Fri, 10 Jul 2026, Oleksij Rempel wrote:
+> > 
+> > > Add the core support module for the NXP MC33978 and MC34978 Multiple
+> > > Switch Detection Interfaces (MSDI).
+> > > 
+> > > The MC33978/MC34978 devices provide 22 switch detection inputs, analog
+> > > multiplexing (AMUX), and comprehensive hardware fault detection.
+> > > 
+> > > This core module handles:
+> > > - SPI communications via a custom regmap bus to support the device's
+> > >   pipelined two-frame MISO response requirement.
+> > > - Interrupt demultiplexing, utilizing an irq_domain to provide 22 virtual
+> > >   IRQs for switch state changes and 1 virtual IRQ for hardware faults.
+> > > - Inline status harvesting from the SPI MSB to detect and trigger events
+> > >   without requiring dedicated status register polling.
+> > > 
+> > > It exports mc33978_core_init(), called by the MFD driver added in the
+> > > following patch. CONFIG_MC33978_CORE carries no prompt and is selected
+> > > by CONFIG_MFD_MC33978, so this patch alone builds nothing new.
+> > > 
+> > > Note: The device currently lacks suspend/resume power management
+> > > callbacks. If the system enters a sleep state cutting power to
+> > > VDDQ/VBATP, the device will wake up in POR state with hardware interrupt
+> > > masks reset. Power management support is intentionally deferred for now.
+> > > 
+> > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > > ---
+> > > changes v15:
+> > > - Split out of the MFD patch, as requested by Lee Jones. The register
+> > >   definitions in include/linux/mfd/mc33978.h are carried here rather than
+> > >   with the MFD driver because this module includes them, keeping every
+> > >   commit individually buildable.
+> > 
+> > I can't help feeling that this is a hack.
+> > 
+> > When I suggested moving the functional parts out, I meant properly
+> > separating off and compartmentalising.  Instead, a huge slice has been
+> > taken out of the initial submission's MFD driver and dumped into the
+> > wild west that is drivers/platform.  Worse still; we're masquerading as
+> > the MFD since the MFD's 'dev' pointer is being passed through so
+> > everything here is operating as though it's the parent device.  You've
+> > created half library / half MFD.
+> > 
+> > I get that we're on v15 and there's still a lot to do, but I guess
+> > that's what happens when 3500 lines of code is submitted at the same
+> > time.
+> > 
+> > My suggestion is to return to first principles; what lives where?
+> > 
+> > Allocating of shared resources, including the various regmaps, IRQs and
+> > domains should live in the MFD subsystem - that's literally what it's
+> > for. 
+> 
+> This is exactly, what you suggest do move to the separate location.
+> 
+> > Anything that does-a-thing, should be allocated a proper subsystem
+> > and platform drivers should be created.
+> 
+> Every thing you suggest to move is making regmap and irq work in
+> the first place.
 
-This patch series depend on [1]
-[1] https://lore.kernel.org/all/20260723151024.318918-1-biju.das.jz@bp.renesas.com/
-
-v18->v19:
- * Renamed aclk->aclks as it is AXI bus slave clock.
- * Rearranged AXI bus master and slave clocks as per binding.
- * Split SD0_CLK and SD0_CMD separate as input enable not available for
-   SD0_CLK.
- * Added bias_pull_down, input enable, default drive strength for SD0_DS.
- * Added input enable for SD0_CMD and SD0_DAT*
- * Added default drive-strength for all SD0 pins except cd.
-v18:
- * Split from patch series [2]
- * Moved sd_ch2 variable near to sd_ch[].
- 
-[2] https://lore.kernel.org/all/20260603065731.93243-1-biju.das.jz@bp.renesas.com/
-
-Biju Das (4):
-  pinctrl: renesas: rzg2l: Add SD channel POC support for RZ/G3L
-  arm64: dts: renesas: r9a08g046: Add SDHI nodes for RZ/G3L SoC and
-    SDHI1 pincontrol on SMARC EVK
-  arm64: dts: renesas: rzg3l-smarc-som: Enable SD/eMMC on SDHI0
-  arm64: dts: renesas: rzg3l-smarc-som: Enable SDHI2
-
- arch/arm64/boot/dts/renesas/r9a08g046.dtsi    |  73 +++++-
- .../boot/dts/renesas/r9a08g046l48-smarc.dts   |  89 +++++++
- .../boot/dts/renesas/rzg3l-smarc-som.dtsi     | 233 ++++++++++++++++++
- drivers/pinctrl/renesas/pinctrl-rzg2l.c       |  74 ++++--
- 4 files changed, 444 insertions(+), 25 deletions(-)
+Let me know if the above doesn't make sense and I'll try to find another
+way to put it.  Essentially slicing the code out and simply relocating
+it, but still operating as the same (MFD) platform device, is not an
+acceptable strategy.  When I suggested that it should be moved, I meant
+properly separated, not just sliced and shifted.
 
 -- 
-2.43.0
-
+Lee Jones
