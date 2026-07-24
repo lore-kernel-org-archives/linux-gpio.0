@@ -1,208 +1,196 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C224A4457A2
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 16:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF9A27FD49;
+	Fri, 24 Jul 2026 18:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784911384; cv=none; b=Ej/90ljDJjndIQ+0U2hqingw59SbPV7gBhYoAFXb2VCDcp7J6KseVYKg52nGNJWn65GIzew01yUTrsL7FgKKXhV1ECAGPn7GV0/p4PR7gzdVgyIteulrtsR6VwvQmZUe//SSiU+nqgS60JT6vmcHeOxgts5WylchKsQeWsy02qo=
+	t=1784917399; cv=none; b=tqzvfUkTEF8jq663nxN5RRIHyqTctdUtPMrhT3+uLzkra83TlVJF3whraMkLxqJRGFO7hfR3zqPLU3nOUyoEZCrp6VxHHQ3uWdfSlfpbrmpfOdpN2AYy4rGiXIHai0xTSuH2QE4Q7XT0PXfCO0CF69gMzPmIQJTIGhmERq1VwKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784911384; c=relaxed/simple;
-	bh=vVPJhbOe/jDVcy81Rh+x1AgzMREYdmwHkMLZibZ5O3I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VvB1ycnhNM9TyuXiib2k55bfeHEPvRa+tQreSi0mG1QErY03y0pkmgPbU2/LUWxH33FxaexMNV7sA0IW/D/iTD9OlCj2oOmGCjn0VA6kPFDYiOUaVPRcxe9+P0fu3XAgn8iL44bLb7tGr8PYlmnY6Oq3EYlUDQ1BWzJsxCyRfLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZGirO6Ip; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MC3+sVci; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1784917399; c=relaxed/simple;
+	bh=e/pxS4dkSGV9JdHD+Vse0KlAUzgS0XeW+PIyOEMyORU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=fejG066kYa+5OSyuDjmG1G2H8nAxn3AXF42ejIZ6g5tYRwboQtEUPoPFSW7O16mhNt2YEF/Eq3tsYfUO/xKahVCFeKNUA7qo7C4cEUoRFIX2ATbArm/9/ruT2mlwBSVPvoIXWZjzStAgUxiGHX3VEl2Z+yoPYxKuQjSD4qa0zHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Ec3HLge7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l+2j6IzE; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZGirO6Ip";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MC3+sVci"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66ODbXSa3336572
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 16:43:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=AqdZU+HIpQlzd6GEke7H13
-	KmSvgaCfgUvWqrUDsQsNM=; b=ZGirO6IpSO0ixAZLdx6h4DmFQCQuOiSXRmro9M
-	7k7c2EEHcRyuzaJNC7gcZlSpspmocCZU4B8tcURd8rPbP8qpVx5g1blXEGqtng9p
-	qyj+1U4EA71JarMKlX26YLNSOcPgf0BGouQDQg28Vh0NOXWeNKE4ZR/XQ7IQ5l3A
-	liKFuXTqxHQaz3zW+ivrMe0ScRzLZRvOF3fISuzUM26EmoexplA/jocIOA8oJYOH
-	qsofW+mBkbFKmVFuVWyy8hBGpUmkPSg9vh2toBw64g50chTLgRXocuJs/DSp7J2H
-	OmeXSnMb8EveGMe9uDAg7c4Gs4vXj9NOMZIkR5FON+Ycdi6Q==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fm5bysm6n-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 16:43:00 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-ca6bd8a190cso833702a12.0
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 09:43:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784911380; x=1785516180; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=AqdZU+HIpQlzd6GEke7H13KmSvgaCfgUvWqrUDsQsNM=;
-        b=MC3+sVci5JiHWAsN6jJBqg1hUQBjc4nZMghE4WegABtac3g6oBS1uFPvSQ+BGfU0Gr
-         w22h6rbRAhp0ywmhKUgoY/M9jmwC209LfCJe27zQJQLfkvE1yjorDCtRWeSZXQijuB2g
-         g4QNYc7l0IPWW41CJ1pdcd4Zo9oUrAxdDwGTwbrV1oRQTnsppkvGbzWLaJXEzOeMXHPb
-         kmzGPvtaZyE9nrRN8i4QKq9nyCq6nBP/x+pEK99HZSfmSGRU5FtXSEVfx2YJtCRiuFq3
-         aG3ltZmOXdGvM+rFwjQDZYnrh+ms20B6GyiLatK4jHGlHRBKVjayBs46MlruSIwHGaoy
-         5WIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784911380; x=1785516180;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=AqdZU+HIpQlzd6GEke7H13KmSvgaCfgUvWqrUDsQsNM=;
-        b=dwIP4wDAPmDlJukdyTo7OT+uvJsW9fjuLcfVZ0Ehvky4o2tZxvyWAPdNfhV8Hgf5oD
-         t3jMBJf0mdtYq87vucO+LQLKaZsqQ8A9609lBDIU+09pcdOeI5vdghSx3QN8T6FokrYf
-         ycDujrIWNqe/Q8+mLzG4e30C73ttLKNqyDikr+pLxX06+DQ9KUv85QmeOgil46fhB5D8
-         yBRaR7Nl8abEomxBevzv02rrpHyo2WKLSQGjvzL3sAj/j6K5Jnn4F0eYjDSoI6tMvrlq
-         Ah/58w1yFRkKbMihAleKuVAOxkLCyD4I56CCYKdRsuXyKt5alBEmynkPvlIxWAfu6ko5
-         nd9w==
-X-Gm-Message-State: AOJu0Yym7fKvYQQ4SAPAoGVh4o4RLyiVkz7jiIVWMBvaoTG1Hqbi80Ph
-	VGE3Ry6M8eTdE8RDcAkKAT+JFchSBBdk/Od6vnu6ReFI2gp6qgoZPunOV4n3WlIoxSKGuMr+H1W
-	0PvSnZDpUWYhWJR/KfWEAsi9DnkYGOoaeGw192IS5/KE3DEa2AXEXmgGlQe60qXJs
-X-Gm-Gg: AR+sD11OoA1ysxDbfHmegfc5IbdtnkEb9UWsq/Xv6lUGz1XPitWYQBXb93AmIBVtFMX
-	VgZ6qY8n+dzxkXu90s2Pz32VVJV+ZD8zoKEwuEqzqmKU/gaBgsqm7bkF91PZ9hA1n/Rc77Fb5Xh
-	r5tI3mrn31GGUOVZapChXOs4OIc9MFcy1OHmVQwr+6/Px0lX7yfiREPXVnFqP71cc+S+5Ii8hyd
-	fZT/Ya+Pdl93krqkS1GDnmGdoWstKQqKCH4inb8fiN9RGLy1GroYfuAzxnhMFkr8l7KODaVyq0V
-	RA4VQ9Ar5J/3dTd4iQRpfnsmT+25GYfc3YQfMzAVZnmQETaZMnIGh8Gtb2XmkBBYcUCC1m7G4a7
-	GTAFvafh84qBJes3E3Y5h6EhwV7qOqeVt+gP5opjW39cw9zhVVA==
-X-Received: by 2002:a05:6300:648f:b0:3c3:69d0:c573 with SMTP id adf61e73a8af0-3c44b270d73mr9674040637.68.1784911379626;
-        Fri, 24 Jul 2026 09:42:59 -0700 (PDT)
-X-Received: by 2002:a05:6300:648f:b0:3c3:69d0:c573 with SMTP id adf61e73a8af0-3c44b270d73mr9674008637.68.1784911379221;
-        Fri, 24 Jul 2026 09:42:59 -0700 (PDT)
-Received: from hu-aletran-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc5cb670sm1294580eec.31.2026.07.24.09.42.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2026 09:42:58 -0700 (PDT)
-From: Alex Tran <alex.tran@oss.qualcomm.com>
-Date: Fri, 24 Jul 2026 09:42:28 -0700
-Subject: [PATCH v2] gpio: gpio-by-pinctrl: Apply initial value in direction
- output wrapper
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Ec3HLge7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l+2j6IzE"
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id CB929EC0066;
+	Fri, 24 Jul 2026 14:23:16 -0400 (EDT)
+Received: from phl-imap-05 ([10.202.2.95])
+  by phl-compute-04.internal (MEProxy); Fri, 24 Jul 2026 14:23:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1784917396; x=1785003796; bh=W2
+	0qbJDbSJFftSzEeXdf2eDqff7ZSn9IsDKzHlBiZlM=; b=Ec3HLge7uoy5cU7eCv
+	nBNS3cZWHWGzZJWb5ytIya8s4aHhqm7AiZFhXQumItaMc2LF8s0Cb4LEppmDo9Rf
+	JOtEcInCntxCaHc+ITowldhG99JL5O5iEDcaIGEIopXEK1if+PW8ScOzwKqj2LTf
+	IdRT/Vt+r0ak3mo5knt8iiTujeUsFtzdvm9XtMoChQFtNqtLu3xCyWRYFNc+26ev
+	yU5jN4scJtVicQOMQjgv9IcJ/l4Vhsub4whrhse4bNPEWmLel2KzcNM6DV+I4a5E
+	/hnQGMEtxUun2h0cIr9DrpWK23D6DfRVHl2FexRR+MB7XpgihDkyhIhpBKdmIP/j
+	7sHA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1784917396; x=1785003796; bh=W20qbJDbSJFftSzEeXdf2eDqff7Z
+	Sn9IsDKzHlBiZlM=; b=l+2j6IzE1P68SGwvc7tWA+OzJZzk9ATyz5nWuS2+3nx9
+	/d7I67Ql8Mr2moeXylIOT2RLN58Fr/KVwphcRFmfwWcqlHkEDYLfRQlR9pBARrq6
+	/o9VSew9nYvqWQoOvcNCahx2OHvR4J0roaLTHzrzUG1WfHS/MpYM9ev1tgyB2hb5
+	PgZELemxndtHy5gzBrRhagESyenpScGtdot3C+vblG0Wfs4KuhPX44rqCx9uNFXu
+	U/eVfJWrO+5Vf0JbEkGXrS7pObT5jbdC941iXuqALsMTPZqsVlOhVpMV87v3bV0K
+	V6TzP+cwLvCXeceBve3J+BmrQzyoEsGmcLFMvy0pig==
+X-ME-Sender: <xms:lK1janDqrOHLU0FYBO3NMNqdO5NM3-96XkZxKMf2ZhgamGIuCwW77Q>
+    <xme:lK1jaoVFD4yjglpXGaK9APQzeC6CD3eSG5hNsGbarH7bKQgY5ENhl-VexE3DLg8G1
+    BRYxx_C23ihfvpJDsRZ5-AVhmJygUpDITghSMxQ2tiCqwHwOKJRSaWm>
+X-ME-Proxy-Cause: dmFkZTEvYcxSBfTwSD5AempWkdIZsZ9EqLQysnZHsKDg1LqZc4V7Tg/p0Q5pKvPzc1h6lN
+    jIXnsivyjrLbzcHYmvyrgdjRPuoUUSXHIPouQSYZv8pQIl/Kgk8SSRP3A10jxNGNbW6Gdl
+    vzwWvoKGdZmwFjYC17hslCBSSdvrnhcCaXQSAiEsrNSUpK+x8aLq53t07SZ67R6KEfG/ub
+    er5f9F8Ij/i+uWZBMTnrM71NrwN8wlS52lNnrRkqbltz2Bc4SOy+qwB9Tb4YWVoCKrWpoE
+    DaoRt365rsEm2Rlw2UWMp7tzTjGuqT23ComDZMoFrRH9KL2P2au9EVnvJHGQZC9/cnAYmV
+    TSs7UlrZqbgcn5AKBYfqC3cmpsxl/C1VvhEFPCAg0+HKkVwwG4BWCqt301xpcsYCDbcZ03
+    P/a4KjMtSQc0txkF6MTedKlsaLnUiSCM0NUsaQ90AHJ+jX231a20dakp+OEbblRmIqEvPm
+    Dac28msjtv+4QC4CLVsEmbNkcrSZRmPLQcQQBvZXMFjP5pdoZeZvYeQ95PpJxXZ2C8RUhe
+    0DsbDGSyuecq+OBne/4eir8QfNA643qpbxdxbU9hjMkEw9U1kSoLo44cxaiBoxqot78YTc
+    Mv1CXXKYhb7S15CKrHMmQTEugf26Vhex6ysL2Ysjhd0l6OCXDFhKB9jZy84w
+X-ME-Proxy: <xmx:lK1jau-dStUIjCw7Jrp6GtfVDSU7OQq4EIdqqC_T3MZMrq6ggNOV5w>
+    <xmx:lK1jajquisIK_PI2rDw4R5cDbwEvXQgGRI7y9naD-1OBBIisBc6yiQ>
+    <xmx:lK1jaoR6jNi0DGm0r08I8g5geh5W6OdvIPiPui3yImuScfVhCEJYYw>
+    <xmx:lK1jamN4NOUFKNysTEhHhaIJYeDGNHE-jVvkvbEmfVhrbD2xSJiamg>
+    <xmx:lK1javSP8fqG8Gp0dmIiD_EsVCfVhGQbjRyhuA2ZRVN8bVeAITxfgRS3>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 960C4182007E; Fri, 24 Jul 2026 14:23:16 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Date: Fri, 24 Jul 2026 20:22:45 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Bartosz Golaszewski" <brgl@kernel.org>,
+ "Linus Walleij" <linusw@kernel.org>
+Cc: "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ "Lee Jones" <lee@kernel.org>, linux-kernel@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ linux-sh@vger.kernel.org, linux-mips@vger.kernel.org
+Message-Id: <aa9cf4a4-a848-43cc-a236-e8e4b89101a6@app.fastmail.com>
+Subject: [GIT PULL] gpio: legacy interface cleanups for 7.3
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260724-gpio-pinctrl-output-set-val-v2-1-cad55d025636@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAPSVY2oC/42NSw6CMBRFt0I69pG2ICWO3IdhgO0TaoDW/qIh7
- N2CG3Byk5PcnLMSj06jJ5diJQ6T9tosGfipIHLslwFBq8yEU95QwSsYrDZg9SKDm8DEYGMAjwF
- SP0EjGkrbc9Myzkk2WIcP/T7st+7HPt6fKMOu3B+j9sG4z5FPbP/9V0oMGKCqayGUVBWyq/G+f
- MV+kmaeyzyk27btC50bAqzfAAAA
-X-Change-ID: 20260723-gpio-pinctrl-output-set-val-676008568122
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alex Tran <alex.tran@oss.qualcomm.com>,
-        Dan Carpenter <error27@gmail.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1784911378; l=2294;
- i=alex.tran@oss.qualcomm.com; h=from:subject:message-id;
- bh=vVPJhbOe/jDVcy81Rh+x1AgzMREYdmwHkMLZibZ5O3I=;
- b=f8f24sis51oX+wQgI2W/CuMFxjc5YR/FxUXMv4O83asaLPnqkIczbB3SWoZtKycmc9w4y6WB8
- csgfqgtBzGyAHhf1EeappyJiuNLGItxmaxo7M3YEdmHQdOHUroX7CL2
-X-Developer-Key: i=alex.tran@oss.qualcomm.com; a=ed25519;
- pk=vKab/gw1fXij5UviWoglv+ho+H/oOiTHyETCLfayPE0=
-X-Proofpoint-ORIG-GUID: VZE8q9oEmRS5Ji8wrVRRInw2shra2dZ-
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI0MDE1MCBTYWx0ZWRfX4nujrTtDifme
- J+utxbFsbbLPW/wNw0f05IwlYDpwQxWVQjoJOQIO1z4kIUbq0KqLpDJs/T09HWkgjcDDUCBpLxX
- Au0ylWhcr0R8ilKZGFPgoi5T0AEzi4k=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI0MDE1MCBTYWx0ZWRfXwD8+iCcT/FgM
- AfPfUHneuZZ2lQ+/Poq7rip5Xcon7ARUnlcSQqNuR57wUY9UBA2Yb/auUGqIrfUENErXNAM1w9Q
- 0DBDh0qrkHUm93moKdEIvrOnFJepmR9KP858mxX86sxuOiTSL6wn6goPO/hcRoZACJWVinWS6kK
- STVl19jNLqg2ppsQ2ZXX2TQnfa5vzK+xi20Ij804HLZOh2xgtJDiG0w+8gpALWf8g7obIbI4Ns4
- BFdSpHI3irSzPUDA1A7uzbah7b60RsLt1dP7wlJ+lkHo8wyqbXHJjQO4DHHugo3W5fMud0c41Zk
- N3Yn3XRtkGU04U5T5JcIeyqm/G8YNHxjM8D6qnbUHuKEU6hsz42DgjWFF3pBA8C8UuR9z8VNZJO
- crpg3WRufpjrjh6h7pAAyyiafYPvmJ7W3jhncaWy2PAKH3i6LIeGg0KPSN0w3aa+vNczFJWopkb
- O+PfPMaXTqoZZ6l4DmA==
-X-Proofpoint-GUID: VZE8q9oEmRS5Ji8wrVRRInw2shra2dZ-
-X-Authority-Analysis: v=2.4 cv=GMA41ONK c=1 sm=1 tr=0 ts=6a639614 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=bC-a23v3AAAA:8 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
- a=KKAkSRfTAAAA:8 a=QyXUC8HyAAAA:8 a=oAmfn5b5h98DFWpm4AAA:9 a=QEXdDO2ut3YA:10
- a=x9snwWr2DeNwDh03kgHS:22 a=FO4_E8m0qiDe52t0p3_H:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-24_03,2026-07-24_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 phishscore=0 lowpriorityscore=0
- priorityscore=1501 suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2607240150
 
-After successfully configuring gpio pin as output, set the
-requested initial output value via the existing gpio set
-wrapper, so that the pin is not left at its previous level.
+The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
 
-Fixes: 7671f4949a6c ("gpio: gpio-by-pinctrl: add pinctrl based generic GPIO driver")
-Signed-off-by: Alex Tran <alex.tran@oss.qualcomm.com>
----
-Changes in v2:
-- Add fixes tag
-- Link to v1: https://patch.msgid.link/20260723-gpio-pinctrl-output-set-val-v1-1-ed4477dcd3e1@oss.qualcomm.com
+  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
 
-To: Linus Walleij <linusw@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-To: Dan Carpenter <error27@gmail.com>
-To: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/gpio/gpio-by-pinctrl.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+are available in the Git repository at:
 
-diff --git a/drivers/gpio/gpio-by-pinctrl.c b/drivers/gpio/gpio-by-pinctrl.c
-index 7d7c48ce5163..fb8440acb31d 100644
---- a/drivers/gpio/gpio-by-pinctrl.c
-+++ b/drivers/gpio/gpio-by-pinctrl.c
-@@ -27,12 +27,6 @@ static int pin_control_gpio_get_direction(struct gpio_chip *gc, unsigned int off
- 	return GPIO_LINE_DIRECTION_IN;
- }
- 
--static int pin_control_gpio_direction_output(struct gpio_chip *chip,
--					     unsigned int offset, int val)
--{
--	return pinctrl_gpio_direction_output(chip, offset);
--}
--
- static int pin_control_gpio_get(struct gpio_chip *chip, unsigned int offset)
- {
- 	unsigned long config;
-@@ -55,6 +49,18 @@ static int pin_control_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 	return pinctrl_gpio_set_config(chip, offset, config);
- }
- 
-+static int pin_control_gpio_direction_output(struct gpio_chip *chip,
-+					     unsigned int offset, int val)
-+{
-+	int ret;
-+
-+	ret = pinctrl_gpio_direction_output(chip, offset);
-+	if (ret)
-+		return ret;
-+
-+	return pin_control_gpio_set(chip, offset, val);
-+}
-+
- static int pin_control_gpio_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
+  https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git tags/config-gpio-legacy-for-7.3
 
----
-base-commit: 4539944e515183668109bdf4d0c3d7d228383d88
-change-id: 20260723-gpio-pinctrl-output-set-val-676008568122
+for you to fetch changes up to 57f64d52ab5e836a5f3f4ea6fd868941b2d7dcdf:
 
-Best regards,
---  
-Alex Tran <alex.tran@oss.qualcomm.com>
+  gpib: gpio: replace linux/gpio.h inclusion (2026-07-24 20:12:48 +0200)
 
+----------------------------------------------------------------
+gpio: legacy interface cleanups for 7.3
+
+These are the remaining patches for legacy gpio interface
+cleanup, ensuring that files referencing them are sure to
+have CONFIG_GPIOLIB_LEGACY set, and use linux/gpio/legacy.h
+instead of the old linux/gpio.h header.
+
+There are a few more patches already merged in other
+branches for 7.3, including soc, led, net and media. Once
+everything is in, we can apply the final patches to turn
+off CONFIG_GPIOLIB_LEGACY by default and remove the obsolete
+header file.
+
+This branch is based on the immutable ib-mfd-legacy-gpio-7.3
+branch from mfd.git to avoid a conflict in the rohm drivers.
+
+----------------------------------------------------------------
+Arnd Bergmann (12):
+      Input: soc_button_array - select CONFIG_GPIOLIB_LEGACY
+      Input: gpio-keys: make legacy gpiolib optional
+      sh: select legacy gpiolib interface
+      x86/olpc: select GPIOLIB_LEGACY
+      mips: replace linux/gpio.h inclusions
+      sh: replace linux/gpio.h inclusions
+      mfd: replace linux/gpio.h inclusions
+      ASoC: replace linux/gpio.h inclusions
+      pcmcia: replace linux/gpio.h inclusions
+      phy: replace linux/gpio.h inclusions
+      Input: matrix_keyboard - replace linux/gpio.h inclusion
+      gpib: gpio: replace linux/gpio.h inclusion
+
+Dmitry Torokhov (2):
+      mfd: rohm-bd71828: Use software nodes for gpio-keys
+      mfd: rohm-bd718x7: Use software nodes for gpio-keys
+
+ arch/mips/alchemy/board-xxs1500.c                  |   2 +-
+ arch/mips/alchemy/devboards/db1000.c               |   2 +-
+ arch/mips/alchemy/devboards/db1200.c               |   2 +-
+ arch/mips/alchemy/devboards/db1550.c               |   2 +-
+ arch/mips/bcm47xx/workarounds.c                    |   2 +-
+ arch/mips/bcm63xx/boards/board_bcm963xx.c          |   1 +
+ .../mips/include/asm/mach-bcm63xx/board_bcm963xx.h |   2 +-
+ arch/sh/Kconfig                                    |   1 +
+ arch/sh/boards/Kconfig                             |   8 ++
+ arch/sh/boards/board-magicpanelr2.c                |   2 +-
+ arch/sh/boards/board-sh7757lcr.c                   |   2 +-
+ arch/sh/boards/board-urquell.c                     |   2 +-
+ arch/sh/boards/mach-ap325rxa/setup.c               |   2 +-
+ arch/sh/boards/mach-ecovec24/setup.c               |   2 +-
+ arch/sh/boards/mach-highlander/Kconfig             |   1 +
+ arch/sh/boards/mach-highlander/pinmux-r7785rp.c    |   2 +-
+ arch/sh/boards/mach-kfr2r09/lcd_wqvga.c            |   2 +-
+ arch/sh/boards/mach-kfr2r09/setup.c                |   2 +-
+ arch/sh/boards/mach-migor/lcd_qvga.c               |   2 +-
+ arch/sh/boards/mach-migor/setup.c                  |   2 +-
+ arch/sh/boards/mach-rsk/Kconfig                    |   3 +
+ arch/sh/boards/mach-rsk/devices-rsk7269.c          |   1 -
+ arch/sh/boards/mach-se/7724/setup.c                |   2 +-
+ arch/sh/include/mach-common/mach/magicpanelr2.h    |   2 -
+ arch/sh/kernel/cpu/sh4a/setup-shx3.c               |   2 +-
+ arch/x86/Kconfig                                   |   1 +
+ arch/x86/platform/olpc/olpc-xo1-sci.c              |   2 +-
+ drivers/gpib/gpio/gpib_bitbang.c                   |   1 -
+ drivers/input/keyboard/gpio_keys.c                 |   7 +-
+ drivers/input/keyboard/gpio_keys_polled.c          |   4 +-
+ drivers/input/keyboard/matrix_keypad.c             |   1 -
+ drivers/input/misc/Kconfig                         |   3 +
+ drivers/input/misc/soc_button_array.c              |   1 -
+ drivers/mfd/aat2870-core.c                         |   2 +-
+ drivers/mfd/arizona-irq.c                          |   2 +-
+ drivers/mfd/lp3943.c                               |   2 +-
+ drivers/mfd/rohm-bd71828.c                         | 125 +++++++++++++++------
+ drivers/mfd/rohm-bd718x7.c                         | 123 ++++++++++++++------
+ drivers/mfd/sm501.c                                |   2 +-
+ drivers/mfd/tps6105x.c                             |   2 +-
+ drivers/mfd/tps65911-comparator.c                  |   2 +-
+ drivers/mfd/wm8994-irq.c                           |   2 +-
+ drivers/pcmcia/bcm63xx_pcmcia.c                    |   2 +-
+ drivers/pcmcia/db1xxx_ss.c                         |   2 +-
+ drivers/pcmcia/sa1100_h3600.c                      |   2 +-
+ drivers/pcmcia/soc_common.c                        |   2 +-
+ drivers/pcmcia/xxs1500_ss.c                        |   2 +-
+ drivers/phy/broadcom/phy-bcm-ns2-usbdrd.c          |   1 -
+ drivers/phy/rockchip/phy-rockchip-usbdp.c          |   2 +-
+ drivers/phy/ti/phy-j721e-wiz.c                     |   1 -
+ include/linux/gpio_keys.h                          |   2 +
+ include/linux/mfd/lp3943.h                         |   2 +-
+ include/linux/mfd/ti-lmu.h                         |   1 -
+ include/linux/mfd/tps65910.h                       |   2 +-
+ include/linux/mfd/ucb1x00.h                        |   2 +-
+ sound/pci/Kconfig                                  |   1 +
+ sound/pci/cs5535audio/cs5535audio_olpc.c           |   2 +-
+ sound/soc/codecs/cs42l84.c                         |   1 -
+ sound/soc/codecs/cx2072x.c                         |   2 +-
+ sound/soc/codecs/dmic.c                            |   1 -
+ 60 files changed, 248 insertions(+), 117 deletions(-)
