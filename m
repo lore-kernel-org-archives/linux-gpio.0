@@ -1,74 +1,81 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA75421256
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 10:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA4A4334A3;
+	Fri, 24 Jul 2026 10:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784888466; cv=none; b=Lw2s8WWOpqymFiG+s7AUjVbq+CreHI6PLuiEpwMrW2200/a4PKmf4zG4aI77qNpwbIzRjiBq9pinfXOiEYbcg2BgztOoOXjthVGUHxNtkwM5Gvld2ga7RUoWSRUgfeVoT5uNwamzFTw11DEDgzj1Bq7p2+dZOSS4EIXiIya+Ltc=
+	t=1784888574; cv=none; b=SyIhdj7oaguuQUSZjvf2Td5j4F3DayfaWPE/JKmAsZrQXpI2gKJ8V8Asl6xqaFD/MPxf0WyK1EfTaSMqKSU7c+rgokSqjTAMz5KCAsz4ubm6abPz3AEpL57hQulVCnj9s2rLZiTblEFemEcyyj4YZexhQzClGfGr2qALkmG5CMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784888466; c=relaxed/simple;
-	bh=EfknOjf2jnFM8oTBVhMolS7pwha4qhwLngmPtrQZl7k=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GEc5BKPIidF7ZSVEgdpn1QWmbahUTNFpNSHal/hCpGfna+mph05O+eyFFqE5YJ0VRRNcG+JvWg5kGU0KuJ/9rgUclJnFqayWUMGzs35/2T5V8of1sNQ5IBUhtqVZze9cuIzqIq9eSFcJt0YS4yXxfXvBCN3waYGfqURVYJIdmOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4W3Z8l2; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784888574; c=relaxed/simple;
+	bh=GWadg1EQWDySCo5T4hvH7Z6S3cXtf/W8PrN6MNY+IcY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qDxYkmWZG1/2iindQd0Xs5iTeO6SXLLXKGo1ti3rXtvhHu7bWymWHmFxsVsht45Bt7PLrwqbyVaug/M0KHsd0cSM9Pn11SnSRuWdGDseRoaxCitES0LT2nRRt9MgKcpXXdE1hCNI5L/qldvg4YMv6kIqG3PUsYSLAEsdG/sr8Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q9Hh+QAJ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4W3Z8l2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C776D1F00A3F
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 10:21:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q9Hh+QAJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD3E1F000E9;
+	Fri, 24 Jul 2026 10:22:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784888464;
-	bh=EfknOjf2jnFM8oTBVhMolS7pwha4qhwLngmPtrQZl7k=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=g4W3Z8l2mFKqDv/WFcy2cXTJDPTlhyOVLUC6OlAo30LN2y+fBQPlNxIRVpAySbUU2
-	 Vi4o5OKNNRP3YdfdkkPLVLwkyCaymHUyjH43NSjPfOpCWxQgZN+AODM8DI5v2bz/W1
-	 VkFJqrp38eJNb0Zj4sikWotEOh1pirfHSvZ4hNo1HbvriPgirbf6LS/mhxIMXXPqUd
-	 I3OnU2+fbgqo93J5BNPLjFy/0shLRtsfD9/zMUl/SgW70U6pgWliId/9xsmaTShFYP
-	 cv4SM+8dUcojP2fkxr/pULNYSP+4kubx/ld3t6xfksIcOQcFvlQxP6LUZLy56Zyvru
-	 pprMEfX4JcMwA==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5aea0fff535so283985e87.3
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 03:21:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoNkgFBNIu0gUH0Y+j2GAnDjYmBbJXMAz8AbNWwysnV1nofUFkZ9zh5SLIz/Dahd1al0Y7gHCeNBJCF@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwS7o2uXoteFLWzR+ETCqOpctzOv+dKVA4BMp6H++6jOgT4bM9
-	h0pYyazZoTKfJpBJLgu9I4yzhub94PVuZPFf5fz1pnsAxCzCQ0wIiXsYsrZrXL0Y9dG+CHDhTqB
-	SuD0GNLCmboq1RzwKj7nHgKxS8yo/Uvn76S58jsu67g==
-X-Received: by 2002:a05:6512:34d2:b0:5b0:163b:e2d6 with SMTP id
- 2adb3069b0e04-5b2b2f77b4fmr1157928e87.62.1784888463466; Fri, 24 Jul 2026
- 03:21:03 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 24 Jul 2026 03:21:01 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 24 Jul 2026 03:21:01 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260724081838.33428-1-phucduc.bui@gmail.com>
+	s=k20260515; t=1784888572;
+	bh=B/QZrNztN7mxBr7a1VoyHoziaj+i+NOGno+VpRywPtM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Q9Hh+QAJE4TydNK4yQfH43zqUMJJ9ecBUWnZycxpWeLTTZqcsPYQ8GPO1duk4BaLs
+	 FLyS7ZAcRs49r09LnhiAQ8RY3hSOkawjAwvdwk+rEoEbeeQ0u/qBVejO7vBqwJ1qLD
+	 Q6VWOToars1/xvnXq1ZTqw71d0Ct7phbmYrLqV7pmsoUXgNYBKl+DyWE2oVnfOjlEO
+	 BJjS9ohmewS8ygDtqp5Y9SQEZSihR9KfEuIS8lsgI9fT8Mxhm680p7BXL4hjNecX7x
+	 06iX+Vup8BRjgcUt/ATaDGEfwSxI6/43eLi78IINuaz+a5nuNpDm5HPeb6posqs0LW
+	 aeq5z2Hg6RYHQ==
+From: William Breathitt Gray <wbg@kernel.org>
+To: Yu-Chun Lin <eleanor.lin@realtek.com>
+Cc: William Breathitt Gray <wbg@kernel.org>,
+	linusw@kernel.org,
+	andriy.shevchenko@intel.com,
+	mwalle@kernel.org,
+	brgl@kernel.org,
+	tychang@realtek.com,
+	mathieu.dubois-briand@bootlin.com,
+	nuno.sa@analog.com,
+	Michael.Hennerich@analog.com,
+	jic23@kernel.org,
+	andy@kernel.org,
+	u.kleine-koenig@baylibre.com,
+	dakr@kernel.org,
+	bhelgaas@google.com,
+	o-takashi@sakamocchi.jp,
+	dlechner@baylibre.com,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux@analog.com,
+	linux-iio@vger.kernel.org,
+	cy.huang@realtek.com,
+	james.tai@realtek.com
+Subject: Re: [PATCH v7 5/9] gpio: regmap: Add gpio_regmap_operation to extend reg_mask_xlate callback
+Date: Fri, 24 Jul 2026 19:22:45 +0900
+Message-ID: <20260724102246.1126107-1-wbg@kernel.org>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260723034237.2501507-6-eleanor.lin@realtek.com>
+References: <20260723034237.2501507-6-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260724081838.33428-1-phucduc.bui@gmail.com>
-Date: Fri, 24 Jul 2026 03:21:01 -0700
-X-Gmail-Original-Message-ID: <CAMRc=Mfp=8X55HcCW+SGAOQc1pdf_Uh+9uyOD7JYMZB_a+K4iQ@mail.gmail.com>
-X-Gm-Features: AUfX_my-ULf6Tpa27IwwCw1zz-js6Dd2KXLjfk6HFOyBMGdbmp4w24XrfuFMErs
-Message-ID: <CAMRc=Mfp=8X55HcCW+SGAOQc1pdf_Uh+9uyOD7JYMZB_a+K4iQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: pca953x: restore cache_only state on resume failure
-To: phucduc.bui@gmail.com
-Cc: linux-kernel@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=643; i=wbg@kernel.org; h=from:subject; bh=GWadg1EQWDySCo5T4hvH7Z6S3cXtf/W8PrN6MNY+IcY=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDFnJNg88j/NJ2Wxn2/Gx6eaJ77dX3tfZqcisZ3I7Y/Yrv atb9NPmd5SyMIhxMciKKbL0mp+9++CSqsaPF/O3wcxhZQIZwsDFKQATYVvP8D/Tt0M2Y3ee3WnX VrmEN343XnVOjHl8YkNCMaesjnZs5xZGhvYpRr82N6iUbQjwc2lkO179a8vKFQ5SWzLtqhLuCic asAAA
+X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
+Content-Transfer-Encoding: 8bit
 
-On Fri, 24 Jul 2026 10:18:38 +0200, phucduc.bui@gmail.com said:
-> From: bui duc phuc <phucduc.bui@gmail.com>
->
-> When pca953x_restore_context() fails, cache_only is left disabled and
-> the IRQ left enabled, even though register synchronization may not have
-> completed successfully. Restore cache_only and disable the IRQ again on
-> failure, matching the state set by pca953x_save_context().
->
-> Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
-> ---
+On Thu, Jul 23, 2026 at 11:42:22AM +0800, Yu-Chun Lin wrote:
+> Extend the reg_mask_xlate callback with an operation type parameter
+> (enum gpio_regmap_operation) to allow drivers to return different
+> register/mask combinations depending on the specific GPIO operation.
+> 
+> Consequently, update all existing drivers utilizing the gpio-regmap
+> framework (across drivers/gpio, drivers/iio, and drivers/pinctrl)
+> to accommodate the new reg_mask_xlate function signature.
+> 
+> Suggested-by: Linus Walleij <linusw@kernel.org>
+> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 
-Fixes: and Cc: stable?
-
-Bart
+Acked-by: William Breathitt Gray <wbg@kernel.org>
