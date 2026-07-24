@@ -1,93 +1,67 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6542746A5FC
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 21:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A3D3368A3
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 21:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784929490; cv=none; b=AfpbzG9R7XxRC/fjTgx4Lo4df56XMk/jrgN6rb5Ch9IJHFYGB7nDblkYAozz8ATjQW8yPfV5HphA9oz+N/EVD67WddP4OlR7wG2Q3g3NkdJMabbyppdRGNTxbwOjkvbppwL2S9JPfrJtpavVl734S7WuB/nBCmzV7pcS8TDWg+Y=
+	t=1784929551; cv=none; b=B3JGVhDb8DYTVgoFaa4NmcBshyuF11z71ZZVmaQdIY300AeK1Tjrr6kDgIA2Nkfb/KDShy4o2bNvy16DSGXeeISdkBMKUJ4A2x/wtxZty0DMG2BYcHzbFcmZUpdCvIJhw7S1yfawLCZ5JudaKOfMvNyARHSy7x7RAw1D6HfkvRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784929490; c=relaxed/simple;
-	bh=7TBvzvmYUVLHPXKKwI4xXmJyXzmc1JDiIJxpABFT5hU=;
+	s=arc-20240116; t=1784929551; c=relaxed/simple;
+	bh=mYuAyjCy5Bynzez0tedD016Te+sewPaFENA3OUP2FZs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BeW1H6kiOTy/k69ek1XA5Z1Q9htQNYUBgTrCp3ov+JJquEp3OGTIczQyKtRValrx1B+38BJmNkrxfnZwPXfUkck8y5lr33UcXr70FxegbUo4xhbNRyZit+ZKuC01RprCcGMLgO9aEVyVfa/rIKhnXp2V4/i2woKVyROBRXDPhUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uo2aPzzv; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=Q2yTC5BcaawBgtIg+X7uP6Ac96ddxWQK/YpFfvjBAyxX7ceA0VgoJWuzFx7oz7Akb4gl1C1q8tKumVgP58YeMhBWat2twg5qpdHZh0kmajx+Pv6lsvfVaL1CZM8PTW5DdHbCyLntb8pzyJDPE3rgE4E9smonzQU2Zenxhy6LV/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACU5fO9v; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uo2aPzzv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0BCB1F01558
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 21:44:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACU5fO9v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA1CF1F00A3A
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 21:45:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784929487;
-	bh=hs1xmwdeKAsh7q8PV1ezAfF/O0QRzKObCak5JHKTyeY=;
+	s=k20260515; t=1784929549;
+	bh=mYuAyjCy5Bynzez0tedD016Te+sewPaFENA3OUP2FZs=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Uo2aPzzv4PTL3ojE4Qmu//GKxHF2Eagk/ty2ryrBYBbYk1xyexy9+2D/B2lC5lPqt
-	 jjXh2GuXbqtdhTbMIRLa7LlTVQQfvjbUmXHQKzabHDVlIC9CraILx9uzc9KYiScGIu
-	 eZbYCLxL8oUbe3GIu4awVaDXounnRYnKFCvvJ+8bmGCoAFjenKyJ4/CcBSNGF2AvhX
-	 LRSyqlB8r/lS8oaBDDo4Qo+pF8ZwiLFrlA0ECAlOuT1GDKFvymPOI/eTwRcjiN8pwO
-	 rAmVBrnoF3vwQ5+lBKQPCXlhmQX9h52vFDjtPOUw6+xkikIa1EaDT4ANdX7ZPywrA9
-	 1pJCdsz4hghwg==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-39c9a3acd40so7011061fa.3
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 14:44:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpT0P39QGWFMSqj4ieqw7IFYCcGWqe2ancL9tyPpf7/6kwRr3YV3nz/J9rQiRl7743vBQd/hZszAb3r@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNK5u7c1B3nZrhZfion4k7CBxVFQqZHiSwHuJ3uVmUVV+CdO1P
-	uu1Zy4SuW7lDHdOjZ2Gc/TqDCzK0uBcatEdIR3qKuEurgTRzLgERyCvZyZZF0zbpphqIrpjLIZe
-	n9F/Pjqs6go0NowYlTjTvHOXKzBP2O1Y=
-X-Received: by 2002:ac2:55a9:0:b0:5b1:5061:e5dc with SMTP id
- 2adb3069b0e04-5b2b2f7df3fmr1260432e87.64.1784929486602; Fri, 24 Jul 2026
- 14:44:46 -0700 (PDT)
+	b=ACU5fO9vWNtq0AJ0Lnni6kljYrnjUHDG4sPnDXlb7fy6Qmx66wNgMnEHm7MmgZ3wb
+	 sq1EbQIgBGjnnxEaFJy8HpgYMVJbgZfqG5OGckcwMUYQcHWJrvfJ6B8PyDN4X7xCQA
+	 OpBSUpvepC44A3zjGxo1vMyiKm/5VOwxFPJXKGJynlG3nZCFjq6MNrIu874mjEh1Hy
+	 yQd44+vEAicNyGcuZ3x81tGnqE0pKZNZf6e/Fk+G+mYSWk/92s9l5kN7LPAwmyUllu
+	 Aek1hMBaGEMF3pKL11JP2VTA9C0XfL/We1cmNqeqsNP9tPMcIfuFc7HnM91vf3p1Wz
+	 iDXUzn6hE2rJw==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b2a8e4c77eso796884e87.1
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 14:45:49 -0700 (PDT)
+X-Gm-Message-State: AOJu0YxaDmXAr6NoMfHCfnvRHSHOoRa3soRBggkKCVqiHMaIAVWBWGJx
+	rP6M1SabT97w4yp56WCs23/U5devdDwD2z/P1J2F+EG2tQKHDRKAnA5/OUTpChlg0lEjUxfFqWl
+	j+B2WF9ltfQfL3eJKOh+o8TXG50Gr5QM=
+X-Received: by 2002:a05:6512:118f:b0:5ae:a9ed:24a0 with SMTP id
+ 2adb3069b0e04-5b2b2f821d4mr1857096e87.65.1784929548505; Fri, 24 Jul 2026
+ 14:45:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260716033441.21330-1-julianbraha@gmail.com>
-In-Reply-To: <20260716033441.21330-1-julianbraha@gmail.com>
+References: <20260715192415.1326037-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20260715192415.1326037-1-andriy.shevchenko@linux.intel.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 24 Jul 2026 23:44:35 +0200
-X-Gmail-Original-Message-ID: <CAD++jLm+xOW3P_uPEb3_xXn-NnfzO1May5D_raS-KyaBWZAcFg@mail.gmail.com>
-X-Gm-Features: AUfX_mz9WbxVv1wJ4mNi8OkOhtnmNOE8vfWiY7hGjzwcubLKTv3Ckuv2sAisxMQ
-Message-ID: <CAD++jLm+xOW3P_uPEb3_xXn-NnfzO1May5D_raS-KyaBWZAcFg@mail.gmail.com>
-Subject: Re: [PATCH] drm: fix unmet dependencies from missing GPIOLIB
-To: Julian Braha <julianbraha@gmail.com>
-Cc: andrea.porta@suse.com, phil@raspberrypi.com, 
-	bartosz.golaszewski@oss.qualcomm.com, iivanov@suse.de, 
-	joshua.henderson@microchip.com, lee@kernel.org, amelie.delaunay@st.com, 
-	rjui@broadcom.com, sbranden@broadcom.com, yrdreddy@broadcom.com, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de
+Date: Fri, 24 Jul 2026 23:45:36 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnkB=+tA4hTB_rqOVC8_DdBM4L3ibVGYyC=aMHJs3o7_g@mail.gmail.com>
+X-Gm-Features: AUfX_mxxi3XBOJFgeJdGL5ag2zVd7kORcZX3P2JSpCK7TsVcXyHJBkypb2jksHw
+Message-ID: <CAD++jLnkB=+tA4hTB_rqOVC8_DdBM4L3ibVGYyC=aMHJs3o7_g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] gpio: legacy: Kill gpio_set_value_cansleep()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@kernel.org>, Lee Jones <lee@kernel.org>, mfd@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 16, 2026 at 5:34=E2=80=AFAM Julian Braha <julianbraha@gmail.com=
-> wrote:
+On Wed, Jul 15, 2026 at 9:24=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-> These 4 options, PINCTRL_PIC32, PINCTRL_PIC32, PINCTRL_IPROC_GPIO, and
-> PINCTRL_NSP_GPIO all select GPIOLIB_IRQCHIP without ensuring GPIOLIB is
-> enabled, causing unmet dependencies, such as:
+> No more users.
 >
-> WARNING: unmet direct dependencies detected for GPIOLIB_IRQCHIP
->   Depends on [n]: GPIOLIB [=3Dn]
->   Selected by [y]:
->   - PINCTRL_PIC32 [=3Dy] && PINCTRL [=3Dy] && OF [=3Dy] && (MACH_PIC32 ||=
- COMPILE_TEST [=3Dy])
->
-> Similar options in this subsystem select GPIOLIB, so let's do the same he=
-re.
->
-> These unmet dependency bugs were found by kconfirm, a static analysis too=
-l for
-> Kconfig.
->
-> Fixes: 2ba384e6c381 ("pinctrl: pinctrl-pic32: Add PIC32 pin control drive=
-r")
-> Fixes: 1490d9f841b1 ("pinctrl: Add STMFX GPIO expander Pinctrl/GPIO drive=
-r")
-> Fixes: b64333ce769c ("pinctrl: cygnus: add gpio/pinconf driver")
-> Fixes: 8bfcbbbcabe0 ("pinctrl: nsp: add gpio-a driver support for Broadco=
-m NSP SoC")
-> Signed-off-by: Julian Braha <julianbraha@gmail.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Fixed up subject and applied as nonurgent fix, thanks!
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
