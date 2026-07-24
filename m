@@ -1,118 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033282931C1;
-	Fri, 24 Jul 2026 00:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3A3361966
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 05:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784854252; cv=none; b=jFNitQm5wq/9Pq/d7NcjgHTb0XVkN1VEn+bkDNIyJ7VUaNbaMJiO/oCAtjK98p+WraS1tA3fk/2GI2rCvXZ0TOVumy5bo5K9XNauEnbRJg5goGyfDVQj8En/wXXlwG8AzUe0BlkM6Pu1yuXKmL7/R6j4MO2nnJlU5JARsClnCXA=
+	t=1784870308; cv=none; b=u+Oq00ABGM9G44FGNUvEi8yWlGQ91aFCRDq2ZM+XVDMIcxuT+sYCCLl/J0Y9FUBuojzj1VNfigONMgLJb/6fOPxjldKjknzTcO2UY+Gpm6oOiFwQEQbOgt8w1ByFch4sle26TWJxK1A5Wg8T05fQi+A8BoLbOJgFWdgSbOJlgi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784854252; c=relaxed/simple;
-	bh=gNaswln45dMN8IadG+DHYm9R4IqyHYqklZA4RSCGm+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YE0KhF0tAerazuu3yyUFNHp183vLARwghd+ld4zMuF+5SkPu/xcCDDF0DMKS7t39JqCP0pNGnFN692oRQ1DZgTKRYmGZaanFPu47blrZ6I0EjTEmTWHQ2ZiP98czFi+5HD2MITeC8yRccNrkyuBXWaOHwQ0TJ/CRk3W1ihbSKxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kaWyq3mw; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784870308; c=relaxed/simple;
+	bh=t3nkXbnhTFYPV2YkPV6kdZre4n/Ql+gnsrnNJRn/iBg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YAjcCtwxZhd0XAh6Af+0X1UaU2k0oRYDEoYPQtT7YKXIPh3CQLGOfq3i+bymx7ZOGryWzLBxS0hHQ7RF2OYVTy1QQ0UmQC4kwvXFsby90agSrq3tsRvwREM3oRWZQjPTps4ZqVAPf4JiagMXd5fTmqS90j+IfsNTo3g5N22d4NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GX+Vz2RQ; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kaWyq3mw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FDD91F000E9;
-	Fri, 24 Jul 2026 00:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784854250;
-	bh=4p27NKwcTMVUYeEaXxRSDoWU3baMIxD7D4KV3WLcWX8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=kaWyq3mwvTq1ZCtdxc7Sq1Pl7Ej5hYrnmJjK7kcxgcYjWKdLiS3TkNhudwF2FSLoQ
-	 WJ1+8PRrFg23GCkbqkmdC9GPw4oQbPjFPKr2QlahtzTO+Pq+Czgp3crKfGZMWZL6PX
-	 ywzi05/V8wZkqR+5WNQq0Vobz2WT6i6l5E5qvdZiLovaPCDo/tlCOZfu0arSbxIOA8
-	 /8Q/SwSgmnlUFCpodfb6ZGebdRL9wxtoHYqd+65XgLxytfbI3B8IJUpbbnNweBOEAe
-	 0faGCBSYwMzbsfB5TwXoOk1o4h/VaUDnTgfeZJdDoxnLvL4xoDxQ1V7XQ+fzVhzbhL
-	 HsboHmlNebpxw==
-Date: Fri, 24 Jul 2026 01:50:43 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Eliav Farber <farbere@amazon.com>
-Cc: <rafael@kernel.org>, <tony.luck@intel.com>, <bp@alien8.de>,
- <guohanjun@huawei.com>, <mchehab@kernel.org>, <xueshuai@linux.alibaba.com>,
- <lenb@kernel.org>, <laurent.pinchart@ideasonboard.com>,
- <linusw@kernel.org>, <brgl@kernel.org>, <orsonzhai@gmail.com>,
- <baolin.wang@linux.alibaba.com>, <zhang.lyra@gmail.com>,
- <dlechner@baylibre.com>, <nuno.sa@analog.com>, <andy@kernel.org>,
- <dmitry.torokhov@gmail.com>, <hansg@kernel.org>,
- <ilpo.jarvinen@linux.intel.com>, <W_Armin@gmx.de>, <ukleinek@kernel.org>,
- <fabio.m.de.francesco@linux.intel.com>, <kaihengf@nvidia.com>,
- <ankita@nvidia.com>, <leitao@debian.org>, <jason@os.amperecomputing.com>,
- <pedro.pbg@usp.br>, <paulmck@kernel.org>, <frederic@kernel.org>,
- <kees@kernel.org>, <linux-acpi@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <linux-iio@vger.kernel.org>,
- <linux-input@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>
-Subject: Re: [PATCH 08/12] ACPI: APEI: GHES: use
- devm_blocking_notifier_chain_register()
-Message-ID: <20260724015043.37cecbfb@jic23-huawei>
-In-Reply-To: <20260723175513.39849-4-farbere@amazon.com>
-References: <20260723175513.39849-1-farbere@amazon.com>
-	<20260723175513.39849-4-farbere@amazon.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GX+Vz2RQ"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-383b4a3755fso5621a91.3
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 22:18:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784870307; x=1785475107; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=54ga4ZHqkMHaUB1dGuwctQU0JL6wXRxmKXLS7dAxp5Y=;
+        b=GX+Vz2RQ7aUy/KjldgFcZQS+kRVhDyVGJ4iAlELBDFqFFBfzxrOaDZDwZ+Y6a6kpjs
+         04W6oJo32zV3gYOWaunnG4aVUpKDmURguC5TkBI9XIn1I4d9Ez+rfvd2kRsXZKWSsHaw
+         rJkCiBrKwrEIUce/CEbd+zLs6o+MgBNL3uY/chQRvqg6zaCWnyihHl3xlifb+Jpd1Eil
+         l8fL8/uwyynv43TwAa84bQlljJ9lKAiFsg/+OxzPb2bTITy1I8fE4nfpJiFOk3aMs44r
+         /+XJPsoR2TKSpRpWGjoKnvU32yT67mzJ4Aud2j7bPRb5fTyZ+PbWA7WWMgJuJmuwvOLk
+         qwRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784870307; x=1785475107;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=54ga4ZHqkMHaUB1dGuwctQU0JL6wXRxmKXLS7dAxp5Y=;
+        b=dN2NhLK8Qs+mb6XCL10bvTzOaCVOXwo8uuszjoVQ30C6lApykmJEAWQDL3hYp6Hvpi
+         tDCu8r8jdWXk1RX0TMmNjXyPk77PUIsT9CYCdQKOE9Dtp6klW1MnkhO1JPNpPXdy0tws
+         bca2xG5ngCtqbqkOyp9rbbozbheshlZq3qfCOHhoDF82qOyNtWSD8iu8iu8UmaAOl44a
+         n/SupsWrTLpA59SsD8U/9tkuYr089VLxT7g2NkzJRWLdM9u+Umw5cq1v2aG9c4fmAxlv
+         qSYh90dMCeXVAPMQsN552BhtS4UvsT20kMXVKuSwCnF9ExcL9/173hQEEr2DyiXt3+he
+         eASg==
+X-Gm-Message-State: AOJu0YxuL8a3AaM/IM8IVLvnYFStjosAOU8k/F9NBtdQFBYjY6Y2sBID
+	aMiNkaekU9Goy8tcsTZngq5gNJA/rNVgOspI38F4EetGN3nvEHW6jZBBk08AKQ==
+X-Gm-Gg: AR+sD111t0jTLBjkiWIw6dF1yw/h0bZRgMfdEmwKAWB3gAkzwM3HCSw9qiOl16vtWCQ
+	p0VSJzsBA/WBj62xDLMchi/HtcHMF3H5B8xvyM2Ly50CH4l5MZD4voO7f3B4Yp85wsFsx96rnNt
+	P2X00SXxpXTkWScEJDGovLbXaMof7hCO2mHqXlMIWYus5XXwJyCGw+e9UecnWlV7hjOHLLC0mNb
+	83zC/cQOM1lyxPNf/+yxohjEg5ollNCsf1qnxyLe0FeMRmyfWojm+cKROgv+j2apl3TLfkjUD1n
+	gxyNfnyejigFmf5x7rjouCtaDYJcy6cdihzK8Z3V7wYikT6xeRNrSg0zlBOF5cV11w/074ConVu
+	KdITNCV4Uy6O6YVyjkdgHybSNSUVUyp5Fi9Ni456JG9A/kb80rSqDTKF3kRjk5NR/sac13zMj4+
+	vqbS7isZDB+nB2wwJUL0O1f9ch+QbR4uV8/PyMiLDbY+YpcJ+e+f5qPMDLKjfx7EZ8
+X-Received: by 2002:a17:90b:3cc4:b0:381:e74f:8a6a with SMTP id 98e67ed59e1d1-38ec65793a6mr5859291a91.16.1784870306909;
+        Thu, 23 Jul 2026 22:18:26 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:f5d:dfe5:9bb9:71ad])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13d130a8421sm19974430c88.10.2026.07.23.22.18.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jul 2026 22:18:26 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/4] gpiolib: of: remove redundant IS_ENABLED check in of_find_mt2701_gpio()
+Date: Thu, 23 Jul 2026 22:18:18 -0700
+Message-ID: <20260724051822.3545532-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.55.0.229.g6434b31f56-goog
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 23 Jul 2026 17:55:09 +0000
-Eliav Farber <farbere@amazon.com> wrote:
+The entire of_find_mt2701_gpio() function as well as its entry in the
+of_find_gpio_quirks table are already conditional on
+IS_ENABLED(CONFIG_SND_SOC_MT2701_CS42448). Remove the redundant inner
+check.
 
-> Replace the blocking_notifier_chain_register() +
-> devm_add_action_or_reset() pattern with a single call to
-> devm_blocking_notifier_chain_register(), removing the
-> ghes_vendor_record_notifier_destroy() callback.
-> 
-> Signed-off-by: Eliav Farber <farbere@amazon.com>
-> ---
->  drivers/acpi/apei/ghes.c | 15 +++------------
->  1 file changed, 3 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index 3236a3ce79d6..3aa29dcd70da 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -689,21 +689,12 @@ void ghes_unregister_vendor_record_noti	fier(struct notifier_block *nb)
->  }
->  EXPORT_SYMBOL_GPL(ghes_unregister_vendor_record_notifier);
->  
-> -static void ghes_vendor_record_notifier_destroy(void *nb)
-> -{
-> -	ghes_unregister_vendor_record_notifier(nb);
-> -}
-> -
->  int devm_ghes_register_vendor_record_notifier(struct device *dev,
->  					      struct notifier_block *nb)
->  {
-> -	int ret;
-> -
-> -	ret = ghes_register_vendor_record_notifier(nb);
-> -	if (ret)
-> -		return ret;
-> -
-> -	return devm_add_action_or_reset(dev, ghes_vendor_record_notifier_destroy, nb);
-> +	return devm_blocking_notifier_chain_register(dev,
-> +						     &vendor_record_notify_list,
-> +						     nb);
+Assisted-by: Antigravity:gemini-3.5-flash
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
 
-Whilst correct, I'm less keen on this one because it looses the obvious connection
-to the non devm form.  I suppose with the code being so near
-to the non devm we can go with this. 
+v2: no changes
 
-For that matter why do we have the non devm variants?  There are no users in tree.
-Can we just rip that and the unregister given this is removing the only users?
+ drivers/gpio/gpiolib-of.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Thanks,
-
-Jonathan
-
-
->  }
->  EXPORT_SYMBOL_GPL(devm_ghes_register_vendor_record_notifier);
->  
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 940b566946ce..fc77cf6b306a 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -629,9 +629,6 @@ static struct gpio_desc *of_find_mt2701_gpio(struct device_node *np,
+ 	struct gpio_desc *desc;
+ 	const char *legacy_id;
+ 
+-	if (!IS_ENABLED(CONFIG_SND_SOC_MT2701_CS42448))
+-		return ERR_PTR(-ENOENT);
+-
+ 	if (!of_device_is_compatible(np, "mediatek,mt2701-cs42448-machine"))
+ 		return ERR_PTR(-ENOENT);
+ 
+-- 
+2.55.0.229.g6434b31f56-goog
 
