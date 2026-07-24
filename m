@@ -1,152 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9043CF05E
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 08:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CE73AFCED
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 09:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784883282; cv=none; b=f8Ef7CYWrt73GD0JykWut5VJsX0gBmH3QAcSqrYQFhYJPmYtwgilXkNSunMiQfSBLumehcY8Qpgt2tmFlI6CN0nc3+/KbD9YHMVYVa1zWJOdNIdPovZ6LnFX/qBYNWYRO9TrfC4fECIPf15PBJWm2UnGkTkyflAuim6qlKn1+ik=
+	t=1784885302; cv=none; b=aHg1LNBLQQeJls8X/WXBD8ZJfSf4vIzvA11uLfMOcvZNOUwWss1oO0pvIeHMOmJFJrZKX3X4PufL4sIXIepNSYiIUCsAIUsw0DOALjto7VZj+P+2kx/cgy15YTHphum+y2x6Zeqxcz5mzKdKvOIe7WvhAd1v9bIgGQLIxBLTypU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784883282; c=relaxed/simple;
-	bh=VsPYV6juei2qPjiCuy/EV7+R7cnFM1NgIVNhKMuCeFU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KQub6nq0sNypMhIuh21dQVCKb1q7J+xSr3zXdj4LC0F85TnoR34eQ9qIZY9VHcC7SMOSEVnoAsGm8S6UnSWT7NsBmIkgY699lq49YjhAKpvEeWivxpGkp3PS1Y/NFPuNMVszjUyEiUJcqgVy7kkRS39hX/XWogZssDAFf/dTtqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hacRXYmx; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784885302; c=relaxed/simple;
+	bh=JS+IFyx0Nx5QnGWEAUcELDS9dig3ky8MVWpuyJmtYrU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=cwomZWBUkqMLN0Bp2UJB4Jd4LdsJSzaaUyLg7mgUXv1gn5qKf+ZuWCQSZIdtXFPHad4ZYgxi9Ck4nF//7ImrF0jqNNLgtODS8aF1FJ6bsqUXfOB4n8utwNVtVJMylE6eSlmvbSxK6YEH+brn1s82H/8XW+8ENJ4mi4V7HvDFeeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQF6eere; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hacRXYmx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C331F00ADB
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 08:54:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784883280;
-	bh=013sbt/Aqw+70808Z5YZj2obs2K/SGEiCRmD03ytTZY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=hacRXYmxHN+gJ4NzV8JwMqoF4SGP5dusGybBPcU4B133huaOOFRiYucSNMaEjw5eN
-	 lZfJN0YLp/rLQGtW4knPKyQR19WXxkv09uzH8E3K+geTi8ZC3khArh72Ib0Yzf1NHM
-	 AnK6QJrznT9a6bK8Yjx8lybcnyZVpChxkNcV6ETbiTioS9wQUGLHFwF4S9+6Tr29YM
-	 /DXv1jcVsmj/uPS9zRtuCboSUPdDpc5azCHRHCbLqNVpy0XvZH+9vvEtQjw3Wc/sWx
-	 8vBG6Uk9YHWTeRhE0T2/w8XmUGVAU63FaFVCcVnSZHFwVUrYsOWil/6Ypz7PZid1H5
-	 Hzkag1mBMDLwg==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6986287534eso173176a12.3
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 01:54:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rr51WnmpXVx420l9i3yRf70oZ4YmVih6gtuclrMpn1wOwalNugHkkhiuHo0cdkV6DMNaa15FCG4bE4U@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdyMpL+kPaC5iRJRJ0YQuCtU0psG0j+sdGZvx9dAGtwsa7qzwX
-	HjNA5SHi/XscrMrjR+eAH8glfb9bGSn694E4tlCtSkT0v0VEHp0EVvT1UAnlDbwgPMnphrcQr0D
-	JI0z/JT+Qw9oAo+RkvOr65XeS4VXdTwQ=
-X-Received: by 2002:a05:6402:2550:b0:69c:794d:48bf with SMTP id
- 4fb4d7f45d1cf-69f6cf10bf5mr1691997a12.17.1784883279220; Fri, 24 Jul 2026
- 01:54:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQF6eere"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2cc8311c6ddso362765ad.0
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 02:28:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1784885300; x=1785490100; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=JS+IFyx0Nx5QnGWEAUcELDS9dig3ky8MVWpuyJmtYrU=;
+        b=HQF6eereYndxrC2OYConm7qiAcfHitE8pQHzCChkydi8QkWQUXHSyxFX5pdjo92UrY
+         kVD4q0wVwaQfXEMyaRNNXHRrcHEwwvHbTqa7qJPY6At7OsA4PsmtQvP8VVYOJNOoW+hV
+         OyfY7fGXtVH7yNsuj9ZuHlgGYF1bNfEFJByU8W9VvmYrFx/WAC0bc4HAF8J+SUcd7sdm
+         zZ8GQIIJE/rR/bOKmrGQG0BfarUv7OD+OR/dHa8HsKkih/kwPbo7GHAAHG0hqG/RgjN9
+         NCX9P0hFRsyEVi1Qm55NwG+XW+OivHNQrGyGkz7nHyiixRYyPYMYfVVjGNLlStgaXEcu
+         udPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784885300; x=1785490100;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=JS+IFyx0Nx5QnGWEAUcELDS9dig3ky8MVWpuyJmtYrU=;
+        b=r4RXxxTnd1WbbfZbJXjbCzBEmyIHdr81dkLeWAqaD9BoacAUWEwkSiS382ftzBmrRv
+         CJLB5OdFrBSJRol2ChRw2IofYWFxD+WTalVSPIu1dSV8wdDSYVHHasq6czb21sauiHMN
+         YLcvPyCxQklVEq82oiY53kCN0dl7H7TSentYsPGYrHcYj/phumn56VDiA+EF8VoWE3PJ
+         NihPKBB8EpjhOMu4GlolMr9Jyw3v70GkrlHewyXReU89fqerVt6HJDYzgP32FjPo6Nx3
+         us+tnrwcrJTCnvkVDVHZg+Uoxt0UZRSAaZ6RWapCx8y/4ycJz7tJvESWlonQ1uoXUl2r
+         G78g==
+X-Forwarded-Encrypted: i=1; AHgh+Rr8R7mEgF2PMMKJ6EOWxEyi4otrDtapzxezmdG2wqFqujXOvtF5jezWYn8Po98YBrp/VYufS+iFehrE@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLq+eYpxcIrZYYpOSAXY846DnokLMZ8r8ouXLVPnZCSJQQw/Al
+	deuLSBp1++Y8pj60y4A4hr5vTsP6z7bsxDOR5bXANp03oQZUDI+Uctxc
+X-Gm-Gg: AR+sD12DQAi9DBaOElKVhUBEcIwVNcGMqn0HMKP8aqPlOLqNSeZKxZIEaN56s3cpFQo
+	Gc8JE0KmhH6rLwpGd2MAmZHeZ9e6OrXMFkU/dW9hxL6LOIf5cO3TOK6+ksjZ38b9yd6ukHZhGJ7
+	/IXWJvRA+7gjQdIX+sll4Gc4UrRPnJBtR8jyP8aTOmNVz2mB1ja9p3JsqqSKGWkUmjxtPks2fD3
+	Gm3IsNDRYrkRbDiVsxUQOoPHRGEkrtMWp262MyGHIsjahQaiCM76YM8Mq2MnIoL/WuEFu408a3i
+	I/a4HX3rav4izm/97dKVCgAnOl4HpJcCBCcJYKlWN02E87Oz3JErbjt73d4uUOo3f8L0i259EYF
+	5UCaki9ZfcZffOMd35U2gMxTCYoROX0c088xhrON5gkS8JCPygu5jrN7UcR5o0HbrYhDrakzC6X
+	P4kF21FxRDLtMtbTIhG63Nw6yt
+X-Received: by 2002:a17:902:d550:b0:2ca:d344:7752 with SMTP id d9443c01a7336-2cfbd6a970amr27757825ad.8.1784885300129;
+        Fri, 24 Jul 2026 02:28:20 -0700 (PDT)
+Received: from smtpclient.apple ([23.247.139.92])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf8f310644sm48128715ad.55.2026.07.24.02.28.15
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 24 Jul 2026 02:28:19 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260710-ls2kbmc-mod-v3-0-ef718636e78e@gmail.com>
-In-Reply-To: <20260710-ls2kbmc-mod-v3-0-ef718636e78e@gmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Fri, 24 Jul 2026 16:55:05 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6kqN1+ZiTqyvXfPEtQJfvFhp_964AB9C00o0O6pigZmQ@mail.gmail.com>
-X-Gm-Features: AUfX_mxcYKp2teJzRblheQVA1sSmPKeM5_68qqTL3jby4L992X1O6XKpOblrK1M
-Message-ID: <CAAhV-H6kqN1+ZiTqyvXfPEtQJfvFhp_964AB9C00o0O6pigZmQ@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.8\))
 Subject: Re: [PATCH RFC v3 0/7] mfd: ls2kbmc: multiple fixes for this driver
-To: shankerwangmiao@gmail.com
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Chong Qiao <qiaochong@loongson.cn>, 
-	Lee Jones <lee@kernel.org>, Corey Minyard <corey@minyard.net>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>, 
-	Yinbo Zhu <zhuyinbo@loongson.cn>, Jiaxun Yang <jiaxun.yang@flygoat.com>, mfd@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	openipmi-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
+From: Miao Wang <shankerwangmiao@gmail.com>
+In-Reply-To: <CAAhV-H6kqN1+ZiTqyvXfPEtQJfvFhp_964AB9C00o0O6pigZmQ@mail.gmail.com>
+Date: Fri, 24 Jul 2026 17:27:58 +0800
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>,
+ Chong Qiao <qiaochong@loongson.cn>,
+ Lee Jones <lee@kernel.org>,
+ Corey Minyard <corey@minyard.net>,
+ Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Xi Ruoyao <xry111@xry111.site>,
+ WANG Xuerui <kernel@xen0n.name>,
+ Yinbo Zhu <zhuyinbo@loongson.cn>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ mfd@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org,
+ openipmi-developer@lists.sourceforge.net
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <8FCFD614-FEA4-475C-9E0C-50E075B49453@gmail.com>
+References: <20260710-ls2kbmc-mod-v3-0-ef718636e78e@gmail.com>
+ <CAAhV-H6kqN1+ZiTqyvXfPEtQJfvFhp_964AB9C00o0O6pigZmQ@mail.gmail.com>
+To: Huacai Chen <chenhuacai@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81.1.8)
 
-Hi, Miao,
+Hi,
 
-On Fri, Jul 10, 2026 at 1:24=E2=80=AFAM Miao Wang via B4 Relay
-<devnull+shankerwangmiao.gmail.com@kernel.org> wrote:
->
-> Previously, the driver has been introduced to support the Loongson 2K
-> BMC running on the Loongson Servers, which is essential to prevent
-> the system from hanging when the BMC is being reset and the default
-> efi-framebuffer is being used. However, there are some drawbacks in the
-> driver.
->
-> Firstly, the driver tries to read and write to the connected PCI-E host
-> controller registers, assuming that the BMC is connected to LS7A PCI-E
-> host controller. This assumption should be true for real products, but
-> to prevent from accidentally reading and writing to the wrong PCI-E host
-> controller, this driver should be modified to check this before
-> accessing the registers.
->
-> Secondly, the driver uses non-exported functions to tell the vt
-> subsystem to redraw the screen, preventing the driver from being
-> compiling as a module. This can be fixed by using the exported
-> functions instead.
-You can replace the redraw function, but I don't think it is necessary
-to make the bmc driver modular.
+> 2026=E5=B9=B47=E6=9C=8824=E6=97=A5 16:55=EF=BC=8CHuacai Chen =
+<chenhuacai@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> Hi, Miao,
+>=20
+> On Fri, Jul 10, 2026 at 1:24=E2=80=AFAM Miao Wang via B4 Relay
+> <devnull+shankerwangmiao.gmail.com@kernel.org> wrote:
+>>=20
+>> Previously, the driver has been introduced to support the Loongson 2K
+>> BMC running on the Loongson Servers, which is essential to prevent
+>> the system from hanging when the BMC is being reset and the default
+>> efi-framebuffer is being used. However, there are some drawbacks in =
+the
+>> driver.
+>>=20
+>> Firstly, the driver tries to read and write to the connected PCI-E =
+host
+>> controller registers, assuming that the BMC is connected to LS7A =
+PCI-E
+>> host controller. This assumption should be true for real products, =
+but
+>> to prevent from accidentally reading and writing to the wrong PCI-E =
+host
+>> controller, this driver should be modified to check this before
+>> accessing the registers.
+>>=20
+>> Secondly, the driver uses non-exported functions to tell the vt
+>> subsystem to redraw the screen, preventing the driver from being
+>> compiling as a module. This can be fixed by using the exported
+>> functions instead.
+> You can replace the redraw function, but I don't think it is necessary
+> to make the bmc driver modular.
+>=20
+> BMC core, IPMI and simpledrm display are usually (if not always)
+> supposed to work as early as possible.
 
-BMC core, IPMI and simpledrm display are usually (if not always)
-supposed to work as early as possible.
+I believe that it should be the user's decision to choose whether to
+compile a module into the kernel or as a module and it would be better
+if we can provide the possibilities for the user to choose from.
+Additionally, I don't think these modules are supposed to work that
+early. The mfd module provide two functions, the display and the ipmi
+device. In the aspect of graphical display, without this module, the
+user can still see the output during booting on their monitors, since
+efifb is working, providing a basic display function. In the aspect of
+the ipmi device, I don't think the lack of such device will influence
+the boot of the system, since it is a common practice to compile ipmi
+device drivers as modules on other architectures. As a result, neither
+of the two functions are required to be loaded that early and it is
+reasonable to at lease leave the choice to compile it as a module
+to the user.
+
+Cheers,
+
+Miao Wang
 
 
-Huacai
-
->
-> Thirdly, the driver directly accesses the GPIO controller registers
-> using hard-coded addresses, which might conflict with the loaded GPIO
-> controller driver for the same GPIO controller. This is fixed in this
-> series by using the GPIO subsystem APIs instead. However, legacy GPIO
-> APIs have to be used in this fixed to correctly request a GPIO
-> descriptor from the GPIO subsystem, which might be further discussed
-> to find a better solution.
->
-> Finally, there is a minor issue in the driver where it changes the
-> mode string describing the screen resolution during probing, which
-> prevents the device from being probed again if -EPROBE_DEFER is
-> returned by the probe function.
->
-> I have tested the changes in this series on a single-socket Loongson
-> 3C6000 server with a Loongson 2K BMC, and the driver works as expected
-> when the corresponding GPIO driver is additionally loaded.
->
-> Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
-> ---
-> Changes in v3:
-> - Check the return value of devm_add_action_or_reset when registering
->   the cleanup hook of the work queue
-> - Use swnode to create the link between the device to the GPIO chip,
->   and prevent borrowing the legacy GPIO APIs
-> - Link to v2: https://lore.kernel.org/r/20260708-ls2kbmc-mod-v2-0-2afdd17=
-41766@gmail.com
->
-> Changes in v2:
-> - Several fixes suggested by the Sashiko AI review bot
-> - Add a cleanup function for the wq on removal of the device
-> - Relax the reverse dependency from CONFIG_IPMI_LS2K to
->   CONFIG_MFD_LS2K_BMC_CORE to allow the driver to be built as a module
-> - Link to v1: https://lore.kernel.org/r/20260708-ls2kbmc-mod-v1-0-c344bf5=
-defa3@gmail.com
->
-> ---
-> Miao Wang (7):
->       mfd: ls2kbmc: Make a copy when parsing mode string
->       mfd: ls2kbmc: Sanity check for the connected pci port
->       mfd: ls2kbmc: Redraw using exported functions
->       mfd: ls2kbmc: Cancel the work queue on removal
->       ipmi: ls2k: Relax the dependency to its mfd driver
->       mfd: ls2kbmc: Able to be compiled as a module
->       mfd: ls2kbmc: Capture the reset event of BMC through GPIO
->
->  drivers/char/ipmi/Kconfig   |   2 +-
->  drivers/mfd/Kconfig         |   2 +-
->  drivers/mfd/ls2k-bmc-core.c | 235 ++++++++++++++++++++++++++++++++++----=
-------
->  3 files changed, 184 insertions(+), 55 deletions(-)
-> ---
-> base-commit: 0e35b9b6ec0ffcc5e23cbdec09f5c622ad532b53
-> change-id: 20260626-ls2kbmc-mod-5209193009b2
->
-> Best regards,
-> --
-> Miao Wang <shankerwangmiao@gmail.com>
->
->
