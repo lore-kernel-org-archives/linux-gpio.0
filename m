@@ -1,71 +1,70 @@
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54DE368D4B
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 05:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51CF336B905
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 05:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784870310; cv=none; b=PFTGlqYZ1grxmuFehbE0Ds6J1nGAF9pmgWskJP74BlctY/4ZQ5YoXCOSVLWpdtaw9U2ZFWvLQmf/7Xq+FIyKIUY7jOL782ecwN+4r3+Ms+UGWznI0X6rNa0wuvwNDz8PAbhDZrkQRlKuW1X+lI8kQV68BdXM2OSF3ICwplAcHE8=
+	t=1784870311; cv=none; b=E8GvHdWZ6dyPYwJC2xhqTjXhIx9NO9dGdQ6rpPiMFsGeS5VzjhfE3bEa/lGmAyxwewklvqG4HBedOY3nFbz+VKWkxhB2yG6Y553ngHUg/XRwBke7MAb7OiHTodEMJnvHfOAmiqAvCg6uHvhHlu32fdsbEgFFdYats/H7130ziLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784870310; c=relaxed/simple;
-	bh=CPrWshwJHJ9NrCImC0buWOyrE0jsWcl1LbTLMNodNog=;
+	s=arc-20240116; t=1784870311; c=relaxed/simple;
+	bh=WHue5wGOkCDwhBMi07H7XlqVHFBmhWW4MmE/EUVGV0M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aKjQhBAPLQMRntkbRg7iz7eAhv0dMSGD7GtZW5j0T0PYXpMkivjrJWjWUOzWg9yDr0LNBekJhABdFP4sQffjUitGRFqkt6KUD9SdF4PLLrQ1scEzIqSpORbh8o3a6HRi3+wCLN+8JNvjs3l4GX5e7vWyn33twg6Y/oQ7o4omPDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GNs60Jih; arc=none smtp.client-ip=209.85.216.45
+	 MIME-Version; b=S+KIuMLBfmHKVRHnwB5iNQLrx3TbwVKsxx2/nRlQTmb5eSNKJKNahtyZlTNF/LRR9qW+JR+aDs6sbmLdGqHWRv+siRJWNOauqkgdBDkdFB3+6rIBntecVL26mayYsOa/UAvHNC0drOWJC0dbFW9G7Rsr+j4u38/BtmdxzXgrQlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=s7rT2Q3X; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GNs60Jih"
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-38759bcd877so7459a91.2
-        for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 22:18:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s7rT2Q3X"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2cedda2ce6fso478925ad.1
+        for <linux-gpio@vger.kernel.org>; Thu, 23 Jul 2026 22:18:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784870308; x=1785475108; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1784870310; x=1785475110; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=HqBAOdQoUNLZYyNV6pFXVp6oAJoLSt+ohQb+KotiSp4=;
-        b=GNs60JihZf6tqRmvfbU8Reu+WS2ScfuJgBkqBpBFJw4UCV0ILflMeMwh25bbwZcLJ3
-         Kb4Lj4xbi9jNupZImYzOrUu3pf4MvRz/EUMTkQiK+3d1vIv23+JyhPIx8v5nU9sXcKli
-         PToZr4hgBoVSYumeZxbxQvuNlYbvU8sqz0jneCRoBQLJm/Dape66qdVStR9GZ8dXXPbe
-         B2FQLDWVMx/Wl3kd0MotC0C2FW2MkeHahaJbsAfA+TkMkCdh7qUFKgVL156+mj0At4fX
-         8jywd9vthQqReY0gbUnl0b+qpYCUQHvBnH6ri1QA9eX+2FQQ539mW0BcGkGtu0Z8zK3j
-         DAVw==
+        bh=Hnz6QUIIWKwdYBgmR95nkq+vZcc3tNj5C5yNYHh5TBc=;
+        b=s7rT2Q3X6V/TzD76lnuQlm71bvxf8UTKx3W9QFgB8CgvOOx9Z/mIim4ghJHi1X6z3Y
+         h1PJ8Onty2tCblO6Ix/C4zNYuox/1NSIW6aGfi8C1P/bEaFyuxv6uCLKUNW/qJdzv2/e
+         Y/iXw22Np5gRXPslXwfU1t0ctXvO8+YD1J1GuIW3NdrvKghVgAG1aSuwCDu8aVqMmElk
+         tTuwy+RBaAdM7geCYI0OWtaY1FL9z6+tGaMKVbTMsCauObwbkueKM4HJGwejlPGOLgI8
+         +PaljcHtZ13ThiYWfYbtKfgwMfOs1lDJMTu0lWrDN1EZeP+oqrKGe0ZxB6GoBxPD6Mhg
+         UTjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784870308; x=1785475108;
+        d=1e100.net; s=20251104; t=1784870310; x=1785475110;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=HqBAOdQoUNLZYyNV6pFXVp6oAJoLSt+ohQb+KotiSp4=;
-        b=NNEdS2MqvAcxDKeXzojT5vF6R7F9jiWPxaZ/y0JQJtpXHdQKzVzYWl5GbfqRa2d8yu
-         mSAvsjbyPAVxJuscLJrwmllojuxg8YcdNP+MaP/kNiYkkOERwxfa9X0u5bqkdKmj6kF9
-         1jzTQ0f13e4brGkglXjCmVO69KxzC4n/sB5LbI6hs3xiscH1EdqddjveXwYCdHgXnaxa
-         LVNssA/Wh5e42epl+/+Z1cqJDaAy1illLGO7xr9VvCfk0733ur71lkPfyzBwv3SZamKb
-         KSfHfYWsLW9Of1AXFXGpsu9KOlDX4PaeTPT3BLABoVir+f/beWr6qpckoit5ZZ/bTvr7
-         hIXg==
-X-Gm-Message-State: AOJu0Yxa4yQoGgbybEREh0yn1EEIIaCpwlfHAQZ03gk+kCgRQmRbNFQz
-	69kZ1mSrDUUGFAZ2FykycYN5cE6iMHU76pYaQiK1KkmnEl24NK1bZhMuqcb12w==
-X-Gm-Gg: AR+sD13pLiJdMvaOa1N5MtfYa3oLADUpUM1wCVfL8u8uHYHXO38vCGUUW2eJ6i0tJpF
-	tSYx+54Cx9de4dkzL3u2vAcJrMUrAlTtllw6pR+0wbIb9Pz1qY6Efss047sReX8f9LHYb2n98ua
-	WRZCxmZRzMs0kxl6X23d7avF6smNqnGfdikweBC7nx1YwSLWYWJ624Im63JDDzbWwicifmXmV9V
-	COcIAxLBdjAkyZZ61AakQsDpu/xt+RCDKae+Oa9iXgCovlRQl9IHxdydETw8WJiCBtkMXT/3BUc
-	TYId/n/EJQ4sKtQwIMNGyWBTIvoUcoB3Pf9d51/yI0G9c1ay72htfXWBEl7Ky71V3dm0WFifydQ
-	Z6F/t6UjXOWkemU8G2WuORg3QXrQlqLA4rfiL4JVWwvRJ6yEGWOb79ckwNMiaVDnqdZ9co6MUlZ
-	YwM9rRzQzGa6BZUUEjN/1vqXRcoBWcdEHrgeSETuLmkh4wAJWn7Npb0IJ9HKULkvNcMaxl2R2wR
-	xo=
-X-Received: by 2002:a17:90b:3b81:b0:38e:f6eb:2b38 with SMTP id 98e67ed59e1d1-38ef6eb2c2cmr3771845a91.17.1784870308213;
-        Thu, 23 Jul 2026 22:18:28 -0700 (PDT)
+        bh=Hnz6QUIIWKwdYBgmR95nkq+vZcc3tNj5C5yNYHh5TBc=;
+        b=kNOlvgzFaxywRAycXw9b9vauMthoFk987HFWDzzBNmPwdlG9JSGXLDr8cL9fssYnZa
+         wbHgPqVTKLwMOHDhkCDwODFHkXn7eSTSHG+3Z9aTYANcEbSW7yNnPY4fseEt04XgJSUz
+         jVKV6tIfE0+vzigGknI/L2BS039VePKb7ZaK1qUf1LwBZua5RAN5uRjVwTuhRrTDG/4A
+         ytQECBj5XN79k51dPvL5kOFRF9MXE0Y6EFb9xXSOCOCcctv6S3VSNjb5FOViBI/X7gre
+         JAzNp8B2kEiJ7ZdcqFakGg1sb5WFTrhp98K77x6DcaMrcuzuh3tJjCqaYfbACrK0S3cz
+         ZYMQ==
+X-Gm-Message-State: AOJu0YxLxeJKqGWkpC6BrHp3673J+tozdiYA0CA6MbUIX+ApBdQwK6zW
+	djn524AXxhU1su8XymZPi6zK9CkALlhHc1OEABZ2Zm/yR/YG4vTPeKig
+X-Gm-Gg: AR+sD13AWFIS1IHdfnh+xSuyxmTUz60GHFew8rkP6RDFQ6nGqmqBa320FCi7YmPmaFn
+	OvYmxVTpa1ZWna3WxUr57HUsDaLZcHd6fjSCukz5meNJggq6GR4F0d5Q+5Nxt2KWZHTcx1zoARB
+	L7U/wstCVycJ127t5GQAIpRKcc0jwYthsCd/f3KkP5xXt8Y/Gwh6Vy5yg1HOUZvbrrYtUhOlL+t
+	K/fbho0tZvjjgeWvrxrzntLb+oAXZosGXO3U9j2jegreZPtarUrjdHpRTHWZaC43NU7Umu+w4Od
+	6CwfL1vr470oX3jyq+hkhTXxCsL6jC7qBxAUBMuyM0rUvntT7ANCj6FVTTUygEBod85/se8LRQc
+	SRre6v4e9yKh4CajhLJ5lk9yZ/iNWaCt9DU9bjfk0bnZGmyapiwpIMCDOfUYymCMSLiH9oiR4O7
+	q0yRiR8U+xI1KQclmAi0yRjKgvf529RRmO9gZNUxUgowxBvYkeox8MtV6DR4qz+dgg
+X-Received: by 2002:a05:6a21:e8b:b0:3bf:6011:53b with SMTP id adf61e73a8af0-3c44b18c993mr6727417637.38.1784870309556;
+        Thu, 23 Jul 2026 22:18:29 -0700 (PDT)
 Received: from dtor-ws.sjc.corp.google.com ([2a00:79e0:2ebe:8:f5d:dfe5:9bb9:71ad])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13d130a8421sm19974430c88.10.2026.07.23.22.18.27
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13d130a8421sm19974430c88.10.2026.07.23.22.18.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2026 22:18:27 -0700 (PDT)
+        Thu, 23 Jul 2026 22:18:28 -0700 (PDT)
 From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To: Bartosz Golaszewski <brgl@kernel.org>,
 	Linus Walleij <linusw@kernel.org>
 Cc: linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] gpiolib: of: compile of_find_trigger_gpio() conditionally
-Date: Thu, 23 Jul 2026 22:18:19 -0700
-Message-ID: <20260724051822.3545532-2-dmitry.torokhov@gmail.com>
+Subject: [PATCH v2 3/4] gpiolib: of: add a quirk for legacy name for TWL4030 external mute GPIO
+Date: Thu, 23 Jul 2026 22:18:20 -0700
+Message-ID: <20260724051822.3545532-3-dmitry.torokhov@gmail.com>
 X-Mailer: git-send-email 2.55.0.229.g6434b31f56-goog
 In-Reply-To: <20260724051822.3545532-1-dmitry.torokhov@gmail.com>
 References: <20260724051822.3545532-1-dmitry.torokhov@gmail.com>
@@ -77,59 +76,73 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Compile of_find_trigger_gpio() and include its entry in the
-of_find_gpio_quirks table only when CONFIG_LEDS_TRIGGER_GPIO is enabled,
-and remove the redundant runtime check.
+The legacy property name specifying external mute GPIO of TWL4030 audio
+coded is "ti,hs_extmute_gpio". To allow converting the driver to gpiod
+API that requires names ending with "-gpios" suffix, add a quirk to
+gpiolib.
 
-Assisted-by: Antigravity:gemini-3.5-flash
+Note that we a custom conversion routine is used as compatible check is
+needed on the parent node, and name of the node ("codec") is also
+validated.
+
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
 
-v2: no changes
+v2: fixed ti,twl4030-audio compatible (Bartosz)
 
- drivers/gpio/gpiolib-of.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpio/gpiolib-of.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
 diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index fc77cf6b306a..f4ea7ca27296 100644
+index f4ea7ca27296..128402431607 100644
 --- a/drivers/gpio/gpiolib-of.c
 +++ b/drivers/gpio/gpiolib-of.c
-@@ -651,6 +651,7 @@ static struct gpio_desc *of_find_mt2701_gpio(struct device_node *np,
+@@ -676,6 +676,35 @@ static struct gpio_desc *of_find_trigger_gpio(struct device_node *np,
  }
  #endif
  
-+#if IS_ENABLED(CONFIG_LEDS_TRIGGER_GPIO)
- /*
-  * Trigger sources are special, they allow us to use any GPIO as a LED trigger
-  * and have the name "trigger-sources" no matter which kind of phandle it is
-@@ -664,9 +665,6 @@ static struct gpio_desc *of_find_trigger_gpio(struct device_node *np,
- {
- 	struct gpio_desc *desc;
- 
--	if (!IS_ENABLED(CONFIG_LEDS_TRIGGER_GPIO))
--		return ERR_PTR(-ENOENT);
--
- 	if (!con_id || strcmp(con_id, "trigger-sources"))
- 		return ERR_PTR(-ENOENT);
- 
-@@ -676,6 +674,7 @@ static struct gpio_desc *of_find_trigger_gpio(struct device_node *np,
- 
- 	return desc;
- }
++#if IS_ENABLED(CONFIG_SND_SOC_TWL4030)
++static struct gpio_desc *of_find_twl4030_gpio(struct device_node *np,
++					      const char *con_id,
++					      unsigned int idx,
++					      enum of_gpio_flags *of_flags)
++{
++	const char *legacy_id = "ti,hs_extmute_gpio";
++	struct gpio_desc *desc;
++
++	if (!con_id || strcmp(con_id, "ti,hs_extmute"))
++		return ERR_PTR(-ENOENT);
++
++	if (!of_node_name_eq(np, "codec"))
++		return ERR_PTR(-ENOENT);
++
++	struct device_node *parent __free(device_node) = of_get_parent(np);
++	if (!parent)
++		return ERR_PTR(-ENOENT);
++
++	if (!of_device_is_compatible(parent, "ti,twl4030-audio"))
++		return ERR_PTR(-ENOENT);
++
++	desc = of_get_named_gpiod_flags(np, legacy_id, 0, of_flags);
++	if (!gpiod_not_found(desc))
++		pr_info("%s is using legacy gpio name '%s' instead of '%s-gpios'\n",
++			of_node_full_name(np), legacy_id, con_id);
++	return desc;
++}
 +#endif
- 
  
  typedef struct gpio_desc *(*of_find_gpio_quirk)(struct device_node *np,
-@@ -687,7 +686,9 @@ static const of_find_gpio_quirk of_find_gpio_quirks[] = {
- #if IS_ENABLED(CONFIG_SND_SOC_MT2701_CS42448)
- 	of_find_mt2701_gpio,
+ 						const char *con_id,
+@@ -688,6 +717,9 @@ static const of_find_gpio_quirk of_find_gpio_quirks[] = {
  #endif
-+#if IS_ENABLED(CONFIG_LEDS_TRIGGER_GPIO)
+ #if IS_ENABLED(CONFIG_LEDS_TRIGGER_GPIO)
  	of_find_trigger_gpio,
 +#endif
++#if IS_ENABLED(CONFIG_SND_SOC_TWL4030)
++	of_find_twl4030_gpio,
+ #endif
  	NULL
  };
- 
 -- 
 2.55.0.229.g6434b31f56-goog
 
