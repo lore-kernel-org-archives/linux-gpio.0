@@ -1,77 +1,85 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844A63CF201
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 21:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9B035674C
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 22:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784930340; cv=none; b=nBUg7sIIZqRz3SQPAtY6l3NG8vvj211BFCkLv9YSs8vRX0SlmpHFVD1MBXBcVWpOoZpD9g7NNPD4gaP99xG/lT7Ll/cv0LM7oIm0qnlhEUFNz/j2VNPBMnyxQYg4qG81SUpmM4sPWhh5sPoxXOrz458ZtUQh6Hg02+Avs9hb59I=
+	t=1784930429; cv=none; b=sEuv7eSLu4njMw0w1hBKn6LTnzWfNx4ktQ5dKjLvLHfmn6T5mhjgiF0R1eY1iFVXJQMYlFIJuvUPcb3712WlXuNU+nz0ZJ6/wjZ5PD8RbWTR4rTfGuJpZcztGcK8JYqm7Vvs8P1a8xkFSFy9TCr/677Sjl15jqoHJ12hGi72hwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784930340; c=relaxed/simple;
-	bh=jbduD0uqiKJjVviHpSJJPcgJv6I182OMv/2oKylqz4s=;
+	s=arc-20240116; t=1784930429; c=relaxed/simple;
+	bh=ciurbXVG7tI+GxVWU3OIFmJA2VqTVB1aguW3w0pZ6WE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WFvZzLHJKdNsbvLYV8HKPuctKynOQBwbQFpoyKoDc4VegiRHANOPxR5hqUa5g+Rur7lXdemzkwcLKSaPozps6nIPNFcha6IdR1GHDsrKdDetdBUXpPFWvrTuyRC9u99gPiZiQUHNeGeib6uBLH4FQRXMLJVBuV8EJAuFi52IXIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2UZ3jR3; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=DMMxMNrKgAPTIy7/XnZc+uAzDQLWdrNxf2SYS6rpQhzlCaNA6fstrxmAylVvj5HFEWv5foW/dEZHtYIIVY8VnXyoYKakDeYB4Q29UPfWIGsH5OhnNMIfRSIthQzc/LtgHJP0HxUyxnCRptsfSd4whkwO7olupzqgVIkEfm2oU3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/IuILDu; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2UZ3jR3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FD7A1F000E9
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 21:58:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/IuILDu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A00F31F00A3E
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 22:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784930337;
-	bh=1SXGDGlq+o5WbMBzt39h8l+fqR+D5O7ucdIdNMzs8Mw=;
+	s=k20260515; t=1784930427;
+	bh=ciurbXVG7tI+GxVWU3OIFmJA2VqTVB1aguW3w0pZ6WE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=b2UZ3jR30oeLq6HiZiLSeirV1WGzxJHkpXqUvEDTVI61ZoWYNiocnvBHn4qryF5rh
-	 vFjwITLvWcVX1I8IiFic2jCeCnsNxOyeFeM2Hk9+WcnB4CXuj6TngIryyax8xqW94z
-	 hN8+qGnRhMBc1SDSVX55lvV9rpDUFzRULpaE9gOmX6YJfpCV1Ki6fb6GDsuSm4huD4
-	 RPGEkpkUvO5PQCvMHeF1WCaYlxaQw2odqhz5FggEVUoxITKgi05CyDzcUcegXcKuST
-	 jnFmxWDF+eXU0mYiuA2nMmqPRcZEw4LzWPP7zcZ4qCNtWg6c5KPWImdK5z9FDQOcko
-	 isEO+oEx4SJSg==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-39c7ac9b8c3so8188651fa.0
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 14:58:57 -0700 (PDT)
-X-Gm-Message-State: AOJu0Yz2wsGJzWVsVWXaz6Gd01HtLv+YKUEv/LWJc8nPJdauMZqzPY1t
-	2yeTSf5KfDLJm2Pt3BntKXXGx2tB6FQcy8x331xYkFwnwl8kAmmN9hhrbniVaWQ0jUUiMnNCsp+
-	lp8Qiggq4UywCPjvQNIdvcLbTBILOcCg=
-X-Received: by 2002:a19:5201:0:b0:5ae:a9ec:bb31 with SMTP id
- 2adb3069b0e04-5b2b2f761c3mr1347641e87.57.1784930336046; Fri, 24 Jul 2026
- 14:58:56 -0700 (PDT)
+	b=n/IuILDu+lvOuOI1AbxNCaPIbF2MNNdbsE4T1jaE65xUfYs9zdEVa5FU+2/dztBt6
+	 Y7LmD+L5eAVvAYNRLg3mb8RMgAes8mLlOoSP4jzjPLF1kQ+qHcO3h4YwxdbiR/S25J
+	 3NCXTEZUUo76k2F7YjCS4dTwUaqa3eb9P5QlbRD09btxJtzDJ7Sn71Ks0mLK/lx6E4
+	 b7VFA1I3S9xnBbT1BGn+E6N3YhyBrpYQ/Kf5oQtG2X49nWjibx9wB8VZUyQvCY2eXE
+	 /2+akqwHRI61C5wmSFMUqOZQNQC4Nt+W3eGsPGfgc9cxpo6lvyK9zPRYSkZUqbT9JW
+	 wLQ3r9bzTQ93Q==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-39c95395230so7975301fa.2
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 15:00:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrwTT0rV8BBcwv0xcnlPau9LrH3EsjziV1IKASkSKOnDdPopMoVB3BdhUcoZrSZWJZ0NJ+xkMyZhCsv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfNs4sQwj/OjWKCqA/qzMj1RdNPAC7LTMMCoqvRGo3sRJFT6KA
+	49WwY/Cx785XdSw10xHm9mn4VCR+8exi8orvda86osGS2mqjGmSU3l7I4QrzPlgXete/sihYLrK
+	QLCB0IfRq/v6evJuO2pE7CgtzcWy7vpU=
+X-Received: by 2002:a05:6512:144f:20b0:5b0:1685:e369 with SMTP id
+ 2adb3069b0e04-5b2b2f69b51mr1418525e87.42.1784930426435; Fri, 24 Jul 2026
+ 15:00:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1784195346.git.geert+renesas@glider.be>
-In-Reply-To: <cover.1784195346.git.geert+renesas@glider.be>
+References: <20260424-pinctrl_irqchip_states-v1-1-85286f078916@oss.qualcomm.com>
+In-Reply-To: <20260424-pinctrl_irqchip_states-v1-1-85286f078916@oss.qualcomm.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 24 Jul 2026 23:58:44 +0200
-X-Gmail-Original-Message-ID: <CAD++jLndokmpURBR7tnQNnfUk47jNxAALtPw+7xwPE02x8i2sg@mail.gmail.com>
-X-Gm-Features: AUfX_mzT0qoQKMWkUg0R280sa8lLo01CVEccx8noSN5rxau2wEI656wHzd0SaWY
-Message-ID: <CAD++jLndokmpURBR7tnQNnfUk47jNxAALtPw+7xwPE02x8i2sg@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: renesas: Updates for v7.3
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Date: Sat, 25 Jul 2026 00:00:14 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnQ1ZmRDZMA0DfAhuVSi2zhqKSrn-xRCNdrAcV4eT1jUg@mail.gmail.com>
+X-Gm-Features: AUfX_mwCQaGPJnUAmt5Lw4bgTuDl8LcZ2_9ygrXHQMoldDRAoXRQYXi-6OKOdj8
+Message-ID: <CAD++jLnQ1ZmRDZMA0DfAhuVSi2zhqKSrn-xRCNdrAcV4eT1jUg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: Add irq_get/set_irqchip_state() for msm
+ gpio irqchip
+To: Sneh Mankad <sneh.mankad@oss.qualcomm.com>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 16, 2026 at 12:04=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Fri, Apr 24, 2026 at 8:31=E2=80=AFAM Sneh Mankad
+<sneh.mankad@oss.qualcomm.com> wrote:
 
-> The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e524917774=
-82:
+> From: Maulik Shah <maulik.shah@oss.qualcomm.com>
 >
->   Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
+> MPM irqchip monitors the interrupts during SoC sleep state and after wake=
+up
+> replays the edge interrupt by making it pending at respective irqchip by
+> invoking irq_set_irqchip_state() API. The msm gpio irqchip however do not
+> implement this function making it impossible to replay the gpio interrupt
+> on any MPM irqchip based SoC.
 >
-> are available in the Git repository at:
+> Add the missing irq_get/set_irqchip_state() APIs. Implement only
+> IRQCHIP_STATE_PENDING case which MPM irqchip uses.
 >
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-pinctrl-for-v7.3-tag1
->
-> for you to fetch changes up to 5a653cedec948423fc8a0180c90b8d05c2239d9d:
->
->   pinctrl: renesas: rza2: Embed pins in the priv struct (2026-06-30 12:03=
-:56 +0200)
+> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
+> Signed-off-by: Sneh Mankad <sneh.mankad@oss.qualcomm.com>
 
-Pulled in!
+This needs to be queued by Bartosz now that he's maintaining
+Qcom pinctrl.
+
+FWIW
+Acked-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
