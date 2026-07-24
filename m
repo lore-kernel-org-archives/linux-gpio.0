@@ -1,85 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A708389108
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 21:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66B7374730
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 21:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784929277; cv=none; b=aYVy9Q/dPkOrjttXmCVA6RsSNlhoV4vkLNScD9veZN07ZCrS1Mt/B6N5wcFeZu7syaOslGG+rXhJL/bmwG03G05OAJbue1NHpgYBrngOcMAya+MT6lWkMLyJd5CNS7VBSulnelx84+wgK9c9r88JGjRL9YTRxef2WRMxCsyaSm0=
+	t=1784929359; cv=none; b=khDyvowOVpq5uK6eJE11M//GESD27dOIkF9JHjM2i+/2KFD3bohCv+UxVVmOctleV6afTtVFrr5/xd0P8sEdDcYZzqoSmaDo/NUOJf2V+5r5XjuVpR6+3zs+Jci3hA9HcZByLIXlQ0NZnGm5fSIYpPVZoXW2qygV3OHmPdBrb5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784929277; c=relaxed/simple;
-	bh=eLmtuzNiJN/NtKa2kUTnWgeyP7l+US/ugXSovTsy5mc=;
+	s=arc-20240116; t=1784929359; c=relaxed/simple;
+	bh=93nTlan20S4ZihF1TH03SELRvajigVT1UCol5rzVHVw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SJNhEA7ow3vuyFRNK74SxzSNGm1bqc7/Rv25N0E2g54FotHTnRjzOc8v9PHVxeewb6InUd5F5LwHGqnmIbUFwaAfTOF1FPKpNr8LE3NBL+3rp+yiHj/f60ppilMMiwXrsYBGIQgRY7qThbM5DDfhMWiPaqkj8ArQf8oF1QW+1kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knpEx5vt; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=jzR5LegFd5CE/hb95A+EjBtxE4PPnYtMIJEeZz40SM2wC4ISE3p0EEKfLuO9r9scY+HPDRX1pxwWhplxnQ68I6XyBkCMvWSMvadQm680787LCi/LdI1UAX7SIcvtaSTxCCR9f6VzXTRbvqysHVTsOZa0Z+LuQ1YoK6O+Aod+XP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hEmFc/BK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knpEx5vt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A531F00A3D
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 21:41:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hEmFc/BK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E49E1F000E9
+	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 21:42:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784929274;
-	bh=eLmtuzNiJN/NtKa2kUTnWgeyP7l+US/ugXSovTsy5mc=;
+	s=k20260515; t=1784929358;
+	bh=93nTlan20S4ZihF1TH03SELRvajigVT1UCol5rzVHVw=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=knpEx5vtRJ3MDi4n/T0WX5+WX2WN+Zwj6kXGPxVh5wOH3ZeVCovQskbtzoSjQdsK8
-	 7hhjtf6Ba4GV9lCE63dlFDsHLvZkU++GIpTULvKQsFlnPDhJAxsVrCnTkOjE/F+jRv
-	 Pn/qUFD1g8I/Qen/F1yNcnzkk7XuE0G8FWlCEfZB4D7BzdGK4kkknBhDwU1VSmKoHb
-	 AGaFRHvSgLBHwOThscZ2bgFO7pgcmfse3HNfyjZw0reTkVRT9nGwRRzDBaUdUhOYjx
-	 g1CV0/EI43bUSDBPWxHlTkSTcU1ZObZ8YYClertTrg9oLWAOwkkJhgrpvCwuc26NcG
-	 HAPrQsKqE539A==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b011edaf7dso942415e87.2
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 14:41:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RquRh8cdr2+TeKrgxVrxnCjgsugz9R2IEagjkNNojJyt8UWbuZgN1wBtpFdIaQi3N2GO1e4zgcU4iK/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYY0rEP5Dso8m0Q2rNPXIPOLtodeTw+F5BDhHe3LQudKJI36et
-	mNNvw212BsNbpOu7e7RxpB23q1TeLqbfzkK57JQBSzB3CMtBXkX9M6iT5xxgP1uvEMoLur5vDdj
-	XeYUTQ+UVBr6fnvu7uDOxeRQrn4Hk1HM=
-X-Received: by 2002:a05:6512:2310:b0:5ae:bf46:2acc with SMTP id
- 2adb3069b0e04-5b2b2f86804mr1934146e87.63.1784929272904; Fri, 24 Jul 2026
- 14:41:12 -0700 (PDT)
+	b=hEmFc/BKUcWsumTk1RsZHe2NY8oeIaOBVSo4dNp3w0dwHVNdpDJD5gJKPwGFOqION
+	 fM78StQHVRjoOcCnvpgdfPQwTk7Tlv8b4vkMviTvDgaxN6Pm18PKfXIvvUw8LCBRb5
+	 zuD6utGJCTclkyaLo7+PlmV1csmHqInHt/91XwlxpwDy2LH44IW9X7KNyqmUsar9x/
+	 /0qnVwXTx1ivWu+1zxl0n/P5Ol4Zfly4hwQ0XsgHkv1g62EXIwjb1+1dpiiNSGNiUr
+	 GeRap6CnkekgkIUOdEvwQL1yzZdKBQqGQmqUOOmt5vBHbuC0XauT8b7+2q/v645YKb
+	 6gwaKlT2io2FA==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5b00d083818so1650211e87.1
+        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 14:42:38 -0700 (PDT)
+X-Gm-Message-State: AOJu0YxS1Cgm1PKU+TDe2x/Tr49XJjAjRj7MUj+c52NFW7xYT3Z60+bY
+	HmJ4rPjyLs55m4GGGLCD81u9Fn94PUoJ0RCi/edn1t/XCQDJ7ecuB/Y6JycVRm66TrT/+/zrxTI
+	25apTYAgpy6NIZHkjiZlnh5OWrzmPOpk=
+X-Received: by 2002:ac2:4f0c:0:b0:5ae:cf70:a1b2 with SMTP id
+ 2adb3069b0e04-5b2bcc1354bmr470886e87.21.1784929357410; Fri, 24 Jul 2026
+ 14:42:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260715185112.1323510-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20260715185112.1323510-1-andriy.shevchenko@linux.intel.com>
+References: <20260715193546.2852108-1-Frank.Li@oss.nxp.com>
+In-Reply-To: <20260715193546.2852108-1-Frank.Li@oss.nxp.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 24 Jul 2026 23:40:59 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=prd1KDZQawqsRmW3qp1-cJ=18-yhp861CQirOOjE5Ag@mail.gmail.com>
-X-Gm-Features: AUfX_mz6ZxVMzIVDlYKzRcjHd5uCb1mkXfd8xMBGPfxdB1J27bvJ-Aw2H_fn9Og
-Message-ID: <CAD++jL=prd1KDZQawqsRmW3qp1-cJ=18-yhp861CQirOOjE5Ag@mail.gmail.com>
-Subject: Re: [PATCH v1 0/7] gpiolib: kill gpio_request_one()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bradford Love <brad@nextdimension.cc>, linux-gpio@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linux-media@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
-	Robert Jarzmik <robert.jarzmik@free.fr>, Russell King <linux@armlinux.org.uk>, 
-	Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Date: Fri, 24 Jul 2026 23:42:25 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmZMNAt9pvohvuR-hMUaX+8WS2_Mg2P1c_Jz40TjbcnSQ@mail.gmail.com>
+X-Gm-Features: AUfX_mwJ_N3tPLjNW1uS8P8WgWqtQe6NfLqreK4It94M8uGNKzXV0WX6KFCrlIc
+Message-ID: <CAD++jLmZMNAt9pvohvuR-hMUaX+8WS2_Mg2P1c_Jz40TjbcnSQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] pinctrl: pinctrl-generic-mux: use mux_state_try_select()
+To: Frank.Li@oss.nxp.com
+Cc: "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 15, 2026 at 8:51=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Wed, Jul 15, 2026 at 9:36=E2=80=AFPM <Frank.Li@oss.nxp.com> wrote:
 
-> This is the finilazation of the work announced in the commit 61e1fd2abca4
-> ("gpiolib: legacy: Make sure we kill gpio_request_one() first"). With thi=
-s
-> small series we kill gpio_request_one() and leave only two legacy calls
-> devm_gpio_request_one() and gpio_request(), where the managed one has onl=
-y
-> a few users and high chances to be killed soon as well.
+> Use mux_state_try_select() instead of mux_state_select() so that the
+> consumer driver does not block during probe when the mux state has
+> already been selected.
 >
-> The series is supposed to go via GPIO tree (due to nature of the last pat=
-ch)
-> with possible immutable branch for others. Please, ack.
+> mux_state_try_select() returns -EBUSY if the requested state is already
+> selected, allowing the driver to handle the condition without waiting.
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Previous earily version pinctrl-generic-mux manage this resouce to avoid
+> call mux_state_select(). But review or respin patch, remove these check.
+> anyways mux_state_try_select() better method.
 
-The kernel is clearly a better place after these patches than before it, so=
-:
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+OK makes sense, patch applied!
 
 Yours,
 Linus Walleij
