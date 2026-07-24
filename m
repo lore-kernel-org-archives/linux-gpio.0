@@ -1,77 +1,117 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFADD13C918
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 22:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF752476CEE;
+	Fri, 24 Jul 2026 23:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784931528; cv=none; b=jdoJ35T3tPcRNLhQFwgAYU79+bYLPtO6ebMnoLy30OqZw+VBN3jIAPRP5JxfB7ey6O8Ox8OK4KLgFUGwyxSGM9p7eL5UCbRwirdJRW3ZqYLhRrLiept9mL6Za0H/smEGrDEbDrSkp/SOsC5RYOwwU9YImscH9xetLwEzhLWbDO8=
+	t=1784936112; cv=none; b=J0KWaa/Munz1//BCYW2eIjIIeNnd1whPFGcvXNYu//CpZtkf4/iPsAuY3kGvjEHlLpCWJsbZbYiD6sAP6agFEyde0Ue97aPr8n3idslwePjXgd6d3Lj2BE2Y/DY6BmGRdDhJswgTB1A9A3ZslJhCTB/2yfx9GLjbwksWwr5o2/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784931528; c=relaxed/simple;
-	bh=Y5AUihlHPx8033n1yOFmjVml/WtHSR3f0szw+EBr36U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TwY+kh+hhOT5G7O5rsTjk8vfbTCMUvi4fIZ3ZQAKiKperhUohiBGsF+F/DpOOJZNV7qOll+IE2jCM1QPK112iezgeRctopP6RZjHC2s1gNLT213eqm8c2VDRw+9zoCceOjBX13JRo9N9xGdFuma+J48B3rS6QKifjTbPudLTLLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXICIGf1; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXICIGf1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 897E31F00A3E
-	for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 22:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784931527;
-	bh=Y5AUihlHPx8033n1yOFmjVml/WtHSR3f0szw+EBr36U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=lXICIGf1UNWbXRobIKI9vq8gfVQOaBiRfA6RrCvGwb+7k1eIQt1onaKPXJE9EwBMd
-	 DSDP3JGtdHAPsI9P7VG+5OkWFt8NGM6qSft7tJ7qHymSY1573sWp7WdkZrqi2Bo/DW
-	 zg4ccVEXCrrLmxOeSQ/OZiYWf/jI8sH8X0cr5ngy+kZUKmUVgJsQAhts3RQdTNFZtf
-	 9JBWn6EJfIUGIBbHJK/jSxpCcPqKmDG4iXe+p5e7f60H2sdauWGHh98TSiinB2RPoS
-	 8fGlEVNFh+1VjncXkKjb81l28LQ9tVkyUAqo4vW70Gd+4Z8tkx9j/PQ/VE+kosqvCB
-	 w1v1C7tIEKTEg==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5b2aab18795so904551e87.2
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 15:18:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RobemtVzSXOSfsZWJ3gw5dmL+G+oyA5UDUieSHCWHkuiG6R3Z28SdjjBF7xAIlVBLwOmsRH3+aNzb1c@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywopc4djn2SKzWhwCh1I2Qn1h64+yeU4uIKw/nuCOU3eOX+E2LP
-	hlP2DvK0cHO/ovQNJtDXe5ODsR3M9d4I1pCLOQVF73mtG/1abIdxYxvUB198knqn1G8CUOWApmJ
-	VE/7yZGYAJDU0tLDHPNmyGAAKfP22ijQ=
-X-Received: by 2002:ac2:5469:0:b0:5b2:a75f:8a6 with SMTP id
- 2adb3069b0e04-5b2b2f55d02mr1518354e87.29.1784931526354; Fri, 24 Jul 2026
- 15:18:46 -0700 (PDT)
+	s=arc-20240116; t=1784936112; c=relaxed/simple;
+	bh=aYrgDhizOckPspQJ6t3G3K3Lc7NOOpJo78OVx01YiFQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=G/cSxaNLZ38oJ0X1nq0GPY0ElORcleiWqC7Akkm8pgkr2qB4x24Wfhj25KXuDl209nPlNLwTXL/IiP67u++BEachw61Hw9arR/4iQCsKPNLl3YZpLwOJuyc1XtIlbzlSCXdN6vhikgAv3oHAtpg6bAtc5HzcC/qwyzIeJuO+DGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79E171F00A3A;
+	Fri, 24 Jul 2026 23:35:11 +0000 (UTC)
+Received: by venus (Postfix, from userid 1000)
+	id 93CE9181F1C; Sat, 25 Jul 2026 01:35:08 +0200 (CEST)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Julia.Lawall@inria.fr, Alex Deucher <alexander.deucher@amd.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Andrew Morton <akpm@linux-foundation.org>, 
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, 
+ Borislav Petkov <bp@alien8.de>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Daniel Lezcano <daniel.lezcano@kernel.org>, 
+ David Airlie <airlied@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Eric Dumazet <edumazet@google.com>, Florian Westphal <fw@strlen.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Hans de Goede <hansg@kernel.org>, Hans Verkuil <hverkuil@kernel.org>, 
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ Jani Nikula <jani.nikula@linux.intel.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Jason Gunthorpe <jgg@ziepe.ca>, Jiri Pirko <jiri@resnulli.us>, 
+ "Joerg Roedel (AMD)" <joro@8bytes.org>, Johan Hovold <johan@kernel.org>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
+ Julian Anastasov <ja@ssi.bg>, Leon Romanovsky <leon@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linusw@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Mark Brown <broonie@kernel.org>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Matthew Sakai <msakai@redhat.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Maxime Ripard <mripard@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Mike Rapoport <rppt@kernel.org>, 
+ Miri Korenblit <miriam.rachel.korenblit@intel.com>, 
+ Nicolas Palix <nicolas.palix@imag.fr>, 
+ Pablo Neira Ayuso <pablo@netfilter.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Ping-Ke Shih <pkshih@realtek.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Sebastian Reichel <sre@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
+ Simon Horman <horms@verge.net.au>, Stephen Boyd <sboyd@kernel.org>, 
+ Steve French <sfrench@samba.org>, Takashi Iwai <tiwai@suse.com>, 
+ Thomas Renninger <trenn@suse.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Tony Luck <tony.luck@intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>, Vinod Koul <vkoul@kernel.org>, 
+ Will Deacon <will@kernel.org>, Yazen Ghannam <Yazen.Ghannam@amd.com>, 
+ Sang-Heon Jeon <ekffu200098@gmail.com>
+Cc: cocci@inria.fr, amd-gfx@lists.freedesktop.org, 
+ dmaengine@vger.kernel.org, dm-devel@lists.linux.dev, 
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+ intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, 
+ linux-cifs@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, 
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org, 
+ linux-rdma@vger.kernel.org, linux-rtc@vger.kernel.org, 
+ linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-usb@vger.kernel.org, 
+ linux-wireless@vger.kernel.org, lvs-devel@vger.kernel.org, 
+ netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+ nouveau@lists.freedesktop.org, platform-driver-x86@vger.kernel.org
+In-Reply-To: <20260723184538.3888637-1-ekffu200098@gmail.com>
+References: <20260723184538.3888637-1-ekffu200098@gmail.com>
+Subject: Re: (subset) [PATCH 00/36] treewide: remove conditional returns
+ with no effect
+Message-Id: <178493610858.699463.6794401814873674138.b4-ty@collabora.com>
+Date: Sat, 25 Jul 2026 01:35:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260717113210.599463-1-pshete@nvidia.com>
-In-Reply-To: <20260717113210.599463-1-pshete@nvidia.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 25 Jul 2026 00:18:34 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnY85znRbLgVdRdi+KrkbRpY76EpmXJ8G8K=ee5_HMYpA@mail.gmail.com>
-X-Gm-Features: AUfX_mwqFAMi9qWV0Q1OSmDfHdOr5bMPAC98hlFCKCt_w73sAvw_TCl3Lck961g
-Message-ID: <CAD++jLnY85znRbLgVdRdi+KrkbRpY76EpmXJ8G8K=ee5_HMYpA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: tegra264: fix DAP2 DIN/DOUT
- pin names
-To: Prathamesh Shete <pshete@nvidia.com>
-Cc: thierry.reding@kernel.org, jonathanh@nvidia.com, 
-	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, u.kleine-koenig@baylibre.com, dakr@kernel.org, 
-	bhelgaas@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On Fri, Jul 17, 2026 at 1:32=E2=80=AFPM Prathamesh Shete <pshete@nvidia.com=
-> wrote:
 
-> The DAP2_DIN and DAP2_DOUT pins were listed with swapped ball suffixes:
-> DAP2_DIN as PV7 and DAP2_DOUT as PW0. On silicon DAP2_DIN is on ball PW0
-> and DAP2_DOUT is on ball PV7. Correct the pin and drive group names to
-> dap2_din_pw0 and dap2_dout_pv7.
->
-> Fixes: 30a9d5162f25 ("dt-bindings: pinctrl: Document Tegra264 pin control=
-lers")
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+On Fri, 24 Jul 2026 03:45:02 +0900, Sang-Heon Jeon wrote:
+> While reading mm/memblock, I found a conditional return where both
+> branches return the same value:
+> 
+> 	err = do_something();
+> 	if (err)
+> 		return err;
+> 	return err;
+> 
+> [...]
 
-This DT patch was not CC to the devicetree list, resend so the DT binding
-people can ACK it!
+Applied, thanks!
 
-Yours,
-Linus Walleij
+[26/36] power: supply: pm8916_lbc: remove conditional return with no effect
+        commit: b7c8d46411317f135e7791c0eddc56691de63f07
+
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
+
