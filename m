@@ -1,54 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75D438F947
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87BB3587DE
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784970693; cv=none; b=NPWe5NHOvRgcDWrT4nHrY7HzMS5EgU+7SPmlC9UWPP4x7ttXgv1zyPCrizybgEzftsgqIJo539ZVzGfk1Wto3c3xl8yPW5/TNuJBjhAYIkp5JPKALklHuoJ6fOn+8t/2WBJkKTeJ9bp17t3cYCXXoKXfN7wrrO/QIDxe4wNWYR4=
+	t=1784970726; cv=none; b=Nj/n0TfxiDwwfylz2AZ+phr0fWozVXD7Qp8Tj/bHb4NqNcEqSRWn9sjiyFdu9lX36N7DAcaar0BK0SCMK2BGFWd2kzzxhOg5K+hzz7wurM/PWA5KfhF/UcKEWR3TRljQxi9afl5/WWnnMSNVqS0sq0r/E3Xe4SRNCHNxpvZBfOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784970693; c=relaxed/simple;
-	bh=6R0Ikomv5cWU5z8x5Zcvwjfe3hrjqxonu1617TWYlM8=;
+	s=arc-20240116; t=1784970726; c=relaxed/simple;
+	bh=0oUtUmzPPJDUoi7oa6q2YhjfWKTYgrJv1plux7vFNCo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E0EyGQfhr9pla2+8GA8oOwk/fihYpAKoSG/IWcACOzmYx1/FwKMLf4QK3DPgKnUJfY2otuhyT5h6BpD7zyR6yO2MdMjUHSLt4jIS63muoKvHYKljrGifd9xenWoVFT/6YXJE+miSAit2/KZ2afFw7LRMkacDWtza8lMdLVKFmyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=konN2uPN; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=e88BX/iLf6qF0E/7KweWW2BOzRqGm9GvMgOndGpgjaBvuyvez3HzaGNJXFAlXhvkflUVfYZk8npsmpNBm2nA2sM6VGfL3iV37rds6zKEKfymUUZw9/P/ezBu6FbyKKQJyzDIZY7iJMWak11P8xo/yzihgsLke+i7jSbpJSdEiGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LMyblcKX; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="konN2uPN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE7271F00A3A
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:11:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LMyblcKX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B03321F00A3A
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:12:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784970692;
-	bh=6R0Ikomv5cWU5z8x5Zcvwjfe3hrjqxonu1617TWYlM8=;
+	s=k20260515; t=1784970725;
+	bh=0oUtUmzPPJDUoi7oa6q2YhjfWKTYgrJv1plux7vFNCo=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=konN2uPNhRes3cQjmf1NHk722qi3VtooVHBbbM1e++J7O71ORFo8hcKLBBXnMgYDS
-	 eiDAArdL3IghCeS67WjP+itK7/AmkhDKFHfogKRPMgX+IkV3qvTCFtUx9q8ZTiL/0+
-	 OxVjXq2UNIqrHtWfAcnHBs239+XgxeXdbxBO/6exA0+3ewoNFhQRv8piHvDITGUWJE
-	 NFZJw51WRnBFqR7VPBawy7R03508GcYCAbj40uLiXlFTBxoEZ4NkcF6U1oNDR7Xg/k
-	 TrrbGuX1VlqEqjr2YMSsIbYQEY3tHQOlg4gQfXoHID9rsTd049KtyAhaasLapQJHux
-	 gYHYNX9U+oX/A==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b0231a3e86so1068278e87.0
-        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:11:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqU+p4SZT5vdB5WuGvFRXmNDohReg3IIOYjiEH48uAWgYJRSMo/UqMDd9wDYKz1lM+nEt0BB15+BfQ+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8WfjrUAgWkZU3Tt7HPivvSC4rfl6AQdTA1LIlE05uith1U9xR
-	npSgOvf+5ealA/kpzJ2goFUwvQrRd8zSZB9Mc2Jt7JqhtifWzlLHZuJhs0nSigMhhMQaPdcE2C7
-	frOZ5Bl/1T/E+QhVcdqN/cK+QogbNgHM=
-X-Received: by 2002:a05:6512:ac4:b0:5b1:5379:8b6d with SMTP id
- 2adb3069b0e04-5b2c1b04349mr253931e87.23.1784970691513; Sat, 25 Jul 2026
- 02:11:31 -0700 (PDT)
+	b=LMyblcKXCMe0QKRwAgizj2PmIfO0O6AvwpJpytZOC3ci6dRzSjhC2cI4BvULePcry
+	 sEonJVXEDGMlO16X90jjf3wFFRFDRRHep/ac7/nUhG/ChW+1nCv4t10qZ7fyCZ4/2s
+	 2PAbHLZwyQq5O9JT4REuG5yRlVzrbzYHn5WHuS3JpiwIYxoyIBUgD4pE/z3fAd/OCt
+	 dgY7ptHVgnTlSjXsyzGmde1UU2ACYUYgLnBFLGLN6Acc1Mv8RPp+XtO0WsyNO3zzGU
+	 En458Cjhv7N6Qk6EhCkqeafFuldwwpacGfgImn5nHyeRNXKKpo9C4odszY5w0K6tIs
+	 gAU+ou4Wv39zA==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-39c94fccf3eso10253881fa.0
+        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:12:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Ro7gJWJ0ASPlCQL3RQw5CAqCMS27Veplgckx5XJl8gQ2hVviOThk3WAKtgUr72W6riv0kgOapwiaZ1v@vger.kernel.org
+X-Gm-Message-State: AOJu0YxizYZd738jjTFGPF/xuDIuluD1B+rOiGkxB7vcf55goAntKuwi
+	j5/7DllFawzD2aWQyvPdzJ+/e5VKUbvnxBzLk+vWkHpwYtsnyxDrgXbAHg3EXoOrvu28rK+9qBq
+	mvK3AxxSSv9wUAkUfAnFi61cT5gc8PpQ=
+X-Received: by 2002:a05:6512:39c3:b0:5b2:a21a:10e7 with SMTP id
+ 2adb3069b0e04-5b2c1b35f7cmr260838e87.25.1784970724532; Sat, 25 Jul 2026
+ 02:12:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260718041311.2605172-1-dmitry.torokhov@gmail.com>
-In-Reply-To: <20260718041311.2605172-1-dmitry.torokhov@gmail.com>
+References: <20260718041311.2605172-1-dmitry.torokhov@gmail.com> <20260718041311.2605172-2-dmitry.torokhov@gmail.com>
+In-Reply-To: <20260718041311.2605172-2-dmitry.torokhov@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 25 Jul 2026 11:11:19 +0200
-X-Gmail-Original-Message-ID: <CAD++jLn1he5vrfWz+iX1ERfEr8qgEvdHQEghguwprHSQX9CT0g@mail.gmail.com>
-X-Gm-Features: AUfX_myp4DfWs0MWcB9cJ2J8QYK15LxI_HmuwPqnhpYY6J1VaBfvVjRCiGx36No
-Message-ID: <CAD++jLn1he5vrfWz+iX1ERfEr8qgEvdHQEghguwprHSQX9CT0g@mail.gmail.com>
-Subject: Re: [PATCH 1/4] gpiolib: of: remove redundant IS_ENABLED check in of_find_mt2701_gpio()
+Date: Sat, 25 Jul 2026 11:11:52 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=8ypbgQAs0G-5jHZRsbcFWeMEKAFFG9dEt-CZfXKjFXQ@mail.gmail.com>
+X-Gm-Features: AUfX_mxFFPFKat-Lyh4In_uIEMUaCjURdX5giLeCnYlZvjYF7wMWuiXimA34ETQ
+Message-ID: <CAD++jL=8ypbgQAs0G-5jHZRsbcFWeMEKAFFG9dEt-CZfXKjFXQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] gpiolib: of: compile of_find_trigger_gpio() conditionally
 To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
@@ -58,15 +58,13 @@ Content-Transfer-Encoding: quoted-printable
 On Sat, Jul 18, 2026 at 6:13=E2=80=AFAM Dmitry Torokhov
 <dmitry.torokhov@gmail.com> wrote:
 
-> The entire of_find_mt2701_gpio() function as well as its entry in the
-> of_find_gpio_quirks table are already conditional on
-> IS_ENABLED(CONFIG_SND_SOC_MT2701_CS42448). Remove the redundant inner
-> check.
+> Compile of_find_trigger_gpio() and include its entry in the
+> of_find_gpio_quirks table only when CONFIG_LEDS_TRIGGER_GPIO is enabled,
+> and remove the redundant runtime check.
 >
 > Assisted-by: Antigravity:gemini-3.5-flash
 > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-OK then
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
