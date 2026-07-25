@@ -1,82 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A999239A7EF
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F8E3988E3
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784971254; cv=none; b=ChcbgNdr7p8He7oywfSa7A6cC+RYg8MtN1Vok3lzTkf5kjFaCRWCKOZRzJO9KTWvFq8U2jGoowitZd51VbP8d7DBiQjP5FQiq6hNiUEoYOgOVcxEFRB8MZncbw3dmpyrnpmB853wwXtsW3ZREFVZfVvGbpkztc41LaYLWA30ZLI=
+	t=1784971335; cv=none; b=HW4mD6StJYdrnEFAhiWGVwxeD29jyBC7mx9e+dQvrlVp17eTy3DM8EV0urg+dp/3jrO0mrum98tmdgAWdYb0iv1pKpuA1yBtNjJr+c0oN9kntRKMs3Mzr3RIov32g1dB+b/vnnAgXL2ghEd8NwyBMXRlzOm3iExR/z7y5Wj6tqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784971254; c=relaxed/simple;
-	bh=czFeVM0srpJXC06T5IagXGllAMP0yg3xodfjsMJsWuI=;
+	s=arc-20240116; t=1784971335; c=relaxed/simple;
+	bh=RPDFRdWxVIW9S40pzEN5XZuqdsGYTf0D2/HjPnJLjSA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MrQnVKcQ3Zi/H2B3E1nENzapPKvwBblRIZbH6L1qlXB4eCgSj5gVo8HJUq+MrBIrEYiDhhQp4vUmmFazz/BQUdAQLJhmv/EnWnCCQ5asqRNyAFoix/8SgTKhnjir283FTGbC5kFJBXnpKKyckaCgtdG5JYOLGQrZvSpd5mwpYZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7l14/gk; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=kAB0vxnobVFcbxY3gut3Ng6GqrF1MYkeEbEs7RP/wGu2hd66+IemP5c2ddWJdq5fUycUDbbF6xAkshBwGxlkzjKrqXVxXTiRpbybzj8xxk6eyY/gxr8SMP6YYZ5fRy0+5TjjBJdGrZN0mLd/SRHbfvk0dUt8EEDDXDjqcJ9S0oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evfVgZ+N; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7l14/gk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D4B21F00AC4
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:20:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evfVgZ+N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26AE91F000E9
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:22:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784971253;
-	bh=czFeVM0srpJXC06T5IagXGllAMP0yg3xodfjsMJsWuI=;
+	s=k20260515; t=1784971332;
+	bh=yeffZJ5O7jKGs/TLFEJVw8uSr4ijtSiArzHMzMUH3yo=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=D7l14/gkJuBe6XC8OfB4qnEEokrVYpojHRkeLihSOuRWpUJzZZuqyIPdJOwUrIFJQ
-	 PWOxznPCASs/Tb9W3VehuxhBP8aVSs/J3G87zZTBiJz5jRtNL3z97Zx2FShA0zQbQl
-	 GkkpHNyJkLwELaNVs23uFhiZOsBIXgn3kWaw9aDchS0wfaTv+k8XNOXTMNgrlY9+P1
-	 hAmtn+OuRODHUyb/O8X1yoWiEuidm1ym0vn/15eGlRvmrh5ZmtvW1CYuzSNqtMGiA9
-	 nYwvJ68Ntwy9lFsmn85Vo1IpLzB9EbtXFS4JYH/O7L6f3FiWURpEXuTUDJk2ZT9E3u
-	 qpR6TDpYLTeMw==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5aec201b582so1230966e87.1
-        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:20:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rot4cYuhWpzzZqdyv5LGXHJ2g8t4HhDYtLTdXecP01K6qbopibX8yjbMfq4yN2iMWh5WDHH90ZhMz3u@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4f2uiPCTuaNX9RXByQdc35/Is+I4YPKtGmbwfB7aAiv2V5B2a
-	Wub4TY84iXgjesEpplphaUQDPD6UbSq0YJuJwDzh9YzrN4CDeuPVQoNN/7iX7Q05vIYCvl+oCV1
-	MUE2jthul8IY0a45sn7ZkFIt8lhKJeu0=
-X-Received: by 2002:a05:6512:3408:b0:5ae:be47:f006 with SMTP id
- 2adb3069b0e04-5b2c1b5caefmr259778e87.43.1784971252074; Sat, 25 Jul 2026
- 02:20:52 -0700 (PDT)
+	b=evfVgZ+NvqPhkm2zem17DUpcWqWTEJbj0XeW6AMsN8v/mE9jnDRne8gb+1WYKr/Hr
+	 57a/YGXe9CuB9WdTAkN1WDuE+CghA6EV1yKa+Yz4IScB3QvqnKh9tgpdhmUzx/0bQU
+	 938lV+nLrTaEm7uTpZNikS+TvPjIVK9UMuY1QouI8tHC3a0gUvO6Nzgfery7VOVWkl
+	 ANZOb4jt7h5xHts6Tcniyuu5JZCQQN1aMhg/fhuhv1nr56pkPKbBNRObL9BQAb1UdU
+	 y6zNtKzR2qjru7XO8jpoQqEd6fXqLf7/keOGdlrtw4Jmw9mfCe37S0CeDUrXoS1IEa
+	 knrobmKtS1kDw==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5b015532f7bso1195684e87.0
+        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:22:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrRa0DgYd2zkut3tQ3uqvLvEz7Vuu2PPLW71Gj4XHHlO+FbzD5jzmNBk3wbyhXz6jEZE9CnT17IOha6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK76mMVrJDava2EPfD2iJhCysD2jvdgClYlflNtkMgQ/FeWMEt
+	AiIuW1MUnwdBoMqjmxcgfxB3O9kPPbMkfTXsqqVhHdSf/bAQ/+kzHGyPEzQ9ArKIgF14K/ZZURp
+	y2wasstC+rp3gOMQf+gXGxC+QnYouHnw=
+X-Received: by 2002:a05:6512:15a1:b0:5ae:b2b0:4c15 with SMTP id
+ 2adb3069b0e04-5b2c1b20907mr265837e87.11.1784971330951; Sat, 25 Jul 2026
+ 02:22:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260719134548.8830-1-linux@ulli-kroll.de>
-In-Reply-To: <20260719134548.8830-1-linux@ulli-kroll.de>
+References: <20260719094427.1328725-1-bennib@mailbox.org>
+In-Reply-To: <20260719094427.1328725-1-bennib@mailbox.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 25 Jul 2026 11:20:40 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=tCKeELwvXQVTg0L4DLmGL7HiAJ3J-OaCDx2b8P6B+Ow@mail.gmail.com>
-X-Gm-Features: AUfX_mwilw7yDox8SW8QhTXKiAqAqdg4N6cIf95uaJ25Sfj1T5Hau1WH7GGea5M
-Message-ID: <CAD++jL=tCKeELwvXQVTg0L4DLmGL7HiAJ3J-OaCDx2b8P6B+Ow@mail.gmail.com>
-Subject: Re: [PATCH 0/2] pinctrl: qcom: ipq806x: mark gpio and pcie-reset as GPIO
-To: Hans Ulli Kroll <linux@ulli-kroll.de>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sat, 25 Jul 2026 11:21:58 +0200
+X-Gmail-Original-Message-ID: <CAD++jLm8cqC2Y6nJLy4KULSbq8+p=+eTDH9Kz2dDSpfZH0Eb0w@mail.gmail.com>
+X-Gm-Features: AUfX_mz1K-DO6jIR7qrurrfXV_-LnGCnet5e8Rx3EcWtnOYCGFlm6uPvx3txgt8
+Message-ID: <CAD++jLm8cqC2Y6nJLy4KULSbq8+p=+eTDH9Kz2dDSpfZH0Eb0w@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: microchip-sgpio: add missing select REGMAP_MMIO
+To: Benjamin Boortz <bennib@mailbox.org>
+Cc: andy.shevchenko@gmail.com, lee@kernel.org, vladimir.oltean@nxp.com, 
+	colin.foster@in-advantage.com, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Andy Shevchenko <andy@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 19, 2026 at 3:48=E2=80=AFPM Hans Ulli Kroll <linux@ulli-kroll.d=
-e> wrote:
+On Sun, Jul 19, 2026 at 11:45=E2=80=AFAM Benjamin Boortz <bennib@mailbox.or=
+g> wrote:
 
-> The qcom pinctrl core supports marking functions that represent GPIO mode
-> via PINCTRL_GPIO_PINFUNCTION(), so that strict pinmuxing does not reject
-> GPIO requests for pins that are muxed to the GPIO function.
+> The driver calls ocelot_regmap_from_resource() via <linux/mfd/ocelot.h>,
+> which internally uses devm_regmap_init_mmio() and requires REGMAP_MMIO.
+> The Kconfig entry does not select REGMAP_MMIO, causing a build failure
+> when no other driver in the config happens to pull in REGMAP_MMIO:
 >
-> ipq806x still describes its gpio function with QCA_PIN_FUNCTION(gpio),
-> so it is not treated as a GPIO pin function. As a result, GPIO consumers
-> can still conflict with pinctrl states that select the "gpio" function.
+>   include/linux/mfd/ocelot.h:34:24: error: implicit declaration of functi=
+on 'devm_regmap_init_mmio'
 >
-> This allows ipq806x to keep the GPIO-related and PCIe-related pin configu=
-ration
-> in DTS without tripping over strict pinmux ownership checks.
+> Found by randconfig testing on arm64; tinyconfig reproducer below.
 >
-> Fixes: cc85cb96e2e4 ("pinctrl: qcom: make the pinmuxing strict")
-> Signed-off-by: Hans Ulli Kroll <linux@ulli-kroll.de>
+> Fixes: 2afbbab45c26 ("pinctrl: microchip-sgpio: update to support regmap"=
+)
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Benjamin Boortz <bennib@mailbox.org>
+> Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-This need to be relayed to Bartosz as qualcomm pinctrl maintainer!
-
-FWIW:
-Acked-by: Linus Walleij <linusw@kernel.org>
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
