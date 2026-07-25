@@ -1,80 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AAB33938E
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C9831F9B4
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784972054; cv=none; b=VidgK9WZXS0zUx67Jjp9acR4RHhbT7sdUW3H1sC8hDgnboofloQdI8kchuOKT8jU25uwTJhVYiBLgK9E3PUmN/v4uV+JDP2Az0F+gY5IwCW5l2Jk3bsRV9YewSh0XGlgnKwTATOK985+V5FjLfP0v8c2/Qc+AtCozVq2uczXp5k=
+	t=1784972374; cv=none; b=gbkV/IEY3eABvDWniApoufm2SeQgaBPqVq6MJe0bCdc9mSFMKTkNJKAknk27rgW9MA9TMU/8HhlDhu+T7HLOnlZZVaQeeHrrzFGz1XP06LZxHoQcz0kTSDhBEKX08xnHBrU8CB3dvGYjSo9wbKoTAQpM2KFBk+caiDN4epZ5YAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784972054; c=relaxed/simple;
-	bh=ITZjcQRn95u6VCpDPPTnBvVga4zbrsqIoFwfm2Q546Y=;
+	s=arc-20240116; t=1784972374; c=relaxed/simple;
+	bh=WwKQm0k3uI6tzAuxRzRXu2CKyKNHm2aVYlQer+UxyKs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nsve6sKcO4MDnyy+y7JdsKrVCgYStBvWXiu+XSfOQxVl9TMBGk8TLb68Q7o80unMCD2TfCxVVdSGGw93opEp7YVttWs2oOb3UA1ik3QyWOLXW2KVO8mlfBOmt/L9yIF+SmsxwxAxcfBWq9STSZKln0A+45PgPK+3fiV68/b4Gu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yrg/NXqp; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=iIGspr4lZvQ7t/nYmcvp29u4S+++8VpRloe2FDZ6jBXz/ctg4sI3DMqKI+alHVS+jDQIHUF0kepQWlK77TAxnlhUIOKtW/WXqnZ0q1MdTBPIl1e2VoNYBNu2GwinPvXItrRa2dnbqVGI3YI86F6sA06Nsm9Sgi46K1bHg4UyY5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNKfaQze; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yrg/NXqp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C798A1F00A3E
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:34:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNKfaQze"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B70821F00A3D
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:39:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784972052;
-	bh=7UupwUNjMRAke2Z1V/NRbotbWdSBA0PD7YbseISQQtQ=;
+	s=k20260515; t=1784972372;
+	bh=WwKQm0k3uI6tzAuxRzRXu2CKyKNHm2aVYlQer+UxyKs=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Yrg/NXqpIw0L3adbgN8AMPtnM4ZSfqEBQNvJ9xCe2xQRK2wXt8k2IS3EXoAjmTMFC
-	 dEBL9zJpKY74ZjSPR2I1hRin80mEqx6TRL8FXBT7CyJxrgnfza5i8ePLmbzDhzTEJp
-	 aazcqYG4IvPiraQT0g/mE1GBhVo7viiR+ygt5oo4LbRGtNn8OdCwJEEXiDwDsk2sSR
-	 DAZM4etNk0wufu9sgRffUGRVrlKOwV4U+JKiHF/RHqJo270socE9YKCz+7s7CmoQNH
-	 owRR4ENeHqcTYr0v8Y1JCJQu6umHY3STTXzwRTz0Ms6W4JUj4EoladLjLtOUWm8we4
-	 Lx+tzGi9pf++Q==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5aeb2bc82ccso1262505e87.2
-        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:34:12 -0700 (PDT)
-X-Gm-Message-State: AOJu0Yy2v5XnRcIJdlUF77R+X/LVtaBPwjtp5wHWW9iyYd3ly8gjWATc
-	HWYWkxZMQKl6sqf4qHz9Id2LvdheeTIuWc7i+VWX7nmBk6cFM927xntV1bDx+LdU7REjnz64nba
-	M+DQf61pju3KhEYktupeja8V13qxY2nI=
-X-Received: by 2002:a05:6512:1148:b0:5b0:d0d:1f10 with SMTP id
- 2adb3069b0e04-5b2c1b089e3mr215924e87.27.1784972051572; Sat, 25 Jul 2026
- 02:34:11 -0700 (PDT)
+	b=YNKfaQzec5ds6Dw+i2SG/EQKqFylo3lUPMsWQDriVzdnCgW9qiBTGa8su9lifhae1
+	 Q2QhnPhhAAOMTnOht8sEiHvUD3NDO2oWKKrFsorV22ENjW88RuouLqAgauRLUCGgIk
+	 Ht2yzZxLNNL2fIFNpvwvY3fnsDSNDqoxXevSRZ5ThxTw6ltAzaSGsy83pfSX2ClZ2x
+	 tN3hKGodqGDaJUrGLB5/PReZJd5UCkS7Jd1oFu7TxIJ0TJDDXyw0rjI1Nm8rB5UGMO
+	 fH97fotrk9maMsV3ITzDqzVTaBzcACVeDTu8CL/3Ebgkc+Az1P1M+SAoRXpBI1du1l
+	 jX1QIvaB5VbSA==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5b0115b9e17so1125055e87.0
+        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:39:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rr5EWzFPPqC3yVuOnN3VifqMgx8QbfbrRu85jipWy+LAt9kQwXbgjm+cLB3kxQPL2uMFp1cA+MPS/c1@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYb8UVroTgu3WzTzy5Z1QuMsF12EtTUzokKAUMlotfJN55tpFG
+	VikrylzWJI0gllOwIJAuRpfFwXPSpTermW/AhCmkfrP8tJev3M/f+gu6u18mNSyIx409rRLxan6
+	75nyNy3pJ1ImnVt6LWbH4GfXBh0oZj3A=
+X-Received: by 2002:a05:6512:3d91:b0:5ae:a36b:e6d2 with SMTP id
+ 2adb3069b0e04-5b2c1b1815cmr304948e87.27.1784972371522; Sat, 25 Jul 2026
+ 02:39:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260720175611.2294418-1-bennib@mailbox.org>
-In-Reply-To: <20260720175611.2294418-1-bennib@mailbox.org>
+References: <20260710183439.996923-1-adilov@disroot.org> <20260710183439.996923-2-adilov@disroot.org>
+In-Reply-To: <20260710183439.996923-2-adilov@disroot.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 25 Jul 2026 11:33:56 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmVvYFYF9dA5060oQEfeejvKukw3B5H0TkJ=A_qnnugZg@mail.gmail.com>
-X-Gm-Features: AUfX_mxXVXUm_Y2opU4d2ZTx2uh9TD7qPFdqWuTUDuky-yGOj5GObdCvk5boT6I
-Message-ID: <CAD++jLmVvYFYF9dA5060oQEfeejvKukw3B5H0TkJ=A_qnnugZg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: bm1880: add missing select GENERIC_PINCONF
-To: Benjamin Boortz <bennib@mailbox.org>
-Cc: linux-gpio@vger.kernel.org, mani@kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
+Date: Sat, 25 Jul 2026 11:39:18 +0200
+X-Gmail-Original-Message-ID: <CAD++jLn1baGEBUv1p9txDEPCpmHaZehkwWf_z0P99jZpS=7byg@mail.gmail.com>
+X-Gm-Features: AUfX_mybi2OHHdDsvgN79PSbpZj8Wza9STirHdaChjkIubMg405F7vOazPhXfAo
+Message-ID: <CAD++jLn1baGEBUv1p9txDEPCpmHaZehkwWf_z0P99jZpS=7byg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] gpio: realtek-otto: use __raw_readl/writel in realtek_gpio_update_line_imr()
+To: Rustam Adilov <adilov@disroot.org>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Sander Vanheule <sander@svanheule.net>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 20, 2026 at 7:57=E2=80=AFPM Benjamin Boortz <bennib@mailbox.org=
-> wrote:
+On Fri, Jul 10, 2026 at 8:35=E2=80=AFPM Rustam Adilov <adilov@disroot.org> =
+wrote:
 
-> drivers/pinctrl/pinctrl-bm1880.c initialises its pinconf_ops with
-> .is_generic =3D true, but that field is only present when
-> CONFIG_GENERIC_PINCONF is enabled (guarded by #ifdef in pinconf.h).
-> The Kconfig entry for PINCTRL_BM1880 never selects GENERIC_PINCONF,
-> so any config that enables CONFIG_PINCTRL_BM1880=3Dy without
-> CONFIG_GENERIC_PINCONF=3Dy fails to compile:
+> In preparation for upcoming changes to how bank reads and writes
+> are defined in this driver, change the ioread32 and iowrite32 to
+> their __raw variants. The realtek_gpio_update_line_imr() function
+> is used by all devices regardless of GPIO_PORTS_REVERSED flag and
+> thus this is the only place where there shouldn't be any byte
+> swapping whether SWAP_IO_SPACE config is enabled or not and that
+> is only possible with __raw_readl and __raw_writel.
 >
->   drivers/pinctrl/pinctrl-bm1880.c:1288:10: error: 'const struct pinconf_=
-ops' has no member named 'is_generic'
->
-> Found by randconfig testing on arm64; tinyconfig reproducer below.
-> Add the missing select to fix the build.
->
-> Fixes: 49bd61ebce5f ("pinctrl: Add pinconf support for BM1880 SoC")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Benjamin Boortz <bennib@mailbox.org>
+> Signed-off-by: Rustam Adilov <adilov@disroot.org>
 
-Patch applied for fixes!
+This makes perfect sense, since the ARM-based ixp4xx does the
+exact same thing in gpio-ixp4xx.c for endianness-agnosticism.
+
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
