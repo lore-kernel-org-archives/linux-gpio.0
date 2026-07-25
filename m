@@ -1,83 +1,76 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD0D3783AF
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8BA2571D7
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784971428; cv=none; b=KAkNwZtqxPdqS23fQWnUiWAjAGUw/NpC+Fcz7jj1cuFH0EEGVANwLdAK1XL8dgQp5EB3rUqvoRkUtbLK4MWWBDol2tMdA7/eWkfyPGGHOSvLHw1bsttyEhgjMjXqWUufNaGHZoAl2KOxbYfCEshn15zl/+rkBy64fQ/cFT7IpUc=
+	t=1784971704; cv=none; b=dSELXTwOf5cqnhfkFoahoEZ+TQba4Cj+iv4N1wtM/VZCpu6HWZEwRTsze7i1bpxZygZC6vIlLuh9jM+3stoqJFoo8gBBhLtVRIRDfmNiCMSLYPb9it2+dJKW3dq1jXvbCqcChSnD65R7DC0AXHEKo815B5Mi+X1LGTLeVlkb9Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784971428; c=relaxed/simple;
-	bh=t7MThxYmbb3VjZjbffFGWRZiUad0vGZbepYSj99HxYc=;
+	s=arc-20240116; t=1784971704; c=relaxed/simple;
+	bh=pIC7rF6lErCSsMWbjNR3Q5aviCldho8K3rsxptcBkyg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u949Uv3/vBkoqilgbtEyx3Xk/eFHuwqY+PD/n1dGKWlrODXI+fnj+BUHGoSZnHEwCLQ2Tevydk23i2d2Q1zPi4Y6Qj781KXoZqQImXJhGOr6+crHtFUiYhnQ5g8gECpKiID4acapJlirasAYIrJlDOYkIeJpTsgbqR/Q3Uvtd44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBB7TUky; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=YuXFagkaSS2jZxr0cKkwFSwiZKPX27FBQDFp0S0z1YHMBwrZQSTzLbwdLnSwT+laFmdzhDnuDRn0AYcw8B6EHx9vC99ETdzRSYrvSZZCfC/ME8uvjI/4Fqfi4gCU5jT4CRyXeSdVlKb1hUpFceG0xm+CBba6XCF1axb1Nnu+8Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMvz/Ctq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBB7TUky"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EFCA1F00AC4
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:23:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMvz/Ctq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06BEE1F00A3A
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:28:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784971427;
-	bh=t7MThxYmbb3VjZjbffFGWRZiUad0vGZbepYSj99HxYc=;
+	s=k20260515; t=1784971703;
+	bh=pIC7rF6lErCSsMWbjNR3Q5aviCldho8K3rsxptcBkyg=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=OBB7TUkyxV6M8zHbAtd0g+2BpFBj6UyGt9V1b48RgtcBxfaQhdVkt1siIm7j1ZV0j
-	 BH9ClGTcTIHpwY8e0BIefu9c8Sxsqs7GfQhAIFBhEkJLH6KK9D5t+GThvabVzX5gx9
-	 VPn0yOEKRu+fCaIcZRLmUovhUR0iriqplRcCgj202IRE3hgB28TusOVS4UXG2UafBo
-	 wUYw9GLL1tptWiTdV/33ReWgv7zI495qqEuijaopOTGFW2WVl/wLsKi9o/5jTVrJZX
-	 JJISt6bjVDfPRWADMU54whT9aLnHvTkaFmwRC3h5v7c1W5NVG5VOZRnvgk338tSFxC
-	 bbVxRIPxSljXw==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-39c9452244aso11752911fa.3
-        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:23:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rp1aDO2YcSZbIf5WSZTOdLNWwwLX3NKLahk0qO1t6OsPDReS/um3sDQaKBw4Q5L1+rkYGGX/GADpngE@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQUTNBnEr8aYsW5UqfdyhoFR9QFdlrjRUBFc/4P37IM0SDQ3S+
-	08Y96PLBU5FW6WS5m+0LuaglRhy9ctEfvtPpXkACBg6+y0xyeHCnG09F5XVE7hKznIa3QhcLcGi
-	eOvel2xV3fXv3Cr9WOQcwwg2KXjHz6NE=
-X-Received: by 2002:a05:6512:1295:b0:5b1:59ec:245f with SMTP id
- 2adb3069b0e04-5b2c1afb585mr286093e87.8.1784971425959; Sat, 25 Jul 2026
- 02:23:45 -0700 (PDT)
+	b=EMvz/Ctqt3fk/DCpJSYXH0eb9kvqq2mcyxlZaPh/Jrg6I+9idk5Aa2XfC45ImX5mB
+	 uXG2hdigueYI3c7KG2qzZJ9HGS4fVFPXe8pbeEm7w9cdM0by+JsdheRLuZNWKAb1HX
+	 uqgS9kQGuG4zGrKkTbS0DSveQYRnAYVrLLqLDfoej70dDLlElcEnf2EyYb2PsPx3fE
+	 NqgoPXSfcQ2wA17Gk/58qwXwf+hZCMS96b0fHlM0cZb8rkGkbnp+zi8VcfFwn8oAig
+	 gojo2N0gYXL9yQEXMz0yZmUaT3JDvEjx5ZsvgQJ1msWo707c1tyY+PYJHHbIW8Uq9u
+	 AcrqTv8F6M9Mw==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-39c923b8c2aso12626721fa.2
+        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:28:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoHJ+P/DPTBTxvNBHql3FV+CvYJoxX1AOiZmIQCdtnNowp51n6CjeP7MNgYQ9vz5SsMTMnM+vrAY+Ui@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYusmnfUVfXEK6TybBBV5hU8J+7d8JyLbBcFYBUhZKDKoGrkuc
+	zlmoiDjzfOt4IvGp86xAEWW9qWLDMzZsGSFZoZGJnSmftHSKdHXPoa7KWfh+ACdcTk0SEoqCszW
+	Lis8etWYWTxp1Y6vdG3PLuMwWLoe1Wq4=
+X-Received: by 2002:a05:6512:3dab:b0:5ae:c5b2:9cac with SMTP id
+ 2adb3069b0e04-5b2c1b2edabmr308663e87.33.1784971701141; Sat, 25 Jul 2026
+ 02:28:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260718002146.698973-1-ts.solidarity@gmail.com>
-In-Reply-To: <20260718002146.698973-1-ts.solidarity@gmail.com>
+References: <20260710183439.996923-1-adilov@disroot.org> <20260710183439.996923-3-adilov@disroot.org>
+ <CAMRc=MddZxoi_=QCFYp1PM8OwsWbz-Tsmoa7TMkQ1bh+qf-pdA@mail.gmail.com>
+ <3d6b8d6ab53aadef56e68c925030dd3b@disroot.org> <CAMRc=MeKB-rH35Jw0Z7vKVuk9=d3M0x5a-LJwgim3fuUW26xWQ@mail.gmail.com>
+ <ba21d405fd51a7dccd9ca5eacc0385bf@disroot.org>
+In-Reply-To: <ba21d405fd51a7dccd9ca5eacc0385bf@disroot.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 25 Jul 2026 11:23:33 +0200
-X-Gmail-Original-Message-ID: <CAD++jLns-5nxWjwa9LiDVbvNngQE+OYF05nD+wd7J1H3rfv9yg@mail.gmail.com>
-X-Gm-Features: AUfX_mzEZphqkBqhPp56J4Kw53AoG30iiWRKp6XfygP-QF_fd1T9aE0wFbObjJE
-Message-ID: <CAD++jLns-5nxWjwa9LiDVbvNngQE+OYF05nD+wd7J1H3rfv9yg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: ipq9650: fix audio_sec_mclk_in1/out1 group pins
-To: Taceddin Sancak <ts.solidarity@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sat, 25 Jul 2026 11:28:09 +0200
+X-Gmail-Original-Message-ID: <CAD++jLn3ubs-Q1vqzr4WZFa6D4Fh=2M+8b5EFVrmou++jrxCEw@mail.gmail.com>
+X-Gm-Features: AUfX_mxeLijErspX70RL-2EZ-6I7voVzeBlMHnaxC4Gedp7XFobfWjFkllf46Ds
+Message-ID: <CAD++jLn3ubs-Q1vqzr4WZFa6D4Fh=2M+8b5EFVrmou++jrxCEw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: realtek-otto: decide bank_read/write by device endianness
+To: Rustam Adilov <adilov@disroot.org>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Sander Vanheule <sander@svanheule.net>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 18, 2026 at 2:22=E2=80=AFAM Taceddin Sancak <ts.solidarity@gmai=
-l.com> wrote:
+On Sun, Jul 19, 2026 at 6:17=E2=80=AFAM Rustam Adilov <adilov@disroot.org> =
+wrote:
 
-> The audio_sec_mclk_in1 and audio_sec_mclk_out1 groups both list
-> "gpio37", but in the pingroup table those functions are muxed on
-> gpio39, while gpio37 provides the audio_sec_mclk_in0/out0 variants.
-> This makes both functions unusable: selecting them on gpio39 is
-> rejected by the pinmux core because the group is not listed for the
-> function, and selecting them on gpio37 trips the WARN_ON() in
-> msm_pinmux_set_mux() and fails with -EINVAL because that group
-> cannot mux them.
+> > That's irrelevant as there may be devicetrees out in the wild and we ca=
+n't
+> > just break them.
 >
-> Point both groups at gpio39, matching the pingroup table. This also
-> mirrors the primary audio MCLK pair, where the mclk0 and mclk1
-> variants live on separate pins (gpio53 and gpio51 respectively).
->
-> Fixes: 3c8e7ba0e399 ("pinctrl: qcom: Introduce IPQ9650 TLMM driver")
-> Assisted-by: Claude:claude-fable-5
-> Signed-off-by: Taceddin Sancak <ts.solidarity@gmail.com>
+> So, what is the solution then?
 
-This patch -> Bartosz
-Acked-by: Linus Walleij <linusw@kernel.org>
+Make a endianness-dependent quirk in the driver that retain the
+current behaviour for old device trees and accepts new ones?
+I.e. enforce the right behaviour using code no matter what the
+device tree says.
 
 Yours,
 Linus Walleij
