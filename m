@@ -1,181 +1,155 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6603603E0
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D7D231830
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 04:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784946122; cv=none; b=S1QLLlnnTGlKeg5sew5Unc4moaF4GkFMfJZt8OCwr6P/2c5QE87jggKeQEJpSg8Rv/0vLXutyph73+m+36ifQOtJHIdQoEdPJl0s4zH+didqhJTTBN5nkHqau7qjZktc6KYdondZRlXcHL7tL/rXHaDZc6Y+/XXIb9XHEHbJBnw=
+	t=1784954578; cv=none; b=kHHwi/t0wU4Nw1EAiqKflfxzfC/FTTCMGCYqMQIaKdlM6tl0J2DMrRRljzlVW9JOJx7UFn38OTWETOItIBqtzxa/waa3aRbNxfqp2PAHRr7FSr0DtKKXfMw7W4lX5x98fxDwkDkqz3IM7c36ixlMq/AE1YmUhlPVoNorSE3oUqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784946122; c=relaxed/simple;
-	bh=5UEYcYyjjY3SOWoaiJ4SAjYJjXuFSRh/DHUfYF6etEc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DKLvzi/Uqz1lWrHU0Yy3nbZyeDZR5kpfZ1pSqTtj1doNg2kI+uyJnVSlvQPRrgDPLcdvhlHOVQLC5bBVHSJkObaQ9SDUa2INhOmhljOGFihkgsvmNUsn7GCEVyzCIEnVL/sl3NDPLyPpRnC08WfYuDLrxc3hL182YwMKSPAFxwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ptYb5i4S; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1784954578; c=relaxed/simple;
+	bh=SG6d+LpzhL9TwVfor9J7J2Q5tzdJhlBcP86sP1J4S6M=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=hufb8Gq6ueatF1/7x2eyYp86al/oOcdqao30FUmkwQz8vdowYirRa91KDmsdJUCf0Abv3mQ43qGzEWNxY4YBFRYoZFD/f+BGAQyo3zcW/DK5B5mYR4uN+KJsl/EQnLeuPt8IdOnFQw/SmjHGi75o/rEDdHXUhfUUK9FqJD1dTcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gF4vgwUr; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ptYb5i4S"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2ca64c3ce5fso11986025ad.3
-        for <linux-gpio@vger.kernel.org>; Fri, 24 Jul 2026 19:21:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784946119; x=1785550919; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GMDGd9nHDZFwlC3wb/2FA/AZe4zicRNBJy5t3j3kPU0=;
-        b=ptYb5i4SP8TOtmKCta/F1QHuZuuVMqomr0UDxZTxbON03heu39Gy5lld8MU1zdLOhf
-         wDtOhyIRjgtnXPf0sNzHQNl6d0jt2nGYKKKFejW20nHPVBnfty+Zf8DIXaRT3imjDhFa
-         eGxs+IR2I3vSPNUzv3LJiCe8SZsivCo7qbjCug1WMG8cG8HsqbrQlRRamz5xth2i4i3u
-         1+7DL6+l0sB+zkTG9ZTTJWiEYAZjnK77MuFmZ3LUZ9lMKwqBtJlSYqNGg59hj6OfXxqW
-         GsB2YKpT2F2yD10OGlsfJehBdwOxvHy0wGSQSeK9Q0PEYs1gkWPfuoRtT8wmmNHVvXx4
-         FSrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784946119; x=1785550919;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=GMDGd9nHDZFwlC3wb/2FA/AZe4zicRNBJy5t3j3kPU0=;
-        b=MnnqbUgaL/b/jgLu41RCJZ7D/8C6Ue3I94mrrCh1A//CstX09BsGfutnJgGMlI810c
-         dUSUj4VhX65xfJlgb+kmjDAacHzKqSYlArpnGnHU+J2l5OqdcXPXHS1hAj9iQoTbrgv4
-         KJdBUe0ed843rYyDv5bkQ25CGdZpL1q0Jd17zuU2Iv12MJmotsa82lPO3L8RadSTCccE
-         0M7Cwm+VcMGHICzaR59KOwonlGx3xFqczcBch3sa3yu17ol2lgCIoozEICylAve8yD4K
-         s3FfKS99CV51wLZANsGyTNmX64UYz14rZQrmh1V3rV5rFoGrf1KtN+M+9Yf+Z6rrBNtz
-         pkKg==
-X-Forwarded-Encrypted: i=1; AHgh+Rp1SC+G8RTqlhwZAKaH5KJhGkFwlxCHxg1GdNnqTTEMxT1BeAipHm61uy9xXUV5bXp6zWUnfuR+QdVG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcafmu/uA6kY6eRbkDbYE/yYxlaIFNvecTWB5H5YdgHnMro+J8
-	+SBousWaCPqjg29SZhUP98IwZXXE60BFrR6TXkp2gcneEcJoAHINX2MWgRaVyo4=
-X-Gm-Gg: AR+sD11lMSYH27OCcqYduj72kyYuzVBYXohNREI4vYb23pRCDfJ07vUQjDNLKkEqUUP
-	PvZl6zsOhQQjz6XviVLtQ0gV1IWy59BjPYwQ2YLGmbP1QCxC8OVouVbo+BxiszxKDi+w+aaWcD2
-	+kLmqHTEiZvhtTyZEXsI42E4ub0/RVIiXMZh8m7Sy2rjiBuRJ4YaS9zRvV6UvNwaYnuST2T6WPV
-	oskaapRX7UG+ZR3hBNfFoB4157AGER1f67u9qVU94KuJ/HLURt8kr/lOlD8I6R2Agt7BxjmHYmx
-	3UpZdBczwcgBMpPHhCP5UWLLM2k577ak1KWn6Fplf/Gih8+Id63EqcKRGuf1zs7rKArJWsD84h3
-	c7Z9KmrqSmAIeeHiyu6b2cyWnBG2A69px1y4MJMUpyUDtjzKAflJxVyaBuuNcFOf1y9uK2dPV87
-	9mgMdxaK1a8AqfAOIQOHdnds+0Dm4=
-X-Received: by 2002:a05:6a21:6e84:b0:3c4:3ada:384d with SMTP id adf61e73a8af0-3c67ddb636cmr729296637.30.1784946118841;
-        Fri, 24 Jul 2026 19:21:58 -0700 (PDT)
-Received: from t-rex ([2401:4900:51da:a518:29e0:5b58:1f42:c54d])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc3e261fsm4806094eec.6.2026.07.24.19.21.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2026 19:21:58 -0700 (PDT)
-From: kr494167@gmail.com
-To: linusw@kernel.org
-Cc: Frank.Li@nxp.com,
-	conor.dooley@microchip.com,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Surendra Singh Chouhan <kr494167@gmail.com>
-Subject: [PATCH v2] pinctrl: generic: free maps on pinctrl_generic_to_map() failure
-Date: Sat, 25 Jul 2026 07:51:50 +0530
-Message-ID: <20260725022150.9214-1-kr494167@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gF4vgwUr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1784954576; x=1816490576;
+  h=date:from:to:cc:subject:message-id;
+  bh=SG6d+LpzhL9TwVfor9J7J2Q5tzdJhlBcP86sP1J4S6M=;
+  b=gF4vgwUrYH1eCmGblY06THIDlgUcYQrROOEMvPKdzYNmrQP568oEA8GG
+   j6nu7FAw3HzqRc/8nhaJlg0zQsVt7G384QRIenKRQNvgZ35D//fuDf2z1
+   zKzRjJ0ULsoKZ+r2asBbRg+K6MkTwQx47vQ1FOQ+v+ghRnNwM68cH14Pt
+   K5JzFeeUDFBgvZLJpNH0Cslzn69n7dX+OVAjVYxlpaxi2fzvAUN+Rzjq+
+   bvUonKX5WOVlbnu8Mba5IQgih2NpYM76464sacjvyzAgrLvpBnZVjMZWg
+   BK+aoOcc2iPXCp6PTAPq4ZQxwYoVYdEfRcBf0isYrQdKD/odtTNRZo4eq
+   w==;
+X-CSE-ConnectionGUID: 7IuGB5WnQzKgeDaT+Kr+iQ==
+X-CSE-MsgGUID: UWuJlOf+RVCxIsRtCckV3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11855"; a="96770309"
+X-IronPort-AV: E=Sophos;i="6.25,183,1779174000"; 
+   d="scan'208";a="96770309"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2026 21:42:56 -0700
+X-CSE-ConnectionGUID: 9wtT4bSOQLep8l120sIWoA==
+X-CSE-MsgGUID: Qg6f9SseSI6mDM7zrMFH9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,183,1779174000"; 
+   d="scan'208";a="254571528"
+Received: from lkp-server02.sh.intel.com (HELO ea128546eb3d) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 24 Jul 2026 21:42:54 -0700
+Received: from kbuild by ea128546eb3d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wnUDl-00000000bUQ-3q98;
+	Sat, 25 Jul 2026 04:42:47 +0000
+Date: Sat, 25 Jul 2026 12:42:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org
+Subject: [brgl:pwrseq/for-next] BUILD SUCCESS
+ a39ac4651e3b9d2ca78b6d3dc2a81a6bd25fa616
+Message-ID: <202607251214.yKpzc7Bv-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Surendra Singh Chouhan <kr494167@gmail.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git pwrseq/for-next
+branch HEAD: a39ac4651e3b9d2ca78b6d3dc2a81a6bd25fa616  power: sequencing: pcie-m2: Match WCN6855 and WCN7851 UART BT variants by subdevice ID
 
-pinctrl_generic_to_map() parses DT configuration and allocates pinctrl
-maps via pinctrl_utils_reserve_map().
+elapsed time: 873m
 
-If subsequent steps (such as pinctrl_utils_add_map_mux(),
-pinctrl_generic_add_group(), pinconf_generic_parse_dt_config(), or
-pinctrl_utils_add_map_configs()) return an error, *maps may contain
-partially allocated map entries. Returning the error directly without
-freeing *maps leaks the allocated mapping memory across all drivers
-that rely on pinctrl_generic_to_map().
+configs tested: 78
+configs skipped: 0
 
-Fix this by calling pinctrl_utils_free_map() and resetting *maps,
-*num_maps, and *num_reserved_maps in the error path of
-pinctrl_generic_to_map().
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Fixes: aaaf31be0426 ("pinctrl: extract pinctrl_generic_to_map() from pinctrl_generic_pins_function_dt_node_to_map()")
-Signed-off-by: Surendra Singh Chouhan <kr494167@gmail.com>
----
-v2:
- - Move map cleanup inside pinctrl_generic_to_map() helper in pinctrl-generic.c
-   so all callers are protected from memory leaks, as suggested by Frank Li.
+tested configs:
+alpha                            allnoconfig    gcc-16.1.0
+alpha                           allyesconfig    gcc-16.1.0
+alpha                              defconfig    gcc-16.1.0
+arc                             allmodconfig    gcc-16.1.0
+arc                             allyesconfig    gcc-16.1.0
+arc                  randconfig-001-20260725    gcc-11.5.0
+arc                  randconfig-002-20260725    gcc-8.5.0
+arm                  randconfig-001-20260725    gcc-8.5.0
+arm                  randconfig-002-20260725    clang-21
+arm                  randconfig-003-20260725    gcc-10.5.0
+arm                  randconfig-004-20260725    gcc-15.2.0
+arm64                randconfig-001-20260725    clang-24
+arm64                randconfig-002-20260725    gcc-13.4.0
+arm64                randconfig-003-20260725    clang-24
+arm64                randconfig-004-20260725    clang-24
+csky                            allmodconfig    gcc-16.1.0
+csky                 randconfig-001-20260725    gcc-9.5.0
+csky                 randconfig-002-20260725    gcc-16.1.0
+hexagon              randconfig-001-20260725    clang-17
+hexagon              randconfig-002-20260725    clang-24
+i386                            allmodconfig    gcc-14
+i386       buildonly-randconfig-001-20260725    clang-22
+i386       buildonly-randconfig-002-20260725    gcc-14
+i386       buildonly-randconfig-003-20260725    clang-22
+i386       buildonly-randconfig-004-20260725    clang-22
+i386       buildonly-randconfig-005-20260725    gcc-14
+i386       buildonly-randconfig-006-20260725    gcc-14
+i386                 randconfig-011-20260725    gcc-14
+i386                 randconfig-012-20260725    gcc-14
+i386                 randconfig-013-20260725    gcc-14
+i386                 randconfig-014-20260725    clang-22
+i386                 randconfig-015-20260725    clang-22
+i386                 randconfig-016-20260725    clang-22
+i386                 randconfig-017-20260725    clang-22
+loongarch                          defconfig    clang-24
+loongarch            randconfig-001-20260725    gcc-16.1.0
+loongarch            randconfig-002-20260725    gcc-13.4.0
+nios2                           allmodconfig    gcc-11.5.0
+nios2                            allnoconfig    gcc-11.5.0
+nios2                randconfig-001-20260725    gcc-11.5.0
+nios2                randconfig-002-20260725    gcc-9.5.0
+parisc                          allmodconfig    gcc-16.1.0
+parisc                          allyesconfig    gcc-16.1.0
+parisc                             defconfig    gcc-16.1.0
+parisc                        randconfig-001    gcc-8.5.0
+parisc               randconfig-001-20260725    gcc-10.5.0
+parisc               randconfig-002-20260725    gcc-12.5.0
+powerpc              randconfig-001-20260725    gcc-9.5.0
+powerpc              randconfig-002-20260725    gcc-15.2.0
+powerpc64            randconfig-001-20260725    clang-17
+powerpc64            randconfig-002-20260725    clang-24
+riscv                   nommu_virt_defconfig    clang-24
+riscv                randconfig-001-20260725    gcc-8.5.0
+riscv                randconfig-002-20260725    gcc-8.5.0
+s390                 randconfig-001-20260725    gcc-10.5.0
+s390                 randconfig-002-20260725    gcc-16.1.0
+sh                                 defconfig    gcc-16.1.0
+sh                   randconfig-001-20260725    gcc-16.1.0
+sh                   randconfig-002-20260725    gcc-11.5.0
+sparc                randconfig-002-20260725    gcc-8.5.0
+sparc64              randconfig-002-20260725    gcc-10.5.0
+x86_64                        randconfig-001    gcc-14
+x86_64               randconfig-001-20260725    gcc-14
+x86_64               randconfig-002-20260725    clang-22
+x86_64               randconfig-003-20260725    clang-22
+x86_64               randconfig-004-20260725    clang-22
+x86_64               randconfig-005-20260725    clang-22
+x86_64               randconfig-006-20260725    clang-22
+x86_64               randconfig-011-20260725    gcc-14
+x86_64               randconfig-012-20260725    gcc-14
+x86_64               randconfig-015-20260725    gcc-14
+x86_64               randconfig-016-20260725    gcc-14
+x86_64               randconfig-071-20260725    gcc-14
+x86_64               randconfig-072-20260725    gcc-14
+x86_64               randconfig-073-20260725    gcc-14
+x86_64               randconfig-074-20260725    gcc-14
+x86_64               randconfig-075-20260725    gcc-14
+x86_64               randconfig-076-20260725    clang-22
 
- drivers/pinctrl/pinctrl-generic-mux.c |  4 +---
- drivers/pinctrl/pinctrl-generic.c     | 27 +++++++++++++++++++--------
- 2 files changed, 20 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-generic-mux.c b/drivers/pinctrl/pinctrl-generic-mux.c
-index 927c7aa616f5..da5a5ec01583 100644
---- a/drivers/pinctrl/pinctrl-generic-mux.c
-+++ b/drivers/pinctrl/pinctrl-generic-mux.c
-@@ -58,10 +58,8 @@ mux_pinmux_dt_node_to_map(struct pinctrl_dev *pctldev,
- 				     num_maps, &num_reserved_maps, group_names,
- 				     0, &np_config->name, NULL, 0);
- 
--	if (ret) {
--		pinctrl_utils_free_map(pctldev, *maps, *num_maps);
-+	if (ret)
- 		return ret;
--	}
- 
- 	ret = pinmux_generic_add_function(pctldev, np_config->name, group_names,
- 					  1, function);
-diff --git a/drivers/pinctrl/pinctrl-generic.c b/drivers/pinctrl/pinctrl-generic.c
-index 9759b0186bcc..d5f07f4a8b88 100644
---- a/drivers/pinctrl/pinctrl-generic.c
-+++ b/drivers/pinctrl/pinctrl-generic.c
-@@ -42,34 +42,45 @@ int pinctrl_generic_to_map(struct pinctrl_dev *pctldev, struct device_node *pare
- 	ret = pinctrl_utils_add_map_mux(pctldev, maps, num_reserved_maps, num_maps, group_name,
- 					parent->name);
- 	if (ret < 0)
--		return ret;
-+		goto err_free_map;
- 
- 	ret = pinctrl_generic_add_group(pctldev, group_name, pins, npins, data);
--	if (ret < 0)
--		return dev_err_probe(dev, ret, "failed to add group %s: %d\n",
-+	if (ret < 0) {
-+		dev_err_probe(dev, ret, "failed to add group %s: %d\n",
- 				     group_name, ret);
-+		goto err_free_map;
-+	}
- 
- 	ret = pinconf_generic_parse_dt_config(np, pctldev, &configs, &num_configs);
--	if (ret)
--		return dev_err_probe(dev, ret, "failed to parse pin config of group %s\n",
-+	if (ret) {
-+		dev_err_probe(dev, ret, "failed to parse pin config of group %s\n",
- 			group_name);
-+		goto err_free_map;
-+	}
- 
- 	if (num_configs == 0)
- 		return 0;
- 
- 	ret = pinctrl_utils_reserve_map(pctldev, maps, num_reserved_maps, num_maps, reserve);
- 	if (ret)
--		return ret;
-+		goto err_free_map;
- 
- 	ret = pinctrl_utils_add_map_configs(pctldev, maps, num_reserved_maps, num_maps, group_name,
- 					    configs,
- 			num_configs, PIN_MAP_TYPE_CONFIGS_GROUP);
- 	kfree(configs);
- 	if (ret)
--		return ret;
-+		goto err_free_map;
- 
- 	return 0;
--};
-+
-+err_free_map:
-+	pinctrl_utils_free_map(pctldev, *maps, *num_maps);
-+	*maps = NULL;
-+	*num_maps = 0;
-+	*num_reserved_maps = 0;
-+	return ret;
-+}
- EXPORT_SYMBOL_GPL(pinctrl_generic_to_map);
- 
- static int pinctrl_generic_pins_function_dt_subnode_to_map(struct pinctrl_dev *pctldev,
--- 
-2.55.0
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
