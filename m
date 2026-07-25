@@ -1,93 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5920B39A81B
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A999239A7EF
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784971190; cv=none; b=pih1olyiZVm/D0fp/gQ5DP6NKO7pjGNRLHqh3DzMMOZUox8XbKK/Ccx6jGS3jvML1IEtJDGza4PwAYAXOup7lYaUfEm8VboP4hF8a2lWc7oX0COyCVb1LfR4/xX4HF7MvutkN1A5vmdzWqz7ebHNsZh+BJJqwec0ETHbCNFjU7Y=
+	t=1784971254; cv=none; b=ChcbgNdr7p8He7oywfSa7A6cC+RYg8MtN1Vok3lzTkf5kjFaCRWCKOZRzJO9KTWvFq8U2jGoowitZd51VbP8d7DBiQjP5FQiq6hNiUEoYOgOVcxEFRB8MZncbw3dmpyrnpmB853wwXtsW3ZREFVZfVvGbpkztc41LaYLWA30ZLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784971190; c=relaxed/simple;
-	bh=gT1CKO4EK7/3bWac08s2YQxQzdQzTQ0qmITNcMrkTwA=;
+	s=arc-20240116; t=1784971254; c=relaxed/simple;
+	bh=czFeVM0srpJXC06T5IagXGllAMP0yg3xodfjsMJsWuI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t+PxaPjV0fMITOXDEN/jeGsyiqLGHDG2rAErnJj5Q4pzJERAPMfXCTnV7JLeegv6OWVcOj4MfptuH9WTjkL03AKfg6kwUmcVOCbNPqV3T/MhePsdYQtHA4QXWC50sDa7M4MKcviGeEfWBusc/yDJj4qu1zXDLL0ru3rvAQb7OIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ppu9UWTa; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=MrQnVKcQ3Zi/H2B3E1nENzapPKvwBblRIZbH6L1qlXB4eCgSj5gVo8HJUq+MrBIrEYiDhhQp4vUmmFazz/BQUdAQLJhmv/EnWnCCQ5asqRNyAFoix/8SgTKhnjir283FTGbC5kFJBXnpKKyckaCgtdG5JYOLGQrZvSpd5mwpYZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7l14/gk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ppu9UWTa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AE8B1F00AC4
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:19:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7l14/gk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D4B21F00AC4
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784971189;
-	bh=NGubqI94Ei6nqDONetK9C5AMVRp/MQujLv0n88M/a/Q=;
+	s=k20260515; t=1784971253;
+	bh=czFeVM0srpJXC06T5IagXGllAMP0yg3xodfjsMJsWuI=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Ppu9UWTawyDY8JAhaTiq+UNZ0TGAedPl05g6TLBTY7WY8L5xR+SDWQrSvBoOw0XrS
-	 KEfWNQR3L//7JewG1tgKWS/a5t+QDi+EPRSSDZxjZd5ppz94CUWkoFvftK8YxMHpYP
-	 l5heK7gazYYo+dalXjPktla9SNcBxN9sX9tjMQArsUH0c1jefbxHLCMTk2SKa6xVnr
-	 u3OeZDgbp6vllOK74eivPIM8oKoGjBoUSV/V6u9Y1ry/ilGVnYuVovTsMMtsZVZ1IP
-	 oqcoIM+rX47NO273j+cFD4ddKX0lDaycCsowCBW5JbL+OPzsUa5Aq6UebfizzVziL5
-	 9wH85UcGx8fWw==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-39c83acb86eso10394731fa.1
-        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:19:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqHO59kqAX5xBQWBgrjr11te0UymOctia+qFCcPtn9xuo09o8jIIpQFsZPCr8BVyiw9hb2DHttHlizC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyux9jUxiXLSRNBoFPTO+L5nRE8rSHsPLKYyoG608bvV0kr8O5s
-	2jF4VI0RYDFH55W9H3V0NSPxG6v+w5WL7pu2+1ONzhIb0wMpCjqTlkZvVA9JqQJq9w92/c+zBPO
-	yOZGbEl5rbHBQ2Ea6ps6xCUnCcaDyWMY=
-X-Received: by 2002:a05:6512:33d1:b0:5b0:1ace:3bec with SMTP id
- 2adb3069b0e04-5b2c1af52f0mr268182e87.10.1784971187926; Sat, 25 Jul 2026
- 02:19:47 -0700 (PDT)
+	b=D7l14/gkJuBe6XC8OfB4qnEEokrVYpojHRkeLihSOuRWpUJzZZuqyIPdJOwUrIFJQ
+	 PWOxznPCASs/Tb9W3VehuxhBP8aVSs/J3G87zZTBiJz5jRtNL3z97Zx2FShA0zQbQl
+	 GkkpHNyJkLwELaNVs23uFhiZOsBIXgn3kWaw9aDchS0wfaTv+k8XNOXTMNgrlY9+P1
+	 hAmtn+OuRODHUyb/O8X1yoWiEuidm1ym0vn/15eGlRvmrh5ZmtvW1CYuzSNqtMGiA9
+	 nYwvJ68Ntwy9lFsmn85Vo1IpLzB9EbtXFS4JYH/O7L6f3FiWURpEXuTUDJk2ZT9E3u
+	 qpR6TDpYLTeMw==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5aec201b582so1230966e87.1
+        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:20:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rot4cYuhWpzzZqdyv5LGXHJ2g8t4HhDYtLTdXecP01K6qbopibX8yjbMfq4yN2iMWh5WDHH90ZhMz3u@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4f2uiPCTuaNX9RXByQdc35/Is+I4YPKtGmbwfB7aAiv2V5B2a
+	Wub4TY84iXgjesEpplphaUQDPD6UbSq0YJuJwDzh9YzrN4CDeuPVQoNN/7iX7Q05vIYCvl+oCV1
+	MUE2jthul8IY0a45sn7ZkFIt8lhKJeu0=
+X-Received: by 2002:a05:6512:3408:b0:5ae:be47:f006 with SMTP id
+ 2adb3069b0e04-5b2c1b5caefmr259778e87.43.1784971252074; Sat, 25 Jul 2026
+ 02:20:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260719121140.28730-1-kmehltretter@gmail.com>
-In-Reply-To: <20260719121140.28730-1-kmehltretter@gmail.com>
+References: <20260719134548.8830-1-linux@ulli-kroll.de>
+In-Reply-To: <20260719134548.8830-1-linux@ulli-kroll.de>
 From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 25 Jul 2026 11:19:36 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnCSVfJy7hgPr2qAwYeJy2wVNMfHoi7aCdJsupEBXaxDQ@mail.gmail.com>
-X-Gm-Features: AUfX_mxBmD26epbQyyenypkfzJ30-O3BLttZrbPM42ge6269rEY64-rgYQRYkA4
-Message-ID: <CAD++jLnCSVfJy7hgPr2qAwYeJy2wVNMfHoi7aCdJsupEBXaxDQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: devicetree: don't free uninitialized dev_name on
- error path
-To: Karl Mehltretter <kmehltretter@gmail.com>
-Cc: Will Deacon <will@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date: Sat, 25 Jul 2026 11:20:40 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=tCKeELwvXQVTg0L4DLmGL7HiAJ3J-OaCDx2b8P6B+Ow@mail.gmail.com>
+X-Gm-Features: AUfX_mwilw7yDox8SW8QhTXKiAqAqdg4N6cIf95uaJ25Sfj1T5Hau1WH7GGea5M
+Message-ID: <CAD++jL=tCKeELwvXQVTg0L4DLmGL7HiAJ3J-OaCDx2b8P6B+Ow@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pinctrl: qcom: ipq806x: mark gpio and pcie-reset as GPIO
+To: Hans Ulli Kroll <linux@ulli-kroll.de>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 19, 2026 at 2:11=E2=80=AFPM Karl Mehltretter <kmehltretter@gmai=
-l.com> wrote:
+On Sun, Jul 19, 2026 at 3:48=E2=80=AFPM Hans Ulli Kroll <linux@ulli-kroll.d=
+e> wrote:
 
-> dt_remember_or_free_map() duplicates dev_name for each map entry. If
-> kstrdup_const() fails, dt_free_map() frees dev_name in all num_maps
-> entries, including entries that have not been initialized.
+> The qcom pinctrl core supports marking functions that represent GPIO mode
+> via PINCTRL_GPIO_PINFUNCTION(), so that strict pinmuxing does not reject
+> GPIO requests for pins that are muxed to the GPIO function.
 >
-> Some pinctrl drivers, including pinctrl-imx, allocate the map with
-> kmalloc() and leave dev_name for the core to initialize. The untouched
-> entries therefore contain uninitialized data which is passed to
-> kfree_const().
+> ipq806x still describes its gpio function with QCA_PIN_FUNCTION(gpio),
+> so it is not treated as a GPIO pin function. As a result, GPIO consumers
+> can still conflict with pinctrl states that select the "gpio" function.
 >
-> Reproduced on qemu's mcimx6ul-evk (pinctrl-imx) with failslab injection
-> while binding the pinctrl-consuming device, under KASAN:
+> This allows ipq806x to keep the GPIO-related and PCIe-related pin configu=
+ration
+> in DTS without tripping over strict pinmux ownership checks.
 >
->   BUG: KASAN: double-free in dt_free_map+0x34/0xa4
->   Free of addr c425a900 by task init/1
->    kfree from dt_free_map+0x34/0xa4
->    dt_free_map from dt_remember_or_free_map+0x184/0x198
->    dt_remember_or_free_map from pinctrl_dt_to_map+0x33c/0x4c8
->    pinctrl_dt_to_map from create_pinctrl+0x9c/0x5c0
->
-> Initialize all dev_name fields to NULL before duplicating the device
-> name, making the full-map cleanup safe after a partial failure.
->
-> Fixes: be4c60b563ed ("pinctrl: devicetree: Avoid taking direct reference =
-to device name string")
-> Cc: stable@vger.kernel.org
-> Assisted-by: Claude:claude-fable-5
-> Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+> Fixes: cc85cb96e2e4 ("pinctrl: qcom: make the pinmuxing strict")
+> Signed-off-by: Hans Ulli Kroll <linux@ulli-kroll.de>
 
-What a good find, patch applied!
+This need to be relayed to Bartosz as qualcomm pinctrl maintainer!
+
+FWIW:
+Acked-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
