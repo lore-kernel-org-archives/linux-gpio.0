@@ -1,76 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF4B1CAA78
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 13:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE57E43AB0
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 13:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784987460; cv=none; b=ncf3OGTiN5UqHM5Q73V/lrr36iVUpuNCh6NPhY2Zc5sxyJlbhr61LiF0SG5svF11XD8qBTvYXX4MXVz3boPZGKWqIhnYXt5WLpsx8YyJ5wSRD0wh40u/DduAs7KFkbMOxTsw0JsBVQWOmzozkkQpt2ye2M074/cBeVtjXkPEPBY=
+	t=1784987778; cv=none; b=G6TVyBcLdtmI7z1fWzHq5eEPVE+6L++ZKwNbPINs7v3G21RSQo406VFxPjcgX3n6pvCXKsQKvtItXyU3yDOMnp9HkU5PpA/wazmEy0wAzlg6tOmM8F1AhBv8CsV1CM2nAKx4K14oeq6S6Fs7jBs4KU2ASYDtHbvE0gzWkSGe/T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784987460; c=relaxed/simple;
-	bh=vbmSzYd2ryzojmmR5tmxApAUV88P2Dup5Q86ZV8c08M=;
+	s=arc-20240116; t=1784987778; c=relaxed/simple;
+	bh=WQP2oA5rKx5FSLpDEvp8uzssDuT51alLjMmAg41jeR0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mdxJznMgsegOt3jdk+irOC6ANPL+j9MPhtyvNAn9xURaAaVLaKY2p03u89T3nsDHfRJ+nBAWecpyMv7oEuFb3QbjgBxpznKoiKODmENg6KMFjbNCEl9ZAWSpFrYjdH7/Jgn5+kBOqzbrC30DJcES7HOTW45FnSE14CiNkTS3wtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ORLG+fWh; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=gCd6wIP9R2eDirT6qNA9Yw0GFPBJgJbM4q4cPKPLCME9c0nf/SDVbiRi82jpaZqmlfTIOV7qszw0pzsvIIOVZhyeUKJu76rSx8ggo+uZJsVLX99L+0S5qFmEghzwk0OjZMT2y9oBcp6tWgESea5aPFYf3x9VoFMNS8nbu7Qez9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZ/E5TVF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORLG+fWh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 360A41F00AC4
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 13:50:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZ/E5TVF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 620451F00ACA
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 13:56:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784987459;
-	bh=vbmSzYd2ryzojmmR5tmxApAUV88P2Dup5Q86ZV8c08M=;
+	s=k20260515; t=1784987777;
+	bh=WQP2oA5rKx5FSLpDEvp8uzssDuT51alLjMmAg41jeR0=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ORLG+fWhZosGalSGWmyV3Kh++97/MDHrKaLPYfDJtWfoak36JOSML9k8SudIKrrp7
-	 wubLUe56gXM8COgYywev6qjsm9UZDTBYS277roo1SLeT6iNgjdN2Z+QKLcpkgZtkNW
-	 uHE0C8c3XpcS/RRzONKUC3CTxBZQm2g0V67rfNBAIjcsTEAdylfX/qIAaGoTV0TGtL
-	 Mdu0hdJm5RTpFNtErkG3HBY3G0u83xcEnbZEOdlXMMm8TFrmZh/7simaAEcqrmif9X
-	 kXaXnn0aBKcs2+twQpN7vZkPNcpI3zWOxZ+p8QRwnGqp80lqCRQqEeyq0rCDkLnzA9
-	 Am7RbQGbgE/XQ==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5b0117d49dcso1103214e87.3
-        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 06:50:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rq5R6mjldy9glK+ndidNIWDJlyDSGzC4LV8SHDuB02BeNUwJYBB87dwOv+1IvYHVvX8aGqaZy+/4l6f@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd1+R/6YUSL8Gas0eos02xlBM3VW9MsSlw6vE72F+QidnwW0BV
-	nA8EsrmhHauvgNmBaiVUPEcaiQpTx/TP9j4uz+RsjXFZYM1vmqc/WBfdTjgvl+yqIK2Ycfv/TrP
-	RDyre6kC2nT3U30PQR3r6BQpFD2OGBHE=
-X-Received: by 2002:a05:6512:3c8e:b0:5ae:c239:f052 with SMTP id
- 2adb3069b0e04-5b2c1b569bfmr442527e87.62.1784987457975; Sat, 25 Jul 2026
- 06:50:57 -0700 (PDT)
+	b=XZ/E5TVF82rL5DqGg0YVX+dOeybuzusBNvTTS+Blticr6jLIna96xK5B2matAKVaJ
+	 ubx+lX3maeLVDgAG8rmSOYZiP5QIFW1ohzkEMpZGCkUzfpVYYj0kaZYDWZDYzf1yeD
+	 9stBJu/bKYvbKbXJSpmbOJoBYQO5nWPNxdpiopTgTLOqT+/ZJYHOpniWK4EKo/cF99
+	 JhJ9frVmhbGwNJEn8+agDT62DOOK6oc/tXdwN4fpIKpViYY3fX9NTLm9zQoRjSyfKz
+	 Nd0Hl2iWeYdCbH27TgVxbO71If6I3ZS7jwuVypNYmWo5iptgKmr6KjHEL1oEJGe1ta
+	 QRHM+af/IYi7Q==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5b015532f7bso1301809e87.0
+        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 06:56:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqpqVUDW426ZjQJyNXlSd8st3HepPm/y2b7H0UXp7m4j0Tzn6fJy6w5nDWjKJLuxm8pXakIM3HAEnpg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4jbXB9wLgXrNnRTtxw8pe4iE8GeP0M6l/YKZt8rQphkIQtOZP
+	jkpULeHWwjm/gIWL7bk8yNVJnzUmQODxpBxKl9RYSI9Duu3m0WzrvK5EJPSBW3fVJCWJvIUNPfx
+	iekD68cmAsl+Tqr7UdT+f7bMsJ+Uotq8=
+X-Received: by 2002:a05:6512:3f14:b0:5b0:1eb2:53de with SMTP id
+ 2adb3069b0e04-5b2c1b5d430mr520664e87.44.1784987776164; Sat, 25 Jul 2026
+ 06:56:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260723184538.3888637-1-ekffu200098@gmail.com> <20260723184538.3888637-25-ekffu200098@gmail.com>
-In-Reply-To: <20260723184538.3888637-25-ekffu200098@gmail.com>
+References: <20260723034237.2501507-1-eleanor.lin@realtek.com> <20260723034237.2501507-10-eleanor.lin@realtek.com>
+In-Reply-To: <20260723034237.2501507-10-eleanor.lin@realtek.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 25 Jul 2026 15:50:45 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=Zso=W-6hu56Jv_JPLLi09zXQVPdQnzDu+qjUNtai8zw@mail.gmail.com>
-X-Gm-Features: AUfX_mxl0SbySY5a9lGPh5hdtT44cpsgYcs6gRZ2aF1kuTPcG7UsdR_1xQAGZMQ
-Message-ID: <CAD++jL=Zso=W-6hu56Jv_JPLLi09zXQVPdQnzDu+qjUNtai8zw@mail.gmail.com>
-Subject: Re: [PATCH 24/36] pinctrl: mediatek: remove conditional return with
- no effect
-To: Sang-Heon Jeon <ekffu200098@gmail.com>
-Cc: Julia.Lawall@inria.fr, Sean Wang <sean.wang@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, cocci@inria.fr, 
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Date: Sat, 25 Jul 2026 15:56:03 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkfrd_X3V-JwqBd3D+kL_d2qQY4X0YQqdVvpndueZiu3g@mail.gmail.com>
+X-Gm-Features: AUfX_myM6hIu4S0umra6E791UEBVNICJ0Fr1LuQ4pJ1qU8fF8MvlDATABrc8HPY
+Message-ID: <CAD++jLkfrd_X3V-JwqBd3D+kL_d2qQY4X0YQqdVvpndueZiu3g@mail.gmail.com>
+Subject: Re: [PATCH v7 9/9] gpio: realtek: Add driver for Realtek DHC RTD1625 SoC
+To: Yu-Chun Lin <eleanor.lin@realtek.com>
+Cc: andriy.shevchenko@intel.com, mwalle@kernel.org, brgl@kernel.org, 
+	tychang@realtek.com, wbg@kernel.org, mathieu.dubois-briand@bootlin.com, 
+	nuno.sa@analog.com, Michael.Hennerich@analog.com, jic23@kernel.org, 
+	andy@kernel.org, u.kleine-koenig@baylibre.com, dakr@kernel.org, 
+	bhelgaas@google.com, o-takashi@sakamocchi.jp, dlechner@baylibre.com, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux@analog.com, 
+	linux-iio@vger.kernel.org, cy.huang@realtek.com, james.tai@realtek.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 23, 2026 at 8:47=E2=80=AFPM Sang-Heon Jeon <ekffu200098@gmail.c=
-om> wrote:
+On Thu, Jul 23, 2026 at 5:43=E2=80=AFAM Yu-Chun Lin <eleanor.lin@realtek.co=
+m> wrote:
 
-> Both branches of the check return the same value, so the check has
-> no effect. Remove it and return the value directly.
+> From: Tzuyi Chang <tychang@realtek.com>
 >
-> This is the result of running the Coccinelle script from
-> scripts/coccinelle/misc/cond_return_no_effect.cocci.
+> Add support for the GPIO controller found on Realtek DHC RTD1625 SoCs.
 >
-> Signed-off-by: Sang-Heon Jeon <ekffu200098@gmail.com>
+> Unlike the existing Realtek GPIO driver (drivers/gpio/gpio-rtd.c),
+> which manages pins via shared bank registers, the RTD1625 introduces
+> a per-pin register architecture. Each GPIO line now has its own
+> dedicated 32-bit control register to manage configuration independently,
+> including direction, output value, input value, interrupt enable, and
+> debounce. Therefore, this distinct hardware design requires a separate
+> driver.
+>
+> The RTD1625 GPIO controller has a hardware quirk where both 'assert'
+> and 'de-assert' interrupts are fired simultaneously on any edge toggle.
+> The driver works around this quirk to correctly handle edge interrupts.
+>
+> Interrupt support is optional for this device, matching the dt-bindings.
+> If the interrupts property is not provided, the driver simply skips IRQ
+> initialization and operates purely as a basic GPIO controller.
+>
+> Signed-off-by: Tzuyi Chang <tychang@realtek.com>
+> Co-developed-by: Yu-Chun Lin <eleanor.lin@realtek.com>
+> Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 
-Patch applied!
+I see Mathieu have some more comments, with those fixed
+I think this looks good!
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
