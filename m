@@ -1,111 +1,141 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F5472627;
-	Sat, 25 Jul 2026 12:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC062690F9
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 13:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784983735; cv=none; b=ZTcYWQK/DpuZXX0BhXFP/EJ1yYDcjA4qyb3270T28gGbDhBQhE6ksKp/7P3KaJFrXfn3x2HlZUWErlMJlWj1zmQpXchGqtI5RFkIEIfVKeQp0VR8dnqiARgU9OcNGfCfTXb0JI4SxBD3TEbe3n/b4F/wD4MXpMzlmEC7D8hfUK4=
+	t=1784984572; cv=none; b=ddL3xqlFhlhMMSOuVM4u9lcH+fhsuTdsOUF595iuFEjaMS78XSGw7KGmO5aitnAQKfrEDpNJUjseyAeiJMRCtSAAJI3TezK1+kTBzikq0Mrl0Mdp73vydTvmdufa6eQG5Ebzf2VttA3Qx4WWIIzw/hliI2g+91NA/YAUU8iv2nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784983735; c=relaxed/simple;
-	bh=Av4Bn+YSGRvGi+rY85WbBxqve3tJoV+orody3IYR/8s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sBSTRQN7RMzmhcvM90GNkzm+znmSdKd/F37EfyNL82DYZT3qxXE0OPooiYOi7zKoCJ93o0kJrb3zpH5v07JAGj/lTAYaXtTmFlr4gboL1Gfy+aISkbdQRoNmpQw5GtxVuayHFfdTbWYTBwYBsFWYnJdqtN/K3cIuql5+eyaj5s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=M9evjnyK; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1784984572; c=relaxed/simple;
+	bh=1E9ONkcs+kPUtpaIiuNPTyQmByw9UWGlAcAFqJ9woAE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aMQzFxhoFYGOnra+LqrL/njjexkKYip+sJ9asQLToaGOwl2Tj5nM7BWFkFA1/ZHP85tXcbiE6n7ydJXVo8aXZvNhsbNLIFNMRk/tTguooi5nk5r2dP1C8ejjuozvvYxhRSynL6zFoTMfgT3UHAoDV5GiDNIfhNmUe0AfacQ2+Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ilSP6pdz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="M9evjnyK"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 66PCm2xdD1763308, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1784983682; bh=Av4Bn+YSGRvGi+rY85WbBxqve3tJoV+orody3IYR/8s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=M9evjnyKw7mauaBq79X0LbQql5eXKNaq4nQiszneP3/D31keid1Cg9Xzwg2er6gbg
-	 qxOXG4gcScVMvojqEZPXEO9Hn5kEvdJL3axM39FcpuCi+Kg8yfz9K3HeVg4ITbEUbQ
-	 8hKYx/ogB5iuJJiaHH+QDBPoArHQCCVY4qvNLKXmQvkRQRn9HeLq8m0c0ekZO5X4rx
-	 cN/8MghuT3LPYO/7qcPfFe41rW5HDkcd7pM0fUljryX5PQiyyoG5zVVU57jpsE1i/C
-	 TS3at5Q4v2khAgJ6GPNOEYlX70h8HV2GS64xS1EMvBFhfroKo6tQOKYnBnzG+Yk+zj
-	 wWi6y4tE560zg==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 66PCm2xdD1763308
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 25 Jul 2026 20:48:02 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sat, 25 Jul 2026 20:48:03 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sat, 25 Jul 2026 20:48:02 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::e6fd:5a3f:8946:92c4%10]) with mapi id
- 15.02.2562.017; Sat, 25 Jul 2026 20:48:02 +0800
-From: =?big5?B?WXUtQ2h1biBMaW4gW6pMr6enZ10=?= <eleanor.lin@realtek.com>
-To: Jonathan Cameron <jic23@kernel.org>
-CC: "linusw@kernel.org" <linusw@kernel.org>, "andriy.shevchenko@intel.com"
-	<andriy.shevchenko@intel.com>, "mwalle@kernel.org" <mwalle@kernel.org>,
-	"brgl@kernel.org" <brgl@kernel.org>, =?big5?B?VFlfQ2hhbmdbsWmkbLZoXQ==?=
-	<tychang@realtek.com>, "wbg@kernel.org" <wbg@kernel.org>,
-	"mathieu.dubois-briand@bootlin.com" <mathieu.dubois-briand@bootlin.com>,
-	"nuno.sa@analog.com" <nuno.sa@analog.com>, "Michael.Hennerich@analog.com"
-	<Michael.Hennerich@analog.com>, "andy@kernel.org" <andy@kernel.org>,
-	"u.kleine-koenig@baylibre.com" <u.kleine-koenig@baylibre.com>,
-	"dakr@kernel.org" <dakr@kernel.org>, "bhelgaas@google.com"
-	<bhelgaas@google.com>, "o-takashi@sakamocchi.jp" <o-takashi@sakamocchi.jp>,
-	"dlechner@baylibre.com" <dlechner@baylibre.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux@analog.com"
-	<linux@analog.com>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	=?big5?B?Q1lfSHVhbmdbtsDgsq7LXQ==?= <cy.huang@realtek.com>,
-	=?big5?B?SmFtZXMgVGFpIFvAuafTrnBd?= <james.tai@realtek.com>
-Subject: RE: [PATCH v6 5/8] gpio: regmap: Add gpio_regmap_operation and
- value_xlate support
-Thread-Topic: [PATCH v6 5/8] gpio: regmap: Add gpio_regmap_operation and
- value_xlate support
-Thread-Index: AQHdGN5I8WbpmIM47EyUD7twNI9s1LZ8tSuAgAGAL/A=
-Date: Sat, 25 Jul 2026 12:48:02 +0000
-Message-ID: <6d1391c912514cf499b4e473be5db537@realtek.com>
-References: <20260721065802.689530-1-eleanor.lin@realtek.com>
-	<20260721065802.689530-6-eleanor.lin@realtek.com>
- <20260724225057.520dfbeb@jic23-huawei>
-In-Reply-To: <20260724225057.520dfbeb@jic23-huawei>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ilSP6pdz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C21BB1F00ACA
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 13:02:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784984558;
+	bh=8pTpZAYL/uV7mr593ZO/jWFOlR/Dg0f8GSHwPZDgbVg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=ilSP6pdzsjzP+GADsGwRiickTJJs8mt88Pod9bCCiLCSiS6e0uuMIcNVQhRau8EHC
+	 x2c4OiwgXb651O3nCODcMwqk0HEKVn0BkcVw7BmxbVLjdTjIzZaJSVCXcX9b1Fu4kA
+	 WBfsw6zjm572aJ2d7SP6olVeumgbhY2bFiqrW4lLFuFBDPVoyhqAq/5QBZJtoaMmh5
+	 NiT/QFBxwmrv2KMruA0ZcURmthLRKBbDjnwqJ1RuF2CWpPYpcY2NZlJH6CZTvMjp5R
+	 FmOAu8cCpUI6h1lV3w5soN3lLzU77KzFMYLiU3goSDMx+JxYj207iBsFcNAfvNykKo
+	 hNvVd0vrSJ5yQ==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5b2aa3be376so1021496e87.0
+        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 06:02:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqCadnuZsT/c516cD3hKRWgItHodhsuWH0ZV+B3QmpKOVYAX5KwXEYuEpbEKyehSv3/Tl8fFcjLjZ/X@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIGXpkGxbvza2dn/CD7vCTL4idokFiowwy/cPtBgjbOsyyOz9M
+	MczuTJ/cl/RSEY1HF1RMQBOA42az2QAr4Yoc/CQuNcRfUQZPDoIZMjbgwORHrlOng3fHN1km9C5
+	XFC+bGBn8AKJA1iQkaTCxP9H3lzH/BLw=
+X-Received: by 2002:a05:6512:15a8:b0:5b0:1f1e:1b6a with SMTP id
+ 2adb3069b0e04-5b2c1b38e19mr351733e87.26.1784984557428; Sat, 25 Jul 2026
+ 06:02:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20260723035823.2041832-1-justin.yeh@mediatek.com>
+In-Reply-To: <20260723035823.2041832-1-justin.yeh@mediatek.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Sat, 25 Jul 2026 15:02:24 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=fy+0ZZhg_eH_BGLUZfpK69zCcOaTp_LQ93yvSxUiS3w@mail.gmail.com>
+X-Gm-Features: AUfX_mwQ7iPbvZyUaqbt4Um5y3UrzgBH-Ks3ZwCCkWtrVCdeGDusOUwTXC1V-p4
+Message-ID: <CAD++jL=fy+0ZZhg_eH_BGLUZfpK69zCcOaTp_LQ93yvSxUiS3w@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] pinctrl: mediatek: Enable module build support
+To: Justin Yeh <justin.yeh@mediatek.com>
+Cc: Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PiBPbiBUdWUsIDIxIEp1bCAyMDI2IDE0OjU3OjU5ICswODAwDQo+IFl1LUNodW4gTGluIDxlbGVh
-bm9yLmxpbkByZWFsdGVrLmNvbT4gd3JvdGU6DQo+IA0KPiA+IEV4dGVuZCB0aGUgcmVnX21hc2tf
-eGxhdGUgY2FsbGJhY2sgd2l0aCBhbiBvcGVyYXRpb24gdHlwZSBwYXJhbWV0ZXINCj4gPiAoZW51
-bSBncGlvX3JlZ21hcF9vcGVyYXRpb24pIHRvIGFsbG93IGRyaXZlcnMgdG8gcmV0dXJuIGRpZmZl
-cmVudA0KPiA+IHJlZ2lzdGVyL21hc2sgY29tYmluYXRpb25zIGRlcGVuZGluZyBvbiB0aGUgc3Bl
-Y2lmaWMgR1BJTyBvcGVyYXRpb24uDQo+ID4NCj4gPiBJbiBhZGRpdGlvbiwgaW50cm9kdWNlIGEg
-bmV3IG9wdGlvbmFsICd2YWx1ZV94bGF0ZScgY2FsbGJhY2suIFRoaXMNCj4gPiByb3V0aW5lIGFs
-bG93cyBkcml2ZXJzIHRvIHRyYW5zbGF0ZSBvciBtb2RpZnkgdGhlIHJlZ2lzdGVyIHZhbHVlIGFu
-ZA0KPiA+IG1hc2sgaW1tZWRpYXRlbHkgYmVmb3JlIGEgd3JpdGUgb3BlcmF0aW9uLiBJdCBpcyBw
-YXJ0aWN1bGFybHkgdXNlZnVsDQo+ID4gZm9yIGhhcmR3YXJlIHRoYXQgcmVxdWlyZXMgYWRkaXRp
-b25hbCBjb250cm9sIGJpdHMsIHN1Y2ggYXMgYQ0KPiA+IHdyaXRlLWVuYWJsZSBiaXQsIHRvIGJl
-IGFwcGVuZGVkIHRvIHRoZSBkYXRhIGR5bmFtaWNhbGx5Lg0KPiA+DQo+ID4gQ29uc2VxdWVudGx5
-LCB1cGRhdGUgYWxsIGV4aXN0aW5nIGRyaXZlcnMgdXRpbGl6aW5nIHRoZSBncGlvLXJlZ21hcA0K
-PiA+IGZyYW1ld29yayAoYWNyb3NzIGRyaXZlcnMvZ3BpbywgZHJpdmVycy9paW8sIGFuZCBkcml2
-ZXJzL3BpbmN0cmwpIHRvDQo+ID4gYWNjb21tb2RhdGUgdGhlIG5ldyByZWdfbWFza194bGF0ZSBm
-dW5jdGlvbiBzaWduYXR1cmUuDQo+ID4NCj4gPiBTdWdnZXN0ZWQtYnk6IExpbnVzIFdhbGxlaWog
-PGxpbnVzd0BrZXJuZWwub3JnPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFl1LUNodW4gTGluIDxlbGVh
-bm9yLmxpbkByZWFsdGVrLmNvbT4NCj4gQWNrZWQtYnk6IEpvbmF0aGFuIENhbWVyb24gPGpvbmF0
-aGFuLmNhbWVyb25Ab3NzLnF1YWxjb21tLmNvbT4NCj4gI2Zvci1paW8NCg0KSGkgSm9uYXRoYW4s
-DQoNClRoYW5rcyBmb3IgdGhlIEFja2VkLWJ5IHRhZyBvbiB2NiENCg0KSG93ZXZlciwgSSBoYXZl
-IHNwbGl0IHRoaXMgcGF0Y2ggaW50byB0d28gc2VwYXJhdGUgcGF0Y2hlcyBpbiB0aGUgdjcuDQpU
-aGUgdGhlIGNvcmUgbG9naWMgcmVtYWlucyB0aGUgc2FtZSBhcyBpbiB2Ni4NCkp1c3QgZGl2aWRl
-ZCBmb3IgYmV0dGVyIHN0cnVjdHVyZS4gDQoNCkhlcmUgYXJlIHRoZSBsaW5rcyB0byB0aGUgdjcg
-cGF0Y2hlczoNCkxpbms6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvMjAyNjA3MjMwMzQy
-MzcuMjUwMTUwNy02LWVsZWFub3IubGluQHJlYWx0ZWsuY29tLw0KTGluazogaHR0cHM6Ly9sb3Jl
-Lmtlcm5lbC5vcmcvbGttbC8yMDI2MDcyMzAzNDIzNy4yNTAxNTA3LTctZWxlYW5vci5saW5AcmVh
-bHRlay5jb20vDQoNCkJlc3QgcmVnYXJkcywNCll1IENodW4NCg==
+On Thu, Jul 23, 2026 at 5:58=E2=80=AFAM Justin Yeh <justin.yeh@mediatek.com=
+> wrote:
+
+> This series lets the MediaTek pinctrl drivers be built as loadable
+> kernel modules. This is required for Android GKI + vendor_dlkm
+> deployments, where vendor-specific drivers must be kept separate from
+> the GKI vmlinux and loaded as modules from the vendor partition.
+>
+> Enabling the individual SoC drivers as modules is a single logical step,
+> but it has a few prerequisites, so the series is:
+>
+>   1. Fix a pre-existing GPIO chip lifecycle bug. The gpio_chip lives in
+>      device-managed memory but is registered with the non-managed
+>      gpiochip_add_data(). While the drivers were built-in only this was
+>      harmless, but once they can be unbound/rmmod'd, devm frees the
+>      backing memory while the chip is still registered (use-after-free).
+>      Switch to devm_gpiochip_add_data() in the shared probe/init paths.
+>
+>   2. Fix a pre-existing EINT resource leak on unbind. mtk_eint_do_init()
+>      creates an IRQ domain, an interrupt mapping per EINT line and a
+>      chained handler on the parent interrupt, none of which were ever
+>      released. Once the drivers can be unbound/rmmod'd this leaves a
+>      dangling IRQ domain, mappings whose chip data points at freed
+>      memory, and a chained handler still firing into that freed data.
+>      Tear them down with a device-managed action, matching the devm
+>      lifecycle used for the gpio_chip.
+>
+>   3. Make the shared common code modular. The SoC drivers link against
+>      pinctrl-mtk-common.c (v1), pinctrl-moore.c and pinctrl-mtmips.c,
+>      whose Kconfig symbols were bool and which exported nothing. Without
+>      this, selecting a SoC driver as =3Dm forces the common symbol to =3D=
+y
+>      and the module fails to link against the unexported entry points.
+>      Convert PINCTRL_MTK, PINCTRL_MTK_MOORE and PINCTRL_MTK_MTMIPS to
+>      tristate, export the entry points, and add MODULE_LICENSE()/
+>      MODULE_DESCRIPTION(). The already-modular v2 common code
+>      additionally needs mtk_rmw() exported, since it is called directly
+>      by SoC drivers such as mt7623. The shared symbols are exported in
+>      the "MTK_PINCTRL" symbol namespace (EXPORT_SYMBOL_NS_GPL()), and
+>      each SoC driver that uses them declares MODULE_IMPORT_NS().
+>
+>   4. Convert the MT7986 driver to a single initcall. It registers two
+>      platform drivers (mt7986a/mt7986b) and used to call arch_initcall()
+>      twice. A module has only one module_init(), so two arch_initcall()s
+>      break the module build with a redefinition of
+>      init_module()/__inittest(). Fold both drivers into one
+>      platform_register_drivers() call from a single initcall. No
+>      functional change when built-in.
+>
+>   5. Flip every SoC driver's Kconfig from bool to tristate and add the
+>      module metadata. This also adds the MODULE_DEVICE_TABLE(of, ...)
+>      entries that several drivers were missing, so the resulting modules
+>      carry the modalias information udev needs to autoload them on a
+>      matching device.
+>
+> The series builds cleanly under allmodconfig on arm64 (all SoC drivers
+> as =3Dm).
+>
+> Changes in v7:
+>  - patch 2/5 (free EINT resources on unbind): add synchronize_irq() in
+>    the teardown, after detaching the chained handler and before disposing
+>    of the domain/mappings, so any in-flight handler has finished before
+>    the data it references is freed, as suggested by AngeloGioacchino Del
+>    Regno. Also add the missing #include <linux/interrupt.h> that
+>    synchronize_irq() needs. Added his Reviewed-by.
+>  - patch 5/5 (enable module build support): add MODULE_DEVICE_TABLE(of,
+>    ...) to the SoC drivers that were missing it. AngeloGioacchino and
+>    Chen-Yu Tsai both pointed this out; without it the module still
+>    builds but is not autoloaded by udev on a matching device.
+>
+> Review status: patches 1/5 and 4/5 carry Chen-Yu Tsai's Reviewed-by;
+> patch 2/5 carries AngeloGioacchino Del Regno's Reviewed-by; patch 5/5
+> carries AngeloGioacchino Del Regno's Reviewed-by (from the per-driver
+> patches reviewed in v4, preserved across the squash). Patch 3/5 has not
+> been reviewed yet.
+
+All patches applied, I had to rebase patch 5/5, please check the
+result!
+
+Yours,
+Linus Walleij
