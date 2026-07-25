@@ -1,82 +1,83 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F8E3988E3
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD0D3783AF
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784971335; cv=none; b=HW4mD6StJYdrnEFAhiWGVwxeD29jyBC7mx9e+dQvrlVp17eTy3DM8EV0urg+dp/3jrO0mrum98tmdgAWdYb0iv1pKpuA1yBtNjJr+c0oN9kntRKMs3Mzr3RIov32g1dB+b/vnnAgXL2ghEd8NwyBMXRlzOm3iExR/z7y5Wj6tqc=
+	t=1784971428; cv=none; b=KAkNwZtqxPdqS23fQWnUiWAjAGUw/NpC+Fcz7jj1cuFH0EEGVANwLdAK1XL8dgQp5EB3rUqvoRkUtbLK4MWWBDol2tMdA7/eWkfyPGGHOSvLHw1bsttyEhgjMjXqWUufNaGHZoAl2KOxbYfCEshn15zl/+rkBy64fQ/cFT7IpUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784971335; c=relaxed/simple;
-	bh=RPDFRdWxVIW9S40pzEN5XZuqdsGYTf0D2/HjPnJLjSA=;
+	s=arc-20240116; t=1784971428; c=relaxed/simple;
+	bh=t7MThxYmbb3VjZjbffFGWRZiUad0vGZbepYSj99HxYc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kAB0vxnobVFcbxY3gut3Ng6GqrF1MYkeEbEs7RP/wGu2hd66+IemP5c2ddWJdq5fUycUDbbF6xAkshBwGxlkzjKrqXVxXTiRpbybzj8xxk6eyY/gxr8SMP6YYZ5fRy0+5TjjBJdGrZN0mLd/SRHbfvk0dUt8EEDDXDjqcJ9S0oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evfVgZ+N; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=u949Uv3/vBkoqilgbtEyx3Xk/eFHuwqY+PD/n1dGKWlrODXI+fnj+BUHGoSZnHEwCLQ2Tevydk23i2d2Q1zPi4Y6Qj781KXoZqQImXJhGOr6+crHtFUiYhnQ5g8gECpKiID4acapJlirasAYIrJlDOYkIeJpTsgbqR/Q3Uvtd44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBB7TUky; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evfVgZ+N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26AE91F000E9
-	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:22:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBB7TUky"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EFCA1F00AC4
+	for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 09:23:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784971332;
-	bh=yeffZJ5O7jKGs/TLFEJVw8uSr4ijtSiArzHMzMUH3yo=;
+	s=k20260515; t=1784971427;
+	bh=t7MThxYmbb3VjZjbffFGWRZiUad0vGZbepYSj99HxYc=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=evfVgZ+NvqPhkm2zem17DUpcWqWTEJbj0XeW6AMsN8v/mE9jnDRne8gb+1WYKr/Hr
-	 57a/YGXe9CuB9WdTAkN1WDuE+CghA6EV1yKa+Yz4IScB3QvqnKh9tgpdhmUzx/0bQU
-	 938lV+nLrTaEm7uTpZNikS+TvPjIVK9UMuY1QouI8tHC3a0gUvO6Nzgfery7VOVWkl
-	 ANZOb4jt7h5xHts6Tcniyuu5JZCQQN1aMhg/fhuhv1nr56pkPKbBNRObL9BQAb1UdU
-	 y6zNtKzR2qjru7XO8jpoQqEd6fXqLf7/keOGdlrtw4Jmw9mfCe37S0CeDUrXoS1IEa
-	 knrobmKtS1kDw==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5b015532f7bso1195684e87.0
-        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:22:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrRa0DgYd2zkut3tQ3uqvLvEz7Vuu2PPLW71Gj4XHHlO+FbzD5jzmNBk3wbyhXz6jEZE9CnT17IOha6@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK76mMVrJDava2EPfD2iJhCysD2jvdgClYlflNtkMgQ/FeWMEt
-	AiIuW1MUnwdBoMqjmxcgfxB3O9kPPbMkfTXsqqVhHdSf/bAQ/+kzHGyPEzQ9ArKIgF14K/ZZURp
-	y2wasstC+rp3gOMQf+gXGxC+QnYouHnw=
-X-Received: by 2002:a05:6512:15a1:b0:5ae:b2b0:4c15 with SMTP id
- 2adb3069b0e04-5b2c1b20907mr265837e87.11.1784971330951; Sat, 25 Jul 2026
- 02:22:10 -0700 (PDT)
+	b=OBB7TUkyxV6M8zHbAtd0g+2BpFBj6UyGt9V1b48RgtcBxfaQhdVkt1siIm7j1ZV0j
+	 BH9ClGTcTIHpwY8e0BIefu9c8Sxsqs7GfQhAIFBhEkJLH6KK9D5t+GThvabVzX5gx9
+	 VPn0yOEKRu+fCaIcZRLmUovhUR0iriqplRcCgj202IRE3hgB28TusOVS4UXG2UafBo
+	 wUYw9GLL1tptWiTdV/33ReWgv7zI495qqEuijaopOTGFW2WVl/wLsKi9o/5jTVrJZX
+	 JJISt6bjVDfPRWADMU54whT9aLnHvTkaFmwRC3h5v7c1W5NVG5VOZRnvgk338tSFxC
+	 bbVxRIPxSljXw==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-39c9452244aso11752911fa.3
+        for <linux-gpio@vger.kernel.org>; Sat, 25 Jul 2026 02:23:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rp1aDO2YcSZbIf5WSZTOdLNWwwLX3NKLahk0qO1t6OsPDReS/um3sDQaKBw4Q5L1+rkYGGX/GADpngE@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQUTNBnEr8aYsW5UqfdyhoFR9QFdlrjRUBFc/4P37IM0SDQ3S+
+	08Y96PLBU5FW6WS5m+0LuaglRhy9ctEfvtPpXkACBg6+y0xyeHCnG09F5XVE7hKznIa3QhcLcGi
+	eOvel2xV3fXv3Cr9WOQcwwg2KXjHz6NE=
+X-Received: by 2002:a05:6512:1295:b0:5b1:59ec:245f with SMTP id
+ 2adb3069b0e04-5b2c1afb585mr286093e87.8.1784971425959; Sat, 25 Jul 2026
+ 02:23:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260719094427.1328725-1-bennib@mailbox.org>
-In-Reply-To: <20260719094427.1328725-1-bennib@mailbox.org>
+References: <20260718002146.698973-1-ts.solidarity@gmail.com>
+In-Reply-To: <20260718002146.698973-1-ts.solidarity@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 25 Jul 2026 11:21:58 +0200
-X-Gmail-Original-Message-ID: <CAD++jLm8cqC2Y6nJLy4KULSbq8+p=+eTDH9Kz2dDSpfZH0Eb0w@mail.gmail.com>
-X-Gm-Features: AUfX_mz1K-DO6jIR7qrurrfXV_-LnGCnet5e8Rx3EcWtnOYCGFlm6uPvx3txgt8
-Message-ID: <CAD++jLm8cqC2Y6nJLy4KULSbq8+p=+eTDH9Kz2dDSpfZH0Eb0w@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: microchip-sgpio: add missing select REGMAP_MMIO
-To: Benjamin Boortz <bennib@mailbox.org>
-Cc: andy.shevchenko@gmail.com, lee@kernel.org, vladimir.oltean@nxp.com, 
-	colin.foster@in-advantage.com, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Andy Shevchenko <andy@kernel.org>
+Date: Sat, 25 Jul 2026 11:23:33 +0200
+X-Gmail-Original-Message-ID: <CAD++jLns-5nxWjwa9LiDVbvNngQE+OYF05nD+wd7J1H3rfv9yg@mail.gmail.com>
+X-Gm-Features: AUfX_mzEZphqkBqhPp56J4Kw53AoG30iiWRKp6XfygP-QF_fd1T9aE0wFbObjJE
+Message-ID: <CAD++jLns-5nxWjwa9LiDVbvNngQE+OYF05nD+wd7J1H3rfv9yg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: ipq9650: fix audio_sec_mclk_in1/out1 group pins
+To: Taceddin Sancak <ts.solidarity@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 19, 2026 at 11:45=E2=80=AFAM Benjamin Boortz <bennib@mailbox.or=
-g> wrote:
+On Sat, Jul 18, 2026 at 2:22=E2=80=AFAM Taceddin Sancak <ts.solidarity@gmai=
+l.com> wrote:
 
-> The driver calls ocelot_regmap_from_resource() via <linux/mfd/ocelot.h>,
-> which internally uses devm_regmap_init_mmio() and requires REGMAP_MMIO.
-> The Kconfig entry does not select REGMAP_MMIO, causing a build failure
-> when no other driver in the config happens to pull in REGMAP_MMIO:
+> The audio_sec_mclk_in1 and audio_sec_mclk_out1 groups both list
+> "gpio37", but in the pingroup table those functions are muxed on
+> gpio39, while gpio37 provides the audio_sec_mclk_in0/out0 variants.
+> This makes both functions unusable: selecting them on gpio39 is
+> rejected by the pinmux core because the group is not listed for the
+> function, and selecting them on gpio37 trips the WARN_ON() in
+> msm_pinmux_set_mux() and fails with -EINVAL because that group
+> cannot mux them.
 >
->   include/linux/mfd/ocelot.h:34:24: error: implicit declaration of functi=
-on 'devm_regmap_init_mmio'
+> Point both groups at gpio39, matching the pingroup table. This also
+> mirrors the primary audio MCLK pair, where the mclk0 and mclk1
+> variants live on separate pins (gpio53 and gpio51 respectively).
 >
-> Found by randconfig testing on arm64; tinyconfig reproducer below.
->
-> Fixes: 2afbbab45c26 ("pinctrl: microchip-sgpio: update to support regmap"=
-)
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Benjamin Boortz <bennib@mailbox.org>
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+> Fixes: 3c8e7ba0e399 ("pinctrl: qcom: Introduce IPQ9650 TLMM driver")
+> Assisted-by: Claude:claude-fable-5
+> Signed-off-by: Taceddin Sancak <ts.solidarity@gmail.com>
 
-Patch applied for fixes.
+This patch -> Bartosz
+Acked-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
