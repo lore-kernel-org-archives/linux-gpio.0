@@ -1,134 +1,104 @@
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D0C22D7A9;
-	Sun, 26 Jul 2026 12:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250E73BB13F;
+	Sun, 26 Jul 2026 14:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785070382; cv=none; b=XHWILFVlCVpD6N/DLooNpQu9uacwSmigHgAVzokPEeiagf0Kj4ZPKeC1TGmUO1aGxnbRSCMI037qteKRpST7r/3DP4dwBMERUCcPXBE9rmH5P3riyzzg6crBVMIE5IdgaUFbGBDnyuYpDpBvNI1F7M13ac2uKw3hF0f/HXRis2c=
+	t=1785075087; cv=none; b=eWeYvJYmzp5CSJklOU2uu3twKSdEPBgR+Ph3iyHNymzsD/02q099TAMpXGDsqPuZ4INdvryUlRR41/zk2Opo7YF1I/AES5R4SZIok2I1+cjbCvtIwwa0Sw1KIV8cYUFSB5aUQeu6m4DpZFCKxqyrutSJNB/hqWEhTvju3LAcbBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785070382; c=relaxed/simple;
-	bh=XZuaYOoovsfL5amEOzT38vDiTHJ0q8Z31zzCYRKhJi8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WDWaDrwODRgf8pQfQS7OJgxa9iMPFF7GHX6EYVuozcJFY4PlBS7cGWZkgHJT1YUNjzslJspV4RMjkHvWlFcM3IBwUphHCOEQyBLdaEZhDYDOcY5ReL6MLVAk7A+8HW2JpBjBGqhGkJCXFqqzKxIsmNTs9gMfU/KTPl6u/vRJJ2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=A0vqyroW; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+	s=arc-20240116; t=1785075087; c=relaxed/simple;
+	bh=RsM7wLQ/jOnJ2CAOeD6Me72MGP1YsDb+SowXpnXJzvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XCPKoBpZGA55XoQfHNGiOVkxD4jbgfnfLUgcqRKTFS9HgLFfYIc+uwTbkRzJFiqM41u0UGkvdiYo8eplTOT9l/NSLct5Um4LQDBGFu+1N+ghsZ1YbICk/ohxcB6moftdFS5vUB1d+TGrmaGeCCaGL0LU5oAZsbMGEVZg63pCzew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PicAm15s; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="A0vqyroW"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 66QCqBxtD2402737, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1785070331; bh=CLzgZ8gVrtLaA0sFxP9OQ2184DrYNzFQrOiTJhEYTbM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=A0vqyroWevpW1uZTD9Ab83+sQwRJ3/48Ii/SCVIVKXciHUFEir9PhNzNmHPpRuHsm
-	 CELRGFgdwP+BISCfD246rWXBB7wgbRPu1qCUwLpTb8CfSSgDhKyV2rY6cA99pk2RVj
-	 5uOKwThox/gULJW9lMGLuU+7sIcmzkUlfIPZnHKolVeLhTVt1gyMHEsUBVJVSMvaH4
-	 q09m3cWIFiSMm3hhMC4LDa7RYJQ9Jyjq9Ol3VhCeETMaHAUza2oURdY/7fR7E7W6tl
-	 xqCVBVIGdFpU9a4uThBr64iXnLbYVJzoCAHWoUgNOqFkl8eLIluJ3pwAcP8/y1QhDp
-	 qbb8ihV1NrAHA==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 66QCqBxtD2402737
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 26 Jul 2026 20:52:11 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sun, 26 Jul 2026 20:52:11 +0800
-Received: from RTKEXHMBS03.realtek.com.tw (10.21.1.53) by
- RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Sun, 26 Jul 2026 20:52:11 +0800
-Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS03.realtek.com.tw
- (10.21.1.53) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Sun, 26 Jul 2026 20:52:11 +0800
-From: Yu-Chun Lin <eleanor.lin@realtek.com>
-To: <linusw@kernel.org>, <andriy.shevchenko@intel.com>, <mwalle@kernel.org>,
-	<brgl@kernel.org>, <tychang@realtek.com>, <wbg@kernel.org>,
-	<mathieu.dubois-briand@bootlin.com>, <nuno.sa@analog.com>,
-	<Michael.Hennerich@analog.com>, <jic23@kernel.org>, <andy@kernel.org>,
-	<o-takashi@sakamocchi.jp>
-CC: <u.kleine-koenig@baylibre.com>, <dakr@kernel.org>, <bhelgaas@google.com>,
-	<eleanor.lin@realtek.com>, <dlechner@baylibre.com>,
-	<linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux@analog.com>, <linux-iio@vger.kernel.org>, <cy.huang@realtek.com>,
-	<james.tai@realtek.com>, <stanley_chang@realtek.com>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v8 8/9] gpio: regmap: Add IRQ enable/disable helpers
-Date: Sun, 26 Jul 2026 20:51:59 +0800
-Message-ID: <20260726125209.140307-9-eleanor.lin@realtek.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260726125209.140307-1-eleanor.lin@realtek.com>
-References: <20260726125209.140307-1-eleanor.lin@realtek.com>
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PicAm15s"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 31E5540E00C3;
+	Sun, 26 Jul 2026 14:11:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 0d6Ot8_kfMTT; Sun, 26 Jul 2026 14:11:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1785075070; bh=r8doXaDn6ecHI39IRrqLZtoTpcRGraO81Kh8LY5Konc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PicAm15s5uT96SZg3N5NWfi+nCimx4ItIGt7nRIwH+6Du9jqDhyW5STVkhbifcuL7
+	 4JQCnJ1b/WdEduujnyrWslHwKUejWKGmu000WgsSEZvlvQ4e1jkD+pdkSfPcT7zSnU
+	 JVf7fIuElseMtHnwIJWZDL4jY7lLeDMejnaxUN2Wi528uwBP6KtsTMBflle1/sGmQ9
+	 PCNvUcQm3J3MBK+ENZfF5fsFGDBCZkQczEgrhGS+6B2kDbF33DP/pUaXp3Rdfzgp3h
+	 Mg28cYxc6+z0Rb12nvJZD5mkxDm/+28zUex+Imiqr738I6QMicj42IgC6CFQDcQuhI
+	 v1aLwwFEV+Hs3EUnzQ28+R44SQ9JXFzMX5dKxNWYAkgXcMfPVUs87XC1CQ9pI9iOhu
+	 4x/0EodwXBAnF0AC1LlybjC/K8ADD3ZCnioQKWcMPAAJMkzkn6Ed/b7vnCN2ZZfnns
+	 g19aV1R8B+hLk/nH1JImgWOuHvKNirKsaAbIrfXT1fN2dm3BBliOY8hfUjvYrUOzQ4
+	 hg3tPClCDuJe45kY0Q5GsWBm34c1B4fGcT4Pa+uzeRc2g+IyOXM5r19vpb+uHuG8PV
+	 hsYj5GRZ/SloQZMSg57Q23s74VhXbOhcyHP1pasyHkKda5DqY3UsW9ZFhXbmFVUdo0
+	 tvhT5aBPUeYNBwHuOCbWzvEA=
+Received: from stx.tnic (unknown [IPv6:2600:1700:38ca:c00::1b])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CE79640E00B8;
+	Sun, 26 Jul 2026 14:10:32 +0000 (UTC)
+Date: Sun, 26 Jul 2026 07:10:29 -0700
+From: Borislav Petkov <bp@alien8.de>
+To: Eliav Farber <farbere@amazon.com>
+Cc: rafael@kernel.org, tony.luck@intel.com, guohanjun@huawei.com,
+	mchehab@kernel.org, xueshuai@linux.alibaba.com, lenb@kernel.org,
+	laurent.pinchart@ideasonboard.com, linusw@kernel.org,
+	brgl@kernel.org, orsonzhai@gmail.com, baolin.wang@linux.alibaba.com,
+	zhang.lyra@gmail.com, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, dmitry.torokhov@gmail.com,
+	hansg@kernel.org, ilpo.jarvinen@linux.intel.com, W_Armin@gmx.de,
+	ukleinek@kernel.org, fabio.m.de.francesco@linux.intel.com,
+	kaihengf@nvidia.com, ankita@nvidia.com, leitao@debian.org,
+	pedro.pbg@usp.br, paulmck@kernel.org, frederic@kernel.org,
+	kees@kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v4 00/13] notifier: add device-managed registration APIs
+ and convert drivers
+Message-ID: <20260726141029.GAamYVVeVnJfH5ebH5@fat_crate.local>
+References: <20260726101739.33170-1-farbere@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260726101739.33170-1-farbere@amazon.com>
 
-Add gpio_regmap_enable_irq() and gpio_regmap_disable_irq(). Since struct
-gpio_regmap is opaque, drivers cannot access the embedded gpio_chip directly.
+On Sun, Jul 26, 2026 at 10:17:26AM +0000, Eliav Farber wrote:
+> Many drivers repeat the same boilerplate when registering notifiers with
+> device lifetime:
 
-Reviewed-by: Michael Walle <mwalle@kernel.org>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Linus Walleij <linusw@kernel.org>
-Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
----
-Changes in v8:
-- Add Reviewed-by tag from Linus.
----
- drivers/gpio/gpio-regmap.c  | 12 ++++++++++++
- include/linux/gpio/regmap.h |  5 +++++
- 2 files changed, 17 insertions(+)
+From: Documentation/process/submitting-patches.rst
 
-diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-index 19e33e361cc4..fb21396e1d02 100644
---- a/drivers/gpio/gpio-regmap.c
-+++ b/drivers/gpio/gpio-regmap.c
-@@ -346,6 +346,18 @@ void *gpio_regmap_get_drvdata(struct gpio_regmap *gpio)
- }
- EXPORT_SYMBOL_GPL(gpio_regmap_get_drvdata);
- 
-+void gpio_regmap_enable_irq(struct gpio_regmap *gpio, irq_hw_number_t hwirq)
-+{
-+	gpiochip_enable_irq(&gpio->gpio_chip, hwirq);
-+}
-+EXPORT_SYMBOL_GPL(gpio_regmap_enable_irq);
-+
-+void gpio_regmap_disable_irq(struct gpio_regmap *gpio, irq_hw_number_t hwirq)
-+{
-+	gpiochip_disable_irq(&gpio->gpio_chip, hwirq);
-+}
-+EXPORT_SYMBOL_GPL(gpio_regmap_disable_irq);
-+
- /**
-  * gpio_regmap_register() - Register a generic regmap GPIO controller
-  * @config: configuration for gpio_regmap
-diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
-index dd9de9958409..6f52c140e50d 100644
---- a/include/linux/gpio/regmap.h
-+++ b/include/linux/gpio/regmap.h
-@@ -3,6 +3,8 @@
- #ifndef _LINUX_GPIO_REGMAP_H
- #define _LINUX_GPIO_REGMAP_H
- 
-+#include <linux/types.h>
-+
- struct device;
- struct fwnode_handle;
- struct gpio_regmap;
-@@ -165,4 +167,7 @@ void *gpio_regmap_get_drvdata(struct gpio_regmap *gpio);
- int gpio_regmap_reqres_irq(struct gpio_regmap *gpio, unsigned int offset);
- void gpio_regmap_relres_irq(struct gpio_regmap *gpio, unsigned int offset);
- 
-+void gpio_regmap_enable_irq(struct gpio_regmap *gpio, irq_hw_number_t hwirq);
-+void gpio_regmap_disable_irq(struct gpio_regmap *gpio, irq_hw_number_t hwirq);
-+
- #endif /* _LINUX_GPIO_REGMAP_H */
+Don't get discouraged - or impatient
+------------------------------------
+
+After you have submitted your change, be patient and wait.  Reviewers are
+busy people and may not get to your patch right away.
+
+Once upon a time, patches used to disappear into the void without comment,
+but the development process works more smoothly than that now.  You should
+receive comments within a week or so; if that does not happen, make sure
+that you have sent your patches to the right place.  Wait for a minimum of
+						     ^^^^^^^^^^^^^^^^^^^^^
+one week before resubmitting or pinging reviewers - possibly longer during
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+busy times like merge windows.
+
 -- 
-2.43.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
