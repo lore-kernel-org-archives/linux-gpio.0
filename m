@@ -1,154 +1,157 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.77.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED0E5477E
-	for <linux-gpio@vger.kernel.org>; Sun, 26 Jul 2026 07:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5701DF75A;
+	Sun, 26 Jul 2026 10:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.77.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785050619; cv=none; b=sbiRYS4gZrdIcyNSU7mLEFTMSekfE1vsPG+C9i+p7xn82jaKf3oIaaF+DY+XRmg77J0CaktOEN2W8Wj7kFsn9Cwj1Ow0RE7p7SAQ5iFu2psZRxSUCmH65jFNLXK5EkOO7Skb2xhnFtmiynWqbdMEMZp/25Kv279YAkBLpMzBiNo=
+	t=1785061078; cv=none; b=OgXPoGvGdH2dMOp4JhPSZNMOYD5u1lp6dQDsbsSSH0OLCIdSrlgbe6Z5GJM3zIoF+hBDpHPr5YJDJqa9tOvb9hnnGRfBcMTVDLQERGNpxwUMs6UxmwV+/Gi9xZAJxTy9jkc+3XEssMeMdbQ/Ng0DG3T94Yt8v5CM5c0Odx2+VhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785050619; c=relaxed/simple;
-	bh=iClk7UB+LHumE3qBCLINl8YaYZxtBF8GkFNXlUop01o=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=TPkvGUC0XJRdm0V+4dcHkJprcGh5gIuRQHBF6l0Ik9V0pmMkgTiI3ewZq36zeSvYOPdpT0te6Ts7/TH0P0MfLoZgiM7IlVE3OBO3di2awXpCkDqyc1ShkfivLW4xOpEJD/hWIYhp8JFVcG224yjfvVPAI2qhJ6HvddbLL7zJrdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YZy8Sp7/; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1785061078; c=relaxed/simple;
+	bh=allb5KNeRefH9BMm4RvnlhgzOZPGgF0M58H36b7ZsKI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rkHrUwhp1ojg8pM9IN5MjsO2lIx2XY9uOJirV6I/6EQ5+3Ym2u97Gi16+2a5NsP8LhTcCIsFAPVIc4prnAqU6oq8n72VeRT2jOvgeckCffp7J3tN42qBaJ3XgoWkIFYPRf4fWGC5xwsNbIxRACjg1nuZRcEeDGJMoz/uR0B8Mzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=F+3+hNmV; arc=none smtp.client-ip=44.246.77.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YZy8Sp7/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1785050617; x=1816586617;
-  h=date:from:to:cc:subject:message-id;
-  bh=iClk7UB+LHumE3qBCLINl8YaYZxtBF8GkFNXlUop01o=;
-  b=YZy8Sp7/BpqBCanHHJf/IYPnguocGcM1du/BT6pFsuwvk8ieaquMXzX2
-   Wtl0Hpo8f0JiydA4Fywnj3CAlhs9q8dPKHhkvT7cV2PqrR9qnkVfCdgzo
-   cWAFB8gniLA7IqaxKiccHJ0VHoXMXLIzaoU9eLVHMwbCQgexQ+keijR7a
-   KjjzbZ6m0CFBSFybD37GXOU+15zdQHDU+k20s8Z00W5ctnSzmheCUFH+6
-   fUvRF2otFhC9Gji09MFutlUfNesR3nXpRLxLsa9E5QcGL9PnVSwhEBLbt
-   Z5GsKv7j625qbGKgDXWo9S52aQMxZD3LkkJnAToEFzJWqfIIl5sGgtVT6
-   A==;
-X-CSE-ConnectionGUID: bkSAVpBTSBey3s5/yU+wXA==
-X-CSE-MsgGUID: 1FgO8tSLTnCPoprRdzteKA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11856"; a="85839580"
-X-IronPort-AV: E=Sophos;i="6.25,186,1779174000"; 
-   d="scan'208";a="85839580"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2026 00:23:37 -0700
-X-CSE-ConnectionGUID: 7aanYwTIRWidR2ohhFbEJA==
-X-CSE-MsgGUID: azR5K7C1Q7aB/rtWa8XnuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,186,1779174000"; 
-   d="scan'208";a="255184497"
-Received: from lkp-server02.sh.intel.com (HELO ea128546eb3d) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 26 Jul 2026 00:23:35 -0700
-Received: from kbuild by ea128546eb3d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wntCv-00000000cNL-06sr;
-	Sun, 26 Jul 2026 07:23:33 +0000
-Date: Sun, 26 Jul 2026 15:22:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- 459890c415306f40886195c07f695d688c87c1dc
-Message-ID: <202607261539.gppWEtzb-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="F+3+hNmV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1785061076; x=1816597076;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=NOzRwXLbdThqlskEtxfEsqrmGFxHPHNE59ZV5xlBpwA=;
+  b=F+3+hNmVcKWfyNGeqHlsTRQ4bAz6NCwMXKO64eJjoyOTBg6RAr3cGcIC
+   oVjzDPZaE893i3Erc6nNLnLZK0n/t3Dpv1Y9y9fK6Lpu3quwwGZjz+REE
+   7Tko4cI9/XFx3RgkvrYVw9MPvXi0TzhwiITG0+yHyffBMm6QPygBR8DdV
+   ssP6JNjey7EDS5J1p6VcJZe0A2KWNOZy4Cxpls2Z5QcVFQSXJshARg1vc
+   fOTAPAdziTXpAuDOBbwF8Xm++e18t7IT0kF82K+kGMM7doBwh9n+zzlLs
+   xftRdGW/NEFs42GDi3nLg8fS3gEHxn1fxPVWd8cyNttER1TGA/NMKj82/
+   Q==;
+X-CSE-ConnectionGUID: DThI+WwJRpi0A7aplxF1bg==
+X-CSE-MsgGUID: ibitYszJRrO3uyoJj7NbUQ==
+X-IronPort-AV: E=Sophos;i="6.25,186,1779148800"; 
+   d="scan'208";a="24362879"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2026 10:17:53 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [205.251.233.178:2757]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.32.26:2525] with esmtp (Farcaster)
+ id 4c7151db-74cc-41dd-8f7c-cde8848a34bf; Sun, 26 Jul 2026 10:17:53 +0000 (UTC)
+X-Farcaster-Flow-ID: 4c7151db-74cc-41dd-8f7c-cde8848a34bf
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.43;
+ Sun, 26 Jul 2026 10:17:53 +0000
+Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
+ (172.19.116.181) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.45; Sun, 26 Jul 2026
+ 10:17:48 +0000
+From: Eliav Farber <farbere@amazon.com>
+To: <rafael@kernel.org>, <tony.luck@intel.com>, <bp@alien8.de>,
+	<guohanjun@huawei.com>, <mchehab@kernel.org>, <xueshuai@linux.alibaba.com>,
+	<lenb@kernel.org>, <laurent.pinchart@ideasonboard.com>, <linusw@kernel.org>,
+	<brgl@kernel.org>, <orsonzhai@gmail.com>, <baolin.wang@linux.alibaba.com>,
+	<zhang.lyra@gmail.com>, <jic23@kernel.org>, <dlechner@baylibre.com>,
+	<nuno.sa@analog.com>, <andy@kernel.org>, <dmitry.torokhov@gmail.com>,
+	<hansg@kernel.org>, <ilpo.jarvinen@linux.intel.com>, <W_Armin@gmx.de>,
+	<ukleinek@kernel.org>, <fabio.m.de.francesco@linux.intel.com>,
+	<kaihengf@nvidia.com>, <ankita@nvidia.com>, <leitao@debian.org>,
+	<farbere@amazon.com>, <pedro.pbg@usp.br>, <paulmck@kernel.org>,
+	<frederic@kernel.org>, <kees@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<linux-pwm@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+	<linux-input@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>
+Subject: [PATCH v4 00/13] notifier: add device-managed registration APIs and convert drivers
+Date: Sun, 26 Jul 2026 10:17:26 +0000
+Message-ID: <20260726101739.33170-1-farbere@amazon.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D032UWB002.ant.amazon.com (10.13.139.190) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: 459890c415306f40886195c07f695d688c87c1dc  pinctrl: mediatek: remove conditional return with no effect
+Many drivers repeat the same boilerplate when registering notifiers with
+device lifetime:
 
-elapsed time: 867m
+  1. Register the notifier with *_notifier_chain_register()
+  2. Check for error
+  3. Register a devm action to unregister on teardown
+  4. Implement a per-driver static unregister callback
 
-configs tested: 77
-configs skipped: 1
+This series adds devm_atomic_notifier_chain_register() and
+devm_blocking_notifier_chain_register() that automatically unregister
+the notifier when the device is unbound, then converts 11 drivers to use
+them.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Each conversion eliminates a per-driver unregister callback and the
+associated devm_add_action_or_reset() call, reducing code by ~15 lines
+per driver.
 
-tested configs:
-alpha                  allnoconfig    gcc-16.1.0
-alpha                 allyesconfig    gcc-16.1.0
-alpha                    defconfig    gcc-16.1.0
-arc                   allmodconfig    gcc-16.1.0
-arc                   allyesconfig    gcc-16.1.0
-arc        randconfig-001-20260726    gcc-8.5.0
-arc        randconfig-002-20260726    gcc-10.5.0
-arm        randconfig-001-20260726    gcc-10.5.0
-arm        randconfig-002-20260726    clang-20
-arm        randconfig-003-20260726    clang-24
-arm        randconfig-004-20260726    clang-24
-arm64      randconfig-001-20260726    clang-24
-arm64      randconfig-002-20260726    clang-24
-arm64      randconfig-003-20260726    gcc-8.5.0
-arm64      randconfig-004-20260726    gcc-8.5.0
-csky                  allmodconfig    gcc-16.1.0
-csky       randconfig-001-20260726    gcc-16.1.0
-csky       randconfig-002-20260726    gcc-16.1.0
-hexagon    randconfig-001-20260726    clang-24
-hexagon    randconfig-002-20260726    clang-24
-i386                  allmodconfig    gcc-14
-i386       randconfig-011-20260726    clang-22
-i386       randconfig-012-20260726    clang-22
-i386       randconfig-013-20260726    gcc-14
-i386       randconfig-014-20260726    clang-22
-i386       randconfig-015-20260726    clang-22
-i386       randconfig-016-20260726    gcc-14
-i386       randconfig-017-20260726    clang-22
-loongarch                defconfig    clang-24
-loongarch  randconfig-001-20260726    gcc-12.5.0
-loongarch  randconfig-002-20260726    gcc-14.3.0
-m68k            m5329evb_defconfig    gcc-16.1.0
-nios2                 allmodconfig    gcc-11.5.0
-nios2                  allnoconfig    gcc-11.5.0
-nios2      randconfig-001-20260726    gcc-11.5.0
-nios2      randconfig-002-20260726    gcc-11.5.0
-parisc                allmodconfig    gcc-16.1.0
-parisc                allyesconfig    gcc-16.1.0
-parisc                   defconfig    gcc-16.1.0
-parisc     randconfig-001-20260726    gcc-8.5.0
-parisc     randconfig-002-20260726    gcc-15.2.0
-powerpc    randconfig-001-20260726    gcc-10.5.0
-powerpc    randconfig-002-20260726    gcc-16.1.0
-powerpc64  randconfig-001-20260726    clang-17
-powerpc64  randconfig-002-20260726    clang-24
-riscv      randconfig-001-20260726    clang-24
-riscv      randconfig-002-20260726    clang-24
-s390       randconfig-001-20260726    clang-24
-s390       randconfig-002-20260726    clang-24
-sh                       defconfig    gcc-16.1.0
-sh         randconfig-001-20260726    gcc-16.1.0
-sh         randconfig-002-20260726    gcc-16.1.0
-sparc      randconfig-001-20260726    gcc-8.5.0
-sparc      randconfig-002-20260726    gcc-8.5.0
-sparc64    randconfig-001-20260726    gcc-8.5.0
-sparc64    randconfig-002-20260726    clang-24
-um         randconfig-001-20260726    clang-24
-um         randconfig-002-20260726    gcc-14
-x86_64     randconfig-001-20260726    gcc-14
-x86_64     randconfig-002-20260726    gcc-12
-x86_64     randconfig-003-20260726    gcc-14
-x86_64     randconfig-005-20260726    gcc-14
-x86_64     randconfig-006-20260726    gcc-14
-x86_64     randconfig-011-20260726    gcc-13
-x86_64     randconfig-012-20260726    clang-22
-x86_64     randconfig-013-20260726    gcc-14
-x86_64     randconfig-014-20260726    gcc-13
-x86_64     randconfig-015-20260726    gcc-14
-x86_64     randconfig-016-20260726    clang-22
-x86_64     randconfig-071-20260726    clang-22
-x86_64     randconfig-072-20260726    gcc-14
-x86_64     randconfig-073-20260726    gcc-14
-x86_64     randconfig-074-20260726    clang-22
-x86_64     randconfig-075-20260726    clang-22
-x86_64     randconfig-076-20260726    clang-22
-xtensa     randconfig-001-20260726    gcc-8.5.0
-xtensa     randconfig-002-20260726    gcc-8.5.0
+The implementation follows the established devres pattern used by other
+device-managed kernel APIs.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Changes in v4:
+- Patch 8: split the removal of unused
+  ghes_register_vendor_record_notifier() and
+  ghes_unregister_vendor_record_notifier() into a separate preceding
+  patch (Andy Shevchenko)
+
+Changes in v3:
+- Patch 1: drop devm_raw_notifier_chain_register() since raw notifiers
+  require caller-provided locking which is incompatible with the devres
+  teardown callback (Sashiko)
+- Patch 12: fix commit message to accurately describe the old code as
+  using devres_alloc() + register_reboot_notifier() (Sashiko)
+
+Changes in v2:
+- Patch 1: drop 'extern' from new function prototypes (Bart Van Assche)
+- Patch 1: fix kerneldoc to use 'Return:' format (Bart Van Assche)
+- Patch 1: use <linux/device/devres.h> instead of <linux/device.h>
+  (Andy Shevchenko)
+- Patch 8: also remove unused ghes_register_vendor_record_notifier() and
+  ghes_unregister_vendor_record_notifier() along with their exports and
+  ghes.h declarations (Jonathan Cameron)
+
+Eliav Farber (13):
+  notifier: add device-managed registration APIs
+  pwm: iqs620a: use devm_blocking_notifier_chain_register()
+  iio: light: iqs621-als: use devm_blocking_notifier_chain_register()
+  iio: position: iqs624: use devm_blocking_notifier_chain_register()
+  gpio: adp5585: use devm_blocking_notifier_chain_register()
+  platform/x86: bitland-mifs-wmi: use
+    devm_blocking_notifier_chain_register()
+  Input: adp5585: use devm_blocking_notifier_chain_register()
+  ACPI: APEI: GHES: remove unused
+    ghes_{,un}register_vendor_record_notifier()
+  ACPI: APEI: GHES: use devm_blocking_notifier_chain_register()
+  platform/x86: uniwill-wmi: use devm_blocking_notifier_chain_register()
+  gpio: eic-sprd: use devm_atomic_notifier_chain_register()
+  gpio: gpiolib-kunit: use devm_blocking_notifier_chain_register()
+  reboot: use devm_blocking_notifier_chain_register()
+
+ drivers/acpi/apei/ghes.c                   |  27 +-----
+ drivers/gpio/gpio-adp5585.c                |  20 +---
+ drivers/gpio/gpio-eic-sprd.c               |  17 +---
+ drivers/gpio/gpiolib-kunit.c               |  14 +--
+ drivers/iio/light/iqs621-als.c             |  24 +----
+ drivers/iio/position/iqs624-pos.c          |  24 +----
+ drivers/input/keyboard/adp5585-keys.c      |  18 +---
+ drivers/platform/x86/bitland-mifs-wmi.c    |  17 +---
+ drivers/platform/x86/uniwill/uniwill-wmi.c |  17 +---
+ drivers/pwm/pwm-iqs620a.c                  |  21 +----
+ include/acpi/ghes.h                        |  16 ----
+ include/linux/notifier.h                   |   7 ++
+ kernel/notifier.c                          | 103 +++++++++++++++++++++
+ kernel/reboot.c                            |  24 +----
+ 14 files changed, 140 insertions(+), 209 deletions(-)
+
+-- 
+2.47.3
+
