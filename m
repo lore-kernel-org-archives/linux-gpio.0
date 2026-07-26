@@ -1,135 +1,120 @@
-Received: from pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.68.102])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B212B36998A;
-	Sun, 26 Jul 2026 06:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.68.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B5E32B9A8
+	for <linux-gpio@vger.kernel.org>; Sun, 26 Jul 2026 06:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785048011; cv=none; b=rEtVy3dJuHB02R4bJb8IwX5Wfwofgf4Xn9SEJVO9Sl0j0KF0cfqg3xgliuZochE0vSWwD/eiViTyebCoY01uiktOyV5yqtvHyaq6NMmgNxdOT9v1ff0jhK5OdPFAgNCbe1i8xLrMylwv3h3StJok77jcoH0I1a5+1XlFw7eINiA=
+	t=1785048572; cv=none; b=g6ZdPudwmfc+Pg1PLjvR7Zb5O+L4L17pWeAbDY5WARUg/SLWobF7gtn9zNXMk6qrCD/62wsayOVceHc1u1kU3kAIwGjAWBMwxb+LPU65wHFArP5cv3lAN4EJ9jISBn+uUOSru5Hp37aILN7IuAOnYt1s8KgAqeYEsvWTyfAKv+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785048011; c=relaxed/simple;
-	bh=dJ68QbooWHZBKQDn5xlKP/a7N1o1WPC7m/Nz/t4kin4=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hVk1JwBkis1bjEIfz4kZd34KHuEHu1jGd0GZDoQzdOjWZVTcUAN8YovzUpHHSewMY5Jgq0OVVJy0XLb5oy/YcbdDlH9i82xaN/VA+tIHCN1plDxf/e3mi08/WgAnqOo1LPIwAO+VahEoZ2A/8t36okWLzX6kLEYrtFY2wCCLXU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=lppOrWc2; arc=none smtp.client-ip=44.246.68.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1785048572; c=relaxed/simple;
+	bh=BBVJIfeJfXx/YggLS6Qg7YYvarRLACcr3XvJfBwefnU=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=k7hEsw99OCu8N5nyGTh40Ry/N3nNmCc4c3iOzQ4NK1erekpaD7VkNF/YXmAqLPa5ZmkOYITVguEF0r9ApU1EHs5oYjEDpzIbYCOo8nC4Uo7314FLxoHuiNk9euewpfjGtPzdHXEhAFg6sT4zKOfeS4mohFXMm3vVHflu0suD6hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rq3TQdnZ; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="lppOrWc2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1785048010; x=1816584010;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=1PjrX0TYQgXkSpJZuPaWlzS4502XZn4rTZl60p1SQXk=;
-  b=lppOrWc2Dfv8JLTWpnlvi7nGbMqCcCPMNWg/DIMoPJg5DWvc5E21Qo3E
-   coeO1fPMezFzgdjiceDzmzC7gkCEL3crcBxr6ObhqyPqZla+3BKN9mDI7
-   XBch0z5mqKPqnl8P9HPLx4gwpP9VFxmIE/2HK71vHGs5dBNcsI7bZePfA
-   0uk3h9EkO0wL7wkB1QNkHrdN18WyPH3rD5s74rslXyz4RxP9x0bN4SG37
-   JbX8WbnnbYXds2hXhcsG7F3LAQ1w2NQDV2Bf0W1p5YTfx04ZJzP1681lk
-   2B6udMs1JafNdwqFTQn2Se2+pgj8n037PZPL0brIkA+z7lkCdfu9sITwR
-   g==;
-X-CSE-ConnectionGUID: NHEVld4iSjWQxVjxvcKtDg==
-X-CSE-MsgGUID: hJ7BKbGESPiWqqSINZIzCA==
-X-IronPort-AV: E=Sophos;i="6.25,186,1779148800"; 
-   d="scan'208";a="24381954"
-Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
-  by internal-pdx-out-003.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2026 06:40:10 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [205.251.233.48:9010]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.25.115:2525] with esmtp (Farcaster)
- id f4fe1e6f-f478-4186-b491-0d1c57155143; Sun, 26 Jul 2026 06:40:09 +0000 (UTC)
-X-Farcaster-Flow-ID: f4fe1e6f-f478-4186-b491-0d1c57155143
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.43;
- Sun, 26 Jul 2026 06:40:09 +0000
-Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
- (172.19.116.181) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.45; Sun, 26 Jul 2026
- 06:40:04 +0000
-From: Eliav Farber <farbere@amazon.com>
-To: <rafael@kernel.org>, <tony.luck@intel.com>, <bp@alien8.de>,
-	<guohanjun@huawei.com>, <mchehab@kernel.org>, <xueshuai@linux.alibaba.com>,
-	<lenb@kernel.org>, <laurent.pinchart@ideasonboard.com>, <linusw@kernel.org>,
-	<brgl@kernel.org>, <orsonzhai@gmail.com>, <baolin.wang@linux.alibaba.com>,
-	<zhang.lyra@gmail.com>, <jic23@kernel.org>, <dlechner@baylibre.com>,
-	<nuno.sa@analog.com>, <andy@kernel.org>, <dmitry.torokhov@gmail.com>,
-	<hansg@kernel.org>, <ilpo.jarvinen@linux.intel.com>, <W_Armin@gmx.de>,
-	<ukleinek@kernel.org>, <fabio.m.de.francesco@linux.intel.com>,
-	<kaihengf@nvidia.com>, <ankita@nvidia.com>, <leitao@debian.org>,
-	<farbere@amazon.com>, <pedro.pbg@usp.br>, <paulmck@kernel.org>,
-	<frederic@kernel.org>, <kees@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-pwm@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-	<linux-input@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>
-Subject: [PATCH v3 12/12] reboot: use devm_blocking_notifier_chain_register()
-Date: Sun, 26 Jul 2026 06:37:27 +0000
-Message-ID: <20260726063727.19111-13-farbere@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260726063727.19111-1-farbere@amazon.com>
-References: <20260726063727.19111-1-farbere@amazon.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rq3TQdnZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1785048570; x=1816584570;
+  h=date:from:to:cc:subject:message-id;
+  bh=BBVJIfeJfXx/YggLS6Qg7YYvarRLACcr3XvJfBwefnU=;
+  b=Rq3TQdnZlqzQASE947f7pH9b/ANGaoeMIexuTOVHf2lWTMGFiDGN7MKb
+   zM+E9LRyR422/7+f5xS0ZTFt4dcBgZHQA2oyFMYxv7Ithl5+13+Vm2XWG
+   UZm3BN5YPHHczp1R0Mlf2aHGvyWwXDPY2l50HZMuiHVKrKwzl+gEN04RA
+   Pjo9NXsZ0C5qoCMZGqpxrZTgPHf72PXqBg06DbMb9QRaSCQd6jrosXtcS
+   vHqfaiNPl3yZMGI3VrRltDELQYN7yr/qk2D2hArNKFpevXFqBsBi3zJ7+
+   p8W/i19C6YVNoAl4liHMG+APwNo3nvVB15dZv2kXMp0HRdXOfRS5AKfW6
+   w==;
+X-CSE-ConnectionGUID: y2wtbTByT6mDapehgSltug==
+X-CSE-MsgGUID: a6OYdLMZTgayVuhY+w7aRA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11856"; a="96006572"
+X-IronPort-AV: E=Sophos;i="6.25,186,1779174000"; 
+   d="scan'208";a="96006572"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jul 2026 23:49:29 -0700
+X-CSE-ConnectionGUID: 4oJaO5bfT+6fcSYds3IO9A==
+X-CSE-MsgGUID: +Ur69sk4RIWxJbLn+BUcqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,186,1779174000"; 
+   d="scan'208";a="282428310"
+Received: from lkp-server02.sh.intel.com (HELO ea128546eb3d) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 25 Jul 2026 23:49:28 -0700
+Received: from kbuild by ea128546eb3d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wnsff-00000000cM3-2bRh;
+	Sun, 26 Jul 2026 06:49:24 +0000
+Date: Sun, 26 Jul 2026 14:49:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: linux-gpio@vger.kernel.org
+Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
+ dad6e107b3cd9d20514e7799b7ad8674f81e3f30
+Message-ID: <202607261451.yLQLcZp2-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D043UWC001.ant.amazon.com (10.13.139.202) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-Replace the manual devres_alloc() + register_reboot_notifier() pattern
-with a single call to devm_blocking_notifier_chain_register(), removing
-the devm_unregister_reboot_notifier() callback.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
+branch HEAD: dad6e107b3cd9d20514e7799b7ad8674f81e3f30  pinctrl: bm1880: add missing select GENERIC_PINCONF
 
-Signed-off-by: Eliav Farber <farbere@amazon.com>
----
-Changes in v3:
-- Fix commit message to accurately describe the old code as using
-  devres_alloc() + register_reboot_notifier() (Sashiko)
+elapsed time: 827m
 
- kernel/reboot.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+configs tested: 43
+configs skipped: 1
 
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index 695c33e75efd..557609419989 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -136,30 +136,10 @@ int unregister_reboot_notifier(struct notifier_block *nb)
- }
- EXPORT_SYMBOL(unregister_reboot_notifier);
- 
--static void devm_unregister_reboot_notifier(struct device *dev, void *res)
--{
--	WARN_ON(unregister_reboot_notifier(*(struct notifier_block **)res));
--}
--
- int devm_register_reboot_notifier(struct device *dev, struct notifier_block *nb)
- {
--	struct notifier_block **rcnb;
--	int ret;
--
--	rcnb = devres_alloc(devm_unregister_reboot_notifier,
--			    sizeof(*rcnb), GFP_KERNEL);
--	if (!rcnb)
--		return -ENOMEM;
--
--	ret = register_reboot_notifier(nb);
--	if (!ret) {
--		*rcnb = nb;
--		devres_add(dev, rcnb);
--	} else {
--		devres_free(rcnb);
--	}
--
--	return ret;
-+	return devm_blocking_notifier_chain_register(dev,
-+						     &reboot_notifier_list, nb);
- }
- EXPORT_SYMBOL(devm_register_reboot_notifier);
- 
--- 
-2.47.3
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
+tested configs:
+alpha                  allnoconfig    gcc-16.1.0
+alpha                 allyesconfig    gcc-16.1.0
+alpha                    defconfig    gcc-16.1.0
+arc                   allmodconfig    gcc-16.1.0
+arc                   allyesconfig    gcc-16.1.0
+arc        randconfig-001-20260726    gcc-8.5.0
+arc        randconfig-002-20260726    gcc-10.5.0
+arm        randconfig-001-20260726    gcc-10.5.0
+arm        randconfig-003-20260726    clang-24
+arm        randconfig-004-20260726    clang-24
+csky                  allmodconfig    gcc-16.1.0
+i386                  allmodconfig    gcc-14
+loongarch                defconfig    clang-24
+loongarch  randconfig-002-20260726    gcc-14.3.0
+nios2                 allmodconfig    gcc-11.5.0
+nios2                  allnoconfig    gcc-11.5.0
+nios2      randconfig-001-20260726    gcc-11.5.0
+nios2      randconfig-002-20260726    gcc-11.5.0
+parisc                allmodconfig    gcc-16.1.0
+parisc                allyesconfig    gcc-16.1.0
+parisc                   defconfig    gcc-16.1.0
+parisc     randconfig-001-20260726    gcc-8.5.0
+parisc     randconfig-002-20260726    gcc-15.2.0
+powerpc    randconfig-001-20260726    gcc-10.5.0
+powerpc    randconfig-002-20260726    gcc-16.1.0
+powerpc64  randconfig-001-20260726    clang-17
+powerpc64  randconfig-002-20260726    clang-24
+riscv      randconfig-002-20260726    clang-24
+s390       randconfig-002-20260726    clang-24
+sh                       defconfig    gcc-16.1.0
+sh         randconfig-001-20260726    gcc-16.1.0
+sh         randconfig-002-20260726    gcc-16.1.0
+sh               urquell_defconfig    gcc-16.1.0
+sparc      randconfig-001-20260726    gcc-8.5.0
+sparc      randconfig-002-20260726    gcc-8.5.0
+sparc64    randconfig-001-20260726    gcc-8.5.0
+sparc64    randconfig-002-20260726    clang-24
+x86_64     randconfig-001-20260726    gcc-14
+x86_64     randconfig-002-20260726    gcc-12
+x86_64     randconfig-003-20260726    gcc-14
+x86_64     randconfig-005-20260726    gcc-14
+x86_64     randconfig-006-20260726    gcc-14
+xtensa     randconfig-001-20260726    gcc-8.5.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
