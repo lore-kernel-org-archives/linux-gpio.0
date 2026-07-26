@@ -1,74 +1,64 @@
-Received: from pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.155.198.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1C537FF7F;
-	Sun, 26 Jul 2026 10:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.155.198.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C7D1D432D;
+	Sun, 26 Jul 2026 12:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785061213; cv=none; b=ZWtSosrTuMPtiEaHwH7NjvTXbc1WqAUz9HnBbtJvZeJhkzAXaahGv4MyUIZnlfsOytI/rslb2sCiSx6JCMikZOjz9EtZacFBOVaNO+TxPrrVA12MhipYVBqo1lGWqWENZBp5d0clojtIj6f8gqzb8DbOCQg+8DBtz17DxYhruUE=
+	t=1785070378; cv=none; b=EDLGwJG4ol/O54vKOoSDIjAnE7HaXB3nx0MTjznBkFHhShKKltMRM2eRLEP1KvnWnuqyDD4f9TW/WN7IzCzaRDVv66kYwWMn+ls5b77GoMebJp5yrhmDeJPGoNK637ON9akALOO4ngtRuMdOHFf+A/bjugBwTNW41WnT39quitI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785061213; c=relaxed/simple;
-	bh=dJ68QbooWHZBKQDn5xlKP/a7N1o1WPC7m/Nz/t4kin4=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VJqWjdksqNOGQDOuAEqp49qmqvFpT8NAH3XQEZbRM2TCwXe+r20SHTYSlBqOpqg7vd8A5OawkvappA79e774rRuDe3baG4tLZH8OQiFhy04DMww7KcOJRapBUkHqCBF0R2Jz5eee4Oc/aak1kTfDHZFTH1iBN6eOXm1ej+ghewo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=VDz9Ou/q; arc=none smtp.client-ip=35.155.198.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1785070378; c=relaxed/simple;
+	bh=OWcmyoGqocFCpC2D8zd96uNdqooxzF119BFHm7mBs2Y=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BpAr1F78uIFUkC9pl2Jh+/JQiBUV5A2JDmoRzb1B6Q4Eqc46tH2luoiSajiUZXXaoNqCfZi5L6Wm3P2hthiSHhoyD3NBHtaMZLlhXQNcXsMTCEAOyo0wrwuZMbZUgMpMVzlrLcNelnHwF54Ic2z5kpKr3D36w8TbfNqKaLe32JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=i5TBMkXP; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="VDz9Ou/q"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1785061212; x=1816597212;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=1PjrX0TYQgXkSpJZuPaWlzS4502XZn4rTZl60p1SQXk=;
-  b=VDz9Ou/qD2OhLsvTgz/UAJNsSmUUzZHLUvNlQ4muJzitRQp2CgvNOmix
-   ij1nZj8mpq2PYI9oBWu9ZSRNYKv/ExSxj60o2T5CGlcDs4lXKe6yzp3gi
-   v0RltmuhkT1pSn/7Z1LwuxORWdlElszeyMm5kTnQAO8CCSWXk2w1SOCZI
-   TtCw4db26O+VIB3y//js1TEiVxywEBpr5bR6Iy8Z20MW9d4HSkfH3eB2S
-   pe7WVagMXPRo9dk8kcl6pcCA/xU3fx4QsRVRAHinI9pyknf+X944jURUQ
-   jmay2yiVHVq8N/ecHz0FfUzMhyL0vMmY69zoLm8JhaivYhSjW0CubAkc4
-   Q==;
-X-CSE-ConnectionGUID: pJ9FbLfKS3CWZ/9Dp/ky1w==
-X-CSE-MsgGUID: f+M/g5v9QHivYv9W/FeiNQ==
-X-IronPort-AV: E=Sophos;i="6.25,186,1779148800"; 
-   d="scan'208";a="24261773"
-Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
-  by internal-pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2026 10:20:11 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [205.251.233.51:3757]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.10.59:2525] with esmtp (Farcaster)
- id f9571028-cbe6-4f91-98d5-a41659b630fa; Sun, 26 Jul 2026 10:20:11 +0000 (UTC)
-X-Farcaster-Flow-ID: f9571028-cbe6-4f91-98d5-a41659b630fa
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.43;
- Sun, 26 Jul 2026 10:20:11 +0000
-Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
- (172.19.116.181) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.45; Sun, 26 Jul 2026
- 10:20:06 +0000
-From: Eliav Farber <farbere@amazon.com>
-To: <rafael@kernel.org>, <tony.luck@intel.com>, <bp@alien8.de>,
-	<guohanjun@huawei.com>, <mchehab@kernel.org>, <xueshuai@linux.alibaba.com>,
-	<lenb@kernel.org>, <laurent.pinchart@ideasonboard.com>, <linusw@kernel.org>,
-	<brgl@kernel.org>, <orsonzhai@gmail.com>, <baolin.wang@linux.alibaba.com>,
-	<zhang.lyra@gmail.com>, <jic23@kernel.org>, <dlechner@baylibre.com>,
-	<nuno.sa@analog.com>, <andy@kernel.org>, <dmitry.torokhov@gmail.com>,
-	<hansg@kernel.org>, <ilpo.jarvinen@linux.intel.com>, <W_Armin@gmx.de>,
-	<ukleinek@kernel.org>, <fabio.m.de.francesco@linux.intel.com>,
-	<kaihengf@nvidia.com>, <ankita@nvidia.com>, <leitao@debian.org>,
-	<farbere@amazon.com>, <pedro.pbg@usp.br>, <paulmck@kernel.org>,
-	<frederic@kernel.org>, <kees@kernel.org>, <linux-acpi@vger.kernel.org>,
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="i5TBMkXP"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 66QCqAPz92402733, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1785070331; bh=2wBKzpUIcxPGBn69FmoQsTNplv+kb/xZ96H/rlz56d4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Transfer-Encoding:Content-Type;
+	b=i5TBMkXPxLd7ZFKz6rN9IC2/wbjJWlgcgD9EWdf26hJrVElqxyMbp13e8uSXq6HRw
+	 YxBQexQRyynNteQvAHIWD6PsdVx64q1BDIcEvJT/sTBI/J6F4wb4D/SBeCsC+Bn2Wa
+	 8pcIPXZUpGAK+X/Vi/z83tdwKncMfXZumu5F21s9iqV039b9EVnK6UJnIJiNYYcQaz
+	 d5VlKZyz2B1KV3vPxPh2FnBePQ3jhBUis6XZn9TdQRXuEhlmUrTaZ+ixbFYAMwtexm
+	 agVpQhwLriIDVVoFCnaz6CpSfuDmBiNBugMGL7Bjm5QZrx1vKorE3IH8Jv5xHP4KWm
+	 rAwsfE+rI6VEQ==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 66QCqAPz92402733
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 26 Jul 2026 20:52:10 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 26 Jul 2026 20:52:11 +0800
+Received: from RTKEXHMBS03.realtek.com.tw (10.21.1.53) by
+ RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Sun, 26 Jul 2026 20:52:11 +0800
+Received: from cn1dhc-k02 (172.21.252.101) by RTKEXHMBS03.realtek.com.tw
+ (10.21.1.53) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Sun, 26 Jul 2026 20:52:11 +0800
+From: Yu-Chun Lin <eleanor.lin@realtek.com>
+To: <linusw@kernel.org>, <andriy.shevchenko@intel.com>, <mwalle@kernel.org>,
+	<brgl@kernel.org>, <tychang@realtek.com>, <wbg@kernel.org>,
+	<mathieu.dubois-briand@bootlin.com>, <nuno.sa@analog.com>,
+	<Michael.Hennerich@analog.com>, <jic23@kernel.org>, <andy@kernel.org>,
+	<o-takashi@sakamocchi.jp>
+CC: <u.kleine-koenig@baylibre.com>, <dakr@kernel.org>, <bhelgaas@google.com>,
+	<eleanor.lin@realtek.com>, <dlechner@baylibre.com>,
 	<linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-pwm@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-	<linux-input@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>
-Subject: [PATCH v4 13/13] reboot: use devm_blocking_notifier_chain_register()
-Date: Sun, 26 Jul 2026 10:17:39 +0000
-Message-ID: <20260726101739.33170-14-farbere@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260726101739.33170-1-farbere@amazon.com>
-References: <20260726101739.33170-1-farbere@amazon.com>
+	<linux@analog.com>, <linux-iio@vger.kernel.org>, <cy.huang@realtek.com>,
+	<james.tai@realtek.com>, <stanley_chang@realtek.com>
+Subject: [PATCH v8 7/9] gpio: regmap: Add set_config callback
+Date: Sun, 26 Jul 2026 20:51:58 +0800
+Message-ID: <20260726125209.140307-8-eleanor.lin@realtek.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260726125209.140307-1-eleanor.lin@realtek.com>
+References: <20260726125209.140307-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -77,59 +67,90 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: EX19D044UWA003.ant.amazon.com (10.13.139.43) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-Replace the manual devres_alloc() + register_reboot_notifier() pattern
-with a single call to devm_blocking_notifier_chain_register(), removing
-the devm_unregister_reboot_notifier() callback.
+Add a new set_config callback to allow drivers to implement
+hardware-specific configuration such as debounce settings, or other
+platform-specific GPIO properties.
 
-Signed-off-by: Eliav Farber <farbere@amazon.com>
+Reviewed-by: Michael Walle <mwalle@kernel.org>
+Reviewed-by: Linus Walleij <linusw@kernel.org>
+Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
-Changes in v3:
-- Fix commit message to accurately describe the old code as using
-  devres_alloc() + register_reboot_notifier() (Sashiko)
+Changes in v8:
+- Move the assignment of gpio->set_config into the if (config->set_config)
+block.
+- Add Reviewed-by tags from Michael and Linus.
+---
+ drivers/gpio/gpio-regmap.c  | 17 +++++++++++++++++
+ include/linux/gpio/regmap.h |  6 ++++++
+ 2 files changed, 23 insertions(+)
 
- kernel/reboot.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
-
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index 695c33e75efd..557609419989 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -136,30 +136,10 @@ int unregister_reboot_notifier(struct notifier_block *nb)
- }
- EXPORT_SYMBOL(unregister_reboot_notifier);
+diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+index cff7db8036f7..19e33e361cc4 100644
+--- a/drivers/gpio/gpio-regmap.c
++++ b/drivers/gpio/gpio-regmap.c
+@@ -51,6 +51,9 @@ struct gpio_regmap {
+ 			   unsigned int reg, unsigned int *mask,
+ 			   unsigned int *val);
  
--static void devm_unregister_reboot_notifier(struct device *dev, void *res)
--{
--	WARN_ON(unregister_reboot_notifier(*(struct notifier_block **)res));
--}
--
- int devm_register_reboot_notifier(struct device *dev, struct notifier_block *nb)
- {
--	struct notifier_block **rcnb;
--	int ret;
--
--	rcnb = devres_alloc(devm_unregister_reboot_notifier,
--			    sizeof(*rcnb), GFP_KERNEL);
--	if (!rcnb)
--		return -ENOMEM;
--
--	ret = register_reboot_notifier(nb);
--	if (!ret) {
--		*rcnb = nb;
--		devres_add(dev, rcnb);
--	} else {
--		devres_free(rcnb);
--	}
--
--	return ret;
-+	return devm_blocking_notifier_chain_register(dev,
-+						     &reboot_notifier_list, nb);
++	int (*set_config)(struct gpio_regmap *gpio, struct gpio_chip *chip,
++			  unsigned int offset, unsigned long config);
++
+ 	void *driver_data;
+ };
+ 
+@@ -306,6 +309,15 @@ static int gpio_regmap_direction_output(struct gpio_chip *chip,
+ 	return gpio_regmap_set_direction(chip, offset, true);
  }
- EXPORT_SYMBOL(devm_register_reboot_notifier);
+ 
++static int gpio_regmap_set_config(struct gpio_chip *chip,
++				  unsigned int offset,
++				  unsigned long cfg)
++{
++	struct gpio_regmap *gpio = gpiochip_get_data(chip);
++
++	return gpio->set_config(gpio, chip, offset, cfg);
++}
++
+ int gpio_regmap_reqres_irq(struct gpio_regmap *gpio, unsigned int offset)
+ {
+ 	return gpiochip_reqres_irq(&gpio->gpio_chip, offset);
+@@ -444,6 +456,11 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+ 
+ 	gpio->value_xlate = config->value_xlate;
+ 
++	if (config->set_config) {
++		gpio->set_config = config->set_config;
++		chip->set_config = gpio_regmap_set_config;
++	}
++
+ 	ret = gpiochip_add_data(chip, gpio);
+ 	if (ret < 0)
+ 		goto err_free_bitmap_output;
+diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
+index 77dbb353bc1f..dd9de9958409 100644
+--- a/include/linux/gpio/regmap.h
++++ b/include/linux/gpio/regmap.h
+@@ -86,6 +86,9 @@ enum gpio_regmap_operation {
+  *			to append additional bits (like write-enable masks)
+  *			dynamically based on the current operation
+  *			(GPIO_REGMAP_SET_OP and GPIO_REGMAP_SET_DIR_OP).
++ * @set_config:		(Optional) Callback for setting GPIO configuration such
++ *			as debounce, drive strength, or other hardware specific
++ *			settings.
+  * @drvdata:		(Optional) Pointer to driver specific data which is
+  *			not used by gpio-remap but is provided "as is" to the
+  *			driver callback(s).
+@@ -147,6 +150,9 @@ struct gpio_regmap_config {
+ 			   unsigned int base, unsigned int offset, unsigned int reg,
+ 			   unsigned int *mask, unsigned int *val);
+ 
++	int (*set_config)(struct gpio_regmap *gpio, struct gpio_chip *chip,
++			  unsigned int offset, unsigned long config);
++
+ 	void *drvdata;
+ };
  
 -- 
-2.47.3
+2.43.0
 
