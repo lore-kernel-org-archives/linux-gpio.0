@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D56F3F660E;
-	Mon, 27 Jul 2026 20:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8C1428481;
+	Mon, 27 Jul 2026 20:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785183179; cv=none; b=W7NksN4zMq5Xe7ovgLqvEOIbJ9Itux8BLA7vO02g1WRNKFgcg8LDTtNQcI7u6XGzysMEv7xlN2GNMfX6nzDAWMUaHsidOVMon8eu4vpvweVEqnGd5rYuB8ugNPydkPcF9Ex6DXWAMjtqSwfe+RwNdBUp7I95pelf2hvPfvGKNz4=
+	t=1785183251; cv=none; b=J3pFmmDMEMWz+sTHikigQG9PDzPBTCsip3HWG6whdREkTDRKLR8lENKREYbqn9CwadvKf6Zd3pIN+0B/+qtsOE9qNAPG+z3NmsuOBJIOt0ZxEbYTGFsj+DTHKmOov1oaoFQCxUY20tq8JVog0tA+fveiZtDgBVkrJeKmiLUYzSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785183179; c=relaxed/simple;
-	bh=nRXAP9RwPapzRXwOuIxa9wbkx6438CQcWQXAuTlTSwk=;
+	s=arc-20240116; t=1785183251; c=relaxed/simple;
+	bh=t10LDD82XwrOtVaO7ZJVSu8lJ2IMTbdEHauI3Nd/+uw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BJBXRJs5jcuTy3Fb/6GHKJgiev1ysNj+y4GXpEefNV0XVk/y+jpGl6YRbDX7lBGKGtqfimrn+Tu+VvzHFPwceFXlyQNre39W7ncwd2eACicsJzy0KWLhqfaggJ+3/vL37CJfrYvAws5TuC+g08o+d6t+jL5Paihe3pv+2hIa700=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=au89phaH; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=IPyahOQEaucYWqktGZHkBSKwf5CncUr3/CoiXz2gv/mnJTgOFeIiB4nlP8ZjjJM6KXYzsAg7uN8crfxV103L2tVhKPUxERxLcpWF2erlcNAiPsbnrNk+AOeuTafltu6bTCAgnUdK5V1MGtqvwJGS5rZcOeNXaV7RMK9k5jBWZlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dxEGY8Tr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="au89phaH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F09CB1F000E9;
-	Mon, 27 Jul 2026 20:12:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dxEGY8Tr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 932B71F000E9;
+	Mon, 27 Jul 2026 20:14:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785183178;
-	bh=kXkxAzMXIXFrCosu9W3EyUqTk5gQKizKUSmuhAPFZ68=;
+	s=k20260515; t=1785183248;
+	bh=t10LDD82XwrOtVaO7ZJVSu8lJ2IMTbdEHauI3Nd/+uw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=au89phaHNhJVD3pPwAzT1BHKXqubkUm2P86+94nLzvreI6Bv06tti53W4KYnjTSXo
-	 jZNLZ4xpRdcHvxWWySxLL/SJubHE6DH+aO8qAjEi5UJkjMIv+z+Ahh249B91o5MtFN
-	 g5gPg4KwwB6ssR6eFFPcr+YkJBQFGALStB/Ikyfj6dtQFsTk7I5F1mcGdNGs4N3U2b
-	 LUnYrXnPHmsST8QIalmXy2nboFXPUB6rzbIKKmXoCn8VhA+o49EgePVVcXo6d/wbXN
-	 3SBHCKPESY3JpChyGP4bIgE1RDP90FaIfUa8gsGNFZMcp4PwZ89AzcxANH373cDSDs
-	 RbCKl4w0HB+/g==
-Date: Mon, 27 Jul 2026 22:12:53 +0200
+	b=dxEGY8TrfYCEfqkblWiu02WRjBRkFEKI64fkLucE5JCdKAODz0XRDSui7rvo4HJDc
+	 6eQ7E/os++Bk5I68uVV5EtsqUaRwsJxwrfQGNHXVqbnICAiU5Vx1DzhjmqbPIMI6s9
+	 etVlKxhYMHKU589qOl+yvh4FUiPbdZwVjWn+rqrqUnNNxMoOzoBmj4MRy1dCrq/f9W
+	 MLeYfSWyfpiskpmJnv6zyhRY/qg3PqkFjV8YtP5YvYEN+HOqEaE3v44A2VdrfpvRJz
+	 Xsiwx2ywJ0Ndnl63AMVnJdt426YCi5JZ6tcEfoDlF77TClZsbBk1lEDgqNTxipOzIt
+	 u4caS7zlg7fGA==
+Date: Mon, 27 Jul 2026 22:14:03 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -36,10 +36,11 @@ Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
 	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
 	Markus Gothe <markus.gothe@genexis.eu>, Matheus Sampaio Queiroga <srherobrine20@gmail.com>
-Subject: Re: [PATCH v8 00/35] pinctrl: airoha: split on shared and SoC
- drivers, add more SoCs
-Message-ID: <20260727-pastel-skinny-muskox-f99fa6@quoll>
+Subject: Re: [PATCH v8 28/35] dt-bindings: pinctrl: airoha: an7583: add
+ pon_alt pin group
+Message-ID: <20260727-stalwart-ruby-cobra-2ea577@quoll>
 References: <20260727174141.664933-1-mikhail.kshevetskiy@iopsys.eu>
+ <20260727174141.664933-29-mikhail.kshevetskiy@iopsys.eu>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -48,17 +49,16 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260727174141.664933-1-mikhail.kshevetskiy@iopsys.eu>
+In-Reply-To: <20260727174141.664933-29-mikhail.kshevetskiy@iopsys.eu>
 
-On Mon, Jul 27, 2026 at 08:41:06PM +0300, Mikhail Kshevetskiy wrote:
-> This patchset
->  * fixes more airoha pinctrl issues
->  * split combined driver on common code and several SoC specific drivers
->  * improves an7583 pinctrl support
->  * adds support of en7523 SoC
->  * adds support of an7563 SoC
+On Mon, Jul 27, 2026 at 08:41:34PM +0300, Mikhail Kshevetskiy wrote:
+> Add pon_alt pin-group support for an7583 pin controller.
 
-You sent this patch bomb today. Wait a few days between big postings.
+Why are you adding one line per patch? Organize your work properly, so
+the same logical change - adding missing functions - will be in one
+patch.
+
+I am dropping all patches from this series from Patchwork.
 
 Best regards,
 Krzysztof
