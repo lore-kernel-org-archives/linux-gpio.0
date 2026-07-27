@@ -1,47 +1,47 @@
 Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11023106.outbound.protection.outlook.com [52.101.72.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54ACD43F0A9;
-	Mon, 27 Jul 2026 17:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFE043F4DE;
+	Mon, 27 Jul 2026 17:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.106
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785174167; cv=fail; b=hWF5JmD5vklFqK8ahR6GcN08v1TRakTrEvpLtR0can18hvrDmeF1QkATgskMyid7Y4XfB7xs0QC9ZSejAP884cs9PP6xZei/VbfG+bwhnNJ0pugm0md5tdS2lmd7U3k2dCQ/GmRwqgrKzJWaVDZwC7z/A57c91FhIfdcSum0jh0=
+	t=1785174169; cv=fail; b=Dur4FJf8A5bkPKcc2DFWf1DSB9EL6AYnlzgJ4nzw/2JQW4fJVqlDcvbvhPkXwBBRvcg4TGlDFzpH/5pznmfiaXPawBl8CxWrhXTBxpXQE/B+cGzklI0ErjXpmFDziF6vZPRxc63IKUoE/5E1iXhFPo77IOga1VDY/fh9QxLQdLg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785174167; c=relaxed/simple;
-	bh=ETUow2cFM4XqmFySlGSlMJz4pMkMKxQSE19ZF5dzDYg=;
+	s=arc-20240116; t=1785174169; c=relaxed/simple;
+	bh=X+Cxyi+IreajQqKJVIWYQJcxujcfApHZTHC9/4IIMIA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Oq4vjbu7ioLDrFdF8adSf9km1dNUmz2hcpVNT94bMYSWH6hZOLf8+OwZWVfzthSQIb5JhcfWb+1X9JHxgJdTxHzQaPFOLCV0JcejFceNt5L55dbOdD8Gc//5aPE/F4JYDq8CpniBQ/ndoyqUmrVEJOTnHAeqSoUaqecLZo6H/os=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=dk/W562K; arc=fail smtp.client-ip=52.101.72.106
+	 Content-Type:MIME-Version; b=Tq3T58rYEHMAePvdR4NGRZNNbQbD/ZLyvv/5Ukeb2/GzxOR0UnrFjwpwZZ2Ndd7dfXN1+lrrpF8aHS4Xe/reV6/KsfABUudSIvD0cZuIoQHzgoBygpLQy/Jqba5Oy7GyHTa8YPT9x0GXEGhr2rxdP2k3y03/nkIrGRe79YPsmPc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=HCKXPGVc; arc=fail smtp.client-ip=52.101.72.106
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="dk/W562K"
+	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="HCKXPGVc"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rYl+z79fizmCDvSJGzWt7BiHRV79PNoCNER2pQETCbpByTXmKInwiLUuN2neB936GBMI6MPFmnrB7YlPw7QKpngFQdh9kOTiFJoZVDdzJhIGMq5q9nlPz/6zvpGp7KDvc+89knUOiCYUPToIuwiWK+0H4vfUtzsqPeAVLjZTDUeEW0gyYdKX8G2raYwaTA/XHleB/IPMyhqGYDthXwxJoMT9YaBe1T7wCiSLqZEA8g04Mdz1h+T/ZfwAd4IAvdmbq2750RIPk6PGbBFWQ0zC2tpdmkuethd1TLEIwgzrm8FzAlMCiAThtSNQq+1Ao/pMwlAuiVXy5TQiE9sA8nOHHA==
+ b=Y300+BxvJ9QVCnLKPd+Ud9K3EIoPKESEHpDvfUM2Xinz3MMIhJ8N2FEqz4F3cs4y6POCI75ahoE94UkcYrHXVVHsitxX1xurc4gVd9Pw7d9BvIygPSGIEnVUhQIs/CFWOGm/s57bWabgJcquFWnzVmK+LRtda20+0XZchtIBu2dEW6Fb0DBajr08nU9k4rR3AMRTtelqeEbUK5ZaFIrIy7vtjhxNIFNVtK45+0sqStL03Eja+9l5RSmz6pFj0JKtOdgwu7FcsJoSD8PqeBBbl4REZUDskAo68pocWDpmrhwlFN0SUy1VPJH5/jHTF/FIWAIL14MHM5BdGuQC//0f3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/pNiEUE8VXNYGtWpSZBCEfv7fEPY0mH8jj7oQdI0MFQ=;
- b=i1XAcQOqE4sBla0xl3zGGcxJQeJtptEL4hF1t9p+gUTpPz3RJpQhHhet6aU8bbwvX2aCoTULY+k75vFL+k/FqzGhS7wDTD8Xp6Tvqb/qqptJNQ4MV1XCcSyk5vef5RueM5GMv0VUzZ78u4V5yMvvizVL0Jl1UGv0Sw24jcikfdeWI/GepIwWTZVpWiJVodXyFOgQWjoHSlHkGWO58RsCHEZ96xL42wasev3OnZxkWDPZYxvkNyCZCHlJIYgegl5XUAkFI2erBajvHDG0A2rjaEgpzpVUdYQT6MtHJaYOk4CrH4GQwMXOHQx//6eDZwpJR4FWjqHoUfsfaYpCLdcauw==
+ bh=rgJGTH2Manqdb6l7SF0s2oZsQViWSq0iBsx9NKel4Tg=;
+ b=PRLWWQPHrGsSwiYK8uikAu9HuJj6wvs4hMf1Y9cEEytnIyVmk3eyumgTXyLGytNQKMO1tNZzHaixki4wMWF8dIivbc+RAd6GwzDRxpZZ7zSzt42fc5KP7T1n1wpzJgwAGp5VUcJlLk/KmdZxnBh55C9turwM/mcO5nwG5LA6tX9l/pr2oXpT5ZysfSQDZTreSmS7/Ar+qO5dZhvj5ovk0nxEusdDSomryJqec/gtfxPUY43vgNuQg+qegOedCjhszkNwt/C7xrQe7B57FfpfeFUJ7qjWPZL7+nNvTXJK/hEvNNs3JgKBJHO+7Uwv6KxxxwEMSO7cgvM2NQhW/G5Euw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
  dkim=pass header.d=iopsys.eu; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/pNiEUE8VXNYGtWpSZBCEfv7fEPY0mH8jj7oQdI0MFQ=;
- b=dk/W562KaNAgIB5P5q+KrTZ9c4fCdVzCInC0WNwBag8YHd9WfAN8mlvMtC/+/lWC/yM6c+CrmBe3k6mIiZrVQAtkDIBE0ettN0FIoZkLA1MW3m3ZcgqwKfewECaDenfZ8S43tqRuhyfV32Q1GYCW1oB0LYgD2DPu1yX12uTzbfAMheTZoQBcQgOmM0BOrLrlZEOZICQkbIV8qLLAR4AdV9WK2Y9KFnz/Om4/InBdC7dwFby0rnXRLUh7Kb7efHdqkUceLl7VcnP+TCZiaxX+5gDE29YqInww0PhnMN4/s0vmkG/y54rW/V+CdbA0BZX3SuKGY10uV/DoGiB2BxrXFw==
+ bh=rgJGTH2Manqdb6l7SF0s2oZsQViWSq0iBsx9NKel4Tg=;
+ b=HCKXPGVc44FtwvzOci/I/NsiO3+JfpLJr2nyrtNGassqtZk8o8yptd8VK6VklvcSj+HkUdYpZqD+BHYC39RL91qepUB7ec/bc8bDuUvVuGtR/QO7VvJmfY+orvvkOp9O/arvrUWc+n5MmqqEv2DbQFRi7RC6swuvZrW61tj8kkURx7BSQ7EMj8gLusrNsEmtakDKIYubp/VpylIM22lqJHTIOaCl5BobsI80OEiPMIZWw/JmY59N+KaaF/ZAQOteqIdr7Z/TKfBso9MpPVKD96H0vot4l8hyUgndeD4HzqP4s1ib3wtwkOJOhMoAgSn9AtosOd1F3KieYEwM4CCOsA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=iopsys.eu;
 Received: from DU2PR08MB10037.eurprd08.prod.outlook.com (2603:10a6:10:49a::20)
  by PA4PR08MB6111.eurprd08.prod.outlook.com (2603:10a6:102:e3::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.12; Mon, 27 Jul
- 2026 17:42:38 +0000
+ 2026 17:42:40 +0000
 Received: from DU2PR08MB10037.eurprd08.prod.outlook.com
  ([fe80::3c7:6d2e:8afe:e4dc]) by DU2PR08MB10037.eurprd08.prod.outlook.com
  ([fe80::3c7:6d2e:8afe:e4dc%5]) with mapi id 15.21.0245.012; Mon, 27 Jul 2026
- 17:42:38 +0000
+ 17:42:40 +0000
 From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 To: Linus Walleij <linusw@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -59,9 +59,9 @@ To: Linus Walleij <linusw@kernel.org>,
 	Markus Gothe <markus.gothe@genexis.eu>,
 	Matheus Sampaio Queiroga <srherobrine20@gmail.com>
 Cc: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Subject: [PATCH v8 27/35] pinctrl: airoha: an7583: add support for pon_alt pinmux
-Date: Mon, 27 Jul 2026 20:41:33 +0300
-Message-ID: <20260727174141.664933-28-mikhail.kshevetskiy@iopsys.eu>
+Subject: [PATCH v8 28/35] dt-bindings: pinctrl: airoha: an7583: add pon_alt pin group
+Date: Mon, 27 Jul 2026 20:41:34 +0300
+Message-ID: <20260727174141.664933-29-mikhail.kshevetskiy@iopsys.eu>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260727174141.664933-1-mikhail.kshevetskiy@iopsys.eu>
 References: <20260727174141.664933-1-mikhail.kshevetskiy@iopsys.eu>
@@ -78,124 +78,79 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DU2PR08MB10037:EE_|PA4PR08MB6111:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3aad3454-bd0b-4b15-e652-08deec067379
+X-MS-Office365-Filtering-Correlation-Id: 817bf2e0-fea8-4890-18ec-08deec067473
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|1800799024|23010399003|7416014|376014|52116014|366016|11063799006|10067099003|56012099006|18002099003|22082099003|38350700014|921020;
 X-Microsoft-Antispam-Message-Info:
-	ULqcOktOhcvn/Z0c0SC3qRZcsNPtTD/3Xkj/ep653Ztf9vShQQylwucXxjbiFyMgH5WK4eh7P5K4J5DuosUZCBo2g6bOOUN0vMZjys8FW3BZo99jCEXG+cMEM7psmn7WgKfZJvpat7B59CdPHJaUK9xx/n0PKHVfGRKOrbbEOj8xVtJHaZOiHOTl+Abd2njd7JegDo92MLXklNBk84ci64iAemvQa0ZG+VeXULKyyxir+GsCv4hI37hyk1dIOhJ71v5yhk2dUxp/xN1oRdFT5By1IJOCoY/uGdWLi1uMp2T1DeH5zA4CifdzogzoWQ66gaco6kyWfBE6ajoNzpqnrsZuFragdByZK368gxHKo5tGlGMATtx99H6F8Hr+3NMKDV1XKEZeQqAHAplX9EGHw8++7X0OingY88UA2d4cj04uoJe6sguS/crke+AaNhTfPAoB7GL5FQUdQi15W7tFvdriWQWoz5U7MmTydOKic4b+sp0Vf2z7S3SsuIs/TgnrJHyWXX7NK2zWeR90Tr36p8KwD4Q8JfcZEhnMdRba9OFDJ3YMnYjXfhzyOOVUaxHsOJD/NWpkKm6HaWGYCT7ZcXkLU9vWE3mV7bv0WTJo4kTV7+nt4G8XRWR1XjVN+3gfu1nh6/HnFfXQPLKNqUyIS3ulv8k6ZQik5rgVQwOuetTCob9ybNSt7foabb/XHL/Nev0f/gQE1b1uw3atOmotm+J3F8TiM4Ei414RdlUCAG0hpFt+dTe+FMHw4lM+xulY
+	NInFbsJR15QeB/fQHYO2tU48KQK0nFfCAVKJ97PahaNPn2v6T6yenaMc4C51mQBkBjrZ7mU+QBQviSVIIXhj3YWDeSPBHeUUrJoOEMzrzTHhYddQD6eaVRzJLladsz+tIdwr2i3PshW9m0hkPJoYvvDG+A09/04vhXhfksyd0QG8C09+Opf/2RJA0LhSuYYhh5KdWL27QSXqjWJpR0zc4xRipZCsN63/tn6bT7e9E4dtcQ/xPTxWZPGimhyltlYel5F//WyD3dvat8J4A3uZ4QS+vPemJHdCLAtLBtxd6tboKsYaE1ESBzoFUPe/DUAuP67fZjyNcykuz4Q9Y70x6OV7WLaQnUvfpyWDy2usn49gIEanplcijJqKDk55TLKq9D4AUcqa0IlARFkCPWU6KsKI0pq2brAlqINa7wPZRQdzz5n5+UMNojNdyjkqOmBRklKDs5ArzRd002VRRPfH7yyFa/51Qwf9qSLlgQsIYI2lpU/AX1Hm0keKDXB1WnyIl0PLYfcT8nZOKLZe/o4z3jnLAfEbrFmnDTzI50BcPgPMxxX61AFUclATDBGsIADkTHXnjEwSwZDyvvpY8Q/5jVj9ka43N2tVR6YS2hE+wNMH+apW6ZgZbvNAmRJEb6+610eH+tpY80PvCun3g+zMii42awystkj0wvD21OLD/wpQyWesfwQ+MrhkZrGO0oNpSyI3xijabBTu6OEsHMFIyVK1iR7lQNcabiL3otn+abC8scqKTbDYoiSBE7AV3vd3
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR08MB10037.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(7416014)(376014)(52116014)(366016)(11063799006)(10067099003)(56012099006)(18002099003)(22082099003)(38350700014)(921020);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7hqJgnJTYOx7V/v6DEKNUm7Obsb2cUJUdmZBeL8C5oCoO6pZ26UYugRJL87b?=
- =?us-ascii?Q?Z3apbOpixBON5mJzAlCFm1q9Xp2unhAiZ4T31j6ZA5axcfCI731QMDxcSyhh?=
- =?us-ascii?Q?EpmiDdn7zfFwTLAvYewuqIXJclFGpZ57m8G1rDvBopbmUjxZ5C2Pu9lOEUy1?=
- =?us-ascii?Q?/fIHtXNHxvKQN4PCs9BPz9V99hwgj8S37TU/c5fuzr3PIvKOC2VXTfPiL5Yq?=
- =?us-ascii?Q?PeVnqbzk1ucqY0dA1wfZ17W1QP1bb87tGPG4A3lSrF1WvX31gNhFoGqmPzou?=
- =?us-ascii?Q?g1uY7/jZchA8zYq9e8RKjgrQxE7FXB8eUj3rmz1tN2eYDir80AQdTAaHWeWC?=
- =?us-ascii?Q?gc+S+FoqwaihbzqO9ZfzMhY6ggxl5Ahdyy3Fk2TzvSlgx1rs0YJg+i/srvoj?=
- =?us-ascii?Q?KEhM8oaVhl3Ypb6wMAoA4VKeLLGI8HamGRm9gyweyLw6AlxvYfY5khy0iRL1?=
- =?us-ascii?Q?Nc3BBjpL1l6PPhK6jY0F6Ol/pYzGyDb9n2Xf/Bs6zzZzqgxMlGx4HOs9Vpbw?=
- =?us-ascii?Q?XWL21BfNwUj+seTeRcSv184FEbPqI6IyLSnBpAkRL8weZheG8srZJ9cQtb93?=
- =?us-ascii?Q?xeJhqrFhz/jT4tKeNkmxQWVOc2xKDVPFUzqeqlwAY9vQHF19NQpoZASLDP1v?=
- =?us-ascii?Q?zsCMCMaYjY/hyOAIlTZwXt7tI3ZiqlyWqBxKLJ1/E6ZukFUf4xm5wqOfWNY+?=
- =?us-ascii?Q?cFxZZPeCW4tTNq8G5sBXsklsHgHq5ZkQ2s/XcCYXIlc91lJmniAvDDZWcuBF?=
- =?us-ascii?Q?GFnTzbB5Ckwz18MbxbJ21PQUMVjPKN1U/RYlY4tKVc8EaTaL82WsdZ8n5RH7?=
- =?us-ascii?Q?OgFzLnwYb3ndDWDw1+RnkhvPMO469oesOu+BNknBp9w4xkuXo9H8Cw+kIIAB?=
- =?us-ascii?Q?oLdnU5UZMHBL9MY/tgDEPqYl6+NlZ2K+UxyyK95Ukfkyk9Inkk1GSeGm/zUa?=
- =?us-ascii?Q?WGJFRSfpScyMf1mMgKgXPzCq2K/ySusR/nVXAwT/EaK0aNJlvSWIeEuNnbak?=
- =?us-ascii?Q?LNQGMCACMz3AJWRyT5W0oQnSY+SyGCbOMoGekZZaDJZ4j1qumv6Dxyve/Nul?=
- =?us-ascii?Q?hoy+BnoOPwwXOIdfLXnkDHyoUeQtXAQ9+GP8FBQMWOAPFbzGC4AntU/USE0u?=
- =?us-ascii?Q?fevI/1kZrAOruTTUAjU0oB7VAdojJ/6JJdMNx/u5gnPm6/PbRhGEENKkEY3k?=
- =?us-ascii?Q?qi+MvB8nabFcQY8JWzzbpsQsvFRoF5w5VChsZ+XeZUUXzj0YIFoYFnt0i11g?=
- =?us-ascii?Q?PwZEXPIEqAZni8h49e9hXL8TzDWqeTeuaVi5jPde3G+Ge1OAiNJye3nMof2d?=
- =?us-ascii?Q?59x2ba4QI8bvXU6rqGrBoBsSjugU988jvXM5PWJbprZBlSuO2AxoD6wZ/fSM?=
- =?us-ascii?Q?UQbKGBbPNIJKtUtGK1dFqgdpjoio1F6H4TmwK+v1vEhJko9HRgJn+uQXQfaU?=
- =?us-ascii?Q?ij6jqRb7AYVQ74siKeYSef5U7SNHB+7scUc57khqxGu1ZvNR/dGczuwnPJnj?=
- =?us-ascii?Q?1jZy/DcE9IfRwy35hxSijY4LsjbBSnp21LkQRDCeMhw2mCFnu0k6ZZ01l7gq?=
- =?us-ascii?Q?dRXzxdyU64BWjUg916/P4P3kU+r1/wkjQJTh11/A4H7GMiNfUZudHH0kBl72?=
- =?us-ascii?Q?hh4k+8gwghPtPIQmHSvNnUVUSFRGmPa2InobPq3lckn43Ak4UR1QxN8wask0?=
- =?us-ascii?Q?sqovhvWLPsvHTPVlIh6sOadJTBVQ8RwiC4gGbSbDWlB7HbHOiBXj4NAAzcQB?=
- =?us-ascii?Q?75pAoE7Hya5Y8GfVwl61PGM6Mt2TKMQ=3D?=
+	=?us-ascii?Q?TS7M21UbTbGgGZtLGRTfNLafsX/hu9aNNEBFJCAYqj/JrtMzcYbx/B8fO4pM?=
+ =?us-ascii?Q?2uALceB+cc+rLulNj8crz48AVQ30YcqjxJkydPq5Er+SRp9FOfJjFvrIq251?=
+ =?us-ascii?Q?56INxQ1bjb5aHrOGW3rEU1H21TzPwD8Yfch5qM8oHgt8v5mdXJiX/+UAUQY6?=
+ =?us-ascii?Q?nUa78c3MUF/6eaprnyxfEmtCq5u7zbYqJKyHz3Vn77ENny/ZiY3/q1zjbJFb?=
+ =?us-ascii?Q?7rHEu77DcDMCh8UsVSE3IBkMCSkNqAI+p4OI7EEiK7cVjlydow6daVqci2N0?=
+ =?us-ascii?Q?ZN1a00YKOdaK+7MWM6RU11YrtTIuA0AFD3HULzmMGUdfdsmrNuSyyiRW6a+u?=
+ =?us-ascii?Q?QuTiDEiyw1l3TB2A/0Appp0fxIFdl3sHifywD7cNUTSpNC2iHzYHiP7KlbqR?=
+ =?us-ascii?Q?Uit8c47WrA5gklpE3i4BVVJv2DzmeFUS3Fs9PXKEZnoIej4g+EF55by8e0k0?=
+ =?us-ascii?Q?pFv6cUicPU0NdjuwyTx73Rt2ibN5NSHR7SML2DHZPsGTcK8c+NMEdp4GscbF?=
+ =?us-ascii?Q?0k8iY90UlNTkxJqKih/3aTTwb50qZ0/nmlf0Qse49OGfMZnxvbDCOHTXHPjp?=
+ =?us-ascii?Q?XL8RjxHlXYrZORj0tDrXgBSHA9lnDjA2wJFquyrRm2/E44NEBS7HG5WskFIu?=
+ =?us-ascii?Q?CKYw1scgNFhX7RnWkH638H8H241PQ8UOphuF1uDccz2xqEETWjyeesSFfG6t?=
+ =?us-ascii?Q?mDwvcQelVQjBlbJKmUAswWY1goDusYsR8iOtW6+311ka8rmsCEJOg00CGVoz?=
+ =?us-ascii?Q?IQjH1o6PZYPnmWawars1qUDCQY4hOQ7QPreTAL/PHBY9qrAHVfmibZ1incgi?=
+ =?us-ascii?Q?mbIWbDxHBwr+YJjp4+YTjkDXgnXg1OOi8iH78xHy3qcsJ+KyaQJggGR/oxSj?=
+ =?us-ascii?Q?jYRTM3A0ZLg+sYXT4K1WyEjHz3q99fYsTI0QQliOEHv7BsIW6UHdr0tvB7oV?=
+ =?us-ascii?Q?ZZl5gbLaqmAq8iJ4GYKeI5Ff2wYXBb2kOG3THYsjnnQZs62Ca0WfYptOCPj/?=
+ =?us-ascii?Q?/mNDm0U7KLIN2uSDfkGFzzmR+mfs2jKK4OgUf+ZGf4oHT9DLnntXQiWdrFIB?=
+ =?us-ascii?Q?qN+ret1ZxXrY3BPqtlRiiEK8fa8o7gAfdVtzFufDrIiIv5in6Lwd0dL1d2Jq?=
+ =?us-ascii?Q?zCWsCR8DXS/wpP6LiNaJ70u0nGxXZ1r7wQKMCSSNqBgNQvuPdkIjH6MAVh6e?=
+ =?us-ascii?Q?COYkifvdkT3fna4FTAz0tPgDN9/nLzQ3JVpteR2XkjlyGuDZlndyox8Hc7Pp?=
+ =?us-ascii?Q?XcGDrHD0a75yw1TN2nzL4p3XAxaIpJfbNOj3gjTEiNxtwF2MAf7+4SAS4soA?=
+ =?us-ascii?Q?luTDS7/2dhueWT3ku2YLJdAMhXJFTXvU0EnSDvjXjPmXFiPQUMXlz9E5a0Us?=
+ =?us-ascii?Q?OgsYGWGSEQzgSD53tw3YKXn6rgTy4wkk/NCGxUyXDc418ziNXsDCA70h9f8w?=
+ =?us-ascii?Q?t02FP+/9sjddyFT4OEFMZhxtnoP0nf3ksKr1YgRS9DcQJDb/SQMUyYTUODc7?=
+ =?us-ascii?Q?tjmVjnyXWzFNTbKGMX/k4igQvLxr0uN4ZmT2EU9UTcCOmwRLaPjZXJpB3TNO?=
+ =?us-ascii?Q?165JxeeuazpDZJGgSw2qUoKwlupQTL9RKbjuAJxVkZ7rkpewT0tRQGbVv4JL?=
+ =?us-ascii?Q?40S26a/xPSDquQBXb8ePLPEYE/9hKfT/FOsa832X7tm0GoPP78UqQPGEQaYZ?=
+ =?us-ascii?Q?DtbfVVwXai6XyDe7WIaCtb8dYfTdWSy519AdHrwd2bkZhdv3RJYQ6yXl4gy2?=
+ =?us-ascii?Q?maCOCTptoVhS2D1YQzQm7iWAlblin74=3D?=
 X-OriginatorOrg: iopsys.eu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3aad3454-bd0b-4b15-e652-08deec067379
+X-MS-Exchange-CrossTenant-Network-Message-Id: 817bf2e0-fea8-4890-18ec-08deec067473
 X-MS-Exchange-CrossTenant-AuthSource: DU2PR08MB10037.eurprd08.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 17:42:38.5919
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 17:42:40.2687
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eqIxZ3TpevRuYsdPXtuYiw5vWB9FKKTWaJzzKsbVBcB8B56GyIqBp9ngKcnNZtQCvYwItSZyhcNSeCBNcHNlRpaajhInI12+jevbxFHnchE=
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZDxlNduUUF1V8yKds/GOSmlXSjvaOpRe81k3xRW0K+eOr0tiOgS6RvoC0l3LYTQffgI9GsJh6lVZCTXyg8YMwBzjhzR2fQWkBLUwNpg5GlM=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR08MB6111
 
-Add support for pon pin function for pon_alt pin group.
+Add pon_alt pin-group support for an7583 pin controller.
 
 Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 ---
- drivers/pinctrl/airoha/pinctrl-an7583.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/pinctrl/airoha,an7583-pinctrl.yaml      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/airoha/pinctrl-an7583.c b/drivers/pinctrl/airoha/pinctrl-an7583.c
-index 9b5c7ea5e5472..7e94dcb3b61a5 100644
---- a/drivers/pinctrl/airoha/pinctrl-an7583.c
-+++ b/drivers/pinctrl/airoha/pinctrl-an7583.c
-@@ -38,6 +38,7 @@
- #define GPIO_SPI_CS1_MODE_MASK			BIT(0)
- 
- #define REG_GPIO_PON_MODE			0x021c
-+#define GPIO_PON_ALT_MODE_MASK			BIT(27)
- #define MDIO_0_GPIO_MODE_MASK			BIT(26)
- #define MDC_0_GPIO_MODE_MASK			BIT(25)
- #define UART_RXD_GPIO_MODE_MASK			BIT(24)
-@@ -391,6 +392,7 @@ static struct pinctrl_pin_desc pinctrl_pins[] = {
- };
- 
- static const int pon_pins[] = { 15, 16, 17, 18, 19, 20 };
-+static const int pon_alt_pins[] = { 36, 37, 38, 39, 40 };
- static const int pon_tod_1pps_pins[] = { 32 };
- static const int gsw_tod_1pps_pins[] = { 32 };
- static const int sipo_pins[] = { 34, 35 };
-@@ -479,6 +481,7 @@ static const int pcie_reset1_pins[] = { 52 };
- 
- static const struct pingroup pinctrl_groups[] = {
- 	PINCTRL_PIN_GROUP("pon", pon),
-+	PINCTRL_PIN_GROUP("pon_alt", pon_alt),
- 	PINCTRL_PIN_GROUP("pon_tod_1pps", pon_tod_1pps),
- 	PINCTRL_PIN_GROUP("gsw_tod_1pps", gsw_tod_1pps),
- 	PINCTRL_PIN_GROUP("sipo", sipo),
-@@ -562,7 +565,7 @@ static const struct pingroup pinctrl_groups[] = {
- 	PINCTRL_PIN_GROUP("pcie_reset1", pcie_reset1),
- };
- 
--static const char *const pon_groups[] = { "pon" };
-+static const char *const pon_groups[] = { "pon", "pon_alt" };
- static const char *const tod_1pps_groups[] = {
- 	"pon_tod_1pps", "gsw_tod_1pps"
- };
-@@ -629,10 +632,19 @@ static const struct airoha_pinctrl_func_group pon_func_group[] = {
- 		.regmap[0] = {
- 			AIROHA_FUNC_MUX,
- 			REG_GPIO_PON_MODE,
--			GPIO_PON_MODE_MASK,
-+			GPIO_PON_MODE_MASK | GPIO_PON_ALT_MODE_MASK,
- 			GPIO_PON_MODE_MASK
- 		},
- 		.regmap_size = 1,
-+	}, {
-+		.name = "pon_alt",
-+		.regmap[0] = {
-+			AIROHA_FUNC_MUX,
-+			REG_GPIO_PON_MODE,
-+			GPIO_PON_MODE_MASK | GPIO_PON_ALT_MODE_MASK,
-+			GPIO_PON_ALT_MODE_MASK
-+		},
-+		.regmap_size = 1,
- 	},
- };
- 
+diff --git a/Documentation/devicetree/bindings/pinctrl/airoha,an7583-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/airoha,an7583-pinctrl.yaml
+index 0a217429b2cb7..7deb48db52c3a 100644
+--- a/Documentation/devicetree/bindings/pinctrl/airoha,an7583-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/airoha,an7583-pinctrl.yaml
+@@ -81,7 +81,7 @@ patternProperties:
+             then:
+               properties:
+                 groups:
+-                  enum: [pon]
++                  enum: [pon, pon_alt]
+           - if:
+               properties:
+                 function:
 -- 
 2.53.0
 
