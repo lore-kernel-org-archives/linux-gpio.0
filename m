@@ -1,207 +1,151 @@
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011001.outbound.protection.outlook.com [52.101.62.1])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8125D30E831;
-	Mon, 27 Jul 2026 14:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785161517; cv=fail; b=jOwD+xcyVJP1deyBMsT5QpqlY7WTaBPEDk/a5vl6blHX1eg+djhRPwzM+YwIXkkEO+LYqAxT+xAMNvdcjVTR9QmfOU1QUStjUQzwDSQVL++66+recHjN5D+DN489WRziB86vdzFoJk4MMMXkuW9qkS3F1akyGRESe4X2PaS9Fmw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785161517; c=relaxed/simple;
-	bh=A7A6wTzAJBCIX+4aDFPU9E5DEIL8wyw3D25m43wxPQc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RV3qvw3zVK6+DyhLKAGYbxsrUCyKwldt/ZwAXCShxh+mUXUdcZBV2rHfBjHmZToos4zVPdTGVYlVTZPpoKMhSOUJpvkBuDTiIRK0oh42GCDmJq3dHIwaPWEZooTCVSn+gbRO7WANb2Kw4j5ANcP8ZAYo7ZHrbfGBVW/N9oTTCBo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HXIlUi7G; arc=fail smtp.client-ip=52.101.62.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E3C377034
+	for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 14:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785162282; cv=none; b=daH5mSnZbuUkIEtUgrg50MalL6xvIo9pAyJG9d7Ho6h0hMNjUi7455kU4mIsHV9neeF2wCL2kd01ONDd07PmFZDevSf76CwugsXhvjFMtkM1JXa+zJmz3lOi6d4BMUHMb7v9U+wBIgLVDg/XGUnHMrsB4hl0w5O5fLjAO9XxeDU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785162282; c=relaxed/simple;
+	bh=3mAT9UG0+1ju82uu5uKy02/xIaDL8I/hhIjnz08fkBA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ItTMsxnIJvNEWLJvTjmqoxa77u8RnOYjmCmnSWwUL+mlRG4f/AotD3WILLM+K6q0Jbro8L09LOJJhQHoK6nNH77YF/s0jX3QAeEOF0CWyvRnC4WTnlfXpBPa3KDbZdztnRdf3yqjpXIcoNG3VF38wqQcd00heFvziYkgGOrYvus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bQJtbZDU; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=M2l2IJCN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HXIlUi7G"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bD2/e9QSYjRVdol6RwRyXWpW5bkXYJEz0dtbBc6TW5bIRjAiK76R90ZN/oFzUg3uXVsZi/jsSblJql1BHg5SosrC31jPw/afFiywqg+G3URdl0Z8abtP4kXg68QRgz6WpiCRkjZrgIF4zjb0oC+dj2Jm/XTD4HE2nH4N9xY7eac21tQnjv27TkoRGJ8a8ZowV1poJgsUEdHboNu0mhpm3xQX92TLM3E0R6pfUt5ikJcPn3PVWwQ8wO+3U0LIrR/t/3FtKsEVGauU0IVe6sGyNmwtv7BusfpCH2LjFTqEfhpAjMDTIr+pYvAcMfkRmN12kR392/sZwUIZulpGJ/pdwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mPNSZtmqaSHehC7SAbaJk4749GETuQov9lRi45mKr+k=;
- b=dZXzXuGteRP3ZKXe93c0BLj+aeYFjxof2j2QphIdIpIrnGYtnVVtnZsObXsdz1mDaIy9jbAr4Oo6sNQnQpVxnYLJ5alZ4XDW7s+kJbY0XiW91R8FD8uJ5x+Tux/6hKM4ZfhMXLcz3cyXpbL3yhTOx8B7V+nwNTWTJAuyH97u5UBXbRBne2SfLzsQxhc4s3S1Co+uBFTtgK3baxhWfY9SIrwznJZNnNSXrrJ7mFVxo5XFvARqmVfwtD+oS1p2o3QJeRuruknjhVx5S7RR4v7eDntyB4d1LjUqODLeACz4Hhl9iqx08ecKGzDRCwp1Gr6S/2PcDlcbugunGJFpsE2nTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mPNSZtmqaSHehC7SAbaJk4749GETuQov9lRi45mKr+k=;
- b=HXIlUi7GYIbJwiD/PriMjSSyMmmJ+eEly3T9d34NC4x4FyihJl8MQNxC6FhEa/gj7/VbUr/XJx7Dxlqhv1cja+Me5uMSBTM29lF4uj7VtTgrhE1ahqsY4aRENO1/GFwXgyzYlDrOOc+yqPBrMU6kir7CPqeYqCdyQcGPsCsAAUqKM2wbrP6j+18+fzN896uMJb1/pmdG8V7kJg2c9dbKd4GnkORDqVf9AZ899ztiQ7HTedYkzbvC3ZiYTFsXbaiTUhr71dS0TzkeeBSAxRi5eky9zIQForegClVqUrdH8H79iY2qUsPvuKnPMKDwi84PQtMsDs5cSd30bpbpzaGo3A==
-Received: from BLAPR03CA0025.namprd03.prod.outlook.com (2603:10b6:208:32b::30)
- by IA1PR12MB8520.namprd12.prod.outlook.com (2603:10b6:208:44d::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Mon, 27 Jul
- 2026 14:11:47 +0000
-Received: from BN1PEPF00006003.namprd05.prod.outlook.com
- (2603:10b6:208:32b:cafe::22) by BLAPR03CA0025.outlook.office365.com
- (2603:10b6:208:32b::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.245.13 via Frontend Transport; Mon,
- 27 Jul 2026 14:11:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN1PEPF00006003.mail.protection.outlook.com (10.167.243.235) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.270.5 via Frontend Transport; Mon, 27 Jul 2026 14:11:47 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Mon, 27 Jul
- 2026 07:11:27 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 27 Jul
- 2026 07:11:27 -0700
-Received: from build-pshete-bionic-20260122.nvidia.com (10.127.8.11) by
- mail.nvidia.com (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 27 Jul 2026 07:11:26 -0700
-From: Prathamesh Shete <pshete@nvidia.com>
-To: <linusw@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <thierry.reding@kernel.org>, <jonathanh@nvidia.com>
-CC: <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<pshete@nvidia.com>
-Subject: [RESEND V2 2/2] pinctrl: tegra264: fix DAP2 DIN/DOUT pin assignment
-Date: Mon, 27 Jul 2026 14:11:21 +0000
-Message-ID: <20260727141121.772110-2-pshete@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20260727141121.772110-1-pshete@nvidia.com>
-References: <20260727141121.772110-1-pshete@nvidia.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bQJtbZDU";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="M2l2IJCN"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66RDldCf3905491
+	for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 14:24:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	A9fjSlQsE+bogjI4QCB1WAwqrOdnkvqIg20lJlfw+zk=; b=bQJtbZDUhZWVO5yI
+	pdHskyTFt39bOZDcY7/QYcY8O9WXDkudFTBVQJXakg7aYStYYicj9tvChjiCYPP5
+	hwch5HMMAm0f591VCP56DTdTPw2tY3SM9rhyj3MyKsczNajBcIuLsoOQ1b9mfUep
+	6ksg0oWCM0LupL1Nbjoe5uorMCs4ilxVTEaY3Dq7eS0t/4PUAWnuyZ/tII4FBpaQ
+	zXWtIldlaSVKzgf5QMgF9tIhc4w0a+FV0gEn2ApkHSznKZpQpkdfu+kyKvAScJ75
+	+e5ZyVmzWWthEN+Ir54N0IOtsE7vnlEiNU8u/AoCxXn1KdnxSq0WBnbOu78KmGJF
+	BymNcw==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fp4uks2qm-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 14:24:39 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-51ebdfceddcso36666961cf.3
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 07:24:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1785162279; x=1785767079; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=A9fjSlQsE+bogjI4QCB1WAwqrOdnkvqIg20lJlfw+zk=;
+        b=M2l2IJCN6BU20RPGfpqXB05niuV2Q5n9exhVrHs5CTavfghUPWy0i/fYWHozEHannj
+         zOAlKkxBUeV8KZTBPfCEgO18Oo0IOfxzPJZ06sYaDpWVrKpo3Ril6k6oYZ3VBItzTI+V
+         QpxuUjWuU7XUmH3TXNzxZxZ2S+FWdy0v7D74c4y0o7GU/LkAABo5N97W9yRHUsMJthrk
+         0SXPr82373993RrXJ6CxFiA+tBIqvh+pcZl0cQd12yCG5kfAFvmgxdyhdz4fLqZ8/XRB
+         n78P0BtrPgG/gF/RWIPELEQ1MYg+QbG4oKG71jsL3EM0hAM2kMF0mPfdl69Mwi3+kJ35
+         JQEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785162279; x=1785767079;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=A9fjSlQsE+bogjI4QCB1WAwqrOdnkvqIg20lJlfw+zk=;
+        b=tI6d3rAvrHpXSl8LpRv1bgkP4bVkBGUqXjVpSFUC3fDDXLpIYpOxXkLtZElrEhlS0H
+         48csW6519Ksol960yDYs1jUucAMlQ53MhCFuVGvIwOE1JkMQRyqfX4Y9d9oWT/ZL2Qm+
+         xz8AlDJXaNsyhW1aA0dQi56VM2ctlOS6HzvmUtGvUN1UvkQ0mtIN/b4ps6K4tulRoYTX
+         XC0wxciyxo3USCTHNyrLruMANl3gGr1WBic/Upv+NwSsglsGsVTj1jjenp5yOVP8e42O
+         F0iqXI5+aPWKk8Q7uSjq6padDDAYf6JHlfB/27xAjfaVWbyizwJFVtUMYOs8H249mceD
+         ng9w==
+X-Forwarded-Encrypted: i=1; AHgh+Ro60UPazNBRS0b8BuvJA+F/3vx3MLLsR7PRBGTE8Xkj2XEp2bfPnAtjkWbK6KyOBBPlECCDFD+QFkEO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz7ia87EDWi91fnCz050wgKCuNRfFBVVwvdieMFYYAxZ+XTzIE
+	cvQU8oqIqvzTRU7I7ECzf0Xd2nZB0fg3DYT2nn98rh+UGjA14KAO1T+PoZsaAo4nnJCnCksRUtg
+	w+J9lrzJ1eqvSieCijcGG0ZWJwvDziTb94p1OSEgy8qMRJBvqZkjmzZS0iPuBGMDF
+X-Gm-Gg: AR+sD11699IGVpoKZscIdHeh7cfSb+fXxPfdqhFfVxDwiYdi3kTIf6usMMMP0eHqS43
+	VauSn/8lDD+BnpXnBH52ysoPdNLkYG/Xr5mDibPn/gd/Xzl7P6ygACW+hK4hPIp9zRLPImtGg05
+	5VJZMG+qQL+5Jf9XOC+taEmHC7PTGLiiB/DuFIJW4+eWecw8cO2tWJ+IgA4kbgq3zd3h5NW6ZPR
+	bFa1NK91X3TtvLoHyhfho1h2CaPwEpLqDptDyiheXeFmvwyyZYPYlpnWX52jaSbobtgrlvgoZtO
+	sKBkqDw18N1pUD/hyDCB4EMEpdLj5Z/fBcvbDc62rRSzrRgNuZR+GBGG3zkbFbvQHEAwFSR97j+
+	w7IeiGxMNv/+g8A9rIeeZdK7l1A4=
+X-Received: by 2002:a05:622a:138e:b0:51a:8c97:938b with SMTP id d75a77b69052e-529a86c6a96mr89951981cf.66.1785162278940;
+        Mon, 27 Jul 2026 07:24:38 -0700 (PDT)
+X-Received: by 2002:a05:622a:138e:b0:51a:8c97:938b with SMTP id d75a77b69052e-529a86c6a96mr89951461cf.66.1785162278433;
+        Mon, 27 Jul 2026 07:24:38 -0700 (PDT)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:1449:2d40:6dd2:20d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85b9a6d7sm48955047f8f.2.2026.07.27.07.24.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jul 2026 07:24:37 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>,
+        Sneh Mankad <sneh.mankad@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Maulik Shah <maulik.shah@oss.qualcomm.com>
+Subject: Re: [PATCH] pinctrl: qcom: Add irq_get/set_irqchip_state() for msm gpio irqchip
+Date: Mon, 27 Jul 2026 16:24:35 +0200
+Message-ID: <178516227335.59204.11412409197069855135.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260424-pinctrl_irqchip_states-v1-1-85286f078916@oss.qualcomm.com>
+References: <20260424-pinctrl_irqchip_states-v1-1-85286f078916@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00006003:EE_|IA1PR12MB8520:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d0662b8-3649-4ba3-8d60-08deebe8fee9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|376014|1800799024|82310400026|36860700016|56012099006|11063799006|10067099003|6133799003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	ApmrHL4pVnFkg6ftg+vdud05euhNPLuLJijTpienyXghzi/nLqdiR+6h1l7kLO0B84RCP8r5bMzwzyhzZuFDiMhOIMPEiOht/XGjcTS06wxlgQvhvADXFKGCCyUuKsbirsJZJX49CUQAE1pNfddoT9oz6ZfQe7XQiphVFo+x/JarlqCFZ/QpV+EcvkVHeMlURg01ZMUyvmO7FiU2VxNLqzu1NVBAVLf1wSmhn3dmwV8+qajSenq5RqNHq5IKkJbzSQs0lvwUkBrO4UOcPfbeSO2nl+Fr5g10WhjnX+S1YlKJ0dqwzIcD/+ln1OvTJ3EbxtB6yq7JGISEdAcQB2HnpkuNsT3RTMfbILvppDeT/nYYWA/GgI6XD3LV4I5Sb7TOrE2f2kaVw7W/9dWdkx7nbvJxq5gIP9L4x7DYQ0LeLZng6U5mhB6m3ZVQFXKOr75M48glnrjlpf1JMEOhcaEiH9jAsupK4QMFmuyHiZzGkWpkIFY5lzmRekvcr90c3T+6AMFRIFqk9YgTZNTfDScrcINPhIG5JlEq4DfoEuUeSA+3tG0TOlE6raXzrZdU5QsREV2Obpdx1ZIP2oIr9/CaA+BMgDhqFO4/WsPVjt0/wtK3/Q5soNK/9hMvLCS4TvBMLJoTqWvR9hXG08LIvjMhGWonwbHL3vl9SNi9sOn5kdUmupuc92q1YzKyIOj1FTgBLLhHXjMayZrSKdaGetxp7A==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(82310400026)(36860700016)(56012099006)(11063799006)(10067099003)(6133799003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	jPiWAil3eKqJfMnSl4pC9Nh8Q0ya8w4h1l2vs2LEisiWT/BpNVaWQxyyonzAKjE9IprCe6u93mk2QiCwTJV9jFgIPE6P7TyHCwNL4qsdFl83pQEjZxlabAB6Aa909vfXsDyn0nuyQGbOhb7CtxIwFBcdCgUHwSXeSXip1OXwvKP0egLi/9ab4fkCDg+k22V4oJOc/IWMw+zcYrtL66QYygChkRpZcoblyRtP33NzOVmZvfCkzkaaDqQTI2ZUqX3O5sgDP4yQF5ORw0daJ+Kd3U9PazwlKqOSENYZ+lpShAgcPPwHp00AVHLy1Ml/dhsL8I2CtYSRS1XBd8Xu7T52un+EZzLO0gigxeA1g1KtA88EMAjFuXwk2w9fB5ebD+BZE/p3fNqpUiTGDOcBqzzswjnDeHRFwl8o2uw9TxV/a9CyU8x97UdqZf2IgBBzfOLy
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 14:11:47.3003
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d0662b8-3649-4ba3-8d60-08deebe8fee9
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00006003.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8520
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: PgMGaXaSYF7v0X1cPN-I5HLEooQZzGWR
+X-Proofpoint-ORIG-GUID: PgMGaXaSYF7v0X1cPN-I5HLEooQZzGWR
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI3MDEzNiBTYWx0ZWRfX/ADsRa2DtIso
+ FC3TSAxNIBRgpqr9OkCOOUGJDmY1Ndp+Ykd1F8ZaIQ810tBd6qjztO+7nzIxgwDIIp62eLK5EL+
+ qjDz4+MaIV6K6DkiAmWfKQB9l2+uNmI=
+X-Authority-Analysis: v=2.4 cv=PeHPQChd c=1 sm=1 tr=0 ts=6a676a27 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=jlfPM1XiwSsKjbdNI6QA:9 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI3MDEzNiBTYWx0ZWRfXzb2QACrHrfWo
+ CzT3Uppyvwca7fl+8RqBUVYKdMKjQ9B5Hi30gJB/z4fXhQKJOKUHGeVxkOgqL4hTjYHpKyVRA9U
+ BrJ01DN7z6aDalz883bU3WCQeqsUm4ohHxfCoZIXsQYCXvZPTJjtjz/6zhH9ZqMiS2pTCkD8zHT
+ bYk7lIwBkZRtGd61ZoghPE8ASPwcG5f0GoMp+H9730uoZjD7M6p4Haja7CSsmwibWpzMYtNodIj
+ Fll60+he5CYHGyf0DewRoZv+rKAD8+m4yqntgWrrMF7WQN4z1Bzk07D3jamA0NWokUIponquMCd
+ nORDkBxg5vRow3X9E9LeYyZwlqQ/T5L38X9bZBJiXim/XpAmou9MzD26OBgk3NGoYxXmqH9RcMP
+ DLkLsG1wmSHcjQ8Y1BsL+sdPKzXaPSLk3Q0PZapKNOJv7Pnxx+sKk1R74zu8dL/l/qCLR5eKRCT
+ nHhyU6/uiG/DQKv3PgQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-27_04,2026-07-24_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 clxscore=1015 adultscore=0 spamscore=0
+ phishscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607270136
 
-The dap2_din and dap2_dout pin groups were given swapped ball suffixes:
-DAP2_DIN was described as ball PV7 and DAP2_DOUT as ball PW0. On silicon
-DAP2_DIN is on ball PW0 (mux register 0x6050, drive register 0x6054) and
-DAP2_DOUT is on ball PV7 (mux register 0x6058, drive register 0x605c),
-as reflected by the board pinmux.
 
-Because the ball suffixes were swapped, the groups were also assigned the
-wrong primary mux functions (dap2_din -> I2S2_SDATA_OUT and dap2_dout ->
-I2S2_SDATA_IN), routing the I2S2 data-in and data-out signals to the wrong
-pins and breaking DAP2 audio. 
+On Fri, 24 Apr 2026 12:01:24 +0530, Sneh Mankad wrote:
+> MPM irqchip monitors the interrupts during SoC sleep state and after wakeup
+> replays the edge interrupt by making it pending at respective irqchip by
+> invoking irq_set_irqchip_state() API. The msm gpio irqchip however do not
+> implement this function making it impossible to replay the gpio interrupt
+> on any MPM irqchip based SoC.
+> 
+> Add the missing irq_get/set_irqchip_state() APIs. Implement only
+> IRQCHIP_STATE_PENDING case which MPM irqchip uses.
+> 
+> [...]
 
-Rename the groups to dap2_din_pw0 and dap2_dout_pv7 and give each pad its
-correct function (dap2_din_pw0 -> I2S2_SDATA_IN, dap2_dout_pv7 ->
-I2S2_SDATA_OUT). The register offsets are already correct and are left
-unchanged. This matches the board pinmux.
+Applied, thanks!
 
-Fixes: c98506206912 ("pinctrl: tegra: Add Tegra264 pinmux driver")
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
----
-Changes in v2:
-- Rename the pin groups to dap2_din_pw0 and dap2_dout_pv7 and assign the
-  correct mux function to each pad in a single driver patch.
----
- drivers/pinctrl/tegra/pinctrl-tegra264.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+[1/1] pinctrl: qcom: Add irq_get/set_irqchip_state() for msm gpio irqchip
+      https://git.kernel.org/brgl/c/1860fb0be224dec0e4d170f46d1cbbc77e25e09e
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra264.c b/drivers/pinctrl/tegra/pinctrl-tegra264.c
-index be64fba34dce..f8afb0bdb68a 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra264.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra264.c
-@@ -96,8 +96,8 @@ enum {
- 	TEGRA_PIN_UART4_RTS_N_PV4,
- 	TEGRA_PIN_UART4_CTS_N_PV5,
- 	TEGRA_PIN_DAP2_CLK_PV6,
--	TEGRA_PIN_DAP2_DIN_PV7,
--	TEGRA_PIN_DAP2_DOUT_PW0,
-+	TEGRA_PIN_DAP2_DIN_PW0,
-+	TEGRA_PIN_DAP2_DOUT_PV7,
- 	TEGRA_PIN_DAP2_FS_PW1,
- 	TEGRA_PIN_GEN1_I2C_SCL_PW2,
- 	TEGRA_PIN_GEN1_I2C_SDA_PW3,
-@@ -329,8 +329,8 @@ static const struct pinctrl_pin_desc tegra264_main_pins[] = {
- 	PINCTRL_PIN(TEGRA_PIN_UART4_RTS_N_PV4, "UART4_RTS_N_PV4"),
- 	PINCTRL_PIN(TEGRA_PIN_UART4_CTS_N_PV5, "UART4_CTS_N_PV5"),
- 	PINCTRL_PIN(TEGRA_PIN_DAP2_CLK_PV6, "DAP2_CLK_PV6"),
--	PINCTRL_PIN(TEGRA_PIN_DAP2_DIN_PV7, "DAP2_DIN_PV7"),
--	PINCTRL_PIN(TEGRA_PIN_DAP2_DOUT_PW0, "DAP2_DOUT_PW0"),
-+	PINCTRL_PIN(TEGRA_PIN_DAP2_DIN_PW0, "DAP2_DIN_PW0"),
-+	PINCTRL_PIN(TEGRA_PIN_DAP2_DOUT_PV7, "DAP2_DOUT_PV7"),
- 	PINCTRL_PIN(TEGRA_PIN_DAP2_FS_PW1, "DAP2_FS_PW1"),
- 	PINCTRL_PIN(TEGRA_PIN_GEN1_I2C_SCL_PW2, "GEN1_I2C_SCL_PW2"),
- 	PINCTRL_PIN(TEGRA_PIN_GEN1_I2C_SDA_PW3, "GEN1_I2C_SDA_PW3"),
-@@ -827,12 +827,12 @@ static const unsigned int dap2_clk_pv6_pins[] = {
- 	TEGRA_PIN_DAP2_CLK_PV6,
- };
- 
--static const unsigned int dap2_din_pv7_pins[] = {
--	TEGRA_PIN_DAP2_DIN_PV7,
-+static const unsigned int dap2_din_pw0_pins[] = {
-+	TEGRA_PIN_DAP2_DIN_PW0,
- };
- 
--static const unsigned int dap2_dout_pw0_pins[] = {
--	TEGRA_PIN_DAP2_DOUT_PW0,
-+static const unsigned int dap2_dout_pv7_pins[] = {
-+	TEGRA_PIN_DAP2_DOUT_PV7,
- };
- 
- static const unsigned int dap2_fs_pw1_pins[] = {
-@@ -1834,8 +1834,8 @@ static const char * const tegra264_functions[] = {
- #define drive_gen1_i2c_sda_pw3 DRV_PINGROUP_ENTRY_Y(0x601c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
- #define drive_dap2_fs_pw1 DRV_PINGROUP_ENTRY_Y(0x6044, 12, 4, 20, 4, -1, -1, -1, -1, 0)
- #define drive_dap2_clk_pv6 DRV_PINGROUP_ENTRY_Y(0x604c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
--#define drive_dap2_din_pv7 DRV_PINGROUP_ENTRY_Y(0x6054, 12, 4, 20, 4, -1, -1, -1, -1, 0)
--#define drive_dap2_dout_pw0 DRV_PINGROUP_ENTRY_Y(0x605c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
-+#define drive_dap2_din_pw0 DRV_PINGROUP_ENTRY_Y(0x6054, 12, 4, 20, 4, -1, -1, -1, -1, 0)
-+#define drive_dap2_dout_pv7 DRV_PINGROUP_ENTRY_Y(0x605c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
- #define drive_pwm10_pv1 DRV_PINGROUP_ENTRY_Y(0x6064, 12, 4, 20, 4, -1, -1, -1, -1, 0)
- #define drive_soc_gpio170_pu0 DRV_PINGROUP_ENTRY_Y(0x606c, 12, 4, 20, 4, -1, -1, -1, -1, 0)
- #define drive_soc_gpio171_pu1 DRV_PINGROUP_ENTRY_Y(0x6074, 12, 4, 20, 4, -1, -1, -1, -1, 0)
-@@ -2051,8 +2051,8 @@ static const struct tegra_pingroup tegra264_main_groups[] = {
- 	PINGROUP(gen1_i2c_sda_pw3, I2C1_DAT, RSVD1, RSVD2, RSVD3, 0x6018, 0, Y, 5, 7, 6, 8, -1, 10, 11),
- 	PINGROUP(dap2_fs_pw1, I2S2_LRCK, RSVD1, RSVD2, RSVD3, 0x6040, 0, Y, 5, 7, 6, 8, -1, 10, 11),
- 	PINGROUP(dap2_clk_pv6, I2S2_SCLK, RSVD1, RSVD2, RSVD3, 0x6048, 0, Y, 5, 7, 6, 8, -1, 10, 11),
--	PINGROUP(dap2_din_pv7, I2S2_SDATA_OUT, RSVD1, RSVD2, RSVD3, 0x6050, 0, Y, 5, 7, 6, 8, -1, 10, 11),
--	PINGROUP(dap2_dout_pw0, I2S2_SDATA_IN, RSVD1, RSVD2, RSVD3, 0x6058, 0, Y, 5, 7, 6, 8, -1, 10, 11),
-+	PINGROUP(dap2_din_pw0, I2S2_SDATA_IN, RSVD1, RSVD2, RSVD3, 0x6050, 0, Y, 5, 7, 6, 8, -1, 10, 11),
-+	PINGROUP(dap2_dout_pv7, I2S2_SDATA_OUT, RSVD1, RSVD2, RSVD3, 0x6058, 0, Y, 5, 7, 6, 8, -1, 10, 11),
- 	PINGROUP(pwm10_pv1, GP_PWM10, SDMMC1_CD, I2S7_LRCK, RSVD3, 0x6060, 0, Y, 5, 7, 6, 8, -1, 10, 11),
- 	PINGROUP(soc_gpio170_pu0, RSVD0, I2S7_SDATA_IN, CCLA_LA_TRIGGER_MUX, RSVD3, 0x6068, 0, Y, 5, 7, 6, 8, -1, 10, 11),
- 	PINGROUP(soc_gpio171_pu1, RSVD0, SPI4_SCK, RSVD2, RSVD3, 0x6070, 0, Y, 5, 7, 6, 8, -1, 10, 11),
+Best regards,
 -- 
-2.17.1
-
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
