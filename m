@@ -1,47 +1,47 @@
 Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11022110.outbound.protection.outlook.com [52.101.66.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A91435AB5;
-	Mon, 27 Jul 2026 17:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DD7438472;
+	Mon, 27 Jul 2026 17:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.110
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785174138; cv=fail; b=UsyxX6+x0CWGtdrtXA8NofZah0NaCfJ6gW474nqT7VAJGJox77R2kTkgHCLLFeb8LtTDO3/4pDmbq2N639wMQLjqyTvRM9h+cvDRPRd0ULi8C8fzmSFd72WJZYhvLNvRABTBPQJ5LtqUohjtfmTtq8i2n8VbPIjsk+vcYbim7EU=
+	t=1785174140; cv=fail; b=K3FvsIiznIMIIGulD7n3xPz3/+rbeZ8ynpw/JGNunkycDfkkfZXcK7WIufCCp06sN4Jzoi1F5VX7ACvnAhhsQ0jNd/YSSwcPismhqvMBqoXsEb3VmnV6dIX2H027q/x1uykSvCpULPwqPytjwi+ZJykQDIbwMJpD1XpWq0wWg2Q=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785174138; c=relaxed/simple;
-	bh=nTox6Fjk2bMgSam/X+wYlijmg6f6BXTxp8fP5uvoIUg=;
+	s=arc-20240116; t=1785174140; c=relaxed/simple;
+	bh=fMVan5Iqfd/ICMWBdK/14fIdpoZwPR7bXP20mlnXhWI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=iLhLK1yE0363445dJuAmDPva2ju3gNHdL4Eo/Qc05kkRisxB+1DFkn7SinhvudvpWlOe9KKSgtXIJ8mwuTDEjQDXCrJG/ky7LHmpwLgHMJJZIaVHmeNWV1dD4G/PbVjYrK3vRRfJfTDpZjo1bFxv8HgVZdb8QooYtTHs3B0vUuw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=ZnzygYpe; arc=fail smtp.client-ip=52.101.66.110
+	 Content-Type:MIME-Version; b=iTstrebpFsfgF81AEj819z7ossGKTaBJQQlkDkcIEJKzH4hNxg7WKo9t+bjuBZM65UizAlwWhlv4n9zSlor6EThA5EcRJ275+3X9b2mq4FPdS9LthpfcJUyXbKqvQ/t7MNwfkIr3dHOCWslObLyUK0Ky4dLwfl4SkPwrrPH/+R8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=Rcpzk0xe; arc=fail smtp.client-ip=52.101.66.110
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="ZnzygYpe"
+	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="Rcpzk0xe"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JW/ZNhMpqTWSh6uoFdVkFd8bQR/DjiaWG0+6V4Okyd6qzUzUixqgvrIX8AFRML3TDBreGbL6j15s8CkBRDygiRG2sUOpulpYAmr15EEbQau00dOJoQVjLHVDECHddA+sAKy1cgMRZYbw2L5+nwMvj2nx0a8X3Z4h4Cv19SR/Jf4tU8zBOk+wUFn6lbvNmHsGKOBnZZdhGhWYgwJSam2+8jiOd8/iZppFBYh+V23EAG5sxZIzZ8E9YBEmS+LuzzErbkuSAOG2nCWxELvrpKYjNxUj1vXAEe9E8XK/yzCR78Twkj4pg8wkkVancvb+851xVWMEuJl2XEVqrWt14+sUvw==
+ b=ps2o66DBpGGFYLvdyP6kXeRMW5c+RTLa7LL90Y+hr4iaB9DwEPBm04mlAGqKGbiL/7x5/TEBdQtQXrobbDnEmnGKv26Fx8mH65XMILFEOV4Kus3PxhtkSQMeYwidaFZ6ipRHCU1dfdaL1XsVmOzDaKHgnqAwiMdIrR77XBrw+U0kLNQYWBtKrpTIWYVkd1H1c1WbDYbIcfxSQAT6Qq1pl5LKCtJ0Zpo8bn9LrQ87o4znqTPHe//8LoPI+OLZx4yT+8uyZKTDDDLsDA/pyl9T8Ecnni6QmW6nwXRqs5/0t6P0AaqnsO+McrlD7qFBJcOl4+4d/KK7V+8ahF7NDBK1kQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9bOyHj2DQt+P82WguoOS8Sw0q0kv0ECfpt0nFjjKRf4=;
- b=EOSvie+1Myvwo+IieeQIJAVNQbOiT5tkFORl2FJYSH5ZunyFZoHHKGKehaBGoHyesXmTEoQOyhX4NC7N7zVwVyiOPez33wsCzFgzpyBu7Y5xLAovD39Ug7xJrfQRdGJAejYewcnh6jRIjASxPlOiVNQl77ma1iEV67an4fFmmVJ1N7qZl28MMBbvHHqReCjC6aHO6s7OTIzaqPbEVgagfAzC0lX2J/D49XPcRtHqWGUZy+hV0LP+u1f4MFqjg59eSWCDmqYqZHvNZ8sLzUNBmtWwDO/CJGy6DtFJ9YfY0AlyKDl077RFRQ8zKIKAOSGQ1ydxRdxiqisD/0gMQmsXrg==
+ bh=eh7ICRCOshSN7S+HPUzEy6bJZx/Ck1ceC+yB3ac3f6M=;
+ b=jHOxfs1rQ5RwpFkk48Q413iSfA1uaVsmPczAAmG6+w8iAPRh5dR5PgCz+JaNDq9c8O7+627yXxYpjIFHAGeGxtQ8XBkrTi2x46g7Tw2H14JVwHIbBNqMv+xTuvn9mhJWIuNkFs2u5QUvnFjqWVzxXmxk43/9MxETNdQ8Zo8TkX48vQwFq2A7bFZSkvIdLjunIgihInkGs0LjGw3upjUm3DhVpSb1pVFBser8Mu2F9QSxSIqMLE3TiIiA9MIRm/xjF2mzwp45Mi/iJL2BrV2vRPkIAapcWcVEzVH7Glwrkg25DV8PgYgrBHsVTBjrTPyXU7iIJ86Sal46w3IohkzLqQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
  dkim=pass header.d=iopsys.eu; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9bOyHj2DQt+P82WguoOS8Sw0q0kv0ECfpt0nFjjKRf4=;
- b=ZnzygYpeud8z/l2aVBKNvRFeE9vM9ZtOVWDmdT8W2R/2AVPH4lTDvoRMFU03nvT5tnPdXnxqoMiv4Wk/VXlfWiXrSq49YDaXuzMqb/Zv8yMNsQu0htBbAQ856bNXaXPmKF1UbvBTltJYbCgcj1rZl6P1Xw7hH8T8abJQU0WIC3sGNzhnabHqGhRt37ghshEspXuZtn/hIrgdlCF1d30C7gPjW10cvFohha8krWRLXGfwm8qIS40rOjr/K4lGXX+xu5e03pAvacEaClZTQqTXbP9sZA8+lXe4pqW1RP9kNx1EOBh5dfVYCed2ryv/LEzevbrq4aAIwHIo9gQ6YT6/kA==
+ bh=eh7ICRCOshSN7S+HPUzEy6bJZx/Ck1ceC+yB3ac3f6M=;
+ b=Rcpzk0xevOkEvEArhyar6PKlB4Yay2DvtfekPZd7H4cSPmbP2WtLvEIgD/VmEdIhU3QWMclD9Y50SBUTFutpCWQoX5BoXZ4TuXe9zPqR4TakMjwp4g3wAbL01vXtLOxvSVkRrKAwNdqTjtpZfd1bIbD2rAU2yEWBf82kShKkDmXNKPoi7BUWmoyFw6EJo//uyYC3sQvetdcFkqyU/nih04kQsE4L6tZYSgYHnNaUy4PIfw/DSUtFvC5WuPrYgQjxKMouID/50aHjSLchPxtSzrlROtGHdr/taBv69/cf5Lgljh2Mn4TDRylTSETfktFvQo/2idmgKn4yZPllXXgpfw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=iopsys.eu;
 Received: from DU2PR08MB10037.eurprd08.prod.outlook.com (2603:10a6:10:49a::20)
  by PA4PR08MB5888.eurprd08.prod.outlook.com (2603:10a6:102:e8::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Mon, 27 Jul
- 2026 17:42:08 +0000
+ 2026 17:42:10 +0000
 Received: from DU2PR08MB10037.eurprd08.prod.outlook.com
  ([fe80::3c7:6d2e:8afe:e4dc]) by DU2PR08MB10037.eurprd08.prod.outlook.com
  ([fe80::3c7:6d2e:8afe:e4dc%5]) with mapi id 15.21.0245.012; Mon, 27 Jul 2026
- 17:42:08 +0000
+ 17:42:10 +0000
 From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 To: Linus Walleij <linusw@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -59,9 +59,9 @@ To: Linus Walleij <linusw@kernel.org>,
 	Markus Gothe <markus.gothe@genexis.eu>,
 	Matheus Sampaio Queiroga <srherobrine20@gmail.com>
 Cc: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Subject: [PATCH v8 09/35] pinctrl: airoha: an7581: fix mux/conf of pcie_reset pins
-Date: Mon, 27 Jul 2026 20:41:15 +0300
-Message-ID: <20260727174141.664933-10-mikhail.kshevetskiy@iopsys.eu>
+Subject: [PATCH v8 10/35] dt-bindings: pinctrl: airoha: en7581: allow configuration of pcie_reset pins as gpio or pwm
+Date: Mon, 27 Jul 2026 20:41:16 +0300
+Message-ID: <20260727174141.664933-11-mikhail.kshevetskiy@iopsys.eu>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260727174141.664933-1-mikhail.kshevetskiy@iopsys.eu>
 References: <20260727174141.664933-1-mikhail.kshevetskiy@iopsys.eu>
@@ -78,337 +78,109 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DU2PR08MB10037:EE_|PA4PR08MB5888:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3cf5e05f-c133-4026-a0c1-08deec0661c4
+X-MS-Office365-Filtering-Correlation-Id: b6717fbc-1e57-4e94-48c1-08deec0662b8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|376014|52116014|7416014|366016|23010399003|1800799024|921020|38350700014|18002099003|22082099003|56012099006|11063799006|10067099003;
 X-Microsoft-Antispam-Message-Info:
-	1oBGtsqO08JxVEGaRKk00c3lWekZy99XAIRyyptmApbMPx6uciIVEre6sjs2rwMGOeAKwn3GLjEXVJp1189vOokkJ348EXrJd2F/z7kGwC15wQjZyFqjmtGgRhSeaCN1U2zTaBmeJo84fBv3eQWQchaYyQeqzuI+DefDh3J7Aox38JMC0GhuBDjBHkR/z+c6PvTco2eU53qJmh6AayKZaQDYn04wyYXzq43+naqA4OStP2o8OL3y49kTRThiaT0UgGP31IoO9P43xy8g+CIshhtp5Ylgye64qI4xlVSbWVo8SxohUOYwrbtRgrQBbds9sa+SJlX/OnQKEN6xPVCTC+XqbK8H0U/F2YCAbJUBGVvp82lVnHq9tA7zuTndLOYj9a0VoQ4fvmjexVjCOqthFfH08p1U1JzgMmzjkmvI0SheLPFOReSSWK56ZIB5cMHgs0k7s0A4pyVjH/s1UXGkKOSTa0FJHwkr4wq6TcB8mf/Ukczq1Nnn7Pvy/wRt2j//rsZJLZrpaUQTnSQJ42n5t79hK6/VPNvxFNe9Q41WshKk+dIHUCb1T+rZBkHBmSBk9RFUutOwhNdIrsIaELZDrA5XsKQ7hyV90JnJJHWepzNz6iioFOyi9tTIsUHUIs/eBY9SSGvxuiMCCCz/Obqu8/CAN+wzz49uee8a5/tk0hvtojIYiH8W6HixJwRWPFWPnM9UC0197BbeXAimMmRAM/V3rT//dMnMHGVYWFVfg0A=
+	W9WBNRhIn3Uct6HFAcqskSeA04X02sbNb9C0G/ZL3me9bWRKn8IWy2Eg6McQY6j1vDKS6Qx/pkGrIjU6mUVNKJto+MtRFpr92uQV/xdJprkJbiih9EE5BIW8BFI1DF19FS8OFFZK5YJnyVIhNk1ziXAjmfwBlIHXyHzklDeIciOOegHasEkQOfK33CoexWQIhVkDNVjEojVo2Yag66iUTk+okgHEkhzis5MrU4qBmdAHkwC+MnUsoaGCAa2bw1jw9qafvp808dQxuB+Pg0hlEud8stm7vReDOgDc03YMd1TIVCbXPOqmj1SQ993Jrscyd3JOuo3ocfnDHZmBtx1VGdfS4JWVBOr0AGEjwQfLsXgLR8Dv6Irq+DM8KQpyjdlB1C3VXItHsL/WbIkrfdsyUIzmr7LILqK8smUGZOayxX0N32yVGhbJnpljpmudHNejPjLoxwgjmoSi7BFrM+WwM0KQgjIeJfB0MnuQJm9MdPPIElAKUz91cVuZPqm4tbeFvLlOeV09t7h3G8X8e6ajl+zbZe44qIUlVOSBcEIjQXvPzuY39QNPAkvxNQpL+fD4ue8wbmykqwI2DNc8E5Xb8JXP9t3KWzzlqxgzuPe65GzODDp32niNXKg+dUr8R9s2Z1BZe4EWKCF+CRS1K8PnKmOpG0JSwsj6qOJkYuK493KZLLOYoXZi7QsGfrFP1CcgyqgxtzzLbIYVqq0H3KghxOg4urBqPg30H6FAqi55wfE=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR08MB10037.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(366016)(23010399003)(1800799024)(921020)(38350700014)(18002099003)(22082099003)(56012099006)(11063799006)(10067099003);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1MPnENwFhrjNbLGx1tW/9dF9tgQrrWOZaOBBaAjX1K6MRg8HzZExW55oZm1a?=
- =?us-ascii?Q?3EaE4uKAeZK9NHPQh7olmPprNlmZKubDlH7OCOTqJxikz/zjSFrJLUb9TY8P?=
- =?us-ascii?Q?2Tz8g8iH+WJXh7DLsCgld44r7+avWgaMPxtyhIF07ZMGlNhLffkkNVz7T5zx?=
- =?us-ascii?Q?Lz5hLz1Vves7wAY+sP+zwxj9d2fH85r4ObOfSStGNETVO4TJKfBim/5Y9qrS?=
- =?us-ascii?Q?ZSSdmeYUFWJx8PfJ4sN5o3BbkgrCx7vpU3p1W40I6YrTmvCAUBM4jpDC0PUY?=
- =?us-ascii?Q?Ptt/nS9wdVeXOzWpkYrEhFVZ3lGRTrPjFm1QIlCdxBUIIjqRG4IXkZWrpJFy?=
- =?us-ascii?Q?Vi7JCsNVhpKzpafljwz9iDjibgjqzg14DH3LzGMC4RAygWm7XcpfqtOh4gh5?=
- =?us-ascii?Q?QIUXAWScen2sdcvCz6Rj5/m6LpPep6EHVeyeBl8RSbETCVdisxz47+EUWEbf?=
- =?us-ascii?Q?1TIb0D4OJobOvNt31zToZM8PaSxB3VQ7y5uwV+ODVlFqGrbqtxYtTZI39c9E?=
- =?us-ascii?Q?RzEdaykLQVUsOepsbNkriKFz7qFQRO+kw4bhmQYEokn4gCtGCQ6dahVM5bLB?=
- =?us-ascii?Q?7+OtFgUdI/XDQB5IfK/KcPnUj72pgcpcjRSgxMJD1Ec8UvLzaNFii6Mod/+h?=
- =?us-ascii?Q?oWKVjC+r0fIoB7yku8FWDCQoyfDk+vRPXfE/F48+wM8jor0kdtHma0ym+ZvA?=
- =?us-ascii?Q?xLuPq/6h4M1IpPAQs5i7ZhP8kNCz4LeXLy68+YIbxDNByf3Tviag0Z1KzcXt?=
- =?us-ascii?Q?rQ+r4EtnJer40B9Luo6fDaDdmRnGYsKeDq6PSY/TtPBeSxEW2//FkSwt3zgg?=
- =?us-ascii?Q?3vmczTZBQ7jFovGvQgem3LgP39E4ZmaBoHM1FvNFQcundB3MUvqkCRxaLKOG?=
- =?us-ascii?Q?+Ww1f9jAjANagx7Z7ran1UOKeaoeLFv/OLMTDZLs64AtBKtouFP1G9+MItvz?=
- =?us-ascii?Q?+IC4n3kRkHt4RPebFzulE7MzMTWCbgUB1OOVn+Cl+fna5pDJKkSAuv12ItCi?=
- =?us-ascii?Q?79g5659JmyKJys+JFb7gNjeYnibcHmmzl3166HMlp8DKwM7iBoKQxQmOpNp+?=
- =?us-ascii?Q?/4aI+5lL93wyrFbL2j4xb1AjXml7Qvs/yumyeqLGigOwd/ghJeC2amvTXdsO?=
- =?us-ascii?Q?M6GoOHDvG/MXyviu/DiL5S/Kt3OzyXP9YOCNHg01ALbzksK62qA12EO5EzgE?=
- =?us-ascii?Q?7ufL92PDbLv69+H/zKd4Q+hrclYS8nDx0hcdIOkLFRyAjFDVGq4tbqRnCw8M?=
- =?us-ascii?Q?KYJ2FgADbxB4XIaclffuvoJWOwPYv6fFm41pSMlTMBkJBUTCkoV6PzgOjMRy?=
- =?us-ascii?Q?TjtmHBzjIFTFa3C1BEFTbdGUZt1rDAUnjBz9Lq5Z79H2WoXxdj9hWivw4BDy?=
- =?us-ascii?Q?9oTb6xs0eVhyVNiGytoo6mGqcploHnKL7M18SewYQUcJ8rccRTF/HR5JByfx?=
- =?us-ascii?Q?KOxIPWF7HslOibZ9HxoA3zRlu3lw/Ss4lSkZQznnQfxPKq4IRRVw8OA5q9/d?=
- =?us-ascii?Q?WH6nb4R/gjTzu2tIphN2WlQpeKXmIlEi4CBdcGlytn3jzOc8j+RVLdcL7FwA?=
- =?us-ascii?Q?+fbH5hDVYsvvUk+CLBXcM1ZaNE//J6keQI6ocbNnGkr58PNSY/QJXBk+f93u?=
- =?us-ascii?Q?tKrQiv6gxdptYebQWnki+SVCOb0vaWDehn0vDDhY/7yPCsh8+yIHV47UClil?=
- =?us-ascii?Q?u/J8lMwFg8LM6/1a+KnTB03GPnJdcHKhnzslZUTWUT3V6FHsyN3XqH0ggrZx?=
- =?us-ascii?Q?gzkqfOCYiru4H29vVqBfD1OMmRC+UJI=3D?=
+	=?us-ascii?Q?Mn7ils6KAVN6szed19hwmRTrvk+f3ZEsSeY3P4QxKfrAYxETgX6KK4qhxuS2?=
+ =?us-ascii?Q?ywgNPx19ebVRH1oYrWIdKDPGqDwVO/FPOMcuBiQkg1YYTAUGJncWkQ/FR6oH?=
+ =?us-ascii?Q?Dojf+SydxwCE5CyOrBtnTCCan9ztpcLQAgs4NOiDoadUqlv/pPFigZultxiO?=
+ =?us-ascii?Q?JEcRWoJLAMpvKdOnltkYGWHYHD58imfgLZaxcqkJa4PHkYm7whsh7cF6zIG2?=
+ =?us-ascii?Q?pDsDR+B5hvJAfzXXXZnh5PNpSklDBsV6NPMhOXZGzoqzA3ORnMvQ2ycnYk5G?=
+ =?us-ascii?Q?BEM28+qoNyikjnkZ3Hw1QxmM0xovWc+ltQu9Jshhah9zB190Sgrd7DsWSmYs?=
+ =?us-ascii?Q?fSkdTUZCUeRCAqDNcqCvJiTJiLZCtnXQg9oCECQNyTEmGmnrs0ya5v8Ho9BY?=
+ =?us-ascii?Q?MAh6RYfMlrAsN1XXPwiu+blZDbr5muzL+dtG1SK6+SrukL0Wx6gRX3pD53wV?=
+ =?us-ascii?Q?zl4SCKeHwUWFtgMxvN7XGOvDUyUoEoRWhdYUBMWCz7p7cfINQDiOYqmKfqtx?=
+ =?us-ascii?Q?Pw15aOJKtJVbZRgr2mwpEcPMj4Gl9v/lgY49R81974HHX9qDHEOqrzuEo/HA?=
+ =?us-ascii?Q?ODK5m3rCFQ3QRP+5uzm538+WaVWf+S9h7YOKClcalTgsfQ63JXAGAV2b0+HU?=
+ =?us-ascii?Q?sg4RsXXnqtwcS41Sfg+n4IyDJnUQv7iqVG/hxkkuCNzYETgcyZklmiTl9BLi?=
+ =?us-ascii?Q?qstEpeQQwZf2YtzITNLWIzoS5iQvi5DrXTZMxlddFOzhel1Qh2xeOj7ukRoM?=
+ =?us-ascii?Q?npgsaP2mKj0aDmtkO1Hmyl8/AOvDeG69yZYRm36mdeFcki8EzQLrWX3EIejV?=
+ =?us-ascii?Q?rM5r0wcXljBq3LmrVIdsfAQHmeE4ddFI1MHlJbMLbB6YWD5bhnc0g3yWXn9p?=
+ =?us-ascii?Q?ehZ6cHLDuaPNTbzjWxZBDyMmeRRBw+57y2x5+Hz7aijUqfiQ5WtnLV4fe/zX?=
+ =?us-ascii?Q?kd0V9x7k885P45Qnbce0G6i53z6NYQe+Zqat9e6glVP7XmjaO3NxXXXExm0T?=
+ =?us-ascii?Q?xtagEfQWBMLGRun4QkP7DlXQUiaxfmi00H+hjViXboF3n6WARGFOGTOyiXvf?=
+ =?us-ascii?Q?2n78lZCdqCEJvbJB9FTg354iFEu4wlOeowikODfPuhbLaruYNpif9UfGeraJ?=
+ =?us-ascii?Q?quKmvYW4Yri/C6nIF85lSHjuGW3zgbP+O/TKaqBJIbek7ropOrn0qmFcOX9W?=
+ =?us-ascii?Q?gXcgTB8HAXySNWrMq4/tGrr+15/PkWThucfzJed5jbuGVHj2jYWbBMYHlXUL?=
+ =?us-ascii?Q?idWQE3msW5tFfnew16eO0VVtu4CFpvJF47ILolNL1CpH33sAHKU+VBAJAXYo?=
+ =?us-ascii?Q?in+Z7EqpNQcP+VutQ07zGTbidxAgvL6OZFYQGrvW+Wcwp1iBZjqQnQwrLUbt?=
+ =?us-ascii?Q?KwYWXPG/dF35HdKjllKbJsJx6HI1pYUmw/Zs4hcoHtoY+k+4tARsspmfvCpY?=
+ =?us-ascii?Q?cSb15RIUjiJycXhmdm0IqN65KfN4RnTRZZNDVxdyRkVU+vUgZkMsxKjvvjK0?=
+ =?us-ascii?Q?QUkN54YHB4Q5zYOJTxnVYYNBE/9VyjmmW0dDtyUc8FGtA88oVWWBlUVQl6si?=
+ =?us-ascii?Q?SedCCtL1Mv5VWz+ZC+OWSCEyR7NUp0/5qZk0OoD5xAt4Xq5+zwpGwdxE/JBK?=
+ =?us-ascii?Q?CrMc+RiQBmMJCk3d5SN7Q0BIthQ4BBFCDAZYKgCzVSrxlqZgR7r45B/ua9PG?=
+ =?us-ascii?Q?3zMdIjrIq6zj2SZpQoVw8IwCaulzycWZRuKQuwpDnSoyacAcYDMTEET1/Jhv?=
+ =?us-ascii?Q?6K2qQmbgewccOsPgD7M0zwdiNO5tHX0=3D?=
 X-OriginatorOrg: iopsys.eu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3cf5e05f-c133-4026-a0c1-08deec0661c4
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6717fbc-1e57-4e94-48c1-08deec0662b8
 X-MS-Exchange-CrossTenant-AuthSource: DU2PR08MB10037.eurprd08.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 17:42:08.8950
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 17:42:10.5231
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jNqMFUsYXHuq1U4lkzH99xQqolZ/dFG/FMdwYlGlHjz6Rhtpbl1yRtAs6o2e/UBxGiSA57DrZFg0kzDMDYu5mGNId/gfOmHmgrlriy9aDog=
+X-MS-Exchange-CrossTenant-UserPrincipalName: nINRhhdMLNujKvVh1ugPHKaP2HrwZ8ZtaSS9tsMivv0ipWz7+VU5bQiuyIWSHO3eUgx6EN4K27DynvipL3XAevUBrIyu8DN37Z66vztnefY=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR08MB5888
 
 In the an7581 case
- * gpio47 and pcie_reset0 shares pin 60,
- * gpio48 and pcie_reset1 shares pin 61,
- * gpio49 and pcie_reset2 shares pin 62.
-but current driver treat them as pins 61--63. This is wrong.
+ * gpio47 and pcie_reset0 shares the same pin,
+ * gpio48 and pcie_reset1 shares the same pin,
+ * gpio49 and pcie_reset2 shares the same pin.
 
-Also current an7581 pinmux implementation have following issues:
- * current pcie_reset pin function actually sets corresponding
-   pins as gpios.
- * there is no proper way to set pcie_reset pins as gpios.
- * there is no way to set pcie_reset pins as pwm.
+This patch defines a way to configure these pins as gpio or pwm.
 
-This patch fixes above issues.
-
-WARNING:
-There is a contradiction in the Airoha documentation. AN7581 programming
-guide claims:
- - gpio44 and pcie_reset0 shares the same pin
- - gpio45 and pcie_reset1 shares the same pin
- - gpio46 and pcie_reset2 shares the same pin
-While AN7581 datasheet claims:
- - gpio47 and pcie_reset0 shares the same pin
- - gpio48 and pcie_reset1 shares the same pin
- - gpio49 and pcie_reset2 shares the same pin
-The datasheet should be considered as a more reliable source.
-Thanks to Benjamin Larsson for clarification.
-
-Fixes: 1c8ace2d0725 ("pinctrl: airoha: Add support for EN7581 SoC")
 Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 ---
- drivers/pinctrl/airoha/pinctrl-airoha.c | 122 +++++++++++++++++++-----
- 1 file changed, 97 insertions(+), 25 deletions(-)
+ .../bindings/pinctrl/airoha,en7581-pinctrl.yaml     | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/airoha/pinctrl-airoha.c
-index 75a5167b67186..23735ea63d7e0 100644
---- a/drivers/pinctrl/airoha/pinctrl-airoha.c
-+++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
-@@ -470,9 +470,9 @@ static struct pinctrl_pin_desc en7581_pinctrl_pins[] = {
- 	PINCTRL_PIN(57, "gpio44"),
- 	PINCTRL_PIN(58, "gpio45"),
- 	PINCTRL_PIN(59, "gpio46"),
--	PINCTRL_PIN(61, "pcie_reset0"),
--	PINCTRL_PIN(62, "pcie_reset1"),
--	PINCTRL_PIN(63, "pcie_reset2"),
-+	PINCTRL_PIN(60, "pcie_reset0"),
-+	PINCTRL_PIN(61, "pcie_reset1"),
-+	PINCTRL_PIN(62, "pcie_reset2"),
- };
+diff --git a/Documentation/devicetree/bindings/pinctrl/airoha,en7581-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/airoha,en7581-pinctrl.yaml
+index 12dd85b5b4105..1f281d3c47cba 100644
+--- a/Documentation/devicetree/bindings/pinctrl/airoha,en7581-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/airoha,en7581-pinctrl.yaml
+@@ -61,7 +61,7 @@ patternProperties:
+             description:
+               A string containing the name of the function to mux to the group.
+             enum: [pon, tod_1pps, sipo, mdio, uart, i2c, jtag, pcm, spi,
+-                   pcm_spi, i2s, emmc, pnand, pcie_reset, pwm, phy1_led0,
++                   pcm_spi, i2s, emmc, pnand, gpio, pcie_reset, pwm, phy1_led0,
+                    phy2_led0, phy3_led0, phy4_led0, phy1_led1, phy2_led1,
+                    phy3_led1, phy4_led1]
  
- static const int en7581_pon_pins[] = { 49, 50, 51, 52, 53, 54 };
-@@ -555,9 +555,12 @@ static const int en7581_gpio43_pins[] = { 56 };
- static const int en7581_gpio44_pins[] = { 57 };
- static const int en7581_gpio45_pins[] = { 58 };
- static const int en7581_gpio46_pins[] = { 59 };
--static const int en7581_pcie_reset0_pins[] = { 61 };
--static const int en7581_pcie_reset1_pins[] = { 62 };
--static const int en7581_pcie_reset2_pins[] = { 63 };
-+static const int en7581_gpio47_pins[] = { 60 };
-+static const int en7581_gpio48_pins[] = { 61 };
-+static const int en7581_gpio49_pins[] = { 62 };
-+static const int en7581_pcie_reset0_pins[] = { 60 };
-+static const int en7581_pcie_reset1_pins[] = { 61 };
-+static const int en7581_pcie_reset2_pins[] = { 62 };
- 
- static const struct pingroup en7581_pinctrl_groups[] = {
- 	PINCTRL_PIN_GROUP("pon", en7581_pon),
-@@ -640,6 +643,9 @@ static const struct pingroup en7581_pinctrl_groups[] = {
- 	PINCTRL_PIN_GROUP("gpio44", en7581_gpio44),
- 	PINCTRL_PIN_GROUP("gpio45", en7581_gpio45),
- 	PINCTRL_PIN_GROUP("gpio46", en7581_gpio46),
-+	PINCTRL_PIN_GROUP("gpio47", en7581_gpio47),
-+	PINCTRL_PIN_GROUP("gpio48", en7581_gpio48),
-+	PINCTRL_PIN_GROUP("gpio49", en7581_gpio49),
- 	PINCTRL_PIN_GROUP("pcie_reset0", en7581_pcie_reset0),
- 	PINCTRL_PIN_GROUP("pcie_reset1", en7581_pcie_reset1),
- 	PINCTRL_PIN_GROUP("pcie_reset2", en7581_pcie_reset2),
-@@ -883,6 +889,7 @@ static const char *const an7583_pcm_spi_groups[] = { "pcm_spi",
- static const char *const i2s_groups[] = { "i2s" };
- static const char *const emmc_groups[] = { "emmc" };
- static const char *const pnand_groups[] = { "pnand" };
-+static const char *const gpio_groups[] = { "gpio47", "gpio48", "gpio49" };
- static const char *const pcie_reset_groups[] = { "pcie_reset0", "pcie_reset1",
- 						 "pcie_reset2" };
- static const char *const an7583_pcie_reset_groups[] = { "pcie_reset0", "pcie_reset1" };
-@@ -907,7 +914,8 @@ static const char *const pwm_groups[] = { "gpio0", "gpio1",
- 					  "gpio40", "gpio41",
- 					  "gpio42", "gpio43",
- 					  "gpio44", "gpio45",
--					  "gpio46" };
-+					  "gpio46", "gpio47",
-+					  "gpio48", "gpio49" };
- static const char *const an7583_pwm_groups[] = { "gpio0", "gpio1",
- 						 "gpio2", "gpio3",
- 						 "gpio4", "gpio5",
-@@ -1406,6 +1414,45 @@ static const struct airoha_pinctrl_func_group pnand_func_group[] = {
- 	},
- };
- 
-+#define AIROHA_PINCTRL_GPIO(gpio, mux_val)			\
-+	{							\
-+		.name = (gpio),					\
-+		.regmap[0] = {					\
-+			AIROHA_FUNC_MUX,			\
-+			REG_GPIO_PON_MODE,			\
-+			(mux_val),				\
-+			(mux_val)				\
-+		},						\
-+		.regmap_size = 1,				\
-+	}
-+
-+#define AIROHA_PINCTRL_GPIO_EXT(gpio, mux_val, smux_val)	\
-+	{							\
-+		.name = (gpio),					\
-+		.regmap[0] = {					\
-+			AIROHA_FUNC_PWM_EXT_MUX,		\
-+			REG_GPIO_FLASH_MODE_CFG_EXT,		\
-+			(mux_val),				\
-+			0					\
-+		},						\
-+		.regmap[1] = {					\
-+			AIROHA_FUNC_MUX,			\
-+			REG_GPIO_PON_MODE,			\
-+			(smux_val),				\
-+			(smux_val)				\
-+		},						\
-+		.regmap_size = 2,				\
-+	}
-+
-+static const struct airoha_pinctrl_func_group gpio_func_group[] = {
-+	AIROHA_PINCTRL_GPIO_EXT("gpio47", GPIO47_FLASH_MODE_CFG,
-+				GPIO_PCIE_RESET0_MASK),
-+	AIROHA_PINCTRL_GPIO_EXT("gpio48", GPIO48_FLASH_MODE_CFG,
-+				GPIO_PCIE_RESET1_MASK),
-+	AIROHA_PINCTRL_GPIO_EXT("gpio49", GPIO49_FLASH_MODE_CFG,
-+				GPIO_PCIE_RESET2_MASK),
-+};
-+
- static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
- 	{
- 		.name = "pcie_reset0",
-@@ -1413,7 +1460,7 @@ static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
- 			AIROHA_FUNC_MUX,
- 			REG_GPIO_PON_MODE,
- 			GPIO_PCIE_RESET0_MASK,
--			GPIO_PCIE_RESET0_MASK
-+			0
- 		},
- 		.regmap_size = 1,
- 	}, {
-@@ -1422,7 +1469,7 @@ static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
- 			AIROHA_FUNC_MUX,
- 			REG_GPIO_PON_MODE,
- 			GPIO_PCIE_RESET1_MASK,
--			GPIO_PCIE_RESET1_MASK
-+			0
- 		},
- 		.regmap_size = 1,
- 	}, {
-@@ -1431,7 +1478,7 @@ static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
- 			AIROHA_FUNC_MUX,
- 			REG_GPIO_PON_MODE,
- 			GPIO_PCIE_RESET2_MASK,
--			GPIO_PCIE_RESET2_MASK
-+			0
- 		},
- 		.regmap_size = 1,
- 	},
-@@ -1484,6 +1531,24 @@ static const struct airoha_pinctrl_func_group an7583_pcie_reset_func_group[] = {
- 		.regmap_size = 1,			\
- 	}						\
- 
-+#define AIROHA_PINCTRL_PWM_EXT_SEC(gpio, mux_val, smux_val)	\
-+	{							\
-+		.name = (gpio),					\
-+		.regmap[0] = {					\
-+			AIROHA_FUNC_PWM_EXT_MUX,		\
-+			REG_GPIO_FLASH_MODE_CFG_EXT,		\
-+			(mux_val),				\
-+			(mux_val)				\
-+		},						\
-+		.regmap[1] = {					\
-+			AIROHA_FUNC_MUX,			\
-+			REG_GPIO_PON_MODE,			\
-+			(smux_val),				\
-+			(smux_val)				\
-+		},						\
-+		.regmap_size = 2,				\
-+	}
-+
- static const struct airoha_pinctrl_func_group pwm_func_group[] = {
- 	AIROHA_PINCTRL_PWM("gpio0", GPIO0_FLASH_MODE_CFG),
- 	AIROHA_PINCTRL_PWM("gpio1", GPIO1_FLASH_MODE_CFG),
-@@ -1528,6 +1593,12 @@ static const struct airoha_pinctrl_func_group pwm_func_group[] = {
- 	AIROHA_PINCTRL_PWM_EXT("gpio44", GPIO44_FLASH_MODE_CFG),
- 	AIROHA_PINCTRL_PWM_EXT("gpio45", GPIO45_FLASH_MODE_CFG),
- 	AIROHA_PINCTRL_PWM_EXT("gpio46", GPIO46_FLASH_MODE_CFG),
-+	AIROHA_PINCTRL_PWM_EXT_SEC("gpio47", GPIO47_FLASH_MODE_CFG,
-+				   GPIO_PCIE_RESET0_MASK),
-+	AIROHA_PINCTRL_PWM_EXT_SEC("gpio48", GPIO48_FLASH_MODE_CFG,
-+				   GPIO_PCIE_RESET1_MASK),
-+	AIROHA_PINCTRL_PWM_EXT_SEC("gpio49", GPIO49_FLASH_MODE_CFG,
-+				   GPIO_PCIE_RESET2_MASK),
- };
- 
- static const struct airoha_pinctrl_func_group an7583_pwm_func_group[] = {
-@@ -1804,6 +1875,7 @@ static const struct airoha_pinctrl_func en7581_pinctrl_funcs[] = {
- 	PINCTRL_FUNC_DESC("i2s", i2s),
- 	PINCTRL_FUNC_DESC("emmc", emmc),
- 	PINCTRL_FUNC_DESC("pnand", pnand),
-+	PINCTRL_FUNC_DESC("gpio", gpio),
- 	PINCTRL_FUNC_DESC("pcie_reset", pcie_reset),
- 	PINCTRL_FUNC_DESC("pwm", pwm),
- 	PINCTRL_FUNC_DESC("phy1_led0", phy1_led0),
-@@ -1896,9 +1968,9 @@ static const struct airoha_pinctrl_conf en7581_pinctrl_pullup_conf[] = {
- 	PINCTRL_CONF_DESC(57, REG_GPIO_H_PU, BIT(12)),
- 	PINCTRL_CONF_DESC(58, REG_GPIO_H_PU, BIT(13)),
- 	PINCTRL_CONF_DESC(59, REG_GPIO_H_PU, BIT(14)),
--	PINCTRL_CONF_DESC(61, REG_I2C_SDA_PU, PCIE0_RESET_PU_MASK),
--	PINCTRL_CONF_DESC(62, REG_I2C_SDA_PU, PCIE1_RESET_PU_MASK),
--	PINCTRL_CONF_DESC(63, REG_I2C_SDA_PU, PCIE2_RESET_PU_MASK),
-+	PINCTRL_CONF_DESC(60, REG_I2C_SDA_PU, PCIE0_RESET_PU_MASK),
-+	PINCTRL_CONF_DESC(61, REG_I2C_SDA_PU, PCIE1_RESET_PU_MASK),
-+	PINCTRL_CONF_DESC(62, REG_I2C_SDA_PU, PCIE2_RESET_PU_MASK),
- };
- 
- static const struct airoha_pinctrl_conf an7583_pinctrl_pullup_conf[] = {
-@@ -2013,9 +2085,9 @@ static const struct airoha_pinctrl_conf en7581_pinctrl_pulldown_conf[] = {
- 	PINCTRL_CONF_DESC(57, REG_GPIO_H_PD, BIT(12)),
- 	PINCTRL_CONF_DESC(58, REG_GPIO_H_PD, BIT(13)),
- 	PINCTRL_CONF_DESC(59, REG_GPIO_H_PD, BIT(14)),
--	PINCTRL_CONF_DESC(61, REG_I2C_SDA_PD, PCIE0_RESET_PD_MASK),
--	PINCTRL_CONF_DESC(62, REG_I2C_SDA_PD, PCIE1_RESET_PD_MASK),
--	PINCTRL_CONF_DESC(63, REG_I2C_SDA_PD, PCIE2_RESET_PD_MASK),
-+	PINCTRL_CONF_DESC(60, REG_I2C_SDA_PD, PCIE0_RESET_PD_MASK),
-+	PINCTRL_CONF_DESC(61, REG_I2C_SDA_PD, PCIE1_RESET_PD_MASK),
-+	PINCTRL_CONF_DESC(62, REG_I2C_SDA_PD, PCIE2_RESET_PD_MASK),
- };
- 
- static const struct airoha_pinctrl_conf an7583_pinctrl_pulldown_conf[] = {
-@@ -2130,9 +2202,9 @@ static const struct airoha_pinctrl_conf en7581_pinctrl_drive_e2_conf[] = {
- 	PINCTRL_CONF_DESC(57, REG_GPIO_H_E2, BIT(12)),
- 	PINCTRL_CONF_DESC(58, REG_GPIO_H_E2, BIT(13)),
- 	PINCTRL_CONF_DESC(59, REG_GPIO_H_E2, BIT(14)),
--	PINCTRL_CONF_DESC(61, REG_I2C_SDA_E2, PCIE0_RESET_E2_MASK),
--	PINCTRL_CONF_DESC(62, REG_I2C_SDA_E2, PCIE1_RESET_E2_MASK),
--	PINCTRL_CONF_DESC(63, REG_I2C_SDA_E2, PCIE2_RESET_E2_MASK),
-+	PINCTRL_CONF_DESC(60, REG_I2C_SDA_E2, PCIE0_RESET_E2_MASK),
-+	PINCTRL_CONF_DESC(61, REG_I2C_SDA_E2, PCIE1_RESET_E2_MASK),
-+	PINCTRL_CONF_DESC(62, REG_I2C_SDA_E2, PCIE2_RESET_E2_MASK),
- };
- 
- static const struct airoha_pinctrl_conf an7583_pinctrl_drive_e2_conf[] = {
-@@ -2247,9 +2319,9 @@ static const struct airoha_pinctrl_conf en7581_pinctrl_drive_e4_conf[] = {
- 	PINCTRL_CONF_DESC(57, REG_GPIO_H_E4, BIT(12)),
- 	PINCTRL_CONF_DESC(58, REG_GPIO_H_E4, BIT(13)),
- 	PINCTRL_CONF_DESC(59, REG_GPIO_H_E4, BIT(14)),
--	PINCTRL_CONF_DESC(61, REG_I2C_SDA_E4, PCIE0_RESET_E4_MASK),
--	PINCTRL_CONF_DESC(62, REG_I2C_SDA_E4, PCIE1_RESET_E4_MASK),
--	PINCTRL_CONF_DESC(63, REG_I2C_SDA_E4, PCIE2_RESET_E4_MASK),
-+	PINCTRL_CONF_DESC(60, REG_I2C_SDA_E4, PCIE0_RESET_E4_MASK),
-+	PINCTRL_CONF_DESC(61, REG_I2C_SDA_E4, PCIE1_RESET_E4_MASK),
-+	PINCTRL_CONF_DESC(62, REG_I2C_SDA_E4, PCIE2_RESET_E4_MASK),
- };
- 
- static const struct airoha_pinctrl_conf an7583_pinctrl_drive_e4_conf[] = {
-@@ -2309,9 +2381,9 @@ static const struct airoha_pinctrl_conf an7583_pinctrl_drive_e4_conf[] = {
- };
- 
- static const struct airoha_pinctrl_conf en7581_pinctrl_pcie_rst_od_conf[] = {
--	PINCTRL_CONF_DESC(61, REG_PCIE_RESET_OD, PCIE0_RESET_OD_MASK),
--	PINCTRL_CONF_DESC(62, REG_PCIE_RESET_OD, PCIE1_RESET_OD_MASK),
--	PINCTRL_CONF_DESC(63, REG_PCIE_RESET_OD, PCIE2_RESET_OD_MASK),
-+	PINCTRL_CONF_DESC(60, REG_PCIE_RESET_OD, PCIE0_RESET_OD_MASK),
-+	PINCTRL_CONF_DESC(61, REG_PCIE_RESET_OD, PCIE1_RESET_OD_MASK),
-+	PINCTRL_CONF_DESC(62, REG_PCIE_RESET_OD, PCIE2_RESET_OD_MASK),
- };
- 
- static const struct airoha_pinctrl_conf an7583_pinctrl_pcie_rst_od_conf[] = {
+@@ -187,6 +187,14 @@ patternProperties:
+               properties:
+                 groups:
+                   enum: [pnand]
++          - if:
++              properties:
++                function:
++                  const: gpio
++            then:
++              properties:
++                groups:
++                  enum: [gpio47, gpio48, gpio49]
+           - if:
+               properties:
+                 function:
+@@ -208,7 +216,8 @@ patternProperties:
+                          gpio20, gpio21, gpio22, gpio23, gpio24, gpio25,
+                          gpio26, gpio27, gpio28, gpio29, gpio30, gpio31,
+                          gpio36, gpio37, gpio38, gpio39, gpio40, gpio41,
+-                         gpio42, gpio43, gpio44, gpio45, gpio46]
++                         gpio42, gpio43, gpio44, gpio45, gpio46, gpio47,
++                         gpio48, gpio49]
+           - if:
+               properties:
+                 function:
 -- 
 2.53.0
 
