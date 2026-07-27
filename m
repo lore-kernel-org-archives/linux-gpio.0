@@ -1,140 +1,193 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DC137B00E;
-	Mon, 27 Jul 2026 08:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDAE379EF0;
+	Mon, 27 Jul 2026 08:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785141041; cv=none; b=VKI5bW6DwjrdrPlLz+R1G58m3Jg+vjdxNOOKhEQ5z1ySQ+rhzzgh+DCSrN7sihfFjvfkO1DqECWSvcKw7oMJCCygguMXpTS8SNkAy/d/w9orowKIjpZqqHtdqo6dr9QbBSuToy2nyjc7rtB3y+PtStaEGaH7OwOPSLfIoPS/8jo=
+	t=1785141069; cv=none; b=UhdQH1BP5kqQXwYW1/PogFsjF5MA4d52bNTispsS5j7n8ZFEowZpNCnfEhNBNE8Z7EfFe8fw6lzw0H9RQWvlPyy67BFzCZqkzCFZaYK+h0bpcKvQto0IPIh4EI19g6r0+gubmOxCEefESY38EInc4JsHF4bKJf7ahildlrxlOEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785141041; c=relaxed/simple;
-	bh=qWnqu6VCUiwZWG189ixa/W9uGeC6PMG4tY9t7kvdnXI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=h8LKZ8EVsai8wMrYj/fT0xVSgPTrl6DOh04/nUgZtFoRkGUPmdEqBdwE+VdRVHNKYYPYr8u+qMLJeJGWgH7glJdNWS6Amw1ytL7A1XMPHxgDaVTsiau46edgGKidGiYhptvON8UGHYeJRIfP1yJhpgmVpJCTvFCOacKBXdHd9K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bn7dLIip; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1785141069; c=relaxed/simple;
+	bh=3nDvMWIjdAVIAdJmNFyQ9DZqwnLKdury4igkP7Cybwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mdMmwgQ/OZddBPwgx69WziYueY1m4mAVVtvjABTwoHCv7LXeIaZPLqDMtTcq5j0oJuB3sVUzlKdwRnM+ppmUfo00jzHgn30/qMrEL/ZaTiIvRIvZwpTamIXYfhUTwiL6nsE3RLz4LGk+5GAHlfwEYEfTlnh7yNeWiwzE0WzRQCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DLmBl6Yq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bn7dLIip"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1785141039; x=1816677039;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=qWnqu6VCUiwZWG189ixa/W9uGeC6PMG4tY9t7kvdnXI=;
-  b=bn7dLIipZCNqvW289b61vT4b6u+LiCajh52WIL+tFfRrmJloKWtUXBG+
-   ZVDoonEWBjxGTWB+TpaP1dMgq905yih2+PZN8ueg2IgP/evaSIknEaQAL
-   sOKMLvBHqFYLDjGevHnwVch9P4Ys6B6dOm9LdKPySPt8mEYMMGnH2QoJC
-   aF5JBvyQDaYcJ0j4N4y7zOns8t8E4CNEzASqkc1P8xkX3THpp4bsMdc1r
-   4+3C/8LmINhYo2vRvUxZOSY6tooBcFJdahJfewgCAoBHpOnR3ol8IO/Kg
-   t6VRYs0MkffinszzXhu5i2/2b1QBE07PokaNo3Am7W/dJ1Y/8SCMhSsNn
-   Q==;
-X-CSE-ConnectionGUID: mgZgOQ5BQgGfhlx+0PVe4w==
-X-CSE-MsgGUID: I0V/57TmQ1qX9+TI9szaWA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11857"; a="85573917"
-X-IronPort-AV: E=Sophos;i="6.25,188,1779174000"; 
-   d="scan'208";a="85573917"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2026 01:30:34 -0700
-X-CSE-ConnectionGUID: zuBRshsISau4U4oJl9pq1g==
-X-CSE-MsgGUID: S6JnVra9Qs26laDkF7yO1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,188,1779174000"; 
-   d="scan'208";a="259417611"
-Received: from rvuia-mobl.ger.corp.intel.com (HELO localhost) ([10.245.245.197])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2026 01:30:04 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Jakub Kicinski <kuba@kernel.org>, Sang-Heon Jeon <ekffu200098@gmail.com>
-Cc: Julia.Lawall@inria.fr, Alex Deucher <alexander.deucher@amd.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, Andrew
- Morton <akpm@linux-foundation.org>, Arkadiusz Kubalewski
- <arkadiusz.kubalewski@intel.com>, Borislav Petkov <bp@alien8.de>,
- Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>, Daniel Lezcano
- <daniel.lezcano@kernel.org>, David Airlie <airlied@gmail.com>, "David S.
- Miller" <davem@davemloft.net>, Dmitry Torokhov
- <dmitry.torokhov@gmail.com>, Eric Dumazet <edumazet@google.com>, Florian
- Westphal <fw@strlen.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hans de Goede <hansg@kernel.org>, Hans Verkuil <hverkuil@kernel.org>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Jaroslav Kysela <perex@perex.cz>,
- Jason Gunthorpe <jgg@ziepe.ca>, Jiri Pirko <jiri@resnulli.us>, "Joerg
- Roedel
- (AMD)" <joro@8bytes.org>, Johan Hovold <johan@kernel.org>, Jonathan Cameron
- <jic23@kernel.org>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Julian Anastasov <ja@ssi.bg>, Leon Romanovsky <leon@kernel.org>, Liam
- Girdwood <lgirdwood@gmail.com>, Linus Walleij <linusw@kernel.org>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Mark Brown
- <broonie@kernel.org>, "Martin K. Petersen" <martin.petersen@oracle.com>,
- Matthew Sakai <msakai@redhat.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Maxime Ripard <mripard@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Mike Rapoport <rppt@kernel.org>, Miri
- Korenblit <miriam.rachel.korenblit@intel.com>, Nicolas Palix
- <nicolas.palix@imag.fr>, Pablo Neira Ayuso <pablo@netfilter.org>, Paolo
- Abeni <pabeni@redhat.com>, Ping-Ke Shih <pkshih@realtek.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Sebastian Reichel <sre@kernel.org>, Shuah Khan <shuah@kernel.org>, Simona
- Vetter <simona@ffwll.ch>, Simon Horman <horms@verge.net.au>, Stephen Boyd
- <sboyd@kernel.org>, Steve French <sfrench@samba.org>, Takashi Iwai
- <tiwai@suse.com>, Thomas Renninger <trenn@suse.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, Tony Luck <tony.luck@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, Vinod
- Koul <vkoul@kernel.org>, Will
- Deacon <will@kernel.org>, Yazen Ghannam <Yazen.Ghannam@amd.com>,
- cocci@inria.fr, amd-gfx@lists.freedesktop.org, dmaengine@vger.kernel.org,
- dm-devel@lists.linux.dev, dri-devel@lists.freedesktop.org,
- intel-gfx@lists.freedesktop.org, intel-wired-lan@lists.osuosl.org,
- iommu@lists.linux.dev, linux-cifs@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-edac@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
- lvs-devel@vger.kernel.org, netdev@vger.kernel.org,
- netfilter-devel@vger.kernel.org, nouveau@lists.freedesktop.org,
- platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 00/36] treewide: remove conditional returns with no effect
-In-Reply-To: <20260724144822.6af8213f@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park,
- 6 krs Bertel Jungin Aukio 5, 02600 Espoo, Finland
-References: <20260723184538.3888637-1-ekffu200098@gmail.com>
- <20260724144822.6af8213f@kernel.org>
-Date: Mon, 27 Jul 2026 11:30:01 +0300
-Message-ID: <0ee1ef4aa7daa908bf28397ccc639c89b6aabd9c@intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DLmBl6Yq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 752251F000E9;
+	Mon, 27 Jul 2026 08:31:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785141068;
+	bh=eVg/uNJQsxF6h7YI8btP6po5t0wmQcAYffBBfRoy1Y0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=DLmBl6Yq19mcpqVYviyuM/vYGjGwqY761oW6rfnxLsG65toy5Nnw6tnNtM5tWoafE
+	 L6Ye/hV0yAWGbJ/cVDnRt6HL95FUTEAg6Njw2cPdk2rb/0QZg2EmjMf5/6kWoeOAME
+	 6WYoGiQ2TpjI15kBrfLqK09IGK++0uo8fokEqB0Xzw7Ik2/831C2bCeH2KUVc7q3RM
+	 KwhABP8d1Qd1WEHpKmvIwyuTmXQ2iBTmJwd9Fq/T2xxo3ZRJyWINApqVkYFPQKtASA
+	 Vd0GyYm6C1BDPg4Tk1wMU2RP/Bfv8bE3ExOsXmmq+HpUC2kLUwOzUj1AW6UFNxEw0K
+	 /QmCcFgZTM3PA==
+Date: Mon, 27 Jul 2026 10:31:05 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	Markus Gothe <markus.gothe@genexis.eu>,
+	Matheus Sampaio Queiroga <srherobrine20@gmail.com>
+Subject: Re: [PATCH v7 14/34] pinctrl: airoha: fix potential kenel panic in
+ IRQ handling code
+Message-ID: <amcXSQ4pfRCJjihI@lore-desk>
+References: <20260727074234.3761170-1-mikhail.kshevetskiy@iopsys.eu>
+ <20260727074234.3761170-15-mikhail.kshevetskiy@iopsys.eu>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qQr/HXH9SxXcZv6z"
+Content-Disposition: inline
+In-Reply-To: <20260727074234.3761170-15-mikhail.kshevetskiy@iopsys.eu>
 
-On Fri, 24 Jul 2026, Jakub Kicinski <kuba@kernel.org> wrote:
-> On Fri, 24 Jul 2026 03:45:02 +0900 Sang-Heon Jeon wrote:
->> Patch 1 adds a Coccinelle script that matches the pattern, including
->> negation and constant-comparison variants. Where a local variable is
->> assigned right before the check, the assignment and the two returns
->> turn into a single return of the assigned expression.
->
-> Huh, I thought we already had such script. Various script children have
-> been sending such "cleanups" in the past.
+--qQr/HXH9SxXcZv6z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We did, and it was removed, I believe in 1a617a8475e8 ("coccinelle:
-misc: remove "complex return code" warnings"), because people just don't
-want this constant churn.
+> airoha_irq_unmask(), airoha_irq_mask(), airoha_irq_type() functions
+> gets invalid pointers when initialize gpiochip and pinctrl variables.
+> Generally this should lead to kernel panic.
+>=20
+> Details:
+>=20
+>     gpiochip =3D irq_data_get_irq_chip_data(data);
+>=20
+> will initialize gpiochip variable with data->chip_data value. This value
+> initialized inside gpiochip_irq_map() function
+>=20
+>     static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
+> 			        irq_hw_number_t hwirq)
+>     {
+> 	struct gpio_chip *gc =3D d->host_data;
+>         ...
+> 	irq_set_chip_data(irq, gc);
+> 	...
+>     }
+>=20
+> Thus gpiochip variable of 'struct airoha_pinctrl_gpiochip *' type will be
+> initialized with a pointer to unrelated variable of 'struct gpio_chip'
+> type.
+>=20
+> pinctrl pointer derived from the gpiochip variable
+>=20
+>     pinctrl =3D container_of(gpiochip, struct airoha_pinctrl, gpiochip);
+>=20
+> thus it will get wrong value as well.
+>=20
+> So any access to the data pointed by gpiochip and pinctrl variables is
+> extremelly dangerous.
+>=20
+> This patch implements correct logic of getting gpiochip and pinctrl
+> pointers.
+>=20
+> Fixes: 1c8ace2d0725 ("pinctrl: airoha: Add support for EN7581 SoC")
+> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+> ---
+>  drivers/pinctrl/airoha/pinctrl-airoha.c | 20 +++++++++-----------
+>  1 file changed, 9 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/ai=
+roha/pinctrl-airoha.c
+> index faad5d3ada31c..6cf4ed5976fb0 100644
+> --- a/drivers/pinctrl/airoha/pinctrl-airoha.c
+> +++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
+> @@ -2569,18 +2569,17 @@ static int airoha_gpio_direction_output(struct gp=
+io_chip *chip,
+>  /* irq callbacks */
+>  static void airoha_irq_unmask(struct irq_data *data)
+>  {
+> +	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(data);
+> +	struct airoha_pinctrl *pinctrl =3D gpiochip_get_data(gc);
+> +	struct airoha_pinctrl_gpiochip *gpiochip =3D &pinctrl->gpiochip;
+>  	u8 offset =3D data->hwirq % AIROHA_REG_GPIOCTRL_NUM_PIN;
+>  	u8 index =3D data->hwirq / AIROHA_REG_GPIOCTRL_NUM_PIN;
+>  	u32 mask =3D GENMASK(2 * offset + 1, 2 * offset);
+> -	struct airoha_pinctrl_gpiochip *gpiochip;
+> -	struct airoha_pinctrl *pinctrl;
+>  	u32 val =3D BIT(2 * offset);
+> =20
+> -	gpiochip =3D irq_data_get_irq_chip_data(data);
 
-It's perfectly fine to have the error case and happy day scenario
-separated.
+I agree the proposed approach is more standard and I am fine with it, but c=
+an
+you please provide more details about how it can panic?
 
+gpio_chip is the first element of airoha_pinctrl_gpiochip so it is fine to =
+cast
+irq_data_get_irq_chip_data() return value to airoha_pinctrl_gpiochip, right?
 
-BR,
-Jani.
+Regards,
+Lorenzo
 
+>  	if (WARN_ON_ONCE(data->hwirq >=3D ARRAY_SIZE(gpiochip->irq_type)))
+>  		return;
+> =20
+> -	pinctrl =3D container_of(gpiochip, struct airoha_pinctrl, gpiochip);
+>  	switch (gpiochip->irq_type[data->hwirq]) {
+>  	case IRQ_TYPE_LEVEL_LOW:
+>  		val =3D val << 1;
+> @@ -2606,14 +2605,12 @@ static void airoha_irq_unmask(struct irq_data *da=
+ta)
+> =20
+>  static void airoha_irq_mask(struct irq_data *data)
+>  {
+> +	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(data);
+> +	struct airoha_pinctrl *pinctrl =3D gpiochip_get_data(gc);
+> +	struct airoha_pinctrl_gpiochip *gpiochip =3D &pinctrl->gpiochip;
+>  	u8 offset =3D data->hwirq % AIROHA_REG_GPIOCTRL_NUM_PIN;
+>  	u8 index =3D data->hwirq / AIROHA_REG_GPIOCTRL_NUM_PIN;
+>  	u32 mask =3D GENMASK(2 * offset + 1, 2 * offset);
+> -	struct airoha_pinctrl_gpiochip *gpiochip;
+> -	struct airoha_pinctrl *pinctrl;
+> -
+> -	gpiochip =3D irq_data_get_irq_chip_data(data);
+> -	pinctrl =3D container_of(gpiochip, struct airoha_pinctrl, gpiochip);
+> =20
+>  	regmap_clear_bits(pinctrl->regmap, gpiochip->level[index], mask);
+>  	regmap_clear_bits(pinctrl->regmap, gpiochip->edge[index], mask);
+> @@ -2621,9 +2618,10 @@ static void airoha_irq_mask(struct irq_data *data)
+> =20
+>  static int airoha_irq_type(struct irq_data *data, unsigned int type)
+>  {
+> -	struct airoha_pinctrl_gpiochip *gpiochip;
+> +	struct gpio_chip *gc =3D irq_data_get_irq_chip_data(data);
+> +	struct airoha_pinctrl *pinctrl =3D gpiochip_get_data(gc);
+> +	struct airoha_pinctrl_gpiochip *gpiochip =3D &pinctrl->gpiochip;
+> =20
+> -	gpiochip =3D irq_data_get_irq_chip_data(data);
+>  	if (data->hwirq >=3D ARRAY_SIZE(gpiochip->irq_type))
+>  		return -EINVAL;
+> =20
+> --=20
+> 2.53.0
+>=20
 
--- 
-Jani Nikula, Intel
+--qQr/HXH9SxXcZv6z
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCamcXSQAKCRA6cBh0uS2t
+rEwWAQD8cGSZk5/1aiOE+u0M8M5puuqsxZZlYElphkINBPmXQAEA1B/nj4I1WqTL
+VLynXQafTFU6141XSGtT8s4S4sZmzAE=
+=Wwkr
+-----END PGP SIGNATURE-----
+
+--qQr/HXH9SxXcZv6z--
