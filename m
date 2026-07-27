@@ -1,175 +1,236 @@
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2099.outbound.protection.partner.outlook.cn [139.219.146.99])
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11021121.outbound.protection.outlook.com [52.101.70.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5223C0A03;
-	Mon, 27 Jul 2026 06:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9F53DDDCA;
+	Mon, 27 Jul 2026 07:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.121
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785132008; cv=fail; b=TnQ8OhhAHZ45yg3W3bIu1HrmMvZjxmsGBc1ec3GQn81uq5PzHIrggXIzOAO/53DQQrMpyrNE0Muywu3o1FHk+2oSTlMzjmarLpow32LbStd661GwfZOMyPxqgL0qcOOQ9unACleZtxwA5cj+Y8lu2jS3ycdAqabhQEDq7Jo+680=
+	t=1785138171; cv=fail; b=oGCkMXnoJ4+pa9ZCBVPh1z83hFl1a4/04UChP0D/H2mR4j5UiTPmrPWLXd+v2xQWEUj1XwStBCE600M3tnom4wzsgKPU6DSVZNByStkNC8nUe6PCf1ObMGvye4UKW31YH3kKQPQqmS2okSADyuTZs5EKjUo3fmFxCEu8ZOURnso=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785132008; c=relaxed/simple;
-	bh=dxfTMHJOIgA1Ct/lF5LgWH+prIhheH0iWT53Wz6vGDk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=mf9KYrgNhh8drWvGeYNynyUGjpeo95hO3x2CuEA4PdS8KyhhaUayVRTAB335o43xL6NOGfiZEUwRzQtgmbfAz0HpEQFRm42yOBqsY8Z0msvVbp8RSEsacy3z2BJ0f6ZQmpND+azx4K0pOS+5P+wSYbGMHQdpebRjUp2SO/Ck5MM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HI7MT4G2XMxMtlUlzaPca5sAgZNDe4zH9o+eDrDAt9z2uhcJBCGfceAjHlQKQUwY3dVX/Vmyi0qxQQ8VE8Pox6HMy3g9oM7B06M85z09Idkm35K0KJ5OCrUQabNcBKJk0Zw91nFJCPEp1HhxtNnJWMLrEwUCcijWYeQSeJGAZGX3QFqJ/tZDChVvE4WSBBP5YjZesa1UMl9NO/V3Xr0w3Hpb2Qk8ctTXNUL+8/FRwbD1cJUSWYCREA990BOV50wg/UeV+DD6U+TtLkCVALWA6wZiVVxGJCUXtIwiku2HL1w6GwEzThHK0BjkxgjjWdI5ciG2SfWBv5nyJW8UDn7SLw==
+	s=arc-20240116; t=1785138171; c=relaxed/simple;
+	bh=bR4JDejIg5MWKoW044r4s+UfdTPM98npgM6mzR4F3C0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=fhHqZGPs4YGAIvpNM27PfKqPboHnWjvJh/wFToZvXaGtXAT9AK6KIbNVeopjtA/sY4muhy+nn81bwnOD1ukwK+xymCUeAkZIHOmTLCK2IaInQP0UBNZIF1TAtxU7ib6KPz55/m7MwMiSlUX4TvJpBzsTE444pZkJwDyASe7x6gI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=nQMvBD5E; arc=fail smtp.client-ip=52.101.70.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="nQMvBD5E"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZL3IEnDJak5ivjBDFezrydBcaSYj2NRsYKGM0WQ2YkB387TPwsBvwyscfTXd40hxVtjQaQNjgcUCio+Uuf9P7obaZNBgBgyl45PCrV06ebYHDapSmdC18TUGVystLv6/Q0G0ghhzd6xZjEQBzhRRPhFPg8yhqtS/O8jvxGHeXzdXkFZunCwobA00f6WgEDxe6f907hXu6RWj/uey3rzSeEd9PmbG9S2eOIAlCS4h03jkHC80tg+rtbIz+xovrtEYSUykT0/v6sVo0CX89WdLzml24Vo1KeuXXfYvYd3Jifl/n3k2cvqJd+8LFQjYhDA+oBU36nqGdOzWgDXIg98qGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
+ s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dxfTMHJOIgA1Ct/lF5LgWH+prIhheH0iWT53Wz6vGDk=;
- b=FBM9Rc0ScHQH7guU8BBjGwPzWLrcqIQqJQ3eaWnatYt+grZGadcPhCOf263DKIXEiFVwbMz/8bin6+v4D9n6o0Oga3VVhFVGSJd78BkVh2BiYAnf9a46wyQlaeLl5vRrS7X9M6rADaSXxsehYfSkZW+PcM9Nq7OpEcGwHbgcLBDb5lFzXdm/uXnKf2+ul5FOtujgdCn3Ver4DWCKaGjSR6Uqx0aTWZgvaFJugQkhFFfnruWVgqo2dBYd5HnqdC1oHbTP9lBPwGLNfVEsKWp1SFKsWCgvDl8PKs2qIAT2HTkNNMwucWfE0QqVKGQdxPg4k7Vi4fUUpfZKUj7/yG6+0Q==
+ bh=kXUQqRfRgEv8OZlgAWTacNdZ7iIT329UkmX331ftvuI=;
+ b=yROSO7kfV77aI2w7gkMHlI9Meicf4TzXGNmSmAP/H9/JPZjzEBDMj12V5rfgKcKtk4ABs4aO01MX5mXKTSDWc4wy5Okf7f4vXFcESPLfbzWTiKqIDBOJrMMjREnMeqTeR7S2R/3nglZwN3artsVj1NotNl8F6p0ZU5H3IcILWvVKdkuhaJp4ZuBaoKiocBbReBXlsyx/8t2HH8EYbXIWsoF5qUT0OWPVG57ogg8XTFiS+5wJP4eelmnMemyg0uBunZETvZhrYj3QUvWqVsZody1s/k/Fr80spUTIb8aNVtXenuTwza8dT/ZGealfc6f5V4BVMdjhIdg270Nbu/iySw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6) by ZQ4PR01MB1316.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:14::10) with Microsoft SMTP Server (version=TLS1_2,
+ smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
+ dkim=pass header.d=iopsys.eu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kXUQqRfRgEv8OZlgAWTacNdZ7iIT329UkmX331ftvuI=;
+ b=nQMvBD5EWa41fzVxnRfeDphTEPb5sq4OdZ2x5BsnT7m3jtUBJSPmhySsbcizUe6LPZov5Ykb1Nt738ydRZV+uegh1EhRYjcB4p1Gd+g43BC6tDGhJyl8eGcMv2bXX81hQhT8kcJPeikO/rBbAA+H9K38L/AWVItCPStXlSOsOdaj4Au6+x1j7rof/Ak78cCFUyfWix9EGhaoRjUcjGfkhX+981wzS4q3bnZ8nxnynt9TP61j2Pn36l9dNKnwlycD41ZQ+swS1jKV6rUEV6oMpKfZqKllT9gX+uFpBbz8pVxCxwKNuzBsaorvUSDgKdreIvMDpcqYT0qBmQulOVcxXw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=iopsys.eu;
+Received: from DU2PR08MB10037.eurprd08.prod.outlook.com (2603:10a6:10:49a::20)
+ by PR3PR08MB5868.eurprd08.prod.outlook.com (2603:10a6:102:81::6) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Mon, 27 Jul
- 2026 03:26:04 +0000
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- ([fe80::e7d4:256c:b066:850d]) by
- ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%2])
- with mapi id 15.21.0245.012; Mon, 27 Jul 2026 03:26:04 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Linus Walleij <linusw@kernel.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
-	Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, Palmer
- Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Bartosz Golaszewski <brgl@kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, Lianfeng
- Ouyang <lianfeng.ouyang@starfivetech.com>
-Subject: Re: [PATCH v3 04/21] pinctrl: starfive: Add StarFive JHB100 sys0
- controller driver
-Thread-Topic: [PATCH v3 04/21] pinctrl: starfive: Add StarFive JHB100 sys0
- controller driver
-Thread-Index: AQHc8x1jj1AWoBKzsESqiyGUJQ5KXbY5RwGAgEUSdKCAAEHjAIACbbtQ
-Date: Mon, 27 Jul 2026 03:26:04 +0000
-Message-ID:
- <ZQ4PR01MB12021A2E486C8CC1B19603DEF2CC2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-References: <20260603055347.66845-1-changhuang.liang@starfivetech.com>
- <20260603055347.66845-5-changhuang.liang@starfivetech.com>
- <CAD++jL=Qd8ADR_kX2Q7msM4Dd0xFayPGM4ZzB3uv2ufvkuybtQ@mail.gmail.com>
- <ZQ4PR01MB120228AD03507B4836EFE19DF2CE2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <CAD++jLnNa6HsS5q5aYHxCLkQdZ3eh09PspO=eZx-4=p4EFr4PA@mail.gmail.com>
-In-Reply-To:
- <CAD++jLnNa6HsS5q5aYHxCLkQdZ3eh09PspO=eZx-4=p4EFr4PA@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1316:EE_
-x-ms-office365-filtering-correlation-id: 60ec883d-8cbb-4d6e-f183-08deeb8eca24
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|23010399003|366016|1800799024|7416014|376014|10067099003|4143699003|6133799003|56012099006|18002099003|22082099003|38070700021;
-x-microsoft-antispam-message-info:
- qHerjFOgSCk15+WWX21IkNOX5hXCgJVBDRs0AZB4rCvGbZy49t6DJfmf0WerrSiqhN40D94wqjrF0JpMd4mkss1KiEvkoM+yJjhWSh3/hPDmCP1TJmDFihfNDgijOD6FpwzXh1YvcYMKrhNHXWOaDsAj79Rqbr7JNsR83QOiN9yXz5MLRQZCv2t7jdOfbBMFgrLgFeitZv+fLryeloJ0l69O7WbYDOGb2bPGLUvAUTwR4o8qKIeWa2T2vV7xzxteRThYvjL9Gg4YZoJXrBK3JqDmj/zI9XZau3IkfQtUvTnYpUWDJIJyiwE/+D44zFpTdIW7b3ZdNhNnhSw8XW6tyY9GAF++oE1n9PYmNumIord8Or70DrifWWSd+CwjwbqaBEg8H31EK6n648hJr/SPQW4CZPWaJdKhboZBW8PZ6GxVTehBZgvVssCwNXyyW9VQNEWRePSe4fJzy9QkEew6E6JcvxoS74IUbJv0xZ5Xn+ivKQUotBcl/SFt7xlmKuHohbCNgr1ujnXXlsLrnr130njM42v6+NJJs//ZqTZKbymxsIFEpCmI19UkSYInjJRS
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(7416014)(376014)(10067099003)(4143699003)(6133799003)(56012099006)(18002099003)(22082099003)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?aFh4QWtJNTA0OGtxYmc1UEI0MFN3UC90SWNkWDBSVzJMMmtZNVZ4TDFJV0NO?=
- =?utf-8?B?MmppTVpaZ21Kc0JTdzhKWGdiYlRkb2pLcWVvOVRabmc1d2lLMU9JMW5GTE9x?=
- =?utf-8?B?dElpdzgzWGptR0FYYjV3RWpRWXNkQWFLK1UxNWlHbUtJb2dnZTN3clY5dk9h?=
- =?utf-8?B?dTFpb0pjSEpoMzVmZDM2NThkeG53UERMZ3RCTG53Uk5naEFsamVYYWd2QWpx?=
- =?utf-8?B?QTBINkF5Si9lbndBdVB2UEdVcGhHbE44SWo4Y1pTMUNEcnJNYnpzNGNiYmN0?=
- =?utf-8?B?NEo3UlRqZENDT1E5aFN0bVoza1F2S09jUFlsV0NzaHhINmcwbDVmR0RXRHlT?=
- =?utf-8?B?WE1nKyt6eStwakJNbmpTRWpRWDV1SXE2M2haS0JmT3NVTHF6SUhwUEtodXpn?=
- =?utf-8?B?a1MxZFk5OHVPMVgwaC80UEV4RzkyTks1MytwUW1GeitKb2pxTFhCNzFINmxr?=
- =?utf-8?B?MjFuMVA5amFsL0huOHNldjBpWGdSSDFSaUJkek5UZDZTNWNGQU9tSDRHNXk3?=
- =?utf-8?B?VVF3TnZmNVhBajZvR3hJeXo3WmptejkrVnBRdnFuNDRNVDhCUHNwSFM5K3FP?=
- =?utf-8?B?TXBjYWlhbU9Ec25vVm90dE1WaC9jRWpodmRMcmhzU1ZMMDBCd1laN252U3Jp?=
- =?utf-8?B?ZHAvRWs3VnF0cUx1UHV0YkdsVm45TkRMMm10djhjL3dYalFmRFNuU2lnMjAw?=
- =?utf-8?B?WEYyZ0RvdHpOSkdlcWZVY1U0M1NnS3dLWHB5dUJQQmNxekRacjVtWmUyaHox?=
- =?utf-8?B?cGNObExXdU92T1FPdXJaUlJVOGZncEFJanFkZmRrOURjeU9iSHl6NkVFN0tN?=
- =?utf-8?B?MSt1Qm5wUVppMEM3UTRZdWJTSTJhKys1ek4zTUprQjJXbkxpU216eEVITi9r?=
- =?utf-8?B?T3pnTzlkS3RrajFpekJ1VmhvRUNGMVh6SkNPaG9sK2twQ21SQ0JOckRqQUVS?=
- =?utf-8?B?SUdJK29hUFVvcTBjU0lORFJrYk9Fb1JSVlljK1NzM01uWThmSnR2NXBkYlBk?=
- =?utf-8?B?cG9NTWFyNkhEeWZ1YnB3ZlBReGxnOVlZMDJyTTVKSVFIeEhZeDZsKzZHZVVl?=
- =?utf-8?B?ZTBJOGhyT1FIRTk2cFR6ZTZZTy9WK2hsR1ZrcWVPME5YYU5raGpDb3lHVnR2?=
- =?utf-8?B?S0ZKQ2JMM2dFTlR0dnRxSmJaRVBKVm9jNUJRRzlCaDI4TUVydDY5Ylora0Rl?=
- =?utf-8?B?cVJuMlc1OUcyVjNsbDlZYVgrakpwa2dzTkhRSFlDSUljMEgyRzltbHVvejVp?=
- =?utf-8?B?NFFvTGwxWnlKSEhyVys3MlA5elphVkRYRTc2L2RDWElXeXBON0VzY21ORXBv?=
- =?utf-8?B?dmNkbGJYZGk5VmptL0Z0NVNZM29XYUtUSXAzbW82NG1qaDV0VVEyVnYrRG11?=
- =?utf-8?B?T2hicnltMVBNZHYyNDNEN0xPTkRkWkNvK1RLcytyWWJHYVZPK2NhbDhpejZP?=
- =?utf-8?B?QVdrZ0pUYlFRR01zOWNxeEZQTXBCeXFUcTM2RGU3K2JlU0VybFdhSEhlVUIx?=
- =?utf-8?B?Mnd1dWtFQUliUUxNZzZyQkxzWjVKbE1HVld3bVprSXV1d2tUMFl2Wm0yUk51?=
- =?utf-8?B?R3pxZTlzajRKcTU3YS9nblZvMkVFMkJwRVBZN0E1dDRKc2gwbC9qelRCWFJI?=
- =?utf-8?B?dSt1dTFhWjBxTHlPbEQ2dUFnVCs3alRlb2NnWS81VDdQN0dnM3MvZXdSYWRG?=
- =?utf-8?B?L0wwQjRkOGJ0b1dSV3lacHFoTmNEdTd0RTVaS05GTGxka1Flb1pIMkZVQUtK?=
- =?utf-8?B?MVlFeU11NVI2OXM5SHlyeHA0cGVRSlMvLzA5RVB0TDdBaWlydmdOc3RHSHZF?=
- =?utf-8?B?QWtWQklQYmFYYVZGMWlNTU4yMm9MaHBpOFlwZlBUZTROd3BscDg5K1JhRXpz?=
- =?utf-8?B?T2w3ajc2QWdUejZEOEFpZVBrQkx3ek9lTlU1QkhxeDJkczdxNlR4OGZSZGo3?=
- =?utf-8?B?WE5rTGdxMzBPUzlmL3BVaW05cnJiTVRoNnF5cVByTi8wZklKYnhyUWhqa1dF?=
- =?utf-8?B?NnhwRldZRjBqSDhzMHhVS2tkNlg5c1pINmZ1ZVlCcHdjUDJzQ3dDY2xoU2Nn?=
- =?utf-8?B?RlF5d1hiaW85UThnNHM4RGo3VmpyZHcxb21qQ2NBOVlPVlNrWVU3TkhHMDlx?=
- =?utf-8?B?SEh5QkJTQnJiRzN2WEY2emI5RVltT0hZZmJsRHFBa0FyMWRBT3VVVWtDaC9z?=
- =?utf-8?B?RnZFNlliWEFJaVV2UHBpVVBERTVLZG44WXlWQldEWnQwTm9KTDhoUzR6Y3pl?=
- =?utf-8?B?VXhkK1lLZEViOUtieDF0UzlMbGRDNXZOdEE0Q2trajM5amphMDVLQUQ0MmMr?=
- =?utf-8?B?K1ZIeUtNR09nVndiZ0c2VVo2ZXMvTjE1Wm1zcCtyTCszZk9XZHEyVjIzUDMw?=
- =?utf-8?Q?OUD2ImkGIPW/Pj5Q=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ 2026 07:42:43 +0000
+Received: from DU2PR08MB10037.eurprd08.prod.outlook.com
+ ([fe80::3c7:6d2e:8afe:e4dc]) by DU2PR08MB10037.eurprd08.prod.outlook.com
+ ([fe80::3c7:6d2e:8afe:e4dc%5]) with mapi id 15.21.0245.012; Mon, 27 Jul 2026
+ 07:42:43 +0000
+From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+To: Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Markus Gothe <markus.gothe@genexis.eu>,
+	Matheus Sampaio Queiroga <srherobrine20@gmail.com>
+Cc: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Subject: [PATCH v7 00/34] pinctrl: airoha: split on shared and SoC drivers, add more SoCs
+Date: Mon, 27 Jul 2026 10:42:00 +0300
+Message-ID: <20260727074234.3761170-1-mikhail.kshevetskiy@iopsys.eu>
+X-Mailer: git-send-email 2.53.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: FR5P281CA0051.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f0::20) To DU2PR08MB10037.eurprd08.prod.outlook.com
+ (2603:10a6:10:49a::20)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR08MB10037:EE_|PR3PR08MB5868:EE_
+X-MS-Office365-Filtering-Correlation-Id: 81157f5b-6ce6-4135-574c-08deebb2a4a8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|7416014|52116014|11063799006|56012099006|10067099003|6133799003|18002099003|3023799007|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	6nmqL/EKtN22YFC96t04DZw7KZKyZHSZQzJLC/pcLSWpcchfa1BMhMct7Ka9O0puV+H4RCdhXCDXwJESYn7iOo8yEtHRN3Aar0bLnB+8v6q/stXlYiY1zLxtb141092/i1ieCmpb733mSWe2500Ew58PgluIsf2WYqBs5djBOxHSpOrRHkixStVBndZf9RHfIqG7W7QxUAeuxWGNIj9znyiJhEnOw4mFTCLlEa5rcJ3L7jkmFtDWRf+WYxFMPNiUkwv29WgZvv3fihN09fxe2bZ1mRGk9AIOr4E59xT19I/k3K4HFP8XMR6VVjn16Tzb67VEnvJXMWJUe+fa0xdnu8YA52sbYtvs3cB7r47V9CIC6TIqcyirezdyABVDacAp9DmLbIOIr1Qsm2MAQLHMtpF0iMJ+U3yPJplEi5V52+HSPACfPD+gjpUo4pPHEmdE/FHa+xF5jz9ThpIckgr2zfbC+vG8izWUQ5hU4UGRiRKhP+Z9L9mR6Cmjk+v3SCEms9NUKJefF5dwEVaLIprOdRN7HumyeLwNHHF+nId8u6HgBs18qtVFBF7ALAB04ZVe0czwllZTcJ2VId9GS+8piAzi7grV0vFZ8GBGdwdCWIL+fpOToG2hcWjcGdtnxuCCB/Tqo0tNzKwi8qlYqcawncJh268TzUAIy77q9+vAtSddsIGt3hADhKnl9G54noQH
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR08MB10037.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(7416014)(52116014)(11063799006)(56012099006)(10067099003)(6133799003)(18002099003)(3023799007)(38350700014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YAK7GvXAUmRPWK3OPH6zDjc534beqjI0EnPCQnjFB1DM/wcsXVP0VKNGTnr/?=
+ =?us-ascii?Q?xwZaXldMu2atbA6P1+Pcjm+qHhClIvihSkP0GMNnz835keDyKoPDQTG8Ofvw?=
+ =?us-ascii?Q?C+8Z2zAneebjZHyhbBEmO6cJ4gAiSOcsoAmDHWjE4JtZaN5GSDqNIGc61Mpd?=
+ =?us-ascii?Q?H+m32guj7eY/0OHaJG5da3AaMHv0iiH0f7D8iv7dvqaXemCUGOkasP5dhpuD?=
+ =?us-ascii?Q?orjvJuBtK6JM49TZGDwfWwjteKTiXZDLSAtJCQhsVPNfwkMhy3ia/K56gRvb?=
+ =?us-ascii?Q?W/y8hSPUVzKZmyAeJy5NCPzhBvX3udEtUmiLFyr8P9NSqDCKa0LqsqJ1Hno+?=
+ =?us-ascii?Q?IpikQGQ6Py17f5E6CPnaObcz9o4++Fn/S017UJ24Tb5VcTRTSchotQhsBrp5?=
+ =?us-ascii?Q?3aP4awrjfpGjlclw/nTH147hf0b/iVOT2W0DUQpvJZ9EKI/KC8ulkX8/mYuo?=
+ =?us-ascii?Q?6AT5Ygtsw1IVI2Cua1xfBj4fjAA0/4iOlxFYM4Xn43tV3o6mfZOWoa/8IZqu?=
+ =?us-ascii?Q?xZztV+FIPGwdUuvvWTKU/m2VVk0rgUDhTgFXGNWzKNtINac3fhSipzwi9Ilv?=
+ =?us-ascii?Q?vru8nUrPnS7wLpdldsorV3jOEwTb/+NHmmzcLxp92P8Fan9o3f7zrE0lkGvm?=
+ =?us-ascii?Q?u9Icc0V7GIXh5NHWiuCM4HJvu7WUS7ARPySW+PO/NWau41x3RMaIGbC7QUT3?=
+ =?us-ascii?Q?5hr/yvJZDfCNicd4Ld9SoWZbG36UrxU5MoI+yqvTCEG/pMTLH70ORODAtoez?=
+ =?us-ascii?Q?yVLCeHngJ5kBhfuws2G4YHLnS45fT3bRb9UsjUc37TnkyYe5K5QLdt+OHAwi?=
+ =?us-ascii?Q?k0tO0wYSWMiielC+vDAJ6VYuZ18cYQpIfl+iDekrCRbsIOHsRDJb9WPSPsKx?=
+ =?us-ascii?Q?0O1udMT2OSspKyLr8lRCOeNA4eUW5TWk8KisJm7rlpInor1wipKT3wIKcuLR?=
+ =?us-ascii?Q?+R1s5mZyl18GAJ3Cc9nkkVI4hgpqELluUVEF79VD47v+teYSbFw2cflfvYFZ?=
+ =?us-ascii?Q?rCm2GV7InM3KLojILHdfSIixMI4uVTXo2lYDCmF1yA899g4QroVa7uo6KKvH?=
+ =?us-ascii?Q?/jApBZomm37EcxvZGEUixPNxGm5fug85TTufYFhZNZCrd6szly/q1hCRNPjD?=
+ =?us-ascii?Q?jtxKW9zlO9QwZGMZl3il1amPefW++ULn1shNxeZZZCPuowXbnsldDRAza4D5?=
+ =?us-ascii?Q?q7mNDNVFa0aAUZSuQSjKDkgOYXQEZGrlmKPRVn6KNixzE0kq0HAgLIWl7MzG?=
+ =?us-ascii?Q?VKSy5FYR6knahOotWGIE5MiawKOX6OQ2KACSHiXn2UC7NMPtfYBOvKjjv7Pe?=
+ =?us-ascii?Q?DNCE32ssz5egdyPqaFxx0qAZ0qnlmgY7FSw+uNUOD6q+3Uent5MqaFb6lvCY?=
+ =?us-ascii?Q?ly1Hol1mL+QMISlP+c613MTjMTl0WbWB6WV/NoDaTaSmwMTspeHcrYQAbbOV?=
+ =?us-ascii?Q?DdRRk8ljz2BKPcc+4D15Fiua2xW7gRY4uExbO/VrWqzVaCiBOMppEkaKYXDh?=
+ =?us-ascii?Q?cyABhCvTD3wHr0xHgXGU4FD35ldzqPBcaUR6ZZki2YRxCG7Vo9D6scLxSarV?=
+ =?us-ascii?Q?bCY/CnxLEzCEYlrDxBFOqMKcjeOOGYhxtUG9WoRO1nXrxEAV3JUaSExNaIth?=
+ =?us-ascii?Q?d9TlOieReGnDLHTwrHqmh8Us6XsHxe175TJP8Ua/6ZDEFcJmNP+sZYRGBD5+?=
+ =?us-ascii?Q?tE9HA3YbXcEZok+yyM1OmPj+KiRuQKeD8a+PToWW//WKvGSSUFMyONpBNdE4?=
+ =?us-ascii?Q?x10UdOqU0L210VWESeK7T9NRMUVNrxo=3D?=
+X-OriginatorOrg: iopsys.eu
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81157f5b-6ce6-4135-574c-08deebb2a4a8
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR08MB10037.eurprd08.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60ec883d-8cbb-4d6e-f183-08deeb8eca24
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2026 03:26:04.1960
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 07:42:43.5889
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: n0EJOMN7ADndDcq01IZ+pF54uh3JiyDfwpWdozHbNnAaKXvScVUseIELr0IjQEqRsDywq0zTn+TfzG8I1wDNHJxwzK4eQioekhJsEhxQCGCSE4+uYzytOr7SWCo+tVxp
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1316
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K+AHw5y5qhPRWDxr/xInS9ADhZntW5IYHmhG7+TxpiwpvlYzb8Q2XTmNKw5iMWgsVdlDFvo9AqAGAUOHhIxWvAHWEYk5CGYRqybo7ygPNq8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR08MB5868
 
-SGksIExpbnVzDQoNClRoYW5rcyBmb3IgdGhlIHJldmlldy4NCg0KPiBPbiBTYXQsIEp1bCAyNSwg
-MjAyNiBhdCAxMjoyNeKAr1BNIENoYW5naHVhbmcgTGlhbmcNCj4gPGNoYW5naHVhbmcubGlhbmdA
-c3RhcmZpdmV0ZWNoLmNvbT4gd3JvdGU6DQo+ID4gPiBPbiBXZWQsIEp1biAzLCAyMDI2IGF0IDc6
-NTTigK9BTSBDaGFuZ2h1YW5nIExpYW5nDQo+ID4gPiA8Y2hhbmdodWFuZy5saWFuZ0BzdGFyZml2
-ZXRlY2guY29tPiB3cm90ZToNCj4gDQo+ID4gPiA+ICtzdGF0aWMgdW5zaWduZWQgaW50IGpoYjEw
-MF9ncGlvX3RvX3BpbihzdHJ1Y3QgZ3Bpb19jaGlwICpnYywNCj4gPiA+ID4gK3Vuc2lnbmVkIGlu
-dCBncGlvKSB7DQo+ID4gPiA+ICsgICAgICAgc3RydWN0IGpoYjEwMF9ncGlvX2JhbmsgKmJhbmsg
-PSBqaGIxMDBfZ2NfdG9fYmFuayhnYyk7DQo+ID4gPiA+ICsNCj4gPiA+ID4gKyAgICAgICByZXR1
-cm4gYmFuay0+aWQgKiBKSEIxMDBfTlJfR1BJT1NfUEVSX0JBTksgKyBncGlvOyB9DQo+ID4gPg0K
-PiA+ID4gVGhpcyB1c3VhbGx5IHRlbGxzIG1lIHRoYXQgR1BJT19HRU5FUklDIGNhbiBiZSB1c2Vk
-IGJ1dCBtYXliZSB0aGlzDQo+ID4gPiBoYXMgYmVlbiBkaXNjdXNzZWQgYmVmb3JlLi4uDQo+ID4N
-Cj4gPiBIZXJlLCB0aGUgbWFpbiBwdXJwb3NlIGlzIHRvIGNvbnZlcnQgR1BJT3MgaW50byBwaW5z
-IGZvciBjb25maWd1cmluZw0KPiA+IGNlcnRhaW4gcGluY3RybCBzZXR0aW5ncy4gSSBoYXZlbid0
-IGZvdW5kIHRoZSBwYXJ0IHdoZXJlIEdQSU9fR0VORVJJQyBjYW4NCj4gYXNzaXN0IHdpdGggdGhp
-cy4NCj4gPiBDYW4geW91IHBvaW50IGl0IG91dCBmb3IgbWU/IFRoYW5rIHlvdSB2ZXJ5IG11Y2gu
-DQo+IA0KPiBOb3JtYWxseSBHUElPIGNoaXBzIHVzZSB0aGUgLmNvbmZpZygpIGNhbGxiYWNrIHdo
-ZW4geW91IHdhbnQgdG8gc2V0IHBpbg0KPiBjb25maWcgZm9yIGEgY2VydGFpbiBwaW4gaW4gYSBw
-aW5jdHJsIGJhY2tlbmQuDQo+IA0KPiBTZWUgRG9jdW1lbnRhdGlvbi9kcml2ZXItYXBpL2dwaW8v
-ZHJpdmVyLnJzdDoNCj4gDQo+ICJUaGUgLnNldF9jb25maWcoKSBjYWxsYmFjayB1c2VzIHRoZSBz
-YW1lIGVudW1lcmF0b3JzIGFuZCBjb25maWd1cmF0aW9uDQo+IHNlbWFudGljcyBhcyB0aGUgZ2Vu
-ZXJpYyBwaW4gY29udHJvbCBkcml2ZXJzLiBUaGlzIGlzIG5vdCBhIGNvaW5jaWRlbmNlOiBpdCBp
-cw0KPiBwb3NzaWJsZSB0byBhc3NpZ24gdGhlIC5zZXRfY29uZmlnKCkgdG8gdGhlIGZ1bmN0aW9u
-IGdwaW9jaGlwX2dlbmVyaWNfY29uZmlnKCkNCj4gd2hpY2ggd2lsbCByZXN1bHQgaW4gcGluY3Ry
-bF9ncGlvX3NldF9jb25maWcoKSBiZWluZyBjYWxsZWQgYW5kIGV2ZW50dWFsbHkNCj4gZW5kaW5n
-IHVwIGluIHRoZSBwaW4gY29udHJvbCBiYWNrLWVuZCAiYmVoaW5kIiB0aGUgR1BJTyBjb250cm9s
-bGVyLCB1c3VhbGx5DQo+IGNsb3NlciB0byB0aGUgYWN0dWFsIHBpbnMuIFRoaXMgd2F5IHRoZSBw
-aW4gY29udHJvbGxlciBjYW4gbWFuYWdlIHRoZSBiZWxvdw0KPiBsaXN0ZWQgR1BJTyBjb25maWd1
-cmF0aW9ucy4NCj4gDQo+IElmIGEgcGluIGNvbnRyb2xsZXIgYmFjay1lbmQgaXMgdXNlZCwgdGhl
-IEdQSU8gY29udHJvbGxlciBvciBoYXJkd2FyZQ0KPiBkZXNjcmlwdGlvbiBuZWVkcyB0byBwcm92
-aWRlICJHUElPIHJhbmdlcyIgbWFwcGluZyB0aGUgR1BJTyBsaW5lIG9mZnNldHMgdG8NCj4gcGlu
-IG51bWJlcnMgb24gdGhlIHBpbiBjb250cm9sbGVyIHNvIHRoZXkgY2FuIHByb3Blcmx5IGNyb3Nz
-LXJlZmVyZW5jZSBlYWNoDQo+IG90aGVyLiINCj4gDQo+IE1heWJlIHRoaXMgaXMgd2hhdCB5b3Un
-cmUgbG9va2luZyBmb3I/DQoNCkkgd2lsbCB0ZXN0IHRoaXMgbmV3IG1ldGhvZC4gSXQgbG9va3Mg
-dmVyeSBtZWFuaW5nZnVsLiBUaGFuayB5b3UgdmVyeSBtdWNoLg0KDQpCZXN0IFJlZ2FyZHMsDQpD
-aGFuZ2h1YW5nDQo=
+This patchset
+ * fixes more airoha pinctrl issues
+ * split combined driver on common code and several SoC specific drivers
+ * improves an7583 pinctrl support
+ * adds support of en7523 SoC
+ * adds support of an7563 SoC
+
+The driver split changes are based on Matheus Sampaio Queiroga work.
+
+Changes v2:
+ * more issues of airoha pinctrl driver was fixed
+ * SoC specific register addresses, bitfields, macroses were
+   removed from common header and placed to SoC specific file
+ * fixed address of LAN LED mappings registers for en7523 SoC
+ * improves support of an7583 pinctrl
+
+Changes v3:
+ * improve searching of chip scu regmap necessary for drivers
+   operations
+
+Changes v4:
+ * an7583: add support of OLT pin function
+ * an7581: do a proper fix of pcie_reset pins mux/conf.
+
+Changes v5:
+ * improve description of an7583 i2c pinmux fix
+ * rename an7583 registers to match its an7583 names
+ * add support of an7563 SoC
+
+Changes v6:
+ * fix some of the issues found by
+   https://sashiko.dev/#/patchset/20260622113046.3619139-1-mikhail.kshevetskiy%40iopsys.eu
+ * update device tree binding
+ * add bindings for en7523 and an7563
+
+Changes v7:
+ * a lot of IRQ support fixes, now there is chances that IRQ code is
+   really working
+ * device tree bindings moved to the separate patches
+ * fix some of the issues found by
+   https://sashiko.dev/#/patchset/20260628143733.273651-1-mikhail.kshevetskiy@iopsys.eu
+
+Mikhail Kshevetskiy (34):
+  dt-bindings: pinctrl: airoha: en7581: fix misprint in i2s function
+    name
+  dt-bindings: pinctrl: airoha: en7581: fix pwm pin-groups
+  dt-bindings: pinctrl: airoha: an7583: fix device tree binding schema
+  pinctrl: airoha: an7581: fix misprint in bitfield name
+  pinctrl: airoha: an7583: fix I2C0_SDA_PD register bit order
+  pinctrl: airoha: an7583: there are no muxes to enable i2c buses
+  dt-bindings: pinctrl: airoha: an7583: remove i2c pin function
+  pinctrl: airoha: an7581: fix mux/conf of pcie_reset pins
+  dt-bindings: pinctrl: airoha: en7581: allow configuration of
+    pcie_reset pins as gpio or pwm
+  pinctrl: airoha: an7583: fix muxing of non-gpio default pins
+  dt-bindings: pinctrl: airoha: an7583: allow configuration of non-gpio
+    default pins as gpio and pwm
+  pinctrl: airoha: add missed get_direction() function for gpio_chip
+  pinctrl: airoha: add set_direction() helper for gpio_chip
+  pinctrl: airoha: fix potential kenel panic in IRQ handling code
+  pinctrl: airoha: fix IRQ mask/unmask code
+  pinctrl: airoha: add missed IRQ resource helpers
+  pinctrl: airoha: fix edge-triggered interrupts handling
+  pinctrl: airoha: remove not needed irq_type[] array
+  pinctrl: airoha: move common definitions to the separate header
+  pinctrl: airoha: split driver on shared code and SoC specific drivers
+  pinctrl: airoha: an7581: remove en7581 prefix from variable names
+  pinctrl: airoha: an7583: remove an7583 prefix from variable names and
+    definitions
+  pinctrl: airoha: an7583: rename registers to match its an7583 names
+  pinctrl: airoha: an7583: add support for npu_uart pinmux
+  dt-bindings: pinctrl: airoha: an7583: add npu_uart pin group
+  pinctrl: airoha: an7583: add support for pon_alt pinmux
+  dt-bindings: pinctrl: airoha: an7583: add pon_alt pin group
+  pinctrl: airoha: an7583: add support for olt pinmux
+  dt-bindings: pinctrl: airoha: an7583: add olt function/group
+  pinctrl: airoha: add support of en7523 SoC
+  pinctrl: airoha: try to find chip scu node by phandle first
+  dt-bindings: pinctrl: airoha: add support of en7523 pin controller
+  pinctrl: airoha: add support of an7563 SoC
+  dt-bindings: pinctrl: airoha: add support of an7563 pin controller
+
+ .../pinctrl/airoha,an7563-pinctrl.yaml        |  348 +++
+ .../pinctrl/airoha,an7583-pinctrl.yaml        |   65 +-
+ .../pinctrl/airoha,en7523-pinctrl.yaml        |  375 +++
+ .../pinctrl/airoha,en7581-pinctrl.yaml        |   15 +-
+ drivers/pinctrl/airoha/Kconfig                |   42 +-
+ drivers/pinctrl/airoha/Makefile               |    7 +
+ drivers/pinctrl/airoha/airoha-common.h        |  169 ++
+ drivers/pinctrl/airoha/pinctrl-airoha.c       | 2608 +----------------
+ drivers/pinctrl/airoha/pinctrl-an7563.c       | 1115 +++++++
+ drivers/pinctrl/airoha/pinctrl-an7581.c       | 1487 ++++++++++
+ drivers/pinctrl/airoha/pinctrl-an7583.c       | 1497 ++++++++++
+ drivers/pinctrl/airoha/pinctrl-en7523.c       | 1125 +++++++
+ 12 files changed, 6369 insertions(+), 2484 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/airoha,an7563-pinctrl.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/airoha,en7523-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/airoha/airoha-common.h
+ create mode 100644 drivers/pinctrl/airoha/pinctrl-an7563.c
+ create mode 100644 drivers/pinctrl/airoha/pinctrl-an7581.c
+ create mode 100644 drivers/pinctrl/airoha/pinctrl-an7583.c
+ create mode 100644 drivers/pinctrl/airoha/pinctrl-en7523.c
+
+-- 
+2.53.0
+
