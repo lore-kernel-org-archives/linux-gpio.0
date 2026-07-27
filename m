@@ -1,104 +1,187 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87CC3F4DC1;
-	Mon, 27 Jul 2026 09:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785146001; cv=none; b=eIY8l4AhjVulPYku2/KKYXh4Al0lOLh4lNNY3ri39s0HzX8NaDvjw1DkkyzO8dY8BMhpk9GABDCGPAx7WcoF87IDlJNzosGvL18+DzZYhxmCn6oxsNGXJSKen82OV4DWNt2OOWC6nf9HDuEx8l/1JRX8sGkGH4p9dp68o100Ka4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785146001; c=relaxed/simple;
-	bh=mnd8JGUpLhfjuGMnBBumrarbO8dMDdvwUy1KHFY25m8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lVaKHas/C5r9QIHr+m2YFj9p6DLiDv7zQI66KEWZkavUXjEBO7AkC6Lwlj8VeO0sR4QOIDLcOFqJDY8o1vzLBZOHw1G6OsDE+Txpk556h9aypdgz0UoBRV6/gdHD42JCKV5RNx++i7xyhq8xnANzhYSBVifMDipoaWquJMq9K5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R3ekCTAT; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804FB3F9A15
+	for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 11:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.180
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785150530; cv=pass; b=gchgcFBGy4ldceOJQEx3m4sbhjru+/VR1ezLqfsO9Ns0xujJJaQnRJe+p9BjLthmO5iyofhf/QOnDt9kNDisY3yBc+m2hbz4hFOLnuSxEfomvh40uNe+FZNMjICCWA7RzZOhh3TuSWBxbcI6JsjY+UimQjLLJrrHT2wOjK0ulGc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785150530; c=relaxed/simple;
+	bh=pV1TDUaa2YAV2kxJY3x35Y0FQXGiZRc6WWYevwzWDGg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nb1O/HOKN+mddHnjMvlUJ/3LroMEfss460VuKGWe/txEd2NfvL1Ata+VEtl4HG5nVbChvbzCi6yfD6whsWQAXyzE2srOzmenaVgz1f13Vz4zE7kq6rGEnzUu/ji0xvLlFa1P/gvLhdUod8RVT7ubpivhJMKQNcvENfcQRnpuz+Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3mRoCn4; arc=pass smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R3ekCTAT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E8F11F00A3A;
-	Mon, 27 Jul 2026 09:53:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785145999;
-	bh=aRit7Gfx5uba8dm8erPWOFTIgUtnZEAD4/wvQacClUI=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To;
-	b=R3ekCTATANXRCgeXbpg4OzWZIkyInp1FJvNGcPQL0E/D1QA8R3VmWg0dDglcO62xl
-	 gVcXhZwnQIizWbw3T+nRboftquu6MgwhJQBtjWbjHnqFSVEM6Xea1qgTHdZ93DCfbi
-	 qk4PjHMQq9CtgxGzzZ8ODwLPjVx2jvFWp3OJbxfiv8cLTDIMOu5yzZ6RhPRBfgmeZk
-	 284IEiBedMkOR1jXq9wfUPa1hppMvOC6PhzyrgVxLIvE5kF/Ny5VWqAqNXw1vPpeYu
-	 WWsnTXCMXOw+EFBEdrn8GWIl+s21aHVCa4SjGQcTX1LOYefMdl5lt6imvEZCE5NvYf
-	 n0KYnl+j4B8Cw==
-Message-ID: <9ecea779-4f11-41e2-95b8-e92ab5302158@kernel.org>
-Date: Mon, 27 Jul 2026 11:53:13 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3mRoCn4"
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-81ea0b7d137so11680257b3.2
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 04:08:46 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785150525; cv=none;
+        d=google.com; s=arc-20260327;
+        b=ObKPo1v/7prVGHd1QPH9nRUwPyZFFvySnXYlTOaOp9HCS8b6Rwdw52dq29Jo72zhPW
+         jIIM5WELdsWJoSSMR6YzUWizJ+eT4/y5AngfWPCcKelUAJCP2GHo5kpiuJ6lFo6/sb8C
+         dt8T8l+iY9Uf6H3N0M9X3K3HZ+K4I1+/syYgRf9e+EXA/FsKQNkAYCaK2I2VGiMBjUWp
+         WjSyTfv4IHORbh7pjVKjX+wRpOpTEGvJHRPutggcxD1ahzWxPZy2LFWrxGX8sCyrWW61
+         xkRjPkgiLvU0w6EpCXVUS+jzrB+OzJzRrpzR/hotvVbe84VcZqkSMQ2JztkBwysFxf+V
+         5vVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=pV1TDUaa2YAV2kxJY3x35Y0FQXGiZRc6WWYevwzWDGg=;
+        fh=qerrU3ygfDHjgfWDqUW4DffTXSNrYEWSiWin4FpIkRo=;
+        b=bgiLrYobi9DEJ7qt/fqC061M2sZ2pCObVNs4ZEzC9e08utOoNN4RwoKTAMwJEFWrG3
+         QQ/mB1hyjASwauzelDNDtAsg6SWqjqS26kUF5xMK78UjR++EroI3fiwgQv3I3ssdXcKs
+         CzOunpOnYuL+NBah/U6kaiqLiVfJobkU2G2OV0CCu4COL+IyJZpOY44lTe+90zFCpUqD
+         aHhAZgouL8UXTTgirQuqxD0FBQXhE8aUt7ULmisWQvQDou3I9g2cDQqOtvbri7ZWLSUo
+         bv3HLoN9HJxI1XynXEx2sSohAaQDVU3n+B5u7RnQi9MMfkVfseH7RuK0Nn0gtXAJ2xtG
+         yJ4g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785150525; x=1785755325; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=pV1TDUaa2YAV2kxJY3x35Y0FQXGiZRc6WWYevwzWDGg=;
+        b=M3mRoCn4tl8RPjfQixKwIWWGSOwAsLGhmh+pOW5tV4opu6k/FIUqHgtBSUi/lYWXNo
+         K98eF+P/A41j+K8iwFXw6liU49SqTYrvvms0nmGWFjNMcapwdxy/m16HBI26xKOSiPvw
+         bHpYUNToOx9zQJmLUksPduoTCqqE2dSxgHeSldgGIbLqv2CWqoDhAou0N3efVhSwmwfM
+         VQbpCmhybFLItirVtnzw4TnneJchaVYJVzYdQrFlaDO4vxp9qnK66elczaAbAPUjs+C1
+         1bvSmITqLw2KhR3gNZaWHhZGr+7ZSQD962od3gweFtTkzKTtbvFjOOIGdEoRbtgOHS17
+         oVMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785150525; x=1785755325;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=pV1TDUaa2YAV2kxJY3x35Y0FQXGiZRc6WWYevwzWDGg=;
+        b=DzTKoqWPvu7jXe9r5UREr2UcLtTSdDYQsgBnV92DdaZsJODry8+ZENxjbT9oNe5eDW
+         3EVdjsc1klFQCPsb7G3MD/ZVnwHBl60TiZtICzhiMqrZ/ZZddJifeJ01vZQhCRtam4JR
+         rNcvRr8AE5ukSb/RXXpHre92p1QcLDeBysQeNpzwhk+SB4wHfrWUY1D5moF/6W1nMZ5o
+         40q7JEJLcdf07bwh+UV7CDPQ41m1ZJ2HuGVr74tQtBharYPbM6SEicGfJ6jR0G/Vf5ZZ
+         fbCipq9+PRanh6SvGW4t62odU54gnR/KVRKN2/VB9J6F+a2ICKUTK9OI5xm825dauJkp
+         SBCg==
+X-Forwarded-Encrypted: i=1; AHgh+RrMuSYV26IThitINYZfWT1o2k67/AOqNiVoBOD6MWJOg+Oztvwzm3xlGe71lmI2M4iFYDaTIt4YLl0M@vger.kernel.org
+X-Gm-Message-State: AOJu0YzisBkFKexoEhHZ66dl4ciJf83gfzjdGcm77BoqAyDMvXVjcIrW
+	/EYvIuKGyNRCSlRLBqSf9TeaQfUJEKiuE3e27o4jZl3AcUpLlu5FJu19zblES5LDgr6ZfXwwt0j
+	TOVq2CiU5/SEPymH8YeTwTraDcvuBIvU=
+X-Gm-Gg: AR+sD10hd6eYVTeaSPVNJ6JSsMPuv3hR62SxG8yHwf9ht1UFQNRRzWeB8YGLN53lNeL
+	w7QY66jLrA1U0avesWC4SoN88BZMIHQWaUaLZgGeX7QumvNvwazQGrdqPAws/Mo0wffCC4MYpXJ
+	qDGwtaX7aX21WmFq66m4q2KNcaZNLZMKeXI73nPzMnCQr7fYN/sa0aGVjAmyWHfumR3niNFt0i+
+	ihMXVoXK/ipsSaVWVIr1WGT1TIzb7+WDs4vnrM4Caz1cKqTedVBfEpfLEY=
+X-Received: by 2002:a05:690c:3747:b0:809:86c6:ee18 with SMTP id
+ 00721157ae682-81f69e3978bmr27868337b3.37.1785150525277; Mon, 27 Jul 2026
+ 04:08:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH v1 3/7] media: em28xx: Open code gpio_request_one()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Bradford Love <brad@nextdimension.cc>, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
- linux-media@vger.kernel.org
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>, Russell King
- <linux@armlinux.org.uk>, Hauke Mehrtens <hauke@hauke-m.de>,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-References: <20260715185112.1323510-1-andriy.shevchenko@linux.intel.com>
- <20260715185112.1323510-4-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US, nl
-In-Reply-To: <20260715185112.1323510-4-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260723184538.3888637-1-ekffu200098@gmail.com>
+ <20260724144822.6af8213f@kernel.org> <0ee1ef4aa7daa908bf28397ccc639c89b6aabd9c@intel.com>
+In-Reply-To: <0ee1ef4aa7daa908bf28397ccc639c89b6aabd9c@intel.com>
+From: Sang-Heon Jeon <ekffu200098@gmail.com>
+Date: Mon, 27 Jul 2026 20:08:33 +0900
+X-Gm-Features: AUfX_mzhfgKW48GB4CRuyNKliFu1x1EH8aDGDqYePXeE0rGOBX3Wid5IOU1hKpc
+Message-ID: <CABFDxMFMOAZ_3kYxEGCutnGt1OSSmgvmwx-=M1RxGc3VGKORYQ@mail.gmail.com>
+Subject: Re: [PATCH 00/36] treewide: remove conditional returns with no effect
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Julia.Lawall@inria.fr, 
+	Alex Deucher <alexander.deucher@amd.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Borislav Petkov <bp@alien8.de>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Daniel Lezcano <daniel.lezcano@kernel.org>, David Airlie <airlied@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Eric Dumazet <edumazet@google.com>, Florian Westphal <fw@strlen.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans de Goede <hansg@kernel.org>, 
+	Hans Verkuil <hverkuil@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Jaroslav Kysela <perex@perex.cz>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Jiri Pirko <jiri@resnulli.us>, "Joerg Roedel (AMD)" <joro@8bytes.org>, 
+	Johan Hovold <johan@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Julian Anastasov <ja@ssi.bg>, 
+	Leon Romanovsky <leon@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linusw@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Mark Brown <broonie@kernel.org>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Matthew Sakai <msakai@redhat.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Mike Rapoport <rppt@kernel.org>, 
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>, Nicolas Palix <nicolas.palix@imag.fr>, 
+	Pablo Neira Ayuso <pablo@netfilter.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Ping-Ke Shih <pkshih@realtek.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, Sebastian Reichel <sre@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Simona Vetter <simona@ffwll.ch>, Simon Horman <horms@verge.net.au>, Stephen Boyd <sboyd@kernel.org>, 
+	Steve French <sfrench@samba.org>, Takashi Iwai <tiwai@suse.com>, Thomas Renninger <trenn@suse.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Tony Luck <tony.luck@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	Vinod Koul <vkoul@kernel.org>, Will Deacon <will@kernel.org>, 
+	Yazen Ghannam <Yazen.Ghannam@amd.com>, cocci@inria.fr, amd-gfx@lists.freedesktop.org, 
+	dmaengine@vger.kernel.org, dm-devel@lists.linux.dev, 
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
+	intel-wired-lan@lists.osuosl.org, iommu@lists.linux.dev, 
+	linux-cifs@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, lvs-devel@vger.kernel.org, 
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	nouveau@lists.freedesktop.org, platform-driver-x86@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15/07/2026 20:46, Andy Shevchenko wrote:
-> Open code the gpio_request_one() call to be able to kill that API
-> in the follow changes.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hello,
 
-Acked-by: Hans Verkuil <hverkuil+cisco@kernel.org>
+On Mon, Jul 27, 2026 at 5:30=E2=80=AFPM Jani Nikula <jani.nikula@linux.inte=
+l.com> wrote:
+>
+> On Fri, 24 Jul 2026, Jakub Kicinski <kuba@kernel.org> wrote:
+> > On Fri, 24 Jul 2026 03:45:02 +0900 Sang-Heon Jeon wrote:
+> >> Patch 1 adds a Coccinelle script that matches the pattern, including
+> >> negation and constant-comparison variants. Where a local variable is
+> >> assigned right before the check, the assignment and the two returns
+> >> turn into a single return of the assigned expression.
+> >
+> > Huh, I thought we already had such script. Various script children have
+> > been sending such "cleanups" in the past.
+>
+> We did, and it was removed, I believe in 1a617a8475e8 ("coccinelle:
+> misc: remove "complex return code" warnings"), because people just don't
+> want this constant churn.
+>
+> It's perfectly fine to have the error case and happy day scenario
+> separated.
 
-Regards,
+Thanks for sharing the history.
 
-	Hans
+I checked the mailing list. The removed script looks similar to the
+new one, but it is different. The removed script reported a
+conditional return followed by an explicit return 0, where the error
+case and happy day scenario are separated as you mentioned, and Johan
+also complained about this 10 years ago.
 
-> ---
->  drivers/media/usb/em28xx/em28xx-dvb.c | 14 +++++---------
->  1 file changed, 5 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/media/usb/em28xx/em28xx-dvb.c b/drivers/media/usb/em28xx/em28xx-dvb.c
-> index ef148a27c94d..d7f8dcf27900 100644
-> --- a/drivers/media/usb/em28xx/em28xx-dvb.c
-> +++ b/drivers/media/usb/em28xx/em28xx-dvb.c
-> @@ -742,18 +742,14 @@ static int em28xx_pctv_290e_set_lna_gpio(struct em28xx *dev, u32 lna)
->  #ifdef CONFIG_GPIOLIB_LEGACY
->  	struct em28xx_dvb *dvb = dev->dvb;
->  	int ret;
-> -	unsigned long flags;
->  
-> -	if (lna == 1)
-> -		flags = GPIOF_OUT_INIT_HIGH; /* enable LNA */
-> -	else
-> -		flags = GPIOF_OUT_INIT_LOW; /* disable LNA */
-> -
-> -	ret = gpio_request_one(dvb->lna_gpio, flags, NULL);
-> -	if (ret)
-> +	ret = gpio_request(dvb->lna_gpio, NULL);
-> +	if (ret) {
->  		dev_err(&dev->intf->dev, "gpio request failed %d\n", ret);
-> -	else
-> +	} else {
-> +		gpio_direction_output(dvb->lna_gpio, !!(lna == 1));
->  		gpio_free(dvb->lna_gpio);
-> +	}
->  
->  	return ret;
->  #else
+But the new script only reports when both branches return the same
+variable, not the explicit 0. So, I think the new script is close to
+the restricted version that Julia mentioned 10 years ago, and it
+should be acceptable.
 
+>
+> BR,
+> Jani.
+>
+>
+> --
+> Jani Nikula, Intel
+
+Best Regards,
+Sang-Heon Jeon
