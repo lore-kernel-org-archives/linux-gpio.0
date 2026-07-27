@@ -1,97 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3039662809
-	for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 07:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7953DE45C
+	for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 08:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785139047; cv=none; b=U0UQmgmfKKvnv+cOqi+AKQDguWI27a/c9sJvO4E+IKRTyn/RHcgbrwTnfA0a3BkL96QkQ5CeT+pF/zzdkmzcXPqS5kiw7Bq88BPD5Cr6v0W4kyhpL16hFbAto+i++GX12KktDRHr9dFswTfdMS05hsvAP6WPakckyjiKv+o7Lb8=
+	t=1785139340; cv=none; b=uqXvqH6+Q7GghXp6NU2jPKhf9hDeXGYARgFFKNCS5w5pOi9Gck4T4NP8RX9UfvKgoklqmOzgcNjZuDN+fpulqetio0uvKuZpss7MeKLlR70gBTZMcSpO1FGpO3NQF0mZdETkydu+VcfxxD1gPv2keOFQYLhygcfG9UHuXCcclsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785139047; c=relaxed/simple;
-	bh=tw+AJz4qt4JrBxlZuLNv/Da/UoDzueOZtTUrOcbKNb8=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WDxdolEMLVS4BCtLeZ1PeaUC9culwJc+S8csAH3TOjp35TNyP6szVdZ+n7OtEOpSeaniJhpFyvK1ukt7vmL/07lqIsrKnGrVsmkpZ/vv0rN6jIok0tuOyi108MReIEPnk4QNtiZOoBgdATevINh7zvFErZTx7Kma0ZSPYGb7vqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CqR4UeD9; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785139340; c=relaxed/simple;
+	bh=pGRRkLOovQKXGIVL46U0Bymbr48B32n4icpDQJ4H2Ig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U4pUNbx9EWnewaNfccC7/YjAsUp5WGSb1c9XxWBvSMOrrmOFAfbVX4lWancj+iVTQlmsYCD7eU5YuyY8LafWt998FfR+WI32MqKPwv6oK0Y5vzhTeZQSkoIvBoQgU3VFVqaWc7GQKdJ/dnZQxyT3NAOop/nJeAJh0cBYhqP3q2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kX2b36h+; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqR4UeD9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 161F81F00A3D
-	for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 07:57:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785139046;
-	bh=0arD5IsAvxdDIvrIg+Sev7LHm607DCox2CINoPn2JVg=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=CqR4UeD9ZZM96l5nrZA0/CNAxYUF3vPdzYqxriC5d3Bz9Q5BOoRdDiFR3rLJSrid8
-	 Z2kUpQynBSOxeV2iysV4nLxhC6eEbLPLw63K5JkxFS+HDRAstdbCS7cTqDgv006ypP
-	 rMHbfvjtJnNcJHciETC3+FCHFbFmmxPYFD0m68ITuKoT6LaG6s8wugZ5KwouhZkfQm
-	 p+8AeCtKst//laSAvyeNfxG3+bIpH6kdJqGhOuMQX955fTKPqZpKIbylU9kO02IucE
-	 F92n7OUvjdBlS1UJ8kZ06wTqRSyR3kEJACbgZikViADY1tfcCH558uFcXVMRdRdmJe
-	 q3Zf7wCWzCxew==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-39c83acb86eso20808731fa.1
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 00:57:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqfqnRrCvfAadbTnbV5jle7bVFgCW8CqYPortR3gwrGdT3U3O7kJh1AzhpsORjWgTiao1d3SyOUqzzK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx4wMQDh2TxNKGSSAyJEI1rUUnh+k9brzVC1FMVHP0vpaZyWzC
-	D1fxKS9UysXZqJv4FWjROGc7GmXFppS6PTZA/M7KjY0WQyvOJ78PaZnY0BC1NE2g+9/GVc09nUG
-	DbZzRR6iLVVN5mGNikO5fH9Bz3dD10y+18FV0Vcj9xQ==
-X-Received: by 2002:a05:6512:159c:b0:5b2:a339:b3fe with SMTP id
- 2adb3069b0e04-5b2c1b26e42mr1332518e87.39.1785139044803; Mon, 27 Jul 2026
- 00:57:24 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 27 Jul 2026 00:57:22 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 27 Jul 2026 00:57:22 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <aa9cf4a4-a848-43cc-a236-e8e4b89101a6@app.fastmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kX2b36h+"
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-cbb8b54fcf8so2341462a12.0
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 01:02:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785139338; x=1785744138; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=QaLoWGkEcB7GzSZ0TXQ17OSV0J1XYO8dorJLUXwgL5k=;
+        b=kX2b36h+EDxNVOu2jAubOtSeBlpSXMI226b3MRICXr5GlztshI3vwa6ci6I+TdaZ7F
+         Q3Lfi0pklkQePGPnPnK5pv33oK4ZhhAb2UgGrbPBVwqugPiCNj9dtoHVDHBwEC4sufxO
+         Ln/3c0XKXo2elN43qe9ff1vpYvnSkw+uRS07ZokkucH63Gp8+IonYXyICPsBNfSgPGWi
+         CQcjm9oMPEMrp4XoDAX2JOw5jIF4RYpy/fcNntmZVhJHK/Zf+F+DcW1IKoB24zu89PkP
+         31yfn7QlpiCjYiycipzSdnZwdmn+BdMQEz6wnr59eIutIJUFpP64OUXmSAGn4d789oPB
+         kjIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785139338; x=1785744138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=QaLoWGkEcB7GzSZ0TXQ17OSV0J1XYO8dorJLUXwgL5k=;
+        b=iw2VY2dkvjtsHTL3XSukfaWfp1Id1ULax0pk8oN3P7zmtFh5eRH5kCOm71Qf5z5Odz
+         g+9hh9q+89ZJHbawvb/xOTN2XV5LKjlRSQYHt2qgut6H3HM6jXUmvrZvg5FXsq95AFY5
+         xkJ7TM45Oz+GAm8shgd5H7fX3pGB/isLNSmP6KYLmI1Mh92ch6b6dgTi3L2j+zXl7ozG
+         8MPO11Llco24APHRQxHxUcfnFUA5DIs7Btyk1ycvXetus3pW2TOABJUt/pxyVN0wN0l+
+         7/pgtqEs+LlutjD54Sl/ko0ZAJMW13sKu3MCz0F8Csx4X6mQ2HC4qKzPveMPSL/GwMVj
+         yXFw==
+X-Forwarded-Encrypted: i=1; AHgh+RoXDpP4gPyl3eS8NeWT8elOfY0SbyltfqjDW/bIMMH3FUysQSDkB9aRwtz+xV27/2I/3sR2ZmwZgcPa@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLPxHl6mDoFYVxVQT+ifwJiIp7mxCyBeT/CraSA8c3LXjYQ+2h
+	PcOpgdcW2OgSVj9YJ1z2JqoZxVPIBCRmIVoup30D4fZs35kr1nxUQyD7
+X-Gm-Gg: AR+sD12nWHvqn+4HvGZzujYxpCLgqMMNcqnXJpCgPO9Qy8WcteiW21hgMSTbXOkK4/N
+	TShIR8FZMqzXgx7mvF5Sm46ExCYNnKAXwLzIoQ4XfQW+2uLfULdZ9JNJE4trsfONSijo/uKyUcD
+	Dsep/G0oLYmPc1vC1P7BXQX9PIjPhwxaM8dNZJJNm22irMH0CitxO1BAeZwqKsFhp98V4DOsU+8
+	U18rZVGZvmeUZeA/9OBWoaIIbqbW7sibrBDfhSk0eMEQd/PQ7GzWn0qChWH064lb2W8oW2uppwm
+	bXn1HTKeNnL/rsMjFHlH/zuiluCBrkncCKjNjEbZG7QYnjNwfeBi0yGWxMgvFwXEgDeZhDZRpNf
+	88hip5YnmWG4b2FCTal0/qlscG3nxAsP26m+3SefJtHZfR2ZB1RMFWlNuuw9KuoEqcAJh/mM4zv
+	U5UDZokSTN+JLSUhci+pQh/RUWNPP+gxAjwqURUCZDqm/6DowagY0MHTyXYuUsXqcdNKvQ5y7Wy
+	HLBg1tGpG1FnSdTZGcnMjBnaGz0qgrU
+X-Received: by 2002:a05:6a21:139a:b0:3bd:3591:2457 with SMTP id adf61e73a8af0-3c67dab46a2mr7637709637.4.1785139338288;
+        Mon, 27 Jul 2026 01:02:18 -0700 (PDT)
+Received: from phuc-desktop.. ([183.91.15.56])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cbbb6623294sm2814443a12.10.2026.07.27.01.02.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jul 2026 01:02:17 -0700 (PDT)
+From: phucduc.bui@gmail.com
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	bui duc phuc <phucduc.bui@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] gpio: pca953x: fix cache_only and IRQ state on restore_context() failure
+Date: Mon, 27 Jul 2026 15:02:05 +0700
+Message-ID: <20260727080205.16353-1-phucduc.bui@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aa9cf4a4-a848-43cc-a236-e8e4b89101a6@app.fastmail.com>
-Date: Mon, 27 Jul 2026 00:57:22 -0700
-X-Gmail-Original-Message-ID: <CAMRc=MeATQp1nPkQSaJm6Ceo=SrqDbgUO6TF0Y94ox-xP+c2hw@mail.gmail.com>
-X-Gm-Features: AUfX_mw0iUUjDFSIh_mXWBBwlVAigNutzQZ_gU1mHhfeYvjQnyk40ypge6OHhTs
-Message-ID: <CAMRc=MeATQp1nPkQSaJm6Ceo=SrqDbgUO6TF0Y94ox-xP+c2hw@mail.gmail.com>
-Subject: Re: [GIT PULL] gpio: legacy interface cleanups for 7.3
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-sh@vger.kernel.org, 
-	linux-mips@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 24 Jul 2026 20:22:45 +0200, Arnd Bergmann <arnd@arndb.de> said:
-> The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
->
->   Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git tags/config-gpio-legacy-for-7.3
->
-> for you to fetch changes up to 57f64d52ab5e836a5f3f4ea6fd868941b2d7dcdf:
->
->   gpib: gpio: replace linux/gpio.h inclusion (2026-07-24 20:12:48 +0200)
->
-> ----------------------------------------------------------------
-> gpio: legacy interface cleanups for 7.3
->
-> These are the remaining patches for legacy gpio interface
-> cleanup, ensuring that files referencing them are sure to
-> have CONFIG_GPIOLIB_LEGACY set, and use linux/gpio/legacy.h
-> instead of the old linux/gpio.h header.
->
-> There are a few more patches already merged in other
-> branches for 7.3, including soc, led, net and media. Once
-> everything is in, we can apply the final patches to turn
-> off CONFIG_GPIOLIB_LEGACY by default and remove the obsolete
-> header file.
->
-> This branch is based on the immutable ib-mfd-legacy-gpio-7.3
-> branch from mfd.git to avoid a conflict in the rohm drivers.
->
-> ----------------------------------------------------------------
+From: bui duc phuc <phucduc.bui@gmail.com>
 
-Pulled, thanks!
+When pca953x_restore_context() fails, cache_only is left disabled and
+the IRQ left enabled, even though register synchronization may not have
+completed successfully. Restore cache_only and disable the IRQ again on
+failure, matching the state set by pca953x_save_context().
 
-Bartosz
+Fixes: ec5bde62019b ("gpio: pca953x: Split pca953x_restore_context() and pca953x_save_context()")
+Fixes: 3e38f946062b ("gpio: pca953x: fix IRQ storm on system wake up")
+Cc: stable@vger.kernel.org
+Reviewed-by: Linus Walleij <linusw@kernel.org>
+Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
+---
+
+Changes in v2:
+ - Add Fixes tag and Cc: stable (Bart).
+ - Add Reviewed-by tag from Linus Walleij.
+ - Update the patch subject to better reflect the patch content.
+
+ drivers/gpio/gpio-pca953x.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index f6b870b7b352..0c94630f3160 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -1369,9 +1369,20 @@ static int pca953x_restore_context(struct pca953x_chip *chip)
+ 	regcache_mark_dirty(chip->regmap);
+ 	ret = pca953x_regcache_sync(chip);
+ 	if (ret)
+-		return ret;
++		goto err;
++
++	ret = regcache_sync(chip->regmap);
++	if (ret)
++		goto err;
++
++	return 0;
+ 
+-	return regcache_sync(chip->regmap);
++err:
++	if (chip->client->irq > 0)
++		disable_irq(chip->client->irq);
++	regcache_cache_only(chip->regmap, true);
++
++	return ret;
+ }
+ 
+ static void pca953x_save_context(struct pca953x_chip *chip)
+-- 
+2.43.0
+
