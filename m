@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E75E3BBFD8;
-	Mon, 27 Jul 2026 08:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889583DB65A;
+	Mon, 27 Jul 2026 08:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785139495; cv=none; b=qvC8CvH6Irpc2Da75eYZ9tlvs83Cut94JUeFh1Y6iLBvXccfalm6TyNM4JmxY63+gj1yRnDHEBNS2CG4UiV7C19ByJb2pKr6wGf8bpCDPFWueSeJRhGUGy9S7R5j5OiyFIPi8LaHu1M6D9q47UIgFmLWlO4QLqZwEjO+oHphGqw=
+	t=1785139617; cv=none; b=PhVIWt/2QlsJWkLjbxlmX1BDCCcmrOSAAAuAPliF17YiSE7AAvGVBTWHRpO2d8yOp+hkiA82dblATKR5SxmGk+H35rrhWxro6Cyft4TOO3dydNKBbvgImjbzEszHwf679L2LCeOcd81KBOlSnrjf4OvdW6geC3LUAUeaxdG1geE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785139495; c=relaxed/simple;
-	bh=sC6B84vcluxlG/AW+2iL0xg2+CX2wozIuSD9iq5nbJU=;
+	s=arc-20240116; t=1785139617; c=relaxed/simple;
+	bh=t50+HRKSJcTC/Xl525coT/pWrsQEGspwgzKt6qN+dhs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uExOXoUJJKTQIafxDTbgMyqky6iDx5t97N2g4K3Z7u8KqE8WspQDHEOkOa+USVRAnNzw3vXYVwuk9z6e3Ii032cgjEUZsbE2lamdYtf+9bKZ++joxtAHFcEeqSTPDOAxGsupN93jpsxIY4Qg3dVgeJCBXtWq2KiEw4fYqJGZNlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMbZzfhz; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=krbO7w3MDyUy5V8XpvJwmYEaTI8qXbVm39xkKANa8tZxwr5pyiglWjwr0Jg4ivHFmapmNob02Di9rYA2gPIEctsVNT0DpGeFlPWf2sXUwVp1LkBqvn6cvVmw7lT0QL3A9AwdQa4pOcbyKTNTCeYQ3Zh0bxOPAj0K9SBlW9aawvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOFRCfAD; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMbZzfhz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4C891F00A3A;
-	Mon, 27 Jul 2026 08:04:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOFRCfAD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1E771F000E9;
+	Mon, 27 Jul 2026 08:06:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785139494;
-	bh=JK6hcDea904zCAzfOvHH+R87EzL8G+f8U4g5JCbElmE=;
+	s=k20260515; t=1785139616;
+	bh=GPD9iXBq/Me9KYkjcOGxgVPjlp2Me+zbMwegGTYossI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=gMbZzfhzqqKrI8a4N/3DQKK14ELe3f3F4eTw9FPTBuBArbUoYGylXrxEive+RR6RH
-	 GlYSU9K8DsvzHDJP8/xAtx+5H2HOPVoyea/c/nVukkEueBKPeGyDeABbf3bM888M5c
-	 u3K6nGqXfl/AlxYU/7RD6GoDoIDDdBNXa4Okjyb7vsYev9FrLySXgvC3ha4B/CCT2g
-	 iuDlvR7iDiJpNWH2MnkbXQNY5rcQ8kGn2y2QngfKkJsswpALxmxo4FcsPjcgcr2ci0
-	 mfQHRw98XVjgI6HO3PLvwXD5+0Zfzcg1e4PJFLjrqV6i7Njsoucgn97ec33Ar5A4Jx
-	 mfiNlfk98yQeg==
-Date: Mon, 27 Jul 2026 10:04:51 +0200
+	b=QOFRCfADGhxgLOUijANCqlOkjkitt/u9FZzycDWUUJk6NlJ9cSS1dCSzxrI96W9DR
+	 qXAgcyj34YDAYnayreQ2Q/ItbUGifihhnQsDiGbPdi+PC+tC1dx79UXuEJssy579+j
+	 rsPRWJGTBLDc615veH4F8TYh4lz6TLclawAr/vwywyRWWJMDSBrEpZ4ukp0we/yw0c
+	 NBntsN+0XWSeeOqthFIuym9is4OxnhwG41ybqgqO3bRROy4XXr4I/wRAe0zW88gnI8
+	 kreNRi9FL6HrkY0HtPlq3Io6kad8sggRc6gVpHJTcAdLShykEz39jm7Z+3cUWTq5jP
+	 wcOx44q+TDHxQ==
+Date: Mon, 27 Jul 2026 10:06:53 +0200
 From: Lorenzo Bianconi <lorenzo@kernel.org>
 To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -40,11 +40,11 @@ Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
 	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
 	Markus Gothe <markus.gothe@genexis.eu>,
 	Matheus Sampaio Queiroga <srherobrine20@gmail.com>
-Subject: Re: [PATCH v7 12/34] pinctrl: airoha: add missed get_direction()
- function for gpio_chip
-Message-ID: <amcRI3c0-1iWWX5M@lore-desk>
+Subject: Re: [PATCH v7 13/34] pinctrl: airoha: add set_direction() helper for
+ gpio_chip
+Message-ID: <amcRnbBXxOrp8kTh@lore-desk>
 References: <20260727074234.3761170-1-mikhail.kshevetskiy@iopsys.eu>
- <20260727074234.3761170-13-mikhail.kshevetskiy@iopsys.eu>
+ <20260727074234.3761170-14-mikhail.kshevetskiy@iopsys.eu>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -52,93 +52,117 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8iQlrEnRGnlj5Pyn"
+	protocol="application/pgp-signature"; boundary="FKh4CvICy88s2Pjr"
 Content-Disposition: inline
-In-Reply-To: <20260727074234.3761170-13-mikhail.kshevetskiy@iopsys.eu>
+In-Reply-To: <20260727074234.3761170-14-mikhail.kshevetskiy@iopsys.eu>
 
---8iQlrEnRGnlj5Pyn
+--FKh4CvICy88s2Pjr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-> This patch adds missed get_direction() function for gpio_chip.
-> Also it reimplements pinconf's get_direction() function using
-> newly defined function.
+> The patch creates set_direction() helper for gpio_chip abstraction.
+> It also implements/reimplements some function using newly defined
+> helper.
 >=20
-> Fixes: 1c8ace2d0725 ("pinctrl: airoha: Add support for EN7581 SoC")
+> This is cosmetic patch used to place gpio_chip specific code together.
+> No functional changes.
+>=20
 > Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 > ---
->  drivers/pinctrl/airoha/pinctrl-airoha.c | 41 ++++++++++++++++++-------
->  1 file changed, 30 insertions(+), 11 deletions(-)
+>  drivers/pinctrl/airoha/pinctrl-airoha.c | 59 ++++++++++++++++---------
+>  1 file changed, 38 insertions(+), 21 deletions(-)
 >=20
 > diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/ai=
 roha/pinctrl-airoha.c
-> index 820b7b0443851..b52eb39c55ff3 100644
+> index b52eb39c55ff3..faad5d3ada31c 100644
 > --- a/drivers/pinctrl/airoha/pinctrl-airoha.c
 > +++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
-> @@ -2502,6 +2502,27 @@ static int airoha_gpio_get(struct gpio_chip *chip,=
- unsigned int gpio)
->  	return err ? err : !!(val & BIT(pin));
+> @@ -2523,12 +2523,43 @@ static int airoha_gpio_get_direction(struct gpio_=
+chip *chip, unsigned int gpio)
+>  	return (val & mask) ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
 >  }
 > =20
-> +static int airoha_gpio_get_direction(struct gpio_chip *chip, unsigned in=
-t gpio)
+> +static int airoha_gpio_set_direction(struct gpio_chip *chip, unsigned in=
+t gpio,
+> +				     bool input)
 > +{
 > +	struct airoha_pinctrl *pinctrl =3D gpiochip_get_data(chip);
-> +	u32 mask, index, val;
+> +	u32 mask, index;
 > +	int err, field_shift;
 > +
-> +	field_shift =3D 2 * (gpio % AIROHA_REG_GPIOCTRL_NUM_PIN);
-> +	mask =3D GENMASK(field_shift + 1, field_shift);
-
-before we where checking just BIT(field_shift) as mask, while now we are
-checking two bits.
-
-> +	index =3D gpio / AIROHA_REG_GPIOCTRL_NUM_PIN;
-> +
-> +	err =3D regmap_read(pinctrl->regmap,
-> +			  pinctrl->gpiochip.dir[index], &val);
+> +	/* set output enable */
+> +	mask =3D BIT(gpio % AIROHA_PIN_BANK_SIZE);
+> +	index =3D gpio / AIROHA_PIN_BANK_SIZE;
+> +	err =3D regmap_update_bits(pinctrl->regmap, pinctrl->gpiochip.out[index=
+],
+> +				 mask, !input ? mask : 0);
 > +	if (err)
 > +		return err;
 > +
-> +	if ((val & mask) > BIT(field_shift))
-> +		return -EINVAL;
+> +	/* set direction */
+> +	field_shift =3D 2 * (gpio % AIROHA_REG_GPIOCTRL_NUM_PIN);
+> +	mask =3D GENMASK(field_shift + 1, field_shift);
+
+same here, why using 2 bits as mask?
+
+> +	index =3D gpio / AIROHA_REG_GPIOCTRL_NUM_PIN;
 > +
-> +	return (val & mask) ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
-
-nit: unnecessary brackets.
-
+> +	return regmap_update_bits(pinctrl->regmap,
+> +				  pinctrl->gpiochip.dir[index],
+> +				  mask, !input ? BIT(field_shift) : 0);
+> +}
+> +
+> +static int airoha_gpio_direction_input(struct gpio_chip *chip,
+> +				       unsigned int gpio)
+> +{
+> +	return airoha_gpio_set_direction(chip, gpio, true);
 > +}
 > +
 >  static int airoha_gpio_direction_output(struct gpio_chip *chip,
 >  					unsigned int gpio, int value)
 >  {
-> @@ -2648,6 +2669,7 @@ static int airoha_pinctrl_add_gpiochip(struct airoh=
+>  	int err;
+> =20
+> -	err =3D pinctrl_gpio_direction_output(chip, gpio);
+> +	err =3D airoha_gpio_set_direction(chip, gpio, false);
+>  	if (err)
+>  		return err;
+> =20
+> @@ -2667,7 +2698,7 @@ static int airoha_pinctrl_add_gpiochip(struct airoh=
 a_pinctrl *pinctrl,
+>  	gc->label =3D dev_name(dev);
+>  	gc->request =3D gpiochip_generic_request;
 >  	gc->free =3D gpiochip_generic_free;
->  	gc->direction_input =3D pinctrl_gpio_direction_input;
+> -	gc->direction_input =3D pinctrl_gpio_direction_input;
+> +	gc->direction_input =3D airoha_gpio_direction_input;
 >  	gc->direction_output =3D airoha_gpio_direction_output;
-> +	gc->get_direction =3D airoha_gpio_get_direction;
+>  	gc->get_direction =3D airoha_gpio_get_direction;
 >  	gc->set =3D airoha_gpio_set;
->  	gc->get =3D airoha_gpio_get;
->  	gc->base =3D -1;
-> @@ -2855,21 +2877,18 @@ static int airoha_pinctrl_set_conf(struct airoha_=
-pinctrl *pinctrl,
->  static int airoha_pinconf_get_direction(struct pinctrl_dev *pctrl_dev, u=
-32 p)
+> @@ -2750,27 +2781,13 @@ static int airoha_pinmux_set_direction(struct pin=
+ctrl_dev *pctrl_dev,
+>  					unsigned int p, bool input)
 >  {
 >  	struct airoha_pinctrl *pinctrl =3D pinctrl_dev_get_drvdata(pctrl_dev);
-> -	u32 val, mask;
+> -	u32 mask, index;
 > -	int err, pin;
-> -	u8 index;
-> +	int err, gpio;
+> +	int gpio;
 > =20
-> -	pin =3D airoha_convert_pin_to_reg_offset(pctrl_dev, NULL, p);
+> -	pin =3D airoha_convert_pin_to_reg_offset(pctrl_dev, range, p);
 > -	if (pin < 0)
 > -		return pin;
-> +	gpio =3D airoha_convert_pin_to_reg_offset(pctrl_dev, NULL, p);
+> -
+> -	/* set output enable */
+> -	mask =3D BIT(pin % AIROHA_PIN_BANK_SIZE);
+> -	index =3D pin / AIROHA_PIN_BANK_SIZE;
+> -	err =3D regmap_update_bits(pinctrl->regmap, pinctrl->gpiochip.out[index=
+],
+> -				 mask, !input ? mask : 0);
+> -	if (err)
+> -		return err;
+> +	gpio =3D airoha_convert_pin_to_reg_offset(pctrl_dev, range, p);
 
-if you do not rename pin in gpio here the patch will be simpler.
+same here, if you do not rename pin in gpio the patch will be simpler.
 
 Regards,
 Lorenzo
@@ -146,34 +170,29 @@ Lorenzo
 > +	if (gpio < 0)
 > +		return gpio;
 > =20
-> -	index =3D pin / AIROHA_REG_GPIOCTRL_NUM_PIN;
-> -	err =3D regmap_read(pinctrl->regmap, pinctrl->gpiochip.dir[index], &val=
-);
-> -	if (err)
-> +	err =3D airoha_gpio_get_direction(&pinctrl->gpiochip.chip, gpio);
-> +	if (err < 0)
->  		return err;
-> =20
+> -	/* set direction */
 > -	mask =3D BIT(2 * (pin % AIROHA_REG_GPIOCTRL_NUM_PIN));
-> -	return val & mask ? PIN_CONFIG_OUTPUT_ENABLE : PIN_CONFIG_INPUT_ENABLE;
-> +	return err =3D=3D GPIO_LINE_DIRECTION_OUT ?
-> +	       PIN_CONFIG_OUTPUT_ENABLE : PIN_CONFIG_INPUT_ENABLE;
+> -	index =3D pin / AIROHA_REG_GPIOCTRL_NUM_PIN;
+> -	return regmap_update_bits(pinctrl->regmap,
+> -				  pinctrl->gpiochip.dir[index], mask,
+> -				  !input ? mask : 0);
+> +	return airoha_gpio_set_direction(&pinctrl->gpiochip.chip, gpio, input);
 >  }
 > =20
->  static int airoha_pinconf_get(struct pinctrl_dev *pctrl_dev,
+>  static const struct pinmux_ops airoha_pmxops =3D {
 > --=20
 > 2.53.0
 >=20
 
---8iQlrEnRGnlj5Pyn
+--FKh4CvICy88s2Pjr
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCamcRIwAKCRA6cBh0uS2t
-rIvRAP46t3ynpmSaQbfS9FRiJxVVb8IPe3lJTpXHNUdJ6JKXKwEAitJivdnbmcKb
-13q9RT2W9cpPRTQIRuoQiYljaIyMjw4=
-=wRoE
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCamcRnQAKCRA6cBh0uS2t
+rF5EAQCijmE11DKyslLdDBJrY8oIQDp7OEcBmnfVIjuVQlFYAgD9FhlzFrcckkdm
+sUsRhgXVF50epcJxDIoqObxTuHFOywU=
+=160x
 -----END PGP SIGNATURE-----
 
---8iQlrEnRGnlj5Pyn--
+--FKh4CvICy88s2Pjr--
