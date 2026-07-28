@@ -1,141 +1,115 @@
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1584934F46F
-	for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2026 06:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785218686; cv=pass; b=o4f/agljH1DuB6fjWkvT6DLBwrbMFpSV9BU1/JE+ayf59iGVsfV/+Yofly8v3nW2g8CBCAqvFJj6s1/Y5tBziCC3OSp9SlOVaUVTudHpu7U9NiQscuYTyJ0tM45nzbfyFMhPz9EFPoziAGIKqkPuK9NiZb6m1vrPzdNTxpG/ji4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785218686; c=relaxed/simple;
-	bh=s5epezU8+nVa2HZkHk30QpaTBqzBX10432LDzMEeYLg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OdVtuc5yVh9L9Cx/ixNIpgOz/MCA2Skg2A0TwaAMGk7s/kNJ7T0izRN0XBuGuORyYRxYDGDr5CUG02+7FucdwSC7gG1trbF3xquui3tsirFvHsaSA6fNyixUl+cUZlLun8dPwKdFYgpQfqfhuekJbmNCgueTVENkXPtdsXZije4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mTN5kML8; arc=pass smtp.client-ip=74.125.224.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5C5246BD5;
+	Tue, 28 Jul 2026 06:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785218743; cv=none; b=WKBodnIyEZsb3b2ea/X7gn+dQe6QlY5Bzc1+HkAkhEWs2tMhG1BcaWRpAqIeVVlTHGxQykho6ugtKarRGOJXQxcGyHMcDLue+TgpkCz6KsO5clbpW5a3mBLIvD4k7Ik2zagH5y6JITZUVVQWWpHEaZJzogBDIbWAIn996h616/s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785218743; c=relaxed/simple;
+	bh=la2w/maOKNG532+j79DbVIrZtlFK4M353e6Ism3ie5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K6KBBVXgYAlEX+I25Vrh6lb2uWxOaDUpuVSifnfVuVBMTavKrcRLeL93Vjg+8ZOCx2STU3aSecWV/I+0bV79OfZd4gqneJjjpkKFZNKrF2aYZp/CIXIGC6srTJVGLVB0ix5weodkKdmbHgYhJXqoMdtV+GEODg1sIjLFW9P+Hmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxeYDorZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mTN5kML8"
-Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-6689f36ae56so4776830d50.3
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 23:04:44 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785218684; cv=none;
-        d=google.com; s=arc-20260327;
-        b=c3W5TKcS+19d1xIDaK6DlvxVczlDofV8bwxHhSl91MOUt7t8Wxmox82ywpuYnVWGT9
-         cg2xcXk+BBhJDJ2b6Ovsg7Q0LNZmoFlQlf9dkxs1ON+6IJavTPlJdeKbYa0AIbcv2q+B
-         yc2as5QIFh31h0IoELonlDwGxM972y8BceqNCMCzziVrYPnZzmfVrTUHOxo0hJEkWbIR
-         I2HthiiOXXcNOr2qdJZy5ZTtQlwpyKHeDs1b0wl2lSrqXavg/R69NuerdtRQ72u4Vra4
-         kxh3mS4VYkvf6vlJrX1h3jfa93HeTqc1lzOzTQh/RyJYrAdPCpob2mYQSoXZqB4agzjv
-         Xjuw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=tPvQKt2i7eXrMO5OaISPk9CgOionShn/uZChS4URYxE=;
-        fh=ODzCtfOjEqUCHTnsqAt8yi2ivPVKFEIMb1yiCHi8QrE=;
-        b=sIwJyiA+cAMQ7bsyg6lmXmNwAYbj+f2TCYqiD05TuB4xA0ohan93Oiw2EHXppRWcg9
-         O7PQbBLbSclzOEQDQ/BYuDNTvkC0ESSVzz4ILocM26Ig646VY4YWj6/KRkhvP7m+/aW/
-         HcCawn7Nhf5eN64y38XBZzxs5SwFMnmxDpSchhFUurid8ti0AmJ5sSWTtdmD7bCOrgpP
-         4OC53AgcfQlYPyTs9u8wPZWuJMizx5eadsMvuLmeh7T6ivo3P14Qki+D8a5+nejivz0l
-         oTVT3BTQZmNHNezOd2Af2hmNr7IM3H0TI8f8vfAExdz1EiV0vh7/jZzHY+Gt5igiZeot
-         7Lag==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785218684; x=1785823484; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=tPvQKt2i7eXrMO5OaISPk9CgOionShn/uZChS4URYxE=;
-        b=mTN5kML8YbdwB3EWpzCgvt4Ozq4BGU5O89TZ+1ZJ/7y39BLVD41tbg4nPCnbrALgpT
-         LKnMokyEzRsq/9y1YAbM9uIs88wNHuNy1dutqx7gR/yaGAfoY61N3yZ55S1gDVp/HkWM
-         2ioYt7nJ1GVYLHy8PZbuMN57EfO722S/rhsgJufuODWbtXpxu+ZTbsvYPU4mxcuZg1G5
-         QMyEkkVI6M9SOAUUGdtL945G3B+afqapib7UepZ5LztryvTXNuiKBY0M4XuDIKQBfJ4H
-         jxChNQ7JGXsOMzEBomdPBZxuwvwyvy7WbORhp+kHlMPdqMjZNhOmTw83scb7Ty3lB7+/
-         CkxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785218684; x=1785823484;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=tPvQKt2i7eXrMO5OaISPk9CgOionShn/uZChS4URYxE=;
-        b=qxlBug8wgGrsoYX2JEWignNUTrQuxV/8CJ5dDcBJtQ7aFVMfWN+BWUVHdWHX49cnXD
-         Oc6EVMVfzXJN6Z7EwoHI3CbcZvXhUG54n7dBp9pF6hmx+QbtPR+cJb4ToW+0OmCtWyIg
-         vlCEgQOkTQgw/6/O5/1zZqPMwiYL7ruXco0x8Qi+A1fk7ay3bYmwSYiEWmIe913XnDe5
-         WPfLTpflDtXOh2MeTV2iF8Zac96q8r5b+ZVYSEOrGA5856hIldzRbgc/Soo0xzPiM5C9
-         kin3xSLACt49H4UnTHA2eHYaust4FeZ0cdbLBsjyOh5uBHnYsnAReOv8LPQ9Hr8Ye6Wz
-         IDsg==
-X-Forwarded-Encrypted: i=1; AHgh+Rrl6/4Krq9TfhaPO3qhdhslJn0ve42khXS9nK0+SgD+ZGUdABN8MfybFYTasy9ceaeOK8rQsle75QQR@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXtPQx8iwLmoe44RLEregUKu3IHBnFWClN7gIldrJIT2e2OIqh
-	hKvv4SYvIMIb5BSqhZeIRFHFRaNCBIDw4SHzx1O0SRKxeV+dX/gUjFxObcWtSzDTGMYbWidCDxI
-	vpjM1g8+GdBvrbDbBSXvJuB/aX55WUxA=
-X-Gm-Gg: AR+sD13GlwYOUiNZxDgwYL4SmOtxgAL2PIL5cSqN2yw4eJQLh1VNX3lqL0uSTycYX+9
-	MMytbSkHdwhI3wObWvjnX/8VMZPH7zjUij4/rYbahqO70SlwMTpXjsE7Y8CjOqmZZDqoCoSEqC5
-	KdYtKJtMLdTj989kcW1A717tQV0ge1kYKAJGt5fzTSU/2FxXMVblUz66bQrdMvmm3QPCeErGXtN
-	l5w89Zpdx8PqXJZe6zCYQQg70DWfH7g80q1BSu5+jEAcDymRxMZ2Oad5xfJ+P2QyKI+EsoKvz4D
-	gOodGS9eYJnMcAPPclj4m+t64CS3NKNGbtyNXu+6xN2isiEnYUuM/jHSUyX+OgqquQzYIiIsxDn
-	tFqIE6bEyWDe7AtaAgwDGQiyza7yLiYZObtxV
-X-Received: by 2002:a05:690c:64c1:b0:81c:b865:2221 with SMTP id
- 00721157ae682-81f993761c8mr4831037b3.33.1785218683887; Mon, 27 Jul 2026
- 23:04:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxeYDorZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79001F000E9;
+	Tue, 28 Jul 2026 06:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785218742;
+	bh=CbvCXbFtQpKu1PcGsiDIN+pvfvebjKSVVQajKdsn1hw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=BxeYDorZA7jaEsrw7vvJEj1hGYSdtx4dlxDE6j4uAbywoxB/isKS3Rk0/pbZs664B
+	 MbsJO6GCIQRnnFbilKjDwSj16SrOPm0Cyps/R60AS7TvfxTFuFAQn276FbhC5fcOfH
+	 eWqpCLNTqmT9Vkd6aItsRh0/K2ebnbeRRQrzfH4AC/giFBtXKhtt/jho2XDc981zEU
+	 +4mibibmncjOKy785ZQL8M+buQHlL8tqTChVhwP1KokJI921Mx0Gwm5bRqH+wo41Zx
+	 H8lLpiD/oYptzawpyr0eOAYdxqsTD/mBdMGpjweF8U55kBSoesE5I2DtBvjztVx7++
+	 MoCKI9a4W+Erg==
+Message-ID: <a9a2caab-f93b-448a-b846-7e739c143687@kernel.org>
+Date: Tue, 28 Jul 2026 08:05:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260718054330.8975-2-hardikprakash.official@gmail.com> <CAMRc=MdXGeCiaR4DnXT-jor0uh1EUJhXhmPrmkbMbQ-L35fGig@mail.gmail.com>
-In-Reply-To: <CAMRc=MdXGeCiaR4DnXT-jor0uh1EUJhXhmPrmkbMbQ-L35fGig@mail.gmail.com>
-From: Hardik Prakash <hardikprakash.official@gmail.com>
-Date: Tue, 28 Jul 2026 11:34:32 +0530
-X-Gm-Features: AUfX_mx1D7zYt_neMZjzc8posXDfBhO_CdkITOYNmSrJiz_7-6bJROpHlDSLoN4
-Message-ID: <CANTFpSXmRqoYNCFkL62tRLLcMum72DGjCq5k5wYBgcKvUgqUhg@mail.gmail.com>
-Subject: Re: [PATCH v13] i2c: designware: defer probe if child GpioInt
- controllers are not bound
-To: wsa@kernel.org, andi.shyti@kernel.org
-Cc: linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	andriy.shevchenko@intel.com, mario.limonciello@amd.com, brgl@bgdev.pl, 
-	basavaraj.natikar@amd.com, linusw@kernel.org, 
-	Bartosz Golaszewski <brgl@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: samsung: exynos: replace irq_of_parse_and_map
+ with modern APIs
+To: Rosen Penev <rosenp@gmail.com>, linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>,
+ "moderated list:PIN CONTROLLER - SAMSUNG"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20260727194836.11689-1-rosenp@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260727194836.11689-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Wolfram, Andi,
+On 27/07/2026 21:48, Rosen Penev wrote:
+> Replace irq_of_parse_and_map() with fwnode_irq_get() for per-pin IRQ
+> lookup and of_irq_get() for the muxed EINT IRQ. The fwnode-based API
+> works with both OF and ACPI fwnodes and follows modern conventions.
 
-This has Reviewed-by from Andy and Acked-by from Bart. Could this be
-queued for the next merge window?
+And what is the point of ACPI here? I see no point in such conversions
+of one call while leading everything untouched. Add proper ACPI support
+with valid ACPI tables with ENTIRE driver converted, not one call.
 
-Thanks,
-Hardik
+> 
+> For the muxed EINT path, change the error handling to propagate the
+> error code rather than silently returning 0.
 
-On Mon, 20 Jul 2026 at 13:37, Bartosz Golaszewski <brgl@kernel.org> wrote:
->
-> On Sat, 18 Jul 2026 07:43:31 +0200, Hardik Prakash
-> <hardikprakash.official@gmail.com> said:
-> > I2C controllers may have child devices with GpioInt resources that
-> > depend on GPIO controllers being fully initialized. If the I2C
-> > controller probes and enumerates children before the referenced GPIO
-> > controller has completed probe, GPIO interrupts may not be properly
-> > configured, leading to device failures.
-> >
-> > On Lenovo Yoga 7 14AGP11, the WACF2200 touchscreen (child of
-> > AMDI0010:02) has a GpioInt resource pointing to GPIO 157 on the
-> > pinctrl-amd controller (AMDI0030:00). When i2c-designware probes
-> > AMDI0010:02 before pinctrl-amd finishes initializing, I2C transactions
-> > fail with lost arbitration errors:
-> >
-> >   0.285952  amd_gpio_probe: registering gpiochip  <- GPIO chip visible
-> >   0.287121  amd_gpio_probe: requesting parent IRQ <- probe still running
-> >   0.301454  AMDI0010:02 dw_i2c_plat_probe: start  <- races here
-> >   2.348157  lost arbitration
-> >
-> > Add a dependency check that walks ACPI child devices and defers probe
-> > until any referenced GPIO controller is bound.
-> >
-> > Fixes: 3812a9e84265 ("pinctrl-amd: enable IRQ for WACF2200 touchscreen on Lenovo Yoga 7 14AGP11")
-> > Suggested-by: Mario Limonciello <mario.limonciello@amd.com>
-> > Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-> > Signed-off-by: Hardik Prakash <hardikprakash.official@gmail.com>
-> > Assisted-by: Claude:claude-sonnet-5
-> > Assisted-by: DeepSeek:deepseek-v4-pro
-> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=221494
-> > ---
->
-> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+But why?
+
+
+Best regards,
+Krzysztof
