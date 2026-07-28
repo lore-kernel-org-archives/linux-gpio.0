@@ -1,152 +1,141 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AD83F44CA
-	for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 23:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785193834; cv=none; b=uyWAYqzp97o9w/fZJ+HbfezrWpsZKdX4Fdyp5UXBmN+taT9+xbWfMURVasHtuH+QpOpOdSKWsmPlr6YhhoEZCqIAoKLgFd2rBccZmo+dQvwH6QoKCPMhnbZeS8c43WyMQM6Cw66TK/efneb3UM+1ccOwVlSit9FyEF5d8bPm2bc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785193834; c=relaxed/simple;
-	bh=q5uBaE+pvKLkonQVvFmVkBaO+ZH7geTTl+UD156AW7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TK8TwigGAo/9dPxMbSy/yrBGypmQ9D1Q7izSOrmwAaNjHdHEbPlR9VGt9XNimQ82IYQVDp5k5RWgK32d/twljqEJt562HVASaeaA38TIGuwCdJcZzRVTH6Txh92CpIvt/QgJKuQ9sw+gfr//aqkqrImfseif72egOSpBZxTqtbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=EkbehhAO; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1584934F46F
+	for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2026 06:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785218686; cv=pass; b=o4f/agljH1DuB6fjWkvT6DLBwrbMFpSV9BU1/JE+ayf59iGVsfV/+Yofly8v3nW2g8CBCAqvFJj6s1/Y5tBziCC3OSp9SlOVaUVTudHpu7U9NiQscuYTyJ0tM45nzbfyFMhPz9EFPoziAGIKqkPuK9NiZb6m1vrPzdNTxpG/ji4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785218686; c=relaxed/simple;
+	bh=s5epezU8+nVa2HZkHk30QpaTBqzBX10432LDzMEeYLg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OdVtuc5yVh9L9Cx/ixNIpgOz/MCA2Skg2A0TwaAMGk7s/kNJ7T0izRN0XBuGuORyYRxYDGDr5CUG02+7FucdwSC7gG1trbF3xquui3tsirFvHsaSA6fNyixUl+cUZlLun8dPwKdFYgpQfqfhuekJbmNCgueTVENkXPtdsXZije4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mTN5kML8; arc=pass smtp.client-ip=74.125.224.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="EkbehhAO"
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com [209.85.221.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id C113A3F169
-	for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 23:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1785193830;
-	bh=eijPHTWXo76lCjdGYGWYkIix3ouR1m/Gs/qiCjM99ns=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=EkbehhAOqh9XNKFJddn2wIJ8LftjEpJb0F0RpL1T7ypWUPvI07Pb6dERz9RRRy9LJ
-	 o1l8lyMBOBXhfjOzbg7TAxm3IWkcbSxj7rhB+6bR9AJxTJ6k4h24WHJ5KKO54ErsHy
-	 caWno6negYUOaxXzS0hQ/4y9zaYmwyrUJu+XYutto8NuB4cZfvdyPIwrV2Myk8bwUw
-	 EHGJIU+J1uYt76WB1VOMYaqC0WVm6dtCjRYhWiNbISjh37JJLZRExBbd5hXlfa6i1J
-	 blExYdDeugvq8KiemvMHzkWC1ILXBtKvz30JCkP/eVu1HvLVCduOZd1TI963U9UzF/
-	 s/9K/7BW0GX3TRFy+HhvI3kJPTHHDa6UddTq8O+M4NzEGxfIVJ367MAEa+hgN5ToB/
-	 aaWgY7+BBpj2fJ44bqEwL7zBcv33fZ3DFTgyCAuBnya3RDYFO+MhgrtAGaIKbCu7XZ
-	 ooIOFBO0/MhDJa60/VylQUkaONpQpW6qEAPYCajj4lg83QfD//ZgJDoAeUFF+1vbu2
-	 EzlGpUeM4onEFV6HxTzg2GvrOQyyYs51zFG1pNbZjRnPUDXr/tAuBmJb0aDFvRuI1M
-	 CH0vABUBkGR1bfxa6WMesJ/7w8za3VIPR2rJZAQcTYXtOO8beZDkS+MFfVPLIII7uz
-	 LqsVEx+xRKNyogfXGEIrevpY=
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-47162f83c75so164619f8f.1
-        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 16:10:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mTN5kML8"
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-6689f36ae56so4776830d50.3
+        for <linux-gpio@vger.kernel.org>; Mon, 27 Jul 2026 23:04:44 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785218684; cv=none;
+        d=google.com; s=arc-20260327;
+        b=c3W5TKcS+19d1xIDaK6DlvxVczlDofV8bwxHhSl91MOUt7t8Wxmox82ywpuYnVWGT9
+         cg2xcXk+BBhJDJ2b6Ovsg7Q0LNZmoFlQlf9dkxs1ON+6IJavTPlJdeKbYa0AIbcv2q+B
+         yc2as5QIFh31h0IoELonlDwGxM972y8BceqNCMCzziVrYPnZzmfVrTUHOxo0hJEkWbIR
+         I2HthiiOXXcNOr2qdJZy5ZTtQlwpyKHeDs1b0wl2lSrqXavg/R69NuerdtRQ72u4Vra4
+         kxh3mS4VYkvf6vlJrX1h3jfa93HeTqc1lzOzTQh/RyJYrAdPCpob2mYQSoXZqB4agzjv
+         Xjuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=tPvQKt2i7eXrMO5OaISPk9CgOionShn/uZChS4URYxE=;
+        fh=ODzCtfOjEqUCHTnsqAt8yi2ivPVKFEIMb1yiCHi8QrE=;
+        b=sIwJyiA+cAMQ7bsyg6lmXmNwAYbj+f2TCYqiD05TuB4xA0ohan93Oiw2EHXppRWcg9
+         O7PQbBLbSclzOEQDQ/BYuDNTvkC0ESSVzz4ILocM26Ig646VY4YWj6/KRkhvP7m+/aW/
+         HcCawn7Nhf5eN64y38XBZzxs5SwFMnmxDpSchhFUurid8ti0AmJ5sSWTtdmD7bCOrgpP
+         4OC53AgcfQlYPyTs9u8wPZWuJMizx5eadsMvuLmeh7T6ivo3P14Qki+D8a5+nejivz0l
+         oTVT3BTQZmNHNezOd2Af2hmNr7IM3H0TI8f8vfAExdz1EiV0vh7/jZzHY+Gt5igiZeot
+         7Lag==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785218684; x=1785823484; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=tPvQKt2i7eXrMO5OaISPk9CgOionShn/uZChS4URYxE=;
+        b=mTN5kML8YbdwB3EWpzCgvt4Ozq4BGU5O89TZ+1ZJ/7y39BLVD41tbg4nPCnbrALgpT
+         LKnMokyEzRsq/9y1YAbM9uIs88wNHuNy1dutqx7gR/yaGAfoY61N3yZ55S1gDVp/HkWM
+         2ioYt7nJ1GVYLHy8PZbuMN57EfO722S/rhsgJufuODWbtXpxu+ZTbsvYPU4mxcuZg1G5
+         QMyEkkVI6M9SOAUUGdtL945G3B+afqapib7UepZ5LztryvTXNuiKBY0M4XuDIKQBfJ4H
+         jxChNQ7JGXsOMzEBomdPBZxuwvwyvy7WbORhp+kHlMPdqMjZNhOmTw83scb7Ty3lB7+/
+         CkxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785193830; x=1785798630;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=eijPHTWXo76lCjdGYGWYkIix3ouR1m/Gs/qiCjM99ns=;
-        b=I1wQr9xZfvm4mL2Cbfoywa+v98wBZWOUIbjxGrNDHSnhKVFGlOj1Od6HvBOAXlEe2I
-         BP5SN1ld648A6j8onDJEbkaJnSP4q7kgW2n7SuOxYcEs8PiZ+2jP9RRo0g2KWM7IZOmu
-         FuYLKXMoMAA8dMOWrgNZR1y1k2r9sq/84spXSDdVhZsR9wf9LR+GxSuyhzr8bv4KohJE
-         OH92GexPR97xYmCCbxGf1ZWJ+5hKy3Rm4H0Mfslu3AxeofPGblGUWHqtpjVuL34sz0b4
-         Rzc+SpFfINQ7CjFHNBhkGBMpgVa3FBZe5jNQkWEHZjhowWV3fvLc+4gFq32QDa0ZEXk4
-         MT3Q==
-X-Forwarded-Encrypted: i=1; AHgh+RpdT2p5r3RHma8HcsYhWQlBLE2I0hQduQEvXwEj9+kDoi/l67lu1ar4Ae6CukCsDuikaBsDP8ceR1ii@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBPm5oWJ6b69f2vXlJmXDfjwrCctxKo2vpLQTc9HzrS+okevdL
-	BkdNs6mivsgC45k+MT48nFdSvIfteav+LN9oL60YUSl8GHze8LLmPNkPa+z9mSCX3YjwYMNTYBs
-	Y4Vl36P+y++1QNmph5QwCqp3S/md1Vb9WIkL8lb9OFeGyemr5NK9AhOKfPXdoZwt37ZZ69L7F+Q
-	9QllA=
-X-Gm-Gg: AR+sD13CJXRb+ZP86pg8tSHXf7mZbS2SFQA8OWFADF7QdtBOirjnNOsc0PAYjpw4mJK
-	AjmG6Y72iZIOBnceDLe6HwzLN/CBwh/EKjGmzYUzm0nXneKhr8316hrwP5nRsxaUD9l6O/fzC9V
-	3+VTirUtKnAC8FGT2JZ88ZesHj/xg3OMyPMrt/9y5m53byTn0IR2ahAdywJlwGCVZZM1SI4RiEz
-	fJAKhqR2BbXq2dOKbtGeJav4Rj9QMxxc+Tb9l1KqxEae16ZC99VO5RDhDhCHf1m7sAkahmem1Oi
-	ZIuTtoHpxeJr19NqFXzH9kClsKygj/POS2XJ/Vr/tzIVYrIn2uVte4F3Ye62ZLDFHq2mytkp9MY
-	3dhod
-X-Received: by 2002:a05:600c:190c:b0:495:5d6d:9cc1 with SMTP id 5b1f17b1804b1-496c60c3657mr37975e9.0.1785193830346;
-        Mon, 27 Jul 2026 16:10:30 -0700 (PDT)
-X-Received: by 2002:a05:600c:190c:b0:495:5d6d:9cc1 with SMTP id 5b1f17b1804b1-496c60c3657mr37765e9.0.1785193829993;
-        Mon, 27 Jul 2026 16:10:29 -0700 (PDT)
-Received: from localhost ([176.43.219.221])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4957bd9e980sm262333645e9.0.2026.07.27.16.10.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jul 2026 16:10:28 -0700 (PDT)
-From: Cengiz Can <cengiz.can@canonical.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: sloppy-logic-analyzer: fix use-after-free via debugfs trigger on unbind
-Date: Tue, 28 Jul 2026 02:10:26 +0300
-Message-ID: <20260727231026.470146-1-cengiz.can@canonical.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20251104; t=1785218684; x=1785823484;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=tPvQKt2i7eXrMO5OaISPk9CgOionShn/uZChS4URYxE=;
+        b=qxlBug8wgGrsoYX2JEWignNUTrQuxV/8CJ5dDcBJtQ7aFVMfWN+BWUVHdWHX49cnXD
+         Oc6EVMVfzXJN6Z7EwoHI3CbcZvXhUG54n7dBp9pF6hmx+QbtPR+cJb4ToW+0OmCtWyIg
+         vlCEgQOkTQgw/6/O5/1zZqPMwiYL7ruXco0x8Qi+A1fk7ay3bYmwSYiEWmIe913XnDe5
+         WPfLTpflDtXOh2MeTV2iF8Zac96q8r5b+ZVYSEOrGA5856hIldzRbgc/Soo0xzPiM5C9
+         kin3xSLACt49H4UnTHA2eHYaust4FeZ0cdbLBsjyOh5uBHnYsnAReOv8LPQ9Hr8Ye6Wz
+         IDsg==
+X-Forwarded-Encrypted: i=1; AHgh+Rrl6/4Krq9TfhaPO3qhdhslJn0ve42khXS9nK0+SgD+ZGUdABN8MfybFYTasy9ceaeOK8rQsle75QQR@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXtPQx8iwLmoe44RLEregUKu3IHBnFWClN7gIldrJIT2e2OIqh
+	hKvv4SYvIMIb5BSqhZeIRFHFRaNCBIDw4SHzx1O0SRKxeV+dX/gUjFxObcWtSzDTGMYbWidCDxI
+	vpjM1g8+GdBvrbDbBSXvJuB/aX55WUxA=
+X-Gm-Gg: AR+sD13GlwYOUiNZxDgwYL4SmOtxgAL2PIL5cSqN2yw4eJQLh1VNX3lqL0uSTycYX+9
+	MMytbSkHdwhI3wObWvjnX/8VMZPH7zjUij4/rYbahqO70SlwMTpXjsE7Y8CjOqmZZDqoCoSEqC5
+	KdYtKJtMLdTj989kcW1A717tQV0ge1kYKAJGt5fzTSU/2FxXMVblUz66bQrdMvmm3QPCeErGXtN
+	l5w89Zpdx8PqXJZe6zCYQQg70DWfH7g80q1BSu5+jEAcDymRxMZ2Oad5xfJ+P2QyKI+EsoKvz4D
+	gOodGS9eYJnMcAPPclj4m+t64CS3NKNGbtyNXu+6xN2isiEnYUuM/jHSUyX+OgqquQzYIiIsxDn
+	tFqIE6bEyWDe7AtaAgwDGQiyza7yLiYZObtxV
+X-Received: by 2002:a05:690c:64c1:b0:81c:b865:2221 with SMTP id
+ 00721157ae682-81f993761c8mr4831037b3.33.1785218683887; Mon, 27 Jul 2026
+ 23:04:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260718054330.8975-2-hardikprakash.official@gmail.com> <CAMRc=MdXGeCiaR4DnXT-jor0uh1EUJhXhmPrmkbMbQ-L35fGig@mail.gmail.com>
+In-Reply-To: <CAMRc=MdXGeCiaR4DnXT-jor0uh1EUJhXhmPrmkbMbQ-L35fGig@mail.gmail.com>
+From: Hardik Prakash <hardikprakash.official@gmail.com>
+Date: Tue, 28 Jul 2026 11:34:32 +0530
+X-Gm-Features: AUfX_mx1D7zYt_neMZjzc8posXDfBhO_CdkITOYNmSrJiz_7-6bJROpHlDSLoN4
+Message-ID: <CANTFpSXmRqoYNCFkL62tRLLcMum72DGjCq5k5wYBgcKvUgqUhg@mail.gmail.com>
+Subject: Re: [PATCH v13] i2c: designware: defer probe if child GpioInt
+ controllers are not bound
+To: wsa@kernel.org, andi.shyti@kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	andriy.shevchenko@intel.com, mario.limonciello@amd.com, brgl@bgdev.pl, 
+	basavaraj.natikar@amd.com, linusw@kernel.org, 
+	Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The "trigger" debugfs file has a hand-rolled ->write handler
-(trigger_write()) that dereferences the per-device gpio_la_poll_priv. The
-file is created with debugfs_create_file_unsafe(), and the handler never
-takes a debugfs reference. Nothing keeps the object alive while the
-handler runs.
+Hi Wolfram, Andi,
 
-The sibling "buf_size" and "capture" files are safe: they use
-DEFINE_DEBUGFS_ATTRIBUTE(), whose accessors take a debugfs reference. Only
-"trigger" omits it.
+This has Reviewed-by from Andy and Acked-by from Bart. Could this be
+queued for the next merge window?
 
-priv is allocated with devm_kzalloc(). devres frees it when the platform
-device is unbound. debugfs_create_file_unsafe() installs no full_proxy
-wrapper, so debugfs_remove_recursive() in gpio_la_poll_remove() does not
-wait for an in-flight trigger_write(). The blob_lock taken there does not
-help, because trigger_write() never takes it. A write that races an unbind
-therefore writes into freed memory:
+Thanks,
+Hardik
 
-  trigger_write()                  gpio_la_poll_remove()
-    priv = m->private
-    buf = memdup_user()  [may sleep]
-                                     mutex_lock(&priv->blob_lock)
-                                     debugfs_remove_recursive()  [no wait]
-                                     mutex_unlock(&priv->blob_lock)
-                                   (remove returns; devres frees priv)
-    priv->trig_data = buf   <-- use-after-free write
-    priv->trig_len  = count
-
-The race is reachable by root via
-/sys/bus/platform/drivers/gpio-sloppy-logic-analyzer/unbind.
-
-Create "trigger" with debugfs_create_file() instead. Its full_proxy
-wrapper makes debugfs_remove_recursive() drain any in-flight ->write
-before it returns. "buf_size" and "capture" are already safe and are left
-unchanged.
-
-The mechanism is confirmed under KASAN with a minimal reproducer of the
-same debugfs_create_file_unsafe() plus devm_kzalloc() pattern (available
-on request); it produces a slab-use-after-free write in the handler.
-
-Fixes: 7828b7bbbf20 ("gpio: add sloppy logic analyzer using polling")
-Cc: stable@vger.kernel.org
-Assisted-by: Claude:claude-opus-4.8
-Signed-off-by: Cengiz Can <cengiz.can@canonical.com>
----
- drivers/gpio/gpio-sloppy-logic-analyzer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-sloppy-logic-analyzer.c b/drivers/gpio/gpio-sloppy-logic-analyzer.c
-index 2bbd308ca08e..c356cf2ed688 100644
---- a/drivers/gpio/gpio-sloppy-logic-analyzer.c
-+++ b/drivers/gpio/gpio-sloppy-logic-analyzer.c
-@@ -290,7 +290,7 @@ static int gpio_la_poll_probe(struct platform_device *pdev)
- 	debugfs_create_ulong("delay_ns_acquisition", 0400, priv->debug_dir, &priv->acq_delay);
- 	debugfs_create_file_unsafe("buf_size", 0600, priv->debug_dir, priv, &fops_buf_size);
- 	debugfs_create_file_unsafe("capture", 0200, priv->debug_dir, priv, &fops_capture);
--	debugfs_create_file_unsafe("trigger", 0200, priv->debug_dir, priv, &fops_trigger);
-+	debugfs_create_file("trigger", 0200, priv->debug_dir, priv, &fops_trigger);
- 
- 	return 0;
- }
--- 
-2.43.0
-
+On Mon, 20 Jul 2026 at 13:37, Bartosz Golaszewski <brgl@kernel.org> wrote:
+>
+> On Sat, 18 Jul 2026 07:43:31 +0200, Hardik Prakash
+> <hardikprakash.official@gmail.com> said:
+> > I2C controllers may have child devices with GpioInt resources that
+> > depend on GPIO controllers being fully initialized. If the I2C
+> > controller probes and enumerates children before the referenced GPIO
+> > controller has completed probe, GPIO interrupts may not be properly
+> > configured, leading to device failures.
+> >
+> > On Lenovo Yoga 7 14AGP11, the WACF2200 touchscreen (child of
+> > AMDI0010:02) has a GpioInt resource pointing to GPIO 157 on the
+> > pinctrl-amd controller (AMDI0030:00). When i2c-designware probes
+> > AMDI0010:02 before pinctrl-amd finishes initializing, I2C transactions
+> > fail with lost arbitration errors:
+> >
+> >   0.285952  amd_gpio_probe: registering gpiochip  <- GPIO chip visible
+> >   0.287121  amd_gpio_probe: requesting parent IRQ <- probe still running
+> >   0.301454  AMDI0010:02 dw_i2c_plat_probe: start  <- races here
+> >   2.348157  lost arbitration
+> >
+> > Add a dependency check that walks ACPI child devices and defers probe
+> > until any referenced GPIO controller is bound.
+> >
+> > Fixes: 3812a9e84265 ("pinctrl-amd: enable IRQ for WACF2200 touchscreen on Lenovo Yoga 7 14AGP11")
+> > Suggested-by: Mario Limonciello <mario.limonciello@amd.com>
+> > Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> > Signed-off-by: Hardik Prakash <hardikprakash.official@gmail.com>
+> > Assisted-by: Claude:claude-sonnet-5
+> > Assisted-by: DeepSeek:deepseek-v4-pro
+> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=221494
+> > ---
+>
+> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
