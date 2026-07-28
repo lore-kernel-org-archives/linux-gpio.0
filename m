@@ -1,312 +1,151 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E55B400996;
-	Tue, 28 Jul 2026 08:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600EF41D21A
+	for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2026 09:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785227460; cv=none; b=qpXvZWXK4uaGbgq9P0ulpBmlEVQOIN/Lj45dyaZ4VeiATeInnPhNzWtKvpa9t3zuqhpA0o8P0/t6R5gp2vngnfouAYYdtblGadJY3niqE0wMey0L+WeKSN9kRVvSHDGerfQXzdABfgGk0//PWnWAn5c6XDjjxr35Z0c4l4ruPUc=
+	t=1785229899; cv=none; b=Ygc4r2SPXTFZFHycUjl5CWv3K+LMibT8lSvbE5Rl3jbk67bo8pi/y97SPbuWKGwZiQZW1L779rF74srMbO+klKxgfO+WYJcWgea5ydo3dzDZfHFHrdCKEE8WCSMNQnHTHGm/eHzc7bqorEQeZgCwCg04qLBbDihapd/BZtn0P18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785227460; c=relaxed/simple;
-	bh=4mRZ1E33uUWVognT8iSTdIxl57jSwCTimss1LD4NGEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tgIkKCT2KKJPQbn9ax4Ak0r+NhygZ+UZ0lhROqJ/C4fPU5AHNZC0/H23qWG2ME8n30K0rDuYWUPwRJqco6Un3RlvSEGd7W+Ehe4QtHKNMCMCzHQ0nHbXFcl1EepbDLB7J39T0C1X2NiwyP4WEMX/1u/T+2ILbBaUXOK6G9acaVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XOtCERTM; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785229899; c=relaxed/simple;
+	bh=EmMkbudgday6pa+6bZXh40iZJi6gdrgGTsD/lKEGPAo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b26KNWdzEtj43cwHY9KHPmfNw31CRaa9cQpXRasmzWVaJbdhP2zwvdeRiBl0ynLY3BWugCtiEXbpM3DxCWtMxu0lRnF7AoROZyCqE3050KlvCjb3ZHOyw7CQX75B+kMjGOZyaxE1sKr+Y61vwZ+i/WOvCClf38t1vLnfNvmM8dA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WgsW96Kr; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=D/7Yph9U; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XOtCERTM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2873E1F000E9;
-	Tue, 28 Jul 2026 08:30:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785227458;
-	bh=EZEIVIWP6rHMILD6MHiFQqIs2luNVm4p4VbDh2UlzgE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=XOtCERTML7f6QxvV8IpQzU4v19NkFlHkPR2KAzzxEKgGZnfqaJ/Hwp4QnuGf0V0uR
-	 Yhtbf8ZToZTTbAiKYUHRTE0k2QLriCmHZGVKNaz/YIcMHPp76rrnyZTFpTYCSu1NkU
-	 HT0wRn72lpr6D4juKrzyH+pLPX4kvNYOwVnKuTacCJ/NiuSARl7GGeci17XBqG1W5k
-	 hE2N3x0UOfKG6yWfmf9t+R5bUJjSi+Vb/4XBLabwL7rauRnDYHZR2T+RWnnANfAAE6
-	 LK4JrGtKY5+mCXe2F/Fn4snttPIAZAnVe3TdSJdN51ZNy67rbrP9SJQWMDdToB/YEe
-	 fE+OW0klSbTyg==
-Date: Tue, 28 Jul 2026 10:30:54 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Hardik Prakash <hardikprakash.official@gmail.com>
-Cc: linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, wsa@kernel.org, 
-	andriy.shevchenko@intel.com, mario.limonciello@amd.com, brgl@bgdev.pl, 
-	basavaraj.natikar@amd.com, linusw@kernel.org, nathan@kernel.org, 
-	chaitanya.kumar.borah@intel.com
-Subject: Re: [PATCH v13] i2c: designware: defer probe if child GpioInt
- controllers are not bound
-Message-ID: <amhodWpAI3K6aeBH@zenone.zhora.eu>
-References: <20260718054330.8975-2-hardikprakash.official@gmail.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WgsW96Kr";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="D/7Yph9U"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66S82DgR2480117
+	for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2026 09:11:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	F1DNkTRN5a/54qc37A6bttfGfqf4yxOXlW+KO0rFAF4=; b=WgsW96KrNoqdGqZr
+	vmT/N7YGm3MLgKg69DIe4yOT06GllIUPVLW/Km2M4DpoQNywNs9ibdHnJ4B9IJnV
+	hG+L+ETDPbwJ8PWY5TYpNodLDfTa1YAoi+v2Edob7qwgsiyKV0n25CET9x8cE2ja
+	NCy+eDDQWMle6gfbXqu6k5oVjlkCWEJJGkk/iDGB39YnTItJOk6KtwdGxQDIdk42
+	7AqUXWDNqiWo0xS0HcJ68AU56aROr5GUKggqorb+r4BC3Go8mfiPCjE2UowF4lcP
+	zg71bbdTN2TG9Ptsw/E4wv0LWGB9c1bLerGxLEVAXbjSVG2XXL3v9hMrBuSH+chU
+	ojnfVw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fpmy1158t-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2026 09:11:36 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-51c1d30035dso33981261cf.2
+        for <linux-gpio@vger.kernel.org>; Tue, 28 Jul 2026 02:11:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1785229895; x=1785834695; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=F1DNkTRN5a/54qc37A6bttfGfqf4yxOXlW+KO0rFAF4=;
+        b=D/7Yph9UYmv0HFw4/sFvs0RmDL5IQh0Pl7QSzW9toKbMx+NAko6cAzgGvYdyNIZjf1
+         StzFIvz6IjQpjIw/NyYREIdkKA067ZFEexdpGRREr488IgnK7aGxfGgX81FjvGvATxVp
+         XEY5pJGz0On37JoGpFa++Lnklcq1OVin3n4ULyMASO0PfrhW81qsD/2ZYKtTRs8vTLFq
+         gsMD5JMCDl04gGrRR1pnNqQ8RYCb+is5/oeWr5EckiF4Au14QytC2ws+qKgbZTZE2U70
+         1jYy30oijy137unhLYmyhyUtQEo58kotBEeHrHSDbLSG6nOVuDYX+gHdCeNDnX/wetPI
+         XW6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785229895; x=1785834695;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=F1DNkTRN5a/54qc37A6bttfGfqf4yxOXlW+KO0rFAF4=;
+        b=BU81/gHYj4btB9hnpWe+fYBnmwGKIFkXr/YjlXM/xfIWWGimRs7NjWS83X7hMwNzIu
+         wYfVgks8zzTdXq3TXaMMaVbcZEwh3Kb0MrnDAmnKWbP6MoN0Bzqvfw1/P41bkECyFFoq
+         tctviTnd/fpNiI4pEKk68aH+0w6q3gwr/w2VE8502Bnrh4hdva4W0BZzRb/n3PJgf5q7
+         vrnnYT4TesRhBXuaRJRIRszWFinKzckStLqdPaUe6CdcS1/fuGLN8+f8glCqSve3G1m0
+         G9Tx2YyFabc+AsKQ7Y3aKEc67XUS3GYtafvqP7KQrAr/KCIaxQlS9Df7uQV0yekL+JQY
+         G9wQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrAjz8zxXImNbZEM2O4vUeBZ3lPzL7xCi94+P3MTmqy4oc+Ut5+LtopV8TTm8SFDK2E9oBJXocki6gF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7ZD5USxdQNPwSVve18Nj5kBqVQhCrtLzv3C4glZ0QNGwPPtpA
+	fxOqYfP8i3DGAk5LmB/1+GR0yXlWZFaDxMUb5J1syGAEn2jRp5Hzdp/4jzXTvCd6J5ApH+iT2d0
+	5NuLROlyG291T2jelSyktlw5Z0QM/GdsW+KcMT5o3hOdX1hA/pVNAjMgR1akcsgfP
+X-Gm-Gg: AR+sD11NibQ24DceKmxL3SWohRm/YEOLffQd7TXq9SOBVfjLYkPpzUEgONA7kr8aZm1
+	kt+pyLU3T7LYyK6ZIqYQs9N57fyLAAITQRMHHZczPVp3fW26w2Uc1IS6B6FtAN9EfJamjaAe7qt
+	tOswMDYJfHUtpKi0OecGbsJNKLhwapGp9vA+5n87zbxDcy4dgxuRjJi40S6U22ePTtUX/4EbfGd
+	Q0ObvMsNgiqqbAK8mMevnJrfHINkUt3KxXglwHEyQZhspEPDjfxpF/QKObQ4nNIVmhabdn5oa+h
+	qlzR2vtsVbxBTpZ0IhfPY3ks3t5N6SrWA05dmVQvSa8hWiRWIrEQ/XJvC0zjvY9JTL7mFy8dbnh
+	+G9Pk1ESNgg/STZGFLGKTkkI32PVZ
+X-Received: by 2002:ac8:5a0a:0:b0:51c:b900:5136 with SMTP id d75a77b69052e-529d6e06aa1mr12257931cf.0.1785229895419;
+        Tue, 28 Jul 2026 02:11:35 -0700 (PDT)
+X-Received: by 2002:ac8:5a0a:0:b0:51c:b900:5136 with SMTP id d75a77b69052e-529d6e06aa1mr12257581cf.0.1785229894781;
+        Tue, 28 Jul 2026 02:11:34 -0700 (PDT)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:d2e3:b407:476e:c977])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47f85b9a659sm58043342f8f.6.2026.07.28.02.11.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jul 2026 02:11:33 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Linus Walleij <linusw@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Hans Ulli Kroll <linux@ulli-kroll.de>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] pinctrl: qcom: ipq806x: mark gpio and pcie-reset as GPIO
+Date: Tue, 28 Jul 2026 11:11:32 +0200
+Message-ID: <178522988754.9776.4844459868316856051.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260719134548.8830-1-linux@ulli-kroll.de>
+References: <20260719134548.8830-1-linux@ulli-kroll.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260718054330.8975-2-hardikprakash.official@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: og5iWlt61k4B89vlTFBVtL73ibhzALyz
+X-Proofpoint-ORIG-GUID: og5iWlt61k4B89vlTFBVtL73ibhzALyz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI4MDA3OSBTYWx0ZWRfX+tYcHFtoSR9J
+ IeFwR/XenMX8FfIUmCIzzUSrW6R6ERXU1osXlI3/wZa66mge9JgprU3Fo6AxnJQVmMVl5b+qCnO
+ y4uniPkxvcFJ6YG4adeTymQ5UGCDW+fucc30y+eb9yUremr6wKkOrqWMfM8gljbtkAmXdV2ApXH
+ JDCUMrMddi7ykRXh/6e+vMlTTkZeJ1tisH4T3slnv4wDMtkN9aguTRu96l+wXsEHPj40ic95eCi
+ TncwXQEgUoY8RGtpZ8BgtH/+zcoywlfU5lgvEyLxna1kLlzSETzFkQ0BPQJN5TGrHwynvoWuoJo
+ ltV1woB7RJwEMza3rm1WEgW9TS7RkF7eH8u8lP5vCgsoiSXhqQqgsgbz7Tq7qx1quCDiQndGian
+ UviS1hZ/FbrF5DK28yh3KWuO7qmCtFui1pYAa3LPU6WiA/HvsPsum1pDWMQ8KbCPY0Vcm7TgH4K
+ uFSsuKe1/bwHPMXTlcA==
+X-Authority-Analysis: v=2.4 cv=PJo/P/qC c=1 sm=1 tr=0 ts=6a687248 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=diqNrFS-WVA_1NOh2bQA:9 a=QEXdDO2ut3YA:10 a=O8hF6Hzn-FEA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI4MDA3OSBTYWx0ZWRfX+PEXOnFcxr0x
+ LYdtIrBsGBV68KQaQonLaHY1hDhd7pnk76zfVzzY8Eppy0Cwj5TiPxvj/NANUYFcpEQ4XSoZTU8
+ qOT93xWWmAbYlm7RgyY829XXySUSY7U=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-28_02,2026-07-27_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 adultscore=0 suspectscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607280079
 
-Hi Hardik,
 
-On Sat, Jul 18, 2026 at 11:13:31AM +0530, Hardik Prakash wrote:
-> I2C controllers may have child devices with GpioInt resources that
-> depend on GPIO controllers being fully initialized. If the I2C
-> controller probes and enumerates children before the referenced GPIO
-> controller has completed probe, GPIO interrupts may not be properly
-> configured, leading to device failures.
+On Sun, 19 Jul 2026 15:35:58 +0200, Hans Ulli Kroll wrote:
+> The qcom pinctrl core supports marking functions that represent GPIO mode
+> via PINCTRL_GPIO_PINFUNCTION(), so that strict pinmuxing does not reject
+> GPIO requests for pins that are muxed to the GPIO function.
 > 
-> On Lenovo Yoga 7 14AGP11, the WACF2200 touchscreen (child of
-> AMDI0010:02) has a GpioInt resource pointing to GPIO 157 on the
-> pinctrl-amd controller (AMDI0030:00). When i2c-designware probes
-> AMDI0010:02 before pinctrl-amd finishes initializing, I2C transactions
-> fail with lost arbitration errors:
+> ipq806x still describes its gpio function with QCA_PIN_FUNCTION(gpio),
+> so it is not treated as a GPIO pin function. As a result, GPIO consumers
+> can still conflict with pinctrl states that select the "gpio" function.
 > 
->   0.285952  amd_gpio_probe: registering gpiochip  <- GPIO chip visible
->   0.287121  amd_gpio_probe: requesting parent IRQ <- probe still running
->   0.301454  AMDI0010:02 dw_i2c_plat_probe: start  <- races here
->   2.348157  lost arbitration
-> 
-> Add a dependency check that walks ACPI child devices and defers probe
-> until any referenced GPIO controller is bound.
-> 
-> Fixes: 3812a9e84265 ("pinctrl-amd: enable IRQ for WACF2200 touchscreen on Lenovo Yoga 7 14AGP11")
-> Suggested-by: Mario Limonciello <mario.limonciello@amd.com>
-> Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-> Signed-off-by: Hardik Prakash <hardikprakash.official@gmail.com>
-> Assisted-by: Claude:claude-sonnet-5
-> Assisted-by: DeepSeek:deepseek-v4-pro
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=221494
+> [...]
 
-This should be "Closes:". "Link:" is referred to the page where
-the patch has been discussed.
+Applied, thanks!
 
-merged to i2c/i2c-fixes.
+[1/2] pinctrl: qcom: ipq806x: mark gpio as a GPIO pin function
+      https://git.kernel.org/brgl/c/687f39faccba29ab26de965411db37e849af8ec2
+[2/2] pinctrl: qcom: ipq806x: mark pci reset as a GPIO pin function
+      https://git.kernel.org/brgl/c/fd46760956509f580f7d3d25db4de10e7c6f949b
 
-Thanks,
-Andi
-
-> ---
-> v12 -> v13:
-> - v12 was sent as an incomplete diff (generated against v11 rather than
->   against current master due to a git format-patch invocation mistake on
->   my end), not a real standalone patch (Andy Shevchenko)
-> - Not carrying forward Bartosz Golaszewski's v12 Acked-by, per Andy's
->   request
-> - Add blank line before guard(device)(gpio_dev) for readability (Andy
->   Shevchenko)
-> - No other functional code changes since v12
-> 
-> v11 -> v12:
-> - Move gdev declaration to point of use with gpio_device_find_by_fwnode()
->   call (Andy Shevchenko)
-> - Extract acpi_get_handle() return into acpi_status variable rather than
->   inline in ACPI_FAILURE() (Andy Shevchenko)
-> - Use guard(device)(...) instead of scoped_guard(device, ...) {} for a
->   single following statement (Andy Shevchenko)
-> - Use LIST_HEAD(res_list) instead of separate declaration + INIT_LIST_HEAD()
->   (Andy Shevchenko)
-> - Check acpi_dev_get_resources() error before freeing the resource list,
->   restoring the check-then-free ordering that had regressed in v11
->   (Andy Shevchenko)
-> - Split ACPI_COMPANION(dev) assignment onto its own line rather than at
->   declaration (Andy Shevchenko)
-> 
-> v10 -> v11:
-> - Replaced custom gpio_controller_ref list and dedup logic with
->   gpio_device_find_by_fwnode() (Suggested-by: Andy Shevchenko)
-> - Moved resource-skip explanation from commit message into a code comment
-> - Fixed device_is_bound() to check gpio_device_to_device(gdev)->parent
->   rather than the gpio_device's own internal class device, which is
->   registered on the synthetic "gpio" bus and never has a driver bound to it
-> 
-> v9 -> v10:
-> - Use acpi_gpio_get_irq_resource() instead of open-coding GPIO resource
->   type checks, eliminating duplication with gpiolib-acpi (Andy Shevchenko)
-> - Simplify string_source guard to a single string_length check, confirmed
->   sufficient via ACPICA parser in drivers/acpi/acpica/rsutils.c
->   (Andy Shevchenko)
-> - acpi_dev_get_resources() on single line, free only on success path
->   (Andy Shevchenko)
-> - Reversed xmas tree ordering for variable declarations (Andy Shevchenko)
-> - Removed useless int ret = 0 assignment (Andy Shevchenko)
-> - acpi_dev_for_each_child() on single line (Andy Shevchenko)
-> - Use guard(device)(gpio_dev) pattern to avoid uninitialized variable
->   warning and deduplicate the !gpio_dev check (Andy Shevchenko)
-> 
-> v8 -> v9:
-> - Sent as a 2-patch series: revert of the broken v8 patch, plus a
->   corrected resubmission
-> - Use acpi_gpio_get_irq_resource() instead of open-coding GPIO resource
->   type checks, eliminating duplication with gpiolib-acpi (Andy Shevchenko)
-> - Remove gpio_dep_ctx wrapper struct, pass list_head * directly (Andy Shevchenko)
-> - Add const to gpio_controller_ref.path (Andy Shevchenko)
-> - Add NULL check for resource_source.string_ptr to fix a crash on hardware
->   where GPIO resources have no named controller (Reported-by: Nathan
->   Chancellor, Reported-by: Chaitanya Kumar Borah)
-> - Use acpi_dev_get_resources() return value properly (Andy Shevchenko)
-> - Fix all error paths to call free_gpio_controller_list() (Andy Shevchenko)
-> - Change guard to #if defined(CONFIG_ACPI) && defined(CONFIG_GPIOLIB)
-> - Remove erroneous put_device() calls -- acpi_get_first_physical_node()
->   returns a borrowed pointer with no refcount increment
-> - Use LIST_HEAD() macro, split adev declaration and assignment (Andy Shevchenko)
-> - scoped_guard single statement without braces (Andy Shevchenko)
-> - Remove misused Reported-by/Closes tags (Andy Shevchenko)
-> 
-> v7 -> v8:
-> - Add revert of the earlier pinctrl-amd DMI quirk (patch 1 of the original
->   v1-v7 series), confirmed unnecessary once probe ordering is fixed
->   (Mario Limonciello)
-> - Collect Acked-by (Bartosz Golaszewski) and Reviewed-by (Mario Limonciello)
-> 
-> v6 -> v7:
-> - Fix unused 'ret' variable in check_child_gpioint() (kernel test robot)
-> - Replace BugLink: with Link: (Bartosz Golaszewski)
-> - Add Reported-by and Closes tags for kernel test robot warning
-> 
-> v5 -> v6:
-> - Replace DMI-specific deferral with a generic GpioInt dependency check
->   walking ACPI child devices (Suggested-by: Mario Limonciello)
-> 
-> v4 -> v5:
-> - Add blank line before #include <linux/acpi.h> (Bartosz Golaszewski)
-> - Use scoped_guard(device, gpio_dev) (Bartosz Golaszewski)
-> 
-> v3 -> v4:
-> - Rebase onto Linus Walleij's tree (the original patch 1 already there)
-> - Use --base so series is correctly 1/1 (Andy Shevchenko)
-> 
-> v2 -> v3:
-> - Fix variable declaration style (Andy Shevchenko)
-> - Add BugLink tag (Andy Shevchenko)
-> - CC AMD engineers (Andy Shevchenko)
-> 
-> v1 -> v2:
-> - Replace custom HID/UID lookup with acpi_dev_get_first_match_dev()
-> - Use device_is_bound() under device_lock() with explanatory comments
-> - Add Assisted-by tags per coding-assistants.rst
-> 
-> Note: this patch was originally part of a 2-patch series (v1-v7) whose
-> first patch was a DMI-specific pinctrl-amd IRQ quirk; that patch was
-> merged separately into Linus Walleij's tree at v1 and later reverted at
-> v8 once this patch made the manual IRQ restoration unnecessary.
-> 
->  drivers/i2c/busses/i2c-designware-platdrv.c | 80 +++++++++++++++++++++
->  1 file changed, 80 insertions(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-> index 6d6e81242f74..c8a203fff4d1 100644
-> --- a/drivers/i2c/busses/i2c-designware-platdrv.c
-> +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-> @@ -8,12 +8,14 @@
->   * Copyright (C) 2007 MontaVista Software Inc.
->   * Copyright (C) 2009 Provigent Ltd.
->   */
-> +#include <linux/acpi.h>
->  #include <linux/clk-provider.h>
->  #include <linux/clk.h>
->  #include <linux/delay.h>
->  #include <linux/dmi.h>
->  #include <linux/err.h>
->  #include <linux/errno.h>
-> +#include <linux/gpio/driver.h>
->  #include <linux/i2c.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
-> @@ -130,6 +132,80 @@ static int i2c_dw_probe_lock_support(struct dw_i2c_dev *dev)
->  	return 0;
->  }
->  
-> +#if defined(CONFIG_ACPI) && defined(CONFIG_GPIOLIB)
-> +/*
-> + * Check whether an ACPI GpioInt resource's referenced GPIO controller
-> + * has finished probing. Resources with no named controller (resource
-> + * source string) are skipped, since they can't be resolved to a
-> + * struct device.
-> + */
-> +static int check_gpioint_resource(struct acpi_resource *ares, void *data)
-> +{
-> +	struct acpi_resource_gpio *agpio;
-> +	struct acpi_device *gpio_adev;
-> +	struct device *gpio_dev;
-> +	acpi_handle handle;
-> +	acpi_status status;
-> +
-> +	if (!acpi_gpio_get_irq_resource(ares, &agpio))
-> +		return 1; /* not a GpioInt resource, skip */
-> +
-> +	if (!agpio->resource_source.string_length)
-> +		return 1; /* no named controller, skip */
-> +
-> +	status = acpi_get_handle(NULL, agpio->resource_source.string_ptr, &handle);
-> +	if (ACPI_FAILURE(status))
-> +		return 1;
-> +
-> +	gpio_adev = acpi_fetch_acpi_dev(handle);
-> +	if (!gpio_adev)
-> +		return 1;
-> +
-> +	struct gpio_device *gdev __free(gpio_device_put) =
-> +		gpio_device_find_by_fwnode(acpi_fwnode_handle(gpio_adev));
-> +	if (!gdev)
-> +		return -EPROBE_DEFER; /* controller not registered yet: abort walk */
-> +
-> +	gpio_dev = gpio_device_to_device(gdev)->parent;
-> +
-> +	guard(device)(gpio_dev);
-> +	if (!device_is_bound(gpio_dev))
-> +		return -EPROBE_DEFER; /* controller not bound yet: abort walk */
-> +
-> +	return 1; /* bound, skip adding to resource list, continue walk */
-> +}
-> +
-> +static int check_child_gpioint(struct acpi_device *adev, void *data)
-> +{
-> +	LIST_HEAD(res_list);
-> +	int ret;
-> +
-> +	ret = acpi_dev_get_resources(adev, &res_list, check_gpioint_resource, NULL);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	acpi_dev_free_resource_list(&res_list);
-> +
-> +	return 0;
-> +}
-> +
-> +static int i2c_dw_check_gpio_dependencies(struct device *dev)
-> +{
-> +	struct acpi_device *adev;
-> +
-> +	adev = ACPI_COMPANION(dev);
-> +	if (!adev)
-> +		return 0;
-> +
-> +	return acpi_dev_for_each_child(adev, check_child_gpioint, NULL);
-> +}
-> +#else
-> +static int i2c_dw_check_gpio_dependencies(struct device *dev)
-> +{
-> +	return 0;
-> +}
-> +#endif /* CONFIG_ACPI && CONFIG_GPIOLIB */
-> +
->  static int dw_i2c_plat_probe(struct platform_device *pdev)
->  {
->  	u32 flags = (uintptr_t)device_get_match_data(&pdev->dev);
-> @@ -138,6 +214,10 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
->  	struct dw_i2c_dev *dev;
->  	int irq, ret;
->  
-> +	ret = i2c_dw_check_gpio_dependencies(device);
-> +	if (ret)
-> +		return ret;
-> +
->  	irq = platform_get_irq_optional(pdev, 0);
->  	if (irq == -ENXIO)
->  		flags |= ACCESS_POLLING;
-> 
-> base-commit: 58717b2a1365d06c8c64b72aa948541b53fe31eb
-> -- 
-> 2.54.0
-> 
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
