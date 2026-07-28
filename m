@@ -1,106 +1,106 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A3F30568D;
-	Tue, 28 Jul 2026 15:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53A2448B8F;
+	Tue, 28 Jul 2026 19:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785252268; cv=none; b=OsTcd+rgI3WCOIMR172rxbLjq66lUh/Id42jBoXAFcIq+pFWGzHn9F9MFdSLqzHk8ILk4nn9ZQ1BWlV1+CpzIyCBkBzgI8iFn9/ZE6jFZZ4mEypGldZ/3vDlB94/GquOyIED3DXOqqDVs2TwZ9NC26Ds/K8owtSdAQOxjcXwbTU=
+	t=1785266723; cv=none; b=TpB5KWMEPbgGf6EK1zZrrBaVMr9WgcPei4HWkjf2BMcP/sQXFgP+3RMbGXIK0AE92DEhgtO+rt/cQ/rWN9kA6ianBaiOMc7nZ4nu7ToaTtUne8LRmxyDbZlgeKj1wwRp/+DIUeMYN8PH/0bqQnspqxzBJ8O0RQkH6YyG5u8ZaHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785252268; c=relaxed/simple;
-	bh=HbAXE+kt/gg6/vVHF+a8eI7tJ3ds+StEx30QT3bbTIY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pNRvweJp0iR1qAVQgJ0A731GxVwvB9lQIBIa0/4f0sRdyy94TB+baP+y25G7xTNrAOCuzEtGpCBdcO5vo0D+s4X7mH71hUHERD4LfUGdhCw08/pMr+JCOvoXaJ7xu2WxM/5pl/rHV8S3UUJyix5cmv6uq8h67bFUKVC+168JkMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQXRuwAn; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785266723; c=relaxed/simple;
+	bh=rficOr8Ws8ZOZBZp0SRXi5JpPZ43FLgD/z8K2JYvSAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XUQACw2sLx9envDS3596uo9Se5JaxlodGLE/J9xvSxmgzMpbOu8dyWhrKSY6XmGOGo7dMOJdFN/Q/d/U0dvtEpzlpuJ3e68ovdufSzqm+yNtpCVKCqsU6yD2RLTqDctMep+BoDfQAf7O8WlWb9Zmv21v8R0zqiXKuATRogkAPYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKqVUeJf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQXRuwAn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F40C91F00A3A;
-	Tue, 28 Jul 2026 15:24:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKqVUeJf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F4A31F000E9;
+	Tue, 28 Jul 2026 19:25:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785252267;
-	bh=+XBHM4Y2azxZZa9+2n0cn7/S1Zo1nqK1cbQKursEuU8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=AQXRuwAnmeNsCUMnDuyVSTCYhTop9FeluTrtQtmzhUKpET33xZQPbfMa/FsniHPe1
-	 jKfwwk1BzCkD2McI7qFj+Og0wcyJNXZUUhx4U6VMOm9Eoa9EGoypukF4qlVj3O2uB6
-	 uGvGpkG4eP5IVy+v/62ogTjydHTTIE/miaHcxSY4VEUVO7BJSKABFvx9rmLuiGi4t3
-	 KXI2mJpnvGKmIrAAlzbTHjtIADZcaTAs3cN0rufVC9R9/xiv2Alg65YXlTUfbIYiYQ
-	 rhzjx4WpOV3R2iGo4RIZUFdh2JChcxhkwF3zdsg0BDMslT6rdF0xGzd5/602iK+WFb
-	 zVIQsy6+FquJw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1wojfM-00000009kmG-1Tn4;
-	Tue, 28 Jul 2026 15:24:24 +0000
-Date: Tue, 28 Jul 2026 16:24:23 +0100
-Message-ID: <86v79zcf2w.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Swark Yang <syang@axiado.com>
-Cc: Rob Herring <robh@kernel.org>,	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,	Harshit Shah <hshah@axiado.com>,	Linus
- Walleij <linusw@kernel.org>,	Bartosz Golaszewski <brgl@kernel.org>,	Jan
- Kotas <jank@cadence.com>,	Michal Simek <michal.simek@amd.com>,	Andi Shyti
- <andi.shyti@kernel.org>,	=?UTF-8?B?UHJ6ZW15c8WCYXc=?= Gaj
- <pgaj@cadence.com>,	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Frank Li <Frank.Li@nxp.com>,	Boris Brezillon <bbrezillon@kernel.org>,	Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,	Jiri Slaby
- <jirislaby@kernel.org>,	Mark Brown <broonie@kernel.org>,	Mathias Nyman
- <mathias.nyman@intel.com>,	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,	linux-i2c@vger.kernel.org,
-	linux-i3c@lists.infradead.org,	linux-serial@vger.kernel.org,
-	linux-spi@vger.kernel.org,	linux-usb@vger.kernel.org
-Subject: Re: [PATCH v3 8/8] arm64: dts: axiado: Add initial support for AX3005 SoC and eval board
-In-Reply-To: <20260716-upstream-axiado-ax3005-upstream-v3-8-c429095143ec@axiado.com>
-References: <20260716-upstream-axiado-ax3005-upstream-v3-0-c429095143ec@axiado.com>
-	<20260716-upstream-axiado-ax3005-upstream-v3-8-c429095143ec@axiado.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20260515; t=1785266721;
+	bh=aXXghq0ck7/bZz6/RnGVHHpMOUZUuu1W1BAVs1A2zeU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IKqVUeJfdE7K+xUG2xcvJ0YDr8KQtdcJAjS4rRTZ8PblXHITibpoUo2CdC3y55/oN
+	 zg9SmeR/1F2rZZc96g2ApvP/PV9pg8IdbOQNhmZNhIbOwB5i+4C+TivJAuAo48ApiZ
+	 jW7Z/pyxxz/lzO4IwC78FN/9vNkWrlPrSP5eV08AVJnvSGLiVX/nIEHSlMm/v15Opa
+	 wtfBxOpV6dyn3vkbNvfqTlIFGQ8LNICEdp3sT8VPnGK9GOK9ZZWJIs74LJD7QHKQhv
+	 a6ocodRwI8MzOlpi79lsxypWRMhvuhdwm682NURs/ZzPuv7HfL6hLYepCtLb8orszc
+	 Kvv0RKsjoNsMw==
+Date: Tue, 28 Jul 2026 21:25:16 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Markus Stockhausen <markus.stockhausen@gmx.de>, linusw@kernel.org, 
+	brgl@kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sander Vanheule <sander@svanheule.net>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v7 2/2] i2c: i2c-gpio: Enhance driver for buses with
+ shared SCL
+Message-ID: <amkB2rm2Ochu1bxJ@zenone.zhora.eu>
+References: <20260714162915.3018703-1-markus.stockhausen@gmx.de>
+ <20260714162915.3018703-3-markus.stockhausen@gmx.de>
+ <alfvXUq_lNXhKQZk@ninjato>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: syang@axiado.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, hshah@axiado.com, linusw@kernel.org, brgl@kernel.org, jank@cadence.com, michal.simek@amd.com, andi.shyti@kernel.org, pgaj@cadence.com, alexandre.belloni@bootlin.com, Frank.Li@nxp.com, bbrezillon@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.org, mathias.nyman@intel.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-i3c@lists.infradead.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alfvXUq_lNXhKQZk@ninjato>
 
-On Fri, 17 Jul 2026 04:51:15 +0100,
-Swark Yang <syang@axiado.com> wrote:
->
+Hi Wolfram,
 
-[...]
+On Wed, Jul 15, 2026 at 10:36:45PM +0200, Wolfram Sang wrote:
+> On Tue, Jul 14, 2026 at 06:29:15PM +0200, Markus Stockhausen wrote:
+> > Some lower end hardware (especially Realtek based switches) are
+> > designed with multiple I2C buses that share a single clock line.
+> > E.g. the D-Link DGS-1250-28X realizes 4 I2C SFP busses with 5 GPIOs.
+> > 
+> > Enhance the i2c-gpio driver so it can handle such hardware designs.
+> > 
+> > - Detect shared SCL GPIOs that are used by multiple I2C buses in the
+> >   devicetree by using a "unique identifier". This is basically the
+> >   phandle and all additional cells.
+> > 
+> > - The first probing instance allocates and requests the shared SCL
+> >   GPIO with an associated rt_mutex. Subsequent instances detect the
+> >   existing entry via the identifier and increment a reference count
+> >   to reuse the descriptor.
+> > 
+> > - All data transfers are serialized via custom lock_ops that handle
+> >   both the standard adapter bus lock and the shared SCL mutex. This
+> >   ensures mutual exclusion across adapters sharing the clock line.
+> > 
+> > - This shared SCL detection works only for dts based systems where
+> >   the GPIO node has at least one cell (usually the pin). GPIOs in
+> >   legacy systems without devicetree will be handled individudally
+> >   as before.
+> > 
+> > This patch was successfully tested on Linksys LGS310C that has two
+> > SFP slots with two GPIO based I2C buses that share a single SCL.
+> > Test environment: OpenWrt snapshot ported to kernel 6.19.14
+> > including CONFIG_GPIO_SHARED=y and CONFIG_GPIO_SHARED_PROXY=y.
+> > 
+> > Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
+> > Tested-by: Sander Vanheule <sander@svanheule.net>
+> > Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> > Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-> +	soc {
-> +		compatible = "simple-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		interrupt-parent = <&gic500>;
-> +		ranges;
-> +
-> +		gic500: interrupt-controller@40400000 {
-> +			compatible = "arm,gic-v3";
-> +			reg = <0x0 0x40400000 0x0 0x10000>,
-> +			      <0x0 0x40500000 0x0 0xc0000>;
+Thanks for testing this series!
 
-This is missing the GICC, GICH and GICV regions that are implemented
-on Cortex-A53. See the binding document.
+> Cool stuff! It took a bit of handling gory details, but I could not only
+> check that there are no regression with non-SCL-shared busses. I could
+> also try two busses with shared SCL and it worked like a charm.
+> Congrats!
+> 
+> Andi, from my side, you can pick up these two patches. I will put them
+> also in my 'for-andi' branch to increase their visibility.
 
-> +			ranges;
-> +			#interrupt-cells = <3>;
-> +			interrupt-controller;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
-> +			#redistributor-regions = <1>;
+are you going to send a pull request at the merge window or can I
+pull it? Either way works.
 
-This is the default, and isn't required.
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Thanks,
+Andi
