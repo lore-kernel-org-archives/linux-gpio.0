@@ -1,103 +1,106 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85CA1B87C0;
-	Tue, 28 Jul 2026 15:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A3F30568D;
+	Tue, 28 Jul 2026 15:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785251785; cv=none; b=Q61FeZ1NZyoBGwfp+moJ+29L77OVIRBiJlQaKoLKvN0rR2LWf4qKsdT4Er66sdu8WJvvl8TFzo/eHkSeOoJp2LhLwYeqwUB72mfAvTkQIcY0HfGPG2mSk4a/5BTePq6qLbGYu1VWh55xUC5U8E5u1Jo904/y4Ehe3vKDMUMSros=
+	t=1785252268; cv=none; b=OsTcd+rgI3WCOIMR172rxbLjq66lUh/Id42jBoXAFcIq+pFWGzHn9F9MFdSLqzHk8ILk4nn9ZQ1BWlV1+CpzIyCBkBzgI8iFn9/ZE6jFZZ4mEypGldZ/3vDlB94/GquOyIED3DXOqqDVs2TwZ9NC26Ds/K8owtSdAQOxjcXwbTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785251785; c=relaxed/simple;
-	bh=sfgfkFhnhWMQTsbh3HciwW3BQkkbqfp/2vdNhNp2Z8Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GbYbEdlAu7/6JIl5lIqfkytGu5/OL8VRZozuuh23511ewQFJIsYr1QNgo9tcPBo7E1gNxNg270K9hxBXDWJoXNwy9rPSnUepXi+rMuQJ3cx5UK9TRY5mbuIwRHvrk75tis2+1VQ1e6/Mp4hfbrm2QJxA1+BH3DCJXYhBrKiB3ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HT+OWaoN; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785252268; c=relaxed/simple;
+	bh=HbAXE+kt/gg6/vVHF+a8eI7tJ3ds+StEx30QT3bbTIY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pNRvweJp0iR1qAVQgJ0A731GxVwvB9lQIBIa0/4f0sRdyy94TB+baP+y25G7xTNrAOCuzEtGpCBdcO5vo0D+s4X7mH71hUHERD4LfUGdhCw08/pMr+JCOvoXaJ7xu2WxM/5pl/rHV8S3UUJyix5cmv6uq8h67bFUKVC+168JkMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQXRuwAn; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HT+OWaoN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E90B1F000E9;
-	Tue, 28 Jul 2026 15:16:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQXRuwAn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F40C91F00A3A;
+	Tue, 28 Jul 2026 15:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785251784;
-	bh=AKmCiyijWN/uLTU+ziUJPAExecQNAfC6LNifRhKSbP4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=HT+OWaoNss9dyGIt96cm7kUWxZwr1/upNA8gYJhp4gQu2rcKARW7W4pOrYjLARVxf
-	 RSBesFk/vRQugTx6TZM7pRwXl74IO/Txx8FxRdWHjlmN5WuymefVb2lDhkfHHnQu3s
-	 0EVMH9FcMJN4tlMqlKlVP9UECW5l2Nwc9d+sk/s612W3JRKWidTIOYMNkyX6JbCkoF
-	 dSrozUw+tguv6wSW1oR94DUs3pIF03YW5c8efhF8pK8q2maxPOMN6Ww2enl/ZiybkC
-	 NZQrja/3P0XNalniKAg04vcByEm0yaKdJkg0yUZcjjoEVF/aT/l/v9Ya8dGMkl4q2E
-	 GK/o9a0lw9dQA==
-From: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-To: Qiang Zhao <qiang.zhao@nxp.com>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Paul Louvel <paul.louvel@bootlin.com>
-Cc: Christophe Leroy <chleroy@kernel.org>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Herve Codina <herve.codina@bootlin.com>,
-	stable@kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH v2 00/10] soc: fsl: qe: QE PIC improvement and add support of IRQs to QUICC ENGINE GPIOs
-Date: Tue, 28 Jul 2026 17:16:04 +0200
-Message-ID: <178525175512.295368.12455063665178901595.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260708-qe-pic-gpios-v2-0-1972044cfbd1@bootlin.com>
-References: <20260708-qe-pic-gpios-v2-0-1972044cfbd1@bootlin.com>
+	s=k20260515; t=1785252267;
+	bh=+XBHM4Y2azxZZa9+2n0cn7/S1Zo1nqK1cbQKursEuU8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=AQXRuwAnmeNsCUMnDuyVSTCYhTop9FeluTrtQtmzhUKpET33xZQPbfMa/FsniHPe1
+	 jKfwwk1BzCkD2McI7qFj+Og0wcyJNXZUUhx4U6VMOm9Eoa9EGoypukF4qlVj3O2uB6
+	 uGvGpkG4eP5IVy+v/62ogTjydHTTIE/miaHcxSY4VEUVO7BJSKABFvx9rmLuiGi4t3
+	 KXI2mJpnvGKmIrAAlzbTHjtIADZcaTAs3cN0rufVC9R9/xiv2Alg65YXlTUfbIYiYQ
+	 rhzjx4WpOV3R2iGo4RIZUFdh2JChcxhkwF3zdsg0BDMslT6rdF0xGzd5/602iK+WFb
+	 zVIQsy6+FquJw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1wojfM-00000009kmG-1Tn4;
+	Tue, 28 Jul 2026 15:24:24 +0000
+Date: Tue, 28 Jul 2026 16:24:23 +0100
+Message-ID: <86v79zcf2w.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Swark Yang <syang@axiado.com>
+Cc: Rob Herring <robh@kernel.org>,	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,	Harshit Shah <hshah@axiado.com>,	Linus
+ Walleij <linusw@kernel.org>,	Bartosz Golaszewski <brgl@kernel.org>,	Jan
+ Kotas <jank@cadence.com>,	Michal Simek <michal.simek@amd.com>,	Andi Shyti
+ <andi.shyti@kernel.org>,	=?UTF-8?B?UHJ6ZW15c8WCYXc=?= Gaj
+ <pgaj@cadence.com>,	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Frank Li <Frank.Li@nxp.com>,	Boris Brezillon <bbrezillon@kernel.org>,	Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,	Jiri Slaby
+ <jirislaby@kernel.org>,	Mark Brown <broonie@kernel.org>,	Mathias Nyman
+ <mathias.nyman@intel.com>,	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,	linux-i2c@vger.kernel.org,
+	linux-i3c@lists.infradead.org,	linux-serial@vger.kernel.org,
+	linux-spi@vger.kernel.org,	linux-usb@vger.kernel.org
+Subject: Re: [PATCH v3 8/8] arm64: dts: axiado: Add initial support for AX3005 SoC and eval board
+In-Reply-To: <20260716-upstream-axiado-ax3005-upstream-v3-8-c429095143ec@axiado.com>
+References: <20260716-upstream-axiado-ax3005-upstream-v3-0-c429095143ec@axiado.com>
+	<20260716-upstream-axiado-ax3005-upstream-v3-8-c429095143ec@axiado.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1713; i=chleroy@kernel.org; h=from:subject:message-id; bh=NeoWdYHUix6Az+HvrAdVP8+jIL8qYnnnjc+0DoSprAs=; b=owGbwMvMwCV2d0KB2p7V54MZT6slMWRlHN/h9Su++WiUD7dlVsxaha17f/VtSplhf185/HDq+ +Qm+9czO0pZGMS4GGTFFFmO/+feNaPrS2r+1F36MHNYmUCGMHBxCsBEZskyMnTPvSXybe57JRbB pSqR+5IfLGLc7XOjQWFmW7/dL9mClZyMDK1S6w04VEN3zDCIlo7Pbd26s4i3/NF/t/8fLUNunHv Ayw4A
-X-Developer-Key: i=chleroy@kernel.org; a=openpgp; fpr=10FFE6F8B390DE17ACC2632368A92FEB01B8DD78
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: syang@axiado.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, hshah@axiado.com, linusw@kernel.org, brgl@kernel.org, jank@cadence.com, michal.simek@amd.com, andi.shyti@kernel.org, pgaj@cadence.com, alexandre.belloni@bootlin.com, Frank.Li@nxp.com, bbrezillon@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.org, mathias.nyman@intel.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-i3c@lists.infradead.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
+On Fri, 17 Jul 2026 04:51:15 +0100,
+Swark Yang <syang@axiado.com> wrote:
+>
 
-On Wed, 08 Jul 2026 12:15:13 +0200, Paul Louvel wrote:
-> This series modernizes the QUICC Engine Port Interrupt Controller (QE
-> PIC) driver and adds the ability for QE GPIO pins to generate interrupts
-> through the QE PIC, completing Christophe Leroy's prior work [1].
-> 
-> Christophe's series was partially merged; patches 4, 6 and 7 did not
-> make it to mainline.
-> 
-> [...]
+[...]
 
-Applied, thanks!
+> +	soc {
+> +		compatible = "simple-bus";
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		interrupt-parent = <&gic500>;
+> +		ranges;
+> +
+> +		gic500: interrupt-controller@40400000 {
+> +			compatible = "arm,gic-v3";
+> +			reg = <0x0 0x40400000 0x0 0x10000>,
+> +			      <0x0 0x40500000 0x0 0xc0000>;
 
-[01/10] soc: fsl: qe: Add chained_irq_{enter,exit}() calls in cascade handler
-        commit: f9cb22ee1b94a3cc5927a3cf3a6f8d01eff8e569
-[02/10] dt-bindings: soc: fsl: qe: Set #interrupt-cells to 2 to support interrupt type encoding
-        commit: 5708dd3c5a92b9199e4d12ae835b42aed55fe35d
-[03/10] dt-bindings: soc: fsl: qe: Convert QE GPIO to DT schema
-        commit: a9fb1bd72af0bac860df82efcd92af9e6d4300b6
-[04/10] dt-bindings: soc: fsl: qe: Add support of IRQ in QE GPIO
-        commit: 33c35fcd8ac007e497f629de105aaf5f39139d1e
-[05/10] soc: fsl: qe: Use generic_handle_domain_irq()
-        commit: 2f30a619841dc0fee839eabc47b9d013a34dad7e
-[06/10] soc: fsl: qe: Iterate over all pending interrupts in cascade handler
-        commit: 8244ee2deae73c12a35616a8eed1a88531dcb36c
-[07/10] soc: fsl: qe: Handle spurious interrupts
-        commit: 7c1419107a55a8d89938a9d04f9c93d9074a3ea9
-[08/10] soc: fsl: qe: Convert to generic IRQ chip
-        commit: f585e2fac5750ead5f697a47b8612baf927f3d10
-[09/10] soc: fsl: qe: Rename irq variable to parent_irq
-        commit: 8cd24ff37c299f8159dee8193f171443b331c708
-[10/10] soc: fsl: qe: Add support of IRQs in QE GPIO
-        commit: 4a3ba9789922560a8111ffbd09f1fde2abff639a
+This is missing the GICC, GICH and GICV regions that are implemented
+on Cortex-A53. See the binding document.
 
-Best regards,
+> +			ranges;
+> +			#interrupt-cells = <3>;
+> +			interrupt-controller;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
+> +			#redistributor-regions = <1>;
+
+This is the default, and isn't required.
+
+	M.
+
 -- 
-Christophe Leroy (CS GROUP) <chleroy@kernel.org>
+Without deviation from the norm, progress is not possible.
