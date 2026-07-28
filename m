@@ -1,115 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5C5246BD5;
-	Tue, 28 Jul 2026 06:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.76.78.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DB4230BDB;
+	Tue, 28 Jul 2026 07:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.76.78.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785218743; cv=none; b=WKBodnIyEZsb3b2ea/X7gn+dQe6QlY5Bzc1+HkAkhEWs2tMhG1BcaWRpAqIeVVlTHGxQykho6ugtKarRGOJXQxcGyHMcDLue+TgpkCz6KsO5clbpW5a3mBLIvD4k7Ik2zagH5y6JITZUVVQWWpHEaZJzogBDIbWAIn996h616/s=
+	t=1785223806; cv=none; b=ATFSVrszbp0pXcLgn+CLqJdPs74ilATzBZWxMCIZBQIMbVvfVal/0ViyZsLFJzAKhkbmNXEwUkyNbw1rwvdGgqXYf/xuWacDWrMSdklp+TNv4wRJK8vAgap5WmrCZigAm2cJ0wk9+UmOR0mZtTx25Wn3cThd5P9DkytWl7iexWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785218743; c=relaxed/simple;
-	bh=la2w/maOKNG532+j79DbVIrZtlFK4M353e6Ism3ie5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K6KBBVXgYAlEX+I25Vrh6lb2uWxOaDUpuVSifnfVuVBMTavKrcRLeL93Vjg+8ZOCx2STU3aSecWV/I+0bV79OfZd4gqneJjjpkKFZNKrF2aYZp/CIXIGC6srTJVGLVB0ix5weodkKdmbHgYhJXqoMdtV+GEODg1sIjLFW9P+Hmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxeYDorZ; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxeYDorZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79001F000E9;
-	Tue, 28 Jul 2026 06:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785218742;
-	bh=CbvCXbFtQpKu1PcGsiDIN+pvfvebjKSVVQajKdsn1hw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=BxeYDorZA7jaEsrw7vvJEj1hGYSdtx4dlxDE6j4uAbywoxB/isKS3Rk0/pbZs664B
-	 MbsJO6GCIQRnnFbilKjDwSj16SrOPm0Cyps/R60AS7TvfxTFuFAQn276FbhC5fcOfH
-	 eWqpCLNTqmT9Vkd6aItsRh0/K2ebnbeRRQrzfH4AC/giFBtXKhtt/jho2XDc981zEU
-	 +4mibibmncjOKy785ZQL8M+buQHlL8tqTChVhwP1KokJI921Mx0Gwm5bRqH+wo41Zx
-	 H8lLpiD/oYptzawpyr0eOAYdxqsTD/mBdMGpjweF8U55kBSoesE5I2DtBvjztVx7++
-	 MoCKI9a4W+Erg==
-Message-ID: <a9a2caab-f93b-448a-b846-7e739c143687@kernel.org>
-Date: Tue, 28 Jul 2026 08:05:34 +0200
+	s=arc-20240116; t=1785223806; c=relaxed/simple;
+	bh=GholajZHT61scFxDQZ9voUFwU0/V2G9xFEXtyMfd8hw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SF1X9h39KVANJFT2L6DwO7qVKerQvuZkXuxchJ2hdE81VtHVU+w7p327xtxGjip0g8U6jp1j5K2VerbL7Ua4E92yRhQzclMX7xX3naEX2vD0B3EOmmKpMWH55Rrhhl3CaTpYZrRNLK5JDfhIZZ+gL/CFSRzq3TpUQjSaea+/AEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.76.78.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0006800LT.eswin.cn (unknown [10.12.96.77])
+	by app1 (Coremail) with SMTP id TAJkCgCHGm9uWmhqjHc3AA--.4254S2;
+	Tue, 28 Jul 2026 15:29:53 +0800 (CST)
+From: Yulin Lu <luyulin@eswincomputing.com>
+To: linusw@kernel.org,
+	samuel.holland@sifive.com,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Yulin Lu <luyulin@eswincomputing.com>
+Subject: [PATCH v1 1/1] pinctrl: eswin: Fix Handling of PIN_CONFIG_PERSIST_STATE
+Date: Tue, 28 Jul 2026 15:29:06 +0800
+Message-Id: <20260728072906.871-1-luyulin@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: samsung: exynos: replace irq_of_parse_and_map
- with modern APIs
-To: Rosen Penev <rosenp@gmail.com>, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>,
- "moderated list:PIN CONTROLLER - SAMSUNG"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20260727194836.11689-1-rosenp@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260727194836.11689-1-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TAJkCgCHGm9uWmhqjHc3AA--.4254S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZrWfuFWkur45XrWfJFW3Awb_yoWkGFb_CF
+	W8ArWxKwn8GFsrZr12qrs3ZFy0kF48urn2grZ2qa4fCryDXa4jqryv9r98Ww18Gr1UJFZr
+	Jr1DW34fArnrWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbIkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCY02Avz4vE-syl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2
+	IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v2
+	6r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2
+	IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv
+	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf
+	9x0JUBVbkUUUUU=
+X-CM-SenderInfo: pox13z1lq6v25zlqu0xpsx3x1qjou0bp/
 
-On 27/07/2026 21:48, Rosen Penev wrote:
-> Replace irq_of_parse_and_map() with fwnode_irq_get() for per-pin IRQ
-> lookup and of_irq_get() for the muxed EINT IRQ. The fwnode-based API
-> works with both OF and ACPI fwnodes and follows modern conventions.
+The EIC7700 pinctrl driver does not handle PIN_CONFIG_PERSIST_STATE
+specifically, and returns -EOPNOTSUPP from the default case.
 
-And what is the point of ACPI here? I see no point in such conversions
-of one call while leading everything untouched. Add proper ACPI support
-with valid ACPI tables with ENTIRE driver converted, not one call.
+Since all pins on the EIC7700 SoC are persistent over suspend, the
+correct behaviour is to accept this parameter and return success.
 
-> 
-> For the muxed EINT path, change the error handling to propagate the
-> error code rather than silently returning 0.
+Add an explicit case for PIN_CONFIG_PERSIST_STATE that returns 0 to
+prevent errors when this parameter is set.
 
-But why?
+Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
+Fixes: 5b797bcc00ef ("pinctrl: eswin: Add EIC7700 pinctrl driver")
+---
+ drivers/pinctrl/pinctrl-eic7700.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
+diff --git a/drivers/pinctrl/pinctrl-eic7700.c b/drivers/pinctrl/pinctrl-eic7700.c
+index d553ec20c619..09a3b097383c 100644
+--- a/drivers/pinctrl/pinctrl-eic7700.c
++++ b/drivers/pinctrl/pinctrl-eic7700.c
+@@ -422,6 +422,9 @@ static int eic7700_pin_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			else
+ 				value &= ~EIC7700_ST;
+ 			break;
++		/* All pins are persistent over suspend */
++		case PIN_CONFIG_PERSIST_STATE:
++			return 0;
+ 		default:
+ 			return -EOPNOTSUPP;
+ 		}
+-- 
+2.34.1
 
-Best regards,
-Krzysztof
