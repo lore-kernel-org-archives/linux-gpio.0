@@ -1,88 +1,165 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BCC42DA56
-	for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 07:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1833F888A
+	for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 07:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785311459; cv=none; b=j6TGP6uoLdRs4wc5j+8rfqLaOnX9NdrEl0bjsg+T1o+byZ5CYGh0n8t881pRwbOAs6til5zHadddUrBdks9wSpI9oCEplCJMklWX2vGwdDnA04jaOcGq57pYBOxFIyLKpe8fgTkVfTuT+wZBtzZtsMeY2RFyA5tktLRFGVxe4+E=
+	t=1785311689; cv=none; b=Ka9xtPTvd/pDwXsTLhG+qAWIzd3S6R3BIyMW5+KBzcin+WA6b5CcM7wtYA10sMqhZs2SVPxw+CS7v0PFJ5nnB3gVchKlCi226pn15MqJFE8SKhsVlyPrR5chZRApg6yKS4VbKm47g7QmVCWalkB/AXIjChKlN0VxdemCHN3Zg+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785311459; c=relaxed/simple;
-	bh=Bw2TtHwa/4qM/hRNTbeGMOd+OyuVWzLcUJAcd5rxsXo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mooku+3CVyesFI3hFMhvEwvy3oxXyFUM9AdgBvX7KE5T1zoAkNo4aV1VGZCO1JAo85OVo01afdfS91GIfmqYK7Ar7njTG8A3jRFa6IEkL5c7eAq4hZLsnNPDSk1UnFbZHxqybyQU+QgeoLcTbm9GbKkyHrexv8yl9FcBUR46aSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNx6lU+K; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785311689; c=relaxed/simple;
+	bh=YEuZ6gKQryE2J3Njd3WN8bxitPP6KVRTPPI06OtEYQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WG2U9Mug5Zjuqn0XinEaF670vQPuCEWzeschEcjwrLXeQ68v5Kh/P4LYQIUjqLjE8F17eYQb+8I4lGujHz4Q9GlCFC0cuT4px1FuTbzA5WyeVD+1spEUSMGUcUh0YdEm1lH6grcZ+lMrzmTGs66S3ZQoT6+cfs6D7jSaZJS/hZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gz12KzP9; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNx6lU+K"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 646A01F000E9
-	for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 07:50:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785311455;
-	bh=Bw2TtHwa/4qM/hRNTbeGMOd+OyuVWzLcUJAcd5rxsXo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=VNx6lU+KvpOVa5ftB/0LZk5uK8FBdBZOHATIszrSAdeYP2BpfWe/3tTAV3umFm9Mm
-	 kphpSv2n3LiuVjqSbU0qw5HoJULLN7+otzutEiEu9R2TiRN4iavNX17nocXdcJPskw
-	 DbMBt6cj8k//Kd8+/I2LwDJStg04ysuOopwO5br1Fwdcyios2oRGR7xzctg5gKaVFw
-	 44JEqQSpVZflSnAeryryYXG6EIAWXvCbkEPsqh3wUNcy+/LfxMXM4ju6TBzYlwYOmK
-	 5jMBa1RzRsPwfTI4UiNkL/nDqZjAPEzqkNxTuP3KMGpKrCpdbWJDEIlD2ZFfr1y97S
-	 U21de2cpsQJOw==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5b2a4359d16so575094e87.3
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 00:50:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RomTj774EGa55yfrGGPEXkprDyj9q6LQNKnrZ5tWEJ0YCVzNEKROCmkXnsxKwVZzd25B5y3RJFS6By4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH1RXeN6uI6lG++A5GgC9ix7kSG7CQpA1H38JdtqpIF0F2TvC3
-	st340hBS3FvDjpAiEIEROxLxcOEQde6BvS8lU7q/EFSgn5FqD9mYcAZzxQwPwPcYY3HjnfJtw2f
-	jpuOuJBtOwPAFRe7lT4Jd0ubt0tl3X0E=
-X-Received: by 2002:a05:6512:3da1:b0:5b0:162e:127f with SMTP id
- 2adb3069b0e04-5b2d0218984mr1414421e87.29.1785311454188; Wed, 29 Jul 2026
- 00:50:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gz12KzP9"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-38deea72eebso692866a91.1
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 00:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785311687; x=1785916487; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=zKG+MabNpbMKXaipIherA7tQ00HJriwc14bih6ExGzc=;
+        b=gz12KzP9KtiHibrxqy+2FVILHoL60CCvE64JrdUF3Pb8djoVYyvF74K45kbVMyM6uH
+         uffNIq5lXLs8rvK5uw/2aS773m2YbfiP34OSeW0JxeL6/5Zw9PctAwSDcIbMReEuhLrz
+         ODHAq0OSKpC54Sia3DXrw2a5UOHc1+Yxdt+0ohdRawcCTvO0QdLh1RFm5V81EqzSaLIa
+         f1b/qy8x3mf+r3VRryPCOgiCd4JhFRv+7dZBo0ytRRBgCQG2KrFrn3x5NBrJ7QZQ4rAG
+         hfQmBeMFmW99MjykKOjDUuu19fBR8qTSjQi5vk/HUWw+41KWPDsDtu2Q/bZQlpEThrQ0
+         kHFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785311687; x=1785916487;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=zKG+MabNpbMKXaipIherA7tQ00HJriwc14bih6ExGzc=;
+        b=LPVoR8/+fgDHsx+3PBJFJKiKgHKIZ98T8J/Lh2BgI96hRga/BBzQ00B9XjO6skJqhw
+         JtIUyCzc9wDFnjhlcuZ9r8iOkVM0AA1nLfbeZmxFteOeN9ohhPLDrfFtgiXhBzGStaRP
+         FMk3E9JaK893w44PafKMj7jBNTvOL++60OewP4QBPdfM4+fXV6b6Xa6lQVccEkrLt6N+
+         QJ8mZbR0yVzo/jSao3uIZIo+7IDk5dXNXflPG11FNs8KbHYQRI0+7jkElZF48xcovIxB
+         fN8/tq/JKdp/k7/pzIIWGzeONsSiDQRjcETcUT0cMjp/b2/Zf2di5CsNp4awwO6wfSJP
+         1t5w==
+X-Forwarded-Encrypted: i=1; AHgh+RoelZPrQYT9fGt90I7LKqH0C3XWxiisbU61fsnsCKb0YqYAqFsfpJhjF7D85bB1kkQ8OjMPApCiOTQ5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBrwxgvaYiuHnRXmcp2MGjsZ/MtVO/LPSUb9C0jszESRHSYGuQ
+	tSCmIM/db8zgBD0cZD1u7chcMBWXRgA4JXnboX47fpMq3IX0Xv72MVc=
+X-Gm-Gg: AR+sD10w7up8/B8yHT7gBxKgfhbL8FgsvMM0uv0v2smhALvqwzdYzaHzyfqW0hkKxQZ
+	/NOQb/VaESo1/AchDGoPN3OsuwBzAYNibpxcjJzUr8QYX+HEewYAQRHgrgO/ZQ4LItGpASIks8Q
+	petQYeWH72svNikpeCmc+H5mnn07KEZfw9X88UXH0MBNaXQdJbjHN/8KXSEuM5R03/jIirOXn2I
+	0zvVMUIRNvZQlp/eBtCvdKVPBy5zzZwtWiYJMEUk1tpZkiFUXWMrLa/w2K90uYtfcOfjepwECrC
+	ID00CNbqpP+/X4T2ZcDeMpLZNIkAXVFVnfN5JguyIGGojZtQnN27qdwT7KJAwXDMqnf0uGbbMC1
+	G8M0CM3G3aTRputdupauUXnDNLxrsfB7/U+1zOHCAS+EWBXKZe93BPQ+QpkeQBBfOJL8L6sH/BM
+	X8uCQqpcnWD1/Ra4YASxwiNx9rgvOxmoze7Ig5jl8tkvtsDOMwk+nxlrv2iYFjo2olv/I+jAYM0
+	06clqIHQTZi5Pl722wOxNBh
+X-Received: by 2002:a05:6a21:3417:b0:3c3:7cb2:8aee with SMTP id adf61e73a8af0-3c8ba5f7795mr6718001637.57.1785311686811;
+        Wed, 29 Jul 2026 00:54:46 -0700 (PDT)
+Received: from t-rex ([2401:4900:adbd:a4c0:7d16:77af:3a35:c411])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13e7271f010sm8030055c88.9.2026.07.29.00.54.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jul 2026 00:54:46 -0700 (PDT)
+From: kr494167@gmail.com
+To: linusw@kernel.org
+Cc: Frank.Li@nxp.com,
+	conor.dooley@microchip.com,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Surendra Singh Chouhan <kr494167@gmail.com>
+Subject: [PATCH v3] pinctrl: generic: free maps on pinctrl_generic_to_map() failure
+Date: Wed, 29 Jul 2026 13:24:37 +0530
+Message-ID: <20260729075437.101025-1-kr494167@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260725022150.9214-1-kr494167@gmail.com>
-In-Reply-To: <20260725022150.9214-1-kr494167@gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 29 Jul 2026 09:50:41 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmipYnkDJ+Ed4LM44zZYcqU_Q+D7BBTs-RdrY4pDCmjpw@mail.gmail.com>
-X-Gm-Features: AUfX_myJB79cJTm0Zj157DCXcqGdSSgbryYyG23dJ4LRJ-XToKOZrwD_9EKx4Bw
-Message-ID: <CAD++jLmipYnkDJ+Ed4LM44zZYcqU_Q+D7BBTs-RdrY4pDCmjpw@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: generic: free maps on pinctrl_generic_to_map()
- failure
-To: kr494167@gmail.com
-Cc: Frank.Li@nxp.com, conor.dooley@microchip.com, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 25, 2026 at 4:22=E2=80=AFAM <kr494167@gmail.com> wrote:
+From: Surendra Singh Chouhan <kr494167@gmail.com>
 
-> From: Surendra Singh Chouhan <kr494167@gmail.com>
->
-> pinctrl_generic_to_map() parses DT configuration and allocates pinctrl
-> maps via pinctrl_utils_reserve_map().
->
-> If subsequent steps (such as pinctrl_utils_add_map_mux(),
-> pinctrl_generic_add_group(), pinconf_generic_parse_dt_config(), or
-> pinctrl_utils_add_map_configs()) return an error, *maps may contain
-> partially allocated map entries. Returning the error directly without
-> freeing *maps leaks the allocated mapping memory across all drivers
-> that rely on pinctrl_generic_to_map().
->
-> Fix this by calling pinctrl_utils_free_map() and resetting *maps,
-> *num_maps, and *num_reserved_maps in the error path of
-> pinctrl_generic_to_map().
->
-> Fixes: aaaf31be0426 ("pinctrl: extract pinctrl_generic_to_map() from pinc=
-trl_generic_pins_function_dt_node_to_map()")
-> Signed-off-by: Surendra Singh Chouhan <kr494167@gmail.com>
+pinctrl_generic_to_map() parses DT configuration and allocates pinctrl
+maps via pinctrl_utils_reserve_map().
 
-This does not apply to the current "devel" branch in the pinctrl tree:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git/lo=
-g/?h=3Ddevel
+If subsequent steps (such as pinctrl_utils_add_map_mux(),
+pinctrl_generic_add_group(), pinconf_generic_parse_dt_config(), or
+pinctrl_utils_add_map_configs()) return an error, *maps may contain
+partially allocated map entries. Returning the error directly without
+freeing *maps leaks the allocated mapping memory across all drivers
+that rely on pinctrl_generic_to_map().
 
-Please rebase (some things may be fixed already) and resend.
+Fix this by calling pinctrl_utils_free_map() and resetting *maps,
+*num_maps, and *num_reserved_maps in the error path of
+pinctrl_generic_to_map().
 
-Yours,
-Linus Walleij
+Fixes: aaaf31be0426 ("pinctrl: extract pinctrl_generic_to_map() from pinctrl_generic_pins_function_dt_node_to_map()")
+Signed-off-by: Surendra Singh Chouhan <kr494167@gmail.com>
+---
+v3:
+ - Clean up pinctrl-generic.c changes cleanly to apply cleanly on linusw/pinctrl.git devel branch.
+v2:
+ - Move map cleanup inside pinctrl_generic_to_map() helper in pinctrl-generic.c
+   so all callers are protected from memory leaks, as suggested by Frank Li.
+
+ drivers/pinctrl/pinctrl-generic.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/pinctrl/pinctrl-generic.c b/drivers/pinctrl/pinctrl-generic.c
+index 9759b0186bcc..fd6bdb74028a 100644
+--- a/drivers/pinctrl/pinctrl-generic.c
++++ b/drivers/pinctrl/pinctrl-generic.c
+@@ -42,33 +42,44 @@ int pinctrl_generic_to_map(struct pinctrl_dev *pctldev, struct device_node *pare
+ 	ret = pinctrl_utils_add_map_mux(pctldev, maps, num_reserved_maps, num_maps, group_name,
+ 					parent->name);
+ 	if (ret < 0)
+-		return ret;
++		goto err_free_map;
+ 
+ 	ret = pinctrl_generic_add_group(pctldev, group_name, pins, npins, data);
+-	if (ret < 0)
+-		return dev_err_probe(dev, ret, "failed to add group %s: %d\n",
++	if (ret < 0) {
++		dev_err_probe(dev, ret, "failed to add group %s: %d\n",
+ 				     group_name, ret);
++		goto err_free_map;
++	}
+ 
+ 	ret = pinconf_generic_parse_dt_config(np, pctldev, &configs, &num_configs);
+-	if (ret)
+-		return dev_err_probe(dev, ret, "failed to parse pin config of group %s\n",
++	if (ret) {
++		dev_err_probe(dev, ret, "failed to parse pin config of group %s\n",
+ 			group_name);
++		goto err_free_map;
++	}
+ 
+ 	if (num_configs == 0)
+ 		return 0;
+ 
+ 	ret = pinctrl_utils_reserve_map(pctldev, maps, num_reserved_maps, num_maps, reserve);
+ 	if (ret)
+-		return ret;
++		goto err_free_map;
+ 
+ 	ret = pinctrl_utils_add_map_configs(pctldev, maps, num_reserved_maps, num_maps, group_name,
+ 					    configs,
+ 			num_configs, PIN_MAP_TYPE_CONFIGS_GROUP);
+ 	kfree(configs);
+ 	if (ret)
+-		return ret;
++		goto err_free_map;
+ 
+ 	return 0;
++
++err_free_map:
++	pinctrl_utils_free_map(pctldev, *maps, *num_maps);
++	*maps = NULL;
++	*num_maps = 0;
++	*num_reserved_maps = 0;
++	return ret;
+ };
+ EXPORT_SYMBOL_GPL(pinctrl_generic_to_map);
+ 
+-- 
+2.55.0
+
