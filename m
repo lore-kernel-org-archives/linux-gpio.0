@@ -1,165 +1,210 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1833F888A
-	for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 07:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1F623909F;
+	Wed, 29 Jul 2026 08:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785311689; cv=none; b=Ka9xtPTvd/pDwXsTLhG+qAWIzd3S6R3BIyMW5+KBzcin+WA6b5CcM7wtYA10sMqhZs2SVPxw+CS7v0PFJ5nnB3gVchKlCi226pn15MqJFE8SKhsVlyPrR5chZRApg6yKS4VbKm47g7QmVCWalkB/AXIjChKlN0VxdemCHN3Zg+8=
+	t=1785312209; cv=none; b=XVsFZr5TWbEfPif9aVXysx4dNao0qDKKAPhjC4NjGtEsRVFwZoMc13b9GcKTH1Ut3uf1B+CKew1V/P2JueEe9ao/+qZg2anBjbjR6CS95NQc/qfJ1BR+1FzDLMPriUnfX2QBA5CDgAxxwuik3T/e+U0cABEhxPu2Ne4XTCOMH8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785311689; c=relaxed/simple;
-	bh=YEuZ6gKQryE2J3Njd3WN8bxitPP6KVRTPPI06OtEYQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WG2U9Mug5Zjuqn0XinEaF670vQPuCEWzeschEcjwrLXeQ68v5Kh/P4LYQIUjqLjE8F17eYQb+8I4lGujHz4Q9GlCFC0cuT4px1FuTbzA5WyeVD+1spEUSMGUcUh0YdEm1lH6grcZ+lMrzmTGs66S3ZQoT6+cfs6D7jSaZJS/hZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gz12KzP9; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785312209; c=relaxed/simple;
+	bh=GnZcwKI+XfZvnS2Df1q/BSFAho55OGNCVk7vAkSMC1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AxauJaCGInOmf4erwoAZ11/SWC//3e/IiTWB852XvgXn4uszaJWrBG/5AKL/EtJqpS7tXSCu/8LrTeWmJ08crpxi+3Ed6bYLMer9XfiRQ7iEKaRH80rWIY6nqVwcWmAAB9m5N5EKZ5b0eR1Htk71xcySGIMZAuPCgHjsosY/j38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IQ179P4C; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gz12KzP9"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-38deea72eebso692866a91.1
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 00:54:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785311687; x=1785916487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=zKG+MabNpbMKXaipIherA7tQ00HJriwc14bih6ExGzc=;
-        b=gz12KzP9KtiHibrxqy+2FVILHoL60CCvE64JrdUF3Pb8djoVYyvF74K45kbVMyM6uH
-         uffNIq5lXLs8rvK5uw/2aS773m2YbfiP34OSeW0JxeL6/5Zw9PctAwSDcIbMReEuhLrz
-         ODHAq0OSKpC54Sia3DXrw2a5UOHc1+Yxdt+0ohdRawcCTvO0QdLh1RFm5V81EqzSaLIa
-         f1b/qy8x3mf+r3VRryPCOgiCd4JhFRv+7dZBo0ytRRBgCQG2KrFrn3x5NBrJ7QZQ4rAG
-         hfQmBeMFmW99MjykKOjDUuu19fBR8qTSjQi5vk/HUWw+41KWPDsDtu2Q/bZQlpEThrQ0
-         kHFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785311687; x=1785916487;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=zKG+MabNpbMKXaipIherA7tQ00HJriwc14bih6ExGzc=;
-        b=LPVoR8/+fgDHsx+3PBJFJKiKgHKIZ98T8J/Lh2BgI96hRga/BBzQ00B9XjO6skJqhw
-         JtIUyCzc9wDFnjhlcuZ9r8iOkVM0AA1nLfbeZmxFteOeN9ohhPLDrfFtgiXhBzGStaRP
-         FMk3E9JaK893w44PafKMj7jBNTvOL++60OewP4QBPdfM4+fXV6b6Xa6lQVccEkrLt6N+
-         QJ8mZbR0yVzo/jSao3uIZIo+7IDk5dXNXflPG11FNs8KbHYQRI0+7jkElZF48xcovIxB
-         fN8/tq/JKdp/k7/pzIIWGzeONsSiDQRjcETcUT0cMjp/b2/Zf2di5CsNp4awwO6wfSJP
-         1t5w==
-X-Forwarded-Encrypted: i=1; AHgh+RoelZPrQYT9fGt90I7LKqH0C3XWxiisbU61fsnsCKb0YqYAqFsfpJhjF7D85bB1kkQ8OjMPApCiOTQ5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBrwxgvaYiuHnRXmcp2MGjsZ/MtVO/LPSUb9C0jszESRHSYGuQ
-	tSCmIM/db8zgBD0cZD1u7chcMBWXRgA4JXnboX47fpMq3IX0Xv72MVc=
-X-Gm-Gg: AR+sD10w7up8/B8yHT7gBxKgfhbL8FgsvMM0uv0v2smhALvqwzdYzaHzyfqW0hkKxQZ
-	/NOQb/VaESo1/AchDGoPN3OsuwBzAYNibpxcjJzUr8QYX+HEewYAQRHgrgO/ZQ4LItGpASIks8Q
-	petQYeWH72svNikpeCmc+H5mnn07KEZfw9X88UXH0MBNaXQdJbjHN/8KXSEuM5R03/jIirOXn2I
-	0zvVMUIRNvZQlp/eBtCvdKVPBy5zzZwtWiYJMEUk1tpZkiFUXWMrLa/w2K90uYtfcOfjepwECrC
-	ID00CNbqpP+/X4T2ZcDeMpLZNIkAXVFVnfN5JguyIGGojZtQnN27qdwT7KJAwXDMqnf0uGbbMC1
-	G8M0CM3G3aTRputdupauUXnDNLxrsfB7/U+1zOHCAS+EWBXKZe93BPQ+QpkeQBBfOJL8L6sH/BM
-	X8uCQqpcnWD1/Ra4YASxwiNx9rgvOxmoze7Ig5jl8tkvtsDOMwk+nxlrv2iYFjo2olv/I+jAYM0
-	06clqIHQTZi5Pl722wOxNBh
-X-Received: by 2002:a05:6a21:3417:b0:3c3:7cb2:8aee with SMTP id adf61e73a8af0-3c8ba5f7795mr6718001637.57.1785311686811;
-        Wed, 29 Jul 2026 00:54:46 -0700 (PDT)
-Received: from t-rex ([2401:4900:adbd:a4c0:7d16:77af:3a35:c411])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13e7271f010sm8030055c88.9.2026.07.29.00.54.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jul 2026 00:54:46 -0700 (PDT)
-From: kr494167@gmail.com
-To: linusw@kernel.org
-Cc: Frank.Li@nxp.com,
-	conor.dooley@microchip.com,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Surendra Singh Chouhan <kr494167@gmail.com>
-Subject: [PATCH v3] pinctrl: generic: free maps on pinctrl_generic_to_map() failure
-Date: Wed, 29 Jul 2026 13:24:37 +0530
-Message-ID: <20260729075437.101025-1-kr494167@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IQ179P4C"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 449DA1F000E9;
+	Wed, 29 Jul 2026 08:03:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785312205;
+	bh=JteUNebrq8Y5BoF6qFLQtjZt8zz9HlOcVSVsWZpTXkA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=IQ179P4CWgJQUfIO/xTq6P8zIgK/o1owHEh2nTPZngI7nTSouMh1AAPQGX2SPtybA
+	 9TNXfo9m0yvDhta7jDb+MjlOM2UPaKBX6ll6ehaYxKrFmGHtkCJCgNwwZYXl0RZ/B6
+	 0mEjmr1SfBPBoXAMwSPV3ZVrywogrGNy1UCka6tQnyDJUmv/1z7pQPylwCbvK8LRyI
+	 3i83/lt0DkSA6bGzzWCpRajoLUkcSs/IaBEdUgYlnY5PODfPvLa/M1wdw3LG5ubFso
+	 5pH8H4j2+JCn0VVtW4HoWrC3k/eSYM+NKpRaG+XeObT2VvRbmtjcuZGx7TCISUsDmc
+	 a42YPQ2BWxJyg==
+Message-ID: <986fac76-3bcd-4523-a902-701027aff1bf@kernel.org>
+Date: Wed, 29 Jul 2026 10:03:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: Add Axiado SGPIO controller
+To: Petar Stepanovic <pstepanovic@axiado.com>, Tzu-Hao Wei <twei@axiado.com>,
+ Swark Yang <syang@axiado.com>, Prasad Bolisetty <pbolisetty@axiado.com>,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Harshit Shah <hshah@axiado.com>,
+ SriNavmani A <srinavmani@axiado.com>, Karthikeyan Mitran <kmitran@axiado.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20260729-axiado-ax3000-sgpio-controller-v2-0-976f4ed11438@axiado.com>
+ <20260729-axiado-ax3000-sgpio-controller-v2-1-976f4ed11438@axiado.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260729-axiado-ax3000-sgpio-controller-v2-1-976f4ed11438@axiado.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Surendra Singh Chouhan <kr494167@gmail.com>
+On 29/07/2026 09:02, Petar Stepanovic wrote:
+> +description: |
+> +  The Axiado SGPIO controller provides a serial GPIO expansion interface
+> +  that multiplexes multiple GPIO signals over a small set of physical lines.
+> +
+> +  The controller operates as a shift-based interface, where output values
+> +  are serialized on a data output line and input values are sampled from a
+> +  data input line in synchronization with a shift clock. A latch signal is
+> +  used to update output states after each transfer cycle.
+> +
+> +  The interface uses data output (DOUT), data input (DIN), shift clock
+> +  (SCLK), and latch signal (LATCH).
+> +
+> +  Each SGPIO position provides one fixed-direction input GPIO and one
+> +  fixed-direction output GPIO. Input GPIOs support edge-triggered
+> +  interrupts.
+> +
+> +  GPIOs are organized in banks of 32 signals, with registers controlling
+> +  output values, input sampling, and interrupt status. The number of GPIO
+> +  lines depends on the hardware variant.
+> +
+> +  The controller detects changes on input GPIOs. Interrupt events are
+> +  aggregated and signaled through a single interrupt line to the parent
+> +  interrupt controller.
+> +
+> +  Register access is performed over the APB bus. The SGPIO shift clock is
+> +  derived from the APB clock using a programmable divider.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - axiado,ax3000-sgpio
+> +      - axiado,ax3005-sgpio
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    description:
+> +      APB clock used for register access and SGPIO shift clock generation
+> +    maxItems: 1
+> +
+> +  bus-frequency:
+> +    description: SGPIO shift clock frequency in Hz
+> +    minimum: 1
 
-pinctrl_generic_to_map() parses DT configuration and allocates pinctrl
-maps via pinctrl_utils_reserve_map().
+Such property is not allowed. Why you cannot calculate it automatically?
 
-If subsequent steps (such as pinctrl_utils_add_map_mux(),
-pinctrl_generic_add_group(), pinconf_generic_parse_dt_config(), or
-pinctrl_utils_add_map_configs()) return an error, *maps may contain
-partially allocated map entries. Returning the error directly without
-freeing *maps leaks the allocated mapping memory across all drivers
-that rely on pinctrl_generic_to_map().
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    const: 2
+> +
+> +  interrupt-controller: true
+> +
+> +  '#interrupt-cells':
+> +    const: 2
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  ngpios:
+> +    description:
+> +      Number of SGPIO positions. Each position provides one input GPIO and
+> +      one output GPIO.
+> +    enum: [128, 512]
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          const: axiado,ax3000-sgpio
+> +    then:
+> +      properties:
+> +        ngpios:
+> +          const: 128
 
-Fix this by calling pinctrl_utils_free_map() and resetting *maps,
-*num_maps, and *num_reserved_maps in the error path of
-pinctrl_generic_to_map().
+else what? 3005 has 512? Then these are implied by compatible, no?
 
-Fixes: aaaf31be0426 ("pinctrl: extract pinctrl_generic_to_map() from pinctrl_generic_pins_function_dt_node_to_map()")
-Signed-off-by: Surendra Singh Chouhan <kr494167@gmail.com>
----
-v3:
- - Clean up pinctrl-generic.c changes cleanly to apply cleanly on linusw/pinctrl.git devel branch.
-v2:
- - Move map cleanup inside pinctrl_generic_to_map() helper in pinctrl-generic.c
-   so all callers are protected from memory leaks, as suggested by Frank Li.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - bus-frequency
+> +  - gpio-controller
+> +  - '#gpio-cells'
+> +  - interrupt-controller
+> +  - '#interrupt-cells'
+> +  - interrupts
+> +  - ngpios
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    sgpio@a000 {
 
- drivers/pinctrl/pinctrl-generic.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+git grep sgpio@
 
-diff --git a/drivers/pinctrl/pinctrl-generic.c b/drivers/pinctrl/pinctrl-generic.c
-index 9759b0186bcc..fd6bdb74028a 100644
---- a/drivers/pinctrl/pinctrl-generic.c
-+++ b/drivers/pinctrl/pinctrl-generic.c
-@@ -42,33 +42,44 @@ int pinctrl_generic_to_map(struct pinctrl_dev *pctldev, struct device_node *pare
- 	ret = pinctrl_utils_add_map_mux(pctldev, maps, num_reserved_maps, num_maps, group_name,
- 					parent->name);
- 	if (ret < 0)
--		return ret;
-+		goto err_free_map;
- 
- 	ret = pinctrl_generic_add_group(pctldev, group_name, pins, npins, data);
--	if (ret < 0)
--		return dev_err_probe(dev, ret, "failed to add group %s: %d\n",
-+	if (ret < 0) {
-+		dev_err_probe(dev, ret, "failed to add group %s: %d\n",
- 				     group_name, ret);
-+		goto err_free_map;
-+	}
- 
- 	ret = pinconf_generic_parse_dt_config(np, pctldev, &configs, &num_configs);
--	if (ret)
--		return dev_err_probe(dev, ret, "failed to parse pin config of group %s\n",
-+	if (ret) {
-+		dev_err_probe(dev, ret, "failed to parse pin config of group %s\n",
- 			group_name);
-+		goto err_free_map;
-+	}
- 
- 	if (num_configs == 0)
- 		return 0;
- 
- 	ret = pinctrl_utils_reserve_map(pctldev, maps, num_reserved_maps, num_maps, reserve);
- 	if (ret)
--		return ret;
-+		goto err_free_map;
- 
- 	ret = pinctrl_utils_add_map_configs(pctldev, maps, num_reserved_maps, num_maps, group_name,
- 					    configs,
- 			num_configs, PIN_MAP_TYPE_CONFIGS_GROUP);
- 	kfree(configs);
- 	if (ret)
--		return ret;
-+		goto err_free_map;
- 
- 	return 0;
-+
-+err_free_map:
-+	pinctrl_utils_free_map(pctldev, *maps, *num_maps);
-+	*maps = NULL;
-+	*num_maps = 0;
-+	*num_reserved_maps = 0;
-+	return ret;
- };
- EXPORT_SYMBOL_GPL(pinctrl_generic_to_map);
- 
--- 
-2.55.0
+No results (except well known poor coding style platform). I already
+commented on this.
 
+> +        compatible = "axiado,ax3005-sgpio";
+> +        reg = <0xa000 0x800>;
+> +        clocks = <&apb_clk>;
+> +        bus-frequency = <1000000>;
+> +        gpio-controller;
+Best regards,
+Krzysztof
