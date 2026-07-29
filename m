@@ -1,157 +1,154 @@
 Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E89E34F474
-	for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 18:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FCB4519A4
+	for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 18:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785349913; cv=pass; b=SwzcoUwrvwqCdF1hGj5JgfdiURYo5H0HiUT5mXQS0hC3VSoMjm6OXeXsViZO09GF59YwsGpgR1B968kK/i4QGwyXvtDl1b9weolSj8ANOPABPTVC0nmGIkA47dVyUsS6zVZREpNE0JzV8VF/CR5Xmlt0q4cMAxljTsxlI68v4fM=
+	t=1785349967; cv=pass; b=kYrLezTg4w6dAJ99ZkFZ4mftFnIhwk4vRjPVQCZ1klCP3RQiuAWJPueWKLK7mdez1Q16F5wtHhGsmp4DHlGHdKwQ5DVSkkH1paBZ9cGVEY8bpQgBaGLci2Z5i5wxMo6bE7XApli0kpzZHGk04vn9ZRqFf9wejR9Zw+igXvKfZlg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785349913; c=relaxed/simple;
-	bh=2Qc5mjkD1dvLD2GeXRakFQKtNFuk6A0eLPxvD7CfVgI=;
+	s=arc-20240116; t=1785349967; c=relaxed/simple;
+	bh=NW7DoNJltPHRzI2HWZo3ilj/TXANIsURSY3njG/YSws=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kOEw1qBGcuxys2txOey1Dc0YRZQLAY873+B8STpFOvvjPMY6VATWrhj+FqgLqFQgPcyWanA3rt+xmVolLskS2d6m/ljemk/NP8cMHOxOdmQ6+tGHXSIELi0j41RIl44RQyzd6M8oG6TY3IRYNjXw3VnM2JbiUs+gGmuY36MvQkc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V9aSGRWw; arc=pass smtp.client-ip=209.85.208.44
+	 To:Cc:Content-Type; b=BxYRRocWwrSNgnehMcHLpoHcUzHR8gdLHDwZKS7O+DZ8TsyEkO6XARrz7nAIDVFEKWLxM9lz8mX6VukhspmqTtMT2bQaEKNSq3MjYCiB1ZWRKqEE2EYx1OTCphRzZVyEPlUN46MNF0Kr7l5Ca5LAsLbUCVy3W0cgReplQujpIuI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PGTL+tGb; arc=pass smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V9aSGRWw"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-69ffb48d599so2072963a12.2
-        for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 11:31:51 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785349910; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PGTL+tGb"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-69ea0595598so1338318a12.0
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 11:32:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785349960; cv=none;
         d=google.com; s=arc-20260327;
-        b=iCa5Tmk+GALA8NjkRYgCs7yQZSPJ0hr+pa297ViyGO3+hEhOZTFAOvlfX+5fMtZIb1
-         FNfAVcoshxWEg9tz2KD1xR9ChUptxeYaaKqeOnF93anCHfsoVTU+sqIQ1GnofofJR/x7
-         t1k7yHdKN807Yi0DaL2tqD6qXEZF/FjilS7R4h6xMqNSm5VZkg1s6cjHF2mj6FOmEuXA
-         gAIFyqFh2US4be350vVoQ7mBPBavNIwv6bCHEHCeXxA0/aOZcbMGaVFUZoZKtKpJpHMO
-         3eAvVxh/Y3mbS9QNYXOd3N87LrHU9+d6msQvok1kOtIkqrBnYhDoQCaR+vwA+FsHdsVt
-         nX3Q==
+        b=j13ZR/PtFTXupJFlfIBWdpgV1rV1zjo2C4eqR73ryx61ge1cNLTCsf8t0AkUEqnbB8
+         YIjFB1O6lWR4mu6TRAIQryz9Y4dvNswTyW0ihxFxxxFZOcVwUNDTbJ566ALuDY7Ys4oP
+         oTmoHvJlxp5zIP9KV2eyQGJmDwu00EmSMnrjO9RNlE/ol5uyXp8ZNa2cOuQ2ujjtHiIH
+         t6qBzUekkwNIDGvtCyQRhqQkRX2by6Jj0n9jlKAWbHzPlrJfBEmiYjqi8C2yBTHqBcqj
+         34eOuCJovMkcyU+BeyHcn3dpAyXuBCo2bn1sWxuvLjhV/jRJayklbSo1QJVHWvOQqMlm
+         TM4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=v4QmJ/SaaPJq1jDPqnjiO/k18kGbmkP2+g1krIrs3vI=;
-        fh=f9xDxKclA35fmdJP7jJRGk1xdbQxZAiBsPQ5yJuNrTw=;
-        b=sm9f+bDOaSxOjyS8yKe9ruIuX3uKMDqzQ/YvK/m+fSkqYJKvbLRPxL0KF+BHk4lobE
-         fnv13CU62P8tF1X7fPQUkokNZaYTAW8uJdoDdVLh4CATN0AR/fIuJFCD0h1QyUjgnxj/
-         YMYbDKS6n487/8ZNefBLYWVujO0knkDJ61GSBKbtEsgNWbrXLVtkBsePXYN4VhdjsEFJ
-         HO9iO1FFePywYdH5ylDufcbzSpVDjoJs1LAMlE3yQ2s63xfCasPAqvSvjEzCegOHmOPT
-         cx7Au5tX4IT7wWjr0jQmvNdnYu5D21MRafNtRaJcq2/WluyB+DqdKNRal8PJBUHnMK1H
-         AhKw==;
+        bh=OWuhUqUKl2tQgwy7xscpevse6bZZgTd2BD+KKHLHGXc=;
+        fh=OdIXSCVDOyeoSReC/KUQPRY86hvINr0gonMZ6LLwzsA=;
+        b=BCRjjqmX4Wxmw1DonFM4t1F3nlD3ULB3XzdDELWsKYFtKGqr2kxC0vlWW3Zmbke2u8
+         NgTBEQ8BHgLYj0JJEcwvInNOZFSpiAhrJEo+Vrzz9kNq2mbw/Fy8tqQtLLKFEhBKhv1q
+         oCJJEyvku3ovi4LtxivTv7Tg3WCZjZLdmtcX302yovTErApSrUj1LgrMkQYG7jm57Vqc
+         Wp37DMRKhqqNcuzo0WUKZfeBjxCnriunfkNCrFPtnbARWLjaRUjXMGBiKe7A0qcDoi+n
+         9vqXx8vUDcK7PXgFymzBbYfbDAsu5Hhbv7n7lMQCLk0JjfcOJ3UAUUXXytrOeqV6dcB+
+         THpg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785349910; x=1785954710; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1785349960; x=1785954760; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=v4QmJ/SaaPJq1jDPqnjiO/k18kGbmkP2+g1krIrs3vI=;
-        b=V9aSGRWw+vDKUDIyASmn6nKVDBKq51PfJdayDN6F2TgpeQZ1rPjHZh27sG8GQdH/ik
-         a+T8EpvYSIIrhhNeY1GVAXE1lOKS87BZ3yP0XfrK2wpEpcs/OeSPdzT7l94uGDjs7v11
-         GtS6TKqojCnVg+13P/QeKZ49K0jo2cceKbTVmuVm2P3m5Lfb0SM4/7ORJphl4xg21ciD
-         JS0H6qvxELj+bKRpjX5xIrXzyVrZQfL/2XhIrFfxitEeyDhMDF67zn6ijJbLvv/aKEzT
-         0SGlKHs8K6aLx8KiONgwtPkbDlKCuecHDYOAVNN0kFNuKqa83Ixx4lSIbKHR4dvS3yVz
-         /Brw==
+        bh=OWuhUqUKl2tQgwy7xscpevse6bZZgTd2BD+KKHLHGXc=;
+        b=PGTL+tGbmpSqmORnGZmN7jdMkNqF4TdS2RlivCNQOfi6UF035RoP0Y6LNXXc0jKjQe
+         ZEX7HzhE+YEcBoLEvHIAJz6clRRd6EWztp5CF4MQ1N3SBQvKIwEQ0LktASwlZXAWfRSi
+         PJAkN5Bhj0wRm/js93GKl9XIsB+GBPVB6r1aBVtlANVkTL4HkcB+tTrCVIm2OJAXMYqS
+         qi5L/sgn+HBx6pVJoGFvo6CgoGyf4GzmIVxS8DwXm0K5u0wzigl+wsJGbrU9Qb/SsRNP
+         V4kY9LzEWDCW/LvboSYy4cWGuqZZp4PRrQtMx7LLDpCy2IWjDe0hqw3TChvDIxlJVxL8
+         Z3ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785349910; x=1785954710;
+        d=1e100.net; s=20251104; t=1785349960; x=1785954760;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=v4QmJ/SaaPJq1jDPqnjiO/k18kGbmkP2+g1krIrs3vI=;
-        b=eNBmc/WULj2+BN7wi6zjOX5p0Eh+ndz2XxdDeoyd0CsQaYfkvlHScP4u7AFDMs9Vui
-         nV/GGxCoxDaieILQNduWPNOzSVD6MI8V4m4uxcpMNCPNTDnrDtYyfdpsLGU8MYgUnC2U
-         +BFkp6yEWQYx4SsuNuK7w3FpCJTOm6v1IDlZjenRd9BGq9qN/rR7Kbqvr86sQ4avLE5l
-         9cj6xqRKy9ULFTlni2+89NKeQvF8XXA9HaER0mC6XCjsuQ5KxPWWn91XU7ZSnaqjemtG
-         CR1y+ubPdnmH0pXXo6OpMjF8WKSxiqQnrTJc4PMtbjmF4aiYB/a++7q9XOvNCV893TPB
-         yUnw==
-X-Forwarded-Encrypted: i=1; AHgh+Rqk9J3zNkI7LDw2VUNYv6VAIrbi/IUbjwA475d6Gq37DzulmuMJfwFfRcVwPiDsE82BLDqt+Oq/deCT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/PT+ezzHGpYbuvYfGS42p8h6ETzQ3hO6EgHA3D+fIFVpD5b5+
-	kaFNaXAlkRkRh/nXNSLAdkUNvusMt9pRnKMcGgqh8G8KUVbrf0bIjF05ZYuzSjA87W1qtHsRBnY
-	mWUYMXwt0AuPwmJsqxb0MIlhJ83kI2ec=
-X-Gm-Gg: AR+sD13bXorAqdUT4Wtv05S5WgkSb8F3wer13EnNxdwBrGvQtoLHcQ7YDXRsSR2ajQw
-	0LRx4FCGJwNvzGWPkve6/Zmh7C9ePrRZi4FDU/iXNNYxDS9DoT/1TBRLZDoXCQCK4QSRCl2FyNm
-	2OkVp/iskDrjFpz5pxYEMKQNBDIeGBOLjF2LnJRJoLB62c4SChXwpm+9k/61A3aO1iCyqddoPwn
-	VZY2jYg06ElV8WJVVCKSYIIEL0XjIhECEtbNNfNi3tmXh0SUy4lDdKav3Ey5jin40RJJrS5b2Uc
-	KQo4mAMgZ1xTb46RJnr9cfeHBnEVRQQvQYejfrXaM5jqKrD4HkwTsWmHNvUGGssHM0yHHCo02QJ
-	b4n//93Qyp887KQ+G+5ifbuz17Y/5waJKsgK3Joez9Hx8GHTP3vNbqXhkjps+2V1MKDhFNQ8sg+
-	vrJNRcT8Qq7TBBusdX1qwh4Akl+SjcilOXbeqrMzgZtZKgRTXuDJha2zg=
-X-Received: by 2002:a05:6402:21cd:b0:698:351c:979c with SMTP id
- 4fb4d7f45d1cf-6a0349e9d99mr3749083a12.2.1785349910290; Wed, 29 Jul 2026
- 11:31:50 -0700 (PDT)
+        bh=OWuhUqUKl2tQgwy7xscpevse6bZZgTd2BD+KKHLHGXc=;
+        b=HYtnc5H+X75cFVhsk/AGtOO8JzS4X3ChQiqr4M3EaNhABqV45gTx7eDv7mtp3QdQka
+         25GSVzJfJWMwk+1i/pMCMO3+ARWJg5aSpL8XuH25Ia0t082cQKO32HRfnvsnIkxiNbqQ
+         uIEXv+zssMsHBBINWIWtTrbnZCdW8ZNJzYGFgMiFURipiQF7EPlzwFUgG9ErbQsPMGBR
+         t9K0ZDJyyD00bc3LbW3L8OIrOrr8Z6swUUGaV9dBlxWZnIYmnQdIKn8RihYX/fX4gWnl
+         caPDHho+c27qOMZ62DMGC83pu3ZqsdEyyxcpiY0H4skd7SsaeVT0PecmUtZ4YdfVUZaw
+         1B3A==
+X-Forwarded-Encrypted: i=1; AHgh+RqbnjWMckvfoK/ULzmkWUpkoQLLqlQcgHPFBqaawaLDK5PyFQ23HMxqGNH/eNbR3DDxwgMAsRwZAT0/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUUCT7xl9lN14rtqlvJp8/sgad0n+/wVRBmoSzvnjZCgjrGX7P
+	HkxuNMSkYB0R9fmKmIHs21zq1219Q0AvVDPgyjiCJZuQ/GlVFwd/5Kdvz54DuiEZH8+AB6bc2bo
+	p6qIQAw1p/VhZ6PJc8B7ChWfrDLna0tE=
+X-Gm-Gg: AR+sD11w49SCxfx3EDTnEd5EzbR25y6s/GC0udR7aYbJQqKqgOI/d2+SmMb+7ebahUR
+	/UZfgGIZys2IPD1OK5aZxNKaGg2m8qceKP4JsZWNPf9fcIk2E054EAXMuemjXAqvBN/xO4DS4nF
+	eHViw2WINxO9RxGK08mO9u+CmG5AFsUmkIOo24XALQXkLqqa9UmlDji4e00EPyNrPm7pN7SFzhj
+	3jIFTybDWCiALYXFVEMaxKe0GvNIGdsuwWtIdgQ5U7R5R3X2nQ4YXio0IVs8wV+kvrIj/1GO4dY
+	+4Ob3k0V9O8sWs0PaVN+/v52R0EoyfDMFlDM5hcn0Ll34U4c37i73czKa1iW9QDsufGRF080HbE
+	PJ5Kclk4/YlVod/t0M0UWUm2dmZY84wvqU4fTregxrgWUACHQtG/PgOwuim+qJp0hrwXIXMC4fm
+	OV29fR1Y0qhEJK0dChaj4ZtpEuKjIHgdHuVZgb3dqzwZEeovHzDvmJQjQ=
+X-Received: by 2002:a05:6402:194e:b0:691:7054:8c6b with SMTP id
+ 4fb4d7f45d1cf-6a034a9e9demr4048551a12.19.1785349959966; Wed, 29 Jul 2026
+ 11:32:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260602050131.856789-1-rosenp@gmail.com> <CAD++jLmk3jMFS0DD0GGTV9AWu-oHJAoxymcyOKQycVFqKCRnzA@mail.gmail.com>
- <CAKxU2N_LhgDj-+-gd0_N9gQOzCddq7dypYhayFQ_09zggpor6Q@mail.gmail.com> <230cf7f0-600e-40e7-8056-6332c678e14c@linux.ibm.com>
-In-Reply-To: <230cf7f0-600e-40e7-8056-6332c678e14c@linux.ibm.com>
+References: <20260602050131.856789-1-rosenp@gmail.com> <20260602050131.856789-6-rosenp@gmail.com>
+ <CAMRc=Me0rqs8nxrp95X-2Bjw059ahRxwKrg-NtmEt025w2m9bw@mail.gmail.com>
+ <DIYGFNLIFBW7.21W9J6SUGYF72@gmail.com> <7ee42722-f7f9-40cc-a576-5f85e3955537@linux.ibm.com>
+In-Reply-To: <7ee42722-f7f9-40cc-a576-5f85e3955537@linux.ibm.com>
 From: Rosen Penev <rosenp@gmail.com>
-Date: Wed, 29 Jul 2026 11:31:37 -0700
-X-Gm-Features: AUfX_mxsf54gYiW4yX38vwZBjC6BKUBp5AuSPAo67d0COlzbbPx1pWEwYjmbywo
-Message-ID: <CAKxU2N_qNZj3dJaHQ46LXA3Q=_sv6r-6WGG3iUDnOT5F=VtNwA@mail.gmail.com>
-Subject: Re: [PATCH 0/7] gpio: move ppc4xx driver to drivers/gpio and modernize
+Date: Wed, 29 Jul 2026 11:32:28 -0700
+X-Gm-Features: AUfX_mwFm41Bflu7ob8t5htCSDpQ6an6HN0IUWP3VvCWL4feJWz2EPy32kLLAAQ
+Message-ID: <CAKxU2N8n4iHrr-+NxL6D9WZ4EgH_XVJ7yfPa4P6ZyFNJTir60w@mail.gmail.com>
+Subject: Re: [PATCH 5/7] gpio: ppc44x: Convert GPIO to generic MMIO
 To: Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org, chleroy@kernel.org, 
+Cc: Bartosz Golaszewski <brgl@kernel.org>, chleroy@kernel.org, 
 	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, 
-	"open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" <linuxppc-dev@lists.ozlabs.org>, open list <linux-kernel@vger.kernel.org>
+	Linus Walleij <linusw@kernel.org>, 
+	"open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" <linuxppc-dev@lists.ozlabs.org>, open list <linux-kernel@vger.kernel.org>, 
+	linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 29, 2026 at 3:20=E2=80=AFAM Madhavan Srinivasan <maddy@linux.ib=
+On Wed, Jul 29, 2026 at 3:55=E2=80=AFAM Madhavan Srinivasan <maddy@linux.ib=
 m.com> wrote:
 >
 >
-> On 6/9/26 3:50 AM, Rosen Penev wrote:
-> > On Mon, Jun 8, 2026 at 3:10=E2=80=AFPM Linus Walleij <linusw@kernel.org=
-> wrote:
-> >> Hi Rosen,
-> >>
-> >> On Tue, Jun 2, 2026 at 7:01=E2=80=AFAM Rosen Penev <rosenp@gmail.com> =
-wrote:
-> >>
-> >>> This series moves the ppc4xx GPIO driver from arch/powerpc to
-> >>> drivers/gpio, converts it to be a proper platform driver using
-> >>> generic MMIO helpers, drops architecture-specific accessors, and
-> >>> prepares it for module build and COMPILE_TEST.
+> On 6/2/26 2:56 PM, Rosen Penev wrote:
+> > On Tue Jun 2, 2026 at 12:51 AM PDT, Bartosz Golaszewski wrote:
+> >> On Tue, 2 Jun 2026 07:01:29 +0200, Rosen Penev <rosenp@gmail.com> said=
+:
+> >>> Use gpio_generic_chip_init() to set up the PPC44x GPIO chip
+> >>> instead of open-coding the basic get, set, locking and state handling=
+.
 > >>>
-> >>> Patches 1-4 move the driver and convert it to standard platform
-> >>> driver infrastructure. Patch 5 switches to generic MMIO helpers.
-> >>> Patch 6 drops PPC-specific IO accessors and enables COMPILE_TEST.
-> >>> Patch 7 adds the missing MODULE metadata so the driver can actually
-> >>> be built as a module.
+> >>> Keep the PPC44x-specific direction callbacks because they still need =
+to
+> >>> program ODR and the OSR/TSR registers around the generic data and
+> >>> direction registers.
 > >>>
-> >>> Rosen Penev (7):
-> >>>    gpio: move ppc4xx gpio driver from arch/powerpc to drivers/gpio
-> >>>    gpio: ppc44x: Use module platform driver helper for GPIO
-> >>>    gpio: ppc44x: Set GPIO chip firmware node
-> >>>    gpio: ppc44x: Use platform resource helper for GPIO MMIO
-> >>>    gpio: ppc44x: Convert GPIO to generic MMIO
-> >>>    gpio: ppc44x: drop PPC-specific IO helpers and rename to ppc44x
-> >>>    gpio: ppc44x: add MODULE info
-> >> Overall a very nice patch series and happy to see that AI can
-> >> assist with this kind of refactoring!
+> >>> Assisted-by: Codex:GPT-5.5
+> >>> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> >>> ---
+> >> ...
 > >>
-> >> I guess we should provide some slack so someone from the PPC
-> >> camp can test it, and if they don't test it, then it is abandoned and
-> >> we should then just apply it anyway.
-> > Hmm? I have the hardware. It works fine.
-> Honestly I dont have the hardware to test this,
-> but thanks for the confirming, i will pull this for the next merge.
-Can't tell if you mean next merge window or not.
+> >>> @@ -124,10 +102,11 @@ static int
+> >>>   ppc4xx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int va=
+l)
+> >>>   {
+> >>>     struct ppc4xx_gpio_chip *chip =3D gpiochip_get_data(gc);
+> >>> +   struct gpio_generic_chip *gen_gc =3D &chip->chip;
+> >>>     struct ppc4xx_gpio __iomem *regs =3D chip->regs;
+> >>>     unsigned long flags;
+> >>>
+> >>> -   spin_lock_irqsave(&chip->lock, flags);
+> >>> +   gpio_generic_chip_lock_irqsave(gen_gc, flags);
+> >> If you're already doing it, can you use lock guards too?
+> > Sure. btw, I avoided placing
+>
+> Do you have plan to address this comment in v2
+Yeah I have it fixed locally.
 
-Anyway, https://lore.kernel.org/linuxppc-dev/20260517063754.21819-1-rosenp@=
-gmail.com/
-needs handling first IMO.
-
-It's needed for kernel 6.18. Otherwise my buttons and LEDs don't work prope=
-rly.
+I'm not sure if this has to do through the PPC or GPIO tree.
 >
 > Maddy
-> >> The series:
-> >> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> >>
-> >> Yours,
-> >> Linus Walleij
+> >
+> > https://lore.kernel.org/all/20260517063754.21819-1-rosenp@gmail.com/
+> >
+> > in the beginning of the series. My thinking is that's for older kernels=
+.
+> > I believe either the generic API or devm_gpiochip_add_data fixes this.
+> >> Bart
+> >
