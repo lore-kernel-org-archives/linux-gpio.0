@@ -1,148 +1,111 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D37472525;
-	Wed, 29 Jul 2026 10:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B734582DE
+	for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 12:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785322545; cv=none; b=egMc4iLg88RIlvFgbWWgA96wSgNgn9/Gyh6m5UC7LtZvlQ3OyALKdrdQHomQnR4TJvpherYGYbKy/7WjSrb4yRZ60CQWGxjui77iQJ/lbbvXW2njoiNnVMZk5rPdtYZ42QrEcLVnsaeWZ4bqAeavgCn3o8Frvkkd0isdkOeH6hg=
+	t=1785326711; cv=none; b=MS0P0YERdQrhFzC/ZoZ6oZCP34itGb2byGeUPqc9OtxSriyM/LU5P0PrADreMMdXkA6WOaTwpol6VBkDPjup2bI3N+DuHNLQEYyeFatDb40wwZ053viEoP9LozBU4IGKomyb00zUoOpI2UOe7zDCr8KoLA0Cd/Bu2T7MSj48FbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785322545; c=relaxed/simple;
-	bh=d37Ayru8kOKLs68umAgDz62Rv26fgWve9REj/zkDR5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PoH0ujkO3QhuibvEa/qV7UuWUXggojk65EO3CaAlUconQZd984d98x8o8UOj5S5mKTCLUnRA0QN1txuHZ1EfZ0hNaUGGtEFa96Zh1/WHpebRg7Za/fB5phkTrxL/rIIaHDXOJyqji11VRoRESKS+b8MLHMpdo3euYsEdVG/8TSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EIOqXW4e; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1785326711; c=relaxed/simple;
+	bh=GMc8rxJ/KjL6rphVFdTqYUh1ZMQzfUxb7/IFgKvy6S8=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nNe5MVkuqRBvyTF96jjF0vvQRBfzeXeZbf2BaHsCY8aitccwt3ivXLnFb5msPBZAehuPuOTpIEDRCtVintyuwgr3dpuRN+gQzDYre/kScS2IjX0LWxSMKtcP+265TIIKfBlOCjRZRUKjvYdpeFa0hjoAsvCilLjM+5Khe1AKtNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K1QQ5q3T; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EIOqXW4e"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66T7mGKp3634526;
-	Wed, 29 Jul 2026 10:55:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=hwzzCr
-	a7C0CstJYEp1tT42EDexaQnLy5hI/uUa94VJk=; b=EIOqXW4eOHkVlvGZVNb58M
-	ba4wOfAkNZof2DISqhjKeWhRPvqIP09zfeo90onRdNVKQpjlzZsUo/ITZsQhI19y
-	hflBv/chKJ/ff5NohsCEacF4pndlQ3OiO5k1oUx05p0CbRPUlgWDiZyr16CY3i2M
-	ciQWBW2tSGsBDseaqcklR3H/JFxx0Kr8d35kdbwz3xDnV+8gHeHDWD7p7VFpmOEc
-	maM/0np+RsL7T0jwO6SHOKCionyIzd7AFzOgztPml+NWeYjolhWYgGOiTEL0C4oe
-	fSyAXKQzkqo2mAtuhvDJex7Ey7Ju8mFbT4GzP3tZ7TYF00oXnJp5I3YKc0+zLsYQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4fmuwd1g5n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Jul 2026 10:55:30 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 66TAfIoj019204;
-	Wed, 29 Jul 2026 10:55:29 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4fn7fqegru-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Jul 2026 10:55:29 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 66TAtT4u31195844
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 29 Jul 2026 10:55:29 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 15C745805D;
-	Wed, 29 Jul 2026 10:55:29 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6858E58053;
-	Wed, 29 Jul 2026 10:55:25 +0000 (GMT)
-Received: from [9.43.93.217] (unknown [9.43.93.217])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 29 Jul 2026 10:55:25 +0000 (GMT)
-Message-ID: <7ee42722-f7f9-40cc-a576-5f85e3955537@linux.ibm.com>
-Date: Wed, 29 Jul 2026 16:25:23 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1QQ5q3T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CE041F00A3A
+	for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 12:05:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785326709;
+	bh=GOMKQKK8qMkZBpt81UGEM/4x78s7SDOI8h9FLDwWwVI=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=K1QQ5q3TgqwoV1ia8hWc5pSw5Q+OHVWZPXX0hrXGZrcXcZF4WO7EUy1ReP2nR2Ajh
+	 XtORVQ/b0nRrRSvrireGbD8oQbx9M2FfAodXQlNXB8+8HnWBmtX4ijs+sJGAXVd7yR
+	 Qy28SyyWX6e82MfbdzgjU0B5xfKavuSU3f03CP22FeW5gpJaTiyNoBbiKSmdulO5O8
+	 SVVQhHqnZDLCZZl5nNOgYKD0RW5jlIT+p/CqKPnofBsgD3S6nwlngvgq44lUQH9Fg1
+	 RxrPZ71Pfm5RMrI6QIUAJr9uOvTk/YIqC6oZHF1qi3HeOWZYcNdcX2VDDv32tyLatq
+	 qM4BdEiUwdByg==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5aeb8c19017so1037015e87.0
+        for <linux-gpio@vger.kernel.org>; Wed, 29 Jul 2026 05:05:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Roya8YigUOy3ox0Lll99IpyYxsCKr1g6nbfpVtah1m+DVOpAaprMkXq1J27QxA2YtRP+caJrGWhIIQw@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzfGL0skhLaLRVTIknsAsbAEHDBU7MgrGLSJF3A5yIGz79Vmd1
+	4Lvh6mWC/0FJZDQWw3awFpoGwx65rb8ToHJeqTtuP3rwUwvU9hj/eyBC3ROQQDSR932gqVQXIym
+	7noYBCPEEOvnqAT57gbrhdK9aVZK2fjjU20yk4sM4tQ==
+X-Received: by 2002:a05:6512:158b:b0:5b2:a919:f9fb with SMTP id
+ 2adb3069b0e04-5b2d02232d4mr1407054e87.22.1785326708196; Wed, 29 Jul 2026
+ 05:05:08 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 29 Jul 2026 05:05:06 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 29 Jul 2026 05:05:06 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <c6eb70aa0e1ba6e15f947c827006aa79edace05c.1785318836.git.chleroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/7] gpio: ppc44x: Convert GPIO to generic MMIO
-To: Rosen Penev <rosenp@gmail.com>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: chleroy@kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>, Linus Walleij <linusw@kernel.org>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
- <linuxppc-dev@lists.ozlabs.org>,
-        open list <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org
-References: <20260602050131.856789-1-rosenp@gmail.com>
- <20260602050131.856789-6-rosenp@gmail.com>
- <CAMRc=Me0rqs8nxrp95X-2Bjw059ahRxwKrg-NtmEt025w2m9bw@mail.gmail.com>
- <DIYGFNLIFBW7.21W9J6SUGYF72@gmail.com>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <DIYGFNLIFBW7.21W9J6SUGYF72@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-ORIG-GUID: tBTYakU7n0Vn7e8QtzOkKWyfn88bok8S
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI5MDA4OSBTYWx0ZWRfX7tiGFQIxiNTD
- F5t8lwghZ87HUEg4HyT/mIeDMhZcBtEUHVJP99SevMzAhatguMlb2ABLDOlP9LoIJ9bF3qZxMjP
- bIkxl3HjwzcDIZ/WqJj/UroK3ci+qIY=
-X-Authority-Analysis: v=2.4 cv=E/z9Y6dl c=1 sm=1 tr=0 ts=6a69dc22 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=RzCfie-kr_QcCd8fBx8p:22 a=VwQbUJbxAAAA:8
- a=pGLkceISAAAA:8 a=z9-AJV4jkBIuID--pQ8A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI5MDA4OSBTYWx0ZWRfX4yNDahZHuPoE
- NOrFq1T9oGQXP92vCYPR9wX4LBtge7vujkpR9dSj/7CsWvLffWZwzU0wihkfXfo831jmIBsvntg
- uRvg3hLSG1YEghUhQcIdUbX+ycki3SrbdhLNvOEAoEEycCTJg3I6Mq5J4y7nt7N2dvdzhnAqgjZ
- BRzgkou2UWBXoCja5phIJJsbrup57tUi3mUGHtN6O9EqWn16qX2/v6hpa/hmocKvC+4f+YZT2DK
- vRArgzWC9cUTvehvuLHd+y2tbtrsWfs31iTn/pA34KCC/YUDKvWb5U94Mu/g8hrSkIjfqVk3Moe
- VaQ9Cwz1E6W4JTEbjPINxTi1pKe5y8wkRayYJAIhK5UYQ0v3LiQsisYdYyUpOk8LSzIiLCiRvUq
- vWcjxqTRyj2+879binTZNrQNAiI5rNKzFwhksBSpwR3+1DgMW9sg4Ux5q33DmrVt+ylrzEcurph
- Bel8dKfXC8OqWcxunAA==
-X-Proofpoint-GUID: FNUgsNz_MsXy1ihe6T69R8zQNpiNvb2Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-29_03,2026-07-28_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 spamscore=0 clxscore=1015 phishscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 impostorscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607290089
+References: <2565e33e629d16d9e33086570834146bb1c962db.1785318831.git.chleroy@kernel.org>
+ <c6eb70aa0e1ba6e15f947c827006aa79edace05c.1785318836.git.chleroy@kernel.org>
+Date: Wed, 29 Jul 2026 05:05:06 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MdpYBZqTVeME2Bd6+6e76f8pU04PWiidbsfGCPSy65TtQ@mail.gmail.com>
+X-Gm-Features: AUfX_mzq7ZVpTopgcSr4EblAUlv1nRkcH2m8kyb6qKgG3g-yIZi9OofmPCxKQ4w
+Message-ID: <CAMRc=MdpYBZqTVeME2Bd6+6e76f8pU04PWiidbsfGCPSy65TtQ@mail.gmail.com>
+Subject: Re: [PATCH] powerpc: implement get_direction() in cpm2
+To: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-gpio@vger.kernel.org, 
+	RAGUENES Jean Noel <jean-noel.raguenes2@cs-soprasteria.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-
-On 6/2/26 2:56 PM, Rosen Penev wrote:
-> On Tue Jun 2, 2026 at 12:51 AM PDT, Bartosz Golaszewski wrote:
->> On Tue, 2 Jun 2026 07:01:29 +0200, Rosen Penev <rosenp@gmail.com> said:
->>> Use gpio_generic_chip_init() to set up the PPC44x GPIO chip
->>> instead of open-coding the basic get, set, locking and state handling.
->>>
->>> Keep the PPC44x-specific direction callbacks because they still need to
->>> program ODR and the OSR/TSR registers around the generic data and
->>> direction registers.
->>>
->>> Assisted-by: Codex:GPT-5.5
->>> Signed-off-by: Rosen Penev <rosenp@gmail.com>
->>> ---
->> ...
->>
->>> @@ -124,10 +102,11 @@ static int
->>>   ppc4xx_gpio_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
->>>   {
->>>   	struct ppc4xx_gpio_chip *chip = gpiochip_get_data(gc);
->>> +	struct gpio_generic_chip *gen_gc = &chip->chip;
->>>   	struct ppc4xx_gpio __iomem *regs = chip->regs;
->>>   	unsigned long flags;
->>>
->>> -	spin_lock_irqsave(&chip->lock, flags);
->>> +	gpio_generic_chip_lock_irqsave(gen_gc, flags);
->> If you're already doing it, can you use lock guards too?
-> Sure. btw, I avoided placing
-
-Do you have plan to address this comment in v2
-
-Maddy
+On Wed, 29 Jul 2026 11:56:48 +0200, "Christophe Leroy (CS GROUP)"
+<chleroy@kernel.org> said:
+> The lack of get_direction() callback in this driver causes GPIOLIB to
+> emit a warning. Implement it.
 >
-> https://lore.kernel.org/all/20260517063754.21819-1-rosenp@gmail.com/
+> Fixes: e623c4303ed1 ("gpiolib: sanitize the return value of gpio_chip::get_direction()")
+> Signed-off-by: Christophe Leroy (CS GROUP) <chleroy@kernel.org>
+> ---
+>  arch/powerpc/sysdev/cpm_common.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 >
-> in the beginning of the series. My thinking is that's for older kernels.
-> I believe either the generic API or devm_gpiochip_add_data fixes this.
->> Bart
+> diff --git a/arch/powerpc/sysdev/cpm_common.c b/arch/powerpc/sysdev/cpm_common.c
+> index 07ea605ab0e6..b5d200e3ad68 100644
+> --- a/arch/powerpc/sysdev/cpm_common.c
+> +++ b/arch/powerpc/sysdev/cpm_common.c
+> @@ -181,6 +181,18 @@ static int cpm2_gpio32_dir_in(struct gpio_chip *gc, unsigned int gpio)
+>  	return 0;
+>  }
 >
+> +static int cpm2_gpio32_get_direction(struct gpio_chip *gc, unsigned int gpio)
+> +{
+> +	struct cpm2_gpio32_chip *cpm2_gc = gpiochip_get_data(gc);
+> +	struct cpm2_ioports __iomem *iop = cpm2_gc->regs;
+> +	u32 pin_mask = 1 << (31 - gpio);
+> +
+> +	if (in_be32(&iop->dir) & pin_mask)
+> +		return GPIO_LINE_DIRECTION_OUT;
+> +
+> +	return GPIO_LINE_DIRECTION_IN;
+> +}
+> +
+>  int cpm2_gpiochip_add32(struct device *dev)
+>  {
+>  	struct device_node *np = dev->of_node;
+> @@ -199,6 +211,7 @@ int cpm2_gpiochip_add32(struct device *dev)
+>  	gc->ngpio = 32;
+>  	gc->direction_input = cpm2_gpio32_dir_in;
+>  	gc->direction_output = cpm2_gpio32_dir_out;
+> +	gc->get_direction = cpm2_gpio32_get_direction;
+>  	gc->get = cpm2_gpio32_get;
+>  	gc->set = cpm2_gpio32_set;
+>  	gc->parent = dev;
+> --
+> 2.54.0
+>
+>
+
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
