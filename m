@@ -1,210 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB1F623909F;
-	Wed, 29 Jul 2026 08:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1674F39C006;
+	Wed, 29 Jul 2026 09:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.59.177.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785312209; cv=none; b=XVsFZr5TWbEfPif9aVXysx4dNao0qDKKAPhjC4NjGtEsRVFwZoMc13b9GcKTH1Ut3uf1B+CKew1V/P2JueEe9ao/+qZg2anBjbjR6CS95NQc/qfJ1BR+1FzDLMPriUnfX2QBA5CDgAxxwuik3T/e+U0cABEhxPu2Ne4XTCOMH8E=
+	t=1785317269; cv=none; b=LSuBIEyk1aozCcIvYvCL2RJC8MC+pOKKhOqbQiMUXSUtCon2yJ36O4dVZ91wX3jUEkExUArl9fdGqWjgNS78Ygp0D+9yVhhCCkg98Z3jaG3M1i6K6qpEugNeOeJSlZC7GNQ+hD66HZ2tDhBhRuPfuaE0q72jrT1z0hUuTWG24ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785312209; c=relaxed/simple;
-	bh=GnZcwKI+XfZvnS2Df1q/BSFAho55OGNCVk7vAkSMC1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AxauJaCGInOmf4erwoAZ11/SWC//3e/IiTWB852XvgXn4uszaJWrBG/5AKL/EtJqpS7tXSCu/8LrTeWmJ08crpxi+3Ed6bYLMer9XfiRQ7iEKaRH80rWIY6nqVwcWmAAB9m5N5EKZ5b0eR1Htk71xcySGIMZAuPCgHjsosY/j38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IQ179P4C; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785317269; c=relaxed/simple;
+	bh=a8vz2kdE1B+R7GzcFtSt/0b0yQsJVgqtNXxc2x0R2BA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fJRHql44+IjA0DYG39xicA11t0qVNpIzC8E/JAb5xVC/5EVPkBCNyVS4ExSPbecFq5mAmysQ7BNtOlKjFgeeSjjiBuvsR2zq4tN8+c67f71vSIM7VsueHPY1xe2YCaPr/01D3j93O9WLpR4/TXosaWEYQwtGBdEsBPtJ0gjVVnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=b1+wJS4w; arc=none smtp.client-ip=52.59.177.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IQ179P4C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 449DA1F000E9;
-	Wed, 29 Jul 2026 08:03:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785312205;
-	bh=JteUNebrq8Y5BoF6qFLQtjZt8zz9HlOcVSVsWZpTXkA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=IQ179P4CWgJQUfIO/xTq6P8zIgK/o1owHEh2nTPZngI7nTSouMh1AAPQGX2SPtybA
-	 9TNXfo9m0yvDhta7jDb+MjlOM2UPaKBX6ll6ehaYxKrFmGHtkCJCgNwwZYXl0RZ/B6
-	 0mEjmr1SfBPBoXAMwSPV3ZVrywogrGNy1UCka6tQnyDJUmv/1z7pQPylwCbvK8LRyI
-	 3i83/lt0DkSA6bGzzWCpRajoLUkcSs/IaBEdUgYlnY5PODfPvLa/M1wdw3LG5ubFso
-	 5pH8H4j2+JCn0VVtW4HoWrC3k/eSYM+NKpRaG+XeObT2VvRbmtjcuZGx7TCISUsDmc
-	 a42YPQ2BWxJyg==
-Message-ID: <986fac76-3bcd-4523-a902-701027aff1bf@kernel.org>
-Date: Wed, 29 Jul 2026 10:03:16 +0200
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="b1+wJS4w"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1785317219;
+	bh=0czDE2Baf5VXcACHNaYCOnmgs1DwgYJgguBQX3abr7U=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To;
+	b=b1+wJS4wBtcvD6CFXUk7zeIlIIYkcrFKZgTl+UA5BwsSP2i/O+IlAIumhqSAOS4V7
+	 55zfJ8cP8WodPjOFyoNWB2xzPtbzy9cbvL4ZyuaoNAwW8oorZWvukpwpUg5MJAKe9d
+	 557qtGItujdrTK73+qphSsOfUp6RJDlCQPSZyFxI=
+X-QQ-mid: esmtpgz10t1785317213t4279bf81
+X-QQ-Originating-IP: /FxxjMWtEwRgOyb56xO01hIfa0l/DYeEUl5M01s6frE=
+Received: from = ( [120.237.158.181])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 29 Jul 2026 17:26:51 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1701228897843642483
+EX-QQ-RecipientCnt: 7
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Date: Wed, 29 Jul 2026 02:26:42 -0700
+Subject: [PATCH] pinctrl: spacemit: validate pins in pinconf callbacks
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: Add Axiado SGPIO controller
-To: Petar Stepanovic <pstepanovic@axiado.com>, Tzu-Hao Wei <twei@axiado.com>,
- Swark Yang <syang@axiado.com>, Prasad Bolisetty <pbolisetty@axiado.com>,
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Harshit Shah <hshah@axiado.com>,
- SriNavmani A <srinavmani@axiado.com>, Karthikeyan Mitran <kmitran@axiado.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20260729-axiado-ax3000-sgpio-controller-v2-0-976f4ed11438@axiado.com>
- <20260729-axiado-ax3000-sgpio-controller-v2-1-976f4ed11438@axiado.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260729-axiado-ax3000-sgpio-controller-v2-1-976f4ed11438@axiado.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20260729-spacemit-pinconf-validation-fixes-v1-1-edeaff398fb3@linux.spacemit.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXM0QrCMAyF4VcZuTZQC5vTVxEvYppqRLvSdEMYe
+ 3erXv4czreCSVExOHUrFFnUdEot9rsO+E7pJqihNXjnB3fwR7RMLC+tmDXxlCIu9NRAtf0w6ls
+ MI/XkhMexDwM0Jxf5DY05X/5t8/UhXL8wbNsHkATQi4UAAAA=
+X-Change-ID: 20260729-spacemit-pinconf-validation-fixes-fa5a0ec885d6
+To: Linus Walleij <linusw@kernel.org>, Yixun Lan <dlan@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2296;
+ i=troy.mitchell@linux.spacemit.com; h=from:subject:message-id;
+ bh=a8vz2kdE1B+R7GzcFtSt/0b0yQsJVgqtNXxc2x0R2BA=;
+ b=owGbwMvMwCU2g/N9w09jE33G02pJDFmZx6OmOR/X0Jk1WWPPJe2ZX3Y3TrjQcvm+X4X7bHc3b
+ 98dj2/1dpSyMIhxMciKKbJ0P+DZVuATZVsgUOgLM4eVCWQIAxenAEwkeQLDfx+b+9OP2uw5btZd
+ dmNFp/L5Zm+tWzxrBKMDr7YorFuU9pThr9ikqnO57oa1kx8pF855p7cn6dm9o+xxbxburbA4Zt0
+ cwQsA
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=openpgp;
+ fpr=3FE5535CF1B0E658E57DB59BAE1C2FBEA7DB42E1
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: MFdGPHhuqhNoWo7ddIDzrYNsbIr6ITpMOzrVfwiwOPW2uZUHVeX9Zr5H
+	tzk/4zkr0yNtpG5UKsxYRb242S1UABddrsg75QM7Z4voDC2KXAdOnz5NxH12LVj14C/1Dt8
+	ue/DR/bvlwNjr4fofg+rifBLNA09omnm6b8hYZgtSB6mTd6XfLbuJ6qO7P0FOBXAW32q4AC
+	0uecuHmBhQKaFiiwM5D8sEyyvQPnIwWmM4Fypbh76C2YLxBNrDX14jMV06YfL1/xBggZj9a
+	SAg+C8PZuQXwfPFIKZLvWON5gTeSDeICuc2N2p9kHf0v1Xs0Am0TMu5+Oh9JpjDcghphTHj
+	siqhs9cDYaKm5WEybc2OBOlqIaw6+c9c1xW4IEi+jYW/GDMKhv393FWf+SXw1iCDw937lDH
+	pw+GmDl5N+l5WTfoGoePPRXYXai33DNwGtJxImY4zzqgiU4JbponcoxIVktY9lToCCBaWlX
+	a54eQVCbb2Abh7f24n8UkamdEHXs4Njc7vTQ2RzlHnYJilVbotnlEJ+ISLR6d44AYmZErMo
+	okDflt3LDUJkmsHzhaThN//3VM2wCRdfGqrM7AhKEQhmkCYuzzEaAZEBfDvWgarMWcqFQ+4
+	kg4dtgz9rpbJ1w285JIBujyhTPBKVPEKpwU6MXpXe03rHaQiDjILDawY9oyRk13mD6Ll2kJ
+	KXDqy403oeSYZy+uFD4VAm1WXzBCmlnzDXItbOuqlFoFP4Etlt6nzVu8e77UMSlEiNz1j3f
+	8toSLl5wc+TGdSLm8cmD4v1t8F8Lv6W8k5MsOZ+kiK+DWvrtdP25B7o5t+hMgf2I+8BNdoi
+	/dV7q9KqUc9WiMOR1ZQYJVudHSt1D8kTOLtXQs6TCEXCGfihIx/xV9ZjDtNacFLfJnBpZey
+	mb6HwPMPfZTo16+eYIZMjE2XMIXvAhKEHFsp96AFFgJt3voeHpEVS8EQz3rd/wx9RkUlNIR
+	cx8jAptUTDuOEhacmxOkJ2vjfEfABMJ/93wFipeoOnV2PC5XVCpMULWl7qApMqZJtdQyG0+
+	lJdNQ5RgNgCZ4Jw4RT9uPzTtzkPODWiqjwozW0V/16OyAV/c+9RN5GDcrcyGs9bkABx1s4Q
+	N5E6J/3XAGRyhQMJPufRes=
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
+X-QQ-RECHKSPAM: 0
 
-On 29/07/2026 09:02, Petar Stepanovic wrote:
-> +description: |
-> +  The Axiado SGPIO controller provides a serial GPIO expansion interface
-> +  that multiplexes multiple GPIO signals over a small set of physical lines.
-> +
-> +  The controller operates as a shift-based interface, where output values
-> +  are serialized on a data output line and input values are sampled from a
-> +  data input line in synchronization with a shift clock. A latch signal is
-> +  used to update output states after each transfer cycle.
-> +
-> +  The interface uses data output (DOUT), data input (DIN), shift clock
-> +  (SCLK), and latch signal (LATCH).
-> +
-> +  Each SGPIO position provides one fixed-direction input GPIO and one
-> +  fixed-direction output GPIO. Input GPIOs support edge-triggered
-> +  interrupts.
-> +
-> +  GPIOs are organized in banks of 32 signals, with registers controlling
-> +  output values, input sampling, and interrupt status. The number of GPIO
-> +  lines depends on the hardware variant.
-> +
-> +  The controller detects changes on input GPIOs. Interrupt events are
-> +  aggregated and signaled through a single interrupt line to the parent
-> +  interrupt controller.
-> +
-> +  Register access is performed over the APB bus. The SGPIO shift clock is
-> +  derived from the APB clock using a programmable divider.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - axiado,ax3000-sgpio
-> +      - axiado,ax3005-sgpio
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    description:
-> +      APB clock used for register access and SGPIO shift clock generation
-> +    maxItems: 1
-> +
-> +  bus-frequency:
-> +    description: SGPIO shift clock frequency in Hz
-> +    minimum: 1
+Pin 0 is a valid pin ID, but spacemit_pinconf_get() rejects it by
+testing the numeric ID rather than the result of the descriptor lookup.
+It also fails to reject nonzero IDs absent from the SoC pin table before
+computing their register addresses. Check the descriptor and use its pin
+ID for the register lookup.
 
-Such property is not allowed. Why you cannot calculate it automatically?
+spacemit_pinconf_group_set() validates only the first group member when
+generating the configuration. If a later member is invalid,
+spacemit_pin_set_config() returns -EINVAL, but the callback ignores it
+and reports success after partially updating the group.
 
-> +
-> +  gpio-controller: true
-> +
-> +  '#gpio-cells':
-> +    const: 2
-> +
-> +  interrupt-controller: true
-> +
-> +  '#interrupt-cells':
-> +    const: 2
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  ngpios:
-> +    description:
-> +      Number of SGPIO positions. Each position provides one input GPIO and
-> +      one output GPIO.
-> +    enum: [128, 512]
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          const: axiado,ax3000-sgpio
-> +    then:
-> +      properties:
-> +        ngpios:
-> +          const: 128
+Validate every group member before writing any registers so malformed
+groups fail without being partially applied.
 
-else what? 3005 has 512? Then these are implied by compatible, no?
+Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC")
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+---
+ drivers/pinctrl/spacemit/pinctrl-k1.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - bus-frequency
-> +  - gpio-controller
-> +  - '#gpio-cells'
-> +  - interrupt-controller
-> +  - '#interrupt-cells'
-> +  - interrupts
-> +  - ngpios
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    sgpio@a000 {
+diff --git a/drivers/pinctrl/spacemit/pinctrl-k1.c b/drivers/pinctrl/spacemit/pinctrl-k1.c
+index f0b5ebd9e223..c3a7538783b8 100644
+--- a/drivers/pinctrl/spacemit/pinctrl-k1.c
++++ b/drivers/pinctrl/spacemit/pinctrl-k1.c
+@@ -503,13 +503,14 @@ static int spacemit_pinconf_get(struct pinctrl_dev *pctldev,
+ 				unsigned int pin, unsigned long *config)
+ {
+ 	struct spacemit_pinctrl *pctrl = pinctrl_dev_get_drvdata(pctldev);
++	const struct spacemit_pin *spin = spacemit_get_pin(pctrl, pin);
+ 	int param = pinconf_to_config_param(*config);
+ 	u32 value, arg = 0;
+ 
+-	if (!pin)
++	if (!spin)
+ 		return -EINVAL;
+ 
+-	value = readl(spacemit_pin_to_reg(pctrl, pin));
++	value = readl(spacemit_pin_to_reg(pctrl, spin->pin));
+ 
+ 	switch (param) {
+ 	case PIN_CONFIG_SLEW_RATE:
+@@ -689,6 +690,11 @@ static int spacemit_pinconf_group_set(struct pinctrl_dev *pctldev,
+ 	if (ret)
+ 		return ret;
+ 
++	for (i = 0; i < group->grp.npins; i++) {
++		if (!spacemit_get_pin(pctrl, group->grp.pins[i]))
++			return -EINVAL;
++	}
++
+ 	for (i = 0; i < group->grp.npins; i++)
+ 		spacemit_pin_set_config(pctrl, group->grp.pins[i], value);
+ 
 
-git grep sgpio@
+---
+base-commit: f5098b6bae761e346ebcd9da7f95622c04733cff
+change-id: 20260729-spacemit-pinconf-validation-fixes-fa5a0ec885d6
 
-No results (except well known poor coding style platform). I already
-commented on this.
-
-> +        compatible = "axiado,ax3005-sgpio";
-> +        reg = <0xa000 0x800>;
-> +        clocks = <&apb_clk>;
-> +        bus-frequency = <1000000>;
-> +        gpio-controller;
 Best regards,
-Krzysztof
+--  
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
+
