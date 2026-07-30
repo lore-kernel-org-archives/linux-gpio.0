@@ -1,87 +1,87 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B599B41B37D
-	for <linux-gpio@vger.kernel.org>; Thu, 30 Jul 2026 12:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7576A4189B9
+	for <linux-gpio@vger.kernel.org>; Thu, 30 Jul 2026 12:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785412847; cv=none; b=FhPabD7FEF7JBnb+RRz7DPmuvqnZXNKX5Rh9N35bTPFbQku3prctxThslgjqw8VSC0Ip+eVuZiOh5eNSpkZfqt1bCs5zXxdrqYo2uaSks6z4q1qiH3K0HIb85RJX/5j+bUB5+dtM35NwjwnzJX81XRYObFZfcAw+U11KQUwoicI=
+	t=1785413079; cv=none; b=s4THQZHMgOS4q1iimIVC5ikAqZ0GN5hekEvehhQWqZagppDOJ63pudk+Z0PwPg6jfcJPUP3RtejgASB7cKKhcS7k8xpXxNULij0rpZ0R5BoPdM0lNR3LruNqsQql4hyuazm//cvV7lRm5mWAs413+UyAtaXAx2r1wpQG+Ft08yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785412847; c=relaxed/simple;
-	bh=/iSzGV52+3U2s77RWrfVZYZelWGYnoZNGDDuhVf8W5w=;
+	s=arc-20240116; t=1785413079; c=relaxed/simple;
+	bh=I5BgxvP34n+zMbhzzcluW4RhyvS0Cz4tNpajXB8Dj0o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I0XWALX03X7wAFP6tlA6YfePEC6HTKrLBRb1g+drowsSvZlkBAH3n4I4mdd8CSImOUVjqjpJiRhXkt2UmA5/TAM0+fFEElwVutE7IRTZvC3OpcZ/bRRKEohkJCv8eBdEBl0P20CGRvFlYwEGhDTmvfNp9vtrm/zdppme+q6az78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aaDMJ+HO; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=iaHyHSPu; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=nb1L624UMCLgNBq5qyjqcYHu1PWvs4bbA59gr8WTd5jEqY1aS66tWQunSE6xOofW+iBW8xxtsW96ZbzQf2/Q4vTioBs5eSMRgXhsWJtP55GJKsrdJJEC/r9C7VFdrahMzS5KQa2EkZxs2yQMzUC/dEr4plxKO1etrTrsFmZmd7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VxApVZSm; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=CVp0wPAA; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aaDMJ+HO";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="iaHyHSPu"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66UA2RNc1663962
-	for <linux-gpio@vger.kernel.org>; Thu, 30 Jul 2026 12:00:45 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VxApVZSm";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="CVp0wPAA"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66UA2fo7735495
+	for <linux-gpio@vger.kernel.org>; Thu, 30 Jul 2026 12:04:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9NtWAH7jHzFcunMlxmfj1lEq54XTtktQ2j6SycD2aU4=; b=aaDMJ+HO1KRcD2CI
-	FR5IUteiUFZPJ68QAqKsp970DL03HKkjvsC3WVx2Ukz23MqpsRZ4Y9JNKxfb34uL
-	exE6HLAxVIjWCGB/ZIypBmrrKG62CuLDZN67IYN8DUEQW7eNzLXHhWOLIVXym/l1
-	xaM05V3FA2cPi637CVxiA3AoVZWQXAQ22mjyhJXD3gxYB1jGIJdRXSQjUdZdMbFy
-	+Z0WoFbjc4RgFKQsRiNKXJkupvDINkSP/wmaR9+Xz5Jv0ZTL0kTtyQBdq6vefZHO
-	D/e4ptbOGDGKSf49aAM2s3zYwBoVeG4esKGmh5s0zUdRuD76O4fsvzxJfHHvLHAf
-	b3TMHQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fr3h1rsmm-1
+	Y+FHdhO5WfA1/EwScHXL3m5MMhllcwYguNR1eoqGLJ8=; b=VxApVZSmWdoJSwUo
+	MGZbBJ27MkUlPpoENy82onsvqwj1TM2o7nONoxVwejHfWL+bxYRRUG6J9HNq/ulM
+	KcxMzZFEyABTtlceMsC8iqHgWvwowkrdsknH4rSX3Hj8y+YomuCxlodN7bKlljHQ
+	BZcdDua+QRgL+T27k/EhsoU7SDVVEJl3LhpG+a9giQF5SkqGvz5VTW7aD1NKRtZe
+	5NZl0OC23GMHmQA7EsuwaF5O1etPc9RTgfCpa7Pu668WLS7NqZIevk9yoTcQCiqe
+	Pgw3eMJh0Zj6EYh9QPun9T5wZh0Jtrf9fWJFcpyG+74yIUOQTP7I8ebSqcjJa97E
+	ST6Shg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fr4a2ghw9-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Thu, 30 Jul 2026 12:00:44 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-51c12e43b98so22048701cf.1
-        for <linux-gpio@vger.kernel.org>; Thu, 30 Jul 2026 05:00:44 -0700 (PDT)
+	for <linux-gpio@vger.kernel.org>; Thu, 30 Jul 2026 12:04:36 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-5174a23afcbso20972201cf.3
+        for <linux-gpio@vger.kernel.org>; Thu, 30 Jul 2026 05:04:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785412844; x=1786017644; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1785413075; x=1786017875; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=9NtWAH7jHzFcunMlxmfj1lEq54XTtktQ2j6SycD2aU4=;
-        b=iaHyHSPucIr4UO6nO9QKM0o6ikGymrEdmMIqH1yGu46Wivc9bm13/EyBmnPphpO+RQ
-         6JIIzcCz8MVU6euq7bXcQzI8uk0i8G6Kf9ZTzhrudDmGDs/3+KUJ8YecRscg2pUdIdpt
-         0dOURtldNPrrlXhPQq0niYjiuZbm2hsgyHphigSzzG6vMDiy9dzigeR1JKvDMwuNzs0N
-         xcHvem8s34FfbNGMb2eU61pvVAQH3Crs8KeJz8mlGIqNzx0EiZbf5wa2Pst3WWsoGU3k
-         T1v0VlFG2Qpz+NoZqj2BRsi5/AeS1qjwyXTo6NYnQ78q8vXsQVZAZmlrmlPFyq26aAOJ
-         1CDA==
+        bh=Y+FHdhO5WfA1/EwScHXL3m5MMhllcwYguNR1eoqGLJ8=;
+        b=CVp0wPAAGH9oqx86Dbbzm8+6bDPGrl906QURni5opG1lnwdTthWOtGnVIkMJIDtHVJ
+         g7PYHvevIXx6rn9vLfJm1JWkSO8tmjGv1A6laiFi3K39yzWE9KgigNldoD4CyteEWpdQ
+         39txHHlblqCBGejkxeJynk862ZEDWkVMdsdQxSfAFIlScroOsfiBz5RpGZ6t9y+TkxZv
+         ePUHBuHbByhvVCaj/9yTGaBs3zg9kaQd3djvtggn+TEVN86ZVvpqQmiVnCJmVTUbtB5/
+         QwvCJ/uNkBE4fGjC1pwmtRDuspr7uWZrwFJqZxiV46Cys6VRc3aub2K0BsJOFYHl3Om+
+         3Vfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785412844; x=1786017644;
+        d=1e100.net; s=20251104; t=1785413075; x=1786017875;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=9NtWAH7jHzFcunMlxmfj1lEq54XTtktQ2j6SycD2aU4=;
-        b=fBZ4zGkxgYzn59CY4qh0DNvmXQXgS0+NviCHUXVIo1YE18sDqEwEXiohX+N9BNGAaY
-         fCC+hPC7AEMnFWMoNt7SnMG/pSY6U4K1DBHT+u1VkZe6uSt2eL8Ems4wyasqnuTWtr3w
-         F21eqhrK4UJsLmAY0K/uLQhtYgz5sIR32N5SI40Lx5TA5tDo46iGp2Do/bNw6bP7I/Zb
-         vq8K0pxE8RDSQYgFDyS1VUh8VWF/nY+g5bw66X87LxoFCkv2BEthZw231k9IvnQakT12
-         FHxQvJmpeG3yGa/hOGkxAYeTOJwpleVzAhU8vd4KXH7hp1VqI+P8OhF5qSOy1anUDaj/
-         x/+w==
-X-Forwarded-Encrypted: i=1; AHgh+RqmInM52rNmYlibi6RVODIr0VwShMU4d72ZQ/KyhkqXPU+SfdwJgnKhPrW1xKVGS4Hq0Logb+vAF/sa@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIqbFUBCuio6EErV9IbIOSZ15nzklqCZVYqvB7lNAQX5z1evgc
-	z5ccqcKRPTDHGm2+MVj0Ysw4BzD1oHUNWt5t8EQcn5S7bOwP7nPSkxEPb6w88JexkN0Mr/dHV9z
-	qKI3bjudfnYfnpDqCPuc9relNXsCkCA4Ew4q6gc13KerXhUhFbvuF4CY/nCpBP7pX
-X-Gm-Gg: AR+sD10t80wmZOS4cL3mf2W/lP9oymWm57+B2uH6GhiM6v0vlysKk8PJblERioS6/nw
-	6RKhIP04SrgFe4deltPUjdWnfG4LhVflztbxkJ8YtRZfCSra16UkX0ky26/2PKIAJ0/ntL97b+X
-	GiqtT5Y0ibCjLZvHU8a+d7P9nhVOLvE0JmvCgKybaARKRn1fNYbcVf63RcUz2C1jFwd3neNt2wN
-	bQMAHAyIvzUqydL2Mmgf37SH6heB3cbJY0mASvwEVtz+JcWMKrirQKJgnpqqXDkTs7LUP+gB8Jo
-	1tIRamlUJ5LfPxIq7cT3c7uSPPs0ZghBc5sckXSqQD0AEIQveShIICdomtQOku4woREj7lPNM6y
-	SY3K0+TbsIMswE4H9hppB63Rsw94=
-X-Received: by 2002:a05:622a:22aa:b0:51c:7b13:62fb with SMTP id d75a77b69052e-52b3874b665mr22517321cf.81.1785412843641;
-        Thu, 30 Jul 2026 05:00:43 -0700 (PDT)
-X-Received: by 2002:a05:622a:22aa:b0:51c:7b13:62fb with SMTP id d75a77b69052e-52b3874b665mr22516521cf.81.1785412843064;
-        Thu, 30 Jul 2026 05:00:43 -0700 (PDT)
+        bh=Y+FHdhO5WfA1/EwScHXL3m5MMhllcwYguNR1eoqGLJ8=;
+        b=IPeQ3TtmqbxB6YO8kHFTOBnlMBx/Xb981o4FN4qIH/P/UP3DCbXBbjN15DThdV1yIc
+         MXiFfBCvp7+Qj1WBXFK+uEqmfrnYF+vd0TCOE2HAlOzROcXQ3+3/enKU1g2bz1qZkF5V
+         gF5FXvWyhLMim9WnYkJYnkINaclwgaNV8v/O/Cw+KBJVulqOPVAhRinwP5Zo8dmuuGLz
+         MMnKlxr4WLJ219H25FbPOZRXmcMO5z5ZtuZ0laD41mjm0kATjQEpO3twfJdbmXq7+cyo
+         Ek8IReCmtd/a+321lkpbUafrPrU/DSvnkmA7ks7x/utaNZK7bzjg6RnkQAtA2opwsuBz
+         zO8A==
+X-Forwarded-Encrypted: i=1; AHgh+RpP/NZDvSYReXF+6LwIsYzHfu/tX5oL6wUExqLXurZiuF+NeRY7Rz8BXZEa1z0vgUyLUh/KN2zgEyK3@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq7Gvn10yPj0+cjimRG60U+DEpJPLNDzj161HNGIC90Yd5NreG
+	NDLig2doopWsMH7SBhUeA783EXSHXqThiZlqW+WEL3lBHmLPhVxsXACgQz4cxJC/vOFfW0YMzoY
+	KA0kK2aNLhJt83t0ebpHyfwN3vNZ1MYZJJDYzTsAk+A32MA8Ke+GNQC6jswMlvePDgiL3F68h
+X-Gm-Gg: AR+sD10InjmuCcVPA477VLIHldKicUAn5XPqLLnujnShp4zOzP5PAyqgPX8niexqaDw
+	xhGKAursCXMSK7c+SyOtSQjictDWqsET1sBaz1GRAE71pS8ot63bpUT3o9hiL39VlaLrn0u4o/+
+	DQPqNnVIQvb1r7b9rRb37Rcnj8ilq74Rv/OrdTrn6v5A5UNbjIr3ObucMIREL8p5DDpXbehJIc5
+	GgOfS2vtDNSP74AYFqDHgbYipUmzyLmEbb9vibthURc/M5obgm3SEqLbSg7r5aFIkyTeKyeRwsi
+	Va497tLBBduqiV3BH7f+Mcnf8XHSP3NtnT63Uo58mHUKRpmmx4tNKdr0atzV4s8YOKFSAhG+1C6
+	1GU3/aHPUkB2ZlGSXUni4IvtjGs8=
+X-Received: by 2002:a05:622a:14c9:b0:51c:7b12:1202 with SMTP id d75a77b69052e-52b386c73d5mr21919791cf.80.1785413075398;
+        Thu, 30 Jul 2026 05:04:35 -0700 (PDT)
+X-Received: by 2002:a05:622a:14c9:b0:51c:7b12:1202 with SMTP id d75a77b69052e-52b386c73d5mr21919061cf.80.1785413074645;
+        Thu, 30 Jul 2026 05:04:34 -0700 (PDT)
 Received: from [192.168.68.105] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-c1fa857c8e1sm61431466b.19.2026.07.30.05.00.41
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-c1fa8b76116sm59455366b.41.2026.07.30.05.04.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jul 2026 05:00:42 -0700 (PDT)
-Message-ID: <8f41fc3b-04e9-4e8b-a07a-d2837f569b57@oss.qualcomm.com>
-Date: Thu, 30 Jul 2026 13:00:41 +0100
+        Thu, 30 Jul 2026 05:04:33 -0700 (PDT)
+Message-ID: <b882ceb5-bf08-4ab1-9f01-216733ab656e@oss.qualcomm.com>
+Date: Thu, 30 Jul 2026 13:04:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -89,8 +89,8 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/5] ASoC: qcom: qdsp6: Increase Q6DSP_MAX_CLK_ID for
- LPASS LPR vote clock
+Subject: Re: [PATCH v6 4/5] dt-bindings: pinctrl: qcom,hawi-lpass-lpi-pinctrl:
+ Add Hawi LPI pinctrl
 To: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>,
         Bartosz Golaszewski <brgl@kernel.org>,
         Bjorn Andersson
@@ -103,69 +103,176 @@ To: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>,
         Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 References: <20260724141708.2212057-1-prasad.kumpatla@oss.qualcomm.com>
- <20260724141708.2212057-3-prasad.kumpatla@oss.qualcomm.com>
+ <20260724141708.2212057-5-prasad.kumpatla@oss.qualcomm.com>
 Content-Language: en-US
 From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <20260724141708.2212057-3-prasad.kumpatla@oss.qualcomm.com>
+In-Reply-To: <20260724141708.2212057-5-prasad.kumpatla@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: SxBHJ5PRpz6FSGsOi4yNyzRHFpArv1yT
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzMwMDA5MCBTYWx0ZWRfX/oBnzvCjyiqG
- TEFW7UHW4Ic73gjS7pD+t/5PV07G88KqP3wfKYo8e86reSutVOiEwdMMXkjccwPWjiQt4euzaE+
- LN54F4jFDZKYpwZGiPvCXxgf0JG24qSm7T2Df2REXPzdtBtkdvMyL9huMrYnInn+hT70TwtWU1z
- iLUj15juT7xOfbQbCgNKygUins2dp9AJD8vIOkg5WPTzpc7Z9ls3bcM8UhmjwJZhW0hfzSkBPZM
- WMNHrMmje96dmCPAUrHU14WrS6fN5R7s94b2AaiJ+2lpTsU2sDG25MWTXGhgyfS9sCJsMmPc5ld
- UkBfSgyQkzx3HMgMrluJrXNpi2dnjuDycMoOQ9fKeGDCszaUl7/bc3cGRfRSfhMoRFQqCildiSx
- 15fuQ9BGvjJQX2yXBdrJ0rA/MB9LkqbZdKEQGIeEmI1Sdilhu8Od4yKOSIZPm9mOATsU7hiiH7g
- Vo8Y4u2N9KoHWeXnbtg==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzMwMDA5MCBTYWx0ZWRfX/tDKUCF0OZ22
- VtIRh/c3ArjXsRbvPhhBz4zfSOuHhJd17EDVr0ClSyaL1ZjxNsylQugZq8UrwXoYNr4J+6TTqV4
- q55xtlNDe4Ftx2DnWn5768FVu80UNZk=
-X-Proofpoint-GUID: SxBHJ5PRpz6FSGsOi4yNyzRHFpArv1yT
-X-Authority-Analysis: v=2.4 cv=K/QS2SWI c=1 sm=1 tr=0 ts=6a6b3cec cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+X-Proofpoint-GUID: aP43VbggMeo2FoeasCfuTX8Ypl5M94gh
+X-Proofpoint-ORIG-GUID: aP43VbggMeo2FoeasCfuTX8Ypl5M94gh
+X-Authority-Analysis: v=2.4 cv=IoIutr/g c=1 sm=1 tr=0 ts=6a6b3dd4 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
  a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=EUspDBNiAAAA:8 a=_tC8s0EdK-zx2rgeGFIA:9 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=DP1ofWnUcdAMOgPlYdMA:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzMwMDA5MSBTYWx0ZWRfX7YstVlMLzNxR
+ rjeWcS9Qy+f8wmF1ka7Kep1t65EOHFT4sX+dhvF+EoNj8Vk2PiyMWvjBtRAvkE0QX050qoSPwMv
+ NlOO/I97JIq6sgY6NK5u+L3iS4oGVUnf1mamAjrAbdLdZZRtf+tbh1b5sEHEtNH89KHHgOGXm0y
+ Tx6u8oK0kIj2uV5jTnOZJnMOZbNoD03dM2yg84MR14EK6ckP1EmgkFM2rKpa6OmPIdSii+tfaup
+ M+iBJrr/S7T7DRGKqLFXVqAxyefId03nau9SDXi8lvAPS2T4RVVCt/TSBJqpFLiH6mRHojhnSbq
+ V3JwlJyop8086FOcN1wu4wm2HLQp5ifu0dPTBDqEcoaY0lvOcGUrjuZacahO/0BLwO2NJlGb9FW
+ H1WHhmuFmA8cpTs5cnOuQB4Yl1Z+RmGtVN3WGBD3YT9SWzGJq5dwiifP2K06uCymDiLqnfl+W19
+ VaBhLQMqndV5LnsVP8g==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzMwMDA5MSBTYWx0ZWRfX54pkaDR4RXo8
+ Sg3rijOzKpFsuYlR1Zau7BB5W7J5wBHusvMnxtwkwEd7ZHBnwmyq+OSnls2KfxkWjK//5dts0sb
+ qXyYdV+hexzD+D22A1qGgx0X4s6tU/0=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-07-30_03,2026-07-29_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 impostorscore=0 phishscore=0 adultscore=0
- bulkscore=0 lowpriorityscore=0 spamscore=0 suspectscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607300090
+ bulkscore=0 adultscore=0 impostorscore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 clxscore=1015 malwarescore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2607300091
 
 On 7/24/26 3:17 PM, Prasad Kumpatla wrote:
-> Q6DSP_MAX_CLK_ID defines the upper bound of supported clock
-> identifiers in the qdsp6 LPASS clock driver.
+> Add bindings for the pin controller in Low Power Audio SubSystem (LPASS)
+> of Qualcomm Hawi SoC.
 > 
-> Increase the maximum clock ID value to accommodate the LPASS
-> LPR vote clock identifier.
+> The controller has 23 GPIOs (gpio0-gpio22) with functions including
+> SoundWire, I2S, DMIC, VA I2S, ext_mclk1, slimbus and lpass_lpi_dbg_clk.
 > 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 > Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
 > ---
+>  .../pinctrl/qcom,hawi-lpass-lpi-pinctrl.yaml  | 109 ++++++++++++++++++
+>  1 file changed, 109 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,hawi-lpass-lpi-pinctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,hawi-lpass-lpi-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,hawi-lpass-lpi-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..af68581750cf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,hawi-lpass-lpi-pinctrl.yaml
+> @@ -0,0 +1,109 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/qcom,hawi-lpass-lpi-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Hawi SoC LPASS LPI TLMM
+> +
+> +maintainers:
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> +  - Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+> +
+> +description:
+> +  Top Level Mode Multiplexer pin controller in the Low Power Audio SubSystem
+> +  (LPASS) Low Power Island (LPI) of Qualcomm Hawi SoC.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,hawi-lpass-lpi-pinctrl
+> +
+> +  reg:
+> +    items:
+> +      - description: LPASS LPI TLMM Control and Status registers
+> +
+> +  clocks:
+> +    items:
+> +      - description: LPASS LPR(Low Power Resource) voting clock
+> +      - description: LPASS Audio voting clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: lpr
+> +      - const: audio
+> +
+> +patternProperties:
+> +  "-state$":
+> +    oneOf:
+> +      - $ref: "#/$defs/qcom-hawi-lpass-state"
+> +      - patternProperties:
+> +          "-pins$":
+> +            $ref: "#/$defs/qcom-hawi-lpass-state"
+> +        additionalProperties: false
+> +
+> +$defs:
+> +  qcom-hawi-lpass-state:
+> +    type: object
+> +    description:
+> +      Pinctrl node's client devices use subnodes for desired pin configuration.
+> +      Client device subnodes use below standard properties.
+> +    $ref: qcom,lpass-lpi-common.yaml#/$defs/qcom-tlmm-state
+> +    unevaluatedProperties: false
+> +
+> +    properties:
+> +      pins:
+> +        description:
+> +          List of gpio pins affected by the properties specified in this
+> +          subnode.
+> +        items:
+> +          pattern: "^gpio([0-9]|1[0-9]|2[0-2])$"
+> +
+> +      function:
+> +        enum: [dmic1_clk, dmic1_data, dmic2_clk, dmic2_data, dmic3_clk,
+> +               dmic3_data, dmic4_clk, dmic4_data, ext_mclk1_a, ext_mclk1_b,
+> +               ext_mclk1_c, ext_mclk1_d, ext_mclk1_e, gpio, i2s0_clk,
+> +               i2s0_data, i2s0_ws, i2s1_clk, i2s1_data, i2s1_ws, i2s2_clk,
+> +               i2s2_data, i2s2_ws, i2s3_clk, i2s3_data, i2s3_ws,
+> +               lpass_lpi_dbg_clk, qca_swr_clk, qca_swr_data, slimbus_clk,
+> +               slimbus_data, swr_rx_clk, swr_rx_data, swr_tx_clk, swr_tx_clk1,
+> +               swr_tx_data, va_i2s0_clk, va_i2s0_data, va_i2s0_ws,
+> +               wsa2_swr_clk, wsa2_swr_data, wsa_swr_clk, wsa_swr_data]
+> +        description:
+> +          Specify the alternative function to be configured for the specified
+> +          pins.
+> +
+> +allOf:
+> +  - $ref: qcom,lpass-lpi-common.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
+> +
+> +    lpass_tlmm: pinctrl@7f60000 {
+> +        compatible = "qcom,hawi-lpass-lpi-pinctrl";
+> +        reg = <0x07f60000 0x20000>;
+> +
+> +        clocks = <&q6prmcc LPASS_HW_LPR_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+> +                 <&q6prmcc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
 
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+TBH, you could have used integer instead of define here, which could
+have made things easy for maintainer to merge the series.
 
 --srini
->  sound/soc/qcom/qdsp6/q6dsp-lpass-clocks.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/qcom/qdsp6/q6dsp-lpass-clocks.c b/sound/soc/qcom/qdsp6/q6dsp-lpass-clocks.c
-> index 03838582aead..ab7d20580638 100644
-> --- a/sound/soc/qcom/qdsp6/q6dsp-lpass-clocks.c
-> +++ b/sound/soc/qcom/qdsp6/q6dsp-lpass-clocks.c
-> @@ -12,7 +12,7 @@
->  #include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
->  #include "q6dsp-lpass-clocks.h"
->  
-> -#define Q6DSP_MAX_CLK_ID			104
-> +#define Q6DSP_MAX_CLK_ID			105
->  #define Q6DSP_LPASS_CLK_ROOT_DEFAULT		0
->  
->  
+> +        clock-names = "lpr", "audio";
+> +
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        gpio-ranges = <&lpass_tlmm 0 0 23>;
+> +
+> +        tx-swr-sleep-clk-state {
+> +            pins = "gpio0";
+> +            function = "swr_tx_clk";
+> +            drive-strength = <2>;
+> +            bias-pull-down;
+> +        };
+> +    };
 
