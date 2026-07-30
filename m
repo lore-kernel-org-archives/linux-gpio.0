@@ -1,1360 +1,220 @@
-Received: from mx0b-00622301.pphosted.com (mx0b-00622301.pphosted.com [205.220.175.205])
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2099.outbound.protection.partner.outlook.cn [139.219.146.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1DF40E8C1;
-	Thu, 30 Jul 2026 11:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.175.205
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785409600; cv=none; b=owFN1xD02IGwNPKJsGUlIXcMpZFhvzWb/c6ODlKAVbW6qdop4JYwaq+F8jEqNgfXSIBc79zEklRDT0+zQqAYxIa5IL7YDUGJOsig6IwA3V9wXXiz5qdPxoIOZVqsPYAjOYkuXT/o/Jl/JlbMkyBGDy+ZXG5fSXR34b5BxR7PpYg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785409600; c=relaxed/simple;
-	bh=uoRbcAD6F5I3du01U+UsE/oEJX0BBBOhmskF5tJP0+0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VvgtDAUVq2SnV7ZoVv43H8vmfv95bGWlCj2vxtmAY5/eIZfbLs0YK5+/rA/fLWUss54NtCyrCJ43l/ets1BqWlSYeQiHDd1ItxqrGtk7jX5mYisXMCxItwhtF2d6XKr2o85plCyNSWrZRhWa21mS6r6nf3VAFyJ+YhSH1GyprIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ambarella.com; spf=pass smtp.mailfrom=ambarella.com; dkim=pass (2048-bit key) header.d=ambarella.com header.i=@ambarella.com header.b=YnP54G2H; arc=none smtp.client-ip=205.220.175.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ambarella.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ambarella.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ambarella.com header.i=@ambarella.com header.b="YnP54G2H"
-Received: from pps.filterd (m0241925.ppops.net [127.0.0.1])
-	by mx0a-00622301.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66UA6Egl3332841;
-	Thu, 30 Jul 2026 10:43:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ambarella.com;
-	 h=cc:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	com20210415pp; bh=5Kruq/R6ztnHJ+eq+TsufwvY3s1IZreB9R/rlD1wjSc=; b=
-	YnP54G2HEpTI1PpEopfIn1J6rg4XF1SAdMPaR8AnpwYaGv75vzpBbaYJVaQZi1+q
-	KWJvpby9KYZQIURafF5OWPYxVtuzCYZtlSjUaq/lwikcM3f+CyXq/cB9+ihIxzZP
-	9d7jGzPdY4K7hNcMpV6ae4NzCEdoFvkqSOHXVRHacBldSdjZ3rLn4ByZAr/RTEPh
-	RzVbB7HWnU+zMgcOT78XPt3rn3rFEsUTCGWLk6yS58Wh17wIugabD8CulKB9Oknf
-	A05+X7wTgJwREzGUtFC/j/pV4nQC0wlcrbfu2vBGdZxmSZsQtbEq4qYi6kDuQQwV
-	P82j1yXKQTe5ZYWieNWNOw==
-Received: from webmail.ambarella.com ([12.30.244.130])
-	by mx0a-00622301.pphosted.com (PPS) with ESMTPS id 4fq8twhnbb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 30 Jul 2026 10:43:49 +0000 (GMT)
-Received: from ambtw-ex-se1.ambarella.net (10.2.5.164) by
- ambus-ex-se2.ambarella.net (10.1.4.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Thu, 30 Jul 2026 03:43:47 -0700
-Received: from ambtw-cas3.ambarella.net (10.2.4.228) by
- ambtw-ex-se1.ambarella.net (10.2.5.164) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Thu, 30 Jul 2026 03:43:46 -0700
-Received: from shbuild7.ambarella.net (10.4.8.70) by ambtw-cas3.ambarella.net
- (10.2.4.228) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Thu, 30 Jul 2026 18:43:44 +0800
-From: Long Zhao <longzhao@ambarella.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-        Alexandre Belloni
-	<alexandre.belloni@bootlin.com>,
-        <linux-arm-kernel@lists.infradead.org>, <soc@lists.linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4814134A795;
+	Thu, 30 Jul 2026 11:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.99
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785411083; cv=fail; b=T4LZqNte0/bSw/0v3bp9eHreugIdMoCWZfNBaFIVWBl/O4qzOnMyHyjXzr89wRog32waPXoOXEY14V4yzPN9JvwivKtBjpR/IvXMz1cfQEe+jocOV0f4Yah2aZORjPb3HxHNSIgOmClQMjg0zFHCcGI+wc6ak5koB19q7NdnP98=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785411083; c=relaxed/simple;
+	bh=YVuioIc3uy5p7a3ZziMo2OgwxTTIy0i3st4Fvp24ohw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ee5C56+kDlbOwMOM/XRvmarehcMg4yoeqVD8WJ5mXL2UYRb0zhRaOpOsCYiQyzS/IIx3KKoyxGNBtsNc+Tpma00fEkhrEcl2o4VQtCEt9L0Ma8AvgIBu+7wzlPHMB6kMj3DxZ9inK3Op+dBWGL/sIunMM/tdnNfij8CSoVvnKOA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jiXMd+G9mCyRQa9VSA5CyPcl7doHvCvQXtWuwApPfQ/Qthvc493ahaUT/2dcAV+rBNM8tDs8x2PdGhWpTC1xnNu70yNI2GG6mcqILDsMGErtJMc7Mt/IbqhaTySBogOaIGSjX2EN6X20ajYHfbdgUVg0afRbrqkAAy3pIM4HIdOoGvTUYIEY3+4Q2rRUN8odKkJ9ypNiP1nSIreDlAOiD5tx5lnfyTj1FhAbKU7fs79//DO1jp5H+8ForeqvWWaraFShgcLiBdjeiOMMrWYoU9cCYM0Ymzo4LR+3hS/7yHJ6s7ryvadKHeLWm3oJNcocOVrvgNI6Vbd+QMD81+dXXg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YVuioIc3uy5p7a3ZziMo2OgwxTTIy0i3st4Fvp24ohw=;
+ b=DHrTGNHo2AqgyGZXNURUWsClXkfIsZA5ros4ge9yNFlzRxT721kNKLFB1vy93CbYk68bEDCRjB8sKK+emqxXtTiP5tg+tN9qJk4HZakojcfzCfewvmZN6US5mo5WsPxNAm0MQ2ky7kyTNcCAGpVb5UI8XnVnSbkvoDy1Y4xAocPvh9ZC16WQzrAUCvzOU9t0euSk0QA9T3Px9wnDqnvKj7uQ/yE12aGwLPhKcCSlxFsu2VyaoQnsnjrw02VJkYg4g21L50Neb4kh+d5k1qo66seVTeV4IrnCL2VTRqvqlQ620cWcy7q1/EWNHFrxXxfWmU3zvNoMQVGJNXy88aGo2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ2PR01MB1210.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:11::6) by ZQ2PR01MB1179.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:7::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.12; Thu, 30 Jul
+ 2026 10:58:24 +0000
+Received: from ZQ2PR01MB1210.CHNPR01.prod.partner.outlook.cn
+ ([fe80::373f:26e:7d1b:38b7]) by ZQ2PR01MB1210.CHNPR01.prod.partner.outlook.cn
+ ([fe80::373f:26e:7d1b:38b7%4]) with mapi id 15.21.0270.012; Thu, 30 Jul 2026
+ 10:58:24 +0000
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+To: Linus Walleij <linusw@kernel.org>
 CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        "Michael
- Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        Linus Walleij <linusw@kernel.org>, <linux-gpio@vger.kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>, <linux-serial@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, <linux-kernel@vger.kernel.org>,
-        Long Zhao
-	<longzhao@ambarella.com>
-Subject: [PATCH 06/10] clk: ambarella: add CV75 CCU driver
-Date: Thu, 30 Jul 2026 18:43:26 +0800
-Message-ID: <20260730104330.81367-7-longzhao@ambarella.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260730104330.81367-1-longzhao@ambarella.com>
-References: <20260730104330.81367-1-longzhao@ambarella.com>
+	Conor Dooley <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
+	Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Bartosz Golaszewski <brgl@kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, Lianfeng
+ Ouyang <lianfeng.ouyang@starfivetech.com>
+Subject: Re: [PATCH v3 04/21] pinctrl: starfive: Add StarFive JHB100 sys0
+ controller driver
+Thread-Topic: [PATCH v3 04/21] pinctrl: starfive: Add StarFive JHB100 sys0
+ controller driver
+Thread-Index: AQHc8x1jj1AWoBKzsESqiyGUJQ5KXbY5RwGAgEUSdKCAAEHjAIAHoxrg
+Date: Thu, 30 Jul 2026 10:58:24 +0000
+Message-ID:
+ <ZQ2PR01MB121089A3224D22A573A0875BF2C92@ZQ2PR01MB1210.CHNPR01.prod.partner.outlook.cn>
+References: <20260603055347.66845-1-changhuang.liang@starfivetech.com>
+ <20260603055347.66845-5-changhuang.liang@starfivetech.com>
+ <CAD++jL=Qd8ADR_kX2Q7msM4Dd0xFayPGM4ZzB3uv2ufvkuybtQ@mail.gmail.com>
+ <ZQ4PR01MB120228AD03507B4836EFE19DF2CE2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ <CAD++jLnNa6HsS5q5aYHxCLkQdZ3eh09PspO=eZx-4=p4EFr4PA@mail.gmail.com>
+In-Reply-To:
+ <CAD++jLnNa6HsS5q5aYHxCLkQdZ3eh09PspO=eZx-4=p4EFr4PA@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ2PR01MB1210:EE_|ZQ2PR01MB1179:EE_
+x-ms-office365-filtering-correlation-id: 36bf660c-f4fc-452f-5459-08deee297a0c
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|1800799024|366016|7416014|23010399003|18002099003|22082099003|38070700021|6133799003|56012099006|4143699003|10067099003;
+x-microsoft-antispam-message-info:
+ qEX5POb3mjvaO0B3kz9qgXyPMIRKNR6/sEG4ia8hdFNGEsT56onxkCoOn7BGHWiJfuMEo55FvGijN9TyJ2zhBvyFQz2ivLWrYZrmePMKXLXDHvqTShBKuew3ze/0EIBpBDFZZkhmCknZzjhEIYicshdBfZ+LU1MbieqjtgNOHQEu7PopMAZ+ue3bnnd0/x/C9g8y6EvtGKpEOt83Je/9nsl3RSdpDlRTlLVVOsmHwX7bXeh2PrYe6p6re0e/WnPPwA/CIlXbBvar2VIzKZSypMzW6CXkUQJ9mrzUoDWF62BOML6/3XbI9sWrtlVEcfMoc3qs7pE3TiY32IuhxuivHCCjezi/rd3zWKIteopJMUjGfR0S52CrAOZtZeM7B9poYh6Pg5RMTkNEJ1Mf8SnNAvCxgpeFh/VA5MqmQfDbJguRhmj7ytEfkZayQVPnYWDUArSYoz1XEHPXwmzqehhgYVN9XN+LHgyr3WDDX297FFVfi/UF10Qhkds/vT5WohtCJxzMKVwqyx2UxjK4ZIte7SUxoTJpwe0so8va2wrQ69f7Hvk6w9/jhD2SSS5SHqU/
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1210.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(23010399003)(18002099003)(22082099003)(38070700021)(6133799003)(56012099006)(4143699003)(10067099003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?Wi9mQXRmRzBIZ1Q2eHFlbDd5bTlXYTNiNjZNWitEK1AzWG5BdytoMTllYklF?=
+ =?utf-8?B?TEFiYm80b0hvMExvMlBkWGhVSXlNYVYyT0wvUXVMQ0JYOFQyT1NJaXVBOWxz?=
+ =?utf-8?B?ek9HUSs4aUh1aDNtRitYRktPNGlqclpFcm56QnFSb2JRalN0RHNzeUdiMzUv?=
+ =?utf-8?B?a0RsRGRNS0JmVU82NXNIQis5UHRiVnBDajZvM1NDMVdIUEVpMkY4QXlVNWNP?=
+ =?utf-8?B?czBCRDVQOC9PTm5iOFk1TFdZRysrbW1NTkQrTzJVU2dwUThFOEg2bUxBcWhK?=
+ =?utf-8?B?Z3d4SUV2NnNvb2E1RHJIQnJ5RENZMXNwSlQxd2R6Q3RLN1R3TzVBTDB5VGw0?=
+ =?utf-8?B?SkhZQ3IrKzdCTmFzWmdEYUZ3TGlrL0NIT3NqL2lCbkZNOVlTc2ZoN3FpWHJ0?=
+ =?utf-8?B?OFJRL3g5YTRyV3VLejNhdHdLOEFyeW9mOFBrTURRdnBaMWM2OHJWK29HNEJS?=
+ =?utf-8?B?ZzJqUnBMTS9rMjJBbzZzTkVnWWlheTNEZC9YSzBZTEIxU3BCV0VjYU15SFBX?=
+ =?utf-8?B?TlhQYTVIektPYVJxbEMxbnFtdnZZU0FNTVEwa3NCT3YvMUQwVWVTMVBsL2Ju?=
+ =?utf-8?B?V1ZWTENsTmVJUC9hc1dEUHl6V1ZpZWN3U29pZUZjdWxZS3kxd1ovUHNEckJT?=
+ =?utf-8?B?ZGZTUTY4Z2x5dHY3TmtEN1VoejdCajZBYlhrZnpIa0w1bWg3cGFsMzU5Z0Js?=
+ =?utf-8?B?UUpSMnBSOVNWQlFSWTJmV3JHYTlhd2pnbi9HVG1yNTBBSUhGdUhHRDVhY0FE?=
+ =?utf-8?B?YXlhM3V2ZEFRb2ozN3NmZjFTRCthazBaTlNFUzA0b2ZtVDEzeTZVemdmVW1U?=
+ =?utf-8?B?MzRyVmxoQW0zOFpmL3dzVW1tZktua0wwVDhIOXBHSDJNRmFpWGl2WTE2L0Jy?=
+ =?utf-8?B?bERaYXlIYWtOVHM2N1J0MmcxQ0k5dFJ5b21PblFXOHB1Wll1U0k1cm9icmtP?=
+ =?utf-8?B?UkFHTjhmMzRabzNPMDdRUVdWQzNMNjR2L29yazk1Ny92VCtDTnFOdjhrWVFq?=
+ =?utf-8?B?c2hLRmYxUitpeWNZQkJPWm1EU0dMZTY0RFR4dGw2QUJydHJySjlZYWFpZTJz?=
+ =?utf-8?B?eUJ6WmJ0U3VxdmhOa0R6aVBDdlpTQ2ZYUys2UlpaU2hiaG5wbFdUU09iVFE5?=
+ =?utf-8?B?MGtHYlpqMmlZYms5ZTMwRG1pV3hPWGFZN3ZCaG1FK3hQek1NeXVweXNyWlRz?=
+ =?utf-8?B?R0gvWkcwMHE2OVpEQUpLYjUxNDFUYm5kdUxET2s0NEIvZTZMdXRxVkUrN05j?=
+ =?utf-8?B?Sm91QkFEa1pqdFBaaWYvQXkwbTFnNS8wcDBwTUlkVm9iRWt2N1hjYTI4WGdC?=
+ =?utf-8?B?SExCRFVDY0lreCtlZDI0MldtVzhJWW5YbUhXLzdhaExGWUJKU1A4OTFsQkN0?=
+ =?utf-8?B?b3NoTitjRm9weGx1OGNqOEZzMG1SRC9iV3NPS1J5Zm8xWlFYV0I1Ny9MaDll?=
+ =?utf-8?B?WHpWdGNPb3JkUGxRK0E2K1k2a0JiZ3lvRWRBTjBFRWkyRWxTaWoza29BbnJs?=
+ =?utf-8?B?L1owcVpDNys1YUZzbzZxQmlZc0xqaENtVVRGelJIelBkVzhHaDJQbmRrWVl0?=
+ =?utf-8?B?VHhjMGZkR3pudk9hWVdabmgxeURZcEl6K0tNRGMrem5sTkJsa293Z2VVcWww?=
+ =?utf-8?B?azBqeld6VlBCR1QvaVNWeVV4eGdkYm80NjRIVHByRDdla29mOXQ2MDlVc2xP?=
+ =?utf-8?B?dkZZYXMvcmhTSWNTWlFURXZxL25Na3FkWjlvZDg3dXN0eUprN0pERDZQbjc0?=
+ =?utf-8?B?MGtkb3c5MFpXSnRaRHZxOWhTS01SOEdVckUwS05pK2RXek83SnY0a1pJc1E2?=
+ =?utf-8?B?bklRTytYWml4U1h5VFVWc1luaWJ0d044elFVb0FUcm8veFlpb0JxQzNxL1Vs?=
+ =?utf-8?B?ajgrUXpwdFZjSDRDTFhMMGZ6SHJkb3NjMzhLNkxTa1hFNXB0MTdWWnR5ZlJO?=
+ =?utf-8?B?YU54Q3ptN2xQK3VHb0g3MkgyVVZhUCtpMVJXa1hsNGVicGFHV3IwTjhiZTNr?=
+ =?utf-8?B?VHp4UmxqYWJ0WGxWLzJYamdFeW1DaXdHRXp5TUIyMUcxeEF2Tmx0TlBaUjVH?=
+ =?utf-8?B?ZDN2N1laQ1FVZGk2ZVJEOUd5VXVqaU14QUlRYTJqNjFJM2ZycHRsNU8vWXdO?=
+ =?utf-8?B?bDllRXBXWHhjR3VuenJqb3R4cEFpaVFYaGt4c3FvTjRRV20rNzA5bU1SMmZ1?=
+ =?utf-8?B?K0pwZ0xFeUMvM0xsby9EL0Y0VEEyb0xGdFdXYnJQTjVDODZaWGRPQ0hRYURt?=
+ =?utf-8?B?cDRnUHphc2VHQkN1UTFBcmdEbjhPNDByL21sUWhPMnBtT2gwMGtEeUlUMjRx?=
+ =?utf-8?B?SnJQc2lValRoY2VmcjVGeWVYYW8vNjA5OFZxQlMyTEc0TWRjYXdzOWl6N3V3?=
+ =?utf-8?Q?/q7d8LwXQcwibJBc=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-Proofpoint-GUID: f4-Y_vSIsHn-KeeGlqQfWkyo9xRYu-_T
-X-Proofpoint-ORIG-GUID: f4-Y_vSIsHn-KeeGlqQfWkyo9xRYu-_T
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzMwMDA4MCBTYWx0ZWRfX/5BQtCXdeyZy
- ZhMK0xjDYu6YbG7tIJ9MrZ5fdDYulbNBbdiEvMGrVc4R+WcOrtWxUSxBkwOTFsFAQHpe5wBB8qZ
- jvfA5N0oDg6HwXa95Oz2MPxOEJNIzuW3YXnixQokPWkhH3snWUiOwpzRxHbB5OxSs3lTwy7Ea4e
- XS6hZSUv1NaFwxr4uzeDkHbmqc6014MQ+dd/wkm2VDaaG7XHZ1aogjrD70mo05terGQyjIyQPpV
- eogrfyScVuZGV271hM1fuU+wVadYveU2E2+sfn3FP5iyVSEPb9fX7RKCUNyAI7oNOCYTd/ZbTUn
- 7aag5xq4ztJg0xTqoempDhketTCHNZPJ7/5nVFrUVTa0kfqm6OUFip01oPvHcC5j/MFQltZfXw9
- rSveT0tvcenMcSfMRhw4mR3xoe7b/ER6gqtKxLpzEs8jd5/gV8tyGeGxqP1N8PTiUg2x19LXyIe
- YOcYavTvr4DfUoAIDwg==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzMwMDA4MCBTYWx0ZWRfX8ToyGlfOq5QJ
- q3VcoqScqKBvtnRd2lV/zmt7lF6z5CQMCovsIa1+90ZzLaNTEJKGv/zzjq3jP9HFpVWLjZYKXNH
- 9RyuB4RE9jClmNKhqHCJhgPBdtsmI4Qr6u2rSJ018cV1OOZU4PNn
-X-Authority-Analysis: v=2.4 cv=PNE/P/qC c=1 sm=1 tr=0 ts=6a6b2ae5 cx=c_pps
- a=DgnZYc2JwZ3KnY28M5UqXQ==:117 a=DgnZYc2JwZ3KnY28M5UqXQ==:17
- a=RAioF0-LDSMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yXVIz-0bn9infC194UBj:22
- a=KblO7da7ppA7TBl3N-nE:22 a=ppJngBeKAAAA:8 a=zJAyzUMJKmXp9TaLk2sA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-30_03,2026-07-29_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 adultscore=0 malwarescore=0 clxscore=1015
- phishscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607300080
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1210.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36bf660c-f4fc-452f-5459-08deee297a0c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2026 10:58:24.1790
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZfGBpyznHgkoh/JkrQChe+Lr98d+oN3Z9tELf2v32EPE6hdmAyGSxFse3TQu8gMFoAKR8ZItY4pVSfCc2+TwL2B6HeaH1GasN+6fokpYnw9Czr3Qdbok7jh4XtPGDoqK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1179
 
-Add a minimal Ambarella clock controller for CV75 covering the
-UART0 and core/ahb/apb clocks required for early console bring-up.
-
-Signed-off-by: Long Zhao <longzhao@ambarella.com>
----
- drivers/clk/Kconfig                 |   1 +
- drivers/clk/Makefile                |   1 +
- drivers/clk/ambarella/Kconfig       |  16 ++
- drivers/clk/ambarella/Makefile      |   6 +
- drivers/clk/ambarella/ccu-cv75.c    | 296 ++++++++++++++++++++++
- drivers/clk/ambarella/ccu_common.c  |  60 +++++
- drivers/clk/ambarella/ccu_common.h  |  25 ++
- drivers/clk/ambarella/ccu_mux_div.c | 223 +++++++++++++++++
- drivers/clk/ambarella/ccu_mux_div.h |  35 +++
- drivers/clk/ambarella/ccu_pll.c     | 374 ++++++++++++++++++++++++++++
- drivers/clk/ambarella/ccu_pll.h     |  70 ++++++
- 11 files changed, 1107 insertions(+)
- create mode 100644 drivers/clk/ambarella/Kconfig
- create mode 100644 drivers/clk/ambarella/Makefile
- create mode 100644 drivers/clk/ambarella/ccu-cv75.c
- create mode 100644 drivers/clk/ambarella/ccu_common.c
- create mode 100644 drivers/clk/ambarella/ccu_common.h
- create mode 100644 drivers/clk/ambarella/ccu_mux_div.c
- create mode 100644 drivers/clk/ambarella/ccu_mux_div.h
- create mode 100644 drivers/clk/ambarella/ccu_pll.c
- create mode 100644 drivers/clk/ambarella/ccu_pll.h
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 1717ce75a907..fbbf4963716c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -506,6 +506,7 @@ config COMMON_CLK_RPMI
-          the RISC-V platform management interface (RPMI) specification.
-
- source "drivers/clk/actions/Kconfig"
-+source "drivers/clk/ambarella/Kconfig"
- source "drivers/clk/analogbits/Kconfig"
- source "drivers/clk/aspeed/Kconfig"
- source "drivers/clk/bcm/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index cc108a75a900..30d823ee606f 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -112,6 +112,7 @@ obj-$(CONFIG_COMMON_CLK_XGENE)              +=3D clk-xg=
-ene.o
-
- # please keep this section sorted lexicographically by directory path name
- obj-y                                  +=3D actions/
-+obj-y                                  +=3D ambarella/
- obj-y                                  +=3D analogbits/
- obj-y                                  +=3D aspeed/
- obj-$(CONFIG_COMMON_CLK_AT91)          +=3D at91/
-diff --git a/drivers/clk/ambarella/Kconfig b/drivers/clk/ambarella/Kconfig
-new file mode 100644
-index 000000000000..639993033f96
---- /dev/null
-+++ b/drivers/clk/ambarella/Kconfig
-@@ -0,0 +1,16 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+config CLK_AMBARELLA_CV75
-+       bool "Ambarella CV75 RCT clock controller"
-+       depends on ARCH_AMBARELLA || COMPILE_TEST
-+       select CLK_AMBARELLA_CCU
-+       default ARCH_AMBARELLA
-+       help
-+         Say Y to enable support for the Reset and Clock Tree controller
-+         found on Ambarella CV75 SoCs. The controller provides the core PL=
-L,
-+         bus clocks and UART clock required during early platform boot.
-+         It is needed to use the serial console on CV75-based systems.
-+
-+config CLK_AMBARELLA_CCU
-+       bool
-+       select REGMAP_MMIO
-diff --git a/drivers/clk/ambarella/Makefile b/drivers/clk/ambarella/Makefil=
-e
-new file mode 100644
-index 000000000000..36e96326ea97
---- /dev/null
-+++ b/drivers/clk/ambarella/Makefile
-@@ -0,0 +1,6 @@
-+#
-+# Makefile for ambarella specific clk
-+#
-+
-+obj-$(CONFIG_CLK_AMBARELLA_CCU) +=3D ccu_common.o ccu_mux_div.o ccu_pll.o
-+obj-$(CONFIG_CLK_AMBARELLA_CV75) +=3D ccu-cv75.o
-diff --git a/drivers/clk/ambarella/ccu-cv75.c b/drivers/clk/ambarella/ccu-c=
-v75.c
-new file mode 100644
-index 000000000000..55132dfa7431
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu-cv75.c
-@@ -0,0 +1,296 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ *
-+ * CV75 RCT clock controller for boot clocks.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/ambarella,cv75-clock.h>
-+
-+#include "ccu_common.h"
-+#include "ccu_mux_div.h"
-+#include "ccu_pll.h"
-+
-+enum amb_cv75_clk_type {
-+       AMB_CV75_CLK_FIXED_RATE,
-+       AMB_CV75_CLK_FIXED_FACTOR,
-+       AMB_CV75_CLK_PLL,
-+       AMB_CV75_CLK_DIV,
-+       AMB_CV75_CLK_MUX_DIV,
-+};
-+
-+enum amb_cv75_clk_ref {
-+       AMB_CV75_CLK_REF_OSC =3D -1,
-+       AMB_CV75_CLK_REF_DUMMY =3D -2,
-+};
-+
-+/* PLL version for CV75 (ambarella,clkpll-v1 in vendor DTS) */
-+static const struct amb_pll_soc_data cv75_pll_soc_data =3D {
-+       .pll_version    =3D 1,
-+       .fsout_mask     =3D CTRL2_FSOUT_DIV2,
-+       .fsout_val      =3D CTRL2_FSOUT_DIV2,
-+       .fsdiv_mask     =3D CTRL2_FSDIV_DIV2,
-+       .fsdiv_val      =3D CTRL2_FSDIV_DIV2,
-+       .vcodiv_mask    =3D CTRL2_VCODIV_DIV2,
-+       .vcodiv_val     =3D CTRL2_VCODIV_DIV2,
-+       .vco_max_mhz    =3D 2600UL,
-+       .vco_min_mhz    =3D 850UL,
-+       .vco_range      =3D { 1800UL, 1400UL, 1100UL, 0UL },
-+};
-+
-+struct amb_cv75_clk_desc {
-+       int id;
-+       enum amb_cv75_clk_type type;
-+       const char *name;
-+       int parent;
-+
-+       union {
-+               struct {
-+                       unsigned long rate;
-+               } fixed_rate;
-+               struct {
-+                       unsigned long flags;
-+                       unsigned int mult;
-+                       unsigned int div;
-+               } fixed_factor;
-+               struct {
-+                       u32 reg_offset[REG_NUM];
-+                       const struct amb_pll_soc_data *soc_data;
-+               } pll;
-+               struct {
-+                       u32 reg;
-+                       u32 shift;
-+                       u32 width;
-+                       u32 flags;
-+                       u32 fix_divider;
-+               } div;
-+               struct amb_mux_div_desc mux_div;
-+       };
-+};
-+
-+static const struct amb_cv75_clk_desc cv75_clks[] =3D {
-+       {
-+               .id =3D AMB_CV75_CLK_REF_DUMMY,
-+               .type =3D AMB_CV75_CLK_FIXED_RATE,
-+               .name =3D "dummy",
-+               .fixed_rate.rate =3D 0,
-+       },
-+       {
-+               .id =3D CV75_GCLK_CORE,
-+               .type =3D AMB_CV75_CLK_PLL,
-+               .name =3D "core",
-+               .parent =3D AMB_CV75_CLK_REF_OSC,
-+               .pll =3D {
-+                       .reg_offset =3D {
-+                               0x000, 0x004, 0x100,
-+                               0x104, 0x000, 0x000,
-+                       },
-+                       .soc_data =3D &cv75_pll_soc_data,
-+               },
-+       },
-+       {
-+               .id =3D CV75_GCLK_AHB,
-+               .type =3D AMB_CV75_CLK_FIXED_FACTOR,
-+               .name =3D "ahb",
-+               .parent =3D CV75_GCLK_CORE,
-+               .fixed_factor =3D {
-+                       .flags =3D 0,
-+                       .mult =3D 1,
-+                       .div =3D 2,
-+               },
-+       },
-+       {
-+               .id =3D CV75_GCLK_APB,
-+               .type =3D AMB_CV75_CLK_FIXED_FACTOR,
-+               .name =3D "apb",
-+               .parent =3D CV75_GCLK_CORE,
-+               .fixed_factor =3D {
-+                       .flags =3D 0,
-+                       .mult =3D 1,
-+                       .div =3D 4,
-+               },
-+       },
-+       {
-+               .id =3D CV75_GCLK_UART0,
-+               .type =3D AMB_CV75_CLK_MUX_DIV,
-+               .name =3D "uart0",
-+               .mux_div =3D {
-+                       .name =3D "uart0",
-+                       .parents =3D (const int[]) {
-+                               AMB_CV75_CLK_REF_OSC, CV75_GCLK_CORE,
-+                               AMB_CV75_CLK_REF_DUMMY, AMB_CV75_CLK_REF_DU=
-MMY,
-+                       },
-+                       .num_parents =3D 4,
-+                       .mux_reg =3D 0x1c8,
-+                       .mux_shift =3D 0,
-+                       .mux_mask =3D 0x3,
-+                       .div_reg =3D 0x038,
-+                       .div_shift =3D 0,
-+                       .div_width =3D 24,
-+                       .div_flags =3D CLK_DIVIDER_ONE_BASED,
-+                       .fix_divider =3D 1,
-+               },
-+       },
-+};
-+
-+static struct clk_hw *amb_cv75_get_parent(struct amb_ccu *ccu,
-+                                         struct clk_hw *osc,
-+                                         struct clk_hw *dummy,
-+                                         int parent)
-+{
-+       if (parent =3D=3D AMB_CV75_CLK_REF_OSC)
-+               return osc;
-+       if (parent =3D=3D AMB_CV75_CLK_REF_DUMMY)
-+               return dummy;
-+
-+       if (parent < 0 || parent >=3D ccu->data->num)
-+               return ERR_PTR(-EINVAL);
-+
-+       if (!ccu->data->hws[parent])
-+               return ERR_PTR(-EPROBE_DEFER);
-+
-+       return ccu->data->hws[parent];
-+}
-+
-+static struct clk_hw *amb_cv75_register_mux_div(struct device *dev,
-+                                               struct amb_ccu *ccu,
-+                                               const struct amb_cv75_clk_d=
-esc *desc,
-+                                               struct clk_hw *osc,
-+                                               struct clk_hw *dummy)
-+{
-+       const struct amb_mux_div_desc *md =3D &desc->mux_div;
-+       struct clk_parent_data *pdata;
-+       struct clk_hw *parent;
-+       u8 i;
-+
-+       pdata =3D devm_kcalloc(dev, md->num_parents, sizeof(*pdata), GFP_KE=
-RNEL);
-+       if (!pdata)
-+               return ERR_PTR(-ENOMEM);
-+
-+       for (i =3D 0; i < md->num_parents; i++) {
-+               if (md->parents[i] =3D=3D AMB_CV75_CLK_REF_OSC) {
-+                       pdata[i].fw_name =3D "osc";
-+                       continue;
-+               }
-+
-+               parent =3D amb_cv75_get_parent(ccu, osc, dummy, md->parents=
-[i]);
-+               if (IS_ERR(parent))
-+                       return parent;
-+
-+               pdata[i].hw =3D parent;
-+       }
-+
-+       return amb_mux_div_register(dev, ccu->map, md, pdata);
-+}
-+
-+static struct clk_hw *amb_cv75_register_clk(struct device *dev,
-+                                           struct amb_ccu *ccu,
-+                                           const struct amb_cv75_clk_desc =
-*desc,
-+                                           struct clk_hw *osc,
-+                                           struct clk_hw *dummy)
-+{
-+       struct amb_pll_desc pll_desc;
-+       struct clk_hw *parent;
-+
-+       switch (desc->type) {
-+       case AMB_CV75_CLK_FIXED_RATE:
-+               return devm_clk_hw_register_fixed_rate(dev, desc->name, NUL=
-L, 0,
-+                                                      desc->fixed_rate.rat=
-e);
-+       case AMB_CV75_CLK_FIXED_FACTOR:
-+               parent =3D amb_cv75_get_parent(ccu, osc, dummy, desc->paren=
-t);
-+               if (IS_ERR(parent))
-+                       return parent;
-+
-+               return devm_clk_hw_register_fixed_factor_parent_hw(dev,
-+                               desc->name, parent,
-+                               desc->fixed_factor.flags,
-+                               desc->fixed_factor.mult,
-+                               desc->fixed_factor.div);
-+       case AMB_CV75_CLK_PLL:
-+               parent =3D amb_cv75_get_parent(ccu, osc, dummy, desc->paren=
-t);
-+               if (IS_ERR(parent))
-+                       return parent;
-+
-+               pll_desc.name =3D desc->name;
-+               pll_desc.parent =3D parent;
-+               memcpy((void *)pll_desc.reg_offset, desc->pll.reg_offset,
-+                      sizeof(pll_desc.reg_offset));
-+               pll_desc.soc_data =3D desc->pll.soc_data;
-+               pll_desc.frac_mode =3D false;
-+
-+               return amb_pll_register(dev, ccu->map, &pll_desc);
-+       case AMB_CV75_CLK_DIV:
-+               parent =3D amb_cv75_get_parent(ccu, osc, dummy, desc->paren=
-t);
-+               if (IS_ERR(parent))
-+                       return parent;
-+
-+               return amb_div_register(dev, ccu->map, desc->name, parent,
-+                                       desc->div.reg, desc->div.shift,
-+                                       desc->div.width, desc->div.flags,
-+                                       desc->div.fix_divider);
-+       case AMB_CV75_CLK_MUX_DIV:
-+               return amb_cv75_register_mux_div(dev, ccu, desc, osc, dummy=
-);
-+       default:
-+               return ERR_PTR(-EINVAL);
-+       }
-+}
-+
-+static int amb_cv75_rct_probe(struct platform_device *pdev)
-+{
-+       struct amb_ccu *ccu;
-+       struct clk *osc_clk;
-+       struct clk_hw *osc, *dummy =3D NULL, *hw;
-+       int i;
-+
-+       ccu =3D amb_ccu_init(pdev, CV75_CLK_NUM);
-+       if (IS_ERR(ccu))
-+               return PTR_ERR(ccu);
-+
-+       osc_clk =3D devm_clk_get(&pdev->dev, "osc");
-+       if (IS_ERR(osc_clk))
-+               return dev_err_probe(&pdev->dev, PTR_ERR(osc_clk),
-+                                    "missing osc clock\n");
-+       osc =3D __clk_get_hw(osc_clk);
-+
-+       for (i =3D 0; i < ARRAY_SIZE(cv75_clks); i++) {
-+               hw =3D amb_cv75_register_clk(&pdev->dev, ccu, &cv75_clks[i]=
-,
-+                                          osc, dummy);
-+               if (IS_ERR(hw))
-+                       return dev_err_probe(&pdev->dev, PTR_ERR(hw),
-+                                            "failed to register %s\n",
-+                                            cv75_clks[i].name);
-+
-+               if (cv75_clks[i].id =3D=3D AMB_CV75_CLK_REF_DUMMY)
-+                       dummy =3D hw;
-+               else
-+                       ccu->data->hws[cv75_clks[i].id] =3D hw;
-+       }
-+
-+       return amb_ccu_register(ccu);
-+}
-+
-+static const struct of_device_id amb_cv75_rct_match[] =3D {
-+       { .compatible =3D "ambarella,cv75-rct" },
-+       { }
-+};
-+MODULE_DEVICE_TABLE(of, amb_cv75_rct_match);
-+
-+static struct platform_driver amb_cv75_rct_driver =3D {
-+       .probe  =3D amb_cv75_rct_probe,
-+       .driver =3D {
-+               .name =3D "ambarella-cv75-rct",
-+               .of_match_table =3D amb_cv75_rct_match,
-+       },
-+};
-+module_platform_driver(amb_cv75_rct_driver);
-+
-+MODULE_AUTHOR("Ambarella Inc.");
-+MODULE_DESCRIPTION("Ambarella CV75 RCT clock controller");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/ambarella/ccu_common.c b/drivers/clk/ambarella/ccu=
-_common.c
-new file mode 100644
-index 000000000000..78587c5f2ce1
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu_common.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "ccu_common.h"
-+
-+static const struct regmap_config amb_rct_regmap_config =3D {
-+       .reg_bits =3D 32,
-+       .val_bits =3D 32,
-+       .reg_stride =3D 4,
-+       .max_register =3D AMB_RCT_REG_SIZE - 4,
-+};
-+
-+struct amb_ccu *amb_ccu_init(struct platform_device *pdev,
-+                            unsigned int num_clks)
-+{
-+       struct amb_ccu *ccu;
-+       void __iomem *base;
-+
-+       if (!num_clks)
-+               return ERR_PTR(-EINVAL);
-+
-+       ccu =3D devm_kzalloc(&pdev->dev, sizeof(*ccu), GFP_KERNEL);
-+       if (!ccu)
-+               return ERR_PTR(-ENOMEM);
-+
-+       ccu->dev =3D &pdev->dev;
-+
-+       ccu->data =3D devm_kzalloc(&pdev->dev,
-+                                struct_size(ccu->data, hws, num_clks),
-+                                GFP_KERNEL);
-+       if (!ccu->data)
-+               return ERR_PTR(-ENOMEM);
-+
-+       ccu->data->num =3D num_clks;
-+
-+       base =3D devm_platform_ioremap_resource(pdev, 0);
-+       if (IS_ERR(base))
-+               return ERR_CAST(base);
-+
-+       ccu->map =3D devm_regmap_init_mmio(&pdev->dev, base,
-+                                        &amb_rct_regmap_config);
-+       if (IS_ERR(ccu->map))
-+               return ERR_CAST(ccu->map);
-+
-+       return ccu;
-+}
-+
-+int amb_ccu_register(struct amb_ccu *ccu)
-+{
-+       return devm_of_clk_add_hw_provider(ccu->dev, of_clk_hw_onecell_get,
-+                                          ccu->data);
-+}
-diff --git a/drivers/clk/ambarella/ccu_common.h b/drivers/clk/ambarella/ccu=
-_common.h
-new file mode 100644
-index 000000000000..f2bf9d1f06d7
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu_common.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ */
-+
-+#ifndef __CCU_COMMON_H
-+#define __CCU_COMMON_H
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+
-+#define AMB_RCT_REG_SIZE       0x1000
-+
-+struct amb_ccu {
-+       struct device *dev;
-+       struct regmap *map;
-+       struct clk_hw_onecell_data *data;
-+};
-+
-+struct amb_ccu *amb_ccu_init(struct platform_device *pdev,
-+                            unsigned int num_clks);
-+int amb_ccu_register(struct amb_ccu *ccu);
-+
-+#endif
-diff --git a/drivers/clk/ambarella/ccu_mux_div.c b/drivers/clk/ambarella/cc=
-u_mux_div.c
-new file mode 100644
-index 000000000000..33430506f8ed
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu_mux_div.c
-@@ -0,0 +1,223 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ *
-+ * Regmap-backed mux + divider, derived from the vendor composite-clock dr=
-iver.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+
-+#include "ccu_mux_div.h"
-+
-+struct amb_mux {
-+       struct clk_hw hw;
-+       struct regmap *map;
-+       u32 offset;
-+       u32 mask;
-+       u32 shift;
-+};
-+
-+struct amb_div {
-+       struct clk_hw hw;
-+       struct regmap *map;
-+       u32 offset;
-+       u32 shift;
-+       u32 width;
-+       u32 flags;
-+       u32 fix_divider;
-+};
-+
-+#define to_amb_mux(_hw)        container_of(_hw, struct amb_mux, hw)
-+#define to_amb_div(_hw)        container_of(_hw, struct amb_div, hw)
-+
-+static u8 amb_mux_get_parent(struct clk_hw *hw)
-+{
-+       struct amb_mux *mux =3D to_amb_mux(hw);
-+       u32 val;
-+
-+       regmap_read(mux->map, mux->offset, &val);
-+       val >>=3D mux->shift;
-+       val &=3D mux->mask;
-+
-+       return val;
-+}
-+
-+static int amb_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+       struct amb_mux *mux =3D to_amb_mux(hw);
-+
-+       return regmap_update_bits(mux->map, mux->offset,
-+                                 mux->mask << mux->shift,
-+                                 index << mux->shift);
-+}
-+
-+static const struct clk_ops amb_mux_ops =3D {
-+       .get_parent =3D amb_mux_get_parent,
-+       .set_parent =3D amb_mux_set_parent,
-+};
-+
-+static unsigned long amb_div_recalc_rate(struct clk_hw *hw,
-+                                        unsigned long parent_rate)
-+{
-+       struct amb_div *div =3D to_amb_div(hw);
-+       unsigned long rate;
-+       u32 val;
-+
-+       regmap_read(div->map, div->offset, &val);
-+
-+       if (val & BIT(div->width))
-+               return 0;
-+
-+       val >>=3D div->shift;
-+       val &=3D clk_div_mask(div->width);
-+
-+       rate =3D divider_recalc_rate(hw, parent_rate, val, NULL,
-+                                  div->flags, div->width);
-+       if (div->fix_divider)
-+               do_div(rate, div->fix_divider);
-+
-+       return rate;
-+}
-+
-+static int amb_div_determine_rate(struct clk_hw *hw,
-+                                 struct clk_rate_request *req)
-+{
-+       struct amb_div *div =3D to_amb_div(hw);
-+       struct clk_rate_request scaled =3D *req;
-+       int ret;
-+
-+       if (!req->rate && (div->flags & CLK_DIVIDER_ONE_BASED))
-+               return 0;
-+
-+       if (div->fix_divider) {
-+               scaled.rate =3D min(req->rate,
-+                                 ULONG_MAX / div->fix_divider) *
-+                             div->fix_divider;
-+               scaled.min_rate =3D min(req->min_rate,
-+                                     ULONG_MAX / div->fix_divider) *
-+                                 div->fix_divider;
-+               scaled.max_rate =3D min(req->max_rate,
-+                                     ULONG_MAX / div->fix_divider) *
-+                                 div->fix_divider;
-+       }
-+
-+       ret =3D divider_determine_rate(hw, &scaled, NULL, div->width,
-+                                    div->flags);
-+       if (ret)
-+               return ret;
-+
-+       req->rate =3D scaled.rate;
-+       req->best_parent_rate =3D scaled.best_parent_rate;
-+       req->best_parent_hw =3D scaled.best_parent_hw;
-+       if (div->fix_divider)
-+               do_div(req->rate, div->fix_divider);
-+
-+       return 0;
-+}
-+
-+static int amb_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+                           unsigned long parent_rate)
-+{
-+       struct amb_div *div =3D to_amb_div(hw);
-+       int val, mask;
-+
-+       if (div->fix_divider)
-+               rate *=3D div->fix_divider;
-+
-+       if (!rate) {
-+               val =3D BIT(div->width);
-+       } else {
-+               val =3D divider_get_val(rate, parent_rate, NULL,
-+                                     div->width, div->flags);
-+               if (val < 0)
-+                       return val;
-+       }
-+
-+       mask =3D (div->flags & CLK_DIVIDER_ONE_BASED) ?
-+               clk_div_mask(div->width + 1) : clk_div_mask(div->width);
-+
-+       regmap_update_bits(div->map, div->offset, mask << div->shift,
-+                          val << div->shift);
-+
-+       if (!(div->flags & CLK_DIVIDER_ONE_BASED)) {
-+               regmap_update_bits(div->map, div->offset, BIT(0), BIT(0));
-+               regmap_update_bits(div->map, div->offset, BIT(0), 0);
-+       }
-+
-+       return 0;
-+}
-+
-+static const struct clk_ops amb_div_ops =3D {
-+       .recalc_rate =3D amb_div_recalc_rate,
-+       .determine_rate =3D amb_div_determine_rate,
-+       .set_rate =3D amb_div_set_rate,
-+};
-+
-+struct clk_hw *amb_div_register(struct device *dev, struct regmap *map,
-+                               const char *name, const struct clk_hw *pare=
-nt,
-+                               u32 div_reg, u32 div_shift, u32 div_width,
-+                               u32 div_flags, u32 fix_divider)
-+{
-+       struct amb_div *div;
-+       struct clk_init_data init =3D {};
-+       int ret;
-+
-+       div =3D devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
-+       if (!div)
-+               return ERR_PTR(-ENOMEM);
-+
-+       div->map =3D map;
-+       div->offset =3D div_reg;
-+       div->shift =3D div_shift;
-+       div->width =3D div_width;
-+       div->flags =3D div_flags;
-+       div->fix_divider =3D fix_divider;
-+
-+       init.name =3D name;
-+       init.ops =3D &amb_div_ops;
-+       init.parent_hws =3D &parent;
-+       init.num_parents =3D 1;
-+
-+       div->hw.init =3D &init;
-+
-+       ret =3D devm_clk_hw_register(dev, &div->hw);
-+       if (ret)
-+               return ERR_PTR(ret);
-+
-+       return &div->hw;
-+}
-+
-+struct clk_hw *amb_mux_div_register(struct device *dev, struct regmap *map=
-,
-+                                   const struct amb_mux_div_desc *desc,
-+                                   const struct clk_parent_data *parent_da=
-ta)
-+{
-+       struct amb_mux *mux;
-+       struct amb_div *div;
-+
-+       mux =3D devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-+       div =3D devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
-+       if (!mux || !div)
-+               return ERR_PTR(-ENOMEM);
-+
-+       mux->map =3D map;
-+       mux->offset =3D desc->mux_reg;
-+       mux->shift =3D desc->mux_shift;
-+       mux->mask =3D desc->mux_mask;
-+
-+       div->map =3D map;
-+       div->offset =3D desc->div_reg;
-+       div->shift =3D desc->div_shift;
-+       div->width =3D desc->div_width;
-+       div->flags =3D desc->div_flags;
-+       div->fix_divider =3D desc->fix_divider;
-+
-+       return devm_clk_hw_register_composite_pdata(dev, desc->name,
-+                                                   parent_data,
-+                                                   desc->num_parents,
-+                                                   &mux->hw, &amb_mux_ops,
-+                                                   &div->hw, &amb_div_ops,
-+                                                   NULL, NULL,
-+                                                   CLK_SET_RATE_NO_REPAREN=
-T);
-+}
-diff --git a/drivers/clk/ambarella/ccu_mux_div.h b/drivers/clk/ambarella/cc=
-u_mux_div.h
-new file mode 100644
-index 000000000000..abaefff1201a
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu_mux_div.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ */
-+
-+#ifndef __CCU_MUX_DIV_H
-+#define __CCU_MUX_DIV_H
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+struct amb_mux_div_desc {
-+       const char *name;
-+       const int *parents;
-+       u8 num_parents;
-+       u32 mux_reg;
-+       u32 mux_shift;
-+       u32 mux_mask;
-+       u32 div_reg;
-+       u32 div_shift;
-+       u32 div_width;
-+       u32 div_flags;
-+       u32 fix_divider;
-+};
-+
-+struct clk_hw *amb_mux_div_register(struct device *dev, struct regmap *map=
-,
-+                                   const struct amb_mux_div_desc *desc,
-+                                   const struct clk_parent_data *parent_da=
-ta);
-+
-+struct clk_hw *amb_div_register(struct device *dev, struct regmap *map,
-+                               const char *name, const struct clk_hw *pare=
-nt,
-+                               u32 div_reg, u32 div_shift, u32 div_width,
-+                               u32 div_flags, u32 fix_divider);
-+
-+#endif
-diff --git a/drivers/clk/ambarella/ccu_pll.c b/drivers/clk/ambarella/ccu_pl=
-l.c
-new file mode 100644
-index 000000000000..1293836e222e
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu_pll.c
-@@ -0,0 +1,374 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/math64.h>
-+#include <linux/rational.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+#include "ccu_pll.h"
-+
-+#define AMB_PLL_MAX_SOUT       16UL
-+#define AMB_PLL_MAX_SDIV       16UL
-+
-+struct amb_pll {
-+       struct clk_hw hw;
-+       struct regmap *map;
-+       u32 reg_offset[REG_NUM];
-+       const struct amb_pll_soc_data *soc_data;
-+       u32 fix_divider;
-+       bool frac_mode;
-+};
-+
-+#define to_amb_pll(_hw) container_of(_hw, struct amb_pll, hw)
-+
-+static void amb_pll_write_enable(struct regmap *map, u32 offset, u32 val)
-+{
-+       regmap_write(map, offset, val);
-+       regmap_write(map, offset, val | CTRL_WRITE_ENABLE);
-+       regmap_write(map, offset, val);
-+}
-+
-+static unsigned long amb_pll_calc_vco(struct amb_pll *pll,
-+                                     unsigned long parent_rate)
-+{
-+       const struct amb_pll_soc_data *soc_data =3D pll->soc_data;
-+       u32 *reg =3D pll->reg_offset;
-+       u32 pre_scaler =3D 1;
-+       u32 ctrl_val, ctrl2_val =3D 0, frac_val;
-+       u32 intp, sdiv, vcodiv, fsdiv;
-+       u64 frac =3D 0, vco;
-+
-+       if (reg[PRES_OFFSET]) {
-+               regmap_read(pll->map, reg[PRES_OFFSET], &pre_scaler);
-+               pre_scaler =3D (pre_scaler >> 4) + 1;
-+       }
-+
-+       regmap_read(pll->map, reg[CTRL_OFFSET], &ctrl_val);
-+       intp =3D ((ctrl_val >> 24) & 0x7f) + 1;
-+       sdiv =3D ((ctrl_val >> 12) & 0xf) + 1;
-+
-+       if (soc_data->pll_version >=3D 2) {
-+               vcodiv =3D (ctrl_val & soc_data->vcodiv_mask) =3D=3D
-+                        soc_data->vcodiv_val ? 2 : 1;
-+               fsdiv =3D (ctrl_val & soc_data->fsdiv_mask) =3D=3D
-+                       soc_data->fsdiv_val ? 2 : 1;
-+       } else {
-+               regmap_read(pll->map, reg[CTRL2_OFFSET], &ctrl2_val);
-+               vcodiv =3D (ctrl2_val & soc_data->vcodiv_mask) =3D=3D
-+                        soc_data->vcodiv_val ? 2 : 1;
-+               fsdiv =3D (ctrl2_val & soc_data->fsdiv_mask) =3D=3D
-+                       soc_data->fsdiv_val ? 2 : 1;
-+       }
-+
-+       vco =3D (u64)parent_rate * vcodiv * fsdiv * intp * sdiv;
-+       vco =3D div_u64(vco, pre_scaler);
-+
-+       if (ctrl_val & CTRL_FRAC_MODE) {
-+               regmap_read(pll->map, reg[FRAC_OFFSET], &frac_val);
-+               frac =3D (u64)parent_rate * vcodiv * fsdiv * sdiv * frac_va=
-l;
-+               frac =3D div_u64(frac, pre_scaler) >> 32;
-+       }
-+
-+       return vco + frac;
-+}
-+
-+static unsigned long amb_pll_recalc_rate(struct clk_hw *hw,
-+                                        unsigned long parent_rate)
-+{
-+       struct amb_pll *pll =3D to_amb_pll(hw);
-+       const struct amb_pll_soc_data *soc_data =3D pll->soc_data;
-+       u32 *reg =3D pll->reg_offset;
-+       u32 pre_scaler =3D 1, post_scaler =3D 1;
-+       u32 ctrl_val, ctrl2_val =3D 0;
-+       u32 vcodiv, fsout, sout;
-+       u64 rate;
-+
-+       regmap_read(pll->map, reg[CTRL_OFFSET], &ctrl_val);
-+       if (ctrl_val & (CTRL_POWER_DOWN | CTRL_HALT_VCO | CTRL_FORCE_RESET)=
-)
-+               return 0;
-+
-+       if (reg[PRES_OFFSET]) {
-+               regmap_read(pll->map, reg[PRES_OFFSET], &pre_scaler);
-+               pre_scaler =3D (pre_scaler >> 4) + 1;
-+       }
-+
-+       if (reg[POST_OFFSET]) {
-+               regmap_read(pll->map, reg[POST_OFFSET], &post_scaler);
-+               post_scaler =3D (post_scaler >> 4) + 1;
-+       }
-+
-+       if (ctrl_val & CTRL_BYPASS)
-+               return parent_rate / pre_scaler / post_scaler;
-+
-+       if (soc_data->pll_version >=3D 2) {
-+               vcodiv =3D (ctrl_val & soc_data->vcodiv_mask) =3D=3D
-+                        soc_data->vcodiv_val ? 2 : 1;
-+               fsout =3D (ctrl_val & soc_data->fsout_mask) =3D=3D
-+                       soc_data->fsout_val ? 2 : 1;
-+       } else {
-+               regmap_read(pll->map, reg[CTRL2_OFFSET], &ctrl2_val);
-+               vcodiv =3D (ctrl2_val & soc_data->vcodiv_mask) =3D=3D
-+                        soc_data->vcodiv_val ? 2 : 1;
-+               fsout =3D (ctrl2_val & soc_data->fsout_mask) =3D=3D
-+                       soc_data->fsout_val ? 2 : 1;
-+       }
-+
-+       sout =3D ((ctrl_val >> 16) & 0xf) + 1;
-+       rate =3D amb_pll_calc_vco(pll, parent_rate);
-+
-+       if (soc_data->pll_version >=3D 2) {
-+               if (!(ctrl_val & CTRL_BYPASS_HSDIV))
-+                       rate =3D div_u64(rate, vcodiv * fsout * sout);
-+       } else {
-+               if (!(ctrl2_val & CTRL2_BYPASS_HSDIV))
-+                       rate =3D div_u64(rate, vcodiv * fsout * sout);
-+       }
-+
-+       rate =3D div_u64(rate, pll->fix_divider * post_scaler);
-+
-+       return rate;
-+}
-+
-+static int amb_pll_determine_rate(struct clk_hw *hw,
-+                                 struct clk_rate_request *req)
-+{
-+       struct amb_pll *pll =3D to_amb_pll(hw);
-+       unsigned long half_refclk =3D req->best_parent_rate / 2;
-+
-+       if (pll->frac_mode)
-+               return 0;
-+
-+       if (!half_refclk)
-+               return 0;
-+
-+       req->rate =3D roundup(req->rate, half_refclk);
-+
-+       return 0;
-+}
-+
-+static int amb_pll_calc_params(struct amb_pll *pll, unsigned long rate,
-+                              unsigned long parent_rate, u32 ctrl2_val,
-+                              u32 *intp, u32 *sdiv, u32 *sout,
-+                              u32 *vcodiv, u32 *fsdiv, u32 *fsout)
-+{
-+       const struct amb_pll_soc_data *soc_data =3D pll->soc_data;
-+       unsigned long max_numerator, max_denominator;
-+       unsigned long intp_ul, sout_ul, rate_tmp;
-+       u32 ctrl_val;
-+
-+       *sdiv =3D 1;
-+
-+       if (soc_data->pll_version >=3D 2) {
-+               ctrl_val =3D 0;
-+               *vcodiv =3D (ctrl_val & soc_data->vcodiv_mask) =3D=3D
-+                         soc_data->vcodiv_val ? 2 : 1;
-+               *fsdiv =3D (ctrl_val & soc_data->fsdiv_mask) =3D=3D
-+                        soc_data->fsdiv_val ? 2 : 1;
-+               *fsout =3D (ctrl_val & soc_data->fsout_mask) =3D=3D
-+                        soc_data->fsout_val ? 2 : 1;
-+       } else {
-+               *vcodiv =3D (ctrl2_val & soc_data->vcodiv_mask) =3D=3D
-+                         soc_data->vcodiv_val ? 2 : 1;
-+               *fsdiv =3D (ctrl2_val & soc_data->fsdiv_mask) =3D=3D
-+                        soc_data->fsdiv_val ? 2 : 1;
-+               *fsout =3D (ctrl2_val & soc_data->fsout_mask) =3D=3D
-+                        soc_data->fsout_val ? 2 : 1;
-+       }
-+
-+       if (rate < parent_rate)
-+               return -EINVAL;
-+
-+       max_numerator =3D soc_data->vco_max_mhz;
-+       max_numerator =3D div_u64(max_numerator * 1000000ULL, parent_rate);
-+       max_numerator =3D div_u64(max_numerator, *vcodiv * *fsdiv);
-+       max_numerator =3D min(128UL, max_numerator);
-+       if (!max_numerator)
-+               return -EINVAL;
-+
-+       max_denominator =3D AMB_PLL_MAX_SOUT;
-+       rate_tmp =3D rate;
-+       rational_best_approximation(rate_tmp, parent_rate, max_numerator,
-+                                   max_denominator, &intp_ul, &sout_ul);
-+
-+       while (parent_rate * *fsdiv * intp_ul * *sdiv / *fsout / sout_ul >
-+              rate) {
-+               unsigned long resolution =3D parent_rate / AMB_PLL_MAX_SOUT=
-;
-+
-+               if (rate_tmp <=3D resolution)
-+                       return -EINVAL;
-+
-+               rate_tmp -=3D resolution;
-+               rational_best_approximation(rate_tmp, parent_rate,
-+                                           max_numerator, max_denominator,
-+                                           &intp_ul, &sout_ul);
-+       }
-+
-+       while (parent_rate / 1000000 * *vcodiv * *fsdiv * intp_ul * *sdiv <
-+              soc_data->vco_min_mhz) {
-+               if (sout_ul > 8 || intp_ul > 64)
-+                       break;
-+
-+               intp_ul *=3D 2;
-+               sout_ul *=3D 2;
-+       }
-+
-+       if (intp_ul > max_numerator || sout_ul > max_denominator ||
-+           *sdiv > AMB_PLL_MAX_SDIV)
-+               return -EINVAL;
-+
-+       *intp =3D intp_ul;
-+       *sout =3D sout_ul;
-+
-+       return 0;
-+}
-+
-+static int amb_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+                           unsigned long parent_rate)
-+{
-+       struct amb_pll *pll =3D to_amb_pll(hw);
-+       const struct amb_pll_soc_data *soc_data =3D pll->soc_data;
-+       u32 *reg =3D pll->reg_offset;
-+       u32 ctrl_val, ctrl2_val =3D 0, ctrl3_val, frac_val =3D 0;
-+       u32 intp, sdiv, sout, vcodiv, fsdiv, fsout;
-+       unsigned long old_rate, new_rate, rate_tmp;
-+       int ret;
-+
-+       if (!rate) {
-+               regmap_read(pll->map, reg[CTRL_OFFSET], &ctrl_val);
-+               ctrl_val |=3D CTRL_POWER_DOWN | CTRL_HALT_VCO;
-+               amb_pll_write_enable(pll->map, reg[CTRL_OFFSET], ctrl_val);
-+               return 0;
-+       }
-+
-+       rate *=3D pll->fix_divider;
-+
-+       if (soc_data->ctrl2_val)
-+               ctrl2_val =3D soc_data->ctrl2_val;
-+       else
-+               regmap_read(pll->map, reg[CTRL2_OFFSET], &ctrl2_val);
-+
-+       ret =3D amb_pll_calc_params(pll, rate, parent_rate, ctrl2_val,
-+                                 &intp, &sdiv, &sout, &vcodiv, &fsdiv,
-+                                 &fsout);
-+       if (ret)
-+               return ret;
-+
-+       if (soc_data->ctrl2_val)
-+               regmap_write(pll->map, reg[CTRL2_OFFSET], soc_data->ctrl2_v=
-al);
-+
-+       ctrl_val =3D ((intp - 1) & 0x7f) << 24;
-+       ctrl_val |=3D ((sdiv - 1) & 0xf) << 12;
-+       ctrl_val |=3D ((sout - 1) & 0xf) << 16;
-+       if (soc_data->pll_version >=3D 2) {
-+               ctrl_val |=3D vcodiv =3D=3D 2 ? soc_data->vcodiv_val : 0;
-+               ctrl_val |=3D fsdiv =3D=3D 2 ? soc_data->fsdiv_val : 0;
-+               ctrl_val |=3D fsout =3D=3D 2 ? soc_data->fsout_val : 0;
-+       }
-+
-+       regmap_write(pll->map, reg[CTRL_OFFSET], ctrl_val);
-+       regmap_write(pll->map, reg[FRAC_OFFSET], 0);
-+
-+       old_rate =3D amb_pll_recalc_rate(hw, parent_rate) * pll->fix_divide=
-r;
-+       rate_tmp =3D old_rate > rate ? 0 : rate - old_rate;
-+       if (rate_tmp && pll->frac_mode) {
-+               u64 dividend, divider;
-+
-+               dividend =3D (u64)rate_tmp * sout * fsout;
-+               dividend <<=3D 32;
-+               divider =3D (u64)sdiv * fsdiv * parent_rate;
-+               frac_val =3D DIV_ROUND_CLOSEST_ULL(dividend, divider);
-+               regmap_write(pll->map, reg[FRAC_OFFSET], frac_val);
-+               ctrl_val |=3D CTRL_FRAC_MODE;
-+       }
-+
-+       if (soc_data->pll_version >=3D 2) {
-+               ctrl3_val =3D soc_data->ctrl3_val;
-+               regmap_write(pll->map, reg[CTRL3_OFFSET],
-+                            ctrl3_val | CTRL3_VCO_CLAMP);
-+               regmap_write(pll->map, reg[CTRL_OFFSET],
-+                            ctrl_val | CTRL_FORCE_RESET);
-+               ndelay(100);
-+               regmap_write(pll->map, reg[CTRL_OFFSET],
-+                            ctrl_val & ~CTRL_FORCE_RESET);
-+               ndelay(100);
-+               regmap_write(pll->map, reg[CTRL3_OFFSET],
-+                            ctrl3_val & ~CTRL3_VCO_CLAMP);
-+       } else {
-+               u32 fvco_mhz, range;
-+
-+               fvco_mhz =3D amb_pll_calc_vco(pll, parent_rate) / 1000000UL=
-;
-+               for (range =3D 0; range < ARRAY_SIZE(soc_data->vco_range);
-+                    range++) {
-+                       if (fvco_mhz > soc_data->vco_range[range])
-+                               break;
-+               }
-+               range =3D ARRAY_SIZE(soc_data->vco_range) - range - 1;
-+
-+               regmap_read(pll->map, reg[CTRL3_OFFSET], &ctrl3_val);
-+               ctrl3_val &=3D ~CTRL3_VCO_RANGE_MASK;
-+               ctrl3_val |=3D range << 1;
-+               regmap_write(pll->map, reg[CTRL3_OFFSET], ctrl3_val);
-+
-+               if (frac_val) {
-+                       ctrl_val |=3D CTRL_FORCE_RESET;
-+                       amb_pll_write_enable(pll->map, reg[CTRL_OFFSET],
-+                                            ctrl_val);
-+               }
-+
-+               ctrl_val &=3D ~CTRL_FORCE_RESET;
-+               amb_pll_write_enable(pll->map, reg[CTRL_OFFSET], ctrl_val);
-+       }
-+
-+       new_rate =3D amb_pll_recalc_rate(hw, parent_rate);
-+       rate_tmp =3D rate / pll->fix_divider;
-+       if (max(new_rate, rate_tmp) - min(new_rate, rate_tmp) > 10)
-+               pr_warn("%s: requested %lu, got %lu\n", clk_hw_get_name(hw)=
-,
-+                       rate_tmp, new_rate);
-+
-+       return 0;
-+}
-+
-+static const struct clk_ops amb_pll_ops =3D {
-+       .recalc_rate =3D amb_pll_recalc_rate,
-+       .determine_rate =3D amb_pll_determine_rate,
-+       .set_rate =3D amb_pll_set_rate,
-+};
-+
-+struct clk_hw *amb_pll_register(struct device *dev, struct regmap *map,
-+                               const struct amb_pll_desc *desc)
-+{
-+       struct amb_pll *pll;
-+       struct clk_init_data init =3D {};
-+       const struct clk_hw *parent =3D desc->parent;
-+       int ret;
-+
-+       pll =3D devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-+       if (!pll)
-+               return ERR_PTR(-ENOMEM);
-+
-+       pll->map =3D map;
-+       memcpy(pll->reg_offset, desc->reg_offset, sizeof(pll->reg_offset));
-+       pll->soc_data =3D desc->soc_data;
-+       pll->fix_divider =3D 1;
-+       pll->frac_mode =3D desc->frac_mode;
-+
-+       init.name =3D desc->name;
-+       init.ops =3D &amb_pll_ops;
-+       init.flags =3D CLK_GET_RATE_NOCACHE | CLK_IS_CRITICAL;
-+       init.parent_hws =3D &parent;
-+       init.num_parents =3D 1;
-+
-+       pll->hw.init =3D &init;
-+
-+       ret =3D devm_clk_hw_register(dev, &pll->hw);
-+       if (ret)
-+               return ERR_PTR(ret);
-+
-+       return &pll->hw;
-+}
-diff --git a/drivers/clk/ambarella/ccu_pll.h b/drivers/clk/ambarella/ccu_pl=
-l.h
-new file mode 100644
-index 000000000000..b9e453e9debf
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu_pll.h
-@@ -0,0 +1,70 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ */
-+
-+#ifndef __CCU_PLL_H
-+#define __CCU_PLL_H
-+
-+#include <linux/bits.h>
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+#include <linux/types.h>
-+
-+enum {
-+       CTRL_OFFSET =3D 0,
-+       FRAC_OFFSET,
-+       CTRL2_OFFSET,
-+       CTRL3_OFFSET,
-+       PRES_OFFSET,
-+       POST_OFFSET,
-+       REG_NUM,
-+};
-+
-+#define CTRL_BYPASS            BIT(2)
-+#define CTRL_WRITE_ENABLE      BIT(0)
-+#define CTRL_FRAC_MODE         BIT(3)
-+#define CTRL_FORCE_RESET       BIT(4)
-+#define CTRL_POWER_DOWN                BIT(5)
-+#define CTRL_HALT_VCO          BIT(6)
-+#define CTRL_VCODIV_DIV2       BIT(8)
-+#define CTRL_FSDIV_DIV2                BIT(9)
-+#define CTRL_FSOUT_DIV2                BIT(10)
-+#define CTRL_BYPASS_HSDIV      BIT(11)
-+
-+#define CTRL2_VCODIV_DIV2      BIT(8)
-+#define CTRL2_FSDIV_DIV2       BIT(9)
-+#define CTRL2_FSOUT_DIV2       BIT(11)
-+#define CTRL2_BYPASS_HSDIV     BIT(12)
-+
-+#define CTRL3_VCO_RANGE_MASK   0x6
-+#define CTRL3_VCO_CLAMP                0x8
-+
-+struct amb_pll_soc_data {
-+       u32 pll_version;
-+       u32 fsout_mask;
-+       u32 fsout_val;
-+       u32 fsdiv_mask;
-+       u32 fsdiv_val;
-+       u32 vcodiv_mask;
-+       u32 vcodiv_val;
-+       u32 vco_max_mhz;
-+       u32 vco_min_mhz;
-+       u32 vco_range[4];
-+       u32 ctrl2_val;
-+       u32 ctrl3_val;
-+};
-+
-+struct amb_pll_desc {
-+       const char *name;
-+       const struct clk_hw *parent;
-+       const u32 reg_offset[REG_NUM];
-+       const struct amb_pll_soc_data *soc_data;
-+       bool frac_mode;
-+};
-+
-+struct clk_hw *amb_pll_register(struct device *dev, struct regmap *map,
-+                               const struct amb_pll_desc *desc);
-+
-+#endif
---
-2.34.1
-
-NOTE: This email (including attachments) contain Ambarella Proprietary and/=
-or Confidential Information and is intended solely for the use of the indiv=
-idual(s) to whom it is addressed. Any unauthorized review, use, disclosure,=
- distribute, copy, or print is prohibited. If you are not an intended recip=
-ient, please contact the sender by reply email and destroy all copies of th=
-e original message. Thank you.
+SGksIExpbnVzDQoNCj4gT24gU2F0LCBKdWwgMjUsIDIwMjYgYXQgMTI6MjXigK9QTSBDaGFuZ2h1
+YW5nIExpYW5nDQo+IDxjaGFuZ2h1YW5nLmxpYW5nQHN0YXJmaXZldGVjaC5jb20+IHdyb3RlOg0K
+PiA+ID4gT24gV2VkLCBKdW4gMywgMjAyNiBhdCA3OjU04oCvQU0gQ2hhbmdodWFuZyBMaWFuZw0K
+PiA+ID4gPGNoYW5naHVhbmcubGlhbmdAc3RhcmZpdmV0ZWNoLmNvbT4gd3JvdGU6DQo+IA0KPiA+
+ID4gPiArc3RhdGljIHVuc2lnbmVkIGludCBqaGIxMDBfZ3Bpb190b19waW4oc3RydWN0IGdwaW9f
+Y2hpcCAqZ2MsDQo+ID4gPiA+ICt1bnNpZ25lZCBpbnQgZ3Bpbykgew0KPiA+ID4gPiArICAgICAg
+IHN0cnVjdCBqaGIxMDBfZ3Bpb19iYW5rICpiYW5rID0gamhiMTAwX2djX3RvX2JhbmsoZ2MpOw0K
+PiA+ID4gPiArDQo+ID4gPiA+ICsgICAgICAgcmV0dXJuIGJhbmstPmlkICogSkhCMTAwX05SX0dQ
+SU9TX1BFUl9CQU5LICsgZ3BpbzsgfQ0KPiA+ID4NCj4gPiA+IFRoaXMgdXN1YWxseSB0ZWxscyBt
+ZSB0aGF0IEdQSU9fR0VORVJJQyBjYW4gYmUgdXNlZCBidXQgbWF5YmUgdGhpcw0KPiA+ID4gaGFz
+IGJlZW4gZGlzY3Vzc2VkIGJlZm9yZS4uLg0KPiA+DQo+ID4gSGVyZSwgdGhlIG1haW4gcHVycG9z
+ZSBpcyB0byBjb252ZXJ0IEdQSU9zIGludG8gcGlucyBmb3IgY29uZmlndXJpbmcNCj4gPiBjZXJ0
+YWluIHBpbmN0cmwgc2V0dGluZ3MuIEkgaGF2ZW4ndCBmb3VuZCB0aGUgcGFydCB3aGVyZSBHUElP
+X0dFTkVSSUMgY2FuDQo+IGFzc2lzdCB3aXRoIHRoaXMuDQo+ID4gQ2FuIHlvdSBwb2ludCBpdCBv
+dXQgZm9yIG1lPyBUaGFuayB5b3UgdmVyeSBtdWNoLg0KPiANCj4gTm9ybWFsbHkgR1BJTyBjaGlw
+cyB1c2UgdGhlIC5jb25maWcoKSBjYWxsYmFjayB3aGVuIHlvdSB3YW50IHRvIHNldCBwaW4NCj4g
+Y29uZmlnIGZvciBhIGNlcnRhaW4gcGluIGluIGEgcGluY3RybCBiYWNrZW5kLg0KPiANCj4gU2Vl
+IERvY3VtZW50YXRpb24vZHJpdmVyLWFwaS9ncGlvL2RyaXZlci5yc3Q6DQo+IA0KPiAiVGhlIC5z
+ZXRfY29uZmlnKCkgY2FsbGJhY2sgdXNlcyB0aGUgc2FtZSBlbnVtZXJhdG9ycyBhbmQgY29uZmln
+dXJhdGlvbg0KPiBzZW1hbnRpY3MgYXMgdGhlIGdlbmVyaWMgcGluIGNvbnRyb2wgZHJpdmVycy4g
+VGhpcyBpcyBub3QgYSBjb2luY2lkZW5jZTogaXQgaXMNCj4gcG9zc2libGUgdG8gYXNzaWduIHRo
+ZSAuc2V0X2NvbmZpZygpIHRvIHRoZSBmdW5jdGlvbiBncGlvY2hpcF9nZW5lcmljX2NvbmZpZygp
+DQo+IHdoaWNoIHdpbGwgcmVzdWx0IGluIHBpbmN0cmxfZ3Bpb19zZXRfY29uZmlnKCkgYmVpbmcg
+Y2FsbGVkIGFuZCBldmVudHVhbGx5DQo+IGVuZGluZyB1cCBpbiB0aGUgcGluIGNvbnRyb2wgYmFj
+ay1lbmQgImJlaGluZCIgdGhlIEdQSU8gY29udHJvbGxlciwgdXN1YWxseQ0KPiBjbG9zZXIgdG8g
+dGhlIGFjdHVhbCBwaW5zLiBUaGlzIHdheSB0aGUgcGluIGNvbnRyb2xsZXIgY2FuIG1hbmFnZSB0
+aGUgYmVsb3cNCj4gbGlzdGVkIEdQSU8gY29uZmlndXJhdGlvbnMuDQo+IA0KPiBJZiBhIHBpbiBj
+b250cm9sbGVyIGJhY2stZW5kIGlzIHVzZWQsIHRoZSBHUElPIGNvbnRyb2xsZXIgb3IgaGFyZHdh
+cmUNCj4gZGVzY3JpcHRpb24gbmVlZHMgdG8gcHJvdmlkZSAiR1BJTyByYW5nZXMiIG1hcHBpbmcg
+dGhlIEdQSU8gbGluZSBvZmZzZXRzIHRvDQo+IHBpbiBudW1iZXJzIG9uIHRoZSBwaW4gY29udHJv
+bGxlciBzbyB0aGV5IGNhbiBwcm9wZXJseSBjcm9zcy1yZWZlcmVuY2UgZWFjaA0KPiBvdGhlci4i
+DQoNCkkgdHJpZWQgdGhpcyBjaGFuZ2UsIGJ1dCBpdCBkb2Vzbid0IHdvcmsuIEluIG15IG5ldyB2
+ZXJzaW9uLCB0aGUgR1BJTyBkaXJlY3Rpb24gaXMgc2V0IA0KdmlhIHRoZSBgc3RydWN0IHBpbm11
+eF9vcHMgLmdwaW9fc2V0X2RpcmVjdGlvbmAgY2FsbGJhY2ssIHdoaWNoIGlzIGV4ZWN1dGVkIGFm
+dGVyIA0KYG11dGV4X2xvY2soJnBjdGxkZXYtPm11dGV4KTtgLiBJIG5lZWQgdG8gY29uZmlndXJl
+IHNvbWUgcGluY29uZiBzZXR0aW5ncyB3aGlsZSANCnNldHRpbmcgdGhlIEdQSU8gZGlyZWN0aW9u
+IGluc2lkZSBgLmdwaW9fc2V0X2RpcmVjdGlvbmAsIGZvciBleGFtcGxlOg0KDQogICAgY29uZmln
+ID0gcGluY29uZl90b19jb25maWdfcGFja2VkKFBJTl9DT05GSUdfSU5QVVRfRU5BQkxFLCAwKTsN
+CiAgICByZXQgPSBwaW5jdHJsX2dwaW9fc2V0X2NvbmZpZyhnYywgZ3BpbywgY29uZmlnKTsNCg0K
+SG93ZXZlciwgYHBpbmN0cmxfZ3Bpb19zZXRfY29uZmlnYCB3aWxsIGFnYWluIGFjcXVpcmUgdGhl
+IGxvY2sgd2l0aCANCmBtdXRleF9sb2NrKCZwY3RsZGV2LT5tdXRleCk7YC4NCg0KU28gdGhpcyBh
+cHByb2FjaCBtYXkgbm8gbG9uZ2VyIHdvcms/DQoNCj4gTWF5YmUgdGhpcyBpcyB3aGF0IHlvdSdy
+ZSBsb29raW5nIGZvcj8NCj4gDQo+IElmIHlvdSBkZWZpbmUgZ3Bpby1yYW5nZXMgaW4geW91ciBk
+ZXZpY2UgdHJlZSwgdGhlIEdQSU8gYW5kIHBpbiBjb250cm9sIGNvcmUNCj4gZGVhbHMgd2l0aCB0
+aGUgY3Jvc3MtcmVmZXJlbmNpbmcgZm9yIHlvdS4NCj4gDQo+ID4gPiA+ICsgICAgICAgc2ZwLT5u
+dW1fYmFua3MgPSBESVZfUk9VTkRfVVAoc2ZwLT5uZ3Bpb3MsDQo+ID4gPiA+ICsgSkhCMTAwX05S
+X0dQSU9TX1BFUl9CQU5LKTsNCj4gPiA+ID4gKw0KPiA+ID4gPiArICAgICAgIGZvciAodW5zaWdu
+ZWQgaW50IGkgPSAwOyBpIDwgc2ZwLT5udW1fYmFua3M7IGkrKykgew0KPiA+ID4gPiArICAgICAg
+ICAgICAgICAgaWYgKHNmcC0+bmdwaW9zID4gKGkgKyAxKSAqDQo+ID4gPiBKSEIxMDBfTlJfR1BJ
+T1NfUEVSX0JBTkspDQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHNmcC0+YmFua3Nb
+aV0uZ2MubmdwaW8gPSAoaSArIDEpICoNCj4gPiA+IEpIQjEwMF9OUl9HUElPU19QRVJfQkFOSzsN
+Cj4gPiA+ID4gKyAgICAgICAgICAgICAgIGVsc2UNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgICAgc2ZwLT5iYW5rc1tpXS5nYy5uZ3BpbyA9IHNmcC0+bmdwaW9zIC0gaSAqDQo+ID4gPiA+
+ICsgSkhCMTAwX05SX0dQSU9TX1BFUl9CQU5LOw0KPiA+ID4NCj4gPiA+IFRoaXMgbG9va3MgY29t
+cGxldGVseSBiYW5hbmFzLCBzaG91bGRuJ3QgdGhpcyBiZSBzaW1wbHk6DQo+ID4gPg0KPiA+ID4g
+c2ZwLT5iYW5rc1tpXS5nYy5uZ3BpbyA9IEpIQjEwMF9OUl9HUElPU19QRVJfQkFOSzsNCj4gPg0K
+PiA+IFRoZSBKSEIxMDAgR1BJTyBkb21haW4gaXMgbm90IGZ1bGx5IGFsaWduZWQgdG8gMzIuIEZv
+ciBleGFtcGxlLCBpbiB0aGUNCj4gPiBwZXIwIGRvbWFpbiwgdGhlcmUgYXJlIDYwIEdQSU9zLCBz
+byBJIHNwbGl0IGl0IGludG86DQo+ID4gYmFuazA6IDMyIEdQSU9zDQo+ID4gYmFuazE6IDI4IEdQ
+SU9zLg0KPiANCj4gQXQgbGVhc3QgYWRkIHRoYXQsIHdoYXQgeW91IGp1c3Qgd3JvdGUsIGFzIGEg
+Y29tbWVudCByaWdodCBhYm92ZSB0aGlzIGxvb3AuDQo+IA0KPiBUaGVyZSBpcyBzb21ldGhpbmcg
+d2l0aCB0aGlzIG1hdGggSSB0aGluayBjYW4gYmUgbWFkZSBzaW1wbGVyIHdpdGggYml0d2lzZQ0K
+PiBhcnRpdGhtZXRpYy4gVGhpbmsgYWJvdXQgaXQuDQo+IA0KPiA+ID4gPiArICAgICAgICAgICAg
+ICAgc2ZwLT5iYW5rc1tpXS5nYy5yZXF1ZXN0ID0gcGluY3RybF9ncGlvX3JlcXVlc3Q7DQo+ID4g
+Pg0KPiA+ID4gVXNlDQo+ID4gPiBncGlvY2hpcF9nZW5lcmljX3JlcXVlc3QNCj4gPiA+DQo+ID4g
+PiA+ICsgICAgICAgICAgICAgICBzZnAtPmJhbmtzW2ldLmdjLmZyZWUgPSBwaW5jdHJsX2dwaW9f
+ZnJlZTsNCj4gPiA+DQo+ID4gPiBVc2UNCj4gPiA+IGdwaW9jaGlwX2dlbmVyaWNfZnJlZQ0KPiA+
+ID4NCj4gPiA+IFRoZXNlIGNhbGxzIHdpbGwgZG8gd2hhdCB5b3Ugd2FudCwgYW5kIGFsc28gY2hl
+Y2sgdGhhdCB0aGUgcmlnaHQNCj4gPiA+IGdwaW8gcmFuZ2VzIGFyZSBhdmFpbGFibGUuDQo+ID4g
+Pg0KPiA+ID4gTWFrZSBzdXJlIHlvdSBhZGQgR1BJTyByYW5nZXMgKHRoZSBtYXBwaW5nIGJldHdl
+ZW4gcGluIGNvbnRyb2wgcGlucw0KPiA+ID4gYW5kIGNvcnJlc3BvbmRpbmcgR1BJTyBvZmZzZXRz
+KSBmb3IgdGhpcyB0byB3b3JrIHByb3Blcmx5Lg0KPiA+ID4NCj4gPiA+IEknbSBwcmV0dHkgc3Vy
+ZSB5b3UgY2FuIGhhdmUgYSBnZW5lcmljIHBpbiBjb25maWcgYmFja2VuZCBhcyB3ZWxsLg0KPiA+
+ID4NCj4gPiA+IHNmcC0+YmFua3NbaV0uZ2Muc2V0X2NvbmZpZyA9IGdwaW9jaGlwX2dlbmVyaWNf
+Y29uZmlnOw0KPiANCj4gVGhpcyBpcyBwZXJ0YWluaW5nIHRvIHdoYXQgSSBzYWlkIGFib3ZlIGFi
+b3V0IHVzaW5nIHRoZSBncGlvIHJhbmdlcyBhbmQgLmNvbmZpZw0KPiBldGMuDQo+IA0KPiA+ID4g
+VGhpcyB3aWxsIG1ha2UgY29uZmlnIGNhbGxzIHRvIHRoZSBncGlvY2hpcCBjYWxsIGludG8gdGhl
+IHBpbmN0cmwNCj4gPiA+IGJhY2tlbmQgPSB3aGF0IHlvdSB3YW50Lg0KPiANCj4gSSBzdGlsbCB0
+aGluayB0aGlzIGlzIHdoYXQgeW91IHdhbnQuDQo+IA0KPiBZb3VycywNCj4gTGludXMgV2FsbGVp
+ag0KDQpCZXN0IFJlZ2FyZHMsDQpDaGFuZ2h1YW5nDQo=
