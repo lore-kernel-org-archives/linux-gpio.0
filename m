@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA783A6B7F;
-	Thu, 30 Jul 2026 17:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B93939F174;
+	Thu, 30 Jul 2026 17:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785431015; cv=none; b=Qx49p/bHDRusfC/I3pFhqhGq4vbWSibLEApEx7dKfg8L0I49HB0KAvSk++giIe85WNksSJtprPNANXMp0wbymZMbPfxZ7nbVJQfIWXakIQWPQWuGOtWJrclC7nXANl7pm/ufd1bn0CtcdKQ3LQtFEJYKa6P/LN2wwVkB4AvYD54=
+	t=1785431015; cv=none; b=SkaBqlITgQz7VOzzlVofwRoQzK/mYDVGNZK8Ukl2tPt1b6BscMAYRQu/BVBJJthvDRXcOg9GvicLm4Q/sUJ1Sw+ZAoDMN563P94WY3L7qxDEHqKhTWHe5E7Gi14p1Brr32uXGzBX0rVJ33vhWH9Vt4CjiNNXX3ezw5yE6hSaxOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785431015; c=relaxed/simple;
-	bh=BCMef9wjPgNYZJy//qkJ2zDqGCZ+SHc7sCThF3XAm/s=;
+	bh=oqo324D+x08yTMlxbQ9JZAmvzprnFd+aGHg0th0+FuU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=h9hoI02W8XKdA+KGGY0bRDMYq9daCB2mxfDvZmEpDlE7ofHMcKQVAtB/4Xn6IC9KT27yYO2C9nzapORfjkhpVHPuj0Qcq2CVts4iR1Y62IGuaA3lnZL31/6qe6KX3KWQ6wpbN5RkP5Tr3NTpl3RmsbaLH2J6VWEetzP1cbmba3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6jE6T6V; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=QMlWUydd8TUPNOwpJM143tiVttgPnHZDS3UY3USR8orpHI2KPixghUT8U5VglN5d6c8W+botWVgW/Aeqzlqd8O4rrq1GvDwtToyWbY6m3DwoNKy5XLYm7gT0wbgENTIY1KxSLJ59XiZwGedQVTEMXmWL92miaxn2JWemHSI0XDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kAIaDVJw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6jE6T6V"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E7EEBC2BCFA;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kAIaDVJw"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AC48BC2BCF7;
 	Thu, 30 Jul 2026 17:03:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1785431015;
-	bh=BCMef9wjPgNYZJy//qkJ2zDqGCZ+SHc7sCThF3XAm/s=;
+	s=k20201202; t=1785431014;
+	bh=oqo324D+x08yTMlxbQ9JZAmvzprnFd+aGHg0th0+FuU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=c6jE6T6VEUQeFszoozzSFHG9GuJokx8ucEgsqw/rVfm5Y3mk7qgJZs426afmNietU
-	 eepop0x5yaZi3S6f0cl48Q/tC1U1txVqSbqmtVERARTjLWu+nUrwkSpP9d4SwC1NG4
-	 +MzOmFIjQZ1VcuXr/jyo7iFXoMD7+cq3bGbeivcXPpWz9zt0b4EJVNsf0j8Atc2m1u
-	 FoNwKO17esNVADt0NVJivYEwsnCRKnSwz8BrA55W6n5BE8wV7k2YyqNT0dUOjh17t5
-	 aD4oZVB9rnUkrSGmDa8BcyDRdI11XKXXpfvgzg84QIcMIZU8mAiigvIkw254R+5oU1
-	 Jl71c7IPvt4nw==
+	b=kAIaDVJww7GFlW+zB8lJp4x6y0pm80kxuOSwr3C6hUnhlZUfPedWSxk5JADzhVip5
+	 yPihWTQ3y9P0rTW7HAhDSfjdt59GyGIRb0H4TofCqngGfNqGbF5O03GhY1pZp1zDUQ
+	 61g23CiVa53lLVesa6lQmgQ9l7dxl8NeROjG4D/Pzwn61cZxt01Pvtxe4HB2emT0w+
+	 lTyRzSZzNM02sWfETUfIx4kx/SyAS07BQr/y+2GkucQNiGCYvIh+NEbL2JAv+iRjxq
+	 Kfhp/dvZ//sO0tEgNCyoWHKMCqNcQrnvPMedc/qDO/baqyHyd3mWy2ZYAD6tKL6HJw
+	 +EO+nhY/tNZCQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FD6C5516F;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D250C55162;
 	Thu, 30 Jul 2026 17:03:34 +0000 (UTC)
 From: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>
-Date: Fri, 31 Jul 2026 01:03:25 +0800
-Subject: [PATCH RFC v4 4/7] mfd: ls2kbmc: Cancel the work queue on removal
+Date: Fri, 31 Jul 2026 01:03:22 +0800
+Subject: [PATCH RFC v4 1/7] mfd: ls2kbmc: Make a copy when parsing mode
+ string
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260731-ls2kbmc-mod-v4-4-d201502ba239@gmail.com>
+Message-Id: <20260731-ls2kbmc-mod-v4-1-d201502ba239@gmail.com>
 References: <20260731-ls2kbmc-mod-v4-0-d201502ba239@gmail.com>
 In-Reply-To: <20260731-ls2kbmc-mod-v4-0-d201502ba239@gmail.com>
 To: Binbin Zhou <zhoubinbin@loongson.cn>, 
@@ -53,21 +54,21 @@ Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
  linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
  Miao Wang <shankerwangmiao@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1480;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2561;
  i=shankerwangmiao@gmail.com; s=20250715; h=from:subject:message-id;
- bh=/0Zc8SBBqzivjk5dmyl3TFu1CZBMiGpU8UG5gVg9tKE=;
- b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqa4PjPzAzEdsdVuiD4bZW/su2PZUzTlyvJc23x
- 38ejXJssDiJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCamuD4wAKCRCwMePKe/7Z
- btqSEADTFcu+lLEgR2fLSWruUjxtdazz08ba8knbWiAew0hwVX+sDyeTbYEw9Rh6CabskVztEfu
- wyAocdxBirv5qdmAtM8VeIA5DXhBwFLN4vfRUrywPskUS0VaqmvRP+TPXCdstIwAli4fIU4/qqh
- 0uX28JTj9heJ4NmFKoH0y3OELwbA5f1EJ5YDp2679BsJi942zH3+Qg4B8dM7RRuoLq3flmfN4K2
- XifHZ/PV7Ld7Z2WkcIEXD5kj10vb8ZepK+VR9K/d614DuUOH8YlKeHn1ShBOX2MF9lFDLOiaFD4
- NPq/lkkXCCmH9xNuGC9v3WfHt2+xkJifqg8sE3JzZ9JKMwjATgj6qjklsdz+P70cmGUYyAnJiwZ
- EZ2Ak8oI70CTKYltHyDiDS9UaxEUOBizP6ivOhO+6WIzEA37YIyWhDZN4kQne20J3qxmoRs1Y/S
- pcmrV66acE7DXKFiPgnBISLCbOGCNDIdxp7mlepNAmX6RBIXSs0qNIXIdigG1GGKZgt+XMGM6IX
- pZVjjJTZBpJbbKmYeQf4LV0Dno+Li5GY98T+JE7ehmPxsIz9CeEibKyhne880aBItfspPEoh7iO
- nKvuTJ4SlClYHO7wBIK16HPSe3iqfAEb1x/ClnB1zZ41Tj7drboiPg+gvMY2abhfZWp35zbnlJW
- FNmCH4fuJ5pEvlw==
+ bh=6DIyNM6vk8kNUgYv2UMACNnAgWrwjVEMmwrMrjQaG1w=;
+ b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqa4PjUaqGYl/WVatdOZe/SdbX8EQIZBwhvmvr7
+ ghslqSIRCaJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCamuD4wAKCRCwMePKe/7Z
+ bo/MD/9o/aNJDVHGcU0YThjfIZvV1S2VMeBKP5l9hkppTDd2H3BcMO+YT6xszLIkKFP2QV0JSR8
+ ZtuC4rW7HCSjTU8kcXKQTO9pJLTmZ/WCbt9j9ys8skuSPQ9M4hoXLrnmcobl+bqOku9zpomb1Fh
+ lGYZaK1KucymrGEvP4LauL+tmA5K5nHtzcOGm74cUyY3EVRNx+FPeA4FP06z3dh+5oLPEv7SBAN
+ of9OZ/u8yMzuUOGuJ+OTidRkHDEWC7mu2JjNIbiXdrJsh7rQqxyO/aN0qiVLFR61TkHTAF95IrI
+ fdiivfLJji4xy0gLDNTH5Ig88qXD9mzYzL1s/kLNW99bzE1YBTbYRvPWl8KC73yP6ne2KE0jqK6
+ OEV/tRyvXbItC3eUPm7XznaEOKKnzoVAf+Nn/UA4UCAsmLS/fIu9M5+GQIL/bw8Af4OnOjLsCqD
+ 8tj5TYYq+vfg25tB+nnzIItQX9B4Fe3weeBa/nqYj+bX5r20MxCGnnS6A3o7QjErJU8zTbWAdRj
+ 0KoN2Ew7z/zxYVYpHJXpF3BefEL7NECF550oJG41xtLurErBlmpW9JeK9bDoPNlq+LgvMq1EYfO
+ fuEG3o4GxXUcSk88tZMO9C7mtBcJjwglPFBYkFreQ6m79CGDROnRSTzhIXLaHATFJwSwTCSave8
+ cY4YL7ns4s1KtNg==
 X-Developer-Key: i=shankerwangmiao@gmail.com; a=openpgp;
  fpr=6FAEFF06B7D212A774C60BFDFA0D166D6632EF4A
 X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/20250715
@@ -77,43 +78,80 @@ Reply-To: shankerwangmiao@gmail.com
 
 From: Miao Wang <shankerwangmiao@gmail.com>
 
-When the device is being removeed, the work queue should be canceled to
-avoid any pending work to be executed after the device is removed.
+When parsing the mode string from BMC, the string is manipulated
+in-place with strsep(), preventing from parsing it again. Make a copy of
+the original string and manipulate the copy instead to fix this.
 
-Fixes: d952bba3fbb5 ("mfd: ls2kbmc: Add Loongson-2K BMC reset function support")
+Fixes: 0d64f6d1ffe9 ("mfd: ls2kbmc: Introduce Loongson-2K BMC core driver")
 Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
 ---
- drivers/mfd/ls2k-bmc-core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/mfd/ls2k-bmc-core.c | 30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
-index a5465c42a77b8b7b81e3ad787d6036679c6ba6df..1466b314fc4e577fe5e31404444648b5b0447ebb 100644
+index 408056bfb2fe757a5bde43775a483a48352e706d..27f6e096404d67459038a0607378057ec7ef69ab 100644
 --- a/drivers/mfd/ls2k-bmc-core.c
 +++ b/drivers/mfd/ls2k-bmc-core.c
-@@ -375,6 +375,12 @@ static void ls2k_bmc_save_pci_data(struct pci_dev *pdev, struct ls2k_bmc_ddata *
- 	pci_read_config_dword(pdev, PCI_INTERRUPT_LINE, &ddata->bmc_pci_data.interrupt_line);
+@@ -427,34 +427,54 @@ static int ls2k_bmc_init(struct ls2k_bmc_ddata *ddata)
+  */
+ static int ls2k_bmc_parse_mode(struct pci_dev *pdev, struct simplefb_platform_data *pd)
+ {
+-	char *mode;
++	/* Assume 64 bytes is enough for the resolution string */
++	char mode_buf[64], mode_buf_orig[64];
++	char *mode = mode_buf;
++	const void __iomem *mode_base;
+ 	int depth, ret;
+ 
+ 	/* The last 16M of PCI BAR0 is used to store the resolution string. */
+-	mode = devm_ioremap(&pdev->dev, pci_resource_start(pdev, 0) + SZ_16M, SZ_16M);
+-	if (!mode)
++	mode_base = ioremap(pci_resource_start(pdev, 0) + SZ_16M,
++			    sizeof(mode_buf));
++	if (!mode_base)
+ 		return -ENOMEM;
++	memcpy_fromio(mode_buf, mode_base, sizeof(mode_buf) - 1);
++	mode_buf[sizeof(mode_buf) - 1] = '\0';
++	iounmap((void __iomem *)mode_base);
++	memcpy(mode_buf_orig, mode_buf, sizeof(mode_buf_orig));
+ 
+ 	/* The resolution field starts with the flag "video=". */
+ 	if (!strncmp(mode, "video=", 6))
+ 		mode = mode + 6;
++	else
++		goto invalid_mode;
+ 
+-	ret = kstrtoint(strsep(&mode, "x"), 10, &pd->width);
++	ret = kstrtouint(strsep(&mode, "x"), 10, &pd->width);
+ 	if (ret)
+ 		return ret;
++	if (mode == NULL)
++		goto invalid_mode;
+ 
+-	ret = kstrtoint(strsep(&mode, "-"), 10, &pd->height);
++	ret = kstrtouint(strsep(&mode, "-"), 10, &pd->height);
+ 	if (ret)
+ 		return ret;
++	if (mode == NULL)
++		goto invalid_mode;
+ 
+ 	ret = kstrtoint(strsep(&mode, "@"), 10, &depth);
+ 	if (ret)
+ 		return ret;
++	if (mode == NULL)
++		goto invalid_mode;
+ 
+ 	pd->stride = pd->width * depth / 8;
+ 	pd->format = depth == 32 ? "a8r8g8b8" : "r5g6b5";
+ 
+ 	return 0;
++
++invalid_mode:
++	dev_err(&pdev->dev, "Invalid resolution string: %s\n", mode_buf_orig);
++	return -EINVAL;
  }
  
-+static void ls2k_bmc_cancel_wq(void *data)
-+{
-+	struct ls2k_bmc_ddata *ddata = data;
-+	(void) cancel_work_sync(&ddata->bmc_reset_work);
-+}
-+
- static int ls2k_bmc_init(struct ls2k_bmc_ddata *ddata)
- {
- 	struct pci_dev *pdev = to_pci_dev(ddata->dev);
-@@ -385,6 +391,10 @@ static int ls2k_bmc_init(struct ls2k_bmc_ddata *ddata)
- 
- 	INIT_WORK(&ddata->bmc_reset_work, ls2k_bmc_events_fn);
- 
-+	ret = devm_add_action_or_reset(ddata->dev, ls2k_bmc_cancel_wq, ddata);
-+	if (ret)
-+		return ret;
-+
- 	ret = devm_request_irq(&pdev->dev, pdev->irq, ls2k_bmc_interrupt,
- 			       IRQF_SHARED | IRQF_TRIGGER_FALLING, "ls2kbmc pcie", ddata);
- 	if (ret) {
+ static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
 
 -- 
 2.49.0
