@@ -1,98 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF4B32BF24;
-	Wed, 29 Jul 2026 21:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B80322DB7;
+	Thu, 30 Jul 2026 00:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785361617; cv=none; b=I3dyx4R7hZgr3l5usIcb3eLybGW4RcULHSCyZMV3BXhKZfQQE1Yl0/H8YaMRFlqdA4IXr3JS3mjJJN4bzdfvNzHm4JAw/rql/lQu1qMrejRqNfORc5SKhSqHDZTfSD6xDVBQebauB7GB3+zFs+lVzlYEPLCmjDqtpge5YLSocMA=
+	t=1785370941; cv=none; b=WqdiUILQ2ppCldcdQG1n+dChxliKFNPVnpjyAWiqIIKU4OJ73iz2fuU/LKODojt9JVVjA66pl5oS8hpErRX2fZALuyCxM9OAUuCggNzZmjmzaVhar0gxkhYsqngWfMne8uxI5Y1zaXqUskrnaJGZdbE2aFPsH5f0NLEes0o3LQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785361617; c=relaxed/simple;
-	bh=W4kqLTTzHRHp7ju4ZHj75RDQEVcrazNkC2JEEvcHFLA=;
+	s=arc-20240116; t=1785370941; c=relaxed/simple;
+	bh=MHaYM5WU/xBjLZguI5+23qBqiNxJLjcHE3vL8ArU3wY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mYEPtjUU+fysrDZUUYkrYIANdqBaGezRWlViaF93XUAiVCvuWQUAb7YM4lTbqsvLUARODeZ9Uraf1Lw1dq3KVBcsIYO4FFxYcxBref5xkcsQ9qX8CK2JOktMFI6qmlaXjCPrvpItOvBZ2a8cFz4M2AfMI6bjv0qb+hfzG+q2ySg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N0XlNcoG; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=cfabt7RJQh2EdnGz0NPWsLYny2qV/5kiQYvD/jy4Yu0d0W1O0WEpvMqmeimMk+9ri3fAO5BUwG+2JpHoUHcnjH9uaPb/RQNFsJi8f9ZU4gYZO9zNy6sqWKXYvVHZD9xvQ1IM6bQY+BCvdTh194eBivYQN2gqGTWJK6+3FCQIvYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTpR1zgN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0XlNcoG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84D1D1F000E9;
-	Wed, 29 Jul 2026 21:46:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTpR1zgN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96F771F000E9;
+	Thu, 30 Jul 2026 00:22:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785361615;
-	bh=4gA1444DY6SQVAsZxsUoZsvLvroO8i1ItHFwF6UxiXc=;
+	s=k20260515; t=1785370934;
+	bh=VXdI7aMO0+VEvuGKwK9rEwLt5ITWmKrv1He2xJ+uhj4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=N0XlNcoGPY+iu+7ddvduJgMw9cv26Z8wc8a+2pqR/f4KUP/6w8RH6zCdk6rNZNpPG
-	 RLDid2Cq1+nwRSHd0f3cSk/aaupzCR6mFLl3zmDIDSftJEF4VNkABKguCkBi2zz9rW
-	 LlkVowZwwwjZNB/V15g71i4KuD8oepEPhRwd3ZckLPjTPstd7scZk698s0IWloOLBZ
-	 c5QpVZ/aPOK7f868LkE6tt6nMX2M+v+TAVjnTHHWdl0pzsP+dWuy3ngEJtB035Yavq
-	 nxzmzxiqW2n1oXC17xZt6NDEdYRy9iaK4WIfpqn0k1EprwvaedxLjUCV8EbL87yLiU
-	 Ss8AWnnipgL+g==
-Date: Wed, 29 Jul 2026 23:46:50 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Jie Li <lj29312931@gmail.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Wolfram Sang <wsa@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jie Li <jie.i.li@nokia.com>
-Subject: Re: [PATCH v5 2/2] i2c: core: support recovery for single-ended GPIOs
-Message-ID: <amp0b2jpiV9VO9Pe@zenone.zhora.eu>
-References: <CAMRc=MfMcEbQ3kkW3fMn-jzDoT2xdJWjp2xVBVsu7n683_5g9A@mail.gmail.com>
- <20260511113726.49041-1-jie.i.li@nokia.com>
- <20260511113726.49041-3-jie.i.li@nokia.com>
+	b=dTpR1zgNR0fqW0ja0xGqtf5c7a59t7Y8byz7SC/T3napFb7xktgkiULLsIXBzPcvK
+	 bnicQgET5J7KoR6RyjAzdQobHGe/2zGRUB7lDwGou3X+usJsIEcMn4a0knUmDpxPET
+	 JS19bOPD4KHstKZxLakv4V6BrY1cVdHXAgRTJjj8aUab8H4we4WkjeWdY7EGfXVx0l
+	 9A04Na0aMk8cSuEnnJwC7PNuU/95uUkN0JlMmVSJMlIgNjChX7Rzr7Gbu4AT7mKSFT
+	 Xf/a+DVKS77cN4lKRtorQmF/gAncniPIIoQIif1HEOIqWl/jkd2uS7ivNn3QM2xzdn
+	 zM1AzqfJbk9Yg==
+Date: Thu, 30 Jul 2026 01:22:08 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Subject: Re: [PATCH v6 0/5] Subject: [PATCH v6 0/7] ASoC: qcom and pinctrl:
+ add LPASS LPR voting and Hawi LPASS LPI support
+Message-ID: <bb6a9164-6dd2-4d11-a9cd-a2ae7ab43949@sirena.org.uk>
+References: <20260724141708.2212057-1-prasad.kumpatla@oss.qualcomm.com>
+ <CAMRc=MfU=u7tH2r19H9Ex9uEDAb1V3Fanzi2EuqzB+iohPQkog@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="y5ZitO3eG7NJF12K"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MfU=u7tH2r19H9Ex9uEDAb1V3Fanzi2EuqzB+iohPQkog@mail.gmail.com>
+X-Cookie: Captain's Log, star date 21:34.5...
+
+
+--y5ZitO3eG7NJF12K
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260511113726.49041-3-jie.i.li@nokia.com>
 
-Hi Jie,
+On Fri, Jul 24, 2026 at 07:32:55AM -0700, Bartosz Golaszewski wrote:
+> On Fri, 24 Jul 2026 16:17:03 +0200, Prasad Kumpatla
 
-On Mon, May 11, 2026 at 01:37:26PM +0200, Jie Li wrote:
-> Currently, i2c_init_recovery() only assigns the set_sda/set_scl
-> hooks if gpiod_get_direction() returns GPIO_LINE_DIRECTION_OUT.
-> 
-> This logic fails on certain SoC controllers where open-drain lines
-> in a high-impedance state are physically reported as inputs. This
-> leads to a "deadlock" where the I2C core refuses to assign the
-> recovery hooks because it incorrectly assumes the pins are
-> input-only, even though they are fully capable of driving the bus
-> low for recovery.
-> 
-> Update the recovery initialization to use the new
-> gpiod_is_single_ended() helper. If a GPIO is configured as
-> open-drain or open-source in the firmware, it is safe to assume
-> it can be used for bus recovery, even if the current hardware
-> direction is reported as input.
-> 
-> Signed-off-by: Jie Li <jie.i.li@nokia.com>
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > The intended merge strategy is:
 
-Please do not send subsequent versions as --in-reply-to, it's
-difficult to track them.
+> >   1. Merge the dt-bindings patch adding LPASS_HW_LPR_VOTE to
+> >      qcom,q6dsp-lpass-ports.h.
 
-> ---
->  drivers/i2c/i2c-core-base.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-> index 9c46147e3506..a3c33e804d47 100644
-> --- a/drivers/i2c/i2c-core-base.c
-> +++ b/drivers/i2c/i2c-core-base.c
-> @@ -445,8 +445,8 @@ static int i2c_init_recovery(struct i2c_adapter *adap)
->  		bri->set_scl = set_scl_gpio_value;
->  		if (bri->sda_gpiod) {
->  			bri->get_sda = get_sda_gpio_value;
-> -			/* FIXME: add proper flag instead of '0' once available */
-> -			if (gpiod_get_direction(bri->sda_gpiod) == 0)
-> +			if (gpiod_get_direction(bri->sda_gpiod) == GPIO_LINE_DIRECTION_OUT ||
-> +			    gpiod_is_single_ended(bri->sda_gpiod))
+> >   2. After the header update is merged, the remaining ASoC and
+> >      pinctrl patches may be merged through their respective
+> >      subsystem trees.
 
-there was a little conflict here which I fixes and merged to
-i2c/i2c.
+> Do you really want to wait an entire additional cycle for a one-liner to first
+> get upstream? I mean: I don't mind it but it's a weird strategy.
 
-Thanks,
-Andi
+I presume the thought is to put it on a shared branch, but that gets
+problematic if I create that branch because the ASoC driver has
+dependencies on whatever is in the huge pile of stuff that's already
+going through ASoC so it'd pull in my entire history.  I suppose I could
+do the tag, merge it into my branch then apply the ASoC driver?
+
+I've complained previously about how unmanagable all these
+interdependent qcom things are, now this adds cross tree issues!
+
+--y5ZitO3eG7NJF12K
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmpqmS8ACgkQJNaLcl1U
+h9B7MQgAgm6hK4vAkMntaBcwPRR8rsOum/KanN05OaB96ft/sKZNLYZHimpODf7I
+lKl4jwUXl7ZE/eF2d8UN1QrEbIx/kLtUYSz48uL7fEFH9bMPSIYkKYu5mKGQvn9p
+2YLWuJnLhEexcQh8sKkVHxCwFNRnttLeXRvaZHrDcg8sHP+h4C3svYFJJq/OojjV
+ypZlcV10+0uSsu5g/+ECOqNoj0l3HYlPIPxGvKGCAac60wN8mIoXWbs3J9SuFaAK
+KMvniNeKaxFjyCbK8eE9OX09wpndayTwpCA0WFMtfEOC+53zWOwuLIvAwHTqipAU
+DBQXIApzYuD49t4nv/h3M8kiAsqDWQ==
+=5Jb6
+-----END PGP SIGNATURE-----
+
+--y5ZitO3eG7NJF12K--
