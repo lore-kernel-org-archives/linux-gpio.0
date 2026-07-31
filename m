@@ -1,97 +1,40 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225023DB634
-	for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 08:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68E53AE6F5;
+	Fri, 31 Jul 2026 09:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785486780; cv=none; b=dfS7nBpaWM/OEgn7VreShRf8R0crBza5bn3hQRmtghI7gKB8khnM2SBIVCWvlzn32TVPahE5m3EF+3ZSz2qaouFlWKqnkNpKMF5HMl+XJAsuczmDa37FFG81rWJTOK72VKfZ4M0aBqRWqOz8csVxRuI/3hAwFhZXtO19JgclYe0=
+	t=1785491527; cv=none; b=NvAxlFJMZAT2RInRxczagi459nnJquH2EMz7zmp3NtWOh2PpRk2+90Jy4Sq2GZTOQ0/QL73YE0Fv4SP+QzXPe8IIa0oFOKI4PTMpHCyBYtrk5o1v3WUjx1YXcXEBUxvxtY6qOarCnChr+LcksREfIGW/JCF0S8qrjvXUZfBh5qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785486780; c=relaxed/simple;
-	bh=U1LozG4rZEEjWVwQ3I7ZFVikTNJQv6vZJq2l659olmA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rHdLLY/mPXC6qbS7MZK1paI0r879aKXcXqz31+GrOFjI+WWhc+cVx69LiqDpYUM93DPHlYPsjnDePi+KMAacBIk7cX6Q5B1JPOq9IEKwaVKjEXphxKqZempk3osCbnD2uikeb0urS8CwhGiioqFTgvwe9cjUjcoRJ43DvOF5+OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ChjfycUc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ksEvyWR7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1785491527; c=relaxed/simple;
+	bh=OKio7VGoJ7oV/2QGcDITcKK3jclw5M/vdUY3cAQ+T1g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=H+c2Woxt85VeMuxMTVBcuZTpTxHvyk+RPvi0TLZkiR1ynBhh8VxmIVn0ldTfjA0Pe05dMWSL+op+PBgMufKk+qRw3WL/ZO3ac/l8GJm3ZwBV1ABRU3WDEf+jXo0Sa7F7CIRH5WBqrDdEmV6ui0Y6DZ0Y1eKXjKCEDTsadjMfz4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iTtsj4AV; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ChjfycUc";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ksEvyWR7"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66V8W9FW3959210
-	for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 08:32:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6EGfAxtNNH/KIZ1TzK6fLYayMFk1+xfs+0d3KiAm9GU=; b=ChjfycUc9iL4SIrP
-	4qoSSUu6u/m2kgOu5+cYUNDxYeqnmqgvOVCjdyL7ChAuEKViLqHAccBRy0WPuPbL
-	gCYpo7dLiKYw1iw+YiTxoy5jOYbxvxwIecwXnf4nPnogn+/3zmAdxPIcXuSaFFcr
-	fbIK01FwPBCFRIfRgdItD1H9CmXAgGu0oxxCWD1uHqU6yhYgVoDJsIg1UjPE8YR5
-	/hC3kdiVn/GJZuUv4I89g8+WQNRKWuofE1A/m+cd1r64kdls12ZnyK8Hhl9JD/Me
-	CDQlEopNtuWRUbIomfXrtNfQU1eAbCIoe+su51K1rlVu1PQQe6B/75TYgRsCW1KT
-	oGrRLw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4frr9e8030-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 08:32:58 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-51c12e43b98so6369091cf.1
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 01:32:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785486777; x=1786091577; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=6EGfAxtNNH/KIZ1TzK6fLYayMFk1+xfs+0d3KiAm9GU=;
-        b=ksEvyWR78ry0QaPd6B3nvBv6EZyrom0lop09n9Ht9EjQ+xr9yyKJQLOtQPJXZMatNY
-         ovKMXafAbwPE8M9c6Lenijws7kyJOm0mvbuXNTEzGUEDTSWoo1YnO0y+bkAy0WoEbXK5
-         adnTEDDh/9Blk1lApkA9iTxEBobqeTlxcaoGDG0EmDL2bodMMjNWcP35wKg5eVCL1XwR
-         mzyBn5Hls3SDZSfsmy6cmWCcUXfugCgFZILOqRdepb3l5MJJp1V8rIMhC3sqlMoIO8K6
-         DDOl0UFAveyPT0W3E6tbbwEiEBBRZWka/hFk96HdS/kpO0/OYas3Dsn+eEKzJsr12xbk
-         GQUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785486777; x=1786091577;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=6EGfAxtNNH/KIZ1TzK6fLYayMFk1+xfs+0d3KiAm9GU=;
-        b=i9OxYXIn8kJXR2E+PekhbHFUklY3T11+zS18Os0cLMsQmPYvQqu68pNG0tziheeQzD
-         8EdGjtt8GyYB3LsT1roxZ+fJ56rKxV5jJh8kyrIJ+8yerXDTD0dV8Bi0c89F12OgUrXF
-         wvyoLTqYiklGjGD/uofHzBZC00zKe5yulObBQbzM6HWo4eIauMsejB8X33G16aRmTNY5
-         6hmKzbYPfVPIG2QLeCdcNJ95cvvL5MhxYplD/LxGztNlTi6UZzT3wFf7Kvn5Sqz0unh0
-         gOp5P5SR2RTVSqocbJo3345Weq75gRG2B6Rewk4xXJmSUYLwhawlCX6hPnTa27AvoE57
-         k/Ag==
-X-Forwarded-Encrypted: i=1; AHgh+RoAGNxwEC7DOO0WCu9dKJYAuGIxYGnDc3wf9uJnjKucguDbzA+T/25n+adEV3F6gDJuxrmImggko/Xr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz21wwgKKvYuUXi7ZS5i7D06lIpkM/SR71ezIhBmI2QQbl5Ewuh
-	0maLPEfHTocTPZSrZF0X6YCfZmXHlPEDTmB6J1m0/FZ7j9bpLkHoyb4HyIDrzLZHC9tfZrP+W6e
-	kk5fnz92VRGvIK7oXVW1KldXBAf548EPZkTIE7P/4u0dlUVtNlgLNDNAAKL+4EmbJiiK2Todl
-X-Gm-Gg: AR+sD13EmMEXj4wK+uSGzJ9gL7Bgza67FyA9SLTGYP3R8kG46I+3svTEDPsiTULLLx+
-	wRoGL5j1t6RYQI/zMsC4xZ2X0nqJ3oEFHwYQpwQa2LizCp4bFnIvVDcWmgi1rIqrAdFLwRp9TbO
-	ddHfShoZ3/N65ENPHtL7GrsZi73e72ct1afBAfzQgH7DwA9u3hRZa2XxN1e+kSOC2OhFU3lKDnC
-	5fvGQZyFykTkkoUm2YZBxHxl38qryEvsaySp/dLVskieaiNuFGXi8pvtkW0i1YOnq/HdgTDNsNz
-	tqw/Jn5V6fMyGzPEs4F9PX9UP0mEftxIpKjVe7CtZYoEQeQ9mksTmGwyeMPwR1nWeRVWa1pkRCF
-	2T9hUfyxSqgzb6hf1Qo/A0og7sNkJ
-X-Received: by 2002:ac8:58c4:0:b0:51c:22c5:daee with SMTP id d75a77b69052e-52b4af4ffddmr11381531cf.29.1785486777177;
-        Fri, 31 Jul 2026 01:32:57 -0700 (PDT)
-X-Received: by 2002:ac8:58c4:0:b0:51c:22c5:daee with SMTP id d75a77b69052e-52b4af4ffddmr11381411cf.29.1785486776791;
-        Fri, 31 Jul 2026 01:32:56 -0700 (PDT)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:40fa:e8e6:4785:ce70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c1fd3c5b4d4sm68887466b.3.2026.07.31.01.32.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2026 01:32:55 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: RAGUENES Jean Noel <jean-noel.raguenes2@cs-soprasteria.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: Check gc->get_direction() before calling gpiod_get_direction()
-Date: Fri, 31 Jul 2026 10:32:53 +0200
-Message-ID: <178548677168.77960.15544843581885268419.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <ad89f92f91d004e63dd5599bb58e9581f373a601.1785318183.git.chleroy@kernel.org>
-References: <ad89f92f91d004e63dd5599bb58e9581f373a601.1785318183.git.chleroy@kernel.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iTtsj4AV"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 745721A1353;
+	Fri, 31 Jul 2026 09:51:57 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3D55F6039A;
+	Fri, 31 Jul 2026 09:51:57 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CD24D11C1664B;
+	Fri, 31 Jul 2026 11:51:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1785491511; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=V0cf8/cn47jMnvWjLmtpVDA2lGAfy+aIYeuPvMACzBI=;
+	b=iTtsj4AVTIgxtDz6tuL4UtDY0NXPZP5o9DxBBsyapnrFCfxo9wzm7fy0F7iAwj7etACkYO
+	C/SVGk9mbDvrDoyi6p1JGGVVIexpFukoYjzS/wwwjWVslvsDCrkW+ZnqZMmSGYbzSdu1ub
+	R+fc2ov9XOTgOIAUNQhfo886/xAAD6UdgPmpJV+XIO25oIy7xYl5aeVSnHOw1UEvsv+zRE
+	ECbObYkA7+HEjaM3WlC1ln01fM9ajiRFY0ymrsn0r4TN9WzbM9COdufco24dvcsT6eUP7s
+	mQm3HIi2og87hES5oq8yHYxaBvokvx+PuwJ38HLYYABaNsXv8MBUe40AkU3BEA==
+From: "Thomas Perrot (Schneider Electric)" <thomas.perrot@bootlin.com>
+Subject: [PATCH v8 0/5] Add support for AAEON SRG-IMX8P MCU
+Date: Fri, 31 Jul 2026 11:51:40 +0200
+Message-Id: <20260731-dev-b4-aaeon-mcu-driver-v8-0-9ab00e80df2a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -99,55 +42,167 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzMxMDA2MSBTYWx0ZWRfXy53qp1IdEc7e
- FU5FxgwMIfCg+puhldAuilnMud3JGglOTXM2kzmJlhVK4fc6U9YU5yySFc9JI7NixtFpfB1y2gp
- 6TYY/EH00/3mLUQ6dVhMnVncyFHyQBA=
-X-Proofpoint-GUID: WjfhRinpGwC7EBAyMLprXS2rGm9mlPfZ
-X-Proofpoint-ORIG-GUID: WjfhRinpGwC7EBAyMLprXS2rGm9mlPfZ
-X-Authority-Analysis: v=2.4 cv=XNgAjwhE c=1 sm=1 tr=0 ts=6a6c5dba cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=6wOr4KMY0LgiFmB2x94A:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzMxMDA2MSBTYWx0ZWRfX2ky2pDx0GID/
- MeTQA87WSwlEsR5mZMLBWu7ziBt3+MpEhY1msDTJFD5K4Po+Wlw+ZsVHSL+jmgH6ufnsbt0LFY9
- uNAyL7sDsqmXdORBVUOxmuyUkdiARFAc2fd1TNX+CLaKiHVlS6Z9aQsDpSmj/rinB6Ev4p9UUz0
- 0TTmMEQVNdZvCRQYJXT/1ZI7S/IAsPe4f2TK4KnA1sfyqM5KbVPiRF5oxS2HVN3320NHHBSId2G
- 3Eh4EU79AXn+lWXzoxkeTgYBi6qd4gbsSY5z0oA6bPAjrqRrgxJdwIY6+MNsbqvwQftsAaj/nc7
- kV0vCX8FK0tM0ZUhp9m3lfGotJdlawnp3mnRuJJimvnWtTtICPkrJHPwkmsB+n1xs8V28KGYoYV
- SucqWMNs89cJsR4VfIH8qUe0f/TOU6OvaXm7g8PZoDIuOPRbE+brl4bWrSApP9aOtd/mcviKl0C
- 0omoJgQtjJUA0oDB0Vw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-31_03,2026-07-30_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 malwarescore=0 adultscore=0 suspectscore=0
- impostorscore=0 phishscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607310061
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4XR20oEMQwG4FdZ5tpKem698j3Ei6YHt+BOpbMWZ
+ Zl3t7Mogw6zXv6BfAnJZZhizXEaHg6XocaWp1zGHszdYfBHN75EkkPPAwMmKaOUhNgICuJcLCM
+ 5+XcSam6xkgjR2IhJuIRD736rMeWPq/z03PMxT+dSP6+DGl2q/5uNEiDSYnIUneeJP2Ip59c83
+ vtyWoZ8C+y2oDAoid7ERNkvYdmrsZ9dFFDG9yXWJZuEB8CE0uNW4qvE4IbEuwSOWsEZaOX8VhK
+ rxJnYl0SX+r2B0pCEtmIryVUSYPYluUjBGgzCUKXMVlKrpDjsS6pLQSmUyWNgCbaSXiUNel/SX
+ fJOeWld/6D+87t5nr8Av3iScb4CAAA=
+X-Change-ID: 20251211-dev-b4-aaeon-mcu-driver-e0e89ebf4afb
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ =?utf-8?q?J=C3=A9r=C3=A9mie_Dautheribes?= <jeremie.dautheribes@bootlin.com>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Lee Jones <lee@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ "Thomas Perrot (Schneider Electric)" <thomas.perrot@bootlin.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Last-TLS-Session-Version: TLSv1.3
 
+This patch series introduces support for the AAEON SRG-IMX8P embedded
+controller (MCU). The MCU is connected via I2C and provides GPIO and
+watchdog functionality for the SRG-IMX8P board.
 
-On Wed, 29 Jul 2026 11:47:20 +0200, Christophe Leroy (CS GROUP) wrote:
-> According to 'struct gpio_chip' documentation in linux/gpio/driver.h,
-> implementing .get_direction() is recommended but not mandatory.
-> Most places verify that gc->get_direction() exists before calling
-> gpiod_get_direction(), but gpiolib_dbg_show() doesn't.
-> 
-> Until commit 471e998c0e31 ("gpiolib: remove redundant callback check")
-> it was also verified by gpiod_get_direction() itself so calling it at
-> all time from gpiolib_dbg_show() was not an issue. But after the check
-> in gpiod_get_direction() has been removed, calling it inconditionaly
-> leads to a big fat warning in gpiochip_get_direction().
-> 
-> [...]
+The series includes:
+- Device tree binding for the MFD driver
+- MFD driver that serves as the core driver for the MCU
+- GPIO driver implementing the GPIO functionality
+- Watchdog driver for system monitoring
+- MAINTAINERS entry for the new drivers
 
-Applied, thanks!
+The drivers follow the standard Linux kernel subsystem patterns, with
+the MFD driver registering the sub-devices (GPIO and watchdog) which
+are then handled by their respective subsystem drivers.
 
-[1/1] gpiolib: Check gc->get_direction() before calling gpiod_get_direction()
-      https://git.kernel.org/brgl/c/d761c7e38a000603a9d16270a1af770a0e8efb5e
+Signed-off-by: Thomas Perrot (Schneider Electric) <thomas.perrot@bootlin.com>
+---
+Changes in v8:
+- mfd: add .use_single_read = true to regmap config; the MCU produces exactly
+  one response byte per command and a bulk read passing val_size > 1 to the
+  bus callback would be incorrect
+- watchdog: call watchdog_stop_ping_on_suspend() in probe so the kthread ping
+  worker is cancelled before platform devices are suspended, preventing I2C
+  transfers on a suspended bus
+- watchdog: check watchdog_hw_running() alongside watchdog_active() in the
+  suspend/resume callbacks so watchdog is stopped before sleep and restarted
+  on wake, preventing a spurious MCU reset if suspend exceeds the 25-second
+  hardware timeout
+- Link to v7: https://lore.kernel.org/r/20260707-dev-b4-aaeon-mcu-driver-v7-0-ca6c59abd672@bootlin.com
+
+Changes in v7:
+- mfd: fix select REGMAP Kconfig entry indented with spaces instead of a tab
+- mfd: use devm_kcalloc() instead of devm_kzalloc() for the cmd buffer allocation
+- mfd: add .use_single_write = true to the regmap config to prevent regcache sync
+or debugfs from issuing multi-register writes that would overflow the fixed 3-byte
+cmd buffer
+- watchdog: remove max_timeout; it is documented as irrelevant when
+max_hw_heartbeat_ms is set and is silently ignored by the watchdog core
+- watchdog: pass dev->parent to watchdog_init_timeout() so that the timeout-sec
+DT property is correctly read from the MCU I2C node; the MFD child platform device
+has no of_node of its own
+- watchdog: add suspend/resume PM hooks to stop the watchdog before entering sleep
+and restart it on resume, preventing spurious resets if suspend lasts longer than
+the 25-second hardware heartbeat
+- Link to v6: https://lore.kernel.org/r/20260630-dev-b4-aaeon-mcu-driver-v6-0-d66b5fcbd2f0@bootlin.com
+
+Changes in v6:
+- mfd: rename local variable to ddata in probe
+- mfd: fix driver name from "aaeon_mcu" to "aaeon-mcu"
+- mfd: set I2C_M_DMA_SAFE on all i2c_msg flags so the host driver
+  skips bounce-buffering the heap-allocated DMA-safe buffers
+- mfd: drop COMPILE_TEST
+- gpio: replace __set/__clear/__assign_bit with atomic set_bit/
+  clear_bit/assign_bit to fix potential races on shared bitmaps
+- gpio: write output value before switching pin to output mode to
+  avoid a potential glitch on direction_output
+- gpio: add MODULE_ALIAS("platform:aaeon-mcu-gpio")
+- watchdog: add WDIOF_SETTIMEOUT and watchdog_init_timeout() so the
+  software timeout is configurable via ioctl, DT timeout-sec or
+  the watchdog_timeout boot parameter
+- watchdog: add watchdog_stop_on_reboot() to prevent a spurious
+  reset from the external MCU during system shutdown
+- watchdog: add MODULE_ALIAS("platform:aaeon-mcu-wdt")
+- Link to v5: https://lore.kernel.org/r/20260408-dev-b4-aaeon-mcu-driver-v5-0-ad98bd481668@bootlin.com
+
+Changes in v5:
+- mfd: use heap-allocated DMA-safe buffers for I2C transfers, replacing
+  stack-allocated buffers in the regmap bus callbacks
+- mfd: switch from REGCACHE_NONE to REGCACHE_MAPLE; add volatile_reg
+  callback marking GPIO input read registers (opcode 0x72) as volatile;
+  add max_register
+- mfd: use PLATFORM_DEVID_AUTO instead of PLATFORM_DEVID_NONE
+- mfd: use MFD_CELL_BASIC() macro for cell definitions
+- mfd: use dev_err_probe() for regmap initialization error
+- Link to v4: https://lore.kernel.org/r/20260324-dev-b4-aaeon-mcu-driver-v4-0-afb011df4794@bootlin.com
+
+Changes in v4:
+- mfd: switch to a custom regmap bus; remove aaeon_mcu_i2c_xfer() and the aaeon_mcu_dev struct
+- mfd: locking delegated to regmap's built-in mutex; drop explicit mutex
+- mfd: remove firmware version reading at probe time
+- gpio, watchdog: use regmap_read()/regmap_write() via dev_get_regmap()
+- include: replace aaeon_mcu_i2c_xfer() declaration with AAEON_MCU_REG() macro
+- dt-bindings: remove unused label from example node
+- Link to v3: https://lore.kernel.org/r/20260203-dev-b4-aaeon-mcu-driver-v3-0-0a19432076ac@bootlin.com
+
+Changes in v3:
+- Renamed SRG-IMX8PL to SRG-IMX8P
+- dt-bindings: add gpio-controller properties as required
+- mfd: move struct aaeon_mcu_dev from header to .c file (private)
+- mfd: use guard(mutex) and devm_mutex_init() for cleanup
+- mfd: firmware version log changed to dev_dbg()
+- mfd: add select MFD_CORE to Kconfig
+- Kconfig: add || COMPILE_TEST to all three drivers
+- watchdog: add comments explaining hardware timeout and WDOG_HW_RUNNING
+- watchdog: remove unused platform_set_drvdata()
+- watchdog: add a function to query the status
+- Link to v2: https://lore.kernel.org/r/20260123-dev-b4-aaeon-mcu-driver-v2-0-9f4c00bfb5cb@bootlin.com
+
+Changes in v2:
+- Fold GPIO and watchdog bindings into MFD binding
+- Drop OF_GPIO dependency in GPIO Kconfig
+- Use __set_bit/__clear_bit/__assign_bit instead of atomic variants
+- Various driver cleanups and improvements
+- Link to v1: https://lore.kernel.org/r/20251212-dev-b4-aaeon-mcu-driver-v1-0-6bd65bc8ef12@bootlin.com
+
+---
+Thomas Perrot (Schneider Electric) (5):
+      dt-bindings: vendor-prefixes: Add AAEON vendor prefix
+      dt-bindings: mfd: Add AAEON embedded controller
+      mfd: aaeon: Add SRG-IMX8P MCU driver
+      gpio: aaeon: Add GPIO driver for SRG-IMX8P MCU
+      watchdog: aaeon: Add watchdog driver for SRG-IMX8P MCU
+
+ .../bindings/mfd/aaeon,srg-imx8p-mcu.yaml          |  67 ++++++
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ MAINTAINERS                                        |  10 +
+ drivers/gpio/Kconfig                               |   9 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-aaeon-mcu.c                      | 230 +++++++++++++++++++++
+ drivers/mfd/Kconfig                                |  11 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/aaeon-mcu.c                            | 207 +++++++++++++++++++
+ drivers/watchdog/Kconfig                           |  10 +
+ drivers/watchdog/Makefile                          |   1 +
+ drivers/watchdog/aaeon_mcu_wdt.c                   | 168 +++++++++++++++
+ include/linux/mfd/aaeon-mcu.h                      |  40 ++++
+ 13 files changed, 757 insertions(+)
+---
+base-commit: d358e5254674b70f34c847715ca509e46eb81e6f
+change-id: 20251211-dev-b4-aaeon-mcu-driver-e0e89ebf4afb
 
 Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Thomas Perrot (Schneider Electric) <thomas.perrot@bootlin.com>
+
