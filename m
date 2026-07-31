@@ -1,312 +1,200 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911DF3CBE9C;
-	Fri, 31 Jul 2026 09:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357181E22E9
+	for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 14:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785491544; cv=none; b=EWZ6/YQVBk4ibLV8YBNwwlwv0Qz/FLRDn1isoesI7uAIdB468OHtwvcfOtDSZXCFBF0UUzm6X+161du+sZezANtcu9miK/IdnsFfqqJ1Pj/7CqTQyekSTBhSNg/sLuWF70/MKRxTl+FkyMwHFahZi2C7g5GBD1kutXfHAPHywZw=
+	t=1785507194; cv=none; b=OfaKKbrKlLBcI74LtWbLII0VrNV42iH9q2bASYZhue1P21gOLUPIAfTJnEoWcSMJobhAyCeBdrNHMXZtFJ0XkuMznQGRpLyQt1o5OvlkZ+GI38QubnPvTZMiiheX8mXrpadV13frBmr1SerotJw7m1aNH4EQHaUlAuD9OG3+jcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785491544; c=relaxed/simple;
-	bh=CvctG6QbAgTHiuEU0Fn1/DNfcUx25lCQVUYfmic5994=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W5/5JpplsVvl/TmbW4YLg42QND4jAytR7f4Yr9boTA8mq8jYLIgtYTcmloAWaUhuMiI17muK2R6ZNMjjre+K9K1IcXJ6r3wiZETAIk+sLZN8PA97354Ap25DOcUIxu4BNSrqjTEK/KkXTa+NhlbofwR1Yb4MIU6VyHduPfT94Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=uTYR8iB7; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1785507194; c=relaxed/simple;
+	bh=mHDK+tdHwDwA5LiXbUo4W/AfIdzUbLnrs7EOlgl7Zs8=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=RUsSR3FABdlW3GUUGDDuyMrlVZuuytzAZTdIC5svrUwvYqhcmgJ78t0IcR0rZsfOJPdgY7WsDUUgYr74foP92aVVkSE8ttSM8m0MOylEsDW7dh743HOlY78/abuHk/1WeS9I/Eh8DMQoZTOORZVDeb9o9RTILxb4gJp5p8fpENk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NTF1bp4X; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="uTYR8iB7"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 26EDD1A1354;
-	Fri, 31 Jul 2026 09:52:17 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id EEACA6039A;
-	Fri, 31 Jul 2026 09:52:16 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D517C11C16653;
-	Fri, 31 Jul 2026 11:52:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1785491535; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=6tzTwtIzcwNOGYqYYE5OkMxf/iAPgArnZ5FvnJjna6Q=;
-	b=uTYR8iB7jFeWw7kdAcGrp3RNuxdIaqvrHiOwjjk7Q08w7c3CegBaRjkS436uJeE2phJhgi
-	qV+X5Rxfa3Kg9+D8ZZRC72J/ki6dBFqI4uPLLn1Kjud/MdGkvPm+1rqbhHypUDcec1jpHK
-	fJZrsmt7wC3P2U6/+EU1+8W+gPj/vVleD90cYCQjvR6AQ9RJvpqz9UTTwj+1K5lBL+QyB1
-	z+xRrtppTikqrb4oPvtkddM936qUkF6Lfb3zB3TLnWvQXA+s+6gQNcZhHsA1ltwu7EECDs
-	G02pTGxR0BHJfvqj6CRhGJbjAEJ2XWrzrTlSPPDU6IV6dji0qvQlMFumFg90MA==
-From: "Thomas Perrot (Schneider Electric)" <thomas.perrot@bootlin.com>
-Date: Fri, 31 Jul 2026 11:51:45 +0200
-Subject: [PATCH v8 5/5] watchdog: aaeon: Add watchdog driver for SRG-IMX8P
- MCU
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NTF1bp4X"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1785507192; x=1817043192;
+  h=date:from:to:cc:subject:message-id;
+  bh=mHDK+tdHwDwA5LiXbUo4W/AfIdzUbLnrs7EOlgl7Zs8=;
+  b=NTF1bp4X5AJVrxEahaxTGpv08UIlyzxmJ/Texz7hlBQoO+0Ia/PBjsq4
+   HSOvRHHP12vkjUu7DJ5O5tJaEmuSUMOZBH49hTBOzt1Z6qmkmtSHy/YYc
+   gz+vUCxHNneXq+w9dH6KccnEplfAgkhan8oY6+81hvXZkibFabPdKp225
+   NMun2B0EPGoxQNiht4t7BBLVAUcRuToKr5Rtp/W2zKiKYUh7FlffS+yZh
+   B5L38soK4zlIsK2F1foXJ5Kl8ulcjy7wylEWpgkJ1kbmnUW3QDtsf2HHD
+   Uo9lX89+FkjO3OqLhHT7P0lhlUcH6SgAlq+xSaIthh21MSUeIYNdPMQwJ
+   g==;
+X-CSE-ConnectionGUID: vgX4SdrcRSSTGNfud7lLQQ==
+X-CSE-MsgGUID: Hr+GohKQSWqsWApABw8Hig==
+X-IronPort-AV: E=McAfee;i="6800,10657,11861"; a="97506679"
+X-IronPort-AV: E=Sophos;i="6.25,196,1779174000"; 
+   d="scan'208";a="97506679"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2026 07:13:11 -0700
+X-CSE-ConnectionGUID: l4csH+IyQr2mmorGM+Ocdw==
+X-CSE-MsgGUID: 4SSROFkOQxmt+I1rrYfHgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,196,1779174000"; 
+   d="scan'208";a="261200738"
+Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 31 Jul 2026 07:13:10 -0700
+Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wpnz2-0000000019t-0pne;
+	Fri, 31 Jul 2026 14:13:08 +0000
+Date: Fri, 31 Jul 2026 22:11:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org
+Subject: [brgl:gpio/for-next] BUILD SUCCESS
+ 6435d21cbd42fea6c66dfd4cfef7d58b9612497e
+Message-ID: <202607312239.MBLkfxma-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260731-dev-b4-aaeon-mcu-driver-v8-5-9ab00e80df2a@bootlin.com>
-References: <20260731-dev-b4-aaeon-mcu-driver-v8-0-9ab00e80df2a@bootlin.com>
-In-Reply-To: <20260731-dev-b4-aaeon-mcu-driver-v8-0-9ab00e80df2a@bootlin.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- =?utf-8?q?J=C3=A9r=C3=A9mie_Dautheribes?= <jeremie.dautheribes@bootlin.com>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, Lee Jones <lee@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- "Thomas Perrot (Schneider Electric)" <thomas.perrot@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
 
-Add watchdog driver for the Aaeon SRG-IMX8P embedded controller.
-This driver provides system monitoring and recovery capabilities
-through the MCU's watchdog timer.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+branch HEAD: 6435d21cbd42fea6c66dfd4cfef7d58b9612497e  gpio: realtek: Add driver for Realtek DHC RTD1625 SoC
 
-The watchdog supports start, stop, and ping operations with a maximum
-hardware heartbeat of 25 seconds and a default timeout of 240 seconds.
-The software timeout can be changed via the WDIOC_SETTIMEOUT ioctl,
-the DT timeout-sec property, or the watchdog_timeout kernel boot
-parameter.
+elapsed time: 797m
 
-Co-developed-by: Jérémie Dautheribes (Schneider Electric) <jeremie.dautheribes@bootlin.com>
-Signed-off-by: Jérémie Dautheribes (Schneider Electric) <jeremie.dautheribes@bootlin.com>
-Signed-off-by: Thomas Perrot (Schneider Electric) <thomas.perrot@bootlin.com>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
----
- MAINTAINERS                      |   1 +
- drivers/watchdog/Kconfig         |  10 +++
- drivers/watchdog/Makefile        |   1 +
- drivers/watchdog/aaeon_mcu_wdt.c | 168 +++++++++++++++++++++++++++++++++++++++
- 4 files changed, 180 insertions(+)
+configs tested: 123
+configs skipped: 0
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2538f8c4bc14..7b92af42c9fd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -193,6 +193,7 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/mfd/aaeon,srg-imx8p-mcu.yaml
- F:	drivers/gpio/gpio-aaeon-mcu.c
- F:	drivers/mfd/aaeon-mcu.c
-+F:	drivers/watchdog/aaeon_mcu_wdt.c
- F:	include/linux/mfd/aaeon-mcu.h
- 
- AAEON UPBOARD FPGA MFD DRIVER
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index d3b9df7d466b..f67a0b453316 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -420,6 +420,16 @@ config SL28CPLD_WATCHDOG
- 
- # ARM Architecture
- 
-+config AAEON_MCU_WATCHDOG
-+	tristate "Aaeon MCU Watchdog"
-+	depends on MFD_AAEON_MCU
-+	select WATCHDOG_CORE
-+	help
-+	  Select this option to enable watchdog timer support for the Aaeon
-+	  SRG-IMX8P onboard microcontroller (MCU). This driver provides
-+	  watchdog functionality through the MCU, allowing system monitoring
-+	  and automatic recovery from system hangs.
-+
- config AIROHA_WATCHDOG
- 	tristate "Airoha EN7581 Watchdog"
- 	depends on ARCH_AIROHA || COMPILE_TEST
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index ba52099b1253..2deec425d3ea 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_USBPCWATCHDOG) += pcwd_usb.o
- # ALPHA Architecture
- 
- # ARM Architecture
-+obj-$(CONFIG_AAEON_MCU_WATCHDOG) += aaeon_mcu_wdt.o
- obj-$(CONFIG_ARM_SP805_WATCHDOG) += sp805_wdt.o
- obj-$(CONFIG_ARM_SBSA_WATCHDOG) += sbsa_gwdt.o
- obj-$(CONFIG_ARMADA_37XX_WATCHDOG) += armada_37xx_wdt.o
-diff --git a/drivers/watchdog/aaeon_mcu_wdt.c b/drivers/watchdog/aaeon_mcu_wdt.c
-new file mode 100644
-index 000000000000..661d14393c6e
---- /dev/null
-+++ b/drivers/watchdog/aaeon_mcu_wdt.c
-@@ -0,0 +1,168 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Aaeon MCU Watchdog driver
-+ *
-+ * Copyright (C) 2026 Bootlin
-+ * Author: Jérémie Dautheribes <jeremie.dautheribes@bootlin.com>
-+ * Author: Thomas Perrot <thomas.perrot@bootlin.com>
-+ */
-+
-+#include <linux/mfd/aaeon-mcu.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/watchdog.h>
-+
-+#define AAEON_MCU_PING_WDT	0x73
-+
-+#define AAEON_MCU_WDT_TIMEOUT         240
-+#define AAEON_MCU_WDT_HEARTBEAT_MS    25000
-+#define AAEON_MCU_WDT_MIN_TIMEOUT     1
-+
-+static unsigned int timeout;
-+module_param(timeout, uint, 0);
-+MODULE_PARM_DESC(timeout, "Watchdog timeout in seconds");
-+
-+struct aaeon_mcu_wdt {
-+	struct watchdog_device wdt;
-+	struct regmap *regmap;
-+};
-+
-+static int aaeon_mcu_wdt_cmd(struct aaeon_mcu_wdt *data, u8 opcode, u8 arg)
-+{
-+	return regmap_write(data->regmap, AAEON_MCU_REG(opcode, arg), 0);
-+}
-+
-+static int aaeon_mcu_wdt_start(struct watchdog_device *wdt)
-+{
-+	struct aaeon_mcu_wdt *data = watchdog_get_drvdata(wdt);
-+
-+	return aaeon_mcu_wdt_cmd(data, AAEON_MCU_CONTROL_WDT_OPCODE, 0x01);
-+}
-+
-+static int aaeon_mcu_wdt_status(struct watchdog_device *wdt, bool *enabled)
-+{
-+	struct aaeon_mcu_wdt *data = watchdog_get_drvdata(wdt);
-+	unsigned int rsp;
-+	int ret;
-+
-+	ret = regmap_read(data->regmap,
-+			  AAEON_MCU_REG(AAEON_MCU_CONTROL_WDT_OPCODE, 0x02),
-+			  &rsp);
-+	if (ret)
-+		return ret;
-+
-+	*enabled = rsp == 0x01;
-+	return 0;
-+}
-+
-+static int aaeon_mcu_wdt_stop(struct watchdog_device *wdt)
-+{
-+	struct aaeon_mcu_wdt *data = watchdog_get_drvdata(wdt);
-+
-+	return aaeon_mcu_wdt_cmd(data, AAEON_MCU_CONTROL_WDT_OPCODE, 0x00);
-+}
-+
-+static int aaeon_mcu_wdt_ping(struct watchdog_device *wdt)
-+{
-+	struct aaeon_mcu_wdt *data = watchdog_get_drvdata(wdt);
-+
-+	return aaeon_mcu_wdt_cmd(data, AAEON_MCU_PING_WDT, 0x00);
-+}
-+
-+static const struct watchdog_info aaeon_mcu_wdt_info = {
-+	.identity	= "Aaeon MCU Watchdog",
-+	.options	= WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE | WDIOF_SETTIMEOUT
-+};
-+
-+static const struct watchdog_ops aaeon_mcu_wdt_ops = {
-+	.owner		= THIS_MODULE,
-+	.start		= aaeon_mcu_wdt_start,
-+	.stop		= aaeon_mcu_wdt_stop,
-+	.ping		= aaeon_mcu_wdt_ping,
-+};
-+
-+static int aaeon_mcu_wdt_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct watchdog_device *wdt;
-+	struct aaeon_mcu_wdt *data;
-+	bool enabled;
-+	int ret;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->regmap = dev_get_regmap(dev->parent, NULL);
-+	if (!data->regmap)
-+		return -ENODEV;
-+
-+	wdt = &data->wdt;
-+	wdt->parent = dev;
-+	wdt->info = &aaeon_mcu_wdt_info;
-+	wdt->ops = &aaeon_mcu_wdt_ops;
-+	/*
-+	 * The MCU firmware has a fixed hardware timeout of 25 seconds that
-+	 * cannot be changed. The watchdog core handles automatic pinging to
-+	 * support software timeouts longer than the hardware limit. The default
-+	 * software timeout of 240 seconds can be overridden via the DT
-+	 * timeout-sec property or the watchdog_timeout kernel boot parameter.
-+	 */
-+	wdt->timeout = AAEON_MCU_WDT_TIMEOUT;
-+	wdt->min_timeout = AAEON_MCU_WDT_MIN_TIMEOUT;
-+	wdt->max_hw_heartbeat_ms = AAEON_MCU_WDT_HEARTBEAT_MS;
-+	watchdog_init_timeout(wdt, timeout, dev->parent);
-+
-+	watchdog_set_drvdata(wdt, data);
-+	watchdog_stop_on_reboot(wdt);
-+	watchdog_stop_ping_on_suspend(wdt);
-+	dev_set_drvdata(dev, wdt);
-+
-+	ret = aaeon_mcu_wdt_status(wdt, &enabled);
-+	if (ret)
-+		return ret;
-+
-+	if (enabled)
-+		set_bit(WDOG_HW_RUNNING, &wdt->status);
-+
-+	return devm_watchdog_register_device(dev, wdt);
-+}
-+
-+static int aaeon_mcu_wdt_suspend(struct device *dev)
-+{
-+	struct watchdog_device *wdt = dev_get_drvdata(dev);
-+
-+	if (watchdog_active(wdt) || watchdog_hw_running(wdt))
-+		return aaeon_mcu_wdt_stop(wdt);
-+
-+	return 0;
-+}
-+
-+static int aaeon_mcu_wdt_resume(struct device *dev)
-+{
-+	struct watchdog_device *wdt = dev_get_drvdata(dev);
-+
-+	if (watchdog_active(wdt) || watchdog_hw_running(wdt))
-+		return aaeon_mcu_wdt_start(wdt);
-+
-+	return 0;
-+}
-+
-+static DEFINE_SIMPLE_DEV_PM_OPS(aaeon_mcu_wdt_pm_ops,
-+				aaeon_mcu_wdt_suspend, aaeon_mcu_wdt_resume);
-+
-+static struct platform_driver aaeon_mcu_wdt_driver = {
-+	.driver		= {
-+		.name	= "aaeon-mcu-wdt",
-+		.pm	= pm_sleep_ptr(&aaeon_mcu_wdt_pm_ops),
-+	},
-+	.probe		= aaeon_mcu_wdt_probe,
-+};
-+
-+module_platform_driver(aaeon_mcu_wdt_driver);
-+
-+MODULE_ALIAS("platform:aaeon-mcu-wdt");
-+MODULE_DESCRIPTION("Aaeon MCU Watchdog Driver");
-+MODULE_AUTHOR("Jérémie Dautheribes <jeremie.dautheribes@bootlin.com>");
-+MODULE_LICENSE("GPL");
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
--- 
-2.55.0
+tested configs:
+alpha                            allnoconfig    gcc-16.1.0
+alpha                           allyesconfig    gcc-16.1.0
+alpha                              defconfig    gcc-16.1.0
+arc                             allmodconfig    gcc-16.1.0
+arc                             allyesconfig    gcc-16.1.0
+arc                  randconfig-001-20260731    clang-17
+arc                  randconfig-001-20260731    gcc-8.5.0
+arc                  randconfig-002-20260731    clang-17
+arc                  randconfig-002-20260731    gcc-16.1.0
+arm                           mmp2_defconfig    gcc-16.1.0
+arm                  randconfig-001-20260731    clang-17
+arm                  randconfig-002-20260731    clang-17
+arm                  randconfig-002-20260731    clang-19
+arm                  randconfig-003-20260731    clang-17
+arm                  randconfig-003-20260731    clang-24
+arm                  randconfig-004-20260731    clang-17
+arm                  randconfig-004-20260731    clang-24
+arm64                randconfig-001-20260731    gcc-8.5.0
+arm64                randconfig-002-20260731    gcc-8.5.0
+arm64                randconfig-003-20260731    gcc-8.5.0
+arm64                randconfig-004-20260731    gcc-8.5.0
+csky                            allmodconfig    gcc-16.1.0
+csky                 randconfig-001-20260731    gcc-8.5.0
+csky                 randconfig-002-20260731    gcc-8.5.0
+hexagon                       randconfig-001    clang-24
+hexagon              randconfig-001-20260731    clang-24
+hexagon              randconfig-002-20260731    clang-24
+i386                            allmodconfig    gcc-14
+i386       buildonly-randconfig-001-20260731    clang-22
+i386       buildonly-randconfig-001-20260731    gcc-14
+i386       buildonly-randconfig-002-20260731    clang-22
+i386       buildonly-randconfig-003-20260731    clang-22
+i386       buildonly-randconfig-004-20260731    clang-22
+i386       buildonly-randconfig-004-20260731    gcc-13
+i386       buildonly-randconfig-005-20260731    clang-22
+i386       buildonly-randconfig-006-20260731    clang-22
+i386       buildonly-randconfig-006-20260731    gcc-14
+i386                 randconfig-001-20260731    gcc-14
+i386                 randconfig-002-20260731    gcc-14
+i386                 randconfig-003-20260731    gcc-14
+i386                 randconfig-004-20260731    gcc-14
+i386                 randconfig-005-20260731    gcc-14
+i386                 randconfig-006-20260731    gcc-14
+i386                 randconfig-007-20260731    gcc-14
+i386                 randconfig-011-20260731    clang-22
+i386                 randconfig-012-20260731    clang-22
+i386                 randconfig-013-20260731    clang-22
+i386                 randconfig-013-20260731    gcc-14
+i386                 randconfig-014-20260731    clang-22
+i386                 randconfig-014-20260731    gcc-14
+i386                 randconfig-015-20260731    clang-22
+i386                 randconfig-015-20260731    gcc-14
+i386                 randconfig-016-20260731    clang-22
+i386                 randconfig-016-20260731    gcc-14
+i386                 randconfig-017-20260731    clang-22
+i386                 randconfig-017-20260731    gcc-14
+loongarch                          defconfig    clang-24
+loongarch            randconfig-001-20260731    clang-24
+loongarch            randconfig-002-20260731    clang-24
+mips                decstation_r4k_defconfig    gcc-16.1.0
+nios2                           allmodconfig    gcc-11.5.0
+nios2                            allnoconfig    gcc-11.5.0
+nios2                randconfig-001-20260731    clang-24
+nios2                randconfig-002-20260731    clang-24
+parisc                          allmodconfig    gcc-16.1.0
+parisc                          allyesconfig    gcc-16.1.0
+parisc                             defconfig    gcc-16.1.0
+parisc                        randconfig-001    gcc-8.5.0
+parisc               randconfig-001-20260731    gcc-8.5.0
+parisc               randconfig-002-20260731    gcc-13.4.0
+parisc               randconfig-002-20260731    gcc-8.5.0
+powerpc                mpc834x_itx_defconfig    clang-24
+powerpc              randconfig-001-20260731    clang-17
+powerpc              randconfig-001-20260731    gcc-8.5.0
+powerpc              randconfig-002-20260731    clang-24
+powerpc              randconfig-002-20260731    gcc-8.5.0
+powerpc64            randconfig-001-20260731    gcc-8.5.0
+powerpc64            randconfig-002-20260731    gcc-8.5.0
+riscv                   nommu_k210_defconfig    clang-24
+riscv                         randconfig-001    clang-19
+riscv                randconfig-001-20260731    clang-19
+riscv                randconfig-002-20260731    clang-19
+s390                 randconfig-001-20260731    clang-19
+s390                 randconfig-002-20260731    clang-19
+sh                                 defconfig    gcc-16.1.0
+sh                   randconfig-001-20260731    clang-19
+sh                   randconfig-002-20260731    clang-19
+sparc                         randconfig-001    gcc-14
+sparc                randconfig-001-20260731    gcc-14
+sparc                randconfig-002-20260731    gcc-14
+sparc64              randconfig-001-20260731    gcc-14
+sparc64              randconfig-002-20260731    gcc-14
+um                   randconfig-001-20260731    gcc-14
+um                   randconfig-002-20260731    gcc-14
+x86_64     buildonly-randconfig-001-20260731    gcc-14
+x86_64     buildonly-randconfig-002-20260731    gcc-14
+x86_64     buildonly-randconfig-003-20260731    gcc-14
+x86_64     buildonly-randconfig-004-20260731    gcc-14
+x86_64     buildonly-randconfig-005-20260731    gcc-14
+x86_64     buildonly-randconfig-006-20260731    gcc-14
+x86_64                                 kexec    clang-22
+x86_64                        randconfig-001    gcc-14
+x86_64               randconfig-001-20260731    gcc-14
+x86_64               randconfig-002-20260731    gcc-14
+x86_64               randconfig-003-20260731    gcc-14
+x86_64               randconfig-004-20260731    gcc-14
+x86_64               randconfig-005-20260731    gcc-14
+x86_64               randconfig-006-20260731    gcc-14
+x86_64               randconfig-011-20260731    gcc-14
+x86_64               randconfig-012-20260731    gcc-14
+x86_64               randconfig-013-20260731    gcc-14
+x86_64               randconfig-014-20260731    gcc-14
+x86_64               randconfig-015-20260731    gcc-14
+x86_64               randconfig-016-20260731    gcc-14
+x86_64               randconfig-071-20260731    clang-22
+x86_64               randconfig-072-20260731    clang-22
+x86_64               randconfig-073-20260731    clang-22
+x86_64               randconfig-074-20260731    clang-22
+x86_64               randconfig-075-20260731    clang-22
+x86_64               randconfig-076-20260731    clang-22
+x86_64                          rhel-9.4-bpf    gcc-14
+xtensa               randconfig-001-20260731    gcc-14
+xtensa               randconfig-002-20260731    gcc-14
 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
