@@ -1,109 +1,127 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FB722B8DF;
-	Fri, 31 Jul 2026 08:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C392C384CF5
+	for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 08:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785485181; cv=none; b=SiUev7vrC/7x25/jyG4sF3zek/tWvsOBAA4Gns3FLIrcS1AvpWrPcnFFqFmRjFZD4Y4W1wba57gF3GsKWN4bC22Fqif6rt0RvRuqMoUuhUbEK+0k1yzu5lkI8qaY2i4T2lp8AEuKD5zXP6PSBfCDZRWTtYupEZ82QMsZYys8tdM=
+	t=1785485237; cv=none; b=aLGJFNEL2LEQjmvbeekaqkdnTCcHpsoSoCcHjPwrdmUyQhFKEgNpFxfrjS+7VCkPoa7nFdDfHm9D3gQ0RU/StQpVbnybRE68JawoOS7fqUADfj1n5HVZGa92x+/G0x3ZAgl1ubF8SGfmFIffOUNFQQW+vUws84XUKaSLzdppbpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785485181; c=relaxed/simple;
-	bh=u37IhomDAQ0R/3F0TeRnDyOLckamW/tMn85NYrKYPHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aFU3FIkY9HjpjGLZ4qOXVH3zzmRYEnZrsCocs0dYpMymwQ5Z5nTE4Z0xi5LhpXD8U/XrQXX9Van02tAcE4L6/BnTFphTbyuK7ba7t4T4W+39/PVsv8DHPmK2i61nrIgRte7vUWR1dB3wf5t2xMN9NLp+mQsHffbYV+1QjzVDZf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjEwwA7W; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785485237; c=relaxed/simple;
+	bh=B+1oDXnaKDqPJTsbcSpixvwxwpTmis4J1AeFx3/ZBuI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g1MH2rFHCn89e5mrvRAh+kBgDEKGmGpfRdaPhXl3u/rcdjgyHO4yX0ZBfC7x53kuTtASAdniSAZSm6/KxcWVfK+UPe6oxUR7qSs6zx0u0nCPHeYBy8XD1Z/s48IaN3oNad2VfhVneIzNd/HubTr4z0TG1AR6YYjlRb1CIAUQnnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0F3Jnnp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjEwwA7W"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51CB31F000E9;
-	Fri, 31 Jul 2026 08:06:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0F3Jnnp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90FD81F00A3A
+	for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 08:07:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785485179;
-	bh=KvwUNSUSfb/M4/F5xz+1QvBheNROeCNKI7esoEcKYI4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WjEwwA7Wdcph7BUVyaIJDfSRb2ARTbTlKIuZLLyfdk4Koa25WUdSwad3bjakBD+Sp
-	 +xa5J/X2be/mcyC/R/BsEGnakppOBkLBDvebmFK3ZZh43xQwCfwTiaqoX+kSzHzQMT
-	 raDYOEwLB73clDPj9VJoSW/OoI6M5jsof54ybmdbILFQGomyKvF2IwLRG+i4BxxNb8
-	 g+2sh1uTv8BeQ1lEZwF8GM/EL6bh+a0I0jkhVFHHjDOMwfsXyl53ikzq3QKVJx6KMQ
-	 w66WKP3vD6ly5jE4FASEvvEm23siHoBHVUgW+Pykr2UHjPx9YmTYGHB3TUgXGKd6a0
-	 GE7zr7/+TDF4A==
-Date: Fri, 31 Jul 2026 10:06:17 +0200
-From: Thierry Reding <thierry.reding@kernel.org>
-To: Prathamesh Shete <pshete@nvidia.com>
-Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, jonathanh@nvidia.com, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND V2 2/2] pinctrl: tegra264: fix DAP2 DIN/DOUT pin
- assignment
-Message-ID: <amxXcVBCnl-PCNRl@orome>
-References: <20260727141121.772110-1-pshete@nvidia.com>
- <20260727141121.772110-2-pshete@nvidia.com>
+	s=k20260515; t=1785485236;
+	bh=B+1oDXnaKDqPJTsbcSpixvwxwpTmis4J1AeFx3/ZBuI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=l0F3JnnpfV7mygzOQiDF6GhxJ51gDP6WkY/hxk3rJ7p1AL4B8+RjcbC9iJ3fCJGVO
+	 WpHYzyt3keXPbeHdDW/hGynrP49lGhNMplhT9W65bt/gkpUBNFfL3QF+KcukoVETDN
+	 Vd+n+X6gUZETiTj+F9Q8WjHJjCII4ztuXIMVg3lnRvf1qUfYl+a8Ly/n/7dgOErC1X
+	 Lt6eM3vrLqGu1qLdc96SGK5WDjNa3Vd/qCzJ3KE83qmqGEp0c4tU6p+8R2RNWfk+mz
+	 2DuoPmECKZtQ8FU3/thP0a8UAAk/w7G9Qj7B9/n47UjNZfTJM4k7J+X9wrHu2gIv4U
+	 0Pvu5LxhepVIA==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-69f2c67650aso1064643a12.2
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 01:07:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpIaT4s+k+xCBgVncpDLUJUDYsCjmMS5EFg4YKGNH5J54s6jRGgNgwNalYZdjP3loeDkgmvjhrNxO8X@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHD/0iUXDJ6IyW8jSqD7jNg9kgg8sfckupmZtMxu5qiLNDnRmH
+	bOFYm+m6M+mjfzMOzvgZKKWyJNw7ThOCfQKD5z7lzAdN0U6kJgg+xc6HbiLNIJfEXfJc0vODZRv
+	j2wo95kd96vNIjoWdU9DkrCbBWVX0V08=
+X-Received: by 2002:a05:6402:a505:10b0:69c:79c5:6f5f with SMTP id
+ 4fb4d7f45d1cf-6a098ceb8bemr342560a12.29.1785485235262; Fri, 31 Jul 2026
+ 01:07:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="a7ft3u4zfnwsefvs"
-Content-Disposition: inline
-In-Reply-To: <20260727141121.772110-2-pshete@nvidia.com>
-
-
---a7ft3u4zfnwsefvs
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20260710-ls2kbmc-mod-v3-0-ef718636e78e@gmail.com>
+ <CAAhV-H6kqN1+ZiTqyvXfPEtQJfvFhp_964AB9C00o0O6pigZmQ@mail.gmail.com> <8FCFD614-FEA4-475C-9E0C-50E075B49453@gmail.com>
+In-Reply-To: <8FCFD614-FEA4-475C-9E0C-50E075B49453@gmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 31 Jul 2026 16:07:40 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5wFZHN2jD-vGgNLuMqugGxwfyfq2TnK=HKyZXxZR7iRA@mail.gmail.com>
+X-Gm-Features: AUfX_mx1RWUHjW7HMGxJ9gMJs4HeptSqYKI92gRAAXEKGLc1aOGcHpsSUewJEV8
+Message-ID: <CAAhV-H5wFZHN2jD-vGgNLuMqugGxwfyfq2TnK=HKyZXxZR7iRA@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 0/7] mfd: ls2kbmc: multiple fixes for this driver
+To: Miao Wang <shankerwangmiao@gmail.com>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Chong Qiao <qiaochong@loongson.cn>, 
+	Lee Jones <lee@kernel.org>, Corey Minyard <corey@minyard.net>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>, 
+	Yinbo Zhu <zhuyinbo@loongson.cn>, Jiaxun Yang <jiaxun.yang@flygoat.com>, mfd@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RESEND V2 2/2] pinctrl: tegra264: fix DAP2 DIN/DOUT pin
- assignment
-MIME-Version: 1.0
 
-On Mon, Jul 27, 2026 at 02:11:21PM +0000, Prathamesh Shete wrote:
-> The dap2_din and dap2_dout pin groups were given swapped ball suffixes:
-> DAP2_DIN was described as ball PV7 and DAP2_DOUT as ball PW0. On silicon
-> DAP2_DIN is on ball PW0 (mux register 0x6050, drive register 0x6054) and
-> DAP2_DOUT is on ball PV7 (mux register 0x6058, drive register 0x605c),
-> as reflected by the board pinmux.
->=20
-> Because the ball suffixes were swapped, the groups were also assigned the
-> wrong primary mux functions (dap2_din -> I2S2_SDATA_OUT and dap2_dout ->
-> I2S2_SDATA_IN), routing the I2S2 data-in and data-out signals to the wrong
-> pins and breaking DAP2 audio.=20
->=20
-> Rename the groups to dap2_din_pw0 and dap2_dout_pv7 and give each pad its
-> correct function (dap2_din_pw0 -> I2S2_SDATA_IN, dap2_dout_pv7 ->
-> I2S2_SDATA_OUT). The register offsets are already correct and are left
-> unchanged. This matches the board pinmux.
->=20
-> Fixes: c98506206912 ("pinctrl: tegra: Add Tegra264 pinmux driver")
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> ---
-> Changes in v2:
-> - Rename the pin groups to dap2_din_pw0 and dap2_dout_pv7 and assign the
->   correct mux function to each pad in a single driver patch.
-> ---
->  drivers/pinctrl/tegra/pinctrl-tegra264.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
+On Fri, Jul 24, 2026 at 5:28=E2=80=AFPM Miao Wang <shankerwangmiao@gmail.co=
+m> wrote:
+>
+> Hi,
+>
+> > 2026=E5=B9=B47=E6=9C=8824=E6=97=A5 16:55=EF=BC=8CHuacai Chen <chenhuaca=
+i@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > Hi, Miao,
+> >
+> > On Fri, Jul 10, 2026 at 1:24=E2=80=AFAM Miao Wang via B4 Relay
+> > <devnull+shankerwangmiao.gmail.com@kernel.org> wrote:
+> >>
+> >> Previously, the driver has been introduced to support the Loongson 2K
+> >> BMC running on the Loongson Servers, which is essential to prevent
+> >> the system from hanging when the BMC is being reset and the default
+> >> efi-framebuffer is being used. However, there are some drawbacks in th=
+e
+> >> driver.
+> >>
+> >> Firstly, the driver tries to read and write to the connected PCI-E hos=
+t
+> >> controller registers, assuming that the BMC is connected to LS7A PCI-E
+> >> host controller. This assumption should be true for real products, but
+> >> to prevent from accidentally reading and writing to the wrong PCI-E ho=
+st
+> >> controller, this driver should be modified to check this before
+> >> accessing the registers.
+> >>
+> >> Secondly, the driver uses non-exported functions to tell the vt
+> >> subsystem to redraw the screen, preventing the driver from being
+> >> compiling as a module. This can be fixed by using the exported
+> >> functions instead.
+> > You can replace the redraw function, but I don't think it is necessary
+> > to make the bmc driver modular.
+> >
+> > BMC core, IPMI and simpledrm display are usually (if not always)
+> > supposed to work as early as possible.
+>
+> I believe that it should be the user's decision to choose whether to
+> compile a module into the kernel or as a module and it would be better
+> if we can provide the possibilities for the user to choose from.
+> Additionally, I don't think these modules are supposed to work that
+> early. The mfd module provide two functions, the display and the ipmi
+> device. In the aspect of graphical display, without this module, the
+> user can still see the output during booting on their monitors, since
+> efifb is working, providing a basic display function. In the aspect of
+> the ipmi device, I don't think the lack of such device will influence
+> the boot of the system, since it is a common practice to compile ipmi
+> device drivers as modules on other architectures. As a result, neither
+> of the two functions are required to be loaded that early and it is
+> reasonable to at lease leave the choice to compile it as a module
+> to the user.
+Flexibility is not always useful, if a config doesn't provide good
+effect, then it just increases complexity and makes maintenance more
+difficult.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Huacai
 
---a7ft3u4zfnwsefvs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmpsV3kACgkQ3SOs138+
-s6FLjRAAryo5yUCe16ev9Hsp5w/uTh6I+6ZqQinCTL84ZWF2ogn8Qg5CicD2MSIa
-vrHucgILo6nf7OK9xEeN8B45zX86KrOIKfz/PhDjNqq/zTuoO95++Z199ECEctbK
-HGESN1vVagxuTLPAqNonoAiDPlMiL7N1H0eOEyOriASbPPEu72dmGktyqn19STIo
-NGIq6BJNKKiqJl+3Td104FZynISwwIMS256jsBVMq46kdciYTYniEq5xYBLj/orm
-FJcL1BY3y+/MuBGEKdBvhuI7WulQ9Kvi0xEdyi+aP7ZP+RSocH5z4dg5Wk/nVd6U
-nFPYqgfMZfRvMHEm1PfDWtBm1fnHCbeLAxb/NKqDAHsVqi5LavFBiJRJXtegslBb
-g7COhQPfkYje5v+zQTi7qdUru9XdY71PzdlXZuYAPmGgWfF/sK1fg+4XjPZ5DPnQ
-QJo2UoPTd27DHf22LfoujCGIDD5tYPWvcGwAm/aHWcqiVGX7hUHaG2WWCEIrmsWN
-bgH1HTJxkqTneZPvAsGBnAnvReHYNBmkSXcWnaSU+nHD5vv8LdcMvvQsmO2o72Yt
-Dt+0xfDmYlyk6A32ex0bNbuVtxUECxBK4+jfpceJEGBvHz4DTArrWnyxRDxUPg65
-I0BAEdeHLa6mMLzqE4sZIPaZq3zHcEyoipuDNdzwYZOaAAIuTzo=
-=t+FL
------END PGP SIGNATURE-----
-
---a7ft3u4zfnwsefvs--
+>
+> Cheers,
+>
+> Miao Wang
+>
+>
