@@ -1,200 +1,221 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357181E22E9
-	for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 14:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785507194; cv=none; b=OfaKKbrKlLBcI74LtWbLII0VrNV42iH9q2bASYZhue1P21gOLUPIAfTJnEoWcSMJobhAyCeBdrNHMXZtFJ0XkuMznQGRpLyQt1o5OvlkZ+GI38QubnPvTZMiiheX8mXrpadV13frBmr1SerotJw7m1aNH4EQHaUlAuD9OG3+jcY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785507194; c=relaxed/simple;
-	bh=mHDK+tdHwDwA5LiXbUo4W/AfIdzUbLnrs7EOlgl7Zs8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=RUsSR3FABdlW3GUUGDDuyMrlVZuuytzAZTdIC5svrUwvYqhcmgJ78t0IcR0rZsfOJPdgY7WsDUUgYr74foP92aVVkSE8ttSM8m0MOylEsDW7dh743HOlY78/abuHk/1WeS9I/Eh8DMQoZTOORZVDeb9o9RTILxb4gJp5p8fpENk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NTF1bp4X; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5025B42C50F
+	for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 17:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785517894; cv=pass; b=n6QMg9JWQdC3UtG98Awm0gTrCg8LzS7QXir3fv7hIWqfkY51LSC/h3bkAWFlP2XMR/aq1IVhrS/SFdKibEZhm3/npJdbGW0TzKmXpmcM1wYaUActZWIbris7IezTagDqn+zc+qAN+7G6jTrNk+iGctmZp6cV7ztYiI/ehMyPG44=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785517894; c=relaxed/simple;
+	bh=Uhh8q41hmOlByjiX1nPXF362Jh+d49ZbfzvIl+Q5Sug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lWybf2tCwfvfT7Dnt1nYnnS1W12FXvrbKb+q7jquhyfljGxt5Vx7mM2lVWQC+7/RcOxf8NRYXmb8Tqzkl6sQ2lD1jrKJxFgUWj6Pg3j4fb50wiMs0E4cEHSJhUuO27rOS1FYB/sdzwAlQemx3+TP8OEBLoZtScR04hHWRtNiH2U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Exy5EQ16; arc=pass smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NTF1bp4X"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1785507192; x=1817043192;
-  h=date:from:to:cc:subject:message-id;
-  bh=mHDK+tdHwDwA5LiXbUo4W/AfIdzUbLnrs7EOlgl7Zs8=;
-  b=NTF1bp4X5AJVrxEahaxTGpv08UIlyzxmJ/Texz7hlBQoO+0Ia/PBjsq4
-   HSOvRHHP12vkjUu7DJ5O5tJaEmuSUMOZBH49hTBOzt1Z6qmkmtSHy/YYc
-   gz+vUCxHNneXq+w9dH6KccnEplfAgkhan8oY6+81hvXZkibFabPdKp225
-   NMun2B0EPGoxQNiht4t7BBLVAUcRuToKr5Rtp/W2zKiKYUh7FlffS+yZh
-   B5L38soK4zlIsK2F1foXJ5Kl8ulcjy7wylEWpgkJ1kbmnUW3QDtsf2HHD
-   Uo9lX89+FkjO3OqLhHT7P0lhlUcH6SgAlq+xSaIthh21MSUeIYNdPMQwJ
-   g==;
-X-CSE-ConnectionGUID: vgX4SdrcRSSTGNfud7lLQQ==
-X-CSE-MsgGUID: Hr+GohKQSWqsWApABw8Hig==
-X-IronPort-AV: E=McAfee;i="6800,10657,11861"; a="97506679"
-X-IronPort-AV: E=Sophos;i="6.25,196,1779174000"; 
-   d="scan'208";a="97506679"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2026 07:13:11 -0700
-X-CSE-ConnectionGUID: l4csH+IyQr2mmorGM+Ocdw==
-X-CSE-MsgGUID: 4SSROFkOQxmt+I1rrYfHgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,196,1779174000"; 
-   d="scan'208";a="261200738"
-Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 31 Jul 2026 07:13:10 -0700
-Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wpnz2-0000000019t-0pne;
-	Fri, 31 Jul 2026 14:13:08 +0000
-Date: Fri, 31 Jul 2026 22:11:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org
-Subject: [brgl:gpio/for-next] BUILD SUCCESS
- 6435d21cbd42fea6c66dfd4cfef7d58b9612497e
-Message-ID: <202607312239.MBLkfxma-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Exy5EQ16"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6a063d211ebso1806544a12.3
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 10:11:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785517890; cv=none;
+        d=google.com; s=arc-20260327;
+        b=ASajDuqzuwmbsQJu9JLnR513mEAWaOTygaviLLajbZCdvGshwSPmtI8HSuLqjPL66A
+         nQzQE/tNZuh4HAy9kXRHi+mqHXAFZl3Sssh0tnqDPLFSRuImoXLgdSExs6Y2pRArZtNp
+         89jtl+pFOtn+JxUbwtouNVQhkc5nEelOPJAKRYwzFkseuNoDv3pKUBQp3upmZ1+QVZu9
+         xxw2pkstolbgu4eSg70MtqWnUahrBqfGB0SvXa3feH90c7p6rcqD6mFCPfmhLerCRWik
+         a5dYohLEV7pTVr9wOTiGhshkraCTbB3sF4prv8yahG5z6YlcydEYhsmPSk/g0caAA+g/
+         HcnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=tfzdRxKMzAqp/+9ZSx+vlyqKp24vqwGUERSU+Y5G+a0=;
+        fh=tm/6bVzfnjLHzczcpoxgFBAUVvxHQWOWchnOACWy40U=;
+        b=SUop/ZBu4EHhqdf59NKn3UMw7Q3MCNWxwR4gyhUWNIA86LgS9y7WISUSf1/pRbQOkp
+         6RZ9LKJrveD5xR6MYmMGG4GlQPiSKRS675bo8L/rdJwGqKJIXMoxWYfHL9YiKAGb3QFh
+         xansxv8vkWG/HGDTyGYHfeiserpMjQlIOgO9kXhLxt1FYEkkTZqeAf8rhpc3RWrldTg5
+         CeoKn2aFGuK4oi7jgmHAo1BsCBR+ltvqQ0jiWvr3loqCyTnhaVOI7VDOmeqRznEl1Zyc
+         ycutjZPnBZv4DHQ/SCC0TM3bMPVSjWK4RLmfrEUBoY53ayWm3P3iBHASgUjEto+WLGOZ
+         mNgA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1785517890; x=1786122690; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=tfzdRxKMzAqp/+9ZSx+vlyqKp24vqwGUERSU+Y5G+a0=;
+        b=Exy5EQ162dvgPIB46DJfZCIj898OhNHYTDXIQagaTUngdPry8jW88hSxi6aVeP31S7
+         YzgozmElj0AURbi6rlolpsPiLByD3Dd4Ii6jY6wqjM621Fqqa0b22PEBuASgo8mAw4De
+         q9L3mNgaXd9xOA1YKaScbjzyuSCFbwu3UiiXTk2ghLdVxl1k256wj9vTvGHuymhzwrX5
+         N1QWFADLLAUwVNfVysAJrQvM98upHj4eMDVgmRkgOseJP/GEExxCmGqFNrQL6nBDdWuh
+         5q9mOh7bcYV0Wbl5Q5V2ykhADYOUtuUfmzcCHvOZ5sPgDDKDntg7uK7b27OmDy1F3uAo
+         XHEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785517890; x=1786122690;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=tfzdRxKMzAqp/+9ZSx+vlyqKp24vqwGUERSU+Y5G+a0=;
+        b=DsLSivJrQ9I9+FkStFF+MIYx9TPWrQmTRDXwqipAx2nRY8pYOTC53OBZhhHk6jqDg5
+         EhEelEooSdT77ADscUdu1DQfCzB1b2AEXPZ1Z1C9PLG25ItpZWNGV+OlZlzNet6pnsGf
+         lywV6s0XFEN3LLuvWOGxtp3l951TapgcPAIjPDJyX9INuUr47O6v3Tzg/FRHjDAL0Xcn
+         R5ZWouSPx56aG7DedrLpVXNlooY6004On1b4V2n1koNIKQPImNWFC6QKm4PEFC8L56ly
+         4PrxdLnrVCsaKP7Iw89y5jwxQHLjfK0hoS/jbb0qcfNlHHwLc52Bc4TCc7R9HXoyNN1o
+         FJkQ==
+X-Forwarded-Encrypted: i=1; AHgh+RrHvFsc2NTRb//R3oMlIJ69FgKcJ662H7bZjImnvtMDpFcY+EBC0LXjYch6nFsKhu18hKpemvZgXIQm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvAMRLCuOBNzKl3QJSJeguWDl4dUSRlpGvPmfI5IhMbC7NLo92
+	BM2bQSZTC1wDtwgsDoEZd4ZtisjXvNscSxBhbPw6uh/pq/YfZ3QUJoMtUXpHL8YlUVBgLyJv/Ze
+	cR/Eo2XpBfMuNzIB191+/DmM+J2FI759Ae+pbu6cfgg==
+X-Gm-Gg: AR+sD13nZeQAEKSM6q5TdCK59TOT9Eq4JhiDh/o8KlzcNUm3eMssflkTDFr0X/TsJC9
+	TmGbXI0re78e3/yk0Dsb+W2mzHRx7vfUww9+jLzLBw1Iu8jZ/c5ZN7Jo4CD5yQ+ohewFjKbI0KN
+	cQa5ujkSb/ZkMOP/JjHid2gEr5vr/bqsnldP8i+JV7TTdQsP9c5eEmAYByZbb3sIPIG29UnTG1X
+	iAStCySqjZo53+I7fmrYV63HDGyZ9k877jgxoX7JGiHjH6YW8yQpLFszJGJjxLzoYabkhu/fm+U
+	gph9anka+3cooEXiQ9N6sSX1Ui3WqI+sWpfr7anAtUFQzooAi7J65qqSS2O8RhOhy8xkPBfgSa6
+	L/4AdIwXK5zRe4g==
+X-Received: by 2002:a05:6402:449a:b0:697:de29:c802 with SMTP id
+ 4fb4d7f45d1cf-6a0a7ccb364mr275774a12.18.1785517889487; Fri, 31 Jul 2026
+ 10:11:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20260721204704.400781-1-shenwei.wang@oss.nxp.com>
+In-Reply-To: <20260721204704.400781-1-shenwei.wang@oss.nxp.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 31 Jul 2026 11:11:17 -0600
+X-Gm-Features: AUfX_mwyptmYyOf4p0ZyWTJXkdByXi3n4edVXueGHxTjG-w_nq_PAPMefUUmQKw
+Message-ID: <CANLsYkyJ=qOz_7x8igcwkiHsJQWP8JizB4-q5QV5gv-s+e6eVA@mail.gmail.com>
+Subject: Re: [PATCH v15 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
+To: Shenwei Wang <shenwei.wang@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>, 
+	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, 
+	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-branch HEAD: 6435d21cbd42fea6c66dfd4cfef7d58b9612497e  gpio: realtek: Add driver for Realtek DHC RTD1625 SoC
+I won't be able to review this patchset until the week starting August 17th=
+.
 
-elapsed time: 797m
-
-configs tested: 123
-configs skipped: 0
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                            allnoconfig    gcc-16.1.0
-alpha                           allyesconfig    gcc-16.1.0
-alpha                              defconfig    gcc-16.1.0
-arc                             allmodconfig    gcc-16.1.0
-arc                             allyesconfig    gcc-16.1.0
-arc                  randconfig-001-20260731    clang-17
-arc                  randconfig-001-20260731    gcc-8.5.0
-arc                  randconfig-002-20260731    clang-17
-arc                  randconfig-002-20260731    gcc-16.1.0
-arm                           mmp2_defconfig    gcc-16.1.0
-arm                  randconfig-001-20260731    clang-17
-arm                  randconfig-002-20260731    clang-17
-arm                  randconfig-002-20260731    clang-19
-arm                  randconfig-003-20260731    clang-17
-arm                  randconfig-003-20260731    clang-24
-arm                  randconfig-004-20260731    clang-17
-arm                  randconfig-004-20260731    clang-24
-arm64                randconfig-001-20260731    gcc-8.5.0
-arm64                randconfig-002-20260731    gcc-8.5.0
-arm64                randconfig-003-20260731    gcc-8.5.0
-arm64                randconfig-004-20260731    gcc-8.5.0
-csky                            allmodconfig    gcc-16.1.0
-csky                 randconfig-001-20260731    gcc-8.5.0
-csky                 randconfig-002-20260731    gcc-8.5.0
-hexagon                       randconfig-001    clang-24
-hexagon              randconfig-001-20260731    clang-24
-hexagon              randconfig-002-20260731    clang-24
-i386                            allmodconfig    gcc-14
-i386       buildonly-randconfig-001-20260731    clang-22
-i386       buildonly-randconfig-001-20260731    gcc-14
-i386       buildonly-randconfig-002-20260731    clang-22
-i386       buildonly-randconfig-003-20260731    clang-22
-i386       buildonly-randconfig-004-20260731    clang-22
-i386       buildonly-randconfig-004-20260731    gcc-13
-i386       buildonly-randconfig-005-20260731    clang-22
-i386       buildonly-randconfig-006-20260731    clang-22
-i386       buildonly-randconfig-006-20260731    gcc-14
-i386                 randconfig-001-20260731    gcc-14
-i386                 randconfig-002-20260731    gcc-14
-i386                 randconfig-003-20260731    gcc-14
-i386                 randconfig-004-20260731    gcc-14
-i386                 randconfig-005-20260731    gcc-14
-i386                 randconfig-006-20260731    gcc-14
-i386                 randconfig-007-20260731    gcc-14
-i386                 randconfig-011-20260731    clang-22
-i386                 randconfig-012-20260731    clang-22
-i386                 randconfig-013-20260731    clang-22
-i386                 randconfig-013-20260731    gcc-14
-i386                 randconfig-014-20260731    clang-22
-i386                 randconfig-014-20260731    gcc-14
-i386                 randconfig-015-20260731    clang-22
-i386                 randconfig-015-20260731    gcc-14
-i386                 randconfig-016-20260731    clang-22
-i386                 randconfig-016-20260731    gcc-14
-i386                 randconfig-017-20260731    clang-22
-i386                 randconfig-017-20260731    gcc-14
-loongarch                          defconfig    clang-24
-loongarch            randconfig-001-20260731    clang-24
-loongarch            randconfig-002-20260731    clang-24
-mips                decstation_r4k_defconfig    gcc-16.1.0
-nios2                           allmodconfig    gcc-11.5.0
-nios2                            allnoconfig    gcc-11.5.0
-nios2                randconfig-001-20260731    clang-24
-nios2                randconfig-002-20260731    clang-24
-parisc                          allmodconfig    gcc-16.1.0
-parisc                          allyesconfig    gcc-16.1.0
-parisc                             defconfig    gcc-16.1.0
-parisc                        randconfig-001    gcc-8.5.0
-parisc               randconfig-001-20260731    gcc-8.5.0
-parisc               randconfig-002-20260731    gcc-13.4.0
-parisc               randconfig-002-20260731    gcc-8.5.0
-powerpc                mpc834x_itx_defconfig    clang-24
-powerpc              randconfig-001-20260731    clang-17
-powerpc              randconfig-001-20260731    gcc-8.5.0
-powerpc              randconfig-002-20260731    clang-24
-powerpc              randconfig-002-20260731    gcc-8.5.0
-powerpc64            randconfig-001-20260731    gcc-8.5.0
-powerpc64            randconfig-002-20260731    gcc-8.5.0
-riscv                   nommu_k210_defconfig    clang-24
-riscv                         randconfig-001    clang-19
-riscv                randconfig-001-20260731    clang-19
-riscv                randconfig-002-20260731    clang-19
-s390                 randconfig-001-20260731    clang-19
-s390                 randconfig-002-20260731    clang-19
-sh                                 defconfig    gcc-16.1.0
-sh                   randconfig-001-20260731    clang-19
-sh                   randconfig-002-20260731    clang-19
-sparc                         randconfig-001    gcc-14
-sparc                randconfig-001-20260731    gcc-14
-sparc                randconfig-002-20260731    gcc-14
-sparc64              randconfig-001-20260731    gcc-14
-sparc64              randconfig-002-20260731    gcc-14
-um                   randconfig-001-20260731    gcc-14
-um                   randconfig-002-20260731    gcc-14
-x86_64     buildonly-randconfig-001-20260731    gcc-14
-x86_64     buildonly-randconfig-002-20260731    gcc-14
-x86_64     buildonly-randconfig-003-20260731    gcc-14
-x86_64     buildonly-randconfig-004-20260731    gcc-14
-x86_64     buildonly-randconfig-005-20260731    gcc-14
-x86_64     buildonly-randconfig-006-20260731    gcc-14
-x86_64                                 kexec    clang-22
-x86_64                        randconfig-001    gcc-14
-x86_64               randconfig-001-20260731    gcc-14
-x86_64               randconfig-002-20260731    gcc-14
-x86_64               randconfig-003-20260731    gcc-14
-x86_64               randconfig-004-20260731    gcc-14
-x86_64               randconfig-005-20260731    gcc-14
-x86_64               randconfig-006-20260731    gcc-14
-x86_64               randconfig-011-20260731    gcc-14
-x86_64               randconfig-012-20260731    gcc-14
-x86_64               randconfig-013-20260731    gcc-14
-x86_64               randconfig-014-20260731    gcc-14
-x86_64               randconfig-015-20260731    gcc-14
-x86_64               randconfig-016-20260731    gcc-14
-x86_64               randconfig-071-20260731    clang-22
-x86_64               randconfig-072-20260731    clang-22
-x86_64               randconfig-073-20260731    clang-22
-x86_64               randconfig-074-20260731    clang-22
-x86_64               randconfig-075-20260731    clang-22
-x86_64               randconfig-076-20260731    clang-22
-x86_64                          rhel-9.4-bpf    gcc-14
-xtensa               randconfig-001-20260731    gcc-14
-xtensa               randconfig-002-20260731    gcc-14
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Tue, 21 Jul 2026 at 14:48, Shenwei Wang <shenwei.wang@oss.nxp.com> wrote=
+:
+>
+> Support the remote devices on the remote processor via the RPMSG bus on
+> i.MX platform.
+>
+> Changes in v15:
+>  - Update Kconfig description per AndrewD and Julian's feedback
+>  - Enable the GPIO driver even without a DT node per AndrewD's feedback
+>  - Update gpio-rpmsg.rst per Mathieu=E2=80=99s feedback
+>  - Code cleanup according the new gpio-rpmsg.rst and sashiko-bot's review
+>    feedback
+>
+> Changes in v14:
+>  - Update gpio-rpmsg.rst per Mathieu=E2=80=99s feedback.
+>  - Align the rpmsg-gpio driver with the revised gpio-rpmsg.rst.
+>  - Modify rpmsg-core to enable prefix-based matching of RPMSG device IDs.
+>
+> Changes in v13:
+>  - drop the support for legacy NXP firmware.
+>  - remove the fixed_up hooks from the rpmsg gpio driver.
+>  - code cleanup.
+>
+> Changes in v12:
+>  - Fixed the "underline" warning reported by Randy.
+>
+> Changes in v11:
+>  - Expand RPMSG for the first time per Shuah's review comment.
+>
+> Changes in v10:
+>  - Update gpio-rpmsg.rst according to Daniel Baluta's review comments.
+>  - Add a kernel CONFIG for fixed up handlers and only enable it on
+>    i.MX products.
+>  - Fixed bugs reported by kernel test robot.
+>
+> Changes in v9:
+>  - Reuse the gpio-virtio design for command and IRQ type definitions.
+>  - Remove msg_id, version, and vendor fields from the generic protocol.
+>  - Add fixed-up handlers to support legacy firmware.
+>
+> Changes in v8:
+>  - Add "depends on REMOTEPROC" in Kconfig to fix the build error reported
+>    by the kernel test robot.
+>  - Move the .rst patch before the .yaml patch.
+>  - Handle the "ngpios" DT property based on Andrew's feedback.
+>
+> Changes in v7:
+>  - Reworked the driver to use the rpmsg_driver framework instead of
+>    platform_driver, based on feedback from Bjorn and Arnaud.
+>  - Updated gpio-rpmsg.yaml and imx_rproc.yaml according to comments from
+>    Rob and Arnaud.
+>  - Further refinements to gpio-rpmsg.yaml per Arnaud's feedback.
+>
+> Changes in v6:
+>  - make the driver more generic with the actions below:
+>      rename the driver file to gpio-rpmsg.c
+>      remove the imx related info in the function and variable names
+>      rename the imx_rpmsg.h to rpdev_info.h
+>      create a gpio-rpmsg.yaml and refer it in imx_rproc.yaml
+>  - update the gpio-rpmsg.rst according to the feedback from Andrew and
+>    move the source file to driver-api/gpio
+>  - fix the bug reported by Zhongqiu Han
+>  - remove the I2C related info
+>
+> Changes in v5:
+>  - move the gpio-rpmsg.rst from admin-guide to staging directory after
+>    discussion with Randy Dunlap.
+>  - add include files with some code improvements per Bartosz's comments.
+>
+> Changes in v4:
+>  - add a documentation to describe the transport protocol per Andrew's
+>    comments.
+>  - add a new handler to get the gpio direction.
+>
+> Changes in v3:
+>  - fix various format issue and return value check per Peng 's review
+>    comments.
+>  - add the logic to also populate the subnodes which are not in the
+>    device map per Arnaud's request. (in imx_rproc.c)
+>  - update the yaml per Frank's review comments.
+>
+> Changes in v2:
+>  - re-implemented the gpio driver per Linus Walleij's feedback by using
+>    GPIOLIB_IRQCHIP helper library.
+>  - fix various format issue per Mathieu/Peng 's review comments.
+>  - update the yaml doc per Rob's feedback
+>
+> Shenwei Wang (5):
+>   docs: driver-api: gpio: rpmsg gpio driver over rpmsg bus
+>   dt-bindings: remoteproc: imx_rproc: Add "rpmsg" subnode support
+>   rpmsg: core: match rpmsg device IDs by prefix
+>   gpio: rpmsg: add generic rpmsg GPIO driver
+>   arm64: dts: imx8ulp: Add rpmsg node under imx_rproc
+>
+>  .../devicetree/bindings/gpio/gpio-rpmsg.yaml  |  55 ++
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml    |  53 ++
+>  Documentation/driver-api/gpio/gpio-rpmsg.rst  | 242 ++++++++
+>  Documentation/driver-api/gpio/index.rst       |   1 +
+>  arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  25 +
+>  drivers/gpio/Kconfig                          |  17 +
+>  drivers/gpio/Makefile                         |   1 +
+>  drivers/gpio/gpio-rpmsg.c                     | 587 ++++++++++++++++++
+>  drivers/rpmsg/rpmsg_core.c                    |   4 +-
+>  9 files changed, 984 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rpmsg.yam=
+l
+>  create mode 100644 Documentation/driver-api/gpio/gpio-rpmsg.rst
+>  create mode 100644 drivers/gpio/gpio-rpmsg.c
+>
+> --
+> 2.43.0
+>
