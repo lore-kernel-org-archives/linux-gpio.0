@@ -1,183 +1,152 @@
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44393CF69E
-	for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 08:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195433E1686
+	for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 08:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785486296; cv=none; b=jRx24+Sj1bpgC2NCesw2agD2ZaFg/m5Xv0dUZym/XK67GhVkS5jA7KYxZztVu97gx2TX6VzzI1e70z1oB2KHUwxIcp1gkkOsdtAxvUDZmWaJHgv5hD4EKvB2rZD/7she3va0PWMDjIFgHdWSJRvynYI5g+Hq1kMc/Oa4pvXtlGA=
+	t=1785486719; cv=none; b=OgfIGaBq844rF+9ahtLDrdV5ZMOml6ElPMo9YuGdFkiE1Zl+lxJf0uma32BS/TSj2ek/BXMLYuwyox7/J5QYBoOyIvRE5m8/y917rV1GFOk/F2rM69fCCMq/q1pJP7JFfC9VU1nXl0vZDgy8ySnKz6H8cM4LGCoC7LfFDPri/N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785486296; c=relaxed/simple;
-	bh=0cRWJ4eKnZR83IAvPi9vpmww2wPNWwtloX3nTeIN+Fg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Ic5QBJ9J7J+EL6qEzYnXztp+K32ufEgzDrccsc9/gbZ6CHdB3QGoeZf/9ZaHI+ZQrVm6tblf86GYcBi99ypx2g1UEBR/fPhC/ge3h8XbPJOA7V2N5MqBQxillZK/2ks09ySBQYxKcejQ1/UxiLYiSIobNHYR3kujaAfoWR2uvRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iZnbNNIP; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785486719; c=relaxed/simple;
+	bh=TDkQHceDrQu9o5vaO+QVXAKUr98zldP4VbnNS+KmXXI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u4DmkjGQBpqKGZObbnkeWv3LZYt8NOm2qk6qiuRTIK6Au5DWrJi3Xp8D79Yiy9DJnWq2JkEz0NE4aQYUYuMlDBiPMpiB8isGXifQ+PZ6O5CziuMVKucJLm8GVGiJDzpcKkRhW4G7uPz+x0xxsKWDDAsbkfOYUwN1iZTGIBLdYLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oB62beYz; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bHICZ7P/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iZnbNNIP"
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-ca6d9c91206so55853a12.2
-        for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 01:24:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oB62beYz";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bHICZ7P/"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66V8UItA2956180
+	for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 08:31:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nRcLhnU8RvHMiOpCapizL+8MGiRW3OtTxZzTT0OFe/M=; b=oB62beYz53A6OZRe
+	urMY1FE5X2/pLQz9xzb0+fi/EubDPGLHakPTHI+uDCxY7WgtlFFNPQnd8/bxFT+j
+	j5MmFwgpn3wiX2mw8W0oMv2lHDEAJcUPm6i6un4z6JOln9+L7rf87xRaIl1n08GW
+	yJT4t1g0RnIU25ffm7BXsI484wrgUl0TCKh43rvl3rg0s18jOZjBZeBGtGzskCUH
+	JOBm2t8G8YtiTS/0kviQoqETsvvYY+dCEUGriK0BmheMe7G4TMLHQxoFYhc77N54
+	MKpXqSOEaYtoKXwlwb7tbEiwtv4UP53oc6q8WAfsGTi/ZN8WaHZ18Dr/isw5G6pG
+	OF9mYQ==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4frr8jg05v-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 08:31:57 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-51c26012cd0so6230821cf.0
+        for <linux-gpio@vger.kernel.org>; Fri, 31 Jul 2026 01:31:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785486292; x=1786091092; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=0cRWJ4eKnZR83IAvPi9vpmww2wPNWwtloX3nTeIN+Fg=;
-        b=iZnbNNIPE+Oagdy/ieL//yOt0JlncSHiBhfY2vx/rW8RbzC2rVJ1lZuHRpg4JxUR57
-         4iCkypJ/TWPSGj/KoNFNG5p2XZnjfgFkRHu3rkmEsxDWY323QRI+TVdMLSArByWkzaB4
-         nsI3t4+zLdBp6AlTBUiuReX1rBJEcyV4kfJZFnODAmlvPz8GPiM6ygR0i74k+O1AzLO9
-         X+5Sd+LZMA3TGrK9Ev/7z1mi0gF8kypXjb7LbEEx+2Pz+MR16HYB2+1uzrE4o7+VVMuK
-         1etuz7ujmimwamCpZKQJ8+uKb6wEGUmDK8rOoUubII1jp9oRfP6SInjTfpUHdhBn2iLv
-         IWHg==
+        d=oss.qualcomm.com; s=google; t=1785486716; x=1786091516; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=nRcLhnU8RvHMiOpCapizL+8MGiRW3OtTxZzTT0OFe/M=;
+        b=bHICZ7P//pOkiGFtT9ggqYQNtE7LX+oP7f+vXrKBt0F/IzhLxDaMYbf+l1q9bGOLQg
+         x+Z8sK9LGV0VWk/OeIqwS/j4yfSbKOzEMRIKZ+u/zBDcKIOps7HWE79Md2hjZwp18YIq
+         k69fKDJxW1cWPyPoT0m5bRc/7TgtfmzkKWDvMwuGjlebVoAHHXANbfLyKo4vzo3VsXLt
+         vnjjeYMxB3SII8wCzdp4Wr3NWeEjfAnDNpZKaqTeU/QAk01/fn9J7rUBH97DyBYSLznG
+         uWpj3y1Cm4+NEyU915Kn4NmvVOTNVLKyxdRYWItkTc2JfENmHw3gQddN/10sIRKa9jWV
+         +RPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785486292; x=1786091092;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:content-type:x-gm-gg
+        d=1e100.net; s=20251104; t=1785486716; x=1786091516;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=0cRWJ4eKnZR83IAvPi9vpmww2wPNWwtloX3nTeIN+Fg=;
-        b=Cu+neUepS9mhKH8MFoRPXhrMeZKCQ8vwFBWAc7vohfsxte977GUW5bpp2Zl95JnG1g
-         ajI/ilgHkzRVlYUNi3Wt8K9J3eWbmXLPDQp9yj9mhDCzynMb4hR3xq4ooGe15H7VrSUL
-         m7ZQZ/9/CeeWg82lWIy6w7Uz243bKos97zEIbpvdkAFF5gt3qHaQXaQTLCxPiiUcEB9m
-         4NW0a+A77CsykgupDhtwvJ5aDRcZfGKlGZbFE/JC1oDzeB37O/yoPMANi7qSy2q6LT+j
-         0/hYiM1zrZo+/8LiLhHYpkn2cdVzlbCb0I37SRZUfYNx7icg21zybbd/HCd/mf2onJvL
-         u5zA==
-X-Forwarded-Encrypted: i=1; AHgh+RomhDmg5tMrdj4pbLx1eEujWYwp9qFmpBW1paCipHPQYob8gUvwiuMsFGF/HkS4Wsb0cYYTgGJGE4Hb@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHfmJIl5Mr5YevyMwH8AStzMmvbdK46VBqry1AU56v8jNYpfLU
-	TZ/4B4rDzIRPPXIeGPQiRdTwe7LbEhJCOU90O/oKEoQXl1Lf6jOG5Fp7KXpmzdct
-X-Gm-Gg: AR+sD107wDyV9SCmK1f7lRLPf53oT/b0YnJ1NzgWUI41e754nHWGCSS16FqSA+6Q3TF
-	NwVLdEgSCuBkuQzjt0f9foNGxP3y9SG4CcD6o6pxS4qyHlRvm4MeLFNkco0aAASLZ8sXcby3HMO
-	f/wHjXHx5u/cwa+kChcBvUFme8A5dgMJwMLWY5BclCiBljCBTpLj0ZF3E+CRth/lB7D15wRNj7u
-	V9hrR/jQLgrlZzuV7P79rqlqlSWKXE3xX4cPCer7Jjow00arXOs1UCBV5PMFRZulUzdE0ANvHTl
-	obKIkJtWRpYSDqE2jHTQ+1+xx/u9uwghalA5lHcFGukoYn9awv7wFpo/jerWZlMcI+32jSwVVz+
-	T2Rt6iG28q+vx+kGiEhq2+WhQj5aitpVv4F730h9PniYzZYj81GLGIh3VHLSUlbkG2RdBhixM16
-	QT3DKt1Ua8OPJchG+J16HtqrmKp2t7Ch37gEKxhq6Q3WeeLOCPRDupsg/c9bWjbhE4uG9D8Tr4s
-	ju8b3//AhF7fw==
-X-Received: by 2002:a05:6a20:12c8:b0:3bf:99ea:aeb2 with SMTP id adf61e73a8af0-3c91b63a5fdmr1209603637.4.1785486291673;
-        Fri, 31 Jul 2026 01:24:51 -0700 (PDT)
-Received: from smtpclient.apple ([23.247.139.92])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cbe3963ddc3sm276125a12.7.2026.07.31.01.24.46
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 31 Jul 2026 01:24:50 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+        bh=nRcLhnU8RvHMiOpCapizL+8MGiRW3OtTxZzTT0OFe/M=;
+        b=I8U5FSBJBF8BP2+V3aETTAiRlnbcD1BMrZyZNTF4M8SAALhlxLXqp41fzNb2Znac5l
+         rAR1xh8fsdYPJSjHXRDR1Yi0rtoOAZr+aPnB2Ein2Fms8FgUyqbBMLMxCPygL8bZEVM7
+         EONVRzDVI4NddiLxbgnvF/+kSjuixrZQpDim1tFO2Tx9+I5FgtyIXsiEp1fwiOaWqX0Q
+         IWzBjjI3w+NYSztqFehY50h26k2Hrh7afWseKX8rk5CLddG9+QQpWLC56ZHdX/mu8anY
+         y+/ymXeJ+cialvhpNtl/AeoHHMbzXkebrLT2iKqNIgZOeDFhd12MftViaTi7rMJdTZki
+         bSPA==
+X-Forwarded-Encrypted: i=1; AHgh+RrLDKShOfpaKoW7RGBcwi3pNjAlkgmho9Hg9InP/ct686dEF4+uamt08WRHN9IypzZLkOKLiawYe9+z@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoQ3vHbVFU+funJzBsfnjDuaqpqKdz+zNdJfo0I+VIMoKtGPuf
+	JcV9xnGe7AlZT7T/3AlEBb5pbl0i9RuRWwpl0SF9GpDgBbV1K2nyYM2O5jD/XEodt/LvGhgmEt1
+	rPWbIIwHfmcsJBzR1zWKXa0Zx4xcViwJebvNAUXQlBOuOOWtH5p3dwUhM0PKanuIg
+X-Gm-Gg: AR+sD10yNIf4O5Z+bLfQczM3WbUH/9lATUKkvl9CkeQk5sNhEjbKcSB/RijOJz94bAR
+	DSH21VIB20BWsPG362PxUfMjGovlNe4sYEBOv7vbh8OjzffvdcD+7FLhaKikuUoeA+aHFGVctMV
+	VSt4GIc5CdDQruV/JEKi09tB9a3UQ9XzJjoFgAh/wDBan/NkqdHhH1+UiRDohDjw8G1kwvZ8RN+
+	MFBlJk6WYbuLGgFsiWdG43LKSBT9eqos7fL+EtPy/x30X6Pw2kq3LBhOlSmwEvlSsyAhvlmIIE1
+	eBULBqjIHQ5hQlciAPCkjGACKQosgUeqt9IEMg54oWXBSRJSsGD03iJ3hltkIZhyAGb9jbWJTrP
+	UoRgQ9acOGE69XnHNtPjxYrMSDFtX
+X-Received: by 2002:a05:622a:4d98:b0:50d:900e:c1c1 with SMTP id d75a77b69052e-52b4aeb645bmr13804261cf.7.1785486715950;
+        Fri, 31 Jul 2026 01:31:55 -0700 (PDT)
+X-Received: by 2002:a05:622a:4d98:b0:50d:900e:c1c1 with SMTP id d75a77b69052e-52b4aeb645bmr13804121cf.7.1785486715593;
+        Fri, 31 Jul 2026 01:31:55 -0700 (PDT)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:40fa:e8e6:4785:ce70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c1fd4454321sm61184766b.31.2026.07.31.01.31.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Jul 2026 01:31:54 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: qcom: shikra: Fix intr_target_width for summary interrupt routing
+Date: Fri, 31 Jul 2026 10:31:52 +0200
+Message-ID: <178548671021.77694.3475041309715789489.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260728-shikra-pinctrl-intr-width-v1-1-46583734d808@oss.qualcomm.com>
+References: <20260728-shikra-pinctrl-intr-width-v1-1-46583734d808@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.8\))
-Subject: Re: [PATCH RFC v3 0/7] mfd: ls2kbmc: multiple fixes for this driver
-From: Miao Wang <shankerwangmiao@gmail.com>
-In-Reply-To: <CAAhV-H5wFZHN2jD-vGgNLuMqugGxwfyfq2TnK=HKyZXxZR7iRA@mail.gmail.com>
-Date: Fri, 31 Jul 2026 16:24:33 +0800
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>,
- Chong Qiao <qiaochong@loongson.cn>,
- Lee Jones <lee@kernel.org>,
- Corey Minyard <corey@minyard.net>,
- Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Xi Ruoyao <xry111@xry111.site>,
- WANG Xuerui <kernel@xen0n.name>,
- Yinbo Zhu <zhuyinbo@loongson.cn>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>,
- mfd@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org,
- openipmi-developer@lists.sourceforge.net
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <64E79496-E66E-45A0-B1D6-DB5466C35D46@gmail.com>
-References: <20260710-ls2kbmc-mod-v3-0-ef718636e78e@gmail.com>
- <CAAhV-H6kqN1+ZiTqyvXfPEtQJfvFhp_964AB9C00o0O6pigZmQ@mail.gmail.com>
- <8FCFD614-FEA4-475C-9E0C-50E075B49453@gmail.com>
- <CAAhV-H5wFZHN2jD-vGgNLuMqugGxwfyfq2TnK=HKyZXxZR7iRA@mail.gmail.com>
-To: Huacai Chen <chenhuacai@kernel.org>
-X-Mailer: Apple Mail (2.3826.700.81.1.8)
-
-Hi,
-
-> 2026=E5=B9=B47=E6=9C=8831=E6=97=A5 16:07=EF=BC=8CHuacai Chen =
-<chenhuacai@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Fri, Jul 24, 2026 at 5:28=E2=80=AFPM Miao Wang =
-<shankerwangmiao@gmail.com> wrote:
->>=20
->> Hi,
->>=20
->>> 2026=E5=B9=B47=E6=9C=8824=E6=97=A5 16:55=EF=BC=8CHuacai Chen =
-<chenhuacai@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
->>>=20
->>> Hi, Miao,
->>>=20
->>> On Fri, Jul 10, 2026 at 1:24=E2=80=AFAM Miao Wang via B4 Relay
->>> <devnull+shankerwangmiao.gmail.com@kernel.org> wrote:
->>>>=20
->>>> Previously, the driver has been introduced to support the Loongson =
-2K
->>>> BMC running on the Loongson Servers, which is essential to prevent
->>>> the system from hanging when the BMC is being reset and the default
->>>> efi-framebuffer is being used. However, there are some drawbacks in =
-the
->>>> driver.
->>>>=20
->>>> Firstly, the driver tries to read and write to the connected PCI-E =
-host
->>>> controller registers, assuming that the BMC is connected to LS7A =
-PCI-E
->>>> host controller. This assumption should be true for real products, =
-but
->>>> to prevent from accidentally reading and writing to the wrong PCI-E =
-host
->>>> controller, this driver should be modified to check this before
->>>> accessing the registers.
->>>>=20
->>>> Secondly, the driver uses non-exported functions to tell the vt
->>>> subsystem to redraw the screen, preventing the driver from being
->>>> compiling as a module. This can be fixed by using the exported
->>>> functions instead.
->>> You can replace the redraw function, but I don't think it is =
-necessary
->>> to make the bmc driver modular.
->>>=20
->>> BMC core, IPMI and simpledrm display are usually (if not always)
->>> supposed to work as early as possible.
->>=20
->> I believe that it should be the user's decision to choose whether to
->> compile a module into the kernel or as a module and it would be =
-better
->> if we can provide the possibilities for the user to choose from.
->> Additionally, I don't think these modules are supposed to work that
->> early. The mfd module provide two functions, the display and the ipmi
->> device. In the aspect of graphical display, without this module, the
->> user can still see the output during booting on their monitors, since
->> efifb is working, providing a basic display function. In the aspect =
-of
->> the ipmi device, I don't think the lack of such device will influence
->> the boot of the system, since it is a common practice to compile ipmi
->> device drivers as modules on other architectures. As a result, =
-neither
->> of the two functions are required to be loaded that early and it is
->> reasonable to at lease leave the choice to compile it as a module
->> to the user.
-> Flexibility is not always useful, if a config doesn't provide good
-> effect, then it just increases complexity and makes maintenance more
-> difficult.
-
-I should emphasize that to allow this driver to be a module, there is
-no such increase on maintenance. Moreover, not all loongarch machines
-are requiring this driver. Especially only a part of the server models
-are quipped with this BMC. Comparing with other architectures, the
-driver for BMC are normally compiled as a module, such as mgag200 for
-iLO from HPE and iDRAC from DELL, hibmc_drm for Kunpeng server from
-Huawei. None of these BMC drivers requiring to be compiled into the
-kernel. I cannot see there is any reason keeping the driver from being
-allowed to be compiled as a module. I also do not think it will bring
-any significant maintenance burden. Implementing correct cleanup code
-should be necessary instead of burden.
-
-Cheers,
-
-Miao Wang
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=Bd7oFLt2 c=1 sm=1 tr=0 ts=6a6c5d7d cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=z-2MmutFRShFpDa9hlsA:9 a=QEXdDO2ut3YA:10
+ a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-GUID: pghAWjhNrEPMO1iFjNjPdgSExP3QxoQF
+X-Proofpoint-ORIG-GUID: pghAWjhNrEPMO1iFjNjPdgSExP3QxoQF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzMxMDA2MCBTYWx0ZWRfX+nYqdM2Xw8o4
+ wNVi85Cpnq0J4UrC92Fm+yXiE8QdfLiFX0NwfMUGpHBOkrtXgJs++f8O6FWU8uAFso71lweoJBY
+ vmz+wawpmE8UqDgCJLRIXadd9UhrGINZzIA99aSBGYuKjzTRVYETSQnxvgSCDW1o7cNvqgEQ7j5
+ j1LaX4mPaf3qp6R1e7X+t9K+M9iXqiIY+gjMB6RBVBoINaHpU6k0GVEnaNHGcRiUTbhyM1jPZQc
+ wPmWy7kbLHyepLSEMRoFxpb7twhyYq7uQOFqXONToyqXlOGhjzEYqy0HJ47uUYmtkoV5hx5ApCv
+ 3i1MrbH32WNrhDh8o0mqvUJolkiZY7ztAoP2//Z8VeH7hQplDVVJzjDChaqCWhMdmmz4NakGXPx
+ dJGUTfpukq6j6v7ouidSH9TOQNFyI5facY71FFIgx8d6d+qg0DeLpiKeCrwOqD6mSWBTFnLUvIZ
+ iL9trO1VGVONN+2IZxQ==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzMxMDA2MCBTYWx0ZWRfX8gOHiuARATea
+ c1t1UYzlDQx5tl7/F/oTAoDD9xupJqRwDmGiM5GZZMoA68eHB8wUuStyc7J4Vo9dTVnSNgATxK6
+ 9hQ5mfvyELBT88Ci8xc7k3dPgqHwWgE=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-31_03,2026-07-30_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0 spamscore=0
+ malwarescore=0 clxscore=1015 suspectscore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607310060
 
 
+On Tue, 28 Jul 2026 16:33:08 +0530, Komal Bajaj wrote:
+> The intr_target_width field sets the mask width used when writing
+> target processor into interrupt config register and deciding which
+> processor receives summary interrupt for a given GPIO.
+> 
+> Without it, pinctrl driver defaults to a 3-bit mask. On Shikra, this
+> field is 4 bits wide, which could corrupt adjacent bits and mis-route
+> interrupts. Set intr_target_width = 4 to match the hardware.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] pinctrl: qcom: shikra: Fix intr_target_width for summary interrupt routing
+      https://git.kernel.org/brgl/c/1e7b04c12c077e8829991833a9aa2cb3bdacab61
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
