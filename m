@@ -1,744 +1,124 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F593C9892
-	for <linux-gpio@vger.kernel.org>; Sat,  1 Aug 2026 19:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4CB2EAB6F
+	for <linux-gpio@vger.kernel.org>; Sat,  1 Aug 2026 20:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785614191; cv=none; b=s1mN5S3IfOGFdlvQIgwtZ2/hD74MLngsjpa/SY/AAHuDYCQHKOCEOSAesgXN1y0bmDy6DQE/pC0Q6ASrL+GpcaclVgt+5QnsgUIwh+ZUDxhAxXTwjmEzLElIFZ8N40cA4v8FJLelcNStNLQv4D8NQck/sC4hlOpTiNBLLOyni08=
+	t=1785616496; cv=none; b=WNPIrTwfARgr80KnEa5CHikWa0f3EQ53kQRtP2+f6RQP3aaEeu2znY10MjS/2xmvzzDiLnWtMzIBILUCI31K1zB8DmfaTFVOKPottJIHzBvWbw6QjN7AGuG/Mbfu7Y+A9kx267iHzTLNQeP1MsOUlBDU0LOqQ5xH+VP7s0pQvvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785614191; c=relaxed/simple;
-	bh=jRCtHxYQbzSVipaJb15HIDt3mt8am6/lnYyTBvSwHXM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tgAqvMo/ElbzQqvlzB+fK1EGnI9A8fZtpCGrbYEizZIAiXZN3E8BtwupXUVfXg5RUPi+BId7rXYSeSCpMhqQUviduS15sxoCqgmczwatESQ/GWYyEF7EhpefDzEjFyqJMqkvkIoVdomvecXvJBn4qZARbPMjIgugIUR9MI+CcSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DL1LcvNk; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=KWt5UWon; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1785616496; c=relaxed/simple;
+	bh=sAUz099dd161yFE8MfIjR8abxAaJ2FyhSWBUpEhGqwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oijvqQazGm5QNEX9n0HUwNTV0IvFPrPYJlB/rIflBcVPWTRz3SX+GOyQ3+nBAXjsobRI7zZj66QMoIAk0LjXYtY7CL/TFVdNGA2AcC7YMptPuck3U282ngnwBm7XOqHGPhb0QzuhavNkRx6VjJYYPjJOVN2MlHpE2YvL8vujV+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cDN+63f/; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DL1LcvNk";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="KWt5UWon"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 671JZwI54105626
-	for <linux-gpio@vger.kernel.org>; Sat, 1 Aug 2026 19:56:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=YilNsvftXkeJTNgADTddjj92CPFeR7A2/HJ
-	cuCj9OM8=; b=DL1LcvNkw21qL3Bm/fQqOWiVRKLOkLn7baYE+LjJlQZY29mMEMb
-	K6rM2iiMi28eCaS4WMLpZPdoZH7pGdTyQdz9jcVXTzS6PkF7N1f8CoAMd1SoKh9P
-	WHAAVQa6do/6X9yfR9EROo2Yq2py9W/D94/OZqoH94YrxgE4vtBbYQirDUQ01/xI
-	7MY/75zQsIEc8YxVDlcT5TuXwVJhhkZnYOdg2Zu0VOne+iaj3uAc3PYYEoYQdljQ
-	9JaP9uXow7znnQ+dO+WKU5nSLfQimWAXgtirtkC7J0JkeiIU6V4OWvKMqnIQQTIX
-	KhFZ2NgJ2PYpai3oqjo1tfygYeCUTar5fZQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fs8q51msf-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Sat, 01 Aug 2026 19:56:28 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-51c0e702df8so21729731cf.2
-        for <linux-gpio@vger.kernel.org>; Sat, 01 Aug 2026 12:56:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785614182; x=1786218982; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=YilNsvftXkeJTNgADTddjj92CPFeR7A2/HJcuCj9OM8=;
-        b=KWt5UWon+o9Qcz7a/RnrT3U3kFp4Qnae0AfTAlFLbaugYr/FbcoSjYdlXo/xTioskQ
-         bVquFQa89/KFywR1V8xEB45ztGsdu3D0Eulq2U6k9uqayo6EOHtC6DYmJJXxHSmns5M5
-         nAMRBny8EfhaDZBeA6mIrndeIPoDeCzNcDX0zjXL9wi77UV12AXaN26K4LHJWODUIp1O
-         2nVBJEzJp3pCFOCYxzH3F91fSuCiKJeori+kXp5kBSTx4VVhc2ZOmJvN5FRXCu04J52r
-         V+2x5ygXFXIXLjEu+G2SS0oqx07EJRJeXmfDsf1sXzjGBAggxKlB3c8FfBXlYTVZ2t2s
-         +cmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785614182; x=1786218982;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=YilNsvftXkeJTNgADTddjj92CPFeR7A2/HJcuCj9OM8=;
-        b=InlYmXJZi8FcF4GRAZcEN29s+Y05hrRlkrlq4g7auWJ3gPfAUYGDrsMUvPBd2uHov0
-         WqG4zo+6WpoosvTg+Borc+F58inR94CFPPog43spCZYaHdZrO9+jE2++dmiz1k+UZV4+
-         B7WkEB0i2IHVjSiropVYSYcD/wUfgnZcIl27ETPsBMjeJzYEFOFdrdH9HjBWTWlL0xZf
-         tSCfCELVNWQscQwgWa2X9TZG0krn8SDyytqyweiHKk4S4zJw03aNk1V26/LQvZEoGWWL
-         U5UDZceWxafQ4sq727XaQ8N1sDBuUI9pYFNUV+JiTzB90TF6x0JcYpJgxlufZHSa0qNm
-         1Xzw==
-X-Forwarded-Encrypted: i=1; AHgh+RpUn9+UwlcPEXtwMK1M/+y+9PIFupHX5ZPS+WxF/r++DfXw4AzGicBwF1xEWuW83gUE1LhPzjCoqWKG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx75aIDjVVDbTqvRFgio6D2fIahcI+73A/2QmpSBeAhQQgJB1pX
-	3t1ezhHldJKBHIXENayTEdeOo/+WLVK9rv0j0e+mrQOJUsWmw1iZSbtTo/uNY24CxYY7g6myLgW
-	jmv0y+0nli/hMyf0ARunAI0CwbFSV+LtdRdn+QMAWVoeNcr3BkfYNj7g2brCTT8cm
-X-Gm-Gg: AR+sD12GdM3RS7FI/oKhRooEH+LCSizwePB/ivDkpk3WyJqC8vOW0UIPKnTwn5PSlJs
-	0ZlkzqXaxXmxXA1BRLlvZh88ImO/Es1fwEam3z+lOBdRZHqB717mEutE5QorZ8eTyh6mWVmlUhy
-	w/eAEANGffni02N1eQqzYPASgDB22fpf8ehNKXmXcogllMYaC1SW8jm8lEXO8G9tIJvQNWEXCwi
-	8bX4eCvXPJzKcaVjgSrxZqpcgijgSdnM2re7KtYEOQbfUSjSbKV8D2BbGoKLo+BrsNN3m5ShWtT
-	vYqyBPWCs2KNlwsFZC7hJ3VKJEBjiC8RaLZg1E4MO9JKZkE4DL3hxlVQWma9pwRR5J3Qfye4Cg4
-	KKwgFdoTFbynMo21a
-X-Received: by 2002:a05:622a:2596:b0:51c:c6c:9d65 with SMTP id d75a77b69052e-52b5667054fmr101488881cf.1.1785614181480;
-        Sat, 01 Aug 2026 12:56:21 -0700 (PDT)
-X-Received: by 2002:a05:622a:2596:b0:51c:c6c:9d65 with SMTP id d75a77b69052e-52b5667054fmr101487961cf.1.1785614180919;
-        Sat, 01 Aug 2026 12:56:20 -0700 (PDT)
-Received: from quoll ([178.197.223.174])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-47fd41cfde0sm16523909f8f.3.2026.08.01.12.56.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Aug 2026 12:56:18 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@arm.com>, James Clark <james.clark@linaro.org>,
-        Leo Yan <leo.yan@arm.com>, Damien Le Moal <dlemoal@kernel.org>,
-        Niklas Cassel <cassel@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jeff Johnson <jjohnson@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Yangbo Lu <yangbo.lu@nxp.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-        Paul Walmsley <pjw@kernel.org>,
-        Samuel Holland <samuel.holland@sifive.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Jens Wiklander <jenswi@kernel.org>,
-        Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>,
-        YC Hung <yc.hung@mediatek.com>, Svyatoslav Ryhel <clamor95@gmail.com>,
-        Sean Wang <sean.wang@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        coresight@lists.linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-ide@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, mfd@lists.linux.dev,
-        linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
-        linux-pm@vger.kernel.org, netdev@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-usb@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: [PATCH] dt-bindings: Correct white-space style
-Date: Sat,  1 Aug 2026 21:56:14 +0200
-Message-ID: <20260801195613.235430-2-krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cDN+63f/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=VGfz
+	hyS3O2UB9EZXGmLEHbmRCKAzVe6i0532ZV6jqzI=; b=cDN+63f/fBu/NCPwfWNW
+	2SevbxFfRu31o+0Se561D4kEfclNgnocOsWHWMWzhSG8SNxv7KMlFRuCzIJCVR9v
+	4nXH4TzQdT5CjG4QZd5/8zDq2Si25KWy2vmofzka3w8KnGyBV3nqd0BhrywA6wyD
+	1DSLYs3RrmD/EpUx4mF/cyfLI6uygAE1vpEq5ZVCs+IWgdmx4HLVERvpc2frbEkI
+	iBeWvWLnTUzTFXLL4j/VkpthqmKThORRyOAFWaa+uoSCoexs+wAbI5vXrD56FmKv
+	oeEVDBbgPtZj3HOTvQ6pPOZAQfd2JUPh99Z8aMjQW74+HIRlHTRfn9dLqlXhIEvb
+	1g==
+Received: (qmail 2491072 invoked from network); 1 Aug 2026 22:34:50 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Aug 2026 22:34:50 +0200
+X-UD-Smtp-Session: l3s3148p1@vLegPAJYIIAujnt8
+Date: Sat, 1 Aug 2026 22:34:50 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Cengiz Can <cengiz.can@canonical.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] gpio: sloppy-logic-analyzer: fix use-after-free
+ via debugfs trigger on unbind
+Message-ID: <am5YamFGKrDSBzQU@shikoro>
+References: <20260730220258.358169-1-cengiz.can@canonical.com>
+ <20260730220258.358169-2-cengiz.can@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=25041; i=krzysztof.kozlowski@oss.qualcomm.com;
- h=from:subject; bh=jRCtHxYQbzSVipaJb15HIDt3mt8am6/lnYyTBvSwHXM=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqbk9dcmvFjYCVFkZB2dpTSq2XFpopFEsJgYPdk
- MOOvnArybaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCam5PXQAKCRDBN2bmhouD
- 13wqD/kBunGPSCWQR/b5Wxs6ixKR+A10NDRYBErq4Tta9I5OlO8dNcUw4VsWhVirfb+XK+6LMv2
- 2lLjyQ9SbjrQfmzFsBMBbtJ6p5NGoP1pE83mslHrQ6LZsrBLt38R0U0KeVjpwegZhaLn9jegUG5
- WwSKtZ0XOXPUpwvGoNE90C2Yiq2ES3TtXSnDEeYfhohFeSsK7r8LKyu9C7HpLrjAsmIoUzjhins
- JZp/lWQt0rwq1YDmKIhZWJhtUHlNW4KL6z2bWpliRjPXoZ8mHQ/5wMsbdS3vRH7ewuC9O8L+mxT
- tnyHO4UbYOzAteLCauAC5XaOLKelbxgmSMaZZPGWSC/uFxZ6/lWvZQQ5G0wudXsdhqRiwFyE8HH
- 737aU0WsC0YOHtzKzMBVKUo2l6039B/7utqrVQCg4bU17HWhY/xeEs0XRBkPQdTVafdwt4K+uXm
- gAPGBqdHIG37ssgKg/b4zuMN4eizSf5rLk4/H9hYAo3kPsdEL/+FivL5o3dL69EtXsi4stRCVVT
- FdUNl+2d+oHHTcK2TX9c+a8oUtp4i9XXyDLLs0U/tkvCbGyVeff3gWR+k4sZcnL/7/BwiS+s4n+
- E6QakHXrRwoL+5PcvBB8WyqkJsWWQJVwJFlmGklcrPEOCr2lQB1YqgLpdRdNJRoOi7Mf0TVYKD/ hwt/BYnshz8WcZA==
-X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODAxMDE2MSBTYWx0ZWRfX+vXODQsvc5IN
- PDwbbGb6PVa9TqjeZ+Z5jlNfbMyinDXzvD6aIC1pHZ7z5fFVLY1IB/bV6DWYr9oW+Z/j5fJxGmQ
- vLJE1apfPWkrszQQ58I4Gm+qgsfd8HA=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAxMDE2MSBTYWx0ZWRfXxblvD+GyFkgW
- QajPGbz9Zelyx83l0RBoOJBrpeHFGqtdC795SzrfgEV78lFHfuUZ5Ryme2VnpZ5kfmer3Xn9khI
- 2XOPIB5vIE4U4EKVCXXcL7guvh0CXEw4OYKalBmlJoYDRqOG4pfawIak+cP0q2RhRNH5U0ftTEs
- RVI+9zB2PTt3s8sgNKS4woRi9zw1N4aOW3EnxOV7f2z6AsDxL2cP/vAWt0aZzTdU/mKlAHfM1EI
- pQExOrrHoVPPo9LfpkWa9RCM/f2Iy7btFkRy4wxmnt8ODwK080uCcFVELKfwRV+MPgFkkbVT/Ih
- s0i/yoTS8kS/1uSjPHAfSsK0W20HeGnZcK2YHQRpf8k05escdFXrxXoVZ4ar9LsscSkePyTLCov
- vkIk3kj3JIc5Gkf0vapz+KvgtJ438XV3B+Q7S1ANtRU/UWi3xTWzYudSC36kOSEdI+oTkKtRw/q
- caQfHejSHs6KCHF7tXw==
-X-Proofpoint-GUID: 8Q548JuCOKQDkY4454TxZq2bXFN_3oJm
-X-Authority-Analysis: v=2.4 cv=IYC3n2qa c=1 sm=1 tr=0 ts=6a6e4f6c cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=N6niishs+lR9UBL1FN3Qrw==:17
- a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=EUspDBNiAAAA:8
- a=7lKMP4hLRc14UtNM5MAA:9 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-ORIG-GUID: 8Q548JuCOKQDkY4454TxZq2bXFN_3oJm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-01_03,2026-07-30_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0 phishscore=0
- suspectscore=0 priorityscore=1501 spamscore=0 malwarescore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608010161
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hJpq6GjMxq/zMXqA"
+Content-Disposition: inline
+In-Reply-To: <20260730220258.358169-2-cengiz.can@canonical.com>
 
-Correct a few white-space issues, like double space after '=' or before
-bracket '{' characters, which will be flagged by dt-check-style.  No
-functional changes.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+--hJpq6GjMxq/zMXqA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
+On Fri, Jul 31, 2026 at 01:02:57AM +0300, Cengiz Can wrote:
+> The "trigger" debugfs file has a hand-rolled ->write handler
+> (trigger_write()) that dereferences the per-device gpio_la_poll_priv. The
+> file is created with debugfs_create_file_unsafe(), and the handler never
+> takes a debugfs reference. Nothing keeps the object alive while the
+> handler runs.
+>=20
+> priv is allocated with devm_kzalloc(). devres frees it when the platform
+> device is unbound. debugfs_create_file_unsafe() installs no full_proxy
+> wrapper, so debugfs_remove_recursive() in gpio_la_poll_remove() does not
+> wait for an in-flight trigger_write(). The blob_lock taken there does not
+> help, because trigger_write() never takes it. A write that races an unbind
+> therefore writes into freed memory:
+>=20
+>   trigger_write()                  gpio_la_poll_remove()
+>     priv =3D m->private
+>     buf =3D memdup_user()  [may sleep]
+>                                      mutex_lock(&priv->blob_lock)
+>                                      debugfs_remove_recursive()  [no wait]
+>                                      mutex_unlock(&priv->blob_lock)
+>                                    (remove returns; devres frees priv)
+>     priv->trig_data =3D buf   <-- use-after-free write
+>     priv->trig_len  =3D count
+>=20
+> The race is reachable by root via
+> /sys/bus/platform/drivers/gpio-sloppy-logic-analyzer/unbind.
+>=20
+> Create "trigger" with debugfs_create_file() instead. Its full_proxy
+> wrapper makes debugfs_remove_recursive() drain any in-flight ->write
+> before it returns.
+>=20
+> The use-after-free is confirmed under KASAN with a minimal reproducer of
+> the same debugfs_create_file_unsafe() plus devm_kzalloc() pattern
+> (available on request); it produces a slab-use-after-free write in the
+> handler.
+>=20
+> Fixes: 7828b7bbbf20 ("gpio: add sloppy logic analyzer using polling")
+> Cc: stable@vger.kernel.org
+> Assisted-by: Claude:claude-opus-4.8
+> Signed-off-by: Cengiz Can <cengiz.can@canonical.com>
 
-Patch applies on Rob's for-next branch.
----
- .../arm/firmware/linaro,optee-tz.yaml         |  8 +-
- .../devicetree/bindings/arm/psci.yaml         | 18 ++--
- .../bindings/arm/qcom,coresight-tnoc.yaml     |  2 +-
- .../devicetree/bindings/ata/st,ahci.yaml      | 22 ++---
- .../bindings/display/ti/ti,am65x-dss.yaml     | 12 +--
- .../bindings/display/ti/ti,j721e-dss.yaml     | 96 +++++++++----------
- .../bindings/display/ti/ti,k2g-dss.yaml       | 36 +++----
- .../bindings/dsp/mediatek,mt8195-dsp.yaml     |  2 +-
- .../bindings/gpio/st,nomadik-gpio.yaml        |  2 +-
- .../devicetree/bindings/i2c/st,sti-i2c.yaml   |  2 +-
- .../bindings/mailbox/st,sti-mailbox.yaml      |  2 +-
- .../bindings/mfd/maxim,max77620.yaml          |  2 +-
- .../bindings/net/wireless/qcom,ath10k.yaml    | 34 +++----
- .../devicetree/bindings/opp/opp-v2.yaml       | 28 +++---
- .../pinctrl/mediatek,mt7988-pinctrl.yaml      |  2 +-
- .../devicetree/bindings/ptp/fsl,ptp.yaml      | 12 +--
- .../devicetree/bindings/pwm/pwm-sifive.yaml   |  2 +-
- .../bindings/usb/ti,twl4030-usb.yaml          |  2 +-
- 18 files changed, 142 insertions(+), 142 deletions(-)
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-diff --git a/Documentation/devicetree/bindings/arm/firmware/linaro,optee-tz.yaml b/Documentation/devicetree/bindings/arm/firmware/linaro,optee-tz.yaml
-index 5d033570b57b..26ebcf4565f3 100644
---- a/Documentation/devicetree/bindings/arm/firmware/linaro,optee-tz.yaml
-+++ b/Documentation/devicetree/bindings/arm/firmware/linaro,optee-tz.yaml
-@@ -50,8 +50,8 @@ additionalProperties: false
- examples:
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
--    firmware  {
--        optee  {
-+    firmware {
-+        optee {
-             compatible = "linaro,optee-tz";
-             method = "smc";
-             interrupts = <GIC_SPI 187 IRQ_TYPE_EDGE_RISING>;
-@@ -59,8 +59,8 @@ examples:
-     };
- 
-   - |
--    firmware  {
--        optee  {
-+    firmware {
-+        optee {
-             compatible = "linaro,optee-tz";
-             method = "hvc";
-         };
-diff --git a/Documentation/devicetree/bindings/arm/psci.yaml b/Documentation/devicetree/bindings/arm/psci.yaml
-index 6e2e0c551841..0d04389c81fa 100644
---- a/Documentation/devicetree/bindings/arm/psci.yaml
-+++ b/Documentation/devicetree/bindings/arm/psci.yaml
-@@ -146,12 +146,12 @@ examples:
-     // Case 1: PSCI v0.1 only.
- 
-     psci {
--      compatible      = "arm,psci";
--      method          = "smc";
--      cpu_suspend     = <0x95c10000>;
--      cpu_off         = <0x95c10001>;
--      cpu_on          = <0x95c10002>;
--      migrate         = <0x95c10003>;
-+      compatible = "arm,psci";
-+      method = "smc";
-+      cpu_suspend = <0x95c10000>;
-+      cpu_off = <0x95c10001>;
-+      cpu_on = <0x95c10002>;
-+      migrate = <0x95c10003>;
-     };
- 
-   - |+
-@@ -159,8 +159,8 @@ examples:
-     // Case 2: PSCI v0.2 only
- 
-     psci {
--      compatible      = "arm,psci-0.2";
--      method          = "smc";
-+      compatible = "arm,psci-0.2";
-+      method = "smc";
-     };
- 
-   - |+
-@@ -251,7 +251,7 @@ examples:
- 
-       cpu_pd1: power-domain-cpu1 {
-         #power-domain-cells = <0>;
--        domain-idle-states =  <&cpu_pwrdn>;
-+        domain-idle-states = <&cpu_pwrdn>;
-         power-domains = <&cluster_pd>;
-       };
- 
-diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
-index ef648a15b806..37147124449e 100644
---- a/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom,coresight-tnoc.yaml
-@@ -82,7 +82,7 @@ additionalProperties: false
- 
- examples:
-   - |
--    tn@109ab000  {
-+    tn@109ab000 {
-       compatible = "qcom,coresight-tnoc", "arm,primecell";
-       reg = <0x109ab000 0x4200>;
- 
-diff --git a/Documentation/devicetree/bindings/ata/st,ahci.yaml b/Documentation/devicetree/bindings/ata/st,ahci.yaml
-index 6e8e4b4f3d6c..d82c5a65b60c 100644
---- a/Documentation/devicetree/bindings/ata/st,ahci.yaml
-+++ b/Documentation/devicetree/bindings/ata/st,ahci.yaml
-@@ -57,16 +57,16 @@ examples:
-     #include <dt-bindings/clock/stih407-clks.h>
- 
-     sata@9b20000 {
--        compatible    = "st,ahci";
--        reg           = <0x9b20000 0x1000>;
--        interrupts    = <GIC_SPI 159 IRQ_TYPE_NONE>;
-+        compatible = "st,ahci";
-+        reg = <0x9b20000 0x1000>;
-+        interrupts = <GIC_SPI 159 IRQ_TYPE_NONE>;
-         interrupt-names = "hostc";
--        phys          = <&phy_port0 PHY_TYPE_SATA>;
--        phy-names     = "sata-phy";
--        resets        = <&powerdown STIH407_SATA0_POWERDOWN>,
--                         <&softreset STIH407_SATA0_SOFTRESET>,
--                         <&softreset STIH407_SATA0_PWR_SOFTRESET>;
--        reset-names   = "pwr-dwn", "sw-rst", "pwr-rst";
--        clocks        = <&clk_s_c0_flexgen CLK_ICN_REG>;
--        clock-names   = "ahci_clk";
-+        phys = <&phy_port0 PHY_TYPE_SATA>;
-+        phy-names = "sata-phy";
-+        resets = <&powerdown STIH407_SATA0_POWERDOWN>,
-+                 <&softreset STIH407_SATA0_SOFTRESET>,
-+                 <&softreset STIH407_SATA0_PWR_SOFTRESET>;
-+        reset-names = "pwr-dwn", "sw-rst", "pwr-rst";
-+        clocks = <&clk_s_c0_flexgen CLK_ICN_REG>;
-+        clock-names = "ahci_clk";
-     };
-diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-index 49a007cbcd3a..d1e530e12604 100644
---- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-+++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-@@ -261,9 +261,9 @@ examples:
-                 "ovr1", "ovr2", "vp1", "vp2", "common1";
-         ti,am65x-oldi-io-ctrl = <&dss_oldi_io_ctrl>;
-         power-domains = <&k3_pds 67 TI_SCI_PD_EXCLUSIVE>;
--        clocks =        <&k3_clks 67 1>,
--                        <&k3_clks 216 1>,
--                        <&k3_clks 67 2>;
-+        clocks = <&k3_clks 67 1>,
-+                 <&k3_clks 216 1>,
-+                 <&k3_clks 67 2>;
-         clock-names = "fck", "vp1", "vp2";
-         interrupts = <GIC_SPI 166 IRQ_TYPE_EDGE_RISING>;
-         ports {
-@@ -299,9 +299,9 @@ examples:
-             reg-names = "common", "vidl1", "vid",
-                         "ovr1", "ovr2", "vp1", "vp2", "common1";
-             power-domains = <&k3_pds 186 TI_SCI_PD_EXCLUSIVE>;
--            clocks =        <&k3_clks 186 6>,
--                            <&vp1_clock>,
--                            <&k3_clks 186 2>;
-+            clocks = <&k3_clks 186 6>,
-+                     <&vp1_clock>,
-+                     <&k3_clks 186 2>;
-             clock-names = "fck", "vp1", "vp2";
-             interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-             oldi-transmitters {
-diff --git a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
-index 65ae8a1c3998..cac5ef1743d3 100644
---- a/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
-+++ b/Documentation/devicetree/bindings/display/ti/ti,j721e-dss.yaml
-@@ -154,54 +154,54 @@ examples:
-     #include <dt-bindings/soc/ti,sci_pm_domain.h>
- 
-     dss: dss@4a00000 {
--            compatible = "ti,j721e-dss";
--            reg =   <0x04a00000 0x10000>, /* common_m */
--                    <0x04a10000 0x10000>, /* common_s0*/
--                    <0x04b00000 0x10000>, /* common_s1*/
--                    <0x04b10000 0x10000>, /* common_s2*/
--                    <0x04a20000 0x10000>, /* vidl1 */
--                    <0x04a30000 0x10000>, /* vidl2 */
--                    <0x04a50000 0x10000>, /* vid1 */
--                    <0x04a60000 0x10000>, /* vid2 */
--                    <0x04a70000 0x10000>, /* ovr1 */
--                    <0x04a90000 0x10000>, /* ovr2 */
--                    <0x04ab0000 0x10000>, /* ovr3 */
--                    <0x04ad0000 0x10000>, /* ovr4 */
--                    <0x04a80000 0x10000>, /* vp1 */
--                    <0x04aa0000 0x10000>, /* vp2 */
--                    <0x04ac0000 0x10000>, /* vp3 */
--                    <0x04ae0000 0x10000>, /* vp4 */
--                    <0x04af0000 0x10000>; /* wb */
--            reg-names = "common_m", "common_s0",
--                    "common_s1", "common_s2",
--                    "vidl1", "vidl2","vid1","vid2",
--                    "ovr1", "ovr2", "ovr3", "ovr4",
--                    "vp1", "vp2", "vp3", "vp4",
--                    "wb";
--            clocks =        <&k3_clks 152 0>,
--                            <&k3_clks 152 1>,
--                            <&k3_clks 152 4>,
--                            <&k3_clks 152 9>,
--                            <&k3_clks 152 13>;
--            clock-names = "fck", "vp1", "vp2", "vp3", "vp4";
--            power-domains = <&k3_pds 152 TI_SCI_PD_EXCLUSIVE>;
--            interrupts =    <GIC_SPI 602 IRQ_TYPE_LEVEL_HIGH>,
--                            <GIC_SPI 603 IRQ_TYPE_LEVEL_HIGH>,
--                            <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH>,
--                            <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH>;
--            interrupt-names =       "common_m",
--                                    "common_s0",
--                                    "common_s1",
--                                    "common_s2";
--            ports {
--                    #address-cells = <1>;
--                    #size-cells = <0>;
--                    port@0 {
--                            reg = <0>;
-+        compatible = "ti,j721e-dss";
-+        reg = <0x04a00000 0x10000>, /* common_m */
-+              <0x04a10000 0x10000>, /* common_s0*/
-+              <0x04b00000 0x10000>, /* common_s1*/
-+              <0x04b10000 0x10000>, /* common_s2*/
-+              <0x04a20000 0x10000>, /* vidl1 */
-+              <0x04a30000 0x10000>, /* vidl2 */
-+              <0x04a50000 0x10000>, /* vid1 */
-+              <0x04a60000 0x10000>, /* vid2 */
-+              <0x04a70000 0x10000>, /* ovr1 */
-+              <0x04a90000 0x10000>, /* ovr2 */
-+              <0x04ab0000 0x10000>, /* ovr3 */
-+              <0x04ad0000 0x10000>, /* ovr4 */
-+              <0x04a80000 0x10000>, /* vp1 */
-+              <0x04aa0000 0x10000>, /* vp2 */
-+              <0x04ac0000 0x10000>, /* vp3 */
-+              <0x04ae0000 0x10000>, /* vp4 */
-+              <0x04af0000 0x10000>; /* wb */
-+        reg-names = "common_m", "common_s0",
-+                "common_s1", "common_s2",
-+                "vidl1", "vidl2","vid1","vid2",
-+                "ovr1", "ovr2", "ovr3", "ovr4",
-+                "vp1", "vp2", "vp3", "vp4",
-+                "wb";
-+        clocks = <&k3_clks 152 0>,
-+                 <&k3_clks 152 1>,
-+                 <&k3_clks 152 4>,
-+                 <&k3_clks 152 9>,
-+                 <&k3_clks 152 13>;
-+        clock-names = "fck", "vp1", "vp2", "vp3", "vp4";
-+        power-domains = <&k3_pds 152 TI_SCI_PD_EXCLUSIVE>;
-+        interrupts = <GIC_SPI 602 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 603 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH>,
-+                     <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-names = "common_m",
-+                          "common_s0",
-+                          "common_s1",
-+                          "common_s2";
-+        ports {
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+            port@0 {
-+                reg = <0>;
- 
--                            dpi_out_0: endpoint {
--                                    remote-endpoint = <&dp_bridge_input>;
--                            };
--                    };
-+                dpi_out_0: endpoint {
-+                    remote-endpoint = <&dp_bridge_input>;
-+                };
-             };
-+        };
-     };
-diff --git a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
-index 96b1439f88e3..87721da0a8af 100644
---- a/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
-+++ b/Documentation/devicetree/bindings/display/ti/ti,k2g-dss.yaml
-@@ -80,26 +80,26 @@ examples:
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-     #include <dt-bindings/interrupt-controller/irq.h>
- 
--    dss: dss@2540000 {
--            compatible = "ti,k2g-dss";
--            reg =   <0x02540000 0x400>,
--                    <0x02550000 0x1000>,
--                    <0x02557000 0x1000>,
--                    <0x0255a800 0x100>,
--                    <0x0255ac00 0x100>;
--            reg-names = "cfg", "common", "vid1", "ovr1", "vp1";
--            clocks =        <&k2g_clks 0x2 0>,
--                            <&k2g_clks 0x2 1>;
--            clock-names = "fck", "vp1";
--            interrupts = <GIC_SPI 247 IRQ_TYPE_EDGE_RISING>;
-+    dss@2540000 {
-+        compatible = "ti,k2g-dss";
-+        reg = <0x02540000 0x400>,
-+              <0x02550000 0x1000>,
-+              <0x02557000 0x1000>,
-+              <0x0255a800 0x100>,
-+              <0x0255ac00 0x100>;
-+        reg-names = "cfg", "common", "vid1", "ovr1", "vp1";
-+        clocks = <&k2g_clks 0x2 0>,
-+                 <&k2g_clks 0x2 1>;
-+        clock-names = "fck", "vp1";
-+        interrupts = <GIC_SPI 247 IRQ_TYPE_EDGE_RISING>;
- 
--            power-domains = <&k2g_pds 0x2>;
-+        power-domains = <&k2g_pds 0x2>;
- 
--            max-memory-bandwidth = <230000000>;
-+        max-memory-bandwidth = <230000000>;
- 
--            port {
--                    dpi_out: endpoint {
--                            remote-endpoint = <&sii9022_in>;
--                    };
-+        port {
-+            dpi_out: endpoint {
-+                remote-endpoint = <&sii9022_in>;
-             };
-+        };
-     };
-diff --git a/Documentation/devicetree/bindings/dsp/mediatek,mt8195-dsp.yaml b/Documentation/devicetree/bindings/dsp/mediatek,mt8195-dsp.yaml
-index abc52978be7a..994afb1c31ff 100644
---- a/Documentation/devicetree/bindings/dsp/mediatek,mt8195-dsp.yaml
-+++ b/Documentation/devicetree/bindings/dsp/mediatek,mt8195-dsp.yaml
-@@ -81,7 +81,7 @@ examples:
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-     #include <dt-bindings/interrupt-controller/irq.h>
-     dsp@10803000 {
--        compatible =  "mediatek,mt8195-dsp";
-+        compatible = "mediatek,mt8195-dsp";
-         reg = <0x10803000 0x1000>,
-               <0x10840000 0x40000>;
-         reg-names = "cfg", "sram";
-diff --git a/Documentation/devicetree/bindings/gpio/st,nomadik-gpio.yaml b/Documentation/devicetree/bindings/gpio/st,nomadik-gpio.yaml
-index 40b4a7551449..e871149c520f 100644
---- a/Documentation/devicetree/bindings/gpio/st,nomadik-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/st,nomadik-gpio.yaml
-@@ -85,7 +85,7 @@ examples:
-   - |
-     gpio@8012e080 {
-         compatible = "st,nomadik-gpio";
--        reg =  <0x8012e080 0x80>;
-+        reg = <0x8012e080 0x80>;
-         interrupts = <0 120 0x4>;
-         #gpio-cells = <2>;
-         gpio-controller;
-diff --git a/Documentation/devicetree/bindings/i2c/st,sti-i2c.yaml b/Documentation/devicetree/bindings/i2c/st,sti-i2c.yaml
-index 08f9c1e446fd..4efbe82b6d68 100644
---- a/Documentation/devicetree/bindings/i2c/st,sti-i2c.yaml
-+++ b/Documentation/devicetree/bindings/i2c/st,sti-i2c.yaml
-@@ -60,7 +60,7 @@ examples:
-     i2c@fed40000 {
-         compatible = "st,comms-ssc4-i2c";
-         reg = <0xfed40000 0x110>;
--        interrupts =  <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
-         clocks = <&clk_s_a0_ls CLK_ICN_REG>;
-         clock-names = "ssc";
-         clock-frequency = <400000>;
-diff --git a/Documentation/devicetree/bindings/mailbox/st,sti-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/st,sti-mailbox.yaml
-index a023c28dff49..662ab7f617ac 100644
---- a/Documentation/devicetree/bindings/mailbox/st,sti-mailbox.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/st,sti-mailbox.yaml
-@@ -42,7 +42,7 @@ additionalProperties: false
- examples:
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
--    mailbox0: mailbox@8f00000  {
-+    mailbox@8f00000 {
-         compatible = "st,stih407-mailbox";
-         reg = <0x8f00000 0x1000>;
-         interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77620.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77620.yaml
-index 602711865274..ac063c2bab73 100644
---- a/Documentation/devicetree/bindings/mfd/maxim,max77620.yaml
-+++ b/Documentation/devicetree/bindings/mfd/maxim,max77620.yaml
-@@ -311,7 +311,7 @@ examples:
-                 in-sd3-supply = <&vdd_5v0_vbus>;
- 
-                 in-ldo0-1-supply = <&vdd_1v8_vio>;
--                in-ldo2-supply   = <&vdd_3v3_vbat>;
-+                in-ldo2-supply = <&vdd_3v3_vbat>;
-                 in-ldo3-5-supply = <&vdd_3v3_vbat>;
-                 in-ldo4-6-supply = <&vdd_3v3_vbat>;
-                 in-ldo7-8-supply = <&vdd_1v8_vio>;
-diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
-index d4f4d72ee0d3..e667d78b3ab3 100644
---- a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
-+++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
-@@ -390,22 +390,22 @@ examples:
-                      <GIC_SPI 46 IRQ_TYPE_EDGE_RISING>,
-                      <GIC_SPI 47 IRQ_TYPE_EDGE_RISING>,
-                      <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>;
--        interrupt-names =  "msi0",
--                           "msi1",
--                           "msi2",
--                           "msi3",
--                           "msi4",
--                           "msi5",
--                           "msi6",
--                           "msi7",
--                           "msi8",
--                           "msi9",
--                           "msi10",
--                           "msi11",
--                           "msi12",
--                           "msi13",
--                           "msi14",
--                           "msi15",
--                           "legacy";
-+        interrupt-names = "msi0",
-+                          "msi1",
-+                          "msi2",
-+                          "msi3",
-+                          "msi4",
-+                          "msi5",
-+                          "msi6",
-+                          "msi7",
-+                          "msi8",
-+                          "msi9",
-+                          "msi10",
-+                          "msi11",
-+                          "msi12",
-+                          "msi13",
-+                          "msi14",
-+                          "msi15",
-+                          "legacy";
-         ieee80211-freq-limit = <5470000 5875000>;
-       };
-diff --git a/Documentation/devicetree/bindings/opp/opp-v2.yaml b/Documentation/devicetree/bindings/opp/opp-v2.yaml
-index 10000a758572..ce0fa82bce98 100644
---- a/Documentation/devicetree/bindings/opp/opp-v2.yaml
-+++ b/Documentation/devicetree/bindings/opp/opp-v2.yaml
-@@ -293,9 +293,9 @@ examples:
-             opp-microvolt = <970000>, /* Supply 0 */
-                             <960000>, /* Supply 1 */
-                             <960000>; /* Supply 2 */
--            opp-microamp =  <70000>,  /* Supply 0 */
--                            <70000>,  /* Supply 1 */
--                            <70000>;  /* Supply 2 */
-+            opp-microamp = <70000>,  /* Supply 0 */
-+                           <70000>,  /* Supply 1 */
-+                           <70000>;  /* Supply 2 */
-             clock-latency-ns = <300000>;
-         };
- 
-@@ -306,9 +306,9 @@ examples:
-             opp-microvolt = <975000 970000 985000>, /* Supply 0 */
-                             <965000 960000 975000>, /* Supply 1 */
-                             <965000 960000 975000>; /* Supply 2 */
--            opp-microamp =  <70000>,    /* Supply 0 */
--                <70000>,    /* Supply 1 */
--                <70000>;    /* Supply 2 */
-+            opp-microamp = <70000>,    /* Supply 0 */
-+                           <70000>,    /* Supply 1 */
-+                           <70000>;    /* Supply 2 */
-             clock-latency-ns = <300000>;
-         };
- 
-@@ -317,11 +317,11 @@ examples:
-         opp-1000000002 {
-             opp-hz = /bits/ 64 <1000000002>;
-             opp-microvolt = <975000 970000 985000>, /* Supply 0 */
--                <965000 960000 975000>, /* Supply 1 */
--                <965000 960000 975000>; /* Supply 2 */
--            opp-microamp =  <70000>,    /* Supply 0 */
--                <0>,      /* Supply 1 doesn't need this */
--                <70000>;    /* Supply 2 */
-+                            <965000 960000 975000>, /* Supply 1 */
-+                            <965000 960000 975000>; /* Supply 2 */
-+            opp-microamp = <70000>,    /* Supply 0 */
-+                           <0>,      /* Supply 1 doesn't need this */
-+                           <70000>;    /* Supply 2 */
-             clock-latency-ns = <300000>;
-         };
-     };
-@@ -405,8 +405,8 @@ examples:
-             opp-hz = /bits/ 64 <1000000000>;
-             opp-microvolt-slow = <915000 900000 925000>;
-             opp-microvolt-fast = <975000 970000 985000>;
--            opp-microamp-slow =  <70000>;
--            opp-microamp-fast =  <71000>;
-+            opp-microamp-slow = <70000>;
-+            opp-microamp-fast = <71000>;
-         };
- 
-         opp-1200000000 {
-@@ -415,7 +415,7 @@ examples:
-                                  <925000 910000 935000>; /* Supply vcc1 */
-             opp-microvolt-fast = <975000 970000 985000>, /* Supply vcc0 */
-                                  <965000 960000 975000>; /* Supply vcc1 */
--            opp-microamp =  <70000>; /* Will be used for both slow/fast */
-+            opp-microamp = <70000>; /* Will be used for both slow/fast */
-         };
-     };
- 
-diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
-index 1f31b520cb43..a33f1fd277c9 100644
---- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt7988-pinctrl.yaml
-@@ -573,7 +573,7 @@ examples:
-         uart0_pins: uart0-pins {
-           mux {
-             function = "uart";
--            groups =  "uart0";
-+            groups = "uart0";
-           };
-         };
-       };
-diff --git a/Documentation/devicetree/bindings/ptp/fsl,ptp.yaml b/Documentation/devicetree/bindings/ptp/fsl,ptp.yaml
-index 42ca895f3c4e..998f2ce8665f 100644
---- a/Documentation/devicetree/bindings/ptp/fsl,ptp.yaml
-+++ b/Documentation/devicetree/bindings/ptp/fsl,ptp.yaml
-@@ -146,11 +146,11 @@ examples:
-         reg = <0x24e00 0xb0>;
-         interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
-         interrupt-parent = <&ipic>;
--        fsl,cksel       = <1>;
-+        fsl,cksel = <1>;
-         fsl,tclk-period = <10>;
--        fsl,tmr-prsc    = <100>;
--        fsl,tmr-add     = <0x999999a4>;
--        fsl,tmr-fiper1  = <0x3b9ac9f6>;
--        fsl,tmr-fiper2  = <0x00018696>;
--        fsl,max-adj     = <659999998>;
-+        fsl,tmr-prsc = <100>;
-+        fsl,tmr-add = <0x999999a4>;
-+        fsl,tmr-fiper1 = <0x3b9ac9f6>;
-+        fsl,tmr-fiper2 = <0x00018696>;
-+        fsl,max-adj = <659999998>;
-     };
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-index bae993128981..40397bdf2d69 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-+++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.yaml
-@@ -62,7 +62,7 @@ additionalProperties: false
- 
- examples:
-   - |
--    pwm:  pwm@10020000 {
-+    pwm@10020000 {
-       compatible = "sifive,fu540-c000-pwm", "sifive,pwm0";
-       reg = <0x10020000 0x1000>;
-       clocks = <&tlclk>;
-diff --git a/Documentation/devicetree/bindings/usb/ti,twl4030-usb.yaml b/Documentation/devicetree/bindings/usb/ti,twl4030-usb.yaml
-index 6ef337507425..c338ad0368de 100644
---- a/Documentation/devicetree/bindings/usb/ti,twl4030-usb.yaml
-+++ b/Documentation/devicetree/bindings/usb/ti,twl4030-usb.yaml
-@@ -67,7 +67,7 @@ examples:
- 
-         usb1v5-supply = <&reg_vusb1v5>;
-         usb1v8-supply = <&reg_vusb1v8>;
--        usb3v1-supply  = <&reg_vusb3v1>;
-+        usb3v1-supply = <&reg_vusb3v1>;
-         usb_mode = <1>;
- 
-         #phy-cells = <0>;
--- 
-2.53.0
 
+--hJpq6GjMxq/zMXqA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmpuWGYACgkQFA3kzBSg
+KbbUDxAAsWK37NbgW+VKEOJp2xFuzvnQs5z/IoLfLtfwoLBjmRGbJ1rcsj00nzKX
+0utqOJBer6tA+9Ucj2KDOk1FqziLRgXjMDxBBJn9vQoQD1klAPvuXqodW+IoA8Vb
+qYAc0MtEAo38stYrLknEOHg98UQgtfOMDmGaAL2z8FFfr2MZb745ksYoL39gnp4J
+qSb1OJkxxlAImgr3Wf8nZmzFEGtb4dimIwpOZU43uuC9Qefb0zLV8Yf3mdgzcuDA
+BWyKeAwVkLw1bfM+m1n8B1VI3gE/KahSlwFLw9+3dp/8EQTlwz4XTzYnaeUdMKvX
+Kn8tt3y4VzFdH3erEIqSru+xZqeMHwePqmsvlavTiAt4cMSA6sYcZJ0CA3BSHw+J
+HEnL9BtMYK3Ln/J2Hs6TFe8OCjWzKMVoaLGXPK87AVn14CGa0vPbZbd//B3lZ1QA
+iAaNqp9/JCenwE6oFqxxopWu/xHRkVtCVvcqK9PhjX36aPNtx+jTD97fDmcLXCHT
+v3YPlJfIeKXxh0TMO0E6i/3t5LoTIn2MqDS7uBsq8/4LgR5j2gtKmOb/5uqQgr4K
+n5BTlNzq7M0FFQ4aiya1qaKw2Pr2BSBYH5YVyDAdngbqfe3oHt/u+5VJv9GnUSFi
+qJKRb6sJ/jRyOfiTDQAIEixzSZwKMuqZubnCTzbYLuCvojME2DI=
+=RyH1
+-----END PGP SIGNATURE-----
+
+--hJpq6GjMxq/zMXqA--
