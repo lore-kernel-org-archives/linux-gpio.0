@@ -1,224 +1,128 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A3C175A93;
-	Sun,  2 Aug 2026 15:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C8848989D
+	for <linux-gpio@vger.kernel.org>; Sun,  2 Aug 2026 22:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785685720; cv=none; b=tGfIp3EchmTDW7caCihcaZ4aCLDjCsscfz+iXEfU2ybuA7d5JxDDBx9bHbNLrFj+28csUVUu0Bvrc/sWaiXijAtGwleZkJ0CGVfRrtl3q+VoIA+k22gTTYuijyDhDK0joEGgB49/ntVN+PnpLmiEK32A87Dh91txmKc1x87GtgY=
+	t=1785709430; cv=none; b=aS0kWdedpGRgMfSmjEeVk4uCHccrgu6YgjslS1ksgXHxWF1b/xHTWNp7pLReDdqR3/2gwH9Gz3wMndPC1FLm9Qbz7j923fZ/bRkfO9l7wYnJ+etwUfliiNC3bez0CpzxsFmZxvReXrx971gVRyiYelBFrkrE/jbBq+HWM/5DpfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785685720; c=relaxed/simple;
-	bh=bGrOQ+CY7EkKESDzSdb+8OxxFKFT0DD6Txi0F3XW9x0=;
+	s=arc-20240116; t=1785709430; c=relaxed/simple;
+	bh=l1ZnHpxm2/LMNQiDhVhwSE0m9IpcWUrwKDgA+ZpNiFA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDSlsp/smf9jSlgzhiktsv059mKdz2s1dk7gkhmEeaaLeNYjQl375PYlzPlKv+fwVUXri9xFW1sBeIc+qZHolhdRV4Jxy5Mp1+G8vYixBdp2ufw8YziRc9njRmOteIU9pNZzewu5AVr8XtPzE5lhHJ2v2GeEZ3MGqG7RUwpdbK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KrmAonmw; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=cdOfRGnp+NwbaZmDg6eaaU4b/Th++rY47ySsGxBd+q5m0pdtTq2O3/krLXWf/vxNvkJe5FTq5DMMI8kYjiy3kxq9c2VOJY0J9WW2MtqX1G5uiD5XaMQlAd9/b3dmY3zN785bDFgh2td3n00i7nIDbQup7SOIvX6DdtcFeFbHGxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=biKhHYEU; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KrmAonmw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1785685718; x=1817221718;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bGrOQ+CY7EkKESDzSdb+8OxxFKFT0DD6Txi0F3XW9x0=;
-  b=KrmAonmwC2KnykxcKWE8Sp2FQg1B0aXL5MH6guxavjQdQwdh740tz+++
-   AksTrTltqdU9aLvDGzR9ABDXKMho2ChT3At8/SjFKtmuPpsd6tIqRDt/L
-   hnd/dbGGU5WDa3xCn2ahTpxu+pDjEpZtvgRjvz58W3jTIStNsIKA0qbEO
-   LR1dXh9VyFi3mRygQ7cdgKPxnruD5Cau2nKN2HBILMtNNkwO0eqfjiLdR
-   wu6MNyBpzKNDxoFXbj3BZMZ4R6hjeNG3jvsL3S8I5E64G4UfctlwrBnLr
-   uoFBHGxe0/3VX4A9FMRlYW/1ORGzrKfqxdPgVRkNaURepPRQcQJKmmA+B
-   A==;
-X-CSE-ConnectionGUID: iauxihUoQW+MTsTpNDCyGg==
-X-CSE-MsgGUID: s3NmgQOxTxaavDswUMo1YA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11863"; a="86442137"
-X-IronPort-AV: E=Sophos;i="6.25,200,1779174000"; 
-   d="scan'208";a="86442137"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2026 08:48:37 -0700
-X-CSE-ConnectionGUID: i31RhG3aR4mFVqtIDOP2bw==
-X-CSE-MsgGUID: 7rPvqHDCSs6Sk392WM6cgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,200,1779174000"; 
-   d="scan'208";a="261064494"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa007.jf.intel.com with ESMTP; 02 Aug 2026 08:48:35 -0700
-Date: Sun, 2 Aug 2026 23:48:34 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Heiko Schocher <hs@nabladev.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-fpga@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
-	Xu Yilun <yilun.xu@intel.com>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3] driver: fpga: xilinx-selectmap: add csi and rdwr
- support
-Message-ID: <am9m0pGSUYKaRRDI@yilunxu-OptiPlex-7050>
-References: <20260727052218.4079979-1-hs@nabladev.com>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="biKhHYEU"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4956242332dso13109205e9.2
+        for <linux-gpio@vger.kernel.org>; Sun, 02 Aug 2026 15:23:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1785709427; x=1786314227; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=l1ZnHpxm2/LMNQiDhVhwSE0m9IpcWUrwKDgA+ZpNiFA=;
+        b=biKhHYEUBhRisKnxkGyEKIEDf803QjLlxC1C/l654mvzhuoyV2ocylZRdV4RFT5FeC
+         xTDQy+dTgsct3jYVWZ0+/lPeLbpWCF+JGffDvKRRHT7fm6gaJbgVMeVD2ygc97j4oTj2
+         5DXbptSW6Hf9A/WjSur0gZVFZhBWR+k4pCkAEgUP4Ri7A/TWOf3nFAyVDqP3+1N8xB0I
+         eRhZ6I8FYj8HDZZZFaj/r0UhhT6ZQY6GF7foTCWw1vP59wnZGeiCemOo6IGeq6+GUWtF
+         gzwIfRJso5iWMHtBVkGGCZzwhlAjOJHcLH+PS4rXDeyCqIL7wItyShZSNSUPc24A0cLL
+         zDPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785709427; x=1786314227;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=l1ZnHpxm2/LMNQiDhVhwSE0m9IpcWUrwKDgA+ZpNiFA=;
+        b=Hw2v0BRPRsonjNu2LcvPpZs+bQ+LMYqQgAK3WIWCJGnS6tsjCAuLwbYPbXe7xvI39q
+         6ZPDYOt3QZaAn2b30+z2bhNikxt0Qs85TEAVmZkc4wiHdRQtBeP5kZz4NQ2BD9y8+PKS
+         erbNHuppw0zSREgJU8TgIBFeV14cFNyk9GJfDV32s8XDtoX3EP7JHJ4cheSpU75VYYQX
+         ochxIY74TfGbJqpZ0Lr+ADR2Qgoe0jX0mRVVEW9a7+jFv0um0u49aPpZIde2VK+p11rU
+         86wuCFumH/zkWJci3jUpsgg1WaHBArWXwZG3WDt50Mo/ErQJSTmc1I5wp4O3L4rLTK0q
+         j+0A==
+X-Forwarded-Encrypted: i=1; AHgh+RpgrJuVnzkFh9FF4RZYuH0iyrGBxnqXXNs6movwQWyP/nU32kH2y8PyBQtVkbgXT4/3lQCIedhk9wMD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuKwbmLFv7ivvQ9BEHWTZYqrVS5rX+JAXFCjnQ7CslnX3WJLhJ
+	dKwK/+6Qt+QAZ1zD9uIrSqdnzBrMMLUBjDMbPOiEJ5B8Ew0RVBhSXm6sEv94UTwH/S0=
+X-Gm-Gg: AR+sD10jguv3YZpSsPC0cp4fcvl+Dg7yyNM76sUHZs/hHfs4xWGtw8PKl3/btPoC00y
+	s4i3c+boWq2jzacNmDQP3lGoB9wKKr9Mi99PpcPgwX79RqYMQfRSLEI1CKixYUto6xEGxzcFWyQ
+	dclvqauFDfS8C/Xu4walyreTkiLtCf+DaKxGXc75qdmVjUhDyozII9vFkq7IKZK3ozxrktVik8/
+	zJdTiBYzHYBN7v4e5LPHRUschMNNi7d+72xWGmqnRDYLVOvoIhgAmXaddauHDlxhKcv6bx3DD6n
+	fbWcdVD4dQNVaf9ZQDtkBcKqsu2q9IL9TyL7AgCUYlH/O8q0Tjq4h7lPSL+/UFthWJ7r1p5cj86
+	hB1vz4MwNxGm3CkQ7Zqzb94Nhx8eht2hAEs19+cazdSLWi+X45a1kofrXOOR0KQdwIaAiLTp1Ye
+	ScFcSzTrVZEfga31gWTLNP21ppHwYmqrXXmTOaDoaA1dUoLpJnFSOcXklauB9Y5Ec/Dw==
+X-Received: by 2002:a05:600c:8b08:b0:495:5b4a:53b7 with SMTP id 5b1f17b1804b1-4980c694e4amr194391165e9.19.1785709426561;
+        Sun, 02 Aug 2026 15:23:46 -0700 (PDT)
+Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-49808691014sm168712505e9.11.2026.08.02.15.23.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Aug 2026 15:23:45 -0700 (PDT)
+Date: Mon, 3 Aug 2026 00:23:44 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Emil Renner Berthing <kernel@esmil.dk>, Paul Walmsley <pjw@kernel.org>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
+Subject: Re: [PATCH v4 04/21] pinctrl: starfive: Add StarFive JHB100 sys0
+ controller driver
+Message-ID: <am_CzLdCkMKeRv_F@monoceros>
+References: <20260801072711.153217-1-changhuang.liang@starfivetech.com>
+ <20260801072711.153217-5-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gz2oumjekulxb57s"
 Content-Disposition: inline
-In-Reply-To: <20260727052218.4079979-1-hs@nabladev.com>
+In-Reply-To: <20260801072711.153217-5-changhuang.liang@starfivetech.com>
 
-On Mon, Jul 27, 2026 at 07:22:10AM +0200, Heiko Schocher wrote:
-> The current driver requests the optional CSI_B and RDWR_B GPIOs but
-> only configures their initial output state and never changes them
-> afterwards. As a result, CSI_B and RDWR_B remain inactive throughout
-> the configuration process.
 
-Then how the existing configuration process work if the control signals
-are always *INACTIVE*?
+--gz2oumjekulxb57s
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v4 04/21] pinctrl: starfive: Add StarFive JHB100 sys0
+ controller driver
+MIME-Version: 1.0
 
-> 
-> This may work on systems with a single FPGA where these signals do not
-> need to be controlled by software,
+Hello,
 
-Is this always the case today? Then why does the existing driver bother
-doing the devm_gpiod_get_optional()?
+On Sat, Aug 01, 2026 at 12:26:54AM -0700, Changhuang Liang wrote:
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/platform_device.h>
 
-> but it does not support systems
-> with multiple FPGAs sharing a SelectMAP interface.
-> 
-> On systems with multiple FPGAs sharing the same SelectMAP data bus,
-> the driver must actively control these signals during configuration.
-> 
-> CSI_B (Chip Select, active low) selects the target FPGA. It is asserted
-> before configuration data is transferred and deasserted afterwards so
-> that only the intended device responds to bus transactions.
+Please don't include <linux/mod_devicetable.h>, which will go away soon.
+<linux/platform_device.h> already contains the necessary bits to have
+of_device_id defined, so you can just drop the #include for
+<linux/mod_devicetable.h>.
 
-I still don't understand, only one Chip Select pin defined for each
-selectmap device, how could it select between multiple FPGAs?
+This also affects several other patches in this series.
 
-> 
-> RDWR_B (Read/Write, active low) controls the transfer direction on the
-> SelectMAP interface. A low level selects write cycles, while a high
-> level selects read cycles. During FPGA configuration the driver drives
-> RDWR_B low before transferring the bitstream and restores it to its
-> reading (high state) afterwards.
-> 
-> Store the optional GPIO descriptors and toggle both signals around the
-> configuration data transfer, allowing multiple FPGAs to safely share a
-> single SelectMAP interface.
-> 
-> Tested on an AM625 based board with two Xilinx FPGAs connected to the
-> GPMC bus.
+Best regards
+Uwe
 
-What is GPMC bus, anything to do with "SelectMAP data bus"?
+--gz2oumjekulxb57s
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> Signed-off-by: Heiko Schocher <hs@nabladev.com>
-> ---
-> 
-> Changes in v3:
-> - use 0 (deasserted state) and 1 (asserted state) in gpio_set_value()
->   as commented from Micahl
-> - rewrite commit message as requested from Xu Yilun
->   - describe what rdwr_b and csi_b do, and why this change is needed
->     for more than one FPGA.
-> - add comment before asserting the signals, why they are asserted
->   in this order.
-> 
-> Changes in v2:
-> - add comments from Michal
->   - skip check if gpio descriptor variables csi_b/rdwr_b are valid,
->     as validate_desc() checks this in gpiod_set_value() call.
->   - initialize the gpio variables csi_b/rdwr_b immediately with
->     the return value from devm_gpiod_get_optional(), so we can
->     drop local gpio variable at all
-> 
->  drivers/fpga/xilinx-selectmap.c | 32 +++++++++++++++++++++++++-------
->  1 file changed, 25 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/fpga/xilinx-selectmap.c b/drivers/fpga/xilinx-selectmap.c
-> index d0cbb5fdfe3a..35078206a3a3 100644
-> --- a/drivers/fpga/xilinx-selectmap.c
-> +++ b/drivers/fpga/xilinx-selectmap.c
-> @@ -19,6 +19,8 @@
->  struct xilinx_selectmap_conf {
->  	struct xilinx_fpga_core core;
->  	void __iomem *base;
-> +	struct gpio_desc *csi_b;
-> +	struct gpio_desc *rdwr_b;
->  };
->  
->  #define to_xilinx_selectmap_conf(obj) \
-> @@ -30,16 +32,30 @@ static int xilinx_selectmap_write(struct xilinx_fpga_core *core,
->  	struct xilinx_selectmap_conf *conf = to_xilinx_selectmap_conf(core);
->  	size_t i;
->  
-> +	/*
-> +	 * Assert CSI_B and select write mode.
-> +	 *
-> +	 * UG570 states in note 4 in Figure "Continuous x8 SelectMAP Data
-> +	 * Loading", RDWR_B should be asserted before CSI_B to avoid
-> +	 * causing an ABORT on the next CCLK.
-> +	 *
-> +	 * To be sure, set first RDWR_B pin before activate CSI_B
-> +	 */
-> +	gpiod_set_value(conf->rdwr_b, 1);
-> +	gpiod_set_value(conf->csi_b, 1);
-> +
->  	for (i = 0; i < count; ++i)
->  		writeb(buf[i], conf->base);
->  
-> +	gpiod_set_raw_value(conf->csi_b, 0);
-> +	gpiod_set_raw_value(conf->rdwr_b, 0);
+-----BEGIN PGP SIGNATURE-----
 
-I don't see why you do gpiod_set_raw_value() here, they seems change nothing.
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmpvw24ACgkQj4D7WH0S
+/k52FQgAnVpMoN8c7RMzlLeC4BZnq+Mr045A+Lyjzbeke6y6tbnrEC8YbXAvRo2N
+sNZXvZHsehjbmNqj46Yh6CxejtAye4h4IKeyjmmrOGc/+Q+bJ0g85G2hmalRb7oi
+CA+lzCUG1kR9AkM0WIATKYQ9xlDy/rxCqmIGxrfvfY/N/xxtC0JwBpuqmoq5BBaD
+7VjgxCyAmBP3XRCgEJB6OEtCdz8Uu55RM2uFyy9Ep1/jGuW4EOAkgFzYOlv6XdDt
+7/4pdjxlnZeXPQRqdYVo5atbFjSGaPkYijxj3ITmnD9eipiXu0elV7ONWEXCgejO
+v/cmCw7tsyRfKKvwR5+mjGtHhsRtuA==
+=Z5ww
+-----END PGP SIGNATURE-----
 
-  Function (example)                 line property          physical line
-  gpiod_set_raw_value(desc, 0);      don't care             low
-  ...
-  gpiod_set_value(desc, 1);          active low             low
-
-> +
->  	return 0;
->  }
->  
->  static int xilinx_selectmap_probe(struct platform_device *pdev)
->  {
->  	struct xilinx_selectmap_conf *conf;
-> -	struct gpio_desc *gpio;
->  	void __iomem *base;
->  
->  	conf = devm_kzalloc(&pdev->dev, sizeof(*conf), GFP_KERNEL);
-> @@ -56,15 +72,17 @@ static int xilinx_selectmap_probe(struct platform_device *pdev)
->  	conf->base = base;
->  
->  	/* CSI_B is active low */
-> -	gpio = devm_gpiod_get_optional(&pdev->dev, "csi", GPIOD_OUT_HIGH);
-> -	if (IS_ERR(gpio))
-> -		return dev_err_probe(&pdev->dev, PTR_ERR(gpio),
-> +	conf->csi_b = devm_gpiod_get_optional(&pdev->dev, "csi",
-> +					      GPIOD_OUT_HIGH);
-
-You've changed this from v2, why? Why keep the initial state active?
-
-> +	if (IS_ERR(conf->csi_b))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(conf->csi_b),
->  				     "Failed to get CSI_B gpio\n");
->  
->  	/* RDWR_B is active low */
-> -	gpio = devm_gpiod_get_optional(&pdev->dev, "rdwr", GPIOD_OUT_HIGH);
-> -	if (IS_ERR(gpio))
-> -		return dev_err_probe(&pdev->dev, PTR_ERR(gpio),
-> +	conf->rdwr_b = devm_gpiod_get_optional(&pdev->dev, "rdwr",
-> +					       GPIOD_OUT_HIGH);
-> +	if (IS_ERR(conf->rdwr_b))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(conf->rdwr_b),
->  				     "Failed to get RDWR_B gpio\n");
->  
->  	return xilinx_core_probe(&conf->core);
-> ---
-> base-commit: 58717b2a1365d06c8c64b72aa948541b53fe31eb
-> 
-> -- 
-> 2.55.0
-> 
-> 
+--gz2oumjekulxb57s--
