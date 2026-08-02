@@ -1,431 +1,224 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1023932EA
-	for <linux-gpio@vger.kernel.org>; Sun,  2 Aug 2026 14:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A3C175A93;
+	Sun,  2 Aug 2026 15:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785679869; cv=none; b=DmAil8taqDsschazz0+GkloJs6u9ioZDDLp2itXjtEI3Q8Mo8Lpj9qovhXMmPNxOpZquR+Ow2NASIr1aIgw70NQtLSBzmRbItxbTG2obX3rbATH5Ddjq5Y8u3yE3vB7zgJGcnGsEyZrz1c6G9YzwmomQyME7owavYZVnRugF6hk=
+	t=1785685720; cv=none; b=tGfIp3EchmTDW7caCihcaZ4aCLDjCsscfz+iXEfU2ybuA7d5JxDDBx9bHbNLrFj+28csUVUu0Bvrc/sWaiXijAtGwleZkJ0CGVfRrtl3q+VoIA+k22gTTYuijyDhDK0joEGgB49/ntVN+PnpLmiEK32A87Dh91txmKc1x87GtgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785679869; c=relaxed/simple;
-	bh=kmNNPLpqsde0L4mq3OnecKZCCNZLcryG1pWcz1C+eAk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bPbKu8bhk8sDfSKG5jWim11xrf0cwiJYlX/XjWMKtz9LIZRzvUds7h44V7Plodb27LNxUtko0C8Z0kO+aKE+FB0Cu0gvUgyjy50PrmAAhqk+9Fn3ZvJI0uYnCg1mST21YPZvad4gBhylTIznIVqwLpLpOVieKd+uiNi89cwaoMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pA9c8GFq; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=kTsKTmB4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1785685720; c=relaxed/simple;
+	bh=bGrOQ+CY7EkKESDzSdb+8OxxFKFT0DD6Txi0F3XW9x0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SDSlsp/smf9jSlgzhiktsv059mKdz2s1dk7gkhmEeaaLeNYjQl375PYlzPlKv+fwVUXri9xFW1sBeIc+qZHolhdRV4Jxy5Mp1+G8vYixBdp2ufw8YziRc9njRmOteIU9pNZzewu5AVr8XtPzE5lhHJ2v2GeEZ3MGqG7RUwpdbK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KrmAonmw; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pA9c8GFq";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="kTsKTmB4"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 672B6cFe1278408
-	for <linux-gpio@vger.kernel.org>; Sun, 2 Aug 2026 14:11:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=CcA21w3/sZIwoJ8o6e+c2v
-	yopqAU1eR1GmGZyGN0FB8=; b=pA9c8GFqUZd3LtzbaTmeHPbX9uiJiQD8gh8Op+
-	UEgsMmrOyr9n5RC5OQFnjfx9yQ1CGviK13rU5cLiZMgMLuGaOPG4EyI9UagwSL0q
-	f4xamCYxJaUVOPmCEGRU38vIXT4Zopv1/iWPpeP8M6Kx86PakXAyxl4eJlC67c7C
-	H3isRpuaKtwyw+yyDTdewcIjiVDW/wuJANCjKnUZL/H3Elcq1XyZ9wgXF7hxPcae
-	yZyp5tM2QhLBWEoSRfvijurXwvh6Yq99rfsjEa0acLjiU0e/op7vgDY0kIHa68nR
-	6/kYp+KvF9PyYcS9X41lRcoTC09UdzVMjXEu2AbDGxgU/VlA==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fsa382rs6-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Sun, 02 Aug 2026 14:11:07 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-38fcaa5f82cso702447a91.3
-        for <linux-gpio@vger.kernel.org>; Sun, 02 Aug 2026 07:11:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1785679866; x=1786284666; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=CcA21w3/sZIwoJ8o6e+c2vyopqAU1eR1GmGZyGN0FB8=;
-        b=kTsKTmB47me3unvLAlj6L7lLSX1pqBsJtGFjSsb431mlvXfCiHU3Gw48cLiw2lL0H3
-         lhNS6VBlDhr3QctTRgxlk9SXHJwyLG9yiDoQKIV57otfUEX22S6Fw2urMMbI37/D7zbl
-         wdiXbqeHZSiBF3dk19yQmvr6/zswxvsk4mW8AX61Oi7nLvMYZqCkGDu/1F65pp0BQ6+N
-         iYTyw/ijDXWUOtkIGWxnifJXFKoDnzXO4VfdIwIm5/I4SmlOHqUbWWzdtxbypHvShIq4
-         vpsxLtZWhDU5fMpOD0g6pirXba6IftBGRo2p3UMASLYZl1qlmR7poRdfG+Caipg2h9XZ
-         YNJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785679866; x=1786284666;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=CcA21w3/sZIwoJ8o6e+c2vyopqAU1eR1GmGZyGN0FB8=;
-        b=Yxa1f7rm8QnDLqFUfYWT36jhRlRt3Y3zhRVJ2bgXDWZAgfezpoE95LAWJlEbyZShGT
-         A7XDrozN9BouYeeZ2nXOY8rycratRiiDiD6u78AI6pjG0JZAz/2PjWFVSPuaFlsomBKK
-         GPs70VQvVFoKKN1P9fLpYnaRBTwY6lhfMuSmHN1xH//tx2vpGdCwauEkBqBeZlQo0NHL
-         x4ffrkx4Mj72HxlEcKwLSE/Il7VqwykzQgjhsouXiZnRXNFWmF+UTF5SDxwmPSr1m57l
-         r0HjHCsnQu6dy8tELulrhLKmUutyQszcw7mzti1j/BN6eJ06aChQNvqK4JdZirPwhAxW
-         5WNg==
-X-Gm-Message-State: AOJu0YyAwcXT9MvaY0rWCcINOL7K3fdlXhV3BBaLF1GXCBHslRWQzI/N
-	ZepqRi3FkuIMPtrl09eq1vwSwC6RF31YY48o7P7/qLtJEFsnUeA20vSWfOMgvcg0rxaNPOw45JQ
-	RYV/jq9hSNHyClY4g+f+swOdycdab3GZI4609kglykq8RXLmV6OGHZiD8yq9h8UOs
-X-Gm-Gg: AR+sD111s5L82fjc5brLADdsC2qlHgYpkTLP4QmP2maIbaYI040uA24eq7Xmy4mUvQ0
-	FHu1ygItoUEOrUErhpu/oKrNaXldwYJ1aj9c4e+yq5yIXWl6rm6aIr3dB4fh3iozcF6H+ZXlFLB
-	QsjHYo4DrN9z7EZFSpyPM+7vMWPNrzfRLf17JRYZv2eOUffapoLdRVI4/p/vMU8SljT2PLn8IO9
-	BRIXrm2QnbB0oh/vyIv3V2g0u+B4WKIopfimqiUp9J6x/rR6BQTamqZzfRbEr2m+IJqNqRcRylh
-	HkWwsk9xboMQ5oCSQCm0xbN96Cirrx4hGJniV8sJZ6Rg7rpP9M7GbG0AyMxvWNsFr2j7sdnT7S2
-	67pAq/12fZETh926ilGWqXES9q0mH
-X-Received: by 2002:a17:90b:5627:b0:387:e0bb:57ff with SMTP id 98e67ed59e1d1-38fbc58d37fmr5602073a91.38.1785679866354;
-        Sun, 02 Aug 2026 07:11:06 -0700 (PDT)
-X-Received: by 2002:a17:90b:5627:b0:387:e0bb:57ff with SMTP id 98e67ed59e1d1-38fbc58d37fmr5602036a91.38.1785679865853;
-        Sun, 02 Aug 2026 07:11:05 -0700 (PDT)
-Received: from hu-mkshah-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3153e18d9c6sm28626151eec.30.2026.08.02.07.10.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Aug 2026 07:11:05 -0700 (PDT)
-From: Maulik Shah <maulik.shah@oss.qualcomm.com>
-Date: Sun, 02 Aug 2026 19:40:35 +0530
-Subject: [PATCH] gpio: Use IRQ trigger mask helpers
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KrmAonmw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1785685718; x=1817221718;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bGrOQ+CY7EkKESDzSdb+8OxxFKFT0DD6Txi0F3XW9x0=;
+  b=KrmAonmwC2KnykxcKWE8Sp2FQg1B0aXL5MH6guxavjQdQwdh740tz+++
+   AksTrTltqdU9aLvDGzR9ABDXKMho2ChT3At8/SjFKtmuPpsd6tIqRDt/L
+   hnd/dbGGU5WDa3xCn2ahTpxu+pDjEpZtvgRjvz58W3jTIStNsIKA0qbEO
+   LR1dXh9VyFi3mRygQ7cdgKPxnruD5Cau2nKN2HBILMtNNkwO0eqfjiLdR
+   wu6MNyBpzKNDxoFXbj3BZMZ4R6hjeNG3jvsL3S8I5E64G4UfctlwrBnLr
+   uoFBHGxe0/3VX4A9FMRlYW/1ORGzrKfqxdPgVRkNaURepPRQcQJKmmA+B
+   A==;
+X-CSE-ConnectionGUID: iauxihUoQW+MTsTpNDCyGg==
+X-CSE-MsgGUID: s3NmgQOxTxaavDswUMo1YA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11863"; a="86442137"
+X-IronPort-AV: E=Sophos;i="6.25,200,1779174000"; 
+   d="scan'208";a="86442137"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2026 08:48:37 -0700
+X-CSE-ConnectionGUID: i31RhG3aR4mFVqtIDOP2bw==
+X-CSE-MsgGUID: 7rPvqHDCSs6Sk392WM6cgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,200,1779174000"; 
+   d="scan'208";a="261064494"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa007.jf.intel.com with ESMTP; 02 Aug 2026 08:48:35 -0700
+Date: Sun, 2 Aug 2026 23:48:34 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Heiko Schocher <hs@nabladev.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-fpga@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+	Xu Yilun <yilun.xu@intel.com>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v3] driver: fpga: xilinx-selectmap: add csi and rdwr
+ support
+Message-ID: <am9m0pGSUYKaRRDI@yilunxu-OptiPlex-7050>
+References: <20260727052218.4079979-1-hs@nabladev.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260802-b4b4-irq-trigger-mask-gpio-v1-1-948973636c84@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIANpPb2oC/yXMwQqDMAwA0F+RnBeonRTZr4wdTI01ytQlbgzEf
- 7dux3d5GxirsMGt2ED5IybzlFFeCoh9MyVGabPBOx9c7TxSRRWKvnBVSYkVn42NmBaZsYzXLgS
- KrQ8EOViUO/n+8vvjb3vTwHE9R9j3AxlJmw9+AAAA
-X-Change-ID: 20260802-b4b4-irq-trigger-mask-gpio-1c3f66bcd26b
-To: Keerthy <j-keerthy@ti.com>, Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Thierry Reding <thierry.reding@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
-        linux-omap@vger.kernel.org, linux-unisoc@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org,
-        Maulik Shah <maulik.shah@oss.qualcomm.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785679857; l=10843;
- i=maulik.shah@oss.qualcomm.com; s=20240109; h=from:subject:message-id;
- bh=kmNNPLpqsde0L4mq3OnecKZCCNZLcryG1pWcz1C+eAk=;
- b=nQReNWb+UmnkXw/zketYQXUdCtGRweCEgZnr9tCDL9XvXxXXhw2bFFqE+AU8ZSuBCe1mtSqzE
- g9APKKoxQXzA17eSkRGAjhB9BUwLChbdS/SkdcENB32PTxTIQtPKrIf
-X-Developer-Key: i=maulik.shah@oss.qualcomm.com; a=ed25519;
- pk=bd9h5FIIliUddIk8p3BlQWBlzKEQ/YW5V+fe759hTWQ=
-X-Authority-Analysis: v=2.4 cv=KezidwYD c=1 sm=1 tr=0 ts=6a6f4ffb cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
- a=EUspDBNiAAAA:8 a=UPyg-B154qBqbsG8PrAA:9 a=QEXdDO2ut3YA:10
- a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODAyMDEyNSBTYWx0ZWRfX0R4lKP51mD1d
- lwuDYEmnOKE7cd5VfbHtOZ0cmJMYZcijtec0C+G2fDgMjxL4B7goiPMLhW8fsORaX7pqvcQPr9p
- N7XlYjjRzWVp6rmo4726fbfoG60XX5I=
-X-Proofpoint-ORIG-GUID: 8Qx-8Q9VT-E1GVvVJmokq83wOrxwDswk
-X-Proofpoint-GUID: 8Qx-8Q9VT-E1GVvVJmokq83wOrxwDswk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAyMDEyNSBTYWx0ZWRfXwiat/ie071GZ
- EQwSUJf87U+2SgV6W8H9DFW+jk85mrgxM7rc0YEODC+Dpc2T2uq9cLGnNo4r6aH3O9HA1YL1aMl
- 5XCnNNpLNk5V4VMVzeZ2oQY07ktvB9aQRPwHWMwLJDBWTMpIWUh7QgbKgMHZrDORmKkbZ070Ns0
- Hng5XJ+HQsDNELOa+C9SUNYjvIKnIlCGljbyuOOvY/ZG64HwnwJQFEKqwudEL2UdAK2ZzigeP54
- eN1TSIHgURq/DBvkWFSflrs92nAfqDfJ8YQZMvAKNIDgMNnoQQOVJUWH69jNQp677tTlDoJjXjD
- S32RYLYrQkh9Y8UQHyUUxWXZReQXfgLjYRFrtdb3S1ZYXeGvGGjlWsnXhvCzE5IknirfigCVhlA
- KRHxRRt+37hDXHE46CKc8nobq2dJkLpOqn8Z9KvRnVkQ0uyNt+WQbo/DwUitKnX4G/Q6d9zSJ20
- lQwdLyqFYDCIqDdVjXQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-02_04,2026-07-30_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 clxscore=1015 impostorscore=0 phishscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2608020125
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260727052218.4079979-1-hs@nabladev.com>
 
-Use IRQ_TYPE_LEVEL_MASK and IRQ_TYPE_EDGE_BOTH instead of open-coded
-trigger type combinations in irqchip callbacks.
+On Mon, Jul 27, 2026 at 07:22:10AM +0200, Heiko Schocher wrote:
+> The current driver requests the optional CSI_B and RDWR_B GPIOs but
+> only configures their initial output state and never changes them
+> afterwards. As a result, CSI_B and RDWR_B remain inactive throughout
+> the configuration process.
 
-No functional change intended.
+Then how the existing configuration process work if the control signals
+are always *INACTIVE*?
 
-Assisted-by: Claude:claude-sonnet-5
-Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
----
- drivers/gpio/gpio-davinci.c    | 8 ++++----
- drivers/gpio/gpio-mt7621.c     | 2 +-
- drivers/gpio/gpio-mvebu.c      | 4 ++--
- drivers/gpio/gpio-mxs.c        | 4 ++--
- drivers/gpio/gpio-omap.c       | 9 ++++-----
- drivers/gpio/gpio-pl061.c      | 5 ++---
- drivers/gpio/gpio-pxa.c        | 2 +-
- drivers/gpio/gpio-rda.c        | 4 ++--
- drivers/gpio/gpio-sa1100.c     | 2 +-
- drivers/gpio/gpio-sodaville.c  | 2 +-
- drivers/gpio/gpio-stmpe.c      | 2 +-
- drivers/gpio/gpio-tegra.c      | 4 ++--
- drivers/gpio/gpio-timberdale.c | 2 +-
- 13 files changed, 24 insertions(+), 26 deletions(-)
+> 
+> This may work on systems with a single FPGA where these signals do not
+> need to be controlled by software,
 
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index 270cd7c88812..cccbaea1dec2 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -285,9 +285,9 @@ static void gpio_irq_unmask(struct irq_data *d)
- 
- 	gpiochip_enable_irq(&chips->chip, hwirq);
- 
--	status &= IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING;
-+	status &= IRQ_TYPE_EDGE_BOTH;
- 	if (!status)
--		status = IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING;
-+		status = IRQ_TYPE_EDGE_BOTH;
- 
- 	if (status & IRQ_TYPE_EDGE_FALLING)
- 		writel_relaxed(mask, &g->set_falling);
-@@ -297,7 +297,7 @@ static void gpio_irq_unmask(struct irq_data *d)
- 
- static int gpio_irq_type(struct irq_data *d, unsigned trigger)
- {
--	if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
-+	if (trigger & ~IRQ_TYPE_EDGE_BOTH)
- 		return -EINVAL;
- 
- 	return 0;
-@@ -400,7 +400,7 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
- 
- 	mask = __gpio_mask(i);
- 
--	if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
-+	if (trigger & ~IRQ_TYPE_EDGE_BOTH)
- 		return -EINVAL;
- 
- 	writel_relaxed(mask, (trigger & IRQ_TYPE_EDGE_FALLING)
-diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
-index 87086c322f08..a86f6b1060fc 100644
---- a/drivers/gpio/gpio-mt7621.c
-+++ b/drivers/gpio/gpio-mt7621.c
-@@ -194,7 +194,7 @@ mt7621_gpio_irq_type(struct irq_data *d, unsigned int type)
- 		     rg->hlevel | rg->llevel) & mask)
- 			return 0;
- 
--		type = IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING;
-+		type = IRQ_TYPE_EDGE_BOTH;
- 	}
- 
- 	rg->rising &= ~mask;
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index 8d3acadb0d68..93b8a08b04b9 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -1296,7 +1296,7 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 	gc = irq_get_domain_generic_chip(mvchip->domain, 0);
- 	gc->private = mvchip;
- 	ct = &gc->chip_types[0];
--	ct->type = IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW;
-+	ct->type = IRQ_TYPE_LEVEL_MASK;
- 	ct->chip.irq_mask = mvebu_gpio_level_irq_mask;
- 	ct->chip.irq_unmask = mvebu_gpio_level_irq_unmask;
- 	ct->chip.irq_set_type = mvebu_gpio_irq_set_type;
-@@ -1305,7 +1305,7 @@ static int mvebu_gpio_probe(struct platform_device *pdev)
- 	ct->chip.name = mvchip->chip.label;
- 
- 	ct = &gc->chip_types[1];
--	ct->type = IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING;
-+	ct->type = IRQ_TYPE_EDGE_BOTH;
- 	ct->chip.irq_ack = mvebu_gpio_irq_ack;
- 	ct->chip.irq_mask = mvebu_gpio_edge_irq_mask;
- 	ct->chip.irq_unmask = mvebu_gpio_edge_irq_unmask;
-diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
-index 5635694bf9f4..900315aba85a 100644
---- a/drivers/gpio/gpio-mxs.c
-+++ b/drivers/gpio/gpio-mxs.c
-@@ -198,7 +198,7 @@ static int mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
- 	gc->private = port;
- 
- 	ct = &gc->chip_types[0];
--	ct->type = IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW;
-+	ct->type = IRQ_TYPE_LEVEL_MASK;
- 	ct->chip.irq_ack = irq_gc_ack_set_bit;
- 	ct->chip.irq_mask = irq_gc_mask_disable_reg;
- 	ct->chip.irq_unmask = irq_gc_unmask_enable_reg;
-@@ -210,7 +210,7 @@ static int mxs_gpio_init_gc(struct mxs_gpio_port *port, int irq_base)
- 	ct->regs.disable = PINCTRL_PIN2IRQ(port) + MXS_CLR;
- 
- 	ct = &gc->chip_types[1];
--	ct->type = IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING;
-+	ct->type = IRQ_TYPE_EDGE_BOTH;
- 	ct->chip.irq_ack = irq_gc_ack_set_bit;
- 	ct->chip.irq_mask = irq_gc_mask_disable_reg;
- 	ct->chip.irq_unmask = irq_gc_unmask_enable_reg;
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index e39723b5901b..005420baecf4 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -432,8 +432,7 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
- 	if (type & ~IRQ_TYPE_SENSE_MASK)
- 		return -EINVAL;
- 
--	if (!bank->regs->leveldetect0 &&
--		(type & (IRQ_TYPE_LEVEL_LOW|IRQ_TYPE_LEVEL_HIGH)))
-+	if (!bank->regs->leveldetect0 && (type & IRQ_TYPE_LEVEL_MASK))
- 		return -EINVAL;
- 
- 	raw_spin_lock_irqsave(&bank->lock, flags);
-@@ -450,9 +449,9 @@ static int omap_gpio_irq_type(struct irq_data *d, unsigned type)
- 	}
- 	raw_spin_unlock_irqrestore(&bank->lock, flags);
- 
--	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
-+	if (type & IRQ_TYPE_LEVEL_MASK)
- 		irq_set_handler_locked(d, handle_level_irq);
--	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
-+	else if (type & IRQ_TYPE_EDGE_BOTH)
- 		/*
- 		 * Edge IRQs are already cleared/acked in irq_handler and
- 		 * not need to be masked, as result handle_edge_irq()
-@@ -702,7 +701,7 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
- 	 * after enabing the interrupt to clear the wakeup status.
- 	 */
- 	if (bank->regs->leveldetect0 && bank->regs->wkup_en &&
--	    trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW))
-+	    trigger & IRQ_TYPE_LEVEL_MASK)
- 		omap_clear_gpio_irqstatus(bank, offset);
- 
- 	if (trigger)
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 919cf86fd590..fcd44e34f65e 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -132,8 +132,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
- 	if (offset < 0 || offset >= PL061_GPIO_NR)
- 		return -EINVAL;
- 
--	if ((trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) &&
--	    (trigger & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING)))
-+	if ((trigger & IRQ_TYPE_LEVEL_MASK) && (trigger & IRQ_TYPE_EDGE_BOTH))
- 	{
- 		dev_err(gc->parent,
- 			"trying to configure line %d for both level and edge "
-@@ -149,7 +148,7 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
- 	gpiois = readb(pl061->base + GPIOIS);
- 	gpioibe = readb(pl061->base + GPIOIBE);
- 
--	if (trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) {
-+	if (trigger & IRQ_TYPE_LEVEL_MASK) {
- 		bool polarity = trigger & IRQ_TYPE_LEVEL_HIGH;
- 
- 		/* Disable edge detection */
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index 5d61053e0596..2b5da973f51f 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -406,7 +406,7 @@ static int pxa_gpio_irq_type(struct irq_data *d, unsigned int type)
- 		if (__gpio_is_occupied(pchip, gpio))
- 			return 0;
- 
--		type = IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING;
-+		type = IRQ_TYPE_EDGE_BOTH;
- 	}
- 
- 	gpdr = readl_relaxed(c->regbase + GPDR_OFFSET);
-diff --git a/drivers/gpio/gpio-rda.c b/drivers/gpio/gpio-rda.c
-index 7bbc6f0ce4c8..f6c05fdbe63f 100644
---- a/drivers/gpio/gpio-rda.c
-+++ b/drivers/gpio/gpio-rda.c
-@@ -169,9 +169,9 @@ static int rda_gpio_irq_set_type(struct irq_data *data, unsigned int flow_type)
- 	if (ret)
- 		return ret;
- 
--	if (flow_type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
-+	if (flow_type & IRQ_TYPE_LEVEL_MASK)
- 		irq_set_handler_locked(data, handle_level_irq);
--	else if (flow_type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
-+	else if (flow_type & IRQ_TYPE_EDGE_BOTH)
- 		irq_set_handler_locked(data, handle_edge_irq);
- 
- 	return 0;
-diff --git a/drivers/gpio/gpio-sa1100.c b/drivers/gpio/gpio-sa1100.c
-index ffa73dd3b982..e4f3bf949b87 100644
---- a/drivers/gpio/gpio-sa1100.c
-+++ b/drivers/gpio/gpio-sa1100.c
-@@ -139,7 +139,7 @@ static int sa1100_gpio_type(struct irq_data *d, unsigned int type)
- 	if (type == IRQ_TYPE_PROBE) {
- 		if ((sgc->irqrising | sgc->irqfalling) & mask)
- 			return 0;
--		type = IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING;
-+		type = IRQ_TYPE_EDGE_BOTH;
- 	}
- 
- 	if (type & IRQ_TYPE_EDGE_RISING)
-diff --git a/drivers/gpio/gpio-sodaville.c b/drivers/gpio/gpio-sodaville.c
-index 37c133837729..e2a784df275c 100644
---- a/drivers/gpio/gpio-sodaville.c
-+++ b/drivers/gpio/gpio-sodaville.c
-@@ -158,7 +158,7 @@ static int sdv_register_irqsupport(struct sdv_gpio_chip_data *sd,
- 
- 	sd->gc->private = sd;
- 	ct = sd->gc->chip_types;
--	ct->type = IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW;
-+	ct->type = IRQ_TYPE_LEVEL_MASK;
- 	ct->regs.eoi = GPSTR;
- 	ct->regs.mask = GPIO_INT;
- 	ct->chip.irq_mask = irq_gc_mask_clr_bit;
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index 6faf30347a36..ccdf13a741b7 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -149,7 +149,7 @@ static int stmpe_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 	int regoffset = offset / 8;
- 	int mask = BIT(offset % 8);
- 
--	if (type & IRQ_TYPE_LEVEL_LOW || type & IRQ_TYPE_LEVEL_HIGH)
-+	if (type & IRQ_TYPE_LEVEL_MASK)
- 		return -EINVAL;
- 
- 	/* STMPE801 and STMPE 1600 don't have RE and FE registers */
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index fa6c8ee92093..ccda3a56d599 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -342,9 +342,9 @@ static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- 		return ret;
- 	}
- 
--	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
-+	if (type & IRQ_TYPE_LEVEL_MASK)
- 		irq_set_handler_locked(d, handle_level_irq);
--	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
-+	else if (type & IRQ_TYPE_EDGE_BOTH)
- 		irq_set_handler_locked(d, handle_edge_irq);
- 
- 	if (d->parent_data)
-diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
-index ec378a4220a7..727fa1b5ad3b 100644
---- a/drivers/gpio/gpio-timberdale.c
-+++ b/drivers/gpio/gpio-timberdale.c
-@@ -148,7 +148,7 @@ static int timbgpio_irq_type(struct irq_data *d, unsigned trigger)
- 	if (ver > 2)
- 		bflr = ioread32(tgpio->membase + TGPIO_BFLR);
- 
--	if (trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) {
-+	if (trigger & IRQ_TYPE_LEVEL_MASK) {
- 		bflr &= ~(1 << offset);
- 		flr &= ~(1 << offset);
- 		if (trigger & IRQ_TYPE_LEVEL_HIGH)
+Is this always the case today? Then why does the existing driver bother
+doing the devm_gpiod_get_optional()?
 
----
-base-commit: 415606a7be939835db9b0d6b711887586646346d
-change-id: 20260802-b4b4-irq-trigger-mask-gpio-1c3f66bcd26b
+> but it does not support systems
+> with multiple FPGAs sharing a SelectMAP interface.
+> 
+> On systems with multiple FPGAs sharing the same SelectMAP data bus,
+> the driver must actively control these signals during configuration.
+> 
+> CSI_B (Chip Select, active low) selects the target FPGA. It is asserted
+> before configuration data is transferred and deasserted afterwards so
+> that only the intended device responds to bus transactions.
 
-Best regards,
---  
-Maulik Shah <maulik.shah@oss.qualcomm.com>
+I still don't understand, only one Chip Select pin defined for each
+selectmap device, how could it select between multiple FPGAs?
 
+> 
+> RDWR_B (Read/Write, active low) controls the transfer direction on the
+> SelectMAP interface. A low level selects write cycles, while a high
+> level selects read cycles. During FPGA configuration the driver drives
+> RDWR_B low before transferring the bitstream and restores it to its
+> reading (high state) afterwards.
+> 
+> Store the optional GPIO descriptors and toggle both signals around the
+> configuration data transfer, allowing multiple FPGAs to safely share a
+> single SelectMAP interface.
+> 
+> Tested on an AM625 based board with two Xilinx FPGAs connected to the
+> GPMC bus.
+
+What is GPMC bus, anything to do with "SelectMAP data bus"?
+
+> 
+> Signed-off-by: Heiko Schocher <hs@nabladev.com>
+> ---
+> 
+> Changes in v3:
+> - use 0 (deasserted state) and 1 (asserted state) in gpio_set_value()
+>   as commented from Micahl
+> - rewrite commit message as requested from Xu Yilun
+>   - describe what rdwr_b and csi_b do, and why this change is needed
+>     for more than one FPGA.
+> - add comment before asserting the signals, why they are asserted
+>   in this order.
+> 
+> Changes in v2:
+> - add comments from Michal
+>   - skip check if gpio descriptor variables csi_b/rdwr_b are valid,
+>     as validate_desc() checks this in gpiod_set_value() call.
+>   - initialize the gpio variables csi_b/rdwr_b immediately with
+>     the return value from devm_gpiod_get_optional(), so we can
+>     drop local gpio variable at all
+> 
+>  drivers/fpga/xilinx-selectmap.c | 32 +++++++++++++++++++++++++-------
+>  1 file changed, 25 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/fpga/xilinx-selectmap.c b/drivers/fpga/xilinx-selectmap.c
+> index d0cbb5fdfe3a..35078206a3a3 100644
+> --- a/drivers/fpga/xilinx-selectmap.c
+> +++ b/drivers/fpga/xilinx-selectmap.c
+> @@ -19,6 +19,8 @@
+>  struct xilinx_selectmap_conf {
+>  	struct xilinx_fpga_core core;
+>  	void __iomem *base;
+> +	struct gpio_desc *csi_b;
+> +	struct gpio_desc *rdwr_b;
+>  };
+>  
+>  #define to_xilinx_selectmap_conf(obj) \
+> @@ -30,16 +32,30 @@ static int xilinx_selectmap_write(struct xilinx_fpga_core *core,
+>  	struct xilinx_selectmap_conf *conf = to_xilinx_selectmap_conf(core);
+>  	size_t i;
+>  
+> +	/*
+> +	 * Assert CSI_B and select write mode.
+> +	 *
+> +	 * UG570 states in note 4 in Figure "Continuous x8 SelectMAP Data
+> +	 * Loading", RDWR_B should be asserted before CSI_B to avoid
+> +	 * causing an ABORT on the next CCLK.
+> +	 *
+> +	 * To be sure, set first RDWR_B pin before activate CSI_B
+> +	 */
+> +	gpiod_set_value(conf->rdwr_b, 1);
+> +	gpiod_set_value(conf->csi_b, 1);
+> +
+>  	for (i = 0; i < count; ++i)
+>  		writeb(buf[i], conf->base);
+>  
+> +	gpiod_set_raw_value(conf->csi_b, 0);
+> +	gpiod_set_raw_value(conf->rdwr_b, 0);
+
+I don't see why you do gpiod_set_raw_value() here, they seems change nothing.
+
+  Function (example)                 line property          physical line
+  gpiod_set_raw_value(desc, 0);      don't care             low
+  ...
+  gpiod_set_value(desc, 1);          active low             low
+
+> +
+>  	return 0;
+>  }
+>  
+>  static int xilinx_selectmap_probe(struct platform_device *pdev)
+>  {
+>  	struct xilinx_selectmap_conf *conf;
+> -	struct gpio_desc *gpio;
+>  	void __iomem *base;
+>  
+>  	conf = devm_kzalloc(&pdev->dev, sizeof(*conf), GFP_KERNEL);
+> @@ -56,15 +72,17 @@ static int xilinx_selectmap_probe(struct platform_device *pdev)
+>  	conf->base = base;
+>  
+>  	/* CSI_B is active low */
+> -	gpio = devm_gpiod_get_optional(&pdev->dev, "csi", GPIOD_OUT_HIGH);
+> -	if (IS_ERR(gpio))
+> -		return dev_err_probe(&pdev->dev, PTR_ERR(gpio),
+> +	conf->csi_b = devm_gpiod_get_optional(&pdev->dev, "csi",
+> +					      GPIOD_OUT_HIGH);
+
+You've changed this from v2, why? Why keep the initial state active?
+
+> +	if (IS_ERR(conf->csi_b))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(conf->csi_b),
+>  				     "Failed to get CSI_B gpio\n");
+>  
+>  	/* RDWR_B is active low */
+> -	gpio = devm_gpiod_get_optional(&pdev->dev, "rdwr", GPIOD_OUT_HIGH);
+> -	if (IS_ERR(gpio))
+> -		return dev_err_probe(&pdev->dev, PTR_ERR(gpio),
+> +	conf->rdwr_b = devm_gpiod_get_optional(&pdev->dev, "rdwr",
+> +					       GPIOD_OUT_HIGH);
+> +	if (IS_ERR(conf->rdwr_b))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(conf->rdwr_b),
+>  				     "Failed to get RDWR_B gpio\n");
+>  
+>  	return xilinx_core_probe(&conf->core);
+> ---
+> base-commit: 58717b2a1365d06c8c64b72aa948541b53fe31eb
+> 
+> -- 
+> 2.55.0
+> 
+> 
