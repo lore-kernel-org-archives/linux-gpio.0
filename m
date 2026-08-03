@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AB3392807;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCB239525E;
 	Mon,  3 Aug 2026 16:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785776206; cv=none; b=RUTz/8ssY0cv5j7kQJNf5YyV1ppQM+8qOj6NFB+Oxlkt+owJqSFnFSiFWO0c3HI0DNNEEAZhVhGBiQnWRh59wIfvoxxFq5+PsFbG5ppBbKeIQwo57OkawEZs6iuC7rhPkHf4RtCvwgE/MYIJr50xpDNkIjSInCCi7ynJqfOZfSs=
+	t=1785776206; cv=none; b=Khx/CkqdmR4iW0KBF55bG05PsUo2gYya4Ti4tpQrT6KtUvmkkHepsmImYT3itePFVOfsYB+4Uby3XOGXiopr7iAO6vKCwe1p4A2izM07hKvtJq7Os2zoHeL5CdGXDFjUOHk4aos1wO4R5s/FFAIOXjiFf7tFz49i2ncvC4QU3ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785776206; c=relaxed/simple;
-	bh=d4M2M70orrgx0wB2m/8b2iSym76cXcoVlWjx1HQ8p+c=;
+	bh=vZac1ji0I2lbNpDkmzQP3TJvCTOj42vg2oAMlAK30yA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FwJbF9x2GrdhU0X1k5eW+ej7uehu503J8JCh6wnXzwfXgLhccERdb13iTF9rW19mLQyXwpojlV+KfC9Fe56Uti/BMtT78MdNRKRnTJKnNZwRR361XQx+vvgRnuu1/oUkiWlTVEC1M0vjaSKpgVW+BGyFIyrfmBYwpYKN+5kP/Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVG1jhQt; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=IApMXcUl063LPAxwupI2rq+G88i5i7AI8Aov7J+Rz3GdpJrQrWWDTRClM/ftPuOZXi4jmF8VQxhBRHWFtEXsotIW4+8GrKIKd822UfAe9auFbf/ONXHb5p4M6t5RaCgZNfPyztT440I/xfREiw18x08D1n+RCuWEWYQCnYiMGz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBTuLm5M; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVG1jhQt"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D6479C32781;
-	Mon,  3 Aug 2026 16:56:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBTuLm5M"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 03DB6C4AF12;
+	Mon,  3 Aug 2026 16:56:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1785776205;
-	bh=d4M2M70orrgx0wB2m/8b2iSym76cXcoVlWjx1HQ8p+c=;
+	s=k20201202; t=1785776206;
+	bh=vZac1ji0I2lbNpDkmzQP3TJvCTOj42vg2oAMlAK30yA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=lVG1jhQt/k4oZ/WkbqT+E1LemSy2DI/3zHnkBOxojm6nTM+nEcecId1lx/re4yN5B
-	 DlTALMvX7bpWKmg1Q8cq4vsd2lFHCEktHVJx8IK87zHjjgF0SOF2kIjuQC3mm78Yr5
-	 np39eS+vZgii3LapvyG2RjeK2MpTf+AFoV4UBeKpOWBzS/f2znv0Z6WANQCODR4MTc
-	 VInriE2UPDB3GQj1FwONZXatS99UuMS8humrSR3LUx0NHaycwmqXQd5qHjow5DGxL5
-	 H4CCtZM5z1JsJ8niMFFBNM4d7n8ZHZxfT6qp4UL+nKaDwTqnsBJb4pg7Vmi7hTbXPJ
-	 0b2NgpZa8bEkQ==
+	b=WBTuLm5M4B4n/s132yz/RiVXbbcUExoiL0FgcMkyB4dHw/vb/W2xckkJ3h17I8nqf
+	 uAAejYlDRMz3rHjw5R6nYIx5lBf9pEPCn2PvnDfUhu7PIOa5zVRd9ago17GZAHs1Jf
+	 n69WbjrFf30vFoC2JAGHDhBPPMa4yAFtUeawbByaaGC9CkKVFKfNuBMFa2IDpEaPbc
+	 5zt1lWUS3xr+5mmm8fdD/zbCw+qnDWfLYeStcUIyCPcs0Dfz/MtX0458X/AlGEAKTR
+	 qaWXl510SVqHNpEzVWI10581QuDe5/4V9pCEQqt0zu+DscdcGziRcbiSWHH8B1wSD3
+	 ylf/yZULHmtUg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C13D9C55838;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E69E4C55822;
 	Mon,  3 Aug 2026 16:56:45 +0000 (UTC)
 From: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>
-Date: Tue, 04 Aug 2026 00:55:52 +0800
-Subject: [PATCH RFC v5 4/7] mfd: ls2kbmc: Cancel the work queue on removal
+Date: Tue, 04 Aug 2026 00:55:54 +0800
+Subject: [PATCH RFC v5 6/7] mfd: ls2kbmc: Able to be compiled as a module
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260804-ls2kbmc-mod-v5-4-e6bc5cdd9a93@gmail.com>
+Message-Id: <20260804-ls2kbmc-mod-v5-6-e6bc5cdd9a93@gmail.com>
 References: <20260804-ls2kbmc-mod-v5-0-e6bc5cdd9a93@gmail.com>
 In-Reply-To: <20260804-ls2kbmc-mod-v5-0-e6bc5cdd9a93@gmail.com>
 To: Binbin Zhou <zhoubinbin@loongson.cn>, 
@@ -53,21 +53,21 @@ Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
  linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
  Miao Wang <shankerwangmiao@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1480;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=726;
  i=shankerwangmiao@gmail.com; s=20250715; h=from:subject:message-id;
- bh=JfJpObrd5YhUsg0KmTA+Fgw5Trzi5JwERZB1GRhNqG0=;
- b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqcMhKuM+IF3Na2gINNmXwdAd99/qiKJDFzpe81
- fBBn4lrj/SJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCanDISgAKCRCwMePKe/7Z
- bkCMD/0d9TDXHqudXnVDofETx3w2WKdtK4V5hw6PTRf5VCAhGd9fl5txALHVjZWr0loSsNbYCPJ
- 0Smgh7HSul9o+2nAQum4J/36M1UfBgKoWy8soL7cyMFRJo/YNCpYXpI5jqLPQKsgAXihyACzEfi
- NSw8KssTl1CdWgmotQrY5MI/b6W3JVRSFCqvbfGg6pNPv2EG406wnrkncsxwUSsKtEuxAs050ds
- 9GLsHJ2CPTgVH1tEFmPCS3S6NQhfM6kUctroJeCQ3w1dJqunAWVRcYtOcUwE6sydTj5xuUFfRvO
- fxhFl2eG8Yw4nq+bIrQGh31zdfVP5g4PMdhOKTxjJC8g1QEx0akXY/9DxcCWeoaZnL7Hk/urp+O
- QDig1UomR27DjBIGS1N1oQmEwOaOaPdneAllfEBwC/bOxtvJWAoiuCNaFlROYvkPrgZxKCjPs99
- 0y0VBKuwG0Bx4X3HsdATKhjQr7k4cLttZ2tP4AENMBzGuPIoThI+XB+WYCnV60e+FgAfHzRdLLG
- hUqMkO00OsqFbR5j4o1fvmZyvandW+e046DeB9/kswHzHwPlWptvYlL+m7+YZNdhrAT3b/y6tzz
- xh3dtFuJBiAuAqXSivkPfXa5uRWHPhwBdkYGTL2ms21rSLGC2JuzV1F+eKRCI1zQadnfob0/cLR
- ETSKrLnoi1nb+/w==
+ bh=4cYoUAWfr6lC2eTeoh29c5JZOLqOi/IiHDJf/iiky6g=;
+ b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqcMhKiv0vPvGaKDS59l99E0Hr6Vacx6sBqnp3c
+ 0rDZSl4e7eJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCanDISgAKCRCwMePKe/7Z
+ bgaZEACu4h57kqez/+wUZsqc8Zn4n0TLdacI9nhuEuQUFiJJ0QkmvsRb6PDeZ6Hyk0RG070ioFn
+ /xpTQt/M8MCPXlhI/idRPF8zWtLC6NHR/unfUAhkLelgd9PLp8wiJ2+TqrJ/2rT7tjhZBuJy/QU
+ 2OzcirSuQXL2XaCojeysGU6IDoZ95Tf+ixDVp6lIr1A7uHVjZN4H4hMecUJUwV4gmI2hy9j1mzb
+ 4MGXfFldNN9PIwsOwKwK8TkZPhd6RYLdxtghewv4JROKsnHVev7N6m4a1isnJ1ZRiB6BaEeFz8F
+ sDvgO7LSkuDsbO+u4SZxPwTipyx/X7f+U34p/4ScATTesMsKIKwLTx8NK6UWHOXprQL6JSVPTP/
+ DeWdWgWfXBEbMm4NsnAJ8aL7yhmpgVp/4FbaB+REqyeDWuIQzlCum5MYgrkrZrjpz5zo43i/eMN
+ chYy4lRDbgQK3qZ9YUdVe0joB4vgY2dWk4LR5kahPbEqAle7r8E/mgg8TZNiUj/Rv6WZyDhdEds
+ 4dVMS7IuC/MKtPdwwD5hkCAWSHO2m/lSPBKxAabuQvNbsHHvo8RT1Uidvy+8bf3NfypQ+8q3KOY
+ cUzbT8+NN18c3V2EiCGqV82KG3YWhHb4qcavAeHOvQJ54nz7IbLG4erAeAAkVdJ5/cWnU/t4fXs
+ pMmsiIupLnhUt1g==
 X-Developer-Key: i=shankerwangmiao@gmail.com; a=openpgp;
  fpr=6FAEFF06B7D212A774C60BFDFA0D166D6632EF4A
 X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/20250715
@@ -77,43 +77,26 @@ Reply-To: shankerwangmiao@gmail.com
 
 From: Miao Wang <shankerwangmiao@gmail.com>
 
-When the device is being removeed, the work queue should be canceled to
-avoid any pending work to be executed after the device is removed.
+Make ls2kmc able to be compiled as a module
 
-Fixes: d952bba3fbb5 ("mfd: ls2kbmc: Add Loongson-2K BMC reset function support")
 Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
 ---
- drivers/mfd/ls2k-bmc-core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/mfd/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
-index e12f2ca2fbef360ceda14ee6fc64f500e4944120..e7bebfe696ac4554eb6283279811a27ed865ab73 100644
---- a/drivers/mfd/ls2k-bmc-core.c
-+++ b/drivers/mfd/ls2k-bmc-core.c
-@@ -375,6 +375,12 @@ static void ls2k_bmc_save_pci_data(struct pci_dev *pdev, struct ls2k_bmc_ddata *
- 	pci_read_config_dword(pdev, PCI_INTERRUPT_LINE, &ddata->bmc_pci_data.interrupt_line);
- }
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 763ce6a34782bdd5d2b1a4d840c75b040092d83e..a7a9f97af248c88489dc1203a1ba05f2ce4827df 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -2494,7 +2494,7 @@ config MFD_LOONGSON_SE
+ 	  which will forward them to the corresponding engine.
  
-+static void ls2k_bmc_cancel_wq(void *data)
-+{
-+	struct ls2k_bmc_ddata *ddata = data;
-+	(void) cancel_work_sync(&ddata->bmc_reset_work);
-+}
-+
- static int ls2k_bmc_init(struct ls2k_bmc_ddata *ddata)
- {
- 	struct pci_dev *pdev = to_pci_dev(ddata->dev);
-@@ -385,6 +391,10 @@ static int ls2k_bmc_init(struct ls2k_bmc_ddata *ddata)
- 
- 	INIT_WORK(&ddata->bmc_reset_work, ls2k_bmc_events_fn);
- 
-+	ret = devm_add_action_or_reset(ddata->dev, ls2k_bmc_cancel_wq, ddata);
-+	if (ret)
-+		return ret;
-+
- 	ret = devm_request_irq(&pdev->dev, pdev->irq, ls2k_bmc_interrupt,
- 			       IRQF_SHARED | IRQF_TRIGGER_FALLING, "ls2kbmc pcie", ddata);
- 	if (ret) {
+ config MFD_LS2K_BMC_CORE
+-	bool "Loongson-2K Board Management Controller Support"
++	tristate "Loongson-2K Board Management Controller Support"
+ 	depends on PCI && ACPI_GENERIC_GSI
+ 	select MFD_CORE
+ 	help
 
 -- 
 2.49.0
