@@ -1,65 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7352B328B7F;
-	Mon,  3 Aug 2026 20:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F173368A9;
+	Mon,  3 Aug 2026 21:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785790409; cv=none; b=pa4NkaWIWyXJQWwGzokLYGUoMHgjQwBsUM47ybrwQL9n5LyALCwIW0UZ66YQRpsY146Gbk5QQBqtIzcqwivSSJdD6Q7mRLLlbEE5T2Q7OMs3MQ+HyaItzKk2qffatFn3Tob+SBL71NMSp+4EpLGJXBotCAss+HMdopzTzY8Gv6o=
+	t=1785790921; cv=none; b=LH7CmDNeqOHbrFuKuVNeN8bxtoKAhHHuh9r3nnHyhU+Q2yxSbPsp+Ya5DZbV+zlMcNWN3HzuYQu8CzYc1tToS/TDUNByICfzoUDT7WMveNAwCPS8DKjbXIQ7eEuGb5fxxuvrM+TzL5lR10q8CIr+GrorrqYbHwfdXjYZwnFRUcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785790409; c=relaxed/simple;
-	bh=MDzfBwhETVtZ+aaDo4ix5KcYZIh3rn9zmcx1yyWNTp8=;
+	s=arc-20240116; t=1785790921; c=relaxed/simple;
+	bh=0JZzRtjbnCEUqsOeRvTcTCfw45rThLjS7V1dfHDHyDQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fw1Z5Wg3z9t7SwTc1HP9s0Y+Ux2UVmhUK6TfXJ+t3WOKUioF4D/x91yP+YyhX0Xtbe89K3noFAAVYxeFLkuC9XRubZLUjOYyZqjgRhu4QQuPep6eP/+dx1svGbvYJVZTZ5vh0lhXgHZSHlLPT/UPw0V68my+lVxpzloLxglZ8B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcECJy5z; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=RoOWXqv7ZsBRTN2K2ldsReuAVuq7Q6Sf7kzihM8f7EgDho6na6SlYBXAFVjY4gcjt7YdYvn5s7mQz7JdHKxQUpPQsy/OZwtA2DW9DqEY1O2dzKVwlusv69MyWrFSr4xobq7KdU7tZfMIRbjt2uFPjM7200SVECalhMGaY1wkE1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+UfxwyI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcECJy5z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B3681F00A3A;
-	Mon,  3 Aug 2026 20:53:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+UfxwyI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82B61F000E9;
+	Mon,  3 Aug 2026 21:01:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785790408;
-	bh=42fMjfMmyKoxIac5xGfUWe0H4Hd5p40u1U7vZae7AME=;
+	s=k20260515; t=1785790919;
+	bh=K823aeVnLWiFC9DZSLy6gcKUdGvBcqjCRa+MlKVZBF0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=WcECJy5zwe3it57uD+HxHZblPLjWVcBNQ4VhRCHd+jKDvO2jXi+m1kaTmRCsRRtg2
-	 QZv+SCD+KsaR3eZlvT0BW/ID679n01MbA83TiXwbEoW1L+W3NZwEyTU1zQpKDvOGCE
-	 urFSI4Joboi6Hyiq5c2YqJ6nXTowsFtdF/4P6kZgUHmg/GSO7B+hNn4Hqlen68o8R/
-	 q9bBSdE7BE92kMkNHFWafNdaz3b4KDwLwEOSwwtD5f8211u/yLgB7/tTHtKXWQzNHT
-	 MQg75JSK1wxMkLL4SVfp7mSe+XGv74BCfS570fKjbcvIODC2S4wXYzjPPjvkQ2o8Q3
-	 bLV42DdnxLicQ==
-Date: Mon, 3 Aug 2026 22:53:24 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@arm.com>, 
-	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>, Damien Le Moal <dlemoal@kernel.org>, 
-	Niklas Cassel <cassel@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>, 
-	Johannes Berg <johannes@sipsolutions.net>, Jeff Johnson <jjohnson@kernel.org>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Yangbo Lu <yangbo.lu@nxp.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Richard Cochran <richardcochran@gmail.com>, 
-	Jens Wiklander <jenswi@kernel.org>, Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>, 
-	YC Hung <yc.hung@mediatek.com>, Svyatoslav Ryhel <clamor95@gmail.com>, 
-	Sean Wang <sean.wang@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Peter Ujfalusi <peter.ujfalusi@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, coresight@lists.linaro.org, linux-arm-msm@vger.kernel.org, 
-	linux-ide@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	mfd@lists.linux.dev, linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
-	linux-pm@vger.kernel.org, netdev@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Correct white-space style
-Message-ID: <anD_bci501e0J3q2@zenone.zhora.eu>
-References: <20260801195613.235430-2-krzysztof.kozlowski@oss.qualcomm.com>
+	b=b+UfxwyIYwHvVlV/KgIy9kLBn9fV0BfcHw9WRoIIYuLWXrlG383xaR1XgghLw6VdK
+	 Tsj2A07x9L6ZImRxAKfu52JOmYPvHBSnVzjLMIQni0oENLefZ0US5Bjt1Y77/NJOja
+	 STQRQ71noarfGB6RaRk8+cZv2UediSIhM6MATbLGS2i669utkmZVE5RzijkuQT7JJZ
+	 2MlyGGzX7vJJSYRee1cB34+ZXWqw0HrnUQac+Ou89l7sY64zYGKqxYa+0DU18vjYxr
+	 f2siUxu9/76mAMxL6z8Xk1QMxnMMODCM99GyqFuUc0QOxLiuDsPQbEDtqOFiJltJjZ
+	 FjyU1crsVDdqQ==
+Date: Mon, 3 Aug 2026 16:01:59 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Bhargav Joshi <j.bhargav.u@gmail.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	goledhruva@gmail.com, m-chawdhry@ti.com,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	simona.toaca@nxp.com, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	daniel.baluta@gmail.com, Linus Walleij <linusw@kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: pinctrl: ti,dra7-iodelay: Convert to DT
+ schema
+Message-ID: <178579091859.459898.14250243901681967047.robh@kernel.org>
+References: <20260722-ti-iodelay-v2-1-995f55f605bf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -68,38 +46,24 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260801195613.235430-2-krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20260722-ti-iodelay-v2-1-995f55f605bf@gmail.com>
 
-Hi Krzysztof,
 
-On Sat, Aug 01, 2026 at 09:56:14PM +0200, Krzysztof Kozlowski wrote:
-> Correct a few white-space issues, like double space after '=' or before
-> bracket '{' characters, which will be flagged by dt-check-style.  No
-> functional changes.
+On Wed, 22 Jul 2026 22:15:54 +0530, Bhargav Joshi wrote:
+> Convert TI IODELAY controller from text to DT schema. Document child
+> properties missing from text bindings for proper validation.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> 
+> Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
 > ---
-> 
-> Patch applies on Rob's for-next branch.
+> Changes in v2:
+> - Add pinctrl-pin-array as required for child node
+> - Support generic child node that ends with _conf
+> - Link to v1: https://lore.kernel.org/r/20260713-ti-iodelay-v1-1-5f06d36c4aac@gmail.com
 > ---
->  .../arm/firmware/linaro,optee-tz.yaml         |  8 +-
->  .../devicetree/bindings/arm/psci.yaml         | 18 ++--
->  .../bindings/arm/qcom,coresight-tnoc.yaml     |  2 +-
->  .../devicetree/bindings/ata/st,ahci.yaml      | 22 ++---
->  .../bindings/display/ti/ti,am65x-dss.yaml     | 12 +--
->  .../bindings/display/ti/ti,j721e-dss.yaml     | 96 +++++++++----------
->  .../bindings/display/ti/ti,k2g-dss.yaml       | 36 +++----
->  .../bindings/dsp/mediatek,mt8195-dsp.yaml     |  2 +-
->  .../bindings/gpio/st,nomadik-gpio.yaml        |  2 +-
->  .../devicetree/bindings/i2c/st,sti-i2c.yaml   |  2 +-
+>  .../bindings/pinctrl/ti,dra7-iodelay.yaml          | 83 ++++++++++++++++++++++
+>  .../devicetree/bindings/pinctrl/ti,iodelay.txt     | 47 ------------
+>  2 files changed, 83 insertions(+), 47 deletions(-)
+> 
 
-Yes, I had noticed this recent white space which slipped off my
-review, but it looked too much hassle for a single patch removing
-the white space.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Thanks!
-
-Acked-by: Andi Shyti <andi.shyti@kernel.org>
-
-Andi
