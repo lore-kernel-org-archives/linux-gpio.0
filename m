@@ -1,58 +1,60 @@
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB5B2848AA
-	for <linux-gpio@vger.kernel.org>; Mon,  3 Aug 2026 14:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A80C40F725
+	for <linux-gpio@vger.kernel.org>; Mon,  3 Aug 2026 14:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785766237; cv=none; b=hBQHoCueVjqFqW/chIlr62olBcKYJeyNcOgK5A6ZGN6BK1x8VEC0r4ytDh2ygNIWbRIKMRvihol5fAI8VlwyzBLtZFTGCi6Jnlzxi0p7l7WgUyM6+0HdHiMVU9GyL4dJXMs8yJ6RwmCVRSdnha9CQHqR26flCvUsHhvCxGLHJmk=
+	t=1785766242; cv=none; b=PGrfs7RxJ7vfFKV8CIqF7UoIOMhj+zkdPJIInWUMCFyjjZ8//Kgr5pMBc657blZ0yyMHVcH43T/9rBnWIaGeQdz/fXfawOoJ8iyR8o/ZZ4TlCd5Bgv73kxi08ODJbf1iLtKWHsIgv7Uq2aPnOjLtNz0ccogCdLCt34uNzha5fKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785766237; c=relaxed/simple;
-	bh=sdMR4rgm4Xdc/V+61aJ3s1zJ7hKIgo4zj5F2xCNrIVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rfzF9Qa2AjQpyjx2hVmWHGSSUmXGAYGUKMTjLt5h/rY/QSi8PlHKhqVvveVlslsIzktf+jyvmPdo9s45WbYHRpSAt3AJg9+MTaiiQ/iVHv7Sg0cG0/KltAKvHdqJBwlKrBMNUhYhzBDBHZud8PURo93nopYXjTeFQ011ApUz8qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Lfo3nPvg; arc=none smtp.client-ip=209.85.160.47
+	s=arc-20240116; t=1785766242; c=relaxed/simple;
+	bh=7i97WC0GFc1OjbIZ5PDB9Kp5zZVuZx2ij7tryM/Y8JY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WpbM568XmNZewwlmElD6RZXZhZ9UYSXw1HVIzubzoxC/iebB14Ip2SCxeA3tCGxNF+VfrRFy0MT4pLXI2ZiwqQ68Bb+d7quULNMTYQ6vhDG/XOqxr7vpKwtpM6PHpaW7VlkpwRyxCFWqYt+wCPFb2UX2THs8ptcdX+uPTb62AsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=faayjzwC; arc=none smtp.client-ip=209.85.161.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Lfo3nPvg"
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-456395f4e7bso2396106fac.0
-        for <linux-gpio@vger.kernel.org>; Mon, 03 Aug 2026 07:10:35 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="faayjzwC"
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-6aca0f482e5so2223451eaf.2
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Aug 2026 07:10:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1785766234; x=1786371034; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Dkd3Vdy/c11kzXWk975o6VbE77tcIPNyghUoE1Wo9PI=;
-        b=Lfo3nPvgDZPKtD22WP9KelDZOfdvvbqo+yDg8K3s+LBsfuLgM7IJ4Fibt3LfKC/XVI
-         I4bZSEPaGSxcoNmW/CSTpSyAEtt/FFvTMIFM2AV36MYjy2aHzbqhuzlKJhwdsBoc6Xr8
-         XL7prGty9KlKykrAgUSqeU60KmH6SlRjC6QGM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785766234; x=1786371034;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1785766238; x=1786371038; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Dkd3Vdy/c11kzXWk975o6VbE77tcIPNyghUoE1Wo9PI=;
-        b=ox8QsWxPycQNoSiGVVjFa0VRz99EsArTtmOrE69aeXEswONtih+xZCO7RR4apouCih
-         tSg4s8qz/66r584xXxQv6ZKNKIKDaOlFCa9Xn6sMtTaX1nPNNee4KIIhA8RnMTOfaDva
-         p3+ihjoSQJADEBo21r/QDkfX5taE4p2LoCBGtgAMLr0H0Rl6Hl1aUC+qapLgppthycFn
-         9aubfbulw8M+BL6qxe2TBtyTUigMEoy1Ztq8iluvkX7gl/epXbFuHGb/4R1vsZCr72c3
-         msEd8hFGfL4HPeY11lDeLa8aktFnGPoge2Y0wNXf15x7tXLNFekY62aZU4DchGAge3qa
-         bwuQ==
-X-Forwarded-Encrypted: i=1; AHgh+RrqM6C1gsIJDtq9J5iWCt9Oqd9nHHgLZJ5LxIYmOW/1RL3VSGzbs9dxXzQUywNQcmwIirlSiuefC95r@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLxee72zTPYItIJrsL6B+DmRR0f/YmIWpyuiIWrelIaU4M8syP
-	QG5HL+AZYfeck18cqA07URZJB6QOZ1x75LtcsC0ENwXW6wEjoCS//rqMfrHiASp/5A==
-X-Gm-Gg: AR+sD12yjBL+OicPqPVqOjv2Bn1lb2M/oLrRuOrZEXwF42roGWNHXNPf9JahIx9hDe2
-	YIS1yuE9EezFULvR9+MKTs0MImqG8wvzql1Gz5DCIy16LEm3XQj+XEDed98ep0Mbhk8s3KVmb7D
-	vsRRGJfvIi2lmaU/uOkFv8Qqmjj5gP6CrwkPMMoyToQ71EzhKcAo9rIWs0EOb71a2qPZfqZZuzX
-	YETK4gkH/Ijlovfx9glOef38Q25NYPsoqozpsfJEDFF6yspk1/ZC3HBrZ1hjVIzHRKeBg1BAa5n
-	e4S3TCg1TrHMHhtjnoMhzxgDcklgeW5IXix1jlu8hrKCfeSuda9NV78vB+dDL90FbIMBd7LELa3
-	RvbHpxy7T7R/4M+cH9GjulTNqluu7K9NQyoUnWiBocNw/nk/RWA9uB08lN7fJCiajXkE+mmItKR
-	0zzMD6W4pJvxW04Gfr3fB/jqUpt8cVoerlOA45vjLlqyryn3fSDSM/1rE=
-X-Received: by 2002:a05:6820:c3d5:b0:6a3:7895:7f30 with SMTP id 006d021491bc7-6ae4358f82cmr10811016eaf.29.1785766234232;
-        Mon, 03 Aug 2026 07:10:34 -0700 (PDT)
+        bh=zn8Ob/lYJrtvb6nSm3sGvGJOnXJvrAS/9UT9vBl2poM=;
+        b=faayjzwCmZtgZe3diLuR9egddinJbQpf5Q+AICYVWyzwFwQTYDTHu9GjV0FbR1zENr
+         rC1DwMjRvheh727R20tEdTUSooJGqP3zNSIMrhmssR19kPPR+jOjjP38MvdAdwt4JIYf
+         oLPnaB1IhGeu6ZnDeETdMRC2E5nbumgRM8iqk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785766238; x=1786371038;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=zn8Ob/lYJrtvb6nSm3sGvGJOnXJvrAS/9UT9vBl2poM=;
+        b=FNRk/8282Zq/dlOeEoczvGJZxSusSvhR+omKEqSQbMurW5Us/y6hL6gaU9r/mBk6mF
+         ikSoeBQkGSINwd9O3R84FpCP+iNHtopBQ8aRKV8SQjPw84U6TQDaZBC8va8r/WO4DDfX
+         vK6g0zsYEvXT4C+lG8ZS+AD0tbvmjoVJnXkPJufQzUE+XpAl+JVl2XDKzB+d0Wygm3Qz
+         1XzqmJ51AdKZk2MXchSyDvvgXCK19DJEOfDH8ULpMUt/Z9LOdyOHeEGob4eswZCRIXkS
+         340ysa9YyTeCPQKz/dv6yZ/nYEoKEWExU3Y1k3XJ0+u0xxg+rpemARWA+1dSWKcmGnmp
+         XqKA==
+X-Forwarded-Encrypted: i=1; AHgh+RqAJgq8bFbXh8xsG0xi56XUaTl/pbXE3WIq7M8oAe9+ih3R1o5mw3PwnbZbXwcKQy53Z8GyAo3NXNFT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQtGzaXE8ja98fDH+ZLokM6We2pmkWxxCbyUp4LxqmGasp8pO0
+	ZsNzYXO552nbdCJswYU9Lj2WZ8djVbGQXshms3qjYGMo6E/i839/wlJopJlvgttH4Q==
+X-Gm-Gg: AR+sD11UOklQ+XGtXul+w5/gqXR4bt/cR/X3kvXulPhopyiHbxx+dRUBEm8kbH4BaN3
+	eHK3XqZHvhjWlugOYAs4l6b+N0hpPo46sqWP4wxcdLA64pABQi48ZlhEihJWCSrVJO7hqIUVAor
+	Z/ccbrzorKGKe6GvJm/D9ON1bbFKoNCy05O9cx8pIj+PokAZSPZwwaAWJkGn/K/z5riuNx99rQU
+	qugV+a2pujruNHdNu7pw2pgVJmmJRF9Mv/BX6OD+ogElEQjIDZS5BmwYPIPWQSfLmFw8Ssczb9l
+	m2AP4Kk5bRoxAV8EfsUGKuwE2LxAK8xRmRrgo5I0mMzpFgMxiiBto/grp5Fp53AI/iqDq69oWUU
+	6WbMhKQIKaHJjPmifM1HiwIJyJLlRo8ehFZz4bzRcTWGfuVzngFk0aHuX+vllmE2IdTgKebc8zW
+	wAOgJDZndM1+0uiWaskR0AWvRr+UY+BzqXCM14lR9KD0hnPY3H2Y/4xhw=
+X-Received: by 2002:a05:6820:4a08:b0:6a1:5b63:2ae2 with SMTP id 006d021491bc7-6ae4334a975mr12207278eaf.29.1785766238536;
+        Mon, 03 Aug 2026 07:10:38 -0700 (PDT)
 Received: from chromium.org ([174.51.25.52])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6ae3a0c9162sm6526695eaf.11.2026.08.03.07.10.32
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6ae3a0c9162sm6526695eaf.11.2026.08.03.07.10.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2026 07:10:33 -0700 (PDT)
+        Mon, 03 Aug 2026 07:10:37 -0700 (PDT)
 From: Simon Glass <sjg@chromium.org>
 To: Linus Walleij <linusw@kernel.org>
 Cc: Heiko Stuebner <heiko@sntech.de>,
@@ -62,14 +64,15 @@ Cc: Heiko Stuebner <heiko@sntech.de>,
 	Vladislav Leonov <vlad@zlab.su>,
 	Jonas Karlman <jonas@kwiboo.se>,
 	Simon Glass <sjg@chromium.org>,
-	Fabio Estevam <festevam@nabladev.com>,
 	Jeffy Chen <jeffy.chen@rock-chips.com>,
 	huang lin <hl@rock-chips.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] pinctrl: rockchip: Two fixes for latent driver bugs
-Date: Mon,  3 Aug 2026 08:10:22 -0600
-Message-ID: <20260803141028.710706-1-sjg@chromium.org>
+Subject: [PATCH 1/2] pinctrl: rockchip: Reset the pin count when recalculating SoC data
+Date: Mon,  3 Aug 2026 08:10:23 -0600
+Message-ID: <20260803081024.1.72f72067ea890a9eac79d63bf655738bec374dfd@changeid>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260803141028.710706-1-sjg@chromium.org>
+References: <20260803141028.710706-1-sjg@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -78,35 +81,54 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series contains two small fixes for pre-existing issues in the
-Rockchip pinctrl driver, found by the sashiko AI review of my RV1106
-series.
+rockchip_pinctrl_get_soc_data() mutates the static per-SoC data. The
+iomux and drive offsets are recalculated idempotently, since a rerun
+anchors at the values calculated before, but the total pin count only
+accumulates: each run adds every bank's pins again. When the probe is
+deferred and runs a second time, nr_pins doubles and every bank's
+pin_base shifts, so later pin lookups resolve to the wrong bank and
+the wrong registers.
 
-The first makes the SoC-data calculation safe when the probe runs
-more than once due to a probe deferral: the pin count currently
-accumulates across runs, shifting every bank's pin base. The second
-aligns the RV1103B drive-type override in the get path with the set
-path, which restricts it to bank 2.
+Reset the pin count at the start of the calculation, so that a rerun
+produces the same values.
 
-The first fix is tested on a Luckfox Pico Mini B by forcing the
-probe to defer once: without the fix the second probe doubles the
-pin count and no GPIO bank comes up, while with it the values are
-recalculated identically and all banks work. The second is a
-behavioural no-op until drive-strength decoding is added to the get
-path, so it is verified by inspection against the set path.
+This is verified on a Luckfox Pico Mini B (RV1103, with the pending
+RV1106 series applied) by forcing the probe to defer once: without
+this patch the second probe calculates nr_pins=304 instead of 152 and
+no GPIO bank comes up; with it the recalculation matches the first
+run and all banks work.
 
-
-Simon Glass (2):
-  pinctrl: rockchip: Reset the pin count when recalculating SoC data
-  pinctrl: rockchip: Restrict the RV1103B 2-bit drive type to bank 2
-
- drivers/pinctrl/pinctrl-rockchip.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Fixes: d3e5116119bd ("pinctrl: add pinctrl driver for Rockchip SoCs")
+Link: https://sashiko.dev/#/patchset/20260729132736.3807082-1-sjg@chromium.org?part=4
+Assisted-by: Claude:claude-opus-5
+Signed-off-by: Simon Glass <sjg@chromium.org>
 
 ---
-base-commit: fc02acf6ac0ccde0c805c2daa9148683cdd01ba8
-branch: rkpinfix
 
+ drivers/pinctrl/pinctrl-rockchip.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 7e0fcd45fd26..8bfc7ab5de15 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -4296,6 +4296,16 @@ static struct rockchip_pin_ctrl *rockchip_pinctrl_get_soc_data(
+ 	pmu_offs = ctrl->pmu_mux_offset;
+ 	drv_pmu_offs = ctrl->pmu_drv_offset;
+ 	drv_grf_offs = ctrl->grf_drv_offset;
++
++	/*
++	 * This function mutates the static per-SoC data. Most of it is
++	 * idempotent: recalculated iomux and drv offsets anchor at the
++	 * values calculated by a previous run. The pin count is not, so
++	 * reset it here; otherwise it accumulates when the probe runs
++	 * again after a probe deferral, shifting every bank's pin_base.
++	 */
++	ctrl->nr_pins = 0;
++
+ 	bank = ctrl->pin_banks;
+ 	for (i = 0; i < ctrl->nr_banks; ++i, ++bank) {
+ 		int bank_pins = 0;
 -- 
 2.43.0
 
