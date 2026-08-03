@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCB239525E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402DF395266;
 	Mon,  3 Aug 2026 16:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785776206; cv=none; b=Khx/CkqdmR4iW0KBF55bG05PsUo2gYya4Ti4tpQrT6KtUvmkkHepsmImYT3itePFVOfsYB+4Uby3XOGXiopr7iAO6vKCwe1p4A2izM07hKvtJq7Os2zoHeL5CdGXDFjUOHk4aos1wO4R5s/FFAIOXjiFf7tFz49i2ncvC4QU3ZI=
+	t=1785776206; cv=none; b=l9Hia3BAmRYQgqYblFHhFgg1a26e6eZ7kEv82RMjqqSG5LpNXnQko0Jo/UnimWO9TgfDbJPUBKaE4ZKmI/GZZEQZssebvh46aOzTiAyhC94XXJglYqbOYRiEf/Pt3r+a7MiwmJrcp9D5IUgNVa5tOb4nx79f08LASoVdZQf1WRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785776206; c=relaxed/simple;
-	bh=vZac1ji0I2lbNpDkmzQP3TJvCTOj42vg2oAMlAK30yA=;
+	bh=WfZ+z7682VFLD8O5mpMXciAcTTygQXbQjtjD80ndMT8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IApMXcUl063LPAxwupI2rq+G88i5i7AI8Aov7J+Rz3GdpJrQrWWDTRClM/ftPuOZXi4jmF8VQxhBRHWFtEXsotIW4+8GrKIKd822UfAe9auFbf/ONXHb5p4M6t5RaCgZNfPyztT440I/xfREiw18x08D1n+RCuWEWYQCnYiMGz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBTuLm5M; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=jJXXcyGKvE/f//nHEJdpDaXgHC6IGiiBoDrFj9IC8QPbKXYvvYqhCMXIioRcdXV9cvkSrllvy0N40q1szon2dgAmmrUX4/HYno9aL5+K6JDUJu+5GUOU1jGNAquYoJ0+nl4ASepHWDgLSrdR32pe7M1qa8MLjClUQTl9JQJ1tSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=thmgH+jL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBTuLm5M"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 03DB6C4AF12;
-	Mon,  3 Aug 2026 16:56:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="thmgH+jL"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EBEE4C2BD00;
+	Mon,  3 Aug 2026 16:56:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1785776206;
-	bh=vZac1ji0I2lbNpDkmzQP3TJvCTOj42vg2oAMlAK30yA=;
+	bh=WfZ+z7682VFLD8O5mpMXciAcTTygQXbQjtjD80ndMT8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=WBTuLm5M4B4n/s132yz/RiVXbbcUExoiL0FgcMkyB4dHw/vb/W2xckkJ3h17I8nqf
-	 uAAejYlDRMz3rHjw5R6nYIx5lBf9pEPCn2PvnDfUhu7PIOa5zVRd9ago17GZAHs1Jf
-	 n69WbjrFf30vFoC2JAGHDhBPPMa4yAFtUeawbByaaGC9CkKVFKfNuBMFa2IDpEaPbc
-	 5zt1lWUS3xr+5mmm8fdD/zbCw+qnDWfLYeStcUIyCPcs0Dfz/MtX0458X/AlGEAKTR
-	 qaWXl510SVqHNpEzVWI10581QuDe5/4V9pCEQqt0zu+DscdcGziRcbiSWHH8B1wSD3
-	 ylf/yZULHmtUg==
+	b=thmgH+jLj2ynWhCw+v3i9qjXLlyZJ1ePdXPp7L1Gt+Nzfo7dwTEssjvGA0Jct21qt
+	 UbQcQiFjqBxYuHJPkg19gY7X0dDKG+uqTL7OMi6zzR+wWKfENx86UeSsY2/GDq0AIO
+	 cbFF3uvbOpKFc5K9q8gcsX/cQVYmskY4T7RoBAuGEIPG2vTP+1mW8VmmEUt9a87uiH
+	 4LFmepaXe63yt5mLwNXuLXEFoh5RZJ7px7tOFwROjHNd5Shk0WxT9zzInjb+qr8wEf
+	 W9F+mnpZTTrg1iMZe1L55AG0NQg3mB0dEk8ZD8pxBeDv7ZkuNFc8aZRc94kPfvNmN8
+	 VtRWd4CTD6iAA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E69E4C55822;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D471DC55AB9;
 	Mon,  3 Aug 2026 16:56:45 +0000 (UTC)
 From: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>
-Date: Tue, 04 Aug 2026 00:55:54 +0800
-Subject: [PATCH RFC v5 6/7] mfd: ls2kbmc: Able to be compiled as a module
+Date: Tue, 04 Aug 2026 00:55:53 +0800
+Subject: [PATCH RFC v5 5/7] ipmi: ls2k: Relax the dependency to its mfd
+ driver
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260804-ls2kbmc-mod-v5-6-e6bc5cdd9a93@gmail.com>
+Message-Id: <20260804-ls2kbmc-mod-v5-5-e6bc5cdd9a93@gmail.com>
 References: <20260804-ls2kbmc-mod-v5-0-e6bc5cdd9a93@gmail.com>
 In-Reply-To: <20260804-ls2kbmc-mod-v5-0-e6bc5cdd9a93@gmail.com>
 To: Binbin Zhou <zhoubinbin@loongson.cn>, 
@@ -53,21 +54,21 @@ Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
  linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
  Miao Wang <shankerwangmiao@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=726;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1366;
  i=shankerwangmiao@gmail.com; s=20250715; h=from:subject:message-id;
- bh=4cYoUAWfr6lC2eTeoh29c5JZOLqOi/IiHDJf/iiky6g=;
- b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqcMhKiv0vPvGaKDS59l99E0Hr6Vacx6sBqnp3c
- 0rDZSl4e7eJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCanDISgAKCRCwMePKe/7Z
- bgaZEACu4h57kqez/+wUZsqc8Zn4n0TLdacI9nhuEuQUFiJJ0QkmvsRb6PDeZ6Hyk0RG070ioFn
- /xpTQt/M8MCPXlhI/idRPF8zWtLC6NHR/unfUAhkLelgd9PLp8wiJ2+TqrJ/2rT7tjhZBuJy/QU
- 2OzcirSuQXL2XaCojeysGU6IDoZ95Tf+ixDVp6lIr1A7uHVjZN4H4hMecUJUwV4gmI2hy9j1mzb
- 4MGXfFldNN9PIwsOwKwK8TkZPhd6RYLdxtghewv4JROKsnHVev7N6m4a1isnJ1ZRiB6BaEeFz8F
- sDvgO7LSkuDsbO+u4SZxPwTipyx/X7f+U34p/4ScATTesMsKIKwLTx8NK6UWHOXprQL6JSVPTP/
- DeWdWgWfXBEbMm4NsnAJ8aL7yhmpgVp/4FbaB+REqyeDWuIQzlCum5MYgrkrZrjpz5zo43i/eMN
- chYy4lRDbgQK3qZ9YUdVe0joB4vgY2dWk4LR5kahPbEqAle7r8E/mgg8TZNiUj/Rv6WZyDhdEds
- 4dVMS7IuC/MKtPdwwD5hkCAWSHO2m/lSPBKxAabuQvNbsHHvo8RT1Uidvy+8bf3NfypQ+8q3KOY
- cUzbT8+NN18c3V2EiCGqV82KG3YWhHb4qcavAeHOvQJ54nz7IbLG4erAeAAkVdJ5/cWnU/t4fXs
- pMmsiIupLnhUt1g==
+ bh=gWOO98z6lpPREnTgNizoggde9a0/OsZs516s8lw5YNI=;
+ b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqcMhKLjA7Pw71S5bqO8V/3cOJ+RNzMUIsZ1+R4
+ faly8Er4oCJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCanDISgAKCRCwMePKe/7Z
+ bjU3D/9zO9GKSVabQGWvriUD7pAikHYnLgNvakZ0ZsA22rBP+B9nuItLx/F0gZuM4/GtWsRbObj
+ dEdZgNjAcK8uJeyOIu69C71A/iVcRDGuzPpB7pICy/gSYn5I2ZA/+9McNDnsTE7femZikHHjt1X
+ wJmg0EdzCSWz2MwVv+9KhwCxSbToMv+6X6Ae3I1B9WkU8gqwSsi2z5y10LsKCcpnzYtmvx1IPK9
+ Vqm7ofvXaGOC3FXZAGQN2B73VAoa2905VJ/FNntOQy6WVx1j/Lp7Rlz5BImSJpqbDYix4lJLwcp
+ KVUBkRIYDFPExT72Gf1MeqOrqXv46xwnjwN13Dk/APApNqHLrlRGbwSjsRFcW3DVSzOh21c6LFC
+ mVrQE9D6WhZqQjathlGvtwuiXsQO4tqoiYVGwkMehYelsgD444oCJ9hOBI0Z6GOWvQhnJIYgbqI
+ FhVsG/RVh7EdDk+StY74HJIi+j/0y/Yl8cIbrjtM8pP0AZfiEND8+9ge/LKvOMJddJsPQ/wjciC
+ cK3UWyUtGMFMVdfXXZUN7Hdf8c9mYmxXuD9lJckVSPxZxlFlFF4SM2xWom0kM236KcZAF0uBg/l
+ m+ZYoyvIf2L5ZWDDbbo+UnLt5c1sCTrLBcZPKX5qYdhyUu5/4ZcVhKlH3IEIOJj0FX4pvzyvhbD
+ GJIutlcIHZ7hh5w==
 X-Developer-Key: i=shankerwangmiao@gmail.com; a=openpgp;
  fpr=6FAEFF06B7D212A774C60BFDFA0D166D6632EF4A
 X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/20250715
@@ -77,26 +78,36 @@ Reply-To: shankerwangmiao@gmail.com
 
 From: Miao Wang <shankerwangmiao@gmail.com>
 
-Make ls2kmc able to be compiled as a module
+There is no strong dependency between the IPMI driver and its mfd
+driver. Although the IPMI driver will not work without the mfd driver,
+it is not a hard dependency. The IPMI driver can actually be compiled
+without the mfd driver, and it will just fail to probe. When the mfd
+driver is loaded, the IPMI driver will probe successfully. Therefore,
+the dependency of the IPMI driver on its mfd driver should be relaxed
+to "imply" from "select". This will allow the mfd driver to be compiled
+as a module and the IPMI driver to be compiled as a part of the ipmi_si
+module. The adjustment to Kconfig for the mfd driver will be introduced
+in the later patch in this series.
 
+Fixes: d46651d4e3c0 ("ipmi: Add Loongson-2K BMC support")
 Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
 ---
- drivers/mfd/Kconfig | 2 +-
+ drivers/char/ipmi/Kconfig | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 763ce6a34782bdd5d2b1a4d840c75b040092d83e..a7a9f97af248c88489dc1203a1ba05f2ce4827df 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -2494,7 +2494,7 @@ config MFD_LOONGSON_SE
- 	  which will forward them to the corresponding engine.
- 
- config MFD_LS2K_BMC_CORE
--	bool "Loongson-2K Board Management Controller Support"
-+	tristate "Loongson-2K Board Management Controller Support"
- 	depends on PCI && ACPI_GENERIC_GSI
- 	select MFD_CORE
+diff --git a/drivers/char/ipmi/Kconfig b/drivers/char/ipmi/Kconfig
+index 669f7600019747bcd2b37563477cf336f19a0407..f456e3e89416932f0d21bb742153a503aeb24267 100644
+--- a/drivers/char/ipmi/Kconfig
++++ b/drivers/char/ipmi/Kconfig
+@@ -87,7 +87,7 @@ config IPMI_IPMB
+ config IPMI_LS2K
+ 	bool 'Loongson-2K IPMI interface'
+ 	depends on LOONGARCH
+-	select MFD_LS2K_BMC_CORE
++	imply MFD_LS2K_BMC_CORE
  	help
+ 	  Provides a driver for Loongson-2K IPMI interfaces.
+ 
 
 -- 
 2.49.0
