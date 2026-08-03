@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AD93921ED;
-	Mon,  3 Aug 2026 16:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A4A3921E4;
+	Mon,  3 Aug 2026 16:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785776206; cv=none; b=HvPTDd1r1hosr9utSpxjocyuGlizlt/N8msgU2e3zhCt8NrI2vp+RpteHDj1eeV/USRckZ6Muoa/c85o2sOkO2NBtcTM9bB2knvTKflFKBvPop4KFxKwM5DBc+F7XWTSZGgu3NI0OM7sDrF+/5kHM17rWyg8b/QQ7FFO1nfBP0Q=
+	t=1785776206; cv=none; b=MyoNCE2MvMwNHJjJBQTSX/xbHcoxWsMFtJOpLZ3WT6gPZF2l7PF167n31cyVREnLmShVMxlD5POuZA9hYc8UKLzXRABwzDAQj5EvupFBuidPyVZlmVJV/u//zcPecfbPzvHScfQiXoOsQV2lfB59zg1mrxKGyMZ4e1tbSTB5Ea0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785776206; c=relaxed/simple;
-	bh=J9mfaTs/eKOadRk45qFHbUkFlnkzEtRD4/K4DSL8eT4=;
+	bh=0gStX5aswa2Oy8OyS3h4jCJzOiKQDmU95lX8+cL9t00=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qOcOgbZ3HmK3ayLx00ojdsyZcn7i37hP3LT/YsWC1TreQU4/g3THic5PsRQoYg0WbAC8LdYi0cWAotG1Jq51Qz5n/STUJVBDSpFutZJ2U9QljmeihMSD0nm70vN1ingqMoyRIpjxGxI/BJY6iIPxy5SqPJahuyPxgGZxgr7l07w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VsuLLXbe; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=mCQSnWudBsm5fIRBSCRUCWu6Yn3E2hWGNfMQIZnbHq3HGOq4GylfeuKkJ0VJb8gc6gcoz75cDNFPeV9c2b+L1z0cHzsxeZBcnemLFKZrlyfgmlwh0+GwAOlgfvkJNgchcm7Yw2rQKEENF7Q/9j/ZIDcRtdoq2MEQQHbQ4DY2dpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nv/3fHsd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VsuLLXbe"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CD120C2BCFF;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nv/3fHsd"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id ABCA4C2BCF7;
 	Mon,  3 Aug 2026 16:56:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1785776205;
-	bh=J9mfaTs/eKOadRk45qFHbUkFlnkzEtRD4/K4DSL8eT4=;
+	bh=0gStX5aswa2Oy8OyS3h4jCJzOiKQDmU95lX8+cL9t00=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=VsuLLXbeNtmHykYwEpN9PCAvMGmIWtZaXiHWGq5zhtCE2OX5BpqkwpsmegzyFjIh7
-	 dXdt2sDcIDLYIIMfnvirBYowG3sT1iKJZfC+xulqQWuEf5nPiZaStXANCrHuVCAQMy
-	 8nxjhN+ISafZY90cBkVjhF+GLixwzKN56lDEvrJRLbr/j2si8xouHaIwxUvHxozuOI
-	 dV+7GSgAwk2KkXv+FYx+Tv/9nb3FCiniAED0Hyf517WmBdFahKuUchWGrmSKvEEVPV
-	 W+ihjAuANxR3j88NuJojUMYlyxr3251h2Gn6w+jsoqyiXcNL8FEjdBQCRFD1lXH+3I
-	 c9vHi85Z+wyjA==
+	b=Nv/3fHsdBVCwWMXrcseSpbfRq14lM3CcpkMhSZv4x8azXwxofbpA/fQ75v/RKbziv
+	 MO1Hsod0DxsRX2dH8uSSO6wRd7fILMMeNdG44S+ts3NyHHTVvxNxgkEZJMVbtod5fb
+	 Vg92/MhHViNaQoSO/ZWfy2nEmZaZnnT6t8DzjgsN4L2kFck4ugAg2SlAMChGnPixqY
+	 Opd9GGLTnxCA08VtDPuOxl2mXHXMIKSO6r7mlRZQ/PvAGOgh8lQis1E2qpCc8GUlev
+	 fZ1+gGFnEVpWdJW/qnngKeAmV3XavrIjH7XR4LrF2X4uRzaQDMJnbcs/UDyDAASVQx
+	 yNQohJ+0zt+ug==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8D3C55843;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8C9C55184;
 	Mon,  3 Aug 2026 16:56:45 +0000 (UTC)
 From: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>
-Date: Tue, 04 Aug 2026 00:55:51 +0800
-Subject: [PATCH RFC v5 3/7] mfd: ls2kbmc: Redraw using exported functions
+Date: Tue, 04 Aug 2026 00:55:49 +0800
+Subject: [PATCH RFC v5 1/7] mfd: ls2kbmc: Make a copy when parsing mode
+ string
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260804-ls2kbmc-mod-v5-3-e6bc5cdd9a93@gmail.com>
+Message-Id: <20260804-ls2kbmc-mod-v5-1-e6bc5cdd9a93@gmail.com>
 References: <20260804-ls2kbmc-mod-v5-0-e6bc5cdd9a93@gmail.com>
 In-Reply-To: <20260804-ls2kbmc-mod-v5-0-e6bc5cdd9a93@gmail.com>
 To: Binbin Zhou <zhoubinbin@loongson.cn>, 
@@ -53,21 +54,21 @@ Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
  linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
  Miao Wang <shankerwangmiao@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1128;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2609;
  i=shankerwangmiao@gmail.com; s=20250715; h=from:subject:message-id;
- bh=VcxGUAsZn+03JiICVZ3kCtaItmQKTSKAeZBuv6zGY/o=;
- b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqcMhKrq6jiI7RrNX9FagV9tUCFSss1tfMqJ2th
- qvNYsk/hiOJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCanDISgAKCRCwMePKe/7Z
- btk8D/41YbebAtDb2E9S3BwoDh7Yx4FtCVdTo96K6VUzWGIIz/T9s/XZWHdTba2p9e7lKJO+ho7
- Sjy+JA2UFfzpmd3d/SXBbN5cEXOvFmZ9CIuLlK7pgIL83XnY+jACqNdHk7W8QukXXFTEPkdty4Q
- Hhm9QEjt/X7uQZtjunOypbvEVWp8blBwDsLvC65nFUNIPvUF3m3nIgrXcokm2tUo8gUJkc06f6V
- T9onIK7QCGt8e32eHa4zERSagpy7Wq6lyZ02pEPgl4PbT3SLI844D3O8FZsE+6Jgf8KfQJ/6Qgd
- aGZgJ8/KEdKWiBEFBuPhBz7oQ+ffmMfxkGl7nIWE1ukfKNOF7xbceY9hRVamglLOwmczybYfb72
- 8fEr4+EYDM8z9rUuDYJPXYFb0HzCzSGpYPk+qDmjs/o+cdm2bP5jwLzKU3GDtYmyYtXaeu8WNvY
- sFAHd1hgvD6mt/ShRpZHWAynqVA7LkIeDJjriacOTGzH4Dx72Y6a5y3GF8g6pJuG7DgxefjutSy
- GMdqSmRjiThq1pX+fECTt8Kk0HHdr468nKx6fUDkTGdT17fs6OSw3RJSV4pSwXdJMTdzwZsi0uq
- Njq52h+pWj/rN1ghPr9UYrsYHkrYgejKbDxOZ6JQb2KKNs1nb6KWEn5286D9XKetkO/+fUJVp4J
- Ft5TEn+Tx/jsOag==
+ bh=U6cr9tgtHDx0WKodEY4FvK4JRMLlLLDCHMpw0TehXDs=;
+ b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqcMhKI8yWfAOidTLPqzOGA8PA9CkgvMDA2n2Rl
+ 1cfvBzkERGJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCanDISgAKCRCwMePKe/7Z
+ bt9mEAC7giJ3sZf0D0yS6L8QLrl7uWy1J7eCaPg92jdlM22hi7UfbXJYQxa8EK1fzHypR1piiOo
+ fH5KIjmEhIJJ4bPdXt894GfCFWWygal9PlH9Yn89V1utIX9c8GLlYXpq1I5Ih3846w63yfbx9nB
+ vuWN1HEs97eWQbwAc8qXjr+xvbNz/dVcKo+CuW1AKbYh+VCA6A1ZC5oI23Y96rlCdyYLiADDzp/
+ 4a3Z44GJvBkfhXy2eMw7Azq006rs+KuI2DcuoEV7449s7WIbBkm+CV8E+IkwBziyO9MszjcoM46
+ vxwAApZvLx/gTxI5+r9hZHck8rqFRABJb2wzH/mCdGbaW42eF03J7rcktAQHfQ8B3V7B4sUSxDF
+ 8fDoc9l1Vsb9BHu0C7QXiFl4a29bx2XYy7JgzdQp8AxzfhBR3cjfPIla3ZbJiwTyY4OnBp8/nuy
+ RxYVvGipb3RamdX30kIMxgxFCDU8iyYKvkycMSZHa0ycNktwzIUKIwfpVQcvFNOIedEtpsG5GZq
+ L5YsFs/F4D68cuOKuOsI57zawn/x+QV6/WYyKocykK/glxiec4/ViiJVWwNtnAgCNFhuoEwWWkV
+ wKYzeJjycWCuFdA4FRMb0MwIwAkoLHVsNYi9qxX/QbiQ1ywRxYaeMpRfGlWNYHoHGR8RcBzOI9d
+ Xw2GRhJp/x5LMNw==
 X-Developer-Key: i=shankerwangmiao@gmail.com; a=openpgp;
  fpr=6FAEFF06B7D212A774C60BFDFA0D166D6632EF4A
 X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/20250715
@@ -77,38 +78,83 @@ Reply-To: shankerwangmiao@gmail.com
 
 From: Miao Wang <shankerwangmiao@gmail.com>
 
-Use update_screen, i.e. redraw_screen() to trigger the redraw of the
-current vt.
+When parsing the mode string from BMC, the string is manipulated
+in-place with strsep(), preventing from parsing it again. Make a copy of
+the original string and manipulate the copy instead to fix this.
 
-Fixes: d952bba3fbb5 ("mfd: ls2kbmc: Add Loongson-2K BMC reset function support")
+Fixes: 0d64f6d1ffe9 ("mfd: ls2kbmc: Introduce Loongson-2K BMC core driver")
 Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
 ---
- drivers/mfd/ls2k-bmc-core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/mfd/ls2k-bmc-core.c | 36 ++++++++++++++++++++++++++++--------
+ 1 file changed, 28 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
-index a9a30611dde9e31cd86ff67b1d6e02bf67b34755..e12f2ca2fbef360ceda14ee6fc64f500e4944120 100644
+index 408056bfb2fe757a5bde43775a483a48352e706d..fc9695eedd3662ac92ff116811bb07bff1c994ea 100644
 --- a/drivers/mfd/ls2k-bmc-core.c
 +++ b/drivers/mfd/ls2k-bmc-core.c
-@@ -25,6 +25,7 @@
- #include <linux/platform_device.h>
- #include <linux/stop_machine.h>
- #include <linux/vt_kern.h>
-+#include <linux/console.h>
+@@ -427,34 +427,54 @@ static int ls2k_bmc_init(struct ls2k_bmc_ddata *ddata)
+  */
+ static int ls2k_bmc_parse_mode(struct pci_dev *pdev, struct simplefb_platform_data *pd)
+ {
+-	char *mode;
++	/* Assume 64 bytes is enough for the resolution string */
++	char mode_buf[64], mode_buf_orig[64];
++	char *mode = mode_buf;
++	const void __iomem *mode_base;
+ 	int depth, ret;
  
- /* LS2K BMC resources */
- #define LS2K_DISPLAY_RES_START		(SZ_16M + SZ_2M)
-@@ -310,7 +311,9 @@ static void ls2k_bmc_events_fn(struct work_struct *work)
+ 	/* The last 16M of PCI BAR0 is used to store the resolution string. */
+-	mode = devm_ioremap(&pdev->dev, pci_resource_start(pdev, 0) + SZ_16M, SZ_16M);
+-	if (!mode)
++	mode_base = ioremap(pci_resource_start(pdev, 0) + SZ_16M,
++			    sizeof(mode_buf));
++	if (!mode_base)
+ 		return -ENOMEM;
++	memcpy_fromio(mode_buf, mode_base, sizeof(mode_buf) - 1);
++	mode_buf[sizeof(mode_buf) - 1] = '\0';
++	iounmap((void __iomem *)mode_base);
++	memcpy(mode_buf_orig, mode_buf, sizeof(mode_buf_orig));
  
- 	if (IS_ENABLED(CONFIG_VT)) {
- 		/* Re-push the display due to previous PCI-E loss. */
--		set_console(vt_move_to_console(MAX_NR_CONSOLES - 1, 1));
-+		console_lock();
-+		update_screen(vc_cons[fg_console].d);
-+		console_unlock();
- 	}
+ 	/* The resolution field starts with the flag "video=". */
+ 	if (!strncmp(mode, "video=", 6))
+ 		mode = mode + 6;
+ 
+-	ret = kstrtoint(strsep(&mode, "x"), 10, &pd->width);
++	ret = kstrtouint(strsep(&mode, "x"), 10, &pd->width);
+ 	if (ret)
+-		return ret;
++		goto invalid_mode;
+ 
+-	ret = kstrtoint(strsep(&mode, "-"), 10, &pd->height);
++	if (mode == NULL) {
++		ret = -EINVAL;
++		goto invalid_mode;
++	}
++	ret = kstrtouint(strsep(&mode, "-"), 10, &pd->height);
+ 	if (ret)
+-		return ret;
++		goto invalid_mode;
+ 
++	if (mode == NULL) {
++		ret = -EINVAL;
++		goto invalid_mode;
++	}
+ 	ret = kstrtoint(strsep(&mode, "@"), 10, &depth);
+ 	if (ret)
+-		return ret;
++		goto invalid_mode;
+ 
+ 	pd->stride = pd->width * depth / 8;
+ 	pd->format = depth == 32 ? "a8r8g8b8" : "r5g6b5";
+ 
+ 	return 0;
++
++invalid_mode:
++	dev_err(&pdev->dev, "Invalid resolution string: %s\n", mode_buf_orig);
++	return ret;
  }
  
+ static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
 
 -- 
 2.49.0
