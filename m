@@ -1,116 +1,78 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA2D305662;
-	Mon,  3 Aug 2026 06:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF4A3AAF52
+	for <linux-gpio@vger.kernel.org>; Mon,  3 Aug 2026 07:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785740247; cv=none; b=nrwntT2dwu8K16mcDs7talFRgeoO80vtGBDWFGbBdeH9z7oH+yjenFJ6A0XqJpzPfgUzkWkl8XbkHs7mvotwf6du3pOG6vSJ8vLMV3apLUsRKmODljzRaWdYlLxuycUxPX111GpA2Bf3RYsNB+svwwpLlDgDAf1VOunUtBwBuAY=
+	t=1785743021; cv=none; b=o8GRh3kms4bFcDx1rUnVfSlQN2nlMmoc5U0yv4sJ4M/PH9kpjK6O+tAwI+J9SVXgUPmHMGFSU6nzqvRubZOaIGar0AvBoeFkU2BxxazQsB1C5ZptWGpE1fJNvu2tXOoFNaVW1NmMVDejhqXd4lcRGNP1Jn4PTydZs0MmgiQkyo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785740247; c=relaxed/simple;
-	bh=EDCPdD1jIMbLyl4ynfiQaDuVlhJDeCAwrxAWXudYTO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rNnJZCNTz31L/EH7EVTL5xXUd/znA8hQ2SvFxvSaVnx8nJf3K4tNEUmrkW55ROgyoDNW99UmhIHyG3CEgo39T6k2ppu2+Y8QT0qTpZocNQBT/a4SdVWHJM99T3YlTnSwEwgpaNwrRRvHYgFbvhgFKk8UdH7O+z3tVkluQiMNlF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Iwx5Is75; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1785743021; c=relaxed/simple;
+	bh=t2aDtqeSQny5RBp/7FwqiCQSN/Qv1mCXiAJtBsU739k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fs3wHGKkVLAZUIQk1oUpfMQS9ZrnHbAzjJyaNihxzslYIee9X5wP+M2DzWuSD7eneaEfcYlw/LxzQLqKr5nfkD13rWSRQBnuDtqMNC7hSzWrw2GTRVsX4DNWNjwq4OtqiFp4T0Ac1bi+38nUkUo1UVa0Pfr1mQf+YqlLMyDjDMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/4T2JYk; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Iwx5Is75"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 672LmQa9161457;
-	Mon, 3 Aug 2026 06:57:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=qUMwf3
-	7wtwX/8FvdmUZT3KeznzjkDDINlIaOGgKr4Zo=; b=Iwx5Is75QFK9SvkycFpKlN
-	o0mC1/esCnemFFgAR+yM+BHUeFNtZPuVcp4zd8mrE6BAXpqz/dHWqrwhxB85CPNT
-	fX+DTOZBpJ8KB/sdJ8d3mnub2RQ7JjJjeYLxT/GgmLMmP7nz0lL6oqF1dcGSJ3Xx
-	+KbB7y//vwa0jtoiSE6bVzCdoT8gnHjYJlF71AkzRIVcXglw2Vgk9P1+KT1l1D8+
-	0XEZRQnhHhft34W0vBSPcok6SngOngRWnnM/FVgxTPtBezzR/uqpF3UFCC+DhvG1
-	cWAwzoCpAPMmitE5vobOxuiUlbbI7QA3YID776Ph2OQgNLYDGMdMQAW9gnxbZoJg
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4fs67hf9sg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Aug 2026 06:57:16 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 6736us9g019488;
-	Mon, 3 Aug 2026 06:57:15 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4fswtybvtd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Aug 2026 06:57:15 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6736vDIS31392158
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Aug 2026 06:57:13 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8658E20040;
-	Mon,  3 Aug 2026 06:57:13 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AC3EA20043;
-	Mon,  3 Aug 2026 06:57:11 +0000 (GMT)
-Received: from Linuxdev.j9d-in.ibm.com (unknown [9.123.86.85])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  3 Aug 2026 06:57:11 +0000 (GMT)
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-To: RAGUENES Jean Noel <jean-noel.raguenes2@cs-soprasteria.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] powerpc: implement get_direction() in cpm2
-Date: Mon,  3 Aug 2026 12:27:10 +0530
-Message-ID: <178574013466.29744.10436603426961250541.b4-ty@linux.ibm.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <c6eb70aa0e1ba6e15f947c827006aa79edace05c.1785318836.git.chleroy@kernel.org>
-References: <2565e33e629d16d9e33086570834146bb1c962db.1785318831.git.chleroy@kernel.org> <c6eb70aa0e1ba6e15f947c827006aa79edace05c.1785318836.git.chleroy@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/4T2JYk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB091F000E9
+	for <linux-gpio@vger.kernel.org>; Mon,  3 Aug 2026 07:43:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785743020;
+	bh=t2aDtqeSQny5RBp/7FwqiCQSN/Qv1mCXiAJtBsU739k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=h/4T2JYkxq8Iq3gfm8/xQq1XSjQ+9B+fb0K8bmLKYejtB3vddTIr88J10Rhgj38ex
+	 V2pTHgoKQomlRUJD1Ik9qgGPFbLy9S4CFklf0/1SJmyG6hroWOQjqmSI41s6BcD0s1
+	 ctMu4NUSzW220jkeMKGpULFEbrmB91EOt716roR16Bt7STeUtOeoVa+8P3Du4VR0xS
+	 YJTD6ikxr0brIScsJdBHG5J/lva4cOGU8SvWJHH2CdXjIsGRNz6i/DDnJbP5ZDNm/o
+	 w2LZPl5JM5qY5EAhm20d/uAshGN8HLKoTXJk8N41rWXQqHTjioPqbPdegcr/IRC5gT
+	 pSbzb9N/6Se0w==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5b2a8e4c77eso3017255e87.1
+        for <linux-gpio@vger.kernel.org>; Mon, 03 Aug 2026 00:43:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrN+fVYypWQD/xCBdp3+JkjZGjEDjhRDQxtYzPQEevo5813j9jLwHQzHe9EjRVfaCi17ccHqRKOEBIj@vger.kernel.org
+X-Gm-Message-State: AOJu0YylEabHYA52JJD9xCdbxASQXjqX2vINz5KWKeUUhXLK2elmc0cm
+	zz57QLrO7PvGb82cpvGj7ZZCUU+JkkmSTbuwX/CAB7XA8qQ+S/6r3K2ftRcE1N55yF0qW5WRG6V
+	o0iK4sjt0U8F1NKQwl4ecugvLmpQaQl0=
+X-Received: by 2002:a05:6512:691:b0:5b0:17c9:a4f3 with SMTP id
+ 2adb3069b0e04-5b2e4f93e7fmr1598511e87.60.1785743019342; Mon, 03 Aug 2026
+ 00:43:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODAzMDA1OCBTYWx0ZWRfX9UzdI6Gib1e0
- 7WmLbQXrJ7EDsVEq84LoyLSIEjKqifAWRn13cTbezmCTbf64/F3wyebhBZGvgIN3DPND+Sv4dOJ
- m2ZZVsm7flRvH1X4iXXu1KqzgSfOF7c=
-X-Authority-Analysis: v=2.4 cv=I7VVgtgg c=1 sm=1 tr=0 ts=6a703bcc cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
- a=rczDo4_ZDh0Zxz2HFYsA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAzMDA1OCBTYWx0ZWRfX0s1D1BN603+g
- gsRQ0b9NfK6cbKogiYic2jPS9IXw5eb80iAVaWBWKxFgMpSR2HR8wzdAU2zvVTyXbclOsZYn6ti
- bwFlwvWIqOgjF2mrRiSzL8U5k0Jpb0/qdxTxsh6WCoCIuVWh2yPGmHVgNTYRAw2+/9e54p7aWmw
- CRe22LJheqlNId3Bfc6KT0j/zzdyFSTeiAFv5V+GaP4gXUIwys/eR1vNH6174IkjlJbV5ISThjY
- k7KQFNFB9IzCv2reaM4I5bb16u1J2A7wBREelHLPt2k3/pLJhiiCf6jIRrWUVtPOxNbGqZvP/6T
- xAG1f448R0MJ42KcOzw9ErYYX0tQ060YHf0oekckvyheOEII74dAN3SBJWik2aQWPpZfM5hbZxB
- IMJG4KeESK2rqOvP56PcYcXausHC9G5WLkI3BNcQGLCgJ4GC0N4bzdF7S2teFgsFbitWbNC0JDE
- CpFQgjbnHMNAL/ZwIXA==
-X-Proofpoint-ORIG-GUID: iFqmfWw77nNejBnbP4OQnM4LzYVkFm6H
-X-Proofpoint-GUID: iFqmfWw77nNejBnbP4OQnM4LzYVkFm6H
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-02_06,2026-07-30_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 impostorscore=0 clxscore=1011 priorityscore=1501 suspectscore=0
- malwarescore=0 adultscore=0 lowpriorityscore=0 phishscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608030058
+References: <20260728072906.871-1-luyulin@eswincomputing.com>
+In-Reply-To: <20260728072906.871-1-luyulin@eswincomputing.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Mon, 3 Aug 2026 09:43:27 +0200
+X-Gmail-Original-Message-ID: <CAD++jLn_jN025L_=UYJi-g3mx1n83A3g50-CLbLqSuNX+d332g@mail.gmail.com>
+X-Gm-Features: AUfX_mzv8-c3NcSh_T9sSm2CbAcRVnCiMsrErgp7XXSZCFaP8bWSyEoQKFfRmgs
+Message-ID: <CAD++jLn_jN025L_=UYJi-g3mx1n83A3g50-CLbLqSuNX+d332g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] pinctrl: eswin: Fix Handling of PIN_CONFIG_PERSIST_STATE
+To: Yulin Lu <luyulin@eswincomputing.com>
+Cc: samuel.holland@sifive.com, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linmin@eswincomputing.com, 
+	pinkesh.vaghela@einfochips.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 29 Jul 2026 11:56:48 +0200, Christophe Leroy (CS GROUP) wrote:
-> The lack of get_direction() callback in this driver causes GPIOLIB to
-> emit a warning. Implement it.
-> 
-> 
+On Tue, Jul 28, 2026 at 9:30=E2=80=AFAM Yulin Lu <luyulin@eswincomputing.co=
+m> wrote:
 
-Applied to powerpc/next.
+> The EIC7700 pinctrl driver does not handle PIN_CONFIG_PERSIST_STATE
+> specifically, and returns -EOPNOTSUPP from the default case.
+>
+> Since all pins on the EIC7700 SoC are persistent over suspend, the
+> correct behaviour is to accept this parameter and return success.
+>
+> Add an explicit case for PIN_CONFIG_PERSIST_STATE that returns 0 to
+> prevent errors when this parameter is set.
+>
+> Signed-off-by: Yulin Lu <luyulin@eswincomputing.com>
+> Fixes: 5b797bcc00ef ("pinctrl: eswin: Add EIC7700 pinctrl driver")
 
-[1/1] powerpc: implement get_direction() in cpm2
-      https://git.kernel.org/powerpc/c/ca16219e9babc874349a6ac307d56523871a9137
+Patch applied, I don't see any indication that this is a regression or
+urgent so applied as nonurgent fix.
 
-cheers
+Yours,
+Linus Walleij
