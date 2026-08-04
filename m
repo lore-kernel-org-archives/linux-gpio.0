@@ -1,137 +1,212 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7370246D085;
-	Tue,  4 Aug 2026 14:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D05C377AAA;
+	Tue,  4 Aug 2026 15:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785855468; cv=none; b=UceqM1ycngmTCf4owSkFotGySbC5Jt57hoaOe3LW83997ev8BQ5okt33kyo7TwhVQ8CoyiKCcRpf0XRqmNFHYgLUNY6eawdMgMwl1JlkQnk79PuATYGeu9TCELaFGqhBjX5rGHwpoNMS/gd5oRjrw8xHOfFfMdOepv32MDD2bC4=
+	t=1785856844; cv=none; b=AZjmzeuqtp5pAcsMTR6AlgKFfEsBmaUEE75DLT6x8BZs48nWoxpDBUVckequ/PQS6STQa0LxJy+HC7Q1rMekl0hcnLYCwYI2JEuMw6Cpjy9YGqJf7f3EixO+K156hg67zhhgsKxgDgh3GrLdGrFpRWW1egkQkVN+TYhrdr6B8vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785855468; c=relaxed/simple;
-	bh=Bxsf/tM/inm4tWB5FckFDrW3RfUJDXeHauOssflYyFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uAZ/ARQJrkmnn+zYBieMdpYrgM1gowkSXWver9pglm3NP1ORY51DLCbD21lTW9kErLaC/kmCPzyQHH6C3uC7wKbvUyYxin9LuaGG3e0QUUO+kt3cUZVXjsZDQAV2FM3Xg4l7CEC2AauXWjmzrzetdyO0mWV/c4Se1OeFGamfDNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LP7eRLHs; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785856844; c=relaxed/simple;
+	bh=597sp7wrS5NZsGOmlApZyviJDKLYPo4BUohV9Dw2AlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQbLhRSYUTp5F0vzCCjS590Z3Hgoc8YCZhW8gGPaXwVUhEnxVFRqDBfb2IPOTO3QIUybRp0uf4x4un2KJmwpNY629uH8T0dgLmBSbTefKTJhtSrLXALp/FLxgck3q1/rDb/EAxFS1jKuwMjLp6cQtNz2pUo5kPNVaxJeqEQhYJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sck07cXY; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LP7eRLHs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B22341F000E9;
-	Tue,  4 Aug 2026 14:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785855463;
-	bh=Jld8QoXOyiRKxKiV6Ij6KMsJftWjnRzT1IjV73V8qmY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=LP7eRLHsIvkuDUhDSJnSpHvpTQWt3F61j6RQKNDy07FNsBlrRb807tlFflrNdton7
-	 XAAWF3/uHfejsdwVyu3UYh8aDyqjiV9O2zxhZvfCtrMSDyKFsbrpiG0qTiiw2QGx8R
-	 XPFIDoWdCpVtWxNEvQXq2SsDvpu22+Uxz/+/bpoyVHbfxrRYUyKK6y1OVB2lbE63no
-	 Hrk0msCy4GNs/mv6QYbsMxzu12Ux4S//vDdVp72Q+ZoHAMC2XUS+kLzNNK40PwsBL7
-	 ETWz6LzTpv+hGaBnabnBVAtquqd+BMSvESxoICuiSRroJ8LH9vbVBfFkUFQXrxe2ZI
-	 AywwE0tVdjK/Q==
-Message-ID: <b99c478d-302b-4c50-8a8b-94aa0f4f7fad@kernel.org>
-Date: Tue, 4 Aug 2026 16:57:34 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sck07cXY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1785856841; x=1817392841;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=597sp7wrS5NZsGOmlApZyviJDKLYPo4BUohV9Dw2AlI=;
+  b=Sck07cXYQbe1skwauYtZxou5RlImLWkJzK5jP5cw06D00Du668xrUtvy
+   XZcdfIckHZgrBtwo8gyQPIZLtCe/Xna6MZ8nuFzyJPSdqF3gh9O0SICMd
+   rtTW05unJfD/P+ciJczj8chhjhkX7nBgu+gcbuH/gE0eKgWFyWFcZpnqA
+   Kb1kFCY3+ioyIdCB2FiQwjUHfG52Y1KvmKMUPBoOKZNLDuAya2/vl9TcO
+   5bXeo/YzzOZSoXQMK85O3zSMnNXo38yBoEOi/a/P481IiDRj+rK4lxybG
+   3HiV/hYSNSzz0XUYmQ6GMIrLVbf8Eya2muNMB6sxmgjE+2pHdUK1vbf/d
+   A==;
+X-CSE-ConnectionGUID: O6+sm3K3REiqRS4kQJPcIw==
+X-CSE-MsgGUID: B12HboDRS1my7+2M+xqBug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11865"; a="86287101"
+X-IronPort-AV: E=Sophos;i="6.25,204,1779174000"; 
+   d="scan'208";a="86287101"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2026 08:20:40 -0700
+X-CSE-ConnectionGUID: ci2R81MSQVWy4BOjYA/FxA==
+X-CSE-MsgGUID: 1uFWCLXURrW07obHP42bBQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,204,1779174000"; 
+   d="scan'208";a="258865749"
+Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 04 Aug 2026 08:16:10 -0700
+Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wrGsC-00000000A5h-0kAL;
+	Tue, 04 Aug 2026 15:16:08 +0000
+Date: Tue, 4 Aug 2026 23:15:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rosen Penev <rosenp@gmail.com>, linux-gpio@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: mvebu: convert to noirq suspend/resume to prevent
+ interrupt storm on resume
+Message-ID: <202608042358.6rKawjZd-lkp@intel.com>
+References: <20260707233511.1272686-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 30/35] dt-bindings: pinctrl: airoha: an7583: add olt
- function/group
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Christian Marangi <ansuelsmth@gmail.com>,
- Benjamin Larsson <benjamin.larsson@genexis.eu>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- Markus Gothe <markus.gothe@genexis.eu>,
- Matheus Sampaio Queiroga <srherobrine20@gmail.com>
-References: <20260727174141.664933-1-mikhail.kshevetskiy@iopsys.eu>
- <20260727174141.664933-31-mikhail.kshevetskiy@iopsys.eu>
- <20260727-chivalrous-legendary-goat-b9ab93@quoll>
- <d92137d6-5dde-468a-95ec-3acc506444f9@iopsys.eu>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <d92137d6-5dde-468a-95ec-3acc506444f9@iopsys.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260707233511.1272686-1-rosenp@gmail.com>
 
-On 04/08/2026 16:43, Mikhail Kshevetskiy wrote:
-> 
-> On 7/27/26 23:15, Krzysztof Kozlowski wrote:
->> On Mon, Jul 27, 2026 at 08:41:36PM +0300, Mikhail Kshevetskiy wrote:
->>> Add support for olt pin function for olt pin group.
->>>
->>> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
->>> ---
->>>  .../bindings/pinctrl/airoha,an7583-pinctrl.yaml        | 10 +++++++++-
->>>  1 file changed, 9 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pinctrl/airoha,an7583-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/airoha,an7583-pinctrl.yaml
->>> index 7deb48db52c3a..f016e0da65a57 100644
->>> --- a/Documentation/devicetree/bindings/pinctrl/airoha,an7583-pinctrl.yaml
->>> +++ b/Documentation/devicetree/bindings/pinctrl/airoha,an7583-pinctrl.yaml
->>> @@ -60,7 +60,7 @@ patternProperties:
->>>            function:
->>>              description:
->>>                A string containing the name of the function to mux to the group.
->>> -            enum: [pon, tod_1pps, sipo, mdio, uart, jtag, pcm, spi,
->>> +            enum: [pon, olt, tod_1pps, sipo, mdio, uart, jtag, pcm, spi,
->> You just changed this line in previous patch, no?
->>
->> Why binding patches are spread all over instead of properly grouped?
->> This makes it difficult to review. Please read submitting patches (both documents).
-> 
-> I tried to create a separate binding patch per change. Could you clarify
-> your suggestion?
+Hi Rosen,
 
-Adding missing functions is one patch, unless there is reason to split.
+kernel test robot noticed the following build warnings:
 
-Best regards,
-Krzysztof
+[auto build test WARNING on brgl/gpio/for-next]
+[also build test WARNING on linusw-pinctrl/devel linusw-pinctrl/for-next linus/master v7.2-rc6 next-20260803]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/gpio-mvebu-convert-to-noirq-suspend-resume-to-prevent-interrupt-storm-on-resume/20260804-155102
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20260707233511.1272686-1-rosenp%40gmail.com
+patch subject: [PATCH] gpio: mvebu: convert to noirq suspend/resume to prevent interrupt storm on resume
+config: alpha-allmodconfig (https://download.01.org/0day-ci/archive/20260804/202608042358.6rKawjZd-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 16.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260804/202608042358.6rKawjZd-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202608042358.6rKawjZd-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/gpio/gpio-mvebu.c:1034:12: warning: 'mvebu_gpio_resume' defined but not used [-Wunused-function]
+    1034 | static int mvebu_gpio_resume(struct device *dev)
+         |            ^~~~~~~~~~~~~~~~~
+>> drivers/gpio/gpio-mvebu.c:982:12: warning: 'mvebu_gpio_suspend' defined but not used [-Wunused-function]
+     982 | static int mvebu_gpio_suspend(struct device *dev)
+         |            ^~~~~~~~~~~~~~~~~~
+
+
+vim +/mvebu_gpio_resume +1034 drivers/gpio/gpio-mvebu.c
+
+   981	
+ > 982	static int mvebu_gpio_suspend(struct device *dev)
+   983	{
+   984		struct mvebu_gpio_chip *mvchip = dev_get_drvdata(dev);
+   985		int i;
+   986	
+   987		regmap_read(mvchip->regs, GPIO_OUT_OFF + mvchip->offset,
+   988			    &mvchip->out_reg);
+   989		regmap_read(mvchip->regs, GPIO_IO_CONF_OFF + mvchip->offset,
+   990			    &mvchip->io_conf_reg);
+   991		regmap_read(mvchip->regs, GPIO_BLINK_EN_OFF + mvchip->offset,
+   992			    &mvchip->blink_en_reg);
+   993		regmap_read(mvchip->regs, GPIO_IN_POL_OFF + mvchip->offset,
+   994			    &mvchip->in_pol_reg);
+   995	
+   996		switch (mvchip->soc_variant) {
+   997		case MVEBU_GPIO_SOC_VARIANT_ORION:
+   998		case MVEBU_GPIO_SOC_VARIANT_A8K:
+   999			regmap_read(mvchip->regs, GPIO_EDGE_MASK_OFF + mvchip->offset,
+  1000				    &mvchip->edge_mask_regs[0]);
+  1001			regmap_read(mvchip->regs, GPIO_LEVEL_MASK_OFF + mvchip->offset,
+  1002				    &mvchip->level_mask_regs[0]);
+  1003			break;
+  1004		case MVEBU_GPIO_SOC_VARIANT_MV78200:
+  1005			for (i = 0; i < 2; i++) {
+  1006				regmap_read(mvchip->regs,
+  1007					    GPIO_EDGE_MASK_MV78200_OFF(i),
+  1008					    &mvchip->edge_mask_regs[i]);
+  1009				regmap_read(mvchip->regs,
+  1010					    GPIO_LEVEL_MASK_MV78200_OFF(i),
+  1011					    &mvchip->level_mask_regs[i]);
+  1012			}
+  1013			break;
+  1014		case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
+  1015			for (i = 0; i < 4; i++) {
+  1016				regmap_read(mvchip->regs,
+  1017					    GPIO_EDGE_MASK_ARMADAXP_OFF(i),
+  1018					    &mvchip->edge_mask_regs[i]);
+  1019				regmap_read(mvchip->regs,
+  1020					    GPIO_LEVEL_MASK_ARMADAXP_OFF(i),
+  1021					    &mvchip->level_mask_regs[i]);
+  1022			}
+  1023			break;
+  1024		default:
+  1025			BUG();
+  1026		}
+  1027	
+  1028		if (IS_REACHABLE(CONFIG_PWM) && mvchip->mvpwm)
+  1029			mvebu_pwm_suspend(mvchip);
+  1030	
+  1031		return 0;
+  1032	}
+  1033	
+> 1034	static int mvebu_gpio_resume(struct device *dev)
+  1035	{
+  1036		struct mvebu_gpio_chip *mvchip = dev_get_drvdata(dev);
+  1037		int i;
+  1038	
+  1039		regmap_write(mvchip->regs, GPIO_OUT_OFF + mvchip->offset,
+  1040			     mvchip->out_reg);
+  1041		regmap_write(mvchip->regs, GPIO_IO_CONF_OFF + mvchip->offset,
+  1042			     mvchip->io_conf_reg);
+  1043		regmap_write(mvchip->regs, GPIO_BLINK_EN_OFF + mvchip->offset,
+  1044			     mvchip->blink_en_reg);
+  1045		regmap_write(mvchip->regs, GPIO_IN_POL_OFF + mvchip->offset,
+  1046			     mvchip->in_pol_reg);
+  1047	
+  1048		switch (mvchip->soc_variant) {
+  1049		case MVEBU_GPIO_SOC_VARIANT_ORION:
+  1050		case MVEBU_GPIO_SOC_VARIANT_A8K:
+  1051			regmap_write(mvchip->regs, GPIO_EDGE_MASK_OFF + mvchip->offset,
+  1052				     mvchip->edge_mask_regs[0]);
+  1053			regmap_write(mvchip->regs, GPIO_LEVEL_MASK_OFF + mvchip->offset,
+  1054				     mvchip->level_mask_regs[0]);
+  1055			break;
+  1056		case MVEBU_GPIO_SOC_VARIANT_MV78200:
+  1057			for (i = 0; i < 2; i++) {
+  1058				regmap_write(mvchip->regs,
+  1059					     GPIO_EDGE_MASK_MV78200_OFF(i),
+  1060					     mvchip->edge_mask_regs[i]);
+  1061				regmap_write(mvchip->regs,
+  1062					     GPIO_LEVEL_MASK_MV78200_OFF(i),
+  1063					     mvchip->level_mask_regs[i]);
+  1064			}
+  1065			break;
+  1066		case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
+  1067			for (i = 0; i < 4; i++) {
+  1068				regmap_write(mvchip->regs,
+  1069					     GPIO_EDGE_MASK_ARMADAXP_OFF(i),
+  1070					     mvchip->edge_mask_regs[i]);
+  1071				regmap_write(mvchip->regs,
+  1072					     GPIO_LEVEL_MASK_ARMADAXP_OFF(i),
+  1073					     mvchip->level_mask_regs[i]);
+  1074			}
+  1075			break;
+  1076		default:
+  1077			BUG();
+  1078		}
+  1079	
+  1080		if (IS_REACHABLE(CONFIG_PWM) && mvchip->mvpwm)
+  1081			mvebu_pwm_resume(mvchip);
+  1082	
+  1083		return 0;
+  1084	}
+  1085	
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
