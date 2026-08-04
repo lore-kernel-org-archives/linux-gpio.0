@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9082843B6E8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2EE43B4A4;
 	Tue,  4 Aug 2026 08:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785833433; cv=none; b=BvdSFvH2/auhr9dugZE/ZGPzAD3PI8b2lIvM2Am94K9YmyVM8kmgaMFJ0mi8z02+2pFfbvTOR+u99sX+PV1iRT5qZWnDySfBN9JEeDJ2xayaMHpY0ghblA+Z5ouhQGEAobGvERD723E+06JwC6LCDBEgKSpmEyLJzqGVNrKLp/A=
+	t=1785833433; cv=none; b=N6qwlEOg9ENE9u4mcVfYDC5GLjiwes49m5Y6fl+gitAdTv5qX4ihlkyLyToWD/RcFn4vn9LN6NqPfkSoDHXC1ACjlex4xD6dSpQTaay3WurAVVLVTXqtvLI/PxDsqnrjjBM9RYNo8XrzhW5sLrmW84zEqZtMmgkNu3bCSSvTSWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785833433; c=relaxed/simple;
-	bh=0LRurGs30izWp59o8FPmIaT+p/OC5LyJScZ6dv8wqHc=;
+	bh=+zzdgbeUTZ1N1DTgq5TxUwR+zP+wJLNITthqc1e88Zc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RDd8TblQ7Qfvx2un80U1Iu5e71gZT/SskvYyO7Uny7onB4MciDbKK0pTVSxT6u13Bhjb0knexbhA2S2xJ8t9sQwzH7Bu8j4mv7baUJdpL6Oo4+w7AKH8ES4QdFlLwmgOVxrnGYMJfSQMkCZQVQiRqKsXzT9tB/EQMNHOSqvnPzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGWJH5Bc; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Lv63G/fISAJXh/ZG+NlRv70p3qRhGCE9Ga8I7IZZsvPFM6p9x60ACt1RFBA/e6Z2M9awMsknwwhMUSt2gFxsIq9ACx4ffzkiFD1QV4hpK7bIkLx0UBjfhZAPyctC8ufbknpzCmNK6syPKpQL4VNSQZk9sMvn8Zb4edoiR7uaofQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BB2yrG8c; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGWJH5Bc"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5D753C2BD00;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BB2yrG8c"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4D618C2BCFD;
 	Tue,  4 Aug 2026 08:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1785833433;
-	bh=0LRurGs30izWp59o8FPmIaT+p/OC5LyJScZ6dv8wqHc=;
+	bh=+zzdgbeUTZ1N1DTgq5TxUwR+zP+wJLNITthqc1e88Zc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=gGWJH5BcI3vBG6JnMANA4hDjeB3+0CydEtPEmWVOQWHgfR6A85VKkoZhkCuMK8byU
-	 YedkWSdFrWrlI15M+YJLZeNqdymyAg+UzsQ5Iah1nqSu2rzNnp/8f0cctGGaeuWZ6W
-	 qeXUSaFjYz/z4AZGo/Y+UEH7cpqvLwhw/3xBG0eyxDpwqEWjW3w3ykilkoYmZNbH48
-	 drOPKUtcb3n3GSiosnpiFxwd0ri6vDxprZ8TWBGN4HyCjqYMKmlUhYa6Psk6Mcwuj1
-	 N8BB5oVGJmr6mZI6RQwusR9SOqwVW7FtDjZPDgZRITjzYOIsuhWmYU97Rz/f3rYqGH
-	 SKIjaaNlaRBcw==
+	b=BB2yrG8ckFP+8ut8Ibj8INcH/DGEHHFJm2IJ43BcegMf5ZMVVvJiDzNdWj5bReSJ1
+	 /BHobg1ars8Zq8n5cEeEe6DMN7IeSrniE57jg2zYqEw5CWQTmQS8rv9b2gcIEjDvrQ
+	 RAlmjL367mom9Y+GL/jxWGIgiwn1YaOxpF6KEcN4leSYa4QiB4o7I9Q+zitxHuQJQl
+	 0xEoA+TTmAsJiYyG0MyDiyc/044t6PMVfiJsWfSXsNMFG2z9lZHEtPPRwjqeabgPBK
+	 R1aAg8jCrxe4rOXTqHwm/dfa+xGxaPOz9PYGLY6lXkaoKFumz1baOOp6nl3YAqWCfU
+	 N1xsVl9eojN4w==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B029C55184;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37618C5518F;
 	Tue,  4 Aug 2026 08:50:33 +0000 (UTC)
 From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Tue, 04 Aug 2026 11:49:47 +0300
-Subject: [PATCH v14 04/22] dt-bindings: media: i2c: max96717: add support
- for MAX9295A
+Date: Tue, 04 Aug 2026 11:49:46 +0300
+Subject: [PATCH v14 03/22] dt-bindings: media: i2c: max96717: add support
+ for pinctrl/pinconf
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260804-gmsl2-3_serdes-v14-4-763710c884c0@analog.com>
+Message-Id: <20260804-gmsl2-3_serdes-v14-3-763710c884c0@analog.com>
 References: <20260804-gmsl2-3_serdes-v14-0-763710c884c0@analog.com>
 In-Reply-To: <20260804-gmsl2-3_serdes-v14-0-763710c884c0@analog.com>
 To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
@@ -58,11 +58,11 @@ Cc: mitrutzceclan@gmail.com, linux-media@vger.kernel.org,
  Martin Hecht <Martin.Hecht@avnet.eu>, 
  Cosmin Tanislav <demonsingur@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1785833430; l=1215;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1785833430; l=4016;
  i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=vJv87PlKhZ/JJOLIT/BDLODjizDSGOosxrrf6SXpE7Q=;
- b=i4CNBAYdnJ6+n1pwpgpkGpgKodQlL6OZhtkCFFNeD0QBL3GpHRTv71Q24Ku4KPd8rQf6GA89H
- bHr9norxQ2yB/ttnTdyK0DGtPf61yKI+bg5l2bJkUtLu/9M0mrc1UaF
+ bh=SrxXRhbQ3GCquuhQkKB0cKcz5eSmglqqWPozYcuiRVM=;
+ b=o+fxzBhcldfJL9SIuu+1Zlxd/qKnxvwAc1jEY1P3iFQ2Gz1kb++2YBNedeNDJnCdlfX+2cboP
+ X/uEqPgAiC9CPch8PRkOJhBud7MjO4GUoOjRtL0NqAnE9H3JDoefshz
 X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
  pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
 X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
@@ -72,40 +72,132 @@ Reply-To: dumitru.ceclan@analog.com
 
 From: Cosmin Tanislav <demonsingur@gmail.com>
 
-MAX9295A is an older variant of the MAX96717 which does not support
-tunnel mode.
+MAX96717 is capable of configuring various pin properties.
 
-Document the compatibility.
+Add pinctrl/pinconf properties to support this usecase.
 
 Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ .../bindings/media/i2c/maxim,max96717.yaml         | 105 +++++++++++++++++++++
+ 1 file changed, 105 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-index d507cad18edc..bbb38b3de7df 100644
+index 976f6dd2c164..d507cad18edc 100644
 --- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
 +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-@@ -24,12 +24,17 @@ description:
+@@ -120,6 +120,111 @@ required:
+   - reg
+   - ports
  
-   The GMSL2 serial link operates at a fixed rate of 3Gbps or 6Gbps in the
-   forward direction and 187.5Mbps in the reverse direction.
++patternProperties:
++  '-pins$':
++    type: object
++    additionalProperties: false
 +
-   MAX96717F only supports a fixed rate of 3Gbps in the forward direction.
++    properties:
++      function:
++        enum: [gpio, rclkout]
++
++      pins: true
++      drive-open-drain: true
++      drive-push-pull: true
++      bias-disable: true
++      output-disable: true
++      output-enable: true
++      output-low: true
++      output-high: true
++      input-enable: true
++
++      slew-rate:
++        description: |
++          Slew rate.
++          Rise and fall times represent the time needed for a GPIO to go
++          from 20% to 80% of VDDIO.
++          0 - Fastest
++              rise:  1.0ns @ 1.8V,  0.6ns @ 3.3V,
++              fall:  0.8ns @ 1.8V,  0.5ns @ 3.3V
++          1 - Fast
++              rise:  2.1ns @ 1.8V,  1.1ns @ 3.3V,
++              fall:  2.0ns @ 1.8V,  1.1ns @ 3.3V
++          2 - Slow
++              rise:  4.0ns @ 1.8V, 2.3ns @3.3V,
++              fall: 10.0ns @ 1.8V, 5.0ns @3.3V
++          3 - Slowest
++              rise:  9.0ns @ 1.8V, 5.0ns @3.3V,
++              fall: 10.0ns @ 1.8V, 5.0ns @3.3V
++        maximum: 3
++
++      bias-pull-up:
++        oneOf:
++          - type: boolean
++            description: Enable regular 40kOhm pull-up
++          - enum: [ 40000, 1000000 ]
++            description: Enable either the 40kOhm or the 1MOhm pull-up
++
++      bias-pull-down:
++        oneOf:
++          - type: boolean
++            description: Enable regular 40kOhm pull-down
++          - enum: [ 40000, 1000000 ]
++            description: Enable either the 40kOhm or the 1MOhm pull-down
++
++      maxim,jitter-compensation:
++        type: boolean
++        description: |
++          Enables jitter compensation.
++          Jitter compensation is used to minimize the jitter of the
++          signals transmitted from the deserializer to the serializer
++          by adding a fixed delay to every transition on the serializer
++          side. This can be used for pulse generation where timing is
++          critical.
++
++      maxim,tx-id:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          Enable transmission of the pin state from the serializer to
++          the deserializer using the specified identifier.
++        maximum: 31
++
++      maxim,rx-id:
++        $ref: /schemas/types.yaml#/definitions/uint32
++        description:
++          Enable transmission of the pin state from the deserializer to
++          the serializer using the specified identifier.
++        maximum: 31
++
++    required:
++      - pins
++      - function
++
++    allOf:
++      - $ref: /schemas/pinctrl/pincfg-node.yaml#
++      - $ref: /schemas/pinctrl/pinmux-node.yaml#
++
++      - if:
++          properties:
++            function:
++              const: gpio
++        then:
++          properties:
++            pins:
++              items:
++                enum: [mfp0, mfp1, mfp2, mfp3, mfp4, mfp5, mfp6, mfp7,
++                       mfp8, mfp9, mfp10]
++
++      - if:
++          properties:
++            function:
++              const: rclkout
++        then:
++          properties:
++            pins:
++              items:
++                enum: [mfp2, mfp4]
++
+ additionalProperties: false
  
-+  MAX9295A only supports pixel mode.
-+
- properties:
-   compatible:
-     oneOf:
--      - const: maxim,max96717f
-+      - enum:
-+          - maxim,max9295a
-+          - maxim,max96717f
-       - items:
-           - enum:
-               - maxim,max96717
+ allOf:
 
 -- 
 2.53.0
