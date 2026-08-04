@@ -1,79 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEB442A14B
-	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 07:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7DF439F8F;
+	Tue,  4 Aug 2026 08:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785829870; cv=none; b=rga2Two4aB7mQKbeAiF6lMGeOf0P7xPCh6N9q1iaUK9AOKuxWTSA9Y5NlPPAr0AqCIXONwzJcYuzhBUymokoXgk35Z0w/ScIYNoHtFlak/G74vPKdzxVQF3fp3o/Qs4gJG0NDZvLhp7UYtRUcUy+JKGKLJ1zdoSRwEHL4ZH6PPw=
+	t=1785833433; cv=none; b=lYMMz6iXT9V4s8inRxKFFbWYvkdxkBTtBcUFkW80D/fewJoYq5nyJaPtZQfF/xyfRPbPbuhMQjCocsKQMQlQr3qKrO8vcyAH0SgBf1kdGj36pC2306SBZl/sjaeZEs5LSK/A/j8C8yexFz4SXPI9LyLvTBg4r+jGnMOxa4yNslI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785829870; c=relaxed/simple;
-	bh=UeaaGkfj+CmXQK3D7/sp1H2v+3bv6fIBMs0uAbi+VxE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SNnvbNwoYa0ZdSgz/Bis6GETQPaUO5NnK+zVokKCARC3siCEb9KFGmOqWTsdKRfHLlwno2sFA5xput0BCr8v0hNRCkwsVPJPE3JWmpcNHJsNwYVEcVSS8x/m/jJoqt5o4sLpCVndDLGQsiSyhXFxKlWPlwshbB/fCOgR0XUJi9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lh//8K/B; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785833433; c=relaxed/simple;
+	bh=m/Lw3D9Sn7b/iEdL6eTGT3K2tR/KZoA6l9gCS1mqNBI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=MPZ0ouahmmUo3f2z/XUIUNzuADmNi5oaSSkiX1LDZtMiOsfAYPHl+T4RSZIMPDSpm+YLSc69pNjwTuk0SyAE8xl3cwoxlhidC+qQEkUWDlS+5WElNMBZOwcO6X3pTBp9QUgWFcs0EvFIudVUjuk3gZ3Z0i81pop8tlQIUuZzydg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INIBlRfl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lh//8K/B"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1B7B1F00ADF
-	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 07:51:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785829868;
-	bh=UeaaGkfj+CmXQK3D7/sp1H2v+3bv6fIBMs0uAbi+VxE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Lh//8K/BjNLfqPOULpksK3++stnAXFzDO7EQjE7RTS72eRu03/yiUQxcZSuM+L5np
-	 2PKIOyi37oW7GwEbPksUNbxSo142sphFkeF4sJQ1ori5DYjV9Pwmr0baYlAYiSHLPb
-	 eh1O0GhAMkgXyM37ZPWKVVmOe1ehK9H9TiSyBO5MntPmbqhkY1/Z58FKTvjoyb1hIQ
-	 VJU7ZAnZT3orLOwpdldiLYNuyZximnx/qx/wcY4RCithAZ67jozuXoDr3RiJruvih5
-	 39i1vgGKDKngp41aQZBCvccOATqvJWuK5911lTscvbF0OnTEza5c/+F0nqMXTDmJY2
-	 61T2CXr6Cke5w==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5b0117d49dcso4870490e87.3
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Aug 2026 00:51:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RojlSYItF0xVeUjt1xsnNqcQAer4nWRAfdGuYx0zG7+YOJMUje61XFibLr9pZxUR99Bm4FFypNIvlkR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1WBV8jGEMMGrIRSvaJBIRTEoAtwxzxFGphI23BBpcGY5cSruy
-	IkWDTQ5hfGB2lIXK/FGudDITodqU8/QHAMLwMdt6xxLPHbXY5dJT0gABovOY7H9WTdKCxivoTgF
-	0iF1yoSchnzwRXYJ0K+UQCQUHeCdowH0=
-X-Received: by 2002:a05:6512:10d5:b0:5b2:9c9d:6448 with SMTP id
- 2adb3069b0e04-5b2e4f11a0fmr2873674e87.12.1785829867354; Tue, 04 Aug 2026
- 00:51:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INIBlRfl"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3C611C2BCFB;
+	Tue,  4 Aug 2026 08:50:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1785833433;
+	bh=m/Lw3D9Sn7b/iEdL6eTGT3K2tR/KZoA6l9gCS1mqNBI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=INIBlRfl7NKkJCesHKf8h83dwD7w7DiyEGANcwuT/VNxxnBAhmrgXpvr4EZJcbxxQ
+	 qKp2ICmcOiEoKvpf2P0EMT+7hAEGev/Y/BWWxsBGSylBNLmyd0rKDZiIgGWDPt+hZF
+	 wpi7zq6Bo2/E82YgY0XozBZLt5vakx/vXzdhq2NCr5hMJ7t8jihvbn4yM4uCRTgJWb
+	 F7+APVIxKxXQmIcRPxY45qAoaxSBicQWUK1Ac4mKQLhOc/7dmFsvDzdp47ESZmONnE
+	 vsnO6g39X6p1w8+bbsNQIyE+WNIPuU1FNR1GqpJ1X0I5TzGdouGuAIU1bWB8aV45bL
+	 pnJwP0KlZOvCQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 230D4C55ABC;
+	Tue,  4 Aug 2026 08:50:33 +0000 (UTC)
+From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
+Date: Tue, 04 Aug 2026 11:49:45 +0300
+Subject: [PATCH v14 02/22] dt-bindings: media: i2c: max96717: add support
+ for I2C ATR
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260801-apple-m4-initial-devicetrees-v2-0-5cb07cc275da@cyberchaos.dev>
- <20260801-apple-m4-initial-devicetrees-v2-5-5cb07cc275da@cyberchaos.dev>
-In-Reply-To: <20260801-apple-m4-initial-devicetrees-v2-5-5cb07cc275da@cyberchaos.dev>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 4 Aug 2026 09:50:54 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkkvrHR9nqO3gTiyU0s=q2-7mr3FY_07JAG4sFyuCENQA@mail.gmail.com>
-X-Gm-Features: AUfX_mxbSJUYZ_-VvnAPg1iAT8y_V2wQkeDasemCN2JDNhyPEfoJfdRT5MtVKyg
-Message-ID: <CAD++jLkkvrHR9nqO3gTiyU0s=q2-7mr3FY_07JAG4sFyuCENQA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/9] dt-bindings: pinctrl: apple,pinctrl: Add t8132 compatible
-To: Yureka Lilian <yureka@cyberchaos.dev>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>, 
-	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, Hector Martin <marcan@marcan.st>, 
-	Mark Kettenis <kettenis@openbsd.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Sasha Finkelstein <k@chaosmail.tech>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-pwm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260804-gmsl2-3_serdes-v14-2-763710c884c0@analog.com>
+References: <20260804-gmsl2-3_serdes-v14-0-763710c884c0@analog.com>
+In-Reply-To: <20260804-gmsl2-3_serdes-v14-0-763710c884c0@analog.com>
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Julien Massot <julien.massot@collabora.com>, Rob Herring <robh@kernel.org>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: mitrutzceclan@gmail.com, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+ Martin Hecht <Martin.Hecht@avnet.eu>, 
+ Cosmin Tanislav <demonsingur@gmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1785833430; l=1814;
+ i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
+ bh=OiYJqgg6XnogVXqu3cCeY60g1Qzx0eB+PgiVHCOJen4=;
+ b=JQreMDp0sMurC0HiRvCUwsypH1MCqfvmfpncYmggoHl1j0JdWJDb1bKHRxjkRA+vNqDRKrkia
+ 50IqJbwFMy5Crdscy0JuDotNNHUA4XZTRaKjovh0NVlxmWIrHLqaYyH
+X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
+ pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
+X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
+ with auth_id=140
+X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+Reply-To: dumitru.ceclan@analog.com
 
-On Sat, Aug 1, 2026 at 11:41=E2=80=AFPM Yureka Lilian <yureka@cyberchaos.de=
-v> wrote:
+From: Cosmin Tanislav <demonsingur@gmail.com>
 
-> The pin controller on the Apple silicon t8132 (M4) SoC is compatible
-> with t8103. Add "apple,t8132-pinctrl" as SoC specific compatible under
-> "apple,t8103-pinctrl".
->
-> Signed-off-by: Yureka Lilian <yureka@cyberchaos.dev>
+MAX96717 is capable of address translation for the connected I2C slaves.
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Add support for I2C ATR while keeping I2C gate for compatibility to
+support this usecase.
 
-Yours,
-Linus Walleij
+Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/media/i2c/maxim,max96717.yaml         | 39 ++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+index d1e8ba6e368e..976f6dd2c164 100644
+--- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+@@ -91,6 +91,30 @@ properties:
+       incoming GMSL2 link. Therefore, it supports an i2c-gate
+       subnode to configure a sensor.
+ 
++  i2c-alias-pool:
++    maxItems: 2
++
++  i2c-atr:
++    type: object
++    additionalProperties: false
++
++    properties:
++      '#address-cells':
++        const: 1
++
++      '#size-cells':
++        const: 0
++
++    patternProperties:
++      '^i2c@[01]$':
++        $ref: /schemas/i2c/i2c-controller.yaml#
++        unevaluatedProperties: false
++        properties:
++          reg:
++            items:
++              minimum: 0
++              maximum: 1
++
+ required:
+   - compatible
+   - reg
+@@ -98,6 +122,21 @@ required:
+ 
+ additionalProperties: false
+ 
++allOf:
++  - $ref: /schemas/i2c/i2c-atr.yaml#
++
++  - anyOf:
++      - oneOf:
++          - required: [i2c-atr]
++          - required: [i2c-gate]
++
++      - not:
++          required: [i2c-atr, i2c-gate]
++
++dependentRequired:
++  i2c-atr: [i2c-alias-pool]
++  i2c-alias-pool: [i2c-atr]
++
+ examples:
+   - |
+     #include <dt-bindings/gpio/gpio.h>
+
+-- 
+2.53.0
+
+
