@@ -1,71 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D854141D20C
-	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 07:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEB442A14B
+	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 07:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785829457; cv=none; b=sAjkn/fztS9Gbp+gDrQxcSAijP9SbugSLbTOeA+aZKybbXja0vwSvQw5YFkA3E1kFQX1hgk+uRhI0heDpR8lHh4Ei4eRInFzJVUj0wDlR9YWiv8nEKJkaFRxFcMm/iHnFIAK+bKLW+GJDoyJ71GwtNgg9+ZYPqDpgb5IFNWp2vs=
+	t=1785829870; cv=none; b=rga2Two4aB7mQKbeAiF6lMGeOf0P7xPCh6N9q1iaUK9AOKuxWTSA9Y5NlPPAr0AqCIXONwzJcYuzhBUymokoXgk35Z0w/ScIYNoHtFlak/G74vPKdzxVQF3fp3o/Qs4gJG0NDZvLhp7UYtRUcUy+JKGKLJ1zdoSRwEHL4ZH6PPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785829457; c=relaxed/simple;
-	bh=Z2Kv/l7OnlUOaYrkmIOf6qCQDdzulL2UvfL1WoFkS0Y=;
+	s=arc-20240116; t=1785829870; c=relaxed/simple;
+	bh=UeaaGkfj+CmXQK3D7/sp1H2v+3bv6fIBMs0uAbi+VxE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q8J93I5OfjqMqHjCaqDAEXuT+hps8F442DKNKDj2EjrQ1ejms75flznaZQ3pzUGKhCUwZIxSiLIRZagiNDIcg5sz649iEu8/MkLQip3DNKN5OO2E37KhCYwPgyjh6c6+Phn58pk+7KRCMsFHMBDXwejZ13YbEhoEBZLHq1A1pxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2gsTK4v; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=SNnvbNwoYa0ZdSgz/Bis6GETQPaUO5NnK+zVokKCARC3siCEb9KFGmOqWTsdKRfHLlwno2sFA5xput0BCr8v0hNRCkwsVPJPE3JWmpcNHJsNwYVEcVSS8x/m/jJoqt5o4sLpCVndDLGQsiSyhXFxKlWPlwshbB/fCOgR0XUJi9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lh//8K/B; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2gsTK4v"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD75C1F00A3E
-	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 07:44:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lh//8K/B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1B7B1F00ADF
+	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 07:51:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785829456;
-	bh=Z2Kv/l7OnlUOaYrkmIOf6qCQDdzulL2UvfL1WoFkS0Y=;
+	s=k20260515; t=1785829868;
+	bh=UeaaGkfj+CmXQK3D7/sp1H2v+3bv6fIBMs0uAbi+VxE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=S2gsTK4vHSKKVXyY8dri/YRShzeSRuZXlpcuVvqAoxFjcriIK36+aJN4x2JrmpTg2
-	 ck7U4S1CLewFRDjZ/Jobj7DGZS39RKwt4N8ds8oteXxcd83/njdrIOmWR/j9oo2HJl
-	 KSgJzZ49I4rhr+dJavR/A49azj6ePjCHWKjzPrT3SD/nbv7X+HM/K8H4SkursNxlmc
-	 VncA+xabAL84i/+9tmAU7GqkeEDA3DAQcMueFsz5CvEnXh8I0e8IpNUtb6OoU7myHa
-	 de4wTbT87357qLcbiGxqf9IVQzj9GATmPD+nUsZGXI+BbXkJrJZMuvwYZGmoxP3xL4
-	 xqhjGko6E4zAw==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-39dbe684115so6309451fa.1
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Aug 2026 00:44:16 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzHgt/8t83aT1Jum4cJXUttSLnahyBF49dwfzZZ6qGzfLH0zzYe
-	nIC+ykDQGkb0ZAzKLU6qAgFI+haNoqlx0kPTUm4PxBgYr0sNMdU5z2oRDgFJKnjs6SaB4g1KwOM
-	nzd4Z+BTUxV1rGHEdPZxAiiAT0FtybBE=
-X-Received: by 2002:ac2:4e14:0:b0:5b0:1186:fdf with SMTP id
- 2adb3069b0e04-5b2f281c00emr380527e87.11.1785829455531; Tue, 04 Aug 2026
- 00:44:15 -0700 (PDT)
+	b=Lh//8K/BjNLfqPOULpksK3++stnAXFzDO7EQjE7RTS72eRu03/yiUQxcZSuM+L5np
+	 2PKIOyi37oW7GwEbPksUNbxSo142sphFkeF4sJQ1ori5DYjV9Pwmr0baYlAYiSHLPb
+	 eh1O0GhAMkgXyM37ZPWKVVmOe1ehK9H9TiSyBO5MntPmbqhkY1/Z58FKTvjoyb1hIQ
+	 VJU7ZAnZT3orLOwpdldiLYNuyZximnx/qx/wcY4RCithAZ67jozuXoDr3RiJruvih5
+	 39i1vgGKDKngp41aQZBCvccOATqvJWuK5911lTscvbF0OnTEza5c/+F0nqMXTDmJY2
+	 61T2CXr6Cke5w==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5b0117d49dcso4870490e87.3
+        for <linux-gpio@vger.kernel.org>; Tue, 04 Aug 2026 00:51:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RojlSYItF0xVeUjt1xsnNqcQAer4nWRAfdGuYx0zG7+YOJMUje61XFibLr9pZxUR99Bm4FFypNIvlkR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1WBV8jGEMMGrIRSvaJBIRTEoAtwxzxFGphI23BBpcGY5cSruy
+	IkWDTQ5hfGB2lIXK/FGudDITodqU8/QHAMLwMdt6xxLPHbXY5dJT0gABovOY7H9WTdKCxivoTgF
+	0iF1yoSchnzwRXYJ0K+UQCQUHeCdowH0=
+X-Received: by 2002:a05:6512:10d5:b0:5b2:9c9d:6448 with SMTP id
+ 2adb3069b0e04-5b2e4f11a0fmr2873674e87.12.1785829867354; Tue, 04 Aug 2026
+ 00:51:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260731071845.175120-1-tchan@jacques.com.au>
-In-Reply-To: <20260731071845.175120-1-tchan@jacques.com.au>
+References: <20260801-apple-m4-initial-devicetrees-v2-0-5cb07cc275da@cyberchaos.dev>
+ <20260801-apple-m4-initial-devicetrees-v2-5-5cb07cc275da@cyberchaos.dev>
+In-Reply-To: <20260801-apple-m4-initial-devicetrees-v2-5-5cb07cc275da@cyberchaos.dev>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 4 Aug 2026 09:44:02 +0200
-X-Gmail-Original-Message-ID: <CAD++jLk-9Nv=N_CxMKqc_sqteW5+g99vkiO2YrMRLmULom5RWw@mail.gmail.com>
-X-Gm-Features: AUfX_mwMGOoQePw2mOedzogMWyiTp8oZuSer2ccdHAOPPRTJz5CvRAwwQF6Su8A
-Message-ID: <CAD++jLk-9Nv=N_CxMKqc_sqteW5+g99vkiO2YrMRLmULom5RWw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sx150x: allow build when I2C is a module
-To: Tsz Shan Chan <tsz.chan.dev@gmail.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tsz Shan Chan <tchan@jacques.com.au>
+Date: Tue, 4 Aug 2026 09:50:54 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkkvrHR9nqO3gTiyU0s=q2-7mr3FY_07JAG4sFyuCENQA@mail.gmail.com>
+X-Gm-Features: AUfX_mxbSJUYZ_-VvnAPg1iAT8y_V2wQkeDasemCN2JDNhyPEfoJfdRT5MtVKyg
+Message-ID: <CAD++jLkkvrHR9nqO3gTiyU0s=q2-7mr3FY_07JAG4sFyuCENQA@mail.gmail.com>
+Subject: Re: [PATCH v2 5/9] dt-bindings: pinctrl: apple,pinctrl: Add t8132 compatible
+To: Yureka Lilian <yureka@cyberchaos.dev>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>, 
+	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, Hector Martin <marcan@marcan.st>, 
+	Mark Kettenis <kettenis@openbsd.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Sasha Finkelstein <k@chaosmail.tech>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-pwm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 31, 2026 at 9:18=E2=80=AFAM Tsz Shan Chan <tsz.chan.dev@gmail.c=
-om> wrote:
+On Sat, Aug 1, 2026 at 11:41=E2=80=AFPM Yureka Lilian <yureka@cyberchaos.de=
+v> wrote:
 
-> PINCTRL_SX150X currently depends on I2C=3Dy. This prevents the driver
-> from being built when I2C is configured as module.
+> The pin controller on the Apple silicon t8132 (M4) SoC is compatible
+> with t8103. Add "apple,t8132-pinctrl" as SoC specific compatible under
+> "apple,t8103-pinctrl".
 >
-> Change the Kconfig dependency to just I2C so sx150x can be built as a
-> module when I2C is also a module.
->
-> Signed-off-by: Tsz Shan Chan <tchan@jacques.com.au>
+> Signed-off-by: Yureka Lilian <yureka@cyberchaos.dev>
 
-Patch applied!
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
