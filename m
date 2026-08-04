@@ -1,234 +1,116 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+Received: from rusty.tulip.relay.mailchannels.net (rusty.tulip.relay.mailchannels.net [23.83.218.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF0C3EC826;
-	Tue,  4 Aug 2026 14:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27A43E9C16;
+	Tue,  4 Aug 2026 14:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.83.218.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785853515; cv=none; b=FoIyzROu9r5VlF7G8tq33ZiN+VzTN+bCBtHYldXx6GlwAxUcpb0cPkaeWfslmmpYGWTeXBlFfvlUDolCIPM4sG1i+5lgHqcP6T2MzOgKgFegORS6j8Cli6ktmq3xKzw2Uc5JB/J21xuoB952HgycT+5Ut4Ja+kUr3KRdV67lOmk=
+	t=1785853528; cv=none; b=bLSm5oRuA/CoASB+r2w4nNeoPE/E9Z5EnpDQZ3+gAdduvwjJL8JPGd3vwlbpioTnmW37kHOUF7iFA7FkhiwgLYhjpCb/F7cM1KreW449+E1pe5Xe6P9uvPCnGDJA+FXercyLnfC207SkFkdL/s1/Xhbd/kqjnkL0ZiJYmFaySkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785853515; c=relaxed/simple;
-	bh=rHnWmvfnall4QZeIN9a9mBRRDgg88+Z8CXK6Kb4emoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YLcQ3Q5cYy3+4KJYjMktvroFuaSy+hN9Bb34VCksl5S2+oUl3KZ72urwQw8IsVImIzgvScqlLPrYbSEVb+d6C7AGE4ipwMR2MU6bOLnpsiVGk4sDz9q7x9Ip2PSJ0ZJJyOMn1WwEsRAX6x0kfvTXWrKTQg8SjoU4XqOEsiYiqDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Z62ahoVw; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1785853528; c=relaxed/simple;
+	bh=ctCtmWffUD8JKJGWtgLHm8Bl2ZGh8zN8rkiL2guT5ZM=;
+	h=Message-ID:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Date; b=EBsoBQ6h2bvYVnT+8SF+9aOBx8rPEUuHcoHti4KBAspapn9ugWkTqqmJCzdVfV7JlR0QHtdYJ/gpVg/XbyPRPgYvMJ8VFYzU21O9b07QFVw6RDMxawbRHdt6qjc3rPeRW1FuXKsUyvesx3ax3mXNCwKGYc0gFO9waw9hY0az2nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b=Fb24aMBq; arc=none smtp.client-ip=23.83.218.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Z62ahoVw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version:
-	Content-Type; bh=ZHRwjPesqBoJn8UTIi0yl5fajUFgc9aYLcMXK0tV0Vg=;
-	b=Z62ahoVwsCSBegc2m9RttLVriZICqT4n2BC2tUNBeBzcgX6V7UnJA32qc5uhsi
-	PVC1wlEn/eCm/MiJWUbBaOvlU1AFONJjQjQw5aznsPV2QA6XkGvVoG8Q1ZFMPa+l
-	LdsErW9zcmOHxaciVZcKhBnkmZ8FgMVTS2UrTJDogf/hM=
-Received: from fedora (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3H4+v9XFqDtAgNQ--.21955S2;
-	Tue, 04 Aug 2026 22:22:41 +0800 (CST)
-From: Ju Nan <junan76@163.com>
-To: junan76@163.com,
-	antonio.borneo@foss.st.com,
-	linusw@kernel.org
-Cc: alexandre.torgue@foss.st.com,
-	arnd@arndb.de,
-	bigeasy@linutronix.de,
-	clrkwllms@kernel.org,
-	lee@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com,
-	mcoquelin.stm32@gmail.com,
-	mfd@lists.linux.dev,
-	rostedt@goodmis.org,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Subject: [PATCH v3] pinctrl: stm32: program the EXTI mux from .alloc instead of .activate
-Date: Tue,  4 Aug 2026 22:14:03 +0800
-Message-ID: <20260804141402.86911-2-junan76@163.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260803061718.43210-1-junan76@163.com>
-References: <20260803061718.43210-1-junan76@163.com>
+	dkim=pass (2048-bit key) header.d=smankusors.com header.i=@smankusors.com header.b="Fb24aMBq"
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 8C78D802A42;
+	Tue, 04 Aug 2026 14:24:56 +0000 (UTC)
+Received: from fr-int-smtpout18.hostinger.io (100-111-241-60.trex-nlb.outbound.svc.cluster.local [100.111.241.60])
+	(Authenticated sender: hostingeremail)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 42CDA80274F;
+	Tue, 04 Aug 2026 14:24:51 +0000 (UTC)
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
+X-MailChannels-Auth-Id: hostingeremail
+X-Celery-Hook: 6e5f91ee2dc7ef85_1785853495174_255492421
+X-MC-Loop-Signature: 1785853495174:838635090
+X-MC-Ingress-Time: 1785853495173
+Received: from fr-int-smtpout18.hostinger.io (fr-int-smtpout18.hostinger.io
+ [148.222.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.111.241.60 (trex/8.0.2);
+	Tue, 04 Aug 2026 14:24:55 +0000
+Received: from [IPV6:2404:c0:b203:a6a7:55d9:cde7:2d4f:c58d] (unknown [IPv6:2404:c0:b203:a6a7:55d9:cde7:2d4f:c58d])
+	(Authenticated sender: linux@smankusors.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4hDwly6wtQz1xxd;
+	Tue,  4 Aug 2026 14:24:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smankusors.com;
+	s=hostingermail-a; t=1785853489;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9v+HbTzWBfh1Gmf/fk8WRVhO2s6dDvNdLs+LNUAiZ+U=;
+	b=Fb24aMBqZhBji2+gyywXVphlyDdaKJ2LrNxnqwsKJZ4szLWhT0GYNP9BL8L00Zqh3A24rD
+	gPDmY5IJUtoQdSEzQmyH354Fm6nmqYdSg3vn9mARYGPJCqJW5SL5uPk/3TazgJoT4jb4+F
+	gD0PEUtmsCBsmkk/DqX8WQLgWE9WqlAW+Day1Jsv8dQQpY0OSypMq+M/jNkLqFukCdZYDd
+	gGT1PJRkipgx9PDh8wNfhHxOt2z6VI6lDabIg41o/cN/6MddaFnpsNz865iCs3UUreYSGc
+	8nGlbHq008EXUr78yrrMiy75QYUzSTWoCnmjWAGSZSPFfLFOvVhq1Yj7c5EZ5w==
+Message-ID: <ddc7820d-a9c8-4a69-9df2-6bc4ff61d3ee@smankusors.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3H4+v9XFqDtAgNQ--.21955S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Ww4rJw4fKryrZry8ZF4fZrb_yoWxWFy3pF
-	WfXrsIyrsxX3WfZ3yDGF4jvF90ka92kasrKw1DKa4xZr1Yvwn5K3WSgFy8ZF4j9F97X3Z0
-	yr4jqry5u3WDAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pina9fUUUUU=
-X-CM-SenderInfo: pmxqt0ixw6il2tof0z/xtbC9hShU2px9bS6CAAA34
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/6] ARM: dts: qcom: apq8064: Fix USB controller clocks
+To: contact@alex-min.fr, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Guru Das Srinagesh
+ <linux@gurudas.dev>, Linus Walleij <linusw@kernel.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Kees Cook <kees@kernel.org>,
+ Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>, Lee Jones <lee@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ phone-devel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20260804-mainline-send-v1-sending-v5-0-149dd4372ac8@alex-min.fr>
+ <20260804-mainline-send-v1-sending-v5-3-149dd4372ac8@alex-min.fr>
+Content-Language: en-US
+From: Antony Kurniawan Soemardi <linux@smankusors.com>
+In-Reply-To: <20260804-mainline-send-v1-sending-v5-3-149dd4372ac8@alex-min.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue,  4 Aug 2026 14:24:30 +0000 (UTC)
+X-CM-Analysis: v=2.4 cv=Gq4Q+V1C c=1 sm=1 tr=0 ts=6a71f631 a=qOstXJigc3fKijKOYFRv+w==:617 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=accKExrkbF7l0cSrD3IA:9 a=QEXdDO2ut3YA:10
+X-CM-Envelope: MS4xfE5ajB1JLe7ezsWryTj5qvDzd4QHZzk3f5Rb0lKfA/jBmdRgYWa1BL92L3UfCfKEwnJl0hoI2CLlCMb6g9Jq670GZ+/n/994fWHzCMJPXz1y0Ym5vdSz mgUNz6p+x9iu93tjBOeNdBkXEWFGzQbSTagzU1LOjpgzU00WCRFP2QY3G/JilT3NPQueiSF73npLZRRGu1T7En2TxKSUOMRi9vQJUnHWPWb0rpZxAt0hd+G4 4wdDZzgzqzXCTq0kjHGbv5BFb4sldnhyTuJbT/G8WZTwhTEP8K6rhV4A5b4nhpN6eao3wNgrcmkunklG+qBFS/P5y+bEBzovUFw0dlNWET8vTMzkPqfcjAgg YNXJp1k7tbfoeOrNAEk5oXsgH53ejwhGQYQn0IFFyMHfVmldvbwGBBUIYb7xHzar7GiFo4vWgaJ2Aj0FXDWHtzCcSOGJfxoZtt2CEo6JwZ9Z6ID0MUDqouTN QqQN8BEPA3909wvYPbQVv+PlvY3X9WNuBcuWDKnJp80QBj5HIaQQE5ZF8ixlpcveWn04dxmvBavFCSLbZ/AFCps+WOQctkgkRlzSI/8J3mu6WV1X4TH3Wlv0 azEFsy1wbMIkwDohBMpg+SRA7JFM5ZgTlXpGaSBhiQCQPqhI/QpH0q47xir+AbYrFQIwFo3rzINQM9dDvxAhz9HVsqOjpbXQmjXQXpI0tIp1PkG0SoWnV2xc NhyWm9ku5aOaeoUm8SomvwgCt1/aIdOPoIexd7ZNclFPKjcdi1uTPWy2pfQMnr1Le2L2VfmVm4knUY0bioyLPueZbFQyRFp++CZx+ksiIPiJcnoMUemcQuAQ /wOLKW+MFyaMRWzWbQLE+ka/kd1Vj46jet8YcBl1sqIVM8VnlPt7rPAYj05CYa+koybkCtmX4C8Cxmj70f1BzIRAauu/t5ClLSRU6Cy8nrjTBWx/I7HZaEm+ Ipqq/HWKCk5Eimg
+ vn8noAlnIoSm4HxMrDEIBU1RQZ6H+qJ3/0vXi4WSw/bWjFbmP3z8aIg==
+X-AuthUser: linux@smankusors.com
 
-stm32_gpio_domain_activate() writes the EXTI interrupt multiplexer
-through a regmap obtained from the generic syscon driver. The irq core
-calls .activate from __setup_irq() with the raw desc->lock held, so this
-happens in a raw atomic section. regmap-mmio sets fast_io, and syscon
-does not ask for a raw spinlock, so the regmap is protected by a
-spinlock_t. On PREEMPT_RT that is a sleeping lock, which must not be
-taken there. lockdep reports it as soon as a GPIO interrupt is
-requested:
+On 8/4/2026 1:34 PM, Alexandre MINETTE via B4 Relay wrote:
+> From: Alexandre MINETTE <contact@alex-min.fr>
+> 
+> The APQ8064 HS USB controller nodes describe the transceiver clock as
+> "core", but the ChipIdea MSM glue expects "core" to be the controller
+> fabric clock and "fs" to be the transceiver clock.
+> 
+> This mismatch can leave the fabric clock disabled while the controller is
+> accessed. Some boards may tolerate that if the clock is already enabled
+> elsewhere, but it is not a correct description of the hardware.
+> 
+> Describe the RPM Daytona fabric clock as "core", the AHB clock as
+> "iface", and the transceiver clock as "fs" for all APQ8064 HS USB
+> controllers. Without this, USB does not probe reliably on Samsung Galaxy
+> S4 because the fabric clock remains disabled.
 
-  BUG: Invalid wait context
-  6.17.0 #4 Not tainted
-  -----------------------------
-  kworker/u8:0/12 is trying to lock:
-  (&syscon_config)->lock){....}-{3:3}, at: regmap_lock_spinlock
-  other info that might help us debug this:
-  6 locks held by kworker/u8:0/12:
-   #5: (&irq_desc_lock_class){-...}-{2:2}, at: __setup_irq
-  stack backtrace:
-   regmap_lock_spinlock
-   regmap_field_update_bits_base
-   stm32_gpio_domain_activate
-   irq_domain_activate_irq
-   __setup_irq
-   request_threaded_irq
+oh sorry, I forgot to mention that, depending on the feedback on
+msm8960's patch [1], we might end up swapping the Daytona fabric and
+HS1_H clocks. So, Daytona fabric would be the "iface" and HS1_H would be
+the "core".
 
-The driver was already aware of running in atomic context there: it uses
-the _in_atomic() hwspinlock primitives around the very same access. The
-syscon lock is the one lock in that section it does not control.
+[1] 
+https://lore.kernel.org/all/1416ada5-ccdf-400e-b2b8-d2c5c7e335dc@oss.qualcomm.com/
 
-Program the mux from .alloc instead, which runs in a sleepable context.
-That callback already owns this resource: it reserves the mux line in
-pctl->irqmux_map under irqmux_lock, so writing the value it just claimed
-is a natural fit, and the value only depends on the bank.
-
-Nothing requires the mux to be reprogrammed at interrupt startup time:
-the domain has no .deactivate, .free() only releases the irqmux_map bit
-without touching the registers, and the resume path reprograms the mux
-itself in stm32_pinctrl_restore_gpio_regs().
-
-Keep the access inside the existing irqmux_lock section rather than
-after it. hwspin_lock_timeout_in_atomic() deliberately skips the local
-lock that the other hwspinlock modes take, so its caller is responsible
-for disabling preemption and for excluding other local contexts; every
-other hwspinlock user in this driver relies on bank->lock for that.
-irqmux_lock plays the same role here, and it also turns the mux
-reservation and the mux write into a single critical section. Nesting
-the regmap spinlock_t inside irqmux_lock, itself a spinlock_t, is what
-the wait-context checker expects.
-
-Note that this bounds the semaphore hold time on !PREEMPT_RT only. On
-PREEMPT_RT spinlock_t disables neither interrupts nor preemption, so the
-hardware semaphore can be held across a preemptible section and a
-coprocessor contending for it may poll for an unbounded time. That is
-not introduced here: bank->lock is a spinlock_t too, so every existing
-hwspinlock user in this driver behaves the same way on PREEMPT_RT.
-Removing that exposure requires the EXTI mux regmap to be raw-spinlock
-based, which the syscon core does not currently offer, and is left for a
-separate change.
-
-While moving the code, release the mux reservation when the hwspinlock
-cannot be taken, which the .activate callback had no way of doing.
-
-Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Closes: https://lore.kernel.org/all/20220202174430.pf37tt6lua2op3gc@pengutronix.de/
-Signed-off-by: Ju Nan <junan76@163.com>
----
-Changes in v3:
-
-- Keep the mux write inside the existing irqmux_lock critical section
-rather than after it.
-
-v2: https://lore.kernel.org/all/20260804032227.35017-3-junan76@163.com/
-v1: https://lore.kernel.org/all/20260803061718.43210-1-junan76@163.com/
----
- drivers/pinctrl/stm32/pinctrl-stm32.c | 55 +++++++++++++--------------
- 1 file changed, 26 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 6a99708a5a23..d97057ec28af 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -600,30 +600,6 @@ static int stm32_gpio_domain_translate(struct irq_domain *d,
- 	return 0;
- }
- 
--static int stm32_gpio_domain_activate(struct irq_domain *d,
--				      struct irq_data *irq_data, bool reserve)
--{
--	struct stm32_gpio_bank *bank = d->host_data;
--	struct stm32_pinctrl *pctl = dev_get_drvdata(bank->gpio_chip.parent);
--	int ret = 0;
--
--	if (pctl->hwlock) {
--		ret = hwspin_lock_timeout_in_atomic(pctl->hwlock,
--						    HWSPNLCK_TIMEOUT);
--		if (ret) {
--			dev_err(pctl->dev, "Can't get hwspinlock\n");
--			return ret;
--		}
--	}
--
--	regmap_field_write(pctl->irqmux[irq_data->hwirq], bank->bank_ioport_nr);
--
--	if (pctl->hwlock)
--		hwspin_unlock_in_atomic(pctl->hwlock);
--
--	return ret;
--}
--
- static int stm32_gpio_domain_alloc(struct irq_domain *d,
- 				   unsigned int virq,
- 				   unsigned int nr_irqs, void *data)
-@@ -637,18 +613,40 @@ static int stm32_gpio_domain_alloc(struct irq_domain *d,
- 	int ret = 0;
- 
- 	/*
--	 * Check first that the IRQ MUX of that line is free.
--	 * gpio irq mux is shared between several banks, protect with a lock
-+	 * Check first that the IRQ MUX of that line is free, then point it at
-+	 * this bank. The mux is shared between several banks, and the register
-+	 * is shared with a coprocessor, so hold both irqmux_lock and the
-+	 * hwspinlock across the update. irqmux_lock also provides the local
-+	 * exclusion and the preemption disabling that the _in_atomic()
-+	 * hwspinlock primitives leave to their caller, as it does for the other
-+	 * hwspinlock users in this driver.
- 	 */
- 	spin_lock_irqsave(&pctl->irqmux_lock, flags);
- 
- 	if (pctl->irqmux_map & BIT(hwirq)) {
- 		dev_err(pctl->dev, "irq line %ld already requested.\n", hwirq);
- 		ret = -EBUSY;
--	} else {
--		pctl->irqmux_map |= BIT(hwirq);
-+		goto unlock;
-+	}
-+
-+	pctl->irqmux_map |= BIT(hwirq);
-+
-+	if (pctl->hwlock) {
-+		ret = hwspin_lock_timeout_in_atomic(pctl->hwlock,
-+						    HWSPNLCK_TIMEOUT);
-+		if (ret) {
-+			dev_err(pctl->dev, "Can't get hwspinlock\n");
-+			pctl->irqmux_map &= ~BIT(hwirq);
-+			goto unlock;
-+		}
- 	}
- 
-+	regmap_field_write(pctl->irqmux[hwirq], bank->bank_ioport_nr);
-+
-+	if (pctl->hwlock)
-+		hwspin_unlock_in_atomic(pctl->hwlock);
-+
-+unlock:
- 	spin_unlock_irqrestore(&pctl->irqmux_lock, flags);
- 	if (ret)
- 		return ret;
-@@ -683,7 +681,6 @@ static const struct irq_domain_ops stm32_gpio_domain_ops = {
- 	.translate	= stm32_gpio_domain_translate,
- 	.alloc		= stm32_gpio_domain_alloc,
- 	.free		= stm32_gpio_domain_free,
--	.activate	= stm32_gpio_domain_activate,
- };
- 
- /* Pinctrl functions */
 -- 
-2.55.0
-
+Thanks,
+Antony K. S.
