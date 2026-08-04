@@ -1,244 +1,234 @@
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADE03A451D
-	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 13:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF0C3EC826;
+	Tue,  4 Aug 2026 14:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785851778; cv=none; b=bfH3mbEo6Mu1GocC6Gph0bKm0wi0yVZ8GN9JuDcNJQTbjaYls5Qh5Lg03PAkKn+vC98XimjczDcVhmXuOxGi/v3RqYms35DAE5wtokPPyXBerNifIrSeaCuBGVGXeJCrVj7jkPeUVjtrlI5xMTUD0bjytGEo0p8dmJagTTNEUms=
+	t=1785853515; cv=none; b=FoIyzROu9r5VlF7G8tq33ZiN+VzTN+bCBtHYldXx6GlwAxUcpb0cPkaeWfslmmpYGWTeXBlFfvlUDolCIPM4sG1i+5lgHqcP6T2MzOgKgFegORS6j8Cli6ktmq3xKzw2Uc5JB/J21xuoB952HgycT+5Ut4Ja+kUr3KRdV67lOmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785851778; c=relaxed/simple;
-	bh=50XrKBZJosL/DTC37lRfslzDFV1+RDFjg0YN60AJyx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iPwhDxtXfMGeLfDwqzjCoKdeYosU4Gt70X2SPDGB8beLLdg4Q03UtuoT9iJHw/8lSbJx7rLkov+tEQ5vAgMvNrYytdcdx7QiWPBCiiApTTnKtM1VoH9BWBylGqnuah0ORJrFUOm/xNnQ0y+iMozW76kA3sRDuhpehplzXZMgfnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=minyard.net; spf=pass smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard.net header.i=@minyard.net header.b=b/1NDoUy; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=minyard.net
+	s=arc-20240116; t=1785853515; c=relaxed/simple;
+	bh=rHnWmvfnall4QZeIN9a9mBRRDgg88+Z8CXK6Kb4emoo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YLcQ3Q5cYy3+4KJYjMktvroFuaSy+hN9Bb34VCksl5S2+oUl3KZ72urwQw8IsVImIzgvScqlLPrYbSEVb+d6C7AGE4ipwMR2MU6bOLnpsiVGk4sDz9q7x9Ip2PSJ0ZJJyOMn1WwEsRAX6x0kfvTXWrKTQg8SjoU4XqOEsiYiqDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Z62ahoVw; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard.net header.i=@minyard.net header.b="b/1NDoUy"
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-6aca0f482e5so2976412eaf.2
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Aug 2026 06:56:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard.net; s=google; t=1785851775; x=1786456575; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:reply-to:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=sXXO2IRcaN/cQzNifZvrT3g0gNImnjqVwD0ab/RL39s=;
-        b=b/1NDoUy/7IMpygxxmh+dw5mFHeaOjwbwLXSW0R01H6LpTQIcHrVha0xc8HP+ApBC1
-         uCghuNmFo/nwRiG2cnV8XNtFd4Bz5WOVhOq/grrKP2UMov264Equ7lkAwHek3KI3OYGE
-         H5GcBppL7CRjsohHh78TBGOT7j8G3mpqFuu6QHNrTxr9AdpJKwmDV+qH1IhlgCj5M1W5
-         LnTPSlmIiCx8ufI0oh7XkvA0EvPGEww1wSc8mlFZDK9zsVjRna/HrQeerbKXehm9CMkT
-         jAfyzyudM+5iJtmRNTgP05yEdX7Q8IUCmi4/IpfC4eiBdGFF0TxkG40BShj+dHpVHmQj
-         z6vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785851775; x=1786456575;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:reply-to:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=sXXO2IRcaN/cQzNifZvrT3g0gNImnjqVwD0ab/RL39s=;
-        b=ZlE9yNPntZRQS8ErTmoeeRN07NA8ZtiNcyXsdwKBAGwwfLnO9pVml8djDst97Yed42
-         C4iQSLH4mUBJrFHQyLWgv+rjs3KEhxNegsIrtrT2dY9KufYx9O1upkvvzrTnRfT0Di8N
-         UCy7R2SMgs6rcmzWcShSNqg728/AmS8P2hXuk99R9IB1dYbMRnKB1rTp6gtq5Cd5TwAm
-         /0LsLn0zL82ekzrSY5IMJsjZNsJal1HiLjL3VgR2Ks2qkOvkMcfEIggK8gP87gsyNp3x
-         k2vwJr67MfZr1/3PHDiq5fYuxX0VOvFoU8xjW6HJ1HoTyyKQlBiMe551HU/J3j467XAa
-         4c4g==
-X-Forwarded-Encrypted: i=1; AHgh+Rqp5JwkNF3s99JIV/Zjm7nJZ5/m6y67qBoBqoAo9BM2W7L8YwN4FKAeym2rSUJnnJgV1DgSFGnCQ7hZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAUYqKlwX7CgpsTRT8bxgZ+NTzJBQrI0PZH5tl7zgJpA+DpZbP
-	BOWp6guqxd8rxy75kFflzZ3NKzupS1CpSv+q7e+foWQMnF6Y2rltJ2I3FSj5tBIxxl4=
-X-Gm-Gg: AR+sD10BmneXRHBYnJ9b88yn6hjcZijrkK1BApa/Ke8cmwOXlBSjbcy8Pd2/sNe5t1M
-	mQdNNRqXrqCQxZI2UQ6kDbsiQAFADtRjlCUlhxeTtbrWw243kR5wSoN3Db6KzHhzVIjQUEhLf4W
-	6wjU291KBSILricYNbGsEIo7Ufy94mtKRXqIu6ltaMKHBPH8nKmnDu1TDAUkiix/CBnsRokU7W/
-	pkPVArC48PmnKiffanTrqujTN+KPIET53XNzuBaR7YLIGIko1BLx1JfaijvDDWBNU8Khrpp9gWQ
-	QRi0aC9t8OuPzrTdD6cZbAOGLIh42Vkjm2AnxUhl84sh47BfkuiYZrjL/GzA2ozM+H54x+wSLVC
-	Gp8VgbMD8xD0TxKDPjoCR4VxcD9XH0dp/wT76YkkCMVp70F8sJb8UK0DJYeavogGT26ziSezp18
-	5B1BOq9HWaoyTd/9qrbBi067KqMnqDELJS1AoLQG4p8c+G0+y1rPt1iSD48v0g+6t7mQ6IkjPs4
-	m9e+dmzgIANXAZZr9aymvmD/B+FwNjd3TyRux+a+ByLNkHk2qaFovSZBRiqYsC+JOMff58ixZav
-	fJlH+ypI1Q==
-X-Received: by 2002:a05:6820:430a:b0:6ac:b07c:b34b with SMTP id 006d021491bc7-6ae43181091mr17136344eaf.4.1785851775253;
-        Tue, 04 Aug 2026 06:56:15 -0700 (PDT)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:398b:b195:5c26:85bd])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6ae93d45b4csm171955eaf.5.2026.08.04.06.56.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Aug 2026 06:56:14 -0700 (PDT)
-Date: Tue, 4 Aug 2026 08:56:11 -0500
-From: Corey Minyard <corey@minyard.net>
-To: Miao Wang <shankerwangmiao@gmail.com>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>,
-	Chong Qiao <qiaochong@loongson.cn>, Lee Jones <lee@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, mfd@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net
-Subject: Re: [PATCH RFC v5 5/7] ipmi: ls2k: Relax the dependency to its mfd
- driver
-Message-ID: <anHvewDHLeyxdTJp@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <20260804-ls2kbmc-mod-v5-0-e6bc5cdd9a93@gmail.com>
- <20260804-ls2kbmc-mod-v5-5-e6bc5cdd9a93@gmail.com>
- <anD-LJYB-afdVAXN@mail.minyard.net>
- <2E268CDE-1D85-4611-BFF7-F74DD36132AB@gmail.com>
- <anHPgqIj907WFEGT@mail.minyard.net>
- <34EE213F-DA1A-4103-AAE9-85618954C846@gmail.com>
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Z62ahoVw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version:
+	Content-Type; bh=ZHRwjPesqBoJn8UTIi0yl5fajUFgc9aYLcMXK0tV0Vg=;
+	b=Z62ahoVwsCSBegc2m9RttLVriZICqT4n2BC2tUNBeBzcgX6V7UnJA32qc5uhsi
+	PVC1wlEn/eCm/MiJWUbBaOvlU1AFONJjQjQw5aznsPV2QA6XkGvVoG8Q1ZFMPa+l
+	LdsErW9zcmOHxaciVZcKhBnkmZ8FgMVTS2UrTJDogf/hM=
+Received: from fedora (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3H4+v9XFqDtAgNQ--.21955S2;
+	Tue, 04 Aug 2026 22:22:41 +0800 (CST)
+From: Ju Nan <junan76@163.com>
+To: junan76@163.com,
+	antonio.borneo@foss.st.com,
+	linusw@kernel.org
+Cc: alexandre.torgue@foss.st.com,
+	arnd@arndb.de,
+	bigeasy@linutronix.de,
+	clrkwllms@kernel.org,
+	lee@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	mcoquelin.stm32@gmail.com,
+	mfd@lists.linux.dev,
+	rostedt@goodmis.org,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: [PATCH v3] pinctrl: stm32: program the EXTI mux from .alloc instead of .activate
+Date: Tue,  4 Aug 2026 22:14:03 +0800
+Message-ID: <20260804141402.86911-2-junan76@163.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260803061718.43210-1-junan76@163.com>
+References: <20260803061718.43210-1-junan76@163.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <34EE213F-DA1A-4103-AAE9-85618954C846@gmail.com>
+X-CM-TRANSID:_____wD3H4+v9XFqDtAgNQ--.21955S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Ww4rJw4fKryrZry8ZF4fZrb_yoWxWFy3pF
+	WfXrsIyrsxX3WfZ3yDGF4jvF90ka92kasrKw1DKa4xZr1Yvwn5K3WSgFy8ZF4j9F97X3Z0
+	yr4jqry5u3WDAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pina9fUUUUU=
+X-CM-SenderInfo: pmxqt0ixw6il2tof0z/xtbC9hShU2px9bS6CAAA34
 
-On Tue, Aug 04, 2026 at 08:27:11PM +0800, Miao Wang wrote:
-> Hi,
-> 
-> > 2026年8月4日 19:39，Corey Minyard <corey@minyard.net> 写道：
-> > 
-> > On Tue, Aug 04, 2026 at 05:40:14PM +0800, Miao Wang wrote:
-> >> Hi,
-> >> 
-> >>> 2026年8月4日 04:46，Corey Minyard <corey@minyard.net> 写道：
-> >>> 
-> >>> On Tue, Aug 04, 2026 at 12:55:53AM +0800, Miao Wang via B4 Relay wrote:
-> >>>> From: Miao Wang <shankerwangmiao@gmail.com>
-> >>>> 
-> >>>> There is no strong dependency between the IPMI driver and its mfd
-> >>>> driver. Although the IPMI driver will not work without the mfd driver,
-> >>>> it is not a hard dependency. The IPMI driver can actually be compiled
-> >>>> without the mfd driver, and it will just fail to probe. When the mfd
-> >>>> driver is loaded, the IPMI driver will probe successfully. Therefore,
-> >>>> the dependency of the IPMI driver on its mfd driver should be relaxed
-> >>>> to "imply" from "select". This will allow the mfd driver to be compiled
-> >>>> as a module and the IPMI driver to be compiled as a part of the ipmi_si
-> >>>> module. The adjustment to Kconfig for the mfd driver will be introduced
-> >>>> in the later patch in this series.
-> >>> 
-> >>> I don't think that's what "imply" is for.  Imply seems to be for if
-> >>> there is another subsystem that can use this subsystem, but doesn't
-> >>> require it to exist.
-> >>> 
-> >>> For instance:
-> >>> 
-> >>> config SENSORS_NPCM7XX
-> >>>       tristate "Nuvoton NPCM750 and compatible PWM and Fan controllers"
-> >>>       imply THERMAL
-> >>> 
-> >>> The fan controller will work fine without the thermal subsystem; you
-> >>> can control the fan speed without it.  But the thermal subsystem is the
-> >>> logical user of this.  I looked at many of these things like this.
-> >>> 
-> >>> In the IPMI case, the IPMI driver is useless without the mfd part.  So
-> >>> there's no point in compiling the IPMI part of this if the mfd part is
-> >>> not there.
-> >>> 
-> >>> I could be wrong, but I can't see why you would want to do this.
-> >> 
-> >> The mfd part and the IPMI part loosely depend on each other. Without the
-> >> IPMI part, the mfd part can still work to handle the display part.
-> >> Without the mfd part, the IPMI part is indeed useless, but it will not
-> >> generate compiling errors or other runtime errors. In the runtime,
-> >> the IPMI part can be actually loaded earlier than the mfd part. As a
-> >> result, their dependency is not that strong.
-> > 
-> > The operational dependency is strong, which is what I think you want to
-> > convey here.
-> > 
-> >> 
-> >> The reason why I want to change this is that "select" here requires the
-> >> mfd part should also be compiled as built-in (i.e. = y), since the
-> >> type of the configure entry IPMI_LS2K is bool. However, I cannot see
-> >> there is no other reason preventing the mfd driver from compiling as
-> >> a module. This patch series will introduce a minor fix, after which
-> >> the mfd driver will be capable to be compiled as a module.
-> >> 
-> >> When the type of MFD_LS2K_BMC_CORE is changed to tristate, the "select"
-> >> here will prevent selecting =m for MFD_LS2K_BMC_CORE. I thus believe
-> >> that "select" here should be also changed.
-> >> 
-> >> Any suggestions on declaring the dependency of the both parts?
-> > 
-> > Ok, I understand now.
-> > 
-> > Why can't the IPMI part be compiled as a module?  Making that
-> > module-capable would be the right fix, I think.  I can't see
-> > why that wouldn't work.  IIRC, it was bool because the mfd part
-> > was bool.
-> 
-> I would have agree with you if the IPMI part was a normal driver.
-> However, the IPMI part is actually a part of ipmi_si. As a result,
-> the IPMI part can actually be compiled as a module, but as a part
-> of ipmi_si. That is why the configure entry IPMI_LS2K is bool rather
-> than tristate. I don't think it is trivial to convert IPMI_LS2K from
-> bool to tristate.
+stm32_gpio_domain_activate() writes the EXTI interrupt multiplexer
+through a regmap obtained from the generic syscon driver. The irq core
+calls .activate from __setup_irq() with the raw desc->lock held, so this
+happens in a raw atomic section. regmap-mmio sets fast_io, and syscon
+does not ask for a raw spinlock, so the regmap is protected by a
+spinlock_t. On PREEMPT_RT that is a sleeping lock, which must not be
+taken there. lockdep reports it as soon as a GPIO interrupt is
+requested:
 
-Yes, you are right it would be non-trivial.  It would take some redesign
-of the ipmi_si module.  You are right here, probably not worth it.
+  BUG: Invalid wait context
+  6.17.0 #4 Not tainted
+  -----------------------------
+  kworker/u8:0/12 is trying to lock:
+  (&syscon_config)->lock){....}-{3:3}, at: regmap_lock_spinlock
+  other info that might help us debug this:
+  6 locks held by kworker/u8:0/12:
+   #5: (&irq_desc_lock_class){-...}-{2:2}, at: __setup_irq
+  stack backtrace:
+   regmap_lock_spinlock
+   regmap_field_update_bits_base
+   stm32_gpio_domain_activate
+   irq_domain_activate_irq
+   __setup_irq
+   request_threaded_irq
 
-> 
-> > If you changed to imply, you would need a depends on the mfd core, BTW.
-> 
-> If imply is used here, and there is "select MFD_CORE" in MFD_LS2K_BMC_CORE,
-> I think there is no need to add "depends on MFD_CORE" to IPMI_LS2K, if I
-> understand it correctly.
+The driver was already aware of running in atomic context there: it uses
+the _in_atomic() hwspinlock primitives around the very same access. The
+syscon lock is the one lock in that section it does not control.
 
-If imply doesn't force MFD_LS2K_BMC_CORE to be selected, then it's not
-going to force MFD_CORE to be selected.
+Program the mux from .alloc instead, which runs in a sleepable context.
+That callback already owns this resource: it reserves the mux line in
+pctl->irqmux_map under irqmux_lock, so writing the value it just claimed
+is a natural fit, and the value only depends on the bank.
 
-> 
-> I don't insist using imply here, if there is a better way to express the
-> relation between both drivers.
-> 
-> > Also, IPMI_LS2K needs a "depends on IPMI_SI" either way.  I missed that
-> > earlier.  Could you add that?
-> 
-> If I understand it correctly, there seems to be no need to add the
-> dependency from the MFD driver to the driver for the actual sub-functions.
-> Examples are:
+Nothing requires the mux to be reprogrammed at interrupt startup time:
+the domain has no .deactivate, .free() only releases the irqmux_map bit
+without touching the registers, and the resume path reprograms the mux
+itself in stm32_pinctrl_restore_gpio_regs().
 
-There absolutely is.  You can select IPMI_LS2K without selecting
-IPMI_SI.  It would compile without it, and it just wouldn't do anything,
-but it would be confusing to be able to select something and it not do
-anything.
+Keep the access inside the existing irqmux_lock section rather than
+after it. hwspin_lock_timeout_in_atomic() deliberately skips the local
+lock that the other hwspinlock modes take, so its caller is responsible
+for disabling preemption and for excluding other local contexts; every
+other hwspinlock user in this driver relies on bank->lock for that.
+irqmux_lock plays the same role here, and it also turns the mux
+reservation and the mux write into a single critical section. Nesting
+the regmap spinlock_t inside irqmux_lock, itself a spinlock_t, is what
+the wait-context checker expects.
 
-> 
-> - MFD_MENF21BMC and SENSORS_MENF21BMC_HWMON, LEDS_MENF21BMC, 
->   MENF21BMC_WATCHDOG: The later three declared depends on the former MFD
->   driver
-> - MFD_INTEL_M10_BMC_CORE and FPGA_M10_BMC_SEC_UPDATE, 
->   SENSORS_INTEL_M10_BMC_HWMON: The later two declared depends on the
->   former MFD driver.
-> - MFD_STMFX and PINCTRL_STMFX: The later declared select the former
->   MFD driver.
-> 
-> To summarize, as shown in the current mfd drivers, there is no need to
-> declare dependency to the drivers providing the sub-functions in the
-> mfd drivers, and the drivers of the sub functions should "depends on" or
-> "select" the mfd driver. So if IPMI_LS2K could be tristate, then it would
-> be reasonable to select MFD_LS2K_BMC_CORE or depends on MFD_LS2K_BMC_CORE.
-> 
-> 
-> Regarding the fact that IPMI_LS2K is bool and it is not an independent
-> module but a part of ipmi_si, it comes into my mind that we may choose
-> to adjust the dependency from ipmi_si. That is to remove "select
-> MFD_LS2K_BMC_CORE" from IPMI_LS2K, and add "select MFD_LS2K_BMC_CORE
-> if IPMI_LS2K" to IPMI_SI.
-> 
-> I wonder if such a change would be appropriate.
+Note that this bounds the semaphore hold time on !PREEMPT_RT only. On
+PREEMPT_RT spinlock_t disables neither interrupts nor preemption, so the
+hardware semaphore can be held across a preemptible section and a
+coprocessor contending for it may poll for an unbounded time. That is
+not introduced here: bank->lock is a spinlock_t too, so every existing
+hwspinlock user in this driver behaves the same way on PREEMPT_RT.
+Removing that exposure requires the EXTI mux regmap to be raw-spinlock
+based, which the syscon core does not currently offer, and is left for a
+separate change.
 
-That would be a good solution if it works.  Thanks for working with
-me on this.
+While moving the code, release the mux reservation when the hwspinlock
+cannot be taken, which the .activate callback had no way of doing.
 
--corey
+Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Closes: https://lore.kernel.org/all/20220202174430.pf37tt6lua2op3gc@pengutronix.de/
+Signed-off-by: Ju Nan <junan76@163.com>
+---
+Changes in v3:
 
-> 
-> Cheers,
-> 
-> Miao Wang
-> 
+- Keep the mux write inside the existing irqmux_lock critical section
+rather than after it.
+
+v2: https://lore.kernel.org/all/20260804032227.35017-3-junan76@163.com/
+v1: https://lore.kernel.org/all/20260803061718.43210-1-junan76@163.com/
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 55 +++++++++++++--------------
+ 1 file changed, 26 insertions(+), 29 deletions(-)
+
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 6a99708a5a23..d97057ec28af 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -600,30 +600,6 @@ static int stm32_gpio_domain_translate(struct irq_domain *d,
+ 	return 0;
+ }
+ 
+-static int stm32_gpio_domain_activate(struct irq_domain *d,
+-				      struct irq_data *irq_data, bool reserve)
+-{
+-	struct stm32_gpio_bank *bank = d->host_data;
+-	struct stm32_pinctrl *pctl = dev_get_drvdata(bank->gpio_chip.parent);
+-	int ret = 0;
+-
+-	if (pctl->hwlock) {
+-		ret = hwspin_lock_timeout_in_atomic(pctl->hwlock,
+-						    HWSPNLCK_TIMEOUT);
+-		if (ret) {
+-			dev_err(pctl->dev, "Can't get hwspinlock\n");
+-			return ret;
+-		}
+-	}
+-
+-	regmap_field_write(pctl->irqmux[irq_data->hwirq], bank->bank_ioport_nr);
+-
+-	if (pctl->hwlock)
+-		hwspin_unlock_in_atomic(pctl->hwlock);
+-
+-	return ret;
+-}
+-
+ static int stm32_gpio_domain_alloc(struct irq_domain *d,
+ 				   unsigned int virq,
+ 				   unsigned int nr_irqs, void *data)
+@@ -637,18 +613,40 @@ static int stm32_gpio_domain_alloc(struct irq_domain *d,
+ 	int ret = 0;
+ 
+ 	/*
+-	 * Check first that the IRQ MUX of that line is free.
+-	 * gpio irq mux is shared between several banks, protect with a lock
++	 * Check first that the IRQ MUX of that line is free, then point it at
++	 * this bank. The mux is shared between several banks, and the register
++	 * is shared with a coprocessor, so hold both irqmux_lock and the
++	 * hwspinlock across the update. irqmux_lock also provides the local
++	 * exclusion and the preemption disabling that the _in_atomic()
++	 * hwspinlock primitives leave to their caller, as it does for the other
++	 * hwspinlock users in this driver.
+ 	 */
+ 	spin_lock_irqsave(&pctl->irqmux_lock, flags);
+ 
+ 	if (pctl->irqmux_map & BIT(hwirq)) {
+ 		dev_err(pctl->dev, "irq line %ld already requested.\n", hwirq);
+ 		ret = -EBUSY;
+-	} else {
+-		pctl->irqmux_map |= BIT(hwirq);
++		goto unlock;
++	}
++
++	pctl->irqmux_map |= BIT(hwirq);
++
++	if (pctl->hwlock) {
++		ret = hwspin_lock_timeout_in_atomic(pctl->hwlock,
++						    HWSPNLCK_TIMEOUT);
++		if (ret) {
++			dev_err(pctl->dev, "Can't get hwspinlock\n");
++			pctl->irqmux_map &= ~BIT(hwirq);
++			goto unlock;
++		}
+ 	}
+ 
++	regmap_field_write(pctl->irqmux[hwirq], bank->bank_ioport_nr);
++
++	if (pctl->hwlock)
++		hwspin_unlock_in_atomic(pctl->hwlock);
++
++unlock:
+ 	spin_unlock_irqrestore(&pctl->irqmux_lock, flags);
+ 	if (ret)
+ 		return ret;
+@@ -683,7 +681,6 @@ static const struct irq_domain_ops stm32_gpio_domain_ops = {
+ 	.translate	= stm32_gpio_domain_translate,
+ 	.alloc		= stm32_gpio_domain_alloc,
+ 	.free		= stm32_gpio_domain_free,
+-	.activate	= stm32_gpio_domain_activate,
+ };
+ 
+ /* Pinctrl functions */
+-- 
+2.55.0
+
