@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCD93F44E2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC4B411FB8;
 	Tue,  4 Aug 2026 19:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785870874; cv=none; b=nBqz5OyYzY7dUWpWDFEVyPwBwkyt5+m5Yqzl2t0XXM8aIgJZZaqxMQaIxB+3ndr7eMUVnGRG4d85PJTbEMV8EUJU0H1RQcG2f0Ccace9jcZjFiO0C+TPyqiSjD5l3lWCPGPlC6a64MuWAkGVPjN8O5c7eBldCh3MidZQUI9J4HY=
+	t=1785870874; cv=none; b=OUVoFjD3rivyF63VjosRQWojyUbSzBkGWvW3hCjD4yKa06Uso0AyCo/o5cucsCT9iwGAfKN1GQ6jIX6sfe/PmAk65G2nPVRqggbxtb9jjEusXEsvjDn55a4Bv7ePQPxWsR4DrB92KAWU/1BQdnZY8SYkEV5ERqpiWr5TNa1DM2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1785870874; c=relaxed/simple;
-	bh=ehRRwOjr5rvL9ll38epbp5w7dw7xqUR8OpqKs2J2CGI=;
+	bh=d4M2M70orrgx0wB2m/8b2iSym76cXcoVlWjx1HQ8p+c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WGE0ACZxCwRMio0rfaeQO0jkEhX8EQvzTyOCMMAwuYglGwSEdfQcTvy2sFIdI14Vv4CAVwORaRQRf004wgWqJwj1DLdl8o84NXtbVUD5dfK/VabnE0yYrRLCIdj4phsBvxCzsXNA944uWqJm7/zA+BuyMNER4qUnXhDwE6TSvU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JQQksl5N; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=GgFNV9HZsl3vBJlEe4LlS9y8ovl9jMedS0VG4dTrjP3gyCZAvt66p4JkGFoF9hdf2MOQUG+5vYWLPp1z8d8nwImgQY5hdRy+72jjxgbAMoZ7wKUm6u80aCsept5Y0KoZsw3Qm+gG5LZOWCsdUU6kefOqbU5FvIEatiwZQJ9HGno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0Qfb5WN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQQksl5N"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4525AC4AF0C;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0Qfb5WN"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5321EC2BCFC;
 	Tue,  4 Aug 2026 19:14:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1785870874;
-	bh=ehRRwOjr5rvL9ll38epbp5w7dw7xqUR8OpqKs2J2CGI=;
+	bh=d4M2M70orrgx0wB2m/8b2iSym76cXcoVlWjx1HQ8p+c=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=JQQksl5NDVrz+gA2DVY9oE0KpfxjjEZHNiH4G+Dnt60optUTvYVnktTjGmq42axHV
-	 gsX3Fsu8Cz0rnvyKlcihzrZnJTFuiiw1KageYsRDR9L9/0GStMMdWKjUJV6aFHT3yc
-	 Z16I78wWbXIWEhuLcpFoIS6h3/qRbDY3dw+B444FfCzkHWHmRAmUR6VOhUVZX2aTDp
-	 zp5WVLmDvrRopZ+ztIhieQQrGeK0vA5lJn0rIpjKaJqD1MJb3kIt6LIa5b02BCyoxr
-	 G3S7rNU2CV0dphrCyCG+8A4yQ4M7yuSA+6rfQQPjyaGgdQSa5RTGN+BlFQzmgjgXym
-	 erS4sNpVkgcZQ==
+	b=l0Qfb5WNwPAKx+dHue1pKBZvTRK/89CbYu47LiTcV5svr82XO/nglYWxT137G4Lgt
+	 V5n9zKXjA4ppygBpuYxvYrJygIJYPHZGzUgLnBrNwmlNFa+PisnfDnsYzLxt8UfpGX
+	 5+pYMF2Fkli4Aq9lCLoanPVAHnqpPgTya0e5zNjsvPRxAEYRDDTbJd5qo42y+m43Xs
+	 s99K6ZJVcplzEIaqzItSX7uS2yA4QsVH1mKYQHoazruCu3LJFV8EhkvTgAnBXxfdWb
+	 lOCUxjHGASILwO+bOOsj6JxTZ7y48zTFZ+8AaRzTsa//vg2bq2k3/Krn4Eq+1c4Ry/
+	 uVpuI56jiGgXg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FB4C55184;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40861C561E6;
 	Tue,  4 Aug 2026 19:14:34 +0000 (UTC)
 From: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>
-Date: Wed, 05 Aug 2026 03:14:20 +0800
-Subject: [PATCH RFC v6 2/7] mfd: ls2kbmc: Sanity check for the connected
- pci port
+Date: Wed, 05 Aug 2026 03:14:22 +0800
+Subject: [PATCH RFC v6 4/7] mfd: ls2kbmc: Cancel the work queue on removal
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +40,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260805-ls2kbmc-mod-v6-2-16ccde412d86@gmail.com>
+Message-Id: <20260805-ls2kbmc-mod-v6-4-16ccde412d86@gmail.com>
 References: <20260805-ls2kbmc-mod-v6-0-16ccde412d86@gmail.com>
 In-Reply-To: <20260805-ls2kbmc-mod-v6-0-16ccde412d86@gmail.com>
 To: Binbin Zhou <zhoubinbin@loongson.cn>, 
@@ -54,21 +53,21 @@ Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
  linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
  Miao Wang <shankerwangmiao@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2625;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1480;
  i=shankerwangmiao@gmail.com; s=20250715; h=from:subject:message-id;
- bh=oufFMpAEKeHSvtXxvdMyphQB5j62aoxVcKbqW/18KeU=;
- b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqcjoXBrqMsf+3WA//Isvd+tQeSt5gb+cG0aevq
- iF4TPh2YPOJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCanI6FwAKCRCwMePKe/7Z
- bpjqD/45lT6z9eynQ7HELKxgVtQ78gLUcYGDBqrXysKlLXS7kaLbLi9Z7okfAQGULj1c3sHRT64
- MP3FS1WHQ5PUfbie9+onctsBolGSsIpQ9NxWeX6mvYiLSVOGQmqCUhDWAG4P24dRZLhhMhjc+UA
- Kv/WoFzYcuBsc4TouaWzFI1Y9/DFeIagA9Ge3zjAscv+VPcaLcN2IyAtH34zeEiTS7P/LEuN6da
- RqOkQ2RI4T7oO4sZdV7Z4VabU4rUNBdNMZ7Tknuyhnm9M9dy7lsR25mNr8oyOFvXqX2LAOV9GVn
- td3UjSxDAruVAi3yXOLTJUYNqUtOV+0VNs0lLWNShuWJRWhoDeUTV4L5CklqTSKXWXH1HSY2wof
- IAVQVH3b/nqJwLKk7/+drlFtJ0r6MTJmp7HAvCIOUIWrZ8U9Dfscd8M7Tgb5Cug3Ybtlwtt5NwK
- I1N/XDSvN6YlMmYF0tIS0ijoZxXyIsfrqEXVVUGi+EJ0fJx0C/VyJkz/leHp21heozBK1jzkaPt
- UC253l76ZWQSm5sDIkKqIdT3B9I8VTfCwrKtaFWvEaLD2uLTraj9ZZRVBHvrhxsDqOGTy9+ER4T
- be8JHlu3z/rKXsjSd8yOIrK9I7eIpfgJ1wMl+PCm6Z2IVvyVM+TTqt59VSpFIqa7t4gPCX1bRbV
- dhj+qqTX/0X46Ow==
+ bh=JfJpObrd5YhUsg0KmTA+Fgw5Trzi5JwERZB1GRhNqG0=;
+ b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqcjoX4PGr3fi2gyACC1u+oTkUNeYJpXcHqn55+
+ svT259NZLOJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCanI6FwAKCRCwMePKe/7Z
+ bnmgD/91eSK0ImtZVckcCKjN0w7Ib2AYx6+aqsrumocsjTwSGjSA6WXRn6o2Mvm1fCFo96mV//F
+ g7ravbOvXqlbld0IAw7rthwCPU+UwGBB8XuW73dUxFGDJ7X6ofNK6EjEh8ruG7AdqZBkxhnDAmt
+ 1dw5+WBFar21oHwpfwLVu3HOaCu1qFGrXqF5sRVUKrW1C+m+vBPtC09P9yUz74a/q92J58seWiH
+ kjthTkX4+wF5ho7TKrMGMsvstfRf2tovpvh9eNTmuo1LvHpozlV3RNG57CY7I+cTJJWCjLlXl6c
+ zuKwKCsZz8i6PbVZOQMbirwEUd+/Hb9TPGZU3xt5UDz68gRPAMK7SON+tjWQd1eZTL/GrMV7IBb
+ Qjo8GHdlbmSCEUnIy0cT6h18GfpwAq32owcwWw6Xhzsqs0HMKx4vv6u8pRPHKpqR+P3JWVWltCi
+ ABplnkhgyfXUgh8AyEj2AcXgVAEuHbrEtwZVK/C15ZrsEm7/8pnnyrxa9pQDjT4XZRs/9YikgOw
+ LIdtwrkiVayrU66/Y9MIyxDtnGF6aOoiVzouuAWzC/ShyJIk+znA4jwXiiwc9cFtjU6v3EPqduM
+ yQpcQVZc7xpoKt7bDmd9fY6DFKwc8INujqe+7BKl9QeL6oHFIs3f7tHhHrjYhQOyPIBrpctk4Yt
+ 15UOdUkfUnrAK0A==
 X-Developer-Key: i=shankerwangmiao@gmail.com; a=openpgp;
  fpr=6FAEFF06B7D212A774C60BFDFA0D166D6632EF4A
 X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/20250715
@@ -78,74 +77,43 @@ Reply-To: shankerwangmiao@gmail.com
 
 From: Miao Wang <shankerwangmiao@gmail.com>
 
-When the bmc resets, the recovery procedure require to reconfigure the
-parent device. The driver assumes that the parent device should be LS7A.
-Add a sanity check on initialization to ensure this and prevent from
-accidentally operating on non-LS7A ports.
+When the device is being removeed, the work queue should be canceled to
+avoid any pending work to be executed after the device is removed.
 
 Fixes: d952bba3fbb5 ("mfd: ls2kbmc: Add Loongson-2K BMC reset function support")
 Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
 ---
- drivers/mfd/ls2k-bmc-core.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ drivers/mfd/ls2k-bmc-core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
-index fc9695eedd3662ac92ff116811bb07bff1c994ea..a9a30611dde9e31cd86ff67b1d6e02bf67b34755 100644
+index e12f2ca2fbef360ceda14ee6fc64f500e4944120..e7bebfe696ac4554eb6283279811a27ed865ab73 100644
 --- a/drivers/mfd/ls2k-bmc-core.c
 +++ b/drivers/mfd/ls2k-bmc-core.c
-@@ -35,6 +35,15 @@
- #define LS2K_IPMI3_RES_START		(LS2K_IPMI2_RES_START + LS2K_IPMI_RES_SIZE)
- #define LS2K_IPMI4_RES_START		(LS2K_IPMI3_RES_START + LS2K_IPMI_RES_SIZE)
- 
-+/* LS7A port Device IDs */
-+#define DEV_LS7A1K_PCIE_PORT0	0x7a09
-+#define DEV_LS7A1K_PCIE_PORT1	0x7a19
-+#define DEV_LS7A1K_PCIE_PORT2	0x7a29
-+#define DEV_LS7A2K_PCIE_PORT0	0x7a39
-+#define DEV_LS7A2K_PCIE_PORT1	0x7a49
-+#define DEV_LS7A2K_PCIE_PORT2	0x7a59
-+#define DEV_LS7A2K_PCIE_PORT3	0x7a69
-+
- #define LS7A_PCI_CFG_SIZE		0x100
- 
- /* LS7A bridge registers */
-@@ -477,6 +486,24 @@ static int ls2k_bmc_parse_mode(struct pci_dev *pdev, struct simplefb_platform_da
- 	return ret;
+@@ -375,6 +375,12 @@ static void ls2k_bmc_save_pci_data(struct pci_dev *pdev, struct ls2k_bmc_ddata *
+ 	pci_read_config_dword(pdev, PCI_INTERRUPT_LINE, &ddata->bmc_pci_data.interrupt_line);
  }
  
-+static const struct pci_device_id ls7a_ports[] = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A1K_PCIE_PORT0) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A1K_PCIE_PORT1) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A1K_PCIE_PORT2) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A2K_PCIE_PORT0) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A2K_PCIE_PORT1) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A2K_PCIE_PORT2) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_LOONGSON, DEV_LS7A2K_PCIE_PORT3) },
-+	{ }
-+};
-+
-+static bool ls2k_check_parent(struct pci_dev *dev)
++static void ls2k_bmc_cancel_wq(void *data)
 +{
-+	struct pci_dev *parent = dev->bus->self;
-+
-+	return parent && pci_match_id(ls7a_ports, parent) != NULL;
++	struct ls2k_bmc_ddata *ddata = data;
++	(void) cancel_work_sync(&ddata->bmc_reset_work);
 +}
 +
- static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ static int ls2k_bmc_init(struct ls2k_bmc_ddata *ddata)
  {
- 	struct simplefb_platform_data pd;
-@@ -488,6 +515,11 @@ static int ls2k_bmc_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 	if (ret)
- 		return ret;
+ 	struct pci_dev *pdev = to_pci_dev(ddata->dev);
+@@ -385,6 +391,10 @@ static int ls2k_bmc_init(struct ls2k_bmc_ddata *ddata)
  
-+	if (!ls2k_check_parent(dev)) {
-+		dev_err(&dev->dev, "Expected to be connected to LS7A PCI-E port\n");
-+		return -ENODEV;
-+	}
+ 	INIT_WORK(&ddata->bmc_reset_work, ls2k_bmc_events_fn);
+ 
++	ret = devm_add_action_or_reset(ddata->dev, ls2k_bmc_cancel_wq, ddata);
++	if (ret)
++		return ret;
 +
- 	ddata = devm_kzalloc(&dev->dev, sizeof(*ddata), GFP_KERNEL);
- 	if (!ddata)
- 		return -ENOMEM;
+ 	ret = devm_request_irq(&pdev->dev, pdev->irq, ls2k_bmc_interrupt,
+ 			       IRQF_SHARED | IRQF_TRIGGER_FALLING, "ls2kbmc pcie", ddata);
+ 	if (ret) {
 
 -- 
 2.49.0
