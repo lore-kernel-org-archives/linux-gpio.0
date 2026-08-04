@@ -1,309 +1,153 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A564446EC;
-	Tue,  4 Aug 2026 10:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BA344AB79
+	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 10:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785837634; cv=none; b=ViLlp5l06Bu++QpKYdNQg7reTIBBERIWu2A7/X0Dhmx72D02cELK04RnZM8F7vWafwvCklOOklLEToI2eFP1VOeKXFLkdnYR95abapF70L/JS3cIaX9kd964Li5Ad5oz4oVlN8mwwlinanX2ovWMSAMThjmw96pdF1JHE952iYs=
+	t=1785838804; cv=none; b=JQTon5Yn2HRGCvi9Q5MehY09VGMNLot4q2ZH6d7Vs+2O714zePp4wRp91J0WYFil8gqZkIPtIrabCiwiE1I+IciBJs2l/SeQAUMAh+9xOaAdOYcnFD5anVg2spR/cwvOwg6IZMCzqWQ20TzqtQlSIiyYCA93u5IWWqzEU73dbns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785837634; c=relaxed/simple;
-	bh=OSI0p4IYsahj3xpwmQxjzteg9wplXjq/9qYMa+3h4CU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GEd2058PBHJPrx930UnwBjZ8BFkS94rGZQFktFs4BcHpsQ/YGXcD4BV7qPo0P0Y0+pj97fN/iZ5bFHnnm5gfey5SYOQSEhyY7vl9FlvPLlVQi6zwxE15DR7Qx5tP8IiZyQzOnG6udiKm7gBBju3uA5rJFg0ZuVzB9644uhSxRho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A3DUazlq; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1785838804; c=relaxed/simple;
+	bh=W0VsvBw4erS62StCAwFbLIw6VY59rs3FwUtxsXp2c1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=a2Y7O2+8/MtB9M9MbFn59isQAk9koWVJarBaM3iv1xyD29ntIyrP2OYvc32Lx+hYS8oG6XMXGU6xfSUWj4y+kjtNJxDa6kD0QgfKoBtc2QwjRBtpX5E7S6+pht6amCVpmOVMmd8sX5QSah3k1Lv3z8bbID1rnhm/HL4RNFKDdBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MQajXf89; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A3DUazlq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1785837632; x=1817373632;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=OSI0p4IYsahj3xpwmQxjzteg9wplXjq/9qYMa+3h4CU=;
-  b=A3DUazlqW6VvaE1ZS+g2oh1A0mPadgB3mOoFpnV2L3OrptA7p/ZNr6xq
-   3cq1dx0RE7voS21IqSOwH1dLAMJtmnp0YSNH2wNXCt/stDI2ZlmUxcg8w
-   qTnbpzMKVFsm+I4OAQchBywjjxs+C4VWq2PDC5ROr14ERoUlNlpu9u+z+
-   az8YTK0j5N7VcAVPway/RGZEaQmXGqj56RFjzCdxKCLiYFI6CzmRU0gHA
-   zX++XKlCbrhNqEEGkl1RDp6eGWJ6tWYKhtalNXDk6vgwVPIxTO463+9jY
-   L1l/Xz8JipsJdwlj0ypONnOhwvaZIUNjy225xOfTJziPOxffCadf86xLW
-   Q==;
-X-CSE-ConnectionGUID: 5pctjktSTci161k8vZXJow==
-X-CSE-MsgGUID: 42HRVBD+QayORnfXHekPsQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11864"; a="85515311"
-X-IronPort-AV: E=Sophos;i="6.25,204,1779174000"; 
-   d="scan'208";a="85515311"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2026 03:00:31 -0700
-X-CSE-ConnectionGUID: 8b8iVbRcQLGsr3MkG4bsRw==
-X-CSE-MsgGUID: I03EpEgmThSKr0cJ9bsiAw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,204,1779174000"; 
-   d="scan'208";a="265717849"
-Received: from junjie-desk-dev.bj.intel.com (HELO junjie-desk-dev.tail2c02c1.ts.net) ([10.238.152.71])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2026 03:00:29 -0700
-From: Junjie Cao <junjie.cao@intel.com>
-To: Bartosz Golaszewski <brgl@kernel.org>,
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MQajXf89"
+Date: Tue, 4 Aug 2026 13:19:43 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1785838799; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type; bh=59bV0VTFOGjwq0yxRhupbuwjdHtO+zfKFhfxls/eC1w=;
+	b=MQajXf89w0T5db6AJd9zx//7rK725ZHKv5Ok+6Bjr62pPw7N17z3N5RCH0aPmCPXoJVyu+
+	NlBiKSyGDQ3ZaGHIvY4YbkDVMDiqwZSq6qEyCkomAIabtYiXScS3prTWPVYTg3NpdPmNtD
+	DMfwz52CyuLOzwJb9MUA2Ko0LJLzDy0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Matti Vaittinen <matti.vaittinen@linux.dev>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <matti.vaittinen@linux.dev>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
 	Linus Walleij <linusw@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>
-Cc: Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>,
-	Grant Likely <grant.likely@secretlab.ca>,
-	sashiko-reviews@lists.linux.dev,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sashiko-bot <sashiko-bot@kernel.org>
-Subject: [PATCH] gpio: ml-ioh: share the register lock across channels
-Date: Tue,  4 Aug 2026 17:59:35 +0800
-Message-ID: <20260804095935.2132215-1-junjie.cao@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAD++jLkAjQG7hFsdX+dy8wZUoKKDCaOzMD0EJ0nn3gYmaEOJDw@mail.gmail.com>
-References: <CAD++jLkAjQG7hFsdX+dy8wZUoKKDCaOzMD0EJ0nn3gYmaEOJDw@mail.gmail.com>
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	mfd@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [PATCH v2 00/10] Support ROHM BD73800
+Message-ID: <cover.1785838584.git.mazziesaccount@gmail.com>
+Reply-To: Matti Vaittinen <mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VHhze1AYksE9JiYU"
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-Suspend and resume hold channel 0's lock while saving and restoring
-registers for all eight channels. Code paths using the other seven locks
-can therefore run concurrently with PM.
+--VHhze1AYksE9JiYU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Use one controller-wide lock shared by all channels.
+Add support for the ROHM BD73800 PMIC and compatibles.
 
-Fixes: b490fa0bf86e ("gpio-ml-ioh: Fix suspend/resume issue")
-Reported-by: sashiko-bot <sashiko-bot@kernel.org>
-Link: https://lore.kernel.org/r/20260731033956.EE6F61F000E9@smtp.kernel.org
-Signed-off-by: Junjie Cao <junjie.cao@intel.com>
+The ROHM BD73800 is a power management IC which integrates 8 BUCKs and 4
+LDOs. There is also an ADC and operation amplifier intended for current
+/ temperature measurement and accumulation. RTC and 32.768 kHz clock
+gate are also included. The PMIC can be customized via OTP and it has
+options for operating as a main PMIC in multi-PMIC installation. Some
+of the pins can also be used for GPO or GPI (including interrupt support).
+
+There are also ROHM BD71851 and BD71885 PMICs out there. These are, from
+the SW-perspective, similar to the BD73800. There is only some different
+default values and OTP settings. The driver should be able to handle them
+just fine.
+
+Revision history:
+
+v1 =3D> v2:
+ - Rebased on regulator/for-7.3 as it carries dependency:
+   f29a8bf6fde1 ("regulator: dt-bindings: ROHM PMIC state-machine voltages")
+ - dt-bindings: Various fixes, split generic stuff to own files.
+ - gpio: Styling, return -ENODEV if no GPIOs found
+ - MFD: Styling
+ - regulator: Simplify dt-reading
+ More accurate change-log in individual patches.
+
 ---
- drivers/gpio/gpio-ml-ioh.c | 69 ++++++++++++++++++++------------------
- 1 file changed, 37 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ml-ioh.c b/drivers/gpio/gpio-ml-ioh.c
-index 0a9d34b7636e..391188c0f2c2 100644
---- a/drivers/gpio/gpio-ml-ioh.c
-+++ b/drivers/gpio/gpio-ml-ioh.c
-@@ -73,7 +73,7 @@ struct ioh_gpio_reg_data {
-  * @gpio_use_sel:		Save GPIO_USE_SEL1~4 register for PM
-  * @ch:				Indicate GPIO channel
-  * @irq_base:		Save base of IRQ number for interrupt
-- * @spinlock:		Used for register access protection
-+ * @spinlock:		Shared register access lock
-  */
- struct ioh_gpio {
- 	void __iomem *base;
-@@ -84,7 +84,12 @@ struct ioh_gpio {
- 	u32 gpio_use_sel;
- 	int ch;
- 	int irq_base;
-+	raw_spinlock_t *spinlock;
-+};
-+
-+struct ioh_gpio_device {
- 	raw_spinlock_t spinlock;
-+	struct ioh_gpio chip[8];
- };
- 
- static const int num_ports[] = {6, 12, 16, 16, 15, 16, 16, 12};
-@@ -95,7 +100,7 @@ static int ioh_gpio_set(struct gpio_chip *gpio, unsigned int nr, int val)
- 	struct ioh_gpio *chip =	gpiochip_get_data(gpio);
- 	unsigned long flags;
- 
--	raw_spin_lock_irqsave(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(chip->spinlock, flags);
- 	reg_val = ioread32(&chip->reg->regs[chip->ch].po);
- 	if (val)
- 		reg_val |= BIT(nr);
-@@ -103,7 +108,7 @@ static int ioh_gpio_set(struct gpio_chip *gpio, unsigned int nr, int val)
- 		reg_val &= ~BIT(nr);
- 
- 	iowrite32(reg_val, &chip->reg->regs[chip->ch].po);
--	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_unlock_irqrestore(chip->spinlock, flags);
- 
- 	return 0;
- }
-@@ -123,7 +128,7 @@ static int ioh_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
- 	u32 reg_val;
- 	unsigned long flags;
- 
--	raw_spin_lock_irqsave(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(chip->spinlock, flags);
- 	pm = ioread32(&chip->reg->regs[chip->ch].pm);
- 	pm &= BIT(num_ports[chip->ch]) - 1;
- 	pm |= BIT(nr);
-@@ -136,7 +141,7 @@ static int ioh_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
- 		reg_val &= ~BIT(nr);
- 	iowrite32(reg_val, &chip->reg->regs[chip->ch].po);
- 
--	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_unlock_irqrestore(chip->spinlock, flags);
- 
- 	return 0;
- }
-@@ -147,12 +152,12 @@ static int ioh_gpio_direction_input(struct gpio_chip *gpio, unsigned nr)
- 	u32 pm;
- 	unsigned long flags;
- 
--	raw_spin_lock_irqsave(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(chip->spinlock, flags);
- 	pm = ioread32(&chip->reg->regs[chip->ch].pm);
- 	pm &= BIT(num_ports[chip->ch]) - 1;
- 	pm &= ~BIT(nr);
- 	iowrite32(pm, &chip->reg->regs[chip->ch].pm);
--	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_unlock_irqrestore(chip->spinlock, flags);
- 
- 	return 0;
- }
-@@ -256,7 +261,7 @@ static int ioh_irq_type(struct irq_data *d, unsigned int type)
- 	dev_dbg(chip->dev, "%s:irq=%d type=%d ch=%d pos=%d type=%d\n",
- 		__func__, irq, type, ch, im_pos, type);
- 
--	raw_spin_lock_irqsave(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(chip->spinlock, flags);
- 
- 	switch (type) {
- 	case IRQ_TYPE_EDGE_RISING:
-@@ -296,7 +301,7 @@ static int ioh_irq_type(struct irq_data *d, unsigned int type)
- 	ien = ioread32(&chip->reg->regs[chip->ch].ien);
- 	iowrite32(ien | BIT(ch), &chip->reg->regs[chip->ch].ien);
- end:
--	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_unlock_irqrestore(chip->spinlock, flags);
- 
- 	return 0;
- }
-@@ -326,11 +331,11 @@ static void ioh_irq_disable(struct irq_data *d)
- 	unsigned long flags;
- 	u32 ien;
- 
--	raw_spin_lock_irqsave(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(chip->spinlock, flags);
- 	ien = ioread32(&chip->reg->regs[chip->ch].ien);
- 	ien &= ~BIT(d->irq - chip->irq_base);
- 	iowrite32(ien, &chip->reg->regs[chip->ch].ien);
--	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_unlock_irqrestore(chip->spinlock, flags);
- }
- 
- static void ioh_irq_enable(struct irq_data *d)
-@@ -340,11 +345,11 @@ static void ioh_irq_enable(struct irq_data *d)
- 	unsigned long flags;
- 	u32 ien;
- 
--	raw_spin_lock_irqsave(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(chip->spinlock, flags);
- 	ien = ioread32(&chip->reg->regs[chip->ch].ien);
- 	ien |= BIT(d->irq - chip->irq_base);
- 	iowrite32(ien, &chip->reg->regs[chip->ch].ien);
--	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_unlock_irqrestore(chip->spinlock, flags);
- }
- 
- static irqreturn_t ioh_gpio_handler(int irq, void *dev_id)
-@@ -407,8 +412,8 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
- 	int ret;
- 	int i, j;
- 	struct ioh_gpio *chip;
-+	struct ioh_gpio_device *priv;
- 	void __iomem *base;
--	void *chip_save;
- 	int irq_base;
- 
- 	ret = pcim_enable_device(pdev);
-@@ -429,18 +434,18 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
- 		return -ENOMEM;
- 	}
- 
--	chip_save = devm_kcalloc(dev, 8, sizeof(*chip), GFP_KERNEL);
--	if (chip_save == NULL) {
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
- 		return -ENOMEM;
--	}
- 
--	chip = chip_save;
-+	raw_spin_lock_init(&priv->spinlock);
-+	chip = priv->chip;
- 	for (i = 0; i < 8; i++, chip++) {
- 		chip->dev = dev;
- 		chip->base = base;
- 		chip->reg = chip->base;
- 		chip->ch = i;
--		raw_spin_lock_init(&chip->spinlock);
-+		chip->spinlock = &priv->spinlock;
- 		ioh_gpio_setup(chip, num_ports[i]);
- 		ret = devm_gpiochip_add_data(dev, &chip->gpio, chip);
- 		if (ret) {
-@@ -449,7 +454,7 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
- 		}
- 	}
- 
--	chip = chip_save;
-+	chip = priv->chip;
- 	for (j = 0; j < 8; j++, chip++) {
- 		irq_base = devm_irq_alloc_descs(dev, -1, IOH_IRQ_BASE,
- 						num_ports[j], NUMA_NO_NODE);
-@@ -466,7 +471,7 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
- 			return ret;
- 	}
- 
--	chip = chip_save;
-+	chip = priv->chip;
- 	ret = devm_request_irq(dev, pdev->irq, ioh_gpio_handler,
- 			       IRQF_SHARED, KBUILD_MODNAME, chip);
- 	if (ret != 0) {
-@@ -474,33 +479,33 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
- 		return ret;
- 	}
- 
--	pci_set_drvdata(pdev, chip);
-+	pci_set_drvdata(pdev, priv);
- 
- 	return 0;
- }
- 
- static int ioh_gpio_suspend(struct device *dev)
- {
--	struct ioh_gpio *chip = dev_get_drvdata(dev);
-+	struct ioh_gpio_device *priv = dev_get_drvdata(dev);
- 	unsigned long flags;
- 
--	raw_spin_lock_irqsave(&chip->spinlock, flags);
--	ioh_gpio_save_reg_conf(chip);
--	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(&priv->spinlock, flags);
-+	ioh_gpio_save_reg_conf(priv->chip);
-+	raw_spin_unlock_irqrestore(&priv->spinlock, flags);
- 
- 	return 0;
- }
- 
- static int ioh_gpio_resume(struct device *dev)
- {
--	struct ioh_gpio *chip = dev_get_drvdata(dev);
-+	struct ioh_gpio_device *priv = dev_get_drvdata(dev);
- 	unsigned long flags;
- 
--	raw_spin_lock_irqsave(&chip->spinlock, flags);
--	iowrite32(0x01, &chip->reg->srst);
--	iowrite32(0x00, &chip->reg->srst);
--	ioh_gpio_restore_reg_conf(chip);
--	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
-+	raw_spin_lock_irqsave(&priv->spinlock, flags);
-+	iowrite32(0x01, &priv->chip->reg->srst);
-+	iowrite32(0x00, &priv->chip->reg->srst);
-+	ioh_gpio_restore_reg_conf(priv->chip);
-+	raw_spin_unlock_irqrestore(&priv->spinlock, flags);
- 
- 	return 0;
- }
+Matti Vaittinen (10):
+  dt-bindings: mfd: common ROHM PMIC properties
+  dt-bindings: rohm,bd*: Ref common ROHM bindings
+  dt-bindings: regulator: ROHM BD73800 regulators
+  dt-bindings: mfd: ROHM BD73800 PMIC
+  mfd: Support for ROHM BD73800 PMIC core
+  rtc: bd70528: Support RTC on ROHM BD73800
+  regulator: bd71828: Support ROHM BD73800
+  clk: bd718x7: Support ROHM BD73800
+  gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
+  MAINTAINERS: Add ROHM BD73800 PMIC files
 
-base-commit: a02b8950d619123da64f69b70fe1dadef217dfe4
-prerequisite-patch-id: cebc220b508b7d9216be1fe01348b9989f0b957e
--- 
-2.43.0
+ .../bindings/mfd/rohm,bd71815-pmic.yaml       |   9 +-
+ .../bindings/mfd/rohm,bd71828-pmic.yaml       |   9 +-
+ .../bindings/mfd/rohm,bd72720-pmic.yaml       |  29 +-
+ .../bindings/mfd/rohm,bd73800-pmic.yaml       | 218 +++++++
+ .../bindings/mfd/rohm,pmic-pins.yaml          |  72 +++
+ .../regulator/rohm,bd73800-regulator.yaml     |  99 ++++
+ MAINTAINERS                                   |   2 +
+ drivers/clk/clk-bd718x7.c                     |   8 +
+ drivers/gpio/Kconfig                          |  11 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-bd73800.c                   | 227 +++++++
+ drivers/mfd/Kconfig                           |  15 +-
+ drivers/mfd/rohm-bd71828.c                    | 147 ++++-
+ drivers/regulator/Kconfig                     |   4 +-
+ drivers/regulator/bd71828-regulator.c         | 558 +++++++++++++++++-
+ drivers/rtc/rtc-bd70528.c                     |   8 +
+ include/linux/mfd/rohm-bd73800.h              | 307 ++++++++++
+ include/linux/mfd/rohm-generic.h              |   1 +
+ 18 files changed, 1679 insertions(+), 46 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd73800-pmic=
+=2Eyaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,pmic-pins.ya=
+ml
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd7380=
+0-regulator.yaml
+ create mode 100644 drivers/gpio/gpio-bd73800.c
+ create mode 100644 include/linux/mfd/rohm-bd73800.h
 
+
+base-commit: 36c3ea84289913d16dd2ed783534193c957055b9
+--=20
+2.55.0
+
+
+--VHhze1AYksE9JiYU
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmpxvLYACgkQeFA3/03a
+ocW5HQgAlH75SLN8BaghMw7rYf5U9E5OPedQFEdQAj2bvP6pi2a0oh763U9YtSRZ
+QfAyxQwz7oEW7rvDT9sMY5A1DcNAo5rTCxeyFKJ1KeBiimdmB277fU2cpMzJ0Noh
+zYrxA2ttWRKa4vGfhxraIK0Z4IAHiL0wSOkH6bvDagXjaUVflGVSShS9xGur5hhY
+udrdU6DX1VAiphwBais1772pxrPuDYtx048OL1TZb9KmKyMX6XY5zEOi1LpvWfhL
+cXGA50TcS3+PLDDGGZF2n0+AYxdc2sL8IEYDJZwo5eWsJ19MdysbX4xWDzCz+NHY
+2G4KMK/9ZJxdjPekEoDWrzyH1P7AnQ==
+=+2F/
+-----END PGP SIGNATURE-----
+
+--VHhze1AYksE9JiYU--
