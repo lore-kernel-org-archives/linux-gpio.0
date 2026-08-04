@@ -1,166 +1,309 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698D843231B
-	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 09:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A564446EC;
+	Tue,  4 Aug 2026 10:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785836435; cv=none; b=bR6CkTAKwau2LattqCa2phzuh83lloeO4ZYJy4ZtZYYT8Kh/1qVZhjG2l4YgYId1Uw+nijWxiwYvwMvlQR5vGMSECtkVmvMsBuMwvSSp5OS5WwA/YEfG/Bwcrw1oYoUnIvW77LKN1iBWg/DshG5tmw4K9zlWx4zIVk2teT8nKak=
+	t=1785837634; cv=none; b=ViLlp5l06Bu++QpKYdNQg7reTIBBERIWu2A7/X0Dhmx72D02cELK04RnZM8F7vWafwvCklOOklLEToI2eFP1VOeKXFLkdnYR95abapF70L/JS3cIaX9kd964Li5Ad5oz4oVlN8mwwlinanX2ovWMSAMThjmw96pdF1JHE952iYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785836435; c=relaxed/simple;
-	bh=+tg4HihkjVnqg6IV94Lm31GvSa3PaWyc5O/YQHA4Dcg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=bxVUZstOrngPAxlo3b/hx4rk62Mc8oZrtiZ6Rxs8tAvy1hPtiwIwgsdfhdDPo6a5tOkTde195fwi94RukvkCrVSEveYpy8UwR1170kuP8UNNAgQ6KEblGLvr/lO0fFWVwfsyT6mWhqYXZLbHdKkSmKpgMz/7ducPXdCd0IVJr6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RcLjbGyE; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1785837634; c=relaxed/simple;
+	bh=OSI0p4IYsahj3xpwmQxjzteg9wplXjq/9qYMa+3h4CU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GEd2058PBHJPrx930UnwBjZ8BFkS94rGZQFktFs4BcHpsQ/YGXcD4BV7qPo0P0Y0+pj97fN/iZ5bFHnnm5gfey5SYOQSEhyY7vl9FlvPLlVQi6zwxE15DR7Qx5tP8IiZyQzOnG6udiKm7gBBju3uA5rJFg0ZuVzB9644uhSxRho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A3DUazlq; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcLjbGyE"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2cf4c37dbe6so5137375ad.2
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Aug 2026 02:40:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1785836432; x=1786441232; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=0KP7c64Yl9kvVeMhN4Vu6FcmRJHPM+FSMkVOBoxsZtQ=;
-        b=RcLjbGyECiBQri73C974Hecga5QwZJhR7cvmbyLTEPJfk6rht4jM9k1fSgN/5xIhhO
-         EqbAuXnq9nXMnYDvkWrL3yy88Zf46dGSugySYDBrI/9o12vi+E6hpSuMD8X9YCEc27NJ
-         JOT1egGrn8Qz7D+MKRMky0u6+iDt4kxQjuT/C/VABJtKyNksRn4s2FhhnV4qTT/Fw254
-         Q9KqDkPfOupRKGmnlosqAvgJAWKycgMPRlYp8cogasSwMW5R1idIPNCOMAfm0fL2Gzjs
-         YlD+rx2WxE3UDM6jvuoIQxW9qbhvAr7To6noO0yPqrc/q2eByf+Y2iiTLntpoG4/5Ex5
-         Eyhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785836432; x=1786441232;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=0KP7c64Yl9kvVeMhN4Vu6FcmRJHPM+FSMkVOBoxsZtQ=;
-        b=bG8+RYwbTeVWz1jMw+IVpGPA/19phezU4O3embUZgCr7CiMoGRrZRFqimXKvIKLxym
-         ciKwVqWkJ4Qgfma0AemSRUvDyZv9X6HszX5K60Rbja99b6lfZu5h01enDEOVmRdJF9iW
-         9D/AYALqMvDyl4aaqfReyBSqvKDho/pC7SbVGbItQ6h8KsrlbyKzNCJpDmMVJGhSYymX
-         bloW050rJyEIumpfewq1YX8oA2OjfXk64+VheBT7O1wiG0SR0WOKsP7ePW8NRuWjxxzc
-         8PMqu8Y+elWzBLgukd8zk9r9UeukvTtlG0helmrGicjC1bIsjIICq00ITm30XWNH9KPH
-         DFBg==
-X-Forwarded-Encrypted: i=1; AHgh+RoEIRW3AWcTl9ViMT36PoEIRTxkQGKfi9yl0Ofhto+Suiacz7Pf/wi/BIHaGXVy4qQhw0YEaIKSP11j@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyeOpDUVsgJ8gjc7aKKWlcY4wgIPqXjkn+KgaC43D3g6pRtjsm
-	0mEznBrSQE/xPQ1lXR/TlNcOb4N3QI+KzjTg6xR91xMONdNhocETpVZP
-X-Gm-Gg: AR+sD13Kmuo6TnspIrBWNbRNw0LF71OCFfWU8Nv0i/orXLKOvWn7sM3r/d+BQ+M164T
-	LTeKukpObtwi/t7Mko9FwDdwI73/njicFqqX++Dlru31aunpuxfwI9eZESFq3iTUI5COMvKQyrj
-	Gy17LzuBVZSDYBLysj1REeYkSFVAk9B5zTTtPK1LaAONqYuM5jo/F6tn2GyS7jnKi/8uEctaF2+
-	+Cp/C1nFu9WylVyvWLms8brwlwczrHT5D8KiSvigLjAAY4LGj+v3Kf0xyAIWuATADWLoCQJO4yZ
-	Y4AP6T8+Wg3iwXN2S5dCvGF4HjkpoTEqxzzA3tOor7Dmk7MkTSreo5WCFEgiGtXkmaKzhphII84
-	cuVQi7O9hZ6J+ym3ffCLr/b/KkileODvidwrv5SHQjUn8wAGM8F3Y/nCZVTQBDk/Vb2lbYSp6L0
-	Qx5pM9lCBRSwk31axPWil9JLaoUqYjBad1ij6h7bX4lLKGZH6m3s50DjjruJB6Q/TVPHgpTNH3U
-	TS+/mmJ8KQ=
-X-Received: by 2002:a17:902:c952:b0:2c7:ef84:c58e with SMTP id d9443c01a7336-2d0521bca53mr200300075ad.1.1785836432230;
-        Tue, 04 Aug 2026 02:40:32 -0700 (PDT)
-Received: from smtpclient.apple ([23.247.139.92])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d0aa013da4sm3898605ad.34.2026.08.04.02.40.27
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 04 Aug 2026 02:40:31 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A3DUazlq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1785837632; x=1817373632;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=OSI0p4IYsahj3xpwmQxjzteg9wplXjq/9qYMa+3h4CU=;
+  b=A3DUazlqW6VvaE1ZS+g2oh1A0mPadgB3mOoFpnV2L3OrptA7p/ZNr6xq
+   3cq1dx0RE7voS21IqSOwH1dLAMJtmnp0YSNH2wNXCt/stDI2ZlmUxcg8w
+   qTnbpzMKVFsm+I4OAQchBywjjxs+C4VWq2PDC5ROr14ERoUlNlpu9u+z+
+   az8YTK0j5N7VcAVPway/RGZEaQmXGqj56RFjzCdxKCLiYFI6CzmRU0gHA
+   zX++XKlCbrhNqEEGkl1RDp6eGWJ6tWYKhtalNXDk6vgwVPIxTO463+9jY
+   L1l/Xz8JipsJdwlj0ypONnOhwvaZIUNjy225xOfTJziPOxffCadf86xLW
+   Q==;
+X-CSE-ConnectionGUID: 5pctjktSTci161k8vZXJow==
+X-CSE-MsgGUID: 42HRVBD+QayORnfXHekPsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11864"; a="85515311"
+X-IronPort-AV: E=Sophos;i="6.25,204,1779174000"; 
+   d="scan'208";a="85515311"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2026 03:00:31 -0700
+X-CSE-ConnectionGUID: 8b8iVbRcQLGsr3MkG4bsRw==
+X-CSE-MsgGUID: I03EpEgmThSKr0cJ9bsiAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,204,1779174000"; 
+   d="scan'208";a="265717849"
+Received: from junjie-desk-dev.bj.intel.com (HELO junjie-desk-dev.tail2c02c1.ts.net) ([10.238.152.71])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2026 03:00:29 -0700
+From: Junjie Cao <junjie.cao@intel.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>
+Cc: Tomoya MORINAGA <tomoya-linux@dsn.okisemi.com>,
+	Grant Likely <grant.likely@secretlab.ca>,
+	sashiko-reviews@lists.linux.dev,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sashiko-bot <sashiko-bot@kernel.org>
+Subject: [PATCH] gpio: ml-ioh: share the register lock across channels
+Date: Tue,  4 Aug 2026 17:59:35 +0800
+Message-ID: <20260804095935.2132215-1-junjie.cao@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAD++jLkAjQG7hFsdX+dy8wZUoKKDCaOzMD0EJ0nn3gYmaEOJDw@mail.gmail.com>
+References: <CAD++jLkAjQG7hFsdX+dy8wZUoKKDCaOzMD0EJ0nn3gYmaEOJDw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.8\))
-Subject: Re: [PATCH RFC v5 5/7] ipmi: ls2k: Relax the dependency to its mfd
- driver
-From: Miao Wang <shankerwangmiao@gmail.com>
-In-Reply-To: <anD-LJYB-afdVAXN@mail.minyard.net>
-Date: Tue, 4 Aug 2026 17:40:14 +0800
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>,
- Chong Qiao <qiaochong@loongson.cn>,
- Lee Jones <lee@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>,
- Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Xi Ruoyao <xry111@xry111.site>,
- WANG Xuerui <kernel@xen0n.name>,
- Yinbo Zhu <zhuyinbo@loongson.cn>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>,
- mfd@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org,
- openipmi-developer@lists.sourceforge.net
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2E268CDE-1D85-4611-BFF7-F74DD36132AB@gmail.com>
-References: <20260804-ls2kbmc-mod-v5-0-e6bc5cdd9a93@gmail.com>
- <20260804-ls2kbmc-mod-v5-5-e6bc5cdd9a93@gmail.com>
- <anD-LJYB-afdVAXN@mail.minyard.net>
-To: corey@minyard.net
-X-Mailer: Apple Mail (2.3826.700.81.1.8)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Suspend and resume hold channel 0's lock while saving and restoring
+registers for all eight channels. Code paths using the other seven locks
+can therefore run concurrently with PM.
 
-> 2026=E5=B9=B48=E6=9C=884=E6=97=A5 04:46=EF=BC=8CCorey Minyard =
-<corey@minyard.net> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Tue, Aug 04, 2026 at 12:55:53AM +0800, Miao Wang via B4 Relay =
-wrote:
->> From: Miao Wang <shankerwangmiao@gmail.com>
->>=20
->> There is no strong dependency between the IPMI driver and its mfd
->> driver. Although the IPMI driver will not work without the mfd =
-driver,
->> it is not a hard dependency. The IPMI driver can actually be compiled
->> without the mfd driver, and it will just fail to probe. When the mfd
->> driver is loaded, the IPMI driver will probe successfully. Therefore,
->> the dependency of the IPMI driver on its mfd driver should be relaxed
->> to "imply" from "select". This will allow the mfd driver to be =
-compiled
->> as a module and the IPMI driver to be compiled as a part of the =
-ipmi_si
->> module. The adjustment to Kconfig for the mfd driver will be =
-introduced
->> in the later patch in this series.
->=20
-> I don't think that's what "imply" is for.  Imply seems to be for if
-> there is another subsystem that can use this subsystem, but doesn't
-> require it to exist.
->=20
-> For instance:
->=20
-> config SENSORS_NPCM7XX
->        tristate "Nuvoton NPCM750 and compatible PWM and Fan =
-controllers"
->        imply THERMAL
->=20
-> The fan controller will work fine without the thermal subsystem; you
-> can control the fan speed without it.  But the thermal subsystem is =
-the
-> logical user of this.  I looked at many of these things like this.
->=20
-> In the IPMI case, the IPMI driver is useless without the mfd part.  So
-> there's no point in compiling the IPMI part of this if the mfd part is
-> not there.
->=20
-> I could be wrong, but I can't see why you would want to do this.
+Use one controller-wide lock shared by all channels.
 
-The mfd part and the IPMI part loosely depend on each other. Without the
-IPMI part, the mfd part can still work to handle the display part.
-Without the mfd part, the IPMI part is indeed useless, but it will not
-generate compiling errors or other runtime errors. In the runtime,
-the IPMI part can be actually loaded earlier than the mfd part. As a
-result, their dependency is not that strong.
+Fixes: b490fa0bf86e ("gpio-ml-ioh: Fix suspend/resume issue")
+Reported-by: sashiko-bot <sashiko-bot@kernel.org>
+Link: https://lore.kernel.org/r/20260731033956.EE6F61F000E9@smtp.kernel.org
+Signed-off-by: Junjie Cao <junjie.cao@intel.com>
+---
+ drivers/gpio/gpio-ml-ioh.c | 69 ++++++++++++++++++++------------------
+ 1 file changed, 37 insertions(+), 32 deletions(-)
 
-The reason why I want to change this is that "select" here requires the
-mfd part should also be compiled as built-in (i.e. =3D y), since the
-type of the configure entry IPMI_LS2K is bool. However, I cannot see
-there is no other reason preventing the mfd driver from compiling as
-a module. This patch series will introduce a minor fix, after which
-the mfd driver will be capable to be compiled as a module.
+diff --git a/drivers/gpio/gpio-ml-ioh.c b/drivers/gpio/gpio-ml-ioh.c
+index 0a9d34b7636e..391188c0f2c2 100644
+--- a/drivers/gpio/gpio-ml-ioh.c
++++ b/drivers/gpio/gpio-ml-ioh.c
+@@ -73,7 +73,7 @@ struct ioh_gpio_reg_data {
+  * @gpio_use_sel:		Save GPIO_USE_SEL1~4 register for PM
+  * @ch:				Indicate GPIO channel
+  * @irq_base:		Save base of IRQ number for interrupt
+- * @spinlock:		Used for register access protection
++ * @spinlock:		Shared register access lock
+  */
+ struct ioh_gpio {
+ 	void __iomem *base;
+@@ -84,7 +84,12 @@ struct ioh_gpio {
+ 	u32 gpio_use_sel;
+ 	int ch;
+ 	int irq_base;
++	raw_spinlock_t *spinlock;
++};
++
++struct ioh_gpio_device {
+ 	raw_spinlock_t spinlock;
++	struct ioh_gpio chip[8];
+ };
+ 
+ static const int num_ports[] = {6, 12, 16, 16, 15, 16, 16, 12};
+@@ -95,7 +100,7 @@ static int ioh_gpio_set(struct gpio_chip *gpio, unsigned int nr, int val)
+ 	struct ioh_gpio *chip =	gpiochip_get_data(gpio);
+ 	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(chip->spinlock, flags);
+ 	reg_val = ioread32(&chip->reg->regs[chip->ch].po);
+ 	if (val)
+ 		reg_val |= BIT(nr);
+@@ -103,7 +108,7 @@ static int ioh_gpio_set(struct gpio_chip *gpio, unsigned int nr, int val)
+ 		reg_val &= ~BIT(nr);
+ 
+ 	iowrite32(reg_val, &chip->reg->regs[chip->ch].po);
+-	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_unlock_irqrestore(chip->spinlock, flags);
+ 
+ 	return 0;
+ }
+@@ -123,7 +128,7 @@ static int ioh_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
+ 	u32 reg_val;
+ 	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(chip->spinlock, flags);
+ 	pm = ioread32(&chip->reg->regs[chip->ch].pm);
+ 	pm &= BIT(num_ports[chip->ch]) - 1;
+ 	pm |= BIT(nr);
+@@ -136,7 +141,7 @@ static int ioh_gpio_direction_output(struct gpio_chip *gpio, unsigned nr,
+ 		reg_val &= ~BIT(nr);
+ 	iowrite32(reg_val, &chip->reg->regs[chip->ch].po);
+ 
+-	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_unlock_irqrestore(chip->spinlock, flags);
+ 
+ 	return 0;
+ }
+@@ -147,12 +152,12 @@ static int ioh_gpio_direction_input(struct gpio_chip *gpio, unsigned nr)
+ 	u32 pm;
+ 	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(chip->spinlock, flags);
+ 	pm = ioread32(&chip->reg->regs[chip->ch].pm);
+ 	pm &= BIT(num_ports[chip->ch]) - 1;
+ 	pm &= ~BIT(nr);
+ 	iowrite32(pm, &chip->reg->regs[chip->ch].pm);
+-	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_unlock_irqrestore(chip->spinlock, flags);
+ 
+ 	return 0;
+ }
+@@ -256,7 +261,7 @@ static int ioh_irq_type(struct irq_data *d, unsigned int type)
+ 	dev_dbg(chip->dev, "%s:irq=%d type=%d ch=%d pos=%d type=%d\n",
+ 		__func__, irq, type, ch, im_pos, type);
+ 
+-	raw_spin_lock_irqsave(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(chip->spinlock, flags);
+ 
+ 	switch (type) {
+ 	case IRQ_TYPE_EDGE_RISING:
+@@ -296,7 +301,7 @@ static int ioh_irq_type(struct irq_data *d, unsigned int type)
+ 	ien = ioread32(&chip->reg->regs[chip->ch].ien);
+ 	iowrite32(ien | BIT(ch), &chip->reg->regs[chip->ch].ien);
+ end:
+-	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_unlock_irqrestore(chip->spinlock, flags);
+ 
+ 	return 0;
+ }
+@@ -326,11 +331,11 @@ static void ioh_irq_disable(struct irq_data *d)
+ 	unsigned long flags;
+ 	u32 ien;
+ 
+-	raw_spin_lock_irqsave(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(chip->spinlock, flags);
+ 	ien = ioread32(&chip->reg->regs[chip->ch].ien);
+ 	ien &= ~BIT(d->irq - chip->irq_base);
+ 	iowrite32(ien, &chip->reg->regs[chip->ch].ien);
+-	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_unlock_irqrestore(chip->spinlock, flags);
+ }
+ 
+ static void ioh_irq_enable(struct irq_data *d)
+@@ -340,11 +345,11 @@ static void ioh_irq_enable(struct irq_data *d)
+ 	unsigned long flags;
+ 	u32 ien;
+ 
+-	raw_spin_lock_irqsave(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(chip->spinlock, flags);
+ 	ien = ioread32(&chip->reg->regs[chip->ch].ien);
+ 	ien |= BIT(d->irq - chip->irq_base);
+ 	iowrite32(ien, &chip->reg->regs[chip->ch].ien);
+-	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_unlock_irqrestore(chip->spinlock, flags);
+ }
+ 
+ static irqreturn_t ioh_gpio_handler(int irq, void *dev_id)
+@@ -407,8 +412,8 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
+ 	int ret;
+ 	int i, j;
+ 	struct ioh_gpio *chip;
++	struct ioh_gpio_device *priv;
+ 	void __iomem *base;
+-	void *chip_save;
+ 	int irq_base;
+ 
+ 	ret = pcim_enable_device(pdev);
+@@ -429,18 +434,18 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
+ 		return -ENOMEM;
+ 	}
+ 
+-	chip_save = devm_kcalloc(dev, 8, sizeof(*chip), GFP_KERNEL);
+-	if (chip_save == NULL) {
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
+ 		return -ENOMEM;
+-	}
+ 
+-	chip = chip_save;
++	raw_spin_lock_init(&priv->spinlock);
++	chip = priv->chip;
+ 	for (i = 0; i < 8; i++, chip++) {
+ 		chip->dev = dev;
+ 		chip->base = base;
+ 		chip->reg = chip->base;
+ 		chip->ch = i;
+-		raw_spin_lock_init(&chip->spinlock);
++		chip->spinlock = &priv->spinlock;
+ 		ioh_gpio_setup(chip, num_ports[i]);
+ 		ret = devm_gpiochip_add_data(dev, &chip->gpio, chip);
+ 		if (ret) {
+@@ -449,7 +454,7 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
+ 		}
+ 	}
+ 
+-	chip = chip_save;
++	chip = priv->chip;
+ 	for (j = 0; j < 8; j++, chip++) {
+ 		irq_base = devm_irq_alloc_descs(dev, -1, IOH_IRQ_BASE,
+ 						num_ports[j], NUMA_NO_NODE);
+@@ -466,7 +471,7 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
+ 			return ret;
+ 	}
+ 
+-	chip = chip_save;
++	chip = priv->chip;
+ 	ret = devm_request_irq(dev, pdev->irq, ioh_gpio_handler,
+ 			       IRQF_SHARED, KBUILD_MODNAME, chip);
+ 	if (ret != 0) {
+@@ -474,33 +479,33 @@ static int ioh_gpio_probe(struct pci_dev *pdev,
+ 		return ret;
+ 	}
+ 
+-	pci_set_drvdata(pdev, chip);
++	pci_set_drvdata(pdev, priv);
+ 
+ 	return 0;
+ }
+ 
+ static int ioh_gpio_suspend(struct device *dev)
+ {
+-	struct ioh_gpio *chip = dev_get_drvdata(dev);
++	struct ioh_gpio_device *priv = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&chip->spinlock, flags);
+-	ioh_gpio_save_reg_conf(chip);
+-	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(&priv->spinlock, flags);
++	ioh_gpio_save_reg_conf(priv->chip);
++	raw_spin_unlock_irqrestore(&priv->spinlock, flags);
+ 
+ 	return 0;
+ }
+ 
+ static int ioh_gpio_resume(struct device *dev)
+ {
+-	struct ioh_gpio *chip = dev_get_drvdata(dev);
++	struct ioh_gpio_device *priv = dev_get_drvdata(dev);
+ 	unsigned long flags;
+ 
+-	raw_spin_lock_irqsave(&chip->spinlock, flags);
+-	iowrite32(0x01, &chip->reg->srst);
+-	iowrite32(0x00, &chip->reg->srst);
+-	ioh_gpio_restore_reg_conf(chip);
+-	raw_spin_unlock_irqrestore(&chip->spinlock, flags);
++	raw_spin_lock_irqsave(&priv->spinlock, flags);
++	iowrite32(0x01, &priv->chip->reg->srst);
++	iowrite32(0x00, &priv->chip->reg->srst);
++	ioh_gpio_restore_reg_conf(priv->chip);
++	raw_spin_unlock_irqrestore(&priv->spinlock, flags);
+ 
+ 	return 0;
+ }
 
-When the type of MFD_LS2K_BMC_CORE is changed to tristate, the "select"
-here will prevent selecting =3Dm for MFD_LS2K_BMC_CORE. I thus believe
-that "select" here should be also changed.
+base-commit: a02b8950d619123da64f69b70fe1dadef217dfe4
+prerequisite-patch-id: cebc220b508b7d9216be1fe01348b9989f0b957e
+-- 
+2.43.0
 
-Any suggestions on declaring the dependency of the both parts?
-
-Cheers,
-
-Miao Wang=
