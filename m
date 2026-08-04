@@ -1,143 +1,86 @@
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49DF3DDB01
-	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 19:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828FB3B2FFE
+	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 20:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785872083; cv=none; b=PfQWnLLcli9mfsO4PUe66bdUBvcbz6YOXNt7LBySt/Go/7Q8LqTN3iYmDqeFIUgjYiP/PrGgBC2+BHA4y1nxs4NhlNRx+i0UPILFH/jA0VUfxy5mLmShMaElQFyc3ZB7oinC2GNQAjp6ka/V9nITkiD+zh+HzgWTk7OO/6/HRzc=
+	t=1785875474; cv=none; b=gyl5xtAAvZEAJxfB/PglJnGfnlFCMm9XezlYAVkodfp8vxQISE5XrfBFJ2AXzfujvTnbHQrA9f1WCaaYklCL2JtwgIZ4xm1N/g9rJJJxn2bWpQzb2AUL240sFuKU1hCb/CLM8bZ3qMhb6Q+b+jO6TZpQ+Hmf5sEnP1+8l5QRmA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785872083; c=relaxed/simple;
-	bh=FkX/xieosdVcbH6HYR/PC2y2qnBz+V3S46vzsZqxsNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jcNmvLGshnh/fRtq4Duk1nJligrydUtoMc2+sBYaOi/EyQH23HRL9Cp5Vi5lij4sjC7SqJ9aJwOnI28EvSWVsQBkBl3+e+z6boVB47gDmFA/oP88RUhxFcVZYY9n/30CvIEUqyO458ZFDl9bsuL9ubNVKBF3cN70qH3xTXiZP0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=minyard.net; spf=pass smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard.net header.i=@minyard.net header.b=RWUdRPWx; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=minyard.net
+	s=arc-20240116; t=1785875474; c=relaxed/simple;
+	bh=hQ/IF9zsRp6EfE4UNaPgSz8EQXYUIanVlGiQJgbb6as=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ikzIR7dQZZEmwj2lW41aq35W68WN9nQu3xKMXK+vuZ6GSIsmP8+7fPEFTJQ1V4cKUAAs5iQVVsIj0pRbF/RH/24vSpsW/JJB6vRDL+hbCu9CiVgjjmZ4M9aAqKNhy0flXahVZf3mc/4o7PJuz9RLaA/521xRfXSTzYvdHCzFMjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdb5XWaT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard.net header.i=@minyard.net header.b="RWUdRPWx"
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-49c38a4f110so158703b6e.1
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Aug 2026 12:34:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard.net; s=google; t=1785872080; x=1786476880; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:reply-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Wvj3oWgLlHevgQNE90cRfYih3W8rje/GVXDKMGEKiAw=;
-        b=RWUdRPWxs9+eD1bRt0cbEaRPnu2VL57EpB2Y92rEoR7l7sBwJlForqhUPut+/82w/W
-         JQVlrNnqHXF6IQgAueKFq/4XZLAh07RiMgOsFRHaQcLzbuZpqe1lgAHln3SfP4pZ4SP/
-         MvnGRMiFQdyNdZQjxsajUfhosz58+ROaQIbV0Q0nOsWN9JtdwGwhtdQkWP0mK5PTN4UK
-         XyJH4R8mT6W23g/0c9aPcjvX+wN7FHj97x0EKLROg3uzRxBjSXGaxhx22V4+TZ8qHJg8
-         UUdLMMj5kVINt1ZLulXbKii5DigFwSEQm5RgT/c326mO5w0rLrQpOSEwtlncUC+tFX+c
-         w7yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785872080; x=1786476880;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Wvj3oWgLlHevgQNE90cRfYih3W8rje/GVXDKMGEKiAw=;
-        b=H0NbsmQe/9SzOW+HVq0k8FV7RWpWIxBPR0DCSqkd50zbHflAS34daOdQA/HcFZmjf+
-         CHqRxV91PyalZtyAnrogmIpLp6MFzHW2XW7fg10Y+wA6UjPdk4fkhSLLcmUVEeuGkINs
-         NDF/majIXYd4CBX5FZzk12IxURkHwAyhklxuvY6x4jSgRUu7EbHkp/3ucMyCh2HxwgXw
-         KpgCNRc0kgsaIToZaWcAlGCEsHaIM0TEP4JJCv46tLxwx/SXI8y4B7E7Lz733tk7shtR
-         hO2CNtVYWfqSuqaye62boZdrIBF7VE9XwFOnZDSN8p3Lrb3LnaoFmjSkIVd0vjMQFweS
-         dC5Q==
-X-Forwarded-Encrypted: i=1; AHgh+Rp1Tq33jkLjLSDAEBUa1G/Ctfqt0oNRjf3syDdSpZeqJMRKlJZYf+x4W3oFj0hrQU6JguSjcAPhktcN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8bVk6ujcl5JdNLUrAn7lIq7yZsxh4GbceZ2o7F2G+o0s7+ckX
-	82RnS5AYa7b9lU17V27GhLRgTD4qS8tJpb2YKN+QXPm9jXRQC/BtIXwdKhOTSSYiYxA=
-X-Gm-Gg: AR+sD11Wr7HgTKOg1jJQ5Yu2fhKBzuUuR/qnbQEdFFFpmdsRN8O/PHrIxmQ+t+WJbzl
-	x7hoFEXs5X1I3p63RoDuoN0BkZqfgzyk0OrUE1WdnOaDLtp0j6huYe6iddUlOhcNfiY+JQZpkaA
-	y/IRsSJEZ7u1FQYWlH5dt0I1AffEvHSSG9R8IzNFYDDQDkvLqPTGeK843NyXCd7qyG7SnX2fCut
-	2ftV+ofe+lu6pJNOruu5pdU2ysl6HDEcCRd6cGotRFLejAbnLmXo21XwL54UYI85ZADHcS0t43U
-	kzcuCqdr66wRuhqQ2oov01OONvb2wbDE8CQelYDGZuyc7194j5pMU1bRSl1C7Z7laynI9fYttxv
-	6moj5bDwT8ERKSzyxwLr/qLFCvLwFAp3Awp2bSY/pgWRxJC/dzrr2/hKndb9RSoh4eudrxiypD3
-	Ig1uDp+4gR4uOJcxBK3g9HlcEWPdh3CysdvXOFPXEhixqCmnZSu1SjJcnClHaN5Hh6xHbieKIo+
-	8qTjKWraWMJouSjaJ9scQRA4/OlkfGiV0eDw+8XZ6/gdhcYoAD8GSjChMfdc+GgFiIBMrjiR0Q0
-	wsyqz7POCV1O/jSBBRWZ
-X-Received: by 2002:a05:6808:1992:b0:48b:1e49:24a8 with SMTP id 5614622812f47-4afae069101mr645898b6e.11.1785872080464;
-        Tue, 04 Aug 2026 12:34:40 -0700 (PDT)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:398b:b195:5c26:85bd])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4afae4b828dsm263189b6e.6.2026.08.04.12.34.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Aug 2026 12:34:39 -0700 (PDT)
-Date: Tue, 4 Aug 2026 14:34:34 -0500
-From: Corey Minyard <corey@minyard.net>
-To: shankerwangmiao@gmail.com
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>,
-	Chong Qiao <qiaochong@loongson.cn>, Lee Jones <lee@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, mfd@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	openipmi-developer@lists.sourceforge.net
-Subject: Re: [PATCH RFC v6 5/7] ipmi: ls2k: adjust dependency to its mfd
- driver
-Message-ID: <anI-yljxhMbZ2DFt@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <20260805-ls2kbmc-mod-v6-0-16ccde412d86@gmail.com>
- <20260805-ls2kbmc-mod-v6-5-16ccde412d86@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdb5XWaT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1848D1F00ACF
+	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 20:31:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1785875473;
+	bh=hQ/IF9zsRp6EfE4UNaPgSz8EQXYUIanVlGiQJgbb6as=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=jdb5XWaTxkq+n6O53rvIAk3SysegMg1HmXJeeSTmoOmmG+x6wcMVbEpwCCvy0f3iG
+	 cf5ZVHDJV+yM+UT5/XUOi5ROLw+pJlj6FS4pMpv/e0pMZOJdhh663bNVf6pSyeVQNJ
+	 t4IHmveN0te3rwW8o1h97uK8SaWJOXyrvRWYWVPWipJBlu6S6q42vYrPrkZIgY8JH7
+	 X2tYAd7TmK5eRbqeEhJBnsCH3Wh7sC89Fs0U7GG2vv/UfXSYFziwD5fIoDKZv8m35i
+	 l23zB59keWG4A/xhAn5os0DKKvDukEtcneCEKJ5oasGR7yUc3s2qyan4NA8xrYp/ED
+	 ZhNGOCmQ/hcog==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5b021916bd3so329719e87.3
+        for <linux-gpio@vger.kernel.org>; Tue, 04 Aug 2026 13:31:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqcTcXCCAvTYreVbU68JqvBUr2NgbQZOM+I5aYZcnjtTYmzJ87WYI3AZ2Iffl7m67MdWlpEm9BUxJW/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmFE6cTQasV+++Zjz/N5XeQieyXFvIPThyCRiFQKJP4btH3sxp
+	u3hv2304gBx0JnswTQckIembI+uDqD3jNU/O14w7M4I21gzHS95ygJ8WFTjvNta1Lp55zrgd7ea
+	tdoR+0QnQu08cDFRGrTXuuVispBYEkSM=
+X-Received: by 2002:a05:6512:2342:b0:5b0:1760:fabe with SMTP id
+ 2adb3069b0e04-5b2f4b8bfe8mr161410e87.15.1785875471838; Tue, 04 Aug 2026
+ 13:31:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260805-ls2kbmc-mod-v6-5-16ccde412d86@gmail.com>
+References: <20260801072711.153217-1-changhuang.liang@starfivetech.com> <20260801072711.153217-5-changhuang.liang@starfivetech.com>
+In-Reply-To: <20260801072711.153217-5-changhuang.liang@starfivetech.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 4 Aug 2026 22:30:59 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmbuS-Tx82AZzwJZ=ANVwi3XVtYL3J4VYaE3yEZBumZ0Q@mail.gmail.com>
+X-Gm-Features: AUfX_mxydusxf8VE7_hAS02smaZytShMdtSQeu6nrNbjybQ0dqWTUpDubwEFwtM
+Message-ID: <CAD++jLmbuS-Tx82AZzwJZ=ANVwi3XVtYL3J4VYaE3yEZBumZ0Q@mail.gmail.com>
+Subject: Re: [PATCH v4 04/21] pinctrl: starfive: Add StarFive JHB100 sys0
+ controller driver
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>, Paul Walmsley <pjw@kernel.org>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 05, 2026 at 03:14:23AM +0800, Miao Wang via B4 Relay wrote:
-> From: Miao Wang <shankerwangmiao@gmail.com>
-> 
-> There is functional dependency between the IPMI driver and its mfd
-> driver. Previously, the dependency was set to "select" from
-> IPMI_LS2K to MFD_LS2K_BMC_CORE. However, the ipmi driver is actually
-> compiled as a part of the ipmi_si module, and IPMI_LS2K is a bool
-> option. Therefore, the dependency "select" will force the mfd driver
-> to be compiled built-in when the ipmi driver is built as a module. This
-> is not desirable. This patch fixes this by declaring a conditional
-> dependency from IPMI_SI to MFD_LS2K_BMC_CORE if IPMI_LS2K is selected.
-> This will allow the mfd driver to be compiled as a module if the ipmi
-> driver is built as a module. The adjustment to Kconfig for the mfd
-> driver will be introduced in the later patch in this series.
+Hi Changhuang,
 
-Looks good to me.
+On Sat, Aug 1, 2026 at 9:27=E2=80=AFAM Changhuang Liang
+<changhuang.liang@starfivetech.com> wrote:
 
-Acked-by: Corey Minyard <cminyard@mvista.com>
+> Add pinctrl driver for StarFive JHB100 SoC System-0(sys0) pinctrl
+> controller.
+>
+> Simultaneously add a generic pinctrl driver framework for registering
+> the pinctrl of other domains (sys1, sys2, and so on) in the JHB100 SoC.
+>
+> Co-developed-by: Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
+> Signed-off-by: Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
+> Signed-off-by: Alex Soo <yuklin.soo@starfivetech.com>
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 
-> 
-> Fixes: d46651d4e3c0 ("ipmi: Add Loongson-2K BMC support")
-> Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
-> ---
->  drivers/char/ipmi/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/ipmi/Kconfig b/drivers/char/ipmi/Kconfig
-> index 669f7600019747bcd2b37563477cf336f19a0407..07f3308c71616215871a730b87f1991d2b502e63 100644
-> --- a/drivers/char/ipmi/Kconfig
-> +++ b/drivers/char/ipmi/Kconfig
-> @@ -62,6 +62,7 @@ config IPMI_DEVICE_INTERFACE
->  config IPMI_SI
->  	tristate 'IPMI System Interface handler'
->  	select IPMI_PLAT_DATA
-> +	select MFD_LS2K_BMC_CORE if IPMI_LS2K
->  	help
->  	  Provides a driver for System Interfaces (KCS, SMIC, BT).
->  	  Currently, only KCS and SMIC are supported.  If
-> @@ -87,7 +88,6 @@ config IPMI_IPMB
->  config IPMI_LS2K
->  	bool 'Loongson-2K IPMI interface'
->  	depends on LOONGARCH
-> -	select MFD_LS2K_BMC_CORE
->  	help
->  	  Provides a driver for Loongson-2K IPMI interfaces.
->  
-> 
-> -- 
-> 2.49.0
-> 
-> 
+With Uwe's and Philipp's comments addressed this looks very nice.
+I really like how you use all helper libraries in this driver!
+
+Once DT bindings and comments are accepted, this can be merged.
+
+Yours,
+Linus Walleij
