@@ -1,500 +1,214 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11023116.outbound.protection.outlook.com [40.107.162.116])
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9011A476CCD;
-	Wed,  5 Aug 2026 12:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.116
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785933346; cv=fail; b=JzHULifOmiArSqksS2+VoAy4NE0kLIn8Fy8uKzpgHbZs02WschIw6ujYfE1BpTxtWaV6z+J06VnJ+XqgTO2vHlnNJWwhQMLe2SY8WeTClQF5W7wG28Cknh4rMXROJMm9Sy/Rm8xI8ZuG5uWo5fei+Dpzfk/aYCrFukLGrlq4bhU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785933346; c=relaxed/simple;
-	bh=8KaDEP6EDMm3QgmBPRH5wFS0Gpt1hpJ3QSlA8DwLuOw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oc3sm6uvNxPtFGFFFc1eSvEZzc0I21ub5Zw3CDxtPhMAzJzo/puuXgS94j4l7Vj1jVsN8gdgmqgn8b5Jcd8FzbNNfD6eK4++iL/gectyKgLyo/RtsNslrI48DQhCuGl8NzHEXyH0LTBg7wr72tK2Vll3rycK/Qommi6oEXUdBX0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=MapVkvuJ; arc=fail smtp.client-ip=40.107.162.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDE633343C
+	for <linux-gpio@vger.kernel.org>; Wed,  5 Aug 2026 19:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785958350; cv=none; b=Wby3ffKU/s59rs6v9FgwF5bP2rPEJx+TWDqCbQGDpe7ycSIyLz9ssiIzVILDPG7YVmfUhjBd7lRdzKMvQYYJkahJMUs5FUFkI4l6QP0ZnTjsUNK84w3PxtCxO+2jcTRB1y5noWe2thjI3vRAqMI/fl6yoArCAufwkcmOgmu4sbU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785958350; c=relaxed/simple;
+	bh=jrTgFP/6/lbl+dptsrGWnkKve08eWg5NyDBoxwYhbvw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=g0FrheXJQMKJ+EQDQeEjujl92g9zKC/0bDp8s0LT/2WTrPBI3IurxP4xbOC3r090h2ctZbS9clyO2IyME0Gb6t9oV9mCcZRJR5edyvxOvXKWuy4q9+qic3dXj6doQd9PfQ3L9JcRv+FB0WB+Hzl4iozkTBEqQexukg5GrvwRgzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=agRlX3R4; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="MapVkvuJ"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=veccgS0TgXfW4IMOAgiNsq2D4vi9VXCjRkZ+iHCKr2ivZALSgJIpTYr9NPsckEFzwQdS+tjutrWS8sCDCUghfT1gJDVpViPtjR74sfvts4+3jHySTVk/Ix4qRZHJUlbZoxP1/Mdrrr+gkPrqIcqpME+j6WTZBfPNXoxl0G+S+lZoTcZGKP9RzZ2+qWOl6QP1jYC2pR/aW1xA82fjSIrXgTsS4AMZCLfwqBY/IoypcZCPITazQZOH3Q4CSe9QvDhZzO3/ch+gXn+ialkQUuqtlUrguZUjgS/4vgpwMywq0kagpZoJQYKuL2j73AXsSG90uDYnwEPX/+TMXwf/PJhKoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=robBuPXmrJ2qY09qM1jH0W9prIrveTCRQzGFQkGA8rg=;
- b=xf2XKLdbKDRmB/LZYOMdrDCYWRvRsmljt+CONkE0T7NPRA+QStkbwqDlPlkrHNhp0hhaPJCuwzUPp95KZ1ajU9QXKXcx1UjLopXx/3Dbwz2vAA7dEqNoQGtXbgAlNXYVx/gXCcCMRl+rwaEn3aobKYuXp8OcDBFoGgpv7UKJzh61gMEHjI56vq7l7PoNKL2UumaLWvig8FPjkcs/uJm4wE7SdP2ShtyCdSUO1q9TwIXGibSHb1vDmwLRko5gfqnRmh41c+DZ1ccqaft4U4i87WyFt6GT8hWzf1QoK+yB9ZTrSNbJ5ky1EALUFit6JgU9vN9sRMH8aUXUzd3h04wVmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
- dkim=pass header.d=iopsys.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=robBuPXmrJ2qY09qM1jH0W9prIrveTCRQzGFQkGA8rg=;
- b=MapVkvuJe3+49auLuh2Vm9JSZ9GUgccywRXvHP8dQVtDuNj3NTksg1zsFf4QNzvw8uVzEjwMfr86Qi0JbevhuIGQTxc3dqJ9uSHyjUXyobFRTERc9RQn7kzOHCYHkPYeZgOOFduoY2PaJ3kURMrkcETVLtpJA+lZUqTD83UpAWPlAD1P8fw4KFLreDSSaMn0rx9x3LTUams1WY0bKR6rVIhAMJJxN7LwUfAFFngI/nbTcpYB5SzBPSqmV0PLroZCMImZCbM1d7/s47RNKXYczNRHNJJe0hmTPelksWfdnBQg0QtWGxzGVuAeamPCq55WCf5tqjram0YTJee/eBC3YA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=iopsys.eu;
-Received: from DU2PR08MB10037.eurprd08.prod.outlook.com (2603:10a6:10:49a::20)
- by AS4PR08MB7831.eurprd08.prod.outlook.com (2603:10a6:20b:51b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.18; Wed, 5 Aug
- 2026 12:35:29 +0000
-Received: from DU2PR08MB10037.eurprd08.prod.outlook.com
- ([fe80::3c7:6d2e:8afe:e4dc]) by DU2PR08MB10037.eurprd08.prod.outlook.com
- ([fe80::3c7:6d2e:8afe:e4dc%5]) with mapi id 15.21.0292.013; Wed, 5 Aug 2026
- 12:35:29 +0000
-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-To: Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Benjamin Larsson <benjamin.larsson@genexis.eu>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	Markus Gothe <markus.gothe@genexis.eu>,
-	Matheus Sampaio Queiroga <srherobrine20@gmail.com>,
-	Daniel Schwierzeck <daniel.schwierzeck@gmail.com>
-Cc: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Subject: [PATCH v10 36/36] dt-bindings: pinctrl: airoha: add support of an7563 pin controller
-Date: Wed,  5 Aug 2026 15:34:08 +0300
-Message-ID: <20260805123408.3767648-37-mikhail.kshevetskiy@iopsys.eu>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260805123408.3767648-1-mikhail.kshevetskiy@iopsys.eu>
-References: <20260805123408.3767648-1-mikhail.kshevetskiy@iopsys.eu>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0065.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ce::8) To DU2PR08MB10037.eurprd08.prod.outlook.com
- (2603:10a6:10:49a::20)
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="agRlX3R4"
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id AFE1124002B
+	for <linux-gpio@vger.kernel.org>; Wed,  5 Aug 2026 21:32:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
+	s=1984.8680eb; t=1785958346;
+	bh=iwRdHOYXMfbpO1WX4Vm0GVh3HBQvySrcvt0pl3nz9Z8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:To:Cc:Autocrypt:OpenPGP:From;
+	b=agRlX3R4kae76kGCGFIEHlHz91aUktgGzSVfOfBVAUYivHWRrfpqrK/5944Ix1cdO
+	 AMh0dIlAi48ELz9dVwvBHzlkk0Jkj7FD+xRSJXnIK76jgZ9/HUvvV4MDHczAN0+nd5
+	 yHXmC5qXy6ZSLgrNHwXVqmjrB6kN/BKJ4GnJpAVQ5pRXrSEjYpVBDZr5I/7qxgFwGI
+	 r8g1LeVzLbYhwr6eNak6dIlqmbC1O+kVls1N8UQKr7dTp/Okzftu5lW4729PuNKoSw
+	 r+LpEDqCDIn0KL6rSyJ88zvi3WmL+W0F4mHwfGG//xtuohA1NfQz1614H2YDaKVAhe
+	 gSGw/E7FfKcPQ==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4hFgXl4pGRz6tvy;
+	Wed,  5 Aug 2026 21:32:23 +0200 (CEST)
+From: Markus Probst <markus.probst@posteo.de>
+Subject: [PATCH v3 0/5] rtc: s35390a: Allow use of output pin for interrupt
+ signal 1 for wakealarm
+Date: Wed, 05 Aug 2026 19:32:25 +0000
+Message-Id: <20260805-rtc_s35390a_int1-v3-0-e836faba3e25@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR08MB10037:EE_|AS4PR08MB7831:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16f072b9-738e-4b26-e11d-08def2ee08a5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|366016|1800799024|23010399003|11063799006|56012099006|10067099003|6133799003|22082099003|18002099003|3023799007|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	M0R59ey2hHgAdPxy5UBRD7Gof0JGRUzvSThmbaA9MY6aN+NFdHm7sLC1lRfi0NMfpwj2Oe2xUvH728oIt15+mGvgwuj4rIKl+k1K81FM8RvXvadLTpeCpYUxiPkcBGmWyINfCEYL/bmHHr+BflN8k0xmAZONWraNQBxr6mI53YyoJha5T58e1PkzSW365qglJXqT2WKLwecRFmWMqerib404K9iVh+O6vLwVjS63j8q5X9hALFc4uY0hh+WLvnhXe5mnj6M/G9wUihFsSLMRzFbAFTHgY6OtSAxWoZd4131iQB8OWN0icCFdMMRdYET1Ef1Xh37Qyk4E90EVbDWsVGInlsBXWVQruHRwiDGosjpB3jHA29owTLXRDwToHlUYS5PdLVfTTKl8ItOKfhRNV6qqB5GH2cfKUQ4LgiZlLtFAgW8Cnr1LSgIuBhl809868NupZyBdY7/tgAgtQhQ+ziNSscRWiR3VOzSUINhzMrHpMqJL5IjJBjY2oAVRZjFMmfUbB7FY2NdNyakANF5UTOo8qliCMq1dSrGpuDRGO5qm/yP6huK0y5pbWCacLwjIbKqPGmNvbat6hSOVcN+N4p5lxrvKjmcPH9XWf6c3v/wEH4I9KHGIMe8WKG+n9rdBy9eDXZDIOZpJdILUPDP0Ffk6ld9POGOJkZg8eTPpWVBoG98QMt4gsXCT6uOkM+IJ84NyVM+lPxsHt++FFWbppJFgjV5XKLyxDEhH7lweIxDo/DHqk8G/OECwXbKpaBa7
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR08MB10037.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(1800799024)(23010399003)(11063799006)(56012099006)(10067099003)(6133799003)(22082099003)(18002099003)(3023799007)(921020)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rIO2UoZ1rBdl0l9HEMHHGx5u+uKLHrQ+w3t0AFEHD9ayXnYUqop1s7D0yfQI?=
- =?us-ascii?Q?/nWvwaa46TwYPLKXgeXsKYbympkNY0HfvcpUBftgEvLqWGSDrwjqYNcJCBSQ?=
- =?us-ascii?Q?6x2KC3zrRn+FLB7rbT/VNgkivQE2D52LaE/g3bQqXYy9Q3gpOsYqIiahnMeO?=
- =?us-ascii?Q?dO798GWCypyCJ4faCt3VQ/eFke5GDmQrzTsmSLs3NgJ0i04tUeCsg1+bHWnn?=
- =?us-ascii?Q?gFi9RlyZNnNFes/V1w6rPCOx7FXCx73YYMZhdcssi9DqQZV8bt8wOhk4so5/?=
- =?us-ascii?Q?ib+t6JxMEwOgEpX7mkZtuvYHqOxNcwAS5O3wcEDLk2h7wXkrzYxQn+CUHzHD?=
- =?us-ascii?Q?EMx9iHnBIY4q/+QZjEWXAxCZqQ40RlZ4MEh6nA+UcxF9I5lxrzUH6SyvPorF?=
- =?us-ascii?Q?flKY0QhXWiYL3T2+Ta37Y7Yof2xQUJlOkQa62a+VJuHWtzNFOXqpxdWuL2JS?=
- =?us-ascii?Q?yYLvtjkN3h3omxEx3oPLWw1zY0R03O3IFQj2Q0EV1LsbZ/DgsH+69G30EoBQ?=
- =?us-ascii?Q?5faF5zOvWgHXR+NwXEo7JtqhCZiRwp2qsUNswFBoG5FTEGpQdIdxHxnFVyd+?=
- =?us-ascii?Q?NEdAOEbESNyxAI0G2i0pWa/9833UcUuolJm2qhOMkIvXtP4MSBJ+0ER0JjSu?=
- =?us-ascii?Q?Fcmus7CW1oRBDBRTLND+gTXUUq3AIuiM3UE+U99jCs5sqaCfPyeFVqOUMixD?=
- =?us-ascii?Q?7vCnsONRCBPysHhkMPmfKoz2lDBbLarZlVQulfNwrmJUWoFfadXhwrNMvNV8?=
- =?us-ascii?Q?LLXb+b7ncipD8uqX30Mtc0eH6+AQxyF6tgvxfIuoCrybMx/Ji1Z0h11yUXm6?=
- =?us-ascii?Q?/L/oBzeKV2NGfZAJw7o++5m+tBy79TwKBrbulIdbXCrN8/y3kZi6MkzQHxFf?=
- =?us-ascii?Q?WwQ1T5H01hTOcVngpThHvIUn20SF08YPTmc8pWniNauBTKkjdtQq9tbwegkd?=
- =?us-ascii?Q?ZbZuLfCz/3iAXZHzsYULps7XeA1ZLNlLoxl/SUqAJzYlh1swLyk3ChI/CTTj?=
- =?us-ascii?Q?fd8ABihK4j5jiZYk9hn7ooSmppkfipbcKcIaK3yEaVLtL5927ozXCCtf2Bok?=
- =?us-ascii?Q?Ns8IPVL1r7n7UGSPO0s6yClK8pwmpZUMHAnvYemqeDfXy7jKFLDqx7fG34L2?=
- =?us-ascii?Q?8Y2iNrt+E/dT/3GEZiIQESKr8fa+bsgHkyylJjlTGp0vs0zq8WP+LROndWHE?=
- =?us-ascii?Q?XCGnqBSg1pE0c/PUundbHALKdl1gLUbyZA44qFMXdZSgOTk1bG3llC9mm+EC?=
- =?us-ascii?Q?krUxZ2il6py+5eabigUJCQWf77ihsk/CQFGy7GXxpWBnjZ9sPRZeUBGMK9gA?=
- =?us-ascii?Q?eFasGxT+X6Ve5i5GeVHPAohq45B5SzO3ucqfoQoEKQRtPbj/UJNnPad3Tyhs?=
- =?us-ascii?Q?xnOcMsYcHj14MDVFNRUqPtn4VjxZluD2hw8/FuD6zKPUKhm3+VZsx3pP+NZY?=
- =?us-ascii?Q?e5VdtaL+rFfD3yn0MIvK8U7bFf7Um4rgF7w4qDFtQpQDqerqrW3aa38lDgJu?=
- =?us-ascii?Q?djsltPDPTVWvLTh34J2ErDbctrC+yCOTsHn+zoKpYAWmzeYat4xwliwJn811?=
- =?us-ascii?Q?nJAzKa6uAQTecoMrcqOfzYLYKXzjAhP+yOCHOZY96GDhLjuYFXseNT4vuWem?=
- =?us-ascii?Q?VJkT/ZSFKZzzuujoPpRVKJORm3zYK/huhrwXVH7EWgzVUf8B4CkV/HXPfQrN?=
- =?us-ascii?Q?/oeW2pgpt5J5NZ/Ia9x1m2/3Mych8VjzkAgW0RW+g19bO2C/qJDU3WBqKd9J?=
- =?us-ascii?Q?yG0ZrnUTY+txW/+LUYDVkrruMixRWSs=3D?=
-X-OriginatorOrg: iopsys.eu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16f072b9-738e-4b26-e11d-08def2ee08a5
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR08MB10037.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2026 12:35:29.5733
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: N8i1JZAbl468sAwyPJlCoCQu1JLVatu94K/XFiwUfOdpIvoxea/Jl/3KxfnVs6dtdtPnmjJlckYuoOI+6KgYm1VAclPlYiHDG99kmDu3vA0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR08MB7831
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XOTQrCMBAF4KuUrE3JD422K+8hIs1kqhHa1CQGR
+ Xp3YyvoQpcP3vtmHiSgtxhIUzyIx2SDdUMOclUQOLXDEak1ORPBhGJKMuojHIKsZM3agx0ip1W
+ lALRkGyM7kmejx87eZnK3X3K46jNCfDnvhsfLNd+KS43oNiAF1/c2NkVal4J6UOS1PtkQnb/P/
+ yU+l/+/kjhllGshZI1caRTb0YWIrjQ4Y0l8gA3jPwCRgY4zqOvWcKPgG5im6QkD5DtVLwEAAA=
+ =
+X-Change-ID: 20260630-rtc_s35390a_int1-556ccb308d3f
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>, 
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ Michael Langer <michael.brainbug.langer@googlemail.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Linus Walleij <linusw@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Markus Probst <markus.probst@posteo.de>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3722;
+ i=markus.probst@posteo.de; h=from:subject:message-id;
+ bh=jrTgFP/6/lbl+dptsrGWnkKve08eWg5NyDBoxwYhbvw=;
+ b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBqc4/Fv4fcMLIljm7bfkO9VwUQBXNOr9wvvaiJz
+ hLrxYNWHk6JAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCanOPxRsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQNHYf+OetQ9Iang//b6+Y+K3FZy1/GUpDqYmHdiEhhXFxgcD
+ kLOp1Z/x9nQd1CnZK4+bEf4LGEOh3u619Sif56Lbdh6+G4gVUZXdvXak1MOM/tH58bqHVAEnpfn
+ n/WSY5GwuRzpZKuqTxWqvwy0p2Qk70bFVqvol+U5vYxNrSbuOO1V28XjMSTX8MUL7gJ0+OXuuDX
+ /4CJWmobKKzXSNk45TFDv6AYff5pvAEl479o0EWhyRmkhgSscFjcHtjhTLlnjtKUfHE3dNyyYla
+ Ww00vB2JhxvmC2Twrb5Q2PGmh8xJI9S7h6MLVfY0mDDDOCbUbHFJHEx4FNAkImXmldX7O5TotS6
+ BqwDHiyoj85NCkS+gLPHxcTj8gsYzyuekMHmonhqfT4Hv/SBJZBPOQZx5emeBbB2GHx8BwsQR1j
+ +TKNDwKmE3QtxjemQA9N27aCdp2NB125CERT8CkryzQj7t3ORZ0e+uH34CSPEQlJ/hMqgHfAZZa
+ IKZ6J6/dJQDbQGFEUy/285TS3DxwBXTKRZ6ubk5j6mBHIebuZ2VRmNy9BA0MggeI4NJ4Azo9eg3
+ mXUWV3ReWHnjU0KFD/j7HAxSh93UOt4G0UGo39WbkOcHfLS52qkzmNX6RbytWq8TWPygX3Lom1F
+ Ml+sTYZIb6jf0JzpNViu3sk0AVp/9fixttCLqlRApVs7qWE/jl+M=
+X-Developer-Key: i=markus.probst@posteo.de; a=openpgp;
+ fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-This patch adds device tree binding schema for Airoha AN7563 SoC pin
-controller.
+Add pinctrl to allow the use of output pin for interrupt signal 1
+for wakealarm. This is needed for wakealarms to work on Synology NAS
+devices.
 
-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+I could only partially test the pinctrl patch. My testing system runs
+ACPI, which makes it impossible for me to configure pinctrl there. I did
+however verify that with missing pinctrl configuration in the devicetree,
+the register were correctly set. So there should be no regressions.
+Every other function than ignore, disable and wakeup should also be
+considered untested.
+
+Also If I am not mistaken, wake alarms on these systems are currently broken:
+(not tested, judged by looking at the devicetrees).
+
+- arch/arm/boot/dts/marvell/armada-370-synology-ds213j.dts
+- arch/arm/boot/dts/marvell/armada-xp-synology-ds414.dts
+- arch/arm/boot/dts/marvell/kirkwood-synology.dtsi
+- arch/arm/boot/dts/marvell/kirkwood-ds110jv10.dts
+- arch/arm/boot/dts/marvell/kirkwood-ds111.dts
+- arch/arm/boot/dts/marvell/kirkwood-ds112.dts
+- arch/arm/boot/dts/marvell/kirkwood-ds210.dts
+- arch/arm/boot/dts/marvell/kirkwood-ds212.dts
+- arch/arm/boot/dts/marvell/kirkwood-ds212j.dts
+- arch/arm/boot/dts/marvell/kirkwood-ds411.dts
+- arch/arm/boot/dts/marvell/kirkwood-ds411j.dts
+- arch/arm/boot/dts/marvell/kirkwood-ds411slim.dts
+- arch/arm/boot/dts/marvell/kirkwood-rs212.dts
+- arch/arm/boot/dts/marvell/kirkwood-rs411.dts
+
+If thats the case it can be fixed by using this patch series and adding
+the example in the devicetree to the s35390a devicetree.
+
+If somebody still runs one of these systems, please test.
+
+Thanks
+- Markus Probst
+
+Signed-off-by: Markus Probst <markus.probst@posteo.de>
 ---
- .../pinctrl/airoha,an7563-pinctrl.yaml        | 348 ++++++++++++++++++
- 1 file changed, 348 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/airoha,an7563-pinctrl.yaml
+Changes in v3:
+- fix issues reported by Sashiko
+  - fix use of uninitialized time data
+  - remove dependence on `CONFIG_OF`
+  - add missing `pinctrl_enable` call
+  - fix wrong index used in `s35390a_pinconf_set`
+  - fix interrupt not cleared
+  - fix `device_set_wakeup_capable` called to late in probe
+  - fix mode caching even on failure
+  - fix failure on synology quirk mode update ignored
+- only set irq in alarm_irq_enable callback
+- fix alarm time not set if set_alarm is called with alarm disabled
+- use pinmux instead of pinconf
+- move patternProperties below properties in dt
+- remove dt-bindings header
+- add '#clock-cells' dt property
+- merge 32768khz and user frequency mode into "clock"
+- remove alarm mode
+- refer to mode now as function in the code, to match phrasing in pinmux
+- resolve checkpatches --strict warnings
+- remove mode_init bool and instead set initial function to -1
+- remove err_read probe variable and reuse err
+- rebase onto v6.2-rc6
+- Link to v2: https://patch.msgid.link/20260801-rtc_s35390a_int1-v2-0-f10c99ad1d6c@posteo.de
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/airoha,an7563-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/airoha,an7563-pinctrl.yaml
-new file mode 100644
-index 0000000000000..e626d34661285
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/airoha,an7563-pinctrl.yaml
-@@ -0,0 +1,348 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/airoha,an7563-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Airoha AN7563 Pin Controller
-+
-+maintainers:
-+  - Lorenzo Bianconi <lorenzo@kernel.org>
-+
-+description:
-+  The Airoha's AN7563 Pin controller is used to control SoC pins.
-+
-+properties:
-+  compatible:
-+    const: airoha,an7563-pinctrl
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 2
-+
-+  gpio-ranges:
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    const: 2
-+
-+allOf:
-+  - $ref: pinctrl.yaml#
-+
-+required:
-+  - compatible
-+  - interrupts
-+  - gpio-controller
-+  - "#gpio-cells"
-+  - interrupt-controller
-+  - "#interrupt-cells"
-+
-+patternProperties:
-+  '-pins$':
-+    type: object
-+
-+    patternProperties:
-+      '^mux(-|$)':
-+        type: object
-+
-+        description:
-+          pinmux configuration nodes.
-+
-+        $ref: /schemas/pinctrl/pinmux-node.yaml
-+
-+        properties:
-+          function:
-+            description:
-+              A string containing the name of the function to mux to the group.
-+            enum: [pon, sipo, mdio, uart, jtag, pcm, spi, pnand, gpio,
-+                   pcie_reset, pwm, phy1_led0, phy2_led0, phy3_led0,
-+                   phy4_led0, phy1_led1, phy2_led1, phy3_led1, phy4_led1]
-+
-+          groups:
-+            description:
-+              An array of strings. Each string contains the name of a group.
-+
-+        required:
-+          - function
-+          - groups
-+
-+        allOf:
-+          - if:
-+              properties:
-+                function:
-+                  const: pon
-+            then:
-+              properties:
-+                groups:
-+                  enum: [pon]
-+          - if:
-+              properties:
-+                function:
-+                  const: sipo
-+            then:
-+              properties:
-+                groups:
-+                  enum: [sipo, sipo_rclk]
-+          - if:
-+              properties:
-+                function:
-+                  const: mdio
-+            then:
-+              properties:
-+                groups:
-+                  enum: [mdio]
-+          - if:
-+              properties:
-+                function:
-+                  const: uart
-+            then:
-+              properties:
-+                groups:
-+                  items:
-+                    enum: [hsuart, hsuart_cts_rts]
-+                  maxItems: 2
-+          - if:
-+              properties:
-+                function:
-+                  const: jtag
-+            then:
-+              properties:
-+                groups:
-+                  enum: [jtag_udi, jtag_dfd]
-+          - if:
-+              properties:
-+                function:
-+                  const: pcm
-+            then:
-+              properties:
-+                groups:
-+                  enum: [pcm1, pcm2]
-+          - if:
-+              properties:
-+                function:
-+                  const: spi
-+            then:
-+              properties:
-+                groups:
-+                  items:
-+                    enum: [spi_quad, spi_cs1]
-+                  maxItems: 2
-+          - if:
-+              properties:
-+                function:
-+                  const: pnand
-+            then:
-+              properties:
-+                groups:
-+                  enum: [pnand]
-+          - if:
-+              properties:
-+                function:
-+                  const: gpio
-+            then:
-+              properties:
-+                groups:
-+                  enum: [gpio28, gpio29, gpio30, gpio31, gpio32,
-+                         gpio33, gpio34, gpio35, gpio36, gpio37]
-+          - if:
-+              properties:
-+                function:
-+                  const: pcie_reset
-+            then:
-+              properties:
-+                groups:
-+                  enum: [pcie_reset0, pcie_reset1]
-+          - if:
-+              properties:
-+                function:
-+                  const: pwm
-+            then:
-+              properties:
-+                groups:
-+                  enum: [gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6,
-+                         gpio7, gpio8, gpio9, gpio10, gpio11, gpio12, gpio13,
-+                         gpio14, gpio15, gpio16, gpio17, gpio18, gpio19,
-+                         gpio20, gpio21, gpio22, gpio23, gpio24, gpio25,
-+                         gpio26, gpio27, gpio28, gpio29, gpio30, gpio31,
-+                         gpio36, gpio37]
-+          - if:
-+              properties:
-+                function:
-+                  const: phy1_led0
-+            then:
-+              properties:
-+                groups:
-+                  enum: [gpio8, gpio9, gpio10, gpio11]
-+          - if:
-+              properties:
-+                function:
-+                  const: phy2_led0
-+            then:
-+              properties:
-+                groups:
-+                  enum: [gpio8, gpio9, gpio10, gpio11]
-+          - if:
-+              properties:
-+                function:
-+                  const: phy3_led0
-+            then:
-+              properties:
-+                groups:
-+                  enum: [gpio8, gpio9, gpio10, gpio11]
-+          - if:
-+              properties:
-+                function:
-+                  const: phy4_led0
-+            then:
-+              properties:
-+                groups:
-+                  enum: [gpio8, gpio9, gpio10, gpio11]
-+          - if:
-+              properties:
-+                function:
-+                  const: phy1_led1
-+            then:
-+              properties:
-+                groups:
-+                  enum: [gpio4, gpio5, gpio6, gpio7]
-+          - if:
-+              properties:
-+                function:
-+                  const: phy2_led1
-+            then:
-+              properties:
-+                groups:
-+                  enum: [gpio4, gpio5, gpio6, gpio7]
-+          - if:
-+              properties:
-+                function:
-+                  const: phy3_led1
-+            then:
-+              properties:
-+                groups:
-+                  enum: [gpio4, gpio5, gpio6, gpio7]
-+          - if:
-+              properties:
-+                function:
-+                  const: phy4_led1
-+            then:
-+              properties:
-+                groups:
-+                  enum: [gpio4, gpio5, gpio6, gpio7]
-+
-+        additionalProperties: false
-+
-+      '^conf(-|$)':
-+        type: object
-+
-+        description:
-+          pinconf configuration nodes.
-+
-+        $ref: /schemas/pinctrl/pincfg-node.yaml
-+
-+        properties:
-+          pins:
-+            description:
-+              An array of strings. Each string contains the name of a pin.
-+            items:
-+              enum: [gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6, gpio7,
-+                     gpio8, gpio9, gpio10, gpio11, gpio12, gpio13, gpio14,
-+                     gpio15, gpio16, gpio17, gpio18, gpio19, gpio20, gpio21,
-+                     gpio22, gpio23, gpio24, gpio25, gpio26, gpio27,
-+                     pcie_reset0, pcie_reset1, i2c_scl, i2c_sda, spi_clk,
-+                     spi_cs, spi_mosi, spi_miso, uart_txd, uart_rxd]
-+            minItems: 1
-+            maxItems: 38
-+
-+          bias-disable: true
-+
-+          bias-pull-up: true
-+
-+          bias-pull-down: true
-+
-+          input-enable: true
-+
-+          output-enable: true
-+
-+          output-low: true
-+
-+          output-high: true
-+
-+          drive-open-drain: true
-+
-+          drive-strength:
-+            description:
-+              Selects the drive strength for MIO pins, in mA.
-+            enum: [2, 4, 6, 8]
-+
-+        required:
-+          - pins
-+
-+        additionalProperties: false
-+
-+    additionalProperties: false
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    pinctrl {
-+      compatible = "airoha,an7563-pinctrl";
-+
-+      interrupt-parent = <&gic>;
-+      interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-+
-+      gpio-controller;
-+      #gpio-cells = <2>;
-+
-+      interrupt-controller;
-+      #interrupt-cells = <2>;
-+
-+      pcie1-rst-pins {
-+        conf {
-+          pins = "pcie_reset1";
-+          drive-open-drain = <1>;
-+        };
-+      };
-+
-+      pwm-pins {
-+        mux {
-+          function = "pwm";
-+          groups = "gpio18";
-+        };
-+      };
-+
-+      spi-pins {
-+        mux {
-+          function = "spi";
-+          groups = "spi_quad", "spi_cs1";
-+        };
-+      };
-+
-+      hsuart-pins {
-+        mux {
-+          function = "uart";
-+          groups = "hsuart", "hsuart_cts_rts";
-+        };
-+      };
-+
-+      mdio-pins {
-+        mux {
-+          function = "mdio";
-+          groups = "mdio";
-+        };
-+
-+        conf {
-+          pins = "gpio2";
-+          output-enable;
-+        };
-+      };
-+    };
--- 
-2.53.0
+Changes in v2:
+- remove sii,wakealarm-output-pin property
+- add pinctrl
+- add fix to allow disabling of wake alarms
+- add synology quirk
+- Link to v1: https://patch.msgid.link/20260630-rtc_s35390a_int1-v1-0-1b2239e16be2@posteo.de
+
+---
+Markus Probst (5):
+      dt-bindings: rtc: Add pinctrl for S35390A
+      rtc: s35390a: Add missing newline to dev_err
+      rtc: s35390a: Fix alarm not disabling
+      rtc: s35390a: Add pinctrl
+      rtc: s35390a: Add synology quirk
+
+ .../devicetree/bindings/rtc/sii,s35390a.yaml       | 109 ++++++
+ .../devicetree/bindings/rtc/trivial-rtc.yaml       |   3 -
+ MAINTAINERS                                        |   1 +
+ drivers/rtc/Kconfig                                |   1 +
+ drivers/rtc/rtc-s35390a.c                          | 413 +++++++++++++++++----
+ 5 files changed, 461 insertions(+), 66 deletions(-)
+---
+base-commit: d7dd96eb916519208210bb4a0408fcf4f7fdce5d
+change-id: 20260630-rtc_s35390a_int1-556ccb308d3f
 
