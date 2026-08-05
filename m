@@ -1,67 +1,70 @@
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11023084.outbound.protection.outlook.com [52.101.83.84])
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11021096.outbound.protection.outlook.com [52.101.52.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59573009CB;
-	Wed,  5 Aug 2026 10:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345A17081E;
+	Wed,  5 Aug 2026 10:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.96
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785925331; cv=fail; b=AjTqKuIz2gTbumA9P/IYFrJVNiaSkc5BKBa2Jzr2T++zCFTLaRixoIe9ONu9/WNCxyKMcflEZ24RF3SPxKSyjygIwIc8gobmelY2lmLrGA4ugDLK4VYDHJe2I2r+CcEG87XnsuI9QFEqCpcON8LUMZAHNHKKbwxmuEeLavk6CD0=
+	t=1785925422; cv=fail; b=Fd4OkBemjLUrLdS5rueNHjkqQOvi+WlRauI/qI0f8G5EgjrNGwPAmyoswJaq8hM6HJBmOJCra0GBDlGKkuJYyB2eNuNd8jC24O8E4Jtj6cWXvyIi179BeFWlN4rcE5aBU11o10gfJzsixqRnxEnmhcB07EPE3iFC7znGjEzQzRg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785925331; c=relaxed/simple;
-	bh=C41wvMOMSvsOcf54DAFb54BjiORRFR8boXFUsE5hhv4=;
+	s=arc-20240116; t=1785925422; c=relaxed/simple;
+	bh=/4GhuAHbk26VtGZplbxH5JicCvkkBc3QZ9GH5wV/Ouc=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZDm33UzaImwcpyGVeUp4G61rriTl19nlp4EYRJw5PgsDXHVlus9xIn+rkO/tA5i3qsGfj+HA91r1WNQxQKdRUlgUSiJ1u8Nob79ulezjHZZvDPcxn2XQ7q2J4cdXuhfq9fVEu0uEn5onS04OZx9jxr3KDj8d+kovXh0T1CjRRhs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=genexis.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=genexis.eu header.i=@genexis.eu header.b=oO5BZk7T; arc=fail smtp.client-ip=52.101.83.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=genexis.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
+	 Content-Type:MIME-Version; b=L2KUB57wtDHbl7MPVyneDN5qhuGNlA1C6MPAaYl0NRH8e6Ny/5PYx9356TUGX9s+GKJa7at38VQvz1GP+lNMI4ue/TOHKWS9im2+oHR5V6V38wl41ujs/spQvlXGh8Wf1o7jY7IDnEHBF8x7lLwoANC0vcmTtQZ9BwZjWb59Lgo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com; spf=pass smtp.mailfrom=axiado.com; dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b=MVhiju4w; arc=fail smtp.client-ip=52.101.52.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=axiado.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axiado.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=genexis.eu header.i=@genexis.eu header.b="oO5BZk7T"
+	dkim=pass (2048-bit key) header.d=axiado.com header.i=@axiado.com header.b="MVhiju4w"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lE01Bw1EjMyvcdfCBdygNA1VS80ahjn2p9bw1dXCAw0qvlOjOr34rH39UGSsMVQgxMxmE0y/hf0GBWTrJ8RyyzmW6V3BOL4rpBfr+rdIt32dDbfqQpFcBVYou24vfW8iuJQTzg3ThEbK3A+a+gpvPrG8V1Beb/+Y7+sc2/1vwUyUdz5Byq5J8w+MnfDD4Be23I2rslpO7IIlYs9W5XNMKUCFIE9LcfqcA+YFj/0tNU4OB/CSlDlUQfvPVDlSR4m6LxUvXNC4kLZxswGEBZGVfm1m5HmxIOq7IHFlQBV/5m7Oopj1W499KMtDZpKtMRJ8LKNaPLKek3W7HiGfy5afNA==
+ b=bRdaByS7reppe2mVDnd8LtigFIIQ7BrSyeJcDVazcEVy6U0d8Rh5NFX8ZkuhxMgS7nfbQoKwurbgQXV7moj5cmN7M8jru79oMZ9N7EUBp+5dl+8xIo+J3Bcqcv7SpuGBBskvj8i77OAhuEL++HMI5Ic5a9qDKHf75FrPI7k83pTj7Nt+7JD/4cY6Pq+/TtUS1dsuiBRpgPSJx7K3qs4u6loR1Be98GaixUhkGLMABU8gwX/X6gGif54DHNgPaw8YPQKsQIunKOqx97+75SJzwt2mMRJw37VgJXabTiisA6JlNW/dE/mWHF8Q0UIaUsy1nnR7PmcxL3rpEv26Hgg0BA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5SDVwYLnqpdvR0WJyx5Os+A7SNvGI+eLxCamJG5uSTE=;
- b=e2LVHeTMdzPs8qcMZo8m5N+7z56ymr4oulFjxs0LHjOK9Z76xUErBGGYSkO03p88Yv2hlujiu2mQTln47H0xljTloZJTzIVdtaXkrGpxNZ82jyw3N0twzw4+bGf1RbIByVPv1e/WWLnW49KG8w5SGxKBZm8Ij663wZPvHV8Wupi0C4ayeNde+9I7+1/tZ4TiXk8vy/QaeOExxNueRlav2RqXZBnIsuluPDX1Vbe82zF528IdlrjfqZDwGdE9+L15PD2jI0aUn9BV9AG+Vk4G0a5Qdd1V11F3IFU0TAE1ziiI0xp3DoDE1GSAIiIPxeACVmn/AR0e2E4hLmufsSEIHA==
+ bh=IfUuSqMcBrhIqZsMEZy/hqlXl/538+C0w++qv/Jl03g=;
+ b=cxSzXVYW9AyInGnx4LTMGeBeQmQqgQkNWPPg2dYt9jagWKqfOCQCGLjr8FkfrMW7i4S60kc16x1u4nuVeb9HHujhw9JYEUQGNd6UjrVFve0PyNQowMupcVwPZ8s5OL46lRVHR7mVzPVt3x7Pw7IDwp5lqx5GL4wZCepMlM3QhUIm9Obw3nw1zVKyAyWTDnzzIhmTAoTK7m/P7vgNAFyIrLcS4oOaKOSzcf8Rh+Bj4r5MYJK1g4rUvEhyKz6GamzCoOmIAhWgjZ8Z4b9oS9V1HD/VoOM87sVkBHDqI8zHzUVbQaUMWNyi78Zb2UJf/2NoImY651lfd9UyIiowWX/Mpg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=genexis.eu;
- dkim=pass header.d=genexis.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=genexis.eu;
+ smtp.mailfrom=axiado.com; dmarc=pass action=none header.from=axiado.com;
+ dkim=pass header.d=axiado.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axiado.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5SDVwYLnqpdvR0WJyx5Os+A7SNvGI+eLxCamJG5uSTE=;
- b=oO5BZk7TF4d9d+OUBzRosMbhWk6kTs8J37xZ0hy2LAWugJvrIREANOXJA0wr3g0QVvwmLb1Dp1huNzsdUOFefYGdNLvAG2aBapuw+HAtWnL23tKevpNLqTo/Tdr8HKAfm8FpvX2D3FUXkgqvzg6yE/ws9WvVfEvl7SufWCI0/y7tV2h2pAClgMLaGZlk2Sb3PEeVQgHfcwZEJF0BDKjjXR9xqsrNeD+vOFyf0OmARQPctu+lDRzxWVvOL8Ag7brsuUWG+ZgKu9nBcavUzMpb3vDfFYgXuji1uk4+NFFBEz4DCDud5xomU5JCNbZ3ck2o4eb963K5KwG40YYMiuHjJQ==
+ bh=IfUuSqMcBrhIqZsMEZy/hqlXl/538+C0w++qv/Jl03g=;
+ b=MVhiju4wb5N5f6Ej+l5NDBFdopKudpfBPLq2a5Gtgz+lVYqQ+D2C6McHXTlCirsNpAfdFUomlBrS8WiaNU4ShXHCUeMryNwtUGmYszy5jm605zEUmUtL8YvUbOjm4XEStM9I+1yfz6r0jOBte2D+Kj3jJVjASajHsqDKgyxmog2Cal4Xvr7k1812DfA2qji0A+eKnWcENgttvjqbz8bC+N/lgtEdt6HMhHPUZSZrkWhxOeNm+aQbjYybxuU7eohtBE293Jj80jviAzcIw+A9KzFXwKubL9jzVX3a1WKZFoQqi7dmuT8+c1ifR7ojwMvfv7FzthcRpz0/U3KUVp7ERw==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=genexis.eu;
-Received: from DB9PR08MB6697.eurprd08.prod.outlook.com (2603:10a6:10:2ad::14)
- by PAWPR08MB11088.eurprd08.prod.outlook.com (2603:10a6:102:468::14) with
+ header.d=none;dmarc=none action=none header.from=axiado.com;
+Received: from DM4PR18MB4144.namprd18.prod.outlook.com (2603:10b6:5:38b::8) by
+ SAWPR18MB988335.namprd18.prod.outlook.com (2603:10b6:806:4e0::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.19; Wed, 5 Aug
- 2026 10:22:04 +0000
-Received: from DB9PR08MB6697.eurprd08.prod.outlook.com
- ([fe80::bdec:3e95:6614:441f]) by DB9PR08MB6697.eurprd08.prod.outlook.com
- ([fe80::bdec:3e95:6614:441f%6]) with mapi id 15.21.0292.015; Wed, 5 Aug 2026
- 10:22:04 +0000
-Message-ID: <8f04fb34-5651-42bf-a85f-64cb7e37461b@genexis.eu>
-Date: Wed, 5 Aug 2026 12:22:03 +0200
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.17; Wed, 5 Aug
+ 2026 10:23:38 +0000
+Received: from DM4PR18MB4144.namprd18.prod.outlook.com
+ ([fe80::cb97:ca8a:e55a:b11]) by DM4PR18MB4144.namprd18.prod.outlook.com
+ ([fe80::cb97:ca8a:e55a:b11%6]) with mapi id 15.21.0292.015; Wed, 5 Aug 2026
+ 10:23:37 +0000
+Message-ID: <e9fb5dd2-3fd5-4dba-b26d-c47abe6885a5@axiado.com>
+Date: Wed, 5 Aug 2026 12:23:32 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: airoha: fix wrong value for PCIe reset pin
-To: Christian Marangi <ansuelsmth@gmail.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Linus Walleij <linusw@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: stable@vger.kernel.org
-References: <20260805084143.3901-1-ansuelsmth@gmail.com>
-Content-Language: en-US
-From: Benjamin Larsson <benjamin.larsson@genexis.eu>
-In-Reply-To: <20260805084143.3901-1-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: Add Axiado SGPIO controller
+To: Krzysztof Kozlowski <krzk@kernel.org>, Tzu-Hao Wei <twei@axiado.com>,
+ Swark Yang <syang@axiado.com>, Prasad Bolisetty <pbolisetty@axiado.com>,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Harshit Shah <hshah@axiado.com>,
+ SriNavmani A <srinavmani@axiado.com>, Karthikeyan Mitran <kmitran@axiado.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20260729-axiado-ax3000-sgpio-controller-v2-0-976f4ed11438@axiado.com>
+ <20260729-axiado-ax3000-sgpio-controller-v2-1-976f4ed11438@axiado.com>
+ <986fac76-3bcd-4523-a902-701027aff1bf@kernel.org>
+Content-Language: en-GB
+From: Petar Stepanovic <pstepanovic@axiado.com>
+In-Reply-To: <986fac76-3bcd-4523-a902-701027aff1bf@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: GV2PEPF0001A325.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:158:401::691) To DB9PR08MB6697.eurprd08.prod.outlook.com
- (2603:10a6:10:2ad::14)
+X-ClientProxiedBy: FR2P281CA0178.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9f::7) To DM4PR18MB4144.namprd18.prod.outlook.com
+ (2603:10b6:5:38b::8)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -69,115 +72,129 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR08MB6697:EE_|PAWPR08MB11088:EE_
-X-MS-Office365-Filtering-Correlation-Id: d54afe9e-63fc-4c2a-0332-08def2db6547
+X-MS-TrafficTypeDiagnostic: DM4PR18MB4144:EE_|SAWPR18MB988335:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32a8e2ba-9333-4615-dd48-08def2db9cc1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|23010399003|18002099003|22082099003|11063799006|56012099006|10067099003;
+	BCL:0;ARA:13230040|23010399003|7416014|376014|366016|1800799024|921020|6133799003|22082099003|18002099003|3023799007|56012099006|10067099003|4143699003;
 X-Microsoft-Antispam-Message-Info:
-	vAxxVRQrw9SU3QZ5LftN41CTqPpqMoOomaJYvaHVPiAWIMSya3iwbVlL5frQglvCn9Q8MAP6fhAz6hH9xCi7BDfhN9kW0bL9lbWrkodQNTNh6Ptl4Z5Np9dUBqs4czZ4gtW2AKSniWt/Vs0HZA+YwoxcnDEb/1Qmq6FDfKKL5eG5+SoLewM5PQFuqqdTMNAyI13nG1nGE+f7px0jirowF5YR8n5OdDMZeeRv88e7cDo/aXn4eKDAWqbI0SlLBrkMwgedDuK5b1cDnhZwjiLos2Z+6k8Rl7snt21BL1TWWGY0GMhOB7OHWTeSbBpe8oIt1vvlWM08SjyKOGIfFEGDpRhewOy9b/kVR2sf3fjtLkpSB1PO5B/R1vkuvKoqq8OUINJNq5XAVrgEsCc3Aapz/lRwZ2lbjofAiXbyzMui3U4f6DFqmxNtdR9DTDECGmZTr1VNoQMxBTUWt4fyzWQlskUHfMK1EwVHbmtvZH4O9PpzfkU2spdF7f+MOovjkNk1ZKcKPY5X7D+mJCjh5i0qYYGj/MScPe3ldl26mMKJxLNjO0k61NdzM22bSrb9DRCQ053cXPUNJ16ZOkdBXv4u5SVq1HwRTREKbBTK1V86BMwt8YOLYLd+929oVyaBo/4Lhr62UBHgMACcLxyAnR9N8LXnqxkRounVqWkzdm+2azA=
+	ZbZakDdeqfY8ja4VIp/CVkdNVck55eTRcmwQxetNj7wY2HTL/oTmcX6JGWTK+Xdm2y7I3ns+N3bBbHT2jlVTrlQnkoEM2u5s0p2gMv9eMAcG37LvGE7j950hb8LodAWPMNV+3oc0yUpFK7VedhdTq6hhlwv0d+j45VaauKIpQwadt8/TdGo719pN332umSYIIH9x8r3VlO6RVg4CpAsx1x4kSYWZ7B42l1dAWgjRp7CsD2UQiBxl3pTvEHCmoIpalyuk2teBGz1TFBqbAEV2KAZrruf+Sgc67ZSVA800QHALI90iOimQ8YK264hz59xWWxPBq5lZfX7zPfZK9V2qHWHIbdb2dHYsB/PDdgJfmgZjqnzKy15NFpwfAIZzt9x7HdFoIif9pd0OuX47VLRuGao53Z2MVAy3zdSTquj53a1uD4EoaccBW8nro5dkstw7YjFlxEvEVEEIRubL5WVjuKr+OxDo0euBMjeGj1UMkdmO0XkLFUNS/TMbTcExemSQciHIj5Q8RqrpJn7OJy4saTnbEUxe5rYE3rq3xmrAJE2LgHrnBF59Dj0omNQnQhyiVbHzLPyvf1aQphJ7Zbhb9J8J2+0hsTHlc/H8OJ/eUCPD7S+Lz+YoWSe0NvYXuuAOE3ozdGugjKQK5t9kNRtqL2zIO62hw0Wo18HBblXFtc7cgMdJaLsUeGw7J0if3OXq6qoeU3PnA3oIAZDlm19Pfg==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR08MB6697.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(18002099003)(22082099003)(11063799006)(56012099006)(10067099003);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR18MB4144.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(366016)(1800799024)(921020)(6133799003)(22082099003)(18002099003)(3023799007)(56012099006)(10067099003)(4143699003);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cHhJL0dyMnlxVUtSUnVqamhOMThXSUx3dmt4dEQrbWtUczhOZDA3YmJnbVJv?=
- =?utf-8?B?RlJoUjlqNm9XV1pHYkg5S2VSU09MZVdpVVBoZFVPaGY3WGN3RTloSGJ6bTR4?=
- =?utf-8?B?RG5lTnNETkczeVlMaGR3bndBcVVhbklPeDIwN1h0MStDcFhEdkJzQ2l4NjU0?=
- =?utf-8?B?RWxOdkFYcUxFMzhWUEVCZUFpY2VTMWcvdmJGd1lybnA5R25mckdMWFI1WTFN?=
- =?utf-8?B?dWxoTnQ5STd4QjdkdFJYT0FxWDRYblRVQTF5QjZ6Tng4VDV1TXY1T3VJZGFK?=
- =?utf-8?B?bHRHQW9QRGRGbWlkNXhYT2MxNzd6OWt3RDBxb3AvMUxRR3lTcm5sbVA5eG5a?=
- =?utf-8?B?aGl0Q2UrTkRpZm5yVkRma0VHUjdLRmgyUHFidHRyTXlGUzQzdDJLQ0hUSVVn?=
- =?utf-8?B?U2RnY3NuYmhsRXMvZjBHQUh6M3FXNEpvTFdaN0FmZjBkZkVGYlNxUjNKMWhZ?=
- =?utf-8?B?emdjWDU1L0xFUEc4SnNLZ2x2YmlEZGhvSGhaNVFNRmpyWk5Sb25ObktyN3d0?=
- =?utf-8?B?NFNGNnBLUzc0dXZWSkFnejdVWWc5M0pDYmxFQ2haRWc3U1dQYmRXdjlkUUQ2?=
- =?utf-8?B?eXRxbFVidHNLcmxvSnVSc1AyaWRpQ2J4QkwvcWNjenJKSlNOUlE2WHZMRmdJ?=
- =?utf-8?B?NmZCdWRHWDlIa250UGVqd0ZXeFRPYmI0ZmJEY0tXRzFlYnI2ajUwZ2NSclZy?=
- =?utf-8?B?WEk4TFR2dUVHNGZ1Si9mWTVNdTYwMWhuZGFra0lCVzQzYmEzQkJBZ2RaQmh3?=
- =?utf-8?B?bU4yTTZtRUxEYkZrRUw4MFlEM3NZaGxnV0Y5NmtVMStJdkwveEorUnAydS8x?=
- =?utf-8?B?cFdPUHhpckhwZnp0NWFuenpENDhxb0V6aWUrTXpyNHVueEhQWG15dGFNbDUw?=
- =?utf-8?B?K1pIdDVpY2lSc0JyT1krY204RWtmQjJnK1pnR2ZyWTA4Njc1cWdGOCs1RWdr?=
- =?utf-8?B?bVJCcEVaWXVtcmVyV2ErNit6NXhKTU1KK2tycm1VSVE5eThicEFNM0VxaWFR?=
- =?utf-8?B?ckY0MmVuYWFwV1J1SFBsUnhlSkVLVDREVVZ6MjI2VGd0YVJoOGhaUThJbC95?=
- =?utf-8?B?QkVhakxJSlcyS1F1UU5JT2lEU2ZZOVB0dkVYVXBKS0hlNHJnTElneXc2OSts?=
- =?utf-8?B?ai9lOGFBalkvQzdDRE91TVAvTkJraytQZGtaOXd1Q3YyYytnckJrSHErdmlm?=
- =?utf-8?B?YllKNkpMVlg1QlhIbThHTEhrRVUrb1BZckk2MkwxS0NMS0xQZWZ6SGxERkRK?=
- =?utf-8?B?dDRScHYycmhMLzdmM0w0QjdpMmZNMXBRa3pMT0dUa1VZV3NSTUFRRk41ZzNa?=
- =?utf-8?B?c25JYWpZNVlqSkVSdURwV1FuQ0xUbjhNSnpoZDFuKzdEQWR4R2QrbCtJaXVu?=
- =?utf-8?B?MTFwZ0p3U2FWQVVoWjRacGdXNnltTUswTEN3d05iU01aNjdiUTMvNjdQUHJa?=
- =?utf-8?B?S1U3TnMwaUk2MTduc2xpd25yMkdGaGJ5RXVwclpLVmE5RXN2UXpOamdhTDZz?=
- =?utf-8?B?R2lKY1ZWbEJ5eFBsY2VlUmxuSEhNRW1heTJDeVFhTG1zeFNvSitLcGhRMVRp?=
- =?utf-8?B?cStrUWpBc2xzdlRXSmFKbzhiUXM1Snc3RGtDZXJMNFpZc0dQbWc3STB4bTI1?=
- =?utf-8?B?L1d6RVdseEYwSUMzU1ZJeFZCeWJKL2JyZGRZYUFKd2lndUVRdDU5Yk9TRk90?=
- =?utf-8?B?bXlab1lRWHJ5d3FrbXorUWI5aDB6RjdIMlkvMkVsdkdiZzRRaER2dWJtc3dq?=
- =?utf-8?B?cjRTVGpuQkszOEM0NEpjMWhEVkh4Slk1L2d2TU5EUk11QkxIclZtNG1pYnNH?=
- =?utf-8?B?L1JlN2pWWUdGSEtDb1lUclRnNlVJQm5EblRIMW5NUDhaOEQ3TiszYWJIRXYr?=
- =?utf-8?B?VUtHMEM0S1ZaUGVBcDd0azVycHMraTRJMjZKYTAyaUpHZ3lWSTdmZmFwM2J2?=
- =?utf-8?B?OHMwdENOenFjQjZFT3lnT3NPRmljaWUzRXVIQUV0aU0rL3QwY3dlaHN3eHdy?=
- =?utf-8?B?L1FoZkRwdXFzd0tFVk5OZEpIajFYU2ZheXZmRlFQL2cxWnZOZzVhaHg4bHZP?=
- =?utf-8?B?NWN1ZUVUL21XbUZBMGFjMmlURDFDQ3p6S2Q4MDl1RVo4WnV0a2FLWnE1ODVX?=
- =?utf-8?B?UkZPSGlxem83cUNmaVV3Nis1SGdZOFhxbmQ2TEMxR05jWHIvL2xXZVNLWkxk?=
- =?utf-8?B?QlhIS2JjOTR5RldhWnNwR1ZNN0EvaG5YVkpOcDlRRnRsY3Y3eGM1UGtVdHRH?=
- =?utf-8?B?SGtSZ3djWG9Ca2JEeEV5UVB4UFdjZHRkMG8wcUZnZG1TdWF2TlZNR2xvaGhV?=
- =?utf-8?B?VUhPSnBaNVNLT0NtbG1vWVQvZW9PRDZWaU4ySys3b04rYTg5OE9rL1BPY2NG?=
- =?utf-8?Q?hZxzExuMUmOaObLk=3D?=
-X-OriginatorOrg: genexis.eu
-X-MS-Exchange-CrossTenant-Network-Message-Id: d54afe9e-63fc-4c2a-0332-08def2db6547
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR08MB6697.eurprd08.prod.outlook.com
+	=?utf-8?B?WVNOa2VTZDBMRUo2Y1diS09nU3ZOa1RZVyt3RGFlZFRUN1ljK25WN1ZYbDQ5?=
+ =?utf-8?B?bUI1V2xNbmJWc0dnZkR4RWlQR2o5SUdUcnR4WU5oK3lzOGV2MEoxZUFESDBH?=
+ =?utf-8?B?bml1VThObzM0T0c3dThBZUxBVm8vdlB0S282RitJVnh5UlBJdFVZNGhXbWlF?=
+ =?utf-8?B?eXZBdnlxaWxkL3p3Q29hZC80L2xVeDBBM2R0YUdiM2JrczJVWnNFQnJDZkpk?=
+ =?utf-8?B?STNUOXZSOGI3cThUMElzblRyYVM5eGNiRjRHQnFwbTRMdHdyOTIvN01yNElQ?=
+ =?utf-8?B?eDd3cjlQNEVqaHZWRU43VVFaVjJMa3lTZ1pOSlJ5MUk0RzFpby92RWtBWHpw?=
+ =?utf-8?B?djFzNDUzQWxYK3dlM20rdUcycnNnekZPY0N4SFl0UXBjbVJqVThNR2Zudnd3?=
+ =?utf-8?B?c0tVS2NzNDBMQlNXaFRjQTB2Mlhlblp1K1FEQUJrdG5sYzBvUnJxUVZaMWQ5?=
+ =?utf-8?B?dWxxb1I2OW9HMzlickVwL3JQenZuK09WelZNSm1ZUURsMzd1MzVEQlJWTm1X?=
+ =?utf-8?B?bldaYStpdSt6cG5nT0gvdWpFa3BHU2pZbjNnNXE0dVJLWDYrcFR0S2ZRYURZ?=
+ =?utf-8?B?YkNYWGpudkI0M21tc1NmS21SeTllYXZ4Zld1UlpYTjMzWXlCaEw3V09Sd2hn?=
+ =?utf-8?B?OHVjQ2g3WUpPaThqOHdXM3kyS2c1S09sMFBqRTFiTHlwUGNPR2lLYkdML3NE?=
+ =?utf-8?B?YmQ4eElTcmYxMkszS3dxYkZPcnI5QWZpMmpaL1RnQjFZZHdTS04vd1lZOHl2?=
+ =?utf-8?B?RmNUOTY2SDNEWWFxRHNNMmg5OGkrbFNzODVWNVNGZjM3VzlDZGd3OXJDQ21t?=
+ =?utf-8?B?eFRLZWoyQzR5UHYrbDRaNGI5bzI3L0FYRTVBWFBqMjNvUHN3MFZXT3M1Q1Qw?=
+ =?utf-8?B?cEthQzN4YnljZndSNUFWTHEyY1c2V1VLakpMMTNwL3NMOWpEMTloYkEvS3pz?=
+ =?utf-8?B?UzB5S0lFTHkrTzZMY3RUM2pjYWViOTVLZ2ZIcVFHdjk2L1JHVzlNaTA3dmtE?=
+ =?utf-8?B?NWRPRzRPblgrZzYxeXlSU0hNb0UrRUFCYVc1UE1Zcng3QXQ2ZUpBMHZOcXlF?=
+ =?utf-8?B?Q3ovanJSYzdNemZWR0NLOGZYaXRQNXF2czN2bEt4eHhxT245czhaRW1EenFU?=
+ =?utf-8?B?N0QzbnlNREtLQ0xqVW1LZkdoaWNWVm4zSEFyNzhnMEx6cXJWTjEwc1BSY3h4?=
+ =?utf-8?B?MHVZYWxIekcwUDhvd3p0TDU3U08wa2IyNVA2NkVqb1hwdG05MFpCZjhTK0dw?=
+ =?utf-8?B?bXZMR1RBRmh1a08rU2VkSWFkN3A3c0tjVml0MzFOMXZWTWEzNWtBemNhdHJ3?=
+ =?utf-8?B?MjRNcFZYcGdvRHNXTmRKTFRqSzN1LytkU3dlMHZQeTJhbDc0YjU5OWFjYjZE?=
+ =?utf-8?B?a1NBdWVBMng2SU5rQTVkeHZOR05abGRWUGhhNDdxbjQyZ2RZcGc1aWtSajlJ?=
+ =?utf-8?B?SDVmTlByeW5sOGF6cTYyNzBZaktkR1pSVEplV2l3NDlTS05SeitiQnNvUSsv?=
+ =?utf-8?B?OHZxUkFzUm9WWDVkQk9VNE1wYUl2amlOWXp0MFVNYnlTcTZSUGh3ckpadjVa?=
+ =?utf-8?B?cG5LSnlUdit4ZUxQeDNTVWNrRVpEaUtkeXFoeUphMmFVaWhMcFc3NmUxVThN?=
+ =?utf-8?B?Y2c4aVQ0UTdyaUgvZ25va0x4WGtWWEdMamtlQVhLSUJONWlDekhaakcwQS96?=
+ =?utf-8?B?RXNSUE1ZbkE4d0gydHowdUpTZFVMRjBkLzZ4MHNKdG1DMFNtOTU5OHZWUjJm?=
+ =?utf-8?B?dUZKclVMZGJCaEFJRU96QmhNeGk4Y0pxQS9jdVd2b0lUNW85SU5yOXRJSHgy?=
+ =?utf-8?B?RDNpSGxhNHVoTkMxaFk0ckJCa2o4UUFQeHoyWlNUOUk5VlB6QjdwajBzVFlo?=
+ =?utf-8?B?MGs4bFZSWjhvZkZ3SWxGSFhZTmhaSFAyakN3ZmxrT2xXVHJSdXhlcy9wSzVh?=
+ =?utf-8?B?bERZTkRHWFlTek9RT0hzQ21PeXhPbm0rdzQwTUd2bFVuYVBOTjVSZkZaRDZL?=
+ =?utf-8?B?UUM2eS9pbnNYMWNVdXRKemVEQ2JYQjVXeG9pUitWUTB2eVh3Z2dlc2FFOWhq?=
+ =?utf-8?B?bEcrRXNhVzZ5eWNaSDdNeE1EQTlyMVIvcUFDOC9wY3lWem9taDdJVEVXWSto?=
+ =?utf-8?B?UnBLSTY5T3g2QnE0RWtXa2Q0eS9GeHFVRERneVNDV3Erdjd4SXFwcGhWYXNr?=
+ =?utf-8?B?c3FieUkza1UwanFiK0haWml0SUhxTHkrZVVNWTJLTHdrN0hlU0RTaTNHZnV3?=
+ =?utf-8?B?YmxmMnZhYXVwWVhVOGZaR2cxWlFDUHQ3MXhxRmJQYUFqK05ZWk9qdzNDeFJ6?=
+ =?utf-8?B?OGt0dWlwbkpZQlphMGZYU2N0TU1ZT2Jha2Q3NUkxSEtDMTE0Qm8xRmpoYUVy?=
+ =?utf-8?Q?TKpv6lGQxBeAmvfo=3D?=
+X-OriginatorOrg: axiado.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32a8e2ba-9333-4615-dd48-08def2db9cc1
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR18MB4144.namprd18.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2026 10:22:04.6368
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Aug 2026 10:23:37.7888
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
+X-MS-Exchange-CrossTenant-Id: ff2db17c-4338-408e-9036-2dee8e3e17d7
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: G7C3lJobfvmbd9OgZrjGcGBFlmlCy8lVXpvE2LZTyKmZe7/PMqp8m4fV2tV0+Jfko92F3rjcIDrpuEwz2wo7NXr0Ajqfc736tlhxrp7oydc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR08MB11088
+X-MS-Exchange-CrossTenant-UserPrincipalName: xepJeYjUYd1leyk8cJe3SIghsQf/EKvBcq1hKLdIoI56ClIuUGNqFKDdcoe9WNbqVAMEkUyOdedO3wn2VPjkGA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SAWPR18MB988335
 
-On 05/08/2026 10:41, Christian Marangi wrote:
-> The PCIe reset pin actually require the bit to be set as 0 to work as PCIe
-> reset pin. When the bit is set as 1, then the PCIe reset pin act as a GPIO
-> for GPIO44, GPIO45 and GPIO46.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 1c8ace2d0725 ("pinctrl: airoha: Add support for EN7581 SoC")
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->   drivers/pinctrl/airoha/pinctrl-airoha.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/airoha/pinctrl-airoha.c
-> index 04b4424c688b..6409572c0a4b 100644
-> --- a/drivers/pinctrl/airoha/pinctrl-airoha.c
-> +++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
-> @@ -1412,7 +1412,7 @@ static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
->   			AIROHA_FUNC_MUX,
->   			REG_GPIO_PON_MODE,
->   			GPIO_PCIE_RESET0_MASK,
-> -			GPIO_PCIE_RESET0_MASK
-> +			0
->   		},
->   		.regmap_size = 1,
->   	}, {
-> @@ -1421,7 +1421,7 @@ static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
->   			AIROHA_FUNC_MUX,
->   			REG_GPIO_PON_MODE,
->   			GPIO_PCIE_RESET1_MASK,
-> -			GPIO_PCIE_RESET1_MASK
-> +			0
->   		},
->   		.regmap_size = 1,
->   	}, {
-> @@ -1430,7 +1430,7 @@ static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
->   			AIROHA_FUNC_MUX,
->   			REG_GPIO_PON_MODE,
->   			GPIO_PCIE_RESET2_MASK,
-> -			GPIO_PCIE_RESET2_MASK
-> +			0
->   		},
->   		.regmap_size = 1,
->   	},
 
-Reviewed-by: Benjamin Larsson <benjamin.larsson@genexis.eu>
+On 7/29/2026 10:03 AM, Krzysztof Kozlowski wrote:
+> On 29/07/2026 09:02, Petar Stepanovic wrote:
+>> ...
+>>
+>> +
+>> +  bus-frequency:
+>> +    description: SGPIO shift clock frequency in Hz
+>> +    minimum: 1
+> Such property is not allowed. Why you cannot calculate it automatically?
+|bus-frequency| specifies the required SGPIO shift-clock frequency, not the
+input APB clock frequency.
 
-MvH
-Benjamin Larsson
+Although the divider can be calculated automatically, the desired output
+frequency cannot be determined from the APB clock alone. Similar to the I2C
+bus frequency, the SGPIO communication speed is a board-level parameter that
+must be selected to meet the timing requirements of the connected target
+devices.
+
+Different external SGPIO devices and board designs may require different
+shift-clock frequencies because of device timing limits and signal-integrity
+constraints.
+
+The upstream ASPEED SGPIO binding uses the same approach: it provides the
+APB clock through |clocks| and uses |bus-frequency| to select the required
+SGPIO communication rate. The driver then calculates the corresponding
+divider.
+
+Is there a preferred generic property or another mechanism that should be
+used for selecting the SGPIO shift-clock frequency?
+
+>> ...
+>>
+>> +
+>> +  ngpios:
+>> +    description:
+>> +      Number of SGPIO positions. Each position provides one input GPIO and
+>> +      one output GPIO.
+>> +    enum: [128, 512]
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          const: axiado,ax3000-sgpio
+>> +    then:
+>> +      properties:
+>> +        ngpios:
+>> +          const: 128
+> else what? 3005 has 512? Then these are implied by compatible, no?
+
+No, the exact number of GPIOs is not implied by the compatible string.
+AX3000 supports any valid number of GPIOs up to 128, while AX3005 supports
+any valid number up to 512, depending on the target configuration.
+
+The current binding and driver incorrectly restrict |ngpios| to the fixed
+values 128 and 512. I will remove this restriction and update the next
+version to enforce the appropriate maximum for each compatible.
+
+Best regards,
+Petar
+
