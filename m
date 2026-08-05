@@ -1,108 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9D03DF00B;
-	Wed,  5 Aug 2026 07:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57A83E315E
+	for <linux-gpio@vger.kernel.org>; Wed,  5 Aug 2026 08:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785915937; cv=none; b=YgaaTPlHYqqkft3fn5ls3jKH2xQk7J1w2FVmxUAS0Ixctto2hHOaPo1r5RTvpLyUAGBYA0zzGnXfRhd8KithIePtmWm0yzufIOqnl4SoDhXZmnlLG8gBX/VkkTF+v3pyeT3xWWC7or1SAzSrfHoFISCLIh4y3t/uLTuMkXsP1Rs=
+	t=1785919315; cv=none; b=WxEWiFzxak+6+a75LQclnK8rbmEktrXDeX1Uyxnh2mQBi4IkYjwVIkOGK5H1U03dTZfJN70231RjYSrPHGe3onekbnzJdkf+wm4dHSvTCdEbqikumyEEol3hd8NQzAOkTRYLNwwjL616liEDXzY+g+fDKNMIhxIhz2ZgCHPfdjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785915937; c=relaxed/simple;
-	bh=5MkdsEZbatWL0Km/ALJMvtpZl4uVbCsYaTa+Amz/Hek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uEfMaXkGTOlxZYJ+1c5M5rreyF8lL8kaixuSRhXW81WqjL5e791JC3zCinD9rYH7DUKq4nzgoFSbmX+X6Ps1mH9oZUmyg3CSFaUwxdgMJfNtrhmX7j5YUuz7M9oDmO/xcmwO5I2jUODsGv+Uis5nwRd685Wru4l7tgngdOttMDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VvfPNc6e; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785919315; c=relaxed/simple;
+	bh=l/oWp5W71NAkATODGkRO0A+w9ni3mNScsDVkSE5s4Z0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sC62EKp2Kx0JRCsZDYW4PlgkG57/GAe5lujjeaHtCzwsBeFOD7lSOpWq8wA90kJjBhscEo+FZYjhCy11LAMNmUzUscO8MoRNvAzd/bHiEF1+VhzZuZQYSbV47mzHYtxQpCbk/q5xBc2KvVofi+I46qCje9Nr/ywx1aS+RD6UH5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BmUKjlbT; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VvfPNc6e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33ABC1F000E9;
-	Wed,  5 Aug 2026 07:45:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785915936;
-	bh=/R63HDh2jusGQkpvw/KzPycVyZokno20dhxlVlpsHAc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=VvfPNc6eBldbaDO3icDZNSePmK+ozYiid2fkNerffKHYaAf3h4Z3VDTPkrogkZc0i
-	 cAsYyinewNpBm4MXozvQLYQo4k7j6qElhFgLAWcGhFfgkqkOZe5FQm6dUwLMcDf+oK
-	 pKAlunBLqqcSCC77800eAXo/lYW4gfltcMiGgEQueH9ktAX7+N/jC6YpkWph4NxhJT
-	 BgdrOysD5IwYtYETrhwnjSUIpqJS9dGn8Y1slyY9lR45QO64OgQ4gAX31kYXmClTZ9
-	 o+Vxxd6ptQvFMkxFT1LBD3Sb3+TmdbcnsWNE173s52BJkfNdLVH8qDkKDYLrtCuXEF
-	 D8q+HWYTX5bXw==
-Message-ID: <c79ca10f-44a6-49b0-89ff-498a8ad1e7f9@kernel.org>
-Date: Wed, 5 Aug 2026 09:45:28 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BmUKjlbT"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-47f6609c657so321951f8f.2
+        for <linux-gpio@vger.kernel.org>; Wed, 05 Aug 2026 01:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1785919312; x=1786524112; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=d3K5hA7CaLdIJbg5AimV7fCZLWk9OkFDdwcvRXHBYow=;
+        b=BmUKjlbTaK+c2Uo/hA6ZB6BM+d3oc2KPCaTqE0FEZF5E1wOZvLCmkaQ02h9y26h1Ff
+         vhmwR7k+vocoIO1i9EiVFLY/4lX50cgR4AwZeVBVN16X3y1wiAiB0aTStH7299WAFME2
+         RTEYrGrLglMxtk/SvW7ocV0hRAJ2xVRIUXygVoqZz6Q8PTNK3BolrO41aFsmlxoVIVkf
+         WJMGB8cwNCNFugqJ3ASpEWHk8YQE0sTz8MNy/iYcoSOJI51Fp9TbpUbPQrfBYjj1JCq4
+         23gHlT7ExEtSleSPMKq7ZibSQiOkPU3yPbFii4msjE/tq07Z/Hs72AtOGfgKtpdcyl2V
+         piUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785919312; x=1786524112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=d3K5hA7CaLdIJbg5AimV7fCZLWk9OkFDdwcvRXHBYow=;
+        b=C2c8r5liMVDTup/1/qyPG1aOVpdCaBhyHcn+Ar8ipPaYX05Drw78gK/3OgGoCQlopH
+         fg/gnaVk/kqemkEq5kBX9DN7lMUZFyDPI/AredWbNxvWBcTyaGykWUdYIA23QLgYABqj
+         sACROKjwZ5kG+TOjFTavDnvgk25ByLj25KXdFTL3xrT93pKAOIcE+ns9lEuz0vWcinWG
+         X8a4t+Nr4FW5e+T2k6KFvl+5qdcln3CeXd3ijGnRxcEGdKpn3adhUlByMpxfhGbR3aFU
+         p2w+HuWo+p1FkImWXvAGffd24y2a419hKdmCfQCkmQNCnRkXZw4WHfUU7egsm1kDwGjI
+         F0IA==
+X-Forwarded-Encrypted: i=1; AHgh+RrsAT1ab2Ga6A9B+OTo8NlqkvfZNoI5jPmEOBCuzRVF4/ZJhc4t7Jqo3IzHdPBzF7bjW9AIDzhzk0lV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5DNm6ny0Q60t+GDkTFYca137JmkrbkE9p9+fUkLHBaM5zAzc0
+	JjmoVE+s51eLkYoXj9pEANQH5ErvwlZyai2u7phRyOV1TdMMMbrdeN/m
+X-Gm-Gg: AR+sD13PmzD3wua45TWWXfK1n5mWlwn0JOeEwgUHaqF0IP+6KWfQiUa+t5z4HJi9F53
+	dfIfgfdXsn4uAoCRvQxknqjUyps16RuB+9W7MBUcuJEtJj8/7Busgf5FqF4ZKbcinRSPpgEfM/9
+	lmj2+ZJeq8C/LS8IYtQ6yF+gYXbpzIvbv93nBS9JuRB0/UlvS8crlfY8rV7aqBkaKTv20FOqLSq
+	rmbFln2sTYJj8mClbFkUDGlLBIm98HKcKSkreflMjm1k3aZuFMxPgsabWdehlpT1ApAJSgL6pSz
+	IaaC1OkhEWs7Lxb+F53JZxlWT1hughRZ5KYxSIvoA5Bte8yXYF61a2cb428hgXzAgbo7oc1N9fo
+	KrKVhsNohY5H4RzMMOSSvtqXszvQ6Drq2z+oCLHtR4Jk3CrcRAvZtKS5mvwybj9BjCD43UyHhDb
+	K8o2/C5AR2X8bKhueMrCJttTIx7ZApE0k/IcGlTFnZUYvLEERO/M5jLoCeJPGcjoiNU1HbAW2/d
+	2gO4W2qecG2/9RDl2tlWXr4PRW/aj/GJK7AXn+ADFFpM4GRWrLA7w==
+X-Received: by 2002:adf:ea89:0:b0:47f:9751:cb3d with SMTP id ffacd0b85a97d-47fec4f229bmr6673348f8f.8.1785919311697;
+        Wed, 05 Aug 2026 01:41:51 -0700 (PDT)
+Received: from Ansuel-XPS24.localdomain (host-79-42-255-151.retail.telecomitalia.it. [79.42.255.151])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-47febfe5b1bsm6278770f8f.12.2026.08.05.01.41.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Aug 2026 01:41:51 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Lorenzo Bianconi <lorenzo@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] pinctrl: airoha: fix wrong value for PCIe reset pin
+Date: Wed,  5 Aug 2026 10:41:41 +0200
+Message-ID: <20260805084143.3901-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND V2 1/2] dt-bindings: pinctrl: tegra264: fix DAP2 DIN/DOUT
- pin names
-To: Prathamesh Shete <pshete@nvidia.com>, linusw@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@kernel.org,
- jonathanh@nvidia.com
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260727141121.772110-1-pshete@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260727141121.772110-1-pshete@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 27/07/2026 16:11, Prathamesh Shete wrote:
-> The DAP2_DIN and DAP2_DOUT pins were listed with swapped ball suffixes:
-> DAP2_DIN as PV7 and DAP2_DOUT as PW0. On silicon DAP2_DIN is on ball PW0
-> and DAP2_DOUT is on ball PV7. Correct the pin and drive group names to
-> dap2_din_pw0 and dap2_dout_pv7.
-> 
-> Fixes: 30a9d5162f25 ("dt-bindings: pinctrl: Document Tegra264 pin controllers")
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> ---
+The PCIe reset pin actually require the bit to be set as 0 to work as PCIe
+reset pin. When the bit is set as 1, then the PCIe reset pin act as a GPIO
+for GPIO44, GPIO45 and GPIO46.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: stable@vger.kernel.org
+Fixes: 1c8ace2d0725 ("pinctrl: airoha: Add support for EN7581 SoC")
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/pinctrl/airoha/pinctrl-airoha.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/pinctrl/airoha/pinctrl-airoha.c b/drivers/pinctrl/airoha/pinctrl-airoha.c
+index 04b4424c688b..6409572c0a4b 100644
+--- a/drivers/pinctrl/airoha/pinctrl-airoha.c
++++ b/drivers/pinctrl/airoha/pinctrl-airoha.c
+@@ -1412,7 +1412,7 @@ static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
+ 			AIROHA_FUNC_MUX,
+ 			REG_GPIO_PON_MODE,
+ 			GPIO_PCIE_RESET0_MASK,
+-			GPIO_PCIE_RESET0_MASK
++			0
+ 		},
+ 		.regmap_size = 1,
+ 	}, {
+@@ -1421,7 +1421,7 @@ static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
+ 			AIROHA_FUNC_MUX,
+ 			REG_GPIO_PON_MODE,
+ 			GPIO_PCIE_RESET1_MASK,
+-			GPIO_PCIE_RESET1_MASK
++			0
+ 		},
+ 		.regmap_size = 1,
+ 	}, {
+@@ -1430,7 +1430,7 @@ static const struct airoha_pinctrl_func_group pcie_reset_func_group[] = {
+ 			AIROHA_FUNC_MUX,
+ 			REG_GPIO_PON_MODE,
+ 			GPIO_PCIE_RESET2_MASK,
+-			GPIO_PCIE_RESET2_MASK
++			0
+ 		},
+ 		.regmap_size = 1,
+ 	},
+-- 
+2.53.0
+
