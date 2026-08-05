@@ -1,57 +1,57 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7451845D183
-	for <linux-gpio@vger.kernel.org>; Wed,  5 Aug 2026 12:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775DE453A33
+	for <linux-gpio@vger.kernel.org>; Wed,  5 Aug 2026 12:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785931337; cv=none; b=l/7IKIyJsN6zC/Gomcoi94x3RNrUOxDI/n9OcIZmwPA92Ve2a1oeR6AgZoZssnpDqvmBmATP7ZuOZO9fCBeQ9WBfKJ/UhIiCAGR4WCBvXei13fs01A+MqG3PK7NwAilOUVN3W1ekNWwfLBGaw2ZbGxWVeaCpXW7imT/g82YPEFI=
+	t=1785931388; cv=none; b=YNRnSdTIotbD717IUoICOGPXES08vq9U9Htw2kI47YxORRTO/HVDqiVpDqvnNaW973Qzg/ueHLd4JCKEFg1FYa/IAKnKdSydbfZhzBPZVBudbpnUm8KVYvBsdl0g3FwczPnQ3Fb/6Y4PYVGlpRXmTfy9qrGxYinhCNIeevASweE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785931337; c=relaxed/simple;
-	bh=5vDKBywu5NXWhvNr2Oh4QQmVjvHKs7vkui0Oc8XizEo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=raTjkhgZM5tsMlxtWsgM7fYB8A5ZmzgWa1bdK/CGm1bFktRDx/Qi3EJI7GlMdmcjnxvI5hvbrmzJNaFLZ5HoEVB287mR53BYqhp0N3rmBKqAryDBfyzatJrKy9xWdqbxj6QVdLufYFmIJXSserumQcFe0Yz7fBvYc9Atu2Lck4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sb/5WY3u; arc=none smtp.client-ip=198.175.65.19
+	s=arc-20240116; t=1785931388; c=relaxed/simple;
+	bh=AVFLckH5ta5/25sIdTfyV2kOgSoCQZ2+WQLJm7ZwKTk=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Ucyx7XzkKkaPn+rLQJwKD/5rXLFcYKZh/RE2AOmUO49mpNzu0pNKPGtLJBUPXyUCFVnrfilLHkgoETHSrRFu6pZ3z+QEkXLul4iJhsnnM3TJx+7GMfi8b8YZChvxaP3LljqorjN2oCfMacnaRnX+t+i6XzyJ7qu7+nR/tPuMVGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YfM4li6R; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sb/5WY3u"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YfM4li6R"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1785931329; x=1817467329;
+  t=1785931387; x=1817467387;
   h=date:from:to:cc:subject:message-id;
-  bh=5vDKBywu5NXWhvNr2Oh4QQmVjvHKs7vkui0Oc8XizEo=;
-  b=Sb/5WY3u9pY3rN83FP+Lj7raFIEA8vQi1UYpc94LWCtSkOy+AsMlj2aH
-   L6dJzrjNad4j3rEo4blMehlo/pKJjxHLK7nXSeVe+TKTJ6Bl5rIzA/PMC
-   EStyyyifvATAMk5GeXhYZsCCUitRfQQjZ512iQ5odZKo2lmZgT7CO7iX+
-   n8tr0JNYLeRGnJig32hAMwMgBOyf/tznh1si2f6Ak2dOPl+TWt1vCCOgt
-   j1f/NNUAqWct8wPVfRn5/jyqrPjMVvGsDZcJMgYLb1Zo3qOLZ6S/ABIOW
-   0YigTqBDyrLItLjNXCr+TiW2KXpAMMlcRRSLfk8M+xkN6QRkmogGifsrF
-   A==;
-X-CSE-ConnectionGUID: o5pl3rslRk6Q2Vnyd30E4Q==
-X-CSE-MsgGUID: TNHrPzpeR/m7jIIYRXn7EQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11865"; a="86441643"
+  bh=AVFLckH5ta5/25sIdTfyV2kOgSoCQZ2+WQLJm7ZwKTk=;
+  b=YfM4li6RNEdiEiNzyBGbKlrWFFqdpzyrYov+6CV6e4YrZ6ri9AC8JCIQ
+   VcHOWgmWMa81c8or2J2jMeReHqmvhOCBpd+ejipblik2ggAiF/tTAZBon
+   BxCdSJdacduvHULx7N491d3yX3SszPVtcBqRB0FYkYDxjzlAUI8bBTBhO
+   dk1I4G3E1BLokVwgkM5M5v6zdYEcxP94JRjJWN5cFTaFc2a7rUHupiQ8z
+   nVL6ItTp6PbZAAqAbdZTZq/ugRbQQAH1LKvH/G/URSSiVbMvSQlsAx7Va
+   lh1ZRMdt8f8X/yNqu5K6JvyZUJTZXSNqLXySvCeFL0bbW6WbIPBQrsj9L
+   g==;
+X-CSE-ConnectionGUID: 7+6YXLksRGOyGu+5I6b3Dw==
+X-CSE-MsgGUID: ghZIm0fpR1S9EH8U4UWnMw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11865"; a="86441784"
 X-IronPort-AV: E=Sophos;i="6.25,206,1779174000"; 
-   d="scan'208";a="86441643"
+   d="scan'208";a="86441784"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2026 05:02:05 -0700
-X-CSE-ConnectionGUID: zRa6c2YRT+m2uFGPNM1k5g==
-X-CSE-MsgGUID: ftGvCsiBRnyHEkSv/Hjlsw==
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2026 05:03:07 -0700
+X-CSE-ConnectionGUID: MO+akYIQS+eNqUWA95YZjw==
+X-CSE-MsgGUID: DeSOoHUbReCvGeLYNaGF6g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,206,1779174000"; 
-   d="scan'208";a="300013476"
+   d="scan'208";a="300013709"
 Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 05 Aug 2026 05:02:03 -0700
+  by orviesa001.jf.intel.com with ESMTP; 05 Aug 2026 05:03:05 -0700
 Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1wraJt-00000000CM5-26Qw;
-	Wed, 05 Aug 2026 12:02:01 +0000
-Date: Wed, 05 Aug 2026 20:01:36 +0800
+	id 1wraKs-00000000CMt-3gNM;
+	Wed, 05 Aug 2026 12:03:02 +0000
+Date: Wed, 05 Aug 2026 20:02:20 +0800
 From: kernel test robot <lkp@intel.com>
 To: Linus Walleij <linusw@kernel.org>
 Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- 41c59b22370d2e1785e0e80f8ad7bd9946a1ca82
-Message-ID: <202608052021.NgvouUDu-lkp@intel.com>
+Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
+ 696ff859f5f93a7cedab2a2afa20bd1635918fcf
+Message-ID: <202608052007.hY9umBLp-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -59,13 +59,13 @@ List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: 41c59b22370d2e1785e0e80f8ad7bd9946a1ca82  pinctrl: spacemit: validate pins in pinconf callbacks
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
+branch HEAD: 696ff859f5f93a7cedab2a2afa20bd1635918fcf  Merge tag 'pinctrl-qcom-fixes-for-v7.2-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux into fixes
 
-elapsed time: 1531m
+elapsed time: 1532m
 
 configs tested: 196
-configs skipped: 1
+configs skipped: 2
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
