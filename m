@@ -1,86 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828FB3B2FFE
-	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 20:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8FC3C4547;
+	Wed,  5 Aug 2026 03:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785875474; cv=none; b=gyl5xtAAvZEAJxfB/PglJnGfnlFCMm9XezlYAVkodfp8vxQISE5XrfBFJ2AXzfujvTnbHQrA9f1WCaaYklCL2JtwgIZ4xm1N/g9rJJJxn2bWpQzb2AUL240sFuKU1hCb/CLM8bZ3qMhb6Q+b+jO6TZpQ+Hmf5sEnP1+8l5QRmA8=
+	t=1785900620; cv=none; b=IrqkxaUuEvsk54OhriIB7ul5Y03ryM9w8p4rAlT0xmtq4RK9ev9d0iaFa6hru1Dq64oB0FoSfOUJZoGdU9CL1WMoKZR6VdWpCGcA69qOHNCa1wBJj4+bCT32SMX2K8ODvxLJw+FKVzxKgRI/j6MgV/mTar7FLYKwRNp3+64dlHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785875474; c=relaxed/simple;
-	bh=hQ/IF9zsRp6EfE4UNaPgSz8EQXYUIanVlGiQJgbb6as=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ikzIR7dQZZEmwj2lW41aq35W68WN9nQu3xKMXK+vuZ6GSIsmP8+7fPEFTJQ1V4cKUAAs5iQVVsIj0pRbF/RH/24vSpsW/JJB6vRDL+hbCu9CiVgjjmZ4M9aAqKNhy0flXahVZf3mc/4o7PJuz9RLaA/521xRfXSTzYvdHCzFMjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdb5XWaT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785900620; c=relaxed/simple;
+	bh=fx1DuAg9HEqxM5McnkCl3EA3FlKtNQUZve7oSEFLZYw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ST7HP7JMULVkV5i560qUO5CazDotUbrTju/YGeZbu/QQU8zn5xnRceWWAul0Q0+5Cljx6s1T3TuA8/I6dFftPq86sWE9LN0fKiABWDJsT7VSMo6SjS2MXjiNlbUv15NTa1+bbb1D/EAAAflic92YUDA0s6dBvFr6LBBAj1LM7JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=aWdGyWz2; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdb5XWaT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1848D1F00ACF
-	for <linux-gpio@vger.kernel.org>; Tue,  4 Aug 2026 20:31:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785875473;
-	bh=hQ/IF9zsRp6EfE4UNaPgSz8EQXYUIanVlGiQJgbb6as=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=jdb5XWaTxkq+n6O53rvIAk3SysegMg1HmXJeeSTmoOmmG+x6wcMVbEpwCCvy0f3iG
-	 cf5ZVHDJV+yM+UT5/XUOi5ROLw+pJlj6FS4pMpv/e0pMZOJdhh663bNVf6pSyeVQNJ
-	 t4IHmveN0te3rwW8o1h97uK8SaWJOXyrvRWYWVPWipJBlu6S6q42vYrPrkZIgY8JH7
-	 X2tYAd7TmK5eRbqeEhJBnsCH3Wh7sC89Fs0U7GG2vv/UfXSYFziwD5fIoDKZv8m35i
-	 l23zB59keWG4A/xhAn5os0DKKvDukEtcneCEKJ5oasGR7yUc3s2qyan4NA8xrYp/ED
-	 ZhNGOCmQ/hcog==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5b021916bd3so329719e87.3
-        for <linux-gpio@vger.kernel.org>; Tue, 04 Aug 2026 13:31:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqcTcXCCAvTYreVbU68JqvBUr2NgbQZOM+I5aYZcnjtTYmzJ87WYI3AZ2Iffl7m67MdWlpEm9BUxJW/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmFE6cTQasV+++Zjz/N5XeQieyXFvIPThyCRiFQKJP4btH3sxp
-	u3hv2304gBx0JnswTQckIembI+uDqD3jNU/O14w7M4I21gzHS95ygJ8WFTjvNta1Lp55zrgd7ea
-	tdoR+0QnQu08cDFRGrTXuuVispBYEkSM=
-X-Received: by 2002:a05:6512:2342:b0:5b0:1760:fabe with SMTP id
- 2adb3069b0e04-5b2f4b8bfe8mr161410e87.15.1785875471838; Tue, 04 Aug 2026
- 13:31:11 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="aWdGyWz2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=kX
+	YywNMh6vzEx1z9jhfiDuQDqbIo2Ie56qyFTxXK1o0=; b=aWdGyWz2d/LJfyqpQp
+	UICDhVQ8NnXN8DYYQb6iIEMfInuyV/jJDWmjFmCFvZzVo0bGgj7KceOTXjmoXNr3
+	+JuFxrmOOshTQTDOqQthlPwcpCCVnHRXc43BlOmPopVWgM/NU5H6GvX5RX0ti6VG
+	MUhh3RPRkptGbYfSxF3GdyBtc=
+Received: from fedora (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3P1sdrnJqG4KmNw--.47924S2;
+	Wed, 05 Aug 2026 11:29:34 +0800 (CST)
+From: Ju Nan <junan76@163.com>
+To: antonio.borneo@foss.st.com,
+	linusw@kernel.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	junan76@163.com
+Cc: linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: stm32: fix the unit of the hwspinlock timeout
+Date: Wed,  5 Aug 2026 11:28:44 +0800
+Message-ID: <20260805032843.36961-2-junan76@163.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260801072711.153217-1-changhuang.liang@starfivetech.com> <20260801072711.153217-5-changhuang.liang@starfivetech.com>
-In-Reply-To: <20260801072711.153217-5-changhuang.liang@starfivetech.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 4 Aug 2026 22:30:59 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmbuS-Tx82AZzwJZ=ANVwi3XVtYL3J4VYaE3yEZBumZ0Q@mail.gmail.com>
-X-Gm-Features: AUfX_mxydusxf8VE7_hAS02smaZytShMdtSQeu6nrNbjybQ0dqWTUpDubwEFwtM
-Message-ID: <CAD++jLmbuS-Tx82AZzwJZ=ANVwi3XVtYL3J4VYaE3yEZBumZ0Q@mail.gmail.com>
-Subject: Re: [PATCH v4 04/21] pinctrl: starfive: Add StarFive JHB100 sys0
- controller driver
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>, Paul Walmsley <pjw@kernel.org>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3P1sdrnJqG4KmNw--.47924S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KF4fXFyxCFWfKw4fKF1kAFb_yoW8Wr47pF
+	W3Gwn8CFsYqayak3WkJa1qgFy3GayxJrW8KF92q3yav3Z0yayvqr4rKayjvF9F9rW8Xanx
+	tF4Sg345C3Z5CFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piPEf5UUUUU=
+X-CM-SenderInfo: pmxqt0ixw6il2tof0z/xtbC1B7pm2pyrh6LhQAA3e
 
-Hi Changhuang,
+HWSPNLCK_TIMEOUT is passed to hwspin_lock_timeout_in_atomic(), whose
+timeout argument is in milliseconds, not microseconds:
 
-On Sat, Aug 1, 2026 at 9:27=E2=80=AFAM Changhuang Liang
-<changhuang.liang@starfivetech.com> wrote:
+  atomic_delay += HWSPINLOCK_RETRY_DELAY_US;
+  if (atomic_delay > to * 1000)
+          return -ETIMEDOUT;
 
-> Add pinctrl driver for StarFive JHB100 SoC System-0(sys0) pinctrl
-> controller.
->
-> Simultaneously add a generic pinctrl driver framework for registering
-> the pinctrl of other domains (sys1, sys2, and so on) in the JHB100 SoC.
->
-> Co-developed-by: Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
-> Signed-off-by: Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
-> Signed-off-by: Alex Soo <yuklin.soo@starfivetech.com>
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+So the driver asks for a 1 second timeout where the comment next to the
+macro says it wants 1 millisecond.
 
-With Uwe's and Philipp's comments addressed this looks very nice.
-I really like how you use all helper libraries in this driver!
+The hwspinlock core documents this explicitly:
 
-Once DT bindings and comments are accepted, this can be merged.
+  If the mode is HWLOCK_IN_ATOMIC (called from an atomic context) the
+  timeout is handled with busy-waiting delays, hence shall not exceed
+  few msecs.
 
-Yours,
-Linus Walleij
+Pass the value the comment always described. The core retries every
+HWSPINLOCK_RETRY_DELAY_US (100 us), so the semaphore is still polled ten
+times before giving up, which is far longer than any plausible hold time
+on the coprocessor side. A timeout is reported with dev_err() and fails
+the pin configuration or the interrupt allocation, so shortening it
+degrades gracefully.
+
+Signed-off-by: Ju Nan <junan76@163.com>
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 6a99708a5..dbc9143ec 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -87,7 +87,7 @@
+ #define gpio_range_to_bank(chip) \
+ 		container_of(chip, struct stm32_gpio_bank, range)
+ 
+-#define HWSPNLCK_TIMEOUT	1000 /* usec */
++#define HWSPNLCK_TIMEOUT	1 /* msec */
+ 
+ static const char * const stm32_gpio_functions[] = {
+ 	"gpio", "af0", "af1",
+-- 
+2.55.0
+
