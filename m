@@ -1,112 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AE03D88F6
-	for <linux-gpio@vger.kernel.org>; Thu,  6 Aug 2026 21:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816A940A92E
+	for <linux-gpio@vger.kernel.org>; Thu,  6 Aug 2026 21:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786051911; cv=none; b=EAkj+hq0Nd9FCKh+29OKgrnikBUILo6blvxO2lCeSy1DBhATQVNcxzbAGTmZk8kfyx8p4gMfQHJ6eXmk9gJev8Rhlv7fYEw/ou5FRPICO27qRAAq88jHGKWqNOn4h9L5IewYPBhgWPEWhgqeuykoX0APuXNMEn481ZM14E8Ytb8=
+	t=1786052089; cv=none; b=ErmNz0yQMHcccznCyZFqtEYe34UFdXdMuvFDE4hnlBllalwX+xpLg89hWiG9sYJ+re18szXqsSVvdk3oaaIY4spENu45Vte0lxv92xQE2I1GC1Rkz8uyMyRsnfu8jGSIda21pdmKRnZo5+Xc0/nYR0jwcdF9m8neaEk+igFlHlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786051911; c=relaxed/simple;
-	bh=MapO9+0UbYPsPznCJ1eGKO8xyWh4okMlTCl5ELK9AJU=;
+	s=arc-20240116; t=1786052089; c=relaxed/simple;
+	bh=pog4xoUC7Tc3PkeqFvTAXaZ6ibInE/ovsISPzhII0xA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TV4hPtbEsEUU1yp0fiiU7VhcubNwblX2O6SJ3cUnlYiBMePxGFoHDaLaB7YxYjz11lNDK4Tod9DZpz01SyyT23rwakfyuoxlPkm0mXOLPimYdGbXdlCmARg96FTvMf4rRTfLJ42WuDpKTWNbakPgbCr1Yu03scpcSQzaQ5/RntQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4yM4f15; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=Ym1fXipI72oPwywqMzWXcWU4yTHmYxdk4hBtuuEPYRszUqefM1Zh0UaQaJFzdXOpw7+n8e2KpRq/D1/kjilg4pHRo7WtXmWLF0OedpgrPa9bg3mlp91ciqXsBfe18Po1dCxFsTC+5K+ISj1zyeDWNmnvp8mXqqCLmDgS88mPvD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJTzlJhb; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4yM4f15"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD63F1F00A3A
-	for <linux-gpio@vger.kernel.org>; Thu,  6 Aug 2026 21:31:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJTzlJhb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 200811F00ACF
+	for <linux-gpio@vger.kernel.org>; Thu,  6 Aug 2026 21:34:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786051909;
-	bh=4nDRcpgpnHZsH8pHVeZMeunrKKlZ3F16xOccjHEdWAg=;
+	s=k20260515; t=1786052088;
+	bh=Yd3/JGFOLcwsntjnEW68DdLA+DfDMzDlmqW2hw1f6Ps=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=W4yM4f1542T0cQFSC9nX2u+rp8G5+hW+wm7040WVxpCpIzrWIjUT+5+fr6YQXCwfY
-	 ZYiX67MD1X/6C0ulWgp4UImu1V2tVwkt78JRsOiTurHw5gEinY57BIwsuNl2wMbt22
-	 W/prT2qFWs5fhYwPODOWhTnHg8LW4xilskGv9/tiae1flgbZWwgNzhVH7lYmCug5rI
-	 rYKrcnOrvFXC6mbrwQW71U4HnwhZfQLJExn1uT01Ol5zbiy0GNLBGNuB/h3dyRb6Gn
-	 GzSVLB1nKstb2rNjw86BaTYn2Co3aVaerqfXpwHBWEuz95WGJK/06s8vhDTGtw7eyv
-	 GJ0cpzbQM0WiA==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-39c74722e27so18722211fa.0
-        for <linux-gpio@vger.kernel.org>; Thu, 06 Aug 2026 14:31:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rq0T4PKXWF6k9rkHf7GZAfeqS9u5vrr+ztCvQPf6zd5BRe8ie80xKyymYZsh+TD25EtMZGmBREgzJh6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL3XvPtUq/VbsPxCIWgA3CKJIQJQKRrEN1TvIq50WMERnE2IJq
-	Y2cQtc/EEtGYuhw55JEkjZjfKTjmfBTB/U687UtHYq/GTGixZoYdfcEQGdt6mr7ppsiTh/R6sem
-	4f67ObImevLGUgPt7QC23DkTmHR9TRL4=
-X-Received: by 2002:a2e:a554:0:b0:39c:90e4:a8c5 with SMTP id
- 38308e7fff4ca-39fd1351341mr9835461fa.1.1786051907625; Thu, 06 Aug 2026
- 14:31:47 -0700 (PDT)
+	b=iJTzlJhbojz3frHzPcS3w4gCJFD9Op/dChir1U2xKyB4YudPzCIa9X8cxbOl6UE+J
+	 HBk3fJ2UkPyuemlV/x218xtO+jzTz/SJ2m3hObzNdVX0X9bahpjHRCW3Qmre96o8Vm
+	 SSFWmH6ErcuI5rTSDdO5OGP8GNbW3c8i5Jjj2N5DDpCZv8CwcwCbubkXKC0vAq/2Lm
+	 Scrym3qRkzk9nGeV3pnyP3G5F0VdZ1DvMX9hA4z1ECMn/jCftUaV61h3zip4sG20If
+	 yNUbF46BG2xbnNVdlE1S7Yh3d3Ed2ewr9oi1+ouJ9UZwKUlGDMgTVIZN33yQRYzzE0
+	 6ENgX6g8++bzA==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5aeb98460c6so2552256e87.2
+        for <linux-gpio@vger.kernel.org>; Thu, 06 Aug 2026 14:34:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqVmj8waaD69mgEyWLCrF+AsKIH1+yHzgyOaG/q9b8gStcPaEAXYb9u4fruTvhMLXIUYWSTGBX4y8Up@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDeKQSALkVbqR6SYJW/MnIrmBohs6fbH7ttBUPJ+12828K0Rz8
+	VtaNW7+2ciYq1uTppuQiVrNoRmLJ2LCejeUZtm060EzjmvAQEM4RhWhVr1qQY/AtZDuJ2yK0KdY
+	+e5uvNaNaclA6+U5SMBTMsEQIcHSn2EA=
+X-Received: by 2002:a05:6512:3e17:b0:5ae:c454:3746 with SMTP id
+ 2adb3069b0e04-5b303b7e6abmr655632e87.43.1786052086882; Thu, 06 Aug 2026
+ 14:34:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260806-ad7768-driver-v2-0-027ac5e2a641@analog.com> <20260806-ad7768-driver-v2-5-027ac5e2a641@analog.com>
-In-Reply-To: <20260806-ad7768-driver-v2-5-027ac5e2a641@analog.com>
+References: <20260806083728.351824-2-krzk@kernel.org>
+In-Reply-To: <20260806083728.351824-2-krzk@kernel.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 6 Aug 2026 23:31:34 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkM26M1CwzQgR+xA1vgLzGsqm1x=1WAjOgJvF8+08ipQw@mail.gmail.com>
-X-Gm-Features: AUfX_mwHF-6hdCsjgFVeW2oXcK7GLWvqB1cVEcRyYzuhLCjvW0a501F65R-LkWg
-Message-ID: <CAD++jLkM26M1CwzQgR+xA1vgLzGsqm1x=1WAjOgJvF8+08ipQw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] gpio: regmap: Add runtime PM and
- read_output_reg_set support
-To: Janani Sunil <janani.sunil@analog.com>
-Cc: =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Olivier Moysan <olivier.moysan@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Michael Walle <mwalle@kernel.org>, linux@analog.com, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
-	jananisunil.dev@gmail.com, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Date: Thu, 6 Aug 2026 23:34:34 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmY=zd9ro5OzD5HK_GBxEBRbJu73dO9ZZ796R2xpL81zA@mail.gmail.com>
+X-Gm-Features: AUfX_mzPSVfj4FuEYELOQ9M6R4lntnhq47DsZWQZZdv6ADv_yISTJYNWs_ln1h4
+Message-ID: <CAD++jLmY=zd9ro5OzD5HK_GBxEBRbJu73dO9ZZ796R2xpL81zA@mail.gmail.com>
+Subject: Re: [GIT PULL] pinctrl: samsung: for v7.3 (second try)
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Janani,
+On Thu, Aug 6, 2026 at 10:37=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 
-thanks for your patch!
 
-On Thu, Aug 6, 2026 at 5:42=E2=80=AFPM Janani Sunil <janani.sunil@analog.co=
-m> wrote:
-
-> The new pm_dev field in gpio_regmap_config allows a driver to supply a
-> device for runtime PM. All operations call pm_runtime_resume_and_get()
-> before accessing the regmap and pm_runtime_put_autosuspend() on return.
+> Second try - in the previous I had still the old email:
+> https://lore.kernel.org/all/20260806082831.350285-2-krzk@kernel.org/
+> Same contents.
 >
-> The new read_output_reg_set flag when set, gpio_regmap_get() checks the
-> pin direction first and reads from reg_set_base instead of reg_dat_base
-> for output pins. Requires both reg_dat_base and reg_set_base to be
-> configured.
+> Best regards,
+> Krzysztof
 >
-> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
+>
+> The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e524917774=
+82:
+>
+>   Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
 
-Do you have to do this in one big patch?
-
-To me it seems like two unrelated changes that should be
-two patches?
-
-> +static int gpio_regmap_get_direction(struct gpio_chip *chip,
-> +                                    unsigned int offset);
-
-Can't you just move this function up in the file to
-avoid the forward declaration?
-
-> -      ret =3D gpio->reg_mask_xlate(gpio, base, offset, &reg, &mask);
-> +       if (gpio->read_output_reg_set) {
-> +               ret =3D gpio_regmap_get_direction(chip, offset);
-> +               if (ret < 0)
-> +                       return ret;
-> +
-> +               if (ret =3D=3D GPIO_LINE_DIRECTION_OUT)
-> +                       base =3D gpio_regmap_addr(gpio->reg_set_base);
-> +       }
-
-Add a comment above this new code explaining what is going on
-otherwise this gets really hard to read and understand.
-
-Other than that it looks good to me.
+Pulled in, thanks!
 
 Yours,
 Linus Walleij
