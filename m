@@ -1,84 +1,157 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108ED40A92E
-	for <linux-gpio@vger.kernel.org>; Thu,  6 Aug 2026 21:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8622340EBA1;
+	Thu,  6 Aug 2026 21:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786053018; cv=none; b=Gd77yQimRnV2mGDvT5zZyAoBNlwJtCDYWUzdkcrIS5dXD9PqzXYRAE91O0Jxy/JC9j1xEwezClc6Veh8UiWh30RuDlwjO1yKeSJvXTdCZD24HsNzQmUULFcygjZkAYM2YcjvhSc5y1S9uTmAnRx16x3A7NAzmPOodHaIx1nb9LY=
+	t=1786053094; cv=none; b=ZGDSjh/UeYY3QtMCWm/s6QcV/xr1NDwdQpmNld6AQyUElqhgQ6CiYQfCgvQ1krWwUx6KBpvDwkWOBn+4MlMQUlxfCitHGT4qmYd8zqkJvCERa0y0ddS684h6g1bNqZXpO2vkpVTxGELgMcWxKoYTbr6eN3ATUID78pPworxZuB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786053018; c=relaxed/simple;
-	bh=xcy7vptF/hy+DPHjB4Gbv52wsdaMVtOZt/3bPVoHJCQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uGmwq59aZiolOyPl5xDj/5voR24Sv33UR5aSymtzTNBsX0kS1WYPQYutdds2KBiqGCWBVRuAUnKrtshySA94nvkWVsM0NCmqVNTSpv/pNt9LVQOxi0oKJf09A/mrefHKDNHa2bjh0mE21mSLorC1TrQvo6jYs7D7KXXogsgVUw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngV5zpVu; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786053094; c=relaxed/simple;
+	bh=7YXZzO7rHKj6qKOZ2jDkYVaRVikc1Wt8k9LrXwdPOkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ast/+CtArSYz1oAKxx39wSbWi+RiV3uenwR9z3qmHOBBEkujKuiCrpCa6otmo9mn3fYGWsr5c5E2HXX8KFZgwM+T/Li25Dcolr8FXitV4svdseprvlecpXw0/0DtOrEbdTsQfZ/syv80DtBbuKZe87AWVaVRZbes9gjgxsBEhIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=STrjp17Z; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngV5zpVu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EA611F01560
-	for <linux-gpio@vger.kernel.org>; Thu,  6 Aug 2026 21:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786053016;
-	bh=xcy7vptF/hy+DPHjB4Gbv52wsdaMVtOZt/3bPVoHJCQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ngV5zpVu+weQOpvh2gMXaltxq8rXyXczgW76DqK2uqSDkzlHCp8bcelPQ7d9NZqWu
-	 9qcU6Qmwhv0CHSXt1hjnP7i9hY6paI1gyIO8etzTx27D5tz0rjwJMs7odjmk8Fr/Fu
-	 kD8cNNMtuOh7eTnilBSaWt+3HS5KaxzCmqjHLCDnEobNlUay3H5N/UpT8jXqE4EXbu
-	 BWkLtbYFL/vasv6axsDMLMoFoOc+KR+15lE4BY4TnTwXM2uhVshbKk8FTOlfGLEKbO
-	 gulS2mOt6lSwEKUHsnrowuAx8G14Cr2r/6lHEwtvFRkrshhUrNj/uSVl2Bk70oiAoZ
-	 jB2+/rorUgz1Q==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5b0f19bea2fso2805561e87.1
-        for <linux-gpio@vger.kernel.org>; Thu, 06 Aug 2026 14:50:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoAN0mxGQBIx3/tM2dwGDbZ4t/6SoBMPQFJ1rfBIzCFp37hy60RCTLV25llsDGzTR2MgNYtubae9M98@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzxM/UFOjCZC2nI7h/nlZEhHi+6p6xTC34xdMkJxsFxmE4VpNN
-	+8hWEjfvEiZK/dVnYDoer/832/IgdojE+UZpQZP38Pmy9tGDrJWaESvG+c0cVVdq8sjrqC57/wj
-	tmsfOecxcvbSv0iUTrjSA5ljJpJm4rTw=
-X-Received: by 2002:a05:6512:304f:b0:5b1:5807:50f2 with SMTP id
- 2adb3069b0e04-5b303cb381fmr548646e87.43.1786053015336; Thu, 06 Aug 2026
- 14:50:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="STrjp17Z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1786053093; x=1817589093;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7YXZzO7rHKj6qKOZ2jDkYVaRVikc1Wt8k9LrXwdPOkI=;
+  b=STrjp17ZrWDDfBkq6sC6Z3ueXIF2jXJWW7OIEK375PjXAX9+Kg0x881B
+   B/tFAsOhA40Z0lvuWVffvaQAEljKw7HYMqX/u7KP0ur9dOv6jJC6wRO0d
+   DHJUEQxewFwF/3wcMAPvZ3ix9baxvlK4Vk9YNc++PpXraV3YglmGArkoC
+   iKmr4WFz3XinofM9bF2IfWwapjytMYTSBBTRaGoHF485ODLSJ+83P9WYi
+   TWw13K4aqwMmD5m4HxjNkjtU44HLV1zYQPtySd2JSudd5Gj+2p4RPZQKS
+   mpPou75Nx/vjJJkTUg/wpXIUtZopZQJCa9y9NqB10rFxJ7pc54PduokLY
+   g==;
+X-CSE-ConnectionGUID: KFxNgBEHR9KxKySnE2yhMg==
+X-CSE-MsgGUID: YzVDWGa4Tq+38KhSvoMDDw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="85630870"
+X-IronPort-AV: E=Sophos;i="6.25,209,1779174000"; 
+   d="scan'208";a="85630870"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2026 14:51:32 -0700
+X-CSE-ConnectionGUID: AB8YyTXOSCSKko1pPJhpvA==
+X-CSE-MsgGUID: gfPYtjsYTwuf1P+pMEQQWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,209,1779174000"; 
+   d="scan'208";a="285586569"
+Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 06 Aug 2026 14:51:25 -0700
+Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1ws5zl-00000000GKf-1GLg;
+	Thu, 06 Aug 2026 21:51:21 +0000
+Date: Fri, 7 Aug 2026 05:50:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Markus Elfring <Markus.Elfring@web.de>, acpica-devel@lists.linux.dev,
+	bpf@vger.kernel.org, coresight@lists.linaro.org,
+	kvm@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-perf-users@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	mptcp@lists.linux.dev, netdev@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org, virtualization@lists.linux.dev,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alex Mastro <amastro@fb.com>, Alex Williamson <alex@shazbot.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andi Kleen <ak@linux.intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Ankur Arora <ankur.a.arora@oracle.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH] tools: Use fputc() calls in some functions
+Message-ID: <202608070547.MRKfa3bH-lkp@intel.com>
+References: <48f2d61f-d468-49b7-881e-f00777db073f@web.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260802-b4b4-irq-trigger-mask-gpio-v1-1-948973636c84@oss.qualcomm.com>
-In-Reply-To: <20260802-b4b4-irq-trigger-mask-gpio-v1-1-948973636c84@oss.qualcomm.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 6 Aug 2026 23:50:00 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmFruzsuSCgzKCZoy63dgTPi=Hci-xgj76315ht9ttFyQ@mail.gmail.com>
-X-Gm-Features: AUfX_mz1H-BHPNicMG_kro-JKcpFPgsijOdPLrxM4JqaXBQO7QyYZT_KtNKmkEg
-Message-ID: <CAD++jLmFruzsuSCgzKCZoy63dgTPi=Hci-xgj76315ht9ttFyQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: Use IRQ trigger mask helpers
-To: Maulik Shah <maulik.shah@oss.qualcomm.com>
-Cc: Keerthy <j-keerthy@ti.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, 
-	Robert Jarzmik <robert.jarzmik@free.fr>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-unisoc@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <48f2d61f-d468-49b7-881e-f00777db073f@web.de>
 
-On Sun, Aug 2, 2026 at 4:11=E2=80=AFPM Maulik Shah <maulik.shah@oss.qualcom=
-m.com> wrote:
+Hi Markus,
 
-> Use IRQ_TYPE_LEVEL_MASK and IRQ_TYPE_EDGE_BOTH instead of open-coded
-> trigger type combinations in irqchip callbacks.
->
-> No functional change intended.
->
-> Assisted-by: Claude:claude-sonnet-5
-> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
+kernel test robot noticed the following build errors:
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+[auto build test ERROR on perf-tools-next/perf-tools-next]
+[also build test ERROR on tip/perf/core perf-tools/perf-tools linus/master v7.2-rc6 next-20260806]
+[cannot apply to acme/perf/core]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Yours,
-Linus Walleij
+url:    https://github.com/intel-lab-lkp/linux/commits/Markus-Elfring/tools-Use-fputc-calls-in-some-functions/20260806-165154
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git perf-tools-next
+patch link:    https://lore.kernel.org/r/48f2d61f-d468-49b7-881e-f00777db073f%40web.de
+patch subject: [PATCH] tools: Use fputc() calls in some functions
+config: x86_64-kexec (https://download.01.org/0day-ci/archive/20260807/202608070547.MRKfa3bH-lkp@intel.com/config)
+compiler: clang version 22.1.3 (https://github.com/llvm/llvm-project e9846648fd6183ee6d8cbdb4502213fcf902a211)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260807/202608070547.MRKfa3bH-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202608070547.MRKfa3bH-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> builtin-check.c:300:8: error: incompatible pointer to integer conversion passing 'FILE *' (aka 'struct _IO_FILE *') to parameter of type 'int' [-Wint-conversion]
+     300 |         fputc(stderr, '\n');
+         |               ^~~~~~
+   /usr/include/stdio.h:155:16: note: expanded from macro 'stderr'
+     155 | #define stderr stderr
+         |                ^~~~~~
+   /usr/include/stdio.h:611:23: note: passing argument to parameter '__c' here
+     611 | extern int fputc (int __c, FILE *__stream) __nonnull ((2));
+         |                       ^
+>> builtin-check.c:300:16: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'FILE *' (aka 'struct _IO_FILE *') [-Wint-conversion]
+     300 |         fputc(stderr, '\n');
+         |                       ^~~~
+   /usr/include/stdio.h:611:34: note: passing argument to parameter '__stream' here
+     611 | extern int fputc (int __c, FILE *__stream) __nonnull ((2));
+         |                                  ^
+   2 errors generated.
+>> disas.c:540:9: error: incompatible pointer to integer conversion passing 'FILE *' (aka 'struct _IO_FILE *') to parameter of type 'int' [-Wint-conversion]
+     540 |                 fputc(stream, '\n');
+         |                       ^~~~~~
+   /usr/include/stdio.h:611:23: note: passing argument to parameter '__c' here
+     611 | extern int fputc (int __c, FILE *__stream) __nonnull ((2));
+         |                       ^
+>> disas.c:540:17: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'FILE *' (aka 'struct _IO_FILE *') [-Wint-conversion]
+     540 |                 fputc(stream, '\n');
+         |                               ^~~~
+   /usr/include/stdio.h:611:34: note: passing argument to parameter '__stream' here
+     611 | extern int fputc (int __c, FILE *__stream) __nonnull ((2));
+         |                                  ^
+   make[5]: *** [tools/build/Makefile.build:96: tools/objtool/builtin-check.o] Error 1
+   2 errors generated.
+   make[5]: *** [tools/build/Makefile.build:95: tools/objtool/disas.o] Error 1
+   make[5]: Target '__build' not remade because of errors.
+   make[4]: *** [Makefile:123: tools/objtool/objtool-in.o] Error 2
+   make[4]: Target 'all' not remade because of errors.
+   make[3]: *** [Makefile:74: objtool] Error 2
+   make[2]: *** [Makefile:1587: tools/objtool] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:248: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
