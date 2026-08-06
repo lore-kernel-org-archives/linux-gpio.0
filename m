@@ -1,456 +1,265 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E2947ACF4;
-	Thu,  6 Aug 2026 14:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AD447ECF2;
+	Thu,  6 Aug 2026 15:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786027523; cv=none; b=N9r98t/lIx3kemt0AROf7Rry2zUb0tcEGkJctJNnIFl51pIvI43Fo12jZ8SgsgnX/hlrtLhEvdnqWX1fkr44+qRCwtVnLsoqqdUc6GAW5uCG0blbCXSuH10t350dnMVsz21K4/Fqf5U6NX4JFpHHqOFlEcgBO0VJoR2iXkykXGM=
+	t=1786030946; cv=none; b=YVdFdYrV1Ct5YJxAx2dek/JVvkQ6+G2oZN5OGo/3K+5phqWbwDX/1tiLNA19S5sCRR0aGW1amTSqMZNztBTft6RaDsmc2/36Bge5YDk61MbBEsFjvAQ6F49JVa2rbpkb5wF2hrwXzGx3DRPGmY8l5QfQd+bCLkn0RW3E7Iy0hyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786027523; c=relaxed/simple;
-	bh=hdKqq0A917bebNCMD3P/xl6fiIr78cXlP5rJIF0CdHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NehCQYkYMUsKsY1sPJb9UbzOtfJmfSK/1asskF1mFHcY+hDSYk86p/aAv0IMQcUuSsy1ONfSE/eCH4OQ4iTACUtEn1qIg9aUCYtOnoaY5mc5nXwl80U9iZnZuinVrAwDWwZoxisyGO42lvmFgHBtSV80x9cXcT+KlJbUfqVbYTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZzXedx8J; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786030946; c=relaxed/simple;
+	bh=cdis5cPip72Bds+HVE118777rlAoUkFOaTG3iCIbBnY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=P8oq9jBbUr9qImCiEDwG8w/tBQEprhD5OA3CYvqxQHlQ0H0QLaamWv+Z+c/anoW7lDEce05WOIkGSWRebih5ksm9SuHTHraHDdcvSuWQ/a4OeKOcmbHpYkj0qRmj+cEdgypLeC1DyE/UstSxwBE5jzzV6El8DwkjTkeTe/MqbNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=07MKdXX4; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZzXedx8J"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E480B1F00A3A;
-	Thu,  6 Aug 2026 14:45:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786027520;
-	bh=sA/Au7S/KrYZzUieAPhYekBhJPW6eueCL/Esuuos5kM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZzXedx8J3D5ItKDFR3JV0Ha2BBDUL2e0R6ZHMi039of9q9Whqg2r4vwHMYAJQNMOi
-	 fOj//0QK8oQos9jPMkz4thYOxSQsHm6WZ0WqtMNEMbDwjEQVyXESBh6jCZDXbdUpqV
-	 WsCgUKKCe3494BIX6I2dlCXHgk5MCOHAezwbwklgupSpamKUEYVvAGNfkP7ihHYKUe
-	 +Ez537pDOj+sTUerHn4kLRuTWDLefS/ZfXhoY98didO6AqCpuhfh0n6WgKxR2f2M3q
-	 /mbyPXC8m5/KA7Z5eprr3AEcAqeFKnVI4p9DCUP2L17JN0qxrenBJ8A+Nx6qUpV52O
-	 bnPLdBGhhNGUA==
-Date: Thu, 6 Aug 2026 15:45:14 +0100
-From: Lee Jones <lee@kernel.org>
-To: "Thomas Perrot (Schneider Electric)" <thomas.perrot@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	=?iso-8859-1?Q?J=E9r=E9mie?= Dautheribes <jeremie.dautheribes@bootlin.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-watchdog@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v8 3/5] mfd: aaeon: Add SRG-IMX8P MCU driver
-Message-ID: <20260806144514.GR2869284@google.com>
-References: <20260731-dev-b4-aaeon-mcu-driver-v8-0-9ab00e80df2a@bootlin.com>
- <20260731-dev-b4-aaeon-mcu-driver-v8-3-9ab00e80df2a@bootlin.com>
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="07MKdXX4"
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 676EqlHl3342773;
+	Thu, 6 Aug 2026 11:42:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=PHHPtgJlL1psJV48pid+ZAo3ndp
+	+Bi1ajAMRXQ92tuc=; b=07MKdXX4GmEX0gbe0uXFS9JLkDshyeNZ3uzS3YRkEty
+	tGkBI+BUzEpA40mpHJ4iHo5Vm8M1wOrfQCN7iC5MQ2P8aK9YyKXS92ur7Blo53/N
+	Akya3j4iyWCdYF++Tb9C7Maxp/RXkNuIL9g7Jc10xv5HM5/0LPugTLVcP5fOCjBu
+	RT9iFdemClRbbKxjBQj0uALFwCUztIHRiAOJF8kiWRHbh6X5mDOtwqKg+//9gEbL
+	acF+VHWAF/6wi2H6+hWoYP0ChNEtOV5+h+eF2YhiCrvEbD7y71W4b6VeeGV2YE15
+	j5GPDH7zG+IVyqH+pu9F/pKWF2zngtODKwuqD2V1i9A==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 4fvuvyrd51-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Aug 2026 11:42:03 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 676Fg16R007015
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 6 Aug 2026 11:42:01 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.37; Thu, 6 Aug
+ 2026 11:42:01 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Thu, 6 Aug 2026 11:42:01 -0400
+Received: from HYB-e1y2fvUQ3cx.ad.analog.com ([10.32.223.174])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 676FfcgX008127;
+	Thu, 6 Aug 2026 11:41:40 -0400
+From: Janani Sunil <janani.sunil@analog.com>
+Subject: [PATCH v2 0/7] iio: adc: Add AD7768/AD7768-4 ADC driver support
+Date: Thu, 6 Aug 2026 17:41:19 +0200
+Message-ID: <20260806-ad7768-driver-v2-0-027ac5e2a641@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260731-dev-b4-aaeon-mcu-driver-v8-3-9ab00e80df2a@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB+rdGoC/13MwQoCIRSF4VcZ7jpDxXRs1XvELETvzFwoDQ0pB
+ t89G2jT8j9wvg0KZsIC52GDjJUKpdhDHgbwq4sLMgq9QXKpueEjc8EYPbKQqWJmgvsgTtJqLzn
+ 0zyPjTK/du069VyrPlN87X8V3/Un2T6qCcaYUCmHVHKx2FxfdLS1Hn+4wtdY+MHlOH6sAAAA=
+X-Change-ID: 20260708-ad7768-driver-10cd15296c20
+To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        David
+ Lechner <dlechner@baylibre.com>,
+        Andy Shevchenko <andy@kernel.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Olivier Moysan <olivier.moysan@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Michael Walle <mwalle@kernel.org>
+CC: <linux@analog.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <jananisunil.dev@gmail.com>,
+        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@baylibre.com>,
+        Janani Sunil <janani.sunil@analog.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1786030898; l=6922;
+ i=janani.sunil@analog.com; s=20260507; h=from:subject:message-id;
+ bh=cdis5cPip72Bds+HVE118777rlAoUkFOaTG3iCIbBnY=;
+ b=LznloeH1J5LTevl8JZYhVdtDskT86PLWeOXsu4oO7+usmLGUhykSMZrP/M4wIegLd6OMTzBIP
+ Pk7X+Zjnc9PBEIqecotmwMwhIlzGUPczosFiL7Hy0cGRwqtwJkp0zJP
+X-Developer-Key: i=janani.sunil@analog.com; a=ed25519;
+ pk=e25MyjRLPY3RWrYm/LrJ+/+t1MZJUbkgIW5CZg+g+hA=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODA2MDEyMSBTYWx0ZWRfX8YcqCCFEQzKW
+ 4PNxq6oEFgIzIiy2582VIJHvzutuMYiVqabGSYMmIDYVR/yqm52B3146pKPZCzrtAtVpfSKgUJv
+ Et+4Yw3i4IRmBoa9AULNvxGmFCZvZk4jRHG9S6vbu07TxQ5GP05S2dQ1+DV+iNyppFOF0/l9eN5
+ Kcm0Y3pd+n4hYX6ie368ZBvslNLND2Y/xQyMC/HD9v0IyOk60GRTrTdza6OcDwYnPpa5SmNn5yY
+ e/rw5Ln4zx7y2QDwrGo7TPNWpx9wxq8H8lHDlYiOIzluUrSfEgJBpY+3loPde7Bsn8T/p5PanLb
+ eKO84WIVUIFWDFQ8AVhpEXUeM2SYfi4jgw9iQO/n0mhXe3G5L9UWDKn1+NCDTrlCH8lj3arJ/qo
+ UrF7UntCK/r5LhCRRJtSFFvS9GFVE4KJYfLO7DaXrLFqMn8RN5/gfs2ZL3oZJJVQ5JtXFfvWXAJ
+ p3XfssLHmS7k0OS79tA==
+X-Proofpoint-GUID: 09nL_w-frpfHQLcqfDgi9AwZ8vqRzCIu
+X-Proofpoint-ORIG-GUID: 09nL_w-frpfHQLcqfDgi9AwZ8vqRzCIu
+X-Authority-Analysis: v=2.4 cv=JsjBas4C c=1 sm=1 tr=0 ts=6a74ab4b cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=0sLvza09kfJOxVLZPwjg:22 a=N--XFCr6TIEc_64PeIT2:22 a=gAnH3GRIAAAA:8
+ a=VwQbUJbxAAAA:8 a=j9EIZ_jAAyhqBOZAihwA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODA2MDEyMSBTYWx0ZWRfX5irjicTMh44U
+ aCNxnnp0RcvaCxGk6r07Zd426ilDfamuhXqvzlW5fzzk1/jTg8VzQhV/VKrX1N9tVtT5bs/Pdti
+ 8cRm0MzC9FyXBubaeiB7gzRXWLjcJftA+PHzSUVLRH2iq13mN/gW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-06_01,2026-08-05_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 malwarescore=0 suspectscore=0 bulkscore=0 phishscore=0
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 impostorscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2608060121
 
-/* Sashiko Automation: Issues Found (4 Findings) */
+Add support for Analog Devices AD7768 and AD7768-4, 24-bit simultaneous
+sampling Sigma-Delta ADCs with automatic power mode selection.
 
-Please review, explain or fix the Sashiko review(s).
+Datasheet:
+https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768.pdf
 
-If this is a set, this request includes the other patches too.
+**Device Overview:**
+The AD7768 is an 8-channel, 24-bit simultaneous sampling ADC. The
+AD7768-4 is a 4-channel variant. Both support configurable power modes,
+programmable decimation filters, and a high-speed serial interface with
+1, 2, 4, or 8 data output lines. Per-channel offset, gain, and phase
+calibration registers are available.
 
-On Fri, 31 Jul 2026, Thomas Perrot (Schneider Electric) wrote:
+**Features Implemented:**
+- Support for AD7768 (8-channel) and AD7768-4 (4-channel) via device
+  match data.
+- Automatic low-noise power mode selection (fast, median, low power)
+  with associated decimation rate and output data rate tables.
+- Per-channel offset, gain, and conversion delay via IIO attributes.
+- SPI communication with custom regmap bus for the device's protocol.
+- IIO backend integration with adi-axi-adc for high-speed data capture.
+- CRC data integrity verification over the serial interface.
+- GPIO auxiliary driver to expose the 5 on-chip GPIO pins.
+- VCM common-mode output exposed through the regulator framework, with
+  runtime PM management while the output is enabled.
 
-> Add Multi-Function Device (MFD) driver for the Aaeon SRG-IMX8P
-> embedded controller. This driver provides the core I2C communication
-> interface and registers child devices (GPIO and watchdog controllers).
-> 
-> The driver implements a custom regmap bus over I2C to match the MCU's
-> fixed 3-byte command format [opcode, arg, value]. Register addresses
-> are encoded as 16-bit values (opcode << 8 | arg) using the
-> AAEON_MCU_REG() macro defined in the shared header. The regmap
-> instance is shared with child drivers via dev_get_regmap(). Concurrent
-> I2C accesses from child drivers are serialized by regmap's built-in
-> locking.
-> 
-> I2C transfers use heap-allocated DMA-safe buffers rather than
-> stack-allocated ones, as required by I2C controllers that perform DMA.
-> 
-> Regmap caching is enabled (REGCACHE_MAPLE) with a volatile_reg
-> callback that marks GPIO input read registers (opcode 0x72) and the
-> watchdog status register (opcode 0x63, arg 0x02) as volatile. All
-> other registers written by the driver (GPIO direction,
-> GPO state, watchdog control) are stable and can be safely cached.
-> 
-> Co-developed-by: Jérémie Dautheribes (Schneider Electric) <jeremie.dautheribes@bootlin.com>
-> Signed-off-by: Jérémie Dautheribes (Schneider Electric) <jeremie.dautheribes@bootlin.com>
-> Signed-off-by: Thomas Perrot (Schneider Electric) <thomas.perrot@bootlin.com>
-> ---
->  MAINTAINERS                   |   2 +
->  drivers/mfd/Kconfig           |  11 +++
->  drivers/mfd/Makefile          |   1 +
->  drivers/mfd/aaeon-mcu.c       | 207 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/aaeon-mcu.h |  40 ++++++++
->  5 files changed, 261 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index ea9d55f76f35..f91b6a1826d0 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -191,6 +191,8 @@ M:	Thomas Perrot <thomas.perrot@bootlin.com>
->  R:	Jérémie Dautheribes <jeremie.dautheribes@bootlin.com>
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/mfd/aaeon,srg-imx8p-mcu.yaml
-> +F:	drivers/mfd/aaeon-mcu.c
-> +F:	include/linux/mfd/aaeon-mcu.h
->  
->  AAEON UPBOARD FPGA MFD DRIVER
->  M:	Thomas Richard <thomas.richard@bootlin.com>
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index aace5766b38a..66f2e7757748 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1561,6 +1561,17 @@ config ABX500_CORE
->  	  remain unchanged when IC changes. Binding of the functions to
->  	  actual register access is done by the IC core driver.
->  
-> +config MFD_AAEON_MCU
-> +	tristate "Aaeon SRG-IMX8P MCU Driver"
-> +	depends on I2C
-> +	select MFD_CORE
-> +	select REGMAP
-> +	help
-> +	  Select this option to enable support for the Aaeon SRG-IMX8P
-> +	  onboard microcontroller (MCU). This driver provides the core
-> +	  functionality to communicate with the MCU over I2C. The MCU
-> +	  provides GPIO and watchdog functionality.
-> +
->  config AB8500_CORE
->  	bool "ST-Ericsson AB8500 Mixed Signal Power Management chip"
->  	depends on ABX500_CORE && MFD_DB8500_PRCMU
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index e75e8045c28a..34db5b033584 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -8,6 +8,7 @@ obj-$(CONFIG_MFD_88PM860X)	+= 88pm860x.o
->  obj-$(CONFIG_MFD_88PM800)	+= 88pm800.o 88pm80x.o
->  obj-$(CONFIG_MFD_88PM805)	+= 88pm805.o 88pm80x.o
->  obj-$(CONFIG_MFD_88PM886_PMIC)	+= 88pm886.o
-> +obj-$(CONFIG_MFD_AAEON_MCU)	+= aaeon-mcu.o
->  obj-$(CONFIG_MFD_ACT8945A)	+= act8945a.o
->  obj-$(CONFIG_MFD_SM501)		+= sm501.o
->  obj-$(CONFIG_ARCH_BCM2835)	+= bcm2835-pm.o
-> diff --git a/drivers/mfd/aaeon-mcu.c b/drivers/mfd/aaeon-mcu.c
-> new file mode 100644
-> index 000000000000..c06c99d02d64
-> --- /dev/null
-> +++ b/drivers/mfd/aaeon-mcu.c
-> @@ -0,0 +1,207 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Aaeon MCU driver
-> + *
-> + * Copyright (C) 2026 Bootlin
-> + * Author: Jérémie Dautheribes <jeremie.dautheribes@bootlin.com>
-> + * Author: Thomas Perrot <thomas.perrot@bootlin.com>
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/i2c.h>
-> +#include <linux/mfd/aaeon-mcu.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/slab.h>
-> +
-> +struct aaeon_mcu {
-> +	struct i2c_client *client;
-> +	u8 *cmd;      /* DMA-safe 3-byte write buffer [opcode, arg, value] */
-> +	u8 *response; /* DMA-safe 1-byte read buffer for MCU acknowledgment */
-> +};
-> +
-> +static const struct mfd_cell aaeon_mcu_devs[] = {
-> +	MFD_CELL_BASIC("aaeon-mcu-wdt", NULL, NULL, 0, 0),
-> +	MFD_CELL_BASIC("aaeon-mcu-gpio", NULL, NULL, 0, 0),
-> +};
-> +
-> +/* Number of bytes in a MCU command: [opcode, arg, value] */
-> +#define AAEON_MCU_CMD_LEN      3
-> +
-> +/*
-> + * Custom regmap bus for the Aaeon MCU I2C protocol.
-> + *
-> + * The MCU uses a fixed 3-byte command format [opcode, arg, value] followed
-> + * by a 1-byte response. It requires a STOP condition between the command
-> + * write and the response read, so two separate i2c_transfer() calls are
-> + * issued.  The regmap lock serialises concurrent accesses from the GPIO
-> + * and watchdog child drivers.
-> + *
-> + * Register addresses are encoded as a 16-bit big-endian value where the
-> + * high byte is the opcode and the low byte is the argument, matching the
-> + * wire layout produced by regmap for reg_bits=16.
-> + */
-> +
-> +static int aaeon_mcu_regmap_write(void *context, const void *data, size_t count)
-> +{
-> +	struct aaeon_mcu *mcu = context;
-> +	struct i2c_client *client = mcu->client;
-> +	struct i2c_msg write_msg;
-> +	/* The MCU always sends a response byte after each command; discard it. */
-> +	struct i2c_msg response_msg;
-> +	int ret;
-> +
-> +	memcpy(mcu->cmd, data, count);
-> +
-> +	write_msg.addr  = client->addr;
-> +	write_msg.flags = I2C_M_DMA_SAFE;
-> +	write_msg.buf   = mcu->cmd;
-> +	write_msg.len   = count;
-> +
-> +	response_msg.addr  = client->addr;
-> +	response_msg.flags = I2C_M_RD | I2C_M_DMA_SAFE;
-> +	response_msg.buf   = mcu->response;
-> +	response_msg.len   = 1;
-> +
-> +	ret = i2c_transfer(client->adapter, &write_msg, 1);
-> +	if (ret < 0)
-> +		return ret;
-> +	if (ret != 1)
-> +		return -EIO;
-> +
-> +	ret = i2c_transfer(client->adapter, &response_msg, 1);
+**Patch Summary:**
+1. **dt-bindings**: Binding documentation for AD7768 and AD7768-4,
+   covering SPI interface, clock, power supplies, reference voltage,
+   reset GPIO, serial data lane count, and on-chip GPIO controller.
+2. **iio: backend**: Add CRC enable/disable backend operation for data
+   integrity verification over the high-speed serial interface.
+3. **iio: adi-axi-adc**: Implement the new CRC backend operation.
+4. **driver**: Core IIO driver for AD7768/AD7768-4 with regmap, power
+   mode, calibration, and IIO backend support. Registers an auxiliary
+   device to expose the GPIO functionality.
+5. **gpio: regmap**: Add optional runtime PM integration and support for
+   reading output values from a separate register.
+6. **gpio**: Auxiliary bus GPIO driver for the AD7768's 5 general-purpose
+   I/O pins, reusing the parent's regmap and runtime PM.
+7. **docs**: Driver documentation.
 
-[Severity: High]
-Since i2c_transfer() internally acquires and releases the I2C adapter lock
-per call, does issuing two separate transfers here leave a race window?
+**Testing:**
+The driver was compiled and tested on the EVAL-AD7768FMCZ using a
+Zedboard with a mainline kernel.
 
-If another device driver on the same I2C bus initiates a transfer during
-this window, its transaction could be physically interleaved on the bus.
-Would it be safer to use i2c_lock_bus() and __i2c_transfer() to maintain
-the lock across both the command write and response read?
+**Driver Rationale:**
+The AD7768/AD7768-4 warrants its own driver due to several
+device-specific characteristics:
 
+1. A custom SPI framing protocol: register reads and writes use 16-bit
+   frames with embedded read/write bits and register address fields,
+   requiring a custom regmap bus implementation rather than the standard
+   SPI regmap backend.
 
-> +	if (ret < 0)
-> +		return ret;
-> +	if (ret != 1)
-> +		return -EIO;
-> +
-> +	return 0;
-> +}
-> +
-> +static int aaeon_mcu_regmap_read(void *context, const void *reg_buf,
-> +				 size_t reg_size, void *val_buf, size_t val_size)
-> +{
-> +	struct aaeon_mcu *mcu = context;
-> +	struct i2c_client *client = mcu->client;
-> +	struct i2c_msg write_msg;
-> +	struct i2c_msg read_msg;
-> +	int ret;
-> +
-> +	/*
-> +	 * reg_buf holds the 2-byte big-endian register address [opcode, arg].
-> +	 * Append a trailing 0x00 to form the full 3-byte MCU command.
-> +	 */
-> +	mcu->cmd[0] = ((u8 *)reg_buf)[0];
-> +	mcu->cmd[1] = ((u8 *)reg_buf)[1];
-> +	mcu->cmd[2] = 0x00;
-> +
-> +	write_msg.addr  = client->addr;
-> +	write_msg.flags = I2C_M_DMA_SAFE;
-> +	write_msg.buf   = mcu->cmd;
-> +	write_msg.len   = AAEON_MCU_CMD_LEN;
-> +
-> +	read_msg.addr  = client->addr;
-> +	read_msg.flags = I2C_M_RD | I2C_M_DMA_SAFE;
-> +	read_msg.buf   = val_buf;
+2. A coupled power mode / sample rate model: available output data rates
+   are not a flat list but depend on the active power mode (fast, median,
+   low power), each with its own set of valid decimation rates. This
+   relationship must be managed in the driver.
 
-[Severity: High]
-Can val_buf point to a stack-allocated buffer?
+3. Simultaneous sampling across all channels with per-channel calibration
+   registers (24-bit offset, gain, and phase) that are laid out
+   differently between the 8-channel AD7768 and the 4-channel AD7768-4,
+   requiring device-specific register mapping.
 
-When a child driver calls regmap_bulk_read() for a volatile register (like
-GPIO inputs), regmap might pass a stack-allocated buffer directly to this
-function. By unconditionally setting I2C_M_DMA_SAFE, doesn't this force
-the I2C core to bypass bounce buffering?
+4. IIO backend integration for high-speed data capture via adi-axi-adc,
+   including CRC data integrity verification over the serial interface.
 
-If the I2C host controller then performs DMA directly into a stack memory
-address, this could lead to cacheline sharing corruption or a kernel
-panic, especially on VMAP_STACK configurations.
+5. On-chip GPIO: 5 general-purpose I/O pins exposed via an auxiliary bus
+   driver, sharing the parent's regmap and runtime PM.
 
+Signed-off-by: Janani Sunil <janani.sunil@analog.com>
+---
+Changes in v2:
+- Renamed and expanded supply descriptions, split reference to
+  ref1-supply and ref2-supply.
+- Added START and synchronization signal descriptions.
+- Added variant-specific channel and data-line validation.
+- Made adi,data-lines-number optional, defaulting to the maximum.
+- Renamed the precharge and reference-buffer properties, removed channel
+  mode and power mode properties.
+- Exposed the VCM output through the regulator framework and updated
+  documentation accordingly.
+- Improved runtime PM initialization and requested initial autosuspend
+  after probe.
+- Automatically assigned channels to two hardware mode profiles.
+- Selected the lowest noise compatible power mode when ODR ranges overlap.
+- Replaced the raw phase attribute with the standard conversion-delay
+  attribute.
+- Added filter-settling delays based on the selected filter and ODR.
+- Fixed AD7768-4 register and channel-bit mapping, including standby,
+  calibration, phase, precharge and reference-buffer handling.
+- Added direct-mode protection around runtime channel configuration.
+- Added calibration register range validation and documented
+  calibration values as raw unsigned 24-bit values.
+- Added the required reset pulse delay derived from MCLK.
+- Added a generic GPIO-regmap patch providing runtime-PM integration
+  and separate output-register readback.
+- Converted the AD7768 GPIO auxiliary driver to use gpio-regmap.
+- Documented that AXI ADC CRC control bit 8 is common to the AXI ADC
+  cores.
+- Added the missing AXI ADC mutex initialization.
+- Expanded the driver documentation to describe dynamic channel
+  grouping, power-mode selection, VCM regulation and conversion delay.
+- Link to v1: https://lore.kernel.org/r/20260709-ad7768-driver-v1-0-44e1194fd96a@analog.com
 
-> +	read_msg.len   = val_size;
-> +
-> +	ret = i2c_transfer(client->adapter, &write_msg, 1);
-> +	if (ret < 0)
-> +		return ret;
-> +	if (ret != 1)
-> +		return -EIO;
-> +
-> +	ret = i2c_transfer(client->adapter, &read_msg, 1);
+---
+Janani Sunil (7):
+      dt-bindings: iio: adc: Add AD7768
+      iio: backend: Add support for CRC
+      iio: adc: adi-axi-adc: Add support for CRC
+      iio: adc: Add AD7768 IIO Driver support
+      gpio: regmap: Add runtime PM and read_output_reg_set support
+      gpio: ad7768: Add AD7768 GPIO auxiliary driver
+      Documentation: iio: Add AD7768 Documentation
 
-[Severity: High]
-Similar to the write path above, does releasing the I2C adapter lock
-between the write command and the read response risk interleaving transfers
-with other devices on the same I2C bus?
+ .../devicetree/bindings/iio/adc/adi,ad7768.yaml    |  343 ++++
+ Documentation/iio/ad7768.rst                       |  240 +++
+ Documentation/iio/index.rst                        |    1 +
+ MAINTAINERS                                        |   10 +
+ drivers/gpio/Kconfig                               |   12 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-ad7768.c                         |   78 +
+ drivers/gpio/gpio-regmap.c                         |  113 +-
+ drivers/iio/adc/Kconfig                            |   16 +
+ drivers/iio/adc/Makefile                           |    1 +
+ drivers/iio/adc/ad7768.c                           | 1720 ++++++++++++++++++++
+ drivers/iio/adc/adi-axi-adc.c                      |   26 +
+ drivers/iio/industrialio-backend.c                 |   33 +
+ include/linux/gpio/regmap.h                        |    8 +
+ include/linux/iio/backend.h                        |    6 +
+ 15 files changed, 2592 insertions(+), 16 deletions(-)
+---
+base-commit: b75697ef53e435d894833dad2a8c2fa882cb9b19
+change-id: 20260708-ad7768-driver-10cd15296c20
 
-
-> +	if (ret < 0)
-> +		return ret;
-> +	if (ret != 1)
-> +		return -EIO;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct regmap_bus aaeon_mcu_regmap_bus = {
-> +	.write = aaeon_mcu_regmap_write,
-> +	.read  = aaeon_mcu_regmap_read,
-> +};
-> +
-> +static bool aaeon_mcu_volatile_reg(struct device *dev, unsigned int reg)
-> +{
-> +	/*
-> +	 * GPIO input registers are driven by external signals and can change
-> +	 * at any time without CPU involvement, always read from hardware.
-> +	 *
-> +	 * The watchdog status register reflects hardware state and can change
-> +	 * autonomously.
-> +	 *
-> +	 * All other registers are written by the driver and their values are
-> +	 * stable, so they can be safely cached.
-> +	 */
-> +	if ((reg >> 8) == AAEON_MCU_READ_GPIO_OPCODE)
-> +		return true;
-> +	if (reg == AAEON_MCU_REG(AAEON_MCU_CONTROL_WDT_OPCODE, 0x02))
-> +		return true;
-> +	return false;
-> +}
-> +
-> +static const struct regmap_config aaeon_mcu_regmap_config = {
-> +	.reg_bits          = 16,
-> +	.val_bits          = 8,
-> +	.reg_format_endian = REGMAP_ENDIAN_BIG,
-> +	.max_register      = AAEON_MCU_MAX_REGISTER,
-> +	.volatile_reg      = aaeon_mcu_volatile_reg,
-> +	.cache_type        = REGCACHE_MAPLE,
-> +	.use_single_write  = true,
-> +	.use_single_read   = true,
-> +};
-> +
-> +static int aaeon_mcu_probe(struct i2c_client *client)
-> +{
-> +	struct aaeon_mcu *ddata;
-> +	struct regmap *regmap;
-> +
-> +	ddata = devm_kzalloc(&client->dev, sizeof(*ddata), GFP_KERNEL);
-> +	if (!ddata)
-> +		return -ENOMEM;
-> +
-> +	ddata->client = client;
-> +
-> +	ddata->cmd = devm_kcalloc(&client->dev, AAEON_MCU_CMD_LEN, sizeof(*ddata->cmd),
-> +				  GFP_KERNEL);
-> +	if (!ddata->cmd)
-> +		return -ENOMEM;
-> +
-> +	ddata->response = devm_kzalloc(&client->dev, sizeof(*ddata->response), GFP_KERNEL);
-> +	if (!ddata->response)
-> +		return -ENOMEM;
-> +
-> +	regmap = devm_regmap_init(&client->dev, &aaeon_mcu_regmap_bus,
-> +				  ddata, &aaeon_mcu_regmap_config);
-> +	if (IS_ERR(regmap))
-> +		return dev_err_probe(&client->dev, PTR_ERR(regmap),
-> +				     "failed to initialize regmap\n");
-> +
-> +	return devm_mfd_add_devices(&client->dev, PLATFORM_DEVID_AUTO,
-> +				    aaeon_mcu_devs, ARRAY_SIZE(aaeon_mcu_devs),
-> +				    NULL, 0, NULL);
-> +}
-> +
-> +static const struct of_device_id aaeon_mcu_of_match[] = {
-> +	{ .compatible = "aaeon,srg-imx8p-mcu" },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, aaeon_mcu_of_match);
-> +
-> +static struct i2c_driver aaeon_mcu_driver = {
-> +	.driver = {
-> +		.name = "aaeon-mcu",
-> +		.of_match_table = aaeon_mcu_of_match,
-> +	},
-> +	.probe = aaeon_mcu_probe,
-> +};
-> +module_i2c_driver(aaeon_mcu_driver);
-> +
-> +MODULE_DESCRIPTION("Aaeon MCU Driver");
-> +MODULE_AUTHOR("Jérémie Dautheribes <jeremie.dautheribes@bootlin.com>");
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/mfd/aaeon-mcu.h b/include/linux/mfd/aaeon-mcu.h
-> new file mode 100644
-> index 000000000000..3a1aeec85d60
-> --- /dev/null
-> +++ b/include/linux/mfd/aaeon-mcu.h
-
-[Severity: Low]
-This isn't a bug, but should this driver-specific header be placed locally
-in drivers/mfd/ instead of the global include/linux/mfd/ directory?
-
-The MFD subsystem guidelines state that driver-specific header files used
-only by the parent and its immediate children should be kept local to
-drivers/mfd/.
-
-> @@ -0,0 +1,40 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/*
-> + * Aaeon MCU driver definitions
-> + *
-> + * Copyright (C) 2026 Bootlin
-> + * Author: Jérémie Dautheribes <jeremie.dautheribes@bootlin.com>
-> + * Author: Thomas Perrot <thomas.perrot@bootlin.com>
-> + */
-> +
-> +#ifndef __LINUX_MFD_AAEON_MCU_H
-> +#define __LINUX_MFD_AAEON_MCU_H
-> +
-> +/*
-> + * MCU register address: the high byte is the command opcode, the low
-> + * byte is the argument.  This matches the 3-byte wire format
-> + * [opcode, arg, value] used by the MCU I2C protocol.
-> + */
-> +#define AAEON_MCU_REG(op, arg)		(((op) << 8) | (arg))
-> +
-> +/*
-> + * Opcode for GPIO input reads. These registers are volatile, their values
-> + * are driven by external signals and can change without CPU involvement.
-> + * Used by the MFD driver's volatile_reg callback to bypass the regmap cache.
-> + */
-> +#define AAEON_MCU_READ_GPIO_OPCODE	0x72
-> +
-> +/*
-> + * Opcode for watchdog control and status commands.
-> + * The status register (arg=0x02) reflects hardware state and is volatile.
-> + */
-> +#define AAEON_MCU_CONTROL_WDT_OPCODE	0x63
-> +
-> +/*
-> + * Highest register address in the MCU register map.
-> + * The WRITE_GPIO opcode (0x77) with the highest GPIO argument (0x0B = 11,
-> + * i.e. MAX_GPIOS - 1) produces the largest encoded address.
-> + */
-> +#define AAEON_MCU_MAX_REGISTER		AAEON_MCU_REG(0x77, 0x0B)
-> +
-> +#endif /* __LINUX_MFD_AAEON_MCU_H */
-> 
-> -- 
-> 2.55.0
-> 
-
+Best regards,
 -- 
-Lee Jones
+Janani Sunil <janani.sunil@analog.com>
+
