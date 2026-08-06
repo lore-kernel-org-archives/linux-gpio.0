@@ -1,90 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E1C3FE644;
-	Thu,  6 Aug 2026 08:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0D83F4118;
+	Thu,  6 Aug 2026 09:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786005486; cv=none; b=oLVDK+7mC6EBYzc72pLeDTft0+gnjMODFutP2FDh5Z6NsILjGJNiXFuHq3tjXYLMTAo4+hY6BFygwCvNLtv/dY2V8Y7DRXOa/u9cATXEPUQj0zSrebU+UbyIfrwlWH+hc1R56r0SZg9Qrv2QMk+om0yE2xbzxFf9IkdKdbRJ6p0=
+	t=1786008866; cv=none; b=Y5EvP0rE6IV3Ayk9lFnKDwJs7I0qhqchzKAXXhdQPem8Is9bTPOp+tcI9+aGsYqIcXFz+LV/92kGDMhJbIEbEKj2fIPMIwIR1X6Rjv/YO/W9SlDGCmhRjF1JpWPtQX6uKqW2NI22Xdp7UphuVUiWXPCpilWW/0wI5D6BnsU72U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786005486; c=relaxed/simple;
-	bh=GSj2xjCNpU7RFp2n8qMzzLXG0wroYNW/RtrARjI/Fbc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DLHsylx10oAT7yyv+7Ic44+voOBD9HUhDh+NPQnbn+sJ2/q+h1ujz9Gg93TgzSHuRkWOz6tpa9ZZjiUEURWpG0DXRQoUVGb8NrRKkQzRPaMvb1frNLghVWJ9whmnx10gFNsaDhPkqvfD+KhDtg1A4dbdCOc5frekfh2yaBfD3Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HP/OxrQA; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786008866; c=relaxed/simple;
+	bh=9o2ym9Q7UN5TolJfnYkWX8F/5ZrsOyVQK0D6QvuiADY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=IyVUwDuldEkWddUXlY8np/d0sG1BbNnf5cpNssRBjgsoNOB3qZWH8Plaqep1n6EE2Qo4kQ44feeIOxQ1VHj2MQ0btWC7mDhQDlkhevsDn+0L3oqgM3d+jQPYtO0yui8gVUU4IWPSZpdFd2V02Vwu0GARTqcMB/GSV48ew4lm8wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iw7uhjC0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HP/OxrQA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE1F1F000E9;
-	Thu,  6 Aug 2026 08:37:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786005466;
-	bh=xETcnXPG1rHGxnguRdsMvGynwcAnDPqDrOB2wbseaJg=;
-	h=From:To:Cc:Subject:Date;
-	b=HP/OxrQAalykCntp4r+1KruZvR3p6C6WhqGSUgH3taZeREm3f93a2hq5camHOcegb
-	 db/opMZqVDWsOYduQUBHSg92ziRpc5QmJr1YwMgYe5d9VmPLRz5jlTLjyIyOkdYA0G
-	 5KFfAdgcVBFByq6waiW88e3ClBT7TA23YOuMiGmz4AbreXMd/uClP5vDrnhYPJnJF/
-	 bVK5nIq99cor8ZjvB2dcCP0K7IBp3Ld8vbw8UfGqwJYoRqq1Cx3Nf5/xT6sTQeyaJ2
-	 M/3oZjIs+l1/qbYIQ1wwTxdo6jFLvVWBErSuyFmWeti0luJyWSQqMc1aZlv2PUfa68
-	 lmXMFTfcYR6gw==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <snawrocki@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: [GIT PULL] pinctrl: samsung: for v7.3 (second try)
-Date: Thu,  6 Aug 2026 10:37:28 +0200
-Message-ID: <20260806083728.351824-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iw7uhjC0"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3E85DC2BCF6;
+	Thu,  6 Aug 2026 09:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1786008866;
+	bh=9o2ym9Q7UN5TolJfnYkWX8F/5ZrsOyVQK0D6QvuiADY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=iw7uhjC0gxpZsDMbrtiAq4XMdOieKGzMWYx5grFRg97hExfHJQT8kMJpsk4Z0rV6r
+	 tXllYRhEFCKtkIxpgFTgs25x86tiQQn9K8R1bmVoPMzBfXgVw+DKCnVXNcc+uoS1F7
+	 YRNPHOeGYANSP+Bp2vOsDzgNLTHOzgLHYnDgMRogQ5a6Y32NFIbvzuanepv6G6vl/C
+	 Lmea7v2NuL0Ub93K0QaAHvJ+kzmzWW748eI/IknJMYIcQXuBS7AysfXqm8+2SC0SWJ
+	 LgG6xbOL1QaPi0lNvHbSd5i/SL8WVcrK5u17DJtNP/8jo6HBTj1HE+fKIGnKXJujhJ
+	 yJXZZAQpgapqg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19484C55ABF;
+	Thu,  6 Aug 2026 09:34:26 +0000 (UTC)
+From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
+Date: Thu, 06 Aug 2026 17:34:09 +0800
+Subject: [PATCH v2 01/10] dt-bindings: arm: add Ambarella CV75 platforms
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1448; i=krzk@kernel.org; h=from:subject; bh=GSj2xjCNpU7RFp2n8qMzzLXG0wroYNW/RtrARjI/Fbc=; b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBqdEfIxNEq366S5fS6pXcmoVMDK2gJknTAZtHKQ VJM4YZ00RWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCanRHyAAKCRDBN2bmhouD 18JsD/9c07VASvHRN2HNf4ywD3BnbucQmSS2Y4UvlUstOicR2scLW7oWTC8544MiC6nPd8bLp4v fL5w6+GwIfIwYROV3Xsy/rXPD6HbZfoiVB+yjgJIqWzPIvq6OAttmUjE17R2eq0YYLH/0+8ytRC 3OmJXzHXAmedTuuHhPufObIskewRhVjw4yTHwsaLCE/E1BCMoeqeD/Rh2USE7szne2+NqrzqQt6 99YZAj/bvVQX+nuDh2W7X1qHtoKjv8N6dOGG12mWgBkEd99OG9QxDGfcuVK82fbJ7O5aPgfi38k wL6mAOuCtGpLgFrwMsWMNSECmTsg7EddqvzE5Alnqr2LJKaQVWmLu0zv0Gb0YMIl7nfDZV7Z0ib Y+bWrE2hq3yNWw4NjspY5TF0C3A3KL+y//mpCZxjTzWnez6UnGNBJLR/YZeD8HoeFSU1rwCuZxf A3WczXYzL/nhAZMVNMZFAa0q1sUMvHvdSedz6r9fa9HlEmyNPISxXqTT/BCNnAOPJ33ZmMMlmV9 k7npJJencS2G2InJC5dx+NCpJu/H+0xoW6wZAfts7BXsJYk0xw2YNYnYf8u6aXeJgxysIgVUOBq O8HpfZmiQWYVSvIOOUKuSPhO0xEGyTbMMh0OUdAXLjqfy5LDGxbRPtpAVk3tZmwbk3ldFBBbDl6 4wecwnxt4g/e81w==
-X-Developer-Key: i=krzk@kernel.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260806-longzhao-upstream-cv75-v2-v2-1-6b09707c5fe9@ambarella.com>
+References: <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
+In-Reply-To: <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
+ soc@lists.linux.dev, Long Zhao <longzhao@ambarella.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1786008863; l=1726;
+ i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
+ bh=E64N0WzuN3RWFUU+WVOoB7iSv1RpxmiKsY2ydNVTzVA=;
+ b=VPKdGB4d5Ldv0umrXjkMWEm6jdp/dVFupjAWrgqvugNER7Wy0ZmWZDGplb+H9c986jFj6wqcn
+ EspvGexW2I6A00/TlCYPgvVtJYcODKR9hiXhS/h3BiFzQjSpdw/kEOy
+X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
+ pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
+X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
+ auth_id=903
+X-Original-From: Long Zhao <longzhao@ambarella.com>
+Reply-To: longzhao@ambarella.com
 
-Hi Linus,
+From: Long Zhao <longzhao@ambarella.com>
 
-Second try - in the previous I had still the old email:
-https://lore.kernel.org/all/20260806082831.350285-2-krzk@kernel.org/
-Same contents.
+Add the Ambarella SoC board binding and vendor prefix covering
+the CV75 EVK.
 
-Best regards,
-Krzysztof
+Signed-off-by: Long Zhao <longzhao@ambarella.com>
+---
+ .../devicetree/bindings/arm/ambarella.yaml         | 23 ++++++++++++++++++++++
+ .../devicetree/bindings/vendor-prefixes.yaml       |  2 ++
+ 2 files changed, 25 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/ambarella.yaml b/Documentation/devicetree/bindings/arm/ambarella.yaml
+new file mode 100644
+index 000000000000..347148530f80
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/ambarella.yaml
+@@ -0,0 +1,23 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/ambarella.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Ambarella SoC platforms
++
++maintainers:
++  - Long Zhao <longzhao@ambarella.com>
++
++properties:
++  $nodename:
++    const: "/"
++
++  compatible:
++    oneOf:
++      - description: Ambarella CV75 EVK board
++        items:
++          - const: ambarella,cv75-evk
++          - const: ambarella,cv75
++
++additionalProperties: true
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 85a27937832e..f48aa6dabbe9 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -112,6 +112,8 @@ patternProperties:
+     description: Amarula Solutions
+   "^amazon,.*":
+     description: Amazon.com, Inc.
++  "^ambarella,.*":
++    description: Ambarella, Inc.
+   "^amcc,.*":
+     description: Applied Micro Circuits Corporation (APM, formally AMCC)
+   "^amd,.*":
+
+-- 
+2.34.1
 
 
-The following changes since commit dc59e4fea9d83f03bad6bddf3fa2e52491777482:
-
-  Linux 7.2-rc1 (2026-06-28 12:01:31 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tags/samsung-pinctrl-7.3
-
-for you to fetch changes up to d441836c9d704d0f3db5dbf44df87af2ba7a9d26:
-
-  pinctrl: samsung: Add Exynos8855 pinctrl configuration (2026-07-13 09:17:05 +0200)
-
-----------------------------------------------------------------
-Samsung pinctrl drivers changes for v7.3
-
-Add drivers for newly introduced Samsung Exynos8855 SoC.
-
-----------------------------------------------------------------
-Alim Akhtar (3):
-      dt-bindings: pinctrl: samsung: Add exynos8855-pinctrl compatible
-      dt-bindings: pinctrl: samsung: Add exynos8855-wakeup-eint compatible
-      pinctrl: samsung: Add Exynos8855 pinctrl configuration
-
- .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |   1 +
- .../bindings/pinctrl/samsung,pinctrl.yaml          |   1 +
- drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 132 +++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c          |   2 +
- drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
- 5 files changed, 137 insertions(+)
