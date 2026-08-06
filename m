@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FA131352B;
-	Thu,  6 Aug 2026 07:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6953DDAF9;
+	Thu,  6 Aug 2026 07:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786000188; cv=none; b=V1Jv9qd+AWhGjber+THR4qschEyXZHo4ydgLZpSAVXwZHUdgtFdRt8/VcoEF4KrvaLPy3OawF2Vo1/4KeC11LLhcXT11yWTadzNOqzHlJ/Imzz1/b9nzLeVDU4n5XRrKC/HnTgw3RDX1fNlXzvZhtt+AIV1zXgglMARuVaU2K04=
+	t=1786000335; cv=none; b=pSjR7tvzayKa4ei9+l8hy3PnnrAE6gW8QVRdVHb+InLcGx4HirIOw6IYVyQN8BzPOEB0h+iuDw0sPM0bFE3yF+o3ERwiknYw1Y1HmdqtCgjE3FFnkRX/hZ6za5/yMhxHk10xcGCWh/Dq3EbtdX80BeDXq2M7VPFmXMcBfuRYwP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786000188; c=relaxed/simple;
-	bh=fsH3E2GiQH+gWl3OlWYrn9KhyDOvLBqUxDfZK0xP7GM=;
+	s=arc-20240116; t=1786000335; c=relaxed/simple;
+	bh=DRUJgTFf3Z71bCJJ5kneAi20KrDnWPgGP241xMLpX3s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HguLAzCJiG8Bc/lmIpCbDpLaigMvpWuq0LmUfSDEJG86N2BLwY8R+iRM1lXgrbin37ekutlw+HOkmBtmomZEXIEi1m1uZQAC7GOi5VqFrZPEEBQeJF8NInpPwRxlsIU/BDOjdCx5lHciCFjQSSbjZxfIL+P92wFWewdOIbu/+oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GR4f0eGy; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=l3NtdVr9HRv/47VfPZ4c26EpHR9zDfcCm6KE3VV0DENk2ZGO+o1TxyFhetvIvfCSiSxnzRKY2WFLw+T7THUfpk4hDG0iw8wYrsBglYdK/6W0W/dzi+8LUmfbOrFjCwbfqzGW6+IqMRmAIXvEtbzAcCGWJQltOHxj6bxd/2BVh/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0pEO5JI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GR4f0eGy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D971F000E9;
-	Thu,  6 Aug 2026 07:09:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0pEO5JI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48B291F00A3A;
+	Thu,  6 Aug 2026 07:12:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786000186;
-	bh=XmN6+jVaBWN+uFT4cw5mCwCOTi/lvtaZPxfj7h/ZTPQ=;
+	s=k20260515; t=1786000334;
+	bh=WpVM/b9ChkcZhLidnj7GV/0zthZKodJLUBqWI25jIh8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=GR4f0eGyWYzjDa4N1wC85mZBPVzdXFzz0DMB7MXtgq81BPt8qLOQF4b604EiOJzmr
-	 Ufn1oW/NPVMFRECtHV3XegO3pOXuB5S8S0ZjZ3cF0siv6Bd/PGNfw3cS4xxIPnSsfM
-	 NnpuWsnFa7sYNQgVZALWdfftXJZ4nztckc1ohipulWR03pU9HdKaS/+rKZVeDGawNb
-	 n2uOOF5tVUnXp3igW4D/8BWhgJTD7hzRDU/+fPNgEb0u03o95GmF+ctgLrtf5s0Tj6
-	 frcApx34SXzqB4vomNU1fCSIC3zW4TdaUYZqsGfx/E4ehAEguhVWY3LPEJAqfBxjlH
-	 Z3UuUmssdWaaA==
-Date: Thu, 6 Aug 2026 09:09:42 +0200
+	b=I0pEO5JI5OXPlf8SpauwiywtF3V6Ud1rGIiGNEvEthQBJmiMy1OXGDyMy0+FI8ZPb
+	 l2Rr8lW0q8eKXzez9lhZS5tfZdv5sDyg7W7f5Hy+7Jny/yxmrOFAtOzGOT/a158gyP
+	 LLLGV8u3wjmppsdYjJMwWledPpnyIsC9fTUFI2dSnTDHpd8BbugEHK/TUw5Az0+ya+
+	 Lf9qZbbJB6/KMtzP6XlaYwxNfDMcHfQw8j0x3eiLiG1uX4HCR8qrq4fqqN09Pcx/hv
+	 bkTLHlMdHTwRCa9Y4otp6WblfqQYEBNNTPqy0SwCru7vFi9edoVpiW1ZkuyxDpvTop
+	 E2LwFl7ooq8dA==
+Date: Thu, 6 Aug 2026 09:12:09 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -37,11 +37,11 @@ Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
 	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-mediatek@lists.infradead.org, Markus Gothe <markus.gothe@genexis.eu>, 
 	Matheus Sampaio Queiroga <srherobrine20@gmail.com>, Daniel Schwierzeck <daniel.schwierzeck@gmail.com>
-Subject: Re: [PATCH v10 09/36] dt-bindings: pinctrl: airoha: an7583: allow
- configuration of non-gpio default pins as gpio and pwm
-Message-ID: <20260806-influential-foamy-lion-c1aadd@quoll>
+Subject: Re: [PATCH v10 31/36] dt-bindings: pinctrl: airoha: an7583: add
+ missed features
+Message-ID: <20260806-muscular-tench-of-elegance-8ec390@quoll>
 References: <20260805123408.3767648-1-mikhail.kshevetskiy@iopsys.eu>
- <20260805123408.3767648-10-mikhail.kshevetskiy@iopsys.eu>
+ <20260805123408.3767648-32-mikhail.kshevetskiy@iopsys.eu>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -50,19 +50,27 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260805123408.3767648-10-mikhail.kshevetskiy@iopsys.eu>
+In-Reply-To: <20260805123408.3767648-32-mikhail.kshevetskiy@iopsys.eu>
 
-On Wed, Aug 05, 2026 at 03:33:41PM +0300, Mikhail Kshevetskiy wrote:
-> Some AN7583 pins have non-gpio default settings. This patch provides a way
-> to configure such pins as GPIO or PWM.
-> 
-> Please note that gpio52 pin can't be configured as PWM pin.
+On Wed, Aug 05, 2026 at 03:34:03PM +0300, Mikhail Kshevetskiy wrote:
+> Changes:
+> * add i2c0 pin-group support for i2c pin-function
+> * add npu_uart pin-group support for uart pin-function
+> * add pon_alt pin-group support for pon pin-function
+> * add support for olt pin group/function
 > 
 > Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
 > ---
->  .../bindings/pinctrl/airoha,an7583-pinctrl.yaml    | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
+>  .../bindings/pinctrl/airoha,an7583-pinctrl.yaml  | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
 
+This is still incorrectly organized.
+
+Please organize the patch documenting the bindings
+before the patch using them.
+See also: https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst#L46
+
+With this fixed:
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
