@@ -1,86 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBC340EBA1
-	for <linux-gpio@vger.kernel.org>; Thu,  6 Aug 2026 21:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108ED40A92E
+	for <linux-gpio@vger.kernel.org>; Thu,  6 Aug 2026 21:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786052904; cv=none; b=RdTG7oLPBx9uIH3Q5UbQTpbcZ/GLi7DIesz8CzR1YRmnL6XPgPz2RY57tXaU9I92ef2EL4Tk26gHkaOXAkAhiyeJTpLyqNV4LZcSeMAwrPZgR9Twg/GZI2kXJQVzFIStAGriKSHysjhpvUZBSqPDPtHInEt5lmhVIBD/Gr63SzI=
+	t=1786053018; cv=none; b=Gd77yQimRnV2mGDvT5zZyAoBNlwJtCDYWUzdkcrIS5dXD9PqzXYRAE91O0Jxy/JC9j1xEwezClc6Veh8UiWh30RuDlwjO1yKeSJvXTdCZD24HsNzQmUULFcygjZkAYM2YcjvhSc5y1S9uTmAnRx16x3A7NAzmPOodHaIx1nb9LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786052904; c=relaxed/simple;
-	bh=k98Bm3UVj63zhBkI6wrLRs31kagMcbh6IIHVpgl9C9I=;
+	s=arc-20240116; t=1786053018; c=relaxed/simple;
+	bh=xcy7vptF/hy+DPHjB4Gbv52wsdaMVtOZt/3bPVoHJCQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qx043zR+eOCa2CxRFmbU4bfLHaN/qAFXBTMrPACToO4ZHGh7YJun7yorSUGCKQLrzbkbjsHEm6gDuVfEPDIKY7kMnYOXVc3/rAklJ+ZRuke1igXQ0qVVfG+8uZ2jDKTuPSS9ow7BakFNTEyxxniAE2SEtFm/zuBqnIEWhagw/4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZpYDe6Y; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=uGmwq59aZiolOyPl5xDj/5voR24Sv33UR5aSymtzTNBsX0kS1WYPQYutdds2KBiqGCWBVRuAUnKrtshySA94nvkWVsM0NCmqVNTSpv/pNt9LVQOxi0oKJf09A/mrefHKDNHa2bjh0mE21mSLorC1TrQvo6jYs7D7KXXogsgVUw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngV5zpVu; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZpYDe6Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD4BE1F00A3E
-	for <linux-gpio@vger.kernel.org>; Thu,  6 Aug 2026 21:48:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngV5zpVu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EA611F01560
+	for <linux-gpio@vger.kernel.org>; Thu,  6 Aug 2026 21:50:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786052902;
-	bh=k98Bm3UVj63zhBkI6wrLRs31kagMcbh6IIHVpgl9C9I=;
+	s=k20260515; t=1786053016;
+	bh=xcy7vptF/hy+DPHjB4Gbv52wsdaMVtOZt/3bPVoHJCQ=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=EZpYDe6Y09zCCXpN79/31AcVJo1mTu5+KlgNXNu1nO9T8ME5xBs+xOCwu2kJYyDNq
-	 AFoueH4i+5m20TmQ8UhUsb6S34nC3xzbZXjQQBedCkO7VXQ0JGApbQFt5AEqz1im9Z
-	 YEn86hIzdqJGM66CRu2YwULVcbzGym3tJeG8450gwHjbBSxexcQhBFvW24q2d4z22I
-	 EMrp88ISe/41f9TF82IaTXPW3l8DCBfdJeOCwos0Vw03sK+L9l62G0EKmpSzJgzCrN
-	 OdoN8LXDxNTXs3GCbpesu08QZGWAWGJmTNNvDEpJcrigd6wk5t5D9ivoWOjecwMsfP
-	 ypxdTz0T56cqg==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5b2b92065ffso2494402e87.1
-        for <linux-gpio@vger.kernel.org>; Thu, 06 Aug 2026 14:48:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Ro0f0BiL0GCEemxbzcLIEwVivQF2DseA3HY2weOk6PHWdjy+iPvMTTkEbA+D87duFbN9MvimeU60PI8@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi96nbr7IHT9lUf4ZfDmNWRO9ypwZKcBwFfHE+uAcqHbJWArW7
-	VGKnA1oBfYTHzvq8LK3fjBSIfFPW6vVgIRpozmrjzhU9H9qYWxh3dtKVzMEenuSnTt2Fm94Jj9Y
-	9ug1cKb3+VbKUyyg0xmc6TpksoF/z0cg=
-X-Received: by 2002:a05:6512:3e17:b0:5ae:c454:3746 with SMTP id
- 2adb3069b0e04-5b303b7e6abmr663601e87.43.1786052901560; Thu, 06 Aug 2026
- 14:48:21 -0700 (PDT)
+	b=ngV5zpVu+weQOpvh2gMXaltxq8rXyXczgW76DqK2uqSDkzlHCp8bcelPQ7d9NZqWu
+	 9qcU6Qmwhv0CHSXt1hjnP7i9hY6paI1gyIO8etzTx27D5tz0rjwJMs7odjmk8Fr/Fu
+	 kD8cNNMtuOh7eTnilBSaWt+3HS5KaxzCmqjHLCDnEobNlUay3H5N/UpT8jXqE4EXbu
+	 BWkLtbYFL/vasv6axsDMLMoFoOc+KR+15lE4BY4TnTwXM2uhVshbKk8FTOlfGLEKbO
+	 gulS2mOt6lSwEKUHsnrowuAx8G14Cr2r/6lHEwtvFRkrshhUrNj/uSVl2Bk70oiAoZ
+	 jB2+/rorUgz1Q==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5b0f19bea2fso2805561e87.1
+        for <linux-gpio@vger.kernel.org>; Thu, 06 Aug 2026 14:50:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoAN0mxGQBIx3/tM2dwGDbZ4t/6SoBMPQFJ1rfBIzCFp37hy60RCTLV25llsDGzTR2MgNYtubae9M98@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzxM/UFOjCZC2nI7h/nlZEhHi+6p6xTC34xdMkJxsFxmE4VpNN
+	+8hWEjfvEiZK/dVnYDoer/832/IgdojE+UZpQZP38Pmy9tGDrJWaESvG+c0cVVdq8sjrqC57/wj
+	tmsfOecxcvbSv0iUTrjSA5ljJpJm4rTw=
+X-Received: by 2002:a05:6512:304f:b0:5b1:5807:50f2 with SMTP id
+ 2adb3069b0e04-5b303cb381fmr548646e87.43.1786053015336; Thu, 06 Aug 2026
+ 14:50:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260727141121.772110-1-pshete@nvidia.com> <20260727141121.772110-2-pshete@nvidia.com>
-In-Reply-To: <20260727141121.772110-2-pshete@nvidia.com>
+References: <20260802-b4b4-irq-trigger-mask-gpio-v1-1-948973636c84@oss.qualcomm.com>
+In-Reply-To: <20260802-b4b4-irq-trigger-mask-gpio-v1-1-948973636c84@oss.qualcomm.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 6 Aug 2026 23:48:08 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkY-r8QYT0_tr=CDKxqG7HdOmuxgBL3F-Y3KmR6iLbqSg@mail.gmail.com>
-X-Gm-Features: AUfX_mwK_CyqtR9BVNeQ0f9t4vpa0IHqx6BW4oYdJSBTHObHrEw4GFinTFYQ7Ow
-Message-ID: <CAD++jLkY-r8QYT0_tr=CDKxqG7HdOmuxgBL3F-Y3KmR6iLbqSg@mail.gmail.com>
-Subject: Re: [RESEND V2 2/2] pinctrl: tegra264: fix DAP2 DIN/DOUT pin assignment
-To: Prathamesh Shete <pshete@nvidia.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	thierry.reding@kernel.org, jonathanh@nvidia.com, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Thu, 6 Aug 2026 23:50:00 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmFruzsuSCgzKCZoy63dgTPi=Hci-xgj76315ht9ttFyQ@mail.gmail.com>
+X-Gm-Features: AUfX_mz1H-BHPNicMG_kro-JKcpFPgsijOdPLrxM4JqaXBQO7QyYZT_KtNKmkEg
+Message-ID: <CAD++jLmFruzsuSCgzKCZoy63dgTPi=Hci-xgj76315ht9ttFyQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: Use IRQ trigger mask helpers
+To: Maulik Shah <maulik.shah@oss.qualcomm.com>
+Cc: Keerthy <j-keerthy@ti.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
+	linux-omap@vger.kernel.org, linux-unisoc@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 27, 2026 at 4:11=E2=80=AFPM Prathamesh Shete <pshete@nvidia.com=
-> wrote:
+On Sun, Aug 2, 2026 at 4:11=E2=80=AFPM Maulik Shah <maulik.shah@oss.qualcom=
+m.com> wrote:
 
-> The dap2_din and dap2_dout pin groups were given swapped ball suffixes:
-> DAP2_DIN was described as ball PV7 and DAP2_DOUT as ball PW0. On silicon
-> DAP2_DIN is on ball PW0 (mux register 0x6050, drive register 0x6054) and
-> DAP2_DOUT is on ball PV7 (mux register 0x6058, drive register 0x605c),
-> as reflected by the board pinmux.
+> Use IRQ_TYPE_LEVEL_MASK and IRQ_TYPE_EDGE_BOTH instead of open-coded
+> trigger type combinations in irqchip callbacks.
 >
-> Because the ball suffixes were swapped, the groups were also assigned the
-> wrong primary mux functions (dap2_din -> I2S2_SDATA_OUT and dap2_dout ->
-> I2S2_SDATA_IN), routing the I2S2 data-in and data-out signals to the wron=
-g
-> pins and breaking DAP2 audio.
+> No functional change intended.
 >
-> Rename the groups to dap2_din_pw0 and dap2_dout_pv7 and give each pad its
-> correct function (dap2_din_pw0 -> I2S2_SDATA_IN, dap2_dout_pv7 ->
-> I2S2_SDATA_OUT). The register offsets are already correct and are left
-> unchanged. This matches the board pinmux.
->
-> Fixes: c98506206912 ("pinctrl: tegra: Add Tegra264 pinmux driver")
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> Assisted-by: Claude:claude-sonnet-5
+> Signed-off-by: Maulik Shah <maulik.shah@oss.qualcomm.com>
 
-Patch applied!
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
