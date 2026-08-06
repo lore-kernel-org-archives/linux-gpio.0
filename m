@@ -1,363 +1,269 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92546434E35;
-	Thu,  6 Aug 2026 09:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530FC40A934;
+	Thu,  6 Aug 2026 10:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786008867; cv=none; b=oqx4zN6VQZx17anMfks3ysRmLndMCWFrYtWwNwSgVk2hj5l0E34tIT5t+EjdOLFIxk1C4rUwdfS+XK0xAX9WpZB9sWjDVnQ+uEaraqN22JoCZUFxlu1ZtX11BM7bnwdVvrHwfB5GgAePYLCwu+Td5iUg8ME8z6oRpAtdnVGTtu4=
+	t=1786013460; cv=none; b=bT37Z4+5MtN1DaIYWgEfDmVQpbj8oRh6SSR2y2gxtQTSJitBc5yjF1ZFuNR3GnmSuPC4EuryfFw7P+7ntg7nOsABYOO3NyaEhvgyEiCa1xtdXDAwXuGlSexBEi406k2VXRbqXyxHH0ZxGnxRid1xuQgEhumSbEKRK4O4FXDo8iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786008867; c=relaxed/simple;
-	bh=X8b8p1l2o3D0Xv9RAiFs7ueXKdhQZGuH/6Gj1rFylvY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AXHt8HGvHqju5UsFotU2eQr8NDIwCRYQZ501zBMf71E4jBng0BV1wWN37KTaE//tcCVvyrC4GXrnUDMn6rEweHoHhyx2jR0s4ITXefyCiU4mG00D1cPHF23B9FPQ8jFSJc9jWBYbU3Lr/UjQljA1PkvLFnW3j4eLkNAr0z4XMh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFDKQUDU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1786013460; c=relaxed/simple;
+	bh=jzLyJT2SCc7a2xpXHUkQv4S7DyAIj6hI+U/vunrxlnI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LhOQYCOGv90xl9rg1vJBJo3XM/M1gO/ISR+CtvJM9hgMydC15nvkn64MofXQ9DdrSj6db6Nb7sAnj2hzrp9ou8ty9UXqt3FLWI3As9myzszWmWyYD+VPu3OJcw6RwQlqVSDyliEj44thCIjEnzpY7smsDecrpTRiFd1e1u1ROFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=pOB6OvPV; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFDKQUDU"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F1FADC2BCF6;
-	Thu,  6 Aug 2026 09:34:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1786008867;
-	bh=X8b8p1l2o3D0Xv9RAiFs7ueXKdhQZGuH/6Gj1rFylvY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=tFDKQUDUypL0Mk8C2b23TYhwU3jR4x5WbRTnIKE5lmys9ANWdRw4nzPq0ldL6/88R
-	 TETWRDWcPu082N0GREl7U1wfD3Tw1OptsOuJwszneFWZYvb6aOIFNQlJSIAUsQ4Pg0
-	 aIDTP8BBR+JjBlJZe65YuV5CLH4gO+uApQvMwJccDMEX+OE6t98Ypx6JxkURsMGGSR
-	 MKuKE2FZLKNqVfoJkgIR+1A5basD88irSji3icGNWknNlXHAZ/jkVHCCIfd/6pzlnK
-	 Ttsdq3HtugX9hmP+Buy6WGsRkYk45Ldcg2rkWIq/dELcjHVAIKnhi1Rg+UfVRlBcnO
-	 QE0e8m6yTYYsw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF399C5620A;
-	Thu,  6 Aug 2026 09:34:26 +0000 (UTC)
-From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Thu, 06 Aug 2026 17:34:17 +0800
-Subject: [PATCH v2 09/10] arm64: ambarella: add ARCH_AMBARELLA and CV75 EVK
- DT
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="pOB6OvPV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1786013459; x=1817549459;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=jzLyJT2SCc7a2xpXHUkQv4S7DyAIj6hI+U/vunrxlnI=;
+  b=pOB6OvPV79QIXcSepqU0moH3Xw6cT8vARn558dhT1pjPorDOq4jpa7kt
+   WfiU1qfmML7QhYRHvzg1a8BLUDBN1s78HysRquAS3Z5yuChvsF6JzpY0p
+   QNaEZCcBtVwS/COXRivIFJp3nnPHdwco/ZpGZq55S5fcmXhFkGC5WfhB7
+   16Q1s5P5L4K+3cUwm+QsUtSHm0lvZi2KUtCJFPVtFqBFcCsWzvyGEdgVF
+   Xdv/p40KSxqciPyMo0DDnAvV9A1NPhMvn5qHyUXUEPUdG/ZPXtCS4kMl3
+   oO1zjtgTip1h4DiPVGpmqLhmZ6KTcTbj1cm9C1DpOLIGKzMbodyiRlKqT
+   w==;
+X-CSE-ConnectionGUID: xaGfURwbR82c40hu9sow7g==
+X-CSE-MsgGUID: Jo8kRUrQTyiF1O0uwqbyRA==
+X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; 
+   d="scan'208";a="60857463"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Aug 2026 03:50:58 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Thu, 6 Aug 2026 03:50:58 -0700
+Received: from che-ld-ungapp03.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Thu, 6 Aug 2026 03:50:54 -0700
+From: Dhanushkalyan G <dhanushkalyan.g@microchip.com>
+To: <linux-gpio@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+	<arnd@arndb.de>, <vaibhaavram.tl@microchip.com>,
+	<kumaravel.thiagarajan@microchip.com>,
+	<tharunkumar.pasumarthi@microchip.com>, <Thangaraj.S@microchip.com>
+Subject: [PATCH v4] misc: microchip: pci1xxxx: Acquire system lock per byte for OTP/EEPROM
+Date: Thu, 6 Aug 2026 16:20:53 +0530
+Message-ID: <20260806105053.8801-1-dhanushkalyan.g@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260806-longzhao-upstream-cv75-v2-v2-9-6b09707c5fe9@ambarella.com>
-References: <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
-In-Reply-To: <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Arnd Bergmann <arnd@arndb.de>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
- soc@lists.linux.dev, Long Zhao <longzhao@ambarella.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1786008863; l=7996;
- i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=6vJ94VlfBvvZA0fx7qMQy5vR9YqyghJ/Vg2eYaSwrT0=;
- b=afzO8MptAlCtg3qKNK2CZh4dztk4jr5TNbqA9ZLgdFbIW1HtIDsh8R/CvpypbD7NwrXTQef2V
- 73JbV2916x8DHOqbxIxzv4/ZctQ26wEXQmVMc26v8uUruEGxedd2Nt2
-X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
- pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
-X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
- auth_id=903
-X-Original-From: Long Zhao <longzhao@ambarella.com>
-Reply-To: longzhao@ambarella.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Long Zhao <longzhao@ambarella.com>
+Access to the OTP and EEPROM is guarded by a hardware system lock
+(CFG_SYS_LOCK register) that has a hardware timeout and is released once
+the timeout elapses.
 
-Enable the Ambarella ARMv8 platform Kconfig, add the CV75 SoC and
-EVK device trees, and select the Ambarella UART in the arm64
-defconfig for console bring-up.
+The read and write helpers acquire the lock once before the per-byte
+loop and release it only after the whole buffer is transferred. As each
+byte access polls the hardware for completion, a multi-byte transfer
+takes longer than the lock timeout, so the lock is released mid-transfer
+and the remaining bytes are not written.
 
-Signed-off-by: Long Zhao <longzhao@ambarella.com>
+Acquire and release the system lock around each byte access instead, so
+every access stays within the lock timeout. Move set_sys_lock()/
+release_sys_lock() inside the loop and release the lock on the error path
+before bailing out, in all four helpers: OTP read/write and EEPROM
+read/write.
+
+After each access, confirm the lock is still owned before trusting the
+result: under heavy load even a single byte access can exceed the lock
+timeout, in which case the hardware releases the lock early. Return
+-ETIMEDOUT in that case instead of silently reporting bad data.
+
+Fixes: 0969001569e4 ("misc: microchip: pci1xxxx: Add support to read and write into PCI1XXXX OTP via NVMEM sysfs")
+Signed-off-by: Dhanushkalyan G <dhanushkalyan.g@microchip.com>
 ---
- arch/arm64/Kconfig.platforms               |   9 ++
- arch/arm64/boot/dts/Makefile               |   1 +
- arch/arm64/boot/dts/ambarella/Makefile     |   3 +
- arch/arm64/boot/dts/ambarella/cv75-evk.dts |  30 ++++++
- arch/arm64/boot/dts/ambarella/cv75.dtsi    | 166 +++++++++++++++++++++++++++++
- arch/arm64/configs/defconfig               |   3 +
- 6 files changed, 212 insertions(+)
+ .../misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c | 83 +++++++++++++++----
+ 1 file changed, 65 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index d2acfac73003..166430ddb3c9 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -26,6 +26,15 @@ config ARCH_SUNXI
- 	help
- 	  This enables support for Allwinner sunxi based SoCs like the A64.
+diff --git a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
+index a2ed477e0370..1e99bf59fdd3 100644
+--- a/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
++++ b/drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c
+@@ -94,6 +94,23 @@ static void release_sys_lock(struct pci1xxxx_otp_eeprom_device *priv)
+ 	writel(0, sys_lock);
+ }
  
-+config ARCH_AMBARELLA
-+	bool "Ambarella SoC family"
-+	select ARM_PSCI
-+	select HAVE_ARM_ARCH_TIMER
-+	select PINCTRL
-+	select PINCTRL_AMB
-+	help
-+	  This enables support for the ARM64 based Ambarella SoCs like CV75.
-+
- config ARCH_ALPINE
- 	bool "Annapurna Labs Alpine platform"
- 	select ALPINE_MSI if PCI
-diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-index fc726b215f12..f1709eb5d915 100644
---- a/arch/arm64/boot/dts/Makefile
-+++ b/arch/arm64/boot/dts/Makefile
-@@ -4,6 +4,7 @@ subdir-y += airoha
- subdir-y += allwinner
- subdir-y += altera
- subdir-y += amazon
-+subdir-y += ambarella
- subdir-y += amd
- subdir-y += amlogic
- subdir-y += apm
-diff --git a/arch/arm64/boot/dts/ambarella/Makefile b/arch/arm64/boot/dts/ambarella/Makefile
-new file mode 100644
-index 000000000000..ddca3d7b18cc
---- /dev/null
-+++ b/arch/arm64/boot/dts/ambarella/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+dtb-$(CONFIG_ARCH_AMBARELLA) += cv75-evk.dtb
-diff --git a/arch/arm64/boot/dts/ambarella/cv75-evk.dts b/arch/arm64/boot/dts/ambarella/cv75-evk.dts
-new file mode 100644
-index 000000000000..42a0fe24b83b
---- /dev/null
-+++ b/arch/arm64/boot/dts/ambarella/cv75-evk.dts
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * Ambarella CV75 EVK board
++ * The system lock has a hardware timeout: if it is held for longer than the
++ * configured timeout, the hardware releases it automatically. Under heavy
++ * load this can happen in the middle of an OTP/EEPROM byte access, leaving
++ * the access only partially completed while the code still assumes the lock
++ * is held. Re-read the lock and confirm this function (PF3) still owns it; a
++ * cleared ownership bit means the access raced with a lock timeout and its
++ * result cannot be trusted.
 + */
++static bool is_sys_lock_owned(struct pci1xxxx_otp_eeprom_device *priv)
++{
++	void __iomem *sys_lock = priv->reg_base +
++				 MMAP_CFG_OFFSET(CFG_SYS_LOCK_OFFSET);
 +
-+/dts-v1/;
++	return readl(sys_lock) & CFG_SYS_LOCK_PF3;
++}
 +
-+#include "cv75.dtsi"
+ static bool is_eeprom_responsive(struct pci1xxxx_otp_eeprom_device *priv)
+ {
+ 	void __iomem *rb = priv->reg_base;
+@@ -133,11 +150,11 @@ static int pci1xxxx_eeprom_read(void *priv_t, unsigned int off,
+ 	if ((off + count) > priv->nvmem_config_eeprom.size)
+ 		count = priv->nvmem_config_eeprom.size - off;
+ 
+-	ret = set_sys_lock(priv);
+-	if (ret)
+-		return ret;
+-
+ 	for (byte = 0; byte < count; byte++) {
++		ret = set_sys_lock(priv);
++		if (ret)
++			return ret;
 +
-+/ {
-+	model = "Ambarella CV75 EVK Board";
-+	compatible = "ambarella,cv75-evk", "ambarella,cv75";
+ 		writel(EEPROM_CMD_EPC_BUSY_BIT | (off + byte), rb +
+ 		       MMAP_EEPROM_OFFSET(EEPROM_CMD_REG));
+ 
+@@ -148,13 +165,20 @@ static int pci1xxxx_eeprom_read(void *priv_t, unsigned int off,
+ 					rb + MMAP_EEPROM_OFFSET(EEPROM_CMD_REG));
+ 		if (ret < 0 || (!ret && (regval & EEPROM_CMD_EPC_TIMEOUT_BIT))) {
+ 			ret = -EIO;
++			release_sys_lock(priv);
+ 			goto error;
+ 		}
+ 
+ 		buf[byte] = readl(rb + MMAP_EEPROM_OFFSET(EEPROM_DATA_REG));
 +
-+	aliases {
-+		serial0 = &uart0;
-+	};
++		if (!is_sys_lock_owned(priv)) {
++			ret = -ETIMEDOUT;
++			goto error;
++		}
 +
-+	chosen {
-+		stdout-path = &uart0;
-+	};
++		release_sys_lock(priv);
+ 	}
+ error:
+-	release_sys_lock(priv);
+ 	return ret;
+ }
+ 
+@@ -174,11 +198,12 @@ static int pci1xxxx_eeprom_write(void *priv_t, unsigned int off,
+ 	if ((off + count) > priv->nvmem_config_eeprom.size)
+ 		count = priv->nvmem_config_eeprom.size - off;
+ 
+-	ret = set_sys_lock(priv);
+-	if (ret)
+-		return ret;
+ 
+ 	for (byte = 0; byte < count; byte++) {
++		ret = set_sys_lock(priv);
++		if (ret)
++			return ret;
 +
-+	memory@200000 {
-+		device_type = "memory";
-+		reg = <0x0 0x00200000 0x0 0x07e00000>;
-+	};
-+};
+ 		writel(*(value + byte), rb + MMAP_EEPROM_OFFSET(EEPROM_DATA_REG));
+ 		regval = EEPROM_CMD_EPC_TIMEOUT_BIT | EEPROM_CMD_EPC_WRITE |
+ 			 (off + byte);
+@@ -193,11 +218,18 @@ static int pci1xxxx_eeprom_write(void *priv_t, unsigned int off,
+ 					rb + MMAP_EEPROM_OFFSET(EEPROM_CMD_REG));
+ 		if (ret < 0 || (!ret && (regval & EEPROM_CMD_EPC_TIMEOUT_BIT))) {
+ 			ret = -EIO;
++			release_sys_lock(priv);
++			goto error;
++		}
 +
-+&uart0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/ambarella/cv75.dtsi b/arch/arm64/boot/dts/ambarella/cv75.dtsi
-new file mode 100644
-index 000000000000..825b773f052f
---- /dev/null
-+++ b/arch/arm64/boot/dts/ambarella/cv75.dtsi
-@@ -0,0 +1,166 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Ambarella CV75 SoC
-+ *
-+ * Boot peripheral: UART0 console.
-+ * Clocks: a single ambarella,cv75-rct provider.
-+ */
++		if (!is_sys_lock_owned(priv)) {
++			ret = -ETIMEDOUT;
+ 			goto error;
+ 		}
 +
-+#include <dt-bindings/clock/ambarella,cv75-clock.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
++		release_sys_lock(priv);
+ 	}
+ error:
+-	release_sys_lock(priv);
+ 	return ret;
+ }
+ 
+@@ -229,11 +261,11 @@ static int pci1xxxx_otp_read(void *priv_t, unsigned int off,
+ 	if ((off + count) > priv->nvmem_config_otp.size)
+ 		count = priv->nvmem_config_otp.size - off;
+ 
+-	ret = set_sys_lock(priv);
+-	if (ret)
+-		return ret;
+-
+ 	for (byte = 0; byte < count; byte++) {
++		ret = set_sys_lock(priv);
++		if (ret)
++			return ret;
 +
-+/ {
-+	compatible = "ambarella,cv75";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
+ 		otp_device_set_address(priv, (u16)(off + byte));
+ 		data = readl(rb + MMAP_OTP_OFFSET(OTP_FUNC_CMD_OFFSET));
+ 		writel(data | OTP_FUNC_RD_BIT,
+@@ -251,13 +283,20 @@ static int pci1xxxx_otp_read(void *priv_t, unsigned int off,
+ 		data = readl(rb + MMAP_OTP_OFFSET(OTP_PASS_FAIL_OFFSET));
+ 		if (ret < 0 || data & OTP_FAIL_BIT) {
+ 			ret = -EIO;
++			release_sys_lock(priv);
+ 			goto error;
+ 		}
+ 
+ 		buf[byte] = readl(rb + MMAP_OTP_OFFSET(OTP_RD_DATA_OFFSET));
 +
-+	osc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-output-names = "osc";
-+		clock-frequency = <24000000>;
-+	};
++		if (!is_sys_lock_owned(priv)) {
++			ret = -ETIMEDOUT;
++			goto error;
++		}
 +
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
++		release_sys_lock(priv);
+ 	}
+ error:
+-	release_sys_lock(priv);
+ 	return ret;
+ }
+ 
+@@ -278,11 +317,12 @@ static int pci1xxxx_otp_write(void *priv_t, unsigned int off,
+ 	if ((off + count) > priv->nvmem_config_otp.size)
+ 		count = priv->nvmem_config_otp.size - off;
+ 
+-	ret = set_sys_lock(priv);
+-	if (ret)
+-		return ret;
+ 
+ 	for (byte = 0; byte < count; byte++) {
++		ret = set_sys_lock(priv);
++		if (ret)
++			return ret;
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
+ 		otp_device_set_address(priv, (u16)(off + byte));
+ 
+ 		/*
+@@ -309,11 +349,18 @@ static int pci1xxxx_otp_write(void *priv_t, unsigned int off,
+ 		data = readl(rb + MMAP_OTP_OFFSET(OTP_PASS_FAIL_OFFSET));
+ 		if (ret < 0 || data & OTP_FAIL_BIT) {
+ 			ret = -EIO;
++			release_sys_lock(priv);
+ 			goto error;
+ 		}
 +
-+		cpu@0 {
-+			compatible = "arm,cortex-a76";
-+			device_type = "cpu";
-+			reg = <0x000>;
-+			enable-method = "psci";
-+		};
++		if (!is_sys_lock_owned(priv)) {
++			ret = -ETIMEDOUT;
++			goto error;
++		}
 +
-+		cpu@1 {
-+			compatible = "arm,cortex-a76";
-+			device_type = "cpu";
-+			reg = <0x100>;
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	gic: interrupt-controller@fff0101000 {
-+		compatible = "arm,gic-400";
-+		#interrupt-cells = <3>;
-+		#address-cells = <0>;
-+		#size-cells = <1>;
-+		interrupt-controller;
-+		reg = <0xff 0xf0101000 0x0 0x1000>,
-+		      <0xff 0xf0102000 0x0 0x2000>,
-+		      <0xff 0xf0104000 0x0 0x2000>,
-+		      <0xff 0xf0106000 0x0 0x2000>;
-+		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 12 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		/* Clock provider and shared system registers. */
-+		rct: clock-controller@ffed080000 {
-+			compatible = "ambarella,cv75-rct", "syscon";
-+			reg = <0xff 0xed080000 0x0 0x1000>;
-+			clocks = <&osc>;
-+			clock-names = "osc";
-+			#clock-cells = <1>;
-+
-+			assigned-clocks = <&rct CV75_GCLK_UART0>;
-+			assigned-clock-parents = <&osc>;
-+			assigned-clock-rates = <24000000>;
-+		};
-+
-+		apb@ffe4000000 {
-+			compatible = "simple-bus";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			reg = <0xff 0xe4000000 0x0 0x01000000>;
-+			ranges = <0xe4000000 0xff 0xe4000000 0x01000000>;
-+
-+			uart0: serial@e4000000 {
-+				compatible = "ambarella,cv75-uart";
-+				reg = <0xe4000000 0x1000>;
-+				interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&rct CV75_GCLK_UART0>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&uart0_pins>;
-+				status = "disabled";
-+			};
-+
-+			pinctrl: pinctrl@e4010000 {
-+				compatible = "ambarella,cv75-pinctrl";
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				reg = <0xe4010000 0x1000>;
-+				ranges;
-+				ambarella,drive-strength-syscon = <&rct>;
-+				ambarella,pull-syscon = <&s_scratchpad_syscon>;
-+
-+				gpio0: gpio@e4013000 {
-+					reg = <0xe4013000 0x1000>;
-+					interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&pinctrl 0 0 32>;
-+					interrupt-controller;
-+					#interrupt-cells = <2>;
-+				};
-+
-+				gpio1: gpio@e4014000 {
-+					reg = <0xe4014000 0x1000>;
-+					interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&pinctrl 0 32 32>;
-+					interrupt-controller;
-+					#interrupt-cells = <2>;
-+				};
-+
-+				gpio2: gpio@e4015000 {
-+					reg = <0xe4015000 0x1000>;
-+					interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					gpio-ranges = <&pinctrl 0 64 32>;
-+					interrupt-controller;
-+					#interrupt-cells = <2>;
-+				};
-+
-+				uart0_pins: uart0-pins {
-+					function = "uart0";
-+					groups = "uart0tx", "uart0rx";
-+				};
-+			};
-+		};
-+
-+		ahb@ffe0000000 {
-+			compatible = "simple-bus";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			reg = <0xff 0xe0000000 0x0 0x01000000>;
-+			ranges = <0xe0000000 0xff 0xe0000000 0x01000000>;
-+
-+			s_scratchpad_syscon: scratchpad@e002e000 {
-+				compatible = "ambarella,cv75-sec-scratchpad", "syscon";
-+				reg = <0xe002e000 0x1000>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index ad3bd3d9507b..64e8fbe43d27 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -36,6 +36,7 @@ CONFIG_CRASH_DUMP=y
- CONFIG_ARCH_ACTIONS=y
- CONFIG_ARCH_AIROHA=y
- CONFIG_ARCH_SUNXI=y
-+CONFIG_ARCH_AMBARELLA=y
- CONFIG_ARCH_ALPINE=y
- CONFIG_ARCH_APPLE=y
- CONFIG_ARCH_ARTPEC=y
-@@ -567,6 +568,8 @@ CONFIG_SERIAL_8250_OMAP=y
- CONFIG_SERIAL_8250_MT6577=y
- CONFIG_SERIAL_8250_UNIPHIER=y
- CONFIG_SERIAL_OF_PLATFORM=y
-+CONFIG_SERIAL_AMBARELLA=y
-+CONFIG_SERIAL_AMBARELLA_CONSOLE=y
- CONFIG_SERIAL_AMBA_PL011=y
- CONFIG_SERIAL_AMBA_PL011_CONSOLE=y
- CONFIG_SERIAL_MESON=y
-
++		release_sys_lock(priv);
+ 	}
+ error:
+-	release_sys_lock(priv);
+ 	return ret;
+ }
+ 
 -- 
 2.34.1
-
 
