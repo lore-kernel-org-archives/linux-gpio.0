@@ -1,131 +1,100 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E0B54781;
-	Fri,  7 Aug 2026 03:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3B8377ED7;
+	Fri,  7 Aug 2026 06:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786074874; cv=none; b=U3K3P/uF0IsI4Ddp/KJfBPbJELWQ/BVa/tkcmkL5wfzSLk+RLouzXl2uHJ8MCZDccCZttkL8VOL+P/pQqd5yRyt6YrcdeCDEFjkvHPfufU2+YJRbgQANIy+6d5395N44zDLG1HtDeEq1uIO2kZCFVozPH6iLR7hZR3zY8Z5Gxq8=
+	t=1786082434; cv=none; b=BOYAaIbZqul5cvOchoS4iVjnoxjZWikB5sudxEcIEWDb7XOofRbed9Oo3zSfBGPzQleszWVyMSbZqF6UTnbqBsIECE7Dt7DefFZHNmnR5QPTj5KKDY8EZXtD6il1TJDfgQ6b0Tmoc0XCb4aZTF0uJ5m427VYJyg4IjCkp8jlBoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786074874; c=relaxed/simple;
-	bh=3oWywf9E4FFyVRBPVd9nDFuhcsrdVyBGtZdVUoKPXzo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N4RJlQJeQgOexMIuC1Oo5+N48RDlzyBjlABm8VZxXBWPmQ0yJ+pnBvcytjy/PtZfjU6Ts3GNbRnFir4KFd1YnY6nIDMciZdsIATOYNA4tA0k6qwI04kK2Rr7mguj6ae4tvSNRs4QRnx30tMA4e2nzeFvkfWwMGtl5GMUjwEsQhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HcaGxXpL; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1786082434; c=relaxed/simple;
+	bh=Io4sIUXznSJBo8m6F1O7A+RV5c/wESUSagXOPByjurw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QhCVCrG8xrZv9T+ORBzOTsvIYwrXHDZtSdytva5fKIdCALn/yIRH1pZTdN/GCnk4zT0iFGHGow6xnAqeqMI1WfqZwPUlFI875xg+469GmbXOT/FFIZcTfvsz3XNLrgakeP1pEuOom3qpZoHx7hWLPKU9fAPX3zMqQpsp3gkC6cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HiDHhnF6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HcaGxXpL"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6770HiRw4161684;
-	Fri, 7 Aug 2026 03:54:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=3oWywf
-	9E4FFyVRBPVd9nDFuhcsrdVyBGtZdVUoKPXzo=; b=HcaGxXpLMRnqaTxd8GuFln
-	AwLuhXzjM7t/0yQbNlB0shXHscW5X1CIR/n78j5eZVtSYIDubUs7Sba610sxK7P0
-	e6muN62c8xoUDdswsYeiGWIABGhyB4xLQrSV/iEgiiykzN8rsiIQAVjuNUN2gwx6
-	lwXjY0HM9v18EQApBXYcGrmLdQ98s1a7VnVy/r5wjgv7hQFT8Kwrpq6EyxqzpwLG
-	1YcGCEveKRhJxOjNRMsyQar4Yy24g0NbjdRjYJssZCqB3EanIGqlrpNqFn692u1Y
-	gFw12V/9J/ZNXIwDN1k4pIqzBxUC0PAKfgLhdUBwevIFeilBB82p2PF/PsganuPw
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4fvxyyt3fs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Aug 2026 03:54:20 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 6773fKpi028260;
-	Fri, 7 Aug 2026 03:54:19 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4fsvmhp2fw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Aug 2026 03:54:19 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 6773sIZ932899400
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Aug 2026 03:54:18 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BB2F958058;
-	Fri,  7 Aug 2026 03:54:18 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A5F835805B;
-	Fri,  7 Aug 2026 03:54:15 +0000 (GMT)
-Received: from [9.123.14.9] (unknown [9.123.14.9])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Aug 2026 03:54:15 +0000 (GMT)
-Message-ID: <7e249d0d-52d5-4df4-800c-8dbd081dad7a@linux.ibm.com>
-Date: Fri, 7 Aug 2026 09:24:13 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HiDHhnF6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55D481F00A3A;
+	Fri,  7 Aug 2026 06:00:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786082433;
+	bh=DTjw2XFDO1scXxZ466G8sTIU0IDoXYq5q8rl6tKiZRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=HiDHhnF61cXktC/fU2PqLlG6QeF7DkMz1CQaC5A8ET1AF7LuXGBsKezuCgD9oox4W
+	 y2Sx9iYyY+aoO0IYPhYr/vqAQwo9NevoenkwIhnrkwDneXA9BloNAgMf5K+h/8uemc
+	 W2Qhlf8cFaOH+e9kXpf8T4vhvCbEpRe4dmzOxv13m3vZGu4d+wqdL61GgkcLKNVwzz
+	 nNjoH/8QJ3euP2YWZbFHlPi4I051+2ZKFABewEgpiuDkrv6OJQswkiX9WEXEdzqWtu
+	 tF/SccwVUtceMU5EcA1v92ftFGRqT0SbnGMkeKhyecvI4oLDiTk3J3T100Sh2RvYHY
+	 p/D9wCGLUxPhQ==
+Date: Fri, 7 Aug 2026 08:00:29 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Long Zhao <longzhao@ambarella.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, soc@lists.linux.dev
+Subject: Re: [PATCH v2 01/10] dt-bindings: arm: add Ambarella CV75 platforms
+Message-ID: <20260807-free-stork-of-effort-60e41d@quoll>
+References: <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
+ <20260806-longzhao-upstream-cv75-v2-v2-1-6b09707c5fe9@ambarella.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 0/8] gpio: move ppc4xx driver to drivers/gpio and
- modernize
-To: Linus Walleij <linusw@kernel.org>, Rosen Penev <rosenp@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
- <linuxppc-dev@lists.ozlabs.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20260803223539.86303-1-rosenp@gmail.com>
- <CAD++jLmKBR=nHQ5O5URC9qmgA25X9=xYWQAx-dyRyUGMG+hKmg@mail.gmail.com>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <CAD++jLmKBR=nHQ5O5URC9qmgA25X9=xYWQAx-dyRyUGMG+hKmg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=SYrHsPRu c=1 sm=1 tr=0 ts=6a7556ec cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=U7nrCbtTmkRpXpFmAIza:22 a=pGLkceISAAAA:8
- a=VwQbUJbxAAAA:8 a=wf8haQ8ew-7n_kzEmYcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODA3MDAyNCBTYWx0ZWRfX+CqrSpzsGbR4
- TsO2RbJdiITuCSmQ9NOyATViihVXhjZ61DJGAGWAKXcoRtRR8KZ9aRFWZc1MZ8+V21MAdco1is6
- Jt47i6q533H/I9tkhgT70EjQXHVcs9Q=
-X-Proofpoint-ORIG-GUID: WvwbCTzeP1eMD5EubWYw4qBjQn7U964I
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODA3MDAyNCBTYWx0ZWRfX2pEwP6FzbbLx
- u1TwTF913n5fHprjDCSUbeWNW0FOiBH9l2omjJtqFFNwUnBNDzrGXja8g6hR4obHIhPA0wYTdVV
- y8OBaH1jvIGn1AIgUD4uA14vcdVKsn5tZUpvL17Cndffa5/lYReVeTsYoM0/FCw1rvq7hd4meaR
- Rm/qlcLaeRU3nlbzf48sIWH5OD1o/6NcH2xURTJtoCF5J2sOu2e+BXNGPnrYyVnFF9BDWSIJpfa
- DWIAxU9Ei/4L58n9OpUzjfRz8oTgGfBk6i6X5o3LoOSQXnZzdIxBTrVfGe/mFT8sYKQ4rJIl6hV
- qYCDFo5T6Nr2NOQ82TmgWMlVmgKIOpyS97P59Qo/6/6TDqyWVFLK1OJka5mQaWn0ecLoIl5F7+2
- H4kvyt2cQl1ZrMcvSZIXvEYO5ykUTVbZyPUNKRxGxmk/ktEGNr87TxuG/oRy12fntAt7aAsZKqZ
- gV3Ewf+ywR015nFCOpg==
-X-Proofpoint-GUID: JXuSyszOSKKI5keZsCMq-WgaEQageF5v
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-07_01,2026-08-06_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 bulkscore=0 impostorscore=0 phishscore=0 spamscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2608070024
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260806-longzhao-upstream-cv75-v2-v2-1-6b09707c5fe9@ambarella.com>
 
+On Thu, Aug 06, 2026 at 05:34:09PM +0800, Long Zhao wrote:
+> Add the Ambarella SoC board binding and vendor prefix covering
+> the CV75 EVK.
+> 
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+> ---
+>  .../devicetree/bindings/arm/ambarella.yaml         | 23 ++++++++++++++++++++++
+>  .../devicetree/bindings/vendor-prefixes.yaml       |  2 ++
+>  2 files changed, 25 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/ambarella.yaml b/Documentation/devicetree/bindings/arm/ambarella.yaml
+> new file mode 100644
+> index 000000000000..347148530f80
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/ambarella.yaml
+> @@ -0,0 +1,23 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/ambarella.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Ambarella SoC platforms
+> +
+> +maintainers:
+> +  - Long Zhao <longzhao@ambarella.com>
+> +
+> +properties:
+> +  $nodename:
+> +    const: "/"
+> +
+> +  compatible:
+> +    oneOf:
+> +      - description: Ambarella CV75 EVK board
+> +        items:
+> +          - const: ambarella,cv75-evk
 
-On 8/7/26 3:45 AM, Linus Walleij wrote:
-> On Tue, Aug 4, 2026 at 12:35 AM Rosen Penev <rosenp@gmail.com> wrote:
->
->> This series moves the ppc4xx GPIO driver from arch/powerpc to
->> drivers/gpio, converts it to be a proper platform driver using
->> generic MMIO helpers, drops architecture-specific accessors, and
->> prepares it for module build and COMPILE_TEST.
-> Excellent patches!
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
+This should be enum, it will grow with other boards, no?
 
-I will take this via ppc tree.
+Anyway,
 
-Maddy
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
+Best regards,
+Krzysztof
 
->
-> Yours,
-> Linus Walleij
->
