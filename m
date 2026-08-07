@@ -1,92 +1,177 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990AF42CB18
-	for <linux-gpio@vger.kernel.org>; Fri,  7 Aug 2026 11:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CE54746D7;
+	Fri,  7 Aug 2026 13:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786100606; cv=none; b=GN7zotSc8aka9xyf0QMwHxJr/59Pb8EPzVDyjcIFEPOgmCfY8xjNkUg0thWBVKgfImN2CWsWUpV1hZhC5Xnb/lBg7eXJVW1bXJu9e8AxuOKsoXEDw01HFI/saDxUaQ/B+MG3ZoouO/M1uUaXlTPVfPGySnS1A6c/Y6tLyrl7EDk=
+	t=1786107770; cv=none; b=MWsGDwI17NThn3heg8iooHVlUK9/PCwPf/jLdmkFa3OFW1SVboQECN/Ge4ve9gFS44wZhg0gQL2dDeoWiJkrOxGPG6SKaCvFdXaTS2KnhOdadte+yeK9GopCeAv19wP22W7pkEXrhRgAY0yNeUMnIaDymtaM5QyXL7hnY9Jkxho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786100606; c=relaxed/simple;
-	bh=psDZqfW/eRrBXSKXUpYLi89rM4Jg69S8hqArA7KJl/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=O1J7VqbGV+IxxitYoKgjVWPlLty/Uij5vNNawGNKgtcHdNCwQai3VxUozxAusMhS5bUAoOCpX8naCLZ2YuLzZFbU6e3n+YqfMLXpY4wHlDHc1S7/sfl3Yt4ElJdyauLm7w6mhJMVjh7ZCswQoUnB7L2VpuqRz2ESOLyTU1Oi+ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gg69n+P0; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1786107770; c=relaxed/simple;
+	bh=cpDukcPxVJzXko/L0eFDwxYderoS/dpMlVO2IjtjjHE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pIVjzrHolI0vDI2NfcFsbOvd/w8xhfXedP6lE/an4inuzLKkv2guaVHsEP1/gV/kv9jFJhNWnx4ZkDZQlC2pTRZeoj4G3FvZIybdKUcJG/EKXE7eHn6yNbrbyY7wa4k9zI83dkMH+5Mp7b/MVZkBjNqUkgsrBhcOJBFkFnwC2Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZDOUHWaS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gg69n+P0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786100605; x=1817636605;
-  h=date:from:to:cc:subject:message-id;
-  bh=psDZqfW/eRrBXSKXUpYLi89rM4Jg69S8hqArA7KJl/Q=;
-  b=gg69n+P0OrjnxoGDAecRQlFXMrI1c0WNMnf4IHwuAVREtQJTswH3J7+T
-   o7+/S1AVTyFoS5X1JwktBW/r048h6htNu9tb2+BhLq6obRkcplkO0CQaK
-   DYo5aWPIVKesuaah7N0FsKaC+uJoqnvUlAzxE/mNi/pZPvdQs7A9yp58i
-   j7mv7AA6vxF1vDLvvJjIySunHvVo/Xq99a9JmpmRGdxC7orzlhIYMo/6r
-   TqlOG+TOph4yKoJ7iTuBgneZrjRLxsN4xXn0WWgAh8cznRr7nOQKy6waf
-   E3BPC133M9ALjf/QRb97lbEii3nfe37cx1IPVj9Tp32Ig+ufbN/LhAwuU
-   g==;
-X-CSE-ConnectionGUID: F66/q2x7RciLgQi/vAvlDA==
-X-CSE-MsgGUID: WKFHf0a7ShSNiueChDykEw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="86470090"
-X-IronPort-AV: E=Sophos;i="6.25,210,1779174000"; 
-   d="scan'208";a="86470090"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2026 04:03:22 -0700
-X-CSE-ConnectionGUID: PszWBXymQA+ecut8bQERcQ==
-X-CSE-MsgGUID: E0gJob+sTEKabuI9+TqNSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,210,1779174000"; 
-   d="scan'208";a="259762783"
-Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 07 Aug 2026 04:03:21 -0700
-Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wsIMA-00000000HyO-0dIh;
-	Fri, 07 Aug 2026 11:03:18 +0000
-Date: Fri, 07 Aug 2026 19:02:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- 35ff52e54b38b01914be62ece27899665a46af56
-Message-ID: <202608071909.ATvS8SQ7-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZDOUHWaS"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 998A4C19425;
+	Fri,  7 Aug 2026 13:02:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1786107766;
+	bh=cpDukcPxVJzXko/L0eFDwxYderoS/dpMlVO2IjtjjHE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=ZDOUHWaSUQb8bjM+jL0mqa22y9vZhIr8Oqc8E0eTe1EXY+pHTdFJWWlM4cez4ATY8
+	 5ckCRIaKJddwS/UqZ/9PUHeK+gKSpcUdy35utaIN8AVjIZ8YPWa4zCw3BlNwQxwwMd
+	 +Qa0BDBfl3WQzBMhPKdCdyv6f1wWl0fqJebpx1S/NosL6Y+dj89OEkOg6SHyBaHCAY
+	 7Dj8DmgGX3/IDEOqx/bIu259JDlDVGIt5QLvW06oMC/G5wejQgn1kcBvyInQ7HrAHA
+	 G35/4nHUSYO/jff3F1p4/yjlhr7jXbQIoelT3B9MBKmlcSRGNu3dpNN2cvDSjGRzp3
+	 as807VkpMCMAw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74969C5AC7C;
+	Fri,  7 Aug 2026 13:02:46 +0000 (UTC)
+From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
+Date: Fri, 07 Aug 2026 16:02:36 +0300
+Subject: [PATCH v15 01/22] media: mc: Add INTERNAL pad flag
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260807-gmsl2-3_serdes-v15-1-7212e9e5156a@analog.com>
+References: <20260807-gmsl2-3_serdes-v15-0-7212e9e5156a@analog.com>
+In-Reply-To: <20260807-gmsl2-3_serdes-v15-0-7212e9e5156a@analog.com>
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Julien Massot <julien.massot@collabora.com>, Rob Herring <robh@kernel.org>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: mitrutzceclan@gmail.com, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+ Martin Hecht <Martin.Hecht@avnet.eu>, 
+ Andrian Suciu <Adrian.Suciu@analog.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1786107763; l=4211;
+ i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
+ bh=j75z8BDeqCgnWrq6GF1INTACeRkTAkS70gXnWGmC/2E=;
+ b=eV/ZagfXNN2LH/n7gS48+hpHFdFxvtXcQLLPWNJsc3vpdQdwHIsLaMR2Ab08oRRUkVwaNMzeB
+ 3NYI9BZC6cABu5dm8Jm0vYanH21l9mW54Yr2sFnKwhpaJ89POHfvP9B
+X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
+ pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
+X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
+ with auth_id=140
+X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+Reply-To: dumitru.ceclan@analog.com
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: 35ff52e54b38b01914be62ece27899665a46af56  pinctrl: rockchip: Restrict the RV1103B 2-bit drive type to bank 2
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-elapsed time: 760m
+Internal sink pads will be used as routing endpoints in V4L2 [GS]_ROUTING
+IOCTLs, to indicate that the stream begins in the entity. Internal sink
+pads are pads that have both SINK and INTERNAL flags set.
 
-configs tested: 15
-configs skipped: 1
+Also prevent creating links to pads that have been flagged as internal and
+initialising SOURCE pads with INTERNAL flag set.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ .../userspace-api/media/mediactl/media-types.rst          |  9 +++++++++
+ drivers/media/mc/mc-entity.c                              | 15 ++++++++++++---
+ include/uapi/linux/media.h                                |  1 +
+ 3 files changed, 22 insertions(+), 3 deletions(-)
 
-tested configs:
-alpha       allnoconfig    gcc-16.1.0
-alpha      allyesconfig    gcc-16.1.0
-alpha         defconfig    gcc-16.1.0
-arc        allmodconfig    gcc-16.1.0
-arc        allyesconfig    gcc-16.1.0
-arm64      alldefconfig    gcc-16.1.0
-csky       allmodconfig    gcc-16.1.0
-i386       allmodconfig    gcc-14
-loongarch     defconfig    clang-24
-nios2      allmodconfig    gcc-11.5.0
-nios2       allnoconfig    gcc-11.5.0
-parisc     allmodconfig    gcc-16.1.0
-parisc     allyesconfig    gcc-16.1.0
-parisc        defconfig    gcc-16.1.0
-sh            defconfig    gcc-16.1.0
+diff --git a/Documentation/userspace-api/media/mediactl/media-types.rst b/Documentation/userspace-api/media/mediactl/media-types.rst
+index 6332e8395263..200c37a1da26 100644
+--- a/Documentation/userspace-api/media/mediactl/media-types.rst
++++ b/Documentation/userspace-api/media/mediactl/media-types.rst
+@@ -361,6 +361,7 @@ Types and flags used to represent the media graph elements
+ .. _MEDIA-PAD-FL-SINK:
+ .. _MEDIA-PAD-FL-SOURCE:
+ .. _MEDIA-PAD-FL-MUST-CONNECT:
++.. _MEDIA-PAD-FL-INTERNAL:
+ 
+ .. flat-table:: Media pad flags
+     :header-rows:  0
+@@ -381,6 +382,14 @@ Types and flags used to represent the media graph elements
+ 	  enabled links even when this flag isn't set; the absence of the flag
+ 	  doesn't imply there is none.
+ 
++    *  -  ``MEDIA_PAD_FL_INTERNAL``
++       -  The internal flag indicates an internal pad that has no external
++	  connections. As they are internal to entities, internal pads shall not
++	  be connected with links.
++
++	  The internal flag may currently be present only in a sink pad where it
++	  indicates that the :ref:``stream <media-glossary-stream>`` originates
++	  from within the entity.
+ 
+ One and only one of ``MEDIA_PAD_FL_SINK`` and ``MEDIA_PAD_FL_SOURCE``
+ must be set for every pad.
+diff --git a/drivers/media/mc/mc-entity.c b/drivers/media/mc/mc-entity.c
+index 3fa0bc687851..7938f785e2e3 100644
+--- a/drivers/media/mc/mc-entity.c
++++ b/drivers/media/mc/mc-entity.c
+@@ -209,11 +209,16 @@ int media_entity_pads_init(struct media_entity *entity, u16 num_pads,
+ 		mutex_lock(&mdev->graph_mutex);
+ 
+ 	media_entity_for_each_pad(entity, iter) {
++		const u32 pad_flags = iter->flags & (MEDIA_PAD_FL_SINK |
++						     MEDIA_PAD_FL_SOURCE |
++						     MEDIA_PAD_FL_INTERNAL);
++
+ 		iter->entity = entity;
+ 		iter->index = i++;
+ 
+-		if (hweight32(iter->flags & (MEDIA_PAD_FL_SINK |
+-					     MEDIA_PAD_FL_SOURCE)) != 1) {
++		if (pad_flags != MEDIA_PAD_FL_SINK &&
++		    pad_flags != (MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_INTERNAL) &&
++		    pad_flags != MEDIA_PAD_FL_SOURCE) {
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+@@ -1118,7 +1123,8 @@ int media_get_pad_index(struct media_entity *entity, u32 pad_type,
+ 
+ 	for (i = 0; i < entity->num_pads; i++) {
+ 		if ((entity->pads[i].flags &
+-		     (MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_SOURCE)) != pad_type)
++		     (MEDIA_PAD_FL_SINK | MEDIA_PAD_FL_SOURCE |
++		      MEDIA_PAD_FL_INTERNAL)) != pad_type)
+ 			continue;
+ 
+ 		if (entity->pads[i].sig_type == sig_type)
+@@ -1148,6 +1154,9 @@ media_create_pad_link(struct media_entity *source, u16 source_pad,
+ 		return -EINVAL;
+ 	if (WARN_ON(!(sink->pads[sink_pad].flags & MEDIA_PAD_FL_SINK)))
+ 		return -EINVAL;
++	if (WARN_ON(source->pads[source_pad].flags & MEDIA_PAD_FL_INTERNAL) ||
++	    WARN_ON(sink->pads[sink_pad].flags & MEDIA_PAD_FL_INTERNAL))
++		return -EINVAL;
+ 
+ 	link = media_add_link(&source->links);
+ 	if (link == NULL)
+diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
+index 1c80b1d6bbaf..80cfd12a43fc 100644
+--- a/include/uapi/linux/media.h
++++ b/include/uapi/linux/media.h
+@@ -208,6 +208,7 @@ struct media_entity_desc {
+ #define MEDIA_PAD_FL_SINK			(1U << 0)
+ #define MEDIA_PAD_FL_SOURCE			(1U << 1)
+ #define MEDIA_PAD_FL_MUST_CONNECT		(1U << 2)
++#define MEDIA_PAD_FL_INTERNAL			(1U << 3)
+ 
+ struct media_pad_desc {
+ 	__u32 entity;		/* entity ID */
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-- 
+2.53.0
+
+
