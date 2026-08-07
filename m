@@ -1,65 +1,74 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD54649504E;
-	Thu,  6 Aug 2026 23:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129E24369A;
+	Fri,  7 Aug 2026 00:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786059860; cv=none; b=Wd7GNpuC6T4AMfmPbLajPXPBQ6+1Qrr+bnMHHQLshVLWmqGpIDwm2ohqfOSP8dum9zfq2JbUv76jzH3IdFSGKv1BjRaR5o831bzfwMlJrNDE52L3stNNjOLamKmHgiXmlNzJysfF3VKESkTpZIDGShmw6QAbT5VaNhdbjEZYz0Q=
+	t=1786060948; cv=none; b=MVZaK+0yrm+GuOuS39CWudjaTN/hLhC8qMNQCIXZi+RqpKb6VCztlfI4AdJH2lPRpb0ubwnuvzqrQTDLpIGEC+efR+hKC1B27BnPSJX9XveE0GsNptIWsX20XF0y0AKakiymHHpeZhrrinY4ZDUdxmB3jIGcJuqJ7mEGrYfRu4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786059860; c=relaxed/simple;
-	bh=l2+DY/+zfm6kc8T511ebTpdJYLnOb77/Vrd25+t/IAI=;
+	s=arc-20240116; t=1786060948; c=relaxed/simple;
+	bh=es/3Rp5Kv8CoLiBfOFFo/p1hSqvIEaneMfjF49har/o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gl4GC6zIRcVwtsGcSVz71O2BP35xFyo2ydMJ5s4MHNJshcWrmMzZ3kRjT7NCGtaC1cOP13mVTDaelK9oDCKE5H6ttXdIQKZRUUlVb9MLSUmDnlHmVIdBsU20fRAsSu4m4SLxJ8yXh4RvxsMfPOhBqZOGKML3FaR9mWcIDtyqgCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g3vijAnz; arc=none smtp.client-ip=198.175.65.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=dyj1JvtfmbBq3lGrQuJZhhg62V6RGufRa0AYgPFitFiHWfy2kani777rHVDyymqWktsxBXvYuRq5bgQJ+w9yIAHAeK4Em/1Ye2j31o3JUafD2a/GOnbUyafOKfbmB0ij1u1sfRTutLuhl3NMovt9QVQax56oSOrW9WAyGfVl534=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XQiZ55aO; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g3vijAnz"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XQiZ55aO"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786059857; x=1817595857;
+  t=1786060946; x=1817596946;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=l2+DY/+zfm6kc8T511ebTpdJYLnOb77/Vrd25+t/IAI=;
-  b=g3vijAnz/zrcxK9AyTU5rbd77JYs6olo9H00fDwtqv0qenBX59Bv3Xk0
-   4ni4sRJsqJVir4HzzjAsbG6vfEhfSouqDco+MAEkYInJJHgkFJmuGpeGf
-   /SffpySiUa5adL98Hr01rujjpYGEHTdCLvO4eTcEuiQIdpVpeXRcgsMMR
-   qTgtfbbyBEQhXIf4GrwNqC+r23ltstFZOygGMcLqUqNNx3x+I2B+SCUpn
-   xqI+qwpDeTEYOMnzaJ1qcZlpIiZmWhUmAdhCPIGmM4oEualPQQ70AefEx
-   BHaDjebEF3gngBgvLv9kywTwv/HxUuYcdGE4XAFCQAOVz81Q7c/JpmiLc
-   w==;
-X-CSE-ConnectionGUID: kaorRZ35QRGfXRxhgTZIRQ==
-X-CSE-MsgGUID: qEVUL4Q+Q9+vHt+9cUPDZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="86874195"
+  bh=es/3Rp5Kv8CoLiBfOFFo/p1hSqvIEaneMfjF49har/o=;
+  b=XQiZ55aOxeoe5IqlpzoOvBLHSKHIdNYTv1fWSaZ0hsmqKezFvkLhOiVV
+   bXUvDziCa2AKk2kWCOnqvB9AVCm00Q+RLL5ZZpjToo1gvzLaFAeshmSdj
+   Ka4OpkNWXZIQorwTQTskRuobylyxhsDmaUv8JtO6JHt91zBhNImRThwDq
+   l4tdUm861MCkiwR/2msG9lLstVR+MaPG93lUTMl1Oov++hVggAc62B4W3
+   IutEGWu2/BDRG69AhPwclqCYLfh5YMVVf2vFzaflQ0YwyWE2zVtNOu4gj
+   46/JKHQNVc1BXs7ZxVd6R7OtJtZZ4yL0Ym0mHxgGhrj0LWIUtfJtZMpvu
+   A==;
+X-CSE-ConnectionGUID: PF+xRugWQw+XlEKtE2ltvA==
+X-CSE-MsgGUID: C0cbY1CzREynySHVQCtmaQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="112217474"
 X-IronPort-AV: E=Sophos;i="6.25,209,1779174000"; 
-   d="scan'208";a="86874195"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2026 16:44:16 -0700
-X-CSE-ConnectionGUID: 6qSmh78FTvG1M+9UW4jjzg==
-X-CSE-MsgGUID: H617RV3XQOqFholnuMijRw==
+   d="scan'208";a="112217474"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2026 17:02:23 -0700
+X-CSE-ConnectionGUID: 0Dh23k81SxC4uoCQNwRJ0w==
+X-CSE-MsgGUID: WuSWqERSTqC7KGQkPpxiuA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,209,1779174000"; 
-   d="scan'208";a="262301863"
+   d="scan'208";a="261730580"
 Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.50])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2026 16:44:10 -0700
-Date: Fri, 7 Aug 2026 02:44:08 +0300
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2026 17:02:17 -0700
+Date: Fri, 7 Aug 2026 03:02:15 +0300
 From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Yu-Chun Lin <eleanor.lin@realtek.com>
-Cc: linusw@kernel.org, mwalle@kernel.org, brgl@kernel.org,
-	tychang@realtek.com, wbg@kernel.org,
-	mathieu.dubois-briand@bootlin.com, nuno.sa@analog.com,
-	Michael.Hennerich@analog.com, jic23@kernel.org, andy@kernel.org,
-	o-takashi@sakamocchi.jp, u.kleine-koenig@baylibre.com,
-	dakr@kernel.org, bhelgaas@google.com, dlechner@baylibre.com,
+To: Janani Sunil <janani.sunil@analog.com>
+Cc: Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Michael Walle <mwalle@kernel.org>, linux@analog.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux@analog.com, linux-iio@vger.kernel.org, cy.huang@realtek.com,
-	james.tai@realtek.com, stanley_chang@realtek.com
-Subject: Re: [PATCH v8 9/9] gpio: realtek: Add driver for Realtek DHC RTD1625
- SoC
-Message-ID: <anUcSPcJjJkLh0Z-@ashevche-desk.local>
-References: <20260726125209.140307-1-eleanor.lin@realtek.com>
- <20260726125209.140307-10-eleanor.lin@realtek.com>
+	linux-doc@vger.kernel.org, jananisunil.dev@gmail.com,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH v2 5/7] gpio: regmap: Add runtime PM and
+ read_output_reg_set support
+Message-ID: <anUgh6qgESzpRJwa@ashevche-desk.local>
+References: <20260806-ad7768-driver-v2-0-027ac5e2a641@analog.com>
+ <20260806-ad7768-driver-v2-5-027ac5e2a641@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -68,227 +77,127 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260726125209.140307-10-eleanor.lin@realtek.com>
+In-Reply-To: <20260806-ad7768-driver-v2-5-027ac5e2a641@analog.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Sun, Jul 26, 2026 at 08:52:00PM +0800, Yu-Chun Lin wrote:
-
-> Add support for the GPIO controller found on Realtek DHC RTD1625 SoCs.
+On Thu, Aug 06, 2026 at 05:41:24PM +0200, Janani Sunil wrote:
+> The new pm_dev field in gpio_regmap_config allows a driver to supply a
+> device for runtime PM. All operations call pm_runtime_resume_and_get()
+> before accessing the regmap and pm_runtime_put_autosuspend() on return.
 > 
-> Unlike the existing Realtek GPIO driver (drivers/gpio/gpio-rtd.c),
-> which manages pins via shared bank registers, the RTD1625 introduces
-> a per-pin register architecture. Each GPIO line now has its own
-> dedicated 32-bit control register to manage configuration independently,
-> including direction, output value, input value, interrupt enable, and
-> debounce. Therefore, this distinct hardware design requires a separate
-> driver.
-> 
-> The RTD1625 GPIO controller has a hardware quirk where both 'assert'
-> and 'de-assert' interrupts are fired simultaneously on any edge toggle.
-> The driver works around this quirk to correctly handle edge interrupts.
-> 
-> Interrupt support is optional for this device, matching the dt-bindings.
-> If the interrupts property is not provided, the driver simply skips IRQ
-> initialization and operates purely as a basic GPIO controller.
-
-I see this is already applied, but consider the below as a material to follow up.
+> The new read_output_reg_set flag when set, gpio_regmap_get() checks the
+> pin direction first and reads from reg_set_base instead of reg_dat_base
+> for output pins. Requires both reg_dat_base and reg_set_base to be
+> configured.
 
 ...
 
-> +static int rtd1625_reg_mask_xlate(struct gpio_regmap *gpio, enum gpio_regmap_operation op,
-> +				  unsigned int base, unsigned int offset, unsigned int *reg,
-> +				  unsigned int *mask)
+> struct gpio_regmap {
+
+>  	unsigned int reg_clr_base;
+>  	unsigned int reg_dir_in_base;
+>  	unsigned int reg_dir_out_base;
+> +	struct device *pm_dev;
+> +	bool read_output_reg_set;
+>  	unsigned long *fixed_direction_mask;
+>  	unsigned long *fixed_direction_output;
+
+>  }
+
+Have you run `pahole`? Is it okay to put bool there and not after one of
+unsigned int:s (just from the given context, it might be even better location)?
+
+...
+
+> +static int gpio_regmap_runtime_get(struct gpio_regmap *gpio)
 > +{
-> +	/* Each GPIO has its own dedicated 32-bit register */
-> +	struct rtd1625_gpio *data = gpio_regmap_get_drvdata(gpio);
-> +	int val = 0, ret = 0;
+> +	if (!gpio->pm_dev)
+> +		return 0;
+> +
+> +	return pm_runtime_resume_and_get(gpio->pm_dev);
+> +}
+> +
+> +static void gpio_regmap_runtime_put(struct gpio_regmap *gpio)
+> +{
 
-ret assignment is redundant.
+> +	if (gpio->pm_dev)
+> +		pm_runtime_put_autosuspend(gpio->pm_dev);
 
-> +	*reg = base + offset * 4;
-> +
-> +	switch (op) {
-> +	case GPIO_REGMAP_SET_OP:
-> +		*mask = RTD1625_GPIO_OUT;
-> +		return 0;
-> +
-> +	case GPIO_REGMAP_GET_OP:
-> +		ret = regmap_read(data->regmap, *reg, &val);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (val & RTD1625_GPIO_DIR)
-> +			*mask = RTD1625_GPIO_OUT;
-> +		else
-> +			*mask = RTD1625_GPIO_IN;
-> +		return 0;
-> +
-> +	case GPIO_REGMAP_GET_DIR_OP:
-> +	case GPIO_REGMAP_SET_DIR_OP:
-> +		*mask = RTD1625_GPIO_DIR;
-> +		return 0;
-> +
-> +	default:
-> +		return -ENOTSUPP;
-> +	}
+Same pattern as per above.
+
 > +}
 
 ...
 
-> +static void rtd1625_gpio_irq_handle(struct irq_desc *desc)
-> +{
-> +	unsigned int (*get_reg_offset)(struct rtd1625_gpio *gpio, unsigned int offset);
-> +	struct rtd1625_gpio *data = irq_desc_get_handler_data(desc);
-> +	struct irq_chip *chip = irq_desc_get_chip(desc);
-> +	unsigned int irq = irq_desc_get_irq(desc);
-> +	struct irq_domain *domain = data->domain;
-> +	unsigned int reg_offset, i, j, val;
-> +	irq_hw_number_t hwirq;
-> +	unsigned long status;
-> +	u32 irq_type;
-> +	int ret;
-> +
-> +	if (irq == data->irqs[RTD1625_IRQ_ASSERT])
-> +		get_reg_offset = &rtd1625_gpio_gpa_offset;
-> +	else if (irq == data->irqs[RTD1625_IRQ_DEASSERT])
-> +		get_reg_offset = &rtd1625_gpio_gpda_offset;
-> +	else if (irq == data->irqs[RTD1625_IRQ_LEVEL])
-> +		get_reg_offset = &rtd1625_gpio_level_offset;
-> +	else
-> +		return;
-> +
-> +	chained_irq_enter(chip, desc);
+> +static int gpio_regmap_get_direction(struct gpio_chip *chip,
+> +				     unsigned int offset);
 
-> +	for (i = 0; i < data->info->num_gpios; i += 32) {
-
-Can be
-
-	for (unsigned int i = 0; i < data->info->num_gpios; i += 32) {
-
-> +		reg_offset = get_reg_offset(data, i);
-> +		ret = regmap_read(data->regmap, reg_offset, &val);
-> +		if (ret) {
-> +			pr_err_ratelimited("Failed to read IRQ status for GPIO %u: %d\n", i, ret);
-
-You have a device, use dev_err_ratelimited().
-
-> +			continue;
-> +		}
-> +
-> +		status = val;
-> +
-> +		/*
-> +		 * Hardware quirk: The controller fires both "assert" and "de-assert"
-> +		 * interrupts simultaneously on any edge toggle.
-> +		 * We must pre-clear edge interrupts here. If we drop an unwanted
-> +		 * de-assert interrupt below, it will never reach the IRQ core
-> +		 * (generic_handle_domain_irq), meaning ->irq_ack() won't be called.
-> +		 * Failing to clear it here leads to an interrupt storm.
-> +		 */
-> +		if (irq != data->irqs[RTD1625_IRQ_LEVEL]) {
-> +			ret = regmap_write(data->regmap, reg_offset, status);
-> +			if (ret)
-> +				pr_err_ratelimited("Failed to clear edge IRQ for GPIO %u: %d\n",
-> +						   i, ret);
-
-As per above.
-
-> +		}
-> +
-> +		for_each_set_bit(j, &status, 32) {
-> +			hwirq = i + j;
-> +			irq_type = irq_get_trigger_type(irq_find_mapping(domain, hwirq));
-> +
-> +			/*
-> +			 * Filter out the hardware-forced de-assert interrupt unless
-> +			 * the user explicitly requested IRQ_TYPE_EDGE_BOTH.
-> +			 */
-> +			if (irq == data->irqs[RTD1625_IRQ_DEASSERT] &&
-> +			    irq_type != IRQ_TYPE_EDGE_BOTH)
-> +				continue;
-> +
-> +			generic_handle_domain_irq(domain, hwirq);
-
-This calls again the irq_find_mapping() (okay, its equivalent) beneath. Using
-same IRQ descriptor that you get from above and call handle_irq_desc().
-
-> +		}
-
-		for_each_set_bit(j, &status, 32) {
-			irq_hw_number_t hwirq = i + j;
-			unsigned int girq;
-			struct irq_desc *gdesc = __irq_resolve_mapping(domain, hwirq, &girq);
-
-			/*
-			 * Filter out the hardware-forced de-assert interrupt unless
-			 * the user explicitly requested IRQ_TYPE_EDGE_BOTH.
-			 */
-			if (irq == data->irqs[RTD1625_IRQ_DEASSERT] &&
-			    irq_get_trigger_type(girq) != IRQ_TYPE_EDGE_BOTH)
-				continue;
-
-			handle_irq_desc(gdesc);
-		}
-
-However, it uses some kind of "protected" (in terms of OOP) function call,
-perhaps the duplication is not a problem as the original (your code) uses
-public APIs.
-
-In any case, consider moving the hwirq definition inside the for-loop.
-
-> +	}
-> +
-> +	chained_irq_exit(chip, desc);
-> +}
+Can this be avoidable?
 
 ...
 
-> +static int rtd1625_gpio_setup_irq(struct platform_device *pdev, struct rtd1625_gpio *data)
-> +{
-> +	unsigned int num_irqs;
-> +	int irq;
-> +
-> +	/* IRQ is optional; operate as basic GPIO if absent */
-> +	irq = platform_get_irq_optional(pdev, 0);
-> +	if (irq == -ENXIO)
-> +		return 0;
-> +	if (irq < 0)
-> +		return irq;
-> +
-> +	num_irqs = (data->info->irq_type_support & IRQ_TYPE_LEVEL_MASK) ? 3 : 2;
+>  	/* ensure we don't spoil any register cache with pin input values */
+>  	if (gpio->reg_dat_base == gpio->reg_set_base)
+>  		ret = regmap_read_bypassed(gpio->regmap, reg, &val);
+>  	else
+>  		ret = regmap_read(gpio->regmap, reg, &val);
+> -	if (ret)
+> -		return ret;
+> +	if (!ret)
+> +		ret = !!(val & mask);
+>  
+> -	return !!(val & mask);
 
-> +
+You want regmap_test_bits() in one case, and the regular pattern in the other.
 
-Unneeded blank line as these two (assignment and a for-loop) are coupled together.
+> +out_pm:
 
-> +	for (unsigned int i = 0; i < num_irqs; i++) {
-> +		irq = platform_get_irq(pdev, i);
-> +		if (irq < 0)
-> +			return irq;
-> +
-> +		data->irqs[i] = irq;
-> +		irq_set_chained_handler_and_data(data->irqs[i], rtd1625_gpio_irq_handle, data);
-> +	}
-> +
-> +	return 0;
-> +}
+labels should be marked better to show what will be when goto them.
+
+out_pm_put:
+
+> +	gpio_regmap_runtime_put(gpio);
+> +	return ret;
 
 ...
 
-> +static const struct rtd1625_gpio_info rtd1625_isom_gpio_info = {
-> +	.num_gpios        = 4,
-> +	.irq_type_support = IRQ_TYPE_EDGE_BOTH | IRQ_TYPE_LEVEL_LOW |
-> +			    IRQ_TYPE_LEVEL_HIGH,
+> +out_pm:
+> +	gpio_regmap_runtime_put(gpio);
+>  	return ret;
 
-	.irq_type_support = IRQ_TYPE_DEFAULT,
+Ditto.
 
-> +	.base_offset      = 0x20,
-> +	.gpa_offset       = 0x00,
-> +	.gpda_offset      = 0x04,
-> +	.level_offset     = 0x18,
-> +	.write_en_all     = RTD1625_ISOM_GPIO_WREN_ALL,
-> +};
+...
+
+>  	ret = regmap_read(gpio->regmap, reg, &val);
+>  	if (ret)
+> -		return ret;
+> +		goto out_pm;
+>  
+>  	if (!!(val & mask) ^ invert)
+> -		return GPIO_LINE_DIRECTION_OUT;
+> +		ret = GPIO_LINE_DIRECTION_OUT;
+>  	else
+> -		return GPIO_LINE_DIRECTION_IN;
+> +		ret = GPIO_LINE_DIRECTION_IN;
+
+Also can be transformed to use regmap_test_bits() (but in a separate change).
+
+...
+
+> struct gpio_regmap_config {
+
+>  	unsigned int reg_clr_base;
+>  	unsigned int reg_dir_in_base;
+>  	unsigned int reg_dir_out_base;
+> +	struct device *pm_dev;
+> +	bool read_output_reg_set;
+>  	int reg_stride;
+>  	int ngpio_per_reg;
+>  	struct irq_domain *irq_domain;
+
+`pahole`?
 
 -- 
 With Best Regards,
