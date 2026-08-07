@@ -1,85 +1,86 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73F739B48D
-	for <linux-gpio@vger.kernel.org>; Fri,  7 Aug 2026 18:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E187A397E75
+	for <linux-gpio@vger.kernel.org>; Fri,  7 Aug 2026 18:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786128353; cv=none; b=KUZIlBagBiUXtZzpTIOouZ65qzhuGS5eK9QS4elFqZTXpFe8k0jH6ww1qeQTd/OBwABvtYaTM3BOGL8VdISsD/4EdxKGD2D1hSn1wsyV6GfPchSFm/I6sQ93Umid+rr6vqTQe++gQwC/tu/i76kD3VpPjpI61Ixi6BngPOJBg3E=
+	t=1786129102; cv=none; b=MAbRek+GUL4EfxaL3ZCjhAzW826YCNv8BU9irVlWI5yLiXvGfq2HwHZIq+mp+2nChbFTR1StKYMPV4pXZ9NVgOf6RdoTfudaS5i5hX002jyXhQu4IKDS77LVTd9HgZN3hcr1VSMXRsrNLFDPk6whgajGgH9bUbSCd1Hcbq5tB2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786128353; c=relaxed/simple;
-	bh=tgk+9L3MqsjcE1km43dPJUdUWwxGWxLSI6wk2iJ28f0=;
+	s=arc-20240116; t=1786129102; c=relaxed/simple;
+	bh=aGtkDqO7e+54jvf08NyJuzEW1eC5g/ECUadimlOEYqI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lvn4tbW8FPGlLFgXEnNPqWgpGph/VHHy9U/Ni6u4CS8wmEUIyc+bDjnvTH4oZN+iozj2R5dKKvSOZQs9/aa5e1Ygymc+5Yfk/OfiYv1VtY7Y0Uxyqm0euL04ztcPBxkIScHBVR+Hk0rsRICtTpZoB1LqE9wlamoTkhlCJvY5asA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eaHqZsGU; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=N4RCZLjhmi7yXdne7nEyKP0oHBn6P4pOpOpextmmD+QEyc2UUDK/OEdo0mT907uG3Q4OkIqOiBJ5wNQVLRTsf+8ZYJZeIt8vTFAn1Vff3D6/rCOWBCQRDrQn3Vz3o631FiAD9W+cG0Z9XSnSGkyxNHA7eUYo+ZhJW36ivRjDwHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+rwtId/; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eaHqZsGU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6905C1F00A3A
-	for <linux-gpio@vger.kernel.org>; Fri,  7 Aug 2026 18:45:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+rwtId/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A59B1F00A3D
+	for <linux-gpio@vger.kernel.org>; Fri,  7 Aug 2026 18:58:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786128351;
-	bh=iAAQGBdBoRkovVpJQHo5IAsY4ppMJrT4CJ2byK1QahQ=;
+	s=k20260515; t=1786129100;
+	bh=aGtkDqO7e+54jvf08NyJuzEW1eC5g/ECUadimlOEYqI=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=eaHqZsGUnGMcADqx4BeggqvVTdls6zjBr4TBOnKeO1H6CHTJ1cDJ3PjB+SJwMuIAE
-	 ipZ67WAh1NWPvOngGBK4VkeYlzR0H35V1iRzA1tMZuwpvBbnETduGrX3am5ZBRpa8B
-	 hVS+WCc+Imo8qEdzTvXcQpE/hRKoEiqB+TbBRiGV07nVM5s/iJ43jaxJXwloSuYt1u
-	 tHj+yKClCoGcO55p3Qbc9AQL1UZNn3TSJYySEDqxT4xtHwyQMNeADJynNjSDhL0qnu
-	 F6iQTEblCKSPU+fWswpig6ImTO1Vi+BTmQvMy3NHSuLKiphz2Ur4oN3mTsSgXWBb++
-	 5Sf8QpHUjeNJQ==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5aeb59d54b1so3856838e87.1
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Aug 2026 11:45:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RoXXGS2hzuGmfiYMuts+97+jFqqcaFaliaI5zKuYJiYzwL57sqc7YGJPeEFOyVqJGo2icWpc5hxM+q2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxpv4kIz8BExJ2oeaiwa5uOFhbpln5nx47OBROk0udfqhVbP0I
-	JbRU/gR3kFwUOriUF2eOa48W35Qs3kJyPSmfsmGeBDOateWg8OUFCD6GB7mY50BHEHotURWCjQ2
-	rXZYs9C5pejPQ6ebte1OPZkOSBRuc+WA=
-X-Received: by 2002:a05:6512:2911:b0:5ae:bfd6:173b with SMTP id
- 2adb3069b0e04-5b30b73dcecmr333543e87.20.1786128350255; Fri, 07 Aug 2026
- 11:45:50 -0700 (PDT)
+	b=K+rwtId/JJsp7Aw67BwNtSGYf8oTs1k/80tLy67f64WjE1mqJ8p1o4Wd3tmwUWnuJ
+	 tnf/u4evB0eUq6ooOVQrjOPtN6jugH4GZ5D85jBSHJ6roCaZEODa6tMpbLm2K1Z8GN
+	 JFHUKYWP96fsCpQSxhAEIqv9Hbn8SfkWo/PX2cHT2H4cyc0GTxfDus55p2j5ElsOsf
+	 jmtgMZ2I67s0sufDbX+plFa8jKOJ+oMFIFV21qe5ZbAhqNQ2rkea9lZaRguYyAZWGH
+	 pcW86LQlgrZ7BTvj515EypQKPRn4h7LtbS4I332NzX8GdB0F901/lS/f72L1H57kpn
+	 8XgFLp8exC9/Q==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-39c94fccf3eso31084011fa.0
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Aug 2026 11:58:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Ro+4+HghmNuluHIBc7mdv21c8w7Pfqe2fM7PESsNlTyTmzKReiKJUFiyW9spQLH4DrZVLw6AjNo3oQA@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJKxnznjM+95xuAPMtpcJP/UiPJ+WHsHpMRSb9sO37nWx+15h6
+	c4zWaJiwYy3B1TY1ohv+UbwYYdvh9kB1vauJd1C8pIaYfXdnxhSzZScwCfTO9S0ToozoIUSJvZR
+	SkHRRLva2M7oLQHhs7R52dCRzPjbIuTg=
+X-Received: by 2002:a05:651c:a38d:10b0:39b:3adc:70f9 with SMTP id
+ 38308e7fff4ca-39fbb0668b1mr21822891fa.1.1786129099241; Fri, 07 Aug 2026
+ 11:58:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260806220615.4078303-1-mikhail.kshevetskiy@iopsys.eu>
-In-Reply-To: <20260806220615.4078303-1-mikhail.kshevetskiy@iopsys.eu>
+References: <20260805084143.3901-1-ansuelsmth@gmail.com>
+In-Reply-To: <20260805084143.3901-1-ansuelsmth@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 7 Aug 2026 20:45:37 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=2vt6qJcXdnyuCSEWMTAdZA0-=yhKtsXX9Qqzm9scjEA@mail.gmail.com>
-X-Gm-Features: AUfX_mwyyr_F-MwW0ZW6ZC4tI78PAU_OowRuALyPIokafW-F9bK_08tyDxfajbs
-Message-ID: <CAD++jL=2vt6qJcXdnyuCSEWMTAdZA0-=yhKtsXX9Qqzm9scjEA@mail.gmail.com>
-Subject: Re: [PATCH v11 00/37] pinctrl: airoha: split on shared and SoC
- drivers, add more SoCs
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Christian Marangi <ansuelsmth@gmail.com>, 
+Date: Fri, 7 Aug 2026 20:58:06 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=LLyod-me-wXKznKLhjjGFTmp7x5uF1nCUL7fMTBpONg@mail.gmail.com>
+X-Gm-Features: AUfX_myFt8OXaBF6dymdCU5o-coQ8gVrYgo4gR7tMibyT7NV-8nbLtvGnaWMtag
+Message-ID: <CAD++jL=LLyod-me-wXKznKLhjjGFTmp7x5uF1nCUL7fMTBpONg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: airoha: fix wrong value for PCIe reset pin
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Benjamin Larsson <benjamin.larsson@genexis.eu>, 
 	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Benjamin Larsson <benjamin.larsson@genexis.eu>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, Markus Gothe <markus.gothe@genexis.eu>, 
-	Matheus Sampaio Queiroga <srherobrine20@gmail.com>, Daniel Schwierzeck <daniel.schwierzeck@gmail.com>
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 7, 2026 at 12:06=E2=80=AFAM Mikhail Kshevetskiy
-<mikhail.kshevetskiy@iopsys.eu> wrote:
+Hi Christian,
 
-> This patchset
->  * fixes more airoha pinctrl issues
->  * split combined driver on common code and several SoC specific drivers
->  * improves an7583 pinctrl support
->  * adds support of en7523 SoC
->  * adds support of an7563 SoC
+On Wed, Aug 5, 2026 at 10:41=E2=80=AFAM Christian Marangi <ansuelsmth@gmail=
+.com> wrote:
+
+> The PCIe reset pin actually require the bit to be set as 0 to work as PCI=
+e
+> reset pin. When the bit is set as 1, then the PCIe reset pin act as a GPI=
+O
+> for GPIO44, GPIO45 and GPIO46.
 >
-> The driver split changes are based on Matheus Sampaio Queiroga work.
+> Cc: stable@vger.kernel.org
+> Fixes: 1c8ace2d0725 ("pinctrl: airoha: Add support for EN7581 SoC")
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
-Patches applied!
+Is this already fixed in the big Airoha patch set from Mikhail
+that I just applied?
 
-I had to manually fixup one patch due to orthogonal changes,
-check the result!
+If this is *not* fixed in what is currently in my tree I need
+a rebased version of this for mainline.
 
-Any remaining nags; let's do patches on top of this.
+If it *is* fixed in what is currently in my tree, this can be
+sent separately to the stable tree as a backport once
+Torvalds has pulled my changes.
 
 Yours,
 Linus Walleij
