@@ -1,651 +1,402 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.63.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEC747AF68;
-	Fri,  7 Aug 2026 13:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DBA28DB54;
+	Fri,  7 Aug 2026 14:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.63.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786107773; cv=none; b=W7WP2+APHpjEwajoWp9EpQZ06o3XsyrBrBEO3Oiz0zNdoNL0Q+8OUN8/yTvrIVMrucx6kk8/vGWK4vcgwj6+ADHVOfnCVbJn+fdXzA9p0N7MdpCve3dq3sfRH7n5GQ9uQygtMI5r1X5sTH033fdNWZi05MWiGwNV+Y8tBsZPCZQ=
+	t=1786111664; cv=none; b=F7rwb068bkSbM9M4bpXEsddCda+mNFa/+nKoESqtFRoZVBUQLsO5jiDolPO2lszdug+k/zoUHoa5rW6MejA70MT7EqKrfb9DHMHOK5oC8YIeKRDVsYmHA+G02Y6xXiKX4xSuDnnLeMJ9vVpDKH86sd3uuCJUgl2midt82smq/P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786107773; c=relaxed/simple;
-	bh=mn11vuo9anX2NyvASUKcWfgNBDFpV7XOuPounWhpjBY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PeCjecged74rUIRhxbjQNOdBxvJTzSu55aBbrDEkce3/egO/qnPpK9S5RInjwC+DGiaayVRXh0w7EPOs+5KjjM20tHlR6x8bXN6sgud4/5m9JaB5OylQVyYnqEN4AoDcLKBDl59m2Zrd8R5EauuiRwpUlEr5TByAV5Xz9evFD0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4ochTDj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1786111664; c=relaxed/simple;
+	bh=OlINJuSfHyW+KxBCr6ii0RuJGP+wReHA7vLxUxoQDUs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hs+E3v3u/ylC0viq2oSngTWTvxXFNdvsWGFt4Bx/A2qWB3shooA+kSXHPIuKC7eI2QhhpcKODGB9r+gdVFT7wUPMUPDE8yv0nKxrGNNgwULuUtTVaTqQMyhe7m3Z5ejJBX4N6Nbl93NwrzzSXt9HA8F2y3cYRfaxOdCn4oAr1K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=XZhgm+Xc; arc=none smtp.client-ip=188.68.63.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4ochTDj"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B5B29C4AF0F;
-	Fri,  7 Aug 2026 13:02:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1786107768;
-	bh=mn11vuo9anX2NyvASUKcWfgNBDFpV7XOuPounWhpjBY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=F4ochTDjoPo3RFDdX0MyTrGniNozRy2DgSnSv+fIfQ3bYfUfCcjD9TGsw5kC+kxSt
-	 QY95d8S8ntnlGMJdCHUai/hQkKLaza11bRx0QHgP//tkjZwGsoov42WVJ9yHvHB1EM
-	 nqFMWGXEeXtshxiM+k3Tnryk9J8uoNCn1j19MvPaI9tFF27GxuBPnlmhCV6Wgatbdq
-	 1GCsd9XQHYGDCKsx9HZ0q85LfOEJJjS6ZNNKKNEkaX8zGU0Fai7Yrhn6eCddSAS0JU
-	 NAy+tkMxOoU2Whgiu/rMzkTGODv8iwjMA0etaFJuhx2oHtn+suo8oGqzIEsVEY6bh8
-	 il25SrE91hWNg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A13C6C5AC7A;
-	Fri,  7 Aug 2026 13:02:48 +0000 (UTC)
-From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Fri, 07 Aug 2026 16:02:55 +0300
-Subject: [PATCH v15 20/22] staging: media: remove MAX96712 driver
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="XZhgm+Xc"
+Received: from mors-relay-2502.netcup.net (localhost [127.0.0.1])
+	by mors-relay-2502.netcup.net (Postfix) with ESMTPS id 4hGmDz5DWBz6B07;
+	Fri,  7 Aug 2026 16:07:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leemhuis.info;
+	s=key2; t=1786111651;
+	bh=OlINJuSfHyW+KxBCr6ii0RuJGP+wReHA7vLxUxoQDUs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XZhgm+XcMW42+KFAcl6TJwtEAkWGVLFxaOJs7qbSiWppkQ6rm46JgaCDxH8JesSKq
+	 uBP17nRPvsv63FWQ0Vz5VyGk3KO9h0d+dMTm3elWMDjnK6Z95V09LHFIPd2CWasZO5
+	 29Sv/EjWvPJ4WgoInWIs/qvw5NLG6THLBwesd+Y5qcO3qXnRkqbAgVgF5kjdtY+Io3
+	 aoKB9xSET34HS62ioVyMH+OshxTo7KpuV6iw6dKOiVjwb7CiEKyOAKCPkWx5aa/d+y
+	 mj2IebJZgGVfV1af8I5rQodLVGnLrtSRXCVPSbeQUUyxp7fGn7wdcCZ6yUi3DyIeD1
+	 /3dHKOJsB2QVA==
+Received: from policy01-mors.netcup.net (unknown [46.38.225.35])
+	by mors-relay-2502.netcup.net (Postfix) with ESMTPS id 4hGmDz4TcTz4wjk;
+	Fri,  7 Aug 2026 16:07:31 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at policy01-mors.netcup.net
+X-Spam-Flag: NO
+X-Spam-Score: -2.898
+X-Spam-Level: 
+Received: from mxe9fb.netcup.net (unknown [10.243.12.53])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by policy01-mors.netcup.net (Postfix) with ESMTPS id 4hGmDx5slkz8tYb;
+	Fri,  7 Aug 2026 16:07:29 +0200 (CEST)
+Received: from [IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f] (unknown [IPv6:2a02:8108:8984:1d00:a0cf:1912:4be:477f])
+	by mxe9fb.netcup.net (Postfix) with ESMTPSA id BE53C5FA52;
+	Fri,  7 Aug 2026 16:07:24 +0200 (CEST)
+Authentication-Results: mxe9fb;
+        spf=pass (sender IP is 2a02:8108:8984:1d00:a0cf:1912:4be:477f) smtp.mailfrom=linux@leemhuis.info smtp.helo=[IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f]
+Received-SPF: pass (mxe9fb: connection is authenticated)
+Message-ID: <b4a4eadb-282f-464c-843a-19d415a34d0c@leemhuis.info>
+Date: Fri, 7 Aug 2026 16:07:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260807-gmsl2-3_serdes-v15-20-7212e9e5156a@analog.com>
-References: <20260807-gmsl2-3_serdes-v15-0-7212e9e5156a@analog.com>
-In-Reply-To: <20260807-gmsl2-3_serdes-v15-0-7212e9e5156a@analog.com>
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Julien Massot <julien.massot@collabora.com>, Rob Herring <robh@kernel.org>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: mitrutzceclan@gmail.com, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
- Martin Hecht <Martin.Hecht@avnet.eu>, 
- Andrian Suciu <Adrian.Suciu@analog.com>, 
- Cosmin Tanislav <demonsingur@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1786107763; l=16775;
- i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=ugc3EuVZ6cJAJaavK9vPfGn7g1Nv1Pk+a3lch7L9wUA=;
- b=1D665oI0HWVceTbyYC8sMldMLQ4q4msPbXNBT0t1nC3TBiMeVVgx3iUeXSWd5odKnyM8p57i6
- Jg7OfZuc8n9AFFZ5Q95cheFnauyFkxwKgGvLwgDa7/BQBpDb3MNuhzG
-X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
- pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
-X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
- with auth_id=140
-X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-Reply-To: dumitru.ceclan@analog.com
+User-Agent: Mozilla Thunderbird
+Subject: i2c designware change broke touchpad of a thinkpad (was: i2c:
+ designware: defer probe if child GpioInt controllers are not bound)
+To: Andi Shyti <andi.shyti@kernel.org>,
+ Hardik Prakash <hardikprakash.official@gmail.com>
+Cc: linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, wsa@kernel.org,
+ andriy.shevchenko@intel.com, mario.limonciello@amd.com, brgl@bgdev.pl,
+ basavaraj.natikar@amd.com, linusw@kernel.org, nathan@kernel.org,
+ chaitanya.kumar.borah@intel.com,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20260718054330.8975-2-hardikprakash.official@gmail.com>
+ <amhodWpAI3K6aeBH@zenone.zhora.eu>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: de-DE, en-US
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ xsFNBFJ4AQ0BEADCz16x4kl/YGBegAsYXJMjFRi3QOr2YMmcNuu1fdsi3XnM+xMRaukWby47
+ JcsZYLDKRHTQ/Lalw9L1HI3NRwK+9ayjg31wFdekgsuPbu4x5RGDIfyNpd378Upa8SUmvHik
+ apCnzsxPTEE4Z2KUxBIwTvg+snEjgZ03EIQEi5cKmnlaUynNqv3xaGstx5jMCEnR2X54rH8j
+ QPvo2l5/79Po58f6DhxV2RrOrOjQIQcPZ6kUqwLi6EQOi92NS9Uy6jbZcrMqPIRqJZ/tTKIR
+ OLWsEjNrc3PMcve+NmORiEgLFclN8kHbPl1tLo4M5jN9xmsa0OZv3M0katqW8kC1hzR7mhz+
+ Rv4MgnbkPDDO086HjQBlS6Zzo49fQB2JErs5nZ0mwkqlETu6emhxneAMcc67+ZtTeUj54K2y
+ Iu8kk6ghaUAfgMqkdIzeSfhO8eURMhvwzSpsqhUs7pIj4u0TPN8OFAvxE/3adoUwMaB+/plk
+ sNe9RsHHPV+7LGADZ6OzOWWftk34QLTVTcz02bGyxLNIkhY+vIJpZWX9UrfGdHSiyYThHCIy
+ /dLz95b9EG+1tbCIyNynr9TjIOmtLOk7ssB3kL3XQGgmdQ+rJ3zckJUQapLKP2YfBi+8P1iP
+ rKkYtbWk0u/FmCbxcBA31KqXQZoR4cd1PJ1PDCe7/DxeoYMVuwARAQABzSdUaG9yc3RlbiBM
+ ZWVtaHVpcyA8bGludXhAbGVlbWh1aXMuaW5mbz7CwZQEEwEKAD4CGwMFCwkIBwMFFQoJCAsF
+ FgIDAQACHgECF4AWIQSoq8a+lZZX4oPULXVytubvTFg9LQUCaOO74gUJHfEI0wAKCRBytubv
+ TFg9Lc4iD/4omf2z88yGmior2f1BCQTAWxI2Em3S4EJY2+Drs8ZrJ1vNvdWgBrqbOtxN6xHF
+ uvrpM6nbYIoNyZpsZrqS1mCA4L7FwceFBaT9CTlQsZLVV/vQvh2/3vbj6pQbCSi7iemXklF7
+ y6qMfA7rirvojSJZ2mi6tKIQnD2ndVhSsxmo/mAAJc4tiEL+wkdaX1p7bh2Ainp6sfxTqL6h
+ z1kYyjnijpnHaPgQ6GQeGG1y+TSQFKkb/FylDLj3b3efzyNkRjSohcauTuYIq7bniw7sI8qY
+ KUuUkrw8Ogi4e6GfBDgsgHDngDn6jUR2wDAiT6iR7qsoxA+SrJDoeiWS/SK5KRgiKMt66rx1
+ Jq6JowukzNxT3wtXKuChKP3EDzH9aD+U539szyKjfn5LyfHBmSfR42Iz0sofE4O89yvp0bYz
+ GDmlgDpYWZN40IFERfCSxqhtHG1X6mQgxS0MknwoGkNRV43L3TTvuiNrsy6Mto7rrQh0epSn
+ +hxwwS0bOTgJQgOO4fkTvto2sEBYXahWvmsEFdLMOcAj2t7gJ+XQLMsBypbo94yFYfCqCemJ
+ +zU5X8yDUeYDNXdR2veePdS3Baz23/YEBCOtw+A9CP0U4ImXzp82U+SiwYEEQIGWx+aVjf4n
+ RZ/LLSospzO944PPK+Na+30BERaEjx04MEB9ByDFdfkSbM7BTQRSeAENARAAzu/3satWzly6
+ +Lqi5dTFS9+hKvFMtdRb/vW4o9CQsMqL2BJGoE4uXvy3cancvcyodzTXCUxbesNP779JqeHy
+ s7WkF2mtLVX2lnyXSUBm/ONwasuK7KLz8qusseUssvjJPDdw8mRLAWvjcsYsZ0qgIU6kBbvY
+ ckUWkbJj/0kuQCmmulRMcaQRrRYrk7ZdUOjaYmjKR+UJHljxLgeregyiXulRJxCphP5migoy
+ ioa1eset8iF9fhb+YWY16X1I3TnucVCiXixzxwn3uwiVGg28n+vdfZ5lackCOj6iK4+lfzld
+ z4NfIXK+8/R1wD9yOj1rr3OsjDqOaugoMxgEFOiwhQDiJlRKVaDbfmC1G5N1YfQIn90znEYc
+ M7+Sp8Rc5RUgN5yfuwyicifIJQCtiWgjF8ttcIEuKg0TmGb6HQHAtGaBXKyXGQulD1CmBHIW
+ zg7bGge5R66hdbq1BiMX5Qdk/o3Sr2OLCrxWhqMdreJFLzboEc0S13BCxVglnPqdv5sd7veb
+ 0az5LGS6zyVTdTbuPUu4C1ZbstPbuCBwSwe3ERpvpmdIzHtIK4G9iGIR3Seo0oWOzQvkFn8m
+ 2k6H2/Delz9IcHEefSe5u0GjIA18bZEt7R2k8CMZ84vpyWOchgwXK2DNXAOzq4zwV8W4TiYi
+ FiIVXfSj185vCpuE7j0ugp0AEQEAAcLBfAQYAQoAJgIbDBYhBKirxr6Vllfig9QtdXK25u9M
+ WD0tBQJo47viBQkd8QjTAAoJEHK25u9MWD0tCH8P/1b+AZ8K3D4TCBzXNS0muN6pLnISzFa0
+ cWcylwxX2TrZeGpJkg14v2R0cDjLRre9toM44izLaz4SKyfgcBSj9XET0103cVXUKt6SgT1o
+ tevoEqFMKKp3vjDpKEnrcOSOCnfH9W0mXx/jDWbjlKbBlN7UBVoZD/FMM5Ul0KSVFJ9Uij0Z
+ S2WAg50NQi71NBDPcga21BMajHKLFzb4wlBWSmWyryXI6ouabvsbsLjkW3IYl2JupTbK3viH
+ pMRIZVb/serLqhJgpaakqgV7/jDplNEr/fxkmhjBU7AlUYXe2BRkUCL5B8KeuGGvG0AEIQR0
+ dP6QlNNBV7VmJnbU8V2X50ZNozdcvIB4J4ncK4OznKMpfbmSKm3t9Ui/cdEK+N096ch6dCAh
+ AeZ9dnTC7ncr7vFHaGqvRC5xwpbJLg3xM/BvLUV6nNAejZeAXcTJtOM9XobCz/GeeT9prYhw
+ 8zG721N4hWyyLALtGUKIVWZvBVKQIGQRPtNC7s9NVeLIMqoH7qeDfkf10XL9tvSSDY6KVl1n
+ K0gzPCKcBaJ2pA1xd4pQTjf4jAHHM4diztaXqnh4OFsu3HOTAJh1ZtLvYVj5y9GFCq2azqTD
+ pPI3FGMkRipwxdKGAO7tJVzM7u+/+83RyUjgAbkkkD1doWIl+iGZ4s/Jxejw1yRH0R5/uTaB MEK4
+In-Reply-To: <amhodWpAI3K6aeBH@zenone.zhora.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-PPP-Message-ID: 
+ <178611164533.1324321.17645473351261494769@mxe9fb.netcup.net>
+X-Rspamd-Server: rspamd-worker-8404
+X-Rspamd-Queue-Id: BE53C5FA52
+X-NC-CID: sxMiVO3Cy4RDvxaFE024WLSZ8Wt856n00+g3iclWmsXiUVO8x1s=
 
-From: Cosmin Tanislav <demonsingur@gmail.com>
+On 7/28/26 10:30, Andi Shyti wrote:
+> On Sat, Jul 18, 2026 at 11:13:31AM +0530, Hardik Prakash wrote:
+>> I2C controllers may have child devices with GpioInt resources that
+>> depend on GPIO controllers being fully initialized. If the I2C
+>> controller probes and enumerates children before the referenced GPIO
+>> controller has completed probe, GPIO interrupts may not be properly
+>> configured, leading to device failures.
+>>
+>> On Lenovo Yoga 7 14AGP11, the WACF2200 touchscreen (child of
+>> AMDI0010:02) has a GpioInt resource pointing to GPIO 157 on the
+>> pinctrl-amd controller (AMDI0030:00). When i2c-designware probes
+>> AMDI0010:02 before pinctrl-amd finishes initializing, I2C transactions
+>> fail with lost arbitration errors:
+>>
+>>   0.285952  amd_gpio_probe: registering gpiochip  <- GPIO chip visible
+>>   0.287121  amd_gpio_probe: requesting parent IRQ <- probe still running
+>>   0.301454  AMDI0010:02 dw_i2c_plat_probe: start  <- races here
+>>   2.348157  lost arbitration
+>>
+>> Add a dependency check that walks ACPI child devices and defers probe
+>> until any referenced GPIO controller is bound.
+>>
+>> Fixes: 3812a9e84265 ("pinctrl-amd: enable IRQ for WACF2200 touchscreen on Lenovo Yoga 7 14AGP11")
+>> Suggested-by: Mario Limonciello <mario.limonciello@amd.com>
+>> Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> [...]
+> merged to i2c/i2c-fixes.
+> 
+> Thanks,
+> Andi
 
-Remove the staging MAX96712 driver.
-Its functionality has been moved to the MAX96724 driver which makes use
-of the Maxim GMSL2/3 deserializer framework.
+This became 0a4bb2abc3e56d ("i2c: designware: defer probe if child
+GpioInt controllers are not bound") and causes a regression for me: the
+Touchpad in my ThinkPad T14s Gen 4 (AMD) stopped working. From the
+kernel log:
 
-Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- MAINTAINERS                               |   1 -
- drivers/staging/media/Kconfig             |   2 -
- drivers/staging/media/Makefile            |   1 -
- drivers/staging/media/max96712/Kconfig    |  13 -
- drivers/staging/media/max96712/Makefile   |   2 -
- drivers/staging/media/max96712/max96712.c | 487 ------------------------------
- 6 files changed, 506 deletions(-)
+i2c_designware AMDI0010:01: i2c_dw_handle_tx_abort: lost arbitration
+i2c_designware AMDI0010:01: controller timed out
+i2c_hid_acpi i2c-SYNA8018:00: failed to fetch HID descriptor: -110
+i2c_hid_acpi i2c-SYNA8018:00: Failed to fetch the HID Descriptor
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b8c2e60de666..ccd7145c56dc 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15984,7 +15984,6 @@ M:	Niklas Söderlund <niklas.soderlund@ragnatech.se>
- L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
--F:	drivers/staging/media/max96712/max96712.c
- 
- MAX96714 GMSL2 DESERIALIZER DRIVER
- M:	Julien Massot <julien.massot@collabora.com>
-diff --git a/drivers/staging/media/Kconfig b/drivers/staging/media/Kconfig
-index 06cbc5c548ca..644aefdb9d41 100644
---- a/drivers/staging/media/Kconfig
-+++ b/drivers/staging/media/Kconfig
-@@ -30,8 +30,6 @@ source "drivers/staging/media/ipu3/Kconfig"
- 
- source "drivers/staging/media/ipu7/Kconfig"
- 
--source "drivers/staging/media/max96712/Kconfig"
--
- source "drivers/staging/media/meson/vdec/Kconfig"
- 
- source "drivers/staging/media/sunxi/Kconfig"
-diff --git a/drivers/staging/media/Makefile b/drivers/staging/media/Makefile
-index 6fd7179733d8..584720e91327 100644
---- a/drivers/staging/media/Makefile
-+++ b/drivers/staging/media/Makefile
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_INTEL_ATOMISP)     += atomisp/
- obj-$(CONFIG_VIDEO_IMX_MEDIA)	+= imx/
--obj-$(CONFIG_VIDEO_MAX96712)	+= max96712/
- obj-$(CONFIG_VIDEO_MESON_VDEC)	+= meson/vdec/
- obj-$(CONFIG_VIDEO_SUNXI)	+= sunxi/
- obj-$(CONFIG_VIDEO_TEGRA)	+= tegra-video/
-diff --git a/drivers/staging/media/max96712/Kconfig b/drivers/staging/media/max96712/Kconfig
-deleted file mode 100644
-index 93a2d583e90d..000000000000
---- a/drivers/staging/media/max96712/Kconfig
-+++ /dev/null
-@@ -1,13 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--config VIDEO_MAX96712
--	tristate "Maxim MAX96712 Quad GMSL2 Deserializer support"
--	depends on I2C
--	depends on VIDEO_DEV
--	select V4L2_FWNODE
--	select VIDEO_V4L2_SUBDEV_API
--	select MEDIA_CONTROLLER
--	help
--	  This driver supports the Maxim MAX96712 Quad GMSL2 Deserializer.
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called max96712.
-diff --git a/drivers/staging/media/max96712/Makefile b/drivers/staging/media/max96712/Makefile
-deleted file mode 100644
-index 70c1974ce3f0..000000000000
---- a/drivers/staging/media/max96712/Makefile
-+++ /dev/null
-@@ -1,2 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--obj-$(CONFIG_VIDEO_MAX96712) += max96712.o
-diff --git a/drivers/staging/media/max96712/max96712.c b/drivers/staging/media/max96712/max96712.c
-deleted file mode 100644
-index 0751b2e04895..000000000000
---- a/drivers/staging/media/max96712/max96712.c
-+++ /dev/null
-@@ -1,487 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Maxim MAX96712 Quad GMSL2 Deserializer Driver
-- *
-- * Copyright (C) 2021 Renesas Electronics Corporation
-- * Copyright (C) 2021 Niklas Söderlund
-- */
--
--#include <linux/delay.h>
--#include <linux/i2c.h>
--#include <linux/module.h>
--#include <linux/of_graph.h>
--#include <linux/regmap.h>
--
--#include <media/v4l2-ctrls.h>
--#include <media/v4l2-fwnode.h>
--#include <media/v4l2-subdev.h>
--
--#define DEBUG_EXTRA_REG			0x09
--#define DEBUG_EXTRA_PCLK_25MHZ		0x00
--#define DEBUG_EXTRA_PCLK_75MHZ		0x01
--
--enum max96712_pattern {
--	MAX96712_PATTERN_CHECKERBOARD = 0,
--	MAX96712_PATTERN_GRADIENT,
--};
--
--struct max96712_info {
--	unsigned int dpllfreq;
--	bool have_debug_extra;
--};
--
--struct max96712_priv {
--	struct i2c_client *client;
--	struct regmap *regmap;
--	struct gpio_desc *gpiod_pwdn;
--
--	const struct max96712_info *info;
--
--	bool cphy;
--	struct v4l2_mbus_config_mipi_csi2 mipi;
--
--	struct v4l2_subdev sd;
--	struct v4l2_ctrl_handler ctrl_handler;
--	struct media_pad pads[1];
--
--	enum max96712_pattern pattern;
--};
--
--static int max96712_write(struct max96712_priv *priv, unsigned int reg, u8 val)
--{
--	int ret;
--
--	ret = regmap_write(priv->regmap, reg, val);
--	if (ret)
--		dev_err(&priv->client->dev, "write 0x%04x failed\n", reg);
--
--	return ret;
--}
--
--static int max96712_update_bits(struct max96712_priv *priv, unsigned int reg,
--				u8 mask, u8 val)
--{
--	int ret;
--
--	ret = regmap_update_bits(priv->regmap, reg, mask, val);
--	if (ret)
--		dev_err(&priv->client->dev, "update 0x%04x failed\n", reg);
--
--	return ret;
--}
--
--static int max96712_write_bulk(struct max96712_priv *priv, unsigned int reg,
--			       const void *val, size_t val_count)
--{
--	int ret;
--
--	ret = regmap_bulk_write(priv->regmap, reg, val, val_count);
--	if (ret)
--		dev_err(&priv->client->dev, "bulk write 0x%04x failed\n", reg);
--
--	return ret;
--}
--
--static int max96712_write_bulk_value(struct max96712_priv *priv,
--				     unsigned int reg, unsigned int val,
--				     size_t val_count)
--{
--	unsigned int i;
--	u8 values[4];
--
--	for (i = 1; i <= val_count; i++)
--		values[i - 1] = (val >> ((val_count - i) * 8)) & 0xff;
--
--	return max96712_write_bulk(priv, reg, &values, val_count);
--}
--
--static void max96712_reset(struct max96712_priv *priv)
--{
--	max96712_update_bits(priv, 0x13, 0x40, 0x40);
--	msleep(20);
--}
--
--static void max96712_mipi_enable(struct max96712_priv *priv, bool enable)
--{
--	if (enable) {
--		max96712_update_bits(priv, 0x40b, 0x02, 0x02);
--		max96712_update_bits(priv, 0x8a0, 0x80, 0x80);
--	} else {
--		max96712_update_bits(priv, 0x8a0, 0x80, 0x00);
--		max96712_update_bits(priv, 0x40b, 0x02, 0x00);
--	}
--}
--
--static void max96712_mipi_configure(struct max96712_priv *priv)
--{
--	unsigned int i;
--	u8 phy5 = 0;
--
--	max96712_mipi_enable(priv, false);
--
--	/* Select 2x4 mode. */
--	max96712_write(priv, 0x8a0, 0x04);
--
--	/* TODO: Add support for 2-lane and 1-lane configurations. */
--	if (priv->cphy) {
--		/* Configure a 3-lane C-PHY using PHY0 and PHY1. */
--		max96712_write(priv, 0x94a, 0xa0);
--
--		/* Configure C-PHY timings. */
--		max96712_write(priv, 0x8ad, 0x3f);
--		max96712_write(priv, 0x8ae, 0x7d);
--	} else {
--		/* Configure a 4-lane D-PHY using PHY0 and PHY1. */
--		max96712_write(priv, 0x94a, 0xc0);
--	}
--
--	/* Configure lane mapping for PHY0 and PHY1. */
--	/* TODO: Add support for lane swapping. */
--	max96712_write(priv, 0x8a3, 0xe4);
--
--	/* Configure lane polarity for PHY0 and PHY1. */
--	for (i = 0; i < priv->mipi.num_data_lanes + 1; i++)
--		if (priv->mipi.lane_polarities[i])
--			phy5 |= BIT(i == 0 ? 5 : i < 3 ? i - 1 : i);
--	max96712_write(priv, 0x8a5, phy5);
--
--	/* Set link frequency for PHY0 and PHY1. */
--	max96712_update_bits(priv, 0x415, 0x3f,
--			     ((priv->info->dpllfreq / 100) & 0x1f) | BIT(5));
--	max96712_update_bits(priv, 0x418, 0x3f,
--			     ((priv->info->dpllfreq / 100) & 0x1f) | BIT(5));
--
--	/* Enable PHY0 and PHY1 */
--	max96712_update_bits(priv, 0x8a2, 0xf0, 0x30);
--}
--
--static void max96712_pattern_enable(struct max96712_priv *priv, bool enable)
--{
--	const u32 h_active = 1920;
--	const u32 h_fp = 88;
--	const u32 h_sw = 44;
--	const u32 h_bp = 148;
--	const u32 h_tot = h_active + h_fp + h_sw + h_bp;
--
--	const u32 v_active = 1080;
--	const u32 v_fp = 4;
--	const u32 v_sw = 5;
--	const u32 v_bp = 36;
--	const u32 v_tot = v_active + v_fp + v_sw + v_bp;
--
--	if (!enable) {
--		max96712_write(priv, 0x1051, 0x00);
--		return;
--	}
--
--	/* Set PCLK to 75MHz if device have DEBUG_EXTRA register. */
--	if (priv->info->have_debug_extra)
--		max96712_write(priv, DEBUG_EXTRA_REG, DEBUG_EXTRA_PCLK_75MHZ);
--
--	/* Configure Video Timing Generator for 1920x1080 @ 30 fps. */
--	max96712_write_bulk_value(priv, 0x1052, 0, 3);
--	max96712_write_bulk_value(priv, 0x1055, v_sw * h_tot, 3);
--	max96712_write_bulk_value(priv, 0x1058,
--				  (v_active + v_fp + + v_bp) * h_tot, 3);
--	max96712_write_bulk_value(priv, 0x105b, 0, 3);
--	max96712_write_bulk_value(priv, 0x105e, h_sw, 2);
--	max96712_write_bulk_value(priv, 0x1060, h_active + h_fp + h_bp, 2);
--	max96712_write_bulk_value(priv, 0x1062, v_tot, 2);
--	max96712_write_bulk_value(priv, 0x1064,
--				  h_tot * (v_sw + v_bp) + (h_sw + h_bp), 3);
--	max96712_write_bulk_value(priv, 0x1067, h_active, 2);
--	max96712_write_bulk_value(priv, 0x1069, h_fp + h_sw + h_bp, 2);
--	max96712_write_bulk_value(priv, 0x106b, v_active, 2);
--
--	/* Generate VS, HS and DE in free-running mode. */
--	max96712_write(priv, 0x1050, 0xfb);
--
--	/* Configure Video Pattern Generator. */
--	if (priv->pattern == MAX96712_PATTERN_CHECKERBOARD) {
--		/* Set checkerboard pattern size. */
--		max96712_write(priv, 0x1074, 0x3c);
--		max96712_write(priv, 0x1075, 0x3c);
--		max96712_write(priv, 0x1076, 0x3c);
--
--		/* Set checkerboard pattern colors. */
--		max96712_write_bulk_value(priv, 0x106e, 0xfecc00, 3);
--		max96712_write_bulk_value(priv, 0x1071, 0x006aa7, 3);
--
--		/* Generate checkerboard pattern. */
--		max96712_write(priv, 0x1051, 0x10);
--	} else {
--		/* Set gradient increment. */
--		max96712_write(priv, 0x106d, 0x10);
--
--		/* Generate gradient pattern. */
--		max96712_write(priv, 0x1051, 0x20);
--	}
--}
--
--static int max96712_s_stream(struct v4l2_subdev *sd, int enable)
--{
--	struct max96712_priv *priv = v4l2_get_subdevdata(sd);
--
--	if (enable) {
--		max96712_pattern_enable(priv, true);
--		max96712_mipi_enable(priv, true);
--	} else {
--		max96712_mipi_enable(priv, false);
--		max96712_pattern_enable(priv, false);
--	}
--
--	return 0;
--}
--
--static const struct v4l2_subdev_video_ops max96712_video_ops = {
--	.s_stream = max96712_s_stream,
--};
--
--static int max96712_init_state(struct v4l2_subdev *sd,
--			       struct v4l2_subdev_state *state)
--{
--	static const struct v4l2_mbus_framefmt default_fmt = {
--		.width          = 1920,
--		.height         = 1080,
--		.code           = MEDIA_BUS_FMT_RGB888_1X24,
--		.colorspace     = V4L2_COLORSPACE_SRGB,
--		.field          = V4L2_FIELD_NONE,
--		.ycbcr_enc      = V4L2_YCBCR_ENC_DEFAULT,
--		.quantization   = V4L2_QUANTIZATION_DEFAULT,
--		.xfer_func      = V4L2_XFER_FUNC_DEFAULT,
--	};
--	struct v4l2_mbus_framefmt *fmt;
--
--	fmt = v4l2_subdev_state_get_format(state, 0);
--	*fmt = default_fmt;
--
--	return 0;
--}
--
--static const struct v4l2_subdev_internal_ops max96712_internal_ops = {
--	.init_state = max96712_init_state,
--};
--
--static const struct v4l2_subdev_pad_ops max96712_pad_ops = {
--	.get_fmt = v4l2_subdev_get_fmt,
--	.set_fmt = v4l2_subdev_get_fmt,
--};
--
--static const struct v4l2_subdev_ops max96712_subdev_ops = {
--	.video = &max96712_video_ops,
--	.pad = &max96712_pad_ops,
--};
--
--static const char * const max96712_test_pattern[] = {
--	"Checkerboard",
--	"Gradient",
--};
--
--static int max96712_s_ctrl(struct v4l2_ctrl *ctrl)
--{
--	struct max96712_priv *priv =
--		container_of(ctrl->handler, struct max96712_priv, ctrl_handler);
--
--	switch (ctrl->id) {
--	case V4L2_CID_TEST_PATTERN:
--		priv->pattern = ctrl->val ?
--			MAX96712_PATTERN_GRADIENT :
--			MAX96712_PATTERN_CHECKERBOARD;
--		break;
--	}
--	return 0;
--}
--
--static const struct v4l2_ctrl_ops max96712_ctrl_ops = {
--	.s_ctrl = max96712_s_ctrl,
--};
--
--static int max96712_v4l2_register(struct max96712_priv *priv)
--{
--	long pixel_rate;
--	int ret;
--
--	priv->sd.internal_ops = &max96712_internal_ops;
--	v4l2_i2c_subdev_init(&priv->sd, priv->client, &max96712_subdev_ops);
--	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
--	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
--
--	v4l2_ctrl_handler_init(&priv->ctrl_handler, 2);
--
--	/*
--	 * TODO: Once V4L2_CID_LINK_FREQ is changed from a menu control to an
--	 * INT64 control it should be used here instead of V4L2_CID_PIXEL_RATE.
--	 */
--	pixel_rate = priv->info->dpllfreq / priv->mipi.num_data_lanes * 1000000;
--	v4l2_ctrl_new_std(&priv->ctrl_handler, NULL, V4L2_CID_PIXEL_RATE,
--			  pixel_rate, pixel_rate, 1, pixel_rate);
--
--	v4l2_ctrl_new_std_menu_items(&priv->ctrl_handler, &max96712_ctrl_ops,
--				     V4L2_CID_TEST_PATTERN,
--				     ARRAY_SIZE(max96712_test_pattern) - 1,
--				     0, 0, max96712_test_pattern);
--
--	priv->sd.ctrl_handler = &priv->ctrl_handler;
--	ret = priv->ctrl_handler.error;
--	if (ret)
--		goto error;
--
--	priv->pads[0].flags = MEDIA_PAD_FL_SOURCE;
--	ret = media_entity_pads_init(&priv->sd.entity, 1, priv->pads);
--	if (ret)
--		goto error;
--
--	v4l2_set_subdevdata(&priv->sd, priv);
--
--	priv->sd.state_lock = priv->ctrl_handler.lock;
--	ret = v4l2_subdev_init_finalize(&priv->sd);
--	if (ret)
--		goto error;
--
--	ret = v4l2_async_register_subdev(&priv->sd);
--	if (ret < 0) {
--		dev_err(&priv->client->dev, "Unable to register subdevice\n");
--		goto error;
--	}
--
--	return 0;
--error:
--	v4l2_ctrl_handler_free(&priv->ctrl_handler);
--
--	return ret;
--}
--
--static int max96712_parse_dt(struct max96712_priv *priv)
--{
--	struct fwnode_handle *ep;
--	struct v4l2_fwnode_endpoint v4l2_ep = {
--		.bus_type = V4L2_MBUS_UNKNOWN,
--	};
--	unsigned int supported_lanes;
--	int ret;
--
--	ep = fwnode_graph_get_endpoint_by_id(dev_fwnode(&priv->client->dev), 4,
--					     0, 0);
--	if (!ep) {
--		dev_err(&priv->client->dev, "Not connected to subdevice\n");
--		return -EINVAL;
--	}
--
--	ret = v4l2_fwnode_endpoint_parse(ep, &v4l2_ep);
--	fwnode_handle_put(ep);
--	if (ret) {
--		dev_err(&priv->client->dev, "Could not parse v4l2 endpoint\n");
--		return -EINVAL;
--	}
--
--	switch (v4l2_ep.bus_type) {
--	case V4L2_MBUS_CSI2_DPHY:
--		supported_lanes = 4;
--		priv->cphy = false;
--		break;
--	case V4L2_MBUS_CSI2_CPHY:
--		supported_lanes = 3;
--		priv->cphy = true;
--		break;
--	default:
--		dev_err(&priv->client->dev, "Unsupported bus-type %u\n",
--			v4l2_ep.bus_type);
--		return -EINVAL;
--	}
--
--	if (v4l2_ep.bus.mipi_csi2.num_data_lanes != supported_lanes) {
--		dev_err(&priv->client->dev, "Only %u data lanes supported\n",
--			supported_lanes);
--		return -EINVAL;
--	}
--
--	priv->mipi = v4l2_ep.bus.mipi_csi2;
--
--	return 0;
--}
--
--static const struct regmap_config max96712_i2c_regmap = {
--	.reg_bits = 16,
--	.val_bits = 8,
--	.max_register = 0x1f00,
--};
--
--static int max96712_probe(struct i2c_client *client)
--{
--	struct max96712_priv *priv;
--	int ret;
--
--	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv)
--		return -ENOMEM;
--
--	priv->info = of_device_get_match_data(&client->dev);
--
--	priv->client = client;
--
--	priv->regmap = devm_regmap_init_i2c(client, &max96712_i2c_regmap);
--	if (IS_ERR(priv->regmap))
--		return PTR_ERR(priv->regmap);
--
--	priv->gpiod_pwdn = devm_gpiod_get_optional(&client->dev, "enable",
--						   GPIOD_OUT_HIGH);
--	if (IS_ERR(priv->gpiod_pwdn))
--		return PTR_ERR(priv->gpiod_pwdn);
--
--	gpiod_set_consumer_name(priv->gpiod_pwdn, "max96712-pwdn");
--	gpiod_set_value_cansleep(priv->gpiod_pwdn, 1);
--
--	if (priv->gpiod_pwdn)
--		usleep_range(4000, 5000);
--
--	max96712_reset(priv);
--
--	ret = max96712_parse_dt(priv);
--	if (ret)
--		return ret;
--
--	max96712_mipi_configure(priv);
--
--	return max96712_v4l2_register(priv);
--}
--
--static void max96712_remove(struct i2c_client *client)
--{
--	struct v4l2_subdev *sd = i2c_get_clientdata(client);
--	struct max96712_priv *priv = container_of(sd, struct max96712_priv, sd);
--
--	v4l2_async_unregister_subdev(&priv->sd);
--
--	gpiod_set_value_cansleep(priv->gpiod_pwdn, 0);
--}
--
--static const struct max96712_info max96712_info_max96712 = {
--	.dpllfreq = 1000,
--	.have_debug_extra = true,
--};
--
--static const struct max96712_info max96712_info_max96724 = {
--	.dpllfreq = 1200,
--};
--
--static const struct of_device_id max96712_of_table[] = {
--	{ .compatible = "maxim,max96712", .data = &max96712_info_max96712 },
--	{ .compatible = "maxim,max96724", .data = &max96712_info_max96724 },
--	{ /* sentinel */ }
--};
--MODULE_DEVICE_TABLE(of, max96712_of_table);
--
--static struct i2c_driver max96712_i2c_driver = {
--	.driver	= {
--		.name = "max96712",
--		.of_match_table	= of_match_ptr(max96712_of_table),
--	},
--	.probe = max96712_probe,
--	.remove = max96712_remove,
--};
--
--module_i2c_driver(max96712_i2c_driver);
--
--MODULE_DESCRIPTION("Maxim MAX96712 Quad GMSL2 Deserializer Driver");
--MODULE_AUTHOR("Niklas Söderlund <niklas.soderlund@ragnatech.se>");
--MODULE_LICENSE("GPL");
+Reverting this change in current mainline/master (f9a2394a23482) fixed
+things for me. Full dmesg of current master and master+revert can be
+found here:
 
--- 
-2.53.0
+https://www.leemhuis.info/files/misc/dmesg-master
+https://www.leemhuis.info/files/misc/dmesg-master-plus_revert
 
+Ciao, Thorsten
 
+#regzbot introduced: 0a4bb2abc3e56d
+#regzbot title i2c: designware: ThinkPad touchpad broke
+
+>> ---
+>> v12 -> v13:
+>> - v12 was sent as an incomplete diff (generated against v11 rather than
+>>   against current master due to a git format-patch invocation mistake on
+>>   my end), not a real standalone patch (Andy Shevchenko)
+>> - Not carrying forward Bartosz Golaszewski's v12 Acked-by, per Andy's
+>>   request
+>> - Add blank line before guard(device)(gpio_dev) for readability (Andy
+>>   Shevchenko)
+>> - No other functional code changes since v12
+>>
+>> v11 -> v12:
+>> - Move gdev declaration to point of use with gpio_device_find_by_fwnode()
+>>   call (Andy Shevchenko)
+>> - Extract acpi_get_handle() return into acpi_status variable rather than
+>>   inline in ACPI_FAILURE() (Andy Shevchenko)
+>> - Use guard(device)(...) instead of scoped_guard(device, ...) {} for a
+>>   single following statement (Andy Shevchenko)
+>> - Use LIST_HEAD(res_list) instead of separate declaration + INIT_LIST_HEAD()
+>>   (Andy Shevchenko)
+>> - Check acpi_dev_get_resources() error before freeing the resource list,
+>>   restoring the check-then-free ordering that had regressed in v11
+>>   (Andy Shevchenko)
+>> - Split ACPI_COMPANION(dev) assignment onto its own line rather than at
+>>   declaration (Andy Shevchenko)
+>>
+>> v10 -> v11:
+>> - Replaced custom gpio_controller_ref list and dedup logic with
+>>   gpio_device_find_by_fwnode() (Suggested-by: Andy Shevchenko)
+>> - Moved resource-skip explanation from commit message into a code comment
+>> - Fixed device_is_bound() to check gpio_device_to_device(gdev)->parent
+>>   rather than the gpio_device's own internal class device, which is
+>>   registered on the synthetic "gpio" bus and never has a driver bound to it
+>>
+>> v9 -> v10:
+>> - Use acpi_gpio_get_irq_resource() instead of open-coding GPIO resource
+>>   type checks, eliminating duplication with gpiolib-acpi (Andy Shevchenko)
+>> - Simplify string_source guard to a single string_length check, confirmed
+>>   sufficient via ACPICA parser in drivers/acpi/acpica/rsutils.c
+>>   (Andy Shevchenko)
+>> - acpi_dev_get_resources() on single line, free only on success path
+>>   (Andy Shevchenko)
+>> - Reversed xmas tree ordering for variable declarations (Andy Shevchenko)
+>> - Removed useless int ret = 0 assignment (Andy Shevchenko)
+>> - acpi_dev_for_each_child() on single line (Andy Shevchenko)
+>> - Use guard(device)(gpio_dev) pattern to avoid uninitialized variable
+>>   warning and deduplicate the !gpio_dev check (Andy Shevchenko)
+>>
+>> v8 -> v9:
+>> - Sent as a 2-patch series: revert of the broken v8 patch, plus a
+>>   corrected resubmission
+>> - Use acpi_gpio_get_irq_resource() instead of open-coding GPIO resource
+>>   type checks, eliminating duplication with gpiolib-acpi (Andy Shevchenko)
+>> - Remove gpio_dep_ctx wrapper struct, pass list_head * directly (Andy Shevchenko)
+>> - Add const to gpio_controller_ref.path (Andy Shevchenko)
+>> - Add NULL check for resource_source.string_ptr to fix a crash on hardware
+>>   where GPIO resources have no named controller (Reported-by: Nathan
+>>   Chancellor, Reported-by: Chaitanya Kumar Borah)
+>> - Use acpi_dev_get_resources() return value properly (Andy Shevchenko)
+>> - Fix all error paths to call free_gpio_controller_list() (Andy Shevchenko)
+>> - Change guard to #if defined(CONFIG_ACPI) && defined(CONFIG_GPIOLIB)
+>> - Remove erroneous put_device() calls -- acpi_get_first_physical_node()
+>>   returns a borrowed pointer with no refcount increment
+>> - Use LIST_HEAD() macro, split adev declaration and assignment (Andy Shevchenko)
+>> - scoped_guard single statement without braces (Andy Shevchenko)
+>> - Remove misused Reported-by/Closes tags (Andy Shevchenko)
+>>
+>> v7 -> v8:
+>> - Add revert of the earlier pinctrl-amd DMI quirk (patch 1 of the original
+>>   v1-v7 series), confirmed unnecessary once probe ordering is fixed
+>>   (Mario Limonciello)
+>> - Collect Acked-by (Bartosz Golaszewski) and Reviewed-by (Mario Limonciello)
+>>
+>> v6 -> v7:
+>> - Fix unused 'ret' variable in check_child_gpioint() (kernel test robot)
+>> - Replace BugLink: with Link: (Bartosz Golaszewski)
+>> - Add Reported-by and Closes tags for kernel test robot warning
+>>
+>> v5 -> v6:
+>> - Replace DMI-specific deferral with a generic GpioInt dependency check
+>>   walking ACPI child devices (Suggested-by: Mario Limonciello)
+>>
+>> v4 -> v5:
+>> - Add blank line before #include <linux/acpi.h> (Bartosz Golaszewski)
+>> - Use scoped_guard(device, gpio_dev) (Bartosz Golaszewski)
+>>
+>> v3 -> v4:
+>> - Rebase onto Linus Walleij's tree (the original patch 1 already there)
+>> - Use --base so series is correctly 1/1 (Andy Shevchenko)
+>>
+>> v2 -> v3:
+>> - Fix variable declaration style (Andy Shevchenko)
+>> - Add BugLink tag (Andy Shevchenko)
+>> - CC AMD engineers (Andy Shevchenko)
+>>
+>> v1 -> v2:
+>> - Replace custom HID/UID lookup with acpi_dev_get_first_match_dev()
+>> - Use device_is_bound() under device_lock() with explanatory comments
+>> - Add Assisted-by tags per coding-assistants.rst
+>>
+>> Note: this patch was originally part of a 2-patch series (v1-v7) whose
+>> first patch was a DMI-specific pinctrl-amd IRQ quirk; that patch was
+>> merged separately into Linus Walleij's tree at v1 and later reverted at
+>> v8 once this patch made the manual IRQ restoration unnecessary.
+>>
+>>  drivers/i2c/busses/i2c-designware-platdrv.c | 80 +++++++++++++++++++++
+>>  1 file changed, 80 insertions(+)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+>> index 6d6e81242f74..c8a203fff4d1 100644
+>> --- a/drivers/i2c/busses/i2c-designware-platdrv.c
+>> +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+>> @@ -8,12 +8,14 @@
+>>   * Copyright (C) 2007 MontaVista Software Inc.
+>>   * Copyright (C) 2009 Provigent Ltd.
+>>   */
+>> +#include <linux/acpi.h>
+>>  #include <linux/clk-provider.h>
+>>  #include <linux/clk.h>
+>>  #include <linux/delay.h>
+>>  #include <linux/dmi.h>
+>>  #include <linux/err.h>
+>>  #include <linux/errno.h>
+>> +#include <linux/gpio/driver.h>
+>>  #include <linux/i2c.h>
+>>  #include <linux/interrupt.h>
+>>  #include <linux/io.h>
+>> @@ -130,6 +132,80 @@ static int i2c_dw_probe_lock_support(struct dw_i2c_dev *dev)
+>>  	return 0;
+>>  }
+>>  
+>> +#if defined(CONFIG_ACPI) && defined(CONFIG_GPIOLIB)
+>> +/*
+>> + * Check whether an ACPI GpioInt resource's referenced GPIO controller
+>> + * has finished probing. Resources with no named controller (resource
+>> + * source string) are skipped, since they can't be resolved to a
+>> + * struct device.
+>> + */
+>> +static int check_gpioint_resource(struct acpi_resource *ares, void *data)
+>> +{
+>> +	struct acpi_resource_gpio *agpio;
+>> +	struct acpi_device *gpio_adev;
+>> +	struct device *gpio_dev;
+>> +	acpi_handle handle;
+>> +	acpi_status status;
+>> +
+>> +	if (!acpi_gpio_get_irq_resource(ares, &agpio))
+>> +		return 1; /* not a GpioInt resource, skip */
+>> +
+>> +	if (!agpio->resource_source.string_length)
+>> +		return 1; /* no named controller, skip */
+>> +
+>> +	status = acpi_get_handle(NULL, agpio->resource_source.string_ptr, &handle);
+>> +	if (ACPI_FAILURE(status))
+>> +		return 1;
+>> +
+>> +	gpio_adev = acpi_fetch_acpi_dev(handle);
+>> +	if (!gpio_adev)
+>> +		return 1;
+>> +
+>> +	struct gpio_device *gdev __free(gpio_device_put) =
+>> +		gpio_device_find_by_fwnode(acpi_fwnode_handle(gpio_adev));
+>> +	if (!gdev)
+>> +		return -EPROBE_DEFER; /* controller not registered yet: abort walk */
+>> +
+>> +	gpio_dev = gpio_device_to_device(gdev)->parent;
+>> +
+>> +	guard(device)(gpio_dev);
+>> +	if (!device_is_bound(gpio_dev))
+>> +		return -EPROBE_DEFER; /* controller not bound yet: abort walk */
+>> +
+>> +	return 1; /* bound, skip adding to resource list, continue walk */
+>> +}
+>> +
+>> +static int check_child_gpioint(struct acpi_device *adev, void *data)
+>> +{
+>> +	LIST_HEAD(res_list);
+>> +	int ret;
+>> +
+>> +	ret = acpi_dev_get_resources(adev, &res_list, check_gpioint_resource, NULL);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	acpi_dev_free_resource_list(&res_list);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int i2c_dw_check_gpio_dependencies(struct device *dev)
+>> +{
+>> +	struct acpi_device *adev;
+>> +
+>> +	adev = ACPI_COMPANION(dev);
+>> +	if (!adev)
+>> +		return 0;
+>> +
+>> +	return acpi_dev_for_each_child(adev, check_child_gpioint, NULL);
+>> +}
+>> +#else
+>> +static int i2c_dw_check_gpio_dependencies(struct device *dev)
+>> +{
+>> +	return 0;
+>> +}
+>> +#endif /* CONFIG_ACPI && CONFIG_GPIOLIB */
+>> +
+>>  static int dw_i2c_plat_probe(struct platform_device *pdev)
+>>  {
+>>  	u32 flags = (uintptr_t)device_get_match_data(&pdev->dev);
+>> @@ -138,6 +214,10 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
+>>  	struct dw_i2c_dev *dev;
+>>  	int irq, ret;
+>>  
+>> +	ret = i2c_dw_check_gpio_dependencies(device);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>>  	irq = platform_get_irq_optional(pdev, 0);
+>>  	if (irq == -ENXIO)
+>>  		flags |= ACCESS_POLLING;
+>>
+>> base-commit: 58717b2a1365d06c8c64b72aa948541b53fe31eb
+>> -- 
+>> 2.54.0
+>>
+> 
