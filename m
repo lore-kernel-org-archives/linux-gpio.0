@@ -1,81 +1,149 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB42A3A1E7E
-	for <linux-gpio@vger.kernel.org>; Fri,  7 Aug 2026 17:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E332E7391
+	for <linux-gpio@vger.kernel.org>; Fri,  7 Aug 2026 17:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786123431; cv=none; b=uN3VZKllWSiQmU95t5biOWlDVQ5WdQqKuFfk7AZGMp1yf8ejdtm0MClawdiVWVIHrC8mo61hbn87vRTwFFrUCMbHVWMEShlENwtl8PGbsemMz698b+TJbKmedJRk/1zToh/uN+LSskzgyPyAH2sKnozutvcSCrT2SWYyogofmis=
+	t=1786124725; cv=none; b=QlGBPgqCQ9XAuAb3kKWFxK7PYVKL9Mggdhtn6/578bMI51quWrDLGa98pqo1AHwuydVBoOBqYjTcyQlyJiPVGiij1IV4TGSNEy7byEnu4wkdX32eM9xGkMymHe89nEAAyKL8l+DHWRcvObVKHTvDJHhVrfqwNtbnuG9M5+vYxXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786123431; c=relaxed/simple;
-	bh=b5+6s7cRaD+WPG+s4777S00qOcnE9y5+EtT1GZhZ2W0=;
+	s=arc-20240116; t=1786124725; c=relaxed/simple;
+	bh=K9y7+qgOIUgusqqnv2A0lIuXRIzhe19SOiZ/1cedtZM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XfuNaGPafvJ13PyzGAMs23f46p/g6gseT8jdvqaVJi1vv5QyhWWNSPI0/WG3dunJ2c5ZeK9iVtrjmsy5eQjSln80Iv2PdWfSL5eQGx+1DczUkEgbZdsE2355uO53ko9ByAYdLZHxz8c90WGrmtQ8CY04+GcmRG5a7tu0ETvEB/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWo8BwuN; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=F4P3zyfO5KaHLy9OQDvnZGke9j0QhaEPs9vrtJIDV3LeYsxWg9qKb02stEpshIaThZtQJfdXTve9av6oJFO89DMedZEvESfmEryUbC0VPXoEAJ0kRDOONvBaGTA1ZwuF7uWoKk0mf0r5GCpUL5MwqZsVDnQJrBVuN715h44zWDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9mdM+J7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWo8BwuN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9311F0155B
-	for <linux-gpio@vger.kernel.org>; Fri,  7 Aug 2026 17:23:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9mdM+J7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 211FA1F000E9
+	for <linux-gpio@vger.kernel.org>; Fri,  7 Aug 2026 17:45:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786123428;
-	bh=b5+6s7cRaD+WPG+s4777S00qOcnE9y5+EtT1GZhZ2W0=;
+	s=k20260515; t=1786124724;
+	bh=OyhnxF+idjJakv4GGlOu6M8jr1I7wPOlS/SALR3zs0g=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=fWo8BwuNcmOGAUWFQLkWMWs5FyFp/Bw7kBHQPomavEjqezdgKmwOzWu+ZfGhVbLEh
-	 GqbJmxzMzrdfDLA6EmLFaiICOTVZ9DQnkwzZILiAO6yZTLqF71dwiPmCjlnATbnyfT
-	 tyZc5WxF3GnhG661H9bBufjr9/+N539IQsP5RjCEexLH1pEUy0Mgf3MRLJk4bsdv/p
-	 1fblhJV07mhSrLh0zQfuLou/F8Gs+JlQ8Rls8fxhoGlwu8OctUVaRV/3L0drArtkz+
-	 4rTJdZJVGyuzUnGOEfuHfIrc9p43UYxa2NBNzSBYFMWbYWoFIwjzGa+RO+WVJxtxZf
-	 W7YqGcistO2bw==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-39c9a3acd40so29813551fa.3
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Aug 2026 10:23:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RookStLv3nbqqMHOKm1OlkI5CvrFfvB+W2Nf2T7aHWDZHeWdWAZT+Oms2NjT1TvtBCT9vN+CNpqbfnh@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYh5GlDaoutGlAj+WT6taIRb3zBDzfDVFK8YdqF922/0+wf/sV
-	02lDOCbfzT8p8onehjBi5Jq7IzPJnUJt8WrtojfQUZacAx2XyLufJM02/BTsejzdtOS127PrxVH
-	6R7PnwbEO2H7tq8WUAKJBrRE53gkjNRY=
-X-Received: by 2002:a05:651c:2122:b0:39b:119d:aa02 with SMTP id
- 38308e7fff4ca-39fbae0b8f8mr29204031fa.5.1786123427162; Fri, 07 Aug 2026
- 10:23:47 -0700 (PDT)
+	b=f9mdM+J7MWS3rxSYZmb8Ntb5HpemFgXBtzrgLvmiufo0fNS13aqkWAPZ/knkrIyXR
+	 VIny+XIoazS+Wtlhe/qDN6VtJgJROhVR4kWZM9DDwccMVdxHfWIuNctzbIvZIW5owQ
+	 ksjRvnBLj5RBVbW3Lxo5sPVNpuguMjCSupqMwORjLSoUzcdGMHFnlCk0W7rpY2B1IB
+	 s6YVhjxVhd+YSBeTJE+0ZYBwCHJhhM5OgfGi8tsnQGdwrcihn6zWLEwnqn0TqYP0JH
+	 3vc12AuTC3vdzXcFEKGtfsAaCxGcMlA0Yi03Tdfi1h/PLp3ezXgUtxq3Ryl+c40f77
+	 NyerY3Z8luhwA==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5b2aa3be376so2693216e87.0
+        for <linux-gpio@vger.kernel.org>; Fri, 07 Aug 2026 10:45:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqIzBQp9//VoxOHYGc5yMoquYe5RzeCtTLLuEnQYYli0Jx4+ammgeZ1jXr/qA9mnTwuI4YuSTvHbg/N@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxtyx9q24gjpPLbBk6mcr3QmTm9x/5fR7jFrleMFEn1OyP3xafJ
+	QXZnl7BVuI8BdSfQSqbJWJjuiyd+ZBE+mVke3BrFuQy4/sivBxH6D1OmQiRUoVGZ0Hh9ksbGTx0
+	3HaPwW4zR30EYvSHJrnXDFzW+kDzVtks=
+X-Received: by 2002:ac2:515b:0:b0:5b2:a483:a367 with SMTP id
+ 2adb3069b0e04-5b2f4cbfd35mr2719806e87.40.1786124722892; Fri, 07 Aug 2026
+ 10:45:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260805-rtc_s35390a_int1-v3-0-e836faba3e25@posteo.de> <20260805-rtc_s35390a_int1-v3-1-e836faba3e25@posteo.de>
-In-Reply-To: <20260805-rtc_s35390a_int1-v3-1-e836faba3e25@posteo.de>
+References: <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
+ <20260806-longzhao-upstream-cv75-v2-v2-7-6b09707c5fe9@ambarella.com>
+In-Reply-To: <20260806-longzhao-upstream-cv75-v2-v2-7-6b09707c5fe9@ambarella.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 7 Aug 2026 19:23:34 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmbp5v5oy9oas3q=nDEvdvmPZpX71eHwEUgSKkn4bfCkQ@mail.gmail.com>
-X-Gm-Features: AUfX_mwxc-wD_DVhl85t0-cdNZC5rlPz-YW3X4nrBUoCVUhyUW7RnE0ImXvu-o0
-Message-ID: <CAD++jLmbp5v5oy9oas3q=nDEvdvmPZpX71eHwEUgSKkn4bfCkQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] dt-bindings: rtc: Add pinctrl for S35390A
-To: Markus Probst <markus.probst@posteo.de>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <uwe@kleine-koenig.org>, 
-	Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
-	Michael Langer <michael.brainbug.langer@googlemail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 7 Aug 2026 19:45:10 +0200
+X-Gmail-Original-Message-ID: <CAD++jLk0LoOJk=TXin42AL3_z_7eVVkvMnYr1S8090C6A_B+dQ@mail.gmail.com>
+X-Gm-Features: AUfX_mz4THtJsHukdTGhBJPWk-nL3TQtLhDW7VNIYAXq_FOwFa7WqkqY6sFI5Ns
+Message-ID: <CAD++jLk0LoOJk=TXin42AL3_z_7eVVkvMnYr1S8090C6A_B+dQ@mail.gmail.com>
+Subject: Re: [PATCH v2 07/10] pinctrl: ambarella: add Ambarella pin controller
+To: longzhao@ambarella.com, Bartosz Golaszewski <brgl@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, soc@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 5, 2026 at 9:32=E2=80=AFPM Markus Probst <markus.probst@posteo.=
-de> wrote:
+Hi Long,
 
-> Synology NAS devices use the output pin for interrupt signal 1 to wake up
-> the system.
->
-> Move devicetree bindings for sii,s35390a into its own file.
-> Add necessary properties to configure the individual pins via pinctrl,
-> which allows the interrupt signal 1 to be used for wakeup alarm.
->
-> Signed-off-by: Markus Probst <markus.probst@posteo.de>
+thanks for your patch!
 
-This is a bit unexpected but I really like how this looks
-and how it is using pin control!
+On Thu, Aug 6, 2026 at 11:34=E2=80=AFAM Long Zhao via B4 Relay
+<devnull+longzhao.ambarella.com@kernel.org> wrote:
+
+> +#define GPIO_DATA_OFFSET               0x00
+> +#define GPIO_DIR_OFFSET                        0x04
+> +#define GPIO_IS_OFFSET                 0x08
+> +#define GPIO_IBE_OFFSET                        0x0c
+> +#define GPIO_IEV_OFFSET                        0x10
+> +#define GPIO_IE_OFFSET                 0x14
+> +#define GPIO_AFSEL_OFFSET              0x18
+> +#define GPIO_RIS_OFFSET                        0x1c
+> +#define GPIO_MIS_OFFSET                        0x20
+> +#define GPIO_IC_OFFSET                 0x24
+> +#define GPIO_MASK_OFFSET               0x28
+> +#define GPIO_ENABLE_OFFSET             0x2c
+
+As everyone can see from a mile away this is a modified ARM PL061
+primecell, see drivers/gpio/gpio-pl061.c.
+
+I'm not very interested in having two drivers for pretty much the same
+hardware in the kernel. Odds are that there will be new quirks and fixed
+to one of the drivers that the other one doesn't get :/
+Also the PL061 driver is pretty complex and specialized as GPIO
+drivers go already. I certainly don't want to have a second copy
+of that.
+
+We need to find a way to re-use the PL061 driver with this pin
+controller.
+
+1. Modify the existing PL061 driver to use a dynamic register
+  layout, i.e. make the different register locations part of some
+  per-variant data:
+
+struct vendor_data {
+    u32 data_offset;
+    u32 dir_offset;
+...
+};
+
+Add:
+
+struct pl061 {
+    struct vendor_data *variant;
+...
+};
+
+Add vendor data to the PL061 variant:
+
+static struct vendor_data vendor_arm =3D {...};
+
+static struct vendor_data vendor_ambarella =3D {...};
+
+static const struct amba_id pl061_ids[] =3D {
+        {
+                .id     =3D 0x00041061,
+                .mask   =3D 0x000fffff,
+                . data =3D &vendor_arm;
+        },
+        {
+               .id =3D /* make something up, see include/linux/amba/bus.h *=
+/
+               .mask =3D ....
+               .data =3D &vendor_ambarella;
+        },
+
+
+Essentially follow the pattern from drivers/spi/spi-pl022.c.
+
+2. Contemplate if the GPIO should be a separate entity in the
+ device tree or not. If not, Linux needs to spawn the new AMBA
+ device with this pin control driver using e.g.
+ amba_device_alloc() and amba_device_register() etc,
+ see drivers/of/platform.c
+
+3. select GPIO_PL061 in Kconfig for this pin controller...
+
+This is not a simple solution but it is the right one.
 
 Yours,
 Linus Walleij
