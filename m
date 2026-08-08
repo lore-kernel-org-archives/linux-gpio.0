@@ -1,150 +1,121 @@
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9903C3438
-	for <linux-gpio@vger.kernel.org>; Sat,  8 Aug 2026 03:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BEC2E54D1
+	for <linux-gpio@vger.kernel.org>; Sat,  8 Aug 2026 15:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786161550; cv=none; b=jisthOFOk9SVS1MmRdRkuCDhBPGuhWe4JLxyftL7kAM7xA+OlymXV/2suZ8nXA6ep8jTK5mEbnASgpAarEsDEnwIOYjUtCWu3Cc1jQFtQl5j9UqSDGyRCrTm+Kg6JISa8aBqf/n4WS4SCpL0TKrB5c388SZShC5lw35dEW029rY=
+	t=1786204566; cv=none; b=UScEpdpzeTheFFgOBpJC+h8A0Wz6hjvetJB26r0KKd6C3PtZs1FyFLGCi+U58GQrK+0/3FCi+A0rqIcjmka790BoLgTz3ob6KmF0qCq9xxdk1qRkKySD6mytuehCgDBeHnIq0TInR8mpILtK8U/4rXzvBdTk8a+tkeSplUTYs/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786161550; c=relaxed/simple;
-	bh=ALPm4wN0XxL4MAFfiFBimkAb2s7JRwqMzky26VfX7JM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mIdvrKVUSIv2fUWfIApSafa3EE/sjS2j3sm8+9W0CdIduawMd02GEafiP/aNi8oLcXuUfZOLDilISnCUpjEz8qd/z48pLrt2MpWYc11aNndkGluqP/u0Dj/XODCDQZDa4SIQ1IO3Hm5lvkzArlhq1i+OkC5e1hceb4NjgbGP+XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVhbSvW3; arc=none smtp.client-ip=209.85.221.177
+	s=arc-20240116; t=1786204566; c=relaxed/simple;
+	bh=i696J/gXK+RpkG0zn/Hf7Ox8aMAw6efUnT10D+Ea+m4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jPZ+AMZP0O2wLP2oRPi4z0ZKgLyjMMJ/2F1l0s5jm4vZQXBi9acm36WinYH4LthYp/uB9MbOt64wBuMW4XFhxM6s39mcwsJl0/SKiZFenAxvpboRpzcggbSfQe+lhUGSd5Ey+9T6hegymscnn6bGDG5N6DT/6AcNvNo5SdDXjWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qHHM68p6; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVhbSvW3"
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5c276bfce7eso192520e0c.2
-        for <linux-gpio@vger.kernel.org>; Fri, 07 Aug 2026 20:59:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qHHM68p6"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2cc73e322dbso5132565ad.1
+        for <linux-gpio@vger.kernel.org>; Sat, 08 Aug 2026 08:56:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786161547; x=1786766347; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=+Z33c2/VIdQJHXYt//EgpTsqkZyaHvNkSYBF+LRNUwo=;
-        b=VVhbSvW33O2Q7jd0o1t2l73Y/OFOskS8IYccyEO6ANNqlqmNv6RxnR93kXC8Rrv+n5
-         k9XgSQqlo/NAh1Z/2Qt1pr5px1c+Wwa5fSBsad93nyXw5g3pkBlVxQ+IJDAf0X1IBnC8
-         x+jOsk/JfO/sE2Awzo7vfPUT96QvWy1f9jjVZ1tqVV30Z19jshHRwPtK+29jSx2wQ1i9
-         aC3wMW0IVLss6icIJ77cFANq/w4S4MTvE4t/JHlZk7I5AAHd5Df3ix16mD/Uqwo3DMMp
-         cZLQRdSGwYLDmupGnoQPmWF/dQrKlaIEYBj9aZVhmGKDbttjWwx9lycV4UXmU2eI1BnU
-         pgjA==
+        d=gmail.com; s=20251104; t=1786204565; x=1786809365; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Z1fnok8b1HIkkpNvGzYE+StwjNqCvQ2feItOzMlKbV0=;
+        b=qHHM68p6IV9Y3e+ryKAy65kmSKjR0oyn2FCqgh0qJVhWHV6otw6FoBplFNZ4fu4CEk
+         masPSyUyH7QZf5w2d8CZEcd0iyWx0H0O7L3ZDXQpYcoi6OBtjv3CguOzoKj7tv2vtl06
+         igJ4Ksy/xIwnJy7+KtVSmKZBIspbtwjReBAhDRJFvTAJbbZ0btVzt8rI0mP7JoLjl+hg
+         2uVyNOMTmzMtqkb4BuaI0srmibxpMU/khFW17YTylsa+Jyg+wrKu+DXPXBE2303RM6Rh
+         smtg8ZiUmoDHx2xbVVTBIQIMZAi/+GTU0GFLzFKH0jRFGRAK0+aACXksiDS35leYR2oa
+         8kMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786161547; x=1786766347;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=+Z33c2/VIdQJHXYt//EgpTsqkZyaHvNkSYBF+LRNUwo=;
-        b=Fi3LJq+xffePKFR/dXMBgTc10qqVwZvpWIKhtjHzdgTeniBDhGQX5OGipJh7lOJzso
-         M25IckwzupFkw8N0FGjbAvuG+28P8dE2WjAu9BoAH9WF0g6Odt2CNRVrM0QmoRCbYXdB
-         /XUpSgZeL6Le6z14v/RdDtZL/SF6YtIAG8bQHCJOaxMgh2Sb0uv6/RxrmnqMVxDL2qh8
-         kh5PhRs/GgpiDKlxAxabHds2gs/OFSXs+9Ju47Io3PddbO7hl/HhepDxZBYqCgVR9/3R
-         aSjbfQeKEMS4MDT7jZX3jYluQrxcJU+fDw4EifmHnYbYAda0h650+zvjHwWOUkqcUNjO
-         laPA==
-X-Forwarded-Encrypted: i=1; AHgh+Rp0yC2TpsFpsUca6yGrqH/UqMiC1IMlPMnUzh5ivUcwN3FsHZ4e9zrqMR3AOaTetiP3QUV10Sywtpkk@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrUWU0sqpz5zYtwh7J/N2V7uKogTonFe22Y4w5f4B3V5rLDCGV
-	K0PD/zHKo0BIwDqyx3cPEAzvDdaZdQiM83qKpRc48uBpWW1wnYwlp9iK
-X-Gm-Gg: AR+sD11QrbYc5bjx/Q36yIeHxzrblUFzbn+e4+HL9gCKtEPCytKNTfLibwYqU8vcgM4
-	tvM7SukMYtEmIF8ELcNUvMNom+luz/MDTbVn1Wjq0wA2gAVfqMs7Bt2eYUMgxVAZU5zwhT6Rmi2
-	/2t5TBytvxsSqDcr9UG5z3Z8dWXP8uWb7VaLoRdafEejjt0cU3uU60O1+pRo4lTD/PUbb2wrWt5
-	OyswwV0xUfOvE5cy9ZiTfeN3YDeV0PP7zCbHKNcQ5lnloAQeXAk/a/C9OLguAe1iYG5H1YEd/HC
-	ruKzqF/I0dGRAGOqTakDWdszr/+bG4t1l57H9QYsa3sedWiIL2HlR5KN648ZHY/aHLysoiqs9Rz
-	2H23NovnQj5iOWMy3g+kXsTabcAEphNdOUbba7rFjKjB+2ri5U+hi6105sbGRjUZslsikwKaaSk
-	GBC3g/2x92YIfVpfHdJK7yizo3VRBG5Qm3yV66x5sq+sddvy2I5AaPn56+EOKS
-X-Received: by 2002:a05:6122:e142:b0:5bf:bb2c:1328 with SMTP id 71dfb90a1353d-5c3d9068a9emr4114304e0c.3.1786161547188;
-        Fri, 07 Aug 2026 20:59:07 -0700 (PDT)
-Received: from [192.168.100.6] ([2800:bf0:82:11a2:7ac4:1f2:947b:2b6])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c40b212fa6sm1432936e0c.16.2026.08.07.20.59.05
+        d=1e100.net; s=20251104; t=1786204565; x=1786809365;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Z1fnok8b1HIkkpNvGzYE+StwjNqCvQ2feItOzMlKbV0=;
+        b=Ud5/6+xNmwk0tY1piPlLdgM2W01ZzVGEJn5JsMyBMNilVh6p/1g7mvS2TTkIXwqfn6
+         cytWJkryl1nOTCiPgVcY9Aiss0Mo8VdCPdMAEp2zlcU1NPq7gyP+MxjtMevssyzw3dLw
+         /8cM1CyXA5F2SHqNVk+sgFUx1kCqea0ZRBZewORLgbIbwaL0GSVkp0TZ1yaP7n5qxz8k
+         NdDqSq1RNYLku2oEf61aK41LcnnFw/Zz/AJyRcQlq8GEtxpyt5mPMmV7CeCAcguauBj1
+         A3nTMnjcG1y74i8KxLWKHQ/qz/MAwXlAy/mH5/WE4nBBhaD9hFe5kc8NlXmowUzlFDLw
+         8XOw==
+X-Gm-Message-State: AOJu0YyG827Q+W8vTe15ANvBIPlplAab1MNO6IeHVNcyqFAX5bmX4qho
+	YoI1QQs/AFMaB9Dpqz48NdebkaHspGIh+U9Q1UJGAKr25enfbQOqfRyF5B2WI8W45g==
+X-Gm-Gg: AR+sD131t/62OTzhi/jJGreH8N3RU/MHr5lSjzOShbAV5nOOLr5QatDkc8ZOShPgCoQ
+	qbwl3CV/8c7ZSinV7pS1lzVxxTATXuYEpOCdWnMpRUxLRetjnMODZ6t7ZqcJThjORtU2GP9ALDh
+	gkqKr9W9IN9rLjWXFz85vT5sAiXYRRMPlXOtc6jlZHVVcad/9PHZSb5CxnWAmv0rRQtnGPoLY1X
+	AQyayUUuDte7Bp/BBGgiHLYG57iOWyryxE8xqMV1XTjFRS+3imYmfydZX9HTbytOudDz0Z3pa1N
+	aV1z7Pi5JyIYR44J0EaLs8GNHwMgarQ7kOmrAcmIGOuKCHHqNq/6O8zQ5EfoWC2Lvr616TmEFbu
+	+xmJnZAeiP1IIE2NaGIxX0o/RK1Ycv5HxeVc+KAhkAvL3MIzQqI9O4Yox+NLsKeUOyQ/19NrIAx
+	5Vhicd0BW9u2NsOO/P7NzIEvffRsDMSXldDjNGKyPlfeSvxo9iP7U+rKx0JPgUoQ==
+X-Received: by 2002:a17:902:ccca:b0:2ca:e3f:6a4a with SMTP id d9443c01a7336-2d0ca962f22mr363775835ad.21.1786204564842;
+        Sat, 08 Aug 2026 08:56:04 -0700 (PDT)
+Received: from DBA71591436.local ([38.76.196.47])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d16c4ea157sm19404345ad.78.2026.08.08.08.56.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Aug 2026 20:59:06 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-Date: Fri, 07 Aug 2026 22:58:31 -0500
-Subject: [PATCH v3 9/9] iio: adc: ti-ads1262: support common mode supplies
+        Sat, 08 Aug 2026 08:56:03 -0700 (PDT)
+From: Yao Qi <xnorigc@gmail.com>
+To: westeri@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	linusw@kernel.org,
+	brgl@kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yao Qi <xnorigc@gmail.com>
+Subject: [PATCH] gpiolib: acpi: Add ignore_wake quirk for ASUS TX Air FA401GM
+Date: Sat,  8 Aug 2026 15:55:13 +0000
+Message-ID: <20260808155513.2221976-1-xnorigc@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260807-ads126x-v3-9-f89925d72792@gmail.com>
-References: <20260807-ads126x-v3-0-f89925d72792@gmail.com>
-In-Reply-To: <20260807-ads126x-v3-0-f89925d72792@gmail.com>
-To: Kurt Borja <kuurtb@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, 
- David Lechner <dlechner@baylibre.com>
-Cc: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1626; i=kuurtb@gmail.com;
- h=from:subject:message-id; bh=ALPm4wN0XxL4MAFfiFBimkAb2s7JRwqMzky26VfX7JM=;
- b=owGbwMvMwCUmluBs8WX+lTTG02pJDFllKyv+Bi7cp7Z2Ws4kW07VnctsRJW3+IbVM4j9nBazW
- Ei6USeqo5SFQYyLQVZMkaU9YdG3R1F5b/0OhN6HmcPKBDKEgYtTACbivJuRYeWM5Y9b32dbyz5U
- 835veax3o2ybb8nmVZWsf16svJQk9JeRYbXY1eC4ZllZh1OuHVLKgq8MKmM/688WLC+r3/Yjsia
- RHQA=
-X-Developer-Key: i=kuurtb@gmail.com; a=openpgp;
- fpr=54D3BE170AEF777983C3C63B57E3B6585920A69A
+Content-Transfer-Encoding: 8bit
 
-Enable common mode regulators. The usual configuration is to have our
-own 'vbias' regulator connected internally as common mode voltage on the
-AINCOM pin.
+The ASUS TX Air FA401GM experiences immediate wakeups from s2idle
+(Modern Standby) when suspended with an external HDMI display connected.
 
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+This issue is caused by spurious ACPI event signaling routed through
+GPIO 24 on the AMD GPIO controller (AMDI0030:00), which triggers a
+system-wide IRQ 7 (pinctrl_amd) wake-up interrupt during sleep.
+
+Add an ignore_wake quirk for GPIO 24 on this machine to prevent these
+unwanted wakeups. This has been runtime-tested and verified using the
+`gpiolib_acpi.ignore_wake=AMDI0030:00@24` kernel parameter.
+
+Signed-off-by: Yao Qi <xnorigc@gmail.com>
 ---
- drivers/iio/adc/ti-ads1262.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/gpio/gpiolib-acpi-quirks.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/iio/adc/ti-ads1262.c b/drivers/iio/adc/ti-ads1262.c
-index 533574169b04..238d803abc50 100644
---- a/drivers/iio/adc/ti-ads1262.c
-+++ b/drivers/iio/adc/ti-ads1262.c
-@@ -962,6 +962,27 @@ static irqreturn_t ads1262_irq_handler(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
+diff --git a/drivers/gpio/gpiolib-acpi-quirks.c b/drivers/gpio/gpiolib-acpi-quirks.c
+index a0116f004..8d7d18b62 100644
+--- a/drivers/gpio/gpiolib-acpi-quirks.c
++++ b/drivers/gpio/gpiolib-acpi-quirks.c
+@@ -392,6 +392,19 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
+ 			.ignore_wake = "VEN_0488:00@355",
+ 		},
+ 	},
++	{
++		/*
++		 * Spurious wakeups from s2idle when suspended with an
++		 * external HDMI display connected.
++		 */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "TX Air FA401GM"),
++		},
++		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
++			.ignore_wake = "AMDI0030:00@24",
++		},
++	},
+ 	{} /* Terminating entry */
+ };
  
-+static int ads1262_common_mode_setup(struct ads1262 *st)
-+{
-+	struct device *dev = &st->spi->dev;
-+	char name[sizeof("aincom")];
-+	int ret;
-+
-+	for (unsigned int i = 0; i <= ADS1262_INPMUX_AINCOM; i++) {
-+		if (i < ADS1262_INPMUX_AINCOM)
-+			scnprintf(name, sizeof(name), "ain%u", i);
-+		else
-+			scnprintf(name, sizeof(name), "aincom");
-+
-+		ret = devm_regulator_get_enable_optional(dev, name);
-+		if (ret < 0 && ret != -ENODEV)
-+			return dev_err_probe(dev, ret,
-+					     "failed to get common mode supply: %s\n", name);
-+	}
-+
-+	return 0;
-+}
-+
- static int ads1262_regulator_enable(struct regulator_dev *rdev)
- {
- 	struct ads1262 *st = rdev_get_drvdata(rdev);
-@@ -1797,6 +1818,10 @@ static int ads1262_spi_probe(struct spi_device *spi)
- 	if (ret)
- 		return ret;
- 
-+	ret = ads1262_common_mode_setup(st);
-+	if (ret)
-+		return ret;
-+
- 	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
- 					      iio_pollfunc_store_time,
- 					      ads1262_trigger_handler,
-
 -- 
 2.55.0
 
