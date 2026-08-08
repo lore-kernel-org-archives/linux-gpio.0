@@ -1,148 +1,85 @@
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EEA3A7F6B
-	for <linux-gpio@vger.kernel.org>; Sat,  8 Aug 2026 18:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE2A3A16B8;
+	Sat,  8 Aug 2026 19:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786214448; cv=none; b=ZxSXsRFplKDjhin47l6bIq0fVjXFVGymggGwEB7721mK0T+APSaGSS1xYlwquvsZao+WsXegynkdcKNOslRvE2+yjf8H8BDNdUsI2+NfjZJbKcXIKoPlt3bGJ8L8PS7ZFiqtNl3FYnkwQp7Jlx5rf6T+lddVclC2xB2jyF9jMlk=
+	t=1786218158; cv=none; b=LzMzvCaKKnpffJGGHEevQlAFo2ctwzIKpWLUWejJlcLfrliCfkIyIl0/HKRMb3/s3ZUqKzXrk9sMiG6xx/tM4CQIEaQf4sCnEnhbVg9MxF269haZ6gKHn595uFc+3x8JtGE12EGKx+hSGVwC23WF85vw9Yj3j4tn/wVImEaMgNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786214448; c=relaxed/simple;
-	bh=FoVSqAX9Cubv9+S4g1XZ9guo+pxeW6BoILi4tAxvEN4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nNHhNQeJT2nYVKkYk4l+x0Xp6yNBPcq6zQ6YhmIsm06eQ/atpVR07OUpJwkovXizK8dX1sNmLfVN0BixeHJNzOkSeVGXKrCqHpDrPEQu9pJ/ojY6JSd07ogQwHlHnFTA1y80gJc6aXvSGGAr8b37/3yW2QTt4aOscZzlBEhInvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=BOmOJtfW; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1786218158; c=relaxed/simple;
+	bh=a4OcAdqrCX6y0kPXZFtZr84ZjqS+lZJOOiA7oR5U0bM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NgRcT3lJYX0gtS2NqUABBjwaeKgeUCdQhCjQTEqTnNiCV/+NZb6TepHPkcrZ/yAvGm6rpxS5TQFEFpWhhYHjr7PVS43GiEjnQqdSA+oTXVr4es9yiliKUCR6y6aIZv1eWn4t6mOPOrMIS17+NXrkPal4cNu1SjeFpw/GWYSZ7dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GNKEVdAi; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="BOmOJtfW"
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-6b051516aaaso174131eaf.2
-        for <linux-gpio@vger.kernel.org>; Sat, 08 Aug 2026 11:40:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1786214446; x=1786819246; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=55sctIR2HSJQXFMzWfmfJXeh2M58cCZiDe00f0EVIXw=;
-        b=BOmOJtfW9Iegj5XVZLiC+C0xTbSG+FQnQv8iVBlNmOUTPceXTfKmfyi8p7fTz7qdkg
-         GzdEhZZxrMQmB9+NPwX8EsHNilV0JLOiUAXx+n+LTN4ZdxOurefwYSDOIVc+HH2B9U3c
-         lemCJ1PUc8xI2AC7QzCudWJyyJweXK7rFpFfUYfva976wgibKn2+7LTOpihtk6WX4P1D
-         IjQ1sBXr7CESg5SELqr1V7fcyFp4nLilaKHX9SruTs1/iCoPztvXkcfwgGoFOqMYsZ9E
-         sS39ZNrw6T16gi738aiUkVmnXj2vbbQCytLL6kFykTN2OueNtbP4BXsIs0TLui2sZP9a
-         ng7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786214446; x=1786819246;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=55sctIR2HSJQXFMzWfmfJXeh2M58cCZiDe00f0EVIXw=;
-        b=QgTzhjTmDM8FR0eXC4xMKOnXrpzLvBeNWfi+BfEXr/Gv1DadUL94w2Dr/FpPzJIe69
-         qKYG2rlqtQpqN1h2zmAIT5VgOmEPaCnPw0BYoCIG3NfCKHWfz5a2Xx35auuux/o9/0Yu
-         KDwDvAQNA8HjJcmQZTp0vDyP+xhnIdd2aUI+QoRHiglCxc3pCQ6zdlClwR/PKROXJdi3
-         ZmgjyHHFMlS75DFXOa82K6Xc4fEAeKOVsbTCGiK1XZXRgQF/3deS+FhCrjqVI6GW1A/j
-         iy8lyFfr9tnMPuBc0W/tae7/+yBCcWXNXILFgBnakN1FHkv575irnRjqyl9fNfnkdxSF
-         BsMQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpwgfvmL0DtHw69MBzr8CYCDxw48nS5xSzSkQdMHGXkkCxz33XmnvUt66cVys9ZI5k6N3jrkehLvSIN@vger.kernel.org
-X-Gm-Message-State: AOJu0YylVXW739E4fwXpDLD2jxlTN+104kYCqpGov5bTzr90bOBrsDJH
-	k7CcJvjwky8zcInke9zoz1pq9CVNI162mmlbfMbYn7aLPaoCyQuYIi/aa34gFXKEE+8=
-X-Gm-Gg: AR+sD13FgOU6qOFwdAfIimN1KCYek71XYY4+mcYlXkJ1kOe16qx497iP1Uc7bG+o0Nc
-	z+AKcIXxFUQVM6VG2Bp0Glhwe+VkHPPsdXOGsCiA6QdHEGVakcmkWHTjPNpRDDm83hhMSMOvsf3
-	5nmQR7DWkZ1RBfY+FLdUz5DSAoykL7D4ulG2TE1qtb+NW18Vo5jCjnqSDhdUKfMrqX+ORlV8Mh/
-	O8GmL2WZwFTFPPdiy5PQabhAIW9NBTj7cYjeOUtaRpHNjWuDCkgHIj6aCU+9ZTULD6WBFgevecC
-	FlhBtU3h+B5F9NtxiF8qbHTTGLsUebc2Hd7XqlDhfWfm/GhQZ4KAPpLQFZN8bEUD4yEx5pueiDn
-	tcQsp5eNhVBPDOdyK2ASuRzO91mjGW7m1YHLqtG3mRpKvMeT6YQQGP5RUTdtkXFwZqn1UsHZEhn
-	7Ti0XZow4FFYDp2W4KsxUQGoi8cAsuutzmNPBlejyaTC6ot9vqWcqLttyc752Ca31ZR4+g21W/r
-	pCTFxivAEHoiMueu9PTl2qZWL8rlZFQwtj9lOs=
-X-Received: by 2002:a05:6820:81d0:b0:6aa:fac5:a3af with SMTP id 006d021491bc7-6ae96d12cfbmr16069294eaf.16.1786214445838;
-        Sat, 08 Aug 2026 11:40:45 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:99c2:f16e:201c:3bb5? ([2600:8803:e7e4:500:99c2:f16e:201c:3bb5])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6b02bc2e840sm5607169eaf.6.2026.08.08.11.40.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Aug 2026 11:40:45 -0700 (PDT)
-Message-ID: <b760633d-a9af-4dc1-be6d-496b7a19e847@baylibre.com>
-Date: Sat, 8 Aug 2026 13:40:44 -0500
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GNKEVdAi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1786218156; x=1817754156;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=a4OcAdqrCX6y0kPXZFtZr84ZjqS+lZJOOiA7oR5U0bM=;
+  b=GNKEVdAiiCD071qdIi47g4Ly7UI0ZL55RqS2Lf55MOeUod9Z2WisEBbt
+   M9bf3IAmOfip1maC71BltfX05K6ne33cr40R2fvBEtJamdat9HQtyQVHL
+   kCz6MkF/V4RB0ZRGdM7yguv6SktAjuJiytQNivw79f/PfJXmhhJzNliNA
+   P0eVkCwBTvflCmKsYyiZQ/NQcgyCpg7Jba8luYHSkEmc1GGcE29J3gUUZ
+   doGjPAOxRJxd+kMsCiBNmK9dkbrkrHZ+nehU/5TgrYpbpeMokvbjbdtbx
+   Yp/Q61pqIf/8aHS+dBk6IeB0JADafbLA41hkoMriuyvpPqvUBnWyXfbWS
+   Q==;
+X-CSE-ConnectionGUID: JIxFP/tFQ4WOU45Uy8Kegw==
+X-CSE-MsgGUID: 8Zcvn/5PRb+E3jYUaCTJBg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11869"; a="97141785"
+X-IronPort-AV: E=Sophos;i="6.25,212,1779174000"; 
+   d="scan'208";a="97141785"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2026 12:42:35 -0700
+X-CSE-ConnectionGUID: YDkSpz6FSUKmrUsfPSkgww==
+X-CSE-MsgGUID: Bh6wZ5dQQxCQiJA3ZHAVWg==
+X-ExtLoop1: 1
+Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.244.2])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2026 12:42:33 -0700
+Date: Sat, 8 Aug 2026 22:42:30 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Yao Qi <xnorigc@gmail.com>
+Cc: westeri@kernel.org, linusw@kernel.org, brgl@kernel.org,
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpiolib: acpi: Add ignore_wake quirk for ASUS TX Air
+ FA401GM
+Message-ID: <aneGptJn8J7eF9tj@ashevche-desk.local>
+References: <20260808155513.2221976-1-xnorigc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 9/9] iio: adc: ti-ads1262: support common mode supplies
-To: Kurt Borja <kuurtb@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>
-Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <20260807-ads126x-v3-0-f89925d72792@gmail.com>
- <20260807-ads126x-v3-9-f89925d72792@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20260807-ads126x-v3-9-f89925d72792@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260808155513.2221976-1-xnorigc@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 8/7/26 10:58 PM, Kurt Borja wrote:
-> Enable common mode regulators. The usual configuration is to have our
-> own 'vbias' regulator connected internally as common mode voltage on the
-> AINCOM pin.
+On Sat, Aug 08, 2026 at 03:55:13PM +0000, Yao Qi wrote:
+> The ASUS TX Air FA401GM experiences immediate wakeups from s2idle
+> (Modern Standby) when suspended with an external HDMI display connected.
 > 
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> ---
->  drivers/iio/adc/ti-ads1262.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
+> This issue is caused by spurious ACPI event signaling routed through
+> GPIO 24 on the AMD GPIO controller (AMDI0030:00), which triggers a
+> system-wide IRQ 7 (pinctrl_amd) wake-up interrupt during sleep.
 > 
-> diff --git a/drivers/iio/adc/ti-ads1262.c b/drivers/iio/adc/ti-ads1262.c
-> index 533574169b04..238d803abc50 100644
-> --- a/drivers/iio/adc/ti-ads1262.c
-> +++ b/drivers/iio/adc/ti-ads1262.c
-> @@ -962,6 +962,27 @@ static irqreturn_t ads1262_irq_handler(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> +static int ads1262_common_mode_setup(struct ads1262 *st)
-> +{
-> +	struct device *dev = &st->spi->dev;
-> +	char name[sizeof("aincom")];
-> +	int ret;
-> +
-> +	for (unsigned int i = 0; i <= ADS1262_INPMUX_AINCOM; i++) {
-> +		if (i < ADS1262_INPMUX_AINCOM)
-> +			scnprintf(name, sizeof(name), "ain%u", i);
-> +		else
-> +			scnprintf(name, sizeof(name), "aincom");
-> +
-> +		ret = devm_regulator_get_enable_optional(dev, name);
+> Add an ignore_wake quirk for GPIO 24 on this machine to prevent these
+> unwanted wakeups. This has been runtime-tested and verified using the
+> `gpiolib_acpi.ignore_wake=AMDI0030:00@24` kernel parameter.
 
-We need to get the voltage which is then used to provide an offset
-(IIO_CHAN_INFO_OFFSET) for the channel.
+If AMD people will be quick enough to tag this, I will include in my PR to
+Linus W. on next week.
 
-> +		if (ret < 0 && ret != -ENODEV)
-> +			return dev_err_probe(dev, ret,
-> +					     "failed to get common mode supply: %s\n", name);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int ads1262_regulator_enable(struct regulator_dev *rdev)
->  {
->  	struct ads1262 *st = rdev_get_drvdata(rdev);
-> @@ -1797,6 +1818,10 @@ static int ads1262_spi_probe(struct spi_device *spi)
->  	if (ret)
->  		return ret;
->  
-> +	ret = ads1262_common_mode_setup(st);
-> +	if (ret)
-> +		return ret;
-> +
->  	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
->  					      iio_pollfunc_store_time,
->  					      ads1262_trigger_handler,
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
