@@ -1,105 +1,84 @@
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F69D2FF66A
-	for <linux-gpio@vger.kernel.org>; Sun,  9 Aug 2026 16:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A57377574
+	for <linux-gpio@vger.kernel.org>; Sun,  9 Aug 2026 22:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786292655; cv=none; b=iPPqBFtBQnzOJJ2n6kOixJZzuEaE7FlMO0MCLm5t+m7kFMbhoFmrkKPWPZPWEJi6LR8R7g+LjMzVRJEhetfmO61sXaTgfjCix7ZLtukrOofwBPUogxO0vHGnWVeVlwbAOtTDjasENV8azb/vV0damqP7Qs/7Mxk80MuSX+13CB8=
+	t=1786313841; cv=none; b=rHn/t9xqrUfNRdlE4EUA4VPvlS1bPc6OSRy3wrgN/iAmwmTYGYe10v29u0981mUU7ORoUo4BVaSG9+h7x2zJcKM91S2G3LxLmPA5MJGWUOZ4JGkH3zPfDIq+NrMJdpg2XGj/NDRTApJevN/r8Xh9zlZWnoQot7g4Qvw+bpDT3B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786292655; c=relaxed/simple;
-	bh=L8jVhzcEx/1Ri/TiJ6hXDYJPVTTnzDVvCCZJTFtQQNw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=hW4ItO5hkEXEIGVqOnJYh5UgE2MejHDVHtVy7QQ8HTLmfEt8TxOUItd1MJiW/nLc3BcoZEOMkzAkXiJ+EQHE9LVRXBPrNcFd5iXqDBRrvcvoy8bkNut0GSuaWNOI4D67m6a0Nv1kX30C5NY/x0Hnv/XOboZ6CBK49yK64C5pKF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R00Blv2j; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786313841; c=relaxed/simple;
+	bh=nhdqEbSz8qSG7osSBFFJiYNmPxdqJgnHGqPOYaeaDVw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m7f58GHqHFv3/kS2drgdRuoKcdzYgCCt3kcISmf7ucNGbLbKDEZmkAKajYVUFBfRjg/QT96QjrkM3r+M/REtpoWaBo4LBcexPJ4B3b9NwEEXjmICEpfYAWJP2NlIDMNdhIdh/+rTXVlisKVGhvHkVFD4iXCGISKU1EAh6FN1TsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nONNCQXo; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R00Blv2j"
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5c39cb2115cso2572535e0c.1
-        for <linux-gpio@vger.kernel.org>; Sun, 09 Aug 2026 09:24:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786292653; x=1786897453; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=L8jVhzcEx/1Ri/TiJ6hXDYJPVTTnzDVvCCZJTFtQQNw=;
-        b=R00Blv2jCyJ1JHvOuRWxIirbnXSieJQnaFuU2qIecCIGssL2OXmby9NhkIpXoGkRHv
-         V4nUCAP/zl9IUOas4zwgcMDvP73s5uLLWL6rdtod7P/3TKnxcEkEAG7HVcy9ycyioDOt
-         gAApCeEgS8qZ81mk1iFxSACvDPGQ/eTM2qtA3l/Wz8iTnzo18Vi6Dwz7XCWdC9g+j7QV
-         ClZVK+56rnmJ8HyMwTURBkICw4WGXy6U7u8Jk9R3iaTg5JmtLFu2HoxT/TM0XfDHTz8R
-         TuBoUkQrcEsJYQUH2Sn9miCwmkUGudqDOELVw1UaQk+hJZKMZdilOMaZH7EChD+xLJ5J
-         5KGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786292653; x=1786897453;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=L8jVhzcEx/1Ri/TiJ6hXDYJPVTTnzDVvCCZJTFtQQNw=;
-        b=UYzA7Je8GBrK8HesH7duamHc55SfifwKmrjMoDZAhc1UzcyVHTIvhzwND+vKnrIWce
-         MjejGt5QA8XSmQjG0K5YshxwoVzstV1rs7niR4dcNj9jynxtzXALAfbfnydScX7gm8j0
-         CPl8b5hlmXK7j84PtspMjHmyi5JvlH9+r9KvhkB/uiUC6F8UTZ3iohH9WUIPjhbu1Ss1
-         W/8Rt0B+7dyeW0XbN0WSVkZFAhFLn69Jlmi9spj+A6JBSCBHzjr8GtDDCrF4dEt+j6g2
-         OmGYIQezud9dVogOT+mF17sTix3h+ymPkzkqqH3JFzhpfUaTx54XmXzQ/dozV/FJqmNb
-         u3zA==
-X-Forwarded-Encrypted: i=1; AHgh+Rph7fBIHSpQrXCbURCDYksVt7vqA1hbydEoJimBLXMWZ1ju0b3aV8pgJz77WDVFv1aCRIDrSJiydWti@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4GusV+5l6WoTJ+8JpgnP1VOX4on4gKssipjCFX2hl1jQLCS2l
-	MLJQ6KyAGSo8tMXPhNkIRz0aFNfg6kSUlDrAFmI2szkNci21O+HkE+kx
-X-Gm-Gg: AR+sD11beve65q2NuTyshQpL84KA5hLAX3sLHaERu0NKx31UJFp1OLLM/kiumdH7p76
-	t/vcTw+SCs/zKwqQOKKxDn8B5NwMLLe//o4NTT/cwLqc7NUDcegSBlne5V6f/VH4IrG3GMsTrSt
-	jRUmYVtX16QQhnWqepe5L7B1AUd7FUvEXR4db1jK6W1RRuLplhrhopQttf/xqUMyHw2moT5J8+c
-	Ohh6iaQyvCCcna+DNuZHy0Ra9Shcu7KNppKAb/1p1HQWSjO8Un60bw6Z2u4u8PwC62yIXUL4obP
-	95BiWO0YuSgAlLsrnzQ4+HulMXlt1tfDc9TMuX7QOlmejUeZKpvXW2giVZSOQ0RmpZVuqR014LK
-	fWq2pNviZHHrcePtyKoxQoQH8jHEWpHrexB50dMZHB9iXNqYqNyF+7wxhMNcLyZf5P9uHzno9XR
-	R8f/PGfnD1NXi/EVK28XnM4IA0QPM1QrEpaZLOdbhRmCANfnHF0fc=
-X-Received: by 2002:a05:6122:2385:b0:5c2:c79c:c093 with SMTP id 71dfb90a1353d-5c4152d5cf1mr1326569e0c.5.1786292652899;
-        Sun, 09 Aug 2026 09:24:12 -0700 (PDT)
-Received: from localhost ([2800:bf0:82:11a2:7ac4:1f2:947b:2b6])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c4133821e5sm2592233e0c.18.2026.08.09.09.24.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Aug 2026 09:24:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nONNCQXo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4251C1F00AC4
+	for <linux-gpio@vger.kernel.org>; Sun,  9 Aug 2026 22:17:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786313840;
+	bh=nhdqEbSz8qSG7osSBFFJiYNmPxdqJgnHGqPOYaeaDVw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=nONNCQXouVsHIKRK2hYsLMITmuoZ6KEDTBlkONLf7Ufrr47x2CrM+peC5rgyzliJm
+	 SS84wLwSLK7f262JDgYuNpgOMRrzcsffeF+LiNwVcbqgBMrqPC/JxVqRB2aKGoQpEy
+	 TbGT9yyG9Q62ybHRkuE34bRIEbzR0gRqSYDjljgRE2d++ma2jBZIv86L3MN+UWy5HK
+	 cA3dw+qch065Z3xWPrDVPUNQQEbw4OZ8oVrGbFv7fy7oWEmwMHSbh4+9KPNUnf6cwi
+	 rJ0AY5dFvx2QaZYRt/lBpH9Riu8b258iGovP9Nkn5S8w+7xautUS4jf+IEBOSOQomF
+	 ap52fGwbbHabQ==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-39f9d4bed90so29879081fa.0
+        for <linux-gpio@vger.kernel.org>; Sun, 09 Aug 2026 15:17:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rqj4NbfG8dO7RfUYiyeBq891lwm5NVLOlm6rr4lvskOdV4Qz997aQ9fGh1Wh+VrGThhXCSnrcarbOia@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg0c6QY2N1hwvQicZ7i/9qXi+UoZN6dHDueqq3Jv4GeoBgYDRO
+	MMtcwwbu2NnmNvcWgEXXPYc8XwvgFGm3w0Y4isGfCsezt3R3ni+yiDDeU8PRGBsFBir140bOwq3
+	/PisELopEeonBiYN7rkJ5Veqla7MDNlI=
+X-Received: by 2002:a2e:be0a:0:b0:39c:a24b:f0b8 with SMTP id
+ 38308e7fff4ca-39fe830f6e4mr19632901fa.2.1786313839066; Sun, 09 Aug 2026
+ 15:17:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20260808155513.2221976-1-xnorigc@gmail.com> <aneGptJn8J7eF9tj@ashevche-desk.local>
+In-Reply-To: <aneGptJn8J7eF9tj@ashevche-desk.local>
+From: Linus Walleij <linusw@kernel.org>
+Date: Mon, 10 Aug 2026 00:17:06 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkCYwTyK6C8LvZiYJ9fSc8bp3RPpb4d6EgQTRraJtJDzA@mail.gmail.com>
+X-Gm-Features: AUfX_mwdclHsp2TUQj2kqqtrFMTvL6R8j3-WzVqxIY599QYIJ4ZBXCxS7imuOfs
+Message-ID: <CAD++jLkCYwTyK6C8LvZiYJ9fSc8bp3RPpb4d6EgQTRraJtJDzA@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: acpi: Add ignore_wake quirk for ASUS TX Air FA401GM
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Yao Qi <xnorigc@gmail.com>, westeri@kernel.org, brgl@kernel.org, 
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 09 Aug 2026 11:24:05 -0500
-Message-Id: <DKKJW8KLSTON.18355X0IQHY5C@gmail.com>
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, "Kurt
- Borja" <kuurtb@gmail.com>
-Cc: "Jonathan Cameron" <jic23@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Linus Walleij" <linusw@kernel.org>, "Bartosz
- Golaszewski" <brgl@kernel.org>, "David Lechner" <dlechner@baylibre.com>,
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy Shevchenko"
- <andy@kernel.org>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v3 2/9] iio: adc: add the ti-ads1262 driver
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20260807-ads126x-v3-0-f89925d72792@gmail.com>
- <20260807-ads126x-v3-2-f89925d72792@gmail.com> <anetMEd_kLs1YXwu@monoceros>
-In-Reply-To: <anetMEd_kLs1YXwu@monoceros>
 
-On Sat Aug 8, 2026 at 5:28 PM -05, Uwe Kleine-K=C3=B6nig wrote:
-> Hello,
+On Sat, Aug 8, 2026 at 9:42=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Sat, Aug 08, 2026 at 03:55:13PM +0000, Yao Qi wrote:
+
+> > The ASUS TX Air FA401GM experiences immediate wakeups from s2idle
+> > (Modern Standby) when suspended with an external HDMI display connected=
+.
+> >
+> > This issue is caused by spurious ACPI event signaling routed through
+> > GPIO 24 on the AMD GPIO controller (AMDI0030:00), which triggers a
+> > system-wide IRQ 7 (pinctrl_amd) wake-up interrupt during sleep.
+> >
+> > Add an ignore_wake quirk for GPIO 24 on this machine to prevent these
+> > unwanted wakeups. This has been runtime-tested and verified using the
+> > `gpiolib_acpi.ignore_wake=3DAMDI0030:00@24` kernel parameter.
 >
-> On Fri, Aug 07, 2026 at 10:58:24PM -0500, Kurt Borja wrote:
->> +#include <linux/mod_devicetable.h>
->> [...]
->> +#include <linux/spi/spi.h>
->
-> Please rely on <linux/spi/spi.h> to provide the structs of_device_id and
-> spi_device_id and drop <linux/mod_devicetable.h>.
-> <linux/mod_devicetable.h> is planned to go away soon.
+> If AMD people will be quick enough to tag this, I will include in my PR t=
+o
+> Linus W. on next week.
 
-Thanks for the heads up!
+To Bartosz?
 
---=20
-Thanks,
- ~ Kurt
+It's gpiolib...
+
+Yours,
+Linus Walleij
