@@ -1,78 +1,79 @@
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63043AAF4D
-	for <linux-gpio@vger.kernel.org>; Sun,  9 Aug 2026 08:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCE63AAF56
+	for <linux-gpio@vger.kernel.org>; Sun,  9 Aug 2026 08:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786264027; cv=none; b=Nid8II/bJGbdknkjyZGdj+vkN9iiV4CPVHZPBVM4/CN+VbpA77GJ8RQhIheePZcKZH6xhQfiK1B+fYjeQnU+u8PLVCI0P1c+rYPlQBw/0A7AZ4RXDYN+FeXeBoIaSvalBqhxuYmPpnUF25KRj5J/VL17p5Xiy5c+ekZvZ/fxGzY=
+	t=1786264050; cv=none; b=dt/+mN2Ux4aAYs17dOf4lf29Gy3QmBZNIcRw8ewipzfnjfp1R/GwfVvv3yDJCQCTJj81EpIdOCo3zgvtTeDz2S01nMR7C30rFDdN6yHqPsUNmcNFHbEJmChjZ3CA1U6IcB2CMaqk7CXBns4UxvNkJBKGR2g37dxZ4ItUtx0ZldI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786264027; c=relaxed/simple;
-	bh=F5FT9OwhnJ6YSXO2v4rbSgahxv2Ps6idkBRw2W44LTg=;
-	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:Mime-Version:
-	 References:In-Reply-To; b=dmkHjqL6PeCR8jetltoIGzAT7ULxtX+yZgJ7BPx9HvAa7UMe/59qPFe74dTknLWW6NMUOYPt88/vBMn6+En304P+J9XM0bUY+VQNeCSVhAOLQhOj5oNIhcd3071x6BXO60ntA3jASxNZJa5U4Y9fcBqx/u3NLwGriaGB981Jo78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=myNRbsXo; arc=none smtp.client-ip=209.85.217.47
+	s=arc-20240116; t=1786264050; c=relaxed/simple;
+	bh=e3/UIPNP7gbjC9nV94BA6p8px1oacssjGqeAyE4CWBo=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:Mime-Version:
+	 References:In-Reply-To; b=rJeck5QF/791cdbUq+9y5X14MtBs1MRptK+cFNNrZBGn4YWevfTlDIDzhuvuxtLoWKDwoaxUWHHzdFk0rJt2FNplW1XX6cBxuUpRhpK9qiRuRkpwO0QAqYk4NrIJ+r50snqCBtfO9Jk2M/ihtJOwVtN9XVSq+xoeqelRj/Fr96g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YnXXJPJK; arc=none smtp.client-ip=209.85.221.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="myNRbsXo"
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-76535268562so147289137.3
-        for <linux-gpio@vger.kernel.org>; Sun, 09 Aug 2026 01:27:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YnXXJPJK"
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5bfc54558d5so908995e0c.0
+        for <linux-gpio@vger.kernel.org>; Sun, 09 Aug 2026 01:27:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786264024; x=1786868824; darn=vger.kernel.org;
-        h=in-reply-to:references:content-transfer-encoding:mime-version
-         :subject:cc:to:from:message-id:date:content-type:from:to:cc:subject
+        d=gmail.com; s=20251104; t=1786264046; x=1786868846; darn=vger.kernel.org;
+        h=in-reply-to:references:content-transfer-encoding:mime-version:to
+         :from:subject:cc:message-id:date:content-type:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=SDlibkiHCsiPlgn9bXT0ZRW/tQXXQ2ApH6C6TY57GQc=;
-        b=myNRbsXoOo3JnAHDqTYhIQpOp4VVohRSt07qercWR+A0HdfZEGaMLnA+mUn5BpxHk5
-         icEJaj2ya7Fh8aZntdr8vJm1InI+bhJNm6OSb8y6OPqD9rmmLuZHsCaENFrjrEQ8oJaN
-         89PyjdCQxwI+rEEH2vdwswbgep4Q0Y//CvtTj6e1cU84x7jpDzyQsz0mDRo1UnEin4wV
-         eGrdFPe1EiPNWkXeS2OCmkggMsZGuh/SakEdWZID36Zfsqo7bU680qq5EZrxDLVnFg+E
-         nVYG3QHX6FY2qj7NPy9CyhvkzGJGjyc1QWAQvd8gsVzB8XDPc04zjF/UakVcN3ewv2xp
-         582w==
+        bh=yZylItRT990VNAVCf8aOnmfkHepq1DiwSn9nE0fJj70=;
+        b=YnXXJPJK0tPU41UJgRV9b3X1S5PjbmAfP56ewMlHP6jr/JBWXVG+57udhZZBZfHKjw
+         3HC0sMm4j9U1wva1+lX4OO3qZLEv+dX/hAkKjcte/gd4yGFInL9rk+MC+op2EbYGeG16
+         /dus1L2gKoaGhRwmMYjD0pcCiDxqO6RrD9BZ+opOzrtL8SiCjGQdytGHmVEHeChmu0QT
+         RrjArxo9LQC9suFK0tyEFIgAcX7Pz7+wNezW0rZaE/R8EteQOngKVVgBUHPKgfdPaFe/
+         geIqpopAVoVp+KGskmIAu+0yQpAJkmb+xjkl0lpF9qyHEqCPgcAqbZMfVK2tlU/jfdv3
+         zKJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786264024; x=1786868824;
-        h=in-reply-to:references:content-transfer-encoding:mime-version
-         :subject:cc:to:from:message-id:date:content-type:x-gm-gg
+        d=1e100.net; s=20251104; t=1786264046; x=1786868846;
+        h=in-reply-to:references:content-transfer-encoding:mime-version:to
+         :from:subject:cc:message-id:date:content-type:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=SDlibkiHCsiPlgn9bXT0ZRW/tQXXQ2ApH6C6TY57GQc=;
-        b=EF6MSKNjo6kReHBo+12aKaqKDRijKk3HBEdjgSoOl92/AnmGy//sxpSYizG+BwcrZ0
-         Y3Qg4/m5LRECJbQorhcB/rIPdYwIeVhwwBb+c23LZ3cQLx4nRA7oqgkfgljzqlSarc0/
-         bkYcvzT561bwQVGtphtdBYxPld3E4NPIdBFWXrcqW39pl4ADGCe46hkWZO3pfXs9XfrP
-         tKvZKWOgbhI1WxHBu3oKpXrgLK2ZXBlavsuOf9KqFwwSavaoHpPPG18lWsnPvD0vprXh
-         Vu+aneRMG4W8ksuaO0rmIRY77vBbT+QSOOp2eZx+dTCdyuGsaMq3Y03cngWj0Ny6r6AR
-         s7Ug==
-X-Forwarded-Encrypted: i=1; AHgh+Ro5ic8up/IDqWbjlaDxFiW9AatGylfNY3iEuH9YlBEtMYSMIUJERbvE0op0N74Tb1qonkhPmlvgFzOX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrIktJkIBuiPz9nnsEutEAwg2oMheIQMoodmJPsII3E1jPvZ4g
-	y1uILZIZTKnu0MUuX0bx0ABFGnNOEclK64VyUd1KDhD7RfH0cP/taNle
-X-Gm-Gg: AR+sD136nrBTmdTTzu9GYBOZbSWSQMz1sd/7OHuoqfFXdedr1lzTqqBZ0+mNVp1kDmO
-	MZ1WKcRlx4kVVYCb9UaDPzhBy3B+uhoVYQCNaE+xzjx46Qwc3er6zHiE3YJ4YFe3tzSapJeRcas
-	eRGSOdX9cScj32/iOospNifbU9e2RBTDyvPekL9BU+lhH+XWPjjH7LKxB/axHrARm/AE0zpS+dK
-	QucjVRe3NjKeod3g0iqj6f9CpTl0hEXDYrBKJh+GNA8A0mqX5qJ0P6TqyCLJWrwDoe1qbuOhCtn
-	X4fHoA5f64mKFTbgnOHWWA/hFPtRG4AW31zpgvYro2q0wieB4tUwChu3ivFFps91pTn+BYps1lE
-	A0m0GrEvOj8byIpzK26SQD0jj2NPQFmYTS94AlS0lBNNPkHItYI3XAaoVrhsMubbmzDjpXyw/qV
-	4uoGMSK6uFzoxEsQsTQAKZNlQ9UkxmvLaTgcvNSx3BR8ibchSHjAI=
-X-Received: by 2002:a05:6102:c10:b0:75f:e517:ec96 with SMTP id ada2fe7eead31-760e3194fc4mr8187153137.0.1786264024434;
-        Sun, 09 Aug 2026 01:27:04 -0700 (PDT)
+        bh=yZylItRT990VNAVCf8aOnmfkHepq1DiwSn9nE0fJj70=;
+        b=qaV+xZm/XJX/pm2/L6QA6appE4Mu+euwpJOWPuMbYTRTp6hLTUCEOEm+hIiQYkgxhK
+         ucZubu92fXN81UDpJct/bGWUE1uVqVIidYoLcg7+pXlXireFeD1vHGBlyIk2CJWC4FaC
+         C53VvmS5DOv7/4TF1J/t54g/MMrEXIpPVOwF3k6DfZ8hICI7gbqHWxXdydcBzbSzzcTL
+         1vNlRndduoPwH3WjPGKGd9X+tmYVWp/ejMBOeHv+k/+ThFpMvyxNxModFUI2LGZgfdw1
+         wIzYWLrR9f6wVy7EvPndyhmuSfJ+Jp9ycqE/AqQS/75Q3kUnkhJgl9Ze7eWWy6kJp9Mm
+         m1lg==
+X-Forwarded-Encrypted: i=1; AHgh+RrWM4egPGDEoAyepki6m3fevPCQxAmat6tnjlktw8NlyPJHHZ51qS1zOFlj5SEvEb3W+EKMwg6SCFND@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqRH7ZRvi2BpjM63GHzjym/Sxai7Zw+67nJDCqg1V5XJxFDRIZ
+	Xa/luCOjmDfkOKggWqSw7e7f+7Y672hFFyc2eVVGCto2wQgpNNTH2jVT
+X-Gm-Gg: AR+sD11sBCbWdWhpdvQfm8bIr0OTMqmMU/spTdNd4+nZa8CvTzfuP0J+uWUaYzsDKIO
+	nAgtekiZpawkACLsFO6G+kizC92/mf2W6BNsS25N6Vc2eQQDVejEMDGYdKCxEwwYSkMY+7fxrGT
+	VnLknNpcKvYFx9acIRkd0lDHWR9r8DzcaZ0D4j49xpqWHmy/KdC5JfXD8qBP4tV4LPyaEJ8WeWR
+	n0/xyoCKA6GF/n5UNh694sPEPx9ROH8hwDqTbFO49QuB0zZydwpCxSDCKKleDuvL0x5AVBKyUVC
+	IH5YprGk0BXMZZDUHMYSAqP1/RBDXMd6ru49cBIpow21KOCmUNe3VYb9kwvR5KfT6Zk4DhKAIio
+	NmWsPqSM1sMMIIGMsN+bURHDQK3ywS363rOljoel37K+Xv9Y/kYLa9YhEEFwstVIwY43uzI6fVC
+	WPwg5Q+WrJiIYFeqc04Emrf9wd6iFWCBqoLI1MChAABpIppZ8e6uo=
+X-Received: by 2002:a05:6122:5102:b0:5c4:1e3:5eb2 with SMTP id 71dfb90a1353d-5c41543034emr902542e0c.10.1786264046317;
+        Sun, 09 Aug 2026 01:27:26 -0700 (PDT)
 Received: from localhost ([2800:bf0:82:11a2:7ac4:1f2:947b:2b6])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c40b1db997sm2752812e0c.13.2026.08.09.01.27.02
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c40b1db997sm2753075e0c.13.2026.08.09.01.27.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Aug 2026 01:27:04 -0700 (PDT)
+        Sun, 09 Aug 2026 01:27:25 -0700 (PDT)
 Content-Type: text/plain; charset=UTF-8
-Date: Sun, 09 Aug 2026 03:26:57 -0500
-Message-Id: <DKK9QWYHOBOT.2VD8XMZTE65H4@gmail.com>
+Date: Sun, 09 Aug 2026 03:27:23 -0500
+Message-Id: <DKK9R9BGWNUT.314LHBLU3R8LO@gmail.com>
+Cc: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy Shevchenko"
+ <andy@kernel.org>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v3 3/9] iio: adc: ti-ads1262: support per-channel
+ sampling frequency
 From: "Kurt Borja" <kuurtb@gmail.com>
 To: "David Lechner" <dlechner@baylibre.com>, "Kurt Borja"
  <kuurtb@gmail.com>, "Jonathan Cameron" <jic23@kernel.org>, "Rob Herring"
  <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
  Dooley" <conor+dt@kernel.org>, "Linus Walleij" <linusw@kernel.org>,
  "Bartosz Golaszewski" <brgl@kernel.org>
-Cc: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy Shevchenko"
- <andy@kernel.org>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v3 2/9] iio: adc: add the ti-ads1262 driver
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -82,172 +83,58 @@ Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Mailer: aerc 0.21.0-0-g5549850facc2
 References: <20260807-ads126x-v3-0-f89925d72792@gmail.com>
- <20260807-ads126x-v3-2-f89925d72792@gmail.com>
- <ad95afb4-e667-4290-8878-fdd7067f20fe@baylibre.com>
-In-Reply-To: <ad95afb4-e667-4290-8878-fdd7067f20fe@baylibre.com>
+ <20260807-ads126x-v3-3-f89925d72792@gmail.com>
+ <6f403c9b-e6b4-4144-b78b-844d0cc02b1d@baylibre.com>
+In-Reply-To: <6f403c9b-e6b4-4144-b78b-844d0cc02b1d@baylibre.com>
 
 On Sat Aug 8, 2026 at 1:39 PM -05, David Lechner wrote:
 > On 8/7/26 10:58 PM, Kurt Borja wrote:
->> Add the ti-ads1262 driver with initial support for the primary ADC
->> (ADC1). The ADS1263 auxiliary ADC (ADC2) is handled by a separate driver
->> and interoperability considerations were taken into account.
->
-> Should probably mention here that IIO_CHAN_INFO_SCALE is intentionally
-> left out here. (Or just implement it using internal reference voltage
-> to start with.)
-
-I'll mention the scale is left out.
-
->
+>> Add per-channel sampling frequency support. The "available" attribute is
+>> assigned per-channel too, in order to eventually support per-filter
+>> availability.
 >>=20
 >> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 >> ---
-
-[...]
-
+>>  drivers/iio/adc/ti-ads1262.c | 159 ++++++++++++++++++++++++++++++++++++=
+++++++-
+>>  1 file changed, 158 insertions(+), 1 deletion(-)
+>>=20
 >> diff --git a/drivers/iio/adc/ti-ads1262.c b/drivers/iio/adc/ti-ads1262.c
+>> index d78e5e3ae13e..b3b7b1249102 100644
+>> --- a/drivers/iio/adc/ti-ads1262.c
+>> +++ b/drivers/iio/adc/ti-ads1262.c
 
 [...]
 
->> +static int ads1262_dev_reset(struct ads1262 *st)
->> +{
->> +	int ret;
->> +
->> +	if (st->reset_gpiod) {
->> +		ret =3D gpiod_set_value_cansleep(st->reset_gpiod, 1);
->> +		if (ret)
->> +			return ret;
->> +
->> +		/*
->> +		 * The RESET pulse timing requirement is 4 clock cycles, at the
->> +		 * minimum clock rate this is 4 microseconds.
->> +		 */
->> +		fsleep(4);
+>> @@ -148,6 +149,7 @@ enum {
+>>  	ADS1262_DR_14400_SPS,
+>>  	ADS1262_DR_19200_SPS,
+>>  	ADS1262_DR_38400_SPS,
+>> +	ADS1262_DR_COUNT,
+>>  };
+>> =20
 >
-> How long do we have to hold reset before the chip powers down?
+> /* FIR filter has limited data rate range. */
+> #define ADS1262_DR_COUNT_FIR_FILTER (ADS1262_DR_20_SPS + 1)
+>
+> So we can properly restrict the rate when the FIR filter
+> is selected.
 
-For power down 65536 clk cycles. Less than that is simple reset.
+There's also a hole in between. The 16.6 SPS data rate doesn't support
+the FIR filter. Maybe I'll need one array specifically for the FIR
+filter.
 
 [...]
 
->> +static int ads1262_wait_for_conversion(struct ads1262 *st)
+>> +static void ads1262_populate_samp_freqs(struct ads1262 *st,
+>> +					struct ads1262_channel *chan)
 >> +{
->> +	u64 max_lat_ms;
->> +	long ret;
->> +
->> +	/*
->> +	 * The first conversion latency is affected by the channel's data rate=
-,
->> +	 * filter, the configurable conversion delay and whether chop mode
->> +	 * and/or IDAC rotation mode are enabled.
->> +	 *
->> +	 * The worst possible latency is calculated by taking the lowest data
->> +	 * rate (2.5 SPS) and the sinc4 filter. This gives a latency of 1600 m=
-s
->> +	 * (Table 9-13). Then we scale it by the actual clock rate and multipl=
-y
->> +	 * by 4 to account for chop and IDAC rotation modes (Equation 20).
->> +	 */
->> +	max_lat_ms =3D 4 * div_u64(mul_u32_u32(1600, 7372800), st->clk_rate);
+>> +	int freq_Hz, freq_rem;
 >
-> These are constant values, so don't need mul_u32_u32(). Also, given the w=
-ide
-> range of possible sampling rates, I would include the current sampling ra=
-te
-> in the calculation. No need to wate 1.6 seconds for something that should
-> take a few 10s of microseconds.
+> Shouldn't these be u64 and u32?
 
-Can we leave it like this until I implement the settlingtime? That way I
-can calculate the actual first conversion latency.
-
-[...]
-
->> +static int ads1262_debugfs_reg_access(struct iio_dev *indio_dev, unsign=
-ed int reg,
->> +				      unsigned int writeval, unsigned int *readval)
->> +{
->> +	struct ads1262 *st =3D iio_priv(indio_dev);
->> +
->> +	guard(mutex)(&st->xfer_lock);
->> +
->> +	if (readval)
->> +		return regmap_read_bypassed(st->regmap, reg, readval);
->
-> Don't trust the cache? :-)
-
-I don't trust myself :-) This was relevant early in development, I'll go
-with the normal version.
-
-[...]
-
->> +static int ads1262_parse_channels(struct iio_dev *indio_dev)
->> +{
->> +	struct ads1262 *st =3D iio_priv(indio_dev);
->> +	struct device *dev =3D &st->spi->dev;
->> +	struct iio_chan_spec *specs;
->> +	unsigned long used_regs =3D 0;
->> +	int num_specs;
->> +	u32 reg;
->> +	int ret;
->> +
->> +	st->num_channels =3D device_get_named_child_node_count(dev, "channel")=
-;
->> +	if (!st->num_channels)
->> +		return dev_err_probe(dev, -ENXIO, "no 'channel' nodes configured\n");
->> +	if (st->num_channels > ADS1262_MAX_CHANNEL_COUNT)
->> +		return dev_err_probe(dev, -EINVAL, "too many channels\n");
->> +
->> +	/* Account for the timestamp channel */
->> +	num_specs =3D st->num_channels + 1;
->> +	specs =3D devm_kcalloc(dev, num_specs, sizeof(*specs), GFP_KERNEL);
->> +	if (!specs)
->> +		return -ENOMEM;
->> +
->> +	device_for_each_named_child_node_scoped(dev, node, "channel") {
->> +		ret =3D fwnode_property_read_u32(node, "reg", &reg);
->> +		if (ret)
->> +			return dev_err_probe(dev, ret, "%s: failed to read channel reg\n",
->> +					     fwnode_get_name(node));
->> +		if (reg >=3D st->num_channels)
->> +			return dev_err_probe(dev, -EINVAL, "%s: reg out of range\n",
->> +					     fwnode_get_name(node));
->> +
->> +		static_assert(ADS1262_MAX_CHANNEL_COUNT < BITS_PER_LONG);
->> +		if (__test_and_set_bit(reg, &used_regs))
->> +			return dev_err_probe(dev, -EINVAL, "%s: duplicated channel reg\n",
->> +					     fwnode_get_name(node));
->> +
->> +		specs[reg].scan_index =3D reg;
->> +		specs[reg].scan_type =3D (struct iio_scan_type) {
->> +			.format =3D IIO_SCAN_FORMAT_SIGNED_INT,
->> +			.realbits =3D ADS1262_ADC1_RESOLUTION,
->> +			.storagebits =3D 32,
->> +			.endianness =3D IIO_BE,
->> +		};
->> +
->> +		ret =3D ads1262_parse_channel_node(st, &specs[reg], node);
->> +		if (ret)
->> +			return ret;
->> +
->> +		if (specs[reg].channel =3D=3D ADS1262_INPMUX_TEMP)
->> +			specs[reg].type =3D IIO_TEMP;
->> +		else
->> +			specs[reg].type =3D IIO_VOLTAGE;
->> +
->> +		if (specs[reg].channel !=3D ADS1262_INPMUX_TEMP)
->> +			specs[reg].indexed =3D true;
->> +
->> +		specs[reg].info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW);
->> +	}
->
-> If we are going to use reg to determine the scan index, we need to
-> make sure there are no holes in specs that didn't get filled in.
->
-> device_for_each_named_child_node_scoped() will skip `status =3D "disabled=
-"`
-> channels, so this could be a possibility.
-
-Ah, I didn't know some channels could be skipped. I'll check for holes.
+I would have to cast them to int either way. Also I think it shouldn't
+be a problem within the recommended clock rate.
 
 [...]
 
