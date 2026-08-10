@@ -1,133 +1,133 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DBE3A4F30;
-	Mon, 10 Aug 2026 09:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387F8309EF9
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 09:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786353173; cv=none; b=sQBjk89j5JUiQblNWNilI3w9FlyWA7igykDDhK6i3TkSZXfrI2r9rtLOt36iMHRtt/brJ6jVLq3XM9yXXDSq31PF1GNo0SAZg+BgefwcJVlRpvJ8pz0OAl75VN7D/AX7bkbzBlsWfNWEJWeDFm0jVTsZ3Hyf0IxiFNJO43OwXvY=
+	t=1786354685; cv=none; b=rVfdxzrxeFAvfmIB5xJMeYTAFglRSVxZSyGTIfHLIWge4/F53BZc6+P/GgU9sdvFdb1HM76MuPbXrKJidMQZUSszQW1Ubkol9fW5I2yTpTqP//FpzjY3y2gX6fDkqX1+Io03AqBZmKOXCMUtqq+UHXBM1A/v6h1JUgSqUUnLYqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786353173; c=relaxed/simple;
-	bh=KbyP52yX1Fc5M0iYUxcfXNkbcaU95W0GezyjeE8qj58=;
+	s=arc-20240116; t=1786354685; c=relaxed/simple;
+	bh=xIcVYX0/9wf5NDk4ZC0V2d1DNB2jwH5MbDCYWw3Ll+E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jGZbyJQxYzfgF347c6N/W7wRX7mCZXB/CudFQ9IJLXnqvZCu0F8c3UX9VC1q/hEFxOh4rI+jxSjh9oK56rwSdk2CgQb/Vt3Lgquq9Awsra0yuyWETLnr3sNwu9nWmoIjnGJSRKdNLIQHK00bE3klYmtOfLJ2xzf/a2jS27xW6Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EMMTWoPQ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=mcgrlJ9W7vCCXr4VBfDZ9sRfjV9qoaUjB8udrmkSiFBkRgCAIgUmesXXov6MBTcEw598K/Yd7HsJGnbJU7VI0ZHGIgAwVeorCmXjJ74XGt02MC7J5e2PPCEVGkqSXEaLa+CfTYMtK9cIhDu+63hT+jlTY8K7jpo8cgN0IfkNIjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=X7WQzG3z; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EMMTWoPQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786353172; x=1817889172;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=KbyP52yX1Fc5M0iYUxcfXNkbcaU95W0GezyjeE8qj58=;
-  b=EMMTWoPQsE3KlcM0nNk7HkvGyjk/bolUF9qke3QUPk9P3U+vkLI6u3ky
-   yLHgaE1V2BlfZKp67bPztIBXDdu5nhMrVxTSEA5e40Ee+dgq74V8rUM/u
-   jhLgxpH//3E7hM78HdG7GZvbxzg5eFH4cxujci9LSyWveve/tJ8HIMCXI
-   8aMQSglKejJYxQJnq1AgiOi0W4oVM3lwEPFMXxknzgHrdeWrXOLmgsLlA
-   HMgcVvBpt05qsVMWI6B5JjktZKtOuFWCp/a0t3rzrQFK9AJHsuMXAo0AK
-   SOKoq7PlKjM9e7hYCKYbOq3pRWKODSSrQ0e5RifQNv3bzOOusNiE1yetQ
-   g==;
-X-CSE-ConnectionGUID: WlFaw+YYS0ygSmEGGGJdJw==
-X-CSE-MsgGUID: TmsmZ3B3ReScbkx7sIAcag==
-X-IronPort-AV: E=McAfee;i="6800,10657,11870"; a="90540087"
-X-IronPort-AV: E=Sophos;i="6.25,215,1779174000"; 
-   d="scan'208";a="90540087"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 02:12:51 -0700
-X-CSE-ConnectionGUID: Zap65IgfRyao47/XSMPIRA==
-X-CSE-MsgGUID: 2mcW99ImTKyDObLUkRAsdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,215,1779174000"; 
-   d="scan'208";a="287692937"
-Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.99])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 02:12:44 -0700
-Date: Mon, 10 Aug 2026 12:12:41 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: Eliav Farber <farbere@amazon.com>, rafael@kernel.org,
-	tony.luck@intel.com, bp@alien8.de, guohanjun@huawei.com,
-	mchehab@kernel.org, xueshuai@linux.alibaba.com, lenb@kernel.org,
-	laurent.pinchart@ideasonboard.com, linusw@kernel.org,
-	brgl@kernel.org, orsonzhai@gmail.com, baolin.wang@linux.alibaba.com,
-	zhang.lyra@gmail.com, jic23@kernel.org, dlechner@baylibre.com,
-	nuno.sa@analog.com, andy@kernel.org, dmitry.torokhov@gmail.com,
-	hansg@kernel.org, ilpo.jarvinen@linux.intel.com, W_Armin@gmx.de,
-	fabio.m.de.francesco@linux.intel.com, kaihengf@nvidia.com,
-	ankita@nvidia.com, leitao@debian.org, pedro.pbg@usp.br,
-	paulmck@kernel.org, frederic@kernel.org, kees@kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v4 01/13] notifier: add device-managed registration APIs
-Message-ID: <anmWCWT_p8sIMwyf@ashevche-desk.local>
-References: <20260726101739.33170-1-farbere@amazon.com>
- <20260726101739.33170-2-farbere@amazon.com>
- <anlUQXtxrghA8kNT@monoceros>
- <anmVwiYW6fT7XhD2@ashevche-desk.local>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="X7WQzG3z"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-47fe89fb333so812991f8f.3
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 02:38:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1786354681; x=1786959481; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=xIcVYX0/9wf5NDk4ZC0V2d1DNB2jwH5MbDCYWw3Ll+E=;
+        b=X7WQzG3zYN2tH+5v3xjFipwf/LyyZ6ev6TwkMKo9w2LmqL1nj5ERVc0V+oitt+6Aij
+         m+hcj+gK1FTFvPO8wV4Ooo6BiUcfmlOtIqrJUTn7mhwLJoXddzrEIkKsNjUi+qte5Xbi
+         6vbh3HaODe/NlOafSpAe7w990wEUUo1Y14XVCZJMLYo6NK3qnMfRoW1dNxg74ABHEovP
+         A++eaPx5yMepnY3Debr5lWfC8T5JvR0DzfeRewSgA+OmlmxMEyRxJYfVrjK22THCl0bn
+         9ozKU+OV2/Ph6HLey3EuX5ttzTsjMtYK7VJl+UFs6i2ilQMFVwuGv68h0nNJoKjl2UzV
+         AWBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786354681; x=1786959481;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=xIcVYX0/9wf5NDk4ZC0V2d1DNB2jwH5MbDCYWw3Ll+E=;
+        b=B4mcngrMURUS8GJxlc2hChztFcgUugTZiFJqtPLPQQunZCOyEyqj5mq7TZsZcfDgar
+         AieaOPCtxgUf/cbMNhd0J4rnYEr98SQetpOyt30yAkrFxsIxyO+qK8AoLiUHmFOTkGfC
+         L0ympmDd2q1LWxO4dUXnunlCyKcKSb8VJaHu0vMXDIiyrp2QDAQUi6Re8UO8NQkqgmxH
+         ill79UEUUfte/AON9nDNYUItPtjnJC5zclQApb63VYUC0wTSeY1FHXMXK+vDGBBn/Sge
+         GOthiybsXXF1T64vh/A2le9fvNrYdvn3oYnHGSHNfh5NNs5oAKw1glDMvrQwTpWQw8ce
+         jn4Q==
+X-Forwarded-Encrypted: i=1; AHgh+RqZ1JizVGZdmLzcdrbd1qwRujiZi4LFNtEJu5LgKeyjS48QWg2q0b2zmQeSztcpZ0MAuVHKATiMuT/F@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRdk1zNUPfJz8p7601tBUz+WI2AEo/Xzi548wbthdHQNC7jCrW
+	fpuzefbRJyftJUZnQiVk5T8gMzx05Yj7Rg222p25ZSo6Ro+kjZxrNj6sR3XIrAH52Eg=
+X-Gm-Gg: AR+sD11xPQllY5diIgjmxnY29CV55Ty8553LbVjLgf9BTeJsyL/9FTGXhLhtgAFyhu8
+	Gq1spuZQLj1pGSmdI5ik+VQ5iTy+hElOzjlVFnsa2fXJYtVv53qRYdNcTBYFWcENDQyNfDtvw0C
+	qWoEp5VlHvVIiWXCAOBtJJDmihB5JiuYejayFhrN4VB4KGHUQecQHf3w5GSTfS6jrfQfeelPl+b
+	HmMSh5i3IsXqngHADGQztwcn1u0C9D0y5d6kC1KxNkrvYIGkB4hoWFN3rnc4M64WZ0UdLuczV6n
+	rEHbZhML2nUnf4PJbMP78QWe+ks64TM0g/D//xTV3FKwq4JqTi3lgPsmzQ/1GJ8LD8MVpHSW0pG
+	LsvI1ziPN0Uj7cNv9UriTHJGvYQs8zzgOdTMOgRpGldfkMbqCgnpFUvCH6TfY05pPnAZufmpJBZ
+	VVv0hu1nQ7OHidTBm9qA0uhRpXq48pXCG4RrDWZrb3RSaTustJbHvKcEFFlVAx3CTgmVmkHGmC/
+	Wumn2WVa41HbiM+OespZ74Ipwkje7HuFo/tedw0lsjhe7QOZ1bh8aQtKh4IHuM=
+X-Received: by 2002:adf:e194:0:b0:47e:aa3e:e75e with SMTP id ffacd0b85a97d-481455df4f3mr803199f8f.10.1786354681431;
+        Mon, 10 Aug 2026 02:38:01 -0700 (PDT)
+Received: from localhost (p200300f65f017104988877d75683e2e7.dip0.t-ipconnect.de. [2003:f6:5f01:7104:9888:77d7:5683:e2e7])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-480021e7b3fsm35703729f8f.20.2026.08.10.02.37.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Aug 2026 02:37:59 -0700 (PDT)
+Date: Mon, 10 Aug 2026 11:37:57 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Georgi Djakov <djakov@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
+	Robert Marko <robimarko@gmail.com>, Guru Das Srinagesh <linux@gurudas.dev>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 07/15] interconnect: qcom: Add Kuno interconnect provider
+ driver
+Message-ID: <anmbi_gXKslOw0bP@monoceros>
+References: <20260809-kuno-soc-support-v1-0-5e0ede4a0c72@oss.qualcomm.com>
+ <20260809-kuno-soc-support-v1-7-5e0ede4a0c72@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3xac63pr2vji44lb"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <anmVwiYW6fT7XhD2@ashevche-desk.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Mon, Aug 10, 2026 at 12:11:40PM +0300, Andy Shevchenko wrote:
-> On Mon, Aug 10, 2026 at 06:37:25AM +0200, Uwe Kleine-König wrote:
-> > On Sun, Jul 26, 2026 at 10:17:27AM +0000, Eliav Farber wrote:
-
-...
-
-> > > +{
-> > > +	struct atomic_notifier_chain_devres *dr;
-> > > +	int ret;
-> > > +
-> > > +	dr = devres_alloc(devm_atomic_notifier_chain_unregister,
-> > > +			  sizeof(*dr), GFP_KERNEL);
-> > > +	if (!dr)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	ret = atomic_notifier_chain_register(nh, n);
-> > > +	if (ret) {
-> > > +		devres_free(dr);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	dr->nh = nh;
-> > > +	dr->nb = n;
-> > > +	devres_add(dev, dr);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(devm_atomic_notifier_chain_register);
-> > 
-> > IMHO devm_atomic_notifier_chain_register() should look as follows:
-> > 
-> > 	ret = atomic_notifier_chain_register(nh, n);
-> > 	if (ret)
-> > 		return ret;
-> > 
-> > 	return devm_add_action_or_reset(dev, devm_atomic_notifier_chain_unregister, dr)
-> > 
-> > which is much easier and includes less details from the inner workings
-> > of devm. Same for the blocking variant.
-> 
-> Won't work. We need more than one parameter and hence the whole devres_alloc().
-> Please, look closer to the code.
-
-And just answering ahead, no, devm_kmalloc() is not good bandaid as it makes code
-not anyhow better to read and have a downside of memory fragmentation.
-
--- 
-With Best Regards,
-Andy Shevchenko
+In-Reply-To: <20260809-kuno-soc-support-v1-7-5e0ede4a0c72@oss.qualcomm.com>
 
 
+--3xac63pr2vji44lb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH 07/15] interconnect: qcom: Add Kuno interconnect provider
+ driver
+MIME-Version: 1.0
+
+Hello,
+
+On Sun, Aug 09, 2026 at 12:57:06PM +0530, Hardeep Sharma wrote:
+> +#include <linux/device.h>
+> +#include <linux/interconnect.h>
+> +#include <linux/interconnect-provider.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+
+Please rely on <linux/platform_device.h> to provide a definition for
+struct device_id and drop <linux/mod_devicetable.h>. The latter will go
+away soon.
+
+Best regards
+Uwe
+
+--3xac63pr2vji44lb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmp5m/IACgkQj4D7WH0S
+/k6R5Af/ZHauc3SyLK+PyzhuAVo8KLioCnH6hR3DN0mwmmRoImnIwhh/fZ8+bxX6
+4sjLWVHk3LNdw7myepDx8m5LApUqxoXGF8MFr2ei4fdCiuGploizmUZTp3Gk89n6
+i05o9xebgzD7+GHFMl3dkgkR8Dlgwhlkiu/eQcM68rZlB+dcqBWwmTIlNam/Ns6h
+DlMcTTmlbkteGx2LreH2BUe4x/5L5HKGnzdEbtkBPY+G/QxvT+BXS3TFwkfblKBF
+KvzW5xksFzfP6mNdXxofjZ1Az5JBPefKwO2VaVRTfH90dspMqIqaB4zuscwYL2J2
+gYsqyFDe+2fuOzTFDh4IeXloKHG9uQ==
+=FHMs
+-----END PGP SIGNATURE-----
+
+--3xac63pr2vji44lb--
