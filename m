@@ -1,65 +1,65 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96AE28506F
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 05:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E912B277CAD
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 05:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786339938; cv=none; b=H4TvhRmufOXuCOcCLxUeGfHANXvS3mfb3cOMz1kbwWRloIglGmwyDAZ3N1K49PZnyAYwdSlTB/V2xOa32UqPa2GxM5rWuBQkSTg+hHdtygwQImeAcKZBh3650JZds1s4t8U49EQIE+KcBQpdTyPyGAsX21SnYFTIxXVQ7V+hgwo=
+	t=1786339942; cv=none; b=m6W3AvckVaVg6EO1SEw3uiwzdXq9G80NnFGmuUewRA/0sox1Ms1/K6UOoGLiesGmoCjlPbAq3NOXcbKlVj/i5vsd8FOdJuNL8gs+h3u6JLDI5X7XRZU3OpmSR9Z4crqEJMGKOpRqWlD6eXgXAemzhMi5+GpgoflRXzfq0hPZptM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786339938; c=relaxed/simple;
-	bh=s77a61BbsknAakN258S6NSFapTQvojXVtuhgWrPYnII=;
+	s=arc-20240116; t=1786339942; c=relaxed/simple;
+	bh=TZzNknFHH7BAGkc2XtagQlGwqztMWM1CC/x+6ogyXf0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jOmp2LsVxqdt7fA6o0ghN6F39T78Vo4E5iCmcyCv2Xyg/t0IOblTV8GnaXWFDr2/zVztcKxYLOQ5uXWEAEnv3JGz77IRLib3IRtu6EfKHMQ7RgMLXhnJG9NQQNdwCCNJXBWzaYzh47jNaAhylmkSltd+Wyq4m6gGDmVU1weSciM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+2LdqgL; arc=none smtp.client-ip=209.85.210.179
+	 MIME-Version; b=GzEYMLzrMBO9kOwigOmxMmTywDM8YeIqhVc0W5TNGYEMtfub8YjzsnnxYKCqaFMu8HT3k1hPGkLyp2+1IUELdX8/Ao/MUyJ7eMfnkhShb5e0VlHN24S4ezI23cuLAjj7BvwonFdM/GkDgRQuYJSERmzetTLjs+x2SR/0XbENTIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qgZKlwDo; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+2LdqgL"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-84a2c90e383so2874704b3a.0
-        for <linux-gpio@vger.kernel.org>; Sun, 09 Aug 2026 22:32:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qgZKlwDo"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-8485b358552so76427b3a.2
+        for <linux-gpio@vger.kernel.org>; Sun, 09 Aug 2026 22:32:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786339936; x=1786944736; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1786339940; x=1786944740; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=9nbcA9WfihtzxcJZe+GIGSV+aV8ohwK7+rsbkazv3zo=;
-        b=P+2LdqgLgdOio66vwAtN/FWmNdnSY2PQWW1jfTvgr5tlMYSYUFbufCan9C6L+T5++9
-         R+ZZU+cAajpKZ7dQ/0ZHdSgZAXopnVtyn8oK1lOGlocGgw1ZoLfcbqnzL97wzhYxPF2d
-         Rjhi2Q1rlA80TFFA2Nj31j+q1SHOdmbezpOcG/EfYGDrDCmaNbKf1uCqm7r6wRIlvfnW
-         jCzmsrEhn0TH+SsK10mI8kpXsekB88HvOrdL6Tao6AuzZWE8mHjcu9zn0G8nzWh9V0lL
-         Dpg8iUUoKXVa1HvSe7InRe65o3lOEaVhyb+dZ44gOn3tsFpCJnI1+bF2lztg8C1rv6cj
-         ca3w==
+        bh=nqCy83cYqtfb3bIbmbQFkKP649F3cDpniFvDlQX5M8w=;
+        b=qgZKlwDos1NPicwJSc00MDos1rE4KYxIBmwa3l4sjiyRqDo2X8cJfob9ohBdK4WGal
+         UBO7HkD2m11g5xZwK4KDFk8SqUMstHQ/OIgMPEh1Qq0imsnxZXB0E3v9cw2EIKmRh8Wl
+         VXzr3dVXrZ2tsQFfbM9WATXQiqlz++3uvfAE970rW2/RgLJOViak+EVo/muf3Gks7jSr
+         OO8Gzlw7KM5UTKftdi64lTIRYdg988Z7B+nmiU5hI2hgUQ2WHpd3/Cn7quBhwSwAb4sK
+         +ZqW5pfZkML0d8gakE2pCyLdpVZ4zOdC6w1UADW2IlvuGAMTRY5DAZVoxpVU33nTKfI2
+         NF4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786339936; x=1786944736;
+        d=1e100.net; s=20251104; t=1786339940; x=1786944740;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=9nbcA9WfihtzxcJZe+GIGSV+aV8ohwK7+rsbkazv3zo=;
-        b=Di2ty54ir8ATm3m1E0KdSYlKd3v8Y7P5TAvxaEpFd2k8/CairtsjqtsGd2gI003JD1
-         OGs/9gfXXkUicemsxJUZogUnHL1EGloUVDQNDeFOhB2bZj2jiSHza8zdoh5nd4gW0Ohu
-         oAdpC/cSTXgk5KPVg4f9YQSG4sDV8t0lgEfhH/31rd005a9CvvyaFhFewWyEyhfhwCAO
-         As8CLJdFKcDVKtQfvsEE6OheXFd19gZaXOFcuUpaSGECoHWEgGln1i01RDWZhgOFLazD
-         vLzwNTk0txilnTqvfKn+5dF4d9QxIkGL8bk/siSnxQbIbJsx15syixl7+Oor0enMK0yq
-         hxyQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpBWeNiG3U7vCDwomhn+zPBYA8YsF7CnutgyOMfnIdhEzOibTPxtdZOjubw+f1edcpiZ9kKNn1CpbwH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv6XDDaGHyjUXhBIaopL9c2aGh2wt8wOdRxUdgNEM2QKKhAeyI
-	d1U6f7hn1an90C0Hcpi4/jOROf+YfoHaeQVpTtQc/6Yyh6GQ/lMri9xE
-X-Gm-Gg: AR+sD13saemgSbdjH4YdoLDsUwAQbgiDO+ixW4lWkOcOxfnP/BpFYgwIqdzBxf55q/F
-	EE+ysyoEQS5jRRjAIK5tq3eCSgraj2i00PjWvvgLuBUhTkgxW8RKSerhQW9S9I5qVDlvpItDrtg
-	R7B+fH2QvHZQJMZau/jlrzc5XJqWRXFsV9XXQcodULNZPqG98ls+4aD50jjbOeqeZDGF6HTmXf+
-	XeDAdnG2wJW4FC9fTfPFKj5Wkcx0NqWkZ1r/W+mmBig5Sule9g9OCeJW7vjKYotTEdsXOX2gSYs
-	oghgBx/SaB+x+OQe2/ZsObuDxqBJwo02hrPUzzzp7IWxTdOyv3vR2AuLp3yQrDntkfk1wP1KKRT
-	wVCA9nWDw1huTKNBrSAIuChc56M041OWrdt7e68NyBbgK2H8IW27VtBgDObUJ24bKoNJGslLiAo
-	eDG1I327ihKSI5dF6vdt3Rr61c0yh/ibvjIDIseOjPJdu6nGix9KozaQHBWVk0aYxjNTw2iVCAn
-	MLMcXfDJK+GaTVJsu/zRnvBmsvXG3n4zyDyQ2cisX3wBVEM4wWvio69iGRh0BXr+Fpd5l0uuGGs
-	deKq
-X-Received: by 2002:a05:6a00:3d0a:b0:847:9d6c:a56d with SMTP id d2e1a72fcca58-84f6b78b1bamr13366983b3a.12.1786339936184;
-        Sun, 09 Aug 2026 22:32:16 -0700 (PDT)
+        bh=nqCy83cYqtfb3bIbmbQFkKP649F3cDpniFvDlQX5M8w=;
+        b=tQr6H8zS0sOPwyQFEBJVkN/m4i5c5oeRTodhamsvdb9ZdMr/y8HcHHjRmCGkcn8RKg
+         3k8pQ8CH4gA51kk4MqrQCQvxvYy1XASK3dSskTmCEA/a2mTFyY8VnzIy7iXmZlsAhWyk
+         rl6cQ0f4yM3WlhOUBUkMM0GLR2vaT0YC4Y+0ohxU/7sTWQh3BqJFJqem5hsE+Z+uYyJD
+         SQKpzjE5POQCVZWuzOH3ZXQwrC1r7AdicHZu9PPAviByudo1xGsvOiPrU7hTFcoUSSzs
+         +RnEq4TRGl/yiRDSvlyjPnEFFNyb0aTew0WrJ75iUnS3+TqqrR7uz2puBmn/JzWsHUF8
+         Kj3A==
+X-Forwarded-Encrypted: i=1; AHgh+Rr7knzfMVIqducjXpqqwH4ivWeSxEUM8PzdY6aUaWDRC4yEXIZ88i4yffI2g/aAH6HZOaG/vQTR/rjF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZQtCwGgwNopb1Z5kon1qgqQEmXhDI1YCK7fKM7jGxCorv3Ki2
+	6AkPBFzlJYYkNSvb6QnSFtJ2p4XxHiF0jpCUt2qVZY/QhX0Y0ZuHO8L6
+X-Gm-Gg: AR+sD137fQ/CtTa3UScyAJSAkLFCeKUVVPm9ZimVpXThlU3747k7CpMo/HcBWidl3qx
+	Hm3X2NzWYBxve4D1kqI6m10JCc4XXjWxk2gqBjMNNFl3rRGdsnvSxvBD2O5TALvq7CELGyxU6Xp
+	jaCZ0iWwVFk87dA+UdUUahWqJu9iKVtXh7uvbktj6Be9iCHuI2lfNrja3GephOev/eqQaoV74xX
+	Ol5EOQ+zivCEf+LGHFZT7rkvnv5/BEdEhyGpwWm1PUZC05BQirsejo4LJO3WUxGTehEKZ3M96zp
+	Eg7zfc6JQpUJOIfUCzWDc6sT0s1FrkLCzJqkDMKTBW/FPgXpgRgxTHkne7+kaIgHQY/mGLu95WG
+	t7ZkBaLHTjq3Y7UPpH31w7PcsT0kKpVgAjEjoqUThT9rSfHTrHBVQ8faQAf93xinbXsJKTa/5bo
+	ZngiVI/E+Sv7SmjqGDPzcbfyHUvBXZpaONXRBS9MfbbiCJwA+GeUpcmztU2qWjrS1yPZsVxjgfS
+	uEvE5n5OLSlqg6vT9xb/i+nDLgnp/9JARul2GLiM29mfWVwwNeSj9bP6GcbQbQ3OPqQehR9wNOR
+	EFsJ
+X-Received: by 2002:a05:6a00:a116:b0:846:bc60:5bf7 with SMTP id d2e1a72fcca58-84f2dfcf7f5mr44878306b3a.6.1786339940416;
+        Sun, 09 Aug 2026 22:32:20 -0700 (PDT)
 Received: from phuc-desktop.. ([183.91.15.56])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84f5a3cadf2sm3243298b3a.22.2026.08.09.22.32.13
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84f5a3cadf2sm3243298b3a.22.2026.08.09.22.32.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Aug 2026 22:32:15 -0700 (PDT)
+        Sun, 09 Aug 2026 22:32:20 -0700 (PDT)
 From: phucduc.bui@gmail.com
 To: Linus Walleij <linusw@kernel.org>,
 	Ray Jui <rjui@broadcom.com>,
@@ -72,9 +72,9 @@ Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	bui duc phuc <phucduc.bui@gmail.com>
-Subject: [PATCH 4/5] pinctrl: baytrail: Propagate errors from optional IRQ lookup
-Date: Mon, 10 Aug 2026 12:31:41 +0700
-Message-ID: <20260810053142.27938-4-phucduc.bui@gmail.com>
+Subject: [PATCH 5/5] pinctrl: bcm: iproc-gpio: Propagate errors from optional IRQ lookup
+Date: Mon, 10 Aug 2026 12:31:42 +0700
+Message-ID: <20260810053142.27938-5-phucduc.bui@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260810053142.27938-1-phucduc.bui@gmail.com>
 References: <20260810053142.27938-1-phucduc.bui@gmail.com>
@@ -97,16 +97,16 @@ than -ENXIO.
 
 Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
 ---
- drivers/pinctrl/intel/pinctrl-baytrail.c | 2 ++
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-baytrail.c b/drivers/pinctrl/intel/pinctrl-baytrail.c
-index b733ec31ad9d..bcc77bf6e811 100644
---- a/drivers/pinctrl/intel/pinctrl-baytrail.c
-+++ b/drivers/pinctrl/intel/pinctrl-baytrail.c
-@@ -1533,6 +1533,8 @@ static int byt_gpio_probe(struct intel_pinctrl *vg)
+diff --git a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+index e20f7dc79d43..025476e251c2 100644
+--- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
++++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+@@ -873,6 +873,8 @@ static int iproc_gpio_probe(struct platform_device *pdev)
  
- 	/* set up interrupts  */
+ 	/* optional GPIO interrupt support */
  	irq = platform_get_irq_optional(pdev, 0);
 +	if (irq < 0 && irq != -ENXIO)
 +		return irq;
