@@ -1,68 +1,68 @@
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173AE41CB5E
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 16:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF0613D6CCE
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 16:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786379486; cv=none; b=c9dBcUnChl8k2jNbcAKL8zM8hHD2DxUm5j78CUMuJGm7wO0Ev01+23HAoEyEopEkg9VKonRScqUeYYXo5aDTZ7mj8ILFBx8Z6smEIlpDOOy+NYAy68JYE7vho8zeNlb1Tfld6DAMxGC+GC5IlC8q/vMI3YYihcIjRxUmCbp+TLk=
+	t=1786380141; cv=none; b=vF+N8JCjrH0UEAvcoK0CyC20HhYIvc83bvfMmk2Gx6CnPD7eX1F6i6BLJsowAmN3pGIzuiDabGDYpZ7zT4owjeoSOoC6vD/CQBGI9DVkzx2WkcVfqLYJ66aoi/kydUtWOqFjlpi0KCUqtkRsVpJBBwrV0gp+sfGCfNqv81fi4JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786379486; c=relaxed/simple;
-	bh=m3C7XInPLOUD6JvFRKXJX7cSBpYecZrWd2US7RhDPtA=;
+	s=arc-20240116; t=1786380141; c=relaxed/simple;
+	bh=UraNGmZFA5REm5mXU8cijvRUoAo6cvI2W9iHwqUD45g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QOjSZ9ZY62qCqmVh4fLf4tJIPJTfx0LXCGWeI0CtXRQCUPUL3OemEQbkQQxSiURUFVYpDv/sqbHaeVi7VeSYNg0oH5sf+eLQoOTEqmKEaS+WZXLPcIFXvXmm1E6pbRD5MybXNmyjYueIkk30XQTbY4rCWREezeu2StdpDCFqfyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=fDMrOHHk; arc=none smtp.client-ip=209.85.161.50
+	 In-Reply-To:Content-Type; b=NqhpvxRpTRoFLjo4BxKbJALeOjdeSYdSn0Q6GrklSopcL0e2dckerbdDksCfLHMpvmruZyXHJSDHd5Ih6sHY2tm8tSQBCVtbXr2MvjYvwpczgV8Iflbq+GF2HxZp+vMPWT7Ro3BnI0C1TOtI6L/tSUPUe7hzyBpgjyRxNKm30RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=QVL7N2Lf; arc=none smtp.client-ip=209.85.167.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="fDMrOHHk"
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-6aae36ea5c4so1215748eaf.1
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 09:31:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="QVL7N2Lf"
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-4a427e628a9so500004b6e.0
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 09:42:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1786379483; x=1786984283; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1786380138; x=1786984938; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=mYGxVmCUHr4pstwMWmIdi+L9AxMi3Q4nuvjSCNXWKtA=;
-        b=fDMrOHHkKtzgBqZ/tqifO6bvf/NgSP/XkUf4XTieKAiikCM6AP2qj7kk8bY5ZyXtkI
-         0dRbag4Xhdei3VmxmukOIuJVsd8tl/5v8Sn2j2PeHs7uFimkkrKt2DswDqXZfCmvMBbx
-         D9wEBgNHTs9tLST4LLAHXiGiuxNKE2qMDYGzqYEaYVf+Ld9XisXCiT0v9aXrNR+8p1hY
-         SDMc7BGfH3ywv5hR1I2a2ox5wjPCfZqkks40h7EmeBNPsgfQscRFLFHBUJc2NC7KhehP
-         adPeWd/xJzXw8OpeLwhfv6GGxchCsU0QUpUYS1l7LTlCko8AowDIjNMC/LFKU5fZe8K7
-         9PRg==
+        bh=4CrwjdneBCLq2MjyKhUL/tcV1sygNbjbpu5GnTQQd44=;
+        b=QVL7N2Lfjlmjxiv1+cn9tFernccaVe8QfmO14LEc7AmROiH+NYCEh6jeiR1MoPpx5K
+         4x9iToehymnSIgSfIOaQPvsrVZvz6458O+0ndqjnnPl+wzQi2pgg5UalsmxKnli8vd59
+         qL8bLs0Hktu6xc2Ge8a+CZp6rWMKjXd15t1oKdmGxlZTCG1Kd+vDRpucDRwXmGvAB2Q3
+         I4l1tLKh3WO7mnh7GLpOEIFnfFq2Vsx03JLEA7Lk3R89Ygcli+QlT2/n40A7UNJJR80v
+         AJ3sVHvEUC/q0+nOCjK2MMzSiWtMQH8MjvUhAO7BmgVMZ6MnVT2tLB4WFkMkruT3pYv5
+         IwLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786379483; x=1786984283;
+        d=1e100.net; s=20251104; t=1786380138; x=1786984938;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=mYGxVmCUHr4pstwMWmIdi+L9AxMi3Q4nuvjSCNXWKtA=;
-        b=UzDDFox5AUUd1IGkDiZx8xTHBGp4UVwG14leb6sxGmaFqFPED9BR+hXEMYKTspGuLp
-         0N0HJIGH1zNHQ+vcS7pL3vDoJQ0T7Zbg0N5X8DA1PERCBmDhtwff310/XuwLzC9TAH9e
-         9nvAifQ3XPwcmVKg1WnFeLSDB1JS79m5MMeDm6qKHsYKr/Cdh+vAMQMirS3CrDyhm7AR
-         bc4rqI1KHaNwXe6vGVE0QrSG+kdi56RxTeCQ6KB13hHN4iNsDEB+Sjz0hVUvltLPklJR
-         uLKGelJO7oKBcW/7aHdNkGHpuLnrcsRVUCHJgj5GTMXOQsQV/5+s8zlDzOMm+ceitzXr
-         KyLQ==
-X-Forwarded-Encrypted: i=1; AHgh+Ro8AGSnSVT/5cqPKAMZIX7bB0dMqAKZODtVLi6vRqxjr/R2Xvwh7eH03N4uBxez748+U+SLpC4Hb/ML@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFsiosbkmg/Q0GohiWEab6G9/IXi8F2QU4yGZI+jS58V9JzGIk
-	1ZLrr/9uFnSvIQbHEIbDFpsq8IEZg6GnK95ebv/Bq+eQh10mU80+Jvp8/Te7OdkgtAM=
-X-Gm-Gg: AR+sD12KAboeSxIXwIv4us9shbuFB1QJB9Al9cI0pIncKguyE3q8ZPX+8+rr5rxyYcH
-	+o8I7tnYHJdkFVWVJSCCspF3cwq89PzZ3pvXrrBn3+KRf2b55MlYxgD6Wr6oe7vryP3V1HpM/Ow
-	6z9JjrWN2a0hM1Zuq9myj2XCr7HNQx9ggVkwsHnsldjvp9IJKqrotYSFUb5cy8LuxpV+EYWUW0X
-	vOF5Q8JX6G1Y9a2gTiLiarRfLelrKPQXIS7Tj3SHfNpGIO7GrnlYlK2LaJChcC/5/Nhg2qutF9j
-	3QytQfTp8L6LNZJChJFivwOKwTv3T7HpU6kWU8C1SfO7kiGCqaH2HpBdAK3IX6n74agaZYaizWN
-	FWYhfduHZ0wge7UwI04jwpU1osL6c5RaCdFVN34Vg+x5bwYmxyJX973fL0HJU3EsQbtrnXcGC68
-	JSUQTHNjQ5bE2NNbHpzzo7qm4rGlLo5HW/mBImXNxqOjs29Yh5fJOKtXWSXH2UAwGrcg30bHxWG
-	h6hWwBozhfJKQbFpuM0RXp4VZoLuQyEogcW8VE=
-X-Received: by 2002:a05:6820:80c8:b0:6ae:46cd:e908 with SMTP id 006d021491bc7-6b09078b3ccmr1499580eaf.17.1786379482614;
-        Mon, 10 Aug 2026 09:31:22 -0700 (PDT)
+        bh=4CrwjdneBCLq2MjyKhUL/tcV1sygNbjbpu5GnTQQd44=;
+        b=naa26UYPWN/wwNilYCkDEUK+9HxwMNZk7vX2GLmqgHNnLCw3OchJQdBEml7a31Cc8h
+         sJrmKmxU1mmLyW8UOG1yr4iFLlnj0rcuK6aZuFNEbiquhDTaP601K6a6fVosJTH0FiJm
+         ig3gCUbSbXqz6GnmPCsTIBaZmNMffzl1uSSEQg4kcM58ybuj5vZOwx1ESNzujs/PBdxZ
+         mYSKDe+YY9EP8Glb2dLybti9hRvbvrBN6A7eMRQexhA5MXzAf2Mjwa5isVG7oVKhsNwO
+         EbzCWHV7yfq/gCUMrsF9uXeZ0czONQKWDmlO7+nEFw/09dL4fLrsZAu7Jxcox4DInbkz
+         r8aQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rr18rmN+DbbEMTDHfLIUpnAn6uR5PIzetAyS7ZFoi26Q/4ZQMui8RSg4PNcfL5ddpVTi43Jbd/0Dlgi@vger.kernel.org
+X-Gm-Message-State: AOJu0YwotJtcq4WX2MdVYunMNk8vvaX1EYqISinodrYFyOVe3kRZWv2e
+	OG+VCES67EcAAFuI1TUYIRKOCuibWsWtz2iZ+k6+8qyJoBAWjcXUMv+2X4NMH7PyPM4=
+X-Gm-Gg: AR+sD117FsQzyoAcmWnRorMqhv8bWFjFixAucjrB/28Z/UYMsaW3zJ8u8f9GnJ6eWxw
+	6WsBMRxxDtC+C9C88tsmIJ1vhxLRpKFsN1SCCRbllUQzHQOtj1ekr2AjC+AELUEIQ5AZhtHhTS4
+	m1kjRXid/HwT1zuGxiEZulzB4pHkaF9XjkEXzXI9+QQ/WN/R9c7PPT4O7bzkCH6N+BE6qDblcCK
+	OK/yu6eT9Bc8KzfR5jE/QCggR/xzGmBl2vmLtiRH3rU7DF9809pI8ewVV4KJRX0bfe6hEGQT6PF
+	kFp/7Foi9dI6xyoB1X3HiNt7bUnGEx2GrTlwDmJtPuLPbDcHCi8BnhLKrrpKdLE/hBC2tGhkd2p
+	+T5Wz4aWK3cvFJlfT3Hh8wQViwfU9olfaSNjcrSEGJ+GPBK13gGDiQ5xCdrWIAe9IEqLXZrshrY
+	SOBW5usT2GHQJ2szToT83p2KEsOe5VUQm/+xRjQXb0RfXMLSduyJ4Mrkd0VczcHxGBPPkEB45D7
+	7dof0ovvx5GSps7alvpIzqH30wSgsS2gbgwruw=
+X-Received: by 2002:a05:6808:bc8:b0:4a4:c12:49d9 with SMTP id 5614622812f47-4b1e770811cmr1551304b6e.3.1786380138504;
+        Mon, 10 Aug 2026 09:42:18 -0700 (PDT)
 Received: from ?IPV6:2600:8803:e7e4:500:e05b:7923:cf50:e4cf? ([2600:8803:e7e4:500:e05b:7923:cf50:e4cf])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6b056cad736sm5390430eaf.0.2026.08.10.09.31.21
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4b1af06d90dsm7404797b6e.3.2026.08.10.09.42.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Aug 2026 09:31:22 -0700 (PDT)
-Message-ID: <f3ea3859-aff1-4c15-9302-095119faec78@baylibre.com>
-Date: Mon, 10 Aug 2026 11:31:21 -0500
+        Mon, 10 Aug 2026 09:42:18 -0700 (PDT)
+Message-ID: <4de0742d-c17f-4d0a-aab1-35870eee053a@baylibre.com>
+Date: Mon, 10 Aug 2026 11:42:17 -0500
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -70,8 +70,7 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/9] iio: adc: ti-ads1262: support triggered buffer
- sampling
+Subject: Re: [PATCH v3 0/9] iio: adc: Add TI ADS126X ADC family support
 To: Kurt Borja <kuurtb@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
@@ -81,92 +80,50 @@ Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-gpio@vger.kernel.org
 References: <20260807-ads126x-v3-0-f89925d72792@gmail.com>
- <20260807-ads126x-v3-7-f89925d72792@gmail.com>
- <1b6b6981-1a08-42a2-a03a-4366b980da13@baylibre.com>
- <DKK9S36LB543.2T124NE3TNETN@gmail.com>
+ <9c2e2c46-32de-4e8a-88c3-bfc2cfe8157c@baylibre.com>
+ <DKK9T3XRZJEV.R83PII0D35H@gmail.com>
 Content-Language: en-US
 From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <DKK9S36LB543.2T124NE3TNETN@gmail.com>
+In-Reply-To: <DKK9T3XRZJEV.R83PII0D35H@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/9/26 3:28 AM, Kurt Borja wrote:
-> On Sat Aug 8, 2026 at 1:39 PM -05, David Lechner wrote:
+On 8/9/26 3:29 AM, Kurt Borja wrote:
+> On Sat Aug 8, 2026 at 1:37 PM -05, David Lechner wrote:
 >> On 8/7/26 10:58 PM, Kurt Borja wrote:
->>> Add triggered buffer support and a data-ready (DRDY) hardware trigger.
->>>
+>>
 
 ...
 
 >>
->>> +	u8 tx[11] __aligned(IIO_DMA_MINALIGN);
->>> +	u8 rx[11] __aligned(IIO_DMA_MINALIGN);
+>> And the driver also allows using an hrtimer trigger to do single-shot
+>> samples for cases where one doesn't want to sample as fast as possible
+>> in continuous mode. This would be more useful to someone who just cares
+>> about sample rate and not about filtering.
+> 
+> Why did you go for this instead of just leaving the continuous mode
+> running and reading on each trigger?
+
+The hrtimer trigger allows more than one channel to be enabled, so we
+have to do all of the channel setup for the next channel before we
+can send the start command to trigger the next conversion. Doing it
+this way eliminates the possibility of not being able to update all
+of the settings in between the DRDY interrupts.
+
+For cases where we only want to read one channel, then we can use
+the DRDY trigger instead of an hrtimer trigger. Since we don't have
+to change channel config in that case, if we miss a DRDY interrupt
+because we took to long to start the I2C transfer, it isn't a big
+deal, we just drop a sample.
+
+> 
 >>
->> don't need second one to be aligned, they aren't independent.
+>> Just posted the series yesterday:
+>> https://lore.kernel.org/linux-iio/20260807-iio-adc-ti-ads112c14-filter-support-v1-0-4d3ba00caf18@baylibre.com/T/#t
 > 
-> Ah, I forgot this observation in the last version. These are used in a
-> full-duplex transfer, wouldn't that require for both to be on its own
-> cache line? I just started learning about DMA.
+> Can you Cc me this series too? The settlingtime stuff is something I'll
+> implement too.
 
-No. In this case, it works roughly like this...
-
-- We fill the TX buffer before the transfer. (CPU access to memory may
-  just live in the cache at this point and not actually be sent to RAM)
-- We request to start the SPI transfer.
-- The core SPI code flushes (or maybe I should say invalidates) the cache
-  on the TX buffer. This ensures that what we wrote with the CPU available
-  to DMA.
-- The actual SPI transfer happens that uses DMA to access both TX and
-  RX buffers. (Again, could just live in a cache and not be sent to RAM)
-- The SPI core code flushes the cache on the RX buffer. This ensures
-  that when the CPU reads the memory, it will see what the DMA just
-  wrote.
-
-Since there isn't a time when CPU and DMA both write to the cache line
-at the same time before a flush, there is never a time we could have
-an issue with stale data replacing data that had not been flushed.
-
-It does mean that we can't update the tx buffer for the next message
-until after this message is done, but we have to do that anyway.
-
-What does cause problems is if we just had a regular unrelated variable
-after this in the cache line and the driver updated it during a SPI
-transfer. If this new value was just living in the CPU cache, then
-when the RX flush happened, it would write over that new value with
-stale data from the DMA's version of the cache.
-
-
-> 
-> [...]
-> 
->>> +static int ads1262_enable_and_read_last(struct ads1262 *st,
->>> +					const struct iio_chan_spec *spec,
->>> +					__be32 *val)
->>> +{
->>> +	struct ads1262_channel *chan;
->>> +	int ret;
->>> +
->>> +	lockdep_assert_held(&st->xfer_lock);
->>
->> What happens if something else (e.g. gpio in the future) decides to do a
->> register write here. If it wins the race, will it unintentionally read the
->> data? So do we also need to read the stored data via command here too?
-> 
-> On each trigger, we are holding the lock before we enable the first
-> channel, until after we read the final conversion. So we don't really
-> care if there's concurrent activity in-between triggers. Am I missing
-> something?
-> 
-The datasheet doesn't seem clear on it, so I don't know if you are
-missing something or not, that is why I asked. :-)
-
-It looks to me like the way this is working is that that when data
-is ready, on the very next SPI transfer, the data is placed in the
-RX buffer no matter what is in the TX buffer. So I was imagining that
-if we got a DRDY interrupt, but someone happened to set a gpio output
-at the same time and the gpio request won the race for the lock, then
-when the gpio request was made, it would receive the RX data and trigger
-the next conversion while setting the gpio output, then then what was
-supposed to be receiving the data would receive I don't know what.
-
+Yes, I meant to. It was late on a Friday when I sent it and I didn't
+the best job checking all of the details like that.
 
