@@ -1,80 +1,136 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAB543551D
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 18:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35981306B3B;
+	Mon, 10 Aug 2026 18:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786385200; cv=none; b=ixPALfsgB+QD1DIs+Ksxjl47wqj9ENBoWPaAt5MOqmeFDkQWBpDHILLjhtDHvXEQ8Z7Nk3/SVBLVUOItYU6Ah08GM9QU4FcKJXePyviH/s2VD7Jq6Xv4A+zBanzaeu56NQZPJLMmICPH9na5eTslmo7uLv+w+p8z0pRCEBi+OwQ=
+	t=1786385564; cv=none; b=fKRDZcYCWpLdsBgW54fOr1m6tRK59uejmzNyjxuPR7DWIWeySzJErn5odmH8PgxttgPybfmdOtu+dmxLE3t2/XOyHYp7A40jOhafGMZ9PWjMiNpbNMd/sNm/wfWUukoVAOaKVLTzi33Bu2az8zvT5O11XqA5rnYbpW7xvJ2/Lso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786385200; c=relaxed/simple;
-	bh=hgcymRn06CEzZYivG2OYevh3C3pdHTxTa6lD6AY+ufg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iN1wmZHrR4T4Es6kDPohKmEYotDtAWCI3WgHA/Aq6yMbZvXqBIZBjcpkZoWAQEYIWhfjj8PwMAaGUtcZhB6bJbJ9FNLMmKQ9gr/VO45dCclY0D5aDwY3OpjLdJ+T8isZ/wqTbgsWdBnC2Usk5wAzZhydOntoHkqcsObaq/fpDfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kh5VROtZ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786385564; c=relaxed/simple;
+	bh=F11Xrj4bvY7dI4efnBVSrqv60Jk9i126GoZXVbVr7TE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YOfTYePkhNjyF6Lg5KLytQ5ngPC8rP25hL9lbGrhbl3FnPa0IRnvfjc5wPb0aFIhwwtrEtkYGNb7WBDCxVlDXVFftQOoSHi1cLVT0txYTh9MqMSwUvd7PpaKU62fdQqQWTL5HJNHfrc+bk6qJi+CnoHYGqDyxoSsNXxRV7RRzqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mpRDHnB7; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kh5VROtZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BAF01F0155B
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 18:06:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786385199;
-	bh=hgcymRn06CEzZYivG2OYevh3C3pdHTxTa6lD6AY+ufg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=kh5VROtZSFG4V4setKEx58r+aXrbRhkM81FNJEhyhDuJ/kqBlm2afkySKxEryEAjI
-	 kjgF9+Rzmf5899CrwmI6A6BinooXbmJ8xOLd9j5nNWR8EJGqVS7CIYJ65g3JccUAhK
-	 YSmjSLQ6tdF2Y+sk8wXbvIY3/urHkouBnvsSMyt8ImL79tDL9CVLuRuUTvRzGEJe4b
-	 GVn6NHwdDrRcbH48z1LRvff7doLUQD+emJgzW7U8p93t1gHIChWUJWPOGYztkhp7Qq
-	 zPpEsDdJX8prSupqD4Jhu/aXxeLWDPU8oTBtvhBCbxYXte6I3F09YVBQlzRk6BCsFo
-	 sHjiQQvHJfAkQ==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5aeb8c19017so2735983e87.0
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:06:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrJZlQRYPRlCFPkjsEg2XkEOdmReZud63g07CfubPXoERPeKHg4ecIOO0gX6G6QlyfIy4g7h4vj9pNc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnkjRqOdRD+mSLNp7nyUuL7M4zN33H4YtixC2ULSUQ7IJXkLgJ
-	t0rBq2ilKeaV14vKfm2Ux7Q2arm8pOxVa+76Bm7xltQW88QyH/BGJvN2oI6+ly0zIlapezU+RSJ
-	JQV7v/hgJbUUkVWSiXoblLksoeGUOeF4=
-X-Received: by 2002:a05:6512:baa:b0:5b2:f437:2a88 with SMTP id
- 2adb3069b0e04-5b2f4cc7be5mr5978880e87.36.1786385197772; Mon, 10 Aug 2026
- 11:06:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mpRDHnB7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1786385562; x=1817921562;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=F11Xrj4bvY7dI4efnBVSrqv60Jk9i126GoZXVbVr7TE=;
+  b=mpRDHnB7WrukaXMmYeqR9asvP6gRpmzdTxQsRFhSaIKqAT9zc15LL7yI
+   ui4Ru3hyNIzmRLaT+RSu+MxHkWvPvpM5PXNYBa6+XHeMUmzxIm5CJkHBi
+   B4P7d/6BpA+gNbvLD6Gb9a2G13dPLVKaKFspKTKt9Q/YlwKAtCucpfS/9
+   Sn211kByRSiYVp0LeftLwvUcxmdoORrA+fRlc6WOMoezHyGmzoLc1sAoy
+   hynEvrzvrtLuTB6LbQcACYXcztY5kkzAkKhvnILVAQTavxMcjYo1XCbZP
+   IEaMemwQgam3Z1E1XEX/T3dnaGxDSpltDE6+00dGivJhXkQ2RAqLEeFn7
+   g==;
+X-CSE-ConnectionGUID: tgJ65a80TOGABF8ThSOIMA==
+X-CSE-MsgGUID: zC8WwD7VSZ2RvWd8CqF8RQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11871"; a="89434534"
+X-IronPort-AV: E=Sophos;i="6.25,216,1779174000"; 
+   d="scan'208";a="89434534"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 11:12:41 -0700
+X-CSE-ConnectionGUID: YoyAPRtpS2Ks2iknPIl8Tw==
+X-CSE-MsgGUID: ojnvnHCQT7G2qrvIfLQpbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,216,1779174000"; 
+   d="scan'208";a="256887570"
+Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.99])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 11:12:38 -0700
+Date: Mon, 10 Aug 2026 21:12:36 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: =?utf-8?B?TWljaGHFgiBLYXJkYcWb?= <mkmkl@google.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Vic Huang <vich@google.com>, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] pinctrl: core: Allow drivers to keep "init"
+ pinctrl state after probe
+Message-ID: <anoUlD3ep6t0WkHw@ashevche-desk.local>
+References: <20260810130635.1166626-1-mkmkl@google.com>
+ <20260810130635.1166626-2-mkmkl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260809-kuno-soc-support-v1-0-5e0ede4a0c72@oss.qualcomm.com>
-In-Reply-To: <20260809-kuno-soc-support-v1-0-5e0ede4a0c72@oss.qualcomm.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 10 Aug 2026 20:06:24 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=kW+K6noeaO9=zktgveVbYmbZsWUWo3r-V0S7V90FDLw@mail.gmail.com>
-X-Gm-Features: AUfX_mymdEhf6vtyoDczgdrTd_h0sSGCYBoPOdLs8lQcTMbtLbfi04PfIu1dDG4
-Message-ID: <CAD++jL=kW+K6noeaO9=zktgveVbYmbZsWUWo3r-V0S7V90FDLw@mail.gmail.com>
-Subject: Re: [PATCH 00/15] Add initial support for Qualcomm Kuno SoC
-To: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Georgi Djakov <djakov@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
-	Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>, 
-	Guru Das Srinagesh <linux@gurudas.dev>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260810130635.1166626-2-mkmkl@google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Sun, Aug 9, 2026 at 9:27=E2=80=AFAM Hardeep Sharma
-<hardeep.sharma@oss.qualcomm.com> wrote:
+On Mon, Aug 10, 2026 at 01:06:34PM +0000, Michał Kardaś wrote:
+> During device probe, pinctrl_bind_pins() binds pins to their "init" state
+> if specified in Device Tree. When probe finishes, pinctrl_init_done()
+> automatically transitions the pins from "init" to "default" state.
+> 
+> While this auto-transition works well for devices that are immediately
+> active upon driver binding, certain peripherals (such as power-sequenced
+> devices connected over UART, SPI, or other buses) remain unpowered until
+> userspace explicitly opens the device node or attaches a protocol driver.
+> 
+> On board designs where the connected peripheral is kept unpowered during
+> boot, auto-selecting "default" or "sleep" pin states (where signals such
+> as TXD or RTS may be driven high or pulled up) can cause parasitic
+> back-powering into the unpowered peripheral through its ESD protection
+> diodes.
+> 
+> Allow drivers to explicitly opt out of the automatic "init" -> "default"
+> transition by calling pinctrl_keep_init_state(dev) during probe. When this
+> helper is called, pinctrl_init_done() leaves the pins in their "init"
+> state upon probe completion. The driver can then transition to the
+> "default" state when the device is first opened by calling
+> pinctrl_pm_select_default_state(dev).
 
-> This series adds initial support for the Qualcomm Kuno SoC and the Kuno
-> IDP reference board.
->
-> Kuno is a 32-bit ARM (Cortex-A7) Qualcomm platform. This series brings up
-> the essential SoC infrastructure required to boot to a serial console:
+...
 
-Is there some special reason why you are not posting this patch series
-to the most relevant mailing list i.e. linux-arm-kernel?
+> +/**
+> + * pinctrl_keep_init_state() - mark pinctrl handle to stay in init state after probe
+> + * @dev: device to keep init state for
+> + *
+> + * Return: true if the device has a valid init state and keep_init flag was set,
+> + *         false otherwise.
+> + */
+> +bool pinctrl_keep_init_state(struct device *dev)
+> +{
+> +	if (!dev->pins || IS_ERR(dev->pins->init_state))
+> +		return false;
 
-Yours,
-Linus Walleij
+The above keeps_init in the initial state which may or may not be wrong.
+I would avoid the ambiguity by rewriting this as
+
+> +	dev->pins->keep_init = true;
+> +	return true;
+
+	dev->pins->keep_init = dev->pins && !IS_ERR(dev->pins->init_state);
+
+	return dev->pins->keep_init;
+
+But please, check if that is what you want.
+
+> +}
+
+...
+
+> +	bool keep_init:1;
+
+What is ':1' supposed to mean (for boolean)? I understand that for say
+unsigned int.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
