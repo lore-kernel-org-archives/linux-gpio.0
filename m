@@ -1,151 +1,122 @@
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com [209.85.208.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7CA3E1204
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 13:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5553DA7C8
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 13:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786367202; cv=none; b=ptafBJqPtT8BVNKF/0BW7vS1X2fEqHIEoxzY/WaOKDdei04G0OeYQaP58R6w/jFFVN7oxsfT2Qq+tdxJTMlrT+eAcbhROz5/oEF6B64rff+1vHxe6AAvPrF4QU0wkDfbqsEEsMdb9NtX3filY5Wz0hcQ0OQA7el0Czbg9hnuH00=
+	t=1786367307; cv=none; b=IN2VlC7YkKyM/2Raqyx96s3S8j2tML4v99IuE46ql4cCQjyGwxPHsJeo9i+31xYuHpp7Ie3d8PSFEXpwVdUeOameMN/959ZK5MGMMh9omYNlgF/xNQXhItDasmewVqlHjTGoLnizovXljQbMqI7nRcSdsK9dAIq3yDS9GvFMNRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786367202; c=relaxed/simple;
-	bh=UOqS2BQJPAESAW6nffGEETU8D6OAwM/CNtqbcFzYb0A=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JuNPtWxR5fTdpHvTE635CEhnbAF1U7aBUKJAvH5rznXJtcZhXnedXeQkJGWnHMw5LuUdv0xkI3PRzaEVGilm0gGnK+Fscn/9XR1/2yUGpAWXV34xdwextSEGPBIQqVkMs2i4qzMm6qrrOTtbfjTixcT38O/c73IPL5gKRffpDvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mkmkl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XCI77hR1; arc=none smtp.client-ip=209.85.208.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mkmkl.bounces.google.com
+	s=arc-20240116; t=1786367307; c=relaxed/simple;
+	bh=JwDhx/0D+tayieNxwpVkbgSROKgJDX7SSVfca9Mn9No=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gNEgdD1YO2VbqrrTcySYgekcz9Mcw2Gni8iQ9B/dkHj4l3IDd0lJHgIYHpTGEizbhljL+DUgsUDqMLeHj3FRn/PMPcXs6KXJamUN9S7PG9I+BshX1BQnx+r8WWf4bGH8HTy4dWJS7w8VhXj936IkaAOfeTd1tvTExCAdPafsqj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Azn3oAF6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XCI77hR1"
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-39c9aa07c5eso2756791fa.0
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 06:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1786367199; x=1786971999; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=IdhndaGQ5ilhTKEdFH/lvhXJ1C8BSb4SQCGnhzgRjo4=;
-        b=XCI77hR15miC48FSsZHnm8hW8Idtwtdx5UtpBoN89Is49Kgnah9cvZqfAWcdIEnPyD
-         wgJwEJWoBaU8avbTKHbEYZtwpBotU0ZLUeIFNIJKIbyjvPfQqBw/BUAKOlp4HxI8Gh3W
-         kmRVmeM18Vcd0lF8cbkeOiYll7l77J+9iyJVDIYi73r27mt0A1mTdphfK1TdcrtmiRBA
-         2rvu4tO+c5Gozeb95JTYlC0u5f4ogVshITa4f2x8n8VYtr3UllBt95My7xo86FLf3csh
-         uut8wLynIwOnCqrCZBZbo9GjsMw17Yx1VKv2fNVPREoVDiohI21hx48IvBfuTcEcUVDn
-         2nYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786367199; x=1786971999;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=IdhndaGQ5ilhTKEdFH/lvhXJ1C8BSb4SQCGnhzgRjo4=;
-        b=NHK6SkINHtgFbanWM6ByDzRgQi0UnZHrAt9mw675H1Q+jfazKw/lYzVG0Q2PMJWXvq
-         6GtpYPTudDIEoZnPeAfL5Ioaa5F95XL1tmJgdpXW9M87JKNz+byi2GZ0VxjgQ3eeyOmd
-         cK4DLTSidptkzeAXnT0YyAJpByaC2Ksijc9nykvZKLGnG6ReR4vgEhe3DIX23nUJAguf
-         LneE5xv1iY+ZLa64y5D45uHgFfyUfu+tKJNC32N9idkZQT0VVODqsfshuy3AYB46/PfC
-         yVywozPQumzo8HQtoE+1VU9jltFSxNgO/kXOIlQZx5L3YplnCoZ23NubNdPJy559B3/T
-         jlYw==
-X-Forwarded-Encrypted: i=1; AHgh+RrLOchY/Bdn0UUFaPUsxkLqQfXkZtcuOQVuSfd+9L80J//dsqKuoYV8d29FOApl4190MRKDeP7hwtu8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHZeAcR7Fz7NfmfF3H+le2+tqrPEglJPZJldDX35S2GulvhpzS
-	FQKZCWwJvrC2Rz0alEz/k0N33kvBiU1BTJ+6XQ7+IyW3Cx2QRsbVpezOaZsx+Qo6B80zwNS3IGF
-	lvg==
-X-Received: from ljxd20-n1.prod.google.com ([2002:a05:651c:a114:10b0:39f:89:905e])
- (user=mkmkl job=prod-delivery.src-stubby-dispatcher) by 2002:a05:651c:a204:10b0:39b:1a03:bcb0
- with SMTP id 38308e7fff4ca-3a00e8253f1mr1938371fa.10.1786367198475; Mon, 10
- Aug 2026 06:06:38 -0700 (PDT)
-Date: Mon, 10 Aug 2026 13:06:35 +0000
-In-Reply-To: <20260810130635.1166626-1-mkmkl@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Azn3oAF6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A56161F00A3F
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 13:08:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786367305;
+	bh=Mex6+YUTjnUjC9Q3NQSKuNqtW6ib0n4wLnfzuqCQKIg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=Azn3oAF60ulXr60AVrgd5++w/a2QT+xiZOhXsSZgGRW9G93ykmy6f/D02mOY0K1dX
+	 5UU+PBSgugBgOTv2zZpd9o+eNsbFoEdaLcBdutzV/sc0uI+nubpXZGp2qlJbYT0Gkm
+	 ILdnWtsXk0CqCIgIChS4rY9OGpJ0sS/tlG45koJuvuGy1VpXdS9ktyA1LbxNNCQfxa
+	 yE8M+MYJ0GR+1AP8LqKMVAuPVNCzGVPWhMdaMtGVhHCNaOmTxAyExXKZf7xxK/FJAe
+	 bb+D3eFrpPmKpOWctUtP2qCwGroO/Jz9nErMinLcEzVTX3uLK2nLZcli/URBrAYpEX
+	 DR531f4TRbxkQ==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5aea0fff535so2020888e87.3
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 06:08:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rp1t5kf3bKb8/OocRtpMAKiQWEDT4EwsMFMCHE8mWgmcD4W8P3EbfogoeUA7OLW20rgpE5ficGZ34+7@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEoptY98cAj8YS2vN+qHI6X+2curNZ1pkfQv6foKa/1X7raCg6
+	VZz+EHBkQOhZfqw2nngFkysxgmIgiySDMrBUxwjrKNo7GDP9icCwXqno5RzllM1PoSqn3YkHPMj
+	02Z5CcIhyKcjVkL+djV0Y8JR47NwApsLVwarlLSqpfQ==
+X-Received: by 2002:a05:6512:2347:b0:5ae:b86b:71f0 with SMTP id
+ 2adb3069b0e04-5b3092de7e0mr2588468e87.37.1786367304353; Mon, 10 Aug 2026
+ 06:08:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260810130635.1166626-1-mkmkl@google.com>
-X-Mailer: git-send-email 2.55.0.654.g21b8a5bc05-goog
-Message-ID: <20260810130635.1166626-3-mkmkl@google.com>
-Subject: [PATCH v1 2/2] tty: serial: 8250_dw: Keep init pinctrl state until
- first open
-From: "=?UTF-8?q?Micha=C5=82=20Karda=C5=9B?=" <mkmkl@google.com>
-To: Linus Walleij <linusw@kernel.org>, 
-	"=?UTF-8?q?Ilpo=20J=C3=A4rvinen?=" <ilpo.jarvinen@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Douglas Anderson <dianders@chromium.org>, Vic Huang <vich@google.com>, linux-gpio@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"=?UTF-8?q?Micha=C5=82=20Karda=C5=9B?=" <mkmkl@google.com>
+MIME-Version: 1.0
+References: <20260810-ls2kbmc-mod-v8-0-16e44f7322f4@gmail.com>
+In-Reply-To: <20260810-ls2kbmc-mod-v8-0-16e44f7322f4@gmail.com>
+From: Bartosz Golaszewski <brgl@kernel.org>
+Date: Mon, 10 Aug 2026 15:08:12 +0200
+X-Gmail-Original-Message-ID: <CAMRc=Mfo4J8n9MWOzUBRz-VRu7T6SNLTTGrnWfHxGfWxZz71Sg@mail.gmail.com>
+X-Gm-Features: AUfX_my5LS0eP6nW1TviHR6fvDzSsa_5WW_4107uE-LtvAShw-kgxeD9ZkUBg8U
+Message-ID: <CAMRc=Mfo4J8n9MWOzUBRz-VRu7T6SNLTTGrnWfHxGfWxZz71Sg@mail.gmail.com>
+Subject: Re: [PATCH RFC v8 0/8] mfd: ls2kbmc: multiple fixes for this driver
+To: shankerwangmiao@gmail.com
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Chong Qiao <qiaochong@loongson.cn>, 
+	Lee Jones <lee@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
+	Corey Minyard <corey@minyard.net>, Linus Walleij <linusw@kernel.org>, Xi Ruoyao <xry111@xry111.site>, 
+	WANG Xuerui <kernel@xen0n.name>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, mfd@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
+	Corey Minyard <cminyard@mvista.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-When a UART port is connected to an external peripheral whose power
-domain is kept powered off until first use, transitioning the UART
-pins from the "init" state to the "default" state prematurely at probe
-completion can cause parasitic back-powering into the unpowered
-peripheral.
+On Mon, Aug 10, 2026 at 3:04=E2=80=AFPM Miao Wang via B4 Relay
+<devnull+shankerwangmiao.gmail.com@kernel.org> wrote:
+>
+> Previously, the driver has been introduced to support the Loongson 2K
+> BMC running on the Loongson Servers, which is essential to prevent
+> the system from hanging when the BMC is being reset and the default
+> efi-framebuffer is being used. However, there are some drawbacks in the
+> driver.
+>
+> Firstly, the driver tries to read and write to the connected PCI-E host
+> controller registers, assuming that the BMC is connected to LS7A PCI-E
+> host controller. This assumption should be true for real products, but
+> to prevent from accidentally reading and writing to the wrong PCI-E host
+> controller, this driver should be modified to check this before
+> accessing the registers.
+>
+> Secondly, the driver uses non-exported functions to tell the vt
+> subsystem to redraw the screen, preventing the driver from being
+> compiling as a module. This can be fixed by using the exported
+> functions instead.
+>
+> Thirdly, the driver directly accesses the GPIO controller registers
+> using hard-coded addresses, which might conflict with the loaded GPIO
+> controller driver for the same GPIO controller. This is fixed in this
+> series by using the GPIO subsystem APIs instead. To associate a GPIO pin
+> with a certian PCI device, it should be declared in the firmware level,
+> i.e. in the ACPI table or the device tree, and thus the firmware
+> interface should be discussed and coordinated with Loongson personnels.
+> Despite of this, the proposed solution in this series should be the
+> minimum necessary change to express such association. Furthermore, the
+> conventional GPIO pin number and the controller address are also
+> provided, to be used as a fallback when the GPIO pin is not declared.
+>
+> Finally, there is a minor issue in the driver where it changes the
+> mode string describing the screen resolution during probing, which
+> prevents the device from being probed again if -EPROBE_DEFER is
+> returned by the probe function.
+>
+> I have tested the changes in this series on a single-socket Loongson
+> 3C6000 server with a Loongson 2K BMC, and the driver works as expected
+> when the corresponding GPIO driver is additionally loaded.
+>
+> Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
+> ---
+> Changes in v8:
+> - Address issues found by the Sashiko AI review bot
+>   - Fix the error path of the probe function, preventing unintentionally
+>     returning 0 on failure
+>   - Reorder the patches in the series to make the change to the Kconfig
+>     entry for ls2kbmc to be the last patch, to satisfy the AI bot's
+>     concern on failure to clean up when the driver is built as a module
+>     and is being removed.
+> - Link to v7: https://lore.kernel.org/r/20260810-ls2kbmc-mod-v7-0-8aa0fb5=
+a5462@gmail.com
+>
 
-Ensure that on boards specifying an "init" pinctrl state for the port,
-the "init" state is preserved until the port is first opened:
+Don't send several versions of the same big series within minutes of
+each other. Give reviewers time to respond.
 
-1. In dw8250_probe(), call pinctrl_keep_init_state(dev) to opt out of the
-   automatic "init" -> "default" transition at probe completion and record
-   this in data->in_init_state.
-2. In dw8250_do_pm(), when the port is opened (state =3D=3D 0), transition
-   pins from "init" to "default" if data->in_init_state is set, and clear
-   the flag.
-
-Suggested-by: Douglas Anderson <dianders@chromium.org>
-Co-developed-by: Vic Huang <vich@google.com>
-Signed-off-by: Vic Huang <vich@google.com>
-Signed-off-by: Micha=C5=82 Karda=C5=9B <mkmkl@google.com>
----
- drivers/tty/serial/8250/8250_dw.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/82=
-50_dw.c
-index 5fba913f3301..74e568e2a0d3 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -18,6 +18,7 @@
- #include <linux/io.h>
- #include <linux/lockdep.h>
- #include <linux/module.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/property.h>
-@@ -77,6 +78,7 @@ struct dw8250_data {
- 	unsigned int		skip_autocfg:1;
- 	unsigned int		uart_16550_compatible:1;
- 	unsigned int		in_idle:1;
-+	unsigned int		in_init_state:1;
-=20
- 	u8			no_int_count;
- };
-@@ -461,8 +463,15 @@ static int dw8250_handle_irq(struct uart_port *p)
- static void
- dw8250_do_pm(struct uart_port *port, unsigned int state, unsigned int old)
- {
--	if (!state)
-+	struct dw8250_data *d =3D to_dw8250_data(port->private_data);
-+
-+	if (!state) {
- 		pm_runtime_get_sync(port->dev);
-+		if (d->in_init_state) {
-+			d->in_init_state =3D false;
-+			pinctrl_pm_select_default_state(port->dev);
-+		}
-+	}
-=20
- 	serial8250_do_pm(port, state, old);
-=20
-@@ -770,6 +779,8 @@ static int dw8250_probe(struct platform_device *pdev)
- 	if (data->data.line < 0)
- 		return data->data.line;
-=20
-+	data->in_init_state =3D pinctrl_keep_init_state(dev);
-+
- 	platform_set_drvdata(pdev, data);
-=20
- 	pm_runtime_enable(dev);
---=20
-2.55.0.654.g21b8a5bc05-goog
-
+Bart
