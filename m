@@ -1,195 +1,174 @@
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2094.outbound.protection.partner.outlook.cn [139.219.146.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9427F36C5A1;
-	Mon, 10 Aug 2026 06:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786342887; cv=none; b=oAYsGzZozdqLUDbGY9iTPVg4mnNPle96vAr3Ybh0vb6uijxH3glTNI1ZcS9kUky6/VM0ZQuNRRpZSDH8U/1zHWLdTpl0L9EczLyrxWE+fV3rPBZOUYreo7geLcl7jCX4b00sp5W6NPvkW+b6UKh49OFhV7wneXHsQ1QA/IA1T98=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786342887; c=relaxed/simple;
-	bh=2mM10romqLpq5O107SRCTjwfedWENZiCE+DZ4PUg6WQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f30nG8eqKbRzmZkF0jph4li/RayQRDVBvFWD8bvxOfSNNU4EabK8cha+4Gt85auwj6ir/lxFry2pEaLN4I7X3ipJUp01dEJInqgcdWbC2cKpmulUvU/tMVZRTVV8/W5whS30RoJpULPno6oNuqipjiqz9Yw9+fdA4gPgNEbkM6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=DoJCGJul; arc=none smtp.client-ip=178.251.229.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="DoJCGJul"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9E3FD11B494;
-	Mon, 10 Aug 2026 08:21:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1786342873; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=TIcYkXIenvNkMTJ1YuV3o4EGTcYhnPA+PcvQgIsAFFM=;
-	b=DoJCGJulsBPRy6JS3ixEUSVrFe8PLIcqz0AV9dMgE0c2ta4xuNd52VcgEO2m8+7XMdoW0D
-	f4IVkh1MvMHVPOGdQ/o5fG6WEKJoSWuaLCvdTMdKmx1qY2gLFdf9jAA9m07w+CArEtGTrS
-	WsWz6W05WTQLgBjDBmiUeaeYaRXPAp5MX9orAwZfVCC70PKljktxTFy/lmbcRCJmgYNZhL
-	qS0bEIX9FP/v6G93p9ZXHJn5v0Qlinw5bmZe2aJr2OC0pgGna2j10vankCQk81wv47lr9I
-	k0KgiLUCaCNPYzhxzar6YpzXqnjcSto23ZUig1PPM1Igu+1pHX5p8zDfb7+yhg==
-From: Heiko Schocher <hs@nabladev.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-fpga@vger.kernel.org,
-	Heiko Schocher <hs@nabladev.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Moritz Fischer <mdf@kernel.org>,
-	Tom Rix <trix@redhat.com>,
-	Xu Yilun <yilun.xu@intel.com>,
-	linux-gpio@vger.kernel.org
-Subject: [PATCH v4] driver: fpga: xilinx-selectmap: add csi and rdwr support
-Date: Mon, 10 Aug 2026 08:20:51 +0200
-Message-ID: <20260810062105.299808-1-hs@nabladev.com>
-X-Mailer: git-send-email 2.55.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0ED8391828;
+	Mon, 10 Aug 2026 06:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786343836; cv=fail; b=Ybf3wvRVOpNuv+qKjYI4fNu7nsyLJXY7TjVJVq2l0PxhVnjb0CkFp542+kORRD0qNu0bjMqTX4J7ZVq/Nka6nwFAkN6QmYy8hJh44wQedr1u8hgSGC1+j3feHt56+cOKwV1jE5TLfZ1dw9+gP03eXYVhJnvJZTzxA/Wyv9sgu+k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786343836; c=relaxed/simple;
+	bh=t28L1oUTsZ9XD6sIT2YdGl+zE3QrFsAYrzOna7rTNqs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UnCRyGWYk2j/pMuqaacpudWZIH+jmULfN6OLDJ6ZKnStf9vH4utkJf1bRidVjHZNA4W4oRNYXoYkkuABFcn6yL2RcZc5EyJpxqmkAbDpl55Mm0Wl0YwQb4qymqrQbIz5yF1nyuwEFeIbvqmSCgKEPprxw0XL6dUDMQUFhbxE1W4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NkuROVkpM+Pe2EzwRRnKLjSxtuldC4ELIMBhLxvz2nd4iWNOVlU2cPZA5n20T7K3eLmpSC62FSegh0gaxYsfMsAZfmp/x90IZRwXW9O4XOSU139uW3Lxk8ELgapPP6xLry/dYVlXBmWIiqLqv0jwpWvKbsWhO2blPBDX6B0gm7xn9/k2On6aVt6WuAEXcmuZYkqXu3jTN8kaPWgrYZzgCh9FQbBcgizMTMEfZyjpE3LUUuiYfff8AjW57iJEql1Nusth6bNj3vNq7OJJwW6hOIGIXWgY/x1QydMTavy2oiQaZCIBS96wJfJ3tlYv8otd2IfQheo5LqvZQaDRr9JY8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KtsTRBD5By9lnAKnAtnF+WiK4mH+R20oalbMwPvliys=;
+ b=iPjtyYt11U3N1U1xs0HRl4dTUhecnt9PRkXP1CoTo5BsAe36UBEbhafV5khXNBmEz3OQVTSHEP5334ZNkVvdjQJMVP5g0HmjkmtKXfnteIQobULuWz5gwmJjVYZGVQmS75pgSMNg7UxgPDYujVin6xEelF0X0peBFNHRPty5nznklHmnd6TiwrsGknzxcsObC0FE2CDx8BL8LftTdh14LW5L95anbjpffY9I1whqq/ZZGgVvBGb32B+v7VVyRtI2Ag0hV5clf6nWz9j0H1zue9hRUnWXjWWwM5OO7/3Xbca9J04r/MB7w5+/ZVVPCam8YBwiOOBz/PIt8ouKW7v+KQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:17::6) by ZQ4PR01MB1315.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:15::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.25; Mon, 10 Aug
+ 2026 06:36:59 +0000
+Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e7d4:256c:b066:850d]) by
+ ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%4])
+ with mapi id 15.21.0292.024; Mon, 10 Aug 2026 06:36:59 +0000
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Paul Walmsley <pjw@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>,
+	Changhuang Liang <changhuang.liang@starfivetech.com>
+Subject: [PATCH v5 01/21] dt-bindings: pincfg-node: Add property 'input-debounce-ns'
+Date: Sun,  9 Aug 2026 23:36:30 -0700
+Message-Id: <20260810063650.239303-2-changhuang.liang@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260810063650.239303-1-changhuang.liang@starfivetech.com>
+References: <20260810063650.239303-1-changhuang.liang@starfivetech.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BJSPR01CA0019.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c211:c::31) To ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:17::6)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1315:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7c0329e8-8ae9-4e4a-27b8-08def6a9c7b6
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|23010399003|376014|52116014|366016|7416014|56012099006|10067099003|6133799003|3023799007|18002099003|22082099003|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	t2v39563yadcQCn5BWebfsZVonCf31i8uzwjrpsgJ/lWcDEwRudtycJ2coKyvhacJyt5n/4apygw1eelHoGuba+AfuyImoVegaxDfedBy3AuQiB16UmJga5fs4N4UzQJKA1BgKQ+jYhsBvAKZMlqFnFWD/A/4YGxeYP4qXVup/RlqWkYQ9yutzt08fC9YIKAuuT2r/c7IAQv2gDuIcGh8h/A2D6juyp6gkPRnR6zZhJViYCidzwRBVgXXMaoR9Lbpf4fNb0IsxKfdQpMFdjT1+IDe9bmRFDD9PKF8wrV/4n65+mwTw5figT4fFgwCMIoiJi9V80tP+7ekO03A93u1gJi7hygTRDF48/IzVIVxlJGNF0zsP7ZPGPM98gmORoc+j/tzfjVoArAXcO+cL+Cb8C8YLFzp+WYXrCeLD+wbVnmXki56EYw0LJOufoPE1PoZOXCup7X+38gd4G1k/leCX3GImqhETPsvaimPL+CtbCz0oUonmgq2nVAQRrb0Fl9EbgYcQC7DeoXCfl0Cuw2O5i9G10Y+fH4P846/QkCI65Xb+SffoQlpZ+U5NI88bAVbC3tOpttlLTV4/L59UA1vQ==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(376014)(52116014)(366016)(7416014)(56012099006)(10067099003)(6133799003)(3023799007)(18002099003)(22082099003)(38350700014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XMsx7hBXdImuxW82JlEUfRA6MOZvtCYPWHVKBFwlHQMfmmetyLUsG5ECcZ0v?=
+ =?us-ascii?Q?ZEp1d/tL96NACIF9WwGXFSlakZVA7kiGQp195G0Pe8EWD4ObRJuCA0GykvTc?=
+ =?us-ascii?Q?nolYcnpmlkupAuNghQczf0/we9ZLSX5fpYZgkamwlB4OOG+2uMbRyCi10qqv?=
+ =?us-ascii?Q?f3NLnh3GEtARbRkU/4C75fulh7jp3RihOij8cGmi/L11BKMikJkjrSvuQJ8L?=
+ =?us-ascii?Q?Sbr4ppkHh6gyudcG1DJeNYxDFxSVxAsxsVWJb/+Y91/zCyWCOVv7UdyD+o2Z?=
+ =?us-ascii?Q?MO82yeFYKmJwTAdywn7hjYVEF5jCxmjTJNjUHa9fcnvkiUdev7jFc5fvqD17?=
+ =?us-ascii?Q?TP7jWulgsSWSx1VMnWCcjanQgfM15j9Yg3fo3rV0KsI2X5rJQCxbmM6B+wJ0?=
+ =?us-ascii?Q?JOp/V3UNN6tVhhLQNpbWFbcEZsj8N7R4PRb8VQI5cAoCb5mSknJEUiF+6YeK?=
+ =?us-ascii?Q?NxG6YPSm7NgsC7moT6D9vJFkvMtJ/i3NUj/5UFjGoiVpM4nBSomZ+HZq05Gp?=
+ =?us-ascii?Q?4ktIJRcN0vjhgiLwZnGGZPYoih9M44gop+90a4XmwnUe8zmcIuEZV4AkEef6?=
+ =?us-ascii?Q?utbMQJvLE5F5nxUEDXJMCbjdfTqf2RhLoAd/dXraLD3KQj9oTQtlzaIc7Y8S?=
+ =?us-ascii?Q?k1gi4MhIvjqUGe7tE4ZdPaxEAIeePWNwRri6icq/vcDkPhroDJUlsshqkqba?=
+ =?us-ascii?Q?Ho+lzHKceTzITCrxYsmdbhQhe9fzHJxhr0UfvPFMKm0Qqgxum3aWKxHLuUZw?=
+ =?us-ascii?Q?PE7ylpE8f7JYZYAHIqlCUmDLT9ovI1ww6p+if02yTT2rOFHdiZIEPIfeKZiw?=
+ =?us-ascii?Q?nhKCPsVpYTnrH88v9ZTYiHRmwA8Rq9ka/ZaMicKR+MI5IusB6s6evuNUptd5?=
+ =?us-ascii?Q?KAoJCuWMl/DZNWOj+linUfXhto68/Xl6/0Wc/nXU5lAWhvZXo+BpXiC6rUJo?=
+ =?us-ascii?Q?bejWBx/6oAVWzo8cW0m9sHEVqrhrKtSQvbGb641g+M+CgJwysoJX3VOZdth1?=
+ =?us-ascii?Q?Ynlri0wecN0Pl6Xojb6Cu6JjKh2MU8rs7Q6GsED4ePW8hf4Pfs6FfzxNJjoU?=
+ =?us-ascii?Q?vOmaGjATRUCEu2MmZsPnqMPtFMPqIXWt6ExU5Nzypoy3cjPs7GcKsOCxeUp4?=
+ =?us-ascii?Q?KPMuHMyuAjLriG00qOvbaXeLSmk6IAdyxIOWCv6Y11X/7sjK6K0Sz3wnRzw5?=
+ =?us-ascii?Q?asD6BD81oRXe2uIAOdnIBV5LbkCX7cO5k8YtBHeEy9RjGVZ4OQzlf2BmsSMV?=
+ =?us-ascii?Q?Ss0WQaWtdzU1RYPXFDJvUaVmYpr0WKh5A5CIf/dVC3K/EgicipU42zH6O7Du?=
+ =?us-ascii?Q?eI6sloWdvksoeodp608JyjzlkGTe7Rh4qs70ga6MeedNqQ2CESecJgh23/Xe?=
+ =?us-ascii?Q?B1c99wvdgRXgrJn+CdxlliTVsOXtNbrdwWZAlUEG71MEeD4pb+4C9imfRDsF?=
+ =?us-ascii?Q?Gvt99+8wB4OJdrOgNc8f46Wb7VukTkiYxbQubX3YK3YCKZd2yWmwdQdvUnsC?=
+ =?us-ascii?Q?eXqkJkdGSWyeU+xo9sjB/BGOks/RjxBoU1+wmPipNE9+ZzkLDWbpqhSIvThE?=
+ =?us-ascii?Q?ncWQDxxZEtegzB8DU68DVVSclQBD3nYVA/dsYeNGFqVMd5lTc7SU35Kygf8c?=
+ =?us-ascii?Q?qo4kxgoVGzwFLLRO3UGGdBlRGhfSrWLtgIEvGh+BaAdddCmEYB4rbBr9XBaC?=
+ =?us-ascii?Q?nbwjJtQ5ejU52exSPrbvgykuzlcjQBK5S2snjGZfmatlMdBg7OHmzPohxUvk?=
+ =?us-ascii?Q?HJpdvNbrDLlrl7sze+nBw/OtxD/45F3857Nzrf/wp6DV8zzpw39G?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c0329e8-8ae9-4e4a-27b8-08def6a9c7b6
+X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2026 06:36:59.5154
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RVk1CgdmO9LckkmRKEVYC4kwUwCXB066oNYxs5mHgie+tPRnXit0sS0DC5YGO9PejQTd+rXC85uWbM42SBXzsG3ZKWxtGzho2CoEkhf+DFG8jb/QYp/0PSNL5y181Ka5
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1315
 
-The current driver requests the optional CSI_B and RDWR_B GPIOs but
-only configures their initial output state and never changes them
-afterwards. As a result, CSI_B and RDWR_B remain inactive or active
-throughout the configuration process.
+The StarFive JHB100 SoC hardware supports debounce time configuration
+with nanosecond granularity. The existing 'input-debounce' property
+uses microseconds, which is insufficient to accurately represent the
+hardware's finer timing steps.
 
-This may work on systems with a single FPGA where these signals do not
-need to be controlled by software, or where the signals are configured
-to their active state. But this does not not support systems with
-multiple FPGAs sharing a SelectMAP interface.
+Add the property 'input-debounce-ns' to specify debounce time in
+nanoseconds as an alternative to the existing 'input-debounce' which
+uses microseconds. Make the new property unavailable when the existing
+property 'input-debounce' is selected to prevent conflicting definitions.
 
-On systems with multiple FPGAs sharing the same SelectMAP data bus,
-the driver must deassert this signals in probe, and actively control
-them during configuration.
-
-CSI_B (Chip Select, active low) selects the target FPGA. It is asserted
-before configuration data is transferred and deasserted afterwards so
-that only the intended device responds to bus transactions.
-
-RDWR_B (Read/Write, active low) controls the transfer direction on the
-SelectMAP interface. A low level selects write cycles, while a high
-level selects read cycles. During FPGA configuration the driver drives
-RDWR_B low before transferring the bitstream and restores it to its
-reading (high state) afterwards.
-
-With that info from the datasheet the driver is now changed to:
-
-- deassert the CSI_B and RDWR_B pin on probe and store the
-  optional GPIO descriptors in private driver data.
-
-- toggle both signals around the configuration data transfer
-
-This allows multiple FPGAs to safely share a single SelectMAP interface.
-
-Signed-off-by: Heiko Schocher <hs@nabladev.com>
+Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
+ .../devicetree/bindings/pinctrl/pincfg-node.yaml      | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Changes in v4:
-- add comments from Xu Yulin
-  replace wrong gpiod_set_raw_value() with gpiod_set_value()
-  deassert CSI_B and RDWR_B in probe as in patch version 2
-  rework commit message (correct the description what current
-  driver do on probe), why this is not a problem with one
-  FPGA, and why it needs a change if you have N FPGAs
-  sharing the same selectmap Interface (clk and data pins).
-
-Changes in v3:
-- use 0 (deasserted state) and 1 (asserted state) in gpio_set_value()
-  as commented from Micahl
-- rewrite commit message as requested from Xu Yilun
-  - describe what rdwr_b and csi_b do, and why this change is needed
-    for more than one FPGA.
-- add comment before asserting the signals, why they are asserted
-  in this order.
-
-Changes in v2:
-- add comments from Michal
-  - skip check if gpio descriptor variables csi_b/rdwr_b are valid,
-    as validate_desc() checks this in gpiod_set_value() call.
-  - initialize the gpio variables csi_b/rdwr_b immediately with
-    the return value from devm_gpiod_get_optional(), so we can
-    drop local gpio variable at all
-
- drivers/fpga/xilinx-selectmap.c | 36 ++++++++++++++++++++++++---------
- 1 file changed, 27 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/fpga/xilinx-selectmap.c b/drivers/fpga/xilinx-selectmap.c
-index d0cbb5fdfe3a..e9b1d15ca054 100644
---- a/drivers/fpga/xilinx-selectmap.c
-+++ b/drivers/fpga/xilinx-selectmap.c
-@@ -19,6 +19,8 @@
- struct xilinx_selectmap_conf {
- 	struct xilinx_fpga_core core;
- 	void __iomem *base;
-+	struct gpio_desc *csi_b;
-+	struct gpio_desc *rdwr_b;
- };
+diff --git a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
+index 97dbce8a261f..17a6270dce31 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
+@@ -104,6 +104,10 @@ properties:
+     description: Takes the debounce time in usec as argument or 0 to disable
+       debouncing
  
- #define to_xilinx_selectmap_conf(obj) \
-@@ -30,16 +32,30 @@ static int xilinx_selectmap_write(struct xilinx_fpga_core *core,
- 	struct xilinx_selectmap_conf *conf = to_xilinx_selectmap_conf(core);
- 	size_t i;
- 
-+	/*
-+	 * Assert CSI_B and select write mode.
-+	 *
-+	 * UG570 states in note 4 in Figure "Continuous x8 SelectMAP Data
-+	 * Loading", RDWR_B should be asserted before CSI_B to avoid
-+	 * causing an ABORT on the next CCLK.
-+	 *
-+	 * To be sure, set first RDWR_B pin before activate CSI_B
-+	 */
-+	gpiod_set_value(conf->rdwr_b, 1);
-+	gpiod_set_value(conf->csi_b, 1);
++  input-debounce-ns:
++    description: Takes the debounce time in nsec as argument or 0 to disable
++      debouncing
 +
- 	for (i = 0; i < count; ++i)
- 		writeb(buf[i], conf->base);
+   power-source:
+     $ref: /schemas/types.yaml#/definitions/uint32
+     description: select between different power supplies
+@@ -214,6 +218,13 @@ allOf:
+         input-schmitt-enable: false
+         input-schmitt-microvolt: false
  
-+	gpiod_set_value(conf->csi_b, 0);
-+	gpiod_set_value(conf->rdwr_b, 0);
++  - if:
++      required:
++        - input-debounce
++    then:
++      properties:
++        input-debounce-ns: false
 +
- 	return 0;
- }
- 
- static int xilinx_selectmap_probe(struct platform_device *pdev)
- {
- 	struct xilinx_selectmap_conf *conf;
--	struct gpio_desc *gpio;
- 	void __iomem *base;
- 
- 	conf = devm_kzalloc(&pdev->dev, sizeof(*conf), GFP_KERNEL);
-@@ -55,16 +71,18 @@ static int xilinx_selectmap_probe(struct platform_device *pdev)
- 				     "ioremap error\n");
- 	conf->base = base;
- 
--	/* CSI_B is active low */
--	gpio = devm_gpiod_get_optional(&pdev->dev, "csi", GPIOD_OUT_HIGH);
--	if (IS_ERR(gpio))
--		return dev_err_probe(&pdev->dev, PTR_ERR(gpio),
-+	/* CSI_B is active low, deassert signal */
-+	conf->csi_b = devm_gpiod_get_optional(&pdev->dev, "csi",
-+					      GPIOD_OUT_LOW);
-+	if (IS_ERR(conf->csi_b))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(conf->csi_b),
- 				     "Failed to get CSI_B gpio\n");
- 
--	/* RDWR_B is active low */
--	gpio = devm_gpiod_get_optional(&pdev->dev, "rdwr", GPIOD_OUT_HIGH);
--	if (IS_ERR(gpio))
--		return dev_err_probe(&pdev->dev, PTR_ERR(gpio),
-+	/* RDWR_B is active low, deassert signal */
-+	conf->rdwr_b = devm_gpiod_get_optional(&pdev->dev, "rdwr",
-+					       GPIOD_OUT_LOW);
-+	if (IS_ERR(conf->rdwr_b))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(conf->rdwr_b),
- 				     "Failed to get RDWR_B gpio\n");
- 
- 	return xilinx_core_probe(&conf->core);
----
-base-commit: db2ddb87143519e20a95aa36c60b36107b736a58
-
+   - if:
+       required:
+         - drive-strength
 -- 
-2.55.0
+2.25.1
 
