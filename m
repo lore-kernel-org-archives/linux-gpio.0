@@ -1,119 +1,162 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC4739BFF2
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 07:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786345603; cv=pass; b=MnRt7A6uMgBamk1JLd4sOXVOYgIfuo7Jm6IeUs3r/DykQoBnfx71EL56OM28rSI+yRg5gXjyfc1SPhEpPkb0+MfaTOTC8Zm+qNn+w3hNoFxm6pQJfDmBz58s3IwsI7tqwJ8AeClYcE8SKYSFXTpH3Bzy57yhAUiItuziMexyAwo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786345603; c=relaxed/simple;
-	bh=8Vyr/Jv7jK4HllQmorQFVSN5kvsKl7FtMVXtkglpHtc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZpIi9mBiIhHXgDm3+5GlpAHP0lz8tSM0sgtOT4E4T/BNHuCCQIQ0s9VcG9RtK1OLI6W3+hljB3xEkJiZT+7R+It0GyvZEvnvk3Hyi6x5OJyFDcvGrhEN5ZDHKEPZX5jemSXfr9aD+w+gqfDiOqUYiS6FDE1orEn2JtQNYgGL41k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F7m6PJXO; arc=pass smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14C5372B26
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 07:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786346582; cv=none; b=ulDOUzHqMRq7h320l6IfJhoYnpswiPgW/XwU1ay1ijCUXVBSmaezLOfYvs8gJC96gWT5Hln6Y9EjkEQHDHER7L1FuGPe4yfTW5wMK8xuYSbHZsepDbbze0x3of6mCTKagoI6dOwDsX+bSdATBjSpfcbCfCfogWmlzpOb7giBEw0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786346582; c=relaxed/simple;
+	bh=j62z6F0g0gX+7Q8aIzAJVtT8cldDiyFB6jdtr+v8JYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aK54/apXjB0rme2KLQGz4kTUScKe4NOmo0Yx08KA1a9kl5n6dE54iWW126zws6NRR8MelBo5vhK+b4We1ktWr6E7fyvjMHvb2J8Aen9bUCrGlCnT2Sp9hcQP+SRsKSZPusDXp1R7c7FRxYDbmdF3fW7ILALX5WRNsuN7y4yeu9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VbGcVMR0; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F7m6PJXO"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-39c7fd21b63so10196731fa.0
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 00:06:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786345600; cv=none;
-        d=google.com; s=arc-20260327;
-        b=BLtHe/nqLa6GMBa1YpVNhjOA9KtJW4QQzS4pu+jkjoISrQT4lPYb8BfJckK5cJaLL/
-         UqA/mukBqRlUtRBDlQfdje3TScypEtBAdC/LHtTW0rs/G0uardHIgRm278kjxwt3Q4BG
-         MT7hHB1H3R4RdJa6WI7GhwKYu7DylXSgbKrt7g/VM3QjMe/eMOWkErWGVkmkDA0TLjQs
-         S+YjuXMr8AbvKhPjr2No9EMNAIaK87hRITDQwFE0tmgSJuk2qw2q2SZijPzfXgO+8sou
-         bhA3QohNOqLmibXWtMHZ8yTOSxe3QYkHLfGL5HHWzRa/AuYhPkySXNzQNS5MTWPRiaUj
-         NO2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=8Vyr/Jv7jK4HllQmorQFVSN5kvsKl7FtMVXtkglpHtc=;
-        fh=iihsQ2hUDrXu9ABZqJtdk6S8FkLXHZhSCXmHvv0gM5c=;
-        b=nS1CLkgD40LfKSEpraLze/bssPGZsOjIzyCDmv0tyhCvpcSQJT2EH9W+IXVEPTw0JJ
-         C23ddn1X+Bxtow+SCd7jMW2W/VppzL0VjVLMrYZJEt5N5B8zQUmpdnPntl5HYhlTZITY
-         ZZlgfWr9/5KeoD2U2DP7v2+nXwYSWaD41AtVLrfQeAZIZ5bvitrinydHrPtaQFIOdYlf
-         Bmwjs3EBCCK7QRd/KThGv5IpsjxOyKYIfqugpicF5Hf6E6HkJjoGrLct26nXdk39f6Vi
-         kaFvhkCDswgTpBoEG9eQb4361Y0hvtXJGp1qzfudd5aNZrtFLHqK2YC7aAmyrLYe+oW1
-         o3Qg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786345600; x=1786950400; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=8Vyr/Jv7jK4HllQmorQFVSN5kvsKl7FtMVXtkglpHtc=;
-        b=F7m6PJXOuOrYSKZOn6fwZNFDEMbLw+BSKTIPhbdqnPgDMZxDykZ2a0tHHs0x1lunzS
-         ISPGN4Fxi2pJ7/KqR27de/1rrcx/GD/Hl4KJLp2C43vMXbC0DEuMGqdgTqfDRUsEZuZG
-         bPpc0ZC24c0m0q8qNl2vRkDzlpXzv6fVVXAed9XVoJYs9klYFGWSqrZsAbmMNE6Xq1QG
-         J1osyskS98IbzdBMrHc8/+qr6a0XWFDxHwgV/jrqsyeBQlsu0mnsxt6IWMJe1e7n2KyC
-         nnFBcDeVJ45fK6Dq4h/NRcFMU58wpmyYKWTsGz31XIbNHTIfxrZPS4VI3xwzfeZogNXQ
-         Qbnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786345600; x=1786950400;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=8Vyr/Jv7jK4HllQmorQFVSN5kvsKl7FtMVXtkglpHtc=;
-        b=kkVdGJoIpvPy7vQ4S4zXeOgbLVi7SFpgMNHnfExVODhNa7o+CeWx4IXbrZpg3HpyUK
-         fZAWOT2IRC9sDp8KdXnvyB3kMobvu2irb63eMFJlBQf2sOR/dcKvIyElRLJgYOLz2N6/
-         cRBwjoTc5kOOVZvKw5Q8Mxs76QRWD/phOneQwQRl2Km5y+ZEvCQ6o7or0/WIWn03ocaC
-         VNJD6Gq1vtSXIJW/IpD/YO0ks77yQKMRXxvrp3BMotO4Lrlv3VrjW4O4oLNQdGm55Apf
-         1xu5yu79O1qKAMHshjGb9JAncrBq2ODg++RxR46UNOv6sUCNR8EHW/IWYYiQUKx6Wzr1
-         D+OQ==
-X-Forwarded-Encrypted: i=1; AHgh+RrW46gAv8tk9zt+0PglJh9G1F/mwzeBQOCT2eyuAljF0oR8iT9R1Kq0+jLuq39oBYjMUZeci+LzD0Lt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh44Sg++GbrU65+KukkR/IqjizPymNcAd3EoEG8D1q8Zmdp693
-	gdRBNQPLUzMYfniStNB8mqBIiHUTqNKb+Gr/oqUztLv7crrTw6TtaE++DvackNiMF0Hna5zCyRg
-	UxvABhzDAvhtJnllU9gSEf+4LOooZiGg=
-X-Gm-Gg: AR+sD11doo8eIK2yenSzNPXakPi7rsCUkbkiQtLA/5n+xRxnhivn3rVLKjXFEEocbXA
-	8LC1vMzc1pGsYNKcz0oVkFIZZWctOlPkepN2PnGu1xX+8sSIsEf8TdDP+NaSzD1b9DBy0t5vUM0
-	OpBJ6GO3t1g0UkbWVqM1Ylq/8M/3Jc4N0K6UA18N4FeXurXezEhfTmj7N23xbQDkFJH82BLXVwA
-	PPW2YFNnoRIHQmh5MXA/DA4Ax1NNgXGKSqDfu5tQ97sgfDxyVk+LHpiByAVQsxAnu1L1BTa6akC
-	vSOhCAiG8nR1tEculjW6j+l+DIakFMAdCYHhYkYcgTufQvE16FKU55W7MemNR7aaOKNsb6+HFx+
-	WX3nQGqZhn2P4VtQAal8BWVS1UfNwE5xr/0smmkexGbcHMnKaYjEvVOY6udJPWTyQqXlYMaWiMB
-	v3O/F+K3t7mTWYMi4NpTW15L5zjv8nFUUMM2pXhYC5Og==
-X-Received: by 2002:a05:651c:515:b0:39c:628c:15ec with SMTP id
- 38308e7fff4ca-39fbb20370cmr42017491fa.23.1786345599591; Mon, 10 Aug 2026
- 00:06:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VbGcVMR0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1786346580; x=1817882580;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=j62z6F0g0gX+7Q8aIzAJVtT8cldDiyFB6jdtr+v8JYw=;
+  b=VbGcVMR0vI1YC9TUtGFzDgaaBV4UId8bTp2huv7gSegWUZsxDG/cLhBC
+   7Xp2v855RPyAlIx9am9dHsC0YHogWV0Q+JluPCAulRpJcspH5zDK/9BTo
+   6c82ksYreWjPQXr9FVje38qFFuHeZo3khxkvK5EZ0xi1sWUVHdJoQT9SH
+   31gazPcP8YK8vozgz0BdilWbOiOglqZDxFzMqGS+UFl1cMo5y+8V7qYG4
+   hZDKR4y15X5ZQlB9LhZPLbxOGZK/jebZGFlc1KRA2otPbEOtmrf0iAdo/
+   VV+Hobdb6Wf1Zdw9b+uMcVNwNQo7l+GRepuc1grFalJoQmNPDPZzqhjgn
+   Q==;
+X-CSE-ConnectionGUID: ISUUDgsdQFe2ZxELaOWR1w==
+X-CSE-MsgGUID: bbUw/CXFQFaIqdL2lNXuVQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11870"; a="112399993"
+X-IronPort-AV: E=Sophos;i="6.25,215,1779174000"; 
+   d="scan'208";a="112399993"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 00:22:59 -0700
+X-CSE-ConnectionGUID: 7P1CHLvcS1ywv/4xxNzUbg==
+X-CSE-MsgGUID: hDXaopBpT9imJ8M1Eoo5qw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,215,1779174000"; 
+   d="scan'208";a="266812997"
+Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.99])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 00:22:57 -0700
+Date: Mon, 10 Aug 2026 10:22:54 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: BillyChou =?utf-8?B?5ZGo5Y2a5YCr?= <BillyChou@aaeon.com.tw>
+Cc: GaryWang <is0124@gmail.com>,
+	JunYingLai =?utf-8?B?6LO05L+K56mO?= <JunYingLai@aaeon.com.tw>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	JasonHuang =?utf-8?B?6buD5LuB5p2w?= <JasonHuang@aaeon.com.tw>
+Subject: Re: Up Squared Pro 7000 (UPN-ADLN01) broken BIOS?
+Message-ID: <anl8TtJweGgob1kp@ashevche-desk.local>
+References: <alAJJr5ATEZdHBBA@ashevche-desk.local>
+ <CANYHO6rgn19uxjmc+1xv-pmadZQ1EaePmwvC3Kfy-E6ckwcYqA@mail.gmail.com>
+ <alC3Kc2BcjkmUVwV@ashevche-desk.local>
+ <TY1PPFA4928F5D95D0BFF5F087E44F8B166F0C02@TY1PPFA4928F5D9.apcprd02.prod.outlook.com>
+ <KL1PR02MB723976B817F54AEB9785B51D9FDE2@KL1PR02MB7239.apcprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260810053142.27938-1-phucduc.bui@gmail.com>
-In-Reply-To: <20260810053142.27938-1-phucduc.bui@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 10 Aug 2026 10:06:02 +0300
-X-Gm-Features: AUfX_mwwgXVwFIJAHgeFASTJpkj6tyq5vvwg3fFo1Zsxr234OStIioODHNuDBEA
-Message-ID: <CAHp75Vfj9XdGY=E1-nDXhwu182b1ikoruzj2dGSp_H6kOo0SDA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] pinctrl: ocelot: Propagate errors from optional IRQ lookup
-To: phucduc.bui@gmail.com
-Cc: Linus Walleij <linusw@kernel.org>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, robh@kernel.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <KL1PR02MB723976B817F54AEB9785B51D9FDE2@KL1PR02MB7239.apcprd02.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Aug 10, 2026 at 8:32=E2=80=AFAM <phucduc.bui@gmail.com> wrote:
->
-> platform_get_irq_optional() returns a positive IRQ number on success or
-> a negative error code on failure. For an optional IRQ, -ENXIO indicates
-> that no optional IRQ is available, while other errors should be propagate=
-d.
->
-> Propagate all error codes returned by platform_get_irq_optional() other
-> than -ENXIO.
+On Mon, Aug 10, 2026 at 04:17:43AM +0000, BillyChou 周博倫 wrote:
+> Dear Andy,
+> 
+> Thank you for your feedback, and we sincerely apologize for the delay.
+> 
+> We are currently updating the BIOS to configure the HAT connector pins to
+> GPIO/GPO mode, which will ensure interrupt support on the OS side. We will
+> update the BIOS as soon as possible and share it with you for testing.
+> 
+> Thanks again for your patience and support.
 
-Same comments. It may or may not be okay to have such a change. The
-less disruptive one is to check only for a deferred probe.
+Thanks for the good news, I'm looking forward to test it!
 
---=20
+> -----Original Message-----
+> From: JunYingLai 賴俊穎 <JunYingLai@aaeon.com.tw> 
+> Sent: Thursday, July 23, 2026 2:48 PM
+> To: BillyChou 周博倫 <BillyChou@aaeon.com.tw>
+> Subject: FW: Up Squared Pro 7000 (UPN-ADLN01) broken BIOS?
+> 
+> FYI
+> 
+> Best Regards,
+> JunYing Lai
+> 
+> JunYing Lai
+> AAEON Technology Inc.
+> 5F, No. 135, Lane 235, Pao Chiao Rd.
+> Hsin-Tien Dist, New Taipei City, 231
+> Taiwan, R.O.C.
+> 
+> 
+> TEL: +886-2-8919-1234 Ext.1891
+> 
+> 
+> 
+> -----Original Message-----
+> From: Andy Shevchenko <andriy.shevchenko@intel.com>
+> Sent: Friday, July 10, 2026 5:11 PM
+> To: GaryWang <is0124@gmail.com>
+> Cc: JunYingLai 賴俊穎 <JunYingLai@aaeon.com.tw>; Thomas Richard <thomas.richard@bootlin.com>; linux-gpio@vger.kernel.org; JasonHuang 黃仁杰 <JasonHuang@aaeon.com.tw>
+> Subject: Re: Up Squared Pro 7000 (UPN-ADLN01) broken BIOS?
+> 
+> 這是外部郵件：在打開連結和附件之前，請確保電子郵件是安全的。 This is an external email: please make sure the email is secure before opening links and attachments.
+> 
+> On Fri, Jul 10, 2026 at 04:37:56PM +0800, GaryWang wrote:
+> > Add AAEON software JunYing.
+> 
+> Thanks, waiting for the response!
+> 
+> > yeah the ACPI flag should not set for HAT pins, JunYin knows it, They 
+> > clear the ACPI flag from the driver now, their BIOS uses the default 
+> > from CRB, but they should fix it from the BIOS to match the right usage.
+> 
+> How do they clean it from the driver? IIRC the ownership registers are locked
+> when BIOS hands over to the OS. Technically any pin that marked as GPIO input
+> must not be owned by ACPI to allow users to connect whatever they want there
+> and get an interrupts. Many of them also have "Locked full" permissions,
+> that's also may not be convenient. Another thing is the absence of bi-di GPIO
+> configuration (or did I miss that?), which people may want to have (my use
+> case, for instance).
+> 
+> In any case I have latest and greatest BIOS version (r3.5 of this year) and
+> problem still persists. Can AAEON share a BIOS for testing? (Note, if you
+> want, it can be done under our Intel-AAEON existing NDA, I believe.)
+> 
+> > On Fri, Jul 10, 2026 at 4:48 AM Andy Shevchenko 
+> > <andriy.shevchenko@intel.com> wrote:
+> > >
+> > > Since I have been playing with the $Subject board, I wondering if I 
+> > > miss something or the BIOS configuration is utterly broken. The 
+> > > problem what I see is that most of the pins on the SoC are marked 
+> > > with [ACPI] if you look at the debugfs 'pins' file for INTC1057:00 device instance.
+> > >
+> > > This means *none* of them (which are user visible via HAT connector) 
+> > > may serve as an interrupt resource to the OS. How the OS should 
+> > > request interrupts on those pins?
+> > >
+> > > As far as I understand that the BIOS does initial settings of CPLD 
+> > > and basically I can use transparently the pins as per their 
+> > > configuration done in BIOS. Right?
+> > >
+> > > Btw, do we have any contacts to engineers in AAEON or whoever who 
+> > > does these UP boards nowadays?
+
+-- 
 With Best Regards,
 Andy Shevchenko
+
+
