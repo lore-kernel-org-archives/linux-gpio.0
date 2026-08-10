@@ -1,159 +1,80 @@
-Received: from 10.mo584.mail-out.ovh.net (10.mo584.mail-out.ovh.net [188.165.33.109])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9703DEFE2
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 17:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAB543551D
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 18:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786384395; cv=none; b=TgTOEidy+ccK7865R3deJM4NNOc8L+AT05kkRdFiyFWb3RrsGvQAwJ7EHokYOBVIpJOf2jQgHeN/1eRdlhaoWL9O5Ssuc+x53JY1EuZwknJRpggcZXUjkJJqZSApvSkrhviGbiVJUu6Xoh7j5CcUvThcSexCWRHi3UottF9aBj4=
+	t=1786385200; cv=none; b=ixPALfsgB+QD1DIs+Ksxjl47wqj9ENBoWPaAt5MOqmeFDkQWBpDHILLjhtDHvXEQ8Z7Nk3/SVBLVUOItYU6Ah08GM9QU4FcKJXePyviH/s2VD7Jq6Xv4A+zBanzaeu56NQZPJLMmICPH9na5eTslmo7uLv+w+p8z0pRCEBi+OwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786384395; c=relaxed/simple;
-	bh=e4kQFCjB5LtFdJIis48BWU7f1G9ZFWIOb2b/rcrqG2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T1+MPr9WTEdL+cpekkDv/+hR77ZAZhDZsH+SuD6J69ux56KhLQdHshTzj2mFx/hJqngprt3ooqsrNSmAR4ucmwMh8urTV49k6XjI9BeWg2UHqur9W9WaL0BazWpQemDqvd8yWVZa3PJw3O5moHVIQpECtckUpkvecJAba5zRz2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=m-works.net; spf=pass smtp.mailfrom=m-works.net; arc=none smtp.client-ip=188.165.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=m-works.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m-works.net
-Received: from director7.ghost.mail-out.ovh.net (unknown [10.110.58.87])
-	by mo584.mail-out.ovh.net (Postfix) with ESMTP id 4hJcJT335jz8Cyw
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 14:16:57 +0000 (UTC)
-Received: from ghost-submission-7d8d68f679-7df7p (unknown [10.108.54.148])
-	by director7.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 5AC5EC0198;
-	Mon, 10 Aug 2026 14:16:53 +0000 (UTC)
-Received: from m-works.net ([37.59.142.101])
-	by ghost-submission-7d8d68f679-7df7p with ESMTPSA
-	id I14hO1TdeWq3KC0Alk6qAw
-	(envelope-from <maciej.andrzejewski@m-works.net>); Mon, 10 Aug 2026 14:16:53 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-101G004796ca3e8-0880-49c0-a3d2-70d64670ab19,
-                    ED6AA3D647CD945153C5C800EF75597CE9F2D384) smtp.auth=maciej.andrzejewski@m-works.net
-X-OVh-ClientIp:144.125.48.245
-Date: Mon, 10 Aug 2026 16:16:52 +0200
-From: Maciej Andrzejewski ICEYE <maciej.andrzejewski@m-works.net>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
-	broonie@kernel.org, linux-spi@vger.kernel.org,
-	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	linux-mtd@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maciej.andrzejewski@m-works.net
-Cc: linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-spi@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Maciej Andrzejewski ICEYE <maciej.andrzejewski@m-works.net>
-Subject: [PATCH 1/2] gpiolib: of: Only apply the SPI CS quirk to SPI
- peripherals
-Message-ID: <20260810141629.81650-2-maciej.andrzejewski@m-works.net>
-References: <20260810141629.81650-1-maciej.andrzejewski@m-works.net>
+	s=arc-20240116; t=1786385200; c=relaxed/simple;
+	bh=hgcymRn06CEzZYivG2OYevh3C3pdHTxTa6lD6AY+ufg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iN1wmZHrR4T4Es6kDPohKmEYotDtAWCI3WgHA/Aq6yMbZvXqBIZBjcpkZoWAQEYIWhfjj8PwMAaGUtcZhB6bJbJ9FNLMmKQ9gr/VO45dCclY0D5aDwY3OpjLdJ+T8isZ/wqTbgsWdBnC2Usk5wAzZhydOntoHkqcsObaq/fpDfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kh5VROtZ; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kh5VROtZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BAF01F0155B
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 18:06:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786385199;
+	bh=hgcymRn06CEzZYivG2OYevh3C3pdHTxTa6lD6AY+ufg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=kh5VROtZSFG4V4setKEx58r+aXrbRhkM81FNJEhyhDuJ/kqBlm2afkySKxEryEAjI
+	 kjgF9+Rzmf5899CrwmI6A6BinooXbmJ8xOLd9j5nNWR8EJGqVS7CIYJ65g3JccUAhK
+	 YSmjSLQ6tdF2Y+sk8wXbvIY3/urHkouBnvsSMyt8ImL79tDL9CVLuRuUTvRzGEJe4b
+	 GVn6NHwdDrRcbH48z1LRvff7doLUQD+emJgzW7U8p93t1gHIChWUJWPOGYztkhp7Qq
+	 zPpEsDdJX8prSupqD4Jhu/aXxeLWDPU8oTBtvhBCbxYXte6I3F09YVBQlzRk6BCsFo
+	 sHjiQQvHJfAkQ==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5aeb8c19017so2735983e87.0
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:06:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrJZlQRYPRlCFPkjsEg2XkEOdmReZud63g07CfubPXoERPeKHg4ecIOO0gX6G6QlyfIy4g7h4vj9pNc@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnkjRqOdRD+mSLNp7nyUuL7M4zN33H4YtixC2ULSUQ7IJXkLgJ
+	t0rBq2ilKeaV14vKfm2Ux7Q2arm8pOxVa+76Bm7xltQW88QyH/BGJvN2oI6+ly0zIlapezU+RSJ
+	JQV7v/hgJbUUkVWSiXoblLksoeGUOeF4=
+X-Received: by 2002:a05:6512:baa:b0:5b2:f437:2a88 with SMTP id
+ 2adb3069b0e04-5b2f4cc7be5mr5978880e87.36.1786385197772; Mon, 10 Aug 2026
+ 11:06:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260810141629.81650-1-maciej.andrzejewski@m-works.net>
-X-Mailer: git-send-email 2.43.0
-x-ovh-tracer-id: 15949779557479752483
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: dmFkZTFkKUw8dTwvfjd4/KP70uzwoCMB5S1Nh1xoCtlKl9zTFZzwWOg+RBpw5P0civI9C611B1wrLGnfL3FNYmECOnjsVZKgynKuLG6Jhd3Uc8cbYV256q4EDW1EJopIsVe6nfKjRwsKIAKDeHxGys67ywGuGjynKrr0p4f+W1tRSR6L8yRsQUchqkYbufFkmr7AL7eeCcTKmnSxggk9Am6xY3yqfHbxzDDXnNa07eo3ri956RbXgeCfNKnKA1gany5tMxKjWt3sHbxNpzbfY66hukbKbQQTBIAx2rECu5ovgOzajdg1Fxma7zv7UmoNQovbLAGQzJu4D89RflMM5EwN9mbnFaByRFVFJA2X6y6FaCO9vLyrT/oEQOqZueL96RwECL9TWwCXZ0SnPU0fyTa5etuolNsKgDZD+0MqPaiqb9BVDupDELhXmAgcuwHv0SEF2X3ZV/ss1HLcpzmSFt3DJZTTWwJ1qDl6Iyo5WHGn0HVerxzpeKnPZehplheywpsiQX4IP4F9sFCUErahKNXCtDUO5HvgjPHqv7eTvhwYLNVj2dF1bXvQEivVPpgIMIY/97fbVuNvt8t7ptR8IBReDEW4kIZXnq1iTzAYXMLpqcOXEhRc/yfolHCQXqqz7f0/JML2PgXBD1wwAP/WSnAWuKx2y3csE8cE0EwIweKqx8BKjw
+References: <20260809-kuno-soc-support-v1-0-5e0ede4a0c72@oss.qualcomm.com>
+In-Reply-To: <20260809-kuno-soc-support-v1-0-5e0ede4a0c72@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Mon, 10 Aug 2026 20:06:24 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=kW+K6noeaO9=zktgveVbYmbZsWUWo3r-V0S7V90FDLw@mail.gmail.com>
+X-Gm-Features: AUfX_mymdEhf6vtyoDczgdrTd_h0sSGCYBoPOdLs8lQcTMbtLbfi04PfIu1dDG4
+Message-ID: <CAD++jL=kW+K6noeaO9=zktgveVbYmbZsWUWo3r-V0S7V90FDLw@mail.gmail.com>
+Subject: Re: [PATCH 00/15] Add initial support for Qualcomm Kuno SoC
+To: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Georgi Djakov <djakov@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
+	Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>, 
+	Guru Das Srinagesh <linux@gurudas.dev>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The legacy SPI chip-select polarity quirk in of_gpio_flags_quirks() is
-keyed on nothing but the property name "cs-gpios". That name is not
-exclusive to SPI: nand-controller.yaml documents the very same property
-for NAND controllers, and rawnand_dt_parse_gpio_cs() requests those
-lines with gpiod_count(dev, "cs"), which gpiolib expands to "cs-gpios".
-A NAND controller therefore has SPI chip-select semantics forced onto
-its chip selects, and any chip node whose first reg cell matches a GPIO
-index is silently flipped to active low. The NAND core requests the
-descriptors GPIOD_OUT_HIGH and drivers assert with a logical 0, so the
-inversion leaves the die permanently deselected.
+On Sun, Aug 9, 2026 at 9:27=E2=80=AFAM Hardeep Sharma
+<hardeep.sharma@oss.qualcomm.com> wrote:
 
-The example in nand-controller.yaml is itself affected: it pairs a
-native chip select with a GPIO one and gives the second chip a reg of 1,
-which trips the quirk whenever CONFIG_SPI_MASTER is enabled. In-tree the
-collision is real but latent. 36 board trees, all Atmel/Microchip at91,
-give their nand@3 controller a cs-gpios line, and they escape only
-because the sole child of those nodes is a partitions container with no
-reg for the quirk to match against.
+> This series adds initial support for the Qualcomm Kuno SoC and the Kuno
+> IDP reference board.
+>
+> Kuno is a 32-bit ARM (Cortex-A7) Qualcomm platform. This series brings up
+> the essential SoC infrastructure required to boot to a serial console:
 
-Device tree carries no bus type marker, so identify the bus from what
-the peripheral advertises about itself. Properties of an SPI peripheral
-are namespaced with "spi-" (spi-max-frequency, spi-cpol, spi-cs-high and
-the rest of spi-peripheral-props.yaml), whereas a NAND chip node carries
-only reg, nand-* and its partition table. Skip the quirk when the
-matched child has no "spi-" prefixed property.
+Is there some special reason why you are not posting this patch series
+to the most relevant mailing list i.e. linux-arm-kernel?
 
-This is a convention rather than a guarantee: compatible and reg are the
-only properties spi-controller.yaml makes mandatory for a peripheral, so
-a minimal one may carry no "spi-" property at all. The next patch covers
-those by looking at the controller instead.
-
-Signed-off-by: Maciej Andrzejewski ICEYE <maciej.andrzejewski@m-works.net>
----
- drivers/gpio/gpiolib-of.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 940b566946ce..bd9a623f2ae1 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -340,6 +340,25 @@ static void of_gpio_set_polarity_by_property(const struct device_node *np,
- 	}
- }
- 
-+/*
-+ * The legacy SPI chip select binding below is keyed on a property name that
-+ * other subsystems reuse for the same purpose, notably NAND controllers (see
-+ * Documentation/devicetree/bindings/mtd/nand-controller.yaml), whose chip
-+ * selects carry no SPI polarity semantics. Device tree has no bus type
-+ * marker, so go by what the peripheral advertises about itself: properties
-+ * of an SPI peripheral are namespaced with "spi-".
-+ */
-+static bool of_gpio_child_is_spi_peripheral(const struct device_node *child)
-+{
-+	struct property *pp;
-+
-+	for_each_property_of_node(child, pp)
-+		if (str_has_prefix(pp->name, "spi-"))
-+			return true;
-+
-+	return false;
-+}
-+
- static void of_gpio_flags_quirks(const struct device_node *np,
- 				 const char *propname,
- 				 enum of_gpio_flags *flags,
-@@ -374,6 +393,11 @@ static void of_gpio_flags_quirks(const struct device_node *np,
- 			if (ret)
- 				continue;
- 			if (cs == index) {
-+				bool active_high;
-+
-+				if (!of_gpio_child_is_spi_peripheral(child))
-+					break;
-+
- 				/*
- 				 * SPI children have active low chip selects
- 				 * by default. This can be specified negatively
-@@ -386,8 +410,8 @@ static void of_gpio_flags_quirks(const struct device_node *np,
- 				 * conflict and the "spi-cs-high" flag will
- 				 * take precedence.
- 				 */
--				bool active_high = of_property_read_bool(child,
--								"spi-cs-high");
-+				active_high = of_property_read_bool(child,
-+								    "spi-cs-high");
- 				of_gpio_quirk_polarity(child, active_high,
- 						       flags);
- 				break;
--- 
-2.50.1
-
+Yours,
+Linus Walleij
