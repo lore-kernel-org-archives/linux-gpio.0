@@ -1,278 +1,195 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3FE345725
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 05:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.171
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786341260; cv=pass; b=EpD/VXKwVYBEEx2wh5yLdJ8Ad7b2QLqChasVODSDARqp4EWj7jOH3otHYfjX+kwG/gQ7SjSn72jYlN6+n4GfpU82F4Ys03OzvEuV/lZ8fPTEDVq+OCLxblIwDYW0eDd3bCe0RkTjg51wq1paRhdBf5OzZG4TTpJKljEsfpfSaaw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786341260; c=relaxed/simple;
-	bh=suUjvTf3P1y0cIsVCuDKytXXdqHPIMwVWtmL6zKDomU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IAUx5na4XU2orZwDiojx+8i/3Jl2ghnKRfOyESpOuROMF30Z5u+0SHxDzoRBHycal1GE+JoDhYYcIDhYLrvyjiTh/iq33wOUv3gSPrEH8CR4Mg7bZ2w+D0L7X1qrIeN+PfIbPh4ammNyijsXXohjamsiYwjhdz0R0P5l+3LUxX0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W9lqP6NQ; arc=pass smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9427F36C5A1;
+	Mon, 10 Aug 2026 06:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786342887; cv=none; b=oAYsGzZozdqLUDbGY9iTPVg4mnNPle96vAr3Ybh0vb6uijxH3glTNI1ZcS9kUky6/VM0ZQuNRRpZSDH8U/1zHWLdTpl0L9EczLyrxWE+fV3rPBZOUYreo7geLcl7jCX4b00sp5W6NPvkW+b6UKh49OFhV7wneXHsQ1QA/IA1T98=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786342887; c=relaxed/simple;
+	bh=2mM10romqLpq5O107SRCTjwfedWENZiCE+DZ4PUg6WQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f30nG8eqKbRzmZkF0jph4li/RayQRDVBvFWD8bvxOfSNNU4EabK8cha+4Gt85auwj6ir/lxFry2pEaLN4I7X3ipJUp01dEJInqgcdWbC2cKpmulUvU/tMVZRTVV8/W5whS30RoJpULPno6oNuqipjiqz9Yw9+fdA4gPgNEbkM6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=DoJCGJul; arc=none smtp.client-ip=178.251.229.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W9lqP6NQ"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-8201447e8cdso24365167b3.3
-        for <linux-gpio@vger.kernel.org>; Sun, 09 Aug 2026 22:54:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786341258; cv=none;
-        d=google.com; s=arc-20260327;
-        b=F9YlJLgoVpnykXjk5+y/g2+D+qQcHE0plsn1Jbo1IniQ8XEU6rw5tlWh4j4CgWKLlB
-         MDaeKjZQHO1YZfiH/8aUtd9Cosb7GXNbgyhpLusYRWIIhNF4wqh9yQCl7ZF+mNdQmmJV
-         8GzemEocUCAat+39lkHq0JrnMCOlfV1sXKU5+P+KNpFmEy4NVp6M6gnkpijbJPHBlSIt
-         8erWMDImFa8pQL4Gy8CmzAoeoN5tNA7Z6qFxutRJlmNaGPnZ1BCpp9t2l8ESU/c+GvZM
-         y+xCrXtQG97DouFvNOk5dOPQJF9Ha/LK5V6SXr4wqYV/QcahY0by1x0aiI8FSev9ecTz
-         XCAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=uwGD58QbD1UPefAzp4tzFsyiBGkUf2nddf4HvF828lA=;
-        fh=jpyBRycW6Bav/QFyrRBvD2w0y24KeIRT9/EWPlbvenc=;
-        b=p98B95BEd/ZjWBPcC9LcQ+YJq3dEiCSmYRVEUuuwltfzwg5w5hfOrcZ50a7UaFCiLU
-         S6xwsYHCb20+ZsATUWaZo99o9ocVuH7uru/cTOo2fSR2awaoj3BvyT8v4ov4fwCMIoJq
-         WVbqs5BZH4ZDmxEUMMUZQHEtQyho1V88KMwRozgP613HW+uhDnzsxgGo84mBPW3kz+6L
-         GJANBw63jnMvsfJxE+dgItFfH6mWIkNJyeud7gZCibWFwYeNvxfI+ihkUitRR2GIexSQ
-         L6FsGaIhcyYpqptdZVa8vDOCcXqxhGzeP+B9ECInO/RRo4tx/SXt3DkqZt2zYpQju0DO
-         5kzQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786341258; x=1786946058; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=uwGD58QbD1UPefAzp4tzFsyiBGkUf2nddf4HvF828lA=;
-        b=W9lqP6NQWxKthg5VK9Ot9mOJY2HPfDOZySxTQlimxgwwnDtroib5Iy4ysfTYEljEPq
-         2tGCs0yVZgIoH9ZKHjAngeNSCN7aSnaoyXkHLoXmWtY3bivcrxmfflwFEdW/ArSFBj73
-         JfCpA7BZ3Hf6/4vbWbuVbpneqComJYJ3F5tY1aDrF4Hxk7zBySp4V/ZeO86L/os+jc19
-         yQcRTuyzM+YQA3G3hYZTK3W2GJiJ0uLK3MAuoo3WxFoezBRFfg1FGy9uT99XM4ITMwPm
-         /a4D8K++/LLfiPFlCmln2RX4TgP1mOJ4NikNKnxfbQFO8/PLToqd6rQJKaDT6+1TwUre
-         LxRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786341258; x=1786946058;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=uwGD58QbD1UPefAzp4tzFsyiBGkUf2nddf4HvF828lA=;
-        b=DidUGD1nD6R7bVe9lhS38aCq933E/w53Ufn4nJh4Dy3zFgyTbfsCiG5VIMdv1Rl8tj
-         LP0P9cbPdnXqrNW+hUG15U/QHqkBpUGdj97+C/+HnnfsczDJbuSrs1rHnZuHWVcUkb03
-         ro0wT0NMzYgOwm2NiLzLU/jV+v7w42WIMeGbEqhOrrQEU4rJdl8gfQa7kbO5r2ItmL1A
-         NXjTD690dT7/2Q9vA7Y77SnTgBgll+zVRy9XxCHV6MHL62QmZlWHRcX2UWGZWUoWlkTj
-         uwiEsA6nAQDaGvX/7AXWj8jni3AIUb857y5m9njrIGIFTIW+Ax2givx5GFvaJBpEA0U2
-         t+dQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpHCLa2eE9vY/n9M+shp9TrJN4PhweXoE4Qn3s14jjYmHhtc6LFK6HETmUltVD1xnTPTfr3TzZ/pqm/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvG3viuosQtTikHrPjoaZXrAUVkdX+bFp9Tq2bNFvNAug80DFZ
-	OaC/MUsaGRDIo9L2hTq0yeAsAwva3zaP03dCkwdeSwrr4zPBdInOir7EYqBAPeA0Sg8w+kXi6mX
-	0dSjLwIsHCsyl1l0rp/4EmLB1/v9xXzk=
-X-Gm-Gg: AR+sD102pTNVqOtBvi9La8/ZAjUTS+wVsLyjTx2dylf4H91YJk0Lms82MnX5XQ9Ccfc
-	hla+GyZ85EO4IHMFCKjjn42yjMOxFLkk4V1J4hVG2R0B3xZj4efTAd03/cgFQlzOj+NElOJrtLa
-	0q3iMqCIqVWm/CRh3ByrAAqFXoIIXYPdMG6lxdl1OK7PsSty1aT4nVC2giljdTvab5+jfND0MvC
-	RMEbeza/AGGhze4pZcEiOuggxHEnH+x805fr0c4jc99opNIzOI8zafvEnY3n/8dmvADXYcfApQw
-	ulibq974ex5s4JOTifMQO9kyEypdIVW1jhXk2z0waZYP7iHKhP6GGPgSz55rDQrWDeVNeTTj9Bx
-	jpLP+Bs/8RaCueYdfWO7IBbEkM4OsH9w5xy38r5KObjCVKi0cREK/BbPyUu0GvZYBpSS3xsqjvr
-	SEdtVtOe7fkSpzwtkEDovuW24lxDs7wA==
-X-Received: by 2002:a05:690c:498d:b0:81f:889c:2078 with SMTP id
- 00721157ae682-8201bc89d5cmr240796707b3.7.1786341258104; Sun, 09 Aug 2026
- 22:54:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="DoJCGJul"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9E3FD11B494;
+	Mon, 10 Aug 2026 08:21:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1786342873; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=TIcYkXIenvNkMTJ1YuV3o4EGTcYhnPA+PcvQgIsAFFM=;
+	b=DoJCGJulsBPRy6JS3ixEUSVrFe8PLIcqz0AV9dMgE0c2ta4xuNd52VcgEO2m8+7XMdoW0D
+	f4IVkh1MvMHVPOGdQ/o5fG6WEKJoSWuaLCvdTMdKmx1qY2gLFdf9jAA9m07w+CArEtGTrS
+	WsWz6W05WTQLgBjDBmiUeaeYaRXPAp5MX9orAwZfVCC70PKljktxTFy/lmbcRCJmgYNZhL
+	qS0bEIX9FP/v6G93p9ZXHJn5v0Qlinw5bmZe2aJr2OC0pgGna2j10vankCQk81wv47lr9I
+	k0KgiLUCaCNPYzhxzar6YpzXqnjcSto23ZUig1PPM1Igu+1pHX5p8zDfb7+yhg==
+From: Heiko Schocher <hs@nabladev.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-fpga@vger.kernel.org,
+	Heiko Schocher <hs@nabladev.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Moritz Fischer <mdf@kernel.org>,
+	Tom Rix <trix@redhat.com>,
+	Xu Yilun <yilun.xu@intel.com>,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH v4] driver: fpga: xilinx-selectmap: add csi and rdwr support
+Date: Mon, 10 Aug 2026 08:20:51 +0200
+Message-ID: <20260810062105.299808-1-hs@nabladev.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260718054330.8975-2-hardikprakash.official@gmail.com>
- <amhodWpAI3K6aeBH@zenone.zhora.eu> <b4a4eadb-282f-464c-843a-19d415a34d0c@leemhuis.info>
- <CANTFpSW+w1GZMbLXszuqZFCZjeVJfFG2bc1vJad+OMzsy-CPCg@mail.gmail.com>
- <aneQvMN_Zet2b62n@ashevche-desk.local> <b5b95476-636f-40b1-8575-47918169b7bb@leemhuis.info>
- <CANTFpSWzV9tzMwc2cURCQBhpZmrv1SsZqnwBEu0jt=ZQWfvWgQ@mail.gmail.com> <1a209e14-05c6-4796-a8fc-d0c3a776520d@leemhuis.info>
-In-Reply-To: <1a209e14-05c6-4796-a8fc-d0c3a776520d@leemhuis.info>
-From: Hardik Prakash <hardikprakash.official@gmail.com>
-Date: Mon, 10 Aug 2026 11:24:06 +0530
-X-Gm-Features: AUfX_mwrTPHihRlbGamOP_Zjb7bYCzzTQ_X6CZ2JeBClHEdHTOPV1XytPUE6eeo
-Message-ID: <CANTFpSWnTjoTS8hBOvVM_w3pWHyOiBhch_GXe_mG-d56WeF-0w@mail.gmail.com>
-Subject: Re: i2c designware change broke touchpad of a thinkpad
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, wsa@kernel.org, 
-	mario.limonciello@amd.com, brgl@bgdev.pl, basavaraj.natikar@amd.com, 
-	linusw@kernel.org, nathan@kernel.org, chaitanya.kumar.borah@intel.com, 
-	Linux kernel regressions list <regressions@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sun, 9 Aug 2026, Thorsten Leemhuis wrote:
-> Sorry, picked the wrong file while preparing the mail, it's here:
-> https://www.leemhuis.info/files/misc/dmesg_patch_dyndbg
+The current driver requests the optional CSI_B and RDWR_B GPIOs but
+only configures their initial output state and never changes them
+afterwards. As a result, CSI_B and RDWR_B remain inactive or active
+throughout the configuration process.
 
-Thanks, that's the one. Full timeline from that boot:
+This may work on systems with a single FPGA where these signals do not
+need to be controlled by software, or where the signals are configured
+to their active state. But this does not not support systems with
+multiple FPGAs sharing a SelectMAP interface.
 
-  0.619s  AMDI0010:00 and AMDI0010:01 defer (AMDI0030:00 not registered)
-  1.136s  Retry succeeds: device_is_bound()=true for AMDI0030:00,
-          confirmed for all three children (XXXX0000:00, SYNA8018:00,
-          NXP1001:00)
-  2.222s  lost arbitration on AMDI0010:01 (x3)
-  3.260s  controller timed out, HID descriptor fetch fails
+On systems with multiple FPGAs sharing the same SelectMAP data bus,
+the driver must deassert this signals in probe, and actively control
+them during configuration.
 
-The dependency check itself is behaving correctly here -- it defers,
-then correctly confirms AMDI0030:00 is bound before letting probe
-continue. The arbitration failure happens over a second *after* that,
-when the touchpad attempts its actual first transaction.
+CSI_B (Chip Select, active low) selects the target FPGA. It is asserted
+before configuration data is transferred and deasserted afterwards so
+that only the intended device responds to bus transactions.
 
-So this doesn't look like a logic bug in the check itself. My read: by
-delaying dw_i2c_plat_probe() by ~500ms (correctly, for GPIO's sake),
-something else ends up contending for the AMDI0010:01 bus by the time
-the touchpad's first transaction actually happens -- a window that
-the original (undeferred, earlier) probe attempt apparently avoided.
+RDWR_B (Read/Write, active low) controls the transfer direction on the
+SelectMAP interface. A low level selects write cycles, while a high
+level selects read cycles. During FPGA configuration the driver drives
+RDWR_B low before transferring the bitstream and restores it to its
+reading (high state) afterwards.
 
-Mario -- does this look like a known AMD I2C/PSP semaphore contention
-pattern to you? Wondering if there's a shared bus/firmware consumer
-that could explain a ~1s-later collision like this, independent of
-the GPIO controller itself being ready.
+With that info from the datasheet the driver is now changed to:
 
-Thorsten, if you have it handy: /proc/interrupts and lsmod from this
-boot would help narrow down what else might be touching that bus
-around the 2.2s mark.
+- deassert the CSI_B and RDWR_B pin on probe and store the
+  optional GPIO descriptors in private driver data.
 
-Thanks,
-Hardik
+- toggle both signals around the configuration data transfer
 
-On Mon, 10 Aug 2026 at 11:06, Thorsten Leemhuis <linux@leemhuis.info> wrote:
->
-> On 8/10/26 07:23, Hardik Prakash wrote:
-> > On Sat, 8 Aug 2026, Thorsten Leemhuis wrote:
-> >> https://www.leemhuis.info/files/misc/dmesg-master-plus_revert
-> >>
-> >> [    0.619018] i2c-dw-gpio-dbg: i2c_dw_check_gpio_dependencies(AMDI0010:00)
-> >> [...]
-> >> [    1.136010] i2c-dw-gpio-dbg: device_is_bound()=true for AMDI0030:00
-> >
-> > Thanks, this trace looks correct on its face (defer at 0.619s, retry
-> > succeeds at 1.122-1.136s), but the link above points to the same file
-> > you sent last round (the master+revert baseline, no debug patch, no
-> > i2c-dw-gpio-dbg lines in it at all) rather than this new capture.
-> >> Could you share the full, unfiltered dmesg from this exact boot (the
-> > one with the debug patch applied)? I need to see where
-> > "lost arbitration" falls relative to the trace above.
->
-> Sorry, picked the wrong file while preparing the mail, it's here:
-> https://www.leemhuis.info/files/misc/dmesg_patch_dyndbg
->
-> Ciao, Thorsten
->
-> > Separately, from your DSDT: NFC1 (NXP1001), which shows up as a child
-> > of AMDI0010:01 in your trace, declares its _CRS as a raw resource
-> > buffer containing three GPIO resources referencing \_SB.GPIO -- one
-> > GpioIo and two separate GpioInt entries. Not sure yet if that's
-> > relevant, but it's a pattern I haven't seen on my hardware
-> > which I've tested against.
-> >
-> > Thanks,
-> > Hardik
-> >
-> > On Sun, 9 Aug 2026 at 21:49, Thorsten Leemhuis <linux@leemhuis.info> wrote:
-> >>
-> >> On 8/8/26 22:25, Andy Shevchenko wrote:
-> >>> On Sat, Aug 08, 2026 at 10:31:28PM +0530, Hardik Prakash wrote:
-> >>>> On Fri, 7 Aug 2026, Thorsten Leemhuis wrote:
-> >>>>> This became 0a4bb2abc3e56d ("i2c: designware: defer probe if child
-> >>>>> GpioInt controllers are not bound") and causes a regression for me: the
-> >>>>> Touchpad in my ThinkPad T14s Gen 4 (AMD) stopped working. From the
-> >>>>> kernel log:
-> >>>>>
-> >>>>> i2c_designware AMDI0010:01: i2c_dw_handle_tx_abort: lost arbitration
-> >>>>> i2c_designware AMDI0010:01: controller timed out
-> >>>>> i2c_hid_acpi i2c-SYNA8018:00: failed to fetch HID descriptor: -110
-> >>>>> i2c_hid_acpi i2c-SYNA8018:00: Failed to fetch the HID Descriptor
-> >>>>>
-> >>>>> Reverting this change in current mainline/master (f9a2394a23482) fixed
-> >>>>> things for me. Full dmesg of current master and master+revert can be
-> >>>>> found here:
-> >>>>>
-> >>>>> https://www.leemhuis.info/files/misc/dmesg-master
-> >>>>> https://www.leemhuis.info/files/misc/dmesg-master-plus_revert
-> >>>> [...]
-> >>>> Two things that would help narrow this down, whenever you have a moment:
-> >>
-> >> Thx for looking into this. Here we go:
-> >>
-> >>>> 1. A DSDT dump
-> >>
-> >> https://www.leemhuis.info/files/misc/dsdt.dsl
-> >>
-> >>>> 2. A dmesg with dynamic debug from a kernel built with the attached
-> >>>>    patch on top of current mainline/master
-> >>
-> >> https://www.leemhuis.info/files/misc/dmesg-master-plus_revert
-> >>
-> >> [    0.619018] i2c-dw-gpio-dbg: i2c_dw_check_gpio_dependencies(AMDI0010:00)
-> >> [    0.619018] i2c-dw-gpio-dbg: check_child_gpioint(adev=XXXX0000:00)
-> >> [    0.619076] i2c-dw-gpio-dbg: GpioInt resource_source=\_SB.GPIO (len=10)
-> >> [    0.619079] i2c-dw-gpio-dbg: acpi_fetch_acpi_dev() succeeded,
-> >> device=AMDI0030:00
-> >> [    0.619080] i2c-dw-gpio-dbg: gpio_device_find_by_fwnode() returned
-> >> NULL, deferring
-> >> [    0.619082] i2c-dw-gpio-dbg: check_child_gpioint ret=-517 (defer)
-> >> [    0.619102] i2c-dw-gpio-dbg: i2c_dw_check_gpio_dependencies(AMDI0010:01)
-> >> [    0.619104] i2c-dw-gpio-dbg: check_child_gpioint(adev=SYNA8018:00)
-> >> [    0.619159] i2c-dw-gpio-dbg: GpioInt resource_source=\_SB.GPIO (len=10)
-> >> [    0.619162] i2c-dw-gpio-dbg: acpi_fetch_acpi_dev() succeeded,
-> >> device=AMDI0030:00
-> >> [    0.619162] i2c-dw-gpio-dbg: gpio_device_find_by_fwnode() returned
-> >> NULL, deferring
-> >> [    0.619164] i2c-dw-gpio-dbg: check_child_gpioint ret=-517 (defer)
-> >> [    1.122517] i2c-dw-gpio-dbg: i2c_dw_check_gpio_dependencies(AMDI0010:00)
-> >> [    1.122523] i2c-dw-gpio-dbg: check_child_gpioint(adev=XXXX0000:00)
-> >> [    1.122625] i2c-dw-gpio-dbg: GpioInt resource_source=\_SB.GPIO (len=10)
-> >> [    1.122636] i2c-dw-gpio-dbg: acpi_fetch_acpi_dev() succeeded,
-> >> device=AMDI0030:00
-> >> [    1.122639] i2c-dw-gpio-dbg: gpio_device_find_by_fwnode() succeeded
-> >> [    1.122642] i2c-dw-gpio-dbg: device_is_bound()=true for AMDI0030:00
-> >> [    1.135894] i2c-dw-gpio-dbg: i2c_dw_check_gpio_dependencies(AMDI0010:01)
-> >> [    1.135898] i2c-dw-gpio-dbg: check_child_gpioint(adev=SYNA8018:00)
-> >> [    1.135976] i2c-dw-gpio-dbg: GpioInt resource_source=\_SB.GPIO (len=10)
-> >> [    1.135980] i2c-dw-gpio-dbg: acpi_fetch_acpi_dev() succeeded,
-> >> device=AMDI0030:00
-> >> [    1.135983] i2c-dw-gpio-dbg: gpio_device_find_by_fwnode() succeeded
-> >> [    1.135985] i2c-dw-gpio-dbg: device_is_bound()=true for AMDI0030:00
-> >> [    1.135987] i2c-dw-gpio-dbg: check_child_gpioint(adev=NXP1001:00)
-> >> [    1.136005] i2c-dw-gpio-dbg: GpioInt resource_source=\_SB.GPIO (len=10)
-> >> [    1.136008] i2c-dw-gpio-dbg: acpi_fetch_acpi_dev() succeeded,
-> >> device=AMDI0030:00
-> >> [    1.136009] i2c-dw-gpio-dbg: gpio_device_find_by_fwnode() succeeded
-> >> [    1.136010] i2c-dw-gpio-dbg: device_is_bound()=true for AMDI0030:00
-> >>
-> >> HTH, Ciao, Thorsten
-> >>
-> >>>> On Fri, 7 Aug 2026 at 19:37, Thorsten Leemhuis <linux@leemhuis.info> wrote:
-> >>>>> On 7/28/26 10:30, Andi Shyti wrote:
-> >>>>>> On Sat, Jul 18, 2026 at 11:13:31AM +0530, Hardik Prakash wrote:
-> >>>>>>> I2C controllers may have child devices with GpioInt resources that
-> >>>>>>> depend on GPIO controllers being fully initialized. If the I2C
-> >>>>>>> controller probes and enumerates children before the referenced GPIO
-> >>>>>>> controller has completed probe, GPIO interrupts may not be properly
-> >>>>>>> configured, leading to device failures.
-> >>>>>>>
-> >>>>>>> On Lenovo Yoga 7 14AGP11, the WACF2200 touchscreen (child of
-> >>>>>>> AMDI0010:02) has a GpioInt resource pointing to GPIO 157 on the
-> >>>>>>> pinctrl-amd controller (AMDI0030:00). When i2c-designware probes
-> >>>>>>> AMDI0010:02 before pinctrl-amd finishes initializing, I2C transactions
-> >>>>>>> fail with lost arbitration errors:
-> >>>>>>>
-> >>>>>>>   0.285952  amd_gpio_probe: registering gpiochip  <- GPIO chip visible
-> >>>>>>>   0.287121  amd_gpio_probe: requesting parent IRQ <- probe still running
-> >>>>>>>   0.301454  AMDI0010:02 dw_i2c_plat_probe: start  <- races here
-> >>>>>>>   2.348157  lost arbitration
-> >>>>>>>
-> >>>>>>> Add a dependency check that walks ACPI child devices and defers probe
-> >>>>>>> until any referenced GPIO controller is bound.
-> >>>
-> >>> [...]
-> >>>
-> >>>>> #regzbot introduced: 0a4bb2abc3e56d
-> >>>>> #regzbot title i2c: designware: ThinkPad touchpad broke
-> >>>
-> >>
-> >
->
+This allows multiple FPGAs to safely share a single SelectMAP interface.
+
+Signed-off-by: Heiko Schocher <hs@nabladev.com>
+---
+
+Changes in v4:
+- add comments from Xu Yulin
+  replace wrong gpiod_set_raw_value() with gpiod_set_value()
+  deassert CSI_B and RDWR_B in probe as in patch version 2
+  rework commit message (correct the description what current
+  driver do on probe), why this is not a problem with one
+  FPGA, and why it needs a change if you have N FPGAs
+  sharing the same selectmap Interface (clk and data pins).
+
+Changes in v3:
+- use 0 (deasserted state) and 1 (asserted state) in gpio_set_value()
+  as commented from Micahl
+- rewrite commit message as requested from Xu Yilun
+  - describe what rdwr_b and csi_b do, and why this change is needed
+    for more than one FPGA.
+- add comment before asserting the signals, why they are asserted
+  in this order.
+
+Changes in v2:
+- add comments from Michal
+  - skip check if gpio descriptor variables csi_b/rdwr_b are valid,
+    as validate_desc() checks this in gpiod_set_value() call.
+  - initialize the gpio variables csi_b/rdwr_b immediately with
+    the return value from devm_gpiod_get_optional(), so we can
+    drop local gpio variable at all
+
+ drivers/fpga/xilinx-selectmap.c | 36 ++++++++++++++++++++++++---------
+ 1 file changed, 27 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/fpga/xilinx-selectmap.c b/drivers/fpga/xilinx-selectmap.c
+index d0cbb5fdfe3a..e9b1d15ca054 100644
+--- a/drivers/fpga/xilinx-selectmap.c
++++ b/drivers/fpga/xilinx-selectmap.c
+@@ -19,6 +19,8 @@
+ struct xilinx_selectmap_conf {
+ 	struct xilinx_fpga_core core;
+ 	void __iomem *base;
++	struct gpio_desc *csi_b;
++	struct gpio_desc *rdwr_b;
+ };
+ 
+ #define to_xilinx_selectmap_conf(obj) \
+@@ -30,16 +32,30 @@ static int xilinx_selectmap_write(struct xilinx_fpga_core *core,
+ 	struct xilinx_selectmap_conf *conf = to_xilinx_selectmap_conf(core);
+ 	size_t i;
+ 
++	/*
++	 * Assert CSI_B and select write mode.
++	 *
++	 * UG570 states in note 4 in Figure "Continuous x8 SelectMAP Data
++	 * Loading", RDWR_B should be asserted before CSI_B to avoid
++	 * causing an ABORT on the next CCLK.
++	 *
++	 * To be sure, set first RDWR_B pin before activate CSI_B
++	 */
++	gpiod_set_value(conf->rdwr_b, 1);
++	gpiod_set_value(conf->csi_b, 1);
++
+ 	for (i = 0; i < count; ++i)
+ 		writeb(buf[i], conf->base);
+ 
++	gpiod_set_value(conf->csi_b, 0);
++	gpiod_set_value(conf->rdwr_b, 0);
++
+ 	return 0;
+ }
+ 
+ static int xilinx_selectmap_probe(struct platform_device *pdev)
+ {
+ 	struct xilinx_selectmap_conf *conf;
+-	struct gpio_desc *gpio;
+ 	void __iomem *base;
+ 
+ 	conf = devm_kzalloc(&pdev->dev, sizeof(*conf), GFP_KERNEL);
+@@ -55,16 +71,18 @@ static int xilinx_selectmap_probe(struct platform_device *pdev)
+ 				     "ioremap error\n");
+ 	conf->base = base;
+ 
+-	/* CSI_B is active low */
+-	gpio = devm_gpiod_get_optional(&pdev->dev, "csi", GPIOD_OUT_HIGH);
+-	if (IS_ERR(gpio))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(gpio),
++	/* CSI_B is active low, deassert signal */
++	conf->csi_b = devm_gpiod_get_optional(&pdev->dev, "csi",
++					      GPIOD_OUT_LOW);
++	if (IS_ERR(conf->csi_b))
++		return dev_err_probe(&pdev->dev, PTR_ERR(conf->csi_b),
+ 				     "Failed to get CSI_B gpio\n");
+ 
+-	/* RDWR_B is active low */
+-	gpio = devm_gpiod_get_optional(&pdev->dev, "rdwr", GPIOD_OUT_HIGH);
+-	if (IS_ERR(gpio))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(gpio),
++	/* RDWR_B is active low, deassert signal */
++	conf->rdwr_b = devm_gpiod_get_optional(&pdev->dev, "rdwr",
++					       GPIOD_OUT_LOW);
++	if (IS_ERR(conf->rdwr_b))
++		return dev_err_probe(&pdev->dev, PTR_ERR(conf->rdwr_b),
+ 				     "Failed to get RDWR_B gpio\n");
+ 
+ 	return xilinx_core_probe(&conf->core);
+---
+base-commit: db2ddb87143519e20a95aa36c60b36107b736a58
+
+-- 
+2.55.0
+
