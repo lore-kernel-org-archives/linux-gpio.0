@@ -1,173 +1,349 @@
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2090.outbound.protection.partner.outlook.cn [139.219.146.90])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941FC3AFD0C;
-	Mon, 10 Aug 2026 09:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786355484; cv=fail; b=KxyusOxJoh8jbm1omi3Y8B5I53lEWqR18jBbpe2KF/xUAlHFyDvmI9WWwQOLu1s1h+/KqS+eRBntZbavxIAEkc93KBKWFFtkTlEP0oyIp30DC8Tnr9Zswu02yc2YR8tTy1Cw+NiHkI7+OFGUCYIsNiy96uZN3WNvgG1sWgY/Ke0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786355484; c=relaxed/simple;
-	bh=OOj7yMryU815aAVtP720aa9aJR63pRSGTjtdOkWuC+o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OgA3AIt01uDWQoLQ93yG1XmKCTO8soNtH7Nhjx68lMQNcZAIrwcD6SItDgVp6SeQ3OXyZ2hZIWUtabyAtvvnUP4MrEtDLhvekK7L1pv3PAbIHbjoevSxZAX8L4hLJ3owYah0nCEzVXf5SBp3NVUNkLmBthkVjShXDjtsBhmtZUQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y+etFNkfQ6LkVj+yi8q01TBMl8JOGfI/TOGDM7Cl7Nd4yvBHMS9o2/nWJx4dCGqdTbK2sDxRkjmy36EsbzPtnMtCc6ZzCkHi4slLQgaWWRT1wYwDNTV5oxOYgQ3p5ecVvANDOherx8S+bcuL0Yh/ivoc/+l2n5aSyuD+tDxd+6eJ6J9qNUpfWe2A9HTA7CB6ab3YQ+QndTq8N6o0H1Hk0JfGnh7xTX9xwYQOj+ijAxaxqWCxgwWV//WkDpLpnnxpmL7vStTe8U08ej+14R2aCOXF4mnRYBbnlrqtDhsdNeyWGIjRuhgDvhA12KiZ+30rhTbG00a583Y0BSDYjqYECg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OOj7yMryU815aAVtP720aa9aJR63pRSGTjtdOkWuC+o=;
- b=Tx7jYXeNhGOkvB8NCe2OLUlT3ONx2wEDA76RZfOnPgkpToOR2u9uZCweZC1VymLnmAlLXaLdUuAgk3xl5IdXzUumFynrgLsalgMzSIiiLj6VAkmkH5cks+PCffB+fa7W97smCs1wr7teg5jNr7SrZTncx/m4QdEKQ3zUqxdGLqoaY936azEN9Gx/iOU/IMLQu5CBDsnuPbEW2aSGFzPKCfRS+YctQwGraBX8XEpleMHzT6jRv1lSVrLaTlYrGRF9nIUVZ26grSQouwbjyZUKzOvdwXizPENIRH5tbs9xNr/rc/C/zLR5XAibRF0VUF/QmdDUIRNzoYXbJhyQ6Tr+jw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6) by ZQ4PR01MB1172.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:14::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.25; Mon, 10 Aug
- 2026 09:51:07 +0000
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- ([fe80::e7d4:256c:b066:850d]) by
- ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%4])
- with mapi id 15.21.0292.024; Mon, 10 Aug 2026 09:51:07 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: Linus Walleij <linusw@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <pjw@kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Emil
- Renner Berthing <kernel@esmil.dk>, Alexandre Ghiti <alex@ghiti.fr>, Lianfeng
- Ouyang <lianfeng.ouyang@starfivetech.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Subject: Re: [PATCH v5 03/21] dt-bindings: pinctrl: Add
- starfive,jhb100-sys0-pinctrl
-Thread-Topic: [PATCH v5 03/21] dt-bindings: pinctrl: Add
- starfive,jhb100-sys0-pinctrl
-Thread-Index: AQHdKJKmmncLFStLcUOAd2EEccdBl7aW8JiAgAAZydA=
-Date: Mon, 10 Aug 2026 09:51:07 +0000
-Message-ID:
- <ZQ4PR01MB120202070B9006984B8677EAF2DE2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-References: <20260810063650.239303-1-changhuang.liang@starfivetech.com>
- <20260810063650.239303-4-changhuang.liang@starfivetech.com>
- <178634991918.1014951.7989635238440361454.robh@kernel.org>
-In-Reply-To: <178634991918.1014951.7989635238440361454.robh@kernel.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1172:EE_
-x-ms-office365-filtering-correlation-id: 5aa7fc97-9e48-4d34-a986-08def6c4e694
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|23010399003|18002099003|22082099003|56012099006|3023799007|38070700021|4143699003|10067099003|6133799003;
-x-microsoft-antispam-message-info:
- MVG9PrqRFSS7M5AmGD/88FJOXG6GxSN8A9UQlCc6kCXYbJtR3OURetN6ZYdwES59WCCIlc+e/nqe29gAdwNkvhnJequHW01pGyJznZth8oco/9SpAupDf7FL/9jmPfEhEJrPo2tJ+nrITdbQbGt8SmTRMAdx1Nx6cQvEnDxar20YVEEgULZMJ8QAjyEoRbrwqimoj/Z2m3U03tDPAF1fbiI3ZJyH5PyJZ4tAa5VURwvK1HDrK2cyFLaJ0jsZQwZgLEAR8DfKaCAdhZoUCuE2n7bAIUW6jJYiXQz2qJFYUGrHeDd5E4VlcWYGKS/p09Da/cg7Bny8S3KAGat+3sgjg9jNKAXiqx2qDG04KLZxZpP/tD4vfYkS7a0+j6mjPsmfC94HGA10X/jSWh0rlb9inwCgNC3tFFyxhGD/NCxfEHb/qpCQkBzhYqEH72UtTucu55Iwae3bS6dCw34K3n8X9+/CKxY+7oAzuV8Iz3cfuAvO46XyyVEoICnAYI7R8+3+uu/zHmXQg4aKgOucv0HMJH8oWcS+C2LIL+ffz8XXZOtui11sY0uO7EVuWQSvsyE8
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(23010399003)(18002099003)(22082099003)(56012099006)(3023799007)(38070700021)(4143699003)(10067099003)(6133799003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VndtN2ZSdmI3MnFrZklTL3lMQnZxYkV2Rzg5TENUMXlvbldEcHN3Zml3eXMw?=
- =?utf-8?B?VTFIVjZUL3ZQVHhWZjkrd2tVd1RtWmR3TnZMWDVRa3lWVU94U08rM1J2YTRZ?=
- =?utf-8?B?UjFOb3lIRTN0R3ZXdEhoVnBoSmhPbjJyVFgvcVV1YnVFUFY2ZFBGaWlrUnU3?=
- =?utf-8?B?VExyalh6TzJBdFNWNDVicnphRFhFdGt3VWY4L2I5QkNCdEYwbjcwN0JGTCt2?=
- =?utf-8?B?U0FRQ0dPMWlrc2RQTXNodGNlUzVPbG5HSVRwMk1nWXBoV0dZcEh1SzRJQW4y?=
- =?utf-8?B?VGRFb1k2NXJFa0ZDWHBSZUR6Z1U2TFpWdTN1REdwRVJ1bDdxWm5jNUZTTll3?=
- =?utf-8?B?NW9sZW1GMFhPQVJJQ0Z2VTBqWGZwMmU5UWN1V0JYNHNaOHVvUkFpTXdWL3li?=
- =?utf-8?B?OWRIQ1ZmUEV4Z1dVdXVGbFVxN1VLMWJmZTl1QlZRMThJaTdicnJOZ3VIWTR5?=
- =?utf-8?B?RWJhd3h5OHhIbWVwS1hzdmZxRnFIWHFEbW51MWNCWHQ3S2dsc0tjNjB0alhT?=
- =?utf-8?B?THl4OHVkcUJkbXB0UlBQYWVha1FTZUZTSWt3Vk1mRXVBUWhxczJpOHVpb0Z1?=
- =?utf-8?B?aXZUR3pVRm12emRLU3ZNdUhOUjVUQ05sTElSRjBHb0FhRjJ3OHFFZHdFK2Vx?=
- =?utf-8?B?blJZck9qWWxvOW9Cb3N3aG4wSThEVkdLTkdzdkNzckVYTytVVytPTHBjc0ZT?=
- =?utf-8?B?eUhZOWE0dTJlak1wT1JKbHhaejNlOWdFd3hhYXpKaGM2ajJZSVpCSnFzMUJl?=
- =?utf-8?B?WHdWL0FzaCt0TWJWbzJhbngxRTlLNGM3VmJHQ0FlZlZRcTMrMkh5d3NuNmpQ?=
- =?utf-8?B?aXdvQUhQbEQ3MGRGUUw2cFhDSUluZzRGSUVhekJxZCtTVDZucmVxRzJCUVRU?=
- =?utf-8?B?NkVIR2N3SzVBd3l2Qm4xWUhOTDZNTmVHNEZ0QW5RUytiQ0tNSzhFcWNKQVNE?=
- =?utf-8?B?QmFVNFpsanlaM3lINXN1QTRZSVhQZ29hZDR5OWV4MTdVdjhVdTVEUWtma0E5?=
- =?utf-8?B?aWJVZkJvZFBZcGx1bWdQaklKbWFMWVRsaXVJcEJkeXFPUVExVWo0TEROS0Iy?=
- =?utf-8?B?ZXZ3YzUxdDV2OTRYSE5HOTQvVEMwVFBkaExURUFtSnQvNjFIZDlZWHNPWmVk?=
- =?utf-8?B?NkY3bU02SVpPd2EyV1Frd0FQdlhYYTNPcE55cmlyMVFmbEhWbEEwbDdsVjE3?=
- =?utf-8?B?cFM1RkIyVmJReVB4THNnZlZ2UFY5MEZOYWFDOHJDVE5iVWRQU1MvamJaSW9S?=
- =?utf-8?B?b0pteVZCKzFOK3NXVWlvQWwzYVBYYU5BL2Z4OGhiTVc2SVVvYno5OW9hdHdB?=
- =?utf-8?B?ZFkvdzJ0MUNFckttejNHVTk1VVpQL092ZnZGTU1VNUs2QXdhYnhYYzNiVmVH?=
- =?utf-8?B?V25oUVA5V0hSWTVxS2NRRXlLZXBiN3NiNjgrbGlQQXl3MDRYZDgzY0crV1Zl?=
- =?utf-8?B?Q3BSZnFsVThhZDY5QW1kUlA3T2tGN003OVArZWNYWUlJd1ZxMHNsT1E4aWxi?=
- =?utf-8?B?d1IxWVNOZHhaZU90TGN0dW9EVzJ4T0hBUTlxNG1kOGh2SnpJQmNsUzI3cm9r?=
- =?utf-8?B?M0Qydkc0SXJaaFpINUdyMjBUSlBUU3NtN3N5VjFpemxoZjlTYk9ZQk1ReGJn?=
- =?utf-8?B?UW5TdVlUdTlwOWROSW9NVjBPaXNzUE14T0RrWldtTXRaT1haeEpnbVVqOTgy?=
- =?utf-8?B?UHBXNlRrSEFxQmI4VU1kcEZNbDRGOTlXSHE2OHdWZWtSVHNKd3VXTUN3R1lC?=
- =?utf-8?B?dUhJU2h3RXFKdmVQOFlkc0U2Wkp3dG0xd0hVelh4bFJsK0FGaEZEMHlYeXJa?=
- =?utf-8?B?bHV5RHhFSk9aY1dDcGpnRHd1WkIzSHlUNCthU2pUV25lZEFORm5zOHVvZXFR?=
- =?utf-8?B?MVdTRGxhT2FLUTFOcngxdE5VNlliSlo0QUhIakhoWVpFOTU1dG10NmZMWUJM?=
- =?utf-8?B?WnhMS0hGYnFGQzkydDdwMmgzdXpadFJ5WXhPMTBER2t3QXU5a0VuQk93RHhK?=
- =?utf-8?B?TVFRSUM0Z2dvMTJHdkZMUVQ0c21RWjlQRUhXN0pQK3RRNXNJUXNiSHJxVHdY?=
- =?utf-8?B?aENlNDNOd0JLdUVVZ1F4QzRJaXRyaHNlMDFYb05kOElHbHNlTFhpUEk4TjRz?=
- =?utf-8?B?VTZmS0IwbWlUOFN4NVQzenRCYzNDVUI4aHkyVG1kenptazAxenR0anoyY0dv?=
- =?utf-8?B?YUo5WUtpRmNPMnNMVUJqY2dzUll3QkNJVldyb0VMRzhqM2RiYnFldHNlL1FD?=
- =?utf-8?B?bE5CeXdQZ3VGVFp4Z0Nqc0dLdFh6disrYS9LOERaOW9DRE9aWmkxaFppamJQ?=
- =?utf-8?B?dEtIOGZZTU5tZkNoUmR2bTBGekxIejh6Y0FXcGtVOGlKU3dsTE5lMVdveWx4?=
- =?utf-8?Q?0WhPqOuDif3pI0X0=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B540E3B841D
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 10:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786356856; cv=none; b=Km+nTNnnYqWVP7wuAyMAauUZk+7Jokvy1QXYWts50liMr2c6K0qPIOurFhdykPgsnRJaeBHXJMnjdDgbiDGd7eATqXJH1RsKmXCeiK7YCli4JpIidy1MxvomA7yGmtHR5VLmcrH/aUmR4+kuq5KSlo/AzBxd/wEzpf994GEJefE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786356856; c=relaxed/simple;
+	bh=IZfjOCDZda2QM4OsqzzZYlded+DNx+RlwJFGYaclHis=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kIizpQx5pJCpbFNKJyDH+wAg0KTR2G5sH5Z1NCYopEI+dlTGHT+E0IuhC/Mzwx8GCKVl4h7Z22eXszYIaj4h3fVBJs00hwvZzPDxO7D4S43pMx9RKp1fW3WFUyY2aQvjyZPTDaEAKjSKkKGDMoRBJ7JLE0eHa1Pcf8GJEmeQh/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aLaPmUis; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLaPmUis"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BA9D1F00ADF
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 10:14:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786356854;
+	bh=WnBOfXGhtTI8rLENZpdOKZdlG3mosue/CTpAJ+tFpQk=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=aLaPmUis+9PoMaDyYWMloXEoYkGOAJQeO9QxXb/nRsOtVKeynjhf8b2SnJH+STHiv
+	 S9Rva1bAfxtiUd4oRN/9Z7qsFo2sBaQuG/9FC0pSkkdGpbbAxBLkWTDKQuHawz3n1I
+	 c8Cf0eT3ggm35C7RXkupk834ZqyWHlJUopsj+ERzniDgM+gyGZyfwQF777XuS6FjZU
+	 7pQA0Yv6YaZa7CdyZLANGWigS7lIK+O1ycUW9eRx9VePxt98n7Y8ArkeqnmxbwC1CK
+	 Nmk5+3ObGe3bxbBeuWj7ZdS5GOa20ULWA4VW5vQpvoIXd6X6qFc9G40wI2Damm1CHD
+	 2BcZA7UpeU7Rw==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5b2a4359d16so1451101e87.3
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 03:14:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrVDgBLD+z0o9gexrDg/rF8Ms61//T3kAHp7E9kjHkJGHYydIsLQzHqce5yLNZPs5L5MLsTCUHbK7jE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6NfOmRTx4OKNCsV6jsJaCLhCUWmhWPwtfhPVGtHBfjfheICMf
+	zMyWLOvL0HTNpiKkq1MoOQqFBPs8AM1iUbPtdPlwLwdD++pBGiD+5OVt8UksLsGMrAMf4T2lUVe
+	WljOZxfHIByC6UImfYaYwp/ZTpsStzNKz0Nqgz2/OuQ==
+X-Received: by 2002:a05:6512:12d2:b0:5b1:5fb6:5cf6 with SMTP id
+ 2adb3069b0e04-5b3181a640amr101620e87.17.1786356852951; Mon, 10 Aug 2026
+ 03:14:12 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 10 Aug 2026 05:14:11 -0500
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 10 Aug 2026 05:14:11 -0500
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260805-ls2kbmc-mod-v6-7-16ccde412d86@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5aa7fc97-9e48-4d34-a986-08def6c4e694
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Aug 2026 09:51:07.5183
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CG3iavWKFHr8FR2Pm+qxPayESPA9DeAGGqng3wvYA56JMj/iJrkW07ltf6OIPlS6cE4ar+VEL+GwtD4NZRz3pOqH0pMexk9rWGlExGVTTmu3PoPMN1vnp3iVfB/76M1s
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1172
+References: <20260805-ls2kbmc-mod-v6-0-16ccde412d86@gmail.com> <20260805-ls2kbmc-mod-v6-7-16ccde412d86@gmail.com>
+Date: Mon, 10 Aug 2026 05:14:11 -0500
+X-Gmail-Original-Message-ID: <CAMRc=Me0DVNYfZJYesvpzTwkVzYZyVzNH+aOAM+DojfV_M9mww@mail.gmail.com>
+X-Gm-Features: AUfX_mzZRCuYVh1IibpEgjsa3wIe1G7ZEocHFOzRorAtuAKLbmR4TjxTIG77wKQ
+Message-ID: <CAMRc=Me0DVNYfZJYesvpzTwkVzYZyVzNH+aOAM+DojfV_M9mww@mail.gmail.com>
+Subject: Re: [PATCH RFC v6 7/7] mfd: ls2kbmc: Capture the reset event of BMC
+ through GPIO
+To: shankerwangmiao@gmail.com
+Cc: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>, 
+	Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, mfd@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
+	Binbin Zhou <zhoubinbin@loongson.cn>, Chong Qiao <qiaochong@loongson.cn>, 
+	Lee Jones <lee@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
+	Corey Minyard <corey@minyard.net>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-SGksIFJvYg0KDQo+IE9uIFN1biwgMDkgQXVnIDIwMjYgMjM6MzY6MzIgLTA3MDAsIENoYW5naHVh
-bmcgTGlhbmcgd3JvdGU6DQo+ID4gQWRkIHBpbmN0cmwgYmluZGluZ3MgZm9yIFN0YXJGaXZlIEpI
-QjEwMCBTb0MgU3lzdGVtLTAoc3lzMCkgcGluY3RybA0KPiA+IGNvbnRyb2xsZXIuDQo+ID4NCj4g
-PiBTaWduZWQtb2ZmLWJ5OiBDaGFuZ2h1YW5nIExpYW5nIDxjaGFuZ2h1YW5nLmxpYW5nQHN0YXJm
-aXZldGVjaC5jb20+DQo+ID4gLS0tDQo+ID4gIC4uLi9waW5jdHJsL3N0YXJmaXZlLGpoYjEwMC1z
-eXMwLXBpbmN0cmwueWFtbCB8IDE2NCArKysrKysrKysrKysrKysrKysNCj4gPiAgLi4uL3BpbmN0
-cmwvc3RhcmZpdmUsamhiMTAwLXBpbmN0cmwuaCAgICAgICAgIHwgIDE3ICsrDQo+ID4gIDIgZmls
-ZXMgY2hhbmdlZCwgMTgxIGluc2VydGlvbnMoKykNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0DQo+
-ID4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvc3RhcmZpdmUsamhi
-MTAwLXN5czAtcGluY3RybA0KPiA+IC55YW1sICBjcmVhdGUgbW9kZSAxMDA2NDQNCj4gPiBpbmNs
-dWRlL2R0LWJpbmRpbmdzL3BpbmN0cmwvc3RhcmZpdmUsamhiMTAwLXBpbmN0cmwuaA0KPiA+DQo+
-IA0KPiBNeSBib3QgZm91bmQgZXJyb3JzIHJ1bm5pbmcgJ21ha2UgZHRfYmluZGluZ19jaGVjaycg
-b24geW91ciBwYXRjaDoNCj4gDQo+IHlhbWxsaW50IHdhcm5pbmdzL2Vycm9yczoNCj4gDQo+IGR0
-c2NoZW1hL2R0YyB3YXJuaW5ncy9lcnJvcnM6DQo+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9waW5jdHJsL3N0YXJmaXZlLGpoYjEwMC1zeXMwLXBpbmN0cmwuZXhhDQo+IG1wbGUu
-ZHRiOiBwaW5jdHJsQDEzMDgwMDAwIChzdGFyZml2ZSxqaGIxMDAtc3lzMC1waW5jdHJsKTogZ3Bp
-by1yYW5nZXM6MTogWzRdDQo+IGlzIHRvbyBzaG9ydA0KPiAJZnJvbSBzY2hlbWEgJGlkOiBodHRw
-Oi8vZGV2aWNldHJlZS5vcmcvc2NoZW1hcy9ncGlvL2dwaW8ueWFtbA0KPiANCj4gZG9jIHJlZmVy
-ZW5jZSBlcnJvcnMgKG1ha2UgcmVmY2hlY2tkb2NzKToNCj4gDQo+IFNlZQ0KPiBodHRwczovL3Bh
-dGNod29yay5rZXJuZWwub3JnL3Byb2plY3QvZGV2aWNldHJlZS9wYXRjaC8yMDI2MDgxMDA2MzY1
-MC4yMw0KPiA5MzAzLTQtY2hhbmdodWFuZy5saWFuZ0BzdGFyZml2ZXRlY2guY29tDQo+IA0KPiBU
-aGUgYmFzZSBmb3IgdGhlIHNlcmllcyBpcyBnZW5lcmFsbHkgdGhlIGxhdGVzdCByYzEuIEEgZGlm
-ZmVyZW50IGRlcGVuZGVuY3kNCj4gc2hvdWxkIGJlIG5vdGVkIGluICp0aGlzKiBwYXRjaC4NCj4g
-DQo+IElmIHlvdSBhbHJlYWR5IHJhbiAnbWFrZSBkdF9iaW5kaW5nX2NoZWNrJyBhbmQgZGlkbid0
-IHNlZSB0aGUgYWJvdmUgZXJyb3IocyksDQo+IHRoZW4gbWFrZSBzdXJlICd5YW1sbGludCcgaXMg
-aW5zdGFsbGVkIGFuZCBkdC1zY2hlbWEgaXMgdXAgdG8NCj4gZGF0ZToNCj4gDQo+IHBpcDMgaW5z
-dGFsbCBkdHNjaGVtYSAtLXVwZ3JhZGUNCj4gDQo+IFBsZWFzZSBjaGVjayBhbmQgcmUtc3VibWl0
-IGFmdGVyIHJ1bm5pbmcgdGhlIGFib3ZlIGNvbW1hbmQgeW91cnNlbGYuIE5vdGUNCj4gdGhhdCBE
-VF9TQ0hFTUFfRklMRVMgY2FuIGJlIHNldCB0byB5b3VyIHNjaGVtYSBmaWxlIHRvIHNwZWVkIHVw
-IGNoZWNraW5nDQo+IHlvdXIgc2NoZW1hLiBIb3dldmVyLCBpdCBtdXN0IGJlIHVuc2V0IHRvIHRl
-c3QgYWxsIGV4YW1wbGVzIHdpdGggeW91cg0KPiBzY2hlbWEuDQoNCkhpIFJvYiwNCg0KUmVnYXJk
-aW5nIHRoaXMgbGluazogaHR0cHM6Ly9naXRodWIuY29tL2RldmljZXRyZWUtb3JnL2R0LXNjaGVt
-YS9ibG9iL21haW4vZHRzY2hlbWEvc2NoZW1hcy9ncGlvL2dwaW8ueWFtbCNMNzENCg0KSXQgc2Vl
-bXMgdGhhdCB0aGUgY29uZmlndXJhdGlvbiB0byBzdXBwb3J0ICNncGlvLWNlbGxzID0gPDM+OyBo
-YXMgbm90IGJlZW4gYWRkZWQgaGVyZSB5ZXQsIGlzIHRoYXQgY29ycmVjdD8NCg0KQmVzdCBSZWdh
-cmRzLA0KQ2hhbmdodWFuZw0KDQo=
+On Tue, 4 Aug 2026 21:14:25 +0200, Miao Wang via B4 Relay
+<devnull+shankerwangmiao.gmail.com@kernel.org> said:
+> From: Miao Wang <shankerwangmiao@gmail.com>
+>
+> The reset event of BMC is captured through GPIO. However, this driver
+> bypasses the GPIO framework and directly accesses the GPIO controller
+> through the fixed address. When the same GPIO controller is also
+> exposed through ACPI and probed by the corresponding GPIO driver,
+> there would be a conflict between the two drivers.
+>
+> This patch will try to find the GPIO through declared GPIO pin in the
+> _CRS resources of the ACPI node. If no such delaration is found, the
+> driver will fall back to search for the correct GPIO controller and pin
+> according to the fixed address and pin number. A possible DSDT
+> declaration for the GPIO pin might be as follows:
+>
+>     Device (BMC0) {
+>         Name (_ADR, ...) // Match the PCI address of the BMC device
+>         // \_SB.GPO1 is the ACPI path of the GPIO controller
+>         Name (_CRS, ResourceTemplate () {
+>             GpioInt (Edge, ActiveLow, Exclusive, PullNone, 0,
+>                      "\\_SB.GPO1", 0) {
+>                 14 // 14 is the GPIO pin number
+>             }
+>     }
+>
+> Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
+> ---
+>  drivers/mfd/ls2k-bmc-core.c | 163 +++++++++++++++++++++++++++++++-------------
+>  1 file changed, 116 insertions(+), 47 deletions(-)
+>
+> diff --git a/drivers/mfd/ls2k-bmc-core.c b/drivers/mfd/ls2k-bmc-core.c
+> index e7bebfe696ac4554eb6283279811a27ed865ab73..97a666a136fe41ed4268cb70770201533aebb1d5 100644
+> --- a/drivers/mfd/ls2k-bmc-core.c
+> +++ b/drivers/mfd/ls2k-bmc-core.c
+> @@ -26,6 +26,10 @@
+>  #include <linux/stop_machine.h>
+>  #include <linux/vt_kern.h>
+>  #include <linux/console.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/gpio/property.h>
+> +#include <linux/gpio/machine.h>
+>
+>  /* LS2K BMC resources */
+>  #define LS2K_DISPLAY_RES_START		(SZ_16M + SZ_2M)
+> @@ -81,18 +85,6 @@
+>
+>  #define PCI_REG_STRIDE			0x4
+>
+> -#define LS2K_BMC_RESET_GPIO		14
+> -#define LOONGSON_GPIO_REG_BASE		0x1FE00500
+> -#define LOONGSON_GPIO_REG_SIZE		0x18
+> -#define LOONGSON_GPIO_OEN		0x0
+> -#define LOONGSON_GPIO_FUNC		0x4
+> -#define LOONGSON_GPIO_INTPOL		0x10
+> -#define LOONGSON_GPIO_INTEN		0x14
+> -
+> -#define LOONGSON_IO_INT_BASE		16
+> -#define LS2K_BMC_RESET_GPIO_INT_VEC	(LS2K_BMC_RESET_GPIO % 8)
+> -#define LS2K_BMC_RESET_GPIO_GSI		(LOONGSON_IO_INT_BASE + LS2K_BMC_RESET_GPIO_INT_VEC)
+> -
+>  enum {
+>  	LS2K_BMC_DISPLAY,
+>  	LS2K_BMC_IPMI0,
+> @@ -186,6 +178,7 @@ struct ls2k_bmc_ddata {
+>  	struct work_struct bmc_reset_work;
+>  	struct ls2k_bmc_pci_data bmc_pci_data;
+>  	struct ls2k_bmc_bridge_pci_data bridge_pci_data;
+> +	struct gpio_desc *reset_gpio;
+>  };
+>
+>  static bool ls2k_bmc_bar0_addr_is_set(struct pci_dev *pdev)
+> @@ -375,6 +368,91 @@ static void ls2k_bmc_save_pci_data(struct pci_dev *pdev, struct ls2k_bmc_ddata *
+>  	pci_read_config_dword(pdev, PCI_INTERRUPT_LINE, &ddata->bmc_pci_data.interrupt_line);
+>  }
+>
+> +static struct fwnode_handle *gpio_dev_get_fwnode(struct gpio_device *gdev)
+> +{
+> +	struct device *gdev_dev;
+> +
+> +	gdev_dev = gpio_device_to_device(gdev);
+> +	return dev_fwnode(gdev_dev);
+
+You can just do a one-liner:
+
+	return dev_fwnode(gpio_device_to_device(gdev));
+
+> +}
+> +
+> +static int ls2k_bmc_gpiochip_find(struct gpio_chip *gc, const void *data)
+> +{
+> +	struct acpi_device *adev;
+> +	struct list_head resource_list;
+> +	struct resource_entry *rentry;
+> +	struct fwnode_handle *fwnode = gpio_dev_get_fwnode(gc->gpiodev);
+> +	phys_addr_t start_addr = (phys_addr_t) data;
+> +	int ret, found = 0;
+> +
+> +	if (!is_acpi_node(fwnode))
+> +		goto out;
+> +
+> +	adev = to_acpi_device_node(fwnode);
+> +	if (!adev)
+> +		goto out;
+> +
+> +	INIT_LIST_HEAD(&resource_list);
+> +
+> +	ret = acpi_dev_get_memory_resources(adev, &resource_list);
+> +	if (ret < 0)
+> +		goto out;
+> +	/*
+> +	 * ACPI memory resources are ordered and only the first one is
+> +	 * considered by the driver of the expected GPIO controller. So
+> +	 * here we also only check the first one to see if it matches the
+> +	 * expected address.
+> +	 */
+> +	rentry = list_first_entry_or_null(&resource_list, struct resource_entry, node);
+> +	if (!rentry)
+> +		goto free_resource_list;
+> +	if (rentry->res->start == start_addr)
+> +		found = 1;
+> +
+> +free_resource_list:
+> +	acpi_dev_free_resource_list(&resource_list);
+> +out:
+> +	return found;
+> +}
+> +
+> +static struct gpio_desc *ls2k_bmc_find_gpio(struct ls2k_bmc_ddata *ddata)
+> +{
+> +	/*
+> +	 * In conventional way, the GPIO should be obtained through ACPI or
+> +	 * device tree. However, when the information is not available,
+> +	 * we should find the GPIO according to the convention of the server
+> +	 * boards with LS2K BMC, the gpio signal reflecting the reset event
+> +	 * of the BMC should be connected to pin 14 of the GPIO input of
+> +	 * the first CPU node. The address of that GPIO controller is fixed.
+> +	 */
+> +	static const phys_addr_t LOONGSON_GPIO_REG_BASE = 0x1FE00500;
+> +	static const unsigned int LS2K_BMC_RESET_GPIO = 14;
+> +	int ret;
+> +	struct gpio_device *gdev __free(gpio_device_put) = NULL;
+
+Please declare the variable where you initialize it when using __free().
+
+> +	struct property_entry ls2k_bmc_swnode_properties[2] = { 0 };
+
+Prefer `= { };`.
+
+> +
+> +	dev_dbg(ddata->dev, "Searching for GPIO chip at address %pa\n", &LOONGSON_GPIO_REG_BASE);
+> +
+> +	gdev = gpio_device_find((void *)LOONGSON_GPIO_REG_BASE, ls2k_bmc_gpiochip_find);
+> +
+
+No need for a blank line here.
+
+> +	if (!gdev) {
+> +		dev_dbg(ddata->dev, "cannot find GPIO chip at address %pa, deferring\n",
+> +			&LOONGSON_GPIO_REG_BASE);
+> +		return ERR_PTR(-EPROBE_DEFER);
+> +	}
+> +
+> +	ls2k_bmc_swnode_properties[0] = PROPERTY_ENTRY_GPIO("gpio",
+> +		gpio_dev_get_fwnode(gdev), LS2K_BMC_RESET_GPIO, GPIO_ACTIVE_HIGH);
+
+TBH this could become a GPIOLIB function as gpio_device_get_fwnode().
+
+> +
+> +	ret = device_create_managed_software_node(ddata->dev, ls2k_bmc_swnode_properties, NULL);
+> +	if (ret) {
+> +		dev_err(ddata->dev, "Failed to create software node for GPIO reset: %d\n", ret);
+> +		return ERR_PTR(ret);
+
+return dev_err_probe()? This can only be called from probe().
+
+> +	}
+> +
+> +	return devm_gpiod_get_index(ddata->dev, NULL, 0, GPIOD_IN);
+> +}
+> +
+>  static void ls2k_bmc_cancel_wq(void *data)
+>  {
+>  	struct ls2k_bmc_ddata *ddata = data;
+> @@ -384,8 +462,7 @@ static void ls2k_bmc_cancel_wq(void *data)
+>  static int ls2k_bmc_init(struct ls2k_bmc_ddata *ddata)
+>  {
+>  	struct pci_dev *pdev = to_pci_dev(ddata->dev);
+> -	void __iomem *gpio_base;
+> -	int gpio_irq, ret, val;
+> +	int gpio_irq, ret;
+>
+>  	ls2k_bmc_save_pci_data(pdev, ddata);
+>
+> @@ -402,44 +479,36 @@ static int ls2k_bmc_init(struct ls2k_bmc_ddata *ddata)
+>  		return ret;
+>  	}
+>
+> -	gpio_base = ioremap(LOONGSON_GPIO_REG_BASE, LOONGSON_GPIO_REG_SIZE);
+> -	if (!gpio_base)
+> -		return -ENOMEM;
+> -
+> -	/* Disable GPIO output */
+> -	val = readl(gpio_base + LOONGSON_GPIO_OEN);
+> -	writel(val | BIT(LS2K_BMC_RESET_GPIO), gpio_base + LOONGSON_GPIO_OEN);
+> -
+> -	/* Enable GPIO functionality */
+> -	val = readl(gpio_base + LOONGSON_GPIO_FUNC);
+> -	writel(val & ~BIT(LS2K_BMC_RESET_GPIO), gpio_base + LOONGSON_GPIO_FUNC);
+> -
+> -	/* Set GPIO interrupts to low-level active */
+> -	val = readl(gpio_base + LOONGSON_GPIO_INTPOL);
+> -	writel(val & ~BIT(LS2K_BMC_RESET_GPIO), gpio_base + LOONGSON_GPIO_INTPOL);
+> -
+> -	/* Enable GPIO interrupts */
+> -	val = readl(gpio_base + LOONGSON_GPIO_INTEN);
+> -	writel(val | BIT(LS2K_BMC_RESET_GPIO), gpio_base + LOONGSON_GPIO_INTEN);
+> +	ddata->reset_gpio = devm_gpiod_get_index_optional(&pdev->dev, NULL, 0, GPIOD_IN);
+> +	if (IS_ERR(ddata->reset_gpio)) {
+> +		ret = PTR_ERR(ddata->reset_gpio);
+> +		ddata->reset_gpio = NULL;
+> +		return dev_err_probe(ddata->dev, ret, "Failed to get GPIO pin for reset signal\n");
+> +	}
+> +	if (ddata->reset_gpio == NULL) {
+> +		ddata->reset_gpio = ls2k_bmc_find_gpio(ddata);
+> +		if (IS_ERR(ddata->reset_gpio)) {
+> +			ret = PTR_ERR(ddata->reset_gpio);
+> +			ddata->reset_gpio = NULL;
+> +			return dev_err_probe(ddata->dev, ret,
+> +					     "Failed to find GPIO pin for reset signal\n");
+
+Why not just:
+
+	return dev_err_probe(ddata->dev, PTR_ERR(ddata->reset_gpio), ...)?
+
+> +		}
+> +	}
+>
+> -	iounmap(gpio_base);
+> +	gpio_irq = gpiod_to_irq(ddata->reset_gpio);
+>
+> -	/*
+> -	 * Since gpio_chip->to_irq is not implemented in the Loongson-3 GPIO driver,
+> -	 * acpi_register_gsi() is used to obtain the GPIO IRQ. The GPIO interrupt is a
+> -	 * watchdog interrupt that is triggered when the BMC resets.
+> -	 */
+> -	gpio_irq = acpi_register_gsi(NULL, LS2K_BMC_RESET_GPIO_GSI, ACPI_EDGE_SENSITIVE,
+> -				     ACPI_ACTIVE_LOW);
+>  	if (gpio_irq < 0)
+> -		return gpio_irq;
+> +		return dev_err_probe(ddata->dev, gpio_irq,
+> +				     "Failed to get IRQ for GPIO reset signal input\n");
+>
+> -	ret = devm_request_irq(ddata->dev, gpio_irq, ls2k_bmc_interrupt,
+> -			       IRQF_SHARED | IRQF_TRIGGER_FALLING, "ls2kbmc gpio", ddata);
+> -	if (ret)
+> -		dev_err(ddata->dev, "Failed to request LS2KBMC GPIO IRQ %d.\n", gpio_irq);
+> +	ret = devm_request_irq(&pdev->dev, gpio_irq, ls2k_bmc_interrupt,
+> +			       IRQF_SHARED | IRQF_TRIGGER_FALLING, "ls2kbmc reset", ddata);
+> +
+> +	if (ret != 0)
+> +		return dev_err_probe(ddata->dev, ret,
+> +				     "Failed to request IRQ %d for GPIO reset signal input.\n",
+> +				     gpio_irq);
+>
+> -	acpi_unregister_gsi(LS2K_BMC_RESET_GPIO_GSI);
+>  	return ret;
+>  }
+>
+>
+> --
+> 2.49.0
+>
+>
+>
+
+
+Obviously this is ugly but I understand the need for this workaround so with
+the issues above addressed, this will work for me.
+
+Bart
