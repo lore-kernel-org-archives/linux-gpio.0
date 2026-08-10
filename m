@@ -1,124 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BD83C1082
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83293B14C3
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786361171; cv=none; b=QzvD2NN6+OTDW3a9RtgaoUoW7WHunBmrvnwuE3gp4eM46qiki3XH7luW8RNYVjLlb0AVTZ1nmPELQLWD6GSuvq0u6FVxllwe1Z5x1wRsIH/4WkwJnth1S0t8aiIhGWwUwUdCGRflaB+2WE8mwniQ3cEH5PkyprB8Lg9QjRH1GaY=
+	t=1786361360; cv=none; b=k4icPIrFOa5ZSePYifCJOhPunLcikGQzMZQyMr9Y+mHlURWgwBfxCchbJbiQ2IGYbCjUGsj7uO8nc2HUsz1Q5M9mCUrAdI6eJBCveAb8+pTz1GlO52OLly+4KLmGfMZUUPhEJjt9od+tJxR1HKppuCl2d4ZdxTfSe/t3rb7Hrhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786361171; c=relaxed/simple;
-	bh=QwVAnHRHiCemIeYxsEaRGiTsru4MY7geYHkt3gj+mPE=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uQP2sWCyrvYlQe3acLA4IggtmDfzQ9sz/UU/WFT9XlALh+miE5+JMaJG7TT783w1OssHMmDYbjS3FDFwbcjbMGG7L5Am70WnIIAcW+IrbFTNWXVPFqlIwUy724UtoJEeAcVCLtF809jfUmbIh2I2beRd5OBnzckdfGfArp6wG5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAi5N8oQ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786361360; c=relaxed/simple;
+	bh=oOhWgBKFgUcwPoQuJLrT3DWJoab0dSEkHi9RoKP2VVU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=NhF5qG6+29+wwtBG8kh2zNI12JrBTHN04t/hYnGzreJmB4vkyCl3FlBZ1IT1cIpzRjpVS5F6pHTsRO5n9wrVsS+nbheGYaFoSVllFhXE5aqBM+vG//jrZjGozKrHZ266ybJsWZEYSruBswnSfyMKvuIaIL9uIghKBQOYZpZMN7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtHTRiqX; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAi5N8oQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3B9B1F0155D
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:26:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786361170;
-	bh=wZoyj/bcYqq2WaFoOPNolBM0q0on9gdK76aAsSvObhU=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=TAi5N8oQgDU3uxlgGdhWfEn9nNC7rXCuv4yN2uZImZ5Qe473HPVo3p50VUpSWiPHG
-	 IoiTod5iPqxiSXKiITSq8Z8zTmwJc5HZ5uz7xmOpQ3Jkb0fyrve6APE8i9wcqXWbG9
-	 lXGMKZJiKDjBF9o//Mpr0RyCf4KxJ0hU7mN22P+i0Mg5N9bg3iRDxEVPL+nUuBavi3
-	 AGideJY+Jza/asFc16Mup/MjDB2acqh/PegxslqsJ6Ggp5t9N4qp8PgknMdViirGgS
-	 A8bpR8iBlt1Pwb4LwILd9Hw6sRCpa0GAj9fkI0FlOKyQ95A6k8YjbPxxtVg2uxyHNg
-	 fWwlAMzpEDWvA==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5b3119957f0so1174456e87.1
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 04:26:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Ro+E6vIRuEk/QcQWfvGEjMVLrB7755uoVkwEUUuzmNxoOZY4jnFi2O16gDHZ6vrNoHNIYSN0b9GS6wM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy76m5LZEVfp7ZCu0N0a29j+1cyUPFyn7+bdqpulBEG7WpUQwUh
-	GLU9rQRczDesnc62bSuR2hMSV9SIwbXCBmzTSldGOB56XfZbf4HvQbntX1Adsc0uuhHmtAP/VlA
-	sH7CNPb9WKF+T6TjrfimlZonMBv2jvKRukdi9ZxqQbg==
-X-Received: by 2002:ac2:4d18:0:b0:5b0:1b0f:7a60 with SMTP id
- 2adb3069b0e04-5b2f4cc8da0mr3704106e87.32.1786361168649; Mon, 10 Aug 2026
- 04:26:08 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 10 Aug 2026 06:26:07 -0500
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 10 Aug 2026 06:26:07 -0500
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260801195613.235430-2-krzysztof.kozlowski@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtHTRiqX"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2cecc8a3dbfso866355ad.0
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 04:29:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1786361358; x=1786966158; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=oOhWgBKFgUcwPoQuJLrT3DWJoab0dSEkHi9RoKP2VVU=;
+        b=FtHTRiqXiKsdAbs8w4uiTD0PGdRiMoPrrfB2pUpNh83V228BI8ahI8mhPAqCnCwjzd
+         vNFHIOub2scA8XWRc8OPOcAZO+ifnY4RAJ2AdGdl+KRSEOgiggPNztbfn/J0sUSxPfDB
+         M9scWEvXPz0xFeis0QOIa2D7QHdPkc17k1IrYxK2cinCLxn9TDnpdoHL4QDS5umYpU2q
+         GYZoUe3SRp2wbohzT+1Jn9LM/W+VMlLIph0pMosSZDE67i2baV4iKn4opVpwjD3QSwNu
+         3952xgRJTjnr0fzk0sKa5uMHgwDHrKCg8T3zS2YUlzfYK+EshYANsoaHRjxEdTFzBkp4
+         rB9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786361358; x=1786966158;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=oOhWgBKFgUcwPoQuJLrT3DWJoab0dSEkHi9RoKP2VVU=;
+        b=lfO5evua7l1L2GYkuK8fHLO5y5kawpnAtlC1FewrTk3Oo9YLoSHuQ95bTiSefwkTPW
+         kXsCSESxVHzDAi9Ol7vVIk0biZDYKFaH9KQm97VVu+g9GvsLTvLp1MesKHhnBKpsH2We
+         gE0AtNh462Qf77l+GDc6+9jZFTzv0y5eS5PlmhldcngEgj+zx58CexMRNVMjS2j7/z/h
+         BetdYXqTRA6pwGTZnolsKNCG93nv9M2oGv6gZdUsoJw0oanUcbLbUSWJIvS+PzVKFhN2
+         kF8zgP2Jl3I07+S7A3sXCuOeTIvisvGNMeALoBDIaK+DjpnZKRQ4EK5CWTcvMyuyF0zH
+         p7KQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqT6Z7nWaa/2udoBZKP8AYf3LUD0xB6BM7vNkxSvt5stqltbZOfC78P8JQqKZox4kpMBv+YEkzbldye@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN9EB8UeQVsa9RiPNa1Y0d9OsZz5RJowcG3mYctXW5Xi0LHUWQ
+	YRr4v9SHGJF+FsIXUQka4LHIpXS2/p1smh8rCzFqZeMx728LT42AE47P
+X-Gm-Gg: AR+sD13CtGFhNrJfI0h5pyFybgqWykSWdKQVUuJJo4gF6SBDqcacSS23V8jhg4ihpUl
+	Oa5WPCHVDAvYcXHN0lowzUqs58hhaphF+rdAEsMiwfWhBF2ki/DzvSfgNm1kxrvZfgLGNhCjVt3
+	fVTC65CILaotHRFKcXud/7i1AHhzzx3Vl+zYixcdYmtR69RANzW1qfipOJOKmh2eE4RQaH69NSK
+	04sQk61jDdEd0rfMwa4Ngh5h0l/4MrW1qyos8mXR5QVTy+FTBBUwKRA5bIQ8jFqUtrRoNQK9a89
+	wYJNGT0yTxXybCVg1mnb4f8p1CTFB5wc0pvNIU/WavY52rGWnVU6BdvYOL24ntV4aNSmUI/nX5f
+	7P9oNebkYVhmFnkxfao1HEsFT7t5eyKLiQRKdx0d0UqEm50PsfJpQkoZonWBTWp3h6atbn+tk8M
+	jcram1cdv86/5Q/FWcsFnbqnngAx0uxQ19YogfK7A9wgmH7+g1NmNxLRu7wM3BJhKQXzVxycaHF
+	sPB60LqjDU=
+X-Received: by 2002:a17:903:2c0c:b0:2cc:d6de:d58e with SMTP id d9443c01a7336-2d0cab4cf8bmr329276335ad.4.1786361358011;
+        Mon, 10 Aug 2026 04:29:18 -0700 (PDT)
+Received: from smtpclient.apple ([23.247.139.92])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d14ccd70ecsm34002835ad.20.2026.08.10.04.29.12
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 10 Aug 2026 04:29:17 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260801195613.235430-2-krzysztof.kozlowski@oss.qualcomm.com>
-Date: Mon, 10 Aug 2026 06:26:07 -0500
-X-Gmail-Original-Message-ID: <CAMRc=MeiXHL-1i31q-+wuibK5qM1=xV+4qn0z+CWFXjt3CdrCQ@mail.gmail.com>
-X-Gm-Features: AUfX_myd-9E67e5jDYYEWIDd_Fhka4yTI8ar0CZ3ucq5EUGNAu2R2AhAZ0we-FI
-Message-ID: <CAMRc=MeiXHL-1i31q-+wuibK5qM1=xV+4qn0z+CWFXjt3CdrCQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Correct white-space style
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@arm.com>, James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Lee Jones <lee@kernel.org>, Johannes Berg <johannes@sipsolutions.net>, 
-	Jeff Johnson <jjohnson@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Yangbo Lu <yangbo.lu@nxp.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Richard Cochran <richardcochran@gmail.com>, 
-	Jens Wiklander <jenswi@kernel.org>, Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>, 
-	YC Hung <yc.hung@mediatek.com>, Svyatoslav Ryhel <clamor95@gmail.com>, 
-	Sean Wang <sean.wang@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Peter Ujfalusi <peter.ujfalusi@gmail.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	coresight@lists.linaro.org, linux-arm-msm@vger.kernel.org, 
-	linux-ide@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, mfd@lists.linux.dev, 
-	linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
-	linux-pm@vger.kernel.org, netdev@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.8\))
+Subject: Re: [PATCH RFC v6 7/7] mfd: ls2kbmc: Capture the reset event of BMC
+ through GPIO
+From: Miao Wang <shankerwangmiao@gmail.com>
+In-Reply-To: <CAMRc=Me0DVNYfZJYesvpzTwkVzYZyVzNH+aOAM+DojfV_M9mww@mail.gmail.com>
+Date: Mon, 10 Aug 2026 19:28:56 +0800
+Cc: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>,
+ Xi Ruoyao <xry111@xry111.site>,
+ WANG Xuerui <kernel@xen0n.name>,
+ Yinbo Zhu <zhuyinbo@loongson.cn>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ mfd@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org,
+ openipmi-developer@lists.sourceforge.net,
+ Binbin Zhou <zhoubinbin@loongson.cn>,
+ Chong Qiao <qiaochong@loongson.cn>,
+ Lee Jones <lee@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Corey Minyard <corey@minyard.net>,
+ Linus Walleij <linusw@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <38DD546D-A2DE-40D7-B6A6-0708162EAA55@gmail.com>
+References: <20260805-ls2kbmc-mod-v6-0-16ccde412d86@gmail.com>
+ <20260805-ls2kbmc-mod-v6-7-16ccde412d86@gmail.com>
+ <CAMRc=Me0DVNYfZJYesvpzTwkVzYZyVzNH+aOAM+DojfV_M9mww@mail.gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81.1.8)
 
-On Sat, 1 Aug 2026 21:56:14 +0200, Krzysztof Kozlowski
-<krzysztof.kozlowski@oss.qualcomm.com> said:
-> Correct a few white-space issues, like double space after '=' or before
-> bracket '{' characters, which will be flagged by dt-check-style.  No
-> functional changes.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
->
-> ---
->
-> Patch applies on Rob's for-next branch.
-> ---
->  .../arm/firmware/linaro,optee-tz.yaml         |  8 +-
->  .../devicetree/bindings/arm/psci.yaml         | 18 ++--
->  .../bindings/arm/qcom,coresight-tnoc.yaml     |  2 +-
->  .../devicetree/bindings/ata/st,ahci.yaml      | 22 ++---
->  .../bindings/display/ti/ti,am65x-dss.yaml     | 12 +--
->  .../bindings/display/ti/ti,j721e-dss.yaml     | 96 +++++++++----------
->  .../bindings/display/ti/ti,k2g-dss.yaml       | 36 +++----
->  .../bindings/dsp/mediatek,mt8195-dsp.yaml     |  2 +-
->  .../bindings/gpio/st,nomadik-gpio.yaml        |  2 +-
->  .../devicetree/bindings/i2c/st,sti-i2c.yaml   |  2 +-
->  .../bindings/mailbox/st,sti-mailbox.yaml      |  2 +-
->  .../bindings/mfd/maxim,max77620.yaml          |  2 +-
->  .../bindings/net/wireless/qcom,ath10k.yaml    | 34 +++----
->  .../devicetree/bindings/opp/opp-v2.yaml       | 28 +++---
->  .../pinctrl/mediatek,mt7988-pinctrl.yaml      |  2 +-
->  .../devicetree/bindings/ptp/fsl,ptp.yaml      | 12 +--
->  .../devicetree/bindings/pwm/pwm-sifive.yaml   |  2 +-
->  .../bindings/usb/ti,twl4030-usb.yaml          |  2 +-
->  18 files changed, 142 insertions(+), 142 deletions(-)
->
+Hi,
 
-For GPIO:
+> 2026=E5=B9=B48=E6=9C=8810=E6=97=A5 18:14=EF=BC=8CBartosz Golaszewski =
+<brgl@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> On Tue, 4 Aug 2026 21:14:25 +0200, Miao Wang via B4 Relay
+> <devnull+shankerwangmiao.gmail.com@kernel.org> said:
+>=20
+>> + gpio_dev_get_fwnode(gdev), LS2K_BMC_RESET_GPIO, GPIO_ACTIVE_HIGH);
+>=20
+> TBH this could become a GPIOLIB function as gpio_device_get_fwnode().
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+I wonder if this function should be a static inline function defined
+in gpio/driver.h or a normal function defined in gpiolib.c? I tend
+to the former.
+
+Cheers,
+
+Miao Wang
+
+
