@@ -1,144 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DC23B8D40
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74C03BED55
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786359810; cv=none; b=Te/oXA/jgYgu30Qwyv65+Xcf0tzz5I5J7EWO88e8gfjN8BXXYgq1f5h/HsH16zz9c2noQQArtk/WsDstFBhDXlhZX+StadM0eL6wNHqu5XuHJECxZLvKVFKpNsF8cK//lXJGQYsUmt6Hcys7eftI/vnkgRgb0ghZMK5l7f3zZxY=
+	t=1786360187; cv=none; b=mdj0Bt+5jFtnGAcFxEUr3TYdf7zfbRT3ck26JxTUGl97fOLEtf3Bkcdu5Cpk2Ft+53O3Nb2t31now+AdGhpLLHaMud31PDvNMdexPbIjiukBoa3/afS1kbLRhtGKHzIn/G69gQdFaJ3IxA/3F3OzeOaLRGguSf+kiP6JHkvA+oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786359810; c=relaxed/simple;
-	bh=p49IchS1moer5f9ixq9X0KkzRurkRwI24S8WQ72LvTw=;
+	s=arc-20240116; t=1786360187; c=relaxed/simple;
+	bh=R6SJa9quMISsNuUCuhJb/DeAvtNBiKOa51XFiH57Z1k=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BLfNVEZ61rRkZfbUHP2GDeOmNp5B57kPGaVnwtKdmCeEYkoyBrD2v5qcnyL0HMg2WNz81gXUGgIhvPAjms2i4urhfLPLrG6f+Pf1Oq48k7v9RH1qwScArMUHnFgShDP8WtJQpTvDkPH7LrK0zdYLqdDQLOFbKlv2uhrLDRI4Ha4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdWyUmhy; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=HdkeGPMPnEF3r3wIBJJODldmwWtM1NzjvuSqTwKDwFEf8oA1WvaWHLBn9sw8Enq8CNJfqe2/maKKrou0jYni6ng6+GKZTCJMazVv7EWZPSJLzWur8sPp8FvqGSEAwRNPfQcmgCaw75pULduDhNoCoAyW526WCUleCSaO3paMPpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/FhO5F2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdWyUmhy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 769411F00A3D
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:03:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/FhO5F2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 490BA1F00ADB
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:09:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786359809;
-	bh=ekwf+Zy2P4O9p1ZEiUBKTIiE5IQ8iZ2Cubn4LVEzpyY=;
+	s=k20260515; t=1786360184;
+	bh=+i1y8yL9YAYFT62cpVPzTGawg3vYnjAPvjLfzKDRmEM=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=PdWyUmhy2AasE+KLSnEw1XSU70YHC5HSdHrKy1otm9Lzgbn9zbYcVShJ4LOzbyAVn
-	 GpCp40kZKFJ696slzMadXDSCfyokg4pWnXY1TCnwGYomnVsi/qbxH9TlR1NSt0IDBs
-	 zjcYwEDHnsC+rmnUTdJ68gbm1a5b/6jZP0g5KbGykg74EhRavTqBTy0dnYw6ojAX0+
-	 665yWOCea3+VPGQReiwpe3jmwm4CyEQ7+smo9LML2nxQPFmzF6Itv4H/mGcWNcxzyS
-	 9crUlqnc0lZm5yxIWBInqSX08UTidePGgYpjGyywZmnNJUb/8eWNKfr1EALiNNQnwy
-	 7IUlzT0KqP4zw==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5b015b2d792so1624199e87.3
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 04:03:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Ro0IwKFcw9LsezwBijhWt2CLokgp2FN9B50f1jGXf5oOfs/w1Kk4x0bRFi0aa6J6SSJiD75fExeswRA@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg2ttj6oB8AZ0Msb7BDakPbVyoPl3C6oesmknHF2tfXCcQx4HC
-	8Q2A1ehE0Goag62Tck/U5TwtQw4tlGjEJscPjE8TSeKqHmx8FCNu6DGEjT81eLJONIQKbGeNnei
-	CQFwpukqFsdM/UzvR2vV1Yul6Ia7EvDvixPMtONc/5A==
-X-Received: by 2002:a05:6512:610:10b0:5b2:9391:40e1 with SMTP id
- 2adb3069b0e04-5b2f4cdc1a1mr4534940e87.51.1786359808243; Mon, 10 Aug 2026
- 04:03:28 -0700 (PDT)
+	b=D/FhO5F2sV4IxIhK1P0bkFiKHh1wfrZZAaE9mkRmBJlrDdrOpU+R7N/gw/FnudknM
+	 M4AlTpswHLrWfUxVx72Qb5od7cyr27PxkNUwFKz7+LB/GL3Ct00CA9x7Y/0Ftc1883
+	 5MNz/8edXk2nkKGWaUK9+D1jEEFoCjj8QgYpU43IRVgVBZwunFUHOJ1OCCQz8T1jd5
+	 40hO0kbnY/lnClPXpdcZt67et6qcLd+e/ZlUVneozHl9hieOenTVHlHkCWtfCUG6Lv
+	 LdjJHHh+sZ/nsRNnFc9wLiBhNbYe9b45g27Phr4dq4uX0V0zox7PMj63EoJtQJjhES
+	 X4s1P1mUjDXTQ==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b011edaf7dso1862558e87.2
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 04:09:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rrp4WJFSP7oYp4YbzRvZSPZJfoavqMvrHjuRMpc3eSitvnviH2a12Y0lRT+43v9OD/PJ4WA/cFoQ1uH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxMrufIhayiVznBTnOFINLBvjKH1t1nObroEBQCzEH+HpqeKz9
+	etRKB31t3DAmCsyC0OQXih7G+AuAni4lxix1MOosXFD5QH0VrfmeWiWTTlh4/OQT+ACGlOGjF/w
+	rCPODpAZ238yjKUWa+3EkV2kHn0rqUFY915mR2bzOVA==
+X-Received: by 2002:a05:6512:258b:b0:5b2:a328:cdd5 with SMTP id
+ 2adb3069b0e04-5b3181d45aemr140129e87.49.1786360183004; Mon, 10 Aug 2026
+ 04:09:43 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 10 Aug 2026 06:03:26 -0500
+ HTTPREST; Mon, 10 Aug 2026 06:09:40 -0500
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 10 Aug 2026 06:03:26 -0500
+ HTTPREST; Mon, 10 Aug 2026 06:09:40 -0500
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260809-kuno-soc-support-v1-9-5e0ede4a0c72@oss.qualcomm.com>
+In-Reply-To: <20260804-mainline-send-v1-sending-v5-2-149dd4372ac8@alex-min.fr>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260809-kuno-soc-support-v1-0-5e0ede4a0c72@oss.qualcomm.com> <20260809-kuno-soc-support-v1-9-5e0ede4a0c72@oss.qualcomm.com>
-Date: Mon, 10 Aug 2026 06:03:26 -0500
-X-Gmail-Original-Message-ID: <CAMRc=MeRNMug6hZ8Jcv7drVfKbLRxG=FG8r9--PkwEpcj5JuCA@mail.gmail.com>
-X-Gm-Features: AUfX_myvx7TjMFh-i1Xu8rFjTgNwvi8c6AXDbCHE0yc0UfXzrx62czbv7eUvtQs
-Message-ID: <CAMRc=MeRNMug6hZ8Jcv7drVfKbLRxG=FG8r9--PkwEpcj5JuCA@mail.gmail.com>
-Subject: Re: [PATCH 09/15] pinctrl: qcom: Add Kuno pinctrl driver
-To: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Georgi Djakov <djakov@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>, 
-	Guru Das Srinagesh <linux@gurudas.dev>
+References: <20260804-mainline-send-v1-sending-v5-0-149dd4372ac8@alex-min.fr> <20260804-mainline-send-v1-sending-v5-2-149dd4372ac8@alex-min.fr>
+Date: Mon, 10 Aug 2026 06:09:40 -0500
+X-Gmail-Original-Message-ID: <CAMRc=MdKYW_NQpqBES5UcyNqBJd_t1cHiLA3av0wWSWwFgOH-g@mail.gmail.com>
+X-Gm-Features: AUfX_mzvj27fy-TnyaVg6gCrjEOz19GIONuwg4d8eLhDGRNod6vnIU9SEq76_hs
+Message-ID: <CAMRc=MdKYW_NQpqBES5UcyNqBJd_t1cHiLA3av0wWSWwFgOH-g@mail.gmail.com>
+Subject: Re: [PATCH v5 2/6] pinctrl: qcom: Register functions before enabling pinctrl
+To: contact@alex-min.fr
+Cc: Alexandre MINETTE via B4 Relay <devnull+contact.alex-min.fr@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, phone-devel@vger.kernel.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Guru Das Srinagesh <linux@gurudas.dev>, Linus Walleij <linusw@kernel.org>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, Kees Cook <kees@kernel.org>, 
+	Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>, Lee Jones <lee@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 9 Aug 2026 09:27:08 +0200, Hardeep Sharma
-<hardeep.sharma@oss.qualcomm.com> said:
-> Add the TLMM pinctrl driver for the Qualcomm Kuno platform, supporting
-> 110 GPIOs and their pin multiplexing, pin configuration and gpiolib
-> interface through the common pinctrl-msm driver.
+On Tue, 4 Aug 2026 08:34:27 +0200, Alexandre MINETTE via B4 Relay
+<devnull+contact.alex-min.fr@kernel.org> said:
+> From: Alexandre MINETTE <contact@alex-min.fr>
 >
-> Signed-off-by: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
+> pinctrl consumers can request states while the pinctrl core enables the
+> controller. On Qualcomm pinctrl drivers this can happen before the SoC
+> function list has been registered, which leaves the function table
+> incomplete during state lookup.
+>
+> On APQ8064 this can fail while claiming pinctrl hogs:
+>
+>    apq8064-pinctrl 800000.pinctrl: invalid function ps_hold in map table
+>    apq8064-pinctrl 800000.pinctrl: error claiming hogs: -22
+>    apq8064-pinctrl 800000.pinctrl: could not claim hogs: -22
+>
+> Register Qualcomm pinctrl with devm_pinctrl_register_and_init(), add the
+> SoC pin functions, and only then enable the pinctrl device.
+>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Alexandre MINETTE <contact@alex-min.fr>
 > ---
-> +
 
-...
-
-> +static const struct pinfunction kuno_functions[] = {
-> +	MSM_PIN_FUNCTION(gpio),
-
-MSM_GPIO_PIN_FUNCTION() ?
-
-> +	MSM_PIN_FUNCTION(audio_ref_clk),
-> +	MSM_PIN_FUNCTION(coex_uart),
-> +	MSM_PIN_FUNCTION(ebi2_lcd_a),
-> +	MSM_PIN_FUNCTION(ebi2_lcd_cs),
-> +	MSM_PIN_FUNCTION(ebi2_lcd_reset),
-> +	MSM_PIN_FUNCTION(ebi2_lcd_te),
-> +	MSM_PIN_FUNCTION(emac_mdc),
-> +	MSM_PIN_FUNCTION(emac_mdio),
-> +	MSM_PIN_FUNCTION(emac_pps_in),
-> +	MSM_PIN_FUNCTION(emac_ptp_aux),
-> +	MSM_PIN_FUNCTION(emac_ptp_pps),
-> +	MSM_PIN_FUNCTION(gcc_gp1_clk),
-> +	MSM_PIN_FUNCTION(gcc_gp2_clk),
-> +	MSM_PIN_FUNCTION(gcc_gp3_clk),
-> +	MSM_PIN_FUNCTION(mi2s0_data0),
-> +	MSM_PIN_FUNCTION(mi2s0_data1),
-> +	MSM_PIN_FUNCTION(mi2s0_sck),
-> +	MSM_PIN_FUNCTION(mi2s0_ws),
-> +	MSM_PIN_FUNCTION(mi2s1_data0),
-> +	MSM_PIN_FUNCTION(mi2s1_data1),
-> +	MSM_PIN_FUNCTION(mi2s1_sck),
-> +	MSM_PIN_FUNCTION(mi2s1_ws),
-> +	MSM_PIN_FUNCTION(mi2s_mclk),
-> +	MSM_PIN_FUNCTION(nav_gpio),
-
-Possibly here too?
-
-> +	MSM_PIN_FUNCTION(pci_e_rst),
-> +	MSM_PIN_FUNCTION(pcie_clkreq_n),
-> +	MSM_PIN_FUNCTION(pll_bist_sync),
-> +	MSM_PIN_FUNCTION(pll_clk_aux),
-> +	MSM_PIN_FUNCTION(qdss_cti_trig0),
-> +	MSM_PIN_FUNCTION(qdss_cti_trig1),
-> +	MSM_PIN_FUNCTION(qdss_gpio_traceclk),
-> +	MSM_PIN_FUNCTION(qdss_gpio_tracectl),
-> +	MSM_PIN_FUNCTION(qup0_se0),
-> +	MSM_PIN_FUNCTION(qup0_se1),
-> +	MSM_PIN_FUNCTION(qup0_se2),
-> +	MSM_PIN_FUNCTION(qup0_se3_mira),
-> +	MSM_PIN_FUNCTION(qup0_se3_mirb),
-> +	MSM_PIN_FUNCTION(qup0_se4),
-> +	MSM_PIN_FUNCTION(sdc4_clk),
-> +	MSM_PIN_FUNCTION(sdc4_cmd),
-> +	MSM_PIN_FUNCTION(sdc4_data),
-> +	MSM_PIN_FUNCTION(sdc4_tb_trig),
-> +	MSM_PIN_FUNCTION(sgmii_phy_intr),
-> +	MSM_PIN_FUNCTION(spmi_coex_clk),
-> +	MSM_PIN_FUNCTION(spmi_coex_data),
-> +	MSM_PIN_FUNCTION(spmi_vgi_hwevent),
-> +	MSM_PIN_FUNCTION(uim1_clk),
-> +	MSM_PIN_FUNCTION(uim1_data),
-> +	MSM_PIN_FUNCTION(uim1_present),
-> +	MSM_PIN_FUNCTION(uim1_reset),
-> +	MSM_PIN_FUNCTION(usb2phy_ac_en),
-> +};
-> +
+This doesn't apply on top of current linux-next. Can you rebase, resend this
+as a separate patch and add the Cc: stable and Fixes: tags?
 
 Bart
