@@ -1,63 +1,65 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C7E1A275
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 05:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC754286A4
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 05:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786339923; cv=none; b=GRiMcd9zHTxRT08VJVK1kZkgyqGpKM04m6J3YixI3r4uQqiZhLMQzjvudXXNLU8X0FByDldcNeqOZF8atgHYuCndEfou8AEiD3igWo3Hu8BGc5I73rEOkOGlaAsSfhOAGIkadt79n/4bY7nxI1+nq3DTsouQj+J2Su/WYTD6xRM=
+	t=1786339929; cv=none; b=mVJUsDy20ht2AfRmZXnm0LU+xc0RSCf9WXLR6oq5fTU/uEAFg0UmP4f72ee+A7qRyUFVm84FHEesXYUkOBEBBtEEz4hxk4QlV0MKGcfIFK/9RAxjjx/2pCYImMDshTbZUJQJbS20zzpS75U5oUX2uH75qLgZJNGegexILeLKF/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786339923; c=relaxed/simple;
-	bh=RcbuHFP0ADuG/oWI4S+o0KsCUQpwaqj9BF4tTJMHIsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sOFTPo0QnCvqoQQh9k2frPfpoUSfaJ70MpfAGx7EYTH515EfSnrPSG7e+Pp1+P+06OPk6jqvDTbg34l1THF1JWUDPOvWpxazbaF+NlqaLdGXZjvX2jv2z9YUK+eCtDmoY9vMrbTk4/8m/tRTPrMDKhFYu6+xUcwQgaR7HUIEm04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhX0q13S; arc=none smtp.client-ip=209.85.210.182
+	s=arc-20240116; t=1786339929; c=relaxed/simple;
+	bh=cYNDaL/C+EAkq8Hq2RbVzEoT0INE6EYN3aK2pcX1vYg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mDYiI8A8d4f8yQwINaUfzLx7yhvD2mdCtXbFLrmF9+HF5dDE3JyhD/NXWujliBmPERt0OdQW8lKvh3V9IljnKRy5pk3NiiF1jnv/51DGAOJgpdygPbVTlMBjGWOMlq8dnArBavB5nrU/qQV3o0FvEx3w1zdc6B84FYeEwchusjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GxjkP67N; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhX0q13S"
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-84862b0d5aeso1333940b3a.2
-        for <linux-gpio@vger.kernel.org>; Sun, 09 Aug 2026 22:32:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GxjkP67N"
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-84f38f3b36eso881874b3a.1
+        for <linux-gpio@vger.kernel.org>; Sun, 09 Aug 2026 22:32:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786339922; x=1786944722; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=0Kli8pbDASdp0VjuYAnhnppe070gvFnPXsKo7o33PTM=;
-        b=DhX0q13Sdd22i9JiqKcHSKprw5QZ6rhkjnkE4d1mZ5CMfz0GT+sm2bO8Ed/UenPKMg
-         qboNeD7BuLu9LgEnkCnR9FZROET93g3ESY+uYm1GyiWHHAy5D2jOh2ofN6vPqbrjccfa
-         k2FHT/m9fKUtSf8brHdSPuq+W8NlAPcbVwsKfcdbAnon4nHAc9bnHeLeLTf1yWoyj6fi
-         PT/2v3KknXJSYN/eFsZcceXhy/j67PKkrraivwfrf422+m/qCKeBN5WZPmMsPNEaqrVG
-         ec3P7bzASazTEbceJ7Ocif1u7w6pKwe0yhNASihOSiJclKkhrrRGNQApVFIL1xj11rfr
-         2Myg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786339922; x=1786944722;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1786339928; x=1786944728; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=0Kli8pbDASdp0VjuYAnhnppe070gvFnPXsKo7o33PTM=;
-        b=PfAwW29DfeH+kRNu+aDknFzWqfDP+eK7UZFrJtIJxR/qfDDix648hRW9wj+uLQFi6B
-         zjvglB3c4uTuYrLdu34BxTH/isT0ul1/FaNCOsR9toi6+yDgCC8plN5Jn7yrDTJPxUas
-         S1j2DxuGquv0oM0VlGYr+ETKfTmwx1iyhmFdfZgRsw5QW0BjtdmFEG4hDmmAIXtbqHhS
-         CPRhJU8anfo9hjKBzKQqIL+K0a6LM+Asq0/Emdtf+6k1pJCyxRg5wgS2AD+e1NPITXT1
-         7KN6l66pOoP4bUXSUFlX1x8HfuJYWmbz/uby0lN9+bSWuKU/FRu7XtegaNNxIxXNp3cl
-         q1yw==
-X-Forwarded-Encrypted: i=1; AHgh+Rr+c9eOBM2+68NSAma+ZyWPjm0cXMa0R+5ijCPYmR3iT+FxdWuHTcIiFQZ24GaDz9Fq1j5hO3mmOBlX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyBc+/9GhEN2DMcm8uueet+KhSo0Eo+mpCeP4a/6PU6NngBrmH
-	L6jwwjBfGnOiIdLP6zOSjMFPXLOzgqR+r61Es8GIj8yWXO8b33ADgTdZ
-X-Gm-Gg: AR+sD12cAyNmT3hF/DAooeaetHbbaaGzQPSE0VglKJ6TWQYyQ0voLtI+bZdObajkz5q
-	GyJ9PnkkiCVlJcnDDGczaPbBkSFlxtt/d0n5dn+z/GnsEuopZr2OCdgurNYQTUevKOZOC6qsHPD
-	U3M7WYBcd+QQhiYxI5xP/orAPinrtS57tD7DrEKdrCtjzwBaoEiKgWVuNPsnKT+9LNrGK7fAQ4q
-	QrXbqLjbkezj4TV3QAQBbQGn7hkv0o61bEwInUnAwthhdC87CJ3HiJbmyRuoD4jXIjSMi/qXiKP
-	FTV1wbKse60SVvEoDNHiUMnndLSku64x6zV7T74nhoN9NnJHLr2mMpWFjLvxZAzP0QC6STVseuh
-	00XyytueT8MghhUjyqc59V6Jr94hWco3CaVFTwGtw53bgKvXToHkdgwi685S0VILoewozuN7TLG
-	mx38+4LE7sxFuq8/scNrv7dfmmCAEmhAf5lLkFOc8VeRmZ52iDMYX7r8xgCqjFQK7IG1L0Hio01
-	z/RHSQjtP5HabKSWGe3iK3hn3tfWsFGK7dGelBGqKtPhGzdOwB6YL3ZjvuUxthLrJsmI6cMLCZX
-	LI5D
-X-Received: by 2002:a05:6a00:2d0c:b0:84e:2382:f4f0 with SMTP id d2e1a72fcca58-84f2dfc8ed4mr42587816b3a.4.1786339922023;
-        Sun, 09 Aug 2026 22:32:02 -0700 (PDT)
+        bh=7j0GcJH+Tj+QIWl1wxKim6ikbz1e2bMUtiA5t3w5TnM=;
+        b=GxjkP67Nc3v7ARGR9AEBjtTwkqC/vVbG2qBCQACvsegWoBTYX30N3fbb21tnQVrsyN
+         W+Yumv8pfc616RqFggVM6eZXwyW1GTpI8dLRHKHdOS7nC19XTkgOcbTEIcWvQNohJ9wL
+         XjQ9nZyxfteawwH4okCEISvvIhteDg5EP6Ho3coLuVORd8v7mIg+Vl/EoZ+KNTldSpYt
+         3GLinJBEIaB/rbI6r8jU91xJ0+U4paYDfkaRkfK3/f5k9nPd5uqjTKzsHtw0PtHG0hm7
+         sok2Wec+J3qKpnsXk0L3jOMUO5YRT8mGicxQIMQxOdD2290bWcz2m0H/QYkTYK8BpbgR
+         7K4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786339928; x=1786944728;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=7j0GcJH+Tj+QIWl1wxKim6ikbz1e2bMUtiA5t3w5TnM=;
+        b=n1fHwCjm/utOqFEq0GecuujdNK7IuVO99zOg7JOwteC36HS0kwjf/J39MGkrK2OEbC
+         JIUyHqF9zZsAwS26nk1HuddLJFogi+w6hFZ13HWfoXqluKUlsbdvJOloOgTEXyEsW8ip
+         k0JK/TtdohES93aqoH66yxAzcRMjfIOVObgHn1pr7VUd9zoDgUASX3GXHpB6q0okABUA
+         acX2+n1yXCft4cAly5/3F02HzLNiGQVqbNyslvsq+jv1ACxiA8Sv3molxMLb5K6Aw8JJ
+         DtUKE0He1ZcuTERX96jOQKS9hfiJDgozvyuBIoTaMgRbhWgKwBHGjxa3SudXb3UxOeF6
+         WVvg==
+X-Forwarded-Encrypted: i=1; AHgh+RoOOt98h96IClOIgnw8JtySAdHjs6zhfkK2A5UzibjcNw1gIbcafQQr5mgmXOEBpxsvn/VH+7jD7+EV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfCwJbYfn4Rs7Mh6o7S1XmtePzW/HpVXbmxU0viYplMxqeO7K7
+	OlrBqKths8xxJJiYpTQtStDSXqrNct/ww7ZZq+gFFdM/bU50QIvEwPvr
+X-Gm-Gg: AR+sD13qI6STFf2dmIUHUCr6YvYu9K22SYgESeNjDWJqZ5IKRy/RxZRfefFmNz9Ecu3
+	zLoT4ba5m+dMs69s/+WmNfok/Dy6qPLavOXYcewe22as4TG2YeTBr0y7wnnm7jZWOK3VFyHyevc
+	vY0FCyqUkoYSX9IpOJLYkBX9wfJ3SJwV26P7PA7jsCUnO/vKKl+Z0hB7HdRtNDKdaopm4OFA29e
+	95ITjZIpcJ76l7myF5jPANDIGyXNtEHGEmOLhCrWqK7ptS2/FqUulGXLwxUKcA9EJJsW62s2iRo
+	7lt58wb4JNjPEujThH3r/XU8BXgQutOArdj8LI7ncY1SSiOrfAmxMmyubWOn5JfZfI96EEYv9xC
+	MZDwZbGCXPqJQH2qBKCwsJGTJRg8/1U7TuEq+eJnD9SvghFMWs5IHYqizJ+tR7hMfWIsL3u+TVL
+	8pnZl3TagTZpgow+v6EI9te+eX3XNartCFOO3OVVwgIscZVd8ZVhJnRbJFnP0hxCN3JXlpG/sdJ
+	DZvAjMji9c2cCeFlkOFWOBsUSzlamA3zH2Hwctlxkh6Swlv0kAerDXPZYmvzifpGC7oBS6iUzTZ
+	UKmC
+X-Received: by 2002:a05:6a00:997:b0:847:926a:7ae3 with SMTP id d2e1a72fcca58-84f4fe9f25cmr28746085b3a.20.1786339927978;
+        Sun, 09 Aug 2026 22:32:07 -0700 (PDT)
 Received: from phuc-desktop.. ([183.91.15.56])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84f5a3cadf2sm3243298b3a.22.2026.08.09.22.31.58
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84f5a3cadf2sm3243298b3a.22.2026.08.09.22.32.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Aug 2026 22:32:01 -0700 (PDT)
+        Sun, 09 Aug 2026 22:32:07 -0700 (PDT)
 From: phucduc.bui@gmail.com
 To: Linus Walleij <linusw@kernel.org>,
 	Ray Jui <rjui@broadcom.com>,
@@ -70,10 +72,12 @@ Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	bui duc phuc <phucduc.bui@gmail.com>
-Subject: [PATCH 1/5] pinctrl: ocelot: Propagate errors from optional IRQ lookup
-Date: Mon, 10 Aug 2026 12:31:38 +0700
-Message-ID: <20260810053142.27938-1-phucduc.bui@gmail.com>
+Subject: [PATCH 2/5] pinctrl: keembay: Propagate errors from optional IRQ lookup
+Date: Mon, 10 Aug 2026 12:31:39 +0700
+Message-ID: <20260810053142.27938-2-phucduc.bui@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260810053142.27938-1-phucduc.bui@gmail.com>
+References: <20260810053142.27938-1-phucduc.bui@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -93,22 +97,25 @@ than -ENXIO.
 
 Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
 ---
- drivers/pinctrl/pinctrl-ocelot.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pinctrl/pinctrl-keembay.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index 0fe0527863b8..02824da6bcdf 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -2369,6 +2369,8 @@ static int ocelot_gpiochip_register(struct platform_device *pdev,
- 	gc->label = "ocelot-gpio";
+diff --git a/drivers/pinctrl/pinctrl-keembay.c b/drivers/pinctrl/pinctrl-keembay.c
+index 3241d3ae6219..0b65b186e3c1 100644
+--- a/drivers/pinctrl/pinctrl-keembay.c
++++ b/drivers/pinctrl/pinctrl-keembay.c
+@@ -1497,8 +1497,10 @@ static int keembay_gpiochip_probe(struct keembay_pinctrl *kpc,
+ 		int irq;
  
- 	irq = platform_get_irq_optional(pdev, 0);
-+	if (irq < 0 && irq != -ENXIO)
-+		return irq;
- 	if (irq > 0) {
- 		girq = &gc->irq;
- 		gpio_irq_chip_set_chip(girq, &ocelot_irqchip);
+ 		irq = platform_get_irq_optional(pdev, i);
+-		if (irq <= 0)
++		if (irq == -ENXIO)
+ 			continue;
++		if (irq < 0)
++			return irq;
+ 
+ 		girq->parents[i]	= irq;
+ 		kmb_irq->line	= girq->parents[i];
 -- 
 2.43.0
 
