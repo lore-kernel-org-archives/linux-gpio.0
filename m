@@ -1,57 +1,57 @@
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com [209.85.208.197])
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com [209.85.208.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D593DB63F
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 13:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7CA3E1204
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 13:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786367201; cv=none; b=EU7PDLHI7ulRdHgt0x04Gv3VlP0cVnaaWOvIqHJNeZg1Wfl8PITmPTqPu+1NutOD640XMaz5JprgRpvoj0KLVuaA9CUXyRHejMFNmyDNTWC6307D7w+CWyXWwkG6wIcePaE3RHeosi+5V9KIXsAdtTbBwCvYL+u1wOLMNgXt+hA=
+	t=1786367202; cv=none; b=ptafBJqPtT8BVNKF/0BW7vS1X2fEqHIEoxzY/WaOKDdei04G0OeYQaP58R6w/jFFVN7oxsfT2Qq+tdxJTMlrT+eAcbhROz5/oEF6B64rff+1vHxe6AAvPrF4QU0wkDfbqsEEsMdb9NtX3filY5Wz0hcQ0OQA7el0Czbg9hnuH00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786367201; c=relaxed/simple;
-	bh=lny2tVxPP3EBC64DjZVVlmMheEKgPPMBmx7Is6mdwkE=;
+	s=arc-20240116; t=1786367202; c=relaxed/simple;
+	bh=UOqS2BQJPAESAW6nffGEETU8D6OAwM/CNtqbcFzYb0A=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=utWbIgnxun8a9SWNgV6UDlK8k7bU8f2Aeh1ngojHb69Wh3Q/JjRbomhr3sk0hRpCiI7IhLOUuPxHTSIbfPuPyOQKDsgtV7PZCZOBYY7mq+L05TVn7t9Z3EQDUXU8BeEYt+jcwm1DT2nGueEo0uQHv27Nn/D9Vvdc3ndGET61bos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mkmkl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PVDUbSSL; arc=none smtp.client-ip=209.85.208.197
+	 To:Cc:Content-Type; b=JuNPtWxR5fTdpHvTE635CEhnbAF1U7aBUKJAvH5rznXJtcZhXnedXeQkJGWnHMw5LuUdv0xkI3PRzaEVGilm0gGnK+Fscn/9XR1/2yUGpAWXV34xdwextSEGPBIQqVkMs2i4qzMm6qrrOTtbfjTixcT38O/c73IPL5gKRffpDvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mkmkl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XCI77hR1; arc=none smtp.client-ip=209.85.208.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mkmkl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PVDUbSSL"
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-39c7291b47eso6640801fa.2
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 06:06:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XCI77hR1"
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-39c9aa07c5eso2756791fa.0
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 06:06:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1786367198; x=1786971998; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1786367199; x=1786971999; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=Aj+m8iVcwc+I5UrIpsW4B7C15egkkpzlbpamrytbNZ4=;
-        b=PVDUbSSLiHaOizW11PbDYBZKQ7gInP5wR8ESqBZEZ5q+RG+nBz3l5w0rNvLsJr40rn
-         X/ouFLi4+rQo73nuZIoKyo8gw3OVsOscsiGe0LdRA2W2AzX+3S81ZLwlWnxTkopZ3U08
-         LtmhNQtmg+nWwHYpMTKG2w79Ig2KkAbzqfeF0l4XMem/15J0Q+9fY7IWuhc+r9tFg2vs
-         OAPaADBDFTJwseJfjkpyzTLxbFb0nVrMdLLKOIW8m173btSWOirwdJb0x+jK2QZQsl2Q
-         UNE6Q3pd5e5FF6iZDQIusOSKJ6dvhs6IiQGHeUjJnFmV7rWf2KOzZ9BuFFk8KeH+FiRu
-         LIHA==
+        bh=IdhndaGQ5ilhTKEdFH/lvhXJ1C8BSb4SQCGnhzgRjo4=;
+        b=XCI77hR15miC48FSsZHnm8hW8Idtwtdx5UtpBoN89Is49Kgnah9cvZqfAWcdIEnPyD
+         wgJwEJWoBaU8avbTKHbEYZtwpBotU0ZLUeIFNIJKIbyjvPfQqBw/BUAKOlp4HxI8Gh3W
+         kmRVmeM18Vcd0lF8cbkeOiYll7l77J+9iyJVDIYi73r27mt0A1mTdphfK1TdcrtmiRBA
+         2rvu4tO+c5Gozeb95JTYlC0u5f4ogVshITa4f2x8n8VYtr3UllBt95My7xo86FLf3csh
+         uut8wLynIwOnCqrCZBZbo9GjsMw17Yx1VKv2fNVPREoVDiohI21hx48IvBfuTcEcUVDn
+         2nYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786367198; x=1786971998;
+        d=1e100.net; s=20251104; t=1786367199; x=1786971999;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Aj+m8iVcwc+I5UrIpsW4B7C15egkkpzlbpamrytbNZ4=;
-        b=ov4oBgeo4xeKRGmNc3jrIia6bZRRmnI+u2E3M9z2q+McXR8KuWbr81vxd1c/uOksSw
-         D4T+QALu1E1GzjbDGzbEBQ/llra2MfkspLqNT9SOT1x/MRu3pYqoR3drEKK6KqQWFQig
-         /2V1IEjuaCbObcqcGSzxYAGJ20IQcKvsfzc5IRE06Z7NGhRPYJPcyA4UW9yxbOxrwjvh
-         lWWd38Vr3C7OKHTZUpleSjUKLFcAaw5WphiiQn/YB3rZazFQW8FkrBVbGEHyBLHwFkh6
-         FTlNhpSj72M7MRK33ffidyq8I6Stqbj+hPrSyiNNoYcURzcuRl/3BEK22QLlX10tVmWK
-         l0iA==
-X-Forwarded-Encrypted: i=1; AHgh+Ro4SIR4Rt9tjcljODwg6YRil9Bnw8dgbt9M6wz73TtyxwPyX9PDkML/a4on4oo1ZuFNysA9fMmS6Fi9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCQsvCJSsKtB39EhbQFjqyhtO7j8B2ggOvUAd8igl/6Ljd6/za
-	GUP8mAnWsta7W+VZ2gtogOf8xrRQfKakB67h2a0GhI6DF08H1rRQvkmNxT9N6WVP7IC5dVEyek4
-	8YA==
-X-Received: from ljic26-n2.prod.google.com ([2002:a05:651c:235a:20b0:39e:e62c:8bfc])
- (user=mkmkl job=prod-delivery.src-stubby-dispatcher) by 2002:a05:651c:198c:b0:39c:6f75:2eea
- with SMTP id 38308e7fff4ca-39fdf42ae01mr28082051fa.11.1786367197480; Mon, 10
- Aug 2026 06:06:37 -0700 (PDT)
-Date: Mon, 10 Aug 2026 13:06:34 +0000
+        bh=IdhndaGQ5ilhTKEdFH/lvhXJ1C8BSb4SQCGnhzgRjo4=;
+        b=NHK6SkINHtgFbanWM6ByDzRgQi0UnZHrAt9mw675H1Q+jfazKw/lYzVG0Q2PMJWXvq
+         6GtpYPTudDIEoZnPeAfL5Ioaa5F95XL1tmJgdpXW9M87JKNz+byi2GZ0VxjgQ3eeyOmd
+         cK4DLTSidptkzeAXnT0YyAJpByaC2Ksijc9nykvZKLGnG6ReR4vgEhe3DIX23nUJAguf
+         LneE5xv1iY+ZLa64y5D45uHgFfyUfu+tKJNC32N9idkZQT0VVODqsfshuy3AYB46/PfC
+         yVywozPQumzo8HQtoE+1VU9jltFSxNgO/kXOIlQZx5L3YplnCoZ23NubNdPJy559B3/T
+         jlYw==
+X-Forwarded-Encrypted: i=1; AHgh+RrLOchY/Bdn0UUFaPUsxkLqQfXkZtcuOQVuSfd+9L80J//dsqKuoYV8d29FOApl4190MRKDeP7hwtu8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHZeAcR7Fz7NfmfF3H+le2+tqrPEglJPZJldDX35S2GulvhpzS
+	FQKZCWwJvrC2Rz0alEz/k0N33kvBiU1BTJ+6XQ7+IyW3Cx2QRsbVpezOaZsx+Qo6B80zwNS3IGF
+	lvg==
+X-Received: from ljxd20-n1.prod.google.com ([2002:a05:651c:a114:10b0:39f:89:905e])
+ (user=mkmkl job=prod-delivery.src-stubby-dispatcher) by 2002:a05:651c:a204:10b0:39b:1a03:bcb0
+ with SMTP id 38308e7fff4ca-3a00e8253f1mr1938371fa.10.1786367198475; Mon, 10
+ Aug 2026 06:06:38 -0700 (PDT)
+Date: Mon, 10 Aug 2026 13:06:35 +0000
 In-Reply-To: <20260810130635.1166626-1-mkmkl@google.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -61,9 +61,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260810130635.1166626-1-mkmkl@google.com>
 X-Mailer: git-send-email 2.55.0.654.g21b8a5bc05-goog
-Message-ID: <20260810130635.1166626-2-mkmkl@google.com>
-Subject: [PATCH v1 1/2] pinctrl: core: Allow drivers to keep "init" pinctrl
- state after probe
+Message-ID: <20260810130635.1166626-3-mkmkl@google.com>
+Subject: [PATCH v1 2/2] tty: serial: 8250_dw: Keep init pinctrl state until
+ first open
 From: "=?UTF-8?q?Micha=C5=82=20Karda=C5=9B?=" <mkmkl@google.com>
 To: Linus Walleij <linusw@kernel.org>, 
 	"=?UTF-8?q?Ilpo=20J=C3=A4rvinen?=" <ilpo.jarvinen@linux.intel.com>, 
@@ -75,162 +75,77 @@ Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-During device probe, pinctrl_bind_pins() binds pins to their "init" state
-if specified in Device Tree. When probe finishes, pinctrl_init_done()
-automatically transitions the pins from "init" to "default" state.
+When a UART port is connected to an external peripheral whose power
+domain is kept powered off until first use, transitioning the UART
+pins from the "init" state to the "default" state prematurely at probe
+completion can cause parasitic back-powering into the unpowered
+peripheral.
 
-While this auto-transition works well for devices that are immediately
-active upon driver binding, certain peripherals (such as power-sequenced
-devices connected over UART, SPI, or other buses) remain unpowered until
-userspace explicitly opens the device node or attaches a protocol driver.
+Ensure that on boards specifying an "init" pinctrl state for the port,
+the "init" state is preserved until the port is first opened:
 
-On board designs where the connected peripheral is kept unpowered during
-boot, auto-selecting "default" or "sleep" pin states (where signals such
-as TXD or RTS may be driven high or pulled up) can cause parasitic
-back-powering into the unpowered peripheral through its ESD protection
-diodes.
-
-Allow drivers to explicitly opt out of the automatic "init" -> "default"
-transition by calling pinctrl_keep_init_state(dev) during probe. When this
-helper is called, pinctrl_init_done() leaves the pins in their "init"
-state upon probe completion. The driver can then transition to the
-"default" state when the device is first opened by calling
-pinctrl_pm_select_default_state(dev).
+1. In dw8250_probe(), call pinctrl_keep_init_state(dev) to opt out of the
+   automatic "init" -> "default" transition at probe completion and record
+   this in data->in_init_state.
+2. In dw8250_do_pm(), when the port is opened (state =3D=3D 0), transition
+   pins from "init" to "default" if data->in_init_state is set, and clear
+   the flag.
 
 Suggested-by: Douglas Anderson <dianders@chromium.org>
+Co-developed-by: Vic Huang <vich@google.com>
+Signed-off-by: Vic Huang <vich@google.com>
 Signed-off-by: Micha=C5=82 Karda=C5=9B <mkmkl@google.com>
 ---
- Documentation/driver-api/pin-control.rst | 10 ++++++----
- drivers/pinctrl/core.c                   | 20 ++++++++++++++++++++
- include/linux/pinctrl/consumer.h         |  6 ++++++
- include/linux/pinctrl/devinfo.h          |  2 ++
- 4 files changed, 34 insertions(+), 4 deletions(-)
+ drivers/tty/serial/8250/8250_dw.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/driver-api/pin-control.rst b/Documentation/drive=
-r-api/pin-control.rst
-index 1f585ecca63c..8d52bf74da6c 100644
---- a/Documentation/driver-api/pin-control.rst
-+++ b/Documentation/driver-api/pin-control.rst
-@@ -1172,7 +1172,8 @@ Possible standard state names are: "default", "init",=
- "sleep" and "idle".
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/82=
+50_dw.c
+index 5fba913f3301..74e568e2a0d3 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -18,6 +18,7 @@
+ #include <linux/io.h>
+ #include <linux/lockdep.h>
+ #include <linux/module.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/property.h>
+@@ -77,6 +78,7 @@ struct dw8250_data {
+ 	unsigned int		skip_autocfg:1;
+ 	unsigned int		uart_16550_compatible:1;
+ 	unsigned int		in_idle:1;
++	unsigned int		in_init_state:1;
 =20
- - if ``init`` and ``default`` are defined in the device tree, the "init"
-   state is selected before the driver probe and the "default" state is
--  selected after the driver probe.
-+  selected after the driver probe, unless the driver explicitly opts out
-+  by calling ``pinctrl_keep_init_state()`` during probe.
-=20
- - the ``sleep`` and ``idle`` states are for power management and can only
-   be selected with the PM API bellow.
-@@ -1233,9 +1234,10 @@ operation and going to sleep, moving from the ``PINC=
-TRL_STATE_DEFAULT`` to
- current in sleep mode.
-=20
- Another case is when the pinctrl needs to switch to a certain mode during
--probe and then revert to the default state at the end of probe. For exampl=
-e
--a PINMUX may need to be configured as a GPIO during probe. In this case, u=
-se
--``PINCTRL_STATE_INIT`` to switch state before probe, then move to
-+probe and then revert to the default state at the end of probe (or remain
-+in the init state until activated if ``pinctrl_keep_init_state()`` is call=
-ed).
-+For example a PINMUX may need to be configured as a GPIO during probe. In =
-this
-+case, use ``PINCTRL_STATE_INIT`` to switch state before probe, then move t=
-o
- ``PINCTRL_STATE_DEFAULT`` at the end of probe for normal operation.
-=20
- A driver may request a certain control state to be activated, usually just=
- the
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 1675dd36bd5c..fd0c91610338 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1640,6 +1640,9 @@ int pinctrl_init_done(struct device *dev)
- 	if (pins->p->state !=3D pins->init_state)
- 		return 0; /* Not at init anyway */
-=20
-+	if (pins->keep_init)
-+		return 0; /* Driver explicitly requested to stay in init state */
-+
- 	if (IS_ERR(pins->default_state))
- 		return 0; /* No default state */
-=20
-@@ -1678,6 +1681,23 @@ int pinctrl_select_default_state(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(pinctrl_select_default_state);
-=20
-+/**
-+ * pinctrl_keep_init_state() - mark pinctrl handle to stay in init state a=
-fter probe
-+ * @dev: device to keep init state for
-+ *
-+ * Return: true if the device has a valid init state and keep_init flag wa=
-s set,
-+ *         false otherwise.
-+ */
-+bool pinctrl_keep_init_state(struct device *dev)
-+{
-+	if (!dev->pins || IS_ERR(dev->pins->init_state))
-+		return false;
-+
-+	dev->pins->keep_init =3D true;
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(pinctrl_keep_init_state);
-+
- #ifdef CONFIG_PM
-=20
- /**
-diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consu=
-mer.h
-index 11b8f0b8da0c..4312a098fb4c 100644
---- a/include/linux/pinctrl/consumer.h
-+++ b/include/linux/pinctrl/consumer.h
-@@ -47,6 +47,7 @@ int pinctrl_select_state(struct pinctrl *p, struct pinctr=
-l_state *s);
- struct pinctrl * __must_check devm_pinctrl_get(struct device *dev);
- void devm_pinctrl_put(struct pinctrl *p);
- int pinctrl_select_default_state(struct device *dev);
-+bool pinctrl_keep_init_state(struct device *dev);
-=20
- #ifdef CONFIG_PM
- int pinctrl_pm_select_default_state(struct device *dev);
-@@ -152,6 +153,11 @@ static inline int pinctrl_select_default_state(struct =
-device *dev)
- 	return 0;
- }
-=20
-+static inline bool pinctrl_keep_init_state(struct device *dev)
-+{
-+	return false;
-+}
-+
- static inline int pinctrl_pm_select_default_state(struct device *dev)
- {
- 	return 0;
-diff --git a/include/linux/pinctrl/devinfo.h b/include/linux/pinctrl/devinf=
-o.h
-index de4228eea90a..13dac33f2df1 100644
---- a/include/linux/pinctrl/devinfo.h
-+++ b/include/linux/pinctrl/devinfo.h
-@@ -32,6 +32,7 @@ struct pinctrl;
-  * @init_state: the state at probe time, if found
-  * @sleep_state: the state at suspend time, if found
-  * @idle_state: the state at idle (runtime suspend) time, if found
-+ * @keep_init: flag indicating if init state should persist after probe
-  */
- struct dev_pin_info {
- 	struct pinctrl *p;
-@@ -41,6 +42,7 @@ struct dev_pin_info {
- 	struct pinctrl_state *sleep_state;
- 	struct pinctrl_state *idle_state;
- #endif
-+	bool keep_init:1;
+ 	u8			no_int_count;
  };
+@@ -461,8 +463,15 @@ static int dw8250_handle_irq(struct uart_port *p)
+ static void
+ dw8250_do_pm(struct uart_port *port, unsigned int state, unsigned int old)
+ {
+-	if (!state)
++	struct dw8250_data *d =3D to_dw8250_data(port->private_data);
++
++	if (!state) {
+ 		pm_runtime_get_sync(port->dev);
++		if (d->in_init_state) {
++			d->in_init_state =3D false;
++			pinctrl_pm_select_default_state(port->dev);
++		}
++	}
 =20
- extern int pinctrl_init_done(struct device *dev);
+ 	serial8250_do_pm(port, state, old);
+=20
+@@ -770,6 +779,8 @@ static int dw8250_probe(struct platform_device *pdev)
+ 	if (data->data.line < 0)
+ 		return data->data.line;
+=20
++	data->in_init_state =3D pinctrl_keep_init_state(dev);
++
+ 	platform_set_drvdata(pdev, data);
+=20
+ 	pm_runtime_enable(dev);
 --=20
 2.55.0.654.g21b8a5bc05-goog
 
