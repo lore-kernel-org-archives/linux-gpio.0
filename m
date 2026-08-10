@@ -1,78 +1,124 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F327E3C3428
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BD83C1082
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786361046; cv=none; b=OYri2x7EvORZu5u9YFvFL9BAPF9Lp8r7nd7bUdGAuh2pA/5j+pOowIrkMesut+5fuk9rW5sHX7+DRKY/dRMaud57jt6BV4DfNS6a+ydoXt5SfzCLwIVCtCHyLYZYWtMEk4x/CK2RXjSJsq79OKHkZBfhkCW3GF32tkIuOTCMjdQ=
+	t=1786361171; cv=none; b=QzvD2NN6+OTDW3a9RtgaoUoW7WHunBmrvnwuE3gp4eM46qiki3XH7luW8RNYVjLlb0AVTZ1nmPELQLWD6GSuvq0u6FVxllwe1Z5x1wRsIH/4WkwJnth1S0t8aiIhGWwUwUdCGRflaB+2WE8mwniQ3cEH5PkyprB8Lg9QjRH1GaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786361046; c=relaxed/simple;
-	bh=kNKcpEsxDjfZLHc6s+Y45GOXx7jCtt7UQGsh6xp7mcA=;
+	s=arc-20240116; t=1786361171; c=relaxed/simple;
+	bh=QwVAnHRHiCemIeYxsEaRGiTsru4MY7geYHkt3gj+mPE=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=irZ9XbpFVEjr+cSpuB7UqJQILsTisJ30fc/UeNiHc+Nw3R2kCQx669nZeFD/hGiawscN8ioMtvHWgas+Cih2liuojwcevaZz1gZ+QROCz8UF5ieFQFj3tZx8utUZj1XwcZ5WM0Gg1gbg92X7s/nCikPFU9xKrIE8yJQ7muAR+ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cr+O68X/; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=uQP2sWCyrvYlQe3acLA4IggtmDfzQ9sz/UU/WFT9XlALh+miE5+JMaJG7TT783w1OssHMmDYbjS3FDFwbcjbMGG7L5Am70WnIIAcW+IrbFTNWXVPFqlIwUy724UtoJEeAcVCLtF809jfUmbIh2I2beRd5OBnzckdfGfArp6wG5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAi5N8oQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cr+O68X/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D97F1F00ACA
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:24:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAi5N8oQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3B9B1F0155D
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 11:26:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786361043;
-	bh=kNKcpEsxDjfZLHc6s+Y45GOXx7jCtt7UQGsh6xp7mcA=;
+	s=k20260515; t=1786361170;
+	bh=wZoyj/bcYqq2WaFoOPNolBM0q0on9gdK76aAsSvObhU=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=Cr+O68X/0YJ4cF9M1950Sn/fjVqo+vrdqG2HoX/BrUFEpWrz/Hruwq41Dh88iazOk
-	 U8j6HKNGxlFKcvQ1nDlZcpYkR55NGkryTop6FLmmB75UpoWlZ5s2TGpZXmhN24K/jt
-	 7utgFg8MBPofYNns2sRBgaye79+l+5osdb2S0yeRrv3TkWLbIxL/ROI+roYuYmnYwg
-	 tpACqUSIMAEd0wBMK5c4qZhIXQHrHeVBujs8xYK3IqfCBhpIZ4KJXmvjTbAUtymGGP
-	 HqzOqiWZH14YfWnIe90hTNWcW6QNh7lo18+/1QSmRsJuzGM8WcLXFRCk3Jp0XLLzpf
-	 SAOFbrpCN+vog==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5b29599b81cso2245200e87.1
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 04:24:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rp5UbyprrhuDyq09bvy6C412XHoUR2xe7HT8SDMQYjvWSPjhiPBq8pI3XWyk6/CBU3fF3LdKe57tUpM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvGYztd0OecKF17bgpR5T6Em3ApvD2BGxcLt2j7dFbu9bACfZv
-	LdxlzK/O8DYFVyyIswcOBinOvXjQ9jOeorbxPrpIqScbye8PFq2AhlO03R/5jSBQLxG59I6IMSi
-	IttwIx2RRfDIQjqBZGu3+CqXdAH/+Za9qUZQYfFn4dQ==
-X-Received: by 2002:a05:6512:688f:10b0:5b2:a4bf:a6d2 with SMTP id
- 2adb3069b0e04-5b3181c8259mr117533e87.39.1786361042263; Mon, 10 Aug 2026
- 04:24:02 -0700 (PDT)
+	b=TAi5N8oQgDU3uxlgGdhWfEn9nNC7rXCuv4yN2uZImZ5Qe473HPVo3p50VUpSWiPHG
+	 IoiTod5iPqxiSXKiITSq8Z8zTmwJc5HZ5uz7xmOpQ3Jkb0fyrve6APE8i9wcqXWbG9
+	 lXGMKZJiKDjBF9o//Mpr0RyCf4KxJ0hU7mN22P+i0Mg5N9bg3iRDxEVPL+nUuBavi3
+	 AGideJY+Jza/asFc16Mup/MjDB2acqh/PegxslqsJ6Ggp5t9N4qp8PgknMdViirGgS
+	 A8bpR8iBlt1Pwb4LwILd9Hw6sRCpa0GAj9fkI0FlOKyQ95A6k8YjbPxxtVg2uxyHNg
+	 fWwlAMzpEDWvA==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5b3119957f0so1174456e87.1
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 04:26:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Ro+E6vIRuEk/QcQWfvGEjMVLrB7755uoVkwEUUuzmNxoOZY4jnFi2O16gDHZ6vrNoHNIYSN0b9GS6wM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy76m5LZEVfp7ZCu0N0a29j+1cyUPFyn7+bdqpulBEG7WpUQwUh
+	GLU9rQRczDesnc62bSuR2hMSV9SIwbXCBmzTSldGOB56XfZbf4HvQbntX1Adsc0uuhHmtAP/VlA
+	sH7CNPb9WKF+T6TjrfimlZonMBv2jvKRukdi9ZxqQbg==
+X-Received: by 2002:ac2:4d18:0:b0:5b0:1b0f:7a60 with SMTP id
+ 2adb3069b0e04-5b2f4cc8da0mr3704106e87.32.1786361168649; Mon, 10 Aug 2026
+ 04:26:08 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 10 Aug 2026 11:24:01 +0000
+ HTTPREST; Mon, 10 Aug 2026 06:26:07 -0500
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 10 Aug 2026 11:24:01 +0000
+ HTTPREST; Mon, 10 Aug 2026 06:26:07 -0500
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260802-sm8475-tlmm-v2-1-a93e1d1cb53b@proton.me>
+In-Reply-To: <20260801195613.235430-2-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260802-sm8475-tlmm-v2-0-a93e1d1cb53b@proton.me> <20260802-sm8475-tlmm-v2-1-a93e1d1cb53b@proton.me>
-Date: Mon, 10 Aug 2026 11:24:01 +0000
-X-Gmail-Original-Message-ID: <CAMRc=Mf+_3CYbcT79NhBPLz2FBs-xWKA5xZxY_hmHbvYvJxF9g@mail.gmail.com>
-X-Gm-Features: AUfX_mywkhS-dFsDLxXis5hy2lIBxPJP1ka_J4nqpo7r0Qqplm7l3mc5qEJQZng
-Message-ID: <CAMRc=Mf+_3CYbcT79NhBPLz2FBs-xWKA5xZxY_hmHbvYvJxF9g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] pinctrl: qcom: sm8450: Remove duplicate reference
- to gpio81
-To: esteuwu@proton.me
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	phone-devel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Esteban Urrutia via B4 Relay <devnull+esteuwu.proton.me@kernel.org>
+References: <20260801195613.235430-2-krzysztof.kozlowski@oss.qualcomm.com>
+Date: Mon, 10 Aug 2026 06:26:07 -0500
+X-Gmail-Original-Message-ID: <CAMRc=MeiXHL-1i31q-+wuibK5qM1=xV+4qn0z+CWFXjt3CdrCQ@mail.gmail.com>
+X-Gm-Features: AUfX_myd-9E67e5jDYYEWIDd_Fhka4yTI8ar0CZ3ucq5EUGNAu2R2AhAZ0we-FI
+Message-ID: <CAMRc=MeiXHL-1i31q-+wuibK5qM1=xV+4qn0z+CWFXjt3CdrCQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: Correct white-space style
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@arm.com>, James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>, 
+	Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Patrice Chotard <patrice.chotard@foss.st.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Lee Jones <lee@kernel.org>, Johannes Berg <johannes@sipsolutions.net>, 
+	Jeff Johnson <jjohnson@kernel.org>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Yangbo Lu <yangbo.lu@nxp.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Paul Walmsley <pjw@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Richard Cochran <richardcochran@gmail.com>, 
+	Jens Wiklander <jenswi@kernel.org>, Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>, 
+	YC Hung <yc.hung@mediatek.com>, Svyatoslav Ryhel <clamor95@gmail.com>, 
+	Sean Wang <sean.wang@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Peter Ujfalusi <peter.ujfalusi@gmail.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	coresight@lists.linaro.org, linux-arm-msm@vger.kernel.org, 
+	linux-ide@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, mfd@lists.linux.dev, 
+	linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
+	linux-pm@vger.kernel.org, netdev@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-usb@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 2 Aug 2026 09:30:54 +0200, Esteban Urrutia via B4 Relay
-<devnull+esteuwu.proton.me@kernel.org> said:
-> From: Esteban Urrutia <esteuwu@proton.me>
+On Sat, 1 Aug 2026 21:56:14 +0200, Krzysztof Kozlowski
+<krzysztof.kozlowski@oss.qualcomm.com> said:
+> Correct a few white-space issues, like double space after '=' or before
+> bracket '{' characters, which will be flagged by dt-check-style.  No
+> functional changes.
 >
-> gpio81 is referenced twice in prng_rosc_groups.
-> Remove the duplicate reference.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 >
-> Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
 > ---
+>
+> Patch applies on Rob's for-next branch.
+> ---
+>  .../arm/firmware/linaro,optee-tz.yaml         |  8 +-
+>  .../devicetree/bindings/arm/psci.yaml         | 18 ++--
+>  .../bindings/arm/qcom,coresight-tnoc.yaml     |  2 +-
+>  .../devicetree/bindings/ata/st,ahci.yaml      | 22 ++---
+>  .../bindings/display/ti/ti,am65x-dss.yaml     | 12 +--
+>  .../bindings/display/ti/ti,j721e-dss.yaml     | 96 +++++++++----------
+>  .../bindings/display/ti/ti,k2g-dss.yaml       | 36 +++----
+>  .../bindings/dsp/mediatek,mt8195-dsp.yaml     |  2 +-
+>  .../bindings/gpio/st,nomadik-gpio.yaml        |  2 +-
+>  .../devicetree/bindings/i2c/st,sti-i2c.yaml   |  2 +-
+>  .../bindings/mailbox/st,sti-mailbox.yaml      |  2 +-
+>  .../bindings/mfd/maxim,max77620.yaml          |  2 +-
+>  .../bindings/net/wireless/qcom,ath10k.yaml    | 34 +++----
+>  .../devicetree/bindings/opp/opp-v2.yaml       | 28 +++---
+>  .../pinctrl/mediatek,mt7988-pinctrl.yaml      |  2 +-
+>  .../devicetree/bindings/ptp/fsl,ptp.yaml      | 12 +--
+>  .../devicetree/bindings/pwm/pwm-sifive.yaml   |  2 +-
+>  .../bindings/usb/ti,twl4030-usb.yaml          |  2 +-
+>  18 files changed, 142 insertions(+), 142 deletions(-)
+>
 
-Please add the Fixes: tag.
+For GPIO:
 
-Bart
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
