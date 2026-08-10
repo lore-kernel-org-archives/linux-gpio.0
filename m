@@ -1,138 +1,109 @@
-Received: from 15.mo561.mail-out.ovh.net (15.mo561.mail-out.ovh.net [87.98.150.177])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A6137B02D
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 14:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.98.150.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7793F3F4DFC
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 14:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786371428; cv=none; b=Fxne7ko7qJ/ReRZ/dh5+PkRp/TjBvNe/XWEsREAlvEhAVbcCBNDZyzHAPPeh+SLeBzSEVKkk/DXrp/sbj3BV10g4MoFHyYuZUjlzsfCLiclQZRVEe86z0WY+G5rYt7xzcJb2YCxS0s9marRZMWuMxHWKdE2EDwAIq7ut3VTgfK4=
+	t=1786372135; cv=none; b=G7FjRJ6JAp5E48lzfOW4hKZsizN3LXO20qjI/fJ1kNELMQzhelW7OMB4LmFay9L+03ixrrscw/HBxNm60dmqrpKxbcYu8bJQY9za7gqlwpl3H37TIl0WDgzeoA/yiBH8sVlwXW7vdzMQL0ZM124JC5rtY7OBSEob8JCMd2AdS40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786371428; c=relaxed/simple;
-	bh=h8JMm3lG2PkZasKfNow2aML+HILdmmApWdsNUKU/K0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WpBqLrJ+uA8+LTshL7gHSsQf9o3SorwdqpOdR5YO5zjNEnJtxa2p+zIFCjLMS6sxF/icnNpaicVfkuQBJjwoc6k51zL8QS62bsGXZMddOcQs72cYxohCdZnMrgIQaGNRiqENGHd/qqysNoX/K6qeTOuPWy1IvGlk415270JkXck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=m-works.net; spf=pass smtp.mailfrom=m-works.net; arc=none smtp.client-ip=87.98.150.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=m-works.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m-works.net
-Received: from director9.ghost.mail-out.ovh.net (unknown [10.110.0.128])
-	by mo561.mail-out.ovh.net (Postfix) with ESMTP id 4hJcJZ5PNbz5ymj
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 14:17:02 +0000 (UTC)
-Received: from ghost-submission-7d8d68f679-5z4sg (unknown [10.110.168.82])
-	by director9.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 44E7F80F5E;
-	Mon, 10 Aug 2026 14:17:00 +0000 (UTC)
-Received: from m-works.net ([37.59.142.108])
-	by ghost-submission-7d8d68f679-5z4sg with ESMTPSA
-	id 4EegBlzdeWqH/wUAQ8H/aw
-	(envelope-from <maciej.andrzejewski@m-works.net>); Mon, 10 Aug 2026 14:17:00 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-108S002f1246bdd-25f1-4367-ad77-4adbbe4a8bb8,
-                    ED6AA3D647CD945153C5C800EF75597CE9F2D384) smtp.auth=maciej.andrzejewski@m-works.net
-X-OVh-ClientIp:144.125.48.245
-Date: Mon, 10 Aug 2026 16:16:59 +0200
-From: Maciej Andrzejewski ICEYE <maciej.andrzejewski@m-works.net>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
-	broonie@kernel.org, linux-spi@vger.kernel.org,
-	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	linux-mtd@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maciej.andrzejewski@m-works.net
-Cc: linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-spi@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Maciej Andrzejewski ICEYE <maciej.andrzejewski@m-works.net>
-Subject: [PATCH 2/2] gpiolib: of: Identify SPI controllers by nodename
-Message-ID: <20260810141629.81650-3-maciej.andrzejewski@m-works.net>
-References: <20260810141629.81650-1-maciej.andrzejewski@m-works.net>
+	s=arc-20240116; t=1786372135; c=relaxed/simple;
+	bh=FM1Yhn5pr3pRaGSn1FE1Z8TC8cgGm1mn/uHg6h+6Xg8=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jRPHrzpMjDAAqv7npymgWZmYgvv8kGIX7+fDgPM9hkL16/48HdxQF7EyqMbk3W5T1/zzu8Npnu2nzlSkIG963UEvsUCde1vAHPjuP3dorNO6mQmMtd1CUUogfgKh9AcC98tKwW0CxTUt3ys0KleRJp5lxPp57j4WPaTuL+Gy6es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4t/rsIz; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4t/rsIz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC5981F000E9
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 14:28:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786372131;
+	bh=AU9hgVa9d3lJZNdKDc3+30A300PYpelbFyDkHeZWtgA=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=X4t/rsIz+ZcsX4wJC7lHa18d2EGLrjYJ4q0eUDp2s9eK0iUTCuChlo4Zc6YDQ/9+k
+	 qHcTzR96k7KKEkfu4ezkouTBnZ76M2pvDyA8AGmz67xCo+ZOUm/1WBq+9VFgH/MyqL
+	 y/MOycSt3Ms5id0TrnYE4VLP4SZO2jR21E//Coo7RnpKuxCR/5TE+T6E/5vV1z22kM
+	 rC+Jbqx34wOlHOV8Wbv+AbKYgbiwXEeWrESuOWLR/o1NQmklOn4MJ16nvoFb099hkQ
+	 RxCna76NkQw5soB3IavGS5SwOBV517mxwr7aKyDK++mxnA27eVB1tCFIuFWdBkFGam
+	 OcIyn/rRHK1SA==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5b021916bd3so2281709e87.3
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 07:28:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqBcZMqrNLbenBqTbpr6xkx1pE9nYuRBeEp+qM3YZP4dbHBD2cRdaxhYUYbDwQGe9uXHgH/dviFVS7F@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi3oAe8YI8OWPcMRkQcu0f8tpNmsSiFyAi0HlluSPwYk84OeXl
+	StRNo1J6BlNERMstQS4cJkre1wkrbhf8MvjRC2zAY0OW+BTmRx50AYhgVJP4HyL3ZXxSy2SFZX6
+	f80P4MHTCW6jgQdI92DTvm1fDrNL5Nw+EEwPXTy/4iQ==
+X-Received: by 2002:ac2:4c1a:0:b0:5b0:1c19:2cf4 with SMTP id
+ 2adb3069b0e04-5b30b770fe2mr1987708e87.35.1786372130466; Mon, 10 Aug 2026
+ 07:28:50 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 10 Aug 2026 14:28:48 +0000
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 10 Aug 2026 14:28:48 +0000
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <84622E1C-DF59-43C1-A92E-478499AEEBCB@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260810141629.81650-1-maciej.andrzejewski@m-works.net>
-X-Mailer: git-send-email 2.43.0
-x-ovh-tracer-id: 15951186934430573347
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: dmFkZTEFIaKoSFRHDjlvEiufjoWcD4cmBUs4G1gkwG+emCAn12twDtQ828LrUUBIp6+oc63Pl1IZhTbYYnD9+OcBLoKPOl05sT6lJvvFsfhsoFtEoWhmZjwf0mt1qHt+i7I0F3iSUlydsnJ+BBo+IBleI0Ojd0VNHdKBk6xRoSCjFwoNNNQLnaZ9w1zKAwYl2KhtJHHKmgtMroyXBzf6h8SKyW/0ADno3WUXP2hhaHAogAUdhe+9CBROLDVJASqsWAaN5y2QiG3UsVHAXkCpGwHOHWCu7oQkAHTR9AD4a6kc3GT/DH8buSkzgyHjzYk8tW+uQSdd7AG6INqyqJsgUmqO12ybredgh+AZqQXl7xmXp53xK+zEX01HBNQacCD1qrPFyrnBUkFDAALYRyWNt0nPLgcxQA49jVp88A47KaP+a8alIiV+LosQXb/2Ehw+CNXZxFRD1Ted3vZSKkMDZzP3h/mTnw5jmHGNG4uDIGdBCGQuHafTJUzr9MRadTMLjfPNbNRVBvZqW2clmjOM8BjKDdt/+W3tZ8Y7/iw+lSmNCBTGgIx4dS6Yue+e8+AniN5VfrhRuCBE8emRzu57h2g1j1HOv6fdJQZpjQbQeemEhipoMjeFv0WCBQVr6ncZunPsQqP0sWJgPfLmN2qQlCyUeEkW+tMbnuONT05b+5NHBFWdOA
+References: <20260810-ls2kbmc-mod-v8-0-16e44f7322f4@gmail.com>
+ <CAMRc=Mfo4J8n9MWOzUBRz-VRu7T6SNLTTGrnWfHxGfWxZz71Sg@mail.gmail.com> <84622E1C-DF59-43C1-A92E-478499AEEBCB@gmail.com>
+Date: Mon, 10 Aug 2026 14:28:48 +0000
+X-Gmail-Original-Message-ID: <CAMRc=McF706Vkzrvt-aTz-4gKbXj3nOi41aTqH1Sp0=Z9nVgtA@mail.gmail.com>
+X-Gm-Features: AUfX_mwzj3JEzdDUgf_TOJsCJ_PFHuAfeh3hZ1YBHGtWdIviOFIrC213zsID224
+Message-ID: <CAMRc=McF706Vkzrvt-aTz-4gKbXj3nOi41aTqH1Sp0=Z9nVgtA@mail.gmail.com>
+Subject: Re: [PATCH RFC v8 0/8] mfd: ls2kbmc: multiple fixes for this driver
+To: Miao Wang <shankerwangmiao@gmail.com>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Chong Qiao <qiaochong@loongson.cn>, 
+	Lee Jones <lee@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
+	Corey Minyard <corey@minyard.net>, Linus Walleij <linusw@kernel.org>, Xi Ruoyao <xry111@xry111.site>, 
+	WANG Xuerui <kernel@xen0n.name>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, mfd@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
+	Corey Minyard <cminyard@mvista.com>, Bartosz Golaszewski <brgl@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The "spi-" property scan added by the previous patch misses SPI
-peripherals that declare nothing beyond compatible and reg, which are
-the only two properties spi-controller.yaml makes mandatory for a child
-node. Let the controller settle those cases: spi-controller.yaml
-constrains the controller nodename to ^spi(@.*|-[0-9]+)?$, so the name
-is the one bus marker every conforming SPI controller has to carry, and
-of_node_name_prefix() is the existing helper for testing it.
+On Mon, 10 Aug 2026 15:20:47 +0200, Miao Wang <shankerwangmiao@gmail.com> s=
+aid:
+> Hi,
+>
+>> 2026=E5=B9=B48=E6=9C=8810=E6=97=A5 21:08=EF=BC=8CBartosz Golaszewski <br=
+gl@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
+>>
+>> On Mon, Aug 10, 2026 at 3:04=E2=80=AFPM Miao Wang via B4 Relay
+>> <devnull+shankerwangmiao.gmail.com@kernel.org> wrote:
+>>>
+>>> ---
+>>> Changes in v8:
+>>> - Address issues found by the Sashiko AI review bot
+>>>  - Fix the error path of the probe function, preventing unintentionally
+>>>    returning 0 on failure
+>>>  - Reorder the patches in the series to make the change to the Kconfig
+>>>    entry for ls2kbmc to be the last patch, to satisfy the AI bot's
+>>>    concern on failure to clean up when the driver is built as a module
+>>>    and is being removed.
+>>> - Link to v7: https://lore.kernel.org/r/20260810-ls2kbmc-mod-v7-0-8aa0f=
+b5a5462@gmail.com
+>>>
+>>
+>> Don't send several versions of the same big series within minutes of
+>> each other. Give reviewers time to respond.
+>
+> Sorry for bothering the maintainers. A reviewer previously required
+> a clean or justified Sashiko pass first before reviewing and thus I
+> have to fix the high issues found by the bot. I would be nice if I
+> can privately send patches to the bot and let it review before I
+> send it publicly, to reduce the disturbance to other maintainers.
+> I tried to run that bot locally but failed because the bot was
+> consuming too many tokens before generating a final result.
+>
 
-Both tests were scored over every board device tree in the kernel,
-expanded with the same cpp and scripts/dtc pipeline the build uses, at
-v7.2-rc7. All 3620 trees under arch/*/boot/dts expand; 503 of them hold
-at least one GPIO chip select that can reach the quirk, 765 such chip
-selects in total. 761 are matched by both tests, and none are matched by
-neither, so no in-tree board changes behaviour.
+That doesn't change anything. Sashiko commented on v7 which also contained
+changes requested by me. You should wait until I respond before resending t=
+he
+series with sashiko issues fixed because I may possibly have more comments =
+too.
 
-One needs the property scan on its own: psc@11400 on ac14xx, a
-fsl,mpc5121-psc-spi named after the hardware block rather than the bus,
-whose m25p128@0 child carries spi-max-frequency.
-
-Three need the nodename on its own, all peripherals with no "spi-"
-property of any kind:
-
-  - panel@0 under the spi-gpio controller on rk3566-anbernic-rg503
-  - can@0, an mcp251xfd, under ecspi3 on imx8mn-vhip4-evalboard-v1
-  - spi@1 under ecspi1 on imx53-ppd
-
-of_gpio_spi_cs_get_count() in this file identifies SPI controllers with
-of_device_is_compatible() instead, but it only has to name three legacy
-controllers whose bindings are closed. An allow-list here would have to
-name every SPI controller binding in the tree, 71 distinct compatible
-strings among the candidates alone, and grow with every new one.
-
-Signed-off-by: Maciej Andrzejewski ICEYE <maciej.andrzejewski@m-works.net>
----
- drivers/gpio/gpiolib-of.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index bd9a623f2ae1..959b32b3bea0 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -359,6 +359,17 @@ static bool of_gpio_child_is_spi_peripheral(const struct device_node *child)
- 	return false;
- }
- 
-+/*
-+ * A minimal SPI peripheral may carry no "spi-" property at all, so also let
-+ * the controller identify the bus. spi-controller.yaml constrains the
-+ * controller nodename to ^spi(@.*|-[0-9]+)?$, which makes the name the one
-+ * bus marker a controller is required to have.
-+ */
-+static bool of_gpio_node_is_spi_controller(const struct device_node *np)
-+{
-+	return of_node_name_prefix(np, "spi");
-+}
-+
- static void of_gpio_flags_quirks(const struct device_node *np,
- 				 const char *propname,
- 				 enum of_gpio_flags *flags,
-@@ -395,7 +406,8 @@ static void of_gpio_flags_quirks(const struct device_node *np,
- 			if (cs == index) {
- 				bool active_high;
- 
--				if (!of_gpio_child_is_spi_peripheral(child))
-+				if (!of_gpio_child_is_spi_peripheral(child) &&
-+				    !of_gpio_node_is_spi_controller(np))
- 					break;
- 
- 				/*
--- 
-2.50.1
-
+Bart
