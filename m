@@ -1,85 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40CB43B4BE
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 20:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47BA434407
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 20:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786392206; cv=none; b=j6cYQyNR1B+mp9rdT5/G+Ge4tu1BZjMkCIW0tsTA1F5OwuiZfxGkKpmpuYZPQMcsdB0jlcHPzIvo1QkytBNior98f3X3yz/DybsiS+KCzclav9kbJ/Vt0ESQ9diACT51odE17EbEMNqVfwTI1bUCmBRb6AXLcJAFZCqvPPqMp90=
+	t=1786392477; cv=none; b=prRrOwap7STiyPx94WtbdHvN87qYg+KUR9iITFBSXYJecvWMzkwlHHUHLAaz+zZOCPm1gX1m+L+8x9bThdRUtF1muwAH2h3dgmpOfoy8HcUBlVN4wB2G2FDDWoBauDnW01LOfQZbYAFgk5bYn6SYUIj1bQF/gMh6gP+3cunt3GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786392206; c=relaxed/simple;
-	bh=T22wC+AG2OIsJgyXoLDKjPj1WSjTxMwaoMhhUG4iOI4=;
+	s=arc-20240116; t=1786392477; c=relaxed/simple;
+	bh=bYSs7pwGOcP1HawBNqhdmv009wD4aFz+D/7i7ebIbM0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mISB2lpNN29Y+6ZCgUj2xoHqKEeqsJnroOFodbOlbE7jAVj7E/ttBipMHMtSeP+OobJ8msC5rs06Q5MgrHllnYj/zwbpWtjZYmUR8pGbUEi1g9lwJJEP+I72+M29Osu69h5eO1AjKoU+SLacvknB4VrtnJf3/G7K4x2c828RFk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pf4cRDK6; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=mzKQMsqy0FkTSkFeSnXAPcg5DCn9X2wpt67gUwK8NXse2xYXmMVbB6VAmApKxeysQEa6q/jbojO5sLxOEenEdgenxNBdWzvJbpNVPyXpNAFXWSuozlxxNZZu2dErNBF0DS2cqLyJPABzGb5BNaZOk+30g7gm9t3n/OYMqK0wuRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ofNkM0Ah; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pf4cRDK6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B59B61F01559
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 20:03:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ofNkM0Ah"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AAC81F00A3A
+	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 20:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786392204;
-	bh=rC1rVxqM5ZYISCIH4TAyel4S6fVMMHIK5wyEPeERNAI=;
+	s=k20260515; t=1786392476;
+	bh=bYSs7pwGOcP1HawBNqhdmv009wD4aFz+D/7i7ebIbM0=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Pf4cRDK6xvYn1fyh+kqGX6+BMnq0+Sh0PuHO5qqk7sDFOQSZu6zJmY5FWZq2D5WK6
-	 D3tHWjNvCA6y77ou2cytCB3ASrrYYzbW7gVV1xVfVkV3/FkGxoM8cWYkucFRo6CLyv
-	 5ObRvK0Fu6trbuXMe4yKq3SRWHHJ5yYIsmFiuziGJslOQl/4hMQEfa+jzF3oDo28zu
-	 iDjKPGFxHOuQHZjvRcNba0pgVMO+QPzARqCx+uUJJC4C3auoRW4b4ZQrsdjFBAe5RL
-	 OcyDZ/Q7rF25XAJ6cakKzSfV6ZNZzkSOpsUnCmn/qey2fsIq5FV/5ZOuJwjKgaSLtY
-	 fWieMcfcz4vnw==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5b021916bd3so2690802e87.3
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 13:03:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rp0LMN2jFChHoXU5SBKDC8k+YXjLhjLIhDq25vlVmrIq9Jd15YGh197SVoNEeK3R1XSlnwsOsyhwLGb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcnAgNsl4vRa60pJVbvBcyxicQc0LuDVw3Ae4qcbnoGDhyv2E8
-	hpqouLIL/o7fhfno0S6eFMdHmR6TpxmNMeorwMYyDojvbqIC1ARISzVTqu2wj1u1/MLvhRcPPQz
-	h0Rql6i/XR+oK9U7Rd/ddvCJOmwfIVJE=
-X-Received: by 2002:a05:6512:6812:b0:5b3:419:7c85 with SMTP id
- 2adb3069b0e04-5b30b723e05mr2481053e87.16.1786392203471; Mon, 10 Aug 2026
- 13:03:23 -0700 (PDT)
+	b=ofNkM0AhJ0ECf2vZ3YjsXcL6Fm9B/LUx9zOf2sBqypegScFN1+CgLPT7B1bDeqx51
+	 64PSAdfaZ1hzB5RB1MefD71UVLE+rsrI7C7ZbugQa6QuVIsqlup3TfRVm3MYkEkwwy
+	 A9SeKcscMEkg2HrBmxV4WHgOk9fLvYOARh3TH3ELrwnPIXUjd4DVFm8T8fsJrpBmT0
+	 m/mzsIMEkeZAYuOVcn9jjZPhAals1XDOZwp+BibAMzZhsMTjjC4CPdFfL19rCmVmwg
+	 YbX8uQhX8QYpT1LFs60IIZ9w1QMfk3Zj3EDVp6skcK8i3xpbxauMyjx3Vkmauqblmj
+	 FmdZm5LV/9d7A==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5aeb8c19017so81164e87.0
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 13:07:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrOqaZAM86TN1W0Q9CqS3A0kD+tWMccAcKN2LaxM5juoq/uiE7f2ewiqC5sHVWd6S0BLookzw8MnJ3N@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWI5Ozlzrv2I3FF9sUA6lP0TzN6G2VNkOvAuiARpyiLq6fCOBw
+	Z9ySDsv7V/QpwTzOcI/QUDYfRScekF/v5DCkJdQnBV8US8pYm0XFa56xJNLgKzUt2FlcVn/aUp2
+	/MSa4+cKhKr4DQJzpuVtuD1JTMCUpxtI=
+X-Received: by 2002:a05:6512:3e0e:b0:5ae:a995:c16c with SMTP id
+ 2adb3069b0e04-5b2f4cc0f61mr5811088e87.27.1786392475246; Mon, 10 Aug 2026
+ 13:07:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260809-kuno-soc-support-v1-0-5e0ede4a0c72@oss.qualcomm.com> <20260809-kuno-soc-support-v1-15-5e0ede4a0c72@oss.qualcomm.com>
-In-Reply-To: <20260809-kuno-soc-support-v1-15-5e0ede4a0c72@oss.qualcomm.com>
+References: <20260729132736.3807082-1-sjg@chromium.org> <20260729132736.3807082-2-sjg@chromium.org>
+In-Reply-To: <20260729132736.3807082-2-sjg@chromium.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 10 Aug 2026 22:03:10 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=M1E+Bvfe9tHw3FaSTFgR1Nfzyn==xoLETvARLZHPrMQ@mail.gmail.com>
-X-Gm-Features: AUfX_myFok2F7A7L92w2o_ISKTNy-XQlclUV5wW5DA8yU_ux0Q3094VpM1fVTx8
-Message-ID: <CAD++jL=M1E+Bvfe9tHw3FaSTFgR1Nfzyn==xoLETvARLZHPrMQ@mail.gmail.com>
-Subject: Re: [PATCH 15/15] ARM: dts: qcom: Add initial device tree for Kuno SoC
-To: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Georgi Djakov <djakov@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Thomas Gleixner <tglx@kernel.org>, 
-	Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>, 
-	Guru Das Srinagesh <linux@gurudas.dev>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
+Date: Mon, 10 Aug 2026 22:07:42 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=hGH7a-LM+Foy=mVxmVhCdtaxdaF5Mfo+3BCwMLHNVdQ@mail.gmail.com>
+X-Gm-Features: AUfX_myfAckQ8mgU7iFbZ97rmWnbGSBawmIas1W-k7uCRWa4QUHeMhWOocB5lDc
+Message-ID: <CAD++jL=hGH7a-LM+Foy=mVxmVhCdtaxdaF5Mfo+3BCwMLHNVdQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] pinctrl: rockchip: Decode drive strength in the
+ get function
+To: Simon Glass <sjg@chromium.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+	devicetree@vger.kernel.org, Jonas Karlman <jonas@kwiboo.se>, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	linux-rockchip@lists.infradead.org, Jeffy Chen <jeffy.chen@rock-chips.com>, 
+	Ye Zhang <ye.zhang@rock-chips.com>, huang lin <hl@rock-chips.com>, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Hardeep,
+On Wed, Jul 29, 2026 at 3:30=E2=80=AFPM Simon Glass <sjg@chromium.org> wrot=
+e:
 
-thanks for your patch!
+> The decoding of the 2-bit and 8-bit level drive-strength values sits in
+> rockchip_set_drive_perpin(), where it is unreachable: the SoCs whose
+> banks declare these drive types (RK3506 and RV1103B) take the early
+> ctrl->type branch in the set path, and the read-and-decode logic in a
+> set function has no purpose. Meanwhile rockchip_get_drive_perpin()
+> lacks the decoding, so pin_config_get() and the debugfs output report
+> -EINVAL for these SoCs.
+>
+> Move the two cases to rockchip_get_drive_perpin(), where they belong.
+>
+> Fixes: dbd2317d7b9f ("pinctrl: rockchip: Add rk3506 pinctrl support")
+> Signed-off-by: Simon Glass <sjg@chromium.org>
 
-On Sun, Aug 9, 2026 at 9:29=E2=80=AFAM Hardeep Sharma
-<hardeep.sharma@oss.qualcomm.com> wrote:
-
-> +       memory {
-> +               device_type =3D "memory";
-> +               reg =3D <0x0 0x0>;
-> +       };
-
-Since this is clearly intended to be filled in by the boot loader, then
-write that in a comment.
-
-Other than that is looks good to me!
+Patch applied!
 
 Yours,
 Linus Walleij
