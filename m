@@ -1,87 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960D4443ABB
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 19:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC6D352C28;
+	Mon, 10 Aug 2026 20:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786390947; cv=none; b=e/GkLxy4KWr6FcNli4187Z+XJKAw6QnMEyhvqxHSw3YZhBJxMp/QNSAUPUGB1at8iMZIrvzr5Lckfm70wf95gQV+enBmCHOvEY06ZkbQnTF4ijAsHv1KZ0Reot0olgBtVaPpWmg3gCuG9zy6bR2NqveZhohBgC5yUNUIiqcW7Ck=
+	t=1786392145; cv=none; b=lJQQCqgxcdyT+PSlneNZvKqBLvAtoLwJRqaX2Lrx1rOvwHKXwsPNeeUFlvzP/PW7Zn1rP7ws6n5gpFL8MAgJvqbePKy1ENU9C9Vu3xaBf75aV0Q3Wu+IZzxamJGcq87g0PWnZ1BOmOyOqxo7/CYgM1Vg22CMqPRi6+EXpPE7Wcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786390947; c=relaxed/simple;
-	bh=a/RorDak4AbNVbw/fWC8eA91U4vFHIR3vGa//TAL5kU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h0K9krAp4qNZZxlx1HX+ZCgEflzkBoZ0mEzmWgusEjiF+t/X8BT5AtpAsWdszCVwohdwcVd9NlmiLWOQI9DG4qwQMFMPmppY+yyGONp+f1xmmzxtAVX6JqehQUjUY/smkmREh/eDLYIfdlhSl8A45Y8XnE+Ydp8NQkQoV+FDI6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kSLGM9fv; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786392145; c=relaxed/simple;
+	bh=9xgm3q/deDgp0UiuirMlRr+73eOPocE1wi8WgQWnUVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PmKVrlYcp8OVXa8hVhQ5A7w541TPIX2lBQUuENb+iVo3k/0RWpf5EpV3YwZJ+jIcgp53GN/npuXY3wPJnUbq6eX+DOJaSyyc2cHN8IkrUkDGSatNAbLQ3mFxxC2a1G72packycL19l3dv+UasNhu7GpFHlaMyasf3D3sc6BxlFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FICAdIaP; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSLGM9fv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C16B1F00A3D
-	for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 19:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786390939;
-	bh=a/RorDak4AbNVbw/fWC8eA91U4vFHIR3vGa//TAL5kU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=kSLGM9fvZI2I6QdHwXN0GjtPaULcvCw9vClBJvqivQxrdMkxYyJaRVbE3dw9Eg0pk
-	 gV9irYScyYu3xK17ROFreMHuX9kjNrCsAI7rTWmkA8bsJv37uaRG/Q1i91vBEsdUgF
-	 YeOFxPs7saOgvEvi4Zeb+YNk8YhPmK+vMCPBiRYFNUkY4TLRLuxOq4Dc0hZFhhI8e3
-	 tKJkrH7B5676yvOgh5CfKkNSh1T1uN2TG66MEnlhrdm/SUiD7x87+TLkC78ihLb5y4
-	 UiFCyMjEmhKX9kMCNnOdxIEpJLkERQOkYray6+KOiu7troydDHQ8l4Mmgk5yO3hUFK
-	 CuDJ7XTxoQmKQ==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5aebd52488cso2360662e87.2
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 12:42:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Ro/GY8CZJmF8H1NDaqsb3TA7wcJoAARikBEeXJlDBtl8U7ih80UXZLYOU6c35CrAz0keX5VzU1aiQtQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMe6YHcIaHB1jGCV8DJNs3DORR4P94ogi+SeZ9uIvX0pu5+g/H
-	pJlK29vRabxfQetuNJExznR7KUvS7mAL0PuiS600G4OSG/eu3iOeKUYpoHd0BVVbQvwfFnNxrvz
-	SuMoe+Q1Ac8KLI8Yh0QA9XBimq902Hjk=
-X-Received: by 2002:a05:6512:61a5:b0:5ae:ba8e:2ef2 with SMTP id
- 2adb3069b0e04-5b3181d3181mr686062e87.51.1786390938286; Mon, 10 Aug 2026
- 12:42:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FICAdIaP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1786392144; x=1817928144;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9xgm3q/deDgp0UiuirMlRr+73eOPocE1wi8WgQWnUVY=;
+  b=FICAdIaPttDQTVBxG05baKnR8mtImq+GMMhkXbLuI8YgMRGmX9uSITqa
+   yHBxgqx3cJqDJ/AuwcOyGjYELciWZPzZnaTJtSAhunJZ5/0vvJeNFLzir
+   8mlGA+RNHYEGxCzivv/B5vYuP7n8gx+sG/XQzeFiDhCAbyZqKMCTM+wnP
+   PVriItUQQPYLiCxYvJ18DpeCa35aTmj+0zHTqzenJFJGPxI3y4UpVloQV
+   +Z7bqdQ4gwSeEXewl5H/hFGYezAeuaQhU1ozheVAX4Tt670jHKvhMLpm8
+   Lks7l9d1UOG2UiFRmazB5OO/j+XTWtvcxeqkOikvqG9oaU/8JkIq/z0vo
+   w==;
+X-CSE-ConnectionGUID: v6ai92s4RIWV9g64ZfZSfw==
+X-CSE-MsgGUID: bIPPU3B+Q269qhoQDl0aWw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11871"; a="87134233"
+X-IronPort-AV: E=Sophos;i="6.25,216,1779174000"; 
+   d="scan'208";a="87134233"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 13:02:23 -0700
+X-CSE-ConnectionGUID: hJpYVr4aReeEZMeQ22JHog==
+X-CSE-MsgGUID: x33doLZpSfmE0OokEInHCA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,216,1779174000"; 
+   d="scan'208";a="261835527"
+Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.99])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2026 13:02:21 -0700
+Date: Mon, 10 Aug 2026 23:02:19 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Alex Tran <alex.tran@oss.qualcomm.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Dan Carpenter <error27@gmail.com>,
+	AKASHI Takahiro <takahiro.akashi@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v3] gpio: gpio-by-pinctrl: Apply initial value in
+ direction output wrapper
+Message-ID: <anouS8SeYINmMT3C@ashevche-desk.local>
+References: <20260810-gpio-pinctrl-output-set-val-v3-1-8e35222b5c8c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
- <20260806-longzhao-upstream-cv75-v2-v2-7-6b09707c5fe9@ambarella.com>
- <CAD++jLk0LoOJk=TXin42AL3_z_7eVVkvMnYr1S8090C6A_B+dQ@mail.gmail.com> <DS0PR19MB7925690FD29D578D8AC5D10EDADE2@DS0PR19MB7925.namprd19.prod.outlook.com>
-In-Reply-To: <DS0PR19MB7925690FD29D578D8AC5D10EDADE2@DS0PR19MB7925.namprd19.prod.outlook.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 10 Aug 2026 21:42:05 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkUPU0eujvWc5Hn1tEu4n451LvkuGGT=j6OfirJENpRgg@mail.gmail.com>
-X-Gm-Features: AUfX_mzNR-BpdsCoy7KeBCm5BOABzsx_ocJuW04mgEWpmksgWM6rzG04G-gloAk
-Message-ID: <CAD++jLkUPU0eujvWc5Hn1tEu4n451LvkuGGT=j6OfirJENpRgg@mail.gmail.com>
-Subject: Re: Re: [PATCH v2 07/10] pinctrl: ambarella: add Ambarella pin controller
-To: Long Zhao <longzhao@ambarella.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "soc@lists.linux.dev" <soc@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260810-gpio-pinctrl-output-set-val-v3-1-8e35222b5c8c@oss.qualcomm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Aug 10, 2026 at 6:02=E2=80=AFAM Long Zhao <longzhao@ambarella.com> =
-wrote:
+On Mon, Aug 10, 2026 at 11:58:17AM -0700, Alex Tran wrote:
+> Apply the requested initial value via the existing gpio set
 
-> Thanks for the review. I will rework this to reuse the PL061 driver with
-> per-variant register offsets, and evaluate modeling each GPIO bank as a
-> separate DT entity. The duplicated GPIO implementation will be removed.
+GPIO
 
-Thanks Long, I think it will be easier if you break out the pin control
-bindings and driver from the patch series and work on it separately,
-the same with the serial driver at least.
+> wrapper, so that the pin is not left at its previous level.
+> Afterwards, configure the gpio pin as output.
 
-I understand this can be hard to test on the hardware, I usually
-put a few patches "underneath" the b4 cover letter, and then the
-b4 send-email will only send the cover letter and the patches
-on top.
+GPIO
 
-Yours,
-Linus Walleij
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
