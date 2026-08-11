@@ -1,90 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F6E415F1D
-	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 06:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD094218B1
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 06:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786430225; cv=none; b=K50my/9sd/N4S/MPIEKAiwMeFvmMA6IFxfLQ3JyjvqmftN0edG0NUIA4thVNG3mloPjoT2iivX32UIfmY9h2cBU6ltfoKNTB5vFP4chqUxqH+ZUF2PzcF7OZsVYXM71R9QfMY62bRmud8Hvw9sw/nYFVXmR1AIn8b6X4a3BkDzc=
+	t=1786430502; cv=none; b=HrT2CrTVzTYfeiolpzcqes0f/KcBmfXikN/QwCHuV2CKkJWttp3TOnT1F0wOWsuM1sdYl1os6RnqoK7blyZqP9IP6/Q7TwYWdENjsyiHzpvHDDjfBgFnzD356WJp23F4XZmjvvauP9zQx7WjnIsgblD82uNsNOyAXJFJtYs+Hic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786430225; c=relaxed/simple;
-	bh=3OS8tzv+PZCNZ2UtF/U7gfDiCpmQfUSYIhnS8fHDnVc=;
+	s=arc-20240116; t=1786430502; c=relaxed/simple;
+	bh=JK+wAqQEUhQz/LHRYT7KzbEjMdMwSq9zpsH8Nz0jD0Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bkv6SIT5+KPBRoCOiuj0XuVwpAtJi0ln1NN2vPYcyEuyEZ0trytDfklpkcjXtyAB1CGdOoD6yyBNGRkUz1b4n8PldRklwsIdA90DCGOdDmwX1HAP2H14/pyF/o1H8rPEGfr2+KNh3fWjA/LXRfo0XwLhdKXFBDizf5tyWyOZFBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGFhcr2h; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=oy6YyRG5oq+xhhnL7wm2Gt7gZ/Ebs6UXVUlVljN8TQnn7f4FT9KjUe25/qWhPyd07XkZBpKfIh0/m8dFsQXKDvqYOENgsd9UjVaehi/r7VydwpPraOibp27iXn5puIW/FMqMR7ILxnWtsv0F2RAls+kY4zBznBiSDeHYO9gHVhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhlwd25v; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGFhcr2h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A071F00AC4
-	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 06:36:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhlwd25v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C754C1F00ACA
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 06:41:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786430203;
-	bh=AJs7Mqn1DKclziey9G0u0ka9dydbjaT+kuaSUmUGGuE=;
+	s=k20260515; t=1786430480;
+	bh=JK+wAqQEUhQz/LHRYT7KzbEjMdMwSq9zpsH8Nz0jD0Q=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=AGFhcr2hgpBoiO6GsvdSKDYX7SGFmd+9Jdxq5nzRKs3f/zj91QeF8nkFBErbloNmH
-	 4csc+V3CVh+whspRDUNT+XT2w7fN8Jcs9JXbzNF1j3d3MzXIReElROyOcHJhSUZJIe
-	 kx8qzp5wZQTfCiuHAchJUFgY2JkkEbMobreHaL7GiKMGTUwN9GK7mhvdvXrEMT83ej
-	 /yeAvUK6iZBvrIU/wMifVCB0ApMsXSwjztpEiMmhtmjmznRGWBuIcGG1bKl0hGjHiS
-	 LoQxIikXzIl3zjunLJhdwfgPBghUIlK5y+BlFWfjZCioHMPn6qolNxGFXM8gELBuK9
-	 reIUw/pJrVN5g==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5aeb98460c6so2504958e87.2
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 23:36:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqFqcOmZnj82WzkeSDnak9Svpjs5Ix4yxbx9NulWrqcGB7WW2BWnET4Qi7GZNQmuMAa6d0Q5mEOmVhz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1OpkEy4EJeggvMnb85r2AzzDiefhgy1+LMOtecaDwPVNZUAj0
-	aDfu2Xk7fpfrp5XiM8fGxoWP+45l9sa6MwXhO1EvyAal30yzNYjH4Mk/HVezqO3Y374Zks7bPs8
-	lrjUJUfkBH1sS4qljjWBO5TeozQt13j8=
-X-Received: by 2002:a05:6512:3d25:b0:5ae:c454:3746 with SMTP id
- 2adb3069b0e04-5b4486390d3mr181868e87.43.1786430202005; Mon, 10 Aug 2026
- 23:36:42 -0700 (PDT)
+	b=dhlwd25vW3cf2orHqbCy/uIaCgOeHKczyl9ZkDbeQyTQ23YwBV06TgCt2GCs0W2vH
+	 fv2pMNS6G2yOor+IV3XuTsU9WezaYHO0l59oGm8czWeb7cJAR24ijA4Ms8xIiUcIt6
+	 bviYwrdIxLIjeIJcpjxvH3Gyk3pyx+DCGsRYkzc30n870YVXi9B8m8OQQa7eptpGSg
+	 rJ9xHeD4DMFiTvebT3hthwkBq67GrtCEG8M3IJ2UGv1y9TcJShmbn6H5E2oLXyC1MA
+	 dw9nl1Q+CdrOKzuxGttUuak+eSKa+vZMu+Q9L2RSDF29eOsqL3fNAfUCv7s0u0zm7B
+	 fHo68SXNc4afw==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-39ca300db70so20314081fa.2
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 23:41:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrPScs2mrlgwkPGRS87jPAWx98XSrTixXv1NAWYDz4j37/CFn/j3UzxfdXS44ow1EgwNCJQmMR1ZjSe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz59vS1M5GgJImHJWEG4gj+y4zdyfOCA956ZjTKT4Ur58yBzxe3
+	P+CWbcuIsf+Jm6QQpyzHEpy9WyTE8sQFQ0hysy0r1MeYNWk3Oecn2cU9C6o+j+Wj5L7h8Vuuf2l
+	fNPYOAo6zMxVKdnqMG4ynnzRS3YJACZY=
+X-Received: by 2002:a2e:b8c9:0:b0:39f:86b8:c99a with SMTP id
+ 38308e7fff4ca-3a0f8d4a576mr1467731fa.15.1786430479553; Mon, 10 Aug 2026
+ 23:41:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260810130635.1166626-1-mkmkl@google.com> <20260810130635.1166626-3-mkmkl@google.com>
-In-Reply-To: <20260810130635.1166626-3-mkmkl@google.com>
+References: <20260810-gpio-pinctrl-output-set-val-v3-1-8e35222b5c8c@oss.qualcomm.com>
+In-Reply-To: <20260810-gpio-pinctrl-output-set-val-v3-1-8e35222b5c8c@oss.qualcomm.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 11 Aug 2026 08:36:27 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkByVL4bPkCTEZie6ymnoFVvyk9TRi8Lw4AGZpOzaPL6Q@mail.gmail.com>
-X-Gm-Features: AUfX_mwslnI_IdnyE5gK_5h55o7AQQdCwBewm4zawXM8cwgIKANR8MWC9zklOJA
-Message-ID: <CAD++jLkByVL4bPkCTEZie6ymnoFVvyk9TRi8Lw4AGZpOzaPL6Q@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] tty: serial: 8250_dw: Keep init pinctrl state
- until first open
-To: =?UTF-8?B?TWljaGHFgiBLYXJkYcWb?= <mkmkl@google.com>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Douglas Anderson <dianders@chromium.org>, Vic Huang <vich@google.com>, linux-gpio@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 11 Aug 2026 08:41:06 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmgx1+biSfritZpvcpszgfwh_natnZ5TE1qARJzqj8QLA@mail.gmail.com>
+X-Gm-Features: AUfX_mwHa1j2GRoz1m5TcZaWA7KGRI5dxYnkFWL2oqzKYFMxItB2ve2Q6tOx0vQ
+Message-ID: <CAD++jLmgx1+biSfritZpvcpszgfwh_natnZ5TE1qARJzqj8QLA@mail.gmail.com>
+Subject: Re: [PATCH v3] gpio: gpio-by-pinctrl: Apply initial value in
+ direction output wrapper
+To: Alex Tran <alex.tran@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dan Carpenter <error27@gmail.com>, 
+	AKASHI Takahiro <takahiro.akashi@linaro.org>, Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michal,
+On Mon, Aug 10, 2026 at 8:59=E2=80=AFPM Alex Tran <alex.tran@oss.qualcomm.c=
+om> wrote:
 
-thanks for your patch!
+> Apply the requested initial value via the existing gpio set
+> wrapper, so that the pin is not left at its previous level.
+> Afterwards, configure the gpio pin as output.
+>
+> Fixes: 7671f4949a6c ("gpio: gpio-by-pinctrl: add pinctrl based generic GP=
+IO driver")
+> Signed-off-by: Alex Tran <alex.tran@oss.qualcomm.com>
 
-On Mon, Aug 10, 2026 at 3:06=E2=80=AFPM Micha=C5=82 Karda=C5=9B <mkmkl@goog=
-le.com> wrote:
-
-> @@ -77,6 +78,7 @@ struct dw8250_data {
->         unsigned int            skip_autocfg:1;
->         unsigned int            uart_16550_compatible:1;
->         unsigned int            in_idle:1;
-> +       unsigned int            in_init_state:1;
-
-Side comment: why are these not bool?
-
-> +       if (!state) {
->                 pm_runtime_get_sync(port->dev);
-> +               if (d->in_init_state) {
-> +                       d->in_init_state =3D false;
-> +                       pinctrl_pm_select_default_state(port->dev);
-> +               }
-> +       }
-
-As noticed in 0/2 don't use the default state for this, create and
-use a custom but optional "online" state. It needs to be optional
-so current users keep working without it.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
