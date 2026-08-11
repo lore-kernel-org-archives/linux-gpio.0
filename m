@@ -1,82 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D1F3CA4A8
-	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 06:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB4C345CBC
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 06:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786428873; cv=none; b=R32YNkaFeNoiIyaCiI9wZR39OPUDXn2N9GCZJUpdyl1pMCYODVJhrR7MCZefMM8qdCtL1t1E5PqbPjVsz8/bXvQ0KwY+f2kVVgenEwwhgnAMNgF6hW0sodQb2+xITbeNnSsUnCrkPVKFAuQz6b9Trriukh5yE7crllUH9G/Iedg=
+	t=1786429085; cv=none; b=p3370P25R2XiRJ5goAJhRdVqwGtEDIeqJoifADnYbO+11wUrD3q2dPLHg5US5mG79n8thp7rYhjieDwyP+1R261ds73t/v4FynpBqucdc0OdLYO1gcQoH3rleuS8EJ8X8t0w/1pqZZaQOoHzQYabxWHBWNsxZUpoNf6SPtYdxWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786428873; c=relaxed/simple;
-	bh=8+7dC9C52i54L8FM3R82ynyaZNWkqslAr+lY370uir0=;
+	s=arc-20240116; t=1786429085; c=relaxed/simple;
+	bh=BzLdaUEIX1BvfXPoEs7iJurYd6+YSJTfmxmB3crYs0c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LbnydfDQ0saBe1zBZD1sWGebZo0T4uvlnYPfEoJyJ2FnjMKvOyViLlVSvgiuOgIcaxpJ9hDWUMJ5fGoQfA1CzB5OeKtPpxTrr3iA6O1aRKUz4bHWJrPU+xll+kzuxYqKm+uCqo5LeFs4Tfa3VOnappcfI+kh0GKrHf2l2ZcDmk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kh+d8lyj; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=ma1TxcXeG9uWWgCyK5pwIoKZJHypG/k3kQh0AzzSigyHdaokeoOJipvEclBoL0GcXDYUuBN08LT+HnAZkRsvOQQqhCogtkvD+y5G69RVHxZ+X6pRWJOPSEeXg+1z0MhxhomBfLYcSoVwwr7mosyymff1/obuZAm+Kpkpi8RkiXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=maoHCdFt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kh+d8lyj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3EB61F00A3E
-	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 06:14:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="maoHCdFt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D86581F00A3D
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 06:18:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786428871;
-	bh=+wNOqVDGEN5i8weJznBIp+8lqP1f4HnqpPBBjIKEJrc=;
+	s=k20260515; t=1786429083;
+	bh=BzLdaUEIX1BvfXPoEs7iJurYd6+YSJTfmxmB3crYs0c=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Kh+d8lyjifRDpe1x2Pdx3lwtO+AF7HtDv7wBtHe3PAkWOhbWBiaAEkbjldzrRhA/f
-	 YD/LV+8H5uY0RI13e4B4vWwLY0FSwgMNLQRaA77hlqculBL/pxU2arJlrHIPUfIRaE
-	 /ngqogip4CpdTrVc4LDSqqE9Fbrxmw9T0TRsyWXvP4N/Zu7dFlrqhHFKjdVRn5ogYl
-	 veQKsY4o1UIFgCvwmeRXMVOtmFt0Iv2npsQ2RfvRkiLcvhObIqs/J4CqgKwpS0WCzh
-	 yim8IqHpXO7wu8b47sp3jochDrExMj63SIVobJ/dOln4y9+2YEZKdIbOm5BCG1DJ/w
-	 5NyHEc9/SAPAQ==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5b013aa02b2so777129e87.0
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 23:14:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Ro+eSq1VtVDeuf2c+MgSC2HTTvxbc2x6VB7Qr7Wgs+ttlp9NavxWsh0q11uJ3uY8NIay7lSq0wAoNc8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9/fFg3dUaHF26oUNmEo1MLvq16hnT+OUqjtJ4TlOoY0ba91bK
-	ATY9Uo3b742ryX04aEZ07lZYxLYAejdvHWHZO4SE57EsabKJZhuainXdGHGRtJr0ZlhPgahX54W
-	n86etWHaNtUdfqeOmEtSDGIJUzBFLfjo=
-X-Received: by 2002:a05:6512:1383:b0:5b0:1e26:7751 with SMTP id
- 2adb3069b0e04-5b44881c2bcmr127826e87.8.1786428870446; Mon, 10 Aug 2026
- 23:14:30 -0700 (PDT)
+	b=maoHCdFtBgDL+Mou80u8Vu6Zdb+FBYio7IgssSFHfKPMekbjaPwwkUoFvWJwcC3SU
+	 wecaukHbhT7n/5xl0Owt7T1VHnZEZS0N2LOBA072A+KTiwDZ68WYZxciU6gVVV8WSd
+	 8xuH99BNYk9jaiTaAhef40tihePfiRSTpf4sxgbDsF8lktOOONSjADOte8nN7iaSy3
+	 FUPtspAqPO6niSJVNUzNZhwBXab40hjD3qpoh4/YcCmv6moms6eixd0SFFTEmzAmzR
+	 qSzQa4n7idjorjTafWDr4hoHFRz25EvLqpNVPauFlZqbVlBJPv72kM7AAFdQJKN6cB
+	 vhA3HZMZFQqiw==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5aeb2bc82ccso3081000e87.2
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 23:18:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpzKNij7mgwe+s26zFmLvv/NHDdO56YdOdizr/rAcZcovdZUXjfaYJrbaYtRTayIxYmMU6JTeJqIMhE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5L7Yw3eROdwabbihTxghDzTTO6gZpsWEYS068AHungZvf9Hcf
+	N/I/S3/56PP9kvab0+wux6K/lcAOk506sBnh3I2S3nBPZW3mJxQHgHlbEQCqcKQVStEv3Qs1nK/
+	XA6QstrkM8R4n04QlxklS9oQhXmESpl8=
+X-Received: by 2002:a05:6512:3c84:b0:5b2:aaa2:1d97 with SMTP id
+ 2adb3069b0e04-5b448654039mr150789e87.48.1786429082679; Mon, 10 Aug 2026
+ 23:18:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260810063650.239303-1-changhuang.liang@starfivetech.com>
-In-Reply-To: <20260810063650.239303-1-changhuang.liang@starfivetech.com>
+References: <cover.1786262697.git.naseefkm@gmail.com> <CAD++jLkpcQkdN5DgCp61OANFhodoQyAUAb2WF4CyNYv=0xVsyQ@mail.gmail.com>
+ <CA+_ehUwO0WEiDGE18a=v=ZjJhpZB_KVP=m-Cog7K9Cm-zZV6EQ@mail.gmail.com>
+In-Reply-To: <CA+_ehUwO0WEiDGE18a=v=ZjJhpZB_KVP=m-Cog7K9Cm-zZV6EQ@mail.gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 11 Aug 2026 08:14:18 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkHYsx3FNcdiPdL_9UcEUGDGs2u8RwfTjotm7f+xiwnvQ@mail.gmail.com>
-X-Gm-Features: AUfX_mzgGug6-5qsnEpmIEwyeblG76ijsb9r5KbO018SdfVmGfJDslC9BjekBp0
-Message-ID: <CAD++jLkHYsx3FNcdiPdL_9UcEUGDGs2u8RwfTjotm7f+xiwnvQ@mail.gmail.com>
-Subject: Re: [PATCH v5 00/21] Add basic pinctrl drivers for JHB100 SoC
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>, Paul Walmsley <pjw@kernel.org>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
+Date: Tue, 11 Aug 2026 08:17:49 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=8BvLvzwN5a8+dZDXU7sSM5m18G=XEnYtWo5ziJ=N6nw@mail.gmail.com>
+X-Gm-Features: AUfX_mze3ESUSsSYW8CEZRJNkHQmDt4gP_VSFyh2kb488Z--smL2Lv1F6RAXAFo
+Message-ID: <CAD++jL=8BvLvzwN5a8+dZDXU7sSM5m18G=XEnYtWo5ziJ=N6nw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] pinctrl: airoha: add EcoNet EN7528 pin controller support
+To: "Christian Marangi (Ansuel)" <ansuelsmth@gmail.com>
+Cc: Ahmed Naseef <naseefkm@gmail.com>, linux-gpio@vger.kernel.org, 
+	Benjamin Larsson <benjamin.larsson@genexis.eu>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>, Rob Herring <robh@kernel.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Changhuang,
+On Mon, Aug 10, 2026 at 9:27=E2=80=AFAM Christian Marangi (Ansuel)
+<ansuelsmth@gmail.com> wrote:
+> Il giorno lun 10 ago 2026 alle ore 09:23 Linus Walleij
+> <linusw@kernel.org> ha scritto:
 
-On Mon, Aug 10, 2026 at 8:37=E2=80=AFAM Changhuang Liang
-<changhuang.liang@starfivetech.com> wrote:
-
-> The JHB100 SoC has 13 pinctrl domains - sys0, sys0h, sys1, sys2, per0, pe=
-r1,
-> per2, per2pok, per3, adc0, adc1, emmc, and vga.
+> > If we can get a speedy review on these patches I don't mind merging
+> > them for v7.3 already, it's nice to get some movement on all the
+> > nice Airoha silicon.
 >
-> In the current series, we will only add the following pinctrl:
->  - sys0, sys0h, sys1, sys2
->  - per0, per1, per2, per2pok, per3
->
-> The remaining pinctrl will be implemented in future series.
+> I wonder if the same speed treatment can be done also for the clock drive=
+r and
+> also dts?
+> There are a few patch there that are currently blocking usb phy and pcie.=
+..
 
-These drivers look good, as soon as the DT bindings are reviewed I can
-probably merge the series.
+Heh not my department. I think the SoC maintainers can merge some
+late DTS patches, the clock driver is up to the clock maintainers.
 
 Yours,
 Linus Walleij
