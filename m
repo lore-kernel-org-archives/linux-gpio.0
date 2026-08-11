@@ -1,111 +1,163 @@
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFC01F09AD;
-	Tue, 11 Aug 2026 13:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6231E43079F
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 13:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786453415; cv=none; b=p/7BBQJHzuQUZv8v1/oCi+x9VUCVLbw4cLy+b70N4mSgtrOKSZ47AK8ljTieO52uOVrkAengDkOmcCiZl8VO+DHeLZhwO7t7V+rPmXwO8ZXgT9HVoiDYZN324AQJJvD9o7IWTx3hQR9hQy5/F8leQro0DMP94RKQqWxzqxODoLc=
+	t=1786455772; cv=none; b=rZeNM2SMDsMZp4X89aS8urmmPVlP4UMtAwUq3wSempzs0K+Ln2JEakAvxdvMTv+q3tt88VdCHPTDia9+GMje29XNfOYsAoL2me8pqEHlQbEfa+c3qixJmRItKW0DVP7wHBdRpYISF9wHkWLWaqPdLNaKQReMWnBIyisXTPhsAy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786453415; c=relaxed/simple;
-	bh=0wMUQ5qPclzmrIkaz3deA/LEEF2M2PQxy+VQQnfvVy0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pXegHznh06s7XjgduN8uAGxk7duYK18GegC+lsGeHJ2XrkJZZIlI1JJL62WlE9F4fwt8ancyl05V4xhqC4NDRzvGW2NS3RDD6r40uLHY3TQg8QVIIZpRXY/rAi6hOnKT4xEOQp0j3owNxQ78/iKUW/S6JxAYMpnPcXCAKYn0P7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 3C7E82698C0;
-	Tue, 11 Aug 2026 15:03:24 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id 8zozc2Fdbl03; Tue, 11 Aug 2026 15:03:23 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id D3D3E2B4F67;
-	Tue, 11 Aug 2026 15:03:23 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bW4shW0w-Lmy; Tue, 11 Aug 2026 15:03:23 +0200 (CEST)
-Received: from nailgun.corp.sigma-star.at (unknown [82.150.214.1])
-	by lithops.sigma-star.at (Postfix) with ESMTPSA id 5FC282B03EB;
-	Tue, 11 Aug 2026 15:03:23 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: linux-kernel@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	brgl@kernel.org,
-	linusw@kernel.org,
-	khilman@kernel.org,
-	ssantosh@kernel.org,
-	grygorii.strashko@ti.com,
-	upstream+linux@sigma-star.at,
-	Julian.FRIEDRICH@frequentis.com,
-	Richard Weinberger <richard@nod.at>
-Subject: [PATCH] gpio: omap: Use device name as chip label
-Date: Tue, 11 Aug 2026 15:03:10 +0200
-Message-ID: <20260811130310.3867697-1-richard@nod.at>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1786455772; c=relaxed/simple;
+	bh=dzCg+9gjTeQCSQnJV7nXw1uw5Ycp+ZYb0dfAyNCr8Zw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GRKyiP4tH3u/F3F4gD0uEBBubZihR8w+q/2O9m2FIs8EgKOBV7cAhxdIxIetlPwqst51cgK9eB75jE8sqBtISWmiRdwHxBRvGIYSgRp/g35y4UKZmb2bOt71vdfnpe6pBQDVZbDmtGnqtECIHFL+9lUxGegGYDtxafVCv4kJUNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=dovHz0PY; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="dovHz0PY"
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 2948024002F
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 15:42:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
+	s=1984.8680eb; t=1786455758;
+	bh=dzCg+9gjTeQCSQnJV7nXw1uw5Ycp+ZYb0dfAyNCr8Zw=;
+	h=Message-ID:Subject:From:To:Cc:Date:Autocrypt:Content-Type:
+	 MIME-Version:OpenPGP:From;
+	b=dovHz0PYtsiFBVMqx3bwf0qpFaKez/xdSmBFMj5DMd5B+W82SpjIX3tPlYqrSXXTL
+	 LgTDyWQrOtNAYW4xZlVG3N+ET1Ah2hBSAkPN9cI2nNIKsxVlMQhxdWb1jUaKNKW4Vu
+	 vTs0cq3dUQTmh4zb9Q7PB5rJudpSQZuVHj4y5OT7Ru2vUvY3xaFiBTinjZERIroB53
+	 gogHRnZ7eTh8LinVWixKRR4GQPBj5YsLy/wfxRUgtL/HaaOcVua5cisHJTIdFgIrAD
+	 sNfvw3tE4UjvkZMrbouch3t0mppmesc7efBab08FEVmK8PFw/wRfUxxgwWzmion3hh
+	 krmRNN+9ufK+g==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4hKCVK3f0zz6tvx;
+	Tue, 11 Aug 2026 15:42:33 +0200 (CEST)
+Message-ID: <2b293ec3ff83348657a64ed551a3c8533fc1d336.camel@posteo.de>
+Subject: Re: [PATCH v3 1/5] dt-bindings: rtc: Add pinctrl for S35390A
+From: Markus Probst <markus.probst@posteo.de>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring
+	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	 <conor+dt@kernel.org>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+	 <uwe@kleine-koenig.org>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement
+	 <gregory.clement@bootlin.com>, Sebastian Hesselbarth
+	 <sebastian.hesselbarth@gmail.com>, Michael Langer
+	 <michael.brainbug.langer@googlemail.com>, Andrew Morton
+	 <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-rtc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 11 Aug 2026 13:42:35 +0000
+In-Reply-To: <CAD++jLmbp5v5oy9oas3q=nDEvdvmPZpX71eHwEUgSKkn4bfCkQ@mail.gmail.com>
+References: <20260805-rtc_s35390a_int1-v3-0-e836faba3e25@posteo.de>
+	 <20260805-rtc_s35390a_int1-v3-1-e836faba3e25@posteo.de>
+	 <CAD++jLmbp5v5oy9oas3q=nDEvdvmPZpX71eHwEUgSKkn4bfCkQ@mail.gmail.com>
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+ keydata=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
+ jfGillcaQOqFZ3WwVqyzG1BUfTow==
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-QW3gka1UqdUF6X6NqTlC"
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+
+
+--=-QW3gka1UqdUF6X6NqTlC
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Since commit 92bf78b33b0b4 ("gpio: omap: use dynamic allocation of base")=
-,
-the driver no longer statically allocates the gpio base.
-Having chip labels with the old static allocation makes no sense anymore.
+On Fri, 2026-08-07 at 19:23 +0200, Linus Walleij wrote:
+> On Wed, Aug 5, 2026 at 9:32=E2=80=AFPM Markus Probst <markus.probst@poste=
+o.de> wrote:
+>=20
+> > Synology NAS devices use the output pin for interrupt signal 1 to wake =
+up
+> > the system.
+> >=20
+> > Move devicetree bindings for sii,s35390a into its own file.
+> > Add necessary properties to configure the individual pins via pinctrl,
+> > which allows the interrupt signal 1 to be used for wakeup alarm.
+> >=20
+> > Signed-off-by: Markus Probst <markus.probst@posteo.de>
+>=20
+> This is a bit unexpected but I really like how this looks
+> and how it is using pin control!
+Thanks!
 
-Use the device name to have a unique name such that gpiod users can clear=
-y
-distinguish between gpio chips.
+To give credit, the use of pin control was Alexandre his idea.
 
-Signed-off-by: Richard Weinberger <richard@nod.at>
----
- drivers/gpio/gpio-omap.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+- Markus Probst
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index e39723b5901b..3fed7b1bebf3 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -1033,8 +1033,6 @@ static void omap_gpio_mod_init(struct gpio_bank *ba=
-nk)
- static int omap_gpio_chip_init(struct gpio_bank *bank, struct device *pm=
-_dev)
- {
- 	struct gpio_irq_chip *irq;
--	static int gpio;
--	const char *label;
- 	int ret;
-=20
- 	/*
-@@ -1056,11 +1054,7 @@ static int omap_gpio_chip_init(struct gpio_bank *b=
-ank, struct device *pm_dev)
- 		if (bank->regs->wkup_en)
- 			bank->chip.parent =3D &omap_mpuio_device.dev;
- 	} else {
--		label =3D devm_kasprintf(bank->chip.parent, GFP_KERNEL, "gpio-%d-%d",
--				       gpio, gpio + bank->width - 1);
--		if (!label)
--			return -ENOMEM;
--		bank->chip.label =3D label;
-+		bank->chip.label =3D dev_name(bank->chip.parent);
- 	}
- 	bank->chip.base =3D -1;
- 	bank->chip.ngpio =3D bank->width;
-@@ -1087,9 +1081,6 @@ static int omap_gpio_chip_init(struct gpio_bank *ba=
-nk, struct device *pm_dev)
- 	if (ret)
- 		gpiochip_remove(&bank->chip);
-=20
--	if (!bank->is_mpuio)
--		gpio +=3D bank->width;
--
- 	return ret;
- }
-=20
---=20
-2.51.0
 
+>=20
+> Yours,
+> Linus Walleij
+
+--=-QW3gka1UqdUF6X6NqTlC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJPBAABCAA5FiEEgnQYxPSsWOdyMMRzNHYf+OetQ9IFAmp7JrkbFIAAAAAABAAO
+bWFudTIsMi41KzEuMTIsMiwyAAoJEDR2H/jnrUPStjQQAJWXeNaXaQVNvejgSBMg
+tvTp2Udl6C+FEODA4dfsNjhm16qkEzN0QBirIL86nifakQW3nergAjyuVfMvJw+0
+2sQvyvsW98NW7qEDZnL2Eehxjwbab8rop3EOCnkGusLwzBZEItVwpuX8G9UDZToO
+skG35NSKZ8vX7IUl04vdms+dP5ou28UseGm7CTR3y1PIaHcFwEEfUhQ1P8bZQJ7x
+broWwqA+qptOFUSfTv3xdi/XzO8PvIs0CR/eCsBI6rn8uuhhX1gvY55tH6uBb9W0
+NJPf+kLxgeLu2stTjGUN9+vFi8DBpX1/rj1ES6sKgd8P3MXCg15gXBZ9oYA3nNQj
+JhFuy2mc3qDqFVzTwcpQghvj2o+zomWbYOLFf0lSpv305UFb2pXXVsQNNr8YUglu
+21I4PRKMTIoskBqKuYyMf76CBaXmgWiP0138t2fo+BYhFkm2ivyyyaYMcDx9OGm7
+D/0aWJau2Em3UwXnFLc3vhgkFfgffaS7NWsQUyxGHovlRzcrZ+gSLDexRhk5mqGL
+kkQonf/4tUL4QgqriEb8qx8ey9ozpfhV/ts3cfYUdUCY/rev/8+iYfZMCIuV75VU
+Zm6Ucsawg/Wj0z5Ebt0F9n8UTZvacVZLuca/pA/lFhtA3WtRE24Inf51BW0HuNd6
+qrwJcxEd7O4+sMcBZXw19b1p
+=1cIM
+-----END PGP SIGNATURE-----
+
+--=-QW3gka1UqdUF6X6NqTlC--
