@@ -1,130 +1,200 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AE3325485
-	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 02:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.216.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786416498; cv=pass; b=nRsY92Q7ZwZOjk7/8X9xX7vF9pZYGC/ji4oFBo4rJwXW7/NtV8qNe2OcQxo4loDW4BZZEwijRPI0cnHKIaWczpiluy/OhXIKt83sPjjhPAyHdSUzj8ab1JDvfNtJKqQe3ieRXxp5sOPjCM6az7tEyhq5aEmOWDuiM/7wLHcof9g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786416498; c=relaxed/simple;
-	bh=UkEjxwiQmZyjj2KDKIQVWRLgdN+ocH05tBa+lPVyBCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KiYRgfbkq29VcwBSsYfD1vG8pd+xxHIoDsu/QX8O7jo7Msf5Igp6p2PSBSUKR5Ftas2VZggdfopwRvEcFhzHRbDdll4KFXtWcFOna6UOyXwj8lCRWc332GHD2MkZ1dI5UneY2oIDWAVSiRT0zv27k9JA7wjiOuGXitK2ZL1siV8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mWjy/FCT; arc=pass smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3B63C0621
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 03:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786417688; cv=none; b=qPJsVdS8b/A7xJLBDSLWIKATFJysf8TlI1EMFZBjBLMt/iaJpns40tYFzM5FP1KZMcLKsY011JWi7N+qb1w9/BKNyyPItDNm46bZN/EFm0/KzbqbGNib8qjr11kAvZdM1urdGOVerXuJBJmY7C4tf5FCOk1McOP2JbvQqIgqo5c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786417688; c=relaxed/simple;
+	bh=DlW8q4oLq48rVY5GwKZjkDvXGvkyA6zitlwCeSxMGIs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tmoiZS9/f3vWmLBrku2lxH7jFB9QF6NpiHtuFnCAJjrxHyVQ562WF3K5+jMLkuiPBYSsczxTc7ZxBtMSIs9ihwTtE/Mbf936TR6pS7r4LGhI3uEIaLFSIbiKIz5d83fnA6+9VVyfysgbQtgWOBW+43otVWK1cD4IMwn/7X/aBmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RkGG3wgx; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Lh65utaV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWjy/FCT"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-383cb94f742so2794579a91.3
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 19:48:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786416494; cv=none;
-        d=google.com; s=arc-20260327;
-        b=bp7d7qLc+Ym4qu1F1jQsHEZoyZrNHSit3PPznSjtvkqP4cR0FfQrAE9NWS5CgKdp/h
-         8opirDfzWEs9oXa5TISS2wlN0pMSSQHJLKXgUiO66cd+dG3nYeKi4HDVv54v4ZPpGSzm
-         /U5seAhidh7/nAGmCtdjzqwjZAh4sEZAwDVk3CytJA4jKQMeOx9bErd7JR+ol5HhKpv8
-         0+1iLaOpCCwYRSWjF5jrrwIL1o1EDMCXFISpu6e1SkzPTZgtNK5D4WiIhAU8iNUFz50k
-         rPz7BrVYdmY17pXRqrDhVWeXKkpnqaNrbsEfxbF83Ybx4iUTiwyL62qKwyCMR9b8qy6f
-         zIwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=fPd0jePCJEvRss0UdFXuGKLy+4PgCDrlaI7MbTAcvZk=;
-        fh=4W4nuHMo9yvKAGDRE+EdR+swDhYBcBWiPc05KJUv710=;
-        b=pMF2lVKziCHEQvat3eXreZXyWkom4NPf5nZUl/DjpYI7lSSiSVYo40dd9Fh83oOimV
-         XTFXXfc+SRFiOBeMGAkkujZxjAORwXhSDc6m1qb0gp+OWNTK/sY8LhZ1e1zL4pTvJBl+
-         Jt9p9yQEcTe++7Z1c643Fqz0bGR/MTor2iJPwVF/4Xk+bTdLCSmo1Cb9DaRK1cq5Fp/X
-         WI/t3UyeVgVIEEFzcKljjaRHj0kjGN1H3qOlt671dfu6VD2QSrXDwmwi7J0T7sKq3+3o
-         lcOp4v5KdXcz1eadeE83Ozm5N9cXGC5CzqT5j0S0Fq2wd3WetY3e8TGQZmDQ+QUcYsqw
-         F5lw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RkGG3wgx";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Lh65utaV"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67AMplql4156898
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 03:08:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EtmCIS8KvZUiQkn67WxkI87wxCudwiP/IcdM2o9zbTc=; b=RkGG3wgxXsXTWtu7
+	BD4DPEjTV1S+NISBzO6sy2j2XzZsOnY3zpN8TjB/lWel0y/hwRSq3sfCcpFYXFcw
+	DDiporaxXVImLnysslm8+Rem/AHCuCmumyMbVy2aSN7Xa3dtpbouFBFSIf4pH8Qh
+	rMxzB5WpMqOFB0z8O4px1KSa4Z0k7uUnjGwmL6bLlwTFOkGVRTqqo/tdoq7e/g1v
+	t36H9J+Cd/gu6wMgCIWP2Kctb1dLa2QAf8Qf7sas7eP5krgM6vu9vxLlkc38R7BQ
+	Vf2+lNZqXVhpJuD0Omy656iZQ71DNUTlGHs39wBae1DCVK+UlFbDTzwbryyGVBDe
+	36TFXw==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fyhp8jf3f-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 03:08:05 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-cb835525b13so3550430a12.1
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 20:08:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786416494; x=1787021294; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+        d=oss.qualcomm.com; s=google; t=1786417685; x=1787022485; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=fPd0jePCJEvRss0UdFXuGKLy+4PgCDrlaI7MbTAcvZk=;
-        b=mWjy/FCT6Gb+QSVYgE0/u0t3tW/JlHvg0jgNVi7aSo2Ya2BCQshcglI7kIPHaD3uc0
-         P448hTTfA9HgAZduXnrIr6u0N4r9/jPvO6DhsF4V7rWgzD/Y3zUBWa1V64qU9Z9Pv7mV
-         gINX204KeSFaTPtdpEudJv09kD2waV1j3EoJYXyEdQfRWOMDJstvoVdZsRyqkFv+uSxv
-         ricVAj4eLrn7kVqL+WjSb4y2fGlBaOMaB2VFw4ydc6Df4HjdbFBxswkRk/sEZjvA/mm4
-         gBfLYnlPHRoo7uHGKwryM6tQEiaDXrEA6rwoYPuKVFcMOPvjY3NWPS8enfP0FOWVzMfy
-         4tmg==
+        bh=EtmCIS8KvZUiQkn67WxkI87wxCudwiP/IcdM2o9zbTc=;
+        b=Lh65utaV31Cooq4lUslxXbbja7kxP4xwjtHUz1MdPcpQ8Co8hw1MH7H7HF8kyDXE05
+         EpMwb0ToCut8Uzr/Gs15BxmXZ1ZFMZZ9iXPsdgYqBM+FmSPK60Z6LWkXVIZ4JmLfXSEV
+         trhU5yjzofxt987O6bVw4YDqH+6dvLYlxLt/H8j9eeW1JV0ZlNBSpwYXezc0NRCSBtko
+         cD5CqjDvTab/zkKjqeperHP8jkPeV33G0VJKeMLpbrNTpAtnuPO+3vSe4zwNolii4bxG
+         sBpPOk3WUWtWBJXlZXtcf43Ko2oSBRKV+qMbEkjrUR2pPlpasWdH46d1EzIIfuUTZZ++
+         tSQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786416494; x=1787021294;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=fPd0jePCJEvRss0UdFXuGKLy+4PgCDrlaI7MbTAcvZk=;
-        b=LgL7CdAVLa0OHEn94wFWUFuG+ZS8brlRazqGC28GxZS0IHkSMpqaGd5NLir9E9gbEC
-         sEGf474JNd2BBo9wP2zF8FtYdnTlpdMCm/delpHqAu/CTKWPWLDJv1zavBjGujDVLLCj
-         yZpuv5NlLZ+cXM6SB8ZlRPBWknpxIrh6V+1NYq9HfZMU4KCaDBKH+grGM4KLzWKxkztX
-         zzIB4Se0rJfDp9dibY9Pcm6Qr6jYFT3l5wIYLQI2+DqE7JsdR7nO/IraLYUsyTg/nZlh
-         kAgGba5chmZbROisK6dKhdFgSPdx02VwTwGd2xO7HwZ+xvPoPeX9INneD5c6T+DZ4n5T
-         PeCQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rps98+iLehjXOKDgkn4gKrL+KFuFoDXiPn5i/8hyOcdlhdN/+lBITFtzeUW8fPsxcmqNzOfuTIPd0fk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy15e83Ie8f1WG52d+bXt07z9mSO/ooDgk5EFgb0wzaS7lCJqp3
-	JT9zvRSN6izvk42SJru16O4Dos/8oM6frIcA3HgQtCNTbhUhOnAqVuiz7+fEYbdK5pg+X15Mo5J
-	mpcMtludDXzP/nncmgOFaNrqfFZ5mmfg=
-X-Gm-Gg: AR+sD11HZQ72dbXVAT4Idyk6pW+QKSzGUGobjcZQQCAlBBgbw1Oyt+sf7zO7fecKSXj
-	n64IpwYqGOls5mhiokuR1Vz0drRB7436i/mTs4oVIsihLuu97LMNKxF47KmFHmtMrhABim4c9mC
-	CfGT0J+sNVE9LWs0rJ7AP1Oz8AcH1QsrhGJvSeFxG5uHHr7q9aSkpp83cUys1Snx8V2QlYcbikH
-	NGobTuWYpSEhf0DzMd5lI6o+qy9heUZ6fGurpVYlo0iuiV/g3ocle4BMZceLXLYXiB2KJ7ECGsa
-	Nv+j6WSJnG6e8A45+d1DN0jU/Ov8B666q5Dr/p/FuNCrlXI4gxsUho7qrX3mFfsY4Yh8Cen7p40
-	UgnzO9HjkqwHJaMVzxYZZxoQRxo6oD0rLXmzkukS5jFKA9IcqitUsxi7N
-X-Received: by 2002:a17:90b:268d:b0:390:b41a:b92f with SMTP id
- 98e67ed59e1d1-392ec6858abmr33121a91.18.1786416494009; Mon, 10 Aug 2026
- 19:48:14 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1786417685; x=1787022485;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=EtmCIS8KvZUiQkn67WxkI87wxCudwiP/IcdM2o9zbTc=;
+        b=n87PUGOT30yxQmjTuzgZrMwFuvkB452wXzXwj6hcKBpf76XHjlVF/vuALioXqAFqED
+         hKro0rH3p9iLzdYjlJzL4QLUFxzEZbrKYJAxp/dKCXhw7VZm6CvPcD5XtUoGbkp6CFXS
+         FJ2Mm7q39G2InpEcaThyfpEqz3YRYL+DZUAnTFgm9rhiCd+vj66E+OnVGhYSJgkRSLXD
+         4Mytm7tUJAxHzIL9rqhOHo5myxpYK+LuzlQ3jJ+tRn51BcMTQthH4ATDhFD9ltR6WEFs
+         SotfL0a1ylY5PhYc/YbOn32tnoZLYREWMLXYwKk3YJyEiTL9fNLScL/HfIGHRgsW7njR
+         K0EQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rp8eTLoHgngtg2KSg6kpK4I1EIs99snxFK9Fhnr2sytTaSJ8+ksOa4fh1XcKkgqakSwc8PIBVpcHkGr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXwWaaFR1hwqJZ0VFpvinfPFLcC2nRkbwt2ODsxaShJ129YJqg
+	l6DgCUH04PC7lpQ4pe8WSFS0HajsY+cXR35/u/R4xFouwhxPYAobnmQxIE9B6Ul/3AufgLAwAdE
+	UJ4Ur5ZJ3CXu85Z8X2xWt12+hxMF+4aVzwLnK7rRG5Iw4CHNZBnt8wVOxIEnCQveV
+X-Gm-Gg: AR+sD13FeiTCQIvZ8v1gqn6IBW43vhmiZPeLD6JcJ0WVkVoQOQd0pK3biqgQszwLoo6
+	PtS6XnY/4AXbbsdnuREEDffLZfqywpcvndAdjXhROn7tKbx4Xgmz/OHX2K7x6dX5uBZ9r8z0ZOP
+	fC0x65XqmJ7PnBAd05J2ql+yL53rQ0COqLqMqcPPHVBfULmA9U+iMG4gz5iIc4WUgImBOkskkmt
+	Y8i4Zn7TGwFseXfqb2EAJ/Iso4ygDEPanolGZsVv0LdQCgjS//0yW4eIbe9oHlalPs0b5OJXUHb
+	HI7Q4K4Rk22PA5GGcSbkpO+PsO2ftH4Xvsq3jSsVklYMKkIiOTzYZKtHzajVglUvwEfoMCxha7N
+	0mZhM/rFyCkDkSBvL0Lt1OGpwRtIkoM55pxr60J30Dqf82KHpEF47m7D3pQNLFJRWppqEYIUSxb
+	i7UdYKwq+ePJskBKPOlzY=
+X-Received: by 2002:a17:902:ea0f:b0:2cc:6018:f030 with SMTP id d9443c01a7336-2d31788ea5emr3693705ad.14.1786417685146;
+        Mon, 10 Aug 2026 20:08:05 -0700 (PDT)
+X-Received: by 2002:a17:902:ea0f:b0:2cc:6018:f030 with SMTP id d9443c01a7336-2d31788ea5emr3693185ad.14.1786417684728;
+        Mon, 10 Aug 2026 20:08:04 -0700 (PDT)
+Received: from [10.79.117.20] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-315be8a754dsm45103397eec.11.2026.08.10.20.07.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Aug 2026 20:08:04 -0700 (PDT)
+Message-ID: <c47b3af2-d265-4e9b-b843-05b5e63fe5f9@oss.qualcomm.com>
+Date: Tue, 11 Aug 2026 08:37:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260810053142.27938-1-phucduc.bui@gmail.com> <20260810053142.27938-2-phucduc.bui@gmail.com>
- <CAHp75Vcb12Ok=yEF_WqKp=yS_EW9SWS=G2+B7Fa7aLH=u-aR0w@mail.gmail.com>
-In-Reply-To: <CAHp75Vcb12Ok=yEF_WqKp=yS_EW9SWS=G2+B7Fa7aLH=u-aR0w@mail.gmail.com>
-From: Bui Duc Phuc <phucduc.bui@gmail.com>
-Date: Tue, 11 Aug 2026 09:48:01 +0700
-X-Gm-Features: AUfX_mzDDYkK2NK5jlqz0_lCJ5Fzf8I6GBhgUkKlRjmlPfvBFmCA__eO_V6VlZk
-Message-ID: <CAABR9nETzzsjzE0JnnLC5tX7d=0yZW9bt+t8DuVxV=JSb1VsYw@mail.gmail.com>
-Subject: Re: [PATCH 2/5] pinctrl: keembay: Propagate errors from optional IRQ lookup
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linusw@kernel.org>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy@kernel.org>, robh@kernel.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/15] soc: qcom: geni-se: allow selection on 32-bit ARM
+ Qualcomm SoCs
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
+        Taniya Das <quic_tdas@quicinc.com>, Georgi Djakov <djakov@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Linus Walleij <linusw@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
+        Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>,
+        Guru Das Srinagesh <linux@gurudas.dev>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+References: <20260809-kuno-soc-support-v1-0-5e0ede4a0c72@oss.qualcomm.com>
+ <20260809-kuno-soc-support-v1-1-5e0ede4a0c72@oss.qualcomm.com>
+ <7f4qs6su5fd5ilecy4r72suk6mqvj7oouz7ahgatxthqavrfia@wxilczij4unf>
+ <vxpntlaebf4an2wgebgbwk2rdkingzjecdgylqv36wmxtyqju3@hkip3wqgendw>
+Content-Language: en-US
+From: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
+In-Reply-To: <vxpntlaebf4an2wgebgbwk2rdkingzjecdgylqv36wmxtyqju3@hkip3wqgendw>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODExMDAyMyBTYWx0ZWRfXy1rh4SA2o4eO
+ Y9Wlu8aXAmr1WUYHEeBH+sd6eB7LbiyltPVxh3o9seUyhykk5BdPSEBDHwI6vHane5Va2a7Ml5O
+ rHBXGfVDgO6412wb8DNqtkrXEaJ/d+U=
+X-Proofpoint-GUID: ermYu9zq8umEi8N99N0uFSjDQhf8qdg9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODExMDAyMyBTYWx0ZWRfXzauvlJjZ66vS
+ B4zoOaiKaNko9vyW8G4wT7d9IrmfG/JBz1bIh39OoEmciekAv8bTdKrxVNnmo6/fzVfiY/s1mef
+ TNfwCgw+jdnrTdDeVRZnXtAxX9XXhnVHJw17jTbmhI4tfTSz2SrbSZI5hi7glcmQvibrYGCdedf
+ GLPLRY/HUd8ssT/mUFWCwuEWDDLaztN7U25PgJfR980LZvGOjFXvSMVppHcP/zJDTZD8cPRuoOG
+ 12qeCP0qi0js3bTpidzXqii0zdpcN+PXtM0Kim8+U7OLLajpK0oKsv/bUlq7134Vj+4uymDRjHR
+ Odm1xaLec0vTm3xB9PbSW1XaWZXKtRze30tmj+iTuoh1r+cqqumzMLomhXhs8djZSEV+dRZUQXa
+ JKQ/8hl7xAtPcTzcy1xyWqiHytN3k1HgEp8IXHhSUzXGPmh4nMyZu3LIIqM7hSgOfMg/v79NP9m
+ jB1LJdHCcklI8vOUfHw==
+X-Authority-Analysis: v=2.4 cv=RM+D2Yi+ c=1 sm=1 tr=0 ts=6a7a9215 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=EUspDBNiAAAA:8 a=FqS0QMqP9mElqJ8EA1EA:9 a=QEXdDO2ut3YA:10
+ a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-ORIG-GUID: ermYu9zq8umEi8N99N0uFSjDQhf8qdg9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-10_06,2026-08-10_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 impostorscore=0 phishscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 clxscore=1015 lowpriorityscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2608110023
 
-Hi Andy,
-Thank you for your review .
 
+On 8/11/2026 6:45 AM, Dmitry Baryshkov wrote:
+> On Tue, Aug 11, 2026 at 03:48:00AM +0300, Dmitry Baryshkov wrote:
+>> On Sun, Aug 09, 2026 at 12:57:00PM +0530, Hardeep Sharma wrote:
+>>> Commit e10b198a94c6 ("soc: qcom: Restrict drivers per ARM/ARM64")
+>>> tightened QCOM_GENI_SE's dependency to ARM64 || COMPILE_TEST on the
+>>> assumption that no ARMv7 Qualcomm SoC uses the GENI Serial Engine
+>>> hardware.
+>>>
+>>> Kuno, a 32-bit ARM Cortex-A7 Qualcomm SoC, uses the GENI-based QUP
+>>> wrapper for its debug UART, so this assumption no longer holds.
+>>>
+>>> Fixes: e10b198a94c6 ("soc: qcom: Restrict drivers per ARM/ARM64")
+>>> Signed-off-by: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
+>>> ---
+>>>   drivers/soc/qcom/Kconfig | 1 -
+>>>   1 file changed, 1 deletion(-)
+>>>
+>>> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+>>> index fd4d4ecd2df0..5b3c9d31fd7f 100644
+>>> --- a/drivers/soc/qcom/Kconfig
+>>> +++ b/drivers/soc/qcom/Kconfig
+>>> @@ -39,7 +39,6 @@ config QCOM_COMMAND_DB
+>>>   
+>>>   config QCOM_GENI_SE
+>>>   	tristate "Qualcomm GENI Serial Engine Driver"
+>>> -	depends on ARM64 || COMPILE_TEST
+>> depends on ARM || ARM64 || COMPILE_TEST
+> Or depends on ARCH_QCOM || COMPILE_TEST
 >
-> While this looks okay, have you considered actually having the
-> platform_get_irq_optional() to be optional in this sense?
->
+>>>   	default ARCH_QCOM
+>>>   	help
+>>>   	  This driver is used to manage Generic Interface (GENI) firmware based
+>>>
+>>> -- 
+>>> 2.43.0
+>>>
+>> -- 
+>> With best wishes
+>> Dmitry
+> Hi Dmitry
 
-As I understand it, if we decide to use platform_get_irq_optional(),
-then -ENXIO should be handled as the expected case where the IRQ is
-not available.
-If we do not want to handle -ENXIO as an optional IRQ,
-then I think we should use platform_get_irq() instead,
-which matches its intended semantics:
+Thanks for the review .
 
-https://elixir.bootlin.com/linux/v7.2-rc6/source/drivers/base/platform.c#L301
+QCOM_GENI_SE is a child of "if QCOM_SOC" which is the menuconfig entry 
+that guard (almost) the whole Kconfig, and that is already "depends on 
+ARCH_QCOM || COMPILE_TEST".
 
--------------------------------
-ret = platform_get_irq_optional(dev, num);
-if (ret < 0)
-        return dev_err_probe(&dev->dev, ret,
-                                            "IRQ index %u not found\n", num);
--------------------------------
+Regards
 
-In my opinion, we should not use an optional API if the IRQ is not
-actually intended to be optional.
-
-Best regards,
-Phuc
