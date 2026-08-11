@@ -1,55 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8326930DEB2
-	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 06:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F6E415F1D
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 06:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786430064; cv=none; b=VzjIta5EracjQ2Kf2lYvtlggvh1jFv9I2Iu5mdFS2MEfUto6mqqrOXQ0fHuWaFDspQsLWdJ37hdEhUVsEeRbA7Z/Zj7I6728cEWAzgc+hkhI0aThsyBitoxT8eJmEsoZR0S9KKI+BdErqe9xxRSpGd834VBodWtWQCLJvjfiXX8=
+	t=1786430225; cv=none; b=K50my/9sd/N4S/MPIEKAiwMeFvmMA6IFxfLQ3JyjvqmftN0edG0NUIA4thVNG3mloPjoT2iivX32UIfmY9h2cBU6ltfoKNTB5vFP4chqUxqH+ZUF2PzcF7OZsVYXM71R9QfMY62bRmud8Hvw9sw/nYFVXmR1AIn8b6X4a3BkDzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786430064; c=relaxed/simple;
-	bh=ay7+68O8x2cBF4Jz5oOuWpIfM41H9XIbkcPKhL5H7SI=;
+	s=arc-20240116; t=1786430225; c=relaxed/simple;
+	bh=3OS8tzv+PZCNZ2UtF/U7gfDiCpmQfUSYIhnS8fHDnVc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hb9xjF/fco35PR7zgEs/yz2VAm9ozw5MBqDi62yaQdgK8ntZ8A6rROLG3B4LYgDkBcszL1VwZAD9qyia4OQ7RmG2IJOpkjs+pmUzsPGCbIb9EthoYoiU5iNWbnRpEzc5M6CByNsbcvS+QlVa566WFt5AIn7FC7ItdFNrjubOcoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dksZ6Qkq; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=Bkv6SIT5+KPBRoCOiuj0XuVwpAtJi0ln1NN2vPYcyEuyEZ0trytDfklpkcjXtyAB1CGdOoD6yyBNGRkUz1b4n8PldRklwsIdA90DCGOdDmwX1HAP2H14/pyF/o1H8rPEGfr2+KNh3fWjA/LXRfo0XwLhdKXFBDizf5tyWyOZFBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGFhcr2h; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dksZ6Qkq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 344C61F00A3D
-	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 06:34:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGFhcr2h"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A071F00AC4
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 06:36:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786430063;
-	bh=e1YQyC/NokXrsQ80jPU5/6YvOMfgYZRaxyNCbf9juaU=;
+	s=k20260515; t=1786430203;
+	bh=AJs7Mqn1DKclziey9G0u0ka9dydbjaT+kuaSUmUGGuE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=dksZ6QkqiT5dR8JFwczVx5BndtH5ifhBobg9NfI9/4vrwOTvlPzvCBCvHOmjZb6JM
-	 8p9JE2pXDD8u71bqmcO9lOgd0nuoeNALLijOuiHg08HX0KyMh374dzkNz0Z7L6XiiG
-	 H0SvJS+t35TfQzJfjxqUT+vzQ3HARzzt/WTiAARqJu/8PyLsYFmsdzqhQ11bi3mpmd
-	 lpNDcxq+zR3Zfj/GTux8AhKFt9M/DiMCpebXvgkZc9pgraTeBgCl/GIM4gls1uouKw
-	 NblnHYAlOVSZHO8Xpj4zb7rUdWcvnyxmFbdn2/ZH0CdgduQHllnZ32/n2U+IkW03xR
-	 mcGIQZ4w3FtaA==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-39faa67fabaso15389461fa.3
-        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 23:34:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpdtG+XxH+owCe3HaBQ8s+P7y63JlM1O1pXjEAiUb8pa3ow/IyZAZ9qYwNEEacsnSoD9i4eboxy8jAG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcPx2jzPcWrGEZxj55VxbTY5aW6+84Ta34Dnd5PMhWbfRode2P
-	O3FLzAJJKO9/eTYvhXzP9IORZmQ1MwSk7cBU+LP87kPTzFdXksnNMCY2UIGlrmebbwqekdqzG57
-	A0FFfUttifEc6xLfuGCEegbafyxRPXm8=
-X-Received: by 2002:a2e:bc81:0:b0:39c:93ff:3672 with SMTP id
- 38308e7fff4ca-3a0f8cf8ad7mr1417531fa.9.1786430061943; Mon, 10 Aug 2026
- 23:34:21 -0700 (PDT)
+	b=AGFhcr2hgpBoiO6GsvdSKDYX7SGFmd+9Jdxq5nzRKs3f/zj91QeF8nkFBErbloNmH
+	 4csc+V3CVh+whspRDUNT+XT2w7fN8Jcs9JXbzNF1j3d3MzXIReElROyOcHJhSUZJIe
+	 kx8qzp5wZQTfCiuHAchJUFgY2JkkEbMobreHaL7GiKMGTUwN9GK7mhvdvXrEMT83ej
+	 /yeAvUK6iZBvrIU/wMifVCB0ApMsXSwjztpEiMmhtmjmznRGWBuIcGG1bKl0hGjHiS
+	 LoQxIikXzIl3zjunLJhdwfgPBghUIlK5y+BlFWfjZCioHMPn6qolNxGFXM8gELBuK9
+	 reIUw/pJrVN5g==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5aeb98460c6so2504958e87.2
+        for <linux-gpio@vger.kernel.org>; Mon, 10 Aug 2026 23:36:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqFqcOmZnj82WzkeSDnak9Svpjs5Ix4yxbx9NulWrqcGB7WW2BWnET4Qi7GZNQmuMAa6d0Q5mEOmVhz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1OpkEy4EJeggvMnb85r2AzzDiefhgy1+LMOtecaDwPVNZUAj0
+	aDfu2Xk7fpfrp5XiM8fGxoWP+45l9sa6MwXhO1EvyAal30yzNYjH4Mk/HVezqO3Y374Zks7bPs8
+	lrjUJUfkBH1sS4qljjWBO5TeozQt13j8=
+X-Received: by 2002:a05:6512:3d25:b0:5ae:c454:3746 with SMTP id
+ 2adb3069b0e04-5b4486390d3mr181868e87.43.1786430202005; Mon, 10 Aug 2026
+ 23:36:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260810130635.1166626-1-mkmkl@google.com>
-In-Reply-To: <20260810130635.1166626-1-mkmkl@google.com>
+References: <20260810130635.1166626-1-mkmkl@google.com> <20260810130635.1166626-3-mkmkl@google.com>
+In-Reply-To: <20260810130635.1166626-3-mkmkl@google.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 11 Aug 2026 08:34:08 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnpZbmbZ_uQTS7pBdbmpvOZSy5+JsVP=Vb3HDhV8J-h4Q@mail.gmail.com>
-X-Gm-Features: AUfX_myZkyC7FNKL5DsoG9WiVk43wg_NI_GO8iktSq0f0PjXO42A_A4Ez5jTirE
-Message-ID: <CAD++jLnpZbmbZ_uQTS7pBdbmpvOZSy5+JsVP=Vb3HDhV8J-h4Q@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] pinctrl / 8250_dw: Allow drivers to keep init
- pinctrl state until first open
+Date: Tue, 11 Aug 2026 08:36:27 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkByVL4bPkCTEZie6ymnoFVvyk9TRi8Lw4AGZpOzaPL6Q@mail.gmail.com>
+X-Gm-Features: AUfX_mwslnI_IdnyE5gK_5h55o7AQQdCwBewm4zawXM8cwgIKANR8MWC9zklOJA
+Message-ID: <CAD++jLkByVL4bPkCTEZie6ymnoFVvyk9TRi8Lw4AGZpOzaPL6Q@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] tty: serial: 8250_dw: Keep init pinctrl state
+ until first open
 To: =?UTF-8?B?TWljaGHFgiBLYXJkYcWb?= <mkmkl@google.com>
 Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
@@ -61,56 +61,30 @@ Content-Transfer-Encoding: quoted-printable
 
 Hi Michal,
 
-thanks for your patches!
+thanks for your patch!
 
 On Mon, Aug 10, 2026 at 3:06=E2=80=AFPM Micha=C5=82 Karda=C5=9B <mkmkl@goog=
 le.com> wrote:
 
-> During device probe, pinctrl_bind_pins() binds pins to their "init" state
-> if specified in Device Tree. When probe finishes, pinctrl_init_done()
-> automatically transitions the pins from "init" to "default" state.
-(...)
-> 1. Patch 1 (pinctrl core):
->    Adds pinctrl_keep_init_state(dev). When called during probe,
->    pinctrl_init_done() opts out of the automatic "init" -> "default"
->    transition, allowing the driver to keep pins in the safe "init" state
->    upon probe completion. Updates Documentation/driver-api/pin-control.rs=
-t.
->    Board configurations that do not define an "init" state are completely
->    unaffected.
+> @@ -77,6 +78,7 @@ struct dw8250_data {
+>         unsigned int            skip_autocfg:1;
+>         unsigned int            uart_16550_compatible:1;
+>         unsigned int            in_idle:1;
+> +       unsigned int            in_init_state:1;
 
-I think this is the wrong approach to this problem.
+Side comment: why are these not bool?
 
-You are changing the transition from "init" to "default" for all devices
-on the entire system. What if this is not good for all devices?
+> +       if (!state) {
+>                 pm_runtime_get_sync(port->dev);
+> +               if (d->in_init_state) {
+> +                       d->in_init_state =3D false;
+> +                       pinctrl_pm_select_default_state(port->dev);
+> +               }
+> +       }
 
-I think the right approach is to create a new custom pin control
-state for 8250dw, something like "active" or "online", and then
-actively retrieve this state when the device goes online.
-The "init" state can just be the exact same as "default",
-or you can just define "default" to be what "init" is and skip
-"init" altogether.
-
-Pin control supports any kind of arbitrarily named custom
-states.
-
-In wherever the UART is actually opened:
-
-#include <linux/pinctrl/consumer.h>
-
-probe():
-mydev->p =3D devm_pinctrl_get(dev);
-mydev->pins_online_state =3D =3D pinctrl_lookup_state(dev->pins->p, "online=
-");
-
-open():
-ret =3D pinctrl_select_state(dev->pins->p, mydev->pins_online_state);
-
-close():
-ret =3D pinctrl_pm_select_default_state(dev);
-
-+ all error handling and stuff, see e.g. drivers/base/pinctrl.c for
-good coding practice.
+As noticed in 0/2 don't use the default state for this, create and
+use a custom but optional "online" state. It needs to be optional
+so current users keep working without it.
 
 Yours,
 Linus Walleij
