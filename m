@@ -1,92 +1,69 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596C6390601
-	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 15:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355A339CD11
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 15:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786461960; cv=none; b=QjGfMY9xR7YFc25gJCp3EKEQt2A9+kkLzAbaLBYy7yzq4riYMIbReDUgXTAUFU0szX3Y2bjb5xcfbrLMYZd0MQ0fhri/t2bZCTbLqkI4FY+8Tm4eIhoVczaDmrDgxuZDBs4F74naMG/uZC7/pcGcTagHypbkiZEVza6wmwG+tEE=
+	t=1786462952; cv=none; b=IKR76STZeJ669eQ8Q98Fi9Tu4kTwrI2ur9wegaFGD9tru1/kU7h2d37IGT8uTfO2fdZFhPVlt6Y2zh1qIUy4V7u+4Ms6+fhQ8usNrYb6F5IXNrWoEOfNoBlAvJkddXRR3rSzC5ym/Yyz7xf6WYGSM/mWlwNlZaOVkqhm1QE1LEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786461960; c=relaxed/simple;
-	bh=aEtTHnYMZuAopQUte3vps0EVXNe15OkCS9m+VeMpp4Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FAwuHoIxtgF6pIScKIaHeJnGvI28IBbgWP3qEAFds7qqWcu+izO62q8Q8szeZq4tTiSFiMJ0kjzBiH7bw500ykk/ezpFm+0+8QWens7QdPXtNI3Y0+YNx8FB065CfQrHbfFTVuz/imhDc2TSYL4isUALaOOFXos5wRRNF6hy36k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d2Ze27xa; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1786462952; c=relaxed/simple;
+	bh=6QICGC1RCueQ/MzNjrvLBwWSkEDtd3HW5RQnwbVIDaY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aJ2QTPQp42FReyV7wwRCG1KaiVgjHoy3CDKP/MuTCLHsLF0+YWfXCYIYAxMFuL/OOKsBqoErznzt0Op8SzDkidaFCqXRPjKdOKs3dE9Negu4Bew6bcWZvGxOviHLFktXxvNo5SJXaiQSGr8Z0y8QvOIVXdYtQUWJ2hChIP4nL64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B4rzsLdB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d2Ze27xa"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786461957; x=1817997957;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=aEtTHnYMZuAopQUte3vps0EVXNe15OkCS9m+VeMpp4Y=;
-  b=d2Ze27xaZX4w9S4sfbm+XodX1KTS7nJVSau0d+9O2qJuDV5Px++wl2gU
-   /tuvmmzc/4U2cag9ycjFwN5MbKOJS2QejHy4B4CywNjhNw8QpynsgOmM5
-   s7a44uPnk9knvcgQvOETeNHoV/1mB5TcqqloDXyxIU/VrlPaNvj/xOihj
-   DhvoSo6jNjT04Crj8RpIpyyl3W8tKOgOct+lC6ml/zCYNE67YaQBRhjF2
-   ZL0VQfZILxTJwCvVEGJr9QfziNA5PxntMee6Pu5ztUdOu6KE7JGjsZ9Hw
-   vK79IYvFtT8uUXs6V6LSLiJx/Tgg32KvwGkPOj8pzOkm6nhb2/OdYNj23
-   g==;
-X-CSE-ConnectionGUID: vrG4Q6AATAyGIyCdM1CR0w==
-X-CSE-MsgGUID: 7kpQ97n3TmK8jwqWFtEdtg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="74530938"
-X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; 
-   d="scan'208";a="74530938"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2026 08:25:55 -0700
-X-CSE-ConnectionGUID: Ju4tzuFjQj+m5fmsVnBM2Q==
-X-CSE-MsgGUID: HBBHqSHiTgur6OhBoALYng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; 
-   d="scan'208";a="260752359"
-Received: from slindbla-desk.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.215])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2026 08:25:54 -0700
-Received: from punajuuri.localdomain (unknown [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 1B6D2121BF2;
-	Tue, 11 Aug 2026 18:25:52 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.98.2)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1wtoMS-00000001fE3-0zSb;
-	Tue, 11 Aug 2026 18:25:52 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: linux-gpio@vger.kernel.org
-Cc: Lixu Zhang <lixu.zhang@intel.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Subject: [RESEND PATCH 1/1] gpio: ljca: Remove Wentong's e-mail address
-Date: Tue, 11 Aug 2026 18:25:52 +0300
-Message-ID: <20260811152552.396791-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B4rzsLdB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D80C21F00A3F
+	for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 15:42:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786462950;
+	bh=6QICGC1RCueQ/MzNjrvLBwWSkEDtd3HW5RQnwbVIDaY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=B4rzsLdB36NdRiZD++VQEpO568uMwGHDgniJOEP3YgaQxpAV4wcd/zqJC5dOppPDp
+	 eAC6AS67LCC+kRhUd52Llzq6F5Fcip6Zfi8YfNWPl2QatfwIbSXqZXETIre39dw+du
+	 cMJpxABO1aghXCbWGAqz8zBIEm7RukBJOw1Lob4nYsoxFZXWDYWyacBe30x//iN6OE
+	 fCan25gjXw737iBbgqzbyrKo1cnlFUhLCwM1vZGNhMVs6VTn9c7chtsb340wFvD9dl
+	 t31R2gjW1BNwrQiyc1svIevtLWPdD9Z1oXt7tX9/JRqW2KSsFHSr6nL/wtZgOXHbzP
+	 /se8T82KoqOtA==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-39c7ef2b1e2so500721fa.1
+        for <linux-gpio@vger.kernel.org>; Tue, 11 Aug 2026 08:42:30 -0700 (PDT)
+X-Gm-Message-State: AOJu0Yxx3lx5VP7c2rljb3Drw+AJzmKXIUhFX09TBvOqLBx7NSD+yp/Z
+	J/DqxzGDboUDCTxcm+5QqXRNEs6Uuhke13WVmQLANr2C128XoHb24nmxb2in8/u5AZHfyXFpS8s
+	3LcHDTfQbDpa2LDj70I2A4K5mry6vhc4=
+X-Received: by 2002:a05:651c:2224:b0:396:94d9:5c88 with SMTP id
+ 38308e7fff4ca-3a0f8d147bemr5314301fa.11.1786462949662; Tue, 11 Aug 2026
+ 08:42:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <ans2wKanSm6W5lSc@black.igk.intel.com>
+In-Reply-To: <ans2wKanSm6W5lSc@black.igk.intel.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 11 Aug 2026 17:42:16 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmMxt8fWOe0uwNvtQBiTKKFgoqSUQDZER3VEBc4Q2ZEKQ@mail.gmail.com>
+X-Gm-Features: AUfX_mzw8qkXiQ1gj15pfNQvTtNG8oXvzrreAWybFuJSfBrEQJcH0or8At7JBNo
+Message-ID: <CAD++jLmMxt8fWOe0uwNvtQBiTKKFgoqSUQDZER3VEBc4Q2ZEKQ@mail.gmail.com>
+Subject: Re: [GIT PULL] intel-pinctrl for 7.3-1
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linux pin control <linux-gpio@vger.kernel.org>, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andy@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Wentong's e-mail address no longer works, remove it.
+On Tue, Aug 11, 2026 at 4:50=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
- drivers/gpio/gpio-ljca.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> A small piece against Intel pin control drivers and associated. Was a lon=
+g time
+> in Linux Next without any reported problems, please pull for v7.3-rc1.
 
-diff --git a/drivers/gpio/gpio-ljca.c b/drivers/gpio/gpio-ljca.c
-index f32d1d237795..4919f707d33e 100644
---- a/drivers/gpio/gpio-ljca.c
-+++ b/drivers/gpio/gpio-ljca.c
-@@ -484,7 +484,7 @@ static struct auxiliary_driver ljca_gpio_driver = {
- };
- module_auxiliary_driver(ljca_gpio_driver);
- 
--MODULE_AUTHOR("Wentong Wu <wentong.wu@intel.com>");
-+MODULE_AUTHOR("Wentong Wu");
- MODULE_AUTHOR("Zhifeng Wang <zhifeng.wang@intel.com>");
- MODULE_AUTHOR("Lixu Zhang <lixu.zhang@intel.com>");
- MODULE_DESCRIPTION("Intel La Jolla Cove Adapter USB-GPIO driver");
--- 
-2.47.3
+Pulled in!
 
+Thanks Andy.
+
+Yours,
+Linus Walleij
