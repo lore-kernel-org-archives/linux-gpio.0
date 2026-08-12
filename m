@@ -1,160 +1,122 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9E439A07B;
-	Wed, 12 Aug 2026 07:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509753290B1;
+	Wed, 12 Aug 2026 07:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786518023; cv=none; b=GAJwRV2uDizRYM5y5N1+csKp7h+c+ZoG+RPDb5HDFSAE3pFHsNYNVNhgoeGQ7PwEBUUkqBkyW7vU617CH5TI1Vs6f/EIw0iZMXvdEFPWCpUbziwc7BiKQ3xlACnM56dMNN57FbMHbV8dkhmOtAGbtRUR5ODV8fEc27XUnk75Z14=
+	t=1786518430; cv=none; b=CWdKrYUgnVKr7nf1C+F22m68tCEomtp17qKV80LaC2csQ3ad5Xh1QAcubUq3p3W04CeL8TddDTwr37gpk435956J/mosF0rLORmmPR9HqgmZFO9O42Go0nm06bYCPCvHZNtHKvoWPpKuyiHEkmEf+SihZ+VqdVHQB9n59aMprAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786518023; c=relaxed/simple;
-	bh=rbw6X78XbIjsHlTKCag2rU4aHjstR2LruI3rFnmmRss=;
+	s=arc-20240116; t=1786518430; c=relaxed/simple;
+	bh=bidLcxrQ7ZXLiPypBzpcDf8b+4ktOMzk0SS7QFVH6jc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SY57qhIGpmHsAGQBxb59cM54X8Lv/sFZ2yOrC9KtkZB7fSWc8OQmaQxaj3oFYmTwo3iYtu7zmk0/gbMCGSP+0pXgbicYBXhUv4VX1gZiTkqTvjwJZ/iwU9mtqExBTywercTVV6tLwn87s3FJCFBEZgz8cDFr5qMRbUjbqx5kXpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HYur3VOJ; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y9Sk1yBLW0qYtimKo5quhUpluGL9Nxor6u4ZzqSCG7934uL51f4vGDhG8S+5rx7slpgs3zv1VL8o2kHjXHlCYxkZi3OarZ9rv/Y769jK6RZznRQDbE7cov7vHm4UshSby7A0Ml56MF4dw+0zQCv8fIBFZ0vdf4wim19ZrQY22Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RUzMiBcR; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HYur3VOJ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RUzMiBcR"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786518020; x=1818054020;
+  t=1786518429; x=1818054429;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:content-transfer-encoding:in-reply-to;
-  bh=rbw6X78XbIjsHlTKCag2rU4aHjstR2LruI3rFnmmRss=;
-  b=HYur3VOJ3cDi9FvkGOjogz0seIqk53uttE/kaLvTAbodL0bg2blQl3yh
-   yKAtUFNQkhyoS1iIBzOZN+W8K0jJLF8mE3qjz8ttSB1fo69F0OerbdxPX
-   8La1ngbphaFXZgt9wObG5yNQ50fOO4ylkVhp3Kaxh+jVPkQJh7guYLXdD
-   EI2ARM+QzOIsdgFFJ5iyz9jAUCi8JHN/1Mq+qW3vfYjc0tfbyXh3UHfvs
-   83G+tpL51EN1f3hkFTZl3XBBabYxbXDi97cG5e6oZTKKoX+CCot3EAAHU
-   8P4hx8ARvjYsahefnQnweNGwUNFL+INzHcR853FUw+pC3VWhIPP96GlH8
-   A==;
-X-CSE-ConnectionGUID: oXTUq9YPS5KBv5pJNyHi1Q==
-X-CSE-MsgGUID: ZD0NAWO0SUWsLcitJC6cew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="97651020"
+  bh=bidLcxrQ7ZXLiPypBzpcDf8b+4ktOMzk0SS7QFVH6jc=;
+  b=RUzMiBcRSBZYjH+D1/7UFNwfeicbZ7R8N0XkrFRwXirUNr7atQ4h21jD
+   4AlUZpRrDSqswKnzrZEigLLwIj0PokCcPZlqMSZW/+kurg+0eHGySr3On
+   S8O5MizZUlkNmhVsLwDSecC+8oCPL6Wx1/2hEXs/dTcwQB07hFzJRuldh
+   HlECcKJCaVnxZaSyxiXyjq7pIcaWg+yJZabGANGBAIcZv4MZQ0CG/J12P
+   w0+66s2bNPgn21lTLq3dXWiObAabAjqVrv8EoMPi80QcGjCr3DtSXLKnf
+   vjvPpXSVh+XQC1f4RmjI0XrKNLiaOYd71SUaVjZSw/taBgLOl10yx7zqS
+   w==;
+X-CSE-ConnectionGUID: Fr+grQoFQ4emSBambyDvFg==
+X-CSE-MsgGUID: k0w/WQ68SRK5bBOXBFOVtA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="97726207"
 X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; 
-   d="scan'208";a="97651020"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 00:00:19 -0700
-X-CSE-ConnectionGUID: tWvW1C/ASFKc0XbpY0+niw==
-X-CSE-MsgGUID: AWUJ9dkfQ16kaKlYGSfJZg==
+   d="scan'208";a="97726207"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 00:06:31 -0700
+X-CSE-ConnectionGUID: tEApZ2tHQ36luwchycMeIA==
+X-CSE-MsgGUID: RK2WkkrBQ5GXBglCWWqLsQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; 
-   d="scan'208";a="293501132"
+   d="scan'208";a="286988306"
 Received: from rvuia-mobl.ger.corp.intel.com (HELO localhost) ([10.245.245.92])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 00:00:17 -0700
-Date: Wed, 12 Aug 2026 10:00:14 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Linus Walleij <linusw@kernel.org>,
-	=?utf-8?B?TWljaGHFgiBLYXJkYcWb?= <mkmkl@google.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Vic Huang <vich@google.com>,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] pinctrl / 8250_dw: Allow drivers to keep init
- pinctrl state until first open
-Message-ID: <anwZ_h5ySXuGpM3B@ashevche-desk.local>
-References: <20260810130635.1166626-1-mkmkl@google.com>
- <CAD++jLnpZbmbZ_uQTS7pBdbmpvOZSy5+JsVP=Vb3HDhV8J-h4Q@mail.gmail.com>
- <CAD=FV=UzV=G_XLoDZ4zq0ZPSQ3ttUDX9oBJUQrLYfUQ6v35nsg@mail.gmail.com>
- <CAD++jL=WmAJNotpxqQkE9Yf3COxMcj=afDVGB2zi+ZN+mRocAg@mail.gmail.com>
- <CAD=FV=UoZ=CoUdku5aaJr9uihxr0Q-Yj4UQeQtYeODMzku7LkA@mail.gmail.com>
- <CAD=FV=UMBrgiRNP7y=KaAcq9a0f4UvJn5HOK=JoYveRS6c8mRw@mail.gmail.com>
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 00:06:26 -0700
+Date: Wed, 12 Aug 2026 10:06:24 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Michael Walle <mwalle@kernel.org>
+Cc: Janani Sunil <janani.sunil@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>, linux@analog.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org, jananisunil.dev@gmail.com,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH v2 5/7] gpio: regmap: Add runtime PM and
+ read_output_reg_set support
+Message-ID: <anwbcDG6BEciTILK@ashevche-desk.local>
+References: <20260806-ad7768-driver-v2-0-027ac5e2a641@analog.com>
+ <20260806-ad7768-driver-v2-5-027ac5e2a641@analog.com>
+ <DKMRF7SNHX5L.263MVTD0EZHD3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=UMBrgiRNP7y=KaAcq9a0f4UvJn5HOK=JoYveRS6c8mRw@mail.gmail.com>
+In-Reply-To: <DKMRF7SNHX5L.263MVTD0EZHD3@kernel.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Aug 11, 2026 at 06:26:53PM -0700, Doug Anderson wrote:
-> On Tue, Aug 11, 2026 at 1:15 PM Doug Anderson <dianders@chromium.org> wrote:
-
-...
-
-> FWIW, we are in basically the same situation for SPI on the same
-> board. Specifically, this happens:
+On Wed, Aug 12, 2026 at 08:43:20AM +0200, Michael Walle wrote:
+> On Thu Aug 6, 2026 at 5:41 PM CEST, Janani Sunil wrote:
+> > The new pm_dev field in gpio_regmap_config allows a driver to supply a
+> > device for runtime PM. All operations call pm_runtime_resume_and_get()
+> > before accessing the regmap and pm_runtime_put_autosuspend() on return.
+> >
+> > The new read_output_reg_set flag when set, gpio_regmap_get() checks the
+> > pin direction first and reads from reg_set_base instead of reg_dat_base
+> > for output pins. Requires both reg_dat_base and reg_set_base to be
+> > configured.
 > 
-> 1. Remote side starts unpowered.
+> As already mentioned. please split it into two patches. Also, could
+> you add some context where/why this is used/useful?
 > 
-> 2. SPI bus driver probes and pinctrl sets SPI pins to their default
-> state. Importantly, the SPI chip select (CS_N) is high, which
-> backpowers the device (illegal).
-> 
-> What we need is we need to _assert_ chip select (make CS_N low) until
-> we know that the other side is powered.
+> So, if the direction is output, then you just read back the set
+> value (instead of the actual line state). Is that correct? Why can't
+> you read the input buffer in that case? Input buffer deactivated?
+> (NB. you can never get the real line state in that case, which is
+> sometimes useful for debugging.)
 
-Isn't this dangerous? Some noise on the bus for whatever reason might produce
-undesired "communication".
+I understand the concern, but this is debugging of HW via SW, which I think is
+sometimes not possible (not all HW supports it) nor good for production in case
+some glitch happens and one reads back not what was written and hence come to
+async state with the actual flow. Yes, SW might use GPIO output buffer as 1-bit
+variable (it's another story to discuss if it's reliable / good design, but it
+is possible and I have heard of a such usage IRL).
 
-> ...we can try to use the "init" state that exists today, but by the
-> time the SPI's probe function finishes, there is no guarantee that the
-> SPI client's probe function has run. The module might not have been
-> loaded yet. This means that "init" state (as currently defined)
-> doesn't help.
-> 
-> ...we can't use the "opened" we've been talking about in UART because
-> there's no real idea of "open"ing a SPI bus. It's transaction
-> oriented.
+TL;DR: I am on the side to return the output state when direction is output.
+Also note, some cases might specifically disable input buffers in GPIO (for
+example to save a few dozens of �A per pin).
 
-But any SPI message that is queued is basically an "open" stage. So, it sounds
-like SPI core should change pin control states when message is queued and when
-it's done. Like be coupled with runtime PM?
-
-> ...we can't use the normal "runtime pm" concept in SPI and start the
-> SPI bus in suspended state because the "runtime suspended" state of
-> the bus would want the chip select deasserted (CS_N high).
-
-Sounds like a PCB / electrical level of design issue. I would solve this
-by gating CS signal using power of the peripheral connected. Have you talked
-to your HW engineers about this problem?
-
-> Using an extended "init" state (as in Michał's patch) and
-> transitioning to "default" upon the first SPI transfer would work,
-> since we'd know that the client is powered by then. After that point
-> in time, if the client wanted to power the device off it could
-> manually assert "chip select" before powering off.
-> 
-> Of course, I'll admit that using the extended "init" state like this
-> is still a bit ugly, whether doing it like Michał's patch does or by
-> doing something like the "unopened" solution that I talked about.
-> 
-> Other options for SPI could be:
-> 
-> 1. Hack something into the SPI bus driver to turn on the regulator for
-> the device. This is pretty ugly, but would work. Probably not
-> upstreamable.
-> 
-> 2. Invent a "pwrseq" solution for SPI where we run a sequence of steps
-> (turning the regulator on) before probing the SPI bus, like other
-> "pwrseq" drivers. Of course, most of those are for "discoverable"
-> busses, but the idea of powering up a peripheral before probing the
-> bus it's on is similar. This seems an extreme amount of work.
-
-Btw, isn't there some development for the undiscoverable buses?
-
-> 3. Hack the "CS GPIO" to be controlled by the client. It looks like we
-> could fully move the GPIO (including the pinctrl in the DT) to the
-> client. Then the client could call spi_set_csgpiod() after it's turned
-> on the regulator. The client could have an "init" state for the GPIO
-> that keeps it low and then transition to "default" right before
-> calling spi_set_csgpiod().
-
-> Of everything, solution #3 doesn't seem terrible. I also still don't
-> totally hate the idea of extending the "init" state... Of course,
-> there's also some chance we can figure out other ways to get this
-> regulator turned on sooner.
-
-Yes, #3 seems okay, but wouldn't be even better to have some flag in
-SPI core or pin control on per message basis (see also above)?
+> Anyway, you should be able to achieve the same with the
+> reg_mask_xlate(), no? Check if the pin is in output mode, then
+> change the &reg.
 
 -- 
 With Best Regards,
