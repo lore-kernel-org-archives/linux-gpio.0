@@ -1,122 +1,129 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509753290B1;
-	Wed, 12 Aug 2026 07:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96C2305698;
+	Wed, 12 Aug 2026 07:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786518430; cv=none; b=CWdKrYUgnVKr7nf1C+F22m68tCEomtp17qKV80LaC2csQ3ad5Xh1QAcubUq3p3W04CeL8TddDTwr37gpk435956J/mosF0rLORmmPR9HqgmZFO9O42Go0nm06bYCPCvHZNtHKvoWPpKuyiHEkmEf+SihZ+VqdVHQB9n59aMprAI=
+	t=1786519336; cv=none; b=qNv0cP7YNCrvLI997p1FszdLooFVaWUaybDonguBkResYlkv+SoHwgdShzjhFhDJumbEAloLgl448ebt853g18qL40vRaXqArn6rmWxNqy9s8rU+dVewSIHxp0SwMcyHF+EZ3a6yQfo7muef8NPaM6plrcH1yWYHwp3MveiCUhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786518430; c=relaxed/simple;
-	bh=bidLcxrQ7ZXLiPypBzpcDf8b+4ktOMzk0SS7QFVH6jc=;
+	s=arc-20240116; t=1786519336; c=relaxed/simple;
+	bh=fufZPUgDIsEd6X7EwYsM5/dvM04z7+1SxQKmNAHvc7U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y9Sk1yBLW0qYtimKo5quhUpluGL9Nxor6u4ZzqSCG7934uL51f4vGDhG8S+5rx7slpgs3zv1VL8o2kHjXHlCYxkZi3OarZ9rv/Y769jK6RZznRQDbE7cov7vHm4UshSby7A0Ml56MF4dw+0zQCv8fIBFZ0vdf4wim19ZrQY22Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RUzMiBcR; arc=none smtp.client-ip=192.198.163.9
+	 Content-Type:Content-Disposition:In-Reply-To; b=FW9D5XcSRFjWizBn+ZQpU8tPd8ffr68T4epvwaPDY6p+TLPXjpgX/Mjer6o13BC6X1ArZg8wOchozJ2aNtbyatdTAp4qeREmHSWo6AB6LvJZiZynZ58tPFjn076NvLtkelaHKG+au7DI9+43i1kWybA5n7G4rII4M9X6+fxzAsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BQRcAwev; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RUzMiBcR"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BQRcAwev"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786518429; x=1818054429;
+  t=1786519335; x=1818055335;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=bidLcxrQ7ZXLiPypBzpcDf8b+4ktOMzk0SS7QFVH6jc=;
-  b=RUzMiBcRSBZYjH+D1/7UFNwfeicbZ7R8N0XkrFRwXirUNr7atQ4h21jD
-   4AlUZpRrDSqswKnzrZEigLLwIj0PokCcPZlqMSZW/+kurg+0eHGySr3On
-   S8O5MizZUlkNmhVsLwDSecC+8oCPL6Wx1/2hEXs/dTcwQB07hFzJRuldh
-   HlECcKJCaVnxZaSyxiXyjq7pIcaWg+yJZabGANGBAIcZv4MZQ0CG/J12P
-   w0+66s2bNPgn21lTLq3dXWiObAabAjqVrv8EoMPi80QcGjCr3DtSXLKnf
-   vjvPpXSVh+XQC1f4RmjI0XrKNLiaOYd71SUaVjZSw/taBgLOl10yx7zqS
-   w==;
-X-CSE-ConnectionGUID: Fr+grQoFQ4emSBambyDvFg==
-X-CSE-MsgGUID: k0w/WQ68SRK5bBOXBFOVtA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="97726207"
+   mime-version:in-reply-to;
+  bh=fufZPUgDIsEd6X7EwYsM5/dvM04z7+1SxQKmNAHvc7U=;
+  b=BQRcAwevALkKKiiTYBA/zU0kWNzF+gucRyGCRwmC/j5qQW1VCLHblWnv
+   vd6rORoXPD8UhCfAPuHbBG/NeCTEMXskl6qsvynLMVQ88RJ5muVAyU3kY
+   NnppF3Pb4TxxnmMzwsideX1rpUIp3YR8c7mmzzHnoOGXwFZdFESptBKya
+   wZd+Pee6kW5TrNVjH5sny6RVEwiLk+RPMvzzRCwLZTh2vee6D8OAKqGT8
+   6VFsYTJivdoDdm++3Ug3c1eI8GfAtd81j7fAKBEeh0UiZOOHXsSx5uJhf
+   IADmfoeYkbCOU3VNjKT1V2sGU39Ynv5MsN61+r+OQqvYE3+JmYCMvEWb5
+   Q==;
+X-CSE-ConnectionGUID: BhSWlIHYTgKtEfDFB/JTgg==
+X-CSE-MsgGUID: VLEw0Nk7TLSDGCGDeNeDJw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="87076276"
 X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; 
-   d="scan'208";a="97726207"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 00:06:31 -0700
-X-CSE-ConnectionGUID: tEApZ2tHQ36luwchycMeIA==
-X-CSE-MsgGUID: RK2WkkrBQ5GXBglCWWqLsQ==
+   d="scan'208";a="87076276"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 00:22:14 -0700
+X-CSE-ConnectionGUID: DEajM0HfS0Wj9YrRZV8BLg==
+X-CSE-MsgGUID: MS06c8JcSu60SFv4KooasQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; 
-   d="scan'208";a="286988306"
+   d="scan'208";a="265560280"
 Received: from rvuia-mobl.ger.corp.intel.com (HELO localhost) ([10.245.245.92])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 00:06:26 -0700
-Date: Wed, 12 Aug 2026 10:06:24 +0300
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 00:22:12 -0700
+Date: Wed, 12 Aug 2026 10:22:10 +0300
 From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Janani Sunil <janani.sunil@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>, linux@analog.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org, jananisunil.dev@gmail.com,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH v2 5/7] gpio: regmap: Add runtime PM and
- read_output_reg_set support
-Message-ID: <anwbcDG6BEciTILK@ashevche-desk.local>
-References: <20260806-ad7768-driver-v2-0-027ac5e2a641@analog.com>
- <20260806-ad7768-driver-v2-5-027ac5e2a641@analog.com>
- <DKMRF7SNHX5L.263MVTD0EZHD3@kernel.org>
+To: Yu-Chun Lin <eleanor.lin@realtek.com>
+Cc: linusw@kernel.org, brgl@kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tychang@realtek.com,
+	cy.huang@realtek.com, stanley_chang@realtek.com,
+	james.tai@realtek.com
+Subject: Re: [PATCH] gpio: rtd1625: minor cleanups and log improvements
+Message-ID: <anwfIsUcasA-juzv@ashevche-desk.local>
+References: <20260812031929.3598364-1-eleanor.lin@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DKMRF7SNHX5L.263MVTD0EZHD3@kernel.org>
+In-Reply-To: <20260812031929.3598364-1-eleanor.lin@realtek.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Aug 12, 2026 at 08:43:20AM +0200, Michael Walle wrote:
-> On Thu Aug 6, 2026 at 5:41 PM CEST, Janani Sunil wrote:
-> > The new pm_dev field in gpio_regmap_config allows a driver to supply a
-> > device for runtime PM. All operations call pm_runtime_resume_and_get()
-> > before accessing the regmap and pm_runtime_put_autosuspend() on return.
-> >
-> > The new read_output_reg_set flag when set, gpio_regmap_get() checks the
-> > pin direction first and reads from reg_set_base instead of reg_dat_base
-> > for output pins. Requires both reg_dat_base and reg_set_base to be
-> > configured.
-> 
-> As already mentioned. please split it into two patches. Also, could
-> you add some context where/why this is used/useful?
-> 
-> So, if the direction is output, then you just read back the set
-> value (instead of the actual line state). Is that correct? Why can't
-> you read the input buffer in that case? Input buffer deactivated?
-> (NB. you can never get the real line state in that case, which is
-> sometimes useful for debugging.)
+On Wed, Aug 12, 2026 at 11:19:29AM +0800, Yu-Chun Lin wrote:
+> Add minor cleanups based on Andy's feedback:
+> - Store 'dev' in driver data to use dev_err_ratelimited().
+> - Drop redundant 'ret' initialization and the line break.
+> - Narrow the scope of local variables 'i' and 'hwirq'.
+> - Use IRQ_TYPE_DEFAULT.
 
-I understand the concern, but this is debugging of HW via SW, which I think is
-sometimes not possible (not all HW supports it) nor good for production in case
-some glitch happens and one reads back not what was written and hence come to
-async state with the actual flow. Yes, SW might use GPIO output buffer as 1-bit
-variable (it's another story to discuss if it's reliable / good design, but it
-is possible and I have heard of a such usage IRL).
+...
 
-TL;DR: I am on the side to return the output state when direction is output.
-Also note, some cases might specifically disable input buffers in GPIO (for
-example to save a few dozens of µA per pin).
+>  struct rtd1625_gpio {
+> +	struct device *dev;
 
-> Anyway, you should be able to achieve the same with the
-> reg_mask_xlate(), no? Check if the pin is in output mode, then
-> change the &reg.
+Can't this be derived from below regmap?
+
+>  	struct gpio_regmap *gpio_reg;
+
+Either this...
+
+>  	const struct rtd1625_gpio_info *info;
+>  	struct regmap *regmap;
+
+...or this?
+
+...
+
+>  {
+>  	/* Each GPIO has its own dedicated 32-bit register */
+
+It's obvious that the comment is placed wrongly...
+
+>  	struct rtd1625_gpio *data = gpio_regmap_get_drvdata(gpio);
+> -	int val = 0, ret = 0;
+> +	int val = 0, ret;
+
+..and while at it you can make it reversed xmas tree order.
+
+>  	*reg = base + offset * 4;
+
+Putting all together, this should be
+
+	struct rtd1625_gpio *data = gpio_regmap_get_drvdata(gpio);
+	/* Each GPIO has its own dedicated 32-bit register */
+	*reg = base + offset * 4;
+	int val = 0, ret;
+
+...
+
+>  		for_each_set_bit(j, &status, 32) {
+> -			hwirq = i + j;
+> +			irq_hw_number_t hwirq = i + j;
+
+Now it needs a blank line here.
+
+>  			irq_type = irq_get_trigger_type(irq_find_mapping(domain, hwirq));
+
+...
+
+Please, split this patch to a few based on the nature of changes (something
+like 4 patches in a series).
 
 -- 
 With Best Regards,
