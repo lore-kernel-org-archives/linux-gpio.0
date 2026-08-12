@@ -1,253 +1,285 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B79423E9B
-	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 10:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C209340DB2C
+	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 11:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786530993; cv=none; b=ZKh6pVn4GRwrJS5ZKmg3ymMoKrCtFUSywj4cxhx3tbM9qusWgRBegBCGPfMQ/keCbbFxN4Iv6LI8USm6DDFPCZYTmDaRnrekYbgfh5WC8JuV5W7ZXOVJymCSmoN32PrKaEHGRkV/V//+KV/qTvJZUMNowmYpzNwpWf2chqRwI9g=
+	t=1786533212; cv=none; b=swRZpqUQT4p8Ila2dvxjV21JgbA2xmNvdZCgP0mZjqcbCsYfeC5m5lJGi9s6bYw2aV58Jtn2hF7Iu9t9LeHP4ExAqI1by/7AwmbHD/5HrSgicEmtrluSMazhRHGFFH7Sx8tQj/sM0ewMu0vmcT6uLUiRJ4OxVJJRiurG+GJMrlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786530993; c=relaxed/simple;
-	bh=sClagvUmiT6O7bZETDOYfatHR0ft7cNK5RMWLl0HUkY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T8BhD7KRlBoA1uX4FR0Mj+gKJ+eZnx21bweC9zyTWl7jaPJ/qpoemzzqXbZ9dmHdu11jaGek89zOwBdRGBVUvFYtiiZKdfELGvxCWNTg4kcyduLmfcHlY3A+Ygx6TVXlfAkV894heo0dklM6Ev1IxVbjknG+J3gn5Q0UaMI6c5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ANQLT/MO; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786533212; c=relaxed/simple;
+	bh=bV2CoI4HIdgSKwMpjPpt4f5ZFBfeARgBMrj2nnJL2RA=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=SdoL4dajuifEsS/CLDkIcXqHX2QRMYrMSPR/YuaHSzIxKmU4WWSYRqUOMIhW6c71NS/CNQrjJ91nIaFlKp/pAkBStPIn29WmL3hXeUV6nQcspe9W2UwThnPzgIxL2QzpK3NASGqR5TRqcAisEY0bcd8ol5fArR70LceeBOGmsmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hr6JdP5t; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ANQLT/MO"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-496bb7cdf51so8901565e9.2
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 03:36:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786530990; x=1787135790; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=JzmJJY1tPn+fmrketi6Y7iKwO+sxC2jcdTbCz1Vr//0=;
-        b=ANQLT/MOCYWpNgnMRaHiZSq8jwJFnNDNuPHnokm8r/NHfVaRQabzaMwB9XRBlW+5bW
-         D6mGEEj7y9Z/nlW9qKbDq63LtH/PYeRBYsUcsDwxI0EXXEE/kz7u22SqzGvyEw9sMG5R
-         5Bqe6DWnxoNd+3K9hau35kOHscTgo2Pp8PY14D51h46nGW+pQBezRPBBXDgzA7r6DxMB
-         ES1YDpSb+QxsvAHtlfkn1bjWEY+mzGRFkmi38nknHBxG2HssC3ygiDT77+/z8SQ1SXTj
-         bj5JHQsOegHyPKNEUMkppwzWtjvkwtSZ3QtkyhwTNpaf4nf/Qx+uYAQ3EM/ZOfyqzffK
-         fyXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786530990; x=1787135790;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=JzmJJY1tPn+fmrketi6Y7iKwO+sxC2jcdTbCz1Vr//0=;
-        b=AxCLSRU/BLLEOybGguDBd1LMZNfBjvSTXQz97WOY35myHpbUBkyrTmOxVRL5mt0QxY
-         tmaEwd+pEqodnGdMrHpBfrtM0Ad5cNpdYVwPvSxycefCXqPRNPZcBuiQQt6FLncfuSE+
-         0SAmeGVnCVa3KKj/p34B0U2FjLDhYa6GequPJ+ZCO9a+u8XuvlPbqIjvbhZKZJpefywk
-         CaCWAbdStxZ/kSFLYpuwmjDy9EHZgjpim0BuZvkdK9TlP/o8NZ1K9XiPlfMssDWhcmxe
-         leX4PY2hFUtiuLCj0yd871Hfb22V05k1zsKjpiMZibCfy45Q0jwhzWAE9AhA975/sdEq
-         tBvQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rp4CMvQ4Iykq18oIccl1zpa6u1Y4dc9TR/vjcoqNWJrBifWU9F3+bpsI6VrlU8mGt2n9R1RRwlzJDIC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw65nQKho/ms36HkHc2cgmmqg32n4GqgbfOEDoTDr6SR8U0KKlB
-	jfIsaMeOzVc11KVlcBRUofkdZGAkue3cPWJ83uJ9a0jpes/zGi0iaBKw
-X-Gm-Gg: AR+sD127I/HYMTogV+O+tcU54tExwgFiU9Qm4Wmg1bzBsqkqotxDl2y2YLvo3YJima4
-	IoO1rDyp8u4UrlFQsY9cwD/q75ZBiXiN8QSaUmerSSUe0ESKKLEBAId65txVx4X9ul7C6kZ7Lnc
-	SMRklrQO84eO3Q4BbGOavZk7FrVAJI0zg33hMoybSfH+0Zy6sUQ1tS3AwlsPkAHcT4CE/U3Aliu
-	EZx2xr6zctP/YHzGTurc7xb3ztWt+/hvNi5OH0d9bI1E7LJEpm9VdpSKD93e/pkquOw75o050/S
-	5dFHTtwH7gjlbDVLVaGAT8Nb99fdHC/s78/Qeghqmu+fsN+kgl3L9iWsw+5qRvAkiYTZ9Xjhz5Z
-	4I1Y3p2xa/EN5AVGYsOBN3HueRCYWxSdGJFpGR8Fhauh13TfvP1G/IuNWQyLjesU7/KcmfeL+9Y
-	hj1UUyMp7i0xlgNxST9bexj1dBAS+huf1ch12EKlajsCZVCEl+VN1aIE/yGb82iLfAGYGQh6fHv
-	77WjCjsnqzJiihN79yUzNdh3VxeZVE=
-X-Received: by 2002:a05:600c:2e11:b0:498:943:ccc0 with SMTP id 5b1f17b1804b1-4997c0e2ba9mr30935055e9.6.1786530990191;
-        Wed, 12 Aug 2026 03:36:30 -0700 (PDT)
-Received: from localhost.localdomain ([82.137.32.40])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4997b15b807sm100146855e9.7.2026.08.12.03.36.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Aug 2026 03:36:29 -0700 (PDT)
-From: Eduard Bostina <egbostina@gmail.com>
-To: Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Eduard Bostina <egbostina@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>
-Cc: daniel.baluta@nxp.com,
-	simona.toaca@nxp.com,
-	goledhruva@gmail.com,
-	m-chawdhry@ti.com
-Subject: [PATCH v3] dt-bindings: pinctrl: Convert TI DA850 pupd to DT schema
-Date: Wed, 12 Aug 2026 10:36:21 +0000
-Message-ID: <20260812103621.1096140-1-egbostina@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hr6JdP5t"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1786533210; x=1818069210;
+  h=date:from:to:cc:subject:message-id;
+  bh=bV2CoI4HIdgSKwMpjPpt4f5ZFBfeARgBMrj2nnJL2RA=;
+  b=hr6JdP5t1xvUF0scCdKsmjVIQjtHg9krlQ7HJ3RfsPQGO2hr5JSQCu8/
+   pOW00XW59SdvfCq6BRJqg4FZWgOMaMMp6dQgatSJD7igYI82GfltnZ4cK
+   jLq6PMz6NOPjUPfduRd4CAOjNnRRIea2HKzgSr3nY/w5+Jt0mfHXMRR6q
+   61xxu+AfFcGC6XFHZ+bPU/YlOcLYxpG8T2S4KId5rfWBdEsSv30xw8ctN
+   xm/7TajydJXAQz4fFfwhGL98gkb+QRL0fUbrBNE/IbCIXy87DfibAIXcV
+   CBZgimhZZwbltJg+xBOOwk423kMqrVYVN7hzwCFlDZpRpTIIvBJF9nkF1
+   w==;
+X-CSE-ConnectionGUID: 9QGWLIkFRVq8B8Kd8n5vtQ==
+X-CSE-MsgGUID: y3yrAKfET3e/hLI3ebhlZw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="86844025"
+X-IronPort-AV: E=Sophos;i="6.25,219,1779174000"; 
+   d="scan'208";a="86844025"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 04:13:29 -0700
+X-CSE-ConnectionGUID: LltNRFwHSJOJN9l27fZRYw==
+X-CSE-MsgGUID: BSQDNuu6STKe3IL5tahwPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,219,1779174000"; 
+   d="scan'208";a="288367396"
+Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 12 Aug 2026 04:13:08 -0700
+Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1wu6tN-00000000QSA-2bL0;
+	Wed, 12 Aug 2026 11:13:05 +0000
+Date: Wed, 12 Aug 2026 19:12:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org
+Subject: [brgl:gpio/for-current] BUILD SUCCESS
+ 44f3468a0aef1aabdad551898ab7cfa2a9d20e99
+Message-ID: <202608121946.xBLoI82r-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Convert the Texas Instruments DA850/OMAP-L138/AM18x pullup/down
-controller bindings to DT schema.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
+branch HEAD: 44f3468a0aef1aabdad551898ab7cfa2a9d20e99  gpio: sloppy-logic-analyzer: fix use-after-free via debugfs trigger on unbind
 
-Signed-off-by: Eduard Bostina <egbostina@gmail.com>
----
-Changes in v3:
-- Restricted the pin group node names to 'disable', 'pull-up' and
-  'pull-down'.
-- Switched the pin group nodes to 'additionalProperties: false' since
-  all of the valid properties are listed.
+elapsed time: 1508m
 
-Changes in v2:
-- Excluded the 'phandle' property from the pin group node pattern so
-  it is no longer validated as a pin configuration node. This fixes
-  the 'make dt_binding_check' failure.
+configs tested: 208
+configs skipped: 0
 
-Link to v2: https://lore.kernel.org/all/20260811111023.721262-1-egbostina@gmail.com/
-Link to v1: https://lore.kernel.org/all/20260811092057.687155-1-egbostina@gmail.com/
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
- .../bindings/pinctrl/ti,da850-pupd.txt        | 55 --------------
- .../bindings/pinctrl/ti,da850-pupd.yaml       | 74 +++++++++++++++++++
- 2 files changed, 74 insertions(+), 55 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/ti,da850-pupd.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/ti,da850-pupd.yaml
+tested configs:
+alpha                            allnoconfig    gcc-16.1.0
+alpha                           allyesconfig    gcc-16.1.0
+alpha                              defconfig    gcc-16.1.0
+arc                             allmodconfig    gcc-16.1.0
+arc                             allyesconfig    gcc-16.1.0
+arc                           randconfig-001    gcc-12.5.0
+arc                  randconfig-001-20260811    gcc-11.5.0
+arc                  randconfig-001-20260812    gcc-12.5.0
+arc                  randconfig-002-20260811    gcc-11.5.0
+arc                  randconfig-002-20260812    gcc-12.5.0
+arm                    am200epdkit_defconfig    gcc-16.1.0
+arm                  randconfig-001-20260811    gcc-11.5.0
+arm                  randconfig-001-20260812    gcc-12.5.0
+arm                  randconfig-002-20260811    gcc-11.5.0
+arm                  randconfig-002-20260812    gcc-12.5.0
+arm                  randconfig-003-20260811    gcc-11.5.0
+arm                  randconfig-003-20260812    gcc-12.5.0
+arm                  randconfig-004-20260811    gcc-11.5.0
+arm                  randconfig-004-20260812    gcc-12.5.0
+arm                        vf610m4_defconfig    gcc-16.1.0
+arm64                         randconfig-001    gcc-14.3.0
+arm64                randconfig-001-20260811    gcc-13.4.0
+arm64                randconfig-001-20260812    gcc-10.5.0
+arm64                randconfig-001-20260812    gcc-14.3.0
+arm64                randconfig-002-20260811    gcc-13.4.0
+arm64                randconfig-002-20260812    gcc-10.5.0
+arm64                randconfig-002-20260812    gcc-14.3.0
+arm64                randconfig-003-20260811    gcc-13.4.0
+arm64                randconfig-003-20260812    gcc-10.5.0
+arm64                randconfig-003-20260812    gcc-14.3.0
+arm64                randconfig-004-20260811    gcc-13.4.0
+arm64                randconfig-004-20260812    gcc-10.5.0
+arm64                randconfig-004-20260812    gcc-14.3.0
+csky                            allmodconfig    gcc-16.1.0
+csky                 randconfig-001-20260811    gcc-13.4.0
+csky                 randconfig-001-20260812    gcc-10.5.0
+csky                 randconfig-001-20260812    gcc-14.3.0
+csky                 randconfig-002-20260811    gcc-13.4.0
+csky                 randconfig-002-20260812    gcc-10.5.0
+csky                 randconfig-002-20260812    gcc-14.3.0
+hexagon                       randconfig-001    gcc-8.5.0
+hexagon              randconfig-001-20260811    clang-24
+hexagon              randconfig-001-20260811    gcc-8.5.0
+hexagon              randconfig-001-20260812    gcc-11.5.0
+hexagon              randconfig-002-20260811    clang-22
+hexagon              randconfig-002-20260811    gcc-8.5.0
+hexagon              randconfig-002-20260812    gcc-11.5.0
+i386                            allmodconfig    gcc-14
+i386       buildonly-randconfig-001-20260811    gcc-14
+i386       buildonly-randconfig-001-20260812    clang-22
+i386       buildonly-randconfig-002-20260811    gcc-14
+i386       buildonly-randconfig-002-20260812    clang-22
+i386       buildonly-randconfig-003-20260811    gcc-14
+i386       buildonly-randconfig-003-20260812    clang-22
+i386       buildonly-randconfig-004-20260811    gcc-14
+i386       buildonly-randconfig-004-20260812    clang-22
+i386       buildonly-randconfig-005-20260811    gcc-14
+i386       buildonly-randconfig-005-20260812    clang-22
+i386       buildonly-randconfig-006-20260811    gcc-14
+i386       buildonly-randconfig-006-20260812    clang-22
+i386                          randconfig-001    clang-22
+i386                          randconfig-001    gcc-14
+i386                 randconfig-001-20260811    gcc-14
+i386                 randconfig-001-20260812    clang-22
+i386                 randconfig-002-20260811    gcc-14
+i386                 randconfig-002-20260812    clang-22
+i386                 randconfig-003-20260811    gcc-14
+i386                 randconfig-003-20260812    clang-22
+i386                 randconfig-004-20260811    gcc-14
+i386                 randconfig-004-20260812    clang-22
+i386                 randconfig-005-20260811    gcc-14
+i386                 randconfig-005-20260812    clang-22
+i386                 randconfig-006-20260811    gcc-14
+i386                 randconfig-006-20260812    clang-22
+i386                 randconfig-007-20260811    gcc-14
+i386                 randconfig-007-20260812    clang-22
+i386                          randconfig-011    gcc-14
+i386                 randconfig-011-20260811    gcc-14
+i386                 randconfig-011-20260812    gcc-12
+i386                 randconfig-012-20260811    gcc-14
+i386                 randconfig-012-20260812    gcc-12
+i386                 randconfig-013-20260811    gcc-14
+i386                 randconfig-013-20260812    gcc-12
+i386                 randconfig-014-20260811    gcc-14
+i386                 randconfig-014-20260812    gcc-12
+i386                 randconfig-015-20260811    gcc-14
+i386                 randconfig-015-20260812    gcc-12
+i386                 randconfig-016-20260811    gcc-14
+i386                 randconfig-016-20260812    gcc-12
+i386                 randconfig-017-20260811    gcc-14
+i386                 randconfig-017-20260812    gcc-12
+loongarch                          defconfig    clang-24
+loongarch            randconfig-001-20260811    gcc-15.2.0
+loongarch            randconfig-001-20260811    gcc-8.5.0
+loongarch            randconfig-001-20260812    gcc-11.5.0
+loongarch            randconfig-002-20260811    clang-24
+loongarch            randconfig-002-20260811    gcc-8.5.0
+loongarch            randconfig-002-20260812    gcc-11.5.0
+mips                       bcm63xx_defconfig    clang-24
+mips                    cu1000-neo_defconfig    gcc-16.1.0
+mips                          ip22_defconfig    gcc-16.1.0
+nios2                           allmodconfig    gcc-11.5.0
+nios2                            allnoconfig    gcc-11.5.0
+nios2                randconfig-001-20260811    gcc-8.5.0
+nios2                randconfig-001-20260812    gcc-11.5.0
+nios2                randconfig-002-20260811    gcc-8.5.0
+nios2                randconfig-002-20260811    gcc-9.5.0
+nios2                randconfig-002-20260812    gcc-11.5.0
+parisc                          allmodconfig    gcc-16.1.0
+parisc                          allyesconfig    gcc-16.1.0
+parisc                             defconfig    gcc-16.1.0
+parisc                        randconfig-001    gcc-15.2.0
+parisc               randconfig-001-20260811    gcc-15.2.0
+parisc               randconfig-001-20260812    clang-17
+parisc               randconfig-002-20260811    gcc-15.2.0
+parisc               randconfig-002-20260812    clang-17
+powerpc              randconfig-001-20260811    gcc-15.2.0
+powerpc              randconfig-001-20260812    clang-17
+powerpc              randconfig-002-20260811    gcc-15.2.0
+powerpc              randconfig-002-20260812    clang-17
+powerpc64            randconfig-001-20260811    gcc-15.2.0
+powerpc64            randconfig-001-20260812    clang-17
+powerpc64            randconfig-002-20260811    gcc-15.2.0
+powerpc64            randconfig-002-20260812    clang-17
+riscv                         randconfig-001    clang-24
+riscv                randconfig-001-20260811    clang-24
+riscv                randconfig-001-20260812    clang-24
+riscv                randconfig-002-20260811    clang-24
+riscv                randconfig-002-20260812    clang-24
+s390                 randconfig-001-20260811    clang-24
+s390                 randconfig-001-20260812    clang-24
+s390                 randconfig-002-20260811    clang-24
+s390                 randconfig-002-20260812    clang-24
+sh                                 defconfig    gcc-16.1.0
+sh                   randconfig-001-20260811    clang-24
+sh                   randconfig-001-20260812    clang-24
+sh                   randconfig-002-20260811    clang-24
+sh                   randconfig-002-20260812    clang-24
+sparc                         randconfig-001    gcc-8.5.0
+sparc                randconfig-001-20260811    gcc-8.5.0
+sparc                randconfig-001-20260812    gcc-13.4.0
+sparc                randconfig-002-20260811    gcc-8.5.0
+sparc                randconfig-002-20260812    gcc-13.4.0
+sparc64              randconfig-001-20260811    gcc-8.5.0
+sparc64              randconfig-001-20260812    gcc-13.4.0
+sparc64              randconfig-002-20260811    gcc-8.5.0
+sparc64              randconfig-002-20260812    gcc-13.4.0
+um                   randconfig-001-20260811    gcc-8.5.0
+um                   randconfig-001-20260812    gcc-13.4.0
+um                   randconfig-002-20260811    gcc-8.5.0
+um                   randconfig-002-20260812    gcc-13.4.0
+x86_64              buildonly-randconfig-001    gcc-12
+x86_64     buildonly-randconfig-001-20260811    gcc-12
+x86_64     buildonly-randconfig-001-20260812    gcc-14
+x86_64     buildonly-randconfig-002-20260811    gcc-12
+x86_64     buildonly-randconfig-002-20260812    gcc-14
+x86_64     buildonly-randconfig-003-20260811    gcc-12
+x86_64     buildonly-randconfig-003-20260812    gcc-14
+x86_64     buildonly-randconfig-004-20260811    gcc-12
+x86_64     buildonly-randconfig-004-20260812    gcc-14
+x86_64     buildonly-randconfig-005-20260811    gcc-12
+x86_64     buildonly-randconfig-005-20260812    gcc-14
+x86_64     buildonly-randconfig-006-20260811    gcc-12
+x86_64     buildonly-randconfig-006-20260812    gcc-14
+x86_64                                 kexec    clang-22
+x86_64               randconfig-001-20260811    clang-22
+x86_64               randconfig-001-20260812    clang-22
+x86_64               randconfig-002-20260811    clang-22
+x86_64               randconfig-002-20260812    clang-22
+x86_64               randconfig-003-20260811    clang-22
+x86_64               randconfig-003-20260812    clang-22
+x86_64               randconfig-004-20260811    clang-22
+x86_64               randconfig-004-20260812    clang-22
+x86_64               randconfig-005-20260811    clang-22
+x86_64               randconfig-005-20260812    clang-22
+x86_64               randconfig-006-20260811    clang-22
+x86_64               randconfig-006-20260812    clang-22
+x86_64                        randconfig-011    clang-22
+x86_64               randconfig-011-20260811    gcc-14
+x86_64               randconfig-011-20260812    clang-22
+x86_64               randconfig-012-20260811    gcc-14
+x86_64               randconfig-012-20260812    clang-22
+x86_64               randconfig-013-20260811    gcc-14
+x86_64               randconfig-013-20260812    clang-22
+x86_64               randconfig-014-20260811    gcc-14
+x86_64               randconfig-014-20260812    clang-22
+x86_64               randconfig-015-20260811    gcc-14
+x86_64               randconfig-015-20260812    clang-22
+x86_64               randconfig-016-20260811    gcc-14
+x86_64               randconfig-016-20260812    clang-22
+x86_64                        randconfig-071    clang-22
+x86_64               randconfig-071-20260811    gcc-14
+x86_64               randconfig-071-20260812    clang-22
+x86_64               randconfig-072-20260811    gcc-14
+x86_64               randconfig-072-20260812    clang-22
+x86_64               randconfig-073-20260811    gcc-14
+x86_64               randconfig-073-20260812    clang-22
+x86_64               randconfig-074-20260811    gcc-14
+x86_64               randconfig-074-20260812    clang-22
+x86_64               randconfig-075-20260811    gcc-14
+x86_64               randconfig-075-20260812    clang-22
+x86_64               randconfig-076-20260811    gcc-14
+x86_64               randconfig-076-20260812    clang-22
+x86_64                          rhel-9.4-bpf    gcc-14
+xtensa               randconfig-001-20260811    gcc-8.5.0
+xtensa               randconfig-001-20260812    gcc-13.4.0
+xtensa               randconfig-002-20260811    gcc-8.5.0
+xtensa               randconfig-002-20260812    gcc-13.4.0
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/ti,da850-pupd.txt b/Documentation/devicetree/bindings/pinctrl/ti,da850-pupd.txt
-deleted file mode 100644
-index 7f2980567c9f..000000000000
---- a/Documentation/devicetree/bindings/pinctrl/ti,da850-pupd.txt
-+++ /dev/null
-@@ -1,55 +0,0 @@
--* Pin configuration for TI DA850/OMAP-L138/AM18x
--
--These SoCs have a separate controller for setting bias (internal pullup/down).
--Bias can only be selected for groups rather than individual pins.
--
--Required Properties:
--
--  - compatible: Must be "ti,da850-pupd"
--  - reg: Base address and length of the memory resource used by the pullup/down
--    controller hardware module.
--
--The controller node also acts as a container for pin group configuration nodes.
--The names of these groups are ignored.
--
--Pin Group Node Properties:
--
--- groups: An array of strings, each string containing the name of a pin group.
--          Valid names are "cp0".."cp31".
--
--The pin configuration parameters use the generic pinconf bindings defined in
--pinctrl-bindings.txt in this directory. The supported parameters are
--bias-disable, bias-pull-up, bias-pull-down.
--
--
--Example
---------
--
--In common dtsi file:
--
--	pinconf: pin-controller@22c00c {
--		compatible = "ti,da850-pupd";
--		reg = <0x22c00c 0x8>;
--	};
--
--In board-specific file:
--
--	&pinconf {
--		pinctrl-0 = <&pinconf_bias_groups>;
--		pinctrl-names = "default";
--
--		pinconf_bias_groups: bias-groups {
--			pull-up {
--				groups = "cp30", "cp31";
--				bias-pull-up;
--			};
--			pull-down {
--				groups = "cp29", "cp28";
--				bias-pull-down;
--			};
--			disable {
--				groups = "cp27", "cp26";
--				bias-disable;
--			};
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/pinctrl/ti,da850-pupd.yaml b/Documentation/devicetree/bindings/pinctrl/ti,da850-pupd.yaml
-new file mode 100644
-index 000000000000..21d439e08d4b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/ti,da850-pupd.yaml
-@@ -0,0 +1,74 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/ti,da850-pupd.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments DA850/OMAP-L138/AM18x Pin Configuration
-+
-+maintainers:
-+  - Eduard Bostina <egbostina@gmail.com>
-+
-+description:
-+  These SoCs have a separate controller for setting bias (internal pullup/down).
-+  Bias can only be selected for groups rather than individual pins.
-+  The controller node also acts as a container for pin group configuration nodes.
-+  The names of these groups are ignored.
-+
-+properties:
-+  compatible:
-+    const: ti,da850-pupd
-+
-+  reg:
-+    maxItems: 1
-+
-+  pinctrl-0: true
-+  pinctrl-names: true
-+
-+patternProperties:
-+  "-groups$":
-+    type: object
-+    additionalProperties: false
-+    patternProperties:
-+      "^(disable|pull-(up|down))$":
-+        $ref: /schemas/pinctrl/pincfg-node.yaml#
-+        properties:
-+          groups:
-+            $ref: /schemas/types.yaml#/definitions/string-array
-+            description: An array of strings containing the name of a pin group.
-+            items:
-+              pattern: "^cp([0-9]|[1-2][0-9]|3[0-1])$"
-+          bias-disable: true
-+          bias-pull-up: true
-+          bias-pull-down: true
-+        additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pinconf: pin-controller@22c00c {
-+        compatible = "ti,da850-pupd";
-+        reg = <0x22c00c 0x8>;
-+        pinctrl-0 = <&pinconf_bias_groups>;
-+        pinctrl-names = "default";
-+
-+        pinconf_bias_groups: bias-groups {
-+            pull-up {
-+                groups = "cp30", "cp31";
-+                bias-pull-up;
-+            };
-+            pull-down {
-+                groups = "cp29", "cp28";
-+                bias-pull-down;
-+            };
-+            disable {
-+                groups = "cp27", "cp26";
-+                bias-disable;
-+            };
-+        };
-+    };
--- 
-2.43.0
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
