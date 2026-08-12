@@ -1,324 +1,334 @@
-Received: from mail-wr2-f0.google.com (mail-wr2-f0.google.com [74.125.225.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670E8437847
-	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 12:01:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6359131E823
+	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 12:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786536083; cv=none; b=NAbVsYL3v3mOzgCGyiedNHxOSFn0rVeMmMXSoz2mfkful+a4FKSCoreWpdT4TmqpQzHIulPohe79WE6P2piNUkOZgiqdQzTpv4cREAptP/UC3W+Qsvg/Nwgcug1ildMcQiL/7DefPQ61w0GiwjwHNBm3jhhOFJqyr53J85TcXqI=
+	t=1786537669; cv=none; b=YW/sovzPJoyl36u5J5Q3jtadFg01jtWfm6fHVWesp0JA1GnyIDLcN8dWenkNMkChpuk6RawKDiOAOHDrlIeqSqcIu62rO1ab6ULpI6im5X8CVABnGgTS9V70Tx1Gyb/uA7BEuurcRLDleP+eHq3Mw0XXsrYZoV552gYn+9x5HoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786536083; c=relaxed/simple;
-	bh=3TUC4hRNeY7ToItc6cmb1cQe8JzM73j3wH/40Aoh7vY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hsjL/Q5uQJf7hBwrRHWSCCX47ptCJmVmHrsDFP2tG7mRfW/uwZ+LUyOVbQeQORy13qYiHhdwkqyxEMOAPEw08e3BiTN4fCXVrQhD0nplvvx8NVIO7qauvJjztvN5Kq3SZse2AQVaanlyYIRdVtkoYufP90UdAMFLgtoc7eWEJK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wirenboard.com; spf=pass smtp.mailfrom=wirenboard.com; dkim=pass (2048-bit key) header.d=wirenboard.com header.i=@wirenboard.com header.b=btWNqVdH; arc=none smtp.client-ip=74.125.225.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wirenboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wirenboard.com
+	s=arc-20240116; t=1786537669; c=relaxed/simple;
+	bh=fVndBBv7ikb7RZ/HhSWVt/pvp9S/iwlFnBU247K7KxE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XDsxsYQJfMfH0sR7CawkoCuVWP1DA24PPspO7z0us8bLfeccYU+gG9Ypv1FzZmZoD6GvPYJAIdgQTJo1tkjD81naMKEERQdEr/E6+uib1KFxFDeOpmOKFVFig1vfqXVWy/As1TdcI9qarjvXXcFAMUb/yKMfahPfQI5pjvJWAzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=lCq5Q5Li; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wirenboard.com header.i=@wirenboard.com header.b="btWNqVdH"
-Received: by mail-wr2-f0.google.com with SMTP id ffacd0b85a97d-47f4c92d1b3so188863f8f.0
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 05:01:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=wirenboard.com; s=google; t=1786536079; x=1787140879; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=XFMlwpc6tCSzUQMVWNSN4gTByCEbr3imhWdA2ltyOwE=;
-        b=btWNqVdHR0xCAc29mzFNzYa6sqJsc4+Ta7XXhEsgNSbZAQ1GqfQ1Ayo+ldLKVIiOeU
-         aMZXeEWuurP1e54HPsIH+r0KZLvEbED8dMX5U9QWILYHCchQMaGOMLHPM+j1OMrR7LbW
-         2XyakWj4v1z/mjDPa68HpNhesKy0u7208wA1g9APwdp4Cn/EedIKuATcAaDz1XTZRPn2
-         +HhEGvheKOGtTrBnJ64jedteFefeyOpGBcmtHwwVH5YYr7bpS73hkWYaEJ2IALiyH3S7
-         2l/6B4LV9SDZ8w6BLqI6SAIXpUw09+592NCgIaATXst7GZT+l7WiBRvgqsTB1n1gHUUJ
-         wKhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786536079; x=1787140879;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=XFMlwpc6tCSzUQMVWNSN4gTByCEbr3imhWdA2ltyOwE=;
-        b=f10jESpm+cbo9nFxZEWhANPJatr7b5OTvd0D7ZW/pfn30r1AThz4zSL7GIxcdokPMR
-         iPnNtghYsr+4dQnzL5EUqA01XhZyIR0c8ad3u/PFDkyC8mZ3l1vUNE7I5TP9usyHlO4J
-         Rw8oVWlLjtFkPQDis98lsS6VoJX/1UzVWbmdlfGqV4aqQnp1FwB7rTGTVfZTcTG3yYaj
-         22qFXoU/lptcONh/wtOfAt+TFhNRobgW5viSNLn+rt7brurn8s2bsPCrKObZJ/xrmAPb
-         fehs8MJt8L1IEeMhMyfGylzuNqwkpQ9aB4JWwGYMkoKtpXJADS4YD0L5RbNDLoOUbI6H
-         N/6A==
-X-Forwarded-Encrypted: i=1; AHgh+RpKV4o/CCOmbjTsFViMFdXYCwYV7f0PEVVFvFqcHr7KUDrpfQZfkDP6jS5khDjCqlvUJYvLAjtPNcbB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlJQHQzje8Z91LxZ7HX8/+3DmVveLBoQsI9gqy0Lh5sKd2Luqi
-	e0OEwdMZ2DwzOiAE/g73VeKFgxXXV42hsHbOPa7lzAgPeGo8VjIeFLQ0MD8Hu0/sE9k=
-X-Gm-Gg: AR+sD128kbzTg1r/N0G5vXbdwpVGU17PQyq4WIu28Eg98bQeL2wvwqrknpK8Ov13Ke2
-	OxwaLNg6Ob2N6udM9uZQnaxQEZ5oCzqYaGLK5Q3mNYZ683St5NrJDaf3LfjTaT6NFru3crMf8V/
-	FYe0seLxEtbna7MY7XQLY94/SL314eYEQN/CIBEpwwOziV70chx2EdOfxbxJVJHRHvbe2tDjrcB
-	DMeHlinh0bh9jETfdp5qTIPDq+kYQQJaUEBG4dxC/DUdSxyiw7Ui1ZGTNcpqWZPhHm/oxSwPiw2
-	F0UE6Zuzx12x8+URtwGSuPcLq1pIcIrZooxE30zhm0HK+p6FqUyEWxEi0P1S8tLgpSJ5NTNXgl8
-	rU30yfhHfNG7fPYZts/g63bikquURebO9EiUOsSjRfbaZiEakLe5AY3uahi5Q0+FO7oQfoTgytg
-	UDvfHnLwhAZ5vMV2vH+wrI4BpBood/ZsHOS+DAYWFdPQ+Uw9+nJOuVaDlGXGWObMOTb2JTPdfTs
-	MEimWGX91FY+0JdGginQXU=
-X-Received: by 2002:a05:6000:240c:b0:47f:e797:41c8 with SMTP id ffacd0b85a97d-481527a0c61mr6728195f8f.4.1786536077716;
-        Wed, 12 Aug 2026 05:01:17 -0700 (PDT)
-Received: from localhost.localdomain ([85.137.25.106])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48150d4e29bsm6609473f8f.24.2026.08.12.05.01.15
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 12 Aug 2026 05:01:17 -0700 (PDT)
-From: Ilya Titov <ilya.titov@wirenboard.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	=?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	linux-gpio@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Ilya Titov <ilya.titov@wirenboard.com>
-Subject: [PATCH] pinctrl: sunxi: keep a shadow copy of the data register output latches
-Date: Wed, 12 Aug 2026 15:01:14 +0300
-Message-ID: <20260812120114.32501-1-ilya.titov@wirenboard.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="lCq5Q5Li"
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id F24F4240106
+	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 14:27:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
+	s=1984.8680eb; t=1786537664;
+	bh=ElBNO9EPvHuirVGnvX/nkoBxhVDqF0yWtKSEwWHqacU=;
+	h=Message-ID:Subject:From:To:Cc:Date:Autocrypt:Content-Type:
+	 MIME-Version:OpenPGP:From;
+	b=lCq5Q5LiwcsfJzkHKr5ABpM+49V7h/hnKL9/ToAbyI095olNp5Y1qknXWx8/OOq5O
+	 dICSAYxeqZQiYzL5L2nEzt/eQQCEuKZYrYW4ZL01e5Xm85iFkFJYMxvJOUz1zSE5xP
+	 39Tg1vfuIXQHPKaK54BFx8zLqOAjxGP/zzt6ncXLjTDOr1TDtBdPSNhmLfB6ySQ5X7
+	 lgER+VbhxKyUsfD95DgfZsA3R3oKPMx5cL09gsFyRf0PPSGOhm0xIR3s7wuDvT7yu7
+	 OFUFqiqQbN/EIToNwab4RiL5tuUGR6UsfWA9b1KT/cXbigRSdkSZM+TDiA2NghsppC
+	 TTBGdTQkJ9pPg==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4hKnnV5CDfz9rxB;
+	Wed, 12 Aug 2026 14:27:42 +0200 (CEST)
+Message-ID: <053e901c9145d57c01078df6febe8b22fd79b850.camel@posteo.de>
+Subject: Re: [PATCH v3 1/5] dt-bindings: rtc: Add pinctrl for S35390A
+From: Markus Probst <markus.probst@posteo.de>
+To: Rob Herring <robh@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?=
+	 <uwe@kleine-koenig.org>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement
+	 <gregory.clement@bootlin.com>, Sebastian Hesselbarth
+	 <sebastian.hesselbarth@gmail.com>, Michael Langer
+	 <michael.brainbug.langer@googlemail.com>, Andrew Morton
+	 <akpm@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 12 Aug 2026 12:27:44 +0000
+In-Reply-To: <20260812020844.GA520945-robh@kernel.org>
+References: <20260805-rtc_s35390a_int1-v3-0-e836faba3e25@posteo.de>
+	 <20260805-rtc_s35390a_int1-v3-1-e836faba3e25@posteo.de>
+	 <20260812020844.GA520945-robh@kernel.org>
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+ keydata=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
+ jfGillcaQOqFZ3WwVqyzG1BUfTow==
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-4FzxRt0vSudbgFRbezTj"
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On Allwinner SoCs, reading a bank's data register returns the pin level,
-not the output latch, for pins that are muxed as inputs.  Writing a GPIO
-therefore corrupts the output latches of all input-muxed pins in the
-same bank: the read-modify-write in sunxi_pinctrl_gpio_set() reads back
-their pin levels and writes those into their latches.
 
-This breaks emulated open-drain lines (e.g. a bit-banged I2C bus from
-i2c-gpio).  Such a line is released high by muxing it as input and
-letting the pull-up raise it, so any concurrent GPIO write in the same
-bank stores 1 into its latch.  Driving the line low afterwards is a
-non-atomic data-then-mux sequence in sunxi_pinctrl_gpio_direction_output();
-if the poisoning write lands between the two steps, the pin actively
-drives high (push-pull) instead of low.
+--=-4FzxRt0vSudbgFRbezTj
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Observed in practice as sporadic glitches on a T507 board bit-banging
-I2C on port E while other PE GPIOs are toggled.  On a scope the failure
-is unmistakable: on a clock pulse where SCL should fall to GND, the line
-instead steps *above* its idle high level for the whole low phase — the
-pad drives a strong push-pull 3.3 V high, higher than the level the
-pull-up sustains on the loaded bus — before the next transition recovers
-it.  The same can hit SDA, corrupting data instead of clocks.
+On Tue, 2026-08-11 at 21:08 -0500, Rob Herring wrote:
+> On Wed, Aug 05, 2026 at 07:32:27PM +0000, Markus Probst wrote:
+> > Synology NAS devices use the output pin for interrupt signal 1 to wake =
+up
+> > the system.
+> >=20
+> > Move devicetree bindings for sii,s35390a into its own file.
+> > Add necessary properties to configure the individual pins via pinctrl,
+> > which allows the interrupt signal 1 to be used for wakeup alarm.
+> >=20
+> > Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> > ---
+> >  .../devicetree/bindings/rtc/sii,s35390a.yaml       | 109 +++++++++++++=
+++++++++
+> >  .../devicetree/bindings/rtc/trivial-rtc.yaml       |   3 -
+> >  MAINTAINERS                                        |   1 +
+> >  3 files changed, 110 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/rtc/sii,s35390a.yaml b/D=
+ocumentation/devicetree/bindings/rtc/sii,s35390a.yaml
+> > new file mode 100644
+> > index 000000000000..0355f17f233a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/rtc/sii,s35390a.yaml
+> > @@ -0,0 +1,109 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/rtc/sii,s35390a.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: S-35390A 2-WIRE REAL-TIME CLOCK
+> > +
+> > +maintainers:
+> > +  - Alexandre Belloni <alexandre.belloni@bootlin.com>
+>=20
+> This should be someone with the h/w, not subsystem maintainer.
+There has been a discussion about this before.
+See
+https://lore.kernel.org/all/20260701-bronze-jaguar-of-perfection-028bac@quo=
+ll/
+and replies.
 
-Steps to reproduce on any sunxi board with a bit-banged (i2c-gpio) bus:
+If desired I can use my own name.
 
-  # background: toggle any other GPIO of the same bank, e.g. line 21
-  gpioset -c <chip> --toggle 100us 21=0 &
+>=20
+> > +
+> > +description:
+> > +  The S-35390A is a CMOS 2-wire real-time clock IC which operates with=
+ the
+> > +  very low current consumption in the wide range of operation voltage.
+> > +
+> > +allOf:
+> > +  - $ref: rtc.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: sii,s35390a
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +    description: Supports up to 2 interrupt lines via the INT1 and INT=
+2 pins.
+> > +
+> > +  wakeup-parent: true
+> > +
+> > +  wakeup-source: true
+> > +
+> > +  "#clock-cells":
+> > +    const: 1
+> > +
+> > +patternProperties:
+> > +  "^pins":
+>=20
+> Do you need wild cards here? Wouldn't just 'pins' for the node name be=
+=20
+> fine?
+Pin control by itself supports multiple states.
+I am not sure if this has a usecase with this device though.
 
-  # foreground: keep the bit-banged bus busy
-  while :; do i2cdetect -y <bus> 0x50 0x57; done
+>=20
+> > +    type: object
+> > +    patternProperties:
+> > +      "-pins$":
+> > +        type: object
+> > +        properties:
+> > +          pins:
+> > +            $ref: /schemas/pinctrl/pinmux-node.yaml#/properties/pins
+> > +            items:
+> > +              enum:
+> > +                - int1
+> > +                - int2
+> > +
+> > +          function:
+> > +            $ref: /schemas/types.yaml#/definitions/string
+> > +            description: |
+> > +              Pin function:
+> > +              - ignore:  Preserve the previous state.
+> > +              - disable: Disable pin output.
+> > +              - wakeup:  Output wakes up the system.
+> > +              - clock:   Output clock pulse.
+> > +              - pmin1:   Minute periodical output with 50% duty.
+> > +              - pmin2:   Minute periodical output L for 7.81 ms.
+> > +                         Can only be used with pin int1.
+> > +            enum:
+> > +              - ignore
+> > +              - disable
+> > +              - wakeup
+> > +              - clock
+> > +              - pmin1
+> > +              - pmin2
+> > +
+> > +        required:
+> > +          - function
+> > +
+> > +        additionalProperties: false
+> > +
+> > +    additionalProperties: false
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    i2c {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        rtc@30 {
+> > +            compatible =3D "sii,s35390a";
+> > +            reg =3D <0x30>;
+> > +            pinctrl-0 =3D <&rtc_pins_default>;
+> > +            pinctrl-names =3D "default";
+> > +
+> > +            wakeup-parent =3D <&int>;
+> > +
+> > +            rtc_pins_default: pins {
+> > +              int1-pins {
+> > +                pins =3D "int1";
+> > +                function =3D "wakeup";
+> > +              };
+> > +              int2-pins {
+> > +                pins =3D "int2";
+> > +                function =3D "disable";
+> > +              };
+> > +            };
+> > +        };
+> > +    };
+> > diff --git a/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml b/D=
+ocumentation/devicetree/bindings/rtc/trivial-rtc.yaml
+> > index f4d0eed98a08..7b3f682ef4d5 100644
+> > --- a/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
+> > +++ b/Documentation/devicetree/bindings/rtc/trivial-rtc.yaml
+> > @@ -81,8 +81,6 @@ properties:
+> >        - ricoh,rv5c386
+> >        # I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+> >        - ricoh,rv5c387a
+> > -      # 2-wire CMOS real-time clock
+> > -      - sii,s35390a
+> >        # ST SPEAr Real-time Clock
+> >        - st,spear600-rtc
+> >        # VIA/Wondermedia VT8500 Real-time Clock
+> > @@ -105,5 +103,4 @@ required:
+> >    - reg
+> > =20
+> >  additionalProperties: false
+> > -
+> >  ...
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 5114e6db7307..4c8bc35cfe55 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -22695,6 +22695,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kerne=
+l/git/abelloni/linux.git
+> >  F:	Documentation/admin-guide/rtc.rst
+> >  F:	Documentation/devicetree/bindings/rtc/
+> >  F:	drivers/rtc/
+> > +F:	include/dt-bindings/rtc/
+> >  F:	include/linux/rtc.h
+> >  F:	include/linux/rtc/
+> >  F:	include/uapi/linux/rtc.h
+> >=20
+> > --=20
+> > 2.54.0
+> >=20
 
-  # watch SCL/SDA with a scope or logic analyzer: sporadic clock-low
-  # phases driven high (above the pull-up level) instead of low
+Thanks
+- Markus Probst
 
-The bank spinlock cannot help: the racing write is a perfectly valid
-whole-register RMW that faithfully writes back what the hardware
-returned.  There are no set/clear registers on this IP to write a single
-bit atomically.
 
-Fix it the same way gpio-mmio handles hardware whose data register read
-does not return the output latch: keep a shadow copy of each bank's
-latches, base the read-modify-write on the shadow, and only write the
-register.  The shadow is seeded from the hardware at probe time so pins
-left in output mode by the bootloader keep their state.  Pins that reach
-output mode through the gpiolib paths write their value (and thereby
-their shadow bit) before the mux switch in
-sunxi_pinctrl_gpio_direction_output(); pins muxed to gpio_out directly
-through a pinmux node bypass that path, so sunxi_pmx_set() refreshes
-their shadow bit from the latch (readable once the pin is in output
-mode) to keep them driving their pre-existing level.
+--=-4FzxRt0vSudbgFRbezTj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-Seeding the shadow reads the PIO registers at probe time, which requires
-the bus clock to be enabled.  The clock was only requested at the very
-end of probe, after devm_pinctrl_register() had already claimed the pin
-hogs described in the device tree - which mux pins, and thus access
-registers, with the clock still gated.  Move the request ahead of both.
-Boards whose bootloader leaves the PIO clock running are unaffected,
-which is why the pre-existing hog problem has gone unnoticed since
-commit 950707c0eb5c ("pinctrl: sunxi: add clock support").
+-----BEGIN PGP SIGNATURE-----
 
-Fixes: df7b34f4c3d2 ("pinctrl: sunxi: Fix gpio_set behaviour")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ilya Titov <ilya.titov@wirenboard.com>
----
-Tested on a Wiren Board 8.5.1 (Allwinner T507) against a 6.18-based
-kernel, where the problem was found: the bit-banged ATECC/RTC bus on
-port E survives 200 probe rounds while another PE line is toggled every
-100 us in the background, which reliably corrupted transfers before.
+iQJPBAABCAA5FiEEgnQYxPSsWOdyMMRzNHYf+OetQ9IFAmp8ZrUbFIAAAAAABAAO
+bWFudTIsMi41KzEuMTIsMiwyAAoJEDR2H/jnrUPSGhsP/0FkoRbcsk5+7zV5xzR+
+CIA/ua0L0QQzESlsroGrtiXxmjAjC/URYmYg8V9x66J2G43ubBMowXp1cm0PLXEs
+Fh2zKPYQEA6T4vxjSGyBXrBg+F3mQ5j2XWu+qny0h5IyPcuAg5PetYQaNl0UAFbL
+41Outw5xs+pKwwAVd+0WkxA3fGPYmayOt48QW+4Qt0r8UvpbG019CHzpLJyeesQn
+6gSnKXs2Vtlad/mlEyDNKXWQeilyCjZttyrQVa8Ospg0KCTyAsJ8bouK6wSsH7IP
+JH+GhYmuAs7ljbeyRjnIyeN6eADayJjDg7Z45Zo+RC838Kct7rLToFP9AsEJLTCd
+KOVIN4a0YZltuZHOsXHdqpc6Br819G2r6TSUOxGNFg+zXqoc9PDyfvkYQWW6GMbw
+PrybeiDp3Q2cIJ4FYaIsflhoXJ8P9OnH7BjMDx9XEa26jfqmuR70ESllkjlL44bE
+KvwBXAMV+fadhl0S4AhexuyWducvyx/bfwnGPNcZl5uqt1PQyuTqci5Bjctu28TQ
+EDTAXzPtzEWmjZYZzVPW7jGOuac+/GdokHWpPxpDiJb+grio5sIthzD5le/JmNTA
+UtbNQODBuxm4Chldw0w+IxUJjhOeRn+oFLFYTSX/oqPUGlQzXx1Ckqf2Ocv/nM3T
+eYmi/LCAVi48JEIml31MLULy
+=Y5gm
+-----END PGP SIGNATURE-----
 
-The mainline port has not been re-tested on that hardware; it was build
-tested on v7.2-rc7 with arm64 allmodconfig and arm allmodconfig (all 28
-PINCTRL_SUN* variants, W=1), both without new warnings, and sparse
-(v0.6.5) reports nothing for the driver.
-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 76 +++++++++++++++++++++------
- drivers/pinctrl/sunxi/pinctrl-sunxi.h |  7 +++
- 2 files changed, 68 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 25489beeb312..3cf5cd8ed991 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -837,6 +837,21 @@ static void sunxi_pmx_set(struct pinctrl_dev *pctldev,
- 	writel((readl(pctl->membase + reg) & ~mask) | config << shift,
- 	       pctl->membase + reg);
- 
-+	/*
-+	 * A pin muxed to gpio_out directly through a pinmux node bypasses
-+	 * sunxi_pinctrl_gpio_set() and drives whatever its output latch
-+	 * holds.  Now that the pin is in output mode the data register
-+	 * reads back the latch, so refresh the shadow to keep such pins
-+	 * driving their pre-existing level.
-+	 */
-+	if (config == SUN4I_FUNC_OUTPUT) {
-+		u32 *shadow = &pctl->dat_shadow[pin / PINS_PER_BANK];
-+
-+		sunxi_data_reg(pctl, pin, &reg, &shift, &mask);
-+		*shadow = (*shadow & ~mask) |
-+			  (readl(pctl->membase + reg) & mask);
-+	}
-+
- 	raw_spin_unlock_irqrestore(&pctl->lock, flags);
- }
- 
-@@ -1017,21 +1032,29 @@ static int sunxi_pinctrl_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 				  int value)
- {
- 	struct sunxi_pinctrl *pctl = gpiochip_get_data(chip);
--	u32 reg, shift, mask, val;
-+	u32 *shadow = &pctl->dat_shadow[offset / PINS_PER_BANK];
-+	u32 reg, shift, mask;
- 	unsigned long flags;
- 
- 	sunxi_data_reg(pctl, offset, &reg, &shift, &mask);
- 
- 	raw_spin_lock_irqsave(&pctl->lock, flags);
- 
--	val = readl(pctl->membase + reg);
--
-+	/*
-+	 * Reading the data register returns the pin level, not the output
-+	 * latch, for pins muxed as inputs.  A read-modify-write based on
-+	 * the register would therefore corrupt the latches of input-muxed
-+	 * pins in the same bank (e.g. an emulated open-drain I2C line
-+	 * released high), making them drive the wrong level once switched
-+	 * to output.  Base the read-modify-write on a shadow copy of the
-+	 * latches instead.
-+	 */
- 	if (value)
--		val |= mask;
-+		*shadow |= mask;
- 	else
--		val &= ~mask;
-+		*shadow &= ~mask;
- 
--	writel(val, pctl->membase + reg);
-+	writel(*shadow, pctl->membase + reg);
- 
- 	raw_spin_unlock_irqrestore(&pctl->lock, flags);
- 
-@@ -1572,7 +1595,7 @@ int sunxi_pinctrl_init_with_flags(struct platform_device *pdev,
- 	struct pinctrl_pin_desc *pins;
- 	struct sunxi_pinctrl *pctl;
- 	struct pinmux_ops *pmxops;
--	int i, ret, last_pin, pin_idx;
-+	int i, ret, last_pin, pin_idx, nbanks;
- 	struct clk *clk;
- 
- 	pctl = devm_kzalloc(&pdev->dev, sizeof(*pctl), GFP_KERNEL);
-@@ -1610,6 +1633,37 @@ int sunxi_pinctrl_init_with_flags(struct platform_device *pdev,
- 	if (!pctl->irq_array)
- 		return -ENOMEM;
- 
-+	/*
-+	 * The bus clock has to be enabled before the pinctrl device
-+	 * registers, as the pin hogs claimed from there access registers.
-+	 */
-+	ret = of_clk_get_parent_count(node);
-+	clk = devm_clk_get_enabled(&pdev->dev, ret == 1 ? NULL : "apb");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	/*
-+	 * Seed the output latch shadow from the hardware so pins the
-+	 * bootloader left in output mode keep their state; see
-+	 * sunxi_pinctrl_gpio_set() for why a shadow is needed.  This must
-+	 * happen before the pinctrl device registers, as pin hogs can mux
-+	 * pins to gpio_out and thereby update the shadow.
-+	 */
-+	last_pin = pctl->desc->pins[pctl->desc->npins - 1].pin.number;
-+	nbanks = (round_up(last_pin, PINS_PER_BANK) - pctl->desc->pin_base) /
-+		 PINS_PER_BANK;
-+	pctl->dat_shadow = devm_kcalloc(&pdev->dev, nbanks,
-+					sizeof(*pctl->dat_shadow), GFP_KERNEL);
-+	if (!pctl->dat_shadow)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < nbanks; i++) {
-+		u32 reg, shift, mask;
-+
-+		sunxi_data_reg(pctl, i * PINS_PER_BANK, &reg, &shift, &mask);
-+		pctl->dat_shadow[i] = readl(pctl->membase + reg);
-+	}
-+
- 	ret = sunxi_pinctrl_build_state(pdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "dt probe failed: %d\n", ret);
-@@ -1665,7 +1719,6 @@ int sunxi_pinctrl_init_with_flags(struct platform_device *pdev,
- 	if (!pctl->chip)
- 		return -ENOMEM;
- 
--	last_pin = pctl->desc->pins[pctl->desc->npins - 1].pin.number;
- 	pctl->chip->owner = THIS_MODULE;
- 	pctl->chip->request = gpiochip_generic_request;
- 	pctl->chip->free = gpiochip_generic_free;
-@@ -1699,13 +1752,6 @@ int sunxi_pinctrl_init_with_flags(struct platform_device *pdev,
- 			goto gpiochip_error;
- 	}
- 
--	ret = of_clk_get_parent_count(node);
--	clk = devm_clk_get_enabled(&pdev->dev, ret == 1 ? NULL : "apb");
--	if (IS_ERR(clk)) {
--		ret = PTR_ERR(clk);
--		goto gpiochip_error;
--	}
--
- 	pctl->irq = devm_kcalloc(&pdev->dev,
- 				 pctl->desc->irq_banks,
- 				 sizeof(*pctl->irq),
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-index 0daf7600e2fb..498e88a19f71 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-@@ -85,6 +85,7 @@
- #define IO_BIAS_MASK		GENMASK(3, 0)
- 
- #define SUN4I_FUNC_INPUT	0
-+#define SUN4I_FUNC_OUTPUT	1
- #define SUN4I_FUNC_IRQ		6
- #define SUN4I_FUNC_DISABLED_OLD 7
- #define SUN4I_FUNC_DISABLED_NEW 15
-@@ -175,6 +176,12 @@ struct sunxi_pinctrl {
- 	int				*irq;
- 	unsigned			*irq_array;
- 	raw_spinlock_t			lock;
-+	/*
-+	 * Output latch shadow, one word per bank.  Seeded lockless at
-+	 * probe before the pinctrl device registers, protected by @lock
-+	 * afterwards.
-+	 */
-+	u32				*dat_shadow;
- 	struct pinctrl_dev		*pctl_dev;
- 	unsigned long			flags;
- 	u32				bank_mem_size;
-
-base-commit: f5bbbfec59b4e2fb7520a91de3df8a6174325d6a
--- 
-2.50.1 (Apple Git-155)
-
+--=-4FzxRt0vSudbgFRbezTj--
