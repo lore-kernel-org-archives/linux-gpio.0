@@ -1,110 +1,112 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A13C3AA518;
-	Wed, 12 Aug 2026 08:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADD33B19BC
+	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 08:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786522844; cv=none; b=q2AEwtKm4S5cLvTWVICdKujWv2iZj0UlTcmpwPhpww2kDVuetiUG5u3sVQYjAeBburPeMQSkmkW2x5qYZjn4x0v3jjEn15Q2HDQhWX10L1jHsJxNDu0gkAUF8+oVEogXha9vPPMDYPY2i6ixaMPIse7EJzFrWEAiPOPk0kDc/co=
+	t=1786523037; cv=none; b=FT5/33/L72oWOQse7fumrCwurQJ2RB1usZr23N2mgeCtbBKkHosGcjyIgroaUTyVYOJq/aX1l4L74w744JF6I/NGHFHtY0pSH4XIVP22o2x8TXAQjB4iF6zFOr+xJ+OUe7DxEOEcSD2FjwhFYYRDyFyMG+BHj1l3w0offh9sPTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786522844; c=relaxed/simple;
-	bh=zY9lfAeGg60M/szQsAT7pL7C5lr5YMoI0MFXXJjlo38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kdVeK7qdFw8rH98g1Aau5IFWe6f39PTgslEmdVJRJqVgpSP9JlDfGevbN/6Vnw4yFMPdoiV2BRubqQfzaM8TS1plMFr7gn0ULXzatBsUDi1KWnFX8L3ErMO7X1ohOeEounAGpjrLv9MVKbmo8VIHZvUf4Tm7/zYhKOyG5Va7zhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MlarmWQL; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1786523037; c=relaxed/simple;
+	bh=ggewJBxgRCZ6GM4jSGbE8mnerhZ/94VxFYfhAw6sWlQ=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SA30SH0OX2Uj7KxmckgDHhdgiBBSTwL7wdZj985UpCOt/ek+r3cRnao08SQO+eK7YXI9xC7tbqSWzXsMCQ8PrYRWMpud50zRyR07vrk1OoDBoefdTQn+JWkfcmjXfWmnPkEPoFAawf4LHzvBRVmD2GPnACJNeTbHmhKDkQ3xIiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QiS5Q6w+; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MlarmWQL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786522843; x=1818058843;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zY9lfAeGg60M/szQsAT7pL7C5lr5YMoI0MFXXJjlo38=;
-  b=MlarmWQL5HJcKZNwFQuE9WkSQdIpvPCerHk8Cnib00jRlP5GHevaEgCc
-   hQEzGgV2vrY3SzBSdTGjXWimlo2bo38P/Y99fwcrosOqnD9CQMq1rRChp
-   SmRGxb+tjTb6aW4ruIMx02rigKSISqF1mVdXTGot3V0kl1W+4FNnMXXAw
-   iG4c++Ozl9MWq8Qshgco0UKBiaK3AUD2eH4RyW92ZCZsPMKI2P66SX8Qv
-   25gWqrnI0kJlds8TFTBCSWntEBU2gWarbYtqtEqkKToyuBfKlh8+XS1XQ
-   rqIC/XqPyHRtnnm8Pdq73N/lwZ1ztiKgbS2pQ8O2XUV8x0hFGmp38/bdr
-   Q==;
-X-CSE-ConnectionGUID: Rw+zrP9fRPS548ugcZzZrw==
-X-CSE-MsgGUID: RB5rq/3cQf2Bsxx5jtIjiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="98581839"
-X-IronPort-AV: E=Sophos;i="6.25,219,1779174000"; 
-   d="scan'208";a="98581839"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 01:20:43 -0700
-X-CSE-ConnectionGUID: HxDbThHLS1imTTlw115NKw==
-X-CSE-MsgGUID: 4sV80IQTTc+RqD4rcZy7VQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,219,1779174000"; 
-   d="scan'208";a="267070761"
-Received: from rvuia-mobl.ger.corp.intel.com (HELO localhost) ([10.245.245.92])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 01:20:40 -0700
-Date: Wed, 12 Aug 2026 11:20:37 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bui Duc Phuc <phucduc.bui@gmail.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Linus Walleij <linusw@kernel.org>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>, robh@kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] pinctrl: keembay: Propagate errors from optional IRQ
- lookup
-Message-ID: <anws1QKiDqMjLNYl@ashevche-desk.local>
-References: <20260810053142.27938-1-phucduc.bui@gmail.com>
- <20260810053142.27938-2-phucduc.bui@gmail.com>
- <CAHp75Vcb12Ok=yEF_WqKp=yS_EW9SWS=G2+B7Fa7aLH=u-aR0w@mail.gmail.com>
- <CAABR9nETzzsjzE0JnnLC5tX7d=0yZW9bt+t8DuVxV=JSb1VsYw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QiS5Q6w+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1711E1F00AC4
+	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 08:23:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786523036;
+	bh=ggewJBxgRCZ6GM4jSGbE8mnerhZ/94VxFYfhAw6sWlQ=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=QiS5Q6w+hl4qg76NBgLfnDqncgvI2uMa+x/VHPPxMVYz2km6lrdHHYNIj4qEwFWuL
+	 Brkv4f5ujuTCZD8chLJGV1knvpAJjF4fnI5vajQGv6HUPZTnzNq26cTjV3YU1gGl3a
+	 ldLrxuidqzC0ZVCg5OPCbiHLGTtNyd4Vs1QI+Waa1eH+SaOH3gusXJ/qJN+6ClaKOy
+	 tVu16cQwoY8PtKVBLqO3SEHbQ89rnHcimarER8dWbnaGhyl2cN9OgnglAOoAozijeR
+	 J61PfsWJ4hlB8Yrc8Q32hlv+nVy4lKKdU3gcrXAOWBN0wb1aDlfYuL+5sbqILqagNm
+	 E+aJ3eJA1/fmA==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5aea0fff535so767522e87.3
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 01:23:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RpEugLFozt5wrIlC4XKrlMh51LY2s5mM45TRWkmMAhHeMcVrMnqyMNkExQsbnh015nPPQMwF9YbjBTj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjxhCXKaxyeDollgur1Sqcp724Xh4fQBE0RTY84gpa0KuYuQxz
+	H1HTRl/6YXgVHbFg+8Xdec/cvRWGolhM0NfT+QcqMUTdyjzECMftxdjGl1Xp97cIzi0NIgaYLgq
+	OZfSFhoSUTEMknm9X99v09xUleUSqD4CzG2I6ZAL8XA==
+X-Received: by 2002:a05:6512:ac8:b0:5b2:d876:514a with SMTP id
+ 2adb3069b0e04-5b44e31a1famr493806e87.26.1786523034804; Wed, 12 Aug 2026
+ 01:23:54 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 12 Aug 2026 01:23:53 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 12 Aug 2026 01:23:53 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <ans3pcNFEDVBYXXT@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAABR9nETzzsjzE0JnnLC5tX7d=0yZW9bt+t8DuVxV=JSb1VsYw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20260808155513.2221976-1-xnorigc@gmail.com> <aneGptJn8J7eF9tj@ashevche-desk.local>
+ <CAD++jLkCYwTyK6C8LvZiYJ9fSc8bp3RPpb4d6EgQTRraJtJDzA@mail.gmail.com>
+ <anmNf3rJGxso6nuc@ashevche-desk.local> <ans3pcNFEDVBYXXT@ashevche-desk.local>
+Date: Wed, 12 Aug 2026 01:23:53 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MeDLc-LPwoCEA8yMw3+L9UcN-NgXpYpFPxtUNffAAffyw@mail.gmail.com>
+X-Gm-Features: AUfX_mzp0xFoKJQOkb5LbPvMPRLjgGd29o-t2k5FVBFiVV_bBiOJeFevYaDnlEM
+Message-ID: <CAMRc=MeDLc-LPwoCEA8yMw3+L9UcN-NgXpYpFPxtUNffAAffyw@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: acpi: Add ignore_wake quirk for ASUS TX Air FA401GM
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Yao Qi <xnorigc@gmail.com>, westeri@kernel.org, brgl@kernel.org, 
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Linus Walleij <linusw@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 11, 2026 at 09:48:01AM +0700, Bui Duc Phuc wrote:
+On Tue, 11 Aug 2026 16:54:29 +0200, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> said:
+> On Mon, Aug 10, 2026 at 11:36:19AM +0300, Andy Shevchenko wrote:
+>> On Mon, Aug 10, 2026 at 12:17:06AM +0200, Linus Walleij wrote:
+>> > On Sat, Aug 8, 2026 at 9:42=E2=80=AFPM Andy Shevchenko
+>> > <andriy.shevchenko@linux.intel.com> wrote:
+>> > > On Sat, Aug 08, 2026 at 03:55:13PM +0000, Yao Qi wrote:
+>> >
+>> > > > The ASUS TX Air FA401GM experiences immediate wakeups from s2idle
+>> > > > (Modern Standby) when suspended with an external HDMI display conn=
+ected.
+>> > > >
+>> > > > This issue is caused by spurious ACPI event signaling routed throu=
+gh
+>> > > > GPIO 24 on the AMD GPIO controller (AMDI0030:00), which triggers a
+>> > > > system-wide IRQ 7 (pinctrl_amd) wake-up interrupt during sleep.
+>> > > >
+>> > > > Add an ignore_wake quirk for GPIO 24 on this machine to prevent th=
+ese
+>> > > > unwanted wakeups. This has been runtime-tested and verified using =
+the
+>> > > > `gpiolib_acpi.ignore_wake=3DAMDI0030:00@24` kernel parameter.
+>> > >
+>> > > If AMD people will be quick enough to tag this, I will include in my=
+ PR to
+>> > > Linus W. on next week.
+>> >
+>> > To Bartosz?
+>> > It's gpiolib...
+>>
+>> Oh, true, I have also pin control stuff to send!
+>
+> Okay, I have checked if I have anything to Bart and it seems I mixed that=
+ with
+> pin control stuff. So, Bart, if you feel confident about this patch, you =
+can
+> take it directly. Here is my formal tag for that
+>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
 
-> > While this looks okay, have you considered actually having the
-> > platform_get_irq_optional() to be optional in this sense?
-> 
-> As I understand it, if we decide to use platform_get_irq_optional(),
-> then -ENXIO should be handled as the expected case where the IRQ is
-> not available.
+Is this a bugfix? I'll be OoO until the end of August starting on Friday wi=
+th
+the exception of a single day to catch up on email. I'll be sending my PRs =
+for
+v7.3 tomorrow. Not sure if I should take it for v7.3 or v7.2?
 
-If platform_get_irq_optional() was optional, it would return 0 instead of ENXIO
-(and avoid printing any message in such a case).
-
-> If we do not want to handle -ENXIO as an optional IRQ,
-> then I think we should use platform_get_irq() instead,
-> which matches its intended semantics:
-
-> https://elixir.bootlin.com/linux/v7.2-rc6/source/drivers/base/platform.c#L301
-
-> -------------------------------
-> ret = platform_get_irq_optional(dev, num);
-> if (ret < 0)
->         return dev_err_probe(&dev->dev, ret,
->                                             "IRQ index %u not found\n", num);
-> -------------------------------
-> 
-> In my opinion, we should not use an optional API if the IRQ is not
-> actually intended to be optional.
-
-Right. But does it suit for this driver?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Bart
