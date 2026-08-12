@@ -1,122 +1,136 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC28D450416
-	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 13:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1054503FB
+	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 13:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786541966; cv=none; b=BReizyLMmjt+TeINXBmoUTvQGcJE58UjsDDBuG80eDI+FgN6+gN8DUQYmW5QzbQmK7TTUFrvyBQbR9Iy3NmvGuG0r+ivXz62/XgepV4FZnWoxfL0488ZAxGYxzR/f4F28QxE8YnD1NMLwexTlMp17tTH7CzVpyLSGDlLi4eb1F0=
+	t=1786542024; cv=none; b=sgjEBip06VKUGJHBzMcMT8+k0rFWUjg4XVYPO+4d+kOLSrBv8bF47tx+m73I6UnnfZlzhRGkXoKgTxXtzFQjzUt/c4jzraAsKP6jSQoyMeb6pM6YlbL9qj0KmAAUlgpbCu5JYh5Pl3zRxCW9VDzQ2iCOI9I/3/UzNn26MEuhsQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786541966; c=relaxed/simple;
-	bh=RWE7pQb8i2JB14XwU4wJ+yXFy3Q4jS2VR+KW/a4+0Lw=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=swPJYZmU9hNjo/kQLlAxLv9hjCFy/52QVEBDiefGv/e/UrM+g5kPxcvB7jbjqweHlBGSBVrPMVEr+XQRgz1OneJCtzTCE745oY1Ycl3wue4cPaT88FKZCtWQnOZrCR/HG2RrUVBmi/RHl7jzwvbUFmkzkayXArMU20tBHkPBaMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=imABkov/; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786542024; c=relaxed/simple;
+	bh=Yp2oRgRlHLK5S6oFnlyMQg7hEjEr5DC8Y6ykHGauOQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=av8sjbx3DwAilWO3zrxRutBZklRzGEON0JmMP7lPLfziyiFW2BMgkJPsA4Xt5JwbDoFCytes84vAGbwj01HRxA87OnAHwhixDX4iS1GH7kOKkhIWQ5LTr68Oz8g/NDz1iVeg1TKlYILdyeYTAQDErAvhngMJ0zvHxfp9ggu/S3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=KuYoRDzE; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="imABkov/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D41B1F00A3E
-	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 13:39:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786541964;
-	bh=RWE7pQb8i2JB14XwU4wJ+yXFy3Q4jS2VR+KW/a4+0Lw=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=imABkov/1V0w27uXhO5lV4FS5nkHrPG7rBt8tYoLX3y1JFEW/3TQe3RSd440Ja6AJ
-	 YGA29br8xyG0cPZ1vs5d35V4Jtu+tmnWv+JPMqTZdzYV79II+Iaa+sggUZCdmJ+Mco
-	 ioT+aPHt/cM0vcDUlctBo7/U0y/kF7zy53oHbMthN44gtP4SzHsyhWRSU5MqpCauew
-	 1dX8SnwlMCqb+I3bYP90bXYFO2EOxCvl57Coj0yKspSnJ8QhT6hjJPskupQMOBzgs9
-	 S+gPrt89TVNwRCzy8xOiiRBDMnumIEecuwIB2/gBLMX7Z9c1jlQYJtdjia4jMqFOBG
-	 JYhy+KYYygNEA==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5b0117d49dcso842952e87.3
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 06:39:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rpa5kcaP88qVByOCrvGTC5o2d0HSEnV9xRknhxgEaDAbfBBY20mUm86TxWd0KEmNVHMjYnwsflBuMXJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPe5BXW/H2jGu5JNKVvNq3rfca3Q3+bCPjkr140bJUs9QbawOv
-	00e0FSRwqVQjZlgMI4ddhImKznb82Z4p4yLpyW7lZ+cSdWf5XPlC2YWCT6nXeras2wql6mKZA4d
-	ZZnpL4x/xwQCJV/QHW+g3T6jUs9PeBEV7I1IpdkiM6g==
-X-Received: by 2002:a05:6512:1053:b0:5b2:a339:b422 with SMTP id
- 2adb3069b0e04-5b44e2e2690mr954360e87.14.1786541963208; Wed, 12 Aug 2026
- 06:39:23 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 12 Aug 2026 06:39:20 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 12 Aug 2026 06:39:20 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <anxyNPJfvkVaa8L-@ashevche-desk.local>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="KuYoRDzE"
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-448b69cfc6dso1069795fac.3
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 06:40:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1786542017; x=1787146817; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=3m/mAJLnKMaOtoiImwSaVIw0nteRIaUTkKOvX93AqPM=;
+        b=KuYoRDzEwL4PLALIl5YDeM+Ss0GYokunxQqXZlzOz6dGYO3Fy1YgftesXLbaMqjZ2g
+         kZmWap+0y/mjsGUlq+JP3iJiFxdjwXHYqZTFovc+Z1clywebjWCs/zB3IG/S32ro6qmw
+         LEb3/1ieoLnuz7H9tbF0FjJMDgKbtb1CWUQz+jXOLuGEVgETKeedrlczKQTtU/Z6+0KQ
+         Z/3g7/qirYN8G1DGnEqgDCEUigohrfD0p6SmRWR/j71trki9+iMm8RTpPAiH65M1yRz/
+         YnBmt0dvMbAqEBWfq+qpbxYc/LD7a7wUuRj89w7y0SSjK0upk3tJVypAWE2/GcDDzgyA
+         8zbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786542017; x=1787146817;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=3m/mAJLnKMaOtoiImwSaVIw0nteRIaUTkKOvX93AqPM=;
+        b=TT3VsnLdVTPBp/d15XN/akSYJ/vMT7rH/JzvCmroYat/pl2N8vrpPOea2Ye0Fuv2B2
+         1BsaOe+xWwYItVmHopTN9acP07HXglxxZodqXF8Q9/W1usQvOPUIvMscBTkI+CuNhDui
+         H+YSMzpI+DAZmUtSuP9unKeqXhnfIRt7dAVVLhkS2P0FWZCTi1D15e3MyGCR14w9fwnr
+         eB0Oazfxtj+eBZUfyyE8S/8BNU3i4NGYsIXyq/k57+skYWoQiP8qF68/C7J+0JVbVbNG
+         L2SANZm2ynEI69Ih0DPVlmBYpN2XPMnU7bMUgXmBbLwp/myU3mvYzpxBfNW6NY2zHYpA
+         iyGA==
+X-Forwarded-Encrypted: i=1; AHgh+RrJvwO4Tx/6EDKUaaB31tmQvQesFPGsEc/ZxD4b/2UvmaZ4hUx6rZW5KmymDyUiNYsYtvZLMfX+GIap@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRfUIsN/l1UKfpyWyW0U0oBYgsGrjl0hLuOymiYAKCHAGQw9+/
+	t3sWlBz0ZR9x9ZlMzgVlIXMoR6wJbpkcbBlHaSnQHnu32RdaZ9Wy31Rs3/wEGgCPh78=
+X-Gm-Gg: AR+sD105wlvtnAaMzv3/UB2tgwFPe175YdRQNHgZEnTUA01jKxXtv/erYevoSBSL01j
+	sLrYmqJlRDF3WSHwHn4BkwUTP4CCGoyb617zsDWWiKG/HvZ83f60HB1zg485wDI4/xZmU2Xr2tL
+	nuFBOAfws2X8iLFQpGoX94q5oPQO0JniBy6xUReMO9doj/9woq4ZhSV/Br8IDKsE4Ewj9/2mlFE
+	yIDMP/PRyJZUZlf00iT9TCEjcO+ebnpotykYfaBLqIH8Gu6rjb6TLPUK0eWrl6SaaO/Sg+/kRTH
+	LNVuxICV2zoOl4c7HRF1Z00ne5LEpXV7lEXP7nW1p0T8CIqHXBUbU0qSPWiCMsVom9x3vYG4Ao3
+	azeYITjP8ZGGJeiHAIZsjhBxE1iq87IfnyXUfvkgAO+9m5h3fFns1oA86u+WNeejDx24vjTzHDV
+	TOFRsZTeIQoCwX+1qutFj46Tr3w7d6cttIdealOVvI6oq/VBHU/JiKylOSF2ycMp9Wx1CqJCe/A
+	153hcVpY2f8SpfG+JnicfGzWIdTxHw/S+UXar4=
+X-Received: by 2002:a05:6870:c267:b0:456:4c3f:7e03 with SMTP id 586e51a60fabf-45e3ea95283mr4055401fac.18.1786542017417;
+        Wed, 12 Aug 2026 06:40:17 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:500:76d8:83ff:449f:8518? ([2600:8803:e7e4:500:76d8:83ff:449f:8518])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-45e35173939sm1812914fac.8.2026.08.12.06.40.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Aug 2026 06:40:16 -0700 (PDT)
+Message-ID: <a30efc8e-22a4-4573-93c7-e1a4689d3a3b@baylibre.com>
+Date: Wed, 12 Aug 2026 08:40:16 -0500
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260808155513.2221976-1-xnorigc@gmail.com> <aneGptJn8J7eF9tj@ashevche-desk.local>
- <CAD++jLkCYwTyK6C8LvZiYJ9fSc8bp3RPpb4d6EgQTRraJtJDzA@mail.gmail.com>
- <anmNf3rJGxso6nuc@ashevche-desk.local> <ans3pcNFEDVBYXXT@ashevche-desk.local>
- <CAMRc=MeDLc-LPwoCEA8yMw3+L9UcN-NgXpYpFPxtUNffAAffyw@mail.gmail.com>
- <anwxWXfqSt2bM8iy@ashevche-desk.local> <CAMRc=McGR_2V2mPJZwU6kBk8TzCV6iKu3-C9yF1bbWE0R73-cw@mail.gmail.com>
- <anxyNPJfvkVaa8L-@ashevche-desk.local>
-Date: Wed, 12 Aug 2026 06:39:20 -0700
-X-Gmail-Original-Message-ID: <CAMRc=Md=5gnKO9TzQR6bgSzNqj_qvRF=j9uVSTnA75A_ZPqT_g@mail.gmail.com>
-X-Gm-Features: AUfX_myIFpzGsa8pkdvOuZXkp5lxzCJJOo3Vo6IeC0qxJJRVzTzdxOBgA_uQfpk
-Message-ID: <CAMRc=Md=5gnKO9TzQR6bgSzNqj_qvRF=j9uVSTnA75A_ZPqT_g@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: acpi: Add ignore_wake quirk for ASUS TX Air FA401GM
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Yao Qi <xnorigc@gmail.com>, westeri@kernel.org, linux-gpio@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/9] iio: adc: add the ti-ads1262 driver
+To: Kurt Borja <kuurtb@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>
+Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org
+References: <20260807-ads126x-v3-0-f89925d72792@gmail.com>
+ <20260807-ads126x-v3-2-f89925d72792@gmail.com>
+ <ad95afb4-e667-4290-8878-fdd7067f20fe@baylibre.com>
+ <DKK9QWYHOBOT.2VD8XMZTE65H4@gmail.com>
+ <7a42a318-780d-4bd0-baf1-55d030b39233@baylibre.com>
+ <DKMECOTJYOZE.3AEGK7RWPH7FW@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <DKMECOTJYOZE.3AEGK7RWPH7FW@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 12 Aug 2026 15:16:36 +0200, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> said:
-> On Wed, Aug 12, 2026 at 06:54:30AM -0500, Bartosz Golaszewski wrote:
->> On Wed, 12 Aug 2026 10:39:53 +0200, Andy Shevchenko
->> <andriy.shevchenko@linux.intel.com> said:
->> > On Wed, Aug 12, 2026 at 01:23:53AM -0700, Bartosz Golaszewski wrote:
->> >> On Tue, 11 Aug 2026 16:54:29 +0200, Andy Shevchenko
->> >> <andriy.shevchenko@linux.intel.com> said:
->> >> > On Mon, Aug 10, 2026 at 11:36:19AM +0300, Andy Shevchenko wrote:
->> >> >> On Mon, Aug 10, 2026 at 12:17:06AM +0200, Linus Walleij wrote:
->> >> >> > On Sat, Aug 8, 2026 at 9:42=E2=80=AFPM Andy Shevchenko
->> >> >> > <andriy.shevchenko@linux.intel.com> wrote:
->> >> >> > > On Sat, Aug 08, 2026 at 03:55:13PM +0000, Yao Qi wrote:
->
-> ...
->
->> >> >> > > If AMD people will be quick enough to tag this, I will include=
- in my PR to
->> >> >> > > Linus W. on next week.
->> >> >> >
->> >> >> > To Bartosz?
->> >> >> > It's gpiolib...
->> >> >>
->> >> >> Oh, true, I have also pin control stuff to send!
->> >> >
->> >> > Okay, I have checked if I have anything to Bart and it seems I mixe=
-d that with
->> >> > pin control stuff. So, Bart, if you feel confident about this patch=
-, you can
->> >> > take it directly. Here is my formal tag for that
->> >> >
->> >> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> >>
->> >> Is this a bugfix? I'll be OoO until the end of August starting on Fri=
-day with
->> >> the exception of a single day to catch up on email. I'll be sending m=
-y PRs for
->> >> v7.3 tomorrow. Not sure if I should take it for v7.3 or v7.2?
->> >
->> > On one hand there is no rocket science behind this patch (that's why I=
- gave my tag),
->> > but if you strictly want AMD to confirm, then postpone, so it's up to =
-you to decide.
+On 8/11/26 3:28 PM, Kurt Borja wrote:
+> On Mon Aug 10, 2026 at 11:42 AM -05, David Lechner wrote:
+>> On 8/9/26 3:26 AM, Kurt Borja wrote:
+>>> On Sat Aug 8, 2026 at 1:39 PM -05, David Lechner wrote:
+>>>> On 8/7/26 10:58 PM, Kurt Borja wrote:
+>>>>> Add the ti-ads1262 driver with initial support for the primary ADC
+>>>>> (ADC1). The ADS1263 auxiliary ADC (ADC2) is handled by a separate driver
+>>>>> and interoperability considerations were taken into account.
+>>>>
 >>
->> If this is not an important bugfix, then let me postpone it until next c=
-ycle.
->
-> I believe a user may survive with this bug to be present for a bit longer=
-.
-> But not my call, at Intel I have no such hardware :-)
->
+>> ...
+>>
+>>>>> +static int ads1262_dev_reset(struct ads1262 *st)
+>>>>> +{
+>>>>> +	int ret;
+>>>>> +
+>>>>> +	if (st->reset_gpiod) {
+>>>>> +		ret = gpiod_set_value_cansleep(st->reset_gpiod, 1);
+>>>>> +		if (ret)
+>>>>> +			return ret;
+>>>>> +
+>>>>> +		/*
+>>>>> +		 * The RESET pulse timing requirement is 4 clock cycles, at the
+>>>>> +		 * minimum clock rate this is 4 microseconds.
+>>>>> +		 */
+>>>>> +		fsleep(4);
+>>>>
+>>>> How long do we have to hold reset before the chip powers down?
+>>>
+>>> For power down 65536 clk cycles. Less than that is simple reset.
+>>
+>> How long is 65536 clk cycles in microseconds at the fasted clock rate?
+>> Hopefully won't accidentally shut down the chip here even if fsleep()
+>> goes significantly longer than requested.
+> 
+> That would be 8192 microseconds. Do you think there is a risk we end up
+> turning off the device?
+> 
+Linux is not a realtime system, so yes technically it is possible. It
+would probably be hard to do in practice though. So hopefully not
+something we have to worry about.
 
-No worries, it can go upstream right after I'm back from vacations.
-
-Bart
+If it did get put to sleep here, how does it get turned back on?
