@@ -1,136 +1,176 @@
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1054503FB
-	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 13:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0093242B8
+	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 16:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786542024; cv=none; b=sgjEBip06VKUGJHBzMcMT8+k0rFWUjg4XVYPO+4d+kOLSrBv8bF47tx+m73I6UnnfZlzhRGkXoKgTxXtzFQjzUt/c4jzraAsKP6jSQoyMeb6pM6YlbL9qj0KmAAUlgpbCu5JYh5Pl3zRxCW9VDzQ2iCOI9I/3/UzNn26MEuhsQw=
+	t=1786552115; cv=none; b=ibUAi4F8+xQmZmFRm6ACbczmeHWTv8CgTbvP4eAAzIoE4zTjWuL2ujd4oV2hwYX+QN/FQNLWNUMmLe2VhmUOS9xBqIUGK4t3OYDQddkcVSb5Calwum1mu01SMRxmRu6LiGDQhLTY1BxXB+xU/xOnqSkS7ons24p81O3bdDy6Oac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786542024; c=relaxed/simple;
-	bh=Yp2oRgRlHLK5S6oFnlyMQg7hEjEr5DC8Y6ykHGauOQI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=av8sjbx3DwAilWO3zrxRutBZklRzGEON0JmMP7lPLfziyiFW2BMgkJPsA4Xt5JwbDoFCytes84vAGbwj01HRxA87OnAHwhixDX4iS1GH7kOKkhIWQ5LTr68Oz8g/NDz1iVeg1TKlYILdyeYTAQDErAvhngMJ0zvHxfp9ggu/S3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=KuYoRDzE; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1786552115; c=relaxed/simple;
+	bh=jil58w9XnfCeytzYazk/rYFNKweL3bAGOGarBwmpMEE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ns1OJmup3nWC6dIZa3CfAXFoF3nzBz3EKQ0jw25FD8rblGzHKjvU19VrRyxpXkO1kPaZJCy2XSbq88SsfUDC3Fkcc2cvPcMD2vyjH7KLR+mtvtd6GsKQzZJt1ofhwfJo7ST1WZnRh6rMEJ2MJQTbFwn2G4rmjFl2fOwe3bNvK18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LunfvuBf; arc=none smtp.client-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="KuYoRDzE"
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-448b69cfc6dso1069795fac.3
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 06:40:19 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LunfvuBf"
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-738a5cc517eso725278137.2
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 09:28:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1786542017; x=1787146817; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=3m/mAJLnKMaOtoiImwSaVIw0nteRIaUTkKOvX93AqPM=;
-        b=KuYoRDzEwL4PLALIl5YDeM+Ss0GYokunxQqXZlzOz6dGYO3Fy1YgftesXLbaMqjZ2g
-         kZmWap+0y/mjsGUlq+JP3iJiFxdjwXHYqZTFovc+Z1clywebjWCs/zB3IG/S32ro6qmw
-         LEb3/1ieoLnuz7H9tbF0FjJMDgKbtb1CWUQz+jXOLuGEVgETKeedrlczKQTtU/Z6+0KQ
-         Z/3g7/qirYN8G1DGnEqgDCEUigohrfD0p6SmRWR/j71trki9+iMm8RTpPAiH65M1yRz/
-         YnBmt0dvMbAqEBWfq+qpbxYc/LD7a7wUuRj89w7y0SSjK0upk3tJVypAWE2/GcDDzgyA
-         8zbg==
+        d=chromium.org; s=google; t=1786552112; x=1787156912; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=jil58w9XnfCeytzYazk/rYFNKweL3bAGOGarBwmpMEE=;
+        b=LunfvuBfpa7A3FNKYS9VzBcVXXjtjHwiWXSVXMn1HcZKrGQz63eBjS5eEDhQZpxrSw
+         DmfQ4ECv2zn/0+aiqI4g6JKGPneQZyMSY5gfg3ZImi9mzX13kfLn1aO7IVWRpRjvgB0G
+         y98TGQugCr5aelfG40fWZZGqgHfmslcoodfU8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786542017; x=1787146817;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=3m/mAJLnKMaOtoiImwSaVIw0nteRIaUTkKOvX93AqPM=;
-        b=TT3VsnLdVTPBp/d15XN/akSYJ/vMT7rH/JzvCmroYat/pl2N8vrpPOea2Ye0Fuv2B2
-         1BsaOe+xWwYItVmHopTN9acP07HXglxxZodqXF8Q9/W1usQvOPUIvMscBTkI+CuNhDui
-         H+YSMzpI+DAZmUtSuP9unKeqXhnfIRt7dAVVLhkS2P0FWZCTi1D15e3MyGCR14w9fwnr
-         eB0Oazfxtj+eBZUfyyE8S/8BNU3i4NGYsIXyq/k57+skYWoQiP8qF68/C7J+0JVbVbNG
-         L2SANZm2ynEI69Ih0DPVlmBYpN2XPMnU7bMUgXmBbLwp/myU3mvYzpxBfNW6NY2zHYpA
-         iyGA==
-X-Forwarded-Encrypted: i=1; AHgh+RrJvwO4Tx/6EDKUaaB31tmQvQesFPGsEc/ZxD4b/2UvmaZ4hUx6rZW5KmymDyUiNYsYtvZLMfX+GIap@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRfUIsN/l1UKfpyWyW0U0oBYgsGrjl0hLuOymiYAKCHAGQw9+/
-	t3sWlBz0ZR9x9ZlMzgVlIXMoR6wJbpkcbBlHaSnQHnu32RdaZ9Wy31Rs3/wEGgCPh78=
-X-Gm-Gg: AR+sD105wlvtnAaMzv3/UB2tgwFPe175YdRQNHgZEnTUA01jKxXtv/erYevoSBSL01j
-	sLrYmqJlRDF3WSHwHn4BkwUTP4CCGoyb617zsDWWiKG/HvZ83f60HB1zg485wDI4/xZmU2Xr2tL
-	nuFBOAfws2X8iLFQpGoX94q5oPQO0JniBy6xUReMO9doj/9woq4ZhSV/Br8IDKsE4Ewj9/2mlFE
-	yIDMP/PRyJZUZlf00iT9TCEjcO+ebnpotykYfaBLqIH8Gu6rjb6TLPUK0eWrl6SaaO/Sg+/kRTH
-	LNVuxICV2zoOl4c7HRF1Z00ne5LEpXV7lEXP7nW1p0T8CIqHXBUbU0qSPWiCMsVom9x3vYG4Ao3
-	azeYITjP8ZGGJeiHAIZsjhBxE1iq87IfnyXUfvkgAO+9m5h3fFns1oA86u+WNeejDx24vjTzHDV
-	TOFRsZTeIQoCwX+1qutFj46Tr3w7d6cttIdealOVvI6oq/VBHU/JiKylOSF2ycMp9Wx1CqJCe/A
-	153hcVpY2f8SpfG+JnicfGzWIdTxHw/S+UXar4=
-X-Received: by 2002:a05:6870:c267:b0:456:4c3f:7e03 with SMTP id 586e51a60fabf-45e3ea95283mr4055401fac.18.1786542017417;
-        Wed, 12 Aug 2026 06:40:17 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:76d8:83ff:449f:8518? ([2600:8803:e7e4:500:76d8:83ff:449f:8518])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-45e35173939sm1812914fac.8.2026.08.12.06.40.16
+        d=1e100.net; s=20251104; t=1786552112; x=1787156912;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=jil58w9XnfCeytzYazk/rYFNKweL3bAGOGarBwmpMEE=;
+        b=R4rycB99CB+3OupKWXE3X4Rf2F7/JyrTRAT2no7mDJy3t6+Hxm7PC9Klk0XfA4qGS+
+         jERVf2sMuDw1x1Bf1hQOm+6YvCcaiabndw83DpGnLgciRlxdDeFGbaeu96Rd700Co4Qr
+         7RmA2vIZiToNRTSFZR2kc3itFAEQTURbhOOkGLSDXz5J/fYjZG1xEU1cAFsizMdCvYhf
+         8YG6sC3lSv3n8JM8cqowFI34PrtmCrXLrIsmVDaWzUn8RHaQozG4tfCRUVS5Y83DacUh
+         6QrCQ0GPAtzhpmntvI0cVcVhb3dAl8kapQ+Rf6cdJb8YjVeGkGv4ViBLqgqfC2REEnHu
+         1vgQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpdVjH4XRm4mu0eo1ggGT2pkaQPQKqif9w7UGq0BaCXHEaTErl/huC791qNXFXCIzZN8tKKqlG+cYzC@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmR3+8Iuh9ujcKQADv4CxocQNJ+a15v6BKHSYpIJe+qLxFByVB
+	oMCA9Mjf8CmHk1OUvWASyIWREiRNUL9JYmQilUfGog7ne2QxkKppYII3n14N/JyvExfYG2yXstN
+	v8Mc=
+X-Gm-Gg: AR+sD1138NjUjK+s/VVDqY/V0JJwepBD2bTA8cbSugbQkYzE6D1xKWOHLlMSQ5o37xS
+	IP3g3BW/1PejpgR1tBt4gEFLYp0iFgJHva42SEa8D0wOhNW1LMaS2JVQ9QqLgWRTI8COJsEOm5U
+	DNQxdoWUSGB0OsabJearbIEcodag9hbUGiPgifHKaaiUypVfiKOYYqMX7QAqNyVnzNsVyJDdChz
+	n8+E9ufbqfPLh6FIx0OB7GzHJy9Rny/hW2FKelOLiR6N8v9oozeoAq9GGDs/600vluZLc9ywAsH
+	mrqonryWxGw06vxB52EBHhgsdEhQPnUR/Kl+2mkpQGzUlkrm47X0yxxz5O1HIef01ZbXjLKvxVD
+	MvuVMpzV5WnIwDgmRqqjvPr1jsa2VXo06bCSyDHv2hnT1Ya1INFQKxtugmOt88SQamIkjrrV8lq
+	hEJeLVQPJxWSQ64zISyuBPwl1NKbCfyRJRJhVOJgnFc2hI0tMgPWzmp8tds9AL5E0G1USqSZJam
+	uErncUy2g0z6bwC+K0N8L36dvU=
+X-Received: by 2002:a05:6102:5086:b0:739:a2d:9621 with SMTP id ada2fe7eead31-76c9071e76emr1545128137.13.1786552112333;
+        Wed, 12 Aug 2026 09:28:32 -0700 (PDT)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-97a3c16f5bbsm1797933241.5.2026.08.12.09.28.29
+        for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Aug 2026 06:40:16 -0700 (PDT)
-Message-ID: <a30efc8e-22a4-4573-93c7-e1a4689d3a3b@baylibre.com>
-Date: Wed, 12 Aug 2026 08:40:16 -0500
+        Wed, 12 Aug 2026 09:28:31 -0700 (PDT)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-74dceb46291so445936137.0
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 09:28:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rpk0WkQQWG+wqgq4GlcdAvSETh4AVoKkKy9T2/sD7Bi8VOlYZdrR1NQNFs2NAyvE02oL72ns7sJX7dY@vger.kernel.org
+X-Received: by 2002:a05:6102:644e:b0:729:affa:70fd with SMTP id
+ ada2fe7eead31-76c8e92d8f7mr1626786137.8.1786552108665; Wed, 12 Aug 2026
+ 09:28:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/9] iio: adc: add the ti-ads1262 driver
-To: Kurt Borja <kuurtb@gmail.com>, Jonathan Cameron <jic23@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>
-Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <20260807-ads126x-v3-0-f89925d72792@gmail.com>
- <20260807-ads126x-v3-2-f89925d72792@gmail.com>
- <ad95afb4-e667-4290-8878-fdd7067f20fe@baylibre.com>
- <DKK9QWYHOBOT.2VD8XMZTE65H4@gmail.com>
- <7a42a318-780d-4bd0-baf1-55d030b39233@baylibre.com>
- <DKMECOTJYOZE.3AEGK7RWPH7FW@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <DKMECOTJYOZE.3AEGK7RWPH7FW@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260810130635.1166626-1-mkmkl@google.com> <CAD++jLnpZbmbZ_uQTS7pBdbmpvOZSy5+JsVP=Vb3HDhV8J-h4Q@mail.gmail.com>
+ <CAD=FV=UzV=G_XLoDZ4zq0ZPSQ3ttUDX9oBJUQrLYfUQ6v35nsg@mail.gmail.com>
+ <CAD++jL=WmAJNotpxqQkE9Yf3COxMcj=afDVGB2zi+ZN+mRocAg@mail.gmail.com>
+ <CAD=FV=UoZ=CoUdku5aaJr9uihxr0Q-Yj4UQeQtYeODMzku7LkA@mail.gmail.com>
+ <CAD=FV=UMBrgiRNP7y=KaAcq9a0f4UvJn5HOK=JoYveRS6c8mRw@mail.gmail.com> <anwZ_h5ySXuGpM3B@ashevche-desk.local>
+In-Reply-To: <anwZ_h5ySXuGpM3B@ashevche-desk.local>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 12 Aug 2026 09:28:17 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VbmszP-rj6ZMH2D0D+x54G2yihy2FmnughH124vK6J1A@mail.gmail.com>
+X-Gm-Features: AUfX_mzqiZI5d7zshS6YofTXn3bchIAOdUEIGUdh9n229oWM8ECdvV8W5r8-YVQ
+Message-ID: <CAD=FV=VbmszP-rj6ZMH2D0D+x54G2yihy2FmnughH124vK6J1A@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] pinctrl / 8250_dw: Allow drivers to keep init
+ pinctrl state until first open
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linusw@kernel.org>, =?UTF-8?B?TWljaGHFgiBLYXJkYcWb?= <mkmkl@google.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Vic Huang <vich@google.com>, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/11/26 3:28 PM, Kurt Borja wrote:
-> On Mon Aug 10, 2026 at 11:42 AM -05, David Lechner wrote:
->> On 8/9/26 3:26 AM, Kurt Borja wrote:
->>> On Sat Aug 8, 2026 at 1:39 PM -05, David Lechner wrote:
->>>> On 8/7/26 10:58 PM, Kurt Borja wrote:
->>>>> Add the ti-ads1262 driver with initial support for the primary ADC
->>>>> (ADC1). The ADS1263 auxiliary ADC (ADC2) is handled by a separate driver
->>>>> and interoperability considerations were taken into account.
->>>>
->>
->> ...
->>
->>>>> +static int ads1262_dev_reset(struct ads1262 *st)
->>>>> +{
->>>>> +	int ret;
->>>>> +
->>>>> +	if (st->reset_gpiod) {
->>>>> +		ret = gpiod_set_value_cansleep(st->reset_gpiod, 1);
->>>>> +		if (ret)
->>>>> +			return ret;
->>>>> +
->>>>> +		/*
->>>>> +		 * The RESET pulse timing requirement is 4 clock cycles, at the
->>>>> +		 * minimum clock rate this is 4 microseconds.
->>>>> +		 */
->>>>> +		fsleep(4);
->>>>
->>>> How long do we have to hold reset before the chip powers down?
->>>
->>> For power down 65536 clk cycles. Less than that is simple reset.
->>
->> How long is 65536 clk cycles in microseconds at the fasted clock rate?
->> Hopefully won't accidentally shut down the chip here even if fsleep()
->> goes significantly longer than requested.
-> 
-> That would be 8192 microseconds. Do you think there is a risk we end up
-> turning off the device?
-> 
-Linux is not a realtime system, so yes technically it is possible. It
-would probably be hard to do in practice though. So hopefully not
-something we have to worry about.
+Hi,
 
-If it did get put to sleep here, how does it get turned back on?
+On Wed, Aug 12, 2026 at 12:00=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> > What we need is we need to _assert_ chip select (make CS_N low) until
+> > we know that the other side is powered.
+>
+> Isn't this dangerous? Some noise on the bus for whatever reason might pro=
+duce
+> undesired "communication".
+
+I dunno about dangerous, but it's an extra hassle for software to get
+right for sure.
+
+
+> > ...we can't use the "opened" we've been talking about in UART because
+> > there's no real idea of "open"ing a SPI bus. It's transaction
+> > oriented.
+>
+> But any SPI message that is queued is basically an "open" stage. So, it s=
+ounds
+> like SPI core should change pin control states when message is queued and=
+ when
+> it's done. Like be coupled with runtime PM?
+
+Certainly the SPI driver can change pin states between "bus idle" and
+"message being sent". The SPI core can auto-runtime-pm the host and
+the host can change between "idle" and "default" states. It all works
+fine. The problem is that we have a 3rd state: remote device is
+unpowered. The SPI core doesn't have this concept right now.
+
+
+> > ...we can't use the normal "runtime pm" concept in SPI and start the
+> > SPI bus in suspended state because the "runtime suspended" state of
+> > the bus would want the chip select deasserted (CS_N high).
+>
+> Sounds like a PCB / electrical level of design issue. I would solve this
+> by gating CS signal using power of the peripheral connected. Have you tal=
+ked
+> to your HW engineers about this problem?
+
+Yup, this is often solved in hardware, but apparently not in our
+hardware. Thus it becomes a "small matter of software". ;-) It looks
+too late to change, in this case...
+
+
+> > 2. Invent a "pwrseq" solution for SPI where we run a sequence of steps
+> > (turning the regulator on) before probing the SPI bus, like other
+> > "pwrseq" drivers. Of course, most of those are for "discoverable"
+> > busses, but the idea of powering up a peripheral before probing the
+> > bus it's on is similar. This seems an extreme amount of work.
+>
+> Btw, isn't there some development for the undiscoverable buses?
+
+Right, "pwrseq" has been looked at for a bunch of busses, but I don't
+think there's anything magical/generic that could just be applied to
+SPI.
+
+
+> > 3. Hack the "CS GPIO" to be controlled by the client. It looks like we
+> > could fully move the GPIO (including the pinctrl in the DT) to the
+> > client. Then the client could call spi_set_csgpiod() after it's turned
+> > on the regulator. The client could have an "init" state for the GPIO
+> > that keeps it low and then transition to "default" right before
+> > calling spi_set_csgpiod().
+>
+> > Of everything, solution #3 doesn't seem terrible. I also still don't
+> > totally hate the idea of extending the "init" state... Of course,
+> > there's also some chance we can figure out other ways to get this
+> > regulator turned on sooner.
+>
+> Yes, #3 seems okay, but wouldn't be even better to have some flag in
+> SPI core or pin control on per message basis (see also above)?
+
+It could certainly be interesting to add the "remote unpowered"
+concept to the SPI core, where SPI device drivers could tell the SPI
+core when they're powered or not and that could cause the SPI
+controller driver to select a different pinctrl state. We'll have to
+think about that when we're ready to upstream the driver for the
+relevant SPI device...
