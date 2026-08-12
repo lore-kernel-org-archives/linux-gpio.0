@@ -1,110 +1,132 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBEA337BB8;
-	Wed, 12 Aug 2026 08:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396D53C5837;
+	Wed, 12 Aug 2026 10:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786524001; cv=none; b=JhNhZJ00SecfiHI4FLvB3QzpfOY6S/AoUzszH76u1rfRlblkxaZH3XqT308iBQv1xP2SZIormMkgaHoFKryp+4fto0CsXDDwmN1RaCne3atC0xYv4vvTHuvh7sTA3vKssdqtyqTV2mcPXnItXoj2gb/dY7d1pgm2d4XH7wabVEI=
+	t=1786529881; cv=none; b=V/UisxRpAevYCNyuINAM2h/h9xJ66kS+jCGuFPKIkibhqtSviFl8mv1tjx2Jb5XjBO7+Yb+g33dM7lUmMNx1XF0yFRYgyEE3IjRhkQq+7G84umSWb0Ya6MFLs0r0hwa2ScUF8LYmo3A7AChlHgiz4NQwChmAJp2WRQ9w/2RIkDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786524001; c=relaxed/simple;
-	bh=33tG3yoQKv7JaweTP8sARbCKifTc49CzGIOdaTqxXvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYOlTPxUO30/KMYkyInP42cD38QbdDFvRHdPWXGs8rizh5nr0N6AGdLcLEtEEGeYr5k4l8eBEcuBwlp4f2VzZqFm5j/uIJ0tYZyz1tbqey/gwUe1gDRW/GTYBjHLt1Zq+EdNt5PT0NjSYyiuVdxLqeMBbt7gfg6ZjdG3SVGOTnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bLK+PS7N; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1786529881; c=relaxed/simple;
+	bh=GmTbEPvkwJ5IHvxjuWI1y3VvjQ4yhh+Rh8rB8hiuHpE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SBWGWx6RkPmA+aclXQwDbJTJb84qnQQKnxdOxwEo5utSKaclvJIMYhBBjFuEOjsbWCO0qK0HqbI/wQlULXxVsAb2D1kCD5tgMguV4kZHdfP3tOmWLx37OZBVmvn6ctxI9BziN2FmUfG8iMyL7xCuxdoQrgeBhVYRXq7TVqJmmzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=olH0SctU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bLK+PS7N"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786523999; x=1818059999;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=33tG3yoQKv7JaweTP8sARbCKifTc49CzGIOdaTqxXvk=;
-  b=bLK+PS7Ndvx0SdRbv/rF8G6FiHthCD8Z56vFGsF+0VFiPJpdfd4wv4/e
-   mRGDJosSa6fl9/U25MUsmktK+wN8tn/Cj1GdFYnvFnf2S5q3NKyUQHDiL
-   v3rf0BuEB0dgNOttQeapTiBEF46ZiY5EwyE02P6OgOflHa88Z3bLTO94G
-   dzekwjv2++RfJmS1rKG+nEatrKzfMuYU4AnITYQtOBhD1YN5koAMdGocG
-   9FZPHU/uICXEIMAwHvM3IhO79yud7gYQCxX200EecvKDeFP6AwcSLAIeP
-   WcoAJ6WctN85vt4YYhUmvTmVa3CwgbSd4QJUXgJZQF7W3TJgMkNCsBWuI
-   g==;
-X-CSE-ConnectionGUID: MBHE/AlFQJS/tZ/mHKZJeQ==
-X-CSE-MsgGUID: BM6JotgjQo2jg3Cd0vcQ6g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="90746914"
-X-IronPort-AV: E=Sophos;i="6.25,219,1779174000"; 
-   d="scan'208";a="90746914"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 01:39:58 -0700
-X-CSE-ConnectionGUID: LI21q6wWTWCJsarsdu/Wsg==
-X-CSE-MsgGUID: wDHlj5ogT165RldE+ih4kA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,219,1779174000"; 
-   d="scan'208";a="267073474"
-Received: from rvuia-mobl.ger.corp.intel.com (HELO localhost) ([10.245.245.92])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 01:39:56 -0700
-Date: Wed, 12 Aug 2026 11:39:53 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Yao Qi <xnorigc@gmail.com>, westeri@kernel.org,
-	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Linus Walleij <linusw@kernel.org>
-Subject: Re: [PATCH] gpiolib: acpi: Add ignore_wake quirk for ASUS TX Air
- FA401GM
-Message-ID: <anwxWXfqSt2bM8iy@ashevche-desk.local>
-References: <20260808155513.2221976-1-xnorigc@gmail.com>
- <aneGptJn8J7eF9tj@ashevche-desk.local>
- <CAD++jLkCYwTyK6C8LvZiYJ9fSc8bp3RPpb4d6EgQTRraJtJDzA@mail.gmail.com>
- <anmNf3rJGxso6nuc@ashevche-desk.local>
- <ans3pcNFEDVBYXXT@ashevche-desk.local>
- <CAMRc=MeDLc-LPwoCEA8yMw3+L9UcN-NgXpYpFPxtUNffAAffyw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="olH0SctU"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BABD0C2BCB9;
+	Wed, 12 Aug 2026 10:18:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1786529880;
+	bh=GmTbEPvkwJ5IHvxjuWI1y3VvjQ4yhh+Rh8rB8hiuHpE=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=olH0SctUXdGKKkRp2o2Th9FpB9truE+eq8BkspfuknysL0rYrT4BFRDxYu/nwXryS
+	 gi7y4nBapblXc4zHQGxzCY+tonmIDfaRUNbQP1Sk5gPquoumHmeqRuMmwjlM1ZpFOC
+	 ZCUKy9heCHEgWj06gQOrKbOEnx1WJNLPwm6uFtgQYD5B+eK1Xvd+TrSFzG9jpb6tEA
+	 eS27rBxO5bQ627g4Pz95wwaRVSvRc9JU8mH8CSQ+xSxB2AuUhhNIJTFtQh6VPIoYZd
+	 jGG4sunfBbBxV/hmgjXt7WZHbO6rOhEq6dhi+HyFgISTcmcVczdAXYPl+0xNl+Uv9J
+	 fGwx7Kahb+l7Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F62C5CFDB;
+	Wed, 12 Aug 2026 10:18:00 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Date: Wed, 12 Aug 2026 10:17:44 +0000
+Subject: [PATCH] pinctrl: meson: a4: Add input enable pin configuration
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MeDLc-LPwoCEA8yMw3+L9UcN-NgXpYpFPxtUNffAAffyw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260812-input-enable-v1-1-81e5ca7772aa@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIAEdIfGoC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDC0Mj3cy8gtIS3dS8xKScVF1TQ0MzsyQTExMzS3MloJaCotS0zAqwcdG
+ xtbUAY0ASUl4AAAA=
+X-Change-ID: 20260812-input-enable-51166b444697
+To: Linus Walleij <linusw@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-gpio@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1786529877; l=2149;
+ i=xianwei.zhao@amlogic.com; s=20251216; h=from:subject:message-id;
+ bh=9SbIm6+8Ee1Yqah/Xj7ZLaezrMlBamtDl5jNdbzcGzc=;
+ b=D7w+Kf1zPLXNaLWHPsaixnfXbBtvYYqUK5MBvXWe+kNz9Ckdy07+uAigRFK3asjPqxVVkefBm
+ 5oLbnS5j6n3Dfqk58YoCnHFz1xdZi88f7ZaNnuFs2Qg2iOAGA2c/0XX
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=dWwxtWCxC6FHRurOmxEtr34SuBYU+WJowV/ZmRJ7H+k=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20251216 with
+ auth_id=578
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-On Wed, Aug 12, 2026 at 01:23:53AM -0700, Bartosz Golaszewski wrote:
-> On Tue, 11 Aug 2026 16:54:29 +0200, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> said:
-> > On Mon, Aug 10, 2026 at 11:36:19AM +0300, Andy Shevchenko wrote:
-> >> On Mon, Aug 10, 2026 at 12:17:06AM +0200, Linus Walleij wrote:
-> >> > On Sat, Aug 8, 2026 at 9:42 PM Andy Shevchenko
-> >> > <andriy.shevchenko@linux.intel.com> wrote:
-> >> > > On Sat, Aug 08, 2026 at 03:55:13PM +0000, Yao Qi wrote:
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-...
+Add support for PIN_CONFIG_INPUT_ENABLE in the Amlogic A4 pinctrl
+driver.
 
-> >> > > If AMD people will be quick enough to tag this, I will include in my PR to
-> >> > > Linus W. on next week.
-> >> >
-> >> > To Bartosz?
-> >> > It's gpiolib...
-> >>
-> >> Oh, true, I have also pin control stuff to send!
-> >
-> > Okay, I have checked if I have anything to Bart and it seems I mixed that with
-> > pin control stuff. So, Bart, if you feel confident about this patch, you can
-> > take it directly. Here is my formal tag for that
-> >
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Is this a bugfix? I'll be OoO until the end of August starting on Friday with
-> the exception of a single day to catch up on email. I'll be sending my PRs for
-> v7.3 tomorrow. Not sure if I should take it for v7.3 or v7.2?
+Use the existing output enable control to configure the input enable
+state, since the hardware uses the same control with inverse semantics.
 
-On one hand there is no rocket science behind this patch (that's why I gave my tag),
-but if you strictly want AMD to confirm, then postpone, so it's up to you to decide.
+Also update PIN_CONFIG_OUTPUT_ENABLE handling to return the actual
+output enable state instead of treating any non-zero value as enabled.
 
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+ drivers/pinctrl/meson/pinctrl-amlogic-a4.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
+index 420f7915c010..39eb8cc7fc0d 100644
+--- a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
++++ b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
+@@ -469,9 +469,15 @@ static int aml_pinconf_get(struct pinctrl_dev *pcdev, unsigned int pin,
+ 		break;
+ 	case PIN_CONFIG_OUTPUT_ENABLE:
+ 		ret = aml_pinconf_get_output(info, pin);
+-		if (ret <= 0)
++		if (ret < 0)
++			return -EINVAL;
++		arg = ret;
++		break;
++	case PIN_CONFIG_INPUT_ENABLE:
++		ret = aml_pinconf_get_output(info, pin);
++		if (ret < 0)
+ 			return -EINVAL;
+-		arg = 1;
++		arg = !ret;
+ 		break;
+ 	case PIN_CONFIG_LEVEL:
+ 		ret = aml_pinconf_get_output(info, pin);
+@@ -619,6 +625,7 @@ static int aml_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
+ 		switch (param) {
+ 		case PIN_CONFIG_DRIVE_STRENGTH_UA:
+ 		case PIN_CONFIG_OUTPUT_ENABLE:
++		case PIN_CONFIG_INPUT_ENABLE:
+ 		case PIN_CONFIG_LEVEL:
+ 			arg = pinconf_to_config_argument(configs[i]);
+ 			break;
+@@ -643,6 +650,9 @@ static int aml_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
+ 		case PIN_CONFIG_OUTPUT_ENABLE:
+ 			ret = aml_pinconf_set_output(info, pin, arg);
+ 			break;
++		case PIN_CONFIG_INPUT_ENABLE:
++			ret = aml_pinconf_set_output(info, pin, !arg);
++			break;
+ 		case PIN_CONFIG_LEVEL:
+ 			ret = aml_pinconf_set_output_drive(info, pin, arg);
+ 			break;
+
+---
+base-commit: 761af93c9f1a100b8d9f71aa744b8f9abbbbbfb2
+change-id: 20260812-input-enable-51166b444697
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
+Xianwei Zhao <xianwei.zhao@amlogic.com>
 
 
