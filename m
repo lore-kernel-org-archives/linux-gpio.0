@@ -1,132 +1,121 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96C2305698;
-	Wed, 12 Aug 2026 07:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944CA39CD0E
+	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 07:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786519336; cv=none; b=qNv0cP7YNCrvLI997p1FszdLooFVaWUaybDonguBkResYlkv+SoHwgdShzjhFhDJumbEAloLgl448ebt853g18qL40vRaXqArn6rmWxNqy9s8rU+dVewSIHxp0SwMcyHF+EZ3a6yQfo7muef8NPaM6plrcH1yWYHwp3MveiCUhk=
+	t=1786520439; cv=none; b=XS+QmIc2864AY8QbUZIbnBxGu3ziG1GhScfOnYxMB84nuZhccuxJ9zHhknPGUYm/BBxUmBrB0bZyBnhtCdjxUlTUGWzHwBpuMEClCp5veQF4wTlN+KqtnnpotHEFMTeaauhrKl+5WWxGAz9d/j3ngDozZDc2sTT1UO7DU0Lpuow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786519336; c=relaxed/simple;
-	bh=fufZPUgDIsEd6X7EwYsM5/dvM04z7+1SxQKmNAHvc7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FW9D5XcSRFjWizBn+ZQpU8tPd8ffr68T4epvwaPDY6p+TLPXjpgX/Mjer6o13BC6X1ArZg8wOchozJ2aNtbyatdTAp4qeREmHSWo6AB6LvJZiZynZ58tPFjn076NvLtkelaHKG+au7DI9+43i1kWybA5n7G4rII4M9X6+fxzAsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BQRcAwev; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1786520439; c=relaxed/simple;
+	bh=8NIMyonBTLl7p5TcLVhooTgWqOCx0uqDr6kFmRrrkQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TjJJo7BjLrfef7T9e3wH4adOBTX3FTh8RbYW5b0j6QS6D6sk4DcaLKeJE2I5aPzrBDtT2N93x12DeGu+0UdVNjg5/TnwNQEqliSjNyucGbroZnFFxpGkR9WPwlXovo3GMzJMlfcc8amKgv96/DaxJHjfT4mu/aonV/FQbfmqtLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpkEHvKv; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BQRcAwev"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1786519335; x=1818055335;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fufZPUgDIsEd6X7EwYsM5/dvM04z7+1SxQKmNAHvc7U=;
-  b=BQRcAwevALkKKiiTYBA/zU0kWNzF+gucRyGCRwmC/j5qQW1VCLHblWnv
-   vd6rORoXPD8UhCfAPuHbBG/NeCTEMXskl6qsvynLMVQ88RJ5muVAyU3kY
-   NnppF3Pb4TxxnmMzwsideX1rpUIp3YR8c7mmzzHnoOGXwFZdFESptBKya
-   wZd+Pee6kW5TrNVjH5sny6RVEwiLk+RPMvzzRCwLZTh2vee6D8OAKqGT8
-   6VFsYTJivdoDdm++3Ug3c1eI8GfAtd81j7fAKBEeh0UiZOOHXsSx5uJhf
-   IADmfoeYkbCOU3VNjKT1V2sGU39Ynv5MsN61+r+OQqvYE3+JmYCMvEWb5
-   Q==;
-X-CSE-ConnectionGUID: BhSWlIHYTgKtEfDFB/JTgg==
-X-CSE-MsgGUID: VLEw0Nk7TLSDGCGDeNeDJw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="87076276"
-X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; 
-   d="scan'208";a="87076276"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 00:22:14 -0700
-X-CSE-ConnectionGUID: DEajM0HfS0Wj9YrRZV8BLg==
-X-CSE-MsgGUID: MS06c8JcSu60SFv4KooasQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; 
-   d="scan'208";a="265560280"
-Received: from rvuia-mobl.ger.corp.intel.com (HELO localhost) ([10.245.245.92])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2026 00:22:12 -0700
-Date: Wed, 12 Aug 2026 10:22:10 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Yu-Chun Lin <eleanor.lin@realtek.com>
-Cc: linusw@kernel.org, brgl@kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tychang@realtek.com,
-	cy.huang@realtek.com, stanley_chang@realtek.com,
-	james.tai@realtek.com
-Subject: Re: [PATCH] gpio: rtd1625: minor cleanups and log improvements
-Message-ID: <anwfIsUcasA-juzv@ashevche-desk.local>
-References: <20260812031929.3598364-1-eleanor.lin@realtek.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpkEHvKv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F35A1F00A3A
+	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 07:40:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786520434;
+	bh=8NIMyonBTLl7p5TcLVhooTgWqOCx0uqDr6kFmRrrkQc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=LpkEHvKv4i+JqSzorjwyomLUtI+GEumeJLV0rdgKKmtQ85BFQ4kA6SXsMMTUPTkYM
+	 P5VlIYfTJD8u8o9jB51KRa+12FOpN+SKPS4+tNM8GMzfUNJSbIRcgdpYkx25sxug+V
+	 +I9sgt6S/W1KiWEi3UuSSJ03TyY8PsqKv6ueN71q6X9aZJrWvDn4++VMHD9b1IH/5M
+	 H3tto67xi6IzkmbvZRuTptMR8ce7jI274fUs6UCKpsqbzrke7fcMpu2fkZCAJE95yB
+	 rOGdyS2IekQ2j9nQQu4PgXNKeupPwadWriiRHn3LOMpJiH3A0QH6RT+aHzQcHKW9mf
+	 FxLq9kWjawaXw==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5b0f19bea2fso775806e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 00:40:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqvpPGKFkOx2poo26PmwgNodNtbPp3Xw5FqJRttnEUIFcLZCTwMjlGxsgd4IryIxjlmgfAhCv72NJxU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMYhM94HWRuhGWRYtR78Tv6K3324wR41IZluErS3X1hdP09ia3
+	pv1jj1hwaC3nOUsPt3JFpFy+o7rg0TZlkOkuMGdLs5uvjPx0GZTWO/it509qye86l4cKFwinUrq
+	E68X679n8vUya0ASLFi1XCkYYekHdI60=
+X-Received: by 2002:a05:6512:668e:10b0:5b0:1dd0:f20b with SMTP id
+ 2adb3069b0e04-5b44e2db43emr269927e87.6.1786520432729; Wed, 12 Aug 2026
+ 00:40:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260812031929.3598364-1-eleanor.lin@realtek.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20260806-longzhao-upstream-cv75-v2-v2-0-6b09707c5fe9@ambarella.com>
+ <20260806-longzhao-upstream-cv75-v2-v2-7-6b09707c5fe9@ambarella.com>
+ <CAD++jLk0LoOJk=TXin42AL3_z_7eVVkvMnYr1S8090C6A_B+dQ@mail.gmail.com>
+ <DS0PR19MB7925690FD29D578D8AC5D10EDADE2@DS0PR19MB7925.namprd19.prod.outlook.com>
+ <CAD++jLkUPU0eujvWc5Hn1tEu4n451LvkuGGT=j6OfirJENpRgg@mail.gmail.com> <CAL_JsqJprX0oC3Gdj=RNNYtPiQ-0NkEPvn-MyQ9ZtFakKcj1ew@mail.gmail.com>
+In-Reply-To: <CAL_JsqJprX0oC3Gdj=RNNYtPiQ-0NkEPvn-MyQ9ZtFakKcj1ew@mail.gmail.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Wed, 12 Aug 2026 09:40:19 +0200
+X-Gmail-Original-Message-ID: <CAD++jLn+LNAb-VDsNz94Rj780fn1Z_SF9qxxbBAwLMNuedpccQ@mail.gmail.com>
+X-Gm-Features: AUfX_mwKiQhkB2vUPp0CB68UDRKMeWXa67ucLPOGncEJWQU6-LQSzSsOw8NITtk
+Message-ID: <CAD++jLn+LNAb-VDsNz94Rj780fn1Z_SF9qxxbBAwLMNuedpccQ@mail.gmail.com>
+Subject: Re: Re: [PATCH v2 07/10] pinctrl: ambarella: add Ambarella pin controller
+To: Rob Herring <robh@kernel.org>, Konstantin Babin <Konstantin.Babin@arm.com>
+Cc: Long Zhao <longzhao@ambarella.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "soc@lists.linux.dev" <soc@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 12, 2026 at 11:19:29AM +0800, Yu-Chun Lin wrote:
-> Add minor cleanups based on Andy's feedback:
-> - Store 'dev' in driver data to use dev_err_ratelimited().
-> - Drop redundant 'ret' initialization and the line break.
-> - Narrow the scope of local variables 'i' and 'hwirq'.
-> - Use IRQ_TYPE_DEFAULT.
+(Page Konstantin)
 
-...
+On Tue, Aug 11, 2026 at 6:11=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
+> On Mon, Aug 10, 2026 at 2:42=E2=80=AFPM Linus Walleij <linusw@kernel.org>=
+ wrote:
+> > On Mon, Aug 10, 2026 at 6:02=E2=80=AFAM Long Zhao <longzhao@ambarella.c=
+om> wrote:
+> >
+> > > Thanks for the review. I will rework this to reuse the PL061 driver w=
+ith
+> > > per-variant register offsets, and evaluate modeling each GPIO bank as=
+ a
+> > > separate DT entity. The duplicated GPIO implementation will be remove=
+d.
+> >
+> > Thanks Long, I think it will be easier if you break out the pin control
+> > bindings and driver from the patch series and work on it separately,
+> > the same with the serial driver at least.
+> >
+> > I understand this can be hard to test on the hardware, I usually
+> > put a few patches "underneath" the b4 cover letter, and then the
+> > b4 send-email will only send the cover letter and the patches
+> > on top.
+>
+> The problem with that advice is then 'base-commit' is useless.
+>
+> Maybe b4 could learn an 'ignore the top N commits" or "only track the
+> first N commits".
 
->  struct rtd1625_gpio {
-> +	struct device *dev;
+I honestly don't even know what the base-commit is for so that's
+I have blissfully ignored this problem...
 
-Can't this be derived from below regmap?
+So the summa summarum is that the current behaviour kind
+of encourages people to do large patch bombs for a new SoC
+since due to base-commit and the fact that developers tend
+to need to boot test the series (and it won't boot without some
+other SoC-enablement patches) the series must be kept
+toghether.
 
->  	struct gpio_regmap *gpio_reg;
+That explains why it feels like I see *more* of those patch
+bombs these days.
 
-Either this...
+My initial stance would be that a useless base-commit is
+the lesser evil in cases like this.
 
->  	const struct rtd1625_gpio_info *info;
->  	struct regmap *regmap;
+Konstantin, what's your take on this dilemma?
 
-...or this?
-
-...
-
->  {
->  	/* Each GPIO has its own dedicated 32-bit register */
-
-It's obvious that the comment is placed wrongly...
-
->  	struct rtd1625_gpio *data = gpio_regmap_get_drvdata(gpio);
-> -	int val = 0, ret = 0;
-> +	int val = 0, ret;
-
-..and while at it you can make it reversed xmas tree order.
-
->  	*reg = base + offset * 4;
-
-Putting all together, this should be
-
-	struct rtd1625_gpio *data = gpio_regmap_get_drvdata(gpio);
-	/* Each GPIO has its own dedicated 32-bit register */
-	*reg = base + offset * 4;
-	int val = 0, ret;
-
-...
-
->  		for_each_set_bit(j, &status, 32) {
-> -			hwirq = i + j;
-> +			irq_hw_number_t hwirq = i + j;
-
-Now it needs a blank line here.
-
->  			irq_type = irq_get_trigger_type(irq_find_mapping(domain, hwirq));
-
-...
-
-Please, split this patch to a few based on the nature of changes (something
-like 4 patches in a series).
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Yours,
+Linus Walleij
