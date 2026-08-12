@@ -1,110 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47698325704
-	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 07:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A8D361958
+	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 07:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786520830; cv=none; b=cUd7+e2Pr6xsLHw0gaxDzIZ+LHsjW++WHQYWA3qZoEZ0xtj32JlzDbQi3hgsrABk8pRZxgQ81z2aqx3ui4V/Bab6yzeR/4cylHWxtBKUxFkvyK2bPZ7IdhkxJ1TJoQfbZbbKtewfM+/ajAyWFYxzrFEMEDYtFzF3KyZGVSuW2XM=
+	t=1786521073; cv=none; b=Fr4LnGXA48m5qyo+R9JUL92KZN3VTD/xfiM9NzjtaWIYHLdevsvNwl1kpuAEPF0Q2+k390iRhEntqaeuikxnMRM/iRanRFu5snD8C6xZBn+uPb90PIhOGUDx2IT5JTs0ZtCurwsGZ1M1lHEoyGUCdrwju+Zh9xoVRM8xROiCCOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786520830; c=relaxed/simple;
-	bh=sUiK7Fx/H+JDSm4/b+Shne5rP7OtJDFv8SjEMu2XlDY=;
+	s=arc-20240116; t=1786521073; c=relaxed/simple;
+	bh=u88vFk2onmkQ3b3xRrvtWd9AENivl8f91ttRccmuGcc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TfoRj3owwTeid867D2f7rPJIoqlE+ob67bpRBSqg1Yd/AJ5L0xNYqpYrjSfVV8xC8IpzwWb+Rmbs/zVdnZArTfrwH/LrYZjBNUjZfhrd/8IlYMd3HbYypU6yk2Wnz0BhdUtaop0U4kj1ogrkjVNLkydQI1fnAHEi4E7FzQ5B4Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZY6JpQE; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=MaNCNqWzE/sQcPyf6+qBDf93NfzGckIy4DN0kwUb624uijgIx5fR1JjYOsosI+7ZrTONy+qonpLQCuCe5fc48c+0s7pMB9MzL2vY4i+MTayBh/H5x8lU6VbPGwHrkun8Ulrz0GyG+luNDEUamcJrvlrbzHgMQ+FQNpvNLjpn2GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kwLgAN5q; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZY6JpQE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 006A21F00A3A
-	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 07:47:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kwLgAN5q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EFA21F00A3F
+	for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 07:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786520829;
-	bh=sUiK7Fx/H+JDSm4/b+Shne5rP7OtJDFv8SjEMu2XlDY=;
+	s=k20260515; t=1786521072;
+	bh=u88vFk2onmkQ3b3xRrvtWd9AENivl8f91ttRccmuGcc=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=QZY6JpQEuKgX85dPRvSGmr3bH9qAroW0GR8zhFsvGh3VWcao3sMM4Moo4XaM3SOEP
-	 O4bdYPcDWBVzEdkkPzhhSltYb1YvSak70l7e5cJLOUTsnP1jwIHqLp5M32CmtlaKSH
-	 T1B9Y/kzFdT5lZ5qQ+KHqYwgup+ceGMaRlm3fxGz4zsBSDi9Y9BvhUjLEwrwvg4a3O
-	 Lkfsvz0iw902zsQgsNW3WMrfodW1et5yFaNjxxBsBZFsKHC5boRsv7juGXvoO5LyKV
-	 VXa/KcW3GdXYMRZb3I/E2FvVcF4IehIiZu5O+0tjPVFHapa73x+soXio0u/IwsaOvT
-	 UIHXquD6Qj5sw==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5b2aab18795so716872e87.2
-        for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 00:47:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqGW9zpm+ftZBygU+PMINGUcHYZNvarNlQr0CsKhRhSRsDH8z/XlmjETma3rO1hqGedjzAYpq8PANPJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEL5fr9W5qqA1nKZEedYTmHJZ53lyQn6HLw5yOW8nK+UsfZpbw
-	yYp8Xm6WBZ+/cIYLMEsffmtXDbjPLJUyIOFxpQWmdADJteFeqWUXazH9HvbZJ/e/srzvf7tqFb+
-	PMUrxd48EhSnmApJg2aPpXVeg6YhQAM8=
-X-Received: by 2002:a05:6512:15a0:b0:5ad:4cb6:fcf with SMTP id
- 2adb3069b0e04-5b44e2e25edmr406738e87.12.1786520827820; Wed, 12 Aug 2026
- 00:47:07 -0700 (PDT)
+	b=kwLgAN5qmRJb02ARh2TZRlmVL+PadHjfTjgi0XQhPQA3jSptBNoidh+mP1Djn7kDV
+	 FNrxvoJFpNoSy8YzudcKrNjoe9l5oN1EKXvHOPVpdyyRE2Fwrok/ddkH3AcRnfdKz4
+	 U9ki95Su0164cYZ5JYmgSOAGe51V5CrPF4rV+zbtKIa8qDdTfCJAbzxcPvF556LpBB
+	 SK3FMmwSvRcUO95m0XRCvERz9M8Y74r5Ymg/o8Ix2z/mCW2yhpMDZCvvQYlNBaOS4W
+	 9tR3XtSaXd04Lo2qN8Ldpc2N2Dv7PDt0CVf3h9Owj2IFRuHHNhmo6rrXmsMeNtp0nO
+	 qCjkGx+6qVKZA==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5b01146b205so524196e87.2
+        for <linux-gpio@vger.kernel.org>; Wed, 12 Aug 2026 00:51:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RqoH/k7e3rbKqLEw6NKaxD3fQqCeoDbrs8MTlkmTzrqWw9fDQbfxi+XinrHsN6REy0DUFrelA2KrWjC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/SLgggfMNXJbtD7AT1C5b8YhOuUJJ8mN07OsVTUN4SorblQZt
+	gbsq9rZJxdTZjiyRzrgqo9OWDPH3INnMtDIYGUIshDMeAsWk6C+qZMNvn1uk1/2TKpaZUweol/D
+	UJdWWJkyqXGeNTO3iGvyyQnZQWzwdjj4=
+X-Received: by 2002:a05:6512:3b10:b0:5b2:a21a:10e7 with SMTP id
+ 2adb3069b0e04-5b44e311101mr395018e87.25.1786521071119; Wed, 12 Aug 2026
+ 00:51:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260810130635.1166626-1-mkmkl@google.com> <CAD++jLnpZbmbZ_uQTS7pBdbmpvOZSy5+JsVP=Vb3HDhV8J-h4Q@mail.gmail.com>
- <CAD=FV=UzV=G_XLoDZ4zq0ZPSQ3ttUDX9oBJUQrLYfUQ6v35nsg@mail.gmail.com>
- <CAD++jL=WmAJNotpxqQkE9Yf3COxMcj=afDVGB2zi+ZN+mRocAg@mail.gmail.com> <CAD=FV=UoZ=CoUdku5aaJr9uihxr0Q-Yj4UQeQtYeODMzku7LkA@mail.gmail.com>
-In-Reply-To: <CAD=FV=UoZ=CoUdku5aaJr9uihxr0Q-Yj4UQeQtYeODMzku7LkA@mail.gmail.com>
+References: <20260811130310.3867697-1-richard@nod.at>
+In-Reply-To: <20260811130310.3867697-1-richard@nod.at>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 12 Aug 2026 09:46:55 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=A+wkWudoDZLDy9mq-y3UT9Yvpi8cWM5Nr6zcXT4qskg@mail.gmail.com>
-X-Gm-Features: AUfX_mxYz7-hp5qQbVQRpfBnrohWFDpJP9rhisrRcXR_wOY30NeSoikp25BhLNk
-Message-ID: <CAD++jL=A+wkWudoDZLDy9mq-y3UT9Yvpi8cWM5Nr6zcXT4qskg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] pinctrl / 8250_dw: Allow drivers to keep init
- pinctrl state until first open
-To: Doug Anderson <dianders@chromium.org>
-Cc: =?UTF-8?B?TWljaGHFgiBLYXJkYcWb?= <mkmkl@google.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Vic Huang <vich@google.com>, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Wed, 12 Aug 2026 09:50:59 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkJF8ZPVtHyZ=A1KhRPtYgXHjCDBMxh1LJasQ0eothk6A@mail.gmail.com>
+X-Gm-Features: AUfX_mzke1iT-khzbAfSekVtleGRjvEH9SklOmIH_9M8VPeyL2EcqGq5F2y-hY4
+Message-ID: <CAD++jLkJF8ZPVtHyZ=A1KhRPtYgXHjCDBMxh1LJasQ0eothk6A@mail.gmail.com>
+Subject: Re: [PATCH] gpio: omap: Use device name as chip label
+To: Richard Weinberger <richard@nod.at>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-omap@vger.kernel.org, brgl@kernel.org, khilman@kernel.org, 
+	ssantosh@kernel.org, grygorii.strashko@ti.com, upstream+linux@sigma-star.at, 
+	Julian.FRIEDRICH@frequentis.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Doug,
+On Tue, Aug 11, 2026 at 3:03=E2=80=AFPM Richard Weinberger <richard@nod.at>=
+ wrote:
 
-On Tue, Aug 11, 2026 at 10:15=E2=80=AFPM Doug Anderson <dianders@chromium.o=
-rg> wrote:
-
-> One thing I guess we'd have to work out is whether we'd really want to
-> use "default" and "open". I usually think of "default" as the active
-> state and then the two common states "sleep" and "idle" as the
-> inactive states. I guess looking at all the states, maybe you'd
-> suggest:
+> Since commit 92bf78b33b0b4 ("gpio: omap: use dynamic allocation of base")=
+,
+> the driver no longer statically allocates the gpio base.
+> Having chip labels with the old static allocation makes no sense anymore.
 >
-> * At probe time, select "default" state since the port is closed.
-> * At port open time, select "open" state if it exists.
-> * If a port runtime suspends while open, select "idle" state if it exists=
-.
-> * If a port runtime resumes while open, try to select "open" if it
-> exists, or fallback to "default".
-> * If a port does system suspend while open, select "sleep" state if it ex=
-ists.
-> * If a port does system resume while open, try to select "open" if it
-> exists, or fallback to "default".
-> * If any kind of suspend/resume happens while a port is closed, it
-> stays in "default"
+> Use the device name to have a unique name such that gpiod users can clear=
+y
+> distinguish between gpio chips.
 >
-> The above assumes that if a port is closed that it doesn't need /
-> shouldn't transition to "sleep" / "idle" states. That's probably true
-> (?) for any port that defines an "open" state, implying that "default"
-> means "closed". If someone only defines "default" and "sleep" or
-> "idle", though, maybe they'd expect transitions to "sleep" / "idle" at
-> suspend time?
->
-> Does that sound roughly like what you're thinking?
+> Signed-off-by: Richard Weinberger <richard@nod.at>
 
-Attention to detail is officially your middle name Doug!
-
-It's what I would have been thinking, if I had sat down and
-had the same attention to detail.
-
-So I really like what I'm seeing here, go ahead with this
-design, provided it checks out and you can somewhat test
-it. I guess you have hardware where you can actually test
-the hairy transitions between open, idle, sleep etc and that
-is more than most will do.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
