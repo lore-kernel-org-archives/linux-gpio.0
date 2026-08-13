@@ -1,72 +1,72 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B4941684A
-	for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2026 15:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33F23B71A4
+	for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2026 15:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786635399; cv=none; b=j1dH4qq/Z5KaTIoPCmr3N3KGNDrPvSpcmy+RYsQN1o+fODyq9bKNNx2QKNdoIQ15r5cCamIV58evvbjTmYb20iaIHu9dQVXoYZpXWN3g9QZE1YeGnm9xObhRKcL+ZCT4VvBPrHVSekLw4hQnL+JGuTGFdOFsiWNdthLzUHFYKJ0=
+	t=1786635478; cv=none; b=L3irMuhertn4+0Pha58+CcorwN+onYZVPEt9roXW1W9SNy3MQ/1qdLb5VPAQwHZLZKExriy9g3vY3Y4cGaOenVHJ8cHIpBAjlKYxrSDyka91sYOkxGU7WiFjTH9AA4AZwqyCIbEi0JZIG7/Xr160Cz0k4cqC7MYXucmCxJsHidU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786635399; c=relaxed/simple;
-	bh=vzsqRgKK6xb+qXIWqmZLoli+ye1tIEurLtQ8ZUQVhRQ=;
+	s=arc-20240116; t=1786635478; c=relaxed/simple;
+	bh=jUutJajjNc7Hw1icO/JaEhCU11F1Np3J+BomYvLKJJg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SM/YtWS035CpJyQdam2oR3i2qD2yEQXkzvMb7q0mvpjTOAA0N5SgeIsOTIzB0bBVK5AX9kzg+Mv/OBcGSpAhZiyWyCQqB/9Uwnjec12m4qemYeoJ+ypB85pnVNYAO2KJfZEKFCnvgZ++Zf5rRo8kcLoFSWkiWfGWeaCaM4YzT7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
+	 To:Cc:Content-Type; b=jHH4vHFFgABviYMAKBqDV9+KuzVh50cyCNG0tLxmJL7GS/e5BNZEnqey2NsRb9TQRING/YsM1zyqZOwnVurR5W0AfoJ/eXR6+prSh9Tx6GDzJM82pWA4NfLORI99gLuC66EnjVJReuT6U86NpC3j8uxvb+XZ2zTxF/FURvPqtJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-c15d3cd51b2so7708066b.3
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2026 08:36:28 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c2074710751so10123966b.1
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2026 08:37:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786635385; x=1787240185;
+        d=1e100.net; s=20251104; t=1786635468; x=1787240268;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=8HfO2oqGvHcLZthk9jR7PnHTZYqhjJfeV3Z47WsDvdU=;
-        b=TZGBwFTGVLNkz231mgIIyvMMWvMZ2OamQdGJGUmgHXl9Ig85d1XuU8eu5WqUkwKYwt
-         CkCjALmpIjKaFuyF+bxWlBa+YaqDYrRgZdwU4rgmo6yUdfszGRbefulaJ4a4z/fKUeiv
-         dv34RboJQDflsWpO7/TmlSZ6Jd86FMNRsv1biUoEgeYC1ih7bKlapVS5EmSAtaWyrniA
-         +6vxG7+kslEGQL+/AInvwJ7qNYGHwEZYVLhBcdzF9Jt9KrtQtUKSyFyTcNXGeCeNx+gU
-         KZ2zWWpwKPTosss+MhoNGdoKS9lKIUOPjfY+nXqXU7MGvj2cHt0H/7XRUsH8E3Cpsus6
-         5P+w==
-X-Forwarded-Encrypted: i=1; AHgh+RqfhpvELDzWlMEWrwv68TYCet4J0GEhR+Y6xKYg547j1tdg6oSS9m9cTVRtSopAEuWxUbDNDIqjHqq2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3tR92dUUKj07rutU87SyCCIO0U6x7WzoaqiK+4lqfXA8mcBfV
-	JFPDjI9iOfOlwK/co+sz/qCc1+Aum/n9MV8A6ihUty5JmYN+r+mKqqP4EX2HSsJeOjI=
-X-Gm-Gg: AR+sD13GvnZwXqFVsvoO/0cVnKTaFz77hEJtRHGlSSIZEOr7sL2RbvM8pjmADqpayr5
-	XQhtWGC8XBPqAE6oF1OqSk6j1TGTBe23AnvKxIu20gr38Zk/JzgGG1/Lwn+oyjhS0Tm8eknavIg
-	nsyaYDsEivPyqwJxo3oxnr4a2PlyHq1YisP0Er2ZQ7COyg/6nU1ScogGxpGDMKA2asEQGUXQ2Iv
-	fXWgvfwyvyugTUDWretWXNKuaBoxZSkFA0D0qQkEnkM1h/yfqGZyqfrtHSUQgnOVZq8gnz5KBx1
-	UYhNhDuR5gQv1k6YJ+SIwwUoAyRMjuWXCpn+tDq5zvsL3TaaGlwqJP9+XgYl6JntIC7MlE0/O37
-	xSso2g5ircaBHV5lVlUfGNcNL5oB9Jk7AkW/nTIV5/D/9loVnDNk9bscTL3NaQMkmR1s19ZhasG
-	XC2Gj8V+8+q+kQTi5wB60wP0SND5NQxAaDUEFQ12PNDJ+RDqahJI3iONQ34JKuUX+D2KS8g4IjX
-	6fqv0vxhW5Vd6/aT8EZJ3JFhg==
-X-Received: by 2002:a17:907:e916:b0:c20:7897:bc69 with SMTP id a640c23a62f3a-c210907b20amr307250066b.30.1786635384512;
-        Thu, 13 Aug 2026 08:36:24 -0700 (PDT)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c21234e5bdfsm7932866b.23.2026.08.13.08.36.22
+        bh=sFyxVjuWrWrBIq8VPvjLqFOlB0PwiULnnhP6Fa2htiM=;
+        b=mWLruO/KZkvPYCUz3p1/Fd92kgNV7JSE2Tj1K18p2VC05WObvAX8H2em+AGZyTjDCE
+         SXZxP821vFbjL7RCnie5nbmrIYoWhEzxKI8MTeD6KWOfxQ2vRrjEXFNQFTLhKFtoiFmE
+         dvS7n5s9veQwFXF4PF49OyQ8oiBcwxsp2bblVoOdWx/J/uR3R084MdQCDztcA1nLwMhI
+         M18nvLeMDUgtdJ1m8lDbPGn5oP/3K/I+u3/6xbqFKciVq9H+lN5rheoyY3fRppfr7xQN
+         a4EjBXUkb6DnCoC7LFkLmaksYfezWBeypRtMHVo1ySTiMzawfj5w+gTx+AkRgV8PEyFK
+         QOow==
+X-Forwarded-Encrypted: i=1; AHgh+RodhiBLepvtU8juUIAFjsFNZwvoCHJyOtnZDF/JHue63Fp7Vh+5XAaQuW4RS5+/pFBHLzv1lGGkc5hL@vger.kernel.org
+X-Gm-Message-State: AOJu0YymN8B7BDQtF0gziDqw83OOXtI2Xe6n2+pXBVw+ET4KuZrIYqSW
+	SCXonUaWSbko9odSYaFN4lCPPwJSIf028eeoeH0+Nj62TBOWbKXedzXvUvzFgsXmYtY=
+X-Gm-Gg: AR+sD11WTg2e/93XpwitdoSpeEyLyUjslvU4YnpDdKqeQVCilBZ8kJgf/AzEXPBagtw
+	l4v8BnBLXcz2aU23bZSXfg9PSO4D6YFImjMSSxyC1GeYYbQhZYYG+8VBcvXD01y6QUhRAxLhK/l
+	5JPPRWguNwQmYx7CKAb8WofOEv2ktcyEOu/OBpb0qDfzgu7Hl7LSvbEDw59xieRGvj6ZbODbzBK
+	KywtbcjD7891KWwZ7L2NbjckH9RjU10P00BhM/6VJ6WUu1z38/JRjjz8dvi4vPvCVr7ZaNbcSt9
+	u21cjCp6iywf27tk9MwjRDFbt1zdMZCTFnHY/3R6sM8YOKNVkk8G9zTeCKE9H9tutR65jkFclK7
+	N7tMrf7InfpniXVIEatMQlfIOliJX28owhRa/ywTnW7XiDUdomuUGB/Hd5lxv8bb3uvHsBfMJcU
+	ZmAoxEbFo8v2eIwJ91Pl8jJYpsKasm7eH4/FFSswaDv0+9ceddjZND3N3UYbcOzNlfoVQzw0euJ
+	eezb2gKcIetHzAGxhUubn1/Pw==
+X-Received: by 2002:a17:907:1c08:b0:c20:31d1:a89f with SMTP id a640c23a62f3a-c21090d8ae3mr327373966b.24.1786635468213;
+        Thu, 13 Aug 2026 08:37:48 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c21234ea5fesm7597966b.24.2026.08.13.08.37.43
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Aug 2026 08:36:22 -0700 (PDT)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6a0794669a6so1575701a12.2
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2026 08:36:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqWvZYt3zMc4Iyc84Rcdu3QYvS4BigTdBEBZseRSaaGWwZUNGPZI1DIfOzRTwHzGaeUU5jZxEZW2lCY@vger.kernel.org
-X-Received: by 2002:a05:6402:42d1:b0:6a0:6978:bee0 with SMTP id
- 4fb4d7f45d1cf-6a3805dd5f3mr3355685a12.9.1786635382098; Thu, 13 Aug 2026
- 08:36:22 -0700 (PDT)
+        Thu, 13 Aug 2026 08:37:44 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6a18840e2abso1678201a12.0
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2026 08:37:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoJTRrskiN4mt8uBlSqazpLA3I8+rw/17gV9IF3yx9r8evAX48/BjOTNB6uKQ3XhS6oclFQJ2wq4rmK@vger.kernel.org
+X-Received: by 2002:a05:6402:e0b:b0:698:8847:e2f8 with SMTP id
+ 4fb4d7f45d1cf-6a38060c289mr3514415a12.15.1786635463470; Thu, 13 Aug 2026
+ 08:37:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260710113637.1328000-1-claudiu.beznea+renesas@tuxon.dev> <20260710113637.1328000-2-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260710113637.1328000-2-claudiu.beznea+renesas@tuxon.dev>
+References: <20260710113637.1328000-1-claudiu.beznea+renesas@tuxon.dev> <20260710113637.1328000-3-claudiu.beznea+renesas@tuxon.dev>
+In-Reply-To: <20260710113637.1328000-3-claudiu.beznea+renesas@tuxon.dev>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Aug 2026 17:36:08 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWLEuC5CFKH4KEUo6H++rp6N=0X7Vd4ffOm2K=hQNPGzg@mail.gmail.com>
-X-Gm-Features: AUfX_mzZK_XqQEToCXzSXsA3RQo5nMa-PCSiTS9b3hgORV81WkefGByzaZwI1FY
-Message-ID: <CAMuHMdWLEuC5CFKH4KEUo6H++rp6N=0X7Vd4ffOm2K=hQNPGzg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] pinctrl: renesas: rzg2l: Generalize the power
- source code
+Date: Thu, 13 Aug 2026 17:37:28 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXiC6P4e823DQ+d8AVtkF2odC4u=0yKbhzbYOAZ0so3FA@mail.gmail.com>
+X-Gm-Features: AUfX_mw9Lq34HFTp79cv_PvTry14Uxpoge8iTcoUGFPvOqN3X9bgBAm5PI-yr1U
+Message-ID: <CAMuHMdXiC6P4e823DQ+d8AVtkF2odC4u=0yKbhzbYOAZ0so3FA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] pinctrl: renesas: rzg2l: Drop defines present in
+ struct rzg2l_hwcfg
 To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
 Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
 	conor+dt@kernel.org, magnus.damm@gmail.com, claudiu.beznea@tuxon.dev, 
@@ -76,133 +76,17 @@ Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Claudiu,
-
 On Fri, 10 Jul 2026 at 13:36, Claudiu Beznea
 <claudiu.beznea+renesas@tuxon.dev> wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> The current functions used to get/set the pin power source check the
-> OTHER_POC register, which is specific to the RZ/G3L SoC only. To allow the
-> code to be extended for other power source functionalities (e.g. I3C on
-> RZ/G3S), generalize the functions used to get/set the pin power source.
+> Drop the QSPI and OTHER_POC register defines, which are SoC specific and
+> accessible through struct rzg2l_hwcfg::{qspi, other_poc}. While at it
+> move the assignement of rzg2l_hwcfg->regs->qspi upper to have the
+> initializations as sorted (by offsets) as possible.
 >
-> For this, introduce the struct rzg2l_register_masks data structure whose
-> purpose is to store SoC specific register bit masks. The members of this
-> structure are then used in rzg2l_caps_to_pwr_reg() to retrieve the bitmask
-> corresponding to a SoC specific power source capability.
->
-> The conversion between HW specific power source values and SW specific
-> power source values is now handled through rzg2l_pwr_reg_val_to_ps() and
-> rzg2l_ps_to_pwr_reg_val().
->
-> Finally, to keep the code generic, the register update in
-> rzg2l_set_power_source() was changed to a read-modify-write approach to
-> cover all cases.
->
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-
->  static int rzg2l_caps_to_pwr_reg(const struct rzg2l_register_offsets *regs,
-> -                                u32 caps, u8 *mask)
-> +                                const struct rzg2l_register_masks *masks,
-> +                                u32 caps, u16 *offset, u8 *mask)
-
-Yes, always returning an offset and mask is what I had in mind before.
-
->  {
-> -       if (caps & PIN_CFG_IO_VMC_SD0)
-> -               return SD_CH(regs->sd_ch, 0);
-> -       if (caps & PIN_CFG_IO_VMC_SD1)
-> -               return SD_CH(regs->sd_ch, 1);
-> -       if (caps & PIN_CFG_IO_VMC_ETH0)
-> -               return ETH_POC(regs->eth_poc, 0);
-> -       if (caps & PIN_CFG_IO_VMC_ETH1)
-> -               return ETH_POC(regs->eth_poc, 1);
-> -       if (caps & PIN_CFG_IO_VMC_QSPI)
-> -               return QSPI;
-> +       *mask = PVDD_MASK;
-> +
-> +       if (caps & PIN_CFG_IO_VMC_SD0) {
-> +               *offset = SD_CH(regs->sd_ch, 0);
-> +               return 0;
-> +       }
-> +       if (caps & PIN_CFG_IO_VMC_SD1) {
-> +               *offset = SD_CH(regs->sd_ch, 1);
-> +               return 0;
-> +       }
-> +       if (caps & PIN_CFG_IO_VMC_ETH0) {
-> +               *offset = ETH_POC(regs->eth_poc, 0);
-> +               return 0;
-> +       }
-> +       if (caps & PIN_CFG_IO_VMC_ETH1) {
-> +               *offset = ETH_POC(regs->eth_poc, 1);
-> +               return 0;
-> +       }
-> +       if (caps & PIN_CFG_IO_VMC_QSPI) {
-> +               *offset = regs->qspi;
-> +               return 0;
-> +       }
->         if (caps & PIN_CFG_OTHER_POC_MASK) {
-> +               *offset = regs->other_poc;
->                 if (caps & PIN_CFG_PVDD1833_OTH_AWO_POC)
-> -                       *mask = BIT(0);
-> +                       *mask = masks->other_poc_pvdd1833_oth_awo_poc;
->                 else if (caps & PIN_CFG_PVDD1833_OTH_ISO_POC)
-> -                       *mask = BIT(1);
-> +                       *mask = masks->other_poc_pvdd1833_oth_iso_poc;
->                 else
-> -                       *mask = BIT(2);
-> +                       *mask = masks->other_poc_wdtovf_n_poc;
-> +               return 0;
-> +       }
->
-> -               return OTHER_POC;
-> +       return -EINVAL;
-> +}
-> +
-> +static int rzg2l_pwr_reg_val_to_ps(u8 val, u32 caps)
-> +{
-> +       switch (val) {
-> +       case PVDD_1800:
-> +               return 1800;
-> +       case PVDD_2500:
-> +               return 2500;
-> +       case PVDD_3300:
-> +               return 3300;
-> +       }
-> +
-> +       return -EINVAL;
-> +}
-
-This function returns a valid value, or an error code...
-
-> +
-> +static int rzg2l_ps_to_pwr_reg_val(u8 *val, u32 ps, u32 caps)
-> +{
-> +       switch (ps) {
-> +       case 1800:
-> +               *val = PVDD_1800;
-> +               return 0;
-> +       case 2500:
-> +               if (!(caps & (PIN_CFG_IO_VMC_ETH0 | PIN_CFG_IO_VMC_ETH1)))
-> +                       return -EINVAL;
-> +               *val = PVDD_2500;
-> +               return 0;
-> +       case 3300:
-> +               *val = PVDD_3300;
-> +               return 0;
->         }
->
->         return -EINVAL;
-
-... while the inverse function stores the value in an output pointer
-on succes. Perhaps this should be changed, for consistency?
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
