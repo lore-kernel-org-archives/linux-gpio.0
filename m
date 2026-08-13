@@ -1,115 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963263E44ED
-	for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2026 12:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B332146AA76
+	for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2026 12:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786622977; cv=none; b=WkEHwjFN3kzHrjUNNsKJyG1/nsI2KReqXy4S8Y4X6JEt2cB/OXSKdm5ehLDvusK+4zqLaIlPi0HqDlYDmxCQU7AbumlJyNWJKriivq5iW7AAQn7OOTZmYMRj9hTF3LVDe7C9B38mH5s5EZhHJmiSSM90fWUZVIt1SxQXJc4/srA=
+	t=1786624874; cv=none; b=e+AmaqK3HKkHdA2QaykEtNSAohK9AZFO0UpiRcYzQfHSqP1BCAfN+8GvZeX1CDc/xGE0na4mxAcII7hf0ZNPg634tabIsL+hdOhDNxRyrzSOGRzsIE4x0brP0xlU6WwV+0ZAsrpq7M72oI6Lln3xLmTfV9JEkVofvt5qrh5tRKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786622977; c=relaxed/simple;
-	bh=wH9ebgAVmcwWQL7wXm9tpkRZBXuosH4mzbUX4Wd+bS8=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VXid9zBYPNorIoRW1U4SCIn9cihjByjWumRm4lscYCqCPcKkO7cwoulbAt5mVPkgCWVjRUI4Wbujl39ctzcfDYjJly3EelpvFS/Y+AIo8xnYBltlnqUBq1rVymfgtgfQHV8UMuST5vga/CDr2VtlTHXu+3WqXohs4h1YoArXRVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VdI786+U; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VdI786+U"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A7091F0155B
-	for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2026 12:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786622976;
-	bh=IBQa4Er77V9YLJg5BavjFMQl1C1RDdo1RB+OP+7gpzY=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=VdI786+UKkG05ZIQcN1yAOmsC5sQdtxbgzzA77gh2NLoPumEmduT2TYR3pculiUZ5
-	 wTY/iPn5tXuNey14qQAO0EHNdIlVmnKCAA3nfhAwAZ7G6sF2D25VYhoiHJ8sq86HRS
-	 fJlHmskckM9wBraOFWosS32ti6iLiD7Lfoc7n8GpLknLVIM8ca4NW61grJD3FGf8C0
-	 RXarNC7d2rxnTgAAYKOPyMQj9+vAYUEfdLKhkt1yo/g4c6W6ql6qfZocFY/kLqCD5h
-	 RNhOmFpodl+I2PsuS+7REkymgzWrLZFF29nJ03xWSQUo4oPefvi8x8mT1vvWnyuJvC
-	 OWr693MNYmXXg==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5aebd52488cso654590e87.2
-        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2026 05:09:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rr3V8ADE3k7/mdTB5kRg7G38NgGwB5NbMGCuhRN5AMRxDGTCOULDdINJAZ0SX+Ti+RDN86hb+TXz2SI@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI7fJz3Xxkxnwm5NJX/wWOc9wi2HvWEzHd6ZbrXycmCy/YbO8W
-	DqNUxUzlwdh/IkS8uIcyExYxKfyZlimVREVv+P/SbPP94zaGXJtqxDCqBoVbYCFZaL/ozx/BieQ
-	Zov2XaqHQ//U20zc3tGe4Rt+LJyEYqjmf2I6AjGDkeA==
-X-Received: by 2002:a2e:bcc5:0:b0:39d:9eac:8ec with SMTP id
- 38308e7fff4ca-3a11a8007c8mr6359941fa.25.1786622974743; Thu, 13 Aug 2026
- 05:09:34 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 13 Aug 2026 12:09:33 +0000
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 13 Aug 2026 12:09:33 +0000
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260813085451.GX1072730@google.com>
+	s=arc-20240116; t=1786624874; c=relaxed/simple;
+	bh=7tWUhsTf7yuYmukkfQ9m0Oxs9WCPgFyK+IQUvr2VHOc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lxs4VWTY38jhbGHEqLxSod7L+Euu1430QZX7kd+xYsYehfgmoL+aTZY4V0ct2q/rXqkaHzVFxDc4HyT1eNqcBx7baDhjtxZkwQNLwfnPDZcYPgV2cLnfCJxovcdK0QKCvORlLFCDDnIRpZLL4+TLmDiY8L0NKY58m3I4qltBUoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5c3fabe908eso690564e0c.0
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2026 05:41:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1786624871; x=1787229671;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=oqIqDSfBSxHW2hfkal8cX0hwZXtcD3FzDsHZ3Y3Mk9Q=;
+        b=D8nnFU68/g0wfemu5j1GZe+Oi1+YpCjHsXS86movsV3hVFx2d/axmwA3ocsAnFQNS+
+         xPznWF6KBaWhZYELQADCCzVXaafQeMU6Hw8bGVWTAqgRSfCqgs+MmS8useDt1v4CbWrw
+         fq4atGi87pwkFnv+ODarOAGYyslmtRQnq8fM4GEEM7YTSiTD2/Vp257fD30EsvxvUHJ+
+         vRs1X2i1cxlGnpjBCqOZf7Mmv4rCYmzDOK6XgIAq4bJBmFAwDF/FmQiLLcfcZdhuwVRm
+         EWZmtaxlTjUH6TMLHqfmSLBIfC5fNDQbcTthHMV283URSueqrCaLuiQbymkFEM7AkzFU
+         Yb5Q==
+X-Forwarded-Encrypted: i=1; AHgh+Rqv8RP8/m3TU3oww3WCVLRTPvKeeFFBag/dUtldKCo0DRVmE4IpDP4U+10PrDMFF6HRcma9AXsbLh9U@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEVwaTgwxhQdeuty8JWroPEgXsyRguPKtiZheEhby3vRwcvWGz
+	+jC1TsdwKr1yzjg6eS2RgECDzQZJBekxyAh517EdRRFQUQEHM0XxwpiF2DKl7+OS
+X-Gm-Gg: AR+sD10KM+RL/K7ATVhPf6reLnoM0x14QlW830Fdj+XpriGGnZaD9jTbnAG31njglA9
+	aJbzOjOdoX/unAafABkjXujV6DgFKlNUS1cPBTYqs9cemZmFvsWxi2hP9d2ggG249VhpQlEdb1c
+	aIwK9CFI4/R4/atUUHBnaq54blDbYhs1RKEmBk9Cc5MAvckaKp2pUbGWiYPQLbrZeCgo5BK1dof
+	L9Au0wDndPfXwBqN6WHPyzUXXoIf2sdu02KpR/+x5qcR1ZPRruFWmJUzxzb42rPUBMVdf9Bxcxc
+	QjAVPtwG29xDyTbDNgYL06y55U4V28Rx6L/BW1hi8MFOeS8XYg5KdzYTXlVeYuDpdhHkDNeDy8o
+	vXi+fgVYIrNPl0VlbwZ76ct0JMtO091wfWhMjRw6u7VwGYZfW9WdENiRPqLjm6d7Vr+4Qw/lVUG
+	HALVg7yc4EVfud6eRrAOoDMwTMzIW/hN/9SgggkBtzW01qx5Uj4tSeGM9ad/lvx0/bKGIF4XOvK
+	B0NTYzLVJbrH5ZdHNsG9G7S/g==
+X-Received: by 2002:a05:6122:e191:b0:5c1:1965:6243 with SMTP id 71dfb90a1353d-5c579c2ef8dmr631326e0c.13.1786624871122;
+        Thu, 13 Aug 2026 05:41:11 -0700 (PDT)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c57ba73a58sm645831e0c.3.2026.08.13.05.41.09
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Aug 2026 05:41:09 -0700 (PDT)
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-7389cff36bdso539501137.1
+        for <linux-gpio@vger.kernel.org>; Thu, 13 Aug 2026 05:41:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrlSqVH5n4l8yB5lPR79OykdJ5f2wvpzCnrY1BxLZppvmsW357t41AVyeA1cjpGlRITPf4jjZUH9zr0@vger.kernel.org
+X-Received: by 2002:a05:6102:2929:b0:739:478b:5bf2 with SMTP id
+ ada2fe7eead31-76db856c8e1mr1303873137.13.1786624869514; Thu, 13 Aug 2026
+ 05:41:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260811-ls2kbmc-mod-v9-0-4fa9a5584406@gmail.com>
- <CAMRc=Me=4vhCACibcXWhH1J6OmjxbEmhatPLuUuRE3pFLkT7xw@mail.gmail.com>
- <E22A87D6-F231-442F-83F5-FAE25D0955A2@gmail.com> <20260813085451.GX1072730@google.com>
-Date: Thu, 13 Aug 2026 12:09:33 +0000
-X-Gmail-Original-Message-ID: <CAMRc=MfaRqNb1J_KWWM5KSq=8ACvVPm9TyDong0tmozXS79CTw@mail.gmail.com>
-X-Gm-Features: AUfX_mzOwZmaoQuqwywWSQmIZRt22vedQdB8FcbSGjQU0Pvb6pC48AZuMoUTf0M
-Message-ID: <CAMRc=MfaRqNb1J_KWWM5KSq=8ACvVPm9TyDong0tmozXS79CTw@mail.gmail.com>
-Subject: Re: [PATCH RFC v9 0/8] mfd: ls2kbmc: multiple fixes for this driver
-To: Lee Jones <lee@kernel.org>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, 
-	Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>, 
-	Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, mfd@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
-	Corey Minyard <cminyard@mvista.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Binbin Zhou <zhoubinbin@loongson.cn>, 
-	Chong Qiao <qiaochong@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Corey Minyard <corey@minyard.net>, Linus Walleij <linusw@kernel.org>, 
-	Miao Wang <shankerwangmiao@gmail.com>
+References: <20260723154154.319674-1-biju.das.jz@bp.renesas.com> <20260723154154.319674-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20260723154154.319674-2-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Aug 2026 14:40:58 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXkj6E4pPCYbGGGGgL+Q57VuBf06B10Kyjkmd6yd4_jhg@mail.gmail.com>
+X-Gm-Features: AUfX_mwfwYc46fKSTK2CZeQ2PKXNjkYeqMfpZWqO1-br0yPfVIChndaOIQ5XDSI
+Message-ID: <CAMuHMdXkj6E4pPCYbGGGGgL+Q57VuBf06B10Kyjkmd6yd4_jhg@mail.gmail.com>
+Subject: Re: [PATCH v19 1/4] pinctrl: renesas: rzg2l: Add SD channel POC
+ support for RZ/G3L
+To: Biju <biju.das.au@gmail.com>
+Cc: Linus Walleij <linusw@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 13 Aug 2026 10:54:51 +0200, Lee Jones <lee@kernel.org> said:
-> On Tue, 11 Aug 2026, Miao Wang wrote:
+On Thu, 23 Jul 2026 at 17:41, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
 >
->> Hi,
->>
->> > 2026=E5=B9=B48=E6=9C=8811=E6=97=A5 21:47=EF=BC=8CBartosz Golaszewski <=
-brgl@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
->> >
->> > On Tue, 11 Aug 2026 10:07:24 +0200, Miao Wang via B4 Relay
->> > <devnull+shankerwangmiao.gmail.com@kernel.org> said:
->> >> Previously, the driver has been introduced to support the Loongson 2K
->> >> BMC running on the Loongson Servers, which is essential to prevent
->> >> the system from hanging when the BMC is being reset and the default
->> >> efi-framebuffer is being used. However, there are some drawbacks in t=
-he
->> >> driver.
->> >>
->> >
->> > I will stop reviewing this series now. I had further comments that I w=
-anted
->> > to post after reviewing patch 6/8 but got carried away. When I came ba=
-ck to it,
->> > there's another iteration already on the list. This is not the way to =
-do kernel
->> > development. Please *don't* send new iterations hourly or daily. Once =
-a week is
->> > preferable, twice a week in special cases is acceptable. Anything over=
- that and
->> > I'm losing interest.
->>
->> I apologize for interrupting your review. I thought you had done the rev=
-iew and
->> given the suggestions. The only change in v9 is adding the comments whic=
-h you
->> had requested in the previous review.
+> Add power-on control (POC) support for SD channels 1 and 2 on the RZ/G3L
+> SoC (r9a08g046).
 >
-> What's the plan then, Bartosz?  Have you given up on this series even
-> post-apology or will you finish your review after a short break?
+> Introduce PIN_CFG_IO_VMC_SD2 capability flag (bit 22) and SD_CH2_POC
+> register offset (0x3024). Extend rzg2l_caps_to_pwr_reg() to return
+> SD_CH2_POC when PIN_CFG_IO_VMC_SD2 is set.
 >
+> Replace RZG3L_MPXED_PIN_FUNCS() with RZG2L_MPXED_COMMON_PIN_FUNCS() for
+> port PG and PH pins, dropping PIN_CFG_SOFT_PS which is inappropriate for
+> SD pins, and annotate them with PIN_CFG_IO_VMC_SD1 and PIN_CFG_IO_VMC_SD2
+> respectively.
+>
+> Annotate all RZ/G3L SD0 dedicated pins (CLK, CMD, RST#, DS, DAT0=E2=80=93=
+DAT7)
+> with PIN_CFG_IO_VMC_SD0 so that power-source register lookups work
+> correctly for those pins.
+>
+> Add sd_ch2 field to rzg2l_register_offsets and rzg2l_pinctrl_reg_cache to
+> save and restore the SD_CH2_POC register across suspend/resume cycles.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v18->v19:
+>  * No change.
+> v17->v18:
+>  * Moved sd_ch2 variable near to sd_ch[].
 
-I will get back to it in September, I'm going to be on vacation starting
-tomorrow until the end of August. It's v7.4 material anyway at this point.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v7.4.
 
-Bartosz
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
