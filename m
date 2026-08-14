@@ -1,95 +1,101 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596D240B10C
-	for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2026 07:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B83C40DB36
+	for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2026 07:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786692287; cv=none; b=qnQvlm4uHokS+rMqCyaxNvPX/yhtW57RtJD4xcmw2/RgP6MhklqDnyYx8WTw1qOzC7N/j0x3l9XVmeO/Tfk9b2XFo47DDA6xeRHu+RtSZPkTyGGw6xRiznLB0dDKRYLU4CCDga/Au5Q5XXqcgnrpRGDYQeQYKJgjMd5rn/C6vVk=
+	t=1786692355; cv=none; b=pCxc7wihrGCX3czGssiivA91d9yH1hc1JT7kCAoms360r3hL0jhK+UexK0BMwAtABkGAUjnpbpUqEOu0LgjSENIhBs8Q8ZMnFvP0SCfpHMBKLvX78giF4S0hwFI6qvz6LD067jvNwfzWTGYJLF6Q49popTxineSFE4PHMGHgjng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786692287; c=relaxed/simple;
-	bh=rdlUChRX55vO9PpflsrwyY/Uty0XIuzlPAZzfWduU2w=;
+	s=arc-20240116; t=1786692355; c=relaxed/simple;
+	bh=1GrAZMcm1LPXjU+/Qsg9/1FMvUYDa+8Y1O9nxVVer9g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jps2J3C1g9ExvbwY4s+JVfWygmaycrVghqwNQdKI6N78W43vhHFKkg512WbZp45J+p93XhLs5qWW+BJIP1nBXeVoc242q9ozQLmq1/pc7rhFc9zzqqhFqA05/Ms9/9QeKPu346WQ2RsarGMmcdljABUQWo57NBaHYkYECTttsN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NdobK5P7; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=S1PXSb2bEBR4VGu2mQv5N4xVBLhojv9IQsPUin80Kkkc/LWpFquPlpTHi0t7YkJYnzXuCjNm5cjkae4XvVfxo/PkcEMkEv8sH2GovTOSnPmxUsxbF1eS+Zozan/B2gWEAaQmdTN1ov2SpMlVWMWRRUZJzjM9/yfWXaBQW41fc4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBucVLV8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NdobK5P7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF9F1F000E9
-	for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2026 07:24:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBucVLV8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 024B61F00A3F
+	for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2026 07:25:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786692285;
-	bh=rdlUChRX55vO9PpflsrwyY/Uty0XIuzlPAZzfWduU2w=;
+	s=k20260515; t=1786692353;
+	bh=zjWapYZHdMgxtzEvLQ2Ffr/6FRwRhpZGjvbVIfTls9w=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=NdobK5P7ltwmAODtEn59kDPeamBRluZxJnXO/nVVW+l6uDYRYpOdFpC1Qw4NmYNhd
-	 lRrOvNmFvZznVWctNMIwMF+LwqUWKEBQOpZh7CcfT6aPbL6ytHNBMsqddT3GJhjojm
-	 zwAcHFmsgoCl2aORKVrzGFVEMDl4rkjT2TgD3Y5bhVCLTs+ZBQpXIdasLjuPwBU3Af
-	 Lzka/D50/HRcAcwVAvWN3x129nZIkkJamcngZ0yXeGLRkrjEWcm/C5m5mb87xgl6xJ
-	 fgfXg+Rd4zfrSge6O6pl/r6ptqmZieogAqn2PCAKxN6rJ3kmb73OniseZhETNNYoul
-	 OmUozkBbB2pKg==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5b2b92065ffso652883e87.1
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2026 00:24:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpXzIh7Ih5B5DMaFJPNSVk4Gv2N6g+tfvoZZrk+eocWDBmskv04gVeKIlYcLpsh87r2Tew72WTzscFf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAhvYqhg93al4DjHDhAGlBW4IRnb8z/wzwtjN0x+LJsfz0rs97
-	BBzG0kHmUYIS91Ipax+zw3M+9hpi2JgmAOTuSUuhELojB2g+qyQscEzTGW1lYv05l+LuExFSHUr
-	1u9QWRV2mdWUFVZn61YYJmhJsgnbB3aM=
-X-Received: by 2002:a05:6512:3b11:b0:5ae:c636:78 with SMTP id
- 2adb3069b0e04-5b459194595mr444450e87.53.1786692283880; Fri, 14 Aug 2026
- 00:24:43 -0700 (PDT)
+	b=YBucVLV8nNOmJxz6sXoRqisDNRAiPDkVfy5N5miqpCJyoRpBJ63CVWJyu0iDKRo9C
+	 djj2iKNa4SHNljMpvMFxolyBrQYAfP1wJMJqFt6XRQeFifeRg7ohA/7Qy4sUWT1LvM
+	 9D0QGsRGs7trv0J1di8tO+c04y6+8VAYISDsqpR6GIo2S/UmM9y1GLbl3zPV3vasGC
+	 cTFj7p77B5D3phnxOXvsoZbDAzH4fffl2xDjlksD/GP+nLwpiRjvn1FRmgY+YRwmVR
+	 IxJ6FhteB3dhMMzvYdzPhbtdo/SXQ39k8P3A0KHzHHugLJi+KVXRui3yNn6u1SGwR1
+	 sODHmDJQNqqJA==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5aec201b582so695899e87.1
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2026 00:25:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RrRuBy8h7k2kL0Ce5UWjarXyqJ4Bry/22f0ozfX118/c0GiPxt+k2MzSj3yU2acwGbegH/L/IGroCjf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxj2OzYIHFnvvlA6drwrAF1YtuM39lY3xchWrB5Gbhw0qVmr+4H
+	SfKme6VnTmkNh8LUNcEZ0SPkSPx9FX44GWL2m2eviG72cJpT52PEgv9/Ua+wX2bqtr6WxytP2uX
+	IqT9l08+S4fkizl7D1xYZi38bYvU5C48=
+X-Received: by 2002:a05:6512:8348:b0:5b0:2176:69f6 with SMTP id
+ 2adb3069b0e04-5b459184b7emr258626e87.37.1786692351807; Fri, 14 Aug 2026
+ 00:25:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260811-apple-m4-initial-devicetrees-v3-0-6bf32d45ad0b@cyberchaos.dev>
- <20260811-apple-m4-initial-devicetrees-v3-9-6bf32d45ad0b@cyberchaos.dev>
-In-Reply-To: <20260811-apple-m4-initial-devicetrees-v3-9-6bf32d45ad0b@cyberchaos.dev>
+References: <cover.1785838584.git.mazziesaccount@gmail.com> <838486b443af9188410d8b802a818dc0af20ea9d.1785838585.git.mazziesaccount@gmail.com>
+In-Reply-To: <838486b443af9188410d8b802a818dc0af20ea9d.1785838585.git.mazziesaccount@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 14 Aug 2026 09:24:32 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkRs5m1m3Y3vBfXvxn13i-3cMXhcEWq5ScD-xbN9uta5A@mail.gmail.com>
-X-Gm-Features: AcwNN1U4pSEQhXzI6xw99X3FAIiwxI9oO82g146e3gwAfl2evI9yLHdfuJ1SQuA
-Message-ID: <CAD++jLkRs5m1m3Y3vBfXvxn13i-3cMXhcEWq5ScD-xbN9uta5A@mail.gmail.com>
-Subject: Re: [PATCH v3 9/9] arm64: dts: apple: Add minimal t8132 (M4) device trees
-To: Yureka Lilian <yureka@cyberchaos.dev>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, Neal Gompa <neal@gompa.dev>, 
-	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, Hector Martin <marcan@marcan.st>, 
-	Mark Kettenis <kettenis@openbsd.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Sasha Finkelstein <k@chaosmail.tech>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-pwm@vger.kernel.org
+Date: Fri, 14 Aug 2026 09:25:40 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=mhchM2L84Dt3myY26cx=ZA4cUr-d6qjqNrw6V=7aPug@mail.gmail.com>
+X-Gm-Features: AcwNN1U780XpZGwhxDiNYxBOxKNu9WP_wvZzUmCrRyQzMpwkyf9iHdEMZlasOC4
+Message-ID: <CAD++jL=mhchM2L84Dt3myY26cx=ZA4cUr-d6qjqNrw6V=7aPug@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] dt-bindings: mfd: common ROHM PMIC properties
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, mfd@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 11, 2026 at 9:37=E2=80=AFPM Yureka Lilian <yureka@cyberchaos.de=
-v> wrote:
+On Tue, Aug 4, 2026 at 12:20=E2=80=AFPM Matti Vaittinen
+<matti.vaittinen@linux.dev> wrote:
 
-> Added device trees for the following devices:
-> - apple,j604 - MacBook Pro (14-inch, M4, 2024)
-> - apple,j623 - iMac (24-inch, 2x USB-C, M4, 2024)
-> - apple,j624 - iMac (24-inch, 4x USB-C, M4, 2024)
-> - apple,j713 - MacBook Air (13-inch, M4, 2025)
-> - apple,j715 - MacBook Air (15-inch, M4, 2025)
-> - apple,j773g - Mac mini (M4, 2024)
+> From: Matti Vaittinen <mazziesaccount@gmail.com>
 >
-> The device trees have a minimal set of devices limited to CPU cores,
-> interrupt controller, power states, watchdog, serial, pin controller,
-> i2c and framebuffer.
-> The device trees for the notebooks add a PWM controller for the keyboard
-> LED illumination.
+> ROHM PMICs keep having similar functionalities from one generation to the
+> next. Keeping the device-trees describing these functionalities similar
+> helps users because:
+>   1. They can re-use existing device-tree properties when switching from
+>      one project, using a ROHM PMIC, to next project using newer
+>      variant.
+>   2. The users can find and re-use examples from old projects - even if
+>      they never worked with ROHM PMICs before.
+> Similarly, introducing new and different properties for same
+> functionality previous variant had, will be adding confusion.
 >
-> Using the macOS 26.6 iBoot/firmware, the Mac mini reliably boots on a
-> single core using the stock kernel.
-> Booting with smp requires avoiding the wfi and wfit instructions
-> in the idle loop and `delay()` respectively, since those instructions
-> cause a loss of architectural state on the secondary cores, and even
-> then boot is unreliable.
+> Sometimes the existing properties aren't 100% what reviewers would
+> prefer. When issues are minor or just cosmetic, changing the existing
+> properties is not feasible. Reviewers can't be expected to know which
+> properties are new, and which are existing - and this can lead to
+> unnecessary review discussion wasting time and energy from everyone.
 >
-> Signed-off-by: Yureka Lilian <yureka@cyberchaos.dev>
+> Adding a common file for re-used ROHM PMIC properties should make it
+> clearly visible that a property is re-used, when a new PMIC binding
+> refers to this file instead of (re-)describing all the existing
+> bindings. This will also help keeping the common properties identical
+> across the variants.
+>
+> Add new file listing commonly used ROHM PMIC properties.
+>
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
+DT maintainers think it's fine in two patches so:
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
