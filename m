@@ -1,89 +1,76 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1ED3E1718
-	for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2026 07:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E11B3E4508
+	for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2026 07:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786691273; cv=none; b=ElQnMoqOMnwyCDHaJn9Q/rCngr8HHB6B6I160oI5VcKPzjm+vpvVlyK82IdHECo8je4td1bvdZ2gb8LRCWZBVNHKetuTtjX+09xRWy0CyL8Vw5JXDkITUHDS3rAodXtu/ZVVLHcO4X0EHY577xljsrSUjH3roXxLnWtttJKyepw=
+	t=1786691514; cv=none; b=qk4txdkvE0epIq3tD1TCtgzSgN3eO0y+u2veV3bNHkze4pw4JJP8V8zPyqtC3cC1KUBxYQCJW8rz5xl0it24W2P1fncvgGcL7iMeGGK51XL8ITbOeFDQ04pU9i99Y+NNljWJ0WxtB3h38OAzgPopl89rAeDY37lgp3rhQy9pSgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786691273; c=relaxed/simple;
-	bh=f6CmMWijGsHe15z5qznB0gE26Z01y8zcvOoaRGn9bk0=;
+	s=arc-20240116; t=1786691514; c=relaxed/simple;
+	bh=oe6TFemgW7Xqh8zpkwUeJGiu2zlIIPM4zRz+Y9hHJB8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PbFEFMQ8yi/MmpJoBvDtpG5p9YE/pgyAU/nXFZqcx0OwXvW5Ecsx/VuTlMKJROGzeQXScl7+eAYZCWnAmRt8YoVUObtu2adKs5tIiO/sNzzgWEAFtv6R04lMpKKxpcqt7+75omUGtIumoAAIqTgf/GWvIVxNU1hQltj+lHNW/cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SPqz7i6S; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=INcwSRVY+AuBBnuhPCjPKk0J4sh3nISy0fQCNrQ8JoBku7gVg2CoH8d8e4j+PoITECio+dowZv163N37eYk1aVDh0DYv8KLSRC1byJw/7L5C/6bYId2AXoryp/rPvn4gdQ+B2a8LBzoHEhURAq0aNA0vngQpwyoY/NpNVnG8O54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBu404+y; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPqz7i6S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4E271F000E9
-	for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2026 07:07:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBu404+y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E4FD1F00ACA
+	for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2026 07:11:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786691271;
-	bh=f6CmMWijGsHe15z5qznB0gE26Z01y8zcvOoaRGn9bk0=;
+	s=k20260515; t=1786691513;
+	bh=oe6TFemgW7Xqh8zpkwUeJGiu2zlIIPM4zRz+Y9hHJB8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=SPqz7i6SIbV0clmYONQJ57ES/0mFDpCMNjaKeqlQNL1dazFKgXul2eRaHFsNrSMlC
-	 E2xefUMurqYgvjNB26B2ZO38gMUiL3Zdub2Vtuj0CjVzff8ysNT6EvBA4xfAdJe+U4
-	 m5xG6+3orXw3zMeWEPDFbKoYCCoikJjulkQ8hIPPSG1zcR4HbWYb9W1/yYkzKT5TMN
-	 WaCHtBxDFOoSSoM4S0rDbwvESJrmYqAnUKo2U91aM6ceTQwsYmi07BN/6XUe/PrOSv
-	 FQv8anc7r3uu6UAzEzwcOjfIHBfXs0pM+u/8GbFB1wWwHQS65dMjIRL1K+XT5GNCCH
-	 yjH638Yy6uhbA==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b2b92065ffso638385e87.1
-        for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2026 00:07:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqtUjCDcQoU1B3zAYeaQqTbfRefHlYrbsfFf/iVCwsuVQ2Eo1qn+gdvDAChd/eFbJy38ZE8CAMFjWpC@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRXATsNkTHd7/Z7gT6HQuIfDGPcCZg1ZApWiJn/WXWXbdnrZCw
-	4rfRSpYkDeig/NB9NJwvX72Q3okVDhlf37o8Lzvf7fACktdlgUag+LKLP0CqsTiE/tdEU/marUp
-	zg7/He4RIXsob9Z9b4XrGe05H23zxoPQ=
-X-Received: by 2002:ac2:4c50:0:b0:5b2:a6e6:8d83 with SMTP id
- 2adb3069b0e04-5b45916c878mr571026e87.23.1786691270612; Fri, 14 Aug 2026
- 00:07:50 -0700 (PDT)
+	b=EBu404+yCZUzCuJU4eeoo+D5zVlkjqIFu9yu1+pvrl6K5uIdftKL9q5X8MTgZHgVK
+	 gLrlcGSGQrp+1Jr0hLoE7/MpMc6+MsqcdffbA5i2md+XpZzpXYyZjf/dbk4o3XYRe5
+	 wOKpSA1dbG027qpW1qmCFANadTNdsOtf2hsC7FyyodLr7pob7OvjvoOLE3gvGDx0St
+	 kG1KaqOTz+GyGAvwVEMAndEoLSJtelFcB529tYbfbP1ekvDKS9SBdZdHeD7OxTTD15
+	 sNqwVHgihI+3mGKjp4croXOAgaosLPcWHPDvCrv2/9wA34opOwgZId9d48b+HLPyVd
+	 9w6kxYSSY7gNQ==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5b28c91fba5so755384e87.1
+        for <linux-gpio@vger.kernel.org>; Fri, 14 Aug 2026 00:11:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoKbZlQ8ECB5Q4XEvh9cnAdLazKe9x2SBWYmoOP41duMF6j5t68poPLWlL4BRQ4m9L+N3XhPEpC//3y@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo5T6cagNPy5TtuTs1T1sbU/jnv6ttB3COhRBLN7fYNl94LtMj
+	dx+Y8TvJTVdSIyCEge9lOjT41+lMS6q3czi16SQeA6mXwCVn4HH5pfzTdgl2ccwLfsujNLrVtHM
+	95kizkaK5/FTyDf8b1eDSeYERrbnz2QE=
+X-Received: by 2002:a05:6512:150e:20b0:5ad:68aa:8a78 with SMTP id
+ 2adb3069b0e04-5b453b9adeemr1676478e87.5.1786691511886; Fri, 14 Aug 2026
+ 00:11:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260813-ad7768-driver-v3-0-cb554399ad26@analog.com> <20260813-ad7768-driver-v3-12-cb554399ad26@analog.com>
-In-Reply-To: <20260813-ad7768-driver-v3-12-cb554399ad26@analog.com>
+References: <20260731174551.86367-1-challauday369@gmail.com>
+In-Reply-To: <20260731174551.86367-1-challauday369@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 14 Aug 2026 09:07:35 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnz8vcK06AfvbipscDDBvbUPA+bcXc+kDE1ZV7eozDviw@mail.gmail.com>
-X-Gm-Features: AcwNN1UTDcDtxZ3Y793tIOH5s58hI_BjN29iCZCUfXKdr-ZoWTYxol2qFk8yM8o
-Message-ID: <CAD++jLnz8vcK06AfvbipscDDBvbUPA+bcXc+kDE1ZV7eozDviw@mail.gmail.com>
-Subject: Re: [PATCH v3 12/14] gpio: regmap: Add optional runtime PM support
-To: Janani Sunil <janani.sunil@analog.com>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Olivier Moysan <olivier.moysan@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Michael Walle <mwalle@kernel.org>, linux@analog.com, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
-	jananisunil.dev@gmail.com, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Date: Fri, 14 Aug 2026 09:11:39 +0200
+X-Gmail-Original-Message-ID: <CAD++jLm8bCWsQPcOrE5vEnLU1hghirv-RgnDpYNb4kwaRcKhNg@mail.gmail.com>
+X-Gm-Features: AcwNN1VR9dA2uycWXeOfWxjBU-gqnztqsD7n_MUZQrz9Si5mIM2KHBCLSvLnt0o
+Message-ID: <CAD++jLm8bCWsQPcOrE5vEnLU1hghirv-RgnDpYNb4kwaRcKhNg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: pinctrl: microchip,pic32mzda-pinctrl:
+ Convert to DT schema
+To: Udaya Kiran Challa <challauday369@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	skhan@linuxfoundation.org, me@brighamcampbell.com, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 13, 2026 at 3:58=E2=80=AFPM Janani Sunil <janani.sunil@analog.c=
-om> wrote:
+On Fri, Jul 31, 2026 at 7:46=E2=80=AFPM Udaya Kiran Challa
+<challauday369@gmail.com> wrote:
 
-> Some gpio-regmap consumers share their regmap with a parent device that
-> may be runtime suspended. GPIO register accesses must resume that device
-> first.
+> Convert Microchip PIC32 Pin Controller devicetree binding
+> from legacy text format to DT schema.
 >
-> Add an optional pm_dev field and acquire it before register translation
-> or access. Release it using runtime autosuspend after each operation.
-> Keep the device active across the complete direction-output sequence and
-> propagate failure when setting the initial output value.
->
-> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
+> Signed-off-by: Udaya Kiran Challa <challauday369@gmail.com>
 
-I like it.
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+This patch (1/2) applied to the pin control tree.
 
-This also looks like it could be merged orthogonally to the GPIO
-tree though I see there are runtime dependencies. What about
-Bartosz queue the two GPIO patches on an immutable branch
-for Jonathan to pick?
+I don't know where 2/2 went, it's not even on lore.
+
+Resend as a separate patch if it's still to be considered
+or even exist.
 
 Yours,
 Linus Walleij
