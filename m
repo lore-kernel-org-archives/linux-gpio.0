@@ -1,36 +1,36 @@
 Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72156222590;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFFF33E348;
 	Sun, 16 Aug 2026 15:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786893481; cv=none; b=KcgEZtJuprexaWrGvUgBjqmgOWo+XcEvcDexiouNUPbs20gODyhs36CTA+4aCzWAHF0u1qTvlPyxDbnLfaeyvNxndgDKDxCw6vSfYuZRwA+RRaN3m5/KO/rb3m7WmnA73YQNqrFb2t9MJKVCJ4JyxorVRv12Sxye6AUpt8MWg/0=
+	t=1786893481; cv=none; b=XzzzZw1u6DLM9yT4b1oeMSZhjicB3pKRCOEcBJKWK4hK6UVWt39ec75HXwkFWRdcpA5XymLr13kiBvLTnkwgxXGSTcxH/gG6yvPAA/pDuqiMH6t0h79Tkgw3joZKNr2pCV5EwokamCYXODIGdF+2f4rdtWr/Mvlv3GJP1N9cpiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1786893481; c=relaxed/simple;
-	bh=6uNM4tvDwKsvImUU21GXrCU0ossqp5RNNNCIRSqCg6s=;
+	bh=Kf85mG55zBSZTgAAaGAk1OzIoeumdb+rz1C45KcXAJQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=lkBpNZ7rCn7DuOMjLqsbOM4wov3MnM7V/9NDslGkU0nO6L5Xy+5AXRDLCkT+ACtCidD1x4QL1khDev3hQLvUEp3LqyNRFbpEaITqyEuLN9QFkLEtjIZpt4LjtZl6K7xrN8jxg1bFD6fIF6iM0Rm/rDKhXbc8bk0eLyDP1KWKXu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=BddymqUe; arc=none smtp.client-ip=211.75.126.72
+	 In-Reply-To:To:CC; b=i94acbFpc/ZAZYAQjEDwtEEO0AqITMHpAkSUKUNBbX5DGl7OJzXvEVyHGRzFtH2ipIibcvKGAxwnweWp0EXs6Eyo8skRnUGcWL07GH0kmL86+VSC3n5CQuQLg+Wh0YsdnMlpGOXja6TZwobGKbBk016ZEo4EwZWlg/6Dv7mHyus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=bRFRIsZ3; arc=none smtp.client-ip=211.75.126.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="BddymqUe"
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 67GFHf5S23038971, This message is accepted by code: ctloc85258
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="bRFRIsZ3"
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 67GFHgaqE3038978, This message is accepted by code: ctloc85258
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1786893461; bh=qjlRcTiw3zeUkDisMgUTN5QMqzQYl8eBRj/OmeBWzt8=;
+	t=1786893462; bh=xGCa7qXkLR7naZVJyFstGp+kY6DayQ1A0zOiO7VlqdI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-ID:References:In-Reply-To:To:CC;
-	b=BddymqUeJDsgg0z2X6eg8ke+X4KyoCWsqRbH4wIQ79r2ylYc9htZg+iaIMNDGRFyN
-	 O8r+t1fynDw91L9Ddfr0kDvdY1ucRg0dXx8yz22+cCdZFofGYeYtGzAQfV3FF4VWGs
-	 hTY7ocxu7vO6bIV3e4+dwQJ+VtfY8b1yJHGqqxl+Dq/I9uir3WlGS7ZPorBxJysG6C
-	 DNOGeI3jylCTS7Ozq+/Oeovg6wXp7OBiYo6GGD8Bubbef8Tu9dQeuTxjaF1uqFCTEz
-	 p7EFOSdXqbZ39ce7fdocr1dLOAi36MN0+7Iax23Ki/NWCsJl03TUP3lROY/toIK5e0
-	 gnXnw7Nn3ixQg==
+	b=bRFRIsZ3wZEZCeeDgINRCWGNx5kr+zB08q+w79yP9Sav1/JYs8bkqakfpBrgeEe5F
+	 uq7k0QUC/cno2nOZfXUUOk/b3rJTM0Cnx1KKTNFGwaIK6oRp7O/6zjh3lKvZrzPhBf
+	 objrqF/d4mVAAh/iAF3l+GmV09JxJH0SjFq73QFMJLbnNnsaTzHY3eLIQWZlSiCiCD
+	 N17WvoZ7yGZtb/227ANGm4zGPesAvDRYAfS7SCpDyUO58W7esZS+P8CeY/227VPfwV
+	 G2VLItHn/A4F+4Xm5sfWISx0RK5LFwu1eF+31hMWejz8BtZu3jAqUu9j9A1l00R2O1
+	 Ybe5jMxLMqZCQ==
 Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 67GFHf5S23038971
+	by rtits2.realtek.com.tw (8.15.2/3.29/5.94) with ESMTPS id 67GFHgaqE3038978
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 16 Aug 2026 23:17:41 +0800
+	Sun, 16 Aug 2026 23:17:42 +0800
 Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
  RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -43,8 +43,8 @@ Received: from [127.0.1.1] (172.21.252.101) by RTKEXHMBS06.realtek.com.tw
  (10.21.1.56) with Microsoft SMTP Server id 15.2.2562.43 via Frontend
  Transport; Sun, 16 Aug 2026 23:17:42 +0800
 From: Yu-Chun Lin <eleanor.lin@realtek.com>
-Date: Sun, 16 Aug 2026 23:17:30 +0800
-Subject: [PATCH v3 1/7] gpio: rtd1625: Remove unnecessary blank line
+Date: Sun, 16 Aug 2026 23:17:33 +0800
+Subject: [PATCH v3 4/7] gpio: rtd1625: Narrow 'i' variable scope in loop
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-ID: <20260816-gpio-cleanup-v3-1-f298cdd65fca@realtek.com>
+Message-ID: <20260816-gpio-cleanup-v3-4-f298cdd65fca@realtek.com>
 References: <20260816-gpio-cleanup-v3-0-f298cdd65fca@realtek.com>
 In-Reply-To: <20260816-gpio-cleanup-v3-0-f298cdd65fca@realtek.com>
 To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
@@ -63,36 +63,45 @@ CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, James Tai
 	<cy.huang@realtek.com>, Stanley Chang <stanley_chang@realtek.com>, "Yu-Chun
  Lin" <eleanor.lin@realtek.com>
 X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1786893461; l=860;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1786893461; l=1273;
  i=eleanor.lin@realtek.com; s=20260815; h=from:subject:message-id;
- bh=6uNM4tvDwKsvImUU21GXrCU0ossqp5RNNNCIRSqCg6s=;
- b=8PvOXEqFTtxnm6DDTmpgQFN5LIxzW3VvPsjkcotF1V6TdnGuSL+WlIDE12gu6vYTZCkhnSQq6
- yyBDrBYW3CqA99VWn2qdgq3tx718QZvG0xBFPehz/Zl54C0vpMHCHJf
+ bh=Kf85mG55zBSZTgAAaGAk1OzIoeumdb+rz1C45KcXAJQ=;
+ b=E/V5h4FNVP9PAHJBbeXMzWTsJWAVIriUMv6sGHFYytOHzCrDHWp9HFWjnd4MGr6nDrNNQPT7R
+ J2fJNB9n8RYCr4VbUI9apYF1YiYCQddQhTIXTVJ3TRGUs5f7VCKNmZ9
 X-Developer-Key: i=eleanor.lin@realtek.com; a=ed25519;
  pk=BrWV6/OS+PyXJgzExw5/cR0hiQtaxRmD7afOAe91lws=
 
-Remove an unnecessary blank line in rtd1625_gpio_setup_irq() to clean up
-the coding style.
+Declare 'i' inside the for-loop header to reduce variable visibility.
 
 Link: https://lore.kernel.org/lkml/anUcSPcJjJkLh0Z-@ashevche-desk.local/
 Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 Signed-off-by: Yu-Chun Lin <eleanor.lin@realtek.com>
 ---
- drivers/gpio/gpio-rtd1625.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpio/gpio-rtd1625.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpio/gpio-rtd1625.c b/drivers/gpio/gpio-rtd1625.c
-index 483e44cf5abc..469d4e94e4c7 100644
+index 0308d7a052e7..2652bc6cb523 100644
 --- a/drivers/gpio/gpio-rtd1625.c
 +++ b/drivers/gpio/gpio-rtd1625.c
-@@ -486,7 +486,6 @@ static int rtd1625_gpio_setup_irq(struct platform_device *pdev, struct rtd1625_g
- 		return irq;
+@@ -224,7 +224,7 @@ static void rtd1625_gpio_irq_handle(struct irq_desc *desc)
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	unsigned int irq = irq_desc_get_irq(desc);
+ 	struct irq_domain *domain = data->domain;
+-	unsigned int reg_offset, i, j, val;
++	unsigned int reg_offset, j, val;
+ 	irq_hw_number_t hwirq;
+ 	unsigned long status;
+ 	u32 irq_type;
+@@ -241,7 +241,7 @@ static void rtd1625_gpio_irq_handle(struct irq_desc *desc)
  
- 	num_irqs = (data->info->irq_type_support & IRQ_TYPE_LEVEL_MASK) ? 3 : 2;
--
- 	for (unsigned int i = 0; i < num_irqs; i++) {
- 		irq = platform_get_irq(pdev, i);
- 		if (irq < 0)
+ 	chained_irq_enter(chip, desc);
+ 
+-	for (i = 0; i < data->info->num_gpios; i += 32) {
++	for (unsigned int i = 0; i < data->info->num_gpios; i += 32) {
+ 		reg_offset = get_reg_offset(data, i);
+ 		ret = regmap_read(data->regmap, reg_offset, &val);
+ 		if (ret) {
 
 -- 
 2.50.1
