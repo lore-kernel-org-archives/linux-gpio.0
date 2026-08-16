@@ -1,77 +1,125 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3ED391E5F
-	for <linux-gpio@vger.kernel.org>; Sun, 16 Aug 2026 17:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD3E33938A;
+	Sun, 16 Aug 2026 17:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786899715; cv=none; b=HHTN8A8Mvu0K5vyu6kPbHpF8NPiZORdl7SxgUc7ZDj5cae+aqOYy4QqilZXVw6sb8mozEfPjzKoUN2T0rjuDmJA9N9nYQWOszb1fuY2mbkWqc3FWGOha9aXc3GapzE+YFClt6Hx+SL3f92u1ZxrCfdHbmsB6uCh+cwU9kzFJpOk=
+	t=1786903197; cv=none; b=gblZ0xbdQulusi2ymiyJZOBtAR7XQCcFBi0XSZUEu4XxkvIuDU32EEoB3A3HgTiHuGkALrfcIhcUZqVM/z6/cunV3TFZAYtsNsx8rleGIzLKBa6hL3I6gl80l2hIChVJMPW9wvk/ZMJ9rlosqeA6Cdw9kt6yXRbML2XF3fdjw2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786899715; c=relaxed/simple;
-	bh=lSJQLIodR3waRArNX7nAQigBXZ7KMNI+H3yZs3Z0s/o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nTeNPJYIyMiI7Ml1+5nRGSUmC4ol9fCnQU/fivEPeMfcVRKcPm9o72NcskYPqK0ugCTe6rrEuPT4trTpwHwbtyS4F+Vk+afnNoK8vBFKjYgNlp+3QCmKSePvvJ64Pe45YHC2Ynrs9MqtyIEXEQ6Q2jzMuZkenqMW8axy+UV9zF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YtxQnNrV; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786903197; c=relaxed/simple;
+	bh=m+AHVyA4Fms6veJKynJ2Z9l5iklw6d82MDzPacYWLVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f/dPIc4W/BJrcns78F+yIUWwBwLVHlhsiaa5vChOEbHrVWXVRX3IphgQOAuXZHLxNQnBV2c0y48eC+OzpSc5mc9RmKsduqo/i1AGpQ0PWzmp9A1hNnkgnEMN0/5uS5AR6woEKKVA7tPH+kgqznB/l4Rz36PECFKf3K/KpTji+uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/fqgBsf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtxQnNrV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77F3C1F00A3F
-	for <linux-gpio@vger.kernel.org>; Sun, 16 Aug 2026 17:01:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/fqgBsf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAF211F000E9;
+	Sun, 16 Aug 2026 17:59:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786899714;
-	bh=lSJQLIodR3waRArNX7nAQigBXZ7KMNI+H3yZs3Z0s/o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=YtxQnNrVUSTzePIXxlBG8TSP/JEYZW/IWl13arpuBcl5FQ9AEDvm4GzM8ZqJuz/jN
-	 drezQ6bdv+QTg4DP3vKWAsHUvnmV9CqriZEH/5XFrn1SFOk7jtykvFo7Z6YuFuiue2
-	 2dnU7uDeT2N81tjoIw9HqzKBtptHfCFtiDFsjFPu3QONCL3AKbw9K+eYp5zINIR9np
-	 moNBMWF7dUVzFEuPZ46AehY7JPYmbZKCYnZxTYuxIvLiA6fRXyuVTrVQMfc683OfZF
-	 o2KRyWSiXuPdBrIFJ61V1aH1gBkAW5D3NvX8EXfiC2QiBH3MKeaix7stCbaSqNa7oI
-	 hREEGgpllqw1A==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5b29599b81cso3590466e87.1
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Aug 2026 10:01:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RrKoE901cMEIr5nhMuOHqVA9R5Oq0O7QpfBOwEcZ2f+46TPZOPBRJZs31w8Iuz+emE1kW9hVzt+a8vz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzDJRiK49+lzPcRwYVGwWKRjXMPXtc8gmxLm+qmqs5/e8LFVS8
-	BvgeJVnNbUH3SmCB2lQDXED4yqzSZ5LZRQW4VSuAGXPuSoR6stcH42r/68xudPMrkO3jVs+YcjO
-	671c6YpJBZGzQltq7Ku8W4nwIcatjoks=
-X-Received: by 2002:a05:6512:3f01:b0:5b0:1f06:f204 with SMTP id
- 2adb3069b0e04-5b459138fa7mr2771373e87.34.1786899713230; Sun, 16 Aug 2026
- 10:01:53 -0700 (PDT)
+	s=k20260515; t=1786903195;
+	bh=ZeUQpdKTHvnxZxC1r+AH+HSymZUPMRMYHOUDemRgIsQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=F/fqgBsf8C8ahaHBhqfp9dSCSNtxQ0y1AECXGKd/OK3xPjZWcXfwtjvOJAEKRR5Jd
+	 25RAjIm8VtccI9AD3r6L+yGJvjA51dyGM7d+ZeXS181hgErEc8atGijTFQW1U1DnFj
+	 kSkREGZu6n6uNzJsfjsPlXSYg9kk11145w+r1uT08nVYc4reI51zbKdAtU0v7+L3Am
+	 NLkXg6b17ab2su9lXnXQ3PRJr+NWrJSQWMudjTyZz/xxjWOSD8gnFmpNW0QU+7VmNt
+	 P1cKbYbg4n4fbumrvHF7bcEr6JkXZ3gwvows0wsyb2j+EZeFfJ/8Bkpn2Bp+AdA1+2
+	 86JjCOGUsae5g==
+Date: Sun, 16 Aug 2026 18:59:49 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Janani Sunil <janani.sunil@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, Linus
+ Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
+ Michael Walle <mwalle@kernel.org>, linux@analog.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-doc@vger.kernel.org, jananisunil.dev@gmail.com, Uwe =?UTF-8?B?S2xl?=
+ =?UTF-8?B?aW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH v3 12/14] gpio: regmap: Add optional runtime PM support
+Message-ID: <20260816185949.4205b507@jic23-huawei>
+In-Reply-To: <an7TBThRam_n7hKg@ashevche-desk.local>
+References: <20260813-ad7768-driver-v3-0-cb554399ad26@analog.com>
+	<20260813-ad7768-driver-v3-12-cb554399ad26@analog.com>
+	<an7TBThRam_n7hKg@ashevche-desk.local>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260813084642.11325-1-bartosz.golaszewski@oss.qualcomm.com>
-In-Reply-To: <20260813084642.11325-1-bartosz.golaszewski@oss.qualcomm.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Sun, 16 Aug 2026 19:01:40 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnUFt8kKGumURy_Ohx7GvxSvko7=u_YGFkfK_KK=GnsrQ@mail.gmail.com>
-X-Gm-Features: AcwNN1UADoNQ0z2nSAL4wSH8-R-tV791BUF-pIBxOXP0COAi1FbSRCbSxYhqaeg
-Message-ID: <CAD++jLnUFt8kKGumURy_Ohx7GvxSvko7=u_YGFkfK_KK=GnsrQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Qualcomm pinctrl updates for v7.3-rc1
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, brgl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 13, 2026 at 10:46=E2=80=AFAM Bartosz Golaszewski
-<bartosz.golaszewski@oss.qualcomm.com> wrote:
+On Fri, 14 Aug 2026 11:34:13 +0300
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-> Here are the Qualcomm pinctrl driver updates for the upcoming merge windo=
-w.
-> There are two new drivers, interrupt handling improvements for pinctrl-ms=
-m
-> and some minor driver updates and refactoring.
->
-> The merge from the irqchip tree pulls in dependencies for the PDC interru=
-pt
-> handling changes.
->
-> All of this has been in next for quite some time. Please consider pulling=
-.
+> On Thu, Aug 13, 2026 at 03:57:05PM +0200, Janani Sunil wrote:
+> > Some gpio-regmap consumers share their regmap with a parent device that
+> > may be runtime suspended. GPIO register accesses must resume that device
+> > first.
+> > 
+> > Add an optional pm_dev field and acquire it before register translation
+> > or access. Release it using runtime autosuspend after each operation.
+> > Keep the device active across the complete direction-output sequence and
+> > propagate failure when setting the initial output value.  
+> 
+> ...
+> 
+> >  static int gpio_regmap_get(struct gpio_chip *chip, unsigned int offset)
+> >  {
+> >  	struct gpio_regmap *gpio = gpiochip_get_data(chip);  
+> 
+> >  
+> > -	ret = gpio->reg_mask_xlate(gpio, base, offset, &reg, &mask);
+> > +	ret = gpio_regmap_runtime_get(gpio);
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > +	ret = gpio->reg_mask_xlate(gpio, base, offset, &reg, &mask);
+> > +	if (ret)
+> > +		goto out_pm_put;
+> > +
+> >  	/* ensure we don't spoil any register cache with pin input values */
+> >  	if (gpio->reg_dat_base == gpio->reg_set_base) {
+> >  		ret = regmap_read_bypassed(gpio->regmap, reg, &val);
+> >  		if (ret)
+> > -			return ret;
+> > +			goto out_pm_put;
+> >  
+> > -		return !!(val & mask);
+> > +		ret = !!(val & mask);
+> > +	} else {
+> > +		ret = regmap_test_bits(gpio->regmap, reg, mask);
+> >  	}
+> >  
+> > -	return regmap_test_bits(gpio->regmap, reg, mask);
+> > +out_pm_put:
+> > +	gpio_regmap_runtime_put(gpio);
+> > +	return ret;
+> >  }  
+> 
+> Instead of adding ugly goto:s, I would rather define the guard and acquire and
+> use in the same way as other PM_RUNTIME_ACQUIRE*() work.
+> 
+Excellent point Andy.
 
-Pulled in, thanks!
+I was thinking exactly this when looking at v2 just now (and feeling guilty for
+being late to the discussion!)
 
-Yours,
-Linus Walleij
+Would need a local GPIO specific variant but that is easy to do - just copy
+the way PM_RUNTIME_ACQUIRE*() works.
+
+Given how much it will reduce the code churn + result in a more elegant result
+for me this is a necessary change rather than a nice to have.
+
+Thanks,
+
+Jonathan
