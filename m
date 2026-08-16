@@ -1,98 +1,241 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9453CB8FF
-	for <linux-gpio@vger.kernel.org>; Sun, 16 Aug 2026 08:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C393A5E7A;
+	Sun, 16 Aug 2026 13:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786870617; cv=none; b=N9Lo1gdyVIY3CC7oG1YKGXypndc800cv0NzEZ62bJMaTMHs9HhZZsIBwLTdRgqAr5r0SDZwNVU2FPOdpabNNbK//+VKE+5hlDM3q+v6L0xa9jLcLCWjba1gNu70+HoWluP5r+MAxkCS1rawaIOC4j+Re2U+cCMUO5779gClQDjQ=
+	t=1786888117; cv=none; b=Kh+dhJAiHmnPgfOEdsxasJYJOY8+aGfXvvtp3GsCMNLwjTT4CZtlGb3nRuIy40P4cOIt3/Q+6RL/3TvDksjZVb8wIzv42Esy36/tI9k4Zlg5YdB4LQKCpl52zvejO4/EsLEVsVXLaMd3jq2MEY7y9Dy+5jkKauP7bRrYlmjcM9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786870617; c=relaxed/simple;
-	bh=tJAz/ItHBVgRIrjKlGA7Yf2OR9BlJEZ77puY8x/smJA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BOHSr4/sJ7PXCmeIHpQ4lhSsMNmH2HwUW2wwByBh0+8arWhtwpvuBbHHTPTIzHLtXwtDnue/F3KJoEsha3gdH0mgrXYRJdFYV/3k+Vlp9fcEbt5qwh6ZOnXeL/SvEyLJjgU7UjAGb/u07/h9xjFBi+HT6R4MQKS6bV6LT/EdZJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=reactivated.net; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=reactivated.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-47f71156e1aso991513f8f.3
-        for <linux-gpio@vger.kernel.org>; Sun, 16 Aug 2026 01:56:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786870614; x=1787475414;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=s0b91MIc9baawgnHgsNGw4IC7c2ROOK7JfMUTm1Q4pU=;
-        b=hIoJaKpBtcNf78e6LcXsKyEfKtdjg+yU+CIFEHOR8EV9YbeK+Ww1i9pujFRhrI7qXS
-         pPHOrd2p0xxSVREzNMmscka7fjsGPolUWH2qEtYuh5j6hbMrKYzogzquqwqmMf6AXm95
-         dKHio1Q1qhKIb81IofH1tPnVzZPTNcBhzHPlUPRXiGiAWnbKlF3qHrdV5Q55MgI+rEja
-         TDaF6RlPNCb3caFv2KKSwdbiVngEdFhEAOG8qKI7d1MIYOOmZNIRUFL7WHy/efM9Cb0P
-         6hxAexNbtOhJpJqXjfPInd3EQrKxcUXxBMujyTQwoO9oySgUxsykgyDKv+DYr0mvpy5K
-         MbxA==
-X-Forwarded-Encrypted: i=1; AHgh+RrYmjCyTK7i67R8QabT+NyoQAiGHozXW35vLUczCvBn9KOQO/iBq+BLV+IhLbCaNimwRG2PXlsmr+rp@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMoPkMyNhdDSfaFzz4BK+vG+SVi+tkYsIN8lKWvp4Rdn0+JwsU
-	iIvhO95r9tTXx1CwLvT84jNNB3D5YjqlBSw1DQR9+09OMx399LEQfQ53LftHgA==
-X-Gm-Gg: AR+sD10SA3FvtQkGrbvPf28uAyxm+0pwtj5PpYEzDe2rYi3pOJueOmeQZ0sBj395nFw
-	RnEc0ZL22kH2DhrcdK7bzWSXCK/9cuVLqJSIn0EMvgAKLsG9ITEOKzupkKFFYoKdPKAfSth/pXq
-	itsLfz6dJuzar89xxrAEts5UcvayVZ+Mip4zs26L0OhyhJjOgQKmE+SMCZLgHz+i17v0BHf3E1c
-	3wG0Y/uumCKLDXjkDZbSkQ0M1+wPIY3lCyiFFPYUa5nnPYrr8yGKkVIywKJ98MqwIoKUPVxFihX
-	0FGjq/I9EbBYyJCujSp6FDDRzUiXeKEy04pAth99ltoi5DYEo+zW+QaqXBa+IkqgR3rR0KzHfHw
-	1Lux1OTDt04/hdD5X45Yj90/t5tMXntSuVuzuNrLlGmpyZdQTEUEMVCqDZkBkcddBE6Mj7t4cQk
-	zNV8641ID5+fV5Rd6Alxa6pGqDCQoErvVijkMdUL4PovI8IxwaGnAf7yQAaNWH1G/Qk63ajB2uL
-	p2QM9TufMMaoTDPXjO8QQ2k/GXm4nrqtZVv7WpvQhVuFxJPk0fZKVks52NPa3AX0GPh
-X-Received: by 2002:a05:6000:25ec:b0:47f:f3d4:26da with SMTP id ffacd0b85a97d-4816070f86dmr24247754f8f.11.1786870614391;
-        Sun, 16 Aug 2026 01:56:54 -0700 (PDT)
-Received: from ?IPV6:2001:8a0:d6cd:9000:86f4:4e71:9fc8:3183? ([2001:8a0:d6cd:9000:86f4:4e71:9fc8:3183])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4815f2b1d90sm23948147f8f.22.2026.08.16.01.56.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 16 Aug 2026 01:56:53 -0700 (PDT)
-Message-ID: <1b4e3d62-619a-454f-a1f3-32165a58f3ef@reactivated.net>
-Date: Sun, 16 Aug 2026 09:56:52 +0100
+	s=arc-20240116; t=1786888117; c=relaxed/simple;
+	bh=7w/B1xjAdx/UC3LU3fU7GioiGC1vTo7lgWHD3wg9EUI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=m2VJtxouMgLkqqGFNFpB083iOJ41p+oDlCb1CS3Baay3wd/FBTX8YhuJMiTXQ7y5pZEFipYyhEg9UsY7WmmST72FZ3oDSuypZDFhqklwUY+WlUGq1hy/EEK1PakeNBxx9XCwiKvBXP834oSQBgIl8+EejhXqhJ8jDiluVMrDhKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F3k18j1/; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F3k18j1/"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B16F1C2BCF7;
+	Sun, 16 Aug 2026 13:48:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1786888116;
+	bh=7w/B1xjAdx/UC3LU3fU7GioiGC1vTo7lgWHD3wg9EUI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=F3k18j1/IjWZwqC1HZUCN8G20nhzwtAw3hAZqO2D/dBoaDeOOnAC4wHxbotrOJj88
+	 GANSzK4ZneyLqB4YsHuQgRzN0WVCZzJnLRsYATFCDmCpKyZx4QpwNkLA3a0zm1kniY
+	 R2yUfqz4g2YhMD+jxpw9XpfQbnI4hSsN6NLjkhtaRJ0bRwK5Jiq7BfEP2yBOAE4/Io
+	 /DzbNEqDPZGqeJpk54YKetSWjFgMGLdRWYxjXVvRXLptqJyAIdpujLcMZOfjDI4z43
+	 GVHPGmUnk3wObs8ARA9+c8/dmeHKW+qsbxlf9mRVSEOFuYm0xYgrs3wL9icLNF3Uia
+	 DrtlPn2eh0N9w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8867EC5B572;
+	Sun, 16 Aug 2026 13:48:36 +0000 (UTC)
+From: Muzaffer Kadir via B4 Relay <devnull+muzafferkadir.mainlining.org@kernel.org>
+Date: Sun, 16 Aug 2026 16:48:30 +0300
+Subject: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add MSM8952 pinctrl
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpiolib: of: don't mark hog nodes OF_POPULATED before a
- chip is found
-To: Abdurrahman Hussain <abdurrahman@nexthop.ai>,
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20260815-gpiolib-of-hog-flag-leak-v1-1-6126aac5f6f3@nexthop.ai>
-Content-Language: en-US
-From: Daniel Drake <dan@reactivated.net>
-In-Reply-To: <20260815-gpiolib-of-hog-flag-leak-v1-1-6126aac5f6f3@nexthop.ai>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20260816-msm8952-pinctrl-v1-1-a7272bcd2187@mainlining.org>
+References: <20260816-msm8952-pinctrl-v1-0-a7272bcd2187@mainlining.org>
+In-Reply-To: <20260816-msm8952-pinctrl-v1-0-a7272bcd2187@mainlining.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Muzaffer Kadir <muzafferkadir@mainlining.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1786888114; l=6507;
+ i=muzafferkadir@mainlining.org; s=20260816; h=from:subject:message-id;
+ bh=2qm3ODzfSZtqD8kFUh1x1Z7la0BunukuZdtiPjANce8=;
+ b=OipONPjKwh8PZYcu/eyeITFBOclj8j8YR/ri8Hd9yeKJ5YQ6hM8j3PycfWKRYC5ncwtDj7HYB
+ EshRWZ3UVjzAKMGIzVMkS2vCkJgbD0h+idvRTQXT/ysImKl/SQ5VgPR
+X-Developer-Key: i=muzafferkadir@mainlining.org; a=ed25519;
+ pk=4zkv4suQ3cYcO4Z7CrV8JSSjEGLBGepUtvQCFjgnYIU=
+X-Endpoint-Received: by B4 Relay for muzafferkadir@mainlining.org/20260816
+ with auth_id=954
+X-Original-From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Reply-To: muzafferkadir@mainlining.org
 
-On 15/08/2026 21:44, Abdurrahman Hussain wrote:
-> When a gpio-hog node is attached by a device-tree overlay before its
-> parent GPIO chip has been registered, of_gpio_notify() sets
-> OF_POPULATED on the node via of_node_test_and_set_flag() and only then
-> discovers that there is no gpio_device for the parent, returning
-> NOTIFY_DONE without clearing the flag.
-> 
-> Since gpiochip_hog_lines() skips any hog child whose of_node carries
-> OF_POPULATED, the leaked flag makes the hog silently ignored when the
-> chip is registered later. Applying an overlay containing both a GPIO
-> controller node and its hog children - and populating devices only
-> after the overlay apply completes - hits this on every boot; the hog
-> is only applied if the chip driver is unbound (which clears the flag
-> in the remove path) and rebound.
-> 
-> Look up the parent gpio_device before claiming the node so that a hog
-> attached ahead of its chip stays unclaimed and is picked up normally
-> by gpiochip_hog_lines() at registration time.
-> 
-> Signed-off-by: Abdurrahman Hussain <abdurrahman@nexthop.ai>
-> Fixes: a23226b7c1f6 ("gpiolib: handle gpio-hogs only once")
-> Cc: stable@vger.kernel.org
-Looks correct, and this is consistent with OF_POPULATED handling in 
-of_i2c_notify() and of_spi_notify().
+From: Muzaffer Kadir <muzafferkadir@mainlining.org>
 
-Reviewed-by: Daniel Drake <dan@reactivated.net>
+Add device tree bindings documentation for Qualcomm MSM8952
+pinctrl driver.
+
+Signed-off-by: Muzaffer Kadir <muzafferkadir@mainlining.org>
+---
+ .../bindings/pinctrl/qcom,msm8952-pinctrl.yaml     | 155 +++++++++++++++++++++
+ 1 file changed, 155 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8952-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8952-pinctrl.yaml
+new file mode 100644
+index 000000000000..c4ba5169fbaf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8952-pinctrl.yaml
+@@ -0,0 +1,155 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,msm8952-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm MSM8952 TLMM pin controller
++
++maintainers:
++  - Muzaffer Kadir <muzafferkadir@mainlining.org>
++
++description:
++  Top Level Mode Multiplexer pin controller in Qualcomm MSM8952 SoC.
++
++properties:
++  compatible:
++    const: qcom,msm8952-pinctrl
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 61
++
++  gpio-line-names:
++    maxItems: 134
++
++patternProperties:
++  "-state$":
++    oneOf:
++      - $ref: "#/$defs/qcom-msm8952-tlmm-state"
++      - patternProperties:
++          "-pins$":
++            $ref: "#/$defs/qcom-msm8952-tlmm-state"
++        additionalProperties: false
++
++$defs:
++  qcom-msm8952-tlmm-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
++    unevaluatedProperties: false
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          oneOf:
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-2][0-9]|13[0-3])$"
++            - enum: [ qdsd_clk, qdsd_cmd, qdsd_data0, qdsd_data1, qdsd_data2,
++                      qdsd_data3, sdc1_clk, sdc1_cmd, sdc1_data, sdc1_rclk,
++                      sdc2_clk, sdc2_cmd, sdc2_data ]
++        minItems: 1
++        maxItems: 36
++
++      function:
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++
++        enum: [ gpio, blsp_uart1, mipi_dsi0, blsp_spi1, smb_int,
++                adsp_ext, blsp_i2c1, prng_rosc, qdss_cti_trig_out_b0, rcm_marker2,
++                qdss_cti_trig_out_a1, blsp_spi2, blsp_uart2, ldo_update, qdss_tracedata_b,
++                pbs1, pwr_modem_enabled_b, blsp_i2c3, gcc_gp2_clk_b, atest_combodac_to_gpio_native,
++                ldo_en, blsp_i2c2, gcc_gp1_clk_b, atest_gpsadc_dtest0_native, blsp_spi3,
++                blsp_uart3, sec_mi2s, pbs0, gcc_gp3_clk_b, blsp_spi4,
++                blsp_uart4, pbs2, pwr_nav_enabled_b, codec_mad, pwr_crypto_enabled_b,
++                blsp_i2c4, nfc_disable, blsp_spi5, blsp_uart5, qdss_traceclk_a,
++                atest_bbrx1, nfc_irq, qdss_tracectl_b, qdss_cti_trig_in_b0, blsp_i2c6,
++                qdss_traceclk_b, atest_wlan0, m_voc, qdss_cti_trig_in_a0, atest_bbrx0,
++                blsp_i2c5, qdss_tracectl_a, atest_gpsadc_dtest1_native, qdss_tracedata_a, blsp_spi6,
++                blsp_uart6, atest_wlan1, mdp_vsync, pri_mi2s_mclk_a, sec_mi2s_mclk_a,
++                cam_mclk, cci_i2c, pwr_modem_enabled_a, flash_strobe, cci_timer0,
++                cci_timer1, cam1_standby, pwr_nav_enabled_a, cam1_rst, pwr_crypto_enabled_a,
++                cam2_standby, cam2_rst, webcam_standby, cci_async, webcam_rst,
++                rcm_marker1, sd_write, qdss_cti_trig_out_a0, accel_int, gcc_gp1_clk_a,
++                alsp_int, gcc_gp2_clk_a, mag_int, gcc_gp3_clk_a, gyro_int,
++                pressure_int, fp_gpio, blsp6_spi, fp_int, qdss_cti_trig_in_b1,
++                uim_batt, qdss_cti_trig_out_b1, uim1_data, uim1_clk, uim1_reset,
++                uim1_present, uim2_data, uim2_clk, uim2_reset, uim2_present,
++                uim3_data, usb_fs, uim3_clk, uim3_reset, uim3_present,
++                us_euro, atest_char3, dbg_out, bimc_dte0, ts_resout,
++                ts_sample, sec_mi2s_mclk_b, pri_mi2s, sdcard_det, atest_char1,
++                ebi_cdc, audio_reset, atest_char0, cdc_pdm0, pri_mi2s_mclk_b,
++                lpass_slimbus, lpass_slimbus0, lpass_slimbus1, codec_int1,
++                codec_int2, wcss_bt, atest_char2, ebi_ch0, wcss_wlan2,
++                wcss_wlan1, wcss_wlan0, wcss_wlan, wcss_fm, ext_lpass,
++                key_volp, key_snapshot, key_focus, gcc_tlmm, key_home,
++                dmic0_clk, dmic0_data, backlight_en, qdss_cti_trig_in_a1, lcd_en,
++                blsp_spi7, blsp_uart7, pri_mi2s_ws, usbc_irq, wsa_io,
++                blsp_i2c7, uim3_ldo, blsp_spi8, blsp_uart8, wsa_irq,
++                blsp_i2c8, gcc_plltest, nav_pps_in_a, pa_indicator,
++                nav_pps_in_b, nav_pps, modem_tsync, nav_tsync, ssbi_wtr1,
++                gsm1_tx, gsm0_tx, atest_char, atest_tsens, bimc_dte1 ]
++
++    required:
++      - pins
++
++allOf:
++  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    msmgpio: pinctrl@1000000 {
++        compatible = "qcom,msm8952-pinctrl";
++        reg = <0x01000000 0x300000>;
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++        gpio-controller;
++        gpio-ranges = <&msmgpio 0 0 134>;
++        #gpio-cells = <2>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++
++        blsp1-uart2-sleep-state {
++            pins = "gpio4", "gpio5";
++            function = "gpio";
++
++            drive-strength = <2>;
++            bias-pull-down;
++        };
++
++        spi1-default-state {
++            spi-pins {
++                pins = "gpio0", "gpio1", "gpio3";
++                function = "blsp_spi1";
++
++                drive-strength = <12>;
++                bias-disable;
++            };
++
++            cs-pins {
++                pins = "gpio2";
++                function = "blsp_spi1";
++
++                drive-strength = <2>;
++                bias-disable;
++            };
++        };
++    };
+
+-- 
+2.54.0
+
 
