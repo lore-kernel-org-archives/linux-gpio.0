@@ -1,136 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D40418B0A;
-	Sun, 16 Aug 2026 21:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786917271; cv=none; b=e8YUehYWC8qyDXZBAIW+iriXdVxfe/RNgYAiYJb8MWWR8E3k97VVtHdiFSbSQtvoea6+ztj8sM3PkSndctFmAUCFu6SbT+WhzkOyhN4cI62VWl45UxyEdWybYKemABLOfYFz8EWFRxPRY4BTu4I954MJzSrQOWNBwSGMvGLhuVc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786917271; c=relaxed/simple;
-	bh=hREXI4wwOw1LBmsGhZlQp8QFxWSTkTI4eWSOcR4ufzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mFxpEZwezS0Fzg0WfSPxsAq6GIBhEpsGbEu/N9fJN5RaBSkDmEx/jiKdmXss8WGTSiLRgOCTaVCFT1o61I05Dc1e78IFHK3j/HbG2DBI48Y1ipYI6JZ8BMWTv2Rs+LWzGuD4/oObCHRd04G5Ut30nvWEHt6R7R5OKmcymQL8j9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYpB9koP; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82A230566F;
+	Mon, 17 Aug 2026 04:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786940712; cv=pass; b=D1/ACbBojr6tkHJF4kBW7ok1l96KwlsP6EHQmujxYzITXgb0SO8itfgYNkrJqqgn62vYc03WJU5L1t/JGOUjpBMazQABRHLkeY+cBQGyHX3B6ed4K99nv0T70h4Y3hwOQhDBuAHyOR9/ornrNYVIrer5WpYfnXJgQXEf3vJ+5Kg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786940712; c=relaxed/simple;
+	bh=tj/YUrP0Y20IM9wcPZHGiH136Mn0RSuTkslJFuKAkY8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Eb3/1G0bX2J8DKHF+3VmDZJ4Ofe1ewkELu1LM2b7Ra2BO749n+D1pLE3aBrX3xY6knZRTH5d7I0xix+D9F5YRP8uiIXlcG1WRDS302QOqG/CZlNm426obnXAv1yedJ7/D/eH66jPCu/F2WEXsWMNGFwRQwDK4DzT/ItaMqQ0TnY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=HT7ksXPE; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYpB9koP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCC451F000E9;
-	Sun, 16 Aug 2026 21:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786917270;
-	bh=EDNSLLXUevqjoErRmT2EvxJMbxIRW7OLOhVI3JXFcpA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=SYpB9koPM32FHtyIEi+5EwIW+137Lr/eWMdsGDTsFD+IsINZWgUoivoWOqGKGXiIH
-	 cdhDmjqrSB0ppA34A3TqtmRZuAa3F9u0SO8u7PskoO8W0SWoeAFBA6WqaswbTxA5mc
-	 C+DpOqgkVL/fwu+7GcfX411uMP3EYeNZXBqiG91YtnOl5CthY3OrypdvTWAUfuvXSw
-	 SEOCaYApmqFAbCMOLJHOhLn6YKwwOStAuj/ISP9VIrwyX8DTpa7CR/8C2//HTEk5U0
-	 MRG9YtjXCyQk30xlm91zN7SHSYPIJHBwLz/ATD81u738mKKaQZAB2ez/b2ziNtKamW
-	 2D7DAZZP8yhiQ==
-Date: Sun, 16 Aug 2026 22:54:24 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Kurt Borja" <kuurtb@gmail.com>
-Cc: "David Lechner" <dlechner@baylibre.com>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Linus Walleij" <linusw@kernel.org>,
- "Bartosz Golaszewski" <brgl@kernel.org>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, "Andy Shevchenko" <andy@kernel.org>,
- <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v3 7/9] iio: adc: ti-ads1262: support triggered buffer
- sampling
-Message-ID: <20260816225424.27c9d223@jic23-huawei>
-In-Reply-To: <DKME9LSBXSXA.28PS1V6ZAH79O@gmail.com>
-References: <20260807-ads126x-v3-0-f89925d72792@gmail.com>
-	<20260807-ads126x-v3-7-f89925d72792@gmail.com>
-	<1b6b6981-1a08-42a2-a03a-4366b980da13@baylibre.com>
-	<DKK9S36LB543.2T124NE3TNETN@gmail.com>
-	<f3ea3859-aff1-4c15-9302-095119faec78@baylibre.com>
-	<DKME9LSBXSXA.28PS1V6ZAH79O@gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="HT7ksXPE"
+ARC-Seal: i=1; a=rsa-sha256; t=1786940677; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KzI1Y4GT+H6j9FEFK0hC47a08RldjqCxo5u3mTr9qqfKlDZVmoOyUfrXICQG2NwgpZ8FE+Ubh+4UDRciq9CJeHPkxgDzNKgqBl/Yc7CnKd5BKlAw4d8eyYUrBtYaF88x0PBTj8ufzJawkNoFIx2YqR47wv0jdVR13M5opHN3mhk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1786940677; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZSlZwiisO+mhc+1mZ7YoDuogysbfOwIRDw36DrAX+ww=; 
+	b=Aj1FAqPjgK//aBsflzglzkpsIq1CFmmkhwPTMRpw8QY3komjD3d3hIFDz+1EsBOYfH43VRJlBf9SdcMhp3oZJbu88LJtuRVSJKCyJH4uxcb9TCDkt82Exeu41HlBHQTR8YovOzeK73oE61S/5rHI8AKlD9pRVkfAOu1DIjGsbW8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1786940677;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=ZSlZwiisO+mhc+1mZ7YoDuogysbfOwIRDw36DrAX+ww=;
+	b=HT7ksXPEC2RKhnKUehEHLxm7khUfsKuBuVPRjd073C8/12ktpJHyDz4j/gGZbo+E
+	xPufyVRRYjkXwSygr+EjDBIKq7Cneonu+it5XdiRURMqzCd00KOV1RUnr0Q+8Rr9hAq
+	SDqkRDksgLZ0Au33T6acXvJzZnKPLb64VCWYYOk8XPr4MFvfBrrbD1bj4ZyxrFrYsIb
+	JhW/c+XIqKuZdn0SOuq4cjJYIPxfaLpY055c118UZ/XMuDkgTyVeQBYwoqlY3dyPNhE
+	FM0owtXUDG+0pC1nV9lQrAKteqTvnCOwyctLIoky65KZgPjh8kJvDOP9Tmep2u/Szpn
+	HErGxyxb/g==
+Received: by mx.zohomail.com with SMTPS id 1786940674891707.3346436865633;
+	Sun, 16 Aug 2026 21:24:34 -0700 (PDT)
+Message-ID: <3f0268a19aab46d602dffc9e14fc6683af7a20cd.camel@icenowy.me>
+Subject: Re: [PATCH 02/12] clk: thead: th1520-ap: add support for MISC
+ subsys clocks
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Michael Turquette
+	 <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring	
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, Neil Armstrong	
+ <neil.armstrong@linaro.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  Paul Walmsley	 <pjw@kernel.org>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou	 <aou@eecs.berkeley.edu>, Alexandre
+ Ghiti <alex@ghiti.fr>, Jisheng Zhang	 <jszhang@kernel.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>, 	linux-riscv@lists.infradead.org,
+ linux-clk@vger.kernel.org, 	devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, 	linux-gpio@vger.kernel.org,
+ linux-phy@lists.infradead.org, 	linux-usb@vger.kernel.org, Han Gao
+ <rabenda.cn@gmail.com>, Yao Zi	 <ziyao@disroot.org>
+Date: Mon, 17 Aug 2026 12:24:26 +0800
+In-Reply-To: <aoH9cvTC8vD4NYpB@x1>
+References: <20260507081710.4090814-1-zhengxingda@iscas.ac.cn>
+	 <20260507081710.4090814-3-zhengxingda@iscas.ac.cn>
+	 <aier9XppLeCkJydw@thelio>
+	 <93b867c1b7f5526cc25cb04f838432cd752f5981.camel@icenowy.me>
+	 <aievi0s-3SO8hV6a@thelio> <aijpEqzJ7fM7rGMH@thelio> <aoH9cvTC8vD4NYpB@x1>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Tue, 11 Aug 2026 15:24:46 -0500
-"Kurt Borja" <kuurtb@gmail.com> wrote:
+=E5=9C=A8 2026-08-16=E6=97=A5=E7=9A=84 11:12 -0700=EF=BC=8CDrew Fustini=E5=
+=86=99=E9=81=93=EF=BC=9A
+> On Tue, Jun 09, 2026 at 09:33:22PM -0700, Drew Fustini wrote:
+> > On Mon, Jun 08, 2026 at 11:15:39PM -0700, Drew Fustini wrote:
+> > > On Tue, Jun 09, 2026 at 02:01:43PM +0800, Icenowy Zheng wrote:
+> > > > =E5=9C=A8 2026-06-08=E4=B8=80=E7=9A=84 23:00 -0700=EF=BC=8CDrew Fus=
+tini=E5=86=99=E9=81=93=EF=BC=9A
+> > > > > On Thu, May 07, 2026 at 04:17:00PM +0800, Icenowy Zheng
+> > > > > wrote:
+> > > > > > The TH1520 SoC contains a MISC_SUBSYS clock controller,
+> > > > > > which
+> > > > > > allows
+> > > > > > controlling of USB related clocks and MMC/SD controller AHB
+> > > > > > bus
+> > > > > > clocks.
+> > > > > >=20
+> > > > > > Add support for this clock controller, in order to enable
+> > > > > > USB
+> > > > > > support.
+> > > > > >=20
+> > > > > > Signed-off-by: Icenowy Zheng <zhengxingda@iscas.ac.cn>
+> > > > > > ---
+> > > > > > =C2=A0drivers/clk/thead/clk-th1520-ap.c | 64
+> > > > > > +++++++++++++++++++++++++++++++
+> > > > > > =C2=A01 file changed, 64 insertions(+)
+> > > > > >=20
+> > > > > > diff --git a/drivers/clk/thead/clk-th1520-ap.c
+> > > > > > b/drivers/clk/thead/clk-th1520-ap.c
+> > > > > > index 3a6847f1c950f..24f785f0b329a 100644
+> > > > > > --- a/drivers/clk/thead/clk-th1520-ap.c
+> > > > > > +++ b/drivers/clk/thead/clk-th1520-ap.c
+> > > > > [...]
+> > > > > > @@ -1609,6 +1663,12 @@ static int th1520_clk_probe(struct
+> > > > > > platform_device *pdev)
+> > > > > > =C2=A0			return ret;
+> > > > > > =C2=A0	}
+> > > > > > =C2=A0
+> > > > > > +	if (plat_data =3D=3D &th1520_ap_platdata) {
+> > > > > > +		ret =3D devm_clk_hw_register(dev,
+> > > > > > &usb_suspend_div_clk.hw);
+> > > > > > +		if (ret)
+> > > > > > +			return ret;
+> > > > > > +	}
+> > > > >=20
+> > > > > Should usb_suspend_div_clk.hw instead be registered under
+> > > > > 'if (plat_data =3D=3D &th1520_ap_platdata)'?
+> > > >=20
+> > > > Do you mean misc_platdata?
+> > > >=20
+> > > > Yes, this is an copy-n-paste error that deserves a fix.
+> > >=20
+> > > Hah, yes, I also had a typo :)
+> >=20
+> > Assuming that gets fixed in the next rev:
+> >=20
+> > Reviewed-by: Drew Fusini <fustini@kernel.org>
+>=20
+> I will fixup the typo and apply to thead-clk-for-next once 7.3-rc1 is
+> released.
 
-> On Mon Aug 10, 2026 at 11:31 AM -05, David Lechner wrote:
-> > On 8/9/26 3:28 AM, Kurt Borja wrote:  
-> >> On Sat Aug 8, 2026 at 1:39 PM -05, David Lechner wrote:  
-> >>> On 8/7/26 10:58 PM, Kurt Borja wrote:  
-> >>>> Add triggered buffer support and a data-ready (DRDY) hardware trigger.
-> >>>>  
-> >
-> > ...
-> >  
-> >>>  
-> >>>> +	u8 tx[11] __aligned(IIO_DMA_MINALIGN);
-> >>>> +	u8 rx[11] __aligned(IIO_DMA_MINALIGN);  
-> >>>
-> >>> don't need second one to be aligned, they aren't independent.  
-> >> 
-> >> Ah, I forgot this observation in the last version. These are used in a
-> >> full-duplex transfer, wouldn't that require for both to be on its own
-> >> cache line? I just started learning about DMA.  
-> >
-> > No. In this case, it works roughly like this...
-> >
-> > - We fill the TX buffer before the transfer. (CPU access to memory may
-> >   just live in the cache at this point and not actually be sent to RAM)
-> > - We request to start the SPI transfer.
-> > - The core SPI code flushes (or maybe I should say invalidates) the cache
-> >   on the TX buffer. This ensures that what we wrote with the CPU available
-> >   to DMA.
+BTW I think the binding patch should go through your tree too.
 
-Extra fun - it has to flush the rx buffer too.  Because...
-> > - The actual SPI transfer happens that uses DMA to access both TX and
-> >   RX buffers. (Again, could just live in a cache and not be sent to RAM)
-> > - The SPI core code flushes the cache on the RX buffer. This ensures
-> >   that when the CPU reads the memory, it will see what the DMA just
-> >   wrote.  
-If the RX buffer had old dirty lines (could have been used for something
-completely different) in it, that is modified data that hadn't
-been written back to RAM, then this flush would wipe out the hardwork of
-the DMA by writing those CPU cache held rx bytes over the top.
+Thanks,
+Icenowy
 
-(Next bit is just to scare anyone who thinks they know how this all works -
-completely irrelevant here :)
-Don't get me started on architectures that do clean write back (occasionally).
-Thankfully I don't believe any of them also have non coherent DMA as to
-be able to do that nasty hack you have to know no one can see it.
-For more fun, one large CPU vendor thought that was the case and there is
-a spec out there that has a magic flag to let the OS know it does this
-because there are cases where you care.
-</rant>
-
-> 
-> Oh, this makes a lot of sense.
-> 
-> >
-> > Since there isn't a time when CPU and DMA both write to the cache line
-> > at the same time before a flush, there is never a time we could have
-> > an issue with stale data replacing data that had not been flushed.
-> >
-> > It does mean that we can't update the tx buffer for the next message
-> > until after this message is done, but we have to do that anyway.
-> >
-> > What does cause problems is if we just had a regular unrelated variable
-> > after this in the cache line and the driver updated it during a SPI
-> > transfer. If this new value was just living in the CPU cache, then
-> > when the RX flush happened, it would write over that new value with
-> > stale data from the DMA's version of the cache.  
-> 
-> Thanks! I'll look deeper into DMA, it's very interesting.
-> 
-Wolfram Sang did a nice ELCE talk on the more normal flows for this a
-few years back when he was working on reducing copies in the i2c subsystem.
-https://www.youtube.com/watch?v=JDwaMClvV-s&pp=ygUQd29sZnJhbSBzYW5nIGRtYQ%3D%3D
-Is the one I think.
-
-
-
+>=20
+> Thanks,
+> Drew
