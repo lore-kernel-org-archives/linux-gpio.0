@@ -1,146 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99F538F94C;
-	Mon, 17 Aug 2026 07:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD3C3BBFD4;
+	Mon, 17 Aug 2026 08:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786953426; cv=none; b=dxbyxo586+Ur8HFdTRLwHVEKdOgDDcOqX2kCDI1cznT0GhSMuQJCPkbX+ftfNTTgQ0Z/ZkzEvFShAZoHi/zDFTpJFw0eePVYXPfCuwzoV4sUYIRQoSef6XmuXGILnXg4mpcsh1KiDHR/0k69Wib94jwYFJ0INpLIneZiEqo6pXs=
+	t=1786954410; cv=none; b=WXiY0rzflsHE6ResWH8KPXN8aXnGh7iGwGPs5N+bF1noBZ7NAqf1Mknl6mvMwimwNSsKFLTWl6y/TE2KRjkXEKG9Ia615pQ/1QWRmwiixiAtk4H+SP2xajPiW4Pya1mIEBqwqZ2ZsM82UIsyDvpghnjOk7BSYFwksF8fnSSN9fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786953426; c=relaxed/simple;
-	bh=YeDuP5z2WaKdkBoEr1D6eBAIQJgRAExzc2RzVmOysmY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PtVMv3UPvRbxgsIDc6nCZGKhWcTmCSy75GV8h/GOdzeUEBKttxZRBtKv8LXzj8zJoruhMeyWlIs5QHiqPY09CDfZhn3Oxlp+tCyfh/v3xXCVkyz4IMA4LcurmS8L5autTtOY96smp6kJav4Ucr39GVQMPCaYb/SuE3YMJ2eC2NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CooNlyiE; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786954410; c=relaxed/simple;
+	bh=d9z8Bc9WTevwszcasPftlPaxfeObi/uieLRUU5QFH1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A78K+VIK4IKd8vbWv2HjVyQH92coB9SVhy/reyDUXh4gXy0CNWOQxsn3wn5Vh4XSlFz6QNfg9hTioeNdTK2tRzqXwmL6AhQsrEZrGNm6Dju+ejfn2cKgGjUoBYM9FQk9/YUS4Vq6pEw9aeJ72CGIhJgO46ASdROU7YjDruVHyqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uq2OUPFo; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CooNlyiE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD7681F000E9;
-	Mon, 17 Aug 2026 07:56:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786953425;
-	bh=DMNyfr+vB6xzROe/nedLxsNSBpjIQIz4TKkDU1bGZHo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=CooNlyiEalGmVPIJWv/C8yFkh5tMwOfRdK/uE2qlWH7OLngt10rA2rrgWe9b5ZfKE
-	 DYzMVq44G+yRGwv0+NCSuASyuRjhRaLNm1D8ObP0vOKDfRNvprdPQ2XyfdQP7UkvjF
-	 TMl+pIako8NA/XPYlupK59IxE8LF3vlPMuab8lyYOnAbLsW5c4fuah1eJ3SkgoGUwt
-	 3Olwu8AHdcDDRk6Yrx1P8oLjowouycEoKkoYOoud63P39CXo0S7MudZqxRuZyl73x9
-	 gSLLJl1z0U86XgBinQrcyLh6ecuTOnR4YHanOBoG2WZz+dv6eBxMCL1H2CxNa4wmd8
-	 OnKA8UU+AasJA==
-Message-ID: <ffb3ee6f-d414-470c-b509-2800e504ba7d@kernel.org>
-Date: Mon, 17 Aug 2026 09:56:54 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uq2OUPFo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1786954408; x=1818490408;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=d9z8Bc9WTevwszcasPftlPaxfeObi/uieLRUU5QFH1c=;
+  b=Uq2OUPFogjVWZOqRGPps3uFrnlr1cm6WNT+6UtKsYKjXhLdMwfKbK0J+
+   tfy9h6W8T3v8+RxGmJNuPQ9HihrYe6XmRIQmg4oQHfkNAY28Hk7Q78LNt
+   AZo65ELmFM8TWRLjzY9VENyaHMbxHDuH9Y90xGUk4NNmZ5nRPii6h9tDT
+   umB+RtZ/VmoJG13SNRRJm2+1f9aR34fhcaJZWShmuYv4HzyjR8B/TLpnO
+   fpezWiN8jxsS4j5c8Vd/jXiUiAJfumIZ91GPeTP+OL3xwj8iBO1DlIzVk
+   72lqE8xjlqS0ajXQz+hLcehgHHfXDofTGdo1E4QnGSx8TFVbcmM2YcUNc
+   Q==;
+X-CSE-ConnectionGUID: 8aeLYdFCS56F41j+oSUjYQ==
+X-CSE-MsgGUID: 8GLR/HN9S5OSB1csrLt99A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11877"; a="104804918"
+X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; 
+   d="scan'208";a="104804918"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2026 01:13:27 -0700
+X-CSE-ConnectionGUID: My7bCKHXQmqPI9xPUPFE1g==
+X-CSE-MsgGUID: n5r16SM/TIWEBk2MgEgjrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; 
+   d="scan'208";a="269118014"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.67])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2026 01:13:25 -0700
+Date: Mon, 17 Aug 2026 11:13:23 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Yu-Chun Lin <eleanor.lin@realtek.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, James Tai <james.tai@realtek.com>,
+	Tzuyi Chang <tychang@realtek.com>, CY Huang <cy.huang@realtek.com>,
+	Stanley Chang <stanley_chang@realtek.com>
+Subject: Re: [PATCH v3 1/7] gpio: rtd1625: Remove unnecessary blank line
+Message-ID: <aoLCo8peLQpibczv@ashevche-desk.local>
+References: <20260816-gpio-cleanup-v3-0-f298cdd65fca@realtek.com>
+ <20260816-gpio-cleanup-v3-1-f298cdd65fca@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/15] dt-bindings: clock: qcom: Add Kuno Global Clock
- Controller
-To: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
- Taniya Das <quic_tdas@quicinc.com>, Georgi Djakov <djakov@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>,
- Robert Marko <robimarko@gmail.com>, Guru Das Srinagesh <linux@gurudas.dev>,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org
-References: <20260814-kuno-soc-support-v2-0-3079794f0f73@oss.qualcomm.com>
- <20260814-kuno-soc-support-v2-10-3079794f0f73@oss.qualcomm.com>
- <20260817-speedy-nimble-heron-a4aeeb@quoll>
- <05c743a3-0111-4b80-be98-b65b3a09ce34@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <05c743a3-0111-4b80-be98-b65b3a09ce34@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260816-gpio-cleanup-v3-1-f298cdd65fca@realtek.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 17/08/2026 09:54, Hardeep Sharma wrote:
-> 
-> On 8/17/2026 1:00 PM, Krzysztof Kozlowski wrote:
->> On Fri, Aug 14, 2026 at 01:01:41PM +0530, Hardeep Sharma wrote:
->>> Document the Global Clock Controller (GCC) binding and associated
->>> clock/reset IDs for the Qualcomm Kuno SoC.
->>>
->>> Signed-off-by: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
->> I do not see how you addressed my comments. I should not be needing to
->> verify if each one is implemented and then say again the same.
->>
->> Best regards,
->> Krzysztof
-> 
-> Hi Krzysztof,
-> 
->    Apologies — my v1 reply just said "done in v2" without detailing each
->    point. Both your comments are addressed in v2 patch 10:
-> 
->    1) Commit-message / binding style consistency:
->       Reworded to the same form used across the series:
->       "Document the Global Clock Controller (GCC) binding and associated
->        clock/reset IDs for the Qualcomm Kuno SoC."
-> 
->    2) "Not a power domain provider?":
->       Correct — Kuno GCC has no GDSCs and takes no corner votes. I removed
->       the power-domains block from the schema entirely, and dropped the
->       matching power-domains = <&rpmhpd RPMHPD_CX> and
->       #include <dt-bindings/power/qcom,rpmhpd.h> from the example.
->       (binding 56 -> 50 lines)
+On Sun, Aug 16, 2026 at 11:17:30PM +0800, Yu-Chun Lin wrote:
+> Remove an unnecessary blank line in rtd1625_gpio_setup_irq() to clean up
+> the coding style.
 
-So if it is not a power domain, then why it is now being made a power
-domain (through qcom,gcc.yaml)? You need to disallow properties which
-are not correct for your device. Look at other bindings for clock
-controllers not being power domain providers.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 
-Best regards,
-Krzysztof
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
