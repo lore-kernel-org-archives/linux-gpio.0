@@ -1,234 +1,89 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10FB3FBB6D
-	for <linux-gpio@vger.kernel.org>; Mon, 17 Aug 2026 11:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786965858; cv=pass; b=cFX/X06xUjpp7Nl8BmLWAWAa87R353LmgGEchekp6bbMgH09DdpMdD/yhLHs95ChTDllJKc/aldhJi2TRzK2eGkuBV0ejo7Gg2CG+xxZnnozHDMJiNTVhpgxFUjrhAtFX7pO+dbNZd/t62W8Id/gD+fDDN4aUPASKm6VvawNsMU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786965858; c=relaxed/simple;
-	bh=pjqPtyWtlCb8NZsTEaCgUsbU2sAf8qLZetVe6NY+2zE=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A43040E8E0
+	for <linux-gpio@vger.kernel.org>; Mon, 17 Aug 2026 12:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786968630; cv=none; b=U05Z8U3O/Plm4pRTFVPls7DMEttxcS2/6jeXazlcNmpxWz3jYTjNIm8ZXMK0vC24D7rddCcypTxnQqIkmZ7GEO434AecuctW+Q047+yVIhNAhnv3RHIQ8F8tYuyWCdHzE+fh3vnSqVkNDb+ie1WwmV7HAct6G9bhwnw0BPaCBLc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786968630; c=relaxed/simple;
+	bh=jMP9MThjemeYakXj/pzFSuQjW7TmSmOZN8BM7kKu6WA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YlnU+JgB39c2pGBf53rY8DOXCBt7PTtKt4xClatDEfOAFVxP/0DxUvVPPmJiy5Y4muse4ca0IW109A9UW4nADCPqx+zNaDbJleMu+PjDL3g6M9tQGyRMW8vSJ9pqLKXVa6fwgdRp/rbUFMwtoOR9h5Y59R949Q76zVhjCalJduA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sEvVUauu; arc=pass smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=Lv3JmJk/bqBhghxRo8z/EC8FpycXMC1GyhJEdfb0+xUNddj98P3AMdQ5xhUTjsIEMchFJbvuaj8ntYYJ4ZqMeWBCQaFVz+kghufNd1m7PY4x6A7Dd+bpvBups030E4Gp2EO1lKs+dIiv2pRVFO/9xNq4FmOt/varrtIq9hwjkIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PqMAGMtt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sEvVUauu"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6a051904222so4079744a12.2
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Aug 2026 04:24:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786965855; cv=none;
-        d=google.com; s=arc-20260327;
-        b=UPlR59YJ8I/GQmANs4hWLi04wlJaSEoDWPyBphkTB+ZQsTmFwqRqH5F/+S9qQPZSAS
-         Mjp62bo3R/yr0MAeVypbJYeJPS6f01h28A1xyuekxnqOTmnGaorvDS9KhE/c3FxycPFB
-         u4sAHguMkf+jV/W/+HarddwOLZ9ZrAyGgFwubdtA9zEbF7icxhCinEvxlBNh60Z/NaP3
-         QLm9kkM+UUUwFYy/CDtfaNet//lnqnV2WvcyMOr+de6C/9TSJCLJ3TwtlJtxoDCkuCGF
-         HMnJL7BWQyI1spmwZOM0ynCEzC4kfueXDG65Xpj3AogTLzHCXWPFg6BFT43hOESisJCc
-         sXdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=pjqPtyWtlCb8NZsTEaCgUsbU2sAf8qLZetVe6NY+2zE=;
-        fh=jHvPnAHF2f18NiSOAcxRvnxhsXki0BIaQhSg+S2dSAQ=;
-        b=erC5WviikwNap6r9CmsT0qu0Dnjmk39nChf1DoyOseyODqZaZZf/vDSJ43a6VFECkF
-         pVT1tszJJbsXYBZLslzJd3r1+V/YR05YTwOGNUkdq7ulrsddeTqNqWqyxWrVnXPS47u1
-         YHt4XFYfywssiW6fK2TeH069A+AgYhLz9WM0XUDcM++RCmmvuQVo/hBILo1LhwUfq0LA
-         QSs0xPOwA1Mte0UQbWa9tgB6Ndmb9yDagGdn3hYslyNikwmXTq8G/rMZaPKFrlsqYkys
-         Z+RG48QJK4W70X1S8q/rE50DrAS2xRWLAXPCnIBqXjtSukRje8BUJKzeUfXm2YfILCJ7
-         Mdiw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786965855; x=1787570655; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=pjqPtyWtlCb8NZsTEaCgUsbU2sAf8qLZetVe6NY+2zE=;
-        b=sEvVUauuEoJ+sZQTf7gdS/YewZhAWU9+59k/Tqed3ps81usXToKqRHFvYDTvqXzaJg
-         jb8yQs98IJkIBt1iA8IZUHvy2wb6Mkc3UgGyJ28qBEX/9htW6JTCwUu8TOO5d192GF4r
-         oobtl/jG+JX6hj+5t8B+pV2e0/oy3TJVbQdp0Ft9WhUD68ceZmioj47PBpR4bYoZP1Ow
-         j51wjl/6y41lMAEq1Wgmmjs5s4Gf1iHWD8KdYPscz+Q3Hma8qWDn2TVI5ja1lw4ojmJI
-         WSF/mIazY2GvoON7/p2KzPvE39ZtAR4n/OxT9dld34Uh/dlF5Cwh9gF/y1c+oKDAuq+I
-         ergw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786965855; x=1787570655;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=pjqPtyWtlCb8NZsTEaCgUsbU2sAf8qLZetVe6NY+2zE=;
-        b=hpIvHMTr9CHaf7IKmY+kIasawh+kcfDWZHzq2L/lUkxtsVVFrV8vVWIboThxtFbkHU
-         BPwU7ckdSDuirWkuzIr0qqRLEUdr7B+D56x789DzrumZYFK39hWRC6pYrOdZsr+N1jRA
-         Z0uC5sErkDQYlBH9voi+sSEYn4UzvUov48xNynb/lu/SuDri+QY14ia2i4ibF5CfjDQ1
-         s+RPpl8LQKuviOAi73Bi5UUw52bNK1i5woeJB8HygeSdOFCF/Qm8G16F/UxAhWSCzuS/
-         AMNwbKXQmupXBb5+vR/ZAYTGHZy4KrwYxu+vdSTPNULz4WAbzIiyjLoU/2HWA0hv02Dv
-         Vjvg==
-X-Forwarded-Encrypted: i=1; AHgh+RpENEZgJV/9cuLwYe1euKplPYZYfaA+cI3SkD5WPtYt6RBd4MOM/ATtvUVF8gikikwH3aPj2PiTBwIv@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHAMpbDeIqL8h8yKeZk23/us8WfpOD2/qRfC67vQvw0/x4WeYy
-	ibKARfxTLGR/ZLWTSwGZ6tFHa9YnJKWRc7EgT2dJmsTvk44YRztJroIMARi9A94/nxu4VFbPXVt
-	gKofrUTydroLZYbbHQcT3gZVxRcin
-X-Gm-Gg: AR+sD11As+Jt0+ChYWOmSFkyTOZKeuE+tseiH0AZEldIyDqtV4U4XNUcpcgNWAMQ/o6
-	HBH25qFccklFAAZKk6R0ld6YzcNdyGXDX0QZ7wDs/qxxwMi6SoSyc2E4LXevoWBf4yzF+98movX
-	aGSzsLTh0cZ7wJdj/jwJKdyeaDCzNTwIGfnZzm1Kj/haXNA40/lKys3Ay7OvXUWvB36wsYgvelZ
-	eUG0xRseyc37kJIGxhd5GrbCFgB9ItpWyTTBZmICYcczS+W53V4yWx9KdqTFnvR239aXlwgyF7x
-	FWPJQ7BSzDqUWRYFdj+kXpp12qBEEH/wHSyRn+HGlxEsQcaLEszfQ0qEHJySsPzb7MtD4t71zCM
-	24TdSWbuwYW7/4RUTfNzxlsqpaSXdxd1Y
-X-Received: by 2002:a17:907:94d2:b0:c19:45df:1856 with SMTP id
- a640c23a62f3a-c212a11a823mr1135761866b.17.1786965853968; Mon, 17 Aug 2026
- 04:24:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PqMAGMtt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F5981F01558
+	for <linux-gpio@vger.kernel.org>; Mon, 17 Aug 2026 12:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1786968628;
+	bh=jMP9MThjemeYakXj/pzFSuQjW7TmSmOZN8BM7kKu6WA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=PqMAGMttp3ylLBu+Kavzaz64O5zE3DG5VJWmhtEfhvdJmWkY3ibyNnQpxMj+esoCk
+	 uLiX40JJvPyBx9j+M2xffXN80RKt0BFHVM/SoF+KhKfduquByjsHw8jh9thN8/t8AB
+	 3Q6BxKoFX3N8Kb/7K0ip7OUWb76Fs2F4eohEOtIpdLkO7wqsCZST8eP4s/yVNUcVmN
+	 mEBK5KSjK86YYlL6lnJeKjCMmV8/n2b3FrNcZHvUAJEf1zvxXUH6gvSWlOT3nqCkxU
+	 KYTDRWgSLAnzNEZAChta0j26I3fuoB0wGZg+vYyBWl6Q0LkKAVpPjIwUcoJXl5nnul
+	 SV3OFXU5ijCtQ==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5b29599b81cso4584489e87.1
+        for <linux-gpio@vger.kernel.org>; Mon, 17 Aug 2026 05:10:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rrs3Ik14V657ea12yENEdzxtWj8fUcDcFYgE6mrN6TSTY1GTX68oGytcDiROp+4oE2CtJ0B8t/hidqj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3QM9Vu8y8bwTlo8q3oAvVD4w2OhH94AIfJKyBHn0bRxw+pZB+
+	18DqZtxt+JI5AdidrR0ezjd2Bdur1wJ+u04tpkc7OtsllB18Rqvm8Xc306DI4cnjQ5grtuBX+/j
+	tDtWGYlLtlzQcjtSQnVNa9dHPJbzeRRA=
+X-Received: by 2002:a05:6512:a34d:b0:5b4:475f:c322 with SMTP id
+ 2adb3069b0e04-5b45913fe58mr2462718e87.43.1786968626410; Mon, 17 Aug 2026
+ 05:10:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260718054330.8975-2-hardikprakash.official@gmail.com>
- <amhodWpAI3K6aeBH@zenone.zhora.eu> <b4a4eadb-282f-464c-843a-19d415a34d0c@leemhuis.info>
- <CANTFpSW+w1GZMbLXszuqZFCZjeVJfFG2bc1vJad+OMzsy-CPCg@mail.gmail.com>
- <aneQvMN_Zet2b62n@ashevche-desk.local> <b5b95476-636f-40b1-8575-47918169b7bb@leemhuis.info>
- <CANTFpSWzV9tzMwc2cURCQBhpZmrv1SsZqnwBEu0jt=ZQWfvWgQ@mail.gmail.com>
- <1a209e14-05c6-4796-a8fc-d0c3a776520d@leemhuis.info> <CANTFpSWnTjoTS8hBOvVM_w3pWHyOiBhch_GXe_mG-d56WeF-0w@mail.gmail.com>
- <5a5f7f58-b35b-407f-a5e5-293a88cafcc0@leemhuis.info> <CANTFpSWTkwmb3F9UnZmeaLizH-cC6evXD=kd1eNwJWkCfyj8DQ@mail.gmail.com>
- <a23375c9-d188-4737-bfa0-f10e66ae7f08@leemhuis.info> <CANTFpSWhqkw4735EFyQ4XoSEiqsgCKt4jTxH4SDO-m3=ybwccw@mail.gmail.com>
- <444caa3c-01ae-4516-b63a-576e095fef94@amd.com> <9095d7c8-92fe-4163-98f8-a53bbcefd6cb@leemhuis.info>
- <CANTFpSV9jguMzmfN7STb7XANYdn8i34bVmpT=0NdJ_o=3_Y1CQ@mail.gmail.com>
- <1bca212d-fe9c-4666-8ac1-743f8c9ef1c5@oss.qualcomm.com> <7c410f84-86f2-48e7-bee9-4c5c038bd115@leemhuis.info>
-In-Reply-To: <7c410f84-86f2-48e7-bee9-4c5c038bd115@leemhuis.info>
-From: =?UTF-8?B?VGnhur9uIMSQ4bqhdCBUcuG6p24=?= <trantiendat29042005@gmail.com>
-Date: Mon, 17 Aug 2026 18:24:02 +0700
-X-Gm-Features: AcwNN1U_DY-Jh0bRZciqKsUnmNuaDADygrkxxJJBvtyvTrqpPw_tyLNImJDo6Hw
-Message-ID: <CAG=RFTXPTJsTf=cGRi7u6OYn1DzWHz5d-rwdZLu0pUg2AezAWw@mail.gmail.com>
-Subject: Re: i2c designware change broke touchpad of a thinkpad
-To: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: johannes.goede@oss.qualcomm.com, 
-	Hardik Prakash <hardikprakash.official@gmail.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Andy Shevchenko <andriy.shevchenko@intel.com>, 
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, wsa@kernel.org, brgl@bgdev.pl, 
-	basavaraj.natikar@amd.com, linusw@kernel.org, nathan@kernel.org, 
-	chaitanya.kumar.borah@intel.com, 
-	Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20260816060648.4030-1-farbere@amazon.com> <20260816060648.4030-2-farbere@amazon.com>
+ <aoFgF2E4p4DqYLGG@monoceros>
+In-Reply-To: <aoFgF2E4p4DqYLGG@monoceros>
+From: Linus Walleij <linusw@kernel.org>
+Date: Mon, 17 Aug 2026 14:10:13 +0200
+X-Gmail-Original-Message-ID: <CAD++jLk+MMH=-ifdSs=Vm4G9RO5-yVs8NLUb4AE1wYH5FQrmjg@mail.gmail.com>
+X-Gm-Features: AcwNN1U-dnnBMYmPJIsmbHOzFmj95rCcwG-Rxxba2eA8HCClSSdawz-FswV3dYE
+Message-ID: <CAD++jLk+MMH=-ifdSs=Vm4G9RO5-yVs8NLUb4AE1wYH5FQrmjg@mail.gmail.com>
+Subject: Re: [PATCH v5 01/13] notifier: add device-managed registration APIs
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Eliav Farber <farbere@amazon.com>, rafael@kernel.org, tony.luck@intel.com, 
+	bp@alien8.de, guohanjun@huawei.com, mchehab@kernel.org, 
+	xueshuai@linux.alibaba.com, lenb@kernel.org, 
+	laurent.pinchart@ideasonboard.com, brgl@kernel.org, orsonzhai@gmail.com, 
+	baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com, jic23@kernel.org, 
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, 
+	dmitry.torokhov@gmail.com, hansg@kernel.org, ilpo.jarvinen@linux.intel.com, 
+	W_Armin@gmx.de, fabio.m.de.francesco@linux.intel.com, kaihengf@nvidia.com, 
+	ankita@nvidia.com, leitao@debian.org, pedro.pbg@usp.br, paulmck@kernel.org, 
+	frederic@kernel.org, kees@kernel.org, saket.dumbre@intel.com, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-input@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, acpica-devel@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Thanks for the detailed background, Thorsten and Hans.
+On Sun, Aug 16, 2026 at 9:04=E2=80=AFAM Uwe Kleine-K=C3=B6nig <ukleinek@ker=
+nel.org> wrote:
 
-Confirming I'm now on this thread. For reference, the bug I reported
-(deferred probe on both i2c_designware.0 and .1, ELAN0307 touchpad
-never coming up) is tracked here:
-https://bugzilla.kernel.org/show_bug.cgi?id=3D221889
+> I suggested to add "Must be called in process context." to the kdoc for
+> devm_atomic_notifier_chain_register() as this is a relevant difference
+> to atomic_notifier_chain_register() and create an immutable branch for
+> it as a base for subsystems to apply their follow-up patches. I'd wait
+> till Wednesday for concerns and review tags to tickle in.
 
-With Linus's revert (d5b95e612cde) applied on top of 7.2 final, my
-system is working correctly again =E2=80=94 both i2c_designware controllers
-probe successfully (~2.80s), the touchpad registers via hid-multitouch,
-and /sys/kernel/debug/devices_deferred is empty.
+I think this is a good approach, but we are in the merge window,
+don't you wanna wait for v7.3-rc1 and create the immutable branch
+based on that?
 
-Happy to test Hardik's upcoming i2c-hid-core patch (the IRQ-request-
-before-connectivity-check approach Hans described) on this hardware
-once it's ready, and report back whether it resolves the original
-issue without reintroducing the deferred-probe regression.
+(But Bartosz will be the one pulling the immutable branch...)
 
-Let me know when there's something to test.
+Acked-by: Linus Walleij <linusw@kernel.org>
 
-Best regards,
-Tran Tien Dat
-
-
-V=C3=A0o Th=E1=BB=A9 2, 17 thg 8, 2026 va=CC=80o lu=CC=81c 18:12 Thorsten L=
-eemhuis
-<regressions@leemhuis.info> =C4=91=C3=A3 vi=E1=BA=BFt:
->
-> On 8/17/26 11:51, johannes.goede@oss.qualcomm.com wrote:
-> > On 14-Aug-26 12:09 PM, Hardik Prakash wrote:
-> >> On Wed, 13 Aug 2026, Thorsten Leemhuis wrote:
-> >>> Hardik, could you submit a revert to the lists? And then I'll provide=
- my
-> >>> Tested-by and ask Linus to directly pick this up?
-> >>
-> >> Sent: https://lore.kernel.org/all/20260814100719.9548-1-hardikprakash.=
-official@gmail.com/
-> >>
-> >> Verified on my end that it builds clean, boots clean, and correctly
-> >> restores the original Yoga 7 race (expected tradeoff) without
-> >> introducing anything else.
->
-> Hans, thx for looking into this.
-> > Thank you for submitting a revert for this. Note it looks like Torvalds=
- himself
-> > beat you to it and already reverted this for 7.2 final :)
->
-> Yeah, I pointed Linus to this and a few others issues and then he
-> reverted the change directly:
-> https://lore.kernel.org/all/628bbf10-29f1-4e9e-b23b-4c47657433b9@leemhuis=
-.info/
->
-> > I hit another problem caused by this now reverted change, where the PMI=
-C
-> > i2c bus would not show up on many Intel BYT/CHT devices. I wrote a fix =
-for
-> > this (attached) on top of the now reverted commit.
->
-> FWIW, meanwhile "Tran Tien Dat" (now CCed) with -next ran into a problem
-> on a MSI Modern 14 H D13MG that the revert seems to have resolved. But
-> the symptoms were different: the two DesignWare I2C controllers in that
-> machine apparently deferred probe forever and are never retried:
->
-> 16.429266 platform i2c_designware.1: deferred probe pending: (reason
-> unknown)
-> 16.429286 platform i2c_designware.0: deferred probe pending: (reason
-> unknown)
->
-> For details, see: https://bugzilla.kernel.org/show_bug.cgi?id=3D221889
->
-> Ciao, Thorsten
->
-> > I think my fix might also have helped for the broken touchpad issue fro=
-m this
-> > thread, but I believe there is a better way to fix all this, so IMHO it=
- is
-> > good that this was reverted.
-> >
-> > If I understand things correctly the problem the reverted fix was tryin=
-g
-> > to fix is i2c-transfer errors happening before the GPIO controller driv=
-er
-> > is ready.
-> >
-> > The i2c-core will not initiate transfers itself, so the problem is that
-> > the i2c-hid driver is initiating transfers before the GPIO controller
-> > is setup.
-> >
-> > The i2c-hid driver does actually request the interrupt itself, so we ca=
-n
-> > simply wait for that to succeed inside the i2c-hid code. ATM the i2c-hi=
-d
-> > code starts with an i2c-connectivity check because some ACPI tables lis=
-t
-> > non existing I2C-HID devices.
-> >
-> > But we could make the i2c-hid driver start with first requesting its IR=
-Q
-> > and if that fails bail (with -EPROBE_DEFER) before doing any i2c-transf=
-ers.
-> >
-> > And then do the i2c-connectivity test after requesting the IRQ. So basi=
-cally
-> > swap the order of i2c-connectivity test vs IRQ requesting.
-> >
-> > The IRQ requesting should then use the IRQF_NO_AUTOEN flag to keep the =
-IRQ
-> > disabled at first and explicitly enable it later when the rest of the d=
-river
-> > setup is done.
-> >
-> > Hardik, can you take a shot at coding up the suggested i2c-hid(-core) c=
-hanges
-> > and test to see if this fixes the original Yoga 7 race in a cleaner man=
-ner ?
-> >
-> > Regards,
-> >
-> > Hans
-> >
->
+Yours,
+Linus Walleij
