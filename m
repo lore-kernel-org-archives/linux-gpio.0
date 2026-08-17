@@ -1,28 +1,28 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010070.outbound.protection.outlook.com [52.101.228.70])
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010006.outbound.protection.outlook.com [52.101.229.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458933B14A4;
-	Mon, 17 Aug 2026 18:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD573B14A1;
+	Mon, 17 Aug 2026 18:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.6
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786993101; cv=fail; b=INgXk+yKiiJb6bIyEYNjIGSwjKN1xz+JlUuIh0f+UJnxZJXyIp3dkXh5BOFH2PH5EFBVA/nqjYbe9Wj4Mrthtf5X1D9jxU6FuQR9EqVIq8328LCz7djCWF62SoporvMlWw+0l6FAKDnHC63WrdOQjJRtNQN//vs/4bX9+XnCfbw=
+	t=1786993106; cv=fail; b=NYPAmhUFk+3reG3oVsy7MJeq4ZJlbv33Aqt6cZJ2oGdP8FXFwG5TNlZWUQeCvqLjHRm3n5oJIbfXS0h7WZk6kdUPYFLRstGmT2KSGo/N4b1Q2vkHX/u/UE3ahN4Zs7O86HVrrYK76B/6mPIzD2G/qUoG5aEgym8aK1g6xJhtIjQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786993101; c=relaxed/simple;
-	bh=ardk4DIWtsN0LWC9JvNmAc1jQM9KlTH48TNz2HXMPfo=;
+	s=arc-20240116; t=1786993106; c=relaxed/simple;
+	bh=ED9klNBdd+qaPrXcO5GqJNuDsSSQt44l4XXuuk0ebI8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I2aWW3aEDPGPmKURguOM9p/dwtnlXKU6TDA3yFV1antig/S29stqSTQ2x+2N+33p29vVyQMP2CBxouNkpgSy+4/ZgTgjRp8NRJSscrlRtyLEcKKA1rAAm4OWLHDzv73sJn1V9KRXrf8Q0FMJIwnlXhyczm/Aw2ibHk7gMLCrSvI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=DPt5gOVB; arc=fail smtp.client-ip=52.101.228.70
+	 MIME-Version:Content-Type; b=qCKylYpAx5wguWA1P/RWvtiE5g/fkELx8d0RkmgQzGRCoJD2suDZ6ln9mbrWwAop9lcC+8vHwGDsxupCVo34yJsvGxtBSckA5Aoc3T0Dmkdgq1rKCP9zZ871XSZEaarwM36IpWdg2bMtJZMWPakqMljOEcvS/N1g/f5RJKau4XI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=jPJIPz8F; arc=fail smtp.client-ip=52.101.229.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="DPt5gOVB"
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="jPJIPz8F"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kNsaDCQJ+mkUMGtQ2cYKZ/WjwKvhNer5lHAjii+aP5vvyDLEZrBmr4bSH859/hzLywjwLn6R0295XawG7KT9lAtKCev9poiCGIaRGc5MfnUVo2/J3SM+JyVsmz6OCqWA3LvkeH+mcvCXbigJ0zVVilHJ7z317yP6If9VL4GbLlbbHtD+T5l07HbASWc1wywTz+pZ11YphXM7KE6TWXLu+Psi/bcvPRMjrXW/5qLLRvS2rIdLjF82hAdZDxYSaG6bcCx01xlbUpd8PqBF6se3vLINWbeSx+nqW9/RsBUHNimbLYdJy5GVWmrd0c3/9gDtpLjx8pCO6g1HVXUs3n43Yw==
+ b=Kk2hwBUrqgi8OoVlg4bTGSbK/Qfq/FG+QrzsbAIaLkhrZG7LxZ75mjmcVZOqCgpnyQnEvl1SXiFk3WcT3m09yB8II/pyq1N3xelTKZPhMoJEhSq9ScPU+9JJimNQrx95RCATFqGM07lUU33u63VeHjPLHuzbgK8D/IoIwCJX0HgRZACl7yjCfbLUyihuBKIpA7GvZFa7F/JVdt1+AcHpS2OxI1HwNfBN2lRHFGyucYbjsBT6nglQ8OwmTiPVPvAxQnAbNLNmiP2z3PSlJPpKXx8zemv8LSuflvrgKR62nEf+FxhMqYr8ZvZyRS0EAHcKx3dQ/7j4zhSbZyP8QGCc0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Lg19ZTdz5xsF8/vyqwL1T9lLCpj5JtCOXhTc0VkxHHI=;
- b=dZ5IM2geDCQAIfEQMr0hsNscGjTgXVwHCpApQFAtevHli7EdEmpCfBYoei6e0RDn/fsr3onYmucFAsBEFNJPfpDC0VHLDu835kBbVOjRMMfT9kDwlwRd/OQndgSNwdE0hxMXaajHf5BJK4sbTlvSNV70ZQdi6h11fQjeVRKBGjAlUEIF4RXWviG7276Vxga9NfD/aOek7+kEcJX6FbyqZeY1cy9j6yoH5JnxjiH8T8Rso9PBrvb68Nys4ugsSLTSPLiappQEGA3Zi3NVIWmbPuSXBuxCjQ9SNWuYqsvGo5APhhs8ioutMM2NxecdG4vpk12WEHyDADWRQEeqja/S0g==
+ bh=sxcVIIwsCSZvGUjeUWlrL4O+d8/m59o419JUkQsOa1g=;
+ b=lsVg/b7tw7gRbU42ew2fZWCQWc1HjSQL0Rdyk2/6h9U00DC1mvCxSmou/PU4vJmK9WwmVak++dgkk0Yk3T/Ym6/7LRJSzxaAG4f6PkAzC5EE3GpgNSc5P0VTAXOkUuFlqycheqZ98w+hgTCsuzr/dKm7u79ZItnst4d6CuImcNmW9XpzUiDH8hWayzI5yyOs8m+Q6AGcrQHhgR8ga18HidiZ+eohPzz7O9afjIRJWEe8w+6dqkJjZCc16xoJ5w+mk50EV4Ef5SnNzRoubZnGC3PutLydonG3JmNdGoovqqsmO8VdfA5nHJIV3x8yne5WcF/PVum+UuuzTnoJ1yPP+Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=glider.be smtp.mailfrom=renesas.com; dmarc=pass
  (p=none sp=none pct=100) action=none header.from=renesas.com; dkim=none
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Lg19ZTdz5xsF8/vyqwL1T9lLCpj5JtCOXhTc0VkxHHI=;
- b=DPt5gOVB2HfOsqaBdqKKoSZk88EoReCcexegFmKXwkn8xzWp69ErYCJ4UHBFhi4CVofhUir+95k8K0DKyW3A4Wqn8vn11whlP2XflnIjprv/byaIIUWBtd3rzrDG0BruGau0VfFXvz9XVzJwgzOCuZSZOkhS8nQsKVw6xXhhm7w=
-Received: from OS7PR01CA0167.jpnprd01.prod.outlook.com (2603:1096:604:24c::18)
- by TYCPR01MB11355.jpnprd01.prod.outlook.com (2603:1096:400:362::10) with
+ bh=sxcVIIwsCSZvGUjeUWlrL4O+d8/m59o419JUkQsOa1g=;
+ b=jPJIPz8F+wAxPlFdZ8mLhdwDGuhG4vXlaOaXe2u3aEgFBZ3gghBbD1KivZhEWf2yKbUmBtrVcX2earzSpiRNw3GOPkWjIiHEsL2akWJv7i3OM/x+cyTWuFu6yBaZJZ2ks4GPL1CPDcPDMSGf/WQ0Idq+r2rcML82CuG/GMr+Blo=
+Received: from OS7PR01CA0088.jpnprd01.prod.outlook.com (2603:1096:604:25b::6)
+ by TY5PR01MB18574.jpnprd01.prod.outlook.com (2603:1096:405:3e4::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.17; Mon, 17 Aug
- 2026 18:58:16 +0000
-Received: from OS1PEPF0000D20F.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:24c:cafe::ad) by OS7PR01CA0167.outlook.office365.com
- (2603:1096:604:24c::18) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 18:58:20 +0000
+Received: from OS3PEPF0000003D.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:25b:cafe::22) by OS7PR01CA0088.outlook.office365.com
+ (2603:1096:604:25b::6) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.315.17 via Frontend Transport; Mon,
- 17 Aug 2026 18:58:16 +0000
+ 17 Aug 2026 18:58:20 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
  smtp.mailfrom=renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=renesas.com;
@@ -49,12 +49,12 @@ Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
  8.62.32.50 as permitted sender) receiver=protection.outlook.com;
  client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
 Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- OS1PEPF0000D20F.mail.protection.outlook.com (10.167.240.38) with Microsoft
+ OS3PEPF0000003D.mail.protection.outlook.com (10.167.240.6) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.339.3
- via Frontend Transport; Mon, 17 Aug 2026 18:58:15 +0000
+ via Frontend Transport; Mon, 17 Aug 2026 18:58:20 +0000
 Received: from demon-pc (DEU-5CG5050QD0.adwin.renesas.com [10.226.92.24])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 81B86300022C;
-	Tue, 18 Aug 2026 03:58:12 +0900 (JST)
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id EDBCD3000269;
+	Tue, 18 Aug 2026 03:58:16 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Linus Walleij <linusw@kernel.org>,
@@ -64,9 +64,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	stable@kernel.org
-Subject: [PATCH 3/7] pinctrl: renesas: rzt2h: setup IRQ in .irq_{request,release}_resources()
-Date: Mon, 17 Aug 2026 21:56:56 +0300
-Message-ID: <20260817185700.322370-4-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH 4/7] pinctrl: renesas: rzt2h: fix reading pin value in IRQ function
+Date: Mon, 17 Aug 2026 21:56:57 +0300
+Message-ID: <20260817185700.322370-5-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260817185700.322370-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260817185700.322370-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -79,187 +79,98 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OS1PEPF0000D20F:EE_|TYCPR01MB11355:EE_
+X-MS-TrafficTypeDiagnostic: OS3PEPF0000003D:EE_|TY5PR01MB18574:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 2cea962b-18b2-4747-0ee7-08defc917ebf
+X-MS-Office365-Filtering-Correlation-Id: 66d317c5-4a97-439d-1c03-08defc918140
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|376014|1800799024|82310400026|36860700016|18002099003|22082099003|56012099006|11063799006|5023799004|10067099003;
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700016|23010399003|18002099003|22082099003|56012099006|3023799007|11063799006|10067099003;
 X-Microsoft-Antispam-Message-Info:
-	PerDF5QXVpZ+R3E25oxWOV+YJtGoBB95OCGmbyRYwPFjDBEQO33TwIz9+oq+xrwAYcsQDyCTXItGYIw+HGiBdFlpR8lNMXdQ+D4Apyi9vVaNQ5r5eHdRic7emLli02Vy9QFNwTipkzHprlnm2XgonQdtJ0Y/pG2J9QAuKLeSIg99M0pXr3y1xEUgj1eVhz5CA02o6rhrrCSA4HQwR7IjhxXthsuW374uAxQD54XoKfQEwmDIhiYg7/9uEaNqses3I5DpZ/32lXi9QtUOnsm3xaaqgYaWx+of3HOsOxgFUeizgHHQXlcG0gAiy6G2ijZdGW1y1Uhu0M7aETFHVLSIcxH8s8i/6u8tV1pVAkkIrC9a+suh0irncIoCzRktf8LaUazYCK7lIjsAH9mrjm8BCpk4DoOJpPW+3Tk6BCTp0mkUKkUCjkgBvJcfwRlMK057YGVa2NRVSVdYIxEA6xA3P9jjE5tkHZDowdkS6g37L8imrsDLybzsQHLglu0tdN8hOusHAb+ZE8Pi7IvuouKAmmLGOuNOlyl/0+PEELdl8O2hRBrown2wrqBEJyImu+8WP4DnK0pvVGvjZlgqJdoCu5MoAtGgS4aWJ7CoZL+v+HjE0g2Qjbx9tA4u5QCXpPnbSzSJdn3/rijSVrx8wQznPLBTfVJCY6zGS48wbnLCJ0WuAmfx+gqE86Rb5h1DhReiGkChW+231v97SPjvmjt7zw==
+	fNlHek1NLeGqs9QBpTSJVfDOZrk2tNa2NtdAkP7ZN5254MOikKCPACSiKPiXMD/XNP1tk3Y+ZJ6ZdNg9BL9kNT7fkS7MT5rUD+kWOBw9Qdvg+RXQ4eU1pQPB+y+6gmsSOZnCa9Ufu+Z/Sk7poljkdE5j0vagU7/7z+irmtCeQwoTTCPcSrgjJW7SRS75EQIpfzjM91yf3kY6ckGgw9Wy93XwJIXdTfc0VKPk7C2VNidgFJ7nDpf5JXO00pfPShRofdm4wg6R8eLB/q+txWDsSEVqUC0qkDZGOPxueJQZaAqd9UsApwRaHA1zGJP3Im3jaNHjCqq03YAg5JS6buMmYRtUJ1Tbrz/it057ALLL4igyM0uGofHeNVANEO/yxgLsrEcT0SbMS+XkuU/9ZUxPiLUkvHmMB3ldbil/gQB8u1myN/H85Q2B+GdmwHFkgNw/YA09CHBnyWsP6Fjx7m1Ij5pHsEiQu++xcB4lyCJI+kRaO3NS4LTMN4W/xQChHOLhhN/CnCPG/q/ty6TT1Jky9T+lN+qpM99wB3bjjNIJjNRZeJ74n7gvx75SPBQQ2/wwhCblLp2MyNZRlpl2lW4oeF/HVuNVuXY9sdrnJEUpk3jPuLUcsOOVB9QiUy3Dg2YAb3yYplYBnxZm1yfRG3D7m8vcGVaFT+ATm8FZbX4Tprm/TMfZGnxAf668LW+qUQCUyXtFK62HIYiZ1T0BJm/gNA==
 X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(82310400026)(36860700016)(18002099003)(22082099003)(56012099006)(11063799006)(5023799004)(10067099003);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700016)(23010399003)(18002099003)(22082099003)(56012099006)(3023799007)(11063799006)(10067099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	6NBgH526bk9HOfh1dWA7le1xCx+Raj6UqKKa11NX+BJ4OtIaGLOusEYuX3aUbGpy8U+LIgAaBv3998sA3afaV4LuF67xjnrFEFJKWOcAqctyoVTWmIUjO9uLvv/SnqMW4kAbHIRFO9sUHBu7s93OusI3XPeSEZdD2Ykl6MH/2zTb2jmYhYRDLkmmaFX+6IS/1IpU0ZSh32D3R1pkrLT7mtvHkBoRwnLbMzb5otDNrxtHmde1U32i/8RhfI78N6rzLMjLlDSWQkIIY8Rlhl7aIiN+QOFLGgbgb7KNK5tfXQ4a1B3fAS864rcW3qblag/YxylN+34T1nPQtzmG+Z0wMwPObapKIxervIvmd0OnAqoJ7H04JG3FSH69oJo0/9tI4t9y1b5nODF7QAq7abVdUuJ7bMSG+pwfU0F7+jv8A9SV2CNhCPc6QkItaWVBoOAx
+	GZyPvydNB+6FFeeSGPDWfwpi2VnN3WEdBsIub7vhf2pYmx2mKlOQ2ACZXnpoQ7fIERL9hbW2N1DXCRd3MP0CqHuRVP5LBptpLXuKdv7gsaUb4FfAFxMjU8YToB8A2FD8MnrJUQf1xUKs02TBDaTC2s3k1H13ZZ0FV9gLdAuN+BefV8qDIf67qtMSb40WpHm9HP6GKOszwhyn0RQomZ91OuhWDldG1awqk+39LHG7kMTMURjvLt8EnzxEjLKF0/D29c309R/m60AwLulr3MRdi0mj4NyV/KDy1nSq+lK48405C7ZFf6lKo4PI5qYOKVjfsTKw74FnYil+JTWaB+vOa2Vc3anGfqg0RQxf7vBXBdrBwpPHg0nluFaw6hW96KzdrSiVBZHUkLh0/Hs/i1xghsOubYpROhnij2s90YKj6eOi47GYi/SPLiuHQ6HF3AfQ
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Aug 2026 18:58:15.9451
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Aug 2026 18:58:20.1474
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cea962b-18b2-4747-0ee7-08defc917ebf
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66d317c5-4a97-439d-1c03-08defc918140
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D20F.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthSource: OS3PEPF0000003D.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11355
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY5PR01MB18574
 
-When exporting a GPIO using the deprecated sysfs GPIO API,
-gpio_is_visible() calls gpiod_to_irq() to determine whether a GPIO is
-IRQ-capable, which ends up using
-struct gpio_irq_chip::child_to_parent_hwirq().
+rzt2h_gpio_get() only reports a level for pins in input or output mode
+and returns -EINVAL otherwise. When a pin is requested as an interrupt
+it is switched to IRQ function and its I/O mode is set to Hi-Z, so its
+value can no longer be read.
 
-When using the GPIO character device, it is possible to request a line
-and to dynamically switch between using it as an IRQ or as a GPIO, by
-updating the edge detector.
+gpiolib calls gpiod_get_value_cansleep() to determine the edge's
+direction when a line is watched with GPIO_V2_LINE_FLAG_EDGE_BOTH.
+Non-zero values are translated to a rising edge, zero to a falling edge.
 
-The current struct gpio_irq_chip::child_to_parent_hwirq() implementation
-makes the assumption that it will only be called with the intention of
-setting up the IRQ permanently, and that it will only be released when
-the IRQ domain is freed.
+Since gpiod_get_value_cansleep() ends up calling rzt2h_gpio_get() which
+returns -EINVAL when the pin is in IRQ function, every edge is reported
+as rising.
 
-Since we now know that this is not the case, take the following steps in
-order to properly handle that case.
+When using the IRQ function, the input buffers are enabled and the PINm
+registers reflect the live state of the input.
 
-Implement struct irq_chip::irq_{request,release}_resources() based on
-the default GPIOCHIP_IRQ_RESOURCE_HELPERS implementations.
-
-Move the IRQ setup and release logic inside them.
-
-Keep the mapping logic inside ::child_to_parent_hwirq() to be able to
-provide a proper HW IRQ number, but do not actually setup the IRQ.
-
-Remove rzt2h_gpio_irq_domain_free() as its only purpose was to free
-the acquired IRQs.
+Report the input level even when the pin is used as an IRQ.
 
 Cc: stable@kernel.org
 Fixes: 829dde3369a9 ("pinctrl: renesas: rzt2h: Add GPIO IRQ chip to handle interrupts")
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
- drivers/pinctrl/renesas/pinctrl-rzt2h.c | 79 +++++++++++++++----------
- 1 file changed, 49 insertions(+), 30 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzt2h.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/drivers/pinctrl/renesas/pinctrl-rzt2h.c b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-index 82fe9b5e8f72..287cacbcb37b 100644
+index 287cacbcb37b..b8d5b6af5be4 100644
 --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
 +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-@@ -1020,32 +1020,17 @@ static int rzt2h_gpio_irq_set_wake(struct irq_data *d, unsigned int on)
- 	return 0;
+@@ -171,6 +171,23 @@ static int rzt2h_validate_pin(struct rzt2h_pinctrl *pctrl, unsigned int offset)
+ 	return (pincfg & BIT(pin)) ? 0 : -EINVAL;
  }
  
--static const struct irq_chip rzt2h_gpio_irqchip = {
--	.name = "rzt2h-gpio",
--	.irq_disable = rzt2h_gpio_irq_disable,
--	.irq_enable = rzt2h_gpio_irq_enable,
--	.irq_mask = irq_chip_mask_parent,
--	.irq_unmask = irq_chip_unmask_parent,
--	.irq_set_type = irq_chip_set_type_parent,
--	.irq_set_wake = rzt2h_gpio_irq_set_wake,
--	.irq_eoi = irq_chip_eoi_parent,
--	.irq_set_affinity = irq_chip_set_affinity_parent,
--	.flags = IRQCHIP_IMMUTABLE,
--	GPIOCHIP_IRQ_RESOURCE_HELPERS,
--};
--
--static int rzt2h_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
--					    unsigned int child,
--					    unsigned int child_type,
--					    unsigned int *parent,
--					    unsigned int *parent_type)
-+static int rzt2h_gpio_irq_request_resources(struct irq_data *d)
- {
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct rzt2h_pinctrl *pctrl = gpiochip_get_data(gc);
--	u8 port = RZT2H_PIN_ID_TO_PORT(child);
--	u8 pin = RZT2H_PIN_ID_TO_PIN(child);
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+	u8 port = RZT2H_PIN_ID_TO_PORT(hwirq);
-+	u8 pin = RZT2H_PIN_ID_TO_PIN(hwirq);
- 	u8 parent_irq, irq_idx;
-+	int ret;
- 
--	parent_irq = rzt2h_gpio_irq_map[child];
-+	parent_irq = rzt2h_gpio_irq_map[hwirq];
- 	if (parent_irq < RZT2H_INTERRUPTS_START)
- 		return -EINVAL;
- 
-@@ -1062,18 +1047,21 @@ static int rzt2h_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
- 
- 	rzt2h_pinctrl_set_pfc_mode(pctrl, port, pin, PFC_FUNC_INTERRUPT);
- 
--	*parent = parent_irq;
--	*parent_type = child_type;
-+	ret = gpiochip_lock_as_irq(gc, hwirq);
-+	if (ret) {
-+		clear_bit(parent_irq - RZT2H_INTERRUPTS_START, pctrl->used_irqs);
-+		rzt2h_pin_write_pm(pctrl, port, pin, pctrl->saved_pm[irq_idx]);
-+		rzt2h_pinctrl_set_gpio_en(pctrl, port, pin, true);
-+		return ret;
-+	}
- 
- 	return 0;
- }
- 
--static void rzt2h_gpio_irq_domain_free(struct irq_domain *domain, unsigned int virq,
--				       unsigned int nr_irqs)
-+static void rzt2h_gpio_irq_release_resources(struct irq_data *d)
- {
--	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
--	struct rzt2h_pinctrl *pctrl = container_of(gc, struct rzt2h_pinctrl, gpio_chip);
-+	struct rzt2h_pinctrl *pctrl = gpiochip_get_data(gc);
- 	irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 	u8 port = RZT2H_PIN_ID_TO_PORT(hwirq);
- 	u8 pin = RZT2H_PIN_ID_TO_PIN(hwirq);
-@@ -1089,7 +1077,39 @@ static void rzt2h_gpio_irq_domain_free(struct irq_domain *domain, unsigned int v
- 		rzt2h_pinctrl_set_gpio_en(pctrl, port, pin, true);
- 	}
- 
--	irq_domain_free_irqs_common(domain, virq, nr_irqs);
-+	gpiochip_unlock_as_irq(gc, hwirq);
++static bool rzt2h_pin_mode_is_peripheral(struct rzt2h_pinctrl *pctrl, u8 port, u8 bit)
++{
++	return rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(bit);
 +}
 +
-+static const struct irq_chip rzt2h_gpio_irqchip = {
-+	.name = "rzt2h-gpio",
-+	.irq_disable = rzt2h_gpio_irq_disable,
-+	.irq_enable = rzt2h_gpio_irq_enable,
-+	.irq_mask = irq_chip_mask_parent,
-+	.irq_unmask = irq_chip_unmask_parent,
-+	.irq_set_type = irq_chip_set_type_parent,
-+	.irq_set_wake = rzt2h_gpio_irq_set_wake,
-+	.irq_eoi = irq_chip_eoi_parent,
-+	.irq_request_resources = rzt2h_gpio_irq_request_resources,
-+	.irq_release_resources = rzt2h_gpio_irq_release_resources,
-+	.irq_set_affinity = irq_chip_set_affinity_parent,
-+	.flags = IRQCHIP_IMMUTABLE,
-+};
-+
-+static int rzt2h_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
-+					    unsigned int child,
-+					    unsigned int child_type,
-+					    unsigned int *parent,
-+					    unsigned int *parent_type)
++static u8 rzt2h_pin_read_pfc(struct rzt2h_pinctrl *pctrl, u8 port, u8 pin)
 +{
-+	u8 parent_irq = rzt2h_gpio_irq_map[child];
++	u64 reg64 = rzt2h_pinctrl_readq(pctrl, port, PFC(port));
 +
-+	if (parent_irq < RZT2H_INTERRUPTS_START)
++	return field_get(PFC_PIN_MASK(pin), reg64);
++}
++
++static bool rzt2h_pin_read_input(struct rzt2h_pinctrl *pctrl, u8 port, u8 bit)
++{
++	return rzt2h_pinctrl_readb(pctrl, port, PIN(port)) & BIT(bit);
++}
++
+ static u8 rzt2h_pin_read_pm(struct rzt2h_pinctrl *pctrl, u8 port, u8 pin)
+ {
+ 	u16 reg = rzt2h_pinctrl_readw(pctrl, port, PM(port));
+@@ -847,6 +864,13 @@ static int rzt2h_gpio_get(struct gpio_chip *chip, unsigned int offset)
+ 	u8 bit = RZT2H_PIN_ID_TO_PIN(offset);
+ 	u16 reg;
+ 
++	if (rzt2h_pin_mode_is_peripheral(pctrl, port, bit)) {
++		if (rzt2h_pin_read_pfc(pctrl, port, bit) == PFC_FUNC_INTERRUPT)
++			return rzt2h_pin_read_input(pctrl, port, bit);
++
 +		return -EINVAL;
++	}
 +
-+	*parent = parent_irq;
-+	*parent_type = child_type;
-+
-+	return 0;
- }
- 
- static void rzt2h_gpio_init_irq_valid_mask(struct gpio_chip *gc,
-@@ -1157,7 +1177,6 @@ static int rzt2h_gpio_register(struct rzt2h_pinctrl *pctrl)
- 		girq->parent_domain = parent_domain;
- 		girq->child_to_parent_hwirq = rzt2h_gpio_child_to_parent_hwirq;
- 		girq->populate_parent_alloc_arg = gpiochip_populate_parent_fwspec_twocell;
--		girq->child_irq_domain_ops.free = rzt2h_gpio_irq_domain_free;
- 		girq->init_valid_mask = rzt2h_gpio_init_irq_valid_mask;
- 	}
- 
+ 	reg = rzt2h_pinctrl_readw(pctrl, port, PM(port));
+ 	reg = (reg >> (bit * 2)) & PM_MASK;
+ 	if (reg & PM_INPUT)
 -- 
 2.55.0
 
