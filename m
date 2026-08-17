@@ -1,79 +1,71 @@
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010045.outbound.protection.outlook.com [52.101.229.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DE543BDBC
-	for <linux-gpio@vger.kernel.org>; Mon, 17 Aug 2026 16:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786983738; cv=none; b=GjNBZ5Wf5I/oRE2yaxa4JxUqlXIKzjHAPAswbNfFasu4QNc8xHubOwQRpYmFSrIkMkRMQIBXlIjD4xf5IB9ikQwsx5yT65IF2SYPuwGOXnnrhTAPTgYr0JeVsk5ahhWsPMT+VMxGSJcJon8hqOaMPeUTSUYB37Y8NmzZHPxTn/k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786983738; c=relaxed/simple;
-	bh=RFcxc0hS0FcL8xkd7cV7Voaom5VxjURr1IJu/bHB2KY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q2gEX35JlO0Wd2ji8Ez08e1TPDrpidHjGeLYvqGXWGTeucCWH/nENiT6i0eYPvU4Vw6UHeolKuVcn3wYL9DhxHdvRWLPiAnq9g+eL+lNIDjeZPonDxm47ci5X2u6NPAIJGQ9fTDJ8+u+4Cnhc2k1rMzHGFaV3IO5fegaVHMrtVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brivo.com; spf=pass smtp.mailfrom=brivo.com; dkim=pass (2048-bit key) header.d=brivo.com header.i=@brivo.com header.b=n4wmHDQq; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brivo.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F793AFCED;
+	Mon, 17 Aug 2026 18:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786993088; cv=fail; b=B3PpQrfmcXL0hpSc5+25LcnXSsM/GW+ThONlACvE8kIDPtStFOoyiJx+IPAGLH6BWR9s7M6iJrzsGeUD4g/xMB5/dXRZSAMveDgcJDrZurmdbl1LjKosx8AdzGmHlgp7pfsdZ4P4vSp7hpOzzk2S9kaWOvzkKsJxNTxN4PP3Ark=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786993088; c=relaxed/simple;
+	bh=KkgCv5ptEWj9dQy+zIT/yhwd8awbAE12BaDKGfoNi0I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XWgJrVtBEWU1AVQTJrSBv1OeFbWCax1fDkZ2I8Jl7WWsbBqpYueYne8CNjlb88MhqgicZOBtlGLgFGasZ+d9dPy2QbNkrUIUZs9nGZ0DOcvrG1D/fMpHRiQmqA5aFfKIVBNW6Pt6YPr7OluomvWgxFmqiQWaBCIpcQSHb3eqEUI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=Pc7yxf9L; arc=fail smtp.client-ip=52.101.229.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brivo.com header.i=@brivo.com header.b="n4wmHDQq"
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-52d8679c149so23313071cf.2
-        for <linux-gpio@vger.kernel.org>; Mon, 17 Aug 2026 09:22:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brivo.com; s=google; t=1786983736; x=1787588536; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ibAJzElUUKot6lni8N5t6jdT1WBvVXg5lJjweeU8WH4=;
-        b=n4wmHDQq9NTX9XgBFu/JtkzYoZqkB36c9UjQ1tMDGeHethiOjvqgenSL1jex/TziRh
-         CUPtUOEH+Ti5pCMQdkbzdTb7ZUZUMxELU1ZBejUEA+o+5r5D6pCnU3rKpRcnVdSFGZ5M
-         uK2IIgX7ObVity4Yre5kTEQZwWo4gUamEAn22hGstxC9ifCo7j3esrBarRmaWsqQcLpn
-         oVjHb8KngvQ4LyV2Tsz5Zwx8l9qoO2xnyEUAPpSyeu7HNhdwnzJ/woKehKTT6TKII+4G
-         jWyRkWaVt3no2Ff+PEEGRgJfVzlRdnwLdKH7KNr+aHIVkCiFwOeLSv15oi0w2L3lAHt4
-         BjhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786983736; x=1787588536;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ibAJzElUUKot6lni8N5t6jdT1WBvVXg5lJjweeU8WH4=;
-        b=CFrRIahXgRwTlrhUmp7MSRNoQxVDv49dedvFJh6aSb1PEhrld1GNcrj1x5bI3h7zwr
-         UjgCw5A6YzkbIlaY+aTMBbcQ1DLeeKpZxwFmtNuN6H9zb3cNv3KlgUvacWL2ZVL+0p/5
-         p4FDBurQIFkAZT/kOexF2QOdjYtPm1r293CmRu2CwVagnLR3RGFi+v4655Qm230JnMiX
-         OhKAfJPJr1NeN9DsUOys+R68ohrvY1w1bzOLf9+ynSimpaWZDaQyYohr0UCei0/CyRUm
-         xdlBZxYmHS5OpAbCda7pS10ElkL4JLUGASzPdCt/4q2sqb2+g/hHwgTuAGSQ6gXSuAZZ
-         smig==
-X-Forwarded-Encrypted: i=1; AHgh+RouEB76Q6zM0VLpETph+nEODMmt8/g0/zSmHsnmPc+LeOuzl0IsBF9nk6+LGpL/Y2SA44NFKB7A4qV8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGD5IZIPt2y6ee3ReAPx63i8wMpbmhJTUB/21YDkInV4YEMz9w
-	PzcI0vcMR25zs5oqfA6GwuDlDUol1LYeD8W77l5SFk01T7hgj6j/Mxyw0bdk4VuI6Yhiv81DO1U
-	SoWuad9A35cCcAqCqTuy2s3PcNMrxwd/YK0LWKbyhaVW5DFFbTjFKSKME
-X-Gm-Gg: AR+sD13M35fX6wuIT+YWQy620klZEDem9OJ2E2hCcs6GW55VQ4rKlZyMwhHLQLbMhKh
-	e5fyYHiIL0Y9v0TKAgL7PVMSxR6PLpIlKf0Y9WoH8ERrxMkfj4Z/zN0imbVUXmaqlt6WkSY9tSv
-	SOgZhixT9TFaYUg+NkCWV3id9IeZguNA2sebNbnzfLYLRRxrnVDYrM7XvAmOr6yOntDBh/pnjbW
-	Q9iuqykN1URI8TIfN1v31PaKIqWipSxOuEX1wVdoXCGo5Jh97LyF9/k2TdNkBsXctkubSy43PE0
-	qETPZNwfftmhj5k8XqSKcQs3ITX0D5o8wKKazeJh5Y4exBU4eC6EdfpbHrmrJmLvDSKkIA0faIK
-	8N7iFtMf9swhlxCdbPcSynvKR003GXVvit+8APeh8mu+SWQmL/nEWJLeTl7wm1sCtXyMLDv3poU
-	VA/Oa1GkiqyNS+YLBgQoDSEuaoAstL7KPgsNmoRghFvfnlzU30LW5PUwL0YrhZZUNrWDFJikvjl
-	lTe80rm0KW+4BSguI3sELGdosjQrATjtYBNdyM=
-X-Received: by 2002:a05:622a:1a88:b0:51c:51e:661c with SMTP id d75a77b69052e-52d8543f3c0mr276688621cf.25.1786983735767;
-        Mon, 17 Aug 2026 09:22:15 -0700 (PDT)
-Received: from strozzi (ec2-54-236-161-35.compute-1.amazonaws.com. [54.236.161.35])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-52db6136569sm18142461cf.12.2026.08.17.09.22.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2026 09:22:15 -0700 (PDT)
-From: Sean Anderson <sanderson@brivo.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="Pc7yxf9L"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a3O3PHj+O0IEfh/U5Xmj5b5Hw3tr1mBkI9nX4l2nE5jd2szYoVjkvzCIuR3uHDu3Db8Xzf+GIOD/rR76d+OWsBBPRQHt+bLVW59ZhZNmhmDFRwfBYCR09k2FRvwS1yZfW8jg8VSl71i/J+b4tP8UjixmMJpMKoToteCrHCdDtbgkIpPT6qxfSy9sIp/iyidPyOfo3V27LtfCxhE+3FtV6ILMltlflPmsJONFVa7/7RXtl1e0BJQwGEzScfy5HIdFkRBqsHQTsM0IKJBz9gnAq3tyAoFOagDxyG8ur2a+F1O9om3U86VxqSM+D5YtjQAKvbnUGqprE7oEohRqak9lmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=O+wwdL6+Ea+Vw3Ikiu2/BzjW+p5jtA0ZpVAdMdQA5kc=;
+ b=iN0AGa6SlbKDf5Bw9tCbz3L4Zz863LDNCFdxBRX02kPTqH59DGA39F+XUQqKeZ9CR1KZTur6ZxH6gLYl8ST5SFcqok358/qVtpmJy9DrMQl5A3tahejePGXIyzUaeCRjmIJcHrquCQkuD6MCAhCRgBXictZVBgp3HWaNeHHIDlieXxPYUQFsCVAY228W5iIsGF9iWIdXcgLR2DbehyK5PbScOvOfHw/nrF8d52mx16QtZ/TGNBwcRman8YhZ6AnN9XXmq8BnMEpUO8mLmt6IAhWPguy/0jtocwN/ZircLbl7E0eBK/vZ76/Wg7hkQjz6eLtAcdPgTC+ytfOEuISTDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 8.62.32.50) smtp.rcpttodomain=glider.be smtp.mailfrom=renesas.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=renesas.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=O+wwdL6+Ea+Vw3Ikiu2/BzjW+p5jtA0ZpVAdMdQA5kc=;
+ b=Pc7yxf9LbxpjFLDfyNsoY9Yq0XkP1BxIpJB+2rLC5Olnozi79dTshZW2DC5BBnliW43pmF1YNjWK1oTNbd4taFPaUOfDA8HJCZiUBKOUSPa57ujG9wgu7MfPW/kZM62gIGlq+KIbBQDu2+OSiHrd6JIcIOPQzNXH3+RCptm71xU=
+Received: from OS0PR01CA0194.jpnprd01.prod.outlook.com (2603:1096:604:1c5::11)
+ by TYWPR01MB9279.jpnprd01.prod.outlook.com (2603:1096:400:1a2::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.17; Mon, 17 Aug
+ 2026 18:58:02 +0000
+Received: from OS1PEPF0000D20E.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:1c5:cafe::14) by OS0PR01CA0194.outlook.office365.com
+ (2603:1096:604:1c5::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.315.17 via Frontend Transport; Mon,
+ 17 Aug 2026 18:58:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
+ smtp.mailfrom=renesas.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=renesas.com;
+Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
+ 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
+Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
+ OS1PEPF0000D20E.mail.protection.outlook.com (10.167.240.37) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.339.3
+ via Frontend Transport; Mon, 17 Aug 2026 18:58:02 +0000
+Received: from demon-pc (DEU-5CG5050QD0.adwin.renesas.com [10.226.92.24])
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 5CD413000262;
+	Tue, 18 Aug 2026 03:57:59 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	linux-amlogic@lists.infradead.org
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	Qianggui Song <qianggui.song@amlogic.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Sean Anderson <sanderson@brivo.com>
-Subject: [PATCH] pinctrl: meson: Fix typo in s4 group name
-Date: Mon, 17 Aug 2026 12:22:11 -0400
-Message-ID: <20260817162212.1890616-1-sanderson@brivo.com>
-X-Mailer: git-send-email 2.53.0
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] Renesas RZ/T2H pinctrl fixes and cleanups
+Date: Mon, 17 Aug 2026 21:56:53 +0300
+Message-ID: <20260817185700.322370-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -81,35 +73,57 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: OS1PEPF0000D20E:EE_|TYWPR01MB9279:EE_
+Content-Type: text/plain
+X-MS-Office365-Filtering-Correlation-Id: 9f2c1924-d557-43c3-c3e8-08defc917689
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|376014|1800799024|82310400026|36860700016|18002099003|56012099006|11063799006|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	u+ohyjBHCjV0DtoziTlnIr42VS99ee0q2SaN7EoqXCg2n14OrJIQTo+WWoX+jDBcqUI1utbKDmQAM6MaC8VZTcxyPNbIL6fckfYJxuJjsfXPQP+I1T09e7cI485Kcz7xlNpCgRCanOyJC5QAZ8JC8s24V4g7MdPKrsTGOcflrBRjgdlNUYV2phj0f9V3iKQ3U8UuFz8Lk/NWg4s+P47kbvv0Sc9CEYsZ4suas6B9BuZL9NNvFg44p77tz8W6WyDfKFNLG7RskmCi5+dYtXAlKIdmt/KKtfQaD7AzpPaQfzyiwAN6EPF0Udj6SPxg7H+/4If+8Z041PSELq1MIRn5SqPwagLy9AIY6njnQss425PSr7/UOvq90hnDk095OIOAa4Sndo8RKahZ8nETSAnJv+vONJ24BppAOZKxCl9/9lI756eH+iINc/RNOMdlhgCFiOZfJe1ejOG5t0VYDaB5rMojDeFIgTbhdHqFAky4Rntzc2ypfFSfNuU9NqtUxHFsd4vXHNbampLpAZlwfdWcdNFYEnYS+k1XCzhdo1FR90pgsZfT/DQawDLxY20v5utRLfD4uaTbHP3+oSk34BVuV2+PWrJS5o2YZQJNadVweBTV9HBR1HlqJy0pKvOLPXO8yvx2NpHVrJXLwa2ibmHYPX3OKqaxMWQgYn0mSL59GiZEPxZQ+T5qRbOzGHQXWWe+Qn0ve0IR1VmEcgIa+UUkfg==
+X-Forefront-Antispam-Report:
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(82310400026)(36860700016)(18002099003)(56012099006)(11063799006)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	Wag/jXosMvTq9nQQAlt5NoelpsJz3FVNzZ0cJjbakk560idczX1U71fGvpxMYfdWuimDcr0DB0azcycVVSlTQSacrLnN078jeh9mHtj/PKZ45aeipVuQv4bByJdCia6rMa/3Mq0epvSVipnNccZ97D3Kr/nlP1X25Hk5tuKbZwrtBu6KjXkgVsz28P/5xO7BJApM9icaYwkNCoA0Xjwhy2VdlpbYsrJN0lL4TDR/yvrsC1hLTNg+vxqeVgUtS+t3DUM+IG6/QOdBvbD89wazpWW7Kzsgs9QxDOF1+7t2WjuQszJ6MOqHLtCrDflJqu+cQQPTHqu4qQpAXqTKnCWliXrcoTP+ND0ZZYRkDuky53mFC5i9Gy2KRHuMalTjLrg+9JZjwntZlv1Y40yvcb6Y4/DFRj87nX4c0fdMldSnwhIN1D9TucX3oCnzpQ9Skvnu
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Aug 2026 18:58:02.1746
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f2c1924-d557-43c3-c3e8-08defc917689
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
+X-MS-Exchange-CrossTenant-AuthSource: OS1PEPF0000D20E.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9279
 
-One of the i2c pin groups has some junk at the end. The name should be
-i2c2_scl_h1, and indeed that's the name used by i2c2_pins3 in
-meson-s4.dtsi.
+This series fixes a couple of issues and then does some cleanups in the
+pinctrl driver for Renesas RZ/T2H.
 
-Fixes: 775214d389c25 ("pinctrl: meson: add pinctrl driver support for Meson-S4 Soc")
-Signed-off-by: Sean Anderson <sanderson@brivo.com>
----
+Patches 1-4 are bug fixes for IRQ request/release lifecycle.
+Patch 5 adds support for setting GPIO configs through the GPIO
+subsystem.
+Patch 6 removes an unused pinctrl_add_gpio_range() remnant.
+Patch 7 consolidates PMC/PFC/PIN/PM register accesses that were
+open-coded in several places into the existing helpers.
 
- drivers/pinctrl/meson/pinctrl-meson-s4.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Cosmin Tanislav (7):
+  pinctrl: renesas: rzt2h: fix used_irqs indexing in clear path
+  pinctrl: renesas: rzt2h: restore correct pin mode on IRQ free
+  pinctrl: renesas: rzt2h: setup IRQ in
+    .irq_{request,release}_resources()
+  pinctrl: renesas: rzt2h: fix reading pin value in IRQ function
+  pinctrl: renesas: rzt2h: wire up struct gpio_chip::set_config
+  pinctrl: renesas: rzt2h: remove unused struct
+    rzt2h_pinctrl::gpio_range
+  pinctrl: renesas: rzt2h: reuse helpers
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-s4.c b/drivers/pinctrl/meson/pinctrl-meson-s4.c
-index 872948699e9fe..365dafe457a9f 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-s4.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-s4.c
-@@ -854,7 +854,7 @@ static const char * const i2c1_groups[] = {
- static const char * const i2c2_groups[] = {
- 	"i2c2_sda_d", "i2c2_scl_d",
- 	"i2c2_sda_h8", "i2c2_scl_h9",
--	"i2c2_sda_h0", "i2c2_scl_h1l,"
-+	"i2c2_sda_h0", "i2c2_scl_h1",
- };
- 
- static const char * const i2c3_groups[] = {
----
-base-commit: 3b5f4b83c4abc0c9b0a7b9e2b44e816611b7f2ec
-branch: meson_pinctrl_group
+ drivers/pinctrl/renesas/pinctrl-rzt2h.c | 185 ++++++++++++++++--------
+ 1 file changed, 121 insertions(+), 64 deletions(-)
 
 -- 
-2.53.0
+2.55.0
 
