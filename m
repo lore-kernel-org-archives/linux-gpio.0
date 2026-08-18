@@ -1,109 +1,112 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C672717C211
-	for <linux-gpio@vger.kernel.org>; Tue, 18 Aug 2026 07:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E5A423EA2;
+	Tue, 18 Aug 2026 08:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787039405; cv=none; b=DJtev3nYdhwEdTq349B55/jHiiCvRsbvHthoh+QKVOtCykaBGOqVJrfqFdBQLm5T7a/VmfkNDNlkyCytx8e/HU9vdoKS8JRZTUmXHmCn4u/yWm5DDkxulCq/K3Mx6zI4oxTBLeJW7EFIi5mblll/TW31NnvBRLLOw3/bmo/gZJg=
+	t=1787041616; cv=none; b=mMqLKQBWNytxT5DsboPIsyBdiUx+ZDb67H1xk/GZbdp4xheAcB0Z/dD1wa9HxfbTlvziWI/J5B1OYAYgC2bsHAEKRmbsaDaDJ8jkX6NDZ1zBSUxsVcgAiB/6ceccNH7m76uI3xefVMKz0BMpRDBbYq2tvY3fNhCx4SOM5If+lVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787039405; c=relaxed/simple;
-	bh=4hovw1LT8ngxIszfZU+LyhOFPvRvMQ+X/1N2LYm7Qa0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nrNG9Ob8QiSALJG2mhRbvPEPFva+5s8tkTu8uAfflYpmCHYP7rdEUnOneqsae2Sz22wdOvk0702E3pRC6udQIG35/5ZTNUJ1YKY2zaJOHIwjg2K06rQhUectWGp6K1y/cXYXo0hMtnrb0iR1y4WNvG1vpoa4/Byzyp4L7xU+VfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-5c2c0e261aeso1215259e0c.0
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Aug 2026 00:50:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787039402; x=1787644202;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=BMbOynpE2wjfT5FAUvd+tzk9OVKzwiZXdK5bfM4NBjQ=;
-        b=hiq5RBK0eNmPhLa1FJn4DWJnI4JmuDRnRX4a/H44/ttOmZtEtEbanKPVwKgwj85cXY
-         T5aYNAhhpliWCm2DdfP+yuw1opjGdM03siO4rXRl52xDRdqnpmwi6cHzo2aRvko+YCmE
-         NyXkmEbUEuTBBX9vN4KAGtV7K3GsrAHgx/OEEhBHGWEFJKrEEOpvv5mKKPVeS5kzeDcB
-         FnlxVikI1pJT23v5qk7icHo/9bhqtJUX2x/ZGq9HzrQk/pMk3edJrn4+ScZDXVkbKTjD
-         rkm4co+MMT4PX+kukCvs4cm9QCBRhgsB73iuKPCYUvv53Rd0MvHRb4U6HsXhFkgy5lgu
-         jCLQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpvHzeuzc2taFGdd0S11shN88KWXXRfpts0zOrewXZ8OFZ8X1d1Qmbv53QITraC64Y71FHPXY+eTNvN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9B89JSwHSgPfH9EaqeLd3dBCjtJljtt58NtfFIyd7fxDlhgNh
-	HD26t+N88GwUkXOYW+/rXYevLuHzCUmitwhQlxYSEnDTWiI8HcryyIgk3uzi1lZk
-X-Gm-Gg: AR+sD11eTF+V1bIHhgmXG7XNN78apcrvIHwDx6aGSXqqwgYO7Yof3vDwVBS+pyYF3TO
-	eyrvYsNWRIjUaVPLsFgD7dnl3dBDDdZyJpLBOrd8nP+xitj+ODrFAquF89z31nQndPpLxW13Sc5
-	bdO+qyJZYWUTpjfUFOJf/HVup12GiVYJF+zgHynfe0JmBSMYVQeGteKgwDQYRtwtkrr/vTlVwpf
-	hQ9KrjqGtqfMJhnH3t9nKxtb0sxKC7O/pGrnFifzGbiAg9uSgzZfFFUJuu7NinHOU2U1jcMtXbg
-	qvgg+TRdQ68k3MdOuACze9o1WnmB6AsM60snCIQn5w+4x+Lbwvf5htNszRyxatFvTRiQ4MIlo4Z
-	EAHLaFjdjbQqVLdPVZS3WSzEvTK1UOaUUJgMagvRLTTBUE/PMz06X9+2+sRjdhDy70YpClcYFni
-	B02npOXBOZ9SPpBYyx2LVCd6Ty5U6jD7JLtDZTnG9dot3oH4kMKUHOAHCngSel4woRnxM8kcvE+
-	N5cBXLMZyfj1jaYsqPkMt2q6l0JKXGp3XB3
-X-Received: by 2002:a05:6122:f89:b0:5c4:1382:c0b with SMTP id 71dfb90a1353d-5c591c3d911mr6145169e0c.2.1787039402588;
-        Tue, 18 Aug 2026 00:50:02 -0700 (PDT)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c5c78c91b0sm2814265e0c.9.2026.08.18.00.50.02
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Aug 2026 00:50:02 -0700 (PDT)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-97bf910aa70so731293241.2
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Aug 2026 00:50:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RqDy0/7wZVfN2SRlU5KeRm4swUp857ERH51bAd9mrEMKy/LQfoffOry51tYl2TNK15oZgfBwwA2W9g6@vger.kernel.org
-X-Received: by 2002:a05:6102:41ab:b0:760:418c:8a9f with SMTP id
- ada2fe7eead31-76f2d5816f5mr4852298137.13.1787039401836; Tue, 18 Aug 2026
- 00:50:01 -0700 (PDT)
+	s=arc-20240116; t=1787041616; c=relaxed/simple;
+	bh=4phCkJfenRg107fZkQ7iErF8Bl7JZhhxA3UMBCXdsDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bavtO4DsUUfXSCh0GqsF9gggPjf7r534yigBwhull4JbIocPfdtWwmNLH08rPnQd9A4aEAQ5lggnbjn+wc4UuXsOAv3pE9BnxFX8h5Wmt9+9RW0R2PW2Unj7nRpT4agQnecTttcHu3f3tWLw+FHJ0VYsobBrc/v/gHNc7KuhVZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yk8utEmC; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yk8utEmC"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 8D4181F000E9;
+	Tue, 18 Aug 2026 08:26:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787041615;
+	bh=4phCkJfenRg107fZkQ7iErF8Bl7JZhhxA3UMBCXdsDY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Yk8utEmCxy96+toKCErkoYApQaMdiPS/mCchSNuianQYv5m27/NqvByr5wIHg/m/V
+	 JYPws0OalIunJ4Yd2Snp/HnkIw1rSMOTd/6QctDhGAOp0jvQrHwF0n9PaeAGt00qC0
+	 saa1+8NO9+GG/Co8K7GGanrbgXB+dSdO7Oxcz2iFPdZC6CEgC3Yj9aPfTOcd+dIN8Z
+	 +LT3Vfdjc4SKL6Lbp/+x2xuv4GH2gVaRlGE3hHt8WEvPCMdOBXAxXd0WAG3L93H+O5
+	 nZwX4r8hyUboRXsOUUNS71jbX+QUFn7K0le4nTVH+Oymi6Gwb5Ng2kBuVnesHYQesU
+	 PTDG5N+c0BpDA==
+Date: Tue, 18 Aug 2026 10:26:52 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Eliav Farber <farbere@amazon.com>, rafael@kernel.org, 
+	tony.luck@intel.com, bp@alien8.de, guohanjun@huawei.com, mchehab@kernel.org, 
+	xueshuai@linux.alibaba.com, lenb@kernel.org, laurent.pinchart@ideasonboard.com, 
+	brgl@kernel.org, orsonzhai@gmail.com, baolin.wang@linux.alibaba.com, 
+	zhang.lyra@gmail.com, jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, dmitry.torokhov@gmail.com, hansg@kernel.org, 
+	ilpo.jarvinen@linux.intel.com, W_Armin@gmx.de, fabio.m.de.francesco@linux.intel.com, 
+	kaihengf@nvidia.com, ankita@nvidia.com, leitao@debian.org, pedro.pbg@usp.br, 
+	paulmck@kernel.org, frederic@kernel.org, kees@kernel.org, saket.dumbre@intel.com, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org, linux-input@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, acpica-devel@lists.linux.dev
+Subject: Re: [PATCH v5 01/13] notifier: add device-managed registration APIs
+Message-ID: <aoQWOsPeyU9o3Ahn@monoceros>
+References: <20260816060648.4030-1-farbere@amazon.com>
+ <20260816060648.4030-2-farbere@amazon.com>
+ <aoFgF2E4p4DqYLGG@monoceros>
+ <CAD++jLk+MMH=-ifdSs=Vm4G9RO5-yVs8NLUb4AE1wYH5FQrmjg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260813081231.8855-1-bartosz.golaszewski@oss.qualcomm.com>
-In-Reply-To: <20260813081231.8855-1-bartosz.golaszewski@oss.qualcomm.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 18 Aug 2026 09:49:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXs8RmenPc_mODnZ08qVMXb_rZfA-A4hez96RbXdBjovA@mail.gmail.com>
-X-Gm-Features: AcwNN1XW6gZd2XAFmTt4EHGbD6kwyLDuAbaP2tGwCP49J5FiTm3i01TIilDfEOI
-Message-ID: <CAMuHMdXs8RmenPc_mODnZ08qVMXb_rZfA-A4hez96RbXdBjovA@mail.gmail.com>
-Subject: Re: [GIT PULL] gpio updates for v7.3-rc1
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, brgl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="atk2on2uarby33p4"
+Content-Disposition: inline
+In-Reply-To: <CAD++jLk+MMH=-ifdSs=Vm4G9RO5-yVs8NLUb4AE1wYH5FQrmjg@mail.gmail.com>
 
-Hi Bartosz,
 
-On Thu, 13 Aug 2026 at 10:13, Bartosz Golaszewski
-<bartosz.golaszewski@oss.qualcomm.com> wrote:
-> I'm sending my pull-request earlier as I'll be mostly OoO until September.
->
-> There's one new driver for the Realtek DHC RTD1625 GPIO controller. If adding
-> it, reverting it and then adding it again raises your eyebrow: this was done
-> becuase the initial implementation - while correct - didn't use the gpio-regmap
-> abstraction that suited it nicely. The conversion was done after I had already
-> merged v7.2-rc2 into my tree so instead of rebasing, I went with a revert.
->
-> The merges you see - other than pulling in your upstream tags with conflicting
-> fixes - are for a PR from Arnd containing his work on further isolating legacy
-> GPIO APIs and the fw_devlink support for software nodes that will go upstream
-> via the driver core tree.
+--atk2on2uarby33p4
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 01/13] notifier: add device-managed registration APIs
+MIME-Version: 1.0
 
-Still, there is a remaining conflict due to
+Hello Linus,
 
-> Alex Tran (1):
->       gpio: gpio-by-pinctrl: Apply initial value in direction output wrapper
+On Mon, Aug 17, 2026 at 02:10:13PM +0200, Linus Walleij wrote:
+> On Sun, Aug 16, 2026 at 9:04=E2=80=AFAM Uwe Kleine-K=C3=B6nig <ukleinek@k=
+ernel.org> wrote:
+>=20
+> > I suggested to add "Must be called in process context." to the kdoc for
+> > devm_atomic_notifier_chain_register() as this is a relevant difference
+> > to atomic_notifier_chain_register() and create an immutable branch for
+> > it as a base for subsystems to apply their follow-up patches. I'd wait
+> > till Wednesday for concerns and review tags to tickle in.
+>=20
+> I think this is a good approach, but we are in the merge window,
+> don't you wanna wait for v7.3-rc1 and create the immutable branch
+> based on that?
 
-being v3 of a fix where v2 made it in v7.2-rc6.
-Note that I believe the resolution in next-20260817 is incorrect:
-https://lore.kernel.org/all/anyjJ6DSHWCjuB97@sirena.org.uk/
+My thought was to base on v7.2, and then consider the topic done for me.
+=20
+> (But Bartosz will be the one pulling the immutable branch...)
 
-Gr{oetje,eeting}s,
+It shouldn't make a difference for him if the branch's base is v7.2 or
+v7.3-rc1, still more given that there are no changes staged in next to
+the affected files (`git log v7.2..next/master --
+include/linux/notifier.h kernel/notifier.c`).
 
-                        Geert
+Best regards
+Uwe
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--atk2on2uarby33p4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmqEF0QACgkQj4D7WH0S
+/k6+ewf/TQPKKAWHFqB2guxJQb4tJtqqrt9CfxNlHgpRy98IQr+Wzsclp/2b55PD
++Vt8rK1QzYpoCbHNgn48yp+ZwOgUgZLGuFt1oOMJuz4TML4VoRQW/KQBjYb8RH6h
+bZwXKf20jhh0jcWWdq+Oloo7khDa3AfPjzRMezSt63HtWnFWyDBFmk+Hpj2iK5wV
+ydEynNxomqrfrzujN4nShzkby6/nearXk+4xXCvj02C50nfaHCtzBWc07ic2TP90
+xDPXfb0bl2EHmQ7jRNKDBne2D3J7gm+NVDzSblze4JXAuRSbDl51QXnnQ49Me8pn
+JJE4fMKe0QjKuFoPX4pzR1Up39HZcg==
+=T8Ew
+-----END PGP SIGNATURE-----
+
+--atk2on2uarby33p4--
