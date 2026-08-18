@@ -1,68 +1,87 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E0F41F7D8
-	for <linux-gpio@vger.kernel.org>; Tue, 18 Aug 2026 08:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DAE4499B1
+	for <linux-gpio@vger.kernel.org>; Tue, 18 Aug 2026 09:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787041652; cv=none; b=h505MOdZ1+bf1Zx/0m+Blw675ST9UpJxyehqa5jY8BAVu9Um6gyI+0Fs3xanacYyM33IUEjJXf7pbyKo172wbfc75ZV6ChdF4OSBsF6Ibs80pmopgYN2NVpEUPgcs6h0//EN0cZvrze92ptNwWDMs2YvorGtT5Ht/rJ2o57YsB0=
+	t=1787046917; cv=none; b=soEIVo6kGU3PxgQfEuncmkLvk2cmqqAnDOSs+1mTqEkLDhRwrXsS62b9T6HYa5B1105tq3gh2JHmqJb37iiZAReH7eVPgJRom9Q0S0u986qVibTnPcWw9pRQIqbuo8fohD9Kq9+Klg+xXdyVOvb87no09EdOoK/D19cel+/QkMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787041652; c=relaxed/simple;
-	bh=JDzjZcLP71KCvagkMKD84MYXhOgKomjguCW9GMyB0bI=;
+	s=arc-20240116; t=1787046917; c=relaxed/simple;
+	bh=OMc49UYmUguEYzyKyIv2wi8A76vXj8J+ya6GNZJJ1g0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pw7XyV1cluhPVDCbJL5JDbXb8uFiDQLvJXoWkuh6VHpG1tMq93yFCik5a0MQjAB2fV4hANi4Iqwx/d7lcEPgYg1VPcyBTZ3Blj114OCxVfCoY6EfixL7BlcUlwHx6vydpWulPdP4iU7N70V8DIEh6ogHwJQJafkQ7o2YqnjILJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rjz7IUyF; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 In-Reply-To:Content-Type; b=j/ozZV7P5cnfiGADswq4Su1a6uPgGwkDpuZIvQen8WOMjWUsx6HcN/BonjRZ6PvNfpy7zZAe8nI/dcjBFPPlnFqkxjF1GEjXr/LRrBs6XcdBjbnd5g4hRljGHvwKqkzCGmZJoU2smFeDroV7WTBcnxCafSkubUr1YSB7MTUsBws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZpjmYld7; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=brXCOkOO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rjz7IUyF"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-47ddf7b09e5so4363923f8f.1
-        for <linux-gpio@vger.kernel.org>; Tue, 18 Aug 2026 01:27:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZpjmYld7";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="brXCOkOO"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67I8BJrV547243
+	for <linux-gpio@vger.kernel.org>; Tue, 18 Aug 2026 09:55:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6JfeiagCGXExL9jPLVYU4oyP0ixfW6Wo8aIWlrLOri0=; b=ZpjmYld7AMP9ZSy7
+	xWnL1sO6gTN3wzp4BAEoeLdFKIacYJZ27ojLid9WHJLUdr5FJr+Itu/HUuLEd6DJ
+	NQLKxhihJv9lYvUmmZq2F16j/GBSsEEI4mjmmkZpcVSD96H3SUsF7BckO/Z8ms4X
+	lE+gG+N7wgJt27udUXq59hrdjJYD4NMuCyeMRf30S5Wiweq4DnIgCAzniup214Mf
+	8LFtG1H5XFFGFebPUnyaXPHk3576+Nutgwx85hLbHwcEMAtPjvVmOY5YmbKIRUl+
+	QBXFt4wWCkEn3KhqNe+Y4G3aHS/9JUHFuf7ouQyUScbjKHNP0TR1cG5MbdN90Jj7
+	r7iJQA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g4g2p1d14-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Tue, 18 Aug 2026 09:55:11 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-92e661ce1dcso99134985a.0
+        for <linux-gpio@vger.kernel.org>; Tue, 18 Aug 2026 02:55:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787041649; x=1787646449; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1787046911; x=1787651711; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=uuK5mDxMiFBjBjKQm/Fiu5kzFGUEM5srIwSUyEqNmyc=;
-        b=rjz7IUyFe10YkUwvNbaJibLuM/n/edgAhlGlK7mAklD2GLJyMyksM0Rl8ZatP4sJCM
-         fbOXoj1hyejD7L+u9KX9607IO5foOZ4+1/rGIuv9pDmNG7dL0XvYBgBFsq1AGJ3DE+VA
-         e3i+Cc3EybrdP4wcrbb1ck1h998kyNxCyPtUn97XIhXiDDUM3CuoI7wCennaDu2IveTU
-         KBbf5025J+uU8aRH8EiWLlJB1mMdODlwwVxcGA0lLChDGdxhblYbfOYBKJ1Xhg2iLS8Y
-         6cw+kfgSRKMumnbm6BkxOJG+YtSKJzE9IuXwABB6syRr9cPIPsozu/9ii3aphEa7QRtu
-         17aA==
+        bh=6JfeiagCGXExL9jPLVYU4oyP0ixfW6Wo8aIWlrLOri0=;
+        b=brXCOkOOiD8STcqBUzF6PgizfhoVAyo1zpvEPm2kPPtCccsnvZXCKqDUGmksoCZlxg
+         5Hvh3tiGTIsW0IETn3QJSffBwuoHOskhqij2HrJD+YARxb5UWvKCZLLgKE466Rk0jVDK
+         jWA1RXkczf7lO03lX85WqWf/Q+jwbOH6EqID22Awmfjvdrkb635PP4psNx+og9+LqP7G
+         lYwRm91Ku0H+sfnk9WiWxxr5Ld97RhYbFfA1z97YoslaV0ZMaVRPPqdh96kWBhgvFAe+
+         +s3yfOXHlLMPf7e+c/LERm8k1saTLbtmcp2ezCX9nPtxm1FxvX70+7sApriLZGsGzZiS
+         OPFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787041649; x=1787646449;
+        d=1e100.net; s=20251104; t=1787046911; x=1787651711;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=uuK5mDxMiFBjBjKQm/Fiu5kzFGUEM5srIwSUyEqNmyc=;
-        b=AWbMusBPRIdhwSdvwmtbnKUIXQSgGdMOjuFF2ajR4EQ5nfcLokxdEquAFimt34x93d
-         HB53u+HohPsLkWPPEmD8Eac5o2lUzBmkRqhfScZI1G3S5tinItpiDtt063LIaFzpYz0T
-         rsEtlpeGU6PqdcBrlsCR/YmNQIHqy3BleoyNaJyTWwW5SZCooaWOgVumEF5OqW8dD1dT
-         8PYLorlsn0QjLPtZQrdyLsuaxwmAXBEAYAHaJ4XzL5EGehfn/8WqyxqS7V9RT1/Vlz+v
-         GbKV8l8uN5mda8vLp7saYEPzdqKzOtMFZWTW/dJlTrB38RJyPTDmxLgyweGsJj8DuCqP
-         fQxg==
-X-Forwarded-Encrypted: i=1; AHgh+RqLGxKicZT2N0mrGW2o/EngYx7braqSzheYy+A2+wWttD9M9+HmNav8enz3d1phbzi0BU5AQgyh53wP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvuX2Mk3wzMemTZv1f9/wdki9EXB42K5EmEvnPKhigfHcImYJ+
-	+9wyMUD/w7W17YJ1OtG0RFT7XWVAtXZWPkmSvIjvi1MoT+upu/Iv9X+rE/K+1fCG
-X-Gm-Gg: AR+sD13RRZaqB3iaW/o+tNGXs/lip6ItsJ9o9nXu+f0V+1TkKKUynJQ/3yJsEOVu6k7
-	riSf7DTei9M8fuuyuWTNHw6Ldk+G/KTnAp4RjbfxZEMHwO+yqQdj1i2LVj0ubgNWvyKFgRmo4IN
-	jQI6Ln7pyioTCqw8drYd+CrsTrikg8/pcZTCo/KY99NJezuGQaE1a9fKbHyFTmvR6EAlqbEa3VS
-	BzdzqoNPm5+zo7bq2XfbDgYXK6kiWqiz5iTmWs9tJ3mFkGlxE96kAj4eP+A0scuJjlk0DG/0gPO
-	0XoguwPvJkRWBQTfaSlpEQBvTjqDPYPjEMd1wibXY9SbGY/rlT6ze45i6DCCnjCSVf7uHOjjdjm
-	uVi++SGxgqzF0SylyDpUdhw4kpbKN+/smaCbcJcojGu0bpvoPwCUXpCA6PSHGHrsTyCIGAu/5bH
-	IBE1FF+IGItjIug50NL/iXU/dnnJ7Q8CIuZ7Yz7zASUg0PNy85hz8+yDL3nJ75A3W9orWcwXuDq
-	KiKM5XHT/M94JW7Nc4pJmZnpDT2PXFA01lfx5uwHTb6/6bJ6GeWxANcZDCUrR96otI=
-X-Received: by 2002:a5d:5e85:0:b0:47f:91eb:342 with SMTP id ffacd0b85a97d-4816071addfmr48543973f8f.13.1787041648823;
-        Tue, 18 Aug 2026 01:27:28 -0700 (PDT)
-Received: from [172.24.138.145] (ipservice-092-208-247-184.092.208.pools.vodafone-ip.de. [92.208.247.184])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482a5a3b51asm10172929f8f.11.2026.08.18.01.27.26
+        bh=6JfeiagCGXExL9jPLVYU4oyP0ixfW6Wo8aIWlrLOri0=;
+        b=jgujWcldd7Ke0DZM9xIyYf/ZaodofSKmZZkVzygwZVyZ5sC1jm3czFHCF4WZUa2Ip5
+         4f65tbbfVeGPH+qgYMIWvX2SNrNb4i8YOMzbs5ybWA6m1cpz+DhriXvGpS1Dg4AV5Kod
+         W4oG0JASximMgQXnydaQBxBxsSvr9e6f6NBvUUFqN/dmwM2/N3/kWE9iyiadGuHkagr5
+         aJrUTvSMr1Fnu3xBWrbA2Zht7iVgyq5N+zYbxlvavWwlTySlPa8ZXEY5yobuZv3zaQO2
+         PBtNnauSWTVHHKK4BFlqbUuDEMntSsRKtxYpg2iZHqiPbiD76sQqX+9bCSquMqcyTBi+
+         nAWg==
+X-Forwarded-Encrypted: i=1; AHgh+RqlhhxD1m9tBzd55EZhVgXCEps540xO3olVjbJ+KyBtbLZzlzq+eizPwrFtTG8y7fuBDXphsUZaoGOF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx466v3TspKawiryuMgAgeooRjgt22K1lRcjnvT1L/L2gf1SHB5
+	2lxaz4JkSj4Ap52HhEIx1pDMzjUCu3pgINASIIUbK50A7jzsz26lpj1PlxhjsSom8a5mrV6g1Y0
+	yqPXcdCkMmVinzmRorS0IOCdnKwsv8eFsqkDciQcbaaYlbnji+EAvx0YvHxIaeT55
+X-Gm-Gg: AR+sD11JYCZAuPK9X4NOUDa0oBYQ+Is8S2BwQYTHphiK/m27hLFi46PH9sk5DEVt459
+	LyBjYcVkDvEJ0EsEDlWuXc2qHBMsq3fWzE0xcPnrhcLCPAWNRXKViT+Guk8d047fBGsWvpTvs0a
+	Z9c8xgZl9Txe1rPJuo27YLg59vJB6qyRsMizbEblJGoigJrCiu+9zIddGqxrj2CcHUaHBCAtuJH
+	cRJzpTXAEVpoX+B7DVqV0/pJP7XVozN+kfHwkdx992qnBba28WQbs8hD/iWvTBpjoFvh7sOrOFV
+	dC24uzlJpnp5qrsQYMKUj93oXfdb1ADfrLwFbsgGpQUUUKXY+IXBkHB/AmpHd7mLxgN9AWMwzuQ
+	6UT6U319Dg8uhZf0d4e9+ls2x
+X-Received: by 2002:ac8:5fd1:0:b0:51b:8543:cbbd with SMTP id d75a77b69052e-52d852d1178mr235156491cf.1.1787046911167;
+        Tue, 18 Aug 2026 02:55:11 -0700 (PDT)
+X-Received: by 2002:ac8:5fd1:0:b0:51b:8543:cbbd with SMTP id d75a77b69052e-52d852d1178mr235156071cf.1.1787046910745;
+        Tue, 18 Aug 2026 02:55:10 -0700 (PDT)
+Received: from [192.168.120.193] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2185b9f47bsm126108766b.52.2026.08.18.02.55.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Aug 2026 01:27:28 -0700 (PDT)
-Message-ID: <6f2b715e-f62b-4b6e-9605-23d6978b6cbb@gmail.com>
-Date: Tue, 18 Aug 2026 10:27:26 +0200
+        Tue, 18 Aug 2026 02:55:09 -0700 (PDT)
+Message-ID: <23470e04-eea2-413d-b055-7451fdfa65e9@oss.qualcomm.com>
+Date: Tue, 18 Aug 2026 11:55:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -70,56 +89,86 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/14] dt-bindings: iio: adc: Add AD7768
-To: Jonathan Cameron <jic23@kernel.org>,
- Janani Sunil <janani.sunil@analog.com>
-Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <skhan@linuxfoundation.org>, Michael Walle <mwalle@kernel.org>,
- linux@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>
-References: <20260813-ad7768-driver-v3-0-cb554399ad26@analog.com>
- <20260813-ad7768-driver-v3-1-cb554399ad26@analog.com>
- <20260816192409.145df670@jic23-huawei>
+Subject: Re: [PATCH 03/10] phy: qcom-usb-hsic: do not run the sleep
+ calibration clock
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Xu Yang
+ <xu.yang_2@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Peter Chen <peter.chen@kernel.org>,
+        Pavankumar Kondeti <quic_pkondeti@quicinc.com>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-phy@lists.infradead.org, Greg Kroah-Hartman <gregkh@suse.de>,
+        Peter Chen <peter.chen@nxp.com>
+References: <20260810-msm8974-usb-hsic-v1-0-e5f93ea76ffa@oss.qualcomm.com>
+ <20260810-msm8974-usb-hsic-v1-3-e5f93ea76ffa@oss.qualcomm.com>
 Content-Language: en-US
-From: Janani Sunil <jananisunil.dev@gmail.com>
-In-Reply-To: <20260816192409.145df670@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260810-msm8974-usb-hsic-v1-3-e5f93ea76ffa@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 9YXWk-Ku2DY1seQj6ZqdJb3Hbsh4TYFi
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODE4MDA3MiBTYWx0ZWRfX3PO3zeTrLkBh
+ 9ycvYQ4+T8v4MtQTf2/XDMe01YNfhoicYSmDbam+3OV0Mdy2kVNQp9pARSOmiD7/PGTg2a+UbxP
+ qmVt/oCz90uobRWnkV8euGEY7/fLyPs=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODE4MDA3MiBTYWx0ZWRfX/g2QeEO6THxQ
+ Evuig4Bk8rhj109Mu3hq2PoYrLFNeskHyoyfxklQj+1cel3hl9LP6okBNT9I5XaIcg7NFPdtGnG
+ mHPhg+qSP/BOOjLevsv5K7P01inm35G+wjXMEgGrNVsjVBoGHhqxc0uSF6bH1kqL9nMRmJ+vo/h
+ NGfAUn914hhsympNQznAct6ypAM8gkK9FEiJGVIj4aVTTnW4mqXBSZciq4KgnKi6D+zR2gloQPx
+ 8sqU93NwWDnn/zFtyE6EIC7ME7cO72GOZs3ZqMBznyGo4fbj7h6ffxXaB0tGFZC1RvVVt0hTwgu
+ IR55nr1O/G0+uOtSK4kQpdFJkAlessRGknGOuK7jCqQhDc4kT1o0vh2Iw/BLzQDNflXyirEVQPC
+ 4oMqHMQUYLW7mS443xUs5Ppt7KAysB2ll5xfVV944ymDTLIYK9ccZm1fo3PQQFO9qxcIRiqU49p
+ pEDavET+EEuB2d1a/LQ==
+X-Proofpoint-ORIG-GUID: 9YXWk-Ku2DY1seQj6ZqdJb3Hbsh4TYFi
+X-Authority-Analysis: v=2.4 cv=bfRbluPB c=1 sm=1 tr=0 ts=6a842bff cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
+ a=EUspDBNiAAAA:8 a=-c7pCBK0zC3Ie-k0gBAA:9 a=QEXdDO2ut3YA:10
+ a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-17_04,2026-08-12_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ phishscore=0 impostorscore=0 bulkscore=0 spamscore=0 adultscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2608180072
 
+On 8/10/26 5:42 PM, Dmitry Baryshkov wrote:
+> With the cal_sleep (32 kHz IO calibration sleep) clock running, the
+> HSIC PHY engages its sleep calibration: the strobe/data pad
+> calibration converges to different values than with the active
+> calibration alone, HSIC_CFG reports the sleep calibration state, and
+> the port no longer detects a device connect - an onboard HSIC hub
+> signalling its attach after reset is never seen (observed on the
+> APQ8074 Dragonboard against its USB4604 hub, by comparing the ULPI
+> register state against the vendor kernel, which never enables this
+> clock: with cal_sleep enabled ULPI HSIC_CFG reads 0xab and the pad
+> registers 0x0f/0x0d, without it 0xa9 and 0x10/0x10, matching the
+> working vendor configuration).
+> 
+> Stop requesting and enabling the cal_sleep clock.
+> 
+> Assisted-by: Claude:claude-fable-5
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
 
-On 8/16/26 20:24, Jonathan Cameron wrote:
-> On Thu, 13 Aug 2026 15:56:54 +0200
-> Janani Sunil <janani.sunil@analog.com> wrote:
->
->> Devicetree Bindings for AD7768-4 (4 channel) and AD7768 (8 channel)
->> simultaneous sampling ADCs.
->>
->> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
->> ---
->>   .../devicetree/bindings/iio/adc/adi,ad7768.yaml    | 338 +++++++++++++++++++++
->>   MAINTAINERS                                        |   7 +
->>   2 files changed, 345 insertions(+)
->>
-...
->> +  adi,data-lines-number:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    enum: [1, 2, 4, 8]
->> +    description:
->> +      Number of DOUTx lines used for the high-speed data output interface
->> +      (distinct from the SPI control interface). AD7768 supports 1, 2, or 8
->> +      lines; AD7768-4 supports 1 or 4 lines. Defaults to the maximum number
->> +      of lines for the selected variant if omitted.
-> The default statement is a bit hidden and I'm not sure useful as it's not
-> an obvious default.  Maybe drop that and make this a required property?
+it seems to be used by the slightly different xhci-hsic driver for 8084 
 
-This property was required in v1. It was changed to optional in v2 following a suggestion to use the highest number of data lines as the default.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
+Konrad
