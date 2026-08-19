@@ -1,80 +1,57 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4246E3CB578;
-	Wed, 19 Aug 2026 07:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6253D3C81B5;
+	Wed, 19 Aug 2026 07:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787124476; cv=none; b=Qe1xUSQnrJCJpW2mpdlfOoO49993TL/E2RcUEhD9644SY6wfNy01TuuuD3vk0zSyOLxWe/Ud1ZyipUbn3bqhhESJSM64mikaKupNBIt+QMN0h7TmbnSmPMCeiwaHQix4oR5MkhR8YDsv+9zdit+v6TaI2KFDjwefsXowsL1Az9w=
+	t=1787124538; cv=none; b=JpgyBoNrSp5pQ4nkorx2ylS9o/08HzznbAToe8Dkw2MpImVHowXtFSQKpPjYgixX8GygbVtsznne0baZKOIO4VaJTApmtnntYf52QFKdUQ6TykqYOlcOZIlOvy0k+P5PR8ffPOBiFwArTKkZoOnjEuJU8F5JpnKxtxNb2KKSZE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787124476; c=relaxed/simple;
-	bh=G2kptcnbxzc2RLrx4I654mJLzlzkb8PupIu+d8FB6VQ=;
+	s=arc-20240116; t=1787124538; c=relaxed/simple;
+	bh=KvPwAk2TY4MSM1WnmG6/LrViwMvQr9kYyXkS6271FQI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZVlNbOFKpn15pMy8f6r3mWLrAtk8FSwt0RdwVFWo1iYDXrEfysj99+IqNj+OUN91/ahzyNDzANSEr0yKRiW43Ju0DHO88gHghUexyUOo6R5V0o+WBG8W2PuQbPmqmYw8NcpMe+6anb8kwDu5iYnaj1K0m2kE02dTcsZf+m1mzgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lA6nfB+p; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=MjYPJvs2uj2/kzCaQha8BnKOuQyFOF983+/xH8o9ZGuQqUryu/5Dem3FdeCNET1cVOx+hNMay6/WTZeYQKv5fpH3UHSnL4WNeOkr3kghSAUPiYeNtaGfEZaEawVsif5b1tdb36EQqzP5G4w5TTuw+CbsBgo0iHjnwtiYLlYPCqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KicRI9RG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lA6nfB+p"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1787124474; x=1818660474;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=G2kptcnbxzc2RLrx4I654mJLzlzkb8PupIu+d8FB6VQ=;
-  b=lA6nfB+pjp9A+FEgVMMP+fRUaCaVKtq6b/8L2ymp3e/adUb13WzPITNX
-   g14wjvRa+bW52WI5yIC6YZjC8wxggCvmVurI7J2Uqbd5cUJHGoHzPsQFK
-   Veukm5aCqqOVT42DFGuB8SQ5pqcHepCqPLIe1PZEqv78w1aBAu4OFILYF
-   43qMDW5p5FxSG3/knXoBxu2X6zffM0D6wuB8B5q4MzMDBGm4Fy9fyO82G
-   pMXKtAlwt9hm/DU9j5dnmMEUzIybe5eOjlFMkFrXvQ7hiVOiwcgj5CLAx
-   yV5fZatcEm1O7Rd61KeRroDVXNp85saO7vbzuuUvYiUL999M6EiWo2MFO
-   w==;
-X-CSE-ConnectionGUID: ynYkFdLRS2OlPIgHBAHERA==
-X-CSE-MsgGUID: verLcMFZSCWsNGJbaH7NiA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11879"; a="87646172"
-X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; 
-   d="scan'208";a="87646172"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2026 00:27:52 -0700
-X-CSE-ConnectionGUID: J+3m20rtSdqiMKQ+W6sX2Q==
-X-CSE-MsgGUID: i+ywqdASR2ib4M2LXoSg4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; 
-   d="scan'208";a="269303976"
-Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.106])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2026 00:27:46 -0700
-Date: Wed, 19 Aug 2026 10:27:43 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: zl020895 <zl020895@163.com>
-Cc: longzhao <longzhao@ambarella.com>, Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	soc <soc@lists.linux.dev>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KicRI9RG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02BEF1F000E9;
+	Wed, 19 Aug 2026 07:28:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787124537;
+	bh=+c4hxv5iAZoAl6x2Vsz/LzNf0z4N+7E+7ULYEPv6Crw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=KicRI9RGqR/qCu1MkdulTJy84Fb4AkP/xipZO2cpfo3I7e6tfyKokUDLhAh/XBKCw
+	 jj/e9/Z8fAr9XTlSURXYW75ag1DZoU5eHVGKztMlL1JN9XA58o4C0glgmYD7lWKTh/
+	 opmBGNch3Cp/opPlU/bv4dqToYYRnvENSso2o+fjLkPfLP3Mal8vncsCHL27uU4iBI
+	 TfEGx7co+XwL26ILXaFHc1NViD4MQxMG+jkrXHH9NgwwHgggA57W/8opNpJ9Vz6GMj
+	 ZKE8t39AUkdiv4/rXy3r0TyHSbOsvLAwdMxznYw4Wy/zDbBNts5MJwUq2e3r0i59ia
+	 Z1lwBjtNRMVsw==
+Date: Wed, 19 Aug 2026 00:28:54 -0700
+From: Peter Chen <peter.chen@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-gpio <linux-gpio@vger.kernel.org>,
-	linux-serial <linux-serial@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	Brian Masney <bmasney@redhat.com>, Lee Jones <lee@kernel.org>,
-	mfd <mfd@lists.linux.dev>
-Subject: Re: Re: [PATCH v5 08/12] gpio: pl061: add Ambarella CV75 register
- layout variant
-Message-ID: <aoVa74E4l4fy5Por@ashevche-desk.local>
-References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com>
- <20260818-cv75-v5-v5-8-7bbb12f0360f@ambarella.com>
- <aoRoBYE_Ns0lu75-@ashevche-desk.local>
- <79f6dc8c.2c42c.1a018dadd29.Coremail.zl020895@163.com>
+	Xu Yang <xu.yang_2@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Pavankumar Kondeti <quic_pkondeti@quicinc.com>,
+	Stephen Boyd <stephen.boyd@linaro.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-phy@lists.infradead.org,
+	Greg Kroah-Hartman <gregkh@suse.de>,
+	Peter Chen <peter.chen@nxp.com>
+Subject: Re: [PATCH 08/10] usb: chipidea: host: calibrate the PHY after
+ starting the host
+Message-ID: <aoVbNp0J2feQ3ezX@hu-petche-lv.qualcomm.com>
+References: <20260810-msm8974-usb-hsic-v1-0-e5f93ea76ffa@oss.qualcomm.com>
+ <20260810-msm8974-usb-hsic-v1-8-e5f93ea76ffa@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -83,42 +60,60 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <79f6dc8c.2c42c.1a018dadd29.Coremail.zl020895@163.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20260810-msm8974-usb-hsic-v1-8-e5f93ea76ffa@oss.qualcomm.com>
 
-On Wed, Aug 19, 2026 at 03:09:51PM +0800, zl020895 wrote:
+On 26-08-10 18:42:12, Dmitry Baryshkov wrote:
+> Some PHYs need a final programming step after the host controller is
+> up: the Qualcomm HSIC PHY latches the device connect at the moment
+> HSIC mode is engaged, so that write must happen with the root port
+> already running, or an already-connected HSIC device (the strobe/data
+> lines have no hotplug) is never seen. The generic PHY framework
+> provides phy_calibrate() for exactly this kind of post-init fixup and
+> dwc3 already calls it; the chipidea host does not, leaving no place
+> for such PHY work.
 > 
-> I followed Linus' guidance on the v2 pinctrl patch to reuse gpio-pl061 with a
-> per-variant register layout, because the Ambarella banks share the PL061
-> interrupt register model (IS/IBE/IEV/IE/RIS/MIS/IC). gpio-mmio/gpio-regmap
-> cover the DATA/DIR side well, but they seem not provide that IRQ controller,
-> so moving there would need a separate irqchip and would risk duplicating the
-> PL061 IRQ logic Linus asked us not to fork.
+> Call phy_calibrate() once the HCD has been added, next to the existing
+> i.MX HSIC active-event hook which serves the same purpose. PHYs
+> without a calibrate op are unaffected.
 > 
-> 
-> Would you prefer we keep the PL061 variant for that reason, or is there a
-> gpio-mmio/gpio-regmap approach that also covers this interrupt model cleanly?
-> We can rework either way once that is clear.
+> Assisted-by: Claude:claude-fable-5
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-I haven't told we should duplicate. My suggestion is:
-- convert current gpio-pl061 to use gpio-mmio / gpio-regmap (and I vote for the latter)
-- add new regmap configuration and necessary layout for your case.
+Acked-by: Peter Chen <peter.chen@kernel.org>
 
-> ---- Replied Message ----
-> | From | Andy Shevchenko<andriy.shevchenko@linux.intel.com> |
-> | Date | 08/18/2026 22:11 |
-> On Tue, Aug 18, 2026 at 06:31:22PM +0800, Long Zhao via B4 Relay wrote:
+Peter
+> ---
+>  drivers/usb/chipidea/host.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> > Extend gpio-pl061 with a per-variant register layout so the Ambarella
-> > CV75 GPIO banks can reuse the PL061 driver instead of a duplicate.
+> diff --git a/drivers/usb/chipidea/host.c b/drivers/usb/chipidea/host.c
+> index ced6076a8248..62bb2999edb6 100644
+> --- a/drivers/usb/chipidea/host.c
+> +++ b/drivers/usb/chipidea/host.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/string_choices.h>
+>  #include <linux/pinctrl/consumer.h>
+> +#include <linux/phy/phy.h>
+>  
+>  #include "../host/ehci.h"
+>  
+> @@ -192,6 +193,9 @@ static int host_start(struct ci_hdrc *ci)
+>  			(ci->platdata->flags & CI_HDRC_IMX_IS_HSIC))
+>  			ci->platdata->notify_event
+>  				(ci, CI_HDRC_IMX_HSIC_ACTIVE_EVENT);
+> +
+> +		if (ci->phy)
+> +			phy_calibrate(ci->phy);
+>  	}
+>  
+>  	return ret;
 > 
-> This is reinvention of gpio-mmio.c (as a library). It has necessary facilities.
-> Also gpio-regmap may be considered. So, switch this driver to use one of the
-> above and the patch for the new device will be much simpler and elegant.
+> -- 
+> 2.47.3
+> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
 
-
+Thanks,
+Peter Chen
