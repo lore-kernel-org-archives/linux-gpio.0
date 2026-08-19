@@ -1,119 +1,83 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6253D3C81B5;
-	Wed, 19 Aug 2026 07:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F203DCDA9
+	for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 07:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787124538; cv=none; b=JpgyBoNrSp5pQ4nkorx2ylS9o/08HzznbAToe8Dkw2MpImVHowXtFSQKpPjYgixX8GygbVtsznne0baZKOIO4VaJTApmtnntYf52QFKdUQ6TykqYOlcOZIlOvy0k+P5PR8ffPOBiFwArTKkZoOnjEuJU8F5JpnKxtxNb2KKSZE8=
+	t=1787124790; cv=none; b=olKj7T6GMKeTv/mp+Ro+GysmiVzJ5HK6JN7oUbiKVn9E7tUzBdtPV2DALV5hMl1aZPeQ42Cl+hSGqklUvWWiOtQjzOUGe4/9h415ryGexQNM9JzG+U07lPmh2qUUPykY/UPJ0ExAnIjellQuwT+UpLnmoRnpG2uUogrj+70ZcOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787124538; c=relaxed/simple;
-	bh=KvPwAk2TY4MSM1WnmG6/LrViwMvQr9kYyXkS6271FQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MjYPJvs2uj2/kzCaQha8BnKOuQyFOF983+/xH8o9ZGuQqUryu/5Dem3FdeCNET1cVOx+hNMay6/WTZeYQKv5fpH3UHSnL4WNeOkr3kghSAUPiYeNtaGfEZaEawVsif5b1tdb36EQqzP5G4w5TTuw+CbsBgo0iHjnwtiYLlYPCqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KicRI9RG; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787124790; c=relaxed/simple;
+	bh=VkxwTHhpX690h2pXqhYY+zmBovwI3C9WHSBD9ryCt6I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f/hRpxAfdJsyFiZaDWV8BgBkdPBd6I6dq5REBkgHQo/FI0GF5ihOS3CNGDYWAvShtG/vK0daR0pUoqiix0DZbk5HxQxb/7MfC+nW0kkUUDS8tDk2awpMivdBYnL7WJvqPGIQHBoOhi61COL9BboNrpvmXcGwuV89XSstQ0IIpm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dpOjroIG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KicRI9RG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02BEF1F000E9;
-	Wed, 19 Aug 2026 07:28:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpOjroIG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4761F1F00ACF
+	for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 07:33:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787124537;
-	bh=+c4hxv5iAZoAl6x2Vsz/LzNf0z4N+7E+7ULYEPv6Crw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KicRI9RGqR/qCu1MkdulTJy84Fb4AkP/xipZO2cpfo3I7e6tfyKokUDLhAh/XBKCw
-	 jj/e9/Z8fAr9XTlSURXYW75ag1DZoU5eHVGKztMlL1JN9XA58o4C0glgmYD7lWKTh/
-	 opmBGNch3Cp/opPlU/bv4dqToYYRnvENSso2o+fjLkPfLP3Mal8vncsCHL27uU4iBI
-	 TfEGx7co+XwL26ILXaFHc1NViD4MQxMG+jkrXHH9NgwwHgggA57W/8opNpJ9Vz6GMj
-	 ZKE8t39AUkdiv4/rXy3r0TyHSbOsvLAwdMxznYw4Wy/zDbBNts5MJwUq2e3r0i59ia
-	 Z1lwBjtNRMVsw==
-Date: Wed, 19 Aug 2026 00:28:54 -0700
-From: Peter Chen <peter.chen@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Xu Yang <xu.yang_2@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Pavankumar Kondeti <quic_pkondeti@quicinc.com>,
-	Stephen Boyd <stephen.boyd@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-phy@lists.infradead.org,
-	Greg Kroah-Hartman <gregkh@suse.de>,
-	Peter Chen <peter.chen@nxp.com>
-Subject: Re: [PATCH 08/10] usb: chipidea: host: calibrate the PHY after
- starting the host
-Message-ID: <aoVbNp0J2feQ3ezX@hu-petche-lv.qualcomm.com>
-References: <20260810-msm8974-usb-hsic-v1-0-e5f93ea76ffa@oss.qualcomm.com>
- <20260810-msm8974-usb-hsic-v1-8-e5f93ea76ffa@oss.qualcomm.com>
+	s=k20260515; t=1787124785;
+	bh=VkxwTHhpX690h2pXqhYY+zmBovwI3C9WHSBD9ryCt6I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=dpOjroIGI85uGUmiGJs9drYoXJhWNmVi4Uu3qGsw/NyvsqnuNvUgi89N9RNfPYAWP
+	 AEgu6FA3sfYXpsYY+Wr9HXu2c8CUR44guutkanr8ETQ64s6zPs4Fh46HEBjo8TPYvD
+	 jjXR4/BaPP1E02MEgaQLgH9LhmetQeGWQMYLdCcKPn1/lPeuo0vL87iviG8vq5aFMT
+	 7BUbcYev20AFu3U5/liiINcqpf2o06mkh1Gpk22RTGdfBkWjXs6MZ2GSuVFHiDCubn
+	 dJzb1UguVvNUKib86ajaYHZEAOcpz6oxmJS6n2q77Tm19iJyblR4R/XacjfhHp7Blg
+	 IdoWLK+59joQA==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5b0231a3e86so784127e87.0
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 00:33:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+RoH8Ry/zpetm+yuRirjQfayHChhMykSjuGii2Djhm5djsUDW4sJry7vfptoFpjFyzCY/YPCFvB7l3SZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlBD5n7WHmodAyAZjjV5Ski/Te3/O708duti2Hk/8DLbqd1ykL
+	swuYQS0Lh9s5qvHQFVqsa2efoKzEP8hrcgOAJEYYNszjP+sgFwakps/MacAppGVpyT3MVh5tdcU
+	eurhNEF5pUuFnmgucadkNjgXteIX0iWQ=
+X-Received: by 2002:a05:6512:3d86:b0:5ae:a702:6528 with SMTP id
+ 2adb3069b0e04-5b478bdc331mr681671e87.26.1787124783764; Wed, 19 Aug 2026
+ 00:33:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260810-msm8974-usb-hsic-v1-8-e5f93ea76ffa@oss.qualcomm.com>
+References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com> <20260818-cv75-v5-v5-6-7bbb12f0360f@ambarella.com>
+In-Reply-To: <20260818-cv75-v5-v5-6-7bbb12f0360f@ambarella.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Wed, 19 Aug 2026 09:32:50 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnsyZDBixXMDFUf1+i0ZtYkmzpc+kggn9bx7=8W-gZHSw@mail.gmail.com>
+X-Gm-Features: AcwNN1WedvW-uebjWVm_0ycL6wQEG6qNIR9PZrbwX20kSbc79ar1YheT6gV97uE
+Message-ID: <CAD++jLnsyZDBixXMDFUf1+i0ZtYkmzpc+kggn9bx7=8W-gZHSw@mail.gmail.com>
+Subject: Re: [PATCH v5 06/12] dt-bindings: serial: add Ambarella CV75 UART
+To: longzhao@ambarella.com
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Brian Masney <bmasney@redhat.com>, Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, 
+	Long Zhao <zl020895@163.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26-08-10 18:42:12, Dmitry Baryshkov wrote:
-> Some PHYs need a final programming step after the host controller is
-> up: the Qualcomm HSIC PHY latches the device connect at the moment
-> HSIC mode is engaged, so that write must happen with the root port
-> already running, or an already-connected HSIC device (the strobe/data
-> lines have no hotplug) is never seen. The generic PHY framework
-> provides phy_calibrate() for exactly this kind of post-init fixup and
-> dwc3 already calls it; the chipidea host does not, leaving no place
-> for such PHY work.
-> 
-> Call phy_calibrate() once the HCD has been added, next to the existing
-> i.MX HSIC active-event hook which serves the same purpose. PHYs
-> without a calibrate op are unaffected.
-> 
-> Assisted-by: Claude:claude-fable-5
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+On Tue, Aug 18, 2026 at 12:32=E2=80=AFPM Long Zhao via B4 Relay
+<devnull+longzhao.ambarella.com@kernel.org> wrote:
 
-Acked-by: Peter Chen <peter.chen@kernel.org>
+> From: Long Zhao <longzhao@ambarella.com>
+>
+> Document the Ambarella CV75 on-chip UART controller binding for early
+> console bring-up. The binding requires a single RCT clock input and
+> fixed 32-bit register access via reg-shift and reg-io-width.
+>
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
 
-Peter
-> ---
->  drivers/usb/chipidea/host.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/usb/chipidea/host.c b/drivers/usb/chipidea/host.c
-> index ced6076a8248..62bb2999edb6 100644
-> --- a/drivers/usb/chipidea/host.c
-> +++ b/drivers/usb/chipidea/host.c
-> @@ -15,6 +15,7 @@
->  #include <linux/regulator/consumer.h>
->  #include <linux/string_choices.h>
->  #include <linux/pinctrl/consumer.h>
-> +#include <linux/phy/phy.h>
->  
->  #include "../host/ehci.h"
->  
-> @@ -192,6 +193,9 @@ static int host_start(struct ci_hdrc *ci)
->  			(ci->platdata->flags & CI_HDRC_IMX_IS_HSIC))
->  			ci->platdata->notify_event
->  				(ci, CI_HDRC_IMX_HSIC_ACTIVE_EVENT);
-> +
-> +		if (ci->phy)
-> +			phy_calibrate(ci->phy);
->  	}
->  
->  	return ret;
-> 
-> -- 
-> 2.47.3
-> 
+Looks good to me!
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
--- 
-
-Thanks,
-Peter Chen
+Yours,
+Linus Walleij
