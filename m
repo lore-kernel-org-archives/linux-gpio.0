@@ -1,123 +1,99 @@
-Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
+Received: from mailgw-out1.grenoble.cnrs.fr (mailgw-out1.grenoble.cnrs.fr [147.173.1.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3792C21FD
-	for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 20:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CEE3C37B3
+	for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 20:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.173.1.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787170005; cv=none; b=oVyk8uyNvIqw5rCfYyZIEAO0naR6Kv6LPwJu6TzPsNFIC0ZsIKhKR2FZQg1cB4k5cjRIHvj1T7GU0PYurccNz5vMtGuueZjMOYtSDzb0m4l2vTwykqB6rl4yz5kgt90Z65rmemMp20OmiMhyHyEIhF5u5jP4wgkvgkZQi9INyKQ=
+	t=1787170441; cv=none; b=UJtw/kYPAAnw6t36XPQJvHOLKxVGSLwJjE9PsaTKRrlhTBxMlx5hHR0bJ08Qw3KvkGoTgm7CimXnkCj/pJBE1AiDWPxsRV/UidPVhHEteeKU7y7kalSFML/Og/W7c23ER9fmRYRIIA5X2dTbYKP1ybmCosVqlXjTIG/I0YiIevk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787170005; c=relaxed/simple;
-	bh=TIATeEOXYNjmrKoU3wlzCsVXfHAmPOlWXR37zssnF7U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Z/HgSZapDtmRrEWqP369ICWknq6upIS0hTMGuVgvl0roJOuQzMJEfiPHTzM4xbNG2pgfEuTQA12nARPFhIsnGg5S0+VrDdgkc3esTQrZALrbrowBCn+RBblpyNytTxYzoI4ypbw9jKw6yy13tE0XeMpxeXewQY5kVZaIVuw1sXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=ZZFz9OF6; arc=none smtp.client-ip=84.16.241.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
+	s=arc-20240116; t=1787170441; c=relaxed/simple;
+	bh=xmlmx6zrhLsn/I5yX+JPNP0cpXNSkwc0jDeGms7/QWY=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=ELIOlTpSbMkVNANWPjTARI1iqMk7kG9r/ksDRavEM4VikpT3jQhoyf98jIlOmKXQOF/ggVMwoejcb/Y25szQUwHrUma7IDgdHIzZ1VLI6oNTRHw2TNnf4CzBDjUzRyJ55nDaF7EZSnNf4+5h/4gmROGLB5JY+eTL0HQqw60U58Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=grenoble.cnrs.fr; spf=pass smtp.mailfrom=grenoble.cnrs.fr; dkim=pass (2048-bit key) header.d=grenoble.cnrs.fr header.i=@grenoble.cnrs.fr header.b=Zm2OQ7K4; arc=none smtp.client-ip=147.173.1.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=grenoble.cnrs.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grenoble.cnrs.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="ZZFz9OF6"
-Received: from [IPv6:2a02:1812:162d:3d00:649f:659d:f6c1:d42] (2a02-1812-162d-3d00-649f-659d-f6c1-d42.ip6.access.telenet.be [IPv6:2a02:1812:162d:3d00:649f:659d:f6c1:d42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits))
+	dkim=pass (2048-bit key) header.d=grenoble.cnrs.fr header.i=@grenoble.cnrs.fr header.b="Zm2OQ7K4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grenoble.cnrs.fr;
+	s=202106-grenoble.cnrs.fr; t=1787170435;
+	bh=XP05MTPXyWgm2G7/skWuEhIr9aSG8vdxo/K9nUc4umw=;
+	h=Date:To:From:Subject:From;
+	b=Zm2OQ7K4awv10nQkVU59//l8bSu/bD0EfcOcgMG7oWlPhjwY8n2ZKstH/retDfFYj
+	 SxhdYDemIQWis7nSgBL5SPcWPG6p3/uFTiRqm2pXkvweH/kzI8vfdOR6Q8encGTyrz
+	 jicgBVT/HlZbn4ptvvKVVmXA6oSzSl3MIGhiaJp/w/ev6p00nKZLMlm3DyJdO1zXSY
+	 pEaTs5j55oRWAOHTthdaMRvB4547FaY3OrSZQhrTsFM9b3191rtfet0TbGXEuxbFdR
+	 DWI4dNXXjNdi8HmjZqClZNMAEqHvpQABPRui8rlvne0YAoP+aQWaU9SFUIAsElu6ay
+	 E/6Cfr5hCelVw==
+Received: from [IPV6:2a01:e0a:1164:dba0:3770:5627:8c1d:d139] (unknown [IPv6:2a01:e0a:1164:dba0:3770:5627:8c1d:d139])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: sander@svanheule.net)
-	by polaris.svanheule.net (Postfix) with ESMTPSA id 385B58E2A47;
-	Wed, 19 Aug 2026 22:06:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
-	s=mail1707; t=1787170002;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TIATeEOXYNjmrKoU3wlzCsVXfHAmPOlWXR37zssnF7U=;
-	b=ZZFz9OF6aNOLQtxD2f94iZqUmptxuCyZkqkj6WCl6m2qySWEfiLPJw2mH3uHmOzDs01/NM
-	bb6oILtdGx08phk17DGJCixUcD+opuS5uyIy1+g4bRC0gYdM9FLf4UpkemMTVdBTmJFkV4
-	pCWaBY6x7EMcjjRWM7ff37Zp4Ocr7649xQIZwr2JsTsraoupUdkt7OUrB6quj8Z1gR11cX
-	AEFf3m39oJkmSF8Q+oVrQIhKJZAE/97Y5ExTqarc6hytoKiJh6gpy1Q0Z85e+e2XqsxL6g
-	4ZELdn44fG+nX7MboDJEVCp5RWfErL5XoNWL7+d9D8TN3vqQ5lWwiFiLh7HpcA==
-Message-ID: <eb087ba826b3c95c233ad878f3cbeb6ded254a5f.camel@svanheule.net>
-Subject: Re: [PATCH v2 1/2] dt-bindings: gpio: otto-gpio: Add gpio-ranges
-From: Sander Vanheule <sander@svanheule.net>
-To: misha.zavertkin@mail.ru, linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski
- <brgl@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Bert Vermeulen	
- <bert@biot.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 19 Aug 2026 22:06:41 +0200
-In-Reply-To: <df4e9924282ac9e719c693abb5e39201f172579f.1787130560.git.misha.zavertkin@mail.ru>
-References: <cover.1787130560.git.misha.zavertkin@mail.ru>
-	 <df4e9924282ac9e719c693abb5e39201f172579f.1787130560.git.misha.zavertkin@mail.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.60.2 (3.60.2-1.fc44) 
+	by mailgw-out1.grenoble.cnrs.fr (Postfix) with ESMTPSA id A5CBD183B67;
+	Wed, 19 Aug 2026 22:13:55 +0200 (CEST)
+Message-ID: <0eb5c26d-731c-4ebb-be34-76466cf57720@grenoble.cnrs.fr>
+Date: Wed, 19 Aug 2026 22:13:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US, fr
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ linux-gpio@vger.kernel.org
+From: Edgar Bonet <bonet@grenoble.cnrs.fr>
+Subject: [PATCH libgpiod] build: do not require a C++ compiler if it is not
+ needed
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+Languages specified in the meson project() function are considered hard
+dependencies. When trying to build libgpiod in an environment lacking a
+C++ compiler, the build fails with an obscure error message ("ERROR:
+Unable to get gcc pre-processor defines").
 
-On Wed, 2026-08-19 at 22:51 +0700, misha.zavertkin@mail.ru wrote:
-> Pinctrl is required for RTL9607C GPIOs to work, otherwise controller
-> won't be routed to SoC pins. Add corresponding requirement to
-> Documentation for realtek,rtl9607-gpio.
->=20
-> Signed-off-by: Michael Zavertkin <misha.zavertkin@mail.ru>
-> ---
-> =C2=A0.../bindings/gpio/realtek,otto-gpio.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 14 ++++++++++++++
-> =C2=A01 file changed, 14 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yam=
-l
-> b/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
-> index b18f8f0ca0ae..96396f968e78 100644
-> --- a/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/realtek,otto-gpio.yaml
-> @@ -40,6 +40,8 @@ properties:
-> =C2=A0
-> =C2=A0=C2=A0 gpio-controller: true
-> =C2=A0
-> +=C2=A0 gpio-ranges: false
-> +
-> =C2=A0=C2=A0 ngpios:
-> =C2=A0=C2=A0=C2=A0=C2=A0 minimum: 1
-> =C2=A0=C2=A0=C2=A0=C2=A0 maximum: 32
-> @@ -75,6 +77,18 @@ required:
-> =C2=A0=C2=A0 - "#gpio-cells"
-> =C2=A0=C2=A0 - gpio-controller
-> =C2=A0
-> +allOf:
-> +=C2=A0 - if:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const=
-: realtek,rtl9607-gpio
-> +=C2=A0=C2=A0=C2=A0 then:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gpio-ranges: true
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 required:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - gpio-ranges
-> +
-> =C2=A0additionalProperties: false
-> =C2=A0
-> =C2=A0dependencies:
+As the C++ compiler is only needed for building the C++ bindings, do not
+require it unless the option bindings-cxx is enabled.
 
-Same remark as for the driver: I would just allow gpio-ranges for all
-compatibles and keep it optional. Since realtek,rtl9607-gpio was already
-published, it needs to remain backwards compatible. Making the property req=
-uired
-now would theoretically invalidate existing devicetrees.
+Signed-off-by: Edgar Bonet <bonet@grenoble.cnrs.fr>
+---
+Note that this issue has caused a few failures on the Buildroot
+autobuilders, e.g.:
+https://autobuild.buildroot.org/results/d1c19ffa0c599bd2ba9be965a98fc8f778d6e366
+https://autobuild.buildroot.org/results/c6b3c9311d628bdb4ea103431767493fab9a3668
+https://autobuild.buildroot.org/results/8e799050c5779c680ff5e5136571f57d29239f2f
+https://autobuild.buildroot.org/results/d6d8833acfe00559579defbbf3ca34c0edbe7869
+---
+ meson.build | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-pinctrl-* properties already serve as an (actively used) alternative way to
-select GPIO functions e.g. on RTL8380, so that's another reason for me to l=
-eave
-this property optional.
+diff --git a/meson.build b/meson.build
+index 7a6306d..a8a5b0b 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-or-later
+ # SPDX-FileCopyrightText: 2026 Qualcomm Technologies, Inc. and/or its subsidiaries
+ 
+-project('libgpiod', ['c', 'cpp'],
++project('libgpiod', 'c',
+   version: '2.4',
+   license: 'LGPL-2.1-or-later',
+   default_options: [
+@@ -56,6 +56,10 @@ opt_dbus                = get_option('dbus')
+ opt_introspection       = get_option('introspection')
+ opt_systemd             = get_option('systemd')
+ 
++if opt_bindings_cxx.allowed()
++  add_languages('cpp')
++endif
++
+ if get_option('profiling')
+   profiling_c_args    = ['-fprofile-arcs', '-ftest-coverage']
+   profiling_link_args = ['-lgcov']
 
-In any case, thanks for the update to the driver!
-
-Best,
-Sander
+base-commit: 7d7b07738885d051a28bdfb5025c8eb73cdf23f8
+-- 
+2.43.0
