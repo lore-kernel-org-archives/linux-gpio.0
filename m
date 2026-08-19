@@ -1,92 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFDC3D45F4
-	for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 07:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A39426D2E;
+	Wed, 19 Aug 2026 09:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787125642; cv=none; b=Ufc8rxKdvcA6jR2J2dysh/+qQch2jPhxAFpbqQxeAahCUQykjIlhkMB63AHgVWToR3Js9ukmOMjWvuEwJYkGENgG9jAQdH65HO6OS8IM6/Ezhx38tzizfZB//nSQKKDASL3Sub3bHaP0Jz3JHlqQk29uQYsGqi0h7ZajU+l/VYU=
+	t=1787130400; cv=none; b=MjremZB1+IMb/X1q/oncECV9/O/aiqGx2w78JL8YkU0ZjwuT51RvmMdxJqFre53WUQjFWUYClzqqDtxVt7ZJMvc9WJUdo9qRULcVZ5z/D0kOtQNR3aySVA29YyH49BM+vS6hJ/t3u23qOh4ayvzeOoZ6wISxO3Stykx2ybLxkcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787125642; c=relaxed/simple;
-	bh=CME2svg5ClAUnJKPj2PXGWwyQELSDleWLCO85/xq6ew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gnKMwypsWrm4j4eC7atIfrufmHdUYwrwMBjfNhwslujssdfMSHZLWUGgUc9K8I9N4UQW64s/WyvCQwIZfEArnlBG4wijJLnkYX++DVqrRLnZ73I+Pex8UVmxFh/zb7QOtdiAV96HTHVJLKuLLByF0T7nCQ8qanMvsxm1d9qpM4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4xJGj9/; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787130400; c=relaxed/simple;
+	bh=1R8DjT6IWhZddPF9ppriYcIPoUIeXndNSl4I9OG62+M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=QcyahMgj5GRLiHfb3tGzFbSELaJAKxbbtQYfVcbbb/IF0Q3JO+Fow45T3WhXtVvyBG9Ygrfk74w/XXIQXrgPdZibBc6lJnji0FpB3prkBM6CzVuSYD4KrblevVBsPF0jYo16A7JIY2NIkFCJ1INrX33EKA1zPY+a9zV5yjslhu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nsiYxzBE; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4xJGj9/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82851F01558
-	for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 07:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787125641;
-	bh=FFro0CShRsSHLGgbO4zij6styDLmEifSQxQUeqQE0X0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=H4xJGj9/2X+lT/uWhbxXcdPQuM7Bg0MQpuq1YyZ+1rRUji8sJaogN48P6A9i+WlXF
-	 CmbN9ufpRZKvfQ6RHrNVHDKf0ZUKH6lMmKJw7oDStcMGXAGn0aBMXq+s1NsNvDrWZ9
-	 Oljf1DDTrJg9pk8S9WLkII1kgG/vYLtKZ48tKvOA/csRJYfBhVTo3A/9r/PbZzmg2Y
-	 efCuanDt6OZrg0W5f9MhLFvQOGXAzTCWx6lZGlWvr/aX4xkhoq2VnwxEh4XhAolNfu
-	 FDozd1jLinL5SbFvKPd574wZbePTihcoFq2hrYBE+GJwIDlRCEPwDIKZy8j3XzgW1Z
-	 XePiEDb7g8E4Q==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5b2b92065ffso824425e87.1
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 00:47:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpOMbldt4PH/BIAFf0GQ3IOcC4/ALJo3hspIsVDGFPohe289/VjteOZXneKOM1FPo2Drrz3Gip/s+YY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw03t/mLXUD4+KtOOrNqzgnmUk1qt8TV8jZwEYbgrNYUzq/5ofj
-	Pm8gUB0BvtQdVqqZV9PKVcHzgdtPqZcA4soXdb3HArUtNdCi6Agvz8xor/lmfFNaUPVc7B9lZ1t
-	pWO34QnAVWMPx43VWX33mXBTGH4JHk0I=
-X-Received: by 2002:a05:6512:3b9c:b0:5b4:5c5f:2aed with SMTP id
- 2adb3069b0e04-5b478bafeedmr801963e87.9.1787125640383; Wed, 19 Aug 2026
- 00:47:20 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nsiYxzBE"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=1R8DjT6IWhZddPF9ppriYcIPoUIeXndNSl4I9OG62+M=; b=n
+	siYxzBEWBxMBYihpoRBFMcjK2KWtCCINQwoXIMX4Rbk850kGPSrYzKknfOev7+Sw
+	rBowQ2sfKOXn7dV3RICnnzH0tv5jezw3yGrUgVKBk5+ih0wW0nRq29+wpgT+o55o
+	bDIKStGKrQM0h3h+RwfBKRrwCMXQ8ASiHhI/rV0clE=
+Received: from zl020895$163.com ( [180.169.129.163] ) by
+ ajax-webmail-wmsvr-40-101 (Coremail) ; Wed, 19 Aug 2026 17:04:36 +0800
+ (CST)
+Date: Wed, 19 Aug 2026 17:04:36 +0800 (CST)
+From: zl020895  <zl020895@163.com>
+To: "Linus Walleij" <linusw@kernel.org>
+Cc: longzhao@ambarella.com, "Arnd Bergmann" <arnd@arndb.de>,
+	"Krzysztof Kozlowski" <krzk@kernel.org>,
+	"Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	"Rob Herring" <robh@kernel.org>,
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+	"Conor Dooley" <conor+dt@kernel.org>,
+	"Michael Turquette" <mturquette@baylibre.com>,
+	"Stephen Boyd" <sboyd@kernel.org>,
+	"Bartosz Golaszewski" <brgl@kernel.org>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	"Jiri Slaby" <jirislaby@kernel.org>,
+	"Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+	"Catalin Marinas" <catalin.marinas@arm.com>,
+	"Will Deacon" <will@kernel.org>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Brian Masney" <bmasney@redhat.com>, "Lee Jones" <lee@kernel.org>,
+	mfd@lists.linux.dev
+Subject: Re:Re: [PATCH v5 05/12] dt-bindings: gpio: pl061: add Ambarella
+ CV75 variant
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
+In-Reply-To: <CAD++jLngqGzethEG5Hx+oAPzZoV6rvWNGXYaycFFkDz_dXFz=g@mail.gmail.com>
+References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com>
+ <20260818-cv75-v5-v5-5-7bbb12f0360f@ambarella.com>
+ <CAD++jLngqGzethEG5Hx+oAPzZoV6rvWNGXYaycFFkDz_dXFz=g@mail.gmail.com>
+X-NTES-SC: AL_Qu2TBf2Yv0os4CKZZulS6DN615F8O5rMxLRDmdYrY+8JiBnj2hsZf1x6Flza4t4S6Qjtskm+L+PiF8ZvJW3f
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com> <20260818-cv75-v5-v5-5-7bbb12f0360f@ambarella.com>
-In-Reply-To: <20260818-cv75-v5-v5-5-7bbb12f0360f@ambarella.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 19 Aug 2026 09:47:06 +0200
-X-Gmail-Original-Message-ID: <CAD++jLngqGzethEG5Hx+oAPzZoV6rvWNGXYaycFFkDz_dXFz=g@mail.gmail.com>
-X-Gm-Features: AcwNN1Xd6vVOI9stCj2gRpLkQqCARgCDR2Ns_rmI0pVH0qFiDI8kQzTDIQYC_Ck
-Message-ID: <CAD++jLngqGzethEG5Hx+oAPzZoV6rvWNGXYaycFFkDz_dXFz=g@mail.gmail.com>
-Subject: Re: [PATCH v5 05/12] dt-bindings: gpio: pl061: add Ambarella CV75 variant
-To: longzhao@ambarella.com
-Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Brian Masney <bmasney@redhat.com>, Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, 
-	Long Zhao <zl020895@163.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <7b258258.6f41.1a01943e97e.Coremail.zl020895@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZSgvCgDXfy2kcYVqde80AA--.8013W
+X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbCxgSB8mqFcaSWywAA3W
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Tue, Aug 18, 2026 at 12:32=E2=80=AFPM Long Zhao via B4 Relay
-<devnull+longzhao.ambarella.com@kernel.org> wrote:
-
-> +      properties:
-> +        arm,primecell-periphid:
-> +          const: 0x00000061
-
-The 0x41 in ARMs PeriphID is actually the JEDEC JEP106
-implementer ID (8 bits).
-
-So you should ideally set this to whatever the hardware engineers
-should have used, had they paid attention to detail.
-If your company has a contact point at JEDEC they should
-know which implementer ID to use for Ambarella designs.
-
-Since Ambarella is evidently a member of JEDEC your
-representative should be able to simply request a JEP106
-implementer ID and give it to you if there is not one assigned
-already, but I know it can be hard
-sometimes to find the right person inside the company
-but I think it'd be worth going the extra mile here, say that
-this guy from the kernel community persists.
-
-Yours,
-Linus Walleij
+SGkgTGludXMsCgpUaGFua3MgZm9yIHRoZSByZXZpZXcuCgpJIGNoZWNrZWQgaXQganVzdCBub3cs
+IEFtYmFyZWxsYSBpcyBpbiBKRVAxMDZCTiBhcyBiYW5rIDE2IC8gaWRlbnRpdHkgMHg2OC4gClBl
+ciBpbmNsdWRlL2xpbnV4L2FtYmEvYnVzLmggSSBwbGFuIHRvIHVzZSBwZXJpcGhpZCAweDAwMGU4
+MDYxCihkZXNpZ25lciAweGU4ID0gSkVQMTA2IDB4Njggd2l0aCBiaXQ3IHNldCwgcGFydCAweDA2
+MSkuClRoZSBjb250aW51YXRpb24gYmFuayBpcyBub3QgcmVwcmVzZW50YWJsZSBpbiB0aGUgY2xh
+c3NpYwo4LWJpdCBkZXNpZ25lciBmaWVsZDsgcGxlYXNlIHRlbGwgbWUgaWYgeW91IHByZWZlciBh
+IGRpZmZlcmVudAplbmNvZGluZy4KCkJlc3QgcmVnYXJkcywKTG9uZyBaaGFvCgpBdCAyMDI2LTA4
+LTE5IDE1OjQ3OjA2LCAiTGludXMgV2FsbGVpaiIgPGxpbnVzd0BrZXJuZWwub3JnPiB3cm90ZToK
+Pk9uIFR1ZSwgQXVnIDE4LCAyMDI2IGF0IDEyOjMy4oCvUE0gTG9uZyBaaGFvIHZpYSBCNCBSZWxh
+eQo+PGRldm51bGwrbG9uZ3poYW8uYW1iYXJlbGxhLmNvbUBrZXJuZWwub3JnPiB3cm90ZToKPgo+
+PiArICAgICAgcHJvcGVydGllczoKPj4gKyAgICAgICAgYXJtLHByaW1lY2VsbC1wZXJpcGhpZDoK
+Pj4gKyAgICAgICAgICBjb25zdDogMHgwMDAwMDA2MQo+Cj5UaGUgMHg0MSBpbiBBUk1zIFBlcmlw
+aElEIGlzIGFjdHVhbGx5IHRoZSBKRURFQyBKRVAxMDYKPmltcGxlbWVudGVyIElEICg4IGJpdHMp
+Lgo+Cj5TbyB5b3Ugc2hvdWxkIGlkZWFsbHkgc2V0IHRoaXMgdG8gd2hhdGV2ZXIgdGhlIGhhcmR3
+YXJlIGVuZ2luZWVycwo+c2hvdWxkIGhhdmUgdXNlZCwgaGFkIHRoZXkgcGFpZCBhdHRlbnRpb24g
+dG8gZGV0YWlsLgo+SWYgeW91ciBjb21wYW55IGhhcyBhIGNvbnRhY3QgcG9pbnQgYXQgSkVERUMg
+dGhleSBzaG91bGQKPmtub3cgd2hpY2ggaW1wbGVtZW50ZXIgSUQgdG8gdXNlIGZvciBBbWJhcmVs
+bGEgZGVzaWducy4KPgo+U2luY2UgQW1iYXJlbGxhIGlzIGV2aWRlbnRseSBhIG1lbWJlciBvZiBK
+RURFQyB5b3VyCj5yZXByZXNlbnRhdGl2ZSBzaG91bGQgYmUgYWJsZSB0byBzaW1wbHkgcmVxdWVz
+dCBhIEpFUDEwNgo+aW1wbGVtZW50ZXIgSUQgYW5kIGdpdmUgaXQgdG8geW91IGlmIHRoZXJlIGlz
+IG5vdCBvbmUgYXNzaWduZWQKPmFscmVhZHksIGJ1dCBJIGtub3cgaXQgY2FuIGJlIGhhcmQKPnNv
+bWV0aW1lcyB0byBmaW5kIHRoZSByaWdodCBwZXJzb24gaW5zaWRlIHRoZSBjb21wYW55Cj5idXQg
+SSB0aGluayBpdCdkIGJlIHdvcnRoIGdvaW5nIHRoZSBleHRyYSBtaWxlIGhlcmUsIHNheSB0aGF0
+Cj50aGlzIGd1eSBmcm9tIHRoZSBrZXJuZWwgY29tbXVuaXR5IHBlcnNpc3RzLgo+Cj5Zb3VycywK
+PkxpbnVzIFdhbGxlaWoK
