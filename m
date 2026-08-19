@@ -1,294 +1,247 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C43C440637
-	for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 23:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD0E388E7A;
+	Wed, 19 Aug 2026 23:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787180542; cv=none; b=V4JeUWZHeagL+1QMJ2X/Pm34rbQZUIadGlRI8SoxTFlSk8xMpD9baysYfXb+1Yd8OQiUQBuAQLYXsAIFI/kBcHXVKTZQUBd2T4PeY+lVuKRKbltwiKUXvBINffTbRSfOY8ZqbHejQGOZvJozg1pEZ1xrPxigbGrZrxTbnZ8Sghc=
+	t=1787182011; cv=none; b=TrGOFk+9YQuzbF55ljL6YVx15QDhmrS9NpcjObvjermZR5HV3oxxxtVaMuRj2e5bxtTA+ek+0jwtLrbQ6quxgYpAB/Ra/46yFRjbiQY3Xfj8Snyk+zy6XucKU6Rs31v4b7qb9l1GFHJ8wvlADCTYOeEPz19q0GW/8WQ5Csv0aDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787180542; c=relaxed/simple;
-	bh=7PBqj65H5cqm5os+MRAq2vSpOftKj/kQhBNpRGqD7BU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=LlrGCUECdC7toUZLYQsahzrF6G1IUp+NJDrnFOcT2y8xaOkA0m0lebu2qPWPwY3YaL0Wpo5ZsAg2Fpzlb3La7x3x8BTSkqso6HfgCWR/7FZsupXt019BxTWqy6bTkzHj1B5ls+bubbf9ljWG3WmZku9isYfUtI38WkVaGejZWNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i6Usju6V; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1787182011; c=relaxed/simple;
+	bh=sSxnGpFs3nHdoCWWcypVJnPxWhOYJnNtIwRyfz1z8uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jGdMOioadx6AbgmCfe3pqo95Q3JffPyz7vdR0MV+pLuYOI6YoKBQLjgXxtKaK2mH7aI0lrMIssCKN6gVjpMNfJoo/A8uOgRD37/gCI5TopHLsB74qLpgJpBzZHBvOUMrYxdO+EEmyjxsZinaCLlDDUc1zA7ADgcIqTTA7Z289SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XWDi9DUq; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i6Usju6V"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1787180541; x=1818716541;
-  h=date:from:to:cc:subject:message-id;
-  bh=7PBqj65H5cqm5os+MRAq2vSpOftKj/kQhBNpRGqD7BU=;
-  b=i6Usju6VDitmU1kLVAn+8titJiQ9PszBEu3corFwoRpMh1vG/yAPssAr
-   l+4Y5r3SZeRItoLUCO/uFNe+Mc+1ke/uNmjEdZXJG2MOg+twiXNXVzSbZ
-   xm2xRlmMgqfHy28tLi4v8tkROArY6fdY0RvJAXHQr0FOibscKImY5S+VL
-   kWchXhjUvb3Jr+B5m9135YKSe7ES2BUp/uznjIpKtAtcGWgNNS6PBpCvL
-   CTI3va5CCpK3G9dUz4pACNliBa2EJ0hQuHRdEwTtxPovPhHB3EcZBDBtb
-   /oB0s1QLfNAQ9n/iCc6iFUBqcKTdOIAjUestwm1sVZOJ5S51EK0755N2/
-   A==;
-X-CSE-ConnectionGUID: afEXDpcFTdapgUWr7uC5jw==
-X-CSE-MsgGUID: IUpUIlLhQiK/+91dIiKeRg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11880"; a="98869623"
-X-IronPort-AV: E=Sophos;i="6.25,232,1779174000"; 
-   d="scan'208";a="98869623"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Aug 2026 16:02:21 -0700
-X-CSE-ConnectionGUID: E8nxrk28STGI+3HgEMHeJg==
-X-CSE-MsgGUID: tIDMxxGvSOmUJSwlUfbhNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,232,1779174000"; 
-   d="scan'208";a="266334843"
-Received: from lkp-server01.sh.intel.com (HELO 6eda058d650d) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 19 Aug 2026 16:02:19 -0700
-Received: from kbuild by 6eda058d650d with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1wwpIX-00000000goT-00wj;
-	Wed, 19 Aug 2026 23:02:17 +0000
-Date: Thu, 20 Aug 2026 07:02:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org
-Subject: [brgl:gpio/for-next] BUILD SUCCESS
- 146cc263e457ff6055fe7829e4f4f4b0b5d5dd86
-Message-ID: <202608200750.PdddWjpO-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XWDi9DUq"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id D64121A174D;
+	Wed, 19 Aug 2026 23:26:44 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A0D455FF42;
+	Wed, 19 Aug 2026 23:26:44 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2E92011C75C37;
+	Thu, 20 Aug 2026 01:26:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1787181999; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=pM4/UAB0zkb9F0/F/T1CEjLUNic6c3WmPdMMpIFJLQA=;
+	b=XWDi9DUqPWP4cdQh6yw/ODZdyA2asZIf5P2saqPI5vdoQKkqqTn1IvBVTWiP2zVVlFcolA
+	8+/tjaLZ28TOf5R1YUUesCvsRis529zYrujbBchpRhj5RYYp0xOalfepL9h32e3j0vdC0T
+	6/Qh1XQOrQ/jETyooHQ572VGch0xRKD5h2dcLdZEVOdWzazl++q9SiLdVOdy/oGiGFZMg7
+	zLMomAd93ZfEe38mJaLP2g9Q7KmWorB4wL/TGKn9Q53WJqjo5KEr65dDlf2fgosVUQ1LUs
+	hCYQnF2zEGYq4TQd7DvUVoo2hMKu7SGy/iS8HfNY7cDOo4H8Z+OOkh1sx//jXw==
+Date: Thu, 20 Aug 2026 01:26:34 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Markus Probst <markus.probst@posteo.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Michael Langer <michael.brainbug.langer@googlemail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Walleij <linusw@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/6] rtc: s35390a: force 24-hour mode
+Message-ID: <20260819232634fd70f621@mail.local>
+References: <20260820-rtc_s35390a_int1-v5-0-5eb4ef85c6a9@posteo.de>
+ <20260820-rtc_s35390a_int1-v5-4-5eb4ef85c6a9@posteo.de>
+ <202608192220436c9c7207@mail.local>
+ <da52511e1257d1a3d01ad78b53eb983162c66003.camel@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da52511e1257d1a3d01ad78b53eb983162c66003.camel@posteo.de>
+X-Last-TLS-Session-Version: TLSv1.3
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-branch HEAD: 146cc263e457ff6055fe7829e4f4f4b0b5d5dd86  Merge tag 'v7.2' of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux into gpio/for-next
+On 19/08/2026 22:57:13+0000, Markus Probst wrote:
+> On Thu, 2026-08-20 at 00:20 +0200, Alexandre Belloni wrote:
+> > On 19/08/2026 22:05:56+0000, Markus Probst wrote:
+> > > Instead of trying to remember the current 12/24-hour mode, which could
+> > > result in time corruption if out of sync, we force the use of the 24-hour
+> > > mode. Set to 24-hour mode if in 12-hour mode on startup and assume
+> > > 24-hour mode. The 24-hour mode is already forced on reset.
+> > > 
+> > > Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> > > ---
+> > >  drivers/rtc/rtc-s35390a.c | 67 +++++++++++++++++++++--------------------------
+> > >  1 file changed, 30 insertions(+), 37 deletions(-)
+> > > 
+> > > diff --git a/drivers/rtc/rtc-s35390a.c b/drivers/rtc/rtc-s35390a.c
+> > > index 575bb256eb25..b34a3f7e8476 100644
+> > > --- a/drivers/rtc/rtc-s35390a.c
+> > > +++ b/drivers/rtc/rtc-s35390a.c
+> > > @@ -64,7 +64,6 @@ MODULE_DEVICE_TABLE(of, s35390a_of_match);
+> > >  
+> > >  struct s35390a {
+> > >  	struct i2c_client *client[8];
+> > > -	int twentyfourhour;
+> > >  };
+> > >  
+> > >  static int s35390a_set_reg(struct s35390a *s35390a, int reg, u8  *buf, int len)
+> > > @@ -181,31 +180,6 @@ static int s35390a_disable_test_mode(struct s35390a *s35390a)
+> > >  	return s35390a_set_reg(s35390a, S35390A_CMD_STATUS2, buf, sizeof(buf));
+> > >  }
+> > >  
+> > > -static char s35390a_hr2reg(struct s35390a *s35390a, int hour)
+> > > -{
+> > > -	if (s35390a->twentyfourhour)
+> > > -		return bin2bcd(hour);
+> > > -
+> > > -	if (hour < 12)
+> > > -		return bin2bcd(hour);
+> > > -
+> > > -	return 0x40 | bin2bcd(hour - 12);
+> > > -}
+> > > -
+> > > -static int s35390a_reg2hr(struct s35390a *s35390a, char reg)
+> > > -{
+> > > -	unsigned hour;
+> > > -
+> > > -	if (s35390a->twentyfourhour)
+> > > -		return bcd2bin(reg & 0x3f);
+> > > -
+> > > -	hour = bcd2bin(reg & 0x3f);
+> > > -	if (reg & 0x40)
+> > > -		hour += 12;
+> > > -
+> > > -	return hour;
+> > > -}
+> > > -
+> > >  static int s35390a_rtc_set_time(struct device *dev, struct rtc_time *tm)
+> > >  {
+> > >  	struct i2c_client *client = to_i2c_client(dev);
+> > > @@ -225,7 +199,7 @@ static int s35390a_rtc_set_time(struct device *dev, struct rtc_time *tm)
+> > >  	buf[S35390A_BYTE_MONTH] = bin2bcd(tm->tm_mon + 1);
+> > >  	buf[S35390A_BYTE_DAY] = bin2bcd(tm->tm_mday);
+> > >  	buf[S35390A_BYTE_WDAY] = bin2bcd(tm->tm_wday);
+> > > -	buf[S35390A_BYTE_HOURS] = s35390a_hr2reg(s35390a, tm->tm_hour);
+> > > +	buf[S35390A_BYTE_HOURS] = bin2bcd(tm->tm_hour);
+> > >  	buf[S35390A_BYTE_MINS] = bin2bcd(tm->tm_min);
+> > >  	buf[S35390A_BYTE_SECS] = bin2bcd(tm->tm_sec);
+> > >  
+> > > @@ -256,7 +230,7 @@ static int s35390a_rtc_read_time(struct device *dev, struct rtc_time *tm)
+> > >  
+> > >  	tm->tm_sec = bcd2bin(buf[S35390A_BYTE_SECS]);
+> > >  	tm->tm_min = bcd2bin(buf[S35390A_BYTE_MINS]);
+> > > -	tm->tm_hour = s35390a_reg2hr(s35390a, buf[S35390A_BYTE_HOURS]);
+> > > +	tm->tm_hour = bcd2bin(buf[S35390A_BYTE_HOURS] & 0x3f);
+> > >  	tm->tm_wday = bcd2bin(buf[S35390A_BYTE_WDAY]);
+> > >  	tm->tm_mday = bcd2bin(buf[S35390A_BYTE_DAY]);
+> > >  	tm->tm_mon = bcd2bin(buf[S35390A_BYTE_MONTH]) - 1;
+> > > @@ -325,8 +299,7 @@ static int s35390a_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
+> > >  	else
+> > >  		buf[S35390A_ALRM_BYTE_WDAY] = 0;
+> > >  
+> > > -	buf[S35390A_ALRM_BYTE_HOURS] = s35390a_hr2reg(s35390a,
+> > > -			alm->time.tm_hour) | 0x80;
+> > > +	buf[S35390A_ALRM_BYTE_HOURS] = bin2bcd(alm->time.tm_hour) | 0x80;
+> > >  	buf[S35390A_ALRM_BYTE_MINS] = bin2bcd(alm->time.tm_min) | 0x80;
+> > >  
+> > >  	if (alm->time.tm_hour >= 12)
+> > > @@ -381,8 +354,7 @@ static int s35390a_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alm)
+> > >  
+> > >  	if (buf[S35390A_ALRM_BYTE_HOURS] & 0x80)
+> > >  		alm->time.tm_hour =
+> > > -			s35390a_reg2hr(s35390a,
+> > > -				       buf[S35390A_ALRM_BYTE_HOURS] & ~0x80);
+> > > +			bcd2bin(buf[S35390A_ALRM_BYTE_HOURS] & 0x3f);
+> > >  
+> > >  	if (buf[S35390A_ALRM_BYTE_MINS] & 0x80)
+> > >  		alm->time.tm_min = bcd2bin(buf[S35390A_ALRM_BYTE_MINS] & ~0x80);
+> > > @@ -459,7 +431,7 @@ static int s35390a_probe(struct i2c_client *client)
+> > >  	unsigned int i;
+> > >  	struct s35390a *s35390a;
+> > >  	struct rtc_device *rtc;
+> > > -	u8 buf, status1;
+> > > +	u8 buf, status1, time[7];
+> > >  	struct device *dev = &client->dev;
+> > >  	struct nvmem_config nvmem_cfg = {
+> > >  		.name = "s35390a_nvram",
+> > > @@ -503,10 +475,31 @@ static int s35390a_probe(struct i2c_client *client)
+> > >  		return err_read;
+> > >  	}
+> > >  
+> > > -	if (status1 & S35390A_FLAG_24H)
+> > > -		s35390a->twentyfourhour = 1;
+> > > -	else
+> > > -		s35390a->twentyfourhour = 0;
+> > > +	if (!(status1 & S35390A_FLAG_24H) && err_read != 1) {
+> > > +		unsigned int hour;
+> > > +
+> > > +		status1 |= S35390A_FLAG_24H;
+> > > +
+> > > +		err = s35390a_get_reg(s35390a, S35390A_CMD_TIME1, time, sizeof(time));
+> > > +		if (err < 0)
+> > > +			return dev_err_probe(dev, err, "reading 12-hour time failed\n");
+> > > +
+> > > +		/* converting to 24-hour time */
+> > > +		time[S35390A_BYTE_HOURS] = bitrev8(time[S35390A_BYTE_HOURS]);
+> > > +		hour = bcd2bin(time[S35390A_BYTE_HOURS] & 0x3f);
+> > > +		if (time[S35390A_BYTE_HOURS] & 0x40)
+> > > +			hour += 12;
+> > > +
+> > > +		time[S35390A_BYTE_HOURS] = bitrev8(bin2bcd(hour));
+> > > +
+> > > +		err = s35390a_set_reg(s35390a, S35390A_CMD_STATUS1, &status1, sizeof(status1));
+> > > +		if (err < 0)
+> > > +			return dev_err_probe(dev, err, "setting 24-hour mode failed\n");
+> > > +
+> > > +		err = s35390a_set_reg(s35390a, S35390A_CMD_TIME1, time, sizeof(time));
+> > > +		if (err < 0)
+> > > +			return dev_err_probe(dev, err, "setting 24-hour time failed\n");
+> > 
+> > No, don't do this, this will break existing users as your conversion may
+> > happen after a minute rollover. The only function in which you are
+> > allowed to change the time registers is set_time. You definitively need
+> > to be able to read 12H mode time but you are allowed to only support
+> > writing 24h time.
+> > 
+> > Also, this is super verbose, adding strings to the kernel makes it
+> > bloated.
+> > 
+> > To avoid any desync, simply test for the S35390A_FLAG_24H bit in status
+> > in s35390a_rtc_read_time as the register is already read anyway.
+> > 
+> I think that would defeat the whole point of the patch, that the rtc is
+> always in 24-hour mode. If this driver was always used with the rtc, it
+> already should be in 24-hour mode, as thats the mode this driver does
+> initialize the rtc.
 
-elapsed time: 1471m
+This assumption may not be true, the RTC may have been initialized by a
+bootloader or a different system in the factory.
 
-configs tested: 217
-configs skipped: 0
+> Your idea would work for the time, but not in combination with alarms.
+> If the rtc could be in 12-hour mode, then this would need to be
+> considered in setting and reading alarm. Also setting 24-hour mode
+> inside set_time would then also require to convert the alarm time.
+> Effectively making it less maintainable than before.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Note that while setting the time when an alarm has been set is not
+forbidden, it is never guaranteed to work anyway. I guess something we
+could do in the core is that whenever the time is set we go over the
+timerqueue and set the alarm again. This would allow to remove the UIE
+disabling/enabling dance.
 
-tested configs:
-alpha                            allnoconfig    gcc-16.1.0
-alpha                           allyesconfig    gcc-16.1.0
-alpha                              defconfig    gcc-16.1.0
-arc                             allmodconfig    gcc-16.1.0
-arc                             allyesconfig    gcc-16.1.0
-arc                           randconfig-001    gcc-11.5.0
-arc                  randconfig-001-20260819    gcc-11.5.0
-arc                  randconfig-001-20260820    clang-24
-arc                  randconfig-002-20260819    gcc-11.5.0
-arc                  randconfig-002-20260820    clang-24
-arm                  randconfig-001-20260819    gcc-11.5.0
-arm                  randconfig-001-20260820    clang-24
-arm                  randconfig-002-20260819    gcc-11.5.0
-arm                  randconfig-002-20260820    clang-24
-arm                  randconfig-003-20260819    gcc-11.5.0
-arm                  randconfig-003-20260820    clang-24
-arm                  randconfig-004-20260819    gcc-11.5.0
-arm                  randconfig-004-20260820    clang-24
-arm64                         randconfig-001    gcc-14.3.0
-arm64                randconfig-001-20260819    gcc-11.5.0
-arm64                randconfig-001-20260819    gcc-14.3.0
-arm64                randconfig-001-20260819    gcc-9.5.0
-arm64                randconfig-001-20260820    clang-24
-arm64                randconfig-002-20260819    clang-17
-arm64                randconfig-002-20260819    gcc-14.3.0
-arm64                randconfig-002-20260819    gcc-9.5.0
-arm64                randconfig-002-20260820    clang-24
-arm64                randconfig-003-20260819    clang-17
-arm64                randconfig-003-20260819    gcc-14.3.0
-arm64                randconfig-003-20260819    gcc-9.5.0
-arm64                randconfig-003-20260820    clang-24
-arm64                randconfig-004-20260819    gcc-14.3.0
-arm64                randconfig-004-20260819    gcc-8.5.0
-arm64                randconfig-004-20260819    gcc-9.5.0
-arm64                randconfig-004-20260820    clang-24
-csky                            allmodconfig    gcc-16.1.0
-csky                 randconfig-001-20260819    gcc-14.3.0
-csky                 randconfig-001-20260819    gcc-9.5.0
-csky                 randconfig-001-20260820    clang-24
-csky                 randconfig-002-20260819    gcc-11.5.0
-csky                 randconfig-002-20260819    gcc-14.3.0
-csky                 randconfig-002-20260819    gcc-9.5.0
-csky                 randconfig-002-20260820    clang-24
-hexagon                       randconfig-001    gcc-11.5.0
-hexagon              randconfig-001-20260819    gcc-11.5.0
-hexagon              randconfig-001-20260820    gcc-14.3.0
-hexagon              randconfig-002-20260819    gcc-11.5.0
-hexagon              randconfig-002-20260820    gcc-14.3.0
-i386                            allmodconfig    gcc-14
-i386                buildonly-randconfig-001    gcc-14
-i386       buildonly-randconfig-001-20260819    gcc-14
-i386       buildonly-randconfig-001-20260820    gcc-14
-i386       buildonly-randconfig-002-20260819    gcc-14
-i386       buildonly-randconfig-002-20260820    gcc-14
-i386       buildonly-randconfig-003-20260819    gcc-14
-i386       buildonly-randconfig-003-20260820    gcc-14
-i386       buildonly-randconfig-004-20260819    gcc-14
-i386       buildonly-randconfig-004-20260820    gcc-14
-i386       buildonly-randconfig-005-20260819    gcc-14
-i386       buildonly-randconfig-005-20260820    gcc-14
-i386       buildonly-randconfig-006-20260819    gcc-14
-i386       buildonly-randconfig-006-20260820    gcc-14
-i386                          randconfig-001    gcc-14
-i386                 randconfig-001-20260819    gcc-14
-i386                 randconfig-001-20260820    clang-22
-i386                 randconfig-002-20260819    gcc-14
-i386                 randconfig-002-20260820    clang-22
-i386                 randconfig-003-20260819    gcc-14
-i386                 randconfig-003-20260820    clang-22
-i386                 randconfig-004-20260819    gcc-14
-i386                 randconfig-004-20260820    clang-22
-i386                 randconfig-005-20260819    gcc-14
-i386                 randconfig-005-20260820    clang-22
-i386                 randconfig-006-20260819    gcc-14
-i386                 randconfig-006-20260820    clang-22
-i386                 randconfig-007-20260819    gcc-14
-i386                 randconfig-007-20260820    clang-22
-i386                          randconfig-011    gcc-14
-i386                 randconfig-011-20260819    gcc-13
-i386                 randconfig-011-20260819    gcc-14
-i386                 randconfig-011-20260820    gcc-14
-i386                 randconfig-012-20260819    gcc-14
-i386                 randconfig-012-20260820    gcc-14
-i386                 randconfig-013-20260819    gcc-14
-i386                 randconfig-013-20260820    gcc-14
-i386                 randconfig-014-20260819    clang-22
-i386                 randconfig-014-20260819    gcc-14
-i386                 randconfig-014-20260820    gcc-14
-i386                 randconfig-015-20260819    clang-22
-i386                 randconfig-015-20260819    gcc-14
-i386                 randconfig-015-20260820    gcc-14
-i386                 randconfig-016-20260819    clang-22
-i386                 randconfig-016-20260819    gcc-14
-i386                 randconfig-016-20260820    gcc-14
-i386                 randconfig-017-20260819    clang-22
-i386                 randconfig-017-20260819    gcc-14
-i386                 randconfig-017-20260820    gcc-14
-loongarch                          defconfig    clang-24
-loongarch            randconfig-001-20260819    gcc-11.5.0
-loongarch            randconfig-001-20260820    gcc-14.3.0
-loongarch            randconfig-002-20260819    gcc-11.5.0
-loongarch            randconfig-002-20260820    gcc-14.3.0
-m68k                         atari_defconfig    gcc-16.1.0
-mips                    cu1000-neo_defconfig    gcc-16.1.0
-mips                          jazz_defconfig    clang-24
-nios2                           allmodconfig    gcc-11.5.0
-nios2                            allnoconfig    gcc-11.5.0
-nios2                randconfig-001-20260819    gcc-11.5.0
-nios2                randconfig-001-20260820    gcc-14.3.0
-nios2                randconfig-002-20260819    gcc-11.5.0
-nios2                randconfig-002-20260820    gcc-14.3.0
-openrisc        de0_nano_multicore_defconfig    gcc-16.1.0
-parisc                          allmodconfig    gcc-16.1.0
-parisc                          allyesconfig    gcc-16.1.0
-parisc                             defconfig    gcc-16.1.0
-parisc                        randconfig-001    clang-24
-parisc               randconfig-001-20260819    clang-24
-parisc               randconfig-001-20260820    gcc-8.5.0
-parisc               randconfig-002-20260819    clang-24
-parisc               randconfig-002-20260820    gcc-8.5.0
-powerpc                        ps3_defconfig    gcc-16.1.0
-powerpc              randconfig-001-20260819    clang-24
-powerpc              randconfig-001-20260820    gcc-8.5.0
-powerpc              randconfig-002-20260819    clang-24
-powerpc              randconfig-002-20260820    gcc-8.5.0
-powerpc                   sam440ep_defconfig    gcc-16.1.0
-powerpc                    sequoia_defconfig    clang-24
-powerpc64            randconfig-001-20260819    clang-24
-powerpc64            randconfig-001-20260820    gcc-8.5.0
-powerpc64            randconfig-002-20260819    clang-24
-powerpc64            randconfig-002-20260820    gcc-8.5.0
-riscv                         randconfig-001    clang-24
-riscv                randconfig-001-20260819    clang-24
-riscv                randconfig-001-20260820    clang-24
-riscv                randconfig-002-20260819    clang-24
-riscv                randconfig-002-20260820    clang-24
-s390                 randconfig-001-20260819    clang-24
-s390                 randconfig-001-20260820    clang-24
-s390                 randconfig-002-20260819    clang-24
-s390                 randconfig-002-20260820    clang-24
-sh                                 defconfig    gcc-16.1.0
-sh                kfr2r09-romimage_defconfig    gcc-16.1.0
-sh                   randconfig-001-20260819    clang-24
-sh                   randconfig-001-20260820    clang-24
-sh                   randconfig-002-20260819    clang-24
-sh                   randconfig-002-20260820    clang-24
-sh                     rts7751r2d1_defconfig    gcc-16.1.0
-sparc                randconfig-001-20260819    gcc-10.5.0
-sparc                randconfig-001-20260820    gcc-13.4.0
-sparc                randconfig-002-20260819    gcc-10.5.0
-sparc                randconfig-002-20260820    gcc-13.4.0
-sparc                      sparc32_defconfig    gcc-16.1.0
-sparc64              randconfig-001-20260819    gcc-10.5.0
-sparc64              randconfig-001-20260820    gcc-13.4.0
-sparc64              randconfig-002-20260819    gcc-10.5.0
-sparc64              randconfig-002-20260820    gcc-13.4.0
-um                   randconfig-001-20260819    gcc-10.5.0
-um                   randconfig-001-20260820    gcc-13.4.0
-um                   randconfig-002-20260819    gcc-10.5.0
-um                   randconfig-002-20260820    gcc-13.4.0
-x86_64              buildonly-randconfig-001    gcc-14
-x86_64     buildonly-randconfig-001-20260819    gcc-14
-x86_64     buildonly-randconfig-001-20260820    gcc-14
-x86_64     buildonly-randconfig-002-20260819    gcc-14
-x86_64     buildonly-randconfig-002-20260820    gcc-14
-x86_64     buildonly-randconfig-003-20260819    gcc-14
-x86_64     buildonly-randconfig-003-20260820    gcc-14
-x86_64     buildonly-randconfig-004-20260819    gcc-14
-x86_64     buildonly-randconfig-004-20260820    gcc-14
-x86_64     buildonly-randconfig-005-20260819    gcc-14
-x86_64     buildonly-randconfig-005-20260820    gcc-14
-x86_64     buildonly-randconfig-006-20260819    gcc-14
-x86_64     buildonly-randconfig-006-20260820    gcc-14
-x86_64                                 kexec    clang-22
-x86_64               randconfig-001-20260819    gcc-14
-x86_64               randconfig-001-20260820    clang-22
-x86_64               randconfig-002-20260819    gcc-14
-x86_64               randconfig-002-20260820    clang-22
-x86_64               randconfig-003-20260819    gcc-14
-x86_64               randconfig-003-20260820    clang-22
-x86_64               randconfig-004-20260819    gcc-14
-x86_64               randconfig-004-20260820    clang-22
-x86_64               randconfig-005-20260819    gcc-14
-x86_64               randconfig-005-20260820    clang-22
-x86_64               randconfig-006-20260819    gcc-14
-x86_64               randconfig-006-20260820    clang-22
-x86_64                        randconfig-011    clang-22
-x86_64               randconfig-011-20260819    clang-22
-x86_64               randconfig-011-20260820    clang-22
-x86_64               randconfig-012-20260819    clang-22
-x86_64               randconfig-012-20260820    clang-22
-x86_64               randconfig-013-20260819    clang-22
-x86_64               randconfig-013-20260820    clang-22
-x86_64               randconfig-014-20260819    clang-22
-x86_64               randconfig-014-20260820    clang-22
-x86_64               randconfig-015-20260819    clang-22
-x86_64               randconfig-015-20260820    clang-22
-x86_64               randconfig-016-20260819    clang-22
-x86_64               randconfig-016-20260820    clang-22
-x86_64                        randconfig-071    clang-22
-x86_64               randconfig-071-20260819    clang-22
-x86_64               randconfig-071-20260820    clang-22
-x86_64               randconfig-072-20260819    clang-22
-x86_64               randconfig-072-20260820    clang-22
-x86_64               randconfig-073-20260819    clang-22
-x86_64               randconfig-073-20260820    clang-22
-x86_64               randconfig-074-20260819    clang-22
-x86_64               randconfig-074-20260820    clang-22
-x86_64               randconfig-075-20260819    clang-22
-x86_64               randconfig-075-20260820    clang-22
-x86_64               randconfig-076-20260819    clang-22
-x86_64               randconfig-076-20260820    clang-22
-x86_64                          rhel-9.4-bpf    gcc-14
-xtensa               randconfig-001-20260819    gcc-10.5.0
-xtensa               randconfig-001-20260820    gcc-13.4.0
-xtensa               randconfig-002-20260819    gcc-10.5.0
-xtensa               randconfig-002-20260820    gcc-13.4.0
+> 
+> Currently s35390a_init does initialize the rtc in 24-hour mode, while
+> not updating s35390a->twentyfourhour. So some change needs to be made.
+> Just setting s35390a->twentyfourhour inside s35390a_init might now be
+> the simplest solution here.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Or maybe simply stop caching the value.
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
