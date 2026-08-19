@@ -1,126 +1,153 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA62B35C1B0;
-	Tue, 18 Aug 2026 19:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893153BED35;
+	Wed, 19 Aug 2026 06:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787081328; cv=none; b=tEXymPE0tIZTQh3tCzAdgK7Lihy3bfE5BP5nuMPB1nND5IDQTC/k4s7aq1TELg0ORAzBfph3Tz0V9SnoEXjRvHf+aH1MBvzuU3YmNg6Dr/qT+JBFrpRqmLm29nK0z576IU3lkpFx5798JH6J6vHJ9ByCNplswF5x0saqGbszfXg=
+	t=1787121191; cv=none; b=j6vaBmFZRAVpKp/EuOuD8C9xc0NEUm118tztoBwRXWgg62kTvlSeTu1eWmG4gthU4HE6nRVrBCS14EctvRCZ73oOrJFiYIBcVK39Hf2lud3cBi/mA76KzxKHEu0aqSFDfCeH5wE2jas5cx6CRQLwv97wwrN65PSLmogCGMAqm5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787081328; c=relaxed/simple;
-	bh=4Vpv5zCLi44iufKU1afO+rmUwyT2htQzjGQNmOfDyYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Eqxhq6Aia/aDAklZxr+uVdwEVfTimxBFMLnpAhKC0VA0d2E18r/p58bbDMrsltLfp1yL5hbn10WkQ7KUeuXe/jBx40bDZalTlJiO2+BX8u+Gpaajlcrue3CZNZ15i2nf51nT50FTVHO/r98+9ktftm0xqEW38dIX30gCrh1fBaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KgDRKWw0; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787121191; c=relaxed/simple;
+	bh=JWowTWLL48ArN+gy1DC64FF7XZDfe0xC2cWtq8be/lU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ENk8SeXe0jQTrmsMA7tsxvSE/DTAakFfVqfixuXjER8+Vk308/FVtplkTAPTKl2vtDA3+vPkSEVbPdQ83vUMVBTIVIwLqeLzU06QmOLmnfiQkok8h2h4/mX/78Gv9PkEO6cvW58wLZ7A4sd04FUJeebx5kHLZoOByI8pAG9Ca4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LDViCpCb; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KgDRKWw0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D10A1F000E9;
-	Tue, 18 Aug 2026 19:28:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LDViCpCb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55DC61F000E9;
+	Wed, 19 Aug 2026 06:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787081327;
-	bh=gBsZ0xwI/Le18b2qGJn/FAvpMBURVFLBFmujAbRyTkU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=KgDRKWw06PAWPw5qGCcc0iYOFW9SZXfNffM8HZ9jYIL9SqRmsBWp+KSmmduq1UYfB
-	 oxnHCtrWoW6vwSNwNhfZJruOuVVVriWKROCZzhlgkP4wcx15UBXQg3AEnghVAVqjNW
-	 4AlMGuJ1xyDdPCi7Qtswd5G5JoQBJ1NAbaNgO09PLyJjJuu13VJohA1mL0D8vlhVjI
-	 2UIzJTKs+pdaChY9kfXg7zKP8Z8xzU9Cfs/aHoOjv1P0aBP0oDFwQ1iHJU36/3Lybc
-	 8q0taZ8XHoAhj0yVTwvMF7SN9gNkGoTk0RX3O/qBZ3TSRshR27VfnEmsnXHxVRzXNx
-	 85pHh+slZSF4A==
-Message-ID: <9f97b734-b92f-425d-920b-2c7ee15a2f9e@kernel.org>
-Date: Tue, 18 Aug 2026 21:28:35 +0200
+	s=k20260515; t=1787121190;
+	bh=Tlw0UXpCBuq3f9nJWEiu2z4H3LwS0KIYrWqNlHzeNAM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=LDViCpCbRk7rn/hj6eAc0ua65YAETCwuya3/6e840pGe5t+tte2/B60LVBbG5yiDE
+	 M5USLndQr94xclK4VGq+dI0S45rAWK9Lf6P0LpO3YHhh57rjlAJCq4eA1GdqX8EUmL
+	 wse/37Ei6LED7vQY4FC8nUNjDnO6j/a8Sg4+WemySq8D6BSV4mctD/aqd6pqVAl2lz
+	 fLLcCR49j66Aspc/EwhcnflXaaDsStgi4uA3Hff7oh+yDndog+Hxz/9AHTTMURAglO
+	 2HXalWZNLDD6twl01W97zGT99x9Wv4Jc9OmErfql7I41v91KVcp7Jha0QVCPXYZeC1
+	 2JMv58b8jGRAg==
+Date: Tue, 18 Aug 2026 23:33:07 -0700
+From: Peter Chen <peter.chen@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Xu Yang <xu.yang_2@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Pavankumar Kondeti <quic_pkondeti@quicinc.com>,
+	Stephen Boyd <stephen.boyd@linaro.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-phy@lists.infradead.org,
+	Greg Kroah-Hartman <gregkh@suse.de>,
+	Peter Chen <peter.chen@nxp.com>
+Subject: Re: [PATCH 05/10] usb: chipidea: msm: support the HSIC asynchronous
+ wakeup interrupt
+Message-ID: <aoVOI0euyCIZq9U7@hu-petche-lv.qualcomm.com>
+References: <20260810-msm8974-usb-hsic-v1-0-e5f93ea76ffa@oss.qualcomm.com>
+ <20260810-msm8974-usb-hsic-v1-5-e5f93ea76ffa@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 03/12] dt-bindings: clock: add Ambarella CV75 RCT
-To: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>,
- Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, Long Zhao <zl020895@163.com>
-References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com>
- <20260818-cv75-v5-v5-3-7bbb12f0360f@ambarella.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260818-cv75-v5-v5-3-7bbb12f0360f@ambarella.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260810-msm8974-usb-hsic-v1-5-e5f93ea76ffa@oss.qualcomm.com>
 
-On 18/08/2026 12:31, Long Zhao via B4 Relay wrote:
-> From: Long Zhao <longzhao@ambarella.com>
+On 26-08-10 18:42:09, Dmitry Baryshkov wrote:
+> The HSIC instances of the chipidea controller runtime-suspend with
+> their clocks gated whenever the bus is empty. HSIC has no VBUS-style
+> connect detection: a device (such as an onboard hub coming out of
+> reset) signals a single connect event, and if the controller is
+> suspended at that moment the connect is never noticed and the device
+> never enumerates.
 > 
-> Document the CV75 RCT clock controller and the clock ID header used by
-> DT consumers.
+> The hardware provides an asynchronous wakeup interrupt that fires on
+> HSIC bus activity while the controller is in low power mode. Pick it
+> up as an optional second interrupt and attach it as a dedicated wake
+> irq of the core device, so the PM core arms it over runtime suspend
+> and resumes the controller when the bus reports activity.
 > 
-> This initial binding describes only the clock-provider functionality.
-> Reset-controller support is outside scope of this series, so #reset-cells
-> property is intentionally omitted.
+> Assisted-by: Claude:claude-fable-5
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>  drivers/usb/chipidea/ci_hdrc_msm.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/drivers/usb/chipidea/ci_hdrc_msm.c b/drivers/usb/chipidea/ci_hdrc_msm.c
+> index 3ab3daa78e34..e28ea87f9898 100644
+> --- a/drivers/usb/chipidea/ci_hdrc_msm.c
+> +++ b/drivers/usb/chipidea/ci_hdrc_msm.c
+> @@ -4,6 +4,7 @@
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/pm_wakeirq.h>
+>  #include <linux/usb/chipidea.h>
+>  #include <linux/clk.h>
+>  #include <linux/reset.h>
+> @@ -173,6 +174,7 @@ static int ci_hdrc_msm_probe(struct platform_device *pdev)
+>  {
+>  	struct ci_hdrc_msm *ci;
+>  	struct platform_device *plat_ci;
+> +	int wake_irq;
+>  	struct clk *clk;
+>  	struct reset_control *reset;
+>  	int ret;
+> @@ -261,6 +263,19 @@ static int ci_hdrc_msm_probe(struct platform_device *pdev)
+>  
+>  	ci->ci = plat_ci;
+>  
+> +	/*
+> +	 * The optional second interrupt is the asynchronous wakeup interrupt
+> +	 * of the HSIC instances: without it a bus connect arriving while the
+> +	 * runtime-suspended controller has its clocks gated is never seen.
+> +	 */
+> +	wake_irq = platform_get_irq_optional(pdev, 1);
+
+You may need to consider error case:
+
+https://lore.kernel.org/all/20260807065619.30604-1-phucduc.bui@gmail.com/
+
+> +	if (wake_irq > 0) {
+> +		device_init_wakeup(&plat_ci->dev, true);
+
+USB wakeup may NOT the same with system wakeup, the user may don't want
+USB event wake system up from suspend. You may consider the solution at:
+see data->wakeup_irq at drivers/usb/chipidea/ci_hdrc_imx.c. 
+
+Peter
+
+> +		ret = dev_pm_set_dedicated_wake_irq(&plat_ci->dev, wake_irq);
+> +		if (ret)
+> +			dev_warn(&pdev->dev, "no wakeup interrupt: %d\n", ret);
+> +	}
+> +
+>  	pm_runtime_set_active(&pdev->dev);
+>  	pm_runtime_no_callbacks(&pdev->dev);
+>  	pm_runtime_enable(&pdev->dev);
+> @@ -279,6 +294,7 @@ static void ci_hdrc_msm_remove(struct platform_device *pdev)
+>  	struct ci_hdrc_msm *ci = platform_get_drvdata(pdev);
+>  
+>  	pm_runtime_disable(&pdev->dev);
+> +	dev_pm_clear_wake_irq(&ci->ci->dev);
+>  	ci_hdrc_remove_device(ci->ci);
+>  	clk_disable_unprepare(ci->iface_clk);
+>  	clk_disable_unprepare(ci->core_clk);
+> 
+> -- 
+> 2.47.3
 > 
 
-You received feedback at v1 or v2. You ignored it. It was reminded you
-at v3. You ignored it.
+-- 
 
-Now you send this again.
-
-NAK, you need to start responding to feedback.
-
-
-Best regards,
-Krzysztof
+Thanks,
+Peter Chen
