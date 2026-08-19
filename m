@@ -1,192 +1,133 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67119478E49
-	for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 14:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E183F39B97F
+	for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 14:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787149701; cv=none; b=tKtyvEGefV6RKbz2GSFv8E+jrRlGqpEqBrECP1ktbT7cRbXjtbOqAcy8TKBhU8IHi2JQ4uzqSisTQWgA7ZYNE0k5Cco/4zLHJr7ubXiyiUxtSIgMDA7XyQI+lvNv6ZSzV+nz383rwylw/3VDISz0TNgTZplMIFpgYIs7Vrs1IaY=
+	t=1787150188; cv=none; b=m1tpb7131jRH61A+AbVR+ROciEuyNZrTwb01GWqqVBle8WBF9W2uIdL8+ZBYcYENQA21X03O4S6On+o8i0S3e0Wa7FBDVHrVkjLb7OMDiTT6Db9B+S+p96CY8qaFdXBVJceYjv/4amGLx+pvkVpahfMt0he87N5VMQcDa5eN6Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787149701; c=relaxed/simple;
-	bh=NdR/r5cs4L7ZRKp84zLL5vTM42zkOs6f/D8Mq7IpFms=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Qij4c1+JKU8Yo3UG67FB88HJds4DmuuvV4/ip/qmawKw5vXsQqnIdPu3LZonqsQr+Qpy1xscURkKhoEfRQOuX5CnZNcimQW1cg/ib5JpIKKFMWManwY85BwmRdBpgwE/PSAOivcCE37qrFBq4c91Wq+rBl7iuqvsFT/nPL21wZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QxLIa+Oi; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1787150188; c=relaxed/simple;
+	bh=z3m6fox0VDL5+p4WGInn9Me43qPCmqPICFvZd8M5Azk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SBri9XFifKNUlgfkCAkcSPFYhsfZ4vi0R1UeK3MKMMVBTQGiO1Op42iGDc+Dq6lkhGf3+YapgDmih0pBdtvRpA7i+GvCqNNLJa7ElkJhWvH2Qrh2qAjOU2TLCnFMY6sMuPdpOODAt0OvU3wQEVJYS1cWZid3XyV2M7jwRhDDpYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=gsrE5JKX; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QxLIa+Oi"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-495437bb891so8557075e9.1
-        for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 07:28:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="gsrE5JKX"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-495757ccbc1so11138585e9.2
+        for <linux-gpio@vger.kernel.org>; Wed, 19 Aug 2026 07:36:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787149687; x=1787754487; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=7un4O3L9YLxIWNurYwHJNMBBiutfCLK9e9so1V1Jlvw=;
-        b=QxLIa+OitKCiehiaW8mxC+S8O9Bk0pLa8p+pHr0hJLiHIUrdvCUDp88yASlfqcV1rl
-         iDACjBiExOwmH3OOSyiszg8ajWnQz7F0aYhZJpe9PrGDFixXOPZUBRrhduN9Sphuhk26
-         BiETZ0eeD28hElYFPhnQ6yocFtdcOHSRbaH4L9iiqiz6gSRxmOo9tmWbKTNQHIyy4y/3
-         ka1FJPYOiOgeGckslYXMo+WNqzNnoBlSaN52ZJc3cImwmMBjobxZ7w3noRdc+awt7SFN
-         f4KR5jVT2gG9M6FlE2HN8lgGRFGhv/qJgWc7/mxn1E2zZpdbqvdYhaoAxVQxCqTl+GoQ
-         46uA==
+        d=tuxon.dev; s=google; t=1787150185; x=1787754985; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=G5yTeyQ1vVAKMn0PJztOwFpeHkqkgo3sW/fF3NuHvjQ=;
+        b=gsrE5JKXPw2lxpRjyJEiaxyPUd1pU8t/0ubzf9j7L/CUXujQi2zmOalOUYsPisha21
+         xFBDX6pAskz6fnYtntzd292CL9DQ3B2cQELsoSgfapRrO1jQxgl5JRpb41ZNu1ZX91cX
+         hsCT31B7STR8s9pHP+Yag3IkC63FWzB56NC2syPIJ6KOi91BKZHKbncBq8fk2zJrSN98
+         ApzAv+ePK07FFh1dgw+fv0zq374G46QmTTRUKi14ljzdSkNU4AcEoPT4kTm6t8jdBoLL
+         44cG5K7TytVkTr5tzekrxNo9DLY1Ii+TjvJfzr67K8Db1DT7ZkUdzIxxR9SU+JwuFpd0
+         DF2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787149687; x=1787754487;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=7un4O3L9YLxIWNurYwHJNMBBiutfCLK9e9so1V1Jlvw=;
-        b=Bqz4mPfwzCry9u0XA0dIqp2NkE2+n1/MIoOTW85G+JadwxEAkctclCAXi+7ZbpwWuc
-         /9CUFFqeHIEygKJJ27P18/L85uXYMGIBPGA2EYG/T8VBjcFtCSOb4CuW44HC3YzeUSHB
-         3yFkK/qXGJrsQssYsuleIrPnmjBc+FzQNmyBTDpBG2tPOZgKd6nvNodxzlPGF9s3Vwh0
-         5NrE8eNaKOa0h86bhXOoHDKcPv+Q8ulhc6VpBd6v9wr7gaEGJuLMfTH30KDIKOOPxfso
-         SDWbefopPpb139idZeoeZZHXvjVULxulZr/pi1s8VYGD31nPcl5/GhdRnzqCHVit8VE2
-         W56A==
-X-Forwarded-Encrypted: i=1; AHgh+Ro7frjZK6v0yYAXgV8bZUws53KgxIhMywHw/hgcXJz/SLXuuyDi+ZEBgGJzUrCmBRK8B7hR9MH2Yezu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/gg9CB/DC1hx14RDYxF5xjtomTnKloKaxWpO+GOgwWzg7zJNB
-	ifVb2k7tQ8rFHeZT46WPEPniT12CB9e18dpmlra8F/XAVJiZ96VsJfJ/
-X-Gm-Gg: AR+sD11kov2/WkZ+HRK2Qqx/dfLX/97BQl6drdAVb6RLJauEAgDK3tpkvtvwVo2pwLZ
-	5FEe6r1lJ4pyGb79DUXebbAu0ttmiibEFhOBvo3d2NUXAFFDsMEfAWCaKRl0yA+2KU1XApJhBw/
-	SOZqRsPOSQrwDJ/I8W7P4serrT7l+qkQ6nqkwjTw3j4lyfPvGg9vv57hqghKuw4Xd742HeCI9t8
-	OhgF4fehqlOzcJorR6d9/2J0lrsNEb/cKJ4VGHtFHtYSiWluFU+zLrsZS7jyw1POtI5LgzyRNmN
-	hIO0UMPmwxGIu+bnyX1jLp9ERawr+AXvGcYBBpozyrdIVo0DHgSOXEa32l/zkT1zn4lVR2wHrvQ
-	bN5Lemtup+6sFoNr1AgosWS2eoxMr9E1XZcZpEk4ebt1N1yFjWkIBuMoMI4ONN/hFO6xublmdHv
-	HVtw0Z5L/Ji/tg5kgK8TXMcdQN1heXesG9g2GE8W+XNoLMWzbNT0IQJAvBcf5EkPgGY4z99k8PK
-	rPG0ShEpVPlxJVs7hAYJJT1kxZrgpgPTgUBLyOw5dZSvnaSj4NjYOM=
-X-Received: by 2002:a05:600c:8b71:b0:499:5f80:83ac with SMTP id 5b1f17b1804b1-499aa100de8mr89119795e9.7.1787149686732;
-        Wed, 19 Aug 2026 07:28:06 -0700 (PDT)
-Received: from localhost (178.43.142.119.ipv4.supernova.orange.pl. [178.43.142.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499a9ddee1esm39709255e9.2.2026.08.19.07.28.05
+        d=1e100.net; s=20251104; t=1787150185; x=1787754985;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=G5yTeyQ1vVAKMn0PJztOwFpeHkqkgo3sW/fF3NuHvjQ=;
+        b=JOIv8XJBvf0qsolvNQCZbnXUffuULaK6Zwz2qlsG0/eolvcc83SsB+ZYKX26paLW8V
+         MhtmoejFV225TwoGa3eV+fC+wPj6gt5G3k7ZO2swxOIS4czob4BHTpwolGyxal+OQItx
+         zAVcpro5AJfPay0/i/QK0G1p90wSB+eYHDR4+0ZVZYY+XfDQSHKGtTmtj0wYuBb1QdNs
+         OKOn2ILe0SGuEm8INtU1EXR8GAasq5KuI77KSztsWcpH8i/Y3EnWccY+w2WNllbIrLNT
+         XSeNceMCDNwaDuH7oum3D/JlazLcEQh/JURjqPISpplTVeqlwWMBXDegE2r/jvYC7ctt
+         w4IQ==
+X-Forwarded-Encrypted: i=1; AHgh+RoYWbcvTvVRsjUvPftV6/7Bnd5k7ehJL0ErroU1M4a5rw07e/3mbjR834QFkEbMix/6sTs8Ewm76bkM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3bK9/lwq2MNoqimLADketqyWTBLnwBacYkRTYX3FdJV7YjehC
+	xPR5Ge3aukQq+DpnP6lcgWK92VALyCd8xKmWjCCx2cvIh7StjJH7xi8pI4v7PlwZZOE=
+X-Gm-Gg: AR+sD13HgED0NqAfWNhlpaMor9CJRxPE9eWW/NgjISpXaaDRj4o7zLRSm763Vw2dA9o
+	G89uW/7l1pIWE2HGnP3/5MXRStEoz1BdIZ7ln0bvN9z5LSMY0jZmTHOQ17wNylb51y80+QZ2Knw
+	ml51h5gj4pwxY0P/7xcK15kXUNZS6qQnRbPsCeHVyhpnPFhm/2hbTswDdQ3fc7G7PVpu+asjWhG
+	Kx9iWP/AOtzqFlG8uMZG/lKvskh3CSdFDNx4eFZzMWoW5dws00qN0Dur+smkL9+rdqUXTtiTdWk
+	RWsxyD8iEG9ont8rlTzGzR9WTPh9A08UBkWuj1Kkw2M65AaTpfrrmkXAgEA8voZGKAdzXq7TT0E
+	CW/6Osd1SP6yYb0J6+d5fTSVkvcHsOgOgMuOJvREkJ4k804oba+GyZW0yXx1u971vIN8dmM3a75
+	QxNSt/e/H1H/MdJSCfNx92UKitdUvdSNCQP17kMOcgCLikq3Ac8lJOhFjI9FJWAJ3/0DooKcrmq
+	7ToJsOQHf5tkgxsyHQj6/1GUXZMJ8O6Mvn/xschvzSSshHV985fVTD1bB5b
+X-Received: by 2002:a05:600c:4eca:b0:496:c1f3:e8f8 with SMTP id 5b1f17b1804b1-499aa1a7a53mr81886955e9.7.1787150185026;
+        Wed, 19 Aug 2026 07:36:25 -0700 (PDT)
+Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([2a02:2f04:6400:1700:e978:dd1f:393f:9962])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499a9e37284sm32671235e9.4.2026.08.19.07.36.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Aug 2026 07:28:05 -0700 (PDT)
+        Wed, 19 Aug 2026 07:36:24 -0700 (PDT)
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+To: geert+renesas@glider.be,
+	linusw@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	magnus.damm@gmail.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com
+Cc: claudiu.beznea@tuxon.dev,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v5 0/5]  pinctrl: renesas: rzg2l: Add support for RZ/G3S I3C
+Date: Wed, 19 Aug 2026 17:35:48 +0300
+Message-ID: <20260819143553.2478984-1-claudiu.beznea+renesas@tuxon.dev>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 19 Aug 2026 16:21:14 +0200
-Message-Id: <DKSZJMQ4KJ2W.1HB8IJEZ9WDFX@gmail.com>
-Cc: <mitrutzceclan@gmail.com>, <linux-media@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-staging@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
- "Martin Hecht" <Martin.Hecht@avnet.eu>, "Andrian Suciu"
- <Adrian.Suciu@analog.com>, "Cosmin Tanislav" <demonsingur@gmail.com>
-Subject: Re: [PATCH v15 16/22] media: i2c: maxim-serdes: add MAX96717 driver
-From: "Artur Andrzejczak" <andrzejczak.artur@gmail.com>
-To: "Dumitru Ceclan" <dumitru.ceclan@analog.com>, "Tomi Valkeinen"
- <tomi.valkeinen+renesas@ideasonboard.com>, "Mauro Carvalho Chehab"
- <mchehab@kernel.org>, "Sakari Ailus" <sakari.ailus@linux.intel.com>,
- "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>, "Julien Massot"
- <julien.massot@collabora.com>, "Rob Herring" <robh@kernel.org>,
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>
-X-Mailer: aerc 0.21.0
-References: <20260807-gmsl2-3_serdes-v15-0-7212e9e5156a@analog.com>
- <20260807-gmsl2-3_serdes-v15-16-7212e9e5156a@analog.com>
-In-Reply-To: <20260807-gmsl2-3_serdes-v15-16-7212e9e5156a@analog.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-I only went through the clock, pinctrl and CSI-2 lane code, not the
-whole patch.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-On Fri Aug 7, 2026 at 3:02 PM CEST, Dumitru Ceclan wrote:
-> [...]
-> +	{ "maxim,jitter-compensation", MAX96717_PINCTRL_JITTER_COMPENSATION_EN,=
- 0 },
+Hi,
 
-The automated review already raised this: maxim,jitter-compensation is a
-boolean in the binding, so the property is present but zero length.
-Reading a zero-length property as a u32 gives -EOVERFLOW.
-pinconf-generic treats only -EINVAL as absent and substitutes the
-default above on any other error, so 0 lands.
-max96717_conf_pin_config_set_one() then takes the arg ? en_val : ~en_val
-branch with arg =3D=3D 0 and clears the bit. That means the property for
-enabling jitter compensation never sets this bit, and nothing else in
-the driver sets it either. Giving it a value does not help, since
-maxim,jitter-compensation =3D <1> is rejected by the schema.
-pinctrl-k210.c uses 1 for its boolean params. Should the default value
-here be 1 as well?
+Series adds pinctrl support for the I3C on Renesas RZ/G3S SoC. For a
+clean I3C support, cleanup patches for the pinctrl driver were also
+included.
 
-> [...]
-> +	/* Configure a lane count. */
-> +	ret =3D regmap_update_bits(priv->regmap, MAX96717_MIPI_RX1,
-> +				 MAX96717_MIPI_RX1_CTRL_NUM_LANES,
-> +				 FIELD_PREP(MAX96717_MIPI_RX1_CTRL_NUM_LANES,
-> +					    num_data_lanes - 1));
+Thank you,
+Claudiu
 
-max96717_init_phy() calculates num_data_lanes - 1 without
-checking for zero. The binding requires data-lanes, so this needs a
-non-conforming DT, but the driver removed in patch 21 still rejected it
-with "Invalid data lanes must be 1 to 4". Here num_data_lanes remains 0
-and the write sets 0b11, so the count becomes four, silently.
-max_ser_find_phys_config() compares num_data_lanes against the single
-{ 4 } entry in max96717_phys_configs, so zero passes there too. The
-automated review asked about the upper bound on this line, this is the
-lower one. Shall the range check come back?
+Changes in v5:
+- collected tags
+- addressed the improvements review comments
+- added patch "pinctrl: renesas: rzg2l: Unify the power source handling";
+  as a result, patch "  pinctrl: renesas: rzg2l: Add RZ/G3S support for
+  selecting the I3C power source" was changed
+- dropped device tree patch since it was already applied
 
-> [...]
-> +	val =3D FIELD_PREP(MAX96717_REF_VTG0_REFGEN_PREDEF_FREQ,
-> +			 predef_freq->val);
-> +
-> +	if (predef_freq->is_alt)
-> +		val |=3D MAX96717_REF_VTG0_REFGEN_PREDEF_FREQ_ALT;
-> +	if (!predef_freq->is_rclk)
-> +		val |=3D MAX96717_REF_VTG0_REFGEN_EN;
-> +
-> +	val |=3D MAX96717_REF_VTG0_REFGEN_RST;
-> +
-> +	ret =3D regmap_write(priv->regmap, MAX96717_REF_VTG0, val);
+Changes in v4:
+- dropped patch 1 from v3 as it was already applied
 
-max96717_clk_set_rate() sets REFGEN_PREDEF_FREQ and its ALT bit, but not
-the predefined frequency enable bit. The REF_VTG0 defines stop at
-PREDEF_FREQ. Bit 6 is not part of the composed value, and this is a full
-regmap_write(), so the write clears it. The driver removed in patch 21
-sets REFGEN_PREDEF_EN (BIT(6)) in its own write of that register, with
-the same encodings for the six rates the two tables share. Currently,
-that bit is left 0 on every rate that goes through REFGEN, including the
-24 MHz default programmed at probe. The datasheet has REFGEN_PREDEF_EN
-reset to 1, and describes REF_VTG4/5 as the feedback divider fraction
-used when predefined mode is disabled, which this driver never writes.
-Was that on purpose, or should it be set here too?
+Changes in v3:
+- collected tags
+- added a fixes patch (patch 1/6)
+- dropped already applied patches
 
-> [...]
-> +static int max96717_register_clkout(struct max96717_priv *priv)
-> +{
-> +	struct device *dev =3D &priv->client->dev;
-> +	struct clk_init_data init =3D { .ops =3D &max96717_clk_ops };
-> +	int ret;
-> +
-> +	ret =3D max96717_mux_set_rclkout(priv, MAX96717_RCLK_MFP);
-> +	if (ret)
-> +		return ret;
+Changes in v2:
+- collected tags
+- dropped patches for configuring I3C standby
 
-max96717_register_clkout() routes RCLKOUT to mfp4 and sets that pin to
-the fastest slew rate. It runs after max96717_gpiochip_probe(), which
-calls pinctrl_enable(), so at that time the pin setup from the max96717
-node itself has already been applied. The binding in patch 03 allows
-function =3D "rclkout" on mfp2, so a config that asks for the RCLK there
-gets it, but loses it a few lines later: max96717_mux_set_rclkout()
-clears RCLK_ALT for any group other than mfp2. A slew rate set on mfp4
-is overwritten the same way. Should this leave alone a mux state that
-pinctrl has already selected?
+Claudiu Beznea (5):
+  pinctrl: renesas: rzg2l: Generalize the power source code
+  pinctrl: renesas: rzg2l: Drop defines present in struct rzg2l_hwcfg
+  pinctrl: renesas: rzg2l: Unify the power source handling
+  dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Document the missing I3C
+    power source option
+  pinctrl: renesas: rzg2l: Add RZ/G3S support for selecting the I3C
+    power source
 
-Moreover, the driver names seven slew fields for eleven pins. The
-binding allows slew-rate on every pin, but max96717_get_pin_config_reg()
-returns -EINVAL for it on mfp5, mfp6, mfp9 and mfp10, so a slew-rate
-that passes the schema on one of those four makes pinctrl_select_state()
-fail. Another device pointing its pinctrl-0 at such a node fails to
-probe, since pinctrl_bind_pins() returns -EINVAL. On the max96717 node
-itself it does not: pinctrl_claim_hogs() logs the error and returns 0.
-Either way pinctrl_commit_state() stops at the failing setting, so the
-pin configs after it are never applied. Table 13 in the datasheet lists
-no pin slew for mfp5, mfp6, mfp9 and mfp10, so the driver looks right
-here. Should the binding restrict slew-rate to the seven pins that have
-the field?
+ .../pinctrl/renesas,rzg2l-pinctrl.yaml        |   2 +-
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       | 313 ++++++++++++------
+ 2 files changed, 216 insertions(+), 99 deletions(-)
 
-Kind Regards,
-Artur Andrzejczak
+-- 
+2.43.0
 
