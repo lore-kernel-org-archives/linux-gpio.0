@@ -1,57 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE43304BB2;
-	Wed, 19 Aug 2026 06:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E99F3A1D14;
+	Wed, 19 Aug 2026 06:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787122105; cv=none; b=p+l+qXC5kvB2Rr8hMEH/UpZRf9G9tOGEnuqhjMQEMHChgz8vIdnaBzGOrG9Z8s1r2ooHiGaG+aBwE6FsG88uyHhLG0AKbYHi5ZuZ8qoNrXo3jfXkNk56crpV5UFqZ8yAhVlDlpwkGO8/XSO3E6Ysq+0RQGuYzx6u9gLg9LCjmME=
+	t=1787122222; cv=none; b=jGf+f7376vfYtRL7J9ticwfEWvPbIiTAYY1lMnjmHZwUMbu1wC0wIUAsEVPiITuH5g5T1ACnY+avoFHbRdwv4kFGXYAf6qlQbcY1Ud+Av3IaR7bDY8X6t0Ua+q5ArxnFPIFSIyMnG4mTHHwcQFIhJVGdq/WMtiSXhXtHVJSJ05k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787122105; c=relaxed/simple;
-	bh=wQHyLGESPH68wY+d+xwMRFArrHAFi+T8zmfJlOR20Bs=;
+	s=arc-20240116; t=1787122222; c=relaxed/simple;
+	bh=izjKXIFxi/rqtVADf2M0sBpedoa8cJQqW1TXF55iZ3A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O/XSdQnl4sz4V9WSNcB+LV+PW6GmLv0rdZ7f58p/zWrUHI+ke/C8niz1N7DFM+DLy2SI23hpCVb1Dp1+wEq1W/oMZkIk1LrN29HonYDl14PEXt17NV5hbSs0jkXCaM8+ouf66yerfvUdHWuemNRydsj3eKafCoR2OrHrzAsfuQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxY2Ggte; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dqla9THKX6A51jJmgiAHWITUYRXSn01tGXVXtnzXyYXIumfbDZ6Wx+2XBUjTO52Oi8cFcEI37JKtCvuSV0t48rjG3yfyC7AeP++x/Ua6U+V9rxlCDwLnx1BxMQfAIXyRYN0a6s0meJTZohciGgQwdM7Q33Jw/FrwlzyN0Lf/tuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mM2knBFF; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxY2Ggte"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F741F000E9;
-	Wed, 19 Aug 2026 06:48:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787122104;
-	bh=zNiG1hgVV74gYmbP47bMIwtTyThAgGJICdsIfO9pDjI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=nxY2Ggte4S1bF6/f428LBhplxCT6ASV6xQzgpd+UYdYOhF8TKGkAzNkK/N2pCORud
-	 a214lyWlwvptxVPyHJs93o00h28j03xbo0CQRNEwgNCOt1hxn6ZQMPTKpVOh0MwgZD
-	 q9bKkI3mb80wRs5Lz6LqCPORa2Aeu/WbPgnIQw3arOetM1KNFt/NZhFXLz7a5ADFw2
-	 mGfc7pNWRcOXfC13MwJGh0lLy8Jy2l8gzKK1SYiharNVeVJCBCoiXfK9XwmsREyD2F
-	 84/Wry6GutpJ4Rm4w93K2/GT1tCDfH5dmDC8TP+V6R9hHS758n5riEn3Bd+K6acVqi
-	 OfV2RL8v5YgvQ==
-Date: Tue, 18 Aug 2026 23:48:22 -0700
-From: Peter Chen <peter.chen@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mM2knBFF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1787122220; x=1818658220;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=izjKXIFxi/rqtVADf2M0sBpedoa8cJQqW1TXF55iZ3A=;
+  b=mM2knBFFGFqRysWIHnSptxhOBFC+LXIi80JPCfgkdfkKLIoEYPhmQ7GA
+   6gWqROSJjYy++GloTHxBIgpIKpxkOz0ii+7nY7Uf1c7EdtAEgs8EgGjuy
+   JpeLaiwhmYlMyVEwniPHJI5N49809VZZ//ObLiyKV2fGxHFPrIt/AqOBp
+   LKqmLvcqYTXzaSn/iHok6jMvzJnCydtwQjV/n2QKskde23rJYr7BibVzj
+   UzTekMdd2p/o2vqZ6CR3P4TOl+06D7slcgt7bNQPdCY7Nn6tgxVYIGuFi
+   dc1KKRg06tnsKl/5/nuFzT5LrFSeJHFHDdCc9xfvF2OM0vLhQ+TtHXuM2
+   g==;
+X-CSE-ConnectionGUID: phjZPAoNQD6TRGLD3KInAw==
+X-CSE-MsgGUID: BiFBqsA9SeeqCHfqNJ7V3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11879"; a="87829334"
+X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; 
+   d="scan'208";a="87829334"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2026 23:50:20 -0700
+X-CSE-ConnectionGUID: H1XQ80vSTXqXbOh+BrnsQw==
+X-CSE-MsgGUID: QSkiNZ14S62aTkp1BIOMog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; 
+   d="scan'208";a="268965440"
+Received: from amilburn-desk.amilburn-desk (HELO localhost) ([10.245.244.106])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Aug 2026 23:50:14 -0700
+Date: Wed, 19 Aug 2026 09:50:11 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: zl020895 <zl020895@163.com>
+Cc: longzhao <longzhao@ambarella.com>, Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	soc <soc@lists.linux.dev>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Xu Yang <xu.yang_2@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Pavankumar Kondeti <quic_pkondeti@quicinc.com>,
-	Stephen Boyd <stephen.boyd@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-phy@lists.infradead.org,
-	Greg Kroah-Hartman <gregkh@suse.de>,
-	Peter Chen <peter.chen@nxp.com>
-Subject: Re: [PATCH 07/10] usb: chipidea: msm: do not force the TX FIFO idle
- on HSIC instances
-Message-ID: <aoVRtt186dVs1sG1@hu-petche-lv.qualcomm.com>
-References: <20260810-msm8974-usb-hsic-v1-0-e5f93ea76ffa@oss.qualcomm.com>
- <20260810-msm8974-usb-hsic-v1-7-e5f93ea76ffa@oss.qualcomm.com>
+	Jiri Slaby <jirislaby@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-gpio <linux-gpio@vger.kernel.org>,
+	linux-serial <linux-serial@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Brian Masney <bmasney@redhat.com>, Lee Jones <lee@kernel.org>,
+	mfd <mfd@lists.linux.dev>
+Subject: Re: Re: [PATCH v5 10/12] serial: 8250: add Ambarella UART driver
+Message-ID: <aoVSI4xcpRqUZIew@ashevche-desk.local>
+References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com>
+ <20260818-cv75-v5-v5-10-7bbb12f0360f@ambarella.com>
+ <aoRpc2RK2_X3CdAi@ashevche-desk.local>
+ <162c0385.2c076.1a018b82fa7.Coremail.zl020895@163.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -60,46 +82,69 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260810-msm8974-usb-hsic-v1-7-e5f93ea76ffa@oss.qualcomm.com>
+In-Reply-To: <162c0385.2c076.1a018b82fa7.Coremail.zl020895@163.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 26-08-10 18:42:11, Dmitry Baryshkov wrote:
-> The controller reset handler unconditionally clears
-> GENCONFIG[TXFIFO_IDLE_FORCE_DIS] as a workaround for an RX buffer
-> collision issue. The vendor HSIC host driver never applies this
+On Wed, Aug 19, 2026 at 02:31:59PM +0800, zl020895 wrote:
 
-Why you said "vendor", it is just CI MSM glue driver.
+> This is Ambarella 8250-compatible IP, not Synopsys DesignWare. We
+> first tried 8250_dw after Linus asked us to move to the 8250 library;
+> you then told us not to touch 8250_dw and to use 8250_ambarella
+> instead. That is what this patch is.
+> Background:
+> https://lore.kernel.org/r/CAD++jLm6HzEU1TM-c=Vtjv3FJEBecVP7TyxSgq_Q0zF-YwT6NA@mail.gmail.com/
+> https://lore.kernel.org/linux-serial/an8KvvHWX0naH3Xw@ashevche-desk.local/
+> https://lore.kernel.org/linux-serial/7E774305-3920-4BB7-BA46-E0772D6BED84@ambarella.com/
+> I will also switch to uart_read_port_properties() and trim the
+> 8250_dw-derived boilerplate.
 
-> workaround on the HSIC instances and leaves the bit at its power-on
-> default (set), so clearing it makes the HSIC instance diverge from the
-> known-working configuration.
+But it has layout like Synopsys? Do you have a link to the datasheet?
+
+> ---- Replied Message ----
+> | From | Andy Shevchenko<andriy.shevchenko@linux.intel.com> |
+> | Date | 08/18/2026 22:17 |
+> On Tue, Aug 18, 2026 at 06:31:24PM +0800, Long Zhao via B4 Relay wrote:
 > 
-> Skip the workaround for HSIC instances, like the neighbouring
-> GENCONFIG_2 write already does.
+> > Add an 8250 platform driver for Ambarella CV75 instead of claiming
+> > snps,dw-apb-uart compatibility.
 > 
-> Fixes: 47654a162081 ("usb: chipidea: msm: Restore wrapper settings after reset")
-> Assisted-by: Claude:claude-fable-5
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  drivers/usb/chipidea/ci_hdrc_msm.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+> This is a record from a changelog. There is nothing in the commit message.
+> ...
 > 
-> diff --git a/drivers/usb/chipidea/ci_hdrc_msm.c b/drivers/usb/chipidea/ci_hdrc_msm.c
-> index 9a9410a814e5..69be194f8e27 100644
-> --- a/drivers/usb/chipidea/ci_hdrc_msm.c
-> +++ b/drivers/usb/chipidea/ci_hdrc_msm.c
-> @@ -108,8 +108,9 @@ static int ci_hdrc_msm_notify_event(struct ci_hdrc *ci, unsigned event)
->  		hw_write_id_reg(ci, HS_PHY_AHB_MODE, 0xffffffff, 0x8);
->  
->  		/* workaround for rx buffer collision issue */
-> -		hw_write_id_reg(ci, HS_PHY_GENCONFIG,
-> -				HS_PHY_TXFIFO_IDLE_FORCE_DIS, 0);
-> +		if (!msm_ci->hsic)
-> +			hw_write_id_reg(ci, HS_PHY_GENCONFIG,
-> +					HS_PHY_TXFIFO_IDLE_FORCE_DIS, 0);
+> The code seems like an almost blind copy of 8250_dw.c.
+> 
+> > +#define AMBARELLA_UART_USR        0x1f
+> > +#define AMBARELLA_UART_USR_BUSY        BIT(0)
+> 
+> So, is it Synopsys IP-based design? How this gets into this platform? This
+> whole story completely made me lost.
+> 
+> > +#define AMBARELLA_UART_IIR_IID        GENMASK(3, 0)
+> > +#define AMBARELLA_UART_IIR_STATUS    GENMASK(5, 0)
 
-So, it should be a standalone bug fix?
+...
+
+> > +    of_property_read_u32(dev->of_node, "reg-shift", &reg_shift);
+> > +    of_property_read_u32(dev->of_node, "reg-io-width", &reg_io_width);
+> > +    uart.port.regshift = reg_shift;
+> 
+> > +    switch (reg_io_width) {
+> > +    case 4:
+> > +        uart.port.iotype = UPIO_MEM32;
+> > +        uart.port.serial_in = ambarella_serial_in;
+> > +        uart.port.serial_out = ambarella_serial_out;
+> > +        break;
+> > +    default:
+> > +        return dev_err_probe(dev, -EINVAL,
+> > +                     "unsupported reg-io-width %u\n",
+> > +                     reg_io_width);
+> > +    }
+> 
+> This is handled by uart_read_port_properties().
 
 -- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks,
-Peter Chen
+
