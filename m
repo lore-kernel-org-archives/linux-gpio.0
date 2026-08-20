@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96342EBDE9;
-	Thu, 20 Aug 2026 06:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B073AAF7F;
+	Thu, 20 Aug 2026 06:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787207641; cv=none; b=NMSSlmww897/c0igSCkghwLOfXvGoLtWx3OQynJIivsHsoBQDelBU2gnf/knT95CRpTzn8UoakBxl0P7UkI9F3zYROcUNwwzuHWNjsXoQQyj965HmypFXAV0lZ95DhCz8vdul8Xjhobw9HiV/hFJM2K4DkWfp9lMcw0lvkXFAU4=
+	t=1787207832; cv=none; b=btkwMbceZfmCI0iH8GGnVCo+Q9cHYdM5t+xyH2cMnWxQ53eDm55HZuU22qM5XM9rArOdtWJLx0OfIdUuUp5k03cPa7gdWMhM+WlIxz08Ub10Gu5hyxH1cNqAyR6+XgR6V2am2CA4uh197yRJ3Bx52ig/IlHAIHU/oU5xydKc8Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787207641; c=relaxed/simple;
-	bh=i2IfvybPXQN8HxOaIEpopMFy2nqWKK0MkaIhAgFy4CI=;
+	s=arc-20240116; t=1787207832; c=relaxed/simple;
+	bh=twd2hSp8RXg3LcsDoxYwRo7i50y6T+ujr1ovcDjawE0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDjEFRFIXRZ+MItQXyHFHTVZLiyuolu/E09UV45IMv+5QBXZWSWaYHvdFXSBWaxUceFqH63urEkJYBPnY7ssxX3ZpS0jPsIZYdN4ZNWxjCiJPeLriTLnl6IJulBhTDkI0qqL0I3PQUHneUxwyMYPsXlINTSzIsl1uj2jFCp05Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEV5IBYz; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=kkevvLIw39tsg/C0fDIxB7cGVajmCH/ifuz9se9tRlow/XgTe0SswmKYNTi3IeQKqqypRWUH2SLdzOlNWFGfxWMYLwfsmlCKvJymT82xB1I73u2svKDCzsb/tREOZK/1UTx5neGJDnNGjZRBPeDBTxxtoWpAWnLeIy5M7aQoKag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ok/DAA3e; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEV5IBYz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 551EF1F000E9;
-	Thu, 20 Aug 2026 06:33:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ok/DAA3e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36C161F000E9;
+	Thu, 20 Aug 2026 06:37:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787207639;
-	bh=pD0WGepCub8+i5e1jJFZFXcaekgCTPD8PN9ZPkEAxKU=;
+	s=k20260515; t=1787207831;
+	bh=twd2hSp8RXg3LcsDoxYwRo7i50y6T+ujr1ovcDjawE0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EEV5IBYz2sQWJcppHKtA/neiMzJ8dzTcX9gTn+cla5ZDnw1X9SGDDTAheeNnsJ5yC
-	 KVSPTvmErc/gyeXhnEFzeV19QOcyqHOp6JyphfJsaIlXT2XfYPb+ZGXc8eT8ZmFEQV
-	 4HqMQPfKauWSbgS6yWmck4PIsan1kxcOy0rormH/e0MXbDkLrL3Pkij93QUf/8bc53
-	 baov8xWkYJvFmH9UNjAhGMwfCPAPm+GMEfsYBKJgSsMQh4rdkAO8rlGUNkQnNH0cou
-	 mSxn0E5Ry9anTXI8qyd0nM1Kx2+LLc/mgWf0VFh4bhTToC7Wef+gDhrBa3LMlaIxt3
-	 A/iymAZ0o4OmA==
-Date: Thu, 20 Aug 2026 08:33:55 +0200
+	b=Ok/DAA3eMFFl3/EWYXUD2twPDDVgtQwMkJXiHJGNHh6Eo32qhZeSj4aUxialCU/8s
+	 HWLYoqylq1c3LnfmcHEsE5X0hABdyMlXeutQWGqdKMGbLjwS2YAELUV6OHblo1oq3B
+	 nw7mWKvG+WknE7khshEXgzsiomzLJkPINLEkEFQNewgYzEx2nCxeh9RyWjpqVEW2k6
+	 g9MBuNJIWXZCYo4X2YLdMQGqvzFEqtoeEfI0bCYR3oh9+IOUbHpyKXI9inxtjxp7f/
+	 dOF7ZxrsYY6wyU6cOHPMi3p+nMftlHDrBub3VkBVXPCwF4wJPZqHI8njlS3nshnDqf
+	 DiWAf/FcdlLmg==
+Date: Thu, 20 Aug 2026 08:37:07 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Cc: Bartosz Golaszewski <brgl@kernel.org>, 
@@ -39,11 +39,11 @@ Cc: Bartosz Golaszewski <brgl@kernel.org>,
 	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-phy@lists.infradead.org, 
 	Greg Kroah-Hartman <gregkh@suse.de>, Peter Chen <peter.chen@nxp.com>
-Subject: Re: [PATCH 02/10] dt-bindings: usb: ci-hdrc-usb2: allow the HSIC PHY
- as the ULPI child
-Message-ID: <20260820-optimistic-merry-mussel-9efbc0@quoll>
+Subject: Re: [PATCH 01/10] dt-bindings: pinctrl: qcom,tlmm-common: allow
+ functions on the HSIC pins
+Message-ID: <20260820-handsome-vehement-buzzard-07fc64@quoll>
 References: <20260810-msm8974-usb-hsic-v1-0-e5f93ea76ffa@oss.qualcomm.com>
- <20260810-msm8974-usb-hsic-v1-2-e5f93ea76ffa@oss.qualcomm.com>
+ <20260810-msm8974-usb-hsic-v1-1-e5f93ea76ffa@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -52,27 +52,16 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260810-msm8974-usb-hsic-v1-2-e5f93ea76ffa@oss.qualcomm.com>
+In-Reply-To: <20260810-msm8974-usb-hsic-v1-1-e5f93ea76ffa@oss.qualcomm.com>
 
-On Mon, Aug 10, 2026 at 06:42:06PM +0300, Dmitry Baryshkov wrote:
-> The Qualcomm HSIC USB PHY (qcom,usb-hsic-phy.yaml) is a ULPI device: its
-> driver is a ulpi_driver, so the PHY node must be a child of the chipidea
-> controller's ulpi node. The ci-hdrc-usb2 schema however hard-codes the
-> ULPI phy child to the qcom,usb-hs-phy.yaml schema, so any HSIC
-> controller instance fails validation with bogus clock/reset/compatible
-> errors.
-> 
-> Allow the ULPI phy child node to match either the HS PHY or the HSIC
-> PHY schema.
-> 
-> Assisted-by: Claude:claude-fable-5
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml | 4 +++-
-
-USB patches must be separate.
-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+On Mon, Aug 10, 2026 at 06:42:05PM +0300, Dmitry Baryshkov wrote:
+> The common TLMM state schema requires the function property for GPIO
+> pins and forbids it for all special pins. That rule is wrong for the
+> MSM8974 HSIC pads: unlike the SDC pads, hsic_data and hsic_strobe are
+> muxable pin groups (between the gpio and hsic_ctl functions, see
+> HSIC_PINGROUP in pinctrl-msm8x74.c), and the msm8974 schema already
+> lists hsic_ctl in its function enum. As a result any valid HSIC
+> pinctrl state fails validation.
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
