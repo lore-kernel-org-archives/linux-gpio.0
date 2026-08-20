@@ -1,84 +1,131 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57B043F4DA;
-	Thu, 20 Aug 2026 12:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C1843F0B7
+	for <linux-gpio@vger.kernel.org>; Thu, 20 Aug 2026 12:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787228757; cv=none; b=jZM8jFCniLJlwL/YGlWDkZ9s4+sfqIXOhJbtuty8AoLsyhs+Oh+V/Hmm/4y7BaZyoV64vOqM8SoRfIraWO5DgAzYmdGRZ2Xrexsy+cNxBmcxIxRew/L1htIIl0p/ORAN/u0Lel9BlESUaXKp7hF6ecU2vHY3YRLsvDVg8LQWfzM=
+	t=1787228766; cv=none; b=U1O9/QC7fejIF3M9Jr3thwt0NQ1QkYOmqfvqluDAxNgm+rtkkWG+I2UtB4F0ugSH1h4JnEG6tGRsTG34ib65NzYiY0yX4k743GX78StCBxpqjwfEeAGDIPXSP80SRXJotLD3qnKLV+VtAkvF1U8h3LKSzlJQ2fn1EUvMsyDt+w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787228757; c=relaxed/simple;
-	bh=uTNLyswJdwJULKL+jsklTzg/ST0iMnNONutfEMVGGH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cp7KVnw77X2SvQl0jAqTaJL0h50uVz4D0uLXSAySLVhHdsOge0revEKeqSTeab3esDxdDeC89XswycB6TQTUr+Lyk1Dx3uFUsa39v3Gx8/45LIiopCVpEibfaienxwh2DkIk4zRf9z5GNa0BaNsKWSMkCVCgOSF4mDqB8hQ5Vvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=0LQiG2/z; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1787228766; c=relaxed/simple;
+	bh=UGIM3aTui+shPbVvhLT3b5f6OpTvEv4JPJold/DY6lA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rCLBNxaGylRrysx+dnqvnsrrht2YZzqazgYwd1e/J6VyqCBvsBe9OsE27Bv+TxhKYBSVQ6O5bvdmVysRpECVQEImhBvnaYeaVS+IGVBtagkHQ7tyqpveo7Q6GV7gh7WekGFnbArGIPzFUpOsmgR2xChyNiUZCqQHw8T1btPBDSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=smH3jAQh; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="0LQiG2/z"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
-	Reply-To:Content-ID:Content-Description;
-	bh=sH2Hz7vQyOp3tVLowWA2S7WAT1Eob61l1V2mpIugraY=; t=1787228755; x=1788438355; 
-	b=0LQiG2/zaEWnPkPBwmbDuHOQZcpj2+/SUA6QaOtwmtLfO1AaB95tPjXyNFbFyuYm3Z4aGMmEh0R
-	LYlsW7LklG93SU/yoWwsnDWFPkjxkQ5iSCuv1DIphZyphM08y73JPsghB71EUDLjTcp8RcO76+ar5
-	exzs7QI7sh1WRx78+NYNIGk6L5/3fIlATWx+wlWDCRUtAl8UyDU2R7GvglVQ0Q1bdKnbnPSJmqyyC
-	T1T/XgkM9Qnsz4GyljfeENtXzhEWBKSooVQJdC8ilHl+yn2L/+xvQkN2tXkJV4xQ5c22tFbF2sVJM
-	26j5rRcMBbP2kS6O+MlXdsTC5T4Nx0C/W79g==;
-Date: Thu, 20 Aug 2026 14:25:47 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Jiawen Liu <1298662399@qq.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>, Santosh Shilimkar
- <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>, Linus Walleij
- <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: omap: handle clk_prepare failure in probe
-Message-ID: <20260820142547.63b85ca3@kemnade.info>
-In-Reply-To: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com>
-References: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="smH3jAQh"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-49954b88fffso22524745e9.0
+        for <linux-gpio@vger.kernel.org>; Thu, 20 Aug 2026 05:26:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787228762; x=1787833562; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=bt6uMG9PgUYc/XVv1n4ledEppWz4qm8tk4GY6vs/fFQ=;
+        b=smH3jAQh3vCdNjEeaF8UD3BHn5lWWVbhOwqm3FC8giSqd9hZwfYsZeeL4tdwGGs1Cu
+         S3i0NEZd+bqjXPIAOuWVTA332n7IMUoZqGQaEvDtGTybVuCL74ADlT53Eoi8vRiJ9ub/
+         4t1HZdFxl1kQoukgKuVTlctHv6Zo2XlXuzP3xb9eBt83EEtYcgmUCU2aGt3BwjPWZxi8
+         PtRyJES5t5KSkshDSzmF7g2sA2rZfhP55t0MVXNOMGxij+bs7nqragOUvxfrn8akP4in
+         mpBwd1m0X1BbFpraBDCseUUMe7DQB9xOr4WBTrQAs1QdlLlUo5OFPQTo9Jpc3sTSLXMt
+         wMxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787228762; x=1787833562;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=bt6uMG9PgUYc/XVv1n4ledEppWz4qm8tk4GY6vs/fFQ=;
+        b=GQcLgHrEpvNGXoneinaoIZg0UmYo6P9CzqQaPjMONTpvKm/RMnMPpOoLFjguPQ9EJh
+         PQPjfZx8csfgT4kFbXcpr9lIVWjT+xQIPstCSIgh94LjfwJL0KuwlGZ2510ook7VjP88
+         trUbHJIRySb9BiTfdFO2TkbEXFQREKpW1hRQ4xrtBxXH4wTKO2VfrQCYdKQjOYUtLcra
+         l2o/q8ci42V/Tgi9KSVmqUUkvoF96J2H74CoMsrFLClbFTHPbsZPne9K6hxgCSCY4wUY
+         cB2/sfAoFBB5Pq+05Aqt1cy4SY7p4P/oR6qcrm9W4Yc/9leMTsUYezwrAs5K6nPgQ8if
+         kSWw==
+X-Forwarded-Encrypted: i=1; AHgh+Rpu8ee3czseASdWSzeWN6FDCh/jey/pIBhBaDg6GqzVuIOgVtkfX0i2KXJx4Eshm1Eme5bJj98yonXQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+Qobs2Nms5TFa+dnwH3ne3kTurHRSNClYIlbEjw77+DWlB4us
+	5ZBA3aTcqQn6RQ3T7hA5ah1si9M27SpsyI23TtgvrB2IqS/Pi4XedxK2
+X-Gm-Gg: AR+sD13njTcDoCNCxQTElHZ72fD5UdPxu41IVb9rvXyfaH/JeguFjx59X3SF0J+rOKU
+	aZEklUREcgFvLHO23BfKeeiLUBJdSPd/yJPNkUJ+C3/qrZuSfnWnYCz7WdN78yNIi8o37XqKlKx
+	khDMP1mCIKe5zw4yA9er6CzPkt8jQvJg50Mr7di0HguksFGlLrWpe5/ydztLSQczfsa6MZtP5ue
+	8tLY69u3D4LNjQhpTR5g8qEJKx+L6S4nsAIxaJ8f+fXsrWiPf6BRnHTKDobVmrO2DQOlVROgdSk
+	355MoRPpT8L0YhskNdB7LcctcVjUHbHB515FD1JJi7XZRsidphcR78Kfo8y8KwX5oib9NAa4QGl
+	F/QFi87b/Vrp1jzJMWXN1fqlXmmz0rPAvwYSiWN+YOvJQuI8qBvb0tE26n3mujF1AglaUVLfGfo
+	k0l4qhsU4zASkhosI3DTKiFrNQhSj3YmLnKIGy7XhSQHG5qkPTvfTyWA==
+X-Received: by 2002:a05:600c:8b65:b0:499:a5fc:2087 with SMTP id 5b1f17b1804b1-499aa1722f5mr231760135e9.6.1787228762272;
+        Thu, 20 Aug 2026 05:26:02 -0700 (PDT)
+Received: from luca-vm.. ([81.56.18.151])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499ab2a8b34sm170494645e9.8.2026.08.20.05.26.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Aug 2026 05:26:01 -0700 (PDT)
+From: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+To: linux-mediatek@lists.infradead.org
+Cc: Fabien Parent <parent.f@gmail.com>,
+	Val Packett <val@packett.cool>,
+	Luca Leonardo Scorcia <l.scorcia@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sen Chu <sen.chu@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>,
+	Lee Jones <lee@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Julien Massot <julien.massot@collabora.com>,
+	Akari Tsuyukusa <akkun11.open@gmail.com>,
+	Chen Zhong <chen.zhong@mediatek.com>,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	mfd@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH v9 2/9] dt-bindings: input: mtk-pmic-keys: Add MT6392 PMIC keys
+Date: Thu, 20 Aug 2026 14:20:00 +0200
+Message-ID: <20260820122242.120039-3-l.scorcia@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260820122242.120039-1-l.scorcia@gmail.com>
+References: <20260820122242.120039-1-l.scorcia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 18 Aug 2026 17:08:54 +0400
-Jiawen Liu <1298662399@qq.com> wrote:
+From: Fabien Parent <parent.f@gmail.com>
 
-> omap_gpio_probe() ignores the return value of clk_prepare(bank->dbck).
-> If clk_prepare fails, the clock is not prepared, but bank->dbck_flag
-> remains true. Later, omap_gpio_remove() or the probe error path calls
-> clk_unprepare(bank->dbck) unconditionally when dbck_flag is true,
-> leading to an unbalanced clock operation.
-> 
-> Check the return value of clk_prepare in omap_gpio_probe. On failure,
-> clear dbck_flag and return the error, preventing unbalanced
-> clk_unprepare in remove or error paths.
-> 
-> Signed-off-by: jiawen <1298662399@qq.com>
-> ---
-> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-> --- a/drivers/gpio/gpio-omap.c
-> +++ b/drivers/gpio/gpio-omap.c
-> @@ -1462,7 +1462,12 @@
->  				"Could not get gpio dbck. Disable debounce\n");
->  			bank->dbck_flag = false;
->  		} else {
-> -			clk_prepare(bank->dbck);
-> +			ret = clk_prepare(bank->dbck);
-> +			if (ret) {
-> +				dev_err(dev, "Could not prepare gpio dbck\n");
-> +				bank->dbck_flag = false;
-> +				return ret;
-> +			}
->
-What about simply using devm_clk_get_prepared() here? That would simplify
-things a lot, given that AFAIK,  prepare is a no-op here anyways.
+Add the binding documentation of mtk-pmic-keys for the MT6392 PMIC.
 
-Regards,
-Andreas
+Signed-off-by: Fabien Parent <parent.f@gmail.com>
+Signed-off-by: Val Packett <val@packett.cool>
+Signed-off-by: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml b/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml
+index 140a862ecfbe..ff720588128b 100644
+--- a/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml
++++ b/Documentation/devicetree/bindings/input/mediatek,pmic-keys.yaml
+@@ -31,6 +31,7 @@ properties:
+           - mediatek,mt6357-keys
+           - mediatek,mt6358-keys
+           - mediatek,mt6359-keys
++          - mediatek,mt6392-keys
+           - mediatek,mt6397-keys
+       - items:
+           - enum:
+-- 
+2.43.0
+
