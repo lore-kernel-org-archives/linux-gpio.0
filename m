@@ -1,60 +1,137 @@
-Received: from mail-106120.protonmail.ch (mail-106120.protonmail.ch [79.135.106.120])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A061EEC3;
-	Thu, 20 Aug 2026 00:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42310222580;
+	Thu, 20 Aug 2026 00:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787187352; cv=none; b=Uej4os+1qBqTS3afR+e/nZjZKj0Cx9IS/+aox0q393t62CtT0fSJVUz+WXauUupQDRcT3fuyrta7dRXydDpOMi+k+S7U57YTrZcRbGhZtdY+alLXAe2YV2wgFgHzJ+QlJLFBaXaBBzcDwvDHRvJipC/8RWpLaUKv3Kkttp+IoMk=
+	t=1787187478; cv=none; b=boezAXzy0MveS0yqKpT2KWOIpNjwxoHzT5lysVt5d5T7wP8V6uftQH8pSomsdMRnjL8ZbWw/hg9OwBEBHUghlm4qEzkiveEwAS5HUhDC+emn77/OdOhWR4UpWPQlF6ABYeNP3dLbj8naWr2stGnZCKQD1XS2BQQcAFE1ysoi/2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787187352; c=relaxed/simple;
-	bh=F8uE5+iW1viGiOIrseLpQPRRvDJhg9SsIXkCqo9117c=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MciPi3rpMI2NZFqwSqDOn5rs/YK4vb/yil9U3xoeZUlHnl6M8hcL5945GJIk4bvzv3eNXXeive1Gq3qH9kBw/dkHWyEy4W5MsIe2EwddCA52l92hxXZY4KvcSMdVECFtODYZ5MxDSYeZtwl3zxCkmJmhE3ye64S8GyjHlZyjabQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Xcif9WKU; arc=none smtp.client-ip=79.135.106.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+	s=arc-20240116; t=1787187478; c=relaxed/simple;
+	bh=iTsBM+zhifhEVy/t0k8fQnDrJ8UkQPci75ZvDiDEHog=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aQwOpwMP+K8RNXqP3eK9GHNPHQXN5hn5WYFpJl5/QNyxIPjccsHjLNnGehkUgmj4rlXLkvWyD59ttXIwn/X/8MtbVhdUYWbyjhLiyWR60atiBr/2Q+Uwt4fJJzc/k2E3EVoaaod3PkhM7ld0NZZa3NH0NTiWEro3Mp94BM/PyMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ofqoOZxY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Xcif9WKU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1787187342; x=1787446542;
-	bh=F8uE5+iW1viGiOIrseLpQPRRvDJhg9SsIXkCqo9117c=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Xcif9WKU0ZYw9SScMW/8f4WWX9jURNdjP6sKmaZSnfO0PpNf4pzlsLeclk1Y/LyBt
-	 Cn+vmk+Zu5tpvgYyQmLlXUxcr9/BCckGGHOH2IkGS0vfSBEstErjotyMOG3bagZmIl
-	 jxh8b0wok75TDROlOq3g7kU9FS08o2KJx8s3rTmIsNDX8wkSgEsgNZ/727RfYoVLN1
-	 bGSx8/Yy3L3Jy2An5H6HRwG4XkdGcN0aFBRtD0IIGEpXBi79MYuoOOgPaGmDiENM3U
-	 Vb4ccyDZmQ+NAmWe/0aGx/LoW6Piwtoyw+6iRCZ3Re7606AkV96hF08JdZrtTvKbbI
-	 qCe1ieOBnT9qQ==
-Date: Thu, 20 Aug 2026 00:55:38 +0000
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>
-From: Esteban Urrutia <esteuwu@proton.me>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] pinctrl: qcom: Add SM8475 pinctrl driver
-Message-ID: <912a1eea-285e-4b61-8173-8878948828ce@proton.me>
-In-Reply-To: <befb87e4-3b29-4e97-be6d-7dcc5e826dbe@oss.qualcomm.com>
-References: <20260802-sm8475-tlmm-v2-0-a93e1d1cb53b@proton.me> <20260802-sm8475-tlmm-v2-4-a93e1d1cb53b@proton.me> <befb87e4-3b29-4e97-be6d-7dcc5e826dbe@oss.qualcomm.com>
-Feedback-ID: 147889766:user:proton
-X-Pm-Message-ID: 0d3488bdec08cfad6dc78a8b5aa561e9e6cf6797
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ofqoOZxY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B5F1F000E9;
+	Thu, 20 Aug 2026 00:57:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787187476;
+	bh=kM+T5YFvyzkuB+A5pR6vF4uBLMNV4q+o0hL9s8uGv3Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=ofqoOZxYl/yJsfKnHokgkeX/MUBBZ9ajy+sguL3jaYm57T/dsYfO/jueRn7X/FOq5
+	 SrIkwOe41UVGfOptOdPxC/IQXsW0WoCNzRYD7FC+W7jj0hpUmFcNZkYeflEzoLGc8M
+	 pVzSG5U7CedgtouGuc2Hfhnm5Bm5ds3wJ3IpMJk7UpbVLf9jtfLl4UEwP0qwe4KZqB
+	 Q71ZsOSpyhcGtML7e9GnCubdoPNIdJmL/bblzeLRaL5CuQIX78x/Zb6MGtUbMxGOUZ
+	 YLREmwHcQrkSnERdUHld+n2XFK4xv4Xw81u31BpfaKB6N4XFOepfHWZ9+WNNjoklMv
+	 ckdSrAt1d2LFA==
+Date: Thu, 20 Aug 2026 01:57:53 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Janani Sunil <jananisunil.dev@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Janani Sunil
+ <janani.sunil@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Michael Hennerich <Michael.Hennerich@analog.com>, Andy Shevchenko
+ <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, Linus
+ Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
+ linux@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: iio: adc: Add AD7768
+Message-ID: <20260820015753.4faee677@jic23-huawei>
+In-Reply-To: <9dd16bb5-7a30-4024-88a7-4a4bf47c35e8@gmail.com>
+References: <20260709-ad7768-driver-v1-0-44e1194fd96a@analog.com>
+	<20260709-ad7768-driver-v1-1-44e1194fd96a@analog.com>
+	<36df7c4f-82ea-4ed5-a4f9-3a29c75dc99a@baylibre.com>
+	<9dd16bb5-7a30-4024-88a7-4a4bf47c35e8@gmail.com>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 8/19/26 7:39 AM, Konrad Dybcio wrote:
-> This is a whole new driver to accomodate a single change (removing
-> function3 - pll_clk_aux from pin 98). I would just add a comment
-> somewhere and not bother, especially since IIUC this is a debug
-> mux output that doesn't get used in practice
+On Mon, 20 Jul 2026 16:00:26 +0200
+Janani Sunil <jananisunil.dev@gmail.com> wrote:
 
-Ack
+> On 7/9/26 17:43, David Lechner wrote:
+> > On 7/9/26 3:50 AM, Janani Sunil wrote:  
+> >> Devicetree Bindings for AD7768-4 (4 channel) and AD7768 (8 channel)
+> >> simultaneous sampling ADC
+> >>
+> >> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
+> >> ---
+> >>   
+> >>
+> >> +
+> >> +  adi,power-mode:
+> >> +    $ref: /schemas/types.yaml#/definitions/string
+> >> +    enum:
+> >> +      - low
+> >> +      - median
+> >> +      - fast
+> >> +    description:
+> >> +      Power mode selection.  
+> > Unless there are pins that control this, it seems like it should be
+> > left up to the driver to decide how to set this.
+> >
+> > In this case, it looks like the power mode also influences sample rate
+> > which is normally something controlled at runtime.  
+> 
+> Hi David,
+> 
+> The reason we'd like to retain power mode control is that certain ODRs 
+> are supported across all three power modes (low/median/fast), and the 
+> RMS noise and power consumption differ significantly between them at the 
+> same ODR.
+> 
+> The higher the power mode, the better the noise performance, but power 
+> consumption nearly doubles for every ~3 dB improvement in dynamic range. 
+> Silently selecting one power mode in the driver would remove a 
+> meaningful hardware tradeoff from the user.
+> 
+> We'd like to propose the following instead:
+> - Remove adi,power-mode from the DT as suggested.
+> - Expose power mode as a per-device sysfs attribute.
+> - in_voltage<N>_sampling_frequency_available dynamically reflects only 
+> the ODRs valid for the currently selected power mode.
+> 
+> This keeps the DT clean while still giving the user explicit control 
+> over the noise versus power trade off. Would this approach be acceptable?
+> 
 
-Regards,
-Esteban
+The challenge here is simple: How does userspace know what a power mode
+means?  Everyone wants low power and low noise and the trade of between
+the two tends to be invisible.  If we add a control it also becomes
+hard to do a best effort - give them something sensible - control based
+on what they want. Users understand the ability to sample at different max
+frequencies for example. There are ways to do this like always requiring
+'auto' as an option for a power control but they are also rather nasty.
+
+Whilst I see that it is reasonably complex to move from 'low / medium / high'
+we need to try really hard to map that to something numeric and well defined.
+I think it came up earlier in the discussion - there is a clearly stated
+set of recommendations for a  mapping from fmod to power mode. I lost
+track of whether we had reasons to not try and build an interface
+around that.  Even though modulator frequency is a little obscure, if it
+is consistently defined across manufacturers and parts and the trade offs
+around how it is chosen are well understood that might be something that
+would make a better ABI?
+
+Jonathan
+
+
+
+
+> Thanks,
+> Jan
+> 
+> 
+> 
 
