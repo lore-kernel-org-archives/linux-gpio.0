@@ -1,92 +1,85 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693904119E5
-	for <linux-gpio@vger.kernel.org>; Thu, 20 Aug 2026 13:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB36046EC8D;
+	Thu, 20 Aug 2026 13:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787230899; cv=none; b=QwkeKNaXa7XWXfP+EFZOR9ju1Ts80r391jnNTMkI1NeG1V+BygtMOkzHwkNdE6wqwTysbnTkSFWpe90XEdATKvNitTB6e/eLqEoWlAXfNbOHXAajPgdO7cgEL+NSaLHuxoQM1oXDI3c3URJu4Ow44p7Qq8ZwRm59jKuJQIrv4eo=
+	t=1787233419; cv=none; b=bIEIPlTv2VQiCZ1RFu4lWz1pO9dPeb72R7eQAgbYjLt5ebLKJL6nYJs4QExZzzfgAq0w2XV/eE8cuWfQyiQjnXCLTlwguiNtdEgvahd6K2rUNhT1ML6NXHPnjq0N3No1VIY9Q6GGslRdfZ5u2FN3uQuixYa6tu7ryX3q4a6c7PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787230899; c=relaxed/simple;
-	bh=SPLxkcCGF2NXuncyXM+2dBkpR4tba2HZtrDt3Qbg3F0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBHDVcexkX97Owkw0FcZRmTy1zA20n8gLe2HrrWxO9TfyzOBSctpkIfqkbpwC2c6sd/eW6UIO/8MDNSLf7t+dxCw4JUR7qC8Yq5rdPSI1BC2kFnTGkuFLGMQ+2N0cDeRfTEMGqr8Nk25PuOLC3L9N0vgygN5IA2SDwC0ov+I+Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=QShvYx2B; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1787233419; c=relaxed/simple;
+	bh=JF2Hfspvy+SVr2lJoLQECIEEFhR4v9Bj/u8UirX+ux4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LwXZaBMP1Ssn+oAreuho+rsISTYHeLogAfP5OZNxK1uHchjuOYE3jpTRVjhw9QAA37wFvrYm6UJZWRVOn87VPrKsf9da9myBYK5/G/gomT4OAzjB7KLihLeWcLGjHcLVL90pS/e3hlW4XHyZBnQVDBm8jSJz+gxg3MKT8Qb2bC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=TskAOehj; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="QShvYx2B"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=SPLx
-	kcCGF2NXuncyXM+2dBkpR4tba2HZtrDt3Qbg3F0=; b=QShvYx2BsH5AL6HHxn8Z
-	JAcY/dUC3UFroBcXlc775gJOOKHxgzOC6IqZCisvd5BCuZVjxuraeyHHzJqye+uc
-	zXIT1W+9cQIBP+/hoFb4UaBGRiBv4v91ri3Et82kVNi8mxbe+DH/p0Ri7LJ6/klN
-	iIAiM0rHLVTUIY1GIU5uup1JI7KI9HYhR3DmQ2JxoGDb6C9EaEVqtHBsgPr5oRDP
-	AgZCyrUIVYZVTkGLawTkkAuyLehwCzJe1rSBq7FXILct1wpV4Zq2LaL+0zXw7wkA
-	tw0H/D+q5eR7aNO57GWc68gi0Jb1GhpXVxrMPxFnJGknhO3RUX3UKjtwr8YFDORo
-	iQ==
-Received: (qmail 303937 invoked from network); 20 Aug 2026 15:01:26 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Aug 2026 15:01:26 +0200
-X-UD-Smtp-Session: l3s3148p1@nR4WHnpZqKwujnuE
-Date: Thu, 20 Aug 2026 15:01:25 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v5 0/5]  pinctrl: renesas: rzg2l: Add support for RZ/G3S
- I3C
-Message-ID: <aob6pW_BQbW_hF2e@ninjato>
-References: <20260819143553.2478984-1-claudiu.beznea+renesas@tuxon.dev>
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="TskAOehj"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Subject:Cc:To:From:
+	Reply-To:Content-ID:Content-Description;
+	bh=0hnkKJN82zoHJv4K7UufbjGMMHI8pFhj5Ti31z7ZufA=; t=1787233416; x=1788443016; 
+	b=TskAOehjpqqby/XTZNLYWubl5RKB/0r1k25LTxK6vmPBOBvwcQnyzmta2+jzRZ9W9nFmZwmHiBA
+	KL7N9kR3s1rGYrT41hqus3a765ET2dEN4BFaTi32WmO86UTo/Q06OnKo7v/B2uI/rJ0lPtX7+nW+r
+	XWUWsKP6fuMe6qKKCgDAtv1rLQ6bH+i+xZ8GDh07VP5GB8cQGjVtx1sS2z075JHjGkltSAI15S8t8
+	1QAweyWcKnONZmrNVWUF5SQOlSYIdoupub2BSyDa1UOSZztwE84Rhd83bM/FzxeMC+/+2r1yJZUOb
+	zuENUG+1mqnsJrhUUXxfeOEggg5Yxkd5MtRA==;
+Date: Thu, 20 Aug 2026 15:43:23 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-gpio@vger.kernel.org, linux-omap@vger.kernel.org,
+ 1298662399@qq.com, Bartosz Golaszewski <brgl@kernel.org>, Grygorii Strashko
+ <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>, Linus
+ Walleij <linusw@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+Subject: Re: gpio: omap: handle clk_prepare failure in probe
+Message-ID: <20260820154323.0a7c7929@kemnade.info>
+In-Reply-To: <1352405b-7bf2-46e6-9aa6-df1e60bc096c@web.de>
+References: <tencent_B4F504456790E8BA3C4EAB80F4BFB6954E08@qq.com>
+	<b610718b-3c9d-4417-b1b7-69f0ac15dae1@web.de>
+	<20260820114843.1b50783f@kemnade.info>
+	<1352405b-7bf2-46e6-9aa6-df1e60bc096c@web.de>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="J02mf6Ickm3xROyz"
-Content-Disposition: inline
-In-Reply-To: <20260819143553.2478984-1-claudiu.beznea+renesas@tuxon.dev>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, 20 Aug 2026 12:47:05 +0200
+Markus Elfring <Markus.Elfring@web.de> wrote:
 
---J02mf6Ickm3xROyz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > About adding this to stable:
+> > does it bother anyone? =20
+>=20
+> I imagine that it can be safer to avoid return value ignorance a bit more.
+> https://cwe.mitre.org/data/definitions/252.html
+>=20
+Well, if that would depend on user input, esp. over the network, it would be
+clear.
+But here you need to patch the devicetree to add a clock there
+that has a prepare() in the ancestry. shows the desired behavior to exploit
+something.
 
+And then the error check is done by clk_enable() anyways.
+BTW: here the return value of that is not checked. That is the more
+interesting issue here.
 
-> Changes in v5:
+Quoting stable kernel rules:
+"
+ - No "This could be a problem..." type of things like a "theoretical race
+    condition", unless an explanation of how the bug can be exploited is al=
+so
+    provided.
+"
+=46rom taking that verbatim, I would say no CC stable.
+But pragmatically, also to avoid noise in any security scanner, I would agr=
+ee
+to a CC stable here.
 
-Tested with my G3S + I3C setup. I3C still works, I could also not find
-any other pinctrl related regression with basic testing.
-
-For the series:
-
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---J02mf6Ickm3xROyz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqG+qUACgkQFA3kzBSg
-KbaJ0w/+InIbfd03VywdBohLgEebaVVEY+lbMP5DIZ0ZNt9iHLPWHP/At7mD+aQn
-Djsj16DCgr+XwqVssc4gGGzPBMGW5aE+STt1a3dKHJ8EsELfpaF8W7Y8AFcxMsU3
-+hdd7J0oZhgbfq/sloTIGsSY/IP1dMDJjv8J7CDoneFBGoM9oU5ojwOxi/keOBTN
-C+zFnQGD30JgtA68iCTQjepD3j1ZpVje7QaQF2tMTITPhks5GoCJvaYlpcaBO2xM
-vhy1slwEdfcTnGwz2ua/Uv01bUjFO+BBJxPaAva038/tmWRMsKQy05gPzc8Rn1Aj
-f+MRmow0PHoTns43GepocxsmORp5Gjd4d439QQ1u3zH78+ajrYeWCatkAjOPnAdF
-EPZhju20B0UKbLaIRrzxsEeytvVfMGyPO6rdZf7D1hNVEHKgqBVPwahXju/Hp18Y
-5+asFKjZW9ur3uAzVYz0I5YON0ZYnqIuj2xrmK2Ii5TD0JQqqvGbOtu0M6mmN/sm
-taKevi3PDf1mMVDJhQrIxFIoZxtk/GJpR3yQsZUPDS1Jxyf0rsxkbcPfKCgfpwMR
-TCV4dLE7VvQnL6LJZcVnBiNQrRM10knHdeqM5Rnd929BRQPLNxEBNrUDyZxgdwCM
-AzdUXfImyf2ycLH1PS7o6kQnleX3nyOpdaGE6+2cvmIS+BVmRzM=
-=3mYK
------END PGP SIGNATURE-----
-
---J02mf6Ickm3xROyz--
+Regards,
+Andreas
