@@ -1,82 +1,71 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B662247CC97
-	for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 10:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2AC379EFF;
+	Fri, 21 Aug 2026 11:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787309787; cv=none; b=F6ldTBAxi4seSSkwJnLu6zNZUYeTeSZcMVY8YBEQxi/2awOMPBqPzaAKqOnT8JP6PB7gMY2npU6EZtwuSRz5zjqokvt2DUIcd08SFpmPs1VfDso3eSN2Ser0ZD8dX5txii/Kky9JXH6Oq6WQvGcMP4Ia4BqF/dESM3Jjs0wDBN0=
+	t=1787312170; cv=none; b=o0heqwMLygBynqv0HL45RGqtwtHrwqX5lEdUZdOSa1fCkRdx3Dcw0+TSHxKaZF8vmm95P68hTuJn4hOcPyC+UZySGIYQZRTKwS49gA2nJ6LrzCBHZ4NYbsBdyxswSiXhU8DLJVXc5FPlM205FRPStHfbXICvm8NL1vsHiSP5pHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787309787; c=relaxed/simple;
-	bh=Hszesw6yVqnZ8OpYpwPtsWJaTs2YTlaai6RAYcmBCoI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uvfchz8nWBrW7Q5yL0mkDYO/t6akJU0s2Gu5kb4bA9NVIsBnEXCo/OsiaEMlPAmNNITk2kYMYYwaaxWnzRfMX2Wda9jqUpmO3KZAXFHvFsxE3BB+h2urtgM8CwH4fFVx3DRLC051HIKx9ezvw7KkXZwDPF0MXfJJ633KHDyiaX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=scX3+nWk; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1787312170; c=relaxed/simple;
+	bh=o1Bhez6qyf0vI6dDip45ZKlBNsGfUzARPydzPVrup1Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KuCp06V3u2w99Cg/OqNzq31phrakHFq+xI2yAsbN6j041BkMyjR9nqtXMhqjy4s9TSdzHOG7+EyaU0YG7R3WEqBkAbt8d35xeZxluhNqK2w9+bU4JDzZRGL1gGb/pGErV1nMXi5bMCAyr4VZXDd2gc1nM/zQVzoHZ5U4jKgDCZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nw6zwRHP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="scX3+nWk"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-38e347638adso757730a91.0
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 03:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787309785; x=1787914585; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=RjmvvNDAO6X5XPPRpkVae2cr18FJFP99cR7ZCryUBd0=;
-        b=scX3+nWkH7deRHF+tYx9TbrYJ4/5GCQygA5h6NPUwcxix/Q6E9n2BlgZ0wRLxwslUF
-         HXbCqI+8xYhFKjmjddfLt0BUfRn9F1cggrYAj94RpoT/gRmWdkOP50C1CAeuFwi/fmh9
-         fHUkjCdVvwlr5Hlq/PlU7Y+dXcqu6Rhl/reN4oE1MKmOtuqlTPJAGW1Z015c4VHhy13W
-         luYvF3Fln+sIpfhwQTRnb6UqG/j3o4JZxRKaKq02FnLZUB7ub6j3M+2zvmEqi97Zbgex
-         DOM7WmmAPmmsGpPFOFSmi1D6w5NVR5uxXP2/IzT26VSbBuiIm0IgfSplJXlJ0j4M2O22
-         sT+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787309785; x=1787914585;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=RjmvvNDAO6X5XPPRpkVae2cr18FJFP99cR7ZCryUBd0=;
-        b=oaU3BigLSrcaBti7vLOlWcS3ablvT1qgy9HNQAfFBmae6rApNgcYlaoUFA8nCnAEp/
-         RcBKkeKDirLxsnzX/CGfqj2ZkonSzM0MT5xRdxVpEccajvkv8VVxLzA2U7aOk+MU/3is
-         7HFyCHvsyVYLwV3BsGqEAoZ/NxHK6bNcE+ydWKgorPRDoyz35ilKlLhCwNxVYRUapYxD
-         tbcobCcMxDS1BfoVO7vpLEWQQUzQAcdiUk/LTObGeiCCMaryJnIgGllHenprJgOZpHSj
-         K2JG96hL7n9xk1Eh2ookkraJ3JRE4lj6RjcMCbHLbZqNCNsQauyZxiMF8XOpdiIJ0pIC
-         Yliw==
-X-Forwarded-Encrypted: i=1; AHgh+RoslPi8p9RS9QS7Ea03ccL3J3nzATV88ju/rGiusrOWhTP+/1ZIy/DSyhJeU/tRMl59uiJBGxPdrHyW@vger.kernel.org
-X-Gm-Message-State: AFuF++n8+2RpLFv4kuHD0eww2nNK6OUAGx7qch+9NaPiSrrIzCtZ1qkq
-	rXukDV7UGDU4WoJIlOfFfEUYhS7e8vNDyNJFuMLpgWhMNhbLGxObFUDA
-X-Gm-Gg: AR+sD10C0zVPVl5uTw6C7uI+K6fqhbyTdBrA6swaPAGM0eQcpv0kbKKXF20Kjd1Hczb
-	nizTeMQl6GpRM2QY5Sp9XJW8RfB7ynnRzoMWiwlBvwERCwlGoFfCsunwMrhBgP8PKOJ4sWRlQ+D
-	jAlahKRjSnGcDSUUhvfUXX7rKv5zR8u4uc93Gc+J+RWLHa4lVOv3C7AH+/4g/4626VqLdiq+ESQ
-	/S0211RIUqbZEDvjo1BmzNIJgf00ySTRo0j6Au7HoLknm+4Ycwsqu/0g0NfY/7mupu1S/ob5Xj2
-	rpxbpWwlU4MWcfB720zP2jfelqeZ0yXPX9DW+kNgjw6xNvJXjTG7qqd6nh5hxOXyJJBmvGgpabc
-	6qQ2ATAsoKbzeCiP2+PsNzcBy2EsEzXlXojxusbvG3uHhzcfkm4AY+O/RprkU/UtQqnJlFE/Hlb
-	JKYkU+9/VFuo8YMOnC6SmeeBnelTT+XxRuNcKOUWr2+CB42KtFSY8cDJlCtgqgpgDa9Z1wP3++i
-	3+/VSaPBPyfZAJ1VyLBCtIiRxqk51XNxplJRdzzySwzDKPd3JOt
-X-Received: by 2002:a17:90b:314a:b0:37f:eafd:3505 with SMTP id 98e67ed59e1d1-395c3522213mr9208574a91.6.1787309784878;
-        Fri, 21 Aug 2026 03:56:24 -0700 (PDT)
-Received: from hanzj-mi.. (ec2-99-79-140-187.ca-central-1.compute.amazonaws.com. [99.79.140.187])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-395c467980bsm2692579a91.5.2026.08.21.03.56.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Aug 2026 03:56:24 -0700 (PDT)
-From: hanzhijian <hanzhijian1991@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Robert Marko <robert.marko@sartura.hr>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	hanzhijian <hanzhijian1991@gmail.com>
-Subject: [PATCH] dt-bindings: fix typos in various bindings
-Date: Fri, 21 Aug 2026 18:56:05 +0800
-Message-ID: <20260821105605.1967718-1-hanzhijian1991@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nw6zwRHP"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67L9LncR1474544;
+	Fri, 21 Aug 2026 11:36:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=CXjD5M0e/Wr
+	v8YrUbZUegzsnwQ++lVeh8HIc5uUcP04=; b=nw6zwRHPrxRogTyZ9MD2FiIx+wZ
+	SBTfqMZNtD5WiXOaEE/9xB55+dnY5HC+aPP5k1xR35mhrhn3TVIoivHDRurlGUq1
+	vystLGIADt0U+60DylO7SfoD0z2nuyVI2f7gk5C6nZKCANRef4TbWTLgrrVXZhoL
+	2BOSGJGM/PU9cD1GOQ8Tm1XdpIfQ9WNMOWg9mnFEm24dqdcaPiJA9iYnEK0KCFEG
+	d3WhsBKJlIerELVrXGrlDaPcs0zOOloMP6MBhbk544xt51yvrFP5gESf4036WWOz
+	I329ahA/GeWdiY9lPlPOv5IbRBLgLXdpUihgZAsrK0dqMQ6cq3QpN3XXRbQ==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g6fbw9fvu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Aug 2026 11:36:06 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.7/8.18.1.7) with ESMTP id 67LBa2OI029385;
+	Fri, 21 Aug 2026 11:36:02 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 4g2h6m45px-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Aug 2026 11:36:02 +0000 (GMT)
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.1.12) with ESMTP id 67LBa1Ok029365;
+	Fri, 21 Aug 2026 11:36:01 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-pkumpatl-hyd.qualcomm.com [10.147.245.204])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 67LBa1ch029359
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Aug 2026 11:36:01 +0000 (GMT)
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3914174)
+	id A53CE5D7; Fri, 21 Aug 2026 17:06:00 +0530 (+0530)
+From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
+        Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: [PATCH v7 1/2] dt-bindings: pinctrl: qcom,hawi-lpass-lpi-pinctrl: Add Hawi LPI pinctrl
+Date: Fri, 21 Aug 2026 17:05:47 +0530
+Message-Id: <20260821113548.2686650-2-prasad.kumpatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260821113548.2686650-1-prasad.kumpatla@oss.qualcomm.com>
+References: <20260821113548.2686650-1-prasad.kumpatla@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -84,75 +73,163 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODIxMDA4NyBTYWx0ZWRfX3Mt3Ih1ITc52
+ fn0Hw/wujT4kqsIo9ddZOR3RiU26cJRhCAVp1W4L1Z2tQUl7G0Zq5PoDaW06epUE/18SX8SJ6mz
+ xXHkUiYw5ipZYykz2SU7Fwj7RZ7WAtg=
+X-Proofpoint-ORIG-GUID: m6vcE7qoeAr1a_8oNM4nLcnySim6LOtI
+X-Authority-Analysis: v=2.4 cv=L9AtheT8 c=1 sm=1 tr=0 ts=6a883826 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=YMgV9FUhrdKAYTUUvYB2:22 a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8
+ a=bT5XQOCXPleopHcqzpYA:9 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODIxMDA4NyBTYWx0ZWRfX6y/mtzBeZv15
+ Wc2ub1DmGUwWPqBrY7sB6POH6/HmL7uhZEY52Vzj94xBgbo3TPxBGpWa6uPvkz8GgN0m4S0AryO
+ 7/AxpRdLqHxjh7e2jB9dETf6T37yP/USRIjCvp2Yof2mFZwgft0ld7JmSfomFhR0lT1z6fhnW/e
+ vPBZLw2l6bM0cEQZ7vTtk90haxcaFDTf/E40W1UYoW9sHxlX69ABRyNt1BXBAay/geF5UdnyKWK
+ WERI6sDams+fX6TORDSfDjmTLtA0UCZKtDi1WMfgmiTL+j8O1spvOQ8bMjAPGzcILmnKinW0UCo
+ JHUqACcruQ9lsKDpOcg4Let42UzWCPjltgWRdl7WrXxxfhNYUnc6vpIln+IPWpnHoGIbgX/zqZm
+ h2T4Q/sozaBVXrBu517TiqBqquC5lRfGM19XnxfBqHLMLMyv2oljD0chih9rIxORf7UDGWVYUAx
+ qODOl/JYNzhNqj8insg==
+X-Proofpoint-GUID: m6vcE7qoeAr1a_8oNM4nLcnySim6LOtI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-21_03,2026-08-21_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 phishscore=0 adultscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608210087
 
-Fix spelling errors found by the kernel's scripts/spelling.txt
-and codespell in several devicetree binding documents:
+Add bindings for the pin controller in Low Power Audio SubSystem (LPASS)
+of Qualcomm Hawi SoC.
 
-  - "curent" -> "current" in adi,ltc2991.yaml
-  - "deivce" -> "device" in zii,rave-sp-eeprom.yaml
-  - "ouput" -> "output" in delta,tn48m-gpio.yaml
-  - "redudant" -> "redundant" in trivial-devices.yaml
+The controller has 23 GPIOs (gpio0-gpio22) with functions including
+SoundWire, I2S, DMIC, VA I2S, ext_mclk1, slimbus and lpass_lpi_dbg_clk.
 
-Signed-off-by: hanzhijian <hanzhijian1991@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
 ---
- Documentation/devicetree/bindings/gpio/delta,tn48m-gpio.yaml    | 2 +-
- Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml        | 2 +-
- Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.yaml | 2 +-
- Documentation/devicetree/bindings/trivial-devices.yaml          | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ .../pinctrl/qcom,hawi-lpass-lpi-pinctrl.yaml  | 109 ++++++++++++++++++
+ 1 file changed, 109 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,hawi-lpass-lpi-pinctrl.yaml
 
-diff --git a/Documentation/devicetree/bindings/gpio/delta,tn48m-gpio.yaml b/Documentation/devicetree/bindings/gpio/delta,tn48m-gpio.yaml
-index e3e668a12..698cc14b0 100644
---- a/Documentation/devicetree/bindings/gpio/delta,tn48m-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/delta,tn48m-gpio.yaml
-@@ -14,7 +14,7 @@ description: |
-   details see ../mfd/delta,tn48m-cpld.yaml.
- 
-   Delta TN48M has an onboard Lattice CPLD that is used as an GPIO expander.
--  It provides 12 pins in total, they are input-only or ouput-only type.
-+  It provides 12 pins in total, they are input-only or output-only type.
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml b/Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml
-index 1ff44cb22..2210764a8 100644
---- a/Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml
-+++ b/Documentation/devicetree/bindings/hwmon/adi,ltc2991.yaml
-@@ -49,7 +49,7 @@ patternProperties:
- 
-       shunt-resistor-micro-ohms:
-         description:
--          The value of curent sense resistor in micro ohms. Pin configuration is
-+          The value of current sense resistor in micro ohms. Pin configuration is
-           set for differential input pair.
- 
-       adi,temperature-enable:
-diff --git a/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.yaml b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.yaml
-index d073c51c2..e0aacecd6 100644
---- a/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.yaml
-@@ -27,7 +27,7 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/string
-     description:
-       Unique EEPROM identifier describing its function in the
--      system. Will be used as created NVMEM deivce's name.
-+      system. Will be used as created NVMEM device's name.
- 
- required:
-   - compatible
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 2de8eb09c..719b82490 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -186,7 +186,7 @@ properties:
-           - injoinic,ip5306
-             # Inspur Power System power supply unit version 1
-           - inspur,ipsps1
--            # Intel common redudant power supply crps185
-+            # Intel common redundant power supply crps185
-           - intel,crps185
-             # Intersil ISL29028 Ambient Light and Proximity Sensor
-           - isil,isl29028
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,hawi-lpass-lpi-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,hawi-lpass-lpi-pinctrl.yaml
+new file mode 100644
+index 000000000000..af68581750cf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,hawi-lpass-lpi-pinctrl.yaml
+@@ -0,0 +1,109 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,hawi-lpass-lpi-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Hawi SoC LPASS LPI TLMM
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
++  - Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
++
++description:
++  Top Level Mode Multiplexer pin controller in the Low Power Audio SubSystem
++  (LPASS) Low Power Island (LPI) of Qualcomm Hawi SoC.
++
++properties:
++  compatible:
++    const: qcom,hawi-lpass-lpi-pinctrl
++
++  reg:
++    items:
++      - description: LPASS LPI TLMM Control and Status registers
++
++  clocks:
++    items:
++      - description: LPASS LPR(Low Power Resource) voting clock
++      - description: LPASS Audio voting clock
++
++  clock-names:
++    items:
++      - const: lpr
++      - const: audio
++
++patternProperties:
++  "-state$":
++    oneOf:
++      - $ref: "#/$defs/qcom-hawi-lpass-state"
++      - patternProperties:
++          "-pins$":
++            $ref: "#/$defs/qcom-hawi-lpass-state"
++        additionalProperties: false
++
++$defs:
++  qcom-hawi-lpass-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: qcom,lpass-lpi-common.yaml#/$defs/qcom-tlmm-state
++    unevaluatedProperties: false
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          pattern: "^gpio([0-9]|1[0-9]|2[0-2])$"
++
++      function:
++        enum: [dmic1_clk, dmic1_data, dmic2_clk, dmic2_data, dmic3_clk,
++               dmic3_data, dmic4_clk, dmic4_data, ext_mclk1_a, ext_mclk1_b,
++               ext_mclk1_c, ext_mclk1_d, ext_mclk1_e, gpio, i2s0_clk,
++               i2s0_data, i2s0_ws, i2s1_clk, i2s1_data, i2s1_ws, i2s2_clk,
++               i2s2_data, i2s2_ws, i2s3_clk, i2s3_data, i2s3_ws,
++               lpass_lpi_dbg_clk, qca_swr_clk, qca_swr_data, slimbus_clk,
++               slimbus_data, swr_rx_clk, swr_rx_data, swr_tx_clk, swr_tx_clk1,
++               swr_tx_data, va_i2s0_clk, va_i2s0_data, va_i2s0_ws,
++               wsa2_swr_clk, wsa2_swr_data, wsa_swr_clk, wsa_swr_data]
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++
++allOf:
++  - $ref: qcom,lpass-lpi-common.yaml#
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
++
++    lpass_tlmm: pinctrl@7f60000 {
++        compatible = "qcom,hawi-lpass-lpi-pinctrl";
++        reg = <0x07f60000 0x20000>;
++
++        clocks = <&q6prmcc LPASS_HW_LPR_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
++                 <&q6prmcc LPASS_HW_DCODEC_VOTE LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
++        clock-names = "lpr", "audio";
++
++        gpio-controller;
++        #gpio-cells = <2>;
++        gpio-ranges = <&lpass_tlmm 0 0 23>;
++
++        tx-swr-sleep-clk-state {
++            pins = "gpio0";
++            function = "swr_tx_clk";
++            drive-strength = <2>;
++            bias-pull-down;
++        };
++    };
 -- 
-2.43.0
+2.34.1
 
