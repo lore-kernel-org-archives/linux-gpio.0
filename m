@@ -1,172 +1,310 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010000.outbound.protection.outlook.com [52.101.84.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5210845A2B4
-	for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 15:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787324415; cv=fail; b=jZe40+hcM6yRf/YOGzERMwceiz6hMDHlO+lMx75Ei1Ow9DoY+S5076p+ZKsqT/sSn2ElLODmsbczSJOv4cZyf5cN/6iXvfah3rB+Gu5QczbC+k9sMxYo88OnyheevO8/eCR3v8ivhBbw/ERj58121rDX4BbG+y70jDncMR0sEmU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787324415; c=relaxed/simple;
-	bh=rMgT7IN7x1zHQsxf71F4E0fSFNcpJR9kru+FT0b1uns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=n/YdAzPUKruExMWw94aAOadDASXfgy8gpNsQ+s5snCwzauRZUTquBmTH+k4zQDM8AZAD+5gccXJeBuKUP1IhJxYRvM0MeHtXaOD7Wqh11mgr2JYjKaFm/EaSDsLAc8M6fzL12fqzBbNYQzm8mwIvE1P85lYRdHpiYo7Jnr+PwzM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=oxqQxYHd; arc=fail smtp.client-ip=52.101.84.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D9E3655C0
+	for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 15:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787327859; cv=none; b=Rl7/h2ytx28C70DH10UOloNIOMmUwG+L25Y4AKbVM3AA49tu6xI1y/h+IZFyz3JMhgF/RFMSZS3w01zFSnrK0Ul99ptPMKO6cPkPNNX9g4lyUtXzf+neidhIvlB57DziLKerS3At+rF7xaTg5M2y13tmvchTqrLHuaNfgTCEQgE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787327859; c=relaxed/simple;
+	bh=QPYcmCGE1j6b1oYmWVelzZOv9rRvxAYFCX/sMvIVkH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jCOZeGAX4LRq1pjojiQrRHiuTMkrIHaDOqeCVYH4j/erDY4c6U/4jnG/qRq7xYfF+SakG4YNMJiKfNCszIn+zqPg8zZfcH2g7jbHwqx/cb6Bj9K3abF14Acy3f5f/zseTWB/qwFd+jfbhGn+zaCie1ZfLIHHLiG6jqxJFZ3TiwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=DoXzwA1K; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="oxqQxYHd"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XdEcNrP5/18ZixNkDx63Nl4wPWNPi0tLilLMrdgdpdTloq0Eo17nJh7dxyKh+pT8EQi8otVL3BxyrGs6excacVzV7N58/lWZ1hETVQDJffls51xXHS0j6Gz/3ejq7zreFWI69u6dwIoaNi16QsIYTRnU7vSf/ePRVcNLVFK6yUWqWmcRoaZ4dqjoEdRU03Isdv/Wm4XLg0eJLh3+JKAWar+MTQHV9Ie1s+FbJWnxChDPGyIMQnLSsyx+db49r+REhAmwjDHzlWAv+MAm7q4IB1PMF/uR3K6wg9MQ4h4bSaSffTGGHFZAgDd3EyNC6uDTvLLefSAm5Q62i7FNrHBdiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OprH4HtsVY/lU92oB6iSztSUPttSsElEEDcfoW2P6M8=;
- b=biEwXTzpseK7LK6icm3Ez8H6oSa+0kql4Lwrw2Cj/M4/8sOq+7WEf0FIViFfaG/brsZPRXM0jeY4wu8/bZuXHc3FZteLT+hyJJ9nlfCJ8dbeBlAuOibv/nvFmQ+gTX9jL7OB2spxg+4NXFZVem3Bsb1kpMlj2CP7q/FGfMDa6WtdEjn+0pC6JPo0g8/RbdXhFtluegtDA+vXM7+JNyDTwDdBvITxqpI13VhpE9qxSOrp+srVpmPuC3DBRUmf1LQ4bBI5VjMZHF/Cg5rn6IbkcAA8oij6k25kRijqcvPh3NVtMaK+KzzRamgsHaX5yN3UtiIiK7TQ5FH/pz1CGqoqow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OprH4HtsVY/lU92oB6iSztSUPttSsElEEDcfoW2P6M8=;
- b=oxqQxYHdbeaxqMKipdXeVhJuUAh2koO6+yKcs9j21UxF4Zlz9GNQM+QQ9x9AZRFnRKgcBG7OFw9uMKcF/zMZHfCVlshaBymErDWl8nW5FBgbQghN9zkioZE/ex7sM/fhcppKy5OveaJabC/zcECubMovXnyB1wXwYBGBSYkb9HAV7ls5STETOMz3okbHxObPrjEU04rpncnXlkWSCShOrvvg8ioJKkHcxt0BkRt3MfqIoIoLs8Uy2aR3ghigbG44E050ePtzfB/2Rb96ETYIxxGVLRG0jJfqfauqCUcMRHhs4AJHIabyIPoCfG6RMTkx7gDygdWN2jq3QICAt33WfQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by AMZPR04MB897483.eurprd04.prod.outlook.com (2603:10a6:20b:7ca::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.11; Fri, 21 Aug
- 2026 15:00:11 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0339.008; Fri, 21 Aug 2026
- 15:00:11 +0000
-Date: Fri, 21 Aug 2026 10:00:03 -0500
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Md Rabbani <rabbanyhmm@gmail.com>
-Cc: Frank Li <Frank.Li@nxp.com>, Fabio Estevam <festevam@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Linus Walleij <linusw@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-gpio@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] pinctrl: freescale: imx1: Fix device node leaks in
- imx1_pinctrl_dt_is_flat_functions()
-Message-ID: <aohn8ybsXRBcbw5t@SMW015318>
-References: <20260821050813.739-1-rabbanyhmm@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260821050813.739-1-rabbanyhmm@gmail.com>
-X-ClientProxiedBy: SA9PR03CA0004.namprd03.prod.outlook.com
- (2603:10b6:806:20::9) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="DoXzwA1K"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-836cbcd0a48so15978057b3.1
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 08:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1787327850; x=1787932650; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=tQtmu6bKLrMNJM/WIbhky8MwVtdX8FoGCP3Tk6EpLao=;
+        b=DoXzwA1K0frpKAlfH202oVdHn0woyQTGgEikG7k2usvBK/b6fQ7vvsOWklc91bwVDt
+         CM+qpIpkZ7sNp5bG99AwV1MW8TE1bkTl+Iodqt+lG4G8LdA2nJYbVtn7rCnVH6x1Hjaw
+         88b8PEPHaB859N99anGKwoXlbRtn99q3uxfNluwzEUsCTSsCXXjWdb2UlqJmTW5MWzkH
+         ozirZM7exyUMXnueoQCT5zOXuYeqwsFpH1lc7Nzz1k/oI08PRAx0U+ND4G3LSEpc5dWT
+         1yateCzxwP13iWwa7jogS3irsGTjdAANmiAdf6gfsaEtF0haFHJ+y5w2er+MQ/J/UZbX
+         i7EQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787327850; x=1787932650;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=tQtmu6bKLrMNJM/WIbhky8MwVtdX8FoGCP3Tk6EpLao=;
+        b=WZyjsF16hEZvYhBSk/YRqgUKuxHk0jKzeWjq3gVVDGDzwoB5FVFY90pVHwqdISC1Gl
+         nzvZhD/Uh+Vzwl5yFf9k1wj2jE6mZXv92ObG9vOX5CQaHmW5j3usNAono70opYlAD10m
+         fo/xbV1koGpM4aCRZd6kp/6xSRUPDp6d/4so59is4AnFihO8jFaMYMhuLM2BZsGCME0H
+         ZxZ+4omPPXaNuoG8mLXNDQbLjWBHx0R9rEG2KqApq86X7YNmY+r3z7OAv9DQdL8fqd1L
+         kuVfnWixFX1NTj2WPLTO2JyfYYZwXA3RVRqcyIQNnDpzf+md9Wiqq/fEv3gPbsTmaO7T
+         79mg==
+X-Forwarded-Encrypted: i=1; AHgh+RpAmdhlRmtxz+ggIZUtZbp8xSAubVxwUEF/J1i5NGMH/sJbHdoay5NXz1ILYbUZZ3H8YmWFgBKwPKZf@vger.kernel.org
+X-Gm-Message-State: AFuF++n6kP4FTUvDHbTLaTSpjzHkpjfOepF+n8Tm8FBaQpPVzkXJ8GMH
+	gpDk8tDZSbPSzmLr8azDtKDEyBGEE8nrvn3ZQSA/HlycduEDsyBVYswDIok7AVIFf3E=
+X-Gm-Gg: AR+sD12AbTHSvkw1l7hvkPfndoWi5hp2ozfd3UTiZOvlvczfGxVuEOXLYX8BHJLSkXt
+	Lbm8DnZbcsjRvWV3w3LMYON/2gPn3MA/5NLgW5meW5Mos0/cjzn5DfvpT4VhN0l6l6yMUICsVod
+	pBqnH/nnbHGQUYbfHADx7ODpJM6JyepQi1CLimP6UYywpGgzRT6cQ8cLkvSfVbpqG1J3Ry7YKD0
+	/xO3jnymuY73VWyDCqzwjKcFMH5kTDhNwdaDQSBBzKbVXFGqY70GqERIMsPZOyyIoJWDpu0xH5Z
+	1tHx4iujBbODlZwy6WyO0iN+eUVF06u1ckmQaUSKPPqHn1FojAEeqo1Gd4tMdXqINjdNiCitPBc
+	KTI1u5VEARbwQQocsoAOMXL6QQ2KTNbDMbRZF/oqE63//Fo6ygeL7HvmVqhBYrdjPKH4/XPnTQ+
+	2Bq2uRJ3SAK3YVN2DpEjuePMubUbzB+Z7qu8MjNETyZO++iEpdpk4CUJ13qnEc0RpgBfJTyUCGx
+	xH6tZxZZapN8yxLgRxeIg7KRTSX/VnPRMb2y3Sqi1w=
+X-Received: by 2002:a05:690c:ecd:b0:81e:ad1b:cad8 with SMTP id 00721157ae682-849f7ff8dc4mr33817707b3.36.1787327850173;
+        Fri, 21 Aug 2026 08:57:30 -0700 (PDT)
+Received: from [192.168.1.169] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-8451955a784sm43139267b3.47.2026.08.21.08.57.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Aug 2026 08:57:29 -0700 (PDT)
+Message-ID: <718f6ead-d1c0-4dc6-82e4-cac49cc73bd6@baylibre.com>
+Date: Fri, 21 Aug 2026 10:57:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AMZPR04MB897483:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3ea978d2-4fe2-49df-a206-08deff94e5df
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|23010399003|19092799006|366016|376014|22082099003|18002099003|56012099006|10067099003|11063799006|6133799003;
-X-Microsoft-Antispam-Message-Info:
-	LDF436dL84PKbZ9CFId8waNzOx61Kod4p44z8HI6vR/dGxlrVaZD4vSV/UbHZom1lHNWZ+rt8LoJqV76z4WTEzZUZgpTE4LF0tb/ziqNB6LQs2fOgnM86uDGrUquH1gZBWgexixFNBFUxVB0YbcFE6jNzv/V5m6Qg6ZWm1M2ghJKCL3GAhXzUqFG1K53LZNUt3wE6vW+RbzPv69/Eo4qZURAidA6VXl88Dp8lMjbqFlcksAcJS/Ajz9aLUuFul7eFDlZzaqF1bnNO8JRrsjdsDZUoy3zKPus9zRXUzmXfxGPS2Ao/qqBy+bvFB8uWK3K1m2lw34K1NrKNZcaw/EbACYKolunyLwbmEFh5obPeKL7i7uRGmzXyV51PzFo9HqNQs2BTJ8HAITXnOxYqNhN/7vwy0ZwTJRWDdFR5FZLGPf9/1Sp2ilC6eSH0T1dbu3yXWSzgirhwMBugzIKikIaB4aFYnDZvn75Mj3S+C2HpkYwnXTIvVOkK+KxbwPIMG5Q2wgTb+YYyYzMrV19jwEKhkWoBheRxkbnO0QMI7uXTLANoTF2f5WZ9jQRoxoWzlga+zrfQN+mN6tgacNsB1weTfW/a2/MIy+NO86zok8QQZEDnc8oUw+Jz+gRBBFhhkIQa96KMrOARRzQJ6xYnmhErQ5F2x1jij8elGA6ARcQmlY=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(19092799006)(366016)(376014)(22082099003)(18002099003)(56012099006)(10067099003)(11063799006)(6133799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tgeSr48bwXxvzQ1tL9iN+YBHFvIt6BAiIGulg6XRqzGbn76o53mb+BzQq0Kd?=
- =?us-ascii?Q?ITMX2F+vZkmAWaYTPr+0YwzmG2mpQrKYsoJmG11ivB4zuA5A374NSwwY5fme?=
- =?us-ascii?Q?5B3OUyxMY7fEOvNWpuKeHGdf5vL8s4fmC/no88jeC9XtIU0bp4EHuG1Od8mI?=
- =?us-ascii?Q?1omr2ITPLjXfdZ6pQWDOwQZaQMX+T9P+NI+oXYIdJdXNYTIT3sz8zOdxzNKn?=
- =?us-ascii?Q?G1zohxBqIF+d0rV9Gk8IE9WaFoWmH0bQ0+bO6saL4CFpIpESp9X2kWc7RZbx?=
- =?us-ascii?Q?DpeCZe/MpQ+oDK5GNtYjZ/FFXaATpNNPlUVus46Vc7XP95bLj/nzJvZzFD6E?=
- =?us-ascii?Q?fU2j5SmR6VFwqGS0GepWgSVkM1r51YCh0ChFVlOEUMThSdtw/1gTY74oOlhX?=
- =?us-ascii?Q?UFDL7WqZMpXkJe/W1Q+Foh/A+5COFZWejcAF6sPOt+VWks3wnHLcaV3qbDhR?=
- =?us-ascii?Q?TOZne07AZhkyyMbWW1lIXW5T5VqjFEQDTOpBrGCYZ6Z21JremWlzyMgLHDbG?=
- =?us-ascii?Q?/efMcGa9NFuHAldTxQdnh2zVk8EiiESIyMAr3ka/a5Kd307eN83S8MY3ynHQ?=
- =?us-ascii?Q?dPMo/dQnXqsmNoi66jZxbyuCY0k5JJWbVPiNZr1NGztexaWO0X8S7QoBcymz?=
- =?us-ascii?Q?hMiWH52mIp3M1IwA6dKiH4o0YRdBpAigkiJHb29NON+64rOyAd42F0ubkDQa?=
- =?us-ascii?Q?mA+DvH+m5TjS2Uk/EwxqGWiXYM9fJyjFR/oS9Ob0odNlI2zIZmBDln0chEzd?=
- =?us-ascii?Q?ThV323/9dsOi8FF04FnJCLTkhjKBj9oZ4DI2ttAsCAPeDnCIAktGi31ytcQ6?=
- =?us-ascii?Q?wP1DHK/OqrdpYfRvMbqa0zt1mMWxXD7BYX6z6oxpBGoDvY9+DkBDx955NN64?=
- =?us-ascii?Q?zE82H6kkENHzWZFDFxhSxLfAViDVXPTdsfSBb7zXygTyRa6wZPHrWMeN+IVJ?=
- =?us-ascii?Q?yMd67B+pRrlMT+nug6nSF7KTK4tmxGSdppsWcBuiheVCzxmpKF6mb5ArlzQf?=
- =?us-ascii?Q?ppiPnCAD3SevuJNP5DSWXNjpc1W9tc1mIHntXtUCP7Db9Otkzqtz0J+e3XT3?=
- =?us-ascii?Q?7E4AxD4A96R4BRWTkMfjP+eCE6KXPogJKb/Bi4ORQrTNrFAvP5QZLym37wwE?=
- =?us-ascii?Q?oUXCF90NrJJiEdy3+w2VcoHFes7JdUv/jvNFzwrpuAGsFvrFK1Y9Xgyc9Ui5?=
- =?us-ascii?Q?8+lYvoavG1ZJIZuOTgUTfYtN01hkdUCaH730fEwzl612e7ga4z4R+LXC2xwE?=
- =?us-ascii?Q?2Bv/0wPoHKQZeaaMOXmWG8sWwJxZjEgK6bbih3OpktYPQ2I2SyVMSbOsoZ/j?=
- =?us-ascii?Q?15pzoHrDlQomHQiqMtljN1gFO/G9n9Enp2zBW0w78OhX49+GPEM9pY0Bw1kg?=
- =?us-ascii?Q?1qhkmLnXR1O1dBULqmITvp0lWFpRqEuleTq6IUrLo43nR8mnljPWVQxarkHQ?=
- =?us-ascii?Q?4GYUjkrX5So5+eHh+iHG2QGUxUTAc51srg2f9vDKRCa5CPPW/Yv3fPGJTPxR?=
- =?us-ascii?Q?OV+At7JQRPo8U1FK+rOGJtQuzJB4MWzI9V6g8qSYVOoAtKIqF43h0DIUwlDI?=
- =?us-ascii?Q?WOYs9xOgSPL8lQstgK3iNNxtabzMvE7T3Wua3Kvj1Gm+OLt3ZKd7yUV6lSm/?=
- =?us-ascii?Q?OQAq+4DNaxn/2e3J1pnoTZKyhEpnIOpCq+hdVNIeOe37Kco6NL8ZKDpJmfpC?=
- =?us-ascii?Q?Gf4o/7u3ZH8sOUAzWqeOytLzta5QISnsJBNP4ClfyvpvpEveaRceV62rdF2T?=
- =?us-ascii?Q?GhWc8NWwmB8lyee4NyGU5LmwU7C9HguBV4S/8H9iJx79/n5hTxou?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ea978d2-4fe2-49df-a206-08deff94e5df
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2026 15:00:11.3997
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RP3auwNZpLmWSE5Hh77sxrQrfLqxyI0hHUs/pg7nXEmXatNtoHmp05z/UaASOoOuX0B2f0DcmOiLCVJsUOahE7ciuADusNP0MTolpHpzHC9kVZ7sA4DpDrgOg6zRYCqd
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMZPR04MB897483
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/14] dt-bindings: iio: adc: Add AD7768
+To: Janani Sunil <janani.sunil@analog.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <skhan@linuxfoundation.org>, Michael Walle <mwalle@kernel.org>
+Cc: linux@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-doc@vger.kernel.org, jananisunil.dev@gmail.com,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+References: <20260821-ad7768-driver-v4-0-bb8fbd06d4eb@analog.com>
+ <20260821-ad7768-driver-v4-2-bb8fbd06d4eb@analog.com>
+From: David Lechner <dlechner@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <20260821-ad7768-driver-v4-2-bb8fbd06d4eb@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 21, 2026 at 11:08:13AM +0600, Md Rabbani wrote:
-> [You don't often get email from rabbanyhmm@gmail.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->
-> imx1_pinctrl_dt_is_flat_functions() uses for_each_child_of_node() to
-> iterate over child and grandchild nodes. When the function returns
-> early upon finding an "fsl,pins" property, it does not release the
-> acquired device_node references, leaking their reference counts.
->
-> Switch to for_each_child_of_node_scoped() to automatically drop the
-> node references on early return and loop exit, matching the pattern used
-> in pinctrl-imx.c and elsewhere in this driver.
->
-> Signed-off-by: Md Rabbani <rabbanyhmm@gmail.com>
+
+
+On 8/21/26 9:06 AM, Janani Sunil wrote:
+> Devicetree Bindings for AD7768-4 (4 channel) and AD7768 (8 channel)
+> simultaneous sampling ADCs.
+> 
+> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
 > ---
+>  .../devicetree/bindings/iio/adc/adi,ad7768.yaml    | 314 +++++++++++++++++++++
+>  MAINTAINERS                                        |   7 +
+>  2 files changed, 321 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768.yaml
+> new file mode 100644
+> index 000000000000..df4b179df988
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768.yaml
+> @@ -0,0 +1,314 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7768.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices AD7768 and AD7768-4 ADC
+> +
+> +maintainers:
+> +  - Janani Sunil <janani.sunil@analog.com>
+> +
+> +description: |
+> +  The AD7768 is an 8-channel, 24-bit simultaneous sampling ADC with configurable
+> +  power and performance modes. The AD7768-4 is a 4-channel version.
+> +
+> +  This binding covers SPI mode only (register access via SPI). Pin control mode,
+> +  where configuration is set via hardware pins rather than SPI registers, is not
+> +  supported.
+> +
+> +  The io-backend represents the high-speed data output interface, consuming the
+> +  DOUTx data lines, DCLK (data clock), and DRDY (data ready) signals.
+> +
+> +  Datasheet at:
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-ad7768-4.pdf
+> +
+> +  HDL reference design:
+> +    https://github.com/analogdevicesinc/hdl/tree/main/projects/ad7768evb
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ad7768
+> +      - adi,ad7768-4
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description:
+> +      Master clock (MCLK). Can be supplied as a CMOS clock on the XTAL2/MCLK
+> +      pin, a crystal oscillator connected between the XTAL1 and XTAL2 pins, or
+> +      an LVDS differential clock on the XTAL1/XTAL2 pin pair. CMOS and LVDS
+> +      clocks must operate from 1.15 MHz to 34 MHz. Crystals must operate from
+> +      8 MHz to 34 MHz.
+> +
+> +  clock-names:
+> +    description:
+> +      Identifies the master clock source.
 
-Manush Prajwal already post the same patch
+It would be more accurate to say that this describes the type of clock that is
+attached to the XTAL1 and XTAL2/MCLK pins. In other words, drop the description
+from clocks and move it here.
 
-https://lore.kernel.org/imx/20260814190527.969-1-manushprajwal555@gmail.com/
+> +    enum:
+> +      - mclk
+> +      - xtal
+> +      - lvds
+> +    default: mclk
+> +
+> +  avdd1-supply:
+> +    description:
+> +      Analog supply voltage for the AVDD1A and AVDD1B pins (5V ± 10% with
+> +      respect to AVSS). Powers the analog front end, reference input, and
+> +      common-mode output circuitry. Both pins must be tied to the same
+> +      potential.
+> +
+> +  avss-supply:
+> +    description:
+> +      Negative analog supply rail for the AVSS1A, AVSS1B, AVSS2A, AVSS2B,
+> +      and AVSS pins. This rail is referenced to DGND and all AVSS pins must
+> +      be tied to the same potential. In single-supply operation AVSS is
+> +      nominally 0 V; in split-supply operation it can range from 0 V to
+> +      -2.75 V with respect to DGND. If omitted, AVSS is assumed to be at
+> +      system ground (0 V).
+> +
+> +  avdd2-supply:
+> +    description:
+> +      Analog supply voltage for the AVDD2A and AVDD2B pins (2V to 5.5V with
+> +      respect to AVSS). Connects to internal 1.8V analog LDO regulators that
+> +      power the ADC core. Both pins must be tied to the same potential.
+> +
+> +  iovdd-supply:
+> +    description:
+> +      Digital supply voltage IOVDD (2.25V to 3.6V with respect to DGND).
+> +      Sets the logic levels for all interface pins and powers the digital
+> +      processing core via an internal LDO. For 1.8V operation (1.72V to
+> +      1.88V), IOVDD must be tied to the DREGCAP pin.
+> +
+> +  ref1p-supply:
+> +    description:
+> +      Positive reference input supply for REF1+. The voltage range is from
+> +      (AVSS + 1 V) to AVDD1. Together, REF1+ and REF1- must provide a
+> +      differential reference voltage from 1 V to |AVDD1 - AVSS|. This
+> +      reference is used by channels 0 to 3 on the AD7768 and channels 0 and 1
+> +      on the AD7768-4.
+> +
+> +  ref1n-supply:
+> +    description:
+> +      Negative reference input supply for REF1-. The voltage range is from
+> +      AVSS to (AVDD1 - 1 V).
+> +
+> +  ref2p-supply:
+> +    description:
+> +      Positive reference input supply for REF2+. The voltage range is from
+> +      (AVSS + 1 V) to AVDD1. Together, REF2+ and REF2- must provide a
+> +      differential reference voltage from 1 V to |AVDD1 - AVSS|. This
+> +      reference is used by channels 4 to 7 on the AD7768 and channels 2 and 3
+> +      on the AD7768-4.
+> +
+> +  ref2n-supply:
+> +    description:
+> +      Negative reference input supply for REF2-. The voltage range is from
+> +      AVSS to (AVDD1 - 1 V).
 
-Frank
->  drivers/pinctrl/freescale/pinctrl-imx1-core.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/pinctrl/freescale/pinctrl-imx1-core.c b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
-> index b7bd4ef9c0..4a6bdaefa4 100644
-> --- a/drivers/pinctrl/freescale/pinctrl-imx1-core.c
-> +++ b/drivers/pinctrl/freescale/pinctrl-imx1-core.c
-> @@ -547,14 +547,11 @@ static int imx1_pinctrl_parse_functions(struct device_node *np,
->   */
->  static bool imx1_pinctrl_dt_is_flat_functions(struct device_node *np)
->  {
-> -       struct device_node *function_np;
-> -       struct device_node *pinctrl_np;
-> -
-> -       for_each_child_of_node(np, function_np) {
-> +       for_each_child_of_node_scoped(np, function_np) {
->                 if (of_property_present(function_np, "fsl,pins"))
->                         return true;
->
-> -               for_each_child_of_node(function_np, pinctrl_np) {
-> +               for_each_child_of_node_scoped(function_np, pinctrl_np) {
->                         if (of_property_present(pinctrl_np, "fsl,pins"))
->                                 return false;
->                 }
-> --
-> 2.55.0.windows.3
->
->
+For all of the supplies, I don't think we need to repeat so much of what the
+datasheet says. It is getting quite noisy and makes it hard to see the parts
+of the description that are actually relevant to how the devicetree is to be
+interpreted. (includes VCM as well)
+
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description: GPIO connected to the active-low RESET pin
+> +
+> +  start-gpios:
+> +    maxItems: 1
+> +    description:
+> +      GPIO connected to the START pin. An active-low pulse on this pin
+> +      synchronizes the device to other AD7768 devices. When not used, this
+> +      pin must be tied to a logic high level through a pull-up resistor.
+> +      When used, SYNC_OUT must be wired back to SYNC_IN on all devices in
+> +      the synchronization chain.
+> +
+> +  sync-in-gpios:
+> +    maxItems: 1
+> +    description:
+> +      GPIO connected to the SYNC_IN pin. Receives the synchronization pulse
+> +      generated on SYNC_OUT in response to a START pulse. Must be synchronous
+> +      to the MCLK clock domain. In multi-device or daisy-chained systems,
+> +      two successive synchronization pulses must be applied to guarantee all
+> +      ADCs are synchronized.
+> +
+> +  sync-out-gpios:
+
+Unusual to have an output pin connected to a GPIO. Usually this would be an
+interrupt or trigger-sources.
+
+> +    maxItems: 1
+> +    description:
+> +      GPIO connected to the SYNC_OUT pin. Outputs a synchronization pulse
+> +      synchronous to MCLK in response to a START pulse or SPI_SYNC command.
+> +      In single-device configurations this pin must be wired back to SYNC_IN.
+> +      In multi-device configurations it can be routed to the SYNC_IN pins of
+> +      all devices in the chain.
+
+Although this description makes it sounds like the SYNC_OUT pin is only ever
+wired to SYNC_IN. So wouldn't be described here at all.
+
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    const: 2
+> +
+> +  adi,data-lines-number:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [1, 2, 4, 8]
+> +    description:
+> +      Number of DOUTx lines used for the high-speed data output interface
+> +      (distinct from the SPI control interface). AD7768 supports 1, 2, or 8
+> +      lines; AD7768-4 supports 1 or 4 lines. Defaults to the maximum number
+> +      of lines for the selected variant if omitted.
+> +
+> +  regulators:
+> +    type: object
+> +    description: Container for the on-chip VCM regulator.
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      vcm-output:
+> +        type: object
+> +        description:
+> +          The VCM pin provides a buffered common-mode voltage output used to
+> +          bias the analog inputs. It supports three fixed output levels of
+> +          1650000 uV, 2500000 uV, and 2140000 uV, as well as a
+> +          supply-dependent (AVDD1 - AVSS) / 2 output derived from
+> +          avdd1-supply. Select the voltage by setting regulator-min-microvolt
+> +          and regulator-max-microvolt to the same value. Use
+> +          regulator-always-on when no DT consumer node references the VCM
+> +          output. The VCM circuitry is associated with channel 0. When VCM is
+> +          used externally, channel@0 must be present and kept enabled because
+> +          placing channel 0 in standby disables the VCM output.
+> +        $ref: /schemas/regulator/regulator.yaml#
+> +        unevaluatedProperties: false
+> +
+> +  io-backends:
+> +    maxItems: 1
+> +
