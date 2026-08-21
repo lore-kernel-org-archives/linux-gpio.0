@@ -1,140 +1,170 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010066.outbound.protection.outlook.com [52.101.84.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07FB24B28
-	for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 07:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787296034; cv=none; b=W/zZvswNuSUDCM/u1HfZPrDu/alaOt+ALGEXst5MSHg+BbDL6JLNcztTcZ1uCb1I/jaXK/CzXB26ubCAFaDxy4A3zWazK1H9Ztz/rxLmy3TYl3sxT/BOO1DK/H4/h/JCKF5uLgJq5ISiZQX9xFZy4GXu40W3DCbVo5EsEuyhZa4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787296034; c=relaxed/simple;
-	bh=KHiT9Uz3L1tUUvPiMn+ljKbKUXigLaVXOr8hzafaS7g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VMGBDxbqDwr64LfMl3N2wVHiYLZ1jKnhx8MsDk6VjmHYkB7jqYUePGTHmXJpmJpAmzzsAyz7G9t6iutfFuzi4hioMBp8vVv7eh4RGt2Jp4weADjlEfAlVXqoKFi2vO4U7yah/SWozhVhsvPS/yhJkimbFNrTJsz8Ev/fnLiY+uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=n3+iFbah; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9462846C830;
+	Fri, 21 Aug 2026 09:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787304180; cv=fail; b=sXMc6fEJY7Z5zWsNjK/FbXI20VCYTKRy1EaDS7nj6Ivxvzy1/qoPOS7irejqjPzv4Uq8fi4otGmTNCLwRTg/yqfgh1jFtfqYt+7YVUSE5PlnZFtIN+2bIPtzGheLawslC5Lx5weDfa33MQDzy90REqOcbSpy6dXxo6I3qICALeM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787304180; c=relaxed/simple;
+	bh=c3QAAhtL3DCYX+J+FVgDnG4lhkwd2FV1CW1w8bXGWJU=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=c0q7dcLtNb7lRsyiHc9i/sXqnebNLkc7qYAwdCAFgueddiEUzPM9z3zoJy0I491DLJtjDG2UaaVBIzps5O3sAfCxNsTaQmezLItgsc7/5jXy2+b8XUA3kuNzj5shm1KDBa5RCz7h+afXyMTGYLaX2j0gYPTWFmsQ4KUJ1jI11Ss=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=n0AKAZOI; arc=fail smtp.client-ip=52.101.84.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n3+iFbah"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-c15d47266baso81368766b.3
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 00:07:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787296031; x=1787900831; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=4/P0D6GBeuWoJ3fKJc4nQEvpIIn/RZFrAaGDwh5r7l8=;
-        b=n3+iFbahR4rSqm2LoLtHV9HvbAc0jP+2Gm8W2zAu0ryEkju/THb03W3oELy8jHtYW4
-         YuWVb7U2VrfaPn9wCf7p9Jw8UeppLWClazCwsFna/Jwmq72mddE0S72BbRaBXQ5DjozV
-         AkfIGqrxChVv0akQYi2l7nZGzYSHOalK8h9PJYPI+UH82OCy/MaYq8fQZc4bBOUPH0AB
-         tD6aRNE520p6mi50qz1w9vqrBwdSo8xLWy5QJB/oUPG7yVpqGXOcQAfYpaAp10rvoIhm
-         KJdjw46h4ozala4k/gJHO5jZpclcZOaPgPezhTp7QjCrStpIiLgd3/JvLQNMo1i+25QI
-         1gOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787296031; x=1787900831;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=4/P0D6GBeuWoJ3fKJc4nQEvpIIn/RZFrAaGDwh5r7l8=;
-        b=bQOUa8LRuaNOl+uEYSjSeCEE5fD4eVmQlTJK1kuKKIt36c5x1jQROxXmB5cJfw7Dra
-         UpiV+aACz2yvOXpL8LAMzyFkxii3HJ08wn53RfzWJ4fAPUi1lR7QaOaT/28g5yAfWvR0
-         7W6HtlQLgvBdralF/NrwJtt3+ENGEhiEOtcK7OULA87D4Op3CYSmNqUWBUoM2IQZLtHM
-         XGtRC/B0m9mP7gCKv+zFe7WtItz5JZTQ1eVwwueVk/GkgjdTV24qwhzkUblwIVVhFRSu
-         bnsIDubwYX5tOcM2GoByeZV/YPtGqRQBKWzr+9fqPKR+/9J52DzoRhgiVUCd8gC+68+Z
-         +ZKQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rr7svp8MaeAV4A8+Doj1NhS21jc1yeeRrtV5S9z2r0Vd/Ypa85uc6oH1Xi508WJA4il8Z7leLio+VMT@vger.kernel.org
-X-Gm-Message-State: AFuF++mKbAdjtUVai0sEkzbEPm6G/97mCgTlGjK/551czARCP3oW5gkx
-	XMc/6wEHcjLAiwyPZWI2qiGaJJOTB2NHvUotOfR8h+cPFJQR0YrR16WM
-X-Gm-Gg: AR+sD103PEcbz9To+9qtx7SDvN2zo03+pzdC7VAwvd6Trhj2a3n5sVS64aP8V9WjwkR
-	BRLVtq3X7Yh9939uQiyZcmKpLcuC6sY9Zn6J5tvQi7qchqr0TfXh10QtLXZtNMateB75sJuzD7n
-	SbSWLjRaEHHEW2EzflYcuLu1tG819f+seJFW7qe3Iqw5fPWYX7Zj+M7fpm1EzgGS2NOEYuN3WyD
-	qzItiDFYSAmZ/L4FY7mUvYiI8pY1LADsRN3QCuC+clQ3GgCXCwOmyZPL0FYQ+VYuYpWTTUxsp2o
-	y+rJaFNA6QcUx7sojhAALA1WGJbZWDHsCyxRnR/4eM/sk4fYZpRDPHNqIqwZj0dyguHgFxk3xgL
-	9qUgQVVFiMsEy3MSeNa+yLMNmaPPxkvLiNs20YFCPyQFelHBfS7gbynJQpodZQ4mttpL5fM33M+
-	AHT2Jr+ijYlXDIDK3Py89KD95awxLE5Q2hSHdI0PjHIiT97JYQS06Gbl8cv87VJb16/dggjFj+B
-	6OnecIFK9TNcjrFX23xCk2q3V4F3sgEZ3+XWDowWJB4Om7dh4mhYznT2i1X+8NwMPmVzbJqM5HJ
-	mblVOacLxFLlQqM=
-X-Received: by 2002:a17:907:7ba7:b0:c16:4e5:944a with SMTP id a640c23a62f3a-c246a6836bcmr403412566b.21.1787296030701;
-        Fri, 21 Aug 2026 00:07:10 -0700 (PDT)
-Received: from localhost.localdomain ([5.22.132.95])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c24591df622sm332597366b.46.2026.08.21.00.07.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Aug 2026 00:07:10 -0700 (PDT)
-From: Kivan <vaknins33@gmail.com>
-To: Mika Westerberg <westeri@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kivan <vaknins33@gmail.com>
-Subject: [PATCH] gpiolib: acpi: Add ignore_wake quirk for ASUS ZenBook UX425UA_UM425UA
-Date: Fri, 21 Aug 2026 10:06:50 +0300
-Message-ID: <20260821070651.39763-1-vaknins33@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="n0AKAZOI"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vQLRTCpVXl18dXLfih00+xDVi1anpkmFsZN5XstQNo1gcDTffWd5PSjgAU5bqHBD2n5q5pUIyIBq0JyLZbeiplbSKXhK4KHcqNw4vVS27UvhbiK8iz6lIQaGYH7FNjKxdTe8gzltJLNMP3THR3U/vOMqxufOEnc9XW2CtpQeAPuKj74vNSq6CTW4r7xkVVfT2JtHbPJ+ut0reGwQMi6CChyHWIjzOltfp9gQY+LvpfEsnZPe66xFqaTLPytIfN9DEmVleA+d1arQYaxGaeWySl7yk9ZfPNKsgOyZwWfOMPt5AUx6eQi0OywqhJUGdDCzy0Wy5Iz6PGYYu6QxQVssvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c3QAAhtL3DCYX+J+FVgDnG4lhkwd2FV1CW1w8bXGWJU=;
+ b=ejg5dUMOpF6wlgPfaB7OIlF0MKv93SFyp18GT8PXmwaUmMsoEbw1jJWhjpugtgCknDPYhG9fZEsSY7+jTzvJ+mmtiGP+bwNK90R3kadDYh7yXuFrYlIgMmDXMIbJEU/E7DsZI6VJ/c2XCaSj+Q9cV60UyZyQjYWu5+xDKN9el/NHgmoGWgtUlr1/n0QTgos5rC2RjYrMRHoL6CsOyBVcVTZiAJwLOMr5rRo8wyIxHfXNYFHU0mGrDkN/Sb3lKyZSt0JD2KuXlrOezHZ11aUuiKRQcayTMb2pMGyynpxr+mzHgPtZhS9K34rsU8ad9I1J4hziVMu4nbgmLPLQz/0hSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.59) smtp.rcpttodomain=163.com smtp.mailfrom=foss.st.com; dmarc=fail
+ (p=none sp=none pct=100) action=none header.from=foss.st.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c3QAAhtL3DCYX+J+FVgDnG4lhkwd2FV1CW1w8bXGWJU=;
+ b=n0AKAZOIK361/qp8N7zgpg1gzS5Ye97+EMtA6DEtM/3qENyT9lPvqyjFWeuNvoWYEEq1Ii+tIemmg3eQDANRw7rYP7cE3X+daQXe2E5k5Oesr3A5Qx1eQnXpe9LcqVR3zjaG7Rlmn6OdK12adHfFwVLkeVcf4SqBC0fQsUU3mIEY/eeFvdVWVsW6sbQeHEwD0GTSN/W1A+UQPW32HTxhOzVqij4tx89kzy6ObcJqf/HUwgbEwTyzJ5+93epXyDHh/0G2s7HHh3taWLanCnJM+nYuFR7rER3uqeNLH9AY3RVFuFY5JhcjmaKh8sbRiyLhWPriliT0h9drvKLt6hjjHA==
+Received: from DUZPR01CA0076.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46a::7) by VE1PR10MB3887.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:800:161::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.10; Fri, 21 Aug
+ 2026 09:22:39 +0000
+Received: from DU2PEPF00028CFE.eurprd03.prod.outlook.com
+ (2603:10a6:10:46a:cafe::4c) by DUZPR01CA0076.outlook.office365.com
+ (2603:10a6:10:46a::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.339.10 via Frontend Transport; Fri,
+ 21 Aug 2026 09:22:38 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.59)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.59; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.59) by
+ DU2PEPF00028CFE.mail.protection.outlook.com (10.167.242.182) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.339.3 via Frontend Transport; Fri, 21 Aug 2026 09:22:38 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
+ (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Fri, 21 Aug
+ 2026 11:28:13 +0200
+Received: from [192.168.8.15] (10.48.86.45) by STKDAG1NODE2.st.com
+ (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Fri, 21 Aug
+ 2026 11:22:37 +0200
+Message-ID: <9b0f76a08a7c1dbaec4684b4bc013263e0149a4b.camel@foss.st.com>
+Subject: Re: [PATCH] pinctrl: stm32: fix the unit of the hwspinlock timeout
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: Ju Nan <junan76@163.com>, <linusw@kernel.org>,
+	<mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>
+CC: <linux-gpio@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Date: Fri, 21 Aug 2026 11:22:25 +0200
+In-Reply-To: <20260805032843.36961-2-junan76@163.com>
+References: <20260805032843.36961-2-junan76@163.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
+ (10.75.128.133)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PEPF00028CFE:EE_|VE1PR10MB3887:EE_
+X-MS-Office365-Filtering-Correlation-Id: 387ecf45-9ebe-4f7d-c759-08deff65be83
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700016|23010399003|1800799024|82310400026|6133799003|56012099006|10067099003|11063799006|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	jYhXf7XTC3vphwwyxsq6exnKBx6G+o4YkasEmM89ZZ2yLNujPG8nleIWUNZFW3p2IcSVGZbYrNOCs82Gz6c12tUok262fpxKQfZVtQ1apFvp/4EqRnnFLuaHZwjwtlbiCPt3K5oIexUUIVNUkMjA0GA85Z8YZNbI7516wzpWOdiXA6w7P+vIl0PvmiB3t0xrlRc1h/7MXwt84WlDELTjNaDpC2p/1e5o0W2JqHhknpy1ahPXV42In9PMV7JYdUhbFacvcXw1yJFAvshnbHLJcDQNAEzy5KGJu+wlpeEAgZB7jzmmWnOprapWo6VM3G691JG7D//Fu5SAERSpAq9HI4r40ZfcePI+7pfOiBewqOIoN5zzDCZbZhBAsi+rHYWYicDP1FVrVfhzIRX/b4tNj5yFAWBrRrxV6dvcZSJNib/j+Q7TQtqkbbii9l3Ra8DdL2P59bDAARxqLupJGvhrOe2EtdgM9MJqxSVYHmJbRvUgHy7rGmWo0pGq1GxYhkzzLtFhKCRHMZdOsFo+LDl8kBsy/cbDgqdXmQXRqe4ioXMr3KkF7ok2KRSSX3Ee/q0cNm5NqlAmR9MZ2eqglBiFamjpyF0pV26eIs1di/3K+FSHYvhwy0qMIHCU4exSaTpIBE/bxXrG3oMCWzf/Gv+zkNELq4ptZ6uCmc114ctZEIEzE2fMskMmDbjKsteSpGanFbQyBXoKKfF+KQM/jqFYDg==
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700016)(23010399003)(1800799024)(82310400026)(6133799003)(56012099006)(10067099003)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	haAoGnm1agbBqlWxsaQ6RMaKelZ9Gf5MJ6jqpWjJp61z+HV4NqLhz7YX1MauhQG3RVikUvkj3Rx+PwCEiO8KT4FtBnypl4h+1LCKmKOw0/brjbwQSUNig/VgJVX/srw30mXcC3xKWMZ51E/VUGqe+WYUhtm5QG2M8b0gcF3RAW9eLuF14eMsPBXHgmXw29gwAqZYwwkGMqeJtTX1pTFgqTmsoIOZfXMjQrX2ql2Nzxh1+LPEwK4bmUcwWd6JL/GWAQk0iEkvQIFt7Yp3tV7+KRO2tkgEM/K2nbNyhTx2W0v4m9d9QpP70dDqfTNihG65HdtlxXre7qNL16nhAYLUkdpxdlAX/oUyyMHvXTowub56fguQYGaBFNotJBy0AUu97d/7HsQprMafXzqGFvZlc2wqNlGG9vhSg62clBKmY/TwrfiPNAn5h7SKBq2UPAnc
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2026 09:22:38.5129
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 387ecf45-9ebe-4f7d-c759-08deff65be83
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU2PEPF00028CFE.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR10MB3887
 
-The ASUS ZenBook UX425UA_UM425UA (with AMD Ryzen 7 5700U SoC) fails
-to stay suspended in s2idle (Modern Standby), prematurely waking
-after 1-3 seconds with 0% hardware sleep achieved.
+On Wed, 2026-08-05 at 11:28 +0800, Ju Nan wrote:
+> HWSPNLCK_TIMEOUT is passed to hwspin_lock_timeout_in_atomic(), whose
+> timeout argument is in milliseconds, not microseconds:
+>=20
+> =C2=A0 atomic_delay +=3D HWSPINLOCK_RETRY_DELAY_US;
+> =C2=A0 if (atomic_delay > to * 1000)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ETIMEDOUT;
+>=20
+> So the driver asks for a 1 second timeout where the comment next to the
+> macro says it wants 1 millisecond.
+>=20
+> The hwspinlock core documents this explicitly:
+>=20
+> =C2=A0 If the mode is HWLOCK_IN_ATOMIC (called from an atomic context) th=
+e
+> =C2=A0 timeout is handled with busy-waiting delays, hence shall not excee=
+d
+> =C2=A0 few msecs.
+>=20
+> Pass the value the comment always described. The core retries every
+> HWSPINLOCK_RETRY_DELAY_US (100 us), so the semaphore is still polled ten
+> times before giving up, which is far longer than any plausible hold time
+> on the coprocessor side. A timeout is reported with dev_err() and fails
+> the pin configuration or the interrupt allocation, so shortening it
+> degrades gracefully.
+>=20
+> Signed-off-by: Ju Nan <junan76@163.com>
 
-In the laptop's ACPI SSDT tables (SSDT15), GPIO Pin 24 (hex 0x18) is
-defined in _AEI as ExclusiveAndWake targeting the PCIe bridge device
-\_SB.PCI0.GPP3:
+Please add
+Fixes: 290a9f937e5a ("pinctrl: stm32: use the hwspin_lock_timeout_in_atomic=
+() API")
 
-    GpioInt (Edge, ActiveLow, ExclusiveAndWake, PullNone, 0x0000,
-             "\\_SB.GPIO", ...) { 0x0018 }
+> ---
+> =C2=A0drivers/pinctrl/stm32/pinctrl-stm32.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm3=
+2/pinctrl-stm32.c
+> index 6a99708a5..dbc9143ec 100644
+> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
+> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> @@ -87,7 +87,7 @@
+> =C2=A0#define gpio_range_to_bank(chip) \
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0container_of(chip, struct stm32_gpio_bank, range)
+> =C2=A0
+> -#define HWSPNLCK_TIMEOUT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A01000 /=
+* usec */
+> +#define HWSPNLCK_TIMEOUT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A01 /* m=
+sec */
 
-When the SoC powers down PCIe root ports into low-power states during
-s2idle, an electrical edge transition triggers a spurious wake interrupt
-on GPIO Pin 24. This signals the AMD GPIO controller (AMDI0030:00 / IRQ 7
-via pinctrl_amd), aborting sleep across the system.
+Please change the macro name as HWSPNLCK_TIMEOUT_MS to keep track of the ti=
+me units
 
-Booting with kernel parameter "gpiolib_acpi.ignore_wake=AMDI0030:00@24"
-completely resolves the issue: amd_gpio reports ignoring the wakeup on
-pin 24, and interrupt counts in /proc/interrupts remain at 0 during sleep
-cycles, allowing uninterrupted s2idle until intentionally woken by the
-user.
+> =C2=A0
+> =C2=A0static const char * const stm32_gpio_functions[] =3D {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0"gpio", "af0", "af1",
 
-Add a DMI quirk entry to ignore wake events on AMDI0030:00@24 for this
-system.
-
-Signed-off-by: Kivan <vaknins33@gmail.com>
----
- drivers/gpio/gpiolib-acpi-quirks.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/gpio/gpiolib-acpi-quirks.c b/drivers/gpio/gpiolib-acpi-quirks.c
-index a0116f0..dd4db58 100644
---- a/drivers/gpio/gpiolib-acpi-quirks.c
-+++ b/drivers/gpio/gpiolib-acpi-quirks.c
-@@ -392,6 +392,19 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
- 			.ignore_wake = "VEN_0488:00@355",
- 		},
- 	},
-+	{
-+		/*
-+		 * Spurious wakeups from GPP3 PCIe bridge interrupt
-+		 * Found in BIOS UX425UA.301
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "ZenBook UX425UA_UM425UA"),
-+		},
-+		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
-+			.ignore_wake = "AMDI0030:00@24",
-+		},
-+	},
- 	{} /* Terminating entry */
- };
- 
--- 
-2.55.0
-
+Thanks!
+Antonio
