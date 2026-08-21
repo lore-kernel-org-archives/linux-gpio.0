@@ -1,238 +1,290 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356D249365E
-	for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 16:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AC431D362
+	for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 20:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787330147; cv=none; b=jHcjquQtorDIGZQw+0WFOkx8pm+yc5WxVO+p4Zs4u9F2ByZCt68uXwJ1OJtFZ6Kycmk+K3fZQPAbTEwt4RuYVdp+C0wKm4rD5pv44pcNzhYjRKgcKurVPT/hh81nukkAVYqv3ikCyISzF1YS8oduMQFBBxzvbgKEZxqN/Q/zFN8=
+	t=1787345329; cv=none; b=m7tZkE79qDMHyrzvP9q7wnPQrssE5ISfcIYldi8WG1/PuVL8vaUmOzDIZeV0n9afeDRhqemkzQdjep+xpJGWmJTCLNxYDpNpuf/IgVhV7UPjCsaUW0Vkadsh3kpJ4ZbdIYXXPB5GK6KXC1Rs9XMfdgNoL+6rEZh2v9Zf0ZnE87g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787330147; c=relaxed/simple;
-	bh=yoXwSvtLEDY7Y30JRpqeWxPNYwIKQ2YSbo8KvTplCso=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YOfLTngEKoWybvoJfY03sxSu7XIaahMm/FPQLZM660RF9fu0iXXl0AejQoJ8mBrBoG6DH640RmEZPqOrOD9M+wZlIGub3NqLOWWQZ6XQmHJqqdgSgZOxP1o2vpOaze9p1CG8bEyJenNCwX/vew0M6Vb++u8Y6Khyiz9UcPwtnZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aBYf/PsU; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=UI+2F1KR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1787345329; c=relaxed/simple;
+	bh=qHMHjHxt9qOFlhTACZWJ0m273uXcnrod6sFq22eDzR8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MIPdMzUjlCKPRlVzkiCrikUu8hDlT19bATLUBayidNkSPr4p52R2fIFD3ur8qnOYkzfL/miv7gEmSNNPicYnw8iT3LfBKW3SoAL1z7f0o9m8dxfaKirSV3U8XNATiHbYHkLcN1/Qx+FXp7umCFvHpMbickcWWT/3RBIZhvT1um0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SQGzhAmO; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aBYf/PsU";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="UI+2F1KR"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67LFmrrU2417765
-	for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 16:35:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	L3BsDa+bgM83S7/700MDK2LAZB8VC8f+XFusC3BhHyk=; b=aBYf/PsUeoBsmUm3
-	QuAHkEKYWLA1441AxVar0asL8VLsCC0J7cazWEFF5aVXTK+LZ9tWb75Q5rQA0h7F
-	oA+03NZeHNrGHmSmbanLNaE1y9ObDI5gttmPf1Box3bnpN0i99SLFuzB1fUO+QBu
-	Xd8SG6FNwpmBX2Y3Z1BFy2l4HfA0MAQuepoF6Pu0CafY8f9t2EBaNQZkXe7beE8/
-	xkafszO6JDAizYRBuMX9UTWhFhJADN8qA2H2mbv8CUIT3jGdsx2k403Y7FVwCIjf
-	lY6MhXMeZdlrNLOj2nXeG8IXYH7OIzP0IvoqHKQpmKoVQ4gMb6yS6h/pDjzReTEz
-	J6IR8w==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g6fue2kb2-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 16:35:44 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-38f5ac7416eso1100531a91.3
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 09:35:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQGzhAmO"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2d5862bc921so3546085ad.1
+        for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 13:48:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1787330144; x=1787934944; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=L3BsDa+bgM83S7/700MDK2LAZB8VC8f+XFusC3BhHyk=;
-        b=UI+2F1KR86TREUNGiwzEDe96GepiNFsNLa7dG0sU4d1R5XZ6ZqCchTdIPEyNY/uDzn
-         p4ThPMcSqbruzZqQfIje4VtPSWoS4RtCOaoks/U/B2atdUNvVHOl45iJVpxz7KcPHzMc
-         KPi1qPSOD1Elh3mGLK7/u6EcppoCDwAxs+rRst8WxgrUY0rwr8U+sjM1nfZGjDMeiKjc
-         RKqEmvhw00AMjsK7Zu8IfclUuJgFg8DTdm7TBVMDdmUgannjTrHEp28FY9WmqrY+nMjz
-         Fkb6d7zi3iM4UhOShoz5heLVIOsY6i+k2cIEF22WQJb9l1lqQAfbcXCzHnUcQ5A95lqA
-         XOvw==
+        d=gmail.com; s=20251104; t=1787345328; x=1787950128; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=rojm+k4iSdRVF9a/PxgeHQrw8LlNRUPx5mwRZtxqBPQ=;
+        b=SQGzhAmOf7sX8zH/Ui81NHwQLRGo39Hq+s3dUTncR4//mnaDCJaSzdXC5cG9DGHMPs
+         3gZ5xje9fmCaJrY5qQNfpiYqxQwvqFz3SUlED7/EO6OZX7v1W1auuAteBrOQIpexV+0Q
+         orskXxOYmvTu13IAN6QJ+fuOdQfQ1lDu348VypzABVzxmVFANu66PHJOZwSpauFR1AIj
+         C8b+W3ZKKbt1eJAKKs4ZsutDa4tUYmoTkbWKYNAw/phcbI3DSpJWkz6jsgr9K7Khzm6q
+         H7lEiU0dEBEEk5rU3SXSBYkK121t55Qlz/039z2QZQWLC8Q4HyqRZ6XZ1+lWj1VjCdRC
+         sV7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787330144; x=1787934944;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=L3BsDa+bgM83S7/700MDK2LAZB8VC8f+XFusC3BhHyk=;
-        b=RaWbsd6J2dwOAT5jlR8ioGE7qShHR+69MRT6JKhkaDxK9Mqa/g9FptPplIGKOHy3Ua
-         pJ49uDmW7/Oq5/+PHysDw4bRmmlDfeZsuwLzFp135K9h/kb9I2PWmzFUmrhP6tKmmCCj
-         Rv36ne3uBO5nedC/oG+kF1+0Edx6jG0O7tHzHBoQD6B7UHbC47NhY2ZMSAWSUIKNANr5
-         G80iEAN3Wd3uV03kybVFr8DhvIKCeLRSq8jsKw2yXsFX0mB0uddcoXhSUkA7OTykfEp5
-         EK05CRZSNF5RjSIM/7ow5POKw6PxRm8ZMIs/jEaaWxMSkoJLbEvWOlpc3kZv/V0GBNMF
-         SPbQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rria5hFlPXP7O1/zyxdCMmwGI7J7OWrmuqtOdrNfYUAchH9p7aJc0q+xeBoyIbwxEaf02hPIneOHh8R@vger.kernel.org
-X-Gm-Message-State: AFuF++n0y4y20ynTrH/re3l8gRSQpe2Es9sdsMov1Pf9+ybEqXl+JmaP
-	R1kVhaY0Kq1U53i1mUim06B2mtGEwQsX2xFKer0wGtz7ElSa5fpgFHhzrp8oWZk//QWzNbKc4PZ
-	3HlgVbfb4p9qn0xQ5TeMjPOvWl7iw7gGmXsUsNktvqphoBlxoQapXxFcGWs0BW0MZ
-X-Gm-Gg: AR+sD10IzQOYKYyRsOdvrI4Q5C7nPdeC3PQQaF1ol82ZRT8Aqvi1yPtNFv/YVyW7Gnj
-	aetgzU5lOXTFDLQnLuBPQNWuCVLphdDpJdbxb0SJvmhq10b4fivzAQzNBOm4svQl2oBgehfqnV2
-	kMIW3dx1uvJE5bsDdfqWyRbWOi1r6roXuKZwM65titiLHtM7XcjZxNLbFCpmSkFW64UG2EXYTNe
-	RK2s0HToM05ToDOhYmFcISuRZwqV3a2ht7gT0DTmxE/Zbu+DI9EA+fjiGT2Cf/+KDRfPngGMzrw
-	NYL/7OuVuYNXOvNtjtd1muPaqeZZJWYfbEfjTZyEZzzI0NtZ6PKF8xDZDkdM5iEebfOKAuHVoBj
-	u3TYeVwZU/ocZKYub6Z1YLlVQYLM1tu0V
-X-Received: by 2002:a17:90b:5303:b0:38e:5ac1:9517 with SMTP id 98e67ed59e1d1-395c354cbffmr14302451a91.3.1787330143900;
-        Fri, 21 Aug 2026 09:35:43 -0700 (PDT)
-X-Received: by 2002:a17:90b:5303:b0:38e:5ac1:9517 with SMTP id 98e67ed59e1d1-395c354cbffmr14302327a91.3.1787330143403;
-        Fri, 21 Aug 2026 09:35:43 -0700 (PDT)
-Received: from [192.168.1.2] ([122.171.20.211])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-395c4c194d2sm3737725a91.15.2026.08.21.09.35.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Aug 2026 09:35:43 -0700 (PDT)
-Message-ID: <55d15218-d812-4b4f-a3a8-ebe02ee26f2b@oss.qualcomm.com>
-Date: Fri, 21 Aug 2026 22:05:34 +0530
+        d=1e100.net; s=20251104; t=1787345328; x=1787950128;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=rojm+k4iSdRVF9a/PxgeHQrw8LlNRUPx5mwRZtxqBPQ=;
+        b=gSxP5Ml+AusKw1g3xmM+tiiXv14CfA+8smse7465p+ey8A2mD5GTrYClIUUsWssffT
+         rOPIqxfFsrK9NJ9YQU0SenPZFsfxvCt+Ae9aRHBwD9NZFK3C7OIhLGXkQDxWNOaRaoe+
+         og/DYeSFvYl933aqynuj2ZkhKft8TsuVfyGvAaOe/QIcfvQ+8O7rX6Hv0N6j+xuHLBpQ
+         DcjjjG1eVNnEY2mcRmZnlq0ynTZOk7HKW9OOxzOphJXfBpFoclIrQvIw3TJJnQh2TXnh
+         XOKDf96EDfBDEbsPHj/zR48Zy/lzQG4tD8g8fRW77DSNFLQXcT99OYGpOjzkl7YWqUgS
+         7Obg==
+X-Gm-Message-State: AFuF++lf+GyRpY3pLUi07P8rJA/9ESmrhX9kCxtGyonM1/BJh43Ybkpu
+	da3LjTqG9SDN3PnSQjZMZ/76tiHvvEGVyTuRBsw4GkDIVY7ny9xf2+dmUKiL/Q==
+X-Gm-Gg: AR+sD12QVdQmW9mUBa4nLCenAgb5uVic4SE4O9+iRilTxYVSRjTq+RkN+4DMtXh+ao4
+	cjaGCzQ/gmOWAkd4o79CKmOEwuHnAzlyXYGIDjPjJ04bA8Ta2BQyz9tozWUE/vGVg1OORe3aUXR
+	qQtcX/I+hCoNAaJMiKwZPrSHPARDkrBVpmZihBIefbcLT2KMoO2hrjf1GWg2JFDYqwCdVooGGb5
+	LscqasJirMjdm5KR1UB5uBw1vJQ48EDUDxmJQn284M/4JiymStACADhQuUcLVvqHPx2cuWhpI9G
+	vixiEyhIIPCcOVoRA0Hz4cjFGNMHuIyVHB8GBWFDhnzIbgfvAY/UJfgZwNlUEKec4F7BaQJYdlA
+	0mqmmK8pzJDBEu6yrjeLoQ+CRrsm8BHap1japgB6E4Ajwv/7qf1hoHl3DInttfwg5Mc/DZCD++s
+	695LqLmLT+txTOY44Zf76RYPlVufQ0LdRdlqAaWi7iex3qQNPv+cs0AQNzBDaIYqlY3HRAhC+l
+X-Received: by 2002:a17:902:ce8e:b0:2d3:a50c:5e19 with SMTP id d9443c01a7336-2d64ad815bdmr83509775ad.1.1787345327635;
+        Fri, 21 Aug 2026 13:48:47 -0700 (PDT)
+Received: from [10.90.163.252] ([2409:40c2:5400:571e:d71e:3d6b:f245:8387])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-327c3fc6675sm42808199eec.13.2026.08.21.13.48.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Aug 2026 13:48:46 -0700 (PDT)
+From: Bhargav Joshi <j.bhargav.u@gmail.com>
+Date: Sat, 22 Aug 2026 02:18:03 +0530
+Subject: [PATCH] dt-bindings: pinctrl: ti,pinctrl-palmas: Convert to DT
+ schema
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/15] dt-bindings: clock: qcom: Add Kuno Global Clock
- Controller
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Taniya Das <quic_tdas@quicinc.com>, Georgi Djakov <djakov@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Linus Walleij <linusw@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
-        Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>,
-        Guru Das Srinagesh <linux@gurudas.dev>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-References: <20260809-kuno-soc-support-v1-0-5e0ede4a0c72@oss.qualcomm.com>
- <20260809-kuno-soc-support-v1-10-5e0ede4a0c72@oss.qualcomm.com>
- <20260813-glorious-secret-mantis-dcc083@quoll>
-Content-Language: en-US
-From: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-In-Reply-To: <20260813-glorious-secret-mantis-dcc083@quoll>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODIxMDEzMCBTYWx0ZWRfX84Rnz24E4mL0
- e0LuVKZ7/5elywjS9CzJ3nxcxKgPUAq15V2ik5yy+GLefBw15uogLr1YqoiKwGyuzdz/EsPsRdY
- VT7NCGP2xfTzgNDbH90wic/wv9Hx9FY=
-X-Authority-Analysis: v=2.4 cv=U9+iy+ru c=1 sm=1 tr=0 ts=6a887e60 cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=+KmVXPE0btiop/5qwQKk0Q==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=gEfo2CItAAAA:8 a=tqvfEU5OP8eIFZPyU8cA:9
- a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-GUID: NmZ5AXC6T7e8Prm3O7wnavgGztKtXOSg
-X-Proofpoint-ORIG-GUID: NmZ5AXC6T7e8Prm3O7wnavgGztKtXOSg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODIxMDEzMCBTYWx0ZWRfX6AM4Gzs6C6Rg
- 8uQoyxUc1Tk4V6xA1WJP/f7k1oLQt39S4JaHBbMzmBXG0UM0wjPuKWoN9s1/X65svz3aixbdeMV
- 079fVdj0UI8Ks4OWiBBtcUMRhmDDJBWrzDqL5xJj9r15JNn6Yi8nkk7hsXlWQgxJYencAzC01A8
- ekdFnxnhngyKXWO961MdLbY56nxro1a9DXu0fftev3uHjWyzrsDXxRADg79l+Q8mhu0TG+S05pE
- 87dLMFQGhVFgUSQ728WbItAspbWFH2BDrctuwYi+P4Al/x/N/DWhKijP2ynYuLhYDctYxl+MzY9
- KqfXqtrxqDgXSlneCpALipXRPb1Z8cxhphbuoPYg0OefhCX/cN11UDwon6c8BTRizked5qrN6da
- IYkrRfWvST8HC+jNf/JygM3nQmNEOqVvvujZAZXHFmqGu53wYesdQLdFi5QbACzlKm9oaP/8xei
- AHuWN6HciszLr/OvDzw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-21_05,2026-08-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 phishscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608210130
+Message-Id: <20260822-ti-pinctrl-palmas-v1-1-a4d49e7f2dab@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MTQqAIBBA4avErBuo6YfqKtFCdKoBM9GIQLp70
+ vJbvJcgchCOMBUJAt8S5XQZdVmA3pXbGMVkA1XUVwMRXoJenL6CRa/soSIydz3TqBrTNpA7H3i
+ V53/Oy/t+X6rHvGMAAAA=
+X-Change-ID: 20260822-ti-pinctrl-palmas-ee56e29a3d43
+To: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, goledhruva@gmail.com, m-chawdhry@ti.com, 
+ daniel.baluta@gmail.com, simona.toaca@nxp.com, j.bhargav.u@gmail.com
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1787345318; l=6098;
+ i=j.bhargav.u@gmail.com; h=from:subject:message-id;
+ bh=qHMHjHxt9qOFlhTACZWJ0m273uXcnrod6sFq22eDzR8=;
+ b=j74mL6e9aZUj6abhaSI1AfjNlgDwwilM+qW6klRFeW8ZkeHUbsjPKpcQQjQz2yHprxjVj9hl4
+ kFlLWWrwY4QA0m0QZcZ1k9Czuj9c6rTAEypF0La72Oz/UEdvf8Ihwc6
+X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
+ pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
 
+Convert TI Palmas pin control text binding to DT schema. The legacy
+binding allowed any subnode name. Restrict them to standard prefixes to
+prevent the validator from accidentally evaluating standard integer
+properties (like phandle) as child nodes.
 
-On 8/13/2026 3:10 PM, Krzysztof Kozlowski wrote:
-> On Sun, Aug 09, 2026 at 12:57:09PM +0530, Hardeep Sharma wrote:
->> Add the device tree binding and clock/reset IDs for the global clock
->> controller (GCC) on the Qualcomm Kuno SoC so its device trees can
->> describe the GCC block and reference the clocks and resets it provides.
-> Almost each of your bindings commit has different style. I would assume
-> this you would write once and copy-paste.
+Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
+---
+ .../bindings/pinctrl/ti,palmas-pinctrl.yaml        | 175 +++++++++++++++++++++
+ 1 file changed, 175 insertions(+)
 
-Thanks for review.
+diff --git a/Documentation/devicetree/bindings/pinctrl/ti,palmas-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/ti,palmas-pinctrl.yaml
+new file mode 100644
+index 000000000000..c07e3a782ef0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/ti,palmas-pinctrl.yaml
+@@ -0,0 +1,175 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/ti,palmas-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI Palmas Pincontrol
++
++maintainers:
++  - Laxman Dewangan <ldewangan@nvidia.com>
++
++description:
++  The pins of Palmas device can be set on different option and provides
++  the configuration for Pull UP/DOWN, open drain etc.
++
++allOf:
++  - $ref: pinctrl.yaml#
++
++properties:
++  compatible:
++    enum:
++      - ti,palmas-pinctrl
++      - ti,tps65913-pinctrl
++      - ti,tps80036-pinctrl
++
++  ti,palmas-enable-dvfs1:
++    type: boolean
++    description:
++      Enable DVFS1. Configure pins for DVFS1 mode.
++      Selection primary or secondary function associated to I2C2_SCL_SCE,
++      I2C2_SDA_SDO pin/pad for DVFS1 interface.
++
++  ti,palmas-enable-dvfs2:
++    type: boolean
++    description:
++      Enable DVFS2. Configure pins for DVFS2 mode.
++      Selection primary or secondary function associated to GPADC_START
++      and SYSEN2 pin/pad for DVFS2 interface.
++
++  ti,palmas-override-powerhold:
++    type: boolean
++    description:
++      This is applicable for PMICs for which GPIO7 is configured in POWERHOLD
++      mode which has higher priority over DEV_ON bit and keeps the PMIC
++      supplies on even after the DEV_ON bit is turned off. This property enables
++      driver to over ride the POWERHOLD value to GPIO7 so as to turn off the PMIC
++      in power off scenarios. So for GPIO7 if ti,palmas-override-powerhold is set
++      then the GPIO_7 field should never be muxed to anything else.
++      It should be set to POWERHOLD by default and only in case of
++      power off scenarios the driver will over ride the mux value.
++
++patternProperties:
++  '^(pinmux|pins?-[a-z0-9-]+)$':
++    type: object
++    additionalProperties: false
++    patternProperties:
++      '^(pin.*|gpio[0-9]+|vac|powergood|nreswarm|pwrdown|gpadc_start|reset_in|nsleep|enable[12]|int)$':
++        type: object
++        allOf:
++          - $ref: /schemas/pinctrl/pinmux-node.yaml
++          - $ref: /schemas/pinctrl/pincfg-node.yaml
++        additionalProperties: false
++        properties:
++          pins:
++            items:
++              enum:
++                - gpio0
++                - gpio1
++                - gpio2
++                - gpio3
++                - gpio4
++                - gpio5
++                - gpio6
++                - gpio7
++                - gpio8
++                - gpio9
++                - gpio10
++                - gpio11
++                - gpio12
++                - gpio13
++                - gpio14
++                - gpio15
++                - vac
++                - powergood
++                - nreswarm
++                - pwrdown
++                - gpadc_start
++                - reset_in
++                - nsleep
++                - enable1
++                - enable2
++                - int
++
++          function:
++            description:
++              Selects the mux function. There are 4 special functions opt0,
++              opt1, opt2 and opt3. If any of these functions is selected then
++              directly pins register will be written with 0, 1, 2 or 3
++              respectively if it is valid for that pin or list of pins.
++            enum:
++              - gpio
++              - led
++              - pwm
++              - regen
++              - sysen
++              - clk32kgaudio
++              - id
++              - vbus_det
++              - chrg_det
++              - vac
++              - vacok
++              - powergood
++              - usb_psel
++              - msecure
++              - pwrhold
++              - int
++              - nreswarm
++              - simrsto
++              - simrsti
++              - low_vbat
++              - wireless_chrg1
++              - rcm
++              - pwrdown
++              - gpadc_start
++              - reset_in
++              - nsleep
++              - enable
++              - opt0
++              - opt1
++              - opt2
++              - opt3
++
++          bias-disable: true
++          bias-pull-up: true
++          bias-pull-down: true
++          drive-open-drain: true
++
++        required:
++          - pins
++
++required:
++  - compatible
++
++additionalProperties: false
++
++examples:
++  - |
++    pmic {
++        pinctrl {
++            compatible = "ti,tps65913-pinctrl";
++            ti,palmas-enable-dvfs1;
++            pinctrl-names = "default";
++            pinctrl-0 = <&palmas_pins_state>;
++
++            pinmux {
++                gpio0 {
++                    pins = "gpio0";
++                    function = "id";
++                    bias-pull-up;
++                };
++
++                vac {
++                    pins = "vac";
++                    function = "vacok";
++                    bias-pull-down;
++                };
++
++                gpio5 {
++                    pins = "gpio5";
++                    function = "opt0";
++                    drive-open-drain = <1>;
++                };
++            };
++        };
++    };
 
-Corrected in v3 : 
-https://lore.kernel.org/all/20260821-kuno-soc-support-v3-0-196e2b306368@oss.qualcomm.com/
+---
+base-commit: 818bebeb63dd6bf5f4e07e145f6cdbace520a34c
+change-id: 20260822-ti-pinctrl-palmas-ee56e29a3d43
 
-Best Wishes
+Best regards,
+-- 
+Bhargav
 
-Hardeep Sharma
-
->> Signed-off-by: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
->> ---
->>   .../devicetree/bindings/clock/qcom,kuno-gcc.yaml   | 56 +++++++++++++
->>   include/dt-bindings/clock/qcom,kuno-gcc.h          | 95 ++++++++++++++++++++++
->>   2 files changed, 151 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,kuno-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,kuno-gcc.yaml
->> new file mode 100644
->> index 000000000000..ff01ff31c2e2
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,kuno-gcc.yaml
->> @@ -0,0 +1,56 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/qcom,kuno-gcc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Global Clock & Reset Controller on Kuno
->> +
->> +maintainers:
->> +  - Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
->> +
->> +description: |
->> +  Qualcomm global clock control module provides the clocks and resets on Kuno.
->> +
->> +  See also: include/dt-bindings/clock/qcom,kuno-gcc.h
->> +
->> +properties:
->> +  compatible:
->> +    const: qcom,kuno-gcc
->> +
->> +  clocks:
->> +    items:
->> +      - description: Board XO source
->> +      - description: Board active-only XO source
->> +      - description: Sleep clock source
->> +      - description: PCIe pipe clock source
->> +
->> +  power-domains:
->> +    items:
->> +      - description: CX domain
->> +
->> +required:
->> +  - compatible
->> +  - clocks
-> Not a power domain provider? Then it should not be allowed or explain
-> oddities in the commit msg.
-
-Thanks for review.
-
-Apologies.
-The GCC does host GDSCs, so it genuinely is a power-domain provider.
-Rather than disallowing #power-domain-cells, in v3 I've made it
-"required" in qcom,kuno-gcc.yaml and declared #power-domain-cells = <1>
-on the SoC gcc node, following qcom,sdx75-gcc.
-
-v3: 
-https://lore.kernel.org/all/20260821-kuno-soc-support-v3-0-196e2b306368@oss.qualcomm.com/
-
-Best Wishes
-
-Hardeep Sharma
-
->
->> +
->> +allOf:
->> +  - $ref: qcom,gcc.yaml#
->> +
->> +unevaluatedProperties: false
-> Best regards,
-> Krzysztof
->
