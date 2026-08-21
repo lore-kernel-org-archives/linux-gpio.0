@@ -1,290 +1,192 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012050.outbound.protection.outlook.com [52.101.48.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AC431D362
-	for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 20:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787345329; cv=none; b=m7tZkE79qDMHyrzvP9q7wnPQrssE5ISfcIYldi8WG1/PuVL8vaUmOzDIZeV0n9afeDRhqemkzQdjep+xpJGWmJTCLNxYDpNpuf/IgVhV7UPjCsaUW0Vkadsh3kpJ4ZbdIYXXPB5GK6KXC1Rs9XMfdgNoL+6rEZh2v9Zf0ZnE87g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787345329; c=relaxed/simple;
-	bh=qHMHjHxt9qOFlhTACZWJ0m273uXcnrod6sFq22eDzR8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MIPdMzUjlCKPRlVzkiCrikUu8hDlT19bATLUBayidNkSPr4p52R2fIFD3ur8qnOYkzfL/miv7gEmSNNPicYnw8iT3LfBKW3SoAL1z7f0o9m8dxfaKirSV3U8XNATiHbYHkLcN1/Qx+FXp7umCFvHpMbickcWWT/3RBIZhvT1um0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SQGzhAmO; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6ED30ACFB;
+	Fri, 21 Aug 2026 20:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787345351; cv=fail; b=jC05A9Nd6qBsvM2z/lajHnDQVtMZtxDQl/uuGJLR6hejhYdYNWPGxz4vIfY5T0UoQgB6zkFnNsdZWy4hCFY4lbKb6xIDo9mcSPtyGUEm1kNI+LQ5zp8GWEFbVcDPbV0MphX/Xg+Qmlr48aUmNMdC5ojePUMLkTQQRVU5G1gM0Dk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787345351; c=relaxed/simple;
+	bh=sgCxUf63+1Ah7Yz3y7fCFCi48zVyuq7pEu8Y5ENthBs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GchexyE2x9W3LuxlzoznL5AcOMF9iQqN4dtuq3h12ZMP9m99mL6LySqD4ZKJds6UJCUdwxvjMytW6fzds9GMIsgji4WVlgmHDqDOSf4bzjFr6py81wt6vOYSNCBqF0YqpQ6lV39ugw49x5e4DD4hrIJ6XLGmrbEdhxFZFyeRkb8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=l2Zz2djd; arc=fail smtp.client-ip=52.101.48.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQGzhAmO"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2d5862bc921so3546085ad.1
-        for <linux-gpio@vger.kernel.org>; Fri, 21 Aug 2026 13:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787345328; x=1787950128; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=rojm+k4iSdRVF9a/PxgeHQrw8LlNRUPx5mwRZtxqBPQ=;
-        b=SQGzhAmOf7sX8zH/Ui81NHwQLRGo39Hq+s3dUTncR4//mnaDCJaSzdXC5cG9DGHMPs
-         3gZ5xje9fmCaJrY5qQNfpiYqxQwvqFz3SUlED7/EO6OZX7v1W1auuAteBrOQIpexV+0Q
-         orskXxOYmvTu13IAN6QJ+fuOdQfQ1lDu348VypzABVzxmVFANu66PHJOZwSpauFR1AIj
-         C8b+W3ZKKbt1eJAKKs4ZsutDa4tUYmoTkbWKYNAw/phcbI3DSpJWkz6jsgr9K7Khzm6q
-         H7lEiU0dEBEEk5rU3SXSBYkK121t55Qlz/039z2QZQWLC8Q4HyqRZ6XZ1+lWj1VjCdRC
-         sV7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787345328; x=1787950128;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=rojm+k4iSdRVF9a/PxgeHQrw8LlNRUPx5mwRZtxqBPQ=;
-        b=gSxP5Ml+AusKw1g3xmM+tiiXv14CfA+8smse7465p+ey8A2mD5GTrYClIUUsWssffT
-         rOPIqxfFsrK9NJ9YQU0SenPZFsfxvCt+Ae9aRHBwD9NZFK3C7OIhLGXkQDxWNOaRaoe+
-         og/DYeSFvYl933aqynuj2ZkhKft8TsuVfyGvAaOe/QIcfvQ+8O7rX6Hv0N6j+xuHLBpQ
-         DcjjjG1eVNnEY2mcRmZnlq0ynTZOk7HKW9OOxzOphJXfBpFoclIrQvIw3TJJnQh2TXnh
-         XOKDf96EDfBDEbsPHj/zR48Zy/lzQG4tD8g8fRW77DSNFLQXcT99OYGpOjzkl7YWqUgS
-         7Obg==
-X-Gm-Message-State: AFuF++lf+GyRpY3pLUi07P8rJA/9ESmrhX9kCxtGyonM1/BJh43Ybkpu
-	da3LjTqG9SDN3PnSQjZMZ/76tiHvvEGVyTuRBsw4GkDIVY7ny9xf2+dmUKiL/Q==
-X-Gm-Gg: AR+sD12QVdQmW9mUBa4nLCenAgb5uVic4SE4O9+iRilTxYVSRjTq+RkN+4DMtXh+ao4
-	cjaGCzQ/gmOWAkd4o79CKmOEwuHnAzlyXYGIDjPjJ04bA8Ta2BQyz9tozWUE/vGVg1OORe3aUXR
-	qQtcX/I+hCoNAaJMiKwZPrSHPARDkrBVpmZihBIefbcLT2KMoO2hrjf1GWg2JFDYqwCdVooGGb5
-	LscqasJirMjdm5KR1UB5uBw1vJQ48EDUDxmJQn284M/4JiymStACADhQuUcLVvqHPx2cuWhpI9G
-	vixiEyhIIPCcOVoRA0Hz4cjFGNMHuIyVHB8GBWFDhnzIbgfvAY/UJfgZwNlUEKec4F7BaQJYdlA
-	0mqmmK8pzJDBEu6yrjeLoQ+CRrsm8BHap1japgB6E4Ajwv/7qf1hoHl3DInttfwg5Mc/DZCD++s
-	695LqLmLT+txTOY44Zf76RYPlVufQ0LdRdlqAaWi7iex3qQNPv+cs0AQNzBDaIYqlY3HRAhC+l
-X-Received: by 2002:a17:902:ce8e:b0:2d3:a50c:5e19 with SMTP id d9443c01a7336-2d64ad815bdmr83509775ad.1.1787345327635;
-        Fri, 21 Aug 2026 13:48:47 -0700 (PDT)
-Received: from [10.90.163.252] ([2409:40c2:5400:571e:d71e:3d6b:f245:8387])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-327c3fc6675sm42808199eec.13.2026.08.21.13.48.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Aug 2026 13:48:46 -0700 (PDT)
-From: Bhargav Joshi <j.bhargav.u@gmail.com>
-Date: Sat, 22 Aug 2026 02:18:03 +0530
-Subject: [PATCH] dt-bindings: pinctrl: ti,pinctrl-palmas: Convert to DT
- schema
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="l2Zz2djd"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fhTG8GrGzbmKFXH2cgM2N8JRku9L63rBtRHxPBo15jpgugLvPI4wG9c3r/3YWZh5B1inacV0yEyednPi5GMDy7RFfFvmS6gRe2qrmCcqkoxEonXmb2+lS5GuEgHEuygoBZ+HrnFPSMrdLSGp3kc57dItCE3b3gUsIz8SgNvkeCiaocW2MwPz0RZZosLLoEAMq2zyUEisknXe23zBk2JxQh0fJyyLwwNApNzwho6+tNgJ51uUQjgoyBgOussa7hRjPGX4XU6P0a/X4J8v66gKNQaxqEqSzPlBAN5AqVHdbmEiBIaZiwBkYoTk+sJE0mRrjvNnwqzxIu7WGONKHPUlKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xfAgakeHzC7+c9TXnCAu7ZqtK7KNABT8wg6D8vJODwQ=;
+ b=G3l+f+nWA/K4iPVdg1SjO3NGZjF09U/l5JkgjPW4ytaijZbTE2RQiqbR48tsMhF+HYxnNW5zF1wZWYzEhGtt63f1JGV6/2LPOlKsRYylaj2artTHz7MefEIbbmEJbVCvKWpdcHViANEt5WebJQS6/tIwr2PWnkpsOIQbmKWiSMa1awU3MrbzDVEap2RF1R0gct6sLQCxyWLKj/Zt52f7PbzJcI7NYaYMNEYCn8CfyCaV1eugSq33ZenMWow7gAtniAZEetIAvSaDx6cjQBNDdZANII9yLMtYOGRZ5eFZsVqgKk3m5BkytmZwjHtwKdiINQnn/511n9RX3pxB/Qdx/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xfAgakeHzC7+c9TXnCAu7ZqtK7KNABT8wg6D8vJODwQ=;
+ b=l2Zz2djdoMU6IG0G7PXh1FnfSlS2ttoyAzg9p/u0ueX/UFnsmHlUOnb87FJrRVYN/QbTqFkvNyWhmJQeP1bZ8GJZwR/H0KRV4R5JDHSqBboUVN9mjZTebAYJc6osfPS9xeeT/EX4NDUI/nZysDW7lj7tpOqYQahLHqLc2skghLk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH8PR12MB6914.namprd12.prod.outlook.com (2603:10b6:510:1cb::21)
+ by MN2PR12MB4158.namprd12.prod.outlook.com (2603:10b6:208:15f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.11; Fri, 21 Aug
+ 2026 20:49:06 +0000
+Received: from PH8PR12MB6914.namprd12.prod.outlook.com
+ ([fe80::2893:177a:72b0:6000]) by PH8PR12MB6914.namprd12.prod.outlook.com
+ ([fe80::2893:177a:72b0:6000%7]) with mapi id 15.21.0315.012; Fri, 21 Aug 2026
+ 20:49:06 +0000
+Message-ID: <52e55283-f628-4a85-851b-fe33dcdd9c47@amd.com>
+Date: Fri, 21 Aug 2026 15:49:03 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpiolib: acpi: Add ignore_wake quirk for ASUS ZenBook
+ UX425UA_UM425UA
+Content-Language: en-US
+To: Kivan <vaknins33@gmail.com>, Mika Westerberg <westeri@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260821070651.39763-1-vaknins33@gmail.com>
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20260821070651.39763-1-vaknins33@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DS7P220CA0028.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:8:223::17) To PH8PR12MB6914.namprd12.prod.outlook.com
+ (2603:10b6:510:1cb::21)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260822-ti-pinctrl-palmas-v1-1-a4d49e7f2dab@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MTQqAIBBA4avErBuo6YfqKtFCdKoBM9GIQLp70
- vJbvJcgchCOMBUJAt8S5XQZdVmA3pXbGMVkA1XUVwMRXoJenL6CRa/soSIydz3TqBrTNpA7H3i
- V53/Oy/t+X6rHvGMAAAA=
-X-Change-ID: 20260822-ti-pinctrl-palmas-ee56e29a3d43
-To: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, goledhruva@gmail.com, m-chawdhry@ti.com, 
- daniel.baluta@gmail.com, simona.toaca@nxp.com, j.bhargav.u@gmail.com
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1787345318; l=6098;
- i=j.bhargav.u@gmail.com; h=from:subject:message-id;
- bh=qHMHjHxt9qOFlhTACZWJ0m273uXcnrod6sFq22eDzR8=;
- b=j74mL6e9aZUj6abhaSI1AfjNlgDwwilM+qW6klRFeW8ZkeHUbsjPKpcQQjQz2yHprxjVj9hl4
- kFlLWWrwY4QA0m0QZcZ1k9Czuj9c6rTAEypF0La72Oz/UEdvf8Ihwc6
-X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
- pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB6914:EE_|MN2PR12MB4158:EE_
+X-MS-Office365-Filtering-Correlation-Id: b24ebc79-8c9b-4caa-a276-08deffc5a43e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|23010399003|366016|22082099003|18002099003|56012099006|10067099003|11063799006|6133799003;
+X-Microsoft-Antispam-Message-Info:
+	WuEr3foJO4x95xrEOQk7HLh+4DZq6ZEft7s2DHRfZ+zWNth9Nx1XtT2r/amHgOb9gmS775t8l3rW6oMPQ+V5eVBTsnYWF406zC50ono4ziM7YDC7LfuFBXbrFN98W0zy0bQI6n+6Tb+vXA1oREr2LEPVjVzRMFxm0wFPR76GX69On4y45/8c9NjnNM8Oq+R6AMqMbC+dQaxCQq3OLkMv8n4kgVVRYfw20+fUzHokO1IEIjsTNzyzIlKwwhULnzOLa2DEKhVIfAuZ7gTLTPhZGqVfLtpsJv8wZBWYT/tfpjH24tC1P1nGQ5ZKwvVMrX5efmAFYGAIPFSfrlsavRLBGH73iWkSguuG2Je62Ff4xUp/kjMoPSS6L7pZsg4taDQzn7X3s2ev3SoubLruSlPCS71T3g+ijwzHinW2J0AU1nuV+HkzdtNbWipPzNzKwyHvyseXxWqJjbKaVgEyhOEQOI0g/xVLoWHwFm2epX1gUoRxJ6i0MW93cKG3BKIHzn8E5vQ7CdkrAZt20XgM8kvYF615a5F2Hcq7kjmZz6FXX/S7vhIvafoBb1//e2xHLi52jZAkeHoRdau5tqBFIWSJKdALxfrKniNhGrg73aNpRN8sVi5ezmRueF7gGupJ2VnNOjl3mS5wwfoRN4BWOKzuP3WbuAEyb0T7E1Ovb2DV+ec=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB6914.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(23010399003)(366016)(22082099003)(18002099003)(56012099006)(10067099003)(11063799006)(6133799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UWJHZEFyMHhBdjdYUnRHWFA0Nm9nd2NyMVZWbzVRL2lCQkNvN09VK2UzdVYx?=
+ =?utf-8?B?ais2ZGRXSzNCbm94Z3lSZld4ak1ZTTRYUlliYUtBQTVBQWJWYlNPUUYvcG9p?=
+ =?utf-8?B?OUJGaVJRSmRNWmRBVmtKdVF5ajZrWTM0MzBwcjJUZE5OVTF6T0c2K0RFVjhD?=
+ =?utf-8?B?d0JqQ2JNYVZWbDYwbE55VUNpSkduYThhYUJrcEdCRkUxQTJMakJLcEd6QXN6?=
+ =?utf-8?B?WEFsTHZaSC9nKzM2bGZjQUlOWlIzQUpiNmh4VERqbm1BbS9NU1Z5UVpmS2N0?=
+ =?utf-8?B?akRsakpnWnZaUzlFT3NBSkJKeUkxdmtpZTBDRk5qd3FsT2c2R1gzTUloblI4?=
+ =?utf-8?B?N1gweTBNS1VsdGNRa1V6Z2J4YkV0TnRNdzZUQjA0bWZBL1hjdGl6OStyY3ZI?=
+ =?utf-8?B?YXU5eGlucUtkSjBwZmRqOCtWcHZ1YWFNbG1zSFlreFR0bU9oQm1sZ096dEto?=
+ =?utf-8?B?MlA3N3Q1LzZLVlE2TWkyc0dCQko2a3k1S1NtYlArMHBZbWpySGdJY3RYZ1lU?=
+ =?utf-8?B?bWNZeGZKUElTZFMvTWVDY0w4TUZDV0Z1UU1oMkU1d3dSeSsvQzVCbnJ4ZzVI?=
+ =?utf-8?B?L3RmV0ZhOWhocHNqdVFZWEZlbURWZ0ZSNnB6Q0FRamp0YmtlT3UzR3FnLzFL?=
+ =?utf-8?B?K1N1YmtsN25GWTREelNBTDhWSlJ2bmRseW5YM3ZyTkl3QzM2LzJiZmVQMzYr?=
+ =?utf-8?B?L1dlMWlLOS8wSnQ0SlNvQ2hGV1k4WGpRa0Zremgzd1l4cHNlQnZIL1VjdDNh?=
+ =?utf-8?B?Q2w2S1JTckRERmIzWWdNSGlENVdyRG1kVnRqMEJRNmF2VFBQYi9uMXFvcWZN?=
+ =?utf-8?B?L3h4Y1ozb2xmZkdQRUxCMEZCNlJ2YUdycHdnSnRxNGE4eE9UYktzeDdnR3lS?=
+ =?utf-8?B?dFhONVlUVnhXNnJhOFQ5ZDBZb2MwK21NNHNuN3JKREpSVUIveFR3N2syeEg1?=
+ =?utf-8?B?WkFUa2RSdWtkNGhuUjBOZHV4QmVpRUhTRE1YaUFkam9vYUljajJFaWVrM1Nm?=
+ =?utf-8?B?M2RmcTNqLytYbVZrYjhwemNtMlRiVnNBRWQ3eU9ldmphY2Zkak5uYlhhOVEy?=
+ =?utf-8?B?YlljZ0NEUHhGdzlDamx3RE15eFR1U283S2tRZlJyZkdtQTFVckczT3o3WU4w?=
+ =?utf-8?B?YkNjcjlSWDQ2MlRoQVJUV2t3bDZEMlNtUVphTUkrUGJqVTJNLytQTUZnNjNv?=
+ =?utf-8?B?QnFvUFBJVDJ1QSsyL3RJdFh0dkhNcG9NRDZINnNLSEZkT0czbWZtWjhLSWwy?=
+ =?utf-8?B?R0ppa0JYWnBETUg0Y3NDRFFJTGhnZGoza1lwajAwOFBha1Z5ZWV4czAxVy9z?=
+ =?utf-8?B?VU1QYmtaeEN1ekdGMTdiWmovV2IwRXJsZk1iczZsRy9OWUQwZDhxSTR2MTl0?=
+ =?utf-8?B?VVBiSTh6NVk5dE9IYk8zaDllTWN1eGxzajRVWFduRzZQbERGeXp3OFFkWUhk?=
+ =?utf-8?B?V2d3OHVYZDNqcUs2ZkRiVHBhL3A2K3VFcDgvZXJtbnBabkxwQmpNVGdxbGg2?=
+ =?utf-8?B?eXRtVVh1bUtoeTZqMms2RnpRdlFyUmEzc0lKN3dZdGJXYUpVUldsZlUwbElW?=
+ =?utf-8?B?bzZ3cWxZZzBqejRJeWRnektsS21vckpRbldmWHc5WndiRjNWcDZWTVVXNnF5?=
+ =?utf-8?B?NkVGSElJZkVhS0FxRTFvQkdBSlFMa0tDZzU2RGZFeExnWnNRSHlZRHhXVVRp?=
+ =?utf-8?B?OElBRC9BdnZqOWhmSlBBWng2ekhrQ3VPaWpPWGw4dGt2N1c5bk14MVIzZi9D?=
+ =?utf-8?B?T2tFaWptcU9HNTFheVV2RVNCRjZEM1dVTy9vaU55eWQ1SXhTWWtIRnplSGE5?=
+ =?utf-8?B?QXhjS2k2ZDZRV1FSZGc0YUtkbUczZkovNm1JZkhadlVmc3lYa1VEZ3E2bE9C?=
+ =?utf-8?B?eWZweitYUExab3BIMGg4WURjY1Z0T3JRc1MyZDR1Q1R1MWpjTzZwcGpyVFpB?=
+ =?utf-8?B?SzRUYnE2Y0NianFrSTFjbW9Xc0dQOXI1RTVyZUorSy9kM3o0elpkeFU0SDlZ?=
+ =?utf-8?B?dzRNS280ZFFHZmIvc1VMM0Mzczk1YVFHbnR3NEZlVmZKN2pyZlZOZXFxVFV3?=
+ =?utf-8?B?YjU4a0JGRmJIV25lcEVpcWdIMVdvcVJTei9takhDTkYyNXdkaDNsVmYvdmE0?=
+ =?utf-8?B?Y05pUnc5NzZvK1JlMHhuUXBJbnVVSmxsQ2xLTE81cS95TFhBRTBhM0sxbzJL?=
+ =?utf-8?B?aTFHcnRSMVBkREtpeVZYL0VGQmd0Z1JuRjZPL0N1eHpsMTZoZkpOdzlKOFcy?=
+ =?utf-8?B?dmNUcnBJTm5kOGEvVHBHUFJVZ3dUdmtzQ3dPRHZRV0hpS2JTVjhKNFBSdnpl?=
+ =?utf-8?B?K29uQ1lyMXdUUk0xQ2lRWVZuUy9Xb2h4QnNUQ3VGRnFoVkNGUlZxUT09?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b24ebc79-8c9b-4caa-a276-08deffc5a43e
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB6914.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2026 20:49:06.3881
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Y2mqeYKoBqRB/HOz5EPrEuk8l0yCZLzd7ZHM6OTqtusB6OwayPakfjK2Mh0T6aNBZkpZOqY6qejjz/a+i64KBQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4158
 
-Convert TI Palmas pin control text binding to DT schema. The legacy
-binding allowed any subnode name. Restrict them to standard prefixes to
-prevent the validator from accidentally evaluating standard integer
-properties (like phandle) as child nodes.
+What is connected to this GPP3?
 
-Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
----
- .../bindings/pinctrl/ti,palmas-pinctrl.yaml        | 175 +++++++++++++++++++++
- 1 file changed, 175 insertions(+)
+Can you please share your acpidump somewhere?
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/ti,palmas-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/ti,palmas-pinctrl.yaml
-new file mode 100644
-index 000000000000..c07e3a782ef0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/ti,palmas-pinctrl.yaml
-@@ -0,0 +1,175 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/ti,palmas-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI Palmas Pincontrol
-+
-+maintainers:
-+  - Laxman Dewangan <ldewangan@nvidia.com>
-+
-+description:
-+  The pins of Palmas device can be set on different option and provides
-+  the configuration for Pull UP/DOWN, open drain etc.
-+
-+allOf:
-+  - $ref: pinctrl.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,palmas-pinctrl
-+      - ti,tps65913-pinctrl
-+      - ti,tps80036-pinctrl
-+
-+  ti,palmas-enable-dvfs1:
-+    type: boolean
-+    description:
-+      Enable DVFS1. Configure pins for DVFS1 mode.
-+      Selection primary or secondary function associated to I2C2_SCL_SCE,
-+      I2C2_SDA_SDO pin/pad for DVFS1 interface.
-+
-+  ti,palmas-enable-dvfs2:
-+    type: boolean
-+    description:
-+      Enable DVFS2. Configure pins for DVFS2 mode.
-+      Selection primary or secondary function associated to GPADC_START
-+      and SYSEN2 pin/pad for DVFS2 interface.
-+
-+  ti,palmas-override-powerhold:
-+    type: boolean
-+    description:
-+      This is applicable for PMICs for which GPIO7 is configured in POWERHOLD
-+      mode which has higher priority over DEV_ON bit and keeps the PMIC
-+      supplies on even after the DEV_ON bit is turned off. This property enables
-+      driver to over ride the POWERHOLD value to GPIO7 so as to turn off the PMIC
-+      in power off scenarios. So for GPIO7 if ti,palmas-override-powerhold is set
-+      then the GPIO_7 field should never be muxed to anything else.
-+      It should be set to POWERHOLD by default and only in case of
-+      power off scenarios the driver will over ride the mux value.
-+
-+patternProperties:
-+  '^(pinmux|pins?-[a-z0-9-]+)$':
-+    type: object
-+    additionalProperties: false
-+    patternProperties:
-+      '^(pin.*|gpio[0-9]+|vac|powergood|nreswarm|pwrdown|gpadc_start|reset_in|nsleep|enable[12]|int)$':
-+        type: object
-+        allOf:
-+          - $ref: /schemas/pinctrl/pinmux-node.yaml
-+          - $ref: /schemas/pinctrl/pincfg-node.yaml
-+        additionalProperties: false
-+        properties:
-+          pins:
-+            items:
-+              enum:
-+                - gpio0
-+                - gpio1
-+                - gpio2
-+                - gpio3
-+                - gpio4
-+                - gpio5
-+                - gpio6
-+                - gpio7
-+                - gpio8
-+                - gpio9
-+                - gpio10
-+                - gpio11
-+                - gpio12
-+                - gpio13
-+                - gpio14
-+                - gpio15
-+                - vac
-+                - powergood
-+                - nreswarm
-+                - pwrdown
-+                - gpadc_start
-+                - reset_in
-+                - nsleep
-+                - enable1
-+                - enable2
-+                - int
-+
-+          function:
-+            description:
-+              Selects the mux function. There are 4 special functions opt0,
-+              opt1, opt2 and opt3. If any of these functions is selected then
-+              directly pins register will be written with 0, 1, 2 or 3
-+              respectively if it is valid for that pin or list of pins.
-+            enum:
-+              - gpio
-+              - led
-+              - pwm
-+              - regen
-+              - sysen
-+              - clk32kgaudio
-+              - id
-+              - vbus_det
-+              - chrg_det
-+              - vac
-+              - vacok
-+              - powergood
-+              - usb_psel
-+              - msecure
-+              - pwrhold
-+              - int
-+              - nreswarm
-+              - simrsto
-+              - simrsti
-+              - low_vbat
-+              - wireless_chrg1
-+              - rcm
-+              - pwrdown
-+              - gpadc_start
-+              - reset_in
-+              - nsleep
-+              - enable
-+              - opt0
-+              - opt1
-+              - opt2
-+              - opt3
-+
-+          bias-disable: true
-+          bias-pull-up: true
-+          bias-pull-down: true
-+          drive-open-drain: true
-+
-+        required:
-+          - pins
-+
-+required:
-+  - compatible
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pmic {
-+        pinctrl {
-+            compatible = "ti,tps65913-pinctrl";
-+            ti,palmas-enable-dvfs1;
-+            pinctrl-names = "default";
-+            pinctrl-0 = <&palmas_pins_state>;
-+
-+            pinmux {
-+                gpio0 {
-+                    pins = "gpio0";
-+                    function = "id";
-+                    bias-pull-up;
-+                };
-+
-+                vac {
-+                    pins = "vac";
-+                    function = "vacok";
-+                    bias-pull-down;
-+                };
-+
-+                gpio5 {
-+                    pins = "gpio5";
-+                    function = "opt0";
-+                    drive-open-drain = <1>;
-+                };
-+            };
-+        };
-+    };
-
----
-base-commit: 818bebeb63dd6bf5f4e07e145f6cdbace520a34c
-change-id: 20260822-ti-pinctrl-palmas-ee56e29a3d43
-
-Best regards,
--- 
-Bhargav
+On 8/21/26 02:06, Kivan wrote:
+> The ASUS ZenBook UX425UA_UM425UA (with AMD Ryzen 7 5700U SoC) fails
+> to stay suspended in s2idle (Modern Standby), prematurely waking
+> after 1-3 seconds with 0% hardware sleep achieved.
+> 
+> In the laptop's ACPI SSDT tables (SSDT15), GPIO Pin 24 (hex 0x18) is
+> defined in _AEI as ExclusiveAndWake targeting the PCIe bridge device
+> \_SB.PCI0.GPP3:
+> 
+>      GpioInt (Edge, ActiveLow, ExclusiveAndWake, PullNone, 0x0000,
+>               "\\_SB.GPIO", ...) { 0x0018 }
+> 
+> When the SoC powers down PCIe root ports into low-power states during
+> s2idle, an electrical edge transition triggers a spurious wake interrupt
+> on GPIO Pin 24. This signals the AMD GPIO controller (AMDI0030:00 / IRQ 7
+> via pinctrl_amd), aborting sleep across the system.
+> 
+> Booting with kernel parameter "gpiolib_acpi.ignore_wake=AMDI0030:00@24"
+> completely resolves the issue: amd_gpio reports ignoring the wakeup on
+> pin 24, and interrupt counts in /proc/interrupts remain at 0 during sleep
+> cycles, allowing uninterrupted s2idle until intentionally woken by the
+> user.
+> 
+> Add a DMI quirk entry to ignore wake events on AMDI0030:00@24 for this
+> system.
+> 
+> Signed-off-by: Kivan <vaknins33@gmail.com>
+> ---
+>   drivers/gpio/gpiolib-acpi-quirks.c | 13 +++++++++++++
+>   1 file changed, 13 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpiolib-acpi-quirks.c b/drivers/gpio/gpiolib-acpi-quirks.c
+> index a0116f0..dd4db58 100644
+> --- a/drivers/gpio/gpiolib-acpi-quirks.c
+> +++ b/drivers/gpio/gpiolib-acpi-quirks.c
+> @@ -392,6 +392,19 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
+>   			.ignore_wake = "VEN_0488:00@355",
+>   		},
+>   	},
+> +	{
+> +		/*
+> +		 * Spurious wakeups from GPP3 PCIe bridge interrupt
+> +		 * Found in BIOS UX425UA.301
+> +		 */
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "ZenBook UX425UA_UM425UA"),
+> +		},
+> +		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
+> +			.ignore_wake = "AMDI0030:00@24",
+> +		},
+> +	},
+>   	{} /* Terminating entry */
+>   };
+>   
 
