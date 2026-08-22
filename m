@@ -1,63 +1,63 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009E4390CA9
-	for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2026 21:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02893911AA
+	for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2026 21:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787434850; cv=none; b=fVZJ3crxZhxrQgt++wVV85pHMlKh741Xz9CYvEd6elTsEmt9XR8/IIWEShhkXrxzD9tH9I40j91xil4dryWVxvJzIF5da13HNRi613ZbLMjNDLHhiDlFrrHomVgyyEz88teI+QCH1bB9J1fQoZDS3/fy1e+AvhfLcKAILSDevFU=
+	t=1787434849; cv=none; b=IHEdvXu+VPBXzQSnOGRxqDZEPGVekl+uR9CSPAoLyeXZbOkgHHUQkzsGPO9QHBkp4XhQP06Hwr1naEuLrugTBpRX3vH/dZaFhG4/hfsM0XmPYjvtaI1Kp3fekvfJWcBxBRW/0z/RUo3zNkuN97DvxPB+rnsRtPgbFEKzS61Juyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787434850; c=relaxed/simple;
-	bh=tSaYsW5ZA87m0Wg9YJ+wfmB/gHIRTOyA3syuwyg8qeQ=;
+	s=arc-20240116; t=1787434849; c=relaxed/simple;
+	bh=O1b4qJuU5h0jkjtN1tmFHZg98/5Kor0pOfpmFSJmhKo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FJjrK/LH5Ekb4Bc3M8iSwyyPPV8XIhH5JLVvDdZCV4bWjXlISi0PAwEQ3fwJFc9rQIZRYVMrwp1xlhN/uCE98YuyQJcXi27Lg+g/Xy/vvO3F5k/vNjeW1YYsfTJxAgi9RICxLLO6AvfZ2amKzzchpmJ5AotBewV1Ob+S1xkNV0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oTQtPDkb; arc=none smtp.client-ip=209.85.218.42
+	 MIME-Version; b=u0VmTIdnr+v7+dwYxkQ5iuRTNF9TZNPxXlXz/PMYepsVN32I+W/PXlwYuMzK7AROlyli5EHRs9giGi3FBM9BI/dK6B8e6TncMqK3JiXgYZ4u6h01pk27g7JZMmWkpf8ApB1+P6rVhKixkFI8eoyQDWeO+MPE88R8Johx4OnmF3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cv/DmAO0; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oTQtPDkb"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c2020421077so372283866b.3
-        for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2026 14:40:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cv/DmAO0"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6a378f90555so3720651a12.3
+        for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2026 14:40:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787434837; x=1788039637; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1787434839; x=1788039639; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=a4eLlaKD/QchVb0r7zAM59fvM/PJvb2qK03bPG46mJc=;
-        b=oTQtPDkblPAwvUkJILdH3vavLZI6Uk5u13K9Ty3z0sAfJwsMNIn5HHspUOj/MbClK9
-         i/gC5WT6TRpLrB/v+f4+FSlpMYBxviJFaHQBbWx5OZe/3PxaCQfXjb8ODwmWqN0syodk
-         PLGE5SeHFYlu1aei1esnpmpkwSibc2rwC6ldYusk8RW4WdhxJvRfAmp1/LRo6rbdBiAQ
-         U7J3Cq5XVpdfa9sC1fGgaRtqjhxRUWHLMFolk6SUDVl1QLN14Dyi/obQGb+72Ajt7+Mo
-         uIY4ZI1I6AGcHImG499TdlfkMy6BnBy8w09JaqLNU2wB+P0wn7t2KRWHAnl2WG75vGbN
-         b24A==
+        bh=7d0fiyXH8Gw0QiNflyUYHvDRi8XIlp2AkUMiyQfpLiI=;
+        b=Cv/DmAO0fbr4HMZI6EQTZ1jjqyYgFpkJODZ7fxs+QkhM/iphqwzhNkTIenH0HihBWb
+         3AyRVV20O8AYDEsZ+SNdQ7tgUWJV/6g5z+o7+o2SpQdYrLIQMNwAsIns9oFyfMRb+SW/
+         9pNZfSFNAPd5waFOWbY4wXqZJ++Cd/C/xMMXCdYOQSCl8U0MzlIzeWQS1M7EiYT1bRJD
+         pGzw3Gc3a7y9qHEtk0/6gGTvY3W9jGTi1XmWX14ZFNHPCOm8ZXtQ+8EgmEHRroDVxPWT
+         W06y0AkTSkxhS5I2dOhT1ypRjBkuPZPttybBv8WMzLBjo1Hk4OVyhOWsZ0QF2iEKidAe
+         osZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787434837; x=1788039637;
+        d=1e100.net; s=20251104; t=1787434839; x=1788039639;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=a4eLlaKD/QchVb0r7zAM59fvM/PJvb2qK03bPG46mJc=;
-        b=L1uDliLXrmRPamKTvUZ5+AFLNINQ6lk2gz8bXfTsVKQCHr0gHePK6GZTnTDn/ODDar
-         jhR99dOumcGP/CFpigtiNrJ4W6ylWzPNhAiYr0l34NlT62AI8Fxc5OqYV8TUGNiWvsxj
-         b+YLzbgn1Lp6Xoi5nrk+NAeXEPkEkoyMxEbseYJuYKO5EyhQv16nLbUvy7lJp2Xvzynj
-         RT8atlcsGmwNZWgtfTytcVPri6idEUsA720fYAPk0pcB6G7/cYWl6N9U0cQ6+IMpLl9h
-         EVtBRdKJyQvknfgPJZHTj+tGyRRLgSW+KXpX66aJsH7BjdsjbiFdRr4WAYNnU2IXyXdd
-         LUOw==
-X-Forwarded-Encrypted: i=1; AHgh+RqGGoyuLt5swNTrswoWK8B7PAdNZXDd3h2yhgFrw8KHL6Q4p1WjrZS32kvlgETMGUdALKildMuxy9YS@vger.kernel.org
-X-Gm-Message-State: AFuF++krULMFtgeWCeQVAoo9KfWKa3aT1OlWGyIQPh4z0MY3/6i74I83
-	U+3e/mczVVNDAOgtb44TDboS1aol/OOFH2oXtZUOELIondarq91+shJT
-X-Gm-Gg: AR+sD10UWabFwoKR1O8jGFkxqGT0jFpe2w0IEoSujhLetAERZaSUh08Cenf/O/wNfQk
-	5DbL1xmMHWlpZq00cuvK+ZDpVA69WMABo2zH8H+lCadC1QsPjNev1SKbP0ec7k4refkP4BhhUjr
-	LTxdezcMsBW+qWdv/72O8OVelWi8z9eQyVP6yDYrYOo5URRNSp7Hh2GU7rCi03FvQNjIoisUDBl
-	Hbm/qFF52MlaBC8nAlQtPh1bQVR9NHq5bXFy45ar28ffGvvTzlmIFh8qeryJOpNTrsv9RcXOBjL
-	9wkUQmPNstTgObNpjVZrEgJVyKOxWOdMrrvEgeFud0E/YWcIFsoZ+Lacpwp7X1h1Z4R5LVyTbR/
-	QVZwEkarC+vszD1cE6ysA7La9Hmn4AezVUgJuIEnUwkvCt35f1VARkD94/cebK/3LIUg5svh5KC
-	CfNyJ/N/rOShqBE4+Y3xQGbEiUSBPmuz66JpnUcHmMCsHrSoX9b0o4Dk0DZO6F0X4QsfzBAQ==
-X-Received: by 2002:a17:907:1c27:b0:c21:382e:9a38 with SMTP id a640c23a62f3a-c2491c2a110mr884931266b.2.1787434836795;
-        Sat, 22 Aug 2026 14:40:36 -0700 (PDT)
+        bh=7d0fiyXH8Gw0QiNflyUYHvDRi8XIlp2AkUMiyQfpLiI=;
+        b=DI6+NFFhn+abFUtVsLwb/2mJoR5AwRn229PNVPuRlG3k/ujXe/81kyJ1V++6jeDOcS
+         sWbTZgpKe/DpLGogT9hCsVbWTfXBDaJqz+x7BMM5ueUD8oWvt9EJkncOS3QtwKEizyph
+         xr8e9i648L1Qx3YFNAEUbxSyuHfHZB9eaqv0NRW1LGqAUr3pFYyUpWiSluD91AVSakS5
+         zyi3NLH/eBd27fKrrgWCoO4YntQBhFsWoOcncrb1pu+nII/5he+BznLGQuQZ5H/w3m9g
+         dnwt/0zpXMiyMSVz5FjQcjG9vm1lkaw5jztHFeGE3P7UAOxMmMqOEoT6TOe9Q1YkeYZB
+         Kblw==
+X-Forwarded-Encrypted: i=1; AHgh+RoMsvni7SFi3INL5SL4RZTPPJncPDC5as2TU1MohDYgL7z5GkNUGoYwyOjh5+vHnrSI1x4TcaUAbbGU@vger.kernel.org
+X-Gm-Message-State: AFuF++khlYKp4qmQ7e8xUNJrD2Zx+DB3zxVjye80HgKlfIrzhjVhnDc7
+	uq0uTjBdhvJ1GO42ttL00WrQqEoHEk7Pyl5m+edkhOXb0SG7LmnTe4zc
+X-Gm-Gg: AR+sD135mcl4KGrFK8hB3bx1VrF1LaKQK0fZD6cdvzWRYOcWonSLqyFNJ2nQOciAvJD
+	FUZ4H6eeENPlSd+X1CGRs2PEB2C0Y+BNua+TXCZSzmmReThHW3Cv6MySCXr1CUYG4crkpiw7uLT
+	Na7POCOUQYjuB6amB6hOWZgeSR599VEja/0hajIQ2H6s+3LxdEfZiqZubDXoRrsxmCjuu79g0DY
+	fm1lVwNtW3zxSEooynTOleq3XWIvhekBxxtj3foCZtjPNHZDi/MguL2zrOvVCKweFRHoyOTHWPb
+	DEyywQYkcb3L3oI5KKUZkI2Pu+7ETGDc31V0TQZekpvpk04TpPTe7pK6KRV+wSOUCz0cDRiif5g
+	ZzygtI5yVO4qsDRonuUwyVN11eURB8psPoP5sI+PsE2Di73AXkTb1T+sArbKqr/ab++R19UCpso
+	phGqftyvesMViBT7hKYggfCQmuspcGrBI17JfQduteFrGHexS58fKZFziyU0L0I1boGdkl2Q==
+X-Received: by 2002:a17:907:3e2a:b0:c21:7feb:4574 with SMTP id a640c23a62f3a-c246a2cece6mr1544595666b.1.1787434838519;
+        Sat, 22 Aug 2026 14:40:38 -0700 (PDT)
 Received: from m2.. ([37.142.151.124])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-c24966f99basm466778466b.37.2026.08.22.14.40.35
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-c24966f99basm466778466b.37.2026.08.22.14.40.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Aug 2026 14:40:36 -0700 (PDT)
+        Sat, 22 Aug 2026 14:40:38 -0700 (PDT)
 From: Michael Zaidman <michael.zaidman@gmail.com>
 To: Jiri Kosina <jikos@kernel.org>,
 	Benjamin Tissoires <bentiss@kernel.org>
@@ -72,9 +72,9 @@ Cc: Linus Walleij <linusw@kernel.org>,
 	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Michael Zaidman <michael.zaidman@gmail.com>
-Subject: [PATCH 05/13] HID: ft260: i2c: silence sysfs store big-numbers
-Date: Sun, 23 Aug 2026 00:39:33 +0300
-Message-ID: <20260822213941.98882-6-michael.zaidman@gmail.com>
+Subject: [PATCH 06/13] HID: ft260: i2c: reduce bus-error message severity
+Date: Sun, 23 Aug 2026 00:39:34 +0300
+Message-ID: <20260822213941.98882-7-michael.zaidman@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260822213941.98882-1-michael.zaidman@gmail.com>
 References: <20260822213941.98882-1-michael.zaidman@gmail.com>
@@ -86,36 +86,80 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-FT260_ATTR_STORE returned the feature-report transfer length from
-ft260_hid_feature_report_set() instead of the sysfs write size. For
-values like 1000, userspace writes more bytes than the HID report
-length, so the VFS retries the remainder and reports "Invalid argument"
-even though the attribute was applied correctly:
+The driver logged errors when the FT260 reported an I2C bus error or when
+ft260_i2c_write / ft260_smbus_write failed after such a status. That was
+meant to flag unexpected failures, but bus scans (i2cdetect, HWMON
+discovery, transceiver monitoring, and similar) hit missing devices
+routinely and should not spam dmesg with either:
 
-  $ echo 1000 > .../clock
-  bash: line 1: echo: write error: Invalid argument
-  $ cat .../clock
-  1000
+  i2c bus error: %#02x
+  ft260_i2c_write: failed with -5
 
-Return count after a successful parse so the full write is consumed.
+Keep returning -EIO, but print those via ft260_dbg. Still use hid_err in
+ft260_hid_output_report_check_status for actual HID/USB transport
+failures, which are genuine errors.
 
 Signed-off-by: Michael Zaidman <michael.zaidman@gmail.com>
 ---
- drivers/hid/hid-ft260.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hid/hid-ft260.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/hid/hid-ft260.c b/drivers/hid/hid-ft260.c
-index 4435a39fce23..8db896f164cd 100644
+index 8db896f164cd..1ed3701eaaf7 100644
 --- a/drivers/hid/hid-ft260.c
 +++ b/drivers/hid/hid-ft260.c
-@@ -1479,6 +1479,7 @@ static void ft260_attr_dummy_func(struct hid_device *hdev, u8 req, u16 value)
- 				hid_err(hdev, "%s: failed!\n", __func__);      \
- 			else						       \
- 				func(hdev, req, name);			       \
-+			ret = count;					       \
- 			mutex_unlock(&dev->lock);			       \
- 		} else {						       \
- 			ret = -EINVAL;					       \
+@@ -565,7 +565,7 @@ static int ft260_xfer_status(struct ft260_device *dev, u8 bus_busy)
+ 	 * to 1, bit 1 is also set to 1.
+ 	 */
+ 	if (report.bus_status & FT260_I2C_STATUS_ERROR) {
+-		hid_err(hdev, "i2c bus error: %#02x\n", report.bus_status);
++		ft260_dbg("i2c bus error: %#02x\n", report.bus_status);
+ 		return -EIO;
+ 	}
+ 
+@@ -599,6 +599,7 @@ static int ft260_hid_output_report_check_status(struct ft260_device *dev,
+ 
+ 	ret = ft260_hid_output_report(hdev, data, len);
+ 	if (ret < 0) {
++		hid_err(hdev, "%s: failed with %d\n", __func__, ret);
+ 		ft260_i2c_reset(hdev);
+ 		return ret;
+ 	}
+@@ -638,7 +639,6 @@ static int ft260_i2c_write(struct ft260_device *dev, u8 addr, u8 *data,
+ 			   int len, u8 flag)
+ {
+ 	int ret, wr_len, idx = 0;
+-	struct hid_device *hdev = dev->hdev;
+ 	struct ft260_i2c_write_request_report *rep =
+ 		(struct ft260_i2c_write_request_report *)dev->i2c_wr_buf;
+ 
+@@ -669,7 +669,7 @@ static int ft260_i2c_write(struct ft260_device *dev, u8 addr, u8 *data,
+ 		ret = ft260_hid_output_report_check_status(dev, (u8 *)rep,
+ 							   wr_len + 4);
+ 		if (ret < 0) {
+-			hid_err(hdev, "%s: failed with %d\n", __func__, ret);
++			ft260_dbg("%s: failed with %d\n", __func__, ret);
+ 			return ret;
+ 		}
+ 
+@@ -685,7 +685,7 @@ static int ft260_i2c_write(struct ft260_device *dev, u8 addr, u8 *data,
+ static int ft260_smbus_write(struct ft260_device *dev, u8 addr, u8 cmd,
+ 			     u8 *data, u8 data_len, u8 flag)
+ {
+-	int ret = 0;
++	int ret;
+ 	int len = 4;
+ 
+ 	struct ft260_i2c_write_request_report *rep =
+@@ -710,7 +710,7 @@ static int ft260_smbus_write(struct ft260_device *dev, u8 addr, u8 cmd,
+ 
+ 	ret = ft260_hid_output_report_check_status(dev, (u8 *)rep, len);
+ 	if (ret < 0)
+-		hid_err(dev->hdev, "%s: failed with %d\n", __func__, ret);
++		ft260_dbg("%s: failed with %d\n", __func__, ret);
+ 
+ 	return ret;
+ }
 -- 
 2.43.0
 
