@@ -1,96 +1,125 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0BA175A9C;
-	Sat, 22 Aug 2026 01:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633755695;
+	Sat, 22 Aug 2026 06:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787363157; cv=none; b=jJMWMXQXR2bWlUzUbeDg2OB1iUuLr9/2Zl5X/a4Iyz0n2XRPZrNyUYGeLTD0wI+9Bs2EyqiO9XwjyMcRo61f+6xPuMCHrrKxOOr9RD5CKTvh90wkdU61pgkC2wU4acj1yryrYAMzAUZiWTi0aOXIKVasSpVUFgL3l0b1I1n/AMY=
+	t=1787380307; cv=none; b=mX2KDp3bZsb/khqI05RTVoE7OpcfTQjn0IsPXAhhkU0ls4Izx/N16BtOnYN4SScZdxjBtnO0mj73E2D0DRMucNzbhw6sKfXp/VsTJSnlsh8hbIxNWITuSmp9y5k83lsP146h7tBIwcRJ9ILSun6YHrTRC1NmOJ06AuKqJnaq8WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787363157; c=relaxed/simple;
-	bh=saY9HDmPbM5AjK3I9l+p+9tDa6BvEBwCvKttGcpSN+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PrDb/mpvshnhnXnGYJ0QYP9IROIG+V0Q/SusQv528ntUsSWVMoFL2MlIGLkCNMDgATCC2S5EZpn374YQpfKUvSuj/9oHm7zLA2tR1Qn+S1a9+uej8LaGSd1+c2ZpVIlorJ71/Fw7mlRYdVUl0dRFabmQmRTfkYkZYM4p/LqwnCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UnD7PNuc; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787380307; c=relaxed/simple;
+	bh=06ShQr22+Mv3tkCvQ5CnmYEUc3wr87P+zY3ZUu64T8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ObmBwvPHDFmd0MNDVTOqEvuDGkZui1sXkOI5ndi3XPvYfSdhmPZjVZpTGKP+8+CMVsNRDi1R6EFpsovW94Bz7sduJntUcUBA9TL83MltTduhUPbqnKDCFCkAVce5xsbw7Xb1u1eiMkg4NAptkC1VmlKWa0iu2uHfvhfAwc7eUlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/PHgpG2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UnD7PNuc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59D71F000E9;
-	Sat, 22 Aug 2026 01:45:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/PHgpG2"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 932571F000E9;
+	Sat, 22 Aug 2026 06:31:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787363155;
-	bh=aHl4AIXsgT0RxAd6Okv+/NzPPlDg2No0M78aNfSQzyM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=UnD7PNucuvv9T8OLHQyT/fm9g1zenXuOiTBWLHjhDXFjRNjaBb+79shFNEkaFL4xM
-	 X0xIuL0Ocwbmd6xPCxb6CPHrySHQOKnPiuACwkoPSlrk3lwi5rjnuFuoBL/zhA+dKP
-	 faVWf0SHh9tJ96fthoZsgXyga0F1K58MrX74nFBsuOSWT9cWrgW0gvlahICX3BE1fd
-	 MZq23OXhQnhKuxanlY/Hrcvx6Y/n22V1gcI3+PkBoNzBoLdPUQLILA6hUpvT2En03X
-	 q5KYsaEP8AX4UQk0PJUhnnOfd1Qr61bImHmk85z4WJdmgzdnd9keGNWgjo61LWgrUM
-	 omycsAVWIRwRg==
-Date: Sat, 22 Aug 2026 02:45:48 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Janani Sunil <jananisunil.dev@gmail.com>
-Cc: Janani Sunil <janani.sunil@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
- David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
- <olivier.moysan@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, Linus
- Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Michael Walle <mwalle@kernel.org>, linux@analog.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH v3 01/14] dt-bindings: iio: adc: Add AD7768
-Message-ID: <20260822024548.5a6e1d7c@jic23-huawei>
-In-Reply-To: <6f2b715e-f62b-4b6e-9605-23d6978b6cbb@gmail.com>
-References: <20260813-ad7768-driver-v3-0-cb554399ad26@analog.com>
-	<20260813-ad7768-driver-v3-1-cb554399ad26@analog.com>
-	<20260816192409.145df670@jic23-huawei>
-	<6f2b715e-f62b-4b6e-9605-23d6978b6cbb@gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	s=k20260515; t=1787380306;
+	bh=R9sVHw5FU4Bh8AKC2R5yfA5vR9BNlZNhimXLNPJPBA8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=k/PHgpG28J5nrHMNy2VGXDoCYnAwZqf0WJGNuXY+FE7tEkLeJa8WgWondVBEcV9QK
+	 RL2mDtaizjnwnlkaPRUNiMTXiER3bdbMYPwe3ucC+BFHLyqQb9bhHLnuBdpUsJH6xj
+	 j/gs14GaCEU9qpyUya/ZrWYtSKfbki2eo5HC5CNUsSNQ/oLc0GuRl8smfBzjGjERU4
+	 sJ//iQhB/wg8DaFepxPYl6heQ9/q+2Y02KXoBDOAzFmocYOuv/aO+jllHGA7cJhTmj
+	 ocHBhkaMZScRw3I8Ts+EnJfBlS2uX8m5QHJIeoLEQu8aRGu0luVkNgMSaa/DWNrYOm
+	 4mXEggP5DD/FA==
+Date: Sat, 22 Aug 2026 08:31:41 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kees Cook <kees@kernel.org>, Armin Wolf <W_Armin@gmx.de>, 
+	Hans de Goede <hansg@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Cameron <jic23@kernel.org>
+Cc: Eliav Farber <farbere@amazon.com>, tony.luck@intel.com, bp@alien8.de, 
+	guohanjun@huawei.com, mchehab@kernel.org, xueshuai@linux.alibaba.com, lenb@kernel.org, 
+	laurent.pinchart@ideasonboard.com, linusw@kernel.org, orsonzhai@gmail.com, 
+	baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com, dlechner@baylibre.com, nuno.sa@analog.com, 
+	andy@kernel.org, fabio.m.de.francesco@linux.intel.com, kaihengf@nvidia.com, 
+	ankita@nvidia.com, leitao@debian.org, pedro.pbg@usp.br, paulmck@kernel.org, 
+	frederic@kernel.org, saket.dumbre@intel.com, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [GIT PULL] Base commit for
+ devm_{atomic,blocking}_notifier_chain_register()
+Message-ID: <aolA9ZV4eDN2uNVe@monoceros>
+References: <20260816060648.4030-1-farbere@amazon.com>
+ <aohZHuN68wIyaxWy@monoceros>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pb2liudaw3te6hmi"
+Content-Disposition: inline
+In-Reply-To: <aohZHuN68wIyaxWy@monoceros>
 
-On Tue, 18 Aug 2026 10:27:26 +0200
-Janani Sunil <jananisunil.dev@gmail.com> wrote:
 
-> On 8/16/26 20:24, Jonathan Cameron wrote:
-> > On Thu, 13 Aug 2026 15:56:54 +0200
-> > Janani Sunil <janani.sunil@analog.com> wrote:
-> >  
-> >> Devicetree Bindings for AD7768-4 (4 channel) and AD7768 (8 channel)
-> >> simultaneous sampling ADCs.
-> >>
-> >> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
-> >> ---
-> >>   .../devicetree/bindings/iio/adc/adi,ad7768.yaml    | 338 +++++++++++++++++++++
-> >>   MAINTAINERS                                        |   7 +
-> >>   2 files changed, 345 insertions(+)
-> >>  
-> ...
-> >> +  adi,data-lines-number:
-> >> +    $ref: /schemas/types.yaml#/definitions/uint32
-> >> +    enum: [1, 2, 4, 8]
-> >> +    description:
-> >> +      Number of DOUTx lines used for the high-speed data output interface
-> >> +      (distinct from the SPI control interface). AD7768 supports 1, 2, or 8
-> >> +      lines; AD7768-4 supports 1 or 4 lines. Defaults to the maximum number
-> >> +      of lines for the selected variant if omitted.  
-> > The default statement is a bit hidden and I'm not sure useful as it's not
-> > an obvious default.  Maybe drop that and make this a required property?  
-> 
-> This property was required in v1. It was changed to optional in v2 following a suggestion to use the highest number of data lines as the default.
-> 
+--pb2liudaw3te6hmi
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [GIT PULL] Base commit for
+ devm_{atomic,blocking}_notifier_chain_register()
+MIME-Version: 1.0
 
-Ah fair enough I guess.
+On Fri, Aug 21, 2026 at 04:07:18PM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> On Sun, Aug 16, 2026 at 06:05:59AM +0000, Eliav Farber wrote:
+> > Many drivers repeat the same boilerplate when registering notifiers with
+> > device lifetime:
+> >=20
+> >   1. Register the notifier with *_notifier_chain_register()
+> >   2. Check for error
+> >   3. Register a devm action to unregister on teardown
+> >   4. Implement a per-driver static unregister callback
+> >=20
+> > This series adds devm_atomic_notifier_chain_register() and
+> > devm_blocking_notifier_chain_register() that automatically unregister
+> > the notifier when the device is unbound, then converts 11 drivers to use
+> > them.
+>=20
+> I applied the first patch on top of v7.2 for you to merge into your
+> subsystem trees as base for applying the patch(es) from this series that
+> should go via your tree.
+>=20
+> Find it at
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags=
+/devm_notifier_chain_register-for-7.3
+>=20
+> This tag only contains this single commit e38b9eda475f ("notifier: add
+> device-managed registration APIs"). I intend to include it in my PR for
+> v7.3-rc1, feel free to do the same.
 
-Jonathan
+While I tried to pick up the pwm patch in this series I noticed my
+Arithmetic error here =F0=9F=99=84. It should be 7.4 of course. I created
 
+	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags/de=
+vm_notifier_chain_register-for-7.4
+
+with a fixed tag message and dropped the 7.3 tag. (Even is someone
+already pulled it, nothing bad happens as it points to the same commit.)
+
+Sorry for the confusion.
+Uwe
+
+--pb2liudaw3te6hmi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmqJQksACgkQj4D7WH0S
+/k631Af9HnbvYBW34E2hi/rCdPLfdqmD+ReFFb5Is+xyDnSW0UAUmvCloPf6QKKQ
+E4K8KqnIztkgI5Q96G79DDjEaWzqhnPfyC6cyByCpmdUh9R093TgR3zk15TXLBlS
+y4v1jTqQvsnN194uYGXOZNZWaneYxQamJO+j7KgAzGRfWnPrJ5yZT0rnngYTluHJ
+U+9zpO5JSc0KEHqLd9Ut9pgQshqpH3zA5c6eH/ZrosIHZMjk2eXjtP+UgoktdtGQ
+Y/qm5UfncradKTexlH2pNh5euQCooFO3fueiYEPgqiddaMl+iF9e5znDvbwSZgsh
+TSvmbdhspJJJz6j0IFJs2kzKgZohWA==
+=4Uhe
+-----END PGP SIGNATURE-----
+
+--pb2liudaw3te6hmi--
