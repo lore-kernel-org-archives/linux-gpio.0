@@ -1,64 +1,64 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F62233955
-	for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2026 16:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DC933E345
+	for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2026 16:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787414960; cv=none; b=Bf8SjZsWgg2e7/bCAxY4kUwJQd4sXVEIvY/wF812KV4iX1ATwPoSXsuw/sAw9ShJfhjR11fxWHe69ZKOp4qZF3KgStDialEL9rbZXxUjV+Oh6IUGlOK/ptFMh7Pkx3+QtM+ij7JwtxxJfzQ+/03jrslmkiQFEAj7W36NZxitjsw=
+	t=1787416755; cv=none; b=X9g4ergWWGqtqsis2BQ+HeCIbDk49t00G6KNIjpkaQfIxMKkITQv24veg8grQYAGvp8A+P0Q7GTcr8SD2tkiTJGgUyzUOj1eUsDRSWR1urb4VD19MapkW/JOTWG9pkAfUP00foAvJdKK+V4AkLTitHtmpRH0O5w6SRONm/Wqpis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787414960; c=relaxed/simple;
-	bh=kdC6x95hcZcj7NjvRK20sOu8F6ePIwl0dUoUel+qQcU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OA2nhgLucLop+aOx4cv5DO/CmxyzBWb3z9KRUw7s7Di06rAlmWTwh3fLX4u1jg7QO0aPiV+B2cps0UWTLAxKDAYZzrPTPahi7nSlilo8mfD+DwyWLOqLO/ZmJ85Rz/n7fUa4BBfoUpKzK8whmPF/R9pm8hCy8zrCEKazid+ir54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hQiuQSCh; arc=none smtp.client-ip=209.85.216.53
+	s=arc-20240116; t=1787416755; c=relaxed/simple;
+	bh=QGthBs2cYAse8hU3NfRheG6PYV/YVUrGjFZ/cvF+W1Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rzXfkUTSXdCDoeegPBfMpSSVZPz+Fx1tvVtKsi777+IcVGkfd1wx/ns9l1fy7fV2so28TVhIx12PExocs5lFAKBESHS/Gke6ExxiW9vemioKtg9HJOvk4vSYqIrZ1Gwx59DdXsLJINZxYPYBs5HG5PJFisfVFhV2XN42NbO05Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hnqo5d7j; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hQiuQSCh"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-394f4397662so208652a91.1
-        for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2026 09:09:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hnqo5d7j"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2d027b7c8easo4454985ad.3
+        for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2026 09:39:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787414957; x=1788019757; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1787416749; x=1788021549; darn=vger.kernel.org;
         h=cc:to:message-id:content-transfer-encoding:content-type
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to:content-type;
-        bh=kUt1Yy+gfMqSHh0mIQ788tGW8A4V2/g80J8oxMhPMHA=;
-        b=hQiuQSChxUKG0yBZ/Cb7sOlF4t5iSFotY3CBS8n3k1vO2ciLXkOi47TX5s1jE+T2Lj
-         2Impk6JNzHK8h4fBrBCB1zLZqybOfE1Z4FwPMrGc4LpM8VZDMRBbrNCUG5ZgNwSYtCpd
-         +Jr/kr6VnT4Q2MQt0u+KV9BIv9dqVR8P7wHA7UApbPCG+Cm1JQVGlRbzrbLw01Adef0A
-         dP5NGye2+HmlVNuK9vErwhghCXbEkSRTQfMJgCR+MwG8+kfGyrhow0Jlgt5QssyyheiZ
-         tNWqlNc2GmR0e1nbzD/YvVnvItpC44GlkiXujCP9UZEAgmDLjxzjVq3HJIFqijVyM4wV
-         rmqQ==
+        bh=a8bdW9dJzKyEAw9N+gxt/IwMYZ7Z3SRgtsnnidiZoC0=;
+        b=Hnqo5d7j+OezLmh03VBICXYnXocYnBaSNw7xcpAmfQ7SaAg19VUkw8psiQeGKz9yxW
+         M0b3BhYwIfWybzQlosBSVhDSDABcyLu9I3CdW4sVOWvwZdMoLDLODCZJWhHboXrr8yvS
+         CDBDOyuAlSVZ8fdteZxFvaNkeaaftTLSyGUZV3NyucRFgon1MvybfJzb+m42YoKN64n4
+         Yj/LEKwmYAStIoaQaT9p4KJa279EN27Gze2UXxDRUiXYyWx5WhZuaGvZEFt3Q7/q5wjM
+         Y+zSj22Pf2T1q9eEFwqYxE1RwZAEICZbQmsk2gVZ4b6LhOMn9+M/QAYVEP3YHo6jvFLO
+         0Rbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787414957; x=1788019757;
+        d=1e100.net; s=20251104; t=1787416749; x=1788021549;
         h=cc:to:message-id:content-transfer-encoding:content-type
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to:content-type;
-        bh=kUt1Yy+gfMqSHh0mIQ788tGW8A4V2/g80J8oxMhPMHA=;
-        b=Mw18lwU9JjBruquwj9jPtzpwf6mQFZnddrufiMXA3EjES5CEabtuZJKllMI3VH3CKi
-         H5inNMQjyA9IDTLljzbZV/Eix1n5plLW1M7nV48xblQz57qSSmzjgUFdGigHI7LcaTeK
-         uO/NIOC5NDmtcFo84Sm2YfMHmp9wH+1Vz6Bia7lEN6a2BplF922MhVkeQbqmPfwxgdRD
-         uU8SclZso9GznD/wZzeDrTEqoA+0gVQPf0bRGav/lt+hGN44iwcDH25fpiQCKit+9auW
-         kZ+e8lHznlCjGcLWJRhNJ4ON/LfLVn0zfL2SYFLGS5cl9Qi5QxfhQgP8VZPHA+X0G3Qm
-         6R/Q==
-X-Gm-Message-State: AFuF++n9vlFEeQGGLTi00pQN+ypcREMoKHp+i+49YZZ/trvraZLzXV2D
-	mg2EnEfx4OFoQtH6j7bCI6VTvejT0ho9ByZ7YnLHgL7+ebAYOpmgihOd1TYJQQ==
-X-Gm-Gg: AR+sD135G8YVj8Bdu4xda1Z0C2EqzxChnESA7/7iWWDV6t6Pue7IE+e3sSfGpIAit3S
-	Uy1ZlNlfV4K9ZrwoWTRGVgFFBePiYuNZ3Clu9C0AqwjxwURgM7nQmITj8p8sj9jgBbzWEGkNcjx
-	sb6crhRtfP/dQlQxdJzja08BwTwxLQNHdvB2vz/inV/IIfkrUL0NKkb+yZyYpU1nYCzF3B9Dxa6
-	ufp1V2EblaeQBmmKeFStC4DSHVTpCAH6lyDWFsMd2AfgkbLZMnntQTvU0Cz4QD3kAYisCId6Wf4
-	NE7KCsdDfujGTKqTssZOWFk7bUjB5TOaHwtLXAT0YcuTwA4PyTGCdS8RXGoWKu6osXAImgh479u
-	JW8eE0eZLGCetcqNaDL5Ox01nDS4FT8wFraPjgaSX6Z+Utt9Drth8Ao1/RfkPR8j52g3ebOJ+uD
-	gfIjHpxxOMfNuUQ8giLw8l9nf+nacOQ9nw8qOsOfLtDdoXyo/RItvq7gi3RfN2SNEpBjMr6pE=
-X-Received: by 2002:a17:903:1b65:b0:2d5:3f09:4126 with SMTP id d9443c01a7336-2d64b13195dmr133230135ad.4.1787414957087;
-        Sat, 22 Aug 2026 09:09:17 -0700 (PDT)
+        bh=a8bdW9dJzKyEAw9N+gxt/IwMYZ7Z3SRgtsnnidiZoC0=;
+        b=UP2QgzFgSLyNjY0gficrmIKuYauy1B1VLaUhRK8t1E9HKZF+W3lX+lrHXaKusSPpxI
+         W7mHLtIqWzQrfDH58uxsyyTM3QgPQnPvuSPklxKf2Ut6U/uaM8eE+c+2a1q8fIJo5T82
+         0xroPYtcFxp7/As72s8VJhwb0vSMUhyXPraE6ArjGUSFZOArx9yet2A56lZ17uVb5YIa
+         4pn6ztXgZBgg7r39hC1ArXrGXdGTE7+bPI3af7wDWVpOxAqPQQ1wxtrcfvDL8gtHe7ll
+         HeJCYIVrR5MID8DhEb+vNhfbb7QJfmVOif3VYpTdaLD5a1jQxqIEMvBW5XMScCsHdBAv
+         70Ng==
+X-Gm-Message-State: AFuF++mR0eVIa6vwBN7gT0i/jjnWAzJS5CW/vXaNqAveyias0YpRbSTx
+	gO9rsv2svK5aD+96nT4MOqfNDDT/DqV2AMFdkMnR8xgoo6EMKRhbPHz5
+X-Gm-Gg: AR+sD12M4t5oQzzhKIgHne4WSxy8scaKcQp+655b4neoQfza5naOfVNypxjKjzexOVs
+	47iS+OuvjoHD4jP7vHdaD2lEcJK7aubAswsOqBFr34uy1eWa+iTQjNGErXD+H4TaTCS1gSO/R+U
+	eLAycWKnjoird4JSXN04JdNdorRCyPSxwC+UpRhGvyzPOfXk/FPbeXgcr1Nzq2UNInfe28Z78u+
+	RLbEQLo3vC/yFChAA7vRVHVb+67M/X66KnRaCu+gwlhM1G+Gxv5OvQUtnSThAJWSIvOmcNrUN2Y
+	fn8a5Ob+6KY8UOQ5PZiv0jMasuKkXnUXpCN3AR6sZp88LygnLskkq8zQqanvoHeihGFVgjiXGzt
+	6Bkvd6Dco9Hg2twJ+3Nl5cMCp10uiwtgt4lTBSERWfVN/I4g1FmqVwGuW9O5gK4wJNTRcoFQP15
+	DWkSDRbJUbWJb8D+wSrXi41Zof0+Rqzuu+4JWlHsMr/P64LOKkTLKe6Lh0GUbdAkN8fI6MUHU=
+X-Received: by 2002:a17:903:3c30:b0:2ca:de3:15eb with SMTP id d9443c01a7336-2d64a9d1a92mr123326665ad.0.1787416749362;
+        Sat, 22 Aug 2026 09:39:09 -0700 (PDT)
 Received: from [10.66.141.252] ([2409:40c2:5436:fa17:e408:579e:d06b:ea4])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-327f920659csm13104481eec.20.2026.08.22.09.09.09
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-327f9099ce7sm7625834eec.5.2026.08.22.09.39.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Aug 2026 09:09:16 -0700 (PDT)
+        Sat, 22 Aug 2026 09:39:08 -0700 (PDT)
 From: Bhargav Joshi <j.bhargav.u@gmail.com>
-Date: Sat, 22 Aug 2026 21:39:02 +0530
-Subject: [PATCH v2] dt-bindings: pinctrl: ti,pinctrl-palmas: Convert to DT
+Date: Sat, 22 Aug 2026 22:08:53 +0530
+Subject: [PATCH v3] dt-bindings: pinctrl: ti,pinctrl-palmas: Convert to DT
  schema
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -68,10 +68,11 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260822-ti-pinctrl-palmas-v2-1-501c9c670e4f@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/32NTQ6CMBBGr0Jm7RgYEMWV9zAsRjrAJPw0bUM0p
- He3cgCX7yXf+3bw4lQ83LMdnGzqdV0S0CmDbuRlEFSTGCinOr8RYVC0unTBTWh5mtmjyKUWarg
- 0VQlpZ530+j6azzbxqD6s7nNcbMXP/qttBRbIlakaufZk+PUYZtbp3K0ztDHGLwMYtNqyAAAA
+Message-Id: <20260822-ti-pinctrl-palmas-v3-1-f92cd3b773fd@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4XNTQ6CMBCG4auQrq1phwLiynsYF2M7wCT8pSWNh
+ nB3CytXuny/ZJ5ZRSDPFMQ1W4WnyIGnMUV+yoTtcGxJskstQEGpLgByYTnzaBffyxn7AYMkKkq
+ CGnNncpHuZk8Nvw7z/kjdcVgm/z5eRL2vv7SopZZonKmpasDh89YOyP3ZToPYtQh/BUhCobStb
+ VkpMs23sG3bB4WIYbn0AAAA
 X-Change-ID: 20260822-ti-pinctrl-palmas-ee56e29a3d43
 To: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -79,12 +80,12 @@ To: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
 Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, goledhruva@gmail.com, m-chawdhry@ti.com, 
  daniel.baluta@gmail.com, simona.toaca@nxp.com, j.bhargav.u@gmail.com
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1787414949; l=10808;
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1787416740; l=10951;
  i=j.bhargav.u@gmail.com; h=from:subject:message-id;
- bh=kdC6x95hcZcj7NjvRK20sOu8F6ePIwl0dUoUel+qQcU=;
- b=dXP38fstpOQgyvcz387fCGKyA9FUpsnebSAN9Yj1CgFP2c3HRbOzCDrvgkxBY5Maxioei1c1+
- JV+9Uq9RgfQAocRpLKtFghpcjhgzmS3IlrtPbDSDITQd4R44FDvyRbU
+ bh=QGthBs2cYAse8hU3NfRheG6PYV/YVUrGjFZ/cvF+W1Q=;
+ b=o0JNR6e3Xx3heOxnMOyS3o7K0LieHs6iZ9eCUWee0+jyLS1kk8tp8ijBDRKua/ANvJ6/i98SD
+ lmC+B3tla1VAcILtUx+/248Xda44ceBekBLwww+ZxTBpMb2qKh8fjcF
 X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
  pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
 
@@ -95,13 +96,19 @@ properties (like phandle) as child nodes.
 
 Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
 ---
+Changes in v3:
+- Add unevaluatedProperties instead additionalProperties in top level
+  and child node as well.
+- remove redundant property definitions inheritted using $ref.
+- Link to v2: https://patch.msgid.link/20260822-ti-pinctrl-palmas-v2-1-501c9c670e4f@gmail.com
+
 Changes in v2:
 - Removed legacy text binding which was not removed accidently in v1
 - Link to v1: https://lore.kernel.org/r/20260822-ti-pinctrl-palmas-v1-1-a4d49e7f2dab@gmail.com
 ---
  .../devicetree/bindings/pinctrl/pinctrl-palmas.txt | 105 -------------
- .../bindings/pinctrl/ti,palmas-pinctrl.yaml        | 175 +++++++++++++++++++++
- 2 files changed, 175 insertions(+), 105 deletions(-)
+ .../bindings/pinctrl/ti,palmas-pinctrl.yaml        | 170 +++++++++++++++++++++
+ 2 files changed, 170 insertions(+), 105 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-palmas.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-palmas.txt
 deleted file mode 100644
@@ -216,10 +223,10 @@ index c28d4eb83b76..000000000000
 -	};
 diff --git a/Documentation/devicetree/bindings/pinctrl/ti,palmas-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/ti,palmas-pinctrl.yaml
 new file mode 100644
-index 000000000000..c07e3a782ef0
+index 000000000000..11c2d429633c
 --- /dev/null
 +++ b/Documentation/devicetree/bindings/pinctrl/ti,palmas-pinctrl.yaml
-@@ -0,0 +1,175 @@
+@@ -0,0 +1,170 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
@@ -281,7 +288,7 @@ index 000000000000..c07e3a782ef0
 +        allOf:
 +          - $ref: /schemas/pinctrl/pinmux-node.yaml
 +          - $ref: /schemas/pinctrl/pincfg-node.yaml
-+        additionalProperties: false
++        unevaluatedProperties: false
 +        properties:
 +          pins:
 +            items:
@@ -352,18 +359,13 @@ index 000000000000..c07e3a782ef0
 +              - opt2
 +              - opt3
 +
-+          bias-disable: true
-+          bias-pull-up: true
-+          bias-pull-down: true
-+          drive-open-drain: true
-+
 +        required:
 +          - pins
 +
 +required:
 +  - compatible
 +
-+additionalProperties: false
++unevaluatedProperties: false
 +
 +examples:
 +  - |
@@ -401,6 +403,6 @@ base-commit: 818bebeb63dd6bf5f4e07e145f6cdbace520a34c
 change-id: 20260822-ti-pinctrl-palmas-ee56e29a3d43
 
 Best regards,
---  
+-- 
 Bhargav
 
