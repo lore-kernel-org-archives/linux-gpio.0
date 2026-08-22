@@ -1,63 +1,63 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4373D38F64E
-	for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2026 21:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4E6390CAE
+	for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2026 21:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787434836; cv=none; b=OtRaLGxzBcZDvuIiteafw9z4gN3RPu8punMEzGBtFQ3y3eVu18WG7wmWoaPI9VbIboOo7TnBSk0rCYq+Bii/POXtV/PHWBUZvMj3YaZ5Z52V9hF+m3Q88NBU8z/vM6ByD85Ex7hP8LurUmrL5yZ4KTe6Jo/pPlavGAyHW3CRHgw=
+	t=1787434841; cv=none; b=CLuoYPeo+HZlemaPmsOpYtPt1D+cHFQaDUG5vVnKWzuyUrsHuvNHt1xU1ptAmPPO3EkvFH6kkAB5h1Pu3PNk/ML4syvoLC1/FYUCO3dYnKR4sBdYSaymgasZ9X8HjGTTfKhNKNCfhYUlf/aw1Ma5qgfkGUeM6EYHXEl2rxRCKvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787434836; c=relaxed/simple;
-	bh=aD+HtX7tnz+ZeAsjCDqb4WQb1+koGa8J8vb951IkdCY=;
+	s=arc-20240116; t=1787434841; c=relaxed/simple;
+	bh=0m7Cttfvo8LCPzHjgNxVmLZjhMYzpm1CMfw2zEHoQgk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dFKK+mdqu5zLbvkDBvKPryfvn3RGUP5UIy6Vi+Q+4aaofGCHSaofSGmYLtaTGwptZJvbOoUd79S8UaXlDlbAxYb7EQlKINY1FC50s50zGT67DA/78xfIzn7qgTUdsSTCZsadDQwl6uLkEOVDKtCTOm/EUb/d0GvYH/rmhujvOTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JWBy7bDQ; arc=none smtp.client-ip=209.85.218.46
+	 MIME-Version; b=FqMntE8ufTJ1PzPycOzNtxcfyexboICJZYMrRM/cYLdWldM6DmlxFx2zy3A2qPTw35l9ndi2SrglSXrvi8z9jL9RahtnXjGJ2+AgnRmHpooB/91HqLttveGGpMDb6+q4yEcBFEUzOyCeaN+mzBSpSu2hMNsPikwn6acXeZ8n0zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YeqJnbvW; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JWBy7bDQ"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-c1712a04ddaso364452966b.2
-        for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2026 14:40:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YeqJnbvW"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-c15cd3fd760so263445766b.2
+        for <linux-gpio@vger.kernel.org>; Sat, 22 Aug 2026 14:40:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787434826; x=1788039626; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1787434833; x=1788039633; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=qwHWguOsSrLzaE9O7187K9INJCM1brdEKh0/stGa2ZM=;
-        b=JWBy7bDQmn+B6v/hRvno7toh4esvLJXh9Ta6lMzGW7vl/lj6waLrUXO2w152Ui5TqQ
-         ZFVrtVaS2u8745Eb+vAEh2aKXuYSbfgVBgkK6Ob1RzzDVpgRYcjWvFJ7i/rdR+tGMjBM
-         9ve+HskqCP3SV+n/LOjOqNm9tOErliX+hMzazPWbhk9R2i1ZANUYEj5af/6aPv90XJdZ
-         TJZtv2ZO3bIZuht0NG084Xpl7CZRkdp8kz1GBx6Apa1kkyTGH0p+QsXsh6IJ9Q+BPUGK
-         7GBSokN9SEOns5/BLVExhOD6AHwS/XEBxYhuiyPMntS1KezuELbVQfjiKMIE59LJJF1s
-         lXEQ==
+        bh=LUHq6orUk6dX8RpgoUJEImzKdwDguH+0tNnHHWNQJOY=;
+        b=YeqJnbvW2zGfDH4IC40fjx6OludDcvdWfqlGyT4zTIhvKypbcM4CdGP5wYj9wisFs6
+         pXPNoj0poJiswEfwNhfDU3glTOFnd+I3b7VLL6fbWXeyw/ocboMsLv+GH/yvstIcG22n
+         z7tp+yIaZuaE8DS1xHO1CA/3Bcnjt1Y5Xk1BeuPJXi3XLxniOQHV086TPyWy7wHgx7c6
+         QqB+Z+50Jq5tkDuC47yChB8s2mjj4fEAzZ+CEoRUxnYHpl8PFM0Q3+ac1NnUGcaClTkp
+         Uoda074/XNyXJUzp0Svn1D0GoWV1U9InHElOHcVO5vNcuKNFnD2WfHeZ7kTn2ftgBol8
+         MEoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787434826; x=1788039626;
+        d=1e100.net; s=20251104; t=1787434833; x=1788039633;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=qwHWguOsSrLzaE9O7187K9INJCM1brdEKh0/stGa2ZM=;
-        b=dR9QHk/rbOLcHQBeS/PHJWCRgiKoZV+QTx3xVDPRi/0yq8FNfYij1IwinidytyxVHO
-         cVtGpSKOgYCQlJSsoWu63JbaFAs8lwLox3heARcorFFQJGtWHx+xnD6+vWrS0262ImUH
-         FGAYZ2H4z0+arPW4iRNqBKTh+M1Fm9k5GV89q+YX6Wfz6dBCluOfpkcR2VkgCU/u2fpr
-         i1XkLlgf67eSLgcKwoc5jIdqG3vSuuZspdp4DLFcMBx23Qv09gYn7IrNqGCP1tdWLB04
-         RvQn6vFAYRLdhGThn6tR8U3hnnQK7T2HrCCm2rJT1vbccsIxqquN5SguGzcanrKR+oUp
-         00eA==
-X-Forwarded-Encrypted: i=1; AHgh+RqjAbGpfYG4YO6loLL5LiMGSUvCIc3Y5CX1Cv+6OkaP/IvKLl5SRIym+WdYiVl73Ieqf8JoboCDrDvf@vger.kernel.org
-X-Gm-Message-State: AFuF++mcU24K3wJ2zOe5FWQAnV6HUJyzFRutTQMn1cfbqreYLO9fi0Oo
-	rJ1TWAevxZiUISx59WpUcgqH34vkQNDhX3P1NHOJzCI4x7iJJYOaapTy
-X-Gm-Gg: AR+sD10siE0GH50TCF2yFxXBwW33pIVuZaJLuXvT48zcT448AoyS7d9fVZ3V6ae6ANj
-	tGgirFXdBgvTPs4JNJFVdBS4YajkWqcG76NcaqxtlWzsCG2xT7XLTsFxLJwZSj0YcvwhHDPiefY
-	C0DnOb8CCdqfn513NyciT/MQpJgCxHxlDK+cAGwAdajdXhrklf2WlF4hmDAy5MFMTznIz15qqq/
-	0msSqcqVHxuL1272p8SRjoy2fywhAEMti7l8g4j8VqisjpKRGjN5KnUQT1BXN+uhmFCoJVW6spI
-	BN4yOUOK6MLH5zHNw9XhgcJr7ayzN9n9noje8Tu/E5rrygadukfKR7X41JHRl6TSEClb8oyI5pC
-	s4IeaYDsTmvzKwXYnsUIpui3niQYMWZls+MWmWUWUEzOP18VMTzt/DIBUAd8AAo9+B7Y8lOthbA
-	0H52hBjm5TL79euZGzj5Tdf9Z19+hd8DisQa4Cgda3/xamnu04QPNViqlLDACjKPR9XeE7dQ==
-X-Received: by 2002:a17:907:c8c7:b0:c24:680a:1c42 with SMTP id a640c23a62f3a-c2491c9a6eamr963194566b.7.1787434826382;
-        Sat, 22 Aug 2026 14:40:26 -0700 (PDT)
+        bh=LUHq6orUk6dX8RpgoUJEImzKdwDguH+0tNnHHWNQJOY=;
+        b=HbE+Wew06uwFQrIWWW1Hey8xP9YfKRXv26s2C1j9a/PtK2R8DgathAciIzXlhTwvzf
+         XOnd5rlnWbjpaWVlT5mxZQPiUf7kuYf1X0yWZUhlpkpgFR48TNCxumCfmPtP6y1t/EDt
+         6NFPmg3TevtlRO9HinhrLqDKQKsWtCES4E+6j6DCPxCHJv8sv6T3KWqTq80hELiNBy5B
+         kyFhwGMfpS4pBSNv6z3ZHkMJYJBDkaW8CYoA2uzjOUJnKH7oWZ96wvRvJTCGfo0URTTl
+         gXLLnV+ceN0wT94BYfnkU/3I9Mx0I4jyhB10y5UFiAr4FSd6IkMQmmwmGGkKCRRCTPNA
+         kHrg==
+X-Forwarded-Encrypted: i=1; AHgh+RrHhPPbhSMh9T908tzNSwWsUiyXju6axvEM6+5lqeWmD8zXeyuweXRQnN9Env0axlgyHfhhKuxqm9rR@vger.kernel.org
+X-Gm-Message-State: AFuF++lBHa0TQ23/HThHxBX0nZ8yXuuuSfK1o0SpsA8R4JJHuBw2cQtw
+	WY/stFeynKZMaO6/stWf1FT/Iqx8Eh2+FunXMvKV0RKkA/gjYR2kOTOl
+X-Gm-Gg: AR+sD11rCgT56ds5IIN9C2+VHFXwDiiwHj6s6BRtmweO+vLxWqQ8WjDiVigZxir0hse
+	V5m+wCYSrf1ZbF3zGA1VWXuRoRNWpCqQJfiKTKpgJGCLgUwN2mjd1g3d9T5KhYFYidER+JbpTVZ
+	j/PO8zujOAmTcB9lnioOGd3ucvRFjG6aBM5Q08PfTGj1n2LOathJzbi011zg8B0eHOmXGDfOe5N
+	2ULFzHjRlP6kKJT1f2ynxLEx0d7GNgrfjCjhN9kAdct7KXXlfJgovhuAWPpplBLVX+58eLfdWN7
+	+zhPkKv/ZozD/8RvFegCA/3+OZhjR/K1+tOO0vjqc/tYNbt4fHM+t+PpNPgGNT8cW4ijWFdYUTb
+	HI+GUFlI0WPNnJYhNCdFCLn0yDrJR5Vml4pNkA73zf+Hhc4hH4ZgDf1snMw9TgQSHtQ2pIMYNAc
+	HN2v2UQS6C4NC1mej0aO8Obzd43tZa68fcrjVcL2xK5ksYG4T14pcv+0CMdpxPwJr3xuj7wA==
+X-Received: by 2002:a17:907:890e:b0:c24:7f65:9c8a with SMTP id a640c23a62f3a-c24926a1ae2mr925290666b.12.1787434833296;
+        Sat, 22 Aug 2026 14:40:33 -0700 (PDT)
 Received: from m2.. ([37.142.151.124])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-c24966f99basm466778466b.37.2026.08.22.14.40.24
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-c24966f99basm466778466b.37.2026.08.22.14.40.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Aug 2026 14:40:25 -0700 (PDT)
+        Sat, 22 Aug 2026 14:40:32 -0700 (PDT)
 From: Michael Zaidman <michael.zaidman@gmail.com>
 To: Jiri Kosina <jikos@kernel.org>,
 	Benjamin Tissoires <bentiss@kernel.org>
@@ -72,9 +72,9 @@ Cc: Linus Walleij <linusw@kernel.org>,
 	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Michael Zaidman <michael.zaidman@gmail.com>
-Subject: [PATCH 02/13] HID: ft260: uart: bring-up fixes
-Date: Sun, 23 Aug 2026 00:39:30 +0300
-Message-ID: <20260822213941.98882-3-michael.zaidman@gmail.com>
+Subject: [PATCH 03/13] HID: ft260: add GPIO support on top of UART
+Date: Sun, 23 Aug 2026 00:39:31 +0300
+Message-ID: <20260822213941.98882-4-michael.zaidman@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260822213941.98882-1-michael.zaidman@gmail.com>
 References: <20260822213941.98882-1-michael.zaidman@gmail.com>
@@ -86,840 +86,1022 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix the UART path so the serial interface added previously works
-reliably in practice. This squashes the contiguous UART bring-up
-fixes that followed the initial serial-driver addition.
+Add gpiochip support for the FT260 multifunctional pins, including
+GPIO2/GPIOA/GPIOG function selection via sysfs, and enable the
+available GPIOs according to the active UART mode.
 
-The UART and I2C paths shared write_buf without proper separation,
-so concurrent use could corrupt transfers on both channels. Give
-UART its own TX buffer. The write request report is now built in
-that fixed per-port buffer, so its payload member becomes a fixed
-FT260_WR_UART_DATA_MAX (62) array rather than a __counted_by()
-flexible array, which describes a runtime-counted allocation this
-path no longer makes.
+This supersedes the earlier pre-UART GPIO series:
+https://lore.kernel.org/lkml/20230211115752.26276-2-michael.zaidman@gmail.com/
 
-The FT260 enters power-save after ~5s idle, which drops RX data at
-higher baud rates. Keep a timed dummy wakeup, but only when needed:
-skip it below 4800 baud and when EEPROM disables power-save; wake
-earlier before RX; avoid configuring baud or disabling the workaround
-twice; and arm the timer when a tty session starts.
-
-The received report length was validated against the actual HID report
-size only on the I2C path. The UART path instead bounded the
-device-supplied length against FT260_RD_DATA_MAX (180), which is the
-maximum I2C read payload, not a bound on the report buffer. As a UART
-payload cannot exceed FT260_WR_UART_DATA_MAX (62) bytes, a report
-claiming more would make ft260_uart_receive_chars() push data past the
-end of the report buffer into the tty flip buffer. Validate the length
-against the received report size once, before dispatching on the report
-type, and drop the two now-redundant FT260_RD_DATA_MAX checks.
-
-Also fix RX data loss after reopening the device, improve TX
-throughput, simplify HID interface-type detection, use kfifo_avail
-for write-room, and ignore spurious UART interrupt status (0xb1)
-reports instead of treating them as errors.
-
-Also includes UART cleanup and refactoring to match the rest of the
-driver style (including replacing kfifo_*_locked aliases with
-kfifo_*_spinlocked).
-
-This replaces the UART bring-up fix series:
-https://lore.kernel.org/all/20240210215147.77629-1-michael.zaidman@gmail.com/
+The gpio_chip.set callback returns int to match the current gpiolib
+API, based on the adaptation originally contributed by Rio Liu
+<rio@r26.me>.
 
 Signed-off-by: Michael Zaidman <michael.zaidman@gmail.com>
 ---
- drivers/hid/hid-ft260.c | 340 ++++++++++++++++++++++------------------
- 1 file changed, 188 insertions(+), 152 deletions(-)
+ drivers/hid/Kconfig     |  10 +-
+ drivers/hid/hid-ft260.c | 660 +++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 586 insertions(+), 84 deletions(-)
 
+diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+index e898adb331ba..8e161c440346 100644
+--- a/drivers/hid/Kconfig
++++ b/drivers/hid/Kconfig
+@@ -386,12 +386,12 @@ config HID_EZKEY
+ 	Support for Ezkey BTC 8193 keyboard.
+ 
+ config HID_FT260
+-	tristate "FTDI FT260 USB HID to I2C/UART host support"
+-	depends on USB_HID && HIDRAW && I2C && TTY
++	tristate "FTDI FT260 USB HID to I2C/UART/GPIO host support"
++	depends on USB_HID && HIDRAW && I2C && TTY && GPIOLIB
+ 	help
+-	  Provides I2C host adapter and UART/TTY functionality over USB-HID
+-	  through the FT260 device. The customizable USB descriptor fields
+-	  are exposed as sysfs attributes.
++	  Provides I2C host adapter, UART/TTY, and GPIO functionality over
++	  USB-HID through the FT260 device. The customizable USB descriptor
++	  fields are exposed as sysfs attributes.
+ 
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called hid-ft260.
 diff --git a/drivers/hid/hid-ft260.c b/drivers/hid/hid-ft260.c
-index 3faedfc5c413..b6c408267a68 100644
+index b6c408267a68..cc3b8f5791de 100644
 --- a/drivers/hid/hid-ft260.c
 +++ b/drivers/hid/hid-ft260.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * hid-ft260.c - FTDI FT260 USB HID to I2C host bridge
-+ * FTDI FT260 USB HID to I2C/UART host bridge
-  *
-  * Copyright (c) 2021, Michael Zaidman <michaelz@xsightlabs.com>
-  *
-@@ -20,10 +20,6 @@
+@@ -19,6 +19,7 @@
+ #include <linux/tty_flip.h>
  #include <linux/minmax.h>
  #include <linux/unaligned.h>
++#include <linux/gpio/driver.h>
  
--#define UART_COUNT_MAX		4	/* Number of UARTs this driver can handle */
--#define FIFO_SIZE	256
--#define TTY_WAKEUP_WATERMARK	(FIFO_SIZE / 2)
--
  #ifdef DEBUG
  static int ft260_debug = 1;
- #else
-@@ -38,9 +34,12 @@ MODULE_PARM_DESC(debug, "Toggle FT260 debugging messages");
- 			pr_info("%s: " format, __func__, ##arg);	  \
- 	} while (0)
- 
--#define FT260_REPORT_MAX_LENGTH (64)
--#define FT260_I2C_DATA_REPORT_ID(len) (FT260_I2C_REPORT_MIN + (len - 1) / 4)
--#define FT260_UART_DATA_REPORT_ID(len) (FT260_UART_REPORT_MIN + (len - 1) / 4)
-+#define FT260_REPORT_MAX_LEN (64)
-+#define FT260_DATA_REPORT_ID(min, len) (min + (len - 1) / 4)
-+#define FT260_I2C_DATA_REPORT_ID(len) \
-+		FT260_DATA_REPORT_ID(FT260_I2C_REPORT_MIN, len)
-+#define FT260_UART_DATA_REPORT_ID(len) \
-+		FT260_DATA_REPORT_ID(FT260_UART_REPORT_MIN, len)
- 
- #define FT260_WAKEUP_NEEDED_AFTER_MS (4800) /* 5s minus 200ms margin */
- 
-@@ -56,7 +55,8 @@ MODULE_PARM_DESC(debug, "Toggle FT260 debugging messages");
-  * read payload length to be 180 bytes.
-  */
+@@ -57,6 +58,11 @@ MODULE_PARM_DESC(debug, "Toggle FT260 debugging messages");
  #define FT260_RD_DATA_MAX (180)
--#define FT260_WR_DATA_MAX (60)
-+#define FT260_WR_I2C_DATA_MAX (60)
-+#define FT260_WR_UART_DATA_MAX (62)
+ #define FT260_WR_I2C_DATA_MAX (60)
+ #define FT260_WR_UART_DATA_MAX (62)
++#define FT260_GPIOCHIP "ft260_gpio"
++#define FT260_GPIO_MAX (6)
++#define FT260_GPIO_EX_MAX (8)
++#define FT260_GPIO_TOTAL (FT260_GPIO_MAX + FT260_GPIO_EX_MAX)
++#define FT260_GPIO_MASK (~(0xffff << FT260_GPIO_TOTAL))
  
  /*
   * Device interface configuration.
-@@ -90,7 +90,7 @@ enum {
- 	FT260_I2C_REPORT_MAX		= 0xDE,
- 	FT260_GPIO			= 0xB0,
- 	FT260_UART_INTERRUPT_STATUS	= 0xB1,
--	FT260_UART_STATUS		= 0xE0,
-+	FT260_UART_SETTINGS		= 0xE0,
- 	FT260_UART_RI_DCD_STATUS	= 0xE1,
- 	FT260_UART_REPORT_MIN		= 0xF0,
- 	FT260_UART_REPORT_MAX		= 0xFE,
-@@ -144,7 +144,7 @@ enum {
- 	FT260_FLAG_START_STOP_REPEATED	= 0x07,
+@@ -151,7 +157,69 @@ enum {
+ 	FT260_IFACE_UART
  };
  
--/* Return values for ft260_get_interface_type func */
-+/* USB interface type values */
- enum {
- 	FT260_IFACE_NONE,
- 	FT260_IFACE_I2C,
-@@ -190,6 +190,18 @@ struct ft260_get_i2c_status_report {
- 	u8 reserved;
+-#define FT260_SET_REQUEST_VALUE(report_id) ((FT260_FEATURE << 8) | report_id)
++/* Multi-function pin functions */
++enum {
++	FT260_MFPIN_GPIO		= 0x00,
++	FT260_MFPIN_SUSPOUT		= 0x01,
++	FT260_MFPIN_PWREN		= 0x02,
++	FT260_MFPIN_TX_ACTIVE		= 0x03,
++	FT260_MFPIN_TX_LED		= 0x04,
++	FT260_MFPIN_RX_LED		= 0x05,
++	FT260_MFPIN_BCD_DET		= 0x06,
++};
++
++enum {
++	FT260_GPIO_VALUE		= 0x00,
++	FT260_GPIO_DIRECTION		= 0x01,
++	FT260_GPIO_DIR_INPUT		= 0x00,
++	FT260_GPIO_DIR_OUTPUT		= 0x01,
++};
++
++/* GPIO offsets */
++enum {
++	FT260_GPIO_0			= (1 << 0),
++	FT260_GPIO_1			= (1 << 1),
++	FT260_GPIO_2			= (1 << 2),
++	FT260_GPIO_3			= (1 << 3),
++	FT260_GPIO_4			= (1 << 4),
++	FT260_GPIO_5			= (1 << 5),
++	FT260_GPIO_A			= (1 << (FT260_GPIO_MAX + 0)),
++	FT260_GPIO_B			= (1 << (FT260_GPIO_MAX + 1)),
++	FT260_GPIO_C			= (1 << (FT260_GPIO_MAX + 2)),
++	FT260_GPIO_D			= (1 << (FT260_GPIO_MAX + 3)),
++	FT260_GPIO_E			= (1 << (FT260_GPIO_MAX + 4)),
++	FT260_GPIO_F			= (1 << (FT260_GPIO_MAX + 5)),
++	FT260_GPIO_G			= (1 << (FT260_GPIO_MAX + 6)),
++	FT260_GPIO_H			= (1 << (FT260_GPIO_MAX + 7)),
++};
++
++/* GPIO groups */
++enum {
++	FT260_GPIO_WAKEUP		= (FT260_GPIO_3),
++	FT260_GPIO_I2C_DEFAULT		= (FT260_GPIO_0 | FT260_GPIO_1),
++	FT260_GPIO_UART_RX_TX		= (FT260_GPIO_C | FT260_GPIO_D),
++	FT260_GPIO_UART_DCD_RI		= (FT260_GPIO_4 | FT260_GPIO_5),
++	FT260_GPIO_UART_RTS_CTS		= (FT260_GPIO_B | FT260_GPIO_E),
++	FT260_GPIO_UART_DTR_DSR		= (FT260_GPIO_F | FT260_GPIO_H),
++	FT260_GPIO_UART_MODE_0_SET	= (FT260_GPIO_UART_RX_TX |
++					   FT260_GPIO_UART_DCD_RI |
++					   FT260_GPIO_UART_RTS_CTS |
++					   FT260_GPIO_UART_DTR_DSR),
++	FT260_GPIO_UART_MODE_1_SET	= (FT260_GPIO_UART_DTR_DSR),
++	FT260_GPIO_UART_MODE_2_SET	= (FT260_GPIO_UART_RTS_CTS),
++	FT260_GPIO_UART_MODE_3_SET	= (FT260_GPIO_UART_RTS_CTS |
++					   FT260_GPIO_UART_DTR_DSR),
++	FT260_GPIO_UART_MODE_4_SET	= (FT260_GPIO_UART_MODE_3_SET),
++	FT260_GPIO_UART_DEFAULT		= (FT260_GPIO_UART_MODE_0_SET),
++	FT260_GPIO_UART_MODE_1_CLR	= (FT260_GPIO_UART_RX_TX |
++					   FT260_GPIO_UART_RTS_CTS),
++	FT260_GPIO_UART_MODE_2_CLR	= (FT260_GPIO_UART_RX_TX |
++					   FT260_GPIO_UART_DTR_DSR),
++	FT260_GPIO_UART_MODE_3_CLR	= (FT260_GPIO_UART_RX_TX),
++	FT260_GPIO_UART_MODES		= (5),
++};
++
++#define FT260_SET_REQUEST_VALUE(report_id) ((FT260_FEATURE << 8) | (report_id))
+ 
+ /* Feature In reports */
+ 
+@@ -171,10 +239,10 @@ struct ft260_get_system_status_report {
+ 	u8 uart_mode;		/* 0 - OFF; 1 - RTS_CTS, 2 - DTR_DSR, */
+ 				/* 3 - XON_XOFF, 4 - No flow control */
+ 	u8 hid_over_i2c_en;	/* 0 - disabled, 1 - enabled */
+-	u8 gpio2_function;	/* 0 - GPIO,  1 - SUSPOUT, */
++	u8 gpio2_func;		/* 0 - GPIO,  1 - SUSPOUT, */
+ 				/* 2 - PWREN, 4 - TX_LED */
+-	u8 gpioA_function;	/* 0 - GPIO, 3 - TX_ACTIVE, 4 - TX_LED */
+-	u8 gpioG_function;	/* 0 - GPIO, 2 - PWREN, */
++	u8 gpioa_func;		/* 0 - GPIO, 3 - TX_ACTIVE, 4 - TX_LED */
++	u8 gpiog_func;		/* 0 - GPIO, 2 - PWREN, */
+ 				/* 5 - RX_LED, 6 - BCD_DET */
+ 	u8 suspend_out_pol;	/* 0 - active-high, 1 - active-low */
+ 	u8 enable_wakeup_int;	/* 0 - disabled, 1 - enabled */
+@@ -202,6 +270,18 @@ struct ft260_get_uart_settings_report {
+ 	u8 breaking;		/* 0: no break */
  } __packed;
  
-+struct ft260_get_uart_settings_report {
-+	u8 report;		/* FT260_UART_SETTINGS */
-+	u8 flow_ctrl;		/* 0 - OFF; 1 - RTS_CTS, 2 - DTR_DSR, */
-+				/* 3 - XON_XOFF, 4 - No flow control */
-+	/* The baudrate field is unaligned */
-+	__le32 baudrate;	/* little endian, 9600 = 0x2580, 19200 = 0x4B00 */
-+	u8 data_bit;		/* 7 or 8 */
-+	u8 parity;		/* 0: no parity, 1: odd, 2: even, 3: high, 4: low */
-+	u8 stop_bit;		/* 0: one stop bit, 2: 2 stop bits */
-+	u8 breaking;		/* 0: no break */
++struct ft260_gpio_state {
++	u8 vals;		/* GPIO[0-5] values in bits 0 - 5 */
++	u8 dirs;		/* GPIO[0-5] directions, 0 - in, 1 - out */
++	u8 ex_vals;		/* GPIO[A-H] values in bits 0 - 7 */
++	u8 ex_dirs;		/* GPIO[A-H] directions, 0 - in, 1 - out */
++} __packed;
++
++struct ft260_gpio_read_request_report {
++	u8 report;		/* FT260_GPIO */
++	struct ft260_gpio_state	gpio;
 +} __packed;
 +
  /* Feature Out reports */
  
  struct ft260_set_system_clock_report {
-@@ -229,7 +241,7 @@ struct ft260_i2c_write_request_report {
- 	u8 address;		/* 7-bit I2C address */
- 	u8 flag;		/* I2C transaction condition */
- 	u8 length;		/* data payload length */
--	u8 data[FT260_WR_DATA_MAX]; /* data payload */
-+	u8 data[FT260_WR_I2C_DATA_MAX]; /* data payload */
+@@ -223,6 +303,12 @@ struct ft260_set_uart_mode_report {
+ 				/* 3 - XON_XOFF, 4 - No flow control */
  } __packed;
  
- struct ft260_i2c_read_request_report {
-@@ -246,18 +258,19 @@ struct ft260_input_report {
- } __packed;
- 
- /* UART reports */
++struct ft260_set_uart_dcd_ri_report {
++	u8 report;		/* FT260_SYSTEM_SETTINGS */
++	u8 request;		/* FT260_ENABLE_UART_DCD_RI */
++	u8 uart_dcd_ri;		/* Pins func: 0 - GPIO4,GPIO5, 1 - DCD,RI */
++} __packed;
 +
- struct ft260_uart_write_request_report {
- 	u8 report;		/* FT260_UART_REPORT */
- 	u8 length;		/* data payload length */
--	u8 data[] __counted_by(length);	/* variable data payload */
-+	u8 data[FT260_WR_UART_DATA_MAX]; /* data payload */
+ struct ft260_set_i2c_reset_report {
+ 	u8 report;		/* FT260_SYSTEM_SETTINGS */
+ 	u8 request;		/* FT260_SET_I2C_RESET */
+@@ -234,6 +320,33 @@ struct ft260_set_i2c_speed_report {
+ 	__le16 clock;		/* I2C bus clock in range 60-3400 KHz */
  } __packed;
  
--struct ft260_configure_uart_request {
-+struct ft260_configure_uart_request_report {
- 	u8 report;		/* FT260_SYSTEM_SETTINGS */
- 	u8 request;		/* FT260_SET_UART_CONFIG */
- 	u8 flow_ctrl;		/* 0: OFF, 1: RTS_CTS, 2: DTR_DSR */
- 				/* 3: XON_XOFF, 4: No flow ctrl */
--	/* The baudrate field is unaligned: */
-+	/* The baudrate field is unaligned */
- 	__le32 baudrate;	/* little endian, 9600 = 0x2580, 19200 = 0x4B00 */
- 	u8 data_bit;		/* 7 or 8 */
- 	u8 parity;		/* 0: no parity, 1: odd, 2: even, 3: high, 4: low */
-@@ -292,6 +305,11 @@ enum {
- 	FT260_CFG_BAUD_MAX		= 12000000,
++struct ft260_set_gpio2_func_report {
++	u8 report;		/* FT260_SYSTEM_SETTINGS */
++	u8 request;		/* FT260_SELECT_GPIO2_FUNC */
++	u8 gpio2_func;		/* Pin func: 0 - GPIO, 1 - SUSPOUT, */
++				/* 2 - PWREN# (active-low), 4 - TX_LED */
++} __packed;
++
++struct ft260_set_gpioa_func_report {
++	u8 report;		/* FT260_SYSTEM_SETTINGS */
++	u8 request;		/* FT260_SELECT_GPIOA_FUNC */
++	u8 gpioa_func;		/* Pin func: 0 - GPIO, */
++				/* 3 - TX_ACTIVE, 4 - TX_LED */
++} __packed;
++
++struct ft260_set_gpiog_func_report {
++	u8 report;		/* FT260_SYSTEM_SETTINGS */
++	u8 request;		/* FT260_SELECT_GPIOG_FUNC */
++	u8 gpiog_func;		/* Pin func: 0 - GPIO, */
++				/* 2 - PWREN# (active-low), */
++				/* 5 - RX_LED, 6 - BCD_DET */
++} __packed;
++
++struct ft260_gpio_write_request_report {
++	u8 report;		/* FT260_GPIO */
++	struct ft260_gpio_state	gpio;
++} __packed;
++
+ /* Data transfer reports */
+ 
+ struct ft260_i2c_write_request_report {
+@@ -280,32 +393,32 @@ struct ft260_configure_uart_request_report {
+ 
+ /* UART interface configuration */
+ enum {
+-	FT260_CFG_FLOW_CTRL_OFF		= 0x00,
+-	FT260_CFG_FLOW_CTRL_RTS_CTS	= 0x01,
+-	FT260_CFG_FLOW_CTRL_DTR_DSR	= 0x02,
+-	FT260_CFG_FLOW_CTRL_XON_XOFF	= 0x03,
+-	FT260_CFG_FLOW_CTRL_NONE	= 0x04,
++	FT260_UART_CFG_FLOW_CTRL_OFF		= 0x00,
++	FT260_UART_CFG_FLOW_CTRL_RTS_CTS	= 0x01,
++	FT260_UART_CFG_FLOW_CTRL_DTR_DSR	= 0x02,
++	FT260_UART_CFG_FLOW_CTRL_XON_XOFF	= 0x03,
++	FT260_UART_CFG_FLOW_CTRL_NONE		= 0x04,
+ 
+-	FT260_CFG_DATA_BITS_7		= 0x07,
+-	FT260_CFG_DATA_BITS_8		= 0x08,
++	FT260_UART_CFG_DATA_BITS_7		= 0x07,
++	FT260_UART_CFG_DATA_BITS_8		= 0x08,
+ 
+-	FT260_CFG_PAR_NO		= 0x00,
+-	FT260_CFG_PAR_ODD		= 0x01,
+-	FT260_CFG_PAR_EVEN		= 0x02,
+-	FT260_CFG_PAR_HIGH		= 0x03,
+-	FT260_CFG_PAR_LOW		= 0x04,
++	FT260_UART_CFG_PAR_NO			= 0x00,
++	FT260_UART_CFG_PAR_ODD			= 0x01,
++	FT260_UART_CFG_PAR_EVEN			= 0x02,
++	FT260_UART_CFG_PAR_HIGH			= 0x03,
++	FT260_UART_CFG_PAR_LOW			= 0x04,
+ 
+-	FT260_CFG_STOP_ONE_BIT		= 0x00,
+-	FT260_CFG_STOP_TWO_BIT		= 0x02,
++	FT260_UART_CFG_STOP_ONE_BIT		= 0x00,
++	FT260_UART_CFG_STOP_TWO_BIT		= 0x02,
+ 
+-	FT260_CFG_BREAKING_NO		= 0x00,
+-	FT260_CFG_BEAKING_YES		= 0x01,
++	FT260_UART_CFG_BREAKING_NO		= 0x00,
++	FT260_UART_CFG_BEAKING_YES		= 0x01,
+ 
+-	FT260_CFG_BAUD_MIN		= 1200,
+-	FT260_CFG_BAUD_MAX		= 12000000,
++	FT260_UART_CFG_BAUD_MIN			= 1200,
++	FT260_UART_CFG_BAUD_MAX			= 12000000,
  };
  
-+#define FT260_UART_EN_PW_SAVE_BAUD	(4800)
-+
-+#define UART_COUNT_MAX (4) /* Number of supported UARTs */
-+#define XMIT_FIFO_SIZE (PAGE_SIZE)
-+
- static const struct hid_device_id ft260_devices[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_FUTURE_TECHNOLOGY,
- 			 USB_DEVICE_ID_FT260) },
-@@ -302,26 +320,22 @@ MODULE_DEVICE_TABLE(hid, ft260_devices);
- struct ft260_device {
+-#define FT260_UART_EN_PW_SAVE_BAUD	(4800)
++#define FT260_UART_EN_PW_SAVE_BAUD (4800)
+ 
+ #define UART_COUNT_MAX (4) /* Number of supported UARTs */
+ #define XMIT_FIFO_SIZE (PAGE_SIZE)
+@@ -321,6 +434,7 @@ struct ft260_device {
  	struct i2c_adapter adap;
  	struct hid_device *hdev;
--
--	bool ft260_is_serial;
-+	int iface_type;
+ 	int iface_type;
++	int iface_id;
  	struct list_head device_list;
--
--	/* tty_port lifetime is equal to device lifetime */
  	struct tty_port port;
-+	/* tty port index */
- 	unsigned int index;
- 	struct kfifo xmit_fifo;
--	/* write_lock: lock to serialize access to xmit fifo */
--	spinlock_t write_lock;
-+	spinlock_t xmit_fifo_lock;
- 	struct uart_icount icount;
--
- 	struct timer_list wakeup_timer;
- 	struct work_struct wakeup_work;
- 	bool reschedule_work;
--
--
-+	bool power_saving_en;
- 	struct completion wait;
- 	struct mutex lock;
--	u8 write_buf[FT260_REPORT_MAX_LENGTH];
-+	u8 i2c_wr_buf[FT260_REPORT_MAX_LEN];
-+	u8 uart_wr_buf[FT260_REPORT_MAX_LEN];
- 	unsigned long need_wakeup_at;
- 	/* Protects read_buf, read_idx and read_len against ft260_raw_event() */
- 	spinlock_t read_lock;
-@@ -332,8 +346,7 @@ struct ft260_device {
+ 	/* tty port index */
+@@ -343,6 +457,10 @@ struct ft260_device {
+ 	u16 read_idx;
+ 	u16 read_len;
+ 	u16 clock;
++	u16 gpio_en;
++	struct gpio_chip *gc;
++	struct ft260_gpio_state gpio;
++	u16 gpio_uart_mode[FT260_GPIO_UART_MODES];
  };
  
  static int ft260_hid_feature_report_get(struct hid_device *hdev,
--					unsigned char report_id, u8 *data,
--					size_t len)
-+					u8 report_id, u8 *data, size_t len)
- {
- 	u8 *buf;
- 	int ret;
-@@ -462,8 +475,6 @@ static int ft260_hid_output_report_check_status(struct ft260_device *dev,
- 
- 	ret = ft260_hid_output_report(hdev, data, len);
- 	if (ret < 0) {
--		hid_dbg(hdev, "%s: failed to start transfer, ret %d\n",
--			__func__, ret);
- 		ft260_i2c_reset(hdev);
- 		return ret;
- 	}
-@@ -505,7 +516,7 @@ static int ft260_i2c_write(struct ft260_device *dev, u8 addr, u8 *data,
- 	int ret, wr_len, idx = 0;
- 	struct hid_device *hdev = dev->hdev;
- 	struct ft260_i2c_write_request_report *rep =
--		(struct ft260_i2c_write_request_report *)dev->write_buf;
-+		(struct ft260_i2c_write_request_report *)dev->i2c_wr_buf;
- 
- 	if (len < 1)
- 		return -EINVAL;
-@@ -513,12 +524,12 @@ static int ft260_i2c_write(struct ft260_device *dev, u8 addr, u8 *data,
- 	rep->flag = FT260_FLAG_START;
- 
- 	do {
--		if (len <= FT260_WR_DATA_MAX) {
-+		if (len <= FT260_WR_I2C_DATA_MAX) {
- 			wr_len = len;
- 			if (flag == FT260_FLAG_START_STOP)
- 				rep->flag |= FT260_FLAG_STOP;
- 		} else {
--			wr_len = FT260_WR_DATA_MAX;
-+			wr_len = FT260_WR_I2C_DATA_MAX;
- 		}
- 
- 		rep->report = FT260_I2C_DATA_REPORT_ID(wr_len);
-@@ -554,7 +565,7 @@ static int ft260_smbus_write(struct ft260_device *dev, u8 addr, u8 cmd,
- 	int len = 4;
- 
- 	struct ft260_i2c_write_request_report *rep =
--		(struct ft260_i2c_write_request_report *)dev->write_buf;
-+		(struct ft260_i2c_write_request_report *)dev->i2c_wr_buf;
- 
- 	if (data_len >= sizeof(rep->data))
- 		return -EINVAL;
-@@ -574,6 +585,8 @@ static int ft260_smbus_write(struct ft260_device *dev, u8 addr, u8 cmd,
- 		  rep->report, addr, cmd, rep->length, len);
- 
- 	ret = ft260_hid_output_report_check_status(dev, (u8 *)rep, len);
-+	if (ret < 0)
-+		hid_err(dev->hdev, "%s: failed with %d\n", __func__, ret);
- 
- 	return ret;
- }
-@@ -692,8 +705,7 @@ static int ft260_i2c_write_read(struct ft260_device *dev, struct i2c_msg *msgs)
- 		else
- 			read_off = *msgs[0].buf;
- 
--		ft260_dbg("%s: off %#x rlen %d wlen %d\n", __func__,
--			read_off, rd_len, wr_len);
-+		ft260_dbg("off %#x rlen %d wlen %d\n", read_off, rd_len, wr_len);
- 	}
- 
- 	ret = ft260_i2c_write(dev, addr, msgs[0].buf, wr_len,
-@@ -926,27 +938,25 @@ static int ft260_get_interface_type(struct hid_device *hdev, struct ft260_device
- 	ft260_dbg("i2c_enable: 0x%02x\n", cfg.i2c_enable);
- 	ft260_dbg("uart_mode:  0x%02x\n", cfg.uart_mode);
- 
--	dev->ft260_is_serial = false;
-+	dev->power_saving_en = cfg.power_saving_en;
- 
- 	switch (cfg.chip_mode) {
- 	case FT260_MODE_ALL:
- 	case FT260_MODE_BOTH:
--		if (interface == 1) {
-+		if (interface == 1)
- 			ret = FT260_IFACE_UART;
--			dev->ft260_is_serial = true;
--		} else {
-+		else
- 			ret = FT260_IFACE_I2C;
--		}
- 		break;
- 	case FT260_MODE_UART:
- 		ret = FT260_IFACE_UART;
--		dev->ft260_is_serial = true;
- 		break;
- 	case FT260_MODE_I2C:
- 		ret = FT260_IFACE_I2C;
- 		break;
- 	}
- 
-+	dev->iface_type = ret;
- 	return ret;
- }
- 
-@@ -1090,12 +1100,36 @@ static const struct attribute_group ft260_attr_group = {
- 	}
- };
- 
--/***
-- * START Serial dev part
-- */
- static DEFINE_MUTEX(ft260_uart_list_lock);
- static LIST_HEAD(ft260_uart_device_list);
- 
-+static void ft260_uart_wakeup(struct ft260_device *dev);
-+
-+static int ft260_get_uart_settings(struct hid_device *hdev,
-+				   struct ft260_get_uart_settings_report *cfg)
-+{
-+	int ret;
-+	int len = sizeof(struct ft260_get_uart_settings_report);
-+
-+	ret = ft260_hid_feature_report_get(hdev, FT260_UART_SETTINGS,
-+					   (u8 *)cfg, len);
-+	if (ret < 0) {
-+		hid_err(hdev, "failed to retrieve uart settings\n");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static void ft260_uart_wakeup_workaraund_enable(struct ft260_device *port,
-+						bool enable)
-+{
-+	if (port->power_saving_en) {
-+		port->reschedule_work = enable;
-+		ft260_dbg("%s wakeup workaround",
-+			  enable ? "activate" : "deactivate");
-+	}
-+}
-+
- static struct ft260_device *ft260_dev_by_index(int index)
- {
- 	struct ft260_device *port;
-@@ -1112,8 +1146,8 @@ static int ft260_uart_add_port(struct ft260_device *port)
- 	int index = 0, ret = 0;
- 	struct ft260_device *dev;
- 
--	spin_lock_init(&port->write_lock);
--	if (kfifo_alloc(&port->xmit_fifo, FIFO_SIZE, GFP_KERNEL))
-+	spin_lock_init(&port->xmit_fifo_lock);
-+	if (kfifo_alloc(&port->xmit_fifo, XMIT_FIFO_SIZE, GFP_KERNEL))
+@@ -375,8 +493,6 @@ static int ft260_hid_feature_report_set(struct hid_device *hdev, u8 *data,
+ 	if (!buf)
  		return -ENOMEM;
  
- 	mutex_lock(&ft260_uart_list_lock);
-@@ -1143,19 +1177,18 @@ static void ft260_uart_port_remove(struct ft260_device *port)
- 	list_del(&port->device_list);
- 	mutex_unlock(&ft260_uart_list_lock);
- 
--	spin_lock(&port->write_lock);
-+	spin_lock(&port->xmit_fifo_lock);
- 	kfifo_free(&port->xmit_fifo);
--	spin_unlock(&port->write_lock);
-+	spin_unlock(&port->xmit_fifo_lock);
- 
- 	mutex_lock(&port->port.mutex);
--	port->reschedule_work = false;
- 	tty_port_tty_hangup(&port->port, false);
- 	mutex_unlock(&port->port.mutex);
- 
- 	ft260_uart_port_put(port);
- }
- 
--static struct ft260_device *ft260_uart_port_get(unsigned int index)
-+static struct ft260_device *ft260_uart_port_get(int index)
- {
- 	struct ft260_device *port;
- 
-@@ -1211,30 +1244,24 @@ static int ft260_uart_transmit_chars(struct ft260_device *port)
- 		goto tty_out;
- 	}
- 
--	rep = (struct ft260_uart_write_request_report *)port->write_buf;
-+	rep = (struct ft260_uart_write_request_report *)port->uart_wr_buf;
- 
- 	do {
--		len = min(data_len, FT260_WR_DATA_MAX);
-+		len = min(data_len, FT260_WR_UART_DATA_MAX);
- 
- 		rep->report = FT260_UART_DATA_REPORT_ID(len);
- 		rep->length = len;
- 
--		len = kfifo_out_locked(xmit, rep->data, len, &port->write_lock);
-+		len = kfifo_out_spinlocked(xmit, rep->data, len, &port->xmit_fifo_lock);
- 
--		ret = ft260_hid_output_report(hdev, (u8 *)rep, len + sizeof(*rep));
--		if (ret < 0) {
--			hid_err(hdev, "Failed to start transfer, ret %d\n", ret);
-+		ret = ft260_hid_output_report(hdev, (u8 *)rep, len + 2);
-+		if (ret < 0)
- 			goto tty_out;
--		}
- 
- 		data_len -= len;
- 		port->icount.tx += len;
- 	} while (data_len > 0);
- 
--	len = kfifo_len(xmit);
--	if ((FIFO_SIZE - len) > TTY_WAKEUP_WATERMARK)
--		tty_wakeup(tty);
+-	buf[0] = FT260_SYSTEM_SETTINGS;
 -
- 	ret = 0;
+ 	ret = hid_hw_raw_request(hdev, buf[0], buf, len, HID_FEATURE_REPORT,
+ 				 HID_REQ_SET_REPORT);
  
- tty_out:
-@@ -1242,20 +1269,14 @@ static int ft260_uart_transmit_chars(struct ft260_device *port)
- 	return ret;
- }
- 
--static int ft260_uart_receive_chars(struct ft260_device *port,
--				    u8 *data, u8 length)
-+static int ft260_uart_receive_chars(struct ft260_device *port, u8 *data, u8 length)
- {
--	struct hid_device *hdev = port->hdev;
--	int ret = 0;
--
--	if (length > FT260_RD_DATA_MAX) {
--		hid_err(hdev, "Received too much data (%d)\n", length);
--		return -EBADR;
--	}
-+	int ret;
- 
- 	ret = tty_insert_flip_string(&port->port, data, length);
- 	if (ret != length)
--		hid_err(hdev, "%d char not inserted to flip buffer\n", length - ret);
-+		ft260_dbg("%d char not inserted to flip buf\n", length - ret);
-+
- 	port->icount.rx += ret;
- 
- 	if (ret)
-@@ -1265,26 +1286,26 @@ static int ft260_uart_receive_chars(struct ft260_device *port,
- }
- 
- static ssize_t ft260_uart_write(struct tty_struct *tty, const u8 *buf,
--				 size_t count)
-+				 size_t cnt)
- {
- 	struct ft260_device *port = tty->driver_data;
--	struct hid_device *hdev = port->hdev;
--	int len, ret;
-+	ssize_t len, ret, diff;
- 
--	len = kfifo_in_locked(&port->xmit_fifo, buf, count, &port->write_lock);
--	ft260_dbg("count: %zu, len: %d", count, len);
-+	len = kfifo_in_spinlocked(&port->xmit_fifo, buf, cnt,
-+				  &port->xmit_fifo_lock);
-+	ft260_dbg("count: %zu, len: %zd", cnt, len);
- 
- 	ret = ft260_uart_transmit_chars(port);
- 	if (ret < 0) {
--		hid_dbg(hdev, "Failed to transmit chars: %d\n", ret);
-+		ft260_dbg("failed to transmit %zd\n", ret);
- 		return 0;
- 	}
- 
- 	ret = kfifo_len(&port->xmit_fifo);
- 	if (ret > 0) {
--		hid_dbg(hdev, "Failed to  all kfifo data bytes\n");
--		ft260_dbg("return: %d", len - ret);
--		return len - ret;
-+		diff = len - ret;
-+		ft260_dbg("failed to send %zd out of %zd bytes\n", diff, len);
-+		return diff;
- 	}
- 
- 	return len;
-@@ -1294,7 +1315,7 @@ static unsigned int ft260_uart_write_room(struct tty_struct *tty)
- {
- 	struct ft260_device *port = tty->driver_data;
- 
--	return FIFO_SIZE - kfifo_len(&port->xmit_fifo);
-+	return kfifo_avail(&port->xmit_fifo);
- }
- 
- static unsigned int ft260_uart_chars_in_buffer(struct tty_struct *tty)
-@@ -1310,7 +1331,8 @@ static int ft260_uart_change_speed(struct ft260_device *port,
- {
- 	struct hid_device *hdev = port->hdev;
- 	unsigned int baud;
--	struct ft260_configure_uart_request req;
-+	struct ft260_configure_uart_request_report req;
-+	bool wakeup_workaraund = false;
+@@ -389,6 +505,7 @@ static int ft260_i2c_reset(struct hid_device *hdev)
+ 	struct ft260_set_i2c_reset_report report;
  	int ret;
  
- 	memset(&req, 0, sizeof(req));
-@@ -1324,7 +1346,7 @@ static int ft260_uart_change_speed(struct ft260_device *port,
++	report.report = FT260_SYSTEM_SETTINGS;
+ 	report.request = FT260_SET_I2C_RESET;
+ 
+ 	ret = ft260_hid_feature_report_set(hdev, (u8 *)&report, sizeof(report));
+@@ -906,6 +1023,322 @@ static const struct i2c_algorithm ft260_i2c_algo = {
+ 	.functionality = ft260_functionality,
+ };
+ 
++static void ft260_gpio_en_set(struct ft260_device *dev, u16 bitmap)
++{
++	dev->gpio_en |= bitmap & FT260_GPIO_MASK;
++}
++
++static void ft260_gpio_en_clr(struct ft260_device *dev, u16 bitmap)
++{
++	dev->gpio_en &= ~bitmap & FT260_GPIO_MASK;
++}
++
++static void ft260_gpio_en_update(struct hid_device *hdev, u8 req, u8 value)
++{
++	u16 bitmap;
++	struct ft260_device *dev = hid_get_drvdata(hdev);
++
++	switch (req) {
++
++	case FT260_SET_I2C_MODE:
++		bitmap = FT260_GPIO_I2C_DEFAULT;
++		break;
++	case FT260_SET_UART_MODE:
++		switch (value) {
++		case FT260_UART_CFG_FLOW_CTRL_OFF:
++			bitmap = (u16)FT260_GPIO_MASK;
++			break;
++		case FT260_UART_CFG_FLOW_CTRL_RTS_CTS:
++			bitmap = FT260_GPIO_UART_MODE_1_CLR;
++			break;
++		case FT260_UART_CFG_FLOW_CTRL_DTR_DSR:
++			bitmap = FT260_GPIO_UART_MODE_2_CLR;
++			break;
++		case FT260_UART_CFG_FLOW_CTRL_XON_XOFF:
++		case FT260_UART_CFG_FLOW_CTRL_NONE:
++			bitmap = FT260_GPIO_UART_MODE_3_CLR;
++			break;
++		default:
++			return;
++		}
++		ft260_gpio_en_clr(dev, bitmap);
++		bitmap = dev->gpio_uart_mode[value];
++		ft260_gpio_en_set(dev, bitmap);
++		goto exit;
++
++	case FT260_ENABLE_UART_DCD_RI:
++		bitmap = FT260_GPIO_UART_DCD_RI;
++		break;
++
++	case FT260_SELECT_GPIO2_FUNC:
++		bitmap = FT260_GPIO_2;
++		break;
++	case FT260_SELECT_GPIOA_FUNC:
++		bitmap = FT260_GPIO_A;
++		break;
++	case FT260_SELECT_GPIOG_FUNC:
++		bitmap = FT260_GPIO_G;
++		break;
++	default:
++		return;
++	}
++
++	if (value == FT260_MFPIN_GPIO)
++		ft260_gpio_en_set(dev, bitmap);
++	else
++		ft260_gpio_en_clr(dev, bitmap);
++exit:
++	hid_info(hdev, "enabled GPIOs: %04x\n", dev->gpio_en);
++}
++
++static int ft260_gpio_set(struct gpio_chip *gc, u32 offset, int value)
++{
++	int ret = 0;
++	struct ft260_gpio_write_request_report rep;
++	struct ft260_device *dev = gpiochip_get_data(gc);
++	struct hid_device *hdev = dev->hdev;
++
++	if (offset >= FT260_GPIO_TOTAL) {
++		hid_err(hdev, "%s: invalid offset %d\n", __func__, offset);
++		return -EINVAL;
++	}
++
++	ft260_dbg("offset %d val %d\n", offset, value);
++
++	mutex_lock(&dev->lock);
++
++	if (!(dev->gpio_en & (1 << offset))) {
++		hid_err(hdev, "%s: wrong pin function %d\n", __func__, offset);
++		ret = -EINVAL;
++		goto exit;
++	}
++
++	rep.report = FT260_GPIO;
++	rep.gpio = dev->gpio;
++
++	if (offset < FT260_GPIO_MAX) {
++		if (value)
++			rep.gpio.vals |= !!value << offset;
++		else
++			rep.gpio.vals &= ~(1 << offset);
++	} else {
++		offset = offset - FT260_GPIO_MAX;
++		if (value)
++			rep.gpio.ex_vals |= !!value << offset;
++		else
++			rep.gpio.ex_vals &= ~(1 << offset);
++	}
++
++	ft260_dbg("dirs %#02x vals %#02x ex_dir %#02x ex_vals %#02x\n",
++		  rep.gpio.dirs, rep.gpio.vals,
++		  rep.gpio.ex_dirs, rep.gpio.ex_vals);
++
++	ret = ft260_hid_feature_report_set(hdev, (u8 *)&rep, sizeof(rep));
++	if (unlikely(ret < 0)) {
++		hid_err(hdev, "%s: cannot set GPIO: %d\n", __func__, ret);
++		goto exit;
++	}
++
++	dev->gpio = rep.gpio;
++	ret = 0;
++exit:
++	mutex_unlock(&dev->lock);
++	return ret;
++}
++
++static int ft260_gpio_direction_set(struct gpio_chip *gc, u32 offset,
++				    int value, int direction)
++{
++	int ret;
++	struct ft260_gpio_read_request_report buf;
++	struct ft260_gpio_write_request_report *rep;
++	struct ft260_device *dev = gpiochip_get_data(gc);
++	struct hid_device *hdev = dev->hdev;
++
++	if (offset >= FT260_GPIO_TOTAL) {
++		hid_err(hdev, "%s: invalid offset %d\n", __func__, offset);
++		return -EINVAL;
++	}
++
++	ft260_dbg("offset %d val %d direction %d\n", offset, value, direction);
++
++	mutex_lock(&dev->lock);
++
++	if (!(dev->gpio_en & (1 << offset))) {
++		hid_err(hdev, "%s: wrong pin function %d\n", __func__, offset);
++		ret = -EIO;
++		goto exit;
++	}
++
++	ret = ft260_hid_feature_report_get(hdev, FT260_GPIO, (u8 *)&buf, sizeof(buf));
++	if (unlikely(ret < 0)) {
++		hid_err(hdev, "%s: cannot get GPIO: %d\n", __func__, ret);
++		goto exit;
++	}
++
++	rep = (struct ft260_gpio_write_request_report *)&buf;
++
++	if (direction == FT260_GPIO_DIR_OUTPUT)
++		if (offset < FT260_GPIO_MAX)
++			rep->gpio.dirs |= 1 << offset;
++		else
++			rep->gpio.ex_dirs |= 1 << (offset - FT260_GPIO_MAX);
++	else
++		if (offset < FT260_GPIO_MAX)
++			rep->gpio.dirs &= ~(1 << offset);
++		else
++			rep->gpio.ex_dirs &= ~(1 << (offset - FT260_GPIO_MAX));
++
++	ft260_dbg("dirs %#02x val %#02x ex_dirs %#02x ex_vals %#02x\n",
++		  rep->gpio.dirs, rep->gpio.vals,
++		  rep->gpio.ex_dirs, rep->gpio.ex_vals);
++
++	ret = ft260_hid_feature_report_set(hdev, (u8 *)rep, sizeof(*rep));
++	if (unlikely(ret < 0)) {
++		hid_err(hdev, "%s: cannot set GPIO: %d\n", __func__, ret);
++		goto exit;
++	}
++
++	dev->gpio = rep->gpio;
++	mutex_unlock(&dev->lock);
++
++	if (direction == FT260_GPIO_DIR_OUTPUT)
++		ft260_gpio_set(gc, offset, value);
++
++	return 0;
++exit:
++	mutex_unlock(&dev->lock);
++	return ret;
++}
++
++static int ft260_gpio_direction_output(struct gpio_chip *gc,
++				       u32 offset, int value)
++{
++	return ft260_gpio_direction_set(gc, offset, value,
++					FT260_GPIO_DIR_OUTPUT);
++}
++
++static int ft260_gpio_direction_input(struct gpio_chip *gc, u32 offset)
++{
++	return ft260_gpio_direction_set(gc, offset, 0,
++					FT260_GPIO_DIR_INPUT);
++}
++
++static int ft260_gpio_get_all(struct gpio_chip *gc, int item)
++{
++	int ret;
++	struct ft260_gpio_read_request_report rep;
++	struct ft260_device *dev = gpiochip_get_data(gc);
++	struct hid_device *hdev = dev->hdev;
++
++	ret = ft260_hid_feature_report_get(hdev, FT260_GPIO, (u8 *)&rep, sizeof(rep));
++	if (unlikely(ret < 0)) {
++		hid_err(hdev, "%s: cannot get GPIO: %d\n", __func__, ret);
++		goto exit;
++	}
++
++	if (item == FT260_GPIO_VALUE)
++		ret = (rep.gpio.ex_vals << FT260_GPIO_MAX) | rep.gpio.vals;
++	else
++		ret = (rep.gpio.ex_dirs << FT260_GPIO_MAX) | rep.gpio.dirs;
++exit:
++	return ret;
++}
++
++static int ft260_gpio_get_direction(struct gpio_chip *gc, u32 offset)
++{
++	int ret = ft260_gpio_get_all(gc, FT260_GPIO_DIRECTION);
++
++	if (ret < 0)
++		return ret;
++	return !((ret >> offset) & 1);
++}
++
++static int ft260_gpio_get(struct gpio_chip *gc, u32 offset)
++{
++	int ret = ft260_gpio_get_all(gc, FT260_GPIO_VALUE);
++
++	if (ret < 0)
++		return ret;
++	return (ret >> offset) & 1;
++}
++
++static int ft260_gpio_init(struct ft260_device *dev,
++			   struct ft260_get_system_status_report *cfg)
++{
++	int ret;
++	int label_sz;
++	char *label;
++	struct ft260_get_chip_version_report ver;
++	struct hid_device *hdev = dev->hdev;
++	char prefix[] = "ft260_";
++	u8 mode = cfg->chip_mode;
++
++	hid_info(hdev, "initialize gpio chip\n");
++
++	dev->gpio_uart_mode[0] = (u16)FT260_GPIO_UART_MODE_0_SET;
++	dev->gpio_uart_mode[1] = (u16)FT260_GPIO_UART_MODE_1_SET;
++	dev->gpio_uart_mode[2] = (u16)FT260_GPIO_UART_MODE_2_SET;
++	dev->gpio_uart_mode[3] = (u16)FT260_GPIO_UART_MODE_3_SET;
++	dev->gpio_uart_mode[4] = (u16)FT260_GPIO_UART_MODE_4_SET;
++
++	if (mode == FT260_MODE_ALL)
++		mode = FT260_MODE_BOTH;
++
++	if (mode & FT260_MODE_UART)
++		dev->gpio_en |= dev->gpio_uart_mode[cfg->uart_mode];
++	else
++		dev->gpio_en |= FT260_GPIO_UART_DEFAULT;
++
++	if (!(mode & FT260_MODE_I2C))
++		dev->gpio_en |= FT260_GPIO_I2C_DEFAULT;
++
++	if (cfg->gpio2_func == FT260_MFPIN_GPIO)
++		dev->gpio_en |= FT260_GPIO_2;
++	if (cfg->enable_wakeup_int == FT260_MFPIN_GPIO)
++		dev->gpio_en |= FT260_GPIO_3;
++	if (cfg->gpioa_func == FT260_MFPIN_GPIO)
++		dev->gpio_en |= FT260_GPIO_A;
++	if (cfg->gpiog_func == FT260_MFPIN_GPIO)
++		dev->gpio_en |= FT260_GPIO_G;
++
++	hid_info(hdev, "enabled GPIOs: %04x\n", dev->gpio_en);
++
++	dev->gc = devm_kzalloc(&hdev->dev, sizeof(*dev->gc), GFP_KERNEL);
++	if (!dev->gc)
++		return -ENOMEM;
++
++	label_sz = strlen(dev_name(&hdev->dev)) + strlen(prefix) + 1;
++	label = devm_kzalloc(&hdev->dev, label_sz, GFP_KERNEL);
++	if (!label) {
++		ret = -ENOMEM;
++		goto exit;
++	}
++	snprintf(label, label_sz, "%s%s", prefix, dev_name(&hdev->dev));
++	hid_info(hdev, "initialize gpio chip on %s\n", label);
++
++	dev->gc->label			= label;
++	dev->gc->direction_input	= ft260_gpio_direction_input;
++	dev->gc->direction_output	= ft260_gpio_direction_output;
++	dev->gc->get_direction		= ft260_gpio_get_direction;
++	dev->gc->set			= ft260_gpio_set;
++	dev->gc->get			= ft260_gpio_get;
++	dev->gc->base			= -1;
++	dev->gc->ngpio			= FT260_GPIO_TOTAL;
++	dev->gc->can_sleep		= true;
++	dev->gc->parent			= &hdev->dev;
++
++	/* Wakeup chip */
++	(void)ft260_hid_feature_report_get(dev->hdev, FT260_CHIP_VERSION,
++					(u8 *)&ver, sizeof(ver));
++
++	ret = devm_gpiochip_add_data(&hdev->dev, dev->gc, dev);
++	if (ret < 0)
++		hid_err(hdev, "cannot add GPIO chip %d\n", ret);
++exit:
++	return ret;
++}
++
+ static int ft260_get_system_config(struct hid_device *hdev,
+ 				   struct ft260_get_system_status_report *cfg)
+ {
+@@ -921,29 +1354,36 @@ static int ft260_get_system_config(struct hid_device *hdev,
+ 	return 0;
+ }
+ 
+-static int ft260_get_interface_type(struct hid_device *hdev, struct ft260_device *dev)
++static int ft260_get_interface_type(struct ft260_device *dev,
++				    struct ft260_get_system_status_report *cfg)
++
+ {
+-	struct ft260_get_system_status_report cfg;
+-	struct usb_interface *usbif = to_usb_interface(hdev->dev.parent);
+-	int interface = usbif->cur_altsetting->desc.bInterfaceNumber;
+ 	int ret;
++	struct hid_device *hdev = dev->hdev;
++	struct usb_interface *usbif = to_usb_interface(hdev->dev.parent);
+ 
+-	ret = ft260_get_system_config(hdev, &cfg);
++	dev->iface_id = usbif->cur_altsetting->desc.bInterfaceNumber;
++
++	ret = ft260_get_system_config(hdev, cfg);
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ft260_dbg("interface:  0x%02x\n", interface);
+-	ft260_dbg("chip mode:  0x%02x\n", cfg.chip_mode);
+-	ft260_dbg("clock_ctl:  0x%02x\n", cfg.clock_ctl);
+-	ft260_dbg("i2c_enable: 0x%02x\n", cfg.i2c_enable);
+-	ft260_dbg("uart_mode:  0x%02x\n", cfg.uart_mode);
++	ft260_dbg("interface:  0x%02x\n", dev->iface_id);
++	ft260_dbg("chip mode:  0x%02x\n", cfg->chip_mode);
++	ft260_dbg("clock_ctl:  0x%02x\n", cfg->clock_ctl);
++	ft260_dbg("i2c_enable: 0x%02x\n", cfg->i2c_enable);
++	ft260_dbg("uart_mode:  0x%02x\n", cfg->uart_mode);
++	ft260_dbg("gpio2_func: 0x%02x\n", cfg->gpio2_func);
++	ft260_dbg("gpioA_func: 0x%02x\n", cfg->gpioa_func);
++	ft260_dbg("gpioG_func: 0x%02x\n", cfg->gpiog_func);
++	ft260_dbg("wakeup_int: 0x%02x\n", cfg->enable_wakeup_int);
+ 
+-	dev->power_saving_en = cfg.power_saving_en;
++	dev->power_saving_en = cfg->power_saving_en;
+ 
+-	switch (cfg.chip_mode) {
++	switch (cfg->chip_mode) {
+ 	case FT260_MODE_ALL:
+ 	case FT260_MODE_BOTH:
+-		if (interface == 1)
++		if (dev->iface_id == 1)
+ 			ret = FT260_IFACE_UART;
+ 		else
+ 			ret = FT260_IFACE_I2C;
+@@ -984,6 +1424,10 @@ static int ft260_word_show(struct hid_device *hdev, int id, u8 *cfg, int len,
+ 	return scnprintf(buf, PAGE_SIZE, "%d\n", le16_to_cpu(*field));
+ }
+ 
++static void ft260_attr_dummy_func(struct hid_device *hdev, u8 req, u16 value)
++{
++}
++
+ #define FT260_ATTR_SHOW(name, reptype, id, type, func)			       \
+ 	static ssize_t name##_show(struct device *kdev,			       \
+ 				   struct device_attribute *attr, char *buf)   \
+@@ -1004,37 +1448,42 @@ static int ft260_word_show(struct hid_device *hdev, int id, u8 *cfg, int len,
+ 		FT260_ATTR_SHOW(name, ft260_get_i2c_status_report,	       \
+ 				FT260_I2C_STATUS, __le16, ft260_word_show)
+ 
+-#define FT260_ATTR_STORE(name, reptype, id, req, type, ctype, func)	       \
++#define FT260_ATTR_STORE(name, reptype, id, req, type, ctype, strtou, func)    \
+ 	static ssize_t name##_store(struct device *kdev,		       \
+ 				    struct device_attribute *attr,	       \
+ 				    const char *buf, size_t count)	       \
+ 	{								       \
+ 		struct reptype rep;					       \
+ 		struct hid_device *hdev = to_hid_device(kdev);		       \
++		struct ft260_device *dev = hid_get_drvdata(hdev);	       \
+ 		type name;						       \
+ 		int ret;						       \
+ 									       \
+-		if (!func(buf, 10, (ctype *)&name)) {			       \
++		if (!strtou(buf, 10, (ctype *)&name)) {			       \
+ 			rep.name = name;				       \
+ 			rep.report = id;				       \
+ 			rep.request = req;				       \
++			mutex_lock(&dev->lock);				       \
+ 			ret = ft260_hid_feature_report_set(hdev, (u8 *)&rep,   \
+ 							   sizeof(rep));       \
+-			if (!ret)					       \
+-				ret = count;				       \
++			if (ret < 0)					       \
++				hid_err(hdev, "%s: failed!\n", __func__);      \
++			else						       \
++				func(hdev, req, name);			       \
++			mutex_unlock(&dev->lock);			       \
+ 		} else {						       \
+ 			ret = -EINVAL;					       \
+ 		}							       \
+ 		return ret;						       \
+ 	}
+ 
+-#define FT260_BYTE_ATTR_STORE(name, reptype, req)			       \
++#define FT260_BYTE_ATTR_STORE(name, reptype, req, func)			       \
+ 		FT260_ATTR_STORE(name, reptype, FT260_SYSTEM_SETTINGS, req,    \
+-				 u8, u8, kstrtou8)
++				 u8, u8, kstrtou8, func)
+ 
+-#define FT260_WORD_ATTR_STORE(name, reptype, req)			       \
++#define FT260_WORD_ATTR_STORE(name, reptype, req, func)			       \
+ 		FT260_ATTR_STORE(name, reptype, FT260_SYSTEM_SETTINGS, req,    \
+-				 __le16, u16, kstrtou16)
++				 __le16, u16, kstrtou16, func)
+ 
+ FT260_SSTAT_ATTR_SHOW(chip_mode);
+ static DEVICE_ATTR_RO(chip_mode);
+@@ -1048,27 +1497,46 @@ static DEVICE_ATTR_RO(suspend_status);
+ FT260_SSTAT_ATTR_SHOW(hid_over_i2c_en);
+ static DEVICE_ATTR_RO(hid_over_i2c_en);
+ 
++FT260_SSTAT_ATTR_SHOW(gpio2_func);
++FT260_BYTE_ATTR_STORE(gpio2_func, ft260_set_gpio2_func_report,
++		      FT260_SELECT_GPIO2_FUNC, ft260_gpio_en_update);
++static DEVICE_ATTR_RW(gpio2_func);
++
++FT260_SSTAT_ATTR_SHOW(gpioa_func);
++FT260_BYTE_ATTR_STORE(gpioa_func, ft260_set_gpioa_func_report,
++		      FT260_SELECT_GPIOA_FUNC, ft260_gpio_en_update);
++static DEVICE_ATTR_RW(gpioa_func);
++
++FT260_SSTAT_ATTR_SHOW(gpiog_func);
++FT260_BYTE_ATTR_STORE(gpiog_func, ft260_set_gpiog_func_report,
++		      FT260_SELECT_GPIOG_FUNC, ft260_gpio_en_update);
++static DEVICE_ATTR_RW(gpiog_func);
++
+ FT260_SSTAT_ATTR_SHOW(power_saving_en);
+ static DEVICE_ATTR_RO(power_saving_en);
+ 
+ FT260_SSTAT_ATTR_SHOW(i2c_enable);
+ FT260_BYTE_ATTR_STORE(i2c_enable, ft260_set_i2c_mode_report,
+-		      FT260_SET_I2C_MODE);
++		      FT260_SET_I2C_MODE, ft260_gpio_en_update);
+ static DEVICE_ATTR_RW(i2c_enable);
+ 
+ FT260_SSTAT_ATTR_SHOW(uart_mode);
+ FT260_BYTE_ATTR_STORE(uart_mode, ft260_set_uart_mode_report,
+-		      FT260_SET_UART_MODE);
++		      FT260_SET_UART_MODE, ft260_gpio_en_update);
+ static DEVICE_ATTR_RW(uart_mode);
+ 
++FT260_BYTE_ATTR_STORE(uart_dcd_ri, ft260_set_uart_dcd_ri_report,
++		      FT260_ENABLE_UART_DCD_RI, ft260_gpio_en_update);
++static DEVICE_ATTR_WO(uart_dcd_ri);
++
+ FT260_SSTAT_ATTR_SHOW(clock_ctl);
+ FT260_BYTE_ATTR_STORE(clock_ctl, ft260_set_system_clock_report,
+-		      FT260_SET_CLOCK);
++		      FT260_SET_CLOCK, ft260_attr_dummy_func);
+ static DEVICE_ATTR_RW(clock_ctl);
+ 
+ FT260_I2CST_ATTR_SHOW(clock);
+ FT260_WORD_ATTR_STORE(clock, ft260_set_i2c_speed_report,
+-		      FT260_SET_I2C_CLOCK_SPEED);
++		      FT260_SET_I2C_CLOCK_SPEED, ft260_attr_dummy_func);
+ static DEVICE_ATTR_RW(clock);
+ 
+ static ssize_t i2c_reset_store(struct device *kdev,
+@@ -1092,7 +1560,11 @@ static const struct attribute_group ft260_attr_group = {
+ 		  &dev_attr_hid_over_i2c_en.attr,
+ 		  &dev_attr_power_saving_en.attr,
+ 		  &dev_attr_i2c_enable.attr,
++		  &dev_attr_gpio2_func.attr,
++		  &dev_attr_gpioa_func.attr,
++		  &dev_attr_gpiog_func.attr,
+ 		  &dev_attr_uart_mode.attr,
++		  &dev_attr_uart_dcd_ri.attr,
+ 		  &dev_attr_clock_ctl.attr,
+ 		  &dev_attr_i2c_reset.attr,
+ 		  &dev_attr_clock.attr,
+@@ -1342,33 +1814,33 @@ static int ft260_uart_change_speed(struct ft260_device *port,
+ 
+ 	switch (termios->c_cflag & CSIZE) {
+ 	case CS7:
+-		req.data_bit = FT260_CFG_DATA_BITS_7;
++		req.data_bit = FT260_UART_CFG_DATA_BITS_7;
  		break;
  	case CS5:
  	case CS6:
--		hid_err(hdev, "Invalid data bit size, setting to default (8 bit)\n");
-+		hid_err(hdev, "invalid data bit size, setting a default\n");
- 		req.data_bit = FT260_CFG_DATA_BITS_8;
+ 		hid_err(hdev, "invalid data bit size, setting a default\n");
+-		req.data_bit = FT260_CFG_DATA_BITS_8;
++		req.data_bit = FT260_UART_CFG_DATA_BITS_8;
  		termios->c_cflag &= ~CSIZE;
  		termios->c_cflag |= CS8;
-@@ -1349,11 +1371,17 @@ static int ft260_uart_change_speed(struct ft260_device *port,
- 	if (baud == 0 || baud < FT260_CFG_BAUD_MIN || baud > FT260_CFG_BAUD_MAX) {
+ 		break;
+ 	default:
+ 	case CS8:
+-		req.data_bit = FT260_CFG_DATA_BITS_8;
++		req.data_bit = FT260_UART_CFG_DATA_BITS_8;
+ 		break;
+ 	}
+ 
+ 	req.stop_bit = (termios->c_cflag & CSTOPB) ?
+-		FT260_CFG_STOP_TWO_BIT : FT260_CFG_STOP_ONE_BIT;
++		FT260_UART_CFG_STOP_TWO_BIT : FT260_UART_CFG_STOP_ONE_BIT;
+ 
+ 	if (termios->c_cflag & PARENB) {
+ 		req.parity = (termios->c_cflag & PARODD) ?
+-			FT260_CFG_PAR_ODD : FT260_CFG_PAR_EVEN;
++			FT260_UART_CFG_PAR_ODD : FT260_UART_CFG_PAR_EVEN;
+ 	} else {
+-		req.parity = FT260_CFG_PAR_NO;
++		req.parity = FT260_UART_CFG_PAR_NO;
+ 	}
+ 
+ 	baud = tty_termios_baud_rate(termios);
+-	if (baud == 0 || baud < FT260_CFG_BAUD_MIN || baud > FT260_CFG_BAUD_MAX) {
++	if (baud == 0 || baud < FT260_UART_CFG_BAUD_MIN || baud > FT260_UART_CFG_BAUD_MAX) {
  		struct tty_struct *tty = tty_port_tty_get(&port->port);
  
--		hid_err(hdev, "Invalid baud rate %d\n", baud);
-+		hid_err(hdev, "invalid baud rate %d\n", baud);
- 		baud = 9600;
- 		tty_encode_baud_rate(tty, baud, baud);
- 		tty_kref_put(tty);
- 	}
-+
-+	if (baud > FT260_UART_EN_PW_SAVE_BAUD)
-+		wakeup_workaraund = true;
-+
-+	ft260_uart_wakeup_workaraund_enable(port, wakeup_workaraund);
-+
+ 		hid_err(hdev, "invalid baud rate %d\n", baud);
+@@ -1385,9 +1857,9 @@ static int ft260_uart_change_speed(struct ft260_device *port,
  	put_unaligned_le32(cpu_to_le32(baud), &req.baudrate);
  
  	if (termios->c_cflag & CRTSCTS)
-@@ -1361,7 +1389,7 @@ static int ft260_uart_change_speed(struct ft260_device *port,
+-		req.flow_ctrl = FT260_CFG_FLOW_CTRL_RTS_CTS;
++		req.flow_ctrl = FT260_UART_CFG_FLOW_CTRL_RTS_CTS;
  	else
- 		req.flow_ctrl = FT260_CFG_FLOW_CTRL_OFF;
+-		req.flow_ctrl = FT260_CFG_FLOW_CTRL_OFF;
++		req.flow_ctrl = FT260_UART_CFG_FLOW_CTRL_OFF;
  
--	ft260_dbg("Configured termios: flow control: %d, baudrate: %d, ",
-+	ft260_dbg("configured termios: flow control: %d, baudrate: %d, ",
+ 	ft260_dbg("configured termios: flow control: %d, baudrate: %d, ",
  		  req.flow_ctrl, baud);
- 	ft260_dbg("data_bit: %d, parity: %d, stop_bit: %d, breaking: %d\n",
+@@ -1395,12 +1867,18 @@ static int ft260_uart_change_speed(struct ft260_device *port,
  		  req.data_bit, req.parity,
-@@ -1372,7 +1400,7 @@ static int ft260_uart_change_speed(struct ft260_device *port,
+ 		  req.stop_bit, req.breaking);
+ 
+-	req.flow_ctrl = FT260_CFG_FLOW_CTRL_NONE;
+-	req.breaking = FT260_CFG_BREAKING_NO;
++	req.flow_ctrl = FT260_UART_CFG_FLOW_CTRL_NONE;
++	req.breaking = FT260_UART_CFG_BREAKING_NO;
++
++	mutex_lock(&port->lock);
  
  	ret = ft260_hid_feature_report_set(hdev, (u8 *)&req, sizeof(req));
  	if (ret < 0)
--		hid_err(hdev, "ft260_hid_feature_report_set failed: %d\n", ret);
-+		hid_err(hdev, "failed to change termios: %d\n", ret);
+ 		hid_err(hdev, "failed to change termios: %d\n", ret);
++	else
++		ft260_gpio_en_update(hdev, FT260_SET_UART_MODE, req.flow_ctrl);
++
++	mutex_unlock(&port->lock);
  
  	return ret;
  }
-@@ -1422,8 +1450,8 @@ static int ft260_uart_proc_show(struct seq_file *m, void *v)
+@@ -1611,9 +2089,11 @@ static const struct tty_port_operations ft260_uart_port_ops = {
+ 
+ static struct tty_driver *ft260_tty_driver;
+ 
+-static int ft260_i2c_probe(struct hid_device *hdev, struct ft260_device *dev)
++static int ft260_i2c_probe(struct ft260_device *dev,
++			   struct ft260_get_system_status_report *cfg)
  {
- 	int i;
- 
--	seq_printf(m, "ft260 info:1.0 driver%s%s revision:%s\n",
--			"", "", "");
-+	seq_printf(m, "ft260 info:1.0 driver%s%s revision:%s\n", "", "", "");
-+
- 	for (i = 0; i < UART_COUNT_MAX; i++) {
- 		struct ft260_device *port = ft260_uart_port_get(i);
- 
-@@ -1478,15 +1506,16 @@ static const struct tty_operations ft260_uart_ops = {
- 	.get_icount		= ft260_uart_get_icount,
- };
- 
--/* The FT260 has a "power saving mode" that causes the device to switch
-+/*
-+ * The FT260 has a "power saving mode" that causes the device to switch
-  * to a 30 kHz oscillator if there's no activity for 5 seconds.
-- * Unfortunately this mode can only be disabled by reprogramming
-+ * Unfortunately, this mode can only be disabled by reprogramming
-  * internal fuses, which requires an additional programming voltage.
-  *
-- * One effect of this mode is to cause data loss on a fast UART that
-- * transmits after being idle for longer than 5 seconds. We work around
-- * this by sending a dummy report at least once per 4 seconds if the
-- * UART is in use.
-+ * One effect of this mode is to cause data loss on an Rx line at baud
-+ * rates higher than 4800 after being idle for longer than 5 seconds.
-+ * We work around this by sending a dummy report at least once per 4.8
-+ * seconds if the UART is in use.
-  */
- static void ft260_uart_start_wakeup(struct timer_list *t)
- {
-@@ -1500,53 +1529,68 @@ static void ft260_uart_start_wakeup(struct timer_list *t)
- 	}
- }
- 
--static void ft260_uart_do_wakeup(struct work_struct *work)
-+static void ft260_uart_wakeup(struct ft260_device *dev)
- {
--	struct ft260_device *dev =
--		container_of(work, struct ft260_device, wakeup_work);
--	struct ft260_get_chip_version_report version;
-+	struct ft260_get_chip_version_report ver;
  	int ret;
++	struct hid_device *hdev = dev->hdev;
  
- 	if (dev->reschedule_work) {
- 		ret = ft260_hid_feature_report_get(dev->hdev, FT260_CHIP_VERSION,
--					  (u8 *)&version, sizeof(version));
-+						   (u8 *)&ver, sizeof(ver));
- 		if (ret < 0)
--			hid_err(dev->hdev,
--				"%s: failed to start transfer, ret %d\n",
--				__func__, ret);
-+			hid_err(dev->hdev, "%s: failed with %d\n", __func__, ret);
+ 	hid_info(hdev, "USB HID v%x.%02x Device [%s] on %s\n",
+ 		hdev->version >> 8, hdev->version & 0xff, hdev->name,
+@@ -1640,11 +2120,16 @@ static int ft260_i2c_probe(struct hid_device *hdev, struct ft260_device *dev)
+ 		return ret;
  	}
- }
  
--static void ft260_uart_shutdown(struct tty_port *tport)
-+static void ft260_uart_do_wakeup(struct work_struct *work)
-+{
-+	struct ft260_device *dev =
-+		container_of(work, struct ft260_device, wakeup_work);
-+
-+	ft260_uart_wakeup(dev);
-+}
-+
-+static void ft260_uart_port_shutdown(struct tty_port *tport)
- {
- 	struct ft260_device *port =
- 		container_of(tport, struct ft260_device, port);
- 
--	port->reschedule_work = false;
-+	ft260_uart_wakeup_workaraund_enable(port, false);
- }
- 
--static int ft260_uart_activate(struct tty_port *tport, struct tty_struct *tty)
-+static int ft260_uart_port_activate(struct tty_port *tport, struct tty_struct *tty)
- {
--	struct ft260_device *port =
--		container_of(tport, struct ft260_device, port);
-+	int ret;
-+	int baudrate;
-+	struct ft260_get_uart_settings_report cfg;
-+	struct ft260_device *port = container_of(tport, struct ft260_device, port);
- 
--	/*
--	 * Set the TTY IO error marker - we will only clear this
--	 * once we have successfully opened the port.
--	 */
- 	set_bit(TTY_IO_ERROR, &tty->flags);
- 
--	spin_lock(&port->write_lock);
-+	spin_lock(&port->xmit_fifo_lock);
- 	kfifo_reset(&port->xmit_fifo);
--	spin_unlock(&port->write_lock);
-+	spin_unlock(&port->xmit_fifo_lock);
- 
--	ft260_uart_change_speed(port, &tty->termios, NULL);
- 	clear_bit(TTY_IO_ERROR, &tty->flags);
- 
--	if (port->reschedule_work) {
--		mod_timer(&port->wakeup_timer, jiffies +
--			  msecs_to_jiffies(FT260_WAKEUP_NEEDED_AFTER_MS));
--	}
-+	/*
-+	 * The port setting may remain intact after session termination.
-+	 * Then, when reopening the port without configuring the port
-+	 * setting, we need to retrieve the baud rate from the device to
-+	 * reactivate the wakeup workaround if needed.
-+	 */
-+	ret = ft260_get_uart_settings(port->hdev, &cfg);
++	ret = ft260_gpio_init(dev, cfg);
 +	if (ret)
-+		return ret;
++		goto err_i2c_free;
 +
-+	baudrate = get_unaligned_le32(&cfg.baudrate);
-+	if (baudrate > FT260_UART_EN_PW_SAVE_BAUD)
-+		ft260_uart_wakeup_workaraund_enable(port, true);
+ 	ret = sysfs_create_group(&hdev->dev.kobj, &ft260_attr_group);
+ 	if (ret < 0) {
+ 		hid_err(hdev, "failed to create sysfs attrs\n");
+ 		goto err_i2c_free;
+ 	}
 +
-+	ft260_dbg("configured baudrate = %d", baudrate);
-+
-+	mod_timer(&port->wakeup_timer, jiffies +
-+		  msecs_to_jiffies(FT260_WAKEUP_NEEDED_AFTER_MS));
- 
  	return 0;
+ 
+ err_i2c_free:
+@@ -1652,14 +2137,15 @@ static int ft260_i2c_probe(struct hid_device *hdev, struct ft260_device *dev)
+ 	return ret;
  }
-@@ -1560,8 +1604,8 @@ static void ft260_uart_port_destroy(struct tty_port *tport)
- }
  
- static const struct tty_port_operations ft260_uart_port_ops = {
--	.shutdown = ft260_uart_shutdown,
--	.activate = ft260_uart_activate,
-+	.shutdown = ft260_uart_port_shutdown,
-+	.activate = ft260_uart_port_activate,
- 	.destruct = ft260_uart_port_destroy,
- };
- 
-@@ -1610,14 +1654,13 @@ static int ft260_i2c_probe(struct hid_device *hdev, struct ft260_device *dev)
- 
- static int ft260_uart_probe(struct hid_device *hdev, struct ft260_device *dev)
+-static int ft260_uart_probe(struct hid_device *hdev, struct ft260_device *dev)
++static int ft260_uart_probe(struct ft260_device *dev,
++			    struct ft260_get_system_status_report *cfg)
  {
--	struct ft260_configure_uart_request req;
-+	struct ft260_configure_uart_request_report req;
- 	int ret;
+ 	struct ft260_configure_uart_request_report req;
+-	int ret;
++	struct hid_device *hdev = dev->hdev;
  	struct device *devt;
++	int ret;
  
  	INIT_WORK(&dev->wakeup_work, ft260_uart_do_wakeup);
--	// FIXME: Do I need that if I have cancel_work_sync?
- 	// FIXME: are all kfifo access secured by lock? with irq or not?
--	dev->reschedule_work = false;
-+	ft260_uart_wakeup_workaraund_enable(dev, true);
+-	// FIXME: are all kfifo access secured by lock? with irq or not?
+ 	ft260_uart_wakeup_workaraund_enable(dev, true);
  	/* Work not started at this point */
  	timer_setup(&dev->wakeup_timer, ft260_uart_start_wakeup, 0);
- 
-@@ -1638,10 +1681,10 @@ static int ft260_uart_probe(struct hid_device *hdev, struct ft260_device *dev)
- 		ret = PTR_ERR(devt);
- 		goto err_register_tty;
- 	}
--	hid_info(hdev, "Registering device /dev/%s%d\n",
-+	hid_info(hdev, "registering device /dev/%s%d\n",
- 		ft260_tty_driver->name, dev->index);
- 
--	/* Send Feature Report to Configure FT260 as UART 9600-8-N-1 */
-+	/* Configure UART to 9600n8 */
+@@ -1687,12 +2173,12 @@ static int ft260_uart_probe(struct hid_device *hdev, struct ft260_device *dev)
+ 	/* Configure UART to 9600n8 */
  	req.report	= FT260_SYSTEM_SETTINGS;
  	req.request	= FT260_SET_UART_CONFIG;
- 	req.flow_ctrl	= FT260_CFG_FLOW_CTRL_NONE;
-@@ -1653,8 +1696,7 @@ static int ft260_uart_probe(struct hid_device *hdev, struct ft260_device *dev)
+-	req.flow_ctrl	= FT260_CFG_FLOW_CTRL_NONE;
++	req.flow_ctrl	= FT260_UART_CFG_FLOW_CTRL_NONE;
+ 	put_unaligned_le32(cpu_to_le32(9600), &req.baudrate);
+-	req.data_bit	= FT260_CFG_DATA_BITS_8;
+-	req.parity	= FT260_CFG_PAR_NO;
+-	req.stop_bit	= FT260_CFG_STOP_ONE_BIT;
+-	req.breaking	= FT260_CFG_BREAKING_NO;
++	req.data_bit	= FT260_UART_CFG_DATA_BITS_8;
++	req.parity	= FT260_UART_CFG_PAR_NO;
++	req.stop_bit	= FT260_UART_CFG_STOP_ONE_BIT;
++	req.breaking	= FT260_UART_CFG_BREAKING_NO;
  
  	ret = ft260_hid_feature_report_set(hdev, (u8 *)&req, sizeof(req));
  	if (ret < 0) {
--		hid_err(hdev, "ft260_hid_feature_report_set failed: %d\n",
--			ret);
-+		hid_err(hdev, "failed to configure uart: %d\n", ret);
+@@ -1700,6 +2186,20 @@ static int ft260_uart_probe(struct hid_device *hdev, struct ft260_device *dev)
  		goto err_hid_report;
  	}
  
-@@ -1675,9 +1717,9 @@ static int ft260_probe(struct hid_device *hdev, const struct hid_device_id *id)
++	cfg->uart_mode = FT260_UART_CFG_FLOW_CTRL_NONE;
++
++	if (dev->iface_id == 0) {
++		ret = ft260_gpio_init(dev, cfg);
++		if (ret)
++			goto err_hid_report;
++
++		ret = sysfs_create_group(&hdev->dev.kobj, &ft260_attr_group);
++		if (ret < 0) {
++			hid_err(hdev, "failed to create sysfs attrs\n");
++			goto err_hid_report;
++		}
++	}
++
+ 	return 0;
+ 
+ err_hid_report:
+@@ -1713,6 +2213,7 @@ static int ft260_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ {
+ 	struct ft260_device *dev;
+ 	struct ft260_get_chip_version_report version;
++	struct ft260_get_system_status_report cfg;
+ 	int ret;
  
  	if (!hid_is_usb(hdev))
- 		return -EINVAL;
+@@ -1727,6 +2228,7 @@ static int ft260_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 		goto alloc_fail;
+ 	}
+ 	hid_set_drvdata(hdev, dev);
++	dev->hdev = hdev;
+ 
+ 	ret = hid_parse(hdev);
+ 	if (ret) {
+@@ -1757,21 +2259,18 @@ static int ft260_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 		 version.chip_code[0], version.chip_code[1],
+ 		 version.chip_code[2], version.chip_code[3]);
+ 
+-	ret = ft260_get_interface_type(hdev, dev);
+-	if (ret <= FT260_IFACE_NONE)
+-		goto err_hid_close;
 -
--	/* We cannot used devm_kzalloc here, because port has to survive until
--	 * destroy function call
-+	/*
-+	 * We cannot use devm_kzalloc here because the port has to survive
-+	 * until destroy function call.
- 	 */
- 	dev = kzalloc_obj(*dev, GFP_KERNEL);
- 	if (!dev) {
-@@ -1726,15 +1768,12 @@ static int ft260_probe(struct hid_device *hdev, const struct hid_device_id *id)
+-	hid_set_drvdata(hdev, dev);
+-	dev->hdev = hdev;
+-
+ 	mutex_init(&dev->lock);
  	spin_lock_init(&dev->read_lock);
  	init_completion(&dev->wait);
  
--	if (!dev->ft260_is_serial) {
-+	if (ret == FT260_IFACE_I2C)
- 		ret = ft260_i2c_probe(hdev, dev);
--		if (ret)
--			goto err_hid_close;
--	} else {
-+	else
- 		ret = ft260_uart_probe(hdev, dev);
--		if (ret)
--			goto err_hid_close;
--	}
-+	if (ret)
++	ret = ft260_get_interface_type(dev, &cfg);
++	if (ret <= FT260_IFACE_NONE)
 +		goto err_hid_close;
++
+ 	if (ret == FT260_IFACE_I2C)
+-		ret = ft260_i2c_probe(hdev, dev);
++		ret = ft260_i2c_probe(dev, &cfg);
+ 	else
+-		ret = ft260_uart_probe(hdev, dev);
++		ret = ft260_uart_probe(dev, &cfg);
+ 	if (ret)
+ 		goto err_hid_close;
  
- 	return 0;
- 
-@@ -1755,13 +1794,12 @@ static void ft260_remove(struct hid_device *hdev)
- 	if (!dev)
- 		return;
- 
--	if (dev->ft260_is_serial) {
--		// FIXME:
-+	if (dev->iface_type == FT260_IFACE_UART) {
- 		cancel_work_sync(&dev->wakeup_work);
- 		tty_port_unregister_device(&dev->port, ft260_tty_driver,
+@@ -1800,6 +2299,9 @@ static void ft260_remove(struct hid_device *hdev)
  					   dev->index);
  		ft260_uart_port_remove(dev);
--		/* dev still needed, so we will free it in _destroy func */
-+		/* dev is still needed, so we will free it in _destroy func */
+ 		/* dev is still needed, so we will free it in _destroy func */
++		if (dev->iface_id == 0)
++			sysfs_remove_group(&hdev->dev.kobj, &ft260_attr_group);
++
  	} else {
  		sysfs_remove_group(&hdev->dev.kobj, &ft260_attr_group);
  		i2c_del_adapter(&dev->adap);
-@@ -1784,6 +1822,12 @@ static int ft260_raw_event(struct hid_device *hdev, struct hid_report *report,
- 		return -1;
- 	}
- 
-+	if (xfer->length > size - offsetof(struct ft260_input_report, data)) {
-+		hid_err(hdev, "report %#02x: length %d exceeds HID report size\n",
-+			xfer->report, xfer->length);
-+		return -1;
-+	}
-+
- 	if (xfer->report >= FT260_I2C_REPORT_MIN &&
- 	    xfer->report <= FT260_I2C_REPORT_MAX) {
- 		bool complete_read;
-@@ -1791,13 +1835,6 @@ static int ft260_raw_event(struct hid_device *hdev, struct hid_report *report,
- 		ft260_dbg("i2c resp: rep %#02x len %d size %d\n",
- 			  xfer->report, xfer->length, size);
- 
--		if (xfer->length > size -
--		    offsetof(struct ft260_input_report, data)) {
--			hid_err(hdev, "report %#02x: length %d exceeds HID report size\n",
--				xfer->report, xfer->length);
--			return -1;
--		}
--
- 		/*
- 		 * Hold read_lock so a timed-out ft260_i2c_read() cannot
- 		 * clear read_buf between the NULL check and the memcpy.
-@@ -1824,12 +1861,11 @@ static int ft260_raw_event(struct hid_device *hdev, struct hid_report *report,
- 
- 		return 0;
- 
--	} else if (xfer->length > FT260_RD_DATA_MAX) {
--		hid_err(hdev, "received data too long (%d)\n", xfer->length);
--		return -EBADR;
- 	} else if (xfer->report >= FT260_UART_REPORT_MIN &&
- 		   xfer->report <= FT260_UART_REPORT_MAX) {
- 		return ft260_uart_receive_chars(dev, xfer->data, xfer->length);
-+	} else if (xfer->report == FT260_UART_INTERRUPT_STATUS) {
-+		return 0;
- 	}
- 	hid_err(hdev, "unhandled report %#02x\n", xfer->report);
- 
-@@ -1874,7 +1910,7 @@ static int __init ft260_driver_init(void)
- 		goto err_reg_driver;
- 	}
- 
--	ret = hid_register_driver(&(ft260_driver));
-+	ret = hid_register_driver(&ft260_driver);
- 	if (ret) {
- 		pr_err("hid_register_driver failed: %d\n", ret);
- 		goto err_reg_hid;
-@@ -1892,7 +1928,7 @@ static int __init ft260_driver_init(void)
- 
- static void __exit ft260_driver_exit(void)
- {
--	hid_unregister_driver(&(ft260_driver));
-+	hid_unregister_driver(&ft260_driver);
- 	tty_unregister_driver(ft260_tty_driver);
- 	tty_driver_kref_put(ft260_tty_driver);
- }
 -- 
 2.43.0
 
