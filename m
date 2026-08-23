@@ -1,129 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB80493633;
-	Sun, 23 Aug 2026 01:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229AC1A5B8C;
+	Sun, 23 Aug 2026 08:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787449527; cv=none; b=Yt/TsGDXLHg9GZuDCx7uXa3HIlh4AbEr8RTA8n9jreYqFlgxbLCPxJqKG4T6cChQIRwjdaXqKtVbhsoA7HmHDpWXl9leVCN3s9uk6EyRyGwlztTNUnjz65yoEbSGyalwq1nKWgOga8gs64boECp/3d0tx39v/xmffHwyJoH/Vl4=
+	t=1787473448; cv=none; b=XiLrI+N7SBNLdgocqcvoMcHpNVofG/3PRT4DkDYlCxA/90l/LS8NWfPx+XppF31gOHsAwomFJPtoqEB24YingwpNf6GaDVQYhFQgH0FqimD3RE7/pKXRih5RovcTZTdxOWCupNDo3Ef3T0KvxQ0YU8rKY9EtxjXjGIOMsaUYw3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787449527; c=relaxed/simple;
-	bh=zYZGc1vkqbwQkIWt+/eSDfR1QodCXeEx48GIk2cQ3OI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xo8xUonRjm7EntpEpNBVg3VtQq9t3aLXzgzCTK7mpH5C9mKM2qLK530R7fhCTtTR9qSjV2AhPnDKGKTzBW7kXETN8k1umpVkAxVRcECydVbuckk3gDLIAoMCvc2lJ+OVQ75niviezcKbyJ1jVsaLQUvKV9doIggc7PhC7LrbNRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dxkAbQlo; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787473448; c=relaxed/simple;
+	bh=qoZ/oVoXZxZ2CMIIrtYMI17kY7edDBot3TR60JiYTkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WlNAdQcF3arigXsJeP++CikJhsgpj/OgqD8lkwOReKWJDpPcSRd9gWoRJoijomcLkXYt9KqfqMn2fmCTPw9VMataR8unO/cgYll20pr8z3440lNVqg5ayL52ZN53vrEq40vo3bwvRY1CNoNAefeaVDx1DDWirf/yvKl+zRrKiS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZZohd0tF; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dxkAbQlo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D26C31F000E9;
-	Sun, 23 Aug 2026 01:45:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787449525;
-	bh=TXMCHlIVfpqQkSeP/b3tc25WGhv/E3FlDQil0NC/ZnY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=dxkAbQlou+MMIDmO2dDrV0XLBr1j/S3mDEh9R5VXoUw9ACRs4dvBZ5fH9+ii7Odzj
-	 Jvg0gRjBGWAn70h6mmPQ5OBQllDWtN+fR6BPu+sezOM3S2xM1Aje7kCun8sJZGAwcg
-	 SWNYJDhTUxomPl6VBe83FtLRB+E/N6KYX7Z0VMjIwZ+uVe/KTddZ8bwpnqfHkj7VpK
-	 Qlx3YkhgiYX4O4mR401XJBHplxtWWvLADYiEDKl6+NqciTuF5HcGbvTk1lQLn80hXM
-	 M5zdsnIeNj+eAZmbLzzq5Opam4AZ22IEGYN/wIveZ97eN9CWquik0oypCH+hHxF3j7
-	 1rZ5kj+DMUPxg==
-Date: Sun, 23 Aug 2026 02:45:18 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Janani Sunil <janani.sunil@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier
- Moysan <olivier.moysan@foss.st.com>, Philipp Zabel
- <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>, Bartosz
- Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan
- <skhan@linuxfoundation.org>, Michael Walle <mwalle@kernel.org>,
- linux@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org, jananisunil.dev@gmail.com, Uwe =?UTF-8?B?S2xl?=
- =?UTF-8?B?aW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH v4 02/14] dt-bindings: iio: adc: Add AD7768
-Message-ID: <20260823024518.2c75733c@jic23-huawei>
-In-Reply-To: <718f6ead-d1c0-4dc6-82e4-cac49cc73bd6@baylibre.com>
-References: <20260821-ad7768-driver-v4-0-bb8fbd06d4eb@analog.com>
-	<20260821-ad7768-driver-v4-2-bb8fbd06d4eb@analog.com>
-	<718f6ead-d1c0-4dc6-82e4-cac49cc73bd6@baylibre.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZZohd0tF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1787473446; x=1819009446;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=qoZ/oVoXZxZ2CMIIrtYMI17kY7edDBot3TR60JiYTkI=;
+  b=ZZohd0tFVxCa0HoUoMVV3t/jWQyEUK/nz2Lw8UMp27AeAuEoMhWHSrpX
+   aTZvtH585y2vPorTffdf+dgdadIp6n5HpDDmpu7K/E5SRSjTfMCSzHa/z
+   S5ygbTPM90fKK8ltskN3rUGGeZzbH8oB1r7jpc9DUq6R25bMscSVsebak
+   iONkOtrZZnhse3RxSzkuPRBh0peqCTYNxkMNx+nSD2CdQabR8uxE3K4YU
+   AMBMFPrdL9oMeID3hJ+dDy/aO+Yxs4mTMrNow742xOzIb14FmRP0lE7US
+   w+eR2PEz0RKK/6HPLMuDQ8kV0zVFQzrBICh0SAoGp56GwUmqcFQLL6Mx3
+   Q==;
+X-CSE-ConnectionGUID: GUI+n4QZS1WQBq1PC7V14g==
+X-CSE-MsgGUID: 5Pa69+/VRLi1Vmgb5YG4Jw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11883"; a="88012581"
+X-IronPort-AV: E=Sophos;i="6.25,238,1779174000"; 
+   d="scan'208";a="88012581"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2026 01:24:04 -0700
+X-CSE-ConnectionGUID: lBdKFbEYQ1ihkzhYQveaQw==
+X-CSE-MsgGUID: 0yf3M9S3Toq1fJ9amZ4T+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,238,1779174000"; 
+   d="scan'208";a="267301149"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.83])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2026 01:24:02 -0700
+Date: Sun, 23 Aug 2026 11:23:59 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Yao Qi <xnorigc@gmail.com>, westeri@kernel.org,
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Linus Walleij <linusw@kernel.org>
+Subject: Re: [PATCH] gpiolib: acpi: Add ignore_wake quirk for ASUS TX Air
+ FA401GM
+Message-ID: <aoquH9Z2lfer_KrH@ashevche-desk.local>
+References: <20260808155513.2221976-1-xnorigc@gmail.com>
+ <aneGptJn8J7eF9tj@ashevche-desk.local>
+ <CAD++jLkCYwTyK6C8LvZiYJ9fSc8bp3RPpb4d6EgQTRraJtJDzA@mail.gmail.com>
+ <anmNf3rJGxso6nuc@ashevche-desk.local>
+ <ans3pcNFEDVBYXXT@ashevche-desk.local>
+ <CAMRc=MeDLc-LPwoCEA8yMw3+L9UcN-NgXpYpFPxtUNffAAffyw@mail.gmail.com>
+ <anwxWXfqSt2bM8iy@ashevche-desk.local>
+ <CAMRc=McGR_2V2mPJZwU6kBk8TzCV6iKu3-C9yF1bbWE0R73-cw@mail.gmail.com>
+ <anxyNPJfvkVaa8L-@ashevche-desk.local>
+ <CAMRc=Md=5gnKO9TzQR6bgSzNqj_qvRF=j9uVSTnA75A_ZPqT_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Md=5gnKO9TzQR6bgSzNqj_qvRF=j9uVSTnA75A_ZPqT_g@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
+On Wed, Aug 12, 2026 at 06:39:20AM -0700, Bartosz Golaszewski wrote:
+> On Wed, 12 Aug 2026 15:16:36 +0200, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> said:
+> > On Wed, Aug 12, 2026 at 06:54:30AM -0500, Bartosz Golaszewski wrote:
+> >> On Wed, 12 Aug 2026 10:39:53 +0200, Andy Shevchenko
+> >> <andriy.shevchenko@linux.intel.com> said:
+> >> > On Wed, Aug 12, 2026 at 01:23:53AM -0700, Bartosz Golaszewski wrote:
+> >> >> On Tue, 11 Aug 2026 16:54:29 +0200, Andy Shevchenko
+> >> >> <andriy.shevchenko@linux.intel.com> said:
+> >> >> > On Mon, Aug 10, 2026 at 11:36:19AM +0300, Andy Shevchenko wrote:
+> >> >> >> On Mon, Aug 10, 2026 at 12:17:06AM +0200, Linus Walleij wrote:
+> >> >> >> > On Sat, Aug 8, 2026 at 9:42 PM Andy Shevchenko
+> >> >> >> > <andriy.shevchenko@linux.intel.com> wrote:
+> >> >> >> > > On Sat, Aug 08, 2026 at 03:55:13PM +0000, Yao Qi wrote:
 
-> > +  ref2p-supply:
-> > +    description:
-> > +      Positive reference input supply for REF2+. The voltage range is from
-> > +      (AVSS + 1 V) to AVDD1. Together, REF2+ and REF2- must provide a
-> > +      differential reference voltage from 1 V to |AVDD1 - AVSS|. This
-> > +      reference is used by channels 4 to 7 on the AD7768 and channels 2 and 3
-> > +      on the AD7768-4.
-> > +
-> > +  ref2n-supply:
-> > +    description:
-> > +      Negative reference input supply for REF2-. The voltage range is from
-> > +      AVSS to (AVDD1 - 1 V).  
+...
+
+> >> >> >> > > If AMD people will be quick enough to tag this, I will include in my PR to
+> >> >> >> > > Linus W. on next week.
+> >> >> >> >
+> >> >> >> > To Bartosz?
+> >> >> >> > It's gpiolib...
+> >> >> >>
+> >> >> >> Oh, true, I have also pin control stuff to send!
+> >> >> >
+> >> >> > Okay, I have checked if I have anything to Bart and it seems I mixed that with
+> >> >> > pin control stuff. So, Bart, if you feel confident about this patch, you can
+> >> >> > take it directly. Here is my formal tag for that
+> >> >> >
+> >> >> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> >> >>
+> >> >> Is this a bugfix? I'll be OoO until the end of August starting on Friday with
+> >> >> the exception of a single day to catch up on email. I'll be sending my PRs for
+> >> >> v7.3 tomorrow. Not sure if I should take it for v7.3 or v7.2?
+> >> >
+> >> > On one hand there is no rocket science behind this patch (that's why I gave my tag),
+> >> > but if you strictly want AMD to confirm, then postpone, so it's up to you to decide.
+> >>
+> >> If this is not an important bugfix, then let me postpone it until next cycle.
+> >
+> > I believe a user may survive with this bug to be present for a bit longer.
+> > But not my call, at Intel I have no such hardware :-)
+> >
 > 
-> For all of the supplies, I don't think we need to repeat so much of what the
-> datasheet says. It is getting quite noisy and makes it hard to see the parts
-> of the description that are actually relevant to how the devicetree is to be
-> interpreted. (includes VCM as well)
+> No worries, it can go upstream right after I'm back from vacations.
 
-Agreed.  Keep anything about how being present / not present may matter.
-Pretty much anything else isn't really that interesting.
-Sometimes
-	xxx-supply: true
+Since there is another similar patch pending, I will take them all into my
+branch and issue a fix PR after -rc1.
 
-is enough.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> 
-> > +
-> > +  reset-gpios:
-> > +    maxItems: 1
-> > +    description: GPIO connected to the active-low RESET pin
-> > +
-> > +  start-gpios:
-> > +    maxItems: 1
-> > +    description:
-> > +      GPIO connected to the START pin. An active-low pulse on this pin
-> > +      synchronizes the device to other AD7768 devices. When not used, this
-> > +      pin must be tied to a logic high level through a pull-up resistor.
-> > +      When used, SYNC_OUT must be wired back to SYNC_IN on all devices in
-> > +      the synchronization chain.
-> > +
-> > +  sync-in-gpios:
-> > +    maxItems: 1
-> > +    description:
-> > +      GPIO connected to the SYNC_IN pin. Receives the synchronization pulse
-> > +      generated on SYNC_OUT in response to a START pulse. Must be synchronous
-> > +      to the MCLK clock domain. In multi-device or daisy-chained systems,
-> > +      two successive synchronization pulses must be applied to guarantee all
-> > +      ADCs are synchronized.
-> > +
-> > +  sync-out-gpios:  
-> 
-> Unusual to have an output pin connected to a GPIO. Usually this would be an
-> interrupt or trigger-sources.
-> 
-> > +    maxItems: 1
-> > +    description:
-> > +      GPIO connected to the SYNC_OUT pin. Outputs a synchronization pulse
-> > +      synchronous to MCLK in response to a START pulse or SPI_SYNC command.
-> > +      In single-device configurations this pin must be wired back to SYNC_IN.
-> > +      In multi-device configurations it can be routed to the SYNC_IN pins of
-> > +      all devices in the chain.  
-> 
-> Although this description makes it sounds like the SYNC_OUT pin is only ever
-> wired to SYNC_IN. So wouldn't be described here at all.
-
-We don't have a particularly good way to say "this hardware controlled pin
-is wired from this ADC to this second ADC"  As you note though GPIO doesn't
-work for that.
 
