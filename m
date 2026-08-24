@@ -1,35 +1,35 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85AA3EC801
-	for <linux-gpio@vger.kernel.org>; Mon, 24 Aug 2026 06:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4680D3E49D4
+	for <linux-gpio@vger.kernel.org>; Mon, 24 Aug 2026 06:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787553504; cv=none; b=WHefPVVc3w/lIwnOIZ1u7jRopKZdVzCu9iXcZvQTh7wBNCQyUxpQkgImk0ZqsL63+NWyOmzqInas22r3dg78v4oIMVotKwa/QJjCXq1LB9ka7nwTn2jha+NZNoKYEzykbar729x7aAqytzAysBHhYUYngmcPeqFszwLk0FjIMtM=
+	t=1787553514; cv=none; b=B8CXFBOw8X6WiSXFG4V2GUBzaPNG+uh9Y2brgfUGEh+iP+WHwi5nw2CQSsdLUr807VgDC4rKOe2i9UCZleiArS8IENk24UxQnwUwpUVVhkq6b2fD0k3CDmmfQxr2vh3jvGzmCn1wj3chS7bRPvhM6qOWLhBDm0LQLOJCHcEXrRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787553504; c=relaxed/simple;
-	bh=5SsRSulYuD+3x7INM2YoswOjf61RQpkPEg/xeBuPLFs=;
+	s=arc-20240116; t=1787553514; c=relaxed/simple;
+	bh=7Xd+BCmdED5gxyjJgMasxs+Mgm/upcFWmR0TEZ+Zag8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I2toUNMsB5nECbFO+PpdwOOCRkhPW7CqP+Dl2x9k5e5wrib3XlXNuo6t/n0pGppGvY+yIH142rPuZFYfmaUZ5GXBiZj5fvaaq5OZ+1sOJhrapwcRT/TaWjvLkCW5yB2PA4xnzuil+wN7Zdbz3QCaAKnVOSlMPph4DkRurBKp8aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=A1EA+888; arc=none smtp.client-ip=194.117.254.33
+	 Content-Type:Content-Disposition:In-Reply-To; b=tzj7DfzLlBXWXHeewBGJUdpueUKl0puZrIJtnn0eVxY16cgwJ0oaHyX+vSqsuWdhxzt98AZ4/KVSNDIK3+TO3eSeBBRaKHnPgtTZN9Zs9wehodL7YLrYxWXA0it44bHDebCu2VuqLkIgQQLnanCLXppTaWKvteojF21sve4sTrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=J3btIDhn; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="A1EA+888"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="J3btIDhn"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=5SsR
-	SulYuD+3x7INM2YoswOjf61RQpkPEg/xeBuPLFs=; b=A1EA+888QuMY2Z8GIU2u
-	FOXMUIDpyXvcqtm4d3ecQKA8KpOpgdnl6q9yscoknHnaydnteu/a8jUSRhSDOWw5
-	scByNvzR04sT/Tv2sxFG5g1fGMKqDWKOkJ/DHXAZCIOy6JluxtMe1sAtj5Wl0brR
-	37PAoxV2XlgO0KTzYZ1Y+PjZ60e2VHmUDs5SkFCkw9I8OycLeuifKKwtp+NCCUq1
-	eLDXANwNUP0SrVyiW+rNH6DO+IhAWcfZRSsgvJohJzQvjmS2tFscpSNoO79rnYPA
-	StfHKpJqKzKRkJVX0cguVjVwfx/PXpwXd6OEvZYSsmZASofmnVQessG5l4TvqvxQ
-	Rw==
-Received: (qmail 1569572 invoked from network); 24 Aug 2026 08:38:19 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Aug 2026 08:38:19 +0200
-X-UD-Smtp-Session: l3s3148p1@CqZaO8VZhMAujnvL
-Date: Mon, 24 Aug 2026 08:38:19 +0200
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=7Xd+
+	BCmdED5gxyjJgMasxs+Mgm/upcFWmR0TEZ+Zag8=; b=J3btIDhndXwrdtyyF2+f
+	Q2RTSCNE/ggq3KBSruHOhSgl9+bhmO59a5k4CWTHjOOjQDSWKB6mCShuOpvDfXWF
+	G+2y7Tk0EECcusS8CTduHnBaQ+ueM+lcLezCA3DuSg5y2dL0cvuDBje5KuEsWY4G
+	bGy06saSQjYdZLqhp297ddsuvq58gbQ+js8UhhSb4ZbhX1Lp3j4lZ8lr/h8mW4Qo
+	bd2pf+W5DUvfmfzCEx5pqx8KmAH1G6ecmWQtJjEKm+K7f9X/sRZQ0th+xMl87O4o
+	ssRZD22kJ+pYQsaGCl1JmbUHUYYtqg+QV72k9ecp5KXEqlx5J9HIZz2NsbM7iPII
+	SQ==
+Received: (qmail 1569687 invoked from network); 24 Aug 2026 08:38:29 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Aug 2026 08:38:29 +0200
+X-UD-Smtp-Session: l3s3148p1@OrPqO8VZlqEujnvL
+Date: Mon, 24 Aug 2026 08:38:28 +0200
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
@@ -38,11 +38,11 @@ Cc: geert+renesas@glider.be, linusw@kernel.org, robh@kernel.org,
 	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v5 1/5] pinctrl: renesas: rzg2l: Generalize the power
- source code
-Message-ID: <aovm28-a5inxl8CY@ninjato>
+Subject: Re: [PATCH v5 2/5] pinctrl: renesas: rzg2l: Drop defines present in
+ struct rzg2l_hwcfg
+Message-ID: <aovm5ODTWuSkzOx3@ninjato>
 References: <20260819143553.2478984-1-claudiu.beznea+renesas@tuxon.dev>
- <20260819143553.2478984-2-claudiu.beznea+renesas@tuxon.dev>
+ <20260819143553.2478984-3-claudiu.beznea+renesas@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -50,60 +50,49 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Da7ZF2KwpmbVFnvR"
+	protocol="application/pgp-signature"; boundary="aM1NGfmg6X/ChnMP"
 Content-Disposition: inline
-In-Reply-To: <20260819143553.2478984-2-claudiu.beznea+renesas@tuxon.dev>
+In-Reply-To: <20260819143553.2478984-3-claudiu.beznea+renesas@tuxon.dev>
 
 
---Da7ZF2KwpmbVFnvR
+--aM1NGfmg6X/ChnMP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 19, 2026 at 05:35:49PM +0300, Claudiu Beznea wrote:
+On Wed, Aug 19, 2026 at 05:35:50PM +0300, Claudiu Beznea wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >=20
-> The current functions used to get/set the pin power source check the
-> OTHER_POC register, which is specific to the RZ/G3L SoC only. To allow the
-> code to be extended for other power source functionalities (e.g. I3C on
-> RZ/G3S), generalize the functions used to get/set the pin power source.
+> Drop the QSPI and OTHER_POC register defines, which are SoC specific and
+> accessible through struct rzg2l_hwcfg::{qspi, other_poc}. While at it
+> move the assignement of rzg2l_hwcfg->regs->qspi upper to have the
+> initializations as sorted (by offsets) as possible.
 >=20
-> For this, introduce the struct rzg2l_register_masks data structure whose
-> purpose is to store SoC specific register bit masks. The members of this
-> structure are then used in rzg2l_caps_to_pwr_reg() to retrieve the bitmask
-> corresponding to a SoC specific power source capability.
->=20
-> The conversion between HW specific power source values and SW specific
-> power source values is now handled through rzg2l_pwr_reg_val_to_ps() and
-> rzg2l_ps_to_pwr_reg_val().
->=20
-> Finally, to keep the code generic, the register update in
-> rzg2l_set_power_source() was changed to a read-modify-write approach to
-> cover all cases.
->=20
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
 Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 
---Da7ZF2KwpmbVFnvR
+--aM1NGfmg6X/ChnMP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqL5tsACgkQFA3kzBSg
-Kbb5FhAAokskPZvLetM1Z7gooANHcXEbCoKbx1a6wxufzwYt1AbT+vN1nCBqmLKn
-W5YH4WXfajh5Y72dLjeMLmSjJ86xDKConT1ShmGqhxfVQQqQR8pUVCJ6UcjBGkqg
-+SLbzMGFeLPFMHB0S6N6aB8TTdqFyggwGrJoXwAqggX7tTYjve8kWmV42Bnt0TmQ
-WP/qstjy3Kocm8d7LGpKSPwuRLhYK0+x2/lIR4nMO/alV53aYjjcIh0o4xsobJXt
-Aeqg8yURXqpn+Lz49TuEMtDhslM6EesxmLYyytZ+RNEItQWnpObQKQ5SorMG2k+u
-rSWf7zkd1XCM2yy8/Uy3RZB8l0+cDZFzBcDBTkQ5mOY/ftVDZh4mWBsWWWOX/wTK
-9DRVQ+mGNIZBPJJgJTSQrPlj7DUyp8jASXURdylE6drdvHu+JG58ik0VIl0HUcuQ
-nJg/Shh/tFt6Zm5v6pRntPdEX0DFc9qEsoyFtK4SbkGPnZSpGscJFdXk4qUaWU85
-QraWGmhSeMGMzKlUbKOr2z75KKGMzpx5qXa5v09PNkZhyJm37/+dio6vN38hb1KE
-7VvMZb7JmGhw+lhOk9yuxQEjsvFDyXcvzUsZy1T+V2I45QeuJRIv+ej6dDU1U+aW
-EtGWc21F3PuDzyh8jbk3fseRHpxHhzvI6LKHB6Jdn0l0Yc/aeCQ=
-=sp0m
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqL5uQACgkQFA3kzBSg
+KbYzkA/+MY/lQ2q2czna+O0XuIPH4TPxYhM184yid8psCKExlM4Odmvb2Xc3Y0Hc
+j33AOkf1GA1fulpXilaQ6oIxUTX1pVxl7JVaAUJMGk0mb6VrhgYJ6KiKh+8OTmXT
+WKKAdFTlwodembXlXtWcIFda3JR2ubcprhrFuN4CxjKJIXxdiQYl9kmQUlA8gEsY
+/HtBVH27ZMFb1NgMovCsf6iI6lMmc6lSuiv6UFcgn/6jzgDh+zHJeOL7oHcr1TvZ
+LwTSEfE56ThhoIe3J2VNDe7BuCmU1SPoDGjVaRpzCspusxnqe/Lsk2f7kafCMJza
+Kfb8NbvRCw7uG/W7tvaHPqS2HUfBAG4scFlGtLQsLqe16c4hqeg7x1vvc23oPFUL
+XScSE3lG62N11jWqLDeQPfLGF1sHcXK6OZ7f+XNiDeDJB0jhUQG9UMw/3cLwmo36
+dLkJgq07Juk+xEiy7HEHrnz0vDTTIvNl9dn0cFqeeGf9fLKZU1UKeuVvi/LXaZmC
+/v+ppSPEaATTpTEjcVKaRyxIiKxYFzOI0Tuax2UymDqJRbS2bkjhhQ1fj9f/gpGk
+OyX3ThAk3dBzb2HkA43rZSFLTDpqHX5d8ZpU6lzEbDttGOadok+fvuuQYS3Zzs0U
+A9idy/dcPCAhLMWw3akHTszm7uVp+EZ0EVzdEPIR+EjMXVbXt1E=
+=dK7m
 -----END PGP SIGNATURE-----
 
---Da7ZF2KwpmbVFnvR--
+--aM1NGfmg6X/ChnMP--
