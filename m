@@ -1,133 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8986D38D6AD;
-	Mon, 24 Aug 2026 21:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E00384CC2;
+	Mon, 24 Aug 2026 21:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787608488; cv=none; b=E0CGSjETs0IpDCrAfEbn8uvBNKZ82yW0TgE6Tt8LiInFOmqhqSoPvJH48ALJffeB5lx1WaBtg8xd+darZc0RNyNXoJcEXwbvKeMLCJOQKXFSYj7ALkJflX4YYIoY8h/+t6Xan0T9vRyCuCEGs3Lhm4eZnLjTuEjb5fc49cW5Nos=
+	t=1787608716; cv=none; b=KI+o1Dtymdaal8lSzu47G8NMOzFCiHrBRVHz78kl6nL5fBJAH4FDeFZ+2symhbgeczuUSU6NUiAf/HkKLmwu3nAYM6Sm5l807EUJ2GsNXmA8fv0nsTMKNI3OCR+0v/aHdIQ3ktTCmf62Y6qta5o+PNoLJ+f4Sdl1eypUEztviq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787608488; c=relaxed/simple;
-	bh=dHPotMoPjkimgv5uJNH1lLg5Xjp99bDcr+jx8XV6URs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mJk/aLbvxSphl4zaoCjZ2tIOHTsy2pcLA+3QpgPfaXBlPosV+e6pQnD1wIqY9VmyNJ2KDc5IfVksbfdLNCWrCqMfAlW6v9fHdMNl8EL9NDBDMy9jjNg1OOBIBEEAYQHeSIXtjI/9h4ef1suYy9ciDNF0o//W1OOHt0UmsmFGNS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IM9v6QkP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1787608716; c=relaxed/simple;
+	bh=RuqQm8IRNyQOGsIuRmtU8fK/cQFtjfLyX66vvyhwJKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s+4Lx6XK3Lr3rmGyyN1XS4pquO+37lrVLAggUlHuJzoJUSeKG5QKYwbGGHpAjPFK3a2Prb6ss78P3OIZZ7IMfj+SXcx/aT40ckIWdZoOMS9yjP5nG7lyUICyCVoCpFIej3hS/8xIYFQLri38edfP1SRRACVHmO6wgQTbBsUDD1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=free.fr; spf=pass smtp.mailfrom=free.fr; dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.b=g1liBUpU; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=free.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=free.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IM9v6QkP"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 46082C19425;
-	Mon, 24 Aug 2026 21:54:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1787608488;
-	bh=dHPotMoPjkimgv5uJNH1lLg5Xjp99bDcr+jx8XV6URs=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=IM9v6QkPAGU9wzJiK8aTZAXHK25keee6yxQV/qK0zBMul6Znnn+7KkWi5BLN3E1CR
-	 +HOcltq6VMh9VESopuP3GF09RQ5OJrNchwJi2MO0XrJZmd1O3X2+llWFNBvnNSngLy
-	 jVuvL9nER9c2ZbHwpEThgM6h+sJhdnmvzhkpViexLf4Bw1au08o0K1X/uVnnpUvbYa
-	 fWtlu/FJ0h2jl6Ulfz0O45FDgBA+SDf8WO7EDlawLhmy6yNqJFANXXRp2Z9CwLnget
-	 DKPPzAgnolU4Wuc6KiiEbisbcpA53fUsAsRIiY0XrMG6872yDJlJQkNS8nSTJ5WXft
-	 EoLHQs77Yb+lg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3256FC5DF9C;
-	Mon, 24 Aug 2026 21:54:48 +0000 (UTC)
-From: Vincent Jardin via B4 Relay <devnull+vjardin.free.fr@kernel.org>
-Date: Mon, 24 Aug 2026 23:54:40 +0200
-Subject: [PATCH v2] dt-bindings: gpio: fsl,qoriq-gpio: allow gpio-hog child
+	dkim=pass (2048-bit key) header.d=free.fr header.i=@free.fr header.b="g1liBUpU"
+Received: from L30177.local (unknown [IPv6:2a01:e0a:ac2:22b0:9a6:acd5:d8dc:dcdb])
+	(Authenticated sender: vjardin@free.fr)
+	by smtp2-g21.free.fr (Postfix) with ESMTPSA id C4AB52003C3;
+	Mon, 24 Aug 2026 23:58:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
+	s=smtp-20201208; t=1787608713;
+	bh=RuqQm8IRNyQOGsIuRmtU8fK/cQFtjfLyX66vvyhwJKE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g1liBUpUCYC3sBIvBDVM+8DLrIrrcLR/FdeCntBle2SgiZzRZp3hKNybIJ3tyDtH8
+	 WctAbdGLFGJnIl6wN8XGB/HDI2nZ0FVJmvJcekqxqQb+yf00Pj8Pki1jklQZWAEl1L
+	 vuDH/HgGdVEUQl7RcqVBAeHFcIk+w218t53t4KbqB9Xg4DrHUpiS6cgpKcu/y6tf1l
+	 Q6hJs2C9CpL6wZYANf6qXa7PMz9wSOOkrcBqQpXPa9s1OaXgJnOLUUogNZYiR1Qp46
+	 z8rnThS3yqEoQnRqcksK1GKYOcdQaM/SqqGq14IANU/7oJ1kzad4xv3qNNqVszsPD5
+	 bKhLPwCw0r9Vw==
+Date: Mon, 24 Aug 2026 23:58:22 +0200
+From: Vincent Jardin <vjardin@free.fr>
+To: Frank Li <Frank.li@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: gpio: fsl,qoriq-gpio: allow gpio-hog child
  nodes
+Message-ID: <aoy-fvFty2LgCamx@L30177.local>
+References: <20260824-for-upstream-dt-qoriq-gpio-hog-v1-1-d75923bcecad@free.fr>
+ <aoxqEAi0d_hxUxbA@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260824-for-upstream-dt-qoriq-gpio-hog-v2-1-58bbc82b881e@free.fr>
-X-B4-Tracking: v=1; b=H4sIAJ+9jGoC/42NQQ6CMBAAv0L27JpSQcGT/zAcKt3CHqSwxUZD+
- ncrL/A4c5jZIJAwBbgWGwhFDuynDPpQQD+aaSBkmxm00mfV6AqdF3zNYRUyT7QrLl54wWFmj6M
- fsFatNspVVjUt5Mgs5Pi9D+5d5pHD6uWz/2L5s3+nY4kl2kvd6tOjp97YmxOioxPoUkpfHC6/y
- coAAAA=
-To: Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Vincent Jardin <vjardin@free.fr>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1787608486; l=2553;
- i=vjardin@free.fr; s=20260525; h=from:subject:message-id;
- bh=vLftnW/6ZHYpxUdAguO8gqJD/zFrC/vFGlvGHyTT+do=;
- b=vnETn4Fqarl7H1tavyKw/MO27Msn4zA6zF1Bg6CprtBiH1Fp+nKXMthIjCMp6ZsX/uBB43goO
- nG6wBIpHOwuBuoce7R1RgwnOLGXKTdGdGRNTU64igJgmUY9tksh6P2Q
-X-Developer-Key: i=vjardin@free.fr; a=ed25519;
- pk=hppgLeFpGpKOi7LNwGEZ4jOYofJCoGd4Jf1ltAabiLw=
-X-Endpoint-Received: by B4 Relay for vjardin@free.fr/20260525 with
- auth_id=871
-X-Original-From: Vincent Jardin <vjardin@free.fr>
-Reply-To: vjardin@free.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aoxqEAi0d_hxUxbA@lizhi-Precision-Tower-5810>
 
-From: Vincent Jardin <vjardin@free.fr>
+Hi Frank,
 
-The binding sets additionalProperties: false and describes no child nodes,
-so a gpio-hog on a QorIQ/Layerscape GPIO controller is rejected by
-dtbs_check as an unmatched node name, even though the hardware and the
-kernel both support it.
+> >   gpio@2310000 (fsl,ls2080a-gpio): 'ethsw-reset-hog', 'flash-reset-hog',
+> >   'pltrst-hog', 'thermtrip-hog' do not match any of the regexes:
+> >   '^pinctrl-[0-9]+$'
+> 
+> I agree on this change, but I can't find ethsw-reset-hog in upstream tree
+> yet.
 
-Hogs are not a controller feature and need nothing from the driver:
-gpio-mpc8xxx.c does not mention them at all. A hog on this controller
-works today, only the schema rejects it.
-
-QorIQ and Layerscape boards do need them. These SoCs bring board-level
-reset, enable and mux-select lines out on the SoC GPIOs, and those lines
-have to be driven to a safe level at boot before any consumer claims them,
-which is exactly what a hog is for.
-
-Some boards in the tree already express this need where they can:
-fsl-ls1088a-ten64.dts and the tqmls1012a/ls1028a boards all carry hogs, but
-on I2C GPIO expanders, because that is the only place the schema currently
-supports them. No board uses one on this controller yet, so this fixes no
-current failure.
-
-Other GPIO bindings already carry the same block. gpio-mvebu.yaml and
-gpio-davinci.yaml use the identical "^(.+-hog(-[0-9]+)?)$" object requiring
-gpio-hog.
-
-Signed-off-by: Vincent Jardin <vjardin@free.fr>
----
-Changes in v2:
-- Change the commit message. Drop the dmesg excerpt: those hog names come
-  from my out-of-tree dev git repo and are not in the tree (Frank Li)
-- Note: the hog call path is: gpiochip_hog_lines(), called from gpiochip_add_data_with_key()
-- Explain why these QorIQ SoCs need it
-- No change to the diff
-- Link to v1: https://lore.kernel.org/r/20260824-for-upstream-dt-qoriq-gpio-hog-v1-1-d75923bcecad@free.fr
----
- Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
-index 4cb2a6b9fabfb..a6252440e099b 100644
---- a/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
-@@ -63,6 +63,13 @@ properties:
-       GPIO registers are used as little endian. If not
-       present registers are used as big endian by default.
- 
-+patternProperties:
-+  "^(.+-hog(-[0-9]+)?)$":
-+    type: object
-+
-+    required:
-+      - gpio-hog
-+
- required:
-   - compatible
-   - reg
-
----
-base-commit: 0a0d1d55dad570724bf8c7ea83409639cfb4be9b
-change-id: 20260824-for-upstream-dt-qoriq-gpio-hog-5092a0f4d089
+It was something from a development branch that I did not properly filter before
+sending. I did send a v2 with an updated commit message:
+  https://lore.kernel.org/all/20260824-for-upstream-dt-qoriq-gpio-hog-v2-1-58bbc82b881e@free.fr/
 
 Best regards,
--- 
-Vincent Jardin <vjardin@free.fr>
-
-
+  Vincent
