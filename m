@@ -1,63 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37DC376BCD
-	for <linux-gpio@vger.kernel.org>; Mon, 24 Aug 2026 16:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8986D38D6AD;
+	Mon, 24 Aug 2026 21:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787589329; cv=none; b=BPbnVh28J4z3JwT95kCLEBZCrdfaWq+s0cPhaQl/swkN4hHDZYyxxhNdJRhqCzLvhgfopTbldOe+k3Kf76bOLAEG9RUABQXiviXvInfnos7Ghg4cl9omhmkQpghRot7tO+3a+Cdd6mrzwTZGRPpJDtjZpdj5P4+71IBo6AAdjoQ=
+	t=1787608488; cv=none; b=E0CGSjETs0IpDCrAfEbn8uvBNKZ82yW0TgE6Tt8LiInFOmqhqSoPvJH48ALJffeB5lx1WaBtg8xd+darZc0RNyNXoJcEXwbvKeMLCJOQKXFSYj7ALkJflX4YYIoY8h/+t6Xan0T9vRyCuCEGs3Lhm4eZnLjTuEjb5fc49cW5Nos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787589329; c=relaxed/simple;
-	bh=qCMoQ54FVVti6QDAPHuapDymiJH3wTEhZyz15sHiQyg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=X8PNvu1x08l1dGArF88bd2x10V/rNflGS5juZl8U6ONcFXL+TVmuODGTUmB+zI5934mN3VBJKFvSYNsRDB7yL2OGioqTh7SFVibwjubfqoengbABh74Z+d1vVcO/H6NhKxmkQ0HRQ1YMzYfR22tniI/cEcD83iAot/j2bMRijHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eoNdZ6ya; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787608488; c=relaxed/simple;
+	bh=dHPotMoPjkimgv5uJNH1lLg5Xjp99bDcr+jx8XV6URs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mJk/aLbvxSphl4zaoCjZ2tIOHTsy2pcLA+3QpgPfaXBlPosV+e6pQnD1wIqY9VmyNJ2KDc5IfVksbfdLNCWrCqMfAlW6v9fHdMNl8EL9NDBDMy9jjNg1OOBIBEEAYQHeSIXtjI/9h4ef1suYy9ciDNF0o//W1OOHt0UmsmFGNS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IM9v6QkP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoNdZ6ya"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88EA81F00A3A;
-	Mon, 24 Aug 2026 16:35:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787589327;
-	bh=BfInJdOKQhbzZOhKlsDAUHGKgjjSEUlKxzNv4k4DJG8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=eoNdZ6yaqOBUINHvz+2nluAku6J2KhQmqxEaHmqDsD0akUnlQkQL/QBL04V+GOgB5
-	 rRUYWrmommfzm7U7zTAxgAPrrp0P8gkPiYwnLKmmL6SUdTbWmbgD3/YHXiW1lDsnS6
-	 6yHytzn+i9kTqxcOF40dWz6PuxeRd2kJaGqeoGfNgbXOigoBXLz5n7qJfyp7NPBsC6
-	 /YB5Gisqw/uxC7pIvyOlOraej4QFelrvXMCCww3E8p/LpWe1enjd5cV4d3J5H7YHTH
-	 a3zqDDGj4EuRcQxTjQYANnJksH2t76Tj3MzQpxHsmzfWJaUbGA/7EO8fDwdWh4P9et
-	 bhel5iL158rQQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 56B8E392446C;
-	Mon, 24 Aug 2026 16:34:36 +0000 (UTC)
-Subject: Re: [GIT PULL] pin control bulk changes for v7.3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAD++jLmw5z+=hx_L_CmumKFZQsGjUHTvgjO4rcpj47u9VSre4Q@mail.gmail.com>
-References: <CAD++jLmw5z+=hx_L_CmumKFZQsGjUHTvgjO4rcpj47u9VSre4Q@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAD++jLmw5z+=hx_L_CmumKFZQsGjUHTvgjO4rcpj47u9VSre4Q@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v7.3-1
-X-PR-Tracked-Commit-Id: d067f0f4c96cb5402a111cf649b7bf9c5771ec74
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cf9610f9116d55c5a66ef9f1faecacabd93a9322
-Message-Id: <178758927490.3007333.6585417043712341199.pr-tracker-bot@kernel.org>
-Date: Mon, 24 Aug 2026 16:34:34 +0000
-To: Linus Walleij <linusw@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux pin control <linux-gpio@vger.kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IM9v6QkP"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 46082C19425;
+	Mon, 24 Aug 2026 21:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1787608488;
+	bh=dHPotMoPjkimgv5uJNH1lLg5Xjp99bDcr+jx8XV6URs=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=IM9v6QkPAGU9wzJiK8aTZAXHK25keee6yxQV/qK0zBMul6Znnn+7KkWi5BLN3E1CR
+	 +HOcltq6VMh9VESopuP3GF09RQ5OJrNchwJi2MO0XrJZmd1O3X2+llWFNBvnNSngLy
+	 jVuvL9nER9c2ZbHwpEThgM6h+sJhdnmvzhkpViexLf4Bw1au08o0K1X/uVnnpUvbYa
+	 fWtlu/FJ0h2jl6Ulfz0O45FDgBA+SDf8WO7EDlawLhmy6yNqJFANXXRp2Z9CwLnget
+	 DKPPzAgnolU4Wuc6KiiEbisbcpA53fUsAsRIiY0XrMG6872yDJlJQkNS8nSTJ5WXft
+	 EoLHQs77Yb+lg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3256FC5DF9C;
+	Mon, 24 Aug 2026 21:54:48 +0000 (UTC)
+From: Vincent Jardin via B4 Relay <devnull+vjardin.free.fr@kernel.org>
+Date: Mon, 24 Aug 2026 23:54:40 +0200
+Subject: [PATCH v2] dt-bindings: gpio: fsl,qoriq-gpio: allow gpio-hog child
+ nodes
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260824-for-upstream-dt-qoriq-gpio-hog-v2-1-58bbc82b881e@free.fr>
+X-B4-Tracking: v=1; b=H4sIAJ+9jGoC/42NQQ6CMBAAv0L27JpSQcGT/zAcKt3CHqSwxUZD+
+ ncrL/A4c5jZIJAwBbgWGwhFDuynDPpQQD+aaSBkmxm00mfV6AqdF3zNYRUyT7QrLl54wWFmj6M
+ fsFatNspVVjUt5Mgs5Pi9D+5d5pHD6uWz/2L5s3+nY4kl2kvd6tOjp97YmxOioxPoUkpfHC6/y
+ coAAAA=
+To: Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Vincent Jardin <vjardin@free.fr>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1787608486; l=2553;
+ i=vjardin@free.fr; s=20260525; h=from:subject:message-id;
+ bh=vLftnW/6ZHYpxUdAguO8gqJD/zFrC/vFGlvGHyTT+do=;
+ b=vnETn4Fqarl7H1tavyKw/MO27Msn4zA6zF1Bg6CprtBiH1Fp+nKXMthIjCMp6ZsX/uBB43goO
+ nG6wBIpHOwuBuoce7R1RgwnOLGXKTdGdGRNTU64igJgmUY9tksh6P2Q
+X-Developer-Key: i=vjardin@free.fr; a=ed25519;
+ pk=hppgLeFpGpKOi7LNwGEZ4jOYofJCoGd4Jf1ltAabiLw=
+X-Endpoint-Received: by B4 Relay for vjardin@free.fr/20260525 with
+ auth_id=871
+X-Original-From: Vincent Jardin <vjardin@free.fr>
+Reply-To: vjardin@free.fr
 
-The pull request you sent on Mon, 24 Aug 2026 11:07:27 +0200:
+From: Vincent Jardin <vjardin@free.fr>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v7.3-1
+The binding sets additionalProperties: false and describes no child nodes,
+so a gpio-hog on a QorIQ/Layerscape GPIO controller is rejected by
+dtbs_check as an unmatched node name, even though the hardware and the
+kernel both support it.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cf9610f9116d55c5a66ef9f1faecacabd93a9322
+Hogs are not a controller feature and need nothing from the driver:
+gpio-mpc8xxx.c does not mention them at all. A hog on this controller
+works today, only the schema rejects it.
 
-Thank you!
+QorIQ and Layerscape boards do need them. These SoCs bring board-level
+reset, enable and mux-select lines out on the SoC GPIOs, and those lines
+have to be driven to a safe level at boot before any consumer claims them,
+which is exactly what a hog is for.
 
+Some boards in the tree already express this need where they can:
+fsl-ls1088a-ten64.dts and the tqmls1012a/ls1028a boards all carry hogs, but
+on I2C GPIO expanders, because that is the only place the schema currently
+supports them. No board uses one on this controller yet, so this fixes no
+current failure.
+
+Other GPIO bindings already carry the same block. gpio-mvebu.yaml and
+gpio-davinci.yaml use the identical "^(.+-hog(-[0-9]+)?)$" object requiring
+gpio-hog.
+
+Signed-off-by: Vincent Jardin <vjardin@free.fr>
+---
+Changes in v2:
+- Change the commit message. Drop the dmesg excerpt: those hog names come
+  from my out-of-tree dev git repo and are not in the tree (Frank Li)
+- Note: the hog call path is: gpiochip_hog_lines(), called from gpiochip_add_data_with_key()
+- Explain why these QorIQ SoCs need it
+- No change to the diff
+- Link to v1: https://lore.kernel.org/r/20260824-for-upstream-dt-qoriq-gpio-hog-v1-1-d75923bcecad@free.fr
+---
+ Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
+index 4cb2a6b9fabfb..a6252440e099b 100644
+--- a/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
+@@ -63,6 +63,13 @@ properties:
+       GPIO registers are used as little endian. If not
+       present registers are used as big endian by default.
+ 
++patternProperties:
++  "^(.+-hog(-[0-9]+)?)$":
++    type: object
++
++    required:
++      - gpio-hog
++
+ required:
+   - compatible
+   - reg
+
+---
+base-commit: 0a0d1d55dad570724bf8c7ea83409639cfb4be9b
+change-id: 20260824-for-upstream-dt-qoriq-gpio-hog-5092a0f4d089
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Vincent Jardin <vjardin@free.fr>
+
+
