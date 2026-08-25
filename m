@@ -1,68 +1,69 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCA8445AE0
-	for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 13:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691F8423A85
+	for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 13:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787663855; cv=none; b=gdY7yZPnzCtv6RV3a2xloUOzInNBdRllSRjHQWYDHDbqX4JpSHAafODEX2P865+ISbdTOYpjz7PSCG76epLak9fzr4gtDrWZXNNetrbXN2wvmeOGStJDP18VzOWUMPwgr5fRr0seNL9U72sBxzbl3tVo0tavy2owoM1FTEFYBvk=
+	t=1787665864; cv=none; b=sXZ0CwrIyb4mL2WfcXlBcYF5GB2uMgX37t02drT8Ely+P4RoUY9nnrxNfVrpdP9My38HOgBfIeRpAX6F635u8texIv1ebdjcT6LSpSIzm0Lpq5/Z7e97bSTkMfe+ebsPYJIeEpW7TR4l1OZwlFqsOuE0/fmVYW5W6e6cHLmFW84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787663855; c=relaxed/simple;
-	bh=pt9eezPeCUT7V+HzJqfo0KBN0/mjD+4aoP/HdGr69OY=;
+	s=arc-20240116; t=1787665864; c=relaxed/simple;
+	bh=q4fmKfhNvE2e6sble7TF9RAgMQFsrD3C7OFXvi8DTWc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cB/KJgqtLY0BX4lLzIQM6jz3ZH68m/qdaawy08Ewla6xnYVBaCIAJfcaQ++EENy6Yi6OPwIDRVB81LuupkFIy0YtbNAqGu91lZEZZ405Pxk8cTaPHTWu+DGA+vSwySrQBUZhWiZ2dFtr/uYXlFVMlvn29Yqkldzy0Axf00uGQ6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+9zZUpR; arc=none smtp.client-ip=209.85.128.48
+	 In-Reply-To:Content-Type; b=IVjlU57mxn978F2Z8Uz8rQhnTTPJm1EoJ/DXgoFc9TE7UxM3jQDxGYL9VSfACFEluUHilPd8LpLoq9YlLwsJRCS0NyddZknYDXaaou4mqbZWM9ybXjoII9AY1XJ9gD+tOekIZ/wf+S46Bj8EQv5La+FcniTvIsvd6iA07g4SI6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJnLlB1i; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+9zZUpR"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-49954b88fffso37736455e9.0
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 06:17:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJnLlB1i"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-c2074710751so869891566b.1
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 06:51:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787663852; x=1788268652; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1787665861; x=1788270661; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=py3ROtb3vVj5APnhYCyw+k54KDsBa1cNIVxX44uQqJI=;
-        b=B+9zZUpR3Zb/yz7F/XWKWBZtBgL6JzX5Givc21cs4Up+fFxlb8U5Q5QANZAu1k1qt7
-         d61UH4CzBQ+r71aPtnq4+97krk8SPK+/YgiRiHb15ZV/G4Bke5s7OYutnw1yw6RTNfy9
-         Rt5srqaP+9EXv7zbMoAQTcTFYnlAlH02qokI4xo4bGmVMyRES6y9pBeJ67nuOvq75byE
-         pzvG/uNOqv3u2wFxDoQmLcjwK4hpEMSZR2cvekRuLEaG3Y4Yvkcg5QY4vcUwWofpBVCe
-         94uZihdjF1/ix97ht17quY3uqeL5I/7Nm213Rty8ioY6arxDir/QqLH3wXKEvsv71XFq
-         jObA==
+        bh=tHnWeKaj8W4Oq7BCPbYGJwG4B0bt+vGlTEM1FKI9IJg=;
+        b=QJnLlB1iyIxaXFJxASiPFKMBPGuWUVwXOZ+rqJF4VuRsxRxiVKV60LASPJLcNG4T3V
+         ezvoma0Z2DS8Sz+V8XCZ3058pmAtfhJg4g00TzajkwAcRfk/9fjJ+sqTuruMaQyH8RDj
+         /cHRjwTOVooAFLw2U8KcNr3pZEmXSx/gwz3a2nIUpDVmU4YMQTjiK1JaUT+TBsaZg9Qj
+         LaW+zC0XlAt2unj2qRnjLZZY9wU/oR70MmCIE/syTlrqK1uhrBOnULonJPaGpT8qDA/z
+         2keXIKK95fIp8Ubla02kGxrvE0QCNK33tioNVGmuquo8OiToWjzaRQXqw1IcPBj4oHPH
+         lokg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787663852; x=1788268652;
+        d=1e100.net; s=20251104; t=1787665861; x=1788270661;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=py3ROtb3vVj5APnhYCyw+k54KDsBa1cNIVxX44uQqJI=;
-        b=Fv06wViUNRHDkv/tAD0XVsT8eq2LP33B88SLmcmL8n2Mj678DWMIgYpVFEVk7f3RZA
-         zS6Nhhyqtnyl0ewlRN63j8XaKTAD1Zq7bMX8dCKCM8gD6jCQTXUC/RIpks8K32lU/yqt
-         Lh7XAc5m11tta83BdOPcPHYEv9jo7YrHC0moMAnM1HxbujVdUK4kFP5yfqOfVgjLQY9O
-         9YlXWBLw6ESm2en9XEt6H+ad4D6nYxd+pQ+fmhMNuwmcQpxr60f8Pg8BCykchd+S3n4E
-         Oz0UhE2aHX2FpoOM5n50JT5ys0k1bmorP2SF97BlXLmczwaU1ylahXBbUE00ddWyrE3I
-         a51A==
-X-Forwarded-Encrypted: i=1; AHgh+RrKwi8SbC86uV4jzsVFLIk/PqiJ0wRPtrHRr19YcczucNtekK4Pghqtp6kUNVK391lZfxVRiGKFVLtk@vger.kernel.org
-X-Gm-Message-State: AFuF++nD1ajMZQ0rMSoAmOhJVSSLavpArhP+YF4GNnieM/cGrKHdiSqj
-	pM87PCJgyDJEjbZo1VN26Btk+DjC3FLwuAl7sANvUU9FmfOOdMpPIsb5
-X-Gm-Gg: AR+sD13egRQzYd/GGzjzDrwB7q1mJ45nTK3oDIqvEeKRy3uCnfnCBxmXW+kx2dNflu5
-	aRaI/kDLBNgQ5z7J+zgZey3EqCDpHKFDjQuELidZ5NiU7BDdMIVOSlVFYiQdXJHXDHF1fsMrT44
-	5o0HZxigbMNqfRYV4YhCwcYggLlhutzJ2MdxrcJtnFH44yH9BInO8CSj8yvXmz/8gLy4T07UF7y
-	ZJ81Vkvu4xqIXbUpzuKYpkjepa7gfOwLaeZYK6qsyCfWekXQNXAoF2jjZcduhUu4xnTKzGNfUkG
-	BlmutZuEh539Kv8RzDl/9I8kGK1eqfWkTnWToUAIlW0dMqyuFZaKMz3Qb0CioDe/wZwNIywpKSP
-	zFpkqvrbsnAf+af3aB1zcD6K6I8NeyjmdPvMPh91id2BHyd4mjJ3L17MqLmg9fdn4Rp91ggnlFP
-	K4zISBpR9f9aGDWeWcF4Nl9rQhAQtPxxrAJ3WxZDJVYhGxQpC8CDJOxWEQFgEFfEFHUKW81P06m
-	rO3AhVBr3U6aPsSiAbjyTJanp9Nd8qq32Ra1imd5G9iFOind71CCJPu
-X-Received: by 2002:a05:600c:3111:b0:495:7888:281c with SMTP id 5b1f17b1804b1-499c1772dd5mr302953505e9.0.1787663851572;
-        Tue, 25 Aug 2026 06:17:31 -0700 (PDT)
+        bh=tHnWeKaj8W4Oq7BCPbYGJwG4B0bt+vGlTEM1FKI9IJg=;
+        b=AUu9V9ogx0zDoqlKvos/hGggzXQf55p162JPcWj8kJxDugT62AmSe6YtZp3fCHkwOy
+         ri6mRorR+Pk3kVNjTZv8DCk4EN/YNFG1v1Y8O9s5iUHRjbpDtAmoA/E35WiBM5EbBThA
+         kBF4h/9wLXojyRJkG/jGoo4FjtNTbHmKLu2hYWt3aFsVZTFmDED0DewA1kthjyvH86nv
+         /2Rs/ItHHjxd/vduPRgeSsxYssXM+07CJBGdGd2CXB9uytj4KWMbDdwRDgHrwOtwF9sX
+         TnKsA4whKh+JaTcIVqwR+EH8QAnpORqNyJMe0X0CU56BaPXM0ckneGqqi/aZzIVH8yxc
+         Os1g==
+X-Forwarded-Encrypted: i=1; AHgh+Rpa5XTea7CqPLHTmp8qoWv10+BaMTdsWoWHP792rYD/sFe1DIixYcjG1jsPYoFdeyeOKfCTbgPWlCPU@vger.kernel.org
+X-Gm-Message-State: AFuF++lb3OpjSGtK5hc8+w10/wkNBS2/3EtIKGlEYjTr6WQRS85l6y84
+	yF+PX2liZrsXkS+q8Eynw0GxWnfyGIofqNLesygVpQo60UwKw3kx3Nkh
+X-Gm-Gg: AR+sD13MgngcUiY8N1RkOuUcx7gSqbif5VfDhIDiwMmUYc+QDhZ1XLTjIRE5z2+JGHD
+	9SNVIp+A+a/bhacts0uRzl/Dsb4LdqLc+Cxr1PBXMUmXMvA0c5zVQ56HCD4eWUJOTL7f23REett
+	5FKYp6phuOm7HvEhj+ZZXwrwHgsQ8n8mjdAHhY+tIzVBmsx/zxGr7d7ZIxxZT7Mzz9BCrWSKsqq
+	laMh09ckHcF1MXz5EvYNw78tDxw0BrudPjKywYmJqjP6eDokbgx0p2gXRmSsPw5y25n2/MJgwfz
+	0XBxncvVbBokpNeWR1xu4Urh+ZQWVAe83+V55M2feB1ItHBD7i3pYxV7XX+8prxuh2PmyTvpylf
+	y86+g0CJvX28ypJnRcgBaa3qfd2ktmHtlxw9neXLhQrTEUy0HSu6giiBWdwYwt0+8Xl5Ov5g0g+
+	GvOObc1KqBrRVoCewp9knra7bZUKWXKEi5bP+aqqrrPecKrv0WhuPMrfqaOF6Zgb8bgEX4Jj+Ot
+	IBHO5kgW5cOykK4rQZbBzAyw97xz3u4TawRwNjAH6clC7ZAbv/j930qW5X7uWkTfw/QlMBWVv2/
+	LRo=
+X-Received: by 2002:a17:907:1c90:b0:c20:edda:ef5b with SMTP id a640c23a62f3a-c2491e839abmr2663366466b.14.1787665860484;
+        Tue, 25 Aug 2026 06:51:00 -0700 (PDT)
 Received: from [172.24.138.145] (dynamic-176-007-058-112.176.7.pool.telefonica.de. [176.7.58.112])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499d5d72d36sm23411535e9.3.2026.08.25.06.17.25
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2496734bfcsm1958495166b.43.2026.08.25.06.50.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2026 06:17:31 -0700 (PDT)
-Message-ID: <9e7edec5-578d-48e0-b253-e50cf848236e@gmail.com>
-Date: Tue, 25 Aug 2026 15:17:14 +0200
+        Tue, 25 Aug 2026 06:51:00 -0700 (PDT)
+Message-ID: <77daa3ee-e5cd-4be9-8110-6f31c90f76d6@gmail.com>
+Date: Tue, 25 Aug 2026 15:50:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -70,8 +71,7 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/14] iio: adc: ad7768: Add per-channel conversion
- delay
+Subject: Re: [PATCH v4 12/14] gpio: regmap: Add optional runtime PM support
 To: Andy Shevchenko <andriy.shevchenko@intel.com>,
  Janani Sunil <janani.sunil@analog.com>
 Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
@@ -88,108 +88,30 @@ Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
  linux-doc@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
  <u.kleine-koenig@baylibre.com>
 References: <20260821-ad7768-driver-v4-0-bb8fbd06d4eb@analog.com>
- <20260821-ad7768-driver-v4-8-bb8fbd06d4eb@analog.com>
- <aovua1sy4sm6RmSt@ashevche-desk.local>
+ <20260821-ad7768-driver-v4-12-bb8fbd06d4eb@analog.com>
+ <aov7QpTVLDZ9PEkw@ashevche-desk.local>
 Content-Language: en-US
 From: Janani Sunil <jananisunil.dev@gmail.com>
-In-Reply-To: <aovua1sy4sm6RmSt@ashevche-desk.local>
+In-Reply-To: <aov7QpTVLDZ9PEkw@ashevche-desk.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
-On 8/24/26 09:10, Andy Shevchenko wrote:
-> On Fri, Aug 21, 2026 at 04:07:01PM +0200, Janani Sunil wrote:
->> Expose the per-channel synchronization phase offset through the IIO
->> conversion-delay attribute.
+On 8/24/26 10:05, Andy Shevchenko wrote:
+> On Fri, Aug 21, 2026 at 04:07:05PM +0200, Janani Sunil wrote:
+>> Some gpio-regmap consumers share their regmap with a parent device that
+>> may be runtime suspended. GPIO register accesses must resume that device
+>> first.
 >>
->> Derive the delay resolution from MCLK, power mode and decimation rate.
->> Validate the requested delay and program the corresponding phase
->> register when applying the active channel configuration.
-> ...
+>> Add an optional pm_dev field and acquire it before register translation
+>> or access. Release it using runtime autosuspend after each operation.
+>> Keep the device active across the complete direction-output sequence and
+>> propagate failure when setting the initial output value.
+>> +DEFINE_GUARD(gpio_regmap_runtime, struct gpio_regmap *,
+>> +	     gpio_regmap_runtime_get(_T), gpio_regmap_runtime_put(_T))
+> This is not used, it's for guard()() case.
 >
->> +static int ad7768_get_convdelay_params(struct ad7768_state *st, unsigned int ch,
->> +				       struct ad7768_convdelay_params *params)
->> +{
->> +	struct ad7768_freq_config f_cfg;
->> +	unsigned int dec_rate;
->> +	unsigned int mclk_div;
->> +	unsigned int mult;
->> +	u64 mclk;
->> +	int ret;
->> +
->> +	ret = ad7768_get_freq_cfg(st, st->ch_freq[ch], &f_cfg);
->> +	if (ret)
->> +		return ret;
->> +
->> +	dec_rate = ad7768_dec_rate[f_cfg.dec_rate];
->> +	switch (dec_rate) {
->> +	case 32:
->> +		params->shift = 3;
->> +		params->max_raw = 31;
->> +		mult = 1;
->> +		break;
->> +	case 64:
->> +		params->shift = 2;
->> +		params->max_raw = 63;
->> +		mult = 1;
->> +		break;
->> +	case 128:
->> +		params->shift = 1;
->> +		params->max_raw = 127;
->> +		mult = 1;
->> +		break;
->> +	case 256:
->> +		params->shift = 0;
->> +		params->max_raw = 255;
->> +		mult = 1;
->> +		break;
->> +	case 512:
->> +		params->shift = 0;
->> +		params->max_raw = 255;
->> +		mult = 2;
->> +		break;
->> +	case 1024:
->> +		params->shift = 0;
->> +		params->max_raw = 255;
->> +		mult = 4;
->> +		break;
->> +	default:
->> +		return -EINVAL;
->> +	}
-> So, this is just a bit twiddling of the dec_rate.
->
-> Can be written like
->
-> 	/* Optional, perhaps shouldn't appear */
-> 	if (!dec_rate)
-> 		return -EINVAL;
->
-> 	/* Same? What does table allow to have? */
-> 	if (!is_power_of_two(dec_rate))
-> 		return -EINVAL;
->
-> 	mult = ilog2(dec_rate);
-> 	if (mult > 10) {
-> 		return -EINVAL;
-> 	} else if (mult > 8) {
-> 		params->shift = 0;
-> 		params->max_raw = 255;
-> 		mult = BIT(mult - 8);
-> 	} else if (mult > 5) {
-> 		params->shift = 8 - mult;
-> 		params->max_raw = dec_rate - 1;
-> 		mult = 1;
-> 	} else {
-> 		return -EINVAL;
-> 	}
->
-> TBH, I don't know which looks easier to read. It all depends on what datasheet
-> says about these parameters and multiplier and what the table allows to have.
->
-I kept the explicit switch case because it the device supports only the 6 discrete decimation ratios listed in the table 32.
-The switch directly mirrors the phase resolution, number of steps and register bit mappings from that table, which I find easier to verify against the datasheet.
-
-The arithmetic version is more compact, but the proposed conditions would reject the valid x32 case because ilog2(32) is 5. A corrected arithmetic version would be functionally equivalent, but I do not think it improves the readability here.
+DEFINED_GUARD() was added because DEFINE_GUARD_COND() extends that class and reuses its type, destructor and error helpers.
 
 Regards,
 Jan
