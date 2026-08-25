@@ -1,124 +1,196 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353EC449990
-	for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 13:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCA8445AE0
+	for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 13:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787662843; cv=none; b=ZR7tH84ko02S/QRqedWct0hH83h5ne6q0hiRc20QfFQbfWrfSWMPJcQiEX/Pb227sQ7xYPS+7b3E4rNyQyeXh/5u2vdWnI60Eo3b7YI+Y5+sUOauk3GtuPAI3IkRj76c+lwL0yCJx7nYuMtKSlwvYW4dkj1oWT3rJmHwmXICrwI=
+	t=1787663855; cv=none; b=gdY7yZPnzCtv6RV3a2xloUOzInNBdRllSRjHQWYDHDbqX4JpSHAafODEX2P865+ISbdTOYpjz7PSCG76epLak9fzr4gtDrWZXNNetrbXN2wvmeOGStJDP18VzOWUMPwgr5fRr0seNL9U72sBxzbl3tVo0tavy2owoM1FTEFYBvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787662843; c=relaxed/simple;
-	bh=VO1GZ4gCp/y9o2rb+D3PA8tXGec2JaV9n1iCQ0jrsiM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jmT0sHx+bX7Tn6j6zkg6KYiAOBegHd4BU8iuK7f1GvYUy5VVFYuHhfTgYRdR1I9jSsA2oRvL6Kdhrg9RkCIufGPlc+V0o4RlOi32si+ZjnEXv4u3I4Tju5dySmftpKdVn7DqWv5GBwL5qjt7gpk8rOJs/7/xEaPj64EnkaaR/Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1787663855; c=relaxed/simple;
+	bh=pt9eezPeCUT7V+HzJqfo0KBN0/mjD+4aoP/HdGr69OY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cB/KJgqtLY0BX4lLzIQM6jz3ZH68m/qdaawy08Ewla6xnYVBaCIAJfcaQ++EENy6Yi6OPwIDRVB81LuupkFIy0YtbNAqGu91lZEZZ405Pxk8cTaPHTWu+DGA+vSwySrQBUZhWiZ2dFtr/uYXlFVMlvn29Yqkldzy0Axf00uGQ6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+9zZUpR; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6a378f90555so7467552a12.3
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 06:00:42 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+9zZUpR"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-49954b88fffso37736455e9.0
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 06:17:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787663852; x=1788268652; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=py3ROtb3vVj5APnhYCyw+k54KDsBa1cNIVxX44uQqJI=;
+        b=B+9zZUpR3Zb/yz7F/XWKWBZtBgL6JzX5Givc21cs4Up+fFxlb8U5Q5QANZAu1k1qt7
+         d61UH4CzBQ+r71aPtnq4+97krk8SPK+/YgiRiHb15ZV/G4Bke5s7OYutnw1yw6RTNfy9
+         Rt5srqaP+9EXv7zbMoAQTcTFYnlAlH02qokI4xo4bGmVMyRES6y9pBeJ67nuOvq75byE
+         pzvG/uNOqv3u2wFxDoQmLcjwK4hpEMSZR2cvekRuLEaG3Y4Yvkcg5QY4vcUwWofpBVCe
+         94uZihdjF1/ix97ht17quY3uqeL5I/7Nm213Rty8ioY6arxDir/QqLH3wXKEvsv71XFq
+         jObA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787662840; x=1788267640;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=f/VL+GrO3wM2oN8yF9pczuQ0vsJ4YOEv+mk062nltpg=;
-        b=hl+u7QC4sXFWBng6HVlJdWgQseG5A5VwvaAvcPBl4YzBBPRo2lwaW51Ow6BYDBq2rc
-         ts/SOFUWh2sfPgqsOU7PbZeUFM8C3EiF+7AXfMxFy/iwUetleWLQJwOtCwBcmUMRK0mo
-         5qDinX6uVWbTALoGJcnvZGTQKahXRlJd8lG+hA7NRq+UJqZM//qsYO0XTXeg4ze0coiJ
-         P2K++Oaqz4bAx5m0fL68FWKctlQigGzkrsk+s+8fphaPhf255cIqzRirzn3XgJCUNeA2
-         6Tq/FSqOWPYCI8663I+ANjecjNgDwsJTgz4ABQONnEYVFPbRuqETOgUTnljw9VQShLJz
-         cv4g==
-X-Forwarded-Encrypted: i=1; AHgh+RqCNn8AH4DFfCwz/ix0uMPigyQu7iMqq4GNlRKhMDhl3cyNGszA1hm+rBajnqHY1p3hYiLJJW+wGjW+@vger.kernel.org
-X-Gm-Message-State: AFuF++kpdW8qlpQk/CyoN1CCgod8nPYJMAmhnJCe0vIjBeD/nXh7FDdN
-	CIf44l6d8xNsEBPp0tvjbQWqn/3c0X8m3xWMrS3uzQZ2trgMKuatSPiVp0cvaJ17it4=
-X-Gm-Gg: AR+sD10e1G+ymabbmZ5pxiphEbhKS1SyvqWrpxDz5sPxeZpb0Bu5U8Gh+NanorIy001
-	qvpjQRcM5eN5TaIIT1Ev9bxlXiJcw2gnMY2p5RxfAtkMEaLInHKv3WJtFzPfV4ugsaaBqJ2aAEH
-	a22Fo+NHd2NLWKgZ7iNmXwHwxAI2Z+5tJgVRJBcvJxhkku8w4Ju66pHfB/VTLnOZVcFea11bUNX
-	chvjSBGIA75BBcvJA+0myvdFvAhMuxktdaVzjscHVoUikMQ2ZM81BUJFQYGuEw+d+D0kgim/wMV
-	+pZNJH8WADhDm3sDoPrFN8Q64ncNgby86j41y9/mXjMz6TImFRNF6fSsgtxiSrE3wkvbgAq+qXl
-	zYQfkP9m9p1v2b8P4Fi6Hzo7vAIRIUZqOhzsK2dyGmFlXaY45/rrbPmBY7hWq703pRQs4nsOqH2
-	tx5QupiK2LeTYoS2jMcb5SUCRyo1AjotgKzelPwhTVl1ET+okrhStFa1jpOMLaYB+qj8na/Jw64
-	fs7auWKILBdroEuM1ISkd/syQ==
-X-Received: by 2002:a05:6402:e93:b0:6a0:584f:454c with SMTP id 4fb4d7f45d1cf-6a42f28ebaemr39721166a12.16.1787662840242;
-        Tue, 25 Aug 2026 06:00:40 -0700 (PDT)
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a5d9824be1sm847682a12.7.2026.08.25.06.00.39
-        for <linux-gpio@vger.kernel.org>
+        d=1e100.net; s=20251104; t=1787663852; x=1788268652;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=py3ROtb3vVj5APnhYCyw+k54KDsBa1cNIVxX44uQqJI=;
+        b=Fv06wViUNRHDkv/tAD0XVsT8eq2LP33B88SLmcmL8n2Mj678DWMIgYpVFEVk7f3RZA
+         zS6Nhhyqtnyl0ewlRN63j8XaKTAD1Zq7bMX8dCKCM8gD6jCQTXUC/RIpks8K32lU/yqt
+         Lh7XAc5m11tta83BdOPcPHYEv9jo7YrHC0moMAnM1HxbujVdUK4kFP5yfqOfVgjLQY9O
+         9YlXWBLw6ESm2en9XEt6H+ad4D6nYxd+pQ+fmhMNuwmcQpxr60f8Pg8BCykchd+S3n4E
+         Oz0UhE2aHX2FpoOM5n50JT5ys0k1bmorP2SF97BlXLmczwaU1ylahXBbUE00ddWyrE3I
+         a51A==
+X-Forwarded-Encrypted: i=1; AHgh+RrKwi8SbC86uV4jzsVFLIk/PqiJ0wRPtrHRr19YcczucNtekK4Pghqtp6kUNVK391lZfxVRiGKFVLtk@vger.kernel.org
+X-Gm-Message-State: AFuF++nD1ajMZQ0rMSoAmOhJVSSLavpArhP+YF4GNnieM/cGrKHdiSqj
+	pM87PCJgyDJEjbZo1VN26Btk+DjC3FLwuAl7sANvUU9FmfOOdMpPIsb5
+X-Gm-Gg: AR+sD13egRQzYd/GGzjzDrwB7q1mJ45nTK3oDIqvEeKRy3uCnfnCBxmXW+kx2dNflu5
+	aRaI/kDLBNgQ5z7J+zgZey3EqCDpHKFDjQuELidZ5NiU7BDdMIVOSlVFYiQdXJHXDHF1fsMrT44
+	5o0HZxigbMNqfRYV4YhCwcYggLlhutzJ2MdxrcJtnFH44yH9BInO8CSj8yvXmz/8gLy4T07UF7y
+	ZJ81Vkvu4xqIXbUpzuKYpkjepa7gfOwLaeZYK6qsyCfWekXQNXAoF2jjZcduhUu4xnTKzGNfUkG
+	BlmutZuEh539Kv8RzDl/9I8kGK1eqfWkTnWToUAIlW0dMqyuFZaKMz3Qb0CioDe/wZwNIywpKSP
+	zFpkqvrbsnAf+af3aB1zcD6K6I8NeyjmdPvMPh91id2BHyd4mjJ3L17MqLmg9fdn4Rp91ggnlFP
+	K4zISBpR9f9aGDWeWcF4Nl9rQhAQtPxxrAJ3WxZDJVYhGxQpC8CDJOxWEQFgEFfEFHUKW81P06m
+	rO3AhVBr3U6aPsSiAbjyTJanp9Nd8qq32Ra1imd5G9iFOind71CCJPu
+X-Received: by 2002:a05:600c:3111:b0:495:7888:281c with SMTP id 5b1f17b1804b1-499c1772dd5mr302953505e9.0.1787663851572;
+        Tue, 25 Aug 2026 06:17:31 -0700 (PDT)
+Received: from [172.24.138.145] (dynamic-176-007-058-112.176.7.pool.telefonica.de. [176.7.58.112])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499d5d72d36sm23411535e9.3.2026.08.25.06.17.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2026 06:00:39 -0700 (PDT)
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-c1c26d7e951so711604566b.0
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 06:00:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+Rp2XrZ+uTUX3UhUccg9UUA0fXfyar6I3zOHiaNRbBCfU3VE4azVYUriDPaJEzrGUXHqbhmKJP/Vscnd@vger.kernel.org
-X-Received: by 2002:a17:907:60cd:b0:c24:c22c:6372 with SMTP id
- a640c23a62f3a-c24c22c6490mr1589458466b.5.1787662838829; Tue, 25 Aug 2026
- 06:00:38 -0700 (PDT)
+        Tue, 25 Aug 2026 06:17:31 -0700 (PDT)
+Message-ID: <9e7edec5-578d-48e0-b253-e50cf848236e@gmail.com>
+Date: Tue, 25 Aug 2026 15:17:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260819143553.2478984-1-claudiu.beznea+renesas@tuxon.dev> <20260819143553.2478984-6-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260819143553.2478984-6-claudiu.beznea+renesas@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 25 Aug 2026 15:00:26 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVSDg2EUhnzVtcrLaL3kyZK-wJ8UfZzcFXmS=O1RZE3MQ@mail.gmail.com>
-X-Gm-Features: AcwNN1VEuaPMxcxWs3RbjdyN-p7dmv63o4Gq5Re74moLFekdRIJP2iC2c_m_pgo
-Message-ID: <CAMuHMdVSDg2EUhnzVtcrLaL3kyZK-wJ8UfZzcFXmS=O1RZE3MQ@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] pinctrl: renesas: rzg2l: Add RZ/G3S support for
- selecting the I3C power source
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, magnus.damm@gmail.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/14] iio: adc: ad7768: Add per-channel conversion
+ delay
+To: Andy Shevchenko <andriy.shevchenko@intel.com>,
+ Janani Sunil <janani.sunil@analog.com>
+Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <skhan@linuxfoundation.org>, Michael Walle <mwalle@kernel.org>,
+ linux@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-doc@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@baylibre.com>
+References: <20260821-ad7768-driver-v4-0-bb8fbd06d4eb@analog.com>
+ <20260821-ad7768-driver-v4-8-bb8fbd06d4eb@analog.com>
+ <aovua1sy4sm6RmSt@ashevche-desk.local>
+Content-Language: en-US
+From: Janani Sunil <jananisunil.dev@gmail.com>
+In-Reply-To: <aovua1sy4sm6RmSt@ashevche-desk.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Claudiu,
 
-On Wed, 19 Aug 2026 at 16:36, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 8/24/26 09:10, Andy Shevchenko wrote:
+> On Fri, Aug 21, 2026 at 04:07:01PM +0200, Janani Sunil wrote:
+>> Expose the per-channel synchronization phase offset through the IIO
+>> conversion-delay attribute.
+>>
+>> Derive the delay resolution from MCLK, power mode and decimation rate.
+>> Validate the requested delay and program the corresponding phase
+>> register when applying the active channel configuration.
+> ...
 >
-> The Renesas RZ/G3S I3C pins can be powered at either 1.8V or 1.2V. The
-> pin controller provides a register to select between these two options.
-> Update the Renesas RZ/G2L pin controller driver to allow selecting the
-> I3C power source on RZ/G3S SoC.
+>> +static int ad7768_get_convdelay_params(struct ad7768_state *st, unsigned int ch,
+>> +				       struct ad7768_convdelay_params *params)
+>> +{
+>> +	struct ad7768_freq_config f_cfg;
+>> +	unsigned int dec_rate;
+>> +	unsigned int mclk_div;
+>> +	unsigned int mult;
+>> +	u64 mclk;
+>> +	int ret;
+>> +
+>> +	ret = ad7768_get_freq_cfg(st, st->ch_freq[ch], &f_cfg);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	dec_rate = ad7768_dec_rate[f_cfg.dec_rate];
+>> +	switch (dec_rate) {
+>> +	case 32:
+>> +		params->shift = 3;
+>> +		params->max_raw = 31;
+>> +		mult = 1;
+>> +		break;
+>> +	case 64:
+>> +		params->shift = 2;
+>> +		params->max_raw = 63;
+>> +		mult = 1;
+>> +		break;
+>> +	case 128:
+>> +		params->shift = 1;
+>> +		params->max_raw = 127;
+>> +		mult = 1;
+>> +		break;
+>> +	case 256:
+>> +		params->shift = 0;
+>> +		params->max_raw = 255;
+>> +		mult = 1;
+>> +		break;
+>> +	case 512:
+>> +		params->shift = 0;
+>> +		params->max_raw = 255;
+>> +		mult = 2;
+>> +		break;
+>> +	case 1024:
+>> +		params->shift = 0;
+>> +		params->max_raw = 255;
+>> +		mult = 4;
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+> So, this is just a bit twiddling of the dec_rate.
 >
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
+> Can be written like
 >
-> Changes in v5:
-> - due to patch 3 from this series:
-> -- dropped the definitions for PVDD_I3C_1200, PVDD_I3C_1800
-> -- dropped available_i3c_ps[] array and fill everything in available_ps[]
-> -- dropped the adjustments from rzg2l_pwr_reg_val_to_ps() and
->    rzg2l_ps_to_pwr_reg_val(), rzg2l_ps_is_supported() and
->    rzg2l_pinctrl_pinconf_set()
-> -- dropped the tags
+> 	/* Optional, perhaps shouldn't appear */
+> 	if (!dec_rate)
+> 		return -EINVAL;
+>
+> 	/* Same? What does table allow to have? */
+> 	if (!is_power_of_two(dec_rate))
+> 		return -EINVAL;
+>
+> 	mult = ilog2(dec_rate);
+> 	if (mult > 10) {
+> 		return -EINVAL;
+> 	} else if (mult > 8) {
+> 		params->shift = 0;
+> 		params->max_raw = 255;
+> 		mult = BIT(mult - 8);
+> 	} else if (mult > 5) {
+> 		params->shift = 8 - mult;
+> 		params->max_raw = dec_rate - 1;
+> 		mult = 1;
+> 	} else {
+> 		return -EINVAL;
+> 	}
+>
+> TBH, I don't know which looks easier to read. It all depends on what datasheet
+> says about these parameters and multiplier and what the table allows to have.
+>
+I kept the explicit switch case because it the device supports only the 6 discrete decimation ratios listed in the table 32.
+The switch directly mirrors the phase resolution, number of steps and register bit mappings from that table, which I find easier to verify against the datasheet.
 
-Thanks for the update!
+The arithmetic version is more compact, but the proposed conditions would reject the valid x32 case because ilog2(32) is 5. A corrected arithmetic version would be functionally equivalent, but I do not think it improves the readability here.
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> @@ -69,6 +69,7 @@
->  #define PIN_CFG_PVDD1833_OTH_AWO_POC   BIT(19) /* known on RZ/G3L only */
->  #define PIN_CFG_PVDD1833_OTH_ISO_POC   BIT(20) /* known on RZ/G3L only */
->  #define PIN_CFG_WDTOVF_N_POC           BIT(21) /* known on RZ/G3L only */
-> +#define PIN_CFG_IO_VMC_I3C             BIT(22)
+Regards,
+Jan
 
-BIT(22) is already taken, please rebase to renesas-pinctrl-for-v7.4.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
