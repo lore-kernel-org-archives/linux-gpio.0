@@ -1,137 +1,127 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDFA3F3288
-	for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 10:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E238E44C4EC
+	for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 12:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787654634; cv=none; b=K4tKJLmI1RudVIrYOYDAsp5ihicjAOdZs1LiEv+hls2nPvL4BaQCnYZv2op7l5bhGftg/VAVcb3uMIq5Y+OIyD5RbnBazq+pxcweukZqP3LfvVb+uEjSqwW3jWUZED1Ne1QFnvDLTisfKbTehRN4n3LBvB+dOg9094Br+2xh4r0=
+	t=1787661615; cv=none; b=tk6TqQWpFJpTDteCj8vf5Tc8s06xeNWV6xD3TYLrkjbmS1morKV106E3hmJrOrSWU/1qaxR9o0ND/Rf8dEHkpM2gEzXZBhBMbMaOhqbCeYYNkdA3SxMftn5P5SN4NMOfakTCNyUKabq3ZB+d4c0uQP/lm84ANu+NHu1YOsHFAZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787654634; c=relaxed/simple;
-	bh=QFInQJXondlUA70nRR+VYLFa+WvVwFUjN0rN7mFQJiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o2TBvwSDtZfuDTWmfaDuWoMJ3qjuzfwafpUcLt09vL9J2CMcldReLqk1FlIrf1rdPK4/7jPvWxlDFYNfHDeULX8/Ndb6B7aiQA513V1dx7SM8D4X2fj9xMTWS0KCGJpUcYjJfHWOAF+W5QakSVcYYTmFQkwkYgCuDvNcOfh6ri8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/Wc1RY5; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1787661615; c=relaxed/simple;
+	bh=QCWu+1nCsFU3Ed99yMQ8CrBj5gAQSQzojcYoisfIgnw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SMu/pasQHh1LBIuh7qFWPkCTHsZaFFS6k4SGWDDXRdEKUuD1T4OKmDAXVGg/FBBK1M9FQW2LlOBhI40UvB+t3dSfCK4n8SvQzhloJErdoPrGkmKgAwPeOzaKpMl7focWM/s+JLJ2YqROvUMSNDmNuN07PL8vuBfPCvM5WwUhVn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/Wc1RY5"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c15cf78d1a2so521250666b.1
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 03:43:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787654631; x=1788259431; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=UviVHg4iRcsv0fdKQmMFuzXb6W/9vw8IV+1dqwY6Nl4=;
-        b=a/Wc1RY5XNJNyi9xtalA395JKQG+d/KRFLbhD3MT26pBIykJU04GXtl4wMSgGelycJ
-         zAS6WKB3joeIIDyOe4rCBaxAPG7DIrUOuh/85cYs6Ksp/0l16Slw7xqde576FqGeINxH
-         w6cxm3yK090PL466jRpAbgXTzZuvmv5bXfKrJbDPhTKl8Xd3/i8KyoDSy8jQl8MdzRDr
-         nw2SpeA6Iza/3I/5fojrkDdUffa95lLQoJRf/hrx1YdEqpGTczUm/suVmYMnVu+Z9H4v
-         ecciR3KkNTFvhSLlkRgd1oi1se5GyGJvs2YkvWiRyC1lbw0FPrJ3YfffAx5968bVjzAv
-         Zeag==
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-73b909fbb6bso2888137137.2
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 05:40:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787654631; x=1788259431;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=UviVHg4iRcsv0fdKQmMFuzXb6W/9vw8IV+1dqwY6Nl4=;
-        b=KG/PxuurMwrV7TjS3Q9xgNLUb0HH8+sQqpchtKHPTkAr8b7tmzguY2A4xm1wPlrHMT
-         s+gMjHlh801azhM6GBeC6amLkcqQuKmaS8TXlPbRXzvFXHArs/GLCDfVyYwwK+AJg8MM
-         7qT0xCOR+zrVVXHEQHMyVGm4Uof/KNywmrSRRSNNgUfBiRfTxP1+RYpWICsAUt5Hkwv6
-         5qs+zkQqW5MpBagkb0f0nRPy3GBI9JU0/tioSaw+KCl8M916shIN0vtZ/o6gRWgpXLvk
-         7xj85PMH9fOxA/i7X1I+fT2if2ffNRJI3V1NZkEYupi0D4pv1jiBrg9NMB1zhN6X4b0n
-         EKTA==
-X-Forwarded-Encrypted: i=1; AHgh+RpYj4QYFkHjI/4Ldc7qm/lwb0u5KD6WOrO+5j1PKP+sGC8X3gq1534P0fDCtya/uiZjqn9fWifWN7CP@vger.kernel.org
-X-Gm-Message-State: AFuF++kZigdjAM/qVAiiH8H57aFAW+IxdLH+T491C3KGK54j9G1VMoS/
-	K6jwCX3cP1ghbgWL2Q/51xF4GFDlEbr6MAICGH+H5Rs4PdqsOfi0ul2S
-X-Gm-Gg: AR+sD11hKavNcGJlaj0eDbH19zJpTnXhYT5c2bDjHXtJjHspsHI2mMZj7q2tyvdHC3m
-	WiHp2CBX93fuTD+6jpipredPRiX4IQVYFSOGqTIUzIepugaIDDCtmzWM+E0HvJ/yl9/ck/r4RMM
-	jwiwP0ENKKT+NtNC6rd/GHrPbgy3xr4Tx8He9gFNVknz3uYP3tkeAR1BqcJgu0pfaWxTrrYfiyV
-	jgfw9ivcTuOqE71LzkmlyPAUciWEHM2qCgxBWczGV5IwLTFGXsrSnJTMpa0eJvEldc6M7tzt2+M
-	NoR84lcDm1X6bOePiuQ4n6tJVRqPGi42p0UoW5GiRJO6Pr9zEHmE1x5kwnzgn+Tri3EbUjm5RA+
-	bzlcyVNLpny4knsAMoMQOUtfnXNuq79R6IsR50grsxm4pBM+v1FnEGTX5/yjC5PhpoDzUKX6efv
-	LkD3tT1WbEhf6wJxDKtGkdVihOXWKr9mI+nOwQMQvTebju2qaJ4JNtVuszmAUS9Ee3WKmHhW40Q
-	Lfuwyl8kopFu2koJ6nM7N6BJhgnufXpJZ3MEqLEmlU2cGS/38+BC/Wu
-X-Received: by 2002:a17:907:8995:b0:c24:4128:c19d with SMTP id a640c23a62f3a-c24e584dc37mr540823866b.4.1787654630510;
-        Tue, 25 Aug 2026 03:43:50 -0700 (PDT)
-Received: from [172.24.138.145] (dynamic-176-007-058-112.176.7.pool.telefonica.de. [176.7.58.112])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a59e1d741asm13240282a12.27.2026.08.25.03.43.47
+        d=1e100.net; s=20251104; t=1787661602; x=1788266402;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=lItA1IXA9IE0IEBaaAVaQ9GLMnrPHs08yepsXMWLXUM=;
+        b=nXCaZlSjr0k9qFyU7Ej6f0ue+h828wexwfwSbqqyp3MerU8/gpvHNQwNfcvHstOUvB
+         oCuqG1b6haRbkg30kRksdfVtlMhxv52UkHGDWnuiXVhOabnJ8nIF6QzEzC/1Wu8j0Z5T
+         ju7O26c58DjQVtU4Q4j2tl/VQofntJCl7EYeye5vQIILymDj4dG07BiiEBVAHlq9NcXu
+         a776PueDvasMzBPZZFuvC4Gttp4H8huqAQR6bVsIP/cfl/CAO12sgW+CA8piHyVM5nkW
+         Ws/SGnEKu0zbPSmDbulIYD59PEC85r74mQQJdIIaB+R7dAfta3WqqGcuwWMVVhhCaJZ8
+         2Jrg==
+X-Forwarded-Encrypted: i=1; AHgh+RqgnUsqWwj4zcyjXEs2G859Ov5xAvkIQmCJ5caoj5I8W6Y6pOLImIxG5hLB0kZSCg0VX8jQQTZTE+EN@vger.kernel.org
+X-Gm-Message-State: AFuF++mwgvVFU452BDW0x8Nsu11amp/ZKvayykSrZV5VqeXVi+uG2PHD
+	kOqo4raprX0KpnW2zrqlombyxeBByMFppX1eQhVHoSBomOJN3TcN3NZu/C69sjgB6j4=
+X-Gm-Gg: AR+sD10ySFA4GCPh5p7lKth1I6Lza855XXUa/j0OpUOCxghijAYalTImmLGY0doXL6N
+	J5XbY/9dNjyVAvKmbpER+7yxg3aYAtHx1RKriU5+S25+gfZr4FUF0+7vCpD3VR9qOYeerVRWcMe
+	3eV2ER67UcVwS3x04Sj5Ftfu0SC9VUkhqrQbBFODNZCPQAW1hwg8zoP58bezFVebD6Vsc2vNBBK
+	eDREz/nF1xlxJJASsFAf0wQPKd3cHcUj0PCsE2dKE8iWja9JkNUxi9vtKHsuDEOxVSvzeufRffJ
+	EuHPEQMi1nEBYz6z36sATmbNA3vh11TJR8APNgT9xa8WJ0EvVC2jw1OhS1OIBNSAuH9LCqyZNdf
+	QWu1c9hzaP7ZVCVsig+VHvPIhfqSV4l5Z/+7HJPFMKh3lbKtK5f/Y1nRGmwCWdb++dWDhKovzSf
+	JS5SS/TtzELVYCMNzyGr8kIuMPBYePlrQs4tOA5EG+BC90WEZEIXlQsnF1RmqwKTLZkljn/RuqC
+	lL38K0ff+ttEdXsctYYkLyFxD1oQJ5XoQhcYLXUFJvaqiIZ
+X-Received: by 2002:a05:6102:512b:b0:778:5bbb:b2d2 with SMTP id ada2fe7eead31-77a64358362mr12675279137.11.1787661602248;
+        Tue, 25 Aug 2026 05:40:02 -0700 (PDT)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-97c8345f53esm10444111241.1.2026.08.25.05.40.00
+        for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2026 03:43:50 -0700 (PDT)
-Message-ID: <79c44439-86a3-4eba-bd6f-44423c59c17d@gmail.com>
-Date: Tue, 25 Aug 2026 12:43:47 +0200
+        Tue, 25 Aug 2026 05:40:01 -0700 (PDT)
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-73b909fbb6bso2888121137.2
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 05:40:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rr652vgnI86WvKaSFmAJf1t/Sq282PsnetqbMXYITFX7e8/5TX+HBbetjEODLRS43UMwoMfJ1lrQ1iO@vger.kernel.org
+X-Received: by 2002:a05:6102:2907:b0:77d:e064:2dc1 with SMTP id
+ ada2fe7eead31-77de064341fmr5703801137.0.1787661600596; Tue, 25 Aug 2026
+ 05:40:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/14] iio: adc: Add AD7768 and AD7768-4 core support
-To: David Lechner <dlechner@baylibre.com>,
- Janani Sunil <janani.sunil@analog.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <skhan@linuxfoundation.org>, Michael Walle <mwalle@kernel.org>
-Cc: linux@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>
-References: <20260821-ad7768-driver-v4-0-bb8fbd06d4eb@analog.com>
- <20260821-ad7768-driver-v4-5-bb8fbd06d4eb@analog.com>
- <10d575af-2a2c-484b-82b0-0a00de1c50be@baylibre.com>
-Content-Language: en-US
-From: Janani Sunil <jananisunil.dev@gmail.com>
-In-Reply-To: <10d575af-2a2c-484b-82b0-0a00de1c50be@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20260819143553.2478984-1-claudiu.beznea+renesas@tuxon.dev> <20260819143553.2478984-2-claudiu.beznea+renesas@tuxon.dev>
+In-Reply-To: <20260819143553.2478984-2-claudiu.beznea+renesas@tuxon.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 25 Aug 2026 14:39:49 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXqsO4Y9g+mLdeq4LZ2sosR7r7hXP0swKtRFap4qU3zfw@mail.gmail.com>
+X-Gm-Features: AcwNN1W430KgO2INmLr-jl8Vwq7Neq8fxPjRN54TH1O2lbbWeDTKDcjU2n1-28M
+Message-ID: <CAMuHMdXqsO4Y9g+mLdeq4LZ2sosR7r7hXP0swKtRFap4qU3zfw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/5] pinctrl: renesas: rzg2l: Generalize the power
+ source code
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, magnus.damm@gmail.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Claudiu,
 
-On 8/22/26 19:30, David Lechner wrote:
+On Wed, 19 Aug 2026 at 16:36, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> On 8/21/26 9:06 AM, Janani Sunil wrote:
->> Add core support for the AD7768 and AD7768-4 simultaneous sampling ADCs.
->> Configure supplies, clock and reset, use a custom regmap bus for the SPI
->> protocol, and parse the enabled channels and input buffer settings from
->> devicetree.
->>
->> Connect the converter to an IIO backend for buffered capture with CRC,
->> provide a fixed safe wideband sampling configuration and add runtime
->> power management.
->>
->> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
->> ---
-...
->> +static int ad7768_regmap_read(void *context, const void *reg_buf,
->> +			      size_t reg_size, void *val_buf, size_t val_size)
->> +{
->> +	struct ad7768_state *st = spi_get_drvdata(context);
->> +	struct spi_device *spi = context;
->> +	struct spi_transfer t[] = {
->> +		{
->> +			.tx_buf = &st->d16,
->> +			.len = sizeof(st->d16),
->> +			.cs_change = 1,
->> +		}, {
->> +			/*
->> +			 * Register responses are delayed by one CS frame. While
->> +			 * receiving the response to this read, the device also
->> +			 * decodes another command on SDI. Repeat the read
->> +			 * command to avoid sending an unspecified dummy
->> +			 * command.
-> Could this have unintended concequences? E.g. register writes that have
-> size-effects, like reset or clearing status registers.
+> The current functions used to get/set the pin power source check the
+> OTHER_POC register, which is specific to the RZ/G3L SoC only. To allow the
+> code to be extended for other power source functionalities (e.g. I3C on
+> RZ/G3S), generalize the functions used to get/set the pin power source.
+>
+> For this, introduce the struct rzg2l_register_masks data structure whose
+> purpose is to store SoC specific register bit masks. The members of this
+> structure are then used in rzg2l_caps_to_pwr_reg() to retrieve the bitmask
+> corresponding to a SoC specific power source capability.
+>
+> The conversion between HW specific power source values and SW specific
+> power source values is now handled through rzg2l_pwr_reg_val_to_ps() and
+> rzg2l_ps_to_pwr_reg_val().
+>
+> Finally, to keep the code generic, the register update in
+> rzg2l_set_power_source() was changed to a read-modify-write approach to
+> cover all cases.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v5:
+> - in function rzg2l_ps_to_pwr_reg_val() return power source register
+>   value or negative error; due to this, in rzg2l_set_power_source()
+>   dropped the val local variable and use ret instead; due to this,
+>   to be able to use ret on register setup, moved the rzg2l_ps_to_pwr_reg_val()
+>   call after rzg2l_caps_to_pwr_reg()
+> - dropped the tags
 
-Repeating the command cannot trigger reset or other write side effects. The device also does not have any read-to-clear registers.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Thanks,
-Jan
+This does not apply to renesas-pinctrl-for-v7.4, so please rebase.
+Thanks!
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
