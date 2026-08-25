@@ -1,71 +1,72 @@
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1D043F4CE
-	for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 12:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353EC449990
+	for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 13:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787662455; cv=none; b=QpKA2eUf+g6pRMwpJfWodyPbkvpNo5X4R5F31+0DZeCm22k3K3SUwqEHhElHkR5v6jhcK09EBhOOjbNC5Qz6eAiY9Pc/nCGpGrfDigK5vtRKaRrDXaX9rLyDzNqCb68a5iZdVwfsKn3eWa/QZgI/Jklh5Dy8+DpqgHkUxjYCl2w=
+	t=1787662843; cv=none; b=ZR7tH84ko02S/QRqedWct0hH83h5ne6q0hiRc20QfFQbfWrfSWMPJcQiEX/Pb227sQ7xYPS+7b3E4rNyQyeXh/5u2vdWnI60Eo3b7YI+Y5+sUOauk3GtuPAI3IkRj76c+lwL0yCJx7nYuMtKSlwvYW4dkj1oWT3rJmHwmXICrwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787662455; c=relaxed/simple;
-	bh=CaotQxU7iNU6c524dtH/JOUWSksfXQDDVYiUOPk3TkE=;
+	s=arc-20240116; t=1787662843; c=relaxed/simple;
+	bh=VO1GZ4gCp/y9o2rb+D3PA8tXGec2JaV9n1iCQ0jrsiM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IORRBjCoRU5VQresMnduoGQH0Cr0MG5rHrRR9CeE/uUCiJTK3zvauZHjtTC1BkCuX2dIA0QL8oCEhTuvqixVXO2LrbmVz3tjVeB7C8J/ZekOE6AvZ8KyxtAAHPBMLGkett+mbl6Aza4MBbxDjm0sXOUFHT5HVweqdLXsCUO4qMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+	 To:Cc:Content-Type; b=jmT0sHx+bX7Tn6j6zkg6KYiAOBegHd4BU8iuK7f1GvYUy5VVFYuHhfTgYRdR1I9jSsA2oRvL6Kdhrg9RkCIufGPlc+V0o4RlOi32si+ZjnEXv4u3I4Tju5dySmftpKdVn7DqWv5GBwL5qjt7gpk8rOJs/7/xEaPj64EnkaaR/Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-7564b7a9490so557575137.1
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 05:54:13 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6a378f90555so7467552a12.3
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 06:00:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787662452; x=1788267252;
+        d=1e100.net; s=20251104; t=1787662840; x=1788267640;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=Edl2lWOUjsEtEInWLfhIYEcuR1CiWfh9q8iac3qNwFA=;
-        b=YaQA9T/I4EVE3NOAzRnAvSbB5jzl3yeGDmKliEVO1mrTF978pBLS47s20bCvWPajwT
-         B9/z7Av1nYXUlfdMdNuFgZ7kVSqaWAsYwDs9GU+kAgh+SmBw/3zxa2YRi4vqVKArp2Ji
-         SdaA2A1IL+P/PWc4/NxQHqtmg7xznHr9EQWGcnbASQI7hV5wGC+g+FNRlxpGVU6z4jE6
-         459JuJSAB6vpabuy7OvmQ3sUoSjDtCgNGZyRjNJj3tBgJicV0Ls576/VYME8uAajS6GN
-         zsnWrsdU3FpMA5AnDHhZAOBdLtNv8w21D/s6FvXStFRvhi0w0BkH6oZMBmGLTHZAAxTL
-         c3VA==
-X-Forwarded-Encrypted: i=1; AHgh+RoiU9TfVFcTYR3lm4quLpXMA0nvUwOsEcQRuzwpFTqAqVzZSokngtTjsCJV4SCTwkhneQazOOl7wx00@vger.kernel.org
-X-Gm-Message-State: AFuF++n/j7SSSwkoi3Or4fCOr1nic6PCuwFmMIQ48NP/2R/jPRxiyg2g
-	4NAsurYBX843OeZ3P8tv+IaC+x7XMBDQD3aMDuajYMmoSDpp8D/BVIkSHoVNZUNLI/o=
-X-Gm-Gg: AR+sD12CiqaXE+slwlehKgdBjEwo+rcoJIbKg7c8raodQN/lnC9LkIA1SIYqvl6l8UC
-	HO4dYdMMp4jZl3ltDUzgD5K9a0oYA1LPzCrjFLsyMy9DfDjfWlXVeyNuAJz2n/VCTvdzZv3t2xs
-	mFJwzPvkk5wi92byqBeec8kzWddLnF4wEATWcQDIzy7YrPsMJIQ4WxMCocfg00yq1DAuISwHdfm
-	tUqEx+gDk4ksbuZF9i3ygHRU3APraxtdXAZW0qGGuGCGn8F96t5CWF5VTEbu+KGsiKnz1ohdQCz
-	kQxyUGygngU25nELnczDoVyDrBpfdYgi0/xULRvL2fT3LpuKKAFRPIJEphrJ/8QFQfAdsmQ7D8r
-	PmMcQpAtXrowY9yH4lFRvEq1+da+Dpwfaorcc8eFOXn+BywgAXMZcEFzgyDXVF5VF0riAXLlQyL
-	H0eluTouI7/cojiWqxkS/jcqFKMV23i3Dce9aaCL2z6EHoVBGGEkwpsmKGDlaBOCb17j/NA/wzE
-	4E9w1D3MG15tsTD3YP4BGuEUw==
-X-Received: by 2002:a67:f243:0:b0:778:34af:bd3f with SMTP id ada2fe7eead31-77fd610463bmr1281302137.18.1787662452335;
-        Tue, 25 Aug 2026 05:54:12 -0700 (PDT)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-77d8357dad9sm5275991137.6.2026.08.25.05.54.10
+        bh=f/VL+GrO3wM2oN8yF9pczuQ0vsJ4YOEv+mk062nltpg=;
+        b=hl+u7QC4sXFWBng6HVlJdWgQseG5A5VwvaAvcPBl4YzBBPRo2lwaW51Ow6BYDBq2rc
+         ts/SOFUWh2sfPgqsOU7PbZeUFM8C3EiF+7AXfMxFy/iwUetleWLQJwOtCwBcmUMRK0mo
+         5qDinX6uVWbTALoGJcnvZGTQKahXRlJd8lG+hA7NRq+UJqZM//qsYO0XTXeg4ze0coiJ
+         P2K++Oaqz4bAx5m0fL68FWKctlQigGzkrsk+s+8fphaPhf255cIqzRirzn3XgJCUNeA2
+         6Tq/FSqOWPYCI8663I+ANjecjNgDwsJTgz4ABQONnEYVFPbRuqETOgUTnljw9VQShLJz
+         cv4g==
+X-Forwarded-Encrypted: i=1; AHgh+RqCNn8AH4DFfCwz/ix0uMPigyQu7iMqq4GNlRKhMDhl3cyNGszA1hm+rBajnqHY1p3hYiLJJW+wGjW+@vger.kernel.org
+X-Gm-Message-State: AFuF++kpdW8qlpQk/CyoN1CCgod8nPYJMAmhnJCe0vIjBeD/nXh7FDdN
+	CIf44l6d8xNsEBPp0tvjbQWqn/3c0X8m3xWMrS3uzQZ2trgMKuatSPiVp0cvaJ17it4=
+X-Gm-Gg: AR+sD10e1G+ymabbmZ5pxiphEbhKS1SyvqWrpxDz5sPxeZpb0Bu5U8Gh+NanorIy001
+	qvpjQRcM5eN5TaIIT1Ev9bxlXiJcw2gnMY2p5RxfAtkMEaLInHKv3WJtFzPfV4ugsaaBqJ2aAEH
+	a22Fo+NHd2NLWKgZ7iNmXwHwxAI2Z+5tJgVRJBcvJxhkku8w4Ju66pHfB/VTLnOZVcFea11bUNX
+	chvjSBGIA75BBcvJA+0myvdFvAhMuxktdaVzjscHVoUikMQ2ZM81BUJFQYGuEw+d+D0kgim/wMV
+	+pZNJH8WADhDm3sDoPrFN8Q64ncNgby86j41y9/mXjMz6TImFRNF6fSsgtxiSrE3wkvbgAq+qXl
+	zYQfkP9m9p1v2b8P4Fi6Hzo7vAIRIUZqOhzsK2dyGmFlXaY45/rrbPmBY7hWq703pRQs4nsOqH2
+	tx5QupiK2LeTYoS2jMcb5SUCRyo1AjotgKzelPwhTVl1ET+okrhStFa1jpOMLaYB+qj8na/Jw64
+	fs7auWKILBdroEuM1ISkd/syQ==
+X-Received: by 2002:a05:6402:e93:b0:6a0:584f:454c with SMTP id 4fb4d7f45d1cf-6a42f28ebaemr39721166a12.16.1787662840242;
+        Tue, 25 Aug 2026 06:00:40 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a5d9824be1sm847682a12.7.2026.08.25.06.00.39
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2026 05:54:10 -0700 (PDT)
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-77e35e008e8so632472137.1
-        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 05:54:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RpqLUd725GRacJlIIWDzijZkmOBoyFl8DZp6JMRqJv4PwnUlZrO7rHBd49RLsxiQQN4n6r6MlOp7+th@vger.kernel.org
-X-Received: by 2002:a05:6102:3b15:b0:736:f95c:4bd4 with SMTP id
- ada2fe7eead31-77fd370acd5mr1148905137.6.1787662449703; Tue, 25 Aug 2026
- 05:54:09 -0700 (PDT)
+        Tue, 25 Aug 2026 06:00:39 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-c1c26d7e951so711604566b.0
+        for <linux-gpio@vger.kernel.org>; Tue, 25 Aug 2026 06:00:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AHgh+Rp2XrZ+uTUX3UhUccg9UUA0fXfyar6I3zOHiaNRbBCfU3VE4azVYUriDPaJEzrGUXHqbhmKJP/Vscnd@vger.kernel.org
+X-Received: by 2002:a17:907:60cd:b0:c24:c22c:6372 with SMTP id
+ a640c23a62f3a-c24c22c6490mr1589458466b.5.1787662838829; Tue, 25 Aug 2026
+ 06:00:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260819143553.2478984-1-claudiu.beznea+renesas@tuxon.dev> <20260819143553.2478984-4-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260819143553.2478984-4-claudiu.beznea+renesas@tuxon.dev>
+References: <20260819143553.2478984-1-claudiu.beznea+renesas@tuxon.dev> <20260819143553.2478984-6-claudiu.beznea+renesas@tuxon.dev>
+In-Reply-To: <20260819143553.2478984-6-claudiu.beznea+renesas@tuxon.dev>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 25 Aug 2026 14:53:57 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXoS=LZ94aYQ=Tm4n+R_L-1t7gZQ2vvHVZMfanxb=1yHg@mail.gmail.com>
-X-Gm-Features: AcwNN1UP9Sje02JijQSgDxiN9g9qyPwNFW9wB2YgLhT-mIKpO45iKkt9fOTFuRw
-Message-ID: <CAMuHMdXoS=LZ94aYQ=Tm4n+R_L-1t7gZQ2vvHVZMfanxb=1yHg@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] pinctrl: renesas: rzg2l: Unify the power source handling
+Date: Tue, 25 Aug 2026 15:00:26 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVSDg2EUhnzVtcrLaL3kyZK-wJ8UfZzcFXmS=O1RZE3MQ@mail.gmail.com>
+X-Gm-Features: AcwNN1VEuaPMxcxWs3RbjdyN-p7dmv63o4Gq5Re74moLFekdRIJP2iC2c_m_pgo
+Message-ID: <CAMuHMdVSDg2EUhnzVtcrLaL3kyZK-wJ8UfZzcFXmS=O1RZE3MQ@mail.gmail.com>
+Subject: Re: [PATCH v5 5/5] pinctrl: renesas: rzg2l: Add RZ/G3S support for
+ selecting the I3C power source
 To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
 	conor+dt@kernel.org, magnus.damm@gmail.com, 
@@ -80,190 +81,36 @@ Hi Claudiu,
 On Wed, 19 Aug 2026 at 16:36, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> The previous code handled power sources using a mixture of power
-> source specific definitions and lookups in the available_ps[] array.
-> Unify the power source handling by introducing
-> struct rzg2l_pinctrl_ps_desc, whose purpose is to describe a power
-> source through its power source value, associated register value,
-> associated capabilities (e.g. Ethernet), and associated IOLH index.
->
-> Introduce two new functions, rzg2l_ps_to_desc() and
-> rzg2l_pwr_reg_val_to_desc(), using the
-> RZG2L_PINCTRL_PS_DESC_MEMBER_TO_DESC_FUNC() macro, as their
-> implementations are similar.
->
-> These functions retrieve a power source descriptor based on either a
-> power source value or a power source register value. Other functions
-> that need to perform power source specific operations can call them to
-> retrieve the corresponding power source descriptor.
+> The Renesas RZ/G3S I3C pins can be powered at either 1.8V or 1.2V. The
+> pin controller provides a register to select between these two options.
+> Update the Renesas RZ/G2L pin controller driver to allow selecting the
+> I3C power source on RZ/G3S SoC.
 >
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v5:
+> - due to patch 3 from this series:
+> -- dropped the definitions for PVDD_I3C_1200, PVDD_I3C_1800
+> -- dropped available_i3c_ps[] array and fill everything in available_ps[]
+> -- dropped the adjustments from rzg2l_pwr_reg_val_to_ps() and
+>    rzg2l_ps_to_pwr_reg_val(), rzg2l_ps_is_supported() and
+>    rzg2l_pinctrl_pinconf_set()
+> -- dropped the tags
 
-Thanks for your patch!
+Thanks for the update!
 
 > --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
 > +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -69,6 +69,7 @@
+>  #define PIN_CFG_PVDD1833_OTH_AWO_POC   BIT(19) /* known on RZ/G3L only */
+>  #define PIN_CFG_PVDD1833_OTH_ISO_POC   BIT(20) /* known on RZ/G3L only */
+>  #define PIN_CFG_WDTOVF_N_POC           BIT(21) /* known on RZ/G3L only */
+> +#define PIN_CFG_IO_VMC_I3C             BIT(22)
 
-> @@ -440,7 +439,65 @@ struct rzg2l_pinctrl {
->         u32                             clone_offset;
->  };
->
-> -static const u16 available_ps[] = { 1800, 2500, 3300 };
-> +/**
-> + * struct rzg2l_pinctrl_ps_desc - RZ/G2L power source descriptor
-> + * @caps: Capabilities that applies to the power source
-> + * @iolh_index: IOLH index
-> + * @ps: Power source value
-> + * @pwr_reg_val: Power source register value
-> + */
-> +struct rzg2l_pinctrl_ps_desc {
-> +       u32 caps;
-> +       enum rzg2l_iolh_index iolh_index;
-> +       u16 ps;
-> +       u16 pwr_reg_val;
-> +};
-> +
-> +#define RZG2L_PINCTRL_PS_DESC(_ps, _pwr_reg_val, _caps, _iolh_index) \
-> +       { \
-> +               .ps = _ps, \
-> +               .pwr_reg_val = _pwr_reg_val, \
-> +               .caps = _caps, \
-> +               .iolh_index = _iolh_index, \
-> +       }
-> +
-> +/* Keep the entries with .caps set in the first positions. */
-> +static const struct rzg2l_pinctrl_ps_desc available_ps[] = {
-> +       /* Ethernet I/O domain voltage 2.5V */
-> +       RZG2L_PINCTRL_PS_DESC(2500, 2, PIN_CFG_IO_VMC_ETH0 | PIN_CFG_IO_VMC_ETH1,
-> +                             RZG2L_IOLH_IDX_2V5),
-> +       /* I/O domain voltage 1.8V */
-> +       RZG2L_PINCTRL_PS_DESC(1800, 1, 0, RZG2L_IOLH_IDX_1V8),
-> +       /* I/O domain voltage 3.3V */
-> +       RZG2L_PINCTRL_PS_DESC(3300, 0, 0, RZG2L_IOLH_IDX_3V3),
-> +};
-> +
-> +#define RZG2L_PINCTRL_PS_DESC_MEMBER_TO_DESC_FUNC(_name, _desc_member, _caps)  \
-> +static const struct rzg2l_pinctrl_ps_desc *_name(u16 _desc_member, u32 _caps)  \
-> +{                                                                              \
-> +       const struct rzg2l_pinctrl_ps_desc *desc = NULL;                        \
-> +                                                                               \
-> +       for (unsigned int i = 0; i < ARRAY_SIZE(available_ps); i++) {           \
-> +               if (available_ps[i]._desc_member == _desc_member) {             \
-> +                       if (available_ps[i].caps) {                             \
-> +                               if (available_ps[i].caps & caps) {              \
+BIT(22) is already taken, please rebase to renesas-pinctrl-for-v7.4.
 
-"_caps", as pointed out by Sashiko.
-
-> +                                       desc = &available_ps[i];                \
-> +                                       break;                                  \
-> +                               } else {                                        \
-> +                                       continue;                               \
-> +                               }                                               \
-> +                       } else {                                                \
-> +                               desc = &available_ps[i];                        \
-> +                               break;                                          \
-> +                       }                                                       \
-> +               }                                                               \
-> +       }                                                                       \
-
-You can reduce indentation, and simplify the code, by restructuring
-the checks:
-
-    for (unsigned int i = 0; i < ARRAY_SIZE(available_ps); i++) {
-            if (!available_ps[i]._desc_member == _desc_member)
-                    continue;
-
-            if (!available_ps[i].caps) {
-                    desc = &available_ps[i];
-                    break;
-            }
-
-            if (available_ps[i].caps & caps) {
-                    desc = &available_ps[i];
-                    break;
-            }
-    }
-
-> +                                                                               \
-> +       return desc;                                                            \
-> +}
-> +
-> +RZG2L_PINCTRL_PS_DESC_MEMBER_TO_DESC_FUNC(rzg2l_ps_to_desc, ps, caps)
-> +RZG2L_PINCTRL_PS_DESC_MEMBER_TO_DESC_FUNC(rzg2l_pwr_reg_val_to_desc, pwr_reg_val, caps)
->
->  static u64 rzg2l_pinctrl_get_variable_pin_cfg(struct rzg2l_pinctrl *pctrl,
->                                               u64 pincfg,
-
-> @@ -1191,32 +1240,21 @@ static int rzg2l_set_power_source(struct rzg2l_pinctrl *pctrl, u32 pin, u32 caps
->         return 0;
->  }
->
-> -static bool rzg2l_ps_is_supported(u16 ps)
-> +static bool rzg2l_ps_is_supported(u16 ps, u32 caps)
->  {
-> -       unsigned int i;
-> +       const struct rzg2l_pinctrl_ps_desc *desc = rzg2l_ps_to_desc(ps, caps);
->
-> -       for (i = 0; i < ARRAY_SIZE(available_ps); i++) {
-> -               if (available_ps[i] == ps)
-> -                       return true;
-> -       }
-> -
-> -       return false;
-> +       return !!desc;
-
-No need for the "!!".
-Then this function becomes very simple, and you can just call
-rzg2l_ps_to_desc(ps, caps) in the callers instead.
-
->  }
->
-> -static enum rzg2l_iolh_index rzg2l_ps_to_iolh_idx(u16 ps)
-> +static enum rzg2l_iolh_index rzg2l_ps_to_iolh_idx(u16 ps, u32 caps)
->  {
-> -       unsigned int i;
-> +       const struct rzg2l_pinctrl_ps_desc *desc = rzg2l_ps_to_desc(ps, caps);
->
-> -       for (i = 0; i < ARRAY_SIZE(available_ps); i++) {
-> -               if (available_ps[i] == ps)
-> -                       break;
-> -       }
-> +       if (!desc)
-> +               return RZG2L_IOLH_IDX_NA;
->
-> -       /*
-> -        * We multiply with RZG2L_IOLH_MAX_DS_ENTRIES as we have
-> -        * RZG2L_IOLH_MAX_DS_ENTRIES DS values per power source
-> -        */
-> -       return i * RZG2L_IOLH_MAX_DS_ENTRIES;
-> +       return desc->iolh_index;
-
-Perhaps
-
-    return desc ? desc->iolh_index : RZG2L_IOLH_IDX_NA;
-
-?
-
->  }
->
->  static u16 rzg2l_iolh_val_to_ua(const struct rzg2l_hwcfg *hwcfg, u32 caps, u8 val)
-
-> @@ -1797,7 +1839,7 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
->
->         /* Apply power source. */
->         if (settings.power_source != pctrl->settings[_pin].power_source) {
-> -               ret = rzg2l_ps_is_supported(settings.power_source);
-> +               ret = rzg2l_ps_is_supported(settings.power_source, cfg);
->                 if (!ret)
->                         return -EINVAL;
-
-As rzg2l_ps_is_supported() returns a bool, there is no need to keep its
-return value in "ret" for later use.
-
-After eliminating rzg2l_ps_is_supported(), this can just become
-
-    if (!rzg2l_ps_to_desc(settings.power_source, cfg)
-            return -EINVAL;
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
