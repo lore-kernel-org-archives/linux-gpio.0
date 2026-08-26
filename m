@@ -1,101 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAD54071CA
-	for <linux-gpio@vger.kernel.org>; Wed, 26 Aug 2026 13:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA947439F7E;
+	Wed, 26 Aug 2026 14:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787751501; cv=none; b=j3hzsmdlHqmZOknzkFeRKPJH4Do1C9O4kifqWGTO4KjTEMhQe+R0JmmBALm+CVIdwzt3LFCLMIjIK1cBQ8vwYO8PSHPTR10YuA+dk3FmWfiWcIDs1ncrv9udakzRTpY2wMsJZgGebbB1BbDDoyeUqqHxGJ1IzLVIvllLPoRTyiI=
+	t=1787752816; cv=none; b=Tzm6UCP5LebPIMNvzPhv0SBUpC5iIPqyFLgBJ+kea9/7ruH/3kjvaBpQbthbpbp2p3KkyVm5ghyDqu9aC3qNxDRqftWq+CUGcueUOx/p14YWCt56qv9s2nmnOAidvAsRkP7HRLGonOwCxdeQXU4dKgRVWl8iXlxnI8Jz7S5vudA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787751501; c=relaxed/simple;
-	bh=WiFLA9yIsaSjQGO65uy6XMFgjvqF6C0O48KGPGR5IAg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O9Xj5LpFFOSPzU8dWun3AtOLzcpMgLAy4af+eScNKu1+bYajTpcxQPgCLLD3JF/i5OF16EknE7McqbizPOP6NamYkk9i2BX96eQ91GeOxuVJOTK2V8HoXCH9fTqeouTt4Qbp2eddQLtUJoSHt+WirQ1iQIUMII0tBzNilHG+ILo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FRj+pyzO; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787752816; c=relaxed/simple;
+	bh=/TzXwS4YF5gUqidjGf4wMNZnieUtP2YP6qNtEw/gL8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X4u/9UNxo1cskHL5EVCWGCmxiEBiLOuTbVuV0apIPHOrXK+AypxsnpNhhm9mk+Dx0HRxSjImn0Pf3MuliWtjgzmdXxCWZJ2NzGEze8Gg9OE7QeFF9c3D9OosHnFQ3Zt2T7k552N3Ua6PPHF6I1DiWwMo/pPtNUPyG4X7yKtY28I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LyqZDVQ+; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FRj+pyzO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0F9D1F00A3A
-	for <linux-gpio@vger.kernel.org>; Wed, 26 Aug 2026 13:38:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787751499;
-	bh=HfM5lr2mL1q2WkP1E6zRu0ypWHQyXIJSTRAPogksnNA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=FRj+pyzOdWz50U+YouP9GmUDlZvJJz+FgLpyjThjuQWjtQBb7Sra2hdnih6Cc3az6
-	 gi5ZwjBQBk8l7LX8Wb4L69ZOHlJ35q2spINLOYQkiFC+9FsQeUGffEcw/EiF+c50hu
-	 reaft2BNafxxgm/UETpsOXvueWvq3xteVDEW83UVuFZURD0OOdjftZcoZqe/ffUmwe
-	 2EtzYmbzZ7AjNYvmJjxvwSLakpHE/qogggnxdcGVD4bxkKORtjHXKIrPASZsZ6E6Wd
-	 wh8ybkWwerxijQhgRzDkynw26ZLTLCbXtF5B8YoytUtjoO8I2mnIWuNrVk3P7NRtVm
-	 b3n9hw0Hwv5Ww==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b2a4359d16so881378e87.3
-        for <linux-gpio@vger.kernel.org>; Wed, 26 Aug 2026 06:38:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AHgh+RosPeUEM53g3/RdzKmLvqtNOTL3GTbfkUs/NMWKdJ81QzrEBcMpiv7qd7mkixdbyG8+6wQhaisLBQDl@vger.kernel.org
-X-Gm-Message-State: AFuF++kq2yFBkCZY+HNiQr5RxUoFUl+ZW4nYE1MANHjpF+7Ibinp6iao
-	bm3N1dOhmkw8zL1V69tY3VstF/EYfuKQesutuYPQs8RpqnRLlYD7xwGkAfGkLx4fEsekND1wJ8w
-	90CXNlTcLzV7PhDSmzf15VthX1fQfYplztj+ANf7QNQ==
-X-Received: by 2002:a19:5507:0:b0:5ae:bbd3:27e3 with SMTP id
- 2adb3069b0e04-5b4a900a129mr1469735e87.5.1787751498522; Wed, 26 Aug 2026
- 06:38:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LyqZDVQ+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1787752811; x=1819288811;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/TzXwS4YF5gUqidjGf4wMNZnieUtP2YP6qNtEw/gL8I=;
+  b=LyqZDVQ+CJYdS3yFvybuZQV5BaQMecgR9jvRlqNXaJ310vqgOLBBitVG
+   Lb628+kvPp+/yWKvWLfpXjx7MPUQb/8wZN59XR9etxyTVDNDR9S6CFj0r
+   GeZ/ueXVswa7JnASTRUQvPlIi98hPJq10/vTffn5qEKXLq4VfKVn08rza
+   GLgkWKzPaXn6ykHONUk8WdVPf/Ks0miAOecjTGXCtmBEsDr4WEix0lu+v
+   dY5rCKtGN1t3l4phLrs8CvCDWj6bxBRHh5FfLbIjkJHD0OvqiTFlhtPXi
+   TrIOF4buybCVSo+mjMZJn6CMmjC7nGvRegG6Z5Hhmya51rrqGZ9Cx6ukA
+   g==;
+X-CSE-ConnectionGUID: aZ1lGm9aQdWSSoN7arv80w==
+X-CSE-MsgGUID: mpn/pdsEQEGxvesHzi/2jQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11886"; a="90744756"
+X-IronPort-AV: E=Sophos;i="6.25,244,1779174000"; 
+   d="scan'208";a="90744756"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2026 07:00:06 -0700
+X-CSE-ConnectionGUID: dfsx2vyhRDCF5cIeDZjYWw==
+X-CSE-MsgGUID: VeOrfRlZTq6usqVghYthtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,244,1779174000"; 
+   d="scan'208";a="267014274"
+Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.245.235])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2026 07:00:04 -0700
+Date: Wed, 26 Aug 2026 17:00:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 0/4] gpio: Unify the GPIO controller node check
+Message-ID: <ao7xYVKgM5jW4vUf@ashevche-desk.local>
+References: <20260824074427.3226457-1-andriy.shevchenko@linux.intel.com>
+ <CAMRc=MejNn8NJYe6ByKig8cZHL8pq98waNfVozY9SteZYYJmHw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260819152356.904023-1-shengchao.guo@oss.qualcomm.com>
- <000076bd-b3fd-42dc-bd43-96ee9492a638@oss.qualcomm.com> <aoZVKWTtdCQSSvaH@QCOM-aGQu4IUr3Y>
- <06acd175-0078-43ce-ae58-567005f62562@oss.qualcomm.com>
-In-Reply-To: <06acd175-0078-43ce-ae58-567005f62562@oss.qualcomm.com>
-From: Bartosz Golaszewski <brgl@kernel.org>
-Date: Wed, 26 Aug 2026 15:38:05 +0200
-X-Gmail-Original-Message-ID: <CAMRc=Meb72v3wJ+BB8ujjD-bxaCLuqWC+JFgmrz09BY5LZSuXg@mail.gmail.com>
-X-Gm-Features: AcwNN1UiDy7IM184TnRcFe0sRHIgizvqFCHfyw15xidHEhJx8LfFXXFO4tCjMnU
-Message-ID: <CAMRc=Meb72v3wJ+BB8ujjD-bxaCLuqWC+JFgmrz09BY5LZSuXg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: nord: Split QUP1 SE2/SE3 into lane-pair functions
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Shawn Guo <shengchao.guo@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MejNn8NJYe6ByKig8cZHL8pq98waNfVozY9SteZYYJmHw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Aug 24, 2026 at 10:44=E2=80=AFAM Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 8/20/26 3:15 AM, Shawn Guo wrote:
-> > On Wed, Aug 19, 2026 at 05:27:34PM +0200, Konrad Dybcio wrote:
-> >> On 8/19/26 5:23 PM, Shawn Guo wrote:
-> >>> QUP1 SE2 and SE3 pack all four of their lanes pair-wise onto only two
-> >>> pins each: lanes 0/1 (I2C SDA/SCL) at mux value 2 and lanes 2/3 (UART
-> >>> TX/RX) at mux value 1, on gpio127/gpio128 and gpio129/gpio130
-> >>> respectively.
-> >>
-> >> [...]
-> >>
-> >>> +   msm_mux_qup1_se2_01,
-> >>
-> >> other drivers where this is necessary stick an 'l' before the
-> >> lane indices, e.g. se2_l2, let's keep this
+On Wed, Aug 26, 2026 at 05:33:23AM -0500, Bartosz Golaszewski wrote:
+> On Mon, 24 Aug 2026 09:42:31 +0200, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> said:
+> > There are handful of drivers perform the same check in different variations
+> > over and over with a potential to make subtle mistakes. Unify the check by
+> > providing a new helper and convert a few users as an example.
 > >
-> > I can see that for single lane function. But for lane-pair function,
-> > it's not a new thing with nord, and the naming convention seems to be
-> > without 'l', based on what I see from shikra, eliza, hawi and maili
-> > drivers.
->
-> Hm, seems like that happened by oversight, but yeah let's stick to it
-> now.
->
-> >> The bindings change must be separate
-> >
-> > I understand that's mandatory for new feature changes, but for such
-> > a bug fix where both binding and driver changes are closely coupled,
-> > it seems more reasonable to not split.
->
-> Up to brgl
->
+> 
+> I like it. With an Ack from Linus, I can take the series through the GPIO tree.
 
-I'm fine with this. Krzyszof, Rob, Conor: any objections?
+Thanks, but note that I need to either drop or redo the patch 2/4.
 
-Thanks,
-Bartosz
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
