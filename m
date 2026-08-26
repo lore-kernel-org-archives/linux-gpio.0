@@ -1,109 +1,105 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18553E4C99;
-	Wed, 26 Aug 2026 10:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C012641D106
+	for <linux-gpio@vger.kernel.org>; Wed, 26 Aug 2026 12:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787741596; cv=none; b=KUFF0zpxhj6kiVIxuCowyexEsigRJgkrYOmi6Qq/Z2aFgoTNj3SHCtMbyzIGcyQjdB5NPOfNysctmmUApUO9gNGQBOl68iSS68aMbX3+zccCyOqvFRQe0Yq2eO66gQ7TOd1LhJePJZliB9a01ZIqOI8t7Jga/Y9WKXdxvyUU8X8=
+	t=1787747136; cv=none; b=DlWD2k7P1E/NjM2TYMrjhJmiVOPfWBALUO4O+Pr1KeSuABb8kf1gY09HGsPdI/1NxLu9Ir6F2KqGrxGRWVyHuMrxIYgeHdWHe+jg6hbpkf2q7VP5Uc9X1EUDHBEgQAXXz5ptqeEIj1DLu/+mr9l+vuqx1q9jLh7ACWXNGoFh/Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787741596; c=relaxed/simple;
-	bh=/UacBLoGcMB9zLAU9jMbtSM3o5RdK2Bxf4dOMT0ihgc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:To:From:
-	 References:In-Reply-To; b=tg7444SCPZF0iT0yxdcoDaAdNBoTroz7RACEKpSbpanzRYJHAz48ZXsCctX16s2wLafdN5z+V9kbF/ANA4fkuYXVPAjfQRbgYzhHV3eZ7NfwYB0hsHSKeSDrgJQQs0je91BVHQFwYGOyd031itAmjeoAS988k1UjOc1Sug4hR7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YwzOoaUv; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1787747136; c=relaxed/simple;
+	bh=G/4pYCI+p6biU0oob2SAOB3uONa8AVChe5krxzG7DZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cDRd2kkz6JN1JHDM1qFWF67kfOtYcKjKKUhof14ZLxcSyKsm57gTobWh9eqArHtoeackI6+nl6hNAccg27aA9tO6iWl6Wq2cmBwPlxZupmG9navzSD0K9lv20GiAJvGgRLoGE3LjTajoOQ5kxNb2wAKunndbPfCX2BjCNrDW1+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhUMNIPi; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YwzOoaUv"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 64CC71A1841;
-	Wed, 26 Aug 2026 10:52:57 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 28841604ED;
-	Wed, 26 Aug 2026 10:52:57 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 23C1A11C7AC46;
-	Wed, 26 Aug 2026 12:52:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1787741569; h=from:subject:date:message-id:to:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Ey9RYH2RFNaz6azoD+KUbSwAq0kYLs0uc4QHAcA42gw=;
-	b=YwzOoaUvCBxvOqya44IQRmcChvhXL8vgHGxbcCmbhbmECnpLcwRQMcP313YXEjBjIbGjtb
-	I3Wid39NLAGygcDi2YmXtYo3AnvhAC8qiwoT3eV4cBJRzRjsj5XRyCYrw6G4qiA7F8Zjly
-	vEXRD7XVgML/YjQ2Uyrc+ngfVs8rycv3oyvd6Hm0WMNZvz7S4w0rvpxlqOaEK5j0BYuwCJ
-	L8Oeso8gBo83WUUPKcbxUYj/zwWIS4h0vUpJl6+JVbBurpBXA6XJKvKWQUQD1lfPaBrb6L
-	0YOhDZdzMEyQk7IuWvSDDzCZv3a6OjEkFdKfO+U7ZZbKTgyueYwGfJ0tIk2zlA==
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhUMNIPi"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-39686abd426so426412a91.1
+        for <linux-gpio@vger.kernel.org>; Wed, 26 Aug 2026 05:25:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787747134; x=1788351934; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=QLB1RbqXq7v7CNRa3wJukW4z5hiwan9Z3mACetA9txg=;
+        b=HhUMNIPiTSQVpBDqwuYr1bDNISgpuMItOcXrP8pRE91ZF2A1Kz6ESIQ9nndGokElNp
+         61Nv3Mlz2+BCWHw6ga38qZHnQR1hd6hba7qAFyQB4Wq+eQX1ZYa3X2E8qCEljS/B2v7R
+         auFYK8/B3vBhgBgOhDQhgiaOgIehTTNf1QYW5E8Ya4UfKmicEn/xdluepOMRoN78KvOl
+         ukDq7CEomaNwUfDkNKrF5IgODpG/RCs5J5ehaJUWOSe8UeJsz1sSMZD0mmuJTlLLBxo1
+         TgRc3X/ilTb5y8+QGHmu/R7oqlCI0f6h8jL3lQEZOXTHMISfPV4o6Shkfq3YFCr0HEN5
+         ffwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787747134; x=1788351934;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=QLB1RbqXq7v7CNRa3wJukW4z5hiwan9Z3mACetA9txg=;
+        b=kRZW1BJJdX4nIHZhcabgQtBsOuszonSYpdjn4Q0NmwYvdQXi0GFKOSkULxhhbRldyV
+         CUkJwWczscd2j6nZ7KeejC55IDfD5Bw1NThaRQo27Bpsj/pQODmZZ4oSv5hU2MjGrjq1
+         vkG/3Ji9PhoW9HT3wXbCNHikbgXB7OPsqlkr9KPLStp7lpRZHm5CPXVbplPMVaZL4c5n
+         FQKIbkbJMG2g1UjNL2Uh+7wnDY26iCn1bMbcT4kw5WcYE006U24wMqhcnkeb1GSwwPNA
+         bYMsnibV59gxW40jvqR5QD/3Fu5EzhK9dr5KsPvE+TpqFIh0DMYkePfFYUxcLOouIBiz
+         u1AA==
+X-Forwarded-Encrypted: i=1; AHgh+Ros34MGPEX2DSTqkCSJWGxdSjDn4DN0cIVrTtxUonv8UPQchCSgSDIMpMy8PG7ahweZ+vTW5Y4t9xVs@vger.kernel.org
+X-Gm-Message-State: AFuF++nqV9+/BRlLKP1Qe/PbFYX8T8SCFF6bDiW2ziOPchoINGisKB02
+	j3ePz0MqdA/PkZ4Cpkj3tvPkRjkqK6s4OY2CKKSuql3KzZp7pKV0TlGk
+X-Gm-Gg: AR+sD10P0d7WXgY7Wtakyc3ePyRAbs5N2L5H5o4zt2ShwQyOXGgrmHD+6WQwOXfryuL
+	Qs1wPDv4LGlCbe26RaS40uvPZhzkqcTT588MUeIRQUuU81ojIAlVmP/IF/jjpDY6Z0nxs/mnLpF
+	RwX+zGH8pzrQ4OoT1uKk9C1NImNXPSa6Op/+qU4x7N/wXfVy49fjMZnVYf3bNu5uY0HPrlz/5Xs
+	/lRv2MONHccWiUaGKQt/uFf6BJIyEvHJpRU0m0KCAH/pPL2j0FcUpcZarim3jeJBn3RlnLEGiAt
+	V8CuS7C8Z+iYYjK2pNb4XgAqoGZ250VFfgUPVAw4O+4D+u2uvj71eRKxwC09MVQcG1yTRLtyY5q
+	EpeX9ZOf9IJJizsnKAeWANWeKaoo1gNJDz9ypNuV77fDvt+TvpYrtZC/pKARe0O5T7tDYSQwOIv
+	CJIUOGj8nPyqn71PLUQy9s7nOFhM6rc0yHgL0VyKXiCPU6gpg7QvfUMa5FCwTXKYKBUquiinIOI
+	g4QQt3FZfj7QW1mELqnA2OCVi0K
+X-Received: by 2002:a17:90b:1dce:b0:381:cef1:11ac with SMTP id 98e67ed59e1d1-3966d3e1cfdmr13717327a91.10.1787747133812;
+        Wed, 26 Aug 2026 05:25:33 -0700 (PDT)
+Received: from google.com ([2a00:79e0:2ebe:8:5877:641:857b:1318])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-141a905c18bsm8457963c88.14.2026.08.26.05.25.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Aug 2026 05:25:32 -0700 (PDT)
+Date: Wed, 26 Aug 2026 05:25:29 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin.sipraga@analog.com>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, 
+	Xiaolong Chen <xiaolong.chen@gmail.com>, Yuanbo Ye <yuan-bo.ye@motorola.com>, Tao Hu <taohu@motorola.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, linux-gpio@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: adp5588-keys - cache GPIO state before
+ registering the gpiochip
+Message-ID: <ao7bNPVKN1q4dWOS@google.com>
+References: <20260818-adp5588-gpio-cache-v1-1-650a2674fc0d@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 26 Aug 2026 12:52:21 +0200
-Message-Id: <DKYTHI4WWQ6V.2CAMI1VACSS7N@bootlin.com>
-Subject: Re: [PATCH] dt-bindings: Drop redundant white-space around values
- in <>
-To: "Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>, "Suzuki K
- Poulose" <suzuki.poulose@arm.com>, "Mike Leach" <mike.leach@arm.com>,
- "James Clark" <james.clark@linaro.org>, "Leo Yan" <leo.yan@arm.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Andrzej Hajda"
- <andrzej.hajda@intel.com>, "Neil Armstrong" <neil.armstrong@linaro.org>,
- "Robert Foss" <rfoss@kernel.org>, "Laurent Pinchart"
- <Laurent.pinchart@ideasonboard.com>, "Jonas Karlman" <jonas@kwiboo.se>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Luca Ceresoli"
- <luca.ceresoli@bootlin.com>, "David Airlie" <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Michal Simek"
- <michal.simek@amd.com>, "Andi Shyti" <andi.shyti@kernel.org>, "Jonathan
- Cameron" <jic23@kernel.org>, "David Lechner" <dlechner@baylibre.com>,
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Andy Shevchenko"
- <andy@kernel.org>, "Dmitry Torokhov" <dmitry.torokhov@gmail.com>, "Mirela
- Rabulea" <mirela.rabulea@nxp.com>, "Mauro Carvalho Chehab"
- <mchehab@kernel.org>, "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer"
- <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
- <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Lee Jones"
- <lee@kernel.org>, "Xiaowei Song" <songxiaowei@hisilicon.com>, "Binghui
- Wang" <wangbinghui@hisilicon.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
- "Lorenzo Pieralisi" <lpieralisi@kernel.org>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Manivannan
- Sadhasivam" <mani@kernel.org>, "Dvorkin Dmitry" <dvorkin@tibbo.com>, "Wells
- Lu" <wellslutw@gmail.com>, "Linus Walleij" <linusw@kernel.org>, "Chin-Ting
- Kuo" <chin-ting_kuo@aspeedtech.com>, =?utf-8?q?C=C3=A9dric_Le_Goater?=
- <clg@kaod.org>, "Mark Brown" <broonie@kernel.org>, "Joel Stanley"
- <joel@jms.id.au>, "Andrew Jeffery" <andrew@codeconstruct.com.au>, "Ryan
- Chen" <ryan_chen@aspeedtech.com>, "Billy Tsai" <billy_tsai@aspeedtech.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, "Daniel Lezcano"
- <daniel.lezcano@kernel.org>, "Zhang Rui" <rui.zhang@intel.com>, "Lukasz
- Luba" <lukasz.luba@arm.com>, "Boris Brezillon" <bbrezillon@kernel.org>,
- <info@mocean-labs.com>, "Olof Johansson" <olof@lixom.net>, "Shree
- Ramamoorthy" <s-ramamoorthy@ti.com>, <coresight@lists.linaro.org>,
- <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <linux-i2c@vger.kernel.org>, <linux-iio@vger.kernel.org>,
- <linux-input@vger.kernel.org>, <imx@lists.linux.dev>,
- <linux-media@vger.kernel.org>, <mfd@lists.linux.dev>,
- <linux-pci@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
- <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
- <linux-spi@vger.kernel.org>, <linux-pm@vger.kernel.org>
-From: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-X-Mailer: aerc 0.22.0
-References: <20260826102044.142986-2-krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20260826102044.142986-2-krzysztof.kozlowski@oss.qualcomm.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260818-adp5588-gpio-cache-v1-1-650a2674fc0d@analog.com>
 
-On Wed Aug 26, 2026 at 12:20 PM CEST, Krzysztof Kozlowski wrote:
-> Correct a few white-space issues around <>, which will be flagged by
-> dt-check-style.  No functional changes.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+On Tue, Aug 18, 2026 at 06:00:02PM +0200, Alvin Šipraga wrote:
+> So as not to clobber any pre-programmed GPIO state in the execution
+> of its gpiochip ops, the driver caches things during probe time.
+> However, since those ops can be called both during and immediately after
+> the call to devm_gpiochip_add_data(), it is imperative that things are
+> cached before that. That's not the case right now, so reorder the two
+> steps to prevent any clobbering.
+> 
+> In a conrete example which motivated this change, a bootloader was
+> preconfiguring an important GPIO output to HIGH before booting the
+> kernel. Linux would then inadvertently set that output to LOW while
+> configuring a GPIO hog on a discrete GPIO line within the same 8-bit
+> bank (because the cached value was 0=LOW).
+> 
+> Fixes: ba9f507a1bea ("Input: adp5588-keys - export unused GPIO pins")
+> Signed-off-by: Alvin Šipraga <alvin.sipraga@analog.com>
 
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Applied, thank you.
 
---
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-- 
+Dmitry
