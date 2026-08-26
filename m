@@ -1,145 +1,132 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1503C2B95
-	for <linux-gpio@vger.kernel.org>; Wed, 26 Aug 2026 10:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CCD3DA5A7;
+	Wed, 26 Aug 2026 10:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787740706; cv=none; b=i5iGrmmkv020gzBybGpmqsLLqM0qtnI2AsYXDPlhYbkJAuHhGquO5UuuJS7f4PukyBupbnIwR/IwnIgrwKF9xFUGl/SYTZXFEVL0qeQbxm3ZbBDggGw8N7e+Gb/SJNCfAiNyVm7NnYsoPNIvYqhaUyC6aGcUakkWqg3YQ3GVgas=
+	t=1787741322; cv=none; b=p+mnZ/NI3Oj+QPESbuQKeLLQkNwpllvY0zp0I6M3ICmGTiX60VEjCT3b/MmcNT5FzTC1uq3UZtt7zLrzfL16/f1ePWVYya0Ynb///W0KGxlCsAblx8C7AI8PaQ2fmKmAR4kvIMYRRPlkwjYEjKrMiBVMOeADE3oHB7K7TL0QsVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787740706; c=relaxed/simple;
-	bh=lpZdeKvXDp1Rqt7xvxmDntNNxrJKzFKa8T/F8XytsRs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BGCCFYx+XAVoVISsGP4onPJIVH3pi6hpddc3mYofVGL+Marv8if9ay56RZ1dmCdt/ClomjB1XHCR6uGO0gX5MmmGWxFKVO6fDwN4N/vXnuRydGAV5/AC5BW6ga5G1eYecetmxVBf+CWL7e9dxWkxYd5xkwJ+xjwMamJGbe5ltas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=G3Gadpij; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=e8mpWcP6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1787741322; c=relaxed/simple;
+	bh=dp2d4GT6xfse/AjmR5CCihdRxLdkONQ6FKx99trQjQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ot28dRxO0gSwknRmaMHEZyxq1OCo/8pdE2YOiXcRG4EKyVwKXvP00o1peb2sowQyaoiSzz4MtcRPx/rKzAfm9FcqQ/jFhu/GT6p5bLlZf6zhvc7m8rjr0ZwXT9OMHbWKqpEv59LKdsOvJgG3XFZdx0QhkPU4bwtmKgE4laQWUFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbC9eXOZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="G3Gadpij";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="e8mpWcP6"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67QAH3If425204
-	for <linux-gpio@vger.kernel.org>; Wed, 26 Aug 2026 10:38:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ILb+u0DKGfjMc5UGDHKo8NPVlS1H9PeiuXuTqoRw53k=; b=G3GadpijslrwFxR9
-	HESLmY6CUDU0YMM+x4D/gXW9fPPKcq069uvDNU/3Y+PBDNYh+t/IIsEFMlqvK3bF
-	SwkSJWzjJi8CD6ynPaZKi/xJuGZVk84j2kcpUi/mSoKV+sxH/glOSipBu9xrCj/g
-	3Qll7t6WwHiSlBoGFCpF3bElsMC4LRWOKaehMxUjh5x86gQ3WKaTxTtmIA9lvJWO
-	0XhwHi+QtGPZuYUO/K/lda8ApDYJmuZyEtlBW0pVzKqoJyrbUBh2ChVEXnoyqYOW
-	9GezEhx19UZJWbCNkh558FYqFu5ISW2O7wMd4xpMcdMQzpXtrsMJiCbal0WGy6UR
-	JkYq0w==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g9fceuf57-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Wed, 26 Aug 2026 10:38:23 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-52f64c48bf2so354361cf.0
-        for <linux-gpio@vger.kernel.org>; Wed, 26 Aug 2026 03:38:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1787740703; x=1788345503; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=ILb+u0DKGfjMc5UGDHKo8NPVlS1H9PeiuXuTqoRw53k=;
-        b=e8mpWcP6S32HGvYRkxnmMGoWx8+YM1uBIBDdKKWbRoGZ59HNn1PlndSaCeJn6TqZA8
-         dEuYflISGTgrSJePpq6vbDISk2r7apiOR2f2TxEgyU5iLnbjA2F395CrI1ny/rvI2eUA
-         B/e4RQm3Moe+B2Zxm4rRltMM+VwRQYS0e7Pq8Xjd6DIG/DVeJWiQ+WeVSZ94Z75Nbyiq
-         thnDB9lHHr1+/uAgjShD0uXP14Vv59alGYHcwnU5s4jii2dnlceRXQFFlYLgRJG5v6Ze
-         P7fq0tOSabO4GXI9wrYr3ibTl9LB2aiSJ5uC11sRFcuVJeXuIwzoQuM1pmqrx4rqo6/t
-         CArg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787740703; x=1788345503;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ILb+u0DKGfjMc5UGDHKo8NPVlS1H9PeiuXuTqoRw53k=;
-        b=Yk0Rwc3EX9MRU4lGODL6MwHN17NZNiCfRIPBWdXPlkezqwB8b2+QM/pNeD69or2Zpw
-         QI9ttbIDixPHTGjwxakQ0TBjit/rFNPQt88QvHNejlOMdyJ6bPcsTyygIjVMcOcC1euT
-         T4V9SXq4zbeA7F0cpJ3B9oNdoYh6qPeq5yXxxZ5TkJABTnzDLOTdxcBidw3xT/4HnWwy
-         rsO1+XbTnLxXAXIsbnT9Yjhf+WUWRGQkrCH5lnSgj4FUYTPh1N0mmxFsY32nHLOLmzl8
-         YbAljt1gHh79cutj8UJBM1rQIAG8P2fvWXExKYuqcDtelZw0+iYrDRjiCPRLpzNBYh+y
-         aU2w==
-X-Gm-Message-State: AFuF++n+GTwV/+evROiuICNQT16q6fLzQMe1R8yT5BDVVmvgIPD5bWlB
-	Kbs5Mmpq4pT3X5Il8Mh9f2Dq2TRV63AHVbAeH+Ytt6mrZbzA3U/c5gCQTPyx0unO7z+ECjIl70A
-	gH4RxZuQ676AOxK0MQhvlbF012dcwTbYFlBH53qym9/6lQ28zxYiIM8QPf+cr1u1CFRSNBMkm
-X-Gm-Gg: AR+sD11JpPcXzGEaa/hTwiIceLWsCYMQrxfEelu8UfDiPgEdM/NrX9FSfM9Yey+ErIS
-	PXbwzD2iFqkhhj3qFS/SwGpQHe/qmGvfHgr3sRBI+J8dWhhPMK1Ja/1KtDppGJ8DPn0WXAnTNeI
-	4l0x8LrZIVIw9F0cKuGoJ8B3KAyUD88QVm9rux51aFCtJP6Edbq/zk0CPqhpXy+p+5COwnQRgOE
-	bk6I0/VzIJKxzTRh5H6tKHpc+opsa+J9ymFPhG2Wp2uXnWvvZYkhtM2+QMB3wv1NqNuSWwjT4KV
-	rOqu30ObkY+Ml5McVNyrHqaFQGEF6I96HL0M7WDUMGdMchqpPJAPPN754n4CHelx61PddDiejp9
-	cyVwl/MrKm4NvXW4XEmcVMGZwqFQ=
-X-Received: by 2002:ac8:5d53:0:b0:52e:1039:c45d with SMTP id d75a77b69052e-52e42422884mr49776501cf.43.1787740703163;
-        Wed, 26 Aug 2026 03:38:23 -0700 (PDT)
-X-Received: by 2002:ac8:5d53:0:b0:52e:1039:c45d with SMTP id d75a77b69052e-52e42422884mr49775981cf.43.1787740702739;
-        Wed, 26 Aug 2026 03:38:22 -0700 (PDT)
-Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:dfd4:a0a3:2df2:7724])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499dd5771a3sm12616865e9.4.2026.08.26.03.38.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Aug 2026 03:38:21 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: linux-gpio@vger.kernel.org, Edgar Bonet <bonet@grenoble.cnrs.fr>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH libgpiod] build: do not require a C++ compiler if it is not needed
-Date: Wed, 26 Aug 2026 12:38:18 +0200
-Message-ID: <178774069503.49994.8214376319796208344.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <0eb5c26d-731c-4ebb-be34-76466cf57720@grenoble.cnrs.fr>
-References: <0eb5c26d-731c-4ebb-be34-76466cf57720@grenoble.cnrs.fr>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbC9eXOZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58DB71F000E9;
+	Wed, 26 Aug 2026 10:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787741295;
+	bh=2PBENmYs6fiknMrazp/50bVkNc1sBGJoebvvjy0eKx4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=CbC9eXOZ2dL6OuBJ1bWchF5seeE8ifsrT8Yw/a4Qo3Y5Rs2etS57xSuEdgQns99ei
+	 QVPl74HmDPUGNZBf7+WL1hBpXywRwssYdENv9y3V+JkVXQ3w8kTmaN2R7sWY+TBwJt
+	 rpd+iGj4akwD2mqMk+XymnQmIxApZFfAWUutiB9ezEi8bwZpp00uztIbITa3g+1Fx7
+	 es9x6uOFAGNXG4NWRTnEbcER/UYbhW9caRHYj7iJhyEeIyDfIV9wtbDJ2QbkvyWlx0
+	 dpH+wik6piKWJNDJwpfLl9XKfDWmEHKEB04XxOxRSgTnJpeatCCyZiHCa7kSHWZp/A
+	 Z2tQRT+7IaTNA==
+Date: Wed, 26 Aug 2026 11:47:59 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@arm.com>,
+	James Clark <james.clark@linaro.org>, Leo Yan <leo.yan@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Michal Simek <michal.simek@amd.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Mirela Rabulea <mirela.rabulea@nxp.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Lee Jones <lee@kernel.org>,
+	Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
+	=?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Ryan Chen <ryan_chen@aspeedtech.com>,
+	Billy Tsai <billy_tsai@aspeedtech.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Boris Brezillon <bbrezillon@kernel.org>, info@mocean-labs.com,
+	Olof Johansson <olof@lixom.net>,
+	Shree Ramamoorthy <s-ramamoorthy@ti.com>,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+	imx@lists.linux.dev, linux-media@vger.kernel.org,
+	mfd@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+	openbmc@lists.ozlabs.org, linux-spi@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Drop redundant white-space around values in
+ <>
+Message-ID: <92dfaa64-18c6-4ac0-8b17-f0a202dcf737@sirena.org.uk>
+References: <20260826102044.142986-2-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=a8AAM0SF c=1 sm=1 tr=0 ts=6a8ec21f cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=a2Vgwq0GL8OCKbOR:21 a=xqWC_Br6kY4A:10
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=0_FRFhzYRNHRsMAIjW8A:9 a=QEXdDO2ut3YA:10
- a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODI2MDA4OCBTYWx0ZWRfXwQ31pbaPoRdI
- xyR6LgY83HUCEsV5GBOKIDq8krzRtF+X/5J8yJ0jL1XpGEDVA9JJ9p2bLA8v5lowTLAy3eqWknA
- z1ICiPsifijJFcQw5Xh5vlytjwkdgvY=
-X-Proofpoint-ORIG-GUID: Pevn6Ij1dgYIiR_XBnwTZ6MM8DkuqnEn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI2MDA4OCBTYWx0ZWRfXwir+oMFBUDFG
- wfyRnuOVxMZIufJzZGLeWcMo0KOOAZnKZ9h/QEINzk1rSiPSD16Z11/Jx5KpfHt7YAa2DFxzYSp
- VuG8aaU3evrq0txV3ikYDUFsrdQLH6BCR9NIp6UrNR9Dn7XF1xLl5+/piyDhSa7pyo+snuPMZmP
- NkagdoFwc0za+46ZiEx0lO7aCx3lehN3fKaAqs0wgMie/Q54GaLlGWXgWi5i39H0Y9gAxfYdsEW
- TTmn6C9PQ7R/mn3q87l2MQVqHPyfjcSXQ3KT2o1B04dI+TJFpPxpcNWzamenHK2MJtgAjmFuc01
- tQV63bxJqD/3g+bsYLXtxE5ZMABocgu+4iKFgc3eMSclBKTX162lUbz9rZ4j19Mj68wXBZ6cDq5
- 8szcn90zQ0fCFHprC5C06KzpeEs92iUsqyXhapvA/J9Zu7dbG4w2VnR4qDjdnK0gx4Exb7RZetS
- nVWHGtzEUr92NzO35Zg==
-X-Proofpoint-GUID: Pevn6Ij1dgYIiR_XBnwTZ6MM8DkuqnEn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-26_03,2026-08-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
- adultscore=0 impostorscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608260088
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hP4PYOBKxN+fM2z6"
+Content-Disposition: inline
+In-Reply-To: <20260826102044.142986-2-krzysztof.kozlowski@oss.qualcomm.com>
+X-Cookie: Obey all traffic laws.
 
 
-On Wed, 19 Aug 2026 22:13:55 +0200, Edgar Bonet wrote:
-> Languages specified in the meson project() function are considered hard
-> dependencies. When trying to build libgpiod in an environment lacking a
-> C++ compiler, the build fails with an obscure error message ("ERROR:
-> Unable to get gcc pre-processor defines").
-> 
-> As the C++ compiler is only needed for building the C++ bindings, do not
-> require it unless the option bindings-cxx is enabled.
-> 
-> [...]
+--hP4PYOBKxN+fM2z6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Applied, thanks!
+On Wed, Aug 26, 2026 at 12:20:45PM +0200, Krzysztof Kozlowski wrote:
+> Correct a few white-space issues around <>, which will be flagged by
+> dt-check-style.  No functional changes.
 
-[1/1] build: do not require a C++ compiler if it is not needed
-      https://git.kernel.org/brgl/c/4946370d06d51e3f9b003e71da416a6dddf9e4bc
+Acked-by: Mark Brown <broonie@kernel.org>
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+--hP4PYOBKxN+fM2z6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqOxF4ACgkQJNaLcl1U
+h9Bdwwf+L6MG9Bumzzk/fUvAIBXVI/dikPCxxDKcuqi5O/yVCeQWiMHK4Kp/ca3l
+imB6hoNyz9NRQmnZ45EXJhpRnz1LbTO357uK3N4zx/bi7V88563ixNa8HQIJZiCi
+yBPtE5ToKgi349/KXca5/vSKWGfyCnD8DRL3icILcg9GwxUC14PEo2WFYcGR4/JP
+ZmD11XU7MLSAhan3AUqcBiK9d+baT2FfEwmxCk4tm3wswPG29CNeUWP8OU145Yuq
+YcOeBmOpgMeDFyqxfCLMwJTToaxX8FcAn5HDjE+mJ+/pTLge8S8d85cmy7dJrUoU
+IMs1ngofm5Q82f4e9E8pPeXEh4y1iQ==
+=ZN0I
+-----END PGP SIGNATURE-----
+
+--hP4PYOBKxN+fM2z6--
