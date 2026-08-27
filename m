@@ -1,71 +1,82 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83137137923
-	for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2026 20:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375383932EE
+	for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2026 20:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787861584; cv=none; b=oU7l+vX6LHIpgw+v6KxlSQCk/ZptWgctAxGQGVqCz4FE1tU/rmABT71RQfHcppVs9+389/8kK1viSajjjeClKmaj3wr3YF6zTBt+79rpBQPmlurCZrCvtfyvwIlJTQ0DVCrg1kQIUYS6z55ve3+wGJmqfCjewa6FY7ajTJuO2v8=
+	t=1787863194; cv=none; b=LChHNQ0v+5O/gH0EDdDV+De2YkMU3Ao+w+YRYvyTIbM5v9AySSSf8BJtftpmG9fR9XjLBStzwgBIeOknsDY5+Zih0Q17P33vQgneLB4pcBshKHImm5/8sFQQO8Mlo4Vg6k+iQVZvT4SX6HQ/qUTKihiRuPqGdRV/XWx6R83Zwns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787861584; c=relaxed/simple;
-	bh=U8UBuySMbGc/UOzxYrgjDZfQtW6BouTJtNoVMuBFFW8=;
+	s=arc-20240116; t=1787863194; c=relaxed/simple;
+	bh=/vNPwhkmLtCiGk6PhShTSyEnp/kNV/OOoJOfRAtZ5IY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FWOdejVsg1swhsUYxIFoTA6kKH0RPPBRi9GJSDyOxRb2acxINxrPHbyFHQQK9+MSFd4hLQ9cY4FccoIu8DwIS3I/PKUKjfF7t++ghosk7WR2xk7zWwMKAuwrSxOQjiAoUcOpIXxxnovgTiz5jTwjn+p3ZRkTTnSwKl6/QBrcGKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k4eGnoDj; arc=none smtp.client-ip=209.85.221.45
+	 MIME-Version; b=Gaibthl5HIMRtaQBa+emV8f8ZkjMs9JfgoNe5rZ198uu/kor4y7T9aQQCydhJJDIUhnDxKTbCAnoWrEN4bZ9+w6GluyasKDLRmZY7INhL7+N9iXWs9XX+90OU0Cg2jyMvQ3K6XXT6PN+Wb+B5mcO/Q0GjERrppayNu9brxUiASo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLizQTPv; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4eGnoDj"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-482e2fdf6ebso220654f8f.1
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2026 13:13:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLizQTPv"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-4798bea72f9so187240f8f.1
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2026 13:39:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787861581; x=1788466381; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1787863187; x=1788467987; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=3WPvnxadCbM9/Z4zsvO6XezoC4evEDdj4rVtjW+XH0E=;
-        b=k4eGnoDjPEMMJQuuHa9jOSeFyrV/vb7tlNaK7suV5p9gPUejK6Kjh8c3Xm5j51hATW
-         NBCfEdQ1AufiQdUGugnKfYpOydaNC3IYn+YnKi9sIl9CdFb2gh7I2KzpmFMzbSEMr8Dn
-         Y/mBL0EHuaPsLRaD4GtHxmUY8B+zoW92gzdaPWkXfpre1NECc76xJlZ+Dlc+sMjf3Kau
-         +ym7cFwEWjhKVz5ydk5bZAqZ0rWaBXHoW4ljUaQi9z66NjuU4jHv/seNXlxLAsp4ZAqV
-         +zY9yvdhI4ONtmh2QeZHqPnVxijTKx+egrYR4kzEMmWc1x5Mw0V9f68skK0LlEsEbVpr
-         jV9g==
+        bh=/vNPwhkmLtCiGk6PhShTSyEnp/kNV/OOoJOfRAtZ5IY=;
+        b=dLizQTPvZ4KhTWe+uxt4RgwP8RN7sKAbOihi7TyB5EVQFRpGcri5kkS/JFzumEbXCQ
+         NIQgXVaI4zW/KrV84TfGs2af1THBt+YXG8aA43WyFlnzPveVbd30q3HpERflxo2GpcdT
+         KQIK/I0ePYbTJos5HW7zvfK/BOk0g6vpjS3bapI+szQpkcPrHSG0cOFco2t6V4naWQKn
+         ZngIITy3SmGws0le4nHJKwGbmkWHCOSggT7BYD4p/o9YdA+coQj3UI55iIiQcsNpyhSW
+         SWq6D+kYLvA+MpMRE9a28F9F4UgMcVIsE7p+dZYjuZlBINqGCy+Ms6j7T2/o6YkHDZNY
+         ZItA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787861581; x=1788466381;
+        d=1e100.net; s=20251104; t=1787863187; x=1788467987;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=3WPvnxadCbM9/Z4zsvO6XezoC4evEDdj4rVtjW+XH0E=;
-        b=TQfJJkxaJfs/K+pbSfQsYzBBsZfI+i7PYhEXkkG4YjpCrb8LGrlM7z4K0j3/Aa4bpN
-         1DgnionJCwHz/khc2ITk/+cNKjoF5YscVj+Dylp+bYeP40DmorVql41BypmGOCK7ghiK
-         Rez++lMHExpjyzH+h3tPj8PfiKwapcesTcuj9Lbc5W6DDiJBE4fnFIITVqAqisINjP5a
-         T+42/mxZpVkukGB0VXlESr+JhzgvuZxfZPpCkLRZx4GFw0tvbC1yjU5H/43o6+NyN8/i
-         we4e64Ko1/Bz3vfqmZEp+vjW2nJuITXFKMcSvPzg8JKDbs8Z90y++4ImUZm8BXLB7AGP
-         RPGg==
-X-Gm-Message-State: AFuF++k1uJtG/iW1eVCh8aadPMVsQb8PqpcA2vidlO41oyc9PsVEfFRM
-	M7jTBbTLw0RdCHUWkwr0OGRFMiUkpBeHWBw0uML3nODPmdw8kB2+CDW5SQZ3ag==
-X-Gm-Gg: AR+sD10RMj/vIOIOJ6gMNHBbefvxzPU14Ww2oUu+iVbeK8vvIPZkMpEphQDS48fUg+8
-	1bOYUlcIyS+/7eYkE0s/a9taTPxZkpIK+ysQLZdIuEpFnTPY7ctkAujgt3Al3CnbCyoaTm4Odlz
-	aHgxSDZESmoYOqpMuwjNj6O9gtAjR9RZ3m/LxRXqDnjeSa4pE1aVHxu65/l+f9myK9etXHzeGB4
-	+niGa05SN3YphrisyP5wYRDPtB7ULLIEOnmjf7G30oUi4LrRX56IumiohRBwA8szBbiuziHFUE8
-	EObG3sGjSrEabb+fmaVWG/EOJPY1oIIZOd5275V1zjipxnDoShVoYJv4DV3WNEb/+QgxaisndNe
-	Y6wqncbVx6EJPP8s6t7i8cMFaOK7bQV4yhLMJ2aE+V/gjhHY3fajUeNGo1jiIFPMcGgFHa1EK45
-	FV99Oh/wbCfPLv5XamdWGS5Aw63X3fXEMPDROYNxw5LwI4OLtX++NalHGyJoz87GBXew==
-X-Received: by 2002:a05:6000:18a6:b0:482:d900:6558 with SMTP id ffacd0b85a97d-482f7984d0dmr1666760f8f.7.1787861580508;
-        Thu, 27 Aug 2026 13:13:00 -0700 (PDT)
-Received: from deb05.proceq.com ([213.160.61.66])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-482e27ab4dasm11379085f8f.15.2026.08.27.13.12.59
+        bh=/vNPwhkmLtCiGk6PhShTSyEnp/kNV/OOoJOfRAtZ5IY=;
+        b=W2o7L1wWGGd+HHDteuw+DgfB2by1ptewZiWLwxd6BvxuyhTOGhjG89yuP0yh7Mj2e8
+         5ivDBE3x+7RZ7KorllEkQ2efxJwvkT9tUuq7hvPuz/Chi8FzNcimyHK+AcqSdcOreMu/
+         sTnMVpr21dy/qfM+tfOkCOgRC8weOClDvEEVA3VgiWXp/Ofrf8mJN8UkNs5IcCGd9R6R
+         s4QaTCIQq2N1+o+7ebV5LY+FLBjvRcqWJxKTd30Xm1UvaDlydmhisDBPRpHkr5D0mwO4
+         IOdpV2T/C45ECcpOE45uJ5RXg1z0xDiqcCGUqO9p5/lu644x3aT+dXWr/CbpxvpMIf1r
+         eipQ==
+X-Forwarded-Encrypted: i=1; AHgh+RoU89TRSiTWmrvFaY2RiMSQey1IUZ6Axel1bKk9gVD6nlJpoJnnypWQv2ccxxRZP8Rx902/RuafPWhg@vger.kernel.org
+X-Gm-Message-State: AFuF++nqQkCTr6EqvPqcc2hzzM9W6x6s1rhmXJ6caimKQBmh1kXTA0+y
+	ZF7CpcigSQFTqbsormlJvQnum1QggmOpFJelJk3OrYUJU6dcTsYO2byo
+X-Gm-Gg: AR+sD12icwVwR8JS/8bFDKCM4/Ag5NCtKlXv3KdjX5YHXjS/IQ2nVuYNNjM67e/PKdh
+	ERcreJiC/AkYVFVrIs7rS9wUxpuO+1XDqCJRG75zTdB4wI1PrX1RoV8U7sqUzh1mzHxQ37L6knI
+	tNGIdmBeGcqQQINIDb3uqSdE478307FWzD1Dd0lXXtHVVU05KZMVMOebWfrm+5Gi59klNk8JY71
+	PfsHtnW4kom3tFESKYQP17zrFkrIKc8MkiRcRfjX4MVTYmackQgZRHSgVbMunDGuHuT7D8fd9aW
+	aXc4LTpnE2OfwKaBIxbU3NSBebR5mc5AYC3mv2jxZiXWagg+FWM6x51D9LkHyCtZrnslxNhjB1j
+	JtAdHzL8kpO1NnXLYcXzucslSan/SyG9neTxcFiR7qsKEzkkMnPyQo6sdHDH3gjAYFgwqF4W8+I
+	K1NWb5XQw9o7wQMEi8DFnvgiKwAjpmzWtYJeJVGMIrzJNRjLOL7GphdUkU0r4=
+X-Received: by 2002:a05:6000:24c6:b0:47f:4919:d5b2 with SMTP id ffacd0b85a97d-482f79870bemr1673162f8f.1.1787863186967;
+        Thu, 27 Aug 2026 13:39:46 -0700 (PDT)
+Received: from m2.. ([37.142.156.156])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-482e28dc10asm12012065f8f.19.2026.08.27.13.39.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Aug 2026 13:13:00 -0700 (PDT)
-From: Mehmet Fide <mehmet.fide@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: return quietly from gpiod_get_direction() without .get_direction()
-Date: Thu, 27 Aug 2026 22:12:59 +0200
-Message-ID: <20260827201259.3647152-1-mehmet.fide@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <CAMRc=MeCeGDEGbDMtHZXGuiPQV-QBYfNW50MmiJ0ke=De2_nVQ@mail.gmail.com>
-References: <CAMRc=MeCeGDEGbDMtHZXGuiPQV-QBYfNW50MmiJ0ke=De2_nVQ@mail.gmail.com>
+        Thu, 27 Aug 2026 13:39:46 -0700 (PDT)
+From: Michael Zaidman <michael.zaidman@gmail.com>
+To: linusw@kernel.org
+Cc: jikos@kernel.org,
+	bentiss@kernel.org,
+	brgl@kernel.org,
+	germain.hebert@ca.abb.com,
+	rio@r26.me,
+	brunoceg1@gmail.com,
+	contact@christina-quast.de,
+	linux-input@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/13] HID: ft260: add GPIO support on top of UART
+Date: Thu, 27 Aug 2026 23:39:33 +0300
+Message-ID: <20260827203933.16726-1-michael.zaidman@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAD++jLm3ZK-=AYCVJHMt=x3_G26CsXZhOVj4E7na1e9JK0busg@mail.gmail.com>
+References: <CAD++jLm3ZK-=AYCVJHMt=x3_G26CsXZhOVj4E7na1e9JK0busg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -74,35 +85,95 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Bartosz,
+On Tue, 25 Aug 2026 at 09:44 +0200, Linus Walleij wrote:
+> It seems this patch title should just be
+> "HID: ft260: add GPIO support"
+> the "on top of UART" part seems to be more about
+> which order you did the patches and that is about
+> development process, not technical content, we don't
+> put that into Subject.
 
-On 26/08/2026 at 17:06, Bartosz Golaszewski wrote:
+Will drop that from the subject in v2.
 
-> I would rather implement the missing callback in gpio-mmio. We already call
-> into pinctrl if needed when setting direction, could we call
-> pinctrl_gpio_get_config() here and read the direction from the underlying
-> pinctrl driver?
+> You probably want:
+>
+> #include <linus/bits.h>
 
-I agree that is the better place, and I am happy to drop this patch in
-favour of it. One wrinkle I ran into while prototyping: for the config
-road to work, the pinctrl driver has to report the direction as a
-generic parameter, and pinctrl-imx (which serves vf610) does not - its
-pin_config_get() returns the raw pad register value, not
-pinconf-generic parameters, so gpio-mmio cannot decode it generically
-(on vf610 the buffer enables are bits 1:0 of the shared mux/conf
-register).
+<linux/bits.h>. I'll switch the pin constants to #define + BIT()
+and the group masks to #defines.
 
-So my plan would be two small steps:
+> So 6 GPIOs is "max" and then there are extended GPIOs and then there is
+> a new max which is 8?
+>
+> #define FT260_BASE_GPIOS 6
+> #define FT260_EXTENDED_GPIOS 8
 
- 1. teach the vf610 pinconf side to report PIN_CONFIG_OUTPUT_ENABLE
-    (and PIN_CONFIG_INPUT_ENABLE) from the pad register;
- 2. give gpio-mmio a get_direction() that is only installed when the
-    chip has no direction registers, asking pinctrl for
-    PIN_CONFIG_OUTPUT_ENABLE, as you suggest.
+Agreed, the names are misleading. FT260_GPIO_MAX and
+FT260_GPIO_EX_MAX are counts of the two GPIO groups the chip
+exposes, not bit indices: 6 pins named GPIO0-5 and 8 named
+GPIOA-H. v2 will use FT260_BASE_GPIOS and FT260_EXTENDED_GPIOS.
 
-Does that match what you had in mind? If so I will send that series
-instead of this patch. Enjoy the rest of your time off - September is
-fine for me.
+One distinction worth making, since it explains the bit numbers
+you suggested. The GPIO report (0xB0) carries the two groups
+in separate bytes: GPIO0-5 values and directions in bits 0-5 of
+one byte pair, GPIOA-H values and directions in bits 0-7 of the
+next pair. So in the report GPIOA is bit 0.
+
+The FT260_GPIO_* masks are not report bits. They are the
+gpiochip offset space, where the two groups are concatenated
+into one 14-line chip: GPIO0-5 at offsets 0-5, GPIOA-H at
+offsets 6-13. There GPIOA is BIT(6) and GPIOB is BIT(7), so
+I'll write them as explicit BIT() with the group named:
+
+#define FT260_GPIO_EXT_A BIT(6)
+#define FT260_GPIO_EXT_B BIT(7)
+
+> What about just:
+>
+> #define FT260_GPIO_MASK GENMASK(FT260_GPIO_TOTAL, 0)
+
+Yes, that mask is over the 14 gpiochip offsets, and GENMASK is
+clearer than the shift. It needs to stop at the top offset:
+
+#define FT260_GPIO_MASK GENMASK(FT260_GPIO_TOTAL - 1, 0)
+
+which is the 0x3fff the current expression produces.
+GENMASK(FT260_GPIO_TOTAL, 0) would add bit 14.
+
+> Is this *really* an enum? I feel an enum should be something like
+> consecutive or sparse integer ranges.
+> What about just using #define for those.
+>
+> Use #defines for all of this as well.
+
+Will do.
+
+> So instead of creating your own cache of all registers,
+> have you considered just using regmap for this?
+> Regmap is essentially a register cache.
+
+There is no register space for regmap to model. 0xB0
+is one 4-byte feature report, a value byte and a direction byte
+per GPIO group, reached with hid_hw_raw_request(). The mux that
+decides which of those bits are GPIO at all is in a different
+report, 0xA1, with an unrelated layout.
+
+> This looks like names you could have already assigned
+> in the UART patch and then the diff would be less noisy.
+
+v2 will put the UART_ infix in the serial patch, as in my
+other mail.
+
+> Linux has bitmap manipulation functions in
+> <linus/bitmap.h>, use these instead of reinventing the wheel.
+
+gpio_en is "GPIO enabled": a mask of which of the 14 lines are
+muxed to GPIO at all, derived from chip_mode and uart_mode, not
+pin state. The setters only OR and mask it, and the only readers
+test one line before touching the pin. That is a u16 flag word,
+and the bitmap helpers work on unsigned long arrays, so I'd keep
+the u16 and use BIT(offset) in those tests instead of 1 << offset.
+I can convert it to DECLARE_BITMAP() if you prefer.
 
 Thanks,
-Mehmet
+Michael
