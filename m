@@ -1,63 +1,63 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BD1241686
-	for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2026 21:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91E72E737D
+	for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2026 22:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787864904; cv=none; b=unhnkbXwbH0JvTjfnVZUlYCF88kqJzw1DdP49n3NF/7Ie8ZzhPDrrK2YremlNFMqy3n6c/JOkn28VZJiDzBGFu/llECwIIc+pWnG7JuTFu7p8eGy9zgu/T/D91zkFiiGlkcH9X9wUOK/tK5+zoWsRqpHE8TcXfPhHy8zNfIgNp8=
+	t=1787868498; cv=none; b=pok2UAMtoVzbvD0vCNXHaria1PC3zzgh+TweRSwDOU2prDte8eOBZyn2Oru8OtSoUz7qgvQ9Zwly/0VJ75dtf/lLEt5cOeEkyRpnjJpNKO6+9vTxvpVyZ2Huas+KVsxruAyx+4aIgl3xKwAAhxw5aYloZiUKxJ/H7UwXMcEtKCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787864904; c=relaxed/simple;
-	bh=+xIX1eMAZoyAFbWbcnOY7u7uOA+U/uYBXIImHcni9IQ=;
+	s=arc-20240116; t=1787868498; c=relaxed/simple;
+	bh=4NZvaMgEivH19ze0KrHa5URPQF+DJXe0KL1Iof4hU0I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=krqwyyGpGrKZMf2q4g6pT+wI8ZT03TsImVIyLSh1l7+MKWvSsLEkyR/rTmpAWddA0OgZACrGa4NT6PsUoae2/FeSsiPz58trr4dm1aDxVD1HRuYT0e5wvwbW09/Yka3EXcgGlLKNnnPNYUqMnElwBuv3FpKmQdixai3mgWqflLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=att3x2UI; arc=none smtp.client-ip=209.85.128.53
+	 MIME-Version; b=tP2iI/ibi/ZQed/NvnyqnJ2XyfnXVxMOFVpu048YOWI0tCrtH0dSLnym2RIpaS0kiRlKIfG15BBlKp6N2uvdGlwr/gyMnlgXRQfLHN+C2/PoLKaxr9RMTimPtAMezdvRE+UAs21BUgBpydwK55hYUSzmE8XcBTD41deTg7Kyp2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZkZACa4M; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="att3x2UI"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-495590dde14so2460095e9.0
-        for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2026 14:08:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZkZACa4M"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-482e1bfcc63so194641f8f.1
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2026 15:08:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787864901; x=1788469701; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1787868495; x=1788473295; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=+xIX1eMAZoyAFbWbcnOY7u7uOA+U/uYBXIImHcni9IQ=;
-        b=att3x2UIVCOC8Iv5ajnga+INBMCP0BuAZ6k8NVH4W/WHb3RYsR3VWUqDAX7/lrHsik
-         iFEdjlqWl7x/mzSTn+NET5NIx1O6UqzfpbkuvMV0VHwvgJLckztHXIkq4eLWVrlLamSN
-         RE2fYHjzn1qrgptiiu6fkI7lphJqtH738u0HkpjJ44iUHmp16ZZM0yhkEPN5vTEoRIYD
-         Z/5JBpTRTFpYfLv4JFBujNLX7tjYsjmVFov/L8wteC6611+/jx2l2zCMaMocF+R7jBxC
-         EMLNDTE1JeLrQH0iCie01wn+2GM7IS+9/nLcVApUA9Tr67Y2tbeOiWfTQAhzmReSz3zt
-         D1uQ==
+        bh=12Czze317YjE4biaV1BLwood9eGVcYGSVELmZ2ehr0Q=;
+        b=ZkZACa4MWqRVc/0lmyKUfN+BEO3QCsy1dGf0mBe8Zi3krYTf4Rpp+MGpPfDI1Soi0S
+         NIcwitWJh0Gpu/PkYOwOgasQj39XuNdu6GscUn4RgcplqNI8pH3VROh2YLFUet9dqaji
+         Gmnp2Otm5XQ31LaFJnPIBHPDIc/3GpHWyh3uD0wTnRqHPyIy6LT8U54IGllYfS3s7EUr
+         aSVee/ptWVfB9mW5l+MML3d/hMCEbQ+DRW7b+y1gDk5kbbZN3fTCpSeUQrTfJqkfDZYA
+         Mr9bTE1uxewFIYCM0GCdPVqQXLxV+tkeFaSE6SaGgwHLlNXG4c+B7pd201DbZVdViJPz
+         iOUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787864901; x=1788469701;
+        d=1e100.net; s=20251104; t=1787868495; x=1788473295;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=+xIX1eMAZoyAFbWbcnOY7u7uOA+U/uYBXIImHcni9IQ=;
-        b=P05buGxI7hgVLLis/lrhhhaQA7PC/Jzw3u7Op9y2EgTPyd8AGosTfTRuYmciLGuUFa
-         J7bNZw9N2XX/Ej7MPewW+HiTNFOj/OPetlGvecn6W0WWEcJs1Vq7vckupxlLRN+zWan0
-         4dRpWhVkPz5/xRCxS2HJ/Nk2lLd3waWLPz7WyPHlffTIIVYNguSYrYrJxGYauSSBVq9R
-         uuaypw+vDNe6LMr/aHPDKNXM8O8vaBnxNbopbomrP19hldlyMpL43Y4zmYA7ZMugC5Cv
-         vlPc6ikfzPjANSLvPfmlkkz00v++vJNjltrDkJAusE3UkIJpW8YgQxTejn+lkJSOcRZS
-         0t3w==
-X-Forwarded-Encrypted: i=1; AHgh+RrK+9ZassraM7/K3F5iroHaU4bZSUIpADkF5sOte1mHe5poS9O0/U5Lx/ETK9p2QyEq9Qst2YjKM6oA@vger.kernel.org
-X-Gm-Message-State: AFuF++lBC1+XcGUMIs0GBD6Do4ocx4DOoCE7uJ5ALrpmNypughJTpfOD
-	57stzZzW9JnZ2rCwxmnMduqH6tXLZQKc2C3Dh61RWwIRKDYZjJ0YGqqe
-X-Gm-Gg: AR+sD11dupT7ZtJxFC6K/6Z5zn+V5+GWtj7hTBUgKXH5S03GwbVyAtSmo+OgsEInR6M
-	5pvtdV/JKXSFyrt1SfneU+y442ijLHzxzdAEmD3hFGUd92knTYOtfUrRusINX45oQ3o2GEaVvrN
-	s5d+BkE2po1A8c6k/Rslh3Z5Xti5VwKgAVwzByn1taYuGwkXMC+5KE4r6eQ0qt/AEs9E0069mZQ
-	7x9ygEyZURRMo4fs8CB0oXB+3LtF2UKTTEW0j+FNf8CafV+g9PUfpfHRtBnYwvFCoNU6vBWygKF
-	t/t42qxHUrEpr18ak0Dg9KGHXUmb9U6TK2r9oJfH0OpEg2OBD0b8kVy4cdnjgZbSZMMEWegJZtj
-	syLL2N+9RsWE+vnoRh/cFl2G4iGxjZuaGgJs8lzllI36JHhvR3WrxreUpUtNx/BLMy1oKnWnVL9
-	+NRphs2wCx1dq5tn8uClLNNstJ7ZwohQJVZ8LlE7oPuE2AmI2cj6p6MMUSoKs8G6JjHQhSzw==
-X-Received: by 2002:a05:600c:3b1a:b0:495:4d5c:903e with SMTP id 5b1f17b1804b1-49b91c2d8f3mr24218465e9.7.1787864900998;
-        Thu, 27 Aug 2026 14:08:20 -0700 (PDT)
+        bh=12Czze317YjE4biaV1BLwood9eGVcYGSVELmZ2ehr0Q=;
+        b=nsxUqPtHmY4of1byUDesaJIbSbHb95cRj8C0Bjw/qpN5TNGDM5Z7zCB4TsG7lNEoN6
+         7mIAe4qZv662GzJ9z3cjOa6k4lz5LgIXh3UQYJ65SgJJVVzNi9PvCK4/ZVST2xfaWMhF
+         Th3swGvr3qdAcQDTLhRNPY4LX81IucFm5VMNNg86AI6QErazl3llTFGhOnnsSrT6sRY7
+         btD/84h6qYJZf/EC0s9vLaNy+yK8pQdQtl+L3cWICCgbxnvouUk9Gyxvfc7Wu6y7t+Ea
+         Wm8gBWehFJFU3EevSRxWDttBAWZ3xNo5/jtKvUdfzDxUZbKKGuY5JitB3DgIbZcNtExM
+         FNgQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rr4nY5bQc7YAb7ZY1m9qbhJaYm7aAnLQuH9QqbFQV8UhQGLQiiVxC/4TYWLEyaygUP56iz4Y5jOGE0J@vger.kernel.org
+X-Gm-Message-State: AFuF++kOAeY0g6WYkvdcO9f+HBoyYcqziBBFODqiy3n7dXi26wOk/qox
+	S6Qv3FVyF5RE+tCGPdVodqGA1OsjBMuiOwjr65fhOZ/Uac07ysxpVKUD
+X-Gm-Gg: AR+sD13DwdhBquUju2icdSA+Q7WwmomBOCWT5P4EO+srgIYliLVh88xTaN/6IkdNKpv
+	OqDUUMDkpmTb1umFLnVy4Swbkd4A96HmH1qJkEkscwQpCBljgLDatCXnrdghzRdNG/WHryHXFsk
+	xrNJM+jY7jZiDn1ZCJQPbx28Cos8pEAMh2lHL3dyKPpCJrSM87K0KLQQ9LJCHIh/lu2cVT5cEoJ
+	89k5D+oc2Il9y14rkbgOizK+MncsAsFOTiUnHyrEvTDfNxDF1s80Aq8Q7WAnce7r7asuLteCs/e
+	n/SrS8m5l6orZqT2w7Um6mhSspJmpyE5Qh50LQcxylLoBUzpaMLvYAINzeFwi8o9oqca/kbbKJC
+	IKV7ei4Dv785msfqqe06t9z1P7eXxNZVL3SFAx8raCU12zcbxsnBvwej9LjRtnbfHscqyUIttgu
+	hxZI0Jd3mHZ9b+pijpZ2DU5MD0Q1CFemoYHbFrqhLvgmAf873l1+0FC/1D+T4=
+X-Received: by 2002:a5d:6f0d:0:b0:47f:71a0:c060 with SMTP id ffacd0b85a97d-482eab5ff3cmr11537622f8f.2.1787868494701;
+        Thu, 27 Aug 2026 15:08:14 -0700 (PDT)
 Received: from m2.. ([37.142.156.156])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-49b4ad16262sm64764375e9.11.2026.08.27.14.08.19
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-482e28e899dsm12023740f8f.28.2026.08.27.15.08.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Aug 2026 14:08:20 -0700 (PDT)
+        Thu, 27 Aug 2026 15:08:13 -0700 (PDT)
 From: Michael Zaidman <michael.zaidman@gmail.com>
 To: linusw@kernel.org
 Cc: jikos@kernel.org,
@@ -67,16 +67,21 @@ Cc: jikos@kernel.org,
 	rio@r26.me,
 	brunoceg1@gmail.com,
 	contact@christina-quast.de,
+	daniel.beer@igorinstitute.com,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	michael.zaidman@gmail.com,
+	linux-serial@vger.kernel.org,
 	linux-input@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/13] HID: ft260: uart: fix active-low RTS/CTS/DTR/DSR polarity
-Date: Fri, 28 Aug 2026 00:08:08 +0300
-Message-ID: <20260827210809.19389-1-michael.zaidman@gmail.com>
+Subject: Re: [PATCH 08/13] HID: ft260: uart: add modem pins control via ioctl
+Date: Fri, 28 Aug 2026 01:08:05 +0300
+Message-ID: <20260827220805.23112-1-michael.zaidman@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CAD++jL=92mLe9w_VADZrSxPcban--S6LgsmpcPAHdLQ0yCZpHQ@mail.gmail.com>
-References: <CAD++jL=92mLe9w_VADZrSxPcban--S6LgsmpcPAHdLQ0yCZpHQ@mail.gmail.com>
+In-Reply-To: <CAD++jLnKXqbV0xB3wvTF9Ri7g1MuWV6csO0MGzCtv5LBwmSr4g@mail.gmail.com>
+References: <CAD++jLnKXqbV0xB3wvTF9Ri7g1MuWV6csO0MGzCtv5LBwmSr4g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -85,37 +90,93 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Tue, 25 Aug 2026 at 10:16 +0200, Linus Walleij wrote:
-> Isn't this just fixing a patch earlier in the same series?
+On Tue, 25 Aug 2026 at 10:08 +0200, Linus Walleij wrote:
+> I'm not the authortative expert on modem control using GPIO,
+> but what I think you should do is to
 >
-> Just fold it in with the patch adding this.
+> select GPIOLIB
+> select SERIAL_MCTRL_GPIO
+>
+> On Kconfig, so that gpiolib is always available and you can use
+> the generic modem control helpers for modem control over GPIO.
 
-It is, and I have no objection to folding it into the patch that
-adds TIOCMGET/TIOCMSET, but it costs an attribution I would
-rather not drop on my own.
+I looked into this, and it does not work for the FT260 without
+changing serial_mctrl_gpio.c first. Three blockers:
 
-This patch is Rio's: From: Rio Liu, signed off by him and then
-by me. The layout of this series, including Rio authoring the
-polarity fix, is what I agreed with Jiri before posting. Folding
-it into my patch 8 turns that From: into a Co-developed-by: Rio
-Liu with his sign-off, which is honest but is a demotion from
-author to contributor. Jiri, Rio - either is fine by me, so tell
-me which you prefer and v2 will do that.
+- Every GPIO access on this chip is a USB transfer, so the
+  gpiochip has can_sleep = true. mctrl_gpio_set() calls
+  gpiod_set_array_value() and mctrl_gpio_get() calls
+  gpiod_get_value(), and gpiolib does WARN_ON(can_sleep) in both,
+  so every TIOCMGET/TIOCMSET would give a WARN backtrace.
 
-> Note: GPIOlib has it's own polarity inversion handling, when
-> you rewrite the serial modem control to use the helpers,
-> the gpio table will include a flag for polarity inversion, and
-> then you just put it there.
+- mctrl_gpio_init() takes a struct uart_port and its IRQ handler
+  needs it: uart_port_lock_irqsave(), uart_handle_dcd_change(),
+  port->icount, delta_msr_wait. This UART is a plain tty_driver
+  with a tty_port, so only mctrl_gpio_init_noauto() is left - and
+  the FT260 GPIO lines have no interrupts anyway.
 
-Understood. If the modem control moves to the mctrl-gpio helpers
-then the inversion belongs in the lookup table as
-GPIO_ACTIVE_LOW and this code goes away entirely. I'm looking
-into that on your patch 8 mail and will answer there.
+- mctrl_gpio_init_noauto() only picks up lines that exist as
+  firmware properties: device_property_present(dev, "cts-gpios")
+  and friends. A gpiod_add_lookup_table() table is the machine
+  lookup path, so every line would be skipped, all descriptors
+  would stay NULL and both helpers would silently do nothing.
+  Software nodes could satisfy that check, but there is no
+  PROPERTY_ENTRY_GPIO in the tree to build them with.
 
-Worth noting that this drops Rio's patch rather than folds it -
-none of his lines would survive the rewrite - so the credit
-would have to move to the commit message body with a link to
-his fix.
+serial_mctrl_gpio.h is also private to drivers/tty/serial - all
+eleven users are serial_core drivers in that directory.
+
+Registering a uart_port instead was tried for this device and
+turned down. Daniel Beer's 2022 FT260 UART patch was built on
+serial_core and called uart_add_one_port(); Greg asked for
+usb-serial, and Johan Hovold answered that "neither USB-serial or
+serial (core) is a good fit for such a HID device", pointing at
+Christina Quast's tty driver as the right approach - which patch
+1 of this series is a port of.
+
+  https://lore.kernel.org/lkml/638c51a2.170a0220.3af16.18f8@mx.google.com/
+  https://lore.kernel.org/lkml/Y6WNl6+ySy8zcSyg@hovoldconsulting.com/
+
+That patch left set_mctrl empty and get_mctrl returning a
+constant, which is this same constraint seen from the other side:
+uart_ops.set_mctrl and .get_mctrl must not sleep, while every
+FT260 line access is a HID feature report over USB.
+
+> This can be a bit delicate in this case since the gpiochip that you
+> use for mctrl is also registered in this driver, so you need to
+> register the gpiochip *first*, then add a look-up table for the
+> GPIOs, then register this modem control.
+>
+> Then look in e.g. drivers/mfd/sm501.c which is an
+> MFD device that register a gpiochip and then consume
+> GPIOs from itself.
+
+Agreed on the ordering, and thanks for the reference. The UART
+probe currently registers the tty port before the gpiochip, so
+that would have to be inverted, and the gpiochip label is built
+from the HID device name, so the table would have to be built at
+probe rather than being static. Both are workable; they are not
+what blocks this. sm501 does not hit the sleeping problem because
+its gpiochip is memory mapped.
+
+> The core idea is that the serial modem control should look
+> up the GPIOs from its own gpiochip and use the MCTRL
+> library helpers, then this should result in very little and
+> compact code that is easy to read.
+
+No argument with the goal - I would rather have that than my own
+TIOCM handling. But making it usable here means work inside the
+serial helpers: cansleep set/get, a path that does not require a
+uart_port, a lookup that works without firmware properties, and
+the header moved to include/linux. That is a serial subsystem
+series to agree with Greg and Jiri Slaby, so I propose keeping
+the ioctl implementation in this series and doing the conversion
+as a follow-up.
+
+Even then only the set/get helpers would apply: with no GPIO
+interrupts, modem status changes come from the FT260's own
+interrupt status input report (0xB1), so that part stays in the
+driver either way.
 
 Thanks,
 Michael
