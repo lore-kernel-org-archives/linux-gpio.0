@@ -1,129 +1,176 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F89147604A;
-	Thu, 27 Aug 2026 14:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D811FECBA;
+	Thu, 27 Aug 2026 14:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787840072; cv=none; b=Ys9kQTjJV4UR5bn61Tb0U1XALc+2BU2LaWzn3uHUEOBNCP+Cc+J6EvIq0nwf3n7IjkentsUuVdOBbyJBpi2bN5FF1cqm6jiZFJ5DvnHjv7M2dl3rqPRdalr0bgX4vbIDXIv0pFTTu0A9OeJ4KyfEQGkdfZsCMWfaaVT1G4txubQ=
+	t=1787840198; cv=none; b=qb453EoTQtsRLX3PHQH/OV159LDNmXxGhDKTggvTxWOaWkXvCk5fufeoqFC6DuOLd9LfuWYBWT7NXRb2Y+8HnapmcY6Xgyj8bUviVWu8/vX/aa7vgQXtCeCsVCBhbxT4aVAw/kiIhWTUrnA6QXr7upfxvCQYUKtYM9R3+Gf/DU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787840072; c=relaxed/simple;
-	bh=yfm0l6U2JD7vyXzu8CeyNZgRDWe8o3K63SYpJUx897M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j9wczCrrsS8DgU0VVEccJAIxQEicVja2P5r90YvbzJWLDtl/iSXe1sfl28xriFHEI2Ffw1WoKfnejy3If/aDkeaeTiJO04WEsEjspKGAU6lnkH+z9Mf2xxpoqB0Zry+LejWMVFF8DBmYLALQqx6B38segnREEfp77hr5zERGzjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/mf54W+; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787840198; c=relaxed/simple;
+	bh=hMRn0TAQdGANoNPh5Or6WlMCNKR68xOEkS5ns+jAYMI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fcF07N+4r59sw7Me5EbvMZWNx4wVJuDUw2b4lKJVm/ww1vYbE6t20CklVKHE0Vp10bVXYmaNiOvBIAO/oHdMUz9a9RRw0dmaYreIfx896MgVjZrQ0QQgAaihYjqIAJ3IVhbZwB4hh7D5tl4JK/FVI44G5mp1GnHfEZkBaybAcUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oOeWCn92; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/mf54W+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E6D41F00A3F;
-	Thu, 27 Aug 2026 14:14:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787840067;
-	bh=iPd05vfVGTTXMu8o+Kz/ydj1//S090ZmEizU6uZMvXQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=H/mf54W+MN//hu47JmgAU9exTPmvl0LBHB5ZzKhGEwexbRuvTYIkxj4GXgA835qnR
-	 9UEt8YKMOrQNOLAFi3nx7pgRQfY25zqX+764+u84p08c1ffcviu+w56HZl/bCUCG0L
-	 ihHFnT+8mC7h+ynswLMu1pkSIvecp+7uEK09sDoYo898fL5w+AT7uAHCJEisDnTdGu
-	 nqenwjGFq5F6mhrGpgDFQqyTszGxV2iYC0cv81MuAExmXpeZ0TN/UNxfU3/4Szp6vv
-	 o+MTXUDPIFfzalBFoZ+PepIPsLWVL0VjVaXlf2cPUDNh52Tp26khuu1cNEKxWPj+FD
-	 a0defbS1Qxr8A==
-Date: Thu, 27 Aug 2026 09:14:26 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Billy Tsai <billy_tsai@aspeedtech.com>, Mark Brown <broonie@kernel.org>,
-	imx@lists.linux.dev, mfd@lists.linux.dev,
-	Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
-	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Linus Walleij <linusw@kernel.org>, linux-pm@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	linux-aspeed@lists.ozlabs.org, Wells Lu <wellslutw@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>, linux-pci@vger.kernel.org,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Conor Dooley <conor+dt@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Dvorkin Dmitry <dvorkin@tibbo.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-spi@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	=?iso-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	dri-devel@lists.freedesktop.org,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	linux-iio@vger.kernel.org, Robert Foss <rfoss@kernel.org>,
-	Joel Stanley <joel@jms.id.au>, Olof Johansson <olof@lixom.net>,
-	coresight@lists.linaro.org, linux-input@vger.kernel.org,
-	linux-media@vger.kernel.org, Leo Yan <leo.yan@arm.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Shree Ramamoorthy <s-ramamoorthy@ti.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>, Mike Leach <mike.leach@arm.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Zhang Rui <rui.zhang@intel.com>,
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Mirela Rabulea <mirela.rabulea@nxp.com>,
-	David Airlie <airlied@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Ryan Chen <ryan_chen@aspeedtech.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-i2c@vger.kernel.org, David Lechner <dlechner@baylibre.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Michal Simek <michal.simek@amd.com>, openbmc@lists.ozlabs.org,
-	James Clark <james.clark@linaro.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Frank Li <Frank.Li@nxp.com>, devicetree@vger.kernel.org,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Xiaowei Song <songxiaowei@hisilicon.com>, info@mocean-labs.com
-Subject: Re: [PATCH] dt-bindings: Drop redundant white-space around values in
- <>
-Message-ID: <178784006582.3145716.1041886875556731621.robh@kernel.org>
-References: <20260826102044.142986-2-krzysztof.kozlowski@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oOeWCn92"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=eF
+	PaUjzplDvusr9EdznTDxXJqZfQ+uxtFj+38XpXKC0=; b=oOeWCn92JKGIxth/Es
+	OTkKzs18z2WErJWeDRXPwH+hm2LrKo7bShUnVmZg7jAr5vTj69LRV10f8P7QMoKN
+	lbAmhQDDWTEX41OlBbklJGibYz0GUlj6o66nAA0UzVGkS3qCrySPE+LkzGha3FXx
+	+mph0fluV+Fzj+HE9u06BligY=
+Received: from fedora (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD395iNRpBqM49eSQ--.24405S2;
+	Thu, 27 Aug 2026 22:15:43 +0800 (CST)
+From: Ju Nan <junan76@163.com>
+To: antonio.borneo@foss.st.com
+Cc: alexandre.torgue@foss.st.com,
+	junan76@163.com,
+	linusw@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	mcoquelin.stm32@gmail.com
+Subject: [PATCH v2] pinctrl: stm32: fix the unit of the hwspinlock timeout
+Date: Thu, 27 Aug 2026 22:11:28 +0800
+Message-ID: <20260827141127.25789-2-junan76@163.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <9b0f76a08a7c1dbaec4684b4bc013263e0149a4b.camel@foss.st.com>
+References: <9b0f76a08a7c1dbaec4684b4bc013263e0149a4b.camel@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260826102044.142986-2-krzysztof.kozlowski@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD395iNRpBqM49eSQ--.24405S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAFyDGw45tFykZF1xGFy3Jwb_yoWrur1rpF
+	Zagwn0yrs8X3y5Zw4DtF4q9rn3JayIywsrJF4jq3W8Zr1q9r95ta1Sqa92kF12qa4xJ3ZI
+	qFW2q345ua1kAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piJKI_UUUUU=
+X-CM-SenderInfo: pmxqt0ixw6il2tof0z/xtbC1BB0JmqQRpCUKAAA3G
 
+HWSPNLCK_TIMEOUT is passed to hwspin_lock_timeout_in_atomic(), whose
+timeout argument is in milliseconds, not microseconds:
 
-On Wed, 26 Aug 2026 12:20:45 +0200, Krzysztof Kozlowski wrote:
-> Correct a few white-space issues around <>, which will be flagged by
-> dt-check-style.  No functional changes.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> 
-> ---
-> 
-> Rob, Can you take it directly?
-> ---
->  .../bindings/arm/arm,coresight-cti.yaml       |  2 +-
->  .../bindings/display/bridge/sil,sii9022.yaml  |  2 +-
->  .../bindings/i2c/xlnx,xps-iic-2.00.a.yaml     |  4 ++--
->  .../bindings/iio/light/upisemi,us5182.yaml    |  2 +-
->  .../bindings/input/matrix-keymap.yaml         |  3 +--
->  .../devicetree/bindings/input/ti,tca8418.yaml | 21 +++++++++----------
->  .../bindings/media/nxp,imx8-jpeg.yaml         |  4 ++--
->  .../devicetree/bindings/mfd/ti,tps65910.yaml  |  2 +-
->  .../bindings/pci/hisilicon,kirin-pcie.yaml    |  4 ++--
->  .../pinctrl/sunplus,sp7021-pinctrl.yaml       |  2 +-
->  .../bindings/spi/aspeed,ast2600-fmc.yaml      |  6 +++---
->  .../bindings/thermal/thermal-idle.yaml        |  2 +-
->  12 files changed, 26 insertions(+), 28 deletions(-)
-> 
+  atomic_delay += HWSPINLOCK_RETRY_DELAY_US;
+  if (atomic_delay > to * 1000)
+          return -ETIMEDOUT;
 
-Applied, thanks!
+So the driver asks for a 1 second timeout where the comment next to the
+macro says it wants 1 millisecond. All seven call sites spin on the
+hardware semaphore with udelay(), from sections that hold bank->lock or
+irqmux_lock, so on a non-PREEMPT_RT kernel this can keep interrupts
+disabled for up to one second while waiting for the coprocessor.
+
+The hwspinlock core documents this explicitly:
+
+  If the mode is HWLOCK_IN_ATOMIC (called from an atomic context) the
+  timeout is handled with busy-waiting delays, hence shall not exceed
+  few msecs.
+
+Pass the value the comment always described. The core retries every
+HWSPINLOCK_RETRY_DELAY_US (100 us), so the semaphore is still polled ten
+times before giving up, which is far longer than any plausible hold time
+on the coprocessor side. A timeout is reported with dev_err() and fails
+the pin configuration or the interrupt allocation, so shortening it
+degrades gracefully.
+
+Fixes: 290a9f937e5a ("pinctrl: stm32: use the hwspin_lock_timeout_in_atomic() API")
+Reviewed-by: Antonio Borneo <antonio.borneo@foss.st.com>
+Signed-off-by: Ju Nan <junan76@163.com>
+---
+changelog:
+v2:
+- Add the "Fixes" tag
+- Redefine HWSPNLCK_TIMEOUT as HWSPNLCK_TIMEOUT_MS
+
+v1: https://lore.kernel.org/all/20260805032843.36961-2-junan76@163.com/
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index d97057ec2..0d888d30f 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -87,7 +87,7 @@
+ #define gpio_range_to_bank(chip) \
+ 		container_of(chip, struct stm32_gpio_bank, range)
+ 
+-#define HWSPNLCK_TIMEOUT	1000 /* usec */
++#define HWSPNLCK_TIMEOUT_MS	1
+ 
+ static const char * const stm32_gpio_functions[] = {
+ 	"gpio", "af0", "af1",
+@@ -633,7 +633,7 @@ static int stm32_gpio_domain_alloc(struct irq_domain *d,
+ 
+ 	if (pctl->hwlock) {
+ 		ret = hwspin_lock_timeout_in_atomic(pctl->hwlock,
+-						    HWSPNLCK_TIMEOUT);
++						    HWSPNLCK_TIMEOUT_MS);
+ 		if (ret) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			pctl->irqmux_map &= ~BIT(hwirq);
+@@ -943,7 +943,7 @@ static int stm32_pmx_set_mode(struct stm32_gpio_bank *bank,
+ 
+ 	if (pctl->hwlock) {
+ 		err = hwspin_lock_timeout_in_atomic(pctl->hwlock,
+-						    HWSPNLCK_TIMEOUT);
++						    HWSPNLCK_TIMEOUT_MS);
+ 		if (err) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			goto unlock;
+@@ -1086,7 +1086,7 @@ static int stm32_pconf_set_driving(struct stm32_gpio_bank *bank,
+ 
+ 	if (pctl->hwlock) {
+ 		err = hwspin_lock_timeout_in_atomic(pctl->hwlock,
+-						    HWSPNLCK_TIMEOUT);
++						    HWSPNLCK_TIMEOUT_MS);
+ 		if (err) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			goto unlock;
+@@ -1132,7 +1132,7 @@ static int stm32_pconf_set_speed(struct stm32_gpio_bank *bank,
+ 
+ 	if (pctl->hwlock) {
+ 		err = hwspin_lock_timeout_in_atomic(pctl->hwlock,
+-						    HWSPNLCK_TIMEOUT);
++						    HWSPNLCK_TIMEOUT_MS);
+ 		if (err) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			goto unlock;
+@@ -1178,7 +1178,7 @@ static int stm32_pconf_set_bias(struct stm32_gpio_bank *bank,
+ 
+ 	if (pctl->hwlock) {
+ 		err = hwspin_lock_timeout_in_atomic(pctl->hwlock,
+-						    HWSPNLCK_TIMEOUT);
++						    HWSPNLCK_TIMEOUT_MS);
+ 		if (err) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			goto unlock;
+@@ -1239,7 +1239,7 @@ static int stm32_pconf_set_advcfgr(struct stm32_gpio_bank *bank, int offset, u32
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 
+ 	if (pctl->hwlock) {
+-		err = hwspin_lock_timeout_in_atomic(pctl->hwlock, HWSPNLCK_TIMEOUT);
++		err = hwspin_lock_timeout_in_atomic(pctl->hwlock, HWSPNLCK_TIMEOUT_MS);
+ 		if (err) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			goto unlock;
+@@ -1317,7 +1317,7 @@ stm32_pconf_set_skew_delay(struct stm32_gpio_bank *bank, int offset, u32 delay,
+ 	spin_lock_irqsave(&bank->lock, flags);
+ 
+ 	if (pctl->hwlock) {
+-		err = hwspin_lock_timeout_in_atomic(pctl->hwlock, HWSPNLCK_TIMEOUT);
++		err = hwspin_lock_timeout_in_atomic(pctl->hwlock, HWSPNLCK_TIMEOUT_MS);
+ 		if (err) {
+ 			dev_err(pctl->dev, "Can't get hwspinlock\n");
+ 			goto unlock;
+-- 
+2.55.0
 
