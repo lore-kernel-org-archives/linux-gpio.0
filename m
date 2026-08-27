@@ -1,116 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AC3366075;
-	Thu, 27 Aug 2026 20:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BD1241686
+	for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2026 21:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787863882; cv=none; b=BOROh+vqe+V0cvM+aEa8PGlQDEvpPUMHvSgxrJ1FXpKPrtrAAYg++cCEB+REETB31cHIgHlZNs2fCq/0hZuO7MT9+TKRXnCVfYvSKsI6M0QM4QPNoZAI2keauBeWZSJjP0oFrWvUYStAU/atNxFSZBzGZNwu6C7xHi1ML0fQKcQ=
+	t=1787864904; cv=none; b=unhnkbXwbH0JvTjfnVZUlYCF88kqJzw1DdP49n3NF/7Ie8ZzhPDrrK2YremlNFMqy3n6c/JOkn28VZJiDzBGFu/llECwIIc+pWnG7JuTFu7p8eGy9zgu/T/D91zkFiiGlkcH9X9wUOK/tK5+zoWsRqpHE8TcXfPhHy8zNfIgNp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787863882; c=relaxed/simple;
-	bh=WXeJ9znMzJWiN2tBxM8sER2zjwBK+7hi+xhyYeIFQUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YuGbo9S3COaG5Y4xFtkwpRL9yAXnTi0PI2ghU9XIItNxlKiMdxw/c7noL2oiABBaAsFXI79+ctMAa0I9/F6hV8okE7X382Qs5wjN08lJprBQdj8iHKREiMtPHUKLBYUJwwxMWcUOWglKAU44gexE1u7TAnvwrw7OcHMCwl0wezA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrkhSe4f; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787864904; c=relaxed/simple;
+	bh=+xIX1eMAZoyAFbWbcnOY7u7uOA+U/uYBXIImHcni9IQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=krqwyyGpGrKZMf2q4g6pT+wI8ZT03TsImVIyLSh1l7+MKWvSsLEkyR/rTmpAWddA0OgZACrGa4NT6PsUoae2/FeSsiPz58trr4dm1aDxVD1HRuYT0e5wvwbW09/Yka3EXcgGlLKNnnPNYUqMnElwBuv3FpKmQdixai3mgWqflLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=att3x2UI; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrkhSe4f"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2B011F000E9;
-	Thu, 27 Aug 2026 20:51:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787863880;
-	bh=q6v8JgrlCW684JMb4jenL6SwOnn3SOSmKXx8tP8gEV0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=jrkhSe4fPptvvR3XclukGrKiVVuNb6aqaA84KbSjHf00rJiFoR/bNqwYF24/3xeUy
-	 t8qPdtm51VB8U9ajjhrlZCQO1T2ZwoS6TWFCHzQCqEKzY4gp91RRsO9BHJfv54qhaz
-	 7FKIcyqTjQBSuW2UbjF+l3IFbE85IOt5OsO9iaMcF2Epi9VOeS+ZB3O3vFPgr9d9h3
-	 p+eUkBvJyU36dcl33BvXKijh0ly8YsTiinoU0JTeN0uBS3BLYgz2fc0ltz7B0L8QSu
-	 Bhln+no5dyGC6dcK1CQsSUVJhGxCV8mVTAUyqmpQZQzyaN8/EqnRvuHxGzDUuJv3BF
-	 zcMseZvktyZWg==
-Date: Thu, 27 Aug 2026 21:51:16 +0100
-From: Lee Jones <lee@kernel.org>
-To: Michael Zaidman <michael.zaidman@gmail.com>
-Cc: Linus Walleij <linusw@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, linux-input@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="att3x2UI"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-495590dde14so2460095e9.0
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2026 14:08:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787864901; x=1788469701; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=+xIX1eMAZoyAFbWbcnOY7u7uOA+U/uYBXIImHcni9IQ=;
+        b=att3x2UIVCOC8Iv5ajnga+INBMCP0BuAZ6k8NVH4W/WHb3RYsR3VWUqDAX7/lrHsik
+         iFEdjlqWl7x/mzSTn+NET5NIx1O6UqzfpbkuvMV0VHwvgJLckztHXIkq4eLWVrlLamSN
+         RE2fYHjzn1qrgptiiu6fkI7lphJqtH738u0HkpjJ44iUHmp16ZZM0yhkEPN5vTEoRIYD
+         Z/5JBpTRTFpYfLv4JFBujNLX7tjYsjmVFov/L8wteC6611+/jx2l2zCMaMocF+R7jBxC
+         EMLNDTE1JeLrQH0iCie01wn+2GM7IS+9/nLcVApUA9Tr67Y2tbeOiWfTQAhzmReSz3zt
+         D1uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787864901; x=1788469701;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=+xIX1eMAZoyAFbWbcnOY7u7uOA+U/uYBXIImHcni9IQ=;
+        b=P05buGxI7hgVLLis/lrhhhaQA7PC/Jzw3u7Op9y2EgTPyd8AGosTfTRuYmciLGuUFa
+         J7bNZw9N2XX/Ej7MPewW+HiTNFOj/OPetlGvecn6W0WWEcJs1Vq7vckupxlLRN+zWan0
+         4dRpWhVkPz5/xRCxS2HJ/Nk2lLd3waWLPz7WyPHlffTIIVYNguSYrYrJxGYauSSBVq9R
+         uuaypw+vDNe6LMr/aHPDKNXM8O8vaBnxNbopbomrP19hldlyMpL43Y4zmYA7ZMugC5Cv
+         vlPc6ikfzPjANSLvPfmlkkz00v++vJNjltrDkJAusE3UkIJpW8YgQxTejn+lkJSOcRZS
+         0t3w==
+X-Forwarded-Encrypted: i=1; AHgh+RrK+9ZassraM7/K3F5iroHaU4bZSUIpADkF5sOte1mHe5poS9O0/U5Lx/ETK9p2QyEq9Qst2YjKM6oA@vger.kernel.org
+X-Gm-Message-State: AFuF++lBC1+XcGUMIs0GBD6Do4ocx4DOoCE7uJ5ALrpmNypughJTpfOD
+	57stzZzW9JnZ2rCwxmnMduqH6tXLZQKc2C3Dh61RWwIRKDYZjJ0YGqqe
+X-Gm-Gg: AR+sD11dupT7ZtJxFC6K/6Z5zn+V5+GWtj7hTBUgKXH5S03GwbVyAtSmo+OgsEInR6M
+	5pvtdV/JKXSFyrt1SfneU+y442ijLHzxzdAEmD3hFGUd92knTYOtfUrRusINX45oQ3o2GEaVvrN
+	s5d+BkE2po1A8c6k/Rslh3Z5Xti5VwKgAVwzByn1taYuGwkXMC+5KE4r6eQ0qt/AEs9E0069mZQ
+	7x9ygEyZURRMo4fs8CB0oXB+3LtF2UKTTEW0j+FNf8CafV+g9PUfpfHRtBnYwvFCoNU6vBWygKF
+	t/t42qxHUrEpr18ak0Dg9KGHXUmb9U6TK2r9oJfH0OpEg2OBD0b8kVy4cdnjgZbSZMMEWegJZtj
+	syLL2N+9RsWE+vnoRh/cFl2G4iGxjZuaGgJs8lzllI36JHhvR3WrxreUpUtNx/BLMy1oKnWnVL9
+	+NRphs2wCx1dq5tn8uClLNNstJ7ZwohQJVZ8LlE7oPuE2AmI2cj6p6MMUSoKs8G6JjHQhSzw==
+X-Received: by 2002:a05:600c:3b1a:b0:495:4d5c:903e with SMTP id 5b1f17b1804b1-49b91c2d8f3mr24218465e9.7.1787864900998;
+        Thu, 27 Aug 2026 14:08:20 -0700 (PDT)
+Received: from m2.. ([37.142.156.156])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-49b4ad16262sm64764375e9.11.2026.08.27.14.08.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Aug 2026 14:08:20 -0700 (PDT)
+From: Michael Zaidman <michael.zaidman@gmail.com>
+To: linusw@kernel.org
+Cc: jikos@kernel.org,
+	bentiss@kernel.org,
+	brgl@kernel.org,
+	germain.hebert@ca.abb.com,
+	rio@r26.me,
+	brunoceg1@gmail.com,
+	contact@christina-quast.de,
+	linux-input@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/13] HID: ft260: add UART and GPIO support, plus I2C
- fixes
-Message-ID: <20260827205116.GJ2943942@google.com>
-References: <20260827132718.GK770273@google.com>
- <20260827185345.10224-1-michael.zaidman@gmail.com>
+Subject: Re: [PATCH 10/13] HID: ft260: uart: fix active-low RTS/CTS/DTR/DSR polarity
+Date: Fri, 28 Aug 2026 00:08:08 +0300
+Message-ID: <20260827210809.19389-1-michael.zaidman@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAD++jL=92mLe9w_VADZrSxPcban--S6LgsmpcPAHdLQ0yCZpHQ@mail.gmail.com>
+References: <CAD++jL=92mLe9w_VADZrSxPcban--S6LgsmpcPAHdLQ0yCZpHQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260827185345.10224-1-michael.zaidman@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, 27 Aug 2026, Michael Zaidman wrote:
+On Tue, 25 Aug 2026 at 10:16 +0200, Linus Walleij wrote:
+> Isn't this just fixing a patch earlier in the same series?
+>
+> Just fold it in with the patch adding this.
 
-> On Thu, Aug 27, 2026 at 14:27 +0100, Lee Jones wrote:
-> > What is this?  4 device drivers in one, shoved into HID?  Each
-> > component; HID, I2C, GPIO, UART, should live in its respective
-> > subsystem, surely?
-> 
-> The FT260 is a USB HID protocol converter, not four MMIO blocks behind
-> an MFD. I2C, UART and GPIO are HID reports on one chip. Mainline
-> hid-ft260 already hosts the I2C adapter in HID for that reason. This
-> series adds GPIO and UART the same way.
-> 
-> hid-cp2112 and hid-mcp2221 already register an i2c_adapter and a
-> gpiochip from a hid_driver. They are not split into i2c/ and gpio/.
-> 
-> A subsystem split does not give independent drivers here. The control
-> and pin mux live in one feature report, and input is one raw_event.
-> 
-> System status (HID feature 0xA1) is chip-wide, not per USB interface.
-> chip_mode (DCNF0/DCNF1), the 12/24/48 MHz clock, i2c_enable, uart_mode,
-> UART configuration (baud/frame/flow), I2C reset and I2C clock, GPIO2/A/G
-> function select, DCD/RI enable, and power-save are fields or SET
-> requests on that same report. Probe on either HID interface reads 0xA1
-> and then decides I2C vs UART from chip_mode plus bInterfaceNumber.
-> 
-> GPIO is not a third USB function. It is feature report 0xB0. Which pins
-> are GPIO depends on that 0xA1 map: I2C enable takes GPIO0/1 (SCL/SDA);
-> uart_mode takes or frees RX/TX, RTS/CTS, DTR/DSR and DCD/RI; GPIO2/A/G
-> are UART/power LEDs vs GPIO; GPIO3 is wakeup vs GPIO. The gpiochip is
-> attached to the I2C HID interface in I2C-only mode and to the UART HID
-> interface in UART or dual mode. TIOCMGET/TIOCMSET use that gpiochip
-> when the modem pins are in GPIO mode. Changing UART flow control
-> rewrites 0xA1 and then updates the GPIO enable mask.
-> 
-> Input is one hid_driver.raw_event. It dispatches I2C read payloads
-> (0xD0-0xDE), UART RX, and UART interrupt status (0xB1) by report ID.
-> Dual-mode still has two USB HID interfaces, but they are two pipes to
-> one chip. There is one 0xA1; there are not two register files.
-> 
-> USB reset (the TN_189 workaround) resets the whole device and rebinds
-> every interface. Idle wakeup uses chip-wide GET reports (0xA0 / 0xC0)
-> and power_saving_en from 0xA1.
-> 
-> UART is still HID reports on the UART interface (0xE0 / 0xB1 / data
-> reports), not an 8250-style port. Putting it in drivers/tty would not
-> remove the 0xA1/0xB0 coupling.
-> 
-> An MFD split would still need a HID core that owns 0xA1, 0xB0 and
-> raw_event, with I2C/GPIO/UART cells calling back into it, and with GPIO
-> availability depending on UART/I2C mode and on which interface probed.
-> That cell-and-core layout is this driver already. Splitting it does
-> not give I2C, GPIO, or UART their own independent devices; it is
-> still one HID protocol converter, in four files to keep aligned
-> across kernel versions.
+It is, and I have no objection to folding it into the patch that
+adds TIOCMGET/TIOCMSET, but it costs an attribution I would
+rather not drop on my own.
 
-That's precisely what MFD is.  It's one chip, usually with a shared and
-overlapping register spaces, that conducts multiple functions.  This is
-no different to any other single-chip device or SoC.
+This patch is Rio's: From: Rio Liu, signed off by him and then
+by me. The layout of this series, including Rio authoring the
+polarity fix, is what I agreed with Jiri before posting. Folding
+it into my patch 8 turns that From: into a Co-developed-by: Rio
+Liu with his sign-off, which is honest but is a demotion from
+author to contributor. Jiri, Rio - either is fine by me, so tell
+me which you prefer and v2 will do that.
 
-Shoving everything into a single driver isn't how things are done in
-Linux.  This should be divided up into the associated sub-systems where
-each part can be reviewed and looked after by the appropriate SMEs.
+> Note: GPIOlib has it's own polarity inversion handling, when
+> you rewrite the serial modem control to use the helpers,
+> the gpio table will include a flag for polarity inversion, and
+> then you just put it there.
 
--- 
-Lee Jones
+Understood. If the modem control moves to the mctrl-gpio helpers
+then the inversion belongs in the lookup table as
+GPIO_ACTIVE_LOW and this code goes away entirely. I'm looking
+into that on your patch 8 mail and will answer there.
+
+Worth noting that this drops Rio's patch rather than folds it -
+none of his lines would survive the rewrite - so the credit
+would have to move to the commit message body with a link to
+his fix.
+
+Thanks,
+Michael
