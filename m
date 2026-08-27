@@ -1,108 +1,117 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822A6347FCD;
-	Thu, 27 Aug 2026 19:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095A14A13B9
+	for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2026 19:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787857336; cv=none; b=dzfm+vsk0vl3XQ08zSmgbRH3pq3ryBna90dBflVGFcTal67MZkGHyzTXM9VsqKHFQ8lg5mhbBfOIgm3k7xNVCNYaWWGz5/z26mAuYVACgSKF/djTRTI2OSu6iSUeVUUWPU2+/4ub6ewhyh7WIdsaw/LfrjGV5+W1I4/vHS0+Qk0=
+	t=1787858219; cv=none; b=hf7JpenBv/dnqSN1dl1ZNrv7D/6nv7b0pxB1EZfuT7Axaexn/r0n07flpx3hggpAD4v0NU2mAGqW0llR+hALlyOz7A5m/7XBizIVG2HL57c+htsiux+uFecv6N/FJHiNtkNRJDZ+AX5iDNfdv8hQ8LrEnJIPTkOZ1tQo//3U//k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787857336; c=relaxed/simple;
-	bh=cgNql1r5duy69QVKHPOD/L3Amcepnx3/m6jgZ4b2aak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OjYPNVDr3FjVNGb9WBRr141b4jcSj4VCVPc/YLEE+mFhcQmHvF1qnmkBF+WX9uJlnB9sFkNmZsk+yhDMr+fts7zdDtc71r9eWAiJLEa8mYjYs1Ez6e/i6GQgcHope4FjwlxaYbe+8AnUhlxbFxoJE8jUT31EAvSC72rXAzekBqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jLPxv0Y2; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1787858219; c=relaxed/simple;
+	bh=W65090XdDBw7UhVDTVjxJFTTrT5+H9xvtxq4LX1QU9A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OXQaVZOGk7V2i5vOqhK/Xkf8MxaRXh/xUHMjKQnjkFHXYyQqD3fKfzMWAI3KRCXFv8cAvqHI3UAWxNhB+a/Cao/vyzga7H35TOCe8MxAZSSb1QZ/dIupn7s+X0odndAokE4uAWuze6+ipVRehyPDWfGhiQi0VkaBtOziduKjgqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GW8W0t6t; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jLPxv0Y2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1787857335; x=1819393335;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=cgNql1r5duy69QVKHPOD/L3Amcepnx3/m6jgZ4b2aak=;
-  b=jLPxv0Y2WUDsp4Vx+WyGL72zttehUL4C1sll3npLt9bhM0j+IOKmeIrq
-   FsNfndI1YhVzP8oSHNJ+YVmM77WZlZCSjB8ap+a5TzjjbSheY7CPgmPvW
-   kEjJKwki/iS1DgPBOZGLxNwj83wsGDCiGuhzOCubd/BE2fvMPYF1eUr4c
-   v4P5+R+13/WvIHM3EmdhESnqHp/4rHx2AP1y2lEXArcVTG0CK9383LS3/
-   vSG93bPYZl/5ajmPyj7ilS/3hbYVzC9IyoRpAVPNm2pOyfjJOmjf4Ylzz
-   eHHr8sYoteGG1OZ3XJ5bvBWYrTfk00wDrG3SSW4aQfKiRBNg4YNOKGWb5
-   w==;
-X-CSE-ConnectionGUID: RbiGn44ATS2J1TfpBffXOg==
-X-CSE-MsgGUID: rswtGsJuShacFb0xXX08tA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="90881397"
-X-IronPort-AV: E=Sophos;i="6.25,247,1779174000"; 
-   d="scan'208";a="90881397"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2026 12:02:10 -0700
-X-CSE-ConnectionGUID: /L4O5qSxRXa+PFe3YNOKjA==
-X-CSE-MsgGUID: hruNPXzxRM+VRp2BpEy3/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,247,1779174000"; 
-   d="scan'208";a="265360641"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO localhost) ([10.245.244.125])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Aug 2026 12:02:09 -0700
-Date: Thu, 27 Aug 2026 22:02:06 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Radek =?iso-8859-1?Q?V=E1lko?= <rvalko@lipicko.cz>
-Cc: Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: denverton: Fix probe of MFD-created platform
- device
-Message-ID: <apCJrj-rORIXCIAQ@ashevche-desk.local>
-References: <20260827184259.32386-1-rvalko@lipicko.cz>
- <apCHdNBSQ7ub6lNi@ashevche-desk.local>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GW8W0t6t"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-47fe89fb333so119586f8f.3
+        for <linux-gpio@vger.kernel.org>; Thu, 27 Aug 2026 12:16:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787858214; x=1788463014; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=W65090XdDBw7UhVDTVjxJFTTrT5+H9xvtxq4LX1QU9A=;
+        b=GW8W0t6twdwAwLTLmEFFYso9t53eB4DYNG5Jl6InpAiPhtoLrqulQ8Q7HYCexTRJnl
+         qpq9hsFycSUNuqH3FuzZH9BJUbKOsoLuNsg3RrQENKG2zv4Gbzd7oaB7UM2TXRIEqkrG
+         ABVoR8qctgtdkXDboWNhbuW0lKmnyLJHWWMVy2FZqbLoJoDnVTMvksZmXPSEhbv8Q7k6
+         ljmEb9l5sJOrGtphawVzDsVaNBGCRtg056ovub4SBtU4JP/jmNh5OtWPCj3axfQVCQEj
+         bG2YCQvk0ifJiH/PCn8hvTpe1Cqb9RX+wCaiHO7wEB43GnTzieKamLmA/jzbBtCaMMNZ
+         zg6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787858214; x=1788463014;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=W65090XdDBw7UhVDTVjxJFTTrT5+H9xvtxq4LX1QU9A=;
+        b=GIUkpRjuVzBddU9ErQXPFLJu+4Yu6EwnUtxK4nA+Bwlo+kFk841NmxN4O5RU7uAAFN
+         QUVBD4IB2QWAI+F9xt6P0OJGNUUQKuF2xDoYOVbPO/za4tfzK5FqnrC1Klpa+qludL1N
+         uwWlv/TnndRrVpX1fdg7Ie+3Au44pHyDwLLFT9qks3692cCJVxnm0jE0kBoZ7cV9EfV7
+         L38HULzRT69DmUqpysysu0siVNz81DXhZHrm2Hc5uFJTwfjH96LFjVhSql/nFoeUwUWu
+         NwLWU2+tBKYwZsPAbqegRk9yzJxqIOofgjXSTp2zJL5x7sVc1OjqQEMNIlLm+bYuFW8x
+         GhHQ==
+X-Forwarded-Encrypted: i=1; AHgh+Roud2nqcJfpjzi1iOFMNQKUs39ni7TrUzXgCcMRwcOIe9zWHL1Ozj3j8neKR+tu31dxSTCP7zApBVqr@vger.kernel.org
+X-Gm-Message-State: AFuF++muFpeufs62O7jfqetgizEDHo6kCO5nH+2IIagXrCv9u1lY6vUH
+	JeKSCRtG7guGXi5gusOB3fOEeiqrtkBkpByZLtflQrYTwF7I/w4LYkuz
+X-Gm-Gg: AR+sD12KWyb+/E8l2ICa7sLwXIfPgW7BQ9kkrx1Pr8wE/UNSe0WYgLksZv2YsIO8vxI
+	4fsDAIMpAxMTuv0hWAIkJDCIkPRirLl7J55Ckx89MEn2+NFNLV0s7eEmWU/capwJDd+pyDxc0Z3
+	QHoR3e92Bhs4xMfj5hCBsEMzITa7O7t+2NaJXwYZdhI7rqcMvQaFq1t77cNfzdDtyl8pQLCgf04
+	OTf/nONkWF4F6zlVRFEBDugYfJB4aWUV1MjkiORtfU4SWuHH4QhuQXH0kAD+e2uvgEYg2y8htk/
+	Ij7rNxsl4GmWEDkf60WcRr+reP64HsnUIFgrA7nEqOq19+F7ncG3Xlk93L9aahPLvX8jPHnoohV
+	OY4eXeIZOxgC6LnBmvkfYOi6gzuTzSKNP9bsSzimasWltmlkWtDC8QRvrugNZtOqwf4wRdtNxzK
+	70jKdVFmrEDiOJymRJ9FGXJ8UYyw9YdomdBZHqggEUctT5IWPXcQUYMuvra+g=
+X-Received: by 2002:a05:6000:2489:b0:482:e4bc:51a8 with SMTP id ffacd0b85a97d-482f7992e40mr1312918f8f.7.1787858213511;
+        Thu, 27 Aug 2026 12:16:53 -0700 (PDT)
+Received: from m2.. ([37.142.156.156])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-482e27aa050sm10505002f8f.12.2026.08.27.12.16.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Aug 2026 12:16:53 -0700 (PDT)
+From: Michael Zaidman <michael.zaidman@gmail.com>
+To: linusw@kernel.org
+Cc: bentiss@kernel.org,
+	brgl@kernel.org,
+	brunoceg1@gmail.com,
+	contact@christina-quast.de,
+	daniel.beer@igorinstitute.com,
+	germain.hebert@ca.abb.com,
+	gregkh@linuxfoundation.org,
+	jikos@kernel.org,
+	jirislaby@kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	michael.zaidman@gmail.com,
+	rio@r26.me
+Subject: Re: [PATCH 01/13] HID: ft260: add serial driver
+Date: Thu, 27 Aug 2026 22:16:40 +0300
+Message-ID: <20260827191640.11725-1-michael.zaidman@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAD++jLmCVfG4AQ_pTkYouGCcKgN-eh0wsRGQby9dPvZVFMpMDQ@mail.gmail.com>
+References: <CAD++jLmCVfG4AQ_pTkYouGCcKgN-eh0wsRGQby9dPvZVFMpMDQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <apCHdNBSQ7ub6lNi@ashevche-desk.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Aug 27, 2026 at 09:52:40PM +0300, Andy Shevchenko wrote:
-> On Thu, Aug 27, 2026 at 08:42:58PM +0200, Radek Válko wrote:
-> > The Denverton pinctrl device can be instantiated by the Intel LPC
-> > driver as an MFD platform device named "denverton-pinctrl".
-> > 
-> > On affected systems the platform device does not carry the INTC3000
-> > ACPI match data itself. As a result, intel_pinctrl_probe_by_hid()
-> > fails to obtain the SoC data using device_get_match_data() and
-> > returns -ENODATA.
-> > 
-> > This results in:
-> > 
-> >   denverton-pinctrl denverton-pinctrl.0:
-> >   probe with driver denverton-pinctrl failed with error -61
-> > 
-> > Denverton has a single fixed intel_pinctrl_soc_data instance. Pass
-> > dnv_soc_data directly to intel_pinctrl_probe() instead of requiring
-> > firmware match data for the MFD-created platform device.
-> > 
-> > Tested on an Intel Atom C3000 system with LPC/eSPI device 8086:19dc.
-> > Before this change the Denverton pinctrl driver failed to probe and
-> > no Denverton GPIO controller was registered. After the change,
-> > denverton-pinctrl.0 registers with pinmux and pinconf support and
-> > exposes 154 GPIO lines.
-> 
-> Thanks for the report.
-> 
-> Can you instead try to replace device_get_match_data() in
-> intel_pinctrl_probe_by_hid() by intel_pinctrl_get_soc_data() in the way how
-> it's done in intel_pinctrl_probe_by_uid()?
+On Tue, 25 Aug 2026 at 09:49 +0200, Linus Walleij wrote:
+> What kind of "enum" is this that re-assigns 0x00, 0x01 etc to
+> several enumerators?
+>
+> Either this is four different enums or you should just do a
+> series of #defines instead if they are all really coming from
+> the same place, because using an enum like this does not
+> make sense: it's like numering pears, apples, oranges
+> and peaches in the same enum or something.
+>
+> Also use the UART_ infix as mentioned in the GPIO patch
+> so you don't need to immediately change it in the next
+> patch.
 
-Ah, it won't work as direct replacement. So, the intel_pinctrl_probe_by_hid()
-should be modified accordingly. I will send a formal patch tomorrow.
+Agreed. v2 will use #defines with the UART_ infix in this
+patch so the GPIO patch does not rename them.
 
--- 
-With Best Regards,
-Andy Shevchenko
+On Tue, 25 Aug 2026 at 10:12 +0200, Linus Walleij wrote:
+> You need to CC the TTY maintainers and linux-serial on patches like this,
+> just keep in mind when resending, thanks!
 
+Will CC linux-serial and the TTY maintainers on v2.
 
+Thanks,
+Michael
