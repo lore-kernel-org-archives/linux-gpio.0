@@ -1,191 +1,194 @@
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B50364059;
-	Fri, 28 Aug 2026 15:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53290360EE5
+	for <linux-gpio@vger.kernel.org>; Fri, 28 Aug 2026 15:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787931174; cv=none; b=FDf5iKM9P7upCrZwbkjtiqRjUXcFbK2KKp+SH9Cn2za66P2rG6vDCvtYlz0u0ciXcIZcOi5eTB/5vRF5LuIZSUiBWZ8E2vQtl+zxAqEr3EH4sHiAT1KCbvTTE1xQUfHb666J19s2Ko+KF9hm/nybx2OjTy9VeQe7dZYcFjJt1CI=
+	t=1787931333; cv=none; b=MLmnMFcv9+X1Nmiqqme5jnX44e3jh2OCl8S2iGV01ZljY2mGPb8dNDT+khlzoyTCq42o5k49faBs0QMcokrOngJVto8Piij2lyuSDxdPzxjbMlekTe6k+xhFCkSgkIszujZ0PKdlKUyT8/hxNY7WRDOYK3JJZWu+V8j1ykS9Bkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787931174; c=relaxed/simple;
-	bh=cIFKPg7aR19JvA32/JMcyUeMAkV0UsHAmAU+6sSAUBU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=huWNvKL0eTws6o0c0abL4mzHh/AtXt3cn/ho4jokjEmGkiUTYZ4qdte57lqIQTS5VgquTSZ1CupbLTfANdJbdYosnHlibjxlcbf2gix8zE6sOzXHo0bz817EmM+urRNuFKc5w7U5gluHV9VQb8aa+rEvZsV0HnpoPk9Ly+8qcDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=FOsPjMR2; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+	s=arc-20240116; t=1787931333; c=relaxed/simple;
+	bh=csZZhW2kTQDC7OmCQK09jSOUeljVKRXJMg7XkzOcdAQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lAjx76A+fX0GE/SVbK3R80BHDo8oj5DF8cSpJ5Ccz5uJbnyJ3DeughwYHspFmmOTMsQ/QoCdlVom5gCxdGkvNFOYD2s27T9xrT8fYudpMQUaYIHD3hOfHNDZtA4Bc+QJLWDVQ7g+p+saJfmikq1VK/ZJrdKFZHGms0bTLGs1ddo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=s9IITnGG; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="FOsPjMR2"
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67SDWYoK1593807;
-	Fri, 28 Aug 2026 11:31:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=hREVb
-	gNyWj2wZiKrMUXMIztb7e8NfeL35pSryE9Au/U=; b=FOsPjMR2y5X4qUsrrhKVQ
-	qSoETD+0F9IrkyfdPPimoCxllBsVGvW7HBNZp79uN8h179LK7aFvHcFx8ZdRpstM
-	vra7+Mll9lNTc508fo3on3D2LxTC12mlp3vy+VvH6LwP9Yrp49tx3uNsDIoZGL1y
-	akmwywDG9Q1UPi/EpQrIs1JOT5ByGWUBqKrRSK3dZvXk46GdwYf0IYhk3CFbF7Yc
-	2FMiKSWQqqO+MIuJqOju2/3tVMthe5NyfoOktwS4T71SyNVg7fNrYpyp17r6E/14
-	/PAjMehByq42buuQg5i8fVovGvFv+wmu1exaXFlP++JZFnoRuY3E6ms9MSrSX+IQ
-	Q==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4gbaebgvms-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Aug 2026 11:31:58 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 67SFVt0u013282
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 28 Aug 2026 11:31:55 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.37; Fri, 28 Aug
- 2026 11:31:55 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
- Transport; Fri, 28 Aug 2026 11:31:55 -0400
-Received: from HYB-e1y2fvUQ3cx.ad.analog.com ([10.32.223.174])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 67SFUY3w031424;
-	Fri, 28 Aug 2026 11:31:49 -0400
-From: Janani Sunil <janani.sunil@analog.com>
-Date: Fri, 28 Aug 2026 17:30:40 +0200
-Subject: [PATCH v5 17/20] gpio: regmap: Use regmap_test_bits() for single
- bit reads
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s9IITnGG"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2d710632717so8091665ad.0
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Aug 2026 08:35:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1787931331; x=1788536131; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=rQup+UUtgEL0yAVMr8c4LZuaauGy5rlbpwT/5caEB14=;
+        b=s9IITnGGGbMH83F3qNM3dRZ18d3Ovxh/siPs3/e7XeUC46rzDZnoOJy2o6518HMAgd
+         IocSsgJgW24jRFtjfsDpeywkR8yEYWa6fkP8ii7HF5o3mIiKByxiU6Q5HdjstoyaEYn/
+         6K+dgPyDSdsJfMokeUFDaFJG0T7OuyOZF6UqgNmt3qRgERIkX15xItEpjwQfJiaYhkVy
+         0ZTSi5KuI0ySH5sot6IZGLSG3MTRyzT9qY4dWx9PFyWKgemFsE2KrxRUE1aVUgan8lnY
+         CFkil7nHGVasUyhKkT19vgbVv9BnnuA6cPnL/ZKqSMinHAIfjK+i01Cf9jNZf1IX8Yrz
+         SILg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787931331; x=1788536131;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=rQup+UUtgEL0yAVMr8c4LZuaauGy5rlbpwT/5caEB14=;
+        b=ekHnwt7DJ6w19oJ0u9wpfq7WXjJ1E7OMBPmde8SKmRl51M+r0MCmI3VyAiiS7yMucO
+         TVwaWAqUAvvBPKtrjTVxdKhiF+DEq5sJ4BzkfYVrU7rGaSR6ofoB9AjFAIk1uf9htvE4
+         BJsar8sYXhCpWlEMgQAzwaREUUcyNOQu+GJbpU+4kR2/fwq8Nnx9IHbidCpW23qbVm4G
+         VtoDGkDivcFG0AiFgx5Et+hOyjQr3baV/1JwTU/IYnuppB+U3KVM8sJfVL1LOAPc5l7K
+         3iVIR90ILhFeAcsRzHZJEDS9SW4JuDROMFQPEItAMH0+z8Zb/THlo30wS1ivusJxs7Dh
+         q1uw==
+X-Gm-Message-State: AFuF++ksiORqvE+LT//g06jMj5dzGZRLElZzgN+7KvRjxI49pD4Gir8Z
+	+XAU3GHz7XAcU9O9tpFadEaE3D83E8/kEt+I92aGq98hxT8sHrMm5Tx79JDKxGUKITY=
+X-Gm-Gg: AR+sD11ZmDEadh9PmJTI+vLlrodeYcNP4ValxQ1cdF+Ng9eijnAfhufB3CTgPhAeYy5
+	GX7q/tgLXz+8qTbH0wSaTXGeABkYZMrKR1E8d0RgXyIMZy0+afz/onxvIG20wCO742m1Nlwh1zm
+	Hj8kfkgNYEpugi+86tOo+eclolW8DbX+YCYJkAl6OnkMg3pVM8EQdEdvIkudwc1BltjjVkQb4av
+	drrAABV3WxIHlDgD8eYHe2MtWv5l5DcR7+7SiChJyvBPQxg9UtBaTJ/QkQEc772nh2axNuuVtsY
+	1jS2me07wszWmPFCWKVquV+3rnr9e5yZYAmw2csLgjcTXOS+3g5Ygq3RxhcwVqGqdVXYcTlfJRT
+	CYYUluUgXFsfjbf4FpMV97XGk3Nv0+ly9u2JkLP9LK3Q+UFO+/naeY2VisWX5FSihR5Zz85yQpK
+	A+PFSCGdzFBkTkGSNp+13sq+28/JxSorq1lmNPB1apfhVB6s2CIyctvgelRON663xVWOKZSFlMZ
+	RB7MBh+LNU=
+X-Received: by 2002:a17:903:286:b0:2c8:248a:5dbb with SMTP id d9443c01a7336-2d74dcbe867mr167466245ad.7.1787931330475;
+        Fri, 28 Aug 2026 08:35:30 -0700 (PDT)
+Received: from DESKTOP-TIT0J8O.dm.ae ([157.51.224.60])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3286f9e2a95sm6256824eec.23.2026.08.28.08.35.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Aug 2026 08:35:29 -0700 (PDT)
+From: Ahmed Naseef <naseefkm@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Ahmed Naseef <naseefkm@gmail.com>,
+	Benjamin Larsson <benjamin.larsson@genexis.eu>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 0/3] pinctrl: airoha: add EcoNet EN7528 pin controller support
+Date: Fri, 28 Aug 2026 19:35:12 +0400
+Message-Id: <cover.1787931313.git.naseefkm@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20260828-ad7768-driver-v5-17-e33ca6f841a2@analog.com>
-References: <20260828-ad7768-driver-v5-0-e33ca6f841a2@analog.com>
-In-Reply-To: <20260828-ad7768-driver-v5-0-e33ca6f841a2@analog.com>
-To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-        Michael Hennerich
-	<Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        David
- Lechner <dlechner@baylibre.com>,
-        Andy Shevchenko <andy@kernel.org>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Olivier Moysan <olivier.moysan@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Michael Walle <mwalle@kernel.org>
-CC: <linux@analog.com>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <jananisunil.dev@gmail.com>,
-        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>,
-        Janani Sunil <janani.sunil@analog.com>,
-        Andy
- Shevchenko <andriy.shevchenko@intel.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1787931034; l=2016;
- i=janani.sunil@analog.com; s=20260507; h=from:subject:message-id;
- bh=cIFKPg7aR19JvA32/JMcyUeMAkV0UsHAmAU+6sSAUBU=;
- b=wcFdQeEED1ChQXMqVXT74/A8nRPiqdKrbO5yAfKuR9ph2nW3htneCUyvJX1F77qowX6jtrAKn
- +Mb5/mANOpOBHQPNjvs2FEoOCHoOOc6rw42WKvLdwh+4TVNXZDNeplf
-X-Developer-Key: i=janani.sunil@analog.com; a=ed25519;
- pk=e25MyjRLPY3RWrYm/LrJ+/+t1MZJUbkgIW5CZg+g+hA=
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODI4MDEzNSBTYWx0ZWRfX4FLEE+/UNTga
- DdPafSqBDo+hcI3eLQmF4TPXcawmFLJHyDTQrEhTu2pcUCknui9HFHDYbsuuxiSeOO2yeWMaFzx
- gjnaiy0KQCcePEoqPlrPyLSDMVDeeGfjwtzobGfucPddYb9RB+DI
-X-Proofpoint-ORIG-GUID: 0Q-UURXz2nRUqTFNNWfgmc4F0j34f3p-
-X-Proofpoint-GUID: 0Q-UURXz2nRUqTFNNWfgmc4F0j34f3p-
-X-Authority-Analysis: v=2.4 cv=WMtPmHsR c=1 sm=1 tr=0 ts=6a91a9ee cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=0sLvza09kfJOxVLZPwjg:22 a=Z0pTeXoby7EwIRygza74:22 a=VwQbUJbxAAAA:8
- a=QyXUC8HyAAAA:8 a=gAnH3GRIAAAA:8 a=D1cL9gYDKEHF3ZsCBWwA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI4MDEzNSBTYWx0ZWRfX4vu9HOcdI0BI
- sXssbVAobCf5totu8fwlwlCJ6A9909AImVs1gBs/j633q8qu7n3LdrdVM0CGkn31X/aGIPVY8H9
- hjzdHwHuqKyJ1tp8dntiZ4RRt2EhnbFAKPr1GNHN/nCrpONFmFL4qkbuddbxMb/OSmu1yV6xFRN
- ocB/snY6lN4lKdD+AU5wdKA5D7KQMz8GmCBkSmMLNXU8xc393EOAPVLPfTg1F+/nmZQqC2AbWsr
- aXBfplPN8IoSKmbOpamDP9M7Cyu/b+q0vHkv9Cuge7xy5jonPHU4gm8i7HKScuaUrui6kc7++So
- 2pXDlQx4mkb2lhxLh0Xe6hRW5O567hfpRwIgJ8K/rG/VdpR6AhFjP5wazoHsGixhvbBqLdY6YrJ
- pLtXVZJA+si67U71BxcqgE0iW+9g0unS4NCI0Q4h+HF1YtGufvu7tXvrjZZGwG7D4us1tJq+rib
- +ZnMndnxLHx98OXi66A==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-28_04,2026-08-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0
- malwarescore=0 clxscore=1011 adultscore=0 phishscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608280135
+Content-Transfer-Encoding: 8bit
 
-Use regmap_test_bits() when reading a single GPIO value from a normal
-register and when reading the direction bit.
+The EcoNet EN7528 is a MIPS SoC that uses the same pin controller and GPIO
+IP as the Airoha SoCs, so it reuses the shared driver code introduced by
+the split into per-SoC drivers. Its register layout differs from every
+existing variant though: all IOMUX mode bits live in a single CHIP SCU
+register plus a few spill-over bits in IOMUX Control 3, EJTAG has its own
+enable register, and every pin configuration register is at a different
+offset than on EN7523.
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
-Reviewed-by: Michael Walle <mwalle@kernel.org>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-Signed-off-by: Janani Sunil <janani.sunil@analog.com>
----
- drivers/gpio/gpio-regmap.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+It also differs in a way the shared code did not model: only GPIO0-GPIO15
+are wired to the interrupt controller, while the driver assumed all
+AIROHA_NUM_PINS GPIOs could raise an interrupt. Patch 1 adds a
+num_irq_pins field to the per-SoC match data to describe that, bounds the
+interrupt callbacks and handler with it, and feeds it to gpiolib through
+gpio_irq_chip::init_valid_mask so gpiod_to_irq() fails up front for a pin
+that can never be an interrupt source. All existing SoCs pass
+AIROHA_NUM_PINS and are unaffected.
 
-diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
-index 51b4d69b8740..0012e03d0d4e 100644
---- a/drivers/gpio/gpio-regmap.c
-+++ b/drivers/gpio/gpio-regmap.c
-@@ -83,11 +83,11 @@ static int gpio_regmap_get(struct gpio_chip *chip, unsigned int offset)
- 	if (ret)
- 		return ret;
- 
-+	if (gpio->reg_dat_base != gpio->reg_set_base)
-+		return regmap_test_bits(gpio->regmap, reg, mask);
-+
- 	/* ensure we don't spoil any register cache with pin input values */
--	if (gpio->reg_dat_base == gpio->reg_set_base)
--		ret = regmap_read_bypassed(gpio->regmap, reg, &val);
--	else
--		ret = regmap_read(gpio->regmap, reg, &val);
-+	ret = regmap_read_bypassed(gpio->regmap, reg, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -157,7 +157,7 @@ static int gpio_regmap_get_direction(struct gpio_chip *chip,
- 				     unsigned int offset)
- {
- 	struct gpio_regmap *gpio = gpiochip_get_data(chip);
--	unsigned int base, val, reg, mask;
-+	unsigned int base, reg, mask;
- 	int invert, ret;
- 
- 	if (gpio_regmap_fixed_direction(gpio, offset)) {
-@@ -186,14 +186,14 @@ static int gpio_regmap_get_direction(struct gpio_chip *chip,
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_read(gpio->regmap, reg, &val);
--	if (ret)
-+	ret = regmap_test_bits(gpio->regmap, reg, mask);
-+	if (ret < 0)
- 		return ret;
- 
--	if (!!(val & mask) ^ invert)
-+	if (ret ^ invert)
- 		return GPIO_LINE_DIRECTION_OUT;
--	else
--		return GPIO_LINE_DIRECTION_IN;
-+
-+	return GPIO_LINE_DIRECTION_IN;
- }
- 
- static int gpio_regmap_try_direction_fixed(struct gpio_regmap *gpio,
+Patch 2 documents the binding, patch 3 adds the driver.
 
+The series is based on linux-pinctrl/for-next, as it depends on the
+per-SoC driver split and on the CHIP SCU lookup by "airoha,chip-scu"
+phandle that landed there.
+
+Tested on a DASAN H660GM-A (EN7528, Airtel), booting OpenWrt.
+
+Changes in v2:
+- 2/3: move patternProperties after properties, and allOf to the end before
+  additionalProperties (Krzysztof Kozlowski).
+- Rebased on linux-pinctrl/for-next.
+- Link to v1:
+  https://lore.kernel.org/linux-gpio/cover.1786262697.git.naseefkm@gmail.com/
+
+Ahmed Naseef (2):
+  pinctrl: airoha: limit GPIO interrupts to interrupt-capable pins
+  dt-bindings: pinctrl: Add EcoNet EN7528 pin controller
+
+Benjamin Larsson (1):
+  pinctrl: airoha: add support of en7528 SoC
+
+ .../pinctrl/econet,en7528-pinctrl.yaml        |  190 +++
+ drivers/pinctrl/airoha/Kconfig                |   15 +-
+ drivers/pinctrl/airoha/Makefile               |    1 +
+ drivers/pinctrl/airoha/airoha-common.h        |    3 +
+ drivers/pinctrl/airoha/pinctrl-airoha.c       |   33 +-
+ drivers/pinctrl/airoha/pinctrl-an7563.c       |    1 +
+ drivers/pinctrl/airoha/pinctrl-an7581.c       |    1 +
+ drivers/pinctrl/airoha/pinctrl-an7583.c       |    1 +
+ drivers/pinctrl/airoha/pinctrl-en7523.c       |    1 +
+ drivers/pinctrl/airoha/pinctrl-en7528.c       | 1204 +++++++++++++++++
+ 10 files changed, 1443 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/airoha/pinctrl-en7528.c
+
+Range-diff against v1:
+1:  5a7f97adbca7 ! 1:  420a5e385cf7 pinctrl: airoha: limit GPIO interrupts to interrupt-capable pins
+    @@ Commit message
+         instead of deferring the failure to request_irq().
+     
+         Signed-off-by: Ahmed Naseef <naseefkm@gmail.com>
+    +    Reviewed-by: Benjamin Larsson <benjamin.larsson@genexis.eu>
+     
+      ## drivers/pinctrl/airoha/airoha-common.h ##
+     @@ drivers/pinctrl/airoha/airoha-common.h: struct airoha_pinctrl {
+2:  7e6150b186c2 ! 2:  c20005a81b40 dt-bindings: pinctrl: Add EcoNet EN7528 pin controller
+    @@ Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml (new)
+     +  '#interrupt-cells':
+     +    const: 2
+     +
+    -+allOf:
+    -+  - $ref: pinctrl.yaml#
+    -+
+    -+required:
+    -+  - compatible
+    -+  - airoha,chip-scu
+    -+  - interrupts
+    -+  - gpio-controller
+    -+  - gpio-ranges
+    -+  - "#gpio-cells"
+    -+  - interrupt-controller
+    -+  - "#interrupt-cells"
+    -+
+     +patternProperties:
+     +  '-pins$':
+     +    type: object
+    @@ Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml (new)
+     +
+     +    additionalProperties: false
+     +
+    ++required:
+    ++  - compatible
+    ++  - airoha,chip-scu
+    ++  - interrupts
+    ++  - gpio-controller
+    ++  - gpio-ranges
+    ++  - "#gpio-cells"
+    ++  - interrupt-controller
+    ++  - "#interrupt-cells"
+    ++
+    ++allOf:
+    ++  - $ref: pinctrl.yaml#
+    ++
+     +additionalProperties: false
+     +
+     +examples:
+3:  c3b785d8463e = 3:  ea5b2ce92136 pinctrl: airoha: add support of en7528 SoC
+
+base-commit: d067f0f4c96cb5402a111cf649b7bf9c5771ec74
 -- 
-2.43.0
+2.34.1
 
