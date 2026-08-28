@@ -1,57 +1,57 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3F841A918
-	for <linux-gpio@vger.kernel.org>; Fri, 28 Aug 2026 11:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E593C1D7C
+	for <linux-gpio@vger.kernel.org>; Fri, 28 Aug 2026 11:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787917709; cv=none; b=ahsjC6YASu//uxqDwcuHW+mUu+LF6zxBGM+oZU4H4UiaUSJAQ+oYPfNJ81qP0ijUd61Sw0SdH8Q/eLByFnx2TMoTTR644H1HsSCzhHnsP5pngmb5Kp99zLOj6jlZqxkhiBW7bvKUsE1acjKThyqxhQwV3zuGRSRtbKCn+mBs0EI=
+	t=1787917765; cv=none; b=M5VT9C60UJeRZHNM60A0DcUFtzDKfW3NUc7Fn8nScwXDPRiKeLAh1rBB3KorxT4fcltJyEFFBxs34eX8bjJgQc5SCrqzLWNecVeiXsL2C9rT0yy6grfqP88YdWpkBcqFYNSSaHlk4OmpHTKvetAm+OtG5r7y1D7MiXN5z7k3GZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787917709; c=relaxed/simple;
-	bh=Z03uRSsPPhzXUfx+eLrGgsjRw/oaHvZRUeUI3JhPsbg=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=E0dRR2M3hHqpy2wO6lrOtZXuw51H8OR8NC7RkyBVvHgAlejBWlK4weXlO/F08vqo9nglQ49k5C2pddqwS6n5Y/iowG/1pO7SAqNhQiJLMzNB2f6bQL5pDx6uNRUFNI66Vr9QIDHTteFA+JvspKFE7t65tcypISIFwWXm+NHO/r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TFv2xI9O; arc=none smtp.client-ip=198.175.65.16
+	s=arc-20240116; t=1787917765; c=relaxed/simple;
+	bh=bRLKrooJm8Atj1Znz1jwdLbMcuRUcHJ5yjYD++BYPv0=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=OySaOd6uTP7NuFKohUJE3Vki8i+EfnspnZMkoqy7y4Po6d7cJ4zd3k5ZQ8JxtRq4qFzXcNq2DRVvHsgSKr4gn/rEPGbRqVU2QpOh3uK67ixyPhra+heFEGkEuBt9lW7Iabc8n7BLt+Ec4va9haWoz/4rroYX6OY+zu/7LEnUJpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zhfe4sEG; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TFv2xI9O"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zhfe4sEG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1787917696; x=1819453696;
+  t=1787917754; x=1819453754;
   h=date:from:to:cc:subject:message-id;
-  bh=Z03uRSsPPhzXUfx+eLrGgsjRw/oaHvZRUeUI3JhPsbg=;
-  b=TFv2xI9OaoISjrDlGRpXZ0QP6P7Bi1O69M4JjbhZdw6htW0HC/gAwtSv
-   LMVEjFtRg41fGDeu3vV7PSiTT/He2+AYmvHz50wLPandBM0EdPTYh8ew7
-   4oEooQJUwF9b445zndrRx84fXh19W+5edZEOzmwVC59o0FXUqzs8EFrCI
-   EPb/cqFOeme23hnmvfjuzHWszh5PgcJ32oY493149033wAsOq51Hh3j90
-   NuZUb0FCjlPyA73tNjuDnOKp2lvaJkhB1aKwDTHx5MHZ/PgZN+td5+ltB
-   BcvjiCj64QCt5CgGIt2PNkzEhXcxYlXMziHHTST2WNALYm+ufDmFiyriY
-   A==;
-X-CSE-ConnectionGUID: 97+SsLzmQkmQvuvhvOXl/w==
-X-CSE-MsgGUID: A/kAaUqHSju/9fmg60nQFA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88630256"
+  bh=bRLKrooJm8Atj1Znz1jwdLbMcuRUcHJ5yjYD++BYPv0=;
+  b=Zhfe4sEG6/Kq8R2HUNgprBktXgdKEx2rWC6I3RZ7PMRVDkCdHNLdhNah
+   lMPAVjYjF+AzHCy47OCU3S90npVgRsb2EN8Q+ohXO/nvzfhA/75A3uskA
+   ZLv2SGlVcOIGt8E+kuiAkouO5LdXfLQQRqO3eh+7810qn2rWfkZsV+J3b
+   EUuWqGmBTazioJihrfvg6mxguWdms7+MX/LTtKqAO7iFaxfgNQ7mgfhBV
+   mQ290YffGZS0ppdLJde2me/WE1NYV1St1BxEPMRdhswLwyM1T80laitYA
+   Yx2UrL6hL/JhxjMyoCtYUo7OEFn0qg6Tv98MlkhqNsEnCZJmJSINOCy8n
+   Q==;
+X-CSE-ConnectionGUID: fkpfGepbT4yo46egV7w6kw==
+X-CSE-MsgGUID: e2mR+10hTw6R76xLDUUwFQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88630298"
 X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; 
-   d="scan'208";a="88630256"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2026 04:48:11 -0700
-X-CSE-ConnectionGUID: y3YZrgpOTWyIWssBVDzQ9Q==
-X-CSE-MsgGUID: 8jtE4DT/SR+opBPZfF7yLg==
+   d="scan'208";a="88630298"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2026 04:49:11 -0700
+X-CSE-ConnectionGUID: IW3+gP5PRBeNF9CEybDobA==
+X-CSE-MsgGUID: J/ZNoog1STS1zj3vwzqjQg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; 
-   d="scan'208";a="264883473"
+   d="scan'208";a="261987935"
 Received: from lkp-server01.sh.intel.com (HELO 3532383e6126) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 28 Aug 2026 04:48:09 -0700
+  by fmviesa009.fm.intel.com with ESMTP; 28 Aug 2026 04:49:09 -0700
 Received: from kbuild by 3532383e6126 with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1wzv43-00000000B0H-0rDB;
-	Fri, 28 Aug 2026 11:48:07 +0000
-Date: Fri, 28 Aug 2026 19:47:29 +0800
+	id 1wzv51-00000000B0P-1Dn5;
+	Fri, 28 Aug 2026 11:49:07 +0000
+Date: Fri, 28 Aug 2026 19:48:29 +0800
 From: kernel test robot <lkp@intel.com>
 To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Cc: linux-gpio@vger.kernel.org
-Subject: [brgl:gpio/for-current] BUILD SUCCESS
- 16b10f64c63f78220c3b4035f1ed6cd3bdcb0b02
-Message-ID: <202608281907.qyDup9PG-lkp@intel.com>
+Subject: [brgl:gpio/for-next] BUILD SUCCESS
+ 3d12d02dda0917f50fcc4cdf4b54bb417f609d78
+Message-ID: <202608281914.iwXy262c-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -59,10 +59,10 @@ List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-current
-branch HEAD: 16b10f64c63f78220c3b4035f1ed6cd3bdcb0b02  gpiolib: Put fwnode reference on failure
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+branch HEAD: 3d12d02dda0917f50fcc4cdf4b54bb417f609d78  gpio: omap: Use device name as chip label
 
-elapsed time: 1437m
+elapsed time: 1438m
 
 configs tested: 257
 configs skipped: 5
