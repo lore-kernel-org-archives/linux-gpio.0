@@ -1,305 +1,166 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7BE357CEB;
-	Fri, 28 Aug 2026 15:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB3E2F747A
+	for <linux-gpio@vger.kernel.org>; Fri, 28 Aug 2026 16:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787932298; cv=none; b=lQrEMbkTExM2A5k7q+S/kG2S3GcdSIr5xU5Z8q4NqiM/QTzTp7Nq7YvlemlY8CHxcx1/jPJyDnVNbbnJhf+YsKbYY/PA+gOywQ95g4DQPGdEr9XBU64YCdrcYLJnvvLz8lSdx3EiULXUHHBpa9b9RrEISJdPwqMnQIcfxX4zjSk=
+	t=1787933114; cv=none; b=EfslUp+ic+pRf76HBy+EajgULfDpY7Wg1mMjIWOAMUbhn+vxBs7LvE9FVksl++Vzx3aGlxXpxUs6pN8IkX64y3OuBmRX7hYeDTHqbDvyg6TZAaouMSWIG5sThQ9grqtD7ESL/sOIMXWgimzUKmwRwxQmqMTthL3RVP3lhnU8Pxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787932298; c=relaxed/simple;
-	bh=yQ/FFwpSapPcZkUMgJlHSmb/Tpy7hDWRSliWpemDAnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pW5yz8euyxmUM2+3ALY4FfuCWRFknUjS8U10UEvCpmkTzlpnnbbSw5DujJ1pjVuuscaL1p9htxkh/QJwdopSjv9BZgirp0ktq1V7UtO96XC3r2Bsg1lZzwoRNadBunLQvCLYpDzUNGn+pex6DlS8mut0umu1YcGldHrsLEAHpkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9W/spZu; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1787933114; c=relaxed/simple;
+	bh=OQ55UOWdoM6PzfXEhWaM686uGxVjeNWgo2k1p9209FY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tF0BSB+iRuh1Q2D2txzL5BAZKvO1o5dqbCFX0U3vXKOGg7lCnAGzM8S6JShkUvH9Tu8b8Ddh8u77+wNHsR3emy3Pfn2ecIP+OVVGBS019ku5xBQiKtsmpruka1cEaFx9X+Cr0sUGiihQqJdgwMqsrwY7ZHzma/PgWasKMctO1Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=jBdnNVo7; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9W/spZu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A71C91F000E9;
-	Fri, 28 Aug 2026 15:51:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787932292;
-	bh=MrxOZII0U1V57oNJKFQCS1oLJUTJEVDy3QDWlAiwRao=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=T9W/spZuHxH4EXPMfNsmZdNUHolT3KUS5V9w2jKDqVNNaWF1LiutG5AYIHlOFN1dr
-	 zWTFBncruZpv+5D55RTF9YG4WAiZ0vMKY3OO+EhxRYrkmpXyqL+wc5b+CsJTEXEcF7
-	 F9z+AI17KJPVP35n//38Tw95QG7k7SMkUi5pA4VI2KfG/RNy0Z3o6ajCzwIb7Ub762
-	 KTrDnNtpB/XobCmZWK1/opg6Sbd53Ni4Pddgr72eEa4s2bPvSThwAaWX2BTmLCV7j4
-	 T4eiow3/vwSPetYbUE5IHhzt8S+zKhLlP/Pa68Ff+vdCXWhM9A85X8kKMoChLFU8Ku
-	 WCcCZf1QrZD6g==
-Date: Fri, 28 Aug 2026 16:51:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ahmed Naseef <naseefkm@gmail.com>
-Cc: linux-gpio@vger.kernel.org,
-	Benjamin Larsson <benjamin.larsson@genexis.eu>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: pinctrl: Add EcoNet EN7528 pin
- controller
-Message-ID: <20260828-chaos-recovery-c99d547ee1b6@spud>
-References: <cover.1787931313.git.naseefkm@gmail.com>
- <c20005a81b4069f3ff68311629ff7d4678fa92dd.1787931313.git.naseefkm@gmail.com>
+	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="jBdnNVo7"
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com [209.85.128.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5782F3F2D7
+	for <linux-gpio@vger.kernel.org>; Fri, 28 Aug 2026 15:58:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20251003; t=1787932702;
+	bh=Y8FBiAAnmtT/XSJItgaiVkaALpoPinlvUkQsty9YnTE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=jBdnNVo7l5Xdr+jwWpI15QnfMGiibvOtaU2YubnV0x1/M+m4sapjREMicdAcfEUVZ
+	 96fNAi+GBibX77arwHbCYS1Zz8I3Mf2JON4KCBmsjQvnV+Ito/ZHT2jvy6uqX1CJAo
+	 lUZuKZxumMhX2f0Pq5EtHuhtA46JuhvGpcjRIVjKGILfdMXqFtzuVc/2CvoKtIjXUq
+	 pPmJPUcUj+Z8hh700f64Yxg+H40CvdP/tFZqhpV0DD/fITdlb41hKq1gphH7gM+ibQ
+	 KOb/ygKX4hHH1aDc8Kvl3eTQ5T4lfV1R7nD3n2ie99nZurB5zS0oqjeA/eU7H+Nhol
+	 dy0a64n4adnlEfDXF4fA/J27XC2hKSGA6DxTHQ6UnPcpMvHX1tJ6oK7gtTeeSyq71I
+	 e4ISv3CoZagrEYmZSaWp55ZeapnpSjO5lbx62XHvvHc+RpPx9V20Afp5WFDbVsq2ae
+	 phUMdx4oixJhIlTKOofIaY6iS8mkag7iKlfy6PXJLnnKBVxywkd02kTESTVWn4Rp3+
+	 tLmfUX6Sr0xG9YFzN5NDA42fhAvutIri0lHn2zOmGv1mm5wz2wnuDyNTU84u1JeBl9
+	 iUq29EwIxqMZc0r4+vKy9cJTbYyXY/u4Gjcm48jg9nEcW00nKc7Ahxt8XblyAP1ws9
+	 FMONtSWBAXHEebfNb2DyHFPY=
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-495529a93f9so11721435e9.3
+        for <linux-gpio@vger.kernel.org>; Fri, 28 Aug 2026 08:58:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787932702; x=1788537502;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Y8FBiAAnmtT/XSJItgaiVkaALpoPinlvUkQsty9YnTE=;
+        b=WVyVWeBYoH+HdyuoTAg7zPZRp0T3C1m3buWyrV+bDmx7a+Z2jnIjNVNGXi5VkQwzPS
+         PHiFRh9MCYGLDPpHT3jJVvAeRdIK5KHlo4EaKyX4yFs0nVuCAtVbYRToe5hB+ap2hY6A
+         Vab2KovVYEMR74DcyUFQBIyEAIcKFOBwEm94jIC7Cqp3SxWdC6qWXqtuVbHWJJi7aEka
+         1Q3AHygXZtVIF4+JQNQjcUi5FS8aKG0XCpFxiX0/4ROJuoDNPgeXPedWzWNQSjMqQfh0
+         2w3lavvgvI/0HdomAB7Hw8p8CEVia8C6cxd0pDlhR4fqQ0IsYE+wVt52DWjfUE+HhRR4
+         0aZg==
+X-Forwarded-Encrypted: i=1; AHgh+RoZzP3osnt1Njuv8v3YuMv1Txp22YT/EQrhDkkXnhB4b8LOiCcIvu6OumAo+0ivGAQ9hMjfmY5FZzjQ@vger.kernel.org
+X-Gm-Message-State: AFuF++n9jyHt/8k+6WDRxKp9NP5aMworp/OeD1u33rYwC28HHdVQR2l+
+	bbz/c7AXDujHpZ22TFf4Ka2bHmyGx12WWuR4x5Tc5nUfKSk1KQn18+sWtZjYuNF6YQYAfnn2kYJ
+	tvXrSVGNlli53n/bmOIxBWQEPsUzpwAt9ylxZSkhfVgy1qGBocClLNGNwo+0/QBkfqcTXaYpM8G
+	1R8J4=
+X-Gm-Gg: AR+sD10hNQpgS6wsMHf55wBbyEeqb2oqtPQ8gwNvOAFnN0UdaI3MM7VNt2vUCtdF3IS
+	ox8wlhH7Ec/+ct6SKJo1rJJbXiTYZxUVlhgiFWeMEz7wiX2vF5LemUe8WZ+FpotdrJfHYHGyM0S
+	fdzzJMSg5qJaaGHflAvBdyUNnY29XivrGL/dStH1JFov2VD0FjI0sXQZ8hVn/7xbeoqfCz7cUsR
+	fSp1G9mUtTZi9YICKRYo/U5Em91tcnMcwcZhIe5x9ulhuYKgqifeM+LrwtVKC70UL6qbGWR1nLU
+	Vs5y4LWaEqwh+wYfnTS8VbpSLAY51Nu1FGgJ93Km4Pt47LLVZmAICUQkOYpyuR6pR+z6hCw=
+X-Received: by 2002:a05:600c:3546:b0:499:bdf1:7578 with SMTP id 5b1f17b1804b1-49b91c19d68mr111597945e9.3.1787932701764;
+        Fri, 28 Aug 2026 08:58:21 -0700 (PDT)
+X-Received: by 2002:a05:600c:3546:b0:499:bdf1:7578 with SMTP id 5b1f17b1804b1-49b91c19d68mr111597415e9.3.1787932701412;
+        Fri, 28 Aug 2026 08:58:21 -0700 (PDT)
+Received: from localhost ([2001:67c:1560:8007::aac:cab2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cc9497b3esm20792375e9.5.2026.08.28.08.58.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Aug 2026 08:58:20 -0700 (PDT)
+From: Sarah Emery <sarah.emery@canonical.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
+	Yixun Lan <dlan@kernel.org>,
+	Jia Wang <wangjia@ultrarisc.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: generic: serialise pinctrl_generic_dt_node_to_map()
+Date: Fri, 28 Aug 2026 17:58:17 +0200
+Message-ID: <20260828155820.4002492-1-sarah.emery@canonical.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+NZ9peSVGfDYs8bS"
-Content-Disposition: inline
-In-Reply-To: <c20005a81b4069f3ff68311629ff7d4678fa92dd.1787931313.git.naseefkm@gmail.com>
+Content-Transfer-Encoding: 8bit
 
---+NZ9peSVGfDYs8bS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+pinctrl_generic_add_group() documents that the caller must take care of
+locking, and pinmux_generic_add_function() needs it too, but
+pinctrl_generic_dt_node_to_map() calls them without holding
+pctldev->mutex, and the core caller in create_pinctrl() does not take it
+either.
 
-On Fri, Aug 28, 2026 at 07:35:14PM +0400, Ahmed Naseef wrote:
-> Add the binding for the pin controller found on the EcoNet EN7528 MIPS
-> SoC. It shares the IP with the Airoha pin controllers, but its IOMUX and
-> pin configuration registers have a different layout, so it gets its own
-> compatible.
->=20
-> The CHIP SCU holding those registers is referenced by the airoha,chip-scu
-> phandle.
->=20
-> Signed-off-by: Ahmed Naseef <naseefkm@gmail.com>
-> ---
->  .../pinctrl/econet,en7528-pinctrl.yaml        | 190 ++++++++++++++++++
->  1 file changed, 190 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/econet,en75=
-28-pinctrl.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/pinctrl/econet,en7528-pinc=
-trl.yaml b/Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.=
-yaml
-> new file mode 100644
-> index 000000000000..3ce1a5309d09
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml
-> @@ -0,0 +1,190 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/econet,en7528-pinctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: EcoNet EN7528 Pin Controller
-> +
-> +maintainers:
-> +  - Lorenzo Bianconi <lorenzo@kernel.org>
-> +
-> +description:
-> +  The EcoNet EN7528 pin controller is used to control SoC pins. It share=
-s the
-> +  IP with the Airoha pin controllers, but its IOMUX and pin configuration
-> +  registers have a different layout.
-> +
-> +properties:
-> +  compatible:
-> +    const: econet,en7528-pinctrl
-> +
-> +  airoha,chip-scu:
-> +    description: phandle to the chip SCU syscon
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  gpio-controller: true
-> +
-> +  '#gpio-cells':
-> +    const: 2
-> +
-> +  gpio-ranges:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  '#interrupt-cells':
-> +    const: 2
-> +
-> +patternProperties:
-> +  '-pins$':
-> +    type: object
-> +
-> +    patternProperties:
-> +      '^mux(-|$)':
-> +        type: object
-> +
-> +        description:
-> +          pinmux configuration nodes.
-> +
-> +        $ref: /schemas/pinctrl/pinmux-node.yaml
-> +
-> +        properties:
-> +          function:
-> +            description:
-> +              A string containing the name of the function to mux to the=
- group.
-> +            enum: [gpio, jtag, pcie_reset, pcm, pcm_spi, phy1_led0,
-> +                   phy1_led1, phy2_led0, phy2_led1, phy3_led0, phy3_led1,
-> +                   phy4_led0, phy4_led1, pnand, pon, pwm, sipo, spi, uar=
-t]
-> +
-> +          groups:
-> +            description:
-> +              An array of strings. Each string contains the name of a gr=
-oup.
-> +            items:
-> +              enum: [pon, sipo, sipo_rclk, uart2, uart2_cts_rts, uart3,
-> +                     ejtag, pcm1, pcm2, spi_quad, spi_cs1, pcm_spi,
-> +                     pcm_spi_int, pcm_spi_rst, pcm_spi_cs1, pcm_spi_cs2,
-> +                     pcm_spi_cs3, pcm_spi_cs4, pcm_spi_cs5, pcm_spi_cs6,
-> +                     pcm_spi_cs7, pnand, gpio0, gpio1, gpio2, gpio3, gpi=
-o4,
-> +                     gpio5, gpio6, gpio7, gpio8, gpio9, gpio10, gpio11,
-> +                     gpio12, gpio13, gpio14, gpio15, gpio16, gpio17,
-> +                     gpio18, gpio19, gpio20, gpio21, gpio22, gpio23,
-> +                     gpio24, gpio25, gpio26, gpio27, gpio28, gpio29,
-> +                     gpio30, gpio31, gpio32, gpio33, gpio34, gpio35,
-> +                     gpio36, gpio37, gpio38, gpio39, gpio40, gpio41,
-> +                     pcie_reset0, pcie_reset1]
-> +
-> +        required:
-> +          - function
-> +          - groups
-> +
-> +        additionalProperties: false
-> +
-> +      '^conf(-|$)':
+The driver core calls pinctrl_bind_pins() before probing a device, so
+two devices that reference the same pin controller can run
+pinctrl_generic_dt_node_to_map() on one pctldev at the same time.
 
-Why is this needed? Why can you not tell from the group which pins the
-config applies to?
+Both `add` functions take the new selector from pctldev->num_groups or
+pctldev->num_functions, and radix_tree_insert() at that index.
+Two racing callers can read the same selector before either
+has inserted, so the second insert collides and fails:
 
-Thanks,
-Conor.
+  k1-pinctrl d401e000.pinctrl: 
+  error -EEXIST: error adding function pcie2-0-cfg
+  k1-pinctrl d401e000.pinctrl: 
+  does not have pin group pcie0-0-cfg.pcie0-0-pins
 
-> +        type: object
-> +
-> +        description:
-> +          pinconf configuration nodes.
-> +
-> +        $ref: /schemas/pinctrl/pincfg-node.yaml
-> +
-> +        properties:
-> +          pins:
-> +            description:
-> +              An array of strings. Each string contains the name of a pi=
-n.
-> +            items:
-> +              enum: [gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6,
-> +                     gpio7, gpio8, gpio9, gpio10, gpio11, gpio12, gpio13,
-> +                     gpio14, gpio15, gpio16, gpio17, gpio18, gpio19,
-> +                     gpio20, gpio21, gpio22, gpio23, gpio24, gpio25,
-> +                     gpio26, gpio27, gpio28, gpio29, gpio30, gpio31,
-> +                     gpio32, gpio33, gpio34, gpio35, gpio36, gpio37,
-> +                     gpio38, gpio39, pcie_reset0, pcie_reset1, i2c_sda,
-> +                     i2c_scl, uart_txd, uart_rxd, spi_cs0, spi_clk,
-> +                     spi_mosi, spi_miso]
-> +            minItems: 1
-> +            maxItems: 50
-> +
-> +          bias-disable: true
-> +
-> +          bias-pull-up: true
-> +
-> +          bias-pull-down: true
-> +
-> +          input-enable: true
-> +
-> +          output-enable: true
-> +
-> +          output-low: true
-> +
-> +          output-high: true
-> +
-> +          drive-strength:
-> +            description:
-> +              Selects the drive strength for the pin, in mA.
-> +            enum: [2, 4]
-> +
-> +        required:
-> +          - pins
-> +
-> +        additionalProperties: false
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - airoha,chip-scu
-> +  - interrupts
-> +  - gpio-controller
-> +  - gpio-ranges
-> +  - "#gpio-cells"
-> +  - interrupt-controller
-> +  - "#interrupt-cells"
-> +
-> +allOf:
-> +  - $ref: pinctrl.yaml#
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/mips-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    pinctrl {
-> +      compatible =3D "econet,en7528-pinctrl";
-> +
-> +      airoha,chip-scu =3D <&chip_scu>;
-> +
-> +      interrupt-parent =3D <&gic>;
-> +      interrupts =3D <GIC_SHARED 10 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +      gpio-controller;
-> +      #gpio-cells =3D <2>;
-> +
-> +      interrupt-controller;
-> +      #interrupt-cells =3D <2>;
-> +
-> +      gpio-ranges =3D <&pinctrl 0 0 42>;
-> +
-> +      uart2-pins {
-> +        mux {
-> +          function =3D "uart";
-> +          groups =3D "uart2";
-> +        };
-> +
-> +        conf {
-> +          pins =3D "gpio28", "gpio29";
-> +          bias-pull-up;
-> +        };
-> +      };
-> +
-> +      pwm-pins {
-> +        mux {
-> +          function =3D "pwm";
-> +          groups =3D "gpio30";
-> +        };
-> +      };
-> +    };
-> --=20
-> 2.34.1
->=20
+leaving one consumer without its pin configuration.
 
---+NZ9peSVGfDYs8bS
-Content-Type: application/pgp-signature; name=signature.asc
+This was hit on a SpacemiT K3 board, where PCIe devices probe in parallel
+against the single shared pin controller.
 
------BEGIN PGP SIGNATURE-----
+Take pctldev->mutex across the whole function, so that the groups and the
+function referring are in a single critical section.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCapGufwAKCRB4tDGHoIJi
-0j4NAP9eETqlBXqwRzyrhwyDVzt50yWQOHH1koC7H2EXeyBIBgEAoRooVdgTczfs
-cTzJYMPlZYMAxvSfHDJwvcWsyD0LYAM=
-=mN/M
------END PGP SIGNATURE-----
+Fixes: 43722575e5cd ("pinctrl: add generic functions + pins mapper")
+Signed-off-by: Sarah Emery <sarah.emery@canonical.com>
+---
+ Notes:
+   The other two users of this function, ultrarisc/pinctrl-ultrarisc.c and
+   microchip/pinctrl-mpfs-mssio.c, are exposed to the same issue if two
+   consumers of one controller probe concurrently. I don't have the hardware
+   to check if I would hit the same issue.
+ 
+   My reproducer needs SpacemiT K3 PCIe support, which is not
+   upstream yet, only in linux-riscv mailing list. Runtime testing was on a
+   v7.2-based tree with SpacemiT patches. Build succeeds on mainline.
+ 
+   The two added includes are include-what-you-use, guard() and the
+   mutex API already resolve through core.h.
 
---+NZ9peSVGfDYs8bS--
+ 
+ drivers/pinctrl/pinctrl-generic.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/pinctrl/pinctrl-generic.c b/drivers/pinctrl/pinctrl-generic.c
+index fd6bdb74028a..4277c8748513 100644
+--- a/drivers/pinctrl/pinctrl-generic.c
++++ b/drivers/pinctrl/pinctrl-generic.c
+@@ -3,8 +3,10 @@
+ #define pr_fmt(fmt) "generic pinconfig core: " fmt
+ 
+ #include <linux/array_size.h>
++#include <linux/cleanup.h>
+ #include <linux/device.h>
+ #include <linux/module.h>
++#include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/slab.h>
+ 
+@@ -196,6 +198,8 @@ static int pinctrl_generic_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	int ngroups = 0;
+ 	int ret;
+ 
++	guard(mutex)(&pctldev->mutex);
++
+ 	*maps = NULL;
+ 	*num_maps = 0;
+ 
+-- 
+2.53.0
+
