@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2336032B113;
-	Sat, 29 Aug 2026 07:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFE32D9ECB;
+	Sat, 29 Aug 2026 08:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787988681; cv=none; b=fzRdYxhjQMFbi4np04ov/E4j2KZxvXQZOQ2zmypzWWni2Qicve8g16R2B0axVeLhFfAj6NH9srypxa1nRYAmvJLj9eqbvTk3I4JhmVYSJ0i1FxPVEnfXBHM8YtSk8ozvA7F2ewkOQpkslQ8wpHETneElkQwNt3gyKfhUa8mEqIo=
+	t=1787990581; cv=none; b=qimVnBUplNEh9lMKHfab2oGhqjlfwQUtzmBQaU4KkMbEmtYKtJ7w2MajS01TYnTxjAkev7XBCD894dEOrv2mO34S69pg4J6KL2c5JDJ6qm3Z8UWMYvHAQgK/e+5QZxWtJfz1himsIDBVyA8gK1y3dLnH6Ko0cXlqRt8qVhKHzLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787988681; c=relaxed/simple;
-	bh=fNTrb6LPmvQ0t01dL5McVgmHaTeiaCCOvvCwdeobtOg=;
+	s=arc-20240116; t=1787990581; c=relaxed/simple;
+	bh=PR+BIfn3653UXqkj8yBjU2JpOOE+OBHSW3Z+1r+tG3k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qWz5qmylsxFl7CF3Tf+4FVtjv6mkR3xJOGDFWsHv8VhM2VJ8KA4rDceo3rkmknrK8cHLTul7l/YbpHb47hFety4iWbrTurKabPrfQw2fyAYqPdbbCHVoQfIzTse+ArnCRxd+V5XiRfvPxUpVDfE8FJ0dde40/sApIfNsvnvesGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBV3YhXO; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=stgrq37FKsFAVhcQWw8hnnzrlchJc5UbzM4bKyjHq/qztq6lct8ZSack+0S0/W80y6zLDRUjAZ4PIoSsBGQH3yhHse1Zv+uZ7b9sVgVGoiaCLP0kSW+HOdbTZnd6K8k4PruGCBslftnBgp0XTTxbu+MUc4vbEBaJGoKcJclMMnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KydmdCun; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBV3YhXO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A36AB1F000E9;
-	Sat, 29 Aug 2026 07:31:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KydmdCun"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA9071F000E9;
+	Sat, 29 Aug 2026 08:02:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787988679;
-	bh=NfubPM6UMo/IG6FaMOOEgle+rUB5+JQcFLVJFPtH9ZM=;
+	s=k20260515; t=1787990579;
+	bh=zBUzO8Dj/vf5qJL5Di4e7l+uaBL4EoFy+oRcvSdhKWA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=iBV3YhXOUrioxddD2+5BsxZ85uor5LFZs2irnpSTbtMOJ2PD615qO2QtpacVozRo3
-	 q0KLtI0q3NINJOiWyqecCJCL+P/k9vKLNEqUi+zU/pbedcyj4h8PSbx+ttg9amiz2P
-	 aSnog2NI3YOJNwQa+sgz/+Lsq5/CcF/povHf1nQNq+FP70K/2BK/nYrG4e1bi0C8zw
-	 UnQW/JYI2WIUGQq5rW3ziNE7lQNltyl5tc8AUe5gYHcMQ4sWlnnrm3J7oo0CQiZpUm
-	 9VlL7h64x7D37+VvmSWDFirmN89v+yCWiQZTalcOsqZI8Wi/nIYlQKTnl1urHFXIfd
-	 zYZC6txPx61og==
-Message-ID: <bd23268f-dee6-43a0-9f8a-51ae8a272082@kernel.org>
-Date: Sat, 29 Aug 2026 09:31:10 +0200
+	b=KydmdCun6TXb3/1wzjgwG1kIlN48qY6kYXktUD0VhHyfwrKf7kGwOufFAWIHrq4Am
+	 1ySenn7ctl/HqZeHQOk575xqFyxXNiI9qIz9aiG7zwB1Vap3VcACp2VjmNei2V1bCI
+	 DH9ReYPbaubN7Ps6zZu8gGBlB4IvZHUOJUWw6gGRTPiiZp6T2yAz3+9MU/19ZDInYP
+	 rdT0F8LC9YBlAogJ52453aWVEvhKLYUyUtqYGj0wrAA0cfSzeUZprN0ar7fjgGHNcW
+	 C7Lt2/lQWRWQn4DtlxhDrztBqbPTGzLgb+8H8jAUlWi2sMNp96Rl+4n+YdvvEtZFpD
+	 6VWOLJBF531fg==
+Message-ID: <f474f659-8234-4dfb-85cc-06d2cc295107@kernel.org>
+Date: Sat, 29 Aug 2026 10:02:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,33 +35,20 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 03/21] dt-bindings: pinctrl: Add
+Subject: Re: [PATCH v6 03/21] dt-bindings: pinctrl: Add
  starfive,jhb100-sys0-pinctrl
 To: Changhuang Liang <changhuang.liang@starfivetech.com>,
- Rob Herring <robh@kernel.org>, Linus Walleij <linusw@kernel.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Paul Walmsley <pjw@kernel.org>,
- "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Emil Renner Berthing <kernel@esmil.dk>,
- Alexandre Ghiti <alex@ghiti.fr>,
- Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Bartosz Golaszewski <brgl@kernel.org>
-References: <20260810063650.239303-1-changhuang.liang@starfivetech.com>
- <20260810063650.239303-4-changhuang.liang@starfivetech.com>
- <178634991918.1014951.7989635238440361454.robh@kernel.org>
- <ZQ4PR01MB120202070B9006984B8677EAF2DE2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260810144012.GA1574021-robh@kernel.org>
- <ZQ4PR01MB12020D2031C400FF805791B7F2DD2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <ZQ4PR01MB120275B9C0CF6BCE8C88261CF2DA2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <20260814-shapeless-onyx-pronghorn-d423a9@quoll>
- <ZQ4PR01MB12022F6D6F71542033CF857BF2DA2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
- <CAD++jL=Q38HwraN1NEOxLf_hE+k=3Q6JP+DUgQsThfYve0t0RA@mail.gmail.com>
- <20260817134715.GA18207-robh@kernel.org>
- <ZQ4PR01MB1202CB0BB258ED52179F3DF4F2AB2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+ Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
+ Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
+References: <20260829025720.23915-1-changhuang.liang@starfivetech.com>
+ <20260829025720.23915-4-changhuang.liang@starfivetech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,51 +94,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <ZQ4PR01MB1202CB0BB258ED52179F3DF4F2AB2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+In-Reply-To: <20260829025720.23915-4-changhuang.liang@starfivetech.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 29/08/2026 05:08, Changhuang Liang wrote:
-> Hi, Rob, Krzysztof, Conor
-> 
->> On Mon, Aug 17, 2026 at 02:45:22PM +0200, Linus Walleij wrote:
->>> On Fri, Aug 14, 2026 at 1:22 PM Changhuang Liang
->>> <changhuang.liang@starfivetech.com> wrote:
->>>
->>>>> You still did not explain the cells - neither in reply nor in
->>>>> commit - thus start with that. Why do you need it? Multiple
->>>>> controllers have groupped pins or GPIOs in registers, so explanation
->> "every 32 GPIOs correspond to one register"
->>>>> tells me nothing. Why would that matter how many GPIOs is in one
->> register?
->>>>
->>>> Since every 32 GPIOs correspond to one register, Linus suggested at the
->> time that I could try using:
->>>> gpios = <&gpio [instance] offset flags>; gpio-ranges = <&pinctrl
->>>> [gpio_instance] gpio_offset pin_offset count>;
->>>>
->>>> The advantage of using this is that in a GPIO controller with more
->>>> than 32 GPIOs, every 32 GPIOs can be treated as one GPIO bank. This
->>>> way, in the driver, converting pin_offset to gpio_offset does not require a
->> large number of /32 and %32 operations.
->>>>
->>>> the following is Linus's original suggestion at the time
->>>>
->> https://lore.kernel.org/all/CAD++jL=tvDBWJHRGGJw4nnox_kcJKn5hwvwz9zx
->>>> adMRedyvRhw@mail.gmail.com/
->>>
->>> Just copy this explanation into the commit so it is clear why you need
->>> three cells for this.
->>
->> "Can use gpiolib" is not really justification. Neither is avoiding a shift and/or
->> mask. I suppose there's some h/w attribute here to justify it?
-> 
-> I'll go ahead and send out a new version per Linus's suggestion. In the meantime, 
-> if anyone has any additional thoughts or further feedback, I'd be more than happy 
-> to incorporate them. Please don't hesitate to let me know!
+On 29/08/2026 04:57, Changhuang Liang wrote:
+> +#ifndef __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
+> +#define __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
+> +
+> +/* sys0 pad numbers */
+> +#define PADNUM_SYS0_GPIO_A0				0
+> +#define PADNUM_SYS0_GPIO_A1				1
+> +#define PADNUM_SYS0_GPIO_A2				2
+> +#define PADNUM_SYS0_GPIO_A3				3
 
-You got feedback... having things organized per registers does not make
-them a bank.
+I could not find how your driver uses these, so are you sure it's a
+binding constant for the SW?
 
 Best regards,
 Krzysztof
