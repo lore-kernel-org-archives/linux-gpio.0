@@ -1,169 +1,92 @@
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51B13ACA60
-	for <linux-gpio@vger.kernel.org>; Sat, 29 Aug 2026 14:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5443B47CD;
+	Sat, 29 Aug 2026 18:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788013395; cv=none; b=AfiOxjPFRwgOIRPG7lcPNxRBaYtpp6r0rDNFJ14omEigfRZEylaBGkdh4s1DYDfNdHbLwDFy/0vv81aT6dkpFOWWqS3as9lOtmRbfvm7ZcvG0a1v5JUxrmglzNBseM67UwN6+xM97Ev/yVGHAdsOsZCQmpFkYxycfBTdSBe3bmM=
+	t=1788027604; cv=none; b=CsPbLBegdZM32Wr2X1syxIjUBLUrkeR6INFdWDJ5soGrryndpx5UcdNZRBf0A0PRhoduFErv1Gs2hPxopk6oQUZw0BLeaGHhs2yB5XDXDkXt28usIo3qqZ5E+wL3G9tAMyOLp7qF8GKaHFHxltBNErm7aFPQV89y4XdSDM5D74c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788013395; c=relaxed/simple;
-	bh=M24Mz218ImJKt0KkgI5/Aj2azuDGtFNwOJqCp02b7jM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KkoQxoi73IWYE6myX4ywCwgeEFG5Ha/WlUh59BqtHCbpxweNG5Nq7+ykA9qYhUZ2EtARvt+CnP0sszMNV/RjqRcafPgxo35HG2MwVJNiJp/B1FLY2JWYiZif6lXu+In8PcnoouWTOC6RnSJMuVyTkQT/EbKxElEQgO12yTdlWNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=imtzIf/O; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+	s=arc-20240116; t=1788027604; c=relaxed/simple;
+	bh=aDthw+klUlFrAHBVWpJb63/nRyWnWEz+h4Ug65DBDTs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SzrHx3T7QdyVzMF5XFSCZKmY2gd8hYGCzI854K8l9CsxZl2QeYSeN7w25ltnFbX9M3D6+YJ/sLMHhLD7PtKuy+8sFolMCammZIieaeQ3vol3y7DCr29SoN5uG2/rkGEyutdA0aarsvbAZj19a4vfJQhTwb6CRAh6L7+UivZ5jVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ji+okeIa; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="imtzIf/O"
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id C40BE240101
-	for <linux-gpio@vger.kernel.org>; Sat, 29 Aug 2026 16:23:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
-	s=1984.8680eb; t=1788013382;
-	bh=Vny3X+6YwhmSlpKhlU7/WA6I3FFRVj0JW+94btVUxuA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:To:Cc:Autocrypt:OpenPGP:From;
-	b=imtzIf/OCYNkjAjjTkp4DlTbYlTqI4gcfXmtKk2eahqG/A5MphLtXVBEQV3uWzr1P
-	 23FrajcbjXdsRb17YpPuy9GOy5nv7DVM4UAd63+Vge0ZPwmHKrvYCi7JlBCqMvWJj1
-	 4krImG5o4iQLrKEOrMNmObii4RyxllKstABCl4Y0Rs4l6DkrR9gWioxP238xALctxB
-	 T5vNxYne7wc6EtqUl+NhFnDH00zIXd1LSWCBBO7cDsRs7qiPQ6BrvUVEIc1W+vo0NQ
-	 aazXMaedRuhVnQ54dM7XQqpvOFeYHdjY/h+LETiL9kdLcZ7lSlKyW0q56Gdo5komoI
-	 IReT521EhxfHg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4hXHXf6tlpz6v38;
-	Sat, 29 Aug 2026 16:22:58 +0200 (CEST)
-From: Markus Probst <markus.probst@posteo.de>
-Date: Sat, 29 Aug 2026 14:22:59 +0000
-Subject: [PATCH v7 6/6] rtc: s35390a: Add synology quirk
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ji+okeIa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EAEC1F000E9;
+	Sat, 29 Aug 2026 18:19:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788027600;
+	bh=2m+w6kX81ZJlZopXoWgvGQ7ixn52IRcN/jOsMcSny2o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=ji+okeIaCJvrDWsEXiKFyJ/uei71ioQ1XKD6OTbxFcv0dNo2ad4PTMLnndFaaCNeE
+	 N3upzQaiF2GOPujY+MgSAbyOCWVOHY0D99c9R64tw0+rACETL8aP9LfB2oMrWz92Qk
+	 YhCcjeZY4TPhr+JC3y9MwSTREERISIKfKAlYpzsCSVIFMbxLnLXfVWN/7kD3aPszjV
+	 MUV2ydg3qI/mR3wVTG+Q58T84ZMYWl+P6UiKiSm18qA8VqKxF+jKzBmtL1F27hQ0ap
+	 Li9sC34f5lhq8HPSGdIJdjg+jA1NydbnPTQcp76qXS3THMbd96FRgfW651VSx3B7EN
+	 5m76x0jjTGijg==
+Date: Sat, 29 Aug 2026 19:19:54 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Janani Sunil <janani.sunil@analog.com>
+Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, "David Lechner" <dlechner@baylibre.com>,
+ Andy Shevchenko <andy@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>, Bartosz
+ Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Shuah Khan
+ <skhan@linuxfoundation.org>, Michael Walle <mwalle@kernel.org>,
+ <linux@analog.com>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <jananisunil.dev@gmail.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@baylibre.com>, "Andy Shevchenko"
+ <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH v5 00/20] iio: adc: Add AD7768/AD7768-4 ADC driver
+ support
+Message-ID: <20260829191954.7a5f1875@jic23-huawei>
+In-Reply-To: <20260828-ad7768-driver-v5-0-e33ca6f841a2@analog.com>
+References: <20260828-ad7768-driver-v5-0-e33ca6f841a2@analog.com>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260829-rtc_s35390a_int1-v7-6-debcd31143ae@posteo.de>
-References: <20260829-rtc_s35390a_int1-v7-0-debcd31143ae@posteo.de>
-In-Reply-To: <20260829-rtc_s35390a_int1-v7-0-debcd31143ae@posteo.de>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>, 
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
- Michael Langer <michael.brainbug.langer@googlemail.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Linus Walleij <linusw@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Markus Probst <markus.probst@posteo.de>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1557;
- i=markus.probst@posteo.de; h=from:subject:message-id;
- bh=M24Mz218ImJKt0KkgI5/Aj2azuDGtFNwOJqCp02b7jM=;
- b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBqkus+heprlaHloBu5NQiKtk7+FGyvRlrumONr1
- mVEsW2uLCWJAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCapLrPhsUgAAAAAAEAA5t
- YW51MiwyLjUrMS4xMiwyLDIACgkQNHYf+OetQ9JtlA/9ER3qaF8lUylr2eTx6R4Uvv7WSqQj7Oj
- re6uFDpyskTO51xuWjt1rBQL0LZuBomVyXjmigFs9gSM5lR40gDaAqKY0ksgEv33gfe3W27ISZg
- EOYGzRMnHcisHJuo7OUSXYczdrn0JEOIRcst/maOEGK9ev2HGitiBsMOq7JFEHBxH6OAvBMLwgI
- W/jZ68Eq8dVKjOPW6Z9dVQNg1UDJo0kVEBABAv8OJ9duT/ZNa8A/1n03mLriXTxbvGG0LhlFnTg
- noXLbqoB8MeN3RGZ0qHuS9ZriN9D8mPdkwpiRoevxM98JtgWR43Mkb/1BDauTFsww4sho05Z2DG
- ziQYghXjdrB5X0aDJ6BAZrGzLWStt8T2J6r2PQIDo/fQGrLcy6K+NHunslcX6tZHakCIBe4LGe/
- Z/RbQB8t6cVgjw92WR0v7nZYT71e2i86vxtEKNp92uONgKLo6bEk8o6qJLyY31A5MqM3rkEwZkW
- 1P7E+7B8Dv3gtBYUQk/gsVBBGGYtsHw3hbP/iNs56/yGA4IYJOvg6LCOCxuqYhDYUdo1thm/44L
- s2n4Wq98Q1fcpnaF44rkUYaAnHGC423t+51jxRz+0S0C2bBmi6NqLjwURiPLXe2qK5lKRLo7I/a
- Uu7dgDK0IwqVTpfCOLlUazM1KY55Ih5Yp5jBUIN3FdGlDqiUL6TE=
-X-Developer-Key: i=markus.probst@posteo.de; a=openpgp;
- fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
-  keydata=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
-  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-Synology NAS devices use interrupt signal 1 for wakeup alarms. On ACPI
-it is not possible to configure pinctrl.
+> ---
+> base-commit: b75697ef53e435d894833dad2a8c2fa882cb9b19
 
-Use interrupt signal 1 for wakeup if no pinmux function has been
-configured in devicetree and dmi sys vendor matches "Synology Inc.".
+Where is this commit?  I tried the various IIO trees, GPIO and linux-next.
+None of them seem to have it.  That means automated tooling is failing
+to apply this including sashiko (and I'm starting to use b4 review which
+has similar problems)  Please fix up and send a v6.
 
-Signed-off-by: Markus Probst <markus.probst@posteo.de>
----
- drivers/rtc/rtc-s35390a.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+Choices for base - and say in text which it is as well as the
+commit id.
 
-diff --git a/drivers/rtc/rtc-s35390a.c b/drivers/rtc/rtc-s35390a.c
-index 66ae58ac06dd..860977fbae87 100644
---- a/drivers/rtc/rtc-s35390a.c
-+++ b/drivers/rtc/rtc-s35390a.c
-@@ -5,6 +5,7 @@
-  * Copyright (c) 2007 Byron Bradley
-  */
- 
-+#include <linux/dmi.h>
- #include <linux/module.h>
- #include <linux/rtc.h>
- #include <linux/i2c.h>
-@@ -780,8 +781,18 @@ static int s35390a_probe(struct i2c_client *client)
- 		return dev_err_probe(dev, err, "pinctrl enable failed\n");
- 
- 	/* If no pinmux function is defined in DT, fallback to previous behaviour */
--	fallback[0] = S35390A_FUNC_IGNORE;
--	fallback[1] = S35390A_FUNC_WAKEUP;
-+
-+	if (dmi_match(DMI_SYS_VENDOR, "Synology Inc.")) {
-+		/*
-+		 * Synology uses interrupt signal 1 for wakeup. Since pinctrl cannot be
-+		 * configured on ACPI, we check against the dmi sys vendor.
-+		 */
-+		fallback[0] = S35390A_FUNC_WAKEUP;
-+		fallback[1] = S35390A_FUNC_DISABLE;
-+	} else {
-+		fallback[0] = S35390A_FUNC_IGNORE;
-+		fallback[1] = S35390A_FUNC_WAKEUP;
-+	}
- 
- 	for (i = 0; i < ARRAY_SIZE(s35390a_pin_groups); i++) {
- 		if (s35390a->pinfunction[i] == -1) {
+Latest mainline release
+rc1 of the new release - occasionally rcX but then you must call that out
+with reasons
 
--- 
-2.54.0
+These first two are the strong preference.
+
+An immutable branch that others have created to allow some cross subsystem
+work in a single cycle.
+
+togreg branch of iio.git - but call that out and say why.
+
+Anyhow, given I have a long queue today and this base commit thing has
+been going on for a few cycles (as seen by sashiko not reviewing it)
+I'm going to give v5 a skip and wait for v6.
+
+Jonathan
+
+> change-id: 20260708-ad7768-driver-10cd15296c20
+> 
+> Best regards,
 
