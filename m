@@ -1,26 +1,26 @@
 Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2100.outbound.protection.partner.outlook.cn [139.219.17.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921A12D73B8;
-	Sat, 29 Aug 2026 02:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C657318ECD;
+	Sat, 29 Aug 2026 02:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.100
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787972335; cv=fail; b=X9Lu0O3XxdpUt3OCNdGAu2HF3SDBVm4kLIbULoxYmalrm+pX+GTNCNIAJoso89ZqXaNnkoe5eYQeSoJjrLFA0vToLWY8MaUJ50APxr7Qi0w/JaNNyHkbjuALwwD9MZlgDcn7QE0qTSg1GmizBVMEQrOL0+Xw6K/URxVX+UufYN4=
+	t=1787972339; cv=fail; b=ivQkL+LebHKvpGeRTsjuIBNCSdPTqdLd7GDapoO/+xwERDEist+qOf1Istfrz2qL/BG/9opmwyxZSg+p+NjoxXkZ1xsnfe2lnALwe3GzpJfKnf/esmbLYHValTAbA32OPKg4wOGty/CRUWMqg0s2Q4B/IxEt1YVS4ejATC0rH+A=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787972335; c=relaxed/simple;
-	bh=AhBHWd9b2GpogC1G86//cJ2Sv98SgxgCuRrTq6MIghs=;
+	s=arc-20240116; t=1787972339; c=relaxed/simple;
+	bh=fkT3wNjAkzCEosEPgA1VCWrycpUeIJuqbaPtbEvZVsw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sbwjXUfjLFfKlp+cZOXBF7Yrt3P/fd/1U+CHcsZoh/t9iActwW1HFgXymJcfE+TeOHwlqJj51vlgcgTWisbTzI/WBUm16jnNd8BXoaELahyTddjUdG7dwg0rTHjR9kl+/UZdpYm4qcwiHF5I+gjUjc9lydz+RFuscZsbLvf5avM=
+	 Content-Type:MIME-Version; b=e8r25l5+M0KZsex48oXZ6xHPxWPWLHnZk0oDdVI/7h5QcZPUwDQppXmpVAVVnhI0R98xkArRiCCkFUWggMiBIDhLq2DaSoCRCTU3F0hdEhPCUS8RclwKPGrEzfZQrnyb/flEI1cCxdJPW1W+ROXNFpnltwf6/QKApaYYkLmDrcU=
 ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.100
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LtCeLhDz/VpiQkpUN4U710GhI92Cs3l7lZDItELvn0gbk7Ev9xQsCZUt2ioLS1t22qERb+tSuuJ1K/sbtKEul8cGTCvWn9W5X3Pr96H0cTse1g1VXiygGgyHdDzzgNXyq3Dsh8q7o/QmOUEw9zpFehKJKDVKkGhcr0Yenzk7PbtTsXUyL0BR+1zZhII3QcIfCE7GzkjUqgsYvMZReJvpoaE+k6gH7k0x0hnyTon3hQgxdpwRUFxX2qWAtmKrPxIzBNuCJVxOjdsw7GI/gYGlncku86Vn2ripPzqt6xB8Ljmyf0Mbhuisvh2+aPxjfOgBbQkIPaNn7b3olC+rgBVFmQ==
+ b=nVonWwCIfNHIXYOdssGNoFWCOlhvN9YZi9XA1y3jM++rlnKKEANRIIZGNZ9wTVPYMieiWS/zyPp2ecQZ6ySFAuRCZh09m5GEllCt01D7U0tyGAKnUu4VAhPnaAdk+SM0bfKZWgJCo3Knc/qxbYctRs7pS80vY+VwCMGN6AF5QiZQRregW2mdfvad+PKE87km5UwxGi9MTn9MROMLjWFle+mqHAHb+v8YajvSP8mlb1DTnRMXMPT3zjTra2qaZJEDXB/KrUEL1q/W+WaLLvUmTj2gvg8qa336iX2h5KVrOH2LFwArWQgGKrfU9AUjXTKsm/Vz0s9w2NV+UAL8Y0t7gg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e+b+4ebnmXYzKgXyevoJgrCKehLyB5S4boBQ3d6SBKg=;
- b=Rrb8q796zPpmVSs30/jk9OEv4vNhPsqJlUEAm5vSbIlY3VnwSGd98BXXaGvMfyjIHEQodesplJ/GEf1XYYqxARAUQ3YLFafC8o3ULZfmd+WAf9UB1dc7hZYe4mA/gBKQ4c51Qlv4V+fNp/Xk1+iVlkdjUK/icraPy65IiwlQ1Z5fXfXZMfF8/HCeeXg7tARRtfs+HXdof7lAAVLrKTHjrx0N6L3Ie0Faihwz9eIGBCTgZ18rpxduFYLCgd09OrJQ3EBwwKywfcoA4pD1iWlUNEvV+SZMxWar3RqZu5geMaX76bYG3zX982WuLeIOoOhQ1jxJHFRn8Ld+/rtNHIqN+w==
+ bh=ZL189OgXpXPwUI+cjZRl1y0Ryjhz/bcYrXw1BhX8i9E=;
+ b=PEyx/VDxcgcAsDvMXcArm+/jPTEVRW6C5cmK9p6n2tQX+fd+BbRyZfzCzhT0TsrfEDQ58GRnKv5sauYTMXd4cKZlUFjmbzQVmLn4tCN2DNp5ajVNjKLqJGXZ3VYC2sBMiZ+IB33VMRNXiakFj4A0RcxynstNveUSppyGhSvAbd/VDxOSL+OXyZ2knyFHVJadaIzl9IpWYm1inuQXfxzqSIBG8TEe65unaEvL0PmwrgEJ5/fsZBHwjzOeo/jqXofXe6iSrqNK0f84tAy8e5x1yeok6m++q3XP9cl4F/Wq4Pt+nFcI6IuTSq9Fc1h7g5++mOVBRhR/uzXvhRiCXOMlSw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=starfivetech.com; dmarc=pass action=none
  header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
@@ -30,11 +30,11 @@ Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
  (2406:e500:c550:17::6) by ZQ4PR01MB1153.CHNPR01.prod.partner.outlook.cn
  (2406:e500:c550:13::6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.19; Sat, 29 Aug
- 2026 02:57:43 +0000
+ 2026 02:57:39 +0000
 Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
  ([fe80::e7d4:256c:b066:850d]) by
  ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%4])
- with mapi id 15.21.0315.011; Sat, 29 Aug 2026 02:57:43 +0000
+ with mapi id 15.21.0315.011; Sat, 29 Aug 2026 02:57:39 +0000
 From: Changhuang Liang <changhuang.liang@starfivetech.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -53,9 +53,9 @@ Cc: linux-gpio@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>,
 	Changhuang Liang <changhuang.liang@starfivetech.com>
-Subject: [PATCH v6 07/21] dt-bindings: pinctrl: Add starfive,jhb100-sys1-pinctrl
-Date: Fri, 28 Aug 2026 19:57:06 -0700
-Message-Id: <20260829025720.23915-8-changhuang.liang@starfivetech.com>
+Subject: [PATCH v6 04/21] pinctrl: starfive: Add StarFive JHB100 sys0 controller driver
+Date: Fri, 28 Aug 2026 19:57:03 -0700
+Message-Id: <20260829025720.23915-5-changhuang.liang@starfivetech.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260829025720.23915-1-changhuang.liang@starfivetech.com>
 References: <20260829025720.23915-1-changhuang.liang@starfivetech.com>
@@ -71,268 +71,1890 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1153:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2cd5b117-4142-4678-2d3e-08df05794bd2
+X-MS-Office365-Filtering-Correlation-Id: 42d35e4a-cbe3-4dae-7544-08df05794942
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|23010399003|7416014|376014|52116014|3023799007|18002099003|22082099003|56012099006|6133799003|10067099003|921020|38350700014;
+	BCL:0;ARA:13230040|366016|1800799024|23010399003|7416014|376014|52116014|3023799007|18002099003|22082099003|56012099006|5023799004|6133799003|10067099003|921020|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	n5t9Px6RdSdD0JwQupK0tHbm8oAWrggvJNqgJKP8myauyMiY3mUIx19f6XpzcivtQTNi+YnuxT7XTp5nixwgz048N0Q9SLu8JK68qcpV6y4e7mmXujr7ZHr01HSmzACr1sq0vEj7izmIZKPPAtU17cd10eTzh/3mobtwoE70klmIi6IxhB1nNJMrNKzrAPVfjTwCafqypSmmwgmYrGq6dvf+BRsn7S7EeDZdBmUFiCE6Q1r4zIm3zah10qzB5nfs+UxFUXfbDsLnTPhcBwmgcYojVyM7iA2HXP/aBdx8nubYDhy5qL6lxzrFPyTUbzcuwi2kT7ha+x7ZPO/rUjBOI7BfzbtsnFPe9RQKjS1YrOrP4tD/4pqZgpYYw3q/LPgeWMw72N5VWIVj9k3ev97ro8dZz6lFI/f96RufxW6kbKNfFvlPv5MGXqZfVh/tayqbp6l4R4Si+WuodOCrdGrw6K1p502yI9bA7nEkBdpciBIvvNMw5OQSlxr3xNEgVgRAC/90oSzgRvQ/MoFq+XCJuowJlqcu7D2Wg5kbvNT1I9UgPUgzOxP8FB6/AARGEZNm0oOhLssxJtDJjap8tLWSzg==
+	Nx+mzWKeOI6NyR6K3h8eTwHthVixMwntcXNtLWN7dt0DJN1s0EeqluVh0Lelixj1yTrqZpguKxADhjDA0k4Q7fB5dXhCC2ejYwEfK7Y7Daa/VfmkZQjDUUlqRYGwwspVREaVVL4Kqqx+tRRI2arbi+eqSiegxxQuHeYqKerGOzkf7GD5bRRKcj73kiC+UMyA4MZDFnZEgR5LJ1BriBWS96YDrAp/eNo8weaSfM00Xdfhgnn48QYkyR8U9ZNe3xnHOJFiICRBof6LSqAqLMgNO4Qha2vP8gF+Jw82LxbMaTAlN4u/ZZlIh/8HpNFIYsLsX9pl7fG/MTAwUPzofYIj5pGRhHjsXuVUksH5Y0PqPg0e66/a/qHScnj9S/usXQVFazdRcRwgXPFTneSKdNojaSTqynnBNXb7VYbAFlEVxpjEKOQc8V4wo0hFquWSE1GBFKJGl9XXuqlc52LiWBaSE4CsRiQwoUNLmYBrQPV0HSCQ1Y3pOAfsPbuvD+xX+sgojT9/5OBbuNzpBG7IPXF1w/hRhnhVV8fWGeWgANfpiPX+t9Ik6qMvehVZpNqkaTA+rY9TA5NikOEKttVRfcXnjQ==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(7416014)(376014)(52116014)(3023799007)(18002099003)(22082099003)(56012099006)(6133799003)(10067099003)(921020)(38350700014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(7416014)(376014)(52116014)(3023799007)(18002099003)(22082099003)(56012099006)(5023799004)(6133799003)(10067099003)(921020)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?oMJy+ZXjUl8iKPZQdylcrK4j0nI3p+3Yra1yJ0RUngZxIpvaf2lQ1FKs8hb8?=
- =?us-ascii?Q?L4zNlrIGyPH+wrjZwHCc0vkyJwyJbV3s+MiPaKnYlQrPhWeVucDPd+6J4w+8?=
- =?us-ascii?Q?kQYH4xEl/XkeQnOduwtNwydgvUKX+fYpzvJQnCqg8T5XlGv/RA+q9XiEgCWt?=
- =?us-ascii?Q?3TdNWFJCFlEeb3lpFcQF31Vkl8KN/bkkOKDcYfuMOhX7CwaoUYglbuqF5Oan?=
- =?us-ascii?Q?Bd55V2u88xa6MyDZdl4bZmX1QSGiupwb9oIKXx/M1bdILI+qKmvoLj3MMU6Q?=
- =?us-ascii?Q?tzZTwNJAhT5g9EytwDIjRlS0jvJzOM6b/0ht5HcwsGW5KrV+3xXCZJ+66mBd?=
- =?us-ascii?Q?eHSWyDsyFuatV50zNZ4nqxV+BtvnQy3ul2aeGgXmHST5PXautLByEsCsmZYT?=
- =?us-ascii?Q?zf9+gNv0PsNUDxjNsDeS0iiE6V31zt2I0XYh2slFI1qSvx/vsvyP2z2Frbq6?=
- =?us-ascii?Q?ZMiOfiKRwYgw8xzm1ulltTaEb0S8QrX77fky1whjUmxs0R89XGFGJuR12D2R?=
- =?us-ascii?Q?/6XTBf8OlJ7UuoIK1FV5P5bdFmEL24fwb2MjYoDwNhbdnRL7ohWRm1wTU/2+?=
- =?us-ascii?Q?nrqfQHdKuRJvBQrsodzCIlBw+bVDn0mI5+9iQMpbJTDV09kbp+wks+8B+RK8?=
- =?us-ascii?Q?E30ECIPsH5uZsbTzCd8HpwXqFOieFJJC9iKS3PDKnHAc4k9xcrQJKvN/zqz/?=
- =?us-ascii?Q?rPQ+2jYfTgYtW68GCHxir9otXvBM4oQ3TKBv5Ue264Dr3r4SR0FAOVj9F0Vy?=
- =?us-ascii?Q?qTlAPBmgMmbwsbwMuTN2mhyuU2xPzR1g9KP+XBMDRE0HFmf7aoIQ1RTM+DZt?=
- =?us-ascii?Q?ZBBhrjk1ccai6CVUIQZYsprCq4GJB+c2EsCDDTsHeDE/UUe0jCMZOVcit4Wv?=
- =?us-ascii?Q?kAqEN3PDPQUMYQm74HIjZ9qipxFWa9ofSXn//71GBEKmC0bN2LYYaQGOFCWm?=
- =?us-ascii?Q?pNNGw66AAo9S6oVwC5cVNx+YkSuFka+I3KGowDNlDgXSf+VBTS/EM09WFjDP?=
- =?us-ascii?Q?Jx6P9WR8nKUy/Gv2bUvwN+hyftC1U3w7wS60BVSMY+l0vr9ib+BmQIZtgcIL?=
- =?us-ascii?Q?jB1+MnsFcD8Nxrf1C/a0A7poHuHheDNdC00t3eJWYG08e4QQF/4SOZnab/xi?=
- =?us-ascii?Q?JXgtetDN6PVSHGC1psjqDmtaIPefY+AM1ZTIir4lA9HNKI9WLGZ/3fR/JulR?=
- =?us-ascii?Q?+BQg39Zhm5rxCpjfuaeFNLLZZkBNYw3zFQFEllBORZRIdh3vrNf5RyGTKxgM?=
- =?us-ascii?Q?Er+OwHuHBztkxAlrgHbkq/JHtJM3kVT2sNkgEa+Cejrugm6nVtx9p//Uh+c7?=
- =?us-ascii?Q?+6uGrdAsv6EzBaQDjuQD4gg8+3s5m1s2Ne7RQrZPzAOg6VhaZRX+9GXlHc/c?=
- =?us-ascii?Q?0aFUtBMSOh0ymd/u8HQTbiWnWDVu9MJdlk7sGoFwNNp6v2zFdUvVd7YI9XBe?=
- =?us-ascii?Q?iUFM8AifqrSs/F3WI/2z0efUGjW9FyrJgCtd5WA3yjkWAGZkzTmKUqLl6h8U?=
- =?us-ascii?Q?6lhOuLkFROciW60sGUmDuomJufACFmakJ2WZcpZpssmCXI9pBFumjK4/BMuN?=
- =?us-ascii?Q?8e7H59/RVrVYf/369V4HhKPeOf5bHv3rz1Oc1f9yE9kmMNsYVlFm344RZ6KF?=
- =?us-ascii?Q?x9DtA7kCQD1OcWj3xY7weClJC6PN51Gn7wgbffXE5hoITeLSJo2Gg1yzWEKf?=
- =?us-ascii?Q?lXpAlxUzxT/iCknPvJH6lhqCWOQQkf8rxxbQCvSsxzR6PatL9z2x84C9mnGE?=
- =?us-ascii?Q?cTRASHpJItsTpe6UETOlGJsIFVx2alPM1FyIYZiFbzFg9qcWSLUq?=
+	=?us-ascii?Q?HAemUKR/LJmlsI3OUqHOxmTo5CBkPtNdCeafBXJXGtKXJ4nPliIsIVHUiLkP?=
+ =?us-ascii?Q?j9AeivyuDiXB5Csi3W3eSSJLo9qdqrZdYafhR6GeDhP1LYo7MZOhOMViYgdh?=
+ =?us-ascii?Q?AALFtAPp2MgTGMHAibFsI5eK9VThSVWGibUx9hHBkfSTfMqUmZU2UjTPvOyk?=
+ =?us-ascii?Q?rsheoWaeXs4rIw3E3CkaJR/tYxasA4FKlL3hcMiXDxK+ep8E+CsDODwuNfCJ?=
+ =?us-ascii?Q?1sCXqY4ONyqXBNc7F8V3slnglYHhzujvXQdlJhIIySFaVWI83dUBMvlkpN6R?=
+ =?us-ascii?Q?t7XwjhmOYPja7fDONXVHW4IjO/MOx3169+h7k5i2JyjSqeo3YeEKHeS3OK/k?=
+ =?us-ascii?Q?6loWP34N5JkhD05qXrxVNXPjRqGwAUng8+hKgLOEtTesDvH9G+1yBX+sTPxW?=
+ =?us-ascii?Q?hR9RhUaBrQaZZYKvQ67mj7dgmQNVs3qR2ZlwJuveG1Vrat92lwPK1ETk738c?=
+ =?us-ascii?Q?yRSX+NzMj5HvyM8G1wP1RlRb49CXbu7PfSOO/lctGv58QXwBRsDlwPJDUGMr?=
+ =?us-ascii?Q?4NiY76mwgw3sCZnby2GdXorHZG3eVggzUCC1bRTaImANWT/TSKSucrw64oie?=
+ =?us-ascii?Q?bYYuyETW8Ld4Smu2VF1wNF8y+3WeEvqa2dJ618y9MJiNoC6h1SfqzMZff+go?=
+ =?us-ascii?Q?nKe3NXZab3hEwy/aZ//3rPR3JPq9XOrcNCJeWgobVYA6xc4+WS7h4mkvGx44?=
+ =?us-ascii?Q?CJT+93CGDgkZv1D9etK5tNLFAUC5kXh7G+3QDOHs+9gDhz26PHzBzuHrLUpB?=
+ =?us-ascii?Q?csaqpBQbJmxXJkZ4YxiXLxCHxNuWsW3l9jV1L5ovHA5B3EmBqljvWcea8tma?=
+ =?us-ascii?Q?ZyVFJdHRQDfW3HSneEpe5/3BCrNdIRrnL8flJECSBjCoMXSWJW6qJRNfpcH1?=
+ =?us-ascii?Q?X5V9wr9h3TccLKHWSCVkE2zCeM9uDWX2DhpVvsmGcsJ9YAblcWSI0KN0JvHD?=
+ =?us-ascii?Q?POS+7CDFKfgefix2KT6JYO9WqICaKffysBZYTn1XAKTEuLbzQSjrPpdXMbMd?=
+ =?us-ascii?Q?P2JJOkbpNJf3iyNvdD4WAQFHE++XRDpJYs/AwT67x1g3/1HLoXN67bcapAf5?=
+ =?us-ascii?Q?d4rgtiVq+InSp0HbXKAJQUbZGUEVmbjALv56qJGR9gaX8njUNXDRWwFBG+Pc?=
+ =?us-ascii?Q?SIugyENZZGGlo/vBJq5TRUc6KqXka9gEQa+PMVULB0gefT93vLcvN1wCOaP0?=
+ =?us-ascii?Q?hsR9gnsaIas43pxcWeCFz+cM8RC2YjXyeEg4gjkc9o+bze9YbNA33F/XHzdd?=
+ =?us-ascii?Q?cAI/tCjF1FyQFOgZTzhUC19CCNLOJqCYbOvh5xe0AVxbnAPKym+Hkqm6WSkQ?=
+ =?us-ascii?Q?D+jNxzdPSHDHBj1BpMljYitXOCGtwfcBjQPqL63bNUrRATzeIRRJkkjdC8d1?=
+ =?us-ascii?Q?HT4ZrOSwH5BHIGjQ+DZcHQhfVUwfogZp3xS2H446ti41942jVEwsFAZESsPf?=
+ =?us-ascii?Q?g8yRe4wstZUoQTwbkJ8hicajfHGfUcrBsFm/dCGI3l04pfn4aKG8Bpjv26Q7?=
+ =?us-ascii?Q?ENf9HKRagJNH2oFQdmUYQFJ0A5Go5HT8eXlbiden59nisE5ubrXVJNEd/HfY?=
+ =?us-ascii?Q?WOPBFX5jhFhZLsgpnfahZcR1yJ5/Y0iLDpPUFeB8KqKiO+JOK2DOxRgTT4Xh?=
+ =?us-ascii?Q?o2gLruUe1AZmuaa/VO3Ht7GFtXP+ev5A6KxCGeTvQ8mgL1w4n/UZ1pQ0X1H4?=
+ =?us-ascii?Q?ijUrMYWUkdKCuV/8266ee7aBrnck0fD9BcoAa653rMaDUe2OrjNjfhu+E+Mr?=
+ =?us-ascii?Q?D0oVwquX605UQExU2oj/kMeFb73e1WAS8Do/bvC7PfYZiU6scDnM?=
 X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cd5b117-4142-4678-2d3e-08df05794bd2
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42d35e4a-cbe3-4dae-7544-08df05794942
 X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2026 02:57:43.2055
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Aug 2026 02:57:39.0490
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hfvzpxKiBqfRnsU23TZhWCwU99qE8v6/05/YYI2WLZ8Dri/ZUsJf+RaCm8Ce4uQ9r/wuNLKBnjBiyk37CqhcKV7cbQyJRnd7J+F8GnqziHY9BJN/RUkExoxrHQGFbxBA
+X-MS-Exchange-CrossTenant-UserPrincipalName: dqREykGrfj3SuNPigZCoVglLUewvTI+AscwiedTrA1qv96STP0CXxchcZc3Ob8buPARpvhhGJ15e6Xo4TGkD2S4S0QTdWX+KqzNFkqZ/kzRiADlnebXE/5vJzlosEj6b
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1153
 
-Add pinctrl bindings for StarFive JHB100 SoC System-1(sys1) pinctrl
+Add pinctrl driver for StarFive JHB100 SoC System-0(sys0) pinctrl
 controller.
 
-On the StarFive JHB100 SoC, every 32 GPIOs correspond to one register
-address. Therefore, under this model, every 32 GPIOs can be regarded
-as one GPIO instance. In this case, the following new approach can be
-used to represent this model:
+Simultaneously add a generic pinctrl driver framework for registering
+the pinctrl of other domains (sys1, sys2, and so on) in the JHB100 SoC.
 
-gpios = <&gpio [instance] offset flags>;
-gpio-ranges = <&pinctrl [gpio_instance] gpio_offset pin_offset count>;
-
-At the same time, this model also reduces the /32 and %32 operations
-in the driver.
-
+Co-developed-by: Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
+Signed-off-by: Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
+Signed-off-by: Alex Soo <yuklin.soo@starfivetech.com>
 Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 ---
- .../pinctrl/starfive,jhb100-sys1-pinctrl.yaml | 164 ++++++++++++++++++
- .../pinctrl/starfive,jhb100-pinctrl.h         |  10 ++
- 2 files changed, 174 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jhb100-sys1-pinctrl.yaml
+ MAINTAINERS                                   |    9 +
+ drivers/pinctrl/starfive/Kconfig              |   20 +
+ drivers/pinctrl/starfive/Makefile             |    3 +
+ .../starfive/pinctrl-starfive-jhb100-sys0.c   |  118 ++
+ .../starfive/pinctrl-starfive-jhb100.c        | 1456 +++++++++++++++++
+ .../starfive/pinctrl-starfive-jhb100.h        |  159 ++
+ 6 files changed, 1765 insertions(+)
+ create mode 100644 drivers/pinctrl/starfive/pinctrl-starfive-jhb100-sys0.c
+ create mode 100644 drivers/pinctrl/starfive/pinctrl-starfive-jhb100.c
+ create mode 100644 drivers/pinctrl/starfive/pinctrl-starfive-jhb100.h
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-sys1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-sys1-pinctrl.yaml
-new file mode 100644
-index 000000000000..cffeee8e3da9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/starfive,jhb100-sys1-pinctrl.yaml
-@@ -0,0 +1,164 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/starfive,jhb100-sys1-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: StarFive JHB100 System-1 Pin Controller
-+
-+description: |
-+  Pinctrl bindings for JHB100 RISC-V SoC from StarFive Technology Ltd.
-+
-+  The JHB100 SoC has 13 pinctrl domains - sys0, sys0h, sys1, sys2, per0, per1,
-+  per2, per2pok, per3, adc0, adc1, emmc, and vga.
-+  This document provides an overview of the "sys1" pinctrl domain.
-+
-+  The "sys1" domain has a pin controller which provides
-+  - function selection for GPIO pads.
-+  - GPIO pad configuration.
-+  - GPIO interrupt handling.
-+
-+  In the SYS1 Pin Controller, there are 8 multi-function GPIO_PADs. Each of
-+  them can be multiplexed to different hardware blocks through function
-+  selection. Each iopad has a maximum of up to 4 functions - 0, 1, 2, and 3.
-+  Function 0 is the default function which is generally the GPIO function
-+  (or occasionally, it can be a peripheral signal).
-+  Function 1, 2, and 3 are the alternate functions or peripheral signals that
-+  can be routed to the iopad. The function selection can be carried out by
-+  writing the function number to the iopad function select register.
-+
-+  Each iopad is configurable with parameters such as input-enable, internal
-+  pull-up/pull-down bias, drive strength, schmitt trigger, slew rate, input
-+  debounce nanoseconds.
-+
-+maintainers:
-+  - Changhuang Liang <changhuang.liang@starfivetech.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: starfive,jhb100-sys1-pinctrl
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  '#interrupt-cells':
-+    const: 3
-+
-+  gpio-controller: true
-+
-+  '#gpio-cells':
-+    const: 3
-+
-+  gpio-ranges: true
-+
-+  gpio-line-names: true
-+
-+patternProperties:
-+  '-grp$':
-+    type: object
-+    additionalProperties: false
-+    patternProperties:
-+      '-pins$':
-+        type: object
-+        description: |
-+          A pinctrl node should contain at least one subnode representing the
-+          pinctrl groups available in the domain. Each subnode will list the
-+          pins it needs, and how they should be configured, with regard to
-+          function selection, bias, input enable/disable, input schmitt
-+          trigger enable/disable, slew-rate, input debounce nanoseconds
-+          and drive-strength.
-+        allOf:
-+          - $ref: /schemas/pinctrl/pincfg-node.yaml
-+          - $ref: /schemas/pinctrl/pinmux-node.yaml
-+        additionalProperties: false
-+
-+        properties:
-+          pins:
-+            description:
-+              The list of IOs that properties in the pincfg node apply to.
-+
-+          function:
-+            description:
-+              A string containing the name of the function to mux for these
-+              pins.
-+            enum: [ espi, espi_reset, gpio, host0_port80, host1_port80 ]
-+
-+          bias-disable: true
-+
-+          bias-pull-down:
-+            type: boolean
-+
-+          bias-pull-up:
-+            type: boolean
-+
-+          drive-strength:
-+            enum: [ 2, 4, 8, 12 ]
-+
-+          drive-strength-microamp:
-+            enum: [ 2000, 4000, 8000, 12000 ]
-+
-+          input-debounce-ns:
-+            minimum: 0
-+            maximum: 10485680
-+            description:
-+              Debounce time in nanoseconds. The hardware counts in 80 ns
-+              stages with a 17-bit counter, so the maximum is 10485680 ns.
-+
-+          input-disable: true
-+
-+          input-enable: true
-+
-+          input-schmitt-enable: true
-+
-+          input-schmitt-disable: true
-+
-+          slew-rate:
-+            enum: [ 0, 1 ]
-+            default: 0
-+            description: |
-+                0: slow
-+                1: fast
-+
-+required:
-+  - compatible
-+  - reg
-+  - resets
-+  - interrupts
-+  - interrupt-controller
-+  - '#interrupt-cells'
-+  - gpio-controller
-+  - '#gpio-cells'
-+  - gpio-ranges
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        pinctrl_sys1: pinctrl@13081000 {
-+            compatible = "starfive,jhb100-sys1-pinctrl";
-+            reg = <0x0 0x13081000 0x0 0x1000>;
-+            resets = <&sys1crg 2>;
-+            interrupts = <58>;
-+            interrupt-controller;
-+            #interrupt-cells = <3>;
-+            gpio-controller;
-+            #gpio-cells = <3>;
-+            gpio-ranges = <&pinctrl_sys1 0 0 0 8>;
-+        };
-+    };
-diff --git a/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h b/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
-index 38d5a94e92e3..30704a5a3418 100644
---- a/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
-+++ b/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
-@@ -28,4 +28,14 @@
- #define PADNUM_SYS0H_GPIO_A14				10
- #define PADNUM_SYS0H_GPIO_A15				11
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e2b317c57a49..198c88b907a0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -25910,6 +25910,15 @@ S:	Supported
+ F:	Documentation/devicetree/bindings/interrupt-controller/starfive,jhb100-intc.yaml
+ F:	drivers/irqchip/irq-starfive-jhb100-intc.c
  
-+/* sys1 pad numbers */
-+#define PADNUM_SYS1_GPIO_A16				0
-+#define PADNUM_SYS1_GPIO_A17				1
-+#define PADNUM_SYS1_GPIO_A18				2
-+#define PADNUM_SYS1_GPIO_A19				3
-+#define PADNUM_SYS1_GPIO_A20				4
-+#define PADNUM_SYS1_GPIO_A21				5
-+#define PADNUM_SYS1_GPIO_A22				6
-+#define PADNUM_SYS1_GPIO_A23				7
++STARFIVE JHB100 PINCTRL DRIVERS
++M:	Changhuang Liang <changhuang.liang@starfivetech.com>
++M:	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
++L:	linux-gpio@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/pinctrl/starfive,jhb1*.yaml
++F:	drivers/pinctrl/starfive/pinctrl-starfive-jhb1*
++F:	include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
 +
- #endif
+ STARFIVE JHB100 RESET CONTROLLER DRIVERS
+ M:	Changhuang Liang <changhuang.liang@starfivetech.com>
+ S:	Maintained
+diff --git a/drivers/pinctrl/starfive/Kconfig b/drivers/pinctrl/starfive/Kconfig
+index a9a7cb101684..eb0b3b705ec5 100644
+--- a/drivers/pinctrl/starfive/Kconfig
++++ b/drivers/pinctrl/starfive/Kconfig
+@@ -47,3 +47,23 @@ config PINCTRL_STARFIVE_JH7110_AON
+ 	  This also provides an interface to the GPIO pins not used by other
+ 	  peripherals supporting inputs, outputs, configuring pull-up/pull-down
+ 	  and interrupts on input changes.
++
++config PINCTRL_STARFIVE_JHB100
++	bool
++	depends on OF
++	select GENERIC_PINCTRL
++	select GPIOLIB
++	select GPIOLIB_IRQCHIP
++	select GPIO_GENERIC
++	select OF_GPIO
++
++config PINCTRL_STARFIVE_JHB100_SYS0
++	tristate "StarFive JHB100 SoC System-0 pinctrl and GPIO driver"
++	depends on ARCH_STARFIVE || COMPILE_TEST
++	select PINCTRL_STARFIVE_JHB100
++	default ARCH_STARFIVE
++	help
++	  Say yes here to support system-0 pin control on the StarFive JHB100 SoC.
++	  This also provides an interface to the GPIO pins not used by other
++	  peripherals supporting inputs, outputs, configuring pull-up/pull-down
++	  and interrupts on input changes.
+diff --git a/drivers/pinctrl/starfive/Makefile b/drivers/pinctrl/starfive/Makefile
+index ee0d32d085cb..c0d368f413bc 100644
+--- a/drivers/pinctrl/starfive/Makefile
++++ b/drivers/pinctrl/starfive/Makefile
+@@ -5,3 +5,6 @@ obj-$(CONFIG_PINCTRL_STARFIVE_JH7100)	+= pinctrl-starfive-jh7100.o
+ obj-$(CONFIG_PINCTRL_STARFIVE_JH7110)		+= pinctrl-starfive-jh7110.o
+ obj-$(CONFIG_PINCTRL_STARFIVE_JH7110_SYS)	+= pinctrl-starfive-jh7110-sys.o
+ obj-$(CONFIG_PINCTRL_STARFIVE_JH7110_AON)	+= pinctrl-starfive-jh7110-aon.o
++
++obj-$(CONFIG_PINCTRL_STARFIVE_JHB100)		+= pinctrl-starfive-jhb100.o
++obj-$(CONFIG_PINCTRL_STARFIVE_JHB100_SYS0)	+= pinctrl-starfive-jhb100-sys0.o
+diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jhb100-sys0.c b/drivers/pinctrl/starfive/pinctrl-starfive-jhb100-sys0.c
+new file mode 100644
+index 000000000000..3ed6a7b63064
+--- /dev/null
++++ b/drivers/pinctrl/starfive/pinctrl-starfive-jhb100-sys0.c
+@@ -0,0 +1,118 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Pinctrl / GPIO driver for StarFive JHB100 SoC System-0 domain
++ *
++ * Copyright (C) 2024 StarFive Technology Co., Ltd.
++ * Author: Alex Soo <yuklin.soo@starfivetech.com>
++ *
++ */
++
++#include <dt-bindings/pinctrl/starfive,jhb100-pinctrl.h>
++#include <linux/platform_device.h>
++
++#include "pinctrl-starfive-jhb100.h"
++
++static const struct jhb100_pin_layout_desc jhb100_sys0_pl_desc[] = {
++	{ .pin_start = 0, .pin_cnt = 3, .name = "gpio", .gpio_func_sel = 0, },
++	{ .pin_start = 3, .pin_cnt = 1, .name = "bmcpcierp_pe2rst_out", .gpio_func_sel = 1, },
++	{ .pin_start = 4, .pin_cnt = 1, .name = "testen", .gpio_func_sel = -1, },
++	{ .pin_start = 5, .pin_cnt = 1, .name = "syspok_in", .gpio_func_sel = -1, },
++	{ .pin_start = 6, .pin_cnt = 1, .name = "sysrstn_in", .gpio_func_sel = -1, },
++	{ .pin_start = 7, .pin_cnt = 1, .name = "perstn0_in", .gpio_func_sel = -1, },
++	{ .pin_start = 8, .pin_cnt = 1, .name = "perstn1_in", .gpio_func_sel = -1, },
++	{ .pin_start = 9, .pin_cnt = 1, .name = "aprstn_out", .gpio_func_sel = -1, },
++	{ .pin_start = 10, .pin_cnt = 1, .name = "pcierp_wake", .gpio_func_sel = -1, },
++	{ 0xff },
++};
++
++static const struct config_reg_layout_desc jhb100_sys0_pinctrl_crl_desc[] = {
++	{
++		.pin_start					= 0,
++		.pin_cnt					= 4,
++		.fields[PAD_CFG_DRIVE_STRENGTH_2BIT]		= { .shift = 0, .width = 2 },
++		.fields[PAD_CFG_INPUT_ENABLE]			= { .shift = 2, .width = 1 },
++		.fields[PAD_CFG_PULL_DOWN]			= { .shift = 3, .width = 1 },
++		.fields[PAD_CFG_PULL_UP]			= { .shift = 4, .width = 1 },
++		.fields[PAD_CFG_SLEW_RATE]			= { .shift = 5, .width = 1 },
++		.fields[PAD_CFG_SCHMITT_TRIGGER_SELECT]		= { .shift = 6, .width = 1 },
++		.fields[PAD_CFG_DEBOUNCE_WIDTH]			= { .shift = 15, .width = 17 },
++	},
++	{
++		.pin_start					= 4,
++		.pin_cnt					= 5,
++		.fields[PAD_CFG_SCHMITT_TRIGGER_SELECT]		= { .shift = 0, .width = 1 },
++	},
++	{
++		.pin_start					= 9,
++		.pin_cnt					= 1,
++		.fields[PAD_CFG_DRIVE_STRENGTH_2BIT]		= { .shift = 0, .width = 2 },
++		.fields[PAD_CFG_SLEW_RATE]			= { .shift = 2, .width = 1 },
++	},
++	{
++		.pin_start					= 10,
++		.pin_cnt					= 1,
++		.fields[PAD_CFG_DRIVE_STRENGTH_2BIT]		= { .shift = 0, .width = 2 },
++		.fields[PAD_CFG_INPUT_ENABLE]			= { .shift = 2, .width = 1 },
++		.fields[PAD_CFG_PULL_DOWN]			= { .shift = 3, .width = 1 },
++		.fields[PAD_CFG_PULL_UP]			= { .shift = 4, .width = 1 },
++		.fields[PAD_CFG_SLEW_RATE]			= { .shift = 5, .width = 1 },
++		.fields[PAD_CFG_SCHMITT_TRIGGER_SELECT]		= { .shift = 6, .width = 1 },
++	},
++	{ 0xff },
++};
++
++static const struct starfive_pinctrl_regs jhb100_sys0_pinctrl_regs = {
++	.func_sel		= { .reg = 0x44, .width_per_pin = 2 },
++	.config			= 0x0c,
++	.output			= 0x38,
++	.output_en		= 0x3c,
++	.gpio_status		= 0x40,
++	.irq_en			= 0x48,
++	.irq_status		= 0x4c,
++	.irq_clr		= 0x50,
++	.irq_trigger		= 0x54,
++	.irq_level		= 0x58,
++	.irq_both_edge		= 0x5c,
++	.irq_edge		= 0x60,
++};
++
++static const struct jhb100_pinctrl_func_maps jhb100_func_maps_sys0[] = {
++	{ .func = "auxpwrgood",		.val = 1 },
++	{ .func = "gpio",		.val = 0,
++	  .max_pin = JHB100_FUNC_MAPS_MAX_PIN(PADNUM_SYS0_GPIO_A2) },
++	{ .func = "gpio",		.val = 1,
++	  .max_pin = JHB100_FUNC_MAPS_MAX_PIN(PADNUM_SYS0_GPIO_A3) },
++	{ .func = "hbled",		.val = 1 },
++	{ .func = "pe2rst_out",		.val = 0 },
++};
++
++static const struct jhb100_pinctrl_domain_info jhb100_sys0_pinctrl_info = {
++	.name			= "jhb100-sys0",
++	.pl_desc		= jhb100_sys0_pl_desc,
++	.crl_desc		= jhb100_sys0_pinctrl_crl_desc,
++	.regs			= &jhb100_sys0_pinctrl_regs,
++	.fmaps			= jhb100_func_maps_sys0,
++	.num_maps		= ARRAY_SIZE(jhb100_func_maps_sys0),
++};
++
++static const struct of_device_id jhb100_sys0_pinctrl_of_match[] = {
++	{
++		.compatible = "starfive,jhb100-sys0-pinctrl",
++		.data = &jhb100_sys0_pinctrl_info,
++	},
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, jhb100_sys0_pinctrl_of_match);
++
++static struct platform_driver jhb100_sys0_pinctrl_driver = {
++	.probe = jhb100_pinctrl_probe,
++	.driver = {
++		.name = "starfive-jhb100-sys0-pinctrl",
++		.of_match_table = jhb100_sys0_pinctrl_of_match,
++	},
++};
++module_platform_driver(jhb100_sys0_pinctrl_driver);
++
++MODULE_DESCRIPTION("Pinctrl driver for StarFive JHB100 SoC System-0 domain");
++MODULE_AUTHOR("Alex Soo <yuklin.soo@starfivetech.com>");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jhb100.c b/drivers/pinctrl/starfive/pinctrl-starfive-jhb100.c
+new file mode 100644
+index 000000000000..aec2cb66d5cf
+--- /dev/null
++++ b/drivers/pinctrl/starfive/pinctrl-starfive-jhb100.c
+@@ -0,0 +1,1456 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Pinctrl / GPIO driver for StarFive JHB100 SoC
++ *
++ * Copyright (C) 2024 StarFive Technology Co., Ltd.
++ * Author: Alex Soo <yuklin.soo@starfivetech.com>
++ *
++ */
++
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++#include <linux/clk.h>
++#include <linux/gpio/driver.h>
++#include <linux/gpio/generic.h>
++#include <linux/io.h>
++#include <linux/irq.h>
++#include <linux/minmax.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/reset.h>
++#include <linux/seq_file.h>
++#include <linux/spinlock.h>
++#include <linux/string.h>
++
++#include <linux/pinctrl/consumer.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinmux.h>
++
++#include "../core.h"
++#include "../pinconf.h"
++#include "../pinctrl-utils.h"
++#include "../pinmux.h"
++#include "pinctrl-starfive-jhb100.h"
++
++#define GPOEN_ENABLE				0
++#define GPOEN_DISABLE				1
++
++#define JHB100_DEBOUNCE_WIDTH_STAGES_MAX	GENMASK(16, 0)
++#define JHB100_DEBOUNCE_WIDTH_STAGE_NS		80
++
++/* mode select */
++#define JHB100_PUSH_PULL			0
++#define JHB100_OPEN_DRAIN			1
++#define JHB100_LEGACY_FAST_MODE_PLUS		2
++#define JHB100_LEGACY_FAST_MODE			3
++
++/* i2c open-drain pull-up select */
++#define JHB100_I2C_OPEN_DRAIN_PU_600_OHMS	0
++#define JHB100_I2C_OPEN_DRAIN_PU_900_OHMS	1
++#define JHB100_I2C_OPEN_DRAIN_PU_1200_OHMS	2
++#define JHB100_I2C_OPEN_DRAIN_PU_2000_OHMS	3
++
++#define JHB100_NR_GPIOS_PER_BANK		32
++#define JHB100_BANK_OFFSET(n)			((n) * 4)
++
++static int jhb100_map_get_func_val(struct jhb100_pinctrl *sfp, const char *function,
++				   unsigned int pin)
++{
++	const struct jhb100_pinctrl_func_maps *fmaps = sfp->info->fmaps;
++	size_t num = sfp->info->num_maps;
++
++	for (int i = 0; i < num; i++) {
++		if (!strcmp(function, fmaps[i].func)) {
++			if (!fmaps[i].max_pin)
++				return fmaps[i].val;
++
++			if (pin < fmaps[i].max_pin)
++				return fmaps[i].val;
++
++			continue;
++		}
++	}
++
++	return -EINVAL;
++}
++
++static const struct config_reg_layout_desc *get_crl_desc_by_pin(struct jhb100_pinctrl *sfp,
++								unsigned int pin)
++{
++	const struct config_reg_layout_desc *crl_desc = sfp->info->crl_desc;
++	unsigned int i = 0;
++
++	do {
++		if (pin >= crl_desc[i].pin_start &&
++		    pin < crl_desc[i].pin_start + crl_desc[i].pin_cnt)
++			return &crl_desc[i];
++	} while (crl_desc[i++].pin_start != 0xff);
++
++	return NULL;
++}
++
++static inline struct jhb100_gpio_bank *jhb100_gc_to_bank(struct gpio_chip *gc)
++{
++	struct gpio_generic_chip *chip = to_gpio_generic_chip(gc);
++
++	return container_of(chip, struct jhb100_gpio_bank, chip);
++}
++
++static unsigned int jhb100_gpio_to_pin(struct gpio_chip *gc, unsigned int gpio)
++{
++	struct jhb100_gpio_bank *bank = jhb100_gc_to_bank(gc);
++
++	return bank->id * JHB100_NR_GPIOS_PER_BANK + gpio;
++}
++
++static const struct pinctrl_ops jhb100_pinctrl_ops = {
++	.get_groups_count = pinctrl_generic_get_group_count,
++	.get_group_name	  = pinctrl_generic_get_group_name,
++	.get_group_pins   = pinctrl_generic_get_group_pins,
++	.dt_node_to_map	  = pinctrl_generic_pins_function_dt_node_to_map,
++	.dt_free_map	  = pinctrl_utils_free_map,
++};
++
++static void jhb100_set_function(struct jhb100_pinctrl *sfp,
++				unsigned int pin, u8 func)
++{
++	const struct starfive_pinctrl_regs *pinctrl_regs = sfp->info->regs;
++	unsigned int pins_per_reg, offset, shift;
++	void __iomem *func_sel_reg;
++	u32 func_sel_mask;
++	u32 func_sel_val;
++
++	if (!pinctrl_regs->func_sel.reg || !pinctrl_regs->func_sel.width_per_pin)
++		return;
++
++	pins_per_reg = 32 / pinctrl_regs->func_sel.width_per_pin;
++	offset = 4 * (pin / pins_per_reg);
++	shift = pinctrl_regs->func_sel.width_per_pin * (pin % pins_per_reg);
++
++	func_sel_reg = sfp->base + pinctrl_regs->func_sel.reg + offset;
++	func_sel_mask = GENMASK(pinctrl_regs->func_sel.width_per_pin - 1, 0) << shift;
++	func_sel_val = func << shift;
++
++	guard(raw_spinlock_irqsave)(&sfp->lock);
++
++	func_sel_val |= readl_relaxed(func_sel_reg) & ~func_sel_mask;
++	writel_relaxed(func_sel_val, func_sel_reg);
++}
++
++static int jhb100_set_one_pin_mux(struct jhb100_pinctrl *sfp,
++				  unsigned int pin,
++				  u8 func)
++{
++	jhb100_set_function(sfp, pin, func);
++
++	return 0;
++}
++
++static int jhb100_set_mux(struct pinctrl_dev *pctldev,
++			  unsigned int fsel, unsigned int gsel)
++{
++	struct jhb100_pinctrl *sfp = pinctrl_dev_get_drvdata(pctldev);
++	const struct group_desc *group;
++	unsigned int i;
++	const char **functions;
++
++	group = pinctrl_generic_get_group(pctldev, gsel);
++	if (!group)
++		return -EINVAL;
++
++	functions = group->data;
++
++	for (i = 0; i < group->grp.npins; i++) {
++		int function;
++
++		function = jhb100_map_get_func_val(sfp, functions[i], group->grp.pins[i]);
++		if (function < 0) {
++			dev_err(pctldev->dev, "invalid function %s\n", functions[i]);
++			return function;
++		}
++
++		jhb100_set_one_pin_mux(sfp, group->grp.pins[i], function);
++	}
++
++	return 0;
++}
++
++static int jhb100_gpio_request_enable(struct pinctrl_dev *pctldev,
++				      struct pinctrl_gpio_range *range,
++				      unsigned int pin)
++{
++	struct jhb100_pinctrl *sfp = pinctrl_dev_get_drvdata(pctldev);
++	const struct starfive_pinctrl_regs *pinctrl_regs = sfp->info->regs;
++	const struct jhb100_pinctrl_domain_info *info = sfp->info;
++	unsigned int pins_per_reg, offset, shift;
++	u32 func_sel_mask, fs;
++	void __iomem *reg_gpio_func_sel;
++	s8 gpio_func_sel = sfp->gpio_func_sel_arr[pin];
++
++	if (!pinctrl_regs->func_sel.reg || !pinctrl_regs->func_sel.width_per_pin)
++		return -EINVAL;
++
++	pins_per_reg = 32 / pinctrl_regs->func_sel.width_per_pin;
++	offset = 4 * (pin / pins_per_reg);
++	shift = pinctrl_regs->func_sel.width_per_pin * (pin % pins_per_reg);
++
++	reg_gpio_func_sel = sfp->base + info->regs->func_sel.reg + offset;
++	func_sel_mask = GENMASK(info->regs->func_sel.width_per_pin - 1, 0) << shift;
++
++	if (gpio_func_sel < 0)
++		return -EINVAL;
++
++	guard(raw_spinlock_irqsave)(&sfp->lock);
++
++	fs = readl_relaxed(reg_gpio_func_sel);
++	fs &= ~func_sel_mask;
++	fs |= (gpio_func_sel << shift);
++	writel_relaxed(fs, reg_gpio_func_sel);
++
++	return 0;
++}
++
++static void jhb100_padcfg_rmw(struct jhb100_pinctrl *sfp,
++			      unsigned int pin, u32 mask, u32 value)
++{
++	void __iomem *reg;
++	unsigned int offset;
++	int padcfg_base;
++
++	padcfg_base = sfp->info->regs->config;
++
++	offset = 4 * pin;
++
++	reg = sfp->base + padcfg_base + offset;
++
++	value &= mask;
++
++	guard(raw_spinlock_irqsave)(&sfp->lock);
++
++	value |= readl_relaxed(reg) & ~mask;
++	writel_relaxed(value, reg);
++}
++
++static int jhb100_gpio_direction_input(struct gpio_chip *gc,
++				       unsigned int gpio)
++{
++	struct jhb100_gpio_bank *bank = jhb100_gc_to_bank(gc);
++	struct jhb100_pinctrl *sfp = gpiochip_get_data(gc);
++	const struct jhb100_pinctrl_domain_info *info = sfp->info;
++	const struct config_reg_layout_desc *crl_desc;
++	unsigned int pin = jhb100_gpio_to_pin(gc, gpio);
++	unsigned int offset = 4 * bank->id;
++	void __iomem *reg_gpio_oen;
++	u32 doen = 0;
++
++	crl_desc = get_crl_desc_by_pin(sfp, pin);
++	if (!crl_desc) {
++		dev_err(sfp->dev, "pin %d can't not found reg layout descriptor\n",
++			pin);
++		return -EINVAL;
++	}
++
++	jhb100_padcfg_rmw(sfp, pin,
++			  RL_DESC_GENMASK(crl_desc, PAD_CFG_INPUT_ENABLE) |
++			  RL_DESC_GENMASK(crl_desc, PAD_CFG_SCHMITT_TRIGGER_SELECT),
++			  RL_DESC_GENMASK(crl_desc, PAD_CFG_INPUT_ENABLE) |
++			  RL_DESC_GENMASK(crl_desc, PAD_CFG_SCHMITT_TRIGGER_SELECT));
++
++	reg_gpio_oen = sfp->base + info->regs->output_en + offset;
++
++	guard(raw_spinlock_irqsave)(&sfp->lock);
++	doen = readl_relaxed(reg_gpio_oen) | BIT(gpio);
++	writel_relaxed(doen, reg_gpio_oen);
++
++	return 0;
++}
++
++static int jhb100_gpio_direction_output(struct gpio_chip *gc, unsigned int gpio)
++{
++	struct jhb100_gpio_bank *bank = jhb100_gc_to_bank(gc);
++	struct jhb100_pinctrl *sfp = gpiochip_get_data(gc);
++	const struct jhb100_pinctrl_domain_info *info = sfp->info;
++	const struct config_reg_layout_desc *crl_desc;
++	unsigned int pin = jhb100_gpio_to_pin(gc, gpio);
++	unsigned int offset = 4 * bank->id;
++	void __iomem *reg_gpio_oen;
++	u32 doen = 0;
++
++	crl_desc = get_crl_desc_by_pin(sfp, pin);
++	if (!crl_desc) {
++		dev_err(sfp->dev, "pin %d can't not found reg layout descriptor\n",
++			pin);
++		return -EINVAL;
++	}
++
++	jhb100_padcfg_rmw(sfp, pin,
++			  RL_DESC_GENMASK(crl_desc, PAD_CFG_INPUT_ENABLE) |
++			  RL_DESC_GENMASK(crl_desc, PAD_CFG_SCHMITT_TRIGGER_SELECT) |
++			  RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_DOWN) |
++			  RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_UP),
++			  0);
++
++	reg_gpio_oen = sfp->base + info->regs->output_en + offset;
++
++	guard(raw_spinlock_irqsave)(&sfp->lock);
++	doen = readl_relaxed(reg_gpio_oen) & ~BIT(gpio);
++	writel_relaxed(doen, reg_gpio_oen);
++
++	return 0;
++}
++
++static int jhb100_gpio_set_direction(struct pinctrl_dev *pctldev,
++				     struct pinctrl_gpio_range *range,
++				     unsigned int pin,
++				     bool input)
++{
++	struct jhb100_pinctrl *sfp = pinctrl_dev_get_drvdata(pctldev);
++	unsigned int id = pin / JHB100_NR_GPIOS_PER_BANK;
++	unsigned int gpio = pin % JHB100_NR_GPIOS_PER_BANK;
++
++	if (input)
++		return jhb100_gpio_direction_input(&sfp->banks[id].chip.gc, gpio);
++
++	return jhb100_gpio_direction_output(&sfp->banks[id].chip.gc, gpio);
++}
++
++static const struct pinmux_ops jhb100_pinmux_ops = {
++	.get_functions_count	= pinmux_generic_get_function_count,
++	.get_function_name	= pinmux_generic_get_function_name,
++	.get_function_groups	= pinmux_generic_get_function_groups,
++	.set_mux		= jhb100_set_mux,
++	.gpio_request_enable	= jhb100_gpio_request_enable,
++	.gpio_set_direction	= jhb100_gpio_set_direction,
++};
++
++static const u8 jhb100_drive_strength_ma[4] = { 2, 4, 8, 12 };
++
++static const u8 jhb100_drive_strength_ma_3bit[8] = { 2, 5, 8, 10, 14, 16, 18, 20 };
++
++static u32 jhb100_padcfg_ds_to_mA(u32 padcfg)
++{
++	return jhb100_drive_strength_ma[padcfg];
++}
++
++static u32 jhb100_padcfg_ds_to_mA_3bit(u32 padcfg)
++{
++	return jhb100_drive_strength_ma_3bit[padcfg];
++}
++
++static u32 jhb100_padcfg_ds_to_uA(u32 padcfg)
++{
++	return (jhb100_drive_strength_ma[padcfg] * 1000);
++}
++
++static u32 jhb100_padcfg_ds_to_uA_3bit(u32 padcfg)
++{
++	return (jhb100_drive_strength_ma_3bit[padcfg] * 1000);
++}
++
++static u32 jhb100_padcfg_ds_from_mA(u32 v)
++{
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(jhb100_drive_strength_ma); i++) {
++		if (v <= jhb100_drive_strength_ma[i])
++			break;
++	}
++	return i;
++}
++
++static u32 jhb100_padcfg_ds_from_mA_3bit(u32 v)
++{
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(jhb100_drive_strength_ma_3bit); i++) {
++		if (v <= jhb100_drive_strength_ma_3bit[i])
++			break;
++	}
++	return i;
++}
++
++static u32 jhb100_padcfg_ds_from_uA(u32 v)
++{
++	/* Convert from uA to mA */
++	v /= 1000;
++
++	return jhb100_padcfg_ds_from_mA(v);
++}
++
++static u32 jhb100_padcfg_ds_from_uA_3bit(u32 v)
++{
++	/* Convert from uA to mA */
++	v /= 1000;
++
++	return jhb100_padcfg_ds_from_mA_3bit(v);
++}
++
++static u32 jhb100_padcfg_vsel_to_reg(u32 val)
++{
++	switch (val) {
++	case 3300:
++	case 1800:
++		return 0;
++	case 2500:
++		return 1;
++	default:
++		return 0;
++	}
++}
++
++static int jhb100_pincfg_reg_to_vref(u32 val)
++{
++	const int vref_table[JHB100_PINVREF_NUM] = { 3300, 2500, 1800 };
++
++	return (val < JHB100_PINVREF_NUM) ? vref_table[val] : -ENOTSUPP;
++}
++
++static u32 jhb100_pincfg_vref_to_reg(u32 val)
++{
++	switch (val) {
++	case 3300:
++		return JHB100_PINVREF_3_3V;
++	case 2500:
++		return JHB100_PINVREF_2_5V;
++	case 1800:
++		return JHB100_PINVREF_1_8V;
++	default:
++		return JHB100_PINVREF_3_3V;
++	}
++}
++
++static int jhb100_pincfg_pin_vref_get(struct jhb100_pinctrl *sfp, unsigned int pin)
++{
++	const struct pinvref_reg *vref = &sfp->info->regs->vref;
++	u32 grp = 0, i;
++	int val;
++
++	while (grp < vref->num_pv) {
++		for (i = 0; i < vref->pv_desc[grp].num_pins; i++) {
++			if (pin != vref->pv_desc[grp].pin_grp[i])
++				continue;
++
++			val = readl(sfp->base + vref->reg + grp * 4);
++
++			return jhb100_pincfg_reg_to_vref(val);
++		}
++
++		grp++;
++	}
++
++	return -ENOTSUPP;
++}
++
++static void jhb100_pincfg_pin_vref_set(struct jhb100_pinctrl *sfp, unsigned int pin,
++				       u32 arg)
++{
++	const struct pinvref_reg *vref = &sfp->info->regs->vref;
++	u32 grp = 0, i;
++
++	while (grp < vref->num_pv) {
++		for (i = 0; i < vref->pv_desc[grp].num_pins; i++) {
++			if (pin != vref->pv_desc[grp].pin_grp[i])
++				continue;
++
++			arg = jhb100_pincfg_vref_to_reg(arg);
++
++			if (!(vref->pv_desc[grp].range & BIT(arg)))
++				return;
++
++			guard(raw_spinlock_irqsave)(&sfp->lock);
++			writel(arg, sfp->base + vref->reg + grp * 4);
++			return;
++		}
++
++		grp++;
++	}
++}
++
++static int jhb100_pinconf_get(struct pinctrl_dev *pctldev,
++			      unsigned int pin, unsigned long *config)
++{
++	struct jhb100_pinctrl *sfp = pinctrl_dev_get_drvdata(pctldev);
++	int param = pinconf_to_config_param(*config);
++	const struct config_reg_layout_desc *crl_desc;
++	unsigned int padcfg_base, offset;
++	bool enabled = false;
++	u32 padcfg, arg;
++	int ret;
++
++	padcfg_base = sfp->info->regs->config;
++	offset = 4 * pin;
++
++	if (pin >= sfp->npins)
++		return -EINVAL;
++
++	padcfg = readl_relaxed(sfp->base + padcfg_base + offset);
++
++	crl_desc = get_crl_desc_by_pin(sfp, pin);
++	if (!crl_desc) {
++		dev_err(sfp->dev, "pin %d can't not found reg layout descriptor\n", pin);
++		return -EINVAL;
++	}
++
++	switch (param) {
++	case PIN_CONFIG_BIAS_DISABLE:
++		arg = 0;
++
++		if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_PULL_DOWN) ||
++		    !RL_DESC_SUPPORTED(crl_desc, PAD_CFG_PULL_UP))
++			return -ENOTSUPP;
++
++		enabled = !(padcfg & (RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_DOWN) |
++				      RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_UP)));
++		break;
++	case PIN_CONFIG_BIAS_PULL_DOWN:
++		arg = 1;
++
++		if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_PULL_DOWN))
++			return -ENOTSUPP;
++
++		enabled = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_DOWN))
++			  >> RL_DESC_SHIFT(crl_desc, PAD_CFG_PULL_DOWN);
++		break;
++	case PIN_CONFIG_BIAS_PULL_UP:
++		if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_PULL_UP) &&
++		    !RL_DESC_SUPPORTED(crl_desc, PAD_CFG_OPEN_DRAIN_PULL_UP_SEL))
++			return -ENOTSUPP;
++
++		if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_PULL_UP)) {
++			arg = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_UP)) >>
++			      RL_DESC_SHIFT(crl_desc, PAD_CFG_PULL_UP);
++
++			enabled = arg ? true : false;
++		}
++
++		if (!enabled && RL_DESC_SUPPORTED(crl_desc, PAD_CFG_OPEN_DRAIN_PULL_UP_SEL)) {
++			enabled = true;
++
++			arg = (padcfg &
++			       RL_DESC_GENMASK(crl_desc, PAD_CFG_OPEN_DRAIN_PULL_UP_SEL)) >>
++			       RL_DESC_SHIFT(crl_desc, PAD_CFG_OPEN_DRAIN_PULL_UP_SEL);
++
++			if (arg == JHB100_I2C_OPEN_DRAIN_PU_600_OHMS)
++				arg = 600;
++			else if (arg == JHB100_I2C_OPEN_DRAIN_PU_900_OHMS)
++				arg = 900;
++			else if (arg == JHB100_I2C_OPEN_DRAIN_PU_1200_OHMS)
++				arg = 1200;
++			else if (arg == JHB100_I2C_OPEN_DRAIN_PU_2000_OHMS)
++				arg = 2000;
++			else
++				return -ENOTSUPP;
++		}
++
++		break;
++	case PIN_CONFIG_DRIVE_STRENGTH:
++		if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT)) {
++			enabled = true;
++
++			arg = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT)) >>
++			      RL_DESC_SHIFT(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT);
++			arg = jhb100_padcfg_ds_to_mA(arg);
++		} else if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT)) {
++			enabled = true;
++
++			arg = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT)) >>
++			      RL_DESC_SHIFT(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT);
++			arg = jhb100_padcfg_ds_to_mA_3bit(arg);
++		} else {
++			return -ENOTSUPP;
++		}
++		break;
++	case PIN_CONFIG_DRIVE_STRENGTH_UA:
++		if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT)) {
++			enabled = true;
++
++			arg = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT)) >>
++			      RL_DESC_SHIFT(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT);
++			arg = jhb100_padcfg_ds_to_uA(arg);
++		} else if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT)) {
++			enabled = true;
++
++			arg = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT)) >>
++			      RL_DESC_SHIFT(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT);
++			arg = jhb100_padcfg_ds_to_uA_3bit(arg);
++		} else {
++			return -ENOTSUPP;
++		}
++		break;
++	case PIN_CONFIG_INPUT_ENABLE:
++		if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_INPUT_ENABLE))
++			return -ENOTSUPP;
++
++		enabled = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_INPUT_ENABLE))
++			   >> RL_DESC_SHIFT(crl_desc, PAD_CFG_INPUT_ENABLE);
++		arg = enabled;
++		break;
++	case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
++		if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_SCHMITT_TRIGGER_SELECT))
++			return -ENOTSUPP;
++
++		enabled = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_SCHMITT_TRIGGER_SELECT))
++			   >> RL_DESC_SHIFT(crl_desc, PAD_CFG_SCHMITT_TRIGGER_SELECT);
++		arg = enabled;
++		break;
++	case PIN_CONFIG_SLEW_RATE:
++		if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_SLEW_RATE)) {
++			enabled = true;
++
++			arg = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_SLEW_RATE)) >>
++			      RL_DESC_SHIFT(crl_desc, PAD_CFG_SLEW_RATE);
++		} else if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_MODE_SELECT)) {
++			enabled = true;
++
++			arg = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_MODE_SELECT)) >>
++			      RL_DESC_SHIFT(crl_desc, PAD_CFG_MODE_SELECT);
++
++			if (arg == JHB100_LEGACY_FAST_MODE_PLUS)
++				arg = 1;
++			else if (arg == JHB100_LEGACY_FAST_MODE)
++				arg = 0;
++			else
++				return -ENOTSUPP;
++		} else {
++			return -ENOTSUPP;
++		}
++		break;
++	case PIN_CONFIG_DRIVE_PUSH_PULL:
++		if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_MODE_SELECT))
++			return -ENOTSUPP;
++
++		arg = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_MODE_SELECT)) >>
++		      RL_DESC_SHIFT(crl_desc, PAD_CFG_MODE_SELECT);
++
++		if (arg == JHB100_PUSH_PULL)
++			enabled = true;
++
++		break;
++	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
++		if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_MODE_SELECT))
++			return -ENOTSUPP;
++
++		arg = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_MODE_SELECT)) >>
++		      RL_DESC_SHIFT(crl_desc, PAD_CFG_MODE_SELECT);
++
++		if (arg == JHB100_OPEN_DRAIN)
++			enabled = true;
++
++		break;
++	case PIN_CONFIG_INPUT_DEBOUNCE_NS:
++		if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_DEBOUNCE_WIDTH))
++			return -ENOTSUPP;
++
++		enabled = true;
++
++		arg = (padcfg & RL_DESC_GENMASK(crl_desc, PAD_CFG_DEBOUNCE_WIDTH)) >>
++		      RL_DESC_SHIFT(crl_desc, PAD_CFG_DEBOUNCE_WIDTH);
++
++		arg *= JHB100_DEBOUNCE_WIDTH_STAGE_NS;
++
++		break;
++	case PIN_CONFIG_POWER_SOURCE:
++		if (!sfp->info->regs->vref.num_pv)
++			return -ENOTSUPP;
++
++		ret = jhb100_pincfg_pin_vref_get(sfp, pin);
++		if (ret < 0)
++			return ret;
++
++		arg = ret;
++		enabled = true;
++
++		break;
++	default:
++		return -ENOTSUPP;
++	}
++
++	*config = pinconf_to_config_packed(param, arg);
++	return enabled ? 0 : -EINVAL;
++}
++
++static int jhb100_pinconf_set(struct pinctrl_dev *pctldev,
++			      unsigned int pin, unsigned long *configs,
++			      unsigned int num_configs)
++{
++	struct jhb100_pinctrl *sfp = pinctrl_dev_get_drvdata(pctldev);
++	const struct config_reg_layout_desc *crl_desc;
++	bool vref_set = false;
++	u32 value = 0;
++	u32 mask = 0;
++	u32 vref = 0;
++	int i;
++
++	crl_desc = get_crl_desc_by_pin(sfp, pin);
++	if (!crl_desc) {
++		dev_err(sfp->dev, "pin %d can't not found reg layout descriptor\n", pin);
++		return -EINVAL;
++	}
++
++	for (i = 0; i < num_configs; i++) {
++		int param = pinconf_to_config_param(configs[i]);
++		u32 arg = pinconf_to_config_argument(configs[i]);
++
++		switch (param) {
++		case PIN_CONFIG_BIAS_DISABLE:
++			if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_PULL_DOWN) ||
++			    !RL_DESC_SUPPORTED(crl_desc, PAD_CFG_PULL_UP))
++				return -ENOTSUPP;
++
++			mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_DOWN) |
++				RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_UP);
++			value &= ~(RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_DOWN) |
++				   RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_UP));
++			break;
++		case PIN_CONFIG_BIAS_PULL_DOWN:
++			if (!arg || !RL_DESC_SUPPORTED(crl_desc, PAD_CFG_PULL_DOWN) ||
++			    !RL_DESC_SUPPORTED(crl_desc, PAD_CFG_PULL_UP))
++				return -ENOTSUPP;
++
++			mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_DOWN) |
++				RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_UP);
++			value &= ~(RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_DOWN) |
++				   RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_UP));
++			value |= RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_DOWN);
++			break;
++		case PIN_CONFIG_BIAS_PULL_UP:
++			if ((!arg || arg == 1) && RL_DESC_SUPPORTED(crl_desc, PAD_CFG_PULL_UP)) {
++				mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_DOWN) |
++					RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_UP);
++				value &= ~(RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_DOWN) |
++					RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_UP));
++				value |= RL_DESC_GENMASK(crl_desc, PAD_CFG_PULL_UP);
++			} else if (arg &&
++				   RL_DESC_SUPPORTED(crl_desc, PAD_CFG_OPEN_DRAIN_PULL_UP_SEL)) {
++				mask |= RL_DESC_GENMASK(crl_desc,
++							PAD_CFG_OPEN_DRAIN_PULL_UP_SEL);
++				value &= ~RL_DESC_GENMASK(crl_desc,
++							  PAD_CFG_OPEN_DRAIN_PULL_UP_SEL);
++				switch (arg) {
++				case 600:
++					value |= JHB100_I2C_OPEN_DRAIN_PU_600_OHMS <<
++						 RL_DESC_SHIFT(crl_desc,
++							       PAD_CFG_OPEN_DRAIN_PULL_UP_SEL);
++					break;
++				case 900:
++					value |= JHB100_I2C_OPEN_DRAIN_PU_900_OHMS <<
++						 RL_DESC_SHIFT(crl_desc,
++							       PAD_CFG_OPEN_DRAIN_PULL_UP_SEL);
++					break;
++				case 1200:
++					value |= JHB100_I2C_OPEN_DRAIN_PU_1200_OHMS <<
++						 RL_DESC_SHIFT(crl_desc,
++							       PAD_CFG_OPEN_DRAIN_PULL_UP_SEL);
++					break;
++				case 2000:
++					value |= JHB100_I2C_OPEN_DRAIN_PU_2000_OHMS <<
++						 RL_DESC_SHIFT(crl_desc,
++							       PAD_CFG_OPEN_DRAIN_PULL_UP_SEL);
++					break;
++				default:
++					return -ENOTSUPP;
++				}
++			} else {
++				return -ENOTSUPP;
++			}
++			break;
++		case PIN_CONFIG_DRIVE_STRENGTH:
++			if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT)) {
++				mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT);
++				value &= ~RL_DESC_GENMASK(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT);
++				value |= jhb100_padcfg_ds_from_mA(arg) <<
++					 RL_DESC_SHIFT(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT);
++			} else if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT)) {
++				mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT);
++				value &= ~RL_DESC_GENMASK(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT);
++				value |= jhb100_padcfg_ds_from_mA_3bit(arg) <<
++					 RL_DESC_SHIFT(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT);
++			} else {
++				return -ENOTSUPP;
++			}
++			break;
++		case PIN_CONFIG_DRIVE_STRENGTH_UA:
++			if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT)) {
++				mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT);
++				value &= ~RL_DESC_GENMASK(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT);
++				value |= jhb100_padcfg_ds_from_uA(arg) <<
++					 RL_DESC_SHIFT(crl_desc, PAD_CFG_DRIVE_STRENGTH_2BIT);
++			} else if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT)) {
++				mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT);
++				value &= ~RL_DESC_GENMASK(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT);
++				value |= jhb100_padcfg_ds_from_uA_3bit(arg) <<
++					 RL_DESC_SHIFT(crl_desc, PAD_CFG_DRIVE_STRENGTH_3BIT);
++			} else {
++				return -ENOTSUPP;
++			}
++			break;
++		case PIN_CONFIG_INPUT_ENABLE:
++			if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_INPUT_ENABLE))
++				return -ENOTSUPP;
++
++			mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_INPUT_ENABLE);
++			value = arg ? (value | RL_DESC_GENMASK(crl_desc, PAD_CFG_INPUT_ENABLE))
++				: value;
++			break;
++		case PIN_CONFIG_INPUT_SCHMITT_ENABLE:
++			if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_SCHMITT_TRIGGER_SELECT))
++				return -ENOTSUPP;
++
++			mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_SCHMITT_TRIGGER_SELECT);
++			value = arg ?
++				(value | RL_DESC_GENMASK(crl_desc, PAD_CFG_SCHMITT_TRIGGER_SELECT))
++				: value;
++			break;
++		case PIN_CONFIG_SLEW_RATE:
++			if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_SLEW_RATE)) {
++				mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_SLEW_RATE);
++				value = arg ?
++					(value | RL_DESC_GENMASK(crl_desc, PAD_CFG_SLEW_RATE)) :
++					value;
++			} else if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_MODE_SELECT)) {
++				mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_MODE_SELECT);
++				value &= ~RL_DESC_GENMASK(crl_desc, PAD_CFG_MODE_SELECT);
++				value |= arg ?
++					 JHB100_LEGACY_FAST_MODE_PLUS <<
++					 RL_DESC_SHIFT(crl_desc, PAD_CFG_MODE_SELECT) :
++					 JHB100_LEGACY_FAST_MODE <<
++					 RL_DESC_SHIFT(crl_desc, PAD_CFG_MODE_SELECT);
++			} else {
++				return -ENOTSUPP;
++			}
++			break;
++		case PIN_CONFIG_DRIVE_PUSH_PULL:
++			if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_MODE_SELECT))
++				return -ENOTSUPP;
++
++			mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_MODE_SELECT);
++			value &= ~RL_DESC_GENMASK(crl_desc, PAD_CFG_MODE_SELECT);
++			value |= JHB100_PUSH_PULL <<
++				 RL_DESC_SHIFT(crl_desc, PAD_CFG_MODE_SELECT);
++			break;
++		case PIN_CONFIG_DRIVE_OPEN_DRAIN:
++			if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_MODE_SELECT))
++				return -ENOTSUPP;
++
++			mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_MODE_SELECT);
++			value &= ~RL_DESC_GENMASK(crl_desc, PAD_CFG_MODE_SELECT);
++			value |= JHB100_OPEN_DRAIN <<
++				 RL_DESC_SHIFT(crl_desc, PAD_CFG_MODE_SELECT);
++			break;
++		case PIN_CONFIG_INPUT_DEBOUNCE_NS: {
++			u32 debounce_stage;
++
++			if (!RL_DESC_SUPPORTED(crl_desc, PAD_CFG_DEBOUNCE_WIDTH))
++				return -ENOTSUPP;
++
++			mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_DEBOUNCE_WIDTH);
++			value &= ~RL_DESC_GENMASK(crl_desc, PAD_CFG_DEBOUNCE_WIDTH);
++
++			debounce_stage = arg ? arg / JHB100_DEBOUNCE_WIDTH_STAGE_NS : 0;
++			debounce_stage = umin(debounce_stage, JHB100_DEBOUNCE_WIDTH_STAGES_MAX);
++
++			value |= (debounce_stage <<
++				  RL_DESC_SHIFT(crl_desc, PAD_CFG_DEBOUNCE_WIDTH));
++
++			break;
++		};
++		case PIN_CONFIG_POWER_SOURCE:
++			if (!sfp->info->regs->vref.num_pv &&
++			    !RL_DESC_SUPPORTED(crl_desc, PAD_CFG_VSEL))
++				return -ENOTSUPP;
++
++			if (sfp->info->regs->vref.num_pv) {
++				vref_set = true;
++				vref = arg;
++			}
++
++			if (RL_DESC_SUPPORTED(crl_desc, PAD_CFG_VSEL)) {
++				mask |= RL_DESC_GENMASK(crl_desc, PAD_CFG_VSEL);
++				value &= ~RL_DESC_GENMASK(crl_desc, PAD_CFG_VSEL);
++
++				value |= jhb100_padcfg_vsel_to_reg(arg) <<
++					 RL_DESC_SHIFT(crl_desc, PAD_CFG_VSEL);
++			}
++			break;
++		default:
++			return -ENOTSUPP;
++		}
++	}
++
++	jhb100_padcfg_rmw(sfp, pin, mask, value);
++
++	if (vref_set)
++		jhb100_pincfg_pin_vref_set(sfp, pin, vref);
++
++	return 0;
++}
++
++static int jhb100_pinconf_group_get(struct pinctrl_dev *pctldev,
++				    unsigned int gsel,
++				    unsigned long *config)
++{
++	const struct group_desc *group;
++
++	group = pinctrl_generic_get_group(pctldev, gsel);
++	if (!group)
++		return -EINVAL;
++
++	return jhb100_pinconf_get(pctldev, group->grp.pins[0], config);
++}
++
++static int jhb100_pinconf_group_set(struct pinctrl_dev *pctldev,
++				    unsigned int gsel,
++				    unsigned long *configs,
++				    unsigned int num_configs)
++{
++	const struct group_desc *group;
++	int ret;
++	u32 i;
++
++	group = pinctrl_generic_get_group(pctldev, gsel);
++	if (!group)
++		return -EINVAL;
++
++	for (i = 0; i < group->grp.npins; i++) {
++		ret = jhb100_pinconf_set(pctldev, group->grp.pins[i], configs, num_configs);
++		if (ret) {
++			dev_err(pctldev->dev, "failed to set config for pin %d\n",
++				group->grp.pins[i]);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static const struct pinconf_ops jhb100_pinconf_ops = {
++	.pin_config_get		= jhb100_pinconf_get,
++	.pin_config_set		= jhb100_pinconf_set,
++	.pin_config_group_get	= jhb100_pinconf_group_get,
++	.pin_config_group_set	= jhb100_pinconf_group_set,
++	.is_generic		= true,
++};
++
++static int jhb100_gpio_get_direction(struct gpio_chip *gc,
++				     unsigned int gpio)
++{
++	struct jhb100_gpio_bank *bank = jhb100_gc_to_bank(gc);
++	struct jhb100_pinctrl *sfp = gpiochip_get_data(gc);
++	const struct jhb100_pinctrl_domain_info *info = sfp->info;
++	unsigned int offset = 4 * bank->id;
++	u32 doen;
++	void __iomem *reg_gpio_oen;
++
++	reg_gpio_oen = sfp->base + info->regs->output_en + offset;
++
++	doen = (readl_relaxed(reg_gpio_oen) & BIT(gpio)) >> gpio;
++
++	return doen == GPOEN_ENABLE ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
++}
++
++static int jhb100_pinctrl_gpio_direction_output(struct gpio_chip *chip,
++						unsigned int offset, int value)
++{
++	if (chip->set)
++		chip->set(chip, offset, value);
++
++	return pinctrl_gpio_direction_output(chip, offset);
++}
++
++static void jhb100_irq_ack(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct jhb100_gpio_bank *bank = jhb100_gc_to_bank(gc);
++	struct jhb100_pinctrl *sfp = gpiochip_get_data(gc);
++	const struct starfive_pinctrl_regs *pinctrl_regs = sfp->info->regs;
++	irq_hw_number_t gpio = irqd_to_hwirq(d);
++	unsigned int offset = 4 * bank->id;
++	void __iomem *ic;
++	u32 value;
++	u32 mask;
++
++	ic = sfp->base + pinctrl_regs->irq_clr + offset;
++	mask = BIT(gpio);
++
++	guard(raw_spinlock_irqsave)(&sfp->lock);
++
++	value = readl_relaxed(ic) & ~mask;
++	writel_relaxed(value | mask, ic);
++	value = readl_relaxed(ic) & ~mask;
++	writel_relaxed(value, ic);
++}
++
++static void jhb100_irq_mask(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct jhb100_gpio_bank *bank = jhb100_gc_to_bank(gc);
++	struct jhb100_pinctrl *sfp = gpiochip_get_data(gc);
++	const struct starfive_pinctrl_regs *pinctrl_regs = sfp->info->regs;
++	irq_hw_number_t gpio = irqd_to_hwirq(d);
++	unsigned int offset = 4 * bank->id;
++	void __iomem *ien;
++	u32 value;
++	u32 mask;
++
++	ien = sfp->base + pinctrl_regs->irq_en + offset;
++	mask = BIT(gpio);
++
++	guard(raw_spinlock_irqsave)(&sfp->lock);
++
++	value = readl_relaxed(ien) & ~mask;
++	writel_relaxed(value, ien);
++
++	gpiochip_disable_irq(gc, d->hwirq);
++}
++
++static void jhb100_irq_mask_ack(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct jhb100_gpio_bank *bank = jhb100_gc_to_bank(gc);
++	struct jhb100_pinctrl *sfp = gpiochip_get_data(gc);
++	const struct starfive_pinctrl_regs *pinctrl_regs = sfp->info->regs;
++	irq_hw_number_t gpio = irqd_to_hwirq(d);
++	unsigned int offset = 4 * bank->id;
++	void __iomem *ien;
++	void __iomem *ic;
++	u32 value;
++	u32 mask;
++
++	ien = sfp->base + pinctrl_regs->irq_en + offset;
++	ic = sfp->base + pinctrl_regs->irq_clr + offset;
++	mask = BIT(gpio);
++
++	guard(raw_spinlock_irqsave)(&sfp->lock);
++
++	value = readl_relaxed(ien) & ~mask;
++	writel_relaxed(value, ien);
++
++	value = readl_relaxed(ic) & ~mask;
++	writel_relaxed(value | mask, ic);
++	value = readl_relaxed(ic) & ~mask;
++	writel_relaxed(value, ic);
++}
++
++static void jhb100_irq_unmask(struct irq_data *d)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct jhb100_gpio_bank *bank = jhb100_gc_to_bank(gc);
++	struct jhb100_pinctrl *sfp = gpiochip_get_data(gc);
++	const struct starfive_pinctrl_regs *pinctrl_regs = sfp->info->regs;
++	irq_hw_number_t gpio = irqd_to_hwirq(d);
++	unsigned int offset = 4 * bank->id;
++	void __iomem *ien;
++	u32 value;
++	u32 mask;
++
++	ien = sfp->base + pinctrl_regs->irq_en + offset;
++	mask = BIT(gpio);
++
++	gpiochip_enable_irq(gc, d->hwirq);
++
++	guard(raw_spinlock_irqsave)(&sfp->lock);
++
++	value = readl_relaxed(ien) | mask;
++	writel_relaxed(value, ien);
++}
++
++static int jhb100_irq_set_type(struct irq_data *d, unsigned int trigger)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct jhb100_gpio_bank *bank = jhb100_gc_to_bank(gc);
++	struct jhb100_pinctrl *sfp = gpiochip_get_data(gc);
++	const struct starfive_pinctrl_regs *pinctrl_regs = sfp->info->regs;
++	irq_hw_number_t gpio = irqd_to_hwirq(d);
++	unsigned int offset = 4 * bank->id;
++	void __iomem *base;
++	u32 irq_type, edge_both, polarity, mask;
++
++	base = sfp->base + offset;
++	mask = BIT(gpio);
++
++	switch (trigger) {
++	case IRQ_TYPE_EDGE_RISING:
++		irq_type  = mask; /* 1: edge triggered */
++		edge_both = 0;    /* 0: single edge */
++		polarity  = mask; /* 1: rising edge */
++		break;
++	case IRQ_TYPE_EDGE_FALLING:
++		irq_type  = mask; /* 1: edge triggered */
++		edge_both = 0;    /* 0: single edge */
++		polarity  = 0;    /* 0: falling edge */
++		break;
++	case IRQ_TYPE_EDGE_BOTH:
++		irq_type  = mask; /* 1: edge triggered */
++		edge_both = mask; /* 1: both edges */
++		polarity  = 0;    /* 0: ignored */
++		break;
++	case IRQ_TYPE_LEVEL_HIGH:
++		irq_type  = 0;    /* 0: level triggered */
++		edge_both = 0;    /* 0: ignored */
++		polarity  = mask; /* 1: high level */
++		break;
++	case IRQ_TYPE_LEVEL_LOW:
++		irq_type  = 0;    /* 0: level triggered */
++		edge_both = 0;    /* 0: ignored */
++		polarity  = 0;    /* 0: low level */
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	if (trigger & IRQ_TYPE_EDGE_BOTH)
++		irq_set_handler_locked(d, handle_edge_irq);
++	else
++		irq_set_handler_locked(d, handle_level_irq);
++
++	guard(raw_spinlock_irqsave)(&sfp->lock);
++
++	irq_type |= readl_relaxed(base + pinctrl_regs->irq_trigger) & ~mask;
++	writel_relaxed(irq_type, base + pinctrl_regs->irq_trigger);
++
++	edge_both |= readl_relaxed(base + pinctrl_regs->irq_both_edge) & ~mask;
++	writel_relaxed(edge_both, base + pinctrl_regs->irq_both_edge);
++
++	if (irq_type & mask) { /* edge polarity */
++		polarity |= readl_relaxed(base + pinctrl_regs->irq_edge) & ~mask;
++		writel_relaxed(polarity, base + pinctrl_regs->irq_edge);
++	} else { /* level polarity */
++		polarity |= readl_relaxed(base + pinctrl_regs->irq_level) & ~mask;
++		writel_relaxed(polarity, base + pinctrl_regs->irq_level);
++	}
++
++	return 0;
++}
++
++static int jhb100_irq_set_wake(struct irq_data *d, unsigned int enable)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct jhb100_pinctrl *sfp = gpiochip_get_data(gc);
++	int ret;
++
++	if (enable)
++		ret = enable_irq_wake(sfp->irq);
++	else
++		ret = disable_irq_wake(sfp->irq);
++	if (ret)
++		dev_err(sfp->dev, "failed to %s wake-up interrupt\n",
++			enable ? "enable" : "disable");
++
++	return ret;
++}
++
++static void jhb100_irq_print_chip(struct irq_data *d, struct seq_file *p)
++{
++	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
++	struct jhb100_gpio_bank *bank = jhb100_gc_to_bank(gc);
++
++	seq_printf(p, "%s-%d", gc->label, bank->id);
++}
++
++static const struct irq_chip jhb100_irq_chip = {
++	.irq_ack        = jhb100_irq_ack,
++	.irq_mask       = jhb100_irq_mask,
++	.irq_mask_ack   = jhb100_irq_mask_ack,
++	.irq_unmask     = jhb100_irq_unmask,
++	.irq_set_type   = jhb100_irq_set_type,
++	.irq_set_wake   = jhb100_irq_set_wake,
++	.irq_print_chip = jhb100_irq_print_chip,
++	.flags          = IRQCHIP_SET_TYPE_MASKED |
++			  IRQCHIP_IMMUTABLE |
++			  IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND |
++			  IRQCHIP_MASK_ON_SUSPEND,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS,
++};
++
++static irqreturn_t jhb100_gpio_irq_handler(int irq, void *dev_id)
++{
++	struct jhb100_gpio_bank *bank = dev_id;
++	struct gpio_chip *gc = &bank->chip.gc;
++	struct jhb100_pinctrl *sfp = gpiochip_get_data(gc);
++	struct gpio_irq_chip *girq = &gc->irq;
++	const struct starfive_pinctrl_regs *pinctrl_regs = sfp->info->regs;
++	unsigned int irq_status = pinctrl_regs->irq_status + JHB100_BANK_OFFSET(bank->id);
++	unsigned long is;
++	unsigned int gpio;
++
++	is = readl_relaxed(sfp->base + irq_status);
++	if (!is)
++		return IRQ_NONE;
++
++	for_each_set_bit(gpio, &is, gc->ngpio)
++		generic_handle_domain_irq(girq->domain, gpio);
++
++	return IRQ_HANDLED;
++}
++
++static
++struct pinctrl_pin_desc *devm_create_pins_from_pld(struct device *dev,
++						   const struct jhb100_pin_layout_desc *desc,
++						   const char *prefix,
++						   unsigned int *total_pins,
++						   unsigned int *total_gpios,
++						   s8 **gpio_func_sel_arr)
++{
++	struct pinctrl_pin_desc *pins = NULL;
++	unsigned int i, j, ngpios = 0, npins = 0, pin_index = 0;
++	unsigned int same_name_found = 0;
++	s8 *arr;
++
++	if (!dev || !desc || !prefix) {
++		dev_err(dev, "Invalid parameters: desc=%p, prefix=%s\n",
++			desc, prefix);
++		return ERR_PTR(-EINVAL);
++	}
++
++	for (i = 0; desc[i].pin_start != 0xff; i++) {
++		if (!desc[i].pin_cnt) {
++			dev_err(dev, "Invalid pin cnt\n");
++			return ERR_PTR(-EINVAL);
++		}
++
++		npins += desc[i].pin_cnt;
++	}
++
++	if (npins == 0) {
++		dev_err(dev, "No pins defined\n");
++		return ERR_PTR(-EINVAL);
++	}
++
++	dev_dbg(dev, "Total pins to create: %d\n", npins);
++
++	pins = devm_kcalloc(dev, npins, sizeof(*pins), GFP_KERNEL);
++	if (!pins)
++		return ERR_PTR(-ENOMEM);
++
++	arr = devm_kzalloc(dev, npins, GFP_KERNEL);
++	if (!arr)
++		return ERR_PTR(-ENOMEM);
++
++	for (i = 0; desc[i].pin_start != 0xff; i++) {
++		same_name_found = 0;
++
++		for (j = 0; j < i; j++) {
++			if (!strcmp(desc[j].name, desc[i].name)) {
++				same_name_found = 1;
++				break;
++			}
++		}
++
++		for (j = 0; j < desc[i].pin_cnt; j++) {
++			char *name = NULL;
++			int pin_num = desc[i].pin_start + j;
++
++			pins[pin_index].number = pin_num;
++			if (same_name_found) {
++				name = devm_kasprintf(dev, GFP_KERNEL, "%s_%s_%d",
++						      prefix, desc[i].name,
++						      desc[i].pin_start + j);
++			} else {
++				if (desc[i].pin_cnt > 1)
++					name = devm_kasprintf(dev, GFP_KERNEL, "%s_%s_%d",
++							      prefix, desc[i].name, j);
++				else
++					name = devm_kasprintf(dev, GFP_KERNEL, "%s_%s",
++							      prefix, desc[i].name);
++			}
++
++			if (!name) {
++				dev_err(dev, "Failed to allocate pin name for pin %d\n",
++					pin_num);
++				return ERR_PTR(-ENOMEM);
++			}
++
++			if (!strcmp(desc[i].name, "gpio") || desc[i].gpio_func_sel != -1)
++				ngpios++;
++
++			pins[pin_index].name = name;
++			arr[pin_index] = desc[i].gpio_func_sel;
++			pin_index++;
++		}
++	}
++
++	*total_pins = npins;
++	*total_gpios = ngpios;
++	*gpio_func_sel_arr = arr;
++
++	return pins;
++}
++
++static bool starfive_of_node_instance_match(struct gpio_chip *gc, unsigned int i)
++{
++	struct jhb100_pinctrl *sfp = gpiochip_get_data(gc);
++
++	if (i >= sfp->num_banks)
++		return false;
++
++	return (gc == &sfp->banks[i].chip.gc);
++}
++
++static void jhb100_reset_control_assert(void *data)
++{
++	reset_control_assert(data);
++}
++
++int jhb100_pinctrl_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct gpio_irq_chip *girq;
++	const struct jhb100_pinctrl_domain_info *info;
++	struct jhb100_pinctrl *sfp;
++	struct pinctrl_desc *jhb100_pinctrl_desc;
++	const struct starfive_pinctrl_regs *pinctrl_regs;
++	struct reset_control *rst;
++	struct clk *clk;
++	int ret;
++
++	info = of_device_get_match_data(&pdev->dev);
++	if (!info)
++		return -ENODEV;
++
++	pinctrl_regs = info->regs;
++
++	sfp = devm_kzalloc(dev, sizeof(*sfp), GFP_KERNEL);
++	if (!sfp)
++		return -ENOMEM;
++
++	sfp->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(sfp->base))
++		return PTR_ERR(sfp->base);
++
++	clk = devm_clk_get_optional_enabled(dev, NULL);
++	if (IS_ERR(clk))
++		return dev_err_probe(dev, PTR_ERR(clk), "could not get & enable clock\n");
++
++	rst = devm_reset_control_array_get_optional_shared(dev);
++	if (IS_ERR(rst))
++		return dev_err_probe(dev, PTR_ERR(rst), "could not get reset control\n");
++
++	ret = reset_control_deassert(rst);
++	if (ret)
++		return dev_err_probe(dev, ret, "could not deassert reset\n");
++
++	ret = devm_add_action_or_reset(dev, jhb100_reset_control_assert, rst);
++	if (ret)
++		return ret;
++
++	sfp->irq = platform_get_irq(pdev, 0);
++	if (sfp->irq < 0)
++		return sfp->irq;
++
++	sfp->pins = devm_create_pins_from_pld(dev, info->pl_desc, info->name,
++					      &sfp->npins, &sfp->ngpios,
++					      &sfp->gpio_func_sel_arr);
++	if (IS_ERR(sfp->pins))
++		return PTR_ERR(sfp->pins);
++
++	jhb100_pinctrl_desc = devm_kzalloc(&pdev->dev,
++					   sizeof(*jhb100_pinctrl_desc),
++					   GFP_KERNEL);
++	if (!jhb100_pinctrl_desc)
++		return -ENOMEM;
++
++	jhb100_pinctrl_desc->name = dev_name(dev);
++	jhb100_pinctrl_desc->pctlops = &jhb100_pinctrl_ops;
++	jhb100_pinctrl_desc->pmxops = &jhb100_pinmux_ops;
++	jhb100_pinctrl_desc->confops = &jhb100_pinconf_ops;
++	jhb100_pinctrl_desc->owner = THIS_MODULE;
++	jhb100_pinctrl_desc->pins = sfp->pins;
++	jhb100_pinctrl_desc->npins = sfp->npins;
++
++	sfp->info = info;
++	sfp->dev = dev;
++	platform_set_drvdata(pdev, sfp);
++
++	raw_spin_lock_init(&sfp->lock);
++
++	ret = devm_pinctrl_register_and_init(dev, jhb100_pinctrl_desc,
++					     sfp, &sfp->pctl);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "could not register pinctrl driver\n");
++
++	ret = pinctrl_enable(sfp->pctl);
++	if (ret)
++		return ret;
++
++	sfp->num_banks = DIV_ROUND_UP(sfp->ngpios, JHB100_NR_GPIOS_PER_BANK);
++	if (sfp->num_banks > JHB100_MAX_BANKS)
++		return dev_err_probe(dev, -EINVAL,
++				     "%u GPIOs need %u banks, max %d\n",
++				     sfp->ngpios, sfp->num_banks, JHB100_MAX_BANKS);
++
++	for (unsigned int i = 0; i < sfp->num_banks; i++) {
++		struct jhb100_gpio_bank *gb = &sfp->banks[i];
++		struct gpio_generic_chip_config config;
++		struct gpio_chip *gc = &gb->chip.gc;
++		void __iomem *dat, *set;
++		unsigned int remaining;
++
++		dat = sfp->base + pinctrl_regs->gpio_status + JHB100_BANK_OFFSET(i);
++		set = sfp->base + pinctrl_regs->output + JHB100_BANK_OFFSET(i);
++
++		config = (struct gpio_generic_chip_config) {
++			.dev = dev,
++			.sz = 4,
++			.dat = dat,
++			.set = set,
++			.flags = GPIO_GENERIC_UNREADABLE_REG_SET | GPIO_GENERIC_PINCTRL_BACKEND,
++		};
++
++		ret = gpio_generic_chip_init(&gb->chip, &config);
++		if (ret)
++			return dev_err_probe(dev, ret, "failed to init gpio chip\n");
++
++		gb->id = i;
++
++		/*
++		 * JHB100 GPIO domain may not be fully aligned to 32 GPIOs per bank.
++		 * For example, per0 domain has 60 GPIOs, split as:
++		 *   bank0: 32 GPIOs
++		 *   bank1: 28 GPIOs
++		 * Calculate the actual number of GPIOs for the last bank.
++		 */
++
++		remaining = sfp->ngpios - i * JHB100_NR_GPIOS_PER_BANK;
++		gc->ngpio = min(remaining, JHB100_NR_GPIOS_PER_BANK);
++
++		gc->owner = THIS_MODULE;
++		gc->get_direction = jhb100_gpio_get_direction;
++		gc->direction_input = pinctrl_gpio_direction_input;
++		gc->direction_output = jhb100_pinctrl_gpio_direction_output;
++		gc->set_config = gpiochip_generic_config;
++		gc->base = -1;
++		gc->of_gpio_n_cells = 3;
++		gc->of_node_instance_match = starfive_of_node_instance_match;
++
++		girq = &gc->irq;
++		girq->handler = handle_simple_irq;
++
++		gpio_irq_chip_set_chip(girq, &jhb100_irq_chip);
++
++		/* mask all GPIO interrupts */
++		writel_relaxed(0U, sfp->base + pinctrl_regs->irq_en + JHB100_BANK_OFFSET(i));
++		/* clear all interrupts */
++		writel_relaxed(~0U, sfp->base + pinctrl_regs->irq_clr + JHB100_BANK_OFFSET(i));
++		writel_relaxed(0U, sfp->base + pinctrl_regs->irq_clr + JHB100_BANK_OFFSET(i));
++
++		ret = devm_gpiochip_add_data(dev, gc, sfp);
++		if (ret)
++			return dev_err_probe(dev, ret, "could not register gpiochip\n");
++
++		ret = devm_request_irq(dev, sfp->irq, jhb100_gpio_irq_handler, IRQF_SHARED,
++				       gc->label, &sfp->banks[i]);
++		if (ret < 0)
++			return ret;
++	}
++
++	dev_info(dev, "StarFive JHB100 GPIO chip registered %d GPIOs\n",
++		 sfp->ngpios);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(jhb100_pinctrl_probe);
++
++MODULE_DESCRIPTION("Pinctrl driver for the StarFive JHB100 SoC");
++MODULE_AUTHOR("Alex Soo <yuklin.soo@starfivetech.com>");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jhb100.h b/drivers/pinctrl/starfive/pinctrl-starfive-jhb100.h
+new file mode 100644
+index 000000000000..9e2c1658096c
+--- /dev/null
++++ b/drivers/pinctrl/starfive/pinctrl-starfive-jhb100.h
+@@ -0,0 +1,159 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Pinctrl / GPIO driver for StarFive JHB100 SoC
++ *
++ * Copyright (C) 2024 StarFive Technology Co., Ltd.
++ * Author: Alex Soo <yuklin.soo@starfivetech.com>
++ *
++ */
++
++#ifndef __PINCTRL_STARFIVE_JHB100_H__
++#define __PINCTRL_STARFIVE_JHB100_H__
++
++#include <linux/gpio/driver.h>
++#include <linux/gpio/generic.h>
++#include <linux/pinctrl/pinconf-generic.h>
++#include <linux/pinctrl/pinmux.h>
++
++/* power-source value */
++enum jhb100_pinvref {
++	JHB100_PINVREF_3_3V,
++	JHB100_PINVREF_2_5V,
++	JHB100_PINVREF_1_8V,
++	JHB100_PINVREF_NUM
++};
++
++#define JHB100_MAX_BANKS			2
++
++struct jhb100_pin_layout_desc {
++	unsigned int pin_start;
++	unsigned int pin_cnt;
++	const char *name;
++	s8 gpio_func_sel;
++};
++
++struct jhb100_gpio_bank {
++	struct gpio_generic_chip chip;
++	unsigned int id;
++};
++
++struct jhb100_pinctrl {
++	struct device *dev;
++	struct jhb100_gpio_bank banks[JHB100_MAX_BANKS];
++	unsigned int num_banks;
++	struct pinctrl_gpio_range gpios;
++	raw_spinlock_t lock;
++	const char *iodomain_name;
++	void __iomem *base;
++	struct pinctrl_dev *pctl;
++	/* register read/write mutex */
++	struct mutex mutex;
++	const struct jhb100_pinctrl_domain_info *info;
++	int irq;
++	struct irq_domain *irq_domain;
++	const struct pinctrl_pin_desc *pins;
++	unsigned int npins;
++	unsigned int ngpios;
++	s8 *gpio_func_sel_arr;
++};
++
++struct pinvref_desc {
++	unsigned int range;
++	u32 pin_grp[32];
++	u32 num_pins;
++};
++
++struct pinvref_reg {
++	unsigned int reg;
++	const struct pinvref_desc *pv_desc;
++	u32 num_pv;
++};
++
++struct gpio_irq_reg {
++	unsigned int reg;
++	unsigned int width_per_pin;
++};
++
++struct starfive_pinctrl_regs {
++	struct pinvref_reg vref;
++	struct gpio_irq_reg func_sel;
++	unsigned int config;
++	unsigned int output;
++	unsigned int output_en;
++	unsigned int gpio_status;
++	unsigned int irq_en;
++	unsigned int irq_status;
++	unsigned int irq_clr;
++	unsigned int irq_trigger;
++	unsigned int irq_level;
++	unsigned int irq_both_edge;
++	unsigned int irq_edge;
++};
++
++struct reg_layout_field {
++	unsigned char shift;
++	unsigned char width;
++};
++
++enum jhb100_pad_cfg_field {
++	PAD_CFG_DEBOUNCE_WIDTH,
++	PAD_CFG_DRIVE_STRENGTH_2BIT,
++	PAD_CFG_DRIVE_STRENGTH_3BIT,
++	PAD_CFG_INPUT_ENABLE,
++	PAD_CFG_VSEL,
++	PAD_CFG_MODE_SELECT,
++	PAD_CFG_OPEN_DRAIN_PULL_UP_SEL,
++	PAD_CFG_PULL_DOWN,
++	PAD_CFG_PULL_UP,
++	PAD_CFG_SCHMITT_TRIGGER_SELECT,
++	PAD_CFG_SLEW_RATE,
++	PAD_CFG_COUNT
++};
++
++#define RL_DESC_SUPPORTED(crl_desc, field_enum) ({ \
++	typeof(crl_desc) _desc = (crl_desc); \
++	(_desc && (_desc)->fields[(field_enum)].width > 0); \
++})
++
++#define RL_DESC_SHIFT(crl_desc, field_enum) ({ \
++	typeof(crl_desc) __desc = (crl_desc); \
++	(__desc)->fields[(field_enum)].shift; \
++})
++
++#define RL_DESC_GENMASK(crl_desc, field_enum) ({ \
++	typeof(crl_desc) __desc = (crl_desc); \
++	RL_DESC_SUPPORTED(__desc, field_enum) ? \
++	GENMASK( \
++		(__desc)->fields[(field_enum)].shift + (__desc)->fields[(field_enum)].width - 1, \
++		(__desc)->fields[(field_enum)].shift \
++	) : 0; \
++})
++
++struct config_reg_layout_desc {
++	unsigned int pin_start;
++	unsigned int pin_cnt;
++
++	struct reg_layout_field fields[PAD_CFG_COUNT];
++};
++
++#define JHB100_FUNC_MAPS_MAX_PIN(n)	((n) + 1)
++
++struct jhb100_pinctrl_func_maps {
++	char *func;
++	unsigned char val;
++	u32 max_pin;
++};
++
++struct jhb100_pinctrl_domain_info {
++	const char *name;
++	const struct pinctrl_pin_desc *pins;
++	const struct jhb100_pin_layout_desc *pl_desc;
++	const struct jhb100_pinctrl_func_maps *fmaps;
++	u32 num_maps;
++	const struct config_reg_layout_desc *crl_desc;
++	const struct starfive_pinctrl_regs *regs;
++};
++
++int jhb100_pinctrl_probe(struct platform_device *pdev);
++
++#endif /* __PINCTRL_STARFIVE_JHB100_H__ */
 -- 
 2.25.1
 
