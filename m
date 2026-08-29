@@ -1,33 +1,32 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A132E737E;
-	Sat, 29 Aug 2026 08:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0CC125A0;
+	Sat, 29 Aug 2026 11:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787991075; cv=none; b=uxBhaljlm/3FS6BLfokFBdmNDdCla8Nzb9kPy6wk995oIDVKEdzDPv1PeXoXO+bb1RGDoT6E0/IVYTzlm5cZEwLNksu9TXkD7vxG66cgiaRrtlwU3e7dEG3CelEVv/jhl8V9yI94WDHbhEoG3erpfF/gvWNrVma0bbv67n0nTcQ=
+	t=1788002456; cv=none; b=eVHN/1u22e3rs84lRx+EQ0pkfVnCfxepZ9l0Yq25Z6XegdIsPJiG1EdT5FnfMJKXoUdg3fZibjz4rwWmqiirQ5iFDNwbEg/61WuCGBK3/ETWE4FRIBYkDnH8Hao17YFtw3XpiJMiBSjp2rLtXOaRfPoqY6xhpOSAl+Njw3T+gJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787991075; c=relaxed/simple;
-	bh=vKe7yVWuWeRvqHC8RHdV/2SiJavwjde7+JVX8H0ymHc=;
+	s=arc-20240116; t=1788002456; c=relaxed/simple;
+	bh=aih4fbchMjpaTHd7Uaz+aGqp+O5TVAcl+oXYIYpCNS0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bah8McQAKgyuqjFNWnRD/NVVgFZatl5IBH3nVAaVDclYXDaQDFuxlmLqMgf5Lq4edKbbwqFfR+Qp22+baYWURj2gOwM1oPtYl2K7E32u519Ubbvd4q3DRIAs+F9cZqwkwW7Kc7+TiHmo/5TK1i3jizf1i5v1+xplzrKDM2WWMig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDDqet8K; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=YByJMkGDvN9KicHjfQZB/xm2YnF7KNJXFjZx3HKcZBu105ssZ2hH4A2jn1NRswTZO+nyQ6eGUNgD2O3BX65erf9EChBjmskH8zGL72q+KSTUdux5Jx20+iBJ6hgjOD1805823papD/b/2JHhWhCrjSx5S2JtnOqSw12zs+sEJa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TEFXuUck; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDDqet8K"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C99E41F000E9;
-	Sat, 29 Aug 2026 08:11:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787991073;
-	bh=ywBcKkWG9cX+HvCcslfUWZFJFs+dgjIM6DJiNySdGyI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=YDDqet8KkndHw4ibFXMqyx8B9nOTDjocmoVlOYyB/rMsfwmlPeJeitqTMtmNL0pXI
-	 Ljr3RQY8FqWK4YkjdSsaviD1igwqYe5Zd1Kdv56HTmz3NPFAMItR/QorVZ8QN+K0YL
-	 1TeG0BIukUTLsK67nICKtmpZXCefqu+kp2DObAc+1ZB1EfCOXuYEocj+3KjRKPM4h1
-	 RytGbMyAWn94PobJ4T/F9jbNYjm8LBKm8tXE18ay5QONkas11SJeUtPkTddzcjfcPy
-	 hlxa+jxO/PpyTnxLZZvGj3qSaV53v//4o20C53efvdVV3KFwLfTqVehroBF2DEHD77
-	 kLrfnO7k3wJ2Q==
-Message-ID: <1df4e0a7-7879-46b5-b24c-d4bb9e44a150@kernel.org>
-Date: Sat, 29 Aug 2026 10:11:05 +0200
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TEFXuUck"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=bQ+pM52Z9d9nH2LW96A3uCNySOonoA9pMirLJW0HCh4=;
+	b=TEFXuUckI/Pn4sONOUGuMFyHYOcYIlgy0z27KZpCM2Ve2zmXJg9iDAC2kRZp3H
+	bVj6KoMT4CjdTbjdjwJ8WurtpGFp/mcMOH7K255Sk37+2XeVxoj/m9dBuOK3Aqy1
+	DCuVteMRkPW1cFHHn/OcyYJ7ZlKaRSExyTc6aQOIkdlC8=
+Received: from [IPV6:2409:8a62:3e6:7890:62cd:186:f39c:9f61] (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wDn3+tiwJJqGlPIEA--.37249S2;
+	Sat, 29 Aug 2026 19:20:03 +0800 (CST)
+Message-ID: <e1f544bb-a338-4360-8158-a373881a9121@163.com>
+Date: Sat, 29 Aug 2026 19:20:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,83 +34,52 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: fix typos in various bindings
-To: Zhijian Han <hanzhijian1991@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Guenter Roeck <linux@roeck-us.net>, Srinivas Kandagatla <srini@kernel.org>,
- Robert Marko <robert.marko@sartura.hr>,
- Antoniu Miclaus <antoniu.miclaus@analog.com>, Frank Li <Frank.Li@nxp.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org
-References: <20260821105605.1967718-1-hanzhijian1991@gmail.com>
- <20260828095459.834657-1-hanzhijian1991@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] pinctrl: stm32: fix the unit of the hwspinlock timeout
+To: antonio.borneo@foss.st.com
+Cc: alexandre.torgue@foss.st.com, linusw@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ mcoquelin.stm32@gmail.com
+References: <9b0f76a08a7c1dbaec4684b4bc013263e0149a4b.camel@foss.st.com>
+ <20260827141127.25789-2-junan76@163.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260828095459.834657-1-hanzhijian1991@gmail.com>
+From: Ju Nan <junan76@163.com>
+In-Reply-To: <20260827141127.25789-2-junan76@163.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wDn3+tiwJJqGlPIEA--.37249S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtr47Zr4DZFW3Cr13Ar48Crg_yoWDXFg_ua
+	1rJ3srCa4qkFyF9w1DCrn3Za4F9anrXw409rs0gF13Cr9Fvw4jkrZ5uF93C3Z3ua13ta4D
+	AF95Xr1Sy3y7CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjasj5UUUUU==
+X-CM-SenderInfo: pmxqt0ixw6il2tof0z/xtbC1AaIOmqSwGZYRwAA3h
 
-On 28/08/2026 11:54, Zhijian Han wrote:
-> Fix spelling errors found by the kernel's scripts/spelling.txt
-> and codespell in several devicetree binding documents:
-> 
->   - "curent" -> "current" in adi,ltc2991.yaml
->   - "deivce" -> "device" in zii,rave-sp-eeprom.yaml
->   - "ouput" -> "output" in delta,tn48m-gpio.yaml
->   - "redudant" -> "redundant" in trivial-devices.yaml
-> 
-> Signed-off-by: Zhijian Han <hanzhijian1991@gmail.com>
-> ---
-> v2:
-> - Use consistent identity "Zhijian Han" instead of the login-style name
->   "hanzhijian"
-> 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> index d97057ec2..0d888d30f 100644
+> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
+> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> @@ -87,7 +87,7 @@
+>  #define gpio_range_to_bank(chip) \
+>  		container_of(chip, struct stm32_gpio_bank, range)
+>  
+> -#define HWSPNLCK_TIMEOUT	1000 /* usec */
+> +#define HWSPNLCK_TIMEOUT_MS	1
+>  
+>  static const char * const stm32_gpio_functions[] = {
+>  	"gpio", "af0", "af1",
+> @@ -633,7 +633,7 @@ static int stm32_gpio_domain_alloc(struct irq_domain *d,
+>  
+>  	if (pctl->hwlock) {
+>  		ret = hwspin_lock_timeout_in_atomic(pctl->hwlock,
+> -						    HWSPNLCK_TIMEOUT);
+> +						    HWSPNLCK_TIMEOUT_MS);
 
-Best regards,
-Krzysztof
+Please ignore this patch for now, since it has a dependency issue with this one:
+https://lore.kernel.org/lkml/4dcb0fb67e12ec6e6aa812e6e93b435704c6105b.camel@foss.st.com/
+
+Thanks Antonio, I will think more about what you said.
+
+Regards,
+Ju Nan
+
