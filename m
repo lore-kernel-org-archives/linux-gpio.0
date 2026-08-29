@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFE32D9ECB;
-	Sat, 29 Aug 2026 08:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A132E737E;
+	Sat, 29 Aug 2026 08:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787990581; cv=none; b=qimVnBUplNEh9lMKHfab2oGhqjlfwQUtzmBQaU4KkMbEmtYKtJ7w2MajS01TYnTxjAkev7XBCD894dEOrv2mO34S69pg4J6KL2c5JDJ6qm3Z8UWMYvHAQgK/e+5QZxWtJfz1himsIDBVyA8gK1y3dLnH6Ko0cXlqRt8qVhKHzLw=
+	t=1787991075; cv=none; b=uxBhaljlm/3FS6BLfokFBdmNDdCla8Nzb9kPy6wk995oIDVKEdzDPv1PeXoXO+bb1RGDoT6E0/IVYTzlm5cZEwLNksu9TXkD7vxG66cgiaRrtlwU3e7dEG3CelEVv/jhl8V9yI94WDHbhEoG3erpfF/gvWNrVma0bbv67n0nTcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787990581; c=relaxed/simple;
-	bh=PR+BIfn3653UXqkj8yBjU2JpOOE+OBHSW3Z+1r+tG3k=;
+	s=arc-20240116; t=1787991075; c=relaxed/simple;
+	bh=vKe7yVWuWeRvqHC8RHdV/2SiJavwjde7+JVX8H0ymHc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=stgrq37FKsFAVhcQWw8hnnzrlchJc5UbzM4bKyjHq/qztq6lct8ZSack+0S0/W80y6zLDRUjAZ4PIoSsBGQH3yhHse1Zv+uZ7b9sVgVGoiaCLP0kSW+HOdbTZnd6K8k4PruGCBslftnBgp0XTTxbu+MUc4vbEBaJGoKcJclMMnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KydmdCun; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=Bah8McQAKgyuqjFNWnRD/NVVgFZatl5IBH3nVAaVDclYXDaQDFuxlmLqMgf5Lq4edKbbwqFfR+Qp22+baYWURj2gOwM1oPtYl2K7E32u519Ubbvd4q3DRIAs+F9cZqwkwW7Kc7+TiHmo/5TK1i3jizf1i5v1+xplzrKDM2WWMig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDDqet8K; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KydmdCun"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA9071F000E9;
-	Sat, 29 Aug 2026 08:02:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDDqet8K"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C99E41F000E9;
+	Sat, 29 Aug 2026 08:11:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1787990579;
-	bh=zBUzO8Dj/vf5qJL5Di4e7l+uaBL4EoFy+oRcvSdhKWA=;
+	s=k20260515; t=1787991073;
+	bh=ywBcKkWG9cX+HvCcslfUWZFJFs+dgjIM6DJiNySdGyI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=KydmdCun6TXb3/1wzjgwG1kIlN48qY6kYXktUD0VhHyfwrKf7kGwOufFAWIHrq4Am
-	 1ySenn7ctl/HqZeHQOk575xqFyxXNiI9qIz9aiG7zwB1Vap3VcACp2VjmNei2V1bCI
-	 DH9ReYPbaubN7Ps6zZu8gGBlB4IvZHUOJUWw6gGRTPiiZp6T2yAz3+9MU/19ZDInYP
-	 rdT0F8LC9YBlAogJ52453aWVEvhKLYUyUtqYGj0wrAA0cfSzeUZprN0ar7fjgGHNcW
-	 C7Lt2/lQWRWQn4DtlxhDrztBqbPTGzLgb+8H8jAUlWi2sMNp96Rl+4n+YdvvEtZFpD
-	 6VWOLJBF531fg==
-Message-ID: <f474f659-8234-4dfb-85cc-06d2cc295107@kernel.org>
-Date: Sat, 29 Aug 2026 10:02:51 +0200
+	b=YDDqet8KkndHw4ibFXMqyx8B9nOTDjocmoVlOYyB/rMsfwmlPeJeitqTMtmNL0pXI
+	 Ljr3RQY8FqWK4YkjdSsaviD1igwqYe5Zd1Kdv56HTmz3NPFAMItR/QorVZ8QN+K0YL
+	 1TeG0BIukUTLsK67nICKtmpZXCefqu+kp2DObAc+1ZB1EfCOXuYEocj+3KjRKPM4h1
+	 RytGbMyAWn94PobJ4T/F9jbNYjm8LBKm8tXE18ay5QONkas11SJeUtPkTddzcjfcPy
+	 hlxa+jxO/PpyTnxLZZvGj3qSaV53v//4o20C53efvdVV3KFwLfTqVehroBF2DEHD77
+	 kLrfnO7k3wJ2Q==
+Message-ID: <1df4e0a7-7879-46b5-b24c-d4bb9e44a150@kernel.org>
+Date: Sat, 29 Aug 2026 10:11:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,20 +35,17 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 03/21] dt-bindings: pinctrl: Add
- starfive,jhb100-sys0-pinctrl
-To: Changhuang Liang <changhuang.liang@starfivetech.com>,
- Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Emil Renner Berthing <kernel@esmil.dk>,
- Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
- Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>,
- Philipp Zabel <p.zabel@pengutronix.de>, Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
-References: <20260829025720.23915-1-changhuang.liang@starfivetech.com>
- <20260829025720.23915-4-changhuang.liang@starfivetech.com>
+Subject: Re: [PATCH v2] dt-bindings: fix typos in various bindings
+To: Zhijian Han <hanzhijian1991@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Guenter Roeck <linux@roeck-us.net>, Srinivas Kandagatla <srini@kernel.org>,
+ Robert Marko <robert.marko@sartura.hr>,
+ Antoniu Miclaus <antoniu.miclaus@analog.com>, Frank Li <Frank.Li@nxp.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org
+References: <20260821105605.1967718-1-hanzhijian1991@gmail.com>
+ <20260828095459.834657-1-hanzhijian1991@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,22 +91,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260829025720.23915-4-changhuang.liang@starfivetech.com>
+In-Reply-To: <20260828095459.834657-1-hanzhijian1991@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/08/2026 04:57, Changhuang Liang wrote:
-> +#ifndef __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
-> +#define __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
-> +
-> +/* sys0 pad numbers */
-> +#define PADNUM_SYS0_GPIO_A0				0
-> +#define PADNUM_SYS0_GPIO_A1				1
-> +#define PADNUM_SYS0_GPIO_A2				2
-> +#define PADNUM_SYS0_GPIO_A3				3
+On 28/08/2026 11:54, Zhijian Han wrote:
+> Fix spelling errors found by the kernel's scripts/spelling.txt
+> and codespell in several devicetree binding documents:
+> 
+>   - "curent" -> "current" in adi,ltc2991.yaml
+>   - "deivce" -> "device" in zii,rave-sp-eeprom.yaml
+>   - "ouput" -> "output" in delta,tn48m-gpio.yaml
+>   - "redudant" -> "redundant" in trivial-devices.yaml
+> 
+> Signed-off-by: Zhijian Han <hanzhijian1991@gmail.com>
+> ---
+> v2:
+> - Use consistent identity "Zhijian Han" instead of the login-style name
+>   "hanzhijian"
+> 
 
-I could not find how your driver uses these, so are you sure it's a
-binding constant for the SW?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
