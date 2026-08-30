@@ -1,248 +1,303 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CDA2D29C8;
-	Sun, 30 Aug 2026 19:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B384C26E71F;
+	Sun, 30 Aug 2026 20:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788118327; cv=none; b=JMFmsI4o1lYFzavXwCMBHn/QdHDr433nLWdqZA4j2fMZFobyVM7pqdQyecYV/4YZApqzyO2rORM2f5Gf0EZYtdh2VL4eGYDnM3m7Uurh2TSmCMnqE7eBgSJRXPho3czhdUgcj8CyJ4YR1O8IZxVacH5bY/pLm4p2KImyPO7ofog=
+	t=1788121163; cv=none; b=bJmcSd8ZrY0pyrnSfTxLtoYdEUvbtBEc1kUptD62GCNup5/LAZiGVplb29XkijjNpG3y7Vxm/4ONHCBaq00xU7DRoZ2Obs1e7/y9KowrlmM4uAczBZmG38NnvHXhPGyn0cXtZJT82u7GWESo8l2uqJXzZ70pfkPp8L+9CKnr4GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788118327; c=relaxed/simple;
-	bh=GF2+6d5Ki9Lkpywk+mOfcy0XeM7raY0lCN+vafb/k9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ps6dDdTMG536FkEwhg7BwNs3jA08Qd3TyrSJxoTP/OUG13UpIxCFANpLDESTly13+LDHhZbd0V241vA5PLmhCBztcWdzg7A9QN24ixb9e4HnB1MGJ51u94vocAIEdrfpl58KH/29WaXegx9FoEYMtdJk/N6NFONFd3w/h6Xelq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q00d5KZ0; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1788121163; c=relaxed/simple;
+	bh=BFFD9Cpn6dGprHkealy6+wEvBEyqfrHGYbkXE5B6SX8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=eAjToAuXa82O1OlQQ+s12tzky/0BAASFdg8B1eddxM2VeI5aj1I4VPhuSSBknESn0m26q7FKqL4mW2oWA/p+/ox49ZVT2mh9vmG9cb0e53wKOSLFVtzWSw0DQeShT9WkHXlrcS/rPRliHQnC5PUKeAzwmEp0Pb5lEZW2u6MMkjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alex-min.fr; spf=pass smtp.mailfrom=alex-min.fr; dkim=pass (2048-bit key) header.d=alex-min.fr header.i=@alex-min.fr header.b=HPDHU44V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eE8PV9Bf; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alex-min.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alex-min.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q00d5KZ0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1788118324; x=1819654324;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GF2+6d5Ki9Lkpywk+mOfcy0XeM7raY0lCN+vafb/k9E=;
-  b=Q00d5KZ0AiBF36LsOCPfELfUZTQAmsnBoJWLoKSN+0VjDFs7t03zQlLg
-   TqnVIa58Q6BYEGxJLfiNDGHdjlyX1busCbFI7J/bK6zGvvd/WPjLVTpPg
-   7C6isXa2MX1XPB0fbnQYXq40a00PFrfV5rSJdojGetgNbtdI/jdqy6+s5
-   QpB3DGaZ0uI+JlMyZN5+wfC46KoggLAXhNz7POFkforbtTG3PV9jL2PBI
-   NrU4Z4ff8QiEZMBgbxwpI6nyBeiw7xcsIsAGrY08ZZ0ylU4ycnM772HcG
-   akw3oUNornr0nmEaypGbwrSfiDSL5Za8p/PM0x1+mxfkEvRj9k5kUII1Q
-   g==;
-X-CSE-ConnectionGUID: kSz+HUmfQHi/dbqdDfbSkg==
-X-CSE-MsgGUID: OaHQ8G0eR6ipbk7vOCXG7g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11891"; a="88294606"
-X-IronPort-AV: E=Sophos;i="6.25,252,1779174000"; 
-   d="scan'208";a="88294606"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2026 12:32:03 -0700
-X-CSE-ConnectionGUID: iIVXZHUeRDiPClN+2A6u+A==
-X-CSE-MsgGUID: ATmQ9GHuQgCsXgPjH5YoiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,252,1779174000"; 
-   d="scan'208";a="272424132"
-Received: from igk-lkp-server01.igk.intel.com (HELO 32268bdb9915) ([10.211.93.152])
-  by orviesa004.jf.intel.com with ESMTP; 30 Aug 2026 12:32:01 -0700
-Received: from kbuild by 32268bdb9915 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1x0lG2-000000000CZ-1ucC;
-	Sun, 30 Aug 2026 19:31:58 +0000
-Date: Sun, 30 Aug 2026 21:31:37 +0200
-From: kernel test robot <lkp@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linus Walleij <linusw@kernel.org>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>
-Subject: Re: [PATCH v1 4/4] pinctrl: pistachio: Replace open coded
- fwnode_is_gpiochip()
-Message-ID: <202608302138.FQoQsbAf-lkp@intel.com>
-References: <20260824074427.3226457-5-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=alex-min.fr header.i=@alex-min.fr header.b="HPDHU44V";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eE8PV9Bf"
+Received: from ams-compute-01.internal (ams-compute-01.internal [10.64.2.61])
+	by mailfout.stl.internal (Postfix) with ESMTP id DBB671D00056;
+	Sun, 30 Aug 2026 16:19:17 -0400 (EDT)
+Received: from ams-imap-13 ([10.64.2.33])
+  by ams-compute-01.internal (MEProxy); Sun, 30 Aug 2026 16:19:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alex-min.fr; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1788121156;
+	 x=1788207556; bh=h7uEa2ZH2PBqpx2CmwL56hO/aLIkIoIJnw3l3vrAw10=; b=
+	HPDHU44Vl+t8w3B3N94/6ZTYgNI845qYLqf3xrrcWF/YKuxMmJLo8+gq7/jxp22/
+	q/T100wiHXqaJpzInbcvavpQAtYGL4u9pp4ioYEgnvqUK+ftHXWpWR/DR8zch6TK
+	S1Yx2Ah8NsEX1VfV/QAEr2gTkOagH/o2LPkppG6QWfHEEL7BLk+vjHz3TxEGVprZ
+	gPLUJ3aUxlM172UdAYDFgw7chjCB4jjDErUCepEzRKyr9TqcTY8/5SrmQsUyO+40
+	xiy7V8z2A9yC+IsZVETEpM8Xrzx89y5jMAOzColT8Uyk8rBk8AyuVRo+7yB1hIv4
+	mQ1qPqHyQPtdNvEGYija7g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1788121156; x=
+	1788207556; bh=h7uEa2ZH2PBqpx2CmwL56hO/aLIkIoIJnw3l3vrAw10=; b=e
+	E8PV9BfyDCnVMYyfHX0sy3oipPF/CXruTpKF6B2LxGzHb4chtqjB2K8HhZOWYUwX
+	oxV/IurZc5/+Ou8tXbCDHQMwvPGPKdslKehlGbQyIRy0HZV66aBB0ouI34BvSjq7
+	LcsalgC9e/aD5ERcloMi+YiI9gDVH4tr8cs7JtFtsvM0G53gBq2DZlZLVLM6oJJx
+	YxMJQxFvYyi5gvKDc3HGJPpzg8wPyOvNJ08asnKB8O3BVH9Ma7M+6+k5SauNQ2Pa
+	QLBaYuZFfOYoyHrdTeHfBdIDyPRWi72PGAyrnkwDc78Ob6GaYCqMgWNqzel2KyOu
+	ZcrjNntF1VuxwFI9T4mZg==
+X-ME-Sender: <xms:PpCUag3Ak6H8D_IMFpS7Hq91j_xFGOaW14RwAKtGmXCHrZpvd3pWcA>
+    <xme:PpCUal5H_7c5M_mPLEZOdOdHkgSJKu_MdpaeIjWKa1OJ6-6cbZUx0XIcBU3KTeoO-
+    t8RAByzS4KB5c_EsiDyUS95aj9DYEryVhulhCH2ZDoyaFTVbfkHMw>
+X-ME-Proxy-Cause: dmFkZTGfqbIh8kNJ8aifZ5SmZDO7eReAEmkJJ3OIMaED0VINmHQNvvMBqReqC933QT0t+P
+    XB1BDplBL20p5BqFiI4k7V6NHrwBDteWQ45FW9D+1L2e6/M2EI9G5VYv6c8NsOIrGsHEVy
+    quTWIf8YYUwQwrnKsVxzs1jnnN3uyvplZNydLZBA+BgiVqo8x90rn107KHZZgnjDWpratE
+    uJqmAzVeg6rhwzdwXrCTR/oOnG+fS6DwZtjDPLHBiW4rpTRseB8kqLCh2f2q7GlpA5WSlj
+    K3aD5FdkQM4qCBfA1QgyQJIWLBQODRBzBN1LyvwvuJSjrX6BCn/+1Hd+iVM7Tw2U+gNVtB
+    nkQdtNn1u/S7FvTCXSduEHtowi+1QnDCzBSp2VslJZOVdpUWMcOm3zRdYgu63juKphHqdo
+    ce98WB9Z4I5axV/dVH8+/hwqbeuN/kqZWG3fhI+Gt1P4CIquCwt3We3amZxkMbtJyNQJHE
+    Unlwb3eQ6pPtPaZNnrxDo1D9hUjgMLdWByMcR7nt6hUCPvimZEmNghv4K4TlMaLf5b5uKZ
+    vIk3ohUYVfsoLTdmlmzPlV6kDt2xmZ1+UTFQ+6kH2sXa6o/J1AcQs2CrDdnz9zaDZgO91f
+    ApyjRhfkMcw0qjphSgBLkBVYi2TO7BuAh2b+oqE7IWrgHswkJLN3hYBhPxIA
+X-ME-Proxy: <xmx:QZCUaqeVwbEedS5NTnRGEborcLipwcyb-QW4YRyonK4KzSyOBXs32g>
+    <xmx:QZCUah6p6GwTWsbLmd4W_ooWn6CE-OmiGMdzKYTOaoeY446p452r7Q>
+    <xmx:QZCUatTfG6bOKT_UmljhY98_tsfIQnJGgfBjKE6FvAswF09K-eCGNg>
+    <xmx:QZCUakd-0m8xHS6lOdoYkqVPMigbAq3qTucNrf7FJBx5bcWuCWeVfg>
+    <xmx:RJCUauTfBTtCKcKTCSkuFerjsHdTRsIaaDebBQ9azVk-e22K3YtSwBkJ>
+Feedback-ID: i72694427:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id 999ADF80082; Sun, 30 Aug 2026 16:19:10 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260824074427.3226457-5-andriy.shevchenko@linux.intel.com>
+X-ThreadId: A4oK29WmcCJJ
+Date: Sun, 30 Aug 2026 22:18:50 +0200
+From: "MINETTE Alexandre" <contact@alex-min.fr>
+To: "Lee Jones" <lee@kernel.org>
+Cc: "Bjorn Andersson" <andersson@kernel.org>,
+ "Konrad Dybcio" <konradybcio@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "MyungJoo Ham" <myungjoo.ham@samsung.com>,
+ "Chanwoo Choi" <cw00.choi@samsung.com>,
+ "Guru Das Srinagesh" <linux@gurudas.dev>,
+ "Linus Walleij" <linusw@kernel.org>,
+ "Rob Clark" <robin.clark@oss.qualcomm.com>, "Kees Cook" <kees@kernel.org>,
+ "Tony Luck" <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, phone-devel@vger.kernel.org
+Message-Id: <646d46b1-7c59-4d73-b033-f4afaf19bdd7@app.fastmail.com>
+In-Reply-To: <20260812122900.GQ1072730@google.com>
+References: <20260804-mainline-send-v1-sending-v5-0-149dd4372ac8@alex-min.fr>
+ <20260804-mainline-send-v1-sending-v5-4-149dd4372ac8@alex-min.fr>
+ <20260812122900.GQ1072730@google.com>
+Subject: Re: [PATCH v5 4/6] mfd: qcom-pm8xxx: register PM8921 USB ID extcon
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+Hi Lee,=20
 
-kernel test robot noticed the following build warnings:
+Thanks for the feedback!
 
-[auto build test WARNING on brgl/gpio/for-next]
-[also build test WARNING on linusw-pinctrl/devel linusw-pinctrl/for-next linus/master v7.2 next-20260828]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+For the v6 series, I'll add a proper define for the 49 IRQ and use the d=
+evm api indeed.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/gpio-Split-fwnode_is_gpiochip-helper/20260824-094232
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20260824074427.3226457-5-andriy.shevchenko%40linux.intel.com
-patch subject: [PATCH v1 4/4] pinctrl: pistachio: Replace open coded fwnode_is_gpiochip()
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20260830/202608302138.FQoQsbAf-lkp@intel.com/config)
-compiler: clang version 22.1.8 (https://github.com/llvm/llvm-project ca7933e47d3a3451d81e72ac174dcb5aa28b59d1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260830/202608302138.FQoQsbAf-lkp@intel.com/reproduce)
+About using the MFD api: I looked at it, but devm_mfd_add_devices() =20
+doesn't seem to let me reuse the parent firmware node, which I need here=
+ =20
+because the DT consumer uses extcon =3D <&pm8921>.=20
+So I kept  platform_device_register_full().
+Let me know if I missed something here.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202608302138.FQoQsbAf-lkp@intel.com/
+Thanks,
+Alexandre
+--=20
+  MINETTE Alexandre
+  contact@alex-min.fr
 
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/gpio/gpiolib-cdev.c:15:
-   include/linux/gpio/driver.h:888:33: error: use of undeclared identifier 'child'
-     888 |         return fwnode_property_present(child, "gpio-controller");
-         |                                        ^~~~~
->> drivers/gpio/gpiolib-cdev.c:1650:2: warning: implicit conversion from '__size_t' (aka 'unsigned long') to 'unsigned int' changes value from 18446744073709551615 to 4294967295 [-Wconstant-conversion]
-    1650 |         INIT_KFIFO(lr->events);
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/kfifo.h:135:69: note: expanded from macro 'INIT_KFIFO'
-     135 |         __kfifo->mask = __is_kfifo_ptr(__tmp) ? 0 : ARRAY_SIZE(__tmp->buf) - 1;\
-         |                       ~                             ~~~~~~~~~~~~~~~~~~~~~~~^~~
-   1 warning and 1 error generated.
-
-
-vim +1650 drivers/gpio/gpiolib-cdev.c
-
-96c02c906a44bc2 Kent Gibson         2026-02-16  1603  
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1604  static int linereq_create(struct gpio_device *gdev, void __user *ip)
-925ca36913fc7df Kent Gibson         2020-06-16  1605  {
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1606  	struct gpio_v2_line_request ulr;
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1607  	struct gpio_v2_line_config *lc;
-96c02c906a44bc2 Kent Gibson         2026-02-16  1608  	struct linereq *lr __free(linereq_free) = NULL;
-b1a92e94560def6 Kent Gibson         2022-07-14  1609  	u64 flags, edflags;
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1610  	unsigned int i;
-96c02c906a44bc2 Kent Gibson         2026-02-16  1611  	int ret;
-925ca36913fc7df Kent Gibson         2020-06-16  1612  
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1613  	if (copy_from_user(&ulr, ip, sizeof(ulr)))
-925ca36913fc7df Kent Gibson         2020-06-16  1614  		return -EFAULT;
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1615  
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1616  	if ((ulr.num_lines == 0) || (ulr.num_lines > GPIO_V2_LINES_MAX))
-925ca36913fc7df Kent Gibson         2020-06-16  1617  		return -EINVAL;
-925ca36913fc7df Kent Gibson         2020-06-16  1618  
-e106b1dd38e723e Andy Shevchenko     2024-11-10  1619  	if (!mem_is_zero(ulr.padding, sizeof(ulr.padding)))
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1620  		return -EINVAL;
-925ca36913fc7df Kent Gibson         2020-06-16  1621  
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1622  	lc = &ulr.config;
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1623  	ret = gpio_v2_line_config_validate(lc, ulr.num_lines);
-925ca36913fc7df Kent Gibson         2020-06-16  1624  	if (ret)
-925ca36913fc7df Kent Gibson         2020-06-16  1625  		return ret;
-925ca36913fc7df Kent Gibson         2020-06-16  1626  
-323bbfcf1ef8836 Linus Torvalds      2026-02-21  1627  	lr = kvzalloc_flex(*lr, lines, ulr.num_lines);
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1628  	if (!lr)
-925ca36913fc7df Kent Gibson         2020-06-16  1629  		return -ENOMEM;
-a512635da9f7223 Kees Cook           2023-09-22  1630  	lr->num_lines = ulr.num_lines;
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1631  
-dc0989e3aa58dc4 Andy Shevchenko     2022-12-28  1632  	lr->gdev = gpio_device_get(gdev);
-925ca36913fc7df Kent Gibson         2020-06-16  1633  
-65cff70464068a8 Kent Gibson         2020-09-28  1634  	for (i = 0; i < ulr.num_lines; i++) {
-73e0341992b68bb Kent Gibson         2020-09-28  1635  		lr->lines[i].req = lr;
-65cff70464068a8 Kent Gibson         2020-09-28  1636  		WRITE_ONCE(lr->lines[i].sw_debounced, 0);
-65cff70464068a8 Kent Gibson         2020-09-28  1637  		INIT_DELAYED_WORK(&lr->lines[i].work, debounce_work_func);
-65cff70464068a8 Kent Gibson         2020-09-28  1638  	}
-73e0341992b68bb Kent Gibson         2020-09-28  1639  
-f188ac1251b909c Kent Gibson         2020-10-05  1640  	if (ulr.consumer[0] != '\0') {
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1641  		/* label is only initialized if consumer is set */
-f188ac1251b909c Kent Gibson         2020-10-05  1642  		lr->label = kstrndup(ulr.consumer, sizeof(ulr.consumer) - 1,
-925ca36913fc7df Kent Gibson         2020-06-16  1643  				     GFP_KERNEL);
-96c02c906a44bc2 Kent Gibson         2026-02-16  1644  		if (!lr->label)
-96c02c906a44bc2 Kent Gibson         2026-02-16  1645  			return -ENOMEM;
-925ca36913fc7df Kent Gibson         2020-06-16  1646  	}
-925ca36913fc7df Kent Gibson         2020-06-16  1647  
-a54756cb24eafac Kent Gibson         2020-09-28  1648  	mutex_init(&lr->config_mutex);
-73e0341992b68bb Kent Gibson         2020-09-28  1649  	init_waitqueue_head(&lr->wait);
-35d848e7a1cbba2 Kent Gibson         2024-05-29 @1650  	INIT_KFIFO(lr->events);
-73e0341992b68bb Kent Gibson         2020-09-28  1651  	lr->event_buffer_size = ulr.event_buffer_size;
-73e0341992b68bb Kent Gibson         2020-09-28  1652  	if (lr->event_buffer_size == 0)
-73e0341992b68bb Kent Gibson         2020-09-28  1653  		lr->event_buffer_size = ulr.num_lines * 16;
-73e0341992b68bb Kent Gibson         2020-09-28  1654  	else if (lr->event_buffer_size > GPIO_V2_LINES_MAX * 16)
-73e0341992b68bb Kent Gibson         2020-09-28  1655  		lr->event_buffer_size = GPIO_V2_LINES_MAX * 16;
-73e0341992b68bb Kent Gibson         2020-09-28  1656  
-73e0341992b68bb Kent Gibson         2020-09-28  1657  	atomic_set(&lr->seqno, 0);
-883f91981843712 Kent Gibson         2020-07-08  1658  
-925ca36913fc7df Kent Gibson         2020-06-16  1659  	/* Request each GPIO */
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1660  	for (i = 0; i < ulr.num_lines; i++) {
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1661  		u32 offset = ulr.offsets[i];
-f4e14d45d7fe95f Bartosz Golaszewski 2024-01-24  1662  		struct gpio_desc *desc = gpio_device_get_desc(gdev, offset);
-925ca36913fc7df Kent Gibson         2020-06-16  1663  
-96c02c906a44bc2 Kent Gibson         2026-02-16  1664  		if (IS_ERR(desc))
-96c02c906a44bc2 Kent Gibson         2026-02-16  1665  			return PTR_ERR(desc);
-925ca36913fc7df Kent Gibson         2020-06-16  1666  
-95a4eed7dd5b7c1 Andy Shevchenko     2022-02-01  1667  		ret = gpiod_request_user(desc, lr->label);
-925ca36913fc7df Kent Gibson         2020-06-16  1668  		if (ret)
-96c02c906a44bc2 Kent Gibson         2026-02-16  1669  			return ret;
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1670  
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1671  		lr->lines[i].desc = desc;
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1672  		flags = gpio_v2_line_config_flags(lc, i);
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1673  		gpio_v2_line_config_flags_to_desc_flags(flags, &desc->flags);
-925ca36913fc7df Kent Gibson         2020-06-16  1674  
-925ca36913fc7df Kent Gibson         2020-06-16  1675  		ret = gpiod_set_transitory(desc, false);
-925ca36913fc7df Kent Gibson         2020-06-16  1676  		if (ret < 0)
-96c02c906a44bc2 Kent Gibson         2026-02-16  1677  			return ret;
-925ca36913fc7df Kent Gibson         2020-06-16  1678  
-b1a92e94560def6 Kent Gibson         2022-07-14  1679  		edflags = flags & GPIO_V2_LINE_EDGE_DETECTOR_FLAGS;
-925ca36913fc7df Kent Gibson         2020-06-16  1680  		/*
-925ca36913fc7df Kent Gibson         2020-06-16  1681  		 * Lines have to be requested explicitly for input
-925ca36913fc7df Kent Gibson         2020-06-16  1682  		 * or output, else the line will be treated "as is".
-925ca36913fc7df Kent Gibson         2020-06-16  1683  		 */
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1684  		if (flags & GPIO_V2_LINE_FLAG_OUTPUT) {
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1685  			int val = gpio_v2_line_config_output_value(lc, i);
-925ca36913fc7df Kent Gibson         2020-06-16  1686  
-07c61d4da43fa3b Bartosz Golaszewski 2024-10-18  1687  			ret = gpiod_direction_output_nonotify(desc, val);
-925ca36913fc7df Kent Gibson         2020-06-16  1688  			if (ret)
-96c02c906a44bc2 Kent Gibson         2026-02-16  1689  				return ret;
-3c0d9c635ae2b2c Kent Gibson         2020-09-28  1690  		} else if (flags & GPIO_V2_LINE_FLAG_INPUT) {
-07c61d4da43fa3b Bartosz Golaszewski 2024-10-18  1691  			ret = gpiod_direction_input_nonotify(desc);
-925ca36913fc7df Kent Gibson         2020-06-16  1692  			if (ret)
-96c02c906a44bc2 Kent Gibson         2026-02-16  1693  				return ret;
-73e0341992b68bb Kent Gibson         2020-09-28  1694  
-65cff70464068a8 Kent Gibson         2020-09-28  1695  			ret = edge_detector_setup(&lr->lines[i], lc, i,
-b1a92e94560def6 Kent Gibson         2022-07-14  1696  						  edflags);
-73e0341992b68bb Kent Gibson         2020-09-28  1697  			if (ret)
-96c02c906a44bc2 Kent Gibson         2026-02-16  1698  				return ret;
-925ca36913fc7df Kent Gibson         2020-06-16  1699  		}
-925ca36913fc7df Kent Gibson         2020-06-16  1700  
-b1a92e94560def6 Kent Gibson         2022-07-14  1701  		lr->lines[i].edflags = edflags;
-b1a92e94560def6 Kent Gibson         2022-07-14  1702  
-9ce4ed5b4db1363 Bartosz Golaszewski 2023-08-21  1703  		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_REQUESTED);
-925ca36913fc7df Kent Gibson         2020-06-16  1704  
-925ca36913fc7df Kent Gibson         2020-06-16  1705  		dev_dbg(&gdev->dev, "registered chardev handle for line %d\n",
-925ca36913fc7df Kent Gibson         2020-06-16  1706  			offset);
-925ca36913fc7df Kent Gibson         2020-06-16  1707  	}
-925ca36913fc7df Kent Gibson         2020-06-16  1708  
-a0dda508bd66b9e Bartosz Golaszewski 2023-08-17  1709  	lr->device_unregistered_nb.notifier_call = linereq_unregistered_notify;
-a0dda508bd66b9e Bartosz Golaszewski 2023-08-17  1710  	ret = blocking_notifier_chain_register(&gdev->device_notifier,
-a0dda508bd66b9e Bartosz Golaszewski 2023-08-17  1711  					       &lr->device_unregistered_nb);
-a0dda508bd66b9e Bartosz Golaszewski 2023-08-17  1712  	if (ret)
-96c02c906a44bc2 Kent Gibson         2026-02-16  1713  		return ret;
-925ca36913fc7df Kent Gibson         2020-06-16  1714  
-96c02c906a44bc2 Kent Gibson         2026-02-16  1715  	FD_PREPARE(fdf, O_RDONLY | O_CLOEXEC,
-96c02c906a44bc2 Kent Gibson         2026-02-16  1716  		   anon_inode_getfile("gpio-line", &line_fileops, lr,
-96c02c906a44bc2 Kent Gibson         2026-02-16  1717  				      O_RDONLY | O_CLOEXEC));
-96c02c906a44bc2 Kent Gibson         2026-02-16  1718  	if (fdf.err)
-96c02c906a44bc2 Kent Gibson         2026-02-16  1719  		return fdf.err;
-96c02c906a44bc2 Kent Gibson         2026-02-16  1720  	retain_and_null_ptr(lr);
-925ca36913fc7df Kent Gibson         2020-06-16  1721  
-96c02c906a44bc2 Kent Gibson         2026-02-16  1722  	ulr.fd = fd_prepare_fd(fdf);
-96c02c906a44bc2 Kent Gibson         2026-02-16  1723  	if (copy_to_user(ip, &ulr, sizeof(ulr)))
-925ca36913fc7df Kent Gibson         2020-06-16  1724  		return -EFAULT;
-925ca36913fc7df Kent Gibson         2020-06-16  1725  
-96c02c906a44bc2 Kent Gibson         2026-02-16  1726  	fd_publish(fdf);
-925ca36913fc7df Kent Gibson         2020-06-16  1727  
-925ca36913fc7df Kent Gibson         2020-06-16  1728  	dev_dbg(&gdev->dev, "registered chardev handle for %d lines\n",
-96c02c906a44bc2 Kent Gibson         2026-02-16  1729  		ulr.num_lines);
-925ca36913fc7df Kent Gibson         2020-06-16  1730  
-925ca36913fc7df Kent Gibson         2020-06-16  1731  	return 0;
-925ca36913fc7df Kent Gibson         2020-06-16  1732  }
-925ca36913fc7df Kent Gibson         2020-06-16  1733  
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Mer 12 ao=C3=BBt 2026, =C3=A0 14:29, Lee Jones a =C3=A9crit=E2=80=AF:
+> On Tue, 04 Aug 2026, Alexandre MINETTE via B4 Relay wrote:
+>
+>> From: Alexandre MINETTE <contact@alex-min.fr>
+>>=20
+>> PM8921 reports the USB ID pin through interrupt 49 of its interrupt
+>> controller. Unlike PM8941, this path has no separate addressable misc
+>> block to represent as a devicetree child node.
+>>=20
+>> Register a child platform device for the existing Qualcomm USB extcon
+>> driver after creating the PMIC IRQ domain. Pass the USB ID interrupt =
+as
+>> a named resource and reuse the PM8921 firmware node, allowing consume=
+rs
+>> to reference the PMIC node directly as their extcon provider.
+>>=20
+>> Unregister the child device and dispose of the IRQ mapping when the
+>> PMIC is removed or probing fails.
+>>=20
+>> Signed-off-by: Alexandre MINETTE <contact@alex-min.fr>
+>> ---
+>>  drivers/mfd/qcom-pm8xxx.c | 78 +++++++++++++++++++++++++++++++++++++=
+++++++++--
+>>  1 file changed, 76 insertions(+), 2 deletions(-)
+>>=20
+>> diff --git a/drivers/mfd/qcom-pm8xxx.c b/drivers/mfd/qcom-pm8xxx.c
+>> index 0cf374c015ce..884fc99a1488 100644
+>> --- dangerously/mfd/qcom-pm8xxx.c
+>> +++ b/drivers/mfd/qcom-pm8xxx.c
+>> @@ -7,6 +7,7 @@
+>> =20
+>>  #include <linux/kernel.h>
+>>  #include <linux/interrupt.h>
+>> +#include <linux/ioport.h>
+>>  #include <linux/irqchip/chained_irq.h>
+>>  #include <linux/irq.h>
+>>  #include <linux/irqdomain.h>
+>> @@ -64,12 +65,15 @@
+>> =20
+>>  struct pm_irq_data {
+>>  	int num_irqs;
+>> +	int usb_id_irq;
+>>  	struct irq_chip *irq_chip;
+>>  	irq_handler_t irq_handler;
+>>  };
+>> =20
+>>  struct pm_irq_chip {
+>>  	struct regmap		*regmap;
+>> +	struct platform_device	*usb_extcon;
+>> +	unsigned int		usb_id_irq;
+>>  	spinlock_t		pm_irq_lock;
+>>  	struct irq_domain	*irqdomain;
+>>  	unsigned int		num_blocks;
+>> @@ -492,6 +496,13 @@ static const struct pm_irq_data pm8xxx_data =3D {
+>>  	.irq_handler =3D pm8xxx_irq_handler,
+>>  };
+>> =20
+>> +static const struct pm_irq_data pm8921_data =3D {
+>> +	.num_irqs =3D PM8XXX_NR_IRQS,
+>> +	.usb_id_irq =3D 49,
+>
+> Magic numbers should be defined.
+>
+>> +	.irq_chip =3D &pm8xxx_irq_chip,
+>> +	.irq_handler =3D pm8xxx_irq_handler,
+>> +};
+>> +
+>>  static const struct pm_irq_data pm8821_data =3D {
+>>  	.num_irqs =3D PM8821_NR_IRQS,
+>>  	.irq_chip =3D &pm8821_irq_chip,
+>> @@ -501,11 +512,60 @@ static const struct pm_irq_data pm8821_data =3D=
+ {
+>>  static const struct of_device_id pm8xxx_id_table[] =3D {
+>>  	{ .compatible =3D "qcom,pm8058", .data =3D &pm8xxx_data},
+>>  	{ .compatible =3D "qcom,pm8821", .data =3D &pm8821_data},
+>> -	{ .compatible =3D "qcom,pm8921", .data =3D &pm8xxx_data},
+>> +	{ .compatible =3D "qcom,pm8921", .data =3D &pm8921_data},
+>>  	{ }
+>>  };
+>>  MODULE_DEVICE_TABLE(of, pm8xxx_id_table);
+>> =20
+>> +static int pm8xxx_add_usb_extcon(struct platform_device *pdev,
+>> +				 struct pm_irq_chip *chip,
+>> +				 unsigned int hwirq)
+>> +{
+>> +	struct irq_fwspec fwspec =3D {
+>> +		.fwnode =3D dev_fwnode(&pdev->dev),
+>> +		.param_count =3D 2,
+>> +		.param =3D { hwirq, IRQ_TYPE_EDGE_BOTH },
+>> +	};
+>> +	struct platform_device_info pdevinfo =3D {
+>> +		.parent =3D &pdev->dev,
+>> +		.fwnode =3D dev_fwnode(&pdev->dev),
+>> +		.of_node_reused =3D true,
+>> +		.name =3D "qcom-pm8xxx-usb-id",
+>> +		.id =3D PLATFORM_DEVID_NONE,
+>> +	};
+>> +	struct resource resource;
+>> +
+>> +	chip->usb_id_irq =3D irq_create_fwspec_mapping(&fwspec);
+>> +	if (!chip->usb_id_irq)
+>> +		return -ENXIO;
+>> +
+>> +	resource =3D DEFINE_RES_IRQ_NAMED(chip->usb_id_irq, "usb_id");
+>> +	pdevinfo.res =3D &resource;
+>> +	pdevinfo.num_res =3D 1;
+>> +
+>> +	chip->usb_extcon =3D platform_device_register_full(&pdevinfo);
+>
+> Why aren't you using the MFD API for this?
+>
+>> +	if (IS_ERR(chip->usb_extcon)) {
+>> +		int ret =3D PTR_ERR(chip->usb_extcon);
+>> +
+>> +		chip->usb_extcon =3D NULL;
+>> +		irq_dispose_mapping(chip->usb_id_irq);
+>> +		chip->usb_id_irq =3D 0;
+>> +
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void pm8xxx_remove_usb_extcon(struct pm_irq_chip *chip)
+>> +{
+>> +	if (chip->usb_extcon)
+>> +		platform_device_unregister(chip->usb_extcon);
+>> +
+>> +	if (chip->usb_id_irq)
+>> +		irq_dispose_mapping(chip->usb_id_irq);
+>> +}
+>
+> Why not devm_*
+>
+>>  static int pm8xxx_probe(struct platform_device *pdev)
+>>  {
+>>  	const struct pm_irq_data *data;
+>> @@ -570,9 +630,22 @@ static int pm8xxx_probe(struct platform_device *=
+pdev)
+>> =20
+>>  	irq_set_irq_wake(irq, 1);
+>> =20
+>> +	if (data->usb_id_irq) {
+>> +		rc =3D pm8xxx_add_usb_extcon(pdev, chip, data->usb_id_irq);
+>> +		if (rc)
+>> +			goto err_domain;
+>> +	}
+>> +
+>>  	rc =3D of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->d=
+ev);
+>>  	if (rc)
+>> -		irq_domain_remove(chip->irqdomain);
+>> +		goto err_extcon;
+>> +
+>> +	return 0;
+>> +
+>> +err_extcon:
+>> +	pm8xxx_remove_usb_extcon(chip);
+>> +err_domain:
+>> +	irq_domain_remove(chip->irqdomain);
+>> =20
+>>  	return rc;
+>>  }
+>> @@ -582,6 +655,7 @@ static void pm8xxx_remove(struct platform_device =
+*pdev)
+>>  	struct pm_irq_chip *chip =3D platform_get_drvdata(pdev);
+>> =20
+>>  	of_platform_depopulate(&pdev->dev);
+>> +	pm8xxx_remove_usb_extcon(chip);
+>>  	irq_domain_remove(chip->irqdomain);
+>>  }
+>> =20
+>>=20
+>> --=20
+>> 2.43.0
+>>=20
+>>=20
+>
+> --=20
+> Lee Jones
