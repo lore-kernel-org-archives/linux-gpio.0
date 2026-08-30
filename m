@@ -1,303 +1,119 @@
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B384C26E71F;
-	Sun, 30 Aug 2026 20:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D116272E6D;
+	Sun, 30 Aug 2026 21:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788121163; cv=none; b=bJmcSd8ZrY0pyrnSfTxLtoYdEUvbtBEc1kUptD62GCNup5/LAZiGVplb29XkijjNpG3y7Vxm/4ONHCBaq00xU7DRoZ2Obs1e7/y9KowrlmM4uAczBZmG38NnvHXhPGyn0cXtZJT82u7GWESo8l2uqJXzZ70pfkPp8L+9CKnr4GQ=
+	t=1788124448; cv=none; b=ax/9gbpdgSr2yUCWobWW2QahQ9Iqv+pyQj2loOY5kuEOBeL/rtJevarewmhhlMS73U3V5SCjI38+CtpldLIqI8ASRrFkImpE45FTylfpEZGTV+JYArkzKLT07HpjOQLMF3vnIf1nnzKJcFZl9DebbZZEiMDXYIw1o9zs1EG4IMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788121163; c=relaxed/simple;
-	bh=BFFD9Cpn6dGprHkealy6+wEvBEyqfrHGYbkXE5B6SX8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=eAjToAuXa82O1OlQQ+s12tzky/0BAASFdg8B1eddxM2VeI5aj1I4VPhuSSBknESn0m26q7FKqL4mW2oWA/p+/ox49ZVT2mh9vmG9cb0e53wKOSLFVtzWSw0DQeShT9WkHXlrcS/rPRliHQnC5PUKeAzwmEp0Pb5lEZW2u6MMkjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alex-min.fr; spf=pass smtp.mailfrom=alex-min.fr; dkim=pass (2048-bit key) header.d=alex-min.fr header.i=@alex-min.fr header.b=HPDHU44V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eE8PV9Bf; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alex-min.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alex-min.fr
+	s=arc-20240116; t=1788124448; c=relaxed/simple;
+	bh=u5WW52dRfOA9bB1N5Z5GSQCIlLzFE6CPKa3DpFewPDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ove2vfndQ4+BXqQpytsf15i9RHVM0nP2aJinlx8/5oMrS7JT9bY/NAei5xl/I1ghpvzXSOqmyCjGm9vVMQtSI0MqftOWEeyaBQW3gWzCisz0mqvReFZzc3l3p5T49hzYd1ufMB60SxmJSQYVo6qXcnDqM+TOtpBNGeuOpXWogs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BxJuQo73; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alex-min.fr header.i=@alex-min.fr header.b="HPDHU44V";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eE8PV9Bf"
-Received: from ams-compute-01.internal (ams-compute-01.internal [10.64.2.61])
-	by mailfout.stl.internal (Postfix) with ESMTP id DBB671D00056;
-	Sun, 30 Aug 2026 16:19:17 -0400 (EDT)
-Received: from ams-imap-13 ([10.64.2.33])
-  by ams-compute-01.internal (MEProxy); Sun, 30 Aug 2026 16:19:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alex-min.fr; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1788121156;
-	 x=1788207556; bh=h7uEa2ZH2PBqpx2CmwL56hO/aLIkIoIJnw3l3vrAw10=; b=
-	HPDHU44Vl+t8w3B3N94/6ZTYgNI845qYLqf3xrrcWF/YKuxMmJLo8+gq7/jxp22/
-	q/T100wiHXqaJpzInbcvavpQAtYGL4u9pp4ioYEgnvqUK+ftHXWpWR/DR8zch6TK
-	S1Yx2Ah8NsEX1VfV/QAEr2gTkOagH/o2LPkppG6QWfHEEL7BLk+vjHz3TxEGVprZ
-	gPLUJ3aUxlM172UdAYDFgw7chjCB4jjDErUCepEzRKyr9TqcTY8/5SrmQsUyO+40
-	xiy7V8z2A9yC+IsZVETEpM8Xrzx89y5jMAOzColT8Uyk8rBk8AyuVRo+7yB1hIv4
-	mQ1qPqHyQPtdNvEGYija7g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1788121156; x=
-	1788207556; bh=h7uEa2ZH2PBqpx2CmwL56hO/aLIkIoIJnw3l3vrAw10=; b=e
-	E8PV9BfyDCnVMYyfHX0sy3oipPF/CXruTpKF6B2LxGzHb4chtqjB2K8HhZOWYUwX
-	oxV/IurZc5/+Ou8tXbCDHQMwvPGPKdslKehlGbQyIRy0HZV66aBB0ouI34BvSjq7
-	LcsalgC9e/aD5ERcloMi+YiI9gDVH4tr8cs7JtFtsvM0G53gBq2DZlZLVLM6oJJx
-	YxMJQxFvYyi5gvKDc3HGJPpzg8wPyOvNJ08asnKB8O3BVH9Ma7M+6+k5SauNQ2Pa
-	QLBaYuZFfOYoyHrdTeHfBdIDyPRWi72PGAyrnkwDc78Ob6GaYCqMgWNqzel2KyOu
-	ZcrjNntF1VuxwFI9T4mZg==
-X-ME-Sender: <xms:PpCUag3Ak6H8D_IMFpS7Hq91j_xFGOaW14RwAKtGmXCHrZpvd3pWcA>
-    <xme:PpCUal5H_7c5M_mPLEZOdOdHkgSJKu_MdpaeIjWKa1OJ6-6cbZUx0XIcBU3KTeoO-
-    t8RAByzS4KB5c_EsiDyUS95aj9DYEryVhulhCH2ZDoyaFTVbfkHMw>
-X-ME-Proxy-Cause: dmFkZTGfqbIh8kNJ8aifZ5SmZDO7eReAEmkJJ3OIMaED0VINmHQNvvMBqReqC933QT0t+P
-    XB1BDplBL20p5BqFiI4k7V6NHrwBDteWQ45FW9D+1L2e6/M2EI9G5VYv6c8NsOIrGsHEVy
-    quTWIf8YYUwQwrnKsVxzs1jnnN3uyvplZNydLZBA+BgiVqo8x90rn107KHZZgnjDWpratE
-    uJqmAzVeg6rhwzdwXrCTR/oOnG+fS6DwZtjDPLHBiW4rpTRseB8kqLCh2f2q7GlpA5WSlj
-    K3aD5FdkQM4qCBfA1QgyQJIWLBQODRBzBN1LyvwvuJSjrX6BCn/+1Hd+iVM7Tw2U+gNVtB
-    nkQdtNn1u/S7FvTCXSduEHtowi+1QnDCzBSp2VslJZOVdpUWMcOm3zRdYgu63juKphHqdo
-    ce98WB9Z4I5axV/dVH8+/hwqbeuN/kqZWG3fhI+Gt1P4CIquCwt3We3amZxkMbtJyNQJHE
-    Unlwb3eQ6pPtPaZNnrxDo1D9hUjgMLdWByMcR7nt6hUCPvimZEmNghv4K4TlMaLf5b5uKZ
-    vIk3ohUYVfsoLTdmlmzPlV6kDt2xmZ1+UTFQ+6kH2sXa6o/J1AcQs2CrDdnz9zaDZgO91f
-    ApyjRhfkMcw0qjphSgBLkBVYi2TO7BuAh2b+oqE7IWrgHswkJLN3hYBhPxIA
-X-ME-Proxy: <xmx:QZCUaqeVwbEedS5NTnRGEborcLipwcyb-QW4YRyonK4KzSyOBXs32g>
-    <xmx:QZCUah6p6GwTWsbLmd4W_ooWn6CE-OmiGMdzKYTOaoeY446p452r7Q>
-    <xmx:QZCUatTfG6bOKT_UmljhY98_tsfIQnJGgfBjKE6FvAswF09K-eCGNg>
-    <xmx:QZCUakd-0m8xHS6lOdoYkqVPMigbAq3qTucNrf7FJBx5bcWuCWeVfg>
-    <xmx:RJCUauTfBTtCKcKTCSkuFerjsHdTRsIaaDebBQ9azVk-e22K3YtSwBkJ>
-Feedback-ID: i72694427:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id 999ADF80082; Sun, 30 Aug 2026 16:19:10 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BxJuQo73"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788124446; x=1819660446;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u5WW52dRfOA9bB1N5Z5GSQCIlLzFE6CPKa3DpFewPDg=;
+  b=BxJuQo73WQaMjpNm+g24TSlA9HFJZqGl2W9Tjld0nEWeqLb9lwlsomoT
+   dBY/8jzgkfnVAYMb5gLhP4+D9q8qu5fogMTAloC3kp3pqTKsij6HRrLJl
+   SupV6DetuH7BHqhgSB1OWWxLHQhj2GZ1bUew0A3OZ9L3r2qGRt79D6NhD
+   HWiopUMxs85mvjNyPKoBqThLIpuOtl6IQ5gYXy+H5EzuOaOMikPmpt56D
+   OMCkIyKdUKby+7gH70/dhLgKIZuaPU9tKOTmboldaejZzdllSL7yhzByI
+   tmR8w2T8fU7nBW39NIBmFAFSkVdCpsNGE9ABVD9bFJzuxgD0qPLUKGSG1
+   A==;
+X-CSE-ConnectionGUID: +SYmL7YwRzSbIt17ekv0sQ==
+X-CSE-MsgGUID: b0PGnNh7T/iJLAxcnDt0bw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11891"; a="106060750"
+X-IronPort-AV: E=Sophos;i="6.25,252,1779174000"; 
+   d="scan'208";a="106060750"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2026 14:14:06 -0700
+X-CSE-ConnectionGUID: qdshCc9lT+KpACMbc3W3Zw==
+X-CSE-MsgGUID: c/6HIHzpSEOcjPazKn0M7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,252,1779174000"; 
+   d="scan'208";a="272433446"
+Received: from igk-lkp-server01.igk.intel.com (HELO 32268bdb9915) ([10.211.93.152])
+  by orviesa004.jf.intel.com with ESMTP; 30 Aug 2026 14:14:03 -0700
+Received: from kbuild by 32268bdb9915 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x0mqn-000000000Df-1ywc;
+	Sun, 30 Aug 2026 21:14:01 +0000
+Date: Sun, 30 Aug 2026 23:13:32 +0200
+From: kernel test robot <lkp@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, Linus Walleij <linusw@kernel.org>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>
+Subject: Re: [PATCH v1 4/4] pinctrl: pistachio: Replace open coded
+ fwnode_is_gpiochip()
+Message-ID: <202608302328.ToabNDV1-lkp@intel.com>
+References: <20260824074427.3226457-5-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: A4oK29WmcCJJ
-Date: Sun, 30 Aug 2026 22:18:50 +0200
-From: "MINETTE Alexandre" <contact@alex-min.fr>
-To: "Lee Jones" <lee@kernel.org>
-Cc: "Bjorn Andersson" <andersson@kernel.org>,
- "Konrad Dybcio" <konradybcio@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "MyungJoo Ham" <myungjoo.ham@samsung.com>,
- "Chanwoo Choi" <cw00.choi@samsung.com>,
- "Guru Das Srinagesh" <linux@gurudas.dev>,
- "Linus Walleij" <linusw@kernel.org>,
- "Rob Clark" <robin.clark@oss.qualcomm.com>, "Kees Cook" <kees@kernel.org>,
- "Tony Luck" <tony.luck@intel.com>,
- "Guilherme G. Piccoli" <gpiccoli@igalia.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, phone-devel@vger.kernel.org
-Message-Id: <646d46b1-7c59-4d73-b033-f4afaf19bdd7@app.fastmail.com>
-In-Reply-To: <20260812122900.GQ1072730@google.com>
-References: <20260804-mainline-send-v1-sending-v5-0-149dd4372ac8@alex-min.fr>
- <20260804-mainline-send-v1-sending-v5-4-149dd4372ac8@alex-min.fr>
- <20260812122900.GQ1072730@google.com>
-Subject: Re: [PATCH v5 4/6] mfd: qcom-pm8xxx: register PM8921 USB ID extcon
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260824074427.3226457-5-andriy.shevchenko@linux.intel.com>
 
-Hi Lee,=20
+Hi Andy,
 
-Thanks for the feedback!
+kernel test robot noticed the following build errors:
 
-For the v6 series, I'll add a proper define for the 49 IRQ and use the d=
-evm api indeed.
+[auto build test ERROR on brgl/gpio/for-next]
+[also build test ERROR on linusw-pinctrl/devel linusw-pinctrl/for-next linus/master v7.2 next-20260827]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-About using the MFD api: I looked at it, but devm_mfd_add_devices() =20
-doesn't seem to let me reuse the parent firmware node, which I need here=
- =20
-because the DT consumer uses extcon =3D <&pm8921>.=20
-So I kept  platform_device_register_full().
-Let me know if I missed something here.
+url:    https://github.com/intel-lab-lkp/linux/commits/Andy-Shevchenko/gpio-Split-fwnode_is_gpiochip-helper/20260824-094232
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20260824074427.3226457-5-andriy.shevchenko%40linux.intel.com
+patch subject: [PATCH v1 4/4] pinctrl: pistachio: Replace open coded fwnode_is_gpiochip()
+config: x86_64-rhel-9.4 (https://download.01.org/0day-ci/archive/20260830/202608302328.ToabNDV1-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260830/202608302328.ToabNDV1-lkp@intel.com/reproduce)
 
-Thanks,
-Alexandre
---=20
-  MINETTE Alexandre
-  contact@alex-min.fr
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202608302328.ToabNDV1-lkp@intel.com/
 
-Mer 12 ao=C3=BBt 2026, =C3=A0 14:29, Lee Jones a =C3=A9crit=E2=80=AF:
-> On Tue, 04 Aug 2026, Alexandre MINETTE via B4 Relay wrote:
->
->> From: Alexandre MINETTE <contact@alex-min.fr>
->>=20
->> PM8921 reports the USB ID pin through interrupt 49 of its interrupt
->> controller. Unlike PM8941, this path has no separate addressable misc
->> block to represent as a devicetree child node.
->>=20
->> Register a child platform device for the existing Qualcomm USB extcon
->> driver after creating the PMIC IRQ domain. Pass the USB ID interrupt =
-as
->> a named resource and reuse the PM8921 firmware node, allowing consume=
-rs
->> to reference the PMIC node directly as their extcon provider.
->>=20
->> Unregister the child device and dispose of the IRQ mapping when the
->> PMIC is removed or probing fails.
->>=20
->> Signed-off-by: Alexandre MINETTE <contact@alex-min.fr>
->> ---
->>  drivers/mfd/qcom-pm8xxx.c | 78 +++++++++++++++++++++++++++++++++++++=
-++++++++--
->>  1 file changed, 76 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/drivers/mfd/qcom-pm8xxx.c b/drivers/mfd/qcom-pm8xxx.c
->> index 0cf374c015ce..884fc99a1488 100644
->> --- dangerously/mfd/qcom-pm8xxx.c
->> +++ b/drivers/mfd/qcom-pm8xxx.c
->> @@ -7,6 +7,7 @@
->> =20
->>  #include <linux/kernel.h>
->>  #include <linux/interrupt.h>
->> +#include <linux/ioport.h>
->>  #include <linux/irqchip/chained_irq.h>
->>  #include <linux/irq.h>
->>  #include <linux/irqdomain.h>
->> @@ -64,12 +65,15 @@
->> =20
->>  struct pm_irq_data {
->>  	int num_irqs;
->> +	int usb_id_irq;
->>  	struct irq_chip *irq_chip;
->>  	irq_handler_t irq_handler;
->>  };
->> =20
->>  struct pm_irq_chip {
->>  	struct regmap		*regmap;
->> +	struct platform_device	*usb_extcon;
->> +	unsigned int		usb_id_irq;
->>  	spinlock_t		pm_irq_lock;
->>  	struct irq_domain	*irqdomain;
->>  	unsigned int		num_blocks;
->> @@ -492,6 +496,13 @@ static const struct pm_irq_data pm8xxx_data =3D {
->>  	.irq_handler =3D pm8xxx_irq_handler,
->>  };
->> =20
->> +static const struct pm_irq_data pm8921_data =3D {
->> +	.num_irqs =3D PM8XXX_NR_IRQS,
->> +	.usb_id_irq =3D 49,
->
-> Magic numbers should be defined.
->
->> +	.irq_chip =3D &pm8xxx_irq_chip,
->> +	.irq_handler =3D pm8xxx_irq_handler,
->> +};
->> +
->>  static const struct pm_irq_data pm8821_data =3D {
->>  	.num_irqs =3D PM8821_NR_IRQS,
->>  	.irq_chip =3D &pm8821_irq_chip,
->> @@ -501,11 +512,60 @@ static const struct pm_irq_data pm8821_data =3D=
- {
->>  static const struct of_device_id pm8xxx_id_table[] =3D {
->>  	{ .compatible =3D "qcom,pm8058", .data =3D &pm8xxx_data},
->>  	{ .compatible =3D "qcom,pm8821", .data =3D &pm8821_data},
->> -	{ .compatible =3D "qcom,pm8921", .data =3D &pm8xxx_data},
->> +	{ .compatible =3D "qcom,pm8921", .data =3D &pm8921_data},
->>  	{ }
->>  };
->>  MODULE_DEVICE_TABLE(of, pm8xxx_id_table);
->> =20
->> +static int pm8xxx_add_usb_extcon(struct platform_device *pdev,
->> +				 struct pm_irq_chip *chip,
->> +				 unsigned int hwirq)
->> +{
->> +	struct irq_fwspec fwspec =3D {
->> +		.fwnode =3D dev_fwnode(&pdev->dev),
->> +		.param_count =3D 2,
->> +		.param =3D { hwirq, IRQ_TYPE_EDGE_BOTH },
->> +	};
->> +	struct platform_device_info pdevinfo =3D {
->> +		.parent =3D &pdev->dev,
->> +		.fwnode =3D dev_fwnode(&pdev->dev),
->> +		.of_node_reused =3D true,
->> +		.name =3D "qcom-pm8xxx-usb-id",
->> +		.id =3D PLATFORM_DEVID_NONE,
->> +	};
->> +	struct resource resource;
->> +
->> +	chip->usb_id_irq =3D irq_create_fwspec_mapping(&fwspec);
->> +	if (!chip->usb_id_irq)
->> +		return -ENXIO;
->> +
->> +	resource =3D DEFINE_RES_IRQ_NAMED(chip->usb_id_irq, "usb_id");
->> +	pdevinfo.res =3D &resource;
->> +	pdevinfo.num_res =3D 1;
->> +
->> +	chip->usb_extcon =3D platform_device_register_full(&pdevinfo);
->
-> Why aren't you using the MFD API for this?
->
->> +	if (IS_ERR(chip->usb_extcon)) {
->> +		int ret =3D PTR_ERR(chip->usb_extcon);
->> +
->> +		chip->usb_extcon =3D NULL;
->> +		irq_dispose_mapping(chip->usb_id_irq);
->> +		chip->usb_id_irq =3D 0;
->> +
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static void pm8xxx_remove_usb_extcon(struct pm_irq_chip *chip)
->> +{
->> +	if (chip->usb_extcon)
->> +		platform_device_unregister(chip->usb_extcon);
->> +
->> +	if (chip->usb_id_irq)
->> +		irq_dispose_mapping(chip->usb_id_irq);
->> +}
->
-> Why not devm_*
->
->>  static int pm8xxx_probe(struct platform_device *pdev)
->>  {
->>  	const struct pm_irq_data *data;
->> @@ -570,9 +630,22 @@ static int pm8xxx_probe(struct platform_device *=
-pdev)
->> =20
->>  	irq_set_irq_wake(irq, 1);
->> =20
->> +	if (data->usb_id_irq) {
->> +		rc =3D pm8xxx_add_usb_extcon(pdev, chip, data->usb_id_irq);
->> +		if (rc)
->> +			goto err_domain;
->> +	}
->> +
->>  	rc =3D of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->d=
-ev);
->>  	if (rc)
->> -		irq_domain_remove(chip->irqdomain);
->> +		goto err_extcon;
->> +
->> +	return 0;
->> +
->> +err_extcon:
->> +	pm8xxx_remove_usb_extcon(chip);
->> +err_domain:
->> +	irq_domain_remove(chip->irqdomain);
->> =20
->>  	return rc;
->>  }
->> @@ -582,6 +655,7 @@ static void pm8xxx_remove(struct platform_device =
-*pdev)
->>  	struct pm_irq_chip *chip =3D platform_get_drvdata(pdev);
->> =20
->>  	of_platform_depopulate(&pdev->dev);
->> +	pm8xxx_remove_usb_extcon(chip);
->>  	irq_domain_remove(chip->irqdomain);
->>  }
->> =20
->>=20
->> --=20
->> 2.43.0
->>=20
->>=20
->
-> --=20
-> Lee Jones
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/bcma/bcma_driver_chipcommon.h:7,
+                    from include/linux/bcma/bcma.h:9,
+                    from arch/x86/kernel/early-quirks.c:17:
+   include/linux/gpio/driver.h: In function 'fwnode_is_gpiochip':
+>> include/linux/gpio/driver.h:888:40: error: 'child' undeclared (first use in this function)
+     888 |         return fwnode_property_present(child, "gpio-controller");
+         |                                        ^~~~~
+   include/linux/gpio/driver.h:888:40: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +/child +888 include/linux/gpio/driver.h
+
+   885	
+   886	static inline bool fwnode_is_gpiochip(struct fwnode_handle *fwnode)
+   887	{
+ > 888		return fwnode_property_present(child, "gpio-controller");
+   889	}
+   890	
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
