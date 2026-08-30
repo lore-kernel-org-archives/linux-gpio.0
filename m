@@ -1,123 +1,148 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from flow-b1-smtp.messagingengine.com (flow-b1-smtp.messagingengine.com [202.12.124.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E8F1E51E0;
-	Sun, 30 Aug 2026 07:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0682B241686;
+	Sun, 30 Aug 2026 07:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788073972; cv=none; b=KS4i3MXmW1EuKB2W1UIrPclWS/yZRoACzFGGaboMqjOzXxdOaHuHXgKUUYufqtgRF5/zVw5gZV4dgtIID8lWvIVrZ4prtAKPlgutT5YxYe5pQo9XjaQlxjY3cCs9YRGohLeDCx9JW9Q180rkJwrplgudDQy2QaM5TefttNwEH1s=
+	t=1788076427; cv=none; b=BfucmmpxnzVSKKuvAAB4iDfdYBCGdQsRRkCgIT8KizNxA1mWQSMIhm8x7/eNZHwUye3lchEsGfDTIQXnKuX0WHqgLYVCUjcoSEwl8LENS179fWkmeAbU8S/9xw9ySb8NEAPGpCDh3dRf/izLYGAqIMXqNMFA8yFG3RUbGQKuzRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788073972; c=relaxed/simple;
-	bh=iazp0KDG9XO8tNOtwqgDz8WtQg1nj0t2IAFOstoA9/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=imnDZDI2wVDGegc1//0w6dwi2oUDIrgWtc54S21w5W3cAXeJJ0Cez6n5aSWLOZZnpTUQzmNac20Ju2cmRUAxIcG1/RAKgc78tmUeS3Kk0gPNpkk+N0z05Sln/buk3SrVfdljFdtPcCGDyEdwwLtEAFEJ2JFvRi3lmbpb/K3lDf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZNkYkutc; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1788076427; c=relaxed/simple;
+	bh=VUeMPa9FyohwrkfRiF8kZfcIyZuYgy4EnQo7t/6sN0c=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=r23jYpNN2bdI+sH8PEtPmyLO1FJbeP9l7TDdQ/c4q23f83HAkqzd/YRn0mwHuFtppPqMOnZyG7fswU5DMf/Te2qiWpTxvi5NuVGb5lBPLLEuTNb2ynsbuFw3Ryo5oJbzN6AfPdXN4+PwefD3inSdrqv37fdBJVodcejbTkoD+A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alex-min.fr; spf=pass smtp.mailfrom=alex-min.fr; dkim=pass (2048-bit key) header.d=alex-min.fr header.i=@alex-min.fr header.b=c34t1fWR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=C3XBqeOx; arc=none smtp.client-ip=202.12.124.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alex-min.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alex-min.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZNkYkutc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1788073969; x=1819609969;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iazp0KDG9XO8tNOtwqgDz8WtQg1nj0t2IAFOstoA9/k=;
-  b=ZNkYkutcT5Ppb/vmRYPAY43wadBKyCzBA0BL+1jFoou941l6jkqFI5fe
-   b5syLEVT2eKqJW3OD/AKDZhAE0a0DE8hjPL55YySNY1ZkiZfkAZ42N/8v
-   l+/b4wHTGF1A9cuQxeYNNUK/sZbT4cbxoJeC6JD/5v49HeGrODMUSyz5H
-   goRBI2jx6LsmtmHmlWSg/bgKRYhxyhsXh55Lh3xC6C/qkYZavol9OoKrM
-   Lzum2Tq+ofOEJUfuTLdt3i21JYgmUrvF2hSyRPqW5lHgkLNe5HjirzYea
-   pZQmXkiLeZ8t7KZWZ3AmKQtP42Lm7PsmjA7SqIRLyAfCRvSpbBGU8dHgg
-   g==;
-X-CSE-ConnectionGUID: hi67F+nyTOe78bFGqoNR1w==
-X-CSE-MsgGUID: QC/cj4nkRUC/ghDIpFajZg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11890"; a="92200426"
-X-IronPort-AV: E=Sophos;i="6.25,251,1779174000"; 
-   d="scan'208";a="92200426"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2026 00:12:49 -0700
-X-CSE-ConnectionGUID: IxVKxOtaSNCL6aggQofF+A==
-X-CSE-MsgGUID: 2Ag3hX7cRYC1ynJibEgjHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,251,1779174000"; 
-   d="scan'208";a="262412193"
-Received: from abityuts-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.243])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2026 00:12:44 -0700
-Date: Sun, 30 Aug 2026 10:12:41 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Janani Sunil <janani.sunil@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Michael Walle <mwalle@kernel.org>, linux@analog.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org, jananisunil.dev@gmail.com,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH v5 00/20] iio: adc: Add AD7768/AD7768-4 ADC driver support
-Message-ID: <apPX6ZeomgPd4WPU@ashevche-desk.local>
-References: <20260828-ad7768-driver-v5-0-e33ca6f841a2@analog.com>
- <20260829191954.7a5f1875@jic23-huawei>
+	dkim=pass (2048-bit key) header.d=alex-min.fr header.i=@alex-min.fr header.b="c34t1fWR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="C3XBqeOx"
+Received: from ams-compute-01.internal (ams-compute-01.internal [10.64.2.61])
+	by mailflow.stl.internal (Postfix) with ESMTP id 1B924130008B;
+	Sun, 30 Aug 2026 03:53:41 -0400 (EDT)
+Received: from ams-imap-13 ([10.64.2.33])
+  by ams-compute-01.internal (MEProxy); Sun, 30 Aug 2026 03:53:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alex-min.fr; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1788076420;
+	 x=1788083620; bh=G6epI7ZnNZNtzgn1RABkpJmt/w3yGfJEmW6rZAtvt00=; b=
+	c34t1fWRfSKkN5Ew3E/Qk0zgGPUMsOIL0LWR5uE3fiYaTyjC0V94EOk7YNNoyZKL
+	Znm0PnFNnMLH5O6Vmz6zzD2e33T/mHB8MgWhIZtRvAgD9F8INgRfPb8/SeSBU3YT
+	9MaollBk5QjfdlwvmNMiPhx7rCyLCbxsu3KQKS8SoIIVSz8SZ7iKw9/TPVaIHZXm
+	2BIsHWo/QEeutDMozCrb4mF56rwcr3D7Okf3njbNk7sJXSmrkrcBHs0iGFlk2juA
+	NKzUJBpXITWETNe36ts8PZij5NBDFULMk8oCGq5oaLkFtRumNZpDAKZKuYU3wb7x
+	X8JCAgArA6+Umvma/OOXQQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1788076420; x=
+	1788083620; bh=G6epI7ZnNZNtzgn1RABkpJmt/w3yGfJEmW6rZAtvt00=; b=C
+	3XBqeOxJwcG043QAJE4U4KwBZSLgsxjO6+14VTnE7epHGCvZAu1gsvQ++Td/OVZP
+	OSeRe4MDnJwdgAhufMxxugN99LSUgw0W+tEwgy3cdmoodWK47GFlOK2AHt/t77ot
+	+mdfnlWsI4gpDwC17TTIPBTtQ/t3nU3vKAr6REkdHZqVDIs0XZjp0MJE+J+oJEH3
+	lPbP/tL4d57IBVACMAlGQ6ynlj7rJ6fdDpVxF0yPsxyAAGlrEuPFjX/2/PohRRYV
+	qYA/fDPYY83Pu3fDKJdR+OPM18MzWEiyJxEigix9ACiTGj5zdt1Am5O33lE9jp8H
+	JQFaTr9CXomA5pFgisujg==
+X-ME-Sender: <xms:feGTarNxjiwMV2-BklVkP7KSisV1P37KLV4TsRDfHXRx3pZKvM5QrA>
+    <xme:feGTagwPYNmceLMi_kXJJ6ZadIXv9zD7-A8Kwd-WtIaj-jVHDUVoxyn3yrrJ6sJBp
+    M7Cajw7ZVZ0Ic6yuzpiaA1BhC5RYpU0dUhZAfZ1q5XH31mKqc5OAUE>
+X-ME-Proxy-Cause: dmFkZTE0775jnaewL4xvj4WmD/nTrN0QHquMU/dRaSE6eNZxMPyVt4nSOBfXeJJ7KFzcKz
+    Jgrgv2hpwlUjonO7MKfTdnDYbb1IHjk+chT1pM0ODsnsCEpRmCFJeXjnBwV5pxcek4e0O3
+    r5g4pJ+yoqE7umYaW6OcJt5lYnZW0hXJtAlwAjVWQUWc87l5I+E1yS4TUdlulBhJaapS6d
+    JVKt9ZBaf8E6fcovY9lwRVQAC4lHwBTYuhfD0JI4uEHWpXaWcml3QZPD3k+I/2xOOChHTp
+    dZrfGDIzAUaFitPY+uC9pmKgdZm64z0VyG8U5BQw0NML2evsyMGO0TwmQx3wk8w5pUdckP
+    q/BsVvDPlcGbozpeTQlg7FeR4M+/5Sn0sVuv7FBkORCkA6SV4oyrbwm6rVl9Id9i0Dw+qE
+    Wqvn3MbKnlEO/e7BBAZBGJM9aiU6qGVDlJ9F2tXPz1LOGtWatT0ZT1u/Cj2MMRCo4tqSnt
+    9sJgx9uu12sA55vX/hbNbMfS6pUZybg4lCg5S+B+7J5X42HhYhikrRSWgGN+rkC0LGznpM
+    l4kOXe6PuRd9wsIItzD7SjdCXggIypQbseaefz30auVhdf40poN65ZafGaFqc/0aTWE/9n
+    22wF9OAwwK0xRh19WxzVQRGzAn7JixlRfoVWo8pBQNYRUvt6tHFhUKT0HF/Q
+X-ME-Proxy: <xmx:gOGTaoPQ84IUY2_cxNno87X-iuTH3O5CWG2nerRQL7PU58Uun0zrtw>
+    <xmx:gOGTaj1tOqTY0taiF2aJmBHliR5B1z8dWXLtKZZqRMncNyL_d9gwUA>
+    <xmx:gOGTas1hbV2QSNc5euuRGOQfXJAhv-Dv_Tnu0_RuUSS9cX7mdfPVOQ>
+    <xmx:gOGTaiyiDwmr9IrCXdE5hiTqIGxs6y7huPz39eqIU0paCMnhToPfsw>
+    <xmx:hOGTaqOTpQopY5N2P1O-eXHbftKN_hs5d7Wy1ciI6BUJwfgQKwZHoz1z>
+Feedback-ID: i72694427:Fastmail
+Received: by mailuser.ams.internal (Postfix, from userid 501)
+	id 51157F8007E; Sun, 30 Aug 2026 03:53:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260829191954.7a5f1875@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-ThreadId: AXMGWqqIHK9F
+Date: Sun, 30 Aug 2026 09:52:50 +0200
+From: "MINETTE Alexandre" <contact@alex-min.fr>
+To: "Bartosz Golaszewski" <brgl@kernel.org>
+Cc: 
+ "Alexandre MINETTE via B4 Relay" <devnull+contact.alex-min.fr@kernel.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ phone-devel@vger.kernel.org,
+ "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>,
+ "Bjorn Andersson" <andersson@kernel.org>,
+ "Konrad Dybcio" <konradybcio@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "MyungJoo Ham" <myungjoo.ham@samsung.com>,
+ "Chanwoo Choi" <cw00.choi@samsung.com>,
+ "Guru Das Srinagesh" <linux@gurudas.dev>,
+ "Linus Walleij" <linusw@kernel.org>,
+ "Rob Clark" <robin.clark@oss.qualcomm.com>, "Kees Cook" <kees@kernel.org>,
+ "Tony Luck" <tony.luck@intel.com>,
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, "Lee Jones" <lee@kernel.org>
+Message-Id: <b6a6d425-c981-438e-9309-5aa00bc23c43@app.fastmail.com>
+In-Reply-To: 
+ <CAMRc=MdKYW_NQpqBES5UcyNqBJd_t1cHiLA3av0wWSWwFgOH-g@mail.gmail.com>
+References: <20260804-mainline-send-v1-sending-v5-0-149dd4372ac8@alex-min.fr>
+ <20260804-mainline-send-v1-sending-v5-2-149dd4372ac8@alex-min.fr>
+ <CAMRc=MdKYW_NQpqBES5UcyNqBJd_t1cHiLA3av0wWSWwFgOH-g@mail.gmail.com>
+Subject: Re: [PATCH v5 2/6] pinctrl: qcom: Register functions before enabling pinctrl
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 29, 2026 at 07:19:54PM +0100, Jonathan Cameron wrote:
-> > ---
-> > base-commit: b75697ef53e435d894833dad2a8c2fa882cb9b19
-> 
-> Where is this commit?  I tried the various IIO trees, GPIO and linux-next.
-> None of them seem to have it.  That means automated tooling is failing
-> to apply this including sashiko (and I'm starting to use b4 review which
-> has similar problems)  Please fix up and send a v6.
+Hi Bartosz,
 
-> Choices for base - and say in text which it is as well as the
-> commit id.
+It seems the patch has already been applied to linux-next with commit 98=
+1aefd53b3cdafae0e45332a1023b80d67f52be, so there's nothing to do, sorry =
+for the confusion
+--=20
+  MINETTE Alexandre
+  contact@alex-min.fr
 
-Hmm... I usually find the text is redundant, especially in the case like this
-where it may add ambiguity. If, say, text refers to vX.Y-rcZ and base can't
-be found, this will rise even more questions (at least to me). Having the only
-one source of info helps (in my opinion). And in the case like this it's simply
-wrong base and we see it immediately without any text description required.
-
-> Latest mainline release
-> rc1 of the new release - occasionally rcX but then you must call that out
-> with reasons
-> 
-> These first two are the strong preference.
-> 
-> An immutable branch that others have created to allow some cross subsystem
-> work in a single cycle.
-
-> togreg branch of iio.git - but call that out and say why.
-
-I agree that for the special cases the text might be needed to explain
-the choice of the (non-standard) base.
-
-> Anyhow, given I have a long queue today and this base commit thing has
-> been going on for a few cycles (as seen by sashiko not reviewing it)
-> I'm going to give v5 a skip and wait for v6.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Lun 10 ao=C3=BBt 2026, =C3=A0 13:09, Bartosz Golaszewski a =C3=A9crit=E2=
+=80=AF:
+> On Tue, 4 Aug 2026 08:34:27 +0200, Alexandre MINETTE via B4 Relay
+> <devnull+contact.alex-min.fr@kernel.org> said:
+>> From: Alexandre MINETTE <contact@alex-min.fr>
+>>
+>> pinctrl consumers can request states while the pinctrl core enables t=
+he
+>> controller. On Qualcomm pinctrl drivers this can happen before the SoC
+>> function list has been registered, which leaves the function table
+>> incomplete during state lookup.
+>>
+>> On APQ8064 this can fail while claiming pinctrl hogs:
+>>
+>>    apq8064-pinctrl 800000.pinctrl: invalid function ps_hold in map ta=
+ble
+>>    apq8064-pinctrl 800000.pinctrl: error claiming hogs: -22
+>>    apq8064-pinctrl 800000.pinctrl: could not claim hogs: -22
+>>
+>> Register Qualcomm pinctrl with devm_pinctrl_register_and_init(), add =
+the
+>> SoC pin functions, and only then enable the pinctrl device.
+>>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>> Signed-off-by: Alexandre MINETTE <contact@alex-min.fr>
+>> ---
+>
+> This doesn't apply on top of current linux-next. Can you rebase, resen=
+d this
+> as a separate patch and add the Cc: stable and Fixes: tags?
+>
+> Bart
