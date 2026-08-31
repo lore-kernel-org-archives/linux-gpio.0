@@ -1,359 +1,180 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AAB43636B
-	for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 17:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34741479860
+	for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 17:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788197817; cv=none; b=XUDud8YtEKhkFpAhfkQOIQb7Nwnef6UaOoNIMBMgV8YmFoq8O7hqFYU2t5CML3TEGNZ7Te2+vndClh/wj1zvKmOhBSo6HFjaIssyamk5k1sxIQ7C5ljmK+WLe4uEYybMYQMsItM3bFfny2R1bLIN/2T4NNi5PfgBB545kRE/8wA=
+	t=1788198155; cv=none; b=a2+8++/Lkn6u2Y6OrzZoEUfEyF2LtpcECTW32Gv2/FQzgIhb7eSuvY5FtCS4JymVwPoUs9KFlAVH1VI9nIAp8MPXBgyg8UtcfAN3IzjME/OQVqujsqjgB+xDvH4B9p86oOERK/ZEM8DLWIDIES2g5mF8vziUnx8Zhh3zpNKItU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788197817; c=relaxed/simple;
-	bh=/wO7E5QKaC15lAhQpA1j94hiJjjlZvvf10RtNmDaFJs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VhiqpY4owNP5ew/rLql7vA9s+/76M0hR7k2nTGwJE3kXIIXX1zsPrt84fiKF2uoaOoU3DGEANXvOBx/5W27U+ds/lt5kI2ldc6zdKh5VVk715xOIGDhh6JQDIXUSk6IzfwDakwkjXQzXHf5P0r9ME8GL5fT7480SGf46CiAD0Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bai50qPi; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788198155; c=relaxed/simple;
+	bh=6wArxx1l8Hm9Dqx4mugbk8wsFGsXoxVI7ksSr89OEeg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=JGgPJV1VQuQnqDSDxNkp2TZccd1r7sx8pa+4kkNG0tOayyKThLHfvMYBStSDovi0wsxHCeGJZsUxIqLIz0XZc23ogjpi/Zh5YxLuINt34zIezr37TpXhiRmUoXx0VvT+HAOFijPabag42tfDk3PIP7aT1KkbQqdKBLPjG7QWtxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=gMSEYcDz; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bai50qPi"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2d5cad1a6baso35827165ad.3
-        for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 10:36:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788197815; x=1788802615; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=M+OTxlGaSoeTcGnz71CmZviuhIa8naVJEy7RHcu28UE=;
-        b=bai50qPi4jTkYF9ttGPHkK6TrqiTkn6sJDFGf3AdGJ/ELU7bOG+eoJBYbFh2pvr935
-         jGL6XZx9P4RvPLNVu1pC9S0X36IM2nTTFBgE8ctzjKX/HBvPcu3reeAyQ703FKFxYQ+g
-         Bz7D5US8BAVQwKZQ61zkViyHazQ8ArFoaSBytezckS0rOCIWD1wFr4MnGokaqWDOzsxQ
-         tYzZAM/y1Of+FrCZJmP0IFByyL1tyyhp4pCptL+HKgVI8ULWld1z8gKUGzfPBlwgH9Di
-         7HYQb4+kLryvWrusZMD9ypZfmTScHFim/ZF7SSauRalBhwItMU+85AWGdxhXUonBHcO/
-         WqNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788197815; x=1788802615;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=M+OTxlGaSoeTcGnz71CmZviuhIa8naVJEy7RHcu28UE=;
-        b=LTr25G7/sP49aKq5cszpckEFtRq5wvmp9QdxnzPxjsGA7NlJlKygYCUoaiPUQmKhA1
-         09rJx5uFA1a2XWEy77hxbORd9kuHTCFMRsW9c76W7isxsfAlIKqKtWcUpN4dN2tYS6bd
-         8FJtGReYZhwIhGYo5ZexZ2Nx8Pma8Ahzt/cHNWfap2oSkhrpnz6L6zpawLiOGimHjbca
-         YDoMrMgPqjsBrxfQRGnzVs+B1liQ3+mD507Ww9VHzCogfQNDSTDkRhYflLG2kfGcVj9p
-         rcAi6/kNHyq1cNT9fFjT03zoDDHTE70S6dlv58FpEjooDvjOKLBL9TJQFkLyjEzlXdsk
-         EQ3w==
-X-Forwarded-Encrypted: i=1; AKwUvBxHP98B0ubbNwid+qzwimVwa2d+1KYc1CKMbHWAm2PdqsvJlj8hZe7Y/d6NNEMh9/0A0b37thZrh8Qt@vger.kernel.org
-X-Gm-Message-State: AFuF++ncedbRf/FWCtFSyF//XY6bmT4cFByTGpMog+g2iBInkbGSHwJr
-	5bSCnJ92xan5uxEynSUSCvlU4/1M0O02G9O1BGr4EsIkidVl/tHabIK4
-X-Gm-Gg: AYBFou0yyjHGzjE6VmyopHPV8pWn9lNcr0vs/eDotwQdv3WSLTUU2fJOjfhpST/jqSR
-	nVKlQsUiyHdKCrdJG/6vYnersrWxfexul2vAahz1g759NDpU9MgN6kSmCqm7TET5Wy42PkMc7aH
-	0b83nAatZxTZKlf49WcInnK4XXnd1mUFExZfbN6crwRC7hzf4fjisdTLA6NyXwsr8dLb0Ouz86D
-	68OoALsx64VOEHlDcC7XvVpdKCj5Li6Ro9P8CQBCBRmMYRFY21MhLsX5QNSLU6XUFm4YNk7Qe0W
-	HlZ4LtO6FKJl/oEEvjDXIVTO1tqEDtHm3J2B9ScDu1d3MbHmdsoNoUBsDhRwBqephRO6/j4Dl3N
-	EFyeKLTYsDL7yTR6PPPkd+M/qcclDtsWwfJzs35lcNLQxdCUdJ9qa8K3Zc76tq1/0eBvcBR0OQb
-	EcWSyCszZGcJD8g5qeN4n+00wAPcshVkAEYkSrSsw191T0kPAaXZLJ+Y+8RSpv3OwZUbNhAbRA0
-	YBP3A==
-X-Received: by 2002:a17:90b:4e88:b0:398:a145:5d3d with SMTP id 98e67ed59e1d1-39907b17a4dmr3439777a91.6.1788197814521;
-        Mon, 31 Aug 2026 10:36:54 -0700 (PDT)
-Received: from DESKTOP-TIT0J8O.localdomain ([49.47.196.141])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-398a661a0ddsm4840917a91.3.2026.08.31.10.36.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 10:36:54 -0700 (PDT)
-Date: Mon, 31 Aug 2026 21:36:47 +0400
-From: Ahmed Naseef <naseefkm@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Ahmed Naseef <naseefkm@gmail.com>, linux-gpio@vger.kernel.org,
-	Benjamin Larsson <benjamin.larsson@genexis.eu>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: pinctrl: Add EcoNet EN7528 pin
- controller
-Message-ID: <apW7r6IdVx9Cmk4G@DESKTOP-TIT0J8O.localdomain>
-References: <cover.1787931313.git.naseefkm@gmail.com>
- <c20005a81b4069f3ff68311629ff7d4678fa92dd.1787931313.git.naseefkm@gmail.com>
- <20260828-chaos-recovery-c99d547ee1b6@spud>
- <apLGtCRjCP1j0u5i@DESKTOP-TIT0J8O.localdomain>
- <20260831-sibling-isolation-3849a5e4845f@spud>
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="gMSEYcDz"
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 2693F240107
+	for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 19:42:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
+	s=1984.8680eb; t=1788198147;
+	bh=/IrZMEnYMWz3cHmLNm2dkUh37mtplEA3JG88ye8+6jg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:To:Cc:Autocrypt:OpenPGP:From;
+	b=gMSEYcDzr+5YYsRLfPjkvUm+isbBsA5OCXpAW2haQnBaHWjGs7k+JZG9+7lJI0fkL
+	 mJcJijPOKrb3BOQb8YG6KJ4RhH4dw2KltgzTUH2xSw5My0BQBqTA7yCbZznURFyGiQ
+	 RHyG8+OM0Cx6BDFZxn76RkLvrAmmove5YU+WmC79H/zZR2OMpcHSH2BMUUditebMAe
+	 FNDb3nY4J8TaJ3pcp9DjCn2+ORWpy2zlWt4CLieD6SWk43ZCRo8G0vNUjqszq6og0a
+	 xQbSxo9uSmteoXst47kipvFxnFuW5ZBY0qZiJP61Rd6wzPEnczFrsJWWJJTLZWBbgL
+	 GgKWpWvpKp/qw==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4hYbsr3qg6z9rxM;
+	Mon, 31 Aug 2026 19:42:24 +0200 (CEST)
+From: Markus Probst <markus.probst@posteo.de>
+Date: Mon, 31 Aug 2026 17:42:26 +0000
+Subject: [PATCH v8 3/6] rtc: s35390a: Fix alarm not disabling
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260831-sibling-isolation-3849a5e4845f@spud>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260831-rtc_s35390a_int1-v8-3-dac1dc86ce1f@posteo.de>
+References: <20260831-rtc_s35390a_int1-v8-0-dac1dc86ce1f@posteo.de>
+In-Reply-To: <20260831-rtc_s35390a_int1-v8-0-dac1dc86ce1f@posteo.de>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>, 
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ Michael Langer <michael.brainbug.langer@googlemail.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Linus Walleij <linusw@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Markus Probst <markus.probst@posteo.de>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1828;
+ i=markus.probst@posteo.de; h=from:subject:message-id;
+ bh=6wArxx1l8Hm9Dqx4mugbk8wsFGsXoxVI7ksSr89OEeg=;
+ b=owEBiQJ2/ZANAwAIATR2H/jnrUPSAcsmYgBqlbz5sTLuBYf+NIWgiqnEk5XzLpu8/y7rS6eip
+ z+qs/Mg4YSJAk8EAAEIADkWIQSCdBjE9KxY53IwxHM0dh/4561D0gUCapW8+RsUgAAAAAAEAA5t
+ YW51MiwyLjUrMS4xMiwyLDIACgkQNHYf+OetQ9Jqtw//WmEI6sp8XAyVvXllG1kGWsORWKmjp2a
+ Zpw2xMI0O5RrDLb09X/JnryXPyydf8zhrWdekwnKQkU1VQWv+2WQaZwseG2Me+QHWyCzO56FJbQ
+ wnKDDVXZsX4/V0asbvyCgySsTKcPUKDY0JfrsRCbYM5YajACYCg/35AxPITlzsqGr6CdVX00gg6
+ kJJD+jiezQDFnWAM7AO03qwb6VZaygN0baELfkcYGoMO7lBmGs4wwDYu+KnG+3zguzmd9axPOLN
+ w2lx49qQtL6ib1DSKOKZ6nCZsoDfQNQqaA1IyDhsKTbDmxIvisWiCcsRLKpJ2KL+wt7lC/Eg7P0
+ U2nMFBFFHH/UXi1VTbH8uw9WS3RTjmyvUo1jv5E2uhW6eEmAq8HkAYE1VrLl2x/U7geiBbHeIQy
+ VdEgcveoDmOPl5u2npD4/WPDpk4nEbWUnbGnqqY+dq7vHjE8oZcsbZKzMFrFHfeIB0pRlqbqWJD
+ brKlqJq1eEEW1BW0mZpwOfUUyflflkNJoFaSKIE46WRd9FuyRnZnsB556bPifbtbcm1fBzBdUql
+ MjMbW4KtIm+7w2ttdfXMHU84w9BR8CYD2yapZAtmc73rtwmG9VKdGAEQIDyIyqXnkJarbM+D8Ur
+ jeoVeRO49dFfvIhK9z3q7icCQpU3O7J3osZWq17tR1nbJLdl8ZJY=
+X-Developer-Key: i=markus.probst@posteo.de; a=openpgp;
+ fpr=827418C4F4AC58E77230C47334761FF8E7AD43D2
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On Mon, Aug 31, 2026 at 05:57:59PM +0100, Conor Dooley wrote:
-> On Sat, Aug 29, 2026 at 03:47:00PM +0400, Ahmed Naseef wrote:
-> > On Fri, Aug 28, 2026 at 04:51:27PM +0100, Conor Dooley wrote:
-> > > On Fri, Aug 28, 2026 at 07:35:14PM +0400, Ahmed Naseef wrote:
-> > > > Add the binding for the pin controller found on the EcoNet EN7528 MIPS
-> > > > SoC. It shares the IP with the Airoha pin controllers, but its IOMUX and
-> > > > pin configuration registers have a different layout, so it gets its own
-> > > > compatible.
-> > > > 
-> > > > The CHIP SCU holding those registers is referenced by the airoha,chip-scu
-> > > > phandle.
-> > > > 
-> > > > Signed-off-by: Ahmed Naseef <naseefkm@gmail.com>
-> > > > ---
-> > > >  .../pinctrl/econet,en7528-pinctrl.yaml        | 190 ++++++++++++++++++
-> > > >  1 file changed, 190 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..3ce1a5309d09
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml
-> > > > @@ -0,0 +1,190 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/pinctrl/econet,en7528-pinctrl.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: EcoNet EN7528 Pin Controller
-> > > > +
-> > > > +maintainers:
-> > > > +  - Lorenzo Bianconi <lorenzo@kernel.org>
-> > > > +
-> > > > +description:
-> > > > +  The EcoNet EN7528 pin controller is used to control SoC pins. It shares the
-> > > > +  IP with the Airoha pin controllers, but its IOMUX and pin configuration
-> > > > +  registers have a different layout.
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    const: econet,en7528-pinctrl
-> > > > +
-> > > > +  airoha,chip-scu:
-> > > > +    description: phandle to the chip SCU syscon
-> > > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > > > +
-> > > > +  interrupts:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  gpio-controller: true
-> > > > +
-> > > > +  '#gpio-cells':
-> > > > +    const: 2
-> > > > +
-> > > > +  gpio-ranges:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  interrupt-controller: true
-> > > > +
-> > > > +  '#interrupt-cells':
-> > > > +    const: 2
-> > > > +
-> > > > +patternProperties:
-> > > > +  '-pins$':
-> > > > +    type: object
-> > > > +
-> > > > +    patternProperties:
-> > > > +      '^mux(-|$)':
-> > > > +        type: object
-> > > > +
-> > > > +        description:
-> > > > +          pinmux configuration nodes.
-> > > > +
-> > > > +        $ref: /schemas/pinctrl/pinmux-node.yaml
-> > > > +
-> > > > +        properties:
-> > > > +          function:
-> > > > +            description:
-> > > > +              A string containing the name of the function to mux to the group.
-> > > > +            enum: [gpio, jtag, pcie_reset, pcm, pcm_spi, phy1_led0,
-> > > > +                   phy1_led1, phy2_led0, phy2_led1, phy3_led0, phy3_led1,
-> > > > +                   phy4_led0, phy4_led1, pnand, pon, pwm, sipo, spi, uart]
-> > > > +
-> > > > +          groups:
-> > > > +            description:
-> > > > +              An array of strings. Each string contains the name of a group.
-> > > > +            items:
-> > > > +              enum: [pon, sipo, sipo_rclk, uart2, uart2_cts_rts, uart3,
-> > > > +                     ejtag, pcm1, pcm2, spi_quad, spi_cs1, pcm_spi,
-> > > > +                     pcm_spi_int, pcm_spi_rst, pcm_spi_cs1, pcm_spi_cs2,
-> > > > +                     pcm_spi_cs3, pcm_spi_cs4, pcm_spi_cs5, pcm_spi_cs6,
-> > > > +                     pcm_spi_cs7, pnand, gpio0, gpio1, gpio2, gpio3, gpio4,
-> > > > +                     gpio5, gpio6, gpio7, gpio8, gpio9, gpio10, gpio11,
-> > > > +                     gpio12, gpio13, gpio14, gpio15, gpio16, gpio17,
-> > > > +                     gpio18, gpio19, gpio20, gpio21, gpio22, gpio23,
-> > > > +                     gpio24, gpio25, gpio26, gpio27, gpio28, gpio29,
-> > > > +                     gpio30, gpio31, gpio32, gpio33, gpio34, gpio35,
-> > > > +                     gpio36, gpio37, gpio38, gpio39, gpio40, gpio41,
-> > > > +                     pcie_reset0, pcie_reset1]
-> > > > +
-> > > > +        required:
-> > > > +          - function
-> > > > +          - groups
-> > > > +
-> > > > +        additionalProperties: false
-> > > > +
-> > > > +      '^conf(-|$)':
-> > > 
-> > > Why is this needed? Why can you not tell from the group which pins the
-> > > config applies to?
-> > 
-> > Not for all of them: i2c_sda, i2c_scl, uart_txd and uart_rxd are in no
-> > group at all.
-> 
-> Why's that? Are they just fixed output pins?
+Implement alarm_irq_enable callback.
 
-Fixed-function :  the dedicated I2C and UART pads. The only registers
-they have are bias and drive strength, there is no mux and no GPIO
-mode.
+Fixes: 542dd33a4925 ("drivers/rtc/rtc-s35390a.c: add wakealarm support for rtc-s35390A rtc chip")
+Signed-off-by: Markus Probst <markus.probst@posteo.de>
+---
+ drivers/rtc/rtc-s35390a.c | 29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-> 
-> > The spi_cs0/clk/mosi/miso pads are only in pnand, which is
-> > 17 pins wide, so no group names them individually either.
-> 
-> That's easily resolved by breaking up pnand though.
-> 
+diff --git a/drivers/rtc/rtc-s35390a.c b/drivers/rtc/rtc-s35390a.c
+index 4cfe7034c516..575bb256eb25 100644
+--- a/drivers/rtc/rtc-s35390a.c
++++ b/drivers/rtc/rtc-s35390a.c
+@@ -270,6 +270,24 @@ static int s35390a_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	return 0;
+ }
+ 
++static int s35390a_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
++{
++	struct s35390a *s35390a = dev_get_drvdata(dev);
++	u8 sts;
++	int err;
++
++	if (enabled)
++		sts = S35390A_INT2_MODE_ALARM;
++	else
++		sts = S35390A_INT2_MODE_NOINTR;
++
++	err = s35390a_set_reg(s35390a, S35390A_CMD_STATUS2, &sts, sizeof(sts));
++	if (err < 0)
++		return err;
++
++	return 0;
++}
++
+ static int s35390a_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
+ {
+ 	struct i2c_client *client = to_i2c_client(dev);
+@@ -410,11 +428,12 @@ static int s35390a_rtc_ioctl(struct device *dev, unsigned int cmd,
+ }
+ 
+ static const struct rtc_class_ops s35390a_rtc_ops = {
+-	.read_time	= s35390a_rtc_read_time,
+-	.set_time	= s35390a_rtc_set_time,
+-	.set_alarm	= s35390a_rtc_set_alarm,
+-	.read_alarm	= s35390a_rtc_read_alarm,
+-	.ioctl          = s35390a_rtc_ioctl,
++	.read_time		= s35390a_rtc_read_time,
++	.set_time		= s35390a_rtc_set_time,
++	.set_alarm		= s35390a_rtc_set_alarm,
++	.read_alarm		= s35390a_rtc_read_alarm,
++	.alarm_irq_enable	= s35390a_rtc_alarm_irq_enable,
++	.ioctl			= s35390a_rtc_ioctl,
+ };
+ 
+ static int s35390a_nvmem_read(void *priv, unsigned int offset, void *val,
 
-Not as mux groups: pnand is a single register bit, so muxing a
-sub-group would still switch all 17 pads while pinctrl only claims the
-subset. As config aliases they would add nothing over pins.
-
-> Devils advocate thing here might be to say that the dedicated
-> configuration node should only be for the things that are fixed outputs,
-> and the muxable ones should get their config from a combined
-> pinmux/pincfg node. Personally I think that presents a nicer interface,
-> where someone doesn't have to go figure out what pins are in the group
-> they just assigned a function to to also set the config properties for
-> it.
-
-The driver would take that as-is (it uses the generic dt_node_to_map,
-which accepts config properties next to function/groups). I kept the
-split mux/conf shape to match the other four Airoha bindings on this
-driver. If you prefer the combined form I would rather do it for the
-whole family as a follow-up than have en7528 be the odd one out - but
-can switch this one now if you want.
-
-Ahmed
-
-> 
-> Cheers,
-> Conor.
-> 
-> > > > +        type: object
-> > > > +
-> > > > +        description:
-> > > > +          pinconf configuration nodes.
-> > > > +
-> > > > +        $ref: /schemas/pinctrl/pincfg-node.yaml
-> > > > +
-> > > > +        properties:
-> > > > +          pins:
-> > > > +            description:
-> > > > +              An array of strings. Each string contains the name of a pin.
-> > > > +            items:
-> > > > +              enum: [gpio0, gpio1, gpio2, gpio3, gpio4, gpio5, gpio6,
-> > > > +                     gpio7, gpio8, gpio9, gpio10, gpio11, gpio12, gpio13,
-> > > > +                     gpio14, gpio15, gpio16, gpio17, gpio18, gpio19,
-> > > > +                     gpio20, gpio21, gpio22, gpio23, gpio24, gpio25,
-> > > > +                     gpio26, gpio27, gpio28, gpio29, gpio30, gpio31,
-> > > > +                     gpio32, gpio33, gpio34, gpio35, gpio36, gpio37,
-> > > > +                     gpio38, gpio39, pcie_reset0, pcie_reset1, i2c_sda,
-> > > > +                     i2c_scl, uart_txd, uart_rxd, spi_cs0, spi_clk,
-> > > > +                     spi_mosi, spi_miso]
-> > > > +            minItems: 1
-> > > > +            maxItems: 50
-> > > > +
-> > > > +          bias-disable: true
-> > > > +
-> > > > +          bias-pull-up: true
-> > > > +
-> > > > +          bias-pull-down: true
-> > > > +
-> > > > +          input-enable: true
-> > > > +
-> > > > +          output-enable: true
-> > > > +
-> > > > +          output-low: true
-> > > > +
-> > > > +          output-high: true
-> > > > +
-> > > > +          drive-strength:
-> > > > +            description:
-> > > > +              Selects the drive strength for the pin, in mA.
-> > > > +            enum: [2, 4]
-> > > > +
-> > > > +        required:
-> > > > +          - pins
-> > > > +
-> > > > +        additionalProperties: false
-> > > > +
-> > > > +    additionalProperties: false
-> > > > +
-> > > > +required:
-> > > > +  - compatible
-> > > > +  - airoha,chip-scu
-> > > > +  - interrupts
-> > > > +  - gpio-controller
-> > > > +  - gpio-ranges
-> > > > +  - "#gpio-cells"
-> > > > +  - interrupt-controller
-> > > > +  - "#interrupt-cells"
-> > > > +
-> > > > +allOf:
-> > > > +  - $ref: pinctrl.yaml#
-> > > > +
-> > > > +additionalProperties: false
-> > > > +
-> > > > +examples:
-> > > > +  - |
-> > > > +    #include <dt-bindings/interrupt-controller/mips-gic.h>
-> > > > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > > > +
-> > > > +    pinctrl {
-> > > > +      compatible = "econet,en7528-pinctrl";
-> > > > +
-> > > > +      airoha,chip-scu = <&chip_scu>;
-> > > > +
-> > > > +      interrupt-parent = <&gic>;
-> > > > +      interrupts = <GIC_SHARED 10 IRQ_TYPE_LEVEL_HIGH>;
-> > > > +
-> > > > +      gpio-controller;
-> > > > +      #gpio-cells = <2>;
-> > > > +
-> > > > +      interrupt-controller;
-> > > > +      #interrupt-cells = <2>;
-> > > > +
-> > > > +      gpio-ranges = <&pinctrl 0 0 42>;
-> > > > +
-> > > > +      uart2-pins {
-> > > > +        mux {
-> > > > +          function = "uart";
-> > > > +          groups = "uart2";
-> > > > +        };
-> > > > +
-> > > > +        conf {
-> > > > +          pins = "gpio28", "gpio29";
-> > > > +          bias-pull-up;
-> > > > +        };
-> > > > +      };
-> > > > +
-> > > > +      pwm-pins {
-> > > > +        mux {
-> > > > +          function = "pwm";
-> > > > +          groups = "gpio30";
-> > > > +        };
-> > > > +      };
-> > > > +    };
-> > > > -- 
-> > > > 2.34.1
-> > > > 
-> > 
-> > 
-
+-- 
+2.54.0
 
