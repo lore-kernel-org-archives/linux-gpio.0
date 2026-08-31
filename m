@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6198A4ACC9C;
-	Mon, 31 Aug 2026 13:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46A65632A6;
+	Mon, 31 Aug 2026 13:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788184048; cv=none; b=PP7H3zXmrRCjHezJsGDcBerhGtSSSqCq921IYWjSd6n7PbsD6WCGKy2vAaSSPF2Po8TjrAu+v4ZprQrL8+as0m0A1jMRg/GGEwWBxByOdYg9XktWL2VFaokB3w8ASyIVwersrQf7S1Q6T+r2MCNgOo36NPNLYO5IhJ8qyzHXlRQ=
+	t=1788184069; cv=none; b=fCjWECd76yQqMd8xBi+sZAhDCCCdWBBvpC2hs7lvPBjOIn75348rsloIG66wqSjiPNql794YQS0DJONiXs0bWD5cJBtKzSojedu8EwxYupt1suo8joHhneiQvCrrzmldNmD3YcnE50sH3mV/0BJMD8i22dWuQkVGh1/oDflg4RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788184048; c=relaxed/simple;
-	bh=2agwZIKpELVYimrSMg1EHXYKksUbEOEuom01oeSACU8=;
+	s=arc-20240116; t=1788184069; c=relaxed/simple;
+	bh=F3PXKsGiZS6fYAcXoh+mSIliT4gOFNfvnyloSUYCwac=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=byfQYE1x77ay3gFPcA4M0lo2tdEJcEfAfboG5yhRrg9SvC4DzFdp6HErkETQaAAa6vDAo+tkfMvBYaPUZPyju2HF3KWHPrETZv2ZujoY7eZ/3N7v/AdMfx5KfX4UEOijUjO4Iz9ReFLgpWSat9QhcgWVoztRW0/RQUIS0cJqSYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKLNJFlg; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=n9lw2rvOSG/ksbFKFyxYDLAsFh4f/r/JczArLsj1Z4W03F8Ss3j6rAD7P4J2cDb05Ph/Y5n5sg/4onRUhSoBcTb1XLrzlCF6rCZvfVK4yDfDVq8LI9lcEwz9m6dZ+bGGBGNT13qjy4ZBxugN5j5qRz7pwDbKcDU3BeP8QO+qETk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzAEGYnV; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKLNJFlg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 163BD1F00ADE;
-	Mon, 31 Aug 2026 13:47:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzAEGYnV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 925F11F00A3D;
+	Mon, 31 Aug 2026 13:47:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788184044;
-	bh=rt4lfTWNmwFbyQ6X9Uiwf5ch2ehd0gQDAwmtyXug9v0=;
+	s=k20260515; t=1788184066;
+	bh=MxBcVVAjkwnqigI9ZfUaaBNLBx8KvOmAXi0pHeLz1eo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=eKLNJFlg7g68MbQbV3Y70eT4KGnwd/g3wImXDb+XatQeiANBTSpKXPIq3PgACUOEx
-	 YnVJlwSRUaCZ8yXtbnnipJLm7kqIcUWZio1IP8Hx6CzrRYqIH/RnW4c3Lnvc9G4gnU
-	 pUFSuokub8KSydglQHWXvxkCc5KH+7DWsHLH98ySnwXp0jc29K0ofc8Fj6cPn5D8cR
-	 bEdTDKl3rz2NCFKuIeex7maIfgGleKzCTAm/EV3KuVWnOGuu7wMe3plmXXUiarGciu
-	 5fITUx6Ulq0hvdSDL7zHCgglbA1RPDhjxirqLVCncb05TrO7y6/hNrX6VX59JeGGpV
-	 WRhz+QVu5UNXQ==
+	b=mzAEGYnVLvXHdJL6Kjh895cClOJCx71v0xA6vUR6CvEmfzuI8Eos6s8SaIah7Nylm
+	 R+xKJ2znesf8iQHXn97Jm6Cb9GZoz+zVWedRzf4wjFzXysu+zg65TLLsjltAOwWv2U
+	 JVWpJtx/1Q/UpNVG45x3AQMk0JsO5ob6I0l1egV/lAXly1eLR40vhfg9SSGQ7Ma/kV
+	 saOvz2vxhgq6XsR5x2QN7Lcc8ztFCHnvyrJMwLcPblfND/zx9irMw+cnNemjaoy9aF
+	 vPOkjXB+vFAe0kDxV+dJ2yquRf0yEWGiOo2fKEo7F7qQ6s/30Xgcacv+109z2AAXDZ
+	 MZT6OB6cksdVQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc: "Rob Herring (Arm)" <robh@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
 	Sasha Levin <sashal@kernel.org>,
 	linusw@kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	brgl@kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-6.12] pinctrl: renesas: rzg2l: Handle RZ/V2H(P) IOLH configuration in PM cache
-Date: Mon, 31 Aug 2026 09:28:06 -0400
-Message-ID: <20260831133314.4125787-458-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.10] gpio: pisosr: Read "ngpios" as u32
+Date: Mon, 31 Aug 2026 09:28:19 -0400
+Message-ID: <20260831133314.4125787-471-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
@@ -54,22 +54,21 @@ X-stable-base: Linux 6.18.48
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
 
-[ Upstream commit d0fc9f8eb2ce55eb00dbfdc0f19c844df5aee5b8 ]
+[ Upstream commit 4910aa198d25e5d1067236560ba34ab12bccc677 ]
 
-Include PIN_CFG_IOLH_RZV2H in the IOLH capability checks when saving
-and restoring pin configuration registers.
+The generic "ngpios" property is encoded as a normal uint32 cell. The
+pisosr driver stores it in the gpio_chip field, but reading it with a
+u16 helper does not match the DT property encoding.
 
-On RZ/V2H(P), RZ/V2N, and RZ/G3E, the IOLH configuration is defined by
-the PIN_CFG_IOLH_RZV2H capability.  The previous implementation did not
-account for this, causing the IOLH registers to be skipped during PM
-save/restore.
+Read "ngpios" as u32 and keep the existing assignment to the chip
+field.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://patch.msgid.link/20260413182456.811543-4-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Assisted-by: Codex:gpt-5-5
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Link: https://patch.msgid.link/20260612215216.1887485-1-robh@kernel.org
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
@@ -77,38 +76,37 @@ LLM Generated explanations, may be completely bogus:
 
 ## Phase 1: Commit Message Forensics
 
-### Step 1.1: Subject line
-**Record:** `[pinctrl: renesas: rzg2l]` `[Handle]` — Include RZ/V2H(P)
-IOLH capability in PM register save/restore checks.
+### Step 1.1: Subject Line
+**Record:** `[gpio: pisosr]` `[Read]` — Read the device-tree `ngpios`
+property with the correct cell width (`u32` instead of `u16`).
 
-### Step 1.2: Commit tags
+### Step 1.2: Tags
 **Record:**
-- **Signed-off-by:** Lad Prabhakar `<prabhakar.mahadev-
-  lad.rj@bp.renesas.com>` (author)
-- **Reviewed-by:** Geert Uytterhoeven `<geert+renesas@glider.be>`
-  (Renesas/pinctrl maintainer)
+- **Assisted-by:** Codex:gpt-5-5
+- **Signed-off-by:** Rob Herring (Arm) \<robh@kernel.org\>
 - **Link:**
-  https://patch.msgid.link/20260413182456.811543-4-prabhakar.mahadev-
-  lad.rj@bp.renesas.com
-- **Signed-off-by:** Geert Uytterhoeven (maintainer tree)
-- No Fixes:, Reported-by:, Tested-by:, Cc: stable@, or syzbot tags
-- Notable: Reviewed by subsystem maintainer; part of v2 5-patch PM
-  caching series (patch 3/5)
+  https://patch.msgid.link/20260612215216.1887485-1-robh@kernel.org
+- **Signed-off-by:** Bartosz Golaszewski
+  \<bartosz.golaszewski@oss.qualcomm.com\> (GPIO maintainer)
+- No Fixes:, Reported-by:, Tested-by:, Reviewed-by:, Cc:
+  stable@vger.kernel.org
+- Notable: authored/assisted by the device-tree maintainer; merged by
+  GPIO subsystem maintainer
 
-### Step 1.3: Body analysis
+### Step 1.3: Body Analysis
 **Record:**
-- **Bug:** PM suspend/resume skips IOLH registers on RZ/V2H(P), RZ/V2N,
-  and RZ/G3E because those SoCs use `PIN_CFG_IOLH_RZV2H` instead of
-  `PIN_CFG_IOLH_A/B/C`.
-- **Symptom:** Output-impedance/drive-strength (IOLH) not saved on
-  suspend or restored on resume; pins revert to wrong electrical
-  settings after S2RAM.
-- **Root cause:** `has_iolh` capability check omits
-  `PIN_CFG_IOLH_RZV2H`.
+- **Bug:** Generic `ngpios` is a standard `u32` DT cell; `gpio-pisosr`
+  read it via `of_property_read_u16()`.
+- **Symptom:** Wrong `ngpio` when `ngpios` is present in DT; chip field
+  type is `u16`, but the property encoding is `u32`.
+- **Root cause:** Size/endian mismatch between DT encoding and OF read
+  helper.
+- **Fix:** Read into temporary `u32`, assign to `gpio->chip.ngpio` only
+  on success.
 
-### Step 1.4: Hidden bug fix?
-**Record:** No — this is an explicit PM suspend/resume bug fix, not
-disguised cleanup.
+### Step 1.4: Hidden Bug Fix?
+**Record:** Yes. Despite neutral wording, this is a correctness /
+memory-safety bug fix, not style cleanup.
 
 ---
 
@@ -116,271 +114,309 @@ disguised cleanup.
 
 ### Step 2.1: Inventory
 **Record:**
-- **File:** `drivers/pinctrl/renesas/pinctrl-rzg2l.c` (+2 lines net in
-  submitted diff; full v2 patch touches 2 functions)
-- **Functions:** `rzg2l_pinctrl_pm_setup_dedicated_regs()` (shown in
-  candidate diff); v2 submission also changed
-  `rzg2l_pinctrl_pm_setup_regs()` (author later agreed to drop that hunk
-  per maintainer review)
-- **Scope:** Single-file, surgical (2-line logical change)
+- **File:** `drivers/gpio/gpio-pisosr.c` (+3 / -1 net)
+- **Function:** `pisosr_gpio_probe()`
+- **Scope:** Single-file surgical fix
 
-### Step 2.2: Code flow
+### Step 2.2: Code Flow Change
 **Record:**
-- **Before:** `has_iolh` true only for `PIN_CFG_IOLH_A|B|C`; dedicated
-  pins with only `PIN_CFG_IOLH_RZV2H` skip IOLH cache read/write.
-- **After:** `PIN_CFG_IOLH_RZV2H` included; IOLH registers saved on
-  suspend and restored on resume for affected dedicated pins.
-- **Path:** System suspend/resume via `rzg2l_pinctrl_suspend_noirq()` /
-  `rzg2l_pinctrl_resume_noirq()` →
-  `rzg2l_pinctrl_pm_setup_dedicated_regs()`.
+- **Before:** `of_property_read_u16(dev->of_node, "ngpios",
+  &gpio->chip.ngpio);` (return ignored). `buffer_size` computed
+  immediately after from `gpio->chip.ngpio`.
+- **After:** `u32 ngpios`; `if (!of_property_read_u32(..., &ngpios))
+  gpio->chip.ngpio = ngpios;`. On missing property, default
+  `DEFAULT_NGPIO` (8) is preserved.
 
-### Step 2.3: Bug mechanism
-**Record:** **Logic/correctness fix** — incomplete capability bitmask
-causes PM cache to omit IOLH register save/restore for a whole class of
-pins on newer Renesas SoCs.
+### Step 2.3: Bug Mechanism
+**Record:** **Category:** DT property parsing / memory safety (buffer
+underrun → OOB)
 
-### Step 2.4: Fix quality
-**Record:** Obviously correct (adds the missing flag already used
-everywhere else in the driver). Minimal risk; no API, locking, or
-structural changes.
+Verified mechanism:
+1. DT stores `ngpios = <N>` as a 4-byte big-endian `u32`.
+2. `of_property_read_u16()` requires `prop->length >= 2` with `max=0`
+   (no upper bound), so it **succeeds** on a 4-byte property.
+3. It reads the **first** 16 bits (`be16_to_cpup` at offset 0). For any
+   normal `N < 65536`, those high 16 bits are zero.
+
+Python simulation confirmed:
+- `ngpios=8` → u32 bytes `00000008` → u16 read = **0**
+- Same for 16, 24, 32
+
+4. With `ngpios` present in DT, `gpio->chip.ngpio` becomes **0**.
+5. `buffer_size = DIV_ROUND_UP(0, 8) = 0`; `devm_kzalloc(dev, 0, ...)`
+   yields `ZERO_SIZE_PTR`.
+6. Later `devm_gpiochip_add_data()` → `gpiochip_get_ngpios()` sees
+   `gc->ngpio == 0`, re-reads `ngpios` as `u32`, and restores the
+   correct line count for registration — but **`buffer_size` and
+   `buffer` are never recomputed**.
+7. GPIO access (`pisosr_gpio_get()` → `gpio->buffer[offset / 8]`) can
+   then read/write through a zero-sized buffer → **out-of-bounds
+   access**.
+
+When `ngpios` is **absent**, `of_property_read_u16()` fails, `ngpio`
+stays at template default 8, and the driver works.
+
+### Step 2.4: Fix Quality
+**Record:** Obviously correct; matches every other GPIO driver in-tree
+(`gpio-uniphier.c`, `gpio-aspeed.c`, `gpio-em.c`, etc.). Minimal diff.
+Regression risk very low.
 
 ---
 
 ## Phase 3: Git History Investigation
 
 ### Step 3.1: Blame
-**Record:** Buggy `has_iolh` lines at 3009 and 3097 trace to the PM
-caching code (blame shows `19eef1d98eeda` in this shallow stable tree).
-`PIN_CFG_IOLH_RZV2H` (line 65) is present in this tree.
+**Record:** Buggy `of_property_read_u16()` introduced in `df6df93c8a73f`
+(2016-01-25, "gpio: Add driver for SPI serializers"). Present throughout
+6.18.y.
 
-### Step 3.2: Fixes: tag
+### Step 3.2: Fixes: Tag
 **Record:** N/A — no Fixes: tag.
 
-### Step 3.3: Related file history
-**Record:** Same PM series already partially backported to this tree:
-- `8d1c6b603327b` — SMT register cache (patch 1/5, same series)
-- `509d342d02fff`, `c4cfa8ee77374` — earlier IOLH/IEN/PUPD/SMT PM fixes
-This IOLH fix is **not** yet in the tree.
+### Step 3.3: Related File History
+**Record:** Recent `gpio-pisosr.c` commits are cleanups
+(`devm_mutex_init`, remove `direction_output`,
+`devm_gpiochip_add_data`). No related ngpios fix already present.
+Standalone one-patch fix.
 
-### Step 3.4: Author context
-**Record:** Lad Prabhakar is the RZ/G2L pinctrl driver author/maintainer
-contributor; Geert Uytterhoeven is Renesas maintainer and reviewed the
-series.
+### Step 3.4: Author Context
+**Record:** Rob Herring is DT maintainer. Bartosz Golaszewski is GPIO
+maintainer. Patch is subsystem-appropriate.
 
 ### Step 3.5: Dependencies
-**Record:** Standalone — only adds a flag to an existing bitmask. Does
-not require patches 2/4/5 (SR/NOD/PUPD) to function; applies cleanly to
-current `rzg2l_pinctrl_pm_setup_dedicated_regs()` at line 3097.
+**Record:** None. No series markers. Applies standalone to existing
+`pisosr_gpio_probe()`.
 
 ---
 
 ## Phase 4: Mailing List and External Research
 
-### Step 4.1: Original discussion
-**Record:** Thread fetched via `b4 mbox` from lore (16 messages). Patch
-3/5 reviewed by Geert Uytterhoeven. Geert noted `PIN_CFG_IOLH_RZV2H` may
-only matter for dedicated pins in `pm_setup_regs`; author agreed to drop
-that hunk. Final fix targets `rzg2l_pinctrl_pm_setup_dedicated_regs()`.
-
-### Step 4.2: Reviewers
-**Record:** Geert Uytterhoeven (maintainer), Linus Walleij CC'd on cover
-letter; linux-renesas-soc list.
-
-### Step 4.3: Bug reports
-**Record:** No external bug report or syzbot link; issue identified
-during PM caching review/fix series.
-
-### Step 4.4: Series context
-**Record:** v2 0/5 cover letter describes 5 related PM cache fixes.
-Patch 1 (SMT) already in this 6.18.43 tree; patches 2/4/5 (SR, NOD,
-dedicated PUPD) are separate and not prerequisites for this IOLH bitmask
-fix.
-
-### Step 4.5: Stable list
-**Record:** No stable@ discussion found in thread.
+### Step 4.1–4.5
+**Record:**
+- `b4 dig -c 2732ea8c16b7b`: commit hash not in local repo (blob only
+  from diff index); no lore match.
+- Link URL and lore.kernel.org blocked by Anubis bot protection —
+  **UNVERIFIED** for review-thread content, stable nominations, or NAKs.
+- No syzbot/bugzilla references in commit message.
 
 ---
 
 ## Phase 5: Code Semantic Analysis
 
-### Step 5.1: Key functions
-**Record:** `rzg2l_pinctrl_pm_setup_dedicated_regs()`, called from
-`rzg2l_pinctrl_suspend_noirq()` and `rzg2l_pinctrl_resume_noirq()`.
+### Step 5.1: Key Functions
+**Record:** `pisosr_gpio_probe()`, indirectly `pisosr_gpio_get()`,
+`pisosr_gpio_refresh()`.
 
 ### Step 5.2: Callers
-**Record:** PM suspend/resume noirq path on every system sleep for
-affected pinctrl devices.
+**Record:** `pisosr_gpio_probe()` via SPI driver registration at
+boot/module load. GPIO ops invoked from gpiolib when consumers read
+lines.
 
 ### Step 5.3: Callees
-**Record:** `RZG2L_PCTRL_REG_ACCESS32()` macro for hardware IOLH/IEN
-register read (suspend) or write (resume).
+**Record:** `of_property_read_u16/u32`, `devm_kzalloc`,
+`devm_gpiochip_add_data` → `gpiochip_get_ngpios`.
 
 ### Step 5.4: Reachability
-**Record:** Triggered on every S2RAM cycle on boards using
-`renesas,r9a09g047-pinctrl` (RZ/G3E), `renesas,r9a09g056-pinctrl`
-(RZ/V2H), or `renesas,r9a09g057-pinctrl` (RZ/V2HP). Dedicated pins
-include Ethernet, SD, XSPI, SCIF, etc.
+**Record:** Triggered when a board DT node has `compatible = "pisosr-
+gpio"` **and** an explicit `ngpios` property. GPIO reads from userspace
+or kernel consumers reach the buggy buffer path.
 
-### Step 5.5: Similar patterns
-**Record:** Same `has_iolh` bitmask omission exists at line 3009 in
-`rzg2l_pinctrl_pm_setup_regs()` for GPIO port pins using
-`RZV2H_MPXED_PIN_FUNCS` (which includes `PIN_CFG_IOLH_RZV2H`). This
-commit (per review) does not fix that path; dedicated-pin path is the
-confirmed target.
+### Step 5.5: Similar Patterns
+**Record:** `gpio-pisosr.c` is the **only** GPIO driver using
+`of_property_read_u16()` for `ngpios`. All others use
+`of_property_read_u32()`.
 
 ---
 
-## Phase 6: Cross-Reference Against Local Tree (6.18.43)
+## Phase 6: Cross-Reference Against Local Tree (v6.18.44)
 
-### Step 6.1: Buggy code present?
-**Record:** **Yes.** Line 3097 in
-`rzg2l_pinctrl_pm_setup_dedicated_regs()`:
-```3097:3097:drivers/pinctrl/renesas/pinctrl-rzg2l.c
-                has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B |
-PIN_CFG_IOLH_C));
+### Step 6.1: Buggy Code Present?
+**Record:** **YES.** Local tree at `v6.18.44-1-g2736c32da98b9` still
+has:
+
+```123:123:drivers/gpio/gpio-pisosr.c
+        of_property_read_u16(dev->of_node, "ngpios", &gpio->chip.ngpio);
 ```
-`PIN_CFG_IOLH_RZV2H` is defined (line 65) and used extensively in
-`rzv2h_dedicated_pins` and `rzg3e_dedicated_pins` (e.g., lines 2233+,
-2370+). Affected SoC compatibles are registered (lines 3470–3479).
 
-### Step 6.2: Backport complications
-**Record:** Clean apply — single-line change at line 3097. No SR/NOD
-infrastructure required (those are separate series patches not in this
-tree).
+Bug present since driver addition in 2016.
 
-### Step 6.3: Related fixes already present?
-**Record:** SMT PM cache fix from same series (`8d1c6b603327b`) is
-already in tree. This IOLH fix is the logical next piece.
+### Step 6.2: Backport Complications
+**Record:** Clean apply expected — 3-line hunk in one function, no
+structural conflicts.
+
+### Step 6.3: Related Fixes Already Present?
+**Record:** None found for this issue.
+
+### In-tree DTS usage
+**Record:** Five `pisosr-gpio` nodes exist (BeagleBone AI, AM57xx IDK,
+AM437x IDK, AM335x ICEv2, VF610 BK4). **None specify `ngpios`** — all
+rely on the driver default of 8. So mainline shipped boards are not
+currently broken, but the binding allows `ngpios` (default 8, max 32 per
+`pisosr-gpio.yaml`).
 
 ---
 
 ## Phase 7: Subsystem Context
 
-### Step 7.1: Subsystem criticality
-**Record:** `drivers/pinctrl/renesas/` — **PERIPHERAL** (platform-
-specific), but suspend/resume correctness is critical for embedded
-products using these SoCs.
+### Step 7.1
+**Record:** `drivers/gpio/gpio-pisosr.c` — GPIO driver for SPI parallel-
+in/serial-out shift registers. **Criticality: PERIPHERAL** (niche
+industrial/embedded hardware).
 
-### Step 7.2: Activity
-**Record:** Active PM fix series; multiple related backports already
-landed in 6.18.y.
+### Step 7.2
+**Record:** Driver is mature (since 2016); recent activity is
+maintenance only.
 
 ---
 
 ## Phase 8: Impact and Risk Assessment
 
-### Step 8.1: Who is affected
-**Record:** Users of RZ/G3E (r9a09g047), RZ/V2H (r9a09g056), RZ/V2HP
-(r9a09g057) who use system suspend/resume. Driver-specific, but
-dedicated pins cover critical peripherals.
+### Step 8.1: Who Is Affected
+**Record:** Users of `pisosr-gpio` hardware who include an explicit
+`ngpios` property in device tree. Config-specific / board-specific.
 
-### Step 8.2: Trigger conditions
-**Record:** Every S2RAM suspend/resume cycle on affected hardware.
-Requires `CONFIG_PINCTRL` + matching DT compatible. Not userspace-
-triggerable directly, but normal laptop/embedded suspend path.
+### Step 8.2: Trigger Conditions
+**Record:** `ngpios = <N>` in DT for a `pisosr-gpio` node. Uncommon
+today (no in-tree examples), but valid per binding. Not userspace-
+triggerable directly; kernel GPIO access after probe triggers OOB.
 
-### Step 8.3: Failure severity
-**Record:** Wrong pin drive strength/impedance after resume → peripheral
-malfunction (Ethernet, SD, XSPI flash, UART), potential bus errors or
-silent data corruption on high-speed interfaces. **Severity: MEDIUM-
-HIGH** (hardware misconfiguration, not kernel oops).
+### Step 8.3: Failure Mode Severity
+**Record:** Wrong zero-sized internal buffer while gpiochip may register
+the correct line count → **OOB on GPIO read** → potential
+oops/corruption. **Severity: HIGH** when triggered; **latent** on
+current in-tree DTS.
 
-### Step 8.4: Risk-benefit
-**Record:** **Benefit: HIGH** for affected embedded users doing
-suspend/resume. **Risk: VERY LOW** (2-line bitmask fix, maintainer-
-reviewed). Ratio strongly favors backport.
+### Step 8.4: Risk-Benefit
+**Record:**
+- **Benefit:** Fixes real DT-binding compliance bug with memory-safety
+  consequences; enables correct custom board DT.
+- **Risk:** Very low — 3-line change, matches established driver
+  pattern.
+- **Ratio:** Favorable for backport despite niche hardware.
 
 ---
 
 ## Phase 9: Final Synthesis
 
-### Step 9.1: Evidence summary
+### Step 9.1: Evidence Summary
 
-**FOR backport:**
-- Real suspend/resume bug on shipping Renesas SoCs in this tree
-- Maintainer-reviewed, obviously correct, minimal diff
-- Same PM series already partially backported (SMT fix in 6.18.43)
-- Affects critical dedicated pins (network, storage, flash buses)
-- Buggy code and `PIN_CFG_IOLH_RZV2H` both present in 6.18.43
+**FOR:**
+- Verified bug: `u16` read of `u32` `ngpios` yields 0 for all normal
+  values
+- Leads to zero-sized buffer + possible OOB despite correct gpiochip
+  registration
+- Bug since 2016; fix not yet in 6.18.y
+- Trivial, obviously correct; DT + GPIO maintainers involved
+- DT binding documents `ngpios` as valid optional property
 
-**AGAINST backport:**
-- Narrow hardware scope (3 SoC compatibles)
-- No crash/oops — functional/hardware issue after resume
-- GPIO port-pin IOLH path (line 3009) may remain unfixed per maintainer
-  review (out of scope for this commit)
+**AGAINST:**
+- No in-tree DTS currently uses `ngpios` on pisosr nodes
+- No fuzzer/user crash reports
+- Peripheral driver; default path (no `ngpios`) works
+- `gpiochip_get_ngpios()` partially masks the gpio-count symptom
 
-**Unresolved:** Whether port-pin IOLH via
-`rzg2l_pinctrl_pm_setup_regs()` also needs the same fix (Geert/author
-agreed to omit; separate issue).
+**UNVERIFIED:**
+- Mailing list review discussion and any explicit stable nomination
 
-### Step 9.2: Stable rules checklist
-1. Obviously correct and tested? **PASS** — bitmask addition; Reviewed-
-   by maintainer; series patch 1 tested by multiple Tested-by on SMT
-   patch
-2. Fixes real bug affecting users? **PASS** — IOLH not saved/restored on
-   suspend/resume
-3. Important issue? **PASS** — suspend/resume hardware misconfiguration
-   on critical pins (MEDIUM-HIGH)
-4. Small and contained? **PASS** — 2 lines, one function
-5. No new features or APIs? **PASS**
-6. Can apply to local tree? **PASS** — applies cleanly at line 3097
+### Step 9.2: Stable Rules Checklist
+1. Obviously correct and tested? **PASS** — mechanism verified in OF
+   code; pattern used elsewhere; maintainer-authored.
+2. Fixes a real bug? **PASS** — incorrect DT parsing when `ngpios` is
+   present.
+3. Important issue? **PASS** — OOB/memory safety when triggered;
+   functional breakage for valid DT.
+4. Small and contained? **PASS** — 4 lines in one file.
+5. No new features/APIs? **PASS** — behavior correction only.
+6. Can apply to local tree? **PASS** — buggy code confirmed present in
+   v6.18.44.
 
-### Step 9.3: Exception category
-**Record:** N/A — standard bug fix, not device-ID/quirk/build fix.
+### Step 9.3: Exception Category
+**Record:** Device tree fix for existing driver/hardware — qualifies
+under DT-update exception.
 
-### Step 9.4: Decision rationale
-
-For **Linux 6.18.43**, this commit should be backported. The tree
-already has RZ/V2H and RZ/G3E pinctrl support with extensive
-`PIN_CFG_IOLH_RZV2H` dedicated-pin tables and active PM suspend/resume,
-but the PM cache path omits that capability flag. After S2RAM, dedicated
-function pins (Ethernet, SD, XSPI, etc.) lose their output-impedance
-settings. The fix is trivial, maintainer-reviewed, and consistent with
-the SMT PM cache fix already in this stable tree.
+### Step 9.4: Decision Rationale
+This is a long-standing DT property encoding bug that silently breaks
+any board specifying `ngpios` for `pisosr-gpio`: the driver allocates a
+zero-byte buffer while registering the correct GPIO count via gpiolib
+fallback, creating an OOB path on GPIO access. The fix is minimal,
+matches every other GPIO driver, and carries negligible regression risk.
+Current mainline DTS avoids the bug by omitting `ngpios`, but the
+binding permits it and custom boards can hit this today.
 
 ---
 
 ## Verification
 
-- **[Phase 1]** Parsed subject, tags, body from commit message and local
-  mbx
-- **[Phase 2]** Read diff and current code at lines 3009, 3097,
-  3179–3243
-- **[Phase 3]** `git describe HEAD` → v6.18.43; `git log --oneline -20
-  -- drivers/pinctrl/renesas/pinctrl-rzg2l.c`; `git blame` on lines
-  3009/3097; confirmed `8d1c6b603327b` (SMT fix from same series) in
-  tree
-- **[Phase 4]** `b4 mbox` fetched 16-message lore thread; Geert review
-  noted dedicated-pin scope; no stable@ nomination found
-- **[Phase 5]** Traced call chain:
-  `rzg2l_pinctrl_suspend_noirq`/`resume_noirq` →
-  `rzg2l_pinctrl_pm_setup_dedicated_regs`; verified
-  `rzv2h_dedicated_pins`/`rzg3e_dedicated_pins` use
-  `PIN_CFG_IOLH_RZV2H`; verified SoC compatibles at lines 3470–3479
-- **[Phase 6]** Confirmed buggy line 3097 present; `PIN_CFG_IOLH_RZV2H`
-  defined at line 65; fix not yet applied; clean apply expected
-- **[Phase 7]** Identified Renesas pinctrl driver subsystem
-- **[Phase 8]** Assessed suspend/resume trigger and MEDIUM-HIGH hardware
-  impact
+- **[Phase 1]** Parsed subject, tags, body from provided commit message
+- **[Phase 2]** Diff analysis: 3-line probe() change; verified
+  `of_property_read_u16` implementation in `drivers/of/property.c`
+  (min=2, max=0, reads first be16)
+- **[Phase 2]** Python simulation: u32 `ngpios` values 8/16/24/32 all
+  read as 0 via u16
+- **[Phase 2]** Confirmed `struct gpio_chip.ngpio` is `u16` in
+  `include/linux/gpio/driver.h`
+- **[Phase 3]** `git blame`: buggy line from `df6df93c8a73f` (2016)
+- **[Phase 3]** `git log --oneline -20 -- drivers/gpio/gpio-pisosr.c`:
+  no prior ngpios fix
+- **[Phase 3]** `git grep`: only `gpio-pisosr.c` uses
+  `of_property_read_u16` for `ngpios`
+- **[Phase 4]** `b4 dig -c 2732ea8c16b7b`: no result (commit not in
+  repo) — **UNVERIFIED** lore thread
+- **[Phase 4]** WebFetch patch.msgid.link and lore.kernel.org: blocked
+  by Anubis — **UNVERIFIED**
+- **[Phase 5]** Read `gpiochip_get_ngpios()` in
+  `drivers/gpio/gpiolib.c`: re-reads u32 when `gc->ngpio==0`, does not
+  fix driver buffer
+- **[Phase 5]** Traced probe order: buffer allocated before
+  `devm_gpiochip_add_data()`
+- **[Phase 6]** `git describe HEAD`: `v6.18.44-1-g2736c32da98b9`;
+  Makefile confirms 6.18.44
+- **[Phase 6]** Read current `drivers/gpio/gpio-pisosr.c`: still has
+  buggy `of_property_read_u16`
+- **[Phase 6]** `grep pisosr-gpio` in `arch/arm/boot/dts/`: 5 nodes,
+  none with `ngpios` property
+- **[Phase 6]** Read `Documentation/devicetree/bindings/gpio/pisosr-
+  gpio.yaml`: `ngpios` optional, default 8, max 32
+- **[Phase 8]** Assessed failure mode: zero buffer + OOB on GPIO access
+  when `ngpios` in DT
 
-**YES**
+**YES**The backport analysis is done for **gpio: pisosr: Read "ngpios"
+as u32** on **v6.18.44**.
 
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+**Verdict: YES**
 
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index e8cc83029db33..ab8d64a14dd0a 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -3094,7 +3094,8 @@ static void rzg2l_pinctrl_pm_setup_dedicated_regs(struct rzg2l_pinctrl *pctrl, b
- 		}
+The driver reads the standard `u32` `ngpios` DT property with
+`of_property_read_u16()`, which turns any normal value into **0**. That
+leaves a zero-sized buffer while gpiolib may still register the correct
+GPIO count, so boards that set `ngpios` in DT can hit out-of-bounds
+access on GPIO reads. The fix is small, obviously correct, and matches
+other GPIO drivers. No in-tree DTS nodes currently set `ngpios` for
+`pisosr-gpio`, but the binding allows it.
+
+ drivers/gpio/gpio-pisosr.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
+index 7ec6a46ed6007..2732ea8c16b7b 100644
+--- a/drivers/gpio/gpio-pisosr.c
++++ b/drivers/gpio/gpio-pisosr.c
+@@ -112,6 +112,7 @@ static int pisosr_gpio_probe(struct spi_device *spi)
+ {
+ 	struct device *dev = &spi->dev;
+ 	struct pisosr_gpio *gpio;
++	u32 ngpios;
+ 	int ret;
  
- 		/* And apply them in a single shot. */
--		has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B | PIN_CFG_IOLH_C));
-+		has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B |
-+				      PIN_CFG_IOLH_C | PIN_CFG_IOLH_RZV2H));
- 		has_ien = !!(caps & PIN_CFG_IEN);
- 		pincnt = hweight8(FIELD_GET(RZG2L_SINGLE_PIN_BITS_MASK, cfg));
+ 	gpio = devm_kzalloc(dev, sizeof(*gpio), GFP_KERNEL);
+@@ -120,7 +121,8 @@ static int pisosr_gpio_probe(struct spi_device *spi)
+ 
+ 	gpio->chip = template_chip;
+ 	gpio->chip.parent = dev;
+-	of_property_read_u16(dev->of_node, "ngpios", &gpio->chip.ngpio);
++	if (!of_property_read_u32(dev->of_node, "ngpios", &ngpios))
++		gpio->chip.ngpio = ngpios;
+ 
+ 	gpio->spi = spi;
  
 -- 
 2.53.0
