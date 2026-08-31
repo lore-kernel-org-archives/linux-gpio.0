@@ -1,65 +1,65 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD774E80B9
-	for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 14:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E9A4E8E03
+	for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 14:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788186771; cv=none; b=QzU2xzFEc3TCklSLlSyAb47rdVU9pHGs5fXmlYjzegOKNJUWVV4fs+MjbBqfU3/LyXuAKO4rBSmqbsTWNQ8/vrzQPJ7VaQA+OwlV3ie+9WAlhYV9C2yRnWeZVX6NY0PM3XOCvS2Y1ZAfN0KWM3QMc6txE32g7OWuvp5GXKsY5s0=
+	t=1788186783; cv=none; b=GEvLDzCN/oi/BJ8L71ODNTtzFrivZgeF5pr9yCDE6IEYv+dByGHn98x3PZeiA9Nu+Ew+JzcANlHCavbCIOJ8Z93iKZa6FtEC9WQcDqen5ZbPkv5J974EOjGluEisZ0XzFcLGkqxyZAEj4DXZeYn7ZJLnmpOCoS/wO/0Iv3zVVGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788186771; c=relaxed/simple;
-	bh=QjMSkXe0n6TBETzI3Ha2tiZ8wGiaGM9B4fBWkY0BniE=;
+	s=arc-20240116; t=1788186783; c=relaxed/simple;
+	bh=JMCAe2D62F+WBYgEqiYoMmr4gCc1PIsBFv3J9qtq950=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tlafVssOoLyrFJ8X/VcU03u7L+kDYNKWqs0W3y+invv+vieJhcS/l3kkwGvFYuROHWPdkruhPKPBYFRcCAJOysk6hiJEkviOG2yW+nv0peW9oPIXob6vG7Ukp5XkEDxkZZdfS5DZRWKvX+oHmiPVLpg38Zuv1b4kSkEZCyG6kT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJnW45oV; arc=none smtp.client-ip=209.85.128.53
+	 MIME-Version:Content-Type; b=dsG9eusrrjbFHPESmI7sqFEoDCN1LNfVjT6N/xyyjRj+NGLvbJzp6EIBoaX+VfHhp5SFfRmxbRcIxq28+Lg9Noi6XsNEVVNm8C7E3laxO6lZ4ttXx6MLU+ZNjYfYqQmVlAVrqxPssTCSu/Di78W7baIWBzcCCQbSBFdkH/NDuf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SVGTa49Z; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJnW45oV"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4956869750eso23182485e9.2
-        for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 07:32:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SVGTa49Z"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-49b0d78a801so27640855e9.2
+        for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 07:33:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788186767; x=1788791567; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788186780; x=1788791580; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=GWaK2495asznjoEZZji7S7Kk6wtOsxYz8ipCUtATvyQ=;
-        b=MJnW45oV/XbuoEXUI/vDyeIcwima7IgbqwDMnXUeA9/qA00WI2LnycOSpegEfjJ3bi
-         S1l2OLs1aGxU+0h/CUa6vz8m9sMSYJBZzxdx7lDCCFZrHBRXqx2X9dbeF37ywz4aLyFs
-         svOD5aWoe8Wi0PpjMjTLOF48AnhGbhzaNjLZ7pQGct4J26cb4GQnS6E3CdGCLXZQjL8q
-         zr0Jc4kmjs+j8arYX+UYQq6cKwYODMTavh4E8/aW/6yuqkRRl6TPYgCVo5qAfFxPKC7X
-         Il9T/BPZK3G/HB36augVssACj0reTm/X1Z0iDnDkdBsZHEQmzjac3rhGQTE1ZDhxjbYv
-         +4OA==
+        bh=2jL+a4C7D0aKEgmVaWlVk7rTqIUCFUo6pEcsZDOtEZU=;
+        b=SVGTa49ZuSxEQjYrS0LRKHEiwXcy2gTQagSeV15i65Ujt1HIlTMauVRF8WJHbdJkuj
+         VpseAtMHo1tXLacBd+A0QjpMjufN4LzN2xEdYw2qPhuDYxyHeoTttyHckfVxpm0MK1OL
+         rDv+DArEVxykHqBwIyli7BL52jJqma6JgVu/eWCLxpFcrtTgOXuyepV/EWi5Y/C6aL7Z
+         2KpL50jSPgGqEEFk6FH0SxpBAr+XWfQdugeFgOWCtKdsnryj7CupdhuGgnLElZZkOfRW
+         u9eFda2YqFCoQrLPGzCL7+sNiZFWdtqL81GFonZC7ho2fVh0IJ9CHUouaRMnuR8BQSh2
+         MBcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788186767; x=1788791567;
+        d=1e100.net; s=20251104; t=1788186780; x=1788791580;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=GWaK2495asznjoEZZji7S7Kk6wtOsxYz8ipCUtATvyQ=;
-        b=M+XivyJ+njJqnNLLjxp6cWakyVfMCDJ4p9bfz8vVPpHy8GFaihOYAdgiYNfoXp2p+q
-         k7A1r1q77QMmEK5mvQZevQsupTx0YGAuJJKu0hisawQuHGdJDjmmol+0B1ySsRc3fkeU
-         uWeF5QXvMsXycXel8EU7O6A379s5SR0DzmxwZe+yvlRFnPdHcfA6Q+xZSibJxZEUreuD
-         sWTowmN3AfqQO93pBII2icfbL9BJ1Ypn4VHD3w4w1YnLLc/OKIFx9glYjrrm2L52y63p
-         YPC0ffUvmLm1jZT3yAAl3K6RSZutpUcK2xPFwwOvWFF7LPWcKS67rRqLojfD2GDYFosu
-         XafA==
-X-Forwarded-Encrypted: i=1; AHgh+RqbBiDw62/dcR08Ze/OqTVm3y0IuHIli9HP3k4xxblp1YjP4cDNBOTSEF1TtbVHrkB77ONfxpKB6QTO@vger.kernel.org
-X-Gm-Message-State: AFuF++lBqnbWd++0Qieut7gkAYe/8DWfk4Xgf6ugtRYTql7DdJSnfP6b
-	qSphw4Q0NZx9K9DsjPzYmggq80O1r6/51nqiT2/torfM2vA3YPiPSZqz
-X-Gm-Gg: AR+sD113j0D6xsWNRjGHLv6SyTLtJ3udgcMPHaQm9Z22oOubSoBF93BZQ4qsaAxNQP1
-	JglafPJwwB1uhByj+abP3ap4ay+IDmxsu4EvDs1Vj5iFN2Ycp/yR5ZPE+EK5yuZ2qduH/RJDHgv
-	KR111dauRPKt2gyer+Gr/szH7Rm2D3TvjiobdjIOQPREgjNR/8juXJ8V0sfLVNQptDEDwa38g4V
-	lkYALsGm9QxtV8QRE4aOAUr6RYCV72O9EZcf61s4ttKrlfsvM9bP4tMHnbl2N2XMFJovMfPlegt
-	TyUM6/8oNHn1v1Czgu/mzRxnfgRAVNyqrRrCZgCxmC1Ng29BbbMPU++MHhnrnZxfXR+Ko43uw/7
-	+ruOtKkdFp0sam8VYu4NzIG44HejBjMEt39A99y45iaHzVgUsjXuCcu7pXoXgUUea5XZnYR9s9W
-	uBtMkIo3rbPihKieuj052kbGAsCqhWiJue5Y4eWrroNiZiu7ptBi92OipqOP6kY8VpsVKV3Qz4x
-	tzvWRgpta2HNi6PLUSdxnj8
-X-Received: by 2002:a05:600c:c494:b0:499:8aff:59b6 with SMTP id 5b1f17b1804b1-49b91c486c3mr330092135e9.14.1788186767364;
-        Mon, 31 Aug 2026 07:32:47 -0700 (PDT)
+        bh=2jL+a4C7D0aKEgmVaWlVk7rTqIUCFUo6pEcsZDOtEZU=;
+        b=XnfTmizR9j57kdfwRSSKfsKdBsK5XEVppnfYFfOoSuRMSUQisqpqwOjPhf7fDMciFv
+         IqevBnHSRnIZmydci7a9Gv0bCWY2vRFyyLoraZBANfXC/YXnSvGQrvVJ168IvqIt0tKy
+         uZicvG5QO7JWnCt5z71dYwO6k/srm5D7fRlbI9yRe1XZITP8BV4sEAcE168iICwsfX/1
+         +OgANnjGIAC8pr4DTAPxp74r/tFCFn44PaYoUi5RqC0EoPa2b9+lEPdF0V+b4fu5uCoj
+         uPPV2nc4csO7J2BDC5zFy+W1OYgG1/ND/ilD4f2o9ALb7shx/m9bjQzHBl0UCR05034z
+         U+og==
+X-Forwarded-Encrypted: i=1; AHgh+Rr6BVgkZPiqloAH/bmNsdkZvqAcjDpXel4eGMjpNGbJnLl/yW/ehweykhwgq+g62ndmx8z4s2j9g1l9@vger.kernel.org
+X-Gm-Message-State: AFuF++m2b+Am7kZOoB/47j71h7Yj+KNSaBuffj8TAeQjf9zwmFiW07pX
+	yxwa8WYHmBfaELTQjva9PmfQdDNlJcLspP7zna9os7hgu4w7peD1+HTQ
+X-Gm-Gg: AR+sD12ARxGN6AYx8+kWpkAGyFuSuE/x3zgVC+vTkaVkqhsJBSVfIE+MFxeMIsxbMZi
+	gKMH9FTGe2wufkxhE5gNIlNO2IWbMPSnr0te1b6hZBIPZTP6jQXQEZfa4+eAXBZyHZ1tReF8U6p
+	LkFLSk5XS2eLrS2GAhHV+g5vyp88bUSouifU3H+6FAOB0xkhDzx8Vh0EtAFn+rZxA0XRm2d2+FO
+	tzs23PMAxw4wbPFxFVgB0dPQdK8h/rGeKOMv9C9k05B3NXSIhEjwFyXtJUu9xyi3Rdr4QYM5IuJ
+	3d7E1kuqiERYDWVqEvIYVYQUurcguV8DAF/R+bN7TXN9uZrokYcrB8IRUdxADQfc/EEegYk7odV
+	CjGj3bTJInmd5Tr/1IpevaVft5Y6FPlL2PDtLX2TCOrL6FrZhtuuRgYLJpftuD2Ie1fehK3PF8w
+	80t3FxoPmBXW3JJxmonRLj0fPlTrVgSXVjrItD/bKu53vVikMNeoj9w/+abbDc7VEhcL5+K+DrH
+	RSlTXENcgzv7Y/D81Ck3TjX
+X-Received: by 2002:a05:600c:8107:b0:49c:d26a:cf70 with SMTP id 5b1f17b1804b1-49cd26ad005mr206906115e9.15.1788186780413;
+        Mon, 31 Aug 2026 07:33:00 -0700 (PDT)
 Received: from unix.. (244.red-81-44-253.staticip.rima-tde.net. [81.44.253.244])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49b945816f2sm344786125e9.8.2026.08.31.07.32.37
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49b945816f2sm344786125e9.8.2026.08.31.07.32.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 07:32:45 -0700 (PDT)
+        Mon, 31 Aug 2026 07:32:59 -0700 (PDT)
 From: =?UTF-8?q?Iv=C3=A1n=20Ezequiel=20Rodriguez?= <ivanrwcm25@gmail.com>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Bartosz Golaszewski <brgl@kernel.org>
@@ -70,9 +70,9 @@ Cc: linux-doc@vger.kernel.org,
 	Jason Wang <jasowangio@gmail.com>,
 	Sumit Semwal <sumit.semwal@linaro.org>,
 	=?UTF-8?q?Iv=C3=A1n=20Ezequiel=20Rodriguez?= <ivanrwcm25@gmail.com>
-Subject: [PATCH 6/7] docs: ioctl: fix stale NVMe registry entry and note N conflict
-Date: Mon, 31 Aug 2026 11:31:24 -0300
-Message-ID: <20260831143125.151360-7-ivanrwcm25@gmail.com>
+Subject: [PATCH 7/7] gpio: cdev: return EOPNOTSUPP when HTE is unavailable
+Date: Mon, 31 Aug 2026 11:31:25 -0300
+Message-ID: <20260831143125.151360-8-ivanrwcm25@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260831143125.151360-1-ivanrwcm25@gmail.com>
 References: <20260831143125.151360-1-ivanrwcm25@gmail.com>
@@ -85,31 +85,28 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The NVMe row pointed at drivers/block/nvme.c, which no longer exists,
-and ioctl numbers 0x80-0x83 overlap between ntsync.h and nvme_ioctl.h
-without a conflict! marker.
+GPIO v2 documentation promises -EOPNOTSUPP when
+GPIO_V2_LINE_FLAG_EVENT_CLOCK_HTE is requested without HTE hardware;
+map -ENODEV from hte_ts_get() in the HTE-only edge setup path.
 
 Signed-off-by: Iván Ezequiel Rodriguez <ivanrwcm25@gmail.com>
 ---
- Documentation/userspace-api/ioctl/ioctl-number.rst | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib-cdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-index 2fc53093752d..bb7004e6043d 100644
---- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-+++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-@@ -181,8 +181,9 @@ Code  Seq#    Include File                                             Comments
- 'M'   01-03  drivers/scsi/megaraid/megaraid_sas.h
- 'M'   00-0F  drivers/video/fsl-diu-fb.h                                conflict!
- 'N'   00-1F  drivers/usb/scanner.h
--'N'   40-7F  drivers/block/nvme.c
--'N'   80-8F  uapi/linux/ntsync.h                                       NT synchronization primitives
-+'N'   40-7F  uapi/linux/nvme_ioctl.h
-+'N'   80-83  uapi/linux/ntsync.h and uapi/linux/nvme_ioctl.h           conflict!
-+'N'   84-8F  uapi/linux/ntsync.h                                       NT synchronization primitives
-                                                                        <mailto:wine-devel@winehq.org>
- 'O'   00-06  mtd/ubi-user.h                                            UBI
- 'P'   all    linux/soundcard.h                                         conflict!
+diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+index 9f3b628d5793..6dc01f7ea838 100644
+--- a/drivers/gpio/gpiolib-cdev.c
++++ b/drivers/gpio/gpiolib-cdev.c
+@@ -715,6 +715,8 @@ static int hte_edge_setup(struct line *line, u64 eflags)
+ 			   line->desc);
+ 
+ 	ret = hte_ts_get(NULL, hdesc, 0);
++	if (ret == -ENODEV)
++		return -EOPNOTSUPP;
+ 	if (ret)
+ 		return ret;
+ 
 -- 
 2.43.0
 
