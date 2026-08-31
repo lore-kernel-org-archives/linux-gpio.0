@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF64241F5D8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B6141CB2E;
 	Mon, 31 Aug 2026 13:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788182500; cv=none; b=m0JAUbqI3vkEr7Vge+lOfd4stg5j6QF9d5gkPFPaY2RDKffSqsdVIzLiNBOlT2eugg85R/mlcQ3Z3uR3G/2jjaMWWI35MXnqnK5942TsUJNSFAjSDpguAFeA0VcoLcc1ZMFkiAlEmH2Nfx8BNn+hJ+qUcMcVKx+VA8FI3iWacy4=
+	t=1788182499; cv=none; b=kcAjP5YptqZ1lbPyS1cpJ78/Drb2/ghun8CUXELkjW/9Mbq5B5aMyH99I/ogY1LMepRm8oxteBK4DwrjSPYwn/EOvSU1tJvIoZ1NEiKo7tGuzKUrLYX0ee+RKhCL0R8SQbdwN+GvBg9TmcuWqCSP3ZE1fco12DbMMGO10qCQWW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788182500; c=relaxed/simple;
-	bh=C9rnPRKRR8AyimaRUcbmAJLI/wbdKMwleszCFVss9Yc=;
+	s=arc-20240116; t=1788182499; c=relaxed/simple;
+	bh=lHo2/ZUMj4sYGHqd8b1Ca0NSi/GORtjGV5/LGUc4nJM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Awy7Lw4WTHbqttxc3XGNoVXycpfQqlF2ZmwfU9uEn3nY8o1EZxyGwapCMoUSKcTY9yVh0OrIK48Z7mM1ddqXZkftBy0xglMuRaYs7apLey2Htq07BPg5We9QAGBGg8z8v8Xe8PC4vd74RpQK0YsTVBeqKzRzWkoIkN/78Re41Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGuq7kyr; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=p7gJMtkZB7IDZrbkR0QN2seBXTKnRUy/VT//pda3rRx6iNNTxA47eRl/mZtjnWge3RY1uB8ZOI9y7SG2yhkYX/2XJg/0IWgqx3hlA4ndxf+BmI+/IcB0V+IGRqga/QVDZ5g3xVcVTUduHk9vg3PB+Ue71k87wcKOxuKY30lZh0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iI7dRn3a; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGuq7kyr"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C2AC8C2BCFB;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iI7dRn3a"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 57B8CC2BCFD;
 	Mon, 31 Aug 2026 13:21:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1788182499;
-	bh=C9rnPRKRR8AyimaRUcbmAJLI/wbdKMwleszCFVss9Yc=;
+	bh=lHo2/ZUMj4sYGHqd8b1Ca0NSi/GORtjGV5/LGUc4nJM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=oGuq7kyrb8g6aLNNi8Zf6rgKfNt01oKplAyZbFuQZaUfZgWo3a3c/uuQ0QI26/vPd
-	 lYpx8QbmLKFw7N/B81z9EXR59w5WV94kyZiVDDMVCihVNZ4YKNCIdP1MdjYqUmKM0I
-	 SV70MZlkjZgGi8HNo3V4DFxU/4v1UjPrN7/Z5Nqn/zvoX8fclnL+TCyG5gjXsRp/YD
-	 IIMdVQAmmETe3uOjtJiEp1wQNkYsfLm7NC3Y5FvqUK/nLauCSBLNfqMkI5igFxwTdH
-	 rnFwC1vHtPeudpPBHH3ddh0Wv/peWicqPeMf9BQ58QjiM4tzVajEpwYvRxyatmVf9Z
-	 DLX4TkfJX8xeQ==
+	b=iI7dRn3aXRbFFh8HtQULaJ1mUpHD7ab4izuggOUQuqQ1eqrYbUfGnUilTnearLTX7
+	 HT3IIiRbeLm2XtyVG44lRJp+dXQCi1Zy+ZQHD04i/ZpHujXFYWzTlkMnNK5fFIeSbF
+	 hfRW/rrZHrvFp93Uwh4aGq1T+m/kjIsmNd6LnXHYrDBLLCPwVdKxbHWp3hS9aqajaR
+	 DVoTAj8lf9GBMBAerKD6rQvFkWUt+rEkz+UfsIGs2mCUNKtAzh6EUd9uVyzCFKvCGU
+	 sJyxQ2SAn5TBNHTxLiM57UIhql1TW/be5845Q6gQSeOidohh5wLsR+Bc38QOFxvDS3
+	 NxE6ajI0YQd9w==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1064C624CF;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F3AC61DD3;
 	Mon, 31 Aug 2026 13:21:39 +0000 (UTC)
 From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Mon, 31 Aug 2026 16:21:37 +0300
-Subject: [PATCH v16 18/22] arm64: defconfig: disable deprecated MAX96712
- driver
+Date: Mon, 31 Aug 2026 16:21:32 +0300
+Subject: [PATCH v16 13/22] media: i2c: add Maxim GMSL2/3 serializer and
+ deserializer framework
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260831-gmsl2-3_serdes-v16-18-4fa6e08bb514@analog.com>
+Message-Id: <20260831-gmsl2-3_serdes-v16-13-4fa6e08bb514@analog.com>
 References: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
 In-Reply-To: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
 To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
@@ -61,11 +61,11 @@ Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
  Andrian Suciu <Adrian.Suciu@analog.com>, 
  Cosmin Tanislav <demonsingur@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788182495; l=722;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1788182495; l=19468;
  i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=IfExQ18ty+dvACC1gRns4FHhE9fCrRU0GJtT5kLCDBc=;
- b=GHpOr6kPBHNUTd2dgmu2tlJ8NjeTuLfrzBIQeLbKONT65CJhjwFZxsN7YUVjixJdNXZF6QipZ
- KzsUNjrOUm8DQ1YiEYZ0P2uklG/dXDBLF+W4/yHfmFfu9xPRDyGfyp0
+ bh=ou2cboCK7HaD+y4+yymDX4KSZXP4zUwb+jWrYDc45H4=;
+ b=qU7TLOFLzqwyA3NssT3PAELAQo7sMyO4d9Aw6rPJu4I8seEEq51dgPfNuaZ8GLH1U9txYno5B
+ KsRjElEgAgXBEwKLjg2EgXrMu996oU1zkV7W5v69xZWdIwHRf5NDL8Q
 X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
  pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
 X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
@@ -75,27 +75,711 @@ Reply-To: dumitru.ceclan@analog.com
 
 From: Cosmin Tanislav <demonsingur@gmail.com>
 
-The staging MAX96712 driver will be removed as its functionality has
-been moved to the MAX96724 driver which makes use of the Maxim
-GMSL2/3 deserializer framework.
+These drivers are meant to be used as a common framework for Maxim
+GMSL2/3 serializers and deserializers.
+
+This framework enables support for the following new features across
+all the chips:
+ * Full Streams API support
+ * .get_frame_desc()
+ * .get_mbus_config()
+ * I2C ATR
+ * automatic GMSL link version negotiation
+ * automatic stream id selection
+ * automatic VC remapping
+ * automatic pixel mode / tunnel mode selection
+ * automatic double mode selection / data padding
+ * logging of internal state and chip status registers via .log_status()
+ * PHY modes
+ * serializer pinctrl
+ * TPG
 
 Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
 ---
- arch/arm64/configs/defconfig | 1 -
- 1 file changed, 1 deletion(-)
+ MAINTAINERS                                 |   1 +
+ drivers/media/i2c/Kconfig                   |   2 +
+ drivers/media/i2c/Makefile                  |   1 +
+ drivers/media/i2c/maxim-serdes/Kconfig      |  17 ++
+ drivers/media/i2c/maxim-serdes/Makefile     |   3 +
+ drivers/media/i2c/maxim-serdes/max_serdes.c | 413 ++++++++++++++++++++++++++++
+ drivers/media/i2c/maxim-serdes/max_serdes.h | 181 ++++++++++++
+ 7 files changed, 618 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 6ec8d3a69c98..e0bdfffd9c52 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1420,7 +1420,6 @@ CONFIG_GREYBUS=m
- CONFIG_GREYBUS_BEAGLEPLAY=m
- CONFIG_STAGING=y
- CONFIG_STAGING_MEDIA=y
--CONFIG_VIDEO_MAX96712=m
- CONFIG_VIDEO_MESON_VDEC=m
- CONFIG_SND_BCM2835=m
- CONFIG_CHROME_PLATFORMS=y
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 80f92b73cc39..b8c2e60de666 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16019,6 +16019,7 @@ M:	Cosmin Tanislav <cosmin.tanislav@analog.com>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/media/i2c/maxim,max9296a.yaml
++F:	drivers/media/i2c/maxim-serdes/
+ 
+ MAXIM MAX11205 DRIVER
+ M:	Ramona Bolboaca <ramona.bolboaca@analog.com>
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index 5c52007f9cbe..d4c49c834ec4 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -1811,6 +1811,8 @@ config VIDEO_MAX96717
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called max96717.
+ 
++source "drivers/media/i2c/maxim-serdes/Kconfig"
++
+ endmenu
+ 
+ endif # VIDEO_DEV
+diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+index d04bd5724552..9d5c2bfc4f4c 100644
+--- a/drivers/media/i2c/Makefile
++++ b/drivers/media/i2c/Makefile
+@@ -74,6 +74,7 @@ obj-$(CONFIG_VIDEO_MAX9271_LIB) += max9271.o
+ obj-$(CONFIG_VIDEO_MAX9286) += max9286.o
+ obj-$(CONFIG_VIDEO_MAX96714) += max96714.o
+ obj-$(CONFIG_VIDEO_MAX96717) += max96717.o
++obj-$(CONFIG_VIDEO_MAXIM_SERDES) += maxim-serdes/
+ obj-$(CONFIG_VIDEO_ML86V7667) += ml86v7667.o
+ obj-$(CONFIG_VIDEO_MSP3400) += msp3400.o
+ obj-$(CONFIG_VIDEO_MT9M001) += mt9m001.o
+diff --git a/drivers/media/i2c/maxim-serdes/Kconfig b/drivers/media/i2c/maxim-serdes/Kconfig
+new file mode 100644
+index 000000000000..f5a4ca80a263
+--- /dev/null
++++ b/drivers/media/i2c/maxim-serdes/Kconfig
+@@ -0,0 +1,17 @@
++# SPDX-License-Identifier: GPL-2.0
++
++config VIDEO_MAXIM_SERDES
++	tristate "Maxim GMSL2/3 Serializer and Deserializer support"
++	depends on VIDEO_DEV
++	depends on I2C
++	select I2C_ATR
++	select I2C_MUX
++	select MEDIA_CONTROLLER
++	select V4L2_FWNODE
++	select VIDEO_V4L2_SUBDEV_API
++	help
++	  This driver supports the Maxim GMSL2/3 common Serializer and
++	  Deserializer framework.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called max_serdes.
+diff --git a/drivers/media/i2c/maxim-serdes/Makefile b/drivers/media/i2c/maxim-serdes/Makefile
+new file mode 100644
+index 000000000000..630fbb486bab
+--- /dev/null
++++ b/drivers/media/i2c/maxim-serdes/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0
++max-serdes-objs := max_serdes.o
++obj-$(CONFIG_VIDEO_MAXIM_SERDES) += max-serdes.o
+diff --git a/drivers/media/i2c/maxim-serdes/max_serdes.c b/drivers/media/i2c/maxim-serdes/max_serdes.c
+new file mode 100644
+index 000000000000..7d013c4739d1
+--- /dev/null
++++ b/drivers/media/i2c/maxim-serdes/max_serdes.c
+@@ -0,0 +1,413 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2025 Analog Devices Inc.
++ */
++
++#include <linux/export.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/stringify.h>
++
++#include <media/mipi-csi2.h>
++
++#include <video/videomode.h>
++
++#include <uapi/linux/media-bus-format.h>
++
++#include "max_serdes.h"
++
++const char * const max_serdes_tpg_patterns[] = {
++	[MAX_SERDES_TPG_PATTERN_GRADIENT] = "Gradient",
++	[MAX_SERDES_TPG_PATTERN_CHECKERBOARD] = "Checkerboard",
++};
++
++static const char * const max_gmsl_versions[] = {
++	[MAX_SERDES_GMSL_2_3GBPS] = "GMSL2 3Gbps",
++	[MAX_SERDES_GMSL_2_6GBPS] = "GMSL2 6Gbps",
++	[MAX_SERDES_GMSL_3_12GBPS] = "GMSL3 12Gbps",
++};
++
++const char *max_serdes_gmsl_version_str(enum max_serdes_gmsl_version version)
++{
++	if (version > MAX_SERDES_GMSL_3_12GBPS)
++		return NULL;
++
++	return max_gmsl_versions[version];
++}
++
++static const char * const max_gmsl_mode[] = {
++	[MAX_SERDES_GMSL_PIXEL_MODE] = "pixel",
++	[MAX_SERDES_GMSL_TUNNEL_MODE] = "tunnel",
++};
++
++const char *max_serdes_gmsl_mode_str(enum max_serdes_gmsl_mode mode)
++{
++	if (mode > MAX_SERDES_GMSL_TUNNEL_MODE)
++		return NULL;
++
++	return max_gmsl_mode[mode];
++}
++
++static const struct max_serdes_mipi_format max_serdes_mipi_formats[] = {
++	{ MIPI_CSI2_DT_EMBEDDED_8B, 8 },
++	{ MIPI_CSI2_DT_YUV422_8B, 16 },
++	{ MIPI_CSI2_DT_YUV422_10B, 20 },
++	{ MIPI_CSI2_DT_RGB565, 16 },
++	{ MIPI_CSI2_DT_RGB666, 18 },
++	{ MIPI_CSI2_DT_RGB888, 24 },
++	{ MIPI_CSI2_DT_RAW8, 8 },
++	{ MIPI_CSI2_DT_RAW10, 10 },
++	{ MIPI_CSI2_DT_RAW12, 12 },
++	{ MIPI_CSI2_DT_RAW14, 14 },
++	{ MIPI_CSI2_DT_RAW16, 16 },
++};
++
++const struct max_serdes_mipi_format *max_serdes_mipi_format_by_dt(u8 dt)
++{
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(max_serdes_mipi_formats); i++)
++		if (max_serdes_mipi_formats[i].dt == dt)
++			return &max_serdes_mipi_formats[i];
++
++	return NULL;
++}
++
++int max_serdes_get_fd_stream_entry(struct v4l2_subdev *sd, u32 pad, u32 stream,
++				   struct v4l2_mbus_frame_desc_entry *entry)
++{
++	struct v4l2_mbus_frame_desc fd;
++	unsigned int i;
++	int ret;
++
++	ret = v4l2_subdev_call(sd, pad, get_frame_desc, pad, &fd);
++	if (ret)
++		return ret;
++
++	if (fd.type != V4L2_MBUS_FRAME_DESC_TYPE_CSI2)
++		return -EOPNOTSUPP;
++
++	for (i = 0; i < fd.num_entries; i++) {
++		if (fd.entry[i].stream == stream) {
++			*entry = fd.entry[i];
++			return 0;
++		}
++	}
++
++	return -ENOENT;
++}
++
++int max_serdes_get_fd_bpp(struct v4l2_mbus_frame_desc_entry *entry,
++			  unsigned int *bpp)
++{
++	const struct max_serdes_mipi_format *format;
++
++	format = max_serdes_mipi_format_by_dt(entry->bus.csi2.dt);
++	if (!format)
++		return -ENOENT;
++
++	*bpp = format->bpp;
++
++	return 0;
++}
++
++int max_serdes_process_bpps(struct device *dev, u32 bpps,
++			    u32 allowed_double_bpps, unsigned int *doubled_bpp)
++{
++	unsigned int min_bpp;
++	unsigned int max_bpp;
++	bool doubled = false;
++
++	if (!bpps)
++		return 0;
++
++	*doubled_bpp = 0;
++
++	/*
++	 * Hardware can double bpps 8, 10, 12, and it can pad bpps < 16
++	 * to another bpp <= 16:
++	 * Hardware can only stream a single constant bpp up to 24.
++	 *
++	 * From these features and limitations, the following rules
++	 * can be deduced:
++	 *
++	 * A bpp of 8 can always be doubled if present.
++	 * A bpp of 10 can be doubled only if there are no other bpps or the
++	 * only other bpp is 20.
++	 * A bpp of 12 can be doubled only if there are no other bpps or the
++	 * only other bpp is 24.
++	 * Bpps <= 16 cannot coexist with bpps > 16.
++	 * Bpps <= 16 need to be padded to the biggest bpp.
++	 */
++
++	min_bpp = __ffs(bpps);
++	max_bpp = __fls(bpps);
++
++	if (min_bpp == 8) {
++		doubled = true;
++	} else if (min_bpp == 10 || min_bpp == 12) {
++		u32 bpp_or_double = BIT(min_bpp) | BIT(min_bpp * 2);
++		u32 other_bpps = bpps & ~bpp_or_double;
++
++		if (!other_bpps)
++			doubled = true;
++	}
++
++	if (doubled && (allowed_double_bpps & BIT(min_bpp))) {
++		*doubled_bpp = min_bpp;
++		bpps &= ~BIT(min_bpp);
++		bpps |= BIT(min_bpp * 2);
++	}
++
++	min_bpp = __ffs(bpps);
++	max_bpp = __fls(bpps);
++
++	if (max_bpp > 24) {
++		dev_err(dev, "Cannot stream bpps > 24\n");
++		return -EINVAL;
++	}
++
++	if (min_bpp <= 16 && max_bpp > 16) {
++		dev_err(dev, "Cannot stream bpps <= 16 with bpps > 16\n");
++		return -EINVAL;
++	}
++
++	if (max_bpp > 16 && min_bpp != max_bpp) {
++		dev_err(dev, "Cannot stream multiple bpps when one is > 16\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++int max_serdes_xlate_enable_disable_streams(struct max_serdes_source *sources,
++					    u32 source_sink_pad_offset,
++					    const struct v4l2_subdev_state *state,
++					    u32 pad, u64 updated_streams_mask,
++					    u32 sink_pad_start, u32 num_sink_pads,
++					    bool enable)
++{
++	u32 failed_sink_pad;
++	int ret;
++	u32 i;
++
++	for (i = sink_pad_start; i < sink_pad_start + num_sink_pads; i++) {
++		u64 matched_streams_mask = updated_streams_mask;
++		u64 updated_sink_streams_mask;
++		struct max_serdes_source *source;
++
++		updated_sink_streams_mask =
++			v4l2_subdev_state_xlate_streams(state, pad, i,
++							&matched_streams_mask);
++		if (!updated_sink_streams_mask)
++			continue;
++
++		source = &sources[i + source_sink_pad_offset];
++		if (!source->sd)
++			continue;
++
++		if (enable)
++			ret = v4l2_subdev_enable_streams(source->sd, source->pad,
++							 updated_sink_streams_mask);
++		else
++			ret = v4l2_subdev_disable_streams(source->sd, source->pad,
++							  updated_sink_streams_mask);
++		if (ret) {
++			failed_sink_pad = i;
++			goto err;
++		}
++	}
++
++	return 0;
++
++err:
++	for (i = sink_pad_start; i < failed_sink_pad; i++) {
++		u64 matched_streams_mask = updated_streams_mask;
++		u64 updated_sink_streams_mask;
++		struct max_serdes_source *source;
++
++		updated_sink_streams_mask =
++			v4l2_subdev_state_xlate_streams(state, pad, i,
++							&matched_streams_mask);
++		if (!updated_sink_streams_mask)
++			continue;
++
++		source = &sources[i + source_sink_pad_offset];
++		if (!source->sd)
++			continue;
++
++		if (!enable)
++			v4l2_subdev_enable_streams(source->sd, source->pad,
++						   updated_sink_streams_mask);
++		else
++			v4l2_subdev_disable_streams(source->sd, source->pad,
++						    updated_sink_streams_mask);
++	}
++
++	return ret;
++}
++
++int max_serdes_get_streams_masks(struct device *dev,
++				 const struct v4l2_subdev_state *state,
++				 u32 pad, u64 updated_streams_mask,
++				 u32 num_pads, u64 *old_streams_masks,
++				 u64 **new_streams_masks, bool enable)
++{
++	u64 *streams_masks;
++	unsigned int i;
++
++	streams_masks = devm_kcalloc(dev, num_pads, sizeof(*streams_masks), GFP_KERNEL);
++	if (!streams_masks)
++		return -ENOMEM;
++
++	for (i = 0; i < num_pads; i++) {
++		u64 matched_streams_mask = updated_streams_mask;
++		u64 updated_sink_streams_mask;
++
++		streams_masks[i] = old_streams_masks[i];
++		updated_sink_streams_mask =
++			v4l2_subdev_state_xlate_streams(state, pad, i,
++							&matched_streams_mask);
++		if (!updated_sink_streams_mask)
++			continue;
++
++		if (enable)
++			streams_masks[i] |= updated_sink_streams_mask;
++		else
++			streams_masks[i] &= ~updated_sink_streams_mask;
++	}
++
++	if (enable)
++		streams_masks[pad] |= updated_streams_mask;
++	else
++		streams_masks[pad] &= ~updated_streams_mask;
++
++	*new_streams_masks = streams_masks;
++
++	return 0;
++}
++
++static const struct videomode max_serdes_tpg_pixel_videomodes[] = {
++	{
++		.pixelclock = 25000000,
++		.hactive = 640,
++		.hfront_porch = 10,
++		.hsync_len = 96,
++		.hback_porch = 40,
++		.vactive = 480,
++		.vfront_porch = 2,
++		.vsync_len = 24,
++		.vback_porch = 24,
++	},
++	{
++		.pixelclock = 75000000,
++		.hactive = 1920,
++		.hfront_porch = 88,
++		.hsync_len = 44,
++		.hback_porch = 148,
++		.vactive = 1080,
++		.vfront_porch = 4,
++		.vsync_len = 16,
++		.vback_porch = 36,
++	},
++	{
++		.pixelclock = 150000000,
++		.hactive = 1920,
++		.hfront_porch = 88,
++		.hsync_len = 44,
++		.hback_porch = 148,
++		.vactive = 1080,
++		.vfront_porch = 4,
++		.vsync_len = 16,
++		.vback_porch = 36,
++	},
++};
++
++static void max_serdes_get_vm_timings(const struct videomode *vm,
++				      struct max_serdes_tpg_timings *timings)
++{
++	u32 hact = vm->hactive;
++	u32 hfp = vm->hfront_porch;
++	u32 hsync = vm->hsync_len;
++	u32 hbp = vm->hback_porch;
++	u32 htot = hact + hfp + hbp + hsync;
++
++	u32 vact = vm->vactive;
++	u32 vfp = vm->vfront_porch;
++	u32 vsync = vm->vsync_len;
++	u32 vbp = vm->vback_porch;
++	u32 vtot = vact + vfp + vbp + vsync;
++
++	*timings = (struct max_serdes_tpg_timings) {
++		.gen_vs = true,
++		.gen_hs = true,
++		.gen_de = true,
++		.vs_inv = true,
++		.vs_dly = 0,
++		.vs_high = vsync * htot,
++		.vs_low = (vact + vfp + vbp) * htot,
++		.v2h = 0,
++		.hs_high = hsync,
++		.hs_low = hact + hfp + hbp,
++		.hs_cnt = vact + vfp + vbp + vsync,
++		.v2d = htot * (vsync + vbp) + (hsync + hbp),
++		.de_high = hact,
++		.de_low = hfp + hsync + hbp,
++		.de_cnt = vact,
++		.clock = vm->pixelclock,
++		.fps = DIV_ROUND_CLOSEST(vm->pixelclock, vtot * htot),
++	};
++}
++
++int max_serdes_get_tpg_timings(const struct max_serdes_tpg_entry *entry,
++			       struct max_serdes_tpg_timings *timings)
++{
++	u32 fps;
++
++	if (!entry)
++		return 0;
++
++	fps = DIV_ROUND_CLOSEST(1 * entry->interval.denominator,
++				entry->interval.numerator);
++
++	for (unsigned int i = 0; i < ARRAY_SIZE(max_serdes_tpg_pixel_videomodes); i++) {
++		struct max_serdes_tpg_timings vm_timings;
++		const struct videomode *vm;
++
++		vm = &max_serdes_tpg_pixel_videomodes[i];
++
++		max_serdes_get_vm_timings(vm, &vm_timings);
++
++		if (vm->hactive == entry->width &&
++		    vm->vactive == entry->height &&
++		    vm_timings.fps == fps) {
++			*timings = vm_timings;
++			return 0;
++		}
++	}
++
++	return -EINVAL;
++}
++EXPORT_SYMBOL_NS_GPL(max_serdes_get_tpg_timings, "MAX_SERDES");
++
++int max_serdes_validate_tpg_routing(struct v4l2_subdev_krouting *routing)
++{
++	const struct v4l2_subdev_route *route;
++
++	if (routing->num_routes != 1)
++		return -EINVAL;
++
++	route = &routing->routes[0];
++
++	if (!(route->flags & V4L2_SUBDEV_ROUTE_FL_ACTIVE))
++		return -EINVAL;
++
++	if (route->sink_stream != MAX_SERDES_TPG_STREAM)
++		return -EINVAL;
++
++	return 0;
++}
++
++MODULE_DESCRIPTION("Maxim GMSL2 Serializer/Deserializer Driver");
++MODULE_AUTHOR("Cosmin Tanislav <cosmin.tanislav@analog.com>");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/media/i2c/maxim-serdes/max_serdes.h b/drivers/media/i2c/maxim-serdes/max_serdes.h
+new file mode 100644
+index 000000000000..1679b38fc8ae
+--- /dev/null
++++ b/drivers/media/i2c/maxim-serdes/max_serdes.h
+@@ -0,0 +1,181 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2025 Analog Devices Inc.
++ */
++
++#ifndef MAX_SERDES_H
++#define MAX_SERDES_H
++
++#include <linux/bitfield.h>
++#include <linux/types.h>
++
++#include <media/mipi-csi2.h>
++#include <media/v4l2-subdev.h>
++
++#define REG_SEQUENCE_2(reg, val) \
++	{ (reg),     ((val) >> 8) & 0xff }, \
++	{ (reg) + 1, ((val) >> 0) & 0xff }
++
++#define REG_SEQUENCE_3(reg, val) \
++	{ (reg),     ((val) >> 16) & 0xff }, \
++	{ (reg) + 1, ((val) >> 8)  & 0xff }, \
++	{ (reg) + 2, ((val) >> 0)  & 0xff }
++
++#define REG_SEQUENCE_3_LE(reg, val) \
++	{ (reg),     ((val) >> 0) & 0xff }, \
++	{ (reg) + 1, ((val) >> 8)  & 0xff }, \
++	{ (reg) + 2, ((val) >> 16)  & 0xff }
++
++#define MAX_SERDES_PHYS_MAX		4
++#define MAX_SERDES_STREAMS_NUM		4
++#define MAX_SERDES_VC_ID_NUM		4
++#define MAX_SERDES_TPG_STREAM		0
++
++#define MAX_SERDES_GRAD_INCR		4
++#define MAX_SERDES_CHECKER_COLOR_A	0x00ccfe
++#define MAX_SERDES_CHECKER_COLOR_B	0xa76a00
++#define MAX_SERDES_CHECKER_SIZE		60
++
++extern const char * const max_serdes_tpg_patterns[];
++
++enum max_serdes_gmsl_version {
++	MAX_SERDES_GMSL_MIN,
++	MAX_SERDES_GMSL_2_3GBPS = MAX_SERDES_GMSL_MIN,
++	MAX_SERDES_GMSL_2_6GBPS,
++	MAX_SERDES_GMSL_3_12GBPS,
++	MAX_SERDES_GMSL_MAX = MAX_SERDES_GMSL_3_12GBPS,
++};
++
++enum max_serdes_gmsl_mode {
++	MAX_SERDES_GMSL_PIXEL_MODE,
++	MAX_SERDES_GMSL_TUNNEL_MODE,
++};
++
++enum max_serdes_tpg_pattern {
++	MAX_SERDES_TPG_PATTERN_MIN,
++	MAX_SERDES_TPG_PATTERN_CHECKERBOARD = MAX_SERDES_TPG_PATTERN_MIN,
++	MAX_SERDES_TPG_PATTERN_GRADIENT,
++	MAX_SERDES_TPG_PATTERN_MAX = MAX_SERDES_TPG_PATTERN_GRADIENT,
++};
++
++struct max_serdes_phys_config {
++	unsigned int lanes[MAX_SERDES_PHYS_MAX];
++	unsigned int clock_lane[MAX_SERDES_PHYS_MAX];
++};
++
++struct max_serdes_phys_configs {
++	const struct max_serdes_phys_config *configs;
++	unsigned int num_configs;
++};
++
++struct max_serdes_i2c_xlate {
++	u8 src;
++	u8 dst;
++	bool en;
++};
++
++struct max_serdes_mipi_format {
++	u8 dt;
++	u8 bpp;
++};
++
++struct max_serdes_vc_remap {
++	u8 src;
++	u8 dst;
++};
++
++struct max_serdes_source {
++	struct v4l2_subdev *sd;
++	u16 pad;
++	struct fwnode_handle *ep_fwnode;
++
++	unsigned int index;
++};
++
++struct max_serdes_asc {
++	struct v4l2_async_connection base;
++	struct max_serdes_source *source;
++};
++
++struct max_serdes_tpg_entry {
++	u32 width;
++	u32 height;
++	struct v4l2_fract interval;
++	u32 code;
++	u8 dt;
++	u8 bpp;
++};
++
++#define MAX_TPG_ENTRY_640X480P60_RGB888 \
++	{ 640, 480, { 1, 60 }, MEDIA_BUS_FMT_RGB888_1X24, MIPI_CSI2_DT_RGB888, 24 }
++
++#define MAX_TPG_ENTRY_1920X1080P30_RGB888 \
++	{ 1920, 1080, { 1, 30 }, MEDIA_BUS_FMT_RGB888_1X24, MIPI_CSI2_DT_RGB888, 24 }
++
++#define MAX_TPG_ENTRY_1920X1080P60_RGB888 \
++	{ 1920, 1080, { 1, 60 }, MEDIA_BUS_FMT_RGB888_1X24, MIPI_CSI2_DT_RGB888, 24 }
++
++struct max_serdes_tpg_entries {
++	const struct max_serdes_tpg_entry *entries;
++	unsigned int num_entries;
++};
++
++struct max_serdes_tpg_timings {
++	bool gen_vs;
++	bool gen_hs;
++	bool gen_de;
++	bool vs_inv;
++	bool hs_inv;
++	bool de_inv;
++	u32 vs_dly;
++	u32 vs_high;
++	u32 vs_low;
++	u32 v2h;
++	u32 hs_high;
++	u32 hs_low;
++	u32 hs_cnt;
++	u32 v2d;
++	u32 de_high;
++	u32 de_low;
++	u32 de_cnt;
++	u32 clock;
++	u32 fps;
++};
++
++static inline struct max_serdes_asc *asc_to_max(struct v4l2_async_connection *asc)
++{
++	return container_of(asc, struct max_serdes_asc, base);
++}
++
++const char *max_serdes_gmsl_version_str(enum max_serdes_gmsl_version version);
++const char *max_serdes_gmsl_mode_str(enum max_serdes_gmsl_mode mode);
++
++const struct max_serdes_mipi_format *max_serdes_mipi_format_by_dt(u8 dt);
++
++int max_serdes_get_fd_stream_entry(struct v4l2_subdev *sd, u32 pad, u32 stream,
++				   struct v4l2_mbus_frame_desc_entry *entry);
++
++int max_serdes_get_fd_bpp(struct v4l2_mbus_frame_desc_entry *entry,
++			  unsigned int *bpp);
++int max_serdes_process_bpps(struct device *dev, u32 bpps,
++			    u32 allowed_double_bpps, unsigned int *doubled_bpp);
++
++int max_serdes_xlate_enable_disable_streams(struct max_serdes_source *sources,
++					    u32 source_sink_pad_offset,
++					    const struct v4l2_subdev_state *state,
++					    u32 pad, u64 updated_streams_mask,
++					    u32 sink_pad_start, u32 num_sink_pads,
++					    bool enable);
++
++int max_serdes_get_streams_masks(struct device *dev,
++				 const struct v4l2_subdev_state *state,
++				 u32 pad, u64 updated_streams_mask,
++				 u32 num_pads, u64 *old_streams_masks,
++				 u64 **new_streams_masks, bool enable);
++
++int max_serdes_get_tpg_timings(const struct max_serdes_tpg_entry *entry,
++			       struct max_serdes_tpg_timings *timings);
++
++int max_serdes_validate_tpg_routing(struct v4l2_subdev_krouting *routing);
++
++#endif // MAX_SERDES_H
 
 -- 
 2.53.0
