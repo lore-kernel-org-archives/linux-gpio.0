@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2161654528E;
-	Mon, 31 Aug 2026 13:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6198A4ACC9C;
+	Mon, 31 Aug 2026 13:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788183977; cv=none; b=LTZLqaQxlEZrVgKNeJOx7aii4WVYPuygkq4QCbdIi8pgdeSbIqLMHupcJbaKz6CM1CCvFtIid4TTGJmalU++HzluPj3tZiqezy0SSGvh+8of6PYqkhl5nUWQYl9uJIQk7/owNS4mkQ0hRjdXRSDlvbYiS37OU+vSuEyobAGSU68=
+	t=1788184048; cv=none; b=PP7H3zXmrRCjHezJsGDcBerhGtSSSqCq921IYWjSd6n7PbsD6WCGKy2vAaSSPF2Po8TjrAu+v4ZprQrL8+as0m0A1jMRg/GGEwWBxByOdYg9XktWL2VFaokB3w8ASyIVwersrQf7S1Q6T+r2MCNgOo36NPNLYO5IhJ8qyzHXlRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788183977; c=relaxed/simple;
-	bh=dzSTdZ849HBReuhrO41FWQwocuEhov5JM/MClRFC4NU=;
+	s=arc-20240116; t=1788184048; c=relaxed/simple;
+	bh=2agwZIKpELVYimrSMg1EHXYKksUbEOEuom01oeSACU8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CX6HnmpUwjJxx5Ey5btUVa2sgy/Y+7YhfzQ/YMZ8baSuC+yjvj+0TEmsWe0kEET51wt04qPIMH7JBYdSM7ArbdnrFXBN1jU6/PsoT38cZxv6LDJThSKSG4uIPc9TRa7mjxU7nkuNxwiapnNKpyZJo1toZdN/Y8ex4oanmpNlnAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5F7DQhs; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=byfQYE1x77ay3gFPcA4M0lo2tdEJcEfAfboG5yhRrg9SvC4DzFdp6HErkETQaAAa6vDAo+tkfMvBYaPUZPyju2HF3KWHPrETZv2ZujoY7eZ/3N7v/AdMfx5KfX4UEOijUjO4Iz9ReFLgpWSat9QhcgWVoztRW0/RQUIS0cJqSYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKLNJFlg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5F7DQhs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD0CB1F00A3F;
-	Mon, 31 Aug 2026 13:46:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKLNJFlg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 163BD1F00ADE;
+	Mon, 31 Aug 2026 13:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788183973;
-	bh=T8CoT45ycZ6x0kFHPpneDiyOZEEg+LlC41dDKdWTFYo=;
+	s=k20260515; t=1788184044;
+	bh=rt4lfTWNmwFbyQ6X9Uiwf5ch2ehd0gQDAwmtyXug9v0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=a5F7DQhs6IyKi3Ggt+9gb65BJU/RUiDB7HxGp9XcZWBxnnwu7e8rhoBg91z/iPujm
-	 9xwr75yCmmyJmr47Nhvn9B4BxlXAIdm4UNKsAbskO/0EUqjPjltglcaHsuoG+rtMBg
-	 laC/Tk4F3zLOreHoxUtWSibHTO/yBSWxppqClOL3XGxIeLkp48VvG+Ld0KebenLpGy
-	 wrw16k4MzpU0x4S+ZE3c1OFicFMh7n9vbUFLKUcevJrm5dLyAgY0fecptfDgSFBeDH
-	 m8txyFVpJlQyXh2GWBkV+G8BgjxRPTJ7XJPoXhZDbn4V9g5o25YLTQHjCGLPVkDmKn
-	 +ENpTwg7kk3IQ==
+	b=eKLNJFlg7g68MbQbV3Y70eT4KGnwd/g3wImXDb+XatQeiANBTSpKXPIq3PgACUOEx
+	 YnVJlwSRUaCZ8yXtbnnipJLm7kqIcUWZio1IP8Hx6CzrRYqIH/RnW4c3Lnvc9G4gnU
+	 pUFSuokub8KSydglQHWXvxkCc5KH+7DWsHLH98ySnwXp0jc29K0ofc8Fj6cPn5D8cR
+	 bEdTDKl3rz2NCFKuIeex7maIfgGleKzCTAm/EV3KuVWnOGuu7wMe3plmXXUiarGciu
+	 5fITUx6Ulq0hvdSDL7zHCgglbA1RPDhjxirqLVCncb05TrO7y6/hNrX6VX59JeGGpV
+	 WRhz+QVu5UNXQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	Linus Walleij <linusw@kernel.org>,
+Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Sasha Levin <sashal@kernel.org>,
-	sean.wang@kernel.org,
-	linux-mediatek@lists.infradead.org,
+	linusw@kernel.org,
+	linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18] pinctrl: mediatek: paris: bypass pinctrl GPIO layer in set GPIO direction
-Date: Mon, 31 Aug 2026 09:27:22 -0400
-Message-ID: <20260831133314.4125787-414-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-6.12] pinctrl: renesas: rzg2l: Handle RZ/V2H(P) IOLH configuration in PM cache
+Date: Mon, 31 Aug 2026 09:28:06 -0400
+Message-ID: <20260831133314.4125787-458-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
@@ -54,398 +54,334 @@ X-stable-base: Linux 6.18.48
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Chen-Yu Tsai <wenst@chromium.org>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-[ Upstream commit c87c9046c4e00d599454e033a477176c4d73ac2a ]
+[ Upstream commit d0fc9f8eb2ce55eb00dbfdc0f19c844df5aee5b8 ]
 
-pinctrl_gpio_direction_input() / pinctrl_gpio_direction_output() take
-the pinctrl mutex. This causes a gpiochip operations to need to sleep.
-Worse yet, the .can_sleep field in the gpiochip is not set. This causes
-the shared GPIO proxy to trip over, as it uses gpiod_cansleep() to check
-whether it can use a spinlock or needs a mutex. In this case, it ends
-up taking a spinlock, then calls pinctrl_gpio_direction_output(), which
-takes a mutex. This causes a huge warning.
+Include PIN_CFG_IOLH_RZV2H in the IOLH capability checks when saving
+and restoring pin configuration registers.
 
-While this class of Mediatek hardware does not have separate clear/set
-registers, the pinctrl context has a spinlock that is taken whenever
-a register read-modify-write is done. Also, once the GPIO function is
-selected / muxed in, further GPIO operations do not involve pinctrl
-operations or state. The GPIO direction and level values do not require
-toggling the pinmux or any other pin config options.
+On RZ/V2H(P), RZ/V2N, and RZ/G3E, the IOLH configuration is defined by
+the PIN_CFG_IOLH_RZV2H capability.  The previous implementation did not
+account for this, causing the IOLH registers to be skipped during PM
+save/restore.
 
-Switch to directly calling mtk_pinmux_gpio_set_direction() in the GPIO
-set direction callbacks to avoid taking the pinctrl mutex. Drop the
-.gpio_set_direction field in mtk_pmxops to signal we are no longer using
-the pinctrl GPIO layer for setting the direction.
-
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-Signed-off-by: Linus Walleij <linusw@kernel.org>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20260413182456.811543-4-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## PHASE 1: COMMIT MESSAGE FORENSICS
+## Phase 1: Commit Message Forensics
 
 ### Step 1.1: Subject line
-**Record:** `[pinctrl: mediatek: paris]` `[bypass]` — bypass the pinctrl
-GPIO layer when setting GPIO direction on MediaTek Paris pin
-controllers.
+**Record:** `[pinctrl: renesas: rzg2l]` `[Handle]` — Include RZ/V2H(P)
+IOLH capability in PM register save/restore checks.
 
-### Step 1.2: Tags
+### Step 1.2: Commit tags
 **Record:**
-- **Signed-off-by:** Chen-Yu Tsai `<wenst@chromium.org>` (author)
-- **Signed-off-by:** Linus Walleij `<linusw@kernel.org>` (pinctrl
-  maintainer)
-- No `Fixes:`, `Reported-by:`, `Tested-by:`, `Cc:
-  stable@vger.kernel.org`, or `Link:` tags
-- Notable: maintainer sign-off; no syzbot/fuzzer report
+- **Signed-off-by:** Lad Prabhakar `<prabhakar.mahadev-
+  lad.rj@bp.renesas.com>` (author)
+- **Reviewed-by:** Geert Uytterhoeven `<geert+renesas@glider.be>`
+  (Renesas/pinctrl maintainer)
+- **Link:**
+  https://patch.msgid.link/20260413182456.811543-4-prabhakar.mahadev-
+  lad.rj@bp.renesas.com
+- **Signed-off-by:** Geert Uytterhoeven (maintainer tree)
+- No Fixes:, Reported-by:, Tested-by:, Cc: stable@, or syzbot tags
+- Notable: Reviewed by subsystem maintainer; part of v2 5-patch PM
+  caching series (patch 3/5)
 
 ### Step 1.3: Body analysis
 **Record:**
-- **Bug:** `pinctrl_gpio_direction_input/output()` take
-  `pctldev->mutex`, so direction callbacks can sleep, but the Paris
-  gpiochip does not set `.can_sleep`. The shared GPIO proxy uses
-  `gpiod_cansleep()` to choose spinlock vs mutex; with `can_sleep ==
-  false` it takes a spinlock, then direction setup reaches the pinctrl
-  mutex → lockdep “sleeping in atomic context” warning.
-- **Symptom:** Large kernel warning (lockdep sleep-in-atomic).
-- **Root cause:** Redundant pinctrl-layer direction call adds a sleeping
-  mutex on a chip that should be fast/MMIO; after muxing to GPIO,
-  direction changes only need register RMW under the driver’s spinlock.
-- **Version info:** None in the message.
+- **Bug:** PM suspend/resume skips IOLH registers on RZ/V2H(P), RZ/V2N,
+  and RZ/G3E because those SoCs use `PIN_CFG_IOLH_RZV2H` instead of
+  `PIN_CFG_IOLH_A/B/C`.
+- **Symptom:** Output-impedance/drive-strength (IOLH) not saved on
+  suspend or restored on resume; pins revert to wrong electrical
+  settings after S2RAM.
+- **Root cause:** `has_iolh` capability check omits
+  `PIN_CFG_IOLH_RZV2H`.
 
 ### Step 1.4: Hidden bug fix?
-**Record:** Yes. Although framed as bypassing a layer, this is a real
-concurrency bug fix: sleeping mutex taken from a path that must be non-
-sleeping.
+**Record:** No — this is an explicit PM suspend/resume bug fix, not
+disguised cleanup.
 
 ---
 
-## PHASE 2: DIFF ANALYSIS
+## Phase 2: Diff Analysis
 
 ### Step 2.1: Inventory
 **Record:**
-- **File:** `drivers/pinctrl/mediatek/pinctrl-paris.c` only
-- **Scope:** ~8 lines changed (1 removed, 5 added, 2 modified)
-- **Functions:** `mtk_pmxops`, `mtk_gpio_direction_input()`,
-  `mtk_gpio_direction_output()`
-- **Classification:** Single-file surgical fix
+- **File:** `drivers/pinctrl/renesas/pinctrl-rzg2l.c` (+2 lines net in
+  submitted diff; full v2 patch touches 2 functions)
+- **Functions:** `rzg2l_pinctrl_pm_setup_dedicated_regs()` (shown in
+  candidate diff); v2 submission also changed
+  `rzg2l_pinctrl_pm_setup_regs()` (author later agreed to drop that hunk
+  per maintainer review)
+- **Scope:** Single-file, surgical (2-line logical change)
 
-### Step 2.2: Code flow per hunk
+### Step 2.2: Code flow
 **Record:**
-1. **`mtk_pmxops`:** Removes `.gpio_set_direction =
-   mtk_pinmux_gpio_set_direction` so the pinctrl core no longer exposes
-   this hook.
-2. **`mtk_gpio_direction_input()`:** Before:
-   `pinctrl_gpio_direction_input()` → mutex + `pinmux_gpio_direction()`
-   → `mtk_pinmux_gpio_set_direction()`. After: direct
-   `mtk_pinmux_gpio_set_direction(hw->pctrl, NULL, gpio, true)` — no
-   pinctrl mutex.
-3. **`mtk_gpio_direction_output()`:** Same pattern after
-   `mtk_gpio_set()`; direct call with `false` for output.
+- **Before:** `has_iolh` true only for `PIN_CFG_IOLH_A|B|C`; dedicated
+  pins with only `PIN_CFG_IOLH_RZV2H` skip IOLH cache read/write.
+- **After:** `PIN_CFG_IOLH_RZV2H` included; IOLH registers saved on
+  suspend and restored on resume for affected dedicated pins.
+- **Path:** System suspend/resume via `rzg2l_pinctrl_suspend_noirq()` /
+  `rzg2l_pinctrl_resume_noirq()` →
+  `rzg2l_pinctrl_pm_setup_dedicated_regs()`.
 
 ### Step 2.3: Bug mechanism
-**Record:**
-- **Category:** Synchronization / sleep-in-atomic (lockdep)
-- **Mechanism:** `pinctrl_gpio_direction()` in `core.c` does
-  `mutex_lock(&pctldev->mutex)` before calling the pinmux op. Paris
-  gpiochip has `can_sleep` unset (false) and uses `mtk_hw_set_value()` →
-  `mtk_rmw()` under `spinlock_irqsave(&pctl->lock)`. The pinctrl mutex
-  path is inappropriate for a non-sleeping gpiochip and conflicts with
-  callers that serialize with a spinlock.
+**Record:** **Logic/correctness fix** — incomplete capability bitmask
+causes PM cache to omit IOLH register save/restore for a whole class of
+pins on newer Renesas SoCs.
 
 ### Step 2.4: Fix quality
-**Record:** Obviously correct and minimal. Same underlying function
-(`mtk_pinmux_gpio_set_direction`) is invoked; only the mutex wrapper is
-removed. Low regression risk; matches the tegra stable backport already
-in this tree.
+**Record:** Obviously correct (adds the missing flag already used
+everywhere else in the driver). Minimal risk; no API, locking, or
+structural changes.
 
 ---
 
-## PHASE 3: GIT HISTORY INVESTIGATION
+## Phase 3: Git History Investigation
 
 ### Step 3.1: Blame
-**Record:** Current direction callbacks and `.gpio_set_direction` in
-`mtk_pmxops` trace to `5d324e5159d9e` in this stable tree (squashed
-history). Paris driver and the `pinctrl_gpio_direction_*` pattern are
-present throughout v6.18.x.
+**Record:** Buggy `has_iolh` lines at 3009 and 3097 trace to the PM
+caching code (blame shows `19eef1d98eeda` in this shallow stable tree).
+`PIN_CFG_IOLH_RZV2H` (line 65) is present in this tree.
 
 ### Step 3.2: Fixes: tag
-**Record:** N/A — no `Fixes:` tag.
+**Record:** N/A — no Fixes: tag.
 
 ### Step 3.3: Related file history
-**Record:** Only one history entry visible for `pinctrl-paris.c` in this
-tree. Related sibling issue exists in `pinctrl-mtk-common.c` (common-v1)
-with a separate patch series; this Paris commit is standalone.
+**Record:** Same PM series already partially backported to this tree:
+- `8d1c6b603327b` — SMT register cache (patch 1/5, same series)
+- `509d342d02fff`, `c4cfa8ee77374` — earlier IOLH/IEN/PUPD/SMT PM fixes
+This IOLH fix is **not** yet in the tree.
 
 ### Step 3.4: Author context
-**Record:** Chen-Yu Tsai (Chromium) has other MediaTek pinctrl work in-
-tree. Linus Walleij is the pinctrl maintainer and signed off upstream.
+**Record:** Lad Prabhakar is the RZ/G2L pinctrl driver author/maintainer
+contributor; Geert Uytterhoeven is Renesas maintainer and reviewed the
+series.
 
 ### Step 3.5: Dependencies
-**Record:** No prerequisites. `mtk_pinmux_gpio_set_direction()`,
-`hw->pctrl`, and `gpiochip_get_data()` all exist in this tree. Applies
-standalone.
+**Record:** Standalone — only adds a flag to an existing bitmask. Does
+not require patches 2/4/5 (SR/NOD/PUPD) to function; applies cleanly to
+current `rzg2l_pinctrl_pm_setup_dedicated_regs()` at line 3097.
 
 ---
 
-## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
+## Phase 4: Mailing List and External Research
 
 ### Step 4.1: Original discussion
-**Record:** v2 posted 2026-05-05 by Chen-Yu Tsai; thread at
-[spinics](https://www.spinics.net/lists/kernel/msg6186918.html). CC’d to
-MediaTek, GPIO, arm-kernel maintainers. v1 linked in cover letter. Linus
-Walleij replied in-thread (per index). `b4 dig -c` could not be used
-(commit not in this checkout).
+**Record:** Thread fetched via `b4 mbox` from lore (16 messages). Patch
+3/5 reviewed by Geert Uytterhoeven. Geert noted `PIN_CFG_IOLH_RZV2H` may
+only matter for dedicated pins in `pm_setup_regs`; author agreed to drop
+that hunk. Final fix targets `rzg2l_pinctrl_pm_setup_dedicated_regs()`.
 
 ### Step 4.2: Reviewers
-**Record:** To: Sean Wang, Matthias Brugger, AngeloGioacchino Del Regno,
-Linus Walleij. Maintainer sign-off from Linus Walleij.
+**Record:** Geert Uytterhoeven (maintainer), Linus Walleij CC'd on cover
+letter; linux-renesas-soc list.
 
-### Step 4.3: Bug report
-**Record:** No external bugzilla/syzbot link. Author describes
-reproduced lockdep warning on Chromebook-class MediaTek hardware.
+### Step 4.3: Bug reports
+**Record:** No external bug report or syzbot link; issue identified
+during PM caching review/fix series.
 
-### Step 4.4: Related patches
-**Record:** Companion patch for `pinctrl-mtk-common.c` (common-v1)
-exists; not required for this Paris-only fix.
+### Step 4.4: Series context
+**Record:** v2 0/5 cover letter describes 5 related PM cache fixes.
+Patch 1 (SMT) already in this 6.18.43 tree; patches 2/4/5 (SR, NOD,
+dedicated PUPD) are separate and not prerequisites for this IOLH bitmask
+fix.
 
 ### Step 4.5: Stable list
-**Record:** No explicit stable nomination in the Paris v2 post (unlike
-tegra fix `ac761e66708d5` which had `Cc: stable@vger.kernel.org`).
+**Record:** No stable@ discussion found in thread.
 
 ---
 
-## PHASE 5: CODE SEMANTIC ANALYSIS
+## Phase 5: Code Semantic Analysis
 
 ### Step 5.1: Key functions
-**Record:** `mtk_gpio_direction_input`, `mtk_gpio_direction_output`,
-`mtk_pinmux_gpio_set_direction`, `pinctrl_gpio_direction`,
-`mtk_hw_set_value`, `mtk_rmw`.
+**Record:** `rzg2l_pinctrl_pm_setup_dedicated_regs()`, called from
+`rzg2l_pinctrl_suspend_noirq()` and `rzg2l_pinctrl_resume_noirq()`.
 
 ### Step 5.2: Callers
-**Record:** Direction callbacks are reached from gpiolib
-(`gpiod_direction_input_nonotify`, `gpiod_direction_output_raw_commit` →
-`gpiochip_direction_*`). On Chromebook/MediaTek platforms these GPIOs
-are used by regulators, PMICs, USB, display, etc. Shared-GPIO consumers
-(when present) call direction while holding their lock.
+**Record:** PM suspend/resume noirq path on every system sleep for
+affected pinctrl devices.
 
 ### Step 5.3: Callees
-**Record:** Fixed path calls `mtk_pinmux_gpio_set_direction()` →
-`mtk_hw_set_value()` → `mtk_rmw()` with
-`spin_lock_irqsave(&pctl->lock)`.
+**Record:** `RZG2L_PCTRL_REG_ACCESS32()` macro for hardware IOLH/IEN
+register read (suspend) or write (resume).
 
 ### Step 5.4: Reachability
-**Record:** Reachable from userspace-driven device operations and from
-kernel drivers requesting GPIO direction changes. The problematic path
-is direction change on a non-`can_sleep` chip while a spinlock-holding
-caller (e.g. gpio-shared-proxy on newer kernels) invokes
-`gpiod_direction_*`.
+**Record:** Triggered on every S2RAM cycle on boards using
+`renesas,r9a09g047-pinctrl` (RZ/G3E), `renesas,r9a09g056-pinctrl`
+(RZ/V2H), or `renesas,r9a09g057-pinctrl` (RZ/V2HP). Dedicated pins
+include Ethernet, SD, XSPI, SCIF, etc.
 
 ### Step 5.5: Similar patterns
-**Record:** `ac761e66708d5` (“gpio: tegra: do not call pinctrl for GPIO
-direction”) is already in this v6.18.43 tree — same bug class,
-explicitly backported to stable with `Cc: stable@vger.kernel.org`.
-`pinctrl-mtk-common.c` and `pinctrl-moore.c` still use
-`pinctrl_gpio_direction_*` but are out of scope for this commit.
+**Record:** Same `has_iolh` bitmask omission exists at line 3009 in
+`rzg2l_pinctrl_pm_setup_regs()` for GPIO port pins using
+`RZV2H_MPXED_PIN_FUNCS` (which includes `PIN_CFG_IOLH_RZV2H`). This
+commit (per review) does not fix that path; dedicated-pin path is the
+confirmed target.
 
 ---
 
-## PHASE 6: CROSS-REFERENCE AGAINST LOCAL TREE (v6.18.43)
+## Phase 6: Cross-Reference Against Local Tree (6.18.43)
 
 ### Step 6.1: Buggy code present?
-**Record:** **Yes.** `git describe HEAD` → `v6.18.43`; `Makefile` →
-6.18.43. Current code at lines 889 and 901 still calls
-`pinctrl_gpio_direction_input/output()`. `.gpio_set_direction` is set in
-`mtk_pmxops` at line 774. `can_sleep` is not set in
-`mtk_build_gpiochip()`.
+**Record:** **Yes.** Line 3097 in
+`rzg2l_pinctrl_pm_setup_dedicated_regs()`:
+```3097:3097:drivers/pinctrl/renesas/pinctrl-rzg2l.c
+                has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B |
+PIN_CFG_IOLH_C));
+```
+`PIN_CFG_IOLH_RZV2H` is defined (line 65) and used extensively in
+`rzv2h_dedicated_pins` and `rzg3e_dedicated_pins` (e.g., lines 2233+,
+2370+). Affected SoC compatibles are registered (lines 3470–3479).
 
 ### Step 6.2: Backport complications
-**Record:** Clean apply expected — small, localized change; no
-structural conflicts observed.
+**Record:** Clean apply — single-line change at line 3097. No SR/NOD
+infrastructure required (those are separate series patches not in this
+tree).
 
 ### Step 6.3: Related fixes already present?
-**Record:** Tegra equivalent fix `ac761e66708d5` is in HEAD. This Paris
-fix is **not** yet applied. No duplicate fix found.
-
-**Important nuance:** `gpio-shared-proxy` was merged in **6.19**, not
-6.18. It is **not** present in this v6.18.43 tree (`grep` found no
-`GPIO_SHARED`, `gpio-shared-proxy`, or `gpio_shared_proxy`). The
-commit’s primary trigger is therefore not available in 6.18.43 today,
-but the underlying mutex-in-non-sleeping-callback bug still exists and
-matches the tegra stable backport rationale.
+**Record:** SMT PM cache fix from same series (`8d1c6b603327b`) is
+already in tree. This IOLH fix is the logical next piece.
 
 ---
 
-## PHASE 7: SUBSYSTEM CONTEXT
+## Phase 7: Subsystem Context
 
-### Step 7.1: Subsystem and criticality
-**Record:** `drivers/pinctrl/mediatek/` — **IMPORTANT** (ARM64 SoC pin
-control; affects Chromebooks, tablets, embedded MediaTek Paris
-platforms: MT8186, MT8188, MT8192, MT8195, MT8196, etc.).
+### Step 7.1: Subsystem criticality
+**Record:** `drivers/pinctrl/renesas/` — **PERIPHERAL** (platform-
+specific), but suspend/resume correctness is critical for embedded
+products using these SoCs.
 
 ### Step 7.2: Activity
-**Record:** Active subsystem with many Paris-based SoC drivers in
-`Kconfig`.
+**Record:** Active PM fix series; multiple related backports already
+landed in 6.18.y.
 
 ---
 
-## PHASE 8: IMPACT AND RISK
+## Phase 8: Impact and Risk Assessment
 
 ### Step 8.1: Who is affected
-**Record:** Users of MediaTek Paris pinctrl/GPIO on affected SoCs
-(CONFIG_PINCTRL_MTK_PARIS and selected SoC drivers). Not universal, but
-significant for ChromeOS/Chromebook and embedded MTK platforms.
+**Record:** Users of RZ/G3E (r9a09g047), RZ/V2H (r9a09g056), RZ/V2HP
+(r9a09g057) who use system suspend/resume. Driver-specific, but
+dedicated pins cover critical peripherals.
 
 ### Step 8.2: Trigger conditions
-**Record:** GPIO direction change on a Paris pin after it is muxed to
-GPIO, when called from a context expecting non-sleeping behavior
-(notably shared-GPIO proxy on 6.19+; tegra stable commit documents the
-same class on 6.18). Normal process-context `gpiod_direction_*` works
-but still incorrectly takes a sleeping mutex on a chip advertised as
-non-sleeping.
+**Record:** Every S2RAM suspend/resume cycle on affected hardware.
+Requires `CONFIG_PINCTRL` + matching DT compatible. Not userspace-
+triggerable directly, but normal laptop/embedded suspend path.
 
-### Step 8.3: Failure mode severity
-**Record:** Lockdep “sleeping in atomic context” / potential real
-deadlock or oops under contention. **Severity: HIGH** (not data
-corruption, but serious stability warning and potential hang).
+### Step 8.3: Failure severity
+**Record:** Wrong pin drive strength/impedance after resume → peripheral
+malfunction (Ethernet, SD, XSPI flash, UART), potential bus errors or
+silent data corruption on high-speed interfaces. **Severity: MEDIUM-
+HIGH** (hardware misconfiguration, not kernel oops).
 
 ### Step 8.4: Risk-benefit
-**Record:**
-- **Benefit:** HIGH for affected platforms; aligns with accepted tegra
-  stable fix in the same tree.
-- **Risk:** VERY LOW — 8-line change, same hardware operation, removes
-  redundant mutex.
-- **Ratio:** Strong benefit, minimal risk.
+**Record:** **Benefit: HIGH** for affected embedded users doing
+suspend/resume. **Risk: VERY LOW** (2-line bitmask fix, maintainer-
+reviewed). Ratio strongly favors backport.
 
 ---
 
-## PHASE 9: FINAL SYNTHESIS
+## Phase 9: Final Synthesis
 
 ### Step 9.1: Evidence summary
 
 **FOR backport:**
-- Real concurrency bug (sleeping mutex in non-sleeping gpiochip
-  callback)
-- Small, surgical, maintainer-reviewed fix
-- Buggy code confirmed present in v6.18.43
-- Same pattern as tegra fix already backported to this tree
-  (`ac761e66708d5`)
-- Affects widely deployed MediaTek Paris SoCs
-- Direct call preserves semantics while removing incorrect mutex
+- Real suspend/resume bug on shipping Renesas SoCs in this tree
+- Maintainer-reviewed, obviously correct, minimal diff
+- Same PM series already partially backported (SMT fix in 6.18.43)
+- Affects critical dedicated pins (network, storage, flash buses)
+- Buggy code and `PIN_CFG_IOLH_RZV2H` both present in 6.18.43
 
 **AGAINST backport:**
-- `gpio-shared-proxy` (the described trigger) is not in v6.18.43 (landed
-  in 6.19)
-- No `Cc: stable` tag on the Paris patch
-- Common-v1 (`pinctrl-mtk-common.c`) has the same pattern but is a
-  separate commit
+- Narrow hardware scope (3 SoC compatibles)
+- No crash/oops — functional/hardware issue after resume
+- GPIO port-pin IOLH path (line 3009) may remain unfixed per maintainer
+  review (out of scope for this commit)
 
-**Unresolved:**
-- Exact upstream commit SHA not in this checkout (candidate evaluation
-  only)
-- Could not fetch full Linus Walleij review reply (wrong spinics message
-  ID)
+**Unresolved:** Whether port-pin IOLH via
+`rzg2l_pinctrl_pm_setup_regs()` also needs the same fix (Geert/author
+agreed to omit; separate issue).
 
 ### Step 9.2: Stable rules checklist
-1. Obviously correct and tested? **PASS** — same function, mutex
-   removed; maintainer SOB; author reproduced warning.
-2. Fixes a real bug? **PASS** — lockdep sleep-in-atomic on direction
-   change.
-3. Important issue? **PASS** — stability / lockdep, HIGH severity.
-4. Small and contained? **PASS** — 1 file, ~8 lines.
-5. No new features/APIs? **PASS** — behavior correction only.
-6. Can apply to local tree? **PASS** — code exists, no dependencies.
+1. Obviously correct and tested? **PASS** — bitmask addition; Reviewed-
+   by maintainer; series patch 1 tested by multiple Tested-by on SMT
+   patch
+2. Fixes real bug affecting users? **PASS** — IOLH not saved/restored on
+   suspend/resume
+3. Important issue? **PASS** — suspend/resume hardware misconfiguration
+   on critical pins (MEDIUM-HIGH)
+4. Small and contained? **PASS** — 2 lines, one function
+5. No new features or APIs? **PASS**
+6. Can apply to local tree? **PASS** — applies cleanly at line 3097
 
 ### Step 9.3: Exception category
-**Record:** None (not device ID, quirk, DT, build, or docs). Standard
-driver bug fix.
+**Record:** N/A — standard bug fix, not device-ID/quirk/build fix.
 
 ### Step 9.4: Decision rationale
 
-This tree (v6.18.43) still has Paris GPIO direction callbacks routing
-through `pinctrl_gpio_direction_*`, which takes the pinctrl mutex on a
-gpiochip that does not set `can_sleep` and whose register access uses a
-spinlock. That is incorrect and matches the tegra direction fix already
-accepted into this same stable series. Even though `gpio-shared-proxy`
-is not in 6.18, the underlying bug is present and the fix is minimal,
-obviously correct, and low-risk. Chromebook/MediaTek users benefit, and
-the change is consistent with stable maintainer practice for this bug
-class.
+For **Linux 6.18.43**, this commit should be backported. The tree
+already has RZ/V2H and RZ/G3E pinctrl support with extensive
+`PIN_CFG_IOLH_RZV2H` dedicated-pin tables and active PM suspend/resume,
+but the PM cache path omits that capability flag. After S2RAM, dedicated
+function pins (Ethernet, SD, XSPI, etc.) lose their output-impedance
+settings. The fix is trivial, maintainer-reviewed, and consistent with
+the SMT PM cache fix already in this stable tree.
 
 ---
 
 ## Verification
 
-- [Phase 1] Parsed subject, tags, body; no Fixes/Reported-by/Cc:stable
-- [Phase 2] Diff: 1 file, `mtk_gpio_direction_*` + `mtk_pmxops`; mutex-
-  bypass fix verified in `core.c` and `pinctrl-paris.c`
-- [Phase 3] `git blame` lines 887–902, 769–776 → present in v6.18.43; no
-  Fixes tag; standalone (no deps)
-- [Phase 4] WebFetch spinics v2 thread; b4 dig requires commit in tree
-  (N/A); gpio-shared-proxy confirmed 6.19+ via web search
-- [Phase 5] Traced `pinctrl_gpio_direction()` → `mutex_lock`;
-  `mtk_hw_set_value()` → `spin_lock_irqsave`
-- [Phase 6] `git describe HEAD` → v6.18.43; buggy code at lines 774,
-  889, 901; `hw->pctrl` in `pinctrl-mtk-common-v2.h:292`; tegra fix
-  `ac761e66708d5` in HEAD
-- [Phase 6] `grep` — no `gpio-shared-proxy` / `GPIO_SHARED` in tree
-- [Phase 7] Paris used by multiple MTK SoCs in `Kconfig`
-- [Phase 8] Failure mode: lockdep sleep-in-atomic, HIGH severity
-- [UNVERIFIED] Full text of Linus Walleij review reply not retrieved
-
-**YES**Those three background `git log -S "gpio_shared_proxy"` searches
-didn’t finish (they timed out or were killed on this large tree), so
-they didn’t add anything new.
-
-That doesn’t change the conclusion: `gpio_shared_proxy` / `gpio-shared-
-proxy` isn’t in this v6.18.43 checkout — that was already confirmed with
-targeted `grep` and the 6.19 merge history. The Paris pinctrl fix should
-still be backported to this tree.
+- **[Phase 1]** Parsed subject, tags, body from commit message and local
+  mbx
+- **[Phase 2]** Read diff and current code at lines 3009, 3097,
+  3179–3243
+- **[Phase 3]** `git describe HEAD` → v6.18.43; `git log --oneline -20
+  -- drivers/pinctrl/renesas/pinctrl-rzg2l.c`; `git blame` on lines
+  3009/3097; confirmed `8d1c6b603327b` (SMT fix from same series) in
+  tree
+- **[Phase 4]** `b4 mbox` fetched 16-message lore thread; Geert review
+  noted dedicated-pin scope; no stable@ nomination found
+- **[Phase 5]** Traced call chain:
+  `rzg2l_pinctrl_suspend_noirq`/`resume_noirq` →
+  `rzg2l_pinctrl_pm_setup_dedicated_regs`; verified
+  `rzv2h_dedicated_pins`/`rzg3e_dedicated_pins` use
+  `PIN_CFG_IOLH_RZV2H`; verified SoC compatibles at lines 3470–3479
+- **[Phase 6]** Confirmed buggy line 3097 present; `PIN_CFG_IOLH_RZV2H`
+  defined at line 65; fix not yet applied; clean apply expected
+- **[Phase 7]** Identified Renesas pinctrl driver subsystem
+- **[Phase 8]** Assessed suspend/resume trigger and MEDIUM-HIGH hardware
+  impact
 
 **YES**
 
- drivers/pinctrl/mediatek/pinctrl-paris.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
-index 6bf37d8085fae..23f04b24fd65e 100644
---- a/drivers/pinctrl/mediatek/pinctrl-paris.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
-@@ -771,7 +771,6 @@ static const struct pinmux_ops mtk_pmxops = {
- 	.get_function_name	= mtk_pmx_get_func_name,
- 	.get_function_groups	= mtk_pmx_get_func_groups,
- 	.set_mux		= mtk_pmx_set_mux,
--	.gpio_set_direction	= mtk_pinmux_gpio_set_direction,
- 	.gpio_request_enable	= mtk_pinmux_gpio_request_enable,
- };
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index e8cc83029db33..ab8d64a14dd0a 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -3094,7 +3094,8 @@ static void rzg2l_pinctrl_pm_setup_dedicated_regs(struct rzg2l_pinctrl *pctrl, b
+ 		}
  
-@@ -886,19 +885,22 @@ static int mtk_gpio_set(struct gpio_chip *chip, unsigned int gpio, int value)
+ 		/* And apply them in a single shot. */
+-		has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B | PIN_CFG_IOLH_C));
++		has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B |
++				      PIN_CFG_IOLH_C | PIN_CFG_IOLH_RZV2H));
+ 		has_ien = !!(caps & PIN_CFG_IEN);
+ 		pincnt = hweight8(FIELD_GET(RZG2L_SINGLE_PIN_BITS_MASK, cfg));
  
- static int mtk_gpio_direction_input(struct gpio_chip *chip, unsigned int gpio)
- {
--	return pinctrl_gpio_direction_input(chip, gpio);
-+	struct mtk_pinctrl *hw = gpiochip_get_data(chip);
-+
-+	return mtk_pinmux_gpio_set_direction(hw->pctrl, NULL, gpio, true);
- }
- 
- static int mtk_gpio_direction_output(struct gpio_chip *chip, unsigned int gpio,
- 				     int value)
- {
-+	struct mtk_pinctrl *hw = gpiochip_get_data(chip);
- 	int ret;
- 
- 	ret = mtk_gpio_set(chip, gpio, value);
- 	if (ret)
- 		return ret;
- 
--	return pinctrl_gpio_direction_output(chip, gpio);
-+	return mtk_pinmux_gpio_set_direction(hw->pctrl, NULL, gpio, false);
- }
- 
- static int mtk_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
 -- 
 2.53.0
 
