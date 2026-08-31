@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDFBA418A4E;
-	Mon, 31 Aug 2026 13:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD3E41A4E6;
+	Mon, 31 Aug 2026 13:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788182498; cv=none; b=YNANf75vpdNA7ylI7sq6iVf+CoLDp4wnFZhjIXwj52Vg55Eane/E7SuWyJezooH/fGtDMru7kuW6DuxF5qhOruFMckCOJB+y0XTH6/6fTcowI9L/sNdnsnvw2atfPq4IqfrbThWOGRT1O3VIjMHENSZHkHhM24JQHVMMOzLTFHo=
+	t=1788182499; cv=none; b=sswIytkG7+RkJ9qMvX9e2Mvye4j6LwVgfWxlaaUPGUjFq1pPkgngm1UXEPry+WShShQulB+DnnwLQm9L1zJXMZXTlTWisPytRHhTlMVqTFxr5mTiDcIS1jtDXgCivT3u2HRH0Acrfnow2FL2tTUFWAK2ar3lFv1T5ScTcDaVues=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788182498; c=relaxed/simple;
-	bh=m/Lw3D9Sn7b/iEdL6eTGT3K2tR/KZoA6l9gCS1mqNBI=;
+	s=arc-20240116; t=1788182499; c=relaxed/simple;
+	bh=SLNI/XAGMKZfggxtvBJlDIgU5ZuLWdwi+/5L7Fr6k9o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Sefewgx9/rd8TTb/ajMAJIitGZTv7cQfRfl19wu7iq/ZXJGNsEp4YxYPScQBA0Og70A0NmLMLtYH4OJ0gx4ybasWSKL6fhXueqhepg3dGtpbh8We1huI3/euLijdbhaPoowfhaRgrY6ucIS3NqFiVoqAL16mgPSPrc51KyXlVgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gwXjAklc; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=IxHrTTBWBBHfyhgjuHhnOwhxlE+mD7qk7TFtVg8dUsUrjS+JFkHfQVa13KI5NB+eAG4cgB/GguXLUhkygn55nZmX3Z0qYWbrQzRAbsEWNPq0GIJSuQ68cn3CPMQiuuT5aKsBuUQqhCgYrPVL/9E/n4NkBeiXkkWYCOlUNxixZHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NUH+kCXF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gwXjAklc"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9962AC2BCFC;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NUH+kCXF"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C41F4C2BD01;
 	Mon, 31 Aug 2026 13:21:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1788182498;
-	bh=m/Lw3D9Sn7b/iEdL6eTGT3K2tR/KZoA6l9gCS1mqNBI=;
+	bh=SLNI/XAGMKZfggxtvBJlDIgU5ZuLWdwi+/5L7Fr6k9o=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=gwXjAklc08e5FUupdsN0UPN75sJF2QUwglVSfXOG+es0itDWY85BKFuxbOi7DFuX7
-	 xd3US5SoUWPPCk5u2UJX68Z8a05IbNgAkg6COwHyEDor5AvwOOkk1wmQmydJhsP1QJ
-	 l6Yu3ypcAspxxi6r9c0VLMRccOIFP2A+FCGfFDqk4nmcp8oYSIfI8/zH46XF7Imc+B
-	 Wr2G/Rpj5oKFgPyRQxzS6GO0whawAfRSSkaUJJnhqrxLIUy9T4XrIaeKxD4vR283BE
-	 r7ZFjyoutdWk2Q06kFuhB7IuFIl5QJo+DAGKMOcwrbv+8GhYTT5QeT0ZqSLsazmRzp
-	 ih6DXCZSxQ4Cg==
+	b=NUH+kCXFrebQiQ4YWV1H4hithLUxY1FU1Mps2yY0jkrO4lpKk+va+FkLGdirpc/Vf
+	 WvAZMwx00rUkLPnZk4lBN+HWW+42itNcepZxCe//a2b7v4zgeS24Wmq4LkUJQk8QBE
+	 cbQda7FhkAPAfChtc977WFEwoU0aPN+DrBKaDopX4UREN+v50nc8i5x/zPW+sVuZ2Z
+	 Sv8Nen+FRk8qeGo38NQr8BoEUgrcmnJB2PO+LBZjxlJSdm0T66jHA6HdtR8omAnTjw
+	 hGm/xDQ6aFoMDPHG10O1JZvZQHmXYaxfLdO9vc04NDIq+OD3Jr2uyKrwajGJoZgGuZ
+	 g9poo+733qryg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B21EC624C6;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B22F6C61DE2;
 	Mon, 31 Aug 2026 13:21:38 +0000 (UTC)
 From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Mon, 31 Aug 2026 16:21:21 +0300
-Subject: [PATCH v16 02/22] dt-bindings: media: i2c: max96717: add support
- for I2C ATR
+Date: Mon, 31 Aug 2026 16:21:24 +0300
+Subject: [PATCH v16 05/22] dt-bindings: media: i2c: max96717: add support
+ for MAX96793
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260831-gmsl2-3_serdes-v16-2-4fa6e08bb514@analog.com>
+Message-Id: <20260831-gmsl2-3_serdes-v16-5-4fa6e08bb514@analog.com>
 References: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
 In-Reply-To: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
 To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
@@ -61,11 +61,11 @@ Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
  Andrian Suciu <Adrian.Suciu@analog.com>, 
  Cosmin Tanislav <demonsingur@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788182495; l=1814;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1788182495; l=1028;
  i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=OiYJqgg6XnogVXqu3cCeY60g1Qzx0eB+PgiVHCOJen4=;
- b=PlzhOi1fZfzGjan1M/xLpEOieIWyuJT5/7ju2z9GVL+5pbx7jb/wAzbspbwqmDS4B+ZUi1pZP
- nhcqNyRN5BnCkPR7asOxYwvaOxCOMv2Wcub9tSjmNm6KJibHyufuAdG
+ bh=5T+tpCCmLzMZaxPkOt0UaUd/8TUY4jmophGIYdhTq/w=;
+ b=MSfTmAQKXURvud3KTgdLq60Pxu2OyY9mGRIbZg8RsNuR56Ddkqss9XdWUioJnqhs7Padx5Sgb
+ z7yt8i68RZeBuXSxAAVe3hjq8WxegSlFtVPBquNcFYFg0hq+t7ztIbK
 X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
  pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
 X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
@@ -75,74 +75,38 @@ Reply-To: dumitru.ceclan@analog.com
 
 From: Cosmin Tanislav <demonsingur@gmail.com>
 
-MAX96717 is capable of address translation for the connected I2C slaves.
+MAX96793 is a newer variant of the MAX96717 which also supports GMSL3
+links.
 
-Add support for I2C ATR while keeping I2C gate for compatibility to
-support this usecase.
+Document this compatibility.
 
 Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../bindings/media/i2c/maxim,max96717.yaml         | 39 ++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-index d1e8ba6e368e..976f6dd2c164 100644
+index 2159fd85a9bf..eea0f974874f 100644
 --- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
 +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-@@ -91,6 +91,30 @@ properties:
-       incoming GMSL2 link. Therefore, it supports an i2c-gate
-       subnode to configure a sensor.
+@@ -29,6 +29,8 @@ description:
  
-+  i2c-alias-pool:
-+    maxItems: 2
-+
-+  i2c-atr:
-+    type: object
-+    additionalProperties: false
-+
-+    properties:
-+      '#address-cells':
-+        const: 1
-+
-+      '#size-cells':
-+        const: 0
-+
-+    patternProperties:
-+      '^i2c@[01]$':
-+        $ref: /schemas/i2c/i2c-controller.yaml#
-+        unevaluatedProperties: false
-+        properties:
-+          reg:
-+            items:
-+              minimum: 0
-+              maximum: 1
-+
- required:
-   - compatible
-   - reg
-@@ -98,6 +122,21 @@ required:
+   MAX9295A only supports pixel mode.
  
- additionalProperties: false
++  MAX96793 also supports GMSL3 mode.
++
+ properties:
+   compatible:
+     oneOf:
+@@ -38,6 +40,7 @@ properties:
+       - items:
+           - enum:
+               - maxim,max96717
++              - maxim,max96793
+           - const: maxim,max96717f
  
-+allOf:
-+  - $ref: /schemas/i2c/i2c-atr.yaml#
-+
-+  - anyOf:
-+      - oneOf:
-+          - required: [i2c-atr]
-+          - required: [i2c-gate]
-+
-+      - not:
-+          required: [i2c-atr, i2c-gate]
-+
-+dependentRequired:
-+  i2c-atr: [i2c-alias-pool]
-+  i2c-alias-pool: [i2c-atr]
-+
- examples:
-   - |
-     #include <dt-bindings/gpio/gpio.h>
+   '#gpio-cells':
 
 -- 
 2.53.0
