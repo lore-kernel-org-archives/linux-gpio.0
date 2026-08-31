@@ -1,1472 +1,562 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F7942049F;
-	Mon, 31 Aug 2026 13:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668564756A3;
+	Mon, 31 Aug 2026 13:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788182500; cv=none; b=LXLi9vHYGigf/R8i8eSFhwT2Tkbya2zI8tyycU4d/f+5jKAruKyP2q3e80KIsxSBXipjD+MsORa+LpEKIW/HhEeStuFIz7kuoyAIZQm1Fvf7+YA9/E0hE+OX35PocCzwEV3mzt5ADPRAKjYmYiKK5cRgJrX+xY3R5AEstPWr9u8=
+	t=1788183332; cv=none; b=EXrr8VGIgzQumJFuliSMp3QsBhQmvk0CacvDGKnPO8jxpxogFX+j/3diXHxwRdkCf6c6CTXoekG88pXgu5D3qGqdsUhcx5IJoH+kmi21q9YkECll2/EBQaOTljL2cIrrNcEOMtxG6oqo7IFj5YhjjmSpOiCVe0eBJQOm7/UqvFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788182500; c=relaxed/simple;
-	bh=mgOJDUUdU8+kirnq0Dth6GR5q6BOsYIqA2Jf27QxMnI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LdqQTRNEXbBtzK9Sa9CnsuZoEPswlt/k9ajqqFB2sJX9BzefChRsYiPoiCIpFn+fSLshoFtebA3BWj26M+85NJnJ4208f02k8irSPIQjx/aOji/JHRymshNnYVdYTAh6p89Nf/2dDDujztmv8AAKRjQGYcOyxd5BR5BCaghfIgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLQbJUxm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1788183332; c=relaxed/simple;
+	bh=4jWO0gVqanCuKitixeoY+1Y+zsxTA4akxbRjF4OdSNU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Dw0tMMoOLQOADQupHkCD9g4CUPU/5m/XY3TbOUof7beCB9qXq2+Xe09oixjg7YXDjx4W1QolabdmfmHNRE39wLUr4oLeRSC+BsC0tVA+cb7OPokUkQpoaHj/SJI5VZxKW/A4ED8JleW0ou3nFCDsuHOQ41k1oeKYJPyeRegixEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDpcoIQw; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLQbJUxm"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E855DC2BCFA;
-	Mon, 31 Aug 2026 13:21:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1788182500;
-	bh=mgOJDUUdU8+kirnq0Dth6GR5q6BOsYIqA2Jf27QxMnI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ZLQbJUxmUo9g1ajI2ZOOSjuP2TuspO4io4ZhA4w8XlTUADUIC3euBjJGsKXxLQZM8
-	 tUjflvpoHSzIF3stdCGIQW4NeWe+Y1p6BFXz1011rzcj5m8NP65RIGvtTtvEY7cj5O
-	 Fw5bpplrRzBiPJE7DlbSgYqZABbwYziHMQtb44+J2KaWB+x0Eqazs7fT6Zk0p71Gj/
-	 7i9x7fOyEnzIgH0JZPO8HOp/6GKsOb4eozyhbG4/6xpf43/UvRZ1pue6NZoElGm6w2
-	 pVi+ANR0WpNzZaOreEKvyWINzSi99LTz6ezejvwDBUQhdcVmGNe4/SxHSaQSXJmx0P
-	 oMqPP9238TTig==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D78DAC624A4;
-	Mon, 31 Aug 2026 13:21:39 +0000 (UTC)
-From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Mon, 31 Aug 2026 16:21:39 +0300
-Subject: [PATCH v16 20/22] media: i2c: maxim-serdes: add MAX96724 driver
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDpcoIQw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 278C91F00A3D;
+	Mon, 31 Aug 2026 13:35:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788183329;
+	bh=JgXObi8OpqL/D540kCQrZs5CkqGGBw3tGTT+Bw/lQEY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=nDpcoIQw4Fp33mpvzhQiS2qwFax/e1pqs5Nvj66xb9N5R8ytW+1Y3aQMTITNi96Cl
+	 sDFnbRYgtNXWpw7rw3n8sen1NDVf3ZUjRFc96e0Z7Hk/UL6AXHebPRzVtWv7FcxSGn
+	 fRWc6Gk7AJoMJSTxWiIdd8JhJjwNC0mRHBkgRlY+wQssYnnyuvL0dFTZFhEACGyptI
+	 rMAq5q7s/ysgFsl2B+fi0otWb+0ZfcwLKF+HshdKMxzfoa+Vv3FihZ/ISt4ZGW4PQ2
+	 4kHK3cMa8sdn6z+rDcHa2alstIiIyVM08lcHic/hpgb4mBWbm5hdQT+wqW30JUJVik
+	 TXtDYWYPCPBNQ==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sasha Levin <sashal@kernel.org>,
+	linusw@kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.18] pinctrl: renesas: rzg2l: Add SR register cache for PM suspend/resume
+Date: Mon, 31 Aug 2026 09:21:51 -0400
+Message-ID: <20260831133314.4125787-83-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
+References: <20260831133314.4125787-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.18.48
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260831-gmsl2-3_serdes-v16-20-4fa6e08bb514@analog.com>
-References: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
-In-Reply-To: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Julien Massot <julien.massot@collabora.com>, Rob Herring <robh@kernel.org>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Dumitru Ceclan <dumitru.ceclan@analog.com>, mitrutzceclan@gmail.com, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-staging@lists.linux.dev, 
- linux-gpio@vger.kernel.org, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
- Martin Hecht <Martin.Hecht@avnet.eu>, 
- Andrian Suciu <Adrian.Suciu@analog.com>, 
- Cosmin Tanislav <demonsingur@gmail.com>, Cory Keitz <ckeitz@amazon.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788182495; l=44372;
- i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=gwPSyRCdHZmrnmA8YQpDjj2efCJ5TBhwO9Hm/5fUkZI=;
- b=bxe9XiYuwm5mfiq5t9xNiBQNZVsMHQhl4q7/A3wMxfxcPqm1c9lRM9tnSzW1Wo+EOMwxn9HRo
- VGYNAuGWW+KAVitiEzcwuNFKLA3GxNjrlbTP1l7LLjjuFCvsrSw6/l7
-X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
- pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
-X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
- with auth_id=140
-X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-Reply-To: dumitru.ceclan@analog.com
 
-From: Cosmin Tanislav <demonsingur@gmail.com>
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add a new MAX96724 driver that also supports MAX96712, MAX96724F
-and MAX96724R.
+[ Upstream commit 29df31ae3e8a0152dd8e8c2376816aad2f233473 ]
 
-Integrate it with the common deserializer framework, while keeping
-compatibility with existing usecases, avoiding code duplication, and
-also enabling more features across all chips.
+Include the SR (Slew Rate) register in the PM suspend/resume register
+cache.
 
-Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Cory Keitz <ckeitz@amazon.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://patch.msgid.link/20260413182456.811543-3-prabhakar.mahadev-lad.rj@bp.renesas.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/maxim-serdes/Kconfig    |   13 +
- drivers/media/i2c/maxim-serdes/Makefile   |    1 +
- drivers/media/i2c/maxim-serdes/max96724.c | 1339 +++++++++++++++++++++++++++++
- 3 files changed, 1353 insertions(+)
 
-diff --git a/drivers/media/i2c/maxim-serdes/Kconfig b/drivers/media/i2c/maxim-serdes/Kconfig
-index c811790c09b9..9d3621ae8d90 100644
---- a/drivers/media/i2c/maxim-serdes/Kconfig
-+++ b/drivers/media/i2c/maxim-serdes/Kconfig
-@@ -34,3 +34,16 @@ config VIDEO_MAX96717
+LLM Generated explanations, may be completely bogus:
+
+# Stable Backport Analysis: pinctrl: renesas: rzg2l: Add SR register
+cache for PM suspend/resume
+
+**Local tree:** `v6.18.43` / `6.18.43`
+
+---
+
+## PHASE 1: COMMIT MESSAGE FORENSICS
+
+### Step 1.1: Parse the subject line
+**Record:** `[pinctrl: renesas: rzg2l]` `[add]` — Include the SR (Slew
+Rate) register in the PM suspend/resume register cache.
+
+### Step 1.2: Parse all commit message tags
+**Record:**
+- **Signed-off-by:** Lad Prabhakar `<prabhakar.mahadev-
+  lad.rj@bp.renesas.com>` (author)
+- **Reviewed-by:** Geert Uytterhoeven `<geert+renesas@glider.be>`
+  (Renesas subsystem maintainer)
+- **Link:**
+  https://patch.msgid.link/20260413182456.811543-3-prabhakar.mahadev-
+  lad.rj@bp.renesas.com
+- **Signed-off-by:** Geert Uytterhoeven (maintainer tree SOB)
+- No Fixes:, Reported-by:, Tested-by:, Cc: stable, or syzbot tags on
+  this individual commit
+- Notable: Part of v2 2/5 series; patch 1/5 (SMT fix) in the same series
+  has extensive Tested-by lines from CIP and embedded testers
+
+### Step 1.3: Analyze commit body text
+**Record:**
+- **Bug described:** SR registers were omitted from the PM
+  suspend/resume register cache.
+- **Symptom/failure mode:** After suspend-to-RAM and resume, slew-rate
+  hardware settings are not saved/restored. Pins keep whatever SR values
+  the hardware has after resume, not the values configured before
+  suspend.
+- **Version info:** None in commit message.
+- **Root cause:** Incomplete PM register caching — SR was never added
+  when suspend/resume support was built out, unlike IOLH, IEN, PUPD, and
+  SMT.
+
+### Step 1.4: Detect hidden bug fixes
+**Record:** Yes — despite the "Add" wording, this completes an existing
+suspend/resume implementation. It is the same class of bug as
+`8d1c6b603327b` ("Fix SMT register cache handling"), which is already in
+this tree. The cover letter explicitly frames the series as fixing PM
+register caching issues.
+
+---
+
+## PHASE 2: DIFF ANALYSIS
+
+### Step 2.1: Inventory the changes
+**Record:**
+- **File:** `drivers/pinctrl/renesas/pinctrl-rzg2l.c` — ~35 insertions,
+  3 deletions
+- **Functions modified:** `rzg2l_pinctrl_reg_cache_alloc()`,
+  `rzg2l_pinctrl_pm_setup_regs()`,
+  `rzg2l_pinctrl_pm_setup_dedicated_regs()`
+- **Struct modified:** `rzg2l_pinctrl_reg_cache` — adds `u32 *sr[2]`
+- **Scope:** Single-file, surgical fix mirroring existing SMT/IEN/IOLH
+  patterns
+
+### Step 2.2: Code flow change per hunk
+**Record:**
+1. **Struct/cache alloc:** Adds `sr[2]` banked arrays for both main and
+   dedicated pin caches, matching SMT layout.
+2. **`rzg2l_pinctrl_pm_setup_regs()`:** On suspend, reads SR register(s)
+   into cache; on resume, writes them back. Uses `has_sr = !!(caps &
+   PIN_CFG_SR)` and handles split 32-bit banks when `pincnt >= 4`.
+3. **`rzg2l_pinctrl_pm_setup_dedicated_regs()`:** Same SR save/restore
+   for dedicated pins.
+
+**Before → After:** SR registers were never touched during PM
+transitions → SR is saved on suspend and restored on resume, consistent
+with SMT/IEN/IOLH/PUPD.
+
+### Step 2.3: Bug mechanism
+**Record:**
+- **Category:** Logic/correctness — incomplete hardware state
+  save/restore on suspend/resume path
+- **Mechanism:** `rzg2l_pinctrl_suspend_noirq()` calls
+  `rzg2l_pinctrl_pm_setup_regs(pctrl, true)` and resume calls it with
+  `false`. SR-capable pins (many SD, Ethernet, QSPI, UART pins via
+  `PIN_CFG_SR`) lose their slew-rate configuration across S2RAM cycles.
+
+### Step 2.4: Fix quality assessment
+**Record:**
+- **Quality:** High — follows the exact established pattern used for SMT
+  (including dual-bank handling for ports with ≥4 pins).
+- **Regression risk:** Very low — only adds cache entries and
+  conditional read/write on existing PM paths.
+- **Red flags:** None. No API changes, no locking changes.
+
+---
+
+## PHASE 3: GIT HISTORY INVESTIGATION
+
+### Step 3.1: Blame the changed lines
+**Record:** Current `has_smt`/SMT cache block at lines 3056–3063 was
+introduced by `8d1c6b603327b` (Apr 2026). SR handling is absent at the
+same location — the omission predates the SMT fix and was never
+addressed.
+
+### Step 3.2: Follow Fixes: tag
+**Record:** Not applicable — no Fixes: tag on this commit.
+
+### Step 3.3: File history for related changes
+**Record:** Recent related commits in this tree:
+- `8d1c6b603327b` — Fix SMT register cache handling (patch 1/5,
+  **already in 6.18.43**)
+- `c4cfa8ee77374` — Fix incorrect PUPD register offset for high pins
+- `509d342d02fff` — Fix save/restore of {IOLH,IEN,PUPD,SMT} for variable
+  pincfg ports
+- `dd6e519ba91e4` — Fix ISEL restore on resume
+
+This commit is patch 2/5 of the "Fix PM register caching" v2 series.
+Patches 3–5 (IOLH_RZV2H, NOD, dedicated PUPD) are separate and not
+required for this SR fix.
+
+### Step 3.4: Author's other commits
+**Record:** Lad Prabhakar is an active Renesas contributor (RTC, PCI,
+clk, mmc, pinctrl). The SMT fix from the same series (`8d1c6b603327b`)
+is already in this tree, reviewed by Geert Uytterhoeven.
+
+### Step 3.5: Prerequisites
+**Record:**
+- **Prerequisite present:** Patch 1/5 (SMT per-bank array `smt[2]`) is
+  already in 6.18.43.
+- **Standalone:** This patch only adds SR caching; it does not depend on
+  patches 3–5.
+- **Can apply cleanly:** Current tree matches the patch base (has
+  `smt[2]`, lacks `sr[2]`).
+
+---
+
+## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
+
+### Step 4.1: Original patch discussion
+**Record:**
+- **Series cover:** `v2_20260413_prabhakar_csengg_pinctrl_renesas_rzg2l_
+  fix_pm_register_caching.cover` — describes fixing PM register caching
+  including SR, SMT, IOLH, NOD, PUPD.
+- **Lore URL:**
+  https://patch.msgid.link/20260413182456.811543-3-prabhakar.mahadev-
+  lad.rj@bp.renesas.com (direct fetch blocked by Anubis bot protection)
+- **Series revisions:** v2; patch 2 updated per review to add dedicated
+  SR cache (v1→v2 note in mbox)
+- **Stable nominations in thread:** Not found in available local mbox
+  content for this specific patch
+- **NAKs/concerns:** None found in local mbox
+
+### Step 4.2: Reviewers
+**Record:** Geert Uytterhoeven (Renesas pinctrl maintainer) Reviewed-by
+and Signed-off-by. Pavel Machek Reviewed-by on patch 2. Patch 1 has
+extensive Tested-by from CIP and embedded community.
+
+### Step 4.3: Bug report
+**Record:** No external bug report or syzbot link. Bug identified by
+code review during PM caching audit (cover letter: "addresses several
+issues with the PM register caching implementation").
+
+### Step 4.4: Related patches in series
+**Record:** 5-patch series. Only patch 1 is in 6.18.43 so far. Patches
+3–5 address separate register types (IOLH_RZV2H, NOD, dedicated PUPD)
+and are independent of this SR fix.
+
+### Step 4.5: Stable mailing list history
+**Record:** Not searched (lore blocked). No stable-specific discussion
+found in local mbox.
+
+---
+
+## PHASE 5: CODE SEMANTIC ANALYSIS
+
+### Step 5.1: Key functions
+**Record:** `rzg2l_pinctrl_reg_cache_alloc()`,
+`rzg2l_pinctrl_pm_setup_regs()`,
+`rzg2l_pinctrl_pm_setup_dedicated_regs()`, called from
+`rzg2l_pinctrl_suspend_noirq()` / `rzg2l_pinctrl_resume_noirq()`.
+
+### Step 5.2: Callers
+**Record:**
+- `rzg2l_pinctrl_suspend_noirq()` — `NOIRQ_SYSTEM_SLEEP_PM_OPS` at line
+  3485
+- `rzg2l_pinctrl_resume_noirq()` — same PM ops
+- Triggered on every system suspend/resume on boards using this pinctrl
+  driver with PM enabled
+
+### Step 5.3: Callees
+**Record:** `RZG2L_PCTRL_REG_ACCESS32()` macro — `readl`/`writel` on
+`SR(off)` register at offset `0x1400 + (off) * 8`. SR is also used in
+normal pinconf get/set (`PIN_CONFIG_SLEW_RATE` at lines 1314–1318,
+1472–1476).
+
+### Step 5.4: Call chain / reachability
+**Record:** Boot → platform probe → PM suspend (S2RAM) →
+`rzg2l_pinctrl_suspend_noirq()` → `rzg2l_pinctrl_pm_setup_regs(true)` →
+SR **not** cached (bug). Resume path similarly fails to restore SR.
+Reachable on any Renesas RZ/G2L/V2H board using suspend.
+
+### Step 5.5: Similar patterns
+**Record:** SMT, IEN, IOLH, PUPD all use identical `has_*` + dual-bank
+`RZG2L_PCTRL_REG_ACCESS32` pattern. SR was the missing sibling.
+`PIN_CFG_SR` appears on 100+ pin definitions across RZ/G2L, RZ/V2H,
+RZ/G3E SoC data in the same file.
+
+---
+
+## PHASE 6: CROSS-REFERENCING AGAINST LOCAL TREE (6.18.43)
+
+### Step 6.1: Does the buggy code exist?
+**Record:** **Yes.** Suspend/resume is present
+(`rzg2l_pinctrl_suspend_noirq` at line 3179). `PIN_CFG_SR` and `SR(off)`
+exist. `rzg2l_pinctrl_reg_cache` has `smt[2]` but **no** `sr[2]`.
+`rzg2l_pinctrl_pm_setup_regs()` handles SMT but not SR. Bug is live in
+6.18.43.
+
+### Step 6.2: Backport complications
+**Record:** **Clean apply expected.** Tree already has patch 1/5 (SMT
+per-bank fix). No conflicting changes. Single file, established pattern.
+
+### Step 6.3: Related fixes already present
+**Record:** SMT cache fix (`8d1c6b603327b`) is in tree. SR cache fix is
+**not** present. No duplicate fix found.
+
+---
+
+## PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
+
+### Step 7.1: Subsystem and criticality
+**Record:** `drivers/pinctrl/renesas/` — **PERIPHERAL** (platform-
+specific, Renesas RZ SoCs). Critical for embedded/industrial users (CIP,
+RZ/V2H EVKs, RZ/G2L boards) but not universal.
+
+### Step 7.2: Subsystem activity
+**Record:** Actively maintained — multiple PM suspend/resume fixes
+landed in 2026 for this driver in this tree.
+
+---
+
+## PHASE 8: IMPACT AND RISK ASSESSMENT
+
+### Step 8.1: Who is affected
+**Record:** Users of `CONFIG_PINCTRL_RZG2L` on Renesas RZ/G2L,
+RZ/V2H(P), RZ/V2N, RZ/G3E SoCs who use system suspend (S2RAM). Platform-
+specific, not universal.
+
+### Step 8.2: Trigger conditions
+**Record:** System suspend-to-RAM on affected hardware. Common on
+embedded/industrial systems. Requires PM-enabled kernel and SR-
+configured pins (very common — SD, Ethernet, QSPI, UART pins all use
+`PIN_CFG_SR`). Unprivileged users can trigger via standard suspend
+interfaces.
+
+### Step 8.3: Failure mode severity
+**Record:** Wrong slew-rate settings after resume → signal integrity
+degradation on high-speed interfaces (SDIO, Ethernet, QSPI). Can cause
+peripheral malfunction, data errors, or intermittent failures post-
+resume. Not a kernel oops/panic, but real hardware misbehavior.
+**Severity: MEDIUM-HIGH** for affected platforms.
+
+### Step 8.4: Risk-benefit ratio
+**Record:**
+- **Benefit:** Restores correct pin electrical configuration after
+  suspend — prevents post-resume peripheral failures on widely deployed
+  embedded SoCs.
+- **Risk:** Very low — ~35 lines, mirrors proven SMT pattern, reviewed
+  by maintainer.
+- **Ratio:** Favorable for affected users; negligible risk to unaffected
+  configurations.
+
+---
+
+## PHASE 9: FINAL SYNTHESIS
+
+### Step 9.1: Evidence compilation
+
+**FOR backporting:**
+- Real suspend/resume bug — SR registers not saved/restored
+- Same bug class as SMT fix already backported to 6.18.43
+- Widely used register (`PIN_CFG_SR` on SD/Ethernet/QSPI/UART pins)
+- Small, surgical, maintainer-reviewed fix
+- Prerequisites (SMT per-bank cache) already in tree
+- CIP/embedded community tested the series (patch 1)
+
+**AGAINST backporting:**
+- Platform-specific (Renesas RZ only)
+- No crash/panic — functional/hardware correctness issue
+- Commit message is terse; doesn't spell out user-visible symptoms
+- Part of a 5-patch series (though this patch is self-contained)
+
+**Unresolved:** Full lore thread review blocked by Anubis. No explicit
+stable nomination found in local mbox.
+
+### Step 9.2: Stable rules checklist
+1. Obviously correct and tested? **PASS** — mirrors SMT/IEN pattern;
+   series tested by CIP community on patch 1; maintainer reviewed.
+2. Fixes a real bug affecting users? **PASS** — incomplete PM state
+   save/restore on suspend/resume.
+3. Important issue? **PASS** — post-resume hardware misconfiguration on
+   high-speed peripherals (MEDIUM-HIGH severity for affected platforms).
+4. Small and contained? **PASS** — ~35 lines, one file, three functions.
+5. No new features or APIs? **PASS** — completes existing PM caching, no
+   userspace-visible changes.
+6. Can apply to local tree? **PASS** — buggy code present, prerequisite
+   patch 1/5 already applied, clean apply expected.
+
+### Step 9.3: Exception categories
+**Record:** Not a device ID, quirk, DT, build, or docs fix. Standard bug
+fix completing PM suspend/resume support.
+
+### Step 9.4: Decision rationale
+
+This commit fixes an omission in the Renesas RZ/G2L pinctrl driver's
+suspend/resume register caching. The driver already saves and restores
+SMT, IEN, IOLH, and PUPD registers, but SR (Slew Rate) was never
+included. After S2RAM, pins on SDIO, Ethernet, QSPI, and other high-
+speed interfaces can have incorrect electrical settings, causing
+peripheral failures after resume.
+
+The fix is minimal, follows an established in-driver pattern, was
+reviewed by the subsystem maintainer, and its prerequisite (SMT per-bank
+cache, patch 1/5) is already in 6.18.43. The same author and series
+already had patch 1 backported to this tree, establishing that this
+class of PM caching fix is appropriate for stable.
+
+---
+
+## Verification
+
+- [Phase 1] `git describe HEAD` → `v6.18.43`; parsed subject, tags, body
+  from user-provided commit
+- [Phase 1] Read cover letter mbox: series context confirms PM caching
+  bug class
+- [Phase 2] Read current `pinctrl-rzg2l.c`: confirmed no `sr` in cache
+  struct (lines 330–343), no `has_sr` in PM functions
+- [Phase 2] Confirmed `RZG2L_PCTRL_REG_ACCESS32` macro and `SR(off)` at
+  line 140
+- [Phase 3] `git log --oneline -15 -- drivers/pinctrl/renesas/pinctrl-
+  rzg2l.c` — related PM fixes listed
+- [Phase 3] `git show 8d1c6b603327b` — SMT fix (patch 1/5) confirmed in
+  tree
+- [Phase 3] `git blame -L 3056,3063` — SMT block from 8d1c6b603327b; no
+  SR block adjacent
+- [Phase 3] `git log --author="Lad Prabhakar" -10` — active Renesas
+  contributor
+- [Phase 4] Read `v2_20260413_...pm_register_caching.mbx` — full series
+  context, v2 revisions
+- [Phase 4] `b4 dig -c 8d1c6b603327b` → lore URL for series
+- [Phase 4] WebFetch lore URL for patch 3 — **blocked** by Anubis bot
+  protection
+- [Phase 5] Grep `PIN_CFG_SR` — 100+ pin definitions use SR capability
+- [Phase 5] Grep `rzg2l_pinctrl_suspend` — PM ops at lines 3179, 3485
+- [Phase 5] Read `rzg2l_pinctrl_reg_cache_alloc()` lines 2720–2766 — no
+  SR allocation
+- [Phase 6] Confirmed suspend/resume code exists and SR is missing from
+  cache path
+- [Phase 6] Confirmed patch 1/5 prerequisite present, patch 2/5 (this
+  commit) absent
+- [Phase 8] Assessed failure mode: post-resume slew-rate
+  misconfiguration, MEDIUM-HIGH for RZ platforms
+
+**YES**
+
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 38 +++++++++++++++++++++++--
+ 1 file changed, 35 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index ab8d64a14dd0a..b4d7e80dd6468 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -322,6 +322,7 @@ struct rzg2l_pinctrl_pin_settings {
+  * @pupd: PUPD registers cache
+  * @ien: IEN registers cache
+  * @smt: SMT registers cache
++ * @sr: SR registers cache
+  * @sd_ch: SD_CH registers cache
+  * @eth_poc: ET_POC registers cache
+  * @oen: Output Enable register cache
+@@ -336,6 +337,7 @@ struct rzg2l_pinctrl_reg_cache {
+ 	u32	*ien[2];
+ 	u32	*pupd[2];
+ 	u32	*smt[2];
++	u32	*sr[2];
+ 	u8	sd_ch[2];
+ 	u8	eth_poc[2];
+ 	u8	oen;
+@@ -2746,6 +2748,11 @@ static int rzg2l_pinctrl_reg_cache_alloc(struct rzg2l_pinctrl *pctrl)
+ 		if (!cache->smt[i])
+ 			return -ENOMEM;
  
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called max96717.
-+
-+config VIDEO_MAX96724
-+	tristate "Maxim MAX96724 Quad Deserializer support"
-+	depends on I2C
-+	depends on VIDEO_DEV
-+	select VIDEO_MAXIM_SERDES
-+	help
-+	  This driver supports the Maxim MAX96712, MAX96724, MAX96724F,
-+	  MAX96724R Quad Deserializers, which convert from four GMSL2
-+	  links to up to four MIPI D-PHY or C-PHY outputs.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called max96724.
-diff --git a/drivers/media/i2c/maxim-serdes/Makefile b/drivers/media/i2c/maxim-serdes/Makefile
-index 04abda6a5437..b6d5aebfaee1 100644
---- a/drivers/media/i2c/maxim-serdes/Makefile
-+++ b/drivers/media/i2c/maxim-serdes/Makefile
-@@ -2,3 +2,4 @@
- max-serdes-objs := max_serdes.o max_ser.o max_des.o
- obj-$(CONFIG_VIDEO_MAXIM_SERDES) += max-serdes.o
- obj-$(CONFIG_VIDEO_MAX96717) += max96717.o
-+obj-$(CONFIG_VIDEO_MAX96724) += max96724.o
-diff --git a/drivers/media/i2c/maxim-serdes/max96724.c b/drivers/media/i2c/maxim-serdes/max96724.c
-new file mode 100644
-index 000000000000..458e78f28511
---- /dev/null
-+++ b/drivers/media/i2c/maxim-serdes/max96724.c
-@@ -0,0 +1,1339 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Maxim MAX96724 Quad GMSL2 Deserializer Driver
-+ *
-+ * Copyright (C) 2025 Analog Devices Inc.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/iopoll.h>
-+#include <linux/module.h>
-+#include <linux/of_graph.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
-+
-+#include "max_des.h"
-+
-+#define MAX96724_REG0				0x0
-+
-+#define MAX96724_REG3				0x3
-+#define MAX96724_REG3_CC_PORT_SEL(n)		GENMASK((n) * 2 + 1, (n) * 2)
-+#define MAX96724_REG3_CC_PORT_SEL_MASK		(MAX96724_REG3_CC_PORT_SEL(0) | \
-+						 MAX96724_REG3_CC_PORT_SEL(1) | \
-+						 MAX96724_REG3_CC_PORT_SEL(2) | \
-+						 MAX96724_REG3_CC_PORT_SEL(3))
-+#define MAX96724_REG3_CC_PORT_SEL_PORT0		0x2
-+#define MAX96724_REG3_CC_PORT_SEL_PORT1		0x1
-+#define MAX96724_REG3_CC_PORT_CFG(sel) \
-+	(FIELD_PREP(MAX96724_REG3_CC_PORT_SEL(0), (sel)) | \
-+	 FIELD_PREP(MAX96724_REG3_CC_PORT_SEL(1), (sel)) | \
-+	 FIELD_PREP(MAX96724_REG3_CC_PORT_SEL(2), (sel)) | \
-+	 FIELD_PREP(MAX96724_REG3_CC_PORT_SEL(3), (sel)))
-+#define MAX96724_REG3_CC_PORT_CFG_PORT0 \
-+	MAX96724_REG3_CC_PORT_CFG(MAX96724_REG3_CC_PORT_SEL_PORT0)
-+#define MAX96724_REG3_CC_PORT_CFG_PORT1 \
-+	MAX96724_REG3_CC_PORT_CFG(MAX96724_REG3_CC_PORT_SEL_PORT1)
-+
-+#define MAX96724_REG6				0x6
-+#define MAX96724_REG6_LINK_EN			GENMASK(3, 0)
-+
-+#define MAX96724_REG7				0x7
-+#define MAX96724_REG7_CC_CROSSOVER_SEL		GENMASK(7, 4)
-+
-+#define MAX96724_DEBUG_EXTRA			0x9
-+#define MAX96724_DEBUG_EXTRA_PCLK_SRC		GENMASK(1, 0)
-+#define MAX96724_DEBUG_EXTRA_PCLK_SRC_25MHZ	0b00
-+#define MAX96724_DEBUG_EXTRA_PCLK_SRC_75MHZ	0b01
-+#define MAX96724_DEBUG_EXTRA_PCLK_SRC_USE_PIPE	0b10
-+
-+/* Link A lock status lives in CTRL3, links B through D in CTRL12 through CTRL14. */
-+#define MAX96724_CTRL12(l)			(0xa + (l) - 1)
-+
-+#define MAX96724_REG26(x)			(0x10 + (x) / 2)
-+#define MAX96724_REG26_RX_RATE_PHY(x)		(GENMASK(1, 0) << (4 * ((x) % 2)))
-+#define MAX96724_REG26_RX_RATE_3GBPS		0b01
-+#define MAX96724_REG26_RX_RATE_6GBPS		0b10
-+
-+#define MAX96724_PWR1				0x13
-+#define MAX96724_PWR1_RESET_ALL			BIT(6)
-+
-+#define MAX96724_CTRL1				0x18
-+#define MAX96724_CTRL1_RESET_ONESHOT		GENMASK(3, 0)
-+
-+#define MAX96724_CTRL3				0x1a
-+#define MAX96724_CTRL_LOCKED			BIT(3)
-+
-+#define MAX96724_VIDEO_PIPE_SEL(p)		(0xf0 + (p) / 2)
-+#define MAX96724_VIDEO_PIPE_SEL_STREAM(p)	(GENMASK(1, 0) << (4 * ((p) % 2)))
-+#define MAX96724_VIDEO_PIPE_SEL_LINK(p)		(GENMASK(3, 2) << (4 * ((p) % 2)))
-+
-+#define MAX96724_VIDEO_PIPE_EN			0xf4
-+#define MAX96724_VIDEO_PIPE_EN_MASK(p)		BIT(p)
-+#define MAX96724_VIDEO_PIPE_EN_STREAM_SEL_ALL	BIT(4)
-+
-+#define MAX96724_VPRBS(p)			(0x1dc + (p) * 0x20)
-+#define MAX96724_VPRBS_VIDEO_LOCK		BIT(0)
-+#define MAX96724_VPRBS_PATGEN_CLK_SRC		BIT(7)
-+#define MAX96724_VPRBS_PATGEN_CLK_SRC_150MHZ	0b0
-+#define MAX96724_VPRBS_PATGEN_CLK_SRC_375MHZ	0b1
-+
-+#define MAX96724_BACKTOP12			0x40b
-+#define MAX96724_BACKTOP12_CSI_OUT_EN		BIT(1)
-+
-+#define MAX96724_BACKTOP21(p)			(0x414 + (p) / 4 * 0x20)
-+#define MAX96724_BACKTOP21_BPP8DBL(p)		BIT(4 + (p) % 4)
-+
-+#define MAX96724_BACKTOP22(x)			(0x415 + (x) * 0x3)
-+#define MAX96724_BACKTOP22_PHY_CSI_TX_DPLL	GENMASK(4, 0)
-+#define MAX96724_BACKTOP22_PHY_CSI_TX_DPLL_EN	BIT(5)
-+
-+#define MAX96724_BACKTOP24(p)			(0x417 + (p) / 4 * 0x20)
-+#define MAX96724_BACKTOP24_BPP8DBL_MODE(p)	BIT(4 + (p) % 4)
-+
-+#define MAX96724_BACKTOP30(p)			(0x41d + (p) / 4 * 0x20)
-+#define MAX96724_BACKTOP30_BPP10DBL3		BIT(4)
-+#define MAX96724_BACKTOP30_BPP10DBL3_MODE	BIT(5)
-+
-+#define MAX96724_BACKTOP31(p)			(0x41e + (p) / 4 * 0x20)
-+#define MAX96724_BACKTOP31_BPP10DBL2		BIT(6)
-+#define MAX96724_BACKTOP31_BPP10DBL2_MODE	BIT(7)
-+
-+#define MAX96724_BACKTOP32(p)			(0x41f + (p) / 4 * 0x20)
-+#define MAX96724_BACKTOP32_BPP12(p)		BIT((p) % 4)
-+#define MAX96724_BACKTOP32_BPP10DBL0		BIT(4)
-+#define MAX96724_BACKTOP32_BPP10DBL0_MODE	BIT(5)
-+#define MAX96724_BACKTOP32_BPP10DBL1		BIT(6)
-+#define MAX96724_BACKTOP32_BPP10DBL1_MODE	BIT(7)
-+
-+#define MAX96724_MIPI_PHY0			0x8a0
-+#define MAX96724_MIPI_PHY0_PHY_CONFIG		GENMASK(4, 0)
-+#define MAX96724_MIPI_PHY0_PHY_4X2		BIT(0)
-+#define MAX96724_MIPI_PHY0_PHY_2X4		BIT(2)
-+#define MAX96724_MIPI_PHY0_PHY_1X4A_2X2		BIT(3)
-+#define MAX96724_MIPI_PHY0_PHY_1X4B_2X2		BIT(4)
-+#define MAX96724_MIPI_PHY0_FORCE_CSI_OUT_EN	BIT(7)
-+
-+#define MAX96724_MIPI_PHY2			0x8a2
-+#define MAX96724_MIPI_PHY2_PHY_STDB_N_4(x)	(GENMASK(5, 4) << ((x) / 2 * 2))
-+#define MAX96724_MIPI_PHY2_PHY_STDB_N_2(x)	(BIT(4 + (x)))
-+
-+#define MAX96724_MIPI_PHY3(x)			(0x8a3 + (x) / 2)
-+#define MAX96724_MIPI_PHY3_PHY_LANE_MAP_4	GENMASK(7, 0)
-+#define MAX96724_MIPI_PHY3_PHY_LANE_MAP_2(x)	(GENMASK(3, 0) << (4 * ((x) % 2)))
-+
-+#define MAX96724_MIPI_PHY5(x)			(0x8a5 + (x) / 2)
-+#define MAX96724_MIPI_PHY5_PHY_POL_MAP_4_0_1	GENMASK(1, 0)
-+#define MAX96724_MIPI_PHY5_PHY_POL_MAP_4_2_3	GENMASK(4, 3)
-+#define MAX96724_MIPI_PHY5_PHY_POL_MAP_4_CLK	BIT(5)
-+#define MAX96724_MIPI_PHY5_PHY_POL_MAP_2(x)	(GENMASK(1, 0) << (3 * ((x) % 2)))
-+#define MAX96724_MIPI_PHY5_PHY_POL_MAP_2_CLK(x)	BIT(2 + 3 * ((x) % 2))
-+
-+#define MAX96724_MIPI_PHY13			0x8ad
-+#define MAX96724_MIPI_PHY13_T_T3_PREBEGIN	GENMASK(5, 0)
-+#define MAX96724_MIPI_PHY13_T_T3_PREBEGIN_64X7	FIELD_PREP(MAX96724_MIPI_PHY13_T_T3_PREBEGIN, 63)
-+
-+#define MAX96724_MIPI_PHY14			0x8ae
-+#define MAX96724_MIPI_PHY14_T_T3_PREP		GENMASK(1, 0)
-+#define MAX96724_MIPI_PHY14_T_T3_PREP_55NS	FIELD_PREP(MAX96724_MIPI_PHY14_T_T3_PREP, 0b01)
-+#define MAX96724_MIPI_PHY14_T_T3_POST		GENMASK(6, 2)
-+#define MAX96724_MIPI_PHY14_T_T3_POST_32X7	FIELD_PREP(MAX96724_MIPI_PHY14_T_T3_POST, 31)
-+
-+#define MAX96724_MIPI_CTRL_SEL			0x8ca
-+#define MAX96724_MIPI_CTRL_SEL_MASK(p)		(GENMASK(1, 0) << ((p) * 2))
-+
-+#define MAX96724_MIPI_PHY25(x)			(0x8d0 + (x) / 2)
-+#define MAX96724_MIPI_PHY25_CSI2_TX_PKT_CNT(x)	(GENMASK(3, 0) << (4 * ((x) % 2)))
-+
-+#define MAX96724_MIPI_PHY27(x)			(0x8d2 + (x) / 2)
-+#define MAX96724_MIPI_PHY27_PHY_PKT_CNT(x)	(GENMASK(3, 0) << (4 * ((x) % 2)))
-+
-+#define MAX96724_MIPI_TX3(x)			(0x903 + (x) * 0x40)
-+#define MAX96724_MIPI_TX3_DESKEW_INIT_8X32K	FIELD_PREP(GENMASK(2, 0), 0b001)
-+#define MAX96724_MIPI_TX3_DESKEW_INIT_AUTO	BIT(7)
-+
-+#define MAX96724_MIPI_TX4(x)			(0x904 + (x) * 0x40)
-+#define MAX96724_MIPI_TX4_DESKEW_PER_2K		FIELD_PREP(GENMASK(2, 0), 0b001)
-+#define MAX96724_MIPI_TX4_DESKEW_PER_AUTO	BIT(7)
-+
-+#define MAX96724_MIPI_TX10(x)			(0x90a + (x) * 0x40)
-+#define MAX96724_MIPI_TX10_CSI2_CPHY_EN		BIT(5)
-+#define MAX96724_MIPI_TX10_CSI2_LANE_CNT	GENMASK(7, 6)
-+
-+#define MAX96724_MIPI_TX11(p)			(0x90b + (p) * 0x40)
-+#define MAX96724_MIPI_TX12(p)			(0x90c + (p) * 0x40)
-+
-+#define MAX96724_MIPI_TX13(p, x)		(0x90d + (p) * 0x40 + (x) * 0x2)
-+#define MAX96724_MIPI_TX13_MAP_SRC_DT		GENMASK(5, 0)
-+#define MAX96724_MIPI_TX13_MAP_SRC_VC		GENMASK(7, 6)
-+
-+#define MAX96724_MIPI_TX14(p, x)		(0x90e + (p) * 0x40 + (x) * 0x2)
-+#define MAX96724_MIPI_TX14_MAP_DST_DT		GENMASK(5, 0)
-+#define MAX96724_MIPI_TX14_MAP_DST_VC		GENMASK(7, 6)
-+
-+#define MAX96724_MIPI_TX45(p, x)		(0x92d + (p) * 0x40 + (x) / 4)
-+#define MAX96724_MIPI_TX45_MAP_DPHY_DEST(x)	(GENMASK(1, 0) << (2 * ((x) % 4)))
-+
-+#define MAX96724_MIPI_TX51(x)			(0x933 + (x) * 0x40)
-+#define MAX96724_MIPI_TX51_ALT_MEM_MAP_12	BIT(0)
-+#define MAX96724_MIPI_TX51_ALT_MEM_MAP_8	BIT(1)
-+#define MAX96724_MIPI_TX51_ALT_MEM_MAP_10	BIT(2)
-+#define MAX96724_MIPI_TX51_ALT2_MEM_MAP_8	BIT(4)
-+
-+#define MAX96724_MIPI_TX54(x)			(0x936 + (x) * 0x40)
-+#define MAX96724_MIPI_TX54_TUN_EN		BIT(0)
-+
-+#define MAX96724_MIPI_TX57(x)			(0x939 + (x) * 0x40)
-+#define MAX96724_MIPI_TX57_TUN_DEST		GENMASK(5, 4)
-+#define MAX96724_MIPI_TX57_DIS_AUTO_TUN_DET	BIT(6)
-+#define MAX96724_DET(p)				BIT(p)
-+
-+#define MAX96724_PATGEN_0			0x1050
-+#define MAX96724_PATGEN_0_VTG_MODE		GENMASK(1, 0)
-+#define MAX96724_PATGEN_0_VTG_MODE_FREE_RUNNING	0b11
-+#define MAX96724_PATGEN_0_DE_INV		BIT(2)
-+#define MAX96724_PATGEN_0_HS_INV		BIT(3)
-+#define MAX96724_PATGEN_0_VS_INV		BIT(4)
-+#define MAX96724_PATGEN_0_GEN_DE		BIT(5)
-+#define MAX96724_PATGEN_0_GEN_HS		BIT(6)
-+#define MAX96724_PATGEN_0_GEN_VS		BIT(7)
-+
-+#define MAX96724_PATGEN_1			0x1051
-+#define MAX96724_PATGEN_1_PATGEN_MODE		GENMASK(5, 4)
-+#define MAX96724_PATGEN_1_PATGEN_MODE_DISABLED	0b00
-+#define MAX96724_PATGEN_1_PATGEN_MODE_CHECKER	0b01
-+#define MAX96724_PATGEN_1_PATGEN_MODE_GRADIENT	0b10
-+
-+#define MAX96724_VS_DLY_2			0x1052
-+#define MAX96724_VS_HIGH_2			0x1055
-+#define MAX96724_VS_LOW_2			0x1058
-+#define MAX96724_V2H_2				0x105b
-+#define MAX96724_HS_HIGH_1			0x105e
-+#define MAX96724_HS_LOW_1			0x1060
-+#define MAX96724_HS_CNT_1			0x1062
-+#define MAX96724_V2D_2				0x1064
-+#define MAX96724_DE_HIGH_1			0x1067
-+#define MAX96724_DE_LOW_1			0x1069
-+#define MAX96724_DE_CNT_1			0x106b
-+#define MAX96724_GRAD_INCR			0x106d
-+#define MAX96724_CHKR_COLOR_A_L			0x106e
-+#define MAX96724_CHKR_COLOR_B_L			0x1071
-+#define MAX96724_CHKR_RPT_A			0x1074
-+#define MAX96724_CHKR_RPT_B			0x1075
-+#define MAX96724_CHKR_ALT			0x1076
-+
-+#define MAX96724_DE_DET				0x11f0
-+#define MAX96724_HS_DET				0x11f1
-+#define MAX96724_VS_DET				0x11f2
-+#define MAX96724_HS_POL				0x11f3
-+#define MAX96724_VS_POL				0x11f4
-+#define MAX96724_DET(p)				BIT(p)
-+
-+#define MAX96724_DPLL_0(x)			(0x1c00 + (x) * 0x100)
-+#define MAX96724_DPLL_0_CONFIG_SOFT_RST_N	BIT(0)
-+
-+#define MAX96724_PHY1_ALT_CLOCK			5
-+
-+static const struct regmap_config max96724_i2c_regmap = {
-+	.reg_bits = 16,
-+	.val_bits = 8,
-+	.max_register = 0x1f00,
-+};
-+
-+struct max96724_priv {
-+	struct max_des des;
-+	const struct max96724_chip_info *info;
-+
-+	struct device *dev;
-+	struct i2c_client *client;
-+	struct regmap *regmap;
-+
-+	struct gpio_desc *gpiod_enable;
-+	unsigned int cc_port_cfg;
-+};
-+
-+struct max96724_chip_info {
-+	unsigned int versions;
-+	unsigned int modes;
-+	bool supports_pipe_stream_autoselect;
-+	unsigned int num_pipes;
-+
-+	int (*set_pipe_phy)(struct max_des *des, struct max_des_pipe *pipe,
-+			    struct max_des_phy *phy);
-+	int (*set_pipe_tunnel_phy)(struct max_des *des, struct max_des_pipe *pipe,
-+				   struct max_des_phy *phy);
-+	int (*set_pipe_tunnel_enable)(struct max_des *des, struct max_des_pipe *pipe,
-+				      bool enable);
-+};
-+
-+#define des_to_priv(_des) \
-+	container_of(_des, struct max96724_priv, des)
-+
-+static int max96724_wait_for_device(struct max96724_priv *priv)
-+{
-+	unsigned int val;
-+	int ret, err;
-+
-+	err = read_poll_timeout(regmap_read, ret,
-+				!ret && val,
-+				100 * USEC_PER_MSEC,
-+				1 * USEC_PER_SEC, false,
-+				priv->regmap, MAX96724_REG0, &val);
-+	if (err)
-+		dev_err(priv->dev, "Timeout waiting for deserializer: %d\n", ret);
-+
-+	return err;
-+}
-+
-+static int max96724_reset(struct max96724_priv *priv)
-+{
-+	int ret;
-+
-+	ret = max96724_wait_for_device(priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(priv->regmap, MAX96724_PWR1,
-+				 MAX96724_PWR1_RESET_ALL,
-+				 FIELD_PREP(MAX96724_PWR1_RESET_ALL, 1));
-+	if (ret)
-+		return ret;
-+
-+	fsleep(10000);
-+
-+	ret = max96724_wait_for_device(priv);
-+	if (ret)
-+		return ret;
-+
-+	/* Restore I2C control-channel access after a reset. */
-+	return regmap_update_bits(priv->regmap, MAX96724_REG3,
-+				  MAX96724_REG3_CC_PORT_SEL_MASK,
-+				  priv->cc_port_cfg);
-+}
-+
-+static int __maybe_unused max96724_reg_read(struct max_des *des, unsigned int reg,
-+					    unsigned int *val)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+
-+	return regmap_read(priv->regmap, reg, val);
-+}
-+
-+static int __maybe_unused max96724_reg_write(struct max_des *des, unsigned int reg,
-+					     unsigned int val)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+
-+	return regmap_write(priv->regmap, reg, val);
-+}
-+
-+static unsigned int max96724_phy_id(struct max_des *des, struct max_des_phy *phy)
-+{
-+	unsigned int num_hw_data_lanes = max_des_phy_hw_data_lanes(des, phy);
-+
-+	/* PHY 1 is the master PHY when combining PHY 0 and PHY 1. */
-+	if (phy->index == 0 && num_hw_data_lanes == 4)
-+		return 1;
-+
-+	/*
-+	 * PHY 1 takes PHY 0's identifier only when it has no data lanes of its
-+	 * own, meaning it is absorbed into PHY 0.
-+	 *
-+	 * A disabled PHY 1 that still owns lanes keeps its own identifier. It
-+	 * is a candidate for the unused PHY that unmapped data is discarded
-+	 * to, so aliasing it here would send that data to PHY 0 instead, which
-+	 * may be streaming.
-+	 */
-+	if (phy->index == 1 && !des->phys[1].enabled && !num_hw_data_lanes)
-+		return 0;
-+
-+	return phy->index;
-+}
-+
-+static int max96724_log_pipe_status(struct max_des *des,
-+				    struct max_des_pipe *pipe)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int index = pipe->index;
-+	unsigned int val, mask;
-+	int ret;
-+
-+	ret = regmap_read(priv->regmap, MAX96724_VPRBS(index), &val);
-+	if (ret)
-+		return ret;
-+
-+	dev_info(priv->dev, "\tvideo_lock: %u\n",
-+		 !!(val & MAX96724_VPRBS_VIDEO_LOCK));
-+
-+	mask = MAX96724_DET(index);
-+
-+	ret = regmap_read(priv->regmap, MAX96724_DE_DET, &val);
-+	if (ret)
-+		return ret;
-+
-+	dev_info(priv->dev, "\tde_det: %u\n", !!(val & mask));
-+
-+	ret = regmap_read(priv->regmap, MAX96724_HS_DET, &val);
-+	if (ret)
-+		return ret;
-+
-+	dev_info(priv->dev, "\ths_det: %u\n", !!(val & mask));
-+
-+	ret = regmap_read(priv->regmap, MAX96724_VS_DET, &val);
-+	if (ret)
-+		return ret;
-+
-+	dev_info(priv->dev, "\tvs_det: %u\n", !!(val & mask));
-+
-+	ret = regmap_read(priv->regmap, MAX96724_HS_POL, &val);
-+	if (ret)
-+		return ret;
-+
-+	dev_info(priv->dev, "\ths_pol: %u\n", !!(val & mask));
-+
-+	ret = regmap_read(priv->regmap, MAX96724_VS_POL, &val);
-+	if (ret)
-+		return ret;
-+
-+	dev_info(priv->dev, "\tvs_pol: %u\n", !!(val & mask));
-+
-+	return 0;
-+}
-+
-+static int max96724_log_phy_status(struct max_des *des,
-+				   struct max_des_phy *phy)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int index = max96724_phy_id(des, phy);
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(priv->regmap, MAX96724_MIPI_PHY25(index), &val);
-+	if (ret)
-+		return ret;
-+
-+	dev_info(priv->dev, "\tcsi2_pkt_cnt: %lu\n",
-+		 field_get(MAX96724_MIPI_PHY25_CSI2_TX_PKT_CNT(index), val));
-+
-+	ret = regmap_read(priv->regmap, MAX96724_MIPI_PHY27(index), &val);
-+	if (ret)
-+		return ret;
-+
-+	dev_info(priv->dev, "\tphy_pkt_cnt: %lu\n",
-+		 field_get(MAX96724_MIPI_PHY27_PHY_PKT_CNT(index), val));
-+
-+	return 0;
-+}
-+
-+static int max96724_set_enable(struct max_des *des, bool enable)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+
-+	return regmap_assign_bits(priv->regmap, MAX96724_BACKTOP12,
-+				  MAX96724_BACKTOP12_CSI_OUT_EN, enable);
-+}
-+
-+static const unsigned int max96724_phys_configs_reg_val[] = {
-+	MAX96724_MIPI_PHY0_PHY_1X4A_2X2,
-+	MAX96724_MIPI_PHY0_PHY_2X4,
-+
-+	MAX96724_MIPI_PHY0_PHY_4X2,
-+	MAX96724_MIPI_PHY0_PHY_1X4A_2X2,
-+	MAX96724_MIPI_PHY0_PHY_1X4B_2X2,
-+	MAX96724_MIPI_PHY0_PHY_2X4,
-+};
-+
-+static const struct max_serdes_phys_config max96724_phys_configs[] = {
-+	/*
-+	 * PHY 1 can be in 4-lane mode (combining lanes of PHY 0 and PHY 1)
-+	 * but only use the data lanes of PHY0, while continuing to use the
-+	 * clock lane of PHY 1.
-+	 * Specifying clock-lanes as 5 turns on alternate clocking mode.
-+	 */
-+	{ { 2, 0, 2, 2 }, { MAX96724_PHY1_ALT_CLOCK, 0, 0, 0 } },
-+	{ { 2, 0, 4, 0 }, { MAX96724_PHY1_ALT_CLOCK, 0, 0, 0 } },
-+
-+	/*
-+	 * When combining PHY 0 and PHY 1 to make them function in 4-lane mode,
-+	 * PHY 1 is the master PHY, but we use PHY 0 here to maintain
-+	 * compatibility.
-+	 */
-+	{ { 2, 2, 2, 2 } },
-+	{ { 4, 0, 2, 2 } },
-+	{ { 2, 2, 4, 0 } },
-+	{ { 4, 0, 4, 0 } },
-+};
-+
-+static int max96724_init_tpg(struct max_des *des)
-+{
-+	const struct reg_sequence regs[] = {
-+		{ MAX96724_GRAD_INCR, MAX_SERDES_GRAD_INCR },
-+		REG_SEQUENCE_3_LE(MAX96724_CHKR_COLOR_A_L,
-+				  MAX_SERDES_CHECKER_COLOR_A),
-+		REG_SEQUENCE_3_LE(MAX96724_CHKR_COLOR_B_L,
-+				  MAX_SERDES_CHECKER_COLOR_B),
-+		{ MAX96724_CHKR_RPT_A, MAX_SERDES_CHECKER_SIZE },
-+		{ MAX96724_CHKR_RPT_B, MAX_SERDES_CHECKER_SIZE },
-+		{ MAX96724_CHKR_ALT, MAX_SERDES_CHECKER_SIZE },
-+	};
-+	struct max96724_priv *priv = des_to_priv(des);
-+
-+	return regmap_multi_reg_write(priv->regmap, regs, ARRAY_SIZE(regs));
-+}
-+
-+static int max96724_init(struct max_des *des)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int i;
-+	int ret;
-+
-+	if (priv->info->set_pipe_tunnel_enable) {
-+		for (i = 0; i < des->info->num_pipes; i++) {
-+			ret = regmap_set_bits(priv->regmap, MAX96724_MIPI_TX57(i),
-+					      MAX96724_MIPI_TX57_DIS_AUTO_TUN_DET);
-+			if (ret)
-+				return ret;
++		cache->sr[i] = devm_kcalloc(pctrl->dev, nports, sizeof(*cache->sr[i]),
++					    GFP_KERNEL);
++		if (!cache->sr[i])
++			return -ENOMEM;
++
+ 		/* Allocate dedicated cache. */
+ 		dedicated_cache->iolh[i] = devm_kcalloc(pctrl->dev, n_dedicated_pins,
+ 							sizeof(*dedicated_cache->iolh[i]),
+@@ -2758,6 +2765,12 @@ static int rzg2l_pinctrl_reg_cache_alloc(struct rzg2l_pinctrl *pctrl)
+ 						       GFP_KERNEL);
+ 		if (!dedicated_cache->ien[i])
+ 			return -ENOMEM;
++
++		dedicated_cache->sr[i] = devm_kcalloc(pctrl->dev, n_dedicated_pins,
++						      sizeof(*dedicated_cache->sr[i]),
++						      GFP_KERNEL);
++		if (!dedicated_cache->sr[i])
++			return -ENOMEM;
+ 	}
+ 
+ 	pctrl->cache = cache;
+@@ -2989,7 +3002,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
+ 	struct rzg2l_pinctrl_reg_cache *cache = pctrl->cache;
+ 
+ 	for (u32 port = 0; port < nports; port++) {
+-		bool has_iolh, has_ien, has_pupd, has_smt;
++		bool has_iolh, has_ien, has_pupd, has_smt, has_sr;
+ 		u32 off, caps;
+ 		u8 pincnt;
+ 		u64 cfg;
+@@ -3010,6 +3023,7 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
+ 		has_ien = !!(caps & PIN_CFG_IEN);
+ 		has_pupd = !!(caps & PIN_CFG_PUPD);
+ 		has_smt = !!(caps & PIN_CFG_SMT);
++		has_sr = !!(caps & PIN_CFG_SR);
+ 
+ 		if (suspend)
+ 			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + PFC(off), cache->pfc[port]);
+@@ -3061,6 +3075,15 @@ static void rzg2l_pinctrl_pm_setup_regs(struct rzg2l_pinctrl *pctrl, bool suspen
+ 							 cache->smt[1][port]);
+ 			}
+ 		}
++
++		if (has_sr) {
++			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + SR(off),
++						 cache->sr[0][port]);
++			if (pincnt >= 4) {
++				RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + SR(off) + 4,
++							 cache->sr[1][port]);
++			}
 +		}
-+	}
-+
-+	if (priv->info->supports_pipe_stream_autoselect) {
-+		/* Enable stream autoselect. */
-+		ret = regmap_set_bits(priv->regmap, MAX96724_VIDEO_PIPE_EN,
-+				      MAX96724_VIDEO_PIPE_EN_STREAM_SEL_ALL);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* Enable I2C control ports crossover. */
-+	ret = regmap_set_bits(priv->regmap, MAX96724_REG7,
-+			      MAX96724_REG7_CC_CROSSOVER_SEL);
-+	if (ret)
-+		return ret;
-+
-+	/* Set PHY mode. */
-+	ret = regmap_update_bits(priv->regmap, MAX96724_MIPI_PHY0,
-+				 MAX96724_MIPI_PHY0_PHY_CONFIG,
-+				 max96724_phys_configs_reg_val[des->phys_config]);
-+	if (ret)
-+		return ret;
-+
-+	return max96724_init_tpg(des);
-+}
-+
-+static int max96724_init_phy(struct max_des *des, struct max_des_phy *phy)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	bool is_cphy = phy->bus_type == V4L2_MBUS_CSI2_CPHY;
-+	unsigned int num_data_lanes = phy->mipi.num_data_lanes;
-+	unsigned int num_hw_data_lanes;
-+	unsigned int index;
-+	unsigned int used_data_lanes = 0;
-+	unsigned int val, mask;
-+	unsigned int i;
-+	u64 dpll_freq;
-+	int ret;
-+
-+	index = max96724_phy_id(des, phy);
-+	num_hw_data_lanes = max_des_phy_hw_data_lanes(des, phy);
-+	dpll_freq = is_cphy ? phy->link_frequency
-+			    : phy->link_frequency * 2;
-+
-+	ret = regmap_update_bits(priv->regmap, MAX96724_MIPI_TX10(index),
-+				 MAX96724_MIPI_TX10_CSI2_LANE_CNT,
-+				 FIELD_PREP(MAX96724_MIPI_TX10_CSI2_LANE_CNT,
-+					    num_data_lanes - 1));
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_assign_bits(priv->regmap, MAX96724_MIPI_TX10(index),
-+				 MAX96724_MIPI_TX10_CSI2_CPHY_EN, is_cphy);
-+	if (ret)
-+		return ret;
-+
-+	/* Configure lane mapping. */
-+	val = 0;
-+	for (i = 0; i < num_hw_data_lanes ; i++) {
-+		unsigned int map;
-+
-+		if (i < num_data_lanes)
-+			map = phy->mipi.data_lanes[i] - 1;
-+		else
-+			map = ffz(used_data_lanes);
-+
-+		val |= map << (i * 2);
-+		used_data_lanes |= BIT(map);
-+	}
-+
-+	if (num_hw_data_lanes == 4)
-+		mask = MAX96724_MIPI_PHY3_PHY_LANE_MAP_4;
-+	else
-+		mask = MAX96724_MIPI_PHY3_PHY_LANE_MAP_2(index);
-+
-+	ret = regmap_update_bits(priv->regmap, MAX96724_MIPI_PHY3(index),
-+				 mask, field_prep(mask, val));
-+	if (ret)
-+		return ret;
-+
-+	/* Configure lane polarity. */
-+	for (i = 0, val = 0; i < num_data_lanes; i++)
-+		if (phy->mipi.lane_polarities[i + 1])
-+			val |= BIT(i);
-+
-+	if (num_hw_data_lanes == 4) {
-+		ret = regmap_update_bits(priv->regmap, MAX96724_MIPI_PHY5(index),
-+					 MAX96724_MIPI_PHY5_PHY_POL_MAP_4_0_1 |
-+					 MAX96724_MIPI_PHY5_PHY_POL_MAP_4_2_3,
-+					 FIELD_PREP(MAX96724_MIPI_PHY5_PHY_POL_MAP_4_0_1,
-+						    val) |
-+					 FIELD_PREP(MAX96724_MIPI_PHY5_PHY_POL_MAP_4_2_3,
-+						    val >> 2));
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_assign_bits(priv->regmap, MAX96724_MIPI_PHY5(index),
-+					 MAX96724_MIPI_PHY5_PHY_POL_MAP_4_CLK,
-+					 phy->mipi.lane_polarities[0]);
-+		if (ret)
-+			return ret;
-+	} else {
-+		ret = regmap_update_bits(priv->regmap, MAX96724_MIPI_PHY5(index),
-+					 MAX96724_MIPI_PHY5_PHY_POL_MAP_2(index),
-+					 field_prep(MAX96724_MIPI_PHY5_PHY_POL_MAP_2(index), val));
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_assign_bits(priv->regmap, MAX96724_MIPI_PHY5(index),
-+					 MAX96724_MIPI_PHY5_PHY_POL_MAP_2_CLK(index),
-+					 phy->mipi.lane_polarities[0]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (!is_cphy && dpll_freq > 1500000000ull) {
-+		/* Enable initial deskew with 2 x 32k UI. */
-+		ret = regmap_write(priv->regmap, MAX96724_MIPI_TX3(index),
-+				   MAX96724_MIPI_TX3_DESKEW_INIT_AUTO |
-+				   MAX96724_MIPI_TX3_DESKEW_INIT_8X32K);
-+		if (ret)
-+			return ret;
-+
-+		/* Enable periodic deskew with 2 x 1k UI.. */
-+		ret = regmap_write(priv->regmap, MAX96724_MIPI_TX4(index),
-+				   MAX96724_MIPI_TX4_DESKEW_PER_AUTO |
-+				   MAX96724_MIPI_TX4_DESKEW_PER_2K);
-+		if (ret)
-+			return ret;
-+	} else {
-+		/* Disable initial deskew. */
-+		ret = regmap_write(priv->regmap, MAX96724_MIPI_TX3(index), 0x0);
-+		if (ret)
-+			return ret;
-+
-+		/* Disable periodic deskew. */
-+		ret = regmap_write(priv->regmap, MAX96724_MIPI_TX4(index), 0x0);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (is_cphy) {
-+		/* Configure C-PHY timings. */
-+		ret = regmap_write(priv->regmap, MAX96724_MIPI_PHY13,
-+				   MAX96724_MIPI_PHY13_T_T3_PREBEGIN_64X7);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_write(priv->regmap, MAX96724_MIPI_PHY14,
-+				   MAX96724_MIPI_PHY14_T_T3_PREP_55NS |
-+				   MAX96724_MIPI_PHY14_T_T3_POST_32X7);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* Put DPLL block into reset. */
-+	ret = regmap_clear_bits(priv->regmap, MAX96724_DPLL_0(index),
-+				MAX96724_DPLL_0_CONFIG_SOFT_RST_N);
-+	if (ret)
-+		return ret;
-+
-+	/* Set DPLL frequency. */
-+	ret = regmap_update_bits(priv->regmap, MAX96724_BACKTOP22(index),
-+				 MAX96724_BACKTOP22_PHY_CSI_TX_DPLL,
-+				 FIELD_PREP(MAX96724_BACKTOP22_PHY_CSI_TX_DPLL,
-+					    div_u64(dpll_freq, 100000000)));
-+	if (ret)
-+		return ret;
-+
-+	/* Enable DPLL frequency. */
-+	ret = regmap_set_bits(priv->regmap, MAX96724_BACKTOP22(index),
-+			      MAX96724_BACKTOP22_PHY_CSI_TX_DPLL_EN);
-+	if (ret)
-+		return ret;
-+
-+	/* Pull DPLL block out of reset. */
-+	return regmap_set_bits(priv->regmap, MAX96724_DPLL_0(index),
-+			       MAX96724_DPLL_0_CONFIG_SOFT_RST_N);
-+}
-+
-+static int max96724_set_phy_mode(struct max_des *des, struct max_des_phy *phy,
-+				 struct max_des_phy_mode *mode)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int index = max96724_phy_id(des, phy);
-+	int ret;
-+
-+	/* Set alternate memory map modes. */
-+	ret = regmap_assign_bits(priv->regmap, MAX96724_MIPI_TX51(index),
-+				 MAX96724_MIPI_TX51_ALT_MEM_MAP_12,
-+				 mode->alt_mem_map12);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_assign_bits(priv->regmap, MAX96724_MIPI_TX51(index),
-+				 MAX96724_MIPI_TX51_ALT_MEM_MAP_8,
-+				 mode->alt_mem_map8);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_assign_bits(priv->regmap, MAX96724_MIPI_TX51(index),
-+				 MAX96724_MIPI_TX51_ALT_MEM_MAP_10,
-+				 mode->alt_mem_map10);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_assign_bits(priv->regmap, MAX96724_MIPI_TX51(index),
-+				  MAX96724_MIPI_TX51_ALT2_MEM_MAP_8,
-+				  mode->alt2_mem_map8);
-+}
-+
-+static int max96724_set_phy_enable(struct max_des *des, struct max_des_phy *phy,
-+				   bool enable)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int index = max96724_phy_id(des, phy);
-+	unsigned int num_hw_data_lanes;
-+	unsigned int mask;
-+
-+	num_hw_data_lanes = max_des_phy_hw_data_lanes(des, phy);
-+
-+	/*
-+	 * Some configurations merge two logical PHYs into one hardware PHY.
-+	 * Skip writes for absorbed PHYs to avoid clobbering the master's bits.
-+	 */
-+	if (!num_hw_data_lanes)
-+		return 0;
-+
-+	if (num_hw_data_lanes == 4)
-+		/* PHY 1 -> bits [5:4] */
-+		/* PHY 2 -> bits [7:6] */
-+		mask = MAX96724_MIPI_PHY2_PHY_STDB_N_4(index);
-+	else
-+		mask = MAX96724_MIPI_PHY2_PHY_STDB_N_2(index);
-+
-+	return regmap_assign_bits(priv->regmap, MAX96724_MIPI_PHY2, mask, enable);
-+}
-+
-+static int max96724_set_pipe_remap(struct max_des *des,
-+				   struct max_des_pipe *pipe,
-+				   unsigned int i,
-+				   struct max_des_remap *remap)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	struct max_des_phy *phy = &des->phys[remap->phy];
-+	unsigned int phy_id = max96724_phy_id(des, phy);
-+	unsigned int index = pipe->index;
-+	int ret;
-+
-+	/* Set source Data Type and Virtual Channel. */
-+	/* TODO: implement extended Virtual Channel. */
-+	ret = regmap_write(priv->regmap, MAX96724_MIPI_TX13(index, i),
-+			   FIELD_PREP(MAX96724_MIPI_TX13_MAP_SRC_DT,
-+				      remap->from_dt) |
-+			   FIELD_PREP(MAX96724_MIPI_TX13_MAP_SRC_VC,
-+				      remap->from_vc));
-+	if (ret)
-+		return ret;
-+
-+	/* Set destination Data Type and Virtual Channel. */
-+	/* TODO: implement extended Virtual Channel. */
-+	ret = regmap_write(priv->regmap, MAX96724_MIPI_TX14(index, i),
-+			   FIELD_PREP(MAX96724_MIPI_TX14_MAP_DST_DT,
-+				      remap->to_dt) |
-+			   FIELD_PREP(MAX96724_MIPI_TX14_MAP_DST_VC,
-+				      remap->to_vc));
-+	if (ret)
-+		return ret;
-+
-+	/* Set destination PHY. */
-+	return regmap_update_bits(priv->regmap, MAX96724_MIPI_TX45(index, i),
-+				  MAX96724_MIPI_TX45_MAP_DPHY_DEST(i),
-+				  field_prep(MAX96724_MIPI_TX45_MAP_DPHY_DEST(i),
-+					     phy_id));
-+}
-+
-+static int max96724_set_pipe_remaps_enable(struct max_des *des,
-+					   struct max_des_pipe *pipe,
-+					   unsigned int mask)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int index = pipe->index;
-+	int ret;
-+
-+	ret = regmap_write(priv->regmap, MAX96724_MIPI_TX11(index), mask);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_write(priv->regmap, MAX96724_MIPI_TX12(index), mask >> 8);
-+}
-+
-+static int max96724_set_pipe_tunnel_phy(struct max_des *des,
-+					struct max_des_pipe *pipe,
-+					struct max_des_phy *phy)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int phy_index = max96724_phy_id(des, phy);
-+
-+	return regmap_update_bits(priv->regmap, MAX96724_MIPI_TX57(pipe->index),
-+				  MAX96724_MIPI_TX57_TUN_DEST,
-+				  FIELD_PREP(MAX96724_MIPI_TX57_TUN_DEST,
-+					     phy_index));
-+}
-+
-+static int max96724_set_pipe_phy(struct max_des *des, struct max_des_pipe *pipe,
-+				 struct max_des_phy *phy)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int phy_index = max96724_phy_id(des, phy);
-+
-+	return regmap_update_bits(priv->regmap, MAX96724_MIPI_CTRL_SEL,
-+				  MAX96724_MIPI_CTRL_SEL_MASK(pipe->index),
-+				  field_prep(MAX96724_MIPI_CTRL_SEL_MASK(pipe->index),
-+					     phy_index));
-+}
-+
-+static int max96724_set_pipe_enable(struct max_des *des, struct max_des_pipe *pipe,
-+				    bool enable)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int index = pipe->index;
-+
-+	return regmap_assign_bits(priv->regmap, MAX96724_VIDEO_PIPE_EN,
-+				  MAX96724_VIDEO_PIPE_EN_MASK(index), enable);
-+}
-+
-+static int max96724_set_pipe_stream_id(struct max_des *des, struct max_des_pipe *pipe,
-+				       unsigned int stream_id)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int index = pipe->index;
-+
-+	return regmap_update_bits(priv->regmap, MAX96724_VIDEO_PIPE_SEL(index),
-+				  MAX96724_VIDEO_PIPE_SEL_STREAM(index),
-+				  field_prep(MAX96724_VIDEO_PIPE_SEL_STREAM(index),
-+					     stream_id));
-+}
-+
-+static int max96724_set_pipe_link(struct max_des *des, struct max_des_pipe *pipe,
-+				  struct max_des_link *link)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int index = pipe->index;
-+
-+	return regmap_update_bits(priv->regmap, MAX96724_VIDEO_PIPE_SEL(index),
-+				  MAX96724_VIDEO_PIPE_SEL_LINK(index),
-+				  field_prep(MAX96724_VIDEO_PIPE_SEL_LINK(index),
-+					     link->index));
-+}
-+
-+static int max96724_set_pipe_mode(struct max_des *des,
-+				  struct max_des_pipe *pipe,
-+				  struct max_des_pipe_mode *mode)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int index = pipe->index;
-+	unsigned int reg, mask, mode_mask;
-+	int ret;
-+
-+	/* Set 8bit double mode. */
-+	ret = regmap_assign_bits(priv->regmap, MAX96724_BACKTOP21(index),
-+				 MAX96724_BACKTOP21_BPP8DBL(index), mode->dbl8);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_assign_bits(priv->regmap, MAX96724_BACKTOP24(index),
-+				 MAX96724_BACKTOP24_BPP8DBL_MODE(index),
-+				 mode->dbl8mode);
-+	if (ret)
-+		return ret;
-+
-+	/* Set 10bit double mode. */
-+	if (index % 4 == 3) {
-+		reg = MAX96724_BACKTOP30(index);
-+		mask = MAX96724_BACKTOP30_BPP10DBL3;
-+		mode_mask = MAX96724_BACKTOP30_BPP10DBL3_MODE;
-+	} else if (index % 4 == 2) {
-+		reg = MAX96724_BACKTOP31(index);
-+		mask = MAX96724_BACKTOP31_BPP10DBL2;
-+		mode_mask = MAX96724_BACKTOP31_BPP10DBL2_MODE;
-+	} else if (index % 4 == 1) {
-+		reg = MAX96724_BACKTOP32(index);
-+		mask = MAX96724_BACKTOP32_BPP10DBL1;
-+		mode_mask = MAX96724_BACKTOP32_BPP10DBL1_MODE;
-+	} else {
-+		reg = MAX96724_BACKTOP32(index);
-+		mask = MAX96724_BACKTOP32_BPP10DBL0;
-+		mode_mask = MAX96724_BACKTOP32_BPP10DBL0_MODE;
-+	}
-+
-+	ret = regmap_assign_bits(priv->regmap, reg, mask, mode->dbl10);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_assign_bits(priv->regmap, reg, mode_mask, mode->dbl10mode);
-+	if (ret)
-+		return ret;
-+
-+	/* Set 12bit double mode. */
-+	return regmap_assign_bits(priv->regmap, MAX96724_BACKTOP32(index),
-+				  MAX96724_BACKTOP32_BPP12(index), mode->dbl12);
-+}
-+
-+static int max96724_set_pipe_tunnel_enable(struct max_des *des,
-+					   struct max_des_pipe *pipe, bool enable)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+
-+	return regmap_assign_bits(priv->regmap, MAX96724_MIPI_TX54(pipe->index),
-+				  MAX96724_MIPI_TX54_TUN_EN, enable);
-+}
-+
-+static int max96724_read_link_locked(struct max96724_priv *priv,
-+				     unsigned int index, bool *locked)
-+{
-+	unsigned int reg, val;
-+	int ret;
-+
-+	reg = index == 0 ? MAX96724_CTRL3 : MAX96724_CTRL12(index);
-+
-+	ret = regmap_read(priv->regmap, reg, &val);
-+	if (ret)
-+		return ret;
-+
-+	*locked = val & MAX96724_CTRL_LOCKED;
-+
-+	return 0;
-+}
-+
-+static int max96724_wait_for_link_lock(struct max96724_priv *priv,
-+				       unsigned int mask)
-+{
-+	unsigned int i;
-+	bool locked;
-+	int ret, err;
-+
-+	for (i = 0; i < priv->des.info->num_links; i++) {
-+		if (!(mask & BIT(i)))
-+			continue;
-+
-+		err = read_poll_timeout(max96724_read_link_locked, ret,
-+					ret || locked,
-+					10 * USEC_PER_MSEC,
-+					200 * USEC_PER_MSEC, true,
-+					priv, i, &locked);
-+		if (ret)
-+			return ret;
-+
-+		if (err) {
-+			dev_dbg(priv->dev,
-+				"Timeout waiting for link %u lock\n", i);
-+
-+			return err;
+ 	}
+ }
+ 
+@@ -3075,7 +3098,7 @@ static void rzg2l_pinctrl_pm_setup_dedicated_regs(struct rzg2l_pinctrl *pctrl, b
+ 	 * port offset are close together.
+ 	 */
+ 	for (i = 0, caps = 0; i < pctrl->data->n_dedicated_pins; i++) {
+-		bool has_iolh, has_ien;
++		bool has_iolh, has_ien, has_sr;
+ 		u32 off, next_off = 0;
+ 		u64 cfg, next_cfg;
+ 		u8 pincnt;
+@@ -3097,6 +3120,7 @@ static void rzg2l_pinctrl_pm_setup_dedicated_regs(struct rzg2l_pinctrl *pctrl, b
+ 		has_iolh = !!(caps & (PIN_CFG_IOLH_A | PIN_CFG_IOLH_B |
+ 				      PIN_CFG_IOLH_C | PIN_CFG_IOLH_RZV2H));
+ 		has_ien = !!(caps & PIN_CFG_IEN);
++		has_sr = !!(caps & PIN_CFG_SR);
+ 		pincnt = hweight8(FIELD_GET(RZG2L_SINGLE_PIN_BITS_MASK, cfg));
+ 
+ 		if (has_iolh) {
+@@ -3107,7 +3131,10 @@ static void rzg2l_pinctrl_pm_setup_dedicated_regs(struct rzg2l_pinctrl *pctrl, b
+ 			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + IEN(off),
+ 						 cache->ien[0][i]);
+ 		}
+-
++		if (has_sr) {
++			RZG2L_PCTRL_REG_ACCESS32(suspend, pctrl->base + SR(off),
++						 cache->sr[0][i]);
 +		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int max96724_select_links(struct max_des *des, unsigned int mask)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int val = priv->cc_port_cfg;
-+	unsigned int i;
-+	int ret;
-+
-+	for (i = 0; i < des->info->num_links; i++) {
-+		if (!(mask & BIT(i)))
-+			val |= MAX96724_REG3_CC_PORT_SEL(i);
-+	}
-+
-+	ret = regmap_write(priv->regmap, MAX96724_REG3, val);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_update_bits(priv->regmap, MAX96724_REG6, MAX96724_REG6_LINK_EN,
-+				 field_prep(MAX96724_REG6_LINK_EN, mask));
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_set_bits(priv->regmap, MAX96724_CTRL1,
-+			      MAX96724_CTRL1_RESET_ONESHOT);
-+	if (ret)
-+		return ret;
-+
-+	return max96724_wait_for_link_lock(priv, mask);
-+}
-+
-+static int max96724_set_link_version(struct max_des *des,
-+				     struct max_des_link *link,
-+				     enum max_serdes_gmsl_version version)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	unsigned int index = link->index;
-+	unsigned int val;
-+
-+	if (version == MAX_SERDES_GMSL_2_6GBPS)
-+		val = MAX96724_REG26_RX_RATE_6GBPS;
-+	else
-+		val = MAX96724_REG26_RX_RATE_3GBPS;
-+
-+	return regmap_update_bits(priv->regmap, MAX96724_REG26(index),
-+				  MAX96724_REG26_RX_RATE_PHY(index),
-+				  field_prep(MAX96724_REG26_RX_RATE_PHY(index), val));
-+}
-+
-+static int max96724_set_tpg_timings(struct max96724_priv *priv,
-+				    const struct max_serdes_tpg_timings *tm)
-+{
-+	const struct reg_sequence regs[] = {
-+		REG_SEQUENCE_3(MAX96724_VS_DLY_2, tm->vs_dly),
-+		REG_SEQUENCE_3(MAX96724_VS_HIGH_2, tm->vs_high),
-+		REG_SEQUENCE_3(MAX96724_VS_LOW_2, tm->vs_low),
-+		REG_SEQUENCE_3(MAX96724_V2H_2, tm->v2h),
-+		REG_SEQUENCE_2(MAX96724_HS_HIGH_1, tm->hs_high),
-+		REG_SEQUENCE_2(MAX96724_HS_LOW_1, tm->hs_low),
-+		REG_SEQUENCE_2(MAX96724_HS_CNT_1, tm->hs_cnt),
-+		REG_SEQUENCE_3(MAX96724_V2D_2, tm->v2d),
-+		REG_SEQUENCE_2(MAX96724_DE_HIGH_1, tm->de_high),
-+		REG_SEQUENCE_2(MAX96724_DE_LOW_1, tm->de_low),
-+		REG_SEQUENCE_2(MAX96724_DE_CNT_1, tm->de_cnt),
-+	};
-+	int ret;
-+
-+	ret = regmap_multi_reg_write(priv->regmap, regs, ARRAY_SIZE(regs));
-+	if (ret)
-+		return ret;
-+
-+	return regmap_write(priv->regmap, MAX96724_PATGEN_0,
-+			    FIELD_PREP(MAX96724_PATGEN_0_VTG_MODE,
-+				       MAX96724_PATGEN_0_VTG_MODE_FREE_RUNNING) |
-+			    FIELD_PREP(MAX96724_PATGEN_0_DE_INV, tm->de_inv) |
-+			    FIELD_PREP(MAX96724_PATGEN_0_HS_INV, tm->hs_inv) |
-+			    FIELD_PREP(MAX96724_PATGEN_0_VS_INV, tm->vs_inv) |
-+			    FIELD_PREP(MAX96724_PATGEN_0_GEN_DE, tm->gen_de) |
-+			    FIELD_PREP(MAX96724_PATGEN_0_GEN_HS, tm->gen_hs) |
-+			    FIELD_PREP(MAX96724_PATGEN_0_GEN_VS, tm->gen_vs));
-+}
-+
-+static int max96724_set_tpg_clk(struct max96724_priv *priv, u32 clock)
-+{
-+	bool patgen_clk_src = 0;
-+	u8 pclk_src;
-+	int ret;
-+
-+	switch (clock) {
-+	case 25000000:
-+		pclk_src = MAX96724_DEBUG_EXTRA_PCLK_SRC_25MHZ;
-+		break;
-+	case 75000000:
-+		pclk_src = MAX96724_DEBUG_EXTRA_PCLK_SRC_75MHZ;
-+		break;
-+	case 150000000:
-+		pclk_src = MAX96724_DEBUG_EXTRA_PCLK_SRC_USE_PIPE;
-+		patgen_clk_src = MAX96724_VPRBS_PATGEN_CLK_SRC_150MHZ;
-+		break;
-+	case 375000000:
-+		pclk_src = MAX96724_DEBUG_EXTRA_PCLK_SRC_USE_PIPE;
-+		patgen_clk_src = MAX96724_VPRBS_PATGEN_CLK_SRC_375MHZ;
-+		break;
-+	case 0:
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * TPG data is always injected on link 0, which is always routed to
-+	 * pipe 0.
-+	 */
-+	ret = regmap_update_bits(priv->regmap, MAX96724_VPRBS(0),
-+				 MAX96724_VPRBS_PATGEN_CLK_SRC,
-+				 FIELD_PREP(MAX96724_VPRBS_PATGEN_CLK_SRC,
-+					    patgen_clk_src));
-+	if (ret)
-+		return ret;
-+
-+	return regmap_update_bits(priv->regmap, MAX96724_DEBUG_EXTRA,
-+				  MAX96724_DEBUG_EXTRA_PCLK_SRC,
-+				  FIELD_PREP(MAX96724_DEBUG_EXTRA_PCLK_SRC,
-+					     pclk_src));
-+}
-+
-+static int max96724_set_tpg_mode(struct max96724_priv *priv, bool enable)
-+{
-+	unsigned int patgen_mode;
-+
-+	switch (priv->des.tpg_pattern) {
-+	case MAX_SERDES_TPG_PATTERN_GRADIENT:
-+		patgen_mode = MAX96724_PATGEN_1_PATGEN_MODE_GRADIENT;
-+		break;
-+	case MAX_SERDES_TPG_PATTERN_CHECKERBOARD:
-+		patgen_mode = MAX96724_PATGEN_1_PATGEN_MODE_CHECKER;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return regmap_update_bits(priv->regmap, MAX96724_PATGEN_1,
-+				  MAX96724_PATGEN_1_PATGEN_MODE,
-+				  FIELD_PREP(MAX96724_PATGEN_1_PATGEN_MODE,
-+					     enable ? patgen_mode
-+						    : MAX96724_PATGEN_1_PATGEN_MODE_DISABLED));
-+}
-+
-+static int max96724_set_tpg(struct max_des *des,
-+			    const struct max_serdes_tpg_entry *entry)
-+{
-+	struct max96724_priv *priv = des_to_priv(des);
-+	struct max_serdes_tpg_timings timings = { 0 };
-+	int ret;
-+
-+	ret = max_serdes_get_tpg_timings(entry, &timings);
-+	if (ret)
-+		return ret;
-+
-+	ret = max96724_set_tpg_timings(priv, &timings);
-+	if (ret)
-+		return ret;
-+
-+	ret = max96724_set_tpg_clk(priv, timings.clock);
-+	if (ret)
-+		return ret;
-+
-+	ret = max96724_set_tpg_mode(priv, entry);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_assign_bits(priv->regmap, MAX96724_MIPI_PHY0,
-+				  MAX96724_MIPI_PHY0_FORCE_CSI_OUT_EN, !!entry);
-+}
-+
-+static const struct max_serdes_tpg_entry max96724_tpg_entries[] = {
-+	MAX_TPG_ENTRY_640X480P60_RGB888,
-+	MAX_TPG_ENTRY_1920X1080P30_RGB888,
-+	MAX_TPG_ENTRY_1920X1080P60_RGB888,
-+};
-+
-+static const struct max_des_info max96724_des_info = {
-+	.num_phys = 4,
-+	.num_links = 4,
-+	.num_remaps_per_pipe = 16,
-+	.phys_configs = {
-+		.num_configs = ARRAY_SIZE(max96724_phys_configs),
-+		.configs = max96724_phys_configs,
-+	},
-+	.tpg_entries = {
-+		.num_entries = ARRAY_SIZE(max96724_tpg_entries),
-+		.entries = max96724_tpg_entries,
-+	},
-+	.tpg_mode = MAX_SERDES_GMSL_PIXEL_MODE,
-+	.tpg_patterns = BIT(MAX_SERDES_TPG_PATTERN_CHECKERBOARD) |
-+			BIT(MAX_SERDES_TPG_PATTERN_GRADIENT),
-+	.use_atr = true,
-+};
-+
-+static const struct max_des_ops max96724_des_ops = {
-+#ifdef CONFIG_VIDEO_ADV_DEBUG
-+	.reg_read = max96724_reg_read,
-+	.reg_write = max96724_reg_write,
-+#endif
-+	.log_pipe_status = max96724_log_pipe_status,
-+	.log_phy_status = max96724_log_phy_status,
-+	.set_enable = max96724_set_enable,
-+	.init = max96724_init,
-+	.init_phy = max96724_init_phy,
-+	.set_phy_mode = max96724_set_phy_mode,
-+	.set_phy_enable = max96724_set_phy_enable,
-+	.set_pipe_stream_id = max96724_set_pipe_stream_id,
-+	.set_pipe_link = max96724_set_pipe_link,
-+	.set_pipe_enable = max96724_set_pipe_enable,
-+	.set_pipe_remap = max96724_set_pipe_remap,
-+	.set_pipe_remaps_enable = max96724_set_pipe_remaps_enable,
-+	.set_pipe_mode = max96724_set_pipe_mode,
-+	.set_tpg = max96724_set_tpg,
-+	.select_links = max96724_select_links,
-+	.set_link_version = max96724_set_link_version,
-+};
-+
-+static const struct max96724_chip_info max96724_info = {
-+	.versions = BIT(MAX_SERDES_GMSL_2_3GBPS) |
-+		    BIT(MAX_SERDES_GMSL_2_6GBPS),
-+	.modes = BIT(MAX_SERDES_GMSL_PIXEL_MODE) |
-+		 BIT(MAX_SERDES_GMSL_TUNNEL_MODE),
-+	.set_pipe_tunnel_enable = max96724_set_pipe_tunnel_enable,
-+	.set_pipe_phy = max96724_set_pipe_phy,
-+	.set_pipe_tunnel_phy = max96724_set_pipe_tunnel_phy,
-+	.supports_pipe_stream_autoselect = true,
-+	.num_pipes = 4,
-+};
-+
-+static const struct max96724_chip_info max96724f_info = {
-+	.versions = BIT(MAX_SERDES_GMSL_2_3GBPS),
-+	.modes = BIT(MAX_SERDES_GMSL_PIXEL_MODE) |
-+		 BIT(MAX_SERDES_GMSL_TUNNEL_MODE),
-+	.set_pipe_tunnel_enable = max96724_set_pipe_tunnel_enable,
-+	.set_pipe_phy = max96724_set_pipe_phy,
-+	.set_pipe_tunnel_phy = max96724_set_pipe_tunnel_phy,
-+	.supports_pipe_stream_autoselect = true,
-+	.num_pipes = 4,
-+};
-+
-+static const struct max96724_chip_info max96712_info = {
-+	.versions = BIT(MAX_SERDES_GMSL_2_3GBPS) |
-+		    BIT(MAX_SERDES_GMSL_2_6GBPS),
-+	.modes = BIT(MAX_SERDES_GMSL_PIXEL_MODE),
-+	.num_pipes = 8,
-+};
-+
-+static void max96724_power_off(void *data)
-+{
-+	struct max96724_priv *priv = data;
-+
-+	gpiod_set_value_cansleep(priv->gpiod_enable, 0);
-+}
-+
-+static int max96724_probe(struct i2c_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	struct max96724_priv *priv;
-+	struct max_des_info *info;
-+	struct max_des_ops *ops;
-+	u32 cc_port;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	ops = devm_kzalloc(dev, sizeof(*ops), GFP_KERNEL);
-+	if (!ops)
-+		return -ENOMEM;
-+
-+	priv->info = device_get_match_data(dev);
-+	if (!priv->info) {
-+		dev_err(dev, "Failed to get match data\n");
-+		return -ENODEV;
-+	}
-+
-+	priv->dev = dev;
-+	priv->client = client;
-+	i2c_set_clientdata(client, priv);
-+
-+	priv->regmap = devm_regmap_init_i2c(client, &max96724_i2c_regmap);
-+	if (IS_ERR(priv->regmap))
-+		return PTR_ERR(priv->regmap);
-+
-+	priv->gpiod_enable = devm_gpiod_get_optional(&client->dev, "enable",
-+						     GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->gpiod_enable))
-+		return PTR_ERR(priv->gpiod_enable);
-+
-+	if (priv->gpiod_enable) {
-+		/* PWDN must be held for 1us for reset */
-+		udelay(1);
-+
-+		gpiod_set_value_cansleep(priv->gpiod_enable, 1);
-+
-+		/* Maximum power-up time (tLOCK) 4ms */
-+		usleep_range(4000, 5000);
-+
-+		ret = devm_add_action_or_reset(dev, max96724_power_off,
-+					       priv);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	priv->cc_port_cfg = MAX96724_REG3_CC_PORT_CFG_PORT0;
-+
-+	ret = device_property_read_u32(dev, "maxim,control-channel-port",
-+				       &cc_port);
-+	if (!ret) {
-+		switch (cc_port) {
-+		case 0:
-+			priv->cc_port_cfg = MAX96724_REG3_CC_PORT_CFG_PORT0;
-+			break;
-+		case 1:
-+			priv->cc_port_cfg = MAX96724_REG3_CC_PORT_CFG_PORT1;
-+			break;
-+		default:
-+			dev_err(dev, "Invalid control-channel port %u\n", cc_port);
-+			return -EINVAL;
-+		}
-+	} else if (ret != -ENODATA && ret != -ENOENT && ret != -EINVAL) {
-+		return ret;
-+	}
-+
-+	*info = max96724_des_info;
-+	info->versions = priv->info->versions;
-+	info->modes = priv->info->modes;
-+	info->num_pipes = priv->info->num_pipes;
-+	priv->des.info = info;
-+
-+	*ops = max96724_des_ops;
-+	ops->set_pipe_tunnel_enable = priv->info->set_pipe_tunnel_enable;
-+	ops->set_pipe_phy = priv->info->set_pipe_phy;
-+	ops->set_pipe_tunnel_phy = priv->info->set_pipe_tunnel_phy;
-+	priv->des.ops = ops;
-+
-+	ret = max96724_reset(priv);
-+	if (ret)
-+		return ret;
-+
-+	return max_des_probe(client, &priv->des);
-+}
-+
-+static void max96724_remove(struct i2c_client *client)
-+{
-+	struct max96724_priv *priv = i2c_get_clientdata(client);
-+
-+	max_des_remove(&priv->des);
-+}
-+
-+static const struct of_device_id max96724_of_table[] = {
-+	{ .compatible = "maxim,max96712", .data = &max96712_info },
-+	{ .compatible = "maxim,max96724", .data = &max96724_info },
-+	{ .compatible = "maxim,max96724f", .data = &max96724f_info },
-+	{ .compatible = "maxim,max96724r", .data = &max96724f_info },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, max96724_of_table);
-+
-+static struct i2c_driver max96724_i2c_driver = {
-+	.driver	= {
-+		.name = "max96724",
-+		.of_match_table	= max96724_of_table,
-+	},
-+	.probe = max96724_probe,
-+	.remove = max96724_remove,
-+};
-+
-+module_i2c_driver(max96724_i2c_driver);
-+
-+MODULE_IMPORT_NS("MAX_SERDES");
-+MODULE_DESCRIPTION("Maxim MAX96724 Quad GMSL2 Deserializer Driver");
-+MODULE_AUTHOR("Cosmin Tanislav <cosmin.tanislav@analog.com>");
-+MODULE_LICENSE("GPL");
-
+ 		if (pincnt >= 4) {
+ 			if (has_iolh) {
+ 				RZG2L_PCTRL_REG_ACCESS32(suspend,
+@@ -3119,6 +3146,11 @@ static void rzg2l_pinctrl_pm_setup_dedicated_regs(struct rzg2l_pinctrl *pctrl, b
+ 							 pctrl->base + IEN(off) + 4,
+ 							 cache->ien[1][i]);
+ 			}
++			if (has_sr) {
++				RZG2L_PCTRL_REG_ACCESS32(suspend,
++							 pctrl->base + SR(off) + 4,
++							 cache->sr[1][i]);
++			}
+ 		}
+ 		caps = 0;
+ 	}
 -- 
 2.53.0
-
 
