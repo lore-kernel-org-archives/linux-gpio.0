@@ -1,44 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46A65632A6;
-	Mon, 31 Aug 2026 13:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324A5576ECB;
+	Mon, 31 Aug 2026 13:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788184069; cv=none; b=fCjWECd76yQqMd8xBi+sZAhDCCCdWBBvpC2hs7lvPBjOIn75348rsloIG66wqSjiPNql794YQS0DJONiXs0bWD5cJBtKzSojedu8EwxYupt1suo8joHhneiQvCrrzmldNmD3YcnE50sH3mV/0BJMD8i22dWuQkVGh1/oDflg4RM=
+	t=1788184151; cv=none; b=dt9aGbxwMTlYxO2oXlbOsJqxV68HPWzSB3dpvpD0vsJyN2TKrhkTgwajPdrVdL23x4g/n7OiZwV/Y+P7QPGpkKKq0ZtKusM/A76mDOCjJdJuhcBG8RdxDL6c58VXlnZxmDJR9NZay696EVgZ1ZNBnDrBkLw5ObW9++NMF0aeK0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788184069; c=relaxed/simple;
-	bh=F3PXKsGiZS6fYAcXoh+mSIliT4gOFNfvnyloSUYCwac=;
+	s=arc-20240116; t=1788184151; c=relaxed/simple;
+	bh=nxm8TCLe1NAIexoZGCss09KSBgvZckLa5mkKFBP8Ld8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n9lw2rvOSG/ksbFKFyxYDLAsFh4f/r/JczArLsj1Z4W03F8Ss3j6rAD7P4J2cDb05Ph/Y5n5sg/4onRUhSoBcTb1XLrzlCF6rCZvfVK4yDfDVq8LI9lcEwz9m6dZ+bGGBGNT13qjy4ZBxugN5j5qRz7pwDbKcDU3BeP8QO+qETk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzAEGYnV; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=gm3nZqOK/mO3GXR4smUVmatFu2iLn/Cbgbr0E8QGXP6mF80HIRnGwLKAYHnvwTUtOVvYglbBcQLbw/HYFFpKJGSIRqwtAufw6FA4XDxiUoKLKke1WRf6eN95c6asJ5wv5tkfprW/z9XcwfnyMQQQYW7eZ0r68bdA8S6O4vtHC/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ChqJJsUL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzAEGYnV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 925F11F00A3D;
-	Mon, 31 Aug 2026 13:47:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChqJJsUL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E76D1F00ADF;
+	Mon, 31 Aug 2026 13:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788184066;
-	bh=MxBcVVAjkwnqigI9ZfUaaBNLBx8KvOmAXi0pHeLz1eo=;
+	s=k20260515; t=1788184148;
+	bh=+2piEAl8TQwbISF+YrXVO7sQM3VsKs+x6fEO3ZYdErE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=mzAEGYnVLvXHdJL6Kjh895cClOJCx71v0xA6vUR6CvEmfzuI8Eos6s8SaIah7Nylm
-	 R+xKJ2znesf8iQHXn97Jm6Cb9GZoz+zVWedRzf4wjFzXysu+zg65TLLsjltAOwWv2U
-	 JVWpJtx/1Q/UpNVG45x3AQMk0JsO5ob6I0l1egV/lAXly1eLR40vhfg9SSGQ7Ma/kV
-	 saOvz2vxhgq6XsR5x2QN7Lcc8ztFCHnvyrJMwLcPblfND/zx9irMw+cnNemjaoy9aF
-	 vPOkjXB+vFAe0kDxV+dJ2yquRf0yEWGiOo2fKEo7F7qQ6s/30Xgcacv+109z2AAXDZ
-	 MZT6OB6cksdVQ==
+	b=ChqJJsUL2nSBGLK0dITiqSnrQLoGn2pqNXrF6Q4RkZj/hG4NAg+tnK3YrvEOm1E/O
+	 PTw/ji6NXP3NDi/julvstqk35fcRMckzGgZLcQmn9vgjqQpxSRWSv1SkZJKQsHUfIz
+	 ddKFQ7TqZU65YS6pGxMlJhL5cIZKAIPJOLNdHxD//GRxXPbgWD8gkRAvUTj1mxm9op
+	 czP+1cleHbMkmT3V9ZiviIBHkhH2GwfvmpEoP0C+toKXhssaApxHK+yutZu/w7LB/r
+	 sA+Fn4CRnjioHcBdnLyJ+kGAE4UpiwBKj1aQxI99/GVVgrFB0d+ZF+QBT7dZq/+wDw
+	 M5sqBr86qsA8g==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: "Rob Herring (Arm)" <robh@kernel.org>,
+Cc: Liang Hao <haohlliang@gmail.com>,
 	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
 	Sasha Levin <sashal@kernel.org>,
+	hoan@os.amperecomputing.com,
 	linusw@kernel.org,
 	brgl@kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-5.10] gpio: pisosr: Read "ngpios" as u32
-Date: Mon, 31 Aug 2026 09:28:19 -0400
-Message-ID: <20260831133314.4125787-471-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.10] gpio: dwapb: Mask interrupts at hardware initialization
+Date: Mon, 31 Aug 2026 09:29:08 -0400
+Message-ID: <20260831133314.4125787-520-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
@@ -54,369 +55,432 @@ X-stable-base: Linux 6.18.48
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: "Rob Herring (Arm)" <robh@kernel.org>
+From: Liang Hao <haohlliang@gmail.com>
 
-[ Upstream commit 4910aa198d25e5d1067236560ba34ab12bccc677 ]
+[ Upstream commit aaf7766ba3b99a3834319e7cf939838afc705574 ]
 
-The generic "ngpios" property is encoded as a normal uint32 cell. The
-pisosr driver stores it in the gpio_chip field, but reading it with a
-u16 helper does not match the DT property encoding.
+GPIO interrupts may retain stale state across warm reboots when
+peripherals remain powered. If a GPIO line is not explicitly
+configured for interrupts, this can result in interrupt storms
+due to missing handlers.
 
-Read "ngpios" as u32 and keep the existing assignment to the chip
-field.
+Fix this by ensuring all interrupts are masked and disabled at
+hardware initialization time via the init_hw() callback. Pending
+interrupts are also cleared to start from a known-safe state.
 
-Assisted-by: Codex:gpt-5-5
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-Link: https://patch.msgid.link/20260612215216.1887485-1-robh@kernel.org
+Interrupts will be unmasked only when explicitly configured by
+userspace or kernel drivers.
+
+Signed-off-by: Liang Hao <haohlliang@gmail.com>
+Link: https://patch.msgid.link/20260705074759.47863-1-haohlliang@gmail.com
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## Phase 1: Commit Message Forensics
+# Stable Backport Analysis: `gpio: dwapb: Mask interrupts at hardware
+initialization`
 
-### Step 1.1: Subject Line
-**Record:** `[gpio: pisosr]` `[Read]` — Read the device-tree `ngpios`
-property with the correct cell width (`u32` instead of `u16`).
+**Local tree:** Linux **6.18.44** (`v6.18.44-1-g2736c32da98b9`)
 
-### Step 1.2: Tags
+---
+
+## PHASE 1: COMMIT MESSAGE FORENSICS
+
+### Step 1.1: Parse the subject line
+**Record:** `[gpio: dwapb]` `[Mask]` — Ensure GPIO interrupt hardware is
+in a known-safe masked state during driver initialization.
+
+### Step 1.2: Parse all commit message tags
 **Record:**
-- **Assisted-by:** Codex:gpt-5-5
-- **Signed-off-by:** Rob Herring (Arm) \<robh@kernel.org\>
+- **Fixes:** — not present (expected for manual review)
+- **Reported-by:** — none
+- **Tested-by:** — none
+- **Reviewed-by:** — none
+- **Acked-by:** — none
 - **Link:**
-  https://patch.msgid.link/20260612215216.1887485-1-robh@kernel.org
+  `https://patch.msgid.link/20260705074759.47863-1-haohlliang@gmail.com`
+- **Cc: stable:** — not present (not a negative signal)
+- **Signed-off-by:** Liang Hao `<haohlliang@gmail.com>` (author)
 - **Signed-off-by:** Bartosz Golaszewski
-  \<bartosz.golaszewski@oss.qualcomm.com\> (GPIO maintainer)
-- No Fixes:, Reported-by:, Tested-by:, Reviewed-by:, Cc:
-  stable@vger.kernel.org
-- Notable: authored/assisted by the device-tree maintainer; merged by
-  GPIO subsystem maintainer
+  `<bartosz.golaszewski@oss.qualcomm.com>` (GPIO maintainer)
 
-### Step 1.3: Body Analysis
+Notable: maintainer sign-off; no syzbot/fuzzer report; no explicit user
+bug report in the message.
+
+### Step 1.3: Analyze commit body
 **Record:**
-- **Bug:** Generic `ngpios` is a standard `u32` DT cell; `gpio-pisosr`
-  read it via `of_property_read_u16()`.
-- **Symptom:** Wrong `ngpio` when `ngpios` is present in DT; chip field
-  type is `u16`, but the property encoding is `u32`.
-- **Root cause:** Size/endian mismatch between DT encoding and OF read
-  helper.
-- **Fix:** Read into temporary `u32`, assign to `gpio->chip.ngpio` only
-  on success.
+- **Bug:** GPIO interrupt registers can retain stale enabled/unmasked
+  state across warm reboots when the GPIO block stays powered.
+- **Symptom:** Interrupt storms on lines not explicitly configured for
+  interrupts, because hardware is firing but software has no proper
+  handler setup for those lines.
+- **Root cause:** Driver did not reset interrupt enable/mask/EOI
+  registers at probe time.
+- **Fix approach:** Add `init_hw` callback that disables all interrupts
+  (`GPIO_INTEN=0`), masks all lines (`GPIO_INTMASK=0xffffffff`), and
+  clears pending interrupts (`GPIO_PORTA_EOI=0xffffffff`) before the
+  irqchip/domain is fully operational.
+- **Version info:** none stated in the message.
 
-### Step 1.4: Hidden Bug Fix?
-**Record:** Yes. Despite neutral wording, this is a correctness /
-memory-safety bug fix, not style cleanup.
+### Step 1.4: Detect hidden bug fixes
+**Record:** Not disguised as cleanup — this is an explicit hardware-init
+bug fix. The failure mode (interrupt storm → potential soft lockup /
+system unresponsiveness) is a real stability bug, not cosmetic cleanup.
 
 ---
 
-## Phase 2: Diff Analysis
+## PHASE 2: DIFF ANALYSIS
 
-### Step 2.1: Inventory
+### Step 2.1: Inventory the changes
 **Record:**
-- **File:** `drivers/gpio/gpio-pisosr.c` (+3 / -1 net)
-- **Function:** `pisosr_gpio_probe()`
-- **Scope:** Single-file surgical fix
+- **Files:** `drivers/gpio/gpio-dwapb.c` only (+16 lines net)
+- **Functions added/modified:**
+  - New: `dwapb_irq_init_hw()`
+  - Modified: `dwapb_configure_irqs()` (assigns `girq->init_hw`)
+- **Scope:** Single-file, surgical driver fix.
 
-### Step 2.2: Code Flow Change
+### Step 2.2: Code flow change per hunk
+
+**Hunk 1 — new `dwapb_irq_init_hw()`:**
+- **Before:** No hardware interrupt reset at GPIO irqchip registration.
+- **After:** On `gpiochip_add_data()`, gpiolib calls `init_hw` which
+  writes:
+  - `GPIO_INTEN = 0` (disable all interrupt enables)
+  - `GPIO_INTMASK = 0xffffffff` (mask all lines)
+  - `GPIO_PORTA_EOI = 0xffffffff` (clear all pending interrupts)
+
+**Hunk 2 — `dwapb_configure_irqs()`:**
+- **Before:** `girq->handler = handle_bad_irq`, `girq->default_type =
+  IRQ_TYPE_NONE` only.
+- **After:** Also sets `girq->init_hw = dwapb_irq_init_hw`.
+
+**Execution path:** Driver probe → `dwapb_gpio_add_port()` →
+`dwapb_configure_irqs()` → `devm_gpiochip_add_data()` →
+`gpiochip_irqchip_init_hw()` → `dwapb_irq_init_hw()`.
+
+### Step 2.3: Bug mechanism
+**Record:** **Category (h): Hardware initialization / stale-state
+workaround**
+
+The DesignWare APB GPIO block does not reset interrupt state on warm
+reboot if power is maintained. Without explicit masking at probe, lines
+left enabled from a prior boot can assert interrupts continuously. The
+driver sets `handle_bad_irq` as default handler, but unmasked hardware
+interrupts on unconfigured lines can still flood the CPU with IRQ
+activity.
+
+The fix mirrors established patterns in other GPIO drivers (e.g. `gpio-
+max77620.c` explicitly documents bootloader-left interrupts).
+
+### Step 2.4: Fix quality assessment
 **Record:**
-- **Before:** `of_property_read_u16(dev->of_node, "ngpios",
-  &gpio->chip.ngpio);` (return ignored). `buffer_size` computed
-  immediately after from `gpio->chip.ngpio`.
-- **After:** `u32 ngpios`; `if (!of_property_read_u32(..., &ngpios))
-  gpio->chip.ngpio = ngpios;`. On missing property, default
-  `DEFAULT_NGPIO` (8) is preserved.
-
-### Step 2.3: Bug Mechanism
-**Record:** **Category:** DT property parsing / memory safety (buffer
-underrun → OOB)
-
-Verified mechanism:
-1. DT stores `ngpios = <N>` as a 4-byte big-endian `u32`.
-2. `of_property_read_u16()` requires `prop->length >= 2` with `max=0`
-   (no upper bound), so it **succeeds** on a 4-byte property.
-3. It reads the **first** 16 bits (`be16_to_cpup` at offset 0). For any
-   normal `N < 65536`, those high 16 bits are zero.
-
-Python simulation confirmed:
-- `ngpios=8` → u32 bytes `00000008` → u16 read = **0**
-- Same for 16, 24, 32
-
-4. With `ngpios` present in DT, `gpio->chip.ngpio` becomes **0**.
-5. `buffer_size = DIV_ROUND_UP(0, 8) = 0`; `devm_kzalloc(dev, 0, ...)`
-   yields `ZERO_SIZE_PTR`.
-6. Later `devm_gpiochip_add_data()` → `gpiochip_get_ngpios()` sees
-   `gc->ngpio == 0`, re-reads `ngpios` as `u32`, and restores the
-   correct line count for registration — but **`buffer_size` and
-   `buffer` are never recomputed**.
-7. GPIO access (`pisosr_gpio_get()` → `gpio->buffer[offset / 8]`) can
-   then read/write through a zero-sized buffer → **out-of-bounds
-   access**.
-
-When `ngpios` is **absent**, `of_property_read_u16()` fails, `ngpio`
-stays at template default 8, and the driver works.
-
-### Step 2.4: Fix Quality
-**Record:** Obviously correct; matches every other GPIO driver in-tree
-(`gpio-uniphier.c`, `gpio-aspeed.c`, `gpio-em.c`, etc.). Minimal diff.
-Regression risk very low.
+- **Quality:** High — minimal, register writes match existing driver
+  register definitions and irq enable/disable logic.
+- **Regression risk:** Very low — interrupts are only unmasked later via
+  `dwapb_irq_unmask()` / `dwapb_irq_enable()` when explicitly
+  configured.
+- **Minor nuance:** On ACPI platforms, `devm_request_irq()` in
+  `dwapb_configure_irqs()` runs *before* `devm_gpiochip_add_data()`
+  triggers `init_hw`. This is a pre-existing ordering characteristic;
+  the fix still addresses the steady-state stale-hardware problem and is
+  strictly better than no masking. Verified in current tree code at
+  lines 484–566 of `gpio-dwapb.c`.
 
 ---
 
-## Phase 3: Git History Investigation
+## PHASE 3: GIT HISTORY INVESTIGATION
 
-### Step 3.1: Blame
-**Record:** Buggy `of_property_read_u16()` introduced in `df6df93c8a73f`
-(2016-01-25, "gpio: Add driver for SPI serializers"). Present throughout
-6.18.y.
+### Step 3.1: Blame changed lines
+**Record:** `dwapb_configure_irqs()` and surrounding interrupt code
+trace to `5d324e5159d9e` (v6.18 merge base in this tree). The driver and
+interrupt path have been present since this tree's import; no `init_hw`
+hook was ever set for dwapb in this tree.
 
-### Step 3.2: Fixes: Tag
-**Record:** N/A — no Fixes: tag.
+### Step 3.2: Follow Fixes: tag
+**Record:** N/A — no `Fixes:` tag in commit message.
 
-### Step 3.3: Related File History
-**Record:** Recent `gpio-pisosr.c` commits are cleanups
-(`devm_mutex_init`, remove `direction_output`,
-`devm_gpiochip_add_data`). No related ngpios fix already present.
-Standalone one-patch fix.
+### Step 3.3: File history for related changes
+**Record:** Recent `gpio-dwapb.c` history in this tree:
+- `5e15cf51982f8` gpio: dwapb: Defer clock gating until noirq
+- `6c736c5ccf4a3` gpio: dwapb: reduce allocation to single kzalloc
+- `d7b5497e0e45b` gpio: dwapb: Use modern PM macros
 
-### Step 3.4: Author Context
-**Record:** Rob Herring is DT maintainer. Bartosz Golaszewski is GPIO
-maintainer. Patch is subsystem-appropriate.
+No related interrupt-init fix already present. Standalone patch, not
+part of a series.
 
-### Step 3.5: Dependencies
-**Record:** None. No series markers. Applies standalone to existing
-`pisosr_gpio_probe()`.
+### Step 3.4: Author's other commits
+**Record:** No commits by Liang Hao found in this tree's history (`git
+log --author` returned empty). Author appears to be an external
+contributor; patch carries GPIO maintainer SOB.
 
----
-
-## Phase 4: Mailing List and External Research
-
-### Step 4.1–4.5
+### Step 3.5: Prerequisites / dependencies
 **Record:**
-- `b4 dig -c 2732ea8c16b7b`: commit hash not in local repo (blob only
-  from diff index); no lore match.
-- Link URL and lore.kernel.org blocked by Anubis bot protection —
-  **UNVERIFIED** for review-thread content, stable nominations, or NAKs.
-- No syzbot/bugzilla references in commit message.
+- **`init_hw` infrastructure:** Present in this tree —
+  `include/linux/gpio/driver.h` defines `gpio_irq_chip::init_hw`;
+  `gpiochip_irqchip_init_hw()` in `gpiolib.c` calls it during
+  `gpiochip_add_data()` at line 1196.
+- **No other commits required.** Patch is self-contained.
+- **Can apply standalone:** Yes.
 
 ---
 
-## Phase 5: Code Semantic Analysis
+## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
 
-### Step 5.1: Key Functions
-**Record:** `pisosr_gpio_probe()`, indirectly `pisosr_gpio_get()`,
-`pisosr_gpio_refresh()`.
+### Step 4.1: Original patch discussion
+**Record:** Attempted `b4 dig -c <commit>` — commit not in local tree
+(not yet applied). Attempted lore fetch via WebFetch and curl — blocked
+by Anubis bot protection. **Could not retrieve mailing list thread
+content.**
+
+### Step 4.2: Reviewers from b4 dig -w
+**Record:** Not performed — commit hash unavailable locally; b4 requires
+`-c COMMITISH`.
+
+### Step 4.3: Bug report search
+**Record:** No Reported-by or syzbot link in commit message. No external
+bug report retrieved.
+
+### Step 4.4: Related patches / series
+**Record:** Appears to be a standalone 1-patch fix. No series indicators
+in subject.
+
+### Step 4.5: Stable mailing list history
+**Record:** Not searchable due to lore access failure. No stable-list
+discussion verified.
+
+---
+
+## PHASE 5: CODE SEMANTIC ANALYSIS
+
+### Step 5.1: Key functions
+**Record:** `dwapb_irq_init_hw()` (new), `dwapb_configure_irqs()`
+(modified), called via `gpiochip_irqchip_init_hw()` in gpiolib.
 
 ### Step 5.2: Callers
-**Record:** `pisosr_gpio_probe()` via SPI driver registration at
-boot/module load. GPIO ops invoked from gpiolib when consumers read
-lines.
+**Record:**
+- `dwapb_configure_irqs()` ← `dwapb_gpio_add_port()` ←
+  `dwapb_gpio_probe()` (platform driver probe)
+- `gpiochip_irqchip_init_hw()` ← `gpiochip_add_data()` ←
+  `devm_gpiochip_add_data()`
+- Probe runs at boot for all DesignWare APB GPIO instances (DT:
+  `snps,dw-apb-gpio`; ACPI on Intel platforms per driver comment).
 
 ### Step 5.3: Callees
-**Record:** `of_property_read_u16/u32`, `devm_kzalloc`,
-`devm_gpiochip_add_data` → `gpiochip_get_ngpios`.
+**Record:** `dwapb_write()` / `dwapb_read()` — MMIO register accessors
+with v2 register offset remapping.
 
-### Step 5.4: Reachability
-**Record:** Triggered when a board DT node has `compatible = "pisosr-
-gpio"` **and** an explicit `ngpios` property. GPIO reads from userspace
-or kernel consumers reach the buggy buffer path.
+### Step 5.4: Call chain / reachability
+**Record:** Triggered on every dwapb controller probe at boot (or module
+load). Warm reboot with powered GPIO block is the specific failure
+scenario. Affects embedded SoCs (RISC-V T-Head, Sophgo, many others in
+DT) and Intel ACPI platforms using shared GPIO IRQ lanes.
 
-### Step 5.5: Similar Patterns
-**Record:** `gpio-pisosr.c` is the **only** GPIO driver using
-`of_property_read_u16()` for `ngpios`. All others use
-`of_property_read_u32()`.
+### Step 5.5: Similar patterns
+**Record:** Identical pattern already used in this tree by:
+- `gpio-max77620.c` — "GPIO interrupts may be left ON after bootloader"
+- `gpio-idt3243x.c` — masks all interrupts in `init_hw`
+- `gpio-tangier.c` — clears edge-detect registers in `init_hw`
 
----
-
-## Phase 6: Cross-Reference Against Local Tree (v6.18.44)
-
-### Step 6.1: Buggy Code Present?
-**Record:** **YES.** Local tree at `v6.18.44-1-g2736c32da98b9` still
-has:
-
-```123:123:drivers/gpio/gpio-pisosr.c
-        of_property_read_u16(dev->of_node, "ngpios", &gpio->chip.ngpio);
-```
-
-Bug present since driver addition in 2016.
-
-### Step 6.2: Backport Complications
-**Record:** Clean apply expected — 3-line hunk in one function, no
-structural conflicts.
-
-### Step 6.3: Related Fixes Already Present?
-**Record:** None found for this issue.
-
-### In-tree DTS usage
-**Record:** Five `pisosr-gpio` nodes exist (BeagleBone AI, AM57xx IDK,
-AM437x IDK, AM335x ICEv2, VF610 BK4). **None specify `ngpios`** — all
-rely on the driver default of 8. So mainline shipped boards are not
-currently broken, but the binding allows `ngpios` (default 8, max 32 per
-`pisosr-gpio.yaml`).
+This is an established, maintainer-accepted GPIO subsystem pattern.
 
 ---
 
-## Phase 7: Subsystem Context
+## PHASE 6: CROSS-REFERENCE AGAINST LOCAL TREE (6.18.44)
 
-### Step 7.1
-**Record:** `drivers/gpio/gpio-pisosr.c` — GPIO driver for SPI parallel-
-in/serial-out shift registers. **Criticality: PERIPHERAL** (niche
-industrial/embedded hardware).
+### Step 6.1: Does buggy code exist?
+**Record:** **YES.** Current `gpio-dwapb.c` has no `dwapb_irq_init_hw`
+and no `girq->init_hw` assignment. `dwapb_configure_irqs()` at lines
+472–474 sets only `handler` and `default_type`. The driver has been
+present in this tree without hardware interrupt masking at init.
 
-### Step 7.2
-**Record:** Driver is mature (since 2016); recent activity is
-maintenance only.
+### Step 6.2: Backport complications
+**Record:** **Clean apply expected.** File structure matches the patch
+context exactly. `init_hw` callback and gpiolib support are present. No
+conflicting changes identified.
+
+### Step 6.3: Related fixes already present?
+**Record:** **None.** `grep` for `dwapb_irq_init_hw` and `init_hw` in
+`gpio-dwapb.c` returns no matches.
 
 ---
 
-## Phase 8: Impact and Risk Assessment
+## PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
 
-### Step 8.1: Who Is Affected
-**Record:** Users of `pisosr-gpio` hardware who include an explicit
-`ngpios` property in device tree. Config-specific / board-specific.
+### Step 7.1: Subsystem criticality
+**Record:** **drivers/gpio** — IMPORTANT. GPIO/IRQ infrastructure
+affects many embedded and ACPI platforms. Interrupt storms are a system-
+wide stability issue.
 
-### Step 8.2: Trigger Conditions
-**Record:** `ngpios = <N>` in DT for a `pisosr-gpio` node. Uncommon
-today (no in-tree examples), but valid per binding. Not userspace-
-triggerable directly; kernel GPIO access after probe triggers OOB.
+### Step 7.2: Subsystem activity
+**Record:** Active — recent dwapb commits in 6.18.y (PM, allocation,
+clock gating). Driver is maintained and in active use.
 
-### Step 8.3: Failure Mode Severity
-**Record:** Wrong zero-sized internal buffer while gpiochip may register
-the correct line count → **OOB on GPIO read** → potential
-oops/corruption. **Severity: HIGH** when triggered; **latent** on
-current in-tree DTS.
+---
 
-### Step 8.4: Risk-Benefit
+## PHASE 8: IMPACT AND RISK ASSESSMENT
+
+### Step 8.1: Who is affected
+**Record:** Users of DesignWare APB GPIO (`CONFIG_GPIO_DWAPB`) on
+platforms where the GPIO block retains power across warm reboot —
+embedded SoCs, Intel ACPI systems with shared GPIO IRQ lanes. Config-
+specific but affects a broad class of hardware.
+
+### Step 8.2: Trigger conditions
 **Record:**
-- **Benefit:** Fixes real DT-binding compliance bug with memory-safety
-  consequences; enables correct custom board DT.
-- **Risk:** Very low — 3-line change, matches established driver
-  pattern.
-- **Ratio:** Favorable for backport despite niche hardware.
+- Warm reboot (not full power cycle)
+- GPIO block stays powered
+- Prior boot left interrupt enables/masks in non-default state
+- Lines not re-configured for interrupts in new boot
+- **Likelihood:** Platform-dependent but realistic on embedded/ACPI
+  systems that use warm reboot
+- **Unprivileged trigger:** No direct userspace trigger; boot-time /
+  reboot-time hardware state issue
+
+### Step 8.3: Failure mode severity
+**Record:** **Interrupt storm** → sustained IRQ handling → CPU
+saturation → soft lockup / hung system / severely degraded
+responsiveness. **Severity: HIGH to CRITICAL** (system stability).
+
+### Step 8.4: Risk-benefit
+**Record:**
+- **Benefit:** HIGH — prevents boot-time or post-warm-reboot interrupt
+  storms on widely deployed IP block
+- **Risk:** VERY LOW — ~16 lines, standard register init, no API
+  changes, interrupts restored only when explicitly enabled
+- **Ratio:** Strongly favors backport
 
 ---
 
-## Phase 9: Final Synthesis
+## PHASE 9: FINAL SYNTHESIS
 
-### Step 9.1: Evidence Summary
+### Step 9.1: Evidence compile
 
-**FOR:**
-- Verified bug: `u16` read of `u32` `ngpios` yields 0 for all normal
-  values
-- Leads to zero-sized buffer + possible OOB despite correct gpiochip
-  registration
-- Bug since 2016; fix not yet in 6.18.y
-- Trivial, obviously correct; DT + GPIO maintainers involved
-- DT binding documents `ngpios` as valid optional property
+**FOR backport:**
+- Fixes real hardware stale-state bug causing interrupt storms
+- Can cause system hang / severe instability (HIGH severity)
+- Small, surgical, obviously correct fix
+- Uses existing `init_hw` infrastructure already in 6.18.44
+- Precedent in multiple GPIO drivers in this same tree
+- GPIO maintainer (Bartosz Golaszewski) signed off
+- Buggy code confirmed present; fix not yet applied
+- No dependencies on other commits
 
-**AGAINST:**
-- No in-tree DTS currently uses `ngpios` on pisosr nodes
-- No fuzzer/user crash reports
-- Peripheral driver; default path (no `ngpios`) works
-- `gpiochip_get_ngpios()` partially masks the gpio-count symptom
+**AGAINST backport:**
+- No syzbot report or explicit user bug report in commit message (weaker
+  evidence of real-world hit rate)
+- ACPI probe ordering means parent IRQ is requested before `init_hw`
+  runs (minor window; pre-existing, not introduced by patch)
+- Lore discussion could not be retrieved to confirm review feedback
 
-**UNVERIFIED:**
-- Mailing list review discussion and any explicit stable nomination
+**Unresolved:**
+- Mailing list review thread content (lore blocked)
+- Exact platforms where author observed the bug
 
-### Step 9.2: Stable Rules Checklist
-1. Obviously correct and tested? **PASS** — mechanism verified in OF
-   code; pattern used elsewhere; maintainer-authored.
-2. Fixes a real bug? **PASS** — incorrect DT parsing when `ngpios` is
-   present.
-3. Important issue? **PASS** — OOB/memory safety when triggered;
-   functional breakage for valid DT.
-4. Small and contained? **PASS** — 4 lines in one file.
-5. No new features/APIs? **PASS** — behavior correction only.
-6. Can apply to local tree? **PASS** — buggy code confirmed present in
-   v6.18.44.
+### Step 9.2: Stable rules checklist
+1. Obviously correct and tested? **PASS** — register init matches driver
+   conventions; maintainer SOB; pattern used elsewhere
+2. Fixes a real bug? **PASS** — stale interrupt state on warm reboot
+3. Important issue? **PASS** — interrupt storm / system stability
+4. Small and contained? **PASS** — one file, ~16 lines
+5. No new features/APIs? **PASS** — uses existing `init_hw` callback
+6. Can apply to local tree? **PASS** — infrastructure present, clean
+   apply expected
 
-### Step 9.3: Exception Category
-**Record:** Device tree fix for existing driver/hardware — qualifies
-under DT-update exception.
+### Step 9.3: Exception categories
+**Record:** Hardware workaround / driver initialization quirk —
+qualifies under stable exception for hardware-specific workarounds that
+fix real hardware behavior.
 
-### Step 9.4: Decision Rationale
-This is a long-standing DT property encoding bug that silently breaks
-any board specifying `ngpios` for `pisosr-gpio`: the driver allocates a
-zero-byte buffer while registering the correct GPIO count via gpiolib
-fallback, creating an OOB path on GPIO access. The fix is minimal,
-matches every other GPIO driver, and carries negligible regression risk.
-Current mainline DTS avoids the bug by omitting `ngpios`, but the
-binding permits it and custom boards can hit this today.
+### Step 9.4: Decision rationale
+This commit fixes a genuine stability bug in a widely used GPIO
+controller driver. The failure mode (interrupt storm after warm reboot)
+is serious, the fix is minimal and follows an established pattern
+already present in this tree's GPIO subsystem, and all prerequisites
+exist in Linux 6.18.44. The fix is not yet in this tree and should be
+backported.
 
 ---
 
 ## Verification
 
-- **[Phase 1]** Parsed subject, tags, body from provided commit message
-- **[Phase 2]** Diff analysis: 3-line probe() change; verified
-  `of_property_read_u16` implementation in `drivers/of/property.c`
-  (min=2, max=0, reads first be16)
-- **[Phase 2]** Python simulation: u32 `ngpios` values 8/16/24/32 all
-  read as 0 via u16
-- **[Phase 2]** Confirmed `struct gpio_chip.ngpio` is `u16` in
-  `include/linux/gpio/driver.h`
-- **[Phase 3]** `git blame`: buggy line from `df6df93c8a73f` (2016)
-- **[Phase 3]** `git log --oneline -20 -- drivers/gpio/gpio-pisosr.c`:
-  no prior ngpios fix
-- **[Phase 3]** `git grep`: only `gpio-pisosr.c` uses
-  `of_property_read_u16` for `ngpios`
-- **[Phase 4]** `b4 dig -c 2732ea8c16b7b`: no result (commit not in
-  repo) — **UNVERIFIED** lore thread
-- **[Phase 4]** WebFetch patch.msgid.link and lore.kernel.org: blocked
-  by Anubis — **UNVERIFIED**
-- **[Phase 5]** Read `gpiochip_get_ngpios()` in
-  `drivers/gpio/gpiolib.c`: re-reads u32 when `gc->ngpio==0`, does not
-  fix driver buffer
-- **[Phase 5]** Traced probe order: buffer allocated before
-  `devm_gpiochip_add_data()`
-- **[Phase 6]** `git describe HEAD`: `v6.18.44-1-g2736c32da98b9`;
-  Makefile confirms 6.18.44
-- **[Phase 6]** Read current `drivers/gpio/gpio-pisosr.c`: still has
-  buggy `of_property_read_u16`
-- **[Phase 6]** `grep pisosr-gpio` in `arch/arm/boot/dts/`: 5 nodes,
-  none with `ngpios` property
-- **[Phase 6]** Read `Documentation/devicetree/bindings/gpio/pisosr-
-  gpio.yaml`: `ngpios` optional, default 8, max 32
-- **[Phase 8]** Assessed failure mode: zero buffer + OOB on GPIO access
-  when `ngpios` in DT
+- [Phase 1] `git describe HEAD` → `v6.18.44-1-g2736c32da98b9`; Makefile
+  → 6.18.44
+- [Phase 1] Parsed commit message tags from user-provided content
+- [Phase 2] Read `drivers/gpio/gpio-dwapb.c` lines 182–509, 750–875;
+  confirmed diff targets match current code structure
+- [Phase 2] Verified register constants `GPIO_INTEN`, `GPIO_INTMASK`,
+  `GPIO_PORTA_EOI` at lines 35–41
+- [Phase 2] Verified irq enable/disable logic at lines 283–313 uses same
+  registers the fix initializes
+- [Phase 3] `git blame -L 454,490 drivers/gpio/gpio-dwapb.c` → code from
+  v6.18 merge base
+- [Phase 3] `git log --oneline -20 -- drivers/gpio/gpio-dwapb.c` →
+  recent PM/allocation commits, no interrupt-init fix
+- [Phase 3] `grep init_hw drivers/gpio/gpio-dwapb.c` → no matches (fix
+  not present)
+- [Phase 3] `git log -S 'init_hw' -- drivers/gpio/gpiolib.c` →
+  infrastructure present since tree base
+- [Phase 4] `b4 dig -c` — failed (commit not in tree)
+- [Phase 4] WebFetch + curl lore URL — blocked by Anubis; thread content
+  UNVERIFIED
+- [Phase 5] Read `gpiolib.c` lines 1185–1202 —
+  `gpiochip_irqchip_init_hw()` called before `gpiochip_add_irqchip()`
+- [Phase 5] `grep init_hw drivers/gpio/` → found precedent in max77620,
+  idt3243x, tangier, realtek-otto
+- [Phase 5] Read `gpio-max77620.c` lines 263–274 — identical rationale
+  ("left ON after bootloader")
+- [Phase 6] Confirmed `dwapb_configure_irqs()` lacks `girq->init_hw` at
+  line 472–474
+- [Phase 6] Confirmed `include/linux/gpio/driver.h` has `init_hw` at
+  line 264
+- [Phase 6] `grep snps,dw-apb-gpio` → multiple DT platforms (T-Head
+  th1520, Sophgo sg2042, etc.)
+- [Phase 7] `drivers/gpio/Kconfig` line 273 — `CONFIG_GPIO_DWAPB`
+  tristate driver exists
+- [Phase 8] Analyzed ACPI vs non-ACPI probe order in
+  `dwapb_configure_irqs()` + `dwapb_gpio_add_port()`
 
-**YES**The backport analysis is done for **gpio: pisosr: Read "ngpios"
-as u32** on **v6.18.44**.
+**YES**
 
-**Verdict: YES**
+ drivers/gpio/gpio-dwapb.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-The driver reads the standard `u32` `ngpios` DT property with
-`of_property_read_u16()`, which turns any normal value into **0**. That
-leaves a zero-sized buffer while gpiolib may still register the correct
-GPIO count, so boards that set `ngpios` in DT can hit out-of-bounds
-access on GPIO reads. The fix is small, obviously correct, and matches
-other GPIO drivers. No in-tree DTS nodes currently set `ngpios` for
-`pisosr-gpio`, but the binding allows it.
-
- drivers/gpio/gpio-pisosr.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-pisosr.c b/drivers/gpio/gpio-pisosr.c
-index 7ec6a46ed6007..2732ea8c16b7b 100644
---- a/drivers/gpio/gpio-pisosr.c
-+++ b/drivers/gpio/gpio-pisosr.c
-@@ -112,6 +112,7 @@ static int pisosr_gpio_probe(struct spi_device *spi)
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 0259c65973323..6ece05f3afe2d 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -201,6 +201,22 @@ static void dwapb_toggle_trigger(struct dwapb_gpio *gpio, unsigned int offs)
+ 	dwapb_write(gpio, GPIO_INT_POLARITY, pol);
+ }
+ 
++static int dwapb_irq_init_hw(struct gpio_chip *gc)
++{
++	struct dwapb_gpio *gpio = to_dwapb_gpio(gc);
++
++	/*
++	 * GPIO interrupts may retain stale state across warm reboots when
++	 * peripherals stay powered. Force a known-safe state before the GPIO
++	 * irqchip and irq domain are set up.
++	 */
++	dwapb_write(gpio, GPIO_INTEN, 0);
++	dwapb_write(gpio, GPIO_INTMASK, 0xffffffff);
++	dwapb_write(gpio, GPIO_PORTA_EOI, 0xffffffff);
++
++	return 0;
++}
++
+ static u32 dwapb_do_irq(struct dwapb_gpio *gpio)
  {
- 	struct device *dev = &spi->dev;
- 	struct pisosr_gpio *gpio;
-+	u32 ngpios;
- 	int ret;
+ 	struct gpio_generic_chip *gen_gc = &gpio->ports[0].chip;
+@@ -472,6 +488,7 @@ static void dwapb_configure_irqs(struct dwapb_gpio *gpio,
+ 	girq = &gc->irq;
+ 	girq->handler = handle_bad_irq;
+ 	girq->default_type = IRQ_TYPE_NONE;
++	girq->init_hw = dwapb_irq_init_hw;
  
- 	gpio = devm_kzalloc(dev, sizeof(*gpio), GFP_KERNEL);
-@@ -120,7 +121,8 @@ static int pisosr_gpio_probe(struct spi_device *spi)
- 
- 	gpio->chip = template_chip;
- 	gpio->chip.parent = dev;
--	of_property_read_u16(dev->of_node, "ngpios", &gpio->chip.ngpio);
-+	if (!of_property_read_u32(dev->of_node, "ngpios", &ngpios))
-+		gpio->chip.ngpio = ngpios;
- 
- 	gpio->spi = spi;
+ 	port->pirq = pirq;
  
 -- 
 2.53.0
