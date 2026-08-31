@@ -1,65 +1,65 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA2B4A2047
-	for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 14:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA6B4E56C8
+	for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 14:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788186715; cv=none; b=Jeon9kUZEndJmzd5zp0TQSeVw8DpC13AP8pWLbTYr14cK/UgrpIEdEUHTCEKx64M/SNz0oWqJjlolnwAZzcS8znFITcAeRLPai+4V47gJ1rgQjeuzVQR8Qu90Sj0Pt3gc/T+3LcwfdvztW7nR3fc1Zq4jMDfu6IWa+A8Cdd9JKE=
+	t=1788186725; cv=none; b=EeQGCIxUtM1JRepRr0WZ4iU5dkA+lhtvmLsu8yPn8uzeTrheF4ryxpBv3sWn1hLlP5aKdCx/UqboSc1+UiwiXioZKHBDj4jplWHPQVaRhRVoYIZ64bMe2NNbsskA6rIwgOrt4v+dI0b6TpBc5QQe2XrAs9VIgqb5NPrOlP3vARE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788186715; c=relaxed/simple;
-	bh=ptU1ZlwnH6vGoRUuvyLN3kutz8OyEqpRWrw+X4HpfRg=;
+	s=arc-20240116; t=1788186725; c=relaxed/simple;
+	bh=TUnjuVNTMvAhZF9FTkevSiPKsEs2vsMID2000or5ufo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gfegO348jD2edUlySWv1nEbhiDatMaNyuT+CC2HpDB61qdkkQ9Ywhlf368DwHdaeQvrb9QlQWenCgFBGx3Cj8upDtx0PKLff3H/6gY0EcvIuaGUsQCeiQSr5cZyD6N9zjfH4M6qomPWKZaw3M2ZqEt16WWwBnYPLbTwtUPQIyAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FWWzjw5z; arc=none smtp.client-ip=209.85.128.51
+	 MIME-Version:Content-Type; b=Uz97Z53//lUWvShwahhizMWav7FFskevMDMVb4bncFJEBlTK/6186VKUk913mAQGdwRPoAIIvFUcaxF4MPFTgEyxFtvHy3CDFwCQIfa65ERKxlT2SNa3cwJVeTVOb7vvxlFR3EdbHkLUIPJiUETwixBoim8ab745LCEHpNNG100=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bmC4Jg8E; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FWWzjw5z"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-49cdc81f40eso1201955e9.2
-        for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 07:31:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bmC4Jg8E"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-49b8e527d63so34706065e9.2
+        for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 07:32:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788186712; x=1788791512; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788186722; x=1788791522; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=0URnMyQaQtd5j8PK7iDRRW4R8eCuSdT+xJY+FbyXAg8=;
-        b=FWWzjw5zdYa5hemg0Bz508VnkzSVUhgGO8Ud33ktqXwJ1yzmBZmVFH4pD8jqIx+Mro
-         LHv8ds1c2BCOVZWQpE0z5MpR8wEKZ3NmLg9SZRGdCrKg3HJ0npHbjOSNX3GkVJz5V2o5
-         yoKUMAe4Llps/svc1uOawDThQD8jiEtLesGMP0xkYOvaW27AEehLgN8S9JamztSLHjpa
-         YhKll6vpaZFXjTagIidbocRnPB/u8shii+qanH73UDHdaYH9TdDYEfwwxwlbElHgbD8z
-         Sd4GyjZR07kOUly9ppEu6F6RiuFw8Xj2Vxln+YrvlqJws9i4AQ4gr/BV0MSW+DSztHjI
-         9eWA==
+        bh=7NP691EgnqrqnLjGXgIUg/rmeTCElLgq1DAscm0V6r4=;
+        b=bmC4Jg8E24KHYj+K81/0TOVmD+M2DUPuGBHHXe43jS7cY+PYDXy35v3rD9CnSSVoYF
+         2WS9lCirne6mvYn/V6HENHNnSXpKYH/hR7Ff9CBGk4U3eCKCfCThEo2w94xfuiVYpyJi
+         ARgSIY78QdONohckLCrzyFy2FUsuyAoS9XJhfxGrrOKZIedu+Om0fKcXqAkTsIo4jnzr
+         2Y+Ll/w2P3g2Eo9p0kt6vWiCfgNKG+NBtuww+e1SNjW87eAoho4N3g9gUvWAsqaMprQf
+         MggcG/xvXtu8eGJLAAXwaMejs+QbPHtIHk4iNttVdBPQg8cvFH0KpNFACAEJ/0orPj5E
+         jSlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788186712; x=1788791512;
+        d=1e100.net; s=20251104; t=1788186722; x=1788791522;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=0URnMyQaQtd5j8PK7iDRRW4R8eCuSdT+xJY+FbyXAg8=;
-        b=Gnz/DoX0thlMoS6tLoqJv7zsbuWGpUcMmoWJoMYm1IcfYztG1vkv35gaeTLgbTWvtZ
-         icmDPYYD0Qkhhof3FybcR3badxDF+lymvXfc+O0xXAB2XDSjtHFdKUjqWoD3SP7/rs0G
-         4EzGgsmDSDiaO9N3k4WAjuHIUK5ymUvxv5D/nhN7tDnAFjB2qdzYskk+oy6jJqumHM9J
-         GKqEDERn/jEF1K0r3ry9xnpA0Nnp0JFPrghVMY0xe7iKGyqrNbcthrATIeY+cG9UrSBN
-         VSeKmwwhQR5CmppY50X6NDF4+4dD9jwO9f+5gB+/xH2PAPfQpDUrTCjmtXd5eYYOoMGX
-         cumw==
-X-Forwarded-Encrypted: i=1; AHgh+RrRZFCY6ZLbKuY8qDNW/ws+/5tz205Fl5avjTL2mIXD7jZvZpla3YSc4WzhxSJpGoTn/5vElagIEloL@vger.kernel.org
-X-Gm-Message-State: AFuF++lq1T6HGi+J15gcekHR3ofbxSTGieVEgvaCpZAlQfmJyWYOx97E
-	1GxulkfAH+4XKoCyqGoY2+yxQTLl/Z4KXkd9suqVCBNk7fuYkYVYDJn7/hBs4Ju1WuI=
-X-Gm-Gg: AR+sD13IeDOed8PCbjqwmhDctCSozq0vB5ZfpCveSLL+Ws3n/jyHcwlZV4xIXAiZTU+
-	csQIB05qjfdZ80XPDDaO2YyLuYFSUOKnMjVC8vUHjf/Erxt/s3UN8g1YziynDAI/0f63r38fF3G
-	+hRrW534hQJA76A2SZZBHHDAPeCrtF5JMyg5uCwnnaGZaTc7ib16UgpKY5wroY6x2IfPp1gS3Ys
-	CZGblObqKYE1QzMgqPGenozLbHsOM7YOPtHExj39S/Dk9Xug3mg5I52PwtkUsUn48rRni23MEeS
-	YpK/G/8sbAVDnzbkhE7JSZN9bRHOB2MOk9t/wO859tY80aBSO0CLvPImRBc+NCd65khr+SkbiLm
-	n7i9E2RYMa91hP1+GWrnWxwOsODlwr/waV9uV5VFSH7gMDPsIcj3Vnfdd2arbKKlzhLEIxvMiUy
-	vmoAR9BCA7gb4O+GB0iHn/iDxO5jEHpLZQ2kKG/xOfnrCBkv2+39LMEMitCMNfAt7HM/ZkTmGjk
-	l68vKQZpBAxW2rX20THGQYW
-X-Received: by 2002:a05:600c:a4a:b0:499:7a15:fcec with SMTP id 5b1f17b1804b1-49cdc567061mr21947265e9.13.1788186712229;
-        Mon, 31 Aug 2026 07:31:52 -0700 (PDT)
+        bh=7NP691EgnqrqnLjGXgIUg/rmeTCElLgq1DAscm0V6r4=;
+        b=iu0fIfdCNPKscsPz6thGZiglZw/bC2q9yAVXEf8PdlagpO25dw4LLmgfOrLQWPWi2N
+         AjQ+TEgOPMILGKR9DDW3Jim+bsCcjI/UBSUnmM1smNLj2FCiQ4j7u2gSRoi24EeXvD7L
+         bumTA6qe42d4EN9wFtbQnm4YwFl/lHPV7led3ij2C7l5rdemyy7tbPzRuCAzL0KiFG3s
+         hX45WjbrI8woZh48ndybmIBaYgAoNXoL3uWAGiZZgRMRr9n1WTHKObeTiXfTLAXx9MGs
+         M0jf1skTbOa/KUio8AV0LwasChiSCjePEliOMpqK84MaSDAukKIWMoq2pLQEP9pvrSvJ
+         YaAg==
+X-Forwarded-Encrypted: i=1; AHgh+Rp0vUvyqg9T51Q9Cc2twD3W/mw9o00spFFX4HXIDOghfpMJEBcj0HkWwkprKwuf3BrCC4rK221h828c@vger.kernel.org
+X-Gm-Message-State: AFuF++lgjw54IjLp2Y5WgV2DZHOUvrqk4Z3TuJ7rmCkyj0m4kAgsSeS3
+	msaL4A91xinnywnors/OG3ZbNvBuGfKG+LJV5AdjWYrUhbfN/Xs/SgPL
+X-Gm-Gg: AR+sD11hN12Wi1y/7ahhsftiPN7qp94Os2UCieMYJvV94Nd7JMRRbIY4AytEUrDdeB2
+	L1of4zwv89sFso71h2yTdXsI0GlnQ+PzDLTzp7tLAR2YimLzmXGCdjQGnghQXcDDd0Ebn09KFGO
+	h4GOy7XxeOP3NyT/JixvHwLfZBGovUESJiAirg4yfHLEkfnh/lONgshkzg62BOua8G50NUDFc12
+	7EnvV0QXq7PPMHgaiR3c5plqhxzj2ST67xjCiVuphb8XHxdjBxte5ARqOimJO6CO8mNZ7zYp+Tu
+	+68eA63Mxd7cn/z0cf2wUB5qVGo36fP38AKtPqgOlrPtGkQwZCBVCwLm02g0bdpzLX/v8QVLHDn
+	7u4rv3Rl7m6A46KeRi3jol8ucON4/DM3juNVl8w6UJ5ixNyLTLKhJYtRAkC8PtCdLkSnJ1vvBer
+	R04rW/c1F+T6Rtp+2PJdR4kYhXyhDWIjb93iyA/zr5a07ayzpD9Ue8qsCfn+RXdG8YeN6DDW4fT
+	ALljsp3mWfcOF86xMCASCKD
+X-Received: by 2002:a05:600c:a01:b0:499:cd34:100d with SMTP id 5b1f17b1804b1-49b91c33792mr362331505e9.7.1788186722075;
+        Mon, 31 Aug 2026 07:32:02 -0700 (PDT)
 Received: from unix.. (244.red-81-44-253.staticip.rima-tde.net. [81.44.253.244])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49b945816f2sm344786125e9.8.2026.08.31.07.31.43
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49b945816f2sm344786125e9.8.2026.08.31.07.31.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 07:31:50 -0700 (PDT)
+        Mon, 31 Aug 2026 07:32:01 -0700 (PDT)
 From: =?UTF-8?q?Iv=C3=A1n=20Ezequiel=20Rodriguez?= <ivanrwcm25@gmail.com>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Bartosz Golaszewski <brgl@kernel.org>
@@ -70,9 +70,9 @@ Cc: linux-doc@vger.kernel.org,
 	Jason Wang <jasowangio@gmail.com>,
 	Sumit Semwal <sumit.semwal@linaro.org>,
 	=?UTF-8?q?Iv=C3=A1n=20Ezequiel=20Rodriguez?= <ivanrwcm25@gmail.com>
-Subject: [PATCH 1/7] docs: futex2: fix documented errno names for futex_waitv
-Date: Mon, 31 Aug 2026 11:31:19 -0300
-Message-ID: <20260831143125.151360-2-ivanrwcm25@gmail.com>
+Subject: [PATCH 2/7] docs: landlock: fix ENOMSG condition in create_ruleset kernel-doc
+Date: Mon, 31 Aug 2026 11:31:20 -0300
+Message-ID: <20260831143125.151360-3-ivanrwcm25@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260831143125.151360-1-ivanrwcm25@gmail.com>
 References: <20260831143125.151360-1-ivanrwcm25@gmail.com>
@@ -85,32 +85,28 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The documentation cited -EAGAIN and -ETIMEOUT, but futex_waitv()
-returns -EWOULDBLOCK on value mismatch and -ETIMEDOUT when the
-timeout expires, per kernel/futex/waitwake.c.
+The kernel-doc stated ENOMSG applies when handled_access_fs is empty,
+but landlock_create_ruleset() returns ENOMSG only when handled_access_fs,
+handled_access_net, and scoped are all zero.
 
 Signed-off-by: Iván Ezequiel Rodriguez <ivanrwcm25@gmail.com>
 ---
- Documentation/userspace-api/futex2.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ security/landlock/syscalls.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/userspace-api/futex2.rst b/Documentation/userspace-api/futex2.rst
-index 9693f47a7e62..615616305c57 100644
---- a/Documentation/userspace-api/futex2.rst
-+++ b/Documentation/userspace-api/futex2.rst
-@@ -51,10 +51,10 @@ future extension.
- 
- For each entry in ``waiters`` array, the current value at ``uaddr`` is compared
- to ``val``. If it's different, the syscall undo all the work done so far and
--return ``-EAGAIN``. If all tests and verifications succeeds, syscall waits until
-+return ``-EWOULDBLOCK``. If all tests and verifications succeeds, syscall waits until
- one of the following happens:
- 
--- The timeout expires, returning ``-ETIMEOUT``.
-+- The timeout expires, returning ``-ETIMEDOUT``.
- - A signal was sent to the sleeping task, returning ``-ERESTARTSYS``.
- - Some futex at the list was woken, returning the index of some waked futex.
- 
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 1d02d57f4c48..400a2f928de3 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -204,7 +204,7 @@ const int landlock_abi_version = 11;
+  *   scoped;
+  * - %E2BIG: @attr or @size inconsistencies;
+  * - %EFAULT: @attr or @size inconsistencies;
+- * - %ENOMSG: empty &landlock_ruleset_attr.handled_access_fs.
++ * - %ENOMSG: empty handled_access_fs, handled_access_net, and scoped fields.
+  *
+  * .. kernel-doc:: include/uapi/linux/landlock.h
+  *     :identifiers: landlock_create_ruleset_flags
 -- 
 2.43.0
 
