@@ -1,65 +1,65 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6ADD4E56FB
-	for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 14:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289554E66CD
+	for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 14:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788186738; cv=none; b=l8jK/LNscxfGtD3t2a7HCjzxzpW9/Lp2KC3s57957KHuUy6/Nb47LuxbpgSzENe8N9b91rceteAEDvwHb9aTtWx/JDgMJ+yEkSwd7fgE6IdlwdaV0kxNf/tR5k0Rrqh/j9dBJGM449aWBQ0ywB3rvkTwT5x1qT2W09N7Vi/ry+8=
+	t=1788186748; cv=none; b=HPMsOrRCcQDmr9iSTwIUV53LZKr2CcMfNaD2MFgyOzT+1LzwI8gu9+HSKz38oa36Mga4j9zPyQ+XEX7dsTMeIAU+5NQk9qVQLeA/IpiRhY7+mqmjmVli1GAJO2icFDW0t8SrC6AhJBDDMLkINwyKFG1Ur3AvodSN4KX/M2NOmQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788186738; c=relaxed/simple;
-	bh=OzOvqUUyFScK+c4Qm0JM+we4nmEqm3utvu0fjkr07bQ=;
+	s=arc-20240116; t=1788186748; c=relaxed/simple;
+	bh=lVZf6gXYP3rEKtgCbZ1/usOfq9IncQX1+3NXISeMmjI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OfAr8qbr0+eBOXJmYB4l9MyqLn6rJNKerCvC1TxaOYgOIkLjLRrVXBt+HBsBfZORpOB3GjIjXKhzBT23i+9S6214C56lCwT+JqxAkFY+7GzMUsiFDlknenbsH//1LtltA6reNcciIeHiU/5GV90Fvosqyx7OFXPpIZbRQI40Z2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VuFS7zui; arc=none smtp.client-ip=209.85.128.42
+	 MIME-Version:Content-Type; b=e9RQZi2hyaUwiWuCrVyvXYczwaUcmr3TNntgCniyqVCVGHSt7faY5xZy5I1KCm8zDkDWNNgttB/zORBIBI8PAtuDwGWabvQhcDN+b9EgSNBsBJrSqiNldszilqKrwxa8oX7hQbOEKfhEh+ZQo3z5a4ToqLh5kTz/C2zQBI/gSEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nkv0toe2; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VuFS7zui"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-49b0d8bc2aaso35601035e9.0
-        for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 07:32:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nkv0toe2"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4995b0343c1so35744495e9.3
+        for <linux-gpio@vger.kernel.org>; Mon, 31 Aug 2026 07:32:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788186735; x=1788791535; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788186745; x=1788791545; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=/P140PVQM179Ozwd8WDoSSuyK9DDQ6P2ESr69rhbMhw=;
-        b=VuFS7zuikF7DdpJdHg+JELfjNSOvQUwUEw3P5IVqe7DRtCcJLMftwcQtBCnP+gt6lx
-         yEh5yTx/M+zAQpdzg+YCt711JxkNRL1mxEFuTR1+aNOSspgLNmvMaLwOGmI53nOTFEBf
-         fkhXxQBBRG9BvV06G/sBQX07n72zz88wZE7q7P+RNy2GstNo1zus+cYB/w2kdNVRpaQ/
-         Wgm/Zqq4eAZ+2BUqzgCw35KbmrZSBehlT94UNAfNS0Pcja5DJyJbp9odSvEn7ydrRKDr
-         mROJJlxTL8J2NBUQuhQAolKFmaGdN/ENDUrnTGZ9mgGm98/LSPMBZ0vPX0FYOq1w3WtK
-         SLsA==
+        bh=/OQas85hzDcBR25BQh9+KAtaxVWL/DH8U0ZJQTxmJD8=;
+        b=Nkv0toe2RMtu4schcQreMthBPsxhBLWPSLYMWI7zMWjZIQtZwrGlKijoof46rz5sb0
+         O4yafgC7W054ts751jRYoD8NS/mO4n/EzzA4eISqkMo9Neop69PdRu0XmvAfhTyr4bId
+         XMdo8fZWxF3/4o6oA+LZm4vMs/P+1b+m8myt4l5xZHrQSm6BJ7EUhGDQv28shiV8K+s/
+         5WemsB/8beAoC/8e7gCz+5nm2778JTiK4paQb/3x948O7ZQ7BBfttkY0wSA40aPLe5rR
+         8aDJAVePcQtN2YvM0RK7wVHgOwX+XHrrHUbQ92x+Qt2yoEQ2JJUbmedRlDj9Zh5JuIFX
+         bj/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788186735; x=1788791535;
+        d=1e100.net; s=20251104; t=1788186745; x=1788791545;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=/P140PVQM179Ozwd8WDoSSuyK9DDQ6P2ESr69rhbMhw=;
-        b=Bkz+NJjjxE4stawp0pi5fpnng+125zAbAkWWuy7DXOKgxzyyDCqltSvBuaIpvq1x1f
-         bHi3iIgfh1b5uvpmrBh7tSKb4m68CCe4rckY/PUyH56XsGyZKjZ3ZnY1mmX7CRKV8OoU
-         FGly9R7HELaNlGTqqe2IRC8cOHGGQCiZM3vOdqiv1z5MQbDRWpWNp58vVExBZ0DQKz4p
-         tuFNwPiDpQX2PVchk41F+I3K+0+ZdpAy/wDIfO1qjO3IP/dr2xcb0pc954vX5AoXwLjC
-         EtFmd8yPJ1QyqVa7sZk6ZCxJEDhSMLa2HRLftcUGI+g5J0kGpKPcY7YuhNykaxLx1c6N
-         ZnBQ==
-X-Forwarded-Encrypted: i=1; AHgh+RrVOeMHR5HhZOOuV6D6qJKFG9fnosN/rH84cCirWSrtFlS1u3lIl1x8o64v4Xp6US2wSPUXw3TczD7n@vger.kernel.org
-X-Gm-Message-State: AFuF++mcqqwwNapVuF14c0NMnkRGAenDUXaX8TFugiMN0/ya0cP8gurm
-	r5pZKXiqBqkwvYpihYVMyJj4qBNJjexe8aEnjf7gPQy3xJZKYwF/Fd0l
-X-Gm-Gg: AR+sD13KHKzP8pclgjdaBmqq+7tpwtidEeghdNSPcPjS0GK6z+rBG0K/J7sZ93xAApF
-	bKdawERUgi/3rMJQDRmQYlT7pgx8n8rgrQeKvH9Dp9ozgs1hDM2hZuMafBqrJs/3V7M+++d6ycQ
-	+ikug1iLI7zjqb0LYvssFlto3kOi9adDQ1KvPKcZmLH1e6CXZQ6/RDsKh+C6WzaYHsHUYC5yRN3
-	BEO1QGm68erADQqLdGL/SrrdDop/9xevbl95ogiLH+0IPM5QRlpDIYLOdQ1jTzVxvgs0fp4SeyG
-	ZWvi1H7EnvG/V3sJ5Fx4uh8Uqcmsqf9tmtm9PU4DQy5yJslSumItIinbRRZuUjafId7jC/rGop4
-	IHjAjqTowkdHmx9NdiT3hO+0F0ArG/LKbjYLsK9lPjhI5Vt1Bt6prQ0U+2jLGcgZrJCiwqw9Tk5
-	MRye0g1GhwQ1V17eSZCkASPdxG6SfX6Ok/hJpFXOM16OFKGgZ0pzosRVv3p7v3jz4M2GrEzvhxD
-	ck2LlTr0igZyURTJg3iDUne
-X-Received: by 2002:a05:600c:3b20:b0:499:8704:242c with SMTP id 5b1f17b1804b1-49b91bd78cdmr340102515e9.0.1788186734682;
-        Mon, 31 Aug 2026 07:32:14 -0700 (PDT)
+        bh=/OQas85hzDcBR25BQh9+KAtaxVWL/DH8U0ZJQTxmJD8=;
+        b=dn+B4cdHiYTvi/PuaaOdMRcCHPXYFsstWv58VUjQN4TlBRGVc4aWwLh1hMd7l0zNoL
+         k3PHH8TbWrEugY+0WThxoLmA4TAY54YSv0Vk6f8mQCpm+t7YimackkgouBRCU3pnPuIN
+         iqqQAEuaUvREYHlT6rtc7BeOyJDEff1mkdSSaQnABzUdnXuqmsSbEBpbKCHBQ75YXWi4
+         Fw5d7PnWaZX0z0deK3sfcDWyFJYy5TOp8EqQygSRTR8E8N6/CSTBF2QXQoTb8Ra+MO7K
+         Xe6rT3AnUYIbZro07vAUhjp7UBp4rzFDUcpUD2kXRnhjjObyFUaV7glH3yEap7bA07zU
+         I+Xw==
+X-Forwarded-Encrypted: i=1; AHgh+RrtoQZq+EWODtsSzj4ByHI3cxmA9uZ3hP/K/WY/Hbxm1Im+9ai96pXe3utN9rUVItHdwzIKAKQwi4BI@vger.kernel.org
+X-Gm-Message-State: AFuF++lr8wbBIdM7mTrVt4lF/7Z0VYjclZW9ENLNhiCk6M6riNQZJp0W
+	x25F8pAsDiv7pTP7HctBWtE+kEyYMWhahs3icAJVDd3fDb5u0vv7VdEP
+X-Gm-Gg: AR+sD137K68URqYT9T15SMscUgk0Xc9P8BR0nA9XHBi77q6D1GNCp9Ah1BqRYA0RaGm
+	83RKYUxHjIlzS2cmIwBAe/rdSEmyiWLSXQ3xtjb4xq2MIUBXvoFP/NpR/hTS8WIxrOn5tl/KupS
+	GND26d3iHjEFvJeklu2dPW6JfzBQjdYrJg9uiBy0ieqV1G+wJoIq0kMq4goC/eRaRmR54+BfW1G
+	TL1VC9jcBykLrEkPMY+VNYVvTQOG6t0JUYoHSZxIH2UzimpFN8DCHxXOhXNy5d1guQl3lM4W5mo
+	uAMFmL+cQYXY1tqCu1noDlqH5sGbtNBFX48T5vrHb7qs1MLsik0zyd+05QmXYJ2taQ/8ZZwK+fm
+	kcowkNFqYlOCwWx+He0el1900qdYKTvDQnxo6J3nXITgmgC9/RCgXtRkEZp2aPlaTFSV6XGV7pa
+	aXwzNe37196Pj6/lX7ljpCtL4mlRUCGOsliWR877FuiTZu3mFe918pui/OCj1Iz47DR6HDZBQcW
+	s6FFURKmxMEPSTaOuUjgFfZ
+X-Received: by 2002:a05:600c:a48:b0:499:9eb8:a1d7 with SMTP id 5b1f17b1804b1-49b91c3b7b6mr330456825e9.9.1788186745344;
+        Mon, 31 Aug 2026 07:32:25 -0700 (PDT)
 Received: from unix.. (244.red-81-44-253.staticip.rima-tde.net. [81.44.253.244])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49b945816f2sm344786125e9.8.2026.08.31.07.32.05
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49b945816f2sm344786125e9.8.2026.08.31.07.32.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2026 07:32:14 -0700 (PDT)
+        Mon, 31 Aug 2026 07:32:24 -0700 (PDT)
 From: =?UTF-8?q?Iv=C3=A1n=20Ezequiel=20Rodriguez?= <ivanrwcm25@gmail.com>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Bartosz Golaszewski <brgl@kernel.org>
@@ -70,9 +70,9 @@ Cc: linux-doc@vger.kernel.org,
 	Jason Wang <jasowangio@gmail.com>,
 	Sumit Semwal <sumit.semwal@linaro.org>,
 	=?UTF-8?q?Iv=C3=A1n=20Ezequiel=20Rodriguez?= <ivanrwcm25@gmail.com>
-Subject: [PATCH 3/7] docs: gpio: note lineinfo padding must be zero filled
-Date: Mon, 31 Aug 2026 11:31:21 -0300
-Message-ID: <20260831143125.151360-4-ivanrwcm25@gmail.com>
+Subject: [PATCH 4/7] docs: dma-buf-heaps: fix CMA heap name typo
+Date: Mon, 31 Aug 2026 11:31:22 -0300
+Message-ID: <20260831143125.151360-5-ivanrwcm25@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260831143125.151360-1-ivanrwcm25@gmail.com>
 References: <20260831143125.151360-1-ivanrwcm25@gmail.com>
@@ -85,28 +85,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-GPIO_V2_GET_LINEINFO_IOCTL and GPIO_V2_GET_LINEINFO_WATCH_IOCTL reject
-non-zero lineinfo.padding with -EINVAL; align the uapi comment with
-gpio_v2_line_request.padding.
+Line 39 used default-cma-region with hyphens; the registered heap name
+is default_cma_region, already named correctly at line 26.
 
 Signed-off-by: Iván Ezequiel Rodriguez <ivanrwcm25@gmail.com>
 ---
- include/uapi/linux/gpio.h | 2 +-
+ Documentation/userspace-api/dma-buf-heaps.rst | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/gpio.h b/include/uapi/linux/gpio.h
-index f7cb8ae87df7..5515b718886e 100644
---- a/include/uapi/linux/gpio.h
-+++ b/include/uapi/linux/gpio.h
-@@ -218,7 +218,7 @@ struct gpio_v2_line_request {
-  * gpio_v2_line_flag, such as %GPIO_V2_LINE_FLAG_ACTIVE_LOW,
-  * %GPIO_V2_LINE_FLAG_OUTPUT etc, added together
-  * @attrs: the configuration attributes associated with the line
-- * @padding: reserved for future use
-+ * @padding: reserved for future use, must be zero filled
-  */
- struct gpio_v2_line_info {
- 	char name[GPIO_MAX_NAME_SIZE];
+diff --git a/Documentation/userspace-api/dma-buf-heaps.rst b/Documentation/userspace-api/dma-buf-heaps.rst
+index f56b743cdb36..92099188893e 100644
+--- a/Documentation/userspace-api/dma-buf-heaps.rst
++++ b/Documentation/userspace-api/dma-buf-heaps.rst
+@@ -36,7 +36,7 @@ following heaps:
+  - A heap will be created for each reusable region in the device tree
+    with the ``shared-dma-pool`` compatible, using the full device tree
+    node name as its name. The buffer semantics are identical to
+-   ``default-cma-region``.
++   ``default_cma_region``.
+ 
+ Naming Convention
+ =================
 -- 
 2.43.0
 
