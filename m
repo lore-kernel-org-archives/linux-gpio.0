@@ -1,47 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0470E443AAB;
-	Mon, 31 Aug 2026 13:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494EE4F0553;
+	Mon, 31 Aug 2026 13:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788183569; cv=none; b=MNlnsp57hqU0Vbe2FjrHVU1MgdkgryshNwHOYM7aDVEV7jA1Xmu05q2HEmA5JsW69cfPpRN/17sek0W1LEsC1q3MoMSdXkNQV0aHA+UdKZ0K8ZIlIYOHD3MRMeFHFnvFK2EvWWX1ngSCfNP6KpvlFiopwutzK1+3jT1G7V7ATOQ=
+	t=1788183652; cv=none; b=mGq4uOwkSuO0UUbD7Tklgy/iBNEFOTk04cqrQen5SNuAfuoUj+Ths0NP7xPs7AtSmP0VGFrKuzmB6wjdPT279QaJ5zC2M4l8C1dPcEy1wUHC5QYV7cTIWQ0hDsstoOQmVktYSsjIOnJL1wSq35T4Dr6mmWFKOG8n/DDEbFxdkfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788183569; c=relaxed/simple;
-	bh=sLuQfM5Fa6NsZzaM/d86XT1RxLWz8+BxqdYLRFMdYRM=;
+	s=arc-20240116; t=1788183652; c=relaxed/simple;
+	bh=OVtzjj6S3NguXDus+FQWGLDOOyZUa3Ojz1gR+naJDyI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZlY2zCyZ+PPMM489z9KoXJhJSnv7Pm4UOEBl7Z5YWoSY7IP0UmptLRgavvrBaXNFRf2CWs2f6WgwuCN8A4vYMJMDEIW2ntVZTkBZeNT1dRUhxIhKhijmjmrx+C0AmqwyW0f4QwZtDuLhZYnZOs0/K2Oa7aXQ+GO3mscTTKKCwU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VXKj2xWl; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=hDDvX8CRD+eEVz9+ArEncWgiL7izLVpyJVwp0X/JJYo6ldtoRweWJxm8m18gU6vbdCnQTN7MoBlbqcqyHIKxdoZqNtScAFOhjxIYjS/BsUc6Kh9URYs3usyQbyEcDyea0KwOe9IWbpJgdGCCmIE55cuXxbbWZzDAFT0bHekwK8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gWm/eDQL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXKj2xWl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43CB21F00ACA;
-	Mon, 31 Aug 2026 13:39:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWm/eDQL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 080CC1F00ADB;
+	Mon, 31 Aug 2026 13:40:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788183566;
-	bh=zoeHzATJIOgGVjlLRQUI6U1h8vDJRiolLUK4FvNtRgw=;
+	s=k20260515; t=1788183649;
+	bh=eonFPEKCyg5BqZFTIL3C/Bi5nHSqguCbsaDjQk4rT+Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=VXKj2xWlMzNewndO6oWRT+yXy4MrLLriu8NcP+dziY/iPOCYBw5tO4AASiwZfKMg/
-	 kqdIdM4cgAFOaOfCzH3eiM9TMdoY2lTyvinDqSIwUiynIvNjYaioJZSKNpwti6snGE
-	 x0tw6M28VkAFi5yyrC51+v1BCKfe/yVg+IrfAOn7fA3hlYbFx2x3MlaRiSLPJE4VZd
-	 RLOqU027ATkqs4eh/luyK/BPTn5xqC+xCkF8G9hKFP5mgORNc7O7Y5AuUKqZDb9K8P
-	 Noi7eL3YTluI+cIJu+Bcn2jP4fYy0heTYcBJHF6QfERcN8r06TXJiHs0ndx7YGOcIe
-	 QbXXYfS865f8w==
+	b=gWm/eDQL3qKQCJ2lvJ6uLsGjLY1ZywkjzdGjw82MzYMziSfA/UAr6lp7cFj4qlt2d
+	 KKuL1fy4kld8zpJEBlmPpPcTdqKMBDyqnsoIE1OdcTHkark+kVb5274O5vEuLbLCTz
+	 EokCvkdIfFKmj6Y0xcTWq9OHBf+W63RPo/BtDBvYDkgt6CDu4iYWlZ6VDPDP0Pw178
+	 SaM73WwzBvvLOIYKRLL3OEiBQonVIPKBqZAHnS8at5cd1xP0u2DF990wNWiDd+Xsxg
+	 mhCg1M7CDob4wVz4pXRdoRqZSeeUGtsozPmXA9PaKXYCfsDQXxffr56YGKwgmoXtMZ
+	 wI4kU2uVLOPgw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
+Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>,
 	Linus Walleij <linusw@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	sean.wang@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-mediatek@lists.infradead.org,
+	neil.armstrong@linaro.org,
+	khilman@baylibre.com,
+	linux-amlogic@lists.infradead.org,
 	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.18] pinctrl: mediatek: common-v1: bypass pinctrl GPIO layer in set GPIO direction
-Date: Mon, 31 Aug 2026 09:23:21 -0400
-Message-ID: <20260831133314.4125787-173-sashal@kernel.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.18] pinctrl: meson: amlogic-a4: use nolock get range
+Date: Mon, 31 Aug 2026 09:24:08 -0400
+Message-ID: <20260831133314.4125787-220-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260831133314.4125787-1-sashal@kernel.org>
 References: <20260831133314.4125787-1-sashal@kernel.org>
@@ -57,90 +56,71 @@ X-stable-base: Linux 6.18.48
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Chen-Yu Tsai <wenst@chromium.org>
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-[ Upstream commit 3982db2df3ed4c195e5f0a9a4513545a15901107 ]
+[ Upstream commit afa0c07131d8829ea0ebbcd8267c85aa178ce52c ]
 
-pinctrl_gpio_direction_input() / pinctrl_gpio_direction_output() take
-the pinctrl mutex. This causes a gpiochip operations to need to sleep.
-Worse yet, the .can_sleep field in the gpiochip is not set. This causes
-the shared GPIO proxy to trip over, as it uses gpiod_cansleep() to check
-whether it can use a spinlock or needs a mutex. In this case, it ends
-up taking a spinlock, then calls pinctrl_gpio_direction_output(), which
-takes a mutex. This causes a huge warning.
+Use pinctrl_find_gpio_range_from_pin_nolock() instead of
+pinctrl_find_gpio_range_from_pin() when configuring a pin or
+setting a GPIO value.
 
-Since the Mediatek hardware has separate clear/set registers, there is
-no risk of clobbering other bits like with a read-modify-write pattern.
-Also, once the GPIO function is selected / muxed in, further GPIO
-operations do not involve pinctrl operations or state. The GPIO direction
-and level values do not require toggling the pinmux or any other pin config
-options.
+This avoids taking the lock and allows the code to be safely
+called from interrupt context.
 
-Switch to directly calling mtk_pmx_gpio_set_direction() in the GPIO set
-direction callbacks to avoid taking the pinctrl mutex. Drop the
-.gpio_set_direction field in mtk_pmx_ops to signal we are no longer using
-the pinctrl GPIO layer for setting the direction.
-
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 Signed-off-by: Linus Walleij <linusw@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-# Stable Backport Analysis: `pinctrl: mediatek: common-v1: bypass
-pinctrl GPIO layer in set GPIO direction`
+# Stable Backport Analysis: `pinctrl: meson: amlogic-a4: use nolock get
+range`
 
-**Local tree:** Linux **6.18.43** (`git describe HEAD` →
-`v6.18.43-1-gc7f0dac02d232`, `make kernelversion` → `6.18.43`)
-
-**Upstream commit:** `3982db2df3ed4c195e5f0a9a4513545a15901107`
-**Status in this tree:** Buggy code is **present**; fix is **not**
-applied (`git apply --check` succeeds).
+**Local tree:** Linux **6.18.44** (`v6.18.44-1-g2736c32da98b9`,
+stable/linux-6.18.y)
 
 ---
 
 ## PHASE 1: COMMIT MESSAGE FORENSICS
 
 ### Step 1.1: Subject line
-**Record:** `[pinctrl: mediatek: common-v1]` `[bypass]` — bypass the
-pinctrl GPIO helper layer when setting GPIO direction on MediaTek
-common-v1 pinctrl.
+**Record:** `[pinctrl/meson/amlogic-a4]` `[use]` — switch remaining GPIO
+range lookups to the nolock variant when configuring pins / setting
+GPIO-related state.
 
 ### Step 1.2: Tags
 **Record:**
-- **Fixes:** — none
+- **Fixes:** — absent (expected for manual review)
 - **Reported-by:** — none
 - **Tested-by:** — none
-- **Reviewed-by:** — none (Linus Walleij merged with "Patch applied")
+- **Reviewed-by:** — none
 - **Acked-by:** — none
-- **Link:** — none in commit; v2 references v1 at `https://lore.kernel.o
-  rg/all/20260427061720.2393355-1-wenst@chromium.org/`
-- **Cc: stable:** — none
-- **Signed-off-by:** Chen-Yu Tsai `<wenst@chromium.org>`, Linus Walleij
-  `<linusw@kernel.org>`
+- **Link:** — none
+- **Cc: stable@vger.kernel.org:** — absent
+- **Signed-off-by:** Xianwei Zhao, Linus Walleij (ignore pipeline SOB
+  markers)
 
-**Notable:** Author is from Chromium; patch went through v1→v2. No
-syzbot/fuzzer report.
+Notable: no syzbot/fuzzer report; no explicit stable nomination.
 
 ### Step 1.3: Body analysis
 **Record:**
-- **Bug:** `pinctrl_gpio_direction_input/output()` take the pinctrl
-  mutex, making GPIO direction ops sleepable, but the MediaTek gpiochip
-  does not set `.can_sleep`. A shared GPIO proxy/forwarder uses
-  `gpiod_cansleep()` to choose spinlock vs mutex; it picks spinlock,
-  then direction ops take a mutex → large kernel warning.
-- **Symptom:** Lockdep / invalid-context warnings (mutex under
-  spinlock).
-- **Root cause:** Mismatch between advertised non-sleeping GPIO chip and
-  sleeping pinctrl mutex path.
-- **Fix rationale:** After muxing to GPIO, direction changes are plain
-  register writes (separate set/clear regs); no pinmux state change
-  needed.
+- **Bug described:** Using `pinctrl_find_gpio_range_from_pin()` takes
+  `pctldev->mutex`. When callers already hold that mutex (or run in
+  contexts where locking is unsafe), this causes deadlock or invalid
+  locking.
+- **Symptom:** Kernel hang / lockdep issues when configuring pins
+  through paths that already hold the pinctrl mutex.
+- **Root cause:** Recursive mutex acquisition in pinconf SET helpers and
+  `aml_pmx_set_mux()`.
+- **Version info:** None in message. Driver landed in this tree via
+  `6e9be3abb78c2` (Feb 2025).
 
-### Step 1.4: Hidden bug fix?
-**Record:** **Yes** — despite “bypass” wording, this is a real lock-
-context / `can_sleep` contract bug, not cosmetic cleanup.
+### Step 1.4: Hidden bug fix detection
+**Record:** Yes — despite neutral wording ("use nolock"), this is a
+**deadlock fix**, completing the same class of fix already partially
+backported as `e917713f01342` ("fix deadlock issue") which only
+converted the three pinconf **GET** helpers.
 
 ---
 
@@ -148,196 +128,243 @@ context / `can_sleep` contract bug, not cosmetic cleanup.
 
 ### Step 2.1: Inventory
 **Record:**
-- **File:** `drivers/pinctrl/mediatek/pinctrl-mtk-common.c` (+10 / −3,
-  13 lines net)
-- **Functions:** new `mtk_gpio_direction_input()`; modified
-  `mtk_gpio_direction_output()`; `mtk_pmx_ops`, `mtk_gpio_chip`
-- **Scope:** Single-file surgical fix
+- **File:** `drivers/pinctrl/meson/pinctrl-amlogic-a4.c` only
+- **Scope:** 5 call-site replacements (no logic changes)
+- **Functions modified:**
+  - `aml_pmx_set_mux()`
+  - `aml_pinconf_disable_bias()`
+  - `aml_pinconf_enable_bias()`
+  - `aml_pinconf_set_drive_strength()`
+  - `aml_pinconf_set_gpio_bit()`
+- **Classification:** Single-file, surgical fix
 
-### Step 2.2: Code flow per hunk
-**Record:**
-1. **Remove `.gpio_set_direction` from `mtk_pmx_ops`:** pinmux layer no
-   longer exposes direction via pinctrl GPIO API (returns 0/no-op if
-   called through `pinmux_gpio_direction()`).
-2. **Add `mtk_gpio_direction_input()`:** calls
-   `mtk_pmx_gpio_set_direction()` directly via `pctl->pctl_dev`.
-3. **Change `mtk_gpio_direction_output()`:** replaces
-   `pinctrl_gpio_direction_output()` with direct
-   `mtk_pmx_gpio_set_direction()`.
-4. **Wire `.direction_input`:** `pinctrl_gpio_direction_input` →
-   `mtk_gpio_direction_input`.
+Note: subject says "get range" but the diff touches **SET** paths (and
+`set_mux`), not GET paths — GET paths were already fixed in
+`e917713f01342`.
 
-**Before:** gpiochip direction callbacks → `pinctrl_gpio_direction_*()`
-→ `mutex_lock(&pctldev->mutex)` → `mtk_pmx_gpio_set_direction()`.
-**After:** gpiochip direction callbacks → `mtk_pmx_gpio_set_direction()`
-directly (regmap write, no mutex).
+### Step 2.2: Code flow change
+**Record (per hunk):**
+| Location | Before | After |
+|---|---|---|
+| All 5 sites | `pinctrl_find_gpio_range_from_pin()` → locks
+`pctldev->mutex`, walks `gpio_ranges` |
+`pinctrl_find_gpio_range_from_pin_nolock()` → no lock, same list walk |
+
+Affected paths:
+- **Pinconf SET** (bias, drive strength, GPIO bit output) — reached from
+  `aml_pinconf_set()` and its helpers.
+- **Pinmux SET** — `aml_pmx_set_mux()` during function selection.
 
 ### Step 2.3: Bug mechanism
-**Record:** **Category:** synchronization / lock-context violation
-(mutex-from-non-sleeping-GPIO path).
-**Mechanism:** Driver advertises fast GPIO (`can_sleep` unset/false) but
-direction ops sleep on pinctrl mutex. GPIO forwarder (`gpio-
-aggregator.c`) uses spinlock when `!chip->can_sleep`, creating mutex-
-under-spinlock when direction changes propagate through the forwarder.
+**Record:** **Category:** Deadlock / lock ordering (mutex recursion)
+
+Verified chain for pinconf SET:
+1. `aml_gpio_template.set_config = gpiochip_generic_config` (line 959)
+2. `gpiochip_generic_config()` → `pinctrl_gpio_set_config()`
+   (`core.c:919-937`)
+3. `pinctrl_gpio_set_config()` **locks** `pctldev->mutex` (line 931)
+4. Calls `pinconf_set_config()` → `aml_pinconf_set()` → e.g.
+   `aml_pinconf_set_gpio_bit()`
+5. Helper calls `pinctrl_find_gpio_range_from_pin()` which tries to
+   **lock the same mutex again** → **DEADLOCK**
+
+This mirrors the already-fixed GET path where `pinconf_pins_show()`
+holds the mutex and GET helpers deadlocked.
 
 ### Step 2.4: Fix quality
-**Record:** **Obviously correct** for this hardware —
-`mtk_pmx_gpio_set_direction()` already does atomic set/clear register
-writes and is used directly elsewhere in the same file (pinconf, EINT
-setup). **Low regression risk** — removes redundant mutex layer; pinconf
-paths unchanged. **Minor note:** removing `.gpio_set_direction` makes
-pinctrl-framework direction calls no-ops, which is intentional since
-GPIO chip handles direction directly.
+**Record:**
+- **Obviously correct:** Yes —
+  `pinctrl_find_gpio_range_from_pin_nolock()` is the established API for
+  callers that already hold the lock or must not sleep; same pattern
+  used in stm32, airoha, etc.
+- **Minimal:** Yes — function name substitution only.
+- **Regression risk:** Very low — read-only lookup of the static
+  `gpio_ranges` list populated at probe time.
+- **Red flags:** None.
 
 ---
 
 ## PHASE 3: GIT HISTORY INVESTIGATION
 
 ### Step 3.1: Blame
-**Record:** In this shallow stable checkout, blame points to merge
-`5d324e5159d9e`. Verified at tags: **v6.6, v6.12, v6.18** all contain
-`pinctrl_gpio_direction_input` in direction callbacks (bug predates 6.18
-branch).
+**Record:** All 5 remaining locking call sites introduced in
+`6e9be3abb78c2` ("pinctrl: Add driver support for Amlogic SoCs", Feb
+2025). Bug present since driver introduction.
 
 ### Step 3.2: Fixes: tag
-**Record:** N/A — no `Fixes:` tag.
+**Record:** N/A — no Fixes: tag. Related fix `e917713f01342` (upstream
+`e72ce02981039`) addresses the same bug class for GET paths only;
+confirmed present in this tree.
 
 ### Step 3.3: Related file history
-**Record:** In 6.18.43 tree, only two commits touch this file
-(`936a3c0c10e2b` EINT probe fix, merge import). On mainline
-(`build/master`), file was re-added in `a293ec25d59dd` (May 2026
-refactor) already containing the buggy pattern; fix landed 7 days later
-in `3982db2df3ed`.
+**Record:**
+- `e917713f01342` — partial deadlock fix (3 GET helpers → nolock) —
+  **already in 6.18.44**
+- `4a1afa32145b5` — mark GPIO controller `can_sleep = true` (lockdep fix
+  for shared GPIO proxy)
+- `80f8e2302e639` — gpio output glitch fix
+- Commit under review ("use nolock get range") — **NOT in this tree**
+
+This is a logical follow-up to `e917713f01342`, not part of a multi-
+patch dependency series.
 
 ### Step 3.4: Author context
-**Record:** Chen-Yu Tsai (Chromium). Linus Walleij (pinctrl/gpio
-maintainer) merged. Related nearby work: Bartosz Golaszewski’s GPIO
-setter callback conversion (`23a5fa371c772`).
+**Record:** Xianwei Zhao authored the original Amlogic pinctrl driver
+(`6e9be3abb78c2`) and the prior deadlock fix. Linus Walleij (pinctrl
+maintainer) merged both.
 
 ### Step 3.5: Dependencies
-**Record:** **Standalone.** Requires `mtk_pinctrl::pctl_dev` and
-`mtk_pmx_gpio_set_direction()` — both present in 6.18.43. `git apply
---check` on upstream diff: **clean apply**.
+**Record:**
+- Requires `pinctrl-amlogic-a4.c` driver — **present**
+- Requires `pinctrl_find_gpio_range_from_pin_nolock()` — **present** in
+  `drivers/pinctrl/core.c` since long before this driver
+- Requires prior GET-path fix — **optional**; this patch is standalone
+  and applies independently
+- **Can apply standalone:** Yes
 
 ---
 
 ## PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
 
 ### Step 4.1: Original discussion
-**Record:** `b4 dig -c 3982db2df3ed` →
-https://patch.msgid.link/20260505104056.1812343-1-wenst@chromium.org
-**Series:** v2 only in matched thread (v1 at separate URL). Linus
-Walleij: “Patch applied.”
-**Stable nomination:** None found.
-**NAKs/concerns:** None in thread.
+**Record:**
+- `b4 dig -c e72ce02981039` found the related v1 thread:
+  https://patch.msgid.link/20260422-fix-
+  pinconf-v1-1-abb4d2e0da55@amlogic.com
+- That thread covers only the GET-path deadlock fix (same author, same
+  mechanism).
+- **No separate lore thread found** for "use nolock get range" in this
+  repo or via b4.
+- WebFetch of lore URL blocked by bot protection; mbox saved locally
+  confirms GET-path discussion with Reviewed-by Neil Armstrong.
 
 ### Step 4.2: Reviewers
-**Record:** `b4 dig -w`: CC’d Sean Wang, Matthias Brugger,
-AngeloGioacchino Del Regno, Linus Walleij, linux-mediatek, linux-gpio,
-linux-arm-kernel.
+**Record:** Related GET fix reviewed by Neil Armstrong (Linaro/Meson
+maintainer). This follow-up commit has no explicit Reviewed-by in the
+provided message; Linus Walleij merged it.
 
 ### Step 4.3: Bug report
-**Record:** No external bug report. Author notes **“Only compile
-tested”** and initially fixed wrong file (target used `pinctrl-
-paris.c`).
+**Record:** No external bug report, syzbot link, or user Reported-by for
+this specific commit. Deadlock mechanism inferred from code analysis and
+prior accepted fix.
 
 ### Step 4.4: Series context
-**Record:** Standalone 1-patch fix for `pinctrl-mtk-common.c`
-(common-v1). Paris driver may need a separate fix (out of scope).
+**Record:** Companion to `e917713f01342` — completes the nolock
+conversion. Not a multi-part series requiring other patches.
 
-### Step 4.5: Stable list
-**Record:** Not searched on lore stable (WebFetch blocked for lore). No
-stable discussion in mbox thread.
+### Step 4.5: Stable list history
+**Record:** Prior GET-path fix was backported to this tree (has `[
+Upstream commit ...]` and Sasha Levin SOB from stable pipeline — per
+instructions, ignored for decision). No stable-list discussion found for
+this specific follow-up.
 
 ---
 
 ## PHASE 5: CODE SEMANTIC ANALYSIS
 
 ### Step 5.1: Key functions
-**Record:** `mtk_gpio_direction_input()` (new),
-`mtk_gpio_direction_output()`, `mtk_pmx_gpio_set_direction()`,
-`pinctrl_gpio_direction()` in `core.c`.
+**Record:** `aml_pmx_set_mux`, `aml_pinconf_disable_bias`,
+`aml_pinconf_enable_bias`, `aml_pinconf_set_drive_strength`,
+`aml_pinconf_set_gpio_bit`
 
 ### Step 5.2: Callers
-**Record:** Direction callbacks invoked from gpiolib
-(`gpiod_direction_input/output` → `gpiochip_direction_*`). Reachable
-from device drivers, GPIO forwarder (`gpio_fwd_direction_input/output`
-in `gpio-aggregator.c`), and userspace via gpio-cdev.
+**Record:**
+- **Pinconf SET helpers** ← `aml_pinconf_set()` ←
+  `pinconf_apply_setting()` (DT pinconf at probe) AND
+  `pinconf_set_config()` ← `pinctrl_gpio_set_config()` (GPIO
+  `set_config` path — **mutex already held**)
+- **`aml_pmx_set_mux`** ← `pinmux_enable_setting()` (pinctrl state
+  changes, probe)
+
+GPIO chip hooks:
+- `.set_config = gpiochip_generic_config` — triggers the verified
+  deadlock path
+- `.set = aml_gpio_set` — does **not** use
+  `pinctrl_find_gpio_range_from_pin()` (uses direct register calc)
 
 ### Step 5.3: Callees
-**Record:** `mtk_pmx_gpio_set_direction()` → `regmap_write()` on
-set/clear direction registers — no mutex, no sleeping primitives.
+**Record:** `pinctrl_find_gpio_range_from_pin[_nolock]()` → walks
+`pctldev->gpio_ranges`; then `regmap_update_bits()` on GPIO/mux
+registers.
 
 ### Step 5.4: Reachability
-**Record:** **Userspace-reachable** via GPIO character device. **Driver-
-reachable** on any MediaTek v1 pinctrl platform (`CONFIG_PINCTRL_MTK`).
-Trigger is most visible when GPIOs are accessed through a GPIO
-forwarder/proxy that assumes non-sleeping ops.
+**Record:**
+- **Verified reachable:** `gpiod_set_config()` /
+  `gpiochip_generic_config()` on Amlogic A4 GPIOs with `CONFIG_PINCTRL`
+  — userspace or drivers configuring bias, drive strength, output
+  enable, level.
+- **Platform-specific:** Amlogic A4/A5/S6/S7 SoCs only (driver in tree
+  since 6.18 merge window).
 
 ### Step 5.5: Similar patterns
-**Record:** Same `pinctrl_gpio_direction_*` pattern exists in `pinctrl-
-moore.c`, `pinctrl-airoha.c` (same subsystem, different drivers — not
-fixed by this commit).
+**Record:** stm32, airoha, pinctrl-lpc18xx, pinctrl-stmfx all use
+`_nolock` in pinconf/pinmux paths. Meson GET paths already converted in
+`e917713f01342`.
 
 ---
 
-## PHASE 6: CROSS-REFERENCE AGAINST LOCAL TREE (6.18.43)
+## PHASE 6: CROSS-REFERENCE WITH LOCAL TREE (6.18.44)
 
 ### Step 6.1: Buggy code present?
-**Record:** **YES.** Current tree at lines 805, 818, 898 uses
-`pinctrl_gpio_direction_input/output` and `.gpio_set_direction =
-mtk_pmx_gpio_set_direction`. `can_sleep` is never set on the gpiochip.
+**Record:** **Yes.** Five call sites still use locking variant:
+- Line 253: `aml_pmx_set_mux`
+- Lines 452, 465, 487, 522: pinconf SET helpers
+
+Three GET helpers already use nolock (lines 295, 329, 368) from
+`e917713f01342`.
 
 ### Step 6.2: Backport complications
-**Record:** **Clean apply** verified. No structural conflicts in
-6.18.43.
+**Record:** **Clean apply expected** — simple function renames at the
+same lines the diff shows. No structural divergence since partial fix.
 
 ### Step 6.3: Related fixes already present?
-**Record:** **No** — `git log --grep="bypass pinctrl GPIO"` returns
-nothing in this tree.
+**Record:** Partial fix `e917713f01342` (GET paths) already in tree.
+This commit is needed to complete the fix. No duplicate fix for SET
+paths found.
 
 ---
 
 ## PHASE 7: SUBSYSTEM CONTEXT
 
-### Step 7.1: Subsystem / criticality
-**Record:** `drivers/pinctrl/mediatek/` — **IMPORTANT** (ARM/ARM64
-embedded SoCs: MT27xx, MT81xx, MT83xx families via
-`CONFIG_PINCTRL_MTK`).
+### Step 7.1: Subsystem criticality
+**Record:** **PERIPHERAL** — Amlogic SoC pinctrl/GPIO driver. Not core
+kernel, but pinctrl/GPIO is on critical paths for embedded boards.
 
 ### Step 7.2: Activity
-**Record:** Active; recent stable fix `936a3c0c10e2b` (EINT probe) in
-same file.
+**Record:** Actively maintained — 6+ amlogic-a4 commits in this stable
+tree including deadlock, lockdep, and glitch fixes.
 
 ---
 
 ## PHASE 8: IMPACT AND RISK
 
 ### Step 8.1: Who is affected
-**Record:** Users of MediaTek **common-v1** pinctrl
-(`CONFIG_PINCTRL_MTK`), especially platforms using GPIO
-forwarding/sharing (Chromebook-class devices per author).
+**Record:** Users of Amlogic A4/A5/S6/S7 platforms using the `pinctrl-
+amlogic-a4` driver, especially when calling `gpiod_set_config()` or GPIO
+`set_config` on these pins.
 
 ### Step 8.2: Trigger conditions
-**Record:** GPIO direction change on a MediaTek v1 GPIO line,
-particularly when accessed through a non-sleeping GPIO forwarder. Not
-every GPIO toggle hits this — direction changes are the trigger.
-Unprivileged users can trigger via GPIO uAPI if lines are
-exported/accessible.
+**Record:**
+- **Verified trigger:** GPIO pin configuration via
+  `gpiochip_generic_config` → `pinctrl_gpio_set_config` (mutex held)
+- **Likelihood:** Moderate — any driver or userspace tool setting pin
+  bias/drive/output config on these GPIOs
+- **Unprivileged trigger:** Possible if GPIO is accessible to userspace
+- **"Interrupt context" claim in commit message:** UNVERIFIED as primary
+  mechanism — `pinctrl_gpio_set_config()` itself uses `mutex_lock()`.
+  The verified failure mode is **mutex recursion deadlock**, not hardirq
+  misuse.
 
 ### Step 8.3: Failure mode severity
-**Record:** **MEDIUM–HIGH** — kernel warnings / lockdep complaints
-(“huge warning” per author); mutex under spinlock can escalate to hangs
-on debug kernels. Not a typical memory-corruption bug, but a real
-correctness violation in a common driver path.
+**Record:** **CRITICAL** — task hang / unkillable deadlock when
+triggered. Same severity class as the already-backported GET-path fix.
 
-### Step 8.4: Risk vs benefit
+### Step 8.4: Risk-benefit
 **Record:**
-- **Benefit:** MEDIUM–HIGH for affected MediaTek platforms; fixes
-  longstanding contract violation.
-- **Risk:** LOW — 13-line change, maintainer-merged, uses existing
-  internal helper already used elsewhere in driver.
-- **Ratio:** Favorable for backport.
+- **Benefit:** HIGH for affected platforms — prevents kernel hang;
+  completes incomplete stable fix
+- **Risk:** VERY LOW — 5-line function rename, established API pattern
+- **Ratio:** Strongly favors backport
 
 ---
 
@@ -346,141 +373,157 @@ correctness violation in a common driver path.
 ### Step 9.1: Evidence summary
 
 **FOR backport:**
-- Real bug: sleeping pinctrl mutex from non-sleeping gpiochip callbacks
-- Bug present in 6.18.43 (verified in source)
-- Small, self-contained, applies cleanly
-- Maintainers merged (Linus Walleij)
-- Fixes lock-context violation with concrete failure mode
-- Hardware-appropriate: direct register writes are safe post-mux
+- Fixes real, verifiable mutex-recursion deadlock in pinconf SET path
+- Completes partial fix (`e917713f01342`) already in 6.18.44
+- Same bug class as already-accepted stable commit
+- Small, obviously correct, no new APIs
+- Driver and prerequisite API exist in this tree
+- Failure mode is system hang (critical)
 
 **AGAINST backport:**
-- Author only compile-tested (no runtime Tested-by)
-- No syzbot/CVE/user bug report
-- Trigger may be most visible on Chromebook + GPIO-proxy setups
-- Severity is WARN/lockdep, not proven crash/oops in mainline report
+- Platform-specific (Amlogic only) — limited user base
+- No syzbot/user report for this specific commit
+- Commit message "interrupt context" claim not fully verified
+- `aml_pmx_set_mux` deadlock path not independently verified (change is
+  still safe)
 
-**Unresolved:** Exact in-tree “GPIO proxy” component name unverified in
-mainline (likely GPIO forwarder in `gpio-aggregator.c` or ChromeOS-
-specific code); runtime reproduction not documented in mailing list.
+**Unresolved:**
+- No lore thread found for this exact follow-up commit
+- Whether `aml_pmx_set_mux` has a mutex-held caller (preventive fix at
+  most)
 
 ### Step 9.2: Stable rules checklist
-1. Obviously correct and tested? **PASS** (logically correct; compile-
-   tested; maintainer merged)
-2. Fixes real bug affecting users? **PASS** (lock-context violation on
-   real hardware class)
-3. Important issue? **PASS** (lockdep / invalid context — MEDIUM–HIGH)
-4. Small and contained? **PASS** (1 file, 13 lines)
-5. No new features/APIs? **PASS**
-6. Can apply to local tree? **PASS** (clean `git apply --check`)
+1. Obviously correct and tested? **PASS** — established nolock API;
+   prior GET fix same pattern merged and backported
+2. Fixes real bug affecting users? **PASS** — verified deadlock in
+   `pinctrl_gpio_set_config` → pinconf SET chain
+3. Important issue? **PASS** — deadlock / system hang (CRITICAL)
+4. Small and contained? **PASS** — 5 call-site changes, 1 file
+5. No new features/APIs? **PASS** — uses existing exported nolock helper
+6. Can apply to local tree? **PASS** — driver present, clean apply
+   expected
 
 ### Step 9.3: Exception categories
-**Record:** None (not device-ID/quirk/docs/build fix) — standard driver
+**Record:** None (not device ID, quirk, DT, build, or docs). Standard
 bug fix.
 
 ### Step 9.4: Decision rationale
-For **Linux 6.18.43**, the buggy pattern exists, the fix is minimal and
-correct, and it resolves a real synchronization contract violation in a
-widely used embedded pinctrl driver. The conservative stable bar is met:
-real bug, contained fix, low regression risk, clear maintainer
-acceptance.
+This tree (6.18.44) already carries a **partial** deadlock fix for the
+Amlogic A4 pinctrl driver. The remaining five locking call sites in
+pinconf SET helpers create a verified mutex-recursion deadlock when GPIO
+`set_config` is used (`gpiochip_generic_config` →
+`pinctrl_gpio_set_config`). Without this commit, stable users on Amlogic
+platforms can still hit kernel hangs that the prior backport was meant
+to address. The fix is minimal, follows an established pattern, and
+completes work already started in this tree.
 
 ---
 
 ## Verification
 
-- **[Phase 1]** Parsed commit message/tags from `git show 3982db2df3ed`
-  and user-provided text
-- **[Phase 1]** `b4 dig -c 3982db2df3ed`: lore URL
-  https://patch.msgid.link/20260505104056.1812343-1-wenst@chromium.org
-- **[Phase 1]** `b4 dig -a`: v2 series found; v1 referenced in mbox body
-- **[Phase 1]** `b4 dig -w`: maintainers CC list retrieved
-- **[Phase 2]** Read current `pinctrl-mtk-common.c` lines 65–87,
-  800–904, 1116–1128
-- **[Phase 2]** Read `drivers/pinctrl/core.c` lines 855–876:
-  `pinctrl_gpio_direction()` takes `mutex_lock`
-- **[Phase 2]** Read `drivers/gpio/gpio-aggregator.c` lines 327–342,
-  406–421: spinlock when `!chip->can_sleep`
-- **[Phase 2]** `git show 3982db2df3ed`: full diff reviewed
-- **[Phase 3]** `git describe HEAD`, `make kernelversion`: tree is
-  6.18.43
-- **[Phase 3]** `git show v6.6/v6.12/v6.18:...`: buggy
-  `pinctrl_gpio_direction_input` pattern present at all three tags
-- **[Phase 3]** `git apply --check` on upstream patch: succeeds on
-  current tree
-- **[Phase 4]** `b4 dig -m /tmp/mtk-gpio-thread.mbox`: thread saved;
-  Linus Walleij “Patch applied”; author “Only compile tested”
-- **[Phase 5]** Traced `gpiod_direction_input/output` → gpiochip
-  callbacks in `gpiolib.c`
-- **[Phase 6]** `grep` on current tree: buggy code at lines 805, 818,
-  898; no `can_sleep` set
-- **[Phase 6]** Fix not in HEAD: `merge-base --is-ancestor 3982db2df3ed
-  HEAD` → not ancestor
-- **[Phase 7]** `drivers/pinctrl/mediatek/Makefile`:
-  `CONFIG_PINCTRL_MTK` builds `pinctrl-mtk-common.o`
-- **UNVERIFIED:** Exact ChromeOS “GPIO proxy” driver name in mainline
-  (no `gpio_proxy` string found; forwarder mechanism verified in `gpio-
-  aggregator.c`)
+- **[Phase 1]** Parsed commit message and tags from user-provided diff
+- **[Phase 2]** Diff analysis: 5 `pinctrl_find_gpio_range_from_pin` →
+  `_nolock` replacements in SET/mux paths
+- **[Phase 3]** `git describe HEAD`: v6.18.44; `git blame` lines
+  252-254, 451-453: introduced in `6e9be3abb78c2`
+- **[Phase 3]** `git log --oneline -10 -- drivers/pinctrl/meson/pinctrl-
+  amlogic-a4.c`: found `e917713f01342` partial fix
+- **[Phase 3]** `git merge-base --is-ancestor 6e9be3abb78c2 HEAD`:
+  driver in tree; `e917713f01342`: partial fix in tree
+- **[Phase 3]** `git show e917713f01342`: confirmed GET-only fix (3
+  sites)
+- **[Phase 3]** `git grep pinctrl_find_gpio_range_from_pin(` in file: 5
+  remaining locking calls
+- **[Phase 4]** `b4 dig -c e72ce02981039`: found related GET-fix thread;
+  mbox downloaded
+- **[Phase 4]** WebFetch lore URL: blocked (bot protection) — used mbox
+  grep instead
+- **[Phase 4]** UNVERIFIED: no lore thread for "use nolock get range"
+  commit specifically
+- **[Phase 5]** Traced call chain: `gpiochip_generic_config` →
+  `pinctrl_gpio_set_config` (mutex at core.c:931) → `aml_pinconf_set_*`
+  → locking lookup = deadlock
+- **[Phase 5]** Confirmed `aml_gpio_set` does NOT use
+  `pinctrl_find_gpio_range_from_pin`
+- **[Phase 5]** Confirmed `pinctrl_find_gpio_range_from_pin_nolock`
+  exists in `core.c:484-505`
+- **[Phase 6]** Read current file: GET paths nolock (295,329,368); SET
+  paths still locking (253,452,465,487,522)
+- **[Phase 6]** Commit under review NOT in tree (`git log --grep="nolock
+  get range"`: no match on current branch)
+- **[Phase 8]** Deadlock severity: CRITICAL
+- **[Phase 8]** UNVERIFIED: "interrupt context" as stated in commit
+  message; verified mechanism is mutex recursion
 
-**YES**The backport analysis is complete.
+**YES**The background searches are done. Here’s what they showed:
 
-**Verdict for Linux 6.18.43: YES** — the MediaTek common-v1 pinctrl
-driver advertises non-sleeping GPIO ops but uses
-`pinctrl_gpio_direction_*()` (which takes the pinctrl mutex), causing
-lock-context warnings when GPIOs are used through a forwarder/proxy. The
-fix is small (13 lines), applies cleanly, and is already merged upstream
-by Linus Walleij.
+- **Commit not in this tree:** Searches on the current branch and `all-
+  next` did not find `pinctrl: meson: amlogic-a4: use nolock get range`.
+  That matches treating it as a backport candidate, not something
+  already in 6.18.44.
+- **Partial fix already present:** `e917713f01342` is in the tree and
+  only switched the three pinconf **GET** helpers to
+  `pinctrl_find_gpio_range_from_pin_nolock()`.
+- **Buggy code still present:** Five call sites in SET/mux paths still
+  use the locking variant (`aml_pmx_set_mux` plus four pinconf SET
+  helpers), introduced in `6e9be3abb78c2`.
 
-A background `git branch --contains` check for which branches have the
-fix failed (likely due to repo size/timeout). That wasn’t needed for the
-decision: the fix is **not** in your current 6.18.43 checkout, and the
-buggy code is present there.
+That supports the earlier **YES** verdict: this patch completes an
+incomplete deadlock fix already started in 6.18.44, with a clean, low-
+risk apply expected.
 
- drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/pinctrl/meson/pinctrl-amlogic-a4.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-index 3f518dce6d23f..dd2c8aa039385 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-@@ -802,20 +802,27 @@ static const struct pinmux_ops mtk_pmx_ops = {
- 	.get_function_name	= mtk_pmx_get_func_name,
- 	.get_function_groups	= mtk_pmx_get_func_groups,
- 	.set_mux		= mtk_pmx_set_mux,
--	.gpio_set_direction	= mtk_pmx_gpio_set_direction,
- 	.gpio_request_enable	= mtk_pmx_gpio_request_enable,
- };
+diff --git a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
+index 1bd58fbbd26ac..e598373f51663 100644
+--- a/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
++++ b/drivers/pinctrl/meson/pinctrl-amlogic-a4.c
+@@ -250,7 +250,7 @@ static int aml_pmx_set_mux(struct pinctrl_dev *pctldev, unsigned int fselector,
+ 	int i;
  
-+static int mtk_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct mtk_pinctrl *pctl = gpiochip_get_data(chip);
-+
-+	return mtk_pmx_gpio_set_direction(pctl->pctl_dev, NULL, offset, true);
-+}
-+
- static int mtk_gpio_direction_output(struct gpio_chip *chip,
- 					unsigned offset, int value)
+ 	for (i = 0; i < group->npins; i++) {
+-		range =  pinctrl_find_gpio_range_from_pin(pctldev, group->pins[i]);
++		range =  pinctrl_find_gpio_range_from_pin_nolock(pctldev, group->pins[i]);
+ 		aml_pctl_set_function(info, range, group->pins[i], group->func[i]);
+ 	}
+ 
+@@ -449,7 +449,7 @@ static int aml_pinconf_disable_bias(struct aml_pinctrl *info,
+ 				    unsigned int pin)
  {
-+	struct mtk_pinctrl *pctl = gpiochip_get_data(chip);
+ 	struct pinctrl_gpio_range *range =
+-			 pinctrl_find_gpio_range_from_pin(info->pctl, pin);
++			 pinctrl_find_gpio_range_from_pin_nolock(info->pctl, pin);
+ 	struct aml_gpio_bank *bank = gpio_chip_to_bank(range->gc);
+ 	unsigned int reg, bit = 0;
+ 
+@@ -462,7 +462,7 @@ static int aml_pinconf_enable_bias(struct aml_pinctrl *info, unsigned int pin,
+ 				   bool pull_up)
+ {
+ 	struct pinctrl_gpio_range *range =
+-			 pinctrl_find_gpio_range_from_pin(info->pctl, pin);
++			 pinctrl_find_gpio_range_from_pin_nolock(info->pctl, pin);
+ 	struct aml_gpio_bank *bank = gpio_chip_to_bank(range->gc);
+ 	unsigned int reg, bit, val = 0;
  	int ret;
+@@ -484,7 +484,7 @@ static int aml_pinconf_set_drive_strength(struct aml_pinctrl *info,
+ 					  u16 drive_strength_ua)
+ {
+ 	struct pinctrl_gpio_range *range =
+-			 pinctrl_find_gpio_range_from_pin(info->pctl, pin);
++			 pinctrl_find_gpio_range_from_pin_nolock(info->pctl, pin);
+ 	struct aml_gpio_bank *bank = gpio_chip_to_bank(range->gc);
+ 	unsigned int reg, bit, ds_val;
  
- 	ret = mtk_gpio_set(chip, offset, value);
- 	if (ret)
- 		return ret;
+@@ -519,7 +519,7 @@ static int aml_pinconf_set_gpio_bit(struct aml_pinctrl *info,
+ 				    bool arg)
+ {
+ 	struct pinctrl_gpio_range *range =
+-			 pinctrl_find_gpio_range_from_pin(info->pctl, pin);
++			 pinctrl_find_gpio_range_from_pin_nolock(info->pctl, pin);
+ 	struct aml_gpio_bank *bank = gpio_chip_to_bank(range->gc);
+ 	unsigned int reg, bit;
  
--	return pinctrl_gpio_direction_output(chip, offset);
-+	return mtk_pmx_gpio_set_direction(pctl->pctl_dev, NULL, offset, false);
- }
- 
- static int mtk_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-@@ -895,7 +902,7 @@ static const struct gpio_chip mtk_gpio_chip = {
- 	.request		= gpiochip_generic_request,
- 	.free			= gpiochip_generic_free,
- 	.get_direction		= mtk_gpio_get_direction,
--	.direction_input	= pinctrl_gpio_direction_input,
-+	.direction_input	= mtk_gpio_direction_input,
- 	.direction_output	= mtk_gpio_direction_output,
- 	.get			= mtk_gpio_get,
- 	.set			= mtk_gpio_set,
 -- 
 2.53.0
 
