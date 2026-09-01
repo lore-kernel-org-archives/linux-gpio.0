@@ -1,107 +1,145 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC3542DA5B;
-	Tue,  1 Sep 2026 07:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B29468C14
+	for <linux-gpio@vger.kernel.org>; Tue,  1 Sep 2026 07:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788247177; cv=none; b=XTjp25JYK+OfjIfA9oGJVdUYF6b2BaY//+cFu/HCdmwOgTuS1Weu9HKBeav7aaGkM75u8IAVPiMmoImHE0vnZRDIV45ltGy8ru2+KmwxGN6p6tM/8/He1XCBlHMsKrkQ7XQZSukLGOy+QbMrsM0Qv67HCodufGXxSiuwmvIHMyY=
+	t=1788248400; cv=none; b=VD25JgIb7MV1gYnSA+62AnpQMBC+rCo3rdN0bJ/HglVPDyrPiNWwI3Jt1E22xeRlfgKGzyoyqMYusPjZ44d3GXQluVLRQgP50fUk73IuyM65+BrcoOdC3yZUTeZITuCgkKifsiY3HI5VF1EbA/Y4paEBk0Rqx8i3X8r/jI44oXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788247177; c=relaxed/simple;
-	bh=Zu24pMlaY4E313bRYquaYaNFWRLE81YRhF5c0OnVNEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GynspgBXPxoWdMF354AqPZBKd+vrK6B6eyZqFbUc/KOcJ0pUo3RoQPJJwBRk5l3+cukwaoCsBuhpWL5KNJ+yp83A9JLGqk0j9V05tsPF8XbQ3NZcprgdr3aNSeZnsKPuFm/6lIcwwq+rK2Gk/KENvK26xVQIejiDTy8uPYsWiJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PPDBE9p+; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1788248400; c=relaxed/simple;
+	bh=ehDE7RYYfCpdnswzW+7J85+kStX5HZj/6Uo3Dns6YP8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u3egYe+FeTNAUaAGFUlhqWX6+fC/TS5r3Zr2JZgTDutvULh0TfJrNJKcSzHLNgiXPcNQ4gnfcBDacivV1vKI8/SgtqNDS4XmUfK33SnGcxY6ZWs5PYkasoXsnaBFaZnknMwfbBbW31mUIXiHBC/Rp1jnQl9HVUC3D1XPgk8IYIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OkN5XOxk; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PPDBE9p+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1788247175; x=1819783175;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Zu24pMlaY4E313bRYquaYaNFWRLE81YRhF5c0OnVNEY=;
-  b=PPDBE9p+4gUyprd5QRvKWfu4eXDqseSwntUfLvvIwMYrlbC7AVPwTsm5
-   BYnuV33cE1u+k8P8E0TfQlF1lPLuMrhTv0X6cxwkPBJOwTrLIQlkWkVvg
-   yTkKWlXZXlBQ+oT4qDduEL5fPgRy5+yXQ/21wi+Q8lOmlpFYTYM7sfh8b
-   gdS9BDdqrzp50RdFGXAAlcVS8/qtiSfZNuhPHfkqZ+DVmlHRzkJhxYtYr
-   KN7a/JCqP5IKpBHG8y1Ppfve3DEQFu6y5iib5csffVBfh5p45xUUEwvKV
-   2cJUhMhEDrFbXIjiPyT37iFvzPZUOsqn5jc4rWAJkh4lHED2aoMpPf6wx
-   A==;
-X-CSE-ConnectionGUID: GUVjwYvDR9CsLHY8uPM4UA==
-X-CSE-MsgGUID: ve7mOAOYR0G+9Kw13Ew8wg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11892"; a="88690999"
-X-IronPort-AV: E=Sophos;i="6.25,255,1779174000"; 
-   d="scan'208";a="88690999"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2026 00:19:33 -0700
-X-CSE-ConnectionGUID: B3MU0I/8Qe6mcsREQCBEuQ==
-X-CSE-MsgGUID: 6sVixS13RAKAx1y52EsupA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,255,1779174000"; 
-   d="scan'208";a="272801263"
-Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.222])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2026 00:19:28 -0700
-Date: Tue, 1 Sep 2026 10:19:25 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Janani Sunil <jananisunil.dev@gmail.com>
-Cc: Janani Sunil <janani.sunil@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Michael Walle <mwalle@kernel.org>, linux@analog.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH v5 05/20] iio: adc: Add AD7768 and AD7768-4 core support
-Message-ID: <apZ8fac_5DLlFKbN@ashevche-desk.local>
-References: <20260828-ad7768-driver-v5-0-e33ca6f841a2@analog.com>
- <20260828-ad7768-driver-v5-5-e33ca6f841a2@analog.com>
- <apVDm1O_NtD07-rw@ashevche-desk.local>
- <b2f430a4-a43c-409f-9bdf-ffb0f70b1538@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OkN5XOxk"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-49b8eeb3ff2so32670825e9.2
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Sep 2026 00:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788248397; x=1788853197; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=aFV4yBSab23d+ZQcyN166yeywrzh3EvBwUi0GdjrM3I=;
+        b=OkN5XOxkn178Mt+tc9zfovUharsZ9AP3Jv1pjQJTOH/WRYlDe9bblk/3371ipG+ksB
+         xAldPxJpFFNUvNSVJ+rNZHKoqI8Pno/D/eF5Ya17OvWl49dawbRaU0UeSLe4bJmm6sQK
+         9kyfe4qUxfdHE2oHexCEYCRF8tmoKuB/ybArYorgEuraIUkKw0Voab4MhdoHAvz+kqFx
+         cWkOstEp4IfLoKfJ7mWiXvNAVM9RV+za7ArP5oC680G/yPFX1w7RELXikrdHlo+pNSVE
+         sz3DhFoXjD+5SuKB6xNgvPXHtNHIY4K1uUZHiwbYEIAatL6YjAbRnyvopzR08JzC3LBi
+         OBcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788248397; x=1788853197;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=aFV4yBSab23d+ZQcyN166yeywrzh3EvBwUi0GdjrM3I=;
+        b=r80Wn3nTKilu31kAiAW4+nAqFvYGiyMOEMhTGS0r1w/8Xr/hMWUvGuklIiFn8MTV1R
+         QJd3ncdkL0PvBaishHR9LlUR0r4YoLnSEojbBtT0xrV54gbwcP+zH3pKP+Hv9QRblrZK
+         M0Sv3WlPDMHb+W8bqPitkBxnGtnQRbKhL7zaitkfoZwhvjxdPvV6foyql/d9dyaanf5G
+         yDLt/pjtgwf5ltZ/4kdizSosMipVBPWmaykXqGLG0cPf7/TxJARGfiKBtMC+5BMXcRf4
+         AKaaI3fJry7Vwk5CA0GUyk30les99fDbrWoiVvjHxRKQjuQ1AzCvs3YayqsRDdEjf+ha
+         rz5w==
+X-Forwarded-Encrypted: i=1; AHgh+Rrffsgv00eaRzmRz9oQKuXIsAncQuF45h2NaLdJYzSJal6/jawen2SGdh5JjzM6Co7D4EgWICXzLu75@vger.kernel.org
+X-Gm-Message-State: AFuF++nGOarjYCkM5HFLKarJ8TFCgmOEaYoWHkMa/3jCRPkeLmrGfuAq
+	7Cs2+4nRsYKv3vug/psj3Jd3qAsv14gjAeALQKzp3EzIyITbjAJ0jmsz
+X-Gm-Gg: AR+sD12mqiT9hZ44qruQbAceQRMvSEdnbBc3G/dCqGZRLS6xipB6nI9JjB8cNvMkgtY
+	5cH/TbjUcV/nOOO9hWPzbUNoTsY8y9A30TqtdeZjvVbXp7xAupVpLsGWfCVMgx4pJIOjvl3uGDR
+	0V2jagOXWRLwVYOek1T8nLPPhuAuUsdRfg1e2tJzvlIjcMS7fX/BbtSL9omLVJMUElaWZDYprBK
+	9Nnf4vDp+kvCOBPsqRtaJUFUO6NrSzdp3jpKz33oGa2qxy65tTjuEy4KhvGdW75sbqIljKHh1MG
+	ZL9HMwlP4NJObjWUEcFIjKkMcEUpNVHLxmWBBdugUPywBb19S0fWRn3EFO+oTbhjJYFwV0tY2Aq
+	D9LHgu2PvQ4vYK//0bY4MJmd7QOU1we810PHHfGZwwWO3gGcNJCyXn71OQAfotXOfO29KWi1aab
+	8tvSLdSGnC/sRzxXAKyD51f0IS/cER2fbPgcIXuLWVJSDfY0+RxR8FDUYaYJvaB5M=
+X-Received: by 2002:a05:600c:1906:b0:499:9240:9a1c with SMTP id 5b1f17b1804b1-49cdc555496mr97428045e9.15.1788248396295;
+        Tue, 01 Sep 2026 00:39:56 -0700 (PDT)
+Received: from [172.31.2.29] ([5.2.194.157])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cdce1e1ebsm48703365e9.14.2026.09.01.00.39.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Sep 2026 00:39:55 -0700 (PDT)
+Message-ID: <65b703e7-e4a0-4046-9d35-7d0ff1057f96@gmail.com>
+Date: Tue, 1 Sep 2026 10:39:53 +0300
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 00/22] media: i2c: add Maxim GMSL2/3 serializer and
+ deserializer drivers
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ dumitru.ceclan@analog.com
+Cc: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Julien Massot <julien.massot@collabora.com>, Rob Herring <robh@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-gpio@vger.kernel.org, Martin Hecht <Martin.Hecht@avnet.eu>,
+ Andrian Suciu <Adrian.Suciu@analog.com>,
+ Cosmin Tanislav <demonsingur@gmail.com>,
+ Vivekananda Dayananda <vivekana@amd.com>, Cory Keitz <ckeitz@amazon.com>
+References: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
+ <20260831170303.GB1116206@ragnatech.se>
+Content-Language: en-US
+From: Ceclan Dumitru <mitrutzceclan@gmail.com>
+In-Reply-To: <20260831170303.GB1116206@ragnatech.se>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b2f430a4-a43c-409f-9bdf-ffb0f70b1538@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Aug 31, 2026 at 05:20:04PM +0200, Janani Sunil wrote:
-> On 8/31/26 11:04, Andy Shevchenko wrote:
-> > On Fri, Aug 28, 2026 at 05:30:28PM +0200, Janani Sunil wrote:
 
-...
 
-> > +	dclk_div = 8 * st->datalines / st->chip_info->num_channels;
-> > Does 8 represent BITS_PER_BYTE? Can BITS_TO_BYTES() be used?
+On 8/31/26 8:03 PM, Niklas SÃ¶derlund wrote:
+> Hello,
 > 
-> 8 is not BITS_PER_BYTE.
-> With fast mode (fMOD = MCLK / 4) and ×64 decimation, this gives:
-> MCLK / DCLK = (4 × 64 / 32) × data lines / channels
-> Therefore, the factor is 8. I will add a comment explaining this.
+> Thanks for  your continued effort pushing this work forward!
+> 
+> On 2026-08-31 16:21:19 +0300, Dumitru Ceclan via B4 Relay wrote:
+>> This series adds new drivers for multiple Maxim GMSL2 and GMSL3 devices,
+>> replacing the few GMSL2 drivers already in upstream, and introducing a
+>> common framework that can be used to implement such GMSL chips, which
+>> avoids code duplication while also adding support for previously
+>> unsupported features.
+>>
+>> While the normally acceptable and polite way would be to extend the
+>> current mainline drivers, the choice was made here to add a totally new
+>> set of drivers. The current drivers support only a small subset of the
+>> possible features, and only a few devices, so the end result after
+>> extending them would in any case be essentially fully rewritten, new
+>> drivers.
+>>
+>> This series depends on support for internal pads, for which a patch has
+>> been added.
+> 
+> It also depends on enabling the streams API right? At least I need to do 
+> so to be able to use the TPG. Out of curiosity do you know the plan to 
+> enable it by default upstream?
+> 
 
-Yes, please do. This will clarify the magic number.
+I do not know when default enable is planned, but series could make it
+so VIDEO_MAXIM_SERDES selection causes v4l2_subdev_enable_streams_api=1.
+  I am not sure that such a hack would be acceptable by Sakari or
+upstream in general.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+>> The drivers have been tested on the following hardware combinations, 
+>> but
+>> further testing is welcome to ensure no / minimal breakage:
+>> * Raspberry Pi 5 + MAX9296A + 2xMAX96717 + 2xIMX219
+>> * Raspberry Pi 5 + MAX96714 + 1xMAX96717 + 1xIMX219
+>> * Raspberry Pi 5 + MAX96716A + 2xMAX96717 + 2xIMX219
+>> * Raspberry Pi 5 + MAX96712 + 4xMAX96717 + 4xIMX219
+>> * Raspberry Pi 5 + MAX96724 + 4xMAX96717 + 4xIMX219
+>> * Raspberry Pi 5 + MAX96792A + 1xMAX96793 + 1xMAX96717 + 2xIMX219
+>> * Raspberry Pi 5 + MAX96792A + 2xMAX96717 + 2xIMX219
+>> * Renesas V4H + MAX96712 + 2xMAX96717 + 2xIMX219
+> 
+> I tested the TPG on Renesas V3U + MAX96712 and it works as just as good 
+> or better then the staging driver this work makes obsolete.
+> 
