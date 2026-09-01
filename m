@@ -1,103 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D89E40B0ED;
-	Tue,  1 Sep 2026 02:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC3542DA5B;
+	Tue,  1 Sep 2026 07:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788228604; cv=none; b=tSm3O10pxe+TYzxjbjAFzhWCMw6JxBYBwvAB4wxF46NtHNOIYX5vITS0mq+HthOFR+TKSZQYkOlb7dJeDPYMMtYWeiAsjHE51OeTNuEUK0c5fcVzYDNJLJ0/pLajn2QwanBK0a4o8+YFGJ0LFHfzfaenVT4f1NYetSnEgJoAwYk=
+	t=1788247177; cv=none; b=XTjp25JYK+OfjIfA9oGJVdUYF6b2BaY//+cFu/HCdmwOgTuS1Weu9HKBeav7aaGkM75u8IAVPiMmoImHE0vnZRDIV45ltGy8ru2+KmwxGN6p6tM/8/He1XCBlHMsKrkQ7XQZSukLGOy+QbMrsM0Qv67HCodufGXxSiuwmvIHMyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788228604; c=relaxed/simple;
-	bh=vM/b+8Lm9P5CL6sjrNCoXlhWVUIXWgvPTo9FewuChPY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NglycMX5pNKdiyQnNIqAgacptc2TitpjcuP3or4VpL+HINYD+PyyqujXblmpvZ0BIfDoHEk8OAKCAsA8fs+CaMQ92+rwXr4igsFHV9pOqIPyGQbWRhhZl/0Gvu8UnGhrUXNimt7bCwBPzJn+U1IjcwBEH+ZvWWzZEkUNMbb70MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ok2cON5q; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788247177; c=relaxed/simple;
+	bh=Zu24pMlaY4E313bRYquaYaNFWRLE81YRhF5c0OnVNEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GynspgBXPxoWdMF354AqPZBKd+vrK6B6eyZqFbUc/KOcJ0pUo3RoQPJJwBRk5l3+cukwaoCsBuhpWL5KNJ+yp83A9JLGqk0j9V05tsPF8XbQ3NZcprgdr3aNSeZnsKPuFm/6lIcwwq+rK2Gk/KENvK26xVQIejiDTy8uPYsWiJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PPDBE9p+; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ok2cON5q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25EF1F00ACA;
-	Tue,  1 Sep 2026 02:09:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788228585;
-	bh=imccdf2g1mEFtExQXUXHUdzPH5T3kvgztV71j7lsVdk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Ok2cON5qzJUYs6HC/WtGf6nOZ+S7sog1jx06koojWhYpFvB1VjXlpU+vazbj6ys6X
-	 5NaeODhTcaoc/Wr0vJz6n2tNSs+/7uMVVIQEQCklowwFfSRTC0jihy6WpRwsDFJhTw
-	 utAT3OmjhjG2VfvLkMnFdFm2RfAE/kQ8ugvNCpyBdAyxBm35bEexK2wsO88UXt6SxC
-	 J4hGZZQOjQ4lmZzuEyH0vh5MC4F1UfYUlc9dkyf+/VqvKRw7gSogBmSItmpuQXFjV9
-	 sOqkbnoqyFXwJhzmXg95gCfi/FksnNECfYMWhmofd+jCJDZA4TWyC3W77+LTsVw++C
-	 /fi4xgOjY/I9A==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PPDBE9p+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788247175; x=1819783175;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Zu24pMlaY4E313bRYquaYaNFWRLE81YRhF5c0OnVNEY=;
+  b=PPDBE9p+4gUyprd5QRvKWfu4eXDqseSwntUfLvvIwMYrlbC7AVPwTsm5
+   BYnuV33cE1u+k8P8E0TfQlF1lPLuMrhTv0X6cxwkPBJOwTrLIQlkWkVvg
+   yTkKWlXZXlBQ+oT4qDduEL5fPgRy5+yXQ/21wi+Q8lOmlpFYTYM7sfh8b
+   gdS9BDdqrzp50RdFGXAAlcVS8/qtiSfZNuhPHfkqZ+DVmlHRzkJhxYtYr
+   KN7a/JCqP5IKpBHG8y1Ppfve3DEQFu6y5iib5csffVBfh5p45xUUEwvKV
+   2cJUhMhEDrFbXIjiPyT37iFvzPZUOsqn5jc4rWAJkh4lHED2aoMpPf6wx
+   A==;
+X-CSE-ConnectionGUID: GUVjwYvDR9CsLHY8uPM4UA==
+X-CSE-MsgGUID: ve7mOAOYR0G+9Kw13Ew8wg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11892"; a="88690999"
+X-IronPort-AV: E=Sophos;i="6.25,255,1779174000"; 
+   d="scan'208";a="88690999"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2026 00:19:33 -0700
+X-CSE-ConnectionGUID: B3MU0I/8Qe6mcsREQCBEuQ==
+X-CSE-MsgGUID: 6sVixS13RAKAx1y52EsupA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,255,1779174000"; 
+   d="scan'208";a="272801263"
+Received: from ettammin-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.222])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2026 00:19:28 -0700
+Date: Tue, 1 Sep 2026 10:19:25 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Janani Sunil <jananisunil.dev@gmail.com>
+Cc: Janani Sunil <janani.sunil@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney@redhat.com>,
-	Georgi Djakov <djakov@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
 	Linus Walleij <linusw@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>,
-	Radu Rendec <radu@rendec.net>,
-	Robert Marko <robimarko@gmail.com>,
-	Guru Das Srinagesh <linux@gurudas.dev>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	Mukesh Savaliya <mukesh.savaliya@oss.qualcomm.com>,
-	Abel Vesa <abel.vesa@oss.qualcomm.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v5 00/15] Add initial support for Qualcomm Kuno SoC
-Date: Mon, 31 Aug 2026 21:09:22 -0500
-Message-ID: <178822856270.1835959.15842744749902984423.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260827-kuno-soc-support-v5-0-6d47636a8f09@oss.qualcomm.com>
-References: <20260827-kuno-soc-support-v5-0-6d47636a8f09@oss.qualcomm.com>
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Michael Walle <mwalle@kernel.org>, linux@analog.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH v5 05/20] iio: adc: Add AD7768 and AD7768-4 core support
+Message-ID: <apZ8fac_5DLlFKbN@ashevche-desk.local>
+References: <20260828-ad7768-driver-v5-0-e33ca6f841a2@analog.com>
+ <20260828-ad7768-driver-v5-5-e33ca6f841a2@analog.com>
+ <apVDm1O_NtD07-rw@ashevche-desk.local>
+ <b2f430a4-a43c-409f-9bdf-ffb0f70b1538@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <b2f430a4-a43c-409f-9bdf-ffb0f70b1538@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
+On Mon, Aug 31, 2026 at 05:20:04PM +0200, Janani Sunil wrote:
+> On 8/31/26 11:04, Andy Shevchenko wrote:
+> > On Fri, Aug 28, 2026 at 05:30:28PM +0200, Janani Sunil wrote:
 
-On Thu, 27 Aug 2026 23:21:03 +0530, Hardeep Sharma wrote:
-> This series adds initial support for the Qualcomm Kuno SoC and the Kuno
-> IDP reference board.
+...
+
+> > +	dclk_div = 8 * st->datalines / st->chip_info->num_channels;
+> > Does 8 represent BITS_PER_BYTE? Can BITS_TO_BYTES() be used?
 > 
-> Kuno is a 32-bit ARM (Cortex-A7) Qualcomm platform. This series brings up
-> the essential SoC infrastructure required to boot to a serial console:
-> 
->   - Global Clock Controller (GCC) and RPMh clock controller
->   - RPMh power domains
->   - Interconnect (NoC) provider
->   - TLMM pin controller
->   - PDC interrupt controller and SCM firmware interface
->   - Devicetree for the SoC and the Kuno IDP board
-> 
-> [...]
+> 8 is not BITS_PER_BYTE.
+> With fast mode (fMOD = MCLK / 4) and ×64 decimation, this gives:
+> MCLK / DCLK = (4 × 64 / 32) × data lines / channels
+> Therefore, the factor is 8. I will add a comment explaining this.
 
-Applied, thanks!
+Yes, please do. This will clarify the magic number.
 
-[04/15] dt-bindings: clock: qcom,rpmhcc: Add Kuno RPMh clock controller
-        commit: e304e8919043712191462224ce9d40bb5f5a6bc1
-[05/15] clk: qcom: clk-rpmh: Add support for Kuno RPMh clocks
-        commit: 12918d595ac96b819b9c3ba0df4c6a4bf50c43a9
-[11/15] clk: qcom: Add Global Clock Controller driver for Kuno
-        commit: 7db06b5f624b583fa2206f98de8437819acada9b
-
-Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+With Best Regards,
+Andy Shevchenko
+
+
