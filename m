@@ -1,161 +1,298 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38AC37E5E5
-	for <linux-gpio@vger.kernel.org>; Tue,  1 Sep 2026 12:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E1547ECED
+	for <linux-gpio@vger.kernel.org>; Tue,  1 Sep 2026 13:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788265216; cv=none; b=KeO33czZNXyslXPMo9G1zw36/rXpqJZD/jWMLoUKgjIPXgr6HkpEbTpVx0jCX5W7+IOA3kejgshWyY13+a0KY6Myt3e9k4+Bg2QniIZyDwqb+1gM2S9wgqA+H0337RrA4sNkwjGci7bTOFntmtzE+GfKUA1alpas996tVaK3TK8=
+	t=1788269321; cv=none; b=LifxGwauYOROLdpb04+GP+lD0h4FwGliFwx4fMrATrTjx2sPI7IIaxWOBMfWHU/s5goKA23CFXW+9nlvAZjszgazf0d/8oC6qLvI1H+6LYvuhAK/jPgYY0++4tYQgkJFZVaRU9mFj6C67NgmZOZkg/jl2zuTk3FWNrTx+UdpUUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788265216; c=relaxed/simple;
-	bh=qXg8sssEt9Q9EeWhnCnsQ6Z9yvVpjqAAzFP2DSeudrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZyBla3LO+Duv8dzHi/hWrC0qhKM9chAI8QPsxPuG2sHrG0VFpa1s+y5QgEmwOJ2yO8yb8SdF4ZFBQDdqJaILuFv6kcTB7zFz1wEkiypDLVRfppla80DqJd0CjPOWIWiUdxFzfxASNUL64rjcORfonI04UJa+Q6HJ7eu6X8CNvFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lWqn8avk; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZRcOQcf7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1788269321; c=relaxed/simple;
+	bh=MUq/5ZoiCfWabfKDlFl7q+tz6E/EDZ9wlA4CyFJOWNk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=To5yFCY5EAAoNaH63yZ6A6XIsqirs+z91InF6SMnW5vIlEUPJzmxbgZo9yCL5lrI6JPWYN3EnDeAcuUvO/H2QW4gnKLKzoFUsx1MdZoI2lTo/Z9rDuuf++c36ccJcat2i5UY4ilN8iPdCDhLiBTj/45RIGPjwqrbp8NLc6jRBTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=EAgluykf; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lWqn8avk";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZRcOQcf7"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 681AJdLa1767329
-	for <linux-gpio@vger.kernel.org>; Tue, 1 Sep 2026 12:20:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kN2kJoz7hO2o7NskE9YevJ8bM5MarrXbwTiIKjarUso=; b=lWqn8avknas80M0G
-	+rPK9sTcfUabALhvPkswOLG5U4wgEa/xDpbFr4/OSbbYdm1/sdLbJ+PWAYYHXcdC
-	LOVA/ADi8OIEXBfoNmGYPRKy8VouuGJqcINCVxuWGoJURicmBa0DTMGUSOm1ZE+1
-	V8wnst+7Qg1T2CX+em6qE3TIabME1mBGSQB4szoe8PYVbDcTQ0ObMT1KUx9sMax/
-	Ez+WD1ampzDU3z2QrLSH2VJEFiMHqN4kk0oVwx0w2EJSGJs5N0SonGfS+4iju9AB
-	UnAINYs+ZRqJGKDKayoum7aJiXLQEI/ICffGTVK2YXL6ZxAbSS7w+AfX47YgeoM2
-	hA+GfA==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gdjtx35xk-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Tue, 01 Sep 2026 12:20:13 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-93494b1e35cso83761385a.0
-        for <linux-gpio@vger.kernel.org>; Tue, 01 Sep 2026 05:20:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788265213; x=1788870013; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=kN2kJoz7hO2o7NskE9YevJ8bM5MarrXbwTiIKjarUso=;
-        b=ZRcOQcf7byOjReIBQtpzjFZXIaSxr6TUTj+mhwh14Y3yuSnNnvOduZrp6xQglaSnyG
-         3IgIxFxYd880ogejdXlUZ5UYI5K6VTtCVZ81ck2v1vhANNmebLgeY/toDBKxM8haFwcd
-         dXDVkKoYOpLTpXOUkb0F3tSMnDPsXhiTODfO83jj9NlPBNYLnqg1XxzAq8s4X4bzK+WN
-         RvSy6yhe6OlTQ9w4pxMmD0ucNveY0eXbRqTfbUNboTyU+7iLmP9tQe0x/nlr+D1atiTk
-         VbIlyyDS/C1k25dqj/7DHelMdijmMrvqlc2VUwrMV+GLMyxTrmVX1C4WPlYmI5xASltS
-         djeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788265213; x=1788870013;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=kN2kJoz7hO2o7NskE9YevJ8bM5MarrXbwTiIKjarUso=;
-        b=Qm2wcNveCQU0+RyvqHfXfImaerLhWk957s+K8b9qtdD0u4r8EXQ3Jn6gf9XIFGfLur
-         BD4fkDTOnocRD545CPfxPoBSRW6g5xfK/62T5k3IK1RDuSzKdGsl8/Y76KcsnRtK2RBO
-         RXClqOhpa9KtGiR8W23Lktl11oNj3NQECdPeX9EShW2Z8owm/n/xilA8n0uw/0B/IXLQ
-         rOUhY03BNjeR2ixyIAtk/upBnYWaMs85oRbLDTNFdkTdRUccYXlYWlMPtIF3puxVHNVi
-         IiZHGya9UR/IvXkoDzLbESoXlezsbr1VErQ8YYv35deE4GSTIxdPrTANAFYMXC4FcCs8
-         cgXA==
-X-Forwarded-Encrypted: i=1; AHgh+RrUYfLEY3nEDZRCl500GX5v9D+KjVgEir9VYG7Zr35nEEvnzRS9CDRStsEwClw4F+S7F/+EFnPAiKoc@vger.kernel.org
-X-Gm-Message-State: AFuF++lZg6VCqUdxiWJMbLX7WSqQkcN4PlYG0evLdADeAEkY5rRapZzz
-	6G7ui1zmteBTKq3OZGgQ+ZqujHyC6hWY2JgThHunHQy0ZAkNaofyp+9BxzyX1Uo8BKenx0WHSF7
-	oOeA8Mq254zftG1b+a1KIKor5qSVWa9jSWovJ46XzUpO8eZqtQvT77niMQO4POkJD
-X-Gm-Gg: AR+sD13dusaUpS92rf2AJhzxy6zRY9irnV8U20j4ncub6erDuuuesrpuij/kZc48b0/
-	4CTeqGAubqXxGmm3AB/J3Oe7CmYLq5h8n8x6Ybj/1Og91lviX4QgRuDPM0X4zmpIeLTNfF1dhEX
-	OeT77JkLQdoM7pyRXkXMTRQvzVEv+OcHF0AJhmey8mwIteoA4Xf90Iph/BPtC024sj0LPaUTpp1
-	XI7GLYnrPyzHTy9uMfnW4n/kYHqUagONLgm5LgnStzYrDlCg8lGLtn11NS5J/8M7kBTps9RVcrN
-	tI84w2uS4VO6IUJY4SzMg1LSFbfnfDvOHiX1ftSR7jE3Yb9NDDEkqVmOaDKpfiJVyzbAP2Z4hOc
-	kQkxgsYnMrqrmEAd+AumpEw==
-X-Received: by 2002:a05:620a:46a3:b0:931:23a:83ca with SMTP id af79cd13be357-939287bdc55mr1477160585a.4.1788265212326;
-        Tue, 01 Sep 2026 05:20:12 -0700 (PDT)
-X-Received: by 2002:a05:620a:46a3:b0:931:23a:83ca with SMTP id af79cd13be357-939287bdc55mr1477151785a.4.1788265211504;
-        Tue, 01 Sep 2026 05:20:11 -0700 (PDT)
-Received: from [192.168.202.12] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c255ee2872dsm590060666b.15.2026.09.01.05.20.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Sep 2026 05:20:10 -0700 (PDT)
-Message-ID: <b4dc8702-212e-452d-b0a9-c9816b545066@oss.qualcomm.com>
-Date: Tue, 1 Sep 2026 14:20:07 +0200
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="EAgluykf"
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 2FFD824002B
+	for <linux-gpio@vger.kernel.org>; Tue,  1 Sep 2026 15:28:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de;
+	s=1984.8680eb; t=1788269317;
+	bh=vUM+yN+wV2Rum2NOiWGNEq7ms74eqAhRWAUvws9oiXc=;
+	h=Message-ID:Subject:From:To:Cc:Date:Autocrypt:Content-Type:
+	 MIME-Version:OpenPGP:From;
+	b=EAgluykfAjkRXM1DT8Typ2YUTHMMjJyBZEaJWN25o3SPept1PGpq6pWpAyGgRNYm+
+	 ITCZaWPgb7aeAHVrS12l2xZy/FJbEZtPgvlE+ahrNMW7/kcHM8ayN1LaqRtga9xGlE
+	 /oQ/UkGQwwKfNUtbZNFnCE2xjaCANnqeib+ot6DPAhZySVjAXZWKJUurPWJsaxrgNK
+	 lnRlAYqZaNpe50gCz+kSArDkCavOODkJaCeJH6m7yFf1JPyXCPF8v2xwuye78LIn/c
+	 1HZ4S//1N9A34INu/OiVg64XZmipGdhLO8M6fwe+ddIySzSCOGjUpq49qsVsacztrq
+	 /FY7gkAc6Yefg==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4hZ6BV3xF4z6tyW;
+	Tue,  1 Sep 2026 15:28:34 +0200 (CEST)
+Message-ID: <c4b9b6c6033774a02be50cf07a6729a6b1e9e5ba.camel@posteo.de>
+Subject: Re: [PATCH v8 1/6] dt-bindings: rtc: Add pinctrl for S35390A
+From: Markus Probst <markus.probst@posteo.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring
+	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	 <conor+dt@kernel.org>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+	 <uwe@kleine-koenig.org>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement
+	 <gregory.clement@bootlin.com>, Sebastian Hesselbarth
+	 <sebastian.hesselbarth@gmail.com>, Michael Langer
+	 <michael.brainbug.langer@googlemail.com>, Andrew Morton
+	 <akpm@linux-foundation.org>, Linus Walleij <linusw@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 01 Sep 2026 13:28:36 +0000
+In-Reply-To: <20260901-proud-furious-bison-0edeec@quoll>
+References: <20260831-rtc_s35390a_int1-v8-0-dac1dc86ce1f@posteo.de>
+	 <20260831-rtc_s35390a_int1-v8-1-dac1dc86ce1f@posteo.de>
+	 <20260901-proud-furious-bison-0edeec@quoll>
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+ keydata=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
+ jfGillcaQOqFZ3WwVqyzG1BUfTow==
+Content-Type: multipart/signed; micalg="pgp-sha256";
+	protocol="application/pgp-signature"; boundary="=-iRkZX+HtzAjTofklDxni"
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: qcs6490-rb3gen2: enable TC9563
- embedded GPIO controller
-To: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Michael Walle <mwalle@kernel.org>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20260901-pci-tc9563-aux-v1-0-dd9b80738e70@oss.qualcomm.com>
- <20260901-pci-tc9563-aux-v1-5-dd9b80738e70@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260901-pci-tc9563-aux-v1-5-dd9b80738e70@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=K78S2SWI c=1 sm=1 tr=0 ts=6a96c2fd cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=EUspDBNiAAAA:8 a=fFHDuP4XVuiI0RsLl8oA:9 a=QEXdDO2ut3YA:10
- a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAxMDEwOSBTYWx0ZWRfX/SW+ThqFcLyK
- l0p6tltE+SV2prJDfKpHXslP5teCu2nwcwRWJQu/mr9fUAVYD2c/wTypyjyhqF4y2fGe3hgxQ5n
- xS+FcZ6fMastzalrNXIFqo1hIt2U1gk=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAxMDEwOSBTYWx0ZWRfX7BNtiwtg3cjs
- A3zcy70RBgBjZvaiBD2rxJQdvX4+cWUEmvruRPAQftfwH/YVehGOepxZrIWb7r7/n2X+FXWbq2J
- 64aBfbGd9yXam9OrGMuk1Ue/yXsT3BCBKwPkEo13Tu2ZiQn/13ZkPMu6MDr0B7Hk4jIeEmYV43f
- AtxApq8b7lW9iuH5E8m2ZoLolHU+bU6bmbIkgpdd24COZdsEQ8mwrPCV5U8wQf9HzYFIGeRQf6H
- swX7TYQwvPILSNISeAD7d7EVWbuqDc+PvQQ798dsbb+OCKYKZaOfqROQxUcCEmNolE8+xL8GUM0
- G8+JYCil6PY+JaXXd6uBajQB6KDJLdMSNIsWD/mtm0bH7O4rweiSENnkJkFJRCV1cRmQkLMufKC
- rdj2rnciK0+Bc3SU2f64x5oN2Wfonj7qgckpT804WG148aZs+0DsAbHmuK311tlnY3PfoczXKY9
- wmz9E9CMNmp045+5EAg==
-X-Proofpoint-GUID: bjn4HjQy7wDP0egm3gyo8CMk0bDWQLAE
-X-Proofpoint-ORIG-GUID: bjn4HjQy7wDP0egm3gyo8CMk0bDWQLAE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-01_03,2026-08-31_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
- priorityscore=1501 suspectscore=0 clxscore=1015 bulkscore=0 spamscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2609010109
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On 9/1/26 12:27 PM, Lorenzo Bianconi wrote:
-> The Toshiba TC9563 PCIe switch embeds a GPIO controller providing 37 GPIO
-> lines.
-> The controller is registered as an auxiliary device by the TC9563 power
-> controller and accessed through the same i2c device.
-> Describe the controller as a "gpio" child node of the switch and use it
-> to control the PERST# reset lines of the two external downstream ports
-> (pcie@1,0 and pcie@2,0), as expected by the TC9563 power controller after
-> switching to the GPIO descriptor API for per-port resets.
-> 
-> Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-> ---
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+--=-iRkZX+HtzAjTofklDxni
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Konrad
+On Tue, 2026-09-01 at 12:05 +0200, Krzysztof Kozlowski wrote:
+> On Mon, Aug 31, 2026 at 05:42:22PM +0000, Markus Probst wrote:
+> > Synology NAS devices use the output pin for interrupt signal 1 to wake =
+up
+> > the system.
+> >=20
+> > Move devicetree bindings for sii,s35390a into its own file.
+> > Add necessary properties to configure the individual pins via pinctrl,
+> > which allows the interrupt signal 1 to be used for wakeup alarm.
+> >=20
+> > Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> > ---
+> >  .../devicetree/bindings/rtc/sii,s35390a.yaml       | 117 +++++++++++++=
+++++++++
+> >  .../devicetree/bindings/rtc/trivial-rtc.yaml       |   3 -
+> >  2 files changed, 117 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/rtc/sii,s35390a.yaml b/D=
+ocumentation/devicetree/bindings/rtc/sii,s35390a.yaml
+> > new file mode 100644
+> > index 000000000000..dfe632c4b2c8
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/rtc/sii,s35390a.yaml
+> > @@ -0,0 +1,117 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/rtc/sii,s35390a.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: S-35390A 2-WIRE REAL-TIME CLOCK
+> > +
+> > +maintainers:
+> > +  - Markus Probst <markus.probst@posteo.de>
+> > +
+> > +description:
+> > +  The S-35390A is a CMOS 2-wire real-time clock IC which operates with=
+ the
+> > +  very low current consumption in the wide range of operation voltage.
+> > +
+> > +allOf:
+> > +  - $ref: rtc.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: sii,s35390a
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +    description: Supports up to 2 interrupt lines via the INT1 and INT=
+2 pins.
+> > +
+> > +  interrupt-names:
+> > +    items:
+> > +      - const: int1
+> > +      - const: int2
+> > +
+> > +  wakeup-parent: true
+> > +
+> > +  wakeup-source: true
+> > +
+> > +  "#clock-cells":
+> > +    const: 1
+> > +
+> > +patternProperties:
+> > +  "^pins":
+> > +    type: object
+> > +    additionalProperties: false
+> > +
+> > +    patternProperties:
+> > +      "-pins$":
+> > +        type: object
+> > +        additionalProperties: false
+> > +
+> > +        allOf:
+> > +          - $ref: /schemas/pinctrl/pinmux-node.yaml#
+> > +
+> > +        properties:
+> > +          pins:
+> > +            minItems: 1
+> > +            items:
+> > +              enum:
+> > +                - int1
+> > +                - int2
+> > +
+> > +          function:
+> > +            description: |
+> > +              Pin function:
+> > +              - ignore:  Preserve the previous state.
+> > +              - disable: Disable pin output.
+> > +              - wakeup:  Output wakes up the system.
+> > +              - clock:   Output clock pulse.
+> > +              - pmin1:   Minute periodical output with 50% duty.
+> > +              - pmin2:   Minute periodical output L for 7.81 ms.
+> > +                         Can only be used with pin int1.
+> > +            enum:
+> > +              - ignore
+> > +              - disable
+> > +              - wakeup
+> > +              - clock
+> > +              - pmin1
+> > +              - pmin2
+> > +
+> > +        required:
+> > +          - pins
+> > +          - function
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    i2c {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        rtc@30 {
+> > +            compatible =3D "sii,s35390a";
+> > +            reg =3D <0x30>;
+> > +            pinctrl-0 =3D <&rtc_pins_default>;
+> > +            pinctrl-names =3D "default";
+> > +
+> > +            wakeup-parent =3D <&int>;
+>=20
+> I don't understand this need. Device does not generate interrupts - no
+> interrupts property - thus how can it wakeup?
+It is just an example.
+
+>=20
+> As explained in commit msg, the signal at int1 goes to the SoC, right?
+I assume.
+
+> So where does it go? To which pin of which device? &int?
+For my Synology DS923+ NAS, I do not have schematics. I only know for
+sure from source code that INT1 is used for wakeup and I can confirm
+that this does indeed wake the device up.=20
+
+>=20
+> Can you show complete upstream DTS using this?
+There is arch/arm/boot/dts/ti/omap/am3517-som.dtsi, which has the pin
+output of INT1 routed to a gpio pin. INT2 isn't connected at all.
+According to the public schematic [1], this looks accurate.
+
+
+Thanks
+- Markus Probst
+
+[1] https://www.scribd.com/doc/60133698/SOM-M2-Schematic
+
+>=20
+>=20
+> Best regards,
+> Krzysztof
+
+--=-iRkZX+HtzAjTofklDxni
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJPBAABCAA5FiEEgnQYxPSsWOdyMMRzNHYf+OetQ9IFAmqW0vQbFIAAAAAABAAO
+bWFudTIsMi41KzEuMTIsMiwyAAoJEDR2H/jnrUPSb7EP/0A6hImyam3AZT6bEy9e
+tqPzzX/4eg90lRdFBoC07xjNdZy9zEF7/SN1jeWxIssdBIm70G5PqQ4ovL8BN5uy
+4h/06BGhT0JxIYlTUiaJNye1ro3B8TquZJUCWr2s3DYLuim3sGAr366rL2Py6U8D
+VooNcKXa68474yEi/cJKQfqF5E5m6pwDaISAKfJcrd0rQA9MitLaLu8iFK+vfKPF
+vfM1fdZnMJEiRU1juNsqz1asfpqKOxX+Jn8u9ZEpZfBErnsCpM+sX2MEw7DbD6xw
+WpETOiFat1weVALHkGE/seTEasfVJdJcNeAJ51RBpPmva5Yz63wKPugl4siz/WRI
+0ECRDwpWQI2567MQOOpk2RtXByYq5sc8TDB/rofz+0sUB4ck5jHyv9eHK72rObbv
+EHsK/HcJ0+i/YlFqUqBS8LsjAdZAlvLw0jdBdsUS09p50gLUtAsr4vrFSz/sd21C
+bba9qkI+Pz4YvrLvno72CES7EQ7PAt1eFNT/Waudu8Rp/tKWdTbn/1sMOYdZmxLR
+ysKzIu6tTTtbL8VPbixjhVo3lAZyB7EteAVPctpnP+w2/UrLW47qP30nP2OJsr+J
+AFJoL9Y6j+iW8j7H7utpdRHacuKHEnazT5YeR3wla2h6LWJnrpynsRKCtIgJDs9E
+AcViFv6GY9IYjEqxwEnLwuwe
+=fvHI
+-----END PGP SIGNATURE-----
+
+--=-iRkZX+HtzAjTofklDxni--
