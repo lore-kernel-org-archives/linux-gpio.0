@@ -1,136 +1,122 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8937A3CF200;
-	Tue,  1 Sep 2026 10:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788258272; cv=none; b=fLZ8JT1NaxakNOl5yEep7Zt5tv3p8grjGjxcsk90BVKzD1aUKpmbn1d0RShr0oNG1oh21Igg9O6MYorObbxBuFoIC7fY5gres0tTEg1aUrLPPROz54HqbQRkDCdCBwjlcP+ofm3lnBWk4iNElIcMYQ9ILOfmZkLIhU63DwQSn04=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788258272; c=relaxed/simple;
-	bh=ouCyD0O09h1vUKKs+urR9vLWPja2JAT8AEBxx0+yrV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hFJTg6Md8Y7XqXRl+CUo/ki/WGrzAOe9Y5H3RTcYFd2sW9EwKaMyRO/nYI9AtfrYP7z/dYzcypb4Ymz1njZBfbgXf6zw8SEQAubs3hDqh6F8UlsIXWw+ti4HRVx7F0xfS61hTRCU5qkNc2gDGnyZWECdl4t0664SlPqUX0o6fyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a8NUy06W; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CF3339381
+	for <linux-gpio@vger.kernel.org>; Tue,  1 Sep 2026 10:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788258486; cv=pass; b=q3llPt7AtoQkJCDEzPNQJ5A6lfHdwJue1H20fQPwYMxi8UoSFa5xEXvFYDoWUZm4IkAVe/c13Tm4AEpzcV407GlSmMYBHCJJQtFZD3kbECKGbO1I/pzIKOcrDGjGzeu4bOfGV/R5fo1UcHXxIkJaj4XzGxGAkQsRvhL67fGKj4Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788258486; c=relaxed/simple;
+	bh=8RhSTE7NXQuuRFzzEOBXrTTWdZIlYAoUG2HnFqGjzaQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yn6JQpKhujZbwtMiF0nBAHN1OyqenGrBS/O6iAmsISayuP56OukIZM3vYuUmSynQx02Js9o3G+Lbp2BHr/cFA6AWyosbyjqG90RwQN7wG/sVB0kPySf8Kuw3UHPBJ2quLVwHpF8NwFmtIdNEm45de4Q0dkku7hxv+8hLjaGiLHM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GD4naID+; arc=pass smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a8NUy06W"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1788258271; x=1819794271;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ouCyD0O09h1vUKKs+urR9vLWPja2JAT8AEBxx0+yrV0=;
-  b=a8NUy06WQ35ndRYQMN/KURE/2ZBTnVDVg/PqoShknj6UDI7ys2htb6cx
-   oiIHzlFsYAVpvdvoGQnU2liaB+thezEAJ+ZHhsMGHXtqvzFazorRgdBl7
-   0QYt8AN2xo2EY5M+B+HvMSlF9ti1HBuXgUhudrvTxaRMMi7iGzz+/HmXE
-   Iwtc0rlxNkjydQryYAlvCl5NUZCO/pPIsR2ep628n4Eh0+VwgciTuOTnI
-   AbB437w+Q/YLi7hRniATNKg9Fzg0j4hCVZogtV9xjc8GJM3Svm6KFQfrf
-   ZT9ZSwsEVvmLku96C4YRG6HAHtgHzktg7HQwlZgHYsmtZWZGMnud4SgAK
-   w==;
-X-CSE-ConnectionGUID: s4mN6zWGTb+5QqbyjPyZew==
-X-CSE-MsgGUID: faVrLjNIT1W8oWDRO/F44w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11892"; a="88889817"
-X-IronPort-AV: E=Sophos;i="6.25,255,1779174000"; 
-   d="scan'208";a="88889817"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2026 03:24:31 -0700
-X-CSE-ConnectionGUID: i1BcpIzsR3qyyWJNFcDJZQ==
-X-CSE-MsgGUID: BXbjYG7dSp+WqUb+s9jRgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,255,1779174000"; 
-   d="scan'208";a="264773745"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa006.fm.intel.com with ESMTP; 01 Sep 2026 03:24:29 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 8E6CD99; Tue, 01 Sep 2026 12:24:28 +0200 (CEST)
-Date: Tue, 1 Sep 2026 12:24:28 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Radek =?utf-8?B?VsOhbGtv?= <rvalko@lipicko.cz>
-Subject: Re: [PATCH v1 2/2] pinctrl: intel: Try to retrieve driver data for
- pure platform drivers
-Message-ID: <20260901102428.GH106095@black.igk.intel.com>
-References: <20260831142853.1995573-1-andriy.shevchenko@linux.intel.com>
- <20260831142853.1995573-3-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GD4naID+"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-39f20d19895so31880061fa.2
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Sep 2026 03:28:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1788258482; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Cr1b8KBTR1fuj9LMT+8t7XZ97zZWyhcipQFEBrgu3d9/wamTNW5GXAKdggvKhYxkpQ
+         Ao922cKKThr0CGuFR6qoaCkRTFrMbRGhcz0nq2LhOU3T8JgsA5STVjHRBA8q1d7zpzUw
+         FmcMVVVVBlWkQ5uLzcaRJeGlB1N+PNOdJTwt6IVwuT/Q8wZuWu1P/82wiQ4NEcslqLiB
+         xCXMiLY1BHH5TuM5oRNMp1l1t8uA+jNuTdyimVzHsFeAbroNq0xZk7TpQ8QVDnWb5WBP
+         yYFWiK854ORJpbsWroHilsrAuTN11xsXJj0mHhQepz0Tb81/HNDC2Z/Mb6a469ENgFpq
+         s2QQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=8RhSTE7NXQuuRFzzEOBXrTTWdZIlYAoUG2HnFqGjzaQ=;
+        fh=vD+lqQuO7EbNpJqkomT8LMnTYM8UgFrE8bq6tK+f95I=;
+        b=p/We0Ib45ru4ED7iVfyxrB2J9KG+Mp9yya8nXzRe+pFOX+cgZaMh62gl98+AV9aR5D
+         qdP5I6zPV2sgInId6APtkUyYyFssrhRrGebUuJAH3TsqvHmpVgncbdLK7dCJChNc1ohC
+         2RQZejt34PJ4bJo6x1dngp2N+FAMWyXiS3E5POxXctOAUCl2qh5buwlFUmsTOIbESi4i
+         mj1hGpM4RW+lkCwNFfOubc9w7/oR28vknP6cUjTbK8xbr526yougaR80xV825gqitjDU
+         +2sZv0QEybds2tqPVUVBKsHfdsUhrjSHeQYlG+cLK0ilp4EJytaYjBdltF93nakww+hj
+         atXg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788258482; x=1788863282; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=8RhSTE7NXQuuRFzzEOBXrTTWdZIlYAoUG2HnFqGjzaQ=;
+        b=GD4naID+2f9Pu4Z8SJDMTTggRM0sjj79qe7A4adyIqCQuJ/f7Ww8erv9ztOGA3RnFG
+         6eq01YttuFogZWLdxfF+2rOqbTchpuxywNCY+jo2tJ1DGuTE8UjACeeOJSodo0sqe9SA
+         vwq31V+3H4It1x9JSGDutVUMZ4q9aRuLVZ83ABvZ0/TW6LNVDh4XcVKclALTbMn+sQFO
+         LMIB0y6LFrGinvc85MhS7KSi0CZCO2uxhq+uxnjL/9xXKCYtrM8tjbBtqtHYM10QrJiN
+         7chSK87bYl1TQZsDOI77b5wh0QAyJFtzXxdJqxJvWny34tBch1dmV94x5W5jczOCGDjM
+         MDgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788258482; x=1788863282;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=8RhSTE7NXQuuRFzzEOBXrTTWdZIlYAoUG2HnFqGjzaQ=;
+        b=pLd2Zl3ZMfx2hP/KmvFR1qdATCAx63kHsxL5DklRgTMq1AqGK7T7fS/zvaaSDS6U2r
+         r9D5eiv8RdJYeILMEGvlEri4RX1a/aSDSDWTu6/mVpsBGFg8BbOkUnaIQrXrt2kqXq9t
+         jJ4wVcDuqov2tV0frcEvkF00tbECw9ADxMV0AlauMUDUc72q+IgCMu8AXp27EQdoU4+0
+         e/2r888u7eH+uYgiDE1MDe/a29S/mf8+qnTuHfQEDlhrksvL3U9Rytm84XIVw9fQf78h
+         oI8DBR+ros18wR5OHqwWpcUuSLeoIxbyeW/9/Ele5CVAHJHkwPzJtM9jw8+UO8uIGGXR
+         s2iA==
+X-Forwarded-Encrypted: i=1; AKwUvByQVPHmgEolWa7mzBCP1S5HgF0YdCN2GF4oF3Xx6DCMoDsrz72Z/Jix+WjYDmJZQaZCM6FG7cFNo6Hg@vger.kernel.org
+X-Gm-Message-State: AFuF++lvLvwDyqVGu7Vdw/RsAbSBIg75it7LlJB9foopFGbvfb6z0xny
+	GXBS4TksNauUtsyd6vMRM4o6xQ3tn0bxzMfly83ZlSq7hQnbp6Mk9koRRzEZ50dngL/nOTgVUI4
+	gxVRJYJ3xQz4TFzqp0rqybPeMU0+gthc=
+X-Gm-Gg: AYBFou0W7xVsLb2HvdX3lwlgVnrQZjnrHlMSV+8Wmnn3qCDIkMoCxWF3myO5Pvq3I9R
+	v6H4pjbZYuorLQ1gmyD/IccGZVqZTwYc37D5iBgP/DraqYrQQOZjA9SdAgh0udvZAJ/xMy9Rn4K
+	Ay5w7JzDiMT2eJqGqtaSLqRc0L3LqzY2Ra30eQ24PfpOAE5rooe9nJtKYiJyWVt4gkG+1h1Ko6Y
+	vTOZv31q5vNpJrrQVZJ587BWocTtXYTOqMl/7h4aV0fxDEdI5AGo0Y4aMGirWm3kfg0RQSbE9XI
+	h7IKO8fPB4JexBhQ6BG6xxSyMy9JiIJ9VarveL9/fWVkVryMK1EiaY1mpL8rCU+caoePqbQ2cek
+	wHUnC4nYGsc198D91DUZUGaRGxJaE3xNDPf750fbPdGxytJ+hjmWfTPoCgarmCcrz8/2oboLPt3
+	rO13gmgE4icuE3qw8codcbYeJgRRjevQ==
+X-Received: by 2002:a2e:bc1a:0:b0:3a1:7f22:93ec with SMTP id
+ 38308e7fff4ca-3a301ac17femr70548301fa.7.1788258480982; Tue, 01 Sep 2026
+ 03:28:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260831142853.1995573-3-andriy.shevchenko@linux.intel.com>
+References: <20260831142853.1995573-1-andriy.shevchenko@linux.intel.com>
+ <20260831142853.1995573-3-andriy.shevchenko@linux.intel.com> <20260901102428.GH106095@black.igk.intel.com>
+In-Reply-To: <20260901102428.GH106095@black.igk.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 1 Sep 2026 13:27:24 +0300
+X-Gm-Features: AcwNN1WgC1bCIJ_reqGXE4PLxo0exnyYPD5oOf4cmGwFgaL2WmrJZYZHO1OB9ZM
+Message-ID: <CAHp75Vd0weJnX2yb4XY8br6xD4gUA0dogzyg7-KNuynOtXnziw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] pinctrl: intel: Try to retrieve driver data for
+ pure platform drivers
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, =?UTF-8?B?UmFkZWsgVsOhbGtv?= <rvalko@lipicko.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 31, 2026 at 04:25:47PM +0200, Andy Shevchenko wrote:
-> The Denverton pinctrl device can be instantiated by the Intel LPC
-> driver as an MFD platform device named "denverton-pinctrl".
-> 
-> On affected systems the platform device does not carry the INTC3000
-> ACPI match data itself. As a result, intel_pinctrl_probe_by_hid()
-> fails to obtain the SoC data using device_get_match_data() and
-> returns -ENODATA.
-> 
-> This might be also true for other platforms that can be enumerated
-> by ACPI _HID. Fix the above by trying the pure platform driver data
-> in case the firmware node is not set or doesn't carry the necessary
-> information.
-> 
-> Reported-by: Radek Válko <rvalko@lipicko.cz>
-> Closes: https://lore.kernel.org/r/20260827184259.32386-1-rvalko@lipicko.cz
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/pinctrl/intel/pinctrl-intel.c | 25 ++++++++++++++++++++++---
->  1 file changed, 22 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-> index 7aa7f81ac405..50ffad6a7610 100644
-> --- a/drivers/pinctrl/intel/pinctrl-intel.c
-> +++ b/drivers/pinctrl/intel/pinctrl-intel.c
-> @@ -1716,13 +1716,32 @@ int intel_pinctrl_probe(struct platform_device *pdev,
->  }
->  EXPORT_SYMBOL_NS_GPL(intel_pinctrl_probe, "PINCTRL_INTEL");
->  
-> +static const struct intel_pinctrl_soc_data *
-> +intel_pinctrl_get_soc_data_by_hid(struct platform_device *pdev)
+On Tue, Sep 1, 2026 at 1:24=E2=80=AFPM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Mon, Aug 31, 2026 at 04:25:47PM +0200, Andy Shevchenko wrote:
+> > The Denverton pinctrl device can be instantiated by the Intel LPC
+> > driver as an MFD platform device named "denverton-pinctrl".
 
-pdev can be const, no?
+...
 
-> +{
-> +	const struct intel_pinctrl_soc_data *data;
-> +	const struct platform_device_id *id;
-> +	struct device *dev = &pdev->dev;
-> +
-> +	data = device_get_match_data(dev);
-> +	if (data)
-> +		return data;
-> +
-> +	id = platform_get_device_id(pdev);
-> +	if (!id)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	data = (const struct intel_pinctrl_soc_data *)id->driver_data;
-> +	return data ?: ERR_PTR(-ENODATA);
-> +}
-> +
->  int intel_pinctrl_probe_by_hid(struct platform_device *pdev)
->  {
->  	const struct intel_pinctrl_soc_data *data;
->  
-> -	data = device_get_match_data(&pdev->dev);
-> -	if (!data)
-> -		return -ENODATA;
-> +	data = intel_pinctrl_get_soc_data_by_hid(pdev);
-> +	if (IS_ERR(data))
-> +		return PTR_ERR(data);
->  
->  	return intel_pinctrl_probe(pdev, data);
->  }
-> -- 
-> 2.50.1
+> > +static const struct intel_pinctrl_soc_data *
+> > +intel_pinctrl_get_soc_data_by_hid(struct platform_device *pdev)
+>
+> pdev can be const, no?
+
+Yes, but it will require also to change the existing prototype for
+_uid case. After I get a confirmation the fix works I will issue a v2
+with an additional patch included.
+
+--=20
+With Best Regards,
+Andy Shevchenko
