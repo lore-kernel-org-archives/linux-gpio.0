@@ -1,30 +1,33 @@
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8877E40D57B;
-	Wed,  2 Sep 2026 09:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7226E3FE37C;
+	Wed,  2 Sep 2026 09:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788341510; cv=none; b=qPabofMjRLVpAmx+WIlTdE6+o/CjSBsndbEWiF/KzghrRiPrxkY2blCXYol05U3T9/SzDOU7K83VDedU/7DefXHkGqyoOvFec9JffAVkszoV8hhI29vlxTr9d923B7rH8h7m0n2euOyJPLgesRgvwzAUO/ObxquONHxr1ClhymQ=
+	t=1788343066; cv=none; b=ujip/q72brAmjPKdEplWDvMiio+1WJkaXexzAAtkf4q1NAQbEoEuyhRDQ8la8OznFCgN5zf1Nb0pJHyX3ti9qOQENNfbyHxjhNp61K87mU8m8soxqrQbRok6MZJwH7H8rRYzkwTFkbo0Z6O9D6HNh+unAbdINMA+KYafyxt8/LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788341510; c=relaxed/simple;
-	bh=ugtBDYJdD5DyhAmButZjBxElaCXhKrXv84O+kv0etJM=;
+	s=arc-20240116; t=1788343066; c=relaxed/simple;
+	bh=9j2Ki5GPWGYkmeARIMt8ZvDgPX6hctJeBXHPtQmb6e8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EHRgGbtvZGdWoRKzMOoQ7rqPnI1JIsPgg0akSAYs8bWQ9vePo720/nrhzZ/QYJ/88GPYuY5GphibNXzX/pnWB5RMRTJrqP1a4EaU7iRTkzZArIHmpbN6RubPrHYyAAGjpzlDzPIsIUJz/LzYgJDOp5/XKKgvrO4GVaMQqxLEZek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip2t1788341474t02b33272
-X-QQ-Originating-IP: DfJlt4hMjpdtOyPap8HbaAi8yVDkdztk3fLVqYXeqbQ=
-Received: from [127.0.0.1] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 02 Sep 2026 17:31:10 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11555312155926092198
-EX-QQ-RecipientCnt: 29
-Message-ID: <B4EB99E5B76C9F40+e6fdbdd4-5c05-4b98-867c-29c7178a0d72@radxa.com>
-Date: Wed, 2 Sep 2026 17:31:10 +0800
+	 In-Reply-To:Content-Type; b=RCfku/C7hzdCC5nyGAUCsxjJCyKb/Rnd9Gm86HY8hqueaYU83Hr0ZAkEYYrJassqiWdM3WAXACB/DBCJ80oOIFVevIxPYIkRoNSGnaLKIf2QyEYlUWEcXSMlUXB3iQQGUaqWnnUIcSUHU/5hc37nPPbtNabLJ41Tq/4S4oNnc/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vj+5c9vx; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vj+5c9vx"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D21071F8;
+	Wed,  2 Sep 2026 11:56:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1788342971;
+	bh=9j2Ki5GPWGYkmeARIMt8ZvDgPX6hctJeBXHPtQmb6e8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=vj+5c9vxvm1NYRM8prIdCcKaN5O+Jh8/21rrP7zR0b2x2JlyX9TxlROE5P8tlgiE6
+	 AmRETcC90lo0IC+tdBHSLnOOGiJTZNWiSqYbekvLDi2O0ZA4N+J7xHfS8yE8/6X9mw
+	 WRIsZ65ar2K9BlASHgFy9v3Va3XSfOkFNtRHoAmY=
+Message-ID: <91be6238-0379-4c3e-b617-f0e1c4ed5cf7@ideasonboard.com>
+Date: Wed, 2 Sep 2026 12:57:37 +0300
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -32,79 +35,87 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Reply-To: sophon@radxa.com
-Subject: Re: [PATCH 1/6] PCI: of: Avoid config reads for disabled bridge nodes
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Bartosz Golaszewski
- <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
- Stephen Chen <stephen@radxa.com>, Junhao Xie <bigfoot@radxa.com>
-References: <20260901-q8b-dts-v1-0-7de0b6a73d08@radxa.com>
- <20260901-q8b-dts-v1-1-7de0b6a73d08@radxa.com>
- <8c2eaba0-c1bd-4db0-bbc8-5ae3b3d9a13c@oss.qualcomm.com>
+Subject: Re: [PATCH v16 00/22] media: i2c: add Maxim GMSL2/3 serializer and
+ deserializer drivers
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: Ceclan Dumitru <mitrutzceclan@gmail.com>, dumitru.ceclan@analog.com,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Julien Massot <julien.massot@collabora.com>, Rob Herring <robh@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-gpio@vger.kernel.org, Martin Hecht <Martin.Hecht@avnet.eu>,
+ Andrian Suciu <Adrian.Suciu@analog.com>,
+ Cosmin Tanislav <demonsingur@gmail.com>,
+ Vivekananda Dayananda <vivekana@amd.com>, Cory Keitz <ckeitz@amazon.com>
+References: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
+ <20260831170303.GB1116206@ragnatech.se>
+ <65b703e7-e4a0-4046-9d35-7d0ff1057f96@gmail.com>
+ <16626ec7-d1ec-4a54-ad1b-a59790cd33e8@ideasonboard.com>
+ <20260902083750.GC1116206@ragnatech.se>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 Content-Language: en-US
-From: Xilin Wu <sophon@radxa.com>
-Organization: Radxa Computer (Shenzhen) Co., Ltd
-In-Reply-To: <8c2eaba0-c1bd-4db0-bbc8-5ae3b3d9a13c@oss.qualcomm.com>
+In-Reply-To: <20260902083750.GC1116206@ragnatech.se>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: ON6lkwODXNJZW8psWSDPXQQvx5jtYx8Gq0DsYERqJ7K2qVNcXc/5FGh0
-	1SonjTmBqxPqIKFWO8q+q6zg7CfAL5syOAY+2UpcOcD7Q5Ghi/chsop4D3V5UoJ3xtMgjCL
-	UMdzpdBJFBPLfTY/wd0XpD0xrs4rTeCHhic/iYDaz5qI74asY9E1pMahsm9AKqJyB8WxWK9
-	L4Fu5uF1Zlp7/4/sTcoqMUew2gZHncapn7wdMaczC2lAlQyLVpn57WDo41caT0YJgxb1vIQ
-	Qz2d6Bow6TxDvrg/My0ZhPpWkYRWPXL/zae7m3UqlMG+ua+OKm78paZcBz3KncrNGq5FW1K
-	6vOQ6ZdI8weYtjVuYpDKSS0Xvt3zQcw5E4sVee8bIBYOPORei6wckxL6weHEzYpG5PyaUor
-	FTfM/zmq/d5OKA1Dn9oABExufdrIb0KPWygPZPRk/IqyiDWgmzq0gDwWwDZe2tw1nyfA7WZ
-	qQOIyVXpJvZdGDZYHFEBtc7b7Mn2x5KeNg6/vPaT8sDIoZmtS9aaGY8KmOSx8g9iQKihBvJ
-	9ZC7WJTvSgto7rr8ajpQ6jKUqd10L3WBacXbfviL6ON0oy/ho/qE7C3XPKZiDghDaeVgHF3
-	CvXYR8aobnImonTN1KMh/zyc106y5jcpjcKyLSd9KDbpjSGGP8q65cN2nCywjA1vRxXCF/z
-	aIA4/B6TTaxELCeIV6tX3bmjwPp/czLM0pWFsuc47hT+amL5PwFKeSmd2qQI4aCW9pPcKJj
-	in8cAL+fPYsrFUdazfmZSMoDGKB3UTsCZF8YzjE74iXf95Mz6TBE57KMXMwkrRpPBX+CHWm
-	cerAYhGhFCH1vlKUOud0uWRQuMycyG7hz2AvE+Wn7Df+sRfEkfp72VbBsO8GrVAMA6iNu+d
-	+mtKhpRzKzEEoxhfGov78gd3fGGr+d4MKR1O7edDM0ICYyJMsE1hkHfUukngXisq8pcU3Lu
-	2Xd0+OM1nbt+6kP5beELz/3cRo+4tYTs1Pa06IQ6Ao1PKIo/OZah5QwtHFXwFJPUArFTKkC
-	xfO85JdtspMn9u07Tf8hndx4k6Y6Wgwy/aj75nxnLeO+uKy5vzGg3WE8Tb55Q0/p9wT3p7r
-	cioUnUhgudG
-X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
 
-On 9/2/2026 4:43 PM, Konrad Dybcio wrote:
-> On 9/1/26 10:47 AM, Xilin Wu wrote:
->> The TC9563 PCI power-control driver powers off external downstream ports
->> whose device tree nodes have status = "disabled".
+Hi,
+
+On 02/09/2026 11:37, Niklas Söderlund wrote:
+> On 2026-09-01 10:43:44 +0300, Tomi Valkeinen wrote:
+>> Hi,
 >>
->> On the Radxa Dragon Q8B, reading the Vendor ID from one of these
->> powered-off port functions during PCI enumeration raises an Arm SError
->> instead of returning an all-ones PCI error response. This prevents the
->> board from completing boot.
+>> On 01/09/2026 10:39, Ceclan Dumitru wrote:
+>>>
+>>>
+>>> On 8/31/26 8:03 PM, Niklas Söderlund wrote:
+>>>> Hello,
+>>>>
+>>>> Thanks for  your continued effort pushing this work forward!
+>>>>
+>>>> On 2026-08-31 16:21:19 +0300, Dumitru Ceclan via B4 Relay wrote:
+>>>>> This series adds new drivers for multiple Maxim GMSL2 and GMSL3 devices,
+>>>>> replacing the few GMSL2 drivers already in upstream, and introducing a
+>>>>> common framework that can be used to implement such GMSL chips, which
+>>>>> avoids code duplication while also adding support for previously
+>>>>> unsupported features.
+>>>>>
+>>>>> While the normally acceptable and polite way would be to extend the
+>>>>> current mainline drivers, the choice was made here to add a totally new
+>>>>> set of drivers. The current drivers support only a small subset of the
+>>>>> possible features, and only a few devices, so the end result after
+>>>>> extending them would in any case be essentially fully rewritten, new
+>>>>> drivers.
+>>>>>
+>>>>> This series depends on support for internal pads, for which a patch has
+>>>>> been added.
+>>>>
+>>>> It also depends on enabling the streams API right? At least I need to do
+>>>> so to be able to use the TPG. Out of curiosity do you know the plan to
+>>>> enable it by default upstream?
+>>>>
+>>>
+>>> I do not know when default enable is planned, but series could make it
+>>> so VIDEO_MAXIM_SERDES selection causes v4l2_subdev_enable_streams_api=1.
+>>>     I am not sure that such a hack would be acceptable by Sakari or
+>>> upstream in general.
+>> I haven't tested with this driver, but in theory these kind of drivers
+>> should work with the Streams API still disabled. The Streams API is a uAPI,
+>> so the driver itself works without it. If the default routing for the
+>> drivers provides a sensible single route, one can use the drivers with a
+>> single camera. This is what the FPD-Link drivers do (although it's been a
+>> long time since I verified it with Streams API disabled).
 > 
-> I agree with the premise of the patch, but I'd like to understand why
-> that happens - do you have any details?
+> Indeed, but to enable the TPG I need to non-default routing ;-) Nothing
+> big I'm just impatient for the streams API to be enabled by default in
+> general.
+Yes, that is true. And annoying, if TPG is your main use case ;).
 
-Unfortunately, I don't have further details. The downstream kernel also 
-includes a similar workaround, so I suspect it's related to how the 
-TC9563 chip is designed.
+The FPD-Link drivers don't have TPG in upstream. I have patches in my 
+local branch, waiting for internal pads.
 
-> 
-> Konrad
-> 
+  Tomi
 
-
--- 
-Best regards,
-Xilin Wu <sophon@radxa.com>
