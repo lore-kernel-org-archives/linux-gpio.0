@@ -1,196 +1,82 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144DB493632
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 13:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B326493632
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 13:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788355362; cv=none; b=n3DL8K3jbUBujZNBAiDDXmI4nsGtfIk/W7W9aeC3s9bR62X53QCqWg+k4/IV73iOaONY680XKELGJ9BYlYiPSeu3qlWWiL4SQ8Ivs52JSpouEv7q67+Kri2ZsSt8qy7wHcWyGKWz3zECptQ3n8Z7VtJN5Oi/M1ukLOQVTfY7h54=
+	t=1788355490; cv=none; b=H6po9tNT+0NX/WqjrF8oF84ZbqknCnIrO4mvXNgd6fDJ6ot5cCksdESH/+2o3Y/8HjzxaD7Eoa6p9W5+GmKMhF+f4H/UmM80wM5IJpp1dKRRQr5XhWeoUST+I8gX93lYL/PvUCqXDvT164h3yqx323728z/idUI6mUvSiiUR2TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788355362; c=relaxed/simple;
-	bh=j3CWAWUl8j20gvrMWzwPLAHuKWnZJAop7WNcGJxwH2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b1EQdNrZuHizt3S6JXp2AKV/6IRU6xijEZ5qQM4eAyUOa4njEd/Sgdwq+HAeZ0tjsLd703qHuZyjkILaot+WMs44m80w1oorG/P1JE0ES/uG/KKnNqgU54jMTct/6fujsEjpdsCzLUId2ttq2QXn/dO7M43NgNevUfZUyd2E1qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlOUo5pv; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788355490; c=relaxed/simple;
+	bh=p4cqvaDK+7g1t1n8Daz9GFsd0RQrOw2NEQEp4FqFxQU=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fKCYqzZhuoEx7MzKblRZIVF13mwNSwzqtA1twjgxad1ry5PwG7BFTgAhomrdLU4notYtoyIaUUwOCIsY8EQPPTn9UxJKLlMNfzfadQFJrO3FMEZZv+ydY2LbWPFA8+Vcn10uAbI1j+hCwnIwzRrjseJ3s1vUObp/DIjPfRJQAfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmgjSWMA; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlOUo5pv"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-49b965570d7so8443295e9.0
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 06:22:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788355359; x=1788960159; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=nkZh/ve/cgf20umwfOvUdi7ulchyjCFeGzRhN//m5sY=;
-        b=XlOUo5pvEgZRxWjg6eGKlL38RroPslxpcansirBoJgD5zDrWh28Onyo2SA+ybYyGRY
-         rcUloOqEQRUW8gXlHojcR2Rq4pSRNyQFUZsKun0H16HkZOR6oJkVsX+b3XVhSi9yMDBP
-         J88NMP3DgGRjD3yTho6mBlQXpAKp8KC3QJR+4oirvKbpe+C9icsTE39N26YdR68E/vYJ
-         cCXps2+y2lyYPditnT8x7tZ7XYxkz+7W+VwFisy5kuAA0P6iN6w/P6uwz4mtoNvDsfhA
-         2DbPuQX/Y0Ls9fyQfccAIIyd166/Rj5f4jqFyHwblO7MyMZxAkPa9pxRIZ17eTrZm3S4
-         07vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788355359; x=1788960159;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=nkZh/ve/cgf20umwfOvUdi7ulchyjCFeGzRhN//m5sY=;
-        b=IMiP8PQc47pm44ZHJhZNkPnOwnFbpx0TR+Kysf6T2yKwJS6E7q/f1I5YHc6CR7Bi8R
-         ReBCJm/q9A5S3/lqqwuJiA6eVAHrctZVDDTg2cBAqJtUG7mIN15xV4KkOrTr2IyxpcCB
-         IVNmDV5GmKGk2AoghjR/fulT0NdRxqbiOR88UWrpInefAF31+8S9KrIFBDU2AuM4YkUk
-         eatysfZ1M0jJGkONTtYQn2hck+jReYoMJQaN9JT9UCC6OUza0e9tuwGbeJJEHJKoZ7bt
-         s7YhjCHGRMQ0ryMpwFABXbeQuY5hGuv6lAWR7uaGVz+KbVB5Sc1vM5r1VQtisfJAkD0A
-         72pQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqTZIzUMWx6sM4jJbI4fqC6Wey4j2owdJduIHMoPnk2PaEUJX/9ytBG3xD0OJMJcJQD3b+F6QQCjgs7@vger.kernel.org
-X-Gm-Message-State: AFuF++mx0gKONKm+gSuFTUnqV24k/23Nmd2z3TjlcKNU6+P9PnqYf/0h
-	U3YwjYVg4y8wwlq7ZvAc1uOIY0NHCKDDGNbmJTXBxOXZazE1dXMG/V68
-X-Gm-Gg: AR+sD11qIWnEKOkDul2SZXmQ0UPE7Vtz5eiJP6KkjG1aZqDQuBNHN+WCgPl0L+dONWb
-	mn9hXbAKUFrcXk4is5wjtkvA4bEg7uDklu+VoLsv6bmSexqo/e5kBXCqdjmxdlNjcpj5lQ3bLEH
-	rcjNLXd8F+gC7eXJF+Xa+Ys3xGGEcI/UcInwt3u3x/q0y1TDAFAzyVTlNwHatvpgeeqrwBqyMjD
-	yPo+q9lE2UdOEtlmufejOY3LVfbcQEHx16G8EiCe+GEaUjBivazwfYVvTGfCXinIZLKE4YJsC6i
-	vRtwVCgSycUcj6yFgPaThoTEW79ioykZvvpJyM9qfxxeMVUYoYB2wr1HyzLomlnwkrQEqlkfxLh
-	aVjIfpD5CHGUe7nLUjOtFWcaqBEM51KFzLbXb8uPEPosZu3niczy0fmLOA8n+TU4Vn1eLlhHi89
-	mZbtTFzCNeirmR+lvkfFVan7KM/QDt3t4sBHDgLZHEePSkDnCvdTpcQ9XqNMqHLKlE08RHDzIec
-	mnOhwo5OQevYzh20eCzcNMEgkUhGKlJ6IIwyFDtG6JnR+EyRaVaKqoWYOZ+lH9u
-X-Received: by 2002:a05:600c:1395:b0:495:4d88:e630 with SMTP id 5b1f17b1804b1-49ce5812c52mr74768615e9.10.1788355358736;
-        Wed, 02 Sep 2026 06:22:38 -0700 (PDT)
-Received: from ernest.hoecke-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cdce10148sm149528255e9.5.2026.09.02.06.22.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2026 06:22:37 -0700 (PDT)
-Date: Wed, 2 Sep 2026 15:22:36 +0200
-From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
-	"Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li <Frank.li@oss.nxp.com>, 
-	Kieran Bingham <kieran.bingham@ideasonboard.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
-	Linus Walleij <linusw@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Herve Codina <herve.codina@bootlin.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Leonardo Costa <leonardo.costa@toradex.com>, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] of: property: fw_devlink: Follow GPIO nexus maps
-Message-ID: <qg2nemg4mlxpancg7az2vsnjkfc4anxkieozoxh3mj3zgkyifd@b5b6yiz4uew3>
-References: <20260902-fw-devlink-nexus-ready-v1-0-68fe1996e78a@toradex.com>
- <20260902-fw-devlink-nexus-ready-v1-1-68fe1996e78a@toradex.com>
- <CAMRc=MfN73=K1nZrqUbhrMSijjpzhF_z_U9JU4_H163W0vRpqA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmgjSWMA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57BBD1F00ACA
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 13:24:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788355489;
+	bh=p4cqvaDK+7g1t1n8Daz9GFsd0RQrOw2NEQEp4FqFxQU=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=nmgjSWMAIlKtQp9EfRwaUJqKsnuj3KrITOVqz0dEvr0RNOzXj1rZdWaX6oMXZruAY
+	 NS8+U5ENG+rbq38HnCpOvaX9YYDLcqpogNuK4ZQgab9fgCB86IaqxBQcgVQbHaSKEc
+	 V1wRLVYNnHNDM17nmKtgIiJ1Qj+CFMHUtvq0ZThgO3wc3Q2tUajvj8nXKmEH5Gj+0G
+	 4XMqkgexyRYUrB5EghLx9yGHfMtagn09buJEn3Z3FwkxK8pmBOWwMuPDWs3Un3v2Yd
+	 TmS4Q44ukoEeNjs0rm7oCi+tNVp0JRJBftXkQEFm13VKF+haXrFppBdKbBacpDjmlm
+	 Dbz7cJmaMfJKQ==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-39c7ed5410bso7244111fa.0
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 06:24:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwpWa5sDCiIvZHFcxeM9+5QVksyVsQVMpo820gmxuyQSU8O7iIfKsCIRMCcsDWBo8cFwks21vRDKbbL@vger.kernel.org
+X-Gm-Message-State: AFuF++k+Rk8bNXl1jt3H5R2jFC1ujye+agHFwm+K93ARshY/GW/N2OsI
+	Fygf/YpmnjQhSJQxBRypx6jUmWWXRaeXQhzNr0auXyNXpboe2+vFWNJKO9vYnd/GUEHueVOij8R
+	2/2PkpFZwWW1RdgqOXnCrNj/jKt3I4vlSzbL8mlcrQA==
+X-Received: by 2002:a05:651c:a211:20b0:3a3:2a41:c0c4 with SMTP id
+ 38308e7fff4ca-3a34ffdf928mr8237171fa.14.1788355486730; Wed, 02 Sep 2026
+ 06:24:46 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 2 Sep 2026 06:24:45 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 2 Sep 2026 06:24:45 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <d48b55173c74410389ca5c863220370e38e4fc49.1788346553.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MfN73=K1nZrqUbhrMSijjpzhF_z_U9JU4_H163W0vRpqA@mail.gmail.com>
+References: <cover.1788346553.git.mazziesaccount@gmail.com> <d48b55173c74410389ca5c863220370e38e4fc49.1788346553.git.mazziesaccount@gmail.com>
+Date: Wed, 2 Sep 2026 06:24:45 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MfBxYGZK1NRefb8MDhgouxkn1G5Qp18OjbWnKvaspTNFA@mail.gmail.com>
+X-Gm-Features: AcwNN1W18o5pkYxzSwFuL_cj4YP-roXYm9ppEat9QNbwOir598GlWvNoB-rXZmY
+Message-ID: <CAMRc=MfBxYGZK1NRefb8MDhgouxkn1G5Qp18OjbWnKvaspTNFA@mail.gmail.com>
+Subject: Re: [PATCH v3 05/10] mfd: Support for ROHM BD73800 PMIC core
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 02, 2026 at 05:30:19AM -0700, Bartosz Golaszewski wrote:
-> On Wed, 2 Sep 2026 13:41:39 +0200, Ernest Van Hoecke
-> <ernestvanhoecke@gmail.com> said:
-> > From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> >
-> > GPIO consumers use of_parse_phandle_with_args_map() to resolve specifiers
-> > through gpio-map properties. fw_devlink instead parses GPIO properties as
-> 
-> Unlike PWM, there's no such thing as "gpio-map" properties.
-> 
-Hi Bartosz,
+On Wed, 2 Sep 2026 13:04:55 +0200, Matti Vaittinen
+<matti.vaittinen@linux.dev> said:
+> From: Matti Vaittinen <mazziesaccount@gmail.com>
+>
+> The BD73800 integrates regulators, ADC (intended for accumulating current /
+> voltage / power values), a real-time clock (RTC), clock gate and GPIOs.
+>
+> Add core support for ROHM BD73800 Power Management IC.
+>
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Acked-by: Lee Jones <lee@kernel.org>
+>
 
-bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through a
-nexus node") added support for nexus nodes, and then c11e6f0f04db ("gpio:
-Support gpio nexus dt bindings") added support for "gpio-map".
-
-Herve later added support for pwm nexus dt bindings modeled on the GPIO
-support in e71e46a6f19c ("pwm: Add support for pwm nexus dt bindings").
-
-Please let me know if I misunderstood something.
-
-> > direct phandle references, so it records the nexus node as the supplier
-> > rather than the mapped GPIO provider.
-> >
-> 
-> Can you point me to an example? I'm not sure what a nexus node is in the
-> context of GPIO.
-
-Stephen gave an example usage in his commit message implementing
-of_parse_phandle_with_args_map():
-	soc {
-	        soc_gpio1: gpio-controller1 {
-	                #gpio-cells = <2>;
-	        };
-	
-	        soc_gpio2: gpio-controller2 {
-	                #gpio-cells = <2>;
-	        };
-	};
-
-	connector: connector {
-	        #gpio-cells = <2>;
-	        gpio-map = <0 0 &soc_gpio1 1 0>,
-	                   <1 0 &soc_gpio2 4 0>,
-	                   <2 0 &soc_gpio1 3 0>,
-	                   <3 0 &soc_gpio2 2 0>;
-	        gpio-map-mask = <0xf 0x0>;
-        	gpio-map-pass-thru = <0x0 0x1>
-	};
-
-	expansion_device {
-        	reset-gpios = <&connector 2 GPIO_ACTIVE_LOW>;
-	};
-
-Admittedly, this hasn't seen much (any?) actual use in the device trees
-yet.
-
-We (Toradex) would like to use it to specify a LVDS connector on our
-boards. This connector appears on different carrier boards that all mate
-with the same display and have the same pinout. The only potential
-difference is which PWMs and GPIOs are connected to the connector.
-
-There, specifying the LVDS connector as a nexus node on the relevant
-carrier board DTS/DTSI would allow us to reuse the same display overlay.
-That example usage is given by Leonardo Costa here:
-https://lore.kernel.org/all/juuc4af7ndbajcl7gzf4tg5qz2q2j5tt3rvql4jbauradujrre@gc5nbdhhixaf/
-Note how we have the connector on imx8mp-verdin-dev.dtsi but could also
-add it to other boards, i.e: imx8mp-verdin-mallow.dtsi
-
-Note that in that example we used the "tdx,verdin-lvds-connector"
-compatible for the connector. Since this is a nexus node and just a
-dumb connector without driver, not having a compatible would make sense.
-In a final implementation we could specify a compatible + binding if
-that specifies the ABI better. It is not entirely clear to me what is
-preferred at the moment, but that is disconnected from this patch
-series.
-
-> 
-> > A nexus is a translation node, not the GPIO provider, and need not be
-> > populated as a device. The resulting fwnode link can therefore remain
-> > unresolved and indefinitely defer the consumer while
-> > device_links_check_suppliers() waits for the nexus.
-> >
-> > Use the map-aware parser for all supported GPIO property spellings. This
-> > makes fw_devlink resolve the same provider as the GPIO consumer API. Direct
-> > GPIO references continue to work because the map-aware parser returns the
-> > original provider when no gpio-map property is present.
-> >
-> > Add OF unittest coverage for mapped and direct GPIO suppliers, including
-> > the deprecated singular and unprefixed property spellings.
-> >
-> 
-> Since this is a fix that we may want to backport, the unit tests should go in
-> a separate, follow-up commit.
-> 
-> Bart
-
-Thanks for the feedback, if we want to go with the direction proposed
-here I'll make sure to split it off in future series, I was unsure about
-that.
-
-Since usage of this nexus system seems limited, I'm also not sure if we
-need to backport but it technically is a fix.
-
-Kind regards,
-Ernest
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
