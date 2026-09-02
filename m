@@ -1,217 +1,205 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E1C4A387A
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 15:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA024AA037;
+	Wed,  2 Sep 2026 16:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788364104; cv=none; b=SR5AEGTTvDmOD2vRIzCah2K1W0wNV/+jtLXF99qFo89rfEflpGhLcD2FFF4qbHcUic3AgNJMq/0hMIjgiZqj53QRhVpef8iVGP/nyw72nWrI9YBHz8p6Vy9WW3j5rfQJ/SJq9Kia5D7sAVspSdOI1UGm8C5BlDnYRebw3Chq1Cc=
+	t=1788365524; cv=none; b=Fn/p6SPp52v4fUu7BHKkuYfh9JByYdp+42AWA2p+3Lk4vUnrh6NjR3JP5IIGOEaadeEJEp/y6LuZvBlYfY6gMFYQ4pWegPls60kcqdHTOAvnyiNtLz9/cnhlsPrarOwFpGs+6jkcCB1uRao6QICWmEAfkF6FzIni01x4Rzzmo4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788364104; c=relaxed/simple;
-	bh=dd9Bc4n94EKXDL0ADU2/wZrlcVly5/OAqlHH4Cf65Xo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HndXbkbC2WDt5raWxUS3x/k2IltVeRk5TKdDKFFt4Xwvwb6Z+JZTe5dA2HdUsLnNjmHM9O9uswIS7Z5BzNlMLoEsE/wTerZOndUKvwxrFC1iEUzDaaAI45zwIYYe/zL62ALfnVaEW6uS3j2IKQ52zmBFBCa3g8WywLG7dTG/NkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JODVhp6S; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788365524; c=relaxed/simple;
+	bh=lU+/DHoXusoy6ibJb3pTDMLiuDHGgz6V++xla5rQybw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=RrynOXO3rz3Xa+UqUJIyeeeiFdk4GLHsu6lOgOAywftHmnUg4/Yzy1tyjcP7yviEOyo7IZzOm+vviAc8emEHlXme8NM5wQwSi1nwe4nG8voqLMSSPPzf4bNT3rhqbZKUTLyo2vue+iWgbqcOrDg+srv9nxSG1EDaU+f2UpBbg/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=AIzpXwqK; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=LQtkb8zE; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JODVhp6S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609311F00A3F
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 15:48:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788364102;
-	bh=WvDDggsJCp8fWjpjbH2MZ34V8WTIMSRAsuek7J69Z2o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=JODVhp6SRX1XR4znAyCaW2UPD+FDbnGSvfHbCC+k45gxVC7aNVrYuQEvG890ao/6r
-	 6T1UZ2F7mLSwWB+TUV/7NN9d3vu1GCq0l+OWkFlu5Xv64bnK5LK0APUSatecOnjw4d
-	 c0YWgi0PYEbR2VgrQxMwy199ToKiNGNgnvyu6cA/tDDZp6tbRl8aB18WFlXFdYK1hu
-	 jwYXTu5tGh7kUyFH35JaQgsz3nwHF4k5MhMYgCkhfXvCBKG5vHp5ahyY8Zs5zyM9Oj
-	 37tEwFOwaJKlb+Ra0Qa31B6bwa4555RH8tnTOmmh944q50cZMD/41esy98FvKphmGk
-	 jL2rvYpI7YRZw==
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-c252c7270faso178604966b.3
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 08:48:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwofWHz/zDiUuUG+8nDXxUT/0Y2g+4dfRVRbkzyteOzIC7YyYH4jI8d5i+ll2g2LbmprlmC8HF5LnYE@vger.kernel.org
-X-Gm-Message-State: AFuF++nvHUyGC8XaFPtfp8fso9gPxei5DoArlvqHwEcb2VvN8fLB52qr
-	sgKD2jxAkhc9luVzyx8VN9p2ItTCdMF8wUVzedyxPpPSxiIpbLTIT7hqJQv0y/sDRe/M+ZgJq3H
-	5CunXh6sk/BEIBCQ9GinctfifoG5geA==
-X-Received: by 2002:a17:907:6090:b0:c25:c979:e76a with SMTP id
- a640c23a62f3a-c25d54fe9f3mr276782466b.22.1788364100947; Wed, 02 Sep 2026
- 08:48:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="AIzpXwqK";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="LQtkb8zE"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Subject:From:Date:Message-ID; t=1788365513; bh=sWZMe53HaEkPuE6YihWbgPX
+	999erW1DZL4BbRTSXgB4=; b=AIzpXwqKNX4xd9hjyCJ/u4NP4ynCFZSZt3u88A9YgCbfJSk/wN
+	2junusoUXlm0ArLEvZeu2vNtNSk6F9PazhXhjtvrmwzmdA9gmaNnQfehvg1tLYWjT13Yx86XCkQ
+	eTGjpFEayMMJ2GSecfeAUmLGA8qxJZjdUkww8/eLlbm11ggbZJ2Io0Zqxkj8UxXXLvsodg/wSfd
+	u+otOhdGmtTJWpuK6gMjju4wEjPU2Ujv5VnACqM3QIIaEw5dNx0ak63kizFuf9/wqboz0dUrbsf
+	yz+qG1IPLhtOnFsmETP/qJ+jFG/fMCXqdUz4O7WXmQUrql5XbfYh+FgzAzmBRIKJy8w==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Subject:From:Date:Message-ID; t=1788365513; bh=sWZMe53HaEkPuE6YihWbgPX
+	999erW1DZL4BbRTSXgB4=; b=LQtkb8zEXjiJ9/N4n4Z0RFpUxLy1n6aG89X0Nsr03MXm32dr0J
+	s2BXJXdusFAwZN/vzMgz4i/8eaRnwhIXMjAw==;
+Message-ID: <1c059e1a-f791-4de9-87c2-cb13405b69bb@mainlining.org>
+Date: Wed, 2 Sep 2026 19:11:51 +0300
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260819155502.3934837-1-maciej.andrzejewski@m-works.net> <e7995f64-3210-455d-bc97-9f3b51099162@kernel.org>
-In-Reply-To: <e7995f64-3210-455d-bc97-9f3b51099162@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 2 Sep 2026 10:48:09 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ2zHrEf6-4Gohaqj+jq_dTeVoR=xyH=yZDTpjBEDoLBw@mail.gmail.com>
-X-Gm-Features: AcwNN1Vp-60QgsJjsf8yFslx_Y0cjbf_CPILfdaB6rH4W7MLE--uqVMj_JD2DH8
-Message-ID: <CAL_JsqJ2zHrEf6-4Gohaqj+jq_dTeVoR=xyH=yZDTpjBEDoLBw@mail.gmail.com>
-Subject: Re: [PATCH v2] gpiolib: of: Only apply the SPI CS quirk to SPI buses
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Maciej Andrzejewski ICEYE <maciej.andrzejewski@m-works.net>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, broonie@kernel.org, 
-	linux-spi@vger.kernel.org, miquel.raynal@bootlin.com, richard@nod.at, 
-	vigneshr@ti.com, linux-mtd@lists.infradead.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Subject: Re: [PATCH v2 2/2] pinctrl: qcom: Add MSM8952 tlmm pinctrl driver
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>, linux-gpio@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260820-msm8952-pinctrl-v2-0-bf2b8b7b379b@mainlining.org>
+ <20260820-msm8952-pinctrl-v2-2-bf2b8b7b379b@mainlining.org>
+ <7eea6a82-6bcf-486d-9c0e-5a68c34c03de@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <7eea6a82-6bcf-486d-9c0e-5a68c34c03de@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 2, 2026 at 4:28=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 19/08/2026 17:55, Maciej Andrzejewski ICEYE wrote:
-> > The legacy SPI chip-select polarity quirk in of_gpio_flags_quirks() is
-> > keyed on nothing but the property name "cs-gpios". That name is not
-> > exclusive to SPI: nand-controller.yaml documents the very same property
-> > for NAND controllers, and rawnand_dt_parse_gpio_cs() requests those
-> > lines with gpiod_count(dev, "cs"), which gpiolib expands to "cs-gpios".
-> > A NAND controller therefore has SPI chip-select semantics forced onto
-> > its chip selects, and any chip node whose first reg cell matches a GPIO
-> > index is silently flipped to active low. The NAND core requests the
-> > descriptors GPIOD_OUT_HIGH and drivers assert with a logical 0, so the
-> > inversion leaves the die permanently deselected.
-> >
-> > The example in nand-controller.yaml is itself affected: it pairs a
-> > native chip select with a GPIO one and gives the second chip a reg of 1=
-,
-> > which trips the quirk whenever CONFIG_SPI_MASTER is enabled. In-tree th=
-e
-> > collision is real but latent. 36 board trees, all Atmel/Microchip at91,
-> > give their nand@3 controller a cs-gpios line, and they escape only
-> > because the sole child of those nodes is a partitions container with no
-> > reg for the quirk to match against.
-> >
-> > Device tree carries no bus type marker, so identify the bus from two
-> > hints. Properties of an SPI peripheral are namespaced with "spi-"
-> > (spi-max-frequency, spi-cpol, spi-cs-high and the rest of
-> > spi-peripheral-props.yaml), whereas a NAND chip node carries only reg,
-> > nand-* and its partition table. That is a convention rather than a
-> > guarantee, since compatible and reg are the only properties
-> > spi-controller.yaml makes mandatory for a peripheral, so let the
-> > controller settle the remaining cases: spi-controller.yaml constrains
-> > the controller nodename to ^spi(@.*|-[0-9]+)?$, which makes the name th=
-e
-> > one bus marker every conforming controller has to carry. A peripheral
-> > that carries nothing but compatible and reg therefore keeps its active
-> > low default through its parent. Skip the quirk only when neither test
-> > matches.
-> >
-> > Both tests were scored over every board device tree in the kernel,
-> > expanded with the same cpp and scripts/dtc pipeline the build uses, at
-> > v7.2-rc7. All 3620 trees under arch/*/boot/dts expand; 503 of them hold
-> > at least one GPIO chip select that can reach the quirk, 765 such chip
-> > selects in total. 761 are matched by both tests, and none are matched b=
-y
-> > neither, so no in-tree board changes behaviour.
-> >
-> > One needs the property scan on its own: psc@11400 on ac14xx, a
-> > fsl,mpc5121-psc-spi named after the hardware block rather than the bus,
-> > whose m25p128@0 child carries spi-max-frequency.
-> >
-> > Three need the nodename on its own, all peripherals with no "spi-"
-> > property of any kind:
-> >
-> >   - panel@0 under the spi-gpio controller on rk3566-anbernic-rg503
-> >   - can@0, an mcp251xfd, under ecspi3 on imx8mn-vhip4-evalboard-v1
-> >   - spi@1 under ecspi1 on imx53-ppd
-> >
-> > The two tests are complementary, so both are needed to keep every
-> > in-tree board working. A tree that names its controller after the
-> > hardware block and gives it a peripheral with no "spi-" property would
-> > still lose the quirk. No in-tree board does, and such a controller is
-> > already outside the nodename pattern spi-controller.yaml requires.
-> >
-> > of_gpio_spi_cs_get_count() in this file identifies SPI controllers with
-> > of_device_is_compatible() instead, but it only has to name three legacy
-> > controllers whose bindings are closed. An allow-list here would have to
-> > name every SPI controller binding in the tree, 71 distinct compatible
-> > strings among the candidates alone, and grow with every new one.
-> >
-> > Signed-off-by: Maciej Andrzejewski ICEYE <maciej.andrzejewski@m-works.n=
-et>
-> > ---
-> > Changes in v2:
-> > - Squashed the two patches into one. The property scan and the nodename
-> >   test are complementary, so patch 1 alone stopped applying the quirk t=
-o
-> >   the three peripherals that carry no "spi-" property, which would have
-> >   broken those boards for anyone bisecting through the series. Reported
-> >   by an automated review of v1.
-> > - Folded the two helpers into a single of_gpio_is_spi_chipselect().
-> > - Said outright that a peripheral with nothing but compatible and reg
-> >   keeps its active low default through the controller nodename.
-> > - Rebased; drivers/gpio/gpiolib-of.c is unchanged since v7.2-rc7, so th=
-e
-> >   diff itself is the v1 pair verbatim.
-> >
-> > v1: https://lore.kernel.org/r/20260810141629.81650-1-maciej.andrzejewsk=
-i@m-works.net
-> >
-> >  drivers/gpio/gpiolib-of.c | 31 +++++++++++++++++++++++++++++--
-> >  1 file changed, 29 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> > index 940b566946ce..d73114166f6b 100644
-> > --- a/drivers/gpio/gpiolib-of.c
-> > +++ b/drivers/gpio/gpiolib-of.c
-> > @@ -340,6 +340,28 @@ static void of_gpio_set_polarity_by_property(const=
- struct device_node *np,
-> >       }
-> >  }
-> >
-> > +/*
-> > + * The legacy SPI chip select binding below is keyed on a property nam=
-e that
-> > + * other subsystems reuse for the same purpose, notably NAND controlle=
-rs (see
-> > + * Documentation/devicetree/bindings/mtd/nand-controller.yaml), whose =
-chip
-> > + * selects carry no SPI polarity semantics. Device tree has no bus typ=
-e
-> > + * marker, so take two hints. Properties of an SPI peripheral are name=
-spaced
-> > + * with "spi-", and a peripheral that declares none is covered by the
-> > + * controller, whose nodename spi-controller.yaml constrains to
-> > + * ^spi(@.*|-[0-9]+)?$.
-> > + */
-> > +static bool of_gpio_is_spi_chipselect(const struct device_node *np,
-> > +                                   const struct device_node *child)
-> > +{
-> > +     struct property *pp;
-> > +
-> > +     for_each_property_of_node(child, pp)
-> > +             if (str_has_prefix(pp->name, "spi-"))
->
-> You should not rely on prefixes of properties. Node can have no such
-> properties at all.
->
->
-> > +                     return true;
-> > +
-> > +     return of_node_name_prefix(np, "spi");
->
-> And neither this. You just added node name based ABI.
->
-> Nope.
->
-> Each peripheral exactly knows that it is a SPI device - it 100% specific
-> knowledge based on the bus, thus nothing of above is needed.
+Hi Konrad,
 
-Do you have an actual suggestion on how to fix it instead? It is
-needed for every SPI controller that uses cs-gpios which is
-potentially all of them. There's 522 cases of cs-gpios and only a few
-are NAND. Even if it is 10 boards per SoC, that's still 52 cases which
-would be more than I want to list in the kernel.
+On Wed, 2 Sep 2026 15:03:33 +0200, Konrad Dybcio wrote:
+> The following is a review from my AI agent who inspected the
+> hw specification and prior art/review feedback regarding qcom
+> pinctrl. I read it and approve of it:
+> 
+> 
+>  Hi Muzaffer,
+> 
+>   The driver currently contains function/group declarations which are not connected to any PINGROUP() entry.
+> 
+>   For each item below, add the function to the corresponding GPIO’s PINGROUP() definition:
+> 
+>    Function                GPIO
+>   ━━━━━━━━━━━━━━━━━━━━━━  ━━━━━━
+>    mipi_dsi0                  0
+>   ──────────────────────  ──────
+>    smb_int                    1
+>   ──────────────────────  ──────
+>    qdss_cti_trig_out_b0       2
+>   ──────────────────────  ──────
+>    rcm_marker2                3
+>   ──────────────────────  ──────
+>    qdss_cti_trig_out_a1       3
+>   ──────────────────────  ──────
+>    codec_mad                 13
+>   ──────────────────────  ──────
+>    nfc_disable               16
+>   ──────────────────────  ──────
+>    nfc_irq                   17
+>   ──────────────────────  ──────
+>    flash_strobe              33
+>   ──────────────────────  ──────
+>    cam1_standby              35
+>   ──────────────────────  ──────
+>    cam1_rst                  36
+>   ──────────────────────  ──────
+>    cam2_standby              37
+>   ──────────────────────  ──────
+>    cam2_rst                  38
+>   ──────────────────────  ──────
+>    webcam_standby            39
+>   ──────────────────────  ──────
+>    webcam_rst                40
+>   ──────────────────────  ──────
+>    rcm_marker1               41
+>   ──────────────────────  ──────
+>    accel_int                 42
+>   ──────────────────────  ──────
+>    alsp_int                  43
+>   ──────────────────────  ──────
+>    mag_int                   44
+>   ──────────────────────  ──────
+>    gyro_int                  45
+>   ──────────────────────  ──────
+>    pressure_int              46
+>   ──────────────────────  ──────
+>    fp_gpio                   47
+>   ──────────────────────  ──────
+>    fp_int                    48
+>   ──────────────────────  ──────
+>    us_euro                   63
+>   ──────────────────────  ──────
+>    ts_resout                 64
+>   ──────────────────────  ──────
+>    ts_sample                 65
+>   ──────────────────────  ──────
+>    sdcard_det                67
+>   ──────────────────────  ──────
+>    audio_reset               68
+>   ──────────────────────  ──────
+>    codec_int1                73
+>   ──────────────────────  ──────
+>    codec_int2                74
+>   ──────────────────────  ──────
+>    key_volp                  85
+>   ──────────────────────  ──────
+>    key_snapshot              86
+>   ──────────────────────  ──────
+>    key_focus                 87
+>   ──────────────────────  ──────
+>    key_home                  88
+>   ──────────────────────  ──────
+>    backlight_en              91
+>   ──────────────────────  ──────
+>    lcd_en                    92
+>   ──────────────────────  ──────
+>    usbc_irq                  93
+>   ──────────────────────  ──────
+>    uim3_ldo                  96
+>   ──────────────────────  ──────
+>    wsa_irq                   97
+> 
+>   For example:
+> 
+>   > static const char *const mipi_dsi0_groups[] = { "gpio0" };
+> 
+>   must have a matching mipi_dsi0 entry in the GPIO0 PINGROUP() definition. The same consistency is required for every item in the table. The gpio function is intentionally excluded because it is inserted
+>   implicitly by the PINGROUP() macro.
 
-Perhaps the SPI core when requesting "cs-gpios" could state "apply the
-polarity quirk to to this GPIO" rather than the GPIO core having any
-specific knowledge about "cs-gpios".
+Sibling SoCs like msm8917, msm8953 and
+msm8976 do leave them without any PINGROUP() too.
+I don't know what function index they map to
+and I don't want to cause bugs by wrong indexes.
+I don't know what to do with them.
+Should I remove them?
 
-However, IMO, for bus nodes, the node names are ABI. That's the only
-way we can identify what type of bus for some buses. The DT core looks
-for "isa", "pci" or "pcie" node names for ISA and PCI buses for
-example. So I don't have much issue with the current approach.
+> 
+>   There are also functions missing from the GPIO table. Please add these to the corresponding groups. The final column is the function index from the MSM8952 GPIO mapping:
+> 
+>    Function     GPIO    Function index
+>   ━━━━━━━━━━━  ━━━━━━  ━━━━━━━━━━━━━━━━
+>    gp_pdm_2a       7                 4
+>   ───────────  ──────  ────────────────
+>    gp_pdm_1b      20                 3
+>   ───────────  ──────  ────────────────
+>    gp_pdm_2b      38                 1
+>   ───────────  ──────  ────────────────
+>    gp_mn          39                 2
+>   ───────────  ──────  ────────────────
+>    gp_pdm_1a      45                 1
+>   ───────────  ──────  ────────────────
+>    gp0_clk        46                 1
+>   ───────────  ──────  ────────────────
+>    gp1_clk        47                 2
+>   ───────────  ──────  ────────────────
+>    gp_pdm_0b      48                 2
+>   ───────────  ──────  ────────────────
+>    gp_pdm_0a      66                 3
 
-Rob
+I don't have access to the hw specification,
+so I didn't know these exist. I used downstream
+kernels as my reference for my port until that point.
+This is so useful information for me. Thank you so much.
+I will add these in v3.
+
+> 
+>   Finally, please move:
+> 
+>   > MODULE_DEVICE_TABLE(of, msm8952_pinctrl_of_match);
+> 
+>   immediately after the OF match table, consistent with the other Qualcomm pinctrl drivers.
+
+I will move it in v3.
+
+Thanks a lot for review.
+
+Best regards,
+Muzaffer Kadir
