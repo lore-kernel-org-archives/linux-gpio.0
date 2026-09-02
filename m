@@ -1,229 +1,163 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514133603E0
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 16:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5B03DA7D6
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 17:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788368131; cv=none; b=tfPohVdUhZKgGxLCIPWjEbPwiQu487i0Y5q7PWulzb6zDfuzUFiiNi3qkzQs5kc8vl7opO36li506iIwHXxEmA80VBaiU3a6MxPj+y4u9T60m5r4/hXenvvjxAORMRjWl/dhFE12M8DqBwZnvu9CzPDW9pB4wxV5iKIhYC0B9ME=
+	t=1788369492; cv=none; b=jm9MHf/kj2O4fyHv4i0lLfX5vN6+eWh4hFlXTqyx4DvUJAdLegoCRs88aq+sOt0YmigJ1zkAUsZ4nHvwaELOqc/ZxP7QikjL9CBVpYbQHmAXknSC3lxZVnd3fHNEwuWW61OWeAgYSOa5Q96eOXs8K1N14S9rqTodKvEzVHb+o74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788368131; c=relaxed/simple;
-	bh=sz/9/TcdM4YQwE3eI4Iv+AQZ0+0SbCoU9Tiqw9z/T+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pQ2cN9DwrNgqvCakTaRTviND3sqYmoa/xI/3CIjH+Vhd4zOvW6+adtSc4OsnBLjTDJpl4NLIw2P+OzcnUnV8jnHAAFLZsReiPjmVbzmvZe7Vdc/I+vMcuyo1Ip4sRQ8yJbz5mIFFm7NGieYq3wfZJN/VonOMLoS2nfE8yQcKEss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sqLT8Ayx; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1788369492; c=relaxed/simple;
+	bh=6Tn0OaGLRreTIGbEtttcTbq5pI0t6SsPxE+m00j3r9I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hhJ8e4MRxzb++INdD/ZhCGw6c/GKZLC3cAphsWWhbTGfn0sLr3nJ8LpCPAwN5TRnFsxV06M8NUQlkecbm+fF/pqzTMHXE5HHpkG7M8V/u1qQV6tRQzzkG71WM10Vhksgv4Mo2TUJmKK40KT0JRwA7wffYXaSWxQO/Upf2g0tZaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sQiC2YgF; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sqLT8Ayx"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 945CB1A1967;
-	Wed,  2 Sep 2026 16:55:26 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5D77E6053C;
-	Wed,  2 Sep 2026 16:55:26 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D2C5811C795A7;
-	Wed,  2 Sep 2026 18:55:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1788368120; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ZQYr6vIouYVEk/Ikuzb8tOHLdjgEOZtrS1Jwy9Of/G8=;
-	b=sqLT8Ayxa836vSD5sWR0ycKtIppaXMbA0OKmrP62QCXWyZl+WBtUS7ZgYFHxtlD6c89uT8
-	rVv1OpUvWcbtOOzBhpcCaOYRC0139YcuuLIEC9x/d0rMeH60trd6yMMxa+0nmKat2/d9me
-	RraVmgbQPtzsH96XAkRp1yZP61N+HPnkMMFeAaA6rk5gf+W/HQmtOGckQThy/XVeTejDLH
-	HoKI/6jYn9urFjiXqlMT4PG/xC1HVQdba2GjaRbyrEoILrjNLYp0CsAvKn/kkiY+Eswkxu
-	4HmshDfFamGEDethvw75Qkr6V3V46XPGIPS2v5/nYZ2knGfEYV2h2u2kXsvZ0g==
-Date: Wed, 2 Sep 2026 18:55:13 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>, Bartosz Golaszewski
- <brgl@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
- "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li
- <Frank.li@oss.nxp.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Linus Walleij
- <linusw@kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <ukleinek@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Leonardo Costa
- <leonardo.costa@toradex.com>, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ernest Van Hoecke
- <ernest.vanhoecke@toradex.com>, stable@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] of: property: fw_devlink: Follow GPIO nexus
- maps
-Message-ID: <20260902185513.4867bc92@bootlin.com>
-In-Reply-To: <qg2nemg4mlxpancg7az2vsnjkfc4anxkieozoxh3mj3zgkyifd@b5b6yiz4uew3>
-References: <20260902-fw-devlink-nexus-ready-v1-0-68fe1996e78a@toradex.com>
-	<20260902-fw-devlink-nexus-ready-v1-1-68fe1996e78a@toradex.com>
-	<CAMRc=MfN73=K1nZrqUbhrMSijjpzhF_z_U9JU4_H163W0vRpqA@mail.gmail.com>
-	<qg2nemg4mlxpancg7az2vsnjkfc4anxkieozoxh3mj3zgkyifd@b5b6yiz4uew3>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sQiC2YgF"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-49cd77e0f95so13793405e9.3
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 10:18:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788369489; x=1788974289; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=6u2dskLwsFp3RaJUgt1/pKQoZpVju/VbValCvllVzDM=;
+        b=sQiC2YgFgEaWhWqjDJnEZw5JlPXTqPt3V2KVYB6+fXZ3J2DuDP2Fv1ryk5YfiSY2Mk
+         P+u8zSeH+Yc46/fa8RriSUR5ROSKY0cpZW0XTNmNVuDxQu6MdcHsWov2jqFLoLBPm2cX
+         HUx5xi5zkMGLPShVJfjUWDCMYIohFBcFuLPujWcxh3+GocjgL2ooOJJwcuz19gr6uDgs
+         A91cllbVqj6Fvkx0vNOU2X7gYFtNE99F9zGxXz9cAmqIooFaEb1rNAfTeiG0OS01CgsK
+         OzvCdiKJrXyQJmw0IoPFb1J+w0YNQQmbvu1iIwJ4jeWzdNWw4m2uaEG0//urxuBsh+cU
+         1zQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788369489; x=1788974289;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=6u2dskLwsFp3RaJUgt1/pKQoZpVju/VbValCvllVzDM=;
+        b=ki/xNbvZFbeRNz2zHjZpAA/iYboulWhLxlalgR6jycUQPHrSX3HePDfbG/f129mnuv
+         59yff4t7YGSedt/pcn45oyG8R19bT3NfHJ9fO84fLMKPz2+as6QuIC58+R3QSbuyxr2R
+         pAQNPmsAH45oTBO1Z7oG3mRY4oeVg2g7uWSRyycnrq/dY3nbg8/p486j6ctS7K8JRxTc
+         FAqGbzbQFQZtj2xgM4xA3ZZONEc8aD1vwBNZSjHqCkLxulTUBmKGYKZbELWTAdg0Z+gS
+         b5t7c2sJbwMelKRYimfIRSGtQNfstJWgcMeZYkqBGn0GVFtQTKNP4QQiwsZlOOMVKtMc
+         QR3w==
+X-Forwarded-Encrypted: i=1; AHgh+RoWtzJ4/a4+2t3BfNCRanTnEeqRj+Ztzw7NuRuiMStcpgSm/J/5yuxV7JL75GsGxvLJsioyS3R1WdWs@vger.kernel.org
+X-Gm-Message-State: AFuF++mPcJxOekgz3qzat8Kk4R0emh4xIdGuoa5TISLFJ+ooLJG5jiGN
+	DofqvkD9n9xqNsxC7bfbMCeAFblxgO9FrAcHMvMLRU54i5be9tEStD19
+X-Gm-Gg: AR+sD10GtQ9acj/7Q92B46thqlJXM4zvZITGw3morEXliACIA8c2uE/g6jXY4+hlPPB
+	PGTexx4lP0fzRRzxvOyh+1ucf2/aTP64gX/FZa/leNFD39C9Z9fSOvDA+XZwoJhrj7h7rkqDu12
+	G5639aSRp/XtS4SwuOnbwOnfQERwySTf02pcZZg+jkOxU+8nKRIhbZXXZz63qeqy/5NcuAGWzba
+	OnegAkdkUsykvdCOPD1+VNoocak6w3DGDQ/GX37dzU1Zo9Jr/SPamUkrQTa+FCUV43MtAjdrW1Q
+	Ee/86bXFDHVrwX2HHoxPb6xTLywDQLGsWxYrjNe/+nS++ilPm1y63C2W8b22m7HCXwq6Gl8zQ6j
+	HrWU3cfqJiWPO3UX+idZMrh78QOvB7lCXOnDftpaeLRhNFFnniKpQjw1wg4uWcGsS+Tr30qkbEp
+	qowO6RJm0B97rbrCfbkjFn1ExysRGTyESWebwouwJo9aJiX3A+7AbmiKQLBbPpKhZfE156wrkFk
+	Fz9
+X-Received: by 2002:a05:600c:4f88:b0:499:d366:f572 with SMTP id 5b1f17b1804b1-49ce58388demr95277025e9.10.1788369488491;
+        Wed, 02 Sep 2026 10:18:08 -0700 (PDT)
+Received: from deb05.proceq.com ([213.160.61.66])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48448e80020sm8076593f8f.10.2026.09.02.10.18.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Sep 2026 10:18:07 -0700 (PDT)
+From: Mehmet Fide <mehmet.fide@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Mehmet Fide <mehmet.fide@screeningeagle.com>,
+	sashiko-bot@kernel.org
+Subject: Re: [PATCH v3 1/2] pinctrl: imx: answer OUTPUT_ENABLE/INPUT_ENABLE queries from the pad register
+Date: Wed,  2 Sep 2026 19:18:06 +0200
+Message-ID: <20260902171806.4141524-1-mehmet.fide@gmail.com>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260902155931.38FCC1F000E9@smtp.kernel.org>
+References: <20260902154525.4090276-2-mehmet.fide@gmail.com> <20260902155931.38FCC1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Ernest, Bartosz,
+From: Mehmet Fide <mehmet.fide@screeningeagle.com>
 
-On Wed, 2 Sep 2026 15:22:36 +0200
-Ernest Van Hoecke <ernestvanhoecke@gmail.com> wrote:
+> [Severity: High]
+> This isn't a bug introduced by this patch, but since you are adding bounds
+> checking here, does imx_pinconf_set() also need this verification?
+>
+> Without validation, a malformed gpio-ranges property in the device tree could
+> translate to an invalid pin_id. Since imx_pinconf_set() lacks the
+> if (pin_id >= info->npins) check, this unvalidated pin_id could cause an
+> out-of-bounds array access in imx_pinconf_set_mmio():
+>
+> 	const struct imx_pin_reg *pin_reg = &ipctl->pin_regs[pin_id];
+>
+> Could the same missing bounds check also cause out-of-bounds array accesses to
+> ipctl->pin_regs in the GPIO direction callbacks like imx_pmx_gpio_set_direction()
+> and vf610_pmx_gpio_set_direction()?
 
-> On Wed, Sep 02, 2026 at 05:30:19AM -0700, Bartosz Golaszewski wrote:
-> > On Wed, 2 Sep 2026 13:41:39 +0200, Ernest Van Hoecke
-> > <ernestvanhoecke@gmail.com> said:  
-> > > From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> > >
-> > > GPIO consumers use of_parse_phandle_with_args_map() to resolve specifiers
-> > > through gpio-map properties. fw_devlink instead parses GPIO properties as  
-> > 
-> > Unlike PWM, there's no such thing as "gpio-map" properties.
-> >   
-> Hi Bartosz,
-> 
-> bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through a
-> nexus node") added support for nexus nodes, and then c11e6f0f04db ("gpio:
-> Support gpio nexus dt bindings") added support for "gpio-map".
-> 
-> Herve later added support for pwm nexus dt bindings modeled on the GPIO
-> support in e71e46a6f19c ("pwm: Add support for pwm nexus dt bindings").
-> 
-> Please let me know if I misunderstood something.
-> 
-> > > direct phandle references, so it records the nexus node as the supplier
-> > > rather than the mapped GPIO provider.
-> > >  
-> > 
-> > Can you point me to an example? I'm not sure what a nexus node is in the
-> > context of GPIO.  
-> 
-> Stephen gave an example usage in his commit message implementing
-> of_parse_phandle_with_args_map():
-> 	soc {
-> 	        soc_gpio1: gpio-controller1 {
-> 	                #gpio-cells = <2>;
-> 	        };
-> 	
-> 	        soc_gpio2: gpio-controller2 {
-> 	                #gpio-cells = <2>;
-> 	        };
-> 	};
-> 
-> 	connector: connector {
-> 	        #gpio-cells = <2>;
-> 	        gpio-map = <0 0 &soc_gpio1 1 0>,
-> 	                   <1 0 &soc_gpio2 4 0>,
-> 	                   <2 0 &soc_gpio1 3 0>,
-> 	                   <3 0 &soc_gpio2 2 0>;
-> 	        gpio-map-mask = <0xf 0x0>;
->         	gpio-map-pass-thru = <0x0 0x1>
-> 	};
-> 
-> 	expansion_device {
->         	reset-gpios = <&connector 2 GPIO_ACTIVE_LOW>;
-> 	};
+No. Everything that reaches the driver through a gpio range goes through
+pinctrl_gpio_request() first, and pin_request() looks the pin up with
+pin_desc_get(), which fails for a pin the controller does not have. A bad
+gpio-ranges entry therefore fails the GPIO request, and the direction and
+config callbacks never see that index.
 
-The binding is available in dtschema
-https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/gpio/gpio-nexus-node.yaml
+Which also means the npins check I added in this version is redundant
+and its commit message overstates the problem. I can drop it in a v4 or
+keep it as a cheap guard, whichever Bartosz and Linus prefer.
 
-And the gpio case is mentionned in the Devicetree Specification
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#specifier-mapping-example
+> [Severity: High]
+> This is another pre-existing issue, but does imx_pinctrl_parse_pin_mmio() also
+> lack bounds checking for *pin_id during device tree parsing?
+>
+> The pin_id is derived algebraically from raw device tree properties:
+>
+> 	*pin_id = (mux_reg != -1) ? mux_reg / 4 : conf_reg / 4;
+> 	pin_reg = &ipctl->pin_regs[*pin_id];
+> 	pin->pin = *pin_id;
+> 	pin_reg->mux_reg = mux_reg;
+> 	pin_reg->conf_reg = conf_reg;
+>
+> If the parsed *pin_id exceeds info->npins, this uses the unverified index
+> directly on the ipctl->pin_regs array, leading to an immediate out-of-bounds
+> memory write.
+>
+> Does imx_pinctrl_parse_pin_scu() have a similar vulnerability when indexing the
+> info->pins array with an unverified pin->pin?
 
-> 
-> Admittedly, this hasn't seen much (any?) actual use in the device trees
-> yet.
+Yes, that is the one real hole, and it is where the fsl,pins value is
+turned into an index. As said on v2, I will send a separate bounds check
+for the parsers after this series.
 
-Not yet in actual device trees but needed for handling hotpluging of extension
-boards.
+> [Severity: High]
+> This is a pre-existing issue, but can concurrent driver probes cause
+> hardware state corruption of the shared input_reg in imx_pmx_set_one_pin_mmio()?
+>
+> There is an unprotected read-modify-write on shared general-purpose IOMUXC
+> registers:
+>
+> 	val = readl(ipctl->base + pin_mmio->input_reg);
+> 	val &= ~mask;
+> 	val |= select << shift;
+> 	writel(val, ipctl->base + pin_mmio->input_reg);
+>
+> If two drivers concurrently request pinctrl states that share the same
+> general-purpose register, and the pinctrl core calls pinmux_enable_setting()
+> locklessly, will these RMW operations race and overwrite each other's
+> configurations?
 
-For instance you can see at the following patch [1]
-https://lore.kernel.org/all/20260826094950.1088288-73-herve.codina@bootlin.com/
+The core does call set_mux without a lock and the driver has none around
+that read-modify-write, so in principle yes. This series does not touch
+the mux path and I have not seen it on Vybrid, so I leave that one to
+the i.MX maintainers.
 
-tests/fdtaddon_realistic_base.dts [2] describes a nexus node for gpios allowing
-to use "gpio 1 available at the connector" from the dtsa instead of "gpio 3
-provided by the GPIO A controller". This allow to decouple extension boards and
-base board. The common part is the connector. Extension boards dts uses
-resources available at the connector while base board dts "wires" resources to
-the connector. A translation in needed and Nexus nodes are part of this
-translation.
-
-tests/fdtaddon_realistic_addon.dtsa [3] uses a gpio that is translated thanks
-to the nexus node:
---- 8< ---
-  /* Use the connector gpio number 1 */
-  reset-gpios = <&connector 1 0>;
---- 8< ---
-
-
-[1] https://lore.kernel.org/all/20260826094950.1088288-73-herve.codina@bootlin.com/
-[2] https://lore.kernel.org/all/20260826094950.1088288-73-herve.codina@bootlin.com/#Z31tests:fdtaddon_realistic_base.dts
-[3] https://lore.kernel.org/all/20260826094950.1088288-73-herve.codina@bootlin.com/#Z31tests:fdtaddon_realistic_addon.dtsa
-
-
-> 
-> We (Toradex) would like to use it to specify a LVDS connector on our
-> boards. This connector appears on different carrier boards that all mate
-> with the same display and have the same pinout. The only potential
-> difference is which PWMs and GPIOs are connected to the connector.
-> 
-> There, specifying the LVDS connector as a nexus node on the relevant
-> carrier board DTS/DTSI would allow us to reuse the same display overlay.
-> That example usage is given by Leonardo Costa here:
-> https://lore.kernel.org/all/juuc4af7ndbajcl7gzf4tg5qz2q2j5tt3rvql4jbauradujrre@gc5nbdhhixaf/
-> Note how we have the connector on imx8mp-verdin-dev.dtsi but could also
-> add it to other boards, i.e: imx8mp-verdin-mallow.dtsi
-> 
-> Note that in that example we used the "tdx,verdin-lvds-connector"
-> compatible for the connector. Since this is a nexus node and just a
-> dumb connector without driver, not having a compatible would make sense.
-> In a final implementation we could specify a compatible + binding if
-> that specifies the ABI better. It is not entirely clear to me what is
-> preferred at the moment, but that is disconnected from this patch
-> series.
-
-Hum, do you have a look at [4] ?
-You could be interrested by this work?
-
-[4] https://lore.kernel.org/all/20260826094950.1088288-1-herve.codina@bootlin.com/
-
-> 
-> >   
-> > > A nexus is a translation node, not the GPIO provider, and need not be
-> > > populated as a device. The resulting fwnode link can therefore remain
-> > > unresolved and indefinitely defer the consumer while
-> > > device_links_check_suppliers() waits for the nexus.
-> > >
-> > > Use the map-aware parser for all supported GPIO property spellings. This
-> > > makes fw_devlink resolve the same provider as the GPIO consumer API. Direct
-> > > GPIO references continue to work because the map-aware parser returns the
-> > > original provider when no gpio-map property is present.
-> > >
-> > > Add OF unittest coverage for mapped and direct GPIO suppliers, including
-> > > the deprecated singular and unprefixed property spellings.
-> > >  
-> > 
-> > Since this is a fix that we may want to backport, the unit tests should go in
-> > a separate, follow-up commit.
-> > 
-> > Bart  
-> 
-> Thanks for the feedback, if we want to go with the direction proposed
-> here I'll make sure to split it off in future series, I was unsure about
-> that.
-> 
-> Since usage of this nexus system seems limited, I'm also not sure if we
-> need to backport but it technically is a fix.
-
-Not sure it is so limited :)
-
-Also, I agree with both patches (PWM and GPIO).
-
-fw_devlink should use the end device and not the first nexus node.
-
-Best regards,
-Hervé
+Mehmet
