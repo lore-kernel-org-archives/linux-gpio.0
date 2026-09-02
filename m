@@ -1,272 +1,196 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E8249C4AE
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 13:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144DB493632
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 13:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788354220; cv=none; b=fj1IZ/iWfTxn/KZdKOfp58ubipOPoww5jNPI7tpHOZUS6vpG1JOm/YHo3flJ59IafJ9YfKyNvzbwHI97bhxoOwOGDS9nBxx8sHwSZETdoWLt9A4L5DsFFXwut1tXmgCNeCXsLtaRervKLP+k5R2vR0DgXI8rekuyPHGp6oQfodQ=
+	t=1788355362; cv=none; b=n3DL8K3jbUBujZNBAiDDXmI4nsGtfIk/W7W9aeC3s9bR62X53QCqWg+k4/IV73iOaONY680XKELGJ9BYlYiPSeu3qlWWiL4SQ8Ivs52JSpouEv7q67+Kri2ZsSt8qy7wHcWyGKWz3zECptQ3n8Z7VtJN5Oi/M1ukLOQVTfY7h54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788354220; c=relaxed/simple;
-	bh=G0hw/pezIlFMRhmrAIQvb2RbWY4suDlV/OtR8kK7ktA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CLpn2++/7h0OXJrIxT5ZnlM5HbKtGwxEJQaamr2JGRLbrfpCbEApE83oyUaPWjlcyihG86cqVHLy4SNv7Q4+GguiGhwtu9AVdhLXQ3jofX9VL5FnoJ6tz0BxVMi0dq3iRORI9POE4dZSsUaPbfJim7NH0ylnEI3PD+Ld1y5GKgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VmL9jYrH; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=AnvYOGQF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1788355362; c=relaxed/simple;
+	bh=j3CWAWUl8j20gvrMWzwPLAHuKWnZJAop7WNcGJxwH2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b1EQdNrZuHizt3S6JXp2AKV/6IRU6xijEZ5qQM4eAyUOa4njEd/Sgdwq+HAeZ0tjsLd703qHuZyjkILaot+WMs44m80w1oorG/P1JE0ES/uG/KKnNqgU54jMTct/6fujsEjpdsCzLUId2ttq2QXn/dO7M43NgNevUfZUyd2E1qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlOUo5pv; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VmL9jYrH";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="AnvYOGQF"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 682CRH5x2001805
-	for <linux-gpio@vger.kernel.org>; Wed, 2 Sep 2026 13:03:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nkx9v1DF+Zw7it7PU+0H3Z4Av/8FoowJS7IAu7u2yc8=; b=VmL9jYrHvfl8wqk8
-	D1B45ze0zrmlx2+vSz7eFAq+aNNbIQrwMGgmNUQafvQvsRCFeoANQX/Ocz00IAc4
-	8GZ2/SV2FelOKLFCEQjx76ryndQW2aAr6vVNvA21rS8yENcc02A5FeD/wpX7lQPp
-	uXbBvxxnp/X5P/cwTGsIrptwrpeomsSHTFqbWdog1ucjT3xggnFXytDQiu6EMwiI
-	Np72QiGQt5QAWebvHetj2CSExlgPZ/H5fUouQqqmKAFJ+q3+GdUzxrO8vqtBx/Yj
-	HCA8axqq+Dqvm5B3MQUly7PB5dSfRCkIU7NBeLY+uACEHHitdbJS5ewWFhSA74bR
-	ng3FFg==
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4geguy0w13-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 13:03:38 +0000 (GMT)
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-7530aaa7212so24384137.3
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 06:03:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlOUo5pv"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-49b965570d7so8443295e9.0
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 06:22:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788354217; x=1788959017; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=nkx9v1DF+Zw7it7PU+0H3Z4Av/8FoowJS7IAu7u2yc8=;
-        b=AnvYOGQFhpevZuq2oNqsKOqSI3rizvxJXj3CZeYD1lIEw9JwpJ7z2ORGPE7prc5Sw6
-         WO+JrtSdItsHwgiKncsh2rExpo2oqfi0R+lzywVu5cdN5RShUrAX9RY5NyQZW4sN165j
-         fDk709DdO0L4FiMuZl71jghHm9r/l4GQseiS4hNXmD93ZHmhqVxcOIJ76FoMbxwYBVQR
-         O3wB7LOo6MxU3abRFJC6+UpfKYO+HneQDHAT/sEOqxx+sI5EYhg4ZByPT8X+xvTtaCdW
-         dX+F7QmVFuIqKrGwNGlm0SOUqUU682IBh8uU4L2tb4e4zsqewr8l5JJtDX2ISUDykiKK
-         BjTw==
+        d=gmail.com; s=20251104; t=1788355359; x=1788960159; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=nkZh/ve/cgf20umwfOvUdi7ulchyjCFeGzRhN//m5sY=;
+        b=XlOUo5pvEgZRxWjg6eGKlL38RroPslxpcansirBoJgD5zDrWh28Onyo2SA+ybYyGRY
+         rcUloOqEQRUW8gXlHojcR2Rq4pSRNyQFUZsKun0H16HkZOR6oJkVsX+b3XVhSi9yMDBP
+         J88NMP3DgGRjD3yTho6mBlQXpAKp8KC3QJR+4oirvKbpe+C9icsTE39N26YdR68E/vYJ
+         cCXps2+y2lyYPditnT8x7tZ7XYxkz+7W+VwFisy5kuAA0P6iN6w/P6uwz4mtoNvDsfhA
+         2DbPuQX/Y0Ls9fyQfccAIIyd166/Rj5f4jqFyHwblO7MyMZxAkPa9pxRIZ17eTrZm3S4
+         07vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788354217; x=1788959017;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=nkx9v1DF+Zw7it7PU+0H3Z4Av/8FoowJS7IAu7u2yc8=;
-        b=sKxQi153OQ+y6qCTVJN/Tw76k6aRTZSp4LDnFRPcWDyf4utvAkF7QhRKtnhjciQsBc
-         l5UeKfnWkhxtjcrSZGr06HNzhD1mVW/93TLDM+pbK9FHWMfwaWDcbcARG44AVdpBUoX+
-         qIQpLgOD+W01qx1ZA8hJgcfm5evrsR+N/WAucbEBl9TPxmFnL1sXZH2C+vcSpQVzMgjE
-         3BXGLSVvy1xNh0rpwmyeOdzm+aNr8XG3CFtPCO6nbfu0c6zEYh19HnMzbzDVIncaXJL9
-         S87G1oqd6hIMRJ0E7r/kkBduhN+nNOn3ztlFuEK/OIpRLsLC24Q9Y2ZtchxwkqEkvhwu
-         NKQQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwcVf9/C/9dEMoMagJgBP0nIdflR+U/jRz2Txq9xVSI1VrwJBN6PT9n5gzo4r5o5JLiXV/aYXSnvPKa@vger.kernel.org
-X-Gm-Message-State: AFuF++nS2BuWsZVY3Z5kCsphN/0XUmdbHVfQGGHfl+k5z6Tg96mrV/GC
-	AxH2HdM8OS1IDlSxqplrnrqtNy8otBWFCqwbdaRila5sfaPAv7cgLLRABOu+z75PexaJLQ2n10K
-	TBKJGH/tQ+FRghZmEBKdIb7A7OIPEWwfEvljrNCIBabnOO87I3mqvJ4Y6vBiPC00r
-X-Gm-Gg: AYBFou1hn5WvoHO2dW0ZVbswDs+v/0t9okGS3R1UPZe9f6iTwyA9UrJZN6EHSD5Ghem
-	D1V/xkvUXTzFaE/xhAg92SfSDPa7P0LPDs3jEtJ9dqDi7qCb67HckyObxqtmlk6mmqLGXlrQK68
-	wUzZeanB81GwWPsHo+eqGRF1uaiqF1VWAUM7Hs3p6TPgur2T7Oar3ilEysE/Lr8OEKhAyhd5/Ez
-	OA97RzUHOtsDOa9yBTmUN6ErbYCsQCboh55FmMXjfbJuCLlcClXOOA4eN6GCJaJ5Prx0QwvkZpq
-	DVdGGu8sTFCNDQG0O34Ea4vQcAjfuxaPBR2Cc2osjc8rlsbWmWGvZy3VlUZ6vyvHF2+h+1pRQFZ
-	b0vF5Tl5PUDtynGGeJrkr4481FSWhwXkFLA==
-X-Received: by 2002:ac5:c84a:0:b0:5c7:d15b:5f2a with SMTP id 71dfb90a1353d-5c7d2809352mr421637e0c.2.1788354217360;
-        Wed, 02 Sep 2026 06:03:37 -0700 (PDT)
-X-Received: by 2002:ac5:c84a:0:b0:5c7:d15b:5f2a with SMTP id 71dfb90a1353d-5c7d2809352mr421601e0c.2.1788354216857;
-        Wed, 02 Sep 2026 06:03:36 -0700 (PDT)
-Received: from [192.168.0.242] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49ce4761dd1sm41932925e9.0.2026.09.02.06.03.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 06:03:36 -0700 (PDT)
-Message-ID: <7eea6a82-6bcf-486d-9c0e-5a68c34c03de@oss.qualcomm.com>
-Date: Wed, 2 Sep 2026 15:03:33 +0200
+        d=1e100.net; s=20251104; t=1788355359; x=1788960159;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=nkZh/ve/cgf20umwfOvUdi7ulchyjCFeGzRhN//m5sY=;
+        b=IMiP8PQc47pm44ZHJhZNkPnOwnFbpx0TR+Kysf6T2yKwJS6E7q/f1I5YHc6CR7Bi8R
+         ReBCJm/q9A5S3/lqqwuJiA6eVAHrctZVDDTg2cBAqJtUG7mIN15xV4KkOrTr2IyxpcCB
+         IVNmDV5GmKGk2AoghjR/fulT0NdRxqbiOR88UWrpInefAF31+8S9KrIFBDU2AuM4YkUk
+         eatysfZ1M0jJGkONTtYQn2hck+jReYoMJQaN9JT9UCC6OUza0e9tuwGbeJJEHJKoZ7bt
+         s7YhjCHGRMQ0ryMpwFABXbeQuY5hGuv6lAWR7uaGVz+KbVB5Sc1vM5r1VQtisfJAkD0A
+         72pQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqTZIzUMWx6sM4jJbI4fqC6Wey4j2owdJduIHMoPnk2PaEUJX/9ytBG3xD0OJMJcJQD3b+F6QQCjgs7@vger.kernel.org
+X-Gm-Message-State: AFuF++mx0gKONKm+gSuFTUnqV24k/23Nmd2z3TjlcKNU6+P9PnqYf/0h
+	U3YwjYVg4y8wwlq7ZvAc1uOIY0NHCKDDGNbmJTXBxOXZazE1dXMG/V68
+X-Gm-Gg: AR+sD11qIWnEKOkDul2SZXmQ0UPE7Vtz5eiJP6KkjG1aZqDQuBNHN+WCgPl0L+dONWb
+	mn9hXbAKUFrcXk4is5wjtkvA4bEg7uDklu+VoLsv6bmSexqo/e5kBXCqdjmxdlNjcpj5lQ3bLEH
+	rcjNLXd8F+gC7eXJF+Xa+Ys3xGGEcI/UcInwt3u3x/q0y1TDAFAzyVTlNwHatvpgeeqrwBqyMjD
+	yPo+q9lE2UdOEtlmufejOY3LVfbcQEHx16G8EiCe+GEaUjBivazwfYVvTGfCXinIZLKE4YJsC6i
+	vRtwVCgSycUcj6yFgPaThoTEW79ioykZvvpJyM9qfxxeMVUYoYB2wr1HyzLomlnwkrQEqlkfxLh
+	aVjIfpD5CHGUe7nLUjOtFWcaqBEM51KFzLbXb8uPEPosZu3niczy0fmLOA8n+TU4Vn1eLlhHi89
+	mZbtTFzCNeirmR+lvkfFVan7KM/QDt3t4sBHDgLZHEePSkDnCvdTpcQ9XqNMqHLKlE08RHDzIec
+	mnOhwo5OQevYzh20eCzcNMEgkUhGKlJ6IIwyFDtG6JnR+EyRaVaKqoWYOZ+lH9u
+X-Received: by 2002:a05:600c:1395:b0:495:4d88:e630 with SMTP id 5b1f17b1804b1-49ce5812c52mr74768615e9.10.1788355358736;
+        Wed, 02 Sep 2026 06:22:38 -0700 (PDT)
+Received: from ernest.hoecke-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cdce10148sm149528255e9.5.2026.09.02.06.22.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Sep 2026 06:22:37 -0700 (PDT)
+Date: Wed, 2 Sep 2026 15:22:36 +0200
+From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+	"Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li <Frank.li@oss.nxp.com>, 
+	Kieran Bingham <kieran.bingham@ideasonboard.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+	Linus Walleij <linusw@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Herve Codina <herve.codina@bootlin.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Leonardo Costa <leonardo.costa@toradex.com>, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH RFC 1/2] of: property: fw_devlink: Follow GPIO nexus maps
+Message-ID: <qg2nemg4mlxpancg7az2vsnjkfc4anxkieozoxh3mj3zgkyifd@b5b6yiz4uew3>
+References: <20260902-fw-devlink-nexus-ready-v1-0-68fe1996e78a@toradex.com>
+ <20260902-fw-devlink-nexus-ready-v1-1-68fe1996e78a@toradex.com>
+ <CAMRc=MfN73=K1nZrqUbhrMSijjpzhF_z_U9JU4_H163W0vRpqA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] pinctrl: qcom: Add MSM8952 tlmm pinctrl driver
-To: muzafferkadir@mainlining.org, Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260820-msm8952-pinctrl-v2-0-bf2b8b7b379b@mainlining.org>
- <20260820-msm8952-pinctrl-v2-2-bf2b8b7b379b@mainlining.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260820-msm8952-pinctrl-v2-2-bf2b8b7b379b@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=UZthjqSN c=1 sm=1 tr=0 ts=6a981eaa cx=c_pps
- a=N1BjEkVkxJi3uNfLdpvX3g==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=OuZLqq7tAAAA:8 a=eYqAknA8CWvG3Flig9cA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=crWF4MFLhNY0qMRaF8an:22 a=AKGiAy9iJ-JzxKVHQNES:22
-X-Proofpoint-GUID: VRJ0Ej7fCRypcn16oPOYuFIsWOvFAdTD
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAyMDExNSBTYWx0ZWRfX3uYuSruzwAhU
- dHN9sW8tcwmhVRMXLVG0tAoitdyZrzu+E6qPXWb6DLtW2YEs12o7iVvE6eeLRHqMBnK10uPplh/
- 9eOrI2SgJglQeuc6hITfJZiQi6mzDsk=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAyMDExNSBTYWx0ZWRfX7cKQrLUVM5bA
- ng6XD3IKAKLhUwhBDiGKFAJiFkmTSvdFls9y09tBh+soXxt15aqo4DY3Yv5quuEev00uZWedXCe
- fkuWiUIZCFkw/SZcDCqJX3/72Zm2d2h0n/e/90PbcR69Icc96U8oSN87GNUZq8w5mBZoa7RnnyO
- tG6H2eCE/9pxMVm0NBe7YdDFtAHh9Zfhl4QN+W03bDwENBPv3KDLDLh7UxwzZDpYTK0RTO5xMgF
- npIUC2O/LgnxWaqyPn14kJsNTiD0Q86p7DYDg3c1lhS+IBFUAKgnj7jRzJcujxop0gODLM5CTc1
- f6TGGPoyw1UPbQ//Jaeb3ZopU1hg6oHHxxAcTVpa6857RFK62DwUHkZHbJklz70W2Rlf6Ydv+rb
- b5aMlI19jqqhracASEyu7BZW/SlozWXZuNrEKmEtAA791zuPBp7xX1og0ZBtv3In4UH5iZI1zwJ
- yyEhgxaYbqDtR4JUTmg==
-X-Proofpoint-ORIG-GUID: VRJ0Ej7fCRypcn16oPOYuFIsWOvFAdTD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-02_03,2026-09-01_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 impostorscore=0 adultscore=0 malwarescore=0
- lowpriorityscore=0 spamscore=0 clxscore=1015 phishscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609020115
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MfN73=K1nZrqUbhrMSijjpzhF_z_U9JU4_H163W0vRpqA@mail.gmail.com>
 
-
-
-On 20-Aug-26 13:17, Muzaffer Kadir via B4 Relay wrote:
-> From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+On Wed, Sep 02, 2026 at 05:30:19AM -0700, Bartosz Golaszewski wrote:
+> On Wed, 2 Sep 2026 13:41:39 +0200, Ernest Van Hoecke
+> <ernestvanhoecke@gmail.com> said:
+> > From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> >
+> > GPIO consumers use of_parse_phandle_with_args_map() to resolve specifiers
+> > through gpio-map properties. fw_devlink instead parses GPIO properties as
 > 
-> MSM8952 has same pin count and similar pinctrl
-> functions mostly with msm8917, but some functions use different pins.
+> Unlike PWM, there's no such thing as "gpio-map" properties.
 > 
-> Signed-off-by: Muzaffer Kadir <muzafferkadir@mainlining.org>
-> ---
+Hi Bartosz,
 
-The following is a review from my AI agent who inspected the
-hw specification and prior art/review feedback regarding qcom
-pinctrl. I read it and approve of it:
+bd6f2fd5a1d5 ("of: Support parsing phandle argument lists through a
+nexus node") added support for nexus nodes, and then c11e6f0f04db ("gpio:
+Support gpio nexus dt bindings") added support for "gpio-map".
 
+Herve later added support for pwm nexus dt bindings modeled on the GPIO
+support in e71e46a6f19c ("pwm: Add support for pwm nexus dt bindings").
 
- Hi Muzaffer,
+Please let me know if I misunderstood something.
 
-  The driver currently contains function/group declarations which are not connected to any PINGROUP() entry.
+> > direct phandle references, so it records the nexus node as the supplier
+> > rather than the mapped GPIO provider.
+> >
+> 
+> Can you point me to an example? I'm not sure what a nexus node is in the
+> context of GPIO.
 
-  For each item below, add the function to the corresponding GPIO’s PINGROUP() definition:
+Stephen gave an example usage in his commit message implementing
+of_parse_phandle_with_args_map():
+	soc {
+	        soc_gpio1: gpio-controller1 {
+	                #gpio-cells = <2>;
+	        };
+	
+	        soc_gpio2: gpio-controller2 {
+	                #gpio-cells = <2>;
+	        };
+	};
 
-   Function                GPIO
-  ━━━━━━━━━━━━━━━━━━━━━━  ━━━━━━
-   mipi_dsi0                  0
-  ──────────────────────  ──────
-   smb_int                    1
-  ──────────────────────  ──────
-   qdss_cti_trig_out_b0       2
-  ──────────────────────  ──────
-   rcm_marker2                3
-  ──────────────────────  ──────
-   qdss_cti_trig_out_a1       3
-  ──────────────────────  ──────
-   codec_mad                 13
-  ──────────────────────  ──────
-   nfc_disable               16
-  ──────────────────────  ──────
-   nfc_irq                   17
-  ──────────────────────  ──────
-   flash_strobe              33
-  ──────────────────────  ──────
-   cam1_standby              35
-  ──────────────────────  ──────
-   cam1_rst                  36
-  ──────────────────────  ──────
-   cam2_standby              37
-  ──────────────────────  ──────
-   cam2_rst                  38
-  ──────────────────────  ──────
-   webcam_standby            39
-  ──────────────────────  ──────
-   webcam_rst                40
-  ──────────────────────  ──────
-   rcm_marker1               41
-  ──────────────────────  ──────
-   accel_int                 42
-  ──────────────────────  ──────
-   alsp_int                  43
-  ──────────────────────  ──────
-   mag_int                   44
-  ──────────────────────  ──────
-   gyro_int                  45
-  ──────────────────────  ──────
-   pressure_int              46
-  ──────────────────────  ──────
-   fp_gpio                   47
-  ──────────────────────  ──────
-   fp_int                    48
-  ──────────────────────  ──────
-   us_euro                   63
-  ──────────────────────  ──────
-   ts_resout                 64
-  ──────────────────────  ──────
-   ts_sample                 65
-  ──────────────────────  ──────
-   sdcard_det                67
-  ──────────────────────  ──────
-   audio_reset               68
-  ──────────────────────  ──────
-   codec_int1                73
-  ──────────────────────  ──────
-   codec_int2                74
-  ──────────────────────  ──────
-   key_volp                  85
-  ──────────────────────  ──────
-   key_snapshot              86
-  ──────────────────────  ──────
-   key_focus                 87
-  ──────────────────────  ──────
-   key_home                  88
-  ──────────────────────  ──────
-   backlight_en              91
-  ──────────────────────  ──────
-   lcd_en                    92
-  ──────────────────────  ──────
-   usbc_irq                  93
-  ──────────────────────  ──────
-   uim3_ldo                  96
-  ──────────────────────  ──────
-   wsa_irq                   97
+	connector: connector {
+	        #gpio-cells = <2>;
+	        gpio-map = <0 0 &soc_gpio1 1 0>,
+	                   <1 0 &soc_gpio2 4 0>,
+	                   <2 0 &soc_gpio1 3 0>,
+	                   <3 0 &soc_gpio2 2 0>;
+	        gpio-map-mask = <0xf 0x0>;
+        	gpio-map-pass-thru = <0x0 0x1>
+	};
 
-  For example:
+	expansion_device {
+        	reset-gpios = <&connector 2 GPIO_ACTIVE_LOW>;
+	};
 
-  > static const char *const mipi_dsi0_groups[] = { "gpio0" };
+Admittedly, this hasn't seen much (any?) actual use in the device trees
+yet.
 
-  must have a matching mipi_dsi0 entry in the GPIO0 PINGROUP() definition. The same consistency is required for every item in the table. The gpio function is intentionally excluded because it is inserted
-  implicitly by the PINGROUP() macro.
+We (Toradex) would like to use it to specify a LVDS connector on our
+boards. This connector appears on different carrier boards that all mate
+with the same display and have the same pinout. The only potential
+difference is which PWMs and GPIOs are connected to the connector.
 
-  There are also functions missing from the GPIO table. Please add these to the corresponding groups. The final column is the function index from the MSM8952 GPIO mapping:
+There, specifying the LVDS connector as a nexus node on the relevant
+carrier board DTS/DTSI would allow us to reuse the same display overlay.
+That example usage is given by Leonardo Costa here:
+https://lore.kernel.org/all/juuc4af7ndbajcl7gzf4tg5qz2q2j5tt3rvql4jbauradujrre@gc5nbdhhixaf/
+Note how we have the connector on imx8mp-verdin-dev.dtsi but could also
+add it to other boards, i.e: imx8mp-verdin-mallow.dtsi
 
-   Function     GPIO    Function index
-  ━━━━━━━━━━━  ━━━━━━  ━━━━━━━━━━━━━━━━
-   gp_pdm_2a       7                 4
-  ───────────  ──────  ────────────────
-   gp_pdm_1b      20                 3
-  ───────────  ──────  ────────────────
-   gp_pdm_2b      38                 1
-  ───────────  ──────  ────────────────
-   gp_mn          39                 2
-  ───────────  ──────  ────────────────
-   gp_pdm_1a      45                 1
-  ───────────  ──────  ────────────────
-   gp0_clk        46                 1
-  ───────────  ──────  ────────────────
-   gp1_clk        47                 2
-  ───────────  ──────  ────────────────
-   gp_pdm_0b      48                 2
-  ───────────  ──────  ────────────────
-   gp_pdm_0a      66                 3
+Note that in that example we used the "tdx,verdin-lvds-connector"
+compatible for the connector. Since this is a nexus node and just a
+dumb connector without driver, not having a compatible would make sense.
+In a final implementation we could specify a compatible + binding if
+that specifies the ABI better. It is not entirely clear to me what is
+preferred at the moment, but that is disconnected from this patch
+series.
 
-  Finally, please move:
+> 
+> > A nexus is a translation node, not the GPIO provider, and need not be
+> > populated as a device. The resulting fwnode link can therefore remain
+> > unresolved and indefinitely defer the consumer while
+> > device_links_check_suppliers() waits for the nexus.
+> >
+> > Use the map-aware parser for all supported GPIO property spellings. This
+> > makes fw_devlink resolve the same provider as the GPIO consumer API. Direct
+> > GPIO references continue to work because the map-aware parser returns the
+> > original provider when no gpio-map property is present.
+> >
+> > Add OF unittest coverage for mapped and direct GPIO suppliers, including
+> > the deprecated singular and unprefixed property spellings.
+> >
+> 
+> Since this is a fix that we may want to backport, the unit tests should go in
+> a separate, follow-up commit.
+> 
+> Bart
 
-  > MODULE_DEVICE_TABLE(of, msm8952_pinctrl_of_match);
+Thanks for the feedback, if we want to go with the direction proposed
+here I'll make sure to split it off in future series, I was unsure about
+that.
 
-  immediately after the OF match table, consistent with the other Qualcomm pinctrl drivers.
+Since usage of this nexus system seems limited, I'm also not sure if we
+need to backport but it technically is a fix.
 
-Best regards,
-Konrad
+Kind regards,
+Ernest
