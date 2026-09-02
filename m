@@ -1,83 +1,164 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mta0.migadu.com (out-246.mta0.migadu.com [91.218.175.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE4C46C4AE;
-	Wed,  2 Sep 2026 10:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843E145C71C
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 11:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788345733; cv=none; b=Ij91XhB9P9K8TWQyt1HTzNA4ffmxOl92V7MWczMKwPh1nPSfUQrKV/RB4el0+tg1IqaR/VoU7t3Lgx+ZUAVra9ZWpWumb3iktAn4G9v1s7JlKVUkZ/rKirTS3viv1Mpl2+2SWWCVX0ax0CmAhnH+iBZe7dMTm9Da7spYLMegAf8=
+	t=1788347015; cv=none; b=G2zwy+bhQKmik+/VCoBnAQEU0nWJBDoZWNOZLQnLMTVQOTJtxKGLBptC0YRxwY2/x97bduPpE4drcydm1C3BKgUeL+2GPS4G64/0Te36hn61brBUtw9iu5EOR7+crEnrFh5lM0pOy115OMoLeJ6qFWUMuMndGgVvhPByxUkHTkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788345733; c=relaxed/simple;
-	bh=rxND3ZAr+oYZRgJHJGknZR4Aewx4zK2E6tokev7TZMY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q35m5ouY6INZ0/yqzzDBqgL39lePBSAoK2vZjD4kFRD+mjcndUyNqnJVq5AsrYiBXtGLgbmAOG0HeWSbTCEprOIu/i7ljnGIM97iUVhJm1eMVmMc/Zv1rBXgLKAF6uPT2bHrx9XvowaXIV/kbDWr93mmX+IQXh15O5VQfCQuokI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=oAHHBOtT; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=jOS6I88W; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1788347015; c=relaxed/simple;
+	bh=20snKJaG8UMW/EixhLl7Mhl2veH34E3KT+pk8OWVknU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XegYZtDe48Fuq9eDkbiZ4Kkd6z2L59VvoZjN0kgj47fWCWQQhV6f5AGgGJgP/+Ck7V6fdC/bMiPkNYouE0gTrKpimDRKHvagY8QnU6O9N66aa61hfMr6pnY2NnLsjGzasle2mPVm6KUqlklHSyONe+J1X2dIbrgEJZuqchhU754=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UqBysMNJ; arc=none smtp.client-ip=91.218.175.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="oAHHBOtT";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="jOS6I88W"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1788345715; bh=/05FvKF24KDm+InPqQKP53Y
-	5sODqZQ4iwRbSWrzJJoQ=; b=oAHHBOtTUc1MFKpJj056x9/L+fGgP765idZSQMzxrAGMZpYINV
-	pU7n7NTec2KU9rC8UysA6vfeZo5AwHCXg+yDgF+YehAhIy3kuabjY7nhFbYxHmq5ZwGhhddXqia
-	2xFr47LW60ovgwk1lYgDuex5gX4qv/gWqxMxrk1SE1jBLhJjf69suO5Vte5VLtUfNOpZVT9A02w
-	raE9pI4dtsLfnKqRs/B/z7DwqeShLBkD9WOyAL6RvqnwRKu5LLo14d4NNGnIUIthc5srNx+8hUK
-	fhvDzx8LUOtMzTzz6FPg1GqW93tHd/tc6Firb3zCK/3k/0w3PSYMqqrFn4nwu3UevSA==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=From:To:Subject:Date:Message-ID; t=1788345715; bh=/05FvKF24KDm+InPqQKP53Y
-	5sODqZQ4iwRbSWrzJJoQ=; b=jOS6I88WmxVwfH+433uUcTkMHP+1Q9So4MA8l35Vv/nQD/pZgP
-	JQnUmzB9jFXlfuG4KVPDnuOUR/PbbeXZjBAw==;
-Message-ID: <99593b39-6851-4ad8-aba8-d4a39192e5ce@mainlining.org>
-Date: Wed, 2 Sep 2026 13:41:53 +0300
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UqBysMNJ"
+X-Envelope-To: linux-gpio@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=20snKJaG8UMW/EixhLl7Mhl2veH34E3KT+pk8OWVknU=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1788347011; v=1; x=1788951811;
+ b=UqBysMNJ7nJEOt3ZuhFhQkOwyIXBsK6i2miRq0YnguHuTE5KrLpWWqktfUkwcBK8QcTBwQEH
+ 9j79XAkSeslqGTe9MCut3qyed6/tUZut3ZgxbOy6RbNikOmfcPFruR9Lp0NAZ20RB+CgeyUOlmW
+ boAZrjPCV21R7p8SFGhVHj3U=
+X-Envelope-To: linux-gpio@vger.kernel.org
+Received: by mta11.migadu.com with ESMTPS id f4c9c9e68c3ee15e;
+	Wed, 02 Sep 2026 11:03:21 +0000
+X-Mizu-Trace-ID: f4c9c9e68c3ee15e
+X-Migadu-Flow: FLOW_OUT
+Date: Wed, 2 Sep 2026 14:03:12 +0300
+From: Matti Vaittinen <matti.vaittinen@linux.dev>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <matti.vaittinen@linux.dev>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org
+Subject: [PATCH v3 00/10] Support ROHM BD73800
+Message-ID: <cover.1788346553.git.mazziesaccount@gmail.com>
+Reply-To: Matti Vaittinen <mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Add pinctrl support for MSM8952
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
- Linus Walleij <linusw@kernel.org>
-References: <20260820-msm8952-pinctrl-v2-0-bf2b8b7b379b@mainlining.org>
- <CAD++jLnGGonfOxLHhM-uXAzP10J9o5=0e_cV9JM5r7SJawChnA@mail.gmail.com>
- <CAMRc=MdKT4RAWdtZf87k5-VbXAZePT2yttf2QPWgRJaowKuDTA@mail.gmail.com>
- <a5956f0f-2842-4b80-8bcf-8763836618cf@mainlining.org>
- <CAMRc=MexQO0r-4+yPQrY_rCcGUY0E92q9hAD5EoTpwLJxMmX8Q@mail.gmail.com>
-From: Muzaffer Kadir <muzafferkadir@mainlining.org>
-Content-Language: en-US
-In-Reply-To: <CAMRc=MexQO0r-4+yPQrY_rCcGUY0E92q9hAD5EoTpwLJxMmX8Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="97DSgaQ3eGUvz8QX"
+Content-Disposition: inline
+
+--97DSgaQ3eGUvz8QX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Add support for the ROHM BD73800 PMIC and compatibles.
+
+The ROHM BD73800 is a power management IC which integrates 8 BUCKs and 4
+LDOs. There is also an ADC and operation amplifier intended for current
+/ temperature measurement and accumulation. RTC and 32.768 kHz clock
+gate are also included. The PMIC can be customized via OTP and it has
+options for operating as a main PMIC in multi-PMIC installation. Some
+of the pins can also be used for GPO or GPI (including interrupt support).
+
+There are also ROHM BD71851 and BD71885 PMICs out there. These are, from
+the SW-perspective, similar to the BD73800. There is only some different
+default values and OTP settings. The driver should be able to handle them
+just fine.
+
+Revision history:
+
+v2 =3D> v3:
+ - Rebased on v7.3-rc1.
+ - gpio: Use gpio-regmap as was suggested by Linus W.
+ More accurate change-log in individual patches.
+
+v1 =3D> v2:
+ - Rebased on regulator/for-7.3 as it carries dependency:
+   f29a8bf6fde1 ("regulator: dt-bindings: ROHM PMIC state-machine voltages")
+ - dt-bindings: Various fixes, split generic stuff to own files.
+ - gpio: Styling, return -ENODEV if no GPIOs found
+ - MFD: Styling
+ - regulator: Simplify dt-reading
+ More accurate change-log in individual patches.
+
+---
+
+Matti Vaittinen (10):
+  dt-bindings: mfd: common ROHM PMIC properties
+  dt-bindings: rohm,bd*: Ref common ROHM bindings
+  dt-bindings: regulator: ROHM BD73800 regulators
+  dt-bindings: mfd: ROHM BD73800 PMIC
+  mfd: Support for ROHM BD73800 PMIC core
+  rtc: bd70528: Support RTC on ROHM BD73800
+  regulator: bd71828: Support ROHM BD73800
+  clk: bd718x7: Support ROHM BD73800
+  gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
+  MAINTAINERS: Add ROHM BD73800 PMIC files
+
+ .../bindings/mfd/rohm,bd71815-pmic.yaml       |   9 +-
+ .../bindings/mfd/rohm,bd71828-pmic.yaml       |   9 +-
+ .../bindings/mfd/rohm,bd72720-pmic.yaml       |  29 +-
+ .../bindings/mfd/rohm,bd73800-pmic.yaml       | 218 +++++++
+ .../bindings/mfd/rohm,pmic-pins.yaml          |  72 +++
+ .../regulator/rohm,bd73800-regulator.yaml     |  99 ++++
+ MAINTAINERS                                   |   2 +
+ drivers/clk/clk-bd718x7.c                     |   8 +
+ drivers/gpio/Kconfig                          |  12 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-bd73800.c                   | 209 +++++++
+ drivers/mfd/Kconfig                           |  15 +-
+ drivers/mfd/rohm-bd71828.c                    | 147 ++++-
+ drivers/regulator/Kconfig                     |   4 +-
+ drivers/regulator/bd71828-regulator.c         | 558 +++++++++++++++++-
+ drivers/rtc/rtc-bd70528.c                     |   8 +
+ include/linux/mfd/rohm-bd73800.h              | 307 ++++++++++
+ include/linux/mfd/rohm-generic.h              |   1 +
+ 18 files changed, 1662 insertions(+), 46 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd73800-pmic=
+=2Eyaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,pmic-pins.ya=
+ml
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd7380=
+0-regulator.yaml
+ create mode 100644 drivers/gpio/gpio-bd73800.c
+ create mode 100644 include/linux/mfd/rohm-bd73800.h
 
 
+base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
+--=20
+2.55.0
 
-On Wed, 2 Sep 2026 03:34:58 -0700, Bartosz Golaszewski wrote:
-> On Wed, 2 Sep 2026 12:32:45 +0200, Muzaffer Kadir
-> <muzafferkadir@mainlining.org> said:
->> On Tue, 1 Sep 2026 08:59:00 -0700, Bartosz Golaszewski wrote:
->>>
->>> And to that end please use scripts/get_maintainer.pl to get the current list
->>> of maintainers for your patches.
->>
->> Hi Bartosz, I did run b4 prep --auto-to-cc before sending the patches. After seeing your message I run it again to check and it said no new addresses to add. Should I rebase on newer tag?
->>
-> 
-> Please wrap lines in your emails at 80 characters.
-> 
-> Are you based on current linux-next or at least v7.3-rc1?
 
-Sorry Bartosz, I accidentally sent it without wrapping.
+--97DSgaQ3eGUvz8QX
+Content-Type: application/pgp-signature; name=signature.asc
 
-I based on v7.2-rc7.
-Should I rebase to v7.3-rc1 or linux-next?
+-----BEGIN PGP SIGNATURE-----
 
-Best Regards,
-Muzaffer Kadir
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmqYAnAACgkQeFA3/03a
+ocWq2wgAgL3fXf8KMA2V440duRc7DIi1NzHj2Skga7Hw3Q1+bMip9KQvtNuI0aoP
+C1iFsO894P5zcCLgqXAeXbfFEP1XsXF3xdQE0K6H3ifM/BQAnwbxHMm2Pf/1FdHb
+37SfRjZ1diBkrixn3UYqxljXnB3tJ2Wb7jQ9WeXAdkUr2Ejjf1UBM7MgvNWqjGG4
+VxSASt9NLtxaAxj+DA7MGSSVvpCwepS93NeNW19JJ7aLmSLC69sq0Yndde8gR9r1
+tZ2qC+QhSN0VSJnoCSR83n1UsVTNjM2hm2r9YuQnE9GA9Z2UXFeWbSHyEgoPuWWw
+SbDmfT4YcFgxRspLULmE72TJ5qAXiA==
+=txE5
+-----END PGP SIGNATURE-----
+
+--97DSgaQ3eGUvz8QX--
