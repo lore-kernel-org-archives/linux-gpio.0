@@ -1,67 +1,68 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2574A386C3E
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 06:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D8A3A7F64
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 06:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788330239; cv=none; b=eZsAKcCuY55XW/VKMrOr9x/Z0GRTkSsAUnbfT7MSwrPaw6vWjYP5rAp+2pqG/0LFVRtIcXW/EW/4lsov4AK7+c5YvpGdqWRYlE1SYuWUntv6ah2nXi983d5Tu8aSut9MTMdSd61V8A/onsZDjLwIOGmPFqE8LuyMnKOzES+8nuM=
+	t=1788331937; cv=none; b=nDtCLE7iAA+Y5ZRQgg+Npsst8O1P1StAFeUx+5Gc9p7NNMOE2TPtPGOmlLOadsHyGSWo5Ilb1W1guBJJCv77MQm2VeIsVZVatg/kCKvU1lou9M/xx2jcvE2gj81hC5/vHHtcO5l8vbiQVqNmvPBa8vXMJJgh7v/XfSfxJDoNbDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788330239; c=relaxed/simple;
-	bh=HMnn5aVJ48OtNSiTS+brlOGFOOU4wR55y7WucMsEbHY=;
+	s=arc-20240116; t=1788331937; c=relaxed/simple;
+	bh=lW19me2kn54UPGQZfTKDH2CoL8h6BT9VeZVPGdecB4g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NjLuYe8YgkMzp2VZyGHt3OIDV6Cbl8d3H8Zd5GoRqRUBHRJrNE7VO+X+pT4uISrAqSQsYsTo2WayyGub7nB0VHGRLBc9ACT14SW8KwkKjNessAfJNZWqh+AdGhPKvtGkKEVl0RRXiX28LZw5OhpkVqHRtOsIbUKjT3+MOQm6nVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=md5v9B9/; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version; b=n6jfeZNqowcFV9Wj7COT7rzFLULxjNBToPeKArLjD2kYOOk8IMTPgRni3UugTq3kMvy3WPue0Ew4AJk7mvX5QWTMpoxORc3h0l4gdU9qPIC2S87c5pQmWZivJ29RPUBpoyNF1eFMxJq+6Tlutmp6g1WLUhum5GR/OTxsmoIhZt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pla2Nt/Y; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="md5v9B9/"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-499b2981a7bso6338305e9.3
-        for <linux-gpio@vger.kernel.org>; Tue, 01 Sep 2026 23:23:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pla2Nt/Y"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-490cf322ed0so7321825e9.1
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Sep 2026 23:52:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788330236; x=1788935036; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788331920; x=1788936720; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=uHOxVIY41WkMlz245AOFHdi0BnFepDxV94FL1AiaZ/8=;
-        b=md5v9B9/6rxyypeKiKXThJpR7D7n7GPHt6OpKP9wGHl1axadAoBRIkHWXj5JJra+uu
-         gFeDhgfLzd9fute7JT+Go2+k20s6l4hYMg/E3izdh9QKIWwcVKY2EmTWAgagq6zXqKfH
-         AT7VkSOhWVrmCPTxLkQlwZ8xY8WTnziO5l4p06yws8+7pxlGMxwxR7iqxINciyyRjU9Y
-         uF7MrXSkkWHA0p+MuyZbivjYRsBTNNz9o8sjFuCrrDipPvzLNchQn1a6zDTEyAhDzIr4
-         sLK6YrmgdTHFrxMs7t+radMq7YptjBnjjTFC+5ODBRTljWzU2BEqnXkKPD0OpvsGu1IJ
-         AHIg==
+        bh=lW19me2kn54UPGQZfTKDH2CoL8h6BT9VeZVPGdecB4g=;
+        b=Pla2Nt/YQTGAtx4hKCTTd1K4WXpuMj8T0hnSNSC5SkRV/PvbKHUTi7mUIhFOm1Dhfz
+         55CcwaCiPUzVtKZpcsqpNBWNTdN+N2CpCL9d4J1wJDBRs1PHjrF5JPa1bwJ2RvUED+iq
+         MNKpE+twcbgEZ/Z4i6kLqwEI3lKSCNj/CCnfn9bYuckm6b9PbOq9z2Wob++lFKUFElqj
+         spWV/IHnOxN22EE8D6vGWz6jUF4BkwHsvh/tb9WQORBC04nQjEpucWkBXiwiNalm7UY9
+         wVNyjCsG3Qu2W3QjA9dxNSQYhx0+Jjq9BpeSyKA+jMUwU+2dJ+DasNqvV12kMcHfpA7C
+         7dYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788330236; x=1788935036;
+        d=1e100.net; s=20251104; t=1788331920; x=1788936720;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=uHOxVIY41WkMlz245AOFHdi0BnFepDxV94FL1AiaZ/8=;
-        b=QAi0EPBPqUxAX89/C6p1Lnwo+NKLRTgqu5lVYi3zZAiFawZxdR86stGxSMi22H1Zyq
-         ++nPha6C62RTk0l3g7wqkYn13OSZOKCUcwMSquAXkOEK0x1CgFear7AqQxB6piodWmwG
-         NQeR1y+FXcNaPHACFlikP3mhH72fbh7w1FiCe7ouOJmogghTHk5gnImmtD3+rFvhX/1e
-         Fuz5AoLCwJpUl/WlrAKRG/pdYlGovu8oujwmUiH5Xo4dVlKQiNSjXQ4KT2oZZGjWWvWE
-         ln2ixN3LvaTLmfJIbZI/rVSN3qUAhQN8aqIGrVnxegJc8LhCo7U+FSrefaEG/GcAgQ0A
-         /Rpw==
-X-Forwarded-Encrypted: i=1; AHgh+RqYDH5W+zP6SZY6larpUkvOXGqNlKxMsqKhi4MCBS2dteFJfL0/FKenkO8fCOh1cTudkYqePYLC5rJF@vger.kernel.org
-X-Gm-Message-State: AFuF++lDsBAdquqDMKzThF01uBcyJHx3pY05MLolVBnEiboLz7GR8r4j
-	OLQDoUppbVORzHt+5/8OCxHwZWMGrZ8fOkj0OwO43lEkScE1dFtrMReR
-X-Gm-Gg: AR+sD11isksIkonbVOQstdbgY8ill0GZEojoeVD4pPrT1RBDryVzkBKJdGJq78gYLFK
-	ErEY4f72bA/1moxQmhmqZfh8rMHnojfiMY85SahhElk7zQaGhsGbeFoHJ4KvGhP9obA2UGueRYu
-	F6AAinf+0BHPuBkqWOCDY6H50TEho3Jx9MU+kOlj/vwrz52JYVHgR621JFwS9QpyXL7fXMVkcUG
-	BTrY6Pn15GHiT07YOJKUN9qBgvlT78xoEFnlbO9A6vQW3HVhgpqn9YyOePkJvE5Pgi4uetio9I6
-	BoOKpprM5dzIa4JfaxQXK8YIaDApfk9bCxGoR2lDt//wUjH3TZZ1VKfzq1RczyyxG26gYDOYtb4
-	agzuuac5j3Nu9xBsVLvCTvECRYhygEEy9Svtua3Hd66zlN/AzKe/A/6/Ybq8Edq2jOisYlKcukX
-	iuqTnibTK/+9RrEsHaO8eRH5IKntjugaYXRHN+4r9fukpcpSMblevZ5ozCN5ebqsEt6w==
-X-Received: by 2002:a05:600c:1d14:b0:499:b65e:49c9 with SMTP id 5b1f17b1804b1-49ce583e94cmr33712895e9.10.1788330236108;
-        Tue, 01 Sep 2026 23:23:56 -0700 (PDT)
+        bh=lW19me2kn54UPGQZfTKDH2CoL8h6BT9VeZVPGdecB4g=;
+        b=q6VU6Lxr/A0pGmylQgAbSkGEk1qUj3ul82HhDr+koPOFbY/AaOeTFdXe4HmQyOPWcC
+         V2+rqpXip9rYUTuZvzwExNkKCznNjM/KzDCGS2ynPeQX2/B2LM5Mx5/KHZPRLnaAvB+f
+         rc4WNQY/ISkpE7EXpdq6LOCLAzD2D3J+Chn1wHFAo0j2QYSxuLA387oH0yhiAPBBn453
+         xz16Rv3chffXXmsHsvNeU12wgspA5P8Aqm07J2TRF86eO7lA0GQGfiHoz8j84XBJNRsI
+         fUM7HHt+mmemJz2EB7Wll8QvGGq2rZ2AJDmXiGDxAIbgGEcweCyXlA48o6gRQSIfdXHG
+         uRtw==
+X-Forwarded-Encrypted: i=1; AHgh+Rqo11hjccfafyy+7DPwVxBx/fAMLb1IU0VhKQOSCBfxCIhdlEA/uW6ON0KtBZ7ID+vvseLBfBo5B5pO@vger.kernel.org
+X-Gm-Message-State: AFuF++nv4bD2oX7hymap5/6+AHwrMob5uBv6uYMCv8I5Dvxwl9cG/G8N
+	CoItY92oFubg2bVF0pbOmWhWlOw+yiWp+qT0ByVE1dG6SDP1G+Jzag8R
+X-Gm-Gg: AR+sD12WJGXcJQQOUjx7cGVfEbC4BYLs2jFOkKlw9VPyVn0iCoUeBipYKbKJBam3lEB
+	+MJs0Ll2Y7vZHAIJXwn3r8dSxUnIGqEOGuadl/f4ZhYD/pPrE5snwxRnNGi7FSnmvYu+ywFwn/y
+	XIOA5crbI9rpNEDY4k7UwweDwvdCK6dgRgaGjWwLi3BSFOEd/qxHz73GxzpjJci9cf+iUrey7DQ
+	fFlkofN5WZxt8EUi1eZV7zgqVAYo5V43WAG0BjwZbXpjY+lTNvUTxVJZceUV3f4jEsrphjtpEBJ
+	oJrGiHC5bN95/M6YPRQKhQZ7QDJfyh64sy7ADybOEu2wOpx91a61JRAPIaAZcwUwdFXfsLW7Scf
+	UI3KNeaIwDwaNWovvVm/5iN3Ezn37yeSI8NcN7TUwC08LtB/tstzEwMevbpmKpZ4QFPF2zEdgwm
+	TuYwPLdtjQQq32zkVYGaif+xvNKQm9ts0NUyX6lAb+ijkzUu8O51VlzLx+kwkAN0rTzQ==
+X-Received: by 2002:a05:600c:a0b:b0:49b:910c:7703 with SMTP id 5b1f17b1804b1-49ce5818612mr34637765e9.9.1788331920540;
+        Tue, 01 Sep 2026 23:52:00 -0700 (PDT)
 Received: from deb05.proceq.com ([213.160.61.66])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49ce4776131sm49735335e9.11.2026.09.01.23.23.55
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cdd73f7a4sm124677705e9.12.2026.09.01.23.51.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Sep 2026 23:23:55 -0700 (PDT)
+        Tue, 01 Sep 2026 23:51:59 -0700 (PDT)
 From: Mehmet Fide <mehmet.fide@gmail.com>
 To: Bartosz Golaszewski <brgl@kernel.org>,
 	Linus Walleij <linusw@kernel.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>,
+Cc: sashiko-bot@kernel.org,
+	Dong Aisheng <aisheng.dong@nxp.com>,
 	Fabio Estevam <festevam@gmail.com>,
 	Frank Li <Frank.Li@nxp.com>,
 	Jacky Bai <ping.bai@nxp.com>,
@@ -72,12 +73,12 @@ Cc: Dong Aisheng <aisheng.dong@nxp.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Mehmet Fide <mehmet.fide@screeningeagle.com>
-Subject: [PATCH 2/2] gpio: mmio: get the direction from pinctrl when there are no direction registers
-Date: Wed,  2 Sep 2026 08:23:52 +0200
-Message-ID: <20260902062352.3600368-3-mehmet.fide@gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: imx: answer OUTPUT_ENABLE/INPUT_ENABLE queries from the pad register
+Date: Wed,  2 Sep 2026 08:51:57 +0200
+Message-ID: <20260902065158.3617522-1-mehmet.fide@gmail.com>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260902062352.3600368-1-mehmet.fide@gmail.com>
-References: <20260902062352.3600368-1-mehmet.fide@gmail.com>
+In-Reply-To: <20260902063739.A89F01F000E9@smtp.kernel.org>
+References: <20260902063739.A89F01F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -88,80 +89,28 @@ Content-Transfer-Encoding: 8bit
 
 From: Mehmet Fide <mehmet.fide@screeningeagle.com>
 
-A generic chip with GPIO_GENERIC_PINCTRL_BACKEND and no direction
-registers already sets the direction through pinctrl, but leaves
-gc->get_direction unset, so every gpiod_get_direction() call trips the
-WARN in gpiolib and the initial line state is guessed. On a Vybrid
-Colibri module that is 21 backtraces per boot.
+> [Severity: Medium]
+> Is it safe to extract a parameter from the incoming *config pointer?
+>
+> Looking at imx_pinconf_group_dbg_show() in the same file, config is passed
+> to imx_pinconf_get() uninitialized:
+[...]
+> This appears to permanently trap all subsequent loop iterations into falsely
+> triggering the generic decoding path instead of returning raw registers.
 
-Install a get_direction callback for that combination which asks the
-pinctrl backend for PIN_CONFIG_OUTPUT_ENABLE, the same way
-gpio-by-pinctrl does it and mirroring how the direction setters are
-forwarded. Pins the pin controller cannot answer for report -ENOTSUPP;
-gpiolib ignores that when requesting a line and in the debugfs dump, and
-such pins cannot change direction through this chip either, as the
-setters fail for them too. The one caller that does not ignore it is
-gpiochip_lock_as_irq(), which now refuses such a pin as an interrupt
-where it previously had nothing to check against.
+Correct, the group dump reuses an uninitialized config across the loop
+and my decode turns that into a sticky misread. In v2 the debugfs dumps
+will read the raw register through their own helper, so they never go
+through pin_config_get() and never depend on *config coming in.
 
-Suggested-by: Bartosz Golaszewski <brgl@kernel.org>
-Signed-off-by: Mehmet Fide <mehmet.fide@screeningeagle.com>
----
- drivers/gpio/gpio-mmio.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+> [Severity: High]
+> This is a pre-existing issue, but does this correctly handle generic queries
+> on SoCs that lack the requested masks?
 
-diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-index 7e4b3e8d609f..b2aa74a734e4 100644
---- a/drivers/gpio/gpio-mmio.c
-+++ b/drivers/gpio/gpio-mmio.c
-@@ -49,6 +49,7 @@ o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
- #include <linux/log2.h>
- #include <linux/module.h>
- #include <linux/pinctrl/consumer.h>
-+#include <linux/pinctrl/pinconf-generic.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
- #include <linux/spinlock.h>
-@@ -365,6 +366,28 @@ static int gpio_mmio_dir_return(struct gpio_chip *gc, unsigned int gpio,
- 		return pinctrl_gpio_direction_input(gc, gpio);
- }
- 
-+/*
-+ * Without direction registers the direction lives in the pin controller
-+ * (Vybrid: the OBE bit in the iomuxc pad), so ask pinctrl.
-+ */
-+static int gpio_mmio_pinctrl_get_dir(struct gpio_chip *gc, unsigned int gpio)
-+{
-+	unsigned long config;
-+	int ret;
-+
-+#ifdef CONFIG_PINCTRL
-+	if (list_empty(&gc->gpiodev->pin_ranges))
-+		return -EOPNOTSUPP;
-+#endif
-+
-+	config = pinconf_to_config_packed(PIN_CONFIG_OUTPUT_ENABLE, 0);
-+	ret = pinctrl_gpio_get_config(gc, gpio, &config);
-+	if (ret)
-+		return ret;
-+
-+	return config ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
-+}
-+
- static int gpio_mmio_dir_in_err(struct gpio_chip *gc, unsigned int gpio)
- {
- 	return -EINVAL;
-@@ -601,6 +624,10 @@ static int gpio_mmio_setup_direction(struct gpio_generic_chip *chip,
- 			gc->direction_input = gpio_mmio_dir_in_err;
- 		else
- 			gc->direction_input = gpio_mmio_simple_dir_in;
-+
-+		if (IS_ENABLED(CONFIG_PINCTRL) &&
-+		    cfg->flags & GPIO_GENERIC_PINCTRL_BACKEND)
-+			gc->get_direction = gpio_mmio_pinctrl_get_dir;
- 	}
- 
- 	return 0;
--- 
-2.54.0
+Also correct. Once the dumps no longer use pin_config_get(), nothing
+needs the raw fallback there anymore, so v2 makes the callback answer
+only the parameters the SoC declares and return -ENOTSUPP for anything
+else, instead of handing raw register bits to a generic caller.
 
+Thanks,
+Mehmet
