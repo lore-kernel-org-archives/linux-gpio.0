@@ -1,63 +1,63 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D8A3A7F64
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 06:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12B519A288
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 06:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788331937; cv=none; b=nDtCLE7iAA+Y5ZRQgg+Npsst8O1P1StAFeUx+5Gc9p7NNMOE2TPtPGOmlLOadsHyGSWo5Ilb1W1guBJJCv77MQm2VeIsVZVatg/kCKvU1lou9M/xx2jcvE2gj81hC5/vHHtcO5l8vbiQVqNmvPBa8vXMJJgh7v/XfSfxJDoNbDQ=
+	t=1788331945; cv=none; b=MCmho6j/biJwkWoQMxePbfK/AGbWrxFh7DFUSJ53A0WTNvt74opU/ceWm+O41NmxVTDvyKzlslvdco0ShThgDN6R0N0MG6abN3gS9iYcnwyTXPKRXztdtHNsFsLuIJ2wpPhQmLLe6WW5ePn2R2RQvVCVTcT/TiDRR4J8YMIM+Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788331937; c=relaxed/simple;
-	bh=lW19me2kn54UPGQZfTKDH2CoL8h6BT9VeZVPGdecB4g=;
+	s=arc-20240116; t=1788331945; c=relaxed/simple;
+	bh=oUBe4V9KHl8iNUfcbhC82PdW9xkiw2ga+WjG1tOSQz0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n6jfeZNqowcFV9Wj7COT7rzFLULxjNBToPeKArLjD2kYOOk8IMTPgRni3UugTq3kMvy3WPue0Ew4AJk7mvX5QWTMpoxORc3h0l4gdU9qPIC2S87c5pQmWZivJ29RPUBpoyNF1eFMxJq+6Tlutmp6g1WLUhum5GR/OTxsmoIhZt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pla2Nt/Y; arc=none smtp.client-ip=209.85.128.48
+	 MIME-Version; b=EIn3HQmD2y079xD2Wz1P6hgljPoh/lO7HbvNcXaTfHUfFxVRn87ENRdI6dtWdsjoYtZgblHK6QG42Fb4xMGcqlGWHtmuKtQqiWGi3XJc9LTcvLjHR9LFH2tvtX6pj4qj02xgjs5rDYeEFhbUQLqNuSLzeZsOZvFAvWpddkxWeDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cV1AcgQ3; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pla2Nt/Y"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-490cf322ed0so7321825e9.1
-        for <linux-gpio@vger.kernel.org>; Tue, 01 Sep 2026 23:52:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cV1AcgQ3"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-49954b88fffso4736575e9.0
+        for <linux-gpio@vger.kernel.org>; Tue, 01 Sep 2026 23:52:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788331920; x=1788936720; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788331922; x=1788936722; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=lW19me2kn54UPGQZfTKDH2CoL8h6BT9VeZVPGdecB4g=;
-        b=Pla2Nt/YQTGAtx4hKCTTd1K4WXpuMj8T0hnSNSC5SkRV/PvbKHUTi7mUIhFOm1Dhfz
-         55CcwaCiPUzVtKZpcsqpNBWNTdN+N2CpCL9d4J1wJDBRs1PHjrF5JPa1bwJ2RvUED+iq
-         MNKpE+twcbgEZ/Z4i6kLqwEI3lKSCNj/CCnfn9bYuckm6b9PbOq9z2Wob++lFKUFElqj
-         spWV/IHnOxN22EE8D6vGWz6jUF4BkwHsvh/tb9WQORBC04nQjEpucWkBXiwiNalm7UY9
-         wVNyjCsG3Qu2W3QjA9dxNSQYhx0+Jjq9BpeSyKA+jMUwU+2dJ+DasNqvV12kMcHfpA7C
-         7dYw==
+        bh=oUBe4V9KHl8iNUfcbhC82PdW9xkiw2ga+WjG1tOSQz0=;
+        b=cV1AcgQ3KKgFFxP6oEB99W4bpfGZ/11jPEQuwK/SIwFutunZDAdR1MXod/yd7tePSE
+         /4aTArgSQaXaD27GpTEB27KPke2NUJLY8KvAX16BdnTR5n00kXTGU6+w0NkqyADIR8gd
+         bwtGyit/8jHoI5jjycoX7Wilh8Jr6+hZ9iJEWe5rd+L+QKbodCynA61LMftCmoorsqLl
+         f5OEp4IoirZODndw5kjpK7pTZaWQgX+7xHKciTqOlxS4diUAznmQe0ZGbjXHbUE+cHjm
+         k27i+xpTxn9Mb4n42YU/wpZNmxJKLb++OeyqW3wbfhB6q1PiLZjsYNJGPes3DjqmAKrE
+         eyoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788331920; x=1788936720;
+        d=1e100.net; s=20251104; t=1788331922; x=1788936722;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=lW19me2kn54UPGQZfTKDH2CoL8h6BT9VeZVPGdecB4g=;
-        b=q6VU6Lxr/A0pGmylQgAbSkGEk1qUj3ul82HhDr+koPOFbY/AaOeTFdXe4HmQyOPWcC
-         V2+rqpXip9rYUTuZvzwExNkKCznNjM/KzDCGS2ynPeQX2/B2LM5Mx5/KHZPRLnaAvB+f
-         rc4WNQY/ISkpE7EXpdq6LOCLAzD2D3J+Chn1wHFAo0j2QYSxuLA387oH0yhiAPBBn453
-         xz16Rv3chffXXmsHsvNeU12wgspA5P8Aqm07J2TRF86eO7lA0GQGfiHoz8j84XBJNRsI
-         fUM7HHt+mmemJz2EB7Wll8QvGGq2rZ2AJDmXiGDxAIbgGEcweCyXlA48o6gRQSIfdXHG
-         uRtw==
-X-Forwarded-Encrypted: i=1; AHgh+Rqo11hjccfafyy+7DPwVxBx/fAMLb1IU0VhKQOSCBfxCIhdlEA/uW6ON0KtBZ7ID+vvseLBfBo5B5pO@vger.kernel.org
-X-Gm-Message-State: AFuF++nv4bD2oX7hymap5/6+AHwrMob5uBv6uYMCv8I5Dvxwl9cG/G8N
-	CoItY92oFubg2bVF0pbOmWhWlOw+yiWp+qT0ByVE1dG6SDP1G+Jzag8R
-X-Gm-Gg: AR+sD12WJGXcJQQOUjx7cGVfEbC4BYLs2jFOkKlw9VPyVn0iCoUeBipYKbKJBam3lEB
-	+MJs0Ll2Y7vZHAIJXwn3r8dSxUnIGqEOGuadl/f4ZhYD/pPrE5snwxRnNGi7FSnmvYu+ywFwn/y
-	XIOA5crbI9rpNEDY4k7UwweDwvdCK6dgRgaGjWwLi3BSFOEd/qxHz73GxzpjJci9cf+iUrey7DQ
-	fFlkofN5WZxt8EUi1eZV7zgqVAYo5V43WAG0BjwZbXpjY+lTNvUTxVJZceUV3f4jEsrphjtpEBJ
-	oJrGiHC5bN95/M6YPRQKhQZ7QDJfyh64sy7ADybOEu2wOpx91a61JRAPIaAZcwUwdFXfsLW7Scf
-	UI3KNeaIwDwaNWovvVm/5iN3Ezn37yeSI8NcN7TUwC08LtB/tstzEwMevbpmKpZ4QFPF2zEdgwm
-	TuYwPLdtjQQq32zkVYGaif+xvNKQm9ts0NUyX6lAb+ijkzUu8O51VlzLx+kwkAN0rTzQ==
-X-Received: by 2002:a05:600c:a0b:b0:49b:910c:7703 with SMTP id 5b1f17b1804b1-49ce5818612mr34637765e9.9.1788331920540;
-        Tue, 01 Sep 2026 23:52:00 -0700 (PDT)
+        bh=oUBe4V9KHl8iNUfcbhC82PdW9xkiw2ga+WjG1tOSQz0=;
+        b=ssxttT9QTzigOUC93rwTWz59CbB1FOg5b/El5cVXLzYobDWZ249Q8H5YM//5D1V7b8
+         tw+AnCZgWgJrB/1kyYvL+LxOn0Ygr7WEI43PX+hEnNEZ7R5icJA4cN/aOjHGxvELoFQ/
+         c5Yc1pf0Mds4uJEAiDYlzKWv5DA1gzRtiYsJnKInT2Me7ya+VStT/yw+cJUJXzlRPhbZ
+         ZHszf4LI7bIxZswqE1BZC2J8TmF5Kzb8UOjFSKSQIzYuomh1VMOxz/ecx/xAEke6VDtM
+         cQRJZtANvtiFLoYPukO9b6ryLOiZbxNWPcpv5mhbvwvh9dhbcMvOJsi/LZ8jb6XpAQOt
+         2Htw==
+X-Forwarded-Encrypted: i=1; AHgh+RqZrmSpZtCruM8qNOvEP9As6V8eGx5ep6PzcagZZz8lBKv+keL0mCgzCb3CK21BLK6MO7F8jMmUoqkp@vger.kernel.org
+X-Gm-Message-State: AFuF++lVQdPF/DJemrWGDHF4SmE4c96kYP4mGMu819hyVYhsdUeb3DlO
+	WoabFy/qHY2d9uwOXRiZsc+ME8OG99beeeOHeiBH6dGhnqmjPKNxsdpW
+X-Gm-Gg: AR+sD11zw3ScwGU/M7cRn3Rb+rKh12GAV+SU7pG+wsqJPtm8LjVDKhZWL4EwntH7DwU
+	cd9BRuxf/ecIkUHbJ+d8n75PkyFxdTgRRDC34uyY/eM9RRbZ7qp4ApBqpCn6ci5vsZm3Brspu4M
+	juQGdRaYJe5SlbwCRCqyCwxkwCxaRTyqMRA1sxOrRW3W9vUJed+EX1c4n5BMRmbsq4IKvtLkKdZ
+	UuPjSdBemaNdkDuOqb+HIekb2RuFplsRFHD9/fH4csRnX9grqcAH97kMzVNh1MZSuBhkeOKV8jp
+	XvEkqsMhvgZ8tN+q/dgYFAZN4HVpbCvitIaRjdmKmRbvJ4OJWvg3cIzTH4eylb2tcD68yvH7Js3
+	/ZtKvHGcMU31OV9+jBt2bbEIvefAjQYDL/Ehh1PICNHTmzUEIV0x2xO6ktwvq7mfrekI+WK8xg4
+	TyvXkmc5sLG4nzh8QF2fYCTY/eqdctlhRD8muUXKatiXLIaY6qt2tZQA75a5iMqa9ELg==
+X-Received: by 2002:a05:600c:3587:b0:49c:cee2:1697 with SMTP id 5b1f17b1804b1-49ce583bc25mr39966725e9.16.1788331921667;
+        Tue, 01 Sep 2026 23:52:01 -0700 (PDT)
 Received: from deb05.proceq.com ([213.160.61.66])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cdd73f7a4sm124677705e9.12.2026.09.01.23.51.58
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cdd73f7a4sm124677705e9.12.2026.09.01.23.52.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Sep 2026 23:51:59 -0700 (PDT)
+        Tue, 01 Sep 2026 23:52:00 -0700 (PDT)
 From: Mehmet Fide <mehmet.fide@gmail.com>
 To: Bartosz Golaszewski <brgl@kernel.org>,
 	Linus Walleij <linusw@kernel.org>
@@ -73,12 +73,12 @@ Cc: sashiko-bot@kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Mehmet Fide <mehmet.fide@screeningeagle.com>
-Subject: Re: [PATCH 1/2] pinctrl: imx: answer OUTPUT_ENABLE/INPUT_ENABLE queries from the pad register
-Date: Wed,  2 Sep 2026 08:51:57 +0200
-Message-ID: <20260902065158.3617522-1-mehmet.fide@gmail.com>
+Subject: Re: [PATCH 2/2] gpio: mmio: get the direction from pinctrl when there are no direction registers
+Date: Wed,  2 Sep 2026 08:51:58 +0200
+Message-ID: <20260902065158.3617522-2-mehmet.fide@gmail.com>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260902063739.A89F01F000E9@smtp.kernel.org>
-References: <20260902063739.A89F01F000E9@smtp.kernel.org>
+In-Reply-To: <20260902064045.60F621F000E9@smtp.kernel.org>
+References: <20260902064045.60F621F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -89,28 +89,44 @@ Content-Transfer-Encoding: 8bit
 
 From: Mehmet Fide <mehmet.fide@screeningeagle.com>
 
-> [Severity: Medium]
-> Is it safe to extract a parameter from the incoming *config pointer?
+> [Severity: High]
+> Can assigning this callback cause a scheduling-while-atomic bug?
 >
-> Looking at imx_pinconf_group_dbg_show() in the same file, config is passed
-> to imx_pinconf_get() uninitialized:
-[...]
-> This appears to permanently trap all subsequent loop iterations into falsely
-> triggering the generic decoding path instead of returning raw registers.
+> Generic MMIO GPIO chips are initialized with gc->can_sleep set to false.
+>
+> When an interrupt is activated, gpiochip_lock_as_irq() executes with the
+> IRQ descriptor's raw spinlock held. Since it sees the chip is non-sleeping,
+> it invokes this new get_direction callback directly in atomic context:
 
-Correct, the group dump reuses an uninitialized config across the loop
-and my decode turns that into a sticky misread. In v2 the debugfs dumps
-will read the raw register through their own helper, so they never go
-through pin_config_get() and never depend on *config coming in.
+This one is real and the most important of the three: irq_activate()
+runs inside the desc->lock region of __setup_irq(), reaches
+gpiochip_lock_as_irq() through gpiochip_irq_domain_activate(), and for a
+!can_sleep chip that calls get_direction(), so the pinctrl mutex would be
+taken with interrupts off. My test kernel had DEBUG_ATOMIC_SLEEP off, the
+uncontended mutex fastpath hid it.
+
+So the callback cannot ask pinctrl. v2 changes the approach: the chip
+keeps the direction in its existing shadow (sdir, under the chip's raw
+spinlock), the direction setters update it, and get_direction() only
+reads the shadow. The pad is asked once, in process context, from the
+request() callback: gpiolib calls request() right before it calls
+get_direction() for a newly requested line, so the shadow is seeded from
+PIN_CONFIG_OUTPUT_ENABLE there and the line reports what the pad says.
 
 > [Severity: High]
-> This is a pre-existing issue, but does this correctly handle generic queries
-> on SoCs that lack the requested masks?
+> Does returning these pinctrl errors break interrupt setup for valid GPIOs?
 
-Also correct. Once the dumps no longer use pin_config_get(), nothing
-needs the raw fallback there anymore, so v2 makes the callback answer
-only the parameters the SoC declares and return -ENOTSUPP for anything
-else, instead of handing raw register bits to a generic caller.
+With the shadow, get_direction() never fails: a line pinctrl cannot
+answer for keeps the input default, which is exactly what gpiolib
+assumed before this patch, so gpiochip_lock_as_irq() behaves as it did.
+
+> [Severity: Medium]
+> Will this early exit prevent the patch from determining the initial line state?
+
+Yes, the initial scan in gpiochip_add_data_with_key() runs before the
+pin ranges exist, so nothing can be read from pinctrl at that point.
+The v2 commit message will drop that claim; what the series fixes is the
+WARN and the direction reported for requested lines.
 
 Thanks,
 Mehmet
