@@ -1,241 +1,260 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B56F48820D
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 14:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4990030DD1B
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 15:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788358377; cv=none; b=mCAeApX9a+1EgI+K7VoZ5hWUFnXHRt/nQHOmM+XvM1ExIEk73R+YiaNCw6DggPv+wfbhLjTzIA5+rDYgVThgW2vb7/q0vv9ktPn/OaIsqNwz3/Hg2hNZdLjFpBvQZ3fD1baqQX4X2x5leq39Pn9aOCOnxIeMfZu5Bthq/c9nTfA=
+	t=1788363934; cv=none; b=axYnr1SviJpBN9UY20X7AswUsubiJ5Xu7cAc2sTSFUFWsyiucoXU/OfB9mzb/vOmFpBhlS4PTBMp8zQnKVosgkpW4o9WE63z42V0mbOzQ92F9I6ulIMF1XCL6SWXiPLBSwlzDniQLf9iiwf4O1tQDHbZdnOQp+2vJvIb8ThUymE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788358377; c=relaxed/simple;
-	bh=6RRBOXunsj08FTZ3ncggluNT5gwoaY3pjLUyNt64cHI=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X1+4dkrrbzo8qNpS3J7kHcoeYvFKmGYYdL4W2/Ruz3OByGcvF7ke22L0jFYBk+nVsLj4vhTqk0N8M5YoJLHp65FUm7ejx1FJowGhy5kKh6eRT1uyY4nXUzf4op7UDuGQ6dxd0mARd9qMTZHYExKbL5Dk/wZK2lmlDLzrQKnRf7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TeoZIdSD; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788363934; c=relaxed/simple;
+	bh=CQGvFSvRALghiXQoMxpKQcygboO0TQW4/ncJ6sj4Xqc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XxfB20AE8czVGO6FxerT3kJiTg5GJao8E7WvxAqGfypbvBW09GP9s4wno7HmyGbwj6cJEJi3D36ZYGT/p38chRWhD7Mc2k7M+/P3t7OLbHc7wBjsmzzVUohDqQ3rwaz7erju8SL7vezBvww13HrY0wWV/UbMiZg9Qg9gP7fbE5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X1nXUXqQ; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TeoZIdSD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD80A1F00A3F
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 14:12:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788358375;
-	bh=rN6sTLCKq1WlxEf3W8MKial3cy5QDz1RxTBBozXpCms=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=TeoZIdSDEA+nZ7QMx36OyM4F86Hclo+N0RYgBAOHt3ihIsWbvVekuo+A7iWnucMOM
-	 F9Sv1K7QHJ9EKzseeAhF5R/JKNulv/OrWoE/5sy/ovLJNCX5DhYbBTDeKwaVU2Pqaz
-	 hs74I9DB+nvNOJqHN8966Xky+bQKHzYTV32mDAQwtErFzApn1AvTFkmyxTaWdPpwz+
-	 QibfIOKE6nsAoivYrerfgPhREz8EnqbVOwKHMkxVB9COeMcoOKbZsLKEbZQiGFyo1s
-	 e5uJARYJcM32nEa4OC4aRVHgcbMxMSx42PgmVW89AAlLg88ZPEZsRG7RQpy0tcRF2K
-	 dc0tqfmuS9sBQ==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5b15dcaca31so1071316e87.0
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 07:12:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzVfVI9Ef0aL7oxCyhM3fLrpZLjGBs5nLmj6VNqUrv9lwSM+hHd5YhSqQMPMUealTzfEsC3Wl0ypj9R@vger.kernel.org
-X-Gm-Message-State: AFuF++mUobO7RcaN9qq2ZZKMji6YyzcHWvk9fysMp0QCEOaeEJuDrg8U
-	/c47IxN0dszCQV6WQm5QCk216nx2iKXairr+J8KMTvnExTEHmxuVb9ZSnrPaZKmpaxynz65a9QS
-	wF4JKva9Wz4W7koe/jWgbMXDW+jD4ejDA5kP6lQJGCQ==
-X-Received: by 2002:a05:6512:3d89:b0:5b6:421:a8fd with SMTP id
- 2adb3069b0e04-5b6087b5051mr1993779e87.29.1788358374082; Wed, 02 Sep 2026
- 07:12:54 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 2 Sep 2026 07:12:52 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 2 Sep 2026 07:12:52 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260901-pci-tc9563-aux-v1-3-dd9b80738e70@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X1nXUXqQ"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-49cdc81f40eso8540155e9.2
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 08:45:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788363929; x=1788968729; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=u0CKgK3ovQK+3XnwU1cpQ9DqhxZBZUxnsENVeMbNExk=;
+        b=X1nXUXqQLbtlBn7ZD+OHXdA5tt506MsTnk8YZWrCaBVVOFmu5x/PMKBeyfczlSuZ5j
+         ePvUaWbb6BNPwhMrxrwADHX6l4awKe07ZMRbNivK9dCOa2m/iBUDMka6WpTAPOf+6+kn
+         juxN9nmjBXFadxyArzIf0qyup6VgFyOyZjnrzt2xRiE+RXrS8UWzZnAKXksefhN5Ujn/
+         kbz0NKiYdvXPvUhwpLkcjgcpG2+kHrFIfRH6JE9gbGX+Jc4wYMxwO9RvDl+I3fetwT6c
+         0gzQX37d1dYRiDOyKHBju8m4wwnRJIwJKDxLvQmZvEJuk0guePC201M0KjhkKNJ4HnNQ
+         tvhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788363929; x=1788968729;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=u0CKgK3ovQK+3XnwU1cpQ9DqhxZBZUxnsENVeMbNExk=;
+        b=ia0WdCzmhN5UtDGAgaMCgHwi+unKBWAF0sDgx6yxX/2/4ItlgaKFSPz0Vms0l4E00/
+         qWiU6JjpxYk8LKjYjoh9uBYdJ3smBd2fl6v09cVqjMK9zIWFpHfs1x0o/GGVju0zYqU+
+         FvFDwsFE66cOG9gqkGsWkPWeLQTCPsDyFVhyi1hby1tak6N4iSK9jU2AP7J5wXeJ/ijL
+         Bx5pKp8TN+Rj0K/sTQMP9/GUJqrefOk0AZLBZH0t0e50yfuPny4LHQ6E/sFVRby/vRVJ
+         lQr8IdiGpC+gSwaGmJ2yKpbaOPeGXQ1Rr2LFxrMF0BlnbfFmGyQA6G70IpeLh2AAa2SP
+         P/3w==
+X-Forwarded-Encrypted: i=1; AHgh+Rrqz08FOO5MwVxSTuv9qRjpD41IAKB0S4y8Z8QmxH06HnimTSdRtV9lsOHGNk77SrUSiyGjnKCHtAkq@vger.kernel.org
+X-Gm-Message-State: AFuF++mMK3mjRfC+xNV/Ys1ad3l+vBnlLnxY748jETLvgmwECBz2IVEV
+	nhDl1V3aCeM8rt5IJSt/2AqCFVqFx48UaFVc6IeIC6WU09KznYfi7Qoy
+X-Gm-Gg: AR+sD13AIz57yshg/wk/E5YJJ3KwcIacPK7ud2cWo3Fc9Zt1uk4NEAFxmZy6IUUPp11
+	K7MU1qa87Y9SqZB9OrFbfjh+wXEwsFKkUVxItk7Xl/HNaZCsmctCiUShSj4jEZxnaB8Fc+IrmJT
+	k3rEOmpPC9bJX39w7ua9ss0lDHuUnd+lu3pfhy+RR/C8iNgPuGxMcFPDEOFzSFBdA8ShcnhiTs0
+	Ds6rw+0+arIlnUeQGehAM1X0GaO/Ww6p6BIBWnlZMkNbR0OL/2ADvYDlRbbtylLfxHb8BwUfQk7
+	g/NGQW/n5xniI8qPEW/JpWI9/RG54PAnoL7X0Je1K+R/J8/JTYPEiNsRxNu/wS7uqlACp4JrU5m
+	RCYiztU3OuFcA8uctOzleDrdELDpbTqBXcSHQM6MBOIsnvBEL17MnH+9xfXSFXWxTtSoSV1j8d4
+	O/jJQxz5z5Rm7Tt/N5hAyUpAFs5ohYaXM20M86IJVHv4v2JKmOlKx+CTDThBH3EGgQBg==
+X-Received: by 2002:a05:600c:3acf:b0:49c:c8de:96a9 with SMTP id 5b1f17b1804b1-49ce5810906mr113425805e9.2.1788363928485;
+        Wed, 02 Sep 2026 08:45:28 -0700 (PDT)
+Received: from deb05.proceq.com ([213.160.61.66])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cee5e686fsm530655e9.15.2026.09.02.08.45.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Sep 2026 08:45:27 -0700 (PDT)
+From: Mehmet Fide <mehmet.fide@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Mehmet Fide <mehmet.fide@screeningeagle.com>
+Subject: [PATCH v3 1/2] pinctrl: imx: answer OUTPUT_ENABLE/INPUT_ENABLE queries from the pad register
+Date: Wed,  2 Sep 2026 17:45:24 +0200
+Message-ID: <20260902154525.4090276-2-mehmet.fide@gmail.com>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <20260902154525.4090276-1-mehmet.fide@gmail.com>
+References: <20260902154525.4090276-1-mehmet.fide@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260901-pci-tc9563-aux-v1-0-dd9b80738e70@oss.qualcomm.com> <20260901-pci-tc9563-aux-v1-3-dd9b80738e70@oss.qualcomm.com>
-Date: Wed, 2 Sep 2026 07:12:52 -0700
-X-Gmail-Original-Message-ID: <CAMRc=Meajb919ZN4QYaW3E=4AktXNs1C7KPRGmkAPMrRSnPQiQ@mail.gmail.com>
-X-Gm-Features: AcwNN1UgHLMd4bA6zzWN-rQnOy4DvPk54i7L8UKWe-_sJVv321EIkRKrSQgl4uA
-Message-ID: <CAMRc=Meajb919ZN4QYaW3E=4AktXNs1C7KPRGmkAPMrRSnPQiQ@mail.gmail.com>
-Subject: Re: [PATCH 3/5] PCI/pwrctrl: tc9563: add GPIO auxiliary device support
-To: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Michael Walle <mwalle@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 1 Sep 2026 12:27:55 +0200, Lorenzo Bianconi
-<lorenzo.bianconi@oss.qualcomm.com> said:
-> The TC9563 embeds a GPIO controller used for per-port reset signals.
-> Create an auxiliary device for it so the gpio-tc9563 driver can
-> register the GPIO chip and enable DT-based GPIO lookups. Pass the
-> tc9563 regmap to the auxiliary device as its platform data.
->
-> The downstream port DT parsing loop gains an of_node_is_type() filter
-> to skip non-PCI child nodes such as the GPIO controller node.
->
-> The pwrctrl driver does not wait for the GPIO chip to be probed. The
-> per-port reset GPIO lookup, returning -EPROBE_DEFER until the chip is
-> registered, is added in the next patch.
->
-> Select AUXILIARY_BUS and GPIO_TC9563 in Kconfig.
->
-> Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-> ---
->  drivers/pci/pwrctrl/Kconfig              |  2 +
->  drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c | 78 ++++++++++++++++++++++++++++++--
->  2 files changed, 77 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/pci/pwrctrl/Kconfig b/drivers/pci/pwrctrl/Kconfig
-> index 1952ab4f29b6..a07694fae0c9 100644
-> --- a/drivers/pci/pwrctrl/Kconfig
-> +++ b/drivers/pci/pwrctrl/Kconfig
-> @@ -30,6 +30,8 @@ config PCI_PWRCTRL_TC9563
->  	default m if ARCH_QCOM
->  	depends on I2C
->  	select REGMAP_I2C
-> +	select AUXILIARY_BUS
-> +	select GPIO_TC9563
+From: Mehmet Fide <mehmet.fide@screeningeagle.com>
 
-I think this should depend on it, not select it?
+The mmio pinconf get callback ignores which parameter was requested and
+returns the raw conf register, so a generic query through
+pinctrl_gpio_get_config() gets register bits back instead of the packed
+parameter it asked for.
 
->  	help
->  	  Say Y here to enable the PCI Power Control driver of TC9563 PCIe
->  	  switch.
-> diff --git a/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c b/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c
-> index b0d8912690a2..ee9c26b8f5cb 100644
-> --- a/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c
-> +++ b/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c
-> @@ -4,11 +4,13 @@
->   */
->
->  #include <linux/array_size.h>
-> +#include <linux/auxiliary_bus.h>
->  #include <linux/bitfield.h>
->  #include <linux/bits.h>
->  #include <linux/delay.h>
->  #include <linux/device.h>
->  #include <linux/gpio/consumer.h>
-> +#include <linux/gpio/driver.h>
->  #include <linux/i2c.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> @@ -20,12 +22,10 @@
->  #include <linux/regulator/consumer.h>
->  #include <linux/string.h>
->  #include <linux/types.h>
-> +#include <linux/soc/qcom/tc9563.h>
->
->  #include "../pci.h"
->
-> -#define TC9563_GPIO_CONFIG		0x801208
-> -#define TC9563_RESET_GPIO		0x801210
-> -
->  #define TC9563_PORT_L0S_DELAY		0x82496c
->  #define TC9563_PORT_L1_DELAY		0x824970
->
-> @@ -393,6 +393,71 @@ static int tc9563_pwrctrl_parse_device_dt(struct device_node *node,
->  	return 0;
->  }
->
-> +static void tc9563_pwrctrl_adev_release(struct device *dev)
-> +{
-> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> +
-> +	of_node_put(adev->dev.of_node);
-> +	kfree(adev);
-> +}
-> +
-> +static void tc9563_pwrctrl_adev_remove(void *data)
-> +{
-> +	struct auxiliary_device *adev = data;
-> +
-> +	auxiliary_device_delete(adev);
-> +	auxiliary_device_uninit(adev);
-> +}
-> +
-> +static int tc9563_pwrctrl_adev_add(struct device *dev, const char *name,
-> +				   u32 id, struct device_node *of_node,
-> +				   void *priv_data)
-> +{
-> +	struct auxiliary_device *adev;
-> +	int ret;
-> +
-> +	adev = kzalloc_obj(*adev);
-> +	if (!adev) {
-> +		of_node_put(of_node);
+Decode the requested parameter and answer PIN_CONFIG_OUTPUT_ENABLE and
+PIN_CONFIG_INPUT_ENABLE on SoCs that declare where those bits live in
+the pad register; Vybrid has OBE at bit 1 and IBE at bit 0. The answer
+is 0 with the bit value as the argument, which is what the
+pinctrl_gpio_get_config() users (gpio-by-pinctrl, and gpio-mmio in the
+next patch) expect. Other parameters and the SCU based SoCs, whose
+firmware call returns the raw pad value as well, get -ENOTSUPP; a pin
+the device tree never configured gets -EINVAL, as the raw helper already
+does, so a caller can tell "no answer for this pin" from "this
+controller never answers".
 
-This is a bit confusing. You get the node in tc9563_pwrctrl_add_gpio_adev() but
-you put it here. Please either do both here or there.
+The pin index comes from the gpio range unchecked and the driver indexes
+flat arrays with it, so an out of range gpio-ranges entry would read
+past pin_regs[]. Nothing called pin_config_get through a gpio range on
+these SoCs before; now something will, so reject an index beyond npins.
 
-> +		return -ENOMEM;
-> +	}
-> +
-> +	adev->id = id;
-> +	adev->name = name;
-> +	adev->dev.parent = dev;
-> +	adev->dev.platform_data = priv_data;
-> +	adev->dev.release = tc9563_pwrctrl_adev_release;
-> +	adev->dev.of_node = of_node;
-> +
-> +	ret = auxiliary_device_init(adev);
-> +	if (ret) {
-> +		of_node_put(of_node);
-> +		kfree(adev);
-> +		return ret;
-> +	}
-> +
-> +	ret = auxiliary_device_add(adev);
-> +	if (ret) {
-> +		auxiliary_device_uninit(adev);
-> +		return ret;
-> +	}
-> +
-> +	return devm_add_action_or_reset(dev, tc9563_pwrctrl_adev_remove, adev);
-> +}
-> +
-> +static int tc9563_pwrctrl_add_gpio_adev(struct tc9563_pwrctrl *tc9563)
-> +{
-> +	struct device *dev = tc9563->pwrctrl.dev;
-> +	struct device_node *node;
-> +
-> +	node = to_of_node(gpiochip_node_get_first(dev));
-> +	if (!node)
-> +		return 0;
-> +
-> +	return tc9563_pwrctrl_adev_add(dev, TC9563_GPIO_DEV_NAME, 0, node,
-> +				       tc9563->regmap);
-> +}
-> +
->  static int tc9563_pwrctrl_power_off(struct pci_pwrctrl *pwrctrl)
->  {
->  	struct tc9563_pwrctrl *tc9563 = container_of(pwrctrl,
-> @@ -565,6 +630,9 @@ static int tc9563_pwrctrl_probe(struct platform_device *pdev)
->  	 */
->  	port = TC9563_USP;
->  	for_each_child_of_node_scoped(node, child) {
-> +		if (!of_node_is_type(child, "pci"))
-> +			continue;
-> +
->  		if (++port >= TC9563_MAX)
->  			break;
->
-> @@ -596,6 +664,10 @@ static int tc9563_pwrctrl_probe(struct platform_device *pdev)
->  	tc9563->pwrctrl.power_on = tc9563_pwrctrl_power_on;
->  	tc9563->pwrctrl.power_off = tc9563_pwrctrl_power_off;
->
-> +	ret = tc9563_pwrctrl_add_gpio_adev(tc9563);
-> +	if (ret)
-> +		goto remove_i2c;
-> +
->  	ret = devm_pci_pwrctrl_device_set_ready(dev, &tc9563->pwrctrl);
->  	if (ret)
->  		goto power_off;
->
-> --
-> 2.55.0
->
->
+The only in-tree user of the raw register was the debugfs group dump,
+which called the callback with an uninitialized config; it now reads
+the register through its own helper, like the single pin dump already
+did.
 
-Bart
+The set callback is not touched: the fsl,pins binding hands it the raw
+pad register value and that stays the only thing it accepts. Nothing
+in-tree sends generic parameters to it on these SoCs; making it
+understand them is a separate change.
+
+This gives gpio-mmio a way to read back the line direction on chips
+whose direction lives in the pin controller.
+
+Suggested-by: Bartosz Golaszewski <brgl@kernel.org>
+Signed-off-by: Mehmet Fide <mehmet.fide@screeningeagle.com>
+---
+ drivers/pinctrl/freescale/pinctrl-imx.c   | 56 +++++++++++++++++++++--
+ drivers/pinctrl/freescale/pinctrl-imx.h   |  4 ++
+ drivers/pinctrl/freescale/pinctrl-vf610.c |  2 +
+ 3 files changed, 58 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.c b/drivers/pinctrl/freescale/pinctrl-imx.c
+index 9a45b376d36f..1bcb2f772d38 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx.c
+@@ -21,6 +21,7 @@
+ 
+ #include <linux/pinctrl/machine.h>
+ #include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinconf-generic.h>
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinmux.h>
+ 
+@@ -291,8 +292,8 @@ struct pinmux_ops imx_pmx_ops = {
+ 	.set_mux = imx_pmx_set,
+ };
+ 
+-static int imx_pinconf_get_mmio(struct pinctrl_dev *pctldev, unsigned pin_id,
+-				unsigned long *config)
++static int imx_pinconf_get_raw_mmio(struct pinctrl_dev *pctldev,
++				    unsigned int pin_id, unsigned long *config)
+ {
+ 	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct imx_pinctrl_soc_info *info = ipctl->info;
+@@ -312,16 +313,63 @@ static int imx_pinconf_get_mmio(struct pinctrl_dev *pctldev, unsigned pin_id,
+ 	return 0;
+ }
+ 
++static int imx_pinconf_get_mmio(struct pinctrl_dev *pctldev,
++				unsigned int pin_id, unsigned long *config)
++{
++	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
++	const struct imx_pinctrl_soc_info *info = ipctl->info;
++	const struct imx_pin_reg *pin_reg = &ipctl->pin_regs[pin_id];
++	enum pin_config_param param = pinconf_to_config_param(*config);
++	unsigned int mask;
++	u32 raw;
++
++	switch (param) {
++	case PIN_CONFIG_OUTPUT_ENABLE:
++		mask = info->obe_mask;
++		break;
++	case PIN_CONFIG_INPUT_ENABLE:
++		mask = info->ibe_mask;
++		break;
++	default:
++		mask = 0;
++		break;
++	}
++
++	if (!mask)
++		return -ENOTSUPP;
++	if (pin_reg->conf_reg == -1)
++		return -EINVAL;
++
++	raw = readl(ipctl->base + pin_reg->conf_reg);
++	*config = pinconf_to_config_packed(param, !!(raw & mask));
++
++	return 0;
++}
++
+ static int imx_pinconf_get(struct pinctrl_dev *pctldev,
+ 			   unsigned pin_id, unsigned long *config)
+ {
+ 	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
+ 	const struct imx_pinctrl_soc_info *info = ipctl->info;
+ 
++	if (info->flags & IMX_USE_SCU)
++		return -ENOTSUPP;
++	if (pin_id >= info->npins)
++		return -EINVAL;
++
++	return imx_pinconf_get_mmio(pctldev, pin_id, config);
++}
++
++static int imx_pinconf_get_raw(struct pinctrl_dev *pctldev,
++			       unsigned int pin_id, unsigned long *config)
++{
++	struct imx_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
++	const struct imx_pinctrl_soc_info *info = ipctl->info;
++
+ 	if (info->flags & IMX_USE_SCU)
+ 		return info->imx_pinconf_get(pctldev, pin_id, config);
+ 	else
+-		return imx_pinconf_get_mmio(pctldev, pin_id, config);
++		return imx_pinconf_get_raw_mmio(pctldev, pin_id, config);
+ }
+ 
+ static int imx_pinconf_set_mmio(struct pinctrl_dev *pctldev,
+@@ -426,7 +474,7 @@ static void imx_pinconf_group_dbg_show(struct pinctrl_dev *pctldev,
+ 		struct imx_pin *pin = &((struct imx_pin *)(grp->data))[i];
+ 
+ 		name = pin_get_name(pctldev, pin->pin);
+-		ret = imx_pinconf_get(pctldev, pin->pin, &config);
++		ret = imx_pinconf_get_raw(pctldev, pin->pin, &config);
+ 		if (ret)
+ 			return;
+ 		seq_printf(s, "  %s: 0x%lx\n", name, config);
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx.h b/drivers/pinctrl/freescale/pinctrl-imx.h
+index f65ff45b4003..8fa7e1e2521d 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx.h
++++ b/drivers/pinctrl/freescale/pinctrl-imx.h
+@@ -91,6 +91,10 @@ struct imx_pinctrl_soc_info {
+ 	unsigned int mux_mask;
+ 	u8 mux_shift;
+ 
++	/* OBE/IBE bits in the conf register, 0 if the pad does not have them */
++	unsigned int obe_mask;
++	unsigned int ibe_mask;
++
+ 	int (*gpio_set_direction)(struct pinctrl_dev *pctldev,
+ 				  struct pinctrl_gpio_range *range,
+ 				  unsigned offset,
+diff --git a/drivers/pinctrl/freescale/pinctrl-vf610.c b/drivers/pinctrl/freescale/pinctrl-vf610.c
+index 76a4bc0181a0..77d077618782 100644
+--- a/drivers/pinctrl/freescale/pinctrl-vf610.c
++++ b/drivers/pinctrl/freescale/pinctrl-vf610.c
+@@ -319,6 +319,8 @@ static const struct imx_pinctrl_soc_info vf610_pinctrl_info = {
+ 	.gpio_set_direction = vf610_pmx_gpio_set_direction,
+ 	.mux_mask = 0x700000,
+ 	.mux_shift = 20,
++	.obe_mask = 0x2,
++	.ibe_mask = 0x1,
+ };
+ 
+ static const struct of_device_id vf610_pinctrl_of_match[] = {
+-- 
+2.54.0
+
