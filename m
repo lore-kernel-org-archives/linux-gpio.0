@@ -1,98 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB0647277C
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 12:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CFC41F5E6
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 12:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788352808; cv=none; b=FEp48K/P6JqbGY0+itEx+f/ZFerh+xrY9pkoG/X6D2YcIK1mR6JgLQMopNI6SwhCYZyumwivMvQEhGR8pKwcDSvktYrtdQ79K86Qtsv4Rh63PbKw4LzeT0VFvrZTFXw+5N32q6MY3XjkUDFYByr+Zk95kIh1c52iudTRMpr+azo=
+	t=1788353912; cv=none; b=kq1JwGKLfc9VKvfZNF+EwGx+/QLk4UsLC2MCrvi29X+Z5lmArgzGaFMwaNC6DX81AobEgYAg/wJ2O5L0iLVvzADaa0+mrPNlCnLY69AvEuRA2+SNQJ7lZLBAqAul4MOpMOfDFuNodPeeZzRvAfpkFJ2uJcLJpSkZuUFwIR8j2lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788352808; c=relaxed/simple;
-	bh=Klpe8gBA+2PNCx51bSzo/EuN3LxVCEYUTgBKdo6fIh8=;
+	s=arc-20240116; t=1788353912; c=relaxed/simple;
+	bh=umVqKIohmkT4iOGNo/tKDzgfluTd945fREkvHl4zJnM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QbO2gp/NTReSSmDCRFXOKpgEvzAngj79OFXYcvmuV0JnOKPhKDVviI8VF5XLv5QR5Yqfs2iJxkonw/fGDR5brvAWkAff0grmz0kyw3FDlPZCaujhL7YDmU2ofAvm1Om8tnML4wAEp2hN2+gUKo3nPmsdE3WRweBohcOjQMJRW2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MJz0oPUx; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=r6C5y4WX0pGsxVF5zvqX3rFeKOwFZ0TkeBl5qvM1CuMqRYfq8CXB/b1be3XE+Lr7BJuPPRKVCWFYy/qQWyQ6mO164ipiwKl/a8TEbCADFkW1rcNaJMed+UzhWxP+zVtHhtgM/lWrVi9gj6eJ2SAoW4vRcYHbg04ML6StI/ttJAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAvxDkqU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MJz0oPUx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F4A41F00A3A
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 12:40:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAvxDkqU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F5571F00ADF
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 12:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788352807;
-	bh=Klpe8gBA+2PNCx51bSzo/EuN3LxVCEYUTgBKdo6fIh8=;
+	s=k20260515; t=1788353911;
+	bh=Wlml6ZbJTx2/0zF5rhvA3HzrKGIPZmpTno210GiX85k=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=MJz0oPUxfO3QSEwUNGtpXHy+HuBfTpqV/zHYyEX7j08CkMxlewomCO4Q3E2RbN1Wp
-	 wEULcFHD710w/brCMoAevkIUzaZQIzAmn2JqiJ8GUKI8XPwwXQ+ZYbeJGczKCa7Ssp
-	 AMyYuc4AKZ/PpLDJH4JzWPivCY5C9eE1wJNsE2AfDJ7BxB/zR0leoCMApSuFA0S8mI
-	 JA0AEhQm8gaAW7SvhWlN4/Z2yt0Xy13B2JtwzI1s8fAslrUUp9e/XIW1ZQtMSI2KZG
-	 Cgm1TMpNWaZgecR+SQvDHgVINgZYSPrR/A0EeQLFUDY9BjHmKGgxzVOVQvDhsq/KW1
-	 I13nLOmrw4TJw==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-39c953950dfso9146911fa.1
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 05:40:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBx268cVr7nxsqd5B+QOKvkeuMW3efK8rS1zyw/1HlVHAEpUCDVWIeU7L99ICDTSRSydeLxYlI3SRYCT@vger.kernel.org
-X-Gm-Message-State: AFuF++nJmeCt3JuqS0sWKvQiPv4NL0i2cdqF6B1aqLCyMAkW83rRm6fP
-	IPLY8hGLoKEX60W/AxA11NjVe0FUSaw1tuha8D9pmCWV6Ndkr7r0cT6hfnag2UcY44Y+M0q/EJB
-	Yq2DHMKA5T/hysdu62z4io0KkM6Rn27M=
-X-Received: by 2002:a05:6512:1252:b0:5b4:ab2f:5bd5 with SMTP id
- 2adb3069b0e04-5b608347bb7mr1568323e87.8.1788352806105; Wed, 02 Sep 2026
- 05:40:06 -0700 (PDT)
+	b=mAvxDkqUROIthEftdJ9QkLt2PDX9PYliG+1ivbgsDCRZTgzVdE2hOuwvRfmttzifv
+	 NKCMXQ8blBXMBz+VXKnM8wS36rQ6qbHBt/wuSGGtdegpl5680Cs8Eu3vbHw5QEJLOV
+	 tIQFQOU1qp1t+/IyMMqivfUg6SautXeJ+fvK++Y6+iCVq7WU1yOKakNgwd3IMGdRUX
+	 knWKEtMRMsfJ6geWCfjHOZRWeSdjed54k2rXEbNfLsThcGzfmGbZY49qoAZpD98ZAO
+	 +tpAyIgqjNYVTVNKIbuIATlF5vm3OulJr2SJDY4a9oYBZ6N589WT541yva9lArLdQo
+	 MUjn0xgbOwa9A==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5b4a95ab94fso2135961e87.0
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 05:58:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzYQYxB5cooQ5o0eUp+oTu+bfELWkIOlu/ROKwXtMp7XdYSmDQZH0vUzJD9a9H0vQOoH3g5Eq4nWFEM@vger.kernel.org
+X-Gm-Message-State: AFuF++n2j/y8rFagCSv3cNeiJo46DN7wGaWY4QuEEj/0siL93cY9EUZy
+	JK5+PIdUoGW1FDuX2oWGAttDa2OmfWcllugRBuYi7EUzlm/GpmzzjP0TQ+89zqtI3fQeEeMEw9I
+	WW9LDm4H64d8JSP1UZ9ku0npoh5s24xw=
+X-Received: by 2002:a05:6512:ac6:b0:5b2:c068:3530 with SMTP id
+ 2adb3069b0e04-5b60c30a181mr881695e87.13.1788353910042; Wed, 02 Sep 2026
+ 05:58:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1788346553.git.mazziesaccount@gmail.com> <5eb294e68b8d5d2c1d3a12b14a55dd2a9c075a09.1788346553.git.mazziesaccount@gmail.com>
-In-Reply-To: <5eb294e68b8d5d2c1d3a12b14a55dd2a9c075a09.1788346553.git.mazziesaccount@gmail.com>
+References: <20260902-rzg2-sr-boards-v4-0-4a456a422fee@solid-run.com> <20260902-rzg2-sr-boards-v4-2-4a456a422fee@solid-run.com>
+In-Reply-To: <20260902-rzg2-sr-boards-v4-2-4a456a422fee@solid-run.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 2 Sep 2026 14:39:52 +0200
-X-Gmail-Original-Message-ID: <CAD++jLkvELVwVD2B-OPF=mV8-F5xi7RZWJ7cvuyg2srnrJ2HLQ@mail.gmail.com>
-X-Gm-Features: AcwNN1XLITgbm1aOFoVQnd28TjU_0cWWW0RJDEA68aIrbre66YkBVpUmqod9dXc
-Message-ID: <CAD++jLkvELVwVD2B-OPF=mV8-F5xi7RZWJ7cvuyg2srnrJ2HLQ@mail.gmail.com>
-Subject: Re: [PATCH v3 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
-	Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>, 
+Date: Wed, 2 Sep 2026 14:58:15 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=fGonMHd0jitwAE8+w=JYPX_6YFW6CzS9kRZLbx3045Q@mail.gmail.com>
+X-Gm-Features: AcwNN1UCFhm1aHVlm-BJzhSf8J2NeZK15MsuFS_3j_uqyeamxc-SEKtsEnY_q0U
+Message-ID: <CAD++jL=fGonMHd0jitwAE8+w=JYPX_6YFW6CzS9kRZLbx3045Q@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow
+ input-enable pinconf
+To: Josua Mayer <josua@solid-run.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
 	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Jon Nettleton <jon@solid-run.com>, 
+	Mikhail Anikin <mikhail.anikin@solid-run.com>, Yazan Shhady <yazan.shhady@solid-run.com>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Matti,
+Hi Joshua,
 
 thanks for your patch!
 
-On Wed, Sep 2, 2026 at 1:07=E2=80=AFPM Matti Vaittinen
-<matti.vaittinen@linux.dev> wrote:
+On Wed, Sep 2, 2026 at 1:50=E2=80=AFPM Josua Mayer <josua@solid-run.com> wr=
+ote:
 
-> From: Matti Vaittinen <mazziesaccount@gmail.com>
+> The list of allowed pinconf properties already includes input-enable,
+> but has omitted input-disable.
 >
-> The ROHM BD73800 PMIC has 4 pins (named GPIO1, CLKOUT, FAULT_B and
-> EXTEN_OUT) which might have been set to operate as a GPI or GPO when OTP
-> (One Time Programmable memory) is written at device manufacturing.
-> Support the GPI/GPO use-case via GPIO framework.
+> Both refer to the same hardware property, setting and clearing input-enab=
+le.
 >
-> The default OTP for these pins is to not use any of them as GPI or GPO.
-> (The GPIO1 defaults as an ADC input regardless the naming). Hence the
-> driver assumes none of these pins is a GPI/GPO unless explicitly pointed
-> as GPI or GPO via device tree.
+> Add input-disable to the list.
 >
-> Furthermore, pin's direction can't be changed after OTP configuration is
-> done. Also the default drive type for a GPO (CMOS / Open Drain) is set
-> by the OTP configuration. The BD73800 has a set of undocumented test
-> registers which should allow changing the drive type. Access to the test
-> register area or the test registers aren't documented and so this driver
-> does not support configuring the drive type even though it might be
-> doable.
->
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
+(...)
+> +        input-disable: true
 
-Pretty neat with gpio-regmap isn't it? :)
+The Subject of this patch is  "Allow input-enable pinconf".
+
+But what you are doing is allowing input-disable.
+
+With the subject fixed:
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
