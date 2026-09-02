@@ -1,105 +1,103 @@
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2DE47DD71
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 12:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEF5484231
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 12:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788350641; cv=none; b=Jk/TFzyXKVPZdK/sGL6KFuEwrzUkPjOu+ZzJjFPDGumAQ+Es4wIgllKUFIDTj9anPf/lucKEvwFgD1/dWT4oBVlpsJdOiJOGlwyCmPVvVNvHdedlnXpFruz46vQrvj5AQ6icS4uAYKNK/3yIj5dHO54tpG9pXux5KjbBZXmPJJ8=
+	t=1788352224; cv=none; b=QGvBwU5xlCEJUTLwXUiEmobXVpdmBFhEAQgPxRNRUP9h1VDMhizut2lm3GR3kvlNeSy7QpJSN/IcuC1SeQF9p93NqQ5se2njc2WAMmFQBdkdeltfT/z6PukwvMUR7v7gS1nHNPYV41ADRQ2KUlT1hQWbvV4pHGbq520UI+cwdDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788350641; c=relaxed/simple;
-	bh=BGVT6NiiPBGrDzAWTCenC1f6pOP4TmMvoz1BBe+v1UE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TzTu6KGLwcWF+qSwXpZGZgBx7lBn58gF7XquT3kDLqvbhn2zf/KVfo3T9C1GEzE+vHF+HmDXvWtbFeIAUEsxC6HMnQi+1Yd9yz69ZHEJ2TlkA/FGRYiKGVHGVgde9iEruvvT6PIgJnV2rk79fM1SvpX/oAjn55INk+a/cQbkr2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5c675de8e1dso393707e0c.2
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 05:03:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788350630; x=1788955430;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=zZuEv2ob4j8Zh+WhkA/MTuPTTESwfEtjHWVWham0Lxc=;
-        b=asoLkOsm3+MZc8ZXtZ57k9qfmrjNgCrIe4enrxbsmXAHWzMo8vky6lpnN1PmD14xCC
-         va0LI6J+U9ZBf3xzOm+jVSvdiQ7KgNpPacDbt/2aDbpu/O7jALijfd8VwSYMU/s4wS4e
-         GDyt5MFvd8vvSfm1OfJfAkwFzWGKUxKS1csJn8KurNYjhpCkr1qp+VHQNysE4t/zipze
-         Nz6UXJ5N1ksuT7DEbbzQfXV3GkCLXjtPIZ+t2tlBhuSqZ2nwCfVs1uM0wSOA+rWI/c7L
-         X9bDvfOmo/tFaZ43MbZwRI2OKuywWOFLTrYZY02PNTi2sqKoIyolbvnPyseDxSTNzM9/
-         rIYg==
-X-Forwarded-Encrypted: i=1; AKwUvBwgfkZAWuBxLWWa5X5gURcO9ztCRdYZjWBEOwt1QDCTrlDEDoaUk/qJcKAvURU94ZwBtEuqTpfBJpNI@vger.kernel.org
-X-Gm-Message-State: AFuF++lZunwYM/Sb5XmuLQp+N1pEooz3mF9OpLXpq8aGX8LU8IhnodZs
-	IUtj9Gng8ssmE1/I6jp7WtiVaUZ1RHl7CyW2aT9fwCmYr1SCRclqS1C3vzyRGKZ3
-X-Gm-Gg: AYBFou0JjTlE572j4/GsWeBmmYtLfQJiMROM+7Nm/oSKfQAvv/hz89zoaXkCGA76PG7
-	vmM2hFqBuPhKCBl6rDWDsNYp0ispnt6ZjuYoF7D+M1ioRFB28l1MzxtwcK3DzPGJ9W9X4aN9Mpu
-	0BiKVp8cV2y/oJQJ1npsi9LO9NZ9gZKoQoSTtqxlxHP3fZOts+g7I0lt51lRNV+WZNSvmvCde4T
-	q5l48WEaS2r9KRTuwjT57JrB4qBDPjQ6pbgsww/fakgC2+zte2VaWYJJWZF2pybGN5VifVJygtO
-	WPskA3TvoQeLS06jvJEduJJ7tDGdGd1BWijP5XHDLePQdPoM8wU2I4D9dbjblthfbT6uSq+a4tD
-	xOKFResMfjuuAGTGGhO3Onv7THNChKxl5Vem6Y+vEAQkrZmeox07d8E3y4UtYvU/KdTCJ/ZIXSS
-	XDyDUl1mn+ONYam80PUwkpmfMT11bMLNoA4SKXxTnAegtxI2hX69Ed5nllbhz9ukJMjirbPAafs
-	/WdeNhpTwGIngPQ8doljgGIXpzl4w==
-X-Received: by 2002:a05:6122:3d0b:b0:5bd:af82:fd9e with SMTP id 71dfb90a1353d-5c7d288d348mr1605737e0c.8.1788350629786;
-        Wed, 02 Sep 2026 05:03:49 -0700 (PDT)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7cd73a0c1sm1800438e0c.4.2026.09.02.05.03.48
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 05:03:48 -0700 (PDT)
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5c7afda4515so569126e0c.1
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 05:03:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBygJgaJMmc8SYzvP50YJL/R77LvpYahVUreDhuVcGwLOswDVjcyO/iab0urBOxrKFHtv99gQHoD2v3H@vger.kernel.org
-X-Received: by 2002:a05:6102:14a5:b0:784:94dd:5389 with SMTP id
- ada2fe7eead31-78a1f3954bfmr1187932137.13.1788350628203; Wed, 02 Sep 2026
- 05:03:48 -0700 (PDT)
+	s=arc-20240116; t=1788352224; c=relaxed/simple;
+	bh=Jw8I8KiyBzK4krNuRNEbLp7x85N3k1ph/dDFzes/gD4=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O0FEQ/WIfNO0wj1WIM6TG6RxpSQ/891k5/7DPtKH/Oz+37oOJte1hRGhcKm4a0hoJM0qfgFOhbe7V4AQeG+kBVDSZLOhk3WyPnOYt9IuNvGGLkzoNU1xQESQ4qQ8ImiU9s+/qs/n5m7a0TvHNG1cFerlW/BLHfnImlW8pQ0eouU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mePyn1Kr; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mePyn1Kr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CFF11F000E9
+	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 12:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788352223;
+	bh=Jw8I8KiyBzK4krNuRNEbLp7x85N3k1ph/dDFzes/gD4=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=mePyn1KrKlUIC0pDJ80SXU8qbae+hipt/NTAtNHnA+cYwDqtQICrwzCor7bqW/UPK
+	 1FV67Mh1McRjLwzgHQBE4lLcZccbquuTffZcNzJGEfIpEhJqt6dijEGng+91dQc79k
+	 E/2nBIosQg4eBVNWa35xPddj8L2qa0m3+4fC1yG+0v8f1KlK/5R7gKww2VcIg5OF0k
+	 O4MuC0VmnIOmatkWtXAVtj6GyyxhDRHTAkloYkehpq+8VCAtkoB4S7roa7IQ/IaIN0
+	 /hZjT6741Qm2oGGxel8EsWztMr/Q7eOfHr1RWFfQihAMNBzeW7GHIss7/cnDbSaaV3
+	 hvdOUNcp+b7ww==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5b5f21afe8cso2848030e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 05:30:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwJEtKQ1EoWiMuF0qLwv7F1oUJa1pmCUwp9qlbl+BAHxD+lazUWkDJKdboXuYWbYUpUBoj7q0LEjStW@vger.kernel.org
+X-Gm-Message-State: AFuF++ndBXJgvpOLmpRIb8+Itw7hQRoxQGUqppgU63vebRNCWgMXqbVG
+	CKnPjCVKPkQH8FvmtauXR6nMZaCh2OnZjDxshPbcGHvjFua6RqeKbRAScG9I5G+uINmGwphJWEe
+	HGQU4D6/OM1MkAimfUS01NmPJNCvJyL02k4wRf6zKeg==
+X-Received: by 2002:a05:6512:228d:b0:5b5:e2c0:510b with SMTP id
+ 2adb3069b0e04-5b60c2af6d7mr680289e87.4.1788352222274; Wed, 02 Sep 2026
+ 05:30:22 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 2 Sep 2026 05:30:19 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 2 Sep 2026 05:30:19 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260902-fw-devlink-nexus-ready-v1-1-68fe1996e78a@toradex.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260902-rzg2-sr-boards-v4-0-4a456a422fee@solid-run.com>
-In-Reply-To: <20260902-rzg2-sr-boards-v4-0-4a456a422fee@solid-run.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 Sep 2026 14:03:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVZfH5rzN-xFvyfERt=j+c0aF7ZSbAn7XTM=R_u55+3MQ@mail.gmail.com>
-X-Gm-Features: AcwNN1W7aL6kq2Ib0xjLGz4RQRE9m6dme2IHxODeY3IaF54CXwsKAcwLlCow_cY
-Message-ID: <CAMuHMdVZfH5rzN-xFvyfERt=j+c0aF7ZSbAn7XTM=R_u55+3MQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] arm64: dts: renesas: Add various SolidRun RZ/G2
- based boards
-To: Josua Mayer <josua@solid-run.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
-	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+References: <20260902-fw-devlink-nexus-ready-v1-0-68fe1996e78a@toradex.com> <20260902-fw-devlink-nexus-ready-v1-1-68fe1996e78a@toradex.com>
+Date: Wed, 2 Sep 2026 05:30:19 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MfN73=K1nZrqUbhrMSijjpzhF_z_U9JU4_H163W0vRpqA@mail.gmail.com>
+X-Gm-Features: AcwNN1U24dyKB99fnkPXyWUGjekW0b5TNJ_oPsk5eSnHyaY2MGzi9qRRlixYVp8
+Message-ID: <CAMRc=MfN73=K1nZrqUbhrMSijjpzhF_z_U9JU4_H163W0vRpqA@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/2] of: property: fw_devlink: Follow GPIO nexus maps
+To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+	"Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li <Frank.li@oss.nxp.com>, 
+	Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Herve Codina <herve.codina@bootlin.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Leonardo Costa <leonardo.costa@toradex.com>, 
+	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Joshua,
+On Wed, 2 Sep 2026 13:41:39 +0200, Ernest Van Hoecke
+<ernestvanhoecke@gmail.com> said:
+> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+>
+> GPIO consumers use of_parse_phandle_with_args_map() to resolve specifiers
+> through gpio-map properties. fw_devlink instead parses GPIO properties as
 
-On Wed, 2 Sept 2026 at 13:50, Josua Mayer <josua@solid-run.com> wrote:
-> Add support for a variety of SolidRun RZ/G2 based SoMs and the
-> HummingBoard IIoT Evaluation board.
+Unlike PWM, there's no such thing as "gpio-map" properties.
 
-Thanks for your series!
+> direct phandle references, so it records the nexus node as the supplier
+> rather than the mapped GPIO provider.
+>
 
-> Changes in v7:
+Can you point me to an example? I'm not sure what a nexus node is in the
+context of GPIO.
 
-Oops, subject says v4?
-Fortunately b4 is not confused, and does The Right Thing(tm)...
+> A nexus is a translation node, not the GPIO provider, and need not be
+> populated as a device. The resulting fwnode link can therefore remain
+> unresolved and indefinitely defer the consumer while
+> device_links_check_suppliers() waits for the nexus.
+>
+> Use the map-aware parser for all supported GPIO property spellings. This
+> makes fw_devlink resolve the same provider as the GPIO consumer API. Direct
+> GPIO references continue to work because the map-aware parser returns the
+> original provider when no gpio-map property is present.
+>
+> Add OF unittest coverage for mapped and direct GPIO suppliers, including
+> the deprecated singular and unprefixed property spellings.
+>
 
-Gr{oetje,eeting}s,
+Since this is a fix that we may want to backport, the unit tests should go in
+a separate, follow-up commit.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Bart
