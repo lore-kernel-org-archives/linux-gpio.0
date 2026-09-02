@@ -1,151 +1,161 @@
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010017.outbound.protection.outlook.com [52.101.69.17])
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A215F39FCAE;
-	Wed,  2 Sep 2026 08:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788337398; cv=fail; b=BNguuMzO3ICxXlyWrPANgKzcwzJllWWwF/dwGi+riwz5P1+TJwTqu8xUVqfdD5AZPHYv3aanv/Ns9atyePQRYjdQC2gQf9ORYErKs2f5Sr6zhbAWaY2Dm8O59OPh4xDqaUgMijG5Q7xOyRANom99scD54SlKJOs8aWxDf6G5JGg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788337398; c=relaxed/simple;
-	bh=e2g0mD844N0n5+kU5CJmi4K+YFUB1xW+6wFbHF75IB4=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VYuH6SzzNdhSJLwn7+083Q7HQUZLJ35A2gPdys+VchXXxQy4iY77f2pF1uCyHu41xpe8cODg/rnLE4a9qGcDV25mLvV5BhJEZ4YGtlKJYvCCs5PceVQXPtQccfLSaYUi6J1u7Zi5W+WwvkqFfUwbrGGFInWqeUeV0hL0NwS7RT4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=LSvobscP; arc=fail smtp.client-ip=52.101.69.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC553E7BA0;
+	Wed,  2 Sep 2026 08:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788338277; cv=none; b=TAvZIyUDc+9CAnnA7J1Qgf3nEzNl+NPaa5j1xrWdgGiKxnXPzF2zYQsn88cKPX/h+T0fZaOIchjWcbGArvDmSeT/+0GewjnGKtGkJ8A//wofEwCsNhNehHU5dIH9IxJ27vCdiNIrBsH0iqayS1wdv+TT2/C0WtagpL5AchE48xk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788338277; c=relaxed/simple;
+	bh=mUq1NKP1kM7w3wLboHMj99aKGstkkbr4FcbOlWlzudM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tz/RZ6dBGGLbis6B2qAZSaJ8ZxPgQhRD+askBWIGcIQCyjj8V887Yyr2uNnmHpF28BBWBb9w3WMz2hByE8H4CbfaoujXzLebiD4NTnjJ/WOPZrr0903grq/pfX8iod1+rrlm6wQ5NU6VdoCmR54QEoJOloAQADdC/Z1okTXe4Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=qTCCoyYG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wJS6+/Qw; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="LSvobscP"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ctF2f9F/Mnva0fJo96TQLNYiD8K6zxLiBRHZXsMDSYLL3MJpL3q5Qp+SOLOHPX0tlPHXGT07i0t2jheTn/M0Naw6VIvz9Ry99Piux5OnpMJ/AlVeIvJhkqVoiBePT0YLerXPiTBH/UAJWIIJBuH9/PUMeZXXwQo1jAAXz66uQyQsFG/CwN+AhG4X7hdhwIEyBtbQ+VYAlmBbxmciszZfZYiMP59EpLDMyOq37uSrlqLDi/5e8HjLoIN8Z/dN6ChsAcDNjBOP2DXWX3j/y78R93MCmvtPfkKFn1ddXOwo6c8FyCq9Gz3fOb3V7+a8AcAh3G8fWKLqhRrF9R+U0EJywA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AgIJ6sAfvKl6AYUuVAL3cI2aM34dZmUHw+BzQvTENQo=;
- b=QKks314pbL36PX3Me61jtB8TURO8JD3W4+sDI5dmSShBZa1ciLWaJOVnhJ1uW56pq47YPOmTkaidAovxKUIuuQQzYlzYWFvZAdnTf/wY5y/Lg6dXNxj+mfz5feUzCFfGbJY0VN8xKEm69RbiNAtmIWYD6UKfZAegV9zNTmdB+DQ5iEcygQt2oK6UisyX38YFFfDx0NAWWCL3bxFYwcne0i+KoTDDperp6pnogWOL0zmVQrhYvXU3HrXCKzJxyg0UJ8mnDi/rGPNiYlBZAWSE5dqOf7JzdOUhSq9uPD5vVAPLeZX1U0ns2UGZrZGNaRP0X7xF7ioMOQt3U0UC6q6o0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AgIJ6sAfvKl6AYUuVAL3cI2aM34dZmUHw+BzQvTENQo=;
- b=LSvobscP3pBZrpSRauBB/clL3ICf7WPhraoCRwGJoT2jAu6sDnsWi+qO7hlOMlcc9UIIA6wjwa51XJULUSCHkt1FgeY9z8LnbvwP0HbbRJvHgTvPjs5hjpGrEwDZQmPkvawSejo29IJr1+WxTWjSlsYg4QmXGOazfEJVZMFU9YI3xs9FgmKFitZLeBDpqb+1cK7iz8sY3d02a7jeGiGfAx15+N+/ri40lMsMps8s81Z6R76yrHnxjtUoNvXX0dSDbtip/jzja+n7OS9Mb6SCCzY0UBy6WbYiilJaJV7Ez21gjj+Gip9o4zriTtHoBG0oOOP6kmAV2XkMiXX3TVdzsQ==
-Received: from ZR6PR04MB375776.eurprd04.prod.outlook.com
- (2603:10a6:910:dc::10) by PAXPR04MB8333.eurprd04.prod.outlook.com
- (2603:10a6:102:1c0::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Wed, 2 Sep
- 2026 08:23:12 +0000
-Received: from ZR6PR04MB375776.eurprd04.prod.outlook.com
- ([fe80::b83a:a0f5:2b29:50de]) by ZR6PR04MB375776.eurprd04.prod.outlook.com
- ([fe80::b83a:a0f5:2b29:50de%4]) with mapi id 15.21.0360.008; Wed, 2 Sep 2026
- 08:23:11 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Aisheng Dong
-	<aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, Frank Li
-	<frank.li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, dl-S32 <S32@nxp.com>, Linus Walleij
-	<linusw@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Giulio Benetti
-	<giulio.benetti@benettiengineering.com>, Jesse Taube
-	<Mr.Bossman075@gmail.com>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] dt-bindings: pinctrl: fsl: Replace tabs with spaces
-Thread-Topic: [PATCH v2] dt-bindings: pinctrl: fsl: Replace tabs with spaces
-Thread-Index: AQHdOFtSVjjrtP01E0+Q4iRKC8m0lra697Vw
-Date: Wed, 2 Sep 2026 08:23:11 +0000
-Message-ID:
- <ZR6PR04MB375776506544910DCDF977F72D88B72@ZR6PR04MB375776.eurprd04.prod.outlook.com>
-References: <20260830084104.14968-2-krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20260830084104.14968-2-krzysztof.kozlowski@oss.qualcomm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f6375508-4f8d-4bf0-98ed-14865d40f2d8_Enabled=True;MSIP_Label_f6375508-4f8d-4bf0-98ed-14865d40f2d8_SiteId=686ea1d3-bc2b-4c6f-a92c-d99c5c301635;MSIP_Label_f6375508-4f8d-4bf0-98ed-14865d40f2d8_SetDate=2026-09-02T08:23:05.0000000Z;MSIP_Label_f6375508-4f8d-4bf0-98ed-14865d40f2d8_Name=NXP
- Public;MSIP_Label_f6375508-4f8d-4bf0-98ed-14865d40f2d8_ContentBits=3;MSIP_Label_f6375508-4f8d-4bf0-98ed-14865d40f2d8_Method=Privileged
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZR6PR04MB375776:EE_|PAXPR04MB8333:EE_
-x-ms-office365-filtering-correlation-id: 1d3753b5-06ab-4d65-3a72-08df08cb6d88
-x-ms-exchange-sharedmailbox-routingagent-processed: True
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|23010399003|7416014|366016|19092799006|376014|22082099003|18002099003|56012099006|38070700021|11063799006|10067099003|921020;
-x-microsoft-antispam-message-info:
- WBzTnrlgWhpOiXVTWgZjnsXl32l7i7D+952m7b0S7cl1YIZPPEMol3+kuoCCeC5VrPDI+OtLy770D8oP226PGbrW1lviQixATILnHKuJQA4WvjxOhYpX2wUQI6oCawitfDpUIerwOQ9BC9OOYxpwIprlwkqcTaf8lvmFGEfCIn4qqg0ZOugGBV45Pbh8bUE/nZGGvsq6NUIrUDzQbE2ykibmKoTCbpRau7mD7ifiOkXMlOKSBKm0G2BV7vuADfC8RJhdgusG86JwwjDgjcNwhu7ApK1LoB/5n7DYBWkuQBaFmSG10Hi8PMqniNyeEvocpwvvlOC6uPc1ZIwHTCveY193eArqEwknyDCnzvURf4gD4EEBf0oF1rYZa4efuAalFMmbqQRB71BI/wjLO12k9y9roWCwhsssPWcld7acnfhUJExz3qD8SVI0RyfM1T8WPXidkShxexwI/aJYaAXBjKJb7tEyEpnNVz2Jr2ir8pa+H0/pDJUYbMg/QUAgITdUXRuXr5HBNgI+0/ovjFLEDS0qBujiW37EsxlN73cePSekp2eXzTRq6Rk8rldqsJZMJ0qcd/V/MilkDaHKePdlPoKOXkSVu4E0k9Gd9F6t5ioaWzFnWEmoFlFl3zF4unBfAsu4JLoJ6CxoIuTF+3lIvnyey89suLl86TMibN/PBbBUDLi4uBhT0/Gng6/QBxUV0Mm8BLF9Th/y3TD0OhNcsf60e5AhDaiWq5UjX55af7k=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZR6PR04MB375776.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(7416014)(366016)(19092799006)(376014)(22082099003)(18002099003)(56012099006)(38070700021)(11063799006)(10067099003)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?G/tsRJYUyKBV4/scGiczqivYYeRiKwEjPMuupDZE9U9Yf45JnQAb2DNlMLui?=
- =?us-ascii?Q?XjXRdhAQiP2ZEsxFzQdJUfJECOws/PQcToFsQrWuXwtOMdChWt8Vz0RrjB1y?=
- =?us-ascii?Q?zp0CXBs6t03XPEhqo18TaFxEEp+Z36MTfvhgNtY4XFlpUKlb4jowH8yVehrO?=
- =?us-ascii?Q?c67bHT535Nw24Jogmp6XqbsZtJRJ+sXQVGfgP7w/AKwA6DTOPBLfxGzlRVWo?=
- =?us-ascii?Q?zqAkoWq3SfwPszrI+IrYnwnw8r7emiolWNl7iVaXIjk5eS+aaazgVD2hkoap?=
- =?us-ascii?Q?t1zGlHAjARltvc+4FLNfj8dCSzlUjMD3SZNzQIGRY2errujnbo06AIsAFu4N?=
- =?us-ascii?Q?ZYqA5x3Ds8jYdIzWG+qPBT/TdVrQXPQ6IcDRdZTeJ3/c6dIxDjqrYwoyw38+?=
- =?us-ascii?Q?aHFTcctz1s0uQEG71orZtKD0zyLPwStUa1pOnoHrWdHtuqOFW3LwgkJ7zpKE?=
- =?us-ascii?Q?GDIOYmq9OBc9k2Mx87W0Y3d52o5h/llKW+7b1Ga2MkL59d7wtGQXN7ezQXJl?=
- =?us-ascii?Q?dWtSQLuJ3iObOp/AWq+fr46ThzUvHsEE23ulOUNzdwIUPykwYLvnIgGQx9jS?=
- =?us-ascii?Q?nIuXd8C4VgI770adDGO3rO/ZAhcJL4C8+1g/v6kTPwZybJIXjr2JuU7wgloZ?=
- =?us-ascii?Q?b5RVzHNIxLwvzhC2uqsLlvDsOn4iZ5JptjzjfmraZQx/oey5paUIkhmwcfyT?=
- =?us-ascii?Q?BPZKwFxH4ajsuGiUFjWLZVc3Xloebi02sbxFtERn8/xsuARQVesIWY2EPHq9?=
- =?us-ascii?Q?RbbT4dRwsh3NhEc3iSDYqN5EZMfz7Em1LNennO+s57Pw8u4m2ukYGquxkN8S?=
- =?us-ascii?Q?djahcrMqMv7s2peSwKSZBoNnARg0AYEV3lvgyrTWa+rOiyzMNGTTd+B+gyHX?=
- =?us-ascii?Q?sKMr1ICtX0gTi1e6FiSe6H6ozZGnlqjyrMkS7Io6IcPJNjw/PtfVOrg5vlvW?=
- =?us-ascii?Q?OCusdbL1IIvUOVFLUfr0UGSUqvZ2r9XmSAfsy0UOVAvy/B9GiT3DUW5ltsJs?=
- =?us-ascii?Q?ihuqmfiAbY0ywwUQCd2VeT9IFc+Erwz54WhJ0sObEuezBH1/Rs5bdvZWHL4B?=
- =?us-ascii?Q?q4zsOpLuzE7uBJIZoWhDwCgTrtlAU4A4jvrhg040sfgKiJtYc+LvLMjrPlrJ?=
- =?us-ascii?Q?wcdm2nX6bjpJX6bYlNV0DmFvfEX5csxzuryZvX/J3kwWSW9EkGJoq/kyhpZz?=
- =?us-ascii?Q?bfSedEN6qFQwE+npyNUldCM4MJkxJpOIdFFt0141i8oUVVGn9mUkNanZkTxB?=
- =?us-ascii?Q?JinTixZc5CN74JOWar69t447khewRVhzjZUIkow/A4q2S5SzEzuFVKYgIRZO?=
- =?us-ascii?Q?JBhQH1AhCaeMd/dgTuF8SO5rhCvp9XauOV+Z+mof/glX3BjOfqq0HHiZKIj8?=
- =?us-ascii?Q?Jixc4sYJQKfwxvyrCd/1oVkz7NDXZKi7PgZLWrlcyTzKK9CnlJASSGxx/4Q1?=
- =?us-ascii?Q?94ytqCFEyawybf2KrroLnAja6dwRCWAUFzHHsQ/ygQRB6zRkYf/NcOr9Pnk0?=
- =?us-ascii?Q?Xo7p5hBzu8HEwYbrfZAZZHnRyfDmOPQm0tTh3qKrmsn6JyD02FQCn7T03anj?=
- =?us-ascii?Q?CsBGc2aUkGiFKOBrDk/shIR3yIzgI20IoSfbOUjqLRDo9rhnS+MXyQ3JnUbI?=
- =?us-ascii?Q?R+LTIZR+QSX4ddYba9paEKmx9ZHOQs0aqYu59rzvDD/dUmJUenQ4xWCIecEM?=
- =?us-ascii?Q?lCw+uyicqhikovx3Qg3v/GdIaP2BnOxlhk4hR9h7I5zsgHdO?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="qTCCoyYG";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wJS6+/Qw"
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 618B4140019E;
+	Wed,  2 Sep 2026 04:37:54 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Wed, 02 Sep 2026 04:37:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1788338274;
+	 x=1788424674; bh=pxWh6c57JPvLZQHcjbN7tBOqCkuOu0wNZnT/jaAcRo8=; b=
+	qTCCoyYGfcuexmQjXfkymQyvVDECxjIbx867Ax4IIQh1YhCWlAw53HEOQMobMdoX
+	rZBeQpnuEUeUQWkxIKGaq+OPOPbeTl/7xG9/JaqRhviLyEXHOFakZSSQgeUxBfjt
+	vURKo2tPeH5jEmTmkMdXkEOti78E8L3nYaH6fGHW1o/TbAP0xUG8kFjBv448qfyh
+	mnFfxZ885Wzx+j3dDo4Rx4hKEZSHIrv1lWUXyVQ7+97v3LMsjMWzoVy0kFmi9C8j
+	2UeuEmamD6rRO7Ui2Irf5ypINodmJnxY8lXtQzOVJ+7U/AJ8HgNAE6U9FS4Z1xrP
+	dypTgp/OXyHSLFUjdtPjzw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1788338274; x=
+	1788424674; bh=pxWh6c57JPvLZQHcjbN7tBOqCkuOu0wNZnT/jaAcRo8=; b=w
+	JS6+/QwctN9rQBJ9VLQqgqFHP3FgLQUZzwBlQ0VwY2CEMUCCx1IaHZ2LCS2StRWm
+	5xVhvrECM57v5HYlYMiz5mbBGehzcJuw1lqZUxVNS61KPcaDWlm4IQ7T22yKvvEa
+	53l7fril1Gcb7K7xKOPsQxd0Xq45u7/ijqf6mdJgMkc2M0JeRwQf39HbB3y4lFZj
+	olTElADLdEQncpoxm6QihFtxy+NviqmMhF84oN/4Moa6SQyGvArjj+IDGwYZR2i+
+	MWCEFC3LSHb2N8dPRdTq8bK+jrNwZ3uNnmLJTWoQCDIGa4U5K7QJ2hYCkHE9p7kG
+	c6WYD7770/fWYrPLluxQw==
+X-ME-Sender: <xms:YeCXasAi8_HShvcwOrCY9XnbtWUYoKBJGMwNkB0L58CLbvkRKJ5TDQ>
+    <xme:YeCXalniGb-Rd0H3Z5wGf2wTiXNimladGsC7Y1Wql1S8OEhk7UXhN2BgCzwEy9NPa
+    l8pR3wFfRKBU05qFdcca5-5hB25BbzRccVfh7CC8-LjNpvQg6o68y5w>
+X-ME-Received: <xmr:YeCXanR3N4GVldEl10rIk7T2qxZuUWvRVOunTkzlcjoI8O9Mni4yyYF6rdwTPr4OSxwttccsLy1YNGbAocYB0N0s0wCWpSI>
+X-ME-Proxy-Cause: dmFkZTEhLSo8c+qmnpPDrYkwDUhLiaeLsVwvsscELmFvJWpopJFxNtJ92HpIsuxk5n5kpF
+    lRWjP+eYlgL+TWp2lDg2QpN5MGsZlvfLXYjGB7sym5gOC7U6RjxjhRL11s9ZMRQzNMg60k
+    JIHenuF9gyvSvtBsIRgtqwNFZGxuavogoztBa8clLJPqZhzpokoUZaDbrTBEiC5v9e96SS
+    9dXVmckb2DMeDxLoms+DPeIhFltqC2/mGof/LhXbAevvZgySc9vjRt1pSnSj9K7g4o1N+E
+    r8oG5vt/KTshJtixl+XSphTatYiTq8Wo7LlR3l3GxCIzptrmZ9dgOssAM/5FNcIwgCh7Sw
+    hgkX8VKhSHx9mp/LL9HL0h0Ova8dopLjR5Q81+OMv8NJcA0cFEcFw5wp7Fdjc5IeE1MNE3
+    qs52UcfhMugc4CVARinw0dlNqFPSxGmdOkjicGFH+ry80SZRispsqOGp2uJdF/ARwp69L+
+    +HXJppD8UDZ7Isa03FMs1PVmCjDFZSjtzsrMcDiHITB6RkZXSPY+IBlVpyLiWJ2D4XcHkA
+    tAByPZ3KlXlNmzhkHymwJrvO92EcGXu9r/dK9dzmtfUGLar09Mgdta0bNHBuKx5MC2w4aq
+    +T+iRrmMOPiNrK/9Fz0FKMbhla35g7J4f06f9n1KTJyksp1AOl5Rv/DRcCFA
+X-ME-Proxy: <xmx:YeCXapLI7lqJ1uAeOZJdDA1aWK1_jr_M6x4cknKvo7m36wNIjwKccQ>
+    <xmx:YeCXat-fMEGirPxnbo6-kK79scAE78_I_nqOESdBr2r3SnR3XfBH3Q>
+    <xmx:YeCXajAdvNLZhuMM-z9egzE8pGIPpUjzZj7UadFHPLLPb69NRKNDRA>
+    <xmx:YeCXavqRwN8UVUiL807FRy_-bFH0kQoBOkZROWxbVTGNCygyRAJ9Ug>
+    <xmx:YuCXanyg3GUEcH2qeoAItAEW5o4-FMGTWc7BxoVbzQJp3iYC3pLY0Q5f>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 2 Sep 2026 04:37:52 -0400 (EDT)
+Date: Wed, 2 Sep 2026 10:37:50 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Ceclan Dumitru <mitrutzceclan@gmail.com>, dumitru.ceclan@analog.com,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Julien Massot <julien.massot@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-gpio@vger.kernel.org, Martin Hecht <Martin.Hecht@avnet.eu>,
+	Andrian Suciu <Adrian.Suciu@analog.com>,
+	Cosmin Tanislav <demonsingur@gmail.com>,
+	Vivekananda Dayananda <vivekana@amd.com>,
+	Cory Keitz <ckeitz@amazon.com>
+Subject: Re: [PATCH v16 00/22] media: i2c: add Maxim GMSL2/3 serializer and
+ deserializer drivers
+Message-ID: <20260902083750.GC1116206@ragnatech.se>
+References: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
+ <20260831170303.GB1116206@ragnatech.se>
+ <65b703e7-e4a0-4046-9d35-7d0ff1057f96@gmail.com>
+ <16626ec7-d1ec-4a54-ad1b-a59790cd33e8@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZR6PR04MB375776.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d3753b5-06ab-4d65-3a72-08df08cb6d88
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2026 08:23:11.8575
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gGVQsgwBGgb9yoIr4J02rsV4X3ZxFXWj0rrq0p2CBS21ErZaSnc+gyrQ55DfP/jwwXa3MA2K1CQaWxpcxs/oUQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8333
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <16626ec7-d1ec-4a54-ad1b-a59790cd33e8@ideasonboard.com>
 
-> Subject: [PATCH v2] dt-bindings: pinctrl: fsl: Replace tabs with spaces
->
-> YAML files do not use tabs, even within the values in DTS.  No
-> functional change, although dt-style-check will warn about it ("[tab-in-
-> yaml] tab character not allowed in DTS example").
->
-> Signed-off-by: Krzysztof Kozlowski
-> <krzysztof.kozlowski@oss.qualcomm.com>
->
+On 2026-09-01 10:43:44 +0300, Tomi Valkeinen wrote:
+> Hi,
+> 
+> On 01/09/2026 10:39, Ceclan Dumitru wrote:
+> > 
+> > 
+> > On 8/31/26 8:03 PM, Niklas Söderlund wrote:
+> > > Hello,
+> > > 
+> > > Thanks for  your continued effort pushing this work forward!
+> > > 
+> > > On 2026-08-31 16:21:19 +0300, Dumitru Ceclan via B4 Relay wrote:
+> > > > This series adds new drivers for multiple Maxim GMSL2 and GMSL3 devices,
+> > > > replacing the few GMSL2 drivers already in upstream, and introducing a
+> > > > common framework that can be used to implement such GMSL chips, which
+> > > > avoids code duplication while also adding support for previously
+> > > > unsupported features.
+> > > > 
+> > > > While the normally acceptable and polite way would be to extend the
+> > > > current mainline drivers, the choice was made here to add a totally new
+> > > > set of drivers. The current drivers support only a small subset of the
+> > > > possible features, and only a few devices, so the end result after
+> > > > extending them would in any case be essentially fully rewritten, new
+> > > > drivers.
+> > > > 
+> > > > This series depends on support for internal pads, for which a patch has
+> > > > been added.
+> > > 
+> > > It also depends on enabling the streams API right? At least I need to do
+> > > so to be able to use the TPG. Out of curiosity do you know the plan to
+> > > enable it by default upstream?
+> > > 
+> > 
+> > I do not know when default enable is planned, but series could make it
+> > so VIDEO_MAXIM_SERDES selection causes v4l2_subdev_enable_streams_api=1.
+> >    I am not sure that such a hack would be acceptable by Sakari or
+> > upstream in general.
+> I haven't tested with this driver, but in theory these kind of drivers
+> should work with the Streams API still disabled. The Streams API is a uAPI,
+> so the driver itself works without it. If the default routing for the
+> drivers provides a sensible single route, one can use the drivers with a
+> single camera. This is what the FPD-Link drivers do (although it's been a
+> long time since I verified it with Streams API disabled).
 
-Acked-by: Peng Fan <peng.fan@nxp.com>
+Indeed, but to enable the TPG I need to non-default routing ;-) Nothing 
+big I'm just impatient for the streams API to be enabled by default in 
+general.
 
-NXP Public
+> 
+>  Tomi
+> 
+
+-- 
+Kind Regards,
+Niklas Söderlund
