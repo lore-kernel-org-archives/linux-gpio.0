@@ -1,63 +1,63 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF7137F30E
-	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 07:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8B6385D61
+	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 07:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788422383; cv=none; b=SjvtCBWopXTOiav6GhHqHywidKEiKMgGQSEuHcf1IEPkBgtKWcGLWe28/mwpAtPuvYYx8nHEO4qK0uxIu4LIlB7nyebNPVrnC3LpufNjmkMbAACb4B6zJOpEyCbk3G3AQ91447+5Wf0duJUgZLqHRYLYtzecq8ZjeXvLkj9iJgM=
+	t=1788422384; cv=none; b=EIxYK/q1vFSMoBRA/B84ExOhykdLiViVCX7DoJ8c5S6VwkZxGlCMcYajwPlN8/7Q6CAvU70ODLHNjbrMrcqjzBpacft5idqumSL55oCRMboFXoM5pJCDj0pZq2yB2dRygl5ppFgh5rAYhzwhs15NRQ1ol1WU6+gb/8UlnKeNg38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788422383; c=relaxed/simple;
-	bh=bQnH6oPwh2rgmIIUJ5Tnv4TB9rJdFNh4J+fzYdpOCl8=;
+	s=arc-20240116; t=1788422384; c=relaxed/simple;
+	bh=0f7Emp76RF4wDRv+c9hXs+xIqJJvCmxjiKd++hQJZ1M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=evwpASF3BEHN29siqQFRENS2XNz8L5cPf9ToB3DllQcA0JUNLFGeTgw0+imlgE8JjXzCLOXGd7gZwZpyi2MFXe/ILU/eFlcrNYKj/RTry6NdHZasHpdlHC81l7SJ0gip8XAYNcQY4oEqiJAvtqdi+cDIQnyLyarNBJiv82t6mZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HsBuX0gr; arc=none smtp.client-ip=209.85.221.42
+	 MIME-Version; b=goRw/g7Qz/B5w3Knfg5wOAyp51NNxXcaoSqFZKzbTy15eHcpnbdO69mOxuCl8bI2e1nblS84AXwmg+6xK9EOm9kf1ix/+jf+Xayjcox2q49FoHVTkg9RWUxXHPwmeN25ps+UmyuddojhelnOtAFH9urw8TPPuj6W/fcXmH4gUNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljfD+dpd; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HsBuX0gr"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-482e067e908so1768333f8f.2
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 00:59:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljfD+dpd"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-484415c8bf2so1502291f8f.0
+        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 00:59:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788422380; x=1789027180; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788422381; x=1789027181; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=bQnH6oPwh2rgmIIUJ5Tnv4TB9rJdFNh4J+fzYdpOCl8=;
-        b=HsBuX0grnkXPgoq0sC5ucMO8GR3gzi864esVYlyAfAch+ejmOqANLUveI9sM+t7sv0
-         JU5gbgggI3X5wpTxHrApZNS7VsQ/ISwLBgcXAdb9nt+qMM16UbEnc6xNQh2dYvNnlN2G
-         SzETfkI39nyYtH8gS+d90ZDgDLN6IhvLW7T7eQV7I7uT9KenDqU0aDb9PnnykXxmrjBU
-         lkkONnUxkl/Sjr6tAJ55eto0kZHprHUcD2dUATYd2O0Og5+y7BndjXxFdQXgez8QMTrs
-         PDfKQrDsZDZJKEKVgq84J+j4cnH7hm1Y32r9aKDOnOLKk842jHEjomPhivpVkKggWaXx
-         biDw==
+        bh=0f7Emp76RF4wDRv+c9hXs+xIqJJvCmxjiKd++hQJZ1M=;
+        b=ljfD+dpd3qCxyz8FOWdlENVs6jjhBpYfHOrwrtNKZE7/MQUJQJRhA/enQx/2lOnl59
+         VCkpwXyHKu7mQ/g72hGYy8vgMoeyBciwUvwZV5aPIfzhcgNtW06h17+ruHxt8cWgl729
+         x7Mpu0tsOX+fXL5qewvTjH90EmmesrsaOQ5FBze4svybFfVO99GifGdsL5zzDkMRhmMG
+         eNxHDGDPsbhCRW7Krn68DKxqpIET0zeCd37tta2gUBzjGGh9TFIc/LdBxBM1mOBX5nik
+         YXNaAAtXg7xQ9/boMo/wC3fpO2s6Xi7lz2q3fw2JO1XUEjlNbPABYbnT9slfnSFcFMyH
+         1A9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788422380; x=1789027180;
+        d=1e100.net; s=20251104; t=1788422381; x=1789027181;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=bQnH6oPwh2rgmIIUJ5Tnv4TB9rJdFNh4J+fzYdpOCl8=;
-        b=k1ZM7+Pya4ZP/3Mqk9g7/AaElip1bk6LyvS06qJjolWxgMuXO9M/lgw56noEXaw6XK
-         9ubpY1Khx2Gl/mFvMhCRaKj9T7z89zk5I7AVL8nylK+gCH/5C28iejvdybZN9mN+giUJ
-         DxGnOWANYIft3UP/9wRY9VDgqzBnvjMKyBGZYDSvwCscA3ux3fMogjuVl1+8z2A007Dr
-         iq5g6QTKs7aftnKadpuBTUR/Cmz49wGDVMH+i6JLkRXmJi53xsbD1/LgiHg0FUZum933
-         1D2DsFiR2pS6wuvZTO3B88mXC0Txq0es5RrFxWtaXoTRqQiFZ8Nl3Fq2UGLi1JAyD8aI
-         2MyQ==
-X-Forwarded-Encrypted: i=1; AKwUvByV4xL2gZp3Jy3+0AoMMLeNvjQ0giRPrTDYkbcmI9UK4riJH8pkBcjUPOK4wDtTd0D9pctb+PlGwoEo@vger.kernel.org
-X-Gm-Message-State: AFuF++mS7zAVoMoNoVcSitxGy8BschCnfXO+8dSU7rkrpiAROUuab/jo
-	zJv7exhcx/cKZ5KMHIB+TCoq1Cs/mmsMtUPmhIQtTat9Er9O8P7iS/XI
-X-Gm-Gg: AYBFou0pCVeBVIFz1XpFJA6gnsfPkzMK1ecYAyjgXNyceni8Ob5fSBhxyVNysVYdv6o
-	9CA8To5fXlKYlhxd3g+ALmaLDbxyOktSiv80PwBSJwvwwHjUIcnms+GGgKnaSRXpRgKjMT/kLbJ
-	0WlKoeDCmccY/AgGG14fLJe9vfkR7oTe81DyJNjvR7RvbYQzjNhdcNVaU4Iy2vJEQHkwuf7BCAs
-	h78SWEGSnQ0Po29A61Pefwz8bQRDgEShZqL1oSgXgMc7HdiDAS9/+LR54MMBODfzWisuwQ2qWlq
-	S7C1X1cOvfiU380Bj2brk5xrxAeSXpz7dA6+mn2gacgZb6UeiW/D+rziWnKZgBtPqySJNnz+Bet
-	cxJlcE2toFJrHOjzkpaB0cldHBeIOtbIVHc2QjnJOSzNBzTYmRYBvEA7FLLodGq8pkVW4+rYzNV
-	48P0Yh0ZqNqQTJwp+EYEidDEU1et9BSkSulHNueOIt+BXMebB+as1YysMze0G8yHpfBA==
-X-Received: by 2002:adf:e196:0:b0:484:3311:3703 with SMTP id ffacd0b85a97d-48488f222d6mr21633674f8f.26.1788422379658;
-        Thu, 03 Sep 2026 00:59:39 -0700 (PDT)
+        bh=0f7Emp76RF4wDRv+c9hXs+xIqJJvCmxjiKd++hQJZ1M=;
+        b=U7jzWI/ssgh+iPcZ60cAzZPbkaJkW19z8suFALhNDCzc4TQx9uxf7iVuub9DJ/SDIm
+         FSNvSXEyPz71u55PfiszaIwxk6JaWaIuDpKD9o7PgFycoD/n+7obxB3Q/LNbCYmFFXy4
+         f+vxWQy0dDZMnhpuXYMbCHe9pwvUZjklsmaBb3+VnNy7RNayi2nAtySLV0YJZwAzIsBb
+         6h2OzBvMe1SiuMQnflgBzDZOIqdfl5FcGEQvMmUnRc8wr25LB2X+/kd+eJIBxI+oiZzZ
+         g0Od2xp7cPHliwJ/cRZExgNfAeH8t1zf7ua/4ZaGf1rMf77wZjZ6i84d/zci2hdinL6B
+         6jJw==
+X-Forwarded-Encrypted: i=1; AKwUvBxbe6QlaooV5cSt0JoOVoqey3IU4g2z7S1MMf5NelZsOW2L4B1Ox9mAfvlrEsjq1sLBdeUMCcqS6L1l@vger.kernel.org
+X-Gm-Message-State: AFuF++ktPJc2vf1lzzw/XbYvP3XtbP4yvPRJla9Hwk83tEV50hbDUeTp
+	eCgTpsLlNZ9OOCpklMa0WqzxrXYXtTj9sOjsRKAm/vZmMBU/27qqYM7T
+X-Gm-Gg: AYBFou2WtYgHEV6phlVKJpg+hNNVqd2K4DqIYiq/jAXIzYh8U1usg49d9JFCyrYwfvr
+	52UhE9qAt/c6CFkzfyYsg3XwV/cxIy6LE+qJB5N3D5leKUc9I3mITokw2qiKf0C1z1rSVD0d0vX
+	FidJdtdK+cYhx6rRcMtFQwmOgcE1IQEEca6QL/lkhy5bEW6RrwkJCeJxhxtuhCcTivyXaLv2rfW
+	TCam/39fIX7mypOkQox6do017qyEoapxgyYSW0mdZJubqyysvldFbAiL8W09S7I5Ri/7UupiO+y
+	Jxa7McTzS8/gXs2NmjdaCNF819LlLH/GZYjNbSFPgQZ489KYNVlun8vtp++zU0wE68Q2KKM6E/7
+	xfcUHYpWXf4PrdUmZ4azxGLqGumx2r4LsaAw7h4WEp6PLprBlSl8U37f9OomVs6jerjxv2qHAZy
+	RUc2NtvzdTd8Ufbv9E6AKcDc2TGTe7uT7+shhChy/e7bSfXmA+zxvo/i4uN9R6lkYWdQ==
+X-Received: by 2002:a5d:5d8a:0:b0:484:41cb:d5f0 with SMTP id ffacd0b85a97d-48488f103d7mr17847999f8f.17.1788422380714;
+        Thu, 03 Sep 2026 00:59:40 -0700 (PDT)
 Received: from deb05.proceq.com ([213.160.61.66])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48448e72c28sm12914843f8f.6.2026.09.03.00.59.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48448e72c28sm12914843f8f.6.2026.09.03.00.59.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Sep 2026 00:59:39 -0700 (PDT)
+        Thu, 03 Sep 2026 00:59:40 -0700 (PDT)
 From: Mehmet Fide <mehmet.fide@gmail.com>
 To: Bartosz Golaszewski <brgl@kernel.org>,
 	Linus Walleij <linusw@kernel.org>
@@ -73,12 +73,12 @@ Cc: Dong Aisheng <aisheng.dong@nxp.com>,
 	linux-kernel@vger.kernel.org,
 	Mehmet Fide <mehmet.fide@screeningeagle.com>,
 	sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 2/3] gpiolib: add get_config() and gpiochip_generic_get_config()
-Date: Thu,  3 Sep 2026 09:59:35 +0200
-Message-ID: <20260903075936.2089280-2-mehmet.fide@gmail.com>
+Subject: Re: [PATCH v4 3/3] gpio: mmio: track the direction of chips without direction registers
+Date: Thu,  3 Sep 2026 09:59:36 +0200
+Message-ID: <20260903075936.2089280-3-mehmet.fide@gmail.com>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260903074509.F36471F000E9@smtp.kernel.org>
-References: <20260903073143.2068494-3-mehmet.fide@gmail.com> <20260903074509.F36471F000E9@smtp.kernel.org>
+In-Reply-To: <20260903075021.7AF3F1F000E9@smtp.kernel.org>
+References: <20260903073143.2068494-4-mehmet.fide@gmail.com> <20260903075021.7AF3F1F000E9@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -90,15 +90,13 @@ Content-Transfer-Encoding: 8bit
 From: Mehmet Fide <mehmet.fide@screeningeagle.com>
 
 > [Severity: Medium]
-> Does pinctrl_gpio_get_config() actually return a packed answer?
->
-> Looking at drivers/pinctrl/core.c, pinctrl_gpio_get_config() intentionally
-> strips the parameter and returns only the unpacked argument:
+> Are we correctly parsing the packed pin configuration value here?
 
-It does not, you are right, and the documentation I wrote is wrong: the
-packed parameter goes in and the bare argument comes out, exactly what
-pinctrl_gpio_get_config() does, and what gpio-mmio relies on in patch 3.
-The code is fine, the kernel-doc in driver.h and gpiolib.c and the
-driver.rst paragraph are not. v5 fixes the three texts; no code change.
+Yes: gpiochip_generic_get_config() hands back what
+pinctrl_gpio_get_config() returns, the bare argument, so config is 0 or
+1 here. The problem is the get_config() documentation in patch 2, which
+says "packed" where the implementation says "argument"; a driver written
+to that text would indeed break this check. Patch 2 gets the wording
+fixed in v5, this patch stays as it is.
 
 Mehmet
