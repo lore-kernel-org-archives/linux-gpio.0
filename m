@@ -1,100 +1,100 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D18E490BFD;
-	Thu,  3 Sep 2026 11:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F2D49E5E1;
+	Thu,  3 Sep 2026 11:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788436560; cv=none; b=TCuk7GzpU3I0oyPzFS/TBJF2Pqg0v3EUpBHlsLtHn6Tza2DaWNnA4iBZveR6CJjPEJ5+coO//34I+l3c0X+1+qfElMdtswTHCWFA0+Nps5QnrpkTxs3KqpG6qtlDPoIKLumRUMpY0J5StxGHz8tPeJHZFHNBJUrvtIEL8ilkSj8=
+	t=1788436696; cv=none; b=tyjIma8o02/iIApUq7mebK9MAh4FD7ndXYkqqyQbwaxcQVxSK8MoLzlwuMz0TYi3QIwc9b4gSVu81beEAnmhvepwwNkXqFDwVygoQIlJtvKGgBWaefetu0Jb3u55T5tzTt+Z09RIMzrep6ztGPtU907epqvKXHuqr2FBnHPntb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788436560; c=relaxed/simple;
-	bh=S/u6snXkZOcbpZDtSUoFn0jpctqNbRUC1eXDBaiIl0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BVCY0/WqJlTJ+2LtGcF9H/XgvBmQzCCfNx//u9w/0z6we/QYk6mbhmPeTpiovifIR7tzyEQl5vDj5sbEtZIYbqq0+/YlVqVNyH85r8ZVRmQvucNO8zIeGITK2JgIwNSi9Ex/IfirWViWHU31Uh8JagAM6tFhFq6ra/VYsJ5OikI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U9T6297N; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1788436696; c=relaxed/simple;
+	bh=TwwfU6hpks+YXRJ6fCld9MUwDFdNClhk4U3xLbF7LOo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=mFKEJ4sWQbatECFEBu8kLUpvdGjShKowaL+9ZOPYaAyxwB5S0/ngTl9OfRc583KopTEjapzYmBF3951QaGxgM2egjE1aGcn7UVaO7x3GVAVhOiQi8zwwr9MTVMVA9duZ72srsx2bTw/1lh2lzx2S78zJLTfhgZZhHiurwizMf0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=iX4QWfdz; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U9T6297N"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1788436556; x=1819972556;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S/u6snXkZOcbpZDtSUoFn0jpctqNbRUC1eXDBaiIl0w=;
-  b=U9T6297NGJg1h2I7nwfFWY+mJQZCrdH/Lq8mr9M8IjaFoXWSEem7IwP/
-   MzkPfhJaMhN4FNifIJEJLyhjf6ITZz7GFp3C8RUSX4NxBriKlWPBotOAH
-   0ZDK4+l6OhFU/Qjh8dcsSLkFY0yFunZycnT7xkM8K6q6T7jW/9/eOd3Hl
-   wAdYvf9GOyoWB7Elu7gx/mtRozLXvLI451eizb01QvhY8NZSXmU1F8Fg+
-   MmemU+NYLfj9giS0nmpwM8TMZonh7xE2zTqikN1XTIFr0Kj5rLLq9VV25
-   ZSflv6SkD82VL4P1+wwDWurNdYBY2oo/VUauE65KCvGGzvwyb6gOhvMpv
-   Q==;
-X-CSE-ConnectionGUID: Tmo45T/FR0W1CHsEUPxzLg==
-X-CSE-MsgGUID: +rpfRzt3R+OxFTGVk+df+A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11894"; a="99576442"
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; 
-   d="scan'208";a="99576442"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 04:55:53 -0700
-X-CSE-ConnectionGUID: eUpxaPeHTMylKUt/4Da1xA==
-X-CSE-MsgGUID: BBBkcgHrQCGcKvlLeBkSeg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; 
-   d="scan'208";a="274978992"
-Received: from smoticic-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.28])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 04:55:51 -0700
-Date: Thu, 3 Sep 2026 14:55:49 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Yao Qi <xnorigc@gmail.com>, westeri@kernel.org, linusw@kernel.org,
-	brgl@kernel.org, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: acpi: Add ignore_wake quirk for ASUS TX Air
- FA401GM
-Message-ID: <aplgRRCxGEC-ahyw@ashevche-desk.local>
-References: <20260808155513.2221976-1-xnorigc@gmail.com>
- <aoqui1OfwEfsmQRu@ashevche-desk.local>
- <a89e95e2-abaa-4ea4-9be2-2a179f6f5257@amd.com>
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="iX4QWfdz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=TwwfU6hpks+YXRJ6fCld9MUwDFdNClhk4U3xLbF7LOo=; b=i
+	X4QWfdzCIGfg7Ms8Zvw0g05r1YDsVi+LDnWP81i2YQkoCXDVA4W/ZLwgF1b4Ps8o
+	7/OtBS09LE6KcDhLST0EbJ7VDcGNmNx2GT1kif/+pBCmUAmTDkTFYwTCygqHW+yx
+	baBl36AzpoimswmhjAiCxqYpOEEwG1TWTj41jtNGjw=
+Date: Thu, 3 Sep 2026 19:56:17 +0800 (CST)
+From: zl020895  <zl020895@163.com>
+To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Cc: longzhao <longzhao@ambarella.com>, "Arnd Bergmann" <arnd@arndb.de>,
+	"Krzysztof Kozlowski" <krzk@kernel.org>,
+	"Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+	soc <soc@lists.linux.dev>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	"Rob Herring" <robh@kernel.org>,
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+	"Conor Dooley" <conor+dt@kernel.org>,
+	"Michael Turquette" <mturquette@baylibre.com>,
+	"Stephen Boyd" <sboyd@kernel.org>,
+	"Linus Walleij" <linusw@kernel.org>,
+	"Bartosz Golaszewski" <brgl@kernel.org>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	"Jiri Slaby" <jirislaby@kernel.org>,
+	"Catalin Marinas" <catalin.marinas@arm.com>,
+	"Will Deacon" <will@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-gpio <linux-gpio@vger.kernel.org>,
+	linux-serial <linux-serial@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	"Brian Masney" <bmasney@redhat.com>, "Lee Jones" <lee@kernel.org>,
+	mfd <mfd@lists.linux.dev>
+Subject: Re:Re: Re: [PATCH v5 10/12] serial: 8250: add Ambarella UART driver
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
+In-Reply-To: <aplcxoINt0YAjvxL@ashevche-desk.local>
+References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com>
+ <20260818-cv75-v5-v5-10-7bbb12f0360f@ambarella.com>
+ <aoRpc2RK2_X3CdAi@ashevche-desk.local>
+ <162c0385.2c076.1a018b82fa7.Coremail.zl020895@163.com>
+ <aplcxoINt0YAjvxL@ashevche-desk.local>
+X-NTES-SC: AL_Qu2TCviYuU0s4SCRZekcn0wRhug/UMa4u/sm3YNXc+sEmyb9wCAKQntjBXjy8euBCTqVrACdWgFHxf1WZpRSWZYdwgSvePe0abAvWg2oAg==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a89e95e2-abaa-4ea4-9be2-2a179f6f5257@amd.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Message-ID: <709278f9.9699.1a067207b4c.Coremail.zl020895@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZCgvCgD3vyZhYJlquTA_AA--.3357W
+X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbCxgExomqZYGHZZAAA3b
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Mon, Aug 24, 2026 at 10:12:18AM -0500, Mario Limonciello wrote:
-> On 8/23/26 03:25, Andy Shevchenko wrote:
-> > On Sat, Aug 08, 2026 at 03:55:13PM +0000, Yao Qi wrote:
-> > > The ASUS TX Air FA401GM experiences immediate wakeups from s2idle
-> > > (Modern Standby) when suspended with an external HDMI display connected.
-> > > 
-> > > This issue is caused by spurious ACPI event signaling routed through
-> > > GPIO 24 on the AMD GPIO controller (AMDI0030:00), which triggers a
-> > > system-wide IRQ 7 (pinctrl_amd) wake-up interrupt during sleep.
-> > > 
-> > > Add an ignore_wake quirk for GPIO 24 on this machine to prevent these
-> > > unwanted wakeups. This has been runtime-tested and verified using the
-> > > `gpiolib_acpi.ignore_wake=AMDI0030:00@24` kernel parameter.
-> > 
-> > Mario, can you ack this one?
-> 
-> It's likely very similar to
-> 
-> https://lore.kernel.org/linux-gpio/20260821070651.39763-1-vaknins33@gmail.com/
-> 
-> As you can see that's also GPIO pin 24.
-
-Right, but this will need still its own DMI entry, will it?
-
-> Can we please see an acpidump to confirm though?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+SGkgQW5keSwKClRoYW5rcyBmb3IgdGhlIGNvbmZpcm1hdGlvbi4gCkkgd2lsbCBrZWVwIDgyNTBf
+YW1iYXJlbGxhIGFuZCB1cGRhdGUgdGhlIGNvbW1pdCBtZXNzYWdlIGFzIHlvdQpzdWdnZXN0ZWQu
+CgpCZXN0IHJlZ2FyZHMsCkxvbmcgWmhhbwoKQXQgMjAyNi0wOS0wMyAxOTo0MDo1NCwgIkFuZHkg
+U2hldmNoZW5rbyIgPGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4LmludGVsLmNvbT4gd3JvdGU6Cj5P
+biBXZWQsIEF1ZyAxOSwgMjAyNiBhdCAwMjozMTo1OVBNICswODAwLCB6bDAyMDg5NSB3cm90ZToK
+Pj4gCj4+IFRoYW5rcyBmb3IgdGhlIHJldmlldy4KPgo+PiBUaGlzIGlzIEFtYmFyZWxsYSA4MjUw
+LWNvbXBhdGlibGUgSVAsIG5vdCBTeW5vcHN5cyBEZXNpZ25XYXJlLiBXZQo+PiBmaXJzdCB0cmll
+ZCA4MjUwX2R3IGFmdGVyIExpbnVzIGFza2VkIHVzIHRvIG1vdmUgdG8gdGhlIDgyNTAgbGlicmFy
+eTsKPj4geW91IHRoZW4gdG9sZCB1cyBub3QgdG8gdG91Y2ggODI1MF9kdyBhbmQgdG8gdXNlIDgy
+NTBfYW1iYXJlbGxhCj4+IGluc3RlYWQuIFRoYXQgaXMgd2hhdCB0aGlzIHBhdGNoIGlzLgo+PiBC
+YWNrZ3JvdW5kOgo+PiBodHRwczovL2xvcmUua2VybmVsLm9yZy9yL0NBRCsrakxtNkh6RVUxVE0t
+Yz1WdGp2M0ZKRUJlY1ZQN1R5eFNncV9RMHpGLVl3VDZOQUBtYWlsLmdtYWlsLmNvbS8KPj4gaHR0
+cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtc2VyaWFsL2FuOEt2dkhXWDBuYUgzWHdAYXNoZXZj
+aGUtZGVzay5sb2NhbC8KPj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGludXgtc2VyaWFsLzdF
+Nzc0MzA1LTM5MjAtNEJCNy1CQTQ2LUUwNzcyRDZCRUQ4NEBhbWJhcmVsbGEuY29tLwo+PiBJIHdp
+bGwgYWxzbyBzd2l0Y2ggdG8gdWFydF9yZWFkX3BvcnRfcHJvcGVydGllcygpIGFuZCB0cmltIHRo
+ZQo+PiA4MjUwX2R3LWRlcml2ZWQgYm9pbGVycGxhdGUuCj4KPlRoYW5rcyBmb3IgdGhlIHJlZ2lz
+dGVyIGRlc2NyaXB0aW9ucywgaXQgd2FzIGhlbHBmdWwuIEFmdGVyIGdvaW5nIHRocm91Z2ggdGhl
+bQo+aXQgc2VlbXMgdGhlIHYzIGFzIHlvdSBtYWRlIGl0IGlzIGdvb2QgZW5vdWdoIChzb3JyeSBm
+b3IgZ29pbmcgYmFjayBhbmQgZm9ydGgpLgo+V2hhdCBpdCBuZWVkcyBpcyBiZXR0ZXIgY29tbWl0
+IG1lc3NhZ2UgZXhwbGFpbmluZyB0aGF0IHdoaWxlIGl0J3Mgbm90IGEgU3lub3BzeXMKPkRXIElQ
+LCBpdCB3YXMgbWFkZSB0byBiZSBxdWl0ZSBjb21wYXRpYmxlIHdpdGggdGhhdCAob24gcmVnaXN0
+ZXIgbGV2ZWwpIGFuZCBoZW5jZQo+bm8gbmV3IGRyaXZlciBpcyByZXF1aXJlZCwganVzdCBhIHNt
+YWxsIHF1aXJrLgo+Cj4tLSAKPldpdGggQmVzdCBSZWdhcmRzLAo+QW5keSBTaGV2Y2hlbmtvCj4K
 
