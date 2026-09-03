@@ -1,95 +1,150 @@
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09334DF4C7;
-	Thu,  3 Sep 2026 15:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C214EC65C;
+	Thu,  3 Sep 2026 16:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788450950; cv=none; b=RsT68snG/LrLPyrFRNMC7A+tQIoStJ8/mJmczew+PT4A3xQTYkWA6aaxHNvJiPr95jduzG97y3vAXv7cMGh2WVfpCBMXj8ag+VuJkWdtw8s4E4qRWkMLyRx3SMAOLjbWvkq/irtyOwndXx2cbBZoslWeT21i+GScHq2+f4Zky7o=
+	t=1788453172; cv=none; b=KsgoOQSZHanR05Iz0MNFvtqH8RisWMyQXKUThYeCXxDLXAfZJpG8A0hsvk8tH1asHODduSXPb8JPusVcexHpK2+WsbYV5Gv9BqFKehlHcVOE+ryrKfWewxHuWIpei0HMN933hFKLhb8umILSa174T8GY5KBOkZ353prqHdl1Djk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788450950; c=relaxed/simple;
-	bh=LgeelbVKSm5sk7+lSiVeSDJzQG9WZu9cPjkOzcdgPZc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mXVerCuzQ0OT9dSrJopIBkWdw+tP8dxazVVsPwhRdRbjmA+GxnhyzPOXfYVNB9o4NGCMnnOtNvLpDulSZaJFAjFwkIWP1a5aVnJ8TfH/dQA5Tp/wbBzy44NUfD4KmcItffJJQoVsMTsTxtySoxXsxcvtmVjG/j2IPhz4LIJeAfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=XrLmbpg+; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=aI1URO8r; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="XrLmbpg+";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="aI1URO8r"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4hbPMK0J5LzKvv6;
-	Thu, 03 Sep 2026 17:55:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1788450941;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gqMbHiSzzKPHp90VgyMlKPKExPNihmb7zR3T0IjUqH8=;
-	b=XrLmbpg+OwSfV259lA0s0Qo+MRFJfCCNc08Rm2EGOxyS519OUtYJ3P0iC7Qgp2ZVCFBUOk
-	V6FMoxf9HhOCtBMFHDSnsKMkdykYjTm3m68JPS34SOOoI0P2zdFeZgRKuS7EoAgffy1OFZ
-	uZ1Ss/3dSGdHgWt+TVITw/x9GO5FGWE7ZtgaPdO2uC+5DGWwIq/S6KtTSbhjEK2p49JH7r
-	0n5eKS8cCXdUVgkIvxrMdWnW5OKud28EGFXGfaRv22w6CCmGyAmcg+oG9ndLDwZ2y9PeAq
-	fug0mfEHzZEp1zB2CROC3s8RestrLYqp8UcDDJLdkrrc+mbkeUeBL+9M5jDr0A==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=aI1URO8r;
-	spf=pass (outgoing_mbo_mout: domain of manuelebnerli@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=manuelebnerli@mailbox.org
-From: Manuel Ebner <manuelebnerli@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1788450939;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gqMbHiSzzKPHp90VgyMlKPKExPNihmb7zR3T0IjUqH8=;
-	b=aI1URO8rH9YQHQjVLsBxeplmzB9N6YtJLhQQ3blxXs5PoYH/ABCW7i1g7N4fnvSCLrVyRs
-	bGTsWwbJzWOXJpgdHgL7XOoRuAxNkXYk8CW5AfSwWiIET32AecaDpJc+vcD6yywbuzo59e
-	hBtCnOtHNGivjBZlFQll9HJsgcFaSJs4Rmblqy5MtwxvJ7pSbkv1MCxesAr1Rr4V/aGjgQ
-	ZrxdOM6kRV7lqKQvWbjCDHI64T3ELGHO8i01gai6lVocBRr/OpaRGE0KsZOONwHfDeMfHZ
-	6/V/qrCZ3vOlRoxRwCYI+cnPJJXi+WjDzo8Qx/kwdXahtAoa92A3lkK4mggf8g==
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>
-Cc: Manuel Ebner <manuelebnerli@mailbox.org>,
-	linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation: gpio: Fix bracket
-Date: Thu,  3 Sep 2026 17:53:44 +0200
-Message-ID: <20260903155345.733244-2-manuelebnerli@mailbox.org>
+	s=arc-20240116; t=1788453172; c=relaxed/simple;
+	bh=6pHy9//q9H0Ofm6mQAv5BYFGgr3Hvu8T1FCebCcnZo4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hoP1Sc39zbAUWscGLcUn1bASnBWYkgd+9eZ05tdgAHhzUv8jPUlYepJEWlg4+Y9OXvvhEP/vR8EO/USMwsryt7bYWahOCOs3UDGFGWPTHKy5xfpLHW5CPGXYU0vUCZRBwuZcFy+7RmpCL/FAVlbgdk93EBY+0+mcFFM5R+GIAC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF5D1F000E9;
+	Thu,  3 Sep 2026 16:32:47 +0000 (UTC)
+Message-ID: <40c96e12-f2f1-4d95-a95f-d4a9cbde7ab4@tuxon.dev>
+Date: Thu, 3 Sep 2026 19:32:45 +0300
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: k55dxrp9mzpghfmeotqox7aegew16sxq
-X-MBO-RS-ID: 0fe043b500e8bc56f5e
-X-Rspamd-Queue-Id: 4hbPMK0J5LzKvv6
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/5] pinctrl: renesas: rzg2l: Unify the power source
+ handling
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, magnus.damm@gmail.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev,
+ linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20260903113327.1217457-1-claudiu.beznea+renesas@tuxon.dev>
+ <20260903113327.1217457-4-claudiu.beznea+renesas@tuxon.dev>
+ <CAMuHMdV9C6LVBqYWo=Njgf3v4a5R1LhBwKuB5H3TFctOCr338g@mail.gmail.com>
+Content-Language: en-US
+From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
+In-Reply-To: <CAMuHMdV9C6LVBqYWo=Njgf3v4a5R1LhBwKuB5H3TFctOCr338g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Balance parentheses.
+Hi, Geert,
 
-Signed-off-by: Manuel Ebner <manuelebnerli@mailbox.org>
----
- Documentation/driver-api/gpio/board.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 9/3/26 18:32, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Thu, 3 Sept 2026 at 13:34, Claudiu Beznea
+> <claudiu.beznea+renesas@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The previous code handled power sources using a mixture of power
+>> source specific definitions and lookups in the available_ps[] array.
+>> Unify the power source handling by introducing
+>> struct rzg2l_pinctrl_ps_desc, whose purpose is to describe a power
+>> source through its power source value, associated register value,
+>> associated capabilities (e.g. Ethernet), and associated IOLH index.
+>>
+>> Introduce two new functions, rzg2l_ps_to_desc() and
+>> rzg2l_pwr_reg_val_to_desc(), using the
+>> RZG2L_PINCTRL_PS_DESC_MEMBER_TO_DESC_FUNC() macro, as their
+>> implementations are similar.
+>>
+>> These functions retrieve a power source descriptor based on either a
+>> power source value or a power source register value. Other functions
+>> that need to perform power source specific operations can call them to
+>> retrieve the corresponding power source descriptor.
+>>
+>> The register values for the soft power sources were kept to zero since
+>> they are not used across the driver's code.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v6:
+>> - described all the available power sources in the available_ps[]
+>>    array and dropped to wildcard approach to avoid letting the user
+>>    selecting unavailable power source for pins
+>> - simplified RZG2L_PINCTRL_PS_DESC_MEMBER_TO_DESC_FUNC()
+>> - for these two points ^ didn't collect the Wolfram's Tb tag
+>> - dropped rzg2l_ps_is_supported()
+>> - used conditional operator in rzg2l_ps_to_iolh_idx()
+>> - adjusted the patch description
+> 
+> Thanks for the update!
+> 
+>> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> 
+>> +static const struct rzg2l_pinctrl_ps_desc available_ps[] = {
+>> +       /* Ethernet I/O voltage domains */
+>> +       RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_IO_VMC_ETH0 | PIN_CFG_IO_VMC_ETH1,
+>> +                             RZG2L_IOLH_IDX_1V8),
+>> +       RZG2L_PINCTRL_PS_DESC(2500, 2, PIN_CFG_IO_VMC_ETH0 | PIN_CFG_IO_VMC_ETH1,
+>> +                             RZG2L_IOLH_IDX_2V5),
+>> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_IO_VMC_ETH0 | PIN_CFG_IO_VMC_ETH1,
+>> +                             RZG2L_IOLH_IDX_3V3),
+>> +
+>> +       /* SD I/O voltage domains */
+>> +       RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_IO_VMC_SD0 | PIN_CFG_IO_VMC_SD1 |
+>> +                             PIN_CFG_IO_VMC_SD2, RZG2L_IOLH_IDX_1V8),
+>> +       RZG2L_PINCTRL_PS_DESC(2500, 2, PIN_CFG_IO_VMC_SD0 | PIN_CFG_IO_VMC_SD1 |
+>> +                             PIN_CFG_IO_VMC_SD2, RZG2L_IOLH_IDX_2V5),
+> 
+> Before (see below), only Ethernet could select the 2.5V domain, so
+> shouldn't this entry be dropped?
 
-diff --git a/Documentation/driver-api/gpio/board.rst b/Documentation/driver-api/gpio/board.rst
-index 4ac1e12cf..83b74843e 100644
---- a/Documentation/driver-api/gpio/board.rst
-+++ b/Documentation/driver-api/gpio/board.rst
-@@ -55,7 +55,7 @@ looked up by the gpiod functions internally) used in the device tree. With above
- 
- Internally, the GPIO subsystem prefixes the GPIO suffix ("gpios" or "gpio")
- with the string passed in con_id to get the resulting string
--(``snprintf(... "%s-%s", con_id, gpio_suffixes[]``).
-+(``snprintf(... "%s-%s", con_id, gpio_suffixes[])``).
- 
- ACPI
- ----
--- 
-2.54.0
+That's a mistake. I'll drop it from here and from QSPI section.
 
+> 
+>> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_IO_VMC_SD0 | PIN_CFG_IO_VMC_SD1 |
+>> +                             PIN_CFG_IO_VMC_SD2, RZG2L_IOLH_IDX_3V3),
+>> +
+>> +       /* QSPI I/O voltage domains */
+>> +       RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_IO_VMC_QSPI, RZG2L_IOLH_IDX_1V8),
+>> +       RZG2L_PINCTRL_PS_DESC(2500, 2, PIN_CFG_IO_VMC_QSPI, RZG2L_IOLH_IDX_2V5),
+> 
+> Same here?
+> 
+>> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_IO_VMC_QSPI, RZG2L_IOLH_IDX_3V3),
+>> +
+>> +       /* AWO I/O voltage domains */
+>> +       RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_PVDD1833_OTH_AWO_POC,
+>> +                             RZG2L_IOLH_IDX_1V8),
+>> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_PVDD1833_OTH_AWO_POC,
+>> +                             RZG2L_IOLH_IDX_3V3),
+>> +
+>> +       /* ISO I/O voltage domains */
+>> +       RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_PVDD1833_OTH_ISO_POC,
+>> +                             RZG2L_IOLH_IDX_1V8),
+>> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_PVDD1833_OTH_ISO_POC,
+>> +                             RZG2L_IOLH_IDX_3V3),
+>> +
+>> +       /* WDTOVF I/O voltage domains */
+>> +       RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_WDTOVF_N_POC, RZG2L_IOLH_IDX_1V8),
+>> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_WDTOVF_N_POC, RZG2L_IOLH_IDX_3V3),
+>> +
+>> +       /* Software voltage domains */
+>> +       RZG2L_PINCTRL_PS_DESC(1800, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_1V8),
+>> +       RZG2L_PINCTRL_PS_DESC(2500, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_2V5),
+>> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_3V3),
+> 
+> I never really understood PIN_CFG_SOFT_PS...
+
+That was to match b/w a voltage and an IOLH value according to the table from 
+45.3.7 Driving Ability Control Register (IOLH_m) in the RZ/G3S manual (rev.1.30)
+
+Thank you,
+Claudiu
