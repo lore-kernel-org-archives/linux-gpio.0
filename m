@@ -1,204 +1,349 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A8143B489
-	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 07:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30C138F951
+	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 07:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788420913; cv=none; b=jdXxjVw5VnnWWQ0hi6uXrqQik4gJtUUE0TRB/e8daqxindtGbfIMz37DSqYnVopqtXIh4hw973/+zk1A3zDv4Va9TUJX2HL9ME8WQC50u6wXtGmRtyBghF9kNdkV58H+7TB+2/vhhzvZKFj2I0SDqnrHIpfuFYe/eWZEH0F81bk=
+	t=1788421930; cv=none; b=oqFlqn2wnr7KjUvedWXfODLPvLgotWkKfnploni5OrvgLDc640XRDFfCnLs4Tx8OyRIT8lDjTWJBN1CMqAKrZ6GHIDD3aZBwr9mxRq1UKUD3++OyyWz5vEyfJEDOd7jvR9WHIRrrm4ErfD3oFLcUfZppfkrt6fVWP48/P3huhtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788420913; c=relaxed/simple;
-	bh=39Jx9KtDS8alLni2xt7CpfUzAqEr0FXk2RhxhmCdxPE=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=YSxMs1Oi12U0pJjVCPElWwfUKllYP3CvWY65IYusj58BP/40bJa7MBErJDbn1+yIegLlDWwI4PdvMJkprrFf8qO8jR43O8+F1Vi3iAGTWeMOHJpr02SiUTOBwuarCsUW6BsWpSSh+2pI4mzUt4QiT0xsdlR3h7tLY2ZvkUMg84M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BtqL1Dq1; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1788421930; c=relaxed/simple;
+	bh=t170ltihgWozrYlmnpLttCFqB4dGx5JN49WSdQ3OKlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+L1iNgEh/o6DP/eHIne4v59Itlhb1we+1RmCc/Go5hvkohWhT8r927w8aSXsu9fFdHg8FwnpsDCIBkO7Kc+Qd8bAURQOUapR9OmkP6uCsklWMu4QdfZqd/T5/18j9DgjjldP7nblkWXIir3ma+gGDyAMwDksZzi6QwAfEGjV+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lkIeBjWn; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=XytUCmCN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BtqL1Dq1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1788420912; x=1819956912;
-  h=date:from:to:cc:subject:message-id;
-  bh=39Jx9KtDS8alLni2xt7CpfUzAqEr0FXk2RhxhmCdxPE=;
-  b=BtqL1Dq1UUIBssUrql1Ol/0533gthbUzkusAp5HX58bPQJIPMexEIoTy
-   LEKXcZ510oAFTL/wkiWnwSxmonz4k1WOxbYDDUbyAWSGzZQyBQrqq8Me0
-   W4QJTS6GsZhEazQfoZtHCYjf1ZZ3CqDbOK/+EOSeoPDpglyLVwURoich0
-   Q6I2xKSOmptCa+fBwy3+5PsFvOP2SAC011vL3v/zV4ptRjTa3heJJQ+kT
-   Bt+p52EsnV5Xjqhxpl+5Z23dx3O8NvDD003oCc8QMrNnmHaXQNHSnzSuO
-   7oBXni92gT/TF1IxorW12EWb0gFCygQfF01qRvJJUPTapOGFNTYl3hnw2
-   A==;
-X-CSE-ConnectionGUID: hX97FJXeQm+w/ycprn4jgg==
-X-CSE-MsgGUID: b96AMpgrT6iouquReRuZaw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11894"; a="92711849"
-X-IronPort-AV: E=Sophos;i="6.25,258,1779174000"; 
-   d="scan'208";a="92711849"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 00:35:09 -0700
-X-CSE-ConnectionGUID: 49kDZtfySiiJC1KDq10zrQ==
-X-CSE-MsgGUID: l5cGXGY+SlStrJStJ6qeUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,258,1779174000"; 
-   d="scan'208";a="268308910"
-Received: from lkp-server01.sh.intel.com (HELO bfac249b2189) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 03 Sep 2026 00:35:07 -0700
-Received: from kbuild by bfac249b2189 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1x21yT-000000004JO-1LdR;
-	Thu, 03 Sep 2026 07:35:05 +0000
-Date: Thu, 03 Sep 2026 15:34:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: bui duc phuc <phucduc.bui@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- linux-gpio@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: [brgl:gpio/for-next 5/8] drivers/gpio/gpio-altera.c:224:11:
- warning: comparison between pointer and integer ('struct gpio_irq_chip *' and
- 'int')
-Message-ID: <202609031554.tpxA67sB-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lkIeBjWn";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="XytUCmCN"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6835lMFK3113957
+	for <linux-gpio@vger.kernel.org>; Thu, 3 Sep 2026 07:52:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=6ndV979LCaTZLV3edZQ1vDIn
+	qqgtTr2HK8ig0FCKydU=; b=lkIeBjWnDxpHBFQtqZprxFYNhBWOQPP3P0KEcu01
+	ZI8dGtgtY6W3L92L8AAkSg3JA2j7ENlMTB3sjKonFPofr60HG2DPmhHsI/fGUWTj
+	TchxEoexNmQ3AuYGK0xANboMJrqBy8ztD/anwbZySXcFG9DfaHT8uNnvRaT1CeqO
+	wuPw3mnicZ1YnEsTjgVPz5qfde5bihIRffd3XALwX8ygkLOffRL1oA97aCRThZ+0
+	IgjgCM40ZFzmu2WxR84uwmRxB62cGG1d6L7kbTcBZiYfA+lDToaEllaqIZPkP1UL
+	822IxYAsSJ4wTqDIucpRub7MgIqNg7ZGhLS6vSZNzPQbDA==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gf0gjs0hm-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 07:52:07 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-92e820609d9so417930485a.2
+        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 00:52:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1788421927; x=1789026727; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=6ndV979LCaTZLV3edZQ1vDInqqgtTr2HK8ig0FCKydU=;
+        b=XytUCmCN0lOrl/251J1VyJ9bxtzFj4OyBy657i43Y4V0KA/Fjy1x87xJaTPrnIdKot
+         Gu1MMfrMB+Z1lrxywP38/7EUf8dF3urSr5/ZfXS9rDOPY403C6F1J5nlQtqImUcqMfQG
+         slwn4q99ycA4FEeRN5thvCHhlXIyTlpw/tCUgEPUHxU+NfFyA7cc3yt8m8jdAiES7r1o
+         cTw21XKXrZwWM0MCHAmWQx8x6r/hBNrrNRTs48HjXZnlY6t3nGaCAqG6e1kbj/13Kd9s
+         JUqf1FtPU+CT5Z7Hvc5fpkHK7DezSG6Dny7iNlKZtlnZjAILNojZ3Fo9g+T2xC6UD9Jn
+         ziCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788421927; x=1789026727;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=6ndV979LCaTZLV3edZQ1vDInqqgtTr2HK8ig0FCKydU=;
+        b=DYz59oR2MBKep6McQJmim1E7PWvta78Ce6K2+tVOoNMH6AePJ3ECmk+OBebREwdsS5
+         KpkKm390QI5LNqu/0ErpazXUPQ9+tbgp7uWrV//rU3CTIos+ENa3B1CK5hE+bEf7aykP
+         P3UJJvagJhJuLvXdDIwGknWZfp3wk8GJK/baxRaoF/r/pVd52mSXRHixgOfhp3QjAJT1
+         kCcKAo2PAFmX57UNQZstkK6RpEE0YXQNUyd1fRj9r5LJdIwUeX7rkMiGD/Msa5BjTDmw
+         pgEbaF+L5jHOyza/Y48yC2bZeJV2nUU01uyjzNLk/yKKweyuXAo4TgIS/3g9Bq/YWFxR
+         LtzA==
+X-Forwarded-Encrypted: i=1; AKwUvBzumkuvSo3LzLEkzKjxAqcM36hYoyOzlFgRn2u00bas0qRN9i7EoEMibVH/u8TFx6W7KFHs+hQ3GCJZ@vger.kernel.org
+X-Gm-Message-State: AFuF++nArzjziT80t/TNu4dvnQt3DiIxenrTuWrMMEK44/+GkgzY+dJ5
+	nRqomcX7fQvQRsZ4ZXRcoLau77XvRItCk+PxUYKF1zxBWgc4j6Hd+TcAyH3s/URYXt8lINfWo95
+	Et4oKIuqHcTuC45B6FW2aN6QNfoxQbWb0Bz34YDE6dCZZJz2k+UgehpWfCdlfVFP/xGoL9+l8
+X-Gm-Gg: AYBFou1527apG5uU1TzHQubCnif69ZbidM+ekgvlnNLVjB8OupcuAYQj0Z5W7vQ3uDP
+	o2vd5ArL0BvTdCIIohK5S8wg/39hq3lD8HE8vGbQzELS/EIXwEGMy+BFBoP8omKRnqqNEhymOYJ
+	ya8J4av/3oHhJkELgZfBdt2UWtKIwlXsSmwpPOobqQR4O7sV3B+wbhUbgpIDzhN5ykAqkGp9Jnd
+	grpRdRXzqNcEa0hL0tvzpkSUElKYNDjC7JXMSABHS1Ev58ZZV+uEpZYu6tHLE8MxLrVdq4KB2Gs
+	zigjctX9NVKsz2k7yhurAq3hOjCf9kFty4C98UbSeiyYTAFa+T5cZWYA23vX13vTuYB8olQdbNI
+	unw+BxTtDSNTKtg==
+X-Received: by 2002:a05:620a:7002:b0:933:aa0:bb83 with SMTP id af79cd13be357-93960f69d21mr1174346285a.34.1788421926817;
+        Thu, 03 Sep 2026 00:52:06 -0700 (PDT)
+X-Received: by 2002:a05:620a:7002:b0:933:aa0:bb83 with SMTP id af79cd13be357-93960f69d21mr1174339185a.34.1788421926156;
+        Thu, 03 Sep 2026 00:52:06 -0700 (PDT)
+Received: from localhost ([188.216.77.92])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48448e72f02sm11588130f8f.3.2026.09.03.00.52.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2026 00:52:05 -0700 (PDT)
+Date: Thu, 3 Sep 2026 09:52:04 +0200
+From: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        Linus Walleij <linusw@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Michael Walle <mwalle@kernel.org>
+Subject: Re: [PATCH 3/5] PCI/pwrctrl: tc9563: add GPIO auxiliary device
+ support
+Message-ID: <apknJCMQEuBAQctQ@lore-desk>
+References: <20260901-pci-tc9563-aux-v1-0-dd9b80738e70@oss.qualcomm.com>
+ <20260901-pci-tc9563-aux-v1-3-dd9b80738e70@oss.qualcomm.com>
+ <CAMRc=Meajb919ZN4QYaW3E=4AktXNs1C7KPRGmkAPMrRSnPQiQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="C1uFe+ZBq5ukVGF+"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=Meajb919ZN4QYaW3E=4AktXNs1C7KPRGmkAPMrRSnPQiQ@mail.gmail.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDA2OSBTYWx0ZWRfX6o/jSpN4XsuY
+ sOfVEbp6iUhNaDv+r+NxuVGsNFYGqF3WX39oRGjysmU/A28/X0dbNj6/SQybRgQwIuHe05/v4tc
+ JIfgj+HkN4wuSrXnETS3FJ/51PccRGms//yrPDv93c/DQci2SPkNdCbnODk0LVp5oIIQr2cukma
+ zYYqf+mLurS5+GQklM6MP/AAHkGFgHzDG4A/DwO3IPWrev+WWGpX3OPwN8c2pJwDPq1o9l0SLaQ
+ 36eLGiv1IwyOYU12XmLaHY+lpW1ejGMw0pbYX3HdS3vznmlibEHZkubnURtcinvYcdVEsgC3PXD
+ CqCpWO78AQT8zE/QG6gqsy4dddjJEjOcOQe66m2lfw/ui3hrO06obpEggSgDBkte9jVt1hMqDqk
+ PuQ21uZOaiEmR9lYHWHOy3f9qkgRBy9sV83VkRWRmI8XY7kP337ceYO54pQnYnlrp2qfPZwfgjx
+ 3sr9IWHgUvdZX1EkYvg==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAzMDA2OSBTYWx0ZWRfX0WEYFdBQAkF2
+ D+/LES2Z9dSTgwcB6yu4gU1T+NqfpUFby28EQgmttpTTaPG9kA1HK6AyUQ/B0E6cOHokZOKpcDA
+ 9Kxjg11LOAHwIxfSo/dwSljPrWmRmNs=
+X-Proofpoint-GUID: ci0a7Az2lY7h8YqyCgH9De3Wd3o33cGl
+X-Proofpoint-ORIG-GUID: ci0a7Az2lY7h8YqyCgH9De3Wd3o33cGl
+X-Authority-Analysis: v=2.4 cv=LZ4MLDfi c=1 sm=1 tr=0 ts=6a992727 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=WpTaRW6qxYHRGzLzQsVYzg==:17
+ a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22 a=EUspDBNiAAAA:8
+ a=lM7qx0wEhktSdUV_m9MA:9 a=CjuIK1q_8ugA:10 a=5Tv-uV9lO1Ep1sV-muIA:9
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-03_02,2026-09-02_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
+ bulkscore=0 priorityscore=1501 impostorscore=0 malwarescore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609030069
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-head:   1900b5a41493e7050c68c1e62780d6fb9a209457
-commit: 6e6e585b603e4f679c2a33c8f0954ec88b52fd7a [5/8] gpio: altera: Handle errors from optional IRQ lookup
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20260903/202609031554.tpxA67sB-lkp@intel.com/config)
-compiler: clang version 24.0.0git (https://github.com/llvm/llvm-project ed1626b9d0eaf7c406f44da5fb595ad94559f54b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260903/202609031554.tpxA67sB-lkp@intel.com/reproduce)
+--C1uFe+ZBq5ukVGF+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202609031554.tpxA67sB-lkp@intel.com/
+> On Tue, 1 Sep 2026 12:27:55 +0200, Lorenzo Bianconi
+> <lorenzo.bianconi@oss.qualcomm.com> said:
+> > The TC9563 embeds a GPIO controller used for per-port reset signals.
+> > Create an auxiliary device for it so the gpio-tc9563 driver can
+> > register the GPIO chip and enable DT-based GPIO lookups. Pass the
+> > tc9563 regmap to the auxiliary device as its platform data.
+> >
+> > The downstream port DT parsing loop gains an of_node_is_type() filter
+> > to skip non-PCI child nodes such as the GPIO controller node.
+> >
+> > The pwrctrl driver does not wait for the GPIO chip to be probed. The
+> > per-port reset GPIO lookup, returning -EPROBE_DEFER until the chip is
+> > registered, is added in the next patch.
+> >
+> > Select AUXILIARY_BUS and GPIO_TC9563 in Kconfig.
+> >
+> > Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+> > ---
+> >  drivers/pci/pwrctrl/Kconfig              |  2 +
+> >  drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c | 78 ++++++++++++++++++++++++=
+++++++--
+> >  2 files changed, 77 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/pci/pwrctrl/Kconfig b/drivers/pci/pwrctrl/Kconfig
+> > index 1952ab4f29b6..a07694fae0c9 100644
+> > --- a/drivers/pci/pwrctrl/Kconfig
+> > +++ b/drivers/pci/pwrctrl/Kconfig
+> > @@ -30,6 +30,8 @@ config PCI_PWRCTRL_TC9563
+> >  	default m if ARCH_QCOM
+> >  	depends on I2C
+> >  	select REGMAP_I2C
+> > +	select AUXILIARY_BUS
+> > +	select GPIO_TC9563
+>=20
+> I think this should depend on it, not select it?
 
-All warnings (new ones prefixed by >>):
+ack, I will fix it in v2.
 
-   drivers/gpio/gpio-altera.c:224:7: error: use of undeclared identifier 'irq'; did you mean 'girq'?
-     224 |                 if (irq != -ENXIO)
-         |                     ^~~
-         |                     girq
-   drivers/gpio/gpio-altera.c:174:24: note: 'girq' declared here
-     174 |         struct gpio_irq_chip *girq;
-         |                               ^
->> drivers/gpio/gpio-altera.c:224:11: warning: comparison between pointer and integer ('struct gpio_irq_chip *' and 'int') [-Wpointer-integer-compare]
-     224 |                 if (irq != -ENXIO)
-         |                     ~~~ ^  ~~~~~~
-   drivers/gpio/gpio-altera.c:225:11: error: use of undeclared identifier 'irq'; did you mean 'girq'?
-     225 |                         return irq;
-         |                                ^~~
-         |                                girq
-   drivers/gpio/gpio-altera.c:174:24: note: 'girq' declared here
-     174 |         struct gpio_irq_chip *girq;
-         |                               ^
-   drivers/gpio/gpio-altera.c:225:11: error: incompatible pointer to integer conversion returning 'struct gpio_irq_chip *' from a function with result type 'int' [-Wint-conversion]
-     225 |                         return irq;
-         |                                ^~~
-   1 warning and 3 errors generated.
+>=20
+> >  	help
+> >  	  Say Y here to enable the PCI Power Control driver of TC9563 PCIe
+> >  	  switch.
+> > diff --git a/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c b/drivers/pci/pwr=
+ctrl/pci-pwrctrl-tc9563.c
+> > index b0d8912690a2..ee9c26b8f5cb 100644
+> > --- a/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c
+> > +++ b/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c
+> > @@ -4,11 +4,13 @@
+> >   */
+> >
+> >  #include <linux/array_size.h>
+> > +#include <linux/auxiliary_bus.h>
+> >  #include <linux/bitfield.h>
+> >  #include <linux/bits.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/device.h>
+> >  #include <linux/gpio/consumer.h>
+> > +#include <linux/gpio/driver.h>
+> >  #include <linux/i2c.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of.h>
+> > @@ -20,12 +22,10 @@
+> >  #include <linux/regulator/consumer.h>
+> >  #include <linux/string.h>
+> >  #include <linux/types.h>
+> > +#include <linux/soc/qcom/tc9563.h>
+> >
+> >  #include "../pci.h"
+> >
+> > -#define TC9563_GPIO_CONFIG		0x801208
+> > -#define TC9563_RESET_GPIO		0x801210
+> > -
+> >  #define TC9563_PORT_L0S_DELAY		0x82496c
+> >  #define TC9563_PORT_L1_DELAY		0x824970
+> >
+> > @@ -393,6 +393,71 @@ static int tc9563_pwrctrl_parse_device_dt(struct d=
+evice_node *node,
+> >  	return 0;
+> >  }
+> >
+> > +static void tc9563_pwrctrl_adev_release(struct device *dev)
+> > +{
+> > +	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
+> > +
+> > +	of_node_put(adev->dev.of_node);
+> > +	kfree(adev);
+> > +}
+> > +
+> > +static void tc9563_pwrctrl_adev_remove(void *data)
+> > +{
+> > +	struct auxiliary_device *adev =3D data;
+> > +
+> > +	auxiliary_device_delete(adev);
+> > +	auxiliary_device_uninit(adev);
+> > +}
+> > +
+> > +static int tc9563_pwrctrl_adev_add(struct device *dev, const char *nam=
+e,
+> > +				   u32 id, struct device_node *of_node,
+> > +				   void *priv_data)
+> > +{
+> > +	struct auxiliary_device *adev;
+> > +	int ret;
+> > +
+> > +	adev =3D kzalloc_obj(*adev);
+> > +	if (!adev) {
+> > +		of_node_put(of_node);
+>=20
+> This is a bit confusing. You get the node in tc9563_pwrctrl_add_gpio_adev=
+() but
+> you put it here. Please either do both here or there.
 
+ack, I will fix it in v2.
 
-vim +224 drivers/gpio/gpio-altera.c
+Regards,
+Lorenzo
 
-   165	
-   166	static int altera_gpio_probe(struct platform_device *pdev)
-   167	{
-   168		struct gpio_generic_chip_config config;
-   169		struct device *dev = &pdev->dev;
-   170		int reg, ret;
-   171		struct altera_gpio_chip *altera_gc;
-   172		struct gpio_generic_chip *chip;
-   173		struct gpio_chip *gc;
-   174		struct gpio_irq_chip *girq;
-   175		int mapped_irq;
-   176	
-   177		altera_gc = devm_kzalloc(&pdev->dev, sizeof(*altera_gc), GFP_KERNEL);
-   178		if (!altera_gc)
-   179			return -ENOMEM;
-   180	
-   181		raw_spin_lock_init(&altera_gc->gpio_lock);
-   182	
-   183		altera_gc->regs = devm_platform_ioremap_resource(pdev, 0);
-   184		if (IS_ERR(altera_gc->regs))
-   185			return dev_err_probe(dev, PTR_ERR(altera_gc->regs),
-   186					     "failed to ioremap memory resource\n");
-   187	
-   188		chip = &altera_gc->chip;
-   189	
-   190		config = (struct gpio_generic_chip_config) {
-   191			.dev = dev,
-   192			.sz = 4,
-   193			.dat = altera_gc->regs + ALTERA_GPIO_DATA,
-   194			.set = altera_gc->regs + ALTERA_GPIO_DATA,
-   195			.dirout = altera_gc->regs + ALTERA_GPIO_DIR,
-   196		};
-   197	
-   198		ret = gpio_generic_chip_init(chip, &config);
-   199		if (ret)
-   200			return dev_err_probe(dev, ret, "unable to init generic GPIO\n");
-   201	
-   202		gc = &chip->gc;
-   203	
-   204		if (device_property_read_u32(dev, "altr,ngpio", &reg))
-   205			/* By default assume maximum ngpio */
-   206			gc->ngpio = ALTERA_GPIO_MAX_NGPIO;
-   207		else
-   208			gc->ngpio = reg;
-   209	
-   210		if (gc->ngpio > ALTERA_GPIO_MAX_NGPIO) {
-   211			dev_warn(&pdev->dev,
-   212				"ngpio is greater than %d, defaulting to %d\n",
-   213				ALTERA_GPIO_MAX_NGPIO, ALTERA_GPIO_MAX_NGPIO);
-   214			gc->ngpio = ALTERA_GPIO_MAX_NGPIO;
-   215		}
-   216	
-   217		gc->base = -1;
-   218		gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pfw", dev_fwnode(dev));
-   219		if (!gc->label)
-   220			return -ENOMEM;
-   221	
-   222		mapped_irq = platform_get_irq_optional(pdev, 0);
-   223		if (mapped_irq < 0) {
- > 224			if (irq != -ENXIO)
-   225				return irq;
-   226			goto skip_irq;
-   227		}
-   228	
-   229		if (device_property_read_u32(dev, "altr,interrupt-type", &reg)) {
-   230			dev_err(&pdev->dev,
-   231				"altr,interrupt-type value not set in device tree\n");
-   232			return -EINVAL;
-   233		}
-   234		altera_gc->interrupt_trigger = reg;
-   235	
-   236		girq = &gc->irq;
-   237		gpio_irq_chip_set_chip(girq, &altera_gpio_irq_chip);
-   238	
-   239		if (altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH)
-   240			girq->parent_handler = altera_gpio_irq_leveL_high_handler;
-   241		else
-   242			girq->parent_handler = altera_gpio_irq_edge_handler;
-   243		girq->num_parents = 1;
-   244		girq->parents = devm_kcalloc(&pdev->dev, 1, sizeof(*girq->parents),
-   245					     GFP_KERNEL);
-   246		if (!girq->parents)
-   247			return -ENOMEM;
-   248		girq->default_type = IRQ_TYPE_NONE;
-   249		girq->handler = handle_bad_irq;
-   250		girq->parents[0] = mapped_irq;
-   251	
-   252	skip_irq:
-   253		ret = devm_gpiochip_add_data(dev, gc, altera_gc);
-   254		if (ret) {
-   255			dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
-   256			return ret;
-   257		}
-   258	
-   259		return 0;
-   260	}
-   261	
+>=20
+> > +		return -ENOMEM;
+> > +	}
+> > +
+> > +	adev->id =3D id;
+> > +	adev->name =3D name;
+> > +	adev->dev.parent =3D dev;
+> > +	adev->dev.platform_data =3D priv_data;
+> > +	adev->dev.release =3D tc9563_pwrctrl_adev_release;
+> > +	adev->dev.of_node =3D of_node;
+> > +
+> > +	ret =3D auxiliary_device_init(adev);
+> > +	if (ret) {
+> > +		of_node_put(of_node);
+> > +		kfree(adev);
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret =3D auxiliary_device_add(adev);
+> > +	if (ret) {
+> > +		auxiliary_device_uninit(adev);
+> > +		return ret;
+> > +	}
+> > +
+> > +	return devm_add_action_or_reset(dev, tc9563_pwrctrl_adev_remove, adev=
+);
+> > +}
+> > +
+> > +static int tc9563_pwrctrl_add_gpio_adev(struct tc9563_pwrctrl *tc9563)
+> > +{
+> > +	struct device *dev =3D tc9563->pwrctrl.dev;
+> > +	struct device_node *node;
+> > +
+> > +	node =3D to_of_node(gpiochip_node_get_first(dev));
+> > +	if (!node)
+> > +		return 0;
+> > +
+> > +	return tc9563_pwrctrl_adev_add(dev, TC9563_GPIO_DEV_NAME, 0, node,
+> > +				       tc9563->regmap);
+> > +}
+> > +
+> >  static int tc9563_pwrctrl_power_off(struct pci_pwrctrl *pwrctrl)
+> >  {
+> >  	struct tc9563_pwrctrl *tc9563 =3D container_of(pwrctrl,
+> > @@ -565,6 +630,9 @@ static int tc9563_pwrctrl_probe(struct platform_dev=
+ice *pdev)
+> >  	 */
+> >  	port =3D TC9563_USP;
+> >  	for_each_child_of_node_scoped(node, child) {
+> > +		if (!of_node_is_type(child, "pci"))
+> > +			continue;
+> > +
+> >  		if (++port >=3D TC9563_MAX)
+> >  			break;
+> >
+> > @@ -596,6 +664,10 @@ static int tc9563_pwrctrl_probe(struct platform_de=
+vice *pdev)
+> >  	tc9563->pwrctrl.power_on =3D tc9563_pwrctrl_power_on;
+> >  	tc9563->pwrctrl.power_off =3D tc9563_pwrctrl_power_off;
+> >
+> > +	ret =3D tc9563_pwrctrl_add_gpio_adev(tc9563);
+> > +	if (ret)
+> > +		goto remove_i2c;
+> > +
+> >  	ret =3D devm_pci_pwrctrl_device_set_ready(dev, &tc9563->pwrctrl);
+> >  	if (ret)
+> >  		goto power_off;
+> >
+> > --
+> > 2.55.0
+> >
+> >
+>=20
+> Bart
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--C1uFe+ZBq5ukVGF+
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCapknJAAKCRA6cBh0uS2t
+rCogAP4oNhM97wLi/RHNG1fo3TNyTqy2/f3NiiIJJPSz4udL2AEAsZpGs54+r2Tk
+jPosRm/JCKaJgPbSKhe/ojsnQ6tipAo=
+=a0la
+-----END PGP SIGNATURE-----
+
+--C1uFe+ZBq5ukVGF+--
