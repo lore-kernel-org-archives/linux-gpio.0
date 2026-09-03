@@ -1,351 +1,283 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE6F466B13
-	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 08:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253A93DFC80
+	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 09:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788425843; cv=none; b=UA88Nntpm1Y78UXFBuNfk0F3R5XbfHR937yYbE7428Ych1COgXwf5BwVA73ACfzgkYoIImADOcdqITICD0oEM1pMWr0ndo/igGuqh6eaus6kKNR9w3Ql3WhNRsB63AtU8W4rXCtjuJ/fwAs/xfoTRCx/S294u2qrMQf2yC0xGBI=
+	t=1788426005; cv=none; b=A5kfrNkc+rUCc4KDB9fLCkcwVEY94EHTtfOiIfXI5ACzqci7UkuyadLApgx5c9rB9jHv9aFOnZjwFotlyyw9dLJ6erBsN+iDjT+0eRqUHCaq/fUmmJM+3E8sQjBACoBzVk/z/iZxeOdgnF4KDXcEf2kYEvESiPOlCTWE7dO6TuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788425843; c=relaxed/simple;
-	bh=1Mn4BcgjHqDobiYyDpI2n+wnu9b1J//ZPYsru93fCT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h9rIGtk22PyEpztWP4qf9XMUEHW/4vu9WEpQsXG8909yCRkgny1xqnVKsRTtPLVRy5+1jEOHMK1ZUOENoUBNXwyPxTUCIh1hwckaPSZpyfwZt5t114JLrK7rxHlxxi/VHcWdMeTxL5xanOzsh53yAxFYg2bWrzwiPywyR3SY1Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GuIBvsOP; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ep03TFWU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1788426005; c=relaxed/simple;
+	bh=bKkk36/4wb9hpi+rhVPCkAecOAZhql96AuE8i1mXAQk=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r9QZEKijw8wPfteoaiPveYDDSZOX+7uCvSARS0umbFMsKn5+xSBLUl5csOFIoGzZLCeFtWLwG0hVrwZpsGWHweOX/caR+gh4EIwamP93PSa4W4qTHhfPMvEey/Op7zdoicAzoBodIHVIjFTQYVpy19nenfGmrvWWDOvFJZClxpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUGVww6F; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GuIBvsOP";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ep03TFWU"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6835lX7I4023516
-	for <linux-gpio@vger.kernel.org>; Thu, 3 Sep 2026 08:57:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=mH3o0RXrBVCerfzSmyAEFqJb
-	hCVag6r+YQ8oHN/r4ck=; b=GuIBvsOPnr6POTPqWUKlOms8YqWC1R8povoq0Znf
-	v88uribvODzu6URnbk7L9ASZk8j0yoi/1KgTDnrcP8i2N6ntRdfOpombkGhLAQIe
-	VyoFajVSwWjP7tkkIligOUoWK8YswuFfqlm/QIo9YaFsnO5TkQamIjodmLpQJ5Kx
-	uW6r/X5bH5Dhv4NrJ7uVjCJ6V9TS6VdchjHx0Q8/4M8Nsc/lLAMN9YMU09JV61+1
-	KigaR1XvLwtBEorwAlcYkGZC30X3K4qzgYjA0fbFO4KbKe9/rGD2CT2Prx3anTK2
-	yZGNkqzDyADagwIihaX/mZM2Sx2dlmfuZuj6og+aESyL3w==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gemjhcb0e-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 08:57:20 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-9390a2c895bso558152285a.0
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 01:57:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788425840; x=1789030640; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=mH3o0RXrBVCerfzSmyAEFqJbhCVag6r+YQ8oHN/r4ck=;
-        b=ep03TFWUtBaXckfzGy7BqNFtyZdaSi/KMTjgFv5S6JXgD9tHuxkWIwLzxLOT9Ia6ug
-         F96ewuHnGQGYlx3XZhIQvgMkhl76EIQAaz/07v0l7W2HJGx5HOksM5BMsYQx85IbWkTa
-         osATedNR6Buc09yCy/iPLvrAUR7OgwdyZUBhXc6coVTiW5P5N0vhOi3B3nsoIy6g7/C/
-         mWWOgJ5NZ7Jz8HsAEekiK+X/1sY50b9qB12F3YickVGRhkGa5jDpAaZ9+47rIrzMyyWL
-         r4AOk/HWAP/0BP0WjbNW7WMomHz8u0jHn9cF9Jmi2eiPBmli21fsw3uQAAlgdoC5LAGF
-         5pUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788425840; x=1789030640;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=mH3o0RXrBVCerfzSmyAEFqJbhCVag6r+YQ8oHN/r4ck=;
-        b=nbSGNoZtFdvWZB+GlPpG0qC3A7/1Af7D+NQQr6HGANH8XKwM5nEjkNTcdImcZZOF5P
-         u8It0/jG202gaVqIbLi5M7XRxVmBqwq0/gjvtF2NA+O+yfvIo08wnmNOoYgmOw/+X4sM
-         4R5SdFPTyVUgQzkfBXpcsEn2tmaMbmxqVuxPh3gMn9bH6jjtYRc+pyC0lV4i1OpgWIfx
-         eE1wQ7YJTvTCSDxQDuVybwnHfSRUtKeNu5fc7zkz3xXhUERCtN2lzdI7kvjDW4bvlGxl
-         EkrJpWWfy1E/paA1lmmmO8qKFQjc2uc84wKYtHxUHRN7QjYP49yN7TJC2U+wvZfSWlk2
-         j0Qw==
-X-Forwarded-Encrypted: i=1; AKwUvBykZfwFscJ/q0QuBuPkW1SArhY8A5xupeTt6Gw4CZ8lz2t/X8gDZeh8iyYedWhd9XU0Z4dnbE4lfJ/P@vger.kernel.org
-X-Gm-Message-State: AFuF++nHwR6wqfK6cxbHFgpXjVWSqw5pcc2eMLePj1D0NJplrr4oHvUO
-	pFuWu2yMKEaldLW+9U3IhJFt3pg2Df2qvVfLP3ZDGHakAiA7hn9Ab3Jxd63+2VgkIhMO2cJpdWW
-	A+pifp4kIu/e57BLV5BT/CayogYKZltQatbqaN4RyYq0oSQixbYyWSNILiguvkpP6
-X-Gm-Gg: AYBFou2+rBEDblN0+e8smUtsevaWE8JIjk+VruFZujh1QT707olPIyUDgP6jAnhUXv9
-	2RViy0MbVkIPfMZ6/H9dN3mDQMlv1miyZ1EmlzrQSWThd5iHx9qNSTRZUCLTq0IFAaliG/96QXR
-	mVU1eVCHChfYZpyhpIaLBvdST7XC4WaNwUej68ueP7tltJWo+AlpeTF883I+yohzQxKryu0/4qY
-	xIzWbs3UWQEggEU1/DkB2OWJsq9CdPqR9uRILBjxf/o/XgcI4u1TkuBSwjDphO9RSeJK8RcQ32R
-	fyD1HOjpXohZsoq2pSB/ZkW+dDUlQaSQeVUsAH7MFiyCl4VBcHem1KPt/c6jM4gUoL4FA0XuLtu
-	t/RkaFBUwW/Wjww==
-X-Received: by 2002:a05:620a:2944:b0:92e:5b92:98bb with SMTP id af79cd13be357-93960deb975mr1139730785a.14.1788425839810;
-        Thu, 03 Sep 2026 01:57:19 -0700 (PDT)
-X-Received: by 2002:a05:620a:2944:b0:92e:5b92:98bb with SMTP id af79cd13be357-93960deb975mr1139725285a.14.1788425838888;
-        Thu, 03 Sep 2026 01:57:18 -0700 (PDT)
-Received: from localhost ([188.216.77.92])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cee7febb4sm59540455e9.14.2026.09.03.01.57.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Sep 2026 01:57:17 -0700 (PDT)
-Date: Thu, 3 Sep 2026 10:57:17 +0200
-From: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Michael Walle <mwalle@kernel.org>, Alex Elder <elder@riscstar.com>,
-        Daniel Thompson <daniel@riscstar.com>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] PCI/pwrctrl: tc9563: add GPIO auxiliary device
- support
-Message-ID: <apk2bd66H6hP_uR0@lore-desk>
-References: <20260903-pci-tc9563-aux-v2-0-34c625b542c1@oss.qualcomm.com>
- <20260903-pci-tc9563-aux-v2-3-34c625b542c1@oss.qualcomm.com>
- <CAMRc=MdpUaJ8sJczbN592wncBZvdhaUW2rcA3CjyxS8fPKAoGw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUGVww6F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 992B61F00ACF
+	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 09:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788426003;
+	bh=GEYx+ojq8Royd9vV2bcO4nv/HSwYCfpOYZxRsx+XsKc=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=DUGVww6FJhsGnXgZhiEjqrGKNx0H1mihS+E/HisLo7qmpgwpwIOXbWmI49CWvOfr7
+	 9PMQy60Ar7ZhfLon9PR4b43NXAWKtKz/MfOYfLF1Pn2vOItlm7hmfrY8SGq2nTbYBU
+	 0OnM16+vFDKxfanEkHLZNkJRNsSa56qb6LHSBKJ2nYHm0WD/a7S70rpL5BL2U0hDX/
+	 wi2QQeQGoSS6tvrsj/52UUKcBBKyyg9bDDFvs/cNmQWBrDvNtSrS/uSYYBMAifHkUP
+	 O/cm1CP65IbWbbcwux3IhEjWGfWjEC++6TitWyCGMHBlWKw2Lo/FffmZzlscWNFPzV
+	 S6aDXhTjJ6W5g==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5b568dae0e8so2087531e87.0
+        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 02:00:03 -0700 (PDT)
+X-Gm-Message-State: AFuF++mZ27fCUWRRlFla+aGyFnApi19iRcV7qfy8/a/zjnKfoQFF1s8f
+	QMRPFYFCY0UvdrJKVsglrang+rDfFI/kbsEbPlUacPohcxO9xrcgxzV4HnSiX4GTnNuMgHqoTwa
+	MW0AAE9Fciue3GpPNbUYiHAHZRIm/pmnptCxqZAcEPw==
+X-Received: by 2002:a05:6512:239c:b0:5b0:c96:cc8c with SMTP id
+ 2adb3069b0e04-5b60834d7a2mr3312319e87.12.1788426000493; Thu, 03 Sep 2026
+ 02:00:00 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 3 Sep 2026 04:59:57 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 3 Sep 2026 04:59:57 -0400
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260903-axiado-ax3000-sgpio-controller-v3-2-b30820e1b858@axiado.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RoZLkDf68al4Rhem"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MdpUaJ8sJczbN592wncBZvdhaUW2rcA3CjyxS8fPKAoGw@mail.gmail.com>
-X-Proofpoint-GUID: 8XGPlXH0OcJJLSze2-jHOJCvbYog3AUl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDA3NyBTYWx0ZWRfX2bIbDnFtOxd4
- bJX/zIiKh4RyJ6gh1tBCcFR54D+RcKGvIqfepHmizMUyGuNHZ5EOe7Ycl5DtXXhW0LqZ6yCe7xY
- GK1R/HUs2B26LSJ9VS3bWzjt3FRN07GM39ENwi3Irf3ceWbsS/DEYMW47z3tB/OTB/wMsdt71Is
- QrnRm1hVekgXuB5p7aw9jqhUyjYfwQY2Vf4kEs8y25QsloBwwEQK7n86xsXvNYVU8v/LT6UR/2K
- 1cJ9YqsJuq+LX2V7MNWcKdghjNYXqkMbfgwTZ20ljIKUit/lfQ3zqwSMM+OtfxKQdGG7fbib/jh
- 4uFb0W3BoAleHr8RdeJlxxyh2Y6Yf0NN74A2CJTdiEnbI462PacZnKmfbq76hrrY16jonaPjD1U
- TMe5i0zMfYcdqI87SMf7qnvJdV0kiAAVMHUELvXQBusz7zFWYtflW1jRyXfhiMTZACMv1dBVsSr
- wSmY224jl3TynOg4cFw==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAzMDA3NyBTYWx0ZWRfXw0511l4wXP5Y
- VfM5ZqJ8uLIRkLuqqmtYP0hI+SizVpNaQgDIZPKf41VS6JpG+uVNDE5+sUWBZL1HIuFPNG7z2xF
- zPh26imLvRooBhgvhnUuAGPHTFHnOuw=
-X-Authority-Analysis: v=2.4 cv=ErHiaycA c=1 sm=1 tr=0 ts=6a993670 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=WpTaRW6qxYHRGzLzQsVYzg==:17
- a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=EUspDBNiAAAA:8
- a=lM7qx0wEhktSdUV_m9MA:9 a=CjuIK1q_8ugA:10 a=CAIs8WcTJ8Yun8YYCucA:9
- a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-ORIG-GUID: 8XGPlXH0OcJJLSze2-jHOJCvbYog3AUl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-03_02,2026-09-02_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 adultscore=0 malwarescore=0 spamscore=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2609030077
+References: <20260903-axiado-ax3000-sgpio-controller-v3-0-b30820e1b858@axiado.com>
+ <20260903-axiado-ax3000-sgpio-controller-v3-2-b30820e1b858@axiado.com>
+Date: Thu, 3 Sep 2026 04:59:57 -0400
+X-Gmail-Original-Message-ID: <CAMRc=MejseGw7P5MYSC=MKi1KeDn9PTd4WKJX_cgoh1WD3egVg@mail.gmail.com>
+X-Gm-Features: AcwNN1Wb5d53ipUlE15H5F27WGBwMP5PUHZHGBO94uLYxXdMLAqLj2hyPpx69zo
+Message-ID: <CAMRc=MejseGw7P5MYSC=MKi1KeDn9PTd4WKJX_cgoh1WD3egVg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] gpio: axiado: add AX3005 SGPIO controller support
+To: Petar Stepanovic <pstepanovic@axiado.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, Tzu-Hao Wei <twei@axiado.com>, Swark Yang <syang@axiado.com>, 
+	Prasad Bolisetty <pbolisetty@axiado.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Harshit Shah <hshah@axiado.com>, SriNavmani A <srinavmani@axiado.com>, 
+	Karthikeyan Mitran <kmitran@axiado.com>, Michael Walle <mwalle@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
---RoZLkDf68al4Rhem
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 3 Sep 2026 09:11:33 +0200, Petar Stepanovic
+<pstepanovic@axiado.com> said:
+> Add support for the Axiado AX3005 SGPIO controller.
+>
+> Each SGPIO position provides one input GPIO and one output GPIO with
+> fixed directions. The driver registers the controller as a gpio_chip,
+> supports interrupts on input GPIOs, and uses regmap for register access.
+>
+> Signed-off-by: Petar Stepanovic <pstepanovic@axiado.com>
+> ---
 
-> On Thu, 3 Sep 2026 09:52:59 +0200, Lorenzo Bianconi
-> <lorenzo.bianconi@oss.qualcomm.com> said:
-> > The TC9563 embeds a GPIO controller used for per-port reset signals.
-> > Create an auxiliary device for it so the gpio-tc9563 driver can
-> > register the GPIO chip and enable DT-based GPIO lookups. Pass the
-> > tc9563 regmap to the auxiliary device as its platform data.
-> >
-> > The downstream port DT parsing loop gains an of_node_is_type() filter
-> > to skip non-PCI child nodes such as the GPIO controller node.
-> >
-> > The pwrctrl driver does not wait for the GPIO chip to be probed. The
-> > per-port reset GPIO lookup, returning -EPROBE_DEFER until the chip is
-> > registered, is added in the next patch.
-> >
-> > Select AUXILIARY_BUS and GPIO_TC9563 in Kconfig.
->=20
-> It's no longer true and also, it's clear from the patch so we don't have =
-to
-> have it in the commit message.
+...
 
-ack, it is just a leftover of v1. I will fix it.
+> +
+> +static int axiado_sgpio_probe(struct platform_device *pdev)
+> +{
+> +	struct gpio_regmap_config config = { };
+> +	struct irq_domain_info d_info = { };
+> +	struct axiado_sgpio *sgpio;
+> +	unsigned int ngpio, i;
+> +	unsigned long apb_freq;
+> +	struct clk *apb_clk;
+> +	void __iomem *base;
+> +	u32 sgpio_freq;
+> +	int irq, rc;
+> +
+> +	sgpio = devm_kzalloc(&pdev->dev, sizeof(*sgpio), GFP_KERNEL);
+> +	if (!sgpio)
+> +		return -ENOMEM;
+> +
+> +	/* The regmap callbacks below need both of these. */
+> +	platform_set_drvdata(pdev, sgpio);
+> +
+> +	sgpio->regs = &axiado_sgpio_offsets;
+> +
+> +	base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	sgpio->regmap = devm_regmap_init_mmio(&pdev->dev, base,
+> +					      &axiado_sgpio_regmap_config);
+> +	if (IS_ERR(sgpio->regmap))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(sgpio->regmap),
+> +				     "Failed to init regmap\n");
+> +
+> +	rc = device_property_read_u32(&pdev->dev, "ngpios", &ngpio);
+> +	if (rc)
+> +		return dev_err_probe(&pdev->dev, rc,
+> +				     "Failed to read ngpios property\n");
+> +
+> +	/*
+> +	 * Each SGPIO signal is exposed as one input and one output line, so
+> +	 * the number of lines is twice the number of signals.
+> +	 */
+> +	if (!ngpio || ngpio % 2 || ngpio > SGPIO_MAX_SIGNALS * 2)
+> +		return dev_err_probe(&pdev->dev, -EINVAL,
+> +				     "Invalid ngpios value: %u (even, max %u)\n",
+> +				     ngpio, SGPIO_MAX_SIGNALS * 2);
+> +
+> +	sgpio->nsignals = ngpio / 2;
+> +
+> +	sgpio->din_shadow = devm_kcalloc(&pdev->dev,
+> +					 DIV_ROUND_UP(sgpio->nsignals,
+> +						      SGPIO_BANK_SIZE),
+> +					 sizeof(*sgpio->din_shadow), GFP_KERNEL);
+> +	sgpio->irq_unmasked = devm_bitmap_zalloc(&pdev->dev, sgpio->nsignals,
+> +						 GFP_KERNEL);
+> +	sgpio->irq_rising = devm_bitmap_zalloc(&pdev->dev, sgpio->nsignals,
+> +					       GFP_KERNEL);
+> +	sgpio->irq_falling = devm_bitmap_zalloc(&pdev->dev, sgpio->nsignals,
+> +						GFP_KERNEL);
+> +	if (!sgpio->din_shadow || !sgpio->irq_unmasked ||
+> +	    !sgpio->irq_rising || !sgpio->irq_falling)
+> +		return -ENOMEM;
+> +
+> +	apb_clk = devm_clk_get_enabled(&pdev->dev, NULL);
+> +	if (IS_ERR(apb_clk))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(apb_clk),
+> +				     "Failed to get and enable APB clock\n");
+> +
+> +	rc = device_property_read_u32(&pdev->dev, "bus-frequency",
+> +				      &sgpio_freq);
+> +	if (rc)
+> +		return dev_err_probe(&pdev->dev, rc,
+> +				     "Failed to read bus-frequency\n");
+> +
+> +	apb_freq = clk_get_rate(apb_clk);
+> +
+> +	if (!apb_freq || !sgpio_freq || sgpio_freq > apb_freq)
+> +		return dev_err_probe(&pdev->dev, -EINVAL,
+> +				     "Invalid SGPIO bus frequency\n");
+> +
+> +	sgpio->preset_value = (apb_freq / sgpio_freq) - 1;
+> +	sgpio->count_value = sgpio->preset_value;
+> +
+> +	sgpio->pos_reg = SGPIO_POS(sgpio->nsignals - 1);
+> +
+> +	sgpio->din_bank_shift =	SGPIO_NUM_BANKS -
+> +				DIV_ROUND_UP(sgpio->nsignals, SGPIO_BANK_SIZE);
+> +
+> +	/*
+> +	 * From here on the hardware may be running, so the shutdown action has
+> +	 * to be in place before the first register is programmed. It only ever
+> +	 * writes zeroes, which is harmless if initialisation never got that
+> +	 * far, and it runs before the APB clock is disabled because that was
+> +	 * requested earlier.
+> +	 */
+> +	rc = devm_add_action_or_reset(&pdev->dev, axiado_sgpio_disable, sgpio);
+> +	if (rc)
+> +		return rc;
+> +
+> +	rc = axiado_sgpio_hw_init(sgpio);
+> +	if (rc)
+> +		return dev_err_probe(&pdev->dev, rc,
+> +				     "Failed to initialize hardware\n");
+> +
+> +	rc = axiado_sgpio_init_input_cache(sgpio);
+> +	if (rc)
+> +		return dev_err_probe(&pdev->dev, rc,
+> +				     "Failed to initialize input cache\n");
+> +
+> +	sgpio->dir_out = devm_bitmap_zalloc(&pdev->dev, ngpio, GFP_KERNEL);
+> +	if (!sgpio->dir_out)
+> +		return -ENOMEM;
+> +
+> +	/* Even lines are the serial inputs, odd lines the serial outputs. */
+> +	for (i = 1; i < ngpio; i += 2)
+> +		__set_bit(i, sgpio->dir_out);
+> +
+> +	d_info.fwnode = dev_fwnode(&pdev->dev);
+> +	d_info.size = ngpio;
+> +	d_info.hwirq_max = ngpio;
+> +	d_info.ops = &axiado_sgpio_domain_ops;
+> +	d_info.host_data = sgpio;
+> +
+> +	sgpio->domain = devm_irq_domain_instantiate(&pdev->dev, &d_info);
+> +	if (IS_ERR(sgpio->domain))
+> +		return PTR_ERR(sgpio->domain);
+> +
+> +	config.parent = &pdev->dev;
+> +	config.regmap = sgpio->regmap;
+> +	config.ngpio = ngpio;
+> +	config.reg_dat_base = GPIO_REGMAP_ADDR(sgpio->regs->din_ss);
+> +	config.reg_set_base = GPIO_REGMAP_ADDR(sgpio->regs->dout_ss);
+> +	config.reg_mask_xlate = axiado_sgpio_reg_mask_xlate;
+> +	config.fixed_direction_output = sgpio->dir_out;
+> +	config.irq_domain = sgpio->domain;
+> +	config.drvdata = sgpio;
+> +
+> +	sgpio->gpio = devm_gpio_regmap_register(&pdev->dev, &config);
+> +	if (IS_ERR(sgpio->gpio))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(sgpio->gpio),
+> +				     "Could not register gpiochip\n");
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0)
+> +		return irq;
+> +
+> +	rc = devm_request_threaded_irq(&pdev->dev, irq, NULL, axiado_sgpio_irq_handler,
+> +				       IRQF_ONESHOT, dev_name(&pdev->dev), sgpio);
+> +	if (rc)
+> +		return dev_err_probe(&pdev->dev, rc, "Failed to request IRQ\n");
+> +
+> +	rc = axiado_sgpio_irq_enable(sgpio);
+> +	if (rc)
+> +		return dev_err_probe(&pdev->dev, rc,
+> +				     "Failed to enable interrupts\n");
 
-Regards,
-Lorenzo
+Phew, that's a complex probe but I don't see anything inherently wrong. Linus
+is a better expert in interrupts so may want to chime in.
 
->=20
-> >
-> > Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-> > ---
-> >  drivers/pci/pwrctrl/Kconfig              |  1 +
-> >  drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c | 80 ++++++++++++++++++++++++=
-++++++--
-> >  2 files changed, 78 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/pci/pwrctrl/Kconfig b/drivers/pci/pwrctrl/Kconfig
-> > index 1952ab4f29b6..38aab596aa04 100644
-> > --- a/drivers/pci/pwrctrl/Kconfig
-> > +++ b/drivers/pci/pwrctrl/Kconfig
-> > @@ -29,6 +29,7 @@ config PCI_PWRCTRL_TC9563
-> >  	select PCI_PWRCTRL
-> >  	default m if ARCH_QCOM
-> >  	depends on I2C
-> > +	depends on GPIO_TC9563
-> >  	select REGMAP_I2C
-> >  	help
-> >  	  Say Y here to enable the PCI Power Control driver of TC9563 PCIe
-> > diff --git a/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c b/drivers/pci/pwr=
-ctrl/pci-pwrctrl-tc9563.c
-> > index b0d8912690a2..6df512d78b54 100644
-> > --- a/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c
-> > +++ b/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c
-> > @@ -4,11 +4,13 @@
-> >   */
-> >
-> >  #include <linux/array_size.h>
-> > +#include <linux/auxiliary_bus.h>
-> >  #include <linux/bitfield.h>
-> >  #include <linux/bits.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/device.h>
-> >  #include <linux/gpio/consumer.h>
-> > +#include <linux/gpio/driver.h>
-> >  #include <linux/i2c.h>
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> > @@ -20,12 +22,10 @@
-> >  #include <linux/regulator/consumer.h>
-> >  #include <linux/string.h>
-> >  #include <linux/types.h>
-> > +#include <linux/soc/qcom/tc9563.h>
-> >
-> >  #include "../pci.h"
-> >
-> > -#define TC9563_GPIO_CONFIG		0x801208
-> > -#define TC9563_RESET_GPIO		0x801210
-> > -
-> >  #define TC9563_PORT_L0S_DELAY		0x82496c
-> >  #define TC9563_PORT_L1_DELAY		0x824970
-> >
-> > @@ -393,6 +393,73 @@ static int tc9563_pwrctrl_parse_device_dt(struct d=
-evice_node *node,
-> >  	return 0;
-> >  }
-> >
-> > +static void tc9563_pwrctrl_adev_release(struct device *dev)
-> > +{
-> > +	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
-> > +
-> > +	of_node_put(adev->dev.of_node);
-> > +	kfree(adev);
-> > +}
-> > +
-> > +static void tc9563_pwrctrl_adev_remove(void *data)
-> > +{
-> > +	struct auxiliary_device *adev =3D data;
-> > +
-> > +	auxiliary_device_delete(adev);
-> > +	auxiliary_device_uninit(adev);
-> > +}
-> > +
-> > +static int tc9563_pwrctrl_adev_add(struct device *dev, const char *nam=
-e,
-> > +				   u32 id, struct device_node *of_node,
-> > +				   void *priv_data)
-> > +{
-> > +	struct auxiliary_device *adev;
-> > +	int ret;
-> > +
-> > +	adev =3D kzalloc_obj(*adev);
-> > +	if (!adev)
-> > +		return -ENOMEM;
-> > +
-> > +	adev->id =3D id;
-> > +	adev->name =3D name;
-> > +	adev->dev.parent =3D dev;
-> > +	adev->dev.platform_data =3D priv_data;
-> > +	adev->dev.release =3D tc9563_pwrctrl_adev_release;
-> > +	adev->dev.of_node =3D of_node_get(of_node);
->=20
-> Ah you're doing it because .release() will be called if auxiliary_device_=
-add()
-> fails. It's fine I guess.
->=20
-> > +
-> > +	ret =3D auxiliary_device_init(adev);
-> > +	if (ret) {
-> > +		of_node_put(adev->dev.of_node);
-> > +		kfree(adev);
-> > +		return ret;
-> > +	}
-> > +
-> > +	ret =3D auxiliary_device_add(adev);
-> > +	if (ret) {
-> > +		auxiliary_device_uninit(adev);
-> > +		return ret;
-> > +	}
-> > +
-> > +	return devm_add_action_or_reset(dev, tc9563_pwrctrl_adev_remove, adev=
-);
-> > +}
-> > +
-> > +static int tc9563_pwrctrl_add_gpio_adev(struct tc9563_pwrctrl *tc9563)
-> > +{
-> > +	struct device *dev =3D tc9563->pwrctrl.dev;
-> > +	struct fwnode_handle *fwnode;
-> > +	int ret;
-> > +
-> > +	fwnode =3D gpiochip_node_get_first(dev);
-> > +	if (!fwnode)
-> > +		return 0;
-> > +
-> > +	ret =3D tc9563_pwrctrl_adev_add(dev, TC9563_GPIO_DEV_NAME, 0,
-> > +				      to_of_node(fwnode), tc9563->regmap);
-> > +	fwnode_handle_put(fwnode);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> >  static int tc9563_pwrctrl_power_off(struct pci_pwrctrl *pwrctrl)
-> >  {
-> >  	struct tc9563_pwrctrl *tc9563 =3D container_of(pwrctrl,
-> > @@ -565,6 +632,9 @@ static int tc9563_pwrctrl_probe(struct platform_dev=
-ice *pdev)
-> >  	 */
-> >  	port =3D TC9563_USP;
-> >  	for_each_child_of_node_scoped(node, child) {
-> > +		if (!of_node_is_type(child, "pci"))
-> > +			continue;
-> > +
-> >  		if (++port >=3D TC9563_MAX)
-> >  			break;
-> >
-> > @@ -596,6 +666,10 @@ static int tc9563_pwrctrl_probe(struct platform_de=
-vice *pdev)
-> >  	tc9563->pwrctrl.power_on =3D tc9563_pwrctrl_power_on;
-> >  	tc9563->pwrctrl.power_off =3D tc9563_pwrctrl_power_off;
-> >
-> > +	ret =3D tc9563_pwrctrl_add_gpio_adev(tc9563);
-> > +	if (ret)
-> > +		goto remove_i2c;
-> > +
-> >  	ret =3D devm_pci_pwrctrl_device_set_ready(dev, &tc9563->pwrctrl);
-> >  	if (ret)
-> >  		goto power_off;
-> >
-> > --
-> > 2.55.0
-> >
-> >
->=20
-> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> +
+> +	/*
+> +	 * Registered last so that it runs first on teardown: the interrupts
+> +	 * must be masked while the parent interrupt is still requested. The
+> +	 * shift engine is stopped by axiado_sgpio_disable(), registered before
+> +	 * the hardware was programmed so that it also covers failures during
+> +	 * probe.
+> +	 */
 
---RoZLkDf68al4Rhem
-Content-Type: application/pgp-signature; name=signature.asc
+In this case it would actually be clearer to just have it in the .remove()
+callback which runs before devres unwind. You don't get anything out of using
+devres here wrt error handling as it's already the bottom of probe().
 
------BEGIN PGP SIGNATURE-----
+Fix it only if you'll need to send another version, otherwise LGTM.
 
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCapk2bQAKCRA6cBh0uS2t
-rNJ8AQCcDI8uZtGWv9Di/c/5jYpjYqbejNgW+BXSETXLqop7SAEA3W1BsmHT9rPr
-ffpTRwj8b5iZCh9Z9PKAuPWQWTutbQQ=
-=ZeZC
------END PGP SIGNATURE-----
+Bart
 
---RoZLkDf68al4Rhem--
+> +	return devm_add_action_or_reset(&pdev->dev, axiado_sgpio_mask_irqs,
+> +					sgpio);
+> +}
+> +
+> +static const struct of_device_id axiado_sgpio_of_match[] = {
+> +	{ .compatible = "axiado,ax3005-sgpio" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, axiado_sgpio_of_match);
+> +
+> +static struct platform_driver axiado_sgpio_driver = {
+> +	.driver = {
+> +		.name = KBUILD_MODNAME,
+> +		.of_match_table = axiado_sgpio_of_match,
+> +	},
+> +	.probe = axiado_sgpio_probe,
+> +};
+> +module_platform_driver(axiado_sgpio_driver);
+> +
+> +MODULE_DESCRIPTION("Axiado AX3005 Serial GPIO Driver");
+> +MODULE_AUTHOR("Axiado Corporation");
+> +MODULE_LICENSE("GPL");
+>
+> --
+> 2.34.1
+>
+>
+
+Bart
