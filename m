@@ -1,84 +1,75 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77023BB9E3
-	for <linux-gpio@vger.kernel.org>; Wed,  2 Sep 2026 22:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646A6331EB8
+	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 03:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788387931; cv=none; b=AsgMMQu83FU8iJsVRpYqnmng8YGfvt1g8e+hZiqhGjJD9rLQJZFOck5eRvsPFr52EYpPtGB+GfVchn60ZY514X5vjgtdjHrz9vlkgZdkeGkDiU3FTdY/G4GjH9zd2OjqEtumgi+JR8Z6SJT1Q1NNqiMHfvBHTVELBwXsPBo8QuU=
+	t=1788404863; cv=none; b=tZnfiFVvQFtmf7+VCZoI2RRg2a1VTH3Xp6SenhJjLVN5/M39W9aSOY7e35uWdRhKdv4HNr+jCwaL1rI6NJ+g4JDAv/TTX0KEj+8JquuITDIIaci7o3LaKB7/H+zMWit7MlnJZlKue/NiK6yOZQjU5X0wSyXbstH/VDMbYqXJpak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788387931; c=relaxed/simple;
-	bh=szYdDO84PxRayQDTK6zsyyf+Yvx7xqhACB6SYVnCYkM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=taMNUfrZQ8gZOVgK6doe4Pu9Bpo8pqCOAgqRvMUn8VHRQD+kInivScXRQyeYxTXSF+diaWuAL8BLnTYSvbfKNPjg92ui1B1PPai+UtlKzfTEAkXY44O6WtQMPuAVYtzTIqHSsHwVr/H5jiW3n5tN2+WHauwyeY4j0+ZZWGOtbcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yb3Ayo9K; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1788404863; c=relaxed/simple;
+	bh=OwY4526r8NGD41XWfHtfgvXiOTOjUHxMAUau6BxnM24=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bdi7C0NJYWyqjJ3G8GxZoQwL29CKCncSgDKbO+jllkAJUNAztcSYIDAXuO4tn+aBH/EaD4NyvE/rKcBUrom7gAzP1ZNrnsVbZUFDwaiN7HpDN1vEzbgt/WJe6M2YzVJrajuwjITjvnfdgb5UHNfKsVy5O6y46rjeTyd2yuK/H/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=llycUH1B; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yb3Ayo9K"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-49b8ce9b733so12394875e9.1
-        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 15:25:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="llycUH1B"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2d71a50caa9so24966745ad.0
+        for <linux-gpio@vger.kernel.org>; Wed, 02 Sep 2026 20:07:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788387923; x=1788992723; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=szYdDO84PxRayQDTK6zsyyf+Yvx7xqhACB6SYVnCYkM=;
-        b=Yb3Ayo9KHdIKe4V+rNGUL0qGvJHx9YBFlAjjC36OB/kyCg5rawY1Wr1W9U4m6D//YY
-         Pxkfnpne3X4nD/2kalDcInPobDGDgSQMjVjWUWUPNvCTi3FWdaSD2z4ACZ3hOe0xfKKZ
-         E3Mqp9hn+Qm5+/DzAiuW2BUDO51EBp9yq4FsGErFFdSPpcZU2e7IMk/Gu3+NkYOtVAaK
-         yM18jTIZg22G0UpgTYQLosojkYDuqUq9+nPazXblvo095cT2RF2RQvhytfWHnS4DfNns
-         8qPEi9noAtnvdPmtueBEvFwLjpclJnvlleluikP3JikvXE4ExFGeA/qrQU1FkmxRCX9I
-         w5Og==
+        d=gmail.com; s=20251104; t=1788404862; x=1789009662; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=eY3y8kerfRWmrbbQj01Vx2Al4+dxXYV6MW1wD432koI=;
+        b=llycUH1BJ0+H9IcgpXEdPyRAmtKgQfysEGSK4fXklnszKPMZkOLFACclMhQzl8NXAC
+         UsK8Hb5AyKute08DYc2E2N4wp9i1TtAUMP4ZTRbYiqtYpr0yi3BP2fX2kBoP8bfzFW0S
+         3KN9xIv062tfq7MnIo5gq2GMhlPqQugK85bX5+6L1s34MyQ9JfxMZ6rlMtpvT2I1eKXi
+         8uh7Nvnqb15fsQ9BIBzAfwFW1OJJsEkPnd+lFmf6LogOdcJDPYAPcbewsE4CV9BRUzTR
+         9SL/7dCOWhZZUtYUgx89xODgtd1quz5KgkguPuy8KTwXBGYE+H0BjepwUdtZTpGJLc4v
+         StJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788387923; x=1788992723;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=szYdDO84PxRayQDTK6zsyyf+Yvx7xqhACB6SYVnCYkM=;
-        b=FDy4RF/Vx85nZnF7/kfY6JbcOqAhO/82V4jrVShXBAdpEglECyuzT35MHdqCyZsG5u
-         pRmqlOVsmau6HywrHFLXEssxCiwHuJTrxLvbXH6D1soWgXxodxKmIi0Onc6gZXttahsy
-         lV0CMD2rVH3xxjH3yA8miiBEminUfDkHB0kaQuo6MSjrdr2Py/tGOjscQNhAi1jK/gjt
-         b76H+AIumz1RrVtSnZkwk9W2dwe59vU4nBo/4gqBh/xWUwdQbuO8hz7M2u7Bs1utFKjD
-         7KYTqxh4ezSeDnl4lVghD8qoZbwyKzvFS1bxfY0/YvIVk4rsa+1DOD6dOY7NRvI0RKrP
-         WMuA==
-X-Forwarded-Encrypted: i=1; AKwUvBwkA+7CYJLHYl19RMpi2hybq1jsCdhPmD5u2A7lgwKSHUWV1FKMqe6n2bu7l7KqEokQvCPELoJZv7NK@vger.kernel.org
-X-Gm-Message-State: AFuF++mBKEzdm6rKe6GnAULnYvMALhl4p7IeBtkY5aaG21K4RmDBKXVU
-	X7a2jFAWeBmNPW78gPpjlmduN/nmbRss+Fh/T4Q/8Z7Ji4jiEV/Tt1Jt
-X-Gm-Gg: AYBFou3v91H0qILBl9IiaTfXIQ2elrVQgaSx0mYQy/r0e2LhywB/fHl0sHIuK8nWl8A
-	TmTRXgqHlJrf8fjCh6MN9K9LITxIahTG7DxfegdcsNqmNOolPdviqgIyFCXiRrSyuPulShsV/R8
-	vMNWgxjSgfl1yZvKncwR4e9kpHZ6RJMeHSdozKy3NPR7gqBeT1K5Y8VvdQoya3npsD46L7UELH3
-	9FzveQlaFwtesDGuXzZTgtutozeL9xmhxEDUs2XAlNZbc6WqKOHpQ6uSeTEf45a4CkJcIHyuIqt
-	IE8AovSMvnnA8Dirn49ECQucuvPvArLwyyAm0xAo/nKLUD1xwqP9b1kT3LH8L5lwxKLwLZliLYT
-	q1CIDTU4mELpr1BbZ0DY5L2rdhdPUMioD+dBt0tuh3eAjynNCPWm9V46Uf/WA3TPNLc9v6EOjs5
-	Q1mUttaud1VbMNUHgjN7IInJxl7BPOEJqP5nOKrscqRErHD6viTLd5mb5wTarczNeyGEAdhjV0B
-	OZd
-X-Received: by 2002:a05:600c:530f:b0:499:bdf1:7578 with SMTP id 5b1f17b1804b1-49ce55ecdf2mr157349195e9.3.1788387922631;
-        Wed, 02 Sep 2026 15:25:22 -0700 (PDT)
-Received: from deb05.proceq.com ([213.160.61.66])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cee6023d6sm20916915e9.8.2026.09.02.15.25.21
+        d=1e100.net; s=20251104; t=1788404862; x=1789009662;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=eY3y8kerfRWmrbbQj01Vx2Al4+dxXYV6MW1wD432koI=;
+        b=JneIKeluiS6ADWzcOa/hP1cqpvioeMLfm+SJXUhYMk6z9RdtrsqzptBSjIq1khzTt+
+         7tiDBC6Pl6dhEZ/us1aznNbCSnkCUMF0XZ79j27Im57MdsyZ68Zzn7fdS8AlrKdnmbJb
+         tNv4+SIh6jTVSKAJGvGTQua4UeT9V+OpKG8e6xvzWT393Mq6yIjc9+63/EjzL9bYoCcl
+         6HtMUXEPt9uSAcVRu/Q1Px4R8Gr+MN23B/o9kT12dD8lHoU2eUkTOOsmEE+TLEgk+6+W
+         rlyOwApT3Knl5KaH5aBo/ulrZ/k9BIUGSSlEa7tsuMUMuyJ74QdfMCLbBBrKcAtv2B99
+         GzAw==
+X-Forwarded-Encrypted: i=1; AKwUvBzzCg4msgWpLUZl4JECyE+XAw7t9ttjYoQmZFFDIZyhY6w9JY6aPaMNAfasZKZ0PR3A6KBkt8wWU1IW@vger.kernel.org
+X-Gm-Message-State: AFuF++nd/rr0KYVvnFm4N+K6uY+WXunuLrrT1vWTJ0h+cA2UxX5Z5Mov
+	OoSnD4EKjq5Wn4G2TCtVrfLSfW+Yx0ntHxb2xCBfm3Cu6UZZbFtOdUFw
+X-Gm-Gg: AYBFou0PYje0lOrxdi7t7ILDLAwjATn8PdlF5DXDzuIl+bAtWfw0fQVgIMB8udpQIrJ
+	d7tWoFTcO++vThCF9U5Iotnt/1mzPOSZcStE0SXIRXTxegWSa8f8BPjwRBH/CLT0Djb/uOD4kpB
+	Ng4HibOERWunA8UESDFgZa6jz7U2TGU0cy9RnWw/P+TG7G3ayoj/Q/zd+87PbrtM92IO0KSg2MZ
+	egULC90EIewBeEAhTBzfnO+BEfUNiYJtyfOY+JF7JxSn3pN9zeFyJOg1I0QkMw/Dr62muORPknQ
+	j/nQjljI3/5cElmFSGjqWqzZbMQL3spp3lF+Mv2meHnl6MjVIvj2ioIfpiwQToa6ggY5hXzghzY
+	Y8S0RLbLYp5MZ5TZY7nroM9byYznStN/e3DfNPFR4XGaAlAzbnCYDAnhtIUxWXlVafpzskPf4Gt
+	5tGXbjbl3fMtE9rd0gwxIF4XuBuwBBfXH5puYnOd235DPCmZ6JWyd+E0ClcOc2UvDoqaVts+FA0
+	efbXUgbXTgiZ2vc0HkapOWEFSwVfYSvjAOv2bLuGGl1NbuoEeYQMxuweFBIkvwiMViwuOOc7xPw
+	VZOt
+X-Received: by 2002:a17:903:32d1:b0:2d0:cc92:f7ae with SMTP id d9443c01a7336-2daec5df7f9mr112667475ad.3.1788404861588;
+        Wed, 02 Sep 2026 20:07:41 -0700 (PDT)
+Received: from phuc-desktop.. ([183.91.15.56])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2dafe928217sm2872135ad.37.2026.09.02.20.07.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Sep 2026 15:25:22 -0700 (PDT)
-From: Mehmet Fide <mehmet.fide@gmail.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	imx@lists.linux.dev,
+        Wed, 02 Sep 2026 20:07:41 -0700 (PDT)
+From: phucduc.bui@gmail.com
+To: Adrian Ng <adrianhoyin.ng@altera.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
 	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Mehmet Fide <mehmet.fide@screeningeagle.com>
-Subject: Re: [PATCH v3 2/2] gpio: mmio: track the direction of chips without direction registers
-Date: Thu,  3 Sep 2026 00:25:21 +0200
-Message-ID: <20260902222521.1752085-1-mehmet.fide@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <CAD++jLmJ1+ZT=j_L79SuOzZS3PjOBgrCwhO8egaHfOU1ScLPkg@mail.gmail.com>
-References: <20260902154525.4090276-3-mehmet.fide@gmail.com> <CAD++jLmJ1+ZT=j_L79SuOzZS3PjOBgrCwhO8egaHfOU1ScLPkg@mail.gmail.com>
+	linux-kernel@vger.kernel.org
+Cc: bui duc phuc <phucduc.bui@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH] gpio: altera: Fix build failure caused by undeclared 'irq'
+Date: Thu,  3 Sep 2026 10:07:00 +0700
+Message-ID: <20260903030700.132068-1-phucduc.bui@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -87,32 +78,37 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Mehmet Fide <mehmet.fide@screeningeagle.com>
+From: bui duc phuc <phucduc.bui@gmail.com>
 
-> What about just implementing generic optional get_config()
-> in struct gpio_chip, implement a likewise generic
-> gpiochip_generic_get_config() in gpiolib and use that as
-> the fallback?
+Use 'mapped_irq' instead of the undefined 'irq' variable in
+altera_gpio_probe().
 
-Yes, that is cleaner: gpio-mmio then knows nothing about pinctrl, the
-same way it does not for set_config today. v4 will add the callback and
-gpiochip_generic_get_config() as a mirror of gpiochip_generic_config(),
-with gpio-mmio installing it for the pinctrl backend and seeding the
-shadow through gc->get_config.
+The incorrect variable name causes the driver to fail to build with
+an 'irq' undeclared error.
 
-One detail for the generic helper: with CONFIG_PINCTRL off the
-pinctrl_gpio_get_config() stub returns 0 and leaves *config alone, so
-the helper returns -ENOTSUPP there instead of pretending it answered,
-like gpiochip_generic_config() does for a chip without pin ranges.
+Fixes: 6e6e585b603e4 ("gpio: altera: Handle errors from optional IRQ lookup")
+Reported-by: Mark Brown <broonie@kernel.org>
+Closes: https://lore.kernel.org/all/apgNYDiSiPmNZspF@sirena.org.uk/
+Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
+---
+ drivers/gpio/gpio-altera.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> I don't think it is necessary to provide any consumer API for this
-> such as gpiod_get_config(gpiod); as no-one really needs it, we can
-> keep it as a private thing in struct gpio_chip for now.
+diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+index d22f5be00745..a6ac9356229c 100644
+--- a/drivers/gpio/gpio-altera.c
++++ b/drivers/gpio/gpio-altera.c
+@@ -221,8 +221,8 @@ static int altera_gpio_probe(struct platform_device *pdev)
+ 
+ 	mapped_irq = platform_get_irq_optional(pdev, 0);
+ 	if (mapped_irq < 0) {
+-		if (irq != -ENXIO)
+-			return irq;
++		if (mapped_irq != -ENXIO)
++			return mapped_irq;
+ 		goto skip_irq;
+ 	}
+ 
+-- 
+2.43.0
 
-Agreed, nothing outside the chip needs it.
-
-Patch 1 stays as it is, minus the npins check I already told the
-Sashiko bot was redundant.
-
-Thanks,
-Mehmet
