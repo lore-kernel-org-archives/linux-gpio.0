@@ -1,126 +1,191 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC65E4A1DFA
-	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 12:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BC34A263D
+	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 12:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788437337; cv=none; b=U4RACJ2EQ4BzCFXtTQmnQdiqRoQq7LkuNe1vg2WH1OmX/9CH4MXXS75eCECJhuXvQIOr7RRmi5sGw2GfO8uSmHrrPn3O0s5RpIu/89aUziRXH9JAN13WuxbAyrkzsEZe/06PrGxaGXMtYFvXe4j7RByj8ThmTzNaVEnnPrE7lRs=
+	t=1788437804; cv=none; b=dVcfVdBApO4bdHjEKZHzANklVNBfseMGcGmvZjaRlas8kvHrMuxUtPmPDRjmxhPxX+/HgJtR94s9yEb1ajhKp8G4MzgwDePnbvHozv49GWu4OeiGvQZSx3ZO6gnyx5lfl0f+mQDNvdPhpukja2rVOHTia09O3iLiSu4uRVOU0Mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788437337; c=relaxed/simple;
-	bh=BRKIuIMQwGJz+W0+V2Cv4f46rDoN+QkQp0uwFbNfBIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X0KL6901Yfj8Q3qY7e2oRVX3wTmwh28UBqwffTdV1lWUH8VahE45kLyvTx4HOhcvt35KGyCk52WefzlGrxyh2zwCmGrHEGaswuTi7v6GUf+mUFZ7QYMKmwotNxViHxv56OaH5k0xwyCdBhn+98VL7nRO0hapFLGaRHsYkcu9kqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LNTleZLj; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788437804; c=relaxed/simple;
+	bh=D6iLQCq9Nu3cfoB9hsaZdtvkqF7xeEYS+SP15ftoqA0=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=C6pY2Rebr4vX09Eg/uM0GiMIqbJMLnPKRSIXVLy4XCJ+Ppwbarp/MJhkw4dztKy/Nk2W4U3j1DZqbm2kmf0Cc33K2fWDTtzuCYNBPLYz5uy2ZrNHPIHbjk/12VCrfEGCyQ2DxmONReczT5jmpNxW833aiaWRm4iBUAl9j6L43hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D6q/xBuD; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LNTleZLj"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-482fc3327fdso1510734f8f.2
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 05:08:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788437332; x=1789042132; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=BRKIuIMQwGJz+W0+V2Cv4f46rDoN+QkQp0uwFbNfBIs=;
-        b=LNTleZLjtLgIkdeZGbBPeA9ZsjsvEyJPAhQhNw2PZd7ulApEWLz537mrDf9ZD5zD1W
-         IKRBieQ9ZE3yGWPobxeG6n5BXCN5/89i/ov0Hy5ANlwABc6aLPvxpegb5+l79KI6X6Jo
-         l+vN6k2xe86K3nisCWYEpHTA7W2K9seBjLKwpUhDxHnaCXI8KzgJRYAqrxjPPrFF4pK7
-         oJV3tXY7t5rvjU5gIw4KkjJdJXJ2Jp0YSmz9uJ06ODrtEjzDrZu+sZSay4S6Upq0eK7c
-         xB7EzuW9XtK2N2yhAq5gu0jbPGqKb/czT2e3Z6vn0F1ejmGraUuNngCFotffaXXogYwJ
-         uJmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788437332; x=1789042132;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=BRKIuIMQwGJz+W0+V2Cv4f46rDoN+QkQp0uwFbNfBIs=;
-        b=GO3TN501N8VeSWcier9P1fcFIWhsdyjQ/H9lzpt6TKvvxg4ahwExYoq915KvJXAsJi
-         ni1CRqjag42ZRDqW1Kik+DhvEv1lJCyms9SbTW+ALJiBlI5R6MscEOBsmyohpoXW0Ja6
-         Dkc1/DPQeVqopKlgp3suzWaWqRzq0YUtnVcis3x7lPAQgT50deNUJ/G7YLkuTKksPUIy
-         3ZwsR+l3dhPVxWUr8YtWEASZIDM0hsPb517G5F1SsX5Pn5PCB8K2zPYiP3OFOrBRxNcJ
-         lqNdGs/3BGgm8Jp3ly8q2XmIul2OaZ7TrQWR5io1FDCMi+Zw4TTENMWwvkNSk9Hxsxr7
-         hHkA==
-X-Forwarded-Encrypted: i=1; AKwUvBxaXG4NqkIbOiMcAwp2u4FehrQOV7rgzyjhafdEvcBpHDMxFP7uH68nId8byD2nl5vbzqF63PXtxHJI@vger.kernel.org
-X-Gm-Message-State: AFuF++nECWCPWK1I2RsmASMoWNyTf2g5lmE5aHp2QK/c14fGMwMQxqXc
-	bGZVfNXGBqr7ZdLCMXBQ/rrjuMbtiehGZOlJv789f27SAdMK6NIXVcXt
-X-Gm-Gg: AYBFou2Jiw/62tvLBSVb2WMb9+P3Z83dPNufM+czxII1fF9trFDp7TgK6t2QLo1Rm9T
-	rJSPrN4Vjlu0yjcsDyHxrdrdTdDtzR2jOn++aDGjcsJ2sjLiudAlL9Tr6XOS/tAgwxqKLkJI+IW
-	EnYxYMc8ow3yJukH9+yXrNXjQiJNEhrboAfgsyoxGDWWLBEN6U66P6Wk1Qg0lzupRuFqWmk4FAH
-	JEcLVLXmjdfHsKmqPN4PMi1igr0EoclElDAWbOfvDTFENXMPW9ZjnPvowsqIVCRFuO+4Cn9OvWu
-	kT1F2UdANZI0lKSewMe+uBr5pMt/PT6mXCTrzvDyigM4cqHEf0qEh00oSAhvU8WIjmMnF2jk+gv
-	SY8n/yOSmEZaq1pB7EXEw43VTroeBamyvD/yJkodP2wnAImn2W3DPDCIAsza8RVE4BbhhB71MWG
-	rbPOi2G+RvDdx/xXSumO5a+l6LeYfgH4SGSE8wqvgbFlKYYPopl7+3PUM5ug2rggLxGc50YSa+0
-	O008O4qVrnsseFUHEXy++HSk5hWwB7ylmZzIM3iueGF9QcO4ul3cVvhER7wZ4VLOw==
-X-Received: by 2002:a05:600c:630e:b0:49c:e27c:6b10 with SMTP id 5b1f17b1804b1-49ce55ecea8mr213777445e9.3.1788437331849;
-        Thu, 03 Sep 2026 05:08:51 -0700 (PDT)
-Received: from [172.24.138.145] (ipservice-092-208-247-184.092.208.pools.vodafone-ip.de. [92.208.247.184])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cf0c1728bsm52458095e9.15.2026.09.03.05.08.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Sep 2026 05:08:51 -0700 (PDT)
-Message-ID: <98851819-2079-4505-b8fa-1b6943ef71e2@gmail.com>
-Date: Thu, 3 Sep 2026 14:08:50 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D6q/xBuD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788437802; x=1819973802;
+  h=date:from:to:cc:subject:message-id;
+  bh=D6iLQCq9Nu3cfoB9hsaZdtvkqF7xeEYS+SP15ftoqA0=;
+  b=D6q/xBuD31/lnzhiaYHvDCMHHHF0bFpwAAEipiaS47QBw8MAAxkMMD4Y
+   PO+FI4Hc4A0mVRmWB57lsuKhXC09Aqf1mjk6hq4AmDt+z8QNxNpR5JjlM
+   JZTlblgtZP58Y71jTICd6+1DMtFDOwzr9fg1i32xjLKRvk5F50Flu23db
+   prETO4KGybgoJA1bIE5u6A+PUejOtgDUZaLFfhDmkBABgrKDGfP+UaSc1
+   86b+JxvAXOawLvlUEJPHNYqBMnRMm/2DQAvqOwJCOTv1V5C0SlEX+f86Y
+   6aXseQRg2Y3fuQpbBnWz8SZmMx/YnUkXzXuPugpFR0YbxyQkOazmfTZCm
+   Q==;
+X-CSE-ConnectionGUID: EJI9JX7QT5SSr3IrNR+vVA==
+X-CSE-MsgGUID: s9kZbSwRS069MsgHeyuzOA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11894"; a="106439072"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; 
+   d="scan'208";a="106439072"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 05:16:40 -0700
+X-CSE-ConnectionGUID: cn8Cvj3vTCiM2EIdxML1MA==
+X-CSE-MsgGUID: cH9s8GaHSKiHwj4CqeL5Pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; 
+   d="scan'208";a="294580162"
+Received: from lkp-server01.sh.intel.com (HELO bfac249b2189) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 03 Sep 2026 05:16:38 -0700
+Received: from kbuild by bfac249b2189 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x26Mt-000000004nG-3cvA;
+	Thu, 03 Sep 2026 12:16:35 +0000
+Date: Thu, 03 Sep 2026 20:15:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: bui duc phuc <phucduc.bui@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-gpio@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: [brgl:gpio/for-next 5/12] drivers/gpio/gpio-altera.c:224:21:
+ error: 'irq' undeclared; did you mean 'girq'?
+Message-ID: <202609032003.JKU2nkvu-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 17/20] gpio: regmap: Use regmap_test_bits() for single
- bit reads
-To: Bartosz Golaszewski <brgl@kernel.org>,
- Janani Sunil <janani.sunil@analog.com>
-Cc: linux@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>, Andy Shevchenko
- <andriy.shevchenko@intel.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Michael Walle <mwalle@kernel.org>
-References: <20260828-ad7768-driver-v5-0-e33ca6f841a2@analog.com>
- <20260828-ad7768-driver-v5-17-e33ca6f841a2@analog.com>
- <CAMRc=MfV+ziruvdyFU-RTbD09E_Jhpxgaab9T6bG=tuPg-jhLA@mail.gmail.com>
-Content-Language: en-US
-From: Janani Sunil <jananisunil.dev@gmail.com>
-In-Reply-To: <CAMRc=MfV+ziruvdyFU-RTbD09E_Jhpxgaab9T6bG=tuPg-jhLA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+head:   a2cfc48fee416f0ea78e7dc38acbf2ce072574cc
+commit: 6e6e585b603e4f679c2a33c8f0954ec88b52fd7a [5/12] gpio: altera: Handle errors from optional IRQ lookup
+config: openrisc-randconfig-r072-20260902 (https://download.01.org/0day-ci/archive/20260903/202609032003.JKU2nkvu-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.3.0
+smatch: v0.5.0-9187-g5189e3fb
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260903/202609032003.JKU2nkvu-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202609032003.JKU2nkvu-lkp@intel.com/
+
+Note: the brgl/gpio/for-next HEAD a2cfc48fee416f0ea78e7dc38acbf2ce072574cc builds fine.
+      It only hurts bisectability.
+
+All errors (new ones prefixed by >>):
+
+   drivers/gpio/gpio-altera.c: In function 'altera_gpio_probe':
+>> drivers/gpio/gpio-altera.c:224:21: error: 'irq' undeclared (first use in this function); did you mean 'girq'?
+     224 |                 if (irq != -ENXIO)
+         |                     ^~~
+         |                     girq
+   drivers/gpio/gpio-altera.c:224:21: note: each undeclared identifier is reported only once for each function it appears in
 
 
-On 9/2/26 15:48, Bartosz Golaszewski wrote:
-> On Fri, 28 Aug 2026 17:30:40 +0200, Janani Sunil <janani.sunil@analog.com> said:
->> Use regmap_test_bits() when reading a single GPIO value from a normal
->> register and when reading the direction bit.
->>
->> Reviewed-by: Linus Walleij <linusw@kernel.org>
->> Reviewed-by: Michael Walle <mwalle@kernel.org>
->> Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
->> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
->> ---
-> Janani: the GPIO patches don't apply on top of current gpio/for-next. Can you
-> rebase and resend just the GPIO bits separately?
->
-> Thanks,
-> Bartosz
+vim +224 drivers/gpio/gpio-altera.c
 
-Hi Bartosz,
+   165	
+   166	static int altera_gpio_probe(struct platform_device *pdev)
+   167	{
+   168		struct gpio_generic_chip_config config;
+   169		struct device *dev = &pdev->dev;
+   170		int reg, ret;
+   171		struct altera_gpio_chip *altera_gc;
+   172		struct gpio_generic_chip *chip;
+   173		struct gpio_chip *gc;
+   174		struct gpio_irq_chip *girq;
+   175		int mapped_irq;
+   176	
+   177		altera_gc = devm_kzalloc(&pdev->dev, sizeof(*altera_gc), GFP_KERNEL);
+   178		if (!altera_gc)
+   179			return -ENOMEM;
+   180	
+   181		raw_spin_lock_init(&altera_gc->gpio_lock);
+   182	
+   183		altera_gc->regs = devm_platform_ioremap_resource(pdev, 0);
+   184		if (IS_ERR(altera_gc->regs))
+   185			return dev_err_probe(dev, PTR_ERR(altera_gc->regs),
+   186					     "failed to ioremap memory resource\n");
+   187	
+   188		chip = &altera_gc->chip;
+   189	
+   190		config = (struct gpio_generic_chip_config) {
+   191			.dev = dev,
+   192			.sz = 4,
+   193			.dat = altera_gc->regs + ALTERA_GPIO_DATA,
+   194			.set = altera_gc->regs + ALTERA_GPIO_DATA,
+   195			.dirout = altera_gc->regs + ALTERA_GPIO_DIR,
+   196		};
+   197	
+   198		ret = gpio_generic_chip_init(chip, &config);
+   199		if (ret)
+   200			return dev_err_probe(dev, ret, "unable to init generic GPIO\n");
+   201	
+   202		gc = &chip->gc;
+   203	
+   204		if (device_property_read_u32(dev, "altr,ngpio", &reg))
+   205			/* By default assume maximum ngpio */
+   206			gc->ngpio = ALTERA_GPIO_MAX_NGPIO;
+   207		else
+   208			gc->ngpio = reg;
+   209	
+   210		if (gc->ngpio > ALTERA_GPIO_MAX_NGPIO) {
+   211			dev_warn(&pdev->dev,
+   212				"ngpio is greater than %d, defaulting to %d\n",
+   213				ALTERA_GPIO_MAX_NGPIO, ALTERA_GPIO_MAX_NGPIO);
+   214			gc->ngpio = ALTERA_GPIO_MAX_NGPIO;
+   215		}
+   216	
+   217		gc->base = -1;
+   218		gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pfw", dev_fwnode(dev));
+   219		if (!gc->label)
+   220			return -ENOMEM;
+   221	
+   222		mapped_irq = platform_get_irq_optional(pdev, 0);
+   223		if (mapped_irq < 0) {
+ > 224			if (irq != -ENXIO)
+   225				return irq;
+   226			goto skip_irq;
+   227		}
+   228	
+   229		if (device_property_read_u32(dev, "altr,interrupt-type", &reg)) {
+   230			dev_err(&pdev->dev,
+   231				"altr,interrupt-type value not set in device tree\n");
+   232			return -EINVAL;
+   233		}
+   234		altera_gc->interrupt_trigger = reg;
+   235	
+   236		girq = &gc->irq;
+   237		gpio_irq_chip_set_chip(girq, &altera_gpio_irq_chip);
+   238	
+   239		if (altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH)
+   240			girq->parent_handler = altera_gpio_irq_leveL_high_handler;
+   241		else
+   242			girq->parent_handler = altera_gpio_irq_edge_handler;
+   243		girq->num_parents = 1;
+   244		girq->parents = devm_kcalloc(&pdev->dev, 1, sizeof(*girq->parents),
+   245					     GFP_KERNEL);
+   246		if (!girq->parents)
+   247			return -ENOMEM;
+   248		girq->default_type = IRQ_TYPE_NONE;
+   249		girq->handler = handle_bad_irq;
+   250		girq->parents[0] = mapped_irq;
+   251	
+   252	skip_irq:
+   253		ret = devm_gpiochip_add_data(dev, gc, altera_gc);
+   254		if (ret) {
+   255			dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
+   256			return ret;
+   257		}
+   258	
+   259		return 0;
+   260	}
+   261	
 
-Done. I split out the three GPIO patches, rebased them onto the current gpio/for-next branch and resent them separately as v6.
-
-https://lore.kernel.org/r/20260903-ad7768-gpio-v6-0-4254ef6c9b38@analog.com
-
-I will drop these patches from the next version of the main AD7768 IIO series.
-
-Best Regards,
-Jan
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
