@@ -1,134 +1,97 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569EF440A34
-	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 11:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379D43F4830;
+	Thu,  3 Sep 2026 11:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788436279; cv=none; b=eHuXK9l7ZVtUJnVN9dmKVpYZeTHlbI5c6BtCdvqm1I+mmiABDPe1BnoGjrZz5D39KxO8pR2kWvnSkqB7hVzi7mOme9nV8du+K4eUh07qayNRNVzscriXq9Z8vHwhsokJMneqhQUpm/relUdsppCv1C7HQGoYPVfsrRddepyzPkE=
+	t=1788436406; cv=none; b=Uz6eaujSJffv1Wd/isjNhiDa3WlCHTDLVCUElqOfbdVC9OY4QlCLMeIuGxu885O75l1lj91bPTDMfkORytZb11mEptB+QChKmptIdK5TQlDL2jiHpDyzJLufeJxxFfwpUSe6N4YY4w7Us9LJPnQ/bp2kfbvrrsZ8VC99Dx5dKIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788436279; c=relaxed/simple;
-	bh=C+QWB+KZzeonLvV0qDuesLnMy5eu8R+OizXBY3d888s=;
+	s=arc-20240116; t=1788436406; c=relaxed/simple;
+	bh=rR7b6ULJfSUlGXbzELTwbp+jflRr7vB5qJkcNXDr6sA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hTW1HIC1fIO+XIwKjjWG9BaOh9qMQlKI9v33COP3Jv+FXOWpsPKyVZdmMitX/w+rYK6Sbd3Kq9TumRdthnEhqPy9KB2zefw0nmYq8Mn6tOpoP00WYJdguHvIULf3S82hdVk4KHyB17JD9+UlpGpOGWrQ0JIfLpQKf0P6plEaxy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QuMsJK6I; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=hpJ+7G4gF/sJX45b4d6+HzqVT4XUJHY8QqTOECdRmvtfrFpF31cR01L59aJhdSbbFOZeHV6Saa1nppCCAL6gsT19yPvZCmUuXRH8owtm7CyrmQt+tPhQ/XfjFoEcpuzVnpK5fqAks6K6wQnCuQkNNB7oGH7Rq+nxfMoVA9//HbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H7bNWoAT; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QuMsJK6I"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-4843e397f74so1317079f8f.1
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 04:51:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788436272; x=1789041072; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=1LiMV9lpRiXnBE6CK4fygOV5eeeeR5AdD/GCs6lVbQQ=;
-        b=QuMsJK6IPyQoldLxUmoNS8vlhkN23066FUD8gMtVLSfPwrcA0V8B+oGC+OsBPzuOHr
-         YIPb4F0p4CrJSOvCV0YUbQ086PADTWdAsxcinxy4Pm10a6gzblDtcOeMqTe3L5WrYzq2
-         LkKA9YNCMkx7Y/W+6pj1HEx5JBSBB6GXoFdOeoccfNTtyxmSsRAXKxVBIcHRkJa6LHdk
-         3J8xI6RTRiGT0rTNrLg3l6TpB6GFKWStuO8RCY/CNSvSXcpfmJw2PVfCwX0dxrOGuxoq
-         MPUrkweb4VYWWqu+89gf9nHf0oucmQmNnwVC34o9XTdW+iU7kqW+PIn6ob3tfV3mpFDs
-         qFTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788436272; x=1789041072;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=1LiMV9lpRiXnBE6CK4fygOV5eeeeR5AdD/GCs6lVbQQ=;
-        b=kco4EY27tQy7V/wLgraw6sB2LlslmFbmBgQ/IyTsI5UE9CtE39F+WNswzmbL19EOK1
-         YBuypl2TYWv3VqHrL9CmfDLmokDPpm+cdGeKp+036JsCUmj9v88WtLBBghpxGHfakIOD
-         gUK2kS9Ji9oOgAfoegkXPUX2hBBu54odYOoPrXqhgwzI2eBdo+Qjthh3g+JqfpMqistW
-         VL0oVJiuqwV98/fDQn1qbIvBdPeqX3YFdh72J36/xodkIKStRsOzvDzJ9lyFc/SDI4FU
-         4+MFB/zDqSnDjN5cUwmP5VEjiXf2FCM0QtixPOCXS9xPMjirQeUCJsjBfydZZnXunBlt
-         HYzw==
-X-Forwarded-Encrypted: i=1; AKwUvBxPkBUNXi/WawaaUFbvWOmNIyXLBeNq+f1QkfGOT0J9rjAEeZbNE6VTkYqu2LHsF/sLIMobBo/Nll1V@vger.kernel.org
-X-Gm-Message-State: AFuF++kRsYeQFkXL0D4FWl0dN4HvTyzHu1q60PiM4iCULvcc027DqapM
-	ZIMFtEsVviph/F1jsEeUQZUq+CR/hxMUmhqCvpCAVhTr50tDCIieA3/N
-X-Gm-Gg: AYBFou1zlhoosKeT9I+26kg6NrTPXxLhsVxlA/ldbZo3MdZUvCFBn0szQPtCxdAbpoD
-	O78m73Jr7s3V48U4BlV3eB0xJcfYWESSqzDeVAmXt2OUrW/L+qqq/D0uxARruh/SFRyCbOvmPrS
-	saedNKQjRZLV8J+Jr5ZGcZnXVb0gXTNkbod8VwOKwy9MTzUP3kFhdgZCL0PJ3awPQruc7fC32oW
-	EngdVthBX0/HZSyEmbZ+R0miPLueHD+/MHg54/TW8PqP72dEcqGO9ELiPiE46EcP6A6wpkdhwBs
-	dJ3TNjks8bCHhURCT/byjy0Y9yRNLr/DvzXK44NOR1WMIDtLwVwCcg9pqfdpnBeOuQkvVfiY3ra
-	THETlKkUSemXGkHeWcgirb68MXsUgh16BCdB3pU4nhXCxwabIxRrEjBDhb211ojSnZDZt4tvUbq
-	hbKCQES2DDlS7vbagjgu+BZN4+3+aaT6tRwzpLeRcEMVeJQza19fIiNU9F6cTImNT7j/Vo1syzR
-	d2wddur9H81d7DGNCUgET4kNhzRp2V+5hDHEjOQTzSTIm6oo1GOws5PEWW1Xe9fP8FpzItrMQ==
-X-Received: by 2002:a05:6000:542:b0:484:361a:1c7b with SMTP id ffacd0b85a97d-4857e4eb54dmr6750369f8f.7.1788436272260;
-        Thu, 03 Sep 2026 04:51:12 -0700 (PDT)
-Received: from ernest.hoecke-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48448e6f604sm13185506f8f.2.2026.09.03.04.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Sep 2026 04:51:11 -0700 (PDT)
-Date: Thu, 3 Sep 2026 13:51:10 +0200
-From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Herve Codina <herve.codina@bootlin.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@kernel.org>, Frank Li <Frank.li@oss.nxp.com>, 
-	Kieran Bingham <kieran.bingham@ideasonboard.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
-	Linus Walleij <linusw@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Leonardo Costa <leonardo.costa@toradex.com>, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, stable@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] of: property: fw_devlink: Follow GPIO nexus maps
-Message-ID: <hxtrtbmfb3jznfw7ooiyx533fzuuagxlhweq6yo4n6j5bne2uh@omibim7aiobk>
-References: <20260902-fw-devlink-nexus-ready-v1-0-68fe1996e78a@toradex.com>
- <20260902-fw-devlink-nexus-ready-v1-1-68fe1996e78a@toradex.com>
- <CAMRc=MfN73=K1nZrqUbhrMSijjpzhF_z_U9JU4_H163W0vRpqA@mail.gmail.com>
- <qg2nemg4mlxpancg7az2vsnjkfc4anxkieozoxh3mj3zgkyifd@b5b6yiz4uew3>
- <20260902185513.4867bc92@bootlin.com>
- <874ig664ih.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H7bNWoAT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788436404; x=1819972404;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rR7b6ULJfSUlGXbzELTwbp+jflRr7vB5qJkcNXDr6sA=;
+  b=H7bNWoATEn23COpSjcmz9PkHyTeH4QS0Wkj6LV+nNgfDP3lefHiBBjpk
+   JUPlH9k6GHrt5yh16tjxdQAWIjwzNxm2A/OpQXLR2S9vVfRX8Ib0uCqxF
+   7kH7SkBtwh+5eFqjc7aDXSeSQaypduYJuYHqNWDn8/wakYV0WOM6W0urF
+   eynwgGLTr4dn6X9ImoQmUSgKE3i4LdWCOqwhTEd7NaunPNC6+sLViLMhk
+   eL1cHYMqF/0ZI4D5C4AA3BkSS+BcZFeuO7YGu6fuLtPCw+gtbJmdbPpq9
+   eEmqESwGHD347ICKSOmQK6oOZxPXJ9MGCUMrqMENcMyba9leDEBltr/Lf
+   w==;
+X-CSE-ConnectionGUID: n9emjjjFTdabcSmtAKbEwA==
+X-CSE-MsgGUID: CHHujzKdTCmL/DD5kPzvfw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11894"; a="88763636"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; 
+   d="scan'208";a="88763636"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 04:53:22 -0700
+X-CSE-ConnectionGUID: zu2RAkuGQi6JdVdRDx+GJg==
+X-CSE-MsgGUID: y7mypbFsTG6gcjjeugeEPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; 
+   d="scan'208";a="266001590"
+Received: from smoticic-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.28])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 04:53:18 -0700
+Date: Thu, 3 Sep 2026 14:53:16 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Mika Westerberg <westeri@kernel.org>, Kivan <vaknins33@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Hans de Goede <hansg@kernel.org>
+Subject: Re: [PATCH] gpiolib: acpi: Add ignore_wake quirk for ASUS ZenBook
+ UX425UA_UM425UA
+Message-ID: <aplfrNXzNvgbMJf1@ashevche-desk.local>
+References: <20260821070651.39763-1-vaknins33@gmail.com>
+ <178827844334.39529.382963115769227795.b4-ty@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <874ig664ih.fsf@bootlin.com>
+In-Reply-To: <178827844334.39529.382963115769227795.b4-ty@oss.qualcomm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Sep 03, 2026 at 11:57:58AM +0200, Miquel Raynal wrote:
-> Hello Ernest,
+On Tue, Sep 01, 2026 at 06:00:46PM +0200, Bartosz Golaszewski wrote:
 > 
-> On 02/09/2026 at 18:55:13 +02, Herve Codina <herve.codina@bootlin.com> wrote:
-> 
-> > Hi Ernest, Bartosz,
-> >
-> > On Wed, 2 Sep 2026 15:22:36 +0200
-> > Ernest Van Hoecke <ernestvanhoecke@gmail.com> wrote:
-> >
-> >> On Wed, Sep 02, 2026 at 05:30:19AM -0700, Bartosz Golaszewski wrote:
-> >> > On Wed, 2 Sep 2026 13:41:39 +0200, Ernest Van Hoecke
-> >> > <ernestvanhoecke@gmail.com> said:  
-> >> > > From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-> >> > >
-> >> > > GPIO consumers use of_parse_phandle_with_args_map() to resolve specifiers
-> >> > > through gpio-map properties. fw_devlink instead parses GPIO properties as  
-> >> > 
-> >> > Unlike PWM, there's no such thing as "gpio-map" properties.
-> 
-> Just as an FYI, there is a pending series to extend the nexus
-> node concept to clocks, this may also require some fw-devlink magic :-)
-> 
-> Link: https://lore.kernel.org/linux-clk/20260807-schneider-v7-2-rc1-eip201-upstream-v5-0-8785f9531cf0@bootlin.com/T/#m16ddef087544db31b5f434fa44be70aad0b5e37e
-> 
-> Thanks,
-> Miquèl
+> On Fri, 21 Aug 2026 10:06:50 +0300, Kivan wrote:
+> > The ASUS ZenBook UX425UA_UM425UA (with AMD Ryzen 7 5700U SoC) fails
+> > to stay suspended in s2idle (Modern Standby), prematurely waking
+> > after 1-3 seconds with 0% hardware sleep achieved.
+> > 
+> > In the laptop's ACPI SSDT tables (SSDT15), GPIO Pin 24 (hex 0x18) is
+> > defined in _AEI as ExclusiveAndWake targeting the PCIe bridge device
+> > \_SB.PCI0.GPP3:
 
-Hi Miquèl,
+[...]
 
-That's the reason I put you in cc and also the reason I went for new
-NEXUS macros in this series. Clock would hopefully be the next consumer
-of that :)
+> Applied, thanks!
+> 
+> [1/1] gpiolib: acpi: Add ignore_wake quirk for ASUS ZenBook UX425UA_UM425UA
+>       https://git.kernel.org/brgl/c/1900b5a41493e7050c68c1e62780d6fb9a209457
 
-I should've mentioned that more explicitly in my cover letter. Your work
-on the clock nexus can certainly come in handy for us, thanks for your
-input.
+I thought I am going to pick this up via my tree...
+But okay, not a big deal, I don't expect any conflict in that area.
 
-Kind regards,
-Ernest
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
