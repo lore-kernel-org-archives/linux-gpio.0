@@ -1,226 +1,204 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565844302E6
-	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 07:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A8143B489
+	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 07:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788420714; cv=none; b=kXC7WJ5YAtLkbgRN/UI1x15NiKEzS/RfZlvp2x+2jF4e66KOdD2G9uFKiLWQj+ALzmKOi/T60gE06CBBsSeftdgH9yfUH4gZjbdJrgi4eGjlK9mBysTQbYFaIU8vWCYLdOEkVVUtYwCAlRAPgf7CUYtCjvCmxOgS2r3prKT5HTs=
+	t=1788420913; cv=none; b=jdXxjVw5VnnWWQ0hi6uXrqQik4gJtUUE0TRB/e8daqxindtGbfIMz37DSqYnVopqtXIh4hw973/+zk1A3zDv4Va9TUJX2HL9ME8WQC50u6wXtGmRtyBghF9kNdkV58H+7TB+2/vhhzvZKFj2I0SDqnrHIpfuFYe/eWZEH0F81bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788420714; c=relaxed/simple;
-	bh=HO1YpOsp7AAqKVPegRZIkVg5ChPOPjxhcr+CFObZK4M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rfQEhaDzngFrOAg3jElmLqurlXwM6ZqYk/3w6WKLLjKenCDjuCg27/wH9J16KJu88iT7yLBCpG2CSVRLhMxTQ1w0JlAX+BsyvS9ft6Y4KIRuJtLbddiYHsVPwFOYd0h/Nf5JmcbpodKgDsRTxOyGKVy4If043/zr0hTcHUTBrWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uv4iOdqb; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788420913; c=relaxed/simple;
+	bh=39Jx9KtDS8alLni2xt7CpfUzAqEr0FXk2RhxhmCdxPE=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=YSxMs1Oi12U0pJjVCPElWwfUKllYP3CvWY65IYusj58BP/40bJa7MBErJDbn1+yIegLlDWwI4PdvMJkprrFf8qO8jR43O8+F1Vi3iAGTWeMOHJpr02SiUTOBwuarCsUW6BsWpSSh+2pI4mzUt4QiT0xsdlR3h7tLY2ZvkUMg84M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BtqL1Dq1; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uv4iOdqb"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-495437bb891so5253225e9.1
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 00:31:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788420709; x=1789025509; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=yGVy22n2k2x8Vmi+YjiPo8Onst4nWhBMCSM53hHrhOk=;
-        b=Uv4iOdqbdE7Rkc/n0DeJNIZ4ZC9bY/FQQBfwG4L+UDw/s7iJo6YJNQIRGS356uj4o1
-         dpZOzjJPW9YJUqKN0Xf/8UsFjav9IllHPVYInQD/tM2fMSjxsrOn6VfyXIFOiC+a1nlJ
-         hC61OO6r0W+uzUXgEva92mRTCgQd6cQOtcLwnV68te460qY4J31c8d8bxN6ObsJcHtKq
-         jb4ckwvsjab7u3X+IgmjWSYyl/HLDG5py8FWFM4M1jX9lzrOh3cMPzIs6cQ7x76E4qPK
-         FTx2HlXUhr5PgE/B5OsABtHWoDhN24e50Cltiu8hHw9t3hifaYnKBknM5+P3UVGn0cvO
-         MKoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788420709; x=1789025509;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=yGVy22n2k2x8Vmi+YjiPo8Onst4nWhBMCSM53hHrhOk=;
-        b=QOGKiwZxqGFNCKSYega+5wDzqDaYzqxz2+FkX8PqFrHR4JkoP+tSxgApwMoFuc/9np
-         Dtvo5OfywjtQrSo8xW5lvpvHOoqxGBplSNbJzTzTVfnHyXScfbW7+JS8Op/PW2Wn9yGu
-         0OWoN97WfeQIL3qaFMT2GHMKyBxrhKUh35IQXFAgSnmIZyedUKD+FG1z7Fw9U7QgklTE
-         ANP9ffYISFzgry/v4OPcw4yriJrkmrqfKjsZD4DHaXrfqAym5HOpm+ocXnZFoJmxApfF
-         MNMWOgzUc8uxjMvOkT7CqvOfWnMxMeJuDYSLN0FIbFbVwzJn1uBdIwYIg5bjpRW98Jpu
-         19rQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxp90dwfhduLukZt2ANjkG4YwR4wZsM7JXFWngLQnaJArJW8/OEJYWcGSgapQkvgXPBK59m8pCL5vMT@vger.kernel.org
-X-Gm-Message-State: AFuF++mZLeoQs4rM+1TVHXIgWlsM7tatbIu+dXCzFv+hy/Lu3tRuuoLD
-	DcB6sr35kcY4cfV9H8QcHz8vQEtqQj//CfcwePy63iEeysy+Vwm1L5UB7e/9KNX5
-X-Gm-Gg: AYBFou1ng6MsCuzcYWCRVd1PJE8UImFV5iGyP4tsEk63wJHsVNAnnPyvxkiwOanIAg8
-	1Tr6mWAIdNia/rWw161QsZ9PpWq+AbPSLHo/lpGxY7zjlKsnd7mzlk857TTdpMOTFq37p2D60rm
-	e1UJdEGwQaOSNAYoiin1QNOfzDzaC4xjQJzwhvKuIKfnVlmxGj1K08wah9lPJAJydgRiUaLYqP6
-	Gh3+jH4caqWSV/vqNmfma9E6BZY4X+f+6iZS+N9B8WedV4AmUh7aG5Cx4YbdHFiV7mNR8JZYWit
-	0eJuvxaS3vEiroNK0k68WGKYT29Ap+Yyxrj1+Wk+4HdOACjxsreWRHHQwz8PIK3sj4UwqJL/S/c
-	inFnUORpiZNuvFHhVkM/D20fK4O2yQ5dja+9o3rzhTTOzfhjAoVub+4TeVh7hEGZr5cUoPebhPk
-	MFfbHYbdhb3aaERnzAdvUmfhnSFK+VxVi0N4qoMqMibSHsZ9fbUjNoq0Z7O6fkV3xusA==
-X-Received: by 2002:a05:600c:348a:b0:49c:f13e:e4d with SMTP id 5b1f17b1804b1-49cf15a3672mr17202235e9.10.1788420709205;
-        Thu, 03 Sep 2026 00:31:49 -0700 (PDT)
-Received: from deb05.proceq.com ([213.160.61.66])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49ce551bf7asm69369455e9.2.2026.09.03.00.31.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Sep 2026 00:31:48 -0700 (PDT)
-From: Mehmet Fide <mehmet.fide@gmail.com>
-To: Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	imx@lists.linux.dev,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Mehmet Fide <mehmet.fide@screeningeagle.com>
-Subject: [PATCH v4 3/3] gpio: mmio: track the direction of chips without direction registers
-Date: Thu,  3 Sep 2026 09:31:43 +0200
-Message-ID: <20260903073143.2068494-4-mehmet.fide@gmail.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260903073143.2068494-1-mehmet.fide@gmail.com>
-References: <20260903073143.2068494-1-mehmet.fide@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BtqL1Dq1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788420912; x=1819956912;
+  h=date:from:to:cc:subject:message-id;
+  bh=39Jx9KtDS8alLni2xt7CpfUzAqEr0FXk2RhxhmCdxPE=;
+  b=BtqL1Dq1UUIBssUrql1Ol/0533gthbUzkusAp5HX58bPQJIPMexEIoTy
+   LEKXcZ510oAFTL/wkiWnwSxmonz4k1WOxbYDDUbyAWSGzZQyBQrqq8Me0
+   W4QJTS6GsZhEazQfoZtHCYjf1ZZ3CqDbOK/+EOSeoPDpglyLVwURoich0
+   Q6I2xKSOmptCa+fBwy3+5PsFvOP2SAC011vL3v/zV4ptRjTa3heJJQ+kT
+   Bt+p52EsnV5Xjqhxpl+5Z23dx3O8NvDD003oCc8QMrNnmHaXQNHSnzSuO
+   7oBXni92gT/TF1IxorW12EWb0gFCygQfF01qRvJJUPTapOGFNTYl3hnw2
+   A==;
+X-CSE-ConnectionGUID: hX97FJXeQm+w/ycprn4jgg==
+X-CSE-MsgGUID: b96AMpgrT6iouquReRuZaw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11894"; a="92711849"
+X-IronPort-AV: E=Sophos;i="6.25,258,1779174000"; 
+   d="scan'208";a="92711849"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 00:35:09 -0700
+X-CSE-ConnectionGUID: 49kDZtfySiiJC1KDq10zrQ==
+X-CSE-MsgGUID: l5cGXGY+SlStrJStJ6qeUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,258,1779174000"; 
+   d="scan'208";a="268308910"
+Received: from lkp-server01.sh.intel.com (HELO bfac249b2189) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 03 Sep 2026 00:35:07 -0700
+Received: from kbuild by bfac249b2189 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x21yT-000000004JO-1LdR;
+	Thu, 03 Sep 2026 07:35:05 +0000
+Date: Thu, 03 Sep 2026 15:34:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: bui duc phuc <phucduc.bui@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ linux-gpio@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: [brgl:gpio/for-next 5/8] drivers/gpio/gpio-altera.c:224:11:
+ warning: comparison between pointer and integer ('struct gpio_irq_chip *' and
+ 'int')
+Message-ID: <202609031554.tpxA67sB-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Mehmet Fide <mehmet.fide@screeningeagle.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+head:   1900b5a41493e7050c68c1e62780d6fb9a209457
+commit: 6e6e585b603e4f679c2a33c8f0954ec88b52fd7a [5/8] gpio: altera: Handle errors from optional IRQ lookup
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20260903/202609031554.tpxA67sB-lkp@intel.com/config)
+compiler: clang version 24.0.0git (https://github.com/llvm/llvm-project ed1626b9d0eaf7c406f44da5fb595ad94559f54b)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260903/202609031554.tpxA67sB-lkp@intel.com/reproduce)
 
-A generic chip with GPIO_GENERIC_PINCTRL_BACKEND and no direction
-registers sets the direction through pinctrl but has no get_direction
-callback, so every gpiod_get_direction() call trips the WARN in gpiolib
-and the direction gpiolib reports is whatever it assumed. On a Vybrid
-Colibri module that is 21 backtraces per boot.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202609031554.tpxA67sB-lkp@intel.com/
 
-Keep the direction of such a chip in the existing shadow: the direction
-setters update sdir under the chip lock, and get_direction() is the
-shadow-reading path already used for unreadable direction registers.
-That keeps the callback usable in atomic context, which it has to be:
-gpiochip_lock_as_irq() calls it for !can_sleep chips from
-gpiochip_irq_domain_activate(), under the irq descriptor lock.
+All warnings (new ones prefixed by >>):
 
-The pad's actual state is read once, in process context, when a line is
-requested: gpiolib calls request() right before get_direction() for a
-new line, so the shadow is seeded there from PIN_CONFIG_OUTPUT_ENABLE
-through the chip's get_config(), which is gpiochip_generic_get_config()
-for the pinctrl backend, and the line reports what the pin controller
-says. Lines pinctrl cannot answer for keep the input default, which is
-what gpiolib assumed before.
+   drivers/gpio/gpio-altera.c:224:7: error: use of undeclared identifier 'irq'; did you mean 'girq'?
+     224 |                 if (irq != -ENXIO)
+         |                     ^~~
+         |                     girq
+   drivers/gpio/gpio-altera.c:174:24: note: 'girq' declared here
+     174 |         struct gpio_irq_chip *girq;
+         |                               ^
+>> drivers/gpio/gpio-altera.c:224:11: warning: comparison between pointer and integer ('struct gpio_irq_chip *' and 'int') [-Wpointer-integer-compare]
+     224 |                 if (irq != -ENXIO)
+         |                     ~~~ ^  ~~~~~~
+   drivers/gpio/gpio-altera.c:225:11: error: use of undeclared identifier 'irq'; did you mean 'girq'?
+     225 |                         return irq;
+         |                                ^~~
+         |                                girq
+   drivers/gpio/gpio-altera.c:174:24: note: 'girq' declared here
+     174 |         struct gpio_irq_chip *girq;
+         |                               ^
+   drivers/gpio/gpio-altera.c:225:11: error: incompatible pointer to integer conversion returning 'struct gpio_irq_chip *' from a function with result type 'int' [-Wint-conversion]
+     225 |                         return irq;
+         |                                ^~~
+   1 warning and 3 errors generated.
 
-Suggested-by: Bartosz Golaszewski <brgl@kernel.org>
-Signed-off-by: Mehmet Fide <mehmet.fide@screeningeagle.com>
----
- drivers/gpio/gpio-mmio.c | 60 +++++++++++++++++++++++++++++++++++++---
- 1 file changed, 56 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-index 7e4b3e8d609f..0709ffaab4de 100644
---- a/drivers/gpio/gpio-mmio.c
-+++ b/drivers/gpio/gpio-mmio.c
-@@ -49,6 +49,7 @@ o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
- #include <linux/log2.h>
- #include <linux/module.h>
- #include <linux/pinctrl/consumer.h>
-+#include <linux/pinctrl/pinconf-generic.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
- #include <linux/spinlock.h>
-@@ -372,7 +373,17 @@ static int gpio_mmio_dir_in_err(struct gpio_chip *gc, unsigned int gpio)
- 
- static int gpio_mmio_simple_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
--	return gpio_mmio_dir_return(gc, gpio, false);
-+	struct gpio_generic_chip *chip = to_gpio_generic_chip(gc);
-+	int ret;
-+
-+	ret = gpio_mmio_dir_return(gc, gpio, false);
-+	if (ret)
-+		return ret;
-+
-+	guard(raw_spinlock_irqsave)(&chip->lock);
-+	chip->sdir &= ~gpio_mmio_line2mask(gc, gpio);
-+
-+	return 0;
- }
- 
- static int gpio_mmio_dir_out_err(struct gpio_chip *gc, unsigned int gpio,
-@@ -384,9 +395,19 @@ static int gpio_mmio_dir_out_err(struct gpio_chip *gc, unsigned int gpio,
- static int gpio_mmio_simple_dir_out(struct gpio_chip *gc, unsigned int gpio,
- 				    int val)
- {
-+	struct gpio_generic_chip *chip = to_gpio_generic_chip(gc);
-+	int ret;
-+
- 	gc->set(gc, gpio, val);
- 
--	return gpio_mmio_dir_return(gc, gpio, true);
-+	ret = gpio_mmio_dir_return(gc, gpio, true);
-+	if (ret)
-+		return ret;
-+
-+	guard(raw_spinlock_irqsave)(&chip->lock);
-+	chip->sdir |= gpio_mmio_line2mask(gc, gpio);
-+
-+	return 0;
- }
- 
- static int gpio_mmio_dir_in(struct gpio_chip *gc, unsigned int gpio)
-@@ -601,20 +622,51 @@ static int gpio_mmio_setup_direction(struct gpio_generic_chip *chip,
- 			gc->direction_input = gpio_mmio_dir_in_err;
- 		else
- 			gc->direction_input = gpio_mmio_simple_dir_in;
-+
-+		if (cfg->flags & GPIO_GENERIC_PINCTRL_BACKEND) {
-+			chip->dir_unreadable = true;
-+			gc->get_direction = gpio_mmio_get_dir;
-+			gc->get_config = gpiochip_generic_get_config;
-+		}
- 	}
- 
- 	return 0;
- }
- 
-+static void gpio_mmio_seed_dir_from_pinctrl(struct gpio_chip *gc,
-+					    unsigned int gpio)
-+{
-+	struct gpio_generic_chip *chip = to_gpio_generic_chip(gc);
-+	unsigned long config;
-+
-+	if (!gc->get_config || chip->reg_dir_out || chip->reg_dir_in)
-+		return;
-+
-+	config = pinconf_to_config_packed(PIN_CONFIG_OUTPUT_ENABLE, 0);
-+	if (gc->get_config(gc, gpio, &config))
-+		return;
-+
-+	guard(raw_spinlock_irqsave)(&chip->lock);
-+	if (config)
-+		chip->sdir |= gpio_mmio_line2mask(gc, gpio);
-+	else
-+		chip->sdir &= ~gpio_mmio_line2mask(gc, gpio);
-+}
-+
- static int gpio_mmio_request(struct gpio_chip *gc, unsigned int gpio_pin)
- {
- 	struct gpio_generic_chip *chip = to_gpio_generic_chip(gc);
-+	int ret;
- 
- 	if (gpio_pin >= gc->ngpio)
- 		return -EINVAL;
- 
--	if (chip->pinctrl)
--		return gpiochip_generic_request(gc, gpio_pin);
-+	if (chip->pinctrl) {
-+		ret = gpiochip_generic_request(gc, gpio_pin);
-+		if (ret)
-+			return ret;
-+		gpio_mmio_seed_dir_from_pinctrl(gc, gpio_pin);
-+	}
- 
- 	return 0;
- }
--- 
-2.54.0
+vim +224 drivers/gpio/gpio-altera.c
 
+   165	
+   166	static int altera_gpio_probe(struct platform_device *pdev)
+   167	{
+   168		struct gpio_generic_chip_config config;
+   169		struct device *dev = &pdev->dev;
+   170		int reg, ret;
+   171		struct altera_gpio_chip *altera_gc;
+   172		struct gpio_generic_chip *chip;
+   173		struct gpio_chip *gc;
+   174		struct gpio_irq_chip *girq;
+   175		int mapped_irq;
+   176	
+   177		altera_gc = devm_kzalloc(&pdev->dev, sizeof(*altera_gc), GFP_KERNEL);
+   178		if (!altera_gc)
+   179			return -ENOMEM;
+   180	
+   181		raw_spin_lock_init(&altera_gc->gpio_lock);
+   182	
+   183		altera_gc->regs = devm_platform_ioremap_resource(pdev, 0);
+   184		if (IS_ERR(altera_gc->regs))
+   185			return dev_err_probe(dev, PTR_ERR(altera_gc->regs),
+   186					     "failed to ioremap memory resource\n");
+   187	
+   188		chip = &altera_gc->chip;
+   189	
+   190		config = (struct gpio_generic_chip_config) {
+   191			.dev = dev,
+   192			.sz = 4,
+   193			.dat = altera_gc->regs + ALTERA_GPIO_DATA,
+   194			.set = altera_gc->regs + ALTERA_GPIO_DATA,
+   195			.dirout = altera_gc->regs + ALTERA_GPIO_DIR,
+   196		};
+   197	
+   198		ret = gpio_generic_chip_init(chip, &config);
+   199		if (ret)
+   200			return dev_err_probe(dev, ret, "unable to init generic GPIO\n");
+   201	
+   202		gc = &chip->gc;
+   203	
+   204		if (device_property_read_u32(dev, "altr,ngpio", &reg))
+   205			/* By default assume maximum ngpio */
+   206			gc->ngpio = ALTERA_GPIO_MAX_NGPIO;
+   207		else
+   208			gc->ngpio = reg;
+   209	
+   210		if (gc->ngpio > ALTERA_GPIO_MAX_NGPIO) {
+   211			dev_warn(&pdev->dev,
+   212				"ngpio is greater than %d, defaulting to %d\n",
+   213				ALTERA_GPIO_MAX_NGPIO, ALTERA_GPIO_MAX_NGPIO);
+   214			gc->ngpio = ALTERA_GPIO_MAX_NGPIO;
+   215		}
+   216	
+   217		gc->base = -1;
+   218		gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pfw", dev_fwnode(dev));
+   219		if (!gc->label)
+   220			return -ENOMEM;
+   221	
+   222		mapped_irq = platform_get_irq_optional(pdev, 0);
+   223		if (mapped_irq < 0) {
+ > 224			if (irq != -ENXIO)
+   225				return irq;
+   226			goto skip_irq;
+   227		}
+   228	
+   229		if (device_property_read_u32(dev, "altr,interrupt-type", &reg)) {
+   230			dev_err(&pdev->dev,
+   231				"altr,interrupt-type value not set in device tree\n");
+   232			return -EINVAL;
+   233		}
+   234		altera_gc->interrupt_trigger = reg;
+   235	
+   236		girq = &gc->irq;
+   237		gpio_irq_chip_set_chip(girq, &altera_gpio_irq_chip);
+   238	
+   239		if (altera_gc->interrupt_trigger == IRQ_TYPE_LEVEL_HIGH)
+   240			girq->parent_handler = altera_gpio_irq_leveL_high_handler;
+   241		else
+   242			girq->parent_handler = altera_gpio_irq_edge_handler;
+   243		girq->num_parents = 1;
+   244		girq->parents = devm_kcalloc(&pdev->dev, 1, sizeof(*girq->parents),
+   245					     GFP_KERNEL);
+   246		if (!girq->parents)
+   247			return -ENOMEM;
+   248		girq->default_type = IRQ_TYPE_NONE;
+   249		girq->handler = handle_bad_irq;
+   250		girq->parents[0] = mapped_irq;
+   251	
+   252	skip_irq:
+   253		ret = devm_gpiochip_add_data(dev, gc, altera_gc);
+   254		if (ret) {
+   255			dev_err(&pdev->dev, "Failed adding memory mapped gpiochip\n");
+   256			return ret;
+   257		}
+   258	
+   259		return 0;
+   260	}
+   261	
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
