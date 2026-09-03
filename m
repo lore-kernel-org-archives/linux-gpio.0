@@ -1,111 +1,96 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334174A5EAB;
-	Thu,  3 Sep 2026 13:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CF74AF15A;
+	Thu,  3 Sep 2026 13:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788440679; cv=none; b=un/K0Ch0+8YvAcaXX3rz+QOt86qC6MPGnEvg7ntVx2S9wr4XXTh95rww/DS6lzbeAAJpht/k1R9oa3yfB+gDrbvgnD+Cqk40y9SU5PviFUDe8ofW9KXDC9iAve2Jkc8Ua3LvBp9ugmNWwaXE2G0v7lrlwZ3TsibFWmf1Z+0vHl4=
+	t=1788443000; cv=none; b=QrxFocAlc39rVc4Cw1P6J/9Ej3kqETLLCx3pntU6FNnrDSxtkO4jgZ8DKnVna2W3JMTV0yxIIRKMjuxcgCmrpsBADCR/WObbvmViiRWioDijMJ0cf8geY2AU74WaUDFf1RYx2wbxDJMNG1DXXGTke0K/zxmQw2yurTpqXbDnRR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788440679; c=relaxed/simple;
-	bh=xL+CoTR59C4km0YBHA8/+2wEU5OAHfxf36Bb0007UXs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=ergBVZylHsMXL+ggqkeJlBeiIqCH7YH0O8/SoNMvYAXEN7Pyz9jGtqOl5707+9AHZqjLpwcjYbdLOgFFYNNGkBjNjt0r98NCIud19ai4bZw9jnYxQKR6E+lj0vzwVu8FCr7Vd8E5252jmRG/MnajjdzBbioShH313it/2K4cgvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VTbqw2/F; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1788443000; c=relaxed/simple;
+	bh=5EyB23EH5eDcdX9Ji8GWYVY6yBlVL7QwTmL0UpakQ00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cHInrr8ahE860wfxUfVisGThCbpc41G0M1HenCTdeS3OSFtXvfhOERH9jyK2TfRNfU7+0vZdsX3nkF3lbXwxf1DIFD48gkZv3GJ2/HjArIM1ZqbqKmvdpU3bQGiURAyX8ASY+6Zg0hREE4muNWm/L1eZCIr04w1prtD5hNZWpzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BKbrmK+u; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VTbqw2/F"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=xL+CoTR59C4km0YBHA8/+2wEU5OAHfxf36Bb0007UXs=; b=V
-	Tbqw2/FmwS4BYiHW0rwmkxQUU0Vnv7sRkl9W17mQb+gRraw7iOPsVJH/rs7FQ/k7
-	lDtHJXYlEF52X63tlpJ4wpttQpf/FkF6NedBUeTYruurmpE7kWZ56aYIr/pGZE5z
-	KGl9m3KFo4lTw9AmXh7WBnFsSUJ4HWh5MA3OVGU89Q=
-Received: from zl020895$163.com ( [2408:84e2:4b0:1b4c:d51e:e49:24cd:960c] )
- by ajax-webmail-wmsvr-40-115 (Coremail) ; Thu, 3 Sep 2026 21:01:58 +0800
- (CST)
-Date: Thu, 3 Sep 2026 21:01:58 +0800 (CST)
-From: zl020895  <zl020895@163.com>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: longzhao <longzhao@ambarella.com>, "Arnd Bergmann" <arnd@arndb.de>,
-	"Krzysztof Kozlowski" <krzk@kernel.org>,
-	"Alexandre Belloni" <alexandre.belloni@bootlin.com>,
-	soc <soc@lists.linux.dev>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	"Rob Herring" <robh@kernel.org>,
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-	"Conor Dooley" <conor+dt@kernel.org>,
-	"Michael Turquette" <mturquette@baylibre.com>,
-	"Stephen Boyd" <sboyd@kernel.org>,
-	"Linus Walleij" <linusw@kernel.org>,
-	"Bartosz Golaszewski" <brgl@kernel.org>,
-	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-	"Jiri Slaby" <jirislaby@kernel.org>,
-	"Catalin Marinas" <catalin.marinas@arm.com>,
-	"Will Deacon" <will@kernel.org>,
-	devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	linux-gpio <linux-gpio@vger.kernel.org>,
-	linux-serial <linux-serial@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	"Brian Masney" <bmasney@redhat.com>, "Lee Jones" <lee@kernel.org>,
-	mfd <mfd@lists.linux.dev>
-Subject: Re:Re: Re: Re: [PATCH v5 10/12] serial: 8250: add Ambarella UART
- driver
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
-In-Reply-To: <aplttDenvZHvn0mF@ashevche-desk.local>
-References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com>
- <20260818-cv75-v5-v5-10-7bbb12f0360f@ambarella.com>
- <aoRpc2RK2_X3CdAi@ashevche-desk.local>
- <162c0385.2c076.1a018b82fa7.Coremail.zl020895@163.com>
- <aplcxoINt0YAjvxL@ashevche-desk.local>
- <709278f9.9699.1a067207b4c.Coremail.zl020895@163.com>
- <aplttDenvZHvn0mF@ashevche-desk.local>
-X-NTES-SC: AL_Qu2TCvifv00q7iCeYekcn0wRhug/UMa4u/sm3YNXc/0Esj/kyz4scntFDXrp/eCXEz6OlTaJfwFx48pKcKVZvW+TqzbAigqlbyZHIiayZw==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BKbrmK+u"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788442995; x=1819978995;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=5EyB23EH5eDcdX9Ji8GWYVY6yBlVL7QwTmL0UpakQ00=;
+  b=BKbrmK+u3JTT1GEo6tzuYUDONM7Ufl9pDCrwVvPHcJmnbhhroGHYiWae
+   rZn4hWRLa4nJa4zS6sLiAfthHngy15uU5X5wQm5h6PFkGZSULPnBqD5sc
+   GpyQ4GzS0pYby7P/l4+TWwBxglJHfJ9VRt/CleYY1M6UADFXFBBNlJ+pT
+   wlzkwoo9W6+sgYlpBLZf07GlfS/imevoV2p1+OBb7NYRxNjY/Fz6DDS43
+   9q4fD62rDlcOXbsCWiHmp8GPZt62i0L4t6bKGx9v3pVXC55jMgG3zZbSQ
+   GS3ULDn5dZg5q+9VY19nJ8dkWzDtAuXCRAxeJy4ypds4AiBqHrv8Ze6HQ
+   A==;
+X-CSE-ConnectionGUID: MUHodzY5T7GvhHuSnOqW1A==
+X-CSE-MsgGUID: 5ZQhxAZ9QDuRxtabnT1T9w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11894"; a="88066045"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; 
+   d="scan'208";a="88066045"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 06:43:09 -0700
+X-CSE-ConnectionGUID: UVG/2k1xTGOYy50l4ostCQ==
+X-CSE-MsgGUID: iGUeliUQTE22i2ZhSU+gWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; 
+   d="scan'208";a="307941437"
+Received: from smoticic-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.28])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 06:43:07 -0700
+Date: Thu, 3 Sep 2026 16:43:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Radek =?iso-8859-1?Q?V=E1lko?= <rvalko@lipicko.cz>
+Subject: Re: [PATCH v2 0/3] pinctrl: intel: retrieve pure platform driver
+ data as well
+Message-ID: <apl5aNs7angIpuA1@ashevche-desk.local>
+References: <20260903114832.1996235-1-andriy.shevchenko@linux.intel.com>
+ <20260903115424.GN106095@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <3a51b3fb.9b8c.1a0675c9db8.Coremail.zl020895@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:cygvCgD3_4DGb5lqPuE+AA--.16267W
-X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbC7gYOf2qZb8YJQwAA3J
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260903115424.GN106095@black.igk.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-SSBzZWUuIFRoYW5rIHlvdSwgQW5keS4KCkJlc3QgcmVnYXJkcywKTG9uZyBaaGFvCgpBdCAyMDI2
-LTA5LTAzIDIwOjUzOjA4LCAiQW5keSBTaGV2Y2hlbmtvIiA8YW5kcml5LnNoZXZjaGVua29AbGlu
-dXguaW50ZWwuY29tPiB3cm90ZToKPk9uIFRodSwgU2VwIDAzLCAyMDI2IGF0IDA3OjU2OjE3UE0g
-KzA4MDAsIHpsMDIwODk1IHdyb3RlOgo+PiAKPj4gVGhhbmtzIGZvciB0aGUgY29uZmlybWF0aW9u
-LiAKPj4gSSB3aWxsIGtlZXAgODI1MF9hbWJhcmVsbGEgYW5kIHVwZGF0ZSB0aGUgY29tbWl0IG1l
-c3NhZ2UgYXMgeW91Cj4+IHN1Z2dlc3RlZC4KPgo+Tm8sIEkgbWVhbiB0byBnbyBiYWNrIHRvIHRo
-ZSB2ZXJzaW9uIHRoYXQgbW9kaWZpZXMgODI1MF9kdy4KPgo+PiBBdCAyMDI2LTA5LTAzIDE5OjQw
-OjU0LCAiQW5keSBTaGV2Y2hlbmtvIiA8YW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29t
-PiB3cm90ZToKPj4gPk9uIFdlZCwgQXVnIDE5LCAyMDI2IGF0IDAyOjMxOjU5UE0gKzA4MDAsIHps
-MDIwODk1IHdyb3RlOgo+PiA+PiAKPj4gPj4gVGhhbmtzIGZvciB0aGUgcmV2aWV3Lgo+PiA+Cj4+
-ID4+IFRoaXMgaXMgQW1iYXJlbGxhIDgyNTAtY29tcGF0aWJsZSBJUCwgbm90IFN5bm9wc3lzIERl
-c2lnbldhcmUuIFdlCj4+ID4+IGZpcnN0IHRyaWVkIDgyNTBfZHcgYWZ0ZXIgTGludXMgYXNrZWQg
-dXMgdG8gbW92ZSB0byB0aGUgODI1MCBsaWJyYXJ5Owo+PiA+PiB5b3UgdGhlbiB0b2xkIHVzIG5v
-dCB0byB0b3VjaCA4MjUwX2R3IGFuZCB0byB1c2UgODI1MF9hbWJhcmVsbGEKPj4gPj4gaW5zdGVh
-ZC4gVGhhdCBpcyB3aGF0IHRoaXMgcGF0Y2ggaXMuCj4+ID4+IEJhY2tncm91bmQ6Cj4+ID4+IGh0
-dHBzOi8vbG9yZS5rZXJuZWwub3JnL3IvQ0FEKytqTG02SHpFVTFUTS1jPVZ0anYzRkpFQmVjVlA3
-VHl4U2dxX1EwekYtWXdUNk5BQG1haWwuZ21haWwuY29tLwo+PiA+PiBodHRwczovL2xvcmUua2Vy
-bmVsLm9yZy9saW51eC1zZXJpYWwvYW44S3Z2SFdYMG5hSDNYd0Bhc2hldmNoZS1kZXNrLmxvY2Fs
-Lwo+PiA+PiBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1zZXJpYWwvN0U3NzQzMDUtMzky
-MC00QkI3LUJBNDYtRTA3NzJENkJFRDg0QGFtYmFyZWxsYS5jb20vCj4+ID4+IEkgd2lsbCBhbHNv
-IHN3aXRjaCB0byB1YXJ0X3JlYWRfcG9ydF9wcm9wZXJ0aWVzKCkgYW5kIHRyaW0gdGhlCj4+ID4+
-IDgyNTBfZHctZGVyaXZlZCBib2lsZXJwbGF0ZS4KPj4gPgo+PiA+VGhhbmtzIGZvciB0aGUgcmVn
-aXN0ZXIgZGVzY3JpcHRpb25zLCBpdCB3YXMgaGVscGZ1bC4gQWZ0ZXIgZ29pbmcgdGhyb3VnaCB0
-aGVtCj4+ID5pdCBzZWVtcyB0aGUgdjMgYXMgeW91IG1hZGUgaXQgaXMgZ29vZCBlbm91Z2ggKHNv
-cnJ5IGZvciBnb2luZyBiYWNrIGFuZCBmb3J0aCkuCj4+ID5XaGF0IGl0IG5lZWRzIGlzIGJldHRl
-ciBjb21taXQgbWVzc2FnZSBleHBsYWluaW5nIHRoYXQgd2hpbGUgaXQncyBub3QgYSBTeW5vcHN5
-cwo+PiA+RFcgSVAsIGl0IHdhcyBtYWRlIHRvIGJlIHF1aXRlIGNvbXBhdGlibGUgd2l0aCB0aGF0
-IChvbiByZWdpc3RlciBsZXZlbCkgYW5kIGhlbmNlCj4+ID5ubyBuZXcgZHJpdmVyIGlzIHJlcXVp
-cmVkLCBqdXN0IGEgc21hbGwgcXVpcmsuCj4KPi0tIAo+V2l0aCBCZXN0IFJlZ2FyZHMsCj5BbmR5
-IFNoZXZjaGVua28KPgo=
+On Thu, Sep 03, 2026 at 01:54:24PM +0200, Mika Westerberg wrote:
+> On Thu, Sep 03, 2026 at 01:46:11PM +0200, Andy Shevchenko wrote:
+> > The reported platform can't be enumerated as it misses driver data
+> > associated with the firmware node. Instead we should use platform
+> > driver data. This mini-series to make it happen.
+> > 
+> > Changes v2:
+> > - constified parameter in intel_pinctrl_get_soc_data() (Mika)
+> > - added tag (Radek)
+> > 
+> > Cc: Radek Válko <rvalko@lipicko.cz>
+> > 
+> > Andy Shevchenko (3):
+> >   pinctrl: intel: Move intel_pinctrl_get_soc_data() upper in the code
+> >   pinctrl: intel: constify parameter in intel_pinctrl_get_soc_data()
+> >   pinctrl: intel: Try to retrieve driver data for pure platform drivers
+> 
+> Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+Pushed to my review and testing queue, thanks!
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
