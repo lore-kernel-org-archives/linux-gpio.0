@@ -1,59 +1,58 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDCF3290C7
-	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 08:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE0A363C6C
+	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 08:50:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788425376; cv=none; b=kXJpXpmI+JfY0UKOsXcyifueglVr44Z+zWCkvsAnaNrB5slnlCJSBfAlgTKT2pEJBrmcNmYSW0TBJ8K/OVY84VrfRKssE1Of4ZNIEYYRPqEsnErwrPrn+szF4mEOubtDjhGLmUvqT94IWDOevfcGylsCsTX/TgOzK13E/Vi37sM=
+	t=1788425433; cv=none; b=LM1S2RoVAvnZFUeLcHixOzGdWHULRrXF9Hr8qGDpmVr0yEEP7BjzyhAG2ma1SQOn9pRbhZVUyGmTqBvrdXT3+XqFw5FIczI1tqbBTZJtadI7cmPIUAnKAL/3egB+T0YV2azEzrlrWqG+tcq4aL00afQUSeomqe9scFrphYdk9B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788425376; c=relaxed/simple;
-	bh=+bRt6BNeoujLa8yrSiSmK3JrnrT/EWUmOd6eI9HCwVQ=;
+	s=arc-20240116; t=1788425433; c=relaxed/simple;
+	bh=b/J2tIGkuu9cYQXNDh0K6oZrkOSsiyfDgQIMW7Oe+HI=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t4LGqFRDjYF2ksIyDEdJIFi2MMcOVAO88OrPY9R7OYq9yc8fb+x6luyXH1Uz29mxI6orlQtA4N+dnz0CuMha7zrXoY8nhqqvoujdpPMUs+rS8rOqXoKUvxKVhPhZz6Dlh0weD8sQDKFUAoDnLP3exH4w40NgJ8eE88h8w33uhho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LTcKeeHg; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=YVO/ZGixeMith6PFDSFAYI2RjM6lpThOT3gHCwpgZNC03q0ittFzLQdSLNJZBAlTb4ApciixkR8fXOvY6ovSc++axdwk2LWUxRHzqIhdonfKjwsGynkS4MQKlGmoeyuTYdCzXj2Meuz+BhdBBXvsDrhBF04vb9rMus9aGclgWrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oT4cM0tI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LTcKeeHg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F421F00A3E
-	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 08:49:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oT4cM0tI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E46761F00ADE
+	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 08:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788425372;
-	bh=+bRt6BNeoujLa8yrSiSmK3JrnrT/EWUmOd6eI9HCwVQ=;
+	s=k20260515; t=1788425431;
+	bh=b/J2tIGkuu9cYQXNDh0K6oZrkOSsiyfDgQIMW7Oe+HI=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=LTcKeeHgzks6ZWYb6Mt9WBbgBz0GQ2/dALRKI9WYPeRGk6lOmjglZDxkPmdBq9O8/
-	 TYH7wI3pNawrQgtQFAcQMBoCoNdcc/a9/YaYKXfqnxU3jZaMVTMU6stCZAWO7fq4wO
-	 H8eontsp1KNlOMp1QTKjFOXKZn1ViDmVcALfYTrHVxhpZCksIlQxQG0DsdVmBvYHcw
-	 VBOnC6O6hS94fbM7PRWdHt3k4iyBeodNbhE5xMZ+vGbmwz3J7FsUb3B+L8B/5Aw6wr
-	 IsuodEkku2bnSrv6TeAULjpxZfEpPIZXUaQcXZP05vNCQcKJ1rWcXWWIPQTKEtOG7+
-	 XJzp6pV1xt8SA==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-39da69c5ba3so14619351fa.1
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 01:49:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxKUT1S+OAWsRbWFUmixMDu6pxCk5cWkIVrg+8jQmvv8CJV3+AP6xNZWjaOq2/qbloyq/0hjg5fT50u@vger.kernel.org
-X-Gm-Message-State: AFuF++m9d/W3nQsUkYwmhRlSW64lWJj2IafL6Jx/E6hYiQ7/+8yboOuh
-	/kVMQgCRxx1A2mi0AViu4f8PTUIihIbifkaYQ8MX33SaRXrdReY4c96/zo51jKh5sMn1Kb++UdU
-	7ztG+hWgOfXIvwosgGFJXos+omDKYpcPFFkrPvn9bGg==
-X-Received: by 2002:a05:651c:146f:b0:3a2:feaf:6f9b with SMTP id
- 38308e7fff4ca-3a34fcca0a7mr22424361fa.7.1788425371236; Thu, 03 Sep 2026
- 01:49:31 -0700 (PDT)
+	b=oT4cM0tIMY8qyjZycMQ1KC1OA9HeAuNsWE8eSQ7UNKQMJi7XC5FlAerfCFKzWrEyI
+	 vXxCSTqoPzZv0khmvzkVbmrx1CHLNsWA3OkM3GEVnIvLanfNv1wzDpquoVKmEYmfwp
+	 LQs3v9GMN7nj6CzG7L/elqhH6A9CdIbJ+jwj24yik9MF3Ejv7I9n9/2vtx5+KWWsyB
+	 zKmDCSif1D0Bbp4IzTunXXeKhp0G5o60u/WmMsbrE4j0chlZ08A2lCjC6RX8XbuQIv
+	 wgEKDxl81gtddzue/pPVIMb7Cp5Rin5gyBDQdNpwR5e4GkC/MYfGIWOx1VNRwYA2Zg
+	 51Gm3opiaZwwQ==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5aec201b582so2826789e87.1
+        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 01:50:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwT3Q2IPgHzIANFMTKDRtQI6kxJXbAQoIhRlxWKZMhkK4mt31Hp5jEFH5+763SYogPI75q5H+GIshMz@vger.kernel.org
+X-Gm-Message-State: AFuF++mCk6kksoM75p9eYilVFmSGelZzjIwV6+Xx6m5ugaHw5kgkiFP1
+	o9ZQzL9R+wjvo8ZIv+Lej2VU8uvzwotb34X4XsfOyI7U5ns02O5YcbkEiyZNYanI2GQwekrbzgT
+	Hl90MyHfNI6ZIFSfz8FYS9NLLUkZX35X3u5UL7Y2WYA==
+X-Received: by 2002:ac2:5696:0:b0:5b0:eda:de25 with SMTP id
+ 2adb3069b0e04-5b609197069mr3452281e87.6.1788425430612; Thu, 03 Sep 2026
+ 01:50:30 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 3 Sep 2026 01:49:29 -0700
+ HTTPREST; Thu, 3 Sep 2026 01:50:29 -0700
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 3 Sep 2026 01:49:29 -0700
+ HTTPREST; Thu, 3 Sep 2026 01:50:29 -0700
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260903-pci-tc9563-aux-v2-4-34c625b542c1@oss.qualcomm.com>
+In-Reply-To: <20260903-pci-tc9563-aux-v2-2-34c625b542c1@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260903-pci-tc9563-aux-v2-0-34c625b542c1@oss.qualcomm.com> <20260903-pci-tc9563-aux-v2-4-34c625b542c1@oss.qualcomm.com>
-Date: Thu, 3 Sep 2026 01:49:29 -0700
-X-Gmail-Original-Message-ID: <CAMRc=MfmkZSvKDCNrDTiXaaihfG0fUbjH3c7Um2hvrG2o4FbkA@mail.gmail.com>
-X-Gm-Features: AcwNN1W7TZ3lTOrRxg51FDkbXOy--JN56l9BA0M_nLUauZ-LpMpb3HTvYJexQ_E
-Message-ID: <CAMRc=MfmkZSvKDCNrDTiXaaihfG0fUbjH3c7Um2hvrG2o4FbkA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] PCI/pwrctrl: tc9563: switch per-port reset to GPIO
- descriptor API
+References: <20260903-pci-tc9563-aux-v2-0-34c625b542c1@oss.qualcomm.com> <20260903-pci-tc9563-aux-v2-2-34c625b542c1@oss.qualcomm.com>
+Date: Thu, 3 Sep 2026 01:50:29 -0700
+X-Gmail-Original-Message-ID: <CAMRc=Mf6-7Y7nDvBA-zpw10_EeQ9mr+TkLfr_msBU7EU58LQ=A@mail.gmail.com>
+X-Gm-Features: AcwNN1W8ZLKq45YYD-0C3nOhQX4esCxMfLaqxcHvxZDmgjB6oKaZzyXDqsJyCzA
+Message-ID: <CAMRc=Mf6-7Y7nDvBA-zpw10_EeQ9mr+TkLfr_msBU7EU58LQ=A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] gpio: tc9563: add support for the embedded GPIO controller
 To: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
 Cc: Alex Elder <elder@riscstar.com>, Daniel Thompson <daniel@riscstar.com>, linux-pci@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
@@ -66,23 +65,29 @@ Cc: Alex Elder <elder@riscstar.com>, Daniel Thompson <daniel@riscstar.com>, linu
 	Konrad Dybcio <konradybcio@kernel.org>, Michael Walle <mwalle@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 3 Sep 2026 09:53:00 +0200, Lorenzo Bianconi
+On Thu, 3 Sep 2026 09:52:58 +0200, Lorenzo Bianconi
 <lorenzo.bianconi@oss.qualcomm.com> said:
-> Remove the local TC9563_GPIO_MASK and TC9563_GPIO_DEASSERT_BITS
-> definitions, which are no longer used after switching to the GPIO
-> descriptor API.
+> From: Alex Elder <elder@riscstar.com>
 >
-> Replace the direct regmap-based per-port reset logic in
-> assert_deassert_reset() with gpiod_direction_output() calls, falling
-> back to the legacy regmap approach only when no reset-gpios DT
-> property is present for a given port.
+> Add a driver for the GPIO controller embedded in the Toshiba TC9563
+> PCIe switch (and the Qualcomm QPS615). The device implements 35
+> GPIOs using two register banks: three registers control the first 32
+> GPIOs (20 and 21 are reserved) and three more control GPIOs 32-36.
+> GPIOs 22-24, 27-28, 31, and 34 are input-only.
 >
-> Add the reset GPIO pointer to struct tc9563_pwrctrl_cfg and introduce
-> tc9563_pwrctrl_parse_reset_line() to look up reset-gpios from each
-> PCI downstream port child node. The lookup is done lazily at the
-> beginning of power_on(), returning -EPROBE_DEFER until the GPIO chip
-> is registered.
+> The driver is registered as an auxiliary device driver; the TC9563
+> power controller creates the auxiliary device and provides a regmap
+> that gives access to the GPIO registers, so the gpio-regmap helpers
+> are used to implement the GPIO chip.
 >
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
+> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
+> Co-developed-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
 > Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+> ---
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Looks good to me. What is the merge strategy? If you want Bjorn to take it
+through the PCI tree:
+
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
