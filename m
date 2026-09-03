@@ -1,82 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC3F42589D
-	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 08:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0829B44A3F8
+	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 08:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788424072; cv=none; b=prp8CdhTykWtmXI0MvoAu7g2764gJ2xuO3Usi7OkdOtF7j98Z3Sj9JQjxPNEkPgdaIDljX0ZyrgKR6rBC8bsbToczdI6BRNjxGYUVK5FIA0jrQ4i0N3DWCbro4pKhmM3VO0SIdi6AGU+8cXeGzql6Kg6IjzmLWVW1GuXQpZT9vs=
+	t=1788424726; cv=none; b=Kzhu952ADOnsZnhf1onsCcHh96subYSDO8bmNPz4SR6QqGCJCOhom+Vzw1vqfTd4B+lzSs+HbeRx6ujLbATldXdqUhDm4XnhppcCRxGaKC2AFd724rG9rB7y6vh1Osi6DJ2HMen3LOBorT7jWoLVnJmrga8XOYcnq/Rj8oIxGK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788424072; c=relaxed/simple;
-	bh=TrJxAmxvRZ+OJcEmvKu0mS/aQ9NNqWTYt4WrKIdYpSg=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Az6KIyJZb1kM42CYYftV6nmiwx6tKCKiLkYV/0T3oG1uq+KJOXTcrRKHSZYRRCTopm7mzNVQaEqrlLDKm2KY/3Vob5L/0obVHxL3h8QOOzHCNYFJvS5aqzfzlZuengdy67wmdGo4gT13bgI9s7PIQo+DGWA8saLpfKe4udrr0NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=omwLy8pQ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788424726; c=relaxed/simple;
+	bh=GRvwnXHVy/jqUCw/PL8fHu/IurmtPlulBPvKYqgBdWo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=usp1eiz6W/G6w9dbOAhQMwLzSlmXAd6BbKBuarvpFvw8lpUPCh5B9uhxI+NzKwxb9zYz6D3aU04d5QZRF6FyN5SctHa24E3Imh21Hixs7qMfn2SO2oQT+T4/F2Xd0zh2PWOCXSjgPCBTCeSrUR5IxLA2B6KsvX4evtPB2ptjVkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KxpTWpBp; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="omwLy8pQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E94711F00A3D
-	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 08:27:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788424070;
-	bh=TrJxAmxvRZ+OJcEmvKu0mS/aQ9NNqWTYt4WrKIdYpSg=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=omwLy8pQosiS6s6aNjAUOvi+dNK9JWsK13oYqOB7usOvfjM8RvkhQcnQbn4M4HaqF
-	 SnH9yImhXfNS4YTsTvTVYU4mAEdHATbCFN7pbZxBWURNcwHDAJogs1Ey3OWu4XR1Mp
-	 Ok1BboP2h5vYnn0kFQQG36Vqr4ecxF2zPCGtcGTy7uYPTibG4827aQ1LzlfgjF4C5O
-	 MCRnQCuJPraOEWZ3GOoJonEpGIjxPDOk7RbNOGxqJfgFjdCV0BWE8IVljIwMmUfsVR
-	 XHQxTk579Y1yfISx5azt6FaUNGyrnSvFJFEYfUaPez3zXLRcA73rujD0nJu0uk7dcN
-	 uu1sUfLCDI+vA==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5aeb98460c6so3180277e87.2
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 01:27:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBy3IJ4BucsYe4xtS/tfGKhbIY0X8AjyzX4AhRBwxG309fSydAAghLbqeK3eTla2ii7oBrGJZFksGNoe@vger.kernel.org
-X-Gm-Message-State: AFuF++lSyEWZxeYsjFcLaM6DLpWcI558ZF7/Mx9TqgOXHDrVfCY5FKY0
-	WoDb/2Dap0BE4JmjLjeN6mu91FT1sEKtRd5ibrgPU7AJV2rfzMA1y98SBfMxuXa+Il3viET5fyV
-	1MZSPfvAXNdgcU0QuzqnArJl0I6YrfWpj1n4Uiol+jA==
-X-Received: by 2002:a05:6512:2246:b0:5b6:4ad:77b5 with SMTP id
- 2adb3069b0e04-5b6087dc220mr3260661e87.29.1788424069613; Thu, 03 Sep 2026
- 01:27:49 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 3 Sep 2026 01:27:47 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 3 Sep 2026 01:27:47 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260903075940.2089367-1-mehmet.fide@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KxpTWpBp"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4843efcbdb2so1342407f8f.2
+        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 01:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788424723; x=1789029523; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=GRvwnXHVy/jqUCw/PL8fHu/IurmtPlulBPvKYqgBdWo=;
+        b=KxpTWpBp2z9O0bZlfiiCrfDE33AeDdsLj55sul/OKLPWoq2t2us6hR0wA/oYmrnBKj
+         PncWq0OgiKTca4aN2FF+MTniEjUVb+t99On0ptlaYCniXNkFSXkMP2ZK+HemnuHaHPd2
+         b+R/LAHCharc0trFSVIP/KKPCcJ7fuMc+Ex/ykNLUmmmvHzB0oufkYhh9Ikqbc0wiFGC
+         oLed1GbjzXECGAsZvxunY4iVxgN5I7PSYUBdZkz623z+/AOWIrF8MYq7hp+uENkkaXYw
+         wz9Y0qUw/p028AFWgto/J9i8VvgkCXWt1IVhopBh8y4WzRLbWKlDnJFs/3GaZ4uo4ZWF
+         pvYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788424723; x=1789029523;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=GRvwnXHVy/jqUCw/PL8fHu/IurmtPlulBPvKYqgBdWo=;
+        b=S64RKUMyE3ZiswwC+toK0AZZUAkHxEwihF8cx3rdMpR0wpXdouwzaWLWxxL7brb/ra
+         MmSgujL4gIj88Wdi0yhdrhyPOyVFm2hMyYCKkwAgxmov3a4WtSbsV6EjzzZbyYL5piLQ
+         ZZhF4P3r/LEGY0ih+rr4TPm9a3mkc0pPsoZgebT/RFk/7hch4uBDC2ERS91l1mxQk4bL
+         OsAlvggG2Zn9GHQmzY3MDHjn4wX4jWnh1ovm8UIBWB6BaTA03J1XSGx6TkkYp5vB6uKd
+         x+C2OTKLs50UD5pnls0sL4hWZ7l4teAM94oj1TnPpDb7m3PukvRCUNDTGv4K2AwsGtiC
+         Mihg==
+X-Forwarded-Encrypted: i=1; AKwUvBwTPNN0WTzg8EcHzrNSIV1VM8l6Rjyo6GCrYVYa/vtJW1NWQ+qirFl14gUdJcui2peF4wIRYe1JXDqg@vger.kernel.org
+X-Gm-Message-State: AFuF++n22UUz4PC1L84nxs8ZHiLmjyF0qf3eSzxjoY49m4wdMDKpNPoV
+	pkAKiZ3hUoUnH3dQczRY+XV6ZBS3wOcU/65j5l/sI4l1Ah3TKLa/+SxJ
+X-Gm-Gg: AYBFou3tKrDK8Jy6AWtm66iQLZ/rM6c6G3Qrr6HZIBKyHC4ZW83FN71cYT2N51iGfEo
+	WiY2rhv3QeBj0WzcHUHqsXj23IPusOc3VAPSVzlWYoxDYWYZUrvyDb2ROnn8au/gGJpmbZ82cx6
+	tOfqJo5cVFlcnEnwlbUENga134FlMftuHWZeni4BNnY2G3gStas25lVQRPvf13o8WiwOQme4zD7
+	Q8JGVXXDvmoLMv+vIw921Q0CngL/J74g9rMHMvGT4Q7SLcnhM+Mhpy1eWsXS0bkPXk80GxIbJvf
+	nWwJ9QC8mCl97ZnOH/+OYlRHk4M2uVplIh/5H1u6Srql7f0nvSa63JUKzkSQAvr655vfEpdOjf+
+	+bn2U9kn1ZKCVz3Z3NJAJjz1iS3lryuLsg93GxePS9ggHQ7JUoIboZsjElYUF2enbbtsTEBPydZ
+	9g5PmoK8/zvNew7Q0wmVa5yxn0ZMMoF0QpwM+/bXRvwuK52iDejv1m/B77n93Yf7I6cV1YyxfXd
+	Kk1
+X-Received: by 2002:a5d:64c9:0:b0:482:fa3c:3e95 with SMTP id ffacd0b85a97d-48488f07dd0mr17932547f8f.8.1788424723044;
+        Thu, 03 Sep 2026 01:38:43 -0700 (PDT)
+Received: from deb05.proceq.com ([213.160.61.66])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48448eeae34sm13075059f8f.32.2026.09.03.01.38.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2026 01:38:42 -0700 (PDT)
+From: Mehmet Fide <mehmet.fide@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>
+Cc: Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Mehmet Fide <mehmet.fide@screeningeagle.com>
+Subject: Re: [PATCH v5 0/3] gpio: mmio: report the line direction on chips without direction registers
+Date: Thu,  3 Sep 2026 10:38:41 +0200
+Message-ID: <20260903083841.2114833-1-mehmet.fide@gmail.com>
+X-Mailer: git-send-email 2.54.0
+In-Reply-To: <CAMRc=Mc3u+2ApzMfFFM1L5MJROaQMSifKReJ-3T+9EX3Zdqzfw@mail.gmail.com>
+References: <20260903075940.2089367-1-mehmet.fide@gmail.com> <CAMRc=Mc3u+2ApzMfFFM1L5MJROaQMSifKReJ-3T+9EX3Zdqzfw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260903075940.2089367-1-mehmet.fide@gmail.com>
-Date: Thu, 3 Sep 2026 01:27:47 -0700
-X-Gmail-Original-Message-ID: <CAMRc=Mc3u+2ApzMfFFM1L5MJROaQMSifKReJ-3T+9EX3Zdqzfw@mail.gmail.com>
-X-Gm-Features: AcwNN1V5FdQ_WXfM8AqBAuAps-0ep9MiWg8pjvabZULokJ8aU7j9fqMb0CzLSlw
-Message-ID: <CAMRc=Mc3u+2ApzMfFFM1L5MJROaQMSifKReJ-3T+9EX3Zdqzfw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] gpio: mmio: report the line direction on chips
- without direction registers
-To: Mehmet Fide <mehmet.fide@gmail.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Mehmet Fide <mehmet.fide@screeningeagle.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 3 Sep 2026 09:59:37 +0200, Mehmet Fide <mehmet.fide@gmail.com> said:
-> From: Mehmet Fide <mehmet.fide@screeningeagle.com>
->
-> Hi Bartosz, Linus,
->
-> this replaces the gpiolib guard patch [1], along the lines Bartosz
-> suggested there: instead of teaching gpiod_get_direction() to stay quiet
-> when a chip has no get_direction(), give gpio-mmio one and let the pin
-> controller tell it what the pad does.
->
+From: Mehmet Fide <mehmet.fide@screeningeagle.com>
 
-Why are you spamming the list with multiple versions per day? You're sending
-a v5 as I'm looking at v4 and I really don't like to have my time wasted like
-this. Please limit yourself to one iteration a week unless you get a set of
-comments in which case try to stay at two iterations a week at most.
+> Why are you spamming the list with multiple versions per day? You're sending
+> a v5 as I'm looking at v4 and I really don't like to have my time wasted like
+> this. Please limit yourself to one iteration a week unless you get a set of
+> comments in which case try to stay at two iterations a week at most.
 
-Bartosz
+Sorry, that was wrong of me. v5 is v4 with only the get_config()
+documentation corrected (it said the answer comes back packed, it is the
+bare argument), no code change, so please review v5 and ignore v4. No
+further version from me until you and Linus have had your say, and I
+will keep to one iteration a week from now on.
+
+Mehmet
