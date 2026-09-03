@@ -1,74 +1,93 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E374A484E;
-	Thu,  3 Sep 2026 12:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034CA4A8A22
+	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 12:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788438996; cv=none; b=Eev7e35TjOFR+zz3QQkfgKDji9XkNJFP3/XoFrqrINRiYq71SYhzzKyjCCAJSxpa8plAr5jdFR1p9agkbJA5wuiIzFgb5zvmlUMGg0BcnsiqflDqDYgCKAn/5WIyWd3V2jO7NLf+9JDud7PS9C4eTi6f4LuL32V2amj8YQeniZo=
+	t=1788439385; cv=none; b=SfEMpUR13QI0uKKzhLSX36mI+eGNvgyRUYHmfmXefDuscy1uOtE04CZm+X8NoXQHCYj7H2KujNzF/cYaJ3+gYweCnqc350UVBkNE8CcRgkpGu2WZZjRGOKuRx/lrVYZyDpoXAyBfh/DQfhQjstZBNpCaV4LsQLhlymnkHOIxS24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788438996; c=relaxed/simple;
-	bh=5wyqrPyAIsPudg2hBxRTbF79wa8Xf+nafl6awjDjsOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t2KfG0roGfDnwqRkxH0yo1NkJpz8nuyglBBOPSSOLrMyDxX4oLzR3eMo7ZxHQTtmkGSgz3eMknJqMylfUtDAdYvq2Si4Uw5wRmpf/FCOYB73/X1ReAZzEa5sHGrv/5HP6X5ioqPU9z0OY1qreySfXfwZuYQozDtgr+62ZogGYYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xje0YJg7; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788439385; c=relaxed/simple;
+	bh=kNU/k11BVa8SD18dvZpEVQtHVQvQQgOOZ50l+boBbK0=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LkFDuL+BfEaFcI2Xf40rAuakcbvs4pJfTBqAvn7auODhzSxWOhv2+FDQaJtu3JdpzKy8L6lVdzQLDS2bKUd/5SiYTNofL6ONqulvgiXQrQk/iiIqceXLvdT7ya+CI7/mL1MorIjQe19C5rH5nsdWV0E8wT7HjM3ldjyv82F+kQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AJu5++RJ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xje0YJg7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 435141F000E9;
-	Thu,  3 Sep 2026 12:36:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AJu5++RJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CBA31F00A3A
+	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 12:43:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788438994;
-	bh=4w6jf87vafgM99bg9s6kWCWTFKCA2du6LEtWeZQAPcU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Xje0YJg7/rQdGmYKvRqh8OHMnTgXxL9lxMK2WYusyrfjvyCj1P42mpgdm2wfxtqTb
-	 gF5oqbwataixl0q9rm01GE677vb2RjMTPMx1RLto7UJrhdmRSjsj9aIGy6iINWnvPf
-	 EsmOolg65pC/cvHw/btvFoxVERH1ZBJRV0MzqhohlEceM+vVB6Z8HnGGfZOfGA6K7d
-	 B6YOhzM/QaMbq8GCHHiWPXcDu87dXXF7F6wltT2R4XnYg0takIbWaSsyLat8Cujv/a
-	 s2eRk9Z1fS/3OQkNm/62rFmfEQGeLqKtEtbipr+gDQcjK4BWcp/Z5mVJrK8tPHwP1M
-	 tdEHNOR9RMlQA==
-Date: Thu, 3 Sep 2026 14:36:30 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Xilin Wu <sophon@radxa.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Stephen Chen <stephen@radxa.com>, Junhao Xie <bigfoot@radxa.com>
-Subject: Re: [PATCH 4/6] dt-bindings: arm: qcom: document Radxa Dragon Q8B
-Message-ID: <20260903-corgi-of-splendid-defense-9c8cae@quoll>
-References: <20260901-q8b-dts-v1-0-7de0b6a73d08@radxa.com>
- <20260901-q8b-dts-v1-4-7de0b6a73d08@radxa.com>
+	s=k20260515; t=1788439382;
+	bh=aR99XB3BjQrnv0W3ztdKLJH/R2+wXXStLVC5XuteylA=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=AJu5++RJGHcdv/OWtoTrrIm0RqfRdt1QHjy1go4yfHObJMiH5LV0EcBV6D2roLGuB
+	 3YsrDhr2AZ7bOHUeT+S31K3T1lSD2z3BXUhNBtLw4EMEXpA05xTkxMX4ao9Dwzf9tp
+	 QfWyqIsffjsFBZQlE51AhOjCyHJtESOd5nAOOFmapiuS69inhWFr3U3lM1rBnWlwsj
+	 ZzyW/2g+8vbm7qpB7FtLd88MUNQHC4FOaD2WZu1zWzL/hEkfJ9lJqAkZ9LgFtqPz9+
+	 4AY6qbrjs3CKOiHlKfkuJLpTwxUNgHzc1ia6xF9bXppf11neZwyx7dezkNv3FLdP3O
+	 IBu2oGxbctYLA==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5b28c91fba5so1382930e87.1
+        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 05:43:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwFPVrCLX8s8RhHFk0E5BkHOUg2gE1eHlIcUeEkvhea0Qp8fe/dbvy9MvwXKYAiiD/AoYRbHrezp8KO@vger.kernel.org
+X-Gm-Message-State: AFuF++luMJGVi0Dgyn6GboWcpcz+jafJfr98cca13fC/Efeac7dfU/Uc
+	Q7t5Us9OgnbNg0WEwzBL9IF7zd8aRYmr1mArjZWq0Tpue+Ozcw9bJ2beMkGDh4BUBwlTks/sFFO
+	MEWU5sc/4843B6ivOonqwzQ/i8HSHesE7VPjiLNDBjw==
+X-Received: by 2002:a05:6512:3e07:b0:5b6:10bc:dc46 with SMTP id
+ 2adb3069b0e04-5b610bcdcefmr604327e87.29.1788439381082; Thu, 03 Sep 2026
+ 05:43:01 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 3 Sep 2026 05:42:59 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 3 Sep 2026 05:42:58 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <aplfrNXzNvgbMJf1@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260901-q8b-dts-v1-4-7de0b6a73d08@radxa.com>
+References: <20260821070651.39763-1-vaknins33@gmail.com> <178827844334.39529.382963115769227795.b4-ty@oss.qualcomm.com>
+ <aplfrNXzNvgbMJf1@ashevche-desk.local>
+Date: Thu, 3 Sep 2026 05:42:58 -0700
+X-Gmail-Original-Message-ID: <CAMRc=Mck+ft9wmWQLcq4uFTvH9u_rB_bFQ6tGtG7YkYdbowJaw@mail.gmail.com>
+X-Gm-Features: AcwNN1WJs57t_o6KckC2mhjZxrGSza3_cvZkypNljGQrIWUv_ioLQdYmRwBlG6E
+Message-ID: <CAMRc=Mck+ft9wmWQLcq4uFTvH9u_rB_bFQ6tGtG7YkYdbowJaw@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: acpi: Add ignore_wake quirk for ASUS ZenBook UX425UA_UM425UA
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <westeri@kernel.org>, Kivan <vaknins33@gmail.com>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Mario Limonciello <mario.limonciello@amd.com>, linux-gpio@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Hans de Goede <hansg@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 01, 2026 at 04:47:57PM +0800, Xilin Wu wrote:
-> The Radxa Dragon Q8B is a single-board computer based on the Qualcomm
+On Thu, 3 Sep 2026 13:53:16 +0200, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> said:
+> On Tue, Sep 01, 2026 at 06:00:46PM +0200, Bartosz Golaszewski wrote:
+>>
+>> On Fri, 21 Aug 2026 10:06:50 +0300, Kivan wrote:
+>> > The ASUS ZenBook UX425UA_UM425UA (with AMD Ryzen 7 5700U SoC) fails
+>> > to stay suspended in s2idle (Modern Standby), prematurely waking
+>> > after 1-3 seconds with 0% hardware sleep achieved.
+>> >
+>> > In the laptop's ACPI SSDT tables (SSDT15), GPIO Pin 24 (hex 0x18) is
+>> > defined in _AEI as ExclusiveAndWake targeting the PCIe bridge device
+>> > \_SB.PCI0.GPP3:
+>
+> [...]
+>
+>> Applied, thanks!
+>>
+>> [1/1] gpiolib: acpi: Add ignore_wake quirk for ASUS ZenBook UX425UA_UM425UA
+>>       https://git.kernel.org/brgl/c/1900b5a41493e7050c68c1e62780d6fb9a209457
+>
+> I thought I am going to pick this up via my tree...
+> But okay, not a big deal, I don't expect any conflict in that area.
+>
 
-"Document the Radxa ....".
+Oops, sorry. If any conflict does occur let me know, I can revert it or we can
+fix it in tree.
 
-> SC8280XP platform.
-> 
-> Document its radxa,dragon-q8b compatible.
-
-No need to repeat the diff contents.
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-Best regards,
-Krzysztof
-
+Bartosz
