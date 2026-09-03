@@ -1,141 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774244A8A0B;
-	Thu,  3 Sep 2026 12:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3983431E6;
+	Thu,  3 Sep 2026 12:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788439868; cv=none; b=tGoyT3C5a9mkdhJEX5IKKweGjthywpE2juFi1X4Z9UbKLHJgZcxsqj+iapnczmKo21yRMQ2kxC9DxMbsydXhGeYbyxcU51hRuQ0hP3Em+sePdXHaiyKLtYASJz5lS7FReBwx54dFdgghAgJgAHHni+FidcgDgxrG/NXa5HjUnrM=
+	t=1788439999; cv=none; b=fnbdzd1DAs8JoPyRE/9HCgcJt5PUOaJICUI6vp+sGHXFdfnvLAB75IEKlDb1TqcVgNBIyA5yd1lAvcK4HrlXUCIOISHWqeTCA+We5V4nOjMxIZu23Eu8HlxpXrxxI1fbvBswoXsHIt5WbKdKA7P9C3gMdg+eNYcfzSd+T6exhXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788439868; c=relaxed/simple;
-	bh=LjmIPmw7ySstw2MxWPXvqRywplG1G3B8XVWx3/VMvMc=;
+	s=arc-20240116; t=1788439999; c=relaxed/simple;
+	bh=tG43r3ybKL5uUT1O97RFbvlWYx+uuXHDv+04GQeYfAI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uFGNB/ABy8HqErCzYUiEM0YnDoliJm86tG30STCw1gqCDMXAmg65iJ8JdxlkOoUjP6/Oj48V0orVFlIEms/ciyiQldZaYkxu3184ehD8ul20I60NNGoPMeHHsy+ZzBvhZccCX6WxqkcjW7cwh96zvp0+Bqzu1asV5g4QeEAzZ6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O24KCjmK; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=F8beYgGZvfYfV2Yp9Genx8kwV70nCUN+GB7z+Bbwh7j9Y8T2U1nOHHnWlkCHSNQKbqodn8JJI0/15snFBghaTahn33ipbo6xWSp+sCPs3gTsIDt3b5aKEaGRtm7BK+3DGeB8zcM0ah5MSoCCcvyxw2uQ5wCJ/3n1Gn738EpJRz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cGemzVTj; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O24KCjmK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87B941F00A3A;
-	Thu,  3 Sep 2026 12:51:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788439867;
-	bh=H/rdkPlLjorMEohQUu1+1d+wMkk6zb1tM90EqfTca1M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=O24KCjmKrZ0eOMZd04iNAg1XzK1hi8LicjfTcpjiEVGH/agfHTAM5IHFaFgF53AHH
-	 ncDFJ/TH/sDpxmJQ8I0e/tb4lGinHRPhYLJRyUfP5aPzxZsPEZlaj7rCxbm5cvlKN0
-	 jU+EsjC4CHVu7pEJ+kDnLUO0BW1fwr1/7nrKxMLBJTCCjo//Pg47J6tYp5xUNz9d7z
-	 ofs1LE+vabuQqfzvYSWugcJqLLUmDnTuXUAOHoMqsRza9X/TZAdhhk2TSKSJjxd07W
-	 KgxmBjACYzWg2ZYriP9pBQqsbyGVMHdQ1RrLKsjB2ogM76FsFzopQbdPe1IanfECeX
-	 nRYileX98WbTQ==
-Date: Thu, 3 Sep 2026 14:51:03 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Michael Walle <mwalle@kernel.org>, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/5] dt-bindings: PCI: toshiba,tc9563: document embedded
- GPIO controller
-Message-ID: <20260903-organic-duck-of-swiftness-f0426e@quoll>
-References: <20260901-pci-tc9563-aux-v1-0-dd9b80738e70@oss.qualcomm.com>
- <20260901-pci-tc9563-aux-v1-1-dd9b80738e70@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cGemzVTj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788439998; x=1819975998;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tG43r3ybKL5uUT1O97RFbvlWYx+uuXHDv+04GQeYfAI=;
+  b=cGemzVTjhDdm/eKK4bNao3ZNAGnj6P2DnGgCd509ZXfEg/zhh7expQDY
+   aesXNjBG3S1Q0VKb/uRKUdcZxOPi3XRDMvB4ZVbikia/zSiZDklNICZ1E
+   3OGMTrrwZvEPO3KAu+sD8OWGP50UitVu4AfEwJln9ADF515UkGZs3VDUv
+   SQGbzQH6Mkdz0O8sIsoV5oDZRI6zrzOQe0FVr6kayPylqTRYBhl8zPcT+
+   tgUVEozUXzwtdLOxHDDImYtsElbYA0+zMmZWVgP+TMgTbHsd9I6BvHJ9V
+   2fKrrPGK1bFNt6fTxJVxHOS74AS9aztv+85tC20gBsGXNZOMxWr1ewQC0
+   Q==;
+X-CSE-ConnectionGUID: YL9PaXPcQViTXGaVv7CkqA==
+X-CSE-MsgGUID: 2JX6UsMcQ2GFouX/phKIBw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11894"; a="100079188"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; 
+   d="scan'208";a="100079188"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 05:53:17 -0700
+X-CSE-ConnectionGUID: EG6UkGFQT6G/iLYPpVG6aQ==
+X-CSE-MsgGUID: Fv19EkL4QhedtceXVGp5ew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; 
+   d="scan'208";a="265372033"
+Received: from smoticic-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.28])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Sep 2026 05:53:11 -0700
+Date: Thu, 3 Sep 2026 15:53:08 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: zl020895 <zl020895@163.com>
+Cc: longzhao <longzhao@ambarella.com>, Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	soc <soc@lists.linux.dev>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-gpio <linux-gpio@vger.kernel.org>,
+	linux-serial <linux-serial@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	Brian Masney <bmasney@redhat.com>, Lee Jones <lee@kernel.org>,
+	mfd <mfd@lists.linux.dev>
+Subject: Re: Re: Re: [PATCH v5 10/12] serial: 8250: add Ambarella UART driver
+Message-ID: <aplttDenvZHvn0mF@ashevche-desk.local>
+References: <20260818-cv75-v5-v5-0-7bbb12f0360f@ambarella.com>
+ <20260818-cv75-v5-v5-10-7bbb12f0360f@ambarella.com>
+ <aoRpc2RK2_X3CdAi@ashevche-desk.local>
+ <162c0385.2c076.1a018b82fa7.Coremail.zl020895@163.com>
+ <aplcxoINt0YAjvxL@ashevche-desk.local>
+ <709278f9.9699.1a067207b4c.Coremail.zl020895@163.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260901-pci-tc9563-aux-v1-1-dd9b80738e70@oss.qualcomm.com>
+In-Reply-To: <709278f9.9699.1a067207b4c.Coremail.zl020895@163.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Sep 01, 2026 at 12:27:53PM +0200, Lorenzo Bianconi wrote:
-> The TC9563 PCIe switch embeds a GPIO controller providing 37 GPIO
-> lines. The controller is not bound by a device tree compatible string
-> but is registered as an auxiliary device by the TC9563 power controller
-> and accessed through the same register map, so the GPIO node has no
-> compatible of its own.
+On Thu, Sep 03, 2026 at 07:56:17PM +0800, zl020895 wrote:
 > 
-> Describe the embedded GPIO controller as a "gpio" child node of the
-> switch, document the per-port reset-gpios property, and update the
-> example to reference the controller from the downstream port reset
-> lines.
-> 
-> Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/pci/toshiba,tc9563.yaml    | 31 ++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml b/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
-> index f084830c6d0c..47cd58c14e4a 100644
-> --- a/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
-> +++ b/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
-> @@ -54,6 +54,23 @@ properties:
->            - description: I2C slave address
->  
->  patternProperties:
-> +  "^gpio(@[0-9a-f]+)?$":
+> Thanks for the confirmation. 
+> I will keep 8250_ambarella and update the commit message as you
+> suggested.
 
-Why the unit address is optional? And what does it even represent?
+No, I mean to go back to the version that modifies 8250_dw.
 
+> At 2026-09-03 19:40:54, "Andy Shevchenko" <andriy.shevchenko@linux.intel.com> wrote:
+> >On Wed, Aug 19, 2026 at 02:31:59PM +0800, zl020895 wrote:
+> >> 
+> >> Thanks for the review.
+> >
+> >> This is Ambarella 8250-compatible IP, not Synopsys DesignWare. We
+> >> first tried 8250_dw after Linus asked us to move to the 8250 library;
+> >> you then told us not to touch 8250_dw and to use 8250_ambarella
+> >> instead. That is what this patch is.
+> >> Background:
+> >> https://lore.kernel.org/r/CAD++jLm6HzEU1TM-c=Vtjv3FJEBecVP7TyxSgq_Q0zF-YwT6NA@mail.gmail.com/
+> >> https://lore.kernel.org/linux-serial/an8KvvHWX0naH3Xw@ashevche-desk.local/
+> >> https://lore.kernel.org/linux-serial/7E774305-3920-4BB7-BA46-E0772D6BED84@ambarella.com/
+> >> I will also switch to uart_read_port_properties() and trim the
+> >> 8250_dw-derived boilerplate.
+> >
+> >Thanks for the register descriptions, it was helpful. After going through them
+> >it seems the v3 as you made it is good enough (sorry for going back and forth).
+> >What it needs is better commit message explaining that while it's not a Synopsys
+> >DW IP, it was made to be quite compatible with that (on register level) and hence
+> >no new driver is required, just a small quirk.
 
-> +    description:
-> +      child node describing the embedded GPIO controller available in TC9563
+-- 
+With Best Regards,
+Andy Shevchenko
 
-No, this is a PCIe switch so the children are PCI bridges. This does not
-fit at all. I do not understand why this node was created in the first
-place - what device does it represent?
-
-> +      PCIe switch. The controller is registered as an auxiliary device by the
-> +      TC9563 power controller and accessed through the i2c device.
-> +    type: object
-> +    additionalProperties: false
-> +    properties:
-
-And why there is no reg here?
-
-> +      gpio-controller: true
-> +
-> +      "#gpio-cells":
-> +        const: 2
-
-Are you sure you are not re-implementing
-https://lore.kernel.org/all/20260701-shikra-upstream-v1-3-e1a721eb8943@oss.qualcomm.com/
-?
-
-> +
-> +    required:
-> +      - gpio-controller
-> +      - "#gpio-cells"
-> +
->    "^pcie@[1-2],0$":
->      description:
->        child nodes describing the internal downstream ports of
-> @@ -62,6 +79,11 @@ patternProperties:
->      allOf:
->        - $ref: "#/$defs/tc9563-node"
->        - $ref: /schemas/pci/pci-pci-bridge.yaml#
-> +    properties:
-> +      reset-gpios:
-> +        maxItems: 1
-> +        description:
-> +          GPIO controlling the PERST# reset of the downstream port.
->      unevaluatedProperties: false
->  
->    "^pcie@[3],0$":
-> @@ -149,6 +171,11 @@ examples:
->  
->                  resx-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
->  
-> +                tc9563_gpio: gpio {
-> +                    gpio-controller;
-> +                    #gpio-cells = <2>;
-
-Where are any resources?
-
-Best regards,
-Krzysztof
 
