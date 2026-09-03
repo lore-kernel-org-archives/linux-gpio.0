@@ -1,107 +1,95 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9F04E13F2
-	for <linux-gpio@vger.kernel.org>; Thu,  3 Sep 2026 15:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09334DF4C7;
+	Thu,  3 Sep 2026 15:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788449645; cv=none; b=qLyGu5w4ig1w9lHv1QKGob8FJt4ISJgHClZQLi+tFls3xnyloAdLjiLWuQQ2LJF513vlwoL61WCqhgZhiwFPkYT+jUBnfOF2wTgmn0zAF24IKLdB3ujsKAjrHeFKzV6yOkMJtKBiudDtfSPpQqLXodHmDnLJ6UbBpMHYmwADdaE=
+	t=1788450950; cv=none; b=RsT68snG/LrLPyrFRNMC7A+tQIoStJ8/mJmczew+PT4A3xQTYkWA6aaxHNvJiPr95jduzG97y3vAXv7cMGh2WVfpCBMXj8ag+VuJkWdtw8s4E4qRWkMLyRx3SMAOLjbWvkq/irtyOwndXx2cbBZoslWeT21i+GScHq2+f4Zky7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788449645; c=relaxed/simple;
-	bh=4ISs0p4OZ8p6JtAb2NqQCn3Ms3bwI1uZBinFoY6Hif8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MXrvbYjxV7ECuFyY1FKrFn4bX/309uvOuDGXB63SH4Nm6Yi9kGnJvRx0VLLvgW4fSkDTPbgDt7cBcKVREfP7mVCZxdxiBvrVEouADvlcnu9KKWfsJnuHza4d/N/CTJGAnLGV03KlUZQ8dyIfo2GdEAMWzzq/U+UQEhY4VwuZlgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5c6670fd413so999083e0c.1
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 08:34:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788449643; x=1789054443;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Q4co215V8cCcryKl+ePptL3AZAP9ssa33MB98SUpHXE=;
-        b=bT0wSljnzopFWV3SMF2rW328au9UbUSbwdOYpgMOtO9c3rXDs8o/6HsM0kpc5tGEi4
-         PfXtOR1UkNrq55qE0+IsO9PaTtBXcfvT0lXU6S+OF7/y+HL8J4S7lyxsOwrHKcWvnB9T
-         IL0thdzXuxvqPne1hiKvOhaIMUEwuoUSkgaHZX2XIBvslkd3zj4i5DRaHq6md3jQgOtw
-         cgHEJSeFv/t50ktBQGZLXsHHpXYgoTBzaechDazPBEdzaIrsycQAg2inCLmpYhoZh7jE
-         9AKGb0c9griS7j3KniwHlrYwTbr3x57uCXabbfqNvQaSGjKAaLgfXoGdh7mL7UbFaPGo
-         gJDQ==
-X-Forwarded-Encrypted: i=1; AKwUvByhkzDceWpFxDSn+ZkvvSVC3+0ac38g0JY2RdaL0E6+EEhjV7ZRNNRi1eTr3OaHqod9IcZ6JfmI3PNA@vger.kernel.org
-X-Gm-Message-State: AFuF++mxmMRDwFgGnqSJfz3Ef/pHcDBNvDVEsrbifmHqjJ+T8eWVwuP4
-	Jb0ih7mJysBgE7zBXC8sph8LTgS81FRR/e+pljQRpiryNyNfwuOqn8Ejj1k7bXAOI4o=
-X-Gm-Gg: AYBFou1tD8jfqCsfezXJaU+Eht/BaSQi+hojA5gYlsXaS6qhdWlKr74jtsC3NT8UPCT
-	uMkkLFYVO7cSdQTg7OdHf6FM/l2QV4SdC66WBDjSYrA5ayAvFUtp1F72NSx0/ZvSQ9bf4zoD0mt
-	psYgXEBvAAolVVLSFg7OwZcmaS7BDpy5c0Sq6isHLpRPNBwW7HYDAmpWvX38F/bZ0IrrsAFKLbd
-	yEeVk0KjTX6DCxolIJJx7mHtBZZOt4HFpWAP+YHVfQNjiRLXzVdbtJAopUnquR46wp5DMoEjj++
-	Y0TgvyC0lKaliO544U1p44y2HHm7GcDwqXJSX8alBlUKaP13spOSeXltg8dXkkckmrNJseRRamG
-	H02u9RNAK09LdCtJvEklt6a1QPeAPdHrcXm9gO+2LUm+zww7kvY8anKty4sis8G7PzC8Bpggrw2
-	U88M370KiELuW+MDuiM0SVzsv+p5mz0uwL7q7p7ajuw2jZMkPt3xKvIT3Shqu+sY0LmAVYGS6Wx
-	79DsYEcLhfptSDsqa/ZNVg2qA==
-X-Received: by 2002:a05:6122:469f:b0:5bd:8dd8:146e with SMTP id 71dfb90a1353d-5c7dced45c4mr1850149e0c.4.1788449637908;
-        Thu, 03 Sep 2026 08:33:57 -0700 (PDT)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7cd92817asm4699729e0c.17.2026.09.03.08.33.55
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Sep 2026 08:33:56 -0700 (PDT)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-78a220b5778so1099176137.1
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 08:33:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzLNHnV3CoCpGx3JfCwy1UhmU4eG8rNzv37xBWa8ebNz2o0sex7cnY3AydlgBShKgmm4B1sQUS+BTBo@vger.kernel.org
-X-Received: by 2002:a05:6102:8345:20b0:777:2e1b:1e2e with SMTP id
- ada2fe7eead31-78a2ed7ca4fmr1596359137.3.1788449635039; Thu, 03 Sep 2026
- 08:33:55 -0700 (PDT)
+	s=arc-20240116; t=1788450950; c=relaxed/simple;
+	bh=LgeelbVKSm5sk7+lSiVeSDJzQG9WZu9cPjkOzcdgPZc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mXVerCuzQ0OT9dSrJopIBkWdw+tP8dxazVVsPwhRdRbjmA+GxnhyzPOXfYVNB9o4NGCMnnOtNvLpDulSZaJFAjFwkIWP1a5aVnJ8TfH/dQA5Tp/wbBzy44NUfD4KmcItffJJQoVsMTsTxtySoxXsxcvtmVjG/j2IPhz4LIJeAfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=XrLmbpg+; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=aI1URO8r; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="XrLmbpg+";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="aI1URO8r"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4hbPMK0J5LzKvv6;
+	Thu, 03 Sep 2026 17:55:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1788450941;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gqMbHiSzzKPHp90VgyMlKPKExPNihmb7zR3T0IjUqH8=;
+	b=XrLmbpg+OwSfV259lA0s0Qo+MRFJfCCNc08Rm2EGOxyS519OUtYJ3P0iC7Qgp2ZVCFBUOk
+	V6FMoxf9HhOCtBMFHDSnsKMkdykYjTm3m68JPS34SOOoI0P2zdFeZgRKuS7EoAgffy1OFZ
+	uZ1Ss/3dSGdHgWt+TVITw/x9GO5FGWE7ZtgaPdO2uC+5DGWwIq/S6KtTSbhjEK2p49JH7r
+	0n5eKS8cCXdUVgkIvxrMdWnW5OKud28EGFXGfaRv22w6CCmGyAmcg+oG9ndLDwZ2y9PeAq
+	fug0mfEHzZEp1zB2CROC3s8RestrLYqp8UcDDJLdkrrc+mbkeUeBL+9M5jDr0A==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=aI1URO8r;
+	spf=pass (outgoing_mbo_mout: domain of manuelebnerli@mailbox.org designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=manuelebnerli@mailbox.org
+From: Manuel Ebner <manuelebnerli@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1788450939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gqMbHiSzzKPHp90VgyMlKPKExPNihmb7zR3T0IjUqH8=;
+	b=aI1URO8rH9YQHQjVLsBxeplmzB9N6YtJLhQQ3blxXs5PoYH/ABCW7i1g7N4fnvSCLrVyRs
+	bGTsWwbJzWOXJpgdHgL7XOoRuAxNkXYk8CW5AfSwWiIET32AecaDpJc+vcD6yywbuzo59e
+	hBtCnOtHNGivjBZlFQll9HJsgcFaSJs4Rmblqy5MtwxvJ7pSbkv1MCxesAr1Rr4V/aGjgQ
+	ZrxdOM6kRV7lqKQvWbjCDHI64T3ELGHO8i01gai6lVocBRr/OpaRGE0KsZOONwHfDeMfHZ
+	6/V/qrCZ3vOlRoxRwCYI+cnPJJXi+WjDzo8Qx/kwdXahtAoa92A3lkK4mggf8g==
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Cc: Manuel Ebner <manuelebnerli@mailbox.org>,
+	linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation: gpio: Fix bracket
+Date: Thu,  3 Sep 2026 17:53:44 +0200
+Message-ID: <20260903155345.733244-2-manuelebnerli@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260903113327.1217457-1-claudiu.beznea+renesas@tuxon.dev> <20260903113327.1217457-6-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260903113327.1217457-6-claudiu.beznea+renesas@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 3 Sep 2026 17:33:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWGCdFH4-+-0Cws402jvHO7YBAELUeobp1BbDpeAZguZw@mail.gmail.com>
-X-Gm-Features: AcwNN1VsYZsO5o2pygHZnaCq-bQizs6Zsc1Hfv4_iBmyRo69jsaq1nCLJ4t6av0
-Message-ID: <CAMuHMdWGCdFH4-+-0Cws402jvHO7YBAELUeobp1BbDpeAZguZw@mail.gmail.com>
-Subject: Re: [PATCH v6 5/5] pinctrl: renesas: rzg2l: Add RZ/G3S support for
- selecting the I3C power source
-To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, magnus.damm@gmail.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: k55dxrp9mzpghfmeotqox7aegew16sxq
+X-MBO-RS-ID: 0fe043b500e8bc56f5e
+X-Rspamd-Queue-Id: 4hbPMK0J5LzKvv6
 
-On Thu, 3 Sept 2026 at 13:41, Claudiu Beznea
-<claudiu.beznea+renesas@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The Renesas RZ/G3S I3C pins can be powered at either 1.8V or 1.2V. The
-> pin controller provides a register to select between these two options.
-> Update the Renesas RZ/G2L pin controller driver to allow selecting the
-> I3C power source on RZ/G3S SoC.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v6:
-> - used bit 23 to define PIN_CFG_IO_VMC_I3C
-> - described the I3C power sources according to the new method; due
->   to this didn't collect the Wolfram's Tb tag.
+Balance parentheses.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Manuel Ebner <manuelebnerli@mailbox.org>
+---
+ Documentation/driver-api/gpio/board.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/driver-api/gpio/board.rst b/Documentation/driver-api/gpio/board.rst
+index 4ac1e12cf..83b74843e 100644
+--- a/Documentation/driver-api/gpio/board.rst
++++ b/Documentation/driver-api/gpio/board.rst
+@@ -55,7 +55,7 @@ looked up by the gpiod functions internally) used in the device tree. With above
+ 
+ Internally, the GPIO subsystem prefixes the GPIO suffix ("gpios" or "gpio")
+ with the string passed in con_id to get the resulting string
+-(``snprintf(... "%s-%s", con_id, gpio_suffixes[]``).
++(``snprintf(... "%s-%s", con_id, gpio_suffixes[])``).
+ 
+ ACPI
+ ----
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.54.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
