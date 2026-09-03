@@ -1,21 +1,37 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C214EC65C;
-	Thu,  3 Sep 2026 16:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277C4383320;
+	Thu,  3 Sep 2026 17:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788453172; cv=none; b=KsgoOQSZHanR05Iz0MNFvtqH8RisWMyQXKUThYeCXxDLXAfZJpG8A0hsvk8tH1asHODduSXPb8JPusVcexHpK2+WsbYV5Gv9BqFKehlHcVOE+ryrKfWewxHuWIpei0HMN933hFKLhb8umILSa174T8GY5KBOkZ353prqHdl1Djk=
+	t=1788456017; cv=none; b=bc53D83pchjg6vpMaHg5WXZxL0FYsadrCBQjKt1gX52WhVgQNaBxryOhbxq+WEAR3/WnTeEmVk8VqqmmVIAIjQTXkSr52Gm9JsfMWcQT1AbbqxMsg8N05wKHrbtw80WLH4aNC/wwCJfnxLeHdV9FmgXZZgHDOrtTW2wU/l524Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788453172; c=relaxed/simple;
-	bh=6pHy9//q9H0Ofm6mQAv5BYFGgr3Hvu8T1FCebCcnZo4=;
+	s=arc-20240116; t=1788456017; c=relaxed/simple;
+	bh=KnKRTI/a1+A2r3fymKhS0OSqumvyBx8E5u4cidFU5AU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hoP1Sc39zbAUWscGLcUn1bASnBWYkgd+9eZ05tdgAHhzUv8jPUlYepJEWlg4+Y9OXvvhEP/vR8EO/USMwsryt7bYWahOCOs3UDGFGWPTHKy5xfpLHW5CPGXYU0vUCZRBwuZcFy+7RmpCL/FAVlbgdk93EBY+0+mcFFM5R+GIAC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF5D1F000E9;
-	Thu,  3 Sep 2026 16:32:47 +0000 (UTC)
-Message-ID: <40c96e12-f2f1-4d95-a95f-d4a9cbde7ab4@tuxon.dev>
-Date: Thu, 3 Sep 2026 19:32:45 +0300
+	 In-Reply-To:Content-Type; b=ro6Nq5RVla8BP+rO6QwqJZvUfRgPxo1KhqlGIfokuVa6MOzCDRdqjfKwgQ2kwQHmXP13KZNMdCxoRDdaJU0MA8j+YhuJSyM1A4X01OUJVmcUQkiOTMDZ/L8GwoW0V9MRpnA6Klxwbfy28NIpCe6xfATXaTPDF0uT5ekKpUKWEdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZDyG0VY4; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZDyG0VY4"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=j5RnnRxAYofVrHjCxSWTXWkNMHFPj+3czVtEzY/wHPQ=; b=ZDyG0VY43vxC+xJdN6zJrbxJtb
+	w2fBl0Drj3mU/+CFj8j1XEsd0Xc38Lgzd+8p6zjdhvYwLkVmwHqUb4C7HTCNCCAT/7qgcTFmwPgXW
+	t99RXSWwjHZB3zwZjSUKF3UDOv8XYPWeIoSoiMJFleARv3Qy54OLHIiRMHqA2M5ug5WtchuRXLJAu
+	oVhnS1nVxg9yNpT7AlAXM39Jjug1GQAfC55Gpgxfshok05/kcZ5QnIwGBNFPI5QILtSN8umsqYJnN
+	40EjPablbCDCO3ZGh0hyKL/o3lHGWJiThhRih/1WVWFmZN7BZREck8yz1Tf1ZSBnPMnHl4awQtzqd
+	OtcLsxAg==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1x2B6j-00000000GVO-2LFa;
+	Thu, 03 Sep 2026 17:20:13 +0000
+Message-ID: <5d699c81-fba0-47ab-a2ab-f4f7dd1f73a2@infradead.org>
+Date: Thu, 3 Sep 2026 10:20:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -23,128 +39,46 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/5] pinctrl: renesas: rzg2l: Unify the power source
- handling
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, magnus.damm@gmail.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev,
- linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20260903113327.1217457-1-claudiu.beznea+renesas@tuxon.dev>
- <20260903113327.1217457-4-claudiu.beznea+renesas@tuxon.dev>
- <CAMuHMdV9C6LVBqYWo=Njgf3v4a5R1LhBwKuB5H3TFctOCr338g@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: gpio: Fix bracket
+To: Manuel Ebner <manuelebnerli@mailbox.org>,
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>
+Cc: linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260903155345.733244-2-manuelebnerli@mailbox.org>
 Content-Language: en-US
-From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <CAMuHMdV9C6LVBqYWo=Njgf3v4a5R1LhBwKuB5H3TFctOCr338g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20260903155345.733244-2-manuelebnerli@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi, Geert,
 
-On 9/3/26 18:32, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Thu, 3 Sept 2026 at 13:34, Claudiu Beznea
-> <claudiu.beznea+renesas@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The previous code handled power sources using a mixture of power
->> source specific definitions and lookups in the available_ps[] array.
->> Unify the power source handling by introducing
->> struct rzg2l_pinctrl_ps_desc, whose purpose is to describe a power
->> source through its power source value, associated register value,
->> associated capabilities (e.g. Ethernet), and associated IOLH index.
->>
->> Introduce two new functions, rzg2l_ps_to_desc() and
->> rzg2l_pwr_reg_val_to_desc(), using the
->> RZG2L_PINCTRL_PS_DESC_MEMBER_TO_DESC_FUNC() macro, as their
->> implementations are similar.
->>
->> These functions retrieve a power source descriptor based on either a
->> power source value or a power source register value. Other functions
->> that need to perform power source specific operations can call them to
->> retrieve the corresponding power source descriptor.
->>
->> The register values for the soft power sources were kept to zero since
->> they are not used across the driver's code.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v6:
->> - described all the available power sources in the available_ps[]
->>    array and dropped to wildcard approach to avoid letting the user
->>    selecting unavailable power source for pins
->> - simplified RZG2L_PINCTRL_PS_DESC_MEMBER_TO_DESC_FUNC()
->> - for these two points ^ didn't collect the Wolfram's Tb tag
->> - dropped rzg2l_ps_is_supported()
->> - used conditional operator in rzg2l_ps_to_iolh_idx()
->> - adjusted the patch description
-> 
-> Thanks for the update!
-> 
->> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
->> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-> 
->> +static const struct rzg2l_pinctrl_ps_desc available_ps[] = {
->> +       /* Ethernet I/O voltage domains */
->> +       RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_IO_VMC_ETH0 | PIN_CFG_IO_VMC_ETH1,
->> +                             RZG2L_IOLH_IDX_1V8),
->> +       RZG2L_PINCTRL_PS_DESC(2500, 2, PIN_CFG_IO_VMC_ETH0 | PIN_CFG_IO_VMC_ETH1,
->> +                             RZG2L_IOLH_IDX_2V5),
->> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_IO_VMC_ETH0 | PIN_CFG_IO_VMC_ETH1,
->> +                             RZG2L_IOLH_IDX_3V3),
->> +
->> +       /* SD I/O voltage domains */
->> +       RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_IO_VMC_SD0 | PIN_CFG_IO_VMC_SD1 |
->> +                             PIN_CFG_IO_VMC_SD2, RZG2L_IOLH_IDX_1V8),
->> +       RZG2L_PINCTRL_PS_DESC(2500, 2, PIN_CFG_IO_VMC_SD0 | PIN_CFG_IO_VMC_SD1 |
->> +                             PIN_CFG_IO_VMC_SD2, RZG2L_IOLH_IDX_2V5),
-> 
-> Before (see below), only Ethernet could select the 2.5V domain, so
-> shouldn't this entry be dropped?
 
-That's a mistake. I'll drop it from here and from QSPI section.
+On 9/3/26 8:53 AM, Manuel Ebner wrote:
+> Balance parentheses.
+> 
+> Signed-off-by: Manuel Ebner <manuelebnerli@mailbox.org>
 
-> 
->> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_IO_VMC_SD0 | PIN_CFG_IO_VMC_SD1 |
->> +                             PIN_CFG_IO_VMC_SD2, RZG2L_IOLH_IDX_3V3),
->> +
->> +       /* QSPI I/O voltage domains */
->> +       RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_IO_VMC_QSPI, RZG2L_IOLH_IDX_1V8),
->> +       RZG2L_PINCTRL_PS_DESC(2500, 2, PIN_CFG_IO_VMC_QSPI, RZG2L_IOLH_IDX_2V5),
-> 
-> Same here?
-> 
->> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_IO_VMC_QSPI, RZG2L_IOLH_IDX_3V3),
->> +
->> +       /* AWO I/O voltage domains */
->> +       RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_PVDD1833_OTH_AWO_POC,
->> +                             RZG2L_IOLH_IDX_1V8),
->> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_PVDD1833_OTH_AWO_POC,
->> +                             RZG2L_IOLH_IDX_3V3),
->> +
->> +       /* ISO I/O voltage domains */
->> +       RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_PVDD1833_OTH_ISO_POC,
->> +                             RZG2L_IOLH_IDX_1V8),
->> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_PVDD1833_OTH_ISO_POC,
->> +                             RZG2L_IOLH_IDX_3V3),
->> +
->> +       /* WDTOVF I/O voltage domains */
->> +       RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_WDTOVF_N_POC, RZG2L_IOLH_IDX_1V8),
->> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_WDTOVF_N_POC, RZG2L_IOLH_IDX_3V3),
->> +
->> +       /* Software voltage domains */
->> +       RZG2L_PINCTRL_PS_DESC(1800, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_1V8),
->> +       RZG2L_PINCTRL_PS_DESC(2500, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_2V5),
->> +       RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_3V3),
-> 
-> I never really understood PIN_CFG_SOFT_PS...
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Thanks.
 
-That was to match b/w a voltage and an IOLH value according to the table from 
-45.3.7 Driving Ability Control Register (IOLH_m) in the RZ/G3S manual (rev.1.30)
+> ---
+>  Documentation/driver-api/gpio/board.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/driver-api/gpio/board.rst b/Documentation/driver-api/gpio/board.rst
+> index 4ac1e12cf..83b74843e 100644
+> --- a/Documentation/driver-api/gpio/board.rst
+> +++ b/Documentation/driver-api/gpio/board.rst
+> @@ -55,7 +55,7 @@ looked up by the gpiod functions internally) used in the device tree. With above
+>  
+>  Internally, the GPIO subsystem prefixes the GPIO suffix ("gpios" or "gpio")
+>  with the string passed in con_id to get the resulting string
+> -(``snprintf(... "%s-%s", con_id, gpio_suffixes[]``).
+> +(``snprintf(... "%s-%s", con_id, gpio_suffixes[])``).
+>  
+>  ACPI
+>  ----
 
-Thank you,
-Claudiu
+-- 
+~Randy
