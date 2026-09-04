@@ -1,72 +1,72 @@
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB661EFF93
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 13:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C09D2F8BC3
+	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 13:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788527156; cv=none; b=DO6UlQknx+6H9e5ZEEQheuF9MSZRzXjtivIV2DG9inft8dFNg0CZ753mZ9DvAG4nebAuxYTMBQC5woYaqm8sT9glQK08GaBd4eJOjZYrbCkDJ8nr8/l47iXYHZ3r1s0Zs9/YOd7xo5+T6mQJhePKF/FurQEQTeY3+DJvAAiCZ8M=
+	t=1788527511; cv=none; b=JLr7kKAqEmcS5Geseb/Qn9o/Z99gbw2DJAIaJp7qxD0BqOU1B+5x3MIG4bkBI/mOuZxQ0WdVw+lBj5akxVGFwxeN4F4aRrfRlCq7IDTs78I246ZYMhXxvV48hHUZLgBoTsBPo/0selYi0bgvUWTGEL03z/CM5iZAnuj5lgZ+ebs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788527156; c=relaxed/simple;
-	bh=/ypz6zJjPNKfNpTn4drsgfOEfmGR4cl9pbI1Kxi8oLQ=;
+	s=arc-20240116; t=1788527511; c=relaxed/simple;
+	bh=2pDxHO8wpZZL1aVsWi+EAA7ecsGJLacrfFeBli+WCFc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u9JQKAWQ0zzht2CIlnUyS/qXFVaztYb/vVGEfh1gqbhg+Duck/3/+lobIyQxcjscBZ5+9lpVrA8Kd1gja6HRNAYU9QQzJplKUIaWDuaCmj8NhqYFWVPmpRrBC1g3p0F4KF7Gd6FDs3N31XBXTU9PA/CKYdNWTvWfCAnJIYTVqaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
+	 To:Cc:Content-Type; b=Vxgj71ajIe0ICHjJNcLa2Q1o/Cdh//HIg3nVq5y0grACxVdE+5IhOExVdvrIQM0DU+mEOgI1ImQslg8SgWRTnaMO4giUOoI4DKEFrAEmMmwmQKWJfO6eDj4FOle4XeQbvn9fc8qifWpZJ+eGicRhDw0eFOIRCLgperj5fTqh5qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-77bf3334d14so693376137.1
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 06:05:55 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-398b3d66515so1022550a91.0
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 06:11:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788527154; x=1789131954;
+        d=1e100.net; s=20251104; t=1788527509; x=1789132309;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=8NOF30mvWowB029u1n+aELPP6OhCTftCoi3R2I9gbMk=;
-        b=KeTyPZtBlcDhz/bKJ86ovvrLED8QqBgkNQd4JKH68upI8+XIEn17X5/FvIx8ujLcHG
-         6oLhGT/kSmL1keOQBgjSiwEwt45VKxRvN3lVj1W2axEp4cugyMr2+G7+YlQd7pKx94bx
-         uUqhYodjgio11A9KvWxBWRAkMN+rZmVvhkOTdrJRicuGP9ejk8E0rp+UrLMw7WEzFrzT
-         fWZLIfx95M9YobjtK40we31eVEVcNfjnwJd8kw3vLEE1lHeVO4Ul7dF9iqtPtGOMGOoN
-         yEhkJWY43gPRY1oo1LD59mZQRe4WgdZrP/ObfAKylkpjDZPN5uCxZRPXYWASviwmLSLr
-         daQQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwI8xHwqqxkAdCclxhXDtoDgJTIFrkM8n8IvwfOxvtHMIueZEDWh1gEQa0hlFI1QY6c6gzVKk0cUyzw@vger.kernel.org
-X-Gm-Message-State: AFuF++nrR9kp+CCN5qufySRurbEWsuX9/4VoRc3xMhSr217BgE+a1S4c
-	/bsEQs/UVRS3XVB0qA6UjU1LOg2kjS7csso1CGsdrj9oXfskCYy2nS15EXMbQOwZ5cw=
-X-Gm-Gg: AYBFou2AGy/hHWuBg8/6dc6cRRax5HC1H8dE307pumf/Y3Bbm7g6wi4onN3BieAY5p2
-	H+APYE5XKMIL5H6U6uu0Fzlic1kd81eBbTpYzJ6K4Q8R28ZA2+TnWMVZ6xHPvjlD3MrBNYPnNGO
-	GXhPW+MmigcIMj1SAACd/LYerl6ekulmw3HyYT/RXi021lPodW38ROcmQFrOjQP10Kvn3n7Dk7d
-	MXhZELE0upyTMh1DfZjLFVLZnP1MwJM3+uqAcCDiN7t2rN3c/YNNG4c2ffIlJzP6IHLzls8a8qV
-	0WlCzmawzHFF3Ui/HpE2JCpn2QeoUiqw+ob8FHxj25ZW5cTvoa1DcaosoN/jaUZXxRx8iQCiyM+
-	Ty2On0E9bKgdVwn9M2/+XXXJ/wY0iVDJgNherzJNSHhaRq1eL6E4V7cDvDPTSGLEO2tUoi95ta8
-	yiCRN1CLmKNI4e9YJf7ua3Nq9akQrOEEho+NAm6UpEpdzj8/ka9yBRd0TifV8pKFgJEXCZgMOPe
-	9rasNgPKpf4+BO0sjcyx3m1VQ==
-X-Received: by 2002:a67:e703:0:b0:785:ab90:bc52 with SMTP id ada2fe7eead31-78a4aabad79mr2101121137.8.1788527154243;
-        Fri, 04 Sep 2026 06:05:54 -0700 (PDT)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9809e56231fsm170342241.2.2026.09.04.06.05.52
+        bh=CgqnNAj6IteboRwdvP7GVLALXi8ReI521PLZ9Y7Kkfw=;
+        b=BOjKaReHXs3Qq8TTIQs+89Bq6R92f+tIEyX92ahq5WAvRr2FmfswGztaVH+LMLt7sB
+         HHT6A6Ji+IM8+RngsBaQeg+YPo0Xa74jwB4AHh527V1YPrdAQbtZmgucnMXTgGjCAE15
+         cuTHDFg+/r3rw3HdU8vUJH22rHUC1RQ0HHOnlWf+p5TnqZQ8jGfZmpGSFH4mPReWjNvE
+         MNhEdo6C4emx8L2bycjUzgNyoSEt68JqNsVFailbeAz0U8ULVhf/3AjqQfeHB0OeVxFa
+         uAgUvjLKjBvlDplGU7y/XSD86+2P4IehKFP3at3+Elm5ESo0OEdTbQ8ijW2KNemMRw/N
+         ynpg==
+X-Forwarded-Encrypted: i=1; AKwUvBzcTgqt8Gqp9t5+Rra6kg+g5nzlNsHigiLLpqSI3Nn4LdhK1MaybsTOrvynDb2y9LwSCHZTEOQLOEXI@vger.kernel.org
+X-Gm-Message-State: AFuF++kLVlRI4ysms+rU84N7bJgI8t5vgoHfAcZwq1aurCLjXz91ylpc
+	/i1WH/G/DL8PHdnFDuSzOaVg6Cmc0Rh/bDo0oApuCTWMgxNNVYqcnqHyHaYr2qHpkE4=
+X-Gm-Gg: AYBFou1WkPzF32TAO3TOtADbpFSkSfYYScYxIBzLPlyrcOIGy7xUK1yWuZnGBt4N84f
+	h1zQ/moiBoPotohE19DanK5LO3547xrcNUkDJ9YaSV+zd+EZPoO9Z2OeCX1hz5epmfVWG5VmTVJ
+	TfRP6ryXSYGFPGpaoFagKH6Uvyse6paP/UTpp/MbPRWPm+Xp28OprZTRuTbcR+p3K88o0MQttyN
+	RxS4ha6WnAz+QgW8yalDdHcCU+Gzgr5BflpDGaZkg0h3bhM/yNeuPKs6HkBXF0tS//sRk7v2ZRp
+	G1+TENZEbngsiou10cqQG83++ucJf4HezL1nOxJpjDOg8beP4M76QYgA656HqNTU63OHm0rZHfv
+	Y7JyEvbnmCB2MvPd2gEcGRDIo2aWW1wu3r4JC8wDTtHtj9Q9315C91Yr2vRtJJwIPOsuW7ePnc3
+	s4sUCTTE7Cldw50ys3gbSWGatnKqX8KTz1qT2+2/AygU7CP/I27lO+QRAn1mOaODqqCtGbnYJI1
+	2ft4qphKwr1XpHIWvLT2Nhnro+r2Q==
+X-Received: by 2002:a17:90a:2c9:b0:39b:2b5a:8dc5 with SMTP id 98e67ed59e1d1-39b2b5a9b24mr4026537a91.6.1788527509296;
+        Fri, 04 Sep 2026 06:11:49 -0700 (PDT)
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com. [209.85.210.173])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39b08d0d7e8sm11364739a91.16.2026.09.04.06.11.48
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2026 06:05:52 -0700 (PDT)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-97bf90f4b41so590274241.2
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 06:05:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzbXbf/2EIm4OmhZTdSeUplAyt9SieBX/G15XcD9Z1gGaUoLEbbuOQGSzH/1JsNuLlvhgwVVj316Rsm@vger.kernel.org
-X-Received: by 2002:a05:6102:290a:b0:785:f288:c23 with SMTP id
- ada2fe7eead31-78a4a918bdfmr1975845137.3.1788527151892; Fri, 04 Sep 2026
- 06:05:51 -0700 (PDT)
+        Fri, 04 Sep 2026 06:11:48 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-8534d507f59so1115810b3a.0
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 06:11:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzBvhecU5q7KZHph7t/9jB/Ak5ZKKr4+9W/GyQQCEd+aOBnIJqs78mmbziu4DeUDwBj5ZyXBU1AEDqN@vger.kernel.org
+X-Received: by 2002:a05:6123:67:b0:5bf:b500:c4f4 with SMTP id
+ 71dfb90a1353d-5c7ed285aefmr2496181e0c.2.1788527126515; Fri, 04 Sep 2026
+ 06:05:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260904125425.412632-1-claudiu.beznea+renesas@tuxon.dev> <20260904125425.412632-6-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260904125425.412632-6-claudiu.beznea+renesas@tuxon.dev>
+References: <20260904125425.412632-1-claudiu.beznea+renesas@tuxon.dev> <20260904125425.412632-5-claudiu.beznea+renesas@tuxon.dev>
+In-Reply-To: <20260904125425.412632-5-claudiu.beznea+renesas@tuxon.dev>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Sep 2026 15:05:39 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV2NavSY5K3Em4jTKuiWCZCc+XOWW4nH4HHh76aoiuWEA@mail.gmail.com>
-X-Gm-Features: AcwNN1VET22qEnErTI_Nd7aROS6yUTveXM7jVaLpauOVguTdNaHuyqM0FX-8ExU
-Message-ID: <CAMuHMdV2NavSY5K3Em4jTKuiWCZCc+XOWW4nH4HHh76aoiuWEA@mail.gmail.com>
-Subject: Re: [PATCH v7 5/5] pinctrl: renesas: rzg2l: Add RZ/G3S support for
- selecting the I3C power source
+Date: Fri, 4 Sep 2026 15:05:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWPd16C-AazzCHJ+Rz2_qMrTwOp1e=u793LimvW99b8Mw@mail.gmail.com>
+X-Gm-Features: AcwNN1WKYIgtG8pquOg-3QDCj5oIF82tVACq3CFfADEbuvkkdmux6vPLdOD-FKA
+Message-ID: <CAMuHMdWPd16C-AazzCHJ+Rz2_qMrTwOp1e=u793LimvW99b8Mw@mail.gmail.com>
+Subject: Re: [PATCH v7 4/5] dt-bindings: pinctrl: renesas,rzg2l-pinctrl:
+ Document the missing I3C power source option
 To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
 Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
 	conor+dt@kernel.org, magnus.damm@gmail.com, 
@@ -74,6 +74,7 @@ Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
 	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, 
 	Wolfram Sang <wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset="UTF-8"
 
@@ -81,12 +82,11 @@ On Fri, 4 Sept 2026 at 14:54, Claudiu Beznea
 <claudiu.beznea+renesas@tuxon.dev> wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> The Renesas RZ/G3S I3C pins can be powered at either 1.8V or 1.2V. The
-> pin controller provides a register to select between these two options.
-> Update the Renesas RZ/G2L pin controller driver to allow selecting the
-> I3C power source on RZ/G3S SoC.
+> The I3C pins on the Renesas RZ/G3S SoC can be powered at either 1.2V or
+> 1.8V. Document the missing 1.2V power source option.
 >
-> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
