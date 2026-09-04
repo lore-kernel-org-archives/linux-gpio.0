@@ -1,106 +1,158 @@
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA2A48382E
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 12:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07223486B9A
+	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 12:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788524554; cv=none; b=cop07Gd/L9S+6FRqJA2ziSX6TGgomOAkOgAgaAEt2aJ6tLsiCpaM5GhhxOYmOL6iLHfWLF7Zq/1HehcqrzdsxGO8qxXogLVcjkZMgndr6PPntPt4YGkKYfppBnu4/WroVejUdRvb785WRaqIZm7GMRcND3p2FoNSHCUyzeRsnMU=
+	t=1788525191; cv=none; b=h67FeVJ713LEBT5W6ltinns1aRN1you1LYELFHRaNvOkKooQ3xn3N2np61qEs244QpXsIl18NuXGT/7TBiYZktiODkzmUfYfKPUAyWOu5uh2u1lkimow4SDk6As6PUuFbH2m+WN75DLwCrUHOUKLXru0WADa2uBdYaMw2fOv/ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788524554; c=relaxed/simple;
-	bh=vjaQgjeSeDSWekFLIKX6/r8ecgd8zwyE1GwfTXL4Nb8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K/IPL/N+x+V8xR/vS3u5tgZt2eTY0Im0bY+sqVvvd7abcIb2/IG+agIL9GZCNDRyvLVyhcTUTb5PA6o+BRna6I11Z43o4Xj9PHW0xV0VxFNgkVtuvvIbj8t9Ra85fYv9RGM+DPl3p6QkoA6Fpi6/2yEQIcUFF+SBP7u7XNxdsXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1788525191; c=relaxed/simple;
+	bh=zSY3tsTOZBtA2hVUkZvtvXV28oUZaPFPy3Vkq+ARZNo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=q9E6hFgk8E9CRnVZ6irQpBmqOfeIBlWGWyTAZpbTnoL8Su9s2bJdQosprWYskR1p00ZYJMkzqcyVaBgz5tWrrmKDQt/ceGl0/JGK8Hgef8/6gbE4gpHmXmHy+oLkQRx3a+R0AOFQ9JKACKCn2qceoENDtypNeXU8isG3NeY8dqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kl0CzDLZ; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5c7afda4515so574108e0c.1
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 05:22:32 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kl0CzDLZ"
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-6b1afdf5196so387020eaf.2
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 05:33:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788525188; x=1789129988; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=eFTOTrjj7XSWJTGyJNIYb5D6sM8s37aw4r9HKigmpj8=;
+        b=kl0CzDLZ9eJeraix6CTaUU5m7OS0iHxOk3b0/hGHg38wqCxtfHrM2GTnT+sF/NFyQn
+         ZHf4gZuC2I3sBDfGPG6+w7jSrWcNO+gtnrBzhT9GQcF3Ansr9wJtel0gIrHrSfQ9w6Zc
+         0WrIN/BK3IlrrTS+3OpSh7GGH7XdxexT2a6YWuUq1Q/ZN3qlT9JqvF9ztdhg4zSbMMpZ
+         sxF0pw5oeYpRMAZF6L49ZzToLq6QAYQmEo2/LSIFOWSK70DTEuO6hMn1whhuSUVvvYtM
+         RrBSZYxEeLxJZbeoY1YNul39PtpPY2zjJzIrS3N8EtENvQTKsqxwEZswF87kYRe6RShR
+         4r1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788524552; x=1789129352;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=1mDtuYgjcDY/xg58xIH9H2reGhfYioaWqgEAldYn7pM=;
-        b=auOtTdKh8ipTvY7N4zr2dZVvfTU+snQ1WliXXXM6LtthQRYkBSpURL1g+NVUUo5Rl9
-         wuqTbe4sKMGeu8sHcW5dJL0zbmMiseTyeNt7lf90PfKR+RY9ZES+Mj86I81n6HgMAzHd
-         kL6K6Gwe0fE6RGu1xRc/DmqUmopSNdPbHQTviRzhoDjtr8XB0+wSG1Re2hHpsTlFQi7l
-         fJFSG/1JMd/39kSuQvowLcyYoIIug1Q8ELDNldkJuMedj/Z0ZaZUP7in7jupQKBCinjC
-         9xFugMUhZf7R3d74qZwHfQjw6qUWrERKi42vXAHdCRZSxkdONvOf7LqJ8EMEUAADbN9A
-         9KCg==
-X-Forwarded-Encrypted: i=1; AKwUvBxRL2fUj3yW2Il3WSzRlw+N65a9DYfZrFfs0X9+sGMA832c3zrL5b8G3lxqwFtmEXhIbwTB++rFpgxs@vger.kernel.org
-X-Gm-Message-State: AFuF++kEbwgJgpTTw/Qy31nUpGfENE0FDn4rOWhy5lwBmRF4aoryICm6
-	Lmz9N7u6fYKkcZhHHPFigSAjvs4omIVU1BqkKA03a/++D8LTkx7T7lvri9fWwNU1om8=
-X-Gm-Gg: AYBFou1YyfSVWoV/1EkwQegPkAGJlkUcG4RG4pqPDTh766sklL1XSpG1Kn7CIRFUugY
-	ZOFfuSUKhdqC2+rDbCZznNFV92tR8Pc6Ah93R6HNtOP7YH7o5Wvg96BL5Z+E9Xz+UYaEcqiWtvZ
-	0loxuq+WFIVxmzjTOH+IG4NlsSTe82ElhRei8+t7/TZiOxAg+hzZeF0bRDU/5bYorHTIMvZAiZ7
-	enGGSx0xGHj2yM+vLFXDUVQR3CChgu1ZD6LzBPnbAs9sjWB4HnPSXN6RnzmZhlV/OZ8PhkEVKSw
-	Y+rnKeSPc0uvvRzQlbrreiUitaUvtzni3ibQlAmJeGVgp7o98a1IhhkOJwj0TABUuLKV3GPfT54
-	VXKO3hPmGg/T1E4Iuy39Rih2ndZLeK7a+obh6BFhcP9Haxst69J5gdlehacbbzo2wJeW6hLPH+1
-	+dl9R8TTt3BBln6dULOygctgEmDJyOXMvObLJGtswJ+9ysf2xjaMZmDYNEsN9mhEqQTnPQmZjjr
-	BqeJDSUyM1kt7lzG5xwfXMtLw==
-X-Received: by 2002:a05:6123:67:b0:5bf:b500:c4f4 with SMTP id 71dfb90a1353d-5c7ed285aefmr2353114e0c.2.1788524551835;
-        Fri, 04 Sep 2026 05:22:31 -0700 (PDT)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec1ef771sm1906179e0c.3.2026.09.04.05.22.29
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2026 05:22:30 -0700 (PDT)
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-783906bdb20so310704137.1
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 05:22:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzAnP+AUSFWljlxW8O1nffzcMMp0GAuZTi3m7mxOz3osM86ZNw0TgR8mSzWAfhY9gcPg1XN2wau5EcC@vger.kernel.org
-X-Received: by 2002:a05:6102:e0d:b0:785:d308:cc0a with SMTP id
- ada2fe7eead31-78a4a91077bmr1483195137.9.1788524549478; Fri, 04 Sep 2026
- 05:22:29 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1788525188; x=1789129988;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=eFTOTrjj7XSWJTGyJNIYb5D6sM8s37aw4r9HKigmpj8=;
+        b=WabpysBc7SJsP8CHmNLIK+qoMHilU5amPUgcCAIcMJCqU4Yi8EB0tMOpYIMSj6bDJh
+         24QAnXC8iS+/j4/LVejXF9VQLyhj1yA4a5ZccSxXM5Ygqlnp/UsKyjRpcLX6hyOT+kP7
+         pqGzx0bLF51/AOHHaFQz9Mt9Jlyz6NoArbAczTel4/UoeNmhzWBPrKA8mxchFoZjOipJ
+         LKXBrt3XEyEPVquqolvG2puEVxFJJeIU/L6G60769pgRSgQXEtpf2rX7VTdH0bifDDSd
+         KqeldmmZkPPeaRe2BJDwKc/cYUZI2PCnHdvXPjbmV1IXE2GX+A+5l7NxiFz6ylYl8q7r
+         AlWg==
+X-Forwarded-Encrypted: i=1; AKwUvBxeUGgWWFrgxsE/RBXx/DWg05N+oucdTvusbfot/epg5ovdfd+amsHaatkGYx14/AIr0UpNHlm5gE4U@vger.kernel.org
+X-Gm-Message-State: AFuF++mCgzCdeElzmFQifT0LHSt4AfR0qd+7VHFzOuBGhIv2Ijnyiq3b
+	GwRGy4dN3Emt1MD9vL6TK3SjXABJavAci7Hlu3UQdTZOF5iOPat/uTXK
+X-Gm-Gg: AYBFou0lSIkMYRVjHEnSpvdN3+nr2y9+cLQtTGg+9cSMaJ0EX4TWHVe4HbLCJhVRzed
+	Tohwwurvblkda6y/+0T/kJCtqhz+HOnRcA7SPwjG7F+8/9f3GcRw6Z4Y8OSODoZnQLNoEI26IFp
+	b8QDZdy0XuAXrCKvIFbRavRzD3I1WS+x/EbvDdSzbYDzOte+zzYzQwDzTL3mKSrBpSP9XQN5/Il
+	KVoOZX4rMm2QFnyzG35r3MnRR+dc7ewBb+6oHgFcfTKmuK6az6G3AOSrsfdaBy4Yz+ldtS3kMlu
+	snX3icxMr/ZvzxNOCImTGnzWHQgn60Nkd6pO9S4yWOHdeIIMBSBLPqh/UQDINkET1gR1jMc+xfk
+	oAJdHhrbdXIHOlXLxu8HPCftrsYggbCB7hjcO3VlC3Za1NErSa73Vo4rSPVwgfLGjytre8Hqyci
+	4qaY+DgJ41+nTSsz6cxOTOj6G8/Xek2YAX+ayjfyezwxSvtXVFnhYiFlAkUqwyOUUOtYDBCBefH
+	lrPxqF4UDqxwJKA/5RcqgP1ag==
+X-Received: by 2002:a05:6820:151f:b0:6b3:bb82:2736 with SMTP id 006d021491bc7-6b6fcac57fbmr4027560eaf.17.1788525187615;
+        Fri, 04 Sep 2026 05:33:07 -0700 (PDT)
+Received: from volcano9f6e-hostos.amd.com ([165.204.217.251])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3339bdf26c5sm6343458eec.27.2026.09.04.05.33.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Sep 2026 05:33:07 -0700 (PDT)
+From: Hemanth Selam <hemanth.selam@gmail.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Patrice Chotard <patrice.chotard@foss.st.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] pinctrl: fix typos in comments
+Date: Fri,  4 Sep 2026 18:02:56 +0530
+Message-ID: <20260904123300.36778-2-hemanth.selam@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20260904123300.36778-1-hemanth.selam@gmail.com>
+References: <20260904123300.36778-1-hemanth.selam@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260904-rzg2-sr-boards-v8-0-94c4674927e8@solid-run.com> <20260904-rzg2-sr-boards-v8-2-94c4674927e8@solid-run.com>
-In-Reply-To: <20260904-rzg2-sr-boards-v8-2-94c4674927e8@solid-run.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Sep 2026 14:22:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVZ_X6rHoC5jjCRv1d5OT+YdCibKu_S3Ni++=Mow2_Efw@mail.gmail.com>
-X-Gm-Features: AcwNN1VOyxrsSm03PmZn55Uovue1s6XEkpvSES0-J6cXzlUAe5_K8yXLbqCQsDU
-Message-ID: <CAMuHMdVZ_X6rHoC5jjCRv1d5OT+YdCibKu_S3Ni++=Mow2_Efw@mail.gmail.com>
-Subject: Re: [PATCH v8 02/11] dt-bindings: pinctrl: renesas,rzg2l-pinctrl:
- Allow input-/output-disable
-To: Josua Mayer <josua@solid-run.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
-	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 4 Sept 2026 at 13:56, Josua Mayer <josua@solid-run.com> wrote:
-> The list of allowed pinconf properties already includes input-enable and
-> output-enable, but omits their -disable counterparts.
->
-> Each pair controls the same bit. Where enable (set) is supported so is
-> disable (clear).
->
-> Add input-disable and output-disable to the list.
->
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
+Fix typos in comments, reported by scripts/checkpatch.pl using the
+misspelling list in scripts/spelling.txt.  Only touches comments, no code
+changes.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v7.4.
+Assisted-by: Cursor:claude-opus-5
+Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
+---
+ drivers/pinctrl/core.c       | 4 ++--
+ drivers/pinctrl/pinconf.c    | 2 +-
+ drivers/pinctrl/pinctrl-st.c | 2 +-
+ drivers/pinctrl/pinmux.c     | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
+index 1675dd36bd5c..ba6c71e6fc2c 100644
+--- a/drivers/pinctrl/core.c
++++ b/drivers/pinctrl/core.c
+@@ -147,7 +147,7 @@ int pin_get_from_name(struct pinctrl_dev *pctldev, const char *name)
+ {
+ 	unsigned int i, pin;
+ 
+-	/* The pin number can be retrived from the pin controller descriptor */
++	/* The pin number can be retrieved from the pin controller descriptor */
+ 	for (i = 0; i < pctldev->desc->npins; i++) {
+ 		struct pin_desc *desc;
+ 
+@@ -1747,7 +1747,7 @@ static int pinctrl_pins_show(struct seq_file *s, void *what)
+ 
+ 	mutex_lock(&pctldev->mutex);
+ 
+-	/* The pin number can be retrived from the pin controller descriptor */
++	/* The pin number can be retrieved from the pin controller descriptor */
+ 	for (i = 0; i < pctldev->desc->npins; i++) {
+ 		struct pin_desc *desc;
+ 
+diff --git a/drivers/pinctrl/pinconf.c b/drivers/pinctrl/pinconf.c
+index 81686844dfa5..ecc888b029d7 100644
+--- a/drivers/pinctrl/pinconf.c
++++ b/drivers/pinctrl/pinconf.c
+@@ -311,7 +311,7 @@ static int pinconf_pins_show(struct seq_file *s, void *what)
+ 
+ 	mutex_lock(&pctldev->mutex);
+ 
+-	/* The pin number can be retrived from the pin controller descriptor */
++	/* The pin number can be retrieved from the pin controller descriptor */
+ 	for (i = 0; i < pctldev->desc->npins; i++) {
+ 		struct pin_desc *desc;
+ 
+diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
+index 8ce88e591f47..59ecc295fb8e 100644
+--- a/drivers/pinctrl/pinctrl-st.c
++++ b/drivers/pinctrl/pinctrl-st.c
+@@ -1148,7 +1148,7 @@ static void st_parse_syscfgs(struct st_pinctrl *info, int bank,
+ 	pc->pu = st_pc_get_value(dev, regmap, bank/4, data->pu, lsb, msb);
+ 	pc->od = st_pc_get_value(dev, regmap, bank/4, data->od, lsb, msb);
+ 
+-	/* retime avaiable for all pins by default */
++	/* retime available for all pins by default */
+ 	pc->rt_pin_mask = 0xff;
+ 	of_property_read_u32(np, "st,retime-pin-mask", &pc->rt_pin_mask);
+ 	st_pctl_dt_setup_retime(info, bank, pc);
+diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
+index c705bc182266..574fc95b6712 100644
+--- a/drivers/pinctrl/pinmux.c
++++ b/drivers/pinctrl/pinmux.c
+@@ -636,7 +636,7 @@ static int pinmux_pins_show(struct seq_file *s, void *what)
+ 
+ 	mutex_lock(&pctldev->mutex);
+ 
+-	/* The pin number can be retrived from the pin controller descriptor */
++	/* The pin number can be retrieved from the pin controller descriptor */
+ 	for (i = 0; i < pctldev->desc->npins; i++) {
+ 		struct pin_desc *desc;
+ 		bool is_hog = false;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.48.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
