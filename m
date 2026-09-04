@@ -1,105 +1,199 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C09D2F8BC3
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 13:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B3B352010;
+	Fri,  4 Sep 2026 13:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788527511; cv=none; b=JLr7kKAqEmcS5Geseb/Qn9o/Z99gbw2DJAIaJp7qxD0BqOU1B+5x3MIG4bkBI/mOuZxQ0WdVw+lBj5akxVGFwxeN4F4aRrfRlCq7IDTs78I246ZYMhXxvV48hHUZLgBoTsBPo/0selYi0bgvUWTGEL03z/CM5iZAnuj5lgZ+ebs=
+	t=1788527684; cv=none; b=GwSmL/iShmH+8n1693a6yRKNFdlCmu3MXUnu1XcmUxe8ImzoeD2l2lOfQFVxkwYHZW/WQa1EbzWzMuTBmrACfOLTFhvs/9BFv+U73AAKrrugEr9u7u1xr5/OlyP8GJ4o5bUeuxmoBCGswnVUsGZhX9quwZ2AcvsBGALtf2u46Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788527511; c=relaxed/simple;
-	bh=2pDxHO8wpZZL1aVsWi+EAA7ecsGJLacrfFeBli+WCFc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vxgj71ajIe0ICHjJNcLa2Q1o/Cdh//HIg3nVq5y0grACxVdE+5IhOExVdvrIQM0DU+mEOgI1ImQslg8SgWRTnaMO4giUOoI4DKEFrAEmMmwmQKWJfO6eDj4FOle4XeQbvn9fc8qifWpZJ+eGicRhDw0eFOIRCLgperj5fTqh5qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-398b3d66515so1022550a91.0
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 06:11:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788527509; x=1789132309;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=CgqnNAj6IteboRwdvP7GVLALXi8ReI521PLZ9Y7Kkfw=;
-        b=BOjKaReHXs3Qq8TTIQs+89Bq6R92f+tIEyX92ahq5WAvRr2FmfswGztaVH+LMLt7sB
-         HHT6A6Ji+IM8+RngsBaQeg+YPo0Xa74jwB4AHh527V1YPrdAQbtZmgucnMXTgGjCAE15
-         cuTHDFg+/r3rw3HdU8vUJH22rHUC1RQ0HHOnlWf+p5TnqZQ8jGfZmpGSFH4mPReWjNvE
-         MNhEdo6C4emx8L2bycjUzgNyoSEt68JqNsVFailbeAz0U8ULVhf/3AjqQfeHB0OeVxFa
-         uAgUvjLKjBvlDplGU7y/XSD86+2P4IehKFP3at3+Elm5ESo0OEdTbQ8ijW2KNemMRw/N
-         ynpg==
-X-Forwarded-Encrypted: i=1; AKwUvBzcTgqt8Gqp9t5+Rra6kg+g5nzlNsHigiLLpqSI3Nn4LdhK1MaybsTOrvynDb2y9LwSCHZTEOQLOEXI@vger.kernel.org
-X-Gm-Message-State: AFuF++kLVlRI4ysms+rU84N7bJgI8t5vgoHfAcZwq1aurCLjXz91ylpc
-	/i1WH/G/DL8PHdnFDuSzOaVg6Cmc0Rh/bDo0oApuCTWMgxNNVYqcnqHyHaYr2qHpkE4=
-X-Gm-Gg: AYBFou1WkPzF32TAO3TOtADbpFSkSfYYScYxIBzLPlyrcOIGy7xUK1yWuZnGBt4N84f
-	h1zQ/moiBoPotohE19DanK5LO3547xrcNUkDJ9YaSV+zd+EZPoO9Z2OeCX1hz5epmfVWG5VmTVJ
-	TfRP6ryXSYGFPGpaoFagKH6Uvyse6paP/UTpp/MbPRWPm+Xp28OprZTRuTbcR+p3K88o0MQttyN
-	RxS4ha6WnAz+QgW8yalDdHcCU+Gzgr5BflpDGaZkg0h3bhM/yNeuPKs6HkBXF0tS//sRk7v2ZRp
-	G1+TENZEbngsiou10cqQG83++ucJf4HezL1nOxJpjDOg8beP4M76QYgA656HqNTU63OHm0rZHfv
-	Y7JyEvbnmCB2MvPd2gEcGRDIo2aWW1wu3r4JC8wDTtHtj9Q9315C91Yr2vRtJJwIPOsuW7ePnc3
-	s4sUCTTE7Cldw50ys3gbSWGatnKqX8KTz1qT2+2/AygU7CP/I27lO+QRAn1mOaODqqCtGbnYJI1
-	2ft4qphKwr1XpHIWvLT2Nhnro+r2Q==
-X-Received: by 2002:a17:90a:2c9:b0:39b:2b5a:8dc5 with SMTP id 98e67ed59e1d1-39b2b5a9b24mr4026537a91.6.1788527509296;
-        Fri, 04 Sep 2026 06:11:49 -0700 (PDT)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com. [209.85.210.173])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39b08d0d7e8sm11364739a91.16.2026.09.04.06.11.48
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2026 06:11:48 -0700 (PDT)
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-8534d507f59so1115810b3a.0
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 06:11:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzBvhecU5q7KZHph7t/9jB/Ak5ZKKr4+9W/GyQQCEd+aOBnIJqs78mmbziu4DeUDwBj5ZyXBU1AEDqN@vger.kernel.org
-X-Received: by 2002:a05:6123:67:b0:5bf:b500:c4f4 with SMTP id
- 71dfb90a1353d-5c7ed285aefmr2496181e0c.2.1788527126515; Fri, 04 Sep 2026
- 06:05:26 -0700 (PDT)
+	s=arc-20240116; t=1788527684; c=relaxed/simple;
+	bh=FYT6/iyY31UJEUUxpTSXKwCdDX8cAQywGqhNs1TpiuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=samzkkq4PQcSyNNeBsHrTEZzOwyLqPY+oycZfMkzNHXjZIm/xCJUmY78W59sG9jR/m+d1UZuGUcbxLmgWjoq2qE6hoj8TYFi0QNNZg+9Vj4NmO6LHWV60D8W5p0sCCuast4Jla77Ro79RTjkWj7k+hfiq5zrT75kdMGfl9YG/h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jq/cqtgU; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jq/cqtgU"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788527682; x=1820063682;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=FYT6/iyY31UJEUUxpTSXKwCdDX8cAQywGqhNs1TpiuM=;
+  b=jq/cqtgUgEmOezbKv1II3jAHDim3U//5LZywn0gHJ1LuUsdHjY3bS7gl
+   IVP6pIuyYe0ofVYvk04m59A0ZAt+qQQ06qj2CEOdf4/ATK7TUVMkkzTZW
+   IQd0+pi/CI8ndtj0iOraFW0qraA1gTcu7v9sTRnAiNFt1h86HcWLtT9mX
+   5NQ4l21QsDFNVmOfiB+v+uIkrDPj8sG5SZHq/Oeym2cObB/IFzUCARaJ6
+   IJ7yYI5PA4GGyD+s2H9SMa4mWxi+lYi5ebKrcw3J+h59dRT9arvuVRsqY
+   iA5Sk6lW4epVRThJuzFNhncCbGNEKw3F8DROgZfu/ZBMSSa+t6kVRA5M9
+   Q==;
+X-CSE-ConnectionGUID: i7LT8UrZSb6LvcrxB3Ms7Q==
+X-CSE-MsgGUID: OeLubQw2SLqfNbKuJJwNnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="91540830"
+X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; 
+   d="scan'208";a="91540830"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2026 06:14:40 -0700
+X-CSE-ConnectionGUID: unw6z+dxSXa0kQr2G8pHcA==
+X-CSE-MsgGUID: +XaBCkDbTp2V2UqV7nszHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; 
+   d="scan'208";a="273823407"
+Received: from slindbla-desk.ger.corp.intel.com (HELO localhost) ([10.245.244.224])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2026 06:14:34 -0700
+Date: Fri, 4 Sep 2026 16:14:32 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: longzhao@ambarella.com
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>,
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 09/13] gpio: pl061: use gpio-regmap and add Ambarella
+ layout
+Message-ID: <aprEOB7AZQWNed4D@ashevche-desk.local>
+References: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com>
+ <20260904-cv75-v5-v6-9-e918514cb3b1@ambarella.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260904125425.412632-1-claudiu.beznea+renesas@tuxon.dev> <20260904125425.412632-5-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260904125425.412632-5-claudiu.beznea+renesas@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Sep 2026 15:05:15 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWPd16C-AazzCHJ+Rz2_qMrTwOp1e=u793LimvW99b8Mw@mail.gmail.com>
-X-Gm-Features: AcwNN1WKYIgtG8pquOg-3QDCj5oIF82tVACq3CFfADEbuvkkdmux6vPLdOD-FKA
-Message-ID: <CAMuHMdWPd16C-AazzCHJ+Rz2_qMrTwOp1e=u793LimvW99b8Mw@mail.gmail.com>
-Subject: Re: [PATCH v7 4/5] dt-bindings: pinctrl: renesas,rzg2l-pinctrl:
- Document the missing I3C power source option
-To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, magnus.damm@gmail.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, claudiu.beznea@tuxon.dev, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260904-cv75-v5-v6-9-e918514cb3b1@ambarella.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, 4 Sept 2026 at 14:54, Claudiu Beznea
-<claudiu.beznea+renesas@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The I3C pins on the Renesas RZ/G3S SoC can be powered at either 1.2V or
-> 1.8V. Document the missing 1.2V power source option.
->
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Fri, Sep 04, 2026 at 02:38:16PM +0800, Long Zhao via B4 Relay wrote:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v7.4.
+> Convert PL061 data and direction handling to gpio-regmap while
+> keeping the existing PL061 irqchip path.
 
-Gr{oetje,eeting}s,
+> Add an Ambarella CV75 register layout variant on the AMBA bus, without
+> claiming unverified GPIO suspend/resume support for Ambarella.
 
-                        Geert
+This part should be in a separate patch.
+
+So far I see at least 2 patches against gpio-regmap and 2 patches against
+gpio-pl061.
+
+...
+
+> +struct pl061_variant_data {
+> +	unsigned int data;
+> +	unsigned int dir;
+> +	unsigned int is;
+> +	unsigned int ibe;
+> +	unsigned int iev;
+> +	unsigned int ie;
+> +	unsigned int ris;
+> +	unsigned int mis;
+> +	unsigned int ic;
+> +	unsigned int mask;
+> +	unsigned int enable;
+> +	unsigned int ngpio;
+> +	bool access_32bit;
+> +	bool masked_data_address;
+> +	bool write_data_after_dir;
+> +	bool clear_irq_on_type;
+> +	bool pm_save_restore;
+> +	const struct regmap_config *regmap_config;
+> +};
+
+Should not be like this. Part of it is in the respective regmap config (with
+all volatile, precious, et cetera registers, and part of it comes from driver
+data (in other words based on the compatible string or other ID).
+
+...
+
+>  struct pl061 {
+>  	raw_spinlock_t		lock;
+> -
+
+Stray change.
+
+>  	void __iomem		*base;
+> -	struct gpio_chip	gc;
+> +	const struct pl061_variant_data *variant;
+> +	struct gpio_irq_chip	girq;
+>  	int			parent_irq;
+
+Here (in this structure) we should get a struct regmap instead of base and
+gpio_chip.
+
+>  	struct pl061_context_save_regs csave_regs;
+
+This is not needed, see how gpio-pca953x does that with enabled regmap cache.
+
+>  };
+
+...
+
+> +static u32 pl061_read(struct pl061 *pl061, unsigned int reg)
+>  {
+> -	struct pl061 *pl061 = gpiochip_get_data(gc);
+> -	unsigned long flags;
+> -	unsigned char gpiodir;
+> +	if (pl061->variant->access_32bit)
+> +		return readl(pl061->base + reg);
+>  
+> -	raw_spin_lock_irqsave(&pl061->lock, flags);
+> -	writeb(!!value << offset, pl061->base + (BIT(offset + 2)));
+> -	gpiodir = readb(pl061->base + GPIODIR);
+> -	gpiodir |= BIT(offset);
+> -	writeb(gpiodir, pl061->base + GPIODIR);
+> -
+> -	/*
+> -	 * gpio value is set again, because pl061 doesn't allow to set value of
+> -	 * a gpio pin before configuring it in OUT mode.
+> -	 */
+> -	writeb(!!value << offset, pl061->base + (BIT(offset + 2)));
+> -	raw_spin_unlock_irqrestore(&pl061->lock, flags);
+> -
+> -	return 0;
+> +	return readb(pl061->base + reg);
+>  }
+
+> -static int pl061_get_value(struct gpio_chip *gc, unsigned offset)
+> +static void pl061_write(struct pl061 *pl061, u32 value, unsigned int reg)
+>  {
+> -	struct pl061 *pl061 = gpiochip_get_data(gc);
+> -
+> -	return !!readb(pl061->base + (BIT(offset + 2)));
+> +	if (pl061->variant->access_32bit)
+> +		writel(value, pl061->base + reg);
+> +	else
+> +		writeb(value, pl061->base + reg);
+
+This is achieved by different regmap config — one for 32-bit, one for 8-bit
+access.
+
+>  }
+
+...
+
+I guess it's enough for now. this needs one more round of designing this.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+With Best Regards,
+Andy Shevchenko
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+
