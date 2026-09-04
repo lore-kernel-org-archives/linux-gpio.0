@@ -1,206 +1,83 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4748F51123F
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 17:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F76A3C0605
+	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 22:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788542190; cv=none; b=UZS/jvHTXUeeXt8nyJ+nDvQbDQx+QQx6rAa7C1YZjihpcdPf7v078a00zHub8fj7gs4zT0eLT6WW9LVVti+Y8DWyhofMU2GE3E/D3z3zjBOhc8EQmuRdg2H8WPyTY9BmVGC6PLLWkGrvPCAI1k5dkkVBBDz+lTHIRy03NCj2zS8=
+	t=1788561569; cv=none; b=NQnj3ki+/CthU69emSxv8prRrm6txsSCwBrNlB13CKCHQaPCExFfOSECcdd+M/uuCJ8miMHIURV6qJYY5FBKzvocAgBiOhfRUgelbbkZV8WopNtLVYl1piIks1qDHaeZC8VBKNsHq1eWwBhhfPXN27IGB5maYwcbLCVt+wGI3HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788542190; c=relaxed/simple;
-	bh=q0/jeQMpe+NIKNmF/OaRaRWoYmKqUjJ3nNw+VwjxmOQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lBX4vyt3zfe74YEBXTYb7YzcYMVvuO+UP+Ta1aao12q1GYEUoyLrq+lzmPRUjUDAvONyR8kZJTSCb57xxMbgPPbW2ZQT5ZUxu5ITxaxlUE85nOlXCfe7qMIxXpUKQw0nblvZK0QjPZoQAvNw2KgXBoopZ6ZD4gYuP0lF8MdvIdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HEuNTDdE; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ISSFoiRe; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1788561569; c=relaxed/simple;
+	bh=llV8+t5XVFTw1AVjhesFZp1A/YnFQGo0lCxhv7P61wE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YsIMyyrmTAciCM00bVtE8a6O/eEidXSY1YXl9Uv3xnxHqQBuluRbYbETnnGJGfiWpyPvoy+XuaYLyySSGZHB0VPWuWry6DsduqDuIDkwnrKjQXlJXTEyuE2M3WW7WXVm9c3rLLxe9CSve7Hf/C5LRoiqM8YFm36JydBpv7k8ltk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TmQSKZ88; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HEuNTDdE";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ISSFoiRe"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 684Dgsgr3121378
-	for <linux-gpio@vger.kernel.org>; Fri, 4 Sep 2026 17:16:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PLl6mm78EKtYKYVqBRt8BNl1RzwF+qAU+YTT22oAhXQ=; b=HEuNTDdElJfdSdwc
-	esba1r4CmHqYxvzcEZyNWzvEaSNa3hlUPGoUS0o4VO0EIzJ5SbLesNbsqKZlqorY
-	0ZYlUu/jYewdgyLseM1ViV4pB8uWzisUQxMrFKRyuaIcOVE84im/0UoZGrSVzRCW
-	oSYf82lzB4FwHCeMNc6TQM5bHlJosqCAvrQuukGEy5IKj6LKBh8vZf8oo5XHKbtX
-	F1AWC+Nv1SkUR1+GU4bXSm19MYU8V1aMmn9LEKIaTx1rtl7GF/day6omJdmrW5Ko
-	bBU7Rn+vIv1nj23CEBT3laoX5TRUNrwZ0uXZntR+k690FIsvXFxO7e+NginO+4rR
-	bFJ82w==
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gfp1fk8e4-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 17:16:23 +0000 (GMT)
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-785b66a7017so316413137.2
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 10:16:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788542182; x=1789146982; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=PLl6mm78EKtYKYVqBRt8BNl1RzwF+qAU+YTT22oAhXQ=;
-        b=ISSFoiReOpTbbWPPEZB/MXCplD1EJeHnGT1elUJtC8oKKrqC1uXtteMkC28ywXwD2f
-         OJvb/OROIVI9APGOESVnwAmf/gxO1vRz88nndrfIN+UGsAsBpei2YA3ApbdhpoMU3XZZ
-         KmKHRW1LwA4DJm6InmnY+OORLZqE2KUw9LMv6TKH3IYjmGmluwmkAUFgRry39t7NFVs4
-         9NIIruys/X9EGd2rHi5v6a7oj9Bop+9Hw+dV1FbtpuH3Wp73UghQHwa6yI8ZR2ercdKw
-         txwqn4Mho53OD9czevoTL8HnvnipTJPisO7h+gvMV3rgdJ5bFniwNkdLVVJKvxnbR8uJ
-         L1Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788542182; x=1789146982;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=PLl6mm78EKtYKYVqBRt8BNl1RzwF+qAU+YTT22oAhXQ=;
-        b=P3vCK47sQB1Z/TwGkxLGLqmKxhwDqroFdHmP63gOmtNY86QdGMMkDyHeUb7MR+Bw6+
-         K1CzDPXHkuTfQ+jQO1/eqRBZNWaLloVIet7IOru9C24BtaxXsFrwxJfXC64Y4yTlXYyB
-         cteWTcG+IyIbZ8eP9ThX9XqvnRD66MFF88f7UbboQ2psmd6kpErsWAdNfNadjhLJSYZX
-         GBAAlYdpGTrMGLsUCKYqzOmurJmOqTi8m27YiGfbAhZZ+JpqcTaAb5tnYMgQocO7F8bl
-         YgYbSBW9nu4voAvC6w62vvg7SplrRis943OVtayw7M4gmf6JH1AhMoOxZBjOnoB9Wo2F
-         xEcQ==
-X-Forwarded-Encrypted: i=1; AKwUvByEnRs4eN7WWsGrTOhwqR9McT3OSKZEd5kcpLBRknOG0s/iNCEXoUjh2kwku4YdL0Xoxr5xeXml2yds@vger.kernel.org
-X-Gm-Message-State: AFuF++nAoFbvMr4IG+m/7IA9URjOQrfwpEJEQSfjPVPTCssN6y85Q/FM
-	ICNggP5deeS5dztAJBnfDxfq9tfIxeHUwnoyZ8eTFLoHScr93lzrEYSL1fiiyPR70Y2pi0v/SxO
-	mCmu8LwmQBXSzHGXSZ7RJnXqHydbPmc1v7cKh66egdRUC5SMpAe7lnyW/4By8/gIa
-X-Gm-Gg: AYBFou0gBQAYbEcq3cX6Y8PP+b9wRKXjD8wwsWW12ioUCVuuPc/dqlB4Vwv+4WCxpEy
-	orJIBOD1RxgynIoR8T5dDI3msdeI8gQJfIjNzRogpxCzwT/5WzhG2YR3qLLZsPYYtnivoufjOFq
-	R+vQYmSrDEjDYGVj64VwYdlwNjMQBT8GHtx+s20WiqpEHa8wo+Zmyofd+N3TNCqBSTonru0dfSD
-	YX0a9rq3nFtjJ1JKzKYkwi0humOJswxm4IGJUyTSB9IElGO9EtVCNHsT+FWoQE/1eckaclY3EOw
-	CX406FWjsZiMQY3CkxEKIU54XdrLaVLuBTXsvws/W4ZR3J1E5x02JJFQVkuQQUmqOQLoPmKl76W
-	OSgVsXCRi1rrbJw==
-X-Received: by 2002:a05:6102:8093:b0:779:5049:87b2 with SMTP id ada2fe7eead31-78a4a42c1a5mr2490108137.0.1788542182330;
-        Fri, 04 Sep 2026 10:16:22 -0700 (PDT)
-X-Received: by 2002:a05:6102:8093:b0:779:5049:87b2 with SMTP id ada2fe7eead31-78a4a42c1a5mr2490076137.0.1788542181905;
-        Fri, 04 Sep 2026 10:16:21 -0700 (PDT)
-Received: from localhost ([188.216.77.92])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cee7fec25sm184598455e9.13.2026.09.04.10.16.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Sep 2026 10:16:19 -0700 (PDT)
-From: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-Date: Fri, 04 Sep 2026 19:15:22 +0200
-Subject: [PATCH v3 5/5] arm64: dts: qcom: qcs6490-rb3gen2: Enable TC9563
- embedded GPIO controller
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmQSKZ88"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4243D1F0155D
+	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 22:39:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788561568;
+	bh=llV8+t5XVFTw1AVjhesFZp1A/YnFQGo0lCxhv7P61wE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=TmQSKZ88V4EGqJifsEp+kZ1YixheuM0ONQhC6ST5IL01g+nhibxZhhf862xYvGKiH
+	 zsL6NdJqRE+8cN1+VwhP5RbcocJ2qECR7DnI8Iv+IHuT7vV9bFqiv6IxNyNxc7AnKC
+	 jvnCWfirZFg+sfpoGgMmQfw5FMbvxJKL8jrVzg6wCknRaHWEIQW+26xRLPkPp6IIA0
+	 1Ij41r0fZpIF5xen12KtRMK1loX6JFhp82ACkNDplK8bRD363CGaVx4pITobwiNhEO
+	 UkWhB7Xwkr33bWh7UYYSA9OPrUsRBgpEwUZDefYoz68AWWve8POgu7uDBwiSMOKzcx
+	 qryaovYBoxAsg==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5b4b037a2c1so1357336e87.2
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 15:39:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw5NcYbgTveeX3CZnpR0ujU3YuXtCDHkaabsjttAvBh1l8AXurVbJXPH1NMtpoBaqvkjTtixBsrlDh9@vger.kernel.org
+X-Gm-Message-State: AFuF++nrNEzpyQsQU/MAgsCbCRcQ/6R7zWqOuWgfK9SDG+nL+slqrSvy
+	83pC//q5vC7IPB4rJr2cFrIA4GksVNx9CBJz4jUWYvZ46P5fOj30WfsO6eefJlGCdsJhvcXdG9B
+	xRiY+ZqPr5JP5cDR7huu5mO+a/yV1qXI=
+X-Received: by 2002:a05:6512:6186:b0:5b6:1a7c:3b with SMTP id
+ 2adb3069b0e04-5b61a7c02e6mr1037141e87.62.1788561566902; Fri, 04 Sep 2026
+ 15:39:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260904-pci-tc9563-aux-v3-5-5b1449d62ba2@oss.qualcomm.com>
-References: <20260904-pci-tc9563-aux-v3-0-5b1449d62ba2@oss.qualcomm.com>
-In-Reply-To: <20260904-pci-tc9563-aux-v3-0-5b1449d62ba2@oss.qualcomm.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Michael Walle <mwalle@kernel.org>
-Cc: Alex Elder <elder@riscstar.com>, Daniel Thompson <daniel@riscstar.com>,
-        Sushrut Shree Trivedi <sushrut.trivedi@oss.qualcomm.com>,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        Abel Vesa <abel.vesa@oss.qualcomm.com>,
-        Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Authority-Analysis: v=2.4 cv=F+xnsKhN c=1 sm=1 tr=0 ts=6a9afce7 cx=c_pps
- a=N1BjEkVkxJi3uNfLdpvX3g==:117 a=WpTaRW6qxYHRGzLzQsVYzg==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=EUspDBNiAAAA:8 a=xMsWz-yJVPOExfjiCSYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=crWF4MFLhNY0qMRaF8an:22
-X-Proofpoint-ORIG-GUID: k56FigzBJla26ILjEXCbwOK6VW62xaNR
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA0MDE1NiBTYWx0ZWRfX/8Wr0hnKBLA7
- 1eYVnj1/+CtWsaumhTsPK69wis8o3KWnLOqGytZYOOdcxa9YGeTHmNqv+amBClt27GwH8nSPv7N
- +CcrnxI6RFgnHnjLVFaKfe13iaZSqcQ=
-X-Proofpoint-GUID: k56FigzBJla26ILjEXCbwOK6VW62xaNR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA0MDE1NiBTYWx0ZWRfX4m7+vxBndtQ+
- bYUCMVZ675cRDbQzaq67rM3v8kAGBMcs5fiiFuF/QXw8827qY78mga49dpUGNfrmpFN6xGKOfGa
- nHzhpl0gE3CIl+uXgo8K3rnesYPEzt9Wnd6vyJfWak/aZ/iN/tPhB5PPM3vLZF1TCNW3ql39j8p
- tMTekQ+aktgV5KZ6FzokauKdhPCDDYYrPsgFWbDB2u2YdlGh2cLXbQPEuWeN9NB8tY2xoNAZbY1
- YvGfgc3DlnZvbErVoeIZ52z92G6wwi3yOaPx8GeOYnlomLlacesvjq9e6I4hEhsThcpMpRQe2i/
- Iyfdy5Q9Yiu7xtGITKStQtDyGYqSJxfC8Th3dm0k6aS3NkTjBiqaDy8Pu7uQ18OeBn0Vywb1AqM
- QLvyk0D0eHHeI1WKMAgT/pTPaNzyYbBzGbvLL7+V5eKMjOp8oVKcQ5gbSTH8X2qkvV/dJW6UkyO
- ouUfGg758//xn/blhkQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-04_04,2026-09-03_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 adultscore=0 spamscore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2609040156
+References: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com> <20260904-cv75-v5-v6-1-e918514cb3b1@ambarella.com>
+In-Reply-To: <20260904-cv75-v5-v6-1-e918514cb3b1@ambarella.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Sat, 5 Sep 2026 00:39:15 +0200
+X-Gmail-Original-Message-ID: <CAD++jLm3KLqaQZFsb2Yu0pERjCfrskL=x3arMtrY3Gq6X4rgZg@mail.gmail.com>
+X-Gm-Features: AcwNN1WuNL_yJJgNrKZTtl_t_1Ngwep6ljsejiCgS8bZ3EgANbDs_npxnarBzq8
+Message-ID: <CAD++jLm3KLqaQZFsb2Yu0pERjCfrskL=x3arMtrY3Gq6X4rgZg@mail.gmail.com>
+Subject: Re: [PATCH v6 01/13] dt-bindings: arm: add Ambarella CV75 platforms
+To: longzhao@ambarella.com
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Toshiba TC9563 PCIe switch embeds a GPIO controller providing 37 GPIO
-lines. The controller is registered as an auxiliary device by the TC9563
-power controller and accessed through the same i2c device.
+On Fri, Sep 4, 2026 at 8:39=E2=80=AFAM Long Zhao via B4 Relay
+<devnull+longzhao.ambarella.com@kernel.org> wrote:
 
-Describe the switch node itself as the embedded GPIO controller and us
-it to drive the PERST# reset lines of the two external downstream port
-(pcie@1,0 and pcie@2,0), as expected by the TC9563 power controller after
-switching to the GPIO descriptor API for per-port resets.
+> From: Long Zhao <longzhao@ambarella.com>
+>
+> Add the Ambarella vendor prefix and CV75 EVK board compatible for the
+> initial SoC bring-up.
+>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-index a13315bf0fb0..4da7342ca90d 100644
---- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-@@ -867,7 +867,7 @@ &pcie1_phy {
- &pcie1_port0 {
- 	reset-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
- 
--	pcie@0,0 {
-+	tc9563: pcie@0,0 {
- 		compatible = "pci1179,0623";
- 		reg = <0x10000 0x0 0x0 0x0 0x0>;
- 		#address-cells = <3>;
-@@ -891,6 +891,9 @@ pcie@0,0 {
- 		pinctrl-0 = <&tc9563_resx_n>;
- 		pinctrl-names = "default";
- 
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
- 		pcie1_switch0_dsp1: pcie@1,0 {
- 			reg = <0x20800 0x0 0x0 0x0 0x0>;
- 			#address-cells = <3>;
-@@ -899,6 +902,7 @@ pcie1_switch0_dsp1: pcie@1,0 {
- 			device_type = "pci";
- 			ranges;
- 			bus-range = <0x3 0xff>;
-+			reset-gpios = <&tc9563 2 GPIO_ACTIVE_LOW>;
- 		};
- 
- 		pcie@2,0 {
-@@ -909,6 +913,7 @@ pcie@2,0 {
- 			device_type = "pci";
- 			ranges;
- 			bus-range = <0x4 0xff>;
-+			reset-gpios = <&tc9563 3 GPIO_ACTIVE_LOW>;
- 
- 			/* Renesas μPD720201 PCIe USB3.0 Host Controller */
- 			usb-controller@0,0 {
-
--- 
-2.55.0
-
+Yours,
+Linus Walleij
