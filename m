@@ -1,86 +1,88 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE0348AE39
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 17:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F45C51121D
+	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 17:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788542174; cv=none; b=avtWM1J0oBijW+zuvJL1p/YUL6KY/s0X3/TiQJqCM7j4JpkCfDixY1N4hY9AYNC520FQGqUUYvl+hTDC1fIcwtD9LY5XDN9U9h3jBzGSM1qlATBin+DpDjb/Go6GWF7HYUOFcBDhr+9PxJOkZZz1wmwOdxVisyUUcHfTotPNudw=
+	t=1788542176; cv=none; b=IWUz04iWqiEBKy3OFIQ2dbUujPZn27BD3DnZuN9aMwQSGJhQ0y7bCur5gFHvq8VDuIXfU1ilp0DDrgxZiWoPqUY5apKMoHSy2gCljwv0VYUQIwvTeZ6UfNEwPndBpWrNNybucDhMfNIRBMpdsf1qv8SYRILalOEL7A4pKx5t1f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788542174; c=relaxed/simple;
-	bh=x7dRHrj7nC8wmVCl2DWfpnKP2LS8cd5CJwncZtshTtI=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dlFFWGIsylM0OH9i2+3W2v6MGm3KuHqLdlkCGARE7ooY3/mnjzD5J7dxsIK+gh68GuP5Eg8wGakpNaKtDcfpkCBDACPznHWX/VuS4r0ymcpzpJqBGJhCzdO5606hR85zmydFzoMLd4gYRCWW+mYbkah17pG6lOKqTtkrUOS4UmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B83Y16dl; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=heTmTYQr; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1788542176; c=relaxed/simple;
+	bh=Dn5L+oJ6dVDXOOdql61ip8Mlt2Vh3aDOeZ/dNzv5dGQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=KXajX+f/Wgdt2IOMDa8b50Tvc2C1t9DpwWtBPlyhYhtW39Jj8YAe0GWHQopNxyHEbCq5rez8QLJHI2lfZQQhutETn3+tD/G4KRX7GsUTfL9v4vdySMvaJHwALB5DM+nZP/+u9+58uyMCAoSrhldf/CBiFEvlPINpnYEuEIYo6sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ISENmjfS; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fNtr7WlZ; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B83Y16dl";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="heTmTYQr"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ISENmjfS";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fNtr7WlZ"
 Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 684EiUTK3765811
-	for <linux-gpio@vger.kernel.org>; Fri, 4 Sep 2026 17:16:12 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 684EiUJU3765787
+	for <linux-gpio@vger.kernel.org>; Fri, 4 Sep 2026 17:16:13 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=jfdac7YboZcbgYFhN1kGke
-	x5CY/GjfxDt67MCRr45lY=; b=B83Y16dlkOZHoHbNni9+ZDbautUl/9OTJHeIGf
-	o6caHsrw6pl7H1dv1MS+P9qfup1fpsCI/gfoKgtEeACrk2+7ZkrDf/6oJV8uizPV
-	J9qiMguk8HGgheaV2kBPvqU4Hx9lfNWsGNDHx6CDyEqQwgObfPVcYfD7vsfr/bju
-	Bpdwh/UF4iX/MJ0UyOJ+fuWwWoJtpzeYO2w0c2ZXn818hZCW6zz1fErEni9K2duT
-	fP2PvL+DZCk0C01AsPIEBGeKzNl6aq1jdhQsYV5kMclUCxNS7usaz8uznn8QE/L4
-	max/5KVuj56t/WD+ySnJUbR8TZ39RWU7ZqM1U7gQvgHuYcVw==
-Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com [209.85.221.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gg012185u-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	URKn1z33NimNKVaAS9LcdjQ97PJvFHzvWWnAyp7TRyY=; b=ISENmjfSM+GizaL+
+	FiFiw7TtD0v4In9U5YqPGG/J6zEw3qlRATCOHHbD8kf1YsIYuTe1zUew0Ej5FeKX
+	ZQBbNOLPedPei/N1okKgXvgZHAjLac07Q4MZQLC2yB5D+h1kZkMXsqRFkoi2U2kc
+	cmA7wAzf0hqTDgalTBS8WESJotJeZHUvOzsMG5r10ONVM7nrr5QTTDHQJ1aTwucH
+	fXi4xlLeNgRpL2KWP79JKmgKbYJoLt/zI//Po9RxM8zAEGkkehdm0/gC32RIRajI
+	XcBhE6WZm2Xe7dk1aqU0ZJzr18X+AxTpCaordv9q5NbkM/1U1hUHMmY1zgYq2VJN
+	N7lcxA==
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com [209.85.217.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gg012185x-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 17:16:12 +0000 (GMT)
-Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-5c405d3e18eso1328088e0c.0
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 10:16:12 -0700 (PDT)
+	for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 17:16:13 +0000 (GMT)
+Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-6751db2792dso251868137.3
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 10:16:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788542171; x=1789146971; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=jfdac7YboZcbgYFhN1kGkex5CY/GjfxDt67MCRr45lY=;
-        b=heTmTYQrgwRljHCMp5T7txvDm+15/edlirk7mchTSG4NNyXg62ZrfYA3ttmMTY17tb
-         3k+0/gTROzvQVzVT50aQnyNvYxWnvZAj2p1gIvNkTu+KXeHetr9/57wnisuMEGWD2asT
-         G0PjJofqlH30DWzYdrmICIlOlWR5+1cV2lerNf5sGK/UQDf4NaLq1zfXFEfNeErpoHsi
-         zRPL2FiiylIrG4VlTjoz5pXexRHOxh/5rApPgLkTkyrg4q2qts39LWjzCH0nURpSLSrL
-         YOoCE9RwIDnELSAYty2B9cCzM4tsFb4mdMyvxyZvn72Yu0seJY5/IMwUVkVT32GB5XSO
-         0B8w==
+        d=oss.qualcomm.com; s=google; t=1788542173; x=1789146973; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=URKn1z33NimNKVaAS9LcdjQ97PJvFHzvWWnAyp7TRyY=;
+        b=fNtr7WlZCwB6pFCVZ1Eoh61HBMPevIH+0OUGlRc1zy69CWfJjHCS5T/s5JTjdgqDxO
+         OFlV7bEB2I3zSzrysW0RYpNKBBCLjuPFpKc+A9KfSJUROmOdq2cijZKjSRrFOpkTy8zD
+         ncNaPXkMgjn4KWkrh/t+L7vprj6hhFduC1iYzFN0gat54muP3LM5aU+nTDX4BZWs8HAL
+         4pHq4UQmSP7llxSuKHCzya2T5p8RX/dfenF/3T6WBab9n9eMArenSG8fbFUu1C0sqFr+
+         vETN24hwaSnRZj5QAIzLFHopHPJOV823/nRtkmJDN74S0JNsIEGgPHytXgrOPStZv0hV
+         YJZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788542171; x=1789146971;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=jfdac7YboZcbgYFhN1kGkex5CY/GjfxDt67MCRr45lY=;
-        b=B9cd9BTPDlaZdxGQyxvci4O4CDmX6lXyqt8SZUys6HbPdcy7jDT58f7wxcLR/0rS/u
-         vOTnm6xo5I2PseG1mOKkFVbO/xp9DsQEjIck3lVsQTFQtMOR/KHmxAK/mYdJ9KpUn2hy
-         RrkLUe5hU7qOtKmYHFysc17xfRTO2YgsRIrbxl+0zpmgMkVtSZmvpbAXixgzXMF2hGpQ
-         QbqNahPC6rp/KkDQBVYRbybWk37/xl8B8pZsE5+aDQPY6wpQDM8a40C3nDOPBMPd5V7w
-         5DgVeOzNAgO1Y5MK+n0leduC5oUnhAlKjBPFk2z/Fkqsf1V+hM2D6A/oW+HVT+vkhN2i
-         bDvg==
-X-Forwarded-Encrypted: i=1; AKwUvBzbKHMVP+Y65UZLFoeI6TjDXNoniJoPCQYNjqIupxJKYQQyD3H3KyMrDmBlSYPHD8uy0QelCkY6fV4j@vger.kernel.org
-X-Gm-Message-State: AFuF++lF1kCvRuwr9SeZ8yVWuTLmrMBeUtCR/IO4C9BPF1RZWGQF0fVg
-	L2KcSieHZZFUiaEKoMAyFsZAa0coA8BJEAT+ir5CqUmTXMfXPh9FThLmW1ImP83xNRi3Y5dPB3L
-	Xdqy1tnvNLmbrDp89wdTahV3aWuEMScLC/cX/ODAwIQKbpAxyz9rCGsi+lbtErKJc
-X-Gm-Gg: AYBFou0rjGzS7blVdJqIFhcu4YYEydmPwToyUKeccUeAE3ygWiP3Q5PxXmKEijtdSEU
-	yIfEufpyjl+rBb/zB/IN6Jx3zkTd7DikKVtLSM25u9LZDbt3rKegsPxAy20WSbqFBmw49c4JRqM
-	sYVKylKtgFcg2h3iaudowGJyRyoxf8ecNS2x81TCWN3+fnaXJV5uOSHKYdLvU1kd8j+qGWB0z09
-	uDvC5e6YQdVO1k8vDLifZP8yroqrHDxGVMquSBv481SNt0mzyylccj3j3bMnTon0qctzZBYXpKu
-	zTk0z2h+UP9C4N9pqU2Zy8oY4pdLqZCEcfqs6+pvNEZ4agOhtdPb9aW8w1MPqL91UpRHyh3u3Ad
-	F9fOUSxg/7NNpVw==
-X-Received: by 2002:a05:6102:1625:b0:77b:28c1:210e with SMTP id ada2fe7eead31-78a4a6e7016mr2730786137.1.1788542171459;
-        Fri, 04 Sep 2026 10:16:11 -0700 (PDT)
-X-Received: by 2002:a05:6102:1625:b0:77b:28c1:210e with SMTP id ada2fe7eead31-78a4a6e7016mr2730765137.1.1788542171014;
-        Fri, 04 Sep 2026 10:16:11 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1788542173; x=1789146973;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=URKn1z33NimNKVaAS9LcdjQ97PJvFHzvWWnAyp7TRyY=;
+        b=RP4jgKDSJAOHa4n/OgEv3QA3MId8Qy/Wd57m3hiNZNR++6VDr1x6isWVQStqxUS6OQ
+         K1Wm3rvB0cmIdWi+gqqLXx9cI502T4p7yxbIxUBK9fNxNJB5HDYmNvLtbhaOQuHx74mZ
+         t8oxtmG1JkCjEENsCnuHgyYuH4xBHL6JAhotR0xw/FrAvYge07gWm2LsYNdDvC/HiaaC
+         m/JooK5rdXsRWCWHh6HAIs7aTTa3RNZHTbBRDT9YqbNs9WVXS78kAyfsFr95IHoglu8O
+         VAhXMELjVmtr9AZ1DxuVMhLCAdDsapCzho0+Sv3R8bja83+q8pnEC2RWPsD3K7WPINUr
+         xv2A==
+X-Forwarded-Encrypted: i=1; AKwUvBxsGV+Sr9/Ntb2FTG8Ni1m4jt2zX1FYRbrs9SMfwtoM2ulZ3SzJIDbv0wBTXou8zqXa1YDG4Qg9F1ad@vger.kernel.org
+X-Gm-Message-State: AFuF++lgCcVOzjAsPd/St+E+9iwf8++MxwGIdFtDSniz6lVLxKp7Um/V
+	B9I88zJn4DEFmm9oIPVmVEoGh23geGVOQe4JQs/o+3PhxAI2CXl2Y6pPI4TxLW0fQZJQq+3RGJC
+	Ki3X6HGA4Fn695I49yy4WhTSVS/zNpX8r+BkV8pxhismwyPhymf8dXjreeiASY+xu
+X-Gm-Gg: AYBFou3Sbt7yyL/ZlOPlwJEYHz0mkQ5evLGkGR++hi+3cSRVl1LtGcQVbUI9EdgU7n3
+	mq04EbG8gwho39NSvhlOvIvMRJk73Gqvajnc7+dEDKGmZRmt0NhF6CBDcGOfArzYmJ2micq+1xY
+	PH5c5twugRfuT24sgRJxmLo3HQaW3q6ReHPn6HIFLEkhsR4ApxEh44gOMZy0/sIO2ecX+pXrdl8
+	kY7fGIJjKCvwyaYAXtXY9OtKOw7h8wGlTXzdFvJxZLqDStgjKDdwHW/Do2pHcrCkhq9urGV3Mja
+	pdNVLWQEhPw1emifgnqwrhHzm9i02D2MdUHHp/CGY3CBeXB+Z64q68CCFmJ98TjBfdCI5vZCcHk
+	EJsV3Zkxm4T45tQ==
+X-Received: by 2002:a05:6102:292b:b0:782:e19d:6f39 with SMTP id ada2fe7eead31-78a4a483c93mr2277300137.0.1788542173067;
+        Fri, 04 Sep 2026 10:16:13 -0700 (PDT)
+X-Received: by 2002:a05:6102:292b:b0:782:e19d:6f39 with SMTP id ada2fe7eead31-78a4a483c93mr2277271137.0.1788542172627;
+        Fri, 04 Sep 2026 10:16:12 -0700 (PDT)
 Received: from localhost ([188.216.77.92])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cfd3f815bsm35516655e9.4.2026.09.04.10.16.10
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-485883c6ba4sm8474411f8f.25.2026.09.04.10.16.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Sep 2026 10:16:10 -0700 (PDT)
+        Fri, 04 Sep 2026 10:16:11 -0700 (PDT)
 From: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-Subject: [PATCH v3 0/5] PCI/pwrctrl: tc9563: introduce support for embedded
+Date: Fri, 04 Sep 2026 19:15:18 +0200
+Subject: [PATCH v3 1/5] dt-bindings: PCI: toshiba,tc9563: Document embedded
  GPIO controller
-Date: Fri, 04 Sep 2026 19:15:17 +0200
-Message-Id: <20260904-pci-tc9563-aux-v3-0-5b1449d62ba2@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -89,11 +91,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/23NSw6CMBCA4auYri3pAwp15T2Mi9IWaSIUW2gwh
- Ls74MYEN5P8k8w3C4o2OBvR5bSgYJOLzvcQ/HxCulX9w2JnoBEjTJCSUzxoh0ctC8GxmmYshGL
- S5LxqBEFwNATbuHkHb3fo1sXRh/fuJ7ptv5QkBypRTLAxsq7gUWVLcvUxZq9JPbXvugwG2sTEf
- hV+UBgoPNeCFXWRM03/KOu6fgBEX/oI+QAAAA==
-X-Change-ID: 20260731-pci-tc9563-aux-66a29d438f60
+Message-Id: <20260904-pci-tc9563-aux-v3-1-5b1449d62ba2@oss.qualcomm.com>
+References: <20260904-pci-tc9563-aux-v3-0-5b1449d62ba2@oss.qualcomm.com>
+In-Reply-To: <20260904-pci-tc9563-aux-v3-0-5b1449d62ba2@oss.qualcomm.com>
 To: Bjorn Helgaas <bhelgaas@google.com>,
         Lorenzo Pieralisi <lpieralisi@kernel.org>,
         =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
@@ -110,31 +110,27 @@ Cc: Alex Elder <elder@riscstar.com>, Daniel Thompson <daniel@riscstar.com>,
         Sushrut Shree Trivedi <sushrut.trivedi@oss.qualcomm.com>,
         linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Abel Vesa <abel.vesa@oss.qualcomm.com>
+        Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Authority-Analysis: v=2.4 cv=dfSwG3Xe c=1 sm=1 tr=0 ts=6a9afcdc cx=c_pps
- a=1Os3MKEOqt8YzSjcPV0cFA==:117 a=WpTaRW6qxYHRGzLzQsVYzg==:17
+X-Authority-Analysis: v=2.4 cv=dfSwG3Xe c=1 sm=1 tr=0 ts=6a9afcdd cx=c_pps
+ a=5HAIKLe1ejAbszaTRHs9Ug==:117 a=WpTaRW6qxYHRGzLzQsVYzg==:17
  a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=S8ISWd2nbyi9d01ScZoA:9 a=QEXdDO2ut3YA:10
- a=hhpmQAJR8DioWGSBphRh:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA0MDE1NiBTYWx0ZWRfX6HYh7glmZm4I
- tyBzqJsQOOVxKFXpmbMF9mH3o94dLjbu1zDocsq8M+ipIWnEATvHOxnkE/9vl4VkMK2kmNTXvmV
- sM88eFsw/+xVPP2k4xw2uYuDnBGEqAZqJBKkFEd1QxARNRdcUFssLk4MhYcGodpd635/PEp8V5y
- 0thkxFFwxLVMPRaDVB7ntANn+JugbQyZ6J4VZWod2ig1L8WHFd9F4UAYOx+++7uGCbexgS1EmYV
- cX+Yj2fajmbttF1ZsbRv8SgZK+Q6+7++5obOrTOZPyW4hqLqTV+knPR4GeZ064WrK1oJtNZSLcn
- f+5FbMbRfyUOHUDtBdoVkoCFY04DUtEt3cqhhdWH0Ez00K1PbTFUbCeBH8WGYcwhxQzYhc6F28Q
- P4hSxMvcj42F4ickekjmOuK6VNlD5YdhpVH9OLQ3z7/YsK1Ipoq0i3voz3TT9P+H1X5QlV8mpEE
- VSMlIccxmdZLwOrvt+Q==
-X-Proofpoint-GUID: F_YNbTHgh7qfN5yu2SbSziWr4OHuz6zH
-X-Proofpoint-ORIG-GUID: F_YNbTHgh7qfN5yu2SbSziWr4OHuz6zH
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA0MDE1NiBTYWx0ZWRfXx6tRTycW6TnP
- XWsjo6ZOFdTS0bpBUsQZKWYxOfw41QaOFuQMmaR0g4c1GDDOhvx+sfqK1T+o2NS3nypWH45ER/M
- 3lSeL/YVeS9XwwH0ElT976Js263eTqA=
+ a=EUspDBNiAAAA:8 a=lJbHue_d3WQnVI_sE6kA:9 a=QEXdDO2ut3YA:10
+ a=gYDTvv6II1OnSo0itH1n:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA0MDE1NiBTYWx0ZWRfX78MRcEsZ5a1l
+ fhSwfjF60QmjdEMakcJeKp+adp3HR24Zp2p7fJXsuHpl8ynZxzcIElv9LWFkkW6wjfWcjBSt9cV
+ k+cLG+aFnnasl1hCXz2hrllXPYDH2SuSlF4jwrFhGo9sW8C7kvoiBgY3FMJ4AqkpbsCW5YLVqQc
+ O7CiPNchvFdxKx14VPqOk4HJyqDQfGWbLVuDBktxjEmWl+bDuCC+JadboPLKrSVJx2klBcTmWQI
+ XhY4WS9Jtb/22awnaq9poYXJvwl81fUTFHquyWGJNdmCRMwwriu51Fupc9NOX2Irn772BF17dgA
+ b6BDBtSHHr4yQSFLORU+zL0gyI83igMe/4ABwUdeciRv/espAZXWC422qrHM4XfLW2NbSZ0GBTT
+ k+a3e7DZAn+Yr6BFElhRa0jTekuXwsjaK694bUtdNEaO3rX4dyutnL8vZoD8ngwoAWInvIeqIE0
+ /TcIEf6IAkWTJAqRHhw==
+X-Proofpoint-GUID: mBM2oViATy1C4aw_Mhxv6EY0qMrd27vi
+X-Proofpoint-ORIG-GUID: mBM2oViATy1C4aw_Mhxv6EY0qMrd27vi
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA0MDE1NiBTYWx0ZWRfXwH29VgOQI5px
+ z/qxyKYwcsco/PH/xu3iCHM8gyCZYzhJs7GitklFdSTpRCuij/LgM7r9zx3lCY0uoNBwQxhaagE
+ 7Y8G4/lKulXQ1XIT3h2hLhlU8DH6il0=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-04_04,2026-09-03_01,2025-10-01_01
@@ -144,43 +140,84 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609040156
 
-This series is based on pwrctrl upstream branch.
+The TC9563 PCIe switch embeds a GPIO controller providing 37 GPIO
+lines. The controller is registered as an auxiliary device by the TC9563
+power controller and accessed through the same register map.
 
+Describe the switch node itself as the embedded GPIO controller and
+document the per-port reset-gpios property.
+
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
 ---
-Changes in v3:
-- Describe gpio-controller support in TC9563 binding instead of defining
-  a gpio child node.
-- Link to v2: https://lore.kernel.org/r/20260903-pci-tc9563-aux-v2-0-34c625b542c1@oss.qualcomm.com
+ .../devicetree/bindings/pci/toshiba,tc9563.yaml       | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-Changes in v2:
-- Fix PCI_PWRCTRL_TC9563 Kconfig dependency
-- Move of_node refcounting management in tc9563_pwrctrl_adev_add().
-- Link to v1: https://lore.kernel.org/r/20260901-pci-tc9563-aux-v1-0-dd9b80738e70@oss.qualcomm.com
+diff --git a/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml b/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
+index f084830c6d0c..c4cd162cb084 100644
+--- a/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
++++ b/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
+@@ -31,6 +31,11 @@ properties:
+     description:
+       GPIO controlling the RESX# pin.
+ 
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
+   vdd18-supply: true
+ 
+   vdd09-supply: true
+@@ -84,6 +89,11 @@ $defs:
+     type: object
+ 
+     properties:
++      reset-gpios:
++        maxItems: 1
++        description:
++          GPIO controlling the reset line connected to the downstream port.
++
+       toshiba,tx-amplitude-microvolt:
+         description:
+           Change Tx Margin setting for low power consumption.
+@@ -128,7 +138,7 @@ examples:
+             ranges;
+             bus-range = <0x01 0xff>;
+ 
+-            pcie@0,0 {
++            tc9563: pcie@0,0 {
+                 compatible = "pci1179,0623";
+ 
+                 reg = <0x10000 0x0 0x0 0x0 0x0>;
+@@ -149,6 +159,9 @@ examples:
+ 
+                 resx-gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
+ 
++                gpio-controller;
++                #gpio-cells = <2>;
++
+                 pcie@1,0 {
+                     compatible = "pciclass,0604";
+                     reg = <0x20800 0x0 0x0 0x0 0x0>;
+@@ -158,6 +171,8 @@ examples:
+                     ranges;
+                     bus-range = <0x03 0xff>;
+ 
++                    reset-gpios = <&tc9563 2 GPIO_ACTIVE_LOW>;
++
+                     toshiba,no-dfe-support;
+                 };
+ 
+@@ -170,6 +185,8 @@ examples:
+                     ranges;
+                     bus-range = <0x04 0xff>;
+ 
++                    reset-gpios = <&tc9563 3 GPIO_ACTIVE_LOW>;
++
+                     toshiba,tx-amplitude-microvolt = <10>;
+                 };
+ 
 
----
-Alex Elder (1):
-      gpio: tc9563: Add support for the embedded GPIO controller
-
-Lorenzo Bianconi (4):
-      dt-bindings: PCI: toshiba,tc9563: Document embedded GPIO controller
-      PCI/pwrctrl: tc9563: Add GPIO auxiliary device support
-      PCI/pwrctrl: tc9563: Switch per-port reset to GPIO descriptor API
-      arm64: dts: qcom: qcs6490-rb3gen2: Enable TC9563 embedded GPIO controller
-
- .../devicetree/bindings/pci/toshiba,tc9563.yaml    |  19 ++-
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts       |   7 +-
- drivers/gpio/Kconfig                               |  11 ++
- drivers/gpio/Makefile                              |   1 +
- drivers/gpio/gpio-tc9563.c                         |  99 +++++++++++++
- drivers/pci/pwrctrl/Kconfig                        |   1 +
- drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c           | 154 +++++++++++++++++++--
- include/linux/soc/qcom/tc9563.h                    |  19 +++
- 8 files changed, 294 insertions(+), 17 deletions(-)
----
-base-commit: 028f86457e822ab9de5b0d6d23efddc1b8b54ae1
-change-id: 20260731-pci-tc9563-aux-66a29d438f60
-
-Best regards,
 -- 
-Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+2.55.0
 
