@@ -1,116 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC17E424D65;
-	Fri,  4 Sep 2026 06:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21FC4195D2;
+	Fri,  4 Sep 2026 06:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788503955; cv=none; b=KUd9HB7KG+6DIOPPyjGv9WzMGsGndDis+tBgEDaZ7Fo/pdwyGUW6vyL5RG08BmCgh+8bwR4QwngbbQh1POJ25Tw8Ra8ye6VWeVz0ZboUgv8vFJWa7LoHp3104UeHzCjU6ac2jchucIdnybzI2BGy98WyGYWq9xzMqsEWS3drT5E=
+	t=1788504261; cv=none; b=eYrvWxirKWMvcgKv0muM2pLQ3/ooYULdO0S7++Cc6/C1opJsemRfLOp7MzYUSZ7K1kN2C1jju8dYaVINHZXFGG+hFeGBzPC3WBZzw701ljmrfjlIXKvTi5ysK+zDnWS01VEqbedAt2ty/AJXfJKJchZcQY2d5Kc/ZpMlvHanIGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788503955; c=relaxed/simple;
-	bh=u1O2yyg4IFgXvWdBWEfBf7DSbFAtEAmAyY6MwVpsw88=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EiDPc3P0q3Zre3YfTPIVPevOUJ1YroTl1A/rUSMQryp1tymSQ/eqKJNFQglqrOoJ4sOw3Bj/9Go9nx1BJNko1O+e3Tn1Vu5WXOERq/4mPPbL6MS7L6qgoJ5YOPLXNjBMsT96uECO3otd5LjLQ1fWKOGU1g28DeDEq8OqekV/j/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J6x4XMEQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1788504261; c=relaxed/simple;
+	bh=FjvaKYb1QnuY7ihNibdHpcnPHO/khxaMekqPzpu/5Z4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=M9dMnWO+k2hA+J3Qk0RCnw3F9SRnrc+hcctHI0NGOPVftf1mtH1GI+4PIZHeJGDaQvpJB+2bD5etUIHCfePQ8DO6G8Sb2djBw/TbjKVnw5bFbKkjeXR9ToiNGESxLloaiYjX7hLRfUoJitzjKB96eQM3MbXylJILe+fg+o/SjdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1q3PoEP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J6x4XMEQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B0313C2BCFB;
-	Fri,  4 Sep 2026 06:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1788503954;
-	bh=u1O2yyg4IFgXvWdBWEfBf7DSbFAtEAmAyY6MwVpsw88=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=J6x4XMEQrbSig3dyY7G2WKP5LuW7mNQWZ6oFtmcWY5zHfTJ9omOcBnQPrvssoNKyu
-	 u4sx4PLmyPshXjxkD+HNXF8P3z2wAjfyzkfngefe1J6PxlALJe38Tq1/NKu3N9pzvY
-	 J1oIauK5BRpeFh1y4ori1dMlhwxGXX6p5j1KYVz0asbB3YArhQL0aV42ts7m7xbdG9
-	 uOBWDWatJZjjxtvAPH4Ug+ebL6u7tF5n8bV/pupj4+ijnfCsOTkIgoIWxotI5wGcRo
-	 b4UkjM8EkCADfnIVBG8FFFPAX/67mauX0CnHeBqy9SXKkR/cFgKx4WZF5CHCRhnsbZ
-	 y441fpKfnjYzA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA5EC79F82;
-	Fri,  4 Sep 2026 06:39:14 +0000 (UTC)
-From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Fri, 04 Sep 2026 14:38:20 +0800
-Subject: [PATCH v6 13/13] MAINTAINERS: add ARM/AMBARELLA SoC support
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1q3PoEP"
+Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id D92561F00A3E;
+	Fri,  4 Sep 2026 06:44:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788504260;
+	bh=FjvaKYb1QnuY7ihNibdHpcnPHO/khxaMekqPzpu/5Z4=;
+	h=Date:Subject:Cc:From:To:References:In-Reply-To;
+	b=D1q3PoEPnIlkqHO5GOgkrLNPagJtL0j+Ttea4S6ev9fyLY9u5lcSa3EzgLncx4QUV
+	 czRUoHDzdD1lmkm3/J9ccpytAIl3cgnEBPaMv5poahYAQ1mQnEqzDVrBgaPaZRVyiE
+	 7G9t17QpZDBmH7Wkcbi8WbrBItESrJNGEJMkX4/PrUXmsXshOjuMRMYTbqkfMYDnZ7
+	 TcXrHrCU9cueCN38EKdDEThKSQJ7dFGOYrKt3nHHxSoFLi6ZrLwDg6Xta0Zgoo5Z6n
+	 WVItvywoVBE4NuaTLaAifq9vGzi8v1xxlmYc0EKOffL2jKJakwCMFhDsveB9UlM9mn
+	 q94NRu39QfbvQ==
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260904-cv75-v5-v6-13-e918514cb3b1@ambarella.com>
-References: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com>
-In-Reply-To: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com>
-To: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org
-Cc: Long Zhao <longzhao@ambarella.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Long Zhao <zl020895@163.com>, Lee Jones <lee@kernel.org>, 
- mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788503951; l=1193;
- i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=FMdxZub31R7avQT3Ojw4RWRGTKHK7OVLHXgrDSDBBvo=;
- b=J20AxAQaqy7Qb3wZitsadbnYGTVQMan5SDPyQ+DqSnV+k1kaVX6z5mKQ4xl+txmE+cBAzqFwj
- r//YYyCQx1pARbXn3QbLcQ8xktjp5ktrUbMtqy+KG1o+7+u+jYSNZBp
-X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
- pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
-X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
- auth_id=903
-X-Original-From: Long Zhao <longzhao@ambarella.com>
-Reply-To: longzhao@ambarella.com
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=c5f9d989349b39aa9155d6611598ddcf6959118f1716d6b107a91e88843e;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Fri, 04 Sep 2026 08:44:15 +0200
+Message-Id: <DL6BUGHEIP3C.1FBQYVS83GQ4W@kernel.org>
+Subject: Re: [PATCH v6 2/3] gpio: regmap: Add optional runtime PM support
+Cc: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, "Jonathan Cameron"
+ <jic23@kernel.org>, "Andy Shevchenko" <andriy.shevchenko@intel.com>,
+ "Janani Sunil" <jananisunil.dev@gmail.com>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Janani Sunil" <janani.sunil@analog.com>, "Linus Walleij"
+ <linusw@kernel.org>, "Bartosz Golaszewski" <brgl@kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20260903-ad7768-gpio-v6-0-4254ef6c9b38@analog.com>
+ <20260903-ad7768-gpio-v6-2-4254ef6c9b38@analog.com>
+In-Reply-To: <20260903-ad7768-gpio-v6-2-4254ef6c9b38@analog.com>
 
-From: Long Zhao <longzhao@ambarella.com>
+--c5f9d989349b39aa9155d6611598ddcf6959118f1716d6b107a91e88843e
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Add a maintainer entry covering Ambarella CV75 bindings, DTS and
-related drivers.
+On Thu Sep 3, 2026 at 2:01 PM CEST, Janani Sunil wrote:
+> Some gpio-regmap consumers share their regmap with a parent device that
+> may be runtime suspended. GPIO register accesses must resume that device
+> first.
+>
+> Add an optional pm_dev field and acquire it before register translation
+> or access. Release it using runtime autosuspend after each operation.
+> Keep the device active across the complete direction-output sequence and
+> propagate failure when setting the initial output value.
+>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
 
-Signed-off-by: Long Zhao <longzhao@ambarella.com>
----
- MAINTAINERS | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Reviewed-by: Michael Walle <mwalle@kernel.org>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 803b60ad628f..59e5b32d7a02 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2502,6 +2502,20 @@ F:	drivers/clocksource/asm9260_timer.c
- F:	drivers/rtc/rtc-asm9260.c
- F:	drivers/watchdog/asm9260_wdt.c
- 
-+ARM/AMBARELLA SOC SUPPORT
-+M:	Long Zhao <longzhao@ambarella.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	devicetree@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/arm/ambarella.yaml
-+F:	Documentation/devicetree/bindings/clock/ambarella,cv75-rct.yaml
-+F:	Documentation/devicetree/bindings/pinctrl/ambarella,cv75-pinctrl.yaml
-+F:	arch/arm64/boot/dts/ambarella/
-+F:	drivers/clk/ambarella/
-+F:	drivers/pinctrl/pinctrl-ambarella*
-+F:	include/dt-bindings/clock/ambarella,cv75-rct.h
-+N:	ambarella
-+
- ARM/AMD PENSANDO ARM64 ARCHITECTURE
- M:	Brad Larson <blarson@amd.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+--c5f9d989349b39aa9155d6611598ddcf6959118f1716d6b107a91e88843e
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-2.34.1
+-----BEGIN PGP SIGNATURE-----
 
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCappowBIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/j6QgGA8HQsKUjdvFVgWd2Da9IvkenWjkIam4Bc
+HvHBCnZ/3I1YiExKxOxja2voN6hZREdDAX94mqyXwKQV/STC4E6T5miN9sx/YGC7
+/+GcrS+oPu2N2429WQNlxiwKcCK4tFVH5X0=
+=WGzB
+-----END PGP SIGNATURE-----
 
+--c5f9d989349b39aa9155d6611598ddcf6959118f1716d6b107a91e88843e--
