@@ -1,134 +1,102 @@
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078FE3A6F04
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 10:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C856472762
+	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 10:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788517054; cv=none; b=BORkvhte0Qq/agIo6rUhOa5ZpfCoFnOuzmoUzsp4vg7LJ2CDlln2wQ7aXysu9kFm6PigUOeVADOYoZd6NJe8EnjVKDQkwhz7g6hjGi8b7nRJGzDHf2q1tMAV8Nw3TY88wZj8CxKDh/OBQmrTmnLKEtygNy1uBVDR7ttBe4XNWj8=
+	t=1788519566; cv=none; b=qMLdqUrtjWrxs01/EmUOcayjOC9O3v8Oi3U1qIPyuF2xWVwMGzTuphA+ukyJyIJ4Cn1gr52QxQu6os8njVb4wnNuG3cZIqllK4cyXJQwNYIMb39UTN90adAhTH76TBFE58tl8kB9uIX7cmxbr2Vko6ynMd4d4rYi2WqfFzUNfoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788517054; c=relaxed/simple;
-	bh=QkrSEynGau1ZbI201+0Em8TncEc13fHHUvNMrEc6cck=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o6bObYvkixDy9qH3YueA/QAj1IS99em7L8qUUvSwv8c3AvPlCs2PelS9UcijaDAk7Ytvx0f/9bIxZqPSuimt81QoXPmVjYn3kPhvZS6L58y1BVZehzrHvRARR0lG9Nm0eHhPjPOPgmh7oHPH0uBXY87KPZ+n0FjbLxii8t65jsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1788519566; c=relaxed/simple;
+	bh=cA8job6qXqmwzEdEB2IZJ+F2iSrbFrc51vamKL3/BKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a8RgrEL9pgEHGdZ+0cp6Id55LOHV1YRl6FfW5tYKFFJyv54L5JcfmVp6TpUqTOdPH3d8APaBXu99TIMtzjMFl6dlaVpqBwytTfStyVE1JqlUsGIxkk5kh2zsIasSTY8FGNmGk55T6ilfKo/tZXfrRYa8wNUJ89p7x8/qQIY4JU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZPpjA/3I; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-46aef6e48fbso533379fac.3
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 03:17:31 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPpjA/3I"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2caced6038eso8960285ad.0
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 03:59:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788519562; x=1789124362; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=CP9sB+DS2YKB5g2OI/tHIWoBap8Qzg/7HUSvRYLgoQs=;
+        b=ZPpjA/3IdY2qIE9R1WS6D3NqTwXGuJ4Z9qL7jqLVDY7RRyUB/pBrW4MSM7XS8HMSXI
+         Exl1kWRUdrIX2Sktz18jHNWLyoIonXbLm5Z30Fuc02mjF2rUwrwPj0S8+m2RoxSV0AUR
+         Lvn3dGjypxhoFPDKyox9fdbCPs6ORT+t+twwWDagddYwq85DXg4QFiR2vsaMhb4wWOAS
+         XllxAQy9e9s1C4A+6VRE4rdCodf71ZfxA1u2fYdituMvXhl/xmt3h+yOV7VdHcW2ZIVT
+         Kxpyi3l37vhcRl5WS08+i7rAnoFImpH0QBKwKRcdbtQaGFc2Ad/FlVBxgX0nrUNSHEcO
+         5q6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788517050; x=1789121850;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=n8ZpJN9RlZp1CfHTyya0RqETx9peOqUoR2+FiCTsKgE=;
-        b=cfPga5XI6fX3DWr61XXrtzRhIjlwOJMz+M3eMgB9l02KnBpu6/s0dOiupPcZ7GJLxZ
-         JUFI+6AuO9ji0k32oASr7OJ3wibdYk5gJnLVD8chYDGWZEJlOBQux2Zvz2YEblnfEdnW
-         eoTo1MOksbM9wh1LTfEhtJH06uEqZFP/2z3qxZ7+HbDqzNec+OUNCAJaTL98KCer8zYN
-         RtSJk40zJSv//BefLkJf1v81qUd2uB/vBJN/WY4MACCu9qMiSsyxYXCY6AIKrgDZhBLj
-         X/EY0dEa/wZjOy24cECjyaV0lexK9gXmtmMWJFDhbMQIU8umZ9KqbV5sKn0K5ZIAu9sm
-         X8HQ==
-X-Forwarded-Encrypted: i=1; AKwUvBz5TzoV5FhF2D7xG/ve1mYLBIM3VGxHxrVnpPR2i+gZQL8NeM+Wy8EXsSjyoWTKTCwvw8FwW5q55S2R@vger.kernel.org
-X-Gm-Message-State: AFuF++mg68wpns+AR8fMiWyhkz/gxq47hk84EpBKH6nOlHCiks+q6/fJ
-	G+dCWKiikuDzW8jUeSI+MvmJq4QDX1GhKX/szvq3rYnJbm3QwPxP5/OCg/Xs8prjssE=
-X-Gm-Gg: AYBFou1QVLs9h9Z+GSZNYqwjSJZ5kDX7KC8juu+AUgT+V9Qim/kUjc+/lJlENscCfku
-	C2CFq2nqGI4UGm/JBFl3x0mbrVmJ53HF+xyla5DnF00lnq0FkjvEeHjqQVmaUq72HgJMZcMX6db
-	mNsrOQh6u2gsV6216EsMlfm6C9tnuM3l8cOse1x5yja60yCIm3/CYgOdEAshOz1Zx9F74K7kgTo
-	cpf1hDQihLK8sTCVX90DJn/38UPHwUyFeDwOfKLtgYV1zwJ9B1D63ZbgQPqdL88+0Yb6ou1MVTp
-	MoElqEMPM3OSCozJP3Lqw0ODDuf4xfJhy86EgwXkaSdSKDH2Qs5mtZ9aE02ri22Yteojyq+2TBs
-	Ypy0My5hmlv8TIRe+0MfzyZKt02YCzpiK4F49HL/l6iwZ4UG6C+ZGMWEK82Q0Z+J3V4gTOztwuZ
-	OaG8KKVU8akmTt98zfnZbBmBEpjLamY1lBVGWKc0POzCXQtYi/fcc5nxv5j1YQuIFtr6K6VWW4u
-	sHs/HOMMu2oXdrMnxd1pCGTpl0zug==
-X-Received: by 2002:a05:6870:1d17:b0:465:317d:1c68 with SMTP id 586e51a60fabf-4755137108dmr5843112fac.3.1788517050436;
-        Fri, 04 Sep 2026 03:17:30 -0700 (PDT)
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com. [209.85.167.178])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-475523d1dc5sm1839925fac.2.2026.09.04.03.17.29
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2026 03:17:30 -0700 (PDT)
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-4b190cdc9feso632082b6e.0
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 03:17:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxVs0tEv/AtZfwTCAYFCbHwDlma/GX/kyY0truYYgKgO0ibm8r7MJKQOJ+rBMt00lXpv7DGl70UqzRW@vger.kernel.org
-X-Received: by 2002:a05:6102:8098:b0:783:79ac:9dc3 with SMTP id
- ada2fe7eead31-78a4a880ccdmr1286425137.10.1788516746128; Fri, 04 Sep 2026
- 03:12:26 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1788519562; x=1789124362;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=CP9sB+DS2YKB5g2OI/tHIWoBap8Qzg/7HUSvRYLgoQs=;
+        b=DOib+WC9tpwyEhIBoAXNLrwOI3ZwWIRW4Ku9OjRvfZguDKPDlTgH4j98TZk1HpdxUB
+         YI5Z6iS/CnPdxmP9YsdfxMmWaGD5baJ5egz1TuzVFScghUhCbh0ICeKr4Wm0q+2rby3i
+         5bqsQ7sHCMMLfKG0/GV8x0RUMSDN4EuDjoJ405Ir2q2zO6FcOOnJkmUHIBLRxdEvT3n2
+         htkewUwuBjhxpX0fjwXMy+5/JyoncB0c32f0j82UmCPjH2IBRH43stb+RcB2K1TBzCLi
+         2uHoOLfQuH1C4Le0/8YTxZAsaH+cBbB2ui/9/I0lBCrklw6SiktWUea63bP0qJjTbrEa
+         PfLg==
+X-Forwarded-Encrypted: i=1; AKwUvBzR9kl84FueyrvL0uksq7YYNa4VMsfO6XTCLzWqRIDfgtQEryVK9hGqZWNTU02ttAEI7prvC53FGl+J@vger.kernel.org
+X-Gm-Message-State: AFuF++lEef0lDr91iV6pExVjhFZ0cpyftwV8oR8BSLERRKxrz7q6ZK5A
+	XkQpqlKlvp2d53rkWYrrDTKTV23cSCS39yvid6gwDe5FW1fEwnDum5EYc4wFV72rZUY=
+X-Gm-Gg: AYBFou0Vq/0Jy1f975HyIF8wqNznhXZDk2mLrRlCkTC1Na7paBQJbYcBcNo6GHl727W
+	IS+SQR6FBxH9vDy8hi7878SSZxxc1O6XOMf2QashbB/G7j8L77gU3xW092f+ngLMZjosHfdrnDc
+	wVNM0vE6WAiMr7swIbTYH+mBAzpyjbmaG/9YP2YO9GvF6hXmqhJT5iJ4kcnD2ctmasTrAPjN6ZL
+	EXGSHgad2akiAWt+yYhEnLyTPfdGzsXZ9oBA2AuZ/Y5yeh2dY6gpWjZKUqHJGX0QGPFF7JAbMhk
+	HD8Ef1UdVSTDy/4ekaPwTvJNEk9Xkb9SslIWvLqIvKoFHNPXLU87a1RBYbdD7t3qhHFxh65q3Hr
+	fe0yPaAt7g00Pfhxdtwt2L0h7KKw156Z6JHXwIr1R1Sf0lfuBKpMYRkw2/d8K21XyZaJ/YtiyIm
+	FCuX+aNohQlqdTawk0PdKFvsQ0TeKz+U/oL3Df7JU+bnrXXU2I7dn3/dUExlk7487DXh3kxlwH/
+	/oEt6gOXbXtRtc=
+X-Received: by 2002:a17:902:ce8e:b0:2d8:d4d2:d138 with SMTP id d9443c01a7336-2dafb136d0emr102433505ad.20.1788519562511;
+        Fri, 04 Sep 2026 03:59:22 -0700 (PDT)
+Received: from volcano9f6e-hostos.amd.com ([165.204.217.251])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3339a534152sm5731385eec.10.2026.09.04.03.59.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Sep 2026 03:59:20 -0700 (PDT)
+From: Hemanth Selam <hemanth.selam@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Kent Gibson <warthog618@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH] tools/gpio: fix typo "amount of times" in comment
+Date: Fri,  4 Sep 2026 16:29:14 +0530
+Message-ID: <20260904105915.4327-1-hemanth.selam@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260902-rzg2-sr-boards-v4-0-4a456a422fee@solid-run.com>
- <20260902-rzg2-sr-boards-v4-2-4a456a422fee@solid-run.com> <CAD++jL=fGonMHd0jitwAE8+w=JYPX_6YFW6CzS9kRZLbx3045Q@mail.gmail.com>
- <0435939c-2836-480d-9ba2-8de4c5e22cc2@solid-run.com>
-In-Reply-To: <0435939c-2836-480d-9ba2-8de4c5e22cc2@solid-run.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Sep 2026 12:12:15 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUE3+qBdy2CoSQMzJ1iePiv0PSTfOjxHAqgp78i_XpMPQ@mail.gmail.com>
-X-Gm-Features: AcwNN1V1Us7DEfFHRItLM1ZA7SwiTD-ZOtpiiIkRmjTu4wyeWXgopaPPPq_n9t4
-Message-ID: <CAMuHMdUE3+qBdy2CoSQMzJ1iePiv0PSTfOjxHAqgp78i_XpMPQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/7] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow
- input-enable pinconf
-To: Josua Mayer <josua@solid-run.com>
-Cc: Linus Walleij <linusw@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Jon Nettleton <jon@solid-run.com>, 
-	Mikhail Anikin <mikhail.anikin@solid-run.com>, Yazan Shhady <yazan.shhady@solid-run.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Joshua,
+Correct "amount of times" to "number of times", reported by
+scripts/checkpatch.pl using the misspelling list in scripts/spelling.txt.
+Only touches comments, no code changes.
 
-On Thu, 3 Sept 2026 at 11:23, Josua Mayer <josua@solid-run.com> wrote:
-> Am 02.09.26 um 14:58 schrieb Linus Walleij:
-> > On Wed, Sep 2, 2026 at 1:50=E2=80=AFPM Josua Mayer <josua@solid-run.com=
-> wrote:
-> >> The list of allowed pinconf properties already includes input-enable,
-> >> but has omitted input-disable.
-> >>
-> >> Both refer to the same hardware property, setting and clearing input-e=
-nable.
-> >>
-> >> Add input-disable to the list.
-> >>
-> >> Signed-off-by: Josua Mayer <josua@solid-run.com>
-> > (...)
-> >> +        input-disable: true
-> > The Subject of this patch is  "Allow input-enable pinconf".
-> >
-> > But what you are doing is allowing input-disable.
-> >
-> > With the subject fixed:
-> > Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Thanks!
-> I'll fix the subject ... !
->
-> ("dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow input-disable pincon=
-f")
+Assisted-by: Cursor:claude-opus-5
+Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
+---
+ tools/gpio/gpio-hammer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No need to resend, I will fix this while applying
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v7.4.
+diff --git a/tools/gpio/gpio-hammer.c b/tools/gpio/gpio-hammer.c
+index ba0866eb3581..1a21e5460242 100644
+--- a/tools/gpio/gpio-hammer.c
++++ b/tools/gpio/gpio-hammer.c
+@@ -145,7 +145,7 @@ int main(int argc, char **argv)
+ 		case 'o':
+ 			/*
+ 			 * Avoid overflow. Do not immediately error, we want to
+-			 * be able to accurately report on the amount of times
++			 * be able to accurately report on the number of times
+ 			 * '-o' was given to give an accurate error message
+ 			 */
+ 			if (i < GPIOHANDLES_MAX)
+-- 
+2.48.1
 
-I will also add "output-disable", which is missing, too.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
