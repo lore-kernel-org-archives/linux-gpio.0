@@ -1,81 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE5B38B157
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 22:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F2625B0B8
+	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 22:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788561961; cv=none; b=ERbJ1eXZbjyjjoyPoKWs9RwekhKLrq5sJ+d/E6wu4YMz3LG19fkjBC1wM7N7V9LMDbwyKYX+e/g8tfdl7CXVJdBgStAXQq2rpNwSK3Vzb/smOu9JB9g+wBoPKDnr3g2IDRT0w6sW7QscerXbt5fS6lC28z/vIRtvCXETl6xhUog=
+	t=1788562569; cv=none; b=nrtAWq6Dx4Knlo79XrkbYuS00zdB/kau24ZsTMawjrgyGSXrow5eS6si6U5yYrq54gU6RwBXnm3fRs8tc6bNpYcTLJhOA83Hdw9RPNqkqDXyeAIR0rQrB8cNPPCwwEcNMl1rYlQL5LPz2EwRmxtLzclvQJMXGmX3EGpITMhvAgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788561961; c=relaxed/simple;
-	bh=N6PrZC21iwen1B31Vi2jxyoGAz00i3RnJHUvEeJPYKI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JD/g+etDzOEzEUqAIqwoOlYKiXxFe45BAj/8W0P3W8Cs6rglgZ75LL/Zn6ozvtiMq6iy+XFTL6up9khf/34A7gZxckpQyN6iGRZilEyFcdvXJXVgoqUQdnKi39L8+4UtyWOzYlxAozVxsC3vLy8dvMaP02POayJLx3v1F7ScjSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d70iELOP; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788562569; c=relaxed/simple;
+	bh=wQbOZlOCfdfFx4A4KwoO3NXyqVWU8K47akLZ9fvLAA4=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=UXv3WpcBl5+4C+CtuPrFlN3RffcRY3u0YziGpt8NtJsTaR5q+yq35HotlwqBXf9DcjgMDu18TTa9AZCjyMbR8enGizzVYmIdReK68xNtaTO45Jy9M+FsGTuczjQKXOCzfpYVuYrmQirNTcHNZt4vb0vVXtVxuCEGVQX3ZWp907E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EJh6sM+f; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d70iELOP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6D4E1F0155B
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 22:45:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788561959;
-	bh=N6PrZC21iwen1B31Vi2jxyoGAz00i3RnJHUvEeJPYKI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=d70iELOPejhaBBj5+6MW44oGn0aWXKRbgAohwfHSsU/NLiIvY/fHQDlN6hkNCQojh
-	 KhsDrUKRNEtpUBfA4wXzCclmbNO5nsV0ItTAAd+M7utWhgIOTI88JJVCdlEfYcfHrZ
-	 Sp+cvzGDdyzy5G5Ds/uDrCbuGDYAm4vbC6ahg99HB8cJlTwyoMUzwGszByY5/+7QWO
-	 hGA+wKRDNsUhZmdcUspY3bXo33TZP7b4J95yD78zG9+PN2BrODGzpSpap7cLoFk2oZ
-	 xdMdKxA+P3VuuxMZkwX/X0dNbrCd4U0OrHFZtaKhN8khrcIWsGPUbucNxAh4IFP59x
-	 lI2oMGKWEi3Rw==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b4ae3e201cso1407039e87.2
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 15:45:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBznXeWnGNdgL8WY6nFYbFoWCyb8e4FSMprSFdTw5BQDqLksmqu4sqJ0L1lSS7zlx/04T/f/n2Uv+DM9@vger.kernel.org
-X-Gm-Message-State: AFuF++lWlN/egafzLyaoHikGHPqLoTdHnSkJH5AgoZBMAr+t/g5LPnlT
-	YIeplP+v/OEJ1gRLslfS97hRbjqC2CwR2pp58JGSizEM9MYc90fjAjRb7InubuNaYfEYQlWDhE9
-	Z5IYIXKJhMDE12vDRsg9qcLvAQnV84gs=
-X-Received: by 2002:a05:6512:a84:b0:5b0:eda:de26 with SMTP id
- 2adb3069b0e04-5b616f2f892mr1623528e87.16.1788561958599; Fri, 04 Sep 2026
- 15:45:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EJh6sM+f"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788562568; x=1820098568;
+  h=date:from:to:cc:subject:message-id;
+  bh=wQbOZlOCfdfFx4A4KwoO3NXyqVWU8K47akLZ9fvLAA4=;
+  b=EJh6sM+fahpGMRpDTL1DGOt2aM0IeDkUktTHQRZ+x0Dkip4g+FCpUDIt
+   YCG1T3a/UxC8Jz20qI1PtJAKc3Tl3Uo93eDL/eI7krpipgl9edI0e2JVH
+   4FEUJXT9LGiK9qJEgx0CalgzXM7fXm91+yPkkGNQcubixSGjjrcc2ivF0
+   BXIHLFH8ksMobqev1FffeNUaAl2Ulg4IyQN2rEVmBhniZXMfszWg+KL/y
+   k8x6KWunJj58aL8TSS4MWDlv/MaMnmCornmbtfhXG9RyYPoezTT4hdr9o
+   L8fTr9DDFCOfDd7dyTfbwPkctZ4LY+lc1ry3fdLQMjOOz4nE/+qjW9WLB
+   Q==;
+X-CSE-ConnectionGUID: t8s6e/d0QfKh8MI04Ar/pw==
+X-CSE-MsgGUID: 7rUt8i9VT2axmhdok1pxUQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11896"; a="99665399"
+X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; 
+   d="scan'208";a="99665399"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2026 15:56:08 -0700
+X-CSE-ConnectionGUID: m3/bm0GpT+mvoRfoHuVg2A==
+X-CSE-MsgGUID: /XYsxaXYQ9uxQ8UochDVgw==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO bfac249b2189) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 04 Sep 2026 15:56:07 -0700
+Received: from kbuild by bfac249b2189 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x2cpI-00000000AEY-11P7;
+	Fri, 04 Sep 2026 22:56:04 +0000
+Date: Sat, 05 Sep 2026 06:55:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org
+Subject: [brgl:pwrseq:for-next] BUILD SUCCESS
+ 3b04e9b8056e868c3e9a04cc74168c7c9a18746a
+Message-ID: <202609050644.DAHeahsg-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com> <20260904-cv75-v5-v6-13-e918514cb3b1@ambarella.com>
-In-Reply-To: <20260904-cv75-v5-v6-13-e918514cb3b1@ambarella.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Sat, 5 Sep 2026 00:45:46 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=tVwQPPCFCc=J6gxBt4VvSJKWKvbAeSRSybfXjvpcdPQ@mail.gmail.com>
-X-Gm-Features: AcwNN1WvpRED5iixL57tKxLT16byEdBDfHJOlSmTYR0bXv5jc6tVAgVJ2Y214Ck
-Message-ID: <CAD++jL=tVwQPPCFCc=J6gxBt4VvSJKWKvbAeSRSybfXjvpcdPQ@mail.gmail.com>
-Subject: Re: [PATCH v6 13/13] MAINTAINERS: add ARM/AMBARELLA SoC support
-To: longzhao@ambarella.com
-Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
-	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 4, 2026 at 8:39=E2=80=AFAM Long Zhao via B4 Relay
-<devnull+longzhao.ambarella.com@kernel.org> wrote:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git pwrseq/for-next
+branch HEAD: 3b04e9b8056e868c3e9a04cc74168c7c9a18746a  power: sequencing: Add Renesas RZ/G3L Power Ready driver
 
-> From: Long Zhao <longzhao@ambarella.com>
->
-> Add a maintainer entry covering Ambarella CV75 bindings, DTS and
-> related drivers.
->
-> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+elapsed time: 2369m
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+configs tested: 53
+configs skipped: 2
 
-Yours,
-Linus Walleij
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha         allnoconfig    gcc-16.1.0
+alpha        allyesconfig    gcc-16.1.0
+arc          allmodconfig    clang-24
+arc           allnoconfig    gcc-16.1.0
+arc          allyesconfig    clang-24
+arm           allnoconfig    gcc-16.1.0
+arm          allyesconfig    clang-24
+arm64        allmodconfig    clang-24
+arm64         allnoconfig    gcc-16.1.0
+csky         allmodconfig    gcc-16.1.0
+csky          allnoconfig    gcc-16.1.0
+hexagon      allmodconfig    gcc-16.1.0
+hexagon       allnoconfig    gcc-16.1.0
+i386         allmodconfig    clang-22
+i386          allnoconfig    gcc-16.1.0
+i386         allyesconfig    clang-22
+loongarch    allmodconfig    clang-24
+loongarch     allnoconfig    gcc-16.1.0
+m68k         allmodconfig    gcc-16.1.0
+m68k          allnoconfig    gcc-16.1.0
+m68k         allyesconfig    clang-24
+microblaze    allnoconfig    gcc-16.1.0
+microblaze   allyesconfig    gcc-16.1.0
+mips         allmodconfig    gcc-16.1.0
+mips          allnoconfig    gcc-16.1.0
+mips         allyesconfig    gcc-16.1.0
+nios2        allmodconfig    clang-20
+nios2         allnoconfig    clang-24
+openrisc     allmodconfig    clang-20
+openrisc      allnoconfig    clang-24
+parisc       allmodconfig    gcc-16.1.0
+parisc        allnoconfig    clang-24
+parisc       allyesconfig    gcc-16.1.0
+powerpc      allmodconfig    gcc-16.1.0
+powerpc       allnoconfig    clang-24
+riscv        allmodconfig    clang-24
+riscv         allnoconfig    clang-24
+riscv        allyesconfig    clang-24
+s390          allnoconfig    clang-24
+s390         allyesconfig    gcc-16.1.0
+sh           allmodconfig    gcc-16.1.0
+sh            allnoconfig    clang-24
+sh           allyesconfig    gcc-16.1.0
+sparc         allnoconfig    clang-24
+sparc64      allmodconfig    clang-20
+um            allnoconfig    clang-24
+um           allyesconfig    gcc-16.1.0
+x86_64       allmodconfig    clang-22
+x86_64        allnoconfig    clang-24
+x86_64       allyesconfig    clang-22
+x86_64      rhel-9.4-rust    clang-22
+xtensa        allnoconfig    clang-24
+xtensa       allyesconfig    clang-20
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
