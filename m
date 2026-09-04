@@ -1,363 +1,162 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BFF4A3F15
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 13:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D1C4A8A17;
+	Fri,  4 Sep 2026 14:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788530384; cv=none; b=CNfDXgVA67+6nIvpwfT5+QukoU5vyKILufJ4EJGO6aEInItNGPdhB03j6rvWweEWt/Usi6U7KimHYcQb6D5NBVig3zKcCZV/UJa4fCrdUEcSkUK0U5/9XPwq4JTCIqeMHcC+kE19b8bEAlMKkaDPKoNKTe1Bbm241utaAJSfMPA=
+	t=1788531368; cv=none; b=ZByeUHTYYhS7pCaqQNJy+UZPBUCOPjIpOuGIxDOfX21El4fcQoDR4yESon1JDErlZtdNxQbCdZ+t3T5EGfRBvgb3Z2DkqGit0BXXvI55/GPYS7KxNhmR3M7liL5XIOA2YNCjpyeflPfX+h26WB3bz77LXCnHWzVY+Td3YyphRAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788530384; c=relaxed/simple;
-	bh=7pCFeF+gU3ZAuL7WEqKYbLZ08IsQzpqKN5xp8+HwQ+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BU4jTs3BtFklesjyPPVyzTz7ovadqE2AWM4T1JdTShiaqBqGuwsbvEVug4WbHAH3eBVB4Nyqv5HE8h/Ry6bIbT/piCU2WvCOvxcZvqqDEajDT47CuYVbOlGeL0xgmVhorxok4omlKRINE5feoByW+mHWsyY+bzlMTaHLfrFh64o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T51kJztQ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=E6ZfKMqL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1788531368; c=relaxed/simple;
+	bh=FGQG3DmM+7X/giTmbo/iKtzgJp69jhePuib7JGtlpCY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=lD9mlfX0HmPMml7y7iiiNXKhHJnhiCHZJJtTud1Uwz5N2IXMO/sn8R8iUYt0HQ+8BBlKkJTRcpQ8GWJOByENVqNkWC9jgi+iV6TOyKoEFCtpYUwZ1HsqPEgV5LnWEcy1NBoINsZoj8VWgJ0lr1Pms4rAffnZIQCDsxTPZ8MI1RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=Lq6j/3Mq; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T51kJztQ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="E6ZfKMqL"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 684Dggxg3196317
-	for <linux-gpio@vger.kernel.org>; Fri, 4 Sep 2026 13:59:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=4RMHhI2ZfjbNe1CKw5LT3jL0
-	mAhEr4O/HrQd7u9Jkos=; b=T51kJztQDFgdxHc7U69v8uKcn/eLjcz87y31AZPi
-	TtmMVaQfCwx8h5XjI4zLzn1l9GnOFahIoXY5XY4b/5t25L63PDshmCPZxEjr6zkp
-	0efMrcLrcmIl4R/aL4Jf2ygmQyIklH7MOHL9KK7bUN9e1rU5VGQdFV5602hsLwY+
-	/tZMrjTZ+/MoMVTXN/wkjjw4H68Wn2OFkBilA0QFHMdjWO2h/82Zlvw9rBw/8ypI
-	3nBcPPgn/g2rqkdkkvrfkZLe5DAroUxixwM0FEjS54SVLxFoXNr5bu28ZanZysms
-	gSN8H4Pl9aXR0N0DzOdiXcS6sA0+cd7N5toyiUTVwC293A==
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gfk922hjk-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 13:59:41 +0000 (GMT)
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-737d2f02d2fso790817137.1
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 06:59:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788530381; x=1789135181; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=4RMHhI2ZfjbNe1CKw5LT3jL0mAhEr4O/HrQd7u9Jkos=;
-        b=E6ZfKMqLeOXyXzEs2+dD2FjJXCGOk2VJUkNu3DXz2tbdZKOYar7JjOIWrMjcwQwnYK
-         9w5sJvR6B8T0EJwMLyN2cHr++eTzS7HsyEaGTtW43jtDRU9iV6lLcsjQBhkUIGe2B6oU
-         +v3lNonzgCOz7tY23LrzqRiF18PrsTKT5OnFhc4K4mdvdnGp/GvDxn2HjQeHA6O3piXG
-         ray6a/8r1D9FLW8uiMYZenWFaq7aMnTTAJgyGMLMDc+vSl5TxiW7FymaBEoHDsC2LbsE
-         a5ZyoYY8kCqCXETNXto1EDkePi1civqhkJgT5SmrDTF2GFbDLb7Ry5EU/dBjKeocOyOA
-         ZPOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788530381; x=1789135181;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=4RMHhI2ZfjbNe1CKw5LT3jL0mAhEr4O/HrQd7u9Jkos=;
-        b=mlLfhWTsgtEjwhIl/mekb5uO9rUDC5HOukMtoZdS0SDPQCxJeBF+Y0ohUzpfELk+ed
-         3zQAw6g9qTyyHk2saJyQoTmZteGSAj0Le5LCU0g/wqJL898/IXI5mW1KPzymt5k72Ifk
-         T3nMP+uB4yO5WxUHeGQo7LCdFd6Y1FQt3aBal1/ZirYPp0wHfaEd+sEM/oLsDmBO1nEi
-         Hk/q2eDopBuucHlb/qOVUmG+H4pI6nQK3KptAIEG9yGuEh8ghDSPosqlJdaq4XhHhZiF
-         Zxu/6jJkfB2sjoddrlzqF40kqha2j2S4Rct1CnHQaQqJp3eDsyAerr5fx2y8jcbqG2Lp
-         bqfg==
-X-Forwarded-Encrypted: i=1; AKwUvByhSZywPhEP5YcP6B7zaGkHe+7g1vmVOUrsyF0bt4qVtMCl0JWfZqHfv8uE8zbfjWvwOOwSW8bhHKEd@vger.kernel.org
-X-Gm-Message-State: AFuF++kSuLd+3pK+gGLL/HTZP7gQfon1kFX/egrL7WRd6J/IayHAEb2P
-	DfIO/Nfqcz1c9KxKt81/N4GVGkXcdMNGoXI7nG6V19echO/4uvLjLCzin3ypMDGpzekXdhR4skh
-	mD7Sbr5qtD5FnO3APCayMakGUvs17ss+/wcl2FeZ6KT1GgfexgTtvm0280W1krGCB
-X-Gm-Gg: AYBFou29PHRbcuOlAG5yCxgaHptZ6jGsCg18hrgIBnHQTpLkSBvKksJACwp4BcKmpjm
-	DsMpJ1t3Ast4sSOwyzhsQk6WB05LfEvppEWC+Vk8vn3xcRtCmRtmzz29/dPHVBKvBhqT1GjylcS
-	zRAqrag7tR+xF2OHU35jp9+YaYjmM3kcL2Rp1oh+I1m0lW0Tgs+vZ+kB5QF//BRIOL8hiA0nZ3Z
-	4b6/1EmqpSEfBIJLdZ4Dh/c4681Du6f7XebcEwwGaS8AMEcD2SsV5anD/lXTBKTGsnMvenspfCr
-	ypPQu8lhU062x6SHa83GvcqsZtaCGD0x4qiCgKe8pSUe90qFxN8wztybRTvs+RYL+e4QIe/fkTl
-	AE/34AnzuIpFx6A==
-X-Received: by 2002:a05:6102:b02:b0:786:c86c:4f5e with SMTP id ada2fe7eead31-78a4a6e7023mr2348234137.3.1788530380565;
-        Fri, 04 Sep 2026 06:59:40 -0700 (PDT)
-X-Received: by 2002:a05:6102:b02:b0:786:c86c:4f5e with SMTP id ada2fe7eead31-78a4a6e7023mr2348208137.3.1788530380019;
-        Fri, 04 Sep 2026 06:59:40 -0700 (PDT)
-Received: from localhost ([188.216.77.92])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cee7fec25sm172877955e9.13.2026.09.04.06.59.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Sep 2026 06:59:38 -0700 (PDT)
-Date: Fri, 4 Sep 2026 15:59:38 +0200
-From: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Michael Walle <mwalle@kernel.org>, Alex Elder <elder@riscstar.com>,
-        Daniel Thompson <daniel@riscstar.com>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] PCI/pwrctrl: tc9563: add GPIO auxiliary device
- support
-Message-ID: <aprOyou2q0Ckw82m@lore-desk>
-References: <20260903-pci-tc9563-aux-v2-3-34c625b542c1@oss.qualcomm.com>
- <20260903211718.GA2247285@bhelgaas>
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="Lq6j/3Mq"
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 684DgPSx4068661;
+	Fri, 4 Sep 2026 10:15:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=rxmPy
+	wnjcLCbFsxSJFUDwnHHA1K7/8xkNzN+tJwpQgI=; b=Lq6j/3MqE6lCjX/RaoWo/
+	99D77oW/BKEC3Jbu6vHy/owl3BOfaOuiLK17oDli9aT5JrqoNzyI0Q12gdM5x9fD
+	4BnuotsajV9evOosBudRIYCfgFyaspR+fIAg9M2MasU6bwQneJJCqIkc4/ILpK55
+	zmLlU2+lejWqzyq+xJ9VZbPmRUwEM5BfbA9X1/tB2YqxDVV04zvCTYOfUZfdxWmT
+	CnrO1C7W92Z7aOFGYAU1d03KKueZSAtRiFy0u7EtK9UWq28YYKekr3AiyGS9b5V/
+	Y+Fro2PoJAviPI29RHzxtm1+HXCHbWCBIKPsl6GFaz1JYaECvSZJokPJFc7yC0J/
+	A==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4gfxaw0d0m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Sep 2026 10:15:27 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 684EFQBT036061
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 4 Sep 2026 10:15:26 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.37; Fri, 4 Sep 2026 10:15:26 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.37; Fri, 4 Sep 2026 10:15:26 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Fri, 4 Sep 2026 10:15:25 -0400
+Received: from HYB-e1y2fvUQ3cx.ad.analog.com ([10.32.225.204])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 684EF2d5026210;
+	Fri, 4 Sep 2026 10:15:18 -0400
+From: Janani Sunil <janani.sunil@analog.com>
+Date: Fri, 4 Sep 2026 16:14:53 +0200
+Subject: [PATCH v6 01/17] iio: adc: adi-axi-adc: Initialize state mutex
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="VXoiADj/XRej++0X"
-Content-Disposition: inline
-In-Reply-To: <20260903211718.GA2247285@bhelgaas>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA0MDEyNyBTYWx0ZWRfX9hH4QHyjUgKA
- GK+fNGKcWvP/Juykphfif0WW2rhKYVIRLZJRkhK4ZatvFjq4O4youuJ2mqtSd/0JnsrK7QbCeny
- jOcgfsFq8U3rptsz/wd/HDwXZ0/CCHv1gT632fpwKenrQCmMtDk7DA8/aHZsfX6rZis4iPhQJ2u
- 2M8FYwa3rPiciyfKqoSDis9qdkBFrm+t4ukuMWJkmgNKa0nFCUc+PHxi1YBUUBn7bCquoStuUg1
- 1hC02M7dlCUvCkZhmVIf329nvqKN6ZhipvY9t6i6q4mG3GgBpVcCyHPgqo+rmJM5HgsUVl00HLl
- zCFn44mGA7taP1stJkbTb9j5M+oNVJ78KRTP/Qh3DD0UGrVCyLyhiGMvxDy+BMP6g8630wFCbIz
- MJwA0U0p1c+zLtHrXE1O4NTgHxMO+zZkIN4HFfnceuDSSYb/JkW5Xgi52IpXREb7f4B8yWX5V0H
- UMqRuUfhCx0Lo6btf2w==
-X-Authority-Analysis: v=2.4 cv=Oc2oyBTY c=1 sm=1 tr=0 ts=6a9acecd cx=c_pps
- a=N1BjEkVkxJi3uNfLdpvX3g==:117 a=WpTaRW6qxYHRGzLzQsVYzg==:17
- a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22 a=EUspDBNiAAAA:8
- a=1XWaLZrsAAAA:8 a=h4XguDUzrQ5YFVcWg1QA:9 a=CjuIK1q_8ugA:10
- a=JwWWi_KuMMMZo6bZ-A0A:9 a=crWF4MFLhNY0qMRaF8an:22
-X-Proofpoint-ORIG-GUID: fBZDoGV3oESX3dP9bgv9RMV18G3ACHxD
-X-Proofpoint-GUID: fBZDoGV3oESX3dP9bgv9RMV18G3ACHxD
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA0MDEyNyBTYWx0ZWRfX1WLmVr2jDGus
- vUf+bZhG8tLsEDFt/0j0faRPlHOk71CCGyStxbbeC3LbkxwfnCC3ADFl3HjvtAKh0eX4d1dywxj
- pIVp6A1wVt59PVgIec5wd+Xd9EDOEHk=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20260904-ad7768-driver-v6-1-e4378f946bfb@analog.com>
+References: <20260904-ad7768-driver-v6-0-e4378f946bfb@analog.com>
+In-Reply-To: <20260904-ad7768-driver-v6-0-e4378f946bfb@analog.com>
+To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        "David
+ Lechner" <dlechner@baylibre.com>,
+        Andy Shevchenko <andy@kernel.org>, "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Olivier Moysan <olivier.moysan@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Michael Walle <mwalle@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+CC: <linux@analog.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <jananisunil.dev@gmail.com>,
+        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@baylibre.com>,
+        Janani Sunil <janani.sunil@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1788531302; l=1021;
+ i=janani.sunil@analog.com; s=20260507; h=from:subject:message-id;
+ bh=FGQG3DmM+7X/giTmbo/iKtzgJp69jhePuib7JGtlpCY=;
+ b=2b35DldDF3ydUbcychk6QzezEG3BNsPaYx8h/vNjPptfL3CIIo7jerVcUGOPseFYqWJLM/Iap
+ EB+L+qiWzz+BEvyHg1z5zjZKilcbNzmL/RQv1kCRL3pIf9b7qwU8+2P
+X-Developer-Key: i=janani.sunil@analog.com; a=ed25519;
+ pk=e25MyjRLPY3RWrYm/LrJ+/+t1MZJUbkgIW5CZg+g+hA=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Authority-Analysis: v=2.4 cv=UNnt2ify c=1 sm=1 tr=0 ts=6a9ad27f cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=0sLvza09kfJOxVLZPwjg:22 a=Z0pTeXoby7EwIRygza74:22 a=gAnH3GRIAAAA:8
+ a=_ljTvifiVFBlT2kRk7cA:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA0MDEzMCBTYWx0ZWRfX4AGs5En9tdyo
+ oAciCPhq0YXvb8tNl7jLDlg0NcZm+glt8swAKU+EVeo1jTEciWffebTcAucYyN8llbNfK8nwP9m
+ 3Nb2x9KfDvwinDzGiurmGouQgDi2vbtXPi1OxCQN0sEPNy1iKQPI
+X-Proofpoint-GUID: 5QT3f8zbuzDyqcjld90mTGtO44lsbLy1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA0MDEzMCBTYWx0ZWRfX7o4PK1vcPKmY
+ SzbPwJBbuMU8DkJ+lcH7wkFzlax0vKEL0vd3AbSALaob3ZSoUXh2ZlsQNVYgBVd+8ZPIwExEx3M
+ lPCCfAMycbT0PTPS6XPGgTlsIkjl/UXWjwfaW5xD4JvRKrZREj1bROCmkrXgQidNYMEx9s87CXX
+ WMwnbqVaGNgH/5uOfs9kUDQaBAIFaHeYcQ3Kn9IHTZP7RzWbBh15od8oBQjA14cmINyks2jWMsa
+ Rh7y3Aea1/byf3wI5gxlBd9D6lGlr5hLCmch7H4X5fBlhLDf9fNYh+GnlXPcKCFnFtdsdPDyGQn
+ e1c/EbhoaT728ElmmeMLT0a8QecAUmbcNZbUnguev3ZhhgeDxBcpqZ8cbDgnvXqJ++qG1mbZrUE
+ yTDHgR8eCnh//EKimtzEL17sSDYsP84wvaGECJf7+8AEoPkEcpM2GM0uOcppcaZE2eTA7sww/EW
+ NApmKO0AEy9pcHegspg==
+X-Proofpoint-ORIG-GUID: 5QT3f8zbuzDyqcjld90mTGtO44lsbLy1
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-04_04,2026-09-03_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 impostorscore=0 bulkscore=0 suspectscore=0
- priorityscore=1501 spamscore=0 clxscore=1015 phishscore=0 malwarescore=0
+ suspectscore=0 malwarescore=0 clxscore=1011 priorityscore=1501 spamscore=0
+ bulkscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 adultscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609040127
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609040130
 
---VXoiADj/XRej++0X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The AXI ADC register access paths serialize transactions with st->lock,
+but probe does not initialize it. Initialize the mutex before registering
+the backend.
 
-> On Thu, Sep 03, 2026 at 09:52:59AM +0200, Lorenzo Bianconi wrote:
-> > The TC9563 embeds a GPIO controller used for per-port reset signals.
-> > Create an auxiliary device for it so the gpio-tc9563 driver can
-> > register the GPIO chip and enable DT-based GPIO lookups. Pass the
-> > tc9563 regmap to the auxiliary device as its platform data.
-> >=20
-> > The downstream port DT parsing loop gains an of_node_is_type() filter
-> > to skip non-PCI child nodes such as the GPIO controller node.
->=20
-> "Add an of_node_is_type() filter in the downstream port DT parsing
-> loop ..." to match the rest.  Or even just "Skip non-PCI nodes such as
-> GPIO controller nodes when parsing downstream port DT".
+Fixes: 7ecb8ee5c93b ("iio: adc: adi-axi-adc: support digital interface calibration")
+Signed-off-by: Janani Sunil <janani.sunil@analog.com>
+---
+This patch is already queued in the IIO fixes-togreg branch as commit
+040c2514b25b ("iio: adc: adi-axi-adc: Initialize state mutex").
+---
+ drivers/iio/adc/adi-axi-adc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-ack, I will fix it in v2.
+diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
+index 589f03618ecf..fc7cc92b35f0 100644
+--- a/drivers/iio/adc/adi-axi-adc.c
++++ b/drivers/iio/adc/adi-axi-adc.c
+@@ -714,6 +714,10 @@ static int adi_axi_adc_probe(struct platform_device *pdev)
+ 	if (!st)
+ 		return -ENOMEM;
+ 
++	ret = devm_mutex_init(dev, &st->lock);
++	if (ret)
++		return ret;
++
+ 	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
 
->=20
-> > The pwrctrl driver does not wait for the GPIO chip to be probed. The
-> > per-port reset GPIO lookup, returning -EPROBE_DEFER until the chip is
-> > registered, is added in the next patch.
-> >=20
-> > Select AUXILIARY_BUS and GPIO_TC9563 in Kconfig.
-> >=20
-> > Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
->=20
-> What's the merge strategy?  I guess this depends on the previous
-> drivers/gpio patches because they add linux/soc/qcom/tc9563.h, which
-> this patch uses, so they all have to go together?
+-- 
+2.43.0
 
-Yes, right. I guess all of the series can go via pci tree if gpio maintaine=
-rs
-are fine with that.
-
->=20
-> Capitalize "Add GPIO ..." in the subject to match the history, then
-
-ack, I will fix it in v2.
-
->=20
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
->=20
-> > ---
-> >  drivers/pci/pwrctrl/Kconfig              |  1 +
-> >  drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c | 80 ++++++++++++++++++++++++=
-++++++--
-> >  2 files changed, 78 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/drivers/pci/pwrctrl/Kconfig b/drivers/pci/pwrctrl/Kconfig
-> > index 1952ab4f29b6..38aab596aa04 100644
-> > --- a/drivers/pci/pwrctrl/Kconfig
-> > +++ b/drivers/pci/pwrctrl/Kconfig
-> > @@ -29,6 +29,7 @@ config PCI_PWRCTRL_TC9563
-> >  	select PCI_PWRCTRL
-> >  	default m if ARCH_QCOM
-> >  	depends on I2C
-> > +	depends on GPIO_TC9563
-> >  	select REGMAP_I2C
-> >  	help
-> >  	  Say Y here to enable the PCI Power Control driver of TC9563 PCIe
-> > diff --git a/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c b/drivers/pci/pwr=
-ctrl/pci-pwrctrl-tc9563.c
-> > index b0d8912690a2..6df512d78b54 100644
-> > --- a/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c
-> > +++ b/drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c
-> > @@ -4,11 +4,13 @@
-> >   */
-> > =20
-> >  #include <linux/array_size.h>
-> > +#include <linux/auxiliary_bus.h>
-> >  #include <linux/bitfield.h>
-> >  #include <linux/bits.h>
-> >  #include <linux/delay.h>
-> >  #include <linux/device.h>
-> >  #include <linux/gpio/consumer.h>
-> > +#include <linux/gpio/driver.h>
-> >  #include <linux/i2c.h>
-> >  #include <linux/module.h>
-> >  #include <linux/of.h>
-> > @@ -20,12 +22,10 @@
-> >  #include <linux/regulator/consumer.h>
-> >  #include <linux/string.h>
-> >  #include <linux/types.h>
-> > +#include <linux/soc/qcom/tc9563.h>
->=20
-> Alphabetize in with the rest of the #includes.
-
-ack, I will fix it in v2.
-
-Regards,
-Lorenzo
-
->=20
-> > =20
-> >  #include "../pci.h"
-> > =20
-> > -#define TC9563_GPIO_CONFIG		0x801208
-> > -#define TC9563_RESET_GPIO		0x801210
-> > -
-> >  #define TC9563_PORT_L0S_DELAY		0x82496c
-> >  #define TC9563_PORT_L1_DELAY		0x824970
-> > =20
-> > @@ -393,6 +393,73 @@ static int tc9563_pwrctrl_parse_device_dt(struct d=
-evice_node *node,
-> >  	return 0;
-> >  }
-> > =20
-> > +static void tc9563_pwrctrl_adev_release(struct device *dev)
-> > +{
-> > +	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
-> > +
-> > +	of_node_put(adev->dev.of_node);
-> > +	kfree(adev);
-> > +}
-> > +
-> > +static void tc9563_pwrctrl_adev_remove(void *data)
-> > +{
-> > +	struct auxiliary_device *adev =3D data;
-> > +
-> > +	auxiliary_device_delete(adev);
-> > +	auxiliary_device_uninit(adev);
-> > +}
-> > +
-> > +static int tc9563_pwrctrl_adev_add(struct device *dev, const char *nam=
-e,
-> > +				   u32 id, struct device_node *of_node,
-> > +				   void *priv_data)
-> > +{
-> > +	struct auxiliary_device *adev;
-> > +	int ret;
-> > +
-> > +	adev =3D kzalloc_obj(*adev);
-> > +	if (!adev)
-> > +		return -ENOMEM;
-> > +
-> > +	adev->id =3D id;
-> > +	adev->name =3D name;
-> > +	adev->dev.parent =3D dev;
-> > +	adev->dev.platform_data =3D priv_data;
-> > +	adev->dev.release =3D tc9563_pwrctrl_adev_release;
-> > +	adev->dev.of_node =3D of_node_get(of_node);
-> > +
-> > +	ret =3D auxiliary_device_init(adev);
-> > +	if (ret) {
-> > +		of_node_put(adev->dev.of_node);
-> > +		kfree(adev);
-> > +		return ret;
-> > +	}
-> > +
-> > +	ret =3D auxiliary_device_add(adev);
-> > +	if (ret) {
-> > +		auxiliary_device_uninit(adev);
-> > +		return ret;
-> > +	}
-> > +
-> > +	return devm_add_action_or_reset(dev, tc9563_pwrctrl_adev_remove, adev=
-);
-> > +}
-> > +
-> > +static int tc9563_pwrctrl_add_gpio_adev(struct tc9563_pwrctrl *tc9563)
-> > +{
-> > +	struct device *dev =3D tc9563->pwrctrl.dev;
-> > +	struct fwnode_handle *fwnode;
-> > +	int ret;
-> > +
-> > +	fwnode =3D gpiochip_node_get_first(dev);
-> > +	if (!fwnode)
-> > +		return 0;
-> > +
-> > +	ret =3D tc9563_pwrctrl_adev_add(dev, TC9563_GPIO_DEV_NAME, 0,
-> > +				      to_of_node(fwnode), tc9563->regmap);
-> > +	fwnode_handle_put(fwnode);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> >  static int tc9563_pwrctrl_power_off(struct pci_pwrctrl *pwrctrl)
-> >  {
-> >  	struct tc9563_pwrctrl *tc9563 =3D container_of(pwrctrl,
-> > @@ -565,6 +632,9 @@ static int tc9563_pwrctrl_probe(struct platform_dev=
-ice *pdev)
-> >  	 */
-> >  	port =3D TC9563_USP;
-> >  	for_each_child_of_node_scoped(node, child) {
-> > +		if (!of_node_is_type(child, "pci"))
-> > +			continue;
-> > +
-> >  		if (++port >=3D TC9563_MAX)
-> >  			break;
-> > =20
-> > @@ -596,6 +666,10 @@ static int tc9563_pwrctrl_probe(struct platform_de=
-vice *pdev)
-> >  	tc9563->pwrctrl.power_on =3D tc9563_pwrctrl_power_on;
-> >  	tc9563->pwrctrl.power_off =3D tc9563_pwrctrl_power_off;
-> > =20
-> > +	ret =3D tc9563_pwrctrl_add_gpio_adev(tc9563);
-> > +	if (ret)
-> > +		goto remove_i2c;
-> > +
-> >  	ret =3D devm_pci_pwrctrl_device_set_ready(dev, &tc9563->pwrctrl);
-> >  	if (ret)
-> >  		goto power_off;
-> >=20
-> > --=20
-> > 2.55.0
-> >=20
-
---VXoiADj/XRej++0X
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaprOygAKCRA6cBh0uS2t
-rIY/AP0fU8j6Qo/YEywAp/ZkDDvk9lcJmRDc7tUAlt8NEnh7XAD+Kyg/S1IVYqkZ
-DVuwwVt67UDrac7CTDeIMgzWtPusKgQ=
-=Zf0R
------END PGP SIGNATURE-----
-
---VXoiADj/XRej++0X--
