@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8469E41D63C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A047D41F5D7;
 	Fri,  4 Sep 2026 06:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788503954; cv=none; b=degmBz6isfAXMn4eR12lXtQmQvhhXn4LNzC4tpZbOyPlzU1448G46J6PJmJy/2sMSnF9zoqcSjmdOnl/Q/N7XHB97qjTIk6RRiXwfCT/4BIzDV5YxFT3Ok8Yxna1kxwcbHKleE0Wa94WJU9nCHWWUqigmYrvb+Pipv8NclyTPyQ=
+	t=1788503954; cv=none; b=KC+Zl8F35w1U6+TeXDaIajpfm3viLziZf2H4lkHHpqRdedR0CMKKqyHoIbD9iSEMBsFAVivSwsYei47Op13YtLIj00FNEHRJ/ZqaS8MsAW2XVGCS+WXR9CPGz/+4dirVzMKcdOjLnQJLHo/Kg+hATO1nKODbd4b0+A1YVoaLQQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1788503954; c=relaxed/simple;
-	bh=qzWoSh8qS3D6DEc0hsDkzK6kHJGmD3lb9vElj7+y2p8=;
+	bh=r4yme7FRSW8qMCF1+BSpasmdZD2Vf8zFJ46MWRuLUqo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lnNjdhRRSYt3647/P1x0BK3e8VCY6V2oD0KOF1KTsplz2Hh+9tZLeYexvb2TDCLAotZHJl/tnAtnuUydiTqG6vg+QY/CfC1E0z0a1LDlCHOqlvDnVMk5dDQByAB6XmyVhKqF/8Y7wSAj9mriIWYxRTJ+mPx7uPXaOmWYy4VYQ20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RTV+s7J/; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=jn8cciVS3e+sZcZN1RW9NQ+AHdbyZBLr/qowKk+xsEzgmciprvws7BWdXPn+ezio7rGDe4oAYUCsZjtO5xt+uKkPvnJVmdjBvonJmd6aTxOlTfwzxWled6HWkUxCfabZrCb032bOfyH5zedCPsB6noolQr58is1ecXBa34rfPag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NNV6JFOg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RTV+s7J/"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3286AC4AF54;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NNV6JFOg"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5EC82C4AF10;
 	Fri,  4 Sep 2026 06:39:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1788503954;
-	bh=qzWoSh8qS3D6DEc0hsDkzK6kHJGmD3lb9vElj7+y2p8=;
+	bh=r4yme7FRSW8qMCF1+BSpasmdZD2Vf8zFJ46MWRuLUqo=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=RTV+s7J/HGrlpn/P+TNOppYiq/KRpwl8pPixfJO0brlNNsAMVai6khF2bWlZnCiKu
-	 LeD3nUj3wY2pDFlPRi8QByGrpQeejHuKveq+Z7Jm5UYm+xiDL2zDW6WGoaB5XHLwpq
-	 DQysRSbzfITBb7ozjX0C2plrvFm82XRuZMD1CWlGqoJ5rtYBbM0QgRVTJ5o3cmaIwd
-	 thlNkrpk9JCuEq9DajxSL5w4X5alx8IfS0kwgJeJYur8YZCHqRkUooTAs08+SuvWII
-	 Vsv87yToUCFcId7Q195gkY7hG0HB+bRMvtvvzJSx9JrmcWKJbs0CvebIBp1ao+pD1j
-	 gyRaGTR3no8WQ==
+	b=NNV6JFOgP/JIDypWO+NQSAvjMBmz21LmtiAbhhU/zStKxI77G8Ip1URXcNNFqKRjH
+	 E6kiS7eEL1KLu8lsQlb7qJ41Pv0sKAu+FBXFfohPRf4v9nwjBHlL4xu70EGh7vuhfr
+	 oW0ARFgJt3fFG26aNXvsbPHG2bhIsbgsCLzCs95qF1vaBIFhVjZiMlkDN5K8E8kBxT
+	 sEy5nOxndMp6e9A9z8AuAGIBwxwkqfU7Rn9KpWCWleWw5soo1b9dmFZa7edYX/n/RY
+	 LZfJFcB6EPy32SraTClN6G8asxPbTydFMXO8AveAd0kGeo6z2nhHcN4h2/0xHiulXU
+	 04LtLETXyc9NQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1FAC79F80;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48067C79F82;
 	Fri,  4 Sep 2026 06:39:14 +0000 (UTC)
 From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Fri, 04 Sep 2026 14:38:14 +0800
-Subject: [PATCH v6 07/13] clk: ambarella: add CV75 CCU driver
+Date: Fri, 04 Sep 2026 14:38:16 +0800
+Subject: [PATCH v6 09/13] gpio: pl061: use gpio-regmap and add Ambarella
+ layout
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260904-cv75-v5-v6-7-e918514cb3b1@ambarella.com>
+Message-Id: <20260904-cv75-v5-v6-9-e918514cb3b1@ambarella.com>
 References: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com>
 In-Reply-To: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com>
 To: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -62,11 +63,11 @@ Cc: Long Zhao <longzhao@ambarella.com>, Rob Herring <robh@kernel.org>,
  linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788503951; l=34308;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1788503951; l=18274;
  i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=fa1qmpnXDBk9Jmnsl4vEEvE9GNr9O+K6mhrOaymx1mQ=;
- b=fHhyAqg1yjMvn3vtDFu78ct6C6gZBJ7+oUnXv/moen29EQy5yXDmcFIKWeEy6Fxqy/DhVZD0L
- yrXDa809cfZDNthHdu+OZtrNOF1+LsbruWpsrZ+z2XngE02WIWL5xJN
+ bh=V1wgVvwkEs+6fWnu6vAzP061lTGyxowJwkCsFwebUoA=;
+ b=WSk9h9IAGipLjwvvCloqfx8Qa9bZ7od7bKIDIJU0zD1keqZaZRzw1tXXuIW4G0DCnRqcmXGld
+ 3GJVg5tcEFID81ggrOz88Qa6FT9k07WOBC2PQ0wQ6h1vyXsDN+ODUaA
 X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
  pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
 X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
@@ -76,1262 +77,572 @@ Reply-To: longzhao@ambarella.com
 
 From: Long Zhao <longzhao@ambarella.com>
 
-Add the Ambarella CV75 clock driver covering the core PLL and the
-UART0 / AHB / APB clocks needed for early console bring-up.
+Convert PL061 data and direction handling to gpio-regmap while
+keeping the existing PL061 irqchip path. Add an Ambarella CV75
+register layout variant on the AMBA bus, without claiming unverified
+GPIO suspend/resume support for Ambarella.
 
 Signed-off-by: Long Zhao <longzhao@ambarella.com>
 ---
- drivers/clk/Kconfig                 |   1 +
- drivers/clk/Makefile                |   1 +
- drivers/clk/ambarella/Kconfig       |  13 ++
- drivers/clk/ambarella/Makefile      |   6 +
- drivers/clk/ambarella/ccu-cv75.c    | 296 +++++++++++++++++++++++++
- drivers/clk/ambarella/ccu_common.c  |  60 +++++
- drivers/clk/ambarella/ccu_common.h  |  25 +++
- drivers/clk/ambarella/ccu_mux_div.c | 234 ++++++++++++++++++++
- drivers/clk/ambarella/ccu_mux_div.h |  35 +++
- drivers/clk/ambarella/ccu_pll.c     | 421 ++++++++++++++++++++++++++++++++++++
- drivers/clk/ambarella/ccu_pll.h     |  70 ++++++
- 11 files changed, 1162 insertions(+)
+ drivers/gpio/Kconfig      |   2 +
+ drivers/gpio/gpio-pl061.c | 342 ++++++++++++++++++++++++++++------------------
+ include/linux/amba/bus.h  |   1 +
+ 3 files changed, 212 insertions(+), 133 deletions(-)
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 1717ce75a907..fbbf4963716c 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -506,6 +506,7 @@ config COMMON_CLK_RPMI
- 	  the RISC-V platform management interface (RPMI) specification.
- 
- source "drivers/clk/actions/Kconfig"
-+source "drivers/clk/ambarella/Kconfig"
- source "drivers/clk/analogbits/Kconfig"
- source "drivers/clk/aspeed/Kconfig"
- source "drivers/clk/bcm/Kconfig"
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index cc108a75a900..30d823ee606f 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -112,6 +112,7 @@ obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
- 
- # please keep this section sorted lexicographically by directory path name
- obj-y					+= actions/
-+obj-y					+= ambarella/
- obj-y					+= analogbits/
- obj-y					+= aspeed/
- obj-$(CONFIG_COMMON_CLK_AT91)		+= at91/
-diff --git a/drivers/clk/ambarella/Kconfig b/drivers/clk/ambarella/Kconfig
-new file mode 100644
-index 000000000000..d79bb4bd6df5
---- /dev/null
-+++ b/drivers/clk/ambarella/Kconfig
-@@ -0,0 +1,13 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+config CLK_AMBARELLA_CV75
-+	bool "Ambarella CV75 RCT clock controller"
-+	depends on ARCH_AMBARELLA || COMPILE_TEST
-+	select CLK_AMBARELLA_CCU
-+	default ARCH_AMBARELLA
-+	help
-+	  Say Y to enable the Ambarella CV75 RCT clock controller.
-+
-+config CLK_AMBARELLA_CCU
-+	bool
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index f03c05288376..55a129836158 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -583,6 +583,8 @@ config GPIO_PL061
+ 	depends on ARM_AMBA || COMPILE_TEST
+ 	select IRQ_DOMAIN
+ 	select GPIOLIB_IRQCHIP
++	select GPIO_REGMAP
 +	select REGMAP_MMIO
-diff --git a/drivers/clk/ambarella/Makefile b/drivers/clk/ambarella/Makefile
-new file mode 100644
-index 000000000000..36e96326ea97
---- /dev/null
-+++ b/drivers/clk/ambarella/Makefile
-@@ -0,0 +1,6 @@
-+#
-+# Makefile for ambarella specific clk
-+#
-+
-+obj-$(CONFIG_CLK_AMBARELLA_CCU) += ccu_common.o ccu_mux_div.o ccu_pll.o
-+obj-$(CONFIG_CLK_AMBARELLA_CV75) += ccu-cv75.o
-diff --git a/drivers/clk/ambarella/ccu-cv75.c b/drivers/clk/ambarella/ccu-cv75.c
-new file mode 100644
-index 000000000000..c4828be598be
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu-cv75.c
-@@ -0,0 +1,296 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ *
-+ * CV75 RCT clock controller for boot clocks.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/ambarella,cv75-rct.h>
-+
-+#include "ccu_common.h"
-+#include "ccu_mux_div.h"
-+#include "ccu_pll.h"
-+
-+enum amb_cv75_clk_type {
-+	AMB_CV75_CLK_FIXED_RATE,
-+	AMB_CV75_CLK_FIXED_FACTOR,
-+	AMB_CV75_CLK_PLL,
-+	AMB_CV75_CLK_DIV,
-+	AMB_CV75_CLK_MUX_DIV,
-+};
-+
-+enum amb_cv75_clk_ref {
-+	AMB_CV75_CLK_REF_OSC = -1,
-+	AMB_CV75_CLK_REF_DUMMY = -2,
-+};
-+
-+/* PLL version for CV75 (ambarella,clkpll-v1 in vendor DTS) */
-+static const struct amb_pll_soc_data cv75_pll_soc_data = {
-+	.pll_version	= 1,
-+	.fsout_mask	= CTRL2_FSOUT_DIV2,
-+	.fsout_val	= CTRL2_FSOUT_DIV2,
-+	.fsdiv_mask	= CTRL2_FSDIV_DIV2,
-+	.fsdiv_val	= CTRL2_FSDIV_DIV2,
-+	.vcodiv_mask	= CTRL2_VCODIV_DIV2,
-+	.vcodiv_val	= CTRL2_VCODIV_DIV2,
-+	.vco_max_mhz	= 2600UL,
-+	.vco_min_mhz	= 850UL,
-+	.vco_range	= { 1800UL, 1400UL, 1100UL, 0UL },
-+};
-+
-+struct amb_cv75_clk_desc {
-+	int id;
-+	enum amb_cv75_clk_type type;
-+	const char *name;
-+	int parent;
-+
-+	union {
-+		struct {
-+			unsigned long rate;
-+		} fixed_rate;
-+		struct {
-+			unsigned long flags;
-+			unsigned int mult;
-+			unsigned int div;
-+		} fixed_factor;
-+		struct {
-+			u32 reg_offset[REG_NUM];
-+			const struct amb_pll_soc_data *soc_data;
-+		} pll;
-+		struct {
-+			u32 reg;
-+			u32 shift;
-+			u32 width;
-+			u32 flags;
-+			u32 fix_divider;
-+		} div;
-+		struct amb_mux_div_desc mux_div;
-+	};
-+};
-+
-+static const struct amb_cv75_clk_desc cv75_clks[] = {
-+	{
-+		.id = AMB_CV75_CLK_REF_DUMMY,
-+		.type = AMB_CV75_CLK_FIXED_RATE,
-+		.name = "dummy",
-+		.fixed_rate.rate = 0,
-+	},
-+	{
-+		.id = CV75_GCLK_CORE,
-+		.type = AMB_CV75_CLK_PLL,
-+		.name = "core",
-+		.parent = AMB_CV75_CLK_REF_OSC,
-+		.pll = {
-+			.reg_offset = {
-+				0x000, 0x004, 0x100,
-+				0x104, 0x000, 0x000,
-+			},
-+			.soc_data = &cv75_pll_soc_data,
-+		},
-+	},
-+	{
-+		.id = CV75_GCLK_AHB,
-+		.type = AMB_CV75_CLK_FIXED_FACTOR,
-+		.name = "ahb",
-+		.parent = CV75_GCLK_CORE,
-+		.fixed_factor = {
-+			.flags = 0,
-+			.mult = 1,
-+			.div = 2,
-+		},
-+	},
-+	{
-+		.id = CV75_GCLK_APB,
-+		.type = AMB_CV75_CLK_FIXED_FACTOR,
-+		.name = "apb",
-+		.parent = CV75_GCLK_CORE,
-+		.fixed_factor = {
-+			.flags = 0,
-+			.mult = 1,
-+			.div = 4,
-+		},
-+	},
-+	{
-+		.id = CV75_GCLK_UART0,
-+		.type = AMB_CV75_CLK_MUX_DIV,
-+		.name = "uart0",
-+		.mux_div = {
-+			.name = "uart0",
-+			.parents = (const int[]) {
-+				AMB_CV75_CLK_REF_OSC, CV75_GCLK_CORE,
-+				AMB_CV75_CLK_REF_DUMMY, AMB_CV75_CLK_REF_DUMMY,
-+			},
-+			.num_parents = 4,
-+			.mux_reg = 0x1c8,
-+			.mux_shift = 0,
-+			.mux_mask = 0x3,
-+			.div_reg = 0x038,
-+			.div_shift = 0,
-+			.div_width = 24,
-+			.div_flags = CLK_DIVIDER_ONE_BASED,
-+			.fix_divider = 1,
-+		},
-+	},
-+};
-+
-+static struct clk_hw *amb_cv75_get_parent(struct amb_ccu *ccu,
-+					  struct clk_hw *osc,
-+					  struct clk_hw *dummy,
-+					  int parent)
-+{
-+	if (parent == AMB_CV75_CLK_REF_OSC)
-+		return osc;
-+	if (parent == AMB_CV75_CLK_REF_DUMMY)
-+		return dummy;
-+
-+	if (parent < 0 || parent >= ccu->data->num)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (!ccu->data->hws[parent])
-+		return ERR_PTR(-EPROBE_DEFER);
-+
-+	return ccu->data->hws[parent];
-+}
-+
-+static struct clk_hw *amb_cv75_register_mux_div(struct device *dev,
-+						struct amb_ccu *ccu,
-+						const struct amb_cv75_clk_desc *desc,
-+						struct clk_hw *osc,
-+						struct clk_hw *dummy)
-+{
-+	const struct amb_mux_div_desc *md = &desc->mux_div;
-+	struct clk_parent_data *pdata;
-+	struct clk_hw *parent;
-+	u8 i;
-+
-+	pdata = devm_kcalloc(dev, md->num_parents, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata)
-+		return ERR_PTR(-ENOMEM);
-+
-+	for (i = 0; i < md->num_parents; i++) {
-+		if (md->parents[i] == AMB_CV75_CLK_REF_OSC) {
-+			pdata[i].fw_name = "osc";
-+			continue;
-+		}
-+
-+		parent = amb_cv75_get_parent(ccu, osc, dummy, md->parents[i]);
-+		if (IS_ERR(parent))
-+			return parent;
-+
-+		pdata[i].hw = parent;
-+	}
-+
-+	return amb_mux_div_register(dev, ccu->map, md, pdata);
-+}
-+
-+static struct clk_hw *amb_cv75_register_clk(struct device *dev,
-+					    struct amb_ccu *ccu,
-+					    const struct amb_cv75_clk_desc *desc,
-+					    struct clk_hw *osc,
-+					    struct clk_hw *dummy)
-+{
-+	struct amb_pll_desc pll_desc;
-+	struct clk_hw *parent;
-+
-+	switch (desc->type) {
-+	case AMB_CV75_CLK_FIXED_RATE:
-+		return devm_clk_hw_register_fixed_rate(dev, desc->name, NULL, 0,
-+						       desc->fixed_rate.rate);
-+	case AMB_CV75_CLK_FIXED_FACTOR:
-+		parent = amb_cv75_get_parent(ccu, osc, dummy, desc->parent);
-+		if (IS_ERR(parent))
-+			return parent;
-+
-+		return devm_clk_hw_register_fixed_factor_parent_hw(dev,
-+				desc->name, parent,
-+				desc->fixed_factor.flags,
-+				desc->fixed_factor.mult,
-+				desc->fixed_factor.div);
-+	case AMB_CV75_CLK_PLL:
-+		parent = amb_cv75_get_parent(ccu, osc, dummy, desc->parent);
-+		if (IS_ERR(parent))
-+			return parent;
-+
-+		pll_desc.name = desc->name;
-+		pll_desc.parent = parent;
-+		memcpy(pll_desc.reg_offset, desc->pll.reg_offset,
-+		       sizeof(pll_desc.reg_offset));
-+		pll_desc.soc_data = desc->pll.soc_data;
-+		pll_desc.frac_mode = false;
-+
-+		return amb_pll_register(dev, ccu->map, &pll_desc);
-+	case AMB_CV75_CLK_DIV:
-+		parent = amb_cv75_get_parent(ccu, osc, dummy, desc->parent);
-+		if (IS_ERR(parent))
-+			return parent;
-+
-+		return amb_div_register(dev, ccu->map, desc->name, parent,
-+					desc->div.reg, desc->div.shift,
-+					desc->div.width, desc->div.flags,
-+					desc->div.fix_divider);
-+	case AMB_CV75_CLK_MUX_DIV:
-+		return amb_cv75_register_mux_div(dev, ccu, desc, osc, dummy);
-+	default:
-+		return ERR_PTR(-EINVAL);
-+	}
-+}
-+
-+static int amb_cv75_rct_probe(struct platform_device *pdev)
-+{
-+	struct amb_ccu *ccu;
-+	struct clk *osc_clk;
-+	struct clk_hw *osc, *dummy = NULL, *hw;
-+	int i;
-+
-+	ccu = amb_ccu_init(pdev, ARRAY_SIZE(cv75_clks));
-+	if (IS_ERR(ccu))
-+		return PTR_ERR(ccu);
-+
-+	osc_clk = devm_clk_get(&pdev->dev, "osc");
-+	if (IS_ERR(osc_clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(osc_clk),
-+				     "missing osc clock\n");
-+	osc = __clk_get_hw(osc_clk);
-+
-+	for (i = 0; i < ARRAY_SIZE(cv75_clks); i++) {
-+		hw = amb_cv75_register_clk(&pdev->dev, ccu, &cv75_clks[i],
-+					   osc, dummy);
-+		if (IS_ERR(hw))
-+			return dev_err_probe(&pdev->dev, PTR_ERR(hw),
-+					     "failed to register %s\n",
-+					     cv75_clks[i].name);
-+
-+		if (cv75_clks[i].id == AMB_CV75_CLK_REF_DUMMY)
-+			dummy = hw;
-+		else
-+			ccu->data->hws[cv75_clks[i].id] = hw;
-+	}
-+
-+	return amb_ccu_register(ccu);
-+}
-+
-+static const struct of_device_id amb_cv75_rct_match[] = {
-+	{ .compatible = "ambarella,cv75-rct" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, amb_cv75_rct_match);
-+
-+static struct platform_driver amb_cv75_rct_driver = {
-+	.probe	= amb_cv75_rct_probe,
-+	.driver = {
-+		.name = "ambarella-cv75-rct",
-+		.of_match_table = amb_cv75_rct_match,
-+	},
-+};
-+module_platform_driver(amb_cv75_rct_driver);
-+
-+MODULE_AUTHOR("Ambarella Inc.");
-+MODULE_DESCRIPTION("Ambarella CV75 RCT clock controller");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/ambarella/ccu_common.c b/drivers/clk/ambarella/ccu_common.c
-new file mode 100644
-index 000000000000..78587c5f2ce1
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu_common.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
+ 	help
+ 	  Say yes here to support the PrimeCell PL061 GPIO device.
+ 
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 919cf86fd590..6b09031f8664 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -13,6 +13,7 @@
+ #include <linux/device.h>
+ #include <linux/errno.h>
+ #include <linux/gpio/driver.h>
++#include <linux/gpio/regmap.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+@@ -22,20 +23,36 @@
+ #include <linux/module.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pm.h>
 +#include <linux/regmap.h>
+ #include <linux/seq_file.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+-#define GPIODIR 0x400
+-#define GPIOIS  0x404
+-#define GPIOIBE 0x408
+-#define GPIOIEV 0x40C
+-#define GPIOIE  0x410
+-#define GPIORIS 0x414
+-#define GPIOMIS 0x418
+-#define GPIOIC  0x41C
+-
+-#define PL061_GPIO_NR	8
++#define PL061_REG_NONE		((unsigned int)-1)
 +
-+#include "ccu_common.h"
++#define PL061_GPIO_NR		8
++#define AMBARELLA_GPIO_NR	32
 +
-+static const struct regmap_config amb_rct_regmap_config = {
++struct pl061_variant_data {
++	unsigned int data;
++	unsigned int dir;
++	unsigned int is;
++	unsigned int ibe;
++	unsigned int iev;
++	unsigned int ie;
++	unsigned int ris;
++	unsigned int mis;
++	unsigned int ic;
++	unsigned int mask;
++	unsigned int enable;
++	unsigned int ngpio;
++	bool access_32bit;
++	bool masked_data_address;
++	bool write_data_after_dir;
++	bool clear_irq_on_type;
++	bool pm_save_restore;
++	const struct regmap_config *regmap_config;
++};
+ 
+ struct pl061_context_save_regs {
+ 	u8 gpio_data;
+@@ -48,74 +65,47 @@ struct pl061_context_save_regs {
+ 
+ struct pl061 {
+ 	raw_spinlock_t		lock;
+-
+ 	void __iomem		*base;
+-	struct gpio_chip	gc;
++	const struct pl061_variant_data *variant;
++	struct gpio_irq_chip	girq;
+ 	int			parent_irq;
+ 
+ 	struct pl061_context_save_regs csave_regs;
+ };
+ 
+-static int pl061_get_direction(struct gpio_chip *gc, unsigned offset)
+-{
+-	struct pl061 *pl061 = gpiochip_get_data(gc);
+-
+-	if (readb(pl061->base + GPIODIR) & BIT(offset))
+-		return GPIO_LINE_DIRECTION_OUT;
+-
+-	return GPIO_LINE_DIRECTION_IN;
+-}
+-
+-static int pl061_direction_input(struct gpio_chip *gc, unsigned offset)
++static struct pl061 *pl061_from_gpio_chip(struct gpio_chip *gc)
+ {
+-	struct pl061 *pl061 = gpiochip_get_data(gc);
+-	unsigned long flags;
+-	unsigned char gpiodir;
+-
+-	raw_spin_lock_irqsave(&pl061->lock, flags);
+-	gpiodir = readb(pl061->base + GPIODIR);
+-	gpiodir &= ~(BIT(offset));
+-	writeb(gpiodir, pl061->base + GPIODIR);
+-	raw_spin_unlock_irqrestore(&pl061->lock, flags);
+-
+-	return 0;
++	return gpio_regmap_get_drvdata(gpiochip_get_data(gc));
+ }
+ 
+-static int pl061_direction_output(struct gpio_chip *gc, unsigned offset,
+-		int value)
++static u32 pl061_read(struct pl061 *pl061, unsigned int reg)
+ {
+-	struct pl061 *pl061 = gpiochip_get_data(gc);
+-	unsigned long flags;
+-	unsigned char gpiodir;
++	if (pl061->variant->access_32bit)
++		return readl(pl061->base + reg);
+ 
+-	raw_spin_lock_irqsave(&pl061->lock, flags);
+-	writeb(!!value << offset, pl061->base + (BIT(offset + 2)));
+-	gpiodir = readb(pl061->base + GPIODIR);
+-	gpiodir |= BIT(offset);
+-	writeb(gpiodir, pl061->base + GPIODIR);
+-
+-	/*
+-	 * gpio value is set again, because pl061 doesn't allow to set value of
+-	 * a gpio pin before configuring it in OUT mode.
+-	 */
+-	writeb(!!value << offset, pl061->base + (BIT(offset + 2)));
+-	raw_spin_unlock_irqrestore(&pl061->lock, flags);
+-
+-	return 0;
++	return readb(pl061->base + reg);
+ }
+ 
+-static int pl061_get_value(struct gpio_chip *gc, unsigned offset)
++static void pl061_write(struct pl061 *pl061, u32 value, unsigned int reg)
+ {
+-	struct pl061 *pl061 = gpiochip_get_data(gc);
+-
+-	return !!readb(pl061->base + (BIT(offset + 2)));
++	if (pl061->variant->access_32bit)
++		writel(value, pl061->base + reg);
++	else
++		writeb(value, pl061->base + reg);
+ }
+ 
+-static int pl061_set_value(struct gpio_chip *gc, unsigned int offset, int value)
++static int pl061_reg_mask_xlate(struct gpio_regmap *gpio, unsigned int base,
++				unsigned int offset, unsigned int *reg,
++				unsigned int *mask)
+ {
+-	struct pl061 *pl061 = gpiochip_get_data(gc);
++	struct pl061 *pl061 = gpio_regmap_get_drvdata(gpio);
+ 
+-	writeb(!!value << offset, pl061->base + (BIT(offset + 2)));
++	/* ARM PL061 data bits use masked addresses: bits [9:2] select pins. */
++	if (base == pl061->variant->data)
++		*reg = BIT(offset + 2);
++	else
++		*reg = base;
++	*mask = BIT(offset);
+ 
+ 	return 0;
+ }
+@@ -123,18 +113,17 @@ static int pl061_set_value(struct gpio_chip *gc, unsigned int offset, int value)
+ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct pl061 *pl061 = gpiochip_get_data(gc);
++	struct pl061 *pl061 = pl061_from_gpio_chip(gc);
++	const struct pl061_variant_data *variant = pl061->variant;
+ 	int offset = irqd_to_hwirq(d);
+ 	unsigned long flags;
+-	u8 gpiois, gpioibe, gpioiev;
+-	u8 bit = BIT(offset);
++	u32 gpiois, gpioibe, gpioiev;
++	u32 bit = BIT(offset);
+ 
+-	if (offset < 0 || offset >= PL061_GPIO_NR)
++	if (offset < 0 || offset >= (int)gc->ngpio)
+ 		return -EINVAL;
+ 
+-	if ((trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) &&
+-	    (trigger & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING)))
+-	{
++	if ((trigger & IRQ_TYPE_LEVEL_MASK) && (trigger & IRQ_TYPE_EDGE_BOTH)) {
+ 		dev_err(gc->parent,
+ 			"trying to configure line %d for both level and edge "
+ 			"detection, choose one!\n",
+@@ -142,14 +131,13 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+ 		return -EINVAL;
+ 	}
+ 
+-
+ 	raw_spin_lock_irqsave(&pl061->lock, flags);
+ 
+-	gpioiev = readb(pl061->base + GPIOIEV);
+-	gpiois = readb(pl061->base + GPIOIS);
+-	gpioibe = readb(pl061->base + GPIOIBE);
++	gpioiev = pl061_read(pl061, variant->iev);
++	gpiois = pl061_read(pl061, variant->is);
++	gpioibe = pl061_read(pl061, variant->ibe);
+ 
+-	if (trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) {
++	if (trigger & IRQ_TYPE_LEVEL_MASK) {
+ 		bool polarity = trigger & IRQ_TYPE_LEVEL_HIGH;
+ 
+ 		/* Disable edge detection */
+@@ -199,9 +187,11 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
+ 			 offset);
+ 	}
+ 
+-	writeb(gpiois, pl061->base + GPIOIS);
+-	writeb(gpioibe, pl061->base + GPIOIBE);
+-	writeb(gpioiev, pl061->base + GPIOIEV);
++	pl061_write(pl061, gpiois, variant->is);
++	pl061_write(pl061, gpioibe, variant->ibe);
++	pl061_write(pl061, gpioiev, variant->iev);
++	if (variant->clear_irq_on_type)
++		pl061_write(pl061, bit, variant->ic);
+ 
+ 	raw_spin_unlock_irqrestore(&pl061->lock, flags);
+ 
+@@ -213,16 +203,15 @@ static void pl061_irq_handler(struct irq_desc *desc)
+ 	unsigned long pending;
+ 	int offset;
+ 	struct gpio_chip *gc = irq_desc_get_handler_data(desc);
+-	struct pl061 *pl061 = gpiochip_get_data(gc);
++	struct pl061 *pl061 = pl061_from_gpio_chip(gc);
+ 	struct irq_chip *irqchip = irq_desc_get_chip(desc);
+ 
+ 	chained_irq_enter(irqchip, desc);
+ 
+-	pending = readb(pl061->base + GPIOMIS);
++	pending = pl061_read(pl061, pl061->variant->mis);
+ 	if (pending) {
+-		for_each_set_bit(offset, &pending, PL061_GPIO_NR)
+-			generic_handle_domain_irq(gc->irq.domain,
+-						  offset);
++		for_each_set_bit(offset, &pending, gc->ngpio)
++			generic_handle_domain_irq(gc->irq.domain, offset);
+ 	}
+ 
+ 	chained_irq_exit(irqchip, desc);
+@@ -231,13 +220,13 @@ static void pl061_irq_handler(struct irq_desc *desc)
+ static void pl061_irq_mask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct pl061 *pl061 = gpiochip_get_data(gc);
+-	u8 mask = BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
+-	u8 gpioie;
++	struct pl061 *pl061 = pl061_from_gpio_chip(gc);
++	u32 mask = BIT(irqd_to_hwirq(d) % gc->ngpio);
++	u32 gpioie;
+ 
+ 	raw_spin_lock(&pl061->lock);
+-	gpioie = readb(pl061->base + GPIOIE) & ~mask;
+-	writeb(gpioie, pl061->base + GPIOIE);
++	gpioie = pl061_read(pl061, pl061->variant->ie) & ~mask;
++	pl061_write(pl061, gpioie, pl061->variant->ie);
+ 	raw_spin_unlock(&pl061->lock);
+ 
+ 	gpiochip_disable_irq(gc, d->hwirq);
+@@ -246,15 +235,15 @@ static void pl061_irq_mask(struct irq_data *d)
+ static void pl061_irq_unmask(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct pl061 *pl061 = gpiochip_get_data(gc);
+-	u8 mask = BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
+-	u8 gpioie;
++	struct pl061 *pl061 = pl061_from_gpio_chip(gc);
++	u32 mask = BIT(irqd_to_hwirq(d) % gc->ngpio);
++	u32 gpioie;
+ 
+ 	gpiochip_enable_irq(gc, d->hwirq);
+ 
+ 	raw_spin_lock(&pl061->lock);
+-	gpioie = readb(pl061->base + GPIOIE) | mask;
+-	writeb(gpioie, pl061->base + GPIOIE);
++	gpioie = pl061_read(pl061, pl061->variant->ie) | mask;
++	pl061_write(pl061, gpioie, pl061->variant->ie);
+ 	raw_spin_unlock(&pl061->lock);
+ }
+ 
+@@ -269,18 +258,18 @@ static void pl061_irq_unmask(struct irq_data *d)
+ static void pl061_irq_ack(struct irq_data *d)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct pl061 *pl061 = gpiochip_get_data(gc);
+-	u8 mask = BIT(irqd_to_hwirq(d) % PL061_GPIO_NR);
++	struct pl061 *pl061 = pl061_from_gpio_chip(gc);
++	u32 mask = BIT(irqd_to_hwirq(d) % gc->ngpio);
+ 
+ 	raw_spin_lock(&pl061->lock);
+-	writeb(mask, pl061->base + GPIOIC);
++	pl061_write(pl061, mask, pl061->variant->ic);
+ 	raw_spin_unlock(&pl061->lock);
+ }
+ 
+ static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+-	struct pl061 *pl061 = gpiochip_get_data(gc);
++	struct pl061 *pl061 = pl061_from_gpio_chip(gc);
+ 
+ 	return irq_set_irq_wake(pl061->parent_irq, state);
+ }
+@@ -306,42 +295,41 @@ static const struct irq_chip pl061_irq_chip = {
+ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ {
+ 	struct device *dev = &adev->dev;
++	struct gpio_regmap_config config = {};
++	const struct pl061_variant_data *variant = id->data;
+ 	struct pl061 *pl061;
+ 	struct gpio_irq_chip *girq;
++	struct regmap *regmap;
+ 	int ret, irq;
+ 
+ 	pl061 = devm_kzalloc(dev, sizeof(*pl061), GFP_KERNEL);
+ 	if (pl061 == NULL)
+ 		return -ENOMEM;
+ 
++	pl061->variant = variant;
++
+ 	pl061->base = devm_ioremap_resource(dev, &adev->res);
+ 	if (IS_ERR(pl061->base))
+ 		return PTR_ERR(pl061->base);
+ 
+ 	raw_spin_lock_init(&pl061->lock);
+-	pl061->gc.request = gpiochip_generic_request;
+-	pl061->gc.free = gpiochip_generic_free;
+-	pl061->gc.base = -1;
+-	pl061->gc.get_direction = pl061_get_direction;
+-	pl061->gc.direction_input = pl061_direction_input;
+-	pl061->gc.direction_output = pl061_direction_output;
+-	pl061->gc.get = pl061_get_value;
+-	pl061->gc.set = pl061_set_value;
+-	pl061->gc.ngpio = PL061_GPIO_NR;
+-	pl061->gc.label = dev_name(dev);
+-	pl061->gc.parent = dev;
+-	pl061->gc.owner = THIS_MODULE;
+-
+-	/*
+-	 * irq_chip support
+-	 */
+-	writeb(0, pl061->base + GPIOIE); /* disable irqs */
++
++	regmap = devm_regmap_init_mmio(dev, pl061->base, variant->regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	pl061_write(pl061, 0, variant->ie); /* disable irqs */
++	if (variant->mask != PL061_REG_NONE)
++		pl061_write(pl061, GENMASK(variant->ngpio - 1, 0), variant->mask);
++	if (variant->enable != PL061_REG_NONE)
++		pl061_write(pl061, GENMASK(variant->ngpio - 1, 0), variant->enable);
++
+ 	irq = adev->irq[0];
+ 	if (!irq)
+ 		dev_warn(&adev->dev, "IRQ support disabled\n");
+ 	pl061->parent_irq = irq;
+ 
+-	girq = &pl061->gc.irq;
++	girq = &pl061->girq;
+ 	gpio_irq_chip_set_chip(girq, &pl061_irq_chip);
+ 	girq->parent_handler = pl061_irq_handler;
+ 	girq->num_parents = 1;
+@@ -353,7 +341,19 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	girq->default_type = IRQ_TYPE_NONE;
+ 	girq->handler = handle_bad_irq;
+ 
+-	ret = devm_gpiochip_add_data(dev, &pl061->gc, pl061);
++	config.parent = dev;
++	config.regmap = regmap;
++	config.ngpio = variant->ngpio;
++	config.reg_dat_base = GPIO_REGMAP_ADDR(variant->data);
++	config.reg_set_base = GPIO_REGMAP_ADDR(variant->data);
++	config.reg_dir_out_base = variant->dir;
++	if (variant->masked_data_address)
++		config.reg_mask_xlate = pl061_reg_mask_xlate;
++	config.write_data_after_dir = variant->write_data_after_dir;
++	config.girq = girq;
++	config.drvdata = pl061;
++
++	ret = PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &config));
+ 	if (ret)
+ 		return ret;
+ 
+@@ -366,19 +366,23 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ static int pl061_suspend(struct device *dev)
+ {
+ 	struct pl061 *pl061 = dev_get_drvdata(dev);
++	const struct pl061_variant_data *variant = pl061->variant;
+ 	int offset;
+ 
++	if (!variant->pm_save_restore)
++		return 0;
++
+ 	pl061->csave_regs.gpio_data = 0;
+-	pl061->csave_regs.gpio_dir = readb(pl061->base + GPIODIR);
+-	pl061->csave_regs.gpio_is = readb(pl061->base + GPIOIS);
+-	pl061->csave_regs.gpio_ibe = readb(pl061->base + GPIOIBE);
+-	pl061->csave_regs.gpio_iev = readb(pl061->base + GPIOIEV);
+-	pl061->csave_regs.gpio_ie = readb(pl061->base + GPIOIE);
+-
+-	for (offset = 0; offset < PL061_GPIO_NR; offset++) {
+-		if (pl061->csave_regs.gpio_dir & (BIT(offset)))
++	pl061->csave_regs.gpio_dir = pl061_read(pl061, variant->dir);
++	pl061->csave_regs.gpio_is = pl061_read(pl061, variant->is);
++	pl061->csave_regs.gpio_ibe = pl061_read(pl061, variant->ibe);
++	pl061->csave_regs.gpio_iev = pl061_read(pl061, variant->iev);
++	pl061->csave_regs.gpio_ie = pl061_read(pl061, variant->ie);
++
++	for (offset = 0; offset < variant->ngpio; offset++) {
++		if (pl061->csave_regs.gpio_dir & BIT(offset))
+ 			pl061->csave_regs.gpio_data |=
+-				pl061_get_value(&pl061->gc, offset) << offset;
++				pl061_read(pl061, BIT(offset + 2));
+ 	}
+ 
+ 	return 0;
+@@ -387,31 +391,103 @@ static int pl061_suspend(struct device *dev)
+ static int pl061_resume(struct device *dev)
+ {
+ 	struct pl061 *pl061 = dev_get_drvdata(dev);
++	const struct pl061_variant_data *variant = pl061->variant;
+ 	int offset;
+ 
+-	for (offset = 0; offset < PL061_GPIO_NR; offset++) {
+-		if (pl061->csave_regs.gpio_dir & (BIT(offset)))
+-			pl061_direction_output(&pl061->gc, offset,
+-					pl061->csave_regs.gpio_data &
+-					(BIT(offset)));
+-		else
+-			pl061_direction_input(&pl061->gc, offset);
++	if (!variant->pm_save_restore)
++		return 0;
++
++	for (offset = 0; offset < variant->ngpio; offset++) {
++		u32 dir = pl061_read(pl061, variant->dir);
++
++		if (pl061->csave_regs.gpio_dir & BIT(offset)) {
++			u32 value = !!(pl061->csave_regs.gpio_data & BIT(offset)) << offset;
++
++			pl061_write(pl061, value, BIT(offset + 2));
++			pl061_write(pl061, dir | BIT(offset), variant->dir);
++			/*
++			 * gpio value is set again, because pl061 doesn't allow to set value of
++			 * a gpio pin before configuring it in OUT mode.
++			 */
++			pl061_write(pl061, value, BIT(offset + 2));
++		} else {
++			pl061_write(pl061, dir & ~BIT(offset), variant->dir);
++		}
+ 	}
+ 
+-	writeb(pl061->csave_regs.gpio_is, pl061->base + GPIOIS);
+-	writeb(pl061->csave_regs.gpio_ibe, pl061->base + GPIOIBE);
+-	writeb(pl061->csave_regs.gpio_iev, pl061->base + GPIOIEV);
+-	writeb(pl061->csave_regs.gpio_ie, pl061->base + GPIOIE);
++	pl061_write(pl061, pl061->csave_regs.gpio_is, variant->is);
++	pl061_write(pl061, pl061->csave_regs.gpio_ibe, variant->ibe);
++	pl061_write(pl061, pl061->csave_regs.gpio_iev, variant->iev);
++	pl061_write(pl061, pl061->csave_regs.gpio_ie, variant->ie);
+ 
+ 	return 0;
+ }
+ 
+ static DEFINE_SIMPLE_DEV_PM_OPS(pl061_dev_pm_ops, pl061_suspend, pl061_resume);
+ 
++static const struct regmap_config pl061_arm_regmap_config = {
++	.reg_bits = 16,
++	.val_bits = 8,
++	.reg_stride = 4,
++	.max_register = 0x400,
++	.fast_io = true,
++};
++
++static const struct regmap_config pl061_ambarella_regmap_config = {
 +	.reg_bits = 32,
 +	.val_bits = 32,
 +	.reg_stride = 4,
-+	.max_register = AMB_RCT_REG_SIZE - 4,
++	.max_register = 0x2c,
++	.fast_io = true,
 +};
 +
-+struct amb_ccu *amb_ccu_init(struct platform_device *pdev,
-+			     unsigned int num_clks)
-+{
-+	struct amb_ccu *ccu;
-+	void __iomem *base;
-+
-+	if (!num_clks)
-+		return ERR_PTR(-EINVAL);
-+
-+	ccu = devm_kzalloc(&pdev->dev, sizeof(*ccu), GFP_KERNEL);
-+	if (!ccu)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ccu->dev = &pdev->dev;
-+
-+	ccu->data = devm_kzalloc(&pdev->dev,
-+				 struct_size(ccu->data, hws, num_clks),
-+				 GFP_KERNEL);
-+	if (!ccu->data)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ccu->data->num = num_clks;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return ERR_CAST(base);
-+
-+	ccu->map = devm_regmap_init_mmio(&pdev->dev, base,
-+					 &amb_rct_regmap_config);
-+	if (IS_ERR(ccu->map))
-+		return ERR_CAST(ccu->map);
-+
-+	return ccu;
-+}
-+
-+int amb_ccu_register(struct amb_ccu *ccu)
-+{
-+	return devm_of_clk_add_hw_provider(ccu->dev, of_clk_hw_onecell_get,
-+					   ccu->data);
-+}
-diff --git a/drivers/clk/ambarella/ccu_common.h b/drivers/clk/ambarella/ccu_common.h
-new file mode 100644
-index 000000000000..f2bf9d1f06d7
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu_common.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ */
-+
-+#ifndef __CCU_COMMON_H
-+#define __CCU_COMMON_H
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+
-+#define AMB_RCT_REG_SIZE	0x1000
-+
-+struct amb_ccu {
-+	struct device *dev;
-+	struct regmap *map;
-+	struct clk_hw_onecell_data *data;
++static struct pl061_variant_data pl061_arm = {
++	.data = 0x000,
++	.dir = 0x400,
++	.is = 0x404,
++	.ibe = 0x408,
++	.iev = 0x40c,
++	.ie = 0x410,
++	.ris = 0x414,
++	.mis = 0x418,
++	.ic = 0x41c,
++	.mask = PL061_REG_NONE,
++	.enable = PL061_REG_NONE,
++	.ngpio = PL061_GPIO_NR,
++	.masked_data_address = true,
++	.write_data_after_dir = true,
++	.pm_save_restore = true,
++	.regmap_config = &pl061_arm_regmap_config,
 +};
 +
-+struct amb_ccu *amb_ccu_init(struct platform_device *pdev,
-+			     unsigned int num_clks);
-+int amb_ccu_register(struct amb_ccu *ccu);
-+
-+#endif
-diff --git a/drivers/clk/ambarella/ccu_mux_div.c b/drivers/clk/ambarella/ccu_mux_div.c
-new file mode 100644
-index 000000000000..d5259bc347e4
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu_mux_div.c
-@@ -0,0 +1,234 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ *
-+ * Regmap-backed mux + divider, derived from the vendor composite-clock driver.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/math64.h>
-+#include <linux/regmap.h>
-+
-+#include "ccu_mux_div.h"
-+
-+struct amb_mux {
-+	struct clk_hw hw;
-+	struct regmap *map;
-+	u32 offset;
-+	u32 mask;
-+	u32 shift;
++static struct pl061_variant_data pl061_ambarella = {
++	.data = 0x00,
++	.dir = 0x04,
++	.is = 0x08,
++	.ibe = 0x0c,
++	.iev = 0x10,
++	.ie = 0x14,
++	.ris = 0x1c,
++	.mis = 0x20,
++	.ic = 0x24,
++	.mask = 0x28,
++	.enable = 0x2c,
++	.ngpio = AMBARELLA_GPIO_NR,
++	.access_32bit = true,
++	.clear_irq_on_type = true,
++	.regmap_config = &pl061_ambarella_regmap_config,
 +};
 +
-+struct amb_div {
-+	struct clk_hw hw;
-+	struct regmap *map;
-+	u32 offset;
-+	u32 shift;
-+	u32 width;
-+	u32 flags;
-+	u32 fix_divider;
-+};
-+
-+#define to_amb_mux(_hw)	container_of(_hw, struct amb_mux, hw)
-+#define to_amb_div(_hw)	container_of(_hw, struct amb_div, hw)
-+
-+static u8 amb_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct amb_mux *mux = to_amb_mux(hw);
-+	u32 val;
-+
-+	regmap_read(mux->map, mux->offset, &val);
-+	val >>= mux->shift;
-+	val &= mux->mask;
-+
-+	return val;
-+}
-+
-+static int amb_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct amb_mux *mux = to_amb_mux(hw);
-+
-+	return regmap_update_bits(mux->map, mux->offset,
-+				  mux->mask << mux->shift,
-+				  index << mux->shift);
-+}
-+
-+static const struct clk_ops amb_mux_ops = {
-+	.get_parent = amb_mux_get_parent,
-+	.set_parent = amb_mux_set_parent,
-+};
-+
-+static unsigned long amb_div_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct amb_div *div = to_amb_div(hw);
-+	unsigned long rate;
-+	u32 val;
-+
-+	regmap_read(div->map, div->offset, &val);
-+
-+	/* Divider reset/disable bit sits above the field at shift+width. */
-+	if (val & (BIT(div->width) << div->shift))
-+		return 0;
-+
-+	val >>= div->shift;
-+	val &= clk_div_mask(div->width);
-+
-+	rate = divider_recalc_rate(hw, parent_rate, val, NULL,
-+				   div->flags, div->width);
-+	if (div->fix_divider)
-+		rate = div_u64(rate, div->fix_divider);
-+
-+	return rate;
-+}
-+
-+static int amb_div_determine_rate(struct clk_hw *hw,
-+				  struct clk_rate_request *req)
-+{
-+	struct amb_div *div = to_amb_div(hw);
-+	struct clk_rate_request scaled = *req;
-+	int ret;
-+
-+	if (!req->rate && (div->flags & CLK_DIVIDER_ONE_BASED))
-+		return 0;
-+
-+	if (div->fix_divider) {
-+		scaled.rate = min(req->rate,
-+				  ULONG_MAX / div->fix_divider) *
-+			      div->fix_divider;
-+		scaled.min_rate = min(req->min_rate,
-+				      ULONG_MAX / div->fix_divider) *
-+				  div->fix_divider;
-+		scaled.max_rate = min(req->max_rate,
-+				      ULONG_MAX / div->fix_divider) *
-+				  div->fix_divider;
-+	}
-+
-+	ret = divider_determine_rate(hw, &scaled, NULL, div->width,
-+				     div->flags);
-+	if (ret)
-+		return ret;
-+
-+	req->rate = scaled.rate;
-+	req->best_parent_rate = scaled.best_parent_rate;
-+	req->best_parent_hw = scaled.best_parent_hw;
-+	if (div->fix_divider)
-+		req->rate = div_u64(req->rate, div->fix_divider);
-+
-+	return 0;
-+}
-+
-+static int amb_div_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct amb_div *div = to_amb_div(hw);
-+	int val, mask;
-+
-+	if (div->fix_divider)
-+		rate *= div->fix_divider;
-+
-+	if (!rate) {
-+		/* Assert the reset/disable bit above the divider field. */
-+		val = BIT(div->width);
-+		mask = clk_div_mask(div->width + 1);
-+	} else {
-+		val = divider_get_val(rate, parent_rate, NULL,
-+				      div->width, div->flags);
-+		if (val < 0)
-+			return val;
-+
-+		/*
-+		 * Include the disable bit in the mask so a later non-zero
-+		 * set_rate clears a previous rate==0 disable assert.
-+		 */
-+		mask = clk_div_mask(div->width + 1);
-+	}
-+
-+	regmap_update_bits(div->map, div->offset, mask << div->shift,
-+			   val << div->shift);
-+
-+	/*
-+	 * Non-ONE_BASED dividers use bit 0 as a write-enable strobe. Skip the
-+	 * pulse when shift == 0 so we do not corrupt the divider field itself.
-+	 */
-+	if (!(div->flags & CLK_DIVIDER_ONE_BASED) && div->shift) {
-+		regmap_update_bits(div->map, div->offset, BIT(0), BIT(0));
-+		regmap_update_bits(div->map, div->offset, BIT(0), 0);
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops amb_div_ops = {
-+	.recalc_rate = amb_div_recalc_rate,
-+	.determine_rate = amb_div_determine_rate,
-+	.set_rate = amb_div_set_rate,
-+};
-+
-+struct clk_hw *amb_div_register(struct device *dev, struct regmap *map,
-+				const char *name, const struct clk_hw *parent,
-+				u32 div_reg, u32 div_shift, u32 div_width,
-+				u32 div_flags, u32 fix_divider)
-+{
-+	struct amb_div *div;
-+	struct clk_init_data init = {};
-+	int ret;
-+
-+	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
-+	if (!div)
-+		return ERR_PTR(-ENOMEM);
-+
-+	div->map = map;
-+	div->offset = div_reg;
-+	div->shift = div_shift;
-+	div->width = div_width;
-+	div->flags = div_flags;
-+	div->fix_divider = fix_divider;
-+
-+	init.name = name;
-+	init.ops = &amb_div_ops;
-+	init.parent_hws = &parent;
-+	init.num_parents = 1;
-+
-+	div->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &div->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &div->hw;
-+}
-+
-+struct clk_hw *amb_mux_div_register(struct device *dev, struct regmap *map,
-+				    const struct amb_mux_div_desc *desc,
-+				    const struct clk_parent_data *parent_data)
-+{
-+	struct amb_mux *mux;
-+	struct amb_div *div;
-+
-+	mux = devm_kzalloc(dev, sizeof(*mux), GFP_KERNEL);
-+	div = devm_kzalloc(dev, sizeof(*div), GFP_KERNEL);
-+	if (!mux || !div)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mux->map = map;
-+	mux->offset = desc->mux_reg;
-+	mux->shift = desc->mux_shift;
-+	mux->mask = desc->mux_mask;
-+
-+	div->map = map;
-+	div->offset = desc->div_reg;
-+	div->shift = desc->div_shift;
-+	div->width = desc->div_width;
-+	div->flags = desc->div_flags;
-+	div->fix_divider = desc->fix_divider;
-+
-+	return devm_clk_hw_register_composite_pdata(dev, desc->name,
-+						    parent_data,
-+						    desc->num_parents,
-+						    &mux->hw, &amb_mux_ops,
-+						    &div->hw, &amb_div_ops,
-+						    NULL, NULL,
-+						    CLK_SET_RATE_NO_REPARENT);
-+}
-diff --git a/drivers/clk/ambarella/ccu_mux_div.h b/drivers/clk/ambarella/ccu_mux_div.h
-new file mode 100644
-index 000000000000..abaefff1201a
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu_mux_div.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ */
-+
-+#ifndef __CCU_MUX_DIV_H
-+#define __CCU_MUX_DIV_H
-+
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+
-+struct amb_mux_div_desc {
-+	const char *name;
-+	const int *parents;
-+	u8 num_parents;
-+	u32 mux_reg;
-+	u32 mux_shift;
-+	u32 mux_mask;
-+	u32 div_reg;
-+	u32 div_shift;
-+	u32 div_width;
-+	u32 div_flags;
-+	u32 fix_divider;
-+};
-+
-+struct clk_hw *amb_mux_div_register(struct device *dev, struct regmap *map,
-+				    const struct amb_mux_div_desc *desc,
-+				    const struct clk_parent_data *parent_data);
-+
-+struct clk_hw *amb_div_register(struct device *dev, struct regmap *map,
-+				const char *name, const struct clk_hw *parent,
-+				u32 div_reg, u32 div_shift, u32 div_width,
-+				u32 div_flags, u32 fix_divider);
-+
-+#endif
-diff --git a/drivers/clk/ambarella/ccu_pll.c b/drivers/clk/ambarella/ccu_pll.c
-new file mode 100644
-index 000000000000..76452003bb0d
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu_pll.c
-@@ -0,0 +1,421 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/math64.h>
-+#include <linux/rational.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+#include "ccu_pll.h"
-+
-+#define AMB_PLL_MAX_SOUT	16UL
-+#define AMB_PLL_MAX_SDIV	16UL
-+
-+struct amb_pll {
-+	struct clk_hw hw;
-+	struct regmap *map;
-+	u32 reg_offset[REG_NUM];
-+	const struct amb_pll_soc_data *soc_data;
-+	u32 fix_divider;
-+	bool frac_mode;
-+};
-+
-+#define to_amb_pll(_hw) container_of(_hw, struct amb_pll, hw)
-+
-+static void amb_pll_write_enable(struct regmap *map, u32 offset, u32 val)
-+{
-+	regmap_write(map, offset, val);
-+	regmap_write(map, offset, val | CTRL_WRITE_ENABLE);
-+	regmap_write(map, offset, val);
-+}
-+
-+static unsigned long amb_pll_calc_vco(struct amb_pll *pll,
-+				      unsigned long parent_rate)
-+{
-+	const struct amb_pll_soc_data *soc_data = pll->soc_data;
-+	u32 *reg = pll->reg_offset;
-+	u32 pre_scaler = 1;
-+	u32 ctrl_val, ctrl2_val = 0, frac_val;
-+	u32 intp, sdiv, vcodiv, fsdiv;
-+	u64 frac = 0, vco;
-+
-+	if (reg[PRES_OFFSET]) {
-+		regmap_read(pll->map, reg[PRES_OFFSET], &pre_scaler);
-+		pre_scaler = (pre_scaler >> 4) + 1;
-+	}
-+
-+	regmap_read(pll->map, reg[CTRL_OFFSET], &ctrl_val);
-+	intp = ((ctrl_val >> 24) & 0x7f) + 1;
-+	sdiv = ((ctrl_val >> 12) & 0xf) + 1;
-+
-+	if (soc_data->pll_version >= 2) {
-+		vcodiv = (ctrl_val & soc_data->vcodiv_mask) ==
-+			 soc_data->vcodiv_val ? 2 : 1;
-+		fsdiv = (ctrl_val & soc_data->fsdiv_mask) ==
-+			soc_data->fsdiv_val ? 2 : 1;
-+	} else {
-+		regmap_read(pll->map, reg[CTRL2_OFFSET], &ctrl2_val);
-+		vcodiv = (ctrl2_val & soc_data->vcodiv_mask) ==
-+			 soc_data->vcodiv_val ? 2 : 1;
-+		fsdiv = (ctrl2_val & soc_data->fsdiv_mask) ==
-+			soc_data->fsdiv_val ? 2 : 1;
-+	}
-+
-+	vco = (u64)parent_rate * vcodiv * fsdiv * intp * sdiv;
-+	vco = div_u64(vco, pre_scaler);
-+
-+	if (ctrl_val & CTRL_FRAC_MODE) {
-+		regmap_read(pll->map, reg[FRAC_OFFSET], &frac_val);
-+		frac = (u64)parent_rate * vcodiv * fsdiv * sdiv * frac_val;
-+		frac = div_u64(frac, pre_scaler) >> 32;
-+	}
-+
-+	return vco + frac;
-+}
-+
-+static unsigned long amb_pll_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct amb_pll *pll = to_amb_pll(hw);
-+	const struct amb_pll_soc_data *soc_data = pll->soc_data;
-+	u32 *reg = pll->reg_offset;
-+	u32 pre_scaler = 1, post_scaler = 1;
-+	u32 ctrl_val, ctrl2_val = 0;
-+	u32 vcodiv, fsout, sout;
-+	u64 rate;
-+
-+	regmap_read(pll->map, reg[CTRL_OFFSET], &ctrl_val);
-+	if (ctrl_val & (CTRL_POWER_DOWN | CTRL_HALT_VCO | CTRL_FORCE_RESET))
-+		return 0;
-+
-+	if (reg[PRES_OFFSET]) {
-+		regmap_read(pll->map, reg[PRES_OFFSET], &pre_scaler);
-+		pre_scaler = (pre_scaler >> 4) + 1;
-+	}
-+
-+	if (reg[POST_OFFSET]) {
-+		regmap_read(pll->map, reg[POST_OFFSET], &post_scaler);
-+		post_scaler = (post_scaler >> 4) + 1;
-+	}
-+
-+	if (ctrl_val & CTRL_BYPASS)
-+		return parent_rate / pre_scaler / post_scaler;
-+
-+	if (soc_data->pll_version >= 2) {
-+		vcodiv = (ctrl_val & soc_data->vcodiv_mask) ==
-+			 soc_data->vcodiv_val ? 2 : 1;
-+		fsout = (ctrl_val & soc_data->fsout_mask) ==
-+			soc_data->fsout_val ? 2 : 1;
-+	} else {
-+		regmap_read(pll->map, reg[CTRL2_OFFSET], &ctrl2_val);
-+		vcodiv = (ctrl2_val & soc_data->vcodiv_mask) ==
-+			 soc_data->vcodiv_val ? 2 : 1;
-+		fsout = (ctrl2_val & soc_data->fsout_mask) ==
-+			soc_data->fsout_val ? 2 : 1;
-+	}
-+
-+	sout = ((ctrl_val >> 16) & 0xf) + 1;
-+	rate = amb_pll_calc_vco(pll, parent_rate);
-+
-+	if (soc_data->pll_version >= 2) {
-+		if (!(ctrl_val & CTRL_BYPASS_HSDIV))
-+			rate = div_u64(rate, vcodiv * fsout * sout);
-+	} else {
-+		if (!(ctrl2_val & CTRL2_BYPASS_HSDIV))
-+			rate = div_u64(rate, vcodiv * fsout * sout);
-+	}
-+
-+	rate = div_u64(rate, pll->fix_divider * post_scaler);
-+
-+	return rate;
-+}
-+
-+static int amb_pll_calc_params(struct amb_pll *pll, unsigned long rate,
-+			       unsigned long parent_rate, u32 ctrl2_val,
-+			       u32 *intp, u32 *sdiv, u32 *sout,
-+			       u32 *vcodiv, u32 *fsdiv, u32 *fsout)
-+{
-+	const struct amb_pll_soc_data *soc_data = pll->soc_data;
-+	unsigned long max_numerator, max_denominator;
-+	unsigned long intp_ul, sout_ul, rate_tmp, parent_scaled;
-+	u32 ctrl_val;
-+
-+	if (!parent_rate)
-+		return -EINVAL;
-+
-+	*sdiv = 1;
-+
-+	if (soc_data->pll_version >= 2) {
-+		ctrl_val = 0;
-+		*vcodiv = (ctrl_val & soc_data->vcodiv_mask) ==
-+			  soc_data->vcodiv_val ? 2 : 1;
-+		*fsdiv = (ctrl_val & soc_data->fsdiv_mask) ==
-+			 soc_data->fsdiv_val ? 2 : 1;
-+		*fsout = (ctrl_val & soc_data->fsout_mask) ==
-+			 soc_data->fsout_val ? 2 : 1;
-+	} else {
-+		*vcodiv = (ctrl2_val & soc_data->vcodiv_mask) ==
-+			  soc_data->vcodiv_val ? 2 : 1;
-+		*fsdiv = (ctrl2_val & soc_data->fsdiv_mask) ==
-+			 soc_data->fsdiv_val ? 2 : 1;
-+		*fsout = (ctrl2_val & soc_data->fsout_mask) ==
-+			 soc_data->fsout_val ? 2 : 1;
-+	}
-+
-+	if (rate < parent_rate)
-+		return -EINVAL;
-+
-+	max_numerator = soc_data->vco_max_mhz;
-+	max_numerator = div_u64(max_numerator * 1000000ULL, parent_rate);
-+	max_numerator = div_u64(max_numerator, *vcodiv * *fsdiv);
-+	max_numerator = min(128UL, max_numerator);
-+	if (!max_numerator)
-+		return -EINVAL;
-+
-+	/*
-+	 * Approximate intp/sout against the fsdiv/fsout-scaled parent so the
-+	 * initial guess matches the hardware frequency equation.
-+	 */
-+	max_denominator = AMB_PLL_MAX_SOUT;
-+	parent_scaled = parent_rate * *fsdiv / *fsout;
-+	if (!parent_scaled)
-+		return -EINVAL;
-+	rate_tmp = rate;
-+	rational_best_approximation(rate_tmp, parent_scaled, max_numerator,
-+				    max_denominator, &intp_ul, &sout_ul);
-+
-+	while (parent_rate * *fsdiv * intp_ul * *sdiv / *fsout / sout_ul >
-+	       rate) {
-+		unsigned long resolution = parent_scaled / AMB_PLL_MAX_SOUT;
-+
-+		/* Avoid an infinite loop when parent_rate < AMB_PLL_MAX_SOUT. */
-+		if (!resolution)
-+			resolution = 1;
-+
-+		if (rate_tmp <= resolution)
-+			return -EINVAL;
-+
-+		rate_tmp -= resolution;
-+		rational_best_approximation(rate_tmp, parent_scaled,
-+					    max_numerator, max_denominator,
-+					    &intp_ul, &sout_ul);
-+	}
-+
-+	while (parent_rate / 1000000 * *vcodiv * *fsdiv * intp_ul * *sdiv <
-+	       soc_data->vco_min_mhz) {
-+		if (sout_ul > 8 || intp_ul > 64)
-+			break;
-+
-+		intp_ul *= 2;
-+		sout_ul *= 2;
-+	}
-+
-+	if (intp_ul > max_numerator || sout_ul > max_denominator ||
-+	    *sdiv > AMB_PLL_MAX_SDIV)
-+		return -EINVAL;
-+
-+	*intp = intp_ul;
-+	*sout = sout_ul;
-+
-+	return 0;
-+}
-+
-+static int amb_pll_determine_rate(struct clk_hw *hw,
-+				  struct clk_rate_request *req)
-+{
-+	struct amb_pll *pll = to_amb_pll(hw);
-+	const struct amb_pll_soc_data *soc_data = pll->soc_data;
-+	u32 ctrl2_val = 0;
-+	u32 intp, sdiv, sout, vcodiv, fsdiv, fsout;
-+	unsigned long rate;
-+	u64 rounded;
-+	int ret;
-+
-+	if (!req->best_parent_rate)
-+		return -EINVAL;
-+
-+	if (!req->rate || pll->frac_mode)
-+		return 0;
-+
-+	if (req->rate > ULONG_MAX / pll->fix_divider)
-+		return -ERANGE;
-+
-+	rate = req->rate * pll->fix_divider;
-+	if (soc_data->ctrl2_val)
-+		ctrl2_val = soc_data->ctrl2_val;
-+	else
-+		regmap_read(pll->map, pll->reg_offset[CTRL2_OFFSET],
-+			    &ctrl2_val);
-+
-+	ret = amb_pll_calc_params(pll, rate, req->best_parent_rate,
-+				  ctrl2_val, &intp, &sdiv, &sout, &vcodiv,
-+				  &fsdiv, &fsout);
-+	if (ret)
-+		return ret;
-+
-+	rounded = (u64)req->best_parent_rate * fsdiv * intp * sdiv;
-+	rounded = div64_u64(rounded, (u64)fsout * sout);
-+	rounded = div64_u64(rounded, pll->fix_divider);
-+	if (rounded < req->min_rate || rounded > req->max_rate)
-+		return -EINVAL;
-+
-+	req->rate = rounded;
-+
-+	return 0;
-+}
-+
-+static int amb_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct amb_pll *pll = to_amb_pll(hw);
-+	const struct amb_pll_soc_data *soc_data = pll->soc_data;
-+	u32 *reg = pll->reg_offset;
-+	u32 ctrl_val, ctrl2_val = 0, ctrl3_val, frac_val = 0;
-+	u32 intp, sdiv, sout, vcodiv, fsdiv, fsout;
-+	unsigned long old_rate, new_rate, rate_tmp;
-+	int ret;
-+
-+	if (!rate) {
-+		regmap_read(pll->map, reg[CTRL_OFFSET], &ctrl_val);
-+		ctrl_val |= CTRL_POWER_DOWN | CTRL_HALT_VCO;
-+		amb_pll_write_enable(pll->map, reg[CTRL_OFFSET], ctrl_val);
-+		return 0;
-+	}
-+
-+	if (!parent_rate)
-+		return -EINVAL;
-+
-+	rate *= pll->fix_divider;
-+
-+	if (soc_data->ctrl2_val)
-+		ctrl2_val = soc_data->ctrl2_val;
-+	else
-+		regmap_read(pll->map, reg[CTRL2_OFFSET], &ctrl2_val);
-+
-+	ret = amb_pll_calc_params(pll, rate, parent_rate, ctrl2_val,
-+				  &intp, &sdiv, &sout, &vcodiv, &fsdiv,
-+				  &fsout);
-+	if (ret)
-+		return ret;
-+
-+	if (soc_data->ctrl2_val)
-+		regmap_write(pll->map, reg[CTRL2_OFFSET], soc_data->ctrl2_val);
-+
-+	ctrl_val = ((intp - 1) & 0x7f) << 24;
-+	ctrl_val |= ((sdiv - 1) & 0xf) << 12;
-+	ctrl_val |= ((sout - 1) & 0xf) << 16;
-+	if (soc_data->pll_version >= 2) {
-+		ctrl_val |= vcodiv == 2 ? soc_data->vcodiv_val : 0;
-+		ctrl_val |= fsdiv == 2 ? soc_data->fsdiv_val : 0;
-+		ctrl_val |= fsout == 2 ? soc_data->fsout_val : 0;
-+	}
-+
-+	regmap_write(pll->map, reg[CTRL_OFFSET], ctrl_val);
-+	regmap_write(pll->map, reg[FRAC_OFFSET], 0);
-+
-+	old_rate = amb_pll_recalc_rate(hw, parent_rate) * pll->fix_divider;
-+	rate_tmp = old_rate > rate ? 0 : rate - old_rate;
-+	if (rate_tmp && pll->frac_mode) {
-+		u64 dividend, divider;
-+
-+		dividend = (u64)rate_tmp * sout * fsout;
-+		dividend <<= 32;
-+		divider = (u64)sdiv * fsdiv * parent_rate;
-+		frac_val = DIV64_U64_ROUND_CLOSEST(dividend, divider);
-+		regmap_write(pll->map, reg[FRAC_OFFSET], frac_val);
-+		ctrl_val |= CTRL_FRAC_MODE;
-+	}
-+
-+	if (soc_data->pll_version >= 2) {
-+		ctrl3_val = soc_data->ctrl3_val;
-+		regmap_write(pll->map, reg[CTRL3_OFFSET],
-+			     ctrl3_val | CTRL3_VCO_CLAMP);
-+		regmap_write(pll->map, reg[CTRL_OFFSET],
-+			     ctrl_val | CTRL_FORCE_RESET);
-+		ndelay(100);
-+		regmap_write(pll->map, reg[CTRL_OFFSET],
-+			     ctrl_val & ~CTRL_FORCE_RESET);
-+		ndelay(100);
-+		regmap_write(pll->map, reg[CTRL3_OFFSET],
-+			     ctrl3_val & ~CTRL3_VCO_CLAMP);
-+	} else {
-+		u32 fvco_mhz, range;
-+
-+		fvco_mhz = amb_pll_calc_vco(pll, parent_rate) / 1000000UL;
-+		for (range = 0; range < ARRAY_SIZE(soc_data->vco_range);
-+		     range++) {
-+			if (fvco_mhz > soc_data->vco_range[range])
-+				break;
-+		}
-+		if (range == ARRAY_SIZE(soc_data->vco_range))
-+			range = 0;
-+		else
-+			range = ARRAY_SIZE(soc_data->vco_range) - range - 1;
-+
-+		regmap_read(pll->map, reg[CTRL3_OFFSET], &ctrl3_val);
-+		ctrl3_val &= ~CTRL3_VCO_RANGE_MASK;
-+		ctrl3_val |= range << 1;
-+		regmap_write(pll->map, reg[CTRL3_OFFSET], ctrl3_val);
-+
-+		if (frac_val) {
-+			ctrl_val |= CTRL_FORCE_RESET;
-+			amb_pll_write_enable(pll->map, reg[CTRL_OFFSET],
-+					     ctrl_val);
-+		}
-+
-+		ctrl_val &= ~CTRL_FORCE_RESET;
-+		amb_pll_write_enable(pll->map, reg[CTRL_OFFSET], ctrl_val);
-+	}
-+
-+	new_rate = amb_pll_recalc_rate(hw, parent_rate);
-+	rate_tmp = rate / pll->fix_divider;
-+	if (max(new_rate, rate_tmp) - min(new_rate, rate_tmp) > 10)
-+		pr_warn("%s: requested %lu, got %lu\n", clk_hw_get_name(hw),
-+			rate_tmp, new_rate);
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops amb_pll_ops = {
-+	.recalc_rate = amb_pll_recalc_rate,
-+	.determine_rate = amb_pll_determine_rate,
-+	.set_rate = amb_pll_set_rate,
-+};
-+
-+struct clk_hw *amb_pll_register(struct device *dev, struct regmap *map,
-+				const struct amb_pll_desc *desc)
-+{
-+	struct amb_pll *pll;
-+	struct clk_init_data init = {};
-+	const struct clk_hw *parent = desc->parent;
-+	int ret;
-+
-+	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
-+	if (!pll)
-+		return ERR_PTR(-ENOMEM);
-+
-+	pll->map = map;
-+	memcpy(pll->reg_offset, desc->reg_offset, sizeof(pll->reg_offset));
-+	pll->soc_data = desc->soc_data;
-+	pll->fix_divider = 1;
-+	pll->frac_mode = desc->frac_mode;
-+
-+	init.name = desc->name;
-+	init.ops = &amb_pll_ops;
-+	init.flags = CLK_GET_RATE_NOCACHE | CLK_IS_CRITICAL;
-+	init.parent_hws = &parent;
-+	init.num_parents = 1;
-+
-+	pll->hw.init = &init;
-+
-+	ret = devm_clk_hw_register(dev, &pll->hw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return &pll->hw;
-+}
-diff --git a/drivers/clk/ambarella/ccu_pll.h b/drivers/clk/ambarella/ccu_pll.h
-new file mode 100644
-index 000000000000..6d901e88f410
---- /dev/null
-+++ b/drivers/clk/ambarella/ccu_pll.h
-@@ -0,0 +1,70 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2026 Ambarella, Inc.
-+ */
-+
-+#ifndef __CCU_PLL_H
-+#define __CCU_PLL_H
-+
-+#include <linux/bits.h>
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/regmap.h>
-+#include <linux/types.h>
-+
-+enum {
-+	CTRL_OFFSET = 0,
-+	FRAC_OFFSET,
-+	CTRL2_OFFSET,
-+	CTRL3_OFFSET,
-+	PRES_OFFSET,
-+	POST_OFFSET,
-+	REG_NUM,
-+};
-+
-+#define CTRL_BYPASS		BIT(2)
-+#define CTRL_WRITE_ENABLE	BIT(0)
-+#define CTRL_FRAC_MODE		BIT(3)
-+#define CTRL_FORCE_RESET	BIT(4)
-+#define CTRL_POWER_DOWN		BIT(5)
-+#define CTRL_HALT_VCO		BIT(6)
-+#define CTRL_VCODIV_DIV2	BIT(8)
-+#define CTRL_FSDIV_DIV2		BIT(9)
-+#define CTRL_FSOUT_DIV2		BIT(10)
-+#define CTRL_BYPASS_HSDIV	BIT(11)
-+
-+#define CTRL2_VCODIV_DIV2	BIT(8)
-+#define CTRL2_FSDIV_DIV2	BIT(9)
-+#define CTRL2_FSOUT_DIV2	BIT(11)
-+#define CTRL2_BYPASS_HSDIV	BIT(12)
-+
-+#define CTRL3_VCO_RANGE_MASK	0x6
-+#define CTRL3_VCO_CLAMP		0x8
-+
-+struct amb_pll_soc_data {
-+	u32 pll_version;
-+	u32 fsout_mask;
-+	u32 fsout_val;
-+	u32 fsdiv_mask;
-+	u32 fsdiv_val;
-+	u32 vcodiv_mask;
-+	u32 vcodiv_val;
-+	u32 vco_max_mhz;
-+	u32 vco_min_mhz;
-+	u32 vco_range[4];
-+	u32 ctrl2_val;
-+	u32 ctrl3_val;
-+};
-+
-+struct amb_pll_desc {
-+	const char *name;
-+	const struct clk_hw *parent;
-+	u32 reg_offset[REG_NUM];
-+	const struct amb_pll_soc_data *soc_data;
-+	bool frac_mode;
-+};
-+
-+struct clk_hw *amb_pll_register(struct device *dev, struct regmap *map,
-+				const struct amb_pll_desc *desc);
-+
-+#endif
+ static const struct amba_id pl061_ids[] = {
+ 	{
+ 		.id	= 0x00041061,
+ 		.mask	= 0x000fffff,
++		.data	= &pl061_arm,
++	},
++	{
++		.id	= (AMBA_VENDOR_AMBARELLA << 12) | 0x061,
++		.mask	= 0x000fffff,
++		.data	= &pl061_ambarella,
+ 	},
+ 	{ 0, 0 },
+ };
+diff --git a/include/linux/amba/bus.h b/include/linux/amba/bus.h
+index 80a74cd2da7e..411533bfa61d 100644
+--- a/include/linux/amba/bus.h
++++ b/include/linux/amba/bus.h
+@@ -98,6 +98,7 @@ enum amba_vendor {
+ 	AMBA_VENDOR_ST = 0x80,
+ 	AMBA_VENDOR_QCOM = 0x51,
+ 	AMBA_VENDOR_LSI = 0xb6,
++	AMBA_VENDOR_AMBARELLA = 0xe8,
+ };
+ 
+ extern const struct bus_type amba_bustype;
 
 -- 
 2.34.1
