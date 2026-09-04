@@ -1,57 +1,57 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB62B3876B2
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 22:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7980D3385AC
+	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 22:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788562572; cv=none; b=cb8d4fy8UIDGXk468X4b8htOi4hpjHm01JHJrZzV7y8puRrCt3pu+uVl/9s+tQ0amFDp37M+sRbpNUnLC4nmJdWTJwa4IQukiq6FRWV4ZOwzuJnfC94XUPDWcMLh6ssL/3RW7FlMP0j817vuM3GMvavP5Azh6ViAlSj6gli77Hc=
+	t=1788562689; cv=none; b=kLZ6peV/HmZr8ozjqV6cxB4GtgPvr6XkmsY7JkL2rSTge1ipQh79xKt/392+ypS8pkYylFw35q6p2dOEN8h1GopluAPjJrHoRbkFeARW/sYxkY6p3iqUZWGbY/se91uma5ybBWyzZeXeZS1866cA8ZsX3rvBh2E93TCv/YzYlu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788562572; c=relaxed/simple;
-	bh=VZI3LzYpzT3/6+/FLGZho79dXt/Qq/2a40qtUT0mQOA=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Wgu+ehFf3NVfxTmpv+5vNtgPk4zPDacTUGKRJWWj/guZPtLrfCPqUWrGA45PQ4UYm6x7ZIIFlyvrkVB4ytvjUCxWr4ksEkG4dwxJMn7KEO8AlyWHm1mrWQvjPlu3bpehPw9Smw7YS3jk2J1EVQvGH1jVxXINpijW/wWlQTRPPQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OTzBp/JI; arc=none smtp.client-ip=192.198.163.19
+	s=arc-20240116; t=1788562689; c=relaxed/simple;
+	bh=IWPLb8VTQn/QL6xzKSoqEejSdlqmNqQDIEczZYcPops=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=RdK1rEGxs35DqUvDz+7L8I7GD+JF16RkZ+ERDeUJrF3y3mjPC3tGyawuS7/EjO7GnP4rkzd2QCrh4Oxf2UD83xddS4mAAOlPF8lvAje+2aspZBbL4TvtmT4gCUA6hUSvtDU823RLeBeBr4Gw43nDgIQ/vLmBgciy/Yfb6SWI+pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gXbNiSiS; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OTzBp/JI"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gXbNiSiS"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1788562571; x=1820098571;
+  t=1788562689; x=1820098689;
   h=date:from:to:cc:subject:message-id;
-  bh=VZI3LzYpzT3/6+/FLGZho79dXt/Qq/2a40qtUT0mQOA=;
-  b=OTzBp/JIlX7BOr/RhYXZjTXNenyi4VbChAgjgOxofmFfZ2zGxvzcdoK+
-   2wHkuchBMOEK8QR9S7Bv/+4bizYITzjivkF5SMp/7jolEkEZmbgkgAZ/F
-   zQSO59opQwID9IN7v2pSAkU5FQu9LNOokdvG7vdF476k0rfAbgD0/5439
-   ndZzSu2fIWcjzY30Nb/smKoNqO9p7Ch8pD3OZqV9Q43J9YCPMhBrteoOl
-   mKM5jm/uoM9kvh81Kq/OIAfYTOJU3rg/vHj23B729UmQlpbHYu+7aDqRd
-   l8vCasaHHQj7x4zmgbNBvYa3Sq/0N3wbEpcKX6HynGLqVjg4qSBChYOEx
+  bh=IWPLb8VTQn/QL6xzKSoqEejSdlqmNqQDIEczZYcPops=;
+  b=gXbNiSiSuTUSO88neZfy/fVrOKr3JFWldwRybNXwlhNXQlcyov5CEwXT
+   zUjRcBSoDPamlm2t0/s9jb00oVHUiVCd6u0dfwPcO6w2+t3Uqa+6QWPxR
+   EvHTmBsHg4NVIB6WgrF6OAOz9rvHQ6THrQ/nKmvVaJ2D8mOetdxfsgw+J
+   fUoNLOIzjzkRg1c3ZWXskU3kzMhYvmkt4+nWQDrDtBtQCEAC7W2Jy7A1b
+   7Ltqqyd94bqzWy8Co3rOc5gcvPpiZQ4HOWzVpp39B645VzLAQ/TtLPq2s
+   IhXzdVg09UMhpFWiHK4LH7gJgQ3ou4g+bhWhwZyDL0iNvUrhDzRIlHTp/
    g==;
-X-CSE-ConnectionGUID: 8Cd8DpIaQBCxnVlNtRMtqw==
-X-CSE-MsgGUID: TuxJKSdXSpWRVLimj1/B9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11896"; a="88007284"
+X-CSE-ConnectionGUID: aMYWbfrqQriBZbICIazp0w==
+X-CSE-MsgGUID: u5lF2kqxS/K+IJyMaQpVgg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11896"; a="89089320"
 X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; 
-   d="scan'208";a="88007284"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2026 15:56:07 -0700
-X-CSE-ConnectionGUID: qScyOugPRs6jahg9EWhudw==
-X-CSE-MsgGUID: LPOB8LbRQ1+FObAUt02OGw==
+   d="scan'208";a="89089320"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2026 15:58:08 -0700
+X-CSE-ConnectionGUID: q/kgRjxwRWmIAvMMAQ7MWA==
+X-CSE-MsgGUID: +SgcTqSQQnmYlzcpTJdnmg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; 
-   d="scan'208";a="293659239"
+   d="scan'208";a="265806655"
 Received: from lkp-server01.sh.intel.com (HELO bfac249b2189) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 04 Sep 2026 15:56:06 -0700
+  by fmviesa006.fm.intel.com with ESMTP; 04 Sep 2026 15:58:07 -0700
 Received: from kbuild by bfac249b2189 with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1x2cpI-00000000AEW-0p6W;
-	Fri, 04 Sep 2026 22:56:04 +0000
-Date: Sat, 05 Sep 2026 06:55:36 +0800
+	id 1x2crE-00000000AEg-1mpj;
+	Fri, 04 Sep 2026 22:58:04 +0000
+Date: Sat, 05 Sep 2026 06:57:37 +0800
 From: kernel test robot <lkp@intel.com>
 To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Cc: linux-gpio@vger.kernel.org
-Subject: [brgl:pwrseq:for-current] BUILD SUCCESS
- 3b54dbd119805361695cb50ca6a875f4c7518b74
-Message-ID: <202609050634.B0rY2elX-lkp@intel.com>
+Subject: [brgl:gpio:for-next] BUILD SUCCESS
+ a2cfc48fee416f0ea78e7dc38acbf2ce072574cc
+Message-ID: <202609050635.ffRUxDlA-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -59,10 +59,10 @@ List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git pwrseq/for-current
-branch HEAD: 3b54dbd119805361695cb50ca6a875f4c7518b74  power: sequencing: Fix build issue with COMPILE_TEST
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+branch HEAD: a2cfc48fee416f0ea78e7dc38acbf2ce072574cc  gpio: altera: Fix build failure caused by undeclared 'irq'
 
-elapsed time: 2369m
+elapsed time: 2263m
 
 configs tested: 53
 configs skipped: 2
