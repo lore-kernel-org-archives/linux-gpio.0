@@ -1,71 +1,72 @@
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F792D1F44
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 13:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB661EFF93
+	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 13:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788527104; cv=none; b=POwXBGdHvTwkFCGBXhp5+sOVOPXGJJhPt8ydgeXxfkoOZ+BXneqO3lzoqcQioilKbLaO08G7AM1rI4iM9NTGaLJ8+I+Y/+AHf+FU0VRYOQzKggnTpz+fTWSG/tkyaG2WFmj8DEtmUVgh0pf3G70+eF/By0HAqBspXTQgCzkKEPI=
+	t=1788527156; cv=none; b=DO6UlQknx+6H9e5ZEEQheuF9MSZRzXjtivIV2DG9inft8dFNg0CZ753mZ9DvAG4nebAuxYTMBQC5woYaqm8sT9glQK08GaBd4eJOjZYrbCkDJ8nr8/l47iXYHZ3r1s0Zs9/YOd7xo5+T6mQJhePKF/FurQEQTeY3+DJvAAiCZ8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788527104; c=relaxed/simple;
-	bh=9xSOtnR0JMeRis+2A9+69QPm6YPp5GCesQOz8P1BqIo=;
+	s=arc-20240116; t=1788527156; c=relaxed/simple;
+	bh=/ypz6zJjPNKfNpTn4drsgfOEfmGR4cl9pbI1Kxi8oLQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fsSsppGxElt4zR0asg8nBB/aQSgdVBLozfptn5ocVDU4yGxYITDQ+RhUmqCaecWlb+Dclr2Gq+NVaC5m3bluMEcK6+B+VMWYj74Sn4gurIJmX7s1MytEV9HFg9t3R7uDqiCfwz8598QRIlpa1ekQpxJ1qINb5rouN9pmmxSiEvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+	 To:Cc:Content-Type; b=u9JQKAWQ0zzht2CIlnUyS/qXFVaztYb/vVGEfh1gqbhg+Duck/3/+lobIyQxcjscBZ5+9lpVrA8Kd1gja6HRNAYU9QQzJplKUIaWDuaCmj8NhqYFWVPmpRrBC1g3p0F4KF7Gd6FDs3N31XBXTU9PA/CKYdNWTvWfCAnJIYTVqaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-97ea7f0d417so344451241.2
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 06:05:02 -0700 (PDT)
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-77bf3334d14so693376137.1
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 06:05:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788527101; x=1789131901;
+        d=1e100.net; s=20251104; t=1788527154; x=1789131954;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=RX5/AQcrp5g9z3JYNb5ynUUaEFHGVwH0550eIwcyIWE=;
-        b=bmNny44PE42sPal4YxSCDJtiu5Yq0JUV1pfu5dJEgauPs6UTMkSJcFYLB+jgmvptTq
-         qaJT8oFrkSD6KeX3kB9zErKXhRs2/RLS9idPPTK/rm97t81xKq/NQlMX0oPmiGp3qoD6
-         O56J66n7RWazQeFo9+qVSDmYHS/A6Jj+A/R3HXhk1VIEhZQqW8LWbgs3R7xFzsEf9T1u
-         b7H/B/xaymoe9esjybNJPuWscYeglrVS0sZdgXAkGzLj9GeWHr1WZMMAzDRqdo92E2sU
-         2Hwwb/qFgjWRovGRLljOiVvvotAnp3MfpfxMLh77KGZgTkrj6no2QBSZg8AKrKgnI3/8
-         HO6g==
-X-Forwarded-Encrypted: i=1; AKwUvBz86MI7GO5qU4rB84VP3DjQ7awdkI6RD7C92l2Z054/4PSO8Iq4t5u7RTfe4B4/2VqWGcrYqnpsQ1rp@vger.kernel.org
-X-Gm-Message-State: AFuF++k3esij0aRXiTCalg0aqZTmwOTckN40tEt3z/vRb429cNF0Tq5i
-	Y3jdSN7ntrik9pZ6hT3D/6FQA4mh1/s1PTiL/Xd9dg/B2ME9O+yoMUrHPSJIS4+CDa8=
-X-Gm-Gg: AYBFou0vDvJ8kaViVSxWCxN6V6TSR3xYZnVZMZzyJMvnkWMokrXKdsdTfn01cXqy2RF
-	enBex7UE/j9yWODsjyiFIt22F22fQY1wwSPoptInCwBJrKLPhq4LGlr9rDNLnVcBcvcsOUgC2Uk
-	n8r4ZIxbU36lwdkD9glgfsygoHe1e58K48KfdwZTtVBnhyRsb7RpmjMREhJq2ysO4ukT9a55m2c
-	dd7ES7pIKzzhfFV50l/26b+ZLmiy66hvzYGM5/J5HcqTB+GZrkOcQX9Kw2RBVSvGTCnrBNYcuph
-	7fsV59YSYXJzfO06yxlDtk/7pGM6OBMoqhcJ1T7nv7AxpmCY0h8rLOGQfWh9Rb6rda0yyXVVccm
-	Ae8o2lEF9mrhNVuBRWJ8hzIqfJON+IMNt7zIQetOEPwGD3hu8aPN008F4MkSzy/aWflFzr/JV5A
-	w0FhEC+UKlFg4p9bicUAjZHwTebPYXK34DN4EH3NUCvy4OVfULwc+KjpIh1Z2iNrV4eMXE7cTVd
-	l4ycQuFUGAzfXEDQfjccqFLjzED9Q==
-X-Received: by 2002:a05:6102:5093:b0:785:d308:cc0c with SMTP id ada2fe7eead31-78a4a61f8f8mr1404751137.5.1788527101541;
-        Fri, 04 Sep 2026 06:05:01 -0700 (PDT)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a47a76487sm1669036137.5.2026.09.04.06.05.00
+        bh=8NOF30mvWowB029u1n+aELPP6OhCTftCoi3R2I9gbMk=;
+        b=KeTyPZtBlcDhz/bKJ86ovvrLED8QqBgkNQd4JKH68upI8+XIEn17X5/FvIx8ujLcHG
+         6oLhGT/kSmL1keOQBgjSiwEwt45VKxRvN3lVj1W2axEp4cugyMr2+G7+YlQd7pKx94bx
+         uUqhYodjgio11A9KvWxBWRAkMN+rZmVvhkOTdrJRicuGP9ejk8E0rp+UrLMw7WEzFrzT
+         fWZLIfx95M9YobjtK40we31eVEVcNfjnwJd8kw3vLEE1lHeVO4Ul7dF9iqtPtGOMGOoN
+         yEhkJWY43gPRY1oo1LD59mZQRe4WgdZrP/ObfAKylkpjDZPN5uCxZRPXYWASviwmLSLr
+         daQQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwI8xHwqqxkAdCclxhXDtoDgJTIFrkM8n8IvwfOxvtHMIueZEDWh1gEQa0hlFI1QY6c6gzVKk0cUyzw@vger.kernel.org
+X-Gm-Message-State: AFuF++nrR9kp+CCN5qufySRurbEWsuX9/4VoRc3xMhSr217BgE+a1S4c
+	/bsEQs/UVRS3XVB0qA6UjU1LOg2kjS7csso1CGsdrj9oXfskCYy2nS15EXMbQOwZ5cw=
+X-Gm-Gg: AYBFou2AGy/hHWuBg8/6dc6cRRax5HC1H8dE307pumf/Y3Bbm7g6wi4onN3BieAY5p2
+	H+APYE5XKMIL5H6U6uu0Fzlic1kd81eBbTpYzJ6K4Q8R28ZA2+TnWMVZ6xHPvjlD3MrBNYPnNGO
+	GXhPW+MmigcIMj1SAACd/LYerl6ekulmw3HyYT/RXi021lPodW38ROcmQFrOjQP10Kvn3n7Dk7d
+	MXhZELE0upyTMh1DfZjLFVLZnP1MwJM3+uqAcCDiN7t2rN3c/YNNG4c2ffIlJzP6IHLzls8a8qV
+	0WlCzmawzHFF3Ui/HpE2JCpn2QeoUiqw+ob8FHxj25ZW5cTvoa1DcaosoN/jaUZXxRx8iQCiyM+
+	Ty2On0E9bKgdVwn9M2/+XXXJ/wY0iVDJgNherzJNSHhaRq1eL6E4V7cDvDPTSGLEO2tUoi95ta8
+	yiCRN1CLmKNI4e9YJf7ua3Nq9akQrOEEho+NAm6UpEpdzj8/ka9yBRd0TifV8pKFgJEXCZgMOPe
+	9rasNgPKpf4+BO0sjcyx3m1VQ==
+X-Received: by 2002:a67:e703:0:b0:785:ab90:bc52 with SMTP id ada2fe7eead31-78a4aabad79mr2101121137.8.1788527154243;
+        Fri, 04 Sep 2026 06:05:54 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9809e56231fsm170342241.2.2026.09.04.06.05.52
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2026 06:05:00 -0700 (PDT)
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5bfaa014978so472850e0c.3
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 06:05:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzrG2oCe69uCIteO40GX9DM0YduUDBWYGW8siGiZ4kig6uwseCzxUkEdz/Ej6L43HZP6Qb8nxX/QC4d@vger.kernel.org
-X-Received: by 2002:a05:6102:8098:b0:783:79ac:9dc3 with SMTP id
- ada2fe7eead31-78a4a880ccdmr1610149137.10.1788527100013; Fri, 04 Sep 2026
- 06:05:00 -0700 (PDT)
+        Fri, 04 Sep 2026 06:05:52 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-97bf90f4b41so590274241.2
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 06:05:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzbXbf/2EIm4OmhZTdSeUplAyt9SieBX/G15XcD9Z1gGaUoLEbbuOQGSzH/1JsNuLlvhgwVVj316Rsm@vger.kernel.org
+X-Received: by 2002:a05:6102:290a:b0:785:f288:c23 with SMTP id
+ ada2fe7eead31-78a4a918bdfmr1975845137.3.1788527151892; Fri, 04 Sep 2026
+ 06:05:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260904125425.412632-1-claudiu.beznea+renesas@tuxon.dev> <20260904125425.412632-4-claudiu.beznea+renesas@tuxon.dev>
-In-Reply-To: <20260904125425.412632-4-claudiu.beznea+renesas@tuxon.dev>
+References: <20260904125425.412632-1-claudiu.beznea+renesas@tuxon.dev> <20260904125425.412632-6-claudiu.beznea+renesas@tuxon.dev>
+In-Reply-To: <20260904125425.412632-6-claudiu.beznea+renesas@tuxon.dev>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Sep 2026 15:04:48 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXMyNqkuLbRuxjmAfx3K9uY2v4Bi3E55Oi83ty3183diQ@mail.gmail.com>
-X-Gm-Features: AcwNN1WoMZ_PTeRAOvmLdFtKHfL1Mzb06YSXX-uH--FGhySrvI3MRJ8Z9p2r4tY
-Message-ID: <CAMuHMdXMyNqkuLbRuxjmAfx3K9uY2v4Bi3E55Oi83ty3183diQ@mail.gmail.com>
-Subject: Re: [PATCH v7 3/5] pinctrl: renesas: rzg2l: Unify the power source handling
+Date: Fri, 4 Sep 2026 15:05:39 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV2NavSY5K3Em4jTKuiWCZCc+XOWW4nH4HHh76aoiuWEA@mail.gmail.com>
+X-Gm-Features: AcwNN1VET22qEnErTI_Nd7aROS6yUTveXM7jVaLpauOVguTdNaHuyqM0FX-8ExU
+Message-ID: <CAMuHMdV2NavSY5K3Em4jTKuiWCZCc+XOWW4nH4HHh76aoiuWEA@mail.gmail.com>
+Subject: Re: [PATCH v7 5/5] pinctrl: renesas: rzg2l: Add RZ/G3S support for
+ selecting the I3C power source
 To: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
 Cc: linusw@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
 	conor+dt@kernel.org, magnus.damm@gmail.com, 
@@ -80,33 +81,14 @@ On Fri, 4 Sept 2026 at 14:54, Claudiu Beznea
 <claudiu.beznea+renesas@tuxon.dev> wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> The previous code handled power sources using a mixture of power
-> source specific definitions and lookups in the available_ps[] array.
-> Unify the power source handling by introducing
-> struct rzg2l_pinctrl_ps_desc, whose purpose is to describe a power
-> source through its power source value, associated register value,
-> associated capabilities (e.g. Ethernet), and associated IOLH index.
->
-> Introduce two new functions, rzg2l_ps_to_desc() and
-> rzg2l_pwr_reg_val_to_desc(), using the
-> RZG2L_PINCTRL_PS_DESC_MEMBER_TO_DESC_FUNC() macro, as their
-> implementations are similar.
->
-> These functions retrieve a power source descriptor based on either a
-> power source value or a power source register value. Other functions
-> that need to perform power source specific operations can call them to
-> retrieve the corresponding power source descriptor.
->
-> The register values for the soft power sources were kept to zero since
-> they are not used across the driver's code.
+> The Renesas RZ/G3S I3C pins can be powered at either 1.8V or 1.2V. The
+> pin controller provides a register to select between these two options.
+> Update the Renesas RZ/G2L pin controller driver to allow selecting the
+> I3C power source on RZ/G3S SoC.
 >
 > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v7:
-> - collected tags
-> - dropped 2.5V voltage domains for SDHI and QSPI
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. will queue in renesas-pinctrl for v7.4.
