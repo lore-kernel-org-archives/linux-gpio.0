@@ -1,160 +1,150 @@
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB784443315
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 11:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04F04071DE
+	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 11:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788520558; cv=none; b=faIASC8C2HXEF1YdPUybXS47m1w8Wbvo1v+ZEreOw3MutAA67/WKr7P+ttTP15Mv48xr0hTBt5h8x45YAHcAFMnnzsxvyreTO9hcBdrfwN9Ih/qv+rZNFiMKOc63BMQ0ofBC+hv03S8uxvism0y5U2vT4wuEckkTB+GUPHX6bBU=
+	t=1788520620; cv=none; b=nMxr/AZ2OyQUWsgnxWq45NglWS988JS8R5A42YKXAwZofkToMCkM1pACNNlMxlACnXZXZ+w6dVK0MiCK1RY9ZrgVhH3xgFcC1zEFZO44Ornr3zetfPO2RmlKwzJaWJwvUNUSksMAIa/gFRPtssJ9zJ47vkGOyFdhSQgnmnaVaAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788520558; c=relaxed/simple;
-	bh=d6jCA5GVTc0ThXif/CzYvuE2cp2VD9so0DaT8N77OTk=;
+	s=arc-20240116; t=1788520620; c=relaxed/simple;
+	bh=V06IaIi4jTJzj1JK9gqz8ZBxdNpdoXx4g6Xhk1QdB8w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cye+MYmqqffUWM6H7kuFaC3MvwZe+BUeHZ6zPgEX/mKS/5b0bh1gyQSK2a/6PoMGY+gyS/CAhKUqE6Lger5fZwSVxRggxdFa4PVxWk7IC+MPt5x34xgmggUKmJvFEzjTY6pasWKgqEKQRakMwO7la6Ln/Z2dMhQ5hx/UbSCJgU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
+	 To:Cc:Content-Type; b=hT+pxyGuTp8iTOp3iXcwfljqJnCWZnfYp1saz6mZxc8H7CUg84YEs03RwTztDHYjnkc2NTYhRr+Gw5Mr0hrIJDVC8oGvBIjUceQC6E1E7fUc9qGdZ2jeEd2RyZg0eK10b5LQpoDYw2nDN8h272tq6RGXkVaY6ouzOaz8oJEFHoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5c652293bcdso1084625e0c.1
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 04:15:56 -0700 (PDT)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-782c22fbb1cso268288137.1
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 04:16:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788520556; x=1789125356;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=kFRwu393qYqOsEzkDFwmTOKtASNW/fykD0KYaVUIBVo=;
-        b=dMatZdHyXzrNFiCmzIRiZPbqfMWyb4GoTeXwzbSwIMeczX/s7z++lmZlN6NJg1MIhU
-         f8OlCetAoRdCDy2x0e/jfHJnnrOIg1DzZ8mCwMRFPqaqpNZl9RfFKagMaDm3cgfHf1aO
-         W082Z2S/EnAVuPexA6lLvM1m7Zp0tJh6KxMCLOJ6wZDlJufm5YhiWB3d57eo6r3YTJko
-         Rbr26yvo1nY+kFZ4O0Lj6zPbi2N4hB6Ee1jrDZtOakRRUU89gHeXC5DAcDMZeEFgtLi4
-         Q7pU0DuwbJr7m+hIQuE7IiW/S1hJJ8evUP3QEqzby0JAqLvHRRkhW4zbJdGOPsxLTOMZ
-         owOA==
-X-Gm-Message-State: AFuF++mNISIio3Yn0Ml+O6GLKIKIeWqCkum7X0Rfl94Qj1fKtD783gGz
-	NCjgJav6ym2uDsnzbx67uQ7Fd1nxQy/jSQWPYxdFGL1TWOpRxnmiYvw4h3hj9zabInc=
-X-Gm-Gg: AYBFou1PKmrttCBSbYjgfqa6WuUChGZ1QDLbpJtNBqxkPdJZJMRTg7HIfUILT/ql0JK
-	QGY2WThRbXltBQ1+pe99gItdGsor1xsfXloQIbNr3ti/KT7rof8mymRIYrwY78TN8+X4/tVRUF+
-	cW5da50klg9HCFZwgR75RIBTBWIxX4ZHsedH4McLU/FGfnrbsqg9S5pBMtlnBM0NchrtFeVNeA1
-	+lGM1GZwPSOyv7I35OhC3VuP9+Cfg/2nTqmMkBKBoJm6tskcFElLW7Jn0ThnrseDP0XxjNkQuUs
-	QQBpBnpOhH/8TwWYuxtN9tKLhbTe/ZUZFsa7QU87HEXrp+RK4JN5yEzYni/cZztNBYq9/AzFy0I
-	Gp2EGfLT7PxORlAbafa+S2KNHBAR1iY/2Jp+y0fFyn41BK9465t5G7ifVcS1vsit23QOd4Vy6xw
-	x5YRW4Er0sBL2LW9NCzOXKA/LkyPuV7+nVdbqk2O9neB7r/qFvP3defngNgp6YaBNlJ631+PvmR
-	i+bU1KxyJUJm8e9tkr8sGgD593pwxJvpkRXqg==
-X-Received: by 2002:a05:6122:4685:b0:5c6:58e0:b2e0 with SMTP id 71dfb90a1353d-5c7ed7dc638mr2295666e0c.7.1788520555822;
-        Fri, 04 Sep 2026 04:15:55 -0700 (PDT)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec35d85fsm1830041e0c.12.2026.09.04.04.15.55
+        d=1e100.net; s=20251104; t=1788520618; x=1789125418;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=bKz0EbNXKgkRmHwAjHcE4su/TyTn7raXYOe8ludN9rM=;
+        b=M6r0fgI7CLU60vWgXoHNNljzoDw4XiHp1f3Lz3iH73odkmDo6DxLiVWlREpKc7sn8x
+         QZ4iDb5jlO0ybUTulw7KLGmLsA/cOOAUHJND9Hy4QbSN3NQamk3DT8mBe+s2HbZhrKH5
+         uxORXNS7WuS4S7mpAsgsz0KhrbuKqUvmt3kuAfhs0nkfsdw2agheBL369bMVVLAhw65b
+         5stAO3walAfUtlufsm/IkZ13hqQ8bk8Qu25y7ZyueDA9arbjM7HLxzpkxy3Ek5w2a1UQ
+         wdVbmnMM27O3YjGXjZL9x89dB9H+fSHAWNWtTWshOTOWG+7oUUGy/ylqLnFT/Lrwvmdg
+         9cfg==
+X-Forwarded-Encrypted: i=1; AKwUvBx6do2Z7tDzvMed9DMPafz8Y7XoIYfaXZC5Lu7EBgDbCGBuXKhzPGZmSkMUGttFygpkjykLCwJgXmsq@vger.kernel.org
+X-Gm-Message-State: AFuF++kjrK26plyYDatFsqgQg/q5hIrjoq1sm24Wx+lf8KekRlK/FQ9B
+	YrTdPG8c+jdHTBJJWND4I+F9rQWrD9VgkPnKfJNkVs3ZaGMT0b/5OFDIN01FUCCbrfs=
+X-Gm-Gg: AYBFou3hVp5Y9lwrgycf2Hy9YC8I7N1OpY9Q5gcMykJkjE9nadMFIVeCB9XtX6B9DgU
+	VJDAX7w6gwQsDtTaDVDAL83stEO2JBT+gd9TzxSHIFs1joiPwEuZGwc6lXb7KcoIMiinOa/JUcQ
+	drC1dSx62znloHrzCeN6ClnvGkS9lBRR7zOKIBa8gZcbyLbBZLVBXpSrsgabb+i4YXt64h9hQhP
+	M3Uvc/0wBfVxYXQbNHQbg1N4TWwVxNGO43VuAGnbeJuHFjjG6qtduDWzeeGPC1XMwhStuzvjPCJ
+	VL092eMkXKOdElkxss/jGON3iQtq3uPxLNZ5GMbTv0P7r+kXFe8WvLaC/P5d0pCPXTfvYp6KuAS
+	lwoAI8XHldBsMRwvMjPjf80FWuTmMp4Vn6SVZEIaq6KElS2soap5wrBsArCrH93HbgkXiCggbO0
+	PK8kPK/EJzwhYRE8DMUwogCwq9vd5JTQHZhJhitilsrdqL1e265cf/JJq6Lrm4pP/S12+SlO9JE
+	SCSLNjMbXZdtnMMSkenPkvGEvSp1w==
+X-Received: by 2002:a05:6102:801c:b0:789:100e:3d1c with SMTP id ada2fe7eead31-78a4a8b0806mr1271204137.5.1788520617481;
+        Fri, 04 Sep 2026 04:16:57 -0700 (PDT)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9808ed1f14asm1290992241.3.2026.09.04.04.16.56
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Sep 2026 04:15:55 -0700 (PDT)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-97622cc1f40so652347241.3
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 04:15:55 -0700 (PDT)
-X-Received: by 2002:a05:6102:3f51:b0:785:b85f:2aa with SMTP id
- ada2fe7eead31-78a4a648a46mr1803410137.2.1788520554747; Fri, 04 Sep 2026
- 04:15:54 -0700 (PDT)
+        Fri, 04 Sep 2026 04:16:56 -0700 (PDT)
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5bf9466867cso377405e0c.2
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 04:16:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBx2KRMRDZMGAId7Pj7dce/rwhkfkxLtYhVNFPwK8WWtB3KOYZzNIqTUsVW8qJOXf0jl+P7nJIPnlxg8@vger.kernel.org
+X-Received: by 2002:a05:6102:6b01:b0:77b:b14e:b670 with SMTP id
+ ada2fe7eead31-78a4aa0794emr1096677137.8.1788520616710; Fri, 04 Sep 2026
+ 04:16:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org> <20260704151521.211335-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260704151521.211335-2-marek.vasut+renesas@mailbox.org>
+References: <20260902-rzg2-sr-boards-v4-0-4a456a422fee@solid-run.com>
+ <20260902-rzg2-sr-boards-v4-2-4a456a422fee@solid-run.com> <CAD++jL=fGonMHd0jitwAE8+w=JYPX_6YFW6CzS9kRZLbx3045Q@mail.gmail.com>
+ <0435939c-2836-480d-9ba2-8de4c5e22cc2@solid-run.com> <CAMuHMdUE3+qBdy2CoSQMzJ1iePiv0PSTfOjxHAqgp78i_XpMPQ@mail.gmail.com>
+ <c0a37ff2-b133-4bd9-82c6-732f58e2c5ec@solid-run.com>
+In-Reply-To: <c0a37ff2-b133-4bd9-82c6-732f58e2c5ec@solid-run.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 4 Sep 2026 13:15:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUapaP-8kkWT5cXtEO1h58aAzzm34XqO_mcrgbVSyXEwg@mail.gmail.com>
-X-Gm-Features: AcwNN1WMlLVxDyFWD65pnl1NyThp-Tpg9HdlxV40HKkGt6SB_vBjbsP-zmpppFo
-Message-ID: <CAMuHMdUapaP-8kkWT5cXtEO1h58aAzzm34XqO_mcrgbVSyXEwg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: rcar: Add R-Car X5H (R8A78000) support
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Date: Fri, 4 Sep 2026 13:16:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUOqA_mNQ6-+rxcTxiJSWDBQbiaLqYAtVEko6T7DLgOdg@mail.gmail.com>
+X-Gm-Features: AcwNN1U-uc-LOk3gvbh_6tN7N3DFNnBp7J17BKaRTYV7o3lPeDqXkvPWiYvEkoY
+Message-ID: <CAMuHMdUOqA_mNQ6-+rxcTxiJSWDBQbiaLqYAtVEko6T7DLgOdg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow
+ input-enable pinconf
+To: Josua Mayer <josua@solid-run.com>
+Cc: Linus Walleij <linusw@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, Jon Nettleton <jon@solid-run.com>, 
+	Mikhail Anikin <mikhail.anikin@solid-run.com>, Yazan Shhady <yazan.shhady@solid-run.com>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Marek,
+Hi Josua,
 
-On Sat, 4 Jul 2026 at 17:15, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> R-Car X5H (R8A78000) is the first member of the R-Car Gen5 family.
-> Add support for R-Car X5H, which has slightly different GPIO block
-> register layout compared to previous generations. Introduce offset
-> remap function which performs 1:1 remap for R-Car Gen1..4 and a bit
-> more complex remap for R-Car Gen5.
+On Fri, 4 Sept 2026 at 13:14, Josua Mayer <josua@solid-run.com> wrote:
+> Am 04.09.26 um 12:12 schrieb Geert Uytterhoeven:
+> > On Thu, 3 Sept 2026 at 11:23, Josua Mayer <josua@solid-run.com> wrote:
+> >> Am 02.09.26 um 14:58 schrieb Linus Walleij:
+> >>> On Wed, Sep 2, 2026 at 1:50=E2=80=AFPM Josua Mayer <josua@solid-run.c=
+om> wrote:
+> >>>> The list of allowed pinconf properties already includes input-enable=
+,
+> >>>> but has omitted input-disable.
+> >>>>
+> >>>> Both refer to the same hardware property, setting and clearing input=
+-enable.
+> >>>>
+> >>>> Add input-disable to the list.
+> >>>>
+> >>>> Signed-off-by: Josua Mayer <josua@solid-run.com>
+> >>> (...)
+> >>>> +        input-disable: true
+> >>> The Subject of this patch is  "Allow input-enable pinconf".
+> >>>
+> >>> But what you are doing is allowing input-disable.
+> >>>
+> >>> With the subject fixed:
+> >>> Reviewed-by: Linus Walleij <linusw@kernel.org>
+> >> Thanks!
+> >> I'll fix the subject ... !
+> >>
+> >> ("dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow input-disable pin=
+conf")
+> > No need to resend, I will fix this while applying
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > i.e. will queue in renesas-pinctrl for v7.4.
+> >
+> > I will also add "output-disable", which is missing, too.
 >
-> The GPIO block register offsets on R-Car Gen5 changed and the change
-> can be divided into five groups, registers which remained at the
-> same offset, INDT register shifted by +0x10, OUTDTSEL register
-> shifted by -0x34, INEN register shifted by -0x38 and the rest of
-> the registers used by the driver shifted by +0x70 .
+> Thanks!
 >
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-
-Thanks for your patch!
-
-> --- a/drivers/gpio/gpio-rcar.c
-> +++ b/drivers/gpio/gpio-rcar.c
-
-> @@ -65,14 +66,59 @@ struct gpio_rcar_priv {
+> However I am ready to send v8. If I drop it my series will fail dtbs_chec=
+k.
+> Is it okay if I do resend it, and/or should I wait and cherry-pick your
+> version
+> so that it is easily dropped while applying without conflict?
 >
->  #define RCAR_MAX_GPIO_PER_BANK         32
->
-> +static inline int gpio_rcar_remap_offset(struct gpio_rcar_priv *p, int *offs)
+> Or drop it and live with failing dtbs_check?
 
-IMO passing a pointer to offs complicates the code.  Perhaps pass offs
-by value, and return the adjusted offset or a negative error code?
-
-> +{
-> +       /* R-Car Gen4 and older do not need any offset remap. */
-> +       if (!p->info.has_layout_gen5)
-> +               return 0;
-> +
-> +       /*
-> +        * R-Car Gen5 register layout is slightly different and the offsets
-> +        * that have to be added to or subtracted from each register offset
-> +        * can be divided into five groups, listed below.
-> +        */
-> +       switch (*offs) {
-> +       case IOINTSEL...OUTDT:
-> +               return 0;
-> +       case INDT:
-> +               *offs += 0x10;
-> +               return 0;
-> +       case INTDT...EDGLEVEL:
-> +               fallthrough;
-> +       case BOTHEDGE:
-> +               *offs += 0x70;
-> +               return 0;
-> +       case OUTDTSEL:
-> +               *offs -= 0x34;
-> +               return 0;
-> +       case INEN:
-> +               *offs -= 0x38;
-> +               return 0;
-> +       default:
-> +               /*
-> +                * This here must never be reached, if this is reached, that
-> +                * means there is a catastrophic failure in the driver. Skip
-> +                * any IO read/write to prevent further damage.
-> +                */
-> +               WARN_ON(1);
-
-A build-time failure would be better.  I tried BUILD_BUG() instead,
-but unfortunately gcc is not smart enough to notice this case is
-never reached.  __always_inline doesn't seem to help either.
-
-> +               return -EINVAL;
-> +       }
-> +}
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+If you're ready, then please send v8 (and add "output-disable").
+Thanks!
 
 Gr{oetje,eeting}s,
 
                         Geert
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
                                 -- Linus Torvalds
