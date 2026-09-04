@@ -1,216 +1,233 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5EC493633;
-	Fri,  4 Sep 2026 12:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8E449483F;
+	Fri,  4 Sep 2026 12:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788526494; cv=none; b=D0zg5d9+xk779BG7htt8iB5Ft7p+fDAt20T51Vf7mLym9BkPF2MQwZgr994elKyiUaKJPVJlHrIvByBQ5K9av3KfixlW5HZMLgIUz/MK2kEyyuwOT17Dz2Z4SHh52W6LOtCB+4htTlP/KvbQWY6jxhoUI2/Kp0UMcRcQ5TYhcJs=
+	t=1788526512; cv=none; b=MnqW24Ck6qi8LjstAlWzIskUAOAE/rzOfCaF2OFVejzXPOMtjcYN/oHrBEeBVr97DCeAAoc2T4XZ3vaqcmIC9xR/O0QMN2fKUbbWqpvqUbJG69+y7wP1EwGmYa39R2AyyyfUszD4GNMZLSt9xOd69y2zBAb2BuOhypc1sZ24gBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788526494; c=relaxed/simple;
-	bh=hGvlZUn7/Ambf9YcNv/eAm7mw97nQrTLcReNYt6Uk4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iLevpTQ7BsRrLwqydDtVALvW3Sd99pst9b3FMyw79LuZ9ECnUtSY8lVKTKkh/UxgAw0M0zuH8N60vfh2wat5KRYwv3QK7DNlsrFOwVNvFHyZ+8qRNOKkDjSMocsdiTu8bWybOOvOly12FAyR8aAhyi+V8q6z2sp2xtX5Ek26QbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30C1A1F00A3E;
-	Fri,  4 Sep 2026 12:54:49 +0000 (UTC)
-From: Claudiu Beznea <claudiu.beznea+renesas@tuxon.dev>
-To: geert+renesas@glider.be,
-	linusw@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	magnus.damm@gmail.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v7 5/5] pinctrl: renesas: rzg2l: Add RZ/G3S support for selecting the I3C power source
-Date: Fri,  4 Sep 2026 15:54:25 +0300
-Message-ID: <20260904125425.412632-6-claudiu.beznea+renesas@tuxon.dev>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260904125425.412632-1-claudiu.beznea+renesas@tuxon.dev>
-References: <20260904125425.412632-1-claudiu.beznea+renesas@tuxon.dev>
+	s=arc-20240116; t=1788526512; c=relaxed/simple;
+	bh=KHkDBsPVsQ5j7R1knzYomfkJJV2X/Gy6OlFk5gywL6U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=giZjHedRwxpHe6rsyxWTv53O78/+s/Ea/ighDy9dvYo122Vkq5mi+Ju588anpYTC1Dilf3aSDS8D5IAVxH/xwP2KSpv9EQ3O2PEQ4S+I0f+7ErXqR5lMYqk67hntbMPzVTXQsffAUPGu1rG33LiYE8iMWWkzRO9lki7xt4NNy/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F0TRprKB; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0TRprKB"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 56A03C2BCF7;
+	Fri,  4 Sep 2026 12:55:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1788526512;
+	bh=KHkDBsPVsQ5j7R1knzYomfkJJV2X/Gy6OlFk5gywL6U=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=F0TRprKB1Ec+iZtzIgZY7M4qF9+BGAoCCeSdhIxE2h3ocCrU1I9+8zrGiSOl+FfNl
+	 oEKIJ2sAmKWimBHUz7nBI0fPGEW7ZSXdx+rDl6asKT6Fz3JFbOht1/TsH4iucNKfBO
+	 XccLU4B+9Y/vU9oWYBI5XrSZvK92GWbW9WACG1OCWpLlfJIDTkePknldEEN75Xrqq1
+	 S41snkUS6eWgfmoTey066qE8IZoo6aCkZHPy6ocRvvn8/lIYOrn89mfidjK7LFRBD/
+	 RDXdz3TrEHOkjmdMcQ+3rQwCQIwfIhOTyFE++V0+S+3zEBuzHwKIrBo5qCtdyPSCEB
+	 nO+Ta1WONAuHQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA8AC61DD6;
+	Fri,  4 Sep 2026 12:55:12 +0000 (UTC)
+From: Muzaffer Kadir via B4 Relay <devnull+muzafferkadir.mainlining.org@kernel.org>
+Date: Fri, 04 Sep 2026 15:55:08 +0300
+Subject: [PATCH v4 1/2] dt-bindings: pinctrl: qcom: Add MSM8952 pinctrl
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260904-msm8952-pinctrl-v4-1-671475ed1397@mainlining.org>
+References: <20260904-msm8952-pinctrl-v4-0-671475ed1397@mainlining.org>
+In-Reply-To: <20260904-msm8952-pinctrl-v4-0-671475ed1397@mainlining.org>
+To: Bartosz Golaszewski <brgl@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Muzaffer Kadir <muzafferkadir@mainlining.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1788526510; l=6036;
+ i=muzafferkadir@mainlining.org; s=20260816; h=from:subject:message-id;
+ bh=PTy1IAb7nzaSy4xC8ME8hdyOaAedYm1UpImwgyv4O/A=;
+ b=tGswtm6ZnuaCeedExOYN/r8oViahba9Q9n/evEnqq90ull80EzHuWXjyAlPuRil2NndKuOj2s
+ /aNG2OaiemsBCf4WnTNFe75RKMvUzC86nrDXG0bXiruvB/rypAaRYAo
+X-Developer-Key: i=muzafferkadir@mainlining.org; a=ed25519;
+ pk=4zkv4suQ3cYcO4Z7CrV8JSSjEGLBGepUtvQCFjgnYIU=
+X-Endpoint-Received: by B4 Relay for muzafferkadir@mainlining.org/20260816
+ with auth_id=954
+X-Original-From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Reply-To: muzafferkadir@mainlining.org
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Muzaffer Kadir <muzafferkadir@mainlining.org>
 
-The Renesas RZ/G3S I3C pins can be powered at either 1.8V or 1.2V. The
-pin controller provides a register to select between these two options.
-Update the Renesas RZ/G2L pin controller driver to allow selecting the
-I3C power source on RZ/G3S SoC.
+Add device tree bindings for the TLMM pin controller
+found on the Qualcomm MSM8952 platform.
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Muzaffer Kadir <muzafferkadir@mainlining.org>
 ---
+ .../bindings/pinctrl/qcom,msm8952-pinctrl.yaml     | 146 +++++++++++++++++++++
+ 1 file changed, 146 insertions(+)
 
-Changes in v7:
-- collected tags
-
-Changes in v6:
-- used bit 23 to define PIN_CFG_IO_VMC_I3C
-- described the I3C power sources according to the new method; due
-  to this didn't collect the Wolfram's Tb tag.
-
-Changes in v5:
-- due to patch 3 from this series:
--- dropped the definitions for PVDD_I3C_1200, PVDD_I3C_1800
--- dropped available_i3c_ps[] array and fill everything in available_ps[]
--- dropped the adjustments from rzg2l_pwr_reg_val_to_ps() and
-   rzg2l_ps_to_pwr_reg_val(), rzg2l_ps_is_supported() and
-   rzg2l_pinctrl_pinconf_set()
--- dropped the tags
-
-Changes in v4:
-- none
-
-Changes in v3:
-- collected tags
-
-Changes in v2:
-- none
-
- drivers/pinctrl/renesas/pinctrl-rzg2l.c | 30 +++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-index 6696e32909c3..9bf3743dc1ce 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
-@@ -70,6 +70,7 @@
- #define PIN_CFG_PVDD1833_OTH_ISO_POC	BIT(20) /* known on RZ/G3L only */
- #define PIN_CFG_WDTOVF_N_POC		BIT(21) /* known on RZ/G3L only */
- #define PIN_CFG_IO_VMC_SD2		BIT(22) /* known on RZ/G3L only */
-+#define PIN_CFG_IO_VMC_I3C		BIT(23)
- 
- #define RZG2L_SINGLE_PIN		BIT_ULL(63)	/* Dedicated pin */
- #define RZG2L_VARIABLE_CFG		BIT_ULL(62)	/* Variable cfg for port pins */
-@@ -256,6 +257,7 @@ static const struct pin_config_item renesas_rzv2h_conf_items[] = {
-  * @oen: OEN register offset
-  * @qspi: QSPI register offset
-  * @other_poc: OTHER_POC register offset
-+ * @i3c_set: I3C_SET register offset
-  */
- struct rzg2l_register_offsets {
- 	u16 pwpr;
-@@ -265,6 +267,7 @@ struct rzg2l_register_offsets {
- 	u16 oen;
- 	u16 qspi;
- 	u16 other_poc;
-+	u16 i3c_set;
- };
- 
- /**
-@@ -272,6 +275,7 @@ struct rzg2l_register_offsets {
-  * @other_poc_pvdd1833_oth_awo_poc: PVDD1833_OTH_AWO_POC mask
-  * @other_poc_pvdd1833_oth_iso_poc: PVDD1833_OTH_ISO_POC mask
-  * @other_poc_wdtovf_n_poc: WDTOVF_N_POC mask
-+ * @i3c_set_poc: I3C_SET_POC mask
-  */
- struct rzg2l_register_masks {
- 	union {
-@@ -281,6 +285,11 @@ struct rzg2l_register_masks {
- 			u8 other_poc_pvdd1833_oth_iso_poc;
- 			u8 other_poc_wdtovf_n_poc;
- 		};
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8952-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,msm8952-pinctrl.yaml
+new file mode 100644
+index 000000000000..d367bb078aff
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8952-pinctrl.yaml
+@@ -0,0 +1,146 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/qcom,msm8952-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+		/* RZ/G3S masks */
-+		struct {
-+			u8 i3c_set_poc;
-+		};
- 	};
- };
- 
-@@ -394,6 +403,7 @@ struct rzg2l_pinctrl_pin_settings {
-  * @oen: Output Enable register cache
-  * @other_poc: OTHER_POC register cache
-  * @qspi: QSPI registers cache
-+ * @i3c_set: I3C_SET register cache
-  */
- struct rzg2l_pinctrl_reg_cache {
- 	u8	*p;
-@@ -413,6 +423,7 @@ struct rzg2l_pinctrl_reg_cache {
- 	u8	oen;
- 	u8	other_poc;
- 	u8	qspi;
-+	u8	i3c_set;
- };
- 
- struct rzg2l_pinctrl {
-@@ -501,6 +512,10 @@ static const struct rzg2l_pinctrl_ps_desc available_ps[] = {
- 	RZG2L_PINCTRL_PS_DESC(1800, 1, PIN_CFG_WDTOVF_N_POC, RZG2L_IOLH_IDX_1V8),
- 	RZG2L_PINCTRL_PS_DESC(3300, 0, PIN_CFG_WDTOVF_N_POC, RZG2L_IOLH_IDX_3V3),
- 
-+	/* I3C I/O voltage domains */
-+	RZG2L_PINCTRL_PS_DESC(1200, 1, PIN_CFG_IO_VMC_I3C, RZG2L_IOLH_IDX_NA),
-+	RZG2L_PINCTRL_PS_DESC(1800, 0, PIN_CFG_IO_VMC_I3C, RZG2L_IOLH_IDX_NA),
++title: Qualcomm MSM8952 TLMM pin controller
 +
- 	/* Software voltage domains */
- 	RZG2L_PINCTRL_PS_DESC(1800, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_1V8),
- 	RZG2L_PINCTRL_PS_DESC(2500, 0, PIN_CFG_SOFT_PS, RZG2L_IOLH_IDX_2V5),
-@@ -1199,6 +1214,11 @@ static int rzg2l_caps_to_pwr_reg(const struct rzg2l_register_offsets *regs,
- 			*mask = masks->other_poc_wdtovf_n_poc;
- 		return 0;
- 	}
-+	if (caps & PIN_CFG_IO_VMC_I3C) {
-+		*offset = regs->i3c_set;
-+		*mask = masks->i3c_set_poc;
-+		return 0;
-+	}
- 
- 	return -EINVAL;
- }
-@@ -2570,6 +2590,8 @@ static const struct rzg2l_dedicated_configs rzg3s_dedicated_pins[] = {
- 	{ "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
- 	{ "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
- 	{ "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A | PIN_CFG_SOFT_PS) },
-+	{ "I3C_SDA", RZG2L_SINGLE_PIN_PACK(0x9, 0, (PIN_CFG_IEN | PIN_CFG_IO_VMC_I3C)) },
-+	{ "I3C_SCL", RZG2L_SINGLE_PIN_PACK(0x9, 1, (PIN_CFG_IEN | PIN_CFG_IO_VMC_I3C)) },
- 	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN_CFG_IO_VMC_SD0)) },
- 	{ "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN_CFG_IEN |
- 						     PIN_CFG_IO_VMC_SD0)) },
-@@ -3792,6 +3814,8 @@ static int rzg2l_pinctrl_suspend_noirq(struct device *dev)
- 	cache->oen = readb(pctrl->base + pctrl->data->hwcfg->regs.oen);
- 	if (regs->other_poc)
- 		cache->other_poc = readb(pctrl->base + regs->other_poc);
-+	if (regs->i3c_set)
-+		cache->i3c_set = readb(pctrl->base + regs->i3c_set);
- 
- 	if (pctrl->syscon) {
- 		int ret;
-@@ -3834,6 +3858,8 @@ static int rzg2l_pinctrl_resume_noirq(struct device *dev)
- 		writeb(cache->qspi, pctrl->base + regs->qspi);
- 	if (regs->other_poc)
- 		writeb(cache->other_poc, pctrl->base + regs->other_poc);
-+	if (regs->i3c_set)
-+		writeb(cache->i3c_set, pctrl->base + regs->i3c_set);
- 
- 	raw_spin_lock_irqsave(&pctrl->lock, flags);
- 	rzg2l_oen_write_with_pwpr(pctrl, cache->oen);
-@@ -3950,8 +3976,12 @@ static const struct rzg2l_hwcfg rzg3s_hwcfg = {
- 		.pwpr = 0x3000,
- 		.sd_ch = 0x3004,
- 		.eth_poc = 0x3010,
-+		.i3c_set = 0x301c,
- 		.oen = 0x3018,
- 	},
-+	.masks = {
-+		.i3c_set_poc = BIT(2),
-+	},
- 	.iolh_groupa_ua = {
- 		/* 1v8 power source */
- 		[RZG2L_IOLH_IDX_1V8] = 2200, 4400, 9000, 10000,
++maintainers:
++  - Muzaffer Kadir <muzafferkadir@mainlining.org>
++
++description:
++  Top Level Mode Multiplexer pin controller in Qualcomm MSM8952 SoC.
++
++properties:
++  compatible:
++    const: qcom,msm8952-pinctrl
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  gpio-reserved-ranges:
++    minItems: 1
++    maxItems: 66
++
++  gpio-line-names:
++    maxItems: 134
++
++patternProperties:
++  "-state$":
++    oneOf:
++      - $ref: "#/$defs/qcom-msm8952-tlmm-state"
++      - patternProperties:
++          "-pins$":
++            $ref: "#/$defs/qcom-msm8952-tlmm-state"
++        additionalProperties: false
++
++$defs:
++  qcom-msm8952-tlmm-state:
++    type: object
++    description:
++      Pinctrl node's client devices use subnodes for desired pin configuration.
++      Client device subnodes use below standard properties.
++    $ref: qcom,tlmm-common.yaml#/$defs/qcom-tlmm-state
++    unevaluatedProperties: false
++
++    properties:
++      pins:
++        description:
++          List of gpio pins affected by the properties specified in this
++          subnode.
++        items:
++          oneOf:
++            - pattern: "^gpio([0-9]|[1-9][0-9]|1[0-2][0-9]|13[0-3])$"
++            - enum: [ qdsd_clk, qdsd_cmd, qdsd_data0, qdsd_data1, qdsd_data2,
++                      qdsd_data3, sdc1_clk, sdc1_cmd, sdc1_data, sdc1_rclk,
++                      sdc2_clk, sdc2_cmd, sdc2_data ]
++        minItems: 1
++        maxItems: 36
++
++      function:
++        description:
++          Specify the alternative function to be configured for the specified
++          pins.
++
++        enum: [ gpio, blsp_uart1, blsp_spi1, adsp_ext, blsp_i2c1, prng_rosc, qdss_cti_trig_out_b0,
++                qdss_cti_trig_out_a1, blsp_spi2, blsp_uart2, ldo_update, qdss_tracedata_b,
++                pbs1, pwr_modem_enabled_b, blsp_i2c3, gcc_gp2_clk_b, atest_combodac_to_gpio_native,
++                ldo_en, blsp_i2c2, gcc_gp1_clk_b, atest_gpsadc_dtest0_native, blsp_spi3,
++                blsp_uart3, sec_mi2s, pbs0, gcc_gp3_clk_b, blsp_spi4, blsp_uart4, pbs2,
++                pwr_nav_enabled_b, pwr_crypto_enabled_b, blsp_i2c4, blsp_spi5, blsp_uart5,
++                qdss_traceclk_a, atest_bbrx1, qdss_tracectl_b, qdss_cti_trig_in_b0, blsp_i2c6,
++                qdss_traceclk_b, atest_wlan0, m_voc, qdss_cti_trig_in_a0, atest_bbrx0, blsp_i2c5,
++                qdss_tracectl_a, atest_gpsadc_dtest1_native, qdss_tracedata_a, blsp_spi6,
++                blsp_uart6, atest_wlan1, mdp_vsync, pri_mi2s_mclk_a, sec_mi2s_mclk_a,
++                cam_mclk, cci_i2c, pwr_modem_enabled_a, cci_timer0, cci_timer1, pwr_nav_enabled_a,
++                pwr_crypto_enabled_a, cci_async, sd_write, qdss_cti_trig_out_a0, gcc_gp1_clk_a,
++                gcc_gp2_clk_a, gcc_gp3_clk_a, blsp6_spi, qdss_cti_trig_in_b1, uim_batt,
++                qdss_cti_trig_out_b1, uim1_data, uim1_clk, uim1_reset, uim1_present, uim2_data,
++                uim2_clk, uim2_reset, uim2_present, uim3_data, usb_fs, uim3_clk, uim3_reset,
++                uim3_present, atest_char3, dbg_out, bimc_dte0, sec_mi2s_mclk_b, pri_mi2s,
++                atest_char1, ebi_cdc, atest_char0, cdc_pdm0, pri_mi2s_mclk_b, lpass_slimbus,
++                lpass_slimbus0, lpass_slimbus1, wcss_bt, atest_char2, ebi_ch0, wcss_wlan2,
++                wcss_wlan1, wcss_wlan0, wcss_wlan, wcss_fm, ext_lpass, gcc_tlmm, dmic0_clk,
++                dmic0_data, qdss_cti_trig_in_a1, blsp_spi7, blsp_uart7, pri_mi2s_ws, wsa_io,
++                blsp_i2c7, blsp_spi8, blsp_uart8, blsp_i2c8, gcc_plltest, nav_pps_in_a,
++                pa_indicator, nav_pps_in_b, nav_pps, modem_tsync, nav_tsync, ssbi_wtr1,
++                gsm1_tx, gsm0_tx, atest_char, atest_tsens, bimc_dte1,
++                gp_mn, gp_pdm_0a, gp_pdm_0b, gp_pdm_1a, gp_pdm_1b,
++                gp_pdm_2a, gp_pdm_2b, gp0_clk, gp1_clk]
++
++    required:
++      - pins
++
++allOf:
++  - $ref: /schemas/pinctrl/qcom,tlmm-common.yaml#
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    msmgpio: pinctrl@1000000 {
++        compatible = "qcom,msm8952-pinctrl";
++        reg = <0x01000000 0x300000>;
++        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++        gpio-controller;
++        gpio-ranges = <&msmgpio 0 0 134>;
++        #gpio-cells = <2>;
++        interrupt-controller;
++        #interrupt-cells = <2>;
++
++        blsp1-uart2-sleep-state {
++            pins = "gpio4", "gpio5";
++            function = "gpio";
++
++            drive-strength = <2>;
++            bias-pull-down;
++        };
++
++        spi1-default-state {
++            spi-pins {
++                pins = "gpio0", "gpio1", "gpio3";
++                function = "blsp_spi1";
++
++                drive-strength = <12>;
++                bias-disable;
++            };
++
++            cs-pins {
++                pins = "gpio2";
++                function = "blsp_spi1";
++
++                drive-strength = <2>;
++                bias-disable;
++            };
++        };
++    };
+
 -- 
-2.43.0
+2.54.0
+
 
