@@ -1,132 +1,137 @@
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6710641685A
-	for <linux-gpio@vger.kernel.org>; Fri,  4 Sep 2026 05:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F73C41684D;
+	Fri,  4 Sep 2026 06:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788500623; cv=none; b=mX+yA4x/1WqBRUD1oWBUlom6G5VSntzqabL3iKqpGlIfP2XgNfQheDvdSWbw84TCs3YfzP8HTpsxu75K5rLmBE+BrO9PbkQ681NolmSdab0jOOmqqVbN4ZfFDkIK9y86gpj/YWPhvzG3ZOj+Fl6glsMnd9U0OBSNrLG/q2cA/tE=
+	t=1788503954; cv=none; b=ide/CVUZ9njCrRcJzHEecb6RCGuSQRH4mlRG8COzTxTzNjN7MoO0OZW8qe6ekDedcIeNybiX21r8xNeVoenY8CkOHAbxAy4MsyHfaVuZ213Vr7Ogi8c5FxJM5mpmmu3q+mXYD2D4kfJDDy7lkjSKKAXupASFIcXJxQCk6a57XSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788500623; c=relaxed/simple;
-	bh=87tW78USOIRu124aJptnXZ1ORwFWyuAoO45i3VE7Rzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tRjRl4qPdFqVywjISlVp0zs17IlWEDKktSkYlJ0ADDdgdzD3cDdjM6Z21JpNUaRuCyQf1u8Xx9mcVnLChQID1pAFAuGKGAUiE5fEzqyotxcriN/gzoRprLK3/YPV2MyczsIvG83ms+yoiHSkuuwfVUj22A4iV95E4u4dWoBZSUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MSWx2XeQ; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1788503954; c=relaxed/simple;
+	bh=bBo2EYuFMiPEg5+TDMdIErdYoSUfwyw/F22EJeOZDYA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=iJgTfEHQhAbBrbKzz4TR/TzITdA8rm22p0FDrg+/goy6dHhj+D5cQHpXBR/bNRX7C+iDQNYSjV1G669Jw8ENZzFFGU53r5rQwrKXY0q5xfQs1gLNeU1iJSzKVSgViw48xHGNOjVJVmBAhBGLD4ekKUuhuvglDniNy0likNDoO5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VEKBMLjJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MSWx2XeQ"
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2d91ff7d9acso5920405ad.3
-        for <linux-gpio@vger.kernel.org>; Thu, 03 Sep 2026 22:43:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1788500621; x=1789105421; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=XxOcRRnDrKQlx91Y28n3fxGGvoUu/s1bIHpjhY19uNc=;
-        b=MSWx2XeQ6YrKYuEm/m5Ku+TmLdgF3ADdeLrlhKjWuUYqYQsk7yysqySZ5F6SyNtK76
-         eMAFuO+DBRnJvZ3w3JxHK5UB1g6mtzydM/mwbPM4GNNPVVTllQcKFMbDhAsZ1VzYs7kd
-         9rir0tqJ43541t3lwj/+YOxuKm8DgoyrwP9ZFsZxm3Z64vEGHouWTDOTI8vQo1faapcD
-         R+gO8HKSRtCVANqMSydPf5Y4iVfwVhxi1kfl9iXlaAecIMF/X2tGYwJ/QgEkWj3dSxdY
-         96bHNVPa8OwG+jOZjx+XXNo6AX1S/x7cVET+dDm8PmEyGBD2UenaSmX33BP0hv+auRyg
-         iS8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788500621; x=1789105421;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=XxOcRRnDrKQlx91Y28n3fxGGvoUu/s1bIHpjhY19uNc=;
-        b=IY03sfG+QeptkuSFRXmHP9Wjx/Fx9Xft0YxqtvCMQPCu5+1WGDPYpQ4ZStHKPX3bRs
-         SMOSNTB5lSp3xxRiUgE622+VAlob8FgovhIM/eB+QJgRRmAvG3ZA6B6qmSZq+hZuS+2F
-         WLnFvqpJL/coW070QWOLCQmC7yNpco611sGI4/bD3+7fAKsjGzmxrLvldsm93duH/Cs6
-         Z8AjROqEB7DD3mE59FmGV2iEWnKWT9fMQ6v/UwprI98k7Op05GMXYdgI3hL47QKtTxHk
-         jZ7ZuEbQ7hSrcztFRZ8PM1/B0mALRB5aR8XLoaVEVebm3Sv8qhmxHfWdkfJfVVFhCx78
-         zWtA==
-X-Forwarded-Encrypted: i=1; AKwUvBxA1dQ7i0T1QT+hUkC9Dzx6yxD/a3u8Efv9mpB3lR1tc3NCKr6yMR4rG97V5MUgUX6vNQ+OuT3D/U9T@vger.kernel.org
-X-Gm-Message-State: AFuF++mDT/gXvsahL9+HmFIZV2BHW7q/J4uq8yB1nWdhY7QGxAdEEIZA
-	rYWqso+rGD29l5WzXnp/LU/xHd2RHsmMrsAAsp8yt8aGmGZt63UUwQTnbDSox0hPpSI=
-X-Gm-Gg: AYBFou15B8aeG1PCOrM4waP7Zk2ey/9F+MLn17Xn+PNkMhwRrrGt0iCKb/a3VxH48SW
-	gaxo7y5fBxnLhfmXpQGKIcol3rx8HCMSQoFjVKIQvJjtu/NpMOVrBez4MzzqbWSnJz7UVICDYdT
-	uL1Q8kEVsArrTXjFm9VrhkbzSc9aZN6IQdBbbbfLgXnH5QHXNesDZaVnn1RoYpYnsLM4lRMEJPb
-	dho5o2Oly3bAtoZ8SEog+HHLXgsoDf6BFqDxVUt/WGQoPp5WhxZnwGKkIb0zhhAo43aLOldgnKL
-	gzBw27f4nvbwyegoD8pyNA+pLj6nF1KdVuW0tFg/1mGsvJpSA3oGFsEww1r224GMt0KXfyFifgZ
-	lOYECHzr8FvvEgmUoWJnAWc+CRUvebaul1G2b/a1Uu06l9VF3L7IePAijviisZa+/ueQskghec5
-	zSqlJpC2K3QlvWrrclBqsJcn7qABB7jEodxPCChSru2XFMFEDw/KBjoqzWrBw4Bg8=
-X-Received: by 2002:a17:90a:ec8d:b0:37d:f983:7b5 with SMTP id 98e67ed59e1d1-39b26101c08mr5553870a91.9.1788500621351;
-        Thu, 03 Sep 2026 22:43:41 -0700 (PDT)
-Received: from localhost ([122.172.87.224])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-143243f780csm3885069c88.13.2026.09.03.22.43.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Sep 2026 22:43:40 -0700 (PDT)
-Date: Fri, 4 Sep 2026 11:13:38 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-imx@nxp.com, Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-	b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v15 2/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
- subnode support
-Message-ID: <appaikrdwu6GpSGy@vireshk-B250M-D3H>
-References: <20260721204704.400781-1-shenwei.wang@oss.nxp.com>
- <20260721204704.400781-3-shenwei.wang@oss.nxp.com>
- <apmunD8bkKOu5_Vm@p14s>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VEKBMLjJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C6DE8C2BCC7;
+	Fri,  4 Sep 2026 06:39:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1788503953;
+	bh=bBo2EYuFMiPEg5+TDMdIErdYoSUfwyw/F22EJeOZDYA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=VEKBMLjJYE8kNq048VFwm0lGC+ZF8jCNfDvM60GZcKMFe2qbhC+84XpR03lUn/hJ8
+	 /3lUgs8++1AzWMyQhBPTscr4Ke3XJw0AQuu+0IQNXNgu4HMf64233Y1VAbj+9ffBni
+	 WiWcoBcp0I1S84MpB721O0uKW/tQ2AFfcwYE+bibcB0275Bh8cMQ4Meg3ROo4H0KBo
+	 guaV20LZoFDpHuqvco4nor36bgwUr6vYFqrcEoFwoU2szV35+KT+W3Zag6JyCluXT2
+	 NU9NbFWjmQIHWgRkYzETT/y1iH9nUxdBsPdd/AlCtxUO8RyMkF48t4clX2Vtzaqd++
+	 lBrMsWacI6lbw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A253BC79F80;
+	Fri,  4 Sep 2026 06:39:13 +0000 (UTC)
+From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
+Date: Fri, 04 Sep 2026 14:38:08 +0800
+Subject: [PATCH v6 01/13] dt-bindings: arm: add Ambarella CV75 platforms
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <apmunD8bkKOu5_Vm@p14s>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260904-cv75-v5-v6-1-e918514cb3b1@ambarella.com>
+References: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com>
+In-Reply-To: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com>
+To: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org
+Cc: Long Zhao <longzhao@ambarella.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Long Zhao <zl020895@163.com>, Lee Jones <lee@kernel.org>, 
+ mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1788503951; l=1828;
+ i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
+ bh=YCSbMKhFe2paSe+SbS/++piT5GFUx/NTLE9tewoMf1g=;
+ b=KuuDEbbSvd+a45QhI6lH1lN5yplbA12BoKFyusqBK7CzPlX3N4jk9HUHNpgG/rMY2AT8DeLcO
+ FI6TJtWFCiUCkyEFvKhdPYaiWsLj+5sOj5yIjUKUwzUlQZFWkViRQKw
+X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
+ pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
+X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
+ auth_id=903
+X-Original-From: Long Zhao <longzhao@ambarella.com>
+Reply-To: longzhao@ambarella.com
 
-On 03-09-26, 11:30, Mathieu Poirier wrote:
-> I'm proposing something like this:
-> 
->                         $(transport) {
->                                 compatible = "$(transport),rpmsg";
->                                 #address-cells = <1>;
->                                 #size-cells = <0>;
-> 
->                                 gpio {
->                                         compatible = "virtio,device29";
+From: Long Zhao <longzhao@ambarella.com>
 
-I would just change a minor thing here:
+Add the Ambarella vendor prefix and CV75 EVK board compatible for the
+initial SoC bring-up.
 
-s/virtio/rpmsg/
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Signed-off-by: Long Zhao <longzhao@ambarella.com>
+---
+ .../devicetree/bindings/arm/ambarella.yaml         | 24 ++++++++++++++++++++++
+ .../devicetree/bindings/vendor-prefixes.yaml       |  2 ++
+ 2 files changed, 26 insertions(+)
 
-This isn't a simple virtio-gpio device, since it doesn't have its own virtqueues
-and uses virtqueues of virtio-rpmsg instead. So this may better be a
-rpmsg,deviceX (where X is virtio ID) ?
-
->                                         reg = <3>
->                                         gpio-controller;
->                                         #gpio-cells = <2>;
->                                         interrupt-controller;
->                                         #interrupt-cells = <2>;
->                                 };  
->                                 gpio {
->                                         compatible = "virtio,device29";
->                                         reg = <4>
->                                         gpio-controller;
->                                         #gpio-cells = <2>;
->                                         interrupt-controller;
->                                         #interrupt-cells = <2>;
->                                 };  
->                         }
+diff --git a/Documentation/devicetree/bindings/arm/ambarella.yaml b/Documentation/devicetree/bindings/arm/ambarella.yaml
+new file mode 100644
+index 000000000000..72946e94fa76
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/ambarella.yaml
+@@ -0,0 +1,24 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/ambarella.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Ambarella SoC platforms
++
++maintainers:
++  - Long Zhao <longzhao@ambarella.com>
++
++properties:
++  $nodename:
++    const: "/"
++
++  compatible:
++    oneOf:
++      - description: Ambarella CV75 boards
++        items:
++          - enum:
++              - ambarella,cv75-evk
++          - const: ambarella,cv75
++
++additionalProperties: true
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 85a27937832e..f48aa6dabbe9 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -112,6 +112,8 @@ patternProperties:
+     description: Amarula Solutions
+   "^amazon,.*":
+     description: Amazon.com, Inc.
++  "^ambarella,.*":
++    description: Ambarella, Inc.
+   "^amcc,.*":
+     description: Applied Micro Circuits Corporation (APM, formally AMCC)
+   "^amd,.*":
 
 -- 
-viresh
+2.34.1
+
+
