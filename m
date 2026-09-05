@@ -1,76 +1,70 @@
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D398D223DE7
-	for <linux-gpio@vger.kernel.org>; Sat,  5 Sep 2026 00:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69E0175A84
+	for <linux-gpio@vger.kernel.org>; Sat,  5 Sep 2026 00:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788566966; cv=none; b=R8caVj2bJS0SbSrALZRUBNj/vO+Ctc4jqVarla/P8IwV6r7cDgtS8fsROYGMvgteU+hLytkQiw/gkdAbsVglVrJ+YbcT91PZ2V9WUPXkobFm+0wLaMiUbXEuLcReheLyZ28n82oAv8WTfUbTGUmDBhYYdc3uROKZvvlI8LG5o+U=
+	t=1788569019; cv=none; b=RZobPMWDN2pPdmk1dGD+j/K4bpbwcCzZyP4BtJEDp9NjToXxFAS5DNCcMC4oXrHPBFvG4KZxBAQWdguds/plLiQC5v/Qo+HBgGapbm35+X8+24965PX/bIP+ujjG8Nh+TJP10F3M9j4qAQ0eojcebJpb/m4x9zEQqhGiWAOjCcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788566966; c=relaxed/simple;
-	bh=Z0eqXMInzFdWundp0bdyqvyQWa4WYterHClI/OnGILA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ATfMj7eTqKhYoLAx/z2vsn6hRFCtQ8yo5rH2LnypEyzrf2m7jnyBphGh9RTAD+d/UJN69oL/e/vctBgFPV7iaMwk1xVjc/zLXYJGVuML47DIbwLpUSC6+GLaQ0LfTO7xiQw4LY8juKglm8GMYnETNPC2oEnd2BAeTJGXlnu4sCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fucYi3dP; arc=none smtp.client-ip=209.85.160.172
+	s=arc-20240116; t=1788569019; c=relaxed/simple;
+	bh=yjKMm6gChtVXHAw60HeDhEuMSDm0IUtrIFMw0nWgZ6M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rU6/eQyPB//1xS7ODq77F+Zt92McIvL6fOaqNr17sNRDTwLLOYc5L0wvEt634RLwQOE0XoP5xiHgpLuRzEO9IVf2D2rK8ypKE0aAJOSx2KycviDqq0D9imbinz/SmW5wT9/ZPu0ev4ZY0t7I40DvfF16FQql5dTmylAy0O0Fays=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gs7836L0; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fucYi3dP"
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-52d8679c149so16606551cf.2
-        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 17:09:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gs7836L0"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-84f38f3b36eso1134773b3a.1
+        for <linux-gpio@vger.kernel.org>; Fri, 04 Sep 2026 17:43:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788566963; x=1789171763; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1788569017; x=1789173817; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=o5lvUDKi34eWgpEQ9bn1qS/2tjyT90hT4Ul3KLa+Q40=;
-        b=fucYi3dPfRb/u7nOr0gUdD3Ka/yaeSL0KJtpSf6GwvdQrt/fCh5kRd7JzaPBe47xQV
-         EH0VUYp62gWD6xkoZMHEfuLjhfxSESoHA1OJNV6YtBqVpxKeVDRQs6LfhMWWPTrlUKgt
-         WdP2HNq2uHbTWx7aaFyfNXsAiM6CtVXlxZ87YngTQfmZdJ1vyK0QM1YrGMjJ9f/z5Qel
-         nFVRqNr+mrRxy1LZqhdZkIRN2XUX+rzeDYnbSFrhsFG1ByugtGtm0wXhCCmLSfvObacT
-         C5+sbPWKvl2wPepZgaxxZJjZdJ86jwzrt9sNsA2BzRZNfyIkKmV57ZxAu8vbY39Manma
-         AqBQ==
+        bh=IL56Z2E8ZfYosW+HWnzXHZbGWKRlHFAbG/aHlWv3wtw=;
+        b=Gs7836L0+n3jLFCfisy04LfnwD/vo/tcC6nGO2pgV7QeQG1/jOyk9kSwEtqGmANeO1
+         S6ehDB1pu/jnKqssjxvf8FNoSFfXB7v6enYK6X528umoGteyR11hbiguBNebHmiCwVZR
+         NEcSXsBRNq6uw/UxcQQkxo81tDjwxGdxqH0/JHpYwxe/HNAA2Q3kNAmtSJgKB843VEBX
+         hqMCOO5hsWBsmz703NgoLTak3yEELcwsAGAXMyKxjDlbMo7LCZU3C+IqJoYjhJfFR0j6
+         vB2sm5T7mP7ufa2rnMmAIPRFGY2K1W7rfHDkGV7tQ0FM8R+3fctehsHFaSAmhLwY0lrc
+         ki6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788566963; x=1789171763;
+        d=1e100.net; s=20251104; t=1788569017; x=1789173817;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=o5lvUDKi34eWgpEQ9bn1qS/2tjyT90hT4Ul3KLa+Q40=;
-        b=IXnw7sqkXo0UWBlqotJTLtIpbPllPLiNBZG/j5ePJgvtEROCvcZ1CfxV065d0Sq6Iq
-         AgHCRLXnxIjxY+VoR67YMljd5Fq1lHKH49voLkVqZjZvuCSW2B4EOY9FIQdOzwSxIm9M
-         ba3TzIssbfTiWi9VKXK0S+Skuus/wJcnitrEiVlyhUNKis8jErqVuQhMpS9kbvwAKeHG
-         eLUgi0iijsSgRVMZk2BR0b1FN17TqIt0zJ2qMq5iHmuPEnpImY4oAj/n83ABpnDWsQIC
-         Og9emBBL8Kls3dxwPbk8MISH6pUNy7I4D+eRH1ed4y/fRJxtRsfT5XQWZe7qeg0yIyUD
-         ksQw==
-X-Forwarded-Encrypted: i=1; AKwUvBzPsg0sKms4gsVeTp2PtZynZ9IcfPDbjMSsxBNZn4Mm0Mu6U8oePpRkvN7JrtzZSmFu7LjRvkoxaPO6@vger.kernel.org
-X-Gm-Message-State: AFuF++kJGXr7msJXiPAt288DN973Wk4lUb7jJDgM/5ZrGGjhaxZYQVXJ
-	GH8u1miXx9x/iIi8bkbRZfNFm0Z4V1wqir/iw9m9+vR+xwrhhIiUYjQy
-X-Gm-Gg: AYBFou2La0ywNT00OrJn3sQTZXnj02xJhxZyI91/rN3cVss8vX066u0mQHqe+D7BAhY
-	tju2zZI+kGwp1Fi+O17NFO2F/zJYkri4tvKAej4E4eOPDAxMNR8lccXYOEag00P9n/FvklC8mMt
-	AGkXNX/amandOekbQg98ipDI4GjXEQmwVcHv74aBp80BpNhNpyx2GQ2LLZzWc0+5LU7lpEvsg4Y
-	kUsA5vySCL0KUOzxrGXKwHzK4OmtxHGsAYYG5uTgZwkuTXjGlBj5EMZVPvmKByn++2COdkEiKJh
-	nuyCulSkmsCfp+vxyrSB5gILG2bL7DEkVROZ8wl698EaKPMQc6liF51VA+Pnxl8AvXieUyDrSu9
-	RlI3ds2cvOzNgYXCDsbU/NJUETNQviFrJE1rOfNhRewAPHjaTH3WKxjuYd3kK7dHeISeO+KHD3w
-	l5pPPqUypINyHT1QjX3zGgTddIVGb4XrEaGgrwN+toQHqcOTgCoYBCv2/9lGZ2bb0rAFY3IMptW
-	qjj0fz80bVmYtZjp6DC4raL2OyUKW105v69QuqHJl6c3bSPH0qRN+tR8x16m4Od+XYp8PVZesSt
-	h69bFiZmQjCJIeKPc1/cV7P7KdBPXsl5NU0NIA==
-X-Received: by 2002:a05:622a:258d:b0:51a:896c:9aae with SMTP id d75a77b69052e-53054876057mr102752221cf.13.1788566962767;
-        Fri, 04 Sep 2026 17:09:22 -0700 (PDT)
+        bh=IL56Z2E8ZfYosW+HWnzXHZbGWKRlHFAbG/aHlWv3wtw=;
+        b=B1ZzX9Fw8I+gdz6O1kplIfj3yyVQWs6D06vljbZCwe3aD1NnYM95ehrRhBT9t9NzQX
+         4lRPjBvxPbO6kDINPH+7Rfm56CPiszcPqI3gtRvNXXpQctqR/AbGsnjqnUI+63t/HmSE
+         JvG99F7p8t776qeGxJVk9bSPfmyM4YRJ2QAFDQK68KD8kB1/jAUULE7KGi8cZl/Z3IXD
+         prjrckgqVA5zPha6CXIlOYLSS5Gc/cnqggOHcFvsWfgTVbhqrH4PxkxPsoZT1vfXj/Ut
+         XEZqTcbUmXIAN9UHDM6wqqHBY8VRrh1V4TcCEVsihHqi7JO4u0qYJus0JLVABf/wNo25
+         ZjXg==
+X-Gm-Message-State: AFuF++mFQnGu4emX4S1YliNZLLIn+ZAp5IDxEHE4DKulJQUneDJ3Fo4v
+	WwD9IIm5a9KeGoCJGI0sZhV8rGMoTFvUO5f0Zz2s/J2dl0l4ZjgOYbE4qSVkrQ==
+X-Gm-Gg: AYBFou2S4hcjXco5dXi+uVET3N6gKcchv6eZEU8MSekHbMK+kI8U7abuAhqQMKA/vkQ
+	AT2GMGS8Usk1aYu+AVYwMNxeueyGxmS2UJ70WmuzxPmVdLDALYF3VHmNnsln7zXPU/FTIcR4BKv
+	5S1KkfWVzKuHX3AvFIlUirQ2EkV6WvVoYtzNGbbtdZjetw2Hjvqvb0MRYTPmIwAnZvYqi8xa12h
+	b2EfBSxmaVV3M1iYilY4tgSoje8FxKBq+IT/rFu+4cWNubIB87egYyjpUEYSvhxKxsx6W4JBs9x
+	NGQcP3pbFfLwFCB3Ze9THO0M3Yef73of1Zg0yW18dqTAnpUw0vsJ7lfgcvR7y6p3fTi5/JV3pIq
+	ZBsmUNSFtQIpAojjYB/gU38gq4AuXituU7vD2WYvRGh/vLcn9FE8/viZNxE8saG/1jt2Gtx+trQ
+	8ZzTI2JAvWZfkfBVl7SJpqVe6y8mYqF9h5losnZX14M4sEZOILjXMM/BesvIcx+uBEPKV0StaLE
+	ZPaG8siNOu/jGT3CV7dx5Buwu+vb7/28DEz0JVG3HW8u5XsNpTWpHatQwmXjCkUOuRJZ/4dCjdD
+	qxf7P+hSRj6YOhxGZdXKLdmI0a2kF/iBIHaLHWCeYuw1mSsA
+X-Received: by 2002:a05:6a00:4388:b0:857:7317:cff2 with SMTP id d2e1a72fcca58-8616a266f1bmr13670831b3a.19.1788569016786;
+        Fri, 04 Sep 2026 17:43:36 -0700 (PDT)
 Received: from ryzen.lan ([2601:644:8000:7a86::e34])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-53053ef5af3sm33158421cf.0.2026.09.04.17.09.20
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-86152d32addsm1673997b3a.34.2026.09.04.17.43.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Sep 2026 17:09:21 -0700 (PDT)
+        Fri, 04 Sep 2026 17:43:35 -0700 (PDT)
 From: Rosen Penev <rosenp@gmail.com>
-To: devicetree@vger.kernel.org
+To: linux-gpio@vger.kernel.org
 Cc: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Robinson <pbrobinson@gmail.com>,
-	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM),
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] dt-bindings: gpio: pca95xx: add onnn,pca9655 compatible
-Date: Fri,  4 Sep 2026 17:09:19 -0700
-Message-ID: <20260905000919.155694-1-rosenp@gmail.com>
+Subject: [PATCH] gpio: mvebu: name regmaps to fix debugfs collisions
+Date: Fri,  4 Sep 2026 17:43:34 -0700
+Message-ID: <20260905004334.177074-1-rosenp@gmail.com>
 X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -80,29 +74,70 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The pca9655 is the On Semi variant of the pca9555 16-bit I2C GPIO
-expander and is register-compatible with it. The addition of the
-compatible in the driver missed the documentation update.
+Each marvell,armada-370-gpio node provides both 'gpio' and 'pwm'
+register windows, and the driver creates one regmap per window on the
+same platform device.  The shared regmap_config was unnamed, so both
+maps defaulted their debugfs directory to dev_name(), e.g.
 
-Fixes: 6d49b3a0f351 ("gpio: pca953x: Add support for the On Semi pca9655")
+  debugfs: 'f1018100.gpio' already exists in 'regmap'
+
+because the PWM regmap (and on Armada XP the per-CPU regmap) claimed
+the same directory as the GPIO regmap.
+
+Give each regmap a distinct .name so the debugfs directories become
+'<dev>.gpio', '<dev>.percpu' and '<dev>.pwm'.  This only affects
+debugfs naming; register access is unchanged.
+
 Assisted-by: opencode:big-pickle
 Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpio-mvebu.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-index 4631388a7d91..563f61e6e543 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-+++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-@@ -67,6 +67,7 @@ properties:
-               - nxp,pcal9555a
-               - onnn,cat9554
-               - onnn,pca9654
-+              - onnn,pca9655
-               - ti,pca6107
-               - ti,pca9536
-               - ti,tca6408
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 93b8a08b04b9..c57758019e92 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -599,6 +599,21 @@ static void mvebu_gpio_irq_handler(struct irq_desc *desc)
+ }
+ 
+ static const struct regmap_config mvebu_gpio_regmap_config = {
++	.name = "gpio",
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++};
++
++static const struct regmap_config mvebu_gpio_percpu_regmap_config = {
++	.name = "percpu",
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++};
++
++static const struct regmap_config mvebu_pwm_regmap_config = {
++	.name = "pwm",
+ 	.reg_bits = 32,
+ 	.reg_stride = 4,
+ 	.val_bits = 32,
+@@ -868,7 +883,7 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+ 			return PTR_ERR(base);
+ 
+ 		mvpwm->regs = devm_regmap_init_mmio(&pdev->dev, base,
+-						    &mvebu_gpio_regmap_config);
++						    &mvebu_pwm_regmap_config);
+ 		if (IS_ERR(mvpwm->regs))
+ 			return PTR_ERR(mvpwm->regs);
+ 
+@@ -1114,7 +1129,7 @@ static int mvebu_gpio_probe_raw(struct platform_device *pdev,
+ 
+ 		mvchip->percpu_regs =
+ 			devm_regmap_init_mmio(&pdev->dev, base,
+-					      &mvebu_gpio_regmap_config);
++					      &mvebu_gpio_percpu_regmap_config);
+ 		if (IS_ERR(mvchip->percpu_regs))
+ 			return PTR_ERR(mvchip->percpu_regs);
+ 	}
 -- 
 2.55.0
 
