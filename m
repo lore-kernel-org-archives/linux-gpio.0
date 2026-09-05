@@ -1,103 +1,82 @@
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4646838DC79
-	for <linux-gpio@vger.kernel.org>; Sat,  5 Sep 2026 09:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4E9330D4C;
+	Sat,  5 Sep 2026 13:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788599565; cv=none; b=BZuqcjHnNg/MobjeTKciWYhulc2YVjrNg2Uc7bg2zx8O8wcXTFUvqDF17FBTofVofCFZMjR8AYQLNWIDYeT+QAn0OqD/JNoD1ob3E+af56wa69n4GVSxgEplkL/p40TONlIYKp5iHm+CSl4W/7ZyU8j8dWoBZ8arW4VQgrz4aPY=
+	t=1788615843; cv=none; b=M8S1RPqFE7IhDjBT4PQW+UXxKRkfi5j9p3ksChoxfUiMHBqJi0uMuzxkMcbFnuo9rY2Jg0BChkoM+bABTrcz7frdcKnmlO/ws7Prdviy+LxVUFqxeZLlSrD2ztqsJ+yx2ESCvOAmhKkZffP6rZZa77DB0w6mwa1VjozccGKFARk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788599565; c=relaxed/simple;
-	bh=aSzJCwGy+Q9LdnOlXJBjjRUd5CuplN1U3kCcFurqCwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=u0ktWIvvr9FdI2ld7/NHfUKxbL56U/AKM/6dVwmMe1bfxsOTuZh/ra+kAmfbJtr3dr72mkAi43+iut0jvwQDj+feKNP7QoCg5mziIxtj8VbHM/qUPReGjRT+bMErq/VMeNbfkBtDexOi1AD7O0jdakDlu0lam2YQy3Hv2FteGsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XGkmSx+y; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788615843; c=relaxed/simple;
+	bh=ycc5GsipWVpNhZ5fE2LxnnyEHtEDd7uBGr478t5UgOE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zzhi+ImWiRBMZRDRIL/Bj6a9UAJnpUXyaS7zzEcF/QHMXe1x+4lFjs8PtiCEsY80a0oPb3OCcl7qrQ6XB8c/74cpI0zW+m4qNgmhXoZQ6msWTZschBkA/MO5PoLcadYLs3j4zQgf7VtMag9HX/4bWHHtm4ru2YwA6IkKrWSqgOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oNzUIlMs; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XGkmSx+y"
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-cbedf433a99so1792427a12.2
-        for <linux-gpio@vger.kernel.org>; Sat, 05 Sep 2026 02:12:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788599563; x=1789204363; darn=vger.kernel.org;
-        h=content-disposition:content-type:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=nTxpnNHYll2qLfMkvXnCCm8UVDYABNMgdwWlDezjMFI=;
-        b=XGkmSx+ylFnl7mHelG5aE/9MHoFMOrS57p03hVS/y7r8fsGzYkEblQl8WlEW934liE
-         Wfy96KM1nL3I189hzafKR/VJve2AN08A/kMnLy5Btq5sLhwILPug6EhqdWmZORWNHZR2
-         46mYCV6uEkB84ufRFxi/Nzuz47JoP8Db63hrp3xchw9nTDzE24dJLMnKjhjO6430gXpz
-         tuIxSINC9ewNU7KPEx9t2c9rQiMuXHAYm/qZzG8hL0D2FZ82NLEu+bUzrK5MUwMyR95/
-         7+agBvfFauQQZfvqyOy5kKBqB5VtY2BybFx37iDR2xMvTG3IhVXhAkuiQFnvUohhVV5T
-         KzYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788599563; x=1789204363;
-        h=content-disposition:content-type:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=nTxpnNHYll2qLfMkvXnCCm8UVDYABNMgdwWlDezjMFI=;
-        b=UuRTDplTtkT/RhS2p5HKzsJEX+1fFILWUEpH18e0LbMDxvue1habm9DyNNGyv7/5ze
-         +evhBlse2KYOSUjMKRCCNSMb+/PYjRb+X6Z5MwRK8eW+UfpjUvsc9laqxapHtl1kp7K6
-         E+zecbJ7u14/WVd5XHtkK3Vzze1WcsDfEQX/+DS6i+TMRLh7jN8jQAYFWQkxc01b45TG
-         MvPKRcWBU5WesPJnwQQG5++WpnQ9/LrVfkUwMMT+s+7sXYtvyiu9qTYw/fmQwRuf39m9
-         25u5OrVBXDMmSkpHHkqUHp94Jnefpt4UgpYaOAA/y49NeBZ9PxlXDyu1foFb3qBXndDI
-         t6Gw==
-X-Gm-Message-State: AFuF++l7jpqVKm1haLLo+ukgPHPXHmkal6/NVu/BGGMic1POAOxf7XqG
-	Dcd5MiX9EUotf9EtvtvaGu/h4J6mFe9S0LTQc69ytjTb8ohx8EsG2QO8
-X-Gm-Gg: AYBFou11UazXDyaKIomY4QVSmZPjVHW74hQacbgjLW4qM4HE2aXLJNQxX6dMtnFvZJB
-	YfYTOiOG/Ogd+j31lhZYG8h+goZ1t0uBzwSMymopxIAqUhJ/oMRRksxueYx+BQDBGmQkuYc0csR
-	WaiWjYPYPpE0T5EOQyfxFDsNAvIhphBoPKw1mPXLR30NTmLMGx1Vi9yhYPs2mHdqRWjk4JDNVA9
-	ryDi/FqXsTQuJrOW4o/9P1+QIVVVaIVWaTQ7xrMDU+f4/vUFO8BYKGy216kHtuW0FXiopFjT0Z4
-	KxWq6IxU2KOUyOyA5kwYmeyMiqMO4yuZ7J+lADm5cX4rIhBXefxDnfWkaGCdbE9LmQGgqdeHhDm
-	2ETTWSuRnnb4ZhHde1kvrAx7lUtvUyFJyvOwdyD6eNX8MIxzczbHxWpEuc/a7UoIuUKlBu6VE0s
-	83ZVfGkW1x8eu0eQI4gT20vl/xpZWDvQ2lSqmrtXOciXxR1CSmSmDjPfBmohd+KKDH4hYz4dqPC
-	/7IwrTnAUVNaXPd2/qdB8/nNAXiMw==
-X-Received: by 2002:a17:90b:3803:b0:395:7fff:a08f with SMTP id 98e67ed59e1d1-39b25eef036mr15552895a91.0.1788599563469;
-        Sat, 05 Sep 2026 02:12:43 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:ff40:39da:76d2:2e7d])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1432435648esm15071268c88.5.2026.09.05.02.12.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Sep 2026 02:12:42 -0700 (PDT)
-Date: Sat, 5 Sep 2026 02:12:39 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: crystalcove: add missing MODULE_ALIAS()
-Message-ID: <apvciC1NYWyNfseD@google.com>
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oNzUIlMs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=UW
+	u3/8Xjz6xMGSiDSxBKSj/Tl3/LVtgAjs+U+h5KuJ8=; b=oNzUIlMsPFjAut1Ge4
+	2wKMwerTQJJWSl0F4cGRT7ZMsCjQSlDV2bG53b08CXAvLAa9ySdEQDBMjFSLTf6c
+	l+wl0HNlboLOeuN8wRv4kgQYEO5KrsKejNBNMWYsIskkh1d94DiYgW2vBtqpaMrU
+	cTeliYE8eTqxZIHpslpUP9cHE=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wCXw0GOHJxqegVwAw--.55937S2;
+	Sat, 05 Sep 2026 21:43:43 +0800 (CST)
+From: "hpp.iscas" <hppiscas@163.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: "hpp.iscas" <hppiscas@163.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: [PATCH] pinctrl: qcom: ipq5210: Publish the OF module alias
+Date: Sat,  5 Sep 2026 21:43:40 +0800
+Message-ID: <20260905134340.67477-1-hppiscas@163.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:_____wCXw0GOHJxqegVwAw--.55937S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKw1UAr45Xw1rZw43ArWfuFg_yoWfKFb_CF
+	y8XFyUXrWUCwnxXFyS9r1avFyvyF4UZrnYgrnYqFyrZ343Zwn0grWv9rZ5Cw18Wr45JFyD
+	JFy5Wr15CrW7AjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRRBOJ3UUUUU==
+X-CM-SenderInfo: 5kssx2xfdvqiywtou0bp/xtbCxg-rtGqcHI8wqwAA3o
 
-The crystalcove GPIO driver lacks a MODULE_ALIAS() to allow it to be
-auto-loaded.
+The IPQ5210 TLMM platform driver can be a module and matches through=0D
+ipq5210_tlmm_of_match. This table is not published for OF modalias=0D
+matching.=0D
+=0D
+Publish the existing table, preserving arch_initcall ordering and=0D
+the shared MSM pinctrl probe.=0D
+=0D
+Fixes: a549fe22376f ("pinctrl: qcom: Introduce IPQ5210 TLMM driver")=0D
+Signed-off-by: hpp.iscas <hppiscas@163.com>=0D
+---=0D
+ drivers/pinctrl/qcom/pinctrl-ipq5210.c | 1 +=0D
+ 1 file changed, 1 insertion(+)=0D
+=0D
+diff --git a/drivers/pinctrl/qcom/pinctrl-ipq5210.c b/drivers/pinctrl/qcom/=
+pinctrl-ipq5210.c=0D
+index 827a4ad..d5b4eb3 100644=0D
+--- a/drivers/pinctrl/qcom/pinctrl-ipq5210.c=0D
++++ b/drivers/pinctrl/qcom/pinctrl-ipq5210.c=0D
+@@ -867,6 +867,7 @@ static const struct of_device_id ipq5210_tlmm_of_match[=
+] =3D {=0D
+ 	{ .compatible =3D "qcom,ipq5210-tlmm", },=0D
+ 	{ },=0D
+ };=0D
++MODULE_DEVICE_TABLE(of, ipq5210_tlmm_of_match);=0D
+ =0D
+ static int ipq5210_tlmm_probe(struct platform_device *pdev)=0D
+ {=0D
 
-Fix this by adding the missing platform alias.
-
-Fixes: 104fb1d5153c ("gpio: Add support for Intel Crystal Cove PMIC")
-Assisted-by: LLM
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/gpio/gpio-crystalcove.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpio/gpio-crystalcove.c b/drivers/gpio/gpio-crystalcove.c
-index 0fb5c06d0886..ab7fab5b9754 100644
---- a/drivers/gpio/gpio-crystalcove.c
-+++ b/drivers/gpio/gpio-crystalcove.c
-@@ -396,3 +396,4 @@ module_platform_driver(crystalcove_gpio_driver);
- MODULE_AUTHOR("Yang, Bin <bin.yang@intel.com>");
- MODULE_DESCRIPTION("Intel Crystal Cove GPIO Driver");
- MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:crystal_cove_gpio");
--- 
-2.55.0.979.g7e5102b832-goog
-
-
--- 
-Dmitry
