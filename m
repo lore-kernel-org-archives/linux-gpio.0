@@ -1,79 +1,107 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1243329405;
-	Mon,  7 Sep 2026 09:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6310B3EB102
+	for <linux-gpio@vger.kernel.org>; Mon,  7 Sep 2026 09:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788772507; cv=none; b=vEEqXg0OB6rvbUDxda6fKFZzlU/Aeg9SbQNWxjz8vhWkbwWwIxZqfNmpZPRqGIDuKBiL+/qn2okFRByPYb/VhZK4Xx6XcUKL/B29lvanmX3Kph67uI0ezRRgmOKAiQQCmyqGsvhZl+KtLFjew7Vn+vvOVwVu8G/nDyecZTOEUwE=
+	t=1788773995; cv=none; b=kpVLj9isLI4G/F6sbzvy3qxyIb5ejw0TbXyri5ywjiyjJpdHnx68Z6vZDyq9KSXUMF8RJVvDZGW+S63X6CG4NOgFK9ZdotRKqgszzqtPX/aVxMBxxbQXrGShTFdH1ZjDMLrJcK2coe80DWneWapO1DYY5kvkUB1H7dcQ3qHEf3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788772507; c=relaxed/simple;
-	bh=yAZBsyqAUs5mrF94dZw5BTxiKBfvU5TkPnHaBKxFCrs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DPwplmofl8w9hVtlhMqojtTMYPQUXvM4MuWlLfl5k+EQZDQjZ7xDe6xXpG5SErcrMgFFoUpmP8kRZpXyfkPp3W1HtkE3GHmfPKm+O8Rh0eo1e0fTA0GnsLpJ6jaV/XLteeZd80nBxXp75FeJAHFxZ7/ORH8a+rQtdg1+rj2BZok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oDZsHBdd; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oDZsHBdd"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1788772504;
-	bh=yAZBsyqAUs5mrF94dZw5BTxiKBfvU5TkPnHaBKxFCrs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oDZsHBddIrpQ1YJt7hAIxSHZzRGcMCY4t0+bAIUzbvZapgskn+gsYmxHXnr/Hbavc
-	 9SsTTSRghDCriMKvdiOkYC00DSVpkprvD3EhybYRt1cy7tUiHJIrwWYvTGl8SIuAyw
-	 Y+WXr9N5v4Aea4wAyBIPGbCt3pLOibMNkuPwtzFCMa7OCb3RoUDA0/ax1R13vadeZm
-	 gSWZxcOuo/8enX5Nk1umBVGaPZ/CmlYQHb9fXUqfDxRY5QYrUEoC8nmG7r3j7Q/fzd
-	 56YRkvm0Mkuj9JustA4wCwtaiWevDUiC0XyotMgXupiapDfKBwjKf3hqsDyWcJzwbf
-	 4J1NrWiyPegaQ==
-Received: from [100.64.1.21] (unknown [100.64.1.21])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4AF3717E0699;
-	Mon, 07 Sep 2026 11:15:03 +0200 (CEST)
-Message-ID: <468b57bd-6f82-4dc7-82ad-71838b6ac12b@collabora.com>
-Date: Mon, 7 Sep 2026 11:15:01 +0200
+	s=arc-20240116; t=1788773995; c=relaxed/simple;
+	bh=WlL+j/Ie6m0Twd+B1P3rICow2WcfWKryEoGQ+1VVbBo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g0YVEISKE9I4OO47oKiH/UZId0AznnhzoOe6T3tCWVry5s3ZLfUCFDZU/805mtGL9NSgYQvcTAvkiNo/H7o5kieAsh8Dm2hT9L9V9SOKLMILNwkUVPcJ4YxHaA7tN084UIkVLrf6X7YOAXISDEMtzTfgjqmt6tXrr4z9tUwzpSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-977258a75d9so2474493241.3
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Sep 2026 02:39:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788773992; x=1789378792;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=idsP1neYZsT92lOTYUcwf/RINlIKDTK8HxAaGpjV2+8=;
+        b=nxHhnVV+VleVm+8SNjjGan8ysQ/aaSIxhITARmDWvXKZvHc06cD5juLO442TOowzRw
+         W1ewSu/cGBRH/hqtgAwKeUzJFBr/XvP7kmjQfuMMvOmJX/5CUkwYuYWU540yGfgd34E9
+         lelVdq/kKgHLlxDTwqPudZr+UyunKXjJWAG9BoxduoWtMLpYZkKuFfs0ZB5639XjYAAZ
+         k+ERUV7Oeme2FYaWglfAq5yY1f6I0eMo4shXkX7T3Th5ALaOnuKlQHmaYH6amQq06coX
+         TWK07EQxTA4nD0Y/FddAaFIA9THltanOhoy3vvSYbiOYdmygWy+FxEjXbqLRYxZcAuX9
+         EMpQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxKh5lN5RyXLieBJUb///XsKm6/Wfx9CkkF2c5XSnJjtAwIEIsAyAj+1LCr57lcaTwEPxMMJFAEXn7k@vger.kernel.org
+X-Gm-Message-State: AFuF++m+UyKRFJi+zXsxQWBvZz/PmCLTgPnYQ+CwkpPpvVFpYqIxrk5D
+	CADY484RuTkknPjGFrtfbWT/Ryn9xbbrdbPKuR88uzPfeUvAMnlj3jRMtYX2isNc
+X-Gm-Gg: AYBFou0pD4kxjJbJs3ftMNU8qD01HQx61Sx4oD40RPclx4F/bRSYJxDcXLiFf0UwQln
+	mwxe3GFCLPwtDUt2IBve9x7rQK4kdJRiKCImTUx4ewbTE/PsWRX4qY/wZWL/fDi3TTsAsQZd1Gm
+	Atj8548Del/8CRG4gEpwiKjSKNvd+QehoiLpOEd4mpomoQm8eBkCcfKv+KEgEiNL+NOQTuEGyx4
+	Z8zraWV090bK5Nj4T6/sx7yNpOT+4J342jABk8UMHmVYYcsrX9gW16VLLBOhqHFjahcXLI8Eu1I
+	IiFnSNPP3RHf+zkPOkZZbMMwVsNe0jbxLJLWKfTntG36KQj6/Qgyz5il2DlzScyHYAsAN/ewqky
+	dRkrboVqfHLnBVRxCtsl+cDuLbjD0jL3Sb6w9TMQ/Xe/CNpcbvlC0c3JuyLJMhJtqQ9biyWmu1k
+	PiX2w6JhJbApQrVo/H7z0soRanj3o+wHMXuArLDxlsDNkoesPC1BfmgexBbt1WnxsE7z7/c4ZAS
+	okzPf7Me9Pe4FGBrFHKAB3vkmsgP7xzyx4zYgB+
+X-Received: by 2002:a05:6102:91a:b0:784:ed9:1a1c with SMTP id ada2fe7eead31-78a4ab66791mr9474683137.12.1788773992333;
+        Mon, 07 Sep 2026 02:39:52 -0700 (PDT)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-78a47a76aaasm6526263137.3.2026.09.07.02.39.52
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Sep 2026 02:39:52 -0700 (PDT)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5c7d65c83feso3200489e0c.1
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Sep 2026 02:39:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzgH5/z+i77VQko+LEbe87aw5Q5V+S0Jjv7Qt7KcLEeJ5UjNb3ntZOc7ExPhYkm77w5GKtuoaDgzOZD@vger.kernel.org
+X-Received: by 2002:a05:6122:c8f:b0:5c6:4bab:4cb2 with SMTP id
+ 71dfb90a1353d-5c7ed80403dmr10646528e0c.6.1788773992044; Mon, 07 Sep 2026
+ 02:39:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/5] pinctrl: mediatek: use devm_gpiochip_add_data()
- for GPIO chip
-To: Justin Yeh <justin.yeh@mediatek.com>, Sean Wang <sean.wang@kernel.org>,
- Linus Walleij <linusw@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Project_Global_Chrome_Upstream_Group@mediatek.com,
- linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Chen-Yu Tsai <wenst@chromium.org>
-References: <20260723035823.2041832-1-justin.yeh@mediatek.com>
- <20260723035823.2041832-2-justin.yeh@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20260723035823.2041832-2-justin.yeh@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20260907090956.2825703-1-arnd@kernel.org> <20260907090956.2825703-2-arnd@kernel.org>
+In-Reply-To: <20260907090956.2825703-2-arnd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 Sep 2026 11:39:40 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVc=ntgrDDqdNUzEbeQ=qjh7Pw=B3TSN+qOD5bRY4_i+g@mail.gmail.com>
+X-Gm-Features: AcwNN1Wp7dWP-FBPz6xYVraXlAq6_uFTgT8pt9uLR2DvecmC1uG2AIElIe46m7g
+Message-ID: <CAMuHMdVc=ntgrDDqdNUzEbeQ=qjh7Pw=B3TSN+qOD5bRY4_i+g@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v7] gpiolib: turn off legacy interface by default
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Kent Gibson <warthog618@gmail.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-sh@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/23/26 05:58, Justin Yeh wrote:
-> The gpio_chip is allocated with device-managed memory but registered with
-> the non-managed gpiochip_add_data(). This was harmless while the drivers
-> were built-in, but once they can be built as modules and unbound/rmmod'd,
-> devm frees the gpio_chip's memory while it is still registered, causing a
-> use-after-free.
-> 
-> Register it with devm_gpiochip_add_data() so it shares the same
-> device-managed lifecycle, which also lets the manual gpiochip_remove()
-> error paths go away.
-> 
-> Fixes: a6df410d420a ("pinctrl: mediatek: Add Pinctrl/GPIO driver for mt8135.")
-> Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implements the vendor dt-bindings")
-> Fixes: e78d57b2f87c ("pinctrl: mediatek: add pinctrl-moore that implements the generic pinctrl dt-bindings")
-> Signed-off-by: Justin Yeh <justin.yeh@mediatek.com>
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+On Mon, 7 Sept 2026 at 11:10, Arnd Bergmann <arnd@kernel.org> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> All users of the legacy interface now select CONFIG_GPIOLIB_LEGACY,
+> so it can be turned off by default and only get built on platforms
+> that still have one unconverted driver.
+>
+> Allow turning it on manually for compile testing, in order to keep
+> the build coverage of the legacy drivers in allmodconfig and
+> randconfig.
+>
+> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com> # for input
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
