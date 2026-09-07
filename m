@@ -1,108 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1313BC68E;
-	Mon,  7 Sep 2026 16:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DFF346AFD
+	for <linux-gpio@vger.kernel.org>; Mon,  7 Sep 2026 21:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788800059; cv=none; b=HiGAr8AHJIk7DmtxBc6m9LpjcGTjmjITvK7vQOgOP3ZS0QZFhjNgb08Eb+43PDE3w5y5/Nthn1g5S1UIa6DR/evX0rCJJfMJ1MJ2qgANnvZ52ePVSiZ172xx+KgORNkISSy81Twwyt1M0K99UjGehH+r0UX41ZDP9WQbWNBUiyw=
+	t=1788817570; cv=none; b=qpsOr6+FJTTzCseJPeSB0POxFgaOA4h4x0n3j+uY4wnuCWju6IEbQwq9tzbmd1r6o60ReKdaTycVB6zPUhpqLN8XRqBfbFVh4D8fW3uMBs/myFjz+S52rg7UTC9E24tBpsIHiJrO5mYg/2A1UyZ5ixwPaNxvvRluVMUjGEk7ek0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788800059; c=relaxed/simple;
-	bh=GKZZny7aMhl5k5Xl79fHaZbfQVI9aamNlsGt2oxXCWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e8gGjP7vm/3SbHsk34c6wv3oEig+/UWaJK7yZfRPTZtW8SRrX3A83KkVZID8Zb6iiFlngwdksATPvWVp3Q2pnixlk246TsG0yCmbTi8nD4m0i9Axzb1we/atH7JJZhadDbO+sbsxfNAVULaM6GQncJjO69GiByev+a+MvKJJ858=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fS8qt/Vd; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788817570; c=relaxed/simple;
+	bh=wl5rSlHC+XhusTlpiC8DIe+ElpjyZ14Dwji7QkvgQbI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=Pt846hU2brvCvzG/8WS13oO/eIf4mZVhlcMVN7mVKzeNpJcoes7PmVziwubpM4P1updMtnawrNzbWo1f/BcjIzjp/YJk4pDSweGwd/ccv2w8WXBS5dBHXrQ8w/5coDvKnUSfVqWnh7wC+aBNcoxKGT4dB/lQUC5Yx7GQdYGT+u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAnj/rcO; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fS8qt/Vd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4132A1F00A3A;
-	Mon,  7 Sep 2026 16:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788800057;
-	bh=fTcG0zRnjibBnzdTxOkRK4sFEF9Nj5QobdtE77g2EMM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fS8qt/VdHzbFsvSLja2PNSSv8mROw+FqMJ4CbOSKdR2qdE+tCB4iXFTP3url8UfpP
-	 ovBwVyqGGgFHkUKBPgLrciZtHKCr0gZ1mJlrC4cRHFmP6hazY0g+xou+Oh3wiSIR5n
-	 WQt5MpjqyDaNlGDsMQPrNBw1Qi75Myxji8Tb8RxKkKvIwY7GKH9GzxObHSoj+OL/eN
-	 yAxqMY4SvzvjywMpGP/eQ9p9m5qAOUJ5LoMgAAFYThqeVRCW3VajKjCSgWLtdFRNFT
-	 FhfT1HNGdutuwQn+qeTHx49TDZR7OCIZQjbtV7g1ob/DZbTZOqyxM5PNi77x0EbNfn
-	 Ihr2wZ31HRFVA==
-Date: Mon, 7 Sep 2026 17:54:12 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: devicetree@vger.kernel.org, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Robinson <pbrobinson@gmail.com>,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: gpio: pca95xx: add onnn,pca9655 compatible
-Message-ID: <20260907-unnamable-geography-d04f61df0fe5@spud>
-References: <20260905000919.155694-1-rosenp@gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAnj/rcO"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-4858595f997so2373148f8f.1
+        for <linux-gpio@vger.kernel.org>; Mon, 07 Sep 2026 14:46:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788817567; x=1789422367; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-type:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=wl5rSlHC+XhusTlpiC8DIe+ElpjyZ14Dwji7QkvgQbI=;
+        b=fAnj/rcO80TMH8HFqrvv8EM18bPhxCk3sdYwPAKLF6fGgFJsHO9sQuudWHzoLaGtuz
+         hJMenQH3yNR9cJAx9610rIwQtPX2BcSdbxcZSKVXizwBQxtMSgw6siBRJ9UtS6jme+tn
+         Sp5buhngBoZr+3vzzVewIkSq8z+eqLSJb1suwCngI4JozAxhw1sSFtmZjBPZ687Ltq5S
+         jAnJ7L3F4tdiSpsCA3yz4vHYbUG/PdxGhjPob2tUkXur6fC7s9Kq1wRuafLJGyjNcWU8
+         sRYQEDZW/KZqtb0BNPqg/5ZHfH57TN4shs8rHSoETT0FEmdyOsOix+3+l2cZQ1xHYsuA
+         wxgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788817567; x=1789422367;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-type:content-transfer-encoding:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wl5rSlHC+XhusTlpiC8DIe+ElpjyZ14Dwji7QkvgQbI=;
+        b=dPpEFO67iJupU3lB4/u/z8HZ1NPWghFimZ0Y0GQq5mZ92QxGRNCwOrQMNpIclRIXWr
+         xAq9gLoxLVx6uDo3Eaf/sles3+4NYbjy7EiUcChcCIj3PxkPvpmah1hVEmvHzfMPGdOM
+         /Pph0asoNRpQYmIBQg6960ek9OQMZTCod0qtL3RPa2V2Ordohe7T129syqdePODCSlHw
+         cfBoq6ERI8RDiSYl/ILnwVCe1YpAg8/LD+JhVPAwJSgMKjbFxDoF2hsWmDG4w3P2+qxN
+         9XMW5qzqe/x1ZXYWhqvC6P79phiQUSsMTBJ/F/mACf+DPxHs/93zVRgcavnSslwpS23M
+         /0KQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwfE0lnHc/2CBAPMML/olOCM0Bib7YprBlZrtPG9mo3NjQu0R7fc77xFriJqh4Cn7uHgLjlDTGDqhYl@vger.kernel.org
+X-Gm-Message-State: AFuF++llKxBv5NJIsiFWoUgb1iuTN6OZL69o9K7fsEYtxcoyp2V/ZnLt
+	6kNoyJoChAcCmec2L6gdlE0ViQB6YLCDuN4/JGwh9JO4dyAgACBkaZWk
+X-Gm-Gg: AYBFou1MFVfbVByt1CA/eYKPu9cGpOw+FX9PxH4hczu93IgUFoxtczb50maPGLJnGE/
+	z7WU16W6OmgFNv4mNp6w2Q+Tz7a8Wm8NV/iA0E5SquksjFRK+cjBklqw8yqKxLIPaSVBWtvydcH
+	KY+RRI9blz1hpSjXMByxEyC8k18hG+EiudU/B+Y3ASUqS58wGBaqcpw8wPpSTtOtH3LS20/MQto
+	7rX7yU+xLI8Chj0FnHkVREnlZojlYkbbKEwerRNNn1TEFqghdfswbWh1Bm+Y/2vF5TdIzPaNzpv
+	u7KAiOs25+LQIKc0Aa5kY48mbaVIuIOwuzVBdCMqxynjjE70z8ZN5HH0b/HSi/+vKCipyDFNc/p
+	f8mgJFpd1l8mseVegDz8Kw8EZURc3T2vXYNrOdK5QLBObAz1H5W5EXG6QiDW14xOCVUl/Dq3hD0
+	b6xxF5n613g/LDYMdKKDj9QXOwFqR7qtD6Z6oLrwNxTNKVXz+Gxvezm/JPknjlL6iq03sd8vko4
+	OM187r4WAi4A+DFKAkiVPe5fqwT5UfHfRCCICDSHrJiOebNJyCV
+X-Received: by 2002:a05:600c:6290:b0:499:8174:9f39 with SMTP id 5b1f17b1804b1-49cf7f3d239mr547293245e9.0.1788817567046;
+        Mon, 07 Sep 2026 14:46:07 -0700 (PDT)
+Received: from localhost (178.43.76.160.ipv4.supernova.orange.pl. [178.43.76.160])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cffdb2c40sm204268135e9.1.2026.09.07.14.46.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Sep 2026 14:46:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i6boig1kl3i2UcBi"
-Content-Disposition: inline
-In-Reply-To: <20260905000919.155694-1-rosenp@gmail.com>
-
---i6boig1kl3i2UcBi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 07 Sep 2026 23:33:35 +0200
+Message-Id: <DL9EN09H9IUW.12C25XA0HVUXE@gmail.com>
+To: "Dumitru Ceclan" <dumitru.ceclan@analog.com>, "Tomi Valkeinen"
+ <tomi.valkeinen+renesas@ideasonboard.com>, "Mauro Carvalho Chehab"
+ <mchehab@kernel.org>, "Sakari Ailus" <sakari.ailus@linux.intel.com>,
+ "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>, "Julien Massot"
+ <julien.massot@collabora.com>, "Rob Herring" <robh@kernel.org>,
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: "Tomi Valkeinen" <tomi.valkeinen@ideasonboard.com>,
+ <mitrutzceclan@gmail.com>, <linux-media@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-staging@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+ "Martin Hecht" <Martin.Hecht@avnet.eu>, "Andrian Suciu"
+ <Adrian.Suciu@analog.com>, "Cosmin Tanislav" <demonsingur@gmail.com>,
+ "Vivekananda Dayananda" <vivekana@amd.com>, "Cory Keitz"
+ <ckeitz@amazon.com>
+Subject: Re: [PATCH v16 00/22] media: i2c: add Maxim GMSL2/3 serializer and
+ deserializer drivers
+From: "Artur Andrzejczak" <andrzejczak.artur@gmail.com>
+X-Mailer: aerc 0.21.0
+References: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
+In-Reply-To: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
 
-On Fri, Sep 04, 2026 at 05:09:19PM -0700, Rosen Penev wrote:
-> The pca9655 is the On Semi variant of the pca9555 16-bit I2C GPIO
-> expander and is register-compatible with it. The addition of the
-> compatible in the driver missed the documentation update.
+Hi Dumitru,
 
-The commit message makes it sound like this device should use a
-fallback. Why doesn't it? Either it should, or the commit message needs
-an update.
-pw-bot: changes-requested
+Went through v16 and checked points I raised on v15.
+All of them have been addressed.
 
-Thanks,
-Conor.
+Kind Regards,
+Artur Andrzejczak
 
->=20
-> Fixes: 6d49b3a0f351 ("gpio: pca953x: Add support for the On Semi pca9655")
-> Assisted-by: opencode:big-pickle
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml b/D=
-ocumentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-> index 4631388a7d91..563f61e6e543 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
-> @@ -67,6 +67,7 @@ properties:
->                - nxp,pcal9555a
->                - onnn,cat9554
->                - onnn,pca9654
-> +              - onnn,pca9655
->                - ti,pca6107
->                - ti,pca9536
->                - ti,tca6408
-> --=20
-> 2.55.0
->=20
-
---i6boig1kl3i2UcBi
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCap7sNAAKCRB4tDGHoIJi
-0pSyAP443T6Ba/r415iW3TBm/unJOBPexuejUCYEdLgutVbPUQD9H4/fGYPb6TUU
-QjTnNSm7vcITIQ3TbIXNdsG5lzEk1gc=
-=DJha
------END PGP SIGNATURE-----
-
---i6boig1kl3i2UcBi--
