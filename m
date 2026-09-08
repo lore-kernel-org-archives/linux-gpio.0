@@ -1,103 +1,93 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DFF346AFD
-	for <linux-gpio@vger.kernel.org>; Mon,  7 Sep 2026 21:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608B738DC58;
+	Tue,  8 Sep 2026 07:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788817570; cv=none; b=qpsOr6+FJTTzCseJPeSB0POxFgaOA4h4x0n3j+uY4wnuCWju6IEbQwq9tzbmd1r6o60ReKdaTycVB6zPUhpqLN8XRqBfbFVh4D8fW3uMBs/myFjz+S52rg7UTC9E24tBpsIHiJrO5mYg/2A1UyZ5ixwPaNxvvRluVMUjGEk7ek0=
+	t=1788851211; cv=none; b=jSYlIGn5dwwbBXn9o53NSa1jKGONWWkqd0nyHTvzcCblKLv33UUPAGNL7x8481T8DcAbe0NQpQa1AucapzQlR3t51QODNPFKxAyeUVtp8USKku9/2GFEf+F1HnW0XABdqlN50iBQnD6VyMS6eeIUAnB93E6ijJ8W1oEt/PYRYM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788817570; c=relaxed/simple;
-	bh=wl5rSlHC+XhusTlpiC8DIe+ElpjyZ14Dwji7QkvgQbI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=Pt846hU2brvCvzG/8WS13oO/eIf4mZVhlcMVN7mVKzeNpJcoes7PmVziwubpM4P1updMtnawrNzbWo1f/BcjIzjp/YJk4pDSweGwd/ccv2w8WXBS5dBHXrQ8w/5coDvKnUSfVqWnh7wC+aBNcoxKGT4dB/lQUC5Yx7GQdYGT+u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAnj/rcO; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788851211; c=relaxed/simple;
+	bh=5Jf+deF/Lqx2VHME5QZe491Y2Wh3liyfJzOwhqfDZSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fNl8Qg5B6wDRpyr9EiPg3mled59hFuUFw+DQahICSG7QHgz74+ZNHBE6X/AZ3mOGNerpbBbAkMp6L6ECbQwYLn0YUDISq6ixsycO/j6qZ7gLacoDEz47SYr0KjMbA0MjEidmBkLYfZGrXv1iN/fb/tEpqxWvnMG4tGAeaaGIeas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YaF2+V0F; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAnj/rcO"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-4858595f997so2373148f8f.1
-        for <linux-gpio@vger.kernel.org>; Mon, 07 Sep 2026 14:46:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788817567; x=1789422367; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-type:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=wl5rSlHC+XhusTlpiC8DIe+ElpjyZ14Dwji7QkvgQbI=;
-        b=fAnj/rcO80TMH8HFqrvv8EM18bPhxCk3sdYwPAKLF6fGgFJsHO9sQuudWHzoLaGtuz
-         hJMenQH3yNR9cJAx9610rIwQtPX2BcSdbxcZSKVXizwBQxtMSgw6siBRJ9UtS6jme+tn
-         Sp5buhngBoZr+3vzzVewIkSq8z+eqLSJb1suwCngI4JozAxhw1sSFtmZjBPZ687Ltq5S
-         jAnJ7L3F4tdiSpsCA3yz4vHYbUG/PdxGhjPob2tUkXur6fC7s9Kq1wRuafLJGyjNcWU8
-         sRYQEDZW/KZqtb0BNPqg/5ZHfH57TN4shs8rHSoETT0FEmdyOsOix+3+l2cZQ1xHYsuA
-         wxgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788817567; x=1789422367;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-type:content-transfer-encoding:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=wl5rSlHC+XhusTlpiC8DIe+ElpjyZ14Dwji7QkvgQbI=;
-        b=dPpEFO67iJupU3lB4/u/z8HZ1NPWghFimZ0Y0GQq5mZ92QxGRNCwOrQMNpIclRIXWr
-         xAq9gLoxLVx6uDo3Eaf/sles3+4NYbjy7EiUcChcCIj3PxkPvpmah1hVEmvHzfMPGdOM
-         /Pph0asoNRpQYmIBQg6960ek9OQMZTCod0qtL3RPa2V2Ordohe7T129syqdePODCSlHw
-         cfBoq6ERI8RDiSYl/ILnwVCe1YpAg8/LD+JhVPAwJSgMKjbFxDoF2hsWmDG4w3P2+qxN
-         9XMW5qzqe/x1ZXYWhqvC6P79phiQUSsMTBJ/F/mACf+DPxHs/93zVRgcavnSslwpS23M
-         /0KQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwfE0lnHc/2CBAPMML/olOCM0Bib7YprBlZrtPG9mo3NjQu0R7fc77xFriJqh4Cn7uHgLjlDTGDqhYl@vger.kernel.org
-X-Gm-Message-State: AFuF++llKxBv5NJIsiFWoUgb1iuTN6OZL69o9K7fsEYtxcoyp2V/ZnLt
-	6kNoyJoChAcCmec2L6gdlE0ViQB6YLCDuN4/JGwh9JO4dyAgACBkaZWk
-X-Gm-Gg: AYBFou1MFVfbVByt1CA/eYKPu9cGpOw+FX9PxH4hczu93IgUFoxtczb50maPGLJnGE/
-	z7WU16W6OmgFNv4mNp6w2Q+Tz7a8Wm8NV/iA0E5SquksjFRK+cjBklqw8yqKxLIPaSVBWtvydcH
-	KY+RRI9blz1hpSjXMByxEyC8k18hG+EiudU/B+Y3ASUqS58wGBaqcpw8wPpSTtOtH3LS20/MQto
-	7rX7yU+xLI8Chj0FnHkVREnlZojlYkbbKEwerRNNn1TEFqghdfswbWh1Bm+Y/2vF5TdIzPaNzpv
-	u7KAiOs25+LQIKc0Aa5kY48mbaVIuIOwuzVBdCMqxynjjE70z8ZN5HH0b/HSi/+vKCipyDFNc/p
-	f8mgJFpd1l8mseVegDz8Kw8EZURc3T2vXYNrOdK5QLBObAz1H5W5EXG6QiDW14xOCVUl/Dq3hD0
-	b6xxF5n613g/LDYMdKKDj9QXOwFqR7qtD6Z6oLrwNxTNKVXz+Gxvezm/JPknjlL6iq03sd8vko4
-	OM187r4WAi4A+DFKAkiVPe5fqwT5UfHfRCCICDSHrJiOebNJyCV
-X-Received: by 2002:a05:600c:6290:b0:499:8174:9f39 with SMTP id 5b1f17b1804b1-49cf7f3d239mr547293245e9.0.1788817567046;
-        Mon, 07 Sep 2026 14:46:07 -0700 (PDT)
-Received: from localhost (178.43.76.160.ipv4.supernova.orange.pl. [178.43.76.160])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cffdb2c40sm204268135e9.1.2026.09.07.14.46.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Sep 2026 14:46:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YaF2+V0F"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1788851207;
+	bh=5Jf+deF/Lqx2VHME5QZe491Y2Wh3liyfJzOwhqfDZSY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YaF2+V0FjKJF8BjDjtN+258NuKmYLJSI4Yys6/ZGhFe7vrADnSaY6gNe30ffml8dQ
+	 HbvFBALsE6cpmwy8TKR/QLeBUtuSeAMx6vTWJBSonjrJg4Gz4hjgy1Fen5CMB3BOQZ
+	 MOHen78lIX4BEAXgMdvBJGXrrd/MDowrSLz1fY8Kah3yptF7WMwMqX3BTaFqoxYuWs
+	 UR+1CNt8stA/vy1J8uMA0wQWK8WiFH56BpLPgfEjHEq2I8C/YTrMQczavNgVuSo6Bi
+	 aqADMc4zKaetrAu+KyG7mC/qzyE1U6uHUSzB1gfc0xHuLXCKYn9hQOK4uFnLQS/D5z
+	 dtddeLdwIWung==
+Received: from [100.64.1.21] (unknown [100.64.1.21])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5479E17E04D7;
+	Tue, 08 Sep 2026 09:06:46 +0200 (CEST)
+Message-ID: <14238208-7422-4542-b678-35fc322ff579@collabora.com>
+Date: Tue, 8 Sep 2026 09:06:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 07 Sep 2026 23:33:35 +0200
-Message-Id: <DL9EN09H9IUW.12C25XA0HVUXE@gmail.com>
-To: "Dumitru Ceclan" <dumitru.ceclan@analog.com>, "Tomi Valkeinen"
- <tomi.valkeinen+renesas@ideasonboard.com>, "Mauro Carvalho Chehab"
- <mchehab@kernel.org>, "Sakari Ailus" <sakari.ailus@linux.intel.com>,
- "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>, "Julien Massot"
- <julien.massot@collabora.com>, "Rob Herring" <robh@kernel.org>,
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: "Tomi Valkeinen" <tomi.valkeinen@ideasonboard.com>,
- <mitrutzceclan@gmail.com>, <linux-media@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-staging@lists.linux.dev>, <linux-gpio@vger.kernel.org>,
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
- "Martin Hecht" <Martin.Hecht@avnet.eu>, "Andrian Suciu"
- <Adrian.Suciu@analog.com>, "Cosmin Tanislav" <demonsingur@gmail.com>,
- "Vivekananda Dayananda" <vivekana@amd.com>, "Cory Keitz"
- <ckeitz@amazon.com>
-Subject: Re: [PATCH v16 00/22] media: i2c: add Maxim GMSL2/3 serializer and
- deserializer drivers
-From: "Artur Andrzejczak" <andrzejczak.artur@gmail.com>
-X-Mailer: aerc 0.21.0
-References: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
-In-Reply-To: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 1/9] dt-bindings: mfd: mt6397: Add MT6392 PMIC
+To: Luca Leonardo Scorcia <l.scorcia@gmail.com>,
+ linux-mediatek@lists.infradead.org
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
+ Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Linus Walleij <linusw@kernel.org>,
+ Julien Massot <julien.massot@collabora.com>, Val Packett <val@packett.cool>,
+ Fabien Parent <parent.f@gmail.com>, Akari Tsuyukusa
+ <akkun11.open@gmail.com>, Chen Zhong <chen.zhong@mediatek.com>,
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, mfd@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+References: <20260902193351.185771-1-l.scorcia@gmail.com>
+ <20260902193351.185771-2-l.scorcia@gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20260902193351.185771-2-l.scorcia@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Dumitru,
+On 9/2/26 21:25, Luca Leonardo Scorcia wrote:
+> Describe the MT6392 PMIC and its RTC and regulator devices. This device
+> is mostly based on MT6323 with some similarities to MT6397 and is usually
+> found on boards using the MT8516/MT8167 SoC.
+> 
+> Signed-off-by: Luca Leonardo Scorcia <l.scorcia@gmail.com>
 
-Went through v16 and checked points I raised on v15.
-All of them have been addressed.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Kind Regards,
-Artur Andrzejczak
-
+> ---
+> Previous version of this patch had the PMIC device declared with a
+> fallback compatible to "mediatek,mt6323". Sashiko pointed out in [1]
+> that it would have been wrong as the fallback device is not really
+> compatible with the new PMIC.
+> 
+> Since the change is significant I have not included the Reviewed-by tag
+> that Krzysztof Kozlowski kindly provided in v9 of this patch, I hope
+> this is the right thing. I really want to get the bindings right as they
+> are harder to fix in later commits if the need arises.
+> 
+> [1] https://sashiko.dev/#/message/20260820125850.3B34D1F000E9%40smtp.kernel.org
+> 
+>   .../bindings/mfd/mediatek,mt6397.yaml         | 72 +++++++++++++++++++
+>   1 file changed, 72 insertions(+)
+> 
