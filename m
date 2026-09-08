@@ -1,184 +1,282 @@
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FC14F4739
-	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 09:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0802351A748
+	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 09:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788859543; cv=none; b=p+IKKDEAiuUzx+Rd4ibjAec0V9ul2wp/rSwj+qAcMYNIpo2VsxizP3EqUXYNt5yUR4GX405Kqtd57+6UxNhP5fHqbWMSsiOyiDOSU4XheoBXjJDgoYYIRu0otjbRE2fSQSCIKwFLDRMahVyWgUJ3mIPy9LCAnA91QQJKEVbTIc0=
+	t=1788859687; cv=none; b=j/1SjTYtvLgzPY/Xaf6vbP7oQD3RtC7s8Z0iE3LYXTxOskOim0whizjecn4hQWATB9So/JEDzNuCEMm9QdpQQP28RY8uif4XTccgGuOm2EY6yhtVJBW56bcoFaMHjdNy7UKjRTnHJXKY0B+Nb+ec9AEGJc1G4CStZUepsfmd4Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788859543; c=relaxed/simple;
-	bh=dElApXNmnOgx2LivlVvzaqjoFojUK7t4I4aO8fOopz0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j6Sn2CNybzc7BOBgDrKLU4OYq1poh9iLgxts5ZgjDd1S+Cp4DdeFfEDxVbESYuXLdqpR0oKJ90NgV5WAnFcPcmIpMsf8Ev0duIuTixnwZ/N7/Eq8gkG7cRjywhk11IKpg8MjuDutzYHksrYb2Z+axIoSfjbQf4QUvQn8vq6eLP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-777c2d69446so3058504137.2
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 02:25:41 -0700 (PDT)
+	s=arc-20240116; t=1788859687; c=relaxed/simple;
+	bh=e978EXWIA4sXTr97huLawpOgX8082ymb9e+2dGNjw5M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IzTiZQiBO/dM05Zktpu4w+MnPkCf7PGoIvjw36pCF/oJXmsfzhYPG9tN0oAhvqNIpywU/EUcClQPcyF5+l5ZTtAx4jWzga7iEZ5HClqcWVMYdoytxs5fddFKXQ2jVThXZQjg/BwsHidJzI6M0W1IcvrVPaZwo5TN+SQr2ZSYkuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IDuIpTTD; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=OoB9sqhn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IDuIpTTD";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="OoB9sqhn"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6888cC6P2380642
+	for <linux-gpio@vger.kernel.org>; Tue, 8 Sep 2026 09:28:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=xQ5AnXapuDmwQthGbSeXpd
+	B6HyiT025OD5a5rgt3h+I=; b=IDuIpTTDT2iBrJo3NF3irTMMKpCHE7YD8YHlr5
+	6VUacu/rh+6fudiycQJzvjxhR7mjrCAcHYxPBsv0NlinrNFcB/j9W2Dbhbe3wHuv
+	AYpPRmRI53IGMkMe1So+1y4u1/B0nq8kX1ZWBfhijsU4WqeTKyQA5v3g86yfmg4G
+	1NVH4DSX6ybRnsg0WPTID3ijy7cTqLNLZBTPsfahWvsyrUb8PsTpyarRObrrA7WT
+	sU3hQ2g9sury0eAUYSsluQQa1jpAw0L1z9m6jWpFHBDHuUGniXsHKl2NY6JmrISH
+	5TovdCVEjbmRElSYF8DryQi8QRHAKUw+mQVTOxVjLysj4i2Q==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gjf1cg6n5-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 09:28:04 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-90e98e74535so73766746d6.1
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 02:28:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1788859684; x=1789464484; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=xQ5AnXapuDmwQthGbSeXpdB6HyiT025OD5a5rgt3h+I=;
+        b=OoB9sqhn7JRo9Zhbft6zzwY6hS1YbMI0eMADV40ZA2b5sKPUi5DRezZlQTCI0bBG8C
+         uVS4vilkagvYSI6c+gcorYh59rQNFRvinGPGf0mZHw1EjD2WJ46RY+9V0pCwrgE5yEfy
+         okZOLFUO751QTV4uIvKXmDXNmNMloR1fZ6SB2N+Hy0mqgZ8EHXUgcAyw+pqkjV7dTGyU
+         JhEdzQYA3WHTbnS8K9GZUjA/rR4LHB9QO9nzNnnQlVOYy6ZQg7XRXoaZtQXtuv1d5RQ7
+         u5THSS2T/7gAUSSxaJZlNoxYWmW1v3/y7NtEVq3zAQCco/wJvwc5UYAAtYqAqbIl9bKX
+         FRsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788859541; x=1789464341;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=uNDZ4Z9RQ9wXrVcNuo/xPMTuBK+T4DwJPmnnzMm2S6s=;
-        b=csrkhIaB+Ey0e0W8iiSkTMMcioIS0zccS6suT7rUstVpRQvf+6yRRf257XDKyoREZ6
-         QGxOjjpzIKaM7DDx3zmAN4zK1U6R6GfpO9n3kZGidnVS2TKO9XzQGz9d/kU7zTvVfhnG
-         zhe02KQ6y4qLbcWstOdQS56suJ+KznHZW+ocM4ayMZLgI0AH4u3VQ+j4ti2jKQD78u6d
-         ldHkinhhe5fyc6qlOGu31VQHWUBfJRczrKYxodpZ8drvcYrWEKtWXfIIdgHGIiuN4B8R
-         +upF3qm0TqxNeRVxXLAHQCeXMkyQdmurfY0cx/0/IgdVaaQ1Ay1O8p5L4F4eppm5hEge
-         DXxA==
-X-Forwarded-Encrypted: i=1; AKwUvBxKS6CKuFRN/G121i1lb5giD9uOO7AWjy0cFVr3LFBd/yCa0yyIiEB+c3NltQq4afU0fHq3LO7CxxLP@vger.kernel.org
-X-Gm-Message-State: AFuF++lUAdekpikuFNIkg7rBQx+6t6zH2PanBAiYN93PxErASr2Lvj+r
-	slpRH/WYE0Q57nzMOrM+rxGm/weZ3QtXK6m+mb62bW1wtAJIGV0xZsYzsLyePR8F
-X-Gm-Gg: AYBFou0mhj9uXuekF75hZSPgz2JQ+94mTFlcxjjxJ4fLpZeRMZHp7EJ4NtDnNeNF4JS
-	E7ohfOgBQdlK6edpySqADcmWukp+vx4qpvHVUMghneaChq6C3K59hwWOpo49+TA/+noqp1z29ot
-	sm7CA5ky5BqTg7gSnx3a4TQSfCS6sZCNE4B5dlPT3EjMujDP4Qvlr1SqNnqzJCzJf5igveuI9my
-	04iHBEMsrIpk93lsESfpU9rgdCxVmT90mz8hbBUHkiyASRVhtec9Nw/rrbgX2b5/nskxStv0wSC
-	lpkxLfPGa6R4WwnxF6+YF2/U+GQpF4AJJtzPWyC+dZlKLLpJwwMWYv43gNy8mdkf7sx0d+kASHT
-	Bs0JvxzOJfJuQ853AgscmA4mcdWULBXlh9e0fAJqH/jtTTl9+7THYuhyDic0oLfl1LSAgDDwoiN
-	RplQA6At5EXqmTN31Peh43wtExZpvnDxkiix2MRAiM6p2oafpPEDxnXSE4etc6J/nmvQK06lHmk
-	3VO3cyKoGY2n/8ZKI9Sk9+wTw==
-X-Received: by 2002:a05:6102:50aa:b0:77f:9278:af6e with SMTP id ada2fe7eead31-78a4aabb472mr11106797137.9.1788859540892;
-        Tue, 08 Sep 2026 02:25:40 -0700 (PDT)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-980d774ad5dsm2136578241.9.2026.09.08.02.25.39
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2026 02:25:39 -0700 (PDT)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-777c2d69446so3058483137.2
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 02:25:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBz8rUx1bL4Y4xdEQ5GbesD9Tm+pQuBr9N1i/WlHfblPJf29VP4N6PdY9jB3dSg4Te8uII2dtSFSnZSZ@vger.kernel.org
-X-Received: by 2002:a05:6102:e0d:b0:789:5b58:e105 with SMTP id
- ada2fe7eead31-78a4a90fdd3mr12719938137.2.1788859539059; Tue, 08 Sep 2026
- 02:25:39 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1788859684; x=1789464484;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=xQ5AnXapuDmwQthGbSeXpdB6HyiT025OD5a5rgt3h+I=;
+        b=EuTwEGlAdpAXELG5ZVtbMYUhkeQJWQgVwhQoSb/+zMOG1ZEOmo1Mw4vEKBbFpkzeGF
+         33IB3vYH6F2cu8ajG+d1V9taOzMvIZk3Zpu7wI+cia2yT1sMfOY2hkOEEQ7eJrJEeZ81
+         EHKPXkNTafooQenpVhVGjwbOBkbcgNpGolbcUxMZGBsVJbB1ggMscQye9w/9H/UoMM1M
+         FhpcKmQEr5c7YUPIb7Ter9HfhHrfGoqW7nsupb4JO/z67hf3qTZe8yqAJ6ZKw5adjkJq
+         zfnRLSs5XPuYs3MW1Jf5IRDPAfiPHTdB7OkQsLmaenqfAWW612F2sGT2gWNqwmjbdmSw
+         rq9g==
+X-Forwarded-Encrypted: i=1; AKwUvBw0baCCpxOCnkXFIhsv5DF7xsyOpCIJZzeQ8arJ67SZcK/D5Y9wEu9U+vmUZAFa0l2hQsrikQhKtvvH@vger.kernel.org
+X-Gm-Message-State: AFuF++l22f82iJzAvtkiw/Xr8lRQrmSmZq6uby9yGON6KfsZIiRiaKAE
+	vGnR7Rr3NEsVIVQ9Ztt9x6U/70QiyAmZUDL6GTXIO5D/lAS2cXHvdcaMKmqKuzxhp2W8hXX+jvn
+	8ys20lk2ZH5xXNdQ8NqXfAOqW3K5GcGmEkurZtjaryrJFx7os5vHmd8K8TiKSsTXq
+X-Gm-Gg: AYBFou2uYKLuvoljq0RS0YNf3R91ZWKOn7ptoBCO9M739unMDvKIMA7SvoWK6RFkVGt
+	CSHjv3NR3TNLvSalIA1vlHvuX0uX1uf0B3CeDDW6WWNHQBqMzl+V/mhEYeudrkBIem1xwhFgzp3
+	ttV6DKmamephBt2Q05gA9ltW4evUrC713dacQLH2W9ZWYjBODwP2HYisBlEFilGGwObxhowoMoP
+	lNUFDv6f38mtdlR113ey+dtdUyq7BDExphtl8af+/+uxhGRHRkeXD41+pd4UvbgXcLnvStsnYDv
+	+yTbMoeTPY6KKh/Z1P3z9Wgt0uNvcdm4VUqkr+ELhlShE2sIx+D6yMpH+tft0F18QNJihL8SKt+
+	jHwprtg03IXp/C6rip9Gln3paVUmh
+X-Received: by 2002:a05:620a:4875:b0:936:8840:427f with SMTP id af79cd13be357-93980328a11mr2689595885a.4.1788859683620;
+        Tue, 08 Sep 2026 02:28:03 -0700 (PDT)
+X-Received: by 2002:a05:620a:4875:b0:936:8840:427f with SMTP id af79cd13be357-93980328a11mr2689592385a.4.1788859683082;
+        Tue, 08 Sep 2026 02:28:03 -0700 (PDT)
+Received: from brgl-qcom.local ([2a01:cb1d:dc:7e00:79a2:f118:df09:fe51])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cfbdacc45sm349714825e9.11.2026.09.08.02.28.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Sep 2026 02:28:02 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Date: Tue, 08 Sep 2026 11:27:46 +0200
+Subject: [PATCH] soc: fsl: qe: drop GPIOD_FLAGS_BIT_NONEXCLUSIVE
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260817185700.322370-1-cosmin-gabriel.tanislav.xa@renesas.com> <20260817185700.322370-3-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20260817185700.322370-3-cosmin-gabriel.tanislav.xa@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Sep 2026 11:25:27 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX+PArWcN9Xc5UiErWNUeGDEVoM6DoLgZQJOQHav9GZ+w@mail.gmail.com>
-X-Gm-Features: AcwNN1USGKMY7TKVnAkjjakrGwhuoyRY6EMfvN47yRnI9dkrkdtdSzBeKR52XOc
-Message-ID: <CAMuHMdX+PArWcN9Xc5UiErWNUeGDEVoM6DoLgZQJOQHav9GZ+w@mail.gmail.com>
-Subject: Re: [PATCH 2/7] pinctrl: renesas: rzt2h: restore correct pin mode on
- IRQ free
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260908-usb-fhci-drop-gpio-nonexclusive-v1-1-8e405dc67874@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIABHVn2oC/x3NwQqDMAyA4VeRnBeIbs66VxEPLkYNSFsaKoL47
+ is7fpf/v8AkqRh8qguSHGoafEH9qIC3ya+COhdDQ82beuow2xeXjRXnFCKuUQP64OXkPZsegq1
+ 7ccuO3PQkKJWYZNHzfxjG+/4B8MoRJHEAAAA=
+X-Change-ID: 20260907-usb-fhci-drop-gpio-nonexclusive-584c5c808a30
+To: Qiang Zhao <qiang.zhao@nxp.com>,
+        "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5039;
+ i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
+ bh=e978EXWIA4sXTr97huLawpOgX8082ymb9e+2dGNjw5M=;
+ b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBqn9UYmHVJfDtsLbAHMyEmW5VQCD+WP9drTn2DY
+ AcGBHo39UOJAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCap/VGAAKCRAFnS7L/zaE
+ w9tfD/9kbyaVWzykBOKPu+CBlGh1AiRvifpabM2JsEGENIXivb7FefAWZOoT8QEnHrIIZObwq/5
+ fpsbf7Dl0zV754tbqWvoUKs9j76lidy1OGe3AG2WuIt8BLKXwFOaqrBqi9Qtlwa6AKBm6FoIbQM
+ H9rEBskiyvJkNu++hVDq3kwTGyDH2BlGnwyIMAew6esPJoS1KzhrzlSnTNvfJfdRzdWJjNsWhnp
+ 7pljZKS/GU0mATdh4pXPZlv1eCcFFj9xypUVwRyd6FyhyGtf13ZM+qGjwYZVWCaU2GQiYkQcSdC
+ arBhhDHyFJWexzeZXvE8ndOYT7q6Z7wwUXvDcebEN1aMmcsilnlD4jGM2etJ45XbskWjFwtAxlD
+ gvfTNnbmg9udfGHeWstwt2kt4oh2CDJznp4xuMn+p+kQNlyrn7VdLM1nKaT724m0Rj2Wa/lTZyc
+ DzeaRRCCmOq1nuRhJp3s/SWWvGYDNdKSUZyuCBKd1DrxYptp9xMrdHG7vNBw3IEnTTTtoGKCxdh
+ sklyMapEBIVXc2rdJJtRIF7fXgRp5VqzW8MaQm3D2ocB370fZKXncEYzc7/V69mDPZErQbn5kPi
+ 6sTDiZ/jY/ONBjNPql+1Hm517jQrhl7H3EZdNMmxWIwnAqdVZ5iEUjSaTuq6XQmRHIAxzpJiINP
+ 7H96kj5/CoBUaMA==
+X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+X-Authority-Analysis: v=2.4 cv=VN3tWdPX c=1 sm=1 tr=0 ts=6a9fd524 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=EUspDBNiAAAA:8
+ a=buOPlMvk26ltgJ9tiNoA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-ORIG-GUID: sr4vyEKQDfVH_Gr_yRzF3bhw-xx8Qku8
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA4MDA5OSBTYWx0ZWRfX4i8CpMYCxvDK
+ 4v7hOhLdlrN5b4UncE6U/ORsp2xEtXqTyBrDGENR+IetvvZwg4f9nXx5PXONK5aNXlP3OlYA+Mv
+ j+3Sed9Lhv3n+AeOBLtYPWd+ntBuHzY=
+X-Proofpoint-GUID: sr4vyEKQDfVH_Gr_yRzF3bhw-xx8Qku8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA4MDA5OSBTYWx0ZWRfX1RL9EiI8l0+P
+ IymmLmhZ9b2P7Z3XiPDssaI8sTkjl3mqmYrRO8dRPh9VYyl2r4piH4yT4YrKBD5i4KqWYeL5zUL
+ d776RDHAXGpkD1ub8RNaC5k+0l4Z+oaxaZkz3eq2GfaTth2MyWaZfK/zDKq0McodOH9zQJgjsrn
+ w5UEwSh82RuRtLYJp7jd11HCRqNS68VBcRYL+LTN1p8IAWBfmV0mcymcAProtFEMaYfEUYIeSmw
+ gpXpAr5K9HovRCxaNe0uCwZYW3S9VJbu3jkDz3y99vStHgzHDskXENTjgcQsvdZnP1bFNsa1ZoQ
+ Mzeqvt0hu3ItBY+AGO+lQfS6fhJvPuCb42cswG9b79YLVeXaqLMzpX1jd1zFawZUU85cpYvTi0O
+ 6wbG7BFGp3Hki++OPUGptk6HHxVKnCZ9csS48jAtPriDoxH5ofKKnhGNhaBsK6qDuQrSxvdAZYZ
+ DhwBHHJQeFzMMBRHthw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-08_01,2026-09-07_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 priorityscore=1501 lowpriorityscore=0 spamscore=0
+ suspectscore=0 clxscore=1015 impostorscore=0 bulkscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609080099
 
-Hi Cosmin,
+The GPIOD_FLAGS_BIT_NONEXCLUSIVE flag for gpiod_get() is deprecated. For
+actually shared GPIOs, it should be replaced by using the functionality
+provided by gpio-shared-proxy. The Freescale QUICC Engine GPIO driver
+uses it as a workaround to access the GPIO descriptor already requested
+by the caller of qe_pin_request() in order to access the private GPIO
+chip data.
 
-Thanks for your patch!
+As the existing comment itself states, the user already requested this
+GPIO and the only user in tree is the FHCI USB driver which does in fact
+request it, we can safely modify the function to take the *exclusive*
+GPIO descriptor as argument and stop using the deprecated flag.
 
-On Mon, 17 Aug 2026 at 20:58, Cosmin Tanislav
-<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> rzt2h_gpio_irq_domain_free() calls rzt2h_pinctrl_set_gpio_en() with
-> false leaving the pin in interrupt function instead of returning it to
-> GPIO mode.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+---
+ drivers/soc/fsl/qe/gpio.c   | 29 +++++++----------------------
+ drivers/usb/host/fhci-hcd.c |  2 +-
+ include/soc/fsl/qe/qe.h     |  6 ++++--
+ 3 files changed, 12 insertions(+), 25 deletions(-)
 
-OK....
+diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
+index 5cd59cfbf22fa68d39ad00b8f73ad389ac8860a3..5a3a1d5df669b1e0a084a0ebfd2aef91e15f126e 100644
+--- a/drivers/soc/fsl/qe/gpio.c
++++ b/drivers/soc/fsl/qe/gpio.c
+@@ -196,18 +196,17 @@ struct qe_pin {
+ /**
+  * qe_pin_request - Request a QE pin
+  * @dev:	device to get the pin from
+- * @index:	index of the pin in the device tree
++ * @gpiod:	GPIO descriptor associated with this pin
+  * Context:	non-atomic
+  *
+  * This function return qe_pin so that you could use it with the rest of
+  * the QE Pin Multiplexing API.
+  */
+-struct qe_pin *qe_pin_request(struct device *dev, int index)
++struct qe_pin *qe_pin_request(struct device *dev, struct gpio_desc *gpiod)
+ {
++	struct gpio_device *gdev;
+ 	struct qe_pin *qe_pin;
+ 	struct gpio_chip *gc;
+-	struct gpio_desc *gpiod;
+-	int gpio_num;
+ 	int err;
+ 
+ 	qe_pin = kzalloc_obj(*qe_pin);
+@@ -216,34 +215,20 @@ struct qe_pin *qe_pin_request(struct device *dev, int index)
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+-	/*
+-	 * Request gpio as nonexclusive as it was likely reserved by the
+-	 * caller, and we are not planning on controlling it, we only need
+-	 * the descriptor to the to the gpio chip structure.
+-	 */
+-	gpiod = gpiod_get_index(dev, NULL, index,
+-			        GPIOD_ASIS | GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+-	err = PTR_ERR_OR_ZERO(gpiod);
+-	if (err)
+-		goto err0;
+-
+-	gc = gpiod_to_chip(gpiod);
+-	gpio_num = desc_to_gpio(gpiod);
+-	/* We no longer need this descriptor */
+-	gpiod_put(gpiod);
+-
+-	if (WARN_ON(!gc)) {
++	gdev = gpiod_to_gpio_device(gpiod);
++	if (WARN_ON(!gdev)) {
+ 		err = -ENODEV;
+ 		goto err0;
+ 	}
+ 
++	gc = gpio_device_get_chip(gdev);
+ 	qe_pin->controller = gpiochip_get_data(gc);
+ 	/*
+ 	 * FIXME: this gets the local offset on the gpio_chip so that the driver
+ 	 * can manipulate pin control settings through its custom API. The real
+ 	 * solution is to create a real pin control driver for this.
+ 	 */
+-	qe_pin->num = gpio_num - gc->base;
++	qe_pin->num = desc_to_gpio(gpiod) - gc->base;
+ 
+ 	if (!fwnode_device_is_compatible(gc->fwnode, "fsl,mpc8323-qe-pario-bank")) {
+ 		dev_dbg(dev, "%s: tried to get a non-qe pin\n", __func__);
+diff --git a/drivers/usb/host/fhci-hcd.c b/drivers/usb/host/fhci-hcd.c
+index 71e785f445a30e116a9cb421d417deaf24389174..d572f0c1dffaf3a40b2fe4326ba8ab021fefb986 100644
+--- a/drivers/usb/host/fhci-hcd.c
++++ b/drivers/usb/host/fhci-hcd.c
+@@ -643,7 +643,7 @@ static int of_fhci_probe(struct platform_device *ofdev)
+ 	}
+ 
+ 	for (j = 0; j < NUM_PINS; j++) {
+-		fhci->pins[j] = qe_pin_request(dev, j);
++		fhci->pins[j] = qe_pin_request(dev, fhci->gpiods[j]);
+ 		if (IS_ERR(fhci->pins[j])) {
+ 			ret = PTR_ERR(fhci->pins[j]);
+ 			dev_err(dev, "can't get pin %d: %d\n", j, ret);
+diff --git a/include/soc/fsl/qe/qe.h b/include/soc/fsl/qe/qe.h
+index 8f967d15e479792219333264c2a463d26e5edae9..7f0e4165c3b0cafdf401be20862aa1bf28047102 100644
+--- a/include/soc/fsl/qe/qe.h
++++ b/include/soc/fsl/qe/qe.h
+@@ -24,6 +24,7 @@
+ #include <linux/types.h>
+ 
+ struct device;
++struct gpio_desc;
+ 
+ #define QE_NUM_OF_SNUM	256	/* There are 256 serial number in QE */
+ #define QE_NUM_OF_BRGS	16
+@@ -193,12 +194,13 @@ static inline int par_io_data_set(u8 port, u8 pin, u8 val) { return -ENOSYS; }
+  */
+ struct qe_pin;
+ #ifdef CONFIG_QE_GPIO
+-extern struct qe_pin *qe_pin_request(struct device *dev, int index);
++extern struct qe_pin *qe_pin_request(struct device *dev, struct gpio_desc *gpiod);
+ extern void qe_pin_free(struct qe_pin *qe_pin);
+ extern void qe_pin_set_gpio(struct qe_pin *qe_pin);
+ extern void qe_pin_set_dedicated(struct qe_pin *pin);
+ #else
+-static inline struct qe_pin *qe_pin_request(struct device *dev, int index)
++static inline struct qe_pin *
++qe_pin_request(struct device *dev, struct gpio_desc *gpiod)
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
 
-> Pass true to rzt2h_pinctrl_set_gpio_en() to take the pin out of
-> interrupt function after we're done using it as an IRQ.
->
-> rzt2h_pinctrl_set_pfc_mode() switches the pin to Hi-Z, losing the
-> previous PM value.
->
-> Save the PM value before switching to Hi-Z, and restore it after the
-> IRQ is freed.
+---
+base-commit: af5f12805e5cefa4fe68d6127c7e1fb78cd5535c
+change-id: 20260907-usb-fhci-drop-gpio-nonexclusive-584c5c808a30
 
-Why is it a problem if the pin is in Hi-Z after the interrupt has been freed?
-Isn't that the right state for an unused pin?
-
->
-> Cc: stable@kernel.org
-> Fixes: 829dde3369a9 ("pinctrl: renesas: rzt2h: Add GPIO IRQ chip to handle interrupts")
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-
-> --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-
-> @@ -170,6 +171,25 @@ static int rzt2h_validate_pin(struct rzt2h_pinctrl *pctrl, unsigned int offset)
->         return (pincfg & BIT(pin)) ? 0 : -EINVAL;
->  }
->
-> +static u8 rzt2h_pin_read_pm(struct rzt2h_pinctrl *pctrl, u8 port, u8 pin)
-> +{
-> +       u16 reg = rzt2h_pinctrl_readw(pctrl, port, PM(port));
-> +
-> +       return field_get(PM_PIN_MASK(pin), reg);
-> +}
-> +
-> +static void rzt2h_pin_write_pm(struct rzt2h_pinctrl *pctrl, u8 port, u8 pin, u8 pm)
-> +{
-> +       u16 reg;
-> +
-> +       guard(raw_spinlock_irqsave)(&pctrl->lock);
-> +
-> +       reg = rzt2h_pinctrl_readw(pctrl, port, PM(port));
-> +       reg &= ~PM_PIN_MASK(pin);
-> +       reg |= (u16)pm << (pin * 2);
-
-General remark: the need for this cast is one reason why function
-parameters should use "unsigned int" instead of u8.  The other reason is
-that the compiler may add code to mask the parameters to 8 bits,
-depending on the CPU architecture.
-
-> +       rzt2h_pinctrl_writew(pctrl, port, reg, PM(port));
-> +}
-> +
->  static void rzt2h_pinctrl_set_gpio_en(struct rzt2h_pinctrl *pctrl,
->                                       u8 port, u8 pin, bool en)
->  {
-> @@ -1023,16 +1043,23 @@ static int rzt2h_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
->         struct rzt2h_pinctrl *pctrl = gpiochip_get_data(gc);
->         u8 port = RZT2H_PIN_ID_TO_PORT(child);
->         u8 pin = RZT2H_PIN_ID_TO_PIN(child);
-> -       u8 parent_irq;
-> +       u8 parent_irq, irq_idx;
->
->         parent_irq = rzt2h_gpio_irq_map[child];
->         if (parent_irq < RZT2H_INTERRUPTS_START)
->                 return -EINVAL;
->
-> -       if (test_and_set_bit(parent_irq - RZT2H_INTERRUPTS_START,
-> -                            pctrl->used_irqs))
-> +       irq_idx = parent_irq - RZT2H_INTERRUPTS_START;
-> +       if (test_and_set_bit(irq_idx, pctrl->used_irqs))
->                 return -EBUSY;
->
-> +       /*
-> +        * rzt2h_pinctrl_set_pfc_mode() sets PM to Hi-Z before switching to the
-> +        * interrupt function, losing the previous PM value.
-> +        * Save it so it can be restored when the IRQ is freed.
-> +        */
-> +       pctrl->saved_pm[irq_idx] = rzt2h_pin_read_pm(pctrl, port, pin);
-> +
->         rzt2h_pinctrl_set_pfc_mode(pctrl, port, pin, PFC_FUNC_INTERRUPT);
-
-If rzt2h_pinctrl_set_pfc_mode() would return the old PM value, you
-could drop rzt2h_pin_read_pm(), and write:
-
-    pctrl->saved_pm[irq_idx] = rzt2h_pinctrl_set_pfc_mode(pctrl, port, pin,
-                                                     PFC_FUNC_INTERRUPT);
-
->
->         *parent = parent_irq;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
