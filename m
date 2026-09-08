@@ -1,83 +1,199 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B2139A808
-	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 07:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13E539FCCD
+	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 07:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788853045; cv=none; b=gERBQicoFNxIY3YGzaGGegUowCePNEtXFqdc5YcVtabHZOQIhV+pF0QlOJEA7F/Sq9G+dmaUshdx3NsZT9QG5JLlBssbCFjxInc1IQ0eUaBwPkPqxxN+Tz4An7pqet7rEJzGr1uYrMI+FSHmW2yAV9JI+5NbCwzqFUOrHDFsuxE=
+	t=1788853771; cv=none; b=ulK6Krgt6SQOQCtXzE2Z5x2H4cHzawTiBVvfkALztb454/vyMGbBwqJTWFjqRRpnFC4vj5WBGOQnmBaJ/3VuXB6uslLYAxeQPC8RYPuDljkmS/AMa+Z+iY/nehnMc7mlcnRBYVG3vuDsFA/Dzxei7RJm7mlYRW8YJqj9Kg4WsZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788853045; c=relaxed/simple;
-	bh=O0/ChRmLR49PqjlSk3WxMDNtjzdOttNj4jO+gAd5+6Y=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HfqCIlIbtJXRISxA8NPzN6r1gj4caPZzxB7nZwt7Q2mQrpICcUHfKiMNERcWjQkMojQBz6b2GOcXnZMaujm974RL8xUOYXbonxyvzc5YUhtsenK6/pvkyxc1e/Hihlmr5Ab1isWmSwMHH1m5KTZD1GYy5UC1KYzn8S+23wjjw3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGppl/v2; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGppl/v2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 801BE1F00A3A
-	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 07:37:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788853044;
-	bh=O0/ChRmLR49PqjlSk3WxMDNtjzdOttNj4jO+gAd5+6Y=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=YGppl/v2ZzsUMlXq1v4/UcsTR9rpe/o+mauE+QnB5zxoeJ0WSyfAnXXbkTk8TXzR8
-	 Oi91O72/4fXg6CfKCqgd/N0oC9U7HjXchu6nxcMThdSiThnyduR5gJGM2ZrDmvEdAt
-	 NFxUKTqo2snfKZbMKwALg/TMLkk+7roI6194RlnQTZiPZH1noN5XhVIdYHX9ZfAySj
-	 soCS0rNLmQGpOefI0HvO6V0XTK+NaaVajCx9g2te/v8utsWe3UEQeDnn3uzepXu9ow
-	 8Ab5Cc7itDVyrhpF5MpwBuF0uFrpEHfOwrIoOWKw39eKaFK8N2hbueiU++xuKJumCk
-	 rrhQuHIKzAVwQ==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-39c8ee87f7eso38651281fa.3
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 00:37:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxr0U2DsQZpZ80JXYMDf5iBO2OiGs/rYrOTswsOiklVraoIWi+uKoG1w4Onbv2M170nON2AEdssfTHa@vger.kernel.org
-X-Gm-Message-State: AFuF++mJEJQWe7DcnXJsU97pGXYsN36Jm4sNiTZNwLmreC7VlYWerC3X
-	V4j8rCzH2jQ/Sapc0aGZOa6hOzRV1wlKKn1QfpsUZqCv8o7u8fwAapWgRZXRmuO08rp0v6oZgQb
-	LT3NHFCAe2+mTgTPdR4oA4k6S6s048r7YwnfAqlcygg==
-X-Received: by 2002:a05:651c:b26:b0:3a1:35f3:d2f2 with SMTP id
- 38308e7fff4ca-3a371bd1cd9mr30141431fa.12.1788853043166; Tue, 08 Sep 2026
- 00:37:23 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 8 Sep 2026 00:37:21 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 8 Sep 2026 00:37:21 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260907-unnamable-geography-d04f61df0fe5@spud>
+	s=arc-20240116; t=1788853771; c=relaxed/simple;
+	bh=w/a+1msjGoAq5RLfsEPT89FQwvNcgfDXVDAMK+BH8PQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YgrY1amcT8MMHMykHWplb5p2G9iQQWj0oJg+mnOyQP14q5pkpHSn7D3M3wtEpLRDu1+0LNyGT+TxVDSGetU2DrjhQfEqzAwJc9Lgcy3CjXmfxtpCal9lk0jL8w1vpY6f7FAgpY2j+VaZ1TvIys3Lylg6i5m/FVfIgyv1ko9okzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5c66eefc868so4326258e0c.3
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 00:49:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788853769; x=1789458569;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=jvWdv2bTFNskO/RaDsnSTq+0xZGM/I73gHnrYZO6XAc=;
+        b=shrpVd7Ee+ApI/ZP2mSkobpuX/ih6cr7UtuF8EwlQ77JEO3h4YYzDHVWpUXn7qBTjO
+         bjFcvh65g2izMr5eiUOOur8oxv8l2wJ2p5Lu5ZMzfn6Af1TMAWFU4tlAi4i6UrRJKrgF
+         S6pb4u1rErLvmlHf9f0I1nqIk879R9mLHa6VIMdA4fOt0rW2NxfZQOKYQC8TlVV+PYKO
+         U0px3uDwTtnUGKehUTOfIKBUvlfKBf7iBR8DvFOsFX9mIBcTNAxjIoXwbUKMQFRvAQmy
+         Dhi+KMVl59ELgQ6DWoKmCey4TUpVeR1Q1wldygtDtoYRLycbMeWqczK/W4K+djJ0L4UG
+         JAKg==
+X-Gm-Message-State: AFuF++nvDOUKCa1qBIRJoT44qrqXclnMl21AM7Ta8sefCj1lDlzmdoW7
+	kwmhYeaYqsPF7HGzKBAuFCzadw2GlXHFhI/tvMYpjAo3u6Xkm8x96HB1J+Y0Ua36
+X-Gm-Gg: AYBFou1J0XMDrBKDM+MnWqY7ammhS6BJPskKJCLXak63mPK14ZLxplx/1OyHenxv3DX
+	kPEeNcjKZOU5jL3cMyVB0zdNYJXFMAnF82v2EN23kqTuznx0jNbMKHZHKlbIrzFelVipV0G/HWO
+	5t5Bh4q02PRcbzoGe52FuqAPjyPPM/bgTfLyjA8lF755GECy2IK7VzKcUGFoKwT/5BaeAljs4sh
+	DdlQTl+ww33fETs/JIKWIR8zSMH/cYKMISZpqbTPVH2GvCCA+E/ZlsMnLE5cpIHbYsuepxh3uYv
+	4NyYLtiR5JwgBwITgr17M18IKBCaBv5Qcy5mD9mliLshXTcYRzyPq135auFh3UdvCVfuZfolwYw
+	JCBel/asEjlWXN80JsphyBMjRgzZJjTdfERRlMKXEEx3VqkdCjCSqTVRB2WcGG4nOIrYZLZVx1J
+	+fjOUBrQ3bk95jOucInBt7B9v77qYcY6+jMUJoHVf6ZxeyHI83IfkgO2Q2SuDlKBdHANHwAWPZu
+	frze+nKvM+URfR06Y5CX4IDiA==
+X-Received: by 2002:a05:6122:e189:b0:5bb:eebe:7ffd with SMTP id 71dfb90a1353d-5c7ed846723mr14906857e0c.8.1788853768636;
+        Tue, 08 Sep 2026 00:49:28 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec24254fsm9186223e0c.10.2026.09.08.00.49.28
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Sep 2026 00:49:28 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-779d18ef706so3067242137.2
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 00:49:28 -0700 (PDT)
+X-Received: by 2002:a05:6102:1481:b0:784:b9ec:9144 with SMTP id
+ ada2fe7eead31-78a4a9c3a45mr12132706137.8.1788853767856; Tue, 08 Sep 2026
+ 00:49:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260905000919.155694-1-rosenp@gmail.com> <20260907-unnamable-geography-d04f61df0fe5@spud>
-Date: Tue, 8 Sep 2026 00:37:21 -0700
-X-Gmail-Original-Message-ID: <CAMRc=MdHUpmoFDtmXdbXnbS+_4ffBQcFLo9XjdO=jMom+getpg@mail.gmail.com>
-X-Gm-Features: AcwNN1V0p3oAVIg0gRX7T9HWtn8hpH3AtiTX2TEeTVAnx9nYkEQ0V6n4JfAdYO8
-Message-ID: <CAMRc=MdHUpmoFDtmXdbXnbS+_4ffBQcFLo9XjdO=jMom+getpg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: gpio: pca95xx: add onnn,pca9655 compatible
-To: Conor Dooley <conor@kernel.org>
-Cc: devicetree@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Peter Robinson <pbrobinson@gmail.com>, 
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Rosen Penev <rosenp@gmail.com>
+References: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org>
+ <20260704151521.211335-2-marek.vasut+renesas@mailbox.org> <CAMuHMdUapaP-8kkWT5cXtEO1h58aAzzm34XqO_mcrgbVSyXEwg@mail.gmail.com>
+ <b516bf77-fb15-41f2-80ac-b80c621fedd1@mailbox.org> <CAMuHMdWb2Qk=heWhwFh4TsEggHOmzTd4Lj-vG6kXjRVMDDUG2A@mail.gmail.com>
+ <43eccc85-fca3-4c69-9114-b45ab5e1b487@mailbox.org>
+In-Reply-To: <43eccc85-fca3-4c69-9114-b45ab5e1b487@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 8 Sep 2026 09:49:16 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVWm1JzmXx1++dhvHbnBbVqQnVVAANfmH5Y24bhJU7pXQ@mail.gmail.com>
+X-Gm-Features: AcwNN1V14nvpkxMTS1YJ9lEZFP5Wka8HrashHqoyW3yt83iI5VS79ckl8xfvtwY
+Message-ID: <CAMuHMdVWm1JzmXx1++dhvHbnBbVqQnVVAANfmH5Y24bhJU7pXQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: rcar: Add R-Car X5H (R8A78000) support
+To: Marek Vasut <marek.vasut@mailbox.org>
+Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 7 Sep 2026 18:54:12 +0200, Conor Dooley <conor@kernel.org> said:
-> On Fri, Sep 04, 2026 at 05:09:19PM -0700, Rosen Penev wrote:
->> The pca9655 is the On Semi variant of the pca9555 16-bit I2C GPIO
->> expander and is register-compatible with it. The addition of the
->> compatible in the driver missed the documentation update.
+Hi Marek,
+
+On Mon, 7 Sept 2026 at 18:37, Marek Vasut <marek.vasut@mailbox.org> wrote:
+> On 9/7/26 9:53 AM, Geert Uytterhoeven wrote:
+> > On Sat, 5 Sept 2026 at 23:57, Marek Vasut <marek.vasut@mailbox.org> wrote:
+> >> On 9/4/26 1:15 PM, Geert Uytterhoeven wrote:
+> >>>> +++ b/drivers/gpio/gpio-rcar.c
+> >>>
+> >>>> @@ -65,14 +66,59 @@ struct gpio_rcar_priv {
+> >>>>
+> >>>>    #define RCAR_MAX_GPIO_PER_BANK         32
+> >>>>
+> >>>> +static inline int gpio_rcar_remap_offset(struct gpio_rcar_priv *p, int *offs)
+> >>>
+> >>> IMO passing a pointer to offs complicates the code.  Perhaps pass offs
+> >>> by value, and return the adjusted offset or a negative error code?
+> >>
+> >> I want to avoid that, since if I only return error value, I can then do
+> >> simple:
+> >>
+> >> ret = gpio_rcar_remap_offset(...);
+> >> if (ret)
+> >>     return ret;
+> >>
+> >> in gpio_rcar_read() and gpio_rcar_write(), which are the only two call
+> >> sites of this function.
+> >
+> > gpio_rcar_read() and gpio_rcar_write() do not return error codes.
+> > I was thinking of
+> >
+> >      offs = gpio_rcar_remap_offset(p, offs);
+> >      if (offs < 0)
+> >              return 0;
+> >
+> > which is almost the same, but avoids passing offs by address.
 >
-> The commit message makes it sound like this device should use a
-> fallback. Why doesn't it? Either it should, or the commit message needs
-> an update.
-> pw-bot: changes-requested
+> Is there any benefit to it, compared to keeping the value and return
+> code separate ?
+
+Naive me (I am not a compiler writer) thinks the compiler may have a
+harder time to optimize the code when addresses are involved.
+
+> >>>> +{
+> >>>> +       /* R-Car Gen4 and older do not need any offset remap. */
+> >>>> +       if (!p->info.has_layout_gen5)
+> >>>> +               return 0;
+> >>>> +
+> >>>> +       /*
+> >>>> +        * R-Car Gen5 register layout is slightly different and the offsets
+> >>>> +        * that have to be added to or subtracted from each register offset
+> >>>> +        * can be divided into five groups, listed below.
+> >>>> +        */
+> >>>> +       switch (*offs) {
+> >>>> +       case IOINTSEL...OUTDT:
+> >>>> +               return 0;
+> >>>> +       case INDT:
+> >>>> +               *offs += 0x10;
+> >>>> +               return 0;
+> >>>> +       case INTDT...EDGLEVEL:
+> >>>> +               fallthrough;
+> >>>> +       case BOTHEDGE:
+> >>>> +               *offs += 0x70;
+> >>>> +               return 0;
+> >>>> +       case OUTDTSEL:
+> >>>> +               *offs -= 0x34;
+> >>>> +               return 0;
+> >>>> +       case INEN:
+> >>>> +               *offs -= 0x38;
+> >>>> +               return 0;
+> >>>> +       default:
+> >>>> +               /*
+> >>>> +                * This here must never be reached, if this is reached, that
+> >>>> +                * means there is a catastrophic failure in the driver. Skip
+> >>>> +                * any IO read/write to prevent further damage.
+> >>>> +                */
+> >>>> +               WARN_ON(1);
+> >>>
+> >>> A build-time failure would be better.  I tried BUILD_BUG() instead,
+> >>> but unfortunately gcc is not smart enough to notice this case is
+> >>> never reached.  __always_inline doesn't seem to help either.
+> >> I had one more idea -- how about we convert the driver to mmio regmap,
+> >> use opaque register numbers throughout the driver to identify registers
+> >> to the regmap (maybe not a great idea), and then implement .read/.write
+> >> callbacks in the regmap_config which instead of doing plain
+> >> readl()/writel() for register IO would instead do this remapping ?
+> >> Regmap could validate that the opaque register numbers are only the
+> >> expected register numbers and reject all the others. Maybe the opaque
+> >> register numbers could instead of Gen4 register offsets. What do you think ?
+> >
+> > That's similar (but more complex?) than the array look-up
+> > in drivers/tty/serial/sh-sci.c I pointed to before.
+> > drivers/i2c/busses/i2c-riic.c uses the same method.
 >
+> Those do not use regmap (drivers/base/regmap/), do they ?
 
-Actually commit 6d49b3a0f351 ("gpio: pca953x: Add support for the On Semi
-pca9655") added this compatible to the driver back in 2021 but it had remained
-undocumented until now. Unfortunately there's no denying I signed off on it. :(
+No they don't.
 
-This commit should probably contain a Fixes: tag pointing at this commit.
+> > I.e. just convert the existing register defines into an enum, and use
+> > that to index a table with the family-specific offsets?
+>
+> Are we back to the table look up discussion instead of remap function ?
 
-Bart
+Yes, I think that's the simplest and best-performing solution: one
+extra table look-up (array indexing) in gpio_rcar_{read,write}(),
+compared to an extra function call to gpio_rcar_remap_offset().
+
+As a bonus, storing -1 for a non-existing register in the look-up table
+would let us get rid of the four existing .has_<reg> booleans, e.g.
+
+   -        if (p->info.has_both_edge_trigger)
+   +        if (p->info.regs[BOTHEDGE] >= 0)
+                    gpio_rcar_modify_bit(p, BOTHEDGE, hwirq, both);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
