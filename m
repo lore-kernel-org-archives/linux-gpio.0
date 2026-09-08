@@ -1,265 +1,154 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8AB377A93;
-	Tue,  8 Sep 2026 07:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1343246EB
+	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 07:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788851211; cv=none; b=phLIxzJxUJdBTgAMrd9JEIdy/egnfw8VkDHL9BFVkONs+H1LezMFstBQAA1hkRRHkfvHt7OGEAtDBkqp0Lp5dPlGwwl9u/0iDyL6qPnEEAssk9HLYH2dDiCfUrJyXDmOWicJIh9UHU5t1GhYem8W2C08r6Jh1szu/ZYB0Od662o=
+	t=1788851887; cv=none; b=iGjI7s/QtSqeA/HqvEtn6w4/5FQLWcdG3tqdSMlpopFVt5Z51N6DQRJ8FNylAqnmElk06ZUfHzzVoCCQWA4f9NNH7aJGcEUYctCbs9Hp/Ml/MTUcZ3ny2BHkONADgE9X6XGzdr2ca4+zBnLulYQ0oqO9SoihTuUhXyIKuJMbsXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788851211; c=relaxed/simple;
-	bh=2fcrYPpUrtoB6BEGf24Voa6RfaHacqnigE3TyU9Q1Xo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AvD0agfcZzvMvJmBzeICMvGOtK7muK02WzkT+cvw/X8RAGGUCNWf+B25XvXGV+gg/u70d7er4tYs067wDQFVVKfMWcmbCs3EneJy5KZW08SlcwgLJQyOQL0AX5Emawo7VaD/7J1NRw5vfrH00OeVMTp7at/pYtwXnOlwZJ35f8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=AuYiKfn0; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1788851887; c=relaxed/simple;
+	bh=x9ZZKc2fe4RqQS4/ZFmbxJlzkYm2N4tHyCzemh4wwKc=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=EkZxc6wH9a7ANVGLykXl3Kc8tT3/KXFZhCqVQvsLtTOH8j8h2mSdb8jkIDtTGfdSyIZVzoL7DdcPaewAe2H8SGygdLcxZ9+buB13rNlxA0jnJBOKTxQNAweL/yDT0lcc1lQmjXnThACMTO7JT0RbOegz9zNtuwWeXmT9Y7Fdtwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GMHf4Gis; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="AuYiKfn0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1788851208;
-	bh=2fcrYPpUrtoB6BEGf24Voa6RfaHacqnigE3TyU9Q1Xo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AuYiKfn0fFshNHjujbNbTmK8vwYckrWNao4X5pzLTRLRgxo52kqrKqTboQbrk/1dY
-	 K0bGgkeV3bacBN67EbvGHlPKQZ8br0lJyQHvu18trECjyWww391KRicoGzD0P47Dhl
-	 SiwZVU3ZoPe8ePQHem0z46ojf/Mf6yNsYglr2L3SL5Vmge00bUu1Oo7K8gF/epJc0V
-	 YF1dG+do0ddmI/hBDpEWj7FkMB4WQLw6kGnkYNzRflg9sGorqNznC56sYVF9AfflBs
-	 xOARzZ9uaVkk6HFnlwNmYhOYhJK8yj8uGVMTGWXY4LgV33ebdbq/7IzSwTnm4iRBCt
-	 N/PD47J6x26UA==
-Received: from [100.64.1.21] (unknown [100.64.1.21])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 964E817E0D43;
-	Tue, 08 Sep 2026 09:06:47 +0200 (CEST)
-Message-ID: <f8419831-8467-4d72-bbe9-d5b7c158cb22@collabora.com>
-Date: Tue, 8 Sep 2026 09:06:47 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GMHf4Gis"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788851886; x=1820387886;
+  h=date:from:to:cc:subject:message-id;
+  bh=x9ZZKc2fe4RqQS4/ZFmbxJlzkYm2N4tHyCzemh4wwKc=;
+  b=GMHf4GisQuXfAjv+RlZbZ6Mug6uey/wDQHzizkdpV7aBP6Run5aq2N3O
+   j5MHiPFDdhgJrA6XMP6FiPOS1YLpiXfq4M7t+bDhQcicnhDC78z2EkYD3
+   ojjSbo5N8rjd3moV1ykWCfuU9gnC1IffrfqfELDOq372bfIqTO5bzlJmD
+   V96R9LL7XhuSJxoQxOYlEI/lD09UtHbfGzXqiKlJr88wMKSW2+GDLbmUu
+   yPoI+ThXz7SelYoNBRgvvtZyQbKXOWLkf4ErnFbGlJ+yCWgXLTsKBvUAZ
+   wDEWnnwN6V1LANeF6XWoCwPSGq0hotXe5mtKvHbB1a+8JBuZiFbSM1x/H
+   Q==;
+X-CSE-ConnectionGUID: 6HdNFUw9QZC258KeifUsiw==
+X-CSE-MsgGUID: EeHoogtwS0OK9ZuaWaFcvg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11899"; a="89170076"
+X-IronPort-AV: E=Sophos;i="6.25,268,1779174000"; 
+   d="scan'208";a="89170076"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2026 00:18:05 -0700
+X-CSE-ConnectionGUID: 2A8K5Gr1SQ+Yv+NH+7uRrA==
+X-CSE-MsgGUID: zxJcEsnvR8eM7nWosBsttw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,268,1779174000"; 
+   d="scan'208";a="267668935"
+Received: from lkp-server01.sh.intel.com (HELO dff15f1b2031) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 08 Sep 2026 00:18:04 -0700
+Received: from kbuild by dff15f1b2031 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1x3q5h-000000001nx-3Xc1;
+	Tue, 08 Sep 2026 07:18:01 +0000
+Date: Tue, 08 Sep 2026 15:17:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org
+Subject: [brgl:gpio:for-next] BUILD SUCCESS
+ 4d305c2273123119c27d6e4c822215e650c451e3
+Message-ID: <202609081513.hIfcnbPw-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 9/9] arm64: dts: mediatek: Add MediaTek MT6392 PMIC
- dtsi
-To: Luca Leonardo Scorcia <l.scorcia@gmail.com>,
- linux-mediatek@lists.infradead.org
-Cc: Val Packett <val@packett.cool>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sen Chu <sen.chu@mediatek.com>,
- Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
- Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Linus Walleij <linusw@kernel.org>,
- Julien Massot <julien.massot@collabora.com>,
- Fabien Parent <parent.f@gmail.com>, Akari Tsuyukusa
- <akkun11.open@gmail.com>, Chen Zhong <chen.zhong@mediatek.com>,
- linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, mfd@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
-References: <20260902193351.185771-1-l.scorcia@gmail.com>
- <20260902193351.185771-10-l.scorcia@gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20260902193351.185771-10-l.scorcia@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 9/2/26 21:25, Luca Leonardo Scorcia wrote:
-> From: Val Packett <val@packett.cool>
-> 
-> Add the dtsi to be included by all boards using the MT6392 PMIC,
-> providing support for regulator, keys, pinctrl and RTC.
-> 
-> Import the new file in the shared device tree for the Pumpkin boards.
-> 
-> Signed-off-by: Val Packett <val@packett.cool>
-> Signed-off-by: Luca Leonardo Scorcia <l.scorcia@gmail.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+branch HEAD: 4d305c2273123119c27d6e4c822215e650c451e3  gpio: mvebu: name regmaps to fix debugfs collisions
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+elapsed time: 1332m
 
-> ---
->   arch/arm64/boot/dts/mediatek/mt6392.dtsi      | 145 ++++++++++++++++++
->   .../boot/dts/mediatek/pumpkin-common.dtsi     |   7 +
->   2 files changed, 152 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/mediatek/mt6392.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt6392.dtsi b/arch/arm64/boot/dts/mediatek/mt6392.dtsi
-> new file mode 100644
-> index 000000000000..cc4770d70246
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt6392.dtsi
-> @@ -0,0 +1,145 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2019 MediaTek Inc.
-> + * Copyright (c) 2024 Val Packett <val@packett.cool>
-> + * Copyright (c) 2026 Luca Leonardo Scorcia <l.scorcia@gmail.com>
-> + */
-> +
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/regulator/mediatek,mt6392-regulator.h>
-> +
-> +&pwrap {
-> +	pmic: pmic {
-> +		compatible = "mediatek,mt6392";
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +
-> +		mt6392keys: keys {
-> +			compatible = "mediatek,mt6392-keys";
-> +
-> +			key-power {
-> +				linux,keycodes = <KEY_POWER>;
-> +				wakeup-source;
-> +			};
-> +
-> +			key-home {
-> +				linux,keycodes = <KEY_HOME>;
-> +				wakeup-source;
-> +			};
-> +		};
-> +
-> +		mt6392pio: pinctrl {
-> +			compatible = "mediatek,mt6392-pinctrl";
-> +
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +		};
-> +
-> +		mt6392regulators: regulators {
-> +			compatible = "mediatek,mt6392-regulator";
-> +
-> +			/* Fixed supply defined in the data sheet */
-> +			avddldo-supply = <&mt6392_vsys_reg>;
-> +
-> +			mt6392_vcore_reg: vcore {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_BUCK_MODE_FORCE_PWM>;
-> +			};
-> +			mt6392_vproc_reg: vproc {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_BUCK_MODE_FORCE_PWM>;
-> +			};
-> +			mt6392_vsys_reg: vsys {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_BUCK_MODE_FORCE_PWM>;
-> +			};
-> +			mt6392_vaud28_reg: vaud28 {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vxo22_reg: vxo22 {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vaud22_reg: vaud22 {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vadc18_reg: vadc18 {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vcama_reg: vcama { };
-> +			mt6392_vcn35_reg: vcn35 {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vio28_reg: vio28 {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vusb_reg: vusb {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vmc_reg: vmc {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vmch_reg: vmch {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vemc3v3_reg: vemc3v3 {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vcamaf_reg: vcamaf {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vgp1_reg: vgp1 {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vgp2_reg: vgp2 {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vefuse_reg: vefuse {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vm25_reg: vm25 {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vdig18_reg: vdig18 { };
-> +			mt6392_vm_reg: vm {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vio18_reg: vio18 {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vcn18_reg: vcn18 {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vcamd_reg: vcamd {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vcamio_reg: vcamio {
-> +				regulator-allowed-modes = <MT6392_REGULATOR_MODE_NORMAL
-> +							   MT6392_LDO_MODE_LP>;
-> +			};
-> +			mt6392_vrtc_reg: vrtc { };
-> +		};
-> +
-> +		mt6392rtc: rtc {
-> +			compatible = "mediatek,mt6392-rtc", "mediatek,mt6323-rtc";
-> +		};
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi b/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
-> index 805fb82138a8..b19d5792bd89 100644
-> --- a/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
-> @@ -6,6 +6,8 @@
->   
->   #include <dt-bindings/gpio/gpio.h>
->   
-> +#include "mt6392.dtsi"
-> +
->   / {
->   	aliases {
->   		serial0 = &uart0;
-> @@ -160,6 +162,11 @@ &i2c2 {
->   	status = "okay";
->   };
->   
-> +&pmic {
-> +	interrupt-parent = <&pio>;
-> +	interrupts = <28 IRQ_TYPE_LEVEL_HIGH>;
-> +};
-> +
->   &uart0 {
->   	status = "okay";
->   };
+configs tested: 77
+configs skipped: 11
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha         allnoconfig    gcc-16.1.0
+alpha        allyesconfig    gcc-16.1.0
+arc          allmodconfig    clang-24
+arc          allmodconfig    gcc-16.1.0
+arc           allnoconfig    gcc-16.1.0
+arc          allyesconfig    gcc-16.1.0
+arm           allnoconfig    clang-17
+arm           allnoconfig    gcc-16.1.0
+arm          allyesconfig    clang-24
+arm64         allnoconfig    gcc-16.1.0
+csky         allmodconfig    gcc-16.1.0
+csky          allnoconfig    gcc-16.1.0
+hexagon      allmodconfig    clang-24
+hexagon      allmodconfig    gcc-16.1.0
+hexagon       allnoconfig    clang-24
+hexagon       allnoconfig    gcc-16.1.0
+i386         allmodconfig    clang-22
+i386         allmodconfig    gcc-14
+i386          allnoconfig    gcc-14
+i386          allnoconfig    gcc-16.1.0
+i386         allyesconfig    clang-22
+loongarch     allnoconfig    clang-20
+loongarch     allnoconfig    gcc-16.1.0
+m68k         allmodconfig    gcc-16.1.0
+m68k          allnoconfig    gcc-16.1.0
+m68k         allyesconfig    clang-24
+m68k         allyesconfig    gcc-16.1.0
+microblaze    allnoconfig    gcc-16.1.0
+microblaze   allyesconfig    gcc-16.1.0
+mips         allmodconfig    gcc-16.1.0
+mips          allnoconfig    gcc-16.1.0
+mips         allyesconfig    gcc-16.1.0
+nios2        allmodconfig    clang-20
+nios2        allmodconfig    gcc-11.5.0
+nios2         allnoconfig    clang-24
+nios2         allnoconfig    gcc-11.5.0
+openrisc     allmodconfig    clang-20
+openrisc     allmodconfig    gcc-16.1.0
+openrisc      allnoconfig    clang-24
+openrisc      allnoconfig    gcc-16.1.0
+parisc       allmodconfig    gcc-16.1.0
+parisc        allnoconfig    clang-24
+parisc        allnoconfig    gcc-16.1.0
+parisc       allyesconfig    clang-17
+parisc       allyesconfig    gcc-16.1.0
+powerpc      allmodconfig    gcc-16.1.0
+powerpc       allnoconfig    clang-24
+powerpc       allnoconfig    gcc-16.1.0
+riscv         allnoconfig    clang-24
+riscv         allnoconfig    gcc-16.1.0
+riscv        allyesconfig    clang-24
+s390         allmodconfig    clang-17
+s390         allmodconfig    clang-24
+s390          allnoconfig    clang-24
+s390         allyesconfig    gcc-16.1.0
+sh           allmodconfig    gcc-16.1.0
+sh            allnoconfig    clang-24
+sh            allnoconfig    gcc-16.1.0
+sh           allyesconfig    clang-17
+sh           allyesconfig    gcc-16.1.0
+sparc         allnoconfig    clang-24
+sparc         allnoconfig    gcc-16.1.0
+sparc64      allmodconfig    clang-20
+um           allmodconfig    clang-17
+um            allnoconfig    clang-17
+um            allnoconfig    clang-24
+um           allyesconfig    gcc-14
+um           allyesconfig    gcc-16.1.0
+x86_64       allmodconfig    clang-22
+x86_64        allnoconfig    clang-22
+x86_64        allnoconfig    clang-24
+x86_64       allyesconfig    clang-22
+x86_64      rhel-9.4-rust    clang-22
+xtensa        allnoconfig    clang-24
+xtensa        allnoconfig    gcc-16.1.0
+xtensa       allyesconfig    clang-20
+xtensa       allyesconfig    gcc-16.1.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
