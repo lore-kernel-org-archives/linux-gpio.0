@@ -1,103 +1,142 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1D5583ACF;
-	Tue,  8 Sep 2026 17:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404984A43F0
+	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 17:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788887024; cv=none; b=TXRcLLVnD5RJCJW1ifDVEWYFONfMyoMVCScHC//HTBHGz5Vprex/rP2FGVxi8LoihEaukvqL5ZVydAs1Pcf/kokTT1mX1WjBBjoxqnY6ZqmwmlYoq7LRpESvuQDDOtju6xp4AIbT8OQnH5ZpwPni6FOveWdfkGRe/RDCES1y2nU=
+	t=1788888827; cv=none; b=ZXaZBPQeaWEurIcKpYOChcX96pzYnwcGybswHpBQx1CIpgM9hzRhTzkzWnZe4MVSLpcl75QzwBLQU5Y2ccic17KeRbEPcN+gCmRyNC44YW3QxKN6iOJIJ1XcVAIRFPq67ccjPiHGihtMACLg+Yzzu2+Fduu6QHIP98UEVxTGjyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788887024; c=relaxed/simple;
-	bh=3BQMzu3ugMZ6g4f160YwvxH0HvU2r7QQo94h7vyc/xY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W3kXslrNMti+RmFsEBxbZxsZ2mnjXzzPqy5YPl+aM36Aeq5LxWZKzxxrqO+190BEr+HUQUQssq9aS9PYQ6WYr5iHjjCUREOkwsBhbksgLutI5KYrMe0p7HT89Rsitq4JEOGCKee5mWUqiUePU0gp0RoMRW5YTlnlGdQDRenBf10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMazRXlC; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788888827; c=relaxed/simple;
+	bh=gmIGR0/AjmJLqjqIA+b+biNqhfd5J7r7shYDGeksk7M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jmaImTREvxsaL4aHflt7u9NlMx/CDnxJ3ndr3BzUUGw82+hQiwKjzOOG6b5VYJ41PwKz5HfJS8pWCDX4vz+auvw3kGSLJhEipXEW2AmECjVSBDHOW5w0Xsu9ufKmz7bfVuV5+j0culB2isBNfPV8zQMlydh2CuIc2bqwbFLVMhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oYUkJxyp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMazRXlC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86511F00A3A;
-	Tue,  8 Sep 2026 17:03:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oYUkJxyp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BBE41F01558
+	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 17:33:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788887022;
-	bh=3BQMzu3ugMZ6g4f160YwvxH0HvU2r7QQo94h7vyc/xY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=IMazRXlCaqgQX/aCRM6oEinu5o4VhEXbaRsGKfVa7dfe3CwGtpPW/lWboJ2rxcfR4
-	 mzfzJqgM3DiPrJtLHkXzu+HDoL83YHUGc+ezqjTQ/60G5rBzvJbj3siEPLrqhkxZGP
-	 9TklLIo785KtX7en0AyhVTBq6n484T7ibMUJHfWKw+5X11op4OVAYkWscXaquLl9bw
-	 n81UVBDrtAaoIJI+iMa2LXS21h/Lz2NOpOqTa4AaVXpKmC68apT7fWTKI8/1GSWnNt
-	 laBS3xTjafNm6NvlRWWPCw37+9ujYom3POQRdKbR7zleuhOS+JJx9y4keR5oFRpGcm
-	 5dpByqvubTuog==
-Date: Tue, 8 Sep 2026 18:03:38 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: devicetree@vger.kernel.org, Linus Walleij <linusw@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Peter Robinson <pbrobinson@gmail.com>,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Rosen Penev <rosenp@gmail.com>
-Subject: Re: [PATCH] dt-bindings: gpio: pca95xx: add onnn,pca9655 compatible
-Message-ID: <20260908-applaud-dallying-9027d7a8a598@spud>
-References: <20260905000919.155694-1-rosenp@gmail.com>
- <20260907-unnamable-geography-d04f61df0fe5@spud>
- <CAMRc=MdHUpmoFDtmXdbXnbS+_4ffBQcFLo9XjdO=jMom+getpg@mail.gmail.com>
+	s=k20260515; t=1788888823;
+	bh=gmIGR0/AjmJLqjqIA+b+biNqhfd5J7r7shYDGeksk7M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=oYUkJxypWqLI8uJLzQPHxhQ71Ks/IyFSnoobdkhybHg/VFrZcScUaUzcU5iGJu3Yg
+	 SVr1zNYq9lzWcvDiEUcX1atpf0jaVT6xPToEVsGnnnsYQD5x0GXAUtiUe+VTGJC6+U
+	 lVLE5LREy7a0wkg5nqv6jsrAjqnRn4VO+GvC4P1WC1OuR3Y0iPEm0L25Nk/xBf6b9z
+	 uj+EZWNfmBY9zPHxZZzMY+PZaGLcUap6z6HgDOpRkikwj/4SgkOIg8RzL7eKjY5zR2
+	 8qBXig3e3zoeZ5+dV8aYrX3pQiy5jGox/+C0yb3jT+lcAU0xZn8D99wJLkp8fHxUtM
+	 u1lhsOfW8IKpA==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5b6036e9c70so3774738e87.1
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 10:33:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxbcAjh6GmWKjZvbqmC2Hxn7stDl41ARHtjn9zKCPfq1C5imrCFQijZR8ZGyoO2okC7S58B7VNCvKSL@vger.kernel.org
+X-Gm-Message-State: AFuF++krdUO0VkkQU72P6g9Ovx1+Vzke4gqJytlNLIfxCD0AXILlL3m4
+	VFXK43Z5jH/QF8R6qgOipUskzYww5G3xtmCpbu6uANIMm/ay95onKBfSPKthYNJS64jH64yLpXd
+	fi665YY7SWAZuK4YRD//wO32C/IuymPY=
+X-Received: by 2002:a05:6512:2241:b0:5b5:fae5:b241 with SMTP id
+ 2adb3069b0e04-5b616f22e66mr5771186e87.14.1788888821627; Tue, 08 Sep 2026
+ 10:33:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3vjiUG8PBMbT8beL"
-Content-Disposition: inline
-In-Reply-To: <CAMRc=MdHUpmoFDtmXdbXnbS+_4ffBQcFLo9XjdO=jMom+getpg@mail.gmail.com>
-
---3vjiUG8PBMbT8beL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20260908152808.3928630-1-arnd@kernel.org> <20260908152808.3928630-6-arnd@kernel.org>
+In-Reply-To: <20260908152808.3928630-6-arnd@kernel.org>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 8 Sep 2026 19:33:29 +0200
+X-Gmail-Original-Message-ID: <CAD++jLka1EcE_pgbQ+k-==7ZBy4t=UzMRoSpftToUvqSWikfOA@mail.gmail.com>
+X-Gm-Features: AcwNN1W4V_RHIjZXrzOUvAHXUKzBi-tBnO9Xu5bnMkKM7BxKaEWn60o-CzXXb5s
+Message-ID: <CAD++jLka1EcE_pgbQ+k-==7ZBy4t=UzMRoSpftToUvqSWikfOA@mail.gmail.com>
+Subject: Re: [PATCH 05/13] ARM: orion/dove/mv78xx0: remove all board files
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Russell King <linux@armlinux.org.uk>, Drew Fustini <fustini@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Stefan Agner <stefan@agner.ch>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
+	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
+	Tony Lindgren <tony@atomide.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Andrew Lunn <andrew@lunn.ch>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+	Gregory Clement <gregory.clement@bootlin.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+	Kristoffer Ericson <kristoffer.ericson@gmail.com>, Ethan Nelson-Moore <enelsonmoore@gmail.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Alexander Sverdlin <alexander.sverdlin@siemens.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Karl Mehltretter <kmehltretter@gmail.com>, 
+	"David Hildenbrand (Arm)" <david@kernel.org>, Nicolas Pitre <npitre@baylibre.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-omap@vger.kernel.org, 
+	Alexander Clouter <alex@digriz.org.uk>, "Jeremy J. Peper" <jeremy@jeremypeper.com>, 
+	Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Vinod Koul <vkoul@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Thomas Weissschuh <thomas.weissschuh@linutronix.de>, 
+	linux-ide@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 08, 2026 at 12:37:21AM -0700, Bartosz Golaszewski wrote:
-> On Mon, 7 Sep 2026 18:54:12 +0200, Conor Dooley <conor@kernel.org> said:
-> > On Fri, Sep 04, 2026 at 05:09:19PM -0700, Rosen Penev wrote:
-> >> The pca9655 is the On Semi variant of the pca9555 16-bit I2C GPIO
-> >> expander and is register-compatible with it. The addition of the
-> >> compatible in the driver missed the documentation update.
-> >
-> > The commit message makes it sound like this device should use a
-> > fallback. Why doesn't it? Either it should, or the commit message needs
-> > an update.
-> > pw-bot: changes-requested
-> >
->=20
-> Actually commit 6d49b3a0f351 ("gpio: pca953x: Add support for the On Semi
-> pca9655") added this compatible to the driver back in 2021 but it had rem=
-ained
-> undocumented until now. Unfortunately there's no denying I signed off on =
-it. :(
+On Tue, Sep 8, 2026 at 5:29=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wrot=
+e:
 
-Ye, but if patches like this appear for things that were undocumented
-but ended up in drivers we still try to get the bindings correct when
-they do show up. The commit message is basically telling me that this patch
-is wrong and that a fallback to the pca9555 should be used. There's no
-impact on the driver, so I don't see any harm in getting the binding
-right.
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The 'orion' platform is the predecessor to what linux now calls the
+> 'mvebu' line of Marvell SoCs, and originally covered orion5x,
+> mv78xx0, kirkwood, dove and a few others that do not have any
+> upstream support at the moment.
+>
+> Only a few board files remain here, these are the ones left
+> in 2022 board file purge because they had some level of support
+> in Debian or OpenWRT, mostly for commercial NAS or router boxes.
+> This distro support is now gone, and nobody has converted the
+> board files to devicetree, though the orion5x and dove platforms
+> also come with devicetree support for some other machines.
+>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Gregory Clement <gregory.clement@bootlin.com>
+> Cc: Alexander Clouter <alex@digriz.org.uk>
+> Cc: Jeremy J. Peper <jeremy@jeremypeper.com>
+> Cc: Damien Le Moal <dlemoal@kernel.org>
+> Cc: Niklas Cassel <cassel@kernel.org>
+> Cc: Ulf Hansson <ulfh@kernel.org>
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: "Krzysztof Wilczy=C5=84ski" <kwilczynski@kernel.org>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Daniel Lezcano <daniel.lezcano@kernel.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Linus Walleij <linusw@kernel.org>
+> Cc: Bartosz Golaszewski <brgl@kernel.org>
+> Cc: Thomas Weissschuh <thomas.weissschuh@linutronix.de>
+> Cc: linux-ide@vger.kernel.org
+> Cc: linux-mmc@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-phy@lists.infradead.org
+> Cc: linux-rtc@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-watchdog@vger.kernel.org
+> Cc: linux-sound@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> This commit should probably contain a Fixes: tag pointing at this commit.
+Acked-by: Linus Walleij <linusw@kernel.org>
 
-Perhaps, but I'm not convinced that binding patches should ever have
-Fixes tags citing drivers.
-
---3vjiUG8PBMbT8beL
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaqA/6gAKCRB4tDGHoIJi
-0kG2AQDOo/oX8jcsUDelIaVes9qwAh5b9nS4DBsp1+sHCdAoEAD/ZQJ89Wz4fHJA
-yf0QrlvhwkaD4bsXqsxmJuI7vruffw4=
-=8wzL
------END PGP SIGNATURE-----
-
---3vjiUG8PBMbT8beL--
+Yours,
+Linus Walleij
