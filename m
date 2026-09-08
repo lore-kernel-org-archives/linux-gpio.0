@@ -1,59 +1,99 @@
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F023396597;
-	Tue,  8 Sep 2026 07:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FD42192F4
+	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 07:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788852317; cv=none; b=mX7OWinkL9sLJAyKRfONtD7mZu+bMx79K0DxhmjlA0qszl/wsaIizt8JxOhJLhHy3aVK8lqj//NgaSeJRaBUwBeTDAXVnZo9qJnfMmbtBy9jnj4VxSWJpgeBFYqCxlFrPB9G2oINg5YEg2fDBMVaZIlgLphFDXZhQYPY8kSALIw=
+	t=1788852816; cv=none; b=BDtXQgYeJUJPgtjCKcnIAs8MGkD4uQIlkykl9pagr3G8wQXhMR6H0XGzbtlULr2lIG6VfqZUt4rjcS3mL6akuTxkkRYHAAE89pBnZqFopa8AQXw5oQ7WydvGI8qjqa+L94ooyDl8FZgfiY8V4iCjCnIts64W2moLOE6RyyfOY+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788852317; c=relaxed/simple;
-	bh=l+Eony3UuqYY0Z+qZgt4P9TCjcM6pbMWWjgi+x/jxa8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=V0MeJohK+z3BfOXxxfaxIcuPpOaM5HM8R6q7wOL1gZygRNOQS1ET8peWtbwWh+GoT+C56F0DHU/h4+XaRmcIAioTBzUW80qNH320uIbQfJoUe1f0/nlhuWr/Kmq5/JyVhpDHVqX5JxJSxpve1iktAdAsADNzHYUbHl6wWJPY5u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=WjzhKaTg; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+	s=arc-20240116; t=1788852816; c=relaxed/simple;
+	bh=WyEiKwbmcVktQiUtPsSA5kbuiPpc1SzEgFhYJd1kOsM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CPinIViqquJRt21/bGSgbQgGfP9K46XIhfIYFJogBxXWMR4Vy1lePXkSrI41K6RwVzZgYP3tEqQc3/ST1YMKwHdXBf8k1Q5CZTfhthpJzpC//V5HzCMNNZsqzDpnCgFSdbBBcSPMRcuS7qlTVx0jGc9VupsW//FfeIthMR/OiuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LsJZkG3S; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bACGaM2x; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="WjzhKaTg"
-Received: from pps.filterd (m0516787.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6886RaXD1884298;
-	Tue, 8 Sep 2026 03:25:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=j/Swa
-	lTTNkhfhIHJjX5eNE0kNrAtrLo17uwB+pFIWqQ=; b=WjzhKaTgF/dDQioIncxiN
-	StYTn8kxmJ18RElytCIu0zh7/7HjsnMhy09TafSl/mecJVUUz6V6rM4+6ELTKVFT
-	snZnrA4vv8UgnkTbvzibUOTcvCmAOc8OkTqs9YXl4n+L9NnQBkCQyfUbVAzcuy9f
-	/E8x7efT2oBpE6DcvPNaL2iihJXtPWNcy36mkmqxsoL3NZ/hF/jGxcqhI3IgNb3H
-	i2ac0Gi/hE9u/A4Kmhbiq+pHPNDskq2+nM1PCtDaYvEDnXMsDc+YrkvodWLRmO+r
-	ltGDwW9DoEGmPO6bUSWdapEcHN4eAwnKmLAyl1pXdiBhwSnTBiy9ZBcW0G8ioTWW
-	Q==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4gh4dg835k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 08 Sep 2026 03:25:10 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 6887P9E7039609
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 8 Sep 2026 03:25:09 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.37; Tue, 8 Sep 2026 03:25:09 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.37; Tue, 8 Sep 2026 03:25:09 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
- Transport; Tue, 8 Sep 2026 03:25:09 -0400
-Received: from HYB-e1y2fvUQ3cx.ad.analog.com (HYB-e1y2fvUQ3cx.ad.analog.com [10.44.3.59])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 6887Ot8f016290;
-	Tue, 8 Sep 2026 03:25:05 -0400
-From: Janani Sunil <janani.sunil@analog.com>
-Date: Tue, 8 Sep 2026 09:24:54 +0200
-Subject: [PATCH v7 3/3] gpio: ad7768: Add AD7768 GPIO auxiliary driver
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LsJZkG3S";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bACGaM2x"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6886M3Ux2072795
+	for <linux-gpio@vger.kernel.org>; Tue, 8 Sep 2026 07:33:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EAVjKTm4Pn/HKXCZzPP0BGVIfDLnFhavf3k/SnjOgsA=; b=LsJZkG3ST6MAMuPD
+	xeogie9gEkfBjRjMe3I3uwRT7h+TKlOioJPFBgyMnEWIdxTOVI6JiuWh6Ur+tSG1
+	4jaA7uUHg5dRrii5ziBT6o/tIkKgojgfICJZ3y0b6BMek8gAcO79+Zk0cjPOCg7w
+	9cASbTxpQMXLjySmo4ekIpf7/mNbmh5wDwopMCO18W8QuAGEDFT2MGFT28nVu6+J
+	7DpB7Mf02s8hNvjIYVBrNrBnbugMHaqdZJXAIxs7VWBecQwHt3C/eaPbJ/xS35hl
+	/B9hGAZn7Ja8SK0grR7MzAYtwbc7bEGQcAXNGTeQlPB4C/4VsDzs3mHPJKk3VyZY
+	WyCA8w==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ghsfymc7q-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 07:33:33 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-9375d92d8cdso830240085a.2
+        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 00:33:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1788852813; x=1789457613; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=EAVjKTm4Pn/HKXCZzPP0BGVIfDLnFhavf3k/SnjOgsA=;
+        b=bACGaM2xXo+m40Nt+DuUu+Niys2+W9+m2KXw1NSWCU2/AyEjh0jvsDIYAE1hMMkOYt
+         +ONjlzhvbkRNQT2ELjcMKUSZ+9ILOh7dgTdJ1fnSMi3cMOlhbp1pWgTl2Dq9sresayEw
+         5QJAg5frVZHpzsVRucJozGYrJEOgAlkLAbfzusyGLzVAnLTd5DxxI+OY0Qt7wUEelMAl
+         UqLpceeL1nyzTncbEMiL0nkXx9a4ysEDtAKcpJ6I/i22h3E4HTg6DEzu3HtboOYJlIGv
+         fh0i+tgb5S0FUssf14sv9YInszWVBwxTtxDJBoBy9L2ESuymi7mX3d/DTbJa5r8JtYkT
+         kQFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788852813; x=1789457613;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=EAVjKTm4Pn/HKXCZzPP0BGVIfDLnFhavf3k/SnjOgsA=;
+        b=Lc3ydJhIFaPbzM1G96bpbEa2dFFNyo29hd60Xgo1A/0FC8tQzwmSvtYDwO5dE+b6Ay
+         tsOFF+kFXscRvwgTfGerMXV6po36hsuEJD8j9vHVH8s+4cqFsdL5yDGIehtHHGkl9qbi
+         exyZMIlmoJY25L7RnnPQAjiRTW5wdml5iYMQc3gNIIO/HEBYJd7ty0JDUCohd/dx9tD3
+         bCwQ3sRXwrGeBta5cgZPO95ePH70khf4QDqgF90tP5mAgML6KPS7twf4Ih3514Egp77f
+         spofiznwsBfecFsB+B/VuXqkpo756vuyGVqOFwt51EvYjkt979j5jBEljOylcV097V0M
+         RAzA==
+X-Forwarded-Encrypted: i=1; AKwUvBxC3sML1DtH7HfPeiL0sDejr01i2UQzXaKNwOhMY3kgjCO7/aAwvKDrqfoPKfou8BZ2VEe60B/TcgaI@vger.kernel.org
+X-Gm-Message-State: AFuF++np9r2y7sSWXb85JoFWFa5AJqNrmz3uI3IRlcFpQn5WVY/aBdvN
+	xnJ3tJ3yr/nCAOB/5BEC3HJfbNkeAy0oBlH2mhjDo9eu/GQDOQGrJmjRanCIt/PsNuR7kt8X5+o
+	ZvpmuN0Qmyb/3IietJuDooI5/ACLNeoeaeo8c3uMGl16d0JGMadfAoY9FbKYIA2K+
+X-Gm-Gg: AYBFou32oyzvBOdZP37RhDXunfM4sg2F+wAYOUGxMmtwsn6tA9vbCBVWDpT/eiKCX97
+	RKWxRvxhsv3mH5mzNFRn67ziLR2SQ8Ua7EvWKWLrOlbCVrJj9azzsfH1zXwvt3l6tmZ238JQqx7
+	Dhdrc/7ZlL/LoWyftVRy+1cvI0sDk+sjAo+YUrEfWNwsfUjOPQd8e5M7SNY+xaPWKhzwQrh7eiW
+	j6mabiU3OhunHFqw1bMVkHO8WTlMuoBS2SG+4abWoCh4Re25M5dpjKr2N9qnBtfUawpxsd/1y/+
+	TEnfFM1Styf1XEpO3V37qLSHXoPdU9rzsNSKecfXtiTUb6iJeDvXkmcs5wMDQaUYJcgZQ52MmD+
+	IfJNW+QuAbyuQhDsjg3PzVIzLgLk=
+X-Received: by 2002:a05:620a:2a0b:b0:939:6de9:4cfd with SMTP id af79cd13be357-93980774882mr2700477185a.48.1788852813269;
+        Tue, 08 Sep 2026 00:33:33 -0700 (PDT)
+X-Received: by 2002:a05:620a:2a0b:b0:939:6de9:4cfd with SMTP id af79cd13be357-93980774882mr2700474185a.48.1788852812904;
+        Tue, 08 Sep 2026 00:33:32 -0700 (PDT)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:79a2:f118:df09:fe51])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-485883a9234sm34019157f8f.14.2026.09.08.00.33.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Sep 2026 00:33:32 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Linus Walleij <linusw@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH] pinctrl: qcom: Drop marketing name-prefixed duplicate defines
+Date: Tue,  8 Sep 2026 09:33:30 +0200
+Message-ID: <178885280732.4383.1676609276287509804.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260907-topic-tlmm_define_cleanup-v1-1-accdf7859e4b@oss.qualcomm.com>
+References: <20260907-topic-tlmm_define_cleanup-v1-1-accdf7859e4b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -61,237 +101,47 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20260908-ad7768-gpio-v7-3-52ee6ef18a1e@analog.com>
-References: <20260908-ad7768-gpio-v7-0-52ee6ef18a1e@analog.com>
-In-Reply-To: <20260908-ad7768-gpio-v7-0-52ee6ef18a1e@analog.com>
-To: Michael Walle <mwalle@kernel.org>, Linus Walleij <linusw@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>
-CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-        Jonathan Cameron
-	<jic23@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        "Janani
- Sunil" <jananisunil.dev@gmail.com>,
-        Janani Sunil <janani.sunil@analog.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788852295; l=5643;
- i=janani.sunil@analog.com; s=20260903; h=from:subject:message-id;
- bh=l+Eony3UuqYY0Z+qZgt4P9TCjcM6pbMWWjgi+x/jxa8=;
- b=r1Fsj3hHn9Orqzg3+dNw0LyTG1imtFoHo4e7FuZKpi6N5zLhsawKoG813G2HGwNt9T9DFF11a
- KFI5PKFm+1wBbbBx6vxlftuFQWqzYiT/vNkvANgkxSLxKDDstxpeEXT
-X-Developer-Key: i=janani.sunil@analog.com; a=ed25519;
- pk=0UJo4rLJeMHBMco/+wcMHzXI7nV8k1T72+XQlBNV4Rw=
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: rxciDb0v_iNRXExW1O6UqMVWKv9OO135
-X-Authority-Analysis: v=2.4 cv=f5N4wuyM c=1 sm=1 tr=0 ts=6a9fb856 cx=c_pps
- a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=0sLvza09kfJOxVLZPwjg:22 a=OmVn7CZJonkx5R5zMQLL:22 a=QyXUC8HyAAAA:8
- a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=8fq82CzG31171KfXEYkA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: rxciDb0v_iNRXExW1O6UqMVWKv9OO135
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA4MDA3NiBTYWx0ZWRfX6M/+kxeXAHdh
- mLM+LgUwY1jGl5nuN97fhjjT+YTzkz49aHocyGFrbAi13Om/d9evGKR8qaGVLqGWjkKn90mHVCy
- CeFvfoRUqAnLTQ7HrTPINM0j/VnVw0h3qCkFckPMwAlXa+zL8do3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA4MDA3NiBTYWx0ZWRfX6PXSMiMBcBme
- kTuxGdK314NChvAI0Phr3EW6CwpY9+b7nSJHz3agp5iW1pzf1EqV9Ms86/Z494PdzMbxkFe2t5F
- pERrxcENvkNQIGoJfZqdXlKJiNnX+DIDwkKe381dJ1ygJb+1xBlKxsgAljhPywuXCh9V61HFBZ5
- hC19KgSvxQe+6HQzKAyVtwv1NR+5tcIuHv2hDH55q9dn+zlbko1IQ8G0jbhWP1hR4hUlLoay+cF
- vpQxambjGFBJV/TPnMsx0RUfoy/hLsUpg8H32LGGydWw2xRbgRyu0jjNfKrnu5kKf04AEJVFkj+
- +xET2xkyigqpwyd86sc8A2KJJwrbqtYWNdsJ5VdcP3bKLQEQKorDm+4mdfqrEARPqYUiRVxArda
- I18WSKDr9HklBaGpfuoDbAl+k34bbj+K9cK4qsEnYN4FlJWD1Qm5hKdz2GIP5uBedtVaUZ6ryiz
- dX8jJAHH+KN1eIxoFfw==
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: x-9dg1gYT6ub9AeHIEpZnWHoDFDpcpcm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA4MDA3NiBTYWx0ZWRfX525SyjW4RANX
+ /ZLpAyhsoUBeCBbaAfi2T5af78fOZUNmO6ih4rkipQizQPQ3GJC/Gdk5fOs5dikjznfWfn8rw4x
+ Gp6B7Y0Nhrvlmz0XeLkpfWzTAV3mX8+zTEX8FgAWdxuhkwzYYHJJkTKMof4ShrVttb86zhKucZ1
+ WDfM2uEuEJ8HQLI/yvQ65aX4qYHG2RTqsrgAlg4W148MM1uABm8NO+1i3vqI7dr3Ye/dm49KEY2
+ fyGzN2yFJsmeSA/LloOExcf2dM1nkbV4Yq+6lElNXs0I14AtqPxdGvFWqKRCFTp40sI4gs21YcX
+ zTxCuRl9fhMarRr0NAXgFC5n5RW0lDttEvNR02/EJct+Z9f6+e++8h3eQfIl9Br1MxCQAjwkmOV
+ fRuxg6GuFbmPSLqYdXyrd0gsAL1kt4wsWVUF4OJ2yv4nwbPFI1pgwnDj18Fil4S9QHWSfra3GCo
+ 898CmARKzxK2lm8gwkw==
+X-Proofpoint-GUID: x-9dg1gYT6ub9AeHIEpZnWHoDFDpcpcm
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA4MDA3NiBTYWx0ZWRfX3TTj7Bmyvj1R
+ GJRp7k5RBSovQiNRVj+6l1bPNRd4EtQK9cKTJXJEUvJq30IcNCmd/LSFGiSvWcOVodZa2SwLo3Y
+ Cz4TBAt0TxswaEzfOwRwILPGfa1TZcw=
+X-Authority-Analysis: v=2.4 cv=AduB2XXG c=1 sm=1 tr=0 ts=6a9fba4d cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=JQ8xzEzk_z3bbdWvsuQA:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-08_01,2026-09-07_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 phishscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 adultscore=0 spamscore=0 suspectscore=0
+ impostorscore=0 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
+ phishscore=0 clxscore=1015 suspectscore=0 priorityscore=1501 malwarescore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609080076
 
-The AD7768 provides five GPIOs controlled through registers shared
-with the parent IIO device. Register an auxiliary gpio-regmap driver
-and use the parent device for runtime PM.
 
-The device has separate input-state and output-latch registers. Add a
-reg_mask_xlate() callback that checks the line direction and reads the
-programmed output latch for output lines while retaining input-state
-reads for input lines.
+On Mon, 07 Sep 2026 10:11:31 +0200, Konrad Dybcio wrote:
+> They are identical and of no use. Drop them and use the common MSM
+> prefix.
+> 
+> 
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-Reviewed-by: Linus Walleij <linusw@kernel.org>
-Signed-off-by: Janani Sunil <janani.sunil@analog.com>
----
- drivers/gpio/Kconfig       |  12 +++++
- drivers/gpio/Makefile      |   1 +
- drivers/gpio/gpio-ad7768.c | 121 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 134 insertions(+)
+Applied, thanks!
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index a48586bb8edb..07b7f8ab0ccb 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1818,6 +1818,18 @@ endmenu
- menu "Auxiliary Bus GPIO drivers"
- 	depends on AUXILIARY_BUS
- 
-+config GPIO_AD7768
-+	tristate "Analog Devices AD7768 GPIO support"
-+	depends on AD7768
-+	depends on GPIOLIB
-+	select GPIO_REGMAP
-+	help
-+	  Say yes here to expose the AD7768 utility pins as GPIOs when the
-+	  device tree node is marked as a GPIO controller.
-+
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called gpio-ad7768.
-+
- config GPIO_LTC4283
- 	tristate "Analog Devices LTC4283 GPIO support"
- 	depends on SENSORS_LTC4283
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index dc9e6d643b5b..ce56e9b3f55d 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -27,6 +27,7 @@ obj-$(CONFIG_GPIO_104_IDI_48)		+= gpio-104-idi-48.o
- obj-$(CONFIG_GPIO_104_IDIO_16)		+= gpio-104-idio-16.o
- obj-$(CONFIG_GPIO_74X164)		+= gpio-74x164.o
- obj-$(CONFIG_GPIO_74XX_MMIO)		+= gpio-74xx-mmio.o
-+obj-$(CONFIG_GPIO_AD7768)		+= gpio-ad7768.o
- obj-$(CONFIG_GPIO_ADNP)			+= gpio-adnp.o
- obj-$(CONFIG_GPIO_ADP5520)		+= gpio-adp5520.o
- obj-$(CONFIG_GPIO_ADP5585)		+= gpio-adp5585.o
-diff --git a/drivers/gpio/gpio-ad7768.c b/drivers/gpio/gpio-ad7768.c
-new file mode 100644
-index 000000000000..6d373c697e7a
---- /dev/null
-+++ b/drivers/gpio/gpio-ad7768.c
-@@ -0,0 +1,121 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Analog Devices AD7768 GPIO auxiliary driver
-+ *
-+ * Copyright 2026 Analog Devices Inc.
-+ */
-+
-+#include <linux/auxiliary_bus.h>
-+#include <linux/bitops.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/gpio/regmap.h>
-+#include <linux/module.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
-+
-+#define AD7768_REG_GPIO_CONTROL		0x0E
-+#define   AD7768_GPIO_UGPIO_ENABLE	BIT(7)
-+
-+#define AD7768_REG_GPIO_WRITE		0x0F
-+#define AD7768_REG_GPIO_READ		0x10
-+
-+#define AD7768_NUM_GPIOS		5
-+#define AD7768_FILTER_GPIO		4
-+
-+static int ad7768_gpio_init_valid_mask(struct gpio_chip *gc,
-+				       unsigned long *valid_mask,
-+				       unsigned int ngpios)
-+{
-+	if (ngpios > AD7768_FILTER_GPIO &&
-+	    device_property_match_string(gc->parent->parent, "clock-names",
-+					 "mclk") < 0)
-+		__clear_bit(AD7768_FILTER_GPIO, valid_mask);
-+
-+	return 0;
-+}
-+
-+static int ad7768_gpio_reg_mask_xlate(struct gpio_regmap *gpio,
-+				      enum gpio_regmap_operation op,
-+				      unsigned int base, unsigned int offset,
-+				      unsigned int *reg, unsigned int *mask)
-+{
-+	struct regmap *regmap = gpio_regmap_get_drvdata(gpio);
-+	int ret;
-+
-+	*reg = base;
-+	*mask = BIT(offset);
-+
-+	if (op != GPIO_REGMAP_GET_OP)
-+		return 0;
-+
-+	/*
-+	 * AD7768 has separate input-state and output-latch registers. For an
-+	 * output line, report the programmed value from the output latch;
-+	 * input lines continue to use the input-state register.
-+	 */
-+	ret = regmap_test_bits(regmap, AD7768_REG_GPIO_CONTROL, *mask);
-+	if (ret < 0)
-+		return ret;
-+	if (ret)
-+		*reg = AD7768_REG_GPIO_WRITE;
-+
-+	return 0;
-+}
-+
-+static int ad7768_gpio_probe(struct auxiliary_device *adev,
-+			     const struct auxiliary_device_id *id)
-+{
-+	struct gpio_regmap_config config;
-+	struct device *dev = &adev->dev;
-+	struct device *parent = dev->parent;
-+	struct regmap *map;
-+	int ret;
-+
-+	map = dev_get_regmap(parent, NULL);
-+	if (!map)
-+		return -ENODEV;
-+
-+	PM_RUNTIME_ACQUIRE_AUTOSUSPEND(parent, pm);
-+	ret = PM_RUNTIME_ACQUIRE_ERR(&pm);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_set_bits(map, AD7768_REG_GPIO_CONTROL, AD7768_GPIO_UGPIO_ENABLE);
-+	if (ret)
-+		return ret;
-+
-+	config = (struct gpio_regmap_config) {
-+		.parent = dev,
-+		.regmap = map,
-+		.label = dev_name(parent),
-+		.ngpio = AD7768_NUM_GPIOS,
-+		.reg_dat_base = AD7768_REG_GPIO_READ,
-+		.reg_set_base = AD7768_REG_GPIO_WRITE,
-+		.reg_dir_out_base = AD7768_REG_GPIO_CONTROL,
-+		.pm_dev = parent,
-+		.reg_mask_xlate = ad7768_gpio_reg_mask_xlate,
-+		.init_valid_mask = ad7768_gpio_init_valid_mask,
-+		.drvdata = map,
-+	};
-+
-+	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &config));
-+}
-+
-+static const struct auxiliary_device_id ad7768_gpio_ids[] = {
-+	{ .name = "ad7768.gpio" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(auxiliary, ad7768_gpio_ids);
-+
-+static struct auxiliary_driver ad7768_gpio_driver = {
-+	.probe = ad7768_gpio_probe,
-+	.id_table = ad7768_gpio_ids,
-+};
-+module_auxiliary_driver(ad7768_gpio_driver);
-+
-+MODULE_AUTHOR("Janani Sunil <janani.sunil@analog.com>");
-+MODULE_DESCRIPTION("Analog Devices AD7768 GPIO auxiliary driver");
-+MODULE_LICENSE("GPL");
+[1/1] pinctrl: qcom: Drop marketing name-prefixed duplicate defines
+      https://git.kernel.org/brgl/c/fd702f895c5addaf9dea1a9d765209592e469cf0
 
+Best regards,
 -- 
-2.43.0
-
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
