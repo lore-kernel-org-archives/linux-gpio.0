@@ -1,131 +1,147 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9573753CA99;
-	Tue,  8 Sep 2026 19:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD3048E0D0;
+	Tue,  8 Sep 2026 20:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788897465; cv=none; b=pszODh/BAXoPuJIHx2CqIGvENhS09kChbx1ZM9yWX2qSZgV6YzVOSIqsxmbrcjRsV/Z27a5RWZHD1KGsIFRYxFQqPmh/UT5OrsU9alGoCUi9N0zdjvNkAgmrR+e7hp11NdJm+B2z2tggIppZcQkW1Kj4qvsGAPBvvwnwWVN/K7g=
+	t=1788898490; cv=none; b=G3jvNEHbH0yV/0AwdncoIsTtaDYr2Ssd9yQ+AXwr7F+8mZoWti7NtzhR6lbNorXtyX34zwPHnNhWPBpkvNZYV+vj8hOIG4bN9iBbuHMa6uEEXovJPwJeyqGwqANgnabOSScSxt8EY/60GLlC5MflJX2iUkvDOZ7/BrXzW0OCCpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788897465; c=relaxed/simple;
-	bh=HjixmwXu4iSZKqj2xB3hyy4C7kd326lWN0LTBgY00ik=;
+	s=arc-20240116; t=1788898490; c=relaxed/simple;
+	bh=rs2nnj7/rcK0lkhFmSUcJ0s9rK51aF20FxE81IRAhl0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UYyQkqbrBEE5FlmGJBmQZVm1QcMRRukWeomMMIsHzMSRjhaylb35soE4ndOLbFD32gfPzOqMfeA+qbQFDJLcAJjjIKM/ioXvs5P/J6b+yyrWeJoNCFdnS8a9E3WZdMc2p5rRhsXa97MiwUxmHulTaFVzvwYMg4LVRkc3E0jBi3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ibk2TJ6A; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=KhSntrPokk0gjZX7wtULPx0PU+oIXsUl9YXD0TPu0KXSIyUYp0I3/EOgLcVznTCo1FiJaMMz+ZdGoOJhvTur8Z7jpEGcIQLDlw52CiBvENXJTBxVDjw5XA2TBTGkKJxWBQZ57s8Prrbq1/ozZmGDQ/fnjZldQvPOJPVv1vs+/14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBmvOZei; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ibk2TJ6A"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E5D61F00A3A;
-	Tue,  8 Sep 2026 19:57:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBmvOZei"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFA0C1F00A3A;
+	Tue,  8 Sep 2026 20:14:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788897464;
-	bh=XxjewhJfqVpvWK6lHZafiM2N3F3gmrUHu3yO9NDfuVM=;
+	s=k20260515; t=1788898489;
+	bh=sj1Ha1RkFOVatFTL0DjQ7FjrTJ+tvbpy4aDhxc56Hwo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Ibk2TJ6AbCxCsNWmuVZMcTtt6wy6QTlt3liWJWEP4L3QXPPMIE+9dFMtvkZpghZCs
-	 bLmZu9TI38oA/GHd6FJYaIlPILyWBpnZcXTDkEWjOCZzh79A40Pgo/9hJkBSjfw+8x
-	 AVDSFoiga0rQqQpdV9qZP9zAy5XmoSQ+jbD/4OXPJGiMl4Pcak2EUdYKJ3W3k8P5eQ
-	 rN4GTGN2/EqohEFv2erx0mSwRWxx8/NXzWsI55FZ1cmdd39FcKJioimQJNSSOKpcV7
-	 MDVJB55itJxTCSzoN4kXDgWYfzccyudPWHjZJlVZTxfxROFeDma5YK23FSFR2MU1AR
-	 m6w8l/BtTNXtw==
-Date: Tue, 8 Sep 2026 20:57:39 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
-Subject: Re: [PATCH v7 03/21] dt-bindings: pinctrl: Add
- starfive,jhb100-sys0-pinctrl
-Message-ID: <20260908-annually-catfight-39e3a1543274@spud>
-References: <20260831113514.66382-1-changhuang.liang@starfivetech.com>
- <20260831113514.66382-4-changhuang.liang@starfivetech.com>
+	b=TBmvOZei/F87+VrsJyz2vLSx4drrq+Mo2AyIhty6cnRWIx4xEqumVspwWndJKSPla
+	 6bMz5NXp5wbwncBfC8OJ69by04CAyE0ysmm/Hfyb83eri0dazwKp6awDk1uYtKhNhK
+	 bia0zqfuijbS2QwURH5RTd3UO6dyGRANca8dhKinrJSe4azNDnzunPnSErNlO2bvXJ
+	 obCaF4h0H8/c25PoD629aySuZRlZdiY4vrn64G4UQOFbtG4iQQqZSNkv/C8t1IjKyg
+	 /mNxbPmXNpiB6q5J1a+Xscrw/s+O3Bxsrxdy9Q/7YkHiBfg3Ilc2hUzKM9PpPI0w/3
+	 k357snXzlA3ng==
+Date: Tue, 8 Sep 2026 22:14:33 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Drew Fustini <fustini@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Stefan Agner <stefan@agner.ch>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
+	Ethan Nelson-Moore <enelsonmoore@gmail.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Karl Mehltretter <kmehltretter@gmail.com>,
+	"David Hildenbrand (Arm)" <david@kernel.org>,
+	Nicolas Pitre <npitre@baylibre.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-omap@vger.kernel.org, Alexander Clouter <alex@digriz.org.uk>,
+	"Jeremy J. Peper" <jeremy@jeremypeper.com>,
+	Damien Le Moal <dlemoal@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Vinod Koul <vkoul@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Thomas Weissschuh <thomas.weissschuh@linutronix.de>,
+	linux-ide@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 05/13] ARM: orion/dove/mv78xx0: remove all board files
+Message-ID: <aqBsqaftroGc0Mfb@ryzen>
+References: <20260908152808.3928630-1-arnd@kernel.org>
+ <20260908152808.3928630-6-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aKnMEl9aGObXvGYC"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260831113514.66382-4-changhuang.liang@starfivetech.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260908152808.3928630-6-arnd@kernel.org>
 
---aKnMEl9aGObXvGYC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, Sep 08, 2026 at 05:27:55PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The 'orion' platform is the predecessor to what linux now calls the
+> 'mvebu' line of Marvell SoCs, and originally covered orion5x,
+> mv78xx0, kirkwood, dove and a few others that do not have any
+> upstream support at the moment.
+> 
+> Only a few board files remain here, these are the ones left
+> in 2022 board file purge because they had some level of support
+> in Debian or OpenWRT, mostly for commercial NAS or router boxes.
+> This distro support is now gone, and nobody has converted the
+> board files to devicetree, though the orion5x and dove platforms
+> also come with devicetree support for some other machines.
+> 
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Gregory Clement <gregory.clement@bootlin.com>
+> Cc: Alexander Clouter <alex@digriz.org.uk>
+> Cc: Jeremy J. Peper <jeremy@jeremypeper.com>
+> Cc: Damien Le Moal <dlemoal@kernel.org>
+> Cc: Niklas Cassel <cassel@kernel.org>
+> Cc: Ulf Hansson <ulfh@kernel.org>
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: "Krzysztof Wilczyński" <kwilczynski@kernel.org>
+> Cc: Manivannan Sadhasivam <mani@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Daniel Lezcano <daniel.lezcano@kernel.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Linus Walleij <linusw@kernel.org>
+> Cc: Bartosz Golaszewski <brgl@kernel.org>
+> Cc: Thomas Weissschuh <thomas.weissschuh@linutronix.de>
+> Cc: linux-ide@vger.kernel.org
+> Cc: linux-mmc@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-phy@lists.infradead.org
+> Cc: linux-rtc@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-watchdog@vger.kernel.org
+> Cc: linux-sound@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-On Mon, Aug 31, 2026 at 04:34:56AM -0700, Changhuang Liang wrote:
-> diff --git a/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h b/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
-> new file mode 100644
-> index 000000000000..6d8f5516a178
-> --- /dev/null
-> +++ b/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> +/*
-> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
-> + *
-> + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
-> + */
-> +
-> +#ifndef __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
-> +#define __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
-> +
-> +/* sys0 pad numbers */
-> +#define PADNUM_SYS0_GPIO_A0				0
-> +#define PADNUM_SYS0_GPIO_A1				1
-> +#define PADNUM_SYS0_GPIO_A2				2
-> +#define PADNUM_SYS0_GPIO_A3				3
-
-Krzysztof's point [1] about these still stands. Pad indices aren't bindings.
-Sure, your driver and your dts both might want to use these but that
-doesn't make them a binding. For that to be the case, they need to
-effectively be made up numbers - like how clocks are often listed with
-numbers from 0 into the dozens or hundreds, when that may or may not
-correlate with actual bits in registers, e.g. indices 0-31 in a clock
-binding might be in register 1 and then 32-63 are in register 2. There's
-no need for a binding here to assign meanings to numbers, because the
-meanings are assigned by the hardware itself - index 0 for SYS0 *is* A0,
-because that's how the hardware is designed.
-
-Were the numbers to run continuously, so that we had
-
-#define JHB100_PADNUM_A0	0
-#define JHB100_PADNUM_A1	1
-#define JHB100_PADNUM_A2	2
-#define JHB100_PADNUM_A3	3
-#define JHB100_PADNUM_A4	4
-and so on down to
-#define JHB100_PADNUM__D0	1234
-
-then it would be a binding, because we're assigning a meaning to 1234
-that's not something determined by the hardware.
-
-FWIW, I'm happy to have the unchanged starfive,jhb100-pinctrl.h sit in
-arch/riscv/boot/dts/starfive, because the defines are helpful - but as
-things stand I think Krzysztof is right.
-
-Cheers,
-Conor.
-
-1 - https://lore.kernel.org/all/ZQ4PR01MB1202123864865439817E1549F2AA2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn/
-
---aKnMEl9aGObXvGYC
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaqBosgAKCRB4tDGHoIJi
-0vUdAQDJk08iDuO2c5CqqTqe3Bbt2Jm+La/0mzM38iV/S+1uSQEAsuTsnqzv5q51
-I8rlyu+04nDW1cZlwp1+dPzjMdDQAAY=
-=GoqV
------END PGP SIGNATURE-----
-
---aKnMEl9aGObXvGYC--
+Acked-by: Niklas Cassel <cassel@kernel.org> # ata parts
