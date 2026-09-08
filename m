@@ -1,1225 +1,155 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010005.outbound.protection.outlook.com [52.101.69.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6501454EEA3;
-	Tue,  8 Sep 2026 13:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788875004; cv=none; b=YdeedO8Ytd5ZMKND8ddBxGtYOTw8yoiaqod+k/LAfxKDlBY2UeDo3jQ8GEuaRUGNX7yaqN8y9vB3gSEr98kJXoe34Sz0XJOLQCv2MRWIIvqjqlGo5GREa9oJ7G1xY1NEtG037CR+PRlsNFvNGdQrxakw9PEWisCkpAvWUuUbim0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788875004; c=relaxed/simple;
-	bh=ybh0yoDuJbA68HXsWLkuN4cY3DrT9NzBhBRwThS/di0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qXVHk2Q4O52BG/XcwFJ8rqahWflwzRLtMjAN2JnUyL3sACcjQQufuSPYDm1T3v9WyUI6vTa6nfhar9BgHmLQjZP2dCCVUZJkPKMTSbIt3IYRKJZlrwHfLgf3rKOqRiKJcoCtudw+ogCeFTr4WMbA72jJdo15oqD3wjHBuqEksOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E291F0155A;
-	Tue,  8 Sep 2026 13:43:01 +0000 (UTC)
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	driver-core@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	tzungbi@kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: [PATCH v12 3/3] gpio: Leverage revocable for accessing struct gpio_chip
-Date: Tue,  8 Sep 2026 21:42:23 +0800
-Message-ID: <20260908134223.13638-4-tzungbi@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260908134223.13638-1-tzungbi@kernel.org>
-References: <20260908134223.13638-1-tzungbi@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CED5452AD
+	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 14:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788876672; cv=fail; b=NrT4ZZsKMwCsFW659KBhHQADuC373iTDxq6PMah6VyenEm/MXz10F4VdsSUrmqgxE9Eg0wWKZFKTVIkYqmgpUMcmEaZCgD9sLt7lL5wDGvMww4SjDfs2zg7+wLJENYOs5vC7bWyYLHWt1ax/zNHVqEwgC6xoUMRoN3xEGjmPCdg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788876672; c=relaxed/simple;
+	bh=cX+C0EKlTTPiaWAWXp8KjGgmxL7fRLcZpTuoNyXGc1U=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Om0DSz5xMqedrMBX3acB7i95ZboC0Wjg/TdfJdGC+T6GeaAUnI/btZG7CGumg34gxUjbR9K+lkvFr7989XRRODvGPSblDK18LynTclBU6aLacto+s2vnRh+VJ/5+rheAgf5+cC5KLXSHXbimVC8zryMM4L23NgttUVI/5oUfbJ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ICjiQrHi; arc=fail smtp.client-ip=52.101.69.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ICjiQrHi"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bpiT7erk1joPaulKuPQ2VeRd6rNXmShs6BPVi1O3xTFnEijYx9kjCzfQ6jKQfQhX/KLTP9xkN4NSnbXRnDjiOK6RfBFDLFj1eoCiol7DTqj3rP0VoEuG3xfmnC3wcRNd6vG/IOX8r2N4y0Fzg2kISC8gjoqoJw5+/oBDXWDVw9gSRV8PJXWrxNZZjSvvJp4sEWj7KN4UlhAat4dzd6kurXg0rKB8IcMZMraWmP7QfVYLC8ob2A9Yd9p9iReyVf8Xl/fsLmuhHUrsUqXkZC4LMwxSgBxNSURTirIDhOutvrIWl+laeLBr7upe+UixeiQwNYqgKwuGknVBqmIL0v7fqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cX+C0EKlTTPiaWAWXp8KjGgmxL7fRLcZpTuoNyXGc1U=;
+ b=F9ro+R3NI/l6SKFnaQdz1Je6H8h7QGSyAhonIozGOtzRcCZe3TIAUS3bQOErXmjMrMYKWzGZXfd+xrVcSIBB8QbE9FKirTaxfr2XYDw5YIX774XUFBHruL4UFrfZwpbPcU9Y6G0zYNF+nEN9Z5MXrK+iUoo/1bebJ2Q2wWlG9vIIbZIDYRYJIn+MBdEGSNFfg5ylt+KusGuRfR7GU3ENVQGg4qGdk4+vDKZPinJs68RdGOxxeoBN9OmtDdxdhpWEIpY/WJ1deb0npEbe+ptUVvfrXFDMXwS0EPjuwCgWGG0MaUGkp1qvxnwH+nXlPFnuXzsMEKHZ7v7PqpebjE+97w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.60) smtp.rcpttodomain=gmail.com smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cX+C0EKlTTPiaWAWXp8KjGgmxL7fRLcZpTuoNyXGc1U=;
+ b=ICjiQrHiiLwNmhMKHU33haw5RkvNtjBFKt5+exaQOzKRDBrdW9JxYWjZLc7TwpvM0Ki22Ue34a3+J7SGMIdmuAEz7+3r5ck9bweVuTEYPcP9pd+UC+xv72dYwePsLose934EbkGNNdaNJxKMkOVbnciYjqbkeAKSUkTXGIx/wcz/dmtMwzop+BFn8IwjCeLBKokFFlgWdOF+MEU4iTGeKbCs9f7F+d6q5EPK3HIqprPQ0N6yfvUY4KMDmqTEM5Z7wb/4eIjdSCtKsegdOyk19FrT3vi1/i7BV/AUHlkRwLEvkt6KF5R1fG2JcV8F3CPDQh9jzCdUw6XSgtgpmt2sbw==
+Received: from VIUP296CA0010.AUTP296.PROD.OUTLOOK.COM (2603:10a6:800:34f::11)
+ by DU0PR10MB6368.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:40c::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.15; Tue, 8 Sep
+ 2026 14:10:57 +0000
+Received: from MI3PEPF0000855E.eurprd05.prod.outlook.com
+ (2603:10a6:800:34f:cafe::8b) by VIUP296CA0010.outlook.office365.com
+ (2603:10a6:800:34f::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.7 via Frontend Transport; Tue, 8
+ Sep 2026 14:10:57 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.60)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.60; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.60) by
+ MI3PEPF0000855E.mail.protection.outlook.com (10.167.240.26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.406.5 via Frontend Transport; Tue, 8 Sep 2026 14:10:56 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
+ (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Tue, 8 Sep
+ 2026 16:16:23 +0200
+Received: from [192.168.8.15] (10.48.86.45) by STKDAG1NODE2.st.com
+ (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Tue, 8 Sep
+ 2026 16:10:56 +0200
+Message-ID: <280f27a5861d4b7e34e92c66bfb8b76548920800.camel@foss.st.com>
+Subject: Re: [PATCH] pinctrl: stm32: Drop the nonexistent
+ CONFIG_MACH_STM32MP25 from the STM32MP257 default
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: Karl Mehltretter <kmehltretter@gmail.com>, Linus Walleij
+	<linusw@kernel.org>
+CC: Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, <linux-gpio@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>
+Date: Tue, 8 Sep 2026 16:10:55 +0200
+In-Reply-To: <20260905080235.33785-1-kmehltretter@gmail.com>
+References: <20260905080235.33785-1-kmehltretter@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: STKCAS1NODE1.st.com (10.75.128.134) To STKDAG1NODE2.st.com
+ (10.75.128.133)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MI3PEPF0000855E:EE_|DU0PR10MB6368:EE_
+X-MS-Office365-Filtering-Correlation-Id: a49bbad6-e231-489f-99d2-08df0db30091
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700016|23010399003|1800799024|6133799003|10067099003|56012099006|11063799006|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	rXBUNjCec+zZc88rXNBhwgK4b5rLdYypbknwcCX73AmDNKAVUPpY1BrTxKoXB46Tr/RPRIfFzefQaqdrqo290Dqc33PQQuMCd4yY1+XVitYL0qyCCDuv4Y8ublvNC0D4DvK9MQX1GohYBrWNyWM5Q+qdIawEQBEiWkATQXCuQ+DnNHV70hVYBk63R7g9+Yg+B8lGpH3k2bCNfaecI+vWeVdQPhNnoYeTmKVlvEjvmoYBgvaVxXtosPVp8zWhszo/VdVTDai7/qJPPyRLoVhSUAvkvAmyDMCnmSrK/eQvU3uTCZ851vzS1aDCGO6NkQUMs1PLgEwJCuG3pCRLSv1a5NVhnvSYuSjUdxbN9Bv4xiJyeqUMSMc7v7F+qUw8bu1lWofyhrEj2onvuJtNCXlf3Z6MiJLzGmTiQYAs0h1i6KS3y+zSQDiyc9r4jBREFU8BSFPoNVQAElhYbsOPeg1U19t9N/Adl/TQrAVoTjJ3n/EGLVTbyqAd8JbQjDHjZNcxqva3AvY5VU1rM3hc9zEi1veH23Bh9eIVENKxfdAJyF/6uL4Ap+QgC7miYkfRZmoLfOixmYiRnLWTlCvr09q6o84cRHZRsTv+1qJj4Fmfpk9NxEcoGS3Gg/MTBdrtURUJZbjc4QTbYFqltUy3WaQZfMk/V1t5Rq/Zk0DVRz8q57F+JNqHghReHoSmgxEYbVd/Na/PxUQH/VeZbxZuXLfBkw==
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700016)(23010399003)(1800799024)(6133799003)(10067099003)(56012099006)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	SnrAR+5p3/XHVJEw9rrwTl+v8WtGrRuQVaqTqOPg/f3QKu8tEYSy1kGC24DY39X7wAmm0HuMuqEHZerv8FawkJaDWX9wJL4jPAjJKaxblRWGH3UxBpH/tTW8LQeUFrxBZDWY6lGj/vvVTZdGFMT3Z36P+1uViBw6TVQjfpld3UbRMYseEJmcJu/YmGZgwgeV1i3g5Y8PnpsbfUwRFkaii/bGS7f434qxMVcbaeYCCYQafvKFFA4T+gWZqVMyS9FpNSVlIVrC6yqj7SR/udEy3r4KQ0lrNp62rTCynZuc/KafJzrYV5uADdxezK15AvnInPQEYKSVbWyA8D1jWhGV1kH6O0vBL6ZlJXJeISydLlMQVN+2L/AgjVDsXHwWHOFr07skZQ8GuYeQbYe2QeieqP5QohoGkT5C4y4RTbJjlycvIcP3RZLlnsMpec5nGYZJ
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2026 14:10:56.8973
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a49bbad6-e231-489f-99d2-08df0db30091
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MI3PEPF0000855E.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6368
 
-The underlying chip can be removed asynchronously.  `gdev->srcu` is used
-to ensure the synchronization before accessing `gdev->chip`.
+On Sat, 2026-09-05 at 10:02 +0200, Karl Mehltretter wrote:
+> Commit 619f8ca4a73d ("pinctrl: stm32: add stm32mp257 pinctrl support")
+> made CONFIG_PINCTRL_STM32MP257 default to MACH_STM32MP25, following the
+> MACH_* pattern of the arm32 entries above it, but no Kconfig symbol of
+> that name exists and git log -S finds no Kconfig file that ever defined
+> one: the STM32MP25 family is arm64 only, where CONFIG_ARCH_STM32 covers
+> it. Commit dba0aff2b89b ("pinctrl: stm32: Allow compile as module for
+> stm32mp257") added "|| (ARCH_STM32 && ARM64)" next to it, so the first
+> half now evaluates to n and changes no configuration.
+>=20
+> Drop the first half.
+>=20
+> Fixes: 619f8ca4a73d ("pinctrl: stm32: add stm32mp257 pinctrl support")
+> Assisted-by: LLM
+> Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+> ---
+> =C2=A0drivers/pinctrl/stm32/Kconfig | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pinctrl/stm32/Kconfig b/drivers/pinctrl/stm32/Kconfi=
+g
+> index d6a171523012..cc425bbfc996 100644
+> --- a/drivers/pinctrl/stm32/Kconfig
+> +++ b/drivers/pinctrl/stm32/Kconfig
+> @@ -55,7 +55,7 @@ config PINCTRL_STM32MP157
+> =C2=A0config PINCTRL_STM32MP257
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tristate "STMicroelectron=
+ics STM32MP257 pin control"
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0depends on OF && HAS_IOME=
+M
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0default MACH_STM32MP25 || (ARC=
+H_STM32 && ARM64)
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0default ARCH_STM32 && ARM64
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0select PINCTRL_STM32
+> =C2=A0
+> =C2=A0config PINCTRL_STM32_HDP
 
-Revocable encapsulates the details.  Leverage revocable for accessing
-the struct gpio_chip and remove the `gdev->srcu`.
+Reviewed-by: Antonio Borneo <antonio.borneo@foss.st.com>
 
-Tested-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
----
-Test:
-
-Prepare gpiod-test.
-(https://libgpiod.readthedocs.io/en/master/building.html#building)
-$ cd libgpiod-2.3.1
-$ mkdir build && cd build
-$ meson setup .. -Dtools=enabled
-$ ninja
-
-Prepare kernel.
-$ cat >test_config <<EOF
-CONFIG_IKCONFIG=y
-CONFIG_IKCONFIG_PROC=y
-CONFIG_KASAN=y
-CONFIG_GPIOLIB=y
-CONFIG_GPIO_SYSFS=y
-CONFIG_GPIO_SIM=y
-CONFIG_EXPERT=y
-CONFIG_PROVE_LOCKING=y
-CONFIG_PANIC_ON_OOPS=y
-CONFIG_DEBUG_KERNEL=y
-CONFIG_LOCKDEP=y
-EOF
-$ export KBUILD_OUTPUT=build
-$ vng -k -f test_config && vng -b
-
-Run gpiod-test.
-$ vng
-$ ./libgpiod-2.3.1/build/tests/gpiod-test
-$ time ./libgpiod-2.3.1/build/tests/gpiod-test >/dev/null 2>&1
----
-v12:
-- Rebase onto next-20260907.
-- Fix conflicts mainly with aa7e8b7ef031 ("gpio: core: fix
-  const-correctness of gpio_chip_guard").
-- Fix error unwinding in gpiochip_add_data_with_key() by initializing
-  chip_rev before device_initialize() and ensuring both references are
-  dropped on error.
-
-v11: https://lore.kernel.org/all/20260513091043.6766-4-tzungbi@kernel.org
-- Add Tested-by tag.
-- Squash
-  - https://lore.kernel.org/all/20260508105448.31799-5-tzungbi@kernel.org
-  - https://lore.kernel.org/all/20260508105448.31799-6-tzungbi@kernel.org
-  - https://lore.kernel.org/all/20260508105448.31799-7-tzungbi@kernel.org
-  - https://lore.kernel.org/all/20260508105448.31799-8-tzungbi@kernel.org
-
-v10: https://lore.kernel.org/all/20260508105448.31799-4-tzungbi@kernel.org
-- Change revocable API usages accordingly.
-
-v9: https://lore.kernel.org/all/20260427135841.96266-4-tzungbi@kernel.org
-- New to the series.
-- Use static allocated resource provider.
-- Rename "chip_rp" -> "chip_rev".
-
-v4 - v8:
-- Doesn't exist.
-
-v3: https://lore.kernel.org/all/20260213092958.864411-8-tzungbi@kernel.org
-- Change revocable API usages accordingly.
-
-v2: https://lore.kernel.org/all/20260203061059.975605-8-tzungbi@kernel.org
-- Change usages accordingly after applying
-  https://lore.kernel.org/all/20260129143733.45618-2-tzungbi@kernel.org.
-  - Add __rcu for `chip_rp`.
-  - Pass pointer of pointer to revocable_provider_revoke().
-- Rebase accordingly after applying
-  https://lore.kernel.org/all/20260203060210.972243-1-tzungbi@kernel.org.
-
-v1: https://lore.kernel.org/all/20260116081036.352286-13-tzungbi@kernel.org
----
- drivers/gpio/gpiolib-cdev.c  |  77 ++++-------
- drivers/gpio/gpiolib-sysfs.c |  31 ++---
- drivers/gpio/gpiolib.c       | 259 +++++++++++++++--------------------
- drivers/gpio/gpiolib.h       |  28 +---
- 4 files changed, 155 insertions(+), 240 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index b5da6e8566dc..dc94fd1f1002 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -22,6 +22,7 @@
- #include <linux/overflow.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/poll.h>
-+#include <linux/revocable.h>
- #include <linux/seq_file.h>
- #include <linux/spinlock.h>
- #include <linux/string.h>
-@@ -210,11 +211,9 @@ static long linehandle_ioctl(struct file *file, unsigned int cmd,
- 	DECLARE_BITMAP(vals, GPIOHANDLES_MAX);
- 	unsigned int i;
- 	int ret;
-+	struct gpio_chip *gc;
- 
--	guard(srcu)(&lh->gdev->srcu);
--
--	if (!rcu_access_pointer(lh->gdev->chip))
--		return -ENODEV;
-+	revocable_try_access_or_return(&lh->gdev->chip_rev, gc);
- 
- 	switch (cmd) {
- 	case GPIOHANDLE_GET_LINE_VALUES_IOCTL:
-@@ -1447,11 +1446,9 @@ static long linereq_ioctl(struct file *file, unsigned int cmd,
- {
- 	struct linereq *lr = file->private_data;
- 	void __user *ip = (void __user *)arg;
-+	struct gpio_chip *gc;
- 
--	guard(srcu)(&lr->gdev->srcu);
--
--	if (!rcu_access_pointer(lr->gdev->chip))
--		return -ENODEV;
-+	revocable_try_access_or_return(&lr->gdev->chip_rev, gc);
- 
- 	switch (cmd) {
- 	case GPIO_V2_LINE_GET_VALUES_IOCTL:
-@@ -1478,10 +1475,10 @@ static __poll_t linereq_poll(struct file *file,
- {
- 	struct linereq *lr = file->private_data;
- 	__poll_t events = 0;
-+	struct gpio_chip *gc;
- 
--	guard(srcu)(&lr->gdev->srcu);
--
--	if (!rcu_access_pointer(lr->gdev->chip))
-+	revocable_try_access_with(&lr->gdev->chip_rev, gc);
-+	if (!gc)
- 		return EPOLLHUP | EPOLLERR;
- 
- 	poll_wait(file, &lr->wait, wait);
-@@ -1500,11 +1497,9 @@ static ssize_t linereq_read(struct file *file, char __user *buf,
- 	struct gpio_v2_line_event le;
- 	ssize_t bytes_read = 0;
- 	int ret;
-+	struct gpio_chip *gc;
- 
--	guard(srcu)(&lr->gdev->srcu);
--
--	if (!rcu_access_pointer(lr->gdev->chip))
--		return -ENODEV;
-+	revocable_try_access_or_return(&lr->gdev->chip_rev, gc);
- 
- 	if (count < sizeof(le))
- 		return -EINVAL;
-@@ -1774,10 +1769,10 @@ static __poll_t lineevent_poll(struct file *file,
- {
- 	struct lineevent_state *le = file->private_data;
- 	__poll_t events = 0;
-+	struct gpio_chip *gc;
- 
--	guard(srcu)(&le->gdev->srcu);
--
--	if (!rcu_access_pointer(le->gdev->chip))
-+	revocable_try_access_with(&le->gdev->chip_rev, gc);
-+	if (!gc)
- 		return EPOLLHUP | EPOLLERR;
- 
- 	poll_wait(file, &le->wait, wait);
-@@ -1812,11 +1807,9 @@ static ssize_t lineevent_read(struct file *file, char __user *buf,
- 	ssize_t bytes_read = 0;
- 	ssize_t ge_size;
- 	int ret;
-+	struct gpio_chip *gc;
- 
--	guard(srcu)(&le->gdev->srcu);
--
--	if (!rcu_access_pointer(le->gdev->chip))
--		return -ENODEV;
-+	revocable_try_access_or_return(&le->gdev->chip_rev, gc);
- 
- 	/*
- 	 * When compatible system call is being used the struct gpioevent_data,
-@@ -1894,11 +1887,9 @@ static long lineevent_ioctl(struct file *file, unsigned int cmd,
- 	struct lineevent_state *le = file->private_data;
- 	void __user *ip = (void __user *)arg;
- 	struct gpiohandle_data ghd;
-+	struct gpio_chip *gc;
- 
--	guard(srcu)(&le->gdev->srcu);
--
--	if (!rcu_access_pointer(le->gdev->chip))
--		return -ENODEV;
-+	revocable_try_access_or_return(&le->gdev->chip_rev, gc);
- 
- 	/*
- 	 * We can get the value for an event line but not set it,
-@@ -2180,10 +2171,9 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
- 	u32 debounce_period_us;
- 	unsigned long dflags;
- 	const char *label;
-+	struct gpio_chip *gc;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return;
-+	revocable_try_access_or_return_void(&desc->gdev->chip_rev, gc);
- 
- 	memset(info, 0, sizeof(*info));
- 	info->offset = gpiod_hwgpio(desc);
-@@ -2216,10 +2206,10 @@ static void gpio_desc_to_lineinfo(struct gpio_desc *desc,
- 	    test_bit(GPIOD_FLAG_IS_HOGGED, &dflags) ||
- 	    test_bit(GPIOD_FLAG_EXPORT, &dflags) ||
- 	    test_bit(GPIOD_FLAG_SYSFS, &dflags) ||
--	    !gpiochip_line_is_valid(guard.gc, info->offset)) {
-+	    !gpiochip_line_is_valid(gc, info->offset)) {
- 		info->flags |= GPIO_V2_LINE_FLAG_USED;
- 	} else if (!atomic) {
--		if (!pinctrl_gpio_can_use_line(guard.gc, info->offset))
-+		if (!pinctrl_gpio_can_use_line(gc, info->offset))
- 			info->flags |= GPIO_V2_LINE_FLAG_USED;
- 	}
- 
-@@ -2400,12 +2390,10 @@ static long gpio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	struct gpio_chardev_data *cdev = file->private_data;
- 	struct gpio_device *gdev = cdev->gdev;
- 	void __user *ip = (void __user *)arg;
--
--	guard(srcu)(&gdev->srcu);
-+	struct gpio_chip *gc;
- 
- 	/* We fail any subsequent ioctl():s when the chip is gone */
--	if (!rcu_access_pointer(gdev->chip))
--		return -ENODEV;
-+	revocable_try_access_or_return(&gdev->chip_rev, gc);
- 
- 	/* Fill in the struct and pass to userspace */
- 	switch (cmd) {
-@@ -2463,12 +2451,9 @@ static void lineinfo_changed_func(struct work_struct *work)
- 		 * Pin functions are in general much more static and while it's
- 		 * not 100% bullet-proof, it's good enough for most cases.
- 		 */
--		scoped_guard(srcu, &ctx->gdev->srcu) {
--			gc = srcu_dereference(ctx->gdev->chip, &ctx->gdev->srcu);
--			if (gc &&
--			    !pinctrl_gpio_can_use_line(gc, ctx->chg.info.offset))
-+		revocable_try_access_or_skip_scoped(&ctx->gdev->chip_rev, gc)
-+			if (!pinctrl_gpio_can_use_line(gc, ctx->chg.info.offset))
- 				ctx->chg.info.flags |= GPIO_V2_LINE_FLAG_USED;
--		}
- 	}
- 
- 	ret = kfifo_in_spinlocked(&ctx->cdev->events, &ctx->chg, 1,
-@@ -2549,10 +2534,10 @@ static __poll_t lineinfo_watch_poll(struct file *file,
- {
- 	struct gpio_chardev_data *cdev = file->private_data;
- 	__poll_t events = 0;
-+	struct gpio_chip *gc;
- 
--	guard(srcu)(&cdev->gdev->srcu);
--
--	if (!rcu_access_pointer(cdev->gdev->chip))
-+	revocable_try_access_with(&cdev->gdev->chip_rev, gc);
-+	if (!gc)
- 		return EPOLLHUP | EPOLLERR;
- 
- 	poll_wait(file, &cdev->wait, pollt);
-@@ -2572,11 +2557,9 @@ static ssize_t lineinfo_watch_read(struct file *file, char __user *buf,
- 	ssize_t bytes_read = 0;
- 	int ret;
- 	size_t event_size;
-+	struct gpio_chip *gc;
- 
--	guard(srcu)(&cdev->gdev->srcu);
--
--	if (!rcu_access_pointer(cdev->gdev->chip))
--		return -ENODEV;
-+	revocable_try_access_or_return(&cdev->gdev->chip_rev, gc);
- 
- #ifndef CONFIG_GPIO_CDEV_V1
- 	event_size = sizeof(struct gpio_v2_line_info_changed);
-diff --git a/drivers/gpio/gpiolib-sysfs.c b/drivers/gpio/gpiolib-sysfs.c
-index fc06b0c2881b..c40320433ff7 100644
---- a/drivers/gpio/gpiolib-sysfs.c
-+++ b/drivers/gpio/gpiolib-sysfs.c
-@@ -10,6 +10,7 @@
- #include <linux/list.h>
- #include <linux/mutex.h>
- #include <linux/printk.h>
-+#include <linux/revocable.h>
- #include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/srcu.h>
-@@ -215,10 +216,9 @@ static int gpio_sysfs_request_irq(struct gpiod_data *data, unsigned char flags)
- 	struct gpio_desc *desc = data->desc;
- 	unsigned long irq_flags;
- 	int ret;
-+	struct gpio_chip *gc;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
- 	data->irq = gpiod_to_irq(desc);
- 	if (data->irq < 0)
-@@ -244,7 +244,7 @@ static int gpio_sysfs_request_irq(struct gpiod_data *data, unsigned char flags)
- 	 * Remove this redundant call (along with the corresponding unlock)
- 	 * when those drivers have been fixed.
- 	 */
--	ret = gpiochip_lock_as_irq(guard.gc, gpiod_hwgpio(desc));
-+	ret = gpiochip_lock_as_irq(gc, gpiod_hwgpio(desc));
- 	if (ret < 0)
- 		goto err_clr_bits;
- 
-@@ -258,7 +258,7 @@ static int gpio_sysfs_request_irq(struct gpiod_data *data, unsigned char flags)
- 	return 0;
- 
- err_unlock:
--	gpiochip_unlock_as_irq(guard.gc, gpiod_hwgpio(desc));
-+	gpiochip_unlock_as_irq(gc, gpiod_hwgpio(desc));
- err_clr_bits:
- 	clear_bit(GPIOD_FLAG_EDGE_RISING, &desc->flags);
- 	clear_bit(GPIOD_FLAG_EDGE_FALLING, &desc->flags);
-@@ -273,14 +273,13 @@ static int gpio_sysfs_request_irq(struct gpiod_data *data, unsigned char flags)
- static void gpio_sysfs_free_irq(struct gpiod_data *data)
- {
- 	struct gpio_desc *desc = data->desc;
-+	struct gpio_chip *gc;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return;
-+	revocable_try_access_or_return_void(&desc->gdev->chip_rev, gc);
- 
- 	data->irq_flags = 0;
- 	free_irq(data->irq, data);
--	gpiochip_unlock_as_irq(guard.gc, gpiod_hwgpio(desc));
-+	gpiochip_unlock_as_irq(gc, gpiod_hwgpio(desc));
- 	clear_bit(GPIOD_FLAG_EDGE_RISING, &desc->flags);
- 	clear_bit(GPIOD_FLAG_EDGE_FALLING, &desc->flags);
- }
-@@ -473,13 +472,12 @@ static DEVICE_ATTR_RO(ngpio);
- static int export_gpio_desc(struct gpio_desc *desc)
- {
- 	int offset, ret;
-+	struct gpio_chip *gc;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
- 	offset = gpiod_hwgpio(desc);
--	if (!gpiochip_line_is_valid(guard.gc, offset)) {
-+	if (!gpiochip_line_is_valid(gc, offset)) {
- 		pr_debug_ratelimited("%s: GPIO %d masked\n", __func__,
- 				     gpiod_hwgpio(desc));
- 		return -EINVAL;
-@@ -732,6 +730,7 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 	struct gpio_device *gdev;
- 	struct attribute **attrs;
- 	int status;
-+	struct gpio_chip *gc;
- 
- 	/* can't export until sysfs is available ... */
- 	if (!class_is_registered(&gpio_class)) {
-@@ -744,9 +743,7 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 		return -EINVAL;
- 	}
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
- 	if (test_and_set_bit(GPIOD_FLAG_EXPORT, &desc->flags))
- 		return -EPERM;
-@@ -769,7 +766,7 @@ int gpiod_export(struct gpio_desc *desc, bool direction_may_change)
- 
- 	desc_data->desc = desc;
- 	mutex_init(&desc_data->mutex);
--	if (guard.gc->direction_input && guard.gc->direction_output)
-+	if (gc->direction_input && gc->direction_output)
- 		desc_data->direction_can_change = direction_may_change;
- 	else
- 		desc_data->direction_can_change = false;
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 66d2325bfae8..a7d3c4d9018c 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -23,6 +23,7 @@
- #include <linux/nospec.h>
- #include <linux/of.h>
- #include <linux/pinctrl/consumer.h>
-+#include <linux/revocable.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/srcu.h>
-@@ -336,7 +337,10 @@ EXPORT_SYMBOL(gpio_device_get_label);
-  */
- struct gpio_chip *gpio_device_get_chip(struct gpio_device *gdev)
- {
--	return rcu_dereference_check(gdev->chip, 1);
-+	struct gpio_chip *gc;
-+
-+	revocable_try_access_with(&gdev->chip_rev, gc);
-+	return gc;
- }
- EXPORT_SYMBOL_GPL(gpio_device_get_chip);
- 
-@@ -426,8 +430,6 @@ static int gpiochip_get_direction(struct gpio_chip *gc, unsigned int offset)
- {
- 	int ret;
- 
--	lockdep_assert_held(&gc->gpiodev->srcu);
--
- 	if (WARN_ON(!gc->get_direction))
- 		return -EOPNOTSUPP;
- 
-@@ -455,14 +457,13 @@ int gpiod_get_direction(struct gpio_desc *desc)
- 	unsigned long flags;
- 	unsigned int offset;
- 	int ret;
-+	struct gpio_chip *gc;
- 
- 	ret = validate_desc(desc, __func__);
- 	if (ret <= 0)
- 		return -EINVAL;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
- 	offset = gpiod_hwgpio(desc);
- 	flags = READ_ONCE(desc->flags);
-@@ -475,7 +476,7 @@ int gpiod_get_direction(struct gpio_desc *desc)
- 	    test_bit(GPIOD_FLAG_IS_OUT, &flags))
- 		return 0;
- 
--	ret = gpiochip_get_direction(guard.gc, offset);
-+	ret = gpiochip_get_direction(gc, offset);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -585,9 +586,7 @@ static struct gpio_desc *gpio_name_to_desc(const char * const name)
- 
- 	list_for_each_entry_srcu(gdev, &gpio_devices, list,
- 				 srcu_read_lock_held(&gpio_devices_srcu)) {
--		guard(srcu)(&gdev->srcu);
--
--		gc = srcu_dereference(gdev->chip, &gdev->srcu);
-+		revocable_try_access_with(&gdev->chip_rev, gc);
- 		if (!gc)
- 			continue;
- 
-@@ -898,10 +897,10 @@ static void gpiodev_release(struct device *dev)
- 	synchronize_srcu(&gdev->desc_srcu);
- 	cleanup_srcu_struct(&gdev->desc_srcu);
- 
-+	revocable_put(&gdev->chip_rev);
- 	ida_free(&gpio_ida, gdev->id);
- 	kfree_const(gdev->label);
- 	kfree(gdev->descs);
--	cleanup_srcu_struct(&gdev->srcu);
- 	kfree(gdev);
- }
- 
-@@ -1084,9 +1083,7 @@ static void gpiochip_setup_devs(void)
- 
- 	list_for_each_entry_srcu(gdev, &gpio_devices, list,
- 				 srcu_read_lock_held(&gpio_devices_srcu)) {
--		guard(srcu)(&gdev->srcu);
--
--		gc = srcu_dereference(gdev->chip, &gdev->srcu);
-+		revocable_try_access_with(&gdev->chip_rev, gc);
- 		if (!gc) {
- 			dev_err(&gdev->dev, "Underlying GPIO chip is gone\n");
- 			continue;
-@@ -1189,18 +1186,17 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 		goto err_free_gdev;
- 	gdev->id = ret;
- 
--	ret = init_srcu_struct(&gdev->srcu);
-+	ret = init_srcu_struct(&gdev->desc_srcu);
- 	if (ret)
- 		goto err_free_ida;
--	rcu_assign_pointer(gdev->chip, gc);
- 
--	ret = init_srcu_struct(&gdev->desc_srcu);
-+	ret = revocable_init(&gdev->chip_rev, gc);
- 	if (ret)
--		goto err_cleanup_gdev_srcu;
-+		goto err_cleanup_desc_srcu;
- 
- 	ret = dev_set_name(&gdev->dev, GPIOCHIP_NAME "%d", gdev->id);
- 	if (ret)
--		goto err_cleanup_desc_srcu;
-+		goto err_revoke_chip_rev;
- 
- 	device_initialize(&gdev->dev);
- 	/*
-@@ -1379,13 +1375,15 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
- 		list_del_rcu(&gdev->list);
- 	synchronize_srcu(&gpio_devices_srcu);
- err_put_device:
-+	revocable_revoke(&gdev->chip_rev);
- 	gpio_device_put(gdev);
- 	goto err_print_message;
- 
-+err_revoke_chip_rev:
-+	revocable_revoke(&gdev->chip_rev);
-+	revocable_put(&gdev->chip_rev);
- err_cleanup_desc_srcu:
- 	cleanup_srcu_struct(&gdev->desc_srcu);
--err_cleanup_gdev_srcu:
--	cleanup_srcu_struct(&gdev->srcu);
- err_free_ida:
- 	ida_free(&gpio_ida, gdev->id);
- err_free_gdev:
-@@ -1422,8 +1420,7 @@ void gpiochip_remove(struct gpio_chip *gc)
- 	synchronize_srcu(&gpio_devices_srcu);
- 
- 	/* Numb the device, cancelling all outstanding operations */
--	rcu_assign_pointer(gdev->chip, NULL);
--	synchronize_srcu(&gdev->srcu);
-+	revocable_revoke(&gdev->chip_rev);
- 	gpio_device_teardown_shared(gdev);
- 	gpiochip_irqchip_remove(gc);
- 	acpi_gpiochip_remove(gc);
-@@ -1484,11 +1481,11 @@ struct gpio_device *gpio_device_find(const void *data,
- 		if (!device_is_registered(&gdev->dev))
- 			continue;
- 
--		guard(srcu)(&gdev->srcu);
--
--		gc = srcu_dereference(gdev->chip, &gdev->srcu);
-+		revocable_try_access_with(&gdev->chip_rev, gc);
-+		if (!gc)
-+			continue;
- 
--		if (gc && match(gc, data))
-+		if (match(gc, data))
- 			return gpio_device_get(gdev);
- 	}
- 
-@@ -2589,16 +2586,15 @@ int gpiod_request_commit(struct gpio_desc *desc, const char *label)
- {
- 	unsigned int offset;
- 	int ret;
-+	struct gpio_chip *gc;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
- 	if (test_and_set_bit(GPIOD_FLAG_REQUESTED, &desc->flags))
- 		return -EBUSY;
- 
- 	offset = gpiod_hwgpio(desc);
--	if (!gpiochip_line_is_valid(guard.gc, offset)) {
-+	if (!gpiochip_line_is_valid(gc, offset)) {
- 		ret = -EINVAL;
- 		goto out_clear_bit;
- 	}
-@@ -2607,15 +2603,15 @@ int gpiod_request_commit(struct gpio_desc *desc, const char *label)
- 	 * before IRQs are enabled, for non-sleeping (SOC) GPIOs.
- 	 */
- 
--	if (guard.gc->request) {
--		ret = guard.gc->request(guard.gc, offset);
-+	if (gc->request) {
-+		ret = gc->request(gc, offset);
- 		if (ret > 0)
- 			ret = -EBADE;
- 		if (ret)
- 			goto out_clear_bit;
- 	}
- 
--	if (guard.gc->get_direction)
-+	if (gc->get_direction)
- 		gpiod_get_direction(desc);
- 
- 	ret = desc_set_label(desc, label ? : "?");
-@@ -2652,16 +2648,17 @@ int gpiod_request(struct gpio_desc *desc, const char *label)
- void gpiod_free_commit(struct gpio_desc *desc)
- {
- 	unsigned long flags;
-+	struct gpio_chip *gc;
- 
- 	might_sleep();
- 
--	CLASS(gpio_chip_guard, guard)(desc);
-+	revocable_try_access_or_return_void(&desc->gdev->chip_rev, gc);
- 
- 	flags = READ_ONCE(desc->flags);
- 
--	if (guard.gc && test_bit(GPIOD_FLAG_REQUESTED, &flags)) {
--		if (guard.gc->free)
--			guard.gc->free(guard.gc, gpiod_hwgpio(desc));
-+	if (test_bit(GPIOD_FLAG_REQUESTED, &flags)) {
-+		if (gc->free)
-+			gc->free(gc, gpiod_hwgpio(desc));
- 
- 		clear_bit(GPIOD_FLAG_ACTIVE_LOW, &flags);
- 		clear_bit(GPIOD_FLAG_REQUESTED, &flags);
-@@ -2813,15 +2810,14 @@ EXPORT_SYMBOL_GPL(gpiochip_free_own_desc);
- int gpio_do_set_config(struct gpio_desc *desc, unsigned long config)
- {
- 	int ret;
-+	struct gpio_chip *gc;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
--	if (!guard.gc->set_config)
-+	if (!gc->set_config)
- 		return -ENOTSUPP;
- 
--	ret = guard.gc->set_config(guard.gc, gpiod_hwgpio(desc), config);
-+	ret = gc->set_config(gc, gpiod_hwgpio(desc), config);
- 	if (ret > 0)
- 		ret = -EBADE;
- 
-@@ -2934,8 +2930,6 @@ static int gpiochip_direction_input(struct gpio_chip *gc, unsigned int offset)
- {
- 	int ret;
- 
--	lockdep_assert_held(&gc->gpiodev->srcu);
--
- 	if (WARN_ON(!gc->direction_input))
- 		return -EOPNOTSUPP;
- 
-@@ -2951,8 +2945,6 @@ static int gpiochip_direction_output(struct gpio_chip *gc, unsigned int offset,
- {
- 	int ret;
- 
--	lockdep_assert_held(&gc->gpiodev->srcu);
--
- 	if (WARN_ON(!gc->direction_output))
- 		return -EOPNOTSUPP;
- 
-@@ -2990,17 +2982,16 @@ EXPORT_SYMBOL_GPL(gpiod_direction_input);
- int gpiod_direction_input_nonotify(struct gpio_desc *desc)
- {
- 	int ret = 0, dir;
-+	struct gpio_chip *gc;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
- 	/*
- 	 * It is legal to have no .get() and .direction_input() specified if
- 	 * the chip is output-only, but you can't specify .direction_input()
- 	 * and not support the .get() operation, that doesn't make sense.
- 	 */
--	if (!guard.gc->get && guard.gc->direction_input) {
-+	if (!gc->get && gc->direction_input) {
- 		gpiod_warn(desc,
- 			   "%s: missing get() but have direction_input()\n",
- 			   __func__);
-@@ -3013,11 +3004,10 @@ int gpiod_direction_input_nonotify(struct gpio_desc *desc)
- 	 * direction (if .get_direction() is supported) else we silently
- 	 * assume we are in input mode after this.
- 	 */
--	if (guard.gc->direction_input) {
--		ret = gpiochip_direction_input(guard.gc,
--					       gpiod_hwgpio(desc));
--	} else if (guard.gc->get_direction) {
--		dir = gpiochip_get_direction(guard.gc, gpiod_hwgpio(desc));
-+	if (gc->direction_input) {
-+		ret = gpiochip_direction_input(gc, gpiod_hwgpio(desc));
-+	} else if (gc->get_direction) {
-+		dir = gpiochip_get_direction(gc, gpiod_hwgpio(desc));
- 		if (dir < 0)
- 			return dir;
- 
-@@ -3042,8 +3032,6 @@ static int gpiochip_set(struct gpio_chip *gc, unsigned int offset, int value)
- {
- 	int ret;
- 
--	lockdep_assert_held(&gc->gpiodev->srcu);
--
- 	if (WARN_ON(unlikely(!gc->set)))
- 		return -EOPNOTSUPP;
- 
-@@ -3057,31 +3045,28 @@ static int gpiochip_set(struct gpio_chip *gc, unsigned int offset, int value)
- static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
- {
- 	int val = !!value, ret = 0, dir;
-+	struct gpio_chip *gc;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
- 	/*
- 	 * It's OK not to specify .direction_output() if the gpiochip is
- 	 * output-only, but if there is then not even a .set() operation it
- 	 * is pretty tricky to drive the output line.
- 	 */
--	if (!guard.gc->set && !guard.gc->direction_output) {
-+	if (!gc->set && !gc->direction_output) {
- 		gpiod_warn(desc,
- 			   "%s: missing set() and direction_output() operations\n",
- 			   __func__);
- 		return -EIO;
- 	}
- 
--	if (guard.gc->direction_output) {
--		ret = gpiochip_direction_output(guard.gc,
--						gpiod_hwgpio(desc), val);
-+	if (gc->direction_output) {
-+		ret = gpiochip_direction_output(gc, gpiod_hwgpio(desc), val);
- 	} else {
- 		/* Check that we are in output mode if we can */
--		if (guard.gc->get_direction) {
--			dir = gpiochip_get_direction(guard.gc,
--						     gpiod_hwgpio(desc));
-+		if (gc->get_direction) {
-+			dir = gpiochip_get_direction(gc, gpiod_hwgpio(desc));
- 			if (dir < 0)
- 				return dir;
- 
-@@ -3096,7 +3081,7 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
- 		 * If we can't actively set the direction, we are some
- 		 * output-only chip, so just drive the output as desired.
- 		 */
--		ret = gpiochip_set(guard.gc, gpiod_hwgpio(desc), val);
-+		ret = gpiochip_set(gc, gpiod_hwgpio(desc), val);
- 		if (ret)
- 			return ret;
- 	}
-@@ -3234,20 +3219,18 @@ int gpiod_direction_output_nonotify(struct gpio_desc *desc, int value)
- int gpiod_enable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags)
- {
- 	int ret;
-+	struct gpio_chip *gc;
- 
- 	VALIDATE_DESC(desc);
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
--	if (!guard.gc->en_hw_timestamp) {
-+	if (!gc->en_hw_timestamp) {
- 		gpiod_warn(desc, "%s: hw ts not supported\n", __func__);
- 		return -ENOTSUPP;
- 	}
- 
--	ret = guard.gc->en_hw_timestamp(guard.gc,
--					gpiod_hwgpio(desc), flags);
-+	ret = gc->en_hw_timestamp(gc, gpiod_hwgpio(desc), flags);
- 	if (ret)
- 		gpiod_warn(desc, "%s: hw ts request failed\n", __func__);
- 
-@@ -3267,20 +3250,18 @@ EXPORT_SYMBOL_GPL(gpiod_enable_hw_timestamp_ns);
- int gpiod_disable_hw_timestamp_ns(struct gpio_desc *desc, unsigned long flags)
- {
- 	int ret;
-+	struct gpio_chip *gc;
- 
- 	VALIDATE_DESC(desc);
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
--	if (!guard.gc->dis_hw_timestamp) {
-+	if (!gc->dis_hw_timestamp) {
- 		gpiod_warn(desc, "%s: hw ts not supported\n", __func__);
- 		return -ENOTSUPP;
- 	}
- 
--	ret = guard.gc->dis_hw_timestamp(guard.gc, gpiod_hwgpio(desc),
--					 flags);
-+	ret = gc->dis_hw_timestamp(gc, gpiod_hwgpio(desc), flags);
- 	if (ret)
- 		gpiod_warn(desc, "%s: hw ts release failed\n", __func__);
- 
-@@ -3398,8 +3379,6 @@ static int gpiochip_get(struct gpio_chip *gc, unsigned int offset)
- {
- 	int ret;
- 
--	lockdep_assert_held(&gc->gpiodev->srcu);
--
- 	/* Make sure this is called after checking for gc->get(). */
- 	ret = gc->get(gc, offset);
- 	if (ret > 1) {
-@@ -3441,13 +3420,12 @@ static int gpio_chip_get_value(struct gpio_chip *gc, const struct gpio_desc *des
- 
- static int gpiod_get_raw_value_commit(const struct gpio_desc *desc)
- {
-+	struct gpio_chip *gc;
- 	int value;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
--	value = gpio_chip_get_value(guard.gc, desc);
-+	value = gpio_chip_get_value(gc, desc);
- 	value = value < 0 ? value : !!value;
- 	trace_gpio_value(desc_to_gpio(desc), 1, value);
- 	return value;
-@@ -3456,8 +3434,6 @@ static int gpiod_get_raw_value_commit(const struct gpio_desc *desc)
- static int gpio_chip_get_multiple(struct gpio_chip *gc,
- 				  unsigned long *mask, unsigned long *bits)
- {
--	lockdep_assert_held(&gc->gpiodev->srcu);
--
- 	if (gc->get_multiple) {
- 		int ret;
- 
-@@ -3484,9 +3460,10 @@ static int gpio_chip_get_multiple(struct gpio_chip *gc,
- /* The 'other' chip must be protected with its GPIO device's SRCU. */
- static bool gpio_device_chip_cmp(struct gpio_device *gdev, struct gpio_chip *gc)
- {
--	guard(srcu)(&gdev->srcu);
-+	struct gpio_chip *chip;
- 
--	return gc == srcu_dereference(gdev->chip, &gdev->srcu);
-+	revocable_try_access_with(&gdev->chip_rev, chip);
-+	return chip ? chip == gc : false;
- }
- 
- int gpiod_get_array_value_complex(bool raw, bool can_sleep,
-@@ -3509,11 +3486,7 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 		if (!can_sleep)
- 			WARN_ON(array_info->gdev->can_sleep);
- 
--		guard(srcu)(&array_info->gdev->srcu);
--		gc = srcu_dereference(array_info->gdev->chip,
--				      &array_info->gdev->srcu);
--		if (!gc)
--			return -ENODEV;
-+		revocable_try_access_or_return(&array_info->gdev->chip_rev, gc);
- 
- 		ret = gpio_chip_get_multiple(gc, array_info->get_mask,
- 					     value_bitmap);
-@@ -3537,31 +3510,29 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 		unsigned long *mask, *bits;
- 		int first, j;
- 
--		CLASS(gpio_chip_guard, guard)(desc_array[i]);
--		if (!guard.gc)
--			return -ENODEV;
-+		revocable_try_access_or_return(&desc_array[i]->gdev->chip_rev, gc);
- 
--		if (likely(guard.gc->ngpio <= FASTPATH_NGPIO)) {
-+		if (likely(gc->ngpio <= FASTPATH_NGPIO)) {
- 			mask = fastpath_mask;
- 			bits = fastpath_bits;
- 		} else {
- 			gfp_t flags = can_sleep ? GFP_KERNEL : GFP_ATOMIC;
- 
--			mask = bitmap_alloc(guard.gc->ngpio, flags);
-+			mask = bitmap_alloc(gc->ngpio, flags);
- 			if (!mask)
- 				return -ENOMEM;
- 
--			bits = bitmap_alloc(guard.gc->ngpio, flags);
-+			bits = bitmap_alloc(gc->ngpio, flags);
- 			if (!bits) {
- 				bitmap_free(mask);
- 				return -ENOMEM;
- 			}
- 		}
- 
--		bitmap_zero(mask, guard.gc->ngpio);
-+		bitmap_zero(mask, gc->ngpio);
- 
- 		if (!can_sleep)
--			WARN_ON(guard.gc->can_sleep);
-+			WARN_ON(gc->can_sleep);
- 
- 		/* collect all inputs belonging to the same chip */
- 		first = i;
-@@ -3576,9 +3547,9 @@ int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				i = find_next_zero_bit(array_info->get_mask,
- 						       array_size, i);
- 		} while ((i < array_size) &&
--			 gpio_device_chip_cmp(desc_array[i]->gdev, guard.gc));
-+			 gpio_device_chip_cmp(desc_array[i]->gdev, gc));
- 
--		ret = gpio_chip_get_multiple(guard.gc, mask, bits);
-+		ret = gpio_chip_get_multiple(gc, mask, bits);
- 		if (ret) {
- 			if (mask != fastpath_mask)
- 				bitmap_free(mask);
-@@ -3727,15 +3698,14 @@ EXPORT_SYMBOL_GPL(gpiod_get_array_value);
- static int gpio_set_open_drain_value_commit(struct gpio_desc *desc, bool value)
- {
- 	int ret = 0, offset = gpiod_hwgpio(desc);
-+	struct gpio_chip *gc;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
- 	if (value) {
--		ret = gpiochip_direction_input(guard.gc, offset);
-+		ret = gpiochip_direction_input(gc, offset);
- 	} else {
--		ret = gpiochip_direction_output(guard.gc, offset, 0);
-+		ret = gpiochip_direction_output(gc, offset, 0);
- 		if (!ret)
- 			set_bit(GPIOD_FLAG_IS_OUT, &desc->flags);
- 	}
-@@ -3756,17 +3726,16 @@ static int gpio_set_open_drain_value_commit(struct gpio_desc *desc, bool value)
- static int gpio_set_open_source_value_commit(struct gpio_desc *desc, bool value)
- {
- 	int ret = 0, offset = gpiod_hwgpio(desc);
-+	struct gpio_chip *gc;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
- 	if (value) {
--		ret = gpiochip_direction_output(guard.gc, offset, 1);
-+		ret = gpiochip_direction_output(gc, offset, 1);
- 		if (!ret)
- 			set_bit(GPIOD_FLAG_IS_OUT, &desc->flags);
- 	} else {
--		ret = gpiochip_direction_input(guard.gc, offset);
-+		ret = gpiochip_direction_input(gc, offset);
- 	}
- 	trace_gpio_direction(desc_to_gpio(desc), !value, ret);
- 	if (ret < 0)
-@@ -3779,15 +3748,15 @@ static int gpio_set_open_source_value_commit(struct gpio_desc *desc, bool value)
- 
- static int gpiod_set_raw_value_commit(struct gpio_desc *desc, bool value)
- {
-+	struct gpio_chip *gc;
-+
- 	if (unlikely(!test_bit(GPIOD_FLAG_IS_OUT, &desc->flags)))
- 		return -EPERM;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
- 	trace_gpio_value(desc_to_gpio(desc), 0, value);
--	return gpiochip_set(guard.gc, gpiod_hwgpio(desc), value);
-+	return gpiochip_set(gc, gpiod_hwgpio(desc), value);
- }
- 
- /*
-@@ -3808,8 +3777,6 @@ static int gpiochip_set_multiple(struct gpio_chip *gc,
- 	unsigned int i;
- 	int ret = 0;
- 
--	lockdep_assert_held(&gc->gpiodev->srcu);
--
- 	if (gc->set_multiple) {
- 		ret = gc->set_multiple(gc, mask, bits);
- 		if (ret > 0)
-@@ -3854,11 +3821,7 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 				return -EPERM;
- 		}
- 
--		guard(srcu)(&array_info->gdev->srcu);
--		gc = srcu_dereference(array_info->gdev->chip,
--				      &array_info->gdev->srcu);
--		if (!gc)
--			return -ENODEV;
-+		revocable_try_access_or_return(&array_info->gdev->chip_rev, gc);
- 
- 		if (!raw && !bitmap_empty(array_info->invert_mask, array_size))
- 			bitmap_xor(value_bitmap, value_bitmap,
-@@ -3882,31 +3845,30 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 		unsigned long *mask, *bits;
- 		int count = 0;
- 
--		CLASS(gpio_chip_guard, guard)(desc_array[i]);
--		if (!guard.gc)
--			return -ENODEV;
-+		revocable_try_access_or_return(&desc_array[i]->gdev->chip_rev,
-+					       gc);
- 
--		if (likely(guard.gc->ngpio <= FASTPATH_NGPIO)) {
-+		if (likely(gc->ngpio <= FASTPATH_NGPIO)) {
- 			mask = fastpath_mask;
- 			bits = fastpath_bits;
- 		} else {
- 			gfp_t flags = can_sleep ? GFP_KERNEL : GFP_ATOMIC;
- 
--			mask = bitmap_alloc(guard.gc->ngpio, flags);
-+			mask = bitmap_alloc(gc->ngpio, flags);
- 			if (!mask)
- 				return -ENOMEM;
- 
--			bits = bitmap_alloc(guard.gc->ngpio, flags);
-+			bits = bitmap_alloc(gc->ngpio, flags);
- 			if (!bits) {
- 				bitmap_free(mask);
- 				return -ENOMEM;
- 			}
- 		}
- 
--		bitmap_zero(mask, guard.gc->ngpio);
-+		bitmap_zero(mask, gc->ngpio);
- 
- 		if (!can_sleep)
--			WARN_ON(guard.gc->can_sleep);
-+			WARN_ON(gc->can_sleep);
- 
- 		do {
- 			struct gpio_desc *desc = desc_array[i];
-@@ -3945,10 +3907,10 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
- 				i = find_next_zero_bit(array_info->set_mask,
- 						       array_size, i);
- 		} while ((i < array_size) &&
--			 gpio_device_chip_cmp(desc_array[i]->gdev, guard.gc));
-+			 gpio_device_chip_cmp(desc_array[i]->gdev, gc));
- 		/* push collected bits to outputs */
- 		if (count != 0) {
--			ret = gpiochip_set_multiple(guard.gc, mask, bits);
-+			ret = gpiochip_set_multiple(gc, mask, bits);
- 			if (ret)
- 				return ret;
- 		}
-@@ -4154,6 +4116,7 @@ EXPORT_SYMBOL_GPL(gpiod_is_shared);
-  */
- int gpiod_to_irq(const struct gpio_desc *desc)
- {
-+	struct gpio_chip *gc;
- 	int offset;
- 	int ret;
- 
-@@ -4161,13 +4124,11 @@ int gpiod_to_irq(const struct gpio_desc *desc)
- 	if (ret <= 0)
- 		return -EINVAL;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
- 	offset = gpiod_hwgpio(desc);
--	if (guard.gc->to_irq) {
--		ret = guard.gc->to_irq(guard.gc, offset);
-+	if (gc->to_irq) {
-+		ret = gc->to_irq(gc, offset);
- 		if (ret)
- 			return ret;
- 
-@@ -4175,7 +4136,7 @@ int gpiod_to_irq(const struct gpio_desc *desc)
- 		return -ENXIO;
- 	}
- #ifdef CONFIG_GPIOLIB_IRQCHIP
--	if (guard.gc->irq.chip) {
-+	if (gc->irq.chip) {
- 		/*
- 		 * Avoid race condition with other code, which tries to lookup
- 		 * an IRQ before the irqchip has been properly registered,
-@@ -5123,18 +5084,16 @@ int gpiod_hog(struct gpio_desc *desc, const char *name,
- 	struct gpio_desc *local_desc;
- 	int hwnum;
- 	int ret;
-+	struct gpio_chip *gc;
- 
--	CLASS(gpio_chip_guard, guard)(desc);
--	if (!guard.gc)
--		return -ENODEV;
-+	revocable_try_access_or_return(&desc->gdev->chip_rev, gc);
- 
- 	if (test_and_set_bit(GPIOD_FLAG_IS_HOGGED, &desc->flags))
- 		return 0;
- 
- 	hwnum = gpiod_hwgpio(desc);
- 
--	local_desc = gpiochip_request_own_desc(guard.gc, hwnum, name,
--					       lflags, dflags);
-+	local_desc = gpiochip_request_own_desc(gc, hwnum, name, lflags, dflags);
- 	if (IS_ERR(local_desc)) {
- 		clear_bit(GPIOD_FLAG_IS_HOGGED, &desc->flags);
- 		ret = PTR_ERR(local_desc);
-@@ -5505,9 +5464,7 @@ static int gpiolib_seq_show(struct seq_file *s, void *v)
- 	if (priv->newline)
- 		seq_putc(s, '\n');
- 
--	guard(srcu)(&gdev->srcu);
--
--	gc = srcu_dereference(gdev->chip, &gdev->srcu);
-+	revocable_try_access_with(&gdev->chip_rev, gc);
- 	if (!gc) {
- 		seq_printf(s, "%s: (dangling chip)\n", dev_name(&gdev->dev));
- 		return 0;
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index 650a702741df..efbff4a1cd4e 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -16,6 +16,7 @@
- #include <linux/gpio/driver.h>
- #include <linux/module.h>
- #include <linux/notifier.h>
-+#include <linux/revocable.h>
- #include <linux/spinlock.h>
- #include <linux/string.h>
- #include <linux/srcu.h>
-@@ -31,7 +32,6 @@ struct fwnode_handle;
-  * @chrdev: character device for the GPIO device
-  * @id: numerical ID number for the GPIO chip
-  * @owner: helps prevent removal of modules exporting active GPIOs
-- * @chip: pointer to the corresponding gpiochip, holding static
-  * data for this device
-  * @descs: array of ngpio descriptors.
-  * @valid_mask: If not %NULL, holds bitmask of GPIOs which are valid to be
-@@ -54,7 +54,7 @@ struct fwnode_handle;
-  *                 process context
-  * @device_notifier: used to notify character device wait queues about the GPIO
-  *                   device being unregistered
-- * @srcu: protects the pointer to the underlying GPIO chip
-+ * @chip_rev: revocable provider handle for the corresponding struct gpio_chip.
-  * @pin_ranges: range of pins served by the GPIO driver
-  *
-  * This state container holds most of the runtime variable data
-@@ -67,7 +67,6 @@ struct gpio_device {
- 	struct cdev		chrdev;
- 	int			id;
- 	struct module		*owner;
--	struct gpio_chip __rcu	*chip;
- 	struct gpio_desc	*descs;
- 	unsigned long		*valid_mask;
- 	struct srcu_struct	desc_srcu;
-@@ -81,7 +80,7 @@ struct gpio_device {
- 	rwlock_t		line_state_lock;
- 	struct workqueue_struct	*line_state_wq;
- 	struct blocking_notifier_head device_notifier;
--	struct srcu_struct	srcu;
-+	struct revocable	chip_rev;
- 
- #ifdef CONFIG_PINCTRL
- 	/*
-@@ -225,27 +224,6 @@ struct gpio_desc {
- 
- #define gpiod_not_found(desc)		(IS_ERR(desc) && PTR_ERR(desc) == -ENOENT)
- 
--struct gpio_chip_guard {
--	struct gpio_device *gdev;
--	struct gpio_chip *gc;
--	int idx;
--};
--
--DEFINE_CLASS(gpio_chip_guard,
--	     struct gpio_chip_guard,
--	     srcu_read_unlock(&_T.gdev->srcu, _T.idx),
--	     ({
--		struct gpio_chip_guard _guard;
--
--		_guard.gdev = desc->gdev;
--		_guard.idx = srcu_read_lock(&_guard.gdev->srcu);
--		_guard.gc = srcu_dereference(_guard.gdev->chip,
--					     &_guard.gdev->srcu);
--
--		_guard;
--	     }),
--	     const struct gpio_desc *desc)
--
- int gpiod_request(struct gpio_desc *desc, const char *label);
- int gpiod_request_commit(struct gpio_desc *desc, const char *label);
- void gpiod_free(struct gpio_desc *desc);
--- 
-2.53.0
+Thanks,
+Antonio
 
