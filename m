@@ -1,170 +1,218 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011011.outbound.protection.outlook.com [40.107.74.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B14854B1A4
-	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 13:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788872849; cv=none; b=iKPD30veTkNucOZKE/T1IbjQX7dTUVJzN7OR4mM5VaihNol95GABk2dEdG0fLUp20TjHMnurimUY+GCRknwlfmqgQgO3CYh3Iuk1oVCXvce196Fs/U4RlvzVxBl1bmmCcB1wi9v0KIzPKHy31xzNqpLeDBmjr6px8pTahDfET0c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788872849; c=relaxed/simple;
-	bh=zUbYzyK4H/GKh+dAUruaqSkERYasj1NCBLqNSm11zjo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HN6SIDXEiVn5gFDq1P88XtwJ/v9PJTaXIkFfi5OWa40oDP62Uo1vdKHP4amfkkb0Tn8AOmsFEpg61kNIwoIhZTpXbcY3rKxxi/LKTPOZvg61l76EdVOiq0nqt3O1OOvUIUP2dclt6jwtHaDazgVi60Oh+AvacYdPiuzQbo/pN50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mWr8nk74; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4406559CB4;
+	Tue,  8 Sep 2026 13:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788873212; cv=fail; b=oY0VY6WDRr/Lp3LJITZBtNoPH4FgaLOa9qMeQh2zvY15gtNOAbj72OjUomGv/N3fFXK9E2t5AnP3PB2atWbntn8OdiNsIXMgXpMRl6g3nWRcPGyK8GAwTLD3XasdUeP6AtUhL87yyrIKOFSX+gCSn+P3vWDvD1EHehiTI0v5xc4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788873212; c=relaxed/simple;
+	bh=uzgImhQKY0YfMNnY9MRd8UE/opwzEzBWUmINAb/hte4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Nbmjw68li/7Hif4HMO4FUfFmiErp0LCxjGiZ02fj74Zs+/qoQfZ+ln4DkMiYHr2n4+jM2MSah4IPXNab2vjX307Y2YUFKWR942hsAQR2P12s9MMweOsDAYXkfBG/vA2wvfnDnlZYkCCpBXawVocIJCv8cPeAyhJR/cGrcC+VfVM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=hilaCJsu; arc=fail smtp.client-ip=40.107.74.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWr8nk74"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-85c9a79590aso4377496b3a.1
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 06:07:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788872848; x=1789477648; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=Y7dULp2jgzMlC/BI0kPlFE1r8grwAUi6RVwGhJW3Oj4=;
-        b=mWr8nk745nK2mQ+eSWRPpAWtgJHdGv2wbSUWGqQnQQjhHBFHP+k2RNxvRD7yyZ3tQc
-         +PSUyMO/yhi0wZYB+Xta+vvWVzhlZHwzYzdziKIRcHvFWFOf3AKaJyu3bPtEJCcxD7wi
-         S31ynXvhYsOVAFLmWMyY6cYIFF6aHGv6ms2mEkexKAS7jni9QYxU3oQBuRRycXApHgjj
-         giZnBjMXTO5JcrOoVLTDLkO0LvQ3LY+8hxAx5yJittFivdSgGK2f4GFUCN9YXOfchXbN
-         y4gvq8RSeYpEFfYCI73IBpWto5D8GF3837pBAYAVX7ybs8bSDfEkTJ/awmGM1MIXZM7C
-         ggkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788872848; x=1789477648;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=Y7dULp2jgzMlC/BI0kPlFE1r8grwAUi6RVwGhJW3Oj4=;
-        b=dxjcU6qXAjAbsDuxeEq+xwUuHx1mBZ7n8JzO8NG3J+tFIXsK+DJs/IHkmSEnrnkuzd
-         JkThac63BLdBiiJ+H4HQ9h9UlEeplHpt42BrKz+YCs2XfuoWxmHXDMfcmgZv3xnFvJ7R
-         O0MIXCTGG0UGBwBFlhvgcDy8oFM8q3hqtLkPOd++pg+0uixlFRV4Y2VYHf7Ehqd+g6LK
-         P2dshD6KYgBbsIAdFZvDGnKW1c1YkWGYpQWG2dZW5TuG4gYVepWCrcx76E/kFuVuAygf
-         lL7P+qQplqbbzy4GKYafQ9rcTPCsXDQU1zTlDieX8mnSIOtC2XlpmnwUTPLdjhdrOB0W
-         6GVQ==
-X-Gm-Message-State: AFuF++lAkT+AiKe3a59htE3hdT0UpvW5lbXwiiRapCz6SbwlKPAHCd5B
-	gt8dQdhWhe2wBx2OA0qPzdwhGVUFTHce9Nz9kAOWCv3acDHWFH7x+76D/uLBAg==
-X-Gm-Gg: AYBFou3OpUwqN01KNLSxbOO9Oxlnza72WT0jJlevmE53rjWzPK5MZ+Aq2i/s5jcHe1L
-	hZDWRab0ZsSGhvbRX9gh/pbNbM1z7wRC0hI40Y+DORbBTl+Kyz34bBZ7PrHtvlCfUGPQfdDyXIF
-	Tc/Ufo4hiUcWBN6B/+/RgQwxvGZqz/zhGKqFrcxA2/4QglxuPkJ1JPIqR1q5D+Z86MOS8OpyL9P
-	DMTsRLrSlRHEgFQ9/V6n+efrlO3GqNOLVTjYo/q/3p/WukRg9ZFu6++HvFHPeWYLiuWm6DlQwKD
-	1DVERt3EPTUwMeNDSL1XZUSPJDRG4bkYO2JB93LqBTOF5iCcKWKzgbZD/cjMm4t9sPZOHMF2S3Y
-	8qLq/ESXPFWdCSONf+YniZK2R9jnUQFhxhvrKgyNq5T/Ax06e5l8sXhttnPV/YS4NqkmyPOvScV
-	ghUMAdmFrULMtQVWjFsRZLomfiAqp1PefezbM+iOv93ql29P/ZZjLbvHJqDENYnzzIQ8hm350UP
-	MjYZs9higNqKe56bvOatAICRrIBbQ==
-X-Received: by 2002:a05:6a00:4fcf:b0:84f:b01d:3693 with SMTP id d2e1a72fcca58-86169b6c458mr36739170b3a.15.1788872847662;
-        Tue, 08 Sep 2026 06:07:27 -0700 (PDT)
-Received: from [10.10.15.228] (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8629b0cc638sm4434273b3a.57.2026.09.08.06.07.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2026 06:07:26 -0700 (PDT)
-From: Potin Lai <potin.lai.pt@gmail.com>
-Date: Tue, 08 Sep 2026 21:05:07 +0800
-Subject: [libgpiod v1.6.5][PATCH] core: gracefully handle disappearing
- chips during iteration
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="hilaCJsu"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=upTmGUMnTwytdwgXDuCmOEioqfoLto9M++hqlnBQYdOtHX7+SxVeg7SGGtiv6xv/FvNpioiyeEfAGM6xe9LRoa7l1pKzm9stB/viNhk/uavwg/68jqPMrqVquhdwzJwFmloaIS/MU3Kzf70DffWiicdJY7S7npcNgjGBSdQZe7d0eDCeNyBwWWZB2UTYUNGyP/eiLCFiqebU7HrwlPm0wCy+fXAw41252X0Wyzu9Hx2prO8WqCfDTUg1HH2mzERMaD4+6T1WhjtLNY1ZqNw+it3uk7fLZA0RbICE4hqUnDnnHILxSveBUfeiS1xt4wXCn2Xg6nM3yBAw31xZ+zLHFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bxPwIWZxysW2N0sv00HrZF3vGysduBjd7bpdIdJklR4=;
+ b=R/bfPNQ5/RZ4P1PXiYnJC99BoBagTW+lt9D8xCKwCIIBgwgUjJhHa/GjW7eL/pIwVVkZCfhwvxwe05YXAJAdP7bsUM/4TZfa7JfTI8uXVmgsKvOZRl/qg95qx7NMEy8AmsbE2GJPa0i59v/cLklvcJGZFJ+QtVR5WdQtE4LAOrpCeySXJLHVXG9pD8srAaB31vBbZKr/ua7t/oB+zD5LjpwBXQfgJsKBbfB8KA1na+iHK/Gt3SVLmulim7NPG7wFdWE3tLE2+VtvYEH5tKbEjDEUNN5ZV/roO35WMu9ECFv1EYSL7Rup8SA6AdrgZa82+1JTm48qk2TNs4/JAouwXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bxPwIWZxysW2N0sv00HrZF3vGysduBjd7bpdIdJklR4=;
+ b=hilaCJsu6Bsc4WbLasHgF/xK9V9IOQrWnNlXmzwIBik0YVSGGl8TJL5bsp51ecPQlJaba+x+FCzSHLfE1lCq+++7z0ZbWxoGovbGQPX/T+le7o/2g19mIS0yoka2JFK9L/Yg0GwCv8phpO2I0JAB0ZVgUEPuWIOxCWrqzitEXmo=
+Received: from TYRPR01MB15619.jpnprd01.prod.outlook.com
+ (2603:1096:405:29b::10) by TYCPR01MB11899.jpnprd01.prod.outlook.com
+ (2603:1096:400:38c::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.15; Tue, 8 Sep
+ 2026 13:13:22 +0000
+Received: from TYRPR01MB15619.jpnprd01.prod.outlook.com
+ ([fe80::a68f:5c9:9de8:4fa4]) by TYRPR01MB15619.jpnprd01.prod.outlook.com
+ ([fe80::a68f:5c9:9de8:4fa4%3]) with mapi id 15.21.0406.005; Tue, 8 Sep 2026
+ 13:13:22 +0000
+From: Cosmin-Gabriel Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: geert <geert@linux-m68k.org>
+CC: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@kernel.org" <stable@kernel.org>
+Subject: RE: [PATCH 4/7] pinctrl: renesas: rzt2h: fix reading pin value in IRQ
+ function
+Thread-Topic: [PATCH 4/7] pinctrl: renesas: rzt2h: fix reading pin value in
+ IRQ function
+Thread-Index: AQHdLnphGKO1zzMM4EueHC4thk/rjrbEk5mAgAAlxuA=
+Date: Tue, 8 Sep 2026 13:13:22 +0000
+Message-ID:
+ <TYRPR01MB1561923FCDFBC721F326FEE6985B12@TYRPR01MB15619.jpnprd01.prod.outlook.com>
+References: <20260817185700.322370-1-cosmin-gabriel.tanislav.xa@renesas.com>
+ <20260817185700.322370-5-cosmin-gabriel.tanislav.xa@renesas.com>
+ <CAMuHMdUHAXzRiODL9hphVTjqKOHNVUe8cOygXESWF6_r7Ou2yw@mail.gmail.com>
+In-Reply-To:
+ <CAMuHMdUHAXzRiODL9hphVTjqKOHNVUe8cOygXESWF6_r7Ou2yw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYRPR01MB15619:EE_|TYCPR01MB11899:EE_
+x-ms-office365-filtering-correlation-id: b5e3468b-3412-4518-d905-08df0daaf559
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|23010399003|366016|1800799024|376014|10067099003|3023799007|22082099003|18002099003|11063799006|56012099006|4143699003|38070700021;
+x-microsoft-antispam-message-info:
+ CGpHcMxa/kSsdGUf1gs1HU+Z61XEc0DFVEi2Luc/l6d+SbHx3yXmDWZ+YddJaTJaZ3mWJ1BQZcXMXBXSIjTH7lAbukcn5oNU1ZlO+esNG6KpU28TOFMWnTyfIzheLF4DqV3MSXwXAWPZAZtkLU2AY6ismTLRP8ZkaKcCrFY5DGxvHCXXuBnssDCwC9XtVdWmla96lR5vig/zB74AJep3XjWxDX79yYqo/rDkMC9OAmUr6BDt+D7/asPyvKo1XBUEn6Uo8QTnAuBP1PQqEhspu7MkZxnOYcxbQUIysC58z0dA0D9U2GNjYzDxCAOaLGSL1kL7vsPM/l5Orne4irq75HBIKT28tZ++egdW/Wc2N+1iBMTqAOknl93aOKTWM35TkTeSmFOpOxLJu+b1ZtLkfWnY86PQCuqelJB+PnGFF0YbQ2n4GxeQKYnEyhlRBn89iE/XmVQoVQ72JeD0MskV5GRYTDtK+D2eLAJx6FEFaHrwe6nfeugggY3Sq4WXxq08qHttfrBfNmPc5AmF/2XIQvU/SGhuG015LiNNZFE7PaAqZex7wTf7VmQfys24ubY630mfNppawNe5z6EqGzcEltXmf5gFd+AIslBtHKYWZQrrImo+rvIHFO3R/Q5zoaa+aL6aCkNF51iEBeaamM+QA/SePqkm9eK90OFNPucQIFUbkb90xJrcBSsfCJyNfe4xzasjeHorzMvTmVsa9Aa652oogPVn6PY1EukQ3yq0LQ8=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYRPR01MB15619.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(10067099003)(3023799007)(22082099003)(18002099003)(11063799006)(56012099006)(4143699003)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?egzHlbTlcTFAP27k8Ii9ywwlx9qiWsABaXic0X2IM1YPc9myJCzqEAcwlIG0?=
+ =?us-ascii?Q?H2CmCdL2sTGUj/hTTmP/tzOSagUTdwhfsCqnIuCRTP6mWcMEjXLwa04ZMH6j?=
+ =?us-ascii?Q?RPiOBfuoCh0E746hQXTCwYQaNb7D1DGtsHQ/Hsz/wiTA07nkQWCTjkqLpCZO?=
+ =?us-ascii?Q?lfvPYRRGqaooQZRUe53fKKGGFpnVWdH3GqB3vVocCWznWkge0CF/LmolTire?=
+ =?us-ascii?Q?H4fbBFnJgSSEWn0SLw/lIRW+3iQ55NPRTPYFbxJukQzWeKN7ZX5u47AHrrti?=
+ =?us-ascii?Q?jyK9f9W8tZwjq6KMLt/TGaRm/DQ9dE9IrakWV4MBql235mCAXuDugkXY8oCJ?=
+ =?us-ascii?Q?J44RODgyxOzD8G/Q9K9X6f8qLxoR9LSaDZE+Cxkm2p7pSF2Jinj93zr/Hgd7?=
+ =?us-ascii?Q?WLrk38M+Bmi5TJQU/WWK2H87mjI1G2G3HbP59MyuI3iNQTtU/G5qGWgvUpQv?=
+ =?us-ascii?Q?URM8BDoZjPJOftNWdCqrD7xLMSsNi7jO6A/Aii7wQG+mE2QJWeIFeDt+/qfg?=
+ =?us-ascii?Q?Jd4TWNT1xP2q0Mft6kf3gvSsTGkY9TQ9s40/lKg7XzE76Dk6C8f9QjNh48LN?=
+ =?us-ascii?Q?aOgODiOiltWGbqpxx6OlFuCGXDZa9qhMsvOwM88cqXw+cIoHfTbXOTTaeUK0?=
+ =?us-ascii?Q?hecVFo3K97FAmq4Rh5a15+6/bqd5CBej1uVnRcS2cUTUCiULXM2bcJA27sgB?=
+ =?us-ascii?Q?/7mOc10Y4k3Tet3YYaW3C3ATGLNPQDi4MLfijiZz3XFV98z8TpL4gTmzXhro?=
+ =?us-ascii?Q?rXxskY1bkn+pr2zi4afjiY30I5/+BiVYrq7kfbGc6tQU2m5wo0+DVtSy283x?=
+ =?us-ascii?Q?BOjSFLUYFiMN/093xSh2ZQQNlWNF4eaJeDxXmfU0wjNNhCoHiLExafd4hKn2?=
+ =?us-ascii?Q?lzBJgUYvHjjIjUuBhPqoXEhcGTkc4hHm6syaVObFx1wiEY4X4xyiTFXN5Z/H?=
+ =?us-ascii?Q?pnZD92IQ+s1qb8WJjqGMdKNqTDxIVQijFmlhZdNY6luxyHXBUnfCQlh2CGBO?=
+ =?us-ascii?Q?V5Cr9JEdDx3EpSBYm5LisMhrLGQeHOiBWQT2AHjG5bTy65XDrbgkkrjKt7OC?=
+ =?us-ascii?Q?qASh5YowN5T5z9I/UMAZiwRE/Vvxh0wBWbb+5LGcsLbnPR8iDaIO5HjYgcwL?=
+ =?us-ascii?Q?kWUn3IRT3xAilr1JJTxTQoe9agGvIxcORcu0tVauO33YpC4L0eJ4YzNTRJn0?=
+ =?us-ascii?Q?lHy3xX9jOOvbuRev25npf7BjY2YVZzJZK9k1uIvO96iIO5C7H8oFtVC+Wy3V?=
+ =?us-ascii?Q?RBTntTzTqSy5tOLD+8wC9HoFnvWQcouW3w3rPQci1DJS34jhUO/HmvRDRNTP?=
+ =?us-ascii?Q?iXTskvO93IaatZF8C0a+dSuNX+Jrz8BC/t0Y4zUfboM86CNi0+vz/s9L7syY?=
+ =?us-ascii?Q?qbLclbwb/mZ8onUZcc05TzmMfp6Rug/vLnS8QCAZDntxriFrj6IQjXuGp/rW?=
+ =?us-ascii?Q?/cGsOOFXbgaEQOqlD5fg6bBh232eMrW7KvncezomiOWXdqzqWDoQDqTud3DT?=
+ =?us-ascii?Q?l/qdv4511XwCZxj796s9bZXVVSS5seaRj5V3X8t//t40PuooMXmMb4o3/zqI?=
+ =?us-ascii?Q?+WdAFKx0lEohCrUylVCLid2yBnu8P04l6ukXqoByd2PS+GfptmJH6lLk13yt?=
+ =?us-ascii?Q?E5DxzRV3IHz9nss2lyE/rx2EWNyMnqN61Rb4OVLb6doU3l/Am/btuJHrNyQd?=
+ =?us-ascii?Q?PBgHz/E85ePPrcuu1CHKIz8juHZX63uvI0lhDSHnerK8Fy9sIChlpUHBtfgZ?=
+ =?us-ascii?Q?nYhoDo/mlm8faGeUAgc345MMuVYABUVALywFlkexCDFKAmD+iRFK?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260908-gpiofind-error-enodev-v1-1-c7756aab9568@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAIIoGoC/yXMQQ6CMBBA0as0s3ZIIUrBqxAWtp3iGNOSqTYmh
- LtbdPkW/2+QSZgyXNUGQoUzp1jRnhS4+y0uhOyrodNdr0c94LJyChw9kkgSpJg8FTRktDsP1tA
- YoLarUODP7zvNf+e3fZB7HbPpyfb4eFXapm8uM+z7F2RfPIiKAAAA
-X-Change-ID: 20260908-gpiofind-error-enodev-7e70c48b7e9f
-To: linux-gpio@vger.kernel.org
-Cc: Cosmo Chou <cosmo.chou@quantatw.com>, 
- Peter Yin <Peter.Yin@quantatw.com>, Potin Lai <potin.lai@quantatw.com>, 
- Potin Lai <potin.lai.pt@gmail.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788872845; l=2232;
- i=potin.lai.pt@gmail.com; s=20260522; h=from:subject:message-id;
- bh=zUbYzyK4H/GKh+dAUruaqSkERYasj1NCBLqNSm11zjo=;
- b=zP5JUbQcbQBUCfUCl3d8/6i+w3w+HGNtiPaCHCKjGnZh5Zf9wFa/NAmph9p0ffREd2yY9YxSS
- hAO7BleQTFQBG2KtXJ6eurJ6X0mol+LIjuBPdjy2ZkHBR8e2/NQge8x
-X-Developer-Key: i=potin.lai.pt@gmail.com; a=ed25519;
- pk=j3/nMxzz1ZPpp1revghyZ8IqOnwi6RWfuxXN2XrNMRE=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYRPR01MB15619.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b5e3468b-3412-4518-d905-08df0daaf559
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Sep 2026 13:13:22.1276
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 264pLrw79xW7PgisNjBNTnbl72lpWGxtdgVPaSV3Uutqta1SZ1clegkjrFb0KpnxqaoraPLr07PFRyqhOHGzhMkCAm0cUAoexP8kwJsdga7rCaRsB7d8wmoj4Uv11Bkr
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11899
 
-When hotpluggable GPIO controllers (like USB devices) are dynamically
-added or removed, a race condition can occur. A chip's device node might
-be present when iterating through /dev, but the chip could disappear by
-the time we try to open it or query its lines.
+> From: Geert Uytterhoeven <geert@linux-m68k.org>
+> Sent: Tuesday, September 8, 2026 12:56 PM
+>=20
+> Hi Cosmin,
+>=20
+> On Mon, 17 Aug 2026 at 20:58, Cosmin Tanislav
+> <cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> > rzt2h_gpio_get() only reports a level for pins in input or output mode
+> > and returns -EINVAL otherwise. When a pin is requested as an interrupt
+> > it is switched to IRQ function and its I/O mode is set to Hi-Z, so its
+> > value can no longer be read.
+> >
+> > gpiolib calls gpiod_get_value_cansleep() to determine the edge's
+> > direction when a line is watched with GPIO_V2_LINE_FLAG_EDGE_BOTH.
+> > Non-zero values are translated to a rising edge, zero to a falling edge=
+.
+> >
+> > Since gpiod_get_value_cansleep() ends up calling rzt2h_gpio_get() which
+> > returns -EINVAL when the pin is in IRQ function, every edge is reported
+> > as rising.
+> >
+> > When using the IRQ function, the input buffers are enabled and the PINm
+> > registers reflect the live state of the input.
+> >
+> > Report the input level even when the pin is used as an IRQ.
+> >
+> > Cc: stable@kernel.org
+> > Fixes: 829dde3369a9 ("pinctrl: renesas: rzt2h: Add GPIO IRQ chip to han=
+dle interrupts")
+> > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+>=20
+> Thanks for your patch!
+>=20
+> > --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+> > +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
+> > @@ -171,6 +171,23 @@ static int rzt2h_validate_pin(struct rzt2h_pinctrl=
+ *pctrl, unsigned int offset)
+> >         return (pincfg & BIT(pin)) ? 0 : -EINVAL;
+> >  }
+> >
+> > +static bool rzt2h_pin_mode_is_peripheral(struct rzt2h_pinctrl *pctrl, =
+u8 port, u8 bit)
+> > +{
+> > +       return rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(bit);
+> > +}
+> > +
+> > +static u8 rzt2h_pin_read_pfc(struct rzt2h_pinctrl *pctrl, u8 port, u8 =
+pin)
+> > +{
+> > +       u64 reg64 =3D rzt2h_pinctrl_readq(pctrl, port, PFC(port));
+> > +
+> > +       return field_get(PFC_PIN_MASK(pin), reg64);
+> > +}
+> > +
+> > +static bool rzt2h_pin_read_input(struct rzt2h_pinctrl *pctrl, u8 port,=
+ u8 bit)
+> > +{
+> > +       return rzt2h_pinctrl_readb(pctrl, port, PIN(port)) & BIT(bit);
+> > +}
+> > +
+> >  static u8 rzt2h_pin_read_pm(struct rzt2h_pinctrl *pctrl, u8 port, u8 p=
+in)
+> >  {
+> >         u16 reg =3D rzt2h_pinctrl_readw(pctrl, port, PM(port));
+> > @@ -847,6 +864,13 @@ static int rzt2h_gpio_get(struct gpio_chip *chip, =
+unsigned int offset)
+> >         u8 bit =3D RZT2H_PIN_ID_TO_PIN(offset);
+> >         u16 reg;
+> >
+> > +       if (rzt2h_pin_mode_is_peripheral(pctrl, port, bit)) {
+> > +               if (rzt2h_pin_read_pfc(pctrl, port, bit) =3D=3D PFC_FUN=
+C_INTERRUPT)
+>=20
+> Section 17.4.5 ("PINm : Port m Input Register (m =3D 00 to 35)") states:
+>=20
+>    "The PINm register is valid not only for general I/O mode (PMCn =3D 0b=
+)
+>     but also when peripheral function is selected (PMCn =3D 1b) and it wo=
+rks
+>     as input."
+>=20
+> this is not limited to PFC_FUNC_INTERRUPT, so I think you can drop
+> this check?
+>=20
 
-Previously, this caused tools like 'gpiofind' to incorrectly abort with
-a 'No such device' (ENODEV) error if any chip on the system vanished
-during the search.
-
-Fix this by ignoring ENODEV errors when searching for a line
-(in gpiod_line_find()) and by silently skipping chips that fail to open
-during iteration (in gpiod_chip_iter_new()).
-
-Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
----
- lib/helpers.c |  2 +-
- lib/iter.c    | 16 ++++------------
- 2 files changed, 5 insertions(+), 13 deletions(-)
-
-diff --git a/lib/helpers.c b/lib/helpers.c
-index 479f370..6d1836a 100644
---- a/lib/helpers.c
-+++ b/lib/helpers.c
-@@ -423,7 +423,7 @@ struct gpiod_line *gpiod_line_find(const char *name)
- 			return line;
- 		}
- 
--		if (errno != ENOENT)
-+		if (errno != ENOENT && errno != ENODEV)
- 			goto out;
- 	}
- 
-diff --git a/lib/iter.c b/lib/iter.c
-index bfd2852..7f5ad9a 100644
---- a/lib/iter.c
-+++ b/lib/iter.c
-@@ -51,7 +51,7 @@ struct gpiod_chip_iter *gpiod_chip_iter_new(void)
- 	if (!iter)
- 		goto err_free_dirs;
- 
--	iter->num_chips = num_chips;
-+	iter->num_chips = 0;
- 	iter->offset = 0;
- 
- 	if (num_chips == 0) {
-@@ -64,23 +64,15 @@ struct gpiod_chip_iter *gpiod_chip_iter_new(void)
- 		goto err_free_iter;
- 
- 	for (i = 0; i < num_chips; i++) {
--		iter->chips[i] = gpiod_chip_open_by_name(dirs[i]->d_name);
--		if (!iter->chips[i])
--			goto err_close_chips;
-+		iter->chips[iter->num_chips] = gpiod_chip_open_by_name(dirs[i]->d_name);
-+		if (iter->chips[iter->num_chips])
-+			iter->num_chips++;
- 	}
- 
- 	free_dirs(dirs, num_chips);
- 
- 	return iter;
- 
--err_close_chips:
--	for (i = 0; i < num_chips; i++) {
--		if (iter->chips[i])
--			gpiod_chip_close(iter->chips[i]);
--	}
--
--	free(iter->chips);
--
- err_free_iter:
- 	free(iter);
- 
-
----
-base-commit: f1af4b189fb4074b08eecbc50cf33306299d6a51
-change-id: 20260908-gpiofind-error-enodev-7e70c48b7e9f
-
-Best regards,
---  
-Potin Lai <potin.lai.pt@gmail.com>
-
+Ack.
