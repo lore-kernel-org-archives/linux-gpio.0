@@ -1,142 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404984A43F0
-	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 17:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E62C59C977;
+	Tue,  8 Sep 2026 18:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788888827; cv=none; b=ZXaZBPQeaWEurIcKpYOChcX96pzYnwcGybswHpBQx1CIpgM9hzRhTzkzWnZe4MVSLpcl75QzwBLQU5Y2ccic17KeRbEPcN+gCmRyNC44YW3QxKN6iOJIJ1XcVAIRFPq67ccjPiHGihtMACLg+Yzzu2+Fduu6QHIP98UEVxTGjyI=
+	t=1788893978; cv=none; b=lGo2NOxPW5dxXiMj20mgj3nhTGCbt5XqzwMQz3uA7OOPZNEccR/fsay5gCgIUgf7mOmz7UbGY5ujjoSlHYZwTZAk/1eANZimy3YWeLle3sYPfCpR9wUXCc0urD49RYxpi2t8oqskKfGYSbgKYaE4ggSBi/pZ+vl4cJcp6wM94i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788888827; c=relaxed/simple;
-	bh=gmIGR0/AjmJLqjqIA+b+biNqhfd5J7r7shYDGeksk7M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jmaImTREvxsaL4aHflt7u9NlMx/CDnxJ3ndr3BzUUGw82+hQiwKjzOOG6b5VYJ41PwKz5HfJS8pWCDX4vz+auvw3kGSLJhEipXEW2AmECjVSBDHOW5w0Xsu9ufKmz7bfVuV5+j0culB2isBNfPV8zQMlydh2CuIc2bqwbFLVMhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oYUkJxyp; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788893978; c=relaxed/simple;
+	bh=fWURKfC0YnKtnpIW+sCXZWGoSCh2jCIDL2blX3O/UH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kDx8XExUNUUWb5Ytwphiz1oakgIhXen7uu0F17cDghvp4g6V8BSg3oA5m4Q7ql4ot6gVb2n2I0XbQeKFGNMADHfI+wp6YS0+bSgeNNGRGSuk+2ThLbXWixkCmoe+jx5KgSVwOl44udVAuhSBm25gFOrsq02Vpkrntq4lritf4mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U4oLHunT; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oYUkJxyp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BBE41F01558
-	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 17:33:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788888823;
-	bh=gmIGR0/AjmJLqjqIA+b+biNqhfd5J7r7shYDGeksk7M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=oYUkJxypWqLI8uJLzQPHxhQ71Ks/IyFSnoobdkhybHg/VFrZcScUaUzcU5iGJu3Yg
-	 SVr1zNYq9lzWcvDiEUcX1atpf0jaVT6xPToEVsGnnnsYQD5x0GXAUtiUe+VTGJC6+U
-	 lVLE5LREy7a0wkg5nqv6jsrAjqnRn4VO+GvC4P1WC1OuR3Y0iPEm0L25Nk/xBf6b9z
-	 uj+EZWNfmBY9zPHxZZzMY+PZaGLcUap6z6HgDOpRkikwj/4SgkOIg8RzL7eKjY5zR2
-	 8qBXig3e3zoeZ5+dV8aYrX3pQiy5jGox/+C0yb3jT+lcAU0xZn8D99wJLkp8fHxUtM
-	 u1lhsOfW8IKpA==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5b6036e9c70so3774738e87.1
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 10:33:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxbcAjh6GmWKjZvbqmC2Hxn7stDl41ARHtjn9zKCPfq1C5imrCFQijZR8ZGyoO2okC7S58B7VNCvKSL@vger.kernel.org
-X-Gm-Message-State: AFuF++krdUO0VkkQU72P6g9Ovx1+Vzke4gqJytlNLIfxCD0AXILlL3m4
-	VFXK43Z5jH/QF8R6qgOipUskzYww5G3xtmCpbu6uANIMm/ay95onKBfSPKthYNJS64jH64yLpXd
-	fi665YY7SWAZuK4YRD//wO32C/IuymPY=
-X-Received: by 2002:a05:6512:2241:b0:5b5:fae5:b241 with SMTP id
- 2adb3069b0e04-5b616f22e66mr5771186e87.14.1788888821627; Tue, 08 Sep 2026
- 10:33:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U4oLHunT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788893977; x=1820429977;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fWURKfC0YnKtnpIW+sCXZWGoSCh2jCIDL2blX3O/UH0=;
+  b=U4oLHunTydgLRgJHVBXZmgl5ZG6vkOuK/0EpvxOT8kIiSR69RvcamciC
+   tuMmg+3l9rvoHqnfHMvCML74QzQ4aIy7zPr+zLHvXU5jhQqI+a8keDAh8
+   W/D2S7GSUVm/uX59g4o+A2PDiIf+47aApL5yoPs/cAkKRe8Ha0HYROKlm
+   macinbxQa4OVzWDaghI2ITkBWzj1R3ITc7Qk2tD+3AWInOD3uh1zP4X6Q
+   EcoAjKBTkdB1x2ksiUFKBZCEg7Q5LOTl5zMzTamAa3KINzBVbyMZsT2KQ
+   pMicR0/HTCo6dNGgMP3JVXbG70g+eHj1INXOV2z0ABNZwr8kCUFztPSAC
+   Q==;
+X-CSE-ConnectionGUID: uxSB/k+vRxenodLJzu9MTg==
+X-CSE-MsgGUID: m+zERQXcRLmCbdoCYjB+sA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="100828040"
+X-IronPort-AV: E=Sophos;i="6.25,269,1779174000"; 
+   d="scan'208";a="100828040"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2026 11:59:36 -0700
+X-CSE-ConnectionGUID: SAxxF9giQsaP/2WeIAZ85A==
+X-CSE-MsgGUID: cktt8h4WT8SZl+P+UCCZbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,269,1779174000"; 
+   d="scan'208";a="266773711"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.47.46])
+  by fmviesa006.fm.intel.com with ESMTP; 08 Sep 2026 11:59:33 -0700
+Date: Wed, 9 Sep 2026 02:59:32 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Heiko Schocher <hs@nabladev.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-fpga@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+	Xu Yilun <yilun.xu@intel.com>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4] driver: fpga: xilinx-selectmap: add csi and rdwr
+ support
+Message-ID: <aqBbFGExUpS0k0yE@yilunxu-OptiPlex-7050>
+References: <20260810062105.299808-1-hs@nabladev.com>
+ <ap2Yx8oACWfBKOep@yilunxu-OptiPlex-7050>
+ <6a489d2b-b5d1-0455-793f-f4100fd3b3d1@nabladev.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260908152808.3928630-1-arnd@kernel.org> <20260908152808.3928630-6-arnd@kernel.org>
-In-Reply-To: <20260908152808.3928630-6-arnd@kernel.org>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 8 Sep 2026 19:33:29 +0200
-X-Gmail-Original-Message-ID: <CAD++jLka1EcE_pgbQ+k-==7ZBy4t=UzMRoSpftToUvqSWikfOA@mail.gmail.com>
-X-Gm-Features: AcwNN1W4V_RHIjZXrzOUvAHXUKzBi-tBnO9Xu5bnMkKM7BxKaEWn60o-CzXXb5s
-Message-ID: <CAD++jLka1EcE_pgbQ+k-==7ZBy4t=UzMRoSpftToUvqSWikfOA@mail.gmail.com>
-Subject: Re: [PATCH 05/13] ARM: orion/dove/mv78xx0: remove all board files
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Russell King <linux@armlinux.org.uk>, Drew Fustini <fustini@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>, Stefan Agner <stefan@agner.ch>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
-	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Andrew Lunn <andrew@lunn.ch>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
-	Gregory Clement <gregory.clement@bootlin.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
-	Kristoffer Ericson <kristoffer.ericson@gmail.com>, Ethan Nelson-Moore <enelsonmoore@gmail.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Alexander Sverdlin <alexander.sverdlin@siemens.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Karl Mehltretter <kmehltretter@gmail.com>, 
-	"David Hildenbrand (Arm)" <david@kernel.org>, Nicolas Pitre <npitre@baylibre.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-omap@vger.kernel.org, 
-	Alexander Clouter <alex@digriz.org.uk>, "Jeremy J. Peper" <jeremy@jeremypeper.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, Ulf Hansson <ulfh@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Vinod Koul <vkoul@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Guenter Roeck <linux@roeck-us.net>, Mark Brown <broonie@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Thomas Weissschuh <thomas.weissschuh@linutronix.de>, 
-	linux-ide@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-rtc@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6a489d2b-b5d1-0455-793f-f4100fd3b3d1@nabladev.com>
 
-On Tue, Sep 8, 2026 at 5:29=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wrot=
-e:
+> I would change v5 commit message to:
+> """
+>     The driver requests the optional CSI_B and RDWR_B GPIOs with
+>     GPIOD_OUT_HIGH and never touches them again. That flag carries a
+>     logical value, so both signals end up asserted on every board,
+>     whatever polarity the device tree states.
 
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The 'orion' platform is the predecessor to what linux now calls the
-> 'mvebu' line of Marvell SoCs, and originally covered orion5x,
-> mv78xx0, kirkwood, dove and a few others that do not have any
-> upstream support at the moment.
->
-> Only a few board files remain here, these are the ones left
-> in 2022 board file purge because they had some level of support
-> in Debian or OpenWRT, mostly for commercial NAS or router boxes.
-> This distro support is now gone, and nobody has converted the
-> board files to devicetree, though the orion5x and dove platforms
-> also come with devicetree support for some other machines.
->
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Gregory Clement <gregory.clement@bootlin.com>
-> Cc: Alexander Clouter <alex@digriz.org.uk>
-> Cc: Jeremy J. Peper <jeremy@jeremypeper.com>
-> Cc: Damien Le Moal <dlemoal@kernel.org>
-> Cc: Niklas Cassel <cassel@kernel.org>
-> Cc: Ulf Hansson <ulfh@kernel.org>
-> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: "Krzysztof Wilczy=C5=84ski" <kwilczynski@kernel.org>
-> Cc: Manivannan Sadhasivam <mani@kernel.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Vinod Koul <vkoul@kernel.org>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Daniel Lezcano <daniel.lezcano@kernel.org>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Linus Walleij <linusw@kernel.org>
-> Cc: Bartosz Golaszewski <brgl@kernel.org>
-> Cc: Thomas Weissschuh <thomas.weissschuh@linutronix.de>
-> Cc: linux-ide@vger.kernel.org
-> Cc: linux-mmc@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-phy@lists.infradead.org
-> Cc: linux-rtc@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> Cc: linux-watchdog@vger.kernel.org
-> Cc: linux-sound@vger.kernel.org
-> Cc: linux-gpio@vger.kernel.org
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Yeah, that's clear now.
 
-Acked-by: Linus Walleij <linusw@kernel.org>
+> 
+>     Keeping them asserted works as long as a single FPGA owns the
+>     SelectMAP port. That FPGA is the only device on the bus, so it may
+>     stay selected, and the driver never reads from it, so the port may
+>     stay in write mode.
 
-Yours,
-Linus Walleij
+I think keeping them asserted is a bad idea even for single FPGA, isn't
+it?
+
+> 
+>     It stops working as soon as two FPGAs share one SelectMAP data bus,
+>     which is the case CSI_B exists for. Both devices are selected all
+>     the time, so every byte written for one of them is clocked into the
+>     other as well, and neither can be configured on its own.
+> 
+>     CSI_B (Chip Select) selects the target FPGA. Assert it before the
+>     configuration data is transferred and deassert it afterwards, so that
+>     only the intended device sees the bus cycles.
+
+What if we re-program the 2 FPGAs at the same time? Is there still
+chance the 2 CS lines are all asserted? Can they be correctly
+re-programmed in this case?
+
+I mean I think this patch does fix the problem of "always assertion",
+which is good to me. But the changelog seems stop me, it talks all about
+2 FPGAs sharing the same bus, which seems more complex than just
+manipulating the CS.
+
+Thanks,
+Yilun
+
+> 
+>     RDWR_B (Read/Write) selects the transfer direction on the SelectMAP
+>     interface. Assert it for the write cycles that carry the bitstream and
+>     deassert it afterwards. UG570 wants RDWR_B settled before CSI_B is
+>     asserted, a change while the device is selected aborts the
+>     configuration on the next CCLK.
+> 
+>     Both are requested with GPIOD_OUT_LOW now, the logical 0 that leaves
+>     them deasserted, and their descriptors are kept in the driver private
+>     data.
+> 
+>     A board with one FPGA keeps working. SelectMAP allows the bitstream to
+>     be loaded non-continuously, with CSI_B deasserted between the data
+>     transfers, and a deselected device ignores the bus.
+> """
