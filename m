@@ -1,199 +1,114 @@
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13E539FCCD
-	for <linux-gpio@vger.kernel.org>; Tue,  8 Sep 2026 07:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1733A59A2;
+	Tue,  8 Sep 2026 07:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788853771; cv=none; b=ulK6Krgt6SQOQCtXzE2Z5x2H4cHzawTiBVvfkALztb454/vyMGbBwqJTWFjqRRpnFC4vj5WBGOQnmBaJ/3VuXB6uslLYAxeQPC8RYPuDljkmS/AMa+Z+iY/nehnMc7mlcnRBYVG3vuDsFA/Dzxei7RJm7mlYRW8YJqj9Kg4WsZU=
+	t=1788854346; cv=none; b=OD+yYSBbJCXdG/oqanz4PAOflX01j6iJHBP9XKFg/IWylRcLx5l1yWfbXYd406C7jEHr6SEZ2XjN/RCaM7wo96wt7+igiaHU/tbclaL1mjP4OJhanSDh1Pvlormautzf8anz2r3Sk3nONx2H0PgHGj9wagBYF4NsnKoA3CQoOvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788853771; c=relaxed/simple;
-	bh=w/a+1msjGoAq5RLfsEPT89FQwvNcgfDXVDAMK+BH8PQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YgrY1amcT8MMHMykHWplb5p2G9iQQWj0oJg+mnOyQP14q5pkpHSn7D3M3wtEpLRDu1+0LNyGT+TxVDSGetU2DrjhQfEqzAwJc9Lgcy3CjXmfxtpCal9lk0jL8w1vpY6f7FAgpY2j+VaZ1TvIys3Lylg6i5m/FVfIgyv1ko9okzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5c66eefc868so4326258e0c.3
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 00:49:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788853769; x=1789458569;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=jvWdv2bTFNskO/RaDsnSTq+0xZGM/I73gHnrYZO6XAc=;
-        b=shrpVd7Ee+ApI/ZP2mSkobpuX/ih6cr7UtuF8EwlQ77JEO3h4YYzDHVWpUXn7qBTjO
-         bjFcvh65g2izMr5eiUOOur8oxv8l2wJ2p5Lu5ZMzfn6Af1TMAWFU4tlAi4i6UrRJKrgF
-         S6pb4u1rErLvmlHf9f0I1nqIk879R9mLHa6VIMdA4fOt0rW2NxfZQOKYQC8TlVV+PYKO
-         U0px3uDwTtnUGKehUTOfIKBUvlfKBf7iBR8DvFOsFX9mIBcTNAxjIoXwbUKMQFRvAQmy
-         Dhi+KMVl59ELgQ6DWoKmCey4TUpVeR1Q1wldygtDtoYRLycbMeWqczK/W4K+djJ0L4UG
-         JAKg==
-X-Gm-Message-State: AFuF++nvDOUKCa1qBIRJoT44qrqXclnMl21AM7Ta8sefCj1lDlzmdoW7
-	kwmhYeaYqsPF7HGzKBAuFCzadw2GlXHFhI/tvMYpjAo3u6Xkm8x96HB1J+Y0Ua36
-X-Gm-Gg: AYBFou1J0XMDrBKDM+MnWqY7ammhS6BJPskKJCLXak63mPK14ZLxplx/1OyHenxv3DX
-	kPEeNcjKZOU5jL3cMyVB0zdNYJXFMAnF82v2EN23kqTuznx0jNbMKHZHKlbIrzFelVipV0G/HWO
-	5t5Bh4q02PRcbzoGe52FuqAPjyPPM/bgTfLyjA8lF755GECy2IK7VzKcUGFoKwT/5BaeAljs4sh
-	DdlQTl+ww33fETs/JIKWIR8zSMH/cYKMISZpqbTPVH2GvCCA+E/ZlsMnLE5cpIHbYsuepxh3uYv
-	4NyYLtiR5JwgBwITgr17M18IKBCaBv5Qcy5mD9mliLshXTcYRzyPq135auFh3UdvCVfuZfolwYw
-	JCBel/asEjlWXN80JsphyBMjRgzZJjTdfERRlMKXEEx3VqkdCjCSqTVRB2WcGG4nOIrYZLZVx1J
-	+fjOUBrQ3bk95jOucInBt7B9v77qYcY6+jMUJoHVf6ZxeyHI83IfkgO2Q2SuDlKBdHANHwAWPZu
-	frze+nKvM+URfR06Y5CX4IDiA==
-X-Received: by 2002:a05:6122:e189:b0:5bb:eebe:7ffd with SMTP id 71dfb90a1353d-5c7ed846723mr14906857e0c.8.1788853768636;
-        Tue, 08 Sep 2026 00:49:28 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c7ec24254fsm9186223e0c.10.2026.09.08.00.49.28
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2026 00:49:28 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-779d18ef706so3067242137.2
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 00:49:28 -0700 (PDT)
-X-Received: by 2002:a05:6102:1481:b0:784:b9ec:9144 with SMTP id
- ada2fe7eead31-78a4a9c3a45mr12132706137.8.1788853767856; Tue, 08 Sep 2026
- 00:49:27 -0700 (PDT)
+	s=arc-20240116; t=1788854346; c=relaxed/simple;
+	bh=eTPH2gRiVebDTV6aKVpwEgVBwge2OxSkNnddqJrGw4Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dtJan9HowHkvgTzleYYACVij8JqpFjlkvTeGHubB80WHNq72x6kwnwwbPlIcu2MjCAvaoanGme6b1F7yAb4lnIB28L5lVtPId1mswYKBGCMFECJ4r996EHkgX4/Z0qsBW7lMndrRLuSntnGTB4D2/zb2oPlwCwWVBBaOEOfI/kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Pva6ijvn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Pva6ijvn"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6886M92S1521684;
+	Tue, 8 Sep 2026 07:59:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=sB7QvgSPFsSgcjLwMoUSMi1kjCgw5FLJoFZ
+	OuoxL674=; b=Pva6ijvnjFE2xGb6X6VcId+Mbeun3+qxg0ZsNl/J7IZsAd/r3WY
+	aA1phAzXxvCyEJk09D+ne9gTeM065+whIiiLev3qHkjreMcmY5g4tUJgJaeLo2Jy
+	0pFmVgmmOX+ZMLDWswv1AzgM5ReyreHwmiVrARBdQcsZTN7UjFS10kuH+7rZQDDO
+	mBeLLDUS55dUhGvnC9GjQa6WMaFeV+Y0UPn1Q75r80KMuhuMkLhT5wY/gTmnTFA8
+	XEAIorUnv0gK080yYVfCs7OarMrlV+lzqxaEi3Rn7iTy/0L+FMuoBwjrDjYvNS+s
+	lxTUUTCwolTnaaodJ5/ZcQNiLKIPBTgWFjg==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gj077jnjj-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 08 Sep 2026 07:59:02 +0000 (GMT)
+Received: from pps.filterd (apblrppmta01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.11/8.18.1.11) with ESMTP id 6887ww2Y1372042;
+	Tue, 8 Sep 2026 07:58:58 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-ks5-hyd.qualcomm.com [10.147.255.18])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 6887wwYr1372036
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 08 Sep 2026 07:58:58 +0000 (GMT)
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 4763723)
+	id AB2C8667; Tue,  8 Sep 2026 13:28:56 +0530 (+0530)
+From: Karthik S <karthik.s@oss.qualcomm.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Karthik S <karthik.s@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] pinctrl: qcom: Add QCS615 LPASS LPI pinctrl support
+Date: Tue,  8 Sep 2026 13:28:52 +0530
+Message-Id: <20260908075854.3015560-1-karthik.s@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260704151521.211335-1-marek.vasut+renesas@mailbox.org>
- <20260704151521.211335-2-marek.vasut+renesas@mailbox.org> <CAMuHMdUapaP-8kkWT5cXtEO1h58aAzzm34XqO_mcrgbVSyXEwg@mail.gmail.com>
- <b516bf77-fb15-41f2-80ac-b80c621fedd1@mailbox.org> <CAMuHMdWb2Qk=heWhwFh4TsEggHOmzTd4Lj-vG6kXjRVMDDUG2A@mail.gmail.com>
- <43eccc85-fca3-4c69-9114-b45ab5e1b487@mailbox.org>
-In-Reply-To: <43eccc85-fca3-4c69-9114-b45ab5e1b487@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 Sep 2026 09:49:16 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVWm1JzmXx1++dhvHbnBbVqQnVVAANfmH5Y24bhJU7pXQ@mail.gmail.com>
-X-Gm-Features: AcwNN1V14nvpkxMTS1YJ9lEZFP5Wka8HrashHqoyW3yt83iI5VS79ckl8xfvtwY
-Message-ID: <CAMuHMdVWm1JzmXx1++dhvHbnBbVqQnVVAANfmH5Y24bhJU7pXQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: rcar: Add R-Car X5H (R8A78000) support
-To: Marek Vasut <marek.vasut@mailbox.org>
-Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA4MDA4MiBTYWx0ZWRfX+PcgXWB8fUa8
+ CFTFrhuDwU7L6+qv6eRrwQE4ExHmEBQmNkje2zwRgvuftSJFxodpxWDKTesdGwGmzny1MPtvfLS
+ xnuCFJOPTYiYiqvhtAmLulbT3XfSYqfqsZzCaWBFC7UgI+1kw2Thp/2vwkxO/D4TGGcw+aCDFBv
+ QJXU+SunDh7cH9L+HcqAlUwLTDZ1Gjgumik2kgXg5UpzcFfts/yeULswuJlzBN7drGlHa1BMw5a
+ zklGURANla2pUqZnm5sVTNgdqjiDWiqe5kh7wAQTV6nLSFfeReHrh+XbjVkqda5EhKUC7IhODbm
+ /v/VMt+Ja4Z093oum851zs3YZVwx7PtWrQ4AUjPYy4htRt0FYAXwepSpjirnDx2L9ltLE1D0FFg
+ /yl3Rcnm9wKvk+gQHE4z2EUZYmVMgcX0xhDaAJhRP0MaNhFThmIMrW/RNdjvoKHN1+XhbfTq8oF
+ 5cYYyeOFYZxI7UMr1CQ==
+X-Authority-Analysis: v=2.4 cv=Xbe5Co55 c=1 sm=1 tr=0 ts=6a9fc046 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=yx91gb_oNiZeI1HMLzn7:22 a=PqG24b8GdM_TS5kaKxcA:9
+X-Proofpoint-ORIG-GUID: nnr6COARgPmiKIGrbte3NZT_ETCMiyBd
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA4MDA4MiBTYWx0ZWRfX5xgvUf+crKv3
+ Xjx/8tS2SvpAoFp64nmy7k0ClWdNIWn9VsHcovZPp8OpBgY8X2FrkUp2T1sFNV6xJpcmiLjS/Vv
+ E97pUxtzU4a5YW16knuG+lBx/aWaDU0=
+X-Proofpoint-GUID: nnr6COARgPmiKIGrbte3NZT_ETCMiyBd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-08_01,2026-09-07_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 impostorscore=0 lowpriorityscore=0 clxscore=1011 adultscore=0
+ suspectscore=0 priorityscore=1501 spamscore=0 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609080082
 
-Hi Marek,
+This series adds LPASS (Low Power Audio SubSystem) LPI (Low Power
+Island) pinctrl support for Qualcomm QCS615 SoC.
 
-On Mon, 7 Sept 2026 at 18:37, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> On 9/7/26 9:53 AM, Geert Uytterhoeven wrote:
-> > On Sat, 5 Sept 2026 at 23:57, Marek Vasut <marek.vasut@mailbox.org> wrote:
-> >> On 9/4/26 1:15 PM, Geert Uytterhoeven wrote:
-> >>>> +++ b/drivers/gpio/gpio-rcar.c
-> >>>
-> >>>> @@ -65,14 +66,59 @@ struct gpio_rcar_priv {
-> >>>>
-> >>>>    #define RCAR_MAX_GPIO_PER_BANK         32
-> >>>>
-> >>>> +static inline int gpio_rcar_remap_offset(struct gpio_rcar_priv *p, int *offs)
-> >>>
-> >>> IMO passing a pointer to offs complicates the code.  Perhaps pass offs
-> >>> by value, and return the adjusted offset or a negative error code?
-> >>
-> >> I want to avoid that, since if I only return error value, I can then do
-> >> simple:
-> >>
-> >> ret = gpio_rcar_remap_offset(...);
-> >> if (ret)
-> >>     return ret;
-> >>
-> >> in gpio_rcar_read() and gpio_rcar_write(), which are the only two call
-> >> sites of this function.
-> >
-> > gpio_rcar_read() and gpio_rcar_write() do not return error codes.
-> > I was thinking of
-> >
-> >      offs = gpio_rcar_remap_offset(p, offs);
-> >      if (offs < 0)
-> >              return 0;
-> >
-> > which is almost the same, but avoids passing offs by address.
->
-> Is there any benefit to it, compared to keeping the value and return
-> code separate ?
+The LPASS LPI TLMM is a dedicated pin controller for audio pins
+on QCS615 which supports 32 GPIOs (gpio0-gpio31) with mux functions
+for i2s1, dmic1, dmic2 and spkr_i2s_mclk_a.
 
-Naive me (I am not a compiler writer) thinks the compiler may have a
-harder time to optimize the code when addresses are involved.
+Karthik S (2):
+  dt-bindings: pinctrl: qcom: Add QCS615 LPASS LPI pinctrl bindings
+  pinctrl: qcom: Add qcs615 lpass lpi pinctrl driver
 
-> >>>> +{
-> >>>> +       /* R-Car Gen4 and older do not need any offset remap. */
-> >>>> +       if (!p->info.has_layout_gen5)
-> >>>> +               return 0;
-> >>>> +
-> >>>> +       /*
-> >>>> +        * R-Car Gen5 register layout is slightly different and the offsets
-> >>>> +        * that have to be added to or subtracted from each register offset
-> >>>> +        * can be divided into five groups, listed below.
-> >>>> +        */
-> >>>> +       switch (*offs) {
-> >>>> +       case IOINTSEL...OUTDT:
-> >>>> +               return 0;
-> >>>> +       case INDT:
-> >>>> +               *offs += 0x10;
-> >>>> +               return 0;
-> >>>> +       case INTDT...EDGLEVEL:
-> >>>> +               fallthrough;
-> >>>> +       case BOTHEDGE:
-> >>>> +               *offs += 0x70;
-> >>>> +               return 0;
-> >>>> +       case OUTDTSEL:
-> >>>> +               *offs -= 0x34;
-> >>>> +               return 0;
-> >>>> +       case INEN:
-> >>>> +               *offs -= 0x38;
-> >>>> +               return 0;
-> >>>> +       default:
-> >>>> +               /*
-> >>>> +                * This here must never be reached, if this is reached, that
-> >>>> +                * means there is a catastrophic failure in the driver. Skip
-> >>>> +                * any IO read/write to prevent further damage.
-> >>>> +                */
-> >>>> +               WARN_ON(1);
-> >>>
-> >>> A build-time failure would be better.  I tried BUILD_BUG() instead,
-> >>> but unfortunately gcc is not smart enough to notice this case is
-> >>> never reached.  __always_inline doesn't seem to help either.
-> >> I had one more idea -- how about we convert the driver to mmio regmap,
-> >> use opaque register numbers throughout the driver to identify registers
-> >> to the regmap (maybe not a great idea), and then implement .read/.write
-> >> callbacks in the regmap_config which instead of doing plain
-> >> readl()/writel() for register IO would instead do this remapping ?
-> >> Regmap could validate that the opaque register numbers are only the
-> >> expected register numbers and reject all the others. Maybe the opaque
-> >> register numbers could instead of Gen4 register offsets. What do you think ?
-> >
-> > That's similar (but more complex?) than the array look-up
-> > in drivers/tty/serial/sh-sci.c I pointed to before.
-> > drivers/i2c/busses/i2c-riic.c uses the same method.
->
-> Those do not use regmap (drivers/base/regmap/), do they ?
-
-No they don't.
-
-> > I.e. just convert the existing register defines into an enum, and use
-> > that to index a table with the family-specific offsets?
->
-> Are we back to the table look up discussion instead of remap function ?
-
-Yes, I think that's the simplest and best-performing solution: one
-extra table look-up (array indexing) in gpio_rcar_{read,write}(),
-compared to an extra function call to gpio_rcar_remap_offset().
-
-As a bonus, storing -1 for a non-existing register in the look-up table
-would let us get rid of the four existing .has_<reg> booleans, e.g.
-
-   -        if (p->info.has_both_edge_trigger)
-   +        if (p->info.regs[BOTHEDGE] >= 0)
-                    gpio_rcar_modify_bit(p, BOTHEDGE, hwirq, both);
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../qcom,qcs615-lpass-lpi-pinctrl.yaml        | 114 +++++++++++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/pinctrl/qcom/Kconfig                  |  10 +
+ drivers/pinctrl/qcom/Makefile                 |   1 +
+ .../pinctrl/qcom/pinctrl-qcs615-lpass-lpi.c   | 185 ++++++++++++++++++
+ 5 files changed, 311 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,qcs615-lpass-lpi-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-qcs615-lpass-lpi.c
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.34.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
