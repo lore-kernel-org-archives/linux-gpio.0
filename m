@@ -1,84 +1,131 @@
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5801648E0CE;
-	Tue,  8 Sep 2026 19:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9573753CA99;
+	Tue,  8 Sep 2026 19:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788896635; cv=none; b=TgYKG53ezT4kt0DxsTNBn7PA0BgrlnYOtiKCoPbTKKYeS5FzLYeXAL/quKMaV57QUkqDNIdhBBoveXiWlMkmKnG/CPE2dNxM1LwqDEWjYeIT5tHRq/WxJ05y9D8X7xBV7l2XYRPl8i+N8sAcVCJRq2f6smUoDvLGH40D6luu67M=
+	t=1788897465; cv=none; b=pszODh/BAXoPuJIHx2CqIGvENhS09kChbx1ZM9yWX2qSZgV6YzVOSIqsxmbrcjRsV/Z27a5RWZHD1KGsIFRYxFQqPmh/UT5OrsU9alGoCUi9N0zdjvNkAgmrR+e7hp11NdJm+B2z2tggIppZcQkW1Kj4qvsGAPBvvwnwWVN/K7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788896635; c=relaxed/simple;
-	bh=H3s2pNS68dE4ODa/jgKCyihtM5QsbUQNcNLq0fMzT1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fm5Sw906saCizesvCKIW8dw7E0OLljXm5AY4FYSph5z3fOoeA44CAIFagTz4ZJd9dLmNqb7KUXMs2YU2XEFCqQ+Nr4RVpvsR81ndSBAbmDDfvUxUC//IO/2YEx3AYMbEvOsNkozkj8D0t5+o4wl4VXUT+g6HkzKhnzlEJCOVHmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=iLstf5vl; arc=none smtp.client-ip=178.251.229.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
+	s=arc-20240116; t=1788897465; c=relaxed/simple;
+	bh=HjixmwXu4iSZKqj2xB3hyy4C7kd326lWN0LTBgY00ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UYyQkqbrBEE5FlmGJBmQZVm1QcMRRukWeomMMIsHzMSRjhaylb35soE4ndOLbFD32gfPzOqMfeA+qbQFDJLcAJjjIKM/ioXvs5P/J6b+yyrWeJoNCFdnS8a9E3WZdMc2p5rRhsXa97MiwUxmHulTaFVzvwYMg4LVRkc3E0jBi3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ibk2TJ6A; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="iLstf5vl"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 655C71018AA;
-	Tue, 08 Sep 2026 21:43:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1788896625;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=jxI79bcrUCAFJsDq8avkEkefGVZa5/cLpguSSOm81mo=;
-	b=iLstf5vl2QHgwbl1SXbP3HTDvslti1e7t5hkcQWzdBS4xk2nUtTGvzVYbXTGH3Fbn/ju9f
-	6gJkZy5jDK6IGDf1EB4TW3wTO8qW8OKSerkNZAUVHDvbdyZEuTb4r/jbMALuJftfMSlAOY
-	aE5CVG8WIoB7rQ+wWz9H0XLL4mEWSkdeciLqpjPVJA7dciw/H7s3DUtiaHgNBdZzAhxJ0d
-	lY2wHTiHMnYJ3m/gNw1DnmpmNTre2jgTvs/s9/JX5kUtFjmpcRm0H5PFubT2nLA4acPF8E
-	8NKRjRwY4DNzDajnIZSxOGtdqpftugjBRra/yFMOMAkFRJaWaFcqZm03/O75Fg==
-Message-ID: <4980c91a-fa3e-4508-b929-a4b1af1ead41@nabladev.com>
-Date: Tue, 8 Sep 2026 21:43:42 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ibk2TJ6A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E5D61F00A3A;
+	Tue,  8 Sep 2026 19:57:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788897464;
+	bh=XxjewhJfqVpvWK6lHZafiM2N3F3gmrUHu3yO9NDfuVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Ibk2TJ6AbCxCsNWmuVZMcTtt6wy6QTlt3liWJWEP4L3QXPPMIE+9dFMtvkZpghZCs
+	 bLmZu9TI38oA/GHd6FJYaIlPILyWBpnZcXTDkEWjOCZzh79A40Pgo/9hJkBSjfw+8x
+	 AVDSFoiga0rQqQpdV9qZP9zAy5XmoSQ+jbD/4OXPJGiMl4Pcak2EUdYKJ3W3k8P5eQ
+	 rN4GTGN2/EqohEFv2erx0mSwRWxx8/NXzWsI55FZ1cmdd39FcKJioimQJNSSOKpcV7
+	 MDVJB55itJxTCSzoN4kXDgWYfzccyudPWHjZJlVZTxfxROFeDma5YK23FSFR2MU1AR
+	 m6w8l/BtTNXtw==
+Date: Tue, 8 Sep 2026 20:57:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
+Subject: Re: [PATCH v7 03/21] dt-bindings: pinctrl: Add
+ starfive,jhb100-sys0-pinctrl
+Message-ID: <20260908-annually-catfight-39e3a1543274@spud>
+References: <20260831113514.66382-1-changhuang.liang@starfivetech.com>
+ <20260831113514.66382-4-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] arm64: dts: st: Add support for DH electronics
- STM32MP23xx/STM32MP25xx DHCOS SoM and Breakout Board and DHSBC
-From: Marek Vasut <marex@nabladev.com>
-To: linux-arm-kernel@lists.infradead.org,
- Alexandre TORGUE <alexandre.torgue@st.com>, Arnd Bergmann <arnd@arndb.de>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, kernel@dh-electronics.com,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20260711210131.236025-1-marex@nabladev.com>
- <d20ef29a-c27b-484f-98ba-77c85ec2b587@nabladev.com>
-Content-Language: en-US
-In-Reply-To: <d20ef29a-c27b-484f-98ba-77c85ec2b587@nabladev.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aKnMEl9aGObXvGYC"
+Content-Disposition: inline
+In-Reply-To: <20260831113514.66382-4-changhuang.liang@starfivetech.com>
 
-Hello one more time,
+--aKnMEl9aGObXvGYC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 8/25/26 7:56 PM, Marek Vasut wrote:
-> Hello Alexandre,
-> 
-> On 7/11/26 10:59 PM, Marek Vasut wrote:
->> This stm32mp25xx-dhcos-bb board is a stack of DHCOS SoM based on
->> STM32MP25xx SoC (1200MHz / crypto capabilities) populated on SoM
->> Breakout Board, the stm32mp255c-dhcos-dhsbc is the SoM populated
->> on DHSBC carrier board. The stm32mp23xx-dhcos-bb is a stack with
->> STM32MP23xx SoC.
->>
->> The SoM contains the following peripherals:
->> - STPMIC (power delivery)
->> - 4GiB LPDDR4 memory
->> - eMMC and SDIO WiFi module
-> Have you had a chance to look at this series ?
+On Mon, Aug 31, 2026 at 04:34:56AM -0700, Changhuang Liang wrote:
+> diff --git a/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h b/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
+> new file mode 100644
+> index 000000000000..6d8f5516a178
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+> +/*
+> + * Copyright (C) 2022 StarFive Technology Co., Ltd.
+> + *
+> + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
+> + */
+> +
+> +#ifndef __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
+> +#define __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
+> +
+> +/* sys0 pad numbers */
+> +#define PADNUM_SYS0_GPIO_A0				0
+> +#define PADNUM_SYS0_GPIO_A1				1
+> +#define PADNUM_SYS0_GPIO_A2				2
+> +#define PADNUM_SYS0_GPIO_A3				3
 
-I would like to be sure this series does not slip through the cracks.
+Krzysztof's point [1] about these still stands. Pad indices aren't bindings.
+Sure, your driver and your dts both might want to use these but that
+doesn't make them a binding. For that to be the case, they need to
+effectively be made up numbers - like how clocks are often listed with
+numbers from 0 into the dozens or hundreds, when that may or may not
+correlate with actual bits in registers, e.g. indices 0-31 in a clock
+binding might be in register 1 and then 32-63 are in register 2. There's
+no need for a binding here to assign meanings to numbers, because the
+meanings are assigned by the hardware itself - index 0 for SYS0 *is* A0,
+because that's how the hardware is designed.
 
-Thank you for your help !
+Were the numbers to run continuously, so that we had
 
--- 
-Best regards,
-Marek Vasut
+#define JHB100_PADNUM_A0	0
+#define JHB100_PADNUM_A1	1
+#define JHB100_PADNUM_A2	2
+#define JHB100_PADNUM_A3	3
+#define JHB100_PADNUM_A4	4
+and so on down to
+#define JHB100_PADNUM__D0	1234
+
+then it would be a binding, because we're assigning a meaning to 1234
+that's not something determined by the hardware.
+
+FWIW, I'm happy to have the unchanged starfive,jhb100-pinctrl.h sit in
+arch/riscv/boot/dts/starfive, because the defines are helpful - but as
+things stand I think Krzysztof is right.
+
+Cheers,
+Conor.
+
+1 - https://lore.kernel.org/all/ZQ4PR01MB1202123864865439817E1549F2AA2@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn/
+
+--aKnMEl9aGObXvGYC
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaqBosgAKCRB4tDGHoIJi
+0vUdAQDJk08iDuO2c5CqqTqe3Bbt2Jm+La/0mzM38iV/S+1uSQEAsuTsnqzv5q51
+I8rlyu+04nDW1cZlwp1+dPzjMdDQAAY=
+=GoqV
+-----END PGP SIGNATURE-----
+
+--aKnMEl9aGObXvGYC--
