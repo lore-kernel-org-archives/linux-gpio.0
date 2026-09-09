@@ -1,318 +1,151 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAE43090F5
-	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 06:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA423054E4;
+	Wed,  9 Sep 2026 06:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788936199; cv=none; b=ZJrc/kkZ57qyWxV0n95YKFA8LUKkmfhXy8ziOIOxNPTEzxVQqS53SnEj4TrUslsIsp3W65OFAJ1cqi7pBila7WjYtDOoLPkIOIbgm3xTGS2SjXcckwx0cqIFX8MfBep7IVgSfo1wEX2kDZYmdF6D+oE6J4Kng7cX9U+Ky7brlJo=
+	t=1788936233; cv=none; b=l16aDQzDnIUqmFtFDnDd1aN2/V8Wl34eN0iXuy7U8X6ZLD/UCmdh+hgF0zmWQG8Z7kCHReycfnLJ+Hx+f+E69O3wxkLH+KePatxhcX7Vs2PbA0xlgEXR+cPT68eMQg7FeGIRLfaGyBkCs/ODXKAgaRCbVBu0Wz83WtuI9jo86lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788936199; c=relaxed/simple;
-	bh=JACPY1/VqHX7t/8PTGyxIGJ14SnlTCkBQMSf/3ExT9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K8rCdrOf+12uVINhGg3IIXCu10kp2DAqFLnKUpgF7+/h2xFmygkMLm2c0hbSwQHkWO+NumMKwbhGtufcGj2xdcpykb3SA8OKm4WtvspvUodD3EKZ0jnwfiSAkAuV59R/KLR/k4CrHJYDWk2O5eKR/K3zqGthUanG/NwGlCNPPUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AwrWLGVP; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=REDtxELx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1788936233; c=relaxed/simple;
+	bh=G7gdKpKFflD/3CuK4Pe16Yge2b33nk4BgG6x4bwQVnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tucTKz0dPh2ARoh25/XU6dHtblr4kqYfsQW4ntH3Sr+dPYXY4V/e1c1KsOa36fyfF/J44vaKros7QkGpUy0BTGzAvci8B8E3xcjOmaMOdg58yfBZkCCOCMy2tBM3oVB+FAElsZd5qHT69ibxsPKdh7ynXcRzldnQOD61b+T6kXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gvqbeL4X; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AwrWLGVP";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="REDtxELx"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6896ZHgr3817343
-	for <linux-gpio@vger.kernel.org>; Wed, 9 Sep 2026 06:43:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0gSncg/waZOalwozhN7BaaqXJIs1BmymYB48sb8DdCY=; b=AwrWLGVP94aUuV3K
-	Hdare4o4nEt5w3hZb7m0fFUhfo8DINdyHhP9UvThc2mu1L+0VljvKVP6hqw92ubx
-	pyI/YyWWSm8IKhGDQmHnfQSppP7H7KMD0eJwzWaGD7AhRYt1ehn9CYRbe9qo+Fjz
-	R9NInUrtLnrHrQtx80Mjwun+LeIyQQpAsBRkQPt1F/qfJWLMq+saFbja4lSZ0f3T
-	gkx9Xtu00KRlC4/Gk+vXPkFLkeoewwC/3uV1u+cexSj2frXS4QK7JJzXm4X4WZdN
-	5qoeFcF6SSqAfqU4WTkcVmUcKTpvno4sbtm3bxPobXCEe4ZMm9Ex3v/2zVnEnhgN
-	/7uPLA==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gjstu9u3u-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Wed, 09 Sep 2026 06:43:17 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-38ea32e57e2so10560725a91.1
-        for <linux-gpio@vger.kernel.org>; Tue, 08 Sep 2026 23:43:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788936197; x=1789540997; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=0gSncg/waZOalwozhN7BaaqXJIs1BmymYB48sb8DdCY=;
-        b=REDtxELxBs1yZ5wgrTL5uSesJB7wB4SYfa0VUaFCvSokGEU+T35IFQTa/7kxw7jqS5
-         Ch3mj39/UCaMX43WlrSZQQlYzjwj0q5kDcZdB/GhAiwcnmuASA+hVngVJm9BjPbjtUd6
-         6fdsa+Z9Vs+SOunfZ+NDynngFUgtSPQfO2yoEEjejJgdC1a/TghgOsL2wKXXv0R+6H/x
-         0FusCfqZ8S0ROd6oSO1OZm3UpEI7qaayG7fDP3c5OJ2/Dl32n4bLCOsd27krsHYkQjYg
-         JS5+nH3wb0KFprWHpWK/l4xeBDgtl4TbCI40V8IoJId1bIhMQrBrG3GdKiBy6vIilWDP
-         gO3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788936197; x=1789540997;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=0gSncg/waZOalwozhN7BaaqXJIs1BmymYB48sb8DdCY=;
-        b=Fw3dNomGoNg2e/oCuyBiYdH74MU85gXrNM6Jn4Uhe+twxP5tfVL2BctGULR/y1mnko
-         pl89TSmfBLmSAGhWcsnmVCgC/rbjZ+y4g5Xwh5I1GUeCR2bdH4UANK/Tu3Vu7NCtiePp
-         bnf14zsZ37ErZPKZyjd2Kh8XJ6ugIYw5YIqq3j7Oy0dhKXKwBrGcvKiWkiAyIaUdSUO6
-         +Af751WvHSKMywtzF+KgFVUXpcAbcRmQ3CsVpB22lqtz+OADHCqYqcCpI7mdu5E5d5Rd
-         +tPxApFgzFxGE0Qbi3fjs4Y55gD0vlMr3/nBA707TbLWqz2KGI7o1yuI1MotOuF/UPWI
-         shyw==
-X-Forwarded-Encrypted: i=1; AKwUvBzGvLp1Z6PtqE/pfmfXMgjf/XgUqjbfrlCMgEBNO61XyPfZROGhvQkIxRK/gqwlJXqp8nM36AtIf4f8@vger.kernel.org
-X-Gm-Message-State: AFuF++mA/eAIgHNHzrBVQNmx0ILaaxdomcSNFiNlLTmbLzmvPaH/wpV1
-	99tuL+PtrFkcDhAGuI3ao2PbGhnoDzAmX+nqHMO/UxVDmyoJsENp9Jv4382P8iyu/mPqf7UzoDH
-	EbXiI4LUUVN47qdTg+u44lB8PavndaoV4xFVnmKzp5X2k7es1PTC71hoG5XcvNv+V
-X-Gm-Gg: AYBFou3oojIl14JhVRznMQFOrCK3+iUBqIt3pXzWiwegTq8b5Zd/VxcY3ePzYJS8bcb
-	7m2nb8X7Uevf4M0QvRqa1y1tMtDizmCBTiwx+o58EnUjPbRVy55A2iQQ6iwfxGkosZgVfliPprV
-	ir1AJR7bVJQgxVu/Rh9v8uc5gY35UnER73BziA4uUNLNd868+9jkIbeAhb3+/x1RsYMsBhxF4Ng
-	0kbuRq3Mef6PkDa4WGwe0Uo0O+Y+3N5V0TjzDfEzCwKcOKEtOQC/7HIDwyQShII/LhuyOJeSkvd
-	Qsi07EEj/9QNhhIkJtPCQCfADQVsL0MTbbhyyF0GBt0uRS8kfGBAEkyzdYoGEzzI2j/fjwpsqWk
-	iAcRqXuhEASnuddGCAmUdPTHekMvtg3SiBYI/1jrrud+WoZr3mXt1EvrRwR2jq4EANxVmLxmnIt
-	q0Wt3f69ogAPIM4ngalS1Yvw==
-X-Received: by 2002:a17:90b:3c42:b0:38e:fea2:df53 with SMTP id 98e67ed59e1d1-39b260d2977mr49609303a91.4.1788936196546;
-        Tue, 08 Sep 2026 23:43:16 -0700 (PDT)
-X-Received: by 2002:a17:90b:3c42:b0:38e:fea2:df53 with SMTP id 98e67ed59e1d1-39b260d2977mr49609246a91.4.1788936195929;
-        Tue, 08 Sep 2026 23:43:15 -0700 (PDT)
-Received: from [10.149.102.240] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-333959d5f69sm39523941eec.0.2026.09.08.23.43.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2026 23:43:15 -0700 (PDT)
-Message-ID: <ac236a52-1293-4a70-b5ea-ec6118cb02e1@oss.qualcomm.com>
-Date: Wed, 9 Sep 2026 12:13:04 +0530
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gvqbeL4X"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1788936231; x=1820472231;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=G7gdKpKFflD/3CuK4Pe16Yge2b33nk4BgG6x4bwQVnM=;
+  b=gvqbeL4XbUfRHkVF58EAtSJbYcN+T3NrzjTgvMjc4iMM7sdXT506VtR1
+   W81wKbAukmVLmZ0tgTASi5g8822FaFY+HQamwF3EwTnLky6uNY2lP7DCU
+   4zZISIAYoDTHzKgPufkSkT7TkxvFvu0gAhldiAJ2hwwoBwlzhPYT1Pd8w
+   GxUkHbmmhRlNCZHIqQZFc8A6B69uVe5Z0QLKnKb0lO+rxzerXP/00RE0W
+   yzS87JnZFN0adGZiJmVC7/VUnBtyFCkrG90CM1TTUPls3g2vKF/zOfDrg
+   8/YAUat4HxxvTqjcZyCfIXFz5i5ZixS1/x3W6/OYSHIVhTWc+tH9u4y+4
+   g==;
+X-CSE-ConnectionGUID: hcor7yu8TOOxKsQVZX1Dnw==
+X-CSE-MsgGUID: OPZtlGnlTl6ssi8Ng8CecQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="106720254"
+X-IronPort-AV: E=Sophos;i="6.25,270,1779174000"; 
+   d="scan'208";a="106720254"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Sep 2026 23:43:50 -0700
+X-CSE-ConnectionGUID: +AvCfD0UTCC9gxEHi8A2Ug==
+X-CSE-MsgGUID: whqY3FT3TheW5UMnFrmDHg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,270,1779174000"; 
+   d="scan'208";a="276458655"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.47.46])
+  by fmviesa005.fm.intel.com with ESMTP; 08 Sep 2026 23:43:47 -0700
+Date: Wed, 9 Sep 2026 14:43:46 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Heiko Schocher <hs@nabladev.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-fpga@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+	Xu Yilun <yilun.xu@intel.com>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4] driver: fpga: xilinx-selectmap: add csi and rdwr
+ support
+Message-ID: <aqEAImnHDYWcOdc0@yilunxu-OptiPlex-7050>
+References: <20260810062105.299808-1-hs@nabladev.com>
+ <ap2Yx8oACWfBKOep@yilunxu-OptiPlex-7050>
+ <6a489d2b-b5d1-0455-793f-f4100fd3b3d1@nabladev.com>
+ <aqBbFGExUpS0k0yE@yilunxu-OptiPlex-7050>
+ <fb783b51-d5cb-c2ae-9d26-11df39e40aa8@nabladev.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/15] Add initial support for Qualcomm Kuno SoC
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Georgi Djakov <djakov@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Linus Walleij <linusw@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
-        Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>,
-        Guru Das Srinagesh <linux@gurudas.dev>,
-        Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Mukesh Savaliya <mukesh.savaliya@oss.qualcomm.com>,
-        Abel Vesa <abel.vesa@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-References: <20260827-kuno-soc-support-v5-0-6d47636a8f09@oss.qualcomm.com>
-Content-Language: en-US
-From: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-In-Reply-To: <20260827-kuno-soc-support-v5-0-6d47636a8f09@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=ItAutr/g c=1 sm=1 tr=0 ts=6aa10005 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=Sism7-CWozsur6xqZRkA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=O8hF6Hzn-FEA:10 a=iS9zxrgQBfv6-_F4QbHw:22
- a=zY0JdQc1-4EAyPf5TuXT:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA5MDA3NCBTYWx0ZWRfX3HsruiTnp2vr
- cSM5DzA4kj7OTGSji5HPZvp7Oo77NZ657k+AQiU4rTAHcIyymZuKa6u/V44v/jueXtHPquZoyVJ
- jVWY3Li2jPEV8qBLO/x5Xm9Du/qSipg=
-X-Proofpoint-ORIG-GUID: 2UT_SJi7tugPtWDBOdZ0JkHcqvk-Hxxg
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA5MDA3NCBTYWx0ZWRfXzl7no1ZME8A4
- MwsP5xrUx98/xJE8BLznABrq/UyvHwnJOXf37kxGUYM4w/8bC31LADav7vHEvhmAIvC0UVJZ0GJ
- mJYBnmg7AyxEG4jgDLL/6BupF+neffzvG5N1t3TkHKPo4BAkeiPXYuy3H07Zvu+1QXjFghm1I3N
- oRM4tAU316DLiSLb7cWbP77/8FJKpdw0mjqOeGRt7iZyB0sy9PuSm+wVw4HxNXWKm/qSdC0FUYh
- Q2qUqTBPJG9NPvXhHh36xYa7KVjAjvJXGJ0TCwdDediAXylFehQqmxuE0/jjjYuDlZHaFAUoNl1
- QhYgN1bJpZxOfRJpXxjP9plt+bCRJHLi8nEZA0IoFSaAwXKYsqqTSghgq/u1/Mrhky0vver2hwd
- hn5an+CfzBgrmkbAOBSmaAQhXo7N96rnvhJgXdoBaYAwjQwdWX2ax2ymA8+jjhWO7ChyqZBV2l6
- 5EvSynuzu6byMIZXZAg==
-X-Proofpoint-GUID: 2UT_SJi7tugPtWDBOdZ0JkHcqvk-Hxxg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-08_03,2026-09-08_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 spamscore=0 clxscore=1015 impostorscore=0 phishscore=0
- suspectscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2609090074
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fb783b51-d5cb-c2ae-9d26-11df39e40aa8@nabladev.com>
 
+> > What if we re-program the 2 FPGAs at the same time? Is there still
+> > chance the 2 CS lines are all asserted? Can they be correctly
+> > re-programmed in this case?
+> 
+> In the FPGA layer, yes. Each FPGA is its own fpga_manager with its own
+> CSI_B, and the only lock the core offers is mgr->ref_mutex, which
+> fpga_mgr_lock() takes per manager. Nothing there serializes two managers
+> that share one SelectMAP port, so both CS lines can be asserted at the
+> same time and then both devices take both bitstreams.
+> 
+> But one layer higher, the only in-tree trigger for a SelectMAP device is
+> of_fpga_region_notify() calling fpga_region_program_fpga(), and
+> of_overlay_fdt_apply() holds of_overlay_phandle_mutex from beginning to
+> end, so two overlay applications cannot overlap, if I see this correct.
+> 
+> I would rather keep this out of this patch.
 
-On 8/27/2026 11:21 PM, Hardeep Sharma wrote:
-> This series adds initial support for the Qualcomm Kuno SoC and the Kuno
-> IDP reference board.
->
-> Kuno is a 32-bit ARM (Cortex-A7) Qualcomm platform. This series brings up
-> the essential SoC infrastructure required to boot to a serial console:
->
->    - Global Clock Controller (GCC) and RPMh clock controller
->    - RPMh power domains
->    - Interconnect (NoC) provider
->    - TLMM pin controller
->    - PDC interrupt controller and SCM firmware interface
->    - Devicetree for the SoC and the Kuno IDP board
->
-> The soc: qcom: geni-se patch allows the GENI serial engine driver to be
-> selected on 32-bit ARM Qualcomm SoCs, which the debug UART console
-> depends on.
->
-> Signed-off-by: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-> ---
-> Changes in v5:
-> - Selected QCOM_GDSC from the Kuno GCC config. The driver registers GDSCs
->    (added in v4), so like the other Qualcomm GCC drivers it must select
->    QCOM_GDSC; otherwise, in a configuration where nothing else enables it
->    (e.g. COMPILE_TEST or a minimal Kuno-only build), gdsc_register() returns
->    -ENOSYS and the clock controller fails to probe.
-> - Link to v4: https://lore.kernel.org/all/20260827-kuno-soc-support-v4-0-dd34f235fc1a@oss.qualcomm.com/
->
-> Changes in v4:
-> - Addressed v3 review feedback:
->    - Registered the interconnect NoC provider from an explicit
->      core_initcall() instead of module_platform_driver(), matching the
->      established qcom interconnect driver convention.
->    - Replaced the NA mux-slot placeholder with _ across the pinctrl
->      PINGROUP table, matching the upstream qcom pinctrl convention.
->    - Added minItems: 1 to the interconnect binding clocks property so a
->      single clock is valid (system-noc), and aligned the binding
->      examples with the sdx75 labelled-node style.
->    - Added GDSC power-domain support to the Kuno GCC: the binding now
->      defines GDSC macros and the driver registers the EMAC0, PCIe and
->      USB20 GDSCs, so #power-domain-cells has real backing providers.
->    - Split the cpu-idle-states phandle list so each phandle is on its
->      own line.
->    - Collected Acked-by / Reviewed-by tags from v3.
-> - Link to v3: https://lore.kernel.org/all/20260821-kuno-soc-support-v3-0-196e2b306368@oss.qualcomm.com/
->
-> Changes in v3:
-> - Addressed v2 review feedback:
->    - Reworked the interconnect binding clocks: dropped clock-names and
->      replaced the flexible min/maxItems list with fixed per-compatible
->      clocks (aggre-noc: 2, system-noc: 1), required where present and
->      disallowed otherwise, matching the sdx75/glymur shape.
->    - Made #power-domain-cells required on the Kuno GCC binding and
->      declared it on the SoC gcc node, since the Kuno GCC hosts GDSCs and
->      is a power-domain provider (following qcom,sdx75-gcc); the driver's
->      GDSC support will follow separately.
->    - Made the GPIO65/66 QDSS CTI trig1 funcsel-3 route selectable: added
->      a distinct qdss_cti_trig1_mire pin function (and allowed it in the
->      TLMM binding enum), as the duplicate funcsel-2/3 entry left
->      funcsel-3 unreachable.
->    - Collected Acked-by / Reviewed-by tags from v2.
-> - Link to v2: https://lore.kernel.org/all/20260814-kuno-soc-support-v2-0-3079794f0f73@oss.qualcomm.com/
->
-> Changes in v2:
-> - Addressed v1 review feedback:
->    - Reworked soc: qcom: geni-se commit message; dropped the Fixes: tag.
->    - Reworded dt-bindings commit messages to the "Document X for the
->      Qualcomm Kuno SoC" one-liner form.
->    - Canonicalized copyright headers on interconnect binding / driver /
->      NoC ID header to the single-line Qualcomm Technologies form.
->    - Dropped unused <linux/mod_devicetable.h> from the interconnect
->      driver.
->    - Fixed MODULE_DESCRIPTION casing "KUNO" -> "Kuno" in the interconnect
->      driver.
->    - Extended interconnect binding to optionally allow up to four QoS AHB
->      clocks (matches sdx75/glymur shape).
->    - Cleaned up brace/space style in gcc-kuno.c to match peer clock
->      drivers.
->    - Reworked initial DTS: moved idle-states / domain-idle-states inside
->      cpus{}, wrapped fixed clocks in a clocks{} container with peer node
->      names (xo-board, sleep-clk), dropped the pcie_pipe_clk fixed-clock
->      stub (the GCC 4th clock now uses <0> in DTS to match the sdx75
->      idiom; the YAML example uses a named placeholder), dropped the
->      RPMHPD_CX power-domain reference on GCC (Kuno GCC has no GDSCs /
->      no corner votes / no pm_runtime, so the reference was inert), and
->      added a bootloader hand-off comment on the memory node.
->    - Collected Acked-by / Reviewed-by tags from v1.
-> - Link to v1: https://lore.kernel.org/all/20260809-kuno-soc-support-v1-0-5e0ede4a0c72@oss.qualcomm.com/
->
-> ---
-> Hardeep Sharma (15):
->        soc: qcom: geni-se: allow selection on 32-bit ARM Qualcomm SoCs
->        dt-bindings: power: rpmpd: Document Kuno RPMh power domains
->        pmdomain: qcom: rpmhpd: Add power domains for Kuno
->        dt-bindings: clock: qcom,rpmhcc: Add Kuno RPMh clock controller
->        clk: qcom: clk-rpmh: Add support for Kuno RPMh clocks
->        dt-bindings: interconnect: Add Qualcomm Kuno NoC
->        interconnect: qcom: Add Kuno interconnect provider driver
->        dt-bindings: pinctrl: qcom: Add Kuno TLMM
->        pinctrl: qcom: Add Kuno pinctrl driver
->        dt-bindings: clock: qcom: Add Kuno Global Clock Controller
->        clk: qcom: Add Global Clock Controller driver for Kuno
->        dt-bindings: interrupt-controller: qcom,pdc: Add Kuno compatible string
->        dt-bindings: firmware: qcom,scm: Document SCM on Kuno SoC
->        dt-bindings: arm: qcom: Document Kuno IDP board
->        ARM: dts: qcom: Add initial device tree for Kuno SoC
->
->   .../devicetree/bindings/arm/qcom-soc.yaml          |    4 +-
->   Documentation/devicetree/bindings/arm/qcom.yaml    |    5 +
->   .../devicetree/bindings/clock/qcom,kuno-gcc.yaml   |   52 +
->   .../devicetree/bindings/clock/qcom,rpmhcc.yaml     |    1 +
->   .../devicetree/bindings/firmware/qcom,scm.yaml     |    1 +
->   .../bindings/interconnect/qcom,kuno-rpmh.yaml      |  118 ++
->   .../bindings/interrupt-controller/qcom,pdc.yaml    |    1 +
->   .../bindings/pinctrl/qcom,kuno-tlmm.yaml           |  110 ++
->   .../devicetree/bindings/power/qcom,rpmpd.yaml      |    1 +
->   arch/arm/boot/dts/qcom/Makefile                    |    1 +
->   arch/arm/boot/dts/qcom/qcom-kuno-idp.dts           |   25 +
->   arch/arm/boot/dts/qcom/qcom-kuno.dtsi              |  423 ++++++
->   drivers/clk/qcom/Kconfig                           |   11 +
->   drivers/clk/qcom/Makefile                          |    1 +
->   drivers/clk/qcom/clk-rpmh.c                        |   15 +
->   drivers/clk/qcom/gcc-kuno.c                        | 1483 ++++++++++++++++++++
->   drivers/interconnect/qcom/Kconfig                  |   13 +
->   drivers/interconnect/qcom/Makefile                 |    2 +
->   drivers/interconnect/qcom/kuno.c                   |  988 +++++++++++++
->   drivers/pinctrl/qcom/Kconfig.msm                   |   11 +
->   drivers/pinctrl/qcom/Makefile                      |    1 +
->   drivers/pinctrl/qcom/pinctrl-kuno.c                |  801 +++++++++++
->   drivers/pmdomain/qcom/rpmhpd.c                     |   16 +
->   drivers/soc/qcom/Kconfig                           |    1 -
->   include/dt-bindings/clock/qcom,kuno-gcc.h          |  100 ++
->   include/dt-bindings/interconnect/qcom,kuno.h       |   89 ++
->   26 files changed, 4271 insertions(+), 3 deletions(-)
-> ---
-> base-commit: f82a5da2f04960df9fb57489992d03dd5e64ec6f
-> change-id: 20260809-kuno-soc-support-1dab826de0bf
->
-> Best regards,
-> --
-> Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
+Yes, that's the way to go.
 
-Hello All,
+> 
+> If you want it handled, I can prepare a follow up patch, and it seems to
+> me this can be done with a simple mutex in this driver around the write
+> transfer in xilinx_selectmap_write(), with one lock for all ports.
 
-Several patches from the series have already been picked up and applied
-through their respective subsystem trees.
+"one lock for all ports" is still illogical to me. The FPGAs on
+different ports won't interfere each other, is it?
 
-The remaining patches listed below are ready to be picked up as well:
+> 
+> The port does not have to be held for a whole bitstream, as documentation
+> says, that SelectMAP takes the configuration data non-continuously, with
+> CSI_B deasserted in between, so serializing single transfers already lets
+> two devices be programmed at the same time with each one seeing only its
+> own data.
+> 
+> Should I send such a patch? And if yes, as a follow up to a v5 version of
+> this patch?
+> 
+> Or add both patches into a v5 series?
 
-  [PATCH v5 06/15] dt-bindings: interconnect: Add Qualcomm Kuno NoC
-  [PATCH v5 07/15] interconnect: qcom: Add Kuno interconnect provider driver
-  [PATCH v5 14/15] dt-bindings: arm: qcom: Document Kuno IDP board
+No, fix the existing problem. 2 FPGAs are another topic.
 
-Since the majority of the series has already been applied, I would
-appreciate it if the remaining patches could also be considered for
-inclusion.
+> 
+> I am fine with both ...
+> 
+> > I mean I think this patch does fix the problem of "always assertion",
+> > which is good to me. But the changelog seems stop me, it talks all about
+> > 2 FPGAs sharing the same bus, which seems more complex than just
+> > manipulating the CS.
+> 
+> Agreed. The two FPGAs are how I ran into this, not what the patch is
+> about.
+> 
+> So next proposal for the commit message is:
+> """
+> fpga: xilinx-selectmap: control CSI_B and RDWR_B during configuration
+> 
+> The driver requests the optional CSI_B and RDWR_B GPIOs with
+> GPIOD_OUT_HIGH and never touches them again. That flag carries a
+> logical value, so both signals end up asserted from probe on, whatever
+> polarity the device tree states, and they stay asserted for the
+> lifetime of the device.
+> 
+> Neither signal belongs to the driver's lifetime. CSI_B (Chip Select)
+> selects the device on the SelectMAP port, RDWR_B (Read/Write) selects
+> the transfer direction, so both belong to the data transfer. A device
+> that is never deselected never lets go of the port, and a port pinned
+> to write mode cannot be read back.
+> 
+> Keep the two descriptors in the driver private data, request them
+> deasserted, and assert them only around the configuration data
+> transfer. RDWR_B is asserted first as UG570, note 4 of figure "Continuous
+> x8 SelectMAP Data Loading", warns that changing it while the device is
+> selected causes an ABORT on the next CCLK.
+> """
+> 
+> If fine for you I can send v5, with no code changes, just some
+> comment changes as discussed.
 
-Please let me know if there are any outstanding concerns or additional
-changes required from my side.
-
-Thank you for your time and review.
-
-Best Wishes,
-Hardeep Sharma
-
+Good to me.
