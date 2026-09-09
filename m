@@ -1,196 +1,233 @@
-Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9F7572693;
-	Wed,  9 Sep 2026 15:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788968889; cv=pass; b=QDU9G+SBdCW2s6Opnq9l9G/KFKxYhbZEYKXSFzjyJeBtpBkXbn06J94ZbU2fRlMzzhpIoOyIUJSb8VLDFC7PBaBexTJUBQiR0w0NXvSicQssa7RSiPBMG1r9r8IoLD0CAWJAhs4jlKmrmambE5+Ea6NABbmS6SE+Ss0dEkyd5jY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788968889; c=relaxed/simple;
-	bh=1WHu6Hc9Jk1lAvAKxEchkOqNKezm6LoV4VOS1wDm8MQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9642758124E;
+	Wed,  9 Sep 2026 16:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788970089; cv=none; b=McTES+UTezaQjw+xoUlq++L54ZYssuQQKH9LGAtWwnYUEalhflTTu3iBoMZIuODB4TjD8QamXlHjqxn4zNkn5bbumUgpAxQktFkfJDNUYXKzMwUPIH/h/F21UshJcpkn37w78JyWiUKAuxVUdQdKD0AXOnsY2IixeaZTH/LMoC0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788970089; c=relaxed/simple;
+	bh=tkaAhqeEYkEodfy8OsxfJfnG3t0wx8Y1psJJPit8mNg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0WA3FDqHyHK316CRTjbQkpUYj7wkxN8tJDiJDNVo/PzwJ4A3Ia7SDD69dWSEZRXssfHSx/2Ls5VEH2jocz9HkGmi93Gnfyh8UhggawX+Un30HTqN85VOjBYC9r+L0BfG2FYAzwyUs45V8N9Gv/1PAihi+P8Bcb7tFmk+Yb+XnA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=QK9PzuPu; arc=pass smtp.client-ip=136.143.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=YVZWtDsWUiyNcwgurUGj1kkuzcWi+E3O/j4TIo2fYRPqd4obF8gLDM7vXKcyR04UIBnTV7qt/uRXBUagQxD3U2t4XBsQ6ci2ko2JMiJ610oFKzgUStHo4wiLNUFd3NLoZaT4Vlz9EPOtS2He8AlY2AjK8Nb1oQosaxtsZZxMHSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7WmWBti; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="QK9PzuPu"
-ARC-Seal: i=1; a=rsa-sha256; t=1788968850; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LrNzaX7Q840JJMB22boDRMC4XbmiCXA37gNpa578E+fzZjLt4A+nukYAlA9Df2BaLC7CWgUf6+IU8BT9hMO9vRDfjnyo+MpHbnoB9zuaZX+EAxwsVGbr69mI66nXIuPXJXW59o7Ui0tvWRgxyc6sAlneJtqlRKaXBULfpIV7OUQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1788968850; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=pE7m7m2sBB5ewZCKug+UN71/5f27jp3fJnMB4dlTatU=; 
-	b=T3zLm6V/V1CyF92gtMOjqhUnvmbQ87vAAOjSDUGeov26rGLxk1jR9PkMDtqgz8zqCyNd9s4+X/ncqjedqXLVdJEh69MKUib4DNZFsztCRXhl0IgcKoCMSUssdjG+vjOdH3Q29LKW79Q6xcAUwZsx31gVfcz2hZV4Kt3HW2AuIhs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1788968850;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=pE7m7m2sBB5ewZCKug+UN71/5f27jp3fJnMB4dlTatU=;
-	b=QK9PzuPuYguldW4zRPZuX/PxYYe7H5UaLIKA4Myro5mVihkb8oyjDNFtaSfo7bGc
-	+59RM1jk+7fc0gozUFD98ZXHehTgg7k9PdbQ61Ks5qY+OgcSc6EMo9uj99nNfvythuq
-	FICikCNYNnWe6xQ3Mw6nUy/LipiPEdmal8Cku4JU=
-Received: by mx.zohomail.com with SMTPS id 178896884950669.76921172500283;
-	Wed, 9 Sep 2026 08:47:29 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 412E7183377; Wed, 09 Sep 2026 17:47:21 +0200 (CEST)
-Date: Wed, 9 Sep 2026 17:47:21 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Arnd Bergmann <arnd@arndb.de>, Daniel Thompson <danielt@kernel.org>, 
-	Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7WmWBti"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 353001F00A3E;
+	Wed,  9 Sep 2026 16:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788970088;
+	bh=xfh6dQwvhJNBpZKgTnhO+xK92GSq+lmModl5wWIGjuQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=D7WmWBtiXCIe5SG3D8cRAEjOqty4zUOe9OTItrGucs+Q9qiZSKr2RPvFHQ2nwo61q
+	 hEjkiKme6f5fJwjIK9l/BFSjmkbIZ+/sq2Uw+vMrBIi5DnavUW8iiU8yOp+LHa1r6k
+	 mi9AP82ugFByN5NxAB5K42b+4n7uDj9OIwtakBbrIcnV0XxN5ISJT1BjB3MRNkrxk8
+	 pUalZcDKp9O8ae8CUQop9SdH+sflmHAp7lAT/rgkSV1J7JuIP0IQO4s3WXO6lOZxr4
+	 3vJAlQsrkh+M3/6MQE22gS4wSszn+aU5EQDEZWvXEZ2ocFEw4Hg4cc/RpdB9FrTJ6P
+	 d3qUIx1zwC0rA==
+Date: Wed, 9 Sep 2026 18:07:59 +0200
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@kernel.org>, 
-	Michael Hennerich <michael.hennerich@analog.com>, Support Opensource <support.opensource@diasemi.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org, 
-	linux-doc@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, patches@opensource.cirrus.com, linux-watchdog@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	linux-fbdev@vger.kernel.org, linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	llvm@lists.linux.dev
-Subject: Re: [PATCH 11/14] mfd: remove unused wm8350 driver
-Message-ID: <aqF_aeDd8oTZaiRR@venus>
-References: <20260909132153.1596191-1-arnd@kernel.org>
- <20260909132153.1596191-12-arnd@kernel.org>
+	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
+	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
+	Tony Lindgren <tony@atomide.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v5 4/7] phy: cpcap-usb: add DCP detection and make UART
+ idle mode optional
+Message-ID: <oheoylzdj3arrnfdm6747cuubllkdmg4gx7vm3zhs3owuooj4v@zdbytrztbdp4>
+References: <20260711204210.197144-1-ivo.g.dimitrov.75@gmail.com>
+ <20260711204210.197144-5-ivo.g.dimitrov.75@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6jecggrki5ootgjo"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260909132153.1596191-12-arnd@kernel.org>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-0.2.13.1.5.4/288.959.6
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260711204210.197144-5-ivo.g.dimitrov.75@gmail.com>
 
+On Sat, Jul 11, 2026 at 11:42:07PM +0300, Ivaylo Dimitrov wrote:
+> Handle DCP separately from USB host connections using CPCAP charger
+> detection status.
+> 
+> Make the existing idle UART mode optional via the "enable_uart" module
+> parameter. When disabled (default), the PHY remains in its USB/charger
+> detection configuration while idle.
+> 
+> Also initialize the PHY into the baseline configuration required for
+> reliable charger detection during probe.
+> 
+> Use the optional "safe" pinctrl state before switching between modes to
+> avoid glitches on USB or UART lines.
+> 
 
---6jecggrki5ootgjo
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 11/14] mfd: remove unused wm8350 driver
-MIME-Version: 1.0
+Looks like this change is doing multiple things at once. Please split the
+changes logically to separate patches.
 
-Hi,
+> Note: Enabling UART idle mode increases idle power consumption (by 25mW
+> on droid4).
+> 
+> Signed-off-by: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+> 
+> # Conflicts:
+> #	drivers/phy/motorola/phy-cpcap-usb.c
 
-On Wed, Sep 09, 2026 at 03:21:48PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->=20
-> This driver was used on the i.MX31 ADS reference board from Freescale
-> and the smdk6410 reference board from Samsung. Both used platform_data
-> based driver probing and are now gone from the kernel.
->=20
-> Since probing with devicetree has never been supported by wm8350,
-> it is clear that nothing can use the driver on an upstream kernel,
-> and it is unlikely that anyone is still interested in a devicetree
-> conversion, so remove it.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+What is this conflict?
+
 > ---
->  Documentation/hwmon/index.rst                 |    1 -
->  Documentation/hwmon/wm8350.rst                |   30 -
->  .../watchdog/watchdog-parameters.rst          |    7 -
->  MAINTAINERS                                   |    1 -
->  drivers/gpio/Kconfig                          |    7 -
->  drivers/gpio/Makefile                         |    1 -
->  drivers/gpio/gpio-wm8350.c                    |  144 --
->  drivers/hwmon/Kconfig                         |   10 -
->  drivers/hwmon/Makefile                        |    1 -
->  drivers/hwmon/wm8350-hwmon.c                  |   92 -
->  drivers/leds/Kconfig                          |    8 -
->  drivers/leds/Makefile                         |    1 -
->  drivers/leds/leds-wm8350.c                    |  267 ---
->  drivers/mfd/Kconfig                           |   15 -
->  drivers/mfd/Makefile                          |    4 -
->  drivers/mfd/wm8350-core.c                     |  444 -----
->  drivers/mfd/wm8350-gpio.c                     |  217 ---
->  drivers/mfd/wm8350-i2c.c                      |   64 -
->  drivers/mfd/wm8350-irq.c                      |  542 ------
->  drivers/mfd/wm8350-regmap.c                   |  335 ----
->  drivers/power/supply/Kconfig                  |    7 -
->  drivers/power/supply/Makefile                 |    1 -
->  drivers/power/supply/wm8350_power.c           |  590 ------
->  drivers/regulator/Kconfig                     |    7 -
->  drivers/regulator/Makefile                    |    1 -
->  drivers/regulator/wm8350-regulator.c          | 1330 -------------
->  drivers/rtc/Kconfig                           |   10 -
->  drivers/rtc/Makefile                          |    1 -
->  drivers/rtc/rtc-wm8350.c                      |  474 -----
->  drivers/watchdog/Kconfig                      |    8 -
->  drivers/watchdog/Makefile                     |    1 -
->  drivers/watchdog/wm8350_wdt.c                 |  171 --
->  include/linux/mfd/wm8350/audio.h              |  620 -------
->  include/linux/mfd/wm8350/comparator.h         |  171 --
->  include/linux/mfd/wm8350/core.h               |  692 -------
->  include/linux/mfd/wm8350/gpio.h               |  356 ----
->  include/linux/mfd/wm8350/pmic.h               |  775 --------
->  include/linux/mfd/wm8350/rtc.h                |  265 ---
->  include/linux/mfd/wm8350/supply.h             |  129 --
->  include/linux/mfd/wm8350/wdt.h                |   24 -
->  sound/soc/codecs/Kconfig                      |    5 -
->  sound/soc/codecs/Makefile                     |    2 -
->  sound/soc/codecs/wm8350.c                     | 1638 -----------------
->  sound/soc/codecs/wm8350.h                     |   25 -
->  44 files changed, 9494 deletions(-)
->  delete mode 100644 Documentation/hwmon/wm8350.rst
->  delete mode 100644 drivers/gpio/gpio-wm8350.c
->  delete mode 100644 drivers/hwmon/wm8350-hwmon.c
->  delete mode 100644 drivers/leds/leds-wm8350.c
->  delete mode 100644 drivers/mfd/wm8350-core.c
->  delete mode 100644 drivers/mfd/wm8350-gpio.c
->  delete mode 100644 drivers/mfd/wm8350-i2c.c
->  delete mode 100644 drivers/mfd/wm8350-irq.c
->  delete mode 100644 drivers/mfd/wm8350-regmap.c
->  delete mode 100644 drivers/power/supply/wm8350_power.c
->  delete mode 100644 drivers/regulator/wm8350-regulator.c
->  delete mode 100644 drivers/rtc/rtc-wm8350.c
->  delete mode 100644 drivers/watchdog/wm8350_wdt.c
->  delete mode 100644 include/linux/mfd/wm8350/audio.h
->  delete mode 100644 include/linux/mfd/wm8350/comparator.h
->  delete mode 100644 include/linux/mfd/wm8350/core.h
->  delete mode 100644 include/linux/mfd/wm8350/gpio.h
->  delete mode 100644 include/linux/mfd/wm8350/pmic.h
->  delete mode 100644 include/linux/mfd/wm8350/rtc.h
->  delete mode 100644 include/linux/mfd/wm8350/supply.h
->  delete mode 100644 include/linux/mfd/wm8350/wdt.h
->  delete mode 100644 sound/soc/codecs/wm8350.c
->  delete mode 100644 sound/soc/codecs/wm8350.h
+>  drivers/phy/motorola/phy-cpcap-usb.c | 301 +++++++++++++++++++++------
+>  1 file changed, 238 insertions(+), 63 deletions(-)
+> 
+> diff --git a/drivers/phy/motorola/phy-cpcap-usb.c b/drivers/phy/motorola/phy-cpcap-usb.c
+> index 741145c89e5b..2d770ff19e93 100644
+> --- a/drivers/phy/motorola/phy-cpcap-usb.c
+> +++ b/drivers/phy/motorola/phy-cpcap-usb.c
+> @@ -110,6 +110,15 @@ enum cpcap_gpio_mode {
+>  	CPCAP_OTG_DM_DP,
+>  };
+>  
+> +enum cpcap_mode {
+> +	CPCAP_UNKNOWN,
+> +	CPCAP_IDLE,
+> +	CPCAP_CHARGER,
+> +	CPCAP_USB,
+> +	CPCAP_USB_HOST,
+> +	CPCAP_DOCK,
+> +};
+> +
+>  struct cpcap_phy_ddata {
+>  	struct regmap *reg;
+>  	struct device *dev;
+> @@ -119,15 +128,19 @@ struct cpcap_phy_ddata {
+>  	struct pinctrl_state *pins_ulpi;
+>  	struct pinctrl_state *pins_utmi;
+>  	struct pinctrl_state *pins_uart;
+> +	struct pinctrl_state *pins_safe;
+>  	struct gpio_desc *gpio[2];
+>  	struct iio_channel *vbus;
+>  	struct iio_channel *id;
+>  	struct regulator *vusb;
+>  	atomic_t active;
+> -	unsigned int vbus_provider:1;
+> -	unsigned int docked:1;
+> +	enum cpcap_mode mode;
+>  };
+>  
+> +static bool cpcap_enable_uart;
+> +module_param_named(enable_uart, cpcap_enable_uart, bool, 0644);
+> +MODULE_PARM_DESC(enable_uart,
+> +		 "Enable UART on the USB connector while idle (increases power consumption)");
 
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Use of module params is discouraged these days. Also, you are disabling it by
+default, which could cause surprises to users who have boards wired up for debug
+console. But considering that it consumes a lot of power, I think it is OK to
+disable it this way. I can't think of another way to add this knob.
 
--- Sebastian
+>  static bool cpcap_usb_vbus_valid(struct cpcap_phy_ddata *ddata)
+>  {
+>  	int error, value = 0;
+> @@ -196,8 +209,9 @@ static int cpcap_phy_get_ints_state(struct cpcap_phy_ddata *ddata,
+>  	return 0;
+>  }
+>  
 
---6jecggrki5ootgjo
-Content-Type: application/pgp-signature; name="signature.asc"
+[...]
 
------BEGIN PGP SIGNATURE-----
+> @@ -473,21 +559,10 @@ static int cpcap_usb_set_usb_mode(struct cpcap_phy_ddata *ddata)
+>  {
+>  	int error;
+>  
+> -	/* Disable lines to prevent glitches from waking up mdm6600 */
+> -	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_UNKNOWN_DISABLED);
+> +	error = cpcap_usb_set_safe_mode(ddata);
+>  	if (error)
+>  		return error;
+>  
+> -	if (ddata->pins_utmi) {
+> -		error = pinctrl_select_state(ddata->pins, ddata->pins_utmi);
+> -		if (error) {
+> -			dev_err(ddata->dev, "could not set usb mode: %i\n",
+> -				error);
+> -
+> -			return error;
+> -		}
+> -	}
+> -
+>  	error = regmap_update_bits(ddata->reg, CPCAP_REG_USBC1,
+>  				   CPCAP_BIT_VBUSPD, 0);
+>  	if (error)
+> @@ -503,11 +578,23 @@ static int cpcap_usb_set_usb_mode(struct cpcap_phy_ddata *ddata)
+>  		goto out_err;
+>  
+>  	error = regmap_update_bits(ddata->reg, CPCAP_REG_USBC2,
+> -				   CPCAP_BIT_USBXCVREN,
+> +				   CPCAP_BIT_USBXCVREN |
+> +				   CPCAP_BIT_UARTMUX0 |
+> +				   CPCAP_BIT_EMUMODE0,
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmqhf4gACgkQ2O7X88g7
-+prKqQ/+PXcHDDMXmArFWKzxhSxHAA3VwPIx07accUNhGecv9r7U8GAjiSQlBv5d
-gojcqTyZ5UKCZQ/g6DCGOzwb9lsRDx5njdMXtyZJUq2Z68YBxbCiKa8iGezkGRAp
-e/rO3HJlQdPs8dvggypfYz+HN/YpOMf/hF9JmgvQI4KR1TYt3RLXavSVQBsb/TMk
-7faKB1EKAYYbJQi+b5fc/iSfNIqxl/Rf+g8VEQtxjSmDafmeLGNJhgS+Amd/CF6i
-nKYmkKALE2Xq6riwBqtqbCazqplJsGsSxWK1qmhfDZs53Ws0+VgYi5N86Qard8Oy
-V8+cITjYwZlOVoRIwSs1roLjdGZFn87iPLEmTmGgBcXtjNMPh5uj4x2+vvhVwW+Y
-0K+Gx3s85iJURMTCZUYqPCI+3fhsU4KQ13g4nf3DAiab3GCtlS8FfH1P+RGHJU5n
-4SAZgJ+DIk7nS4CEYeq3EZJacM7/IAMAdjE/IOSkfmY7ZPui71QXNASTru/d0K23
-5HdYwbYghK1kj2Lb33geTv+TP5LXDsmvvWGDnMTlf5mna6YUdyAvMtgEtF0VDtUV
-CUWngQHAxaSKC2DRfTeqP6/vjUww9bj6oDpUicbnz8BrEags3kzaJWKtFqGUs7M9
-n0wbYmjflYmAe/mK+1CsH7p2TuMiqpvc9pc06lXO/85PySPEqNI=
-=bCBv
------END PGP SIGNATURE-----
+As Sashiko noted, you are not clearing CPCAP_BIT_USBSUSPEND bit set in
+cpcap_usb_set_idle_mode().
 
---6jecggrki5ootgjo--
+>  				   CPCAP_BIT_USBXCVREN);
+>  	if (error)
+>  		goto out_err;
+>  
+> +	if (ddata->pins_utmi) {
+> +		error = pinctrl_select_state(ddata->pins, ddata->pins_utmi);
+> +		if (error) {
+> +			dev_err(ddata->dev, "could not set usb mode: %i\n",
+> +				error);
+> +
+> +			return error;
+> +		}
+> +	}
+> +
+>  	/* Enable USB mode */
+>  	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_OTG_DM_DP);
+>  	if (error)
+> @@ -521,6 +608,38 @@ static int cpcap_usb_set_usb_mode(struct cpcap_phy_ddata *ddata)
+>  	return error;
+>  }
+>  
+> +static int cpcap_usb_set_dcp_mode(struct cpcap_phy_ddata *ddata)
+> +{
+> +	int error;
+> +
+> +	error = cpcap_usb_set_safe_mode(ddata);
+> +	if (error)
+> +		return error;
+> +
+> +	error = regmap_update_bits(ddata->reg, CPCAP_REG_USBC2,
+> +				   CPCAP_BIT_USBXCVREN |
+> +				   CPCAP_BIT_UARTMUX0 |
+> +				   CPCAP_BIT_EMUMODE0, 0);
+> +	if (error)
+> +		goto out_err;
+> +
+> +	error = regmap_update_bits(ddata->reg, CPCAP_REG_USBC3,
+> +				   CPCAP_BIT_SUSPEND_SPI, 0);
+> +	if (error)
+> +		goto out_err;
+> +
+> +	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_DM_DP);
+> +	if (error)
+> +		goto out_err;
+> +
+> +	return 0;
+> +
+> +out_err:
+> +	dev_err(ddata->dev, "%s failed with %i\n", __func__, error);
+
+Don't print function names in the error log.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
