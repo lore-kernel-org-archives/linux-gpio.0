@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7F0376A06;
-	Wed,  9 Sep 2026 06:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975042DC783;
+	Wed,  9 Sep 2026 06:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788934303; cv=none; b=UHmV9VqQveYwoW3w75RV4Q3K7gxyfpEFh+hmnaiSh3UomBeehlV77A15hluRQXllX2w4/2TuPdfZm5TkRuZ7Uerp/sJtpMxdAeyqn1xKjZ5RUNsnh8D6aiVNWRYmdzdW/wwaJwRycaUY3TpsyCr3zbMDKHyAdBkVnfyfrAV7cmk=
+	t=1788934361; cv=none; b=cjydFLzRA0BWii9vCXIuXCQgXkJad7h9SznrZKAJ5Hgd3p6XWBN0GFDR8b9p9CwRq6YC2gHAjrONSqHvmQ2fakMKtqmA1oOUtDpCAIxNgMFgcNz81brAXHUE/Z+TemXAjUkTosDQb9OxaC2/81qD8Euvf//hobo/WetfN01BYIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788934303; c=relaxed/simple;
-	bh=AA88sVHu2RjejiGwmGjLyptcgv7EEHaQUyZCPpvyB4A=;
+	s=arc-20240116; t=1788934361; c=relaxed/simple;
+	bh=o9lJuskxlS/VL1kUwQEto+sRjBrGbBpYC7schzGsl1E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cJmnGTjC6LtlixGW0Fm1fUoj1/480zq0OR7Yn7WG7YBaJaV5OlxttWBX6IDSBVUKiudPnxtcf3n7+NnzEO4NevBkfz56I7kS6QXXfpwHtXZ7u22x7MYS6SAtTWJVbguHiStbaJk9QQ3+NAbw2wmkshFpgls0p2rR96qcvp3SWgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koO1jTZd; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=MLA7qQ0EZ1iZOvNBb2W770U1/rD9Iwpk60fSQDI+t1J0Ek7UcmSy7Pg1PM6h8ZU/evPGggiEtv0VtZJz6tQ8X70nJYe82QiXT5sIq591M0mYLk2MS9EOXmwgM3Xym1LC8grD8P1BHtmychKZqbhPGxofxW6InifgTOaaDGR8eWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EKq3aF7Q; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koO1jTZd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86B4B1F00A3A;
-	Wed,  9 Sep 2026 06:11:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EKq3aF7Q"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC03D1F00A3A;
+	Wed,  9 Sep 2026 06:12:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788934299;
-	bh=wKVzZ3DXomIuSaP/EgVD76UrmtWu9SrVhn2lBA4cc7k=;
+	s=k20260515; t=1788934360;
+	bh=Tuo6rdwril8NyFt+etJBWA6GYuyVXoxg2ngoy/Jex/s=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=koO1jTZdY8lUmp8ZIlLpM90UDSszO2+fNjIIL8oOLPp6yYIZ9zwkkDPUNwu/czmmd
-	 0jgjB+zPzqrQTa+8Try6aE55cVpJ12vSylOoS2jCIgIlOalhMzcojIruawC7K6fpdM
-	 JzwmL0HmircrECSv1Ozk9OpZkAnc/tRfcrz+pKr1PucClnBotMW5Wx5s5pSVAVrO7j
-	 V9rvbMmV1mk3gGv/g4uss/ohBF6bVJ3/uKBtr247YVtj1EcmSBrf99MQb8OWr/Q64c
-	 G4N0HvCL4fsrg4pu1koYH4vL66Odli4Xb/0aHAS/zmGkKHJkBNOVJ4eRKj8pdzjkhO
-	 wMJHKN/9pxvDw==
-Message-ID: <219e88c6-5f49-4db3-8a30-54d387711fcc@kernel.org>
-Date: Wed, 9 Sep 2026 08:11:29 +0200
+	b=EKq3aF7Q5LnnBMLA67gOq2o/dsQkGLOyyWndkBM6ecjSwc5k5GWJfqr+ef1FrEg0f
+	 pUSAQp9m5U1pL+Ba1RcJi027ETNGVHgAsR0kROOLSBa0fATcSK7YJsFCYGZvjjbbu0
+	 dqEOmSdmAT9Csb0quHcLr1xQEHko4UoV4r5M6OTkEXLw8HU/r/LUJO0Q9azxJgPm9i
+	 L0qlXa91WM0P8+ujnKde2eRh5CVFzPM9nIiqOLYjMFFyzsvmxe7gHZjpg4nBY9hUZz
+	 QcUVpOeVfXnSLrs8OKe5va0VmbV5zvSGTl2GvjiHZ9D+GVcK3NO2fTX+1qsN8kvgVH
+	 i5TmKj8JsZZGg==
+Message-ID: <27d56d43-0959-40b8-be5c-693c074a49f5@kernel.org>
+Date: Wed, 9 Sep 2026 08:12:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,21 +35,18 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: Add EcoNet EN7528 pin
+Subject: Re: [PATCH v2 2/3] dt-bindings: pinctrl: Add EcoNet EN7528 pin
  controller
-To: Ahmed Naseef <naseefkm@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Benjamin Larsson
- <benjamin.larsson@genexis.eu>, Christian Marangi <ansuelsmth@gmail.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
+To: Ahmed Naseef <naseefkm@gmail.com>, linux-gpio@vger.kernel.org
+Cc: Benjamin Larsson <benjamin.larsson@genexis.eu>,
+ Christian Marangi <ansuelsmth@gmail.com>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Linus Walleij <linusw@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
  Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
  Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <cover.1786262697.git.naseefkm@gmail.com>
- <7e6150b186c2d16820d7382bce065596a0854a47.1786262697.git.naseefkm@gmail.com>
- <20260828-adorable-bug-from-arcadia-fcad00@quoll>
- <apGcOAUpb6XZ2Iud@DESKTOP-TIT0J8O.localdomain>
+References: <cover.1787931313.git.naseefkm@gmail.com>
+ <c20005a81b4069f3ff68311629ff7d4678fa92dd.1787931313.git.naseefkm@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,42 +92,57 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <apGcOAUpb6XZ2Iud@DESKTOP-TIT0J8O.localdomain>
+In-Reply-To: <c20005a81b4069f3ff68311629ff7d4678fa92dd.1787931313.git.naseefkm@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/08/2026 16:33, Ahmed Naseef wrote:
-> On Fri, Aug 28, 2026 at 08:59:57AM +0200, Krzysztof Kozlowski wrote:
->> On Sun, Aug 09, 2026 at 12:04:59PM +0400, Ahmed Naseef wrote:
->>> +maintainers:
->>> +  - Lorenzo Bianconi <lorenzo@kernel.org>
->>> +
->>> +description:
->>> +  The EcoNet EN7528 pin controller is used to control SoC pins. It shares the
->>> +  IP with the Airoha pin controllers, but its IOMUX and pin configuration
->>> +  registers have a different layout.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    const: econet,en7528-pinctrl
->>> +
->>> +  airoha,chip-scu:
->>> +    description: phandle to the chip SCU syscon
->>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>
->> If the entire address space is part of the SCU, then this device should
->> be part of the SCU, e.g. its subnode.
+On 28/08/2026 17:35, Ahmed Naseef wrote:
+> Add the binding for the pin controller found on the EcoNet EN7528 MIPS
+> SoC. It shares the IP with the Airoha pin controllers, but its IOMUX and
+> pin configuration registers have a different layout, so it gets its own
+> compatible.
 > 
-> It is not: the registers are split over two blocks. The GPIO, interrupt
-> and PWM flash-mode registers are in the block the node sits under, and
-> the IOMUX and pin configuration registers are in the SCU. Both are
-> needed, so whichever of the two is the parent, the other one has to come
-> in by phandle.
+> The CHIP SCU holding those registers is referenced by the airoha,chip-scu
+> phandle.
+> 
+> Signed-off-by: Ahmed Naseef <naseefkm@gmail.com>
+> ---
+>  .../pinctrl/econet,en7528-pinctrl.yaml        | 190 ++++++++++++++++++
+>  1 file changed, 190 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml
+> new file mode 100644
+> index 000000000000..3ce1a5309d09
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml
+> @@ -0,0 +1,190 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/econet,en7528-pinctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: EcoNet EN7528 Pin Controller
+> +
+> +maintainers:
+> +  - Lorenzo Bianconi <lorenzo@kernel.org>
+> +
+> +description:
+> +  The EcoNet EN7528 pin controller is used to control SoC pins. It shares the
+> +  IP with the Airoha pin controllers, but its IOMUX and pin configuration
+> +  registers have a different layout.
+> +
+> +properties:
+> +  compatible:
+> +    const: econet,en7528-pinctrl
+> +
+> +  airoha,chip-scu:
+> +    description: phandle to the chip SCU syscon
+> +    $ref: /schemas/types.yaml#/definitions/phandle
 
-Sure, one is parent and other is sibling. This is standard. But
-non-standard is to claim to have no MMIO but then get that MMIO from
-someone else...
 
+For the record, same comments here. It seems I was discussing v1.
 
 Best regards,
 Krzysztof
