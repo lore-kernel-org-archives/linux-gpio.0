@@ -1,653 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CC7566C75;
-	Wed,  9 Sep 2026 13:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D7D57981C;
+	Wed,  9 Sep 2026 13:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788960483; cv=none; b=e4Fom8mB8A/bJq2FVPOhiATdSJC0GgVIehB7iJ88l8zO6A9BmMYT/7ABOdeLIOsvyys2+QECUSFJI+mK9tUXnrcnABq6gdkXqryMdBYhlsG/aifMqmO4stH9KY6Rw/4wpmktuOZNc2nmTqdEb2qLRWI2XVm+YQQ5Rw4X1RqCmBs=
+	t=1788960491; cv=none; b=sbGJtJKUzITG8HQiD37BmuI0YcvgNJdtB8BEHEdH8YtdMxAxGU+yrLLzSVGZhcybL+ds8VxF4vzziUUw7aagUolz5ztOduTngKV24b6LJYRG76Kp51O42YoIGGQUBPqySOrnwvRHdJKGC/stcSWXXMQwIWVq+cDjjUwfw7JPgsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788960483; c=relaxed/simple;
-	bh=FrDyYmZm3NnTru3A0NJ8UQYP9M0nDNSBD3jG6rFcc40=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=URLeXflsQe3FIZx6POPFiAqjSWORCENmYTrXJOeOw1KcjB0aXHaasCfyJpK/9HeLacEABwdBWdwEkyAQ+DEdV+3mdEOw2YtfKAs1cr5FozMq7y2ZCcKXYs9CSBjskdiX5QEx4RXCjeoDBHUoSDKsX4khWqz1trDxTkLa23XZXBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZeIWb7UB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1788960491; c=relaxed/simple;
+	bh=/hlzJNzei2knOn1RYcaTNkb4UoqZbwgVsH5KNit1MHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z9oVulXpzlgva3wYektP1omFy5KrfwNhigc0FV54Q53VOzqWgsd0r3jGIGX3PaycuLNCZR0eWMlwUqeR3UhveKhUZuZB2i/NWzGD4kJFGI5eHRcWAROQ6sZOuT9jw9i/cCeQTeJtLiM/iQvC/NR8n+U/vsoU9KhNk+REVdkfZ4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eR5D3nm1; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZeIWb7UB"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7E51DC2BD00;
-	Wed,  9 Sep 2026 13:28:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1788960483;
-	bh=FrDyYmZm3NnTru3A0NJ8UQYP9M0nDNSBD3jG6rFcc40=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ZeIWb7UBy9UyrVMRwXDU0Dv7tdZXedDx2DdPTJr6cVdeXEwv3QvFhoPpZmn0Q6Rs2
-	 Rp2SvnQWtGu5fborCgudzWCZF6mNXR9+VeVCgmy64Ez5amVJGBkSXcJ7MPQceMLY5H
-	 QLxTfXIFWyggbCuj8V6SVn83pbpP38zTht+dNpB+24vMJLE64OQ1pYYz+3v5jlBNFt
-	 ntAyY3MQ/dXVmCx/hRQ+GDpefJjLaP6gaSQoiaIRNLlXQaYyLD2N+mF1kqutbldCxN
-	 ExNvytVXkfiTQbh5TeWb55jMQKuUBHx92Mr/nDz/eZDpUmkK1xOh3ziNqI2AX5jy/p
-	 smJMArVOXTXEA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68145C79FB7;
-	Wed,  9 Sep 2026 13:28:03 +0000 (UTC)
-From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Wed, 09 Sep 2026 16:27:56 +0300
-Subject: [PATCH v17 19/22] staging: media: remove MAX96712 driver
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eR5D3nm1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C301F00A3A;
+	Wed,  9 Sep 2026 13:27:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1788960486;
+	bh=/hlzJNzei2knOn1RYcaTNkb4UoqZbwgVsH5KNit1MHs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=eR5D3nm1CPgbjmHPZ0Vv7T4vdNRF/43OgybS94gl2A9fsyrl4gGmKe6vwaT3jfTzX
+	 +jD4I9IGrYtGuGXb5/A7jnHJvsDKGHllhymRTLq9kCq/SQi87n+n9y8sD4xk8HYc4W
+	 1FMZTsqHXMX6M3yTH47nD27tyCXLTKlR5oFEGKYxbRLJ27lUqEnoIOljlrumgyldGk
+	 vQ0EiMkovKU1SvLxEK2ji2FQp/hgc7rRh1M5u3fknsEg1fK7g7esz94rpEqvklnBCa
+	 BYmZFTXxMbawW0CHZITqBgDveaise1uxWGeZVkrhXq8mgPMzdHFvBAlr06emaY0HNc
+	 eC2FsYwPx3u3A==
+Date: Wed, 9 Sep 2026 14:27:57 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, mfd@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Arnd Bergmann <arnd@arndb.de>, Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Pavel Machek <pavel@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	patches@opensource.cirrus.com, linux-watchdog@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, linux-sound@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, llvm@lists.linux.dev
+Subject: Re: [PATCH 04/14] mfd: remove unused wm8400 driver
+Message-ID: <76d70b0a-a3c1-4051-84c9-77afb715c4a8@sirena.org.uk>
+References: <20260909132153.1596191-1-arnd@kernel.org>
+ <20260909132153.1596191-5-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260909-gmsl2-3_serdes-v17-19-002499e534e8@analog.com>
-References: <20260909-gmsl2-3_serdes-v17-0-002499e534e8@analog.com>
-In-Reply-To: <20260909-gmsl2-3_serdes-v17-0-002499e534e8@analog.com>
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Julien Massot <julien.massot@collabora.com>, Rob Herring <robh@kernel.org>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Dumitru Ceclan <dumitru.ceclan@analog.com>, mitrutzceclan@gmail.com, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-staging@lists.linux.dev, 
- linux-gpio@vger.kernel.org, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
- Martin Hecht <Martin.Hecht@avnet.eu>, 
- Andrian Suciu <Adrian.Suciu@analog.com>, 
- Cosmin Tanislav <demonsingur@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1788960478; l=16775;
- i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=aUtyu1X+yfwEM5pnI1NrqlZ4GpXnjZR0/iNzS9d7J6k=;
- b=C5J0DhghIAAZZzruGwGo3aMQIUmI8bLi88j85o0C1fhH5XtIY4BM7sVJDmoRxZq64zHT+jnYt
- ofkP+KJoQ7jAqaDHWAYXkIIdU9f4suuZOJWz4SOu/In/ldhQy522Iuc
-X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
- pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
-X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
- with auth_id=140
-X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-Reply-To: dumitru.ceclan@analog.com
-
-From: Cosmin Tanislav <demonsingur@gmail.com>
-
-Remove the staging MAX96712 driver.
-Its functionality has been moved to the MAX96724 driver which makes use
-of the Maxim GMSL2/3 deserializer framework.
-
-Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-Acked-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- MAINTAINERS                               |   1 -
- drivers/staging/media/Kconfig             |   2 -
- drivers/staging/media/Makefile            |   1 -
- drivers/staging/media/max96712/Kconfig    |  13 -
- drivers/staging/media/max96712/Makefile   |   2 -
- drivers/staging/media/max96712/max96712.c | 487 ------------------------------
- 6 files changed, 506 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8a3985c8960e..85c283155784 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15984,7 +15984,6 @@ M:	Niklas Söderlund <niklas.soderlund@ragnatech.se>
- L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
--F:	drivers/staging/media/max96712/max96712.c
- 
- MAX96714 GMSL2 DESERIALIZER DRIVER
- M:	Julien Massot <julien.massot@collabora.com>
-diff --git a/drivers/staging/media/Kconfig b/drivers/staging/media/Kconfig
-index 06cbc5c548ca..644aefdb9d41 100644
---- a/drivers/staging/media/Kconfig
-+++ b/drivers/staging/media/Kconfig
-@@ -30,8 +30,6 @@ source "drivers/staging/media/ipu3/Kconfig"
- 
- source "drivers/staging/media/ipu7/Kconfig"
- 
--source "drivers/staging/media/max96712/Kconfig"
--
- source "drivers/staging/media/meson/vdec/Kconfig"
- 
- source "drivers/staging/media/sunxi/Kconfig"
-diff --git a/drivers/staging/media/Makefile b/drivers/staging/media/Makefile
-index 6fd7179733d8..584720e91327 100644
---- a/drivers/staging/media/Makefile
-+++ b/drivers/staging/media/Makefile
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_INTEL_ATOMISP)     += atomisp/
- obj-$(CONFIG_VIDEO_IMX_MEDIA)	+= imx/
--obj-$(CONFIG_VIDEO_MAX96712)	+= max96712/
- obj-$(CONFIG_VIDEO_MESON_VDEC)	+= meson/vdec/
- obj-$(CONFIG_VIDEO_SUNXI)	+= sunxi/
- obj-$(CONFIG_VIDEO_TEGRA)	+= tegra-video/
-diff --git a/drivers/staging/media/max96712/Kconfig b/drivers/staging/media/max96712/Kconfig
-deleted file mode 100644
-index 93a2d583e90d..000000000000
---- a/drivers/staging/media/max96712/Kconfig
-+++ /dev/null
-@@ -1,13 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--config VIDEO_MAX96712
--	tristate "Maxim MAX96712 Quad GMSL2 Deserializer support"
--	depends on I2C
--	depends on VIDEO_DEV
--	select V4L2_FWNODE
--	select VIDEO_V4L2_SUBDEV_API
--	select MEDIA_CONTROLLER
--	help
--	  This driver supports the Maxim MAX96712 Quad GMSL2 Deserializer.
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called max96712.
-diff --git a/drivers/staging/media/max96712/Makefile b/drivers/staging/media/max96712/Makefile
-deleted file mode 100644
-index 70c1974ce3f0..000000000000
---- a/drivers/staging/media/max96712/Makefile
-+++ /dev/null
-@@ -1,2 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0
--obj-$(CONFIG_VIDEO_MAX96712) += max96712.o
-diff --git a/drivers/staging/media/max96712/max96712.c b/drivers/staging/media/max96712/max96712.c
-deleted file mode 100644
-index 0751b2e04895..000000000000
---- a/drivers/staging/media/max96712/max96712.c
-+++ /dev/null
-@@ -1,487 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Maxim MAX96712 Quad GMSL2 Deserializer Driver
-- *
-- * Copyright (C) 2021 Renesas Electronics Corporation
-- * Copyright (C) 2021 Niklas Söderlund
-- */
--
--#include <linux/delay.h>
--#include <linux/i2c.h>
--#include <linux/module.h>
--#include <linux/of_graph.h>
--#include <linux/regmap.h>
--
--#include <media/v4l2-ctrls.h>
--#include <media/v4l2-fwnode.h>
--#include <media/v4l2-subdev.h>
--
--#define DEBUG_EXTRA_REG			0x09
--#define DEBUG_EXTRA_PCLK_25MHZ		0x00
--#define DEBUG_EXTRA_PCLK_75MHZ		0x01
--
--enum max96712_pattern {
--	MAX96712_PATTERN_CHECKERBOARD = 0,
--	MAX96712_PATTERN_GRADIENT,
--};
--
--struct max96712_info {
--	unsigned int dpllfreq;
--	bool have_debug_extra;
--};
--
--struct max96712_priv {
--	struct i2c_client *client;
--	struct regmap *regmap;
--	struct gpio_desc *gpiod_pwdn;
--
--	const struct max96712_info *info;
--
--	bool cphy;
--	struct v4l2_mbus_config_mipi_csi2 mipi;
--
--	struct v4l2_subdev sd;
--	struct v4l2_ctrl_handler ctrl_handler;
--	struct media_pad pads[1];
--
--	enum max96712_pattern pattern;
--};
--
--static int max96712_write(struct max96712_priv *priv, unsigned int reg, u8 val)
--{
--	int ret;
--
--	ret = regmap_write(priv->regmap, reg, val);
--	if (ret)
--		dev_err(&priv->client->dev, "write 0x%04x failed\n", reg);
--
--	return ret;
--}
--
--static int max96712_update_bits(struct max96712_priv *priv, unsigned int reg,
--				u8 mask, u8 val)
--{
--	int ret;
--
--	ret = regmap_update_bits(priv->regmap, reg, mask, val);
--	if (ret)
--		dev_err(&priv->client->dev, "update 0x%04x failed\n", reg);
--
--	return ret;
--}
--
--static int max96712_write_bulk(struct max96712_priv *priv, unsigned int reg,
--			       const void *val, size_t val_count)
--{
--	int ret;
--
--	ret = regmap_bulk_write(priv->regmap, reg, val, val_count);
--	if (ret)
--		dev_err(&priv->client->dev, "bulk write 0x%04x failed\n", reg);
--
--	return ret;
--}
--
--static int max96712_write_bulk_value(struct max96712_priv *priv,
--				     unsigned int reg, unsigned int val,
--				     size_t val_count)
--{
--	unsigned int i;
--	u8 values[4];
--
--	for (i = 1; i <= val_count; i++)
--		values[i - 1] = (val >> ((val_count - i) * 8)) & 0xff;
--
--	return max96712_write_bulk(priv, reg, &values, val_count);
--}
--
--static void max96712_reset(struct max96712_priv *priv)
--{
--	max96712_update_bits(priv, 0x13, 0x40, 0x40);
--	msleep(20);
--}
--
--static void max96712_mipi_enable(struct max96712_priv *priv, bool enable)
--{
--	if (enable) {
--		max96712_update_bits(priv, 0x40b, 0x02, 0x02);
--		max96712_update_bits(priv, 0x8a0, 0x80, 0x80);
--	} else {
--		max96712_update_bits(priv, 0x8a0, 0x80, 0x00);
--		max96712_update_bits(priv, 0x40b, 0x02, 0x00);
--	}
--}
--
--static void max96712_mipi_configure(struct max96712_priv *priv)
--{
--	unsigned int i;
--	u8 phy5 = 0;
--
--	max96712_mipi_enable(priv, false);
--
--	/* Select 2x4 mode. */
--	max96712_write(priv, 0x8a0, 0x04);
--
--	/* TODO: Add support for 2-lane and 1-lane configurations. */
--	if (priv->cphy) {
--		/* Configure a 3-lane C-PHY using PHY0 and PHY1. */
--		max96712_write(priv, 0x94a, 0xa0);
--
--		/* Configure C-PHY timings. */
--		max96712_write(priv, 0x8ad, 0x3f);
--		max96712_write(priv, 0x8ae, 0x7d);
--	} else {
--		/* Configure a 4-lane D-PHY using PHY0 and PHY1. */
--		max96712_write(priv, 0x94a, 0xc0);
--	}
--
--	/* Configure lane mapping for PHY0 and PHY1. */
--	/* TODO: Add support for lane swapping. */
--	max96712_write(priv, 0x8a3, 0xe4);
--
--	/* Configure lane polarity for PHY0 and PHY1. */
--	for (i = 0; i < priv->mipi.num_data_lanes + 1; i++)
--		if (priv->mipi.lane_polarities[i])
--			phy5 |= BIT(i == 0 ? 5 : i < 3 ? i - 1 : i);
--	max96712_write(priv, 0x8a5, phy5);
--
--	/* Set link frequency for PHY0 and PHY1. */
--	max96712_update_bits(priv, 0x415, 0x3f,
--			     ((priv->info->dpllfreq / 100) & 0x1f) | BIT(5));
--	max96712_update_bits(priv, 0x418, 0x3f,
--			     ((priv->info->dpllfreq / 100) & 0x1f) | BIT(5));
--
--	/* Enable PHY0 and PHY1 */
--	max96712_update_bits(priv, 0x8a2, 0xf0, 0x30);
--}
--
--static void max96712_pattern_enable(struct max96712_priv *priv, bool enable)
--{
--	const u32 h_active = 1920;
--	const u32 h_fp = 88;
--	const u32 h_sw = 44;
--	const u32 h_bp = 148;
--	const u32 h_tot = h_active + h_fp + h_sw + h_bp;
--
--	const u32 v_active = 1080;
--	const u32 v_fp = 4;
--	const u32 v_sw = 5;
--	const u32 v_bp = 36;
--	const u32 v_tot = v_active + v_fp + v_sw + v_bp;
--
--	if (!enable) {
--		max96712_write(priv, 0x1051, 0x00);
--		return;
--	}
--
--	/* Set PCLK to 75MHz if device have DEBUG_EXTRA register. */
--	if (priv->info->have_debug_extra)
--		max96712_write(priv, DEBUG_EXTRA_REG, DEBUG_EXTRA_PCLK_75MHZ);
--
--	/* Configure Video Timing Generator for 1920x1080 @ 30 fps. */
--	max96712_write_bulk_value(priv, 0x1052, 0, 3);
--	max96712_write_bulk_value(priv, 0x1055, v_sw * h_tot, 3);
--	max96712_write_bulk_value(priv, 0x1058,
--				  (v_active + v_fp + + v_bp) * h_tot, 3);
--	max96712_write_bulk_value(priv, 0x105b, 0, 3);
--	max96712_write_bulk_value(priv, 0x105e, h_sw, 2);
--	max96712_write_bulk_value(priv, 0x1060, h_active + h_fp + h_bp, 2);
--	max96712_write_bulk_value(priv, 0x1062, v_tot, 2);
--	max96712_write_bulk_value(priv, 0x1064,
--				  h_tot * (v_sw + v_bp) + (h_sw + h_bp), 3);
--	max96712_write_bulk_value(priv, 0x1067, h_active, 2);
--	max96712_write_bulk_value(priv, 0x1069, h_fp + h_sw + h_bp, 2);
--	max96712_write_bulk_value(priv, 0x106b, v_active, 2);
--
--	/* Generate VS, HS and DE in free-running mode. */
--	max96712_write(priv, 0x1050, 0xfb);
--
--	/* Configure Video Pattern Generator. */
--	if (priv->pattern == MAX96712_PATTERN_CHECKERBOARD) {
--		/* Set checkerboard pattern size. */
--		max96712_write(priv, 0x1074, 0x3c);
--		max96712_write(priv, 0x1075, 0x3c);
--		max96712_write(priv, 0x1076, 0x3c);
--
--		/* Set checkerboard pattern colors. */
--		max96712_write_bulk_value(priv, 0x106e, 0xfecc00, 3);
--		max96712_write_bulk_value(priv, 0x1071, 0x006aa7, 3);
--
--		/* Generate checkerboard pattern. */
--		max96712_write(priv, 0x1051, 0x10);
--	} else {
--		/* Set gradient increment. */
--		max96712_write(priv, 0x106d, 0x10);
--
--		/* Generate gradient pattern. */
--		max96712_write(priv, 0x1051, 0x20);
--	}
--}
--
--static int max96712_s_stream(struct v4l2_subdev *sd, int enable)
--{
--	struct max96712_priv *priv = v4l2_get_subdevdata(sd);
--
--	if (enable) {
--		max96712_pattern_enable(priv, true);
--		max96712_mipi_enable(priv, true);
--	} else {
--		max96712_mipi_enable(priv, false);
--		max96712_pattern_enable(priv, false);
--	}
--
--	return 0;
--}
--
--static const struct v4l2_subdev_video_ops max96712_video_ops = {
--	.s_stream = max96712_s_stream,
--};
--
--static int max96712_init_state(struct v4l2_subdev *sd,
--			       struct v4l2_subdev_state *state)
--{
--	static const struct v4l2_mbus_framefmt default_fmt = {
--		.width          = 1920,
--		.height         = 1080,
--		.code           = MEDIA_BUS_FMT_RGB888_1X24,
--		.colorspace     = V4L2_COLORSPACE_SRGB,
--		.field          = V4L2_FIELD_NONE,
--		.ycbcr_enc      = V4L2_YCBCR_ENC_DEFAULT,
--		.quantization   = V4L2_QUANTIZATION_DEFAULT,
--		.xfer_func      = V4L2_XFER_FUNC_DEFAULT,
--	};
--	struct v4l2_mbus_framefmt *fmt;
--
--	fmt = v4l2_subdev_state_get_format(state, 0);
--	*fmt = default_fmt;
--
--	return 0;
--}
--
--static const struct v4l2_subdev_internal_ops max96712_internal_ops = {
--	.init_state = max96712_init_state,
--};
--
--static const struct v4l2_subdev_pad_ops max96712_pad_ops = {
--	.get_fmt = v4l2_subdev_get_fmt,
--	.set_fmt = v4l2_subdev_get_fmt,
--};
--
--static const struct v4l2_subdev_ops max96712_subdev_ops = {
--	.video = &max96712_video_ops,
--	.pad = &max96712_pad_ops,
--};
--
--static const char * const max96712_test_pattern[] = {
--	"Checkerboard",
--	"Gradient",
--};
--
--static int max96712_s_ctrl(struct v4l2_ctrl *ctrl)
--{
--	struct max96712_priv *priv =
--		container_of(ctrl->handler, struct max96712_priv, ctrl_handler);
--
--	switch (ctrl->id) {
--	case V4L2_CID_TEST_PATTERN:
--		priv->pattern = ctrl->val ?
--			MAX96712_PATTERN_GRADIENT :
--			MAX96712_PATTERN_CHECKERBOARD;
--		break;
--	}
--	return 0;
--}
--
--static const struct v4l2_ctrl_ops max96712_ctrl_ops = {
--	.s_ctrl = max96712_s_ctrl,
--};
--
--static int max96712_v4l2_register(struct max96712_priv *priv)
--{
--	long pixel_rate;
--	int ret;
--
--	priv->sd.internal_ops = &max96712_internal_ops;
--	v4l2_i2c_subdev_init(&priv->sd, priv->client, &max96712_subdev_ops);
--	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
--	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
--
--	v4l2_ctrl_handler_init(&priv->ctrl_handler, 2);
--
--	/*
--	 * TODO: Once V4L2_CID_LINK_FREQ is changed from a menu control to an
--	 * INT64 control it should be used here instead of V4L2_CID_PIXEL_RATE.
--	 */
--	pixel_rate = priv->info->dpllfreq / priv->mipi.num_data_lanes * 1000000;
--	v4l2_ctrl_new_std(&priv->ctrl_handler, NULL, V4L2_CID_PIXEL_RATE,
--			  pixel_rate, pixel_rate, 1, pixel_rate);
--
--	v4l2_ctrl_new_std_menu_items(&priv->ctrl_handler, &max96712_ctrl_ops,
--				     V4L2_CID_TEST_PATTERN,
--				     ARRAY_SIZE(max96712_test_pattern) - 1,
--				     0, 0, max96712_test_pattern);
--
--	priv->sd.ctrl_handler = &priv->ctrl_handler;
--	ret = priv->ctrl_handler.error;
--	if (ret)
--		goto error;
--
--	priv->pads[0].flags = MEDIA_PAD_FL_SOURCE;
--	ret = media_entity_pads_init(&priv->sd.entity, 1, priv->pads);
--	if (ret)
--		goto error;
--
--	v4l2_set_subdevdata(&priv->sd, priv);
--
--	priv->sd.state_lock = priv->ctrl_handler.lock;
--	ret = v4l2_subdev_init_finalize(&priv->sd);
--	if (ret)
--		goto error;
--
--	ret = v4l2_async_register_subdev(&priv->sd);
--	if (ret < 0) {
--		dev_err(&priv->client->dev, "Unable to register subdevice\n");
--		goto error;
--	}
--
--	return 0;
--error:
--	v4l2_ctrl_handler_free(&priv->ctrl_handler);
--
--	return ret;
--}
--
--static int max96712_parse_dt(struct max96712_priv *priv)
--{
--	struct fwnode_handle *ep;
--	struct v4l2_fwnode_endpoint v4l2_ep = {
--		.bus_type = V4L2_MBUS_UNKNOWN,
--	};
--	unsigned int supported_lanes;
--	int ret;
--
--	ep = fwnode_graph_get_endpoint_by_id(dev_fwnode(&priv->client->dev), 4,
--					     0, 0);
--	if (!ep) {
--		dev_err(&priv->client->dev, "Not connected to subdevice\n");
--		return -EINVAL;
--	}
--
--	ret = v4l2_fwnode_endpoint_parse(ep, &v4l2_ep);
--	fwnode_handle_put(ep);
--	if (ret) {
--		dev_err(&priv->client->dev, "Could not parse v4l2 endpoint\n");
--		return -EINVAL;
--	}
--
--	switch (v4l2_ep.bus_type) {
--	case V4L2_MBUS_CSI2_DPHY:
--		supported_lanes = 4;
--		priv->cphy = false;
--		break;
--	case V4L2_MBUS_CSI2_CPHY:
--		supported_lanes = 3;
--		priv->cphy = true;
--		break;
--	default:
--		dev_err(&priv->client->dev, "Unsupported bus-type %u\n",
--			v4l2_ep.bus_type);
--		return -EINVAL;
--	}
--
--	if (v4l2_ep.bus.mipi_csi2.num_data_lanes != supported_lanes) {
--		dev_err(&priv->client->dev, "Only %u data lanes supported\n",
--			supported_lanes);
--		return -EINVAL;
--	}
--
--	priv->mipi = v4l2_ep.bus.mipi_csi2;
--
--	return 0;
--}
--
--static const struct regmap_config max96712_i2c_regmap = {
--	.reg_bits = 16,
--	.val_bits = 8,
--	.max_register = 0x1f00,
--};
--
--static int max96712_probe(struct i2c_client *client)
--{
--	struct max96712_priv *priv;
--	int ret;
--
--	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
--	if (!priv)
--		return -ENOMEM;
--
--	priv->info = of_device_get_match_data(&client->dev);
--
--	priv->client = client;
--
--	priv->regmap = devm_regmap_init_i2c(client, &max96712_i2c_regmap);
--	if (IS_ERR(priv->regmap))
--		return PTR_ERR(priv->regmap);
--
--	priv->gpiod_pwdn = devm_gpiod_get_optional(&client->dev, "enable",
--						   GPIOD_OUT_HIGH);
--	if (IS_ERR(priv->gpiod_pwdn))
--		return PTR_ERR(priv->gpiod_pwdn);
--
--	gpiod_set_consumer_name(priv->gpiod_pwdn, "max96712-pwdn");
--	gpiod_set_value_cansleep(priv->gpiod_pwdn, 1);
--
--	if (priv->gpiod_pwdn)
--		usleep_range(4000, 5000);
--
--	max96712_reset(priv);
--
--	ret = max96712_parse_dt(priv);
--	if (ret)
--		return ret;
--
--	max96712_mipi_configure(priv);
--
--	return max96712_v4l2_register(priv);
--}
--
--static void max96712_remove(struct i2c_client *client)
--{
--	struct v4l2_subdev *sd = i2c_get_clientdata(client);
--	struct max96712_priv *priv = container_of(sd, struct max96712_priv, sd);
--
--	v4l2_async_unregister_subdev(&priv->sd);
--
--	gpiod_set_value_cansleep(priv->gpiod_pwdn, 0);
--}
--
--static const struct max96712_info max96712_info_max96712 = {
--	.dpllfreq = 1000,
--	.have_debug_extra = true,
--};
--
--static const struct max96712_info max96712_info_max96724 = {
--	.dpllfreq = 1200,
--};
--
--static const struct of_device_id max96712_of_table[] = {
--	{ .compatible = "maxim,max96712", .data = &max96712_info_max96712 },
--	{ .compatible = "maxim,max96724", .data = &max96712_info_max96724 },
--	{ /* sentinel */ }
--};
--MODULE_DEVICE_TABLE(of, max96712_of_table);
--
--static struct i2c_driver max96712_i2c_driver = {
--	.driver	= {
--		.name = "max96712",
--		.of_match_table	= of_match_ptr(max96712_of_table),
--	},
--	.probe = max96712_probe,
--	.remove = max96712_remove,
--};
--
--module_i2c_driver(max96712_i2c_driver);
--
--MODULE_DESCRIPTION("Maxim MAX96712 Quad GMSL2 Deserializer Driver");
--MODULE_AUTHOR("Niklas Söderlund <niklas.soderlund@ragnatech.se>");
--MODULE_LICENSE("GPL");
-
--- 
-2.53.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="E7vTznbJl/k8Ppdd"
+Content-Disposition: inline
+In-Reply-To: <20260909132153.1596191-5-arnd@kernel.org>
+X-Cookie: Postage will be paid by addressee.
 
 
+--E7vTznbJl/k8Ppdd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Sep 09, 2026 at 03:21:41PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> This driver requires a platform_data definition, which does not exist
+> in the kernel.
+>=20
+> According to Mark Brown, the hardware supported by this driver was never
+> shipped in production.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--E7vTznbJl/k8Ppdd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmqhXtwACgkQJNaLcl1U
+h9DKkgf/RLbTE5UB6RL3Q66U8VBY9ivEji//LxLXmZDVRMWW85M/tZkuimYXhr1H
+qRZzWzsDpkIZhMa5DFLZxJGgVhSyRq9lmv40QYt8TboWu0+dKRy4nuB95+RSTNWh
+fjmkSjHkD/A3ELOP2Q/9B/cCFXsbGXHwS8eXeJVkuaDa1BSP3E7o1l338kofZy5F
+KyFWqJgxYKL/U82xSTvj04+NKj++SorlCIGShW9hgF11hhNTRHMwW8uF2pksnopN
+W8URlMgbSAEsELUabpsbzCFqwtnOJZU2y2vWAICyNt491Nctuj5oUx6D3c0HFsnZ
+z8z8A5SciRK3sUB/+Uh4thfPneAMHA==
+=lTKT
+-----END PGP SIGNATURE-----
+
+--E7vTznbJl/k8Ppdd--
