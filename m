@@ -1,148 +1,209 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2104.outbound.protection.partner.outlook.cn [139.219.146.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975042DC783;
-	Wed,  9 Sep 2026 06:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788934361; cv=none; b=cjydFLzRA0BWii9vCXIuXCQgXkJad7h9SznrZKAJ5Hgd3p6XWBN0GFDR8b9p9CwRq6YC2gHAjrONSqHvmQ2fakMKtqmA1oOUtDpCAIxNgMFgcNz81brAXHUE/Z+TemXAjUkTosDQb9OxaC2/81qD8Euvf//hobo/WetfN01BYIE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788934361; c=relaxed/simple;
-	bh=o9lJuskxlS/VL1kUwQEto+sRjBrGbBpYC7schzGsl1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MLA7qQ0EZ1iZOvNBb2W770U1/rD9Iwpk60fSQDI+t1J0Ek7UcmSy7Pg1PM6h8ZU/evPGggiEtv0VtZJz6tQ8X70nJYe82QiXT5sIq591M0mYLk2MS9EOXmwgM3Xym1LC8grD8P1BHtmychKZqbhPGxofxW6InifgTOaaDGR8eWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EKq3aF7Q; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EKq3aF7Q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC03D1F00A3A;
-	Wed,  9 Sep 2026 06:12:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788934360;
-	bh=Tuo6rdwril8NyFt+etJBWA6GYuyVXoxg2ngoy/Jex/s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=EKq3aF7Q5LnnBMLA67gOq2o/dsQkGLOyyWndkBM6ecjSwc5k5GWJfqr+ef1FrEg0f
-	 pUSAQp9m5U1pL+Ba1RcJi027ETNGVHgAsR0kROOLSBa0fATcSK7YJsFCYGZvjjbbu0
-	 dqEOmSdmAT9Csb0quHcLr1xQEHko4UoV4r5M6OTkEXLw8HU/r/LUJO0Q9azxJgPm9i
-	 L0qlXa91WM0P8+ujnKde2eRh5CVFzPM9nIiqOLYjMFFyzsvmxe7gHZjpg4nBY9hUZz
-	 QcUVpOeVfXnSLrs8OKe5va0VmbV5zvSGTl2GvjiHZ9D+GVcK3NO2fTX+1qsN8kvgVH
-	 i5TmKj8JsZZGg==
-Message-ID: <27d56d43-0959-40b8-be5c-693c074a49f5@kernel.org>
-Date: Wed, 9 Sep 2026 08:12:32 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A4D3A7852;
+	Wed,  9 Sep 2026 06:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.104
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788934723; cv=fail; b=ej9yhs+StXrX+02lF9OQ3h4QwET7wLpGVrBhd3Vv4ynpkmfC4jGdXCg+r/YfisvkORqK4GEneacBI7FbeQ14KM3yra0ayORcXmfYDdPHaPI1BNQYtdJUZ0XZfGREM3UlFHNGb2DtsmiED2bZoiKNxZ/dlP2zoflPgqlrA4x1DGQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788934723; c=relaxed/simple;
+	bh=L3kWmHagBXo+LONExhSJznNgfAa2TB0F/NF/DA2U/xg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ul1Ps5Jr1otwA9BFyQAefzvhG0aarGVqA9nL5TfH4Nfu2OODEAkVxifqrGja9960hsvCAAD73qmVK+5PMFth3IUH01Jl2dHbhn5ySUCwsdKKNBCp2Vb0uqxdCuG9u8PhxHQzcasTbJOdNGjEKrRL5YTMYqGzvDLDay7P2ft85OY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TK3qbEcSr6BAFcOg0IDnyf2CywUGFRc0xR8vQmQy604U+WUs22LrF6I70EVZutP/6vd5koYeFRnDBLcS1Eb8Mk/HuJMbD8nsqKyG85AYVi16IYs9u3e2dcFJDscCyzFU1+qq8ZeB6BmkPCHgFJHQiCB6WJ+Spf2l9ArOzxXJw/DW6EPnJUlWNLpdkNMVVaHlNJgtRNBM/nyZjnwAjdmoCLGZ0HPYrP1lN0Bd4E9HJdq64nx/p6ugRm7S1MMP3hixQOmdjensMu64cAJhEkW7pFuT0l2LbNtfPC8JT9Xp5A7LZ+kDZhtP6LH8sCI4cUxbzUMG1JPmtm8KeOFcCCJN+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=91IBFkekoyrjI+nDmQJA4wLRF4Be374Ak/3DGItdEi8=;
+ b=HUimvhHFsHpcvNQiUQSHmAWk5WqqqrAlUOi/5s9n50zYYr0LXeZ81tvkPB2F4mYU8/aHXTrBnCcKOYQAqGpHqnJ4jHd+aIIkdz6iR6IFoIx1Dah8p/lUk67kH4b6pXYCiNlwzHAWNhYJ4JCi8f5g2VahX9jxoY45424iwYdfKke07gJpKnk8oR2PLgrya5iePUM4JSBsyfZpB5ueFgcC3fuOIsdEXGwoOeetu1Xj1Zr1K4yjDY5nuD1B8t/pVjNiQ/eVyN9vprFbxwZpcGrX1IEY4iKgxtG0c/XwO2zjyilHcFLOXfxY2fINhulDt7T/k8qx7JnP4DonAHEEVBWsLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:17::6) by ZQ4PR01MB1220.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:14::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.18; Wed, 9 Sep
+ 2026 01:43:20 +0000
+Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e7d4:256c:b066:850d]) by
+ ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%4])
+ with mapi id 15.21.0339.017; Wed, 9 Sep 2026 01:43:20 +0000
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+To: Conor Dooley <conor@kernel.org>
+CC: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>, Paul Walmsley <pjw@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Bartosz Golaszewski <brgl@kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>, Lianfeng Ouyang
+	<lianfeng.ouyang@starfivetech.com>
+Subject: Re: [PATCH v7 03/21] dt-bindings: pinctrl: Add
+ starfive,jhb100-sys0-pinctrl
+Thread-Topic: [PATCH v7 03/21] dt-bindings: pinctrl: Add
+ starfive,jhb100-sys0-pinctrl
+Thread-Index: AQHdOTzS/Ezb1OmSwkyNoZ30RtNkILbFJiCAgABglEA=
+Date: Wed, 9 Sep 2026 01:43:20 +0000
+Message-ID:
+ <ZQ4PR01MB1202F0B2A4BB3D370C82D523F2B02@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+References: <20260831113514.66382-1-changhuang.liang@starfivetech.com>
+ <20260831113514.66382-4-changhuang.liang@starfivetech.com>
+ <20260908-annually-catfight-39e3a1543274@spud>
+In-Reply-To: <20260908-annually-catfight-39e3a1543274@spud>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1220:EE_
+x-ms-office365-filtering-correlation-id: fc801271-77aa-4eda-79c8-08df0e13ba7c
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|23010399003|366016|1800799024|7416014|376014|4143699003|10067099003|18002099003|22082099003|56012099006|38070700021;
+x-microsoft-antispam-message-info:
+ JF/bDqvZ9OFs5F7pJNV+sY6MBcTng4rhZY00XJp25GGA2E7UyONHhIIC4vuyC6BQGbCcPN1FUFh5nTXvHva5TzeAwhvpyPbbMnuT4D4/1sa/pgp513w2PRuQWdmSoIpmf8eFcvfyyzFt5OBH1gor1E8u1jInpQ4DXniWQXDvAik/qd09Zd8sAZNhmW6oNSFA7BJMtojan3D0KlCf4E8VPXdpnz5HhJsyFbpvT/we9PgbF67hVvDH7vtcHvDYn9XdPuxbhOXe0pr9VzS4CUJ1Gq/wFucpB9+jlUY945YnQR1TsTIvJkjSqnMe+ytjTxV4Rp1qANqrhMwOVvDt2izarFLF6v3uJayysJOlhou14M/qsD8sv/YYBefNz0gsznpJhFnk6KK1Rq30qEGTFb4AiG/mOcLf6W9bdD3x5oMc91ZqjRSkybMqi6Dr8zV7akWTF0TqnmfO3CDEbxYmPN15G/bNxoGIGdm7EcS0ZwisXx9ATIzq4n5eBbCbkrQQykZT5gkTVp0AUQ1gUZk2JqoqKXroI5PCBKK3mX2+NZyrx6/hXL1oQFHYgoZ9kLBvcUIL
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(7416014)(376014)(4143699003)(10067099003)(18002099003)(22082099003)(56012099006)(38070700021);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?wwhS1HLCjM0fXs2odjqCIeoIFOZF/piN9xx7Hk3TcGdvQ2yMRjXY2DSxqEFm?=
+ =?us-ascii?Q?GayWBN9zRi9Md4TqeyWnojw24H546ECCqsxOKtmyYEsanIibRZyMBFkGqRm0?=
+ =?us-ascii?Q?1QN+CVg2FSLGvmF/FMJuwH3lFhwTxWoqJNwXSWXraSxK+25OsgJ4+gtSnQiD?=
+ =?us-ascii?Q?vTbFnhFXDdXhca75BTq+UWWGlwj0ypxBuTLcpAbEDq3lJNfuU9i6n7Hvr6sy?=
+ =?us-ascii?Q?5CkvrBxqt3a9m2n5Tv7+DcyHI3WbFTQK8jnWYIjzy7g+v9m6PI5dl68fxFK9?=
+ =?us-ascii?Q?ipl11AyxslKSM06QBH/hJ8SDTUgszt2UGKhkZItP/3/VGvJN8FXNr2oRJZdf?=
+ =?us-ascii?Q?3ydzAPNdvfgM1RLJkb5zeYSgmds7cTJU1d9KtgCcqNECsjikDRlvvOKGqyly?=
+ =?us-ascii?Q?CymKLNuq9tda/hFnG42AgzlBz6CWcthgWzW28fKoA28yCCJbiIVXNc6TuqH5?=
+ =?us-ascii?Q?Weq1ieZ04YIRrH48wno+q9DavrqCLyPyGPgVcepyXbJ3k4A1obryEOXYkhv+?=
+ =?us-ascii?Q?uv5u42ZdD1Nb0oCbLGDnKN9KFcmD8UvQjAW+wlCIfgm57rbvcbWZiTmrFrW5?=
+ =?us-ascii?Q?ZHkCgi9v8ERCgmiDY/T1LV57zQxOrsQebjGYRFGQgziRXt84SkK9E3ewdi06?=
+ =?us-ascii?Q?jc0IXHCzHWUxxrANaVNRZC65Z4hcpGQS1cxPlSCIoCsElN1/frWNNj1bHSUY?=
+ =?us-ascii?Q?Y6xGLCLG0bdF7w+M9b5smVPNaVf9HmEfQsl40O0NRnk2xQV8B7Rpsm/+4jd6?=
+ =?us-ascii?Q?OQfxzsEX1gvmegqZOT6YTEYw61reB8kRvNwxvw1MKzt5e4cSX52IlhsR3J/C?=
+ =?us-ascii?Q?hh8bu7VdWn0YdGcfoCXT/zI6KuIrrQxzjm3/svqUi7Z4XgTbB4h93WgSyuqr?=
+ =?us-ascii?Q?rEowQb+nlQvkYlzNM9Ex9/8tABIxuj0Vx5BKSpTyYAQL78+CwwRnTCeEaXMU?=
+ =?us-ascii?Q?J3RaMW7s6HK5fxSzEEJ2+vigAtH2jQz5t76xjQRFhqjrap6aaNxyVHMPd5UW?=
+ =?us-ascii?Q?5E6xG2cKV2w01HqaxxX3DiuDH//3w8jgkZ3IZHfvycNu6Ap9d3LW+pP8xB0r?=
+ =?us-ascii?Q?iePaayc8fXGehv87Sgt9Hth9lDYWOR0oVaAmnmoK16abCCmYVwm8sFVAiIlO?=
+ =?us-ascii?Q?atCoeSBv/Q50jfqZZdqAYmBfZMi+W8xgGNmJ5XqfJoVV0t7IK/LtR6z1pYDl?=
+ =?us-ascii?Q?XEYtAEUZP5siQV/nPfuTGlxnNxhvSzm5f8+pren6BOKl+RQoYZdFJ9MXCew+?=
+ =?us-ascii?Q?f/KNo3CbCCRXrcPjq+D1y0rkfP6iioP/tGnERMGz6tvKeWz4jill9/AuIR0m?=
+ =?us-ascii?Q?gcDM80tpbF2epGUIlaBjm4L2hsstVK2JX3Op9CnVOLCPyt/C6xhiNvbVn28H?=
+ =?us-ascii?Q?d01oxaPripj0yP08iGNSlH4cn3bpvclOBUXTsaU8SpTG1cuPOl22EHK2t0sq?=
+ =?us-ascii?Q?f+RH6SW2lq6+u6xWVd4AFNOA8uw4HZgh9MfktsJcjrj80YliG0LwA3c/WxwC?=
+ =?us-ascii?Q?JKV4DQG8SdBLSwNRkOGNQv66uVENWelnvkn6dsL0G9Xwza72Ln/sbeA+3FdM?=
+ =?us-ascii?Q?e8Ux6NnvDSyAM9CU3qRgBDSw7RZ+bwZNBMZgxMbjWvANE/1I52A7MSKxNXu0?=
+ =?us-ascii?Q?Wtl6o6YHo3c4SnpiAVm9Bu4L7aOUM0TrzXMnLUsj0LFYUVKWDiBqM/zygCY6?=
+ =?us-ascii?Q?MIjLirHMNrzvEQVQI5QxMPYMTFTRW2S5HrYZkhF+Vyec6eQHLbXbQN1KxK/D?=
+ =?us-ascii?Q?8QzSXBPujtSNqHPlS3RRWaCKYxcP+jk=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: pinctrl: Add EcoNet EN7528 pin
- controller
-To: Ahmed Naseef <naseefkm@gmail.com>, linux-gpio@vger.kernel.org
-Cc: Benjamin Larsson <benjamin.larsson@genexis.eu>,
- Christian Marangi <ansuelsmth@gmail.com>, Conor Dooley
- <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Linus Walleij <linusw@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
- Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
- Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <cover.1787931313.git.naseefkm@gmail.com>
- <c20005a81b4069f3ff68311629ff7d4678fa92dd.1787931313.git.naseefkm@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <c20005a81b4069f3ff68311629ff7d4678fa92dd.1787931313.git.naseefkm@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: fc801271-77aa-4eda-79c8-08df0e13ba7c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2026 01:43:20.4710
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 0oKCA7QqJKk0yhIurZh5BUS9es2JH4Y4kCrV4pn8pAijfa+N4SnpCA2F5x2dpDkViUizVVqvWIN8cPzCyX+m6dKUA0sR7I2wy1V8Vyv0j7hWvHL6s67TgghlmOEcSfv1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1220
 
-On 28/08/2026 17:35, Ahmed Naseef wrote:
-> Add the binding for the pin controller found on the EcoNet EN7528 MIPS
-> SoC. It shares the IP with the Airoha pin controllers, but its IOMUX and
-> pin configuration registers have a different layout, so it gets its own
-> compatible.
-> 
-> The CHIP SCU holding those registers is referenced by the airoha,chip-scu
-> phandle.
-> 
-> Signed-off-by: Ahmed Naseef <naseefkm@gmail.com>
-> ---
->  .../pinctrl/econet,en7528-pinctrl.yaml        | 190 ++++++++++++++++++
->  1 file changed, 190 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml
-> new file mode 100644
-> index 000000000000..3ce1a5309d09
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/econet,en7528-pinctrl.yaml
-> @@ -0,0 +1,190 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/econet,en7528-pinctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: EcoNet EN7528 Pin Controller
-> +
-> +maintainers:
-> +  - Lorenzo Bianconi <lorenzo@kernel.org>
-> +
-> +description:
-> +  The EcoNet EN7528 pin controller is used to control SoC pins. It shares the
-> +  IP with the Airoha pin controllers, but its IOMUX and pin configuration
-> +  registers have a different layout.
-> +
-> +properties:
-> +  compatible:
-> +    const: econet,en7528-pinctrl
-> +
-> +  airoha,chip-scu:
-> +    description: phandle to the chip SCU syscon
-> +    $ref: /schemas/types.yaml#/definitions/phandle
+Hi, Conor
 
+Thanks for the review.
 
-For the record, same comments here. It seems I was discussing v1.
+> On Mon, Aug 31, 2026 at 04:34:56AM -0700, Changhuang Liang wrote:
+> > diff --git a/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
+> > b/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
+> > new file mode 100644
+> > index 000000000000..6d8f5516a178
+> > --- /dev/null
+> > +++ b/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
+> > @@ -0,0 +1,17 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+> > +/*
+> > + * Copyright (C) 2022 StarFive Technology Co., Ltd.
+> > + *
+> > + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
+> > + */
+> > +
+> > +#ifndef __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
+> > +#define __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
+> > +
+> > +/* sys0 pad numbers */
+> > +#define PADNUM_SYS0_GPIO_A0				0
+> > +#define PADNUM_SYS0_GPIO_A1				1
+> > +#define PADNUM_SYS0_GPIO_A2				2
+> > +#define PADNUM_SYS0_GPIO_A3				3
+>=20
+> Krzysztof's point [1] about these still stands. Pad indices aren't bindin=
+gs.
+> Sure, your driver and your dts both might want to use these but that does=
+n't
+> make them a binding. For that to be the case, they need to effectively be
+> made up numbers - like how clocks are often listed with numbers from 0 in=
+to
+> the dozens or hundreds, when that may or may not correlate with actual bi=
+ts
+> in registers, e.g. indices 0-31 in a clock binding might be in register 1=
+ and then
+> 32-63 are in register 2. There's no need for a binding here to assign mea=
+nings
+> to numbers, because the meanings are assigned by the hardware itself - in=
+dex
+> 0 for SYS0 *is* A0, because that's how the hardware is designed.
+>=20
+> Were the numbers to run continuously, so that we had
+>=20
+> #define JHB100_PADNUM_A0	0
+> #define JHB100_PADNUM_A1	1
+> #define JHB100_PADNUM_A2	2
+> #define JHB100_PADNUM_A3	3
+> #define JHB100_PADNUM_A4	4
+> and so on down to
+> #define JHB100_PADNUM__D0	1234
+>=20
+> then it would be a binding, because we're assigning a meaning to 1234 tha=
+t's
+> not something determined by the hardware.
+>=20
+> FWIW, I'm happy to have the unchanged starfive,jhb100-pinctrl.h sit in
+> arch/riscv/boot/dts/starfive, because the defines are helpful - but as th=
+ings
+> stand I think Krzysztof is right.
 
-Best regards,
-Krzysztof
+For the current series, the drivers also use some definitions from the bind=
+ing. In=20
+the next version, should the macro definitions be directly placed in their =
+respective=20
+pinctrl-starfive-jhb100-<domain>.c files?
+
+>=20
+> Cheers,
+> Conor.
+>=20
+> 1 -
+> https://lore.kernel.org/all/ZQ4PR01MB1202123864865439817E1549F2AA2
+> @ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn/
+
+Best Regards,
+Changhuang
+
