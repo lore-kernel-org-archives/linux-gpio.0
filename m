@@ -1,88 +1,84 @@
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8A94915AE;
-	Wed,  9 Sep 2026 08:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB3229405
+	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 08:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788940974; cv=none; b=bVETyLE8Bn4/uyt/MLrKXCuWgiSUFBKTAwfX+eQpLrzsBiNpWyr4Gzs4dTNGq89eQ/eIBcHLcE0k/BzaK0eJdUg1MPLIxyL6HGCyNFAmb+JGAUSQP4U3FqEbT03KTGST5cIai9l9j03yVKg5Jcz0b76yXMfPAar+JW6XH1c9IQg=
+	t=1788941301; cv=none; b=sIyIhUqfAxJM7NBOgKN0pMztZstvsPd//GolVFziEk9hs2hb0Xn1aLnZ2MXNvKpJJvdNYPGe8uur4T2+ERxVJDEbfM3Mil1NoiQa9w/PxbJsCFYwVho4HMX20VFDmnrgFvEMfiALWvFM9dg2XndUHbVRPy7o3plVn4UA0W88jSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788940974; c=relaxed/simple;
-	bh=AZf0hTGanZoBX9juw8A4Hkcbr/03el49J34+Wj833zM=;
+	s=arc-20240116; t=1788941301; c=relaxed/simple;
+	bh=sJk1P7W3r94sDQAmQK29QSXw1byQg92FvIaPYKTejbo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WDtUnDprMUKiWunSuJw+cLdgbp8HFUOa7Xx/beKv1BVWg7Jmk1Ti3IfsaqCwckSxnSR3rltK/lC679Fop9kP9eHgeFrWK0FhXaJjOYrFDHrEfBm12rnCM87ETd0ldVaDblqBBQtmyO16JbPmtDM27IEOawzdxAfyv7RiFG8ZhlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RIraTNUr; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	 MIME-Version; b=F6WJ5oMjYzDMN6hcYLufAmiJyeZV2Gn/xmyX38bq3vueJU3Y+WLTlHmKwaz5KLsedeFMWGT/tz2oUGE0ZmO4rtUj7LCd9wVgIIcDQLS3lTVRh/RNhVF4AgLt6svwIXFZqFSlTgxJMPKG9sh/Y4rP1HPvdQRyK7rx3sC+qDiuWbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lljv5Bfg; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RIraTNUr"
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 36B904E415A9;
-	Wed,  9 Sep 2026 08:02:51 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 0732F60448;
-	Wed,  9 Sep 2026 08:02:51 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A0BF711C7AF61;
-	Wed,  9 Sep 2026 10:02:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1788940966; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=eCEDZNLNxkg3C8C9bAECCcFaN+XP6VaQ0+RYJcLH1V4=;
-	b=RIraTNUrkx8rCgnGMdZIZgTAmId6aTvpFsKskmRr8sg58vyK+nsLZw+IEBJ/WApunHb/X8
-	kXXLsF/GCIY7yWlgLuQ1dLYx4qDXo5z3PainBnBqpGjZC9r4sZaUYSm9alaRpm+2RmlaRu
-	lKFOoY5Th4hY02UleIwruKfgCzgUmV1nVSlZKkfIl9QtoePCzkCWZm7RUh9AmyxjdQiCA8
-	zNiQeW4LbncfeogkF85WKGhEA/Nmw/TYjgjiPeocqbZ2x3VGbN+6v/R1FLYbIfVXdS3vC/
-	buGYg/XJLb2IJBYAkx0Xzv0C1QpqFxMk5hvR/nMdJ4e0Ab6CGDzrnrHm8i3Kmg==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Richard Cheng <icheng@nvidia.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	David Rhodes <david.rhodes@cirrus.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dan Williams <djbw@kernel.org>,
-	Ira Weiny <iweiny@kernel.org>,
-	Li Ming <ming.li@zohomail.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Lizhi Hou <lizhi.hou@amd.com>
-Cc: driver-core@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lljv5Bfg"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-47f96c5b722so3917408f8f.0
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Sep 2026 01:08:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1788941298; x=1789546098; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=sJk1P7W3r94sDQAmQK29QSXw1byQg92FvIaPYKTejbo=;
+        b=Lljv5BfghPEyAZdBHB7ojjxScB4j14WMegeylWwkxP7lkBcyZse9+AIxKLDVSn3/JH
+         2W4G0KyZq2XtfZAyzv/Wl36qCZUiPIU+fXOwyqUPJlR9S3nHA8MhtDQlz2M9euS1WYHd
+         xeZiESb+eNDcdLRSzah979Q3Ok6YAydd43ahoESBUqj79lB/L/IRlvT8d8XIIqimG5QX
+         9uIRA+tOwa1YL1byuJGZmT5GPVGWkJzP8JQuaPljsHM5U44KGORKCav88fzRlRfE03h+
+         WtwgarPJFGD2/SclFwjjgoxcgWocYH6Adw94CH9gUE9pmGfWNUZKIlKtjmZMzii4TMxV
+         hBow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788941298; x=1789546098;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=sJk1P7W3r94sDQAmQK29QSXw1byQg92FvIaPYKTejbo=;
+        b=pLB+aSWOfHyuiSe3sN79EtXxOq3kodB5OBRMKi+/ayaQe+ghEZq/Na91QrpKo04Pnd
+         vc1tu+VJewlMll5VezrEzEZX+qV+NySklqOSB8HeHaaU0ABlL2QKJ7d/jpqgm9bLUu2D
+         tMHsJzxW6UWcFhs4L2xFpnXULKaVPTdCF8/xXK0oNxZVyPdnStUqbPXCDOiRYgbjdqMs
+         Oc8HD+90o6FiS1yALnaQFfRJy3fD1xokL6YooyOnYO/GIGHngYTvFp4bxPE9aJHyWBTC
+         0ij7KwmQYPMxbOQsxsgFxFos4q+b+OTNdBRUjLXnJAxGvu41/1MljjOnxi4A57ddgfWm
+         Rqxg==
+X-Forwarded-Encrypted: i=1; AKwUvBxJz9WvrU3IJif6zr6mwyuBsxLAJq2XDpBCoBEurgWO5lG7BMIFSPLXCWtLntsFMtJvU4dNzpEZfK6Q@vger.kernel.org
+X-Gm-Message-State: AFuF++n5T2Udn4Gx1jAsr0gaF93gzRMjJkYA/Mqkfw1bEWb7jk+cUn5u
+	VvZu2BuMw77WgKm5QZl/th25QO+ZlAD/6aO+kYpGRfTI/j7IRFIcAwaX
+X-Gm-Gg: AYBFou18sY0xAfETqlrZ70zFQbs13fh2+QhoXa8LQ/QlpW4fuXq+N8j86mTp+BOcv67
+	EOhbo88Uf1HJY0zmfEcKf6r8vmA2VAYKsf50VhgUJJgRarUJuC69njQOpQkkL/qxIz9LAMLZP73
+	BPOcqolbz1W7bjgTehRXcw7hVWT7lyoExEsPGD3ulRcGJFWHG9YySCp/+70rEZWegjB83L04aJh
+	alVF3c0iDZjv/NY8zgTTLJnUMsYvoRrzZGnDFD2qIcmiLtHhE9D55LLbZ1+7z0XoVgN0KALGdtg
+	q8IEIb8MqL+sHii4/gSGHAd4kE9Qq8eoutSxcJ2KDBx65SH+SDViafGqjgq7VW3BbX2hogMuoFj
+	YtgOozApCCtnwfIQwDiIzh97c/bhhh0Jj++jfU0PzmmfoLS6MPKGaiY3HJHXowZAyr1JwLPQDaZ
+	Sr31GF+RKtxE6u2aSF8ks9atHfj4d8OQkh1cTzytthMY4ni6dWXfW+vDW1JEX62YPBPzDJTzk5x
+	fhz
+X-Received: by 2002:a05:600c:3b1f:b0:49c:ee06:9c58 with SMTP id 5b1f17b1804b1-49cf821eff7mr338313485e9.4.1788941297583;
+        Wed, 09 Sep 2026 01:08:17 -0700 (PDT)
+Received: from deb05.proceq.com ([213.160.61.66])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d20db6e76sm46285355e9.3.2026.09.09.01.08.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Sep 2026 01:08:16 -0700 (PDT)
+From: Mehmet Fide <mehmet.fide@gmail.com>
+To: haibo.chen@nxp.com
+Cc: brgl@kernel.org,
+	linusw@kernel.org,
+	aisheng.dong@nxp.com,
+	festevam@gmail.com,
+	Frank.Li@nxp.com,
+	ping.bai@nxp.com,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	imx@lists.linux.dev,
 	linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	stable+noautosel@kernel.org
-Subject: [PATCH v11 10/10] PCI: of: Avoid np->data usage for the node changeset
-Date: Wed,  9 Sep 2026 10:01:09 +0200
-Message-ID: <20260909080114.591938-11-herve.codina@bootlin.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] gpiolib: add get_config() and gpiochip_generic_get_config()
+Date: Wed,  9 Sep 2026 10:08:15 +0200
+Message-ID: <20260909080815.2297127-1-mehmet.fide@gmail.com>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260909080114.591938-1-herve.codina@bootlin.com>
-References: <20260909080114.591938-1-herve.codina@bootlin.com>
+In-Reply-To: <20260909063018.sajfn5vjk4y3oyi2@shlinux89>
+References: <20260903075940.2089367-3-mehmet.fide@gmail.com> <20260903081432.278721F00A3A@smtp.kernel.org> <20260909063018.sajfn5vjk4y3oyi2@shlinux89>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -90,174 +86,31 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-of_pci_remove_node() and of_pci_remove_host_bridge_node() check
-whether the node is dynamic but not whether it has valid private data.
+From: Mehmet Fide <mehmet.fide@screeningeagle.com>
 
-During the node creation, an OF changeset is used and this changeset is
-stored in np->data to be available for removal functions.
+Hi Haibo,
 
-If, for instance, a PCI host bridge is created using a device-tree
-overlay, the related node will have the dynamic flag set but np->data
-will be NULL. This leads to NULL pointer dereferences.
+On Wed, Sep 09, 2026 at 02:30:18PM +0800, Bough Chen wrote:
+> > Should the pre-existing setter stub also be updated to return -ENOTSUPP
+> > to ensure consistent API behavior?
+>
+> I think Sashiko is correct, better to aligned here, but in a separate patch.
 
-Checking for a non-NULL np->data pointer to determine if the node has
-been created by the PCI node creation process is not enough. Indeed,
-on some platforms like PowerPC, the OF_RECONFIG_ATTACH_NODE notifier
-(e.g., in the pci_dn_reconfig_notifier() function) intercepts node
-additions and populates np->data with its own structure, such as a
-struct pci_dn. In that case, np->data is not NULL but it is not related
-to our changeset stored during the PCI node process creation.
+Agreed. v6 will start with a preparatory patch that makes both
+CONFIG_PINCTRL=n stubs, pinctrl_gpio_get_config() and
+pinctrl_gpio_set_config(), return -ENOTSUPP. With CONFIG_PINCTRL=y a
+chip without pin ranges already gets -ENOTSUPP from
+gpiochip_generic_config(), so every caller of that path handles the
+value today; the only other users of the stubs, gpio-by-pinctrl and
+gpio-aspeed, are pinctrl-backed drivers. I will compile-test a
+CONFIG_PINCTRL=n GPIOLIB build with the change.
 
-Avoid the usage of np->data to store the changeset used during the PCI
-node creation. Store our changeset in a more relevant structure: either
-struct pci_dev when the node is created for a PCI device or struct
-pci_host_bridge when the node is created for the PCI host bridge.
+> If changing the CONFIG_PINCTRL=n stub in include/linux/pinctrl/consumer.h
+> to return -ENOTSUPP, then I think you can drop the explicit "#else return
+> -ENOTSUPP" in gpiochip_generic_get_config()
 
-With that done, no ambiguity remains on removal. Indeed, this changeset,
-if non-NULL, is the one used during PCI node creation. Check and use
-this changeset on the removal process.
+Yes, the #else goes away in v6.
 
-Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
-Fixes: 1f340724419e ("PCI: of: Create device tree PCI host bridge node")
-Cc: <stable+noautosel@kernel.org> # Issue not triggered but could be a problem
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
----
- drivers/pci/of.c    | 28 ++++++++++++++--------------
- include/linux/pci.h | 11 +++++++++++
- 2 files changed, 25 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index 0a5797652e18..cd87128c71dd 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -732,15 +732,16 @@ void of_pci_remove_node(struct pci_dev *pdev)
- {
- 	struct device_node *np;
- 
--	np = pci_device_to_OF_node(pdev);
--	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
-+	if (!pdev->cset)
- 		return;
- 
-+	np = pci_device_to_OF_node(pdev);
- 	fw_devlink_set_device(&np->fwnode, NULL);
- 	device_remove_of_node(&pdev->dev);
--	of_changeset_revert(np->data);
--	of_changeset_destroy(np->data);
-+	of_changeset_revert(pdev->cset);
-+	of_changeset_destroy(pdev->cset);
- 	of_node_put(np);
-+	kfree(pdev->cset);
- }
- 
- void of_pci_make_dev_node(struct pci_dev *pdev)
-@@ -800,18 +801,17 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
- 	if (ret)
- 		goto out_clear_devlink_dev;
- 
--	np->data = cset;
--
- 	ret = device_add_of_node(&pdev->dev, np);
- 	if (ret)
- 		goto out_revert_cset;
- 
-+	pdev->cset = cset;
-+
- 	kfree(name);
- 
- 	return;
- 
- out_revert_cset:
--	np->data = NULL;
- 	of_changeset_revert(cset);
- out_clear_devlink_dev:
- 	fw_devlink_set_device(&np->fwnode, NULL);
-@@ -828,16 +828,17 @@ void of_pci_remove_host_bridge_node(struct pci_host_bridge *bridge)
- {
- 	struct device_node *np;
- 
--	np = pci_bus_to_OF_node(bridge->bus);
--	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
-+	if (!bridge->cset)
- 		return;
- 
-+	np = pci_bus_to_OF_node(bridge->bus);
- 	fw_devlink_set_device(&np->fwnode, NULL);
- 	device_remove_of_node(&bridge->bus->dev);
- 	device_remove_of_node(&bridge->dev);
--	of_changeset_revert(np->data);
--	of_changeset_destroy(np->data);
-+	of_changeset_revert(bridge->cset);
-+	of_changeset_destroy(bridge->cset);
- 	of_node_put(np);
-+	kfree(bridge->cset);
- }
- 
- void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
-@@ -899,8 +900,6 @@ void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
- 	if (ret)
- 		goto out_clear_devlink_dev;
- 
--	np->data = cset;
--
- 	/* Add the of_node to host bridge and the root bus */
- 	ret = device_add_of_node(&bridge->dev, np);
- 	if (ret)
-@@ -910,6 +909,8 @@ void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
- 	if (ret)
- 		goto out_remove_bridge_dev_of_node;
- 
-+	bridge->cset = cset;
-+
- 	kfree(name);
- 
- 	return;
-@@ -917,7 +918,6 @@ void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
- out_remove_bridge_dev_of_node:
- 	device_remove_of_node(&bridge->dev);
- out_revert_cset:
--	np->data = NULL;
- 	of_changeset_revert(cset);
- out_clear_devlink_dev:
- 	fw_devlink_set_device(&np->fwnode, NULL);
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index d31a8d107b1e..7b0ba9ec7b5c 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -339,6 +339,9 @@ struct pcie_link_state;
- struct pci_sriov;
- struct pci_p2pdma;
- struct rcec_ea;
-+#ifdef CONFIG_PCI_DYNAMIC_OF_NODES
-+struct of_changeset;
-+#endif
- 
- /* struct pci_dev - describes a PCI device
-  *
-@@ -598,6 +601,10 @@ struct pci_dev {
- 	u8		tph_mode;	/* TPH mode */
- 	u8		tph_req_type;	/* TPH requester type */
- #endif
-+
-+#ifdef CONFIG_PCI_DYNAMIC_OF_NODES
-+	struct of_changeset *cset; /* Changeset used for OF node creation */
-+#endif
- };
- 
- static inline struct pci_dev *pci_physfn(struct pci_dev *dev)
-@@ -670,6 +677,10 @@ struct pci_host_bridge {
- 	unsigned int	broken_l1ss_resume:1;	/* Resuming from L1SS during
- 						   system suspend is broken */
- 
-+#ifdef CONFIG_PCI_DYNAMIC_OF_NODES
-+	struct of_changeset *cset; /* Changeset used for OF node creation */
-+#endif
-+
- 	/* Resource alignment requirements */
- 	resource_size_t (*align_resource)(struct pci_dev *dev,
- 			const struct resource *res,
--- 
-2.55.0
-
+Thanks for the review,
+Mehmet
