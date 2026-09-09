@@ -1,97 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from sender5-op-o11.zoho.com (sender5-op-o11.zoho.com [165.173.182.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956243AEB2C;
-	Wed,  9 Sep 2026 15:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788967939; cv=none; b=fACxqn+JVlc0Bogol5Knm2F0tY6ltQoKAuZD5G2WdO16LM6Bi1vyeYA89RszYyKin9K0+Uuz4wXX3o1y0rl2l0uhNViySXyfUVrTz/ps38m/aAvjDFDy2OuaOw+S3frdYo/2zqB1KoPOBn4ejjae1l6cUKu5kO1YNyNec7s21/w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788967939; c=relaxed/simple;
-	bh=XGeiZ9dLZLsr9DS2/J/+J3Y0FtcWfQo3TB5UJ2Y7SNk=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758A9333730;
+	Wed,  9 Sep 2026 15:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.182.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788968851; cv=pass; b=Wfx8N+nS2N19V1fYofWlVzKdk/jN9XPIc9fMOQgSWD8PbO43y/L1A61VwKB2jUiyPwuGlUZz+sCs+eun3CttPPlB5xZlVyU5EWH1xjildFWcUtQRSEggTBl4X1z0e1Z3ceeMOVGFD2m9qmcRKdi1C+gea0rKFlDxv+3jC7K1BKw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788968851; c=relaxed/simple;
+	bh=6yQif5n5XRyay83f1ZHCtKwqfS7yhNH4nuo418vK98k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Crn41YrwUxUIns3TnHPyn6iVEHh6ChKZ4Ruwwj0Z7wHsgDmQStWLjpNXVwDIrFlfnMPeipCoGY8MXnuGQZrofNz1NrEv0xG4BdoyImP/Spl3kUSh6GhgLJ0vbZaxHJV7CQy7YCcBjueScXuUlrlkTIXm7zbk8ixeGdjlSkfNEGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABQ99Fcr; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=VjV/pIYMb28Jc2hJkMaVGwkE8kI2vv5fZFGMSUMGEWnPEily9XNg7pmp49+C9gmA/+We3SusQ3mcnHN9wKtvJVxx0zggwuZDius99Pz+YWCtA2PFyvBDbAOppIiV6hNoD2+JYL+BABs1YoXQSCE4t+By7N9FqUQCl+OtZ3m8Kys=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=RrRxL6K+; arc=pass smtp.client-ip=165.173.182.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABQ99Fcr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D08CE1F00A3A;
-	Wed,  9 Sep 2026 15:32:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788967938;
-	bh=IzQ4BNbF6faCBeB/IFPsIGfhclYL1yNQY5hzJO1XqG0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ABQ99Fcr8z6PssIHhGeNIOA/6HUbkQzaWVgO6zSij2p6NYH7OmNRNz3AVuDosKmBs
-	 1JNogt/yg00/i/cMm5P/kBQQEMczqsp8eP2H+w52XZ4cPzIserfY9oa5Vh8qLs76pk
-	 SuiIEskCsG8ElEFvueS0iCgg9TnVVYM8YEPvx/SCZCkl2eh5G5n/XhfBY5EQpj2bVx
-	 /DwaaLm+v4SvMn+rX+l8XyWdF8k5QQkt0t/8Cjp5P1af27FsO6NdqmnIO7B/6+/01z
-	 dHRa59ZxK8pf2P6Hr5mmVgUNclXsS7l1qhHL5SACfOtkCkc822XNTwgEvo/xudpxvH
-	 vvM7goXuY0qfg==
-Date: Wed, 9 Sep 2026 17:32:09 +0200
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="RrRxL6K+"
+ARC-Seal: i=1; a=rsa-sha256; t=1788968791; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=bIP7FxCUP7PHjxh/nM4jKTnSi4O3I6PRlfBOfFxAVACnPdkG1o4ROdKc9mHAKRk9dawZAajHbag1i0Dtm5oZk73POFNeyTsIoMQdqnIex15/DdocxTTJLcvNzHv+8W2Brfrmzqd5aG+ycRGI3Kd6X4Q83AZV8i/HAccJDK0A7uQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1788968791; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=+2jg2ESPMMGY2dLnVmlBMJSk4zf6hyXqLuJROhsLZFs=; 
+	b=fHK0xZYkJa0EQ8iscGhXs3nCz+azjAIWs6h68cT2ql692DXJDd4uXiAI5yoxp5+3TWpg0puF6aimsbN7lur+FafMxu8awciKl9BP+tkdlvpc/mFm22kHkLG3ENAuLoHnilj1qqzm/Fi5AAKKvOLxax8bDHgaJF7386Ys1Wsq9ck=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1788968791;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=+2jg2ESPMMGY2dLnVmlBMJSk4zf6hyXqLuJROhsLZFs=;
+	b=RrRxL6K+fJgetX/zevzIf8shNUQZ64sHRap9E0npkCTqOSQIKdGw7QGQsmmT/nEh
+	MDEWBwP3A3JSNrYY6AU5UVrxINL1kX0CeJRhDr083WK6iOkhdTlz+KNgeB67XQeShiX
+	D9sDnGwGS2S6atyJx9cWGAcEY8UQgBcy05nf5uW0=
+Received: by mx.zohomail.com with SMTPS id 1788968790593167.81978655910598;
+	Wed, 9 Sep 2026 08:46:30 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 24C93183377; Wed, 09 Sep 2026 17:46:21 +0200 (CEST)
+Date: Wed, 9 Sep 2026 17:46:21 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Arnd Bergmann <arnd@arndb.de>, Daniel Thompson <danielt@kernel.org>, 
+	Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
-	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 3/7] phy: cpcap-usb: fix IRQ teardown race
-Message-ID: <af7ikpyy7rheb5d46wpwn6v6sfwh4ncmgb2bcwzbl5flyikseu@mj5q24u4omun>
-References: <20260711204210.197144-1-ivo.g.dimitrov.75@gmail.com>
- <20260711204210.197144-4-ivo.g.dimitrov.75@gmail.com>
+	Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@kernel.org>, 
+	Michael Hennerich <michael.hennerich@analog.com>, Support Opensource <support.opensource@diasemi.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org, 
+	linux-doc@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-hwmon@vger.kernel.org, patches@opensource.cirrus.com, linux-watchdog@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, 
+	linux-fbdev@vger.kernel.org, linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	llvm@lists.linux.dev
+Subject: Re: [PATCH 06/14] mfd: remove unused da903x driver
+Message-ID: <aqF_GZq1C4Tv1JB9@venus>
+References: <20260909132153.1596191-1-arnd@kernel.org>
+ <20260909132153.1596191-7-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jrej5ylckfdda26t"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260711204210.197144-4-ivo.g.dimitrov.75@gmail.com>
+In-Reply-To: <20260909132153.1596191-7-arnd@kernel.org>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-0.2.13.1.5.4/288.959.6
+X-ZohoMailClient: External
 
-On Sat, Jul 11, 2026 at 11:42:06PM +0300, Ivaylo Dimitrov wrote:
-> there is a race between IRQ handler and remove:
-> 
-> IRQ thread:
->     ddata->active == 1
-> 
-> remove():
->     ddata->active = 0
->     cancel_delayed_work_sync()
-> 
-> IRQ thread:
->     schedule_delayed_work()
-> 
-> The IRQ handler can therefore queue detect work after it has been canceled
-> during remove(). Free the IRQ handlers before canceling detect work to
-> prevent new work from being scheduled during teardown.
-> 
-> Reported by Sashiko
 
-Add a proper tag.
+--jrej5ylckfdda26t
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 06/14] mfd: remove unused da903x driver
+MIME-Version: 1.0
 
-> 
-> Signed-off-by: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+Hi,
+
+On Wed, Sep 09, 2026 at 03:21:43PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> This driver was used on a handful of ARM/PXA boards until those
+> got removed a few years ago. Without devicetree support, there is
+> no way to use them upstream.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/phy/motorola/phy-cpcap-usb.c | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/phy/motorola/phy-cpcap-usb.c b/drivers/phy/motorola/phy-cpcap-usb.c
-> index 7cb020dd3423..741145c89e5b 100644
-> --- a/drivers/phy/motorola/phy-cpcap-usb.c
-> +++ b/drivers/phy/motorola/phy-cpcap-usb.c
-> @@ -393,6 +393,19 @@ static int cpcap_usb_init_interrupts(struct platform_device *pdev,
->  	return 0;
->  }
->  
-> +static void cpcap_usb_fini_interrupts(struct platform_device *pdev,
+>  MAINTAINERS                           |   1 -
+>  drivers/input/touchscreen/Kconfig     |  13 -
+>  drivers/input/touchscreen/Makefile    |   1 -
+>  drivers/input/touchscreen/da9034-ts.c | 365 ----------------
+>  drivers/leds/Kconfig                  |   8 -
+>  drivers/leds/Makefile                 |   1 -
+>  drivers/leds/leds-da903x.c            | 145 -------
+>  drivers/mfd/Kconfig                   |  11 -
+>  drivers/mfd/Makefile                  |   2 -
+>  drivers/mfd/da903x.c                  | 565 -------------------------
+>  drivers/power/supply/Kconfig          |   7 -
+>  drivers/power/supply/Makefile         |   1 -
+>  drivers/power/supply/da9030_battery.c | 581 --------------------------
+>  drivers/regulator/Kconfig             |   8 -
+>  drivers/regulator/Makefile            |   1 -
+>  drivers/regulator/da903x-regulator.c  | 495 ----------------------
+>  drivers/video/backlight/Kconfig       |   7 -
+>  drivers/video/backlight/Makefile      |   1 -
+>  drivers/video/backlight/da903x_bl.c   | 160 -------
+>  19 files changed, 2373 deletions(-)
+>  delete mode 100644 drivers/input/touchscreen/da9034-ts.c
+>  delete mode 100644 drivers/leds/leds-da903x.c
+>  delete mode 100644 drivers/mfd/da903x.c
+>  delete mode 100644 drivers/power/supply/da9030_battery.c
+>  delete mode 100644 drivers/regulator/da903x-regulator.c
+>  delete mode 100644 drivers/video/backlight/da903x_bl.c
 
-s/fini/free
+Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-- Mani
+-- Sebastian
 
--- 
-மணிவண்ணன் சதாசிவம்
+--jrej5ylckfdda26t
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmqhf0gACgkQ2O7X88g7
++ppaAhAAjamgA9v7fn8KcrThl75UZh6bOUT/5XiVqaq9zEwVJoY2fygDVmYao95K
+QhI39+RMyWRuGdnDCBrpw0eVA53PbFPc1VTm+Iw4FWehLC1skbbSwDpPLFSIZaLe
+DJlLr11UbevMyqcmNKw8yeRolbQfUbAA4leflpjAbhhEvAzotNSeIxLY3yFHNXoV
+hJsWKIRE4cFFb5bsx3qTlJFQMop9WidRYq3vdPeoGVCUW2zjROm5drG9e8Hb2dvd
+I1KgIIFgyn2WJYDlD3u0eLwYZk/YabwYv3PUfxRXIXRS3+JMzwA3ubQyoMit/SHv
+MMH4/sJdjtgUjUcnWKA9Ktle3BQgYFr80H6HHHaBoFQveCC2B/98B85Ev0wwi9Xa
+60t+RHmELFKX9TnD6o797ZxnsXxErlDhjl+UZhEKQpsQjKwBQHnV1RzX3QLFWYkv
+i16c5MyNzgDusXB4zpTBiAy/kVNKUysPwY13R8BBvr2NsQcBf9uYDTRHr/g+3Xd4
+wquTx7yb8tYLUn6cJr9jXHrSseS5TpMUu+8scdSVZBC9KSuaeRYigm5dLM0X6Zj5
+vmXaD9vlAGtPL7fv+zomhwt4Ufe51v2YGxWa8IQSEsyOG1eUO6zdfFIiajXpgBTR
+mZ6OWJdhnZ9sRSQVANNafU85fqkka6x1/ZAQvqaKPBGVE7bXzhc=
+=3btz
+-----END PGP SIGNATURE-----
+
+--jrej5ylckfdda26t--
