@@ -1,102 +1,323 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D4546EC9F
-	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 08:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D265A470EA3;
+	Wed,  9 Sep 2026 08:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.200.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788941324; cv=none; b=l19DpaFi/YXeSj/MB9G/CRX/OfCe5GOEL8irrOy7zlNBATZcYRgpxVdJf/8axmnnJe5Lrxy0zfnHx9c6P8zPDDIzEerYRc4Z6EFZa80ClU4M3LeEnZujmVFDz4jenSgQFzX7QZOW7LA+9sYiGz6T9LDxwNjiD+PVt8fEjCjndC8=
+	t=1788944064; cv=none; b=ifbTTIdl8OIbm+nIrxntsfZIarj6U2kKQ5WqG3lZAaERyrMHGZV0DHvfgyjNcvL/XIjkXGX/G67gACgEE91wwhfQc97ow3aAf4uECSpjQx6HvOqTLZS2TCQq8VCnTyVTiDwaUU3HtbEgR7xpbB5C7glwHx4ntX7pwmwZwABNVuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788941324; c=relaxed/simple;
-	bh=R2je63BbknUokaDi3WpiVqNteUMA8vRZHwmgqRUZSpI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EW2m476DjnI2jCD9GjQz/tCVB6UGQrT9b6g+qajTrEzavKOu67hvwby2Due/4u3K2Bo0vFg5NIOT6Fab63SKXgRuJpeyt3PooFDknb0y9dog5R9b1x0bs8DawhZB/OZCDMS6lbMaX95x5ZsOHW347DCK45JK27T8g6EMj2Ev7Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EqeAGu3l; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EqeAGu3l"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-49b0d8bc2aaso68611075e9.0
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Sep 2026 01:08:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788941321; x=1789546121; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=R2je63BbknUokaDi3WpiVqNteUMA8vRZHwmgqRUZSpI=;
-        b=EqeAGu3lDZ5wIt1qBPKH2nmJSryWB+DBCIRKnhhHjUMd6lMA7PmjY19q2YLwgOB7zl
-         yqgEcj4uHp9WA/IFnMM1fo37UIFy3rAAjhZFrNCbOD6i/bCQyLPt+yVd26Qswc4yKznl
-         MZ6iLO3i06u5WUeTLScq/SuwmWsUL7Y5RwaOJZQdgyBNyEnpHJ8z22FFq+YaenMMJqrF
-         TT8Zkw+uEPf2nvJ/LkaRiBQn54LyMe70coN8EtOoROd32BWTVULHh6hL1FhzKEsn2mCm
-         rz12aS8q6LXFx3LoCc6jUyC4N3FReBKyd9zLRvNa0s9M9yPA/6pg4OMY+NWeSLGg0rF2
-         kypQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788941321; x=1789546121;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=R2je63BbknUokaDi3WpiVqNteUMA8vRZHwmgqRUZSpI=;
-        b=f9KOLZGHHWkYnWbitRi2Nt6sDJzreh/sbPCk7/fGzUmDbc+uF4VEfgCCIBr3SEBRCB
-         N93nykRQuTfeYgHmHAJDOeCc4NZo1XCVQfg5oCNUrJn50/pJYe4f75BD3cN+9LG3/jKV
-         K8XTvYAIcq9rPspLoHVl5WMeuEfmLSmV8gyPleyTsdhtikFRWHHplD+FGHBOuzzZVdgM
-         z02jj3pca5QaflxZM8Br414ravaJ9ZDwYE3iWHPEGDNs+w1ktZJ61TuTcNqdgNmU4Md+
-         6vTObyiRiQ9nMW1e9DemnByroYUN+xyCram3IWs6b6Z8+e3v6PAER58iTz18KBIGziCR
-         +0Dw==
-X-Forwarded-Encrypted: i=1; AKwUvBz5BynEwoK5I8OP3Z57q6cFstt5wJjNKWiMXtAUH+mTU+S/WJT/YHAPMVhjhUr2QL3J6RpCzWIBsm4p@vger.kernel.org
-X-Gm-Message-State: AFuF++momlRCHuHoEh7zsSZp0ladhFd5X2ZkFEVwmAJkgd64TRf0Vyr+
-	1GSVVE89WwvbZCFmee3Ix+ToK1gfX51Z1BIu2snNQMV7PtVI265Vhd8P
-X-Gm-Gg: AYBFou1w/ZcfEd+/MzjIw2IwrkutLhnApO7rOo43E38izAV+5B+5XJZomsix1UEzRwi
-	EraCDKFEW/XgsUSvhrUczSQEP/12pbzH63X4IYjqc3j6IfPndBAE0G3a5uHBdmnuANVvB8hrx0L
-	cwOSC1vVUEi/rUpEcQMWPmX26I68jbm7C8XcXruWg/aolBfg0D4uNCsxAMCfLF+zyimLQ3ppYMG
-	n+hDSDnBqZ1HW8slEl+Y/0Lh6RoUMtX+/xfSLKRkhZfZHUiHEBiT5sDRTMVGFxBBndN9yZGpplV
-	L6HHmjcJEnjPuwhVn0lqN0hg3ZrUfukT6I+tU7aK4raVIe8Dqeur6pn3PNVrX03b1CWtjGlO1O+
-	4mdxkxdtUt7iHblU8NokZYi/rR10CVfU4HUrU8RiK2lIKMe3hE7kMN+2A8e5kX2P0+l4LKcNyC0
-	V7XtuSYrO/bHpR090xv5VyCONu/2pRfY9mR8+IaoeDqNmEsEQFnkM1hMDoYDZRxLoFhMNqAuWt3
-	UjK
-X-Received: by 2002:a05:600c:4684:b0:49c:fc6c:be14 with SMTP id 5b1f17b1804b1-49cfc6cc10bmr303543295e9.26.1788941320634;
-        Wed, 09 Sep 2026 01:08:40 -0700 (PDT)
-Received: from deb05.proceq.com ([213.160.61.66])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cf7703cefsm607453595e9.5.2026.09.09.01.08.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2026 01:08:40 -0700 (PDT)
-From: Mehmet Fide <mehmet.fide@gmail.com>
-To: haibo.chen@nxp.com
-Cc: brgl@kernel.org,
-	linusw@kernel.org,
-	aisheng.dong@nxp.com,
-	festevam@gmail.com,
-	Frank.Li@nxp.com,
-	ping.bai@nxp.com,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	imx@lists.linux.dev,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] gpio: mmio: track the direction of chips without direction registers
-Date: Wed,  9 Sep 2026 10:08:39 +0200
-Message-ID: <20260909080839.2297374-1-mehmet.fide@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260909064415.pel5dilh7nrkxz6u@shlinux89>
-References: <20260903075940.2089367-4-mehmet.fide@gmail.com> <20260909064415.pel5dilh7nrkxz6u@shlinux89>
+	s=arc-20240116; t=1788944064; c=relaxed/simple;
+	bh=OT3HE675N+VdybCn3UOUW38GVdcZHrAGIqgFEgNE7wY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=k5VjUw6rAC81zB+vzR1bwNoUJq+jQ1sKoupYgTgPyZyFA0w6QOsM27H/4qVuI4xHtyx5edty+CgejxjhYNcjf0XFGNERCeUB+it9S/4nxXdDwXUXl1kwIWZ8o6orgHADqPHOGgbFSfHS12XDWoiachnailclWr0gdOgJ6oJr2/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+X-PTX-Original-Recipient: alvin.sipraga@analog.com
+X-PTX-Original-Recipient: linusw@kernel.org
+X-PTX-Original-Recipient: conor+dt@kernel.org
+X-PTX-Original-Recipient: sboyd@kernel.org
+X-PTX-Original-Recipient: krzk@kernel.org
+X-PTX-Original-Recipient: robh@kernel.org
+X-PTX-Original-Recipient: krzk+dt@kernel.org
+X-PTX-Original-Recipient: mturquette@baylibre.com
+X-PTX-Original-Recipient: devicetree@vger.kernel.org
+X-PTX-Original-Recipient: linux-gpio@vger.kernel.org
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-PTX-Original-Recipient: kernel@pengutronix.de
+X-PTX-Original-Recipient: s.hauer@pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id C28DB202043;
+	Wed, 09 Sep 2026 10:54:12 +0200 (CEST)
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1x4E4K-0003io-23;
+	Wed, 09 Sep 2026 10:54:12 +0200
+Received: from [::1] (helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.98.2)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1x4E4K-00000006WeY-2GL6;
+	Wed, 09 Sep 2026 10:54:12 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Date: Wed, 09 Sep 2026 10:54:07 +0200
+Subject: [PATCH v8 1/2] dt-bindings: clock: add TI CDCE6214 binding
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260909-clk-cdce6214-v8-1-4dfa355c1f65@pengutronix.de>
+References: <20260909-clk-cdce6214-v8-0-4dfa355c1f65@pengutronix.de>
+In-Reply-To: <20260909-clk-cdce6214-v8-0-4dfa355c1f65@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, kernel@pengutronix.de, 
+ linux-gpio@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Linus Walleij <linusw@kernel.org>, 
+ =?utf-8?q?Alvin_=C5=A0ipraga?= <alvin.sipraga@analog.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1788944052; l=6861;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=OT3HE675N+VdybCn3UOUW38GVdcZHrAGIqgFEgNE7wY=;
+ b=HUmJlHyah0E6yRPguByL833PJoT1r04F2pA0f2QCoVaJWlmqljUIwxudcf8d6zcKM1baB5cQm
+ bhN+YD9fZOXCIiDSX22caHEREYa06TVzSTXb2oLLKCFgwkIBQ3odbPa
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
 
-From: Mehmet Fide <mehmet.fide@screeningeagle.com>
+Add device tree binding for the CDCE6214, an Ultra-Low Power Clock
+Generator With One PLL, Four Differential Outputs, Two Inputs, and
+Internal EEPROM.
 
-Hi Haibo,
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ .../devicetree/bindings/clock/ti,cdce6214.yaml     | 192 +++++++++++++++++++++
+ include/dt-bindings/clock/ti,cdce6214.h            |  25 +++
+ 2 files changed, 217 insertions(+)
 
-On Wed, Sep 09, 2026 at 02:44:15PM +0800, Bough Chen wrote:
-> dir_unreadable is now set from a second source (PINCTRL_BACKEND with no
-> direction register, in addition to GPIO_GENERIC_UNREADABLE_REG_DIR);
-> worth a line in the commit message.
+diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
+new file mode 100644
+index 0000000000000..4a9c9155894af
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
+@@ -0,0 +1,192 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ti,cdce6214.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI CDCE6214 programmable clock generator with PLL
++
++maintainers:
++  - Sascha Hauer <s.hauer@pengutronix.de>
++
++description: >
++  Ultra-Low Power Clock Generator With One PLL, Four Differential Outputs,
++  Two Inputs, and Internal EEPROM
++
++  - CDCE6214: https://www.ti.com/product/CDCE6214
++
++properties:
++  compatible:
++    enum:
++      - ti,cdce6214
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    minItems: 1
++    items:
++      - enum: [ priref, secref ]
++      - const: secref
++
++  '#clock-cells':
++    const: 1
++
++patternProperties:
++  '-pins$':
++    type: object
++    additionalProperties: false
++
++    patternProperties:
++      '^conf':
++        type: object
++        additionalProperties: false
++        $ref: /schemas/pinctrl/pincfg-node.yaml#
++
++        properties:
++          pins:
++            items:
++              enum: [priref, secref, out0, out1, out2, out3, out4 ]
++
++          ti,io-standard:
++            description: |
++              1: CMOS
++              2: LVDS
++              3: Low-Power HCSL
++              4: XTAL mode
++              5: differential
++            enum: [1, 2, 3, 4, 5]
++            $ref: /schemas/types.yaml#/definitions/uint32
++
++          ti,xo-cload-femtofarads:
++            description: Load capacity for XO in Femtofarad
++
++          ti,xo-bias-microamp:
++            description: Bias current setting of the XO
++
++          ti,cmosp-mode:
++            description: |
++              Driving mode for CMOSN output:
++              1: Low Polarity
++              2: High Polrity
++              3: Disable
++            $ref: /schemas/types.yaml#/definitions/uint32
++            maximum: 3
++
++          ti,cmosn-mode:
++            description: |
++              Driving mode for CMOSN output:
++              1: Low Polarity
++              2: High Polrity
++              3: Disable
++            $ref: /schemas/types.yaml#/definitions/uint32
++            maximum: 3
++
++        allOf:
++          - if:
++              properties:
++                pins:
++                  contains:
++                    const: priref
++            then:
++              properties:
++                io-standard:
++                  enum: [ 1, 5 ]
++
++          - if:
++              properties:
++                pins:
++                  contains:
++                    const: secref
++            then:
++              properties:
++                io-standard:
++                  enum: [ 1, 4, 5 ]
++
++          - if:
++              properties:
++                pins:
++                  contains:
++                    const: out0
++            then:
++              properties:
++                io-standard:
++                  enum: [ 1 ]
++
++          - if:
++              properties:
++                pins:
++                  contains:
++                    enum:
++                      - out1
++                      - out4
++            then:
++              properties:
++                io-standard:
++                  enum: [ 1, 2, 3 ]
++
++          - if:
++              properties:
++                pins:
++                  contains:
++                    enum:
++                      - out2
++                      - out3
++            then:
++              properties:
++                io-standard:
++                  enum: [ 2, 3 ]
++
++        required:
++          - pins
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/ti,cdce6214.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        clock-generator@67 {
++            compatible = "ti,cdce6214";
++            reg = <0x67>;
++            #clock-cells = <1>;
++            clocks = <&clock_ref25m>;
++            clock-names = "priref";
++
++            cdce6214_pins: cdce6214-pins {
++                conf1 {
++                    pins = "secref";
++                    ti,io-standard = <CDCE6214_IOSTD_XTAL>;
++                    ti,xo-cload-femtofarads = <8100>;
++                    ti,xo-bias-microamp = <100>;
++                };
++
++                conf2 {
++                    pins = "out1";
++                    ti,io-standard = <CDCE6214_IOSTD_CMOS>;
++                    ti,cmosp-mode = <CDCE6214_CMOS_MODE_HIGH>;
++                    ti,cmosn-mode = <CDCE6214_CMOS_MODE_LOW>;
++                };
++
++                conf3 {
++                    pins = "out4";
++                    ti,io-standard = <CDCE6214_IOSTD_CMOS>;
++                    ti,cmosp-mode = <CDCE6214_CMOS_MODE_HIGH>;
++                    ti,cmosn-mode = <CDCE6214_CMOS_MODE_LOW>;
++                };
++            };
++        };
++    };
+diff --git a/include/dt-bindings/clock/ti,cdce6214.h b/include/dt-bindings/clock/ti,cdce6214.h
+new file mode 100644
+index 0000000000000..41ec4f8868bbb
+--- /dev/null
++++ b/include/dt-bindings/clock/ti,cdce6214.h
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
++#ifndef _DT_BINDINGS_CLK_TI_CDCE6214_H
++#define _DT_BINDINGS_CLK_TI_CDCE6214_H
++
++/* Clock indices for the clocks provided by the CDCE6214 */
++#define CDCE6214_CLK_OUT0	2
++#define CDCE6214_CLK_OUT1	3
++#define CDCE6214_CLK_OUT2	4
++#define CDCE6214_CLK_OUT3	5
++#define CDCE6214_CLK_OUT4	6
++#define CDCE6214_CLK_PLL	7
++#define CDCE6214_CLK_PSA	8
++#define CDCE6214_CLK_PSB	9
++
++#define CDCE6214_IOSTD_CMOS	1
++#define CDCE6214_IOSTD_LVDS	2
++#define CDCE6214_IOSTD_LP_HCSL	3
++#define CDCE6214_IOSTD_XTAL	4
++#define CDCE6214_IOSTD_DIFF	5
++
++#define CDCE6214_CMOS_MODE_LOW		1
++#define CDCE6214_CMOS_MODE_HIGH		2
++#define CDCE6214_CMOS_MODE_DISABLED	3
++
++#endif /* _DT_BINDINGS_CLK_TI_CDCE6214_H */
 
-Will do in v6, together with your Reviewed-by on 1/3 and 3/3. Thanks
-for checking the i.MX7ULP/i.MX8ULP side as well.
+-- 
+2.47.3
 
-Mehmet
