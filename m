@@ -1,209 +1,277 @@
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2104.outbound.protection.partner.outlook.cn [139.219.146.104])
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013008.outbound.protection.outlook.com [52.101.83.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A4D3A7852;
-	Wed,  9 Sep 2026 06:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C53242D89;
+	Wed,  9 Sep 2026 06:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.8
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788934723; cv=fail; b=ej9yhs+StXrX+02lF9OQ3h4QwET7wLpGVrBhd3Vv4ynpkmfC4jGdXCg+r/YfisvkORqK4GEneacBI7FbeQ14KM3yra0ayORcXmfYDdPHaPI1BNQYtdJUZ0XZfGREM3UlFHNGb2DtsmiED2bZoiKNxZ/dlP2zoflPgqlrA4x1DGQ=
+	t=1788936010; cv=fail; b=lwDHS9zdfWGiEvUW/tSCFwCJ5drm8X7yfQEMd+i57F7H/XxIWNNcHL9klFTojyiqdMWSrfkeT7OsTUjYkdo2mIQJTIwYpBaea80WcjF5BCQWpE9Dkqjwl3ehyFBxEm/M+KomHGbX0U+Kg3rl4fOYf/vLTS/UnPsE3+a47M/a9b8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788934723; c=relaxed/simple;
-	bh=L3kWmHagBXo+LONExhSJznNgfAa2TB0F/NF/DA2U/xg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ul1Ps5Jr1otwA9BFyQAefzvhG0aarGVqA9nL5TfH4Nfu2OODEAkVxifqrGja9960hsvCAAD73qmVK+5PMFth3IUH01Jl2dHbhn5ySUCwsdKKNBCp2Vb0uqxdCuG9u8PhxHQzcasTbJOdNGjEKrRL5YTMYqGzvDLDay7P2ft85OY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TK3qbEcSr6BAFcOg0IDnyf2CywUGFRc0xR8vQmQy604U+WUs22LrF6I70EVZutP/6vd5koYeFRnDBLcS1Eb8Mk/HuJMbD8nsqKyG85AYVi16IYs9u3e2dcFJDscCyzFU1+qq8ZeB6BmkPCHgFJHQiCB6WJ+Spf2l9ArOzxXJw/DW6EPnJUlWNLpdkNMVVaHlNJgtRNBM/nyZjnwAjdmoCLGZ0HPYrP1lN0Bd4E9HJdq64nx/p6ugRm7S1MMP3hixQOmdjensMu64cAJhEkW7pFuT0l2LbNtfPC8JT9Xp5A7LZ+kDZhtP6LH8sCI4cUxbzUMG1JPmtm8KeOFcCCJN+A==
+	s=arc-20240116; t=1788936010; c=relaxed/simple;
+	bh=acUwX/1AwX+95c2MN/SHIutK5pyVlchH1ip9Z35cylY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bExqLB5BOfBQXxzy+TffAKE2z4kFLDFK0aIsIwHh7T2SR0+h/m8/d4IaB2EzQ4t/X+8AkyPMNXt1wam4fXM88lmTwfAEBYXCycPKq4MFyDNP7fRCKGHwx5oRVq8ox/qL0Q1AJp54u++IhePcZ/rjWQGhoOvK1542PPZ4BtEwGzk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=vSrp2oXH; arc=fail smtp.client-ip=52.101.83.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="vSrp2oXH"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bdbz5gCG+1x1KoF7nQT3cinuJsBezRfAZ4YZO2/z6mUctaXNbngX/zVQrpBwJF66QGfCAX03GgwCL0g1GqoMVTYoq7IYGifIUZIJ2NemxMK+eu3DSUt9c3kGLKL/cL7AH0lP3veiSLk8fqPGrhyTip9Y1MEoHR7sGqVULhUdPwZqMQjG1Oj3wngh83J0q1yuwnMStvWZcZy76WbWBC5Nj79yzkC+4ZEiQ191oWIOiV8we2SjkIvuEI3ZR6xf0vRhfla7pstYPZYi9iD3i6q5Ph47V+C/0Fi0OBemBUmfTIqk32zqteYcOtQtiPyJ/zRnxNKhIgxvHR9tkmfEU97ylg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
+ s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=91IBFkekoyrjI+nDmQJA4wLRF4Be374Ak/3DGItdEi8=;
- b=HUimvhHFsHpcvNQiUQSHmAWk5WqqqrAlUOi/5s9n50zYYr0LXeZ81tvkPB2F4mYU8/aHXTrBnCcKOYQAqGpHqnJ4jHd+aIIkdz6iR6IFoIx1Dah8p/lUk67kH4b6pXYCiNlwzHAWNhYJ4JCi8f5g2VahX9jxoY45424iwYdfKke07gJpKnk8oR2PLgrya5iePUM4JSBsyfZpB5ueFgcC3fuOIsdEXGwoOeetu1Xj1Zr1K4yjDY5nuD1B8t/pVjNiQ/eVyN9vprFbxwZpcGrX1IEY4iKgxtG0c/XwO2zjyilHcFLOXfxY2fINhulDt7T/k8qx7JnP4DonAHEEVBWsLw==
+ bh=mpGnf2THzpjkqf3nYuIap+ZpOXwwTlp/Hym6b5DuIYo=;
+ b=wQsTRsq4H2z9BXfHKs1I+9gFWi7hxW0+YU+UB4oZX10rIxyYTkuFVYehQlFyEmnrBMNtnalEcFeSznAvY8B2py9+Ug5CA4y2OwPHrmpU2XEmf1s/VUZ9WZ2XSKUsGEbmnSx8cImxgjtjYHkMozyN1D0dqD/cnTlwSmDYU8QeBLqf8jlxX+SdkcXLKHHi/pNuQ+7aVJUGgwSNvgcPNfSOSYZI/89EwP+N3JketL1klxDqwyt3jA+IAEnbzkwTN0XGujtSYSdjmc7mbbIxXo0DUWN/cYfLbDPXPz/f4ODn5ZnA1mT1/4bzrZs3/8vsr0L1m6egYVim1U+6kKe1VUnfmA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:17::6) by ZQ4PR01MB1220.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:14::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.18; Wed, 9 Sep
- 2026 01:43:20 +0000
-Received: from ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
- ([fe80::e7d4:256c:b066:850d]) by
- ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn ([fe80::e7d4:256c:b066:850d%4])
- with mapi id 15.21.0339.017; Wed, 9 Sep 2026 01:43:20 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Conor Dooley <conor@kernel.org>
-CC: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>, Paul Walmsley <pjw@kernel.org>,
-	Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Bartosz Golaszewski <brgl@kernel.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, Lianfeng Ouyang
-	<lianfeng.ouyang@starfivetech.com>
-Subject: Re: [PATCH v7 03/21] dt-bindings: pinctrl: Add
- starfive,jhb100-sys0-pinctrl
-Thread-Topic: [PATCH v7 03/21] dt-bindings: pinctrl: Add
- starfive,jhb100-sys0-pinctrl
-Thread-Index: AQHdOTzS/Ezb1OmSwkyNoZ30RtNkILbFJiCAgABglEA=
-Date: Wed, 9 Sep 2026 01:43:20 +0000
-Message-ID:
- <ZQ4PR01MB1202F0B2A4BB3D370C82D523F2B02@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
-References: <20260831113514.66382-1-changhuang.liang@starfivetech.com>
- <20260831113514.66382-4-changhuang.liang@starfivetech.com>
- <20260908-annually-catfight-39e3a1543274@spud>
-In-Reply-To: <20260908-annually-catfight-39e3a1543274@spud>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ4PR01MB1202:EE_|ZQ4PR01MB1220:EE_
-x-ms-office365-filtering-correlation-id: fc801271-77aa-4eda-79c8-08df0e13ba7c
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|23010399003|366016|1800799024|7416014|376014|4143699003|10067099003|18002099003|22082099003|56012099006|38070700021;
-x-microsoft-antispam-message-info:
- JF/bDqvZ9OFs5F7pJNV+sY6MBcTng4rhZY00XJp25GGA2E7UyONHhIIC4vuyC6BQGbCcPN1FUFh5nTXvHva5TzeAwhvpyPbbMnuT4D4/1sa/pgp513w2PRuQWdmSoIpmf8eFcvfyyzFt5OBH1gor1E8u1jInpQ4DXniWQXDvAik/qd09Zd8sAZNhmW6oNSFA7BJMtojan3D0KlCf4E8VPXdpnz5HhJsyFbpvT/we9PgbF67hVvDH7vtcHvDYn9XdPuxbhOXe0pr9VzS4CUJ1Gq/wFucpB9+jlUY945YnQR1TsTIvJkjSqnMe+ytjTxV4Rp1qANqrhMwOVvDt2izarFLF6v3uJayysJOlhou14M/qsD8sv/YYBefNz0gsznpJhFnk6KK1Rq30qEGTFb4AiG/mOcLf6W9bdD3x5oMc91ZqjRSkybMqi6Dr8zV7akWTF0TqnmfO3CDEbxYmPN15G/bNxoGIGdm7EcS0ZwisXx9ATIzq4n5eBbCbkrQQykZT5gkTVp0AUQ1gUZk2JqoqKXroI5PCBKK3mX2+NZyrx6/hXL1oQFHYgoZ9kLBvcUIL
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(1800799024)(7416014)(376014)(4143699003)(10067099003)(18002099003)(22082099003)(56012099006)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?wwhS1HLCjM0fXs2odjqCIeoIFOZF/piN9xx7Hk3TcGdvQ2yMRjXY2DSxqEFm?=
- =?us-ascii?Q?GayWBN9zRi9Md4TqeyWnojw24H546ECCqsxOKtmyYEsanIibRZyMBFkGqRm0?=
- =?us-ascii?Q?1QN+CVg2FSLGvmF/FMJuwH3lFhwTxWoqJNwXSWXraSxK+25OsgJ4+gtSnQiD?=
- =?us-ascii?Q?vTbFnhFXDdXhca75BTq+UWWGlwj0ypxBuTLcpAbEDq3lJNfuU9i6n7Hvr6sy?=
- =?us-ascii?Q?5CkvrBxqt3a9m2n5Tv7+DcyHI3WbFTQK8jnWYIjzy7g+v9m6PI5dl68fxFK9?=
- =?us-ascii?Q?ipl11AyxslKSM06QBH/hJ8SDTUgszt2UGKhkZItP/3/VGvJN8FXNr2oRJZdf?=
- =?us-ascii?Q?3ydzAPNdvfgM1RLJkb5zeYSgmds7cTJU1d9KtgCcqNECsjikDRlvvOKGqyly?=
- =?us-ascii?Q?CymKLNuq9tda/hFnG42AgzlBz6CWcthgWzW28fKoA28yCCJbiIVXNc6TuqH5?=
- =?us-ascii?Q?Weq1ieZ04YIRrH48wno+q9DavrqCLyPyGPgVcepyXbJ3k4A1obryEOXYkhv+?=
- =?us-ascii?Q?uv5u42ZdD1Nb0oCbLGDnKN9KFcmD8UvQjAW+wlCIfgm57rbvcbWZiTmrFrW5?=
- =?us-ascii?Q?ZHkCgi9v8ERCgmiDY/T1LV57zQxOrsQebjGYRFGQgziRXt84SkK9E3ewdi06?=
- =?us-ascii?Q?jc0IXHCzHWUxxrANaVNRZC65Z4hcpGQS1cxPlSCIoCsElN1/frWNNj1bHSUY?=
- =?us-ascii?Q?Y6xGLCLG0bdF7w+M9b5smVPNaVf9HmEfQsl40O0NRnk2xQV8B7Rpsm/+4jd6?=
- =?us-ascii?Q?OQfxzsEX1gvmegqZOT6YTEYw61reB8kRvNwxvw1MKzt5e4cSX52IlhsR3J/C?=
- =?us-ascii?Q?hh8bu7VdWn0YdGcfoCXT/zI6KuIrrQxzjm3/svqUi7Z4XgTbB4h93WgSyuqr?=
- =?us-ascii?Q?rEowQb+nlQvkYlzNM9Ex9/8tABIxuj0Vx5BKSpTyYAQL78+CwwRnTCeEaXMU?=
- =?us-ascii?Q?J3RaMW7s6HK5fxSzEEJ2+vigAtH2jQz5t76xjQRFhqjrap6aaNxyVHMPd5UW?=
- =?us-ascii?Q?5E6xG2cKV2w01HqaxxX3DiuDH//3w8jgkZ3IZHfvycNu6Ap9d3LW+pP8xB0r?=
- =?us-ascii?Q?iePaayc8fXGehv87Sgt9Hth9lDYWOR0oVaAmnmoK16abCCmYVwm8sFVAiIlO?=
- =?us-ascii?Q?atCoeSBv/Q50jfqZZdqAYmBfZMi+W8xgGNmJ5XqfJoVV0t7IK/LtR6z1pYDl?=
- =?us-ascii?Q?XEYtAEUZP5siQV/nPfuTGlxnNxhvSzm5f8+pren6BOKl+RQoYZdFJ9MXCew+?=
- =?us-ascii?Q?f/KNo3CbCCRXrcPjq+D1y0rkfP6iioP/tGnERMGz6tvKeWz4jill9/AuIR0m?=
- =?us-ascii?Q?gcDM80tpbF2epGUIlaBjm4L2hsstVK2JX3Op9CnVOLCPyt/C6xhiNvbVn28H?=
- =?us-ascii?Q?d01oxaPripj0yP08iGNSlH4cn3bpvclOBUXTsaU8SpTG1cuPOl22EHK2t0sq?=
- =?us-ascii?Q?f+RH6SW2lq6+u6xWVd4AFNOA8uw4HZgh9MfktsJcjrj80YliG0LwA3c/WxwC?=
- =?us-ascii?Q?JKV4DQG8SdBLSwNRkOGNQv66uVENWelnvkn6dsL0G9Xwza72Ln/sbeA+3FdM?=
- =?us-ascii?Q?e8Ux6NnvDSyAM9CU3qRgBDSw7RZ+bwZNBMZgxMbjWvANE/1I52A7MSKxNXu0?=
- =?us-ascii?Q?Wtl6o6YHo3c4SnpiAVm9Bu4L7aOUM0TrzXMnLUsj0LFYUVKWDiBqM/zygCY6?=
- =?us-ascii?Q?MIjLirHMNrzvEQVQI5QxMPYMTFTRW2S5HrYZkhF+Vyec6eQHLbXbQN1KxK/D?=
- =?us-ascii?Q?8QzSXBPujtSNqHPlS3RRWaCKYxcP+jk=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mpGnf2THzpjkqf3nYuIap+ZpOXwwTlp/Hym6b5DuIYo=;
+ b=vSrp2oXHqwzHO8rB+2cww0JsMnQxQFR2rtrxNScq7vcCzxsSch/XtkZPAccKYi/WTMBaeQQKOa1KsTZzGMG5BEvBKhQwrW4H+cyxstGmBY6iQgZf+PvUvjTUirG0DSVuYpMKuCa+6aVF6oy7thWg545FmMWX6MZds+6qrW4xlF3eHBIADvsMshIQNLjgkrQ0aP7i79HuVSl5U09uY+3GHHymu73YEAXx8P9IXaaxxxJqbQz4kl4ssHZjdWWoUux8wHTGEN6rS3DQHhvSgPPTn509nZVtfeqO8O3VZkJi64oc2+vsBVWkQ90FzLhtZCXPoAukSbHB5H3iPJ9q29uZjg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PA6PR04MB11909.eurprd04.prod.outlook.com
+ (2603:10a6:102:51c::22) by VI1PR04MB6831.eurprd04.prod.outlook.com
+ (2603:10a6:803:135::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Wed, 9 Sep
+ 2026 06:40:03 +0000
+Received: from PA6PR04MB11909.eurprd04.prod.outlook.com
+ ([fe80::a4b:fa4e:7fe7:e6a2]) by PA6PR04MB11909.eurprd04.prod.outlook.com
+ ([fe80::a4b:fa4e:7fe7:e6a2%7]) with mapi id 15.21.0406.005; Wed, 9 Sep 2026
+ 06:40:02 +0000
+Date: Wed, 9 Sep 2026 14:44:15 +0800
+From: Bough Chen <haibo.chen@oss.nxp.com>
+To: Mehmet Fide <mehmet.fide@gmail.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	Jacky Bai <ping.bai@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Mehmet Fide <mehmet.fide@screeningeagle.com>
+Subject: Re: [PATCH v5 3/3] gpio: mmio: track the direction of chips without
+ direction registers
+Message-ID: <20260909064415.pel5dilh7nrkxz6u@shlinux89>
+References: <20260903075940.2089367-1-mehmet.fide@gmail.com>
+ <20260903075940.2089367-4-mehmet.fide@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260903075940.2089367-4-mehmet.fide@gmail.com>
+X-ClientProxiedBy: SG2PR02CA0123.apcprd02.prod.outlook.com
+ (2603:1096:4:188::22) To PA6PR04MB11909.eurprd04.prod.outlook.com
+ (2603:10a6:102:51c::22)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PA6PR04MB11909:EE_|VI1PR04MB6831:EE_
+X-MS-Office365-Filtering-Correlation-Id: 13fe79b5-78e8-4c40-27b1-08df0e3d2d56
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|23010399003|7416014|376014|19092799006|366016|3023799007|10067099003|56012099006|11063799006|4143699003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	yAFXmj1QQoogqfLKKldTXgr5zZLMZLt1KQ0f4SP5P305KuMYhHSsQvPzT+aALVcQ1eZZJCKUBu3kuv2xRGv2Z7ry1ceqVcAiWRMHjpKJf2VtVdZzyvkV3FoDCcJ87WLffK2oQjJeFQyXVhLhiZ2ptyTb45dDIJfLqbO1mpMkBtqBnyryF0ilpo8dbnGVkD/iQntmM5eh0/i412YY7e4C75/jsOCMmYOvM5scf4o9IuHwF5Z2+7NU9Jb/o/nwHo+tNanLtzxtuD6sKarNw1KUiz3/cXneDzZaBq1WYIam29fINNabxxuR/EzRu7xb9X3W5U70lE/6czlFoA0YXuXQSp6WPCy0jjGBJ9am8pd1pr+LbV1qytGZjae7aoDzydZ+gw6+CVo3SN2cglhSrrgMndq8jra9RNOydCdXMkHfJVTwK/oNkXG4VHJMrjoAV385DINNMe4MrcLCgE5RMXvRm5T7xXS9jazHBwU/Q8MGA+BBeHNLwzHikn/ITm+Zg28Ey3UKoqW3dEEX/O0NFlPc2RApooqpilw03+ohtD6EFxYfrzEWkxuzq31mpRZlTLAM0VKIAfQBLId4zlQY1Y9kVLsJrjNEGd5Vu7M4/bwjWlHH23f4rT//3Ba+esg/2Jj9JAKDcuKfxd315IAJlK0xacrr284QG+jAbrsn/Eod63U=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA6PR04MB11909.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(7416014)(376014)(19092799006)(366016)(3023799007)(10067099003)(56012099006)(11063799006)(4143699003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?JaMbAWJajvtTWi6vZHMSjmSID9sxAB5Dv2IjVQkg85BAta6x/kP99x38Ftbg?=
+ =?us-ascii?Q?o3JifF1xBSgUnKBwREGDkejUSum8XSfmHCMWj48AGzrkwN2JaNY+w/P81qKz?=
+ =?us-ascii?Q?FJWZSUNL6f3Pbmw6QFWQQ0o9os5DmTqVRdpHiWhsTULWxWUmcjTAzCunc0jI?=
+ =?us-ascii?Q?Mxp4yELSSmuiP7CjWFkS9yjafkgCivSQ5E3g3HcpptxbFh14G4F2WYOvn5VG?=
+ =?us-ascii?Q?m0ptuTV5rpE9QlQGBrFKIfWtwehd6ppx0MC9k94j24PP2gcBsDK8Kz5bvxSV?=
+ =?us-ascii?Q?liRCmqT5+13W+Ssh6gH3xJa7T09BNG01nVqfkCvDuMg0jHbbHbABIqMl0Dqv?=
+ =?us-ascii?Q?A4cckGIY8r3QTN3l4SLo8pQ7FiEXOM4GiL61lmTkFNpII7rNoznOjimNE55q?=
+ =?us-ascii?Q?lsNf48xM+vQ8nQhRXrP41H6BLl+e5zAwc+2RXJVpYvmm7xUwpLpPCZ3waKDR?=
+ =?us-ascii?Q?LG83x/msKtHPyCCODCyf9RT5JXnO/oCXAjdkIqqSVtZLZU9+FE0WkBYiOB79?=
+ =?us-ascii?Q?A0AVbAA7Jvz0LU2RV+WiIFCy2lQN4fWsemfwit31eEJiMyKP3vlfruMePSSh?=
+ =?us-ascii?Q?2YTe+vf9pK/SEyVgKMvuC4NoqTsjDGv3c72ZUFO5cLulI2hYVFnGujSsNRlm?=
+ =?us-ascii?Q?K5on8hplf5uoFXg17u7rh8j0dtc/k1V1O23CAsRaeiAvXa6HFIal2K2iSz4p?=
+ =?us-ascii?Q?evS7l/8n3zlFAHy/iHcjzAPWQ3K2yRn1nvCdg9Emj7bdcVc1AaysnTtMJB9d?=
+ =?us-ascii?Q?0MGZR80IRZ754w98xlHaqsGJU3BIVRmX6yfIfKReFn4Ndp/QPNcctaD+DMvK?=
+ =?us-ascii?Q?kpj8KMXres4noc9P1k8ZMZbLr934ibTRFYy0goSp2gQLH1oeNXqlQ+ZUrFoU?=
+ =?us-ascii?Q?lZeOpT0WSzn03hkurFkGRqMCc7Xp5kF0Mm9OBvF1KHAESp6+oa0hCcrBQIup?=
+ =?us-ascii?Q?IpUJDe3L9dBzT8AIj44KIh8PWZQfULdHj7YDt2ifx4abnWVzriX1jM5jCv3v?=
+ =?us-ascii?Q?ELeIP76lPeYCe4bkZ73eHj6a8ADp6ySVSj9f/s5DDgNn2f980O7F1OsQgJoI?=
+ =?us-ascii?Q?G5w/3CP375Bt3ZlhHOduOvfiopMl7D3v/r458NI/8UHeFcs3jZKHxf/fietq?=
+ =?us-ascii?Q?tSHM8CHxZjfD29OmjBSbMOeVo6QQKk1CEv4mYjemRYwTrSkO0t2zqZpb+w3m?=
+ =?us-ascii?Q?tC96mkbhHhouj1TbqfynSRnnL0q66aaj2oqsyo2Sq02sHKIFhMOwMEzWWHLA?=
+ =?us-ascii?Q?2ei6HBrjJVLFvvJIlZkwflMcR+3BhPZ0ZZlwa9am9gJtKX8bVZEtG5OlIl0q?=
+ =?us-ascii?Q?nwafq+nR8/1VqwtFdEwSTdIm+QPQGzRJ1/IL+deyrHSADdV+00FClVDhCmAU?=
+ =?us-ascii?Q?ZCg6GfP+PMh+sR/CaoBhYr4llFYkPywPzd7gwBueecb1OOYGzZ1fRB2yB+GQ?=
+ =?us-ascii?Q?cBYVJDelDBl2op67zg6/1vztKfRsDlTARyzNpsCZi5w/bIDp6cnRscAeFRBn?=
+ =?us-ascii?Q?XxipSbGRfRPEG6wd6lZIWpoMw7MK6Iyc3ha1UABPpIVu8h6AKrwB41MVamDW?=
+ =?us-ascii?Q?APzC/+qCrvN6eedfn++GzyotsukYxFw/BMjKlOtQId+iAXbCSPCVG9xpFw7f?=
+ =?us-ascii?Q?YJj0bGr1pqtHKQHmnIEvcl62EzTLgGFg1EZmtT5yhhCTWx5rvPGZw8+Ewbhl?=
+ =?us-ascii?Q?GNZBYhbG0T8Xqqu6lxidBvmuwBJtaTDCG/V6R51o0SlbDxRyW1IbOS5wpvzu?=
+ =?us-ascii?Q?KQnr515KQMkbOv3sszXMfcJUNzYpXPKEOV+WbzeE6Ipd7XhyyREJ?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13fe79b5-78e8-4c40-27b1-08df0e3d2d56
+X-MS-Exchange-CrossTenant-AuthSource: PA6PR04MB11909.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc801271-77aa-4eda-79c8-08df0e13ba7c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2026 01:43:20.4710
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2026 06:40:02.8372
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0oKCA7QqJKk0yhIurZh5BUS9es2JH4Y4kCrV4pn8pAijfa+N4SnpCA2F5x2dpDkViUizVVqvWIN8cPzCyX+m6dKUA0sR7I2wy1V8Vyv0j7hWvHL6s67TgghlmOEcSfv1
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ4PR01MB1220
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AbH6rl4jEnLD2pQnJPGt1MwQ42/Qpi+HoOT7v7UI1HrULje/0P79hpEFw45fTOxjrIu1U8pcy/KmbD6Dqn2grnNCIiFP3fBMWyuu/DelsIN1KsJVHcvzUPcu5e8KvUte
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6831
 
-Hi, Conor
+On Thu, Sep 03, 2026 at 09:59:40AM +0200, Mehmet Fide wrote:
+> From: Mehmet Fide <mehmet.fide@screeningeagle.com>
+> 
+> A generic chip with GPIO_GENERIC_PINCTRL_BACKEND and no direction
+> registers sets the direction through pinctrl but has no get_direction
+> callback, so every gpiod_get_direction() call trips the WARN in gpiolib
+> and the direction gpiolib reports is whatever it assumed. On a Vybrid
+> Colibri module that is 21 backtraces per boot.
+> 
+> Keep the direction of such a chip in the existing shadow: the direction
+> setters update sdir under the chip lock, and get_direction() is the
+> shadow-reading path already used for unreadable direction registers.
+> That keeps the callback usable in atomic context, which it has to be:
+> gpiochip_lock_as_irq() calls it for !can_sleep chips from
+> gpiochip_irq_domain_activate(), under the irq descriptor lock.
+> 
+> The pad's actual state is read once, in process context, when a line is
+> requested: gpiolib calls request() right before get_direction() for a
+> new line, so the shadow is seeded there from PIN_CONFIG_OUTPUT_ENABLE
+> through the chip's get_config(), which is gpiochip_generic_get_config()
+> for the pinctrl backend, and the line reports what the pin controller
+> says. Lines pinctrl cannot answer for keep the input default, which is
+> what gpiolib assumed before.
 
-Thanks for the review.
+dir_unreadable is now set from a second source (PINCTRL_BACKEND with no
+direction register, in addition to GPIO_GENERIC_UNREADABLE_REG_DIR);
+worth a line in the commit message.
 
-> On Mon, Aug 31, 2026 at 04:34:56AM -0700, Changhuang Liang wrote:
-> > diff --git a/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
-> > b/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
-> > new file mode 100644
-> > index 000000000000..6d8f5516a178
-> > --- /dev/null
-> > +++ b/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
-> > @@ -0,0 +1,17 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> > +/*
-> > + * Copyright (C) 2022 StarFive Technology Co., Ltd.
-> > + *
-> > + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
-> > + */
-> > +
-> > +#ifndef __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
-> > +#define __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
-> > +
-> > +/* sys0 pad numbers */
-> > +#define PADNUM_SYS0_GPIO_A0				0
-> > +#define PADNUM_SYS0_GPIO_A1				1
-> > +#define PADNUM_SYS0_GPIO_A2				2
-> > +#define PADNUM_SYS0_GPIO_A3				3
->=20
-> Krzysztof's point [1] about these still stands. Pad indices aren't bindin=
-gs.
-> Sure, your driver and your dts both might want to use these but that does=
-n't
-> make them a binding. For that to be the case, they need to effectively be
-> made up numbers - like how clocks are often listed with numbers from 0 in=
-to
-> the dozens or hundreds, when that may or may not correlate with actual bi=
-ts
-> in registers, e.g. indices 0-31 in a clock binding might be in register 1=
- and then
-> 32-63 are in register 2. There's no need for a binding here to assign mea=
-nings
-> to numbers, because the meanings are assigned by the hardware itself - in=
-dex
-> 0 for SYS0 *is* A0, because that's how the hardware is designed.
->=20
-> Were the numbers to run continuously, so that we had
->=20
-> #define JHB100_PADNUM_A0	0
-> #define JHB100_PADNUM_A1	1
-> #define JHB100_PADNUM_A2	2
-> #define JHB100_PADNUM_A3	3
-> #define JHB100_PADNUM_A4	4
-> and so on down to
-> #define JHB100_PADNUM__D0	1234
->=20
-> then it would be a binding, because we're assigning a meaning to 1234 tha=
-t's
-> not something determined by the hardware.
->=20
-> FWIW, I'm happy to have the unchanged starfive,jhb100-pinctrl.h sit in
-> arch/riscv/boot/dts/starfive, because the defines are helpful - but as th=
-ings
-> stand I think Krzysztof is right.
+Reviewed-by: Haibo Chen <haibo.chen@nxp.com>
 
-For the current series, the drivers also use some definitions from the bind=
-ing. In=20
-the next version, should the macro definitions be directly placed in their =
-respective=20
-pinctrl-starfive-jhb100-<domain>.c files?
+Regards
+Haibo Chen
 
->=20
-> Cheers,
-> Conor.
->=20
-> 1 -
-> https://lore.kernel.org/all/ZQ4PR01MB1202123864865439817E1549F2AA2
-> @ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn/
-
-Best Regards,
-Changhuang
-
+> 
+> Suggested-by: Bartosz Golaszewski <brgl@kernel.org>
+> Signed-off-by: Mehmet Fide <mehmet.fide@screeningeagle.com>
+> ---
+>  drivers/gpio/gpio-mmio.c | 60 +++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 56 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
+> index 7e4b3e8d609f..0709ffaab4de 100644
+> --- a/drivers/gpio/gpio-mmio.c
+> +++ b/drivers/gpio/gpio-mmio.c
+> @@ -49,6 +49,7 @@ o        `                     ~~~~\___/~~~~    ` controller in FPGA is ,.`
+>  #include <linux/log2.h>
+>  #include <linux/module.h>
+>  #include <linux/pinctrl/consumer.h>
+> +#include <linux/pinctrl/pinconf-generic.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/property.h>
+>  #include <linux/spinlock.h>
+> @@ -372,7 +373,17 @@ static int gpio_mmio_dir_in_err(struct gpio_chip *gc, unsigned int gpio)
+>  
+>  static int gpio_mmio_simple_dir_in(struct gpio_chip *gc, unsigned int gpio)
+>  {
+> -	return gpio_mmio_dir_return(gc, gpio, false);
+> +	struct gpio_generic_chip *chip = to_gpio_generic_chip(gc);
+> +	int ret;
+> +
+> +	ret = gpio_mmio_dir_return(gc, gpio, false);
+> +	if (ret)
+> +		return ret;
+> +
+> +	guard(raw_spinlock_irqsave)(&chip->lock);
+> +	chip->sdir &= ~gpio_mmio_line2mask(gc, gpio);
+> +
+> +	return 0;
+>  }
+>  
+>  static int gpio_mmio_dir_out_err(struct gpio_chip *gc, unsigned int gpio,
+> @@ -384,9 +395,19 @@ static int gpio_mmio_dir_out_err(struct gpio_chip *gc, unsigned int gpio,
+>  static int gpio_mmio_simple_dir_out(struct gpio_chip *gc, unsigned int gpio,
+>  				    int val)
+>  {
+> +	struct gpio_generic_chip *chip = to_gpio_generic_chip(gc);
+> +	int ret;
+> +
+>  	gc->set(gc, gpio, val);
+>  
+> -	return gpio_mmio_dir_return(gc, gpio, true);
+> +	ret = gpio_mmio_dir_return(gc, gpio, true);
+> +	if (ret)
+> +		return ret;
+> +
+> +	guard(raw_spinlock_irqsave)(&chip->lock);
+> +	chip->sdir |= gpio_mmio_line2mask(gc, gpio);
+> +
+> +	return 0;
+>  }
+>  
+>  static int gpio_mmio_dir_in(struct gpio_chip *gc, unsigned int gpio)
+> @@ -601,20 +622,51 @@ static int gpio_mmio_setup_direction(struct gpio_generic_chip *chip,
+>  			gc->direction_input = gpio_mmio_dir_in_err;
+>  		else
+>  			gc->direction_input = gpio_mmio_simple_dir_in;
+> +
+> +		if (cfg->flags & GPIO_GENERIC_PINCTRL_BACKEND) {
+> +			chip->dir_unreadable = true;
+> +			gc->get_direction = gpio_mmio_get_dir;
+> +			gc->get_config = gpiochip_generic_get_config;
+> +		}
+>  	}
+>  
+>  	return 0;
+>  }
+>  
+> +static void gpio_mmio_seed_dir_from_pinctrl(struct gpio_chip *gc,
+> +					    unsigned int gpio)
+> +{
+> +	struct gpio_generic_chip *chip = to_gpio_generic_chip(gc);
+> +	unsigned long config;
+> +
+> +	if (!gc->get_config || chip->reg_dir_out || chip->reg_dir_in)
+> +		return;
+> +
+> +	config = pinconf_to_config_packed(PIN_CONFIG_OUTPUT_ENABLE, 0);
+> +	if (gc->get_config(gc, gpio, &config))
+> +		return;
+> +
+> +	guard(raw_spinlock_irqsave)(&chip->lock);
+> +	if (config)
+> +		chip->sdir |= gpio_mmio_line2mask(gc, gpio);
+> +	else
+> +		chip->sdir &= ~gpio_mmio_line2mask(gc, gpio);
+> +}
+> +
+>  static int gpio_mmio_request(struct gpio_chip *gc, unsigned int gpio_pin)
+>  {
+>  	struct gpio_generic_chip *chip = to_gpio_generic_chip(gc);
+> +	int ret;
+>  
+>  	if (gpio_pin >= gc->ngpio)
+>  		return -EINVAL;
+>  
+> -	if (chip->pinctrl)
+> -		return gpiochip_generic_request(gc, gpio_pin);
+> +	if (chip->pinctrl) {
+> +		ret = gpiochip_generic_request(gc, gpio_pin);
+> +		if (ret)
+> +			return ret;
+> +		gpio_mmio_seed_dir_from_pinctrl(gc, gpio_pin);
+> +	}
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.54.0
+> 
