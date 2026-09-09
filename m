@@ -1,58 +1,58 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFAB48E0FF
-	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 09:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EFD49EC5D
+	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 09:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788944784; cv=none; b=Ewv1PxUvqe0T3gP4C1AeKPoBoiLDHFRfdqDEUR7lYPPTT1IOyzic7Tqw5XlTNyt5GHgRYM+aPfmadd7svVJ+I1n8+uxg88mYYEGxKLelw5XTjOz5cKCecL8iM9OGoZCM4TJ9eI2pESX4YfbxxdlB5/yc+I30NYPuaU3hSB4liTo=
+	t=1788944795; cv=none; b=NJd2kvxNRgdIg6pgm+nCFxx2BbkxFBijHclifPUeo0dsvrs8/zDtNw8D6KYJna4czNl+lV/vvSbIuQ1v51/ODU9s6RGaIox006RnKjCaAmA5j8fIMp6m5VuaDqgSbbnfbD5ZZLbkAueaXPmbak24HN7Gc9/OOoRcVpuLUIBIVIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788944784; c=relaxed/simple;
-	bh=kjC7zFmvS6+Z0Su5AyND9tbS4+QZuh6pAhX8y/gfjkk=;
+	s=arc-20240116; t=1788944795; c=relaxed/simple;
+	bh=MDBBmeOGt1jJA2QyqYyZpKdJgVhokM9Hyvk+N6kJG7Y=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mi6pnWSSsLO8qmcQdmzd/5CoYwk5i2y+qovG6gXozv2Pg6NCorT9kNKXhdNqioTNEQSrT/s6XuULRUcFErWEmHSgtbsNu2eVISlShBvAv9s/bj5Pg8kXLju5egz65vqAMf+5IGS8LjH9AkZw5zAtO05KQlHfLseY3nS9RkY/Qsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QXm2dDTq; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=krTVr3833Xjen8Oeca0sHlk3vMHuDLC4tlEVh2GzUnVLH9LybjGs2jSQtb4gHBrLAgTD1MvY7aGP2kXBMBUJahR017wwV877F7+2Dt/97hta3vgQMert5E4sst0E/fcsda9ssqRezygOkMoqW6NwDo/beYJg8+OnT3SnWm9dgzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1Dgu4B2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QXm2dDTq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B21B21F01561
-	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 09:06:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1Dgu4B2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF1EB1F01572
+	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 09:06:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788944781;
-	bh=dii2jE7C72W2ski5o7RHBY8kSMlzb7654UkI7tfR0PE=;
+	s=k20260515; t=1788944791;
+	bh=osuKNlWwkgDC1U1icT/Qoh45Es9k9O509Xjy31GoFe8=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=QXm2dDTqlawpzUKdH2+SNJMCzqg70ZPHzpXImpE35OqvKbcWRXUTLibBkb+G4xDlz
-	 dzLJsh7eoIz1A2jwF3kWkyb/N3kPfQReyR3aR/MnFAGQGgpQl90VcITXo82+oLzKEU
-	 Kz+5jY9YNszGfKfeK0XkcOEXOZVtNEReOZPdQHmyzHBt0zbBGJQBOjpydNXmgo+sA2
-	 It8cpdRykkukGN/OvO4uMKqDs4gWwJNm4hZtmNR6z4gI1N0u3SZmE0JLfSXbrUtgI6
-	 f+cwqkR1SQ1sES5sZPGZQe6m9pz/Q8RKnHyf1oxkzyWtcxgrpNE7h31Aao313JlkWz
-	 EMiSTFZznYieQ==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5b4adcce4b1so5090669e87.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Sep 2026 02:06:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxOJ66nMZ69OlnARLuommxGTBA7MUWqzcVVH8te5GjapSfQsjhaMl1nMnDNRV9/XAR+GYLerAeluWDX@vger.kernel.org
-X-Gm-Message-State: AFuF++naj8PlPk8Bv6nRHtvX2bjNMm3LmPzZoEcKrcGIlwCdxsdiwVMS
-	XFdhJZ67gXhJn0qL9A5bENP71Oq0Z6XyAQ1WvhnmHvlBZLt9duk7sHe4P3OLMbJb/tay2gLZZlz
-	C3z3huuKh6AwvfoUwQD9w8IAkn5rzf474Hw1XYt3X6w==
-X-Received: by 2002:a05:6512:2392:b0:5b6:19e9:faee with SMTP id
- 2adb3069b0e04-5b619e9feadmr9372101e87.7.1788944780379; Wed, 09 Sep 2026
- 02:06:20 -0700 (PDT)
+	b=m1Dgu4B2XCYkK9uqtTe9U9zEXs0+QrbFPh/q2c/n8LAZhnNC57aXu7oDMWH25YFrp
+	 9M2uoKoGR0DUSNTkL3g/H7OsUoXwQwe3tockNtuif2v6KCgmiZhBLiZfpFCiHmtePp
+	 Ba0GX/O8QSZZ2e1PFYofcm1ZihQj+A4SwJ0IR1I9Z6n3NuDtUxi+qnbBBYRVakRThB
+	 YXRpuC/R0xLvXvgN8OC5C5P2hHsyLiPrcv/x3z8mk/Adi17+SZdQwgIpCpfpwHlzP0
+	 TZTIQSliDRZSrY2WY7ooZWDbOWX076STbMR2HTqAlqJCusNUgpsOdOCmSq9L96ms35
+	 SuQ/zVSZCkVoQ==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-39c86ce9e29so39433511fa.3
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Sep 2026 02:06:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByXlerU97eGaO9y0efwopL1Ex7LaCu5Yk+OQBsrwmueAbKy0ExNXhkRKFJWmwLkwYjZ9ekjh4dOREB5@vger.kernel.org
+X-Gm-Message-State: AFuF++m7iC6rZiso1EhTNqVMxUMY9TqJ84kX0HKhXlfvzTdya3cSqGr/
+	z6kLVt2zGktiFhjuALH4/8dm/4BxsW2GKP6gNPeOcx/b3uUb8HR+cb7HjbfEX2BLIEpCfRNQPqp
+	jJ05kB4psJMMy4fKl32K+PcI0YuBDVq14lqfL00HJyA==
+X-Received: by 2002:a2e:bc13:0:b0:39c:624d:82b9 with SMTP id
+ 38308e7fff4ca-3a371b5785bmr81319681fa.4.1788944790433; Wed, 09 Sep 2026
+ 02:06:30 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 9 Sep 2026 02:06:18 -0700
+ HTTPREST; Wed, 9 Sep 2026 02:06:29 -0700
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 9 Sep 2026 02:06:18 -0700
+ HTTPREST; Wed, 9 Sep 2026 02:06:29 -0700
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260909080114.591938-5-herve.codina@bootlin.com>
+In-Reply-To: <20260909080114.591938-6-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260909080114.591938-1-herve.codina@bootlin.com> <20260909080114.591938-5-herve.codina@bootlin.com>
-Date: Wed, 9 Sep 2026 02:06:18 -0700
-X-Gmail-Original-Message-ID: <CAMRc=MfqMBixhXHVmYhdpGc6BU7M+rrs8EQ_j+q3hbotkqCjEw@mail.gmail.com>
-X-Gm-Features: AcwNN1XGS28aCCiZZDD6zMMd556ezTre_MtLVw34sLu2zEhsTocTiN_vEfjyNZM
-Message-ID: <CAMRc=MfqMBixhXHVmYhdpGc6BU7M+rrs8EQ_j+q3hbotkqCjEw@mail.gmail.com>
-Subject: Re: [PATCH v11 04/10] cxl/test: Use device_set_node()
+References: <20260909080114.591938-1-herve.codina@bootlin.com> <20260909080114.591938-6-herve.codina@bootlin.com>
+Date: Wed, 9 Sep 2026 02:06:29 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MfMvXWLHMb1w7km_JCsZvE9_HmhiAWgoMi9mjxXL3_8EQ@mail.gmail.com>
+X-Gm-Features: AcwNN1UAL1h56FAgIlDt7ND-Ag45pHEciGYFt6Y1QX_NiTCc2meGcA2HgU6LiJg
+Message-ID: <CAMRc=MfMvXWLHMb1w7km_JCsZvE9_HmhiAWgoMi9mjxXL3_8EQ@mail.gmail.com>
+Subject: Re: [PATCH v11 05/10] cxl/test: Use fw_devlink_set_device()
 To: Herve Codina <herve.codina@bootlin.com>
 Cc: driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
 	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
@@ -76,10 +76,11 @@ Cc: driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
 	Ira Weiny <iweiny@kernel.org>, Li Ming <ming.li@zohomail.com>, Lizhi Hou <lizhi.hou@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 9 Sep 2026 10:01:03 +0200, Herve Codina <herve.codina@bootlin.com> said:
-> The code set directly dev->fwnode.
+On Wed, 9 Sep 2026 10:01:04 +0200, Herve Codina <herve.codina@bootlin.com> said:
+> The code set directly fwnode.dev field.
 >
-> Use the dedicated helper to perform this operation.
+> Use the dedicated fw_devlink_set_device() helper to perform this
+> operation.
 >
 > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 > Reviewed-by: Dave Jiang <dave.jiang@intel.com>
@@ -91,18 +92,18 @@ On Wed, 9 Sep 2026 10:01:03 +0200, Herve Codina <herve.codina@bootlin.com> said:
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 >
 > diff --git a/tools/testing/cxl/test/cxl.c b/tools/testing/cxl/test/cxl.c
-> index 62bd92b3be45..547ebc97bf59 100644
+> index 547ebc97bf59..e21e45fe1572 100644
 > --- a/tools/testing/cxl/test/cxl.c
 > +++ b/tools/testing/cxl/test/cxl.c
-> @@ -1677,7 +1677,7 @@ static void mock_companion(struct acpi_device *adev, struct device *dev)
->  {
+> @@ -1678,7 +1678,7 @@ static void mock_companion(struct acpi_device *adev, struct device *dev)
 >  	device_initialize(&adev->dev);
 >  	fwnode_init(&adev->fwnode, NULL);
-> -	dev->fwnode = &adev->fwnode;
-> +	device_set_node(dev, &adev->fwnode);
->  	adev->fwnode.dev = dev;
+>  	device_set_node(dev, &adev->fwnode);
+> -	adev->fwnode.dev = dev;
+> +	fw_devlink_set_device(&adev->fwnode, dev);
 >  }
 >
+>  #ifndef SZ_64G
 > --
 > 2.55.0
 >
