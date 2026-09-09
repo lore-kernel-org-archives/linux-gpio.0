@@ -1,156 +1,168 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C3E4A13AD;
-	Wed,  9 Sep 2026 10:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AD94AA3FB;
+	Wed,  9 Sep 2026 10:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788948329; cv=none; b=e50FJaR9K6P6Os92G7dOwrTqq4E6cT0Nr7/Pj/MnBWNAXwNZlq00bJSUp5YKCBiDA3fzYgJlzKrBSaE4IzZE8YxEdnIgoNvaJ4eW4M/lrnoItUXR2SsM0fdAoT1b4ygQ2B6lpPEwM8x5YarZbnyxLx9ihww9VD4uAUnC7/SMQdo=
+	t=1788948454; cv=none; b=BD5KlreRr+ah9M/4nN9whUt1Sai7nnGbhAc9itAHDz9SHZAa9zVvigsHsr+rr2EYRMSkx5rASIzJGhBO2KZs5PLTYXTuqZ29y2pwfNgUUTMHxqL/g78pxVXLxMLrGtFOvZwScOHNdQdatSF6KD6Ts+tJvMTUjrwSSnMFXvC+gGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788948329; c=relaxed/simple;
-	bh=kJV1f3wB2RcXY3XSY6MQqbSq5MB+kbNhrwlsOrgQJrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D6ay1j1AhlYgw1Hf71em2LoEM0l1CzEYFMnKFDujZI/3jCMrEW61DWwaqI+nrnTPfsJDT4FXKDQvcpsdt3OziXjJ2DqCNPvBmJYfwky2KJrVVS70KSg69akwFmU//Hz2bX2+DfKnXSBAYYg1EDFuPSKBJ613HQKb7mUiokFuWJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Da7lqg5D; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788948454; c=relaxed/simple;
+	bh=V5UBoopZ3KQVTUPVB5g0l5mZ54qcuD+78LD4jh6PV5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aChdcZbwq4xlTSfFFrMU1R55+QytEXbsNa627niTyRrGR1vEehQfvhyOPqja4Js083uGOtAmQh6ws3/IkRcqwRZrm8IrHEAwN82ow6pLorWzKeSz3DJRFEkuokdxaTqwITwuTdYrHBKomhq9vxRSP0qvnpnDOibKwM+djuOHTko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=IFF89JlA; arc=none smtp.client-ip=178.251.229.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Da7lqg5D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2585E1F00ADE;
-	Wed,  9 Sep 2026 10:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788948327;
-	bh=DoOFUTTLq3F8SnEe2BxPjPHx1V1IzLc22vrDVr7s0qE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Da7lqg5DuVdSEz0zDKFb8J9Z+VkDjG93eZuIcAXcREQ2aDFko+cNF2lzOTsJBKjM+
-	 VsWLj7ddjbK7pjhXVYPCJff3BKRIduusD8QU4WCR6FEbodMnZpQLYdjdA9Ao3DtyXv
-	 IeCV/xXu/IcfAqrgmOYMfbuTim39bcfnhWOHd164kyjKmC5RXI4oHBk8P8qXS46TOn
-	 6ftny5crMo+OO8GsD7qhAFEUI/XzXJgL+YiMAGS5SHAKTunwV6pUFaCQRX1dZ8fpUz
-	 oyjRPSnFO90qFV4Y4c1XrGl1PUH3HcbH6IkDn3U6YKfrDMjLCPnxuuyU8QD/noEk4n
-	 o4Kvp4XZQctyA==
-Date: Wed, 9 Sep 2026 11:05:02 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Paul Walmsley <pjw@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>
-Subject: Re: [PATCH v7 03/21] dt-bindings: pinctrl: Add
- starfive,jhb100-sys0-pinctrl
-Message-ID: <aqEvTU_-69_PAQf7@squawk>
-References: <20260831113514.66382-1-changhuang.liang@starfivetech.com>
- <20260831113514.66382-4-changhuang.liang@starfivetech.com>
- <20260908-annually-catfight-39e3a1543274@spud>
- <ZQ4PR01MB1202F0B2A4BB3D370C82D523F2B02@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="IFF89JlA"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B03AA101CCB;
+	Wed, 09 Sep 2026 12:07:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1788948445;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=t5vFdgJaDV4YUMq5lpmdzQC9P/e5D7d6TtaH7tjrnhE=;
+	b=IFF89JlAZBhq582k4BbFlFrFNPjbKkidA5MU0OZFY79LAPStNpNeQj5KGL0ghVxC5YKM52
+	ZIPR8zXD4OVjUwDUFLMNRLoTxa2F6gRlFX3ZmmP7Ku1qQTuKrrCdwCvzGm5UDj18Jf1A+l
+	TTewT0mjSi7aIxMms1/BKB21JjjUVXXWgeDjsqOg/RtAVC4DQVFKPVSwlXUmJRjoit+Ug3
+	k5LJp7VvpzL1QMfkcS4WruRJHrC4cacnxEqFanfaYEnXv+EWAuZPky4Mig+O5yGh3I9bXI
+	Dji4wc+hfon/apceuuvOJ55VCVRyPZ1f2oECotTUGQV1yAwo9y+yMlA6cfLRMg==
+Message-ID: <71a1e980-419f-35a5-647c-b34463a57c37@nabladev.com>
+Date: Wed, 9 Sep 2026 12:06:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CzfhbBx3OnI0r5Pd"
-Content-Disposition: inline
-In-Reply-To: <ZQ4PR01MB1202F0B2A4BB3D370C82D523F2B02@ZQ4PR01MB1202.CHNPR01.prod.partner.outlook.cn>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v4] driver: fpga: xilinx-selectmap: add csi and rdwr
+ support
+Content-Language: en-US
+To: Xu Yilun <yilun.xu@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-fpga@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>,
+ Linus Walleij <linusw@kernel.org>, Michal Simek <michal.simek@amd.com>,
+ Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+ Xu Yilun <yilun.xu@intel.com>, linux-gpio@vger.kernel.org
+References: <20260810062105.299808-1-hs@nabladev.com>
+ <ap2Yx8oACWfBKOep@yilunxu-OptiPlex-7050>
+ <6a489d2b-b5d1-0455-793f-f4100fd3b3d1@nabladev.com>
+ <aqBbFGExUpS0k0yE@yilunxu-OptiPlex-7050>
+ <fb783b51-d5cb-c2ae-9d26-11df39e40aa8@nabladev.com>
+ <aqEAImnHDYWcOdc0@yilunxu-OptiPlex-7050>
+From: Heiko Schocher <hs@nabladev.com>
+In-Reply-To: <aqEAImnHDYWcOdc0@yilunxu-OptiPlex-7050>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
---CzfhbBx3OnI0r5Pd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Xu Yilun,
 
-On Wed, Sep 09, 2026 at 01:43:20AM +0000, Changhuang Liang wrote:
-> Hi, Conor
->=20
-> Thanks for the review.
->=20
-> > On Mon, Aug 31, 2026 at 04:34:56AM -0700, Changhuang Liang wrote:
-> > > diff --git a/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
-> > > b/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
-> > > new file mode 100644
-> > > index 000000000000..6d8f5516a178
-> > > --- /dev/null
-> > > +++ b/include/dt-bindings/pinctrl/starfive,jhb100-pinctrl.h
-> > > @@ -0,0 +1,17 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
-> > > +/*
-> > > + * Copyright (C) 2022 StarFive Technology Co., Ltd.
-> > > + *
-> > > + * Author: Changhuang Liang <changhuang.liang@starfivetech.com>
-> > > + */
-> > > +
-> > > +#ifndef __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
-> > > +#define __DT_BINDINGS_PINCTRL_STARFIVE_JHB100_H__
-> > > +
-> > > +/* sys0 pad numbers */
-> > > +#define PADNUM_SYS0_GPIO_A0				0
-> > > +#define PADNUM_SYS0_GPIO_A1				1
-> > > +#define PADNUM_SYS0_GPIO_A2				2
-> > > +#define PADNUM_SYS0_GPIO_A3				3
-> >=20
-> > Krzysztof's point [1] about these still stands. Pad indices aren't bind=
-ings.
-> > Sure, your driver and your dts both might want to use these but that do=
-esn't
-> > make them a binding. For that to be the case, they need to effectively =
-be
-> > made up numbers - like how clocks are often listed with numbers from 0 =
-into
-> > the dozens or hundreds, when that may or may not correlate with actual =
-bits
-> > in registers, e.g. indices 0-31 in a clock binding might be in register=
- 1 and then
-> > 32-63 are in register 2. There's no need for a binding here to assign m=
-eanings
-> > to numbers, because the meanings are assigned by the hardware itself - =
-index
-> > 0 for SYS0 *is* A0, because that's how the hardware is designed.
-> >=20
-> > Were the numbers to run continuously, so that we had
-> >=20
-> > #define JHB100_PADNUM_A0	0
-> > #define JHB100_PADNUM_A1	1
-> > #define JHB100_PADNUM_A2	2
-> > #define JHB100_PADNUM_A3	3
-> > #define JHB100_PADNUM_A4	4
-> > and so on down to
-> > #define JHB100_PADNUM__D0	1234
-> >=20
-> > then it would be a binding, because we're assigning a meaning to 1234 t=
-hat's
-> > not something determined by the hardware.
-> >=20
-> > FWIW, I'm happy to have the unchanged starfive,jhb100-pinctrl.h sit in
-> > arch/riscv/boot/dts/starfive, because the defines are helpful - but as =
-things
-> > stand I think Krzysztof is right.
->=20
-> For the current series, the drivers also use some definitions from the bi=
-nding. In=20
-> the next version, should the macro definitions be directly placed in thei=
-r respective=20
-> pinctrl-starfive-jhb100-<domain>.c files?
+On 09.09.26 08:43, Xu Yilun wrote:
+>>> What if we re-program the 2 FPGAs at the same time? Is there still
+>>> chance the 2 CS lines are all asserted? Can they be correctly
+>>> re-programmed in this case?
+>>
+>> In the FPGA layer, yes. Each FPGA is its own fpga_manager with its own
+>> CSI_B, and the only lock the core offers is mgr->ref_mutex, which
+>> fpga_mgr_lock() takes per manager. Nothing there serializes two managers
+>> that share one SelectMAP port, so both CS lines can be asserted at the
+>> same time and then both devices take both bitstreams.
+>>
+>> But one layer higher, the only in-tree trigger for a SelectMAP device is
+>> of_fpga_region_notify() calling fpga_region_program_fpga(), and
+>> of_overlay_fdt_apply() holds of_overlay_phandle_mutex from beginning to
+>> end, so two overlay applications cannot overlap, if I see this correct.
+>>
+>> I would rather keep this out of this patch.
+> 
+> Yes, that's the way to go.
 
-Only the ones that are actually used, which I think is a limited subset
-of the definitions in this header. At least, none of the ones that I
-looked up were actually used in the drivers, except for the sys0 ones.
+Ok, I send the v5 soon.
 
---CzfhbBx3OnI0r5Pd
-Content-Type: application/pgp-signature; name=signature.asc
+>> If you want it handled, I can prepare a follow up patch, and it seems to
+>> me this can be done with a simple mutex in this driver around the write
+>> transfer in xilinx_selectmap_write(), with one lock for all ports.
+> 
+> "one lock for all ports" is still illogical to me. The FPGAs on
+> different ports won't interfere each other, is it?
 
------BEGIN PGP SIGNATURE-----
+They do not, you are right. I first thought to solve it "easy" with
+a mutex around the write... but nothing tells the driver which managers
+share a port.
 
-iHUEARYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaqEvTgAKCRB4tDGHoIJi
-0tkiAP4ju3bCLww2Qz0ZX7JJ3vLgGAKAjceC7CmVV8I/mNuImAD/SuYzUxILRQFb
-FRai3/OvTbB6UApRe77WAcLJupsGww8=
-=rHeS
------END PGP SIGNATURE-----
+Two managers on one port and two managers on two ports look exactly the
+same from inside the driver. And so we may we lock the write unnecessary...
 
---CzfhbBx3OnI0r5Pd--
+I have to think about...
+
+>>
+>> The port does not have to be held for a whole bitstream, as documentation
+>> says, that SelectMAP takes the configuration data non-continuously, with
+>> CSI_B deasserted in between, so serializing single transfers already lets
+>> two devices be programmed at the same time with each one seeing only its
+>> own data.
+>>
+>> Should I send such a patch? And if yes, as a follow up to a v5 version of
+>> this patch?
+>>
+>> Or add both patches into a v5 series?
+> 
+> No, fix the existing problem. 2 FPGAs are another topic.
+
+Fine.
+
+> 
+>>
+>> I am fine with both ...
+>>
+>>> I mean I think this patch does fix the problem of "always assertion",
+>>> which is good to me. But the changelog seems stop me, it talks all about
+>>> 2 FPGAs sharing the same bus, which seems more complex than just
+>>> manipulating the CS.
+>>
+>> Agreed. The two FPGAs are how I ran into this, not what the patch is
+>> about.
+>>
+>> So next proposal for the commit message is:
+>> """
+>> fpga: xilinx-selectmap: control CSI_B and RDWR_B during configuration
+>>
+>> The driver requests the optional CSI_B and RDWR_B GPIOs with
+>> GPIOD_OUT_HIGH and never touches them again. That flag carries a
+>> logical value, so both signals end up asserted from probe on, whatever
+>> polarity the device tree states, and they stay asserted for the
+>> lifetime of the device.
+>>
+>> Neither signal belongs to the driver's lifetime. CSI_B (Chip Select)
+>> selects the device on the SelectMAP port, RDWR_B (Read/Write) selects
+>> the transfer direction, so both belong to the data transfer. A device
+>> that is never deselected never lets go of the port, and a port pinned
+>> to write mode cannot be read back.
+>>
+>> Keep the two descriptors in the driver private data, request them
+>> deasserted, and assert them only around the configuration data
+>> transfer. RDWR_B is asserted first as UG570, note 4 of figure "Continuous
+>> x8 SelectMAP Data Loading", warns that changing it while the device is
+>> selected causes an ABORT on the next CCLK.
+>> """
+>>
+>> If fine for you I can send v5, with no code changes, just some
+>> comment changes as discussed.
+> 
+> Good to me.
+> 
+
+Thanks!
+
+bye,
+Heiko
+-- 
+Nabla Software Engineering
+HRB 40522 Augsburg
+Phone: +49 821 45592596
+E-Mail: office@nabladev.com
+Geschäftsführer : Stefano Babic
