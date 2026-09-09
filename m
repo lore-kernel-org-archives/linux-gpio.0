@@ -1,69 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9D2580398;
-	Wed,  9 Sep 2026 16:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2E9582B9E
+	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 16:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788970469; cv=none; b=WeMV3JWcTVAoUeZlPfmwfwsGZRZbQbrcCnujicGs5d0xolPI6e3GnPxN6oq2CcM/1Zttr1e5UG54MFZ8fIvChrtRYh4GtTvSTBcoDknjBb2NYgukKTI+gkxiiq7T/zJSe5MpgU66oIVxuCtB/pTADIr9ErdtWV4dDrpVIDjPoUY=
+	t=1788971792; cv=none; b=H8JdfbM6nbMaVD7TUCT+pzuR4qDG+pt7pYhlOZdLOmPnPRlRo2VJKTC9IzRbaMqQoq/yqKaDHChlvy2Cuhmfv2aHGaVRIj2FbmOYjmfHAj9AG0uenvj2RSXCyZbeD8MuBgAp7LXaRGOr5ZjtR4BcGV+CyFa+aCR+OcrxzsHdB2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788970469; c=relaxed/simple;
-	bh=ie0mTwcofOxh0NXmlQKCG8ejXh8K8pWzU4OXJwOEXio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3U2aBq+TOtQ8Rqv5YWoM3xUYD8dpSoM6o+uC6XvJ0G/iyRejPGwwZgbsvV9X+cwSrNnalXu1HyFP+dPb/hOmHFWtEVHbvwa9kvp129VjONN1p1Ms+tvYpb224uG80tXb8zFpMOZlm1RUge8pQgEQs7vtLU+9tQmcW63FCSAtdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ir0VIni2; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788971792; c=relaxed/simple;
+	bh=nxJMyW2KES9jvdUVk7ZisUZkd9/MeO6bf3swemaGG+c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DOP6lkSCG1/lovJej4nX1mzddf1ANQ08ftzHYSH0F7GxQgFeOv7KbaVqpiy+RpUdnmtPIPBUM6vVb264JfyChjOvZSjyBPlhvu/wNJES1SJtv/AfqXvPkuuP3BAcVw9k//3F3kxnfyF+GqrfwBi0MkpJM33WyvDVOm3jyU9seM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=mR7DfNNo; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=UNmNcYFc; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ir0VIni2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AD611F000FF;
-	Wed,  9 Sep 2026 16:14:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788970467;
-	bh=rbdm5hDsbnlk0c+hSr2Azc2QmffaDxhfieJZMMkSDhI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ir0VIni2MAQQSr1ASJW77hBN5FPBDaHBUKiEFwzfpt91x5QMTUtoz+k+7dVYsdvV5
-	 wQzX1UqjjskvLtizq+PZ1oCKyLscJB78MXIknFchyDSh8LmYtL9nIBfd+52eD8+qQx
-	 EYOmyKRz0ou1ZZIR+7hIN9CHW3mT/y5zh3SQohp1AJTUp6wK+aAWfk+TT9ird3aWcM
-	 ZVNi+1/OIiPw7WF3oWfwwJkZbme80yvgowhY833HN7J5bdzQFDAlQdUERF5yQo2OvN
-	 m+GoHLWHwGcJFOtQ9zYSqXWz2TdYXCzoV7dOxwrpggKY/P97h+Z9+Ln71MhUGAXGGb
-	 WW5SsAJ1k5mRg==
-Date: Wed, 9 Sep 2026 18:14:12 +0200
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade <andreas@kemnade.info>, 
-	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 5/7] phy: cpcap-usb: add extcon support
-Message-ID: <b7m36qi3rute5q3rmrfq4kp2fu5mfohgw64z6biq35aedts7ys@wbuekxxyz4ya>
-References: <20260711204210.197144-1-ivo.g.dimitrov.75@gmail.com>
- <20260711204210.197144-6-ivo.g.dimitrov.75@gmail.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="mR7DfNNo";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="UNmNcYFc"
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4hg5zc0CWHzMlKR;
+	Wed, 09 Sep 2026 18:36:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1788971788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=w3TBALJHvonHQbpy/cSR8YWjNR9E1xU+golve+iyG4M=;
+	b=mR7DfNNo5gJjTo0TC6ziyciBqzK4hC39loo+eursvvl3IthZmoNomsRQ7dPCpE/CXDpfZj
+	FLgNtKC86n4JQSxDIl7MQwZrorYkTvOvRGBDNdBfLoa76gRpBaf0q8jNaXQ5fEjD78Cv8O
+	3XruthGKzFGegBdLGn4tZogvVjlYlEXPyfJClkXYnaX2gXKMedDap1TzIACt/qLm67M6EB
+	xxYYvd32wdLnnUFXDeLYcxoYBXJo7wYplOkUOGCT1b6fza4UKe4Q3wtdeNRg0bKmG4MhXN
+	0xxxRg0MkuCQW2TYTywngnF7rwMd9l+OD8rECWAYINEDz83aLWX9Ssx1oPhrIw==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1788971786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=w3TBALJHvonHQbpy/cSR8YWjNR9E1xU+golve+iyG4M=;
+	b=UNmNcYFc8y25Dn3p4DzbjP0qTgi9vtNnHIoA4pI3Gj0RqmSyEJPYkRenRgK+4J4qAUsuZd
+	3r1oD+T7lbhRIL9kx0bQ1CIB+KK6fFvmjCZgUvs7A2lDNwfaThE5nvnfr3bIMLHEu+cO6n
+	s0D9jK/2ApRvmSNOQeX1IGqjvQyXaAifux5v8LV4LQ5fv1V6fKNAxDQTn88gC7+S4iFe7G
+	EHwoXr23nBBXMGxFDDqfYB2VHovDIGT1ldpB0nXUU3zQLxL5cw0EJI8JvK/mTNVCkO6mNj
+	dwC63z3xKvhru5n3hIGDdHsbEVlZ+YE6FqL4OwhkHiyAbLStraEg+iiZkSXYKw==
+To: linux-gpio@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 1/2] dt-bindings: gpio: renesas,rcar-gpio: Document R-Car X5H (R8A78000) support
+Date: Wed,  9 Sep 2026 18:35:04 +0200
+Message-ID: <20260909163621.96288-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260711204210.197144-6-ivo.g.dimitrov.75@gmail.com>
+X-MBO-RS-META: nfpaizrk4y8bd1ir9s57ug14awbb1rjf
+X-MBO-RS-ID: 02ca7bb08d74792a1f7
 
-On Sat, Jul 11, 2026 at 11:42:08PM +0300, Ivaylo Dimitrov wrote:
-> Register an Extcon device and report the detected cable state.
-> 
-> The driver already determines the type of cable attached during USB cable
-> detection. Export the detected state through the Extcon framework so
-> other drivers can consume it using a standard kernel interface.
-> 
-> Signed-off-by: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+Document support for the GPIO controller blocks in the
+Renesas R-Car X5H (R8A78000) SoC.
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+V2: - Add AB from Conor
+    - Add RB from Geert
+V3: No change
+---
+ .../devicetree/bindings/gpio/renesas,rcar-gpio.yaml          | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-- Mani
-
+diff --git a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+index d32e103a64aac..95f5175c7a9da 100644
+--- a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
+@@ -56,6 +56,11 @@ properties:
+               - renesas,gpio-r8a779h0     # R-Car V4M
+           - const: renesas,rcar-gen4-gpio # R-Car Gen4
+ 
++      - items:
++          - enum:
++              - renesas,gpio-r8a78000     # R-Car X5H
++          - const: renesas,rcar-gen5-gpio # R-Car Gen5
++
+   reg:
+     maxItems: 1
+ 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.53.0
+
