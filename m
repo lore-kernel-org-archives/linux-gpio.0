@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EFD49EC5D
-	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 09:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D233D0907
+	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 09:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788944795; cv=none; b=NJd2kvxNRgdIg6pgm+nCFxx2BbkxFBijHclifPUeo0dsvrs8/zDtNw8D6KYJna4czNl+lV/vvSbIuQ1v51/ODU9s6RGaIox006RnKjCaAmA5j8fIMp6m5VuaDqgSbbnfbD5ZZLbkAueaXPmbak24HN7Gc9/OOoRcVpuLUIBIVIE=
+	t=1788945791; cv=none; b=hI2Tx1THKXFbJrgvwkS7w7R3k/toSOcnAEtTBUB7u8DSKa/RsK497Mhozvku6l9OcE+EhYxlS4C7xWG/WHzkn04mPrIvcJ1l2Wm0959qfM9bo92dyqoWLoaorPntdAjeEadEWElwF++FD0TnVKTCRtsJpBr6b4fcv7R5PTdTW0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788944795; c=relaxed/simple;
+	s=arc-20240116; t=1788945791; c=relaxed/simple;
 	bh=MDBBmeOGt1jJA2QyqYyZpKdJgVhokM9Hyvk+N6kJG7Y=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=krTVr3833Xjen8Oeca0sHlk3vMHuDLC4tlEVh2GzUnVLH9LybjGs2jSQtb4gHBrLAgTD1MvY7aGP2kXBMBUJahR017wwV877F7+2Dt/97hta3vgQMert5E4sst0E/fcsda9ssqRezygOkMoqW6NwDo/beYJg8+OnT3SnWm9dgzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1Dgu4B2; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=p/+6fGGp1JDpZ+7XTzNXel323Jv4Ry4nxlamDFZ333QiT7PRb7W4k5NUnIcayj/HkLLJwputE08eszNid8NNuhakdQQqTG0FvbgrzK4wrUlydfwd7USAKmMr3GaSrKeMtjHLYWPnNgbUPxF/XVMMcOaf5xp6iLQQO7zaEOGLABg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xv8ei3Eh; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1Dgu4B2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF1EB1F01572
-	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 09:06:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xv8ei3Eh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5A781F01565
+	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 09:23:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788944791;
+	s=k20260515; t=1788945789;
 	bh=osuKNlWwkgDC1U1icT/Qoh45Es9k9O509Xjy31GoFe8=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=m1Dgu4B2XCYkK9uqtTe9U9zEXs0+QrbFPh/q2c/n8LAZhnNC57aXu7oDMWH25YFrp
-	 9M2uoKoGR0DUSNTkL3g/H7OsUoXwQwe3tockNtuif2v6KCgmiZhBLiZfpFCiHmtePp
-	 Ba0GX/O8QSZZ2e1PFYofcm1ZihQj+A4SwJ0IR1I9Z6n3NuDtUxi+qnbBBYRVakRThB
-	 YXRpuC/R0xLvXvgN8OC5C5P2hHsyLiPrcv/x3z8mk/Adi17+SZdQwgIpCpfpwHlzP0
-	 TZTIQSliDRZSrY2WY7ooZWDbOWX076STbMR2HTqAlqJCusNUgpsOdOCmSq9L96ms35
-	 SuQ/zVSZCkVoQ==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-39c86ce9e29so39433511fa.3
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Sep 2026 02:06:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByXlerU97eGaO9y0efwopL1Ex7LaCu5Yk+OQBsrwmueAbKy0ExNXhkRKFJWmwLkwYjZ9ekjh4dOREB5@vger.kernel.org
-X-Gm-Message-State: AFuF++m7iC6rZiso1EhTNqVMxUMY9TqJ84kX0HKhXlfvzTdya3cSqGr/
-	z6kLVt2zGktiFhjuALH4/8dm/4BxsW2GKP6gNPeOcx/b3uUb8HR+cb7HjbfEX2BLIEpCfRNQPqp
-	jJ05kB4psJMMy4fKl32K+PcI0YuBDVq14lqfL00HJyA==
-X-Received: by 2002:a2e:bc13:0:b0:39c:624d:82b9 with SMTP id
- 38308e7fff4ca-3a371b5785bmr81319681fa.4.1788944790433; Wed, 09 Sep 2026
- 02:06:30 -0700 (PDT)
+	b=Xv8ei3EhJ4HgzbOdGsjteUPopCkw4XU2rkVeC9+Yfe1nKnNiNuCsJxA2oGOVTwAin
+	 saUDbUkbRvVy4G8RMb+sD2xLpnoZ+wb5cFTZpHBb/r3XXd7BgseV4AD9YSzORRN1Qo
+	 P6+hM6WkOb7MTC6McLuApcRQCfbbCx9L9oRk3VjEbTuhLzsp4hXtg3FOsuAsAody6o
+	 OwWw9b+uJ7KWWbwXq3MgiXGRa4JZiV1mxJaSS7zepZzVlygSaortBcOxlQoHcOw9Zp
+	 P8pkZZRMSUTymuvBe/OaVF0AQH8Bu8SUO6au2gniraylnozvssr9Ux9ggfAylFPJnU
+	 VMchAFHffC2ew==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5b28c91fba5so5916241e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 09 Sep 2026 02:23:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwoFCcxSN5mKQXZXxIqDspUw1V3ri3aB/D845iWo0YM0etEQ1Nt7D3wJOrxITa+f0LVHW4io285wS5m@vger.kernel.org
+X-Gm-Message-State: AFuF++lHi3vXt4q4O7YgiS6xXAYcHk5xtDBhh+vKIQqykvb3ZeTw9mhe
+	3TbVtsJxc3h1m5cboJMWCsx5E16l5pj6nCH54Q3JeFISVQuMLGPe/+aKO0qxkAuef0/MyIRGv7n
+	E2lisGPfbjS9FbkV2M4LY9/S+bggkfzSqE5Cx3N3PFw==
+X-Received: by 2002:a05:6512:1286:b0:5b7:668a:e8cb with SMTP id
+ 2adb3069b0e04-5b7668aeb82mr414082e87.31.1788945788232; Wed, 09 Sep 2026
+ 02:23:08 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 9 Sep 2026 02:06:29 -0700
+ HTTPREST; Wed, 9 Sep 2026 02:23:07 -0700
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 9 Sep 2026 02:06:29 -0700
+ HTTPREST; Wed, 9 Sep 2026 02:23:06 -0700
 From: Bartosz Golaszewski <brgl@kernel.org>
 In-Reply-To: <20260909080114.591938-6-herve.codina@bootlin.com>
 Precedence: bulk
@@ -48,10 +48,10 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20260909080114.591938-1-herve.codina@bootlin.com> <20260909080114.591938-6-herve.codina@bootlin.com>
-Date: Wed, 9 Sep 2026 02:06:29 -0700
-X-Gmail-Original-Message-ID: <CAMRc=MfMvXWLHMb1w7km_JCsZvE9_HmhiAWgoMi9mjxXL3_8EQ@mail.gmail.com>
-X-Gm-Features: AcwNN1UAL1h56FAgIlDt7ND-Ag45pHEciGYFt6Y1QX_NiTCc2meGcA2HgU6LiJg
-Message-ID: <CAMRc=MfMvXWLHMb1w7km_JCsZvE9_HmhiAWgoMi9mjxXL3_8EQ@mail.gmail.com>
+Date: Wed, 9 Sep 2026 02:23:06 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MfqbjoARAQQ65fpwn8Y8SMXt7BAfvhtfzOj6iQUEYnAPQ@mail.gmail.com>
+X-Gm-Features: AcwNN1WZ09Q1SV1ODjBdPMqkfOrJoPMMt-CtgzyA6h5c6HSsWVZpQuvsCQtR_OE
+Message-ID: <CAMRc=MfqbjoARAQQ65fpwn8Y8SMXt7BAfvhtfzOj6iQUEYnAPQ@mail.gmail.com>
 Subject: Re: [PATCH v11 05/10] cxl/test: Use fw_devlink_set_device()
 To: Herve Codina <herve.codina@bootlin.com>
 Cc: driver-core@lists.linux.dev, linux-kernel@vger.kernel.org, 
