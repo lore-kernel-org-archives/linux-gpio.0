@@ -1,219 +1,196 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22D330BF4F
-	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 02:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A6237B025;
+	Wed,  9 Sep 2026 05:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788920048; cv=none; b=Nml3EFBRaPob59tN7uHWRX5dPpgwftq7lESJx8esvJej2I73y1yZt9NWbIRUSTwZKUDQ49aijaeuqNikhSbRGAfQFgT+9BFIxxpTULceAF9D62kctAcUUjdUHE/MOvyMk1nG9u/2vMCQ5ebp+thHv3LMGARECkctbZ2WOYXTZ7k=
+	t=1788933000; cv=none; b=XXMf99Qf+yj5VSptBPmsIbUlmAL3ltZOjdLfpjjE7Mj+vk3HvGHMACiTxJHy99uEEzHSc8Jh05iydcOofuqTHEQTxzmcZQMnM1Bo+ouBA0PUjVcAblVq25hVuVYKGh2NAnpMyu6xu267dba8tDWnXsPwEcIuovZdvYdH6EsXO0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788920048; c=relaxed/simple;
-	bh=GLIfJ96+dcTdrpDRB1wFAfzNxtk8q3YftB2AFNZLjfo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jDLloQzliw/k4Yjmbo3isWlpa2yiNSXKz10oKt9Io/KWPicnWX8TFg1pZR6yaHAcJ+5RoyYGOBaCiZHMdtHDDhSTfoxhMylrId8pNNCHmkg2XEl96re7ArLfymwyo75fvxLDufvUfTyXWWw89GC8b6Ma6+nvQ1oSgjacTpTtQyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=qoswQpO0; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=nl8d9+sN; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1788933000; c=relaxed/simple;
+	bh=87VT4pz/dqKIK6BQR2NcLMbCenPV5hqPV3xCcgm6M2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WEgyBbuZdBJdeS4pQfJpGdOBl0tuacvYoauDmYiDDAE44wDdDIG74sGq3hx4nXNfaXXg24QaRUe2bm2OPAfWRFnEtqbivGH+ClSGycfRNTo6TIqKb7S9GpE6aqu5H/0RfeIicF/28XgTCD/cVLj1iJnXR4FK97nkXt//PWZU1EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=f5UVi7qv; arc=none smtp.client-ip=178.251.229.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="qoswQpO0";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="nl8d9+sN"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4hfkrX5F3czMlG6
-	for <linux-gpio@vger.kernel.org>; Wed, 09 Sep 2026 04:14:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1788920044;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SpRuSsPJ57ViytWC3iX2AH5QJjTS6Q2cs39FSdDHC34=;
-	b=qoswQpO0Nq4lVGS474e6JtbGWfj+78MUgFwbODTO2XhOPYRca9ImccKfIWVFnRtdRYMnlN
-	h99YjzvX2UmDX5rgmAqCMQICrT3RHjBFWJk/Z+cm+Y3Z90Zdo1/mRgbPm8IIywNzIf3Rbr
-	N995C8YQylOI56CRcuRDqv4UP4BB1B+5DV5bJYLUQ3ALiCRL07EOs51uzVvxj6UiNc6TaQ
-	QjsKeOW5snYmq1EdpbrFR2/R7148gTFrds2uYELTxQ18Hpe4meU0tjkIGlDeIvk8smyCjl
-	XWLan+JJQe/haWdxwlLKQcEbBXpjM7U+EqwWTXkk7AeZSuIlQVyXAFbFm3GolA==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=nl8d9+sN;
-	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1788920043;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SpRuSsPJ57ViytWC3iX2AH5QJjTS6Q2cs39FSdDHC34=;
-	b=nl8d9+sNaRefxWTVhw1gTWRG/A8H6wOLxnD+52w7WbUtlU262/yh/E8e8kpnryt3UztxvU
-	hJs8YaqzvnOMa5dOIeh1zJoJOKvlwWCpqJPIiIbbJCTFn7hnvlGqT1ziySyeZ3z8VUdc7Z
-	RDWLNBPkv2w0gx+rt0bCKNlcEb7LhmmogLZzGbw9qZFXCgLcDRoWLoOzLfZKIfGmQ+0PW1
-	AQrR9jFfkStoEciS7dB3e5lc8sBUULXUpVV68cVrJvu13RKAdJNtJVYr4V+n7ocI4oiZ1E
-	5sNFIbrLqsBvyKZ+QL5R+c1lUhtLIztvl8WnSwkPADgWvU6sQasc9JZXfPIomA==
-To: linux-gpio@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Subject: [PATCH v2 2/2] gpio: rcar: Add R-Car X5H (R8A78000) support
-Date: Wed,  9 Sep 2026 04:13:12 +0200
-Message-ID: <20260909021354.135899-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260909021354.135899-1-marek.vasut+renesas@mailbox.org>
-References: <20260909021354.135899-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="f5UVi7qv"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BCA0F1019A4;
+	Wed, 09 Sep 2026 07:49:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
+	s=dkim; t=1788932992;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=KEtXgpc9PlhEQpNkSRRgMcnx2DFsOGROQ6KzVyMwk3k=;
+	b=f5UVi7qvBE0SwVxrdW/WVMsGqU0Mem59nwQWSoyDc8KcQNh5Abpg/U8DCi04pvLFaR2D3h
+	Ws2yFS9p0u3/uLptZOBisnUDe5QF5eIQ2Qcr6D/KZpM0yM/JrWHcnhz1LaHBp0OJ3f6pCm
+	57SUB33mUx37U2JFIS1hRkdPIqGsSit1d7BBlzZSsGRs845TB/PPcaMwbtBybDrYvDU825
+	+i1tmxgR1oMj2Trpo9vzvyLVxRiEs7U7uhdzs7ExX3ZJAYpd2ZKYB+MaOS24pcdz/XrxIl
+	CZdffOdRSjSsxDcuSq+sUSKO+RkUAIkG7F91B7cuUeRo8JHuEixydkNpN9hyrg==
+Message-ID: <fb783b51-d5cb-c2ae-9d26-11df39e40aa8@nabladev.com>
+Date: Wed, 9 Sep 2026 07:49:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v4] driver: fpga: xilinx-selectmap: add csi and rdwr
+ support
+Content-Language: en-US
+To: Xu Yilun <yilun.xu@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-fpga@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>,
+ Linus Walleij <linusw@kernel.org>, Michal Simek <michal.simek@amd.com>,
+ Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
+ Xu Yilun <yilun.xu@intel.com>, linux-gpio@vger.kernel.org
+References: <20260810062105.299808-1-hs@nabladev.com>
+ <ap2Yx8oACWfBKOep@yilunxu-OptiPlex-7050>
+ <6a489d2b-b5d1-0455-793f-f4100fd3b3d1@nabladev.com>
+ <aqBbFGExUpS0k0yE@yilunxu-OptiPlex-7050>
+From: Heiko Schocher <hs@nabladev.com>
+In-Reply-To: <aqBbFGExUpS0k0yE@yilunxu-OptiPlex-7050>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: gz8rm9pws8bb6ppfhutenz31o7t5p3wi
-X-MBO-RS-ID: ee4828a6142b1371a6b
-X-Rspamd-Queue-Id: 4hfkrX5F3czMlG6
+X-Last-TLS-Session-Version: TLSv1.3
 
-R-Car X5H (R8A78000) is the first member of the R-Car Gen5 family.
-Add support for R-Car X5H, which has slightly different GPIO block
-register layout compared to previous generations. Introduce offset
-remap function which performs 1:1 remap for R-Car Gen1..4 and a bit
-more complex remap for R-Car Gen5.
+Hello Xu Yilun,
 
-The GPIO block register offsets on R-Car Gen5 changed and the change
-can be divided into five groups, registers which remained at the
-same offset, INDT register shifted by +0x10, OUTDTSEL register
-shifted by -0x34, INEN register shifted by -0x38 and the rest of
-the registers used by the driver shifted by +0x70 .
+On 08.09.26 20:59, Xu Yilun wrote:
+>> I would change v5 commit message to:
+>> """
+>>      The driver requests the optional CSI_B and RDWR_B GPIOs with
+>>      GPIOD_OUT_HIGH and never touches them again. That flag carries a
+>>      logical value, so both signals end up asserted on every board,
+>>      whatever polarity the device tree states.
+> 
+> Yeah, that's clear now.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-V2: Rewrite this into a table look up
----
- drivers/gpio/gpio-rcar.c | 63 ++++++++++++++++++++++++++++++----------
- 1 file changed, 48 insertions(+), 15 deletions(-)
+Fine, sorry for not that clear from the beginning.
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 09bebde5c4260..2946ca910c512 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -36,6 +36,7 @@ struct gpio_rcar_info {
- 	bool has_both_edge_trigger;
- 	bool has_always_in;
- 	bool has_inen;
-+	bool has_layout_gen5;
- };
- 
- struct gpio_rcar_priv {
-@@ -49,31 +50,48 @@ struct gpio_rcar_priv {
- 	struct gpio_rcar_bank_info bank_info;
- };
- 
--#define IOINTSEL	0x00	/* General IO/Interrupt Switching Register */
--#define INOUTSEL	0x04	/* General Input/Output Switching Register */
--#define OUTDT		0x08	/* General Output Register */
--#define INDT		0x0c	/* General Input Register */
--#define INTDT		0x10	/* Interrupt Display Register */
--#define INTCLR		0x14	/* Interrupt Clear Register */
--#define INTMSK		0x18	/* Interrupt Mask Register */
--#define MSKCLR		0x1c	/* Interrupt Mask Clear Register */
--#define POSNEG		0x20	/* Positive/Negative Logic Select Register */
--#define EDGLEVEL	0x24	/* Edge/level Select Register */
--#define OUTDTSEL	0x40	/* Output Data Select Register */
--#define BOTHEDGE	0x4c	/* One Edge/Both Edge Select Register */
--#define INEN		0x50	/* General Input Enable Register */
-+enum {
-+	IOINTSEL = 0,	/* General IO/Interrupt Switching Register */
-+	INOUTSEL,	/* General Input/Output Switching Register */
-+	OUTDT,		/* General Output Register */
-+	INDT,		/* General Input Register */
-+	INTDT,		/* Interrupt Display Register */
-+	INTCLR,		/* Interrupt Clear Register */
-+	INTMSK,		/* Interrupt Mask Register */
-+	MSKCLR,		/* Interrupt Mask Clear Register */
-+	POSNEG,		/* Positive/Negative Logic Select Register */
-+	EDGLEVEL,	/* Edge/level Select Register */
-+	OUTDTSEL,	/* Output Data Select Register */
-+	BOTHEDGE,	/* One Edge/Both Edge Select Register */
-+	INEN,		/* General Input Enable Register */
-+	REG_COUNT
-+};
- 
- #define RCAR_MAX_GPIO_PER_BANK		32
- 
-+static volatile void __iomem *gpio_rcar_remap_offset(struct gpio_rcar_priv *p, int offs)
-+{
-+	const u32 offsetmap[2][REG_COUNT] = {
-+		/* Gen1..Gen4 */
-+		{ 0x00, 0x04, 0x08, 0x0c, 0x10, 0x14, 0x18, 0x1c, 0x20, 0x24, 0x40, 0x4c, 0x50 },
-+		/* Gen5 */
-+		{ 0x00, 0x04, 0x08, 0x1c, 0x80, 0x84, 0x88, 0x8c, 0x90, 0x94, 0x0c, 0xbc, 0x18 },
-+	};
-+
-+	BUILD_BUG_ON(offs < 0 || offs >= REG_COUNT);
-+
-+	return p->base + offsetmap[p->info.has_layout_gen5][offs];
-+}
-+
- static inline u32 gpio_rcar_read(struct gpio_rcar_priv *p, int offs)
- {
--	return ioread32(p->base + offs);
-+	return ioread32(gpio_rcar_remap_offset(p, offs));
- }
- 
- static inline void gpio_rcar_write(struct gpio_rcar_priv *p, int offs,
- 				   u32 value)
- {
--	iowrite32(value, p->base + offs);
-+	iowrite32(value, gpio_rcar_remap_offset(p, offs));
- }
- 
- static void gpio_rcar_modify_bit(struct gpio_rcar_priv *p, int offs,
-@@ -399,6 +417,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
- 	.has_both_edge_trigger = false,
- 	.has_always_in = false,
- 	.has_inen = false,
-+	.has_layout_gen5 = false,
- };
- 
- static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
-@@ -406,6 +425,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
- 	.has_both_edge_trigger = true,
- 	.has_always_in = false,
- 	.has_inen = false,
-+	.has_layout_gen5 = false,
- };
- 
- static const struct gpio_rcar_info gpio_rcar_info_gen3 = {
-@@ -413,6 +433,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen3 = {
- 	.has_both_edge_trigger = true,
- 	.has_always_in = true,
- 	.has_inen = false,
-+	.has_layout_gen5 = false,
- };
- 
- static const struct gpio_rcar_info gpio_rcar_info_gen4 = {
-@@ -420,6 +441,15 @@ static const struct gpio_rcar_info gpio_rcar_info_gen4 = {
- 	.has_both_edge_trigger = true,
- 	.has_always_in = true,
- 	.has_inen = true,
-+	.has_layout_gen5 = false,
-+};
-+
-+static const struct gpio_rcar_info gpio_rcar_info_gen5 = {
-+	.has_outdtsel = true,
-+	.has_both_edge_trigger = true,
-+	.has_always_in = true,
-+	.has_inen = true,
-+	.has_layout_gen5 = true,
- };
- 
- static const struct of_device_id gpio_rcar_of_table[] = {
-@@ -438,6 +468,9 @@ static const struct of_device_id gpio_rcar_of_table[] = {
- 	}, {
- 		.compatible = "renesas,rcar-gen4-gpio",
- 		.data = &gpio_rcar_info_gen4,
-+	}, {
-+		.compatible = "renesas,rcar-gen5-gpio",
-+		.data = &gpio_rcar_info_gen5,
- 	}, {
- 		.compatible = "renesas,gpio-rcar",
- 		.data = &gpio_rcar_info_gen1,
+> 
+>>
+>>      Keeping them asserted works as long as a single FPGA owns the
+>>      SelectMAP port. That FPGA is the only device on the bus, so it may
+>>      stay selected, and the driver never reads from it, so the port may
+>>      stay in write mode.
+> 
+> I think keeping them asserted is a bad idea even for single FPGA, isn't
+> it?
+
+You are right, both pins belong to the data transfer, not to the driver`s
+lifetime. That a board with one FPGA does not visibly break is not the same
+as simply behave correct.
+
+I drop that paragraph, as my patch corrects this already.
+
+>>      It stops working as soon as two FPGAs share one SelectMAP data bus,
+>>      which is the case CSI_B exists for. Both devices are selected all
+>>      the time, so every byte written for one of them is clocked into the
+>>      other as well, and neither can be configured on its own.
+>>
+>>      CSI_B (Chip Select) selects the target FPGA. Assert it before the
+>>      configuration data is transferred and deassert it afterwards, so that
+>>      only the intended device sees the bus cycles.
+> 
+> What if we re-program the 2 FPGAs at the same time? Is there still
+> chance the 2 CS lines are all asserted? Can they be correctly
+> re-programmed in this case?
+
+In the FPGA layer, yes. Each FPGA is its own fpga_manager with its own
+CSI_B, and the only lock the core offers is mgr->ref_mutex, which
+fpga_mgr_lock() takes per manager. Nothing there serializes two managers
+that share one SelectMAP port, so both CS lines can be asserted at the
+same time and then both devices take both bitstreams.
+
+But one layer higher, the only in-tree trigger for a SelectMAP device is
+of_fpga_region_notify() calling fpga_region_program_fpga(), and
+of_overlay_fdt_apply() holds of_overlay_phandle_mutex from beginning to
+end, so two overlay applications cannot overlap, if I see this correct.
+
+I would rather keep this out of this patch.
+
+If you want it handled, I can prepare a follow up patch, and it seems to
+me this can be done with a simple mutex in this driver around the write
+transfer in xilinx_selectmap_write(), with one lock for all ports.
+
+The port does not have to be held for a whole bitstream, as documentation
+says, that SelectMAP takes the configuration data non-continuously, with
+CSI_B deasserted in between, so serializing single transfers already lets
+two devices be programmed at the same time with each one seeing only its
+own data.
+
+Should I send such a patch? And if yes, as a follow up to a v5 version of
+this patch?
+
+Or add both patches into a v5 series?
+
+I am fine with both ...
+
+> I mean I think this patch does fix the problem of "always assertion",
+> which is good to me. But the changelog seems stop me, it talks all about
+> 2 FPGAs sharing the same bus, which seems more complex than just
+> manipulating the CS.
+
+Agreed. The two FPGAs are how I ran into this, not what the patch is
+about.
+
+So next proposal for the commit message is:
+"""
+fpga: xilinx-selectmap: control CSI_B and RDWR_B during configuration
+
+The driver requests the optional CSI_B and RDWR_B GPIOs with
+GPIOD_OUT_HIGH and never touches them again. That flag carries a
+logical value, so both signals end up asserted from probe on, whatever
+polarity the device tree states, and they stay asserted for the
+lifetime of the device.
+
+Neither signal belongs to the driver's lifetime. CSI_B (Chip Select)
+selects the device on the SelectMAP port, RDWR_B (Read/Write) selects
+the transfer direction, so both belong to the data transfer. A device
+that is never deselected never lets go of the port, and a port pinned
+to write mode cannot be read back.
+
+Keep the two descriptors in the driver private data, request them
+deasserted, and assert them only around the configuration data
+transfer. RDWR_B is asserted first as UG570, note 4 of figure "Continuous
+x8 SelectMAP Data Loading", warns that changing it while the device is
+selected causes an ABORT on the next CCLK.
+"""
+
+If fine for you I can send v5, with no code changes, just some
+comment changes as discussed.
+
+Thanks for your patience.
+
+bye,
+Heiko
+
+> Thanks,
+> Yilun
+> 
+>>
+>>      RDWR_B (Read/Write) selects the transfer direction on the SelectMAP
+>>      interface. Assert it for the write cycles that carry the bitstream and
+>>      deassert it afterwards. UG570 wants RDWR_B settled before CSI_B is
+>>      asserted, a change while the device is selected aborts the
+>>      configuration on the next CCLK.
+>>
+>>      Both are requested with GPIOD_OUT_LOW now, the logical 0 that leaves
+>>      them deasserted, and their descriptors are kept in the driver private
+>>      data.
+>>
+>>      A board with one FPGA keeps working. SelectMAP allows the bitstream to
+>>      be loaded non-continuously, with CSI_B deasserted between the data
+>>      transfers, and a deselected device ignores the bus.
+>> """
+
 -- 
-2.53.0
-
+Nabla Software Engineering
+HRB 40522 Augsburg
+Phone: +49 821 45592596
+E-Mail: office@nabladev.com
+Geschäftsführer : Stefano Babic
