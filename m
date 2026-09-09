@@ -1,105 +1,231 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607F9323416;
-	Wed,  9 Sep 2026 07:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72374611C7
+	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 08:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788938930; cv=none; b=gYzsryWueLHK/85yG8xj2B/baH4290Rh14igU8buBUVu5bRaWYpKaJrHxbPmoSUj8s+17N94CqVFKDR1t8OcWG1Vwof45+hSXhcwRatVlwGQv+qcZ/DSmsp6aesqd9x6p1MbSSsRUPT7BDSh9r3xmcPV19loStnfwykgZn3pE4o=
+	t=1788940903; cv=none; b=bU4rLMUrN6V8HAIWrtMBL8gISeUbtyaCm71iViGC/BcA68XA6Z86UQJ15eCmUtQsa/HHLYdE+K8np1vEWXdpZguzheSSI+hSkTodMWl0VqLEesJfqikOcWyLNLXeL/XQo0PQeNZBymmcXOB0DO+bgCr/WO6xEQHEpNF8a5HhXws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788938930; c=relaxed/simple;
-	bh=8yVzF90AoaAUb8R+7eeWxFRhtRbFA35v3+7WbXbVEDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FQQ4VRNPiqb1PLv1xuJfyS471kch/0EQ19D0Xve8UKztW+kMD3iHxLYv64w6w/uC5r8Dh6SM/3HPlZoiWgD03JqnMa7XtwhJB9cFFfwEMwBy82K8NwAVT/PpPlpIafmdNMc4MrEI2cHA8BAgAqYp/m4vJ/tW6BPTG0zTfMGFvkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KsOz/14p; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788940903; c=relaxed/simple;
+	bh=YpNIu094u+89RI5gbo3fzj/SYquKO/mDu0CC4YoNWpY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M+D5lsRpjIJgw1l6LFDfIcY9LjNgBlWjjaPkNjpnJxdIgZo+gFzxBA4ezcVjK+D4wfd20peMPEIE9K0k0Ya25pViuE9WfQ3pkFNfB78BVDxbjtlcZt2ksKoxsbUbz/zRrGV7gev4Ij1CY4niOeUgbR6upGX3o10vco40umu+ZxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BDgSr0ph; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KsOz/14p"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 008D31F00A3A;
-	Wed,  9 Sep 2026 07:28:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788938929;
-	bh=t+tV0/lAuT7CI4Ui5m8EmZlQe7dn2V6hXPejm7rkrWo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KsOz/14poZfHaEGIYearElwNKpYepOycHddfz19fcbPukp3QY0jFiThoKoo6dH8ox
-	 ruNgL2F2sgLxRWLbCzTid0KtgtOALFDWS1/vZn+0RHolpOCqWjj51MW+dFmHSs328p
-	 6V68IYu/RTvevUQrL5vSfTOWwYf+AEnrwBYR4E8Zp5nIdgB9OJUrc8UpWc+0oJ4ZjG
-	 UStIj/s7p9/UgYcAQypYG0aTynHwQQD+92scbsmHbu0AgO9XuUeCxDFmBbZJEq5KBD
-	 rGZ3f+YTeCovtgRktywNP4E+0jPaFWh/uVIrE++8FWGiZnvOwp8jm7Bwx0IyuHCRpR
-	 FmRE+ukf41yVQ==
-Date: Wed, 9 Sep 2026 09:28:45 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Michael Walle <mwalle@kernel.org>, 
-	Alex Elder <elder@riscstar.com>, Daniel Thompson <daniel@riscstar.com>, 
-	Sushrut Shree Trivedi <sushrut.trivedi@oss.qualcomm.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] dt-bindings: PCI: toshiba,tc9563: Document
- embedded GPIO controller
-Message-ID: <20260909-fascinating-vermilion-tarantula-0c9dff@quoll>
-References: <20260904-pci-tc9563-aux-v3-0-5b1449d62ba2@oss.qualcomm.com>
- <20260904-pci-tc9563-aux-v3-1-5b1449d62ba2@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BDgSr0ph"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 108B81A1A74;
+	Wed,  9 Sep 2026 08:01:38 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id CECDE60448;
+	Wed,  9 Sep 2026 08:01:37 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4029A11C7AF65;
+	Wed,  9 Sep 2026 10:01:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1788940895; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=ZtdcF2IAi6h02JGk/dKLiRFO0qJ1c0YPMsIxctf2Hcg=;
+	b=BDgSr0phSF9eTr7FGs7OL4Rb6nuX1pBveI8epbY+7Mu/mSxmDwguvikis/PgB9CqbseSiI
+	BPDb3K79glmr2XnsijoDB2v/jm32uhxZwdS8YeOhVM0/cxWkBb955s/V8mbM2QzZPAwdZ+
+	XwnPLHqEvhzGpf7L5N79Pn+maASOkmYVy8wYFQpykh6NIWHVxzjhYMzDJMZPbg6EE7+Za7
+	/MgG/cIIEUbAfQc1pgTJmpJYX4D4rAizDly36KDmwfH71FhpGsdvaxnBHpbkpmqQdwifcd
+	IWDxgGbVgL9wK+WAP3jlrgLWrPMeNioa3QOrvlz3cyIBX5lXWPDTNNlj//3qfw==
+From: Herve Codina <herve.codina@bootlin.com>
+To: Richard Cheng <icheng@nvidia.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <djbw@kernel.org>,
+	Ira Weiny <iweiny@kernel.org>,
+	Li Ming <ming.li@zohomail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Lizhi Hou <lizhi.hou@amd.com>
+Cc: driver-core@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v11 00/10] lan966x pci device: Add support for SFPs, PCI part
+Date: Wed,  9 Sep 2026 10:00:59 +0200
+Message-ID: <20260909080114.591938-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260904-pci-tc9563-aux-v3-1-5b1449d62ba2@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Sep 04, 2026 at 07:15:18PM +0200, Lorenzo Bianconi wrote:
-> The TC9563 PCIe switch embeds a GPIO controller providing 37 GPIO
-> lines. The controller is registered as an auxiliary device by the TC9563
+Hi,
 
-"auxiliary device" is Linux term, so not really relevant here.
+Previously, I sent a big picture series adding support for SFP ports
+available on the LAN966x PCI device [0].
 
-> power controller and accessed through the same register map.
-> 
-> Describe the switch node itself as the embedded GPIO controller and
-> document the per-port reset-gpios property.
+In this series patches touch several parts and sub-system in the kernel.
+Reviews have be done and it makes sense to split the series and send
+parts separately.
 
-Isn't the switch node already described?
+This current series is the extraction of patches related to issues in
+the PCI subsystem. It has to be seen as a continuation of the big
+picture series but related to this specific core part.
 
-> 
-> Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/pci/toshiba,tc9563.yaml       | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml b/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
-> index f084830c6d0c..c4cd162cb084 100644
-> --- a/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
-> +++ b/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
-> @@ -31,6 +31,11 @@ properties:
->      description:
->        GPIO controlling the RESX# pin.
->  
-> +  gpio-controller: true
-> +
-> +  '#gpio-cells':
-> +    const: 2
-> +
->    vdd18-supply: true
->  
->    vdd09-supply: true
-> @@ -84,6 +89,11 @@ $defs:
->      type: object
->  
->      properties:
-> +      reset-gpios:
-> +        maxItems: 1
-> +        description:
-> +          GPIO controlling the reset line connected to the downstream port.
+Patches 1 to 6 introduce and use fw_devlink_set_device() in already
+existing code. No functional change but the introduction of the
+fw_devlink_set_device() wrapper.
 
-Why do you exactly need this? Isn't this PERST, thus already there?
+Patch 7 avoids a dangling pointer.
+
+Patches 8 and 9 fix fw_devlink issues specific to PCI and the
+device-tree nodes created during enumeration.
+
+Patch 10 avoids the usage of np->data and adds guards to prevent
+incorrect nodes removal.
+
+[0] https://lore.kernel.org/all/20260325143555.451852-1-herve.codina@bootlin.com/
 
 Best regards,
-Krzysztof
+Hervé
+
+Changes:
+
+v10 -> v11
+  v10: https://lore.kernel.org/all/20260717145147.823749-1-herve.codina@bootlin.com/
+
+  Rebase on top of v7.3-rc1
+
+  - Patches 1 to 5
+    Add 'Reviewed-by: Richard Cheng'
+
+  - Patches 6, 7 and 8
+    Add 'Reviewed-by: Richard Cheng'
+    Add 'Acked-by: Manivannan Sadhasivam'
+
+  - Patch 9
+    Add 'Reviewed-by: Richard Cheng'
+
+  - Patch 10
+    Rework removing np->data usage in the PCI devicetree node creation
+    and removal.
+
+v9 -> v10
+  v9: https://lore.kernel.org/all/20260708100302.517792-1-herve.codina@bootlin.com/
+
+  - Patches 1 to 6
+    No changes
+
+  - Patch 7
+    Clear fwnode->dev also on error path.
+
+  - Patch 8
+    Clear fwnode->dev also on error path.
+
+  - Patch 9
+    No changes
+
+  - Patch 10 (New patch in v10)
+    Guard against node removal with incorrect np->data.
+
+v8 -> v9
+  v8: https://lore.kernel.org/all/20260630102804.413563-1-herve.codina@bootlin.com/
+
+  - Patch 7 (new patch in v9)
+    Clear fwnode->dev during root bridge node removal (avoid a dangling
+    pointer).
+
+  - Patch 8 (patch 7 in v8)
+    Clear fwnode->dev during PCI device node removal.
+
+v7 -> v8
+  v7: https://lore.kernel.org/all/20260511155930.34604-1-herve.codina@bootlin.com/
+
+  Rebase on top of v7.2-rc1
+
+  - patches 4 and 5
+    Add 'Reviewed-by: Andy Shevchenko'
+
+  - Other Patches
+    No other changes
+
+v6 -> v7
+
+  Rebase on top of v7.1-rc1
+
+  - Patch 1
+     Add Cc stable. Needed for patches 11 and 12
+
+  - Patches 2 to 5
+    No changes
+
+  - Patch 6
+     Add Cc stable. Needed for patch 13
+     Add 'Acked-by: Bjorn Helgaas'
+
+  - Patch 7
+     Fix a typo in commit log
+     Add Fixes tag + Cc stable
+     Add 'Acked-by: Bjorn Helgaas'
+
+  - Patch 8
+     Add Fixes tag + Cc stable
+     Add 'Acked-by: Bjorn Helgaas'
+Older iterations:
+  Patches 6 to 13 in the big picture series
+  https://lore.kernel.org/all/20260325143555.451852-1-herve.codina@bootlin.com/
+
+Herve Codina (10):
+  driver core: fw_devlink: Introduce fw_devlink_set_device()
+  drivers: core: Use fw_devlink_set_device()
+  pinctrl: cs42l43: Use fw_devlink_set_device()
+  cxl/test: Use device_set_node()
+  cxl/test: Use fw_devlink_set_device()
+  PCI: of: Use fw_devlink_set_device()
+  PCI: of: Clear fwnode->dev during root bridge node removal and error
+    path
+  PCI: of: Set fwnode device of newly created PCI device nodes
+  PCI: of: Remove fwnode_dev_initialized() call for a PCI root bridge
+    node
+  PCI: of: Avoid np->data usage for the node changeset
+
+ drivers/base/core.c                      |  4 +-
+ drivers/pci/of.c                         | 48 +++++++++++++++---------
+ drivers/pinctrl/cirrus/pinctrl-cs42l43.c |  2 +-
+ include/linux/fwnode.h                   |  6 +++
+ include/linux/pci.h                      | 11 ++++++
+ tools/testing/cxl/test/cxl.c             |  4 +-
+ 6 files changed, 52 insertions(+), 23 deletions(-)
+
+-- 
+2.55.0
 
