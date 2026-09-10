@@ -1,186 +1,132 @@
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com [74.125.228.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from send101.i.mail.ru (send101.i.mail.ru [89.221.237.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248A1599A36
-	for <linux-gpio@vger.kernel.org>; Thu, 10 Sep 2026 19:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F5A457E69;
+	Thu, 10 Sep 2026 21:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.221.237.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789068724; cv=none; b=uc2bUveVOnOXEBwhPIh7C4fmygF3KqmI5PazxnyYlOMJVhDi65bsQDqF/Pq4G26y0gnKWdDJtyhoUDxg7rfskRDwnidH4NMtMzzwTk71CBHW94WQ4vebo43hWA42io6M+0j+Mg4LfMBwYnftBp4nNiueXuOUC1Qdei1OhghLVlU=
+	t=1789075801; cv=none; b=WMKaTwJ8eGGTyGbLBkvwqH973bEDtWSY2jUtk8Zewzdy3PFYLVVBru7ruUKokGnIUQdk7OQtzXmbfnghUIpA1TdHQ2Yh+3MNLUlEmkIwTb1ZYkj9ButV1OlI24XufWZTxoD2J9c7zmUq9AXc9UeMf0iktl/O1QE2eFYv3+I4rwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789068724; c=relaxed/simple;
-	bh=RVscuzOwWBLYOqPI0VAq65UPbl5BzTBhY3MPWSu7TYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PR+MqI4cmB5iDNb8asUOYFEUkDxi8ldWovNNBFWh3ry+cvWR5NzEYZVEWD6ASe+ccLIH6It3Nhb71u7Zl6LSsJSYjTAUV/p2nnCVbsHcb2bnyeuNb85q/Algzl/9EyD8vqqq5NWHv5jRdCkSEh6u3Q4l/y1+Id8mtP14tuc+Yv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RosHvJK9; arc=none smtp.client-ip=74.125.228.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789075801; c=relaxed/simple;
+	bh=7EFGNJLgtMdHJBVbzOCDrno2UDDgic4EQ0WIsgKob9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kzz+7s4ll13VtXQW6VslPpGjquounXw8Z2NTDbYSugjWNdRpxRm+prDsmbaChnpWI7sjNSqrvzqxxDHZt+KAtGg6K52xCRmerqcyuSgIycxW/P5as6ZYFKk0MsNyvxlIYXkFc5eu8EH5fneJZ5eLQA/aUpPlEmUNY1qsDrvyRbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mail.ru; spf=pass smtp.mailfrom=mail.ru; dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b=QUKAPJzX; dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b=Syt9GFq1; arc=none smtp.client-ip=89.221.237.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mail.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RosHvJK9"
-Received: by mail-pz2-f12.google.com with SMTP id d2e1a72fcca58-85469b2e1d5so63581b3a.1
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Sep 2026 12:31:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789068712; x=1789673512; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=gEdV5Xs8ER2iH6ECRgXfLV1Fk4a++1FtqWHfmbg9CiM=;
-        b=RosHvJK9DLK0FlPnzknkm7VlHCbjT6fsYBPIZKcvabHTFuvKkmzNvbSYKIfikaqHtc
-         7fab1b9E0d3x7/+7bqzQqEkKybK8tvuS1RJM5+ez9HQ3ByWOxS1UTWx4CGZ428GgZPWL
-         mPBxWuS5QN4kF+LEajLA2p6ch7yrI86NwVxJoWW+3acLARqivoKzVNc8A3cPUa67JG8W
-         y+Y81VXs5tzI1Kr5aXGO2kiOfkfJe0LFJB/lG0LnzmLD0ihHV/iUTViFOXYhY1IO0KEJ
-         VwNx2nrsNwn+8yTFMvNE3/ZtaHG/9WrfezbUsXaTPuMioWUfYeRrrG9aOn/IRs0A2SMA
-         ppGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789068712; x=1789673512;
-        h=content-transfer-encoding:content-type:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=gEdV5Xs8ER2iH6ECRgXfLV1Fk4a++1FtqWHfmbg9CiM=;
-        b=TLM24sbNs/8OjjVt4ohEF+0SlGqxnKdu5g5Ig03aAOIY0XyzXJ/U73VkdxBP26GCLf
-         9m6BVxDXgGoPpemQbn4Bt5rxFSJCDvbLokP7+rA+b4wa4FaPyj+KvuUjHEXWD4YbTfIq
-         klSxMPqsIyRfNaneETJtFIYIE4QxijLLG5t/WBJ1+N1tPC5CvgDiFYetUsaJ3yR6ZFfV
-         SBf7gD1BRse+YnddBIzq8j6Ge6liG1r/YMSc/A7p2OkmVQoBKu2Rv1Alrf61ngz2vSWT
-         szEoruaax97o6WnfFBWoQEYZ4vc/zqzrSDmLsQwNEJRD4Ws4xBKQvwYvuw3NI0bMKX5W
-         Od3w==
-X-Forwarded-Encrypted: i=1; AKwUvBxK5CX9b7Vfjo+kktROFMWrs5cbS4RvCKeSoOj7zyx0WuJo7umCzAD9aZhKsLQLzp84KuutrVdmLhXJ@vger.kernel.org
-X-Gm-Message-State: AFuF++kduNXHv2cYCNpwT+AjpTnStStAkHf5S74g1AksjQ9Srif+Sl69
-	7ITJG0oabUo13wWqcMn7QEnLqu3hvBf/0gmkgUrMwUtxJFZ0TOcVFLtK
-X-Gm-Gg: AYBFou24nA6wuVJq1071Pw7LtVjZo7rL23I8Lb4/fpMX312y0z38b8KdVEMisTSuN4E
-	phETuNu8JqvevxckECgnm9Bel+4mlb3LPE/wwPMuYhXKEc5ixmAYuEIIvIiqmB59C+1kZ9vkXAe
-	plrqZQqYwHyga2SHk0214p/VI5YlyZtAngWHHFTgOwTmtyTar3xkHQDOuWAWR8CpJ1rI6oMYvCU
-	ePN1Eiw3wyiULMzc0dk0yHaqVaU0ybxk4nTRAvv1LjWRsCfxspOB5RkNzItnTFQGs7PGLF9H3JH
-	2jZq7WTdg0PtsDI4vHl2X9uGKJ44vLC5dGdfA2sWU986ck4wrpPgbizvpw5reygaGyGXlZEVKlv
-	JRZz3m94gK0loEo8j+QSMKnBoGxJoKshNeUNEIBp1wjp6QcmLp4M+Kt/wmvUz8POJEm0leC8jqT
-	PUJWd88IGMRTaBRFdvMS/TgyWnkwhUE3NrQWBpHOik9CfDE6FcsFgnEF7FWswh/g4lk9PzaJEpp
-	hEfLss4TVv7yVX8708nDM1I12iD9dg4MSPDO3kB2SEpaPXj
-X-Received: by 2002:a05:6a00:ba8d:b0:857:72ba:ff0f with SMTP id d2e1a72fcca58-86b34efaaebmr529838b3a.23.1789068712105;
-        Thu, 10 Sep 2026 12:31:52 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-86b2a5c052csm79353b3a.58.2026.09.10.12.31.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Sep 2026 12:31:51 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <c5fd98fc-2cfb-434a-8a81-3bf589049670@roeck-us.net>
-Date: Thu, 10 Sep 2026 12:31:49 -0700
+	dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b="QUKAPJzX";
+	dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b="Syt9GFq1"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru;
+	s=mail4; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive:X-Cloud-Ids;
+	bh=M5/ZdFs6G+JwukJRaChnMAhq3ufA8+AY63Lxvnse6vc=; t=1789075797; x=1789165797; 
+	b=QUKAPJzXNoNbMIY8H1y37ZMVekF3TU1rT+7kPirRnNGYUH3U81s1TVj7g2Yp80hLixbkhSuU9hJ
+	xpc0BBEyacSluCA5d/OJAy66IIDNS3V9e65hOpPw0hyCX/IoHLXXxsVNTrJhMxZpnZyk4JiRCCrHy
+	4LWlr+iZyYi3pWQaX72z0vpe8lnekixHKVtEmF1saDyaR0vVTk08cpHYNEu3mj/hTzGrsEr3N80ux
+	kQrzZ4MMlEReW93/itEM2he1nvWTKp6D4bfxCQaEa5ref7te4UWmdozJBWQjGjkpGGu38JRyaM6cn
+	+HiCxQz34bX1S/2mwuH45OM+5N3iRyvrW6RA==;
+Received: from [10.112.206.51] (port=49732 helo=send35.i.mail.ru)
+	by exim-fallback-679568fb9b-cgblr with esmtp (envelope-from <misha.zavertkin@mail.ru>)
+	id 1x4mL6-000000005IE-1ems; Fri, 11 Sep 2026 00:29:48 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru;
+	s=mail4; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:To:Cc:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+	List-Archive:X-Cloud-Ids:Disposition-Notification-To;
+	bh=M5/ZdFs6G+JwukJRaChnMAhq3ufA8+AY63Lxvnse6vc=; t=1789075788; x=1789165788; 
+	b=Syt9GFq1XvoJMPvq2Y0pOjJXcB/Kbkelcukln2rWh2ku3+w4LECIXKbjlpF2TzK9FAYbGEE4r/+
+	tjyhaPhCwZUkfkk0+SwhZSolGGmIosNjPgk2JsL5c8DhbDDdxcFgR+r/AOvwOtGWHcYBgGScNF8du
+	HeaE+7Axfel13RoJZLwfxaDslcdQGxO2REG8SLF1k/uKVN0mv+3aCrmibW0NOh8leNJgd3HalDJk/
+	4NZ7ILS9j+LseqTk/SCd95+FAcikbKd4eoN5rgvd34XHgZeNI7zJ0J2YIVNrrfsaBHX1kS7Dc7TGt
+	b20FNGRXv+aPn1Is62QB1nEnzCgGAJfr9Vwg==;
+Received: by exim-smtp-569b45c49c-vlj65 with esmtpa (envelope-from <misha.zavertkin@mail.ru>)
+	id 1x4mKt-00000000CoV-301E; Fri, 11 Sep 2026 00:29:36 +0300
+Date: Fri, 11 Sep 2026 04:29:33 +0700
+From: Michael Zavertkin <misha.zavertkin@mail.ru>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sander Vanheule <sander@svanheule.net>,
+	Bert Vermeulen <bert@biot.com>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] gpio: realtek-otto: add pinctrl support
+Message-ID: <aqMhPQpDPJ_J7n1V@gamepc>
+References: <cover.1787830440.git.misha.zavertkin@mail.ru>
+ <adce57b3797cae6f6a3486eb1d21c33be61f14dc.1787830440.git.misha.zavertkin@mail.ru>
+ <CAMRc=Mf16PBE0=Udm+A--i2d1VoZCEC1=LNC2q=t8BwqtgZY0g@mail.gmail.com>
+ <apgeSVMUQlwqFGEa@gamepc>
+ <CAMRc=MfTTZKBRPGWi3Bu8n3V0y6TN6TR0izdxZ=Zt0mM2eN+_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/14] mfd: remove unused aat2870 driver
-To: Arnd Bergmann <arnd@arndb.de>, Svyatoslav Ryhel <clamor95@gmail.com>,
- Arnd Bergmann <arnd@kernel.org>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Bartosz Golaszewski <brgl@kernel.org>, Mark Brown <broonie@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Daniel Thompson <danielt@kernel.org>,
- Helge Deller <deller@gmx.de>, devicetree@vger.kernel.org,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- dri-devel@lists.freedesktop.org, Jonathan Cameron <jic23@kernel.org>,
- Jingoo Han <jingoohan1@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Linus Walleij <linusw@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, llvm@lists.linux.dev,
- Mauro Carvalho Chehab <mchehab@kernel.org>, mfd@lists.linux.dev,
- Michael Hennerich <michael.hennerich@analog.com>,
- patches@opensource.cirrus.com, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Support Opensource <support.opensource@diasemi.com>
-References: <CAPVz0n0ryOns2sCJE_jFana9MVzwEj1QZuPEa8FNhGbHXnMB+A@mail.gmail.com>
- <11652e5e-053e-45b0-98a0-0c1cb2aeedc4@app.fastmail.com>
- <7a92a79e-e22a-4e34-9f11-4086b88f62cc@roeck-us.net>
- <e33b42dc-1561-4819-b028-b13af9e7115b@app.fastmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <e33b42dc-1561-4819-b028-b13af9e7115b@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MfTTZKBRPGWi3Bu8n3V0y6TN6TR0izdxZ=Zt0mM2eN+_g@mail.gmail.com>
+X-Mailru-Src: smtp
+X-4EC0790: 10
+X-7564579A: 646B95376F6C166E
+X-77F55803: 4F1203BC0FB41BD9344F665CF1C84C29C1B1043BB2B67B67822F752175909D07182A05F538085040115CC57DD1BA3AA33DE06ABAFEAF67050EF52EF8D72CA0D927F81055F1E8DD1F4AADF9F6CE649D98
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7227E4400968B082FEA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637AC83A81C8FD4AD23D82A6BABE6F325AC2E85FA5F3EDFCBAA7353EFBB55337566A08549CA5D9647611DC7E293A31A7CB9D2E34ACAB02B80CBA5E024749B0F422F8EEF46B7454FC60B9742502CCDD46D0D4E7D9683544204AFF6B57BC7E64490618DEB871D839B73339E8FC8737B5C22494854413538E1713FCC7F00164DA146DAFE8445B8C89999729449624AB7ADAF37F6B57BC7E64490611E7FA7ABCAF51C92176DF2183F8FC7C091DAD9F922AA71188941B15DA834481F9449624AB7ADAF37BA3038C0950A5D3613377AFFFEAFD269176DF2183F8FC7C096C9B5BF839F39F6D8FC6C240DEA76429C9F4D5AE37F343AA9539A8B242431040A6AB1C7CE11FEE35E3BF8C76DC23F74BA3038C0950A5D36B5C8C57E37DE458B330BD67F2E7D9AF16D1867E19FE14079C09775C1D3CA48CF3D321E7403792E342EB15956EA79C166A417C69337E82CC275ECD9A6C639B01B78DA827A17800CE75E4120A18BF8FD0B731C566533BA786AA5CC5B56E945C8DA
+X-C1DE0DAB: 0D63561A33F958A56BE93B2663B6415E5002B1117B3ED6960DEC0DA5BFCD0D9FE772F934B9BCD185823CB91A9FED034534781492E4B8EEAD543F342AA183667FBDAD6C7F3747799A
+X-C8649E89: 1C3962B70DF3F0AD73CAD6646DEDE1918E10F71CB4DF9F96AB70F9BE574AE9C625B6776AC983F447FC0B9F89525902EE6F57B2FD27647F25E66C117BDB76D65937C5AA88F79D82D0410C956BC7B6A8AFAA9BBB85141980BAB374E4C7765BF98C3B80F2335B61517EB8341EE9D5BE9A0A2CCFB2D5F3057899A8C86FE4E44269957DAF55EC7FDC349C52EE4E5D9E54FDA4A7285BF96B6084FC8511FE41C8941D68F571C199C4BE91E79E69A34BD5DD98C9F0A6D2C91ED28CB6
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+ObcCpyrx6l7KImUglyhkEat/+ysWwi0gdhEs0JGjl6ggRWTy1haxBpVdbIX1nthFXOcIETfglQORZ0zpDET4Zrk3igikrdHlWEssXJwuOaRcl/VZul3y37o=
+X-Mailru-Sender: FD65D7C492470CAE6D6F289AB67699DD68EF15A5A331D24FB951B70A5BD4BD8E9CF0DC132E16D0BBEA31111DDB2986FB4B2A3C715BC1DED96EFAE8183A2EAE0D96DD28E056F58A23E3C55DE776B662A1DD77B849F69637CB3DDE9B364B0DF289AE208404248635DF
+X-Mras: Ok
+X-Mailru-Src: fallback
+X-7564579A: 646B95376F6C166E
+X-77F55803: 6242723A09DB00B41153A78F4023D79834203D6D6CF93A9271190DCD2B41B41568F3CF0E9FE49B697BB15FB09B4F134443CC94A79F659AEE2F30B760C6B95F364A76CD8C8DE44B846D2B54FC6AABC6EC
+X-7FA49CB5: 0D63561A33F958A5876136146B5A9ACD5002B1117B3ED6961CBF1CA798BA77936A798FA66DF72EC902ED4CEA229C1FA827C277FBC8AE2E8B54F520D093A0DF28
+X-87b9d050: 1
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+OYcBso8Zm+oliTz8oZwnDrFsY77LZRcHyw5ht0smWrfSeTW5FiI8avd9v29gUBslpLaIlvAR6h4id02YH9mgeCTAyYoNlVO8a/mge5WbOvyy0SDhjhkluhU=
+X-Mailru-MI: 20000080020000000000000800
+X-Mras: Ok
 
-On 9/10/26 12:15, Arnd Bergmann wrote:
-> On Thu, Sep 10, 2026, at 20:38, Guenter Roeck wrote:
->>>
->> ...
->>> drivers/hwmon/ds620.c
->>> drivers/hwmon/f75375s.c
->>> drivers/hwmon/max1111.c
->>> drivers/hwmon/max197.c
->>
->> I missed the rationale for removing those, but then I don't really
->> mind either. I guess we'll hear if someone still uses any of those
->> drivers/chips.
+On Thu, Sep 10, 2026 at 02:11:51AM -0700, Bartosz Golaszewski wrote:
+> On Wed, 2 Sep 2026 15:02:01 +0200, Michael Zavertkin
+> <misha.zavertkin@mail.ru> said:
+> > On Wed, Sep 02, 2026 at 11:27:50AM +0200, Bartosz Golaszewski wrote:
+> >> On Thu, Aug 27, 2026 at 4:29 PM Michael Zavertkin
+> >> <misha.zavertkin@mail.ru> wrote:
+> >> >
+> >> > RTL9607C relies on pinctrl to mux SoC pins. Use pinctrl to request pins
+> >> > for GPIO.
+> >> > pinctrl driver for other SoCs might be implemented later.
+> >> >
+> >>
+> >> So for now shouldn't you make it conditional on the compatible for
+> >> this one model?
+> >>
+> >> Bart
+> >
+> > It might, but enabling it for all will spare time if/when pin
+> > controllers for other SoCs will be implemented. And it doesn't change
+> > anything if pinctrl not enabled/provided for them.
+> >
+> >
 > 
-> None of these have devicetree support, and they are not usable
-> with any of the remaining board files.
+> Sashiko claims otherwise[1] so I had a look and it seems to me that it's
+> correct saying we'll defer indefinitely for GPIO chips not backed by a pin
+> controller.
 > 
->  From what I found:
+> Bart
 > 
-> - da620 apparently never had any users upstream, though it does
->    not require platform data and is theoretically usable with
->    an external dtb
-> - f75375s was only used on iop32x (long gone)
-> - max197 was used on x86/elan/ts5500, which is still in the
->    tree but cannot be enabled anymore because it is a 486 class SoC.
->    I have sent a separate patch to remove that platform
-> - max1111 was used on spitz, which is on its way out for 7.4.
-> 
+> [1] https://sashiko.dev/#/patchset/cover.1787830440.git.misha.zavertkin%40mail.ru
 
-As I said, I don't have any issues with removing them. Note though
-that the ds620 driver (like many other hwmon drivers) does not require
-devicetree or platform data to work just fine.
+Already addressed: https://patch.msgid.link/20260820-fix-gpio-mmio-pinctrl-v1-1-62c2d7dd4903@kernel.org
 
-Thanks,
-Guenter
+Tried it myself, without that patch infinite defers happens if no
+pinctrl provided. After patch applied probe loop doesn't happen.
 
