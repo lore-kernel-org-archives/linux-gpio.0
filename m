@@ -1,272 +1,166 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A993546D0;
-	Thu, 10 Sep 2026 13:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A6C48663E
+	for <linux-gpio@vger.kernel.org>; Thu, 10 Sep 2026 14:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789048628; cv=none; b=Nl9ExjxRPoJoeU8PpYb0mlPgMlqZtLlzf1DrBzVn0n/J5uB5WCPOlctI7OE0imreuRFM1GTsIdEqJaC3g0UuD02jT+VrBl/stoN1CcHWZQSyejz4yAzvIQJODUVSxZbof3dFfwujStlDqNVTmibd2sCrtK+vJ0sX9dHzr8Iq3yM=
+	t=1789049812; cv=none; b=agU3HRw6m/ccVjQgGmRCCsTWNJenGwiE9Ke+9FR5+3eytU26fPGaEXxLmsayDKzTG65IfKHc3t5NvMAo1HKS4YOVZD6c3o3BcQJfuebpxOWbrOJ3KrjMNKZ11amGVjQ2oqilxFvuncSk5072I78tzHVkOhq+mPQcdj9jgwbp5U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789048628; c=relaxed/simple;
-	bh=/V5WNdZ1RPhuheJlhxOVq0Ydh2//1gFKC0DOj17EII0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMOkggypqedhHdiokzN0wDXkZkg47MiBWVNInYvKhQ7PyLOp3SxhAmnHrhSRXQJdTlLnTXJG2MUht3LNoTgRGnTIfhy49rVnv4FwHRWwyLflXrnB9TBajCPa2HR28NXcdLSebkfyc0cirjXy0W88I8ld1oAV2h5FrFNOgAA05mA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJF89swD; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789049812; c=relaxed/simple;
+	bh=Nay3LPpHkzmUOR2yFLIxbZK/j+WBUazFJ93AhqK7x8s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BK04DwwYLNzewCWOvygx9vLPKmXyVkM2hLZnA+MbnASHGm6ju2WXAc427OE/8zmlm1WZYBMp1n7WyBP0ndUTB2gjbK6i3f2KgyzU7+fTzPWTGaoVCUPRMPoe2nTg1mcrtv8nQAw3I4VlnF4AMLnu8bDpMvyh+7jiyRnUBZp9G9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8FwVx28; arc=none smtp.client-ip=74.125.225.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJF89swD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97D631F000FF;
-	Thu, 10 Sep 2026 13:57:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789048627;
-	bh=DQns45W+7r5KCS8RR0S25TqH8Uxqu3GnDAmnybjH4WQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cJF89swDw3fKORJfS1aHX4foh1nkbh0ygT2k8E8ydHdueT7aqP/Nh5833f4IsCxkq
-	 Ulq+C5dMsczrtxpktfXxWIPQjzLqyuvhLlGYN2zf1pHD4AnKsgAd6JmVpSLmILus54
-	 7t/zxQSANfjq/w506Co6X8IoFyMAvWoxkLyIy6slpBXZ1gMxkMLBUMJJs0EqiDGOZ5
-	 wMK4V2CvRswT+OyFSEH8+shPaBT0ffVizKMsadd/8AMJZ7RlTs1YrF/eQJVUF2VcI0
-	 Eri6eu/deM1iVa0w+DKK3Y1wzBQk32LIqujAApwdy5PMsJcMzTryhjg6usmVcYRH2B
-	 VDqjaCwr4y1yg==
-Date: Thu, 10 Sep 2026 14:56:59 +0100
-From: Lee Jones <lee@kernel.org>
-To: MINETTE Alexandre <contact@alex-min.fr>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Guru Das Srinagesh <linux@gurudas.dev>,
-	Linus Walleij <linusw@kernel.org>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	phone-devel@vger.kernel.org
-Subject: Re: [PATCH v5 4/6] mfd: qcom-pm8xxx: register PM8921 USB ID extcon
-Message-ID: <20260910135659.GC1051768@google.com>
-References: <20260804-mainline-send-v1-sending-v5-0-149dd4372ac8@alex-min.fr>
- <20260804-mainline-send-v1-sending-v5-4-149dd4372ac8@alex-min.fr>
- <20260812122900.GQ1072730@google.com>
- <646d46b1-7c59-4d73-b033-f4afaf19bdd7@app.fastmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8FwVx28"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49d1fb0cf5eso11588195e9.3
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Sep 2026 07:16:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789049808; x=1789654608; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=yU5rOk6h8bj4CbQ83n6GeZ2/DFqLMn/rBfdmHQNe++Y=;
+        b=m8FwVx288C/QajAORCMOh/BdLO3MtDYU/9rc6uzc49A2JyBcRFhdDiLW4QvMu5v/MM
+         DcpYy2srodbZOSzycNp3+GkgS7VToNz56yDydrZsVtboZa2ZA9Cd7HVIT6dWtUH3EySn
+         CTMUX2OTquF7iUSJ3hww4LWzYgCL0tQX+cVlzDUyPZ5NsFRbKE2X190YMFZUpI/xCbij
+         UHjU4zyV+D2sSE/Rwtxf2s8Lfhp9ahWPXxOyuQDeCvYLesxkBHyNPGfDnTyA0+6xqZBx
+         8fVV4juwK5wW0h5vTfSH9dcjqO1kvL1ct4LIT2tPaHfS6V9lKrQhPbpTY1MPbxJGT55N
+         UwzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789049808; x=1789654608;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=yU5rOk6h8bj4CbQ83n6GeZ2/DFqLMn/rBfdmHQNe++Y=;
+        b=J7yp70EreH2FAoEG68ewgogZg8bas2FCTuiIOUaf1u66zn7puzPvmLqKpJDJVIpKUk
+         MlpX15dmrvT9xy4MyxWoKSRwtbXopfeIwC4B8b/XhDFYSdBuRdwHk+GiXiuhc134Tmog
+         EbC0CcjBDfyIsedwHgNHwwI6nqPTKXZVsE+yZZt9gXGXmxsydul9Umi88WTKjD7VyjbK
+         +qO62wLR9gG03ILNTvsuLA3iwADzX4ZT54IYTRskl+mjJmION0X+gf4Vd+oUUIexiiJs
+         VmfWD34yVREoC6pgqUtTMMZXPMbA5DQPXTIjVI35hyA9oe4+ZGfplUM+eoDkPx4g7ges
+         PAbg==
+X-Forwarded-Encrypted: i=1; AKwUvByH+iQhg/QDpT1TzQlSYMfFBM8GWSchtacWbiJKwxCRRMu2ziMn80cC1935iQsC/d3SeU87+vTto8Dc@vger.kernel.org
+X-Gm-Message-State: AFuF++kOIb6zWSLmftbznpA+kyH+QdCCbZ4A+i4RCdkO2bW42+q8lbRW
+	2uJeqmsR/liT8RtybJtcolRMsnZLy6ssDqwu1IOshsjNRX3qVa4Iv90q
+X-Gm-Gg: AYBFou0QXtKl5DGPSu0Q08hCzj3SH3zeXE6PBuAyAeIrlSbbbjqzGl+dh4lgeancZrB
+	reGCzk/asCSx1sMzjp7+IZxVSrJl8pXBVt+XrVpi9ko8eCAiGkZ+O94wYmCCTaKZh8zmLc8XzAV
+	4xqBotkNByx/O0xV7yPGO9hLdLNjJN2yM0skOX8E+0O9jlTqQk9+fjpUicc9D11K8Zo5DHkpTFo
+	n86RNkPgZGgCtOK8yh5LevKHE7tPxaXfGPyVMg+/cMqkR/fwLujD3lc9PMX50/rRxiSh48oQADB
+	doDsbV7JU52pyrSnVs2eMI82Mt7LKgDfal5kTzqwuIpQUQp2YVJ6tQieBy8UU44nChdwAndJ0wf
+	0Rs841zlufhrITMRkxHbqlZmQJiReH6dmOKtEyIDtbJUCafbtHrp0+cS+mPneBA8LiPLzM3wdYr
+	AGU392y8meElOfuSQAnQQj9O1W+xtyQT3qfENASqywmX/FsRRN+cVoGQVDGRGUJOd4eS0sUWsJr
+	U7A4HbJiG3lh6tTO41HnzpqtjlChaUt/6S/DRZS3cLpaTXPif0FeVpriCHh1RiUepAMZce1ig==
+X-Received: by 2002:a05:600c:5307:b0:49c:f617:7cf with SMTP id 5b1f17b1804b1-49d25871d73mr162962375e9.0.1789049807967;
+        Thu, 10 Sep 2026 07:16:47 -0700 (PDT)
+Received: from ernest.hoecke-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d20fce7a7sm293895575e9.4.2026.09.10.07.16.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Sep 2026 07:16:47 -0700 (PDT)
+From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+Subject: [PATCH v2 0/7] of: property: Make fw_devlink follow GPIO, PWM and
+ clock nexus maps
+Date: Thu, 10 Sep 2026 16:16:41 +0200
+Message-Id: <20260910-fw-devlink-nexus-ready-v2-0-17ac82dbe226@toradex.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <646d46b1-7c59-4d73-b033-f4afaf19bdd7@app.fastmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMm7omoC/3XNQQ7CIBCF4as0s3YMkEiLK+9hukCY2olKG1Bs0
+ /TuYhOXLv+XzDcLJIpMCY7VApEyJx5CCbWrwPU2XAnZlwYllBZGSOze6CnfOdww0PRKGMn6GV1
+ zMLXQFyGNh3I8Rup42uBzW7rn9BzivP3J8rv+SPWPzBIF6qYjaYymurGnIlhP094ND2jXdf0AE
+ E5L/L4AAAA=
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>
+Cc: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, 
+ Frank Li <Frank.li@oss.nxp.com>, 
+ Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Herve Codina <herve.codina@bootlin.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, 
+ Leonardo Costa <leonardo.costa@toradex.com>, devicetree@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, stable@vger.kernel.org
+X-Mailer: b4 0.13.0
 
-On Sun, 30 Aug 2026, MINETTE Alexandre wrote:
+This series fixes an fw_devlink supplier-resolution problem reported by
+Leonardo Costa while using a Devicetree nexus to describe GPIO and PWM
+resources routed through an LVDS connector. Consumers referencing the
+nexus could remain deferred because fw_devlink linked them to the nexus
+rather than to the providers selected by gpio-map and pwm-map. [1]
 
-> Hi Lee, 
-> 
-> Thanks for the feedback!
-> 
-> For the v6 series, I'll add a proper define for the 49 IRQ and use the devm api indeed.
-> 
-> About using the MFD api: I looked at it, but devm_mfd_add_devices()  
-> doesn't seem to let me reuse the parent firmware node, which I need here  
-> because the DT consumer uses extcon = <&pm8921>. 
-> So I kept  platform_device_register_full().
-> Let me know if I missed something here.
+GPIO, PWM and clock consumer APIs use of_parse_phandle_with_args_map()
+to resolve specifiers through gpio-map, pwm-map and clock-map
+properties. The corresponding fw_devlink parsers use direct phandle
+parsing instead. Given a consumer which references a nexus, the consumer
+API and fw_devlink therefore resolve the reference to different nodes:
 
-Please reply inline.
+  consumer API:  consumer -> nexus -> mapped provider
+  fw_devlink:    consumer -> nexus
 
-Top-posts are generally not allowed for this kind of discussion.
+A nexus is a translation node rather than the resource provider and need
+not have a driver. The link to it can consequently remain unresolved and
+defer the consumer even though the mapped provider is available.
 
-If you're not using the MFD API or of_platform_populate(), then this is
-not an MFD and therefore could and should live elsewhere.
+Make the fw_devlink GPIO, PWM and clock parsers use the same map-aware
+resolver as their consumer APIs. The resolver also handles valid direct
+references by returning the original provider when no map is present.
+Use dedicated exact-name and suffix declaration macros to opt these
+bindings into map-aware parsing without changing unrelated property
+parsers. Retain GPIO's existing exclusions and compatibility handling.
 
-Can you explain to me the problem in depth please?
+The regression tests call the OF add_links operation and verify that a
+mapped reference creates exactly one link to the final provider, not to
+the nexus. They also cover valid direct references. The GPIO tests
+exercise all property spellings recognized by fw_devlink, including the
+deprecated singular and unprefixed forms.
 
-> Mer 12 août 2026, à 14:29, Lee Jones a écrit :
-> > On Tue, 04 Aug 2026, Alexandre MINETTE via B4 Relay wrote:
-> >
-> >> From: Alexandre MINETTE <contact@alex-min.fr>
-> >> 
-> >> PM8921 reports the USB ID pin through interrupt 49 of its interrupt
-> >> controller. Unlike PM8941, this path has no separate addressable misc
-> >> block to represent as a devicetree child node.
-> >> 
-> >> Register a child platform device for the existing Qualcomm USB extcon
-> >> driver after creating the PMIC IRQ domain. Pass the USB ID interrupt as
-> >> a named resource and reuse the PM8921 firmware node, allowing consumers
-> >> to reference the PMIC node directly as their extcon provider.
-> >> 
-> >> Unregister the child device and dispose of the IRQ mapping when the
-> >> PMIC is removed or probing fails.
-> >> 
-> >> Signed-off-by: Alexandre MINETTE <contact@alex-min.fr>
-> >> ---
-> >>  drivers/mfd/qcom-pm8xxx.c | 78 +++++++++++++++++++++++++++++++++++++++++++++--
-> >>  1 file changed, 76 insertions(+), 2 deletions(-)
-> >> 
-> >> diff --git a/drivers/mfd/qcom-pm8xxx.c b/drivers/mfd/qcom-pm8xxx.c
-> >> index 0cf374c015ce..884fc99a1488 100644
-> >> --- dangerously/mfd/qcom-pm8xxx.c
-> >> +++ b/drivers/mfd/qcom-pm8xxx.c
-> >> @@ -7,6 +7,7 @@
-> >>  
-> >>  #include <linux/kernel.h>
-> >>  #include <linux/interrupt.h>
-> >> +#include <linux/ioport.h>
+Tested with:
+  - The new CONFIG_OF_UNITTEST fw_devlink cases under QEMU/x86_64 all
+    passed
+  - W=1 builds on x86_64 and arm64, including the OF unittest data
+  - Toradex Verdin iMX8M Plus hardware using a connector nexus for the
+    display GPIO and PWM resources: the display probes successfully
 
-Should we sort the '#include' directives alphabetically here?
+[1] https://lore.kernel.org/all/juuc4af7ndbajcl7gzf4tg5qz2q2j5tt3rvql4jbauradujrre@gc5nbdhhixaf/
 
->>  #include <linux/irqchip/chained_irq.h>
->>  #include <linux/irq.h>
->>  #include <linux/irqdomain.h>
->> @@ -64,12 +65,15 @@
->>  
->>  struct pm_irq_data {
->>  	int num_irqs;
->> +	int usb_id_irq;
->>  	struct irq_chip *irq_chip;
->>  	irq_handler_t irq_handler;
->>  };
->>  
->>  struct pm_irq_chip {
->>  	struct regmap		*regmap;
->> +	struct platform_device	*usb_extcon;
->> +	unsigned int		usb_id_irq;
->>  	spinlock_t		pm_irq_lock;
->>  	struct irq_domain	*irqdomain;
->>  	unsigned int		num_blocks;
->> @@ -492,6 +496,13 @@ static const struct pm_irq_data pm8xxx_data = {
->>  	.irq_handler = pm8xxx_irq_handler,
->>  };
->>  
->> +static const struct pm_irq_data pm8921_data = {
->> +	.num_irqs = PM8XXX_NR_IRQS,
->> +	.usb_id_irq = 49,
+Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 
-Should we define '49' with a descriptive macro rather than using a magic 
-number?
+---
+Changes in v2:
+- Split the unit tests into per-resource follow-up commits
+- Added clock nexus as well because the clock nexus series was merged:
+  https://lore.kernel.org/all/20260807-schneider-v7-2-rc1-eip201-upstream-v5-0-8785f9531cf0@bootlin.com/
+- Link to v1: https://lore.kernel.org/r/20260902-fw-devlink-nexus-ready-v1-0-68fe1996e78a@toradex.com
 
->> +	.irq_chip = &pm8xxx_irq_chip,
->> +	.irq_handler = pm8xxx_irq_handler,
->> +};
->> +
->>  static const struct pm_irq_data pm8821_data = {
->>  	.num_irqs = PM8821_NR_IRQS,
->>  	.irq_chip = &pm8821_irq_chip,
->> @@ -501,11 +512,60 @@ static const struct pm_irq_data pm8821_data = {
->>  static const struct of_device_id pm8xxx_id_table[] = {
->>  	{ .compatible = "qcom,pm8058", .data = &pm8xxx_data},
->>  	{ .compatible = "qcom,pm8821", .data = &pm8821_data},
->> -	{ .compatible = "qcom,pm8921", .data = &pm8xxx_data},
->> +	{ .compatible = "qcom,pm8921", .data = &pm8921_data},
->>  	{ }
->>  };
->>  MODULE_DEVICE_TABLE(of, pm8xxx_id_table);
->>  
->> +static int pm8xxx_add_usb_extcon(struct platform_device *pdev,
->> +				 struct pm_irq_chip *chip,
->> +				 unsigned int hwirq)
->> +{
->> +	struct irq_fwspec fwspec = {
->> +		.fwnode = dev_fwnode(&pdev->dev),
->> +		.param_count = 2,
->> +		.param = { hwirq, IRQ_TYPE_EDGE_BOTH },
->> +	};
->> +	struct platform_device_info pdevinfo = {
->> +		.parent = &pdev->dev,
->> +		.fwnode = dev_fwnode(&pdev->dev),
->> +		.of_node_reused = true,
->> +		.name = "qcom-pm8xxx-usb-id",
->> +		.id = PLATFORM_DEVID_NONE,
->> +	};
->> +	struct resource resource;
->> +
->> +	chip->usb_id_irq = irq_create_fwspec_mapping(&fwspec);
->> +	if (!chip->usb_id_irq)
->> +		return -ENXIO;
->> +
->> +	resource = DEFINE_RES_IRQ_NAMED(chip->usb_id_irq, "usb_id");
->> +	pdevinfo.res = &resource;
->> +	pdevinfo.num_res = 1;
->> +
->> +	chip->usb_extcon = platform_device_register_full(&pdevinfo);
+---
+Ernest Van Hoecke (7):
+      of: property: fw_devlink: Follow GPIO nexus maps
+      of: property: fw_devlink: Report unsupported supplier linking
+      of: unittest: Test fw_devlink with GPIO nexus maps
+      of: property: fw_devlink: Follow PWM nexus maps
+      of: unittest: Test fw_devlink with PWM nexus maps
+      of: property: fw_devlink: Follow clock nexus maps
+      of: unittest: Test fw_devlink with clock nexus maps
 
-Should we use 'devm_platform_device_register_full()' here to simplify 
-resource management?
+ drivers/of/property.c                       | 53 ++++++++++++++-----
+ drivers/of/unittest-data/tests-phandle.dtsi | 63 +++++++++++++++++++++++
+ drivers/of/unittest.c                       | 79 +++++++++++++++++++++++++++++
+ 3 files changed, 182 insertions(+), 13 deletions(-)
+---
+base-commit: 91b1b8d437abe0cd83210d8f257b785a63047aa9
+change-id: 20260901-fw-devlink-nexus-ready-c859706b019d
 
->> +	if (IS_ERR(chip->usb_extcon)) {
->> +		int ret = PTR_ERR(chip->usb_extcon);
->> +
->> +		chip->usb_extcon = NULL;
->> +		irq_dispose_mapping(chip->usb_id_irq);
->> +		chip->usb_id_irq = 0;
->> +
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static void pm8xxx_remove_usb_extcon(struct pm_irq_chip *chip)
->> +{
->> +	if (chip->usb_extcon)
->> +		platform_device_unregister(chip->usb_extcon);
->> +
->> +	if (chip->usb_id_irq)
->> +		irq_dispose_mapping(chip->usb_id_irq);
->> +}
-> >
-> > Why not devm_*
-> >
-> >>  static int pm8xxx_probe(struct platform_device *pdev)
-> >>  {
-> >>  	const struct pm_irq_data *data;
-> >> @@ -570,9 +630,22 @@ static int pm8xxx_probe(struct platform_device *pdev)
-> >>  
-> >>  	irq_set_irq_wake(irq, 1);
-> >>  
-> >> +	if (data->usb_id_irq) {
-> >> +		rc = pm8xxx_add_usb_extcon(pdev, chip, data->usb_id_irq);
-
-Should we rename 'rc' to 'ret' here to align with the standard naming 
-convention for return values?
-
->> +		if (rc)
->> +			goto err_domain;
->> +	}
->> +
->>  	rc = of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
->>  	if (rc)
->> -		irq_domain_remove(chip->irqdomain);
->> +		goto err_extcon;
->> +
->> +	return 0;
->> +
->> +err_extcon:
->> +	pm8xxx_remove_usb_extcon(chip);
->> +err_domain:
->> +	irq_domain_remove(chip->irqdomain);
->>  
-> >>  	return rc;
-> >>  }
-> >> @@ -582,6 +655,7 @@ static void pm8xxx_remove(struct platform_device *pdev)
-> >>  	struct pm_irq_chip *chip = platform_get_drvdata(pdev);
-> >>  
-> >>  	of_platform_depopulate(&pdev->dev);
-> >> +	pm8xxx_remove_usb_extcon(chip);
-> >>  	irq_domain_remove(chip->irqdomain);
-> >>  }
-> >>  
-> >> 
-> >> -- 
-> >> 2.43.0
-> >> 
-> >> 
-> >
-> > -- 
-> > Lee Jones
-
+Best regards,
 -- 
-Lee Jones
+Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+
