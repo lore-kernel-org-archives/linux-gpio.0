@@ -1,68 +1,68 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E2C4A0924
-	for <linux-gpio@vger.kernel.org>; Thu, 10 Sep 2026 14:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC834A012E
+	for <linux-gpio@vger.kernel.org>; Thu, 10 Sep 2026 14:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789049819; cv=none; b=umMH3z4AWYdZGBIIzb0xcyXmEnQkuUVUok0Gr7HEI8X5DWCi/Jid/vZ+VAUOoFp6D0EtBMASzF2ER3A0UK//qoi4tImVuzbwtpO299GpowVBKdmD7tNR3bWlhddYxGdtmJdUWxgglsmTZyR3E9kmYFoAtj4Gwfcu2GG3vER5aFY=
+	t=1789049820; cv=none; b=Lhe7G6WKK/VyKKe+IK6SdCHk6qlyHCbjgyyTh3Bggmjv2OWoPZB9SNU4zgAvtoe9vnvMosVn9kB+7ciGShvOA8VyGE7vApzu+dK0IBAOJFXgRB9LOLhCz9f797avKqJ3A6xa5RN8PWtAJa0QT9tWaG1wjjdzX3D6U6Gyi2FHIA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789049819; c=relaxed/simple;
-	bh=ZHk+OoghMCoHYA0fAqgJIcS5mK9yxj9zSLOS3Af/sOg=;
+	s=arc-20240116; t=1789049820; c=relaxed/simple;
+	bh=xA45Y61XTBAgpBy6OAEVUm+aoRID/iBFxEHp4Q6aM/M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C6+2zPafHkni1RnNJa82/DdPWlKxoKqlLZxFRkQ6wy7N2Gk4FNYHIoA5lpwOQwdFIQxwiUhoEZewlIl6c+LancX9Okueqx4oEiRwQ6l4/GrMNeL+goHv6QyNS406vId+7DjKhGUwO6UjC3JPGOpfoAv2HoSV/gq+8u2W56al4hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mJBh6qOR; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:To:Cc; b=COLR8OwnaDHaWfdtseWW/hfmaolQ6V2bydTxkuFGyeeSjRprg/JhP77Qy0UYARbZPdlJPHvE1gLcwfnR2Hv5z0Ps4I2T/8HiZkxkBh6+y7WR15OxN2/asK2ZDbf5gAT8Snuw0noh1revradRKC+BqZkx18z1fY9ZM0/RfrkGFuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lQ9clEgS; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mJBh6qOR"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4957eefd361so56175265e9.1
-        for <linux-gpio@vger.kernel.org>; Thu, 10 Sep 2026 07:16:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lQ9clEgS"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-49b392ccaacso103364825e9.2
+        for <linux-gpio@vger.kernel.org>; Thu, 10 Sep 2026 07:16:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789049815; x=1789654615; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1789049816; x=1789654616; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=cfkoJaXJRyESn+mlV6qvPjMOAGJjSlzoQyRVAMURXQc=;
-        b=mJBh6qORqrE0iRe9+QI0rJvrG0o05/+4qzEXS4PawP2R15wzEA9fgg6EByDgqMcQGU
-         NBoKI7a+ShTEBZGtzABj0D/YCxGnJfjL8hGwCKaFgVubId9bqM4W3huDdvY2b8cHnP1l
-         P99qJMSjSA3VInVW/hesfdHwnJ+iNdKaHDva+R6sElZ3glRY3E2VvtHs2I+cQnICnT9e
-         ddnk6R06xHwROtyVXHq6zXTfdb/C7+zy5H8ZNhKXSznOr8Y+uHbrnfwGNmEgMHJq/ohl
-         m9P970I1q/rUfIg8Et6e+IC1ZoPmetgTP2J22OSy9os3NJz0x9fH5Fn4CnTzUhD+RNdf
-         WH5Q==
+        bh=5WKuPMePtnop5uPfXFl1ahyGCh0WOUAD5jTxVfDVb9I=;
+        b=lQ9clEgS3Tw6dpdrUNTsv5JC6Pv6Mvk1nNq1+006g7fVDdjBRc9cF6cNuJpQYuJoLl
+         rsSoRZbq8pwaV9OLBVFVWFcpKIIlHlhUeabZaTRxbyBpw7bEx0wVcdFk7Xbb/g/1FT3N
+         tt3VK4Pps6RhuxY+6CfCO1mKKkMhQ1YwDRJ+/MbYaa0sM+jzi3rhP85Ksy8IlsE+Fq5f
+         CI4e/dE8B0UkoC8hrq3QiCc/nQTsgjn7Y7bKH+yphaUuRPRTHtXZhKfl0oitdsGRrECb
+         /5b3fFheIcitWvRzGSxrP421yH48vIuNZAHXTdyoTNti0MlyJpbMuxw1RUqBpPgpUdkq
+         y4bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789049815; x=1789654615;
+        d=1e100.net; s=20251104; t=1789049816; x=1789654616;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=cfkoJaXJRyESn+mlV6qvPjMOAGJjSlzoQyRVAMURXQc=;
-        b=hGbjP1EJiZpU8uRn4v2eUcBmlvml3TMPYjmgyF+bqvmmq3rjTIU7fjSjqmvKv6Xtqy
-         nFbDBpz9GAZOwlzFYm5VIXbLJ/9yhG+czR2Uqua4S9gjYgPggsKxBMurQd2Ykk46/HOq
-         P5eBHHYXI81FkX8o2lcvAZlxUR/LfY77KocaYOjFwPXc4waXyq/q0pCyL530Cv7TxbwX
-         pHUAt0EGw+1gDY6tSBkdmT7DyeeXJ4Zdv83U+sei98kvp2QJ88Lr4ym2x6HgZn87I6wW
-         pMOsHR4KGleS5Nhmfp65t/miwB0SZuHXpQwFkBh1ZzRwNc822DMh7Td3VgPUArrY26C1
-         2XEA==
-X-Forwarded-Encrypted: i=1; AKwUvBxZKZt7cwKUJqMtXB8FdWGSy5134bi0v7ZKtuE+WID63EUE20sFVnCKSKHv6n8R2O9TijXWFyCBoS59@vger.kernel.org
-X-Gm-Message-State: AFuF++lL+xiVLl5UQ7SZOg5eailcXnVnyKUSbCQRdsVTQ7dt2lA2d5uZ
-	ViqPOO7SV6Y02nEzLG67ldOBN98BPzLGf1UxJCZFOkXFRTO0YM5TQHMX
-X-Gm-Gg: AYBFou3eFNTMIj8GOq9MDnQO0pT0C64BGw1v2F/H9EQi9uw3GLermHs9dObdptiTPeH
-	rQq/l0LcdNqxD3XAfLcXPSPjGUUgFbKw3hhM2+lTmUSOM9lKLUCR9bHEn21ckVmSImPD48vSrjv
-	vBNiCQyk38PE1AGPihb/nKt8KVZLYlKIN3Ad8RRWePlUIfUxo7idVVs7fjWiwmFZVYzTOsj66sb
-	FKFNy5h1RGUk4dTbLj92+lgkIw9RVY4RB80U487T2O9OBTACyntJO5jpPvsaAr1Gxr6b4yZN1QG
-	J1PXrAc9wuvxmJqt/HK2gHKn6HHDd/jEUxnmzd2AMUIrQ3ICfqULAK709qPRED9l5H1nhxOr3Yh
-	fAnUB8UWeG0pdW/PT78Am3Clm6PNVxskYzkgtKR1c3kPbX0Bws7fgsYc31OQ1VOiV6j0q8J5j9x
-	4iVefRWFKpaKdtikOCqErhYlefez3PXEMSiwLqw/HCDAZND0QIOp0DIBihRF8UHsf0PlbNlJBFT
-	OaXW3QrG6lHDaYvx8mQ1jM6j1YpczFhWM60xUVJBW6kHBsE3lC+Vozq8MbnF7dtCcM8BXEH1A==
-X-Received: by 2002:a05:600c:8b29:b0:49c:ee22:364c with SMTP id 5b1f17b1804b1-49cf824743cmr422491675e9.9.1789049814830;
-        Thu, 10 Sep 2026 07:16:54 -0700 (PDT)
+        bh=5WKuPMePtnop5uPfXFl1ahyGCh0WOUAD5jTxVfDVb9I=;
+        b=o7f+PrZTueSfTnzj5WY5ejxLrAcaSTwvmkl6YTFH8wpGk0g/duXC81i0L2VQyjM6sx
+         g9+AJysqOKj4L91kTxv8yxWdcdcL+E+PX0ZcELxT4fsIiQM7qCFXMQ1KujVZSJJNEFiF
+         bVYFL7m8SGqDJiLXpKmWMw5RO6ze7MxpxLXG48ilDAOGLZjcr5kqv+o9sgd7+aD4Yd5m
+         CZzZ5d1Y5HjXVcCvvFP1B8KVVUIBdjuJujQwrds7VTG1ZiMhLCJ6LbUyjYH9lf+gUmyQ
+         E2usIMSFt5wt2/6rM6SrUjPz+upRfIotWes/x8hgtBIUogIQvToEhX2UUjgcm+nUIxo0
+         oLcg==
+X-Forwarded-Encrypted: i=1; AKwUvBxT9E4y2CWX/8U44heqBSYLI+E0Cc2nqSS7Ui8iNg61mtsWnvsPRRrdiymeLwIo48eZfcWtER2QFntq@vger.kernel.org
+X-Gm-Message-State: AFuF++lCl+4fyRGGIqmTZ1Jrdxzo0+V/JyqZ4nznbbJAmeLp4ffAWbnz
+	wLNIByb1RDVSYIoAHGHwtkyl7topmtHNDptaGUO4tGm7PMkg0X0DUb1z
+X-Gm-Gg: AYBFou14fT3oGzfyQdXA756tjWc05NlcgsLdtmYW8+/wK4XwZy9K5CFC5STGRG1qcxE
+	JcVNaMA3s8NPP/45TGXF1OMEy12EtNzj/xeyVcf9JRccJTVwAHA3lJSZJZNaeldRhyP7JHr3Thp
+	Btkn5QZQoZ8w41v7HoxODenpdb9qfe40VDpmMMV41E1g0zKQU2qhnFwHlybX4uisiT19LbVUveN
+	WqnNx7UiCKezLqEVEkpAC634u8lBT6qCI1gSbADqldNRS5kZzo6Wkp6uDkijr883x3tN9pvYmx5
+	XgKdxZ5DJo2g5oS4n93fZxcaFOGrIglkzn53K3AE7y1SMefW0i+ZpdITpw7wSrJ5XWkFmRs+O+L
+	fzUDA5bfoBP1lVsBGRA4ujdbdGv2QmIrWoFQnF1oJ3+N6K44ZgNHwPrd5Nsg54ldwENQNDEawmo
+	dQJfVCt58g88BloGQI2DsfpN3V712lwGDVUUclww9RQZh9aiP1dwFi5XLowYqQ7rtN3HGnnj25w
+	mMTt0oZpSDmnilckRbLyxZMbmDyO2AN7AhzuRJfBYJ/i52+N716jHjMHt3diXLi0fCHR0rRew==
+X-Received: by 2002:a05:600c:c168:b0:49c:edfa:15a with SMTP id 5b1f17b1804b1-49cf826c5f5mr415258855e9.13.1789049816022;
+        Thu, 10 Sep 2026 07:16:56 -0700 (PDT)
 Received: from ernest.hoecke-nb (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d20fce7a7sm293895575e9.4.2026.09.10.07.16.53
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d20fce7a7sm293895575e9.4.2026.09.10.07.16.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Sep 2026 07:16:53 -0700 (PDT)
+        Thu, 10 Sep 2026 07:16:55 -0700 (PDT)
 From: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
-Date: Thu, 10 Sep 2026 16:16:45 +0200
-Subject: [PATCH v2 4/7] of: property: fw_devlink: Follow PWM nexus maps
+Date: Thu, 10 Sep 2026 16:16:46 +0200
+Subject: [PATCH v2 5/7] of: unittest: Test fw_devlink with PWM nexus maps
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -71,7 +71,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260910-fw-devlink-nexus-ready-v2-4-17ac82dbe226@toradex.com>
+Message-Id: <20260910-fw-devlink-nexus-ready-v2-5-17ac82dbe226@toradex.com>
 References: <20260910-fw-devlink-nexus-ready-v2-0-17ac82dbe226@toradex.com>
 In-Reply-To: <20260910-fw-devlink-nexus-ready-v2-0-17ac82dbe226@toradex.com>
 To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>
@@ -88,65 +88,76 @@ Cc: "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>,
  Leonardo Costa <leonardo.costa@toradex.com>, devicetree@vger.kernel.org, 
  linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
  linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, stable@vger.kernel.org
+ Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 X-Mailer: b4 0.13.0
 
 From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 
-PWM consumers use of_parse_phandle_with_args_map() to resolve specifiers
-through pwm-map properties. fw_devlink instead parses the pwms property
-as a direct phandle reference, so it records the nexus node as the
-supplier rather than the mapped PWM provider.
+Extend the fw_devlink OF unit tests with PWM references routed through a
+nexus map. Verify that the mapped consumer has exactly one link to the
+final PWM provider rather than to the nexus.
 
-A nexus is a translation node, not the PWM provider, and need not be
-populated as a device. The resulting fwnode link can therefore remain
-unresolved and indefinitely defer the consumer while
-device_links_check_suppliers() waits for the nexus.
+Also cover a direct PWM reference to ensure that it continues to resolve
+to the original provider when no map is present.
 
-Use the map-aware parser for pwms so fw_devlink resolves the same
-provider as the PWM consumer API. Direct PWM references continue to work
-because the map-aware parser returns the original provider when no
-pwm-map property is present.
-
-Fixes: e71e46a6f19c ("pwm: Add support for pwm nexus dt bindings")
-Reported-by: Leonardo Costa <leonardo.costa@toradex.com>
-Link: https://lore.kernel.org/all/juuc4af7ndbajcl7gzf4tg5qz2q2j5tt3rvql4jbauradujrre@gc5nbdhhixaf/
-Tested-by: Leonardo Costa <leonardo.costa@toradex.com>
-Cc: stable@vger.kernel.org
 Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 ---
- drivers/of/property.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/of/unittest-data/tests-phandle.dtsi | 16 ++++++++++++++++
+ drivers/of/unittest.c                       |  2 ++
+ 2 files changed, 18 insertions(+)
 
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index eba7e9fe6c38..a9c51d639a2b 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -1331,6 +1331,15 @@ static struct device_node *parse_##fname(struct device_node *np,	  \
- 	return parse_prop_cells(np, prop_name, index, name, cells);	  \
- }
+diff --git a/drivers/of/unittest-data/tests-phandle.dtsi b/drivers/of/unittest-data/tests-phandle.dtsi
+index c3727ed15bde..eef966615b22 100644
+--- a/drivers/of/unittest-data/tests-phandle.dtsi
++++ b/drivers/of/unittest-data/tests-phandle.dtsi
+@@ -85,11 +85,19 @@ gpio_provider: gpio-controller {
+ 					#gpio-cells = <2>;
+ 				};
  
-+#define DEFINE_SIMPLE_NEXUS_PROP(fname, name, stem)			  \
-+static struct device_node *parse_##fname(struct device_node *np,	  \
-+					const char *prop_name, int index) \
-+{									  \
-+	if (strcmp(prop_name, name))					  \
-+		return NULL;						  \
-+	return parse_nexus_prop(np, prop_name, index, stem);		  \
-+}
++				pwm_provider: pwm-controller {
++					#pwm-cells = <2>;
++				};
 +
- /**
-  * parse_suffix_prop_cells - Suffix property parsing function for suppliers
-  *
-@@ -1426,7 +1435,7 @@ DEFINE_SIMPLE_PROP(extcon, "extcon", NULL)
- DEFINE_SIMPLE_PROP(nvmem_cells, "nvmem-cells", "#nvmem-cell-cells")
- DEFINE_SIMPLE_PROP(phys, "phys", "#phy-cells")
- DEFINE_SIMPLE_PROP(wakeup_parent, "wakeup-parent", NULL)
--DEFINE_SIMPLE_PROP(pwms, "pwms", "#pwm-cells")
-+DEFINE_SIMPLE_NEXUS_PROP(pwms, "pwms", "pwm")
- DEFINE_SIMPLE_PROP(resets, "resets", "#reset-cells")
- DEFINE_SIMPLE_PROP(leds, "leds", NULL)
- DEFINE_SIMPLE_PROP(backlight, "backlight", NULL)
+ 				fwdevlink_nexus: nexus {
+ 					#gpio-cells = <2>;
++					#pwm-cells = <2>;
+ 					gpio-map = <0 0 &gpio_provider 1 0>;
+ 					gpio-map-mask = <0xffffffff 0>;
+ 					gpio-map-pass-thru = <0 0xffffffff>;
++					pwm-map = <0 0 &pwm_provider 1 0>;
++					pwm-map-mask = <0xffffffff 0>;
++					pwm-map-pass-thru = <0 0xffffffff>;
+ 				};
+ 
+ 				gpio-compat-consumer {
+@@ -111,6 +119,14 @@ gpio-direct-consumer {
+ 				gpio-singular-consumer {
+ 					test-gpio = <&fwdevlink_nexus 0 0>;
+ 				};
++
++				pwm-consumer {
++					pwms = <&fwdevlink_nexus 0 0>;
++				};
++
++				pwm-direct-consumer {
++					pwms = <&pwm_provider 1 0>;
++				};
+ 			};
+ 		};
+ 	};
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index dfa3c885d142..b739a69997a9 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -770,6 +770,8 @@ static void __init of_unittest_fw_devlink(void)
+ 		{ "gpio-consumer", "gpio-controller" },
+ 		{ "gpio-direct-consumer", "gpio-controller" },
+ 		{ "gpio-singular-consumer", "gpio-controller" },
++		{ "pwm-consumer", "pwm-controller" },
++		{ "pwm-direct-consumer", "pwm-controller" },
+ 	};
+ 	struct device_node *tests;
+ 	int i;
 
 -- 
 2.43.0
