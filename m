@@ -1,71 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539FA48595B;
-	Thu, 10 Sep 2026 12:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F799492E31;
+	Thu, 10 Sep 2026 13:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789043695; cv=none; b=lCOgvDpd+hkAI/YKCN3Theh9J5iUst2Zwhu9+CclO25DNntmjqfH8M2IhmpKJxIa6zqpWxE1l1O6iyRzdxpSRhI7KpmV0+2owaeeEA7d3rUrcbnQDcBkaNTwJAH2oAv95JIxId0+Rs3dMLncUl1pc3ICzX7mvNZdur7NvZF3+TY=
+	t=1789047115; cv=none; b=bAMLUFnfM7ROPIrtfKg1xXfmh63KsYY/JpIN800jiET9A5CGjpqFR+0ns0hC/t9XDyygxDzvuhd2SaZVyaDOCei+SqK/XZrF3zxeOe4u+K6KgKSiXWWrE08VU90C3UtCPFohcns1J6M0vqxD8abTiGlUXnJXDDv4Fr3ZrY68N1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789043695; c=relaxed/simple;
-	bh=R5IIQUSffnX9KzdkFYW8JXqA+LYaU2CIl+sIeHvBmzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f7dIx3kzRhw6IQDD37VdU3HnDaGw2zpE3wbWsfdZBodhlNm7tImod5C/aulCHtH+Xsh/77Uv1n/HeYjEMgx5kRhgGiv+8+MwQA9I6Q4W4s23Xk7RgdE/0TTxJsgEgTJH/+DWBKF+ptwhWQKyRSGMi8tofi3jr89znUXWpiZN1NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=u1xLW18Z; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789047115; c=relaxed/simple;
+	bh=q2y1E+jfz+e2loPgk5uTMKvJJpPn2qFQADreOTA75TE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KqfthMLuBWXAgSo0VjRF8lgyvctTDv8BGBltXCPzJerHcHhboRiFqWtAL1XpnAYM8Fex63+MXn+T/p6ePnKkTvvMbd7beL1O3LjETY86G4IsUKj9zHMFWExyvVcenRp4/RTpfZppyVpkMT+yOYLI727UbrmJcXwIAjCzA/3R6vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=LH9up4Du; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="u1xLW18Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 578341F000FF;
-	Thu, 10 Sep 2026 12:34:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1789043693;
-	bh=Io3H7eT8+LcVwxa4TUx68Yyzl1iwGXsQIYcZ6tFQJ98=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=u1xLW18ZHX7/n1Wou5fWybTlwRYu6ZlLjZtXO8L23OFv40UOva766BrcpKgINEwrf
-	 AhteRRgEUNZ1S2S4dJBbJX26x5fRnke9xFf26XrSZASXOHoei01unD1PQv+JG5dpM2
-	 Mdw4hTSE2GPfyTpK9pcMOPeFuaHN8/0Cm9zpXfGk=
-Date: Thu, 10 Sep 2026 14:34:45 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
-	Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij <linusw@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] soc: fsl: qe: drop GPIOD_FLAGS_BIT_NONEXCLUSIVE
-Message-ID: <2026091038-trailing-jaywalker-2055@gregkh>
-References: <20260908-usb-fhci-drop-gpio-nonexclusive-v1-1-8e405dc67874@oss.qualcomm.com>
- <40845ad0-e321-4e1b-860d-ff798f430c42@kernel.org>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="LH9up4Du"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBAF2153B;
+	Thu, 10 Sep 2026 06:31:48 -0700 (PDT)
+Received: from [192.168.178.24] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7201E3F528;
+	Thu, 10 Sep 2026 06:31:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1789047112; bh=q2y1E+jfz+e2loPgk5uTMKvJJpPn2qFQADreOTA75TE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LH9up4Du6y4lg3MG2LYVykgQw0LKCGzFD7zHgyyrJrMa0ENvf0EYwGNnyn2inXtKw
+	 jPfnW+q+TLHjAisKlgb1xbRyeNUguD1docHILvcFytT8kkTNw1e1N0AYWs7+xTAP1m
+	 +tGr4x8OHatjQ5Kj1/wEKH3r9C8hDRgVcnc8z/2M=
+Message-ID: <82b2541c-ea6b-41d0-89b1-ecf9a9920cd9@arm.com>
+Date: Thu, 10 Sep 2026 15:31:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 8/9] pinctrl: sunxi: a523-r: add a733-r compatible
+ string
+To: Julian Calaby <julian.calaby@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+References: <20250821004232.8134-1-andre.przywara@arm.com>
+ <20250821004232.8134-9-andre.przywara@arm.com>
+ <CAGRGNgXsG5FmwFTSE1BM5qDHz_Jovb4EuRtt-=ipavBDf7AzJQ@mail.gmail.com>
+Content-Language: en-GB
+From: Andre Przywara <andre.przywara@arm.com>
+In-Reply-To: <CAGRGNgXsG5FmwFTSE1BM5qDHz_Jovb4EuRtt-=ipavBDf7AzJQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <40845ad0-e321-4e1b-860d-ff798f430c42@kernel.org>
 
-On Tue, Sep 08, 2026 at 01:58:18PM +0200, Christophe Leroy (CS GROUP) wrote:
-> Hi,
-> 
-> Le 08/09/2026 à 11:27, Bartosz Golaszewski a écrit :
-> > The GPIOD_FLAGS_BIT_NONEXCLUSIVE flag for gpiod_get() is deprecated. For
-> > actually shared GPIOs, it should be replaced by using the functionality
-> > provided by gpio-shared-proxy. The Freescale QUICC Engine GPIO driver
-> > uses it as a workaround to access the GPIO descriptor already requested
-> > by the caller of qe_pin_request() in order to access the private GPIO
-> > chip data.
-> > 
-> > As the existing comment itself states, the user already requested this
-> > GPIO and the only user in tree is the FHCI USB driver which does in fact
-> > request it, we can safely modify the function to take the *exclusive*
-> > GPIO descriptor as argument and stop using the deprecated flag.
-> 
-> This change seems sensible. I will take it via soc/fsl tree unless you have
-> other plans.
-> 
-> Greg, can you ack the change to drivers/usb/host/fhci-hcd.c ?
+Hi Julian,
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I know this email is almost comically old, but still didn't want this 
+left unanswered before sending a new revision:
+
+On 8/24/25 01:09, Julian Calaby wrote:
+> Hi Andre,
+> 
+> On Thu, Aug 21, 2025 at 10:46â€¯AM Andre Przywara <andre.przywara@arm.com> wrote:
+>>
+>> The secondary Allwinner A733 pincontroller ("-r") is interestingly not
+>> using the same new MMIO frame layout as the main controller, but is in
+>> fact very similar to the A523-r one: it has two banks, with 14 and 6 pins
+>> each. From the driver's perspective, this is all we care about, so we can
+>> re-use the a523-r pinctrl driver for the a733-r, too.
+>>
+>> The individual pinmux settings are different, so we must not use the
+>> a523-r compatible string as a fallback, but we can surely let the same
+>> driver care for both the a523-r and a733-r IP, as the pinmux values will
+>> be provided by the DT.
+> 
+> If the bank and pin counts are the same and the pinmux values are
+> provided by the DT, that means they _are_ compatible, right?
+
+I wouldn't say so: I would argue the devices are different, and not 
+necessarily every driver written for the old device can cope with the 
+new one. For instance U-Boot still goes with hardcoded pinmux tables 
+(because that's simpler to implement there), which don't match between 
+A523-R and A733-R.
+And I would see a point if that would enable old kernels to use that new 
+SoC, but because the main pinctrl is different anyway, that doesn't help us.
+
+But it's not a very strong opinion, so if the maintainers disagree with 
+me, I am happy to change that.
+
+Cheers,
+Andre
+
