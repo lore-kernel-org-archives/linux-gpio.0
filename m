@@ -1,31 +1,31 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61904A2056;
-	Thu, 10 Sep 2026 13:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A632A4A2634;
+	Thu, 10 Sep 2026 13:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789047342; cv=none; b=fQpK9zqS+C/Q0dEv7zmQrayK9E9aRWGiBMd7hICzHOJcl3TnmfwITeSgFX1mVmfiNz43ud9ClDeTULeujBJr27lMqYLbOeQXiucrHs37mgGlzP6Y32anbm2vH+Aw5f1nt+EVwCO8UmGs0H7Z1Ry6StiJNq9cY1DBPx6AhzZ9bCM=
+	t=1789047344; cv=none; b=HU9EB79fJFQXt1xahoBsKSncX3+e9FNk5qZEKDdF2oilQOIaXek2FeoZkgJq87wF00lYOXwGDMLF9wFbgD6JRl87yvOmaQubeolZ+tneFyOxXTzZN7OPGu3sF0MykARbY6HvibjnKC/cD+KR9ytKz9shSMqp/nMFgB33mGGuAtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789047342; c=relaxed/simple;
-	bh=hSa/tH8M8jk5gYes5gwVXQnH3e8X4j6HtduRWqIb3Ig=;
+	s=arc-20240116; t=1789047344; c=relaxed/simple;
+	bh=vFiGko9W5vY2zPx9uystmT+pgsJatJ921+bOqjDFnsw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G08fhgnOLFfxJu/9kfbLE07Jay7PqO76juLVyNMMWuoQktlC6ID6K7WoqshgSf2/gT+lCo/GkFdke4qv7ARWGGyuKraERZxQQ7U6tWaPwnL1cL+S14Eyd4lPdPmTVIZM/eZ97Dhc6CO9kjUg8MFFnYNVQAQ96xzA8SBKLTAk8AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ufl9Fesw; arc=none smtp.client-ip=217.140.110.172
+	 MIME-Version; b=O8IqKXK89WPasUFWPBRLaGGORy1YNNvc97AezAE6nNYQCvx3P63KH6x7HMwKJb9F9svfqs/Z5GVmJNdJoCX6DcQFZRKs9I7b8DlRuqL3lFaBejc+S0GQ5SpGZQmvpeZA9cdZHpL2lG77Uc2t8kkai1EelOKCSF9tTvBaIMDXzLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=TMigpWmV; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ufl9Fesw"
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="TMigpWmV"
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DA1622C7;
-	Thu, 10 Sep 2026 06:35:36 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6BD5322C8;
+	Thu, 10 Sep 2026 06:35:39 -0700 (PDT)
 Received: from e142021.fritz.box (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9220C3F528;
-	Thu, 10 Sep 2026 06:35:37 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 801593F528;
+	Thu, 10 Sep 2026 06:35:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1789047340; bh=hSa/tH8M8jk5gYes5gwVXQnH3e8X4j6HtduRWqIb3Ig=;
+	t=1789047343; bh=vFiGko9W5vY2zPx9uystmT+pgsJatJ921+bOqjDFnsw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ufl9Fesw8ci7X2Kc4PTAqdtuKbfDNk+st4bNXYBhxmDMYOlz9TjgyfWh6sRuv1v9o
-	 4juU4bwHRWNchv+K9SsLkDg/Cjrt2THjC5Kz22Fx7iL3pImZJnbqHUC5HqcWb9bEJQ
-	 ZVD7Sy5FAi2WzcsvanRC8rC1EoFFOsxLHqa/1QnM=
+	b=TMigpWmVs+gqlwFfSICdSaAmeo6lDUIvUP6cV9HfrbQt55FN6fTzomymOP19U3v9J
+	 f6VS/cUdGXCOgakdg9hL8rw6vkvhAOCtOPHpv2tmQbRYrLHCKE3+EGZOdPbMKr6CaC
+	 Njqm5G9HmtqPDwAg+e3/s/nDqc31iNGz9UqrHa3A=
 From: Andre Przywara <andre.przywara@arm.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -42,9 +42,9 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev
-Subject: [PATCH 5/7] dt-bindings: pinctrl: add compatible for Allwinner A733
-Date: Thu, 10 Sep 2026 15:35:16 +0200
-Message-ID: <20260910133519.459011-6-andre.przywara@arm.com>
+Subject: [PATCH 6/7] pinctrl: sunxi: a523-r: add a733-r compatible string
+Date: Thu, 10 Sep 2026 15:35:17 +0200
+Message-ID: <20260910133519.459011-7-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260910133519.459011-1-andre.przywara@arm.com>
 References: <20260910133519.459011-1-andre.przywara@arm.com>
@@ -56,59 +56,38 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The A733 contains a pin controller similar to previous SoCs, although
-with a change in the MMIO register frame layout.
-This SoC uses the new style of DT binding, where the pinmux values for
-each pin group are stored in the new "allwinner,pinmux" property in the
-DT node.
+The secondary Allwinner A733 pincontroller ("-r") is interestingly not
+using the same new MMIO frame layout as the main controller, but is in
+fact very similar to the A523-r one: it has two banks, with 14 and 6 pins
+each. From the driver's perspective, this is all we care about, so we can
+re-use the a523-r pinctrl driver for the a733-r, too.
 
-Add the new compatible to the existing A523 binding, since they share a
-lot of features, including the number of banks and clocks.
+The individual pinmux settings are different, so we must not use the
+a523-r compatible string as a fallback, but we can surely let the same
+driver care for both the a523-r and a733-r IP, as the pinmux values will
+be provided by the DT.
+
+Add the a733-r compatible string to the match list, without further
+distinguishing between the two. Should differences be discovered later,
+we can easily split this up then.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- .../bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml     | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
-index f87b8274cc372..d7d0ba32ced4d 100644
---- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun55i-a523-pinctrl.yaml
-@@ -4,7 +4,7 @@
- $id: http://devicetree.org/schemas/pinctrl/allwinner,sun55i-a523-pinctrl.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
+index 9e07fbb5be7cb..dfdcfa740ecc9 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
+@@ -40,6 +40,7 @@ static int a523_r_pinctrl_probe(struct platform_device *pdev)
  
--title: Allwinner A523 Pin Controller
-+title: Allwinner A523 & A733 Pin Controller
+ static const struct of_device_id a523_r_pinctrl_match[] = {
+ 	{ .compatible = "allwinner,sun55i-a523-r-pinctrl", },
++	{ .compatible = "allwinner,sun60i-a733-r-pinctrl", },
+ 	{}
+ };
  
- maintainers:
-   - Andre Przywara <andre.przywara@arm.com>
-@@ -28,6 +28,8 @@ properties:
-     enum:
-       - allwinner,sun55i-a523-pinctrl
-       - allwinner,sun55i-a523-r-pinctrl
-+      - allwinner,sun60i-a733-pinctrl
-+      - allwinner,sun60i-a733-r-pinctrl
- 
-   reg:
-     maxItems: 1
-@@ -126,6 +128,7 @@ allOf:
-         compatible:
-           enum:
-             - allwinner,sun55i-a523-pinctrl
-+            - allwinner,sun60i-a733-pinctrl
- 
-     then:
-       properties:
-@@ -138,6 +141,7 @@ allOf:
-         compatible:
-           enum:
-             - allwinner,sun55i-a523-r-pinctrl
-+            - allwinner,sun60i-a733-r-pinctrl
- 
-     then:
-       properties:
 -- 
 2.47.3
 
