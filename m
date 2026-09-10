@@ -1,213 +1,113 @@
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3AB737BE64
-	for <linux-gpio@vger.kernel.org>; Wed,  9 Sep 2026 17:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD37379C3C;
+	Thu, 10 Sep 2026 03:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788974984; cv=none; b=V/6MUbN2ARrurxO+rDUfnwoq6mtxbVPIwMGPqIAc2ucktXp3UqanAjv2mmCibptHdvF82OEZzhGvnRriiMUL0fRQkWuLM5d6fBzkhEKM2ImrCOfoXIsCYweXXgpbJ6FoZBsDT9TEaakzLTbnGYzyUkPKk0gC/acNl8egR0D+NI0=
+	t=1789011842; cv=none; b=Asq9tLU8KQVxAHsDdWRQnyLILxp+44Xk4fOEEFtpZE5HiJb/FmBfgsvTRcUh2Uyx7te1zLc5xVmcD9+Xwm0FQMdXFnEOt7g+4rE/ro8U+hKzMv1o17qxwyU2noQPhxM7jg9U5ChAAtoLsGdpxJNd+6VD9VeI4CAIpBjY63cGG6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788974984; c=relaxed/simple;
-	bh=3XHuEAHmF9mZh+23lL0Y/SKnX00eK8sbmtD5tQwkD3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XtTik9NM5wAdjdiBS4DlDI1cOwH0nELve7cHr43VvU4rd9f6ztEnMrIfQvYeMkA5BX4ET2pMeaqVUn+O9w9o4uZuHjqi8qXsHTMyOtKj2VI/N/qGCWq9d6bjUojDjpjN1Uw7SRjUO0rJj4MVIO5Gz7u9T9ocnk9hqMyOOQilVcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K8QDTIVN; arc=none smtp.client-ip=74.125.227.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789011842; c=relaxed/simple;
+	bh=aHFXpjcIZQG9vX4kBkqYBeDw2g/hbR70cFKTn0d5m1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Pmyj7FSd2f/SPCOQ4R9SXr7DUTgKtDe0oVQcGzrUUcSxlKzJn2UCmc2x83o+O1zxKkq9BOEM95jC5cmP1E8PQBLerhIu9L3Myy0srEnqo4aIq4OtIUFbwhRy7EUCldWvSayr2XXAOMPsCtiVbRKkJmKtmqULxeFy+3e/FfiJAJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IucH3r1E; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K8QDTIVN"
-Received: by mail-pj2-f12.google.com with SMTP id 98e67ed59e1d1-396ccc02279so537743a91.1
-        for <linux-gpio@vger.kernel.org>; Wed, 09 Sep 2026 10:29:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788974982; x=1789579782; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=doXhXrJthHFYgvoQ59t6i4yuIdUh6fUHC6pQJIIVyWE=;
-        b=K8QDTIVNhfLASTp3QphzlEUfrSvguuCg5pG4jCmWw9B7cxs5OOMcWg+MyeZMlQE2s/
-         iD1b9Lm1HxiHaT1c5K2N1lCkrWuVY/v236AcLxp/UYrKdudm9hC4ppaUdSSREiVpl36W
-         PZud1RO8O+XqaFoDSoShPh4PZGDP1pAI5L7/LOyYLP+MZPAPHz2E8gPTJk7GsiLxCEHX
-         SY9GUkq4SebbICg+ysSv2+I92KkXS6tROdlau6CdOKhaqfoyhY5d0UJuZDLmeqeE6z4y
-         FCUbaUkkMZxkC+1TDYwKrdCYkoGGIxy8D0XMQUJblDH05mquDPEM9lNIPgiBPAZyajW6
-         Alqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788974982; x=1789579782;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=doXhXrJthHFYgvoQ59t6i4yuIdUh6fUHC6pQJIIVyWE=;
-        b=o8Lp0H2MCaGdDzwhuWvkZWz5pun+AGNSdV9MToaeZcEkg+pR/vvX3MlfPzMTjt0eya
-         S6AiPiawE5vbz/dyfBnHVoJ0HaZyA+W9JRSkUEoNWCqawX6lY9m5dZv2edOFV6FB30Xn
-         d26RpMXrTQ/2By4hAPjg1zPqG8KGJZ3Bob1RfgICCDHZSHf924Nm+PRNy09lupN7qmg7
-         N1nXdZnoopFAAJC2DABXEN/vgIhZMwTSe4xgMkchLTAGdRQ8132OkJUsBg+O7SMeDoeG
-         zt7ifyvwEg2LsE6BrDWWLuAqGvMWQMl38LHLn0Lr4v0WKv72MBOjvDMlxxMRvScOWy7K
-         ksqA==
-X-Forwarded-Encrypted: i=1; AKwUvByMffKJ+h0cqUdOhVBTS2nOJ0WOqurloHuTHRmG9Eai+EcEVds78oZHhy7+qEsRdEUJ1f03uT7AG5X+@vger.kernel.org
-X-Gm-Message-State: AFuF++nJn22Aq3RqYx+A+wvH1m2m9JdolBO0Hbz7rEa7GnnU/dbL/2AG
-	qwf5yniFBmjaDBirng9FsHYQJz1WmYOWvLyVcq+5K82BsfnicGscPgCD
-X-Gm-Gg: AYBFou2FI2f8NnpJMHVUQ2AvOb3HDUzuDgJgBaJrLIFqWkH6d6Yp5kxB6n3NzaU8/vk
-	s/uhWJ4aDupDO7b/Wi4jBiTzMMwqZ5IzQoYWr1/WeQ0/ut7liCRNpTMytRf9OHRuhUODfUNFRM3
-	HoXeejquQ1KjwrOm2+aRNoT64Hg8HT4RQmUL9ON7k/4CZQtUGKDFcfzHzx6lW59Zd7BXmmQscza
-	YmOt8q3u6yGObsmc2bSgUvyc/0Xm2MqfWpdvpFZE3vOyUnTxpyNq53b2rYrbmVP4Hivn+JFYCwV
-	AUwcPQ+VpSNCr9vKPZyn9DfYE7ybe+m0hfEwvXzYFI/zrEVYdLc/vVmiNCkewtW4HJ9A2VXw/fz
-	X40jSMORumbf7U8kGIo1cS1AUAWfG1CkZ1SUg9aRtj5iVBTa4xOqQsx8anl6wDl0RBWJXbCZwr/
-	3TQH5IMt1h1IgJD8irRxqionPhKEpN/baQKwXNUsYHReTuyeiY9s2MJontAwRzrz8DyiOs4JPOf
-	0bFfx6QMXY7YQn4Dzx7QQsmLvu9WRjuM7NC9JLG
-X-Received: by 2002:a17:90b:3809:b0:398:9bd4:d12 with SMTP id 98e67ed59e1d1-39d70b1a9d7mr2622732a91.17.1788974982000;
-        Wed, 09 Sep 2026 10:29:42 -0700 (PDT)
-Received: from google.com ([2a00:79e0:2ebe:8:2d43:5153:5c50:643e])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1432435ec2bsm40462438c88.3.2026.09.09.10.29.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Sep 2026 10:29:41 -0700 (PDT)
-Date: Wed, 9 Sep 2026 10:29:38 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
-	Mark Brown <broonie@kernel.org>, jacopo mondi <jacopo@jmondi.org>, linux-sh@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>
-Subject: Re: [RESEND PATCH] sh: ecovec24: use static device properties to
- describe the touchscreen
-Message-ID: <aqGXSGr87b3NPDBI@google.com>
-References: <alUyZ2zVWCPhyHHX@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IucH3r1E"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C52B1F000FF;
+	Thu, 10 Sep 2026 03:43:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789011840;
+	bh=ANNG6DdUCxlYuWMbFzSeAUQzUyNQIbPodMwECaISSB4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=IucH3r1Ew0YlN89WQk+tOagjPY3acAnwOL3bFDIRIpdNtGQw2KR9pyHhwzq4hkPLj
+	 tEfMzgCNrxRe/3v53B5YCaK/lfCX7/Nc5xLdPmohUr+IT+MxZnU9P59Z9hYD23OvCE
+	 ounljH69wE6SrXwhESgwIlcn7Q7uScbxImgqm47RziwUYXFXTxbCp2j5qzVwPb2z1m
+	 NL/OtgNE8wFVU7i7/7bljfc4fL1sjbSZoWiHrJDovqLFUBiaZb5ApxnwqJtf+tZ0PS
+	 Z5g4fIDH0nw80p0eTXKbN3/omAZL+rOdnaQy4FowCooE/g6XENKGukeEBORrIkM5BW
+	 Sr1RxE2KqYn5g==
+Date: Thu, 10 Sep 2026 04:43:52 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Janani Sunil <jananisunil.dev@gmail.com>
+Cc: Janani Sunil <janani.sunil@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, Linus
+ Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
+ Michael Walle <mwalle@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
+ linux@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-doc@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@baylibre.com>
+Subject: Re: [PATCH v6 05/17] iio: adc: Add AD7768 and AD7768-4 core support
+Message-ID: <20260910044352.6241504b@jic23-hlaptop>
+In-Reply-To: <21704002-3bc7-474a-9e27-dd9b7f01a4bb@gmail.com>
+References: <20260904-ad7768-driver-v6-0-e4378f946bfb@analog.com>
+	<20260904-ad7768-driver-v6-5-e4378f946bfb@analog.com>
+	<178866660277.3402141.13365217395986099796.b4-review@b4>
+	<21704002-3bc7-474a-9e27-dd9b7f01a4bb@gmail.com>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alUyZ2zVWCPhyHHX@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 13, 2026 at 02:41:31PM -0700, Dmitry Torokhov wrote:
-> Convert the board to use static device properties instead of platform
-> data to describe the touchscreen, so that support for platform data can
-> be removed from tsc2007 driver (ecovec24 is the last board using this
-> mechanism of describing tsc2007).
-> 
-> Device properties do not allow custom board methods, so the method for
-> getting "pen down" state was removed (the driver is capable of working
-> without it). If this functionality is needed proper pin control/gpio
-> support needs to be implemented so that the same pin can serve as an
-> input GPIO and an interrupt.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
-> 
-> This is a resend of the patch I sent in August of 2024. My fault of not
-> noticing reply from Adrian inquiring about potential negative impact
-> from not having GPIO-based "pen down" detection. I believe this is fine,
-> the "pen down" is an optional feature and the driver can detect the
-> touches even when it is not specified. Additionally, this is an
-> evaluation board, so user impact should be negligible.
-> 
-> However the bigger question is whether ecovec24 board still relevant.
-> According to my research it has the following regressions currently
-> unfixed:
-> 
-> 5716fb9bd9c6 ("mmc: spi: Convert to use GPIO descriptors")
->   - MMC SPI device naming broken (broke SD fallback mode)
-> 
-> 9fda6693335c ("spi: sh-msiof: Convert to use GPIO descriptors")
->   - SPI CS polarity inverted (broke initialization on the MSIOF0 SPI bus)
-> 
-> c2f9b05fd5c1 ("media: arch: sh: ecovec: Use new renesas-ceu camera driver")
->   - Camera array sentinel missing (causes out-of-bounds reads and
->     potentially kernel panics)
->   - Camera standby polarity inverted (enadvertently keeps cameras
->     permanently powered off)
->   - Camera disabled iby default (board defconfig points to a deleted
->     driver)
-> 
-> They are ~6 years old, so I wonder: do people actually *actively* use
-> this board with modern kernels? Should it simply be removed?
+On Mon, 7 Sep 2026 13:25:53 +0200
+Janani Sunil <jananisunil.dev@gmail.com> wrote:
 
-John, gentle ping...
+> On 9/6/26 05:50, Jonathan Cameron wrote:
+> >> Add core support for the AD7768 and AD7768-4 simultaneous sampling ADCs.
+> >> Configure supplies, clock and reset, use a custom regmap bus for the SPI
+> >> protocol, and parse the enabled channels and input buffer settings from
+> >> devicetree.
+> >>
+> >> Connect the converter to an IIO backend for buffered capture with CRC,
+> >> provide a fixed safe wideband sampling configuration and add runtime
+> >> power management.
+> >>
+> >> Signed-off-by: Janani Sunil <janani.sunil@analog.com>  
+> > ...
+> >  
+> >> +
+> >> +static int ad7768_get_enable_vref(struct device *dev, unsigned int index)
+> >> +{
+> >> +	const char * const *supply = ad7768_vref_supply_names[index];
+> >> +	int refp_uV;
+> >> +	int refn_uV;
+> >> +
+> >> +	refp_uV = devm_regulator_get_enable_read_voltage(dev, supply[0]);
+> >> +	if (refp_uV < 0)
+> >> +		return dev_err_probe(dev, refp_uV,
+> >> +				     "Failed to get %s supply voltage\n", supply[0]);
+> >> +
+> >> +	refn_uV = devm_regulator_get_enable_read_voltage(dev, supply[1]);
+> >> +	if (refn_uV == -ENODEV)
+> >> +		refn_uV = 0;
+> >> +	else if (refn_uV < 0)
+> >> +		return dev_err_probe(dev, refn_uV,
+> >> +				     "Failed to get %s supply voltage\n", supply[1]);
+> >> +
+> >> +	if (refp_uV <= refn_uV)
+> >> +		return dev_err_probe(dev, -EINVAL,
+> >> +				     "Invalid reference %u voltage\n", index + 1);
+> >> +
+> >> +	return refp_uV - refn_uV;  
+> > Do we never care about the offset inherent in where the negative sits?  
+> 
+> The absolute REFx- voltage does not introduce an offset into the ADC transfer function. The datasheet defines VREF as REFx+ - REFx- and the LSB size as (2 * VREF)/2^24. Zero code remains at AINx+ - AINx- = 0.
 
+Fair enough - I'm not sure what I had in mind.
+
+Jonathan
 > 
-> Thanks!
-> 
->  arch/sh/boards/mach-ecovec24/setup.c | 38 ++++++++--------------------
->  1 file changed, 11 insertions(+), 27 deletions(-)
-> 
-> diff --git a/arch/sh/boards/mach-ecovec24/setup.c b/arch/sh/boards/mach-ecovec24/setup.c
-> index a641e26f8fdf..110a77f903b5 100644
-> --- a/arch/sh/boards/mach-ecovec24/setup.c
-> +++ b/arch/sh/boards/mach-ecovec24/setup.c
-> @@ -26,6 +26,7 @@
->  #include <linux/platform_data/tmio.h>
->  #include <linux/platform_data/tsc2007.h>
->  #include <linux/platform_device.h>
-> +#include <linux/property.h>
->  #include <linux/regulator/fixed.h>
->  #include <linux/regulator/machine.h>
->  #include <linux/sh_eth.h>
-> @@ -589,39 +590,21 @@ static struct platform_device keysc_device = {
->  /* TouchScreen */
->  #define IRQ0 evt2irq(0x600)
->  
-> -static int ts_get_pendown_state(struct device *dev)
-> -{
-> -	int val = 0;
-> -	gpio_free(GPIO_FN_INTC_IRQ0);
-> -	gpio_request(GPIO_PTZ0, NULL);
-> -	gpio_direction_input(GPIO_PTZ0);
-> -
-> -	val = gpio_get_value(GPIO_PTZ0);
-> -
-> -	gpio_free(GPIO_PTZ0);
-> -	gpio_request(GPIO_FN_INTC_IRQ0, NULL);
-> -
-> -	return val ? 0 : 1;
-> -}
-> -
-> -static int ts_init(void)
-> -{
-> -	gpio_request(GPIO_FN_INTC_IRQ0, NULL);
-> -	return 0;
-> -}
-> +static const struct property_entry tsc2007_properties[] = {
-> +	PROPERTY_ENTRY_U32("ti,x-plate-ohms", 180),
-> +	{ }
-> +};
->  
-> -static struct tsc2007_platform_data tsc2007_info = {
-> -	.model			= 2007,
-> -	.x_plate_ohms		= 180,
-> -	.get_pendown_state	= ts_get_pendown_state,
-> -	.init_platform_hw	= ts_init,
-> +static const struct software_node tsc2007_swnode = {
-> +	.name = "tsc2007",
-> +	.properties = tsc2007_properties,
->  };
->  
->  static struct i2c_board_info ts_i2c_clients = {
->  	I2C_BOARD_INFO("tsc2007", 0x48),
->  	.type		= "tsc2007",
-> -	.platform_data	= &tsc2007_info,
->  	.irq		= IRQ0,
-> +	.swnode		= &tsc2007_swnode,
->  };
->  
->  static struct regulator_consumer_supply cn12_power_consumers[] =
-> @@ -1242,8 +1225,9 @@ static int __init arch_setup(void)
->  		gpio_direction_output(GPIO_PTF4, 1);
->  
->  		/* enable TouchScreen */
-> -		i2c_register_board_info(0, &ts_i2c_clients, 1);
-> +		gpio_request(GPIO_FN_INTC_IRQ0, NULL);
->  		irq_set_irq_type(IRQ0, IRQ_TYPE_LEVEL_LOW);
-> +		i2c_register_board_info(0, &ts_i2c_clients, 1);
->  	}
->  
->  	/* enable CEU0 */
-> -- 
-> 2.55.0.795.g602f6c329a-goog
-> 
+> Regards,
+> Jan
 > 
 
--- 
-Dmitry
