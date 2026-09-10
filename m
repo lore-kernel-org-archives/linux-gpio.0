@@ -1,218 +1,293 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010038.outbound.protection.outlook.com [52.101.228.38])
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AE42EB5A6;
-	Thu, 10 Sep 2026 16:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789056233; cv=fail; b=NRBB7VuyF3K4KKBVLYGXQt6TeSCLVDbyuNpIk6R4pLzOz/FTO3R2tXWt7cXIVQ5hAeIt7X1OSuio9SY/kUYs+wKeeR2lCndvspiduwDeyVJsIMH7zVSlf7Ojc7olsFZeEcZN70r23ZKinnZUBfJrpbaPEze8igWhe4osRGRgqpU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789056233; c=relaxed/simple;
-	bh=rpR60oG9pCtDqqYRsH37aCAXxhNxb/+ywveDqx1hh+w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I6QAcFhikxPpgjQzUrIhS966TeolE4QvMzRJC6pmP0ChOlwdSWjcsyxUQ3469XThMoZkYvWnsJXFt8pBwA7eejkYWksVgzIrHdAvtaAiVI+VRgmXuZOpduSpHGlEsBThwkvau6zNhWQRxWlZMGxtO5L+s/oS7cM+Qd4s5Nq70fc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=f8/bDxEw; arc=fail smtp.client-ip=52.101.228.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8B355C1D7;
+	Thu, 10 Sep 2026 17:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789061400; cv=none; b=TFy0LRnEk9lrn/kVjXAfeF/dNmpGG8L/pL4I38Xf5W2LgxQx8iWLT4O0PQXY5pV8EgWc6EOs+L9WV+vYmqPnRapdcu2/XkZuIyX5SBsxV+h7P/4gG/4jABqFKP5HcKio9D+FItbPMKt+fsf/s1MA6Z/ajMJHvEc7yvaIQPUvqJ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789061400; c=relaxed/simple;
+	bh=qj04lnfabPkO4RhURI7w92r5/cwoXH0pgIJukWhuhBA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=BzDJwH9V5rgd9E024ZQ7n9otTeeb7FHPbkmO1E4dFG1PxIcLpTJOsB9MI/aysV1NcBadtYlsKx1xf0id3zLpqGrxtZwpZgOVElJbuAmm8VxjQkH3xVfpuYs5wmWlTyNwdPWrTF8xO01yQPePP9ezTk38FGHyLXo7CENf8QCmbrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=0KalttTC; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="f8/bDxEw"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oXUEEcnFV2d70XGb2Z/NInSxgrODAQ9m69iERoEtZhr42S8eLb5nLp3gI4WMlrkSY8Yh2GuW4xyv+PZ67Q3Fu9Y2bep8iA6Z2u7QbgfY5mQo1pNDcdeteQof4WyVLBSl6HN4y8+8oMQke1ZjvRlNNsmGRmt8yyxUcdiczfRYVSTD/00jsxsiXy4CBMgY1nep/v6LsZcnGv7N8sQ3E58wk3Yse6qymVw3K+v49vTYPfuTZjYa5UeF3YNsQZDNt9nKNxQUsynhCBGZXN8yo7huFVVAZkeQNfezt35skaIZXknpaY5eXiGaM0IAqAUuTTfAAI/qa6IUfsvhojzQQj1rrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3vzucJ3+1m8wzjgnGHs0+KTlzU+0pSFkZaZgxgZwCe8=;
- b=wZYltWUulcdmxqHyQ4Lcw2jJzQ7OmoTaonnNteDNS2WfieF47WBFTPkKwfNCQ/v94ykzBAVYW77OxES8P40gExK/Ejp+xOieJ49qlWAIBDfaKnoOYtZk86dvNqok9lbXm8RuxVRnUGNe9fYupwUIwrdvSJspKCBUkTHV8/7gIlNXo9lK2FzGSbK05W9yBIprSQSQWDdZg4bnaR8Vz9GvcI5pME3tr3ZUYDmSwcgcD8iFDzEBf2mviqN/T9wdUEHvC/b+Ay6sixGzaCx/t19ZjaQBrScdwkbykcF6QX1zP9WKAncOEQVkhX+cwhwo6U1xsw+DgRkQ2TKEyrwZhzriQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.62.32.50) smtp.rcpttodomain=glider.be smtp.mailfrom=renesas.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=renesas.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3vzucJ3+1m8wzjgnGHs0+KTlzU+0pSFkZaZgxgZwCe8=;
- b=f8/bDxEwhMi8Tp9O8rgOktmQN1C5AWQfycDilNXLC2rzkt8vfwrImzURbm4X9fn59AqvtQdRgSfNh8QCYcv4m44AUWBliB3m0na/tkyVZ34ULaQVdmlgPh4/0zb2mv5TyMRb6OrDQB93Ln6d7HSMWUvFA8905xsLQjDIkokUs7A=
-Received: from TYCP286CA0022.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:263::8)
- by TY7PR01MB17246.jpnprd01.prod.outlook.com (2603:1096:405:32b::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.9; Thu, 10 Sep
- 2026 16:03:48 +0000
-Received: from TY1PEPF0000BADA.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:263:cafe::45) by TYCP286CA0022.outlook.office365.com
- (2603:1096:400:263::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.9 via Frontend Transport; Thu, 10
- Sep 2026 16:03:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
- smtp.mailfrom=renesas.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=renesas.com;
-Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
- 8.62.32.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.62.32.50; helo=ejcrelay004p.adwin.renesas.com; pr=E
-Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
- TY1PEPF0000BADA.mail.protection.outlook.com (10.167.240.39) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.5
- via Frontend Transport; Thu, 10 Sep 2026 16:03:47 +0000
-Received: from demon-pc (DEU-5CG5050QD0.adwin.renesas.com [10.226.92.160])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 451D430083C7;
-	Fri, 11 Sep 2026 01:03:45 +0900 (JST)
-From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] pinctrl: renesas: rzt2h: reuse helpers
-Date: Thu, 10 Sep 2026 19:02:26 +0300
-Message-ID: <20260910160226.489183-5-cosmin-gabriel.tanislav.xa@renesas.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260910160226.489183-1-cosmin-gabriel.tanislav.xa@renesas.com>
-References: <20260910160226.489183-1-cosmin-gabriel.tanislav.xa@renesas.com>
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="0KalttTC"
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68AF7Qm6343103;
+	Thu, 10 Sep 2026 13:29:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=G8GvV
+	apYrb5qwfEX35H9jYhItTfnC+pyFDI6wfAjNdQ=; b=0KalttTCC1bF7xyTYWES+
+	MU1nWoOypLPvcjaU1O6mWvx3GIMWQAxgklsEBmec3HpEmmRQBVCuDKhn+ttlh1oo
+	awu4W7dc177r31/PcFRKvi3KAZU1O5JPgjp0VnEgo2QqlZulwDH7spcWOXIt9cWW
+	X+GT6sIFJuvdfaEBDe/dLW1A1g3jlWl6+36XDuvZul78riR+iVaTX3MI8oW+Wadz
+	YWJoqvpQ7ccoPf8Usy/BPRDiWn9TPzcABTIWh0A8/TDfz0MYpk3W5zKZldt/e3cZ
+	Ovlu7BO8YpRgmcxNEbFz60E0g7u1WO9tJ/7X6hSuuzamyGQMRCyl4EjtdhPeE5Tq
+	w==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4gkcx950ym-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Sep 2026 13:29:35 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 68AHTY2Y037800
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 10 Sep 2026 13:29:34 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.37; Thu, 10 Sep
+ 2026 13:29:34 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Thu, 10 Sep 2026 13:29:34 -0400
+Received: from HYB-e1y2fvUQ3cx.ad.analog.com ([10.32.225.204])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 68AHTIdr018670;
+	Thu, 10 Sep 2026 13:29:30 -0400
+From: Janani Sunil <janani.sunil@analog.com>
+Date: Thu, 10 Sep 2026 19:29:12 +0200
+Subject: [PATCH v8 3/3] gpio: ad7768: Add AD7768 GPIO auxiliary driver
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY1PEPF0000BADA:EE_|TY7PR01MB17246:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 6e92d28d-e30c-4e08-af98-08df0f5518ff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|82310400026|1800799024|36860700016|376014|10067099003|3023799007|56012099006|22082099003|18002099003|11063799006;
-X-Microsoft-Antispam-Message-Info:
-	HpUY+M0FQb4JWRDLFt5rtsX6Fl0PTgwf67sMIBuvjyYZ+Jw9Zkxxn8JVh1ewNXwkTQ5LrorA0MH5LcIgD455Jd3hYAfWTb7ZCWuojlk/DRGYuBYeX7FFPqrgKOGvBuBpJM2kkao1/ix/y1wl2yMYZDLHkuBaitI28KeFRMuY1nRnDO9BCd0+sBtsFkahD5ItCX0LYatuexqLlpNiyX+adV3L+I49emmSmsh1oLBw+7axNnIYLTbblCjmRwwpb8joS7oJ0OpCBNxGavqj2OCo9qbwBUxs7EjMnnX6exTJN3S2m2Q/DlM79wphRFhYtVYmCfCMG86d1EQ8TORnKa4ESS7l5k6AC1CN3lTJFYDRgoq/F40DNLXDkJiGvSyZffYRPTyXy5muEBKsKZKwv1H/acxjmyreQu7PFuzO1/QqDu2sXS3WTNH60U0Aijd3dMN2Rm4hYBx/rOSDyj8kwJNg/BXm2GCyFtlLVU3bTjFHV7TrABfw8DyEqyp5L97XspPOw+h3p3TuJscBjgqeJFehX7QEXkFHL2ZO7zgnAOfV4NLLdcU6Z+yb/5oX2e3Ew7y+8k8Sifi6UdBKsU1soSvPZBeTQkYeQJ/dk9eogObqJmCNyhR2MnU6ezvCzraPjFD0840DLafVxUGK0ydT5QE0hVuPvfOkK6YVukxezmMYY4tpAt6YD7HjmCZ4Pw6NPUXDtpCchJAerk0IF6hy5PnOsg==
-X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(82310400026)(1800799024)(36860700016)(376014)(10067099003)(3023799007)(56012099006)(22082099003)(18002099003)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	az18aeV1anxaI+gT+alvhWuY7MK+Lv1iBIds7ZC+4E1O7765H4jxYKXSor3nXEg+RHrJfkFDT6swlxF4pPZrcT3kBJ3qIec0FM8UEEherv/08uXw97ZJoKAsxOzQd7MBAxmr7R8iQfUUoyTzixgsIfUstpPwFPMIPb9ZmXz1sY65zzmDW+mNRPhKhct6hBMrZTeCqYJMkpqNIvQonSNsKg8FX2TU74JGuLJsRMnPBCCSIskxd0EC3XY19yaYLo0B7LGnzci95UShmTTwg2G8W+DLvuLVL1/pQOELr19ZsEX9L4iPGdUXa/6k6UV6ib4Q0PWueyPuzJhjieD8bDoWbb4fwRanEucdmFKG8XlXM2rO6oY1Zt51uVXq6rdBK+piXb6N1FhUi1OjaRZDZiSrDB38Vo857t9nCIPZKdJ0pDWXeD2rvF7QpWg6KZxjcqVo
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Sep 2026 16:03:47.5454
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e92d28d-e30c-4e08-af98-08df0f5518ff
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
-X-MS-Exchange-CrossTenant-AuthSource: TY1PEPF0000BADA.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB17246
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20260910-ad7768-gpio-v8-3-6aaaa15adeb3@analog.com>
+References: <20260910-ad7768-gpio-v8-0-6aaaa15adeb3@analog.com>
+In-Reply-To: <20260910-ad7768-gpio-v8-0-6aaaa15adeb3@analog.com>
+To: Michael Walle <mwalle@kernel.org>, Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>
+CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+        Jonathan Cameron
+	<jic23@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@intel.com>,
+        Janani
+ Sunil <jananisunil.dev@gmail.com>,
+        Janani Sunil <janani.sunil@analog.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789061359; l=5661;
+ i=janani.sunil@analog.com; s=20260903; h=from:subject:message-id;
+ bh=qj04lnfabPkO4RhURI7w92r5/cwoXH0pgIJukWhuhBA=;
+ b=A0f9/jZZyvSxWIaCIJmuDhNV8hu5nAvDbjdrJ07cDIFLFwr3ZBVoFL9d3zy/+1CTKcj/e+25+
+ EayJFyK49BOAersCedgdEkDD0S0slUTvgG4gWjBPu46/tySMBgJJpfy
+X-Developer-Key: i=janani.sunil@analog.com; a=ed25519;
+ pk=0UJo4rLJeMHBMco/+wcMHzXI7nV8k1T72+XQlBNV4Rw=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTEwMDIxNCBTYWx0ZWRfX7ki4cBU6iqlx
+ klhZryDWLajUv4vPU5jIj7t8XzoCROLXka7yeOr57ZRLWZA/Gr06NfX6/fbDGC92rjMoD1Tf5dJ
+ 567tD9XSz+AN8g0rwdgNMxJXP4Y7TR3qBokhTRUWo9vm1Zfg8ceC
+X-Proofpoint-GUID: ktNsYz2yY6mlNYCMt5ZRrw2rD6lZXIT6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTEwMDIxNCBTYWx0ZWRfX0Tjv4jNtfDrD
+ WXr9iAqqBcLy8a6UAFyGDGraRPUyimTDJncEfZXNALhC58ljb5EQmRPknDXZCvp+bd9Ts26rXG9
+ Qeg/2SqZAicgKzZsGFTu4z21Mqhky6A45GS4nDmR7m4dtSF4J+iK3ES8UIhETeaTET5zrbKrMF5
+ q3cWj1AGojTEsk/h5ecIFWOqoTtQJkJ7aYQHQhejbhBO7heh3t2l/UAR9dcYG+YXg/F2xapkY4v
+ HTVMNdIRPtA5l6KXUeiUUvhBPUGulIVRn95+w6ILNls3KiYQELhc8Ptdkp6KVU6PkhGpQaUiN15
+ zHxVFGIF4v6/ZYa7gE33sd8vLf+CgwUoP6sypw8ZpKsJosD+FcnIYg7TaXmOpE6tOuMlXRf1wxm
+ SAPTpR3W1yIcFIUrA6eBqh7G1f+1XN/Nwh/4GK2ek2TZU4EFJh80Dh1pSih7Qn/1es6y6qLV81p
+ /EWaBC3ctcNXDxVdxdQ==
+X-Authority-Analysis: v=2.4 cv=G8CJgNk5 c=1 sm=1 tr=0 ts=6aa2e8ff cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=0sLvza09kfJOxVLZPwjg:22 a=uXIjobp8t2wMuQ0fPvqm:22 a=QyXUC8HyAAAA:8
+ a=VwQbUJbxAAAA:8 a=gAnH3GRIAAAA:8 a=8fq82CzG31171KfXEYkA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: ktNsYz2yY6mlNYCMt5ZRrw2rD6lZXIT6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-10_05,2026-09-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 adultscore=0 malwarescore=0 priorityscore=1501
+ bulkscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609100214
 
-The PMCm peripheral-mode test, the PFCm function read, the PINm input
-read, the PMm write, and the PMm read are open-coded in several places.
+The AD7768 provides five GPIOs controlled through registers shared
+with the parent IIO device. Register an auxiliary gpio-regmap driver
+and use the parent device for runtime PM.
 
-Reuse the already existing helpers.
+The device has separate input-state and output-latch registers. Add a
+reg_mask_xlate() callback that checks the line direction and reads the
+programmed output latch for output lines while retaining input-state
+reads for input lines.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+Reviewed-by: Linus Walleij <linusw@kernel.org>
+Signed-off-by: Janani Sunil <janani.sunil@analog.com>
 ---
+ drivers/gpio/Kconfig       |  12 +++++
+ drivers/gpio/Makefile      |   1 +
+ drivers/gpio/gpio-ad7768.c | 121 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 134 insertions(+)
 
-V2:
- * pick up Geert's Reviewed-by
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index a48586bb8edb..07b7f8ab0ccb 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1818,6 +1818,18 @@ endmenu
+ menu "Auxiliary Bus GPIO drivers"
+ 	depends on AUXILIARY_BUS
+ 
++config GPIO_AD7768
++	tristate "Analog Devices AD7768 GPIO support"
++	depends on AD7768
++	depends on GPIOLIB
++	select GPIO_REGMAP
++	help
++	  Say yes here to expose the AD7768 utility pins as GPIOs when the
++	  device tree node is marked as a GPIO controller.
++
++	  To compile this driver as a module, choose M here: the module will be
++	  called gpio-ad7768.
++
+ config GPIO_LTC4283
+ 	tristate "Analog Devices LTC4283 GPIO support"
+ 	depends on SENSORS_LTC4283
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index dc9e6d643b5b..ce56e9b3f55d 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -27,6 +27,7 @@ obj-$(CONFIG_GPIO_104_IDI_48)		+= gpio-104-idi-48.o
+ obj-$(CONFIG_GPIO_104_IDIO_16)		+= gpio-104-idio-16.o
+ obj-$(CONFIG_GPIO_74X164)		+= gpio-74x164.o
+ obj-$(CONFIG_GPIO_74XX_MMIO)		+= gpio-74xx-mmio.o
++obj-$(CONFIG_GPIO_AD7768)		+= gpio-ad7768.o
+ obj-$(CONFIG_GPIO_ADNP)			+= gpio-adnp.o
+ obj-$(CONFIG_GPIO_ADP5520)		+= gpio-adp5520.o
+ obj-$(CONFIG_GPIO_ADP5585)		+= gpio-adp5585.o
+diff --git a/drivers/gpio/gpio-ad7768.c b/drivers/gpio/gpio-ad7768.c
+new file mode 100644
+index 000000000000..c37e1ac30612
+--- /dev/null
++++ b/drivers/gpio/gpio-ad7768.c
+@@ -0,0 +1,121 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Analog Devices AD7768 GPIO auxiliary driver
++ *
++ * Copyright 2026 Analog Devices Inc.
++ */
++
++#include <linux/auxiliary_bus.h>
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/gpio/driver.h>
++#include <linux/gpio/regmap.h>
++#include <linux/module.h>
++#include <linux/pm_runtime.h>
++#include <linux/property.h>
++#include <linux/regmap.h>
++
++#define AD7768_REG_GPIO_CONTROL		0x0E
++#define   AD7768_GPIO_UGPIO_ENABLE	BIT(7)
++
++#define AD7768_REG_GPIO_WRITE		0x0F
++#define AD7768_REG_GPIO_READ		0x10
++
++#define AD7768_NUM_GPIOS		5
++#define AD7768_FILTER_GPIO		4
++
++static int ad7768_gpio_init_valid_mask(struct gpio_chip *gc,
++				       unsigned long *valid_mask,
++				       unsigned int ngpios)
++{
++	if (ngpios > AD7768_FILTER_GPIO &&
++	    fwnode_property_match_string(gc->fwnode, "clock-names", "mclk") < 0)
++		__clear_bit(AD7768_FILTER_GPIO, valid_mask);
++
++	return 0;
++}
++
++static int ad7768_gpio_reg_mask_xlate(struct gpio_regmap *gpio,
++				      enum gpio_regmap_operation op,
++				      unsigned int base, unsigned int offset,
++				      unsigned int *reg, unsigned int *mask)
++{
++	struct regmap *regmap = gpio_regmap_get_drvdata(gpio);
++	int ret;
++
++	*reg = base;
++	*mask = BIT(offset);
++
++	if (op != GPIO_REGMAP_GET_OP)
++		return 0;
++
++	/*
++	 * AD7768 has separate input-state and output-latch registers. For an
++	 * output line, report the programmed value from the output latch;
++	 * input lines continue to use the input-state register.
++	 */
++	ret = regmap_test_bits(regmap, AD7768_REG_GPIO_CONTROL, *mask);
++	if (ret < 0)
++		return ret;
++	if (ret)
++		*reg = AD7768_REG_GPIO_WRITE;
++
++	return 0;
++}
++
++static int ad7768_gpio_probe(struct auxiliary_device *adev,
++			     const struct auxiliary_device_id *id)
++{
++	struct gpio_regmap_config config;
++	struct device *dev = &adev->dev;
++	struct device *parent = dev->parent;
++	struct regmap *map;
++	int ret;
++
++	map = dev_get_regmap(parent, NULL);
++	if (!map)
++		return -ENODEV;
++
++	PM_RUNTIME_ACQUIRE_AUTOSUSPEND(parent, pm);
++	ret = PM_RUNTIME_ACQUIRE_ERR(&pm);
++	if (ret)
++		return ret;
++
++	ret = regmap_set_bits(map, AD7768_REG_GPIO_CONTROL, AD7768_GPIO_UGPIO_ENABLE);
++	if (ret)
++		return ret;
++
++	config = (struct gpio_regmap_config) {
++		.parent = dev,
++		.regmap = map,
++		.label = dev_name(parent),
++		.ngpio = AD7768_NUM_GPIOS,
++		.reg_dat_base = AD7768_REG_GPIO_READ,
++		.reg_set_base = AD7768_REG_GPIO_WRITE,
++		.reg_dir_out_base = AD7768_REG_GPIO_CONTROL,
++		.pm_dev = parent,
++		.fwnode = dev_fwnode(parent),
++		.reg_mask_xlate = ad7768_gpio_reg_mask_xlate,
++		.init_valid_mask = ad7768_gpio_init_valid_mask,
++		.drvdata = map,
++	};
++
++	return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &config));
++}
++
++static const struct auxiliary_device_id ad7768_gpio_ids[] = {
++	{ .name = "ad7768.gpio" },
++	{ }
++};
++MODULE_DEVICE_TABLE(auxiliary, ad7768_gpio_ids);
++
++static struct auxiliary_driver ad7768_gpio_driver = {
++	.probe = ad7768_gpio_probe,
++	.id_table = ad7768_gpio_ids,
++};
++module_auxiliary_driver(ad7768_gpio_driver);
++
++MODULE_AUTHOR("Janani Sunil <janani.sunil@analog.com>");
++MODULE_DESCRIPTION("Analog Devices AD7768 GPIO auxiliary driver");
++MODULE_LICENSE("GPL");
 
- drivers/pinctrl/renesas/pinctrl-rzt2h.c | 39 +++++++++----------------
- 1 file changed, 13 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzt2h.c b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-index 8cf4b7f48e7e..4872a208e0c3 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-@@ -230,7 +230,7 @@ static void rzt2h_pinctrl_set_pfc_mode(struct rzt2h_pinctrl *pctrl,
- 
- 	reg64 = rzt2h_pinctrl_readq(pctrl, port, PFC(port));
- 	/* Check if pin is already configured to the desired function */
--	if ((rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(pin)) &&
-+	if (rzt2h_pin_mode_is_peripheral(pctrl, port, pin) &&
- 	    field_get(PFC_PIN_MASK(pin), reg64) == func)
- 		return;
- 
-@@ -784,15 +784,7 @@ static int rzt2h_gpio_request(struct gpio_chip *chip, unsigned int offset)
- static void rzt2h_gpio_set_direction(struct rzt2h_pinctrl *pctrl, u32 port,
- 				     u8 bit, bool output)
- {
--	u16 reg;
--
--	guard(raw_spinlock_irqsave)(&pctrl->lock);
--
--	reg = rzt2h_pinctrl_readw(pctrl, port, PM(port));
--	reg &= ~PM_PIN_MASK(bit);
--
--	reg |= (output ? PM_OUTPUT : PM_INPUT) << (bit * 2);
--	rzt2h_pinctrl_writew(pctrl, port, reg, PM(port));
-+	rzt2h_pin_write_pm(pctrl, port, bit, output ? PM_OUTPUT : PM_INPUT);
- }
- 
- static int rzt2h_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
-@@ -800,9 +792,8 @@ static int rzt2h_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 	struct rzt2h_pinctrl *pctrl = gpiochip_get_data(chip);
- 	u8 port = RZT2H_PIN_ID_TO_PORT(offset);
- 	u8 bit = RZT2H_PIN_ID_TO_PIN(offset);
--	u64 reg64;
--	u16 reg;
- 	int ret;
-+	u8 pm;
- 
- 	ret = rzt2h_validate_pin(pctrl, offset);
- 	if (ret)
-@@ -810,7 +801,7 @@ static int rzt2h_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 
- 	guard(raw_spinlock_irqsave)(&pctrl->lock);
- 
--	if (rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(bit)) {
-+	if (rzt2h_pin_mode_is_peripheral(pctrl, port, bit)) {
- 		/*
- 		 * When a GPIO is being requested as an IRQ, the pinctrl
- 		 * framework expects to be able to read the GPIO's direction.
-@@ -820,19 +811,16 @@ static int rzt2h_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 		 * called to enable the IRQ function.
- 		 * Default to input direction for IRQ function.
- 		 */
--		reg64 = rzt2h_pinctrl_readq(pctrl, port, PFC(port));
--		reg64 = (reg64 >> (bit * 8)) & PFC_MASK;
--		if (reg64 == PFC_FUNC_INTERRUPT)
-+		if (rzt2h_pin_read_pfc(pctrl, port, bit) == PFC_FUNC_INTERRUPT)
- 			return GPIO_LINE_DIRECTION_IN;
- 
- 		return -EINVAL;
- 	}
- 
--	reg = rzt2h_pinctrl_readw(pctrl, port, PM(port));
--	reg = (reg >> (bit * 2)) & PM_MASK;
--	if (reg & PM_OUTPUT)
-+	pm = rzt2h_pin_read_pm(pctrl, port, bit);
-+	if (pm & PM_OUTPUT)
- 		return GPIO_LINE_DIRECTION_OUT;
--	if (reg & PM_INPUT)
-+	if (pm & PM_INPUT)
- 		return GPIO_LINE_DIRECTION_IN;
- 
- 	return -EINVAL;
-@@ -862,16 +850,15 @@ static int rzt2h_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	struct rzt2h_pinctrl *pctrl = gpiochip_get_data(chip);
- 	u8 port = RZT2H_PIN_ID_TO_PORT(offset);
- 	u8 bit = RZT2H_PIN_ID_TO_PIN(offset);
--	u16 reg;
-+	u8 pm;
- 
- 	if (rzt2h_pin_mode_is_peripheral(pctrl, port, bit))
- 		return rzt2h_pin_read_input(pctrl, port, bit);
- 
--	reg = rzt2h_pinctrl_readw(pctrl, port, PM(port));
--	reg = (reg >> (bit * 2)) & PM_MASK;
--	if (reg & PM_INPUT)
--		return !!(rzt2h_pinctrl_readb(pctrl, port, PIN(port)) & BIT(bit));
--	if (reg & PM_OUTPUT)
-+	pm = rzt2h_pin_read_pm(pctrl, port, bit);
-+	if (pm & PM_INPUT)
-+		return rzt2h_pin_read_input(pctrl, port, bit);
-+	if (pm & PM_OUTPUT)
- 		return !!(rzt2h_pinctrl_readb(pctrl, port, P(port)) & BIT(bit));
- 
- 	return -EINVAL;
 -- 
-2.55.0
+2.43.0
+
