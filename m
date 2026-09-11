@@ -1,55 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE33232395;
-	Fri, 11 Sep 2026 07:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9954457DA;
+	Fri, 11 Sep 2026 07:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789111503; cv=none; b=KV+IGgXFsQMPevUP4+7mQA1lf2cSBZ5NB/nrjEIWH0WR3ClTj0p2HYI+ue88G4kEXizvdlyYY8Lbs/d/SQUFjrRzle3HrOsTwSp4u+i17cFnhVzpGKv05jRSJNnKJ5bBkofntu5AX2BU5cgyaa1p+/QKGQv0BBtVMaGGY+RzRzI=
+	t=1789111754; cv=none; b=Krg68QzVZtCzj+rOKKPsx8mrseSl2kILlBgqm/ZDm+/O1wo4jQNT7iMqz18AKdghrCzU+oYp3+sKLDkIYjwMyfQBMl6tTCGQWdQuC9ATmceliGZYFEpW3a8gfAoYdAN7HCz94rrVaOE1CgKTUc0my9co64SHv15to7hIlI5qxt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789111503; c=relaxed/simple;
-	bh=GWroBVEzFoQk4S/34nBzYkm+qHO729shFJDiDKYbJl8=;
+	s=arc-20240116; t=1789111754; c=relaxed/simple;
+	bh=H2vKcrBeOf2KlTyDuSxatl6hblqRzQ/Id/Mhlhp6OU8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C71P2j8HTpbUfn8LdhLyUlC/xlvcCLwHmTebJq1U4PeGaxsI87u5dtEnm9WN1cN6WHW9kIg25Hyi8HBAFSnnbenQS4tfDO1CwRlveaGsKA0y0V5bQ1zHsJaboIo7Zoea5dRNRPoAGc35+3llqIqZPPWXNviGdotwKImcca9Oz7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANl9844t; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=byCQeiydHZVq5zSakx9kvShP63qIM2Qm3yGqFxYzz7Nf/ySk2NCkb2DRONTpZ3MTB3W41KhhV3SbfEQUscO+kUIHo8i7aL0rXCjEkmQ1E1Aom6smnLBF7Cxejx00hqnmG64VMBFv05yIx3Z+ZkBvbdKMeZlzooSVIuELM/jh+hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwEzf1jc; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANl9844t"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D7E1F000FF;
-	Fri, 11 Sep 2026 07:25:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwEzf1jc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F2F51F0089B;
+	Fri, 11 Sep 2026 07:29:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789111501;
-	bh=BH+kR55l7q2T4yQ9SIaFXw37h9ozVxD3HhYmGKf8G4g=;
+	s=k20260515; t=1789111752;
+	bh=K7ria4gLd+ljva1/e0Ar6F7V+sxjRDUrOLPcuYFX6jY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ANl9844tOuE5AoQGY+DjaIFqCkPogFuzPNdfQWqulQ1ewcXnDBgt4NdOoaAxooGZH
-	 otw3WqXN/dfJ1pNs0X0yevkODFTPh3pxA9BwxVVkBA1iktQgUJQewif5xVbMODOWQG
-	 p/mWIch3ra5WH3jLHFaw3cWT0YrPLRjUedj8sYvbwLEFVFwspXynmHIaliKaD8MzHM
-	 Xaf5Qs18Xas8eGIznU7yaUWvc+9ptKBerpjAHFGKEw0DHIqd0hSZcM1yyqzMhkH095
-	 IUQbqVg1ph51dt/CUhqYAMrmXLp66EUw6RS72Jj/2UD9lzJLKJvRcTkZjvnML1Ja+L
-	 dkfqQ0ihw0QKA==
-Date: Fri, 11 Sep 2026 09:24:57 +0200
+	b=JwEzf1jcwuPKInyZ9nq4F14+sjSSTGypdVJp++aFsELS2MKVdraMJCcHuiSmdtczs
+	 VbsoVgg1JJ8mgrJFqAzTyhlzHfyrIkfwR/ikPB5DVkIkHSqZSdixAeDn+BkUn90Lrn
+	 wPpPneVWkc4GBILmJDkzy38HJhnEwr6GpbqyrC40FTWJCqTszzFMO+7ZMrIhrZ8dGH
+	 kVaQzmm4/43VHNrWsK9KjjOzhO8TDVQIEcanRhWVxYmRf16jJCSjjeE8DwlUItPPQe
+	 6ypnqU8YlXPewuq0UJCtu7veuUiuOxLTF15GdrUlh7qoP8qA6+amKPGb+UG8+hA7Go
+	 zYlbRk7DKh1sA==
+Date: Fri, 11 Sep 2026 09:29:09 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Arnd Bergmann <arnd@arndb.de>, Daniel Thompson <danielt@kernel.org>, 
-	Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+To: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@kernel.org>, 
-	Michael Hennerich <michael.hennerich@analog.com>, Support Opensource <support.opensource@diasemi.com>, 
-	Sebastian Reichel <sre@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	patches@opensource.cirrus.com, linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-fbdev@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 01/14] mfd: remove unused 88pm80x driver
-Message-ID: <20260911-righteous-arboreal-angelfish-3bcbdf@quoll>
-References: <20260909132153.1596191-1-arnd@kernel.org>
- <20260909132153.1596191-2-arnd@kernel.org>
+	Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+	Alex Elder <elder@riscstar.com>, Daniel Thompson <daniel@riscstar.com>, 
+	Sushrut Shree Trivedi <sushrut.trivedi@oss.qualcomm.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v5 1/5] dt-bindings: PCI: toshiba,tc9563: Document
+ embedded GPIO controller
+Message-ID: <20260911-leech-of-ultimate-force-b08f28@quoll>
+References: <20260909-pci-tc9563-aux-v5-0-c9b33f56c8d3@oss.qualcomm.com>
+ <20260909-pci-tc9563-aux-v5-1-c9b33f56c8d3@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -58,20 +52,23 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260909132153.1596191-2-arnd@kernel.org>
+In-Reply-To: <20260909-pci-tc9563-aux-v5-1-c9b33f56c8d3@oss.qualcomm.com>
 
-On Wed, Sep 09, 2026 at 03:21:38PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Wed, Sep 09, 2026 at 04:55:53PM +0200, Lorenzo Bianconi wrote:
+> The TC9563 PCIe switch embeds a GPIO controller providing 37 GPIO
+> lines, accessed through the switch's I2C interface.
 > 
-> This pair of drivers was originally added as companion chips for pxa/mmp
-> SoCs, but the corresponding platform code was never merged, so it has
-> been unused the entire time.
+> The controller is integrated in the switch rather than being a separate
+> device, so expose it by adding the gpio-controller and #gpio-cells
+> properties to the switch node itself, and extend the example to show
+> the downstream ports' reset-gpios being driven from those lines.
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
 > ---
->  .../devicetree/bindings/regulator/88pm800.txt |  38 --
+>  Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
