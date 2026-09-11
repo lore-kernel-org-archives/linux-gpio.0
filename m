@@ -1,143 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2271747F3BB;
-	Fri, 11 Sep 2026 12:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689B4489885
+	for <linux-gpio@vger.kernel.org>; Fri, 11 Sep 2026 13:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789131496; cv=none; b=EnjtoMMrvedSDnO24/EfaVvA2RuTg4DxFJBmmMa94mI2qmBXcuBhddzIRQKM8eM4EtUGvJk6ODGzuFyC/vyYaL2uIl8KGQU8qj7T/BZT7VUKCHvL0fcc/h2dM8/X1mu0Oq/GmeW3NiW+CfWnUwRpzzlxF5YSlb42IVZwfKpcOSQ=
+	t=1789132968; cv=none; b=LC+NO+gKan9VyAvbMuH8jPa23cUWBuTQSxOKwFdj+1NsasB5gTbdGYJ3Ma0SCLYG8qkEB4trmYz3luDfDRGyyBUZGPm4P0cMxip3095Xg1gRpYr/nNw+WLXpOOZGB9VoYAQSZqjRsBOuMN92rsiZkimoGrEoWjjVHwThGnDOPFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789131496; c=relaxed/simple;
-	bh=L39o9je2pRF3Ee/1VQ9cYHRACMSgblJcYDT9SNPwiYw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Btfl9HoOgaqb8NP9s6srObvXzB1RU4kHEEexR681q0T84/BusiF8I30wXpord7fRGaZQnhQpd4Xazv2AFAoRFkyT30pHTi2Bzr1fJSfIsRtP86A+LelFeFsyEYKpdFVMoAYPP52clvOc/fjkMId0hhZvDOka8PQmLVw0vPE2ztM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngr7S5tV; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789132968; c=relaxed/simple;
+	bh=T/e2vgzi/yX3haBVonSYMOMOZ1YJ8sxvxQcGMOKmPKs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=bjy/TQl7Inu4D+lkTvNVUi8CPrKK3kUBFnP/MPHlp/cFdmHFfz9+Ovz4zlnUgwy2QER1RBlxcOIj04DfeX7aU0j1J4ebJwFGTox1+lFHB7eq7Jh6vv0wDkc4M1YH7sZVP0s6+P/vKawxMiKI+Pk1yDiJIDAzXBzeJgwgU93EtRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RLwvSvK3; arc=none smtp.client-ip=209.85.215.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngr7S5tV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3D241F00898;
-	Fri, 11 Sep 2026 12:57:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789131471;
-	bh=EdmRJCCaDZa1nBcr3H2N1qYwEdhuymVKhEFGMKEdU+k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=ngr7S5tVBMBaQxLkItH0euI3RcZTH2yMPtzQ84xbpRe7x7e8oi9A9sdRvNDqhz55L
-	 eP5iCgGdM+grkmZzOF7BIF587oDRa+FUbCfSh+iW/3GUH4npUj16KHxP3wUMkvZHwI
-	 RHxunIY4VoRB8tLHiT8MjI7gcHwiaknyxUZcb+1sANp2qZKMQ5kHnme1v0fgAUMzqY
-	 fhqnmGqmLnwrwgy17Xa56tQrimbv+TIYqX79t0eGQKapJnurZedIcc1YLIKpnFBwQj
-	 9Amwmf4NyrU3UfwG3ikNCgj65N2Wl2fdN9bUwA92a7TRrL3HZzmTzcDGsph6tJih5h
-	 c4pUWdmyLISNg==
-Message-ID: <e5271c66-572a-40c1-a339-5aaf113544f7@kernel.org>
-Date: Fri, 11 Sep 2026 14:57:38 +0200
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RLwvSvK3"
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-cc1eb205d31so1370636a12.2
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Sep 2026 06:22:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1789132963; x=1789737763; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=kqAHaS5fsv9ERkHKe2Kmet0fUHotC014bD2kFqqX4to=;
+        b=RLwvSvK31Nx6W5e5cWd1Zwn3GrqgUoi6AhS072W/uylcwVwZ3gpe+kx6GEa9rIFlk0
+         FYF4erl5BDuLlexOocQCSN41l6ccwOOPma6v34CdMIG5khIVZqkDirlCdqv964QjHzjX
+         wPzKEn407qRm3Embbs+yCBCiSEJTY3Js8tzzleFdo1mBTOxt2yTNnE2xosV20WkoMQvM
+         wIayUAwD/BVN9hgLYwfzEr+DeuhSbiV33KL8FX8Bmqy/2DX9ttcVZLG7uRr6EAwczGFk
+         ZiDQLDEUQiAQ8XVcZzOaCJECezVH/N/QfYRIjvdt+E3bJGSQdWRG09uKOPUwfNDqFGFJ
+         twjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789132963; x=1789737763;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=kqAHaS5fsv9ERkHKe2Kmet0fUHotC014bD2kFqqX4to=;
+        b=NqeO0KZ4eLh8nUIHv4RtXpEE2M9aVFoLNeOeOXxNmSc9cfTaVQ67MS+m6r+usLuSyf
+         bUrj/8REZlCa6Enu1IxVyXm2SrHOOTGUGKK2ojL8RAwxGSWmJE0Mq5r7OzZCl5kVqnnu
+         pYSQNEdg/319hc+oQ1VJQu5X0rTPqfzDTtHqmPMaLqo9lQwJGBPobRgEYzkqEcfqs0JC
+         XbuLzqwY0C8BTvCat+M3PQNm1DHVX8l1lzidUOmAL2X14EEHSXP9JqLIoC+N48/en/8W
+         h0N+tm2hLp+X0uetL35yCO3fQxYoPUjRZKkR9jLX+ITF//7rjThFsqcJWg4ZPdZf/3Id
+         kAdg==
+X-Forwarded-Encrypted: i=1; AKwUvBym+Xv2iBmyxVUR/Z6WLVVCrpACjdnlj4+7TE1Uyq/Oqu1msp6/nOR6hlXIdIFSLzUsSIqJCVlLh2sj@vger.kernel.org
+X-Gm-Message-State: AFuF++mouytP0XFEUJd+8eyFVE1l09nzleKigmYa+nQoCQnwbdEEKPvJ
+	2aYD0AjYSQ27uE4xdoqV8auSbPM1jhT52ZGGbGtyybEAM/6FnlQl6hE90J9SJDG43uEpxxaH+S1
+	WZr/lhQ==
+X-Received: from pjbmv13.prod.google.com ([2002:a17:90b:198d:b0:39d:8dae:7e6d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3c89:b0:398:e46e:ade3
+ with SMTP id 98e67ed59e1d1-39d9c39625dmr7169956a91.23.1789132962606; Fri, 11
+ Sep 2026 06:22:42 -0700 (PDT)
+Date: Fri, 11 Sep 2026 06:22:41 -0700
+In-Reply-To: <20260911074530.3140830-13-jgross@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/13] Ambarella CV75 SoC minimal bring-up
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-Cc: Long Zhao <longzhao@ambarella.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Long Zhao <zl020895@163.com>, Lee Jones <lee@kernel.org>,
- mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-References: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com>
- <1jwlt1ld6c.fsf@starbuckisacylon.baylibre.com>
- <46d21889-6b52-4c09-8f77-7c08dba93777@kernel.org>
- <1jld986j7m.fsf@starbuckisacylon.baylibre.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <1jld986j7m.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20260911074530.3140830-1-jgross@suse.com> <20260911074530.3140830-13-jgross@suse.com>
+Message-ID: <aqQAodJCAEZyeQ1k@google.com>
+Subject: Re: [PATCH v3 12/13] treewide: convert rdmsrq() from a macro to an
+ inline function
+From: Sean Christopherson <seanjc@google.com>
+To: Juergen Gross <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+	linux-edac@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-acpi@vger.kernel.org, linux-ide@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-crypto@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, platform-driver-x86@vger.kernel.org, 
+	linux-fbdev@vger.kernel.org, Thomas Gleixner <tglx@kernel.org>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	James Clark <james.clark@linaro.org>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Long Li <longli@microsoft.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Ajay Kaher <ajay.kaher@broadcom.com>, 
+	Alexey Makhalov <alexey.makhalov@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Pu Wen <puwen@hygon.cn>, Tony Luck <tony.luck@intel.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, 
+	Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Andy Lutomirski <luto@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Kiryl Shutsemau <kas@kernel.org>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+	Len Brown <lenb@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+	David Airlie <airlied@redhat.com>, Olivia Mackall <olivia@selenic.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Huang Rui <ray.huang@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Perry Yuan <perry.yuan@amd.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Yazen Ghannam <yazen.ghannam@amd.com>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Artem Bityutskiy <dedekind1@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Ashok Raj <ashok.raj.linux@gmail.com>, 
+	Hans de Goede <hansg@kernel.org>, 
+	"Ilpo =?utf-8?B?SsOkcnZpbmVu?=" <ilpo.jarvinen@linux.intel.com>, 
+	Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>, Xi Pardee <xi.pardee@linux.intel.com>, 
+	Daniel Lezcano <daniel.lezcano@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Helge Deller <deller@gmx.de>, xen-devel@lists.xenproject.org, 
+	linux-geode@lists.infradead.org, Michael Kelley <mhklinux@outlook.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 11/09/2026 14:55, Jerome Brunet wrote:
-> On ven. 04 sept. 2026 at 08:56, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> That is a lot of stuff mixed into a single series that could easily split
->>
->> Well, not easily, because each split patchset would rely on non-existing
->> CONFIG which could trigger warnings.
->>
->> Contributors follow here the correct and documented process of new SoC
->> platform, I don't get why now only this patchset has to be split...
+On Fri, Sep 11, 2026, Juergen Gross wrote:
+> Today rdmsrq() is a macro using its second parameter as the target for
+> storing the read MSR value.
 > 
-> Are you referring to this or something else ?
+> Convert rdmsrq() to an inline function returning the MSR value.
 > 
-> """
-> one patchset containing new arch/foo/Kconfig entry, DTS files, MAINTAINERS file entry and *optionally initial drivers* with their Devicetree bindings
-> """
-
-Yes
-
+> The users have been converted using the following semantic patch:
 > 
-> No problem with that, I was merely trying to say that mixing 4 or 5 trees
-> in a single patchset is pushing it a little and it does not solve the
-> dependency problem you've mentioned, it just move it.
+>   // Options: --include-headers
+> 
+>   virtual patch
+>   virtual report
+> 
+>   @@
+>   expression msr, val;
+>   @@
+>   (
+>   - rdmsrq(msr,val)
+>   + val = rdmsrq(msr)
+>   )
+> 
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> Acked-by: Damien Le Moal <dlemoal@kernel.org>      # ATA
+> Reviewed-by: Michael Kelley <mhklinux@outlook.com> # Hyper-V
+> ---
 
-It solves, because there is no dependency. Symbol is introduced in first
-commit on given branch, then used in second commit on the same branch
-and so on...
-
-Just like every other new platform, I really do not get why this should
-be done differently.
-
-Best regards,
-Krzysztof
+Acked-by: Sean Christopherson <seanjc@google.com>
