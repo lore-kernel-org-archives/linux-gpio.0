@@ -1,105 +1,78 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0D7379C38;
-	Fri, 11 Sep 2026 05:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE33232395;
+	Fri, 11 Sep 2026 07:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789105466; cv=none; b=m5C/dtheYEZtzQEWvR+iFM5zAJH7UJceMpLx26u3TGELaBGZnCp0UJY64twLxSxbKT6/2GxCXJ8RsCgrIt8wE7UB5kBqN15HkyINF/hElC1lZe70FebcuT26AFWByppDvyG0dQkq4FdSAqVTWYvPZolvg+UFTbQk0yptfmljNIM=
+	t=1789111503; cv=none; b=KV+IGgXFsQMPevUP4+7mQA1lf2cSBZ5NB/nrjEIWH0WR3ClTj0p2HYI+ue88G4kEXizvdlyYY8Lbs/d/SQUFjrRzle3HrOsTwSp4u+i17cFnhVzpGKv05jRSJNnKJ5bBkofntu5AX2BU5cgyaa1p+/QKGQv0BBtVMaGGY+RzRzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789105466; c=relaxed/simple;
-	bh=2APTfQIXTRATtbvOuCVlvk8TWKSwryDPNPcG+OH8Sis=;
+	s=arc-20240116; t=1789111503; c=relaxed/simple;
+	bh=GWroBVEzFoQk4S/34nBzYkm+qHO729shFJDiDKYbJl8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gMOHizwObGEcME1Cckb58mjhmOXvOMyEXMHQ5B1II1E+oq3SPQlrzNuuTCoj1JteLl4mrpWoFdZJWjuuBvyni0WDFjjLxOGZwLFrU6pWGfkATY+goPhHrnaJK1VHG8nuw4XGjw3OAHb6T6o5gKnaH6XQnpCZGifYB1fgPlmOsQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k+5uwGbT; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=C71P2j8HTpbUfn8LdhLyUlC/xlvcCLwHmTebJq1U4PeGaxsI87u5dtEnm9WN1cN6WHW9kIg25Hyi8HBAFSnnbenQS4tfDO1CwRlveaGsKA0y0V5bQ1zHsJaboIo7Zoea5dRNRPoAGc35+3llqIqZPPWXNviGdotwKImcca9Oz7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ANl9844t; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k+5uwGbT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789105465; x=1820641465;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2APTfQIXTRATtbvOuCVlvk8TWKSwryDPNPcG+OH8Sis=;
-  b=k+5uwGbTvCXeCiJDATlKfxwltGa7v3zJQSDI0dCPb6PwbvdPmPNWGOao
-   iweiU+9kJ7X6a5eLqC7CYibgTVRDtFhwrLO5cZcnuw1Yq/ORS8RrDHs9+
-   ndkSIMIa1i01b4Nmfjxs2UjqRKCdshAzSrKeu6kzXrLI9gD2Wk0+29fMw
-   Qx3MoeZG4yOLFxLmdbMgjPZ6ZL3XaMWGvnbNtyYKwS5io0m9whiy1XfZ5
-   S5+/zJoKm4s9AtiOYAjuoafgAzZmDwCsVeqrUWFNuGdCLc/vT31apZdOm
-   Hv/C/ZpNxvb1r55miWsV2OcD15oKqFR/f+HycicuqhM02YcYfUy0ti/C0
-   w==;
-X-CSE-ConnectionGUID: L8qmaXgQQ8WxPBzR1WJv+A==
-X-CSE-MsgGUID: H9ZFo2gGQ2ugULkJH0izyg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11901"; a="93393855"
-X-IronPort-AV: E=Sophos;i="6.27,96,1787036400"; 
-   d="scan'208";a="93393855"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2026 22:44:25 -0700
-X-CSE-ConnectionGUID: EM65ARTMRkSFeJtaRtCkcw==
-X-CSE-MsgGUID: IYXwuMZRQkqnB/483Ew1CA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,96,1787036400"; 
-   d="scan'208";a="269234916"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.80])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2026 22:44:22 -0700
-Date: Fri, 11 Sep 2026 08:44:20 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Janani Sunil <janani.sunil@analog.com>
-Cc: Michael Walle <mwalle@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Janani Sunil <jananisunil.dev@gmail.com>
-Subject: Re: [PATCH v8 2/3] gpio: regmap: Add optional runtime PM support
-Message-ID: <aqOVNP6S0efi3XY9@ashevche-desk.local>
-References: <20260910-ad7768-gpio-v8-0-6aaaa15adeb3@analog.com>
- <20260910-ad7768-gpio-v8-2-6aaaa15adeb3@analog.com>
- <aqOUoEsxHXPH_Yzy@ashevche-desk.local>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANl9844t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D7E1F000FF;
+	Fri, 11 Sep 2026 07:25:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789111501;
+	bh=BH+kR55l7q2T4yQ9SIaFXw37h9ozVxD3HhYmGKf8G4g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ANl9844tOuE5AoQGY+DjaIFqCkPogFuzPNdfQWqulQ1ewcXnDBgt4NdOoaAxooGZH
+	 otw3WqXN/dfJ1pNs0X0yevkODFTPh3pxA9BwxVVkBA1iktQgUJQewif5xVbMODOWQG
+	 p/mWIch3ra5WH3jLHFaw3cWT0YrPLRjUedj8sYvbwLEFVFwspXynmHIaliKaD8MzHM
+	 Xaf5Qs18Xas8eGIznU7yaUWvc+9ptKBerpjAHFGKEw0DHIqd0hSZcM1yyqzMhkH095
+	 IUQbqVg1ph51dt/CUhqYAMrmXLp66EUw6RS72Jj/2UD9lzJLKJvRcTkZjvnML1Ja+L
+	 dkfqQ0ihw0QKA==
+Date: Fri, 11 Sep 2026 09:24:57 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Arnd Bergmann <arnd@arndb.de>, Daniel Thompson <danielt@kernel.org>, 
+	Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@kernel.org>, 
+	Michael Hennerich <michael.hennerich@analog.com>, Support Opensource <support.opensource@diasemi.com>, 
+	Sebastian Reichel <sre@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Helge Deller <deller@gmx.de>, dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-watchdog@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org, linux-fbdev@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, llvm@lists.linux.dev
+Subject: Re: [PATCH 01/14] mfd: remove unused 88pm80x driver
+Message-ID: <20260911-righteous-arboreal-angelfish-3bcbdf@quoll>
+References: <20260909132153.1596191-1-arnd@kernel.org>
+ <20260909132153.1596191-2-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aqOUoEsxHXPH_Yzy@ashevche-desk.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20260909132153.1596191-2-arnd@kernel.org>
 
-On Fri, Sep 11, 2026 at 08:41:57AM +0300, Andy Shevchenko wrote:
-> On Thu, Sep 10, 2026 at 07:29:11PM +0200, Janani Sunil wrote:
-
-...
-
-> > -	ret = gpio->reg_mask_xlate(gpio, GPIO_REGMAP_GET_OP, base, offset, &reg, &mask);
+On Wed, Sep 09, 2026 at 03:21:38PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Hmm... As far as I understand the xlate function should not touch the hardware.
-> Is it not the case?
-
-Answering to myself:
-Yeah, it's not the case as the new driver in the follow up accesses HW.
-
-> > +	GPIO_REGMAP_RUNTIME_ACQUIRE(gpio, pm);
-> > +	ret = GPIO_REGMAP_RUNTIME_ACQUIRE_ERR(&pm);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret = gpio->reg_mask_xlate(gpio, GPIO_REGMAP_GET_OP, base, offset,
-> > +				   &reg, &mask);
-> >  	if (ret)
-> >  		return ret;
+> This pair of drivers was originally added as companion chips for pxa/mmp
+> SoCs, but the corresponding platform code was never merged, so it has
+> been unused the entire time.
 > 
-> Otherwise runtime PM may be handled after that call.
-> 
-> ...
-> 
-> Ditto for the rest.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  .../devicetree/bindings/regulator/88pm800.txt |  38 --
 
--- 
-With Best Regards,
-Andy Shevchenko
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
+Best regards,
+Krzysztof
 
