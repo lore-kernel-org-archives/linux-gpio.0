@@ -1,121 +1,159 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89662D0C75;
-	Sat, 12 Sep 2026 11:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAB14BEE22;
+	Sat, 12 Sep 2026 12:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789212996; cv=none; b=XCV0e6KEl5kWnMUW4YGpDdzOe4B6pnL3Jdb9CWT0etSeRkyS/Lp9UNgaY+0kVa5yi+BBbKcjr4r/wDbxrd1ttrRNdIijY2Gg7MaMHOJYVScdbd5XsPE6QHgD975Lpca6J3odjFqK1lZ+/CG4kAqFZSq473r3U7HXLXFvxY7+Kos=
+	t=1789216555; cv=none; b=HRg7MbLMCrNoIPoJTtgGgLNwBY6wMr5b0VjjO8hr0TTjFaPBH9ZK7mOayBG8Mv0ApZjw4MEuPfm3PbNVhaLYS0v7AgKFJIK8X190z0pEJibf+QmUsg2dJl0p8PLhcjuIbWbHU0QjE1z2GAoTON4+c9l34u3tYNrrVp1aQr1SvWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789212996; c=relaxed/simple;
-	bh=3UIwecDJsfS4ql3mhWCRI+wvBFP1eDHU45TLm8V5nlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6234Nhk+G/+dnpQsIESLv7LfjaUHTfuiurl6/0DqhzDpN+dKz86t+DnkdgximqTlPyI7u6Qtnm1Hk+a6vAt+09eq5JSrW2omikHJ/z04D/pZj3Tgt36wfPEunVMcUfLc+yvuzlKrhpDDmu3+15IlOz9DWZAhEqp7bnYWhfTtC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jJkK9nZx; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1789216555; c=relaxed/simple;
+	bh=TWZEC54bLK00kXeOtabiyWj+qzrU5BA86uJhYlmW8gU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t8seQPS/HvhmwTGGG8DPx+/c2HXvw0ECEOyc0FdkPFQjGuoVUBS7qwajjTbn+OQMpKuZkzH/3qnhlXJvXF/skHNwaZYt+HSSlunj1gYEefE6oo15LfOZ8LwfETl2wGnmTKiWuwN2IFGzYWH+VQe51fGqItSBR7SHpm/uNOQ5rAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WdlQW2kg; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jJkK9nZx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789212995; x=1820748995;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3UIwecDJsfS4ql3mhWCRI+wvBFP1eDHU45TLm8V5nlk=;
-  b=jJkK9nZxZZpMp3PVDKb5wmOWqIp8sQJPc64O9orC+usTW9dhWl2vX+bc
-   nUO6JRYqrKt8jQHVYOBJRjvd/Y9Tk2On4ZLPHJw6fgwf3OB0JSQh/Jr3L
-   H/cd3xuiad/fcTyC8wNIRx1rDthocopZG2WIBeOd0de1DnYwLS2xG6Evh
-   1CjQKyA4oaesQaypbo0eDHhA8lwm4x8r7SaTv7HcbZN/MzMzOErvGVQkI
-   ysAiJNfVDeohpfM3LqiNIO+5pQaogdoKNiHYjEj5ZYtpolxbaDnfDfZXY
-   97cdjz0C+ZkrNvdfkTLG6uDHFFs7VzKLBonK+ojCRXkcy+S3dEKZYfaGK
-   A==;
-X-CSE-ConnectionGUID: gkN/CAhYS2WVmfN29b9NKQ==
-X-CSE-MsgGUID: +zPjIWRXRtGV6gq762/hRg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11902"; a="89696629"
-X-IronPort-AV: E=Sophos;i="6.27,99,1787036400"; 
-   d="scan'208";a="89696629"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2026 04:36:34 -0700
-X-CSE-ConnectionGUID: LanRjFjZRtO2YDIcfnFfcQ==
-X-CSE-MsgGUID: 1VEMAkvyQBmHQuEtVyipDw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,99,1787036400"; 
-   d="scan'208";a="302061599"
-Received: from mkosciow-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.238])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2026 04:36:30 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id EA3C9120EA9;
-	Sat, 12 Sep 2026 14:36:32 +0300 (EEST)
-Date: Sat, 12 Sep 2026 14:36:32 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Ceclan Dumitru <mitrutzceclan@gmail.com>,
-	Dan Carpenter <error27@gmail.com>,
-	Ricardo Ribalda <ribalda@chromium.org>
-Cc: dumitru.ceclan@analog.com,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Julien Massot <julien.massot@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-staging@lists.linux.dev,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WdlQW2kg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4756A1F000FF;
+	Sat, 12 Sep 2026 12:35:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789216553;
+	bh=xNb0L15IXhfLloKf7VB3JE2WPDpU2+nArFv5hqH0SMs=;
+	h=From:To:Cc:Subject:Date;
+	b=WdlQW2kgQ6nhpMp/ElbDXC/6Tbcux+aFtmwfyrAUhB2rvegpnQ0arUmMYcZRmifru
+	 HLsr6dZVoaziY3yzgbRXl6Z/lBESwgc6K/m6AsHkwHjwjO53kKc+PlTc+e2RhZSD/7
+	 H8I78VaqHN9NXsHCjgDSun21fGCSDCs9Xv/mDPrwWPZce8jCnYw87qKh3o/ESxGTDT
+	 jRhRXiB5OUZUAobTNFwCKA2YES30+IAuvWpFIKhIUYQo30rIxjITZS9zNhAiC2uaV8
+	 lCIM/kEbBKKgaYdhluOSIJ75yDN0G6PKG3Kap7m50NGZOmzLiaEBWN5ZT0d05hcp0J
+	 CDj6mSdBGLFpA==
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	driver-core@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Martin Hecht <Martin.Hecht@avnet.eu>,
-	Andrian Suciu <Adrian.Suciu@analog.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Vivekananda Dayananda <vivekana@amd.com>,
-	Cory Keitz <ckeitz@amazon.com>
-Subject: Re: [PATCH v16 00/22] media: i2c: add Maxim GMSL2/3 serializer and
- deserializer drivers
-Message-ID: <aqU5QFGmYlCtbdiE@kekkonen.localdomain>
-References: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
- <apqGlTiybdvQX3Ao@kekkonen.localdomain>
- <eff6fe78-cc4b-4192-93ed-53a738fc3c3a@gmail.com>
+	tzungbi@kernel.org
+Subject: [PATCH v13 0/3] drivers/base: Introduce revocable
+Date: Sat, 12 Sep 2026 20:35:26 +0800
+Message-ID: <20260912123529.7951-1-tzungbi@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eff6fe78-cc4b-4192-93ed-53a738fc3c3a@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Dumitru, Dan, Ricardo,
+This series introduces the "revocable" mechanism, a synchronization
+primitive designed to prevent Use-After-Free errors.
 
-On Tue, Sep 08, 2026 at 01:35:05PM +0300, Ceclan Dumitru wrote:
-> > Can you check this
-> > <URL:https://linux-media.pages.freedesktop.org/-/users/sailus/-/jobs/109521830/artifacts/junit/test-smatch.log.txt>
-> > please? If there's a single patch that needs to be modified, I can squash a
-> > patch into that, otherwise v17 it is.
-> > 
-> 
-> These are the same warns reported by Niklas in V13. Dan fixed them in
-> smatch in devel branch but fix is not in master. Testing with smatch on
-> that branch yields no warnings.
+- Patch 1 introduces the revocable which is an implementation of ideas
+  from the talk [1][2].
 
-Dan: any plans to merge these things to master some time soon? Or:
+- Patch 2 adds KUnit test cases.
 
-Ricardo: could we use devel branch of smatch for some time?
+- Patch 3 transitions the UAF prevention logic within the GPIO core
+  (gpiolib) to use the "revocable" mechanism.
 
-This driver has been waiting to be merged for quite some time so it'd be
-nice to get it to 7.4
+  The existing code aims to prevent UAF issues when the underlying GPIO
+  chip is removed.  The patch replaces that custom logic with the
+  generic "revocable" API, which is designed to handle such lifecycle
+  dependencies.  There should be no changes in behavior.
 
-> 
-> https://lore.kernel.org/all/ai_txjwLPHsSKsJI@stanley.mountain
-> https://repo.or.cz/smatch.git/commit/d12183645a31b737d7fb39cbefa589e34615e8f7
-> 
-> v17 is still needed to revert one breaking change introduced in v16 and
-> fix more findings from Sashiko.
+Since v9, there are two ways to manage the resource provider handle.
+- Embedded allocation: patch 3 is the user.
+- Dynamic allocation: no user yet; I could find it later.
 
-Ack.
+[1] https://lpc.events/event/17/contributions/1627/
+[2] https://lpc.events/event/19/contributions/2262/
+---
+v13:
+- Rebase onto next-20260911.
+
+v12: https://lore.kernel.org/all/20260908134223.13638-1-tzungbi@kernel.org
+- Rebase onto next-20260907.
+- Drop patch 4 and 5.
+
+v11: https://lore.kernel.org/all/20260513091043.6766-1-tzungbi@kernel.org
+- Rebase onto v7.1-rc3.
+- Squash patches 4 to 7 into patch 3.  A single patch for GPIO.
+
+v10: https://lore.kernel.org/all/20260508105448.31799-1-tzungbi@kernel.org
+- Unify handling of embedded and dynamic allocation.
+
+v9: https://lore.kernel.org/all/20260427135841.96266-1-tzungbi@kernel.org
+- Rebase onto v7.1-rc1.
+- Remove the selftests patch as it makes less sense to test revocable
+  APIs via kselftests.
+- Merge patches 7 to 11 from
+  https://lore.kernel.org/all/20260213092958.864411-1-tzungbi@kernel.org
+  into the series.
+- Merge patch from
+  https://lore.kernel.org/all/20250923075302.591026-5-tzungbi@kernel.org
+- Merge patch from
+  https://lore.kernel.org/all/20250912081718.3827390-6-tzungbi@kernel.org
+
+v8: https://lore.kernel.org/all/20260213092307.858908-1-tzungbi@kernel.org
+- Rework on the revocable APIs.  See changelog in [PATCH v8 1/3] for details.
+
+v7: https://lore.kernel.org/all/20260116080235.350305-1-tzungbi@kernel.org
+- Rebase onto next-20260115.
+
+v6: https://lore.kernel.org/all/20251106152330.11733-1-tzungbi@kernel.org
+- Rebase onto next-20251106.
+- Separate revocable core and use cases.
+
+v5: https://lore.kernel.org/all/20251016054204.1523139-1-tzungbi@kernel.org
+- Rebase onto next-20251015.
+- Add more context about the PoC.
+- Support multiple revocable providers in the PoC.
+
+v4: https://lore.kernel.org/all/20250923075302.591026-1-tzungbi@kernel.org
+- Rebase onto next-20250922.
+- Remove the 5th patch from v3.
+- Add fops replacement PoC in 5th - 7th patches.
+
+v3: https://lore.kernel.org/all/20250912081718.3827390-1-tzungbi@kernel.org
+- Rebase onto https://lore.kernel.org/all/20250828083601.856083-1-tzungbi@kernel.org
+  and next-20250912.
+- The 4th patch changed accordingly.
+
+v2: https://lore.kernel.org/all/20250820081645.847919-1-tzungbi@kernel.org
+- Rename "ref_proxy" -> "revocable".
+- Add test cases in Kunit and selftest.
+
+v1: https://lore.kernel.org/all/20250814091020.1302888-1-tzungbi@kernel.org
+
+Tzung-Bi Shih (3):
+  revocable: Revocable resource management
+  revocable: Add KUnit test cases
+  gpio: Leverage revocable for accessing struct gpio_chip
+
+ .../driver-api/driver-model/index.rst         |   1 +
+ .../driver-api/driver-model/revocable.rst     | 425 +++++++++++++
+ MAINTAINERS                                   |  11 +
+ drivers/base/Makefile                         |   2 +-
+ drivers/base/revocable.c                      | 302 +++++++++
+ drivers/base/test/Kconfig                     |   5 +
+ drivers/base/test/Makefile                    |   4 +
+ drivers/base/test/revocable-test.c            | 576 ++++++++++++++++++
+ drivers/gpio/gpiolib-cdev.c                   |  77 +--
+ drivers/gpio/gpiolib-sysfs.c                  |  31 +-
+ drivers/gpio/gpiolib.c                        | 259 ++++----
+ drivers/gpio/gpiolib.h                        |  28 +-
+ include/linux/revocable.h                     | 220 +++++++
+ 13 files changed, 1700 insertions(+), 241 deletions(-)
+ create mode 100644 Documentation/driver-api/driver-model/revocable.rst
+ create mode 100644 drivers/base/revocable.c
+ create mode 100644 drivers/base/test/revocable-test.c
+ create mode 100644 include/linux/revocable.h
 
 -- 
-Kind regards,
+2.53.0
 
-Sakari Ailus
