@@ -1,496 +1,510 @@
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165272F5337
-	for <linux-gpio@vger.kernel.org>; Sat, 12 Sep 2026 03:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789183615; cv=none; b=F7pdP6J9vQ2xEbl0yYwIFM8Zv+7U+d/P0/C+UN6pRxWaTgRUJ6f2f8+VQOzzvkJ7CI/6wF2rQa+Cw7QWlWSAkLpscV70MDkT3vOcp/kpq3aARAZP9nFqsJh6ZYm0cKYFOLz6F1ExUCFjkua4RB+HP2SacaG+Jr51yYWhIdvDKjs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789183615; c=relaxed/simple;
-	bh=MPCNwBp5FkYDqs0V1o1Vs4fXd5IIRrTa+KavVBgYSR4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jGUhMNiwRpd/1GH/QmVrX90bs0pPuDDCRCLLTmkkOMwjdPLvFy7EyhjNOquzoBXEej+vlIB8PANRiCqZwBR/8XYa0NNoP0jejTeEDrj8BorDNb+AmgvRMGV/EttKq9b+3FgIoBLenlCAoVg5olGrLlSO8aB3qarEuwsbGoT+qng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=q-lab.dev; spf=pass smtp.mailfrom=q-lab.dev; dkim=pass (2048-bit key) header.d=q-lab.dev header.i=@q-lab.dev header.b=bumlszwb; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=QsIU2I1w; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=q-lab.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=q-lab.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF768374721
+	for <linux-gpio@vger.kernel.org>; Sat, 12 Sep 2026 06:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.180
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789195365; cv=pass; b=eoEpQI0kwpowaf7frQb3MnjfWRVfhrFpxpSPv6xZJrKSmWog9tPb6lJpxXv4yKUr0VvgeVFGDzZ8YPBP83YQS/8y5ATz0sBK/G12oZqawk9mU569LHkrIfyZSJzFM7lMbsCsNTZgcafW0dMYDsX8rjmINfjI/ornev0Snndl7h0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789195365; c=relaxed/simple;
+	bh=tJjQDgXYqlnPmpKINoz2d/oWMTDr4BO/qDJAgzNKoVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f4eEJuKm/fDvx8e6wSkAxZfSahvdIxzVe3cPZ0T96+5avFyaOyAkcHpxJiTlQg4ht8L9/QrruoowVryQC4ds7Yy1tyfCKCcjLESN3ePtF8LQ1AyN+mSX3ZT1KX7Yhy1xwvLYEiDPtXiYe/sKFS8ODytSsPszFkM8vnIXWqZX1yg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqw2uZiR; arc=pass smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=q-lab.dev header.i=@q-lab.dev header.b="bumlszwb";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="QsIU2I1w"
-DKIM-Signature: a=rsa-sha256; b=bumlszwbiU/nL74wGeM1/hFZb7H/7FMLzG2fkzYdg2ezbeD5jUD/b+/a+6bBMjm3LoVo7qMj/Gm76OsJfIbBJ5baXrHRWdvlFwFTQfaFX8TNGvYNlCZCIe4n/jIQJWe57k9f5GHNUSOGZEu811HaoE7yekNq/FOJu8Mpw8VTtlumTE2wmkEa/mXOo8CyhPa6J6i4/5722VduPySIpEgmwmvD4N5TY37cN+xfwfZ01xEGYzhmY4RWK+e/ebA02jFj7yHUXh2OYvS3+L8yEvU5/ukU/gyYdF5b/t47yYSes2M7dES6HEq2VCrG849EIkxw12bQAWy57U/vphwmtdxKVw==; s=purelymail1; d=q-lab.dev; v=1; bh=MPCNwBp5FkYDqs0V1o1Vs4fXd5IIRrTa+KavVBgYSR4=; h=Received:Date:Subject:To:From;
-DKIM-Signature: a=rsa-sha256; b=QsIU2I1wMPOvjUiijhBV80LJ7qrEz+6niB3SHV9iMAOEPOWYU+NNTKO28k8WCjOwSRE6EvA2aeMTVCCHy24+VtMhIfHsME3Gi9Xv3kFVVIeqYwQk3jWHOgCWvk+5b7K9bxqTfZlFVFGr9lpiApGmZFrMsz8+yMEoNxDDisDAdKdHUDaIeWf5kWaqxKl+80xWAp4NgZ7hCXt+zPAwEsz4MfwKF1nxIbgJH8IHAdDAOI3AcbawFRw7Ew49oR88927L+M7c86Im4d7d6USHQS0XxqW4tYzHgr1QcU/aAhixvzWwt7rol5LdeKhi8cuH7ZjQpJJbXk/Ow/eSTpyUPgGaoQ==; s=purelymail1; d=purelymail.com; v=1; bh=MPCNwBp5FkYDqs0V1o1Vs4fXd5IIRrTa+KavVBgYSR4=; h=Feedback-ID:Received:Date:Subject:To:From;
-Feedback-ID: 284201:25281:null:purelymail
-X-Pm-Original-To: linux-gpio@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1510296314;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Sat, 12 Sep 2026 03:26:22 +0000 (UTC)
-Message-ID: <76b9381d-dcd6-40d3-84f2-661413f56521@q-lab.dev>
-Date: Fri, 11 Sep 2026 20:26:20 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqw2uZiR"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2caced6038eso17644225ad.0
+        for <linux-gpio@vger.kernel.org>; Fri, 11 Sep 2026 23:42:41 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789195361; cv=none;
+        d=google.com; s=arc-20260327;
+        b=LvY3I3oB8DXHLK+8j4taVS9folWC8dvfB2TycRAYHN49Wt7fsGIR101r40jtGMMJGi
+         toJ3GCOF+6dXIqD79VNRDiYTtwVTdu2r0TUq0sjE2DJggImu2cfjuR9QXvXAD5/YmSkY
+         KPaO3+yvSLrclY8Oig0sT/jyR35x3qPlnK/OltRGeVAb6Z04w2yjJXpOEpClgVqphUc2
+         fh4gcU9IrTlrXsXaF+doLAoT1JGUqHdYz0gZw4q9frgGfnbL07VTSGuZlQOnDUUKYB4h
+         O048jf7GUSoZAJd4LcBsBjoo4uUBoCeSs8cz9Jqj7QuaPi9MKzd65tG642b/JJLwgey+
+         vhjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=cIueFh+gkuoIg/zyR6m8UHNu9YPuEhQan6MTb8FOTWM=;
+        fh=db32Z5E/WApvjTTt4/MYYImDFM6YYnPhqwc8BR3QlF8=;
+        b=ck3If2M8rYaNvrK4gKlXkP782eLzSUPQP9BQknIwLtPhZWRxSJCgafczZqBEWaLptH
+         9c2CUpBkfIFSc9kNK83R+VZGjK+9VYBiHalGHSR62lguMKt71+8bS2JlimA6MbnoJvrE
+         C64i0L56HkEi6zW3sE8Z8ksBrfLRsZBdk1ARp6uXIL2sdpxiMN3LWy4bsuXEpv+fEZwQ
+         uz6GDqGIiIgp2dqbeED0PystBPthoFRph9L62BTL32GsRicGeKU7h2VlCTcZJMmz+wAY
+         19DM5IMFZKZWVHZRMyj5p3m3GVnJ+WJkZphGrnuHBM80pxXjlKmmdC7gUe59E7MQ+Csd
+         8mdw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789195361; x=1789800161; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=cIueFh+gkuoIg/zyR6m8UHNu9YPuEhQan6MTb8FOTWM=;
+        b=nqw2uZiRYy9kU82/HHF9q541/rHCJ6TVpY8clukoqIDDG9bRVtESBncDRCnER89YOc
+         CpJlynGEdw1aO5LnFsuRuk4gas/Ofx92Q+jF6MYllXmpCM5mLz+PzRM4Ubhe7OHkXsme
+         H+IUZ7Md8hkcl7GiKojDWyr/EEub5WWZyj9/Xqj5zYNO8dyjkvRcSSMQ0h28Bv5rVfSr
+         tIGHFX+Myu7BamKjJdQ8MKL3un8JM5apb8Xyrw6Lih6QCfxUMPO4gRzXKeSq/YgoXL2C
+         A5eH90yPkrdNlGjFaVBo503zHm1UO0ISUiJWSQJ+Le2lKGNnpWyU/wVtMBf0bafJGDrw
+         meLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789195361; x=1789800161;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=cIueFh+gkuoIg/zyR6m8UHNu9YPuEhQan6MTb8FOTWM=;
+        b=auTKd85t1LOLPLwdynqrA1m4FtdMwqK4Q8gqms3N4wzlJklyQcXAbyj3jIefHT0X8I
+         GZEkgkiCgpLTs/u0Z/GRI9rr+hdsAc3OEx/TxC79eKoD2RjGKSyYMljLELW1t/SN21/U
+         rjsUDd13YIbaoGIdcw1ta+jSJZ5exIzRIT/C3DtKMNYgiQM62HxGzmG4Nn32FHEqTgRt
+         1gCT7Baz1KInCZqgR7h0d6luwCE19TvdwEYfY8/qMv8bblYCWaEJEbzAjwrHBMv2y20c
+         op1KuBfnm3BWiZqnM3DLH/5Px6JRmbPSETTgn6D7/RoqgwBIq2PYxF8rQ46JNwoaxbVk
+         QJXw==
+X-Forwarded-Encrypted: i=1; AKwUvBxOMWVniZnh6T05SGby+7D6UG6v1TiZCYCwL8+CAqiMLavOW8BgAQ6cbXsNjm/UMJJT9QUS1aHhytgj@vger.kernel.org
+X-Gm-Message-State: AFuF++l+cu1QPqcUfzx49YGLGGgGISVjBNW0cDG0kO1cBzDqyyQ2Bzw3
+	qWzGrfYc+ZZ806egGIVnZaAoNHAq0IUVieoKZynqNQVp9uSvDBjBtyzQ5Dkukh7KkCXDsn+QVLF
+	75u3gLnESgRSyFDgkrVIiJnUMbej8JaI=
+X-Gm-Gg: AYBFou1TN0gtzWVlF8wAsc2UWdrzeqpEIRjRts9rHbC3GiXWKTYTMjuHSFTko23BL5E
+	NPQNhR7qTyMp0QOYTYGaC29nYFJhTI1HGZwCaJqPugoI1zXATFZd8COf960Q/ExC/aPIJy/V0Rg
+	4n3eL3nSWtudxv4jWYjnUwF5Icz3lVSj4H926sZ8LZcVffA2WVekyVkSJUglPKHl330Uq5x7sjK
+	JvPrfGkM3Y0j1vSd5r8PbxUpUTIaPFFZ5WR6r1SkC/fA3FKFZlLZSf4a7k1m/0gEPfRUcHTToa9
+	9lzOHB67aChCJFhv9s8Tpn4kOqZM/qaqO8bIYNqoTc/3mV0F31dP0fMg6Fpnd+RO2iCOWOjQQnH
+	j3pLyrXuTik+F
+X-Received: by 2002:a17:902:f092:b0:2dd:4438:4290 with SMTP id
+ d9443c01a7336-2dd443843aamr24758605ad.3.1789195361107; Fri, 11 Sep 2026
+ 23:42:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v17 15/22] media: i2c: add Maxim GMSL2/3 deserializer
- framework
-To: dumitru.ceclan@analog.com,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Julien Massot <julien.massot@collabora.com>, Rob Herring <robh@kernel.org>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- mitrutzceclan@gmail.com, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
- Martin Hecht <Martin.Hecht@avnet.eu>, Andrian Suciu
- <Adrian.Suciu@analog.com>, Cosmin Tanislav <demonsingur@gmail.com>
-References: <20260909-gmsl2-3_serdes-v17-0-002499e534e8@analog.com>
- <20260909-gmsl2-3_serdes-v17-15-002499e534e8@analog.com>
-Content-Language: en-US
-From: Quentin Freimanis <quentin@q-lab.dev>
-In-Reply-To: <20260909-gmsl2-3_serdes-v17-15-002499e534e8@analog.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAPVz0n0ryOns2sCJE_jFana9MVzwEj1QZuPEa8FNhGbHXnMB+A@mail.gmail.com>
+ <11652e5e-053e-45b0-98a0-0c1cb2aeedc4@app.fastmail.com>
+In-Reply-To: <11652e5e-053e-45b0-98a0-0c1cb2aeedc4@app.fastmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Sat, 12 Sep 2026 09:42:29 +0300
+X-Gm-Features: AcwNN1UU9hydFOGImBeWBO5hjkcNCRQ2PnPzv9Tt-xAUH4b_sUlrCRdkTJ4wt_0
+Message-ID: <CAPVz0n0pBxP2J=5DN+k+ut0HRnTmsU64orXwxa19G0+WAxN-zg@mail.gmail.com>
+Subject: Re: [PATCH 08/14] mfd: remove unused aat2870 driver
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Mark Brown <broonie@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Daniel Thompson <danielt@kernel.org>, Helge Deller <deller@gmx.de>, devicetree@vger.kernel.org, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, dri-devel@lists.freedesktop.org, 
+	Jonathan Cameron <jic23@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Linus Walleij <linusw@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, 
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-hwmon@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
+	linuxppc-dev@lists.ozlabs.org, llvm@lists.linux.dev, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, mfd@lists.linux.dev, 
+	Michael Hennerich <michael.hennerich@analog.com>, patches@opensource.cirrus.com, 
+	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
+	Support Opensource <support.opensource@diasemi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dumitru,
-
-On 2026-09-09 6:27 a.m., Dumitru Ceclan via B4 Relay wrote:
-> From: Cosmin Tanislav <demonsingur@gmail.com>
+=D1=87=D1=82, 10 =D0=B2=D0=B5=D1=80. 2026=E2=80=AF=D1=80. =D0=BE 21:15 Arnd=
+ Bergmann <arnd@arndb.de> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Thu, Sep 10, 2026, at 18:40, Svyatoslav Ryhel wrote:
+> > __
+> > Hello Arnd! May you please spare AAT2870 from being removed? I have a
+> > device which uses aat2870 (LG Optimus 2X P990 Tegra 2, not upstreamed
+> > yet, but in process as well) and atm I am working on converting this
+> > driver to use OF. Thank you!
+>
+> Sure, I have removed this patch from my series now.
 >
 
-<snip>
+Thank you!
 
-> +static int max_des_init_link_ser_xlate(struct max_des_priv *priv,
-> +				       struct max_des_link *link,
-> +				       struct i2c_adapter *adapter,
-> +				       u8 power_up_addr, u8 new_addr)
-> +{
-> +	struct max_des *des = priv->des;
-> +	u8 addrs[] = { power_up_addr, new_addr };
-> +	u8 current_addr;
-> +	int ret;
-> +
-> +	if (des->ops->select_links) {
-> +		ret = des->ops->select_links(des, BIT(link->index));
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	ret = max_ser_wait_for_multiple(adapter, addrs, ARRAY_SIZE(addrs),
-> +					&current_addr);
-> +	if (ret) {
-> +		dev_err(priv->dev,
-> +			"Failed to wait for serializer at 0x%02x or 0x%02x: %d\n",
-> +			power_up_addr, new_addr, ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = max_ser_reset(adapter, current_addr);
-> +	if (ret) {
-> +		dev_err(priv->dev, "Failed to reset serializer: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = max_ser_wait(adapter, power_up_addr);
-> +	if (ret) {
-> +		dev_err(priv->dev,
-> +			"Failed to wait for serializer at 0x%02x: %d\n",
-> +			power_up_addr, ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = max_ser_change_address(adapter, power_up_addr, new_addr);
-> +	if (ret) {
-> +		dev_err(priv->dev,
-> +			"Failed to change serializer from 0x%02x to 0x%02x: %d\n",
-> +			power_up_addr, new_addr, ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = max_ser_wait(adapter, new_addr);
-> +	if (ret) {
-> +		dev_err(priv->dev,
-> +			"Failed to wait for serializer at 0x%02x: %d\n",
-> +			new_addr, ret);
-> +		return ret;
-> +	}
-> +
-> +	if (des->info->fix_tx_ids) {
-> +		ret = max_ser_fix_tx_ids(adapter, new_addr);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int max_des_init(struct max_des_priv *priv)
-> +{
-> +	struct max_des *des = priv->des;
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	if (des->ops->init) {
-> +		ret = des->ops->init(des);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (des->ops->set_enable) {
-> +		ret = des->ops->set_enable(des, false);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	for (i = 0; i < des->info->num_phys; i++) {
-> +		struct max_des_phy *phy = &des->phys[i];
-> +
-> +		if (phy->enabled) {
-> +			ret = des->ops->init_phy(des, phy);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +
-> +		ret = des->ops->set_phy_enable(des, phy, phy->enabled);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	for (i = 0; i < des->info->num_pipes; i++) {
-> +		struct max_des_pipe *pipe = &des->pipes[i];
-> +		struct max_des_link *link = &des->links[pipe->link_id];
-> +
-> +		ret = des->ops->set_pipe_enable(des, pipe, false);
-> +		if (ret)
-> +			return ret;
-> +
-> +		if (des->ops->set_pipe_tunnel_enable) {
-> +			ret = des->ops->set_pipe_tunnel_enable(des, pipe, false);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +
-> +		if (des->ops->set_pipe_stream_id) {
-> +			ret = des->ops->set_pipe_stream_id(des, pipe, pipe->stream_id);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +
-> +		if (des->ops->set_pipe_link) {
-> +			ret = des->ops->set_pipe_link(des, pipe, link);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +
-> +		ret = max_des_set_pipe_remaps(priv, pipe, pipe->remaps,
-> +					      pipe->num_remaps);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	if (!des->ops->init_link)
-> +		return 0;
-> +
-> +	for (i = 0; i < des->info->num_links; i++) {
-> +		struct max_des_link *link = &des->links[i];
-> +
-> +		if (!link->enabled)
-> +			continue;
-> +
-> +		ret = des->ops->init_link(des, link);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void max_des_ser_find_version_range(struct max_des *des, int *min, int *max)
-> +{
-> +	unsigned int i;
-> +
-> +	*min = MAX_SERDES_GMSL_MIN;
-> +	*max = MAX_SERDES_GMSL_MAX;
-> +
-> +	if (!des->info->needs_single_link_version)
-> +		return;
-> +
-> +	for (i = 0; i < des->info->num_links; i++) {
-> +		struct max_des_link *link = &des->links[i];
-> +
-> +		if (!link->enabled)
-> +			continue;
-> +
-> +		if (!link->ser_xlate.en)
-> +			continue;
-> +
-> +		*min = *max = link->version;
-> +
-> +		return;
-> +	}
-> +}
-> +
-> +static unsigned int max_des_enabled_links_mask(struct max_des *des)
-> +{
-> +	unsigned int mask = 0;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < des->info->num_links; i++) {
-> +		struct max_des_link *link = &des->links[i];
-> +
-> +		if (link->enabled)
-> +			mask |= BIT(link->index);
-> +	}
-> +
-> +	return mask;
-> +}
-> +
-> +static int max_des_ser_attach_addr(struct max_des_priv *priv, u32 chan_id,
-> +				   u16 addr, u16 alias)
-> +{
-> +	struct max_des *des = priv->des;
-> +	struct max_des_link *link = &des->links[chan_id];
-> +	unsigned int mask;
-> +	int i, min, max;
-> +	int ret = -ENOENT;
-> +	int err;
-> +
-> +	max_des_ser_find_version_range(des, &min, &max);
-> +
-> +	if (link->ser_xlate.en) {
-> +		dev_err(priv->dev, "Serializer for link %u already bound\n",
-> +			link->index);
-> +		return -EINVAL;
-> +	}
-> +
-> +	for (i = max; i >= min; i--) {
-> +		if (!(des->info->versions & BIT(i)))
-> +			continue;
-> +
-> +		if (des->ops->set_link_version) {
-> +			ret = des->ops->set_link_version(des, link, i);
-> +			if (ret)
-> +				goto out_select_links;
-> +		}
-> +
-> +		ret = max_des_init_link_ser_xlate(priv, link, priv->client->adapter,
-> +						  addr, alias);
-> +		if (!ret)
-> +			break;
-> +	}
-> +
-> +	if (ret) {
-> +		dev_err(priv->dev, "Cannot find serializer for link %u\n",
-> +			link->index);
-> +		ret = -ENOENT;
-> +		goto out_select_links;
-> +	}
-> +
-> +	link->version = i;
-> +	link->ser_xlate.src = alias;
-> +	link->ser_xlate.dst = addr;
-> +	link->ser_xlate.en = true;
-> +
-> +out_select_links:
-> +	if (!des->ops->select_links)
-> +		return ret;
-> +
-> +	mask = max_des_enabled_links_mask(des);
-> +	err = des->ops->select_links(des, mask);
-> +	if (err)
-> +		dev_warn(priv->dev, "Failed to restore link selection: %d\n",
-> +			 err);
-> +
-> +	return ret;
-> +}
-> +
-> +static int max_des_ser_atr_attach_addr(struct i2c_atr *atr, u32 chan_id,
-> +				       u16 addr, u16 alias)
-> +{
-> +	struct max_des_priv *priv = i2c_atr_get_driver_data(atr);
-> +
-> +	return max_des_ser_attach_addr(priv, chan_id, addr, alias);
-> +}
-> +
-> +static void max_des_ser_atr_detach_addr(struct i2c_atr *atr, u32 chan_id, u16 addr)
-> +{
-> +	/* Don't do anything. */
-> +}
-> +
-> +static const struct i2c_atr_ops max_des_i2c_atr_ops = {
-> +	.attach_addr = max_des_ser_atr_attach_addr,
-> +	.detach_addr = max_des_ser_atr_detach_addr,
-> +};
-> +
-> +static void max_des_i2c_atr_deinit(struct max_des_priv *priv)
-> +{
-> +	struct max_des *des = priv->des;
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < des->info->num_links; i++) {
-> +		struct max_des_link *link = &des->links[i];
-> +
-> +		/* Deleting adapters that haven't been added does no harm. */
-> +		i2c_atr_del_adapter(priv->atr, link->index);
-> +	}
-> +
-> +	i2c_atr_delete(priv->atr);
-> +	priv->atr = NULL;
-> +}
-> +
-> +static int max_des_i2c_atr_init(struct max_des_priv *priv)
-> +{
-> +	struct max_des *des = priv->des;
-> +	unsigned int mask = 0;
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	if (!i2c_check_functionality(priv->client->adapter,
-> +				     I2C_FUNC_SMBUS_WRITE_BYTE_DATA))
-> +		return -ENODEV;
-> +
-> +	priv->atr = i2c_atr_new(priv->client->adapter, priv->dev,
-> +				&max_des_i2c_atr_ops, des->info->num_links,
-> +				I2C_ATR_F_STATIC | I2C_ATR_F_PASSTHROUGH);
-> +	if (IS_ERR(priv->atr))
-> +		return PTR_ERR(priv->atr);
-> +
-> +	i2c_atr_set_driver_data(priv->atr, priv);
-> +
-> +	for (i = 0; i < des->info->num_links; i++) {
-> +		struct max_des_link *link = &des->links[i];
-> +		struct i2c_atr_adap_desc desc = {
-> +			.chan_id = i,
-> +		};
-> +
-> +		if (!link->enabled)
-> +			continue;
-> +
-> +		ret = i2c_atr_add_adapter(priv->atr, &desc);
-> +		if (ret)
-> +			goto err_add_adapters;
-> +	}
-> +
-> +	if (des->ops->select_links) {
-> +		mask = max_des_enabled_links_mask(des);
-> +
-> +		ret = des->ops->select_links(des, mask);
-> +		if (ret) {
-> +			dev_warn(priv->dev, "Failed to select links: %d\n", ret);
-> +
-> +			goto err_add_adapters;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +
-> +err_add_adapters:
-> +	max_des_i2c_atr_deinit(priv);
-> +
-> +	return ret;
-> +}
-> +
+> > P. S. If you are planning to remove more old drivers, please CC me in
+> > since I may be interested in some additional driver upgrades for
+> > devices I own.
+>
+> Please have a look at
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/log/?h=3Dboar=
+d-remove-7.3
+>
 
-I was able to create a race condition during driver probe when using i2c 
-ATR.
+Thanks, I will keep my eye on this branch.
 
-My setup has 1x MAX96724 + 4x MAX96717 + 4x distinct camera sensors
+> I tried to be careful about figuring out exactly which drivers are
+> unused, but I'm sure there are still a few false positive and false
+> negative ones in there. I've added the current list of driver files below=
+,
+> let me know if you see something that shouldn't be there.
+>
+>      Arnd
+>
+> drivers/ata/pata_icside.c
+> drivers/ata/pata_pxa.c
+> drivers/char/ds1620.c
+> drivers/char/hw_random/mxc-rnga.c
+> drivers/char/nwbutton.c
+> drivers/char/nwbutton.h
+> drivers/char/nwflash.c
+> drivers/clk/clk-axm5516.c
+> drivers/clk/clk-stm32f4.c
+> drivers/clk/clk-stm32h7.c
+> drivers/clk/imx/clk-imx31.c
+> drivers/clk/imx/clk-imxrt1050.c
+> drivers/clk/nxp/clk-lpc18xx-ccu.c
+> drivers/clk/nxp/clk-lpc18xx-cgu.c
+> drivers/clk/nxp/clk-lpc18xx-creg.c
+> drivers/clk/ti/clk-2xxx.c
+> drivers/clocksource/armv7m_systick.c
+> drivers/clocksource/mps2-timer.c
+> drivers/cpufreq/sa1110-cpufreq.c
+> drivers/dma/lpc18xx-dmamux.c
+> drivers/dma/sa11x0-dma.c
+> drivers/gpio/gpio-adp5520.c
+> drivers/gpio/gpio-htc-egpio.c
+> drivers/gpio/gpio-lpc18xx.c
+> drivers/gpio/gpio-rc5t583.c
+> drivers/gpio/gpio-rdc321x.c
+> drivers/gpio/gpio-reg.c
+> drivers/gpio/gpio-sa1100.c
+> drivers/gpio/gpio-wm8350.c
+> drivers/hwmon/ds620.c
+> drivers/hwmon/f75375s.c
+> drivers/hwmon/max1111.c
+> drivers/hwmon/max197.c
+> drivers/hwmon/wm8350-hwmon.c
+> drivers/i2c/busses/i2c-acorn.c
+> drivers/i2c/busses/i2c-axxia.c
+> drivers/i2c/busses/i2c-lpc2k.c
+> drivers/i2c/busses/i2c-stm32f4.c
+> drivers/iio/adc/ad7266.c
+> drivers/iio/adc/ad7791.c
+> drivers/iio/adc/ad7793.c
+> drivers/iio/adc/ad7887.c
+> drivers/iio/adc/lp8788_adc.c
+> drivers/iio/adc/lpc18xx_adc.c
+> drivers/iio/dac/lpc18xx_dac.c
+> drivers/iio/frequency/ad9523.c
+> drivers/input/joystick/as5011.c
+> drivers/input/keyboard/adp5520-keys.c
+> drivers/input/keyboard/ipaq-micro-keys.c
+> drivers/input/keyboard/jornada720_kbd.c
+> drivers/input/keyboard/lm8323.c
+> drivers/input/keyboard/lm8333.c
+> drivers/input/keyboard/locomokbd.c
+> drivers/input/misc/88pm80x_onkey.c
+> drivers/input/misc/ad714x-i2c.c
+> drivers/input/misc/ad714x-spi.c
+> drivers/input/misc/ad714x.c
+> drivers/input/misc/ad714x.h
+> drivers/input/misc/adxl34x-i2c.c
+> drivers/input/misc/adxl34x-spi.c
+> drivers/input/misc/adxl34x.c
+> drivers/input/misc/adxl34x.h
+> drivers/input/misc/bma150.c
+> drivers/input/misc/cma3000_d0x.c
+> drivers/input/misc/cma3000_d0x.h
+> drivers/input/misc/cma3000_d0x_i2c.c
+> drivers/input/misc/kxtj9.c
+> drivers/input/misc/max8997_haptic.c
+> drivers/input/misc/mc13783-pwrbutton.c
+> drivers/input/mouse/rpcmouse.c
+> drivers/input/serio/rpckbd.c
+> drivers/input/serio/sa1111ps2.c
+> drivers/input/touchscreen/ad7877.c
+> drivers/input/touchscreen/da9034-ts.c
+> drivers/input/touchscreen/ipaq-micro-ts.c
+> drivers/input/touchscreen/jornada720_ts.c
+> drivers/input/touchscreen/mc13783_ts.c
+> drivers/input/touchscreen/tps6507x-ts.c
+> drivers/irqchip/irq-nvic.c
+> drivers/irqchip/irq-sa11x0.c
+> drivers/irqchip/irq-stm32-exti.c
+> drivers/leds/leds-adp5520.c
+> drivers/leds/leds-bd2802.c
+> drivers/leds/leds-da903x.c
+> drivers/leds/leds-ipaq-micro.c
+> drivers/leds/leds-lm3530.c
+> drivers/leds/leds-lm3532.c
 
-NOTE: I am using this series on an older kernel release, with my own 
-non-mainline camera drivers. Although as far as I can tell this can 
-still happen on the latest media.git with mainlined camera drivers.
+LM3532 has full OF support and is functional, it just does not have
+device tree users yet. I have a device using it - Motorola Atrix 4G
+(Tegra 2 based).
 
-Here is an example I observed on my setup:
-+------------------------------+------------------------------+
-| Thread 1                     | Thread 2                     |
-+------------------------------+------------------------------+
-| deser probes                 |                              |
-+------------------------------+------------------------------+
-| max_des_i2c_atr_init()       |                              |
-+------------------------------+------------------------------+
-| first iteration of           |                              |
-| for (i = 0; i <              |                              |
-| des->info->num_links; i++)   |                              |
-+------------------------------+------------------------------+
-| i2c_atr_add_adapter() called |                              |
-| on link 0                    |                              |
-+------------------------------+------------------------------+
-| i2c_add_adapter() called for |                              |
-| link 0                       |                              |
-+------------------------------+------------------------------+
-| max_des_ser_atr_attach_addr()|                              |
-| called for serializer 0      |                              |
-+------------------------------+------------------------------+
-| all other links are          |                              |
-| disabled to change ser 0's   |                              |
-| address, then all re-        |                              |
-| enabled again in             |                              |
-| max_des_init_link_ser_xlate()|                              |
-+------------------------------+------------------------------+
-| the seralizer is left unbound|                              |
-| because the module is not    |                              |
-| loaded yet                   |                              |
-+------------------------------+------------------------------+
-| second iteration of          |                              |
-| for (i = 0; i <              |                              |
-| des->info->num_links; i++)   |                              |
-+------------------------------+------------------------------+
-| i2c_atr_add_adapter called   |                              |
-| on link 1                    |                              |
-+------------------------------+------------------------------+
-| i2c_add_adapter called for   |                              |
-| link 1                       |                              |
-+------------------------------+------------------------------+
-| max_des_ser_atr_attach_addr()| max96717.ko loads, and the   |
-| called for serializer 1      | driver probes                |
-+------------------------------+------------------------------+
-| all other links are          |                              |
-| disabled in                  |                              |
-| max_des_init_link_ser_xlate  |                              |
-| to change serializer 1's     |                              |
-| address                      |                              |
-+------------------------------+------------------------------+
-| we write the new i2c         | camera 0 probes (module      |
-| address to serializer 1      | already loaded)              |
-+------------------------------+------------------------------+
-|                              | camera driver requests a     |
-|                              | reset gpio on serializer 0   |
-+------------------------------+------------------------------+
-|                              | max96717.ko does a i2c       |
-|                              | write on link 0, which       |
-|                              | fails since it was disabled  |
-+------------------------------+------------------------------+
-|                              | -EIO                         |
-+------------------------------+------------------------------+
-| all links re-enabled in      |                              |
-| max_des_init_link_ser_xlate  |                              |
-+------------------------------+------------------------------+
-| max96717.ko is loaded so we  |                              |
-| probe serializer 1           |                              |
-| now                          |                              |
-+------------------------------+------------------------------+
-| camera 1 probes              |                              |
-| (different driver)           |                              |
-+------------------------------+------------------------------+
+Here is commit removing LM3532
+https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/commit/?id=3D46=
+a6457870825d8b782d350fdc7e27c540734d41
+Here are my patches bringing up Motorola Atrix 4G support
+https://lore.kernel.org/lkml/20260721100245.444623-3-clamor95@gmail.com/
 
-As a quick hack I fixed this in my local tree by modifying i2c-atr.c to 
-lock atr->lock in i2c_atr_attach_addr() and i2c_atr_detach_addr().
+> drivers/leds/leds-lm355x.c
+> drivers/leds/leds-lm3642.c
+> drivers/leds/leds-locomo.c
+> drivers/leds/leds-lp3944.c
+> drivers/leds/leds-lp8788.c
+> drivers/leds/leds-wm8350.c
+> drivers/media/i2c/ths7303.c
+> drivers/media/platform/samsung/s3c-camif/Kconfig
+> drivers/media/platform/samsung/s3c-camif/Makefile
+> drivers/media/platform/samsung/s3c-camif/camif-capture.c
+> drivers/media/platform/samsung/s3c-camif/camif-core.c
+> drivers/media/platform/samsung/s3c-camif/camif-core.h
+> drivers/media/platform/samsung/s3c-camif/camif-regs.c
+> drivers/media/platform/samsung/s3c-camif/camif-regs.h
+> drivers/media/platform/st/stm32/dma2d/dma2d-hw.c
+> drivers/media/platform/st/stm32/dma2d/dma2d-regs.h
+> drivers/media/platform/st/stm32/dma2d/dma2d.c
+> drivers/media/platform/st/stm32/dma2d/dma2d.h
+> drivers/media/radio/radio-si476x.c
+> drivers/mfd/88pm800.c
+> drivers/mfd/88pm805.c
+> drivers/mfd/88pm80x.c
+> drivers/mfd/adp5520.c
+> drivers/mfd/da903x.c
+> drivers/mfd/ipaq-micro.c
+> drivers/mfd/lp8788-irq.c
+> drivers/mfd/lp8788.c
+> drivers/mfd/mcp-core.c
+> drivers/mfd/mcp-sa11x0.c
+> drivers/mfd/menelaus.c
+> drivers/mfd/rc5t583-irq.c
+> drivers/mfd/rc5t583.c
+> drivers/mfd/rdc321x-southbridge.c
+> drivers/mfd/si476x-cmd.c
+> drivers/mfd/si476x-i2c.c
+> drivers/mfd/si476x-prop.c
+> drivers/mfd/ucb1x00-assabet.c
+> drivers/mfd/ucb1x00-core.c
+> drivers/mfd/ucb1x00-ts.c
+> drivers/mfd/wm8350-core.c
+> drivers/mfd/wm8350-gpio.c
+> drivers/mfd/wm8350-i2c.c
+> drivers/mfd/wm8350-irq.c
+> drivers/mfd/wm8350-regmap.c
+> drivers/mfd/wm8400-core.c
+> drivers/misc/bh1770glc.c
+> drivers/mtd/maps/dc21285.c
+> drivers/mtd/maps/pxa2xx-flash.c
+> drivers/mtd/maps/sa1100-flash.c
+> drivers/mtd/nand/raw/sharpsl.c
+> drivers/mtd/parsers/sharpslpart.c
+> drivers/mtd/spi-nor/controllers/Kconfig
+> drivers/mtd/spi-nor/controllers/Makefile
+> drivers/mtd/spi-nor/controllers/hisi-sfc.c
+> drivers/mtd/spi-nor/controllers/nxp-spifi.c
+> drivers/net/can/bxcan.c
+> drivers/net/ethernet/8390/etherh.c
+> drivers/net/ethernet/i825xx/ether1.c
+> drivers/net/ethernet/i825xx/ether1.h
+> drivers/net/ethernet/lantiq_etop.c
+> drivers/net/ethernet/samsung/Kconfig
+> drivers/net/ethernet/samsung/Makefile
+> drivers/net/ethernet/samsung/sxgbe/Makefile
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_common.h
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_core.c
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.c
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_desc.h
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.c
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_dma.h
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_ethtool.c
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_mdio.c
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_mtl.c
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_mtl.h
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c
+> drivers/net/ethernet/samsung/sxgbe/sxgbe_reg.h
+> drivers/net/ethernet/seeq/ether3.c
+> drivers/net/ethernet/seeq/ether3.h
+> drivers/net/ethernet/stmicro/stmmac/dwmac-lpc18xx.c
+> drivers/net/wireless/marvell/libertas/if_spi.c
+> drivers/net/wireless/marvell/libertas/if_spi.h
+> drivers/net/wireless/st/Kconfig
+> drivers/net/wireless/st/Makefile
+> drivers/net/wireless/st/cw1200/Kconfig
+> drivers/net/wireless/st/cw1200/Makefile
+> drivers/net/wireless/st/cw1200/bh.c
+> drivers/net/wireless/st/cw1200/bh.h
+> drivers/net/wireless/st/cw1200/cw1200.h
+> drivers/net/wireless/st/cw1200/cw1200_sdio.c
+> drivers/net/wireless/st/cw1200/cw1200_spi.c
+> drivers/net/wireless/st/cw1200/debug.c
+> drivers/net/wireless/st/cw1200/debug.h
+> drivers/net/wireless/st/cw1200/fwio.c
+> drivers/net/wireless/st/cw1200/fwio.h
+> drivers/net/wireless/st/cw1200/hwbus.h
+> drivers/net/wireless/st/cw1200/hwio.c
+> drivers/net/wireless/st/cw1200/hwio.h
+> drivers/net/wireless/st/cw1200/main.c
+> drivers/net/wireless/st/cw1200/pm.c
+> drivers/net/wireless/st/cw1200/pm.h
+> drivers/net/wireless/st/cw1200/queue.c
+> drivers/net/wireless/st/cw1200/queue.h
+> drivers/net/wireless/st/cw1200/scan.c
+> drivers/net/wireless/st/cw1200/scan.h
+> drivers/net/wireless/st/cw1200/sta.c
+> drivers/net/wireless/st/cw1200/sta.h
+> drivers/net/wireless/st/cw1200/txrx.c
+> drivers/net/wireless/st/cw1200/txrx.h
+> drivers/net/wireless/st/cw1200/wsm.c
+> drivers/net/wireless/st/cw1200/wsm.h
+> drivers/nvmem/lpc18xx_eeprom.c
+> drivers/nvmem/lpc18xx_otp.c
+> drivers/pcmcia/max1600.c
+> drivers/pcmcia/max1600.h
+> drivers/pcmcia/pxa2xx_base.c
+> drivers/pcmcia/pxa2xx_base.h
+> drivers/pcmcia/pxa2xx_sharpsl.c
+> drivers/pcmcia/sa1100_generic.c
+> drivers/pcmcia/sa1100_generic.h
+> drivers/pcmcia/sa1100_h3600.c
+> drivers/pcmcia/sa1111_generic.c
+> drivers/pcmcia/sa1111_generic.h
+> drivers/pcmcia/sa1111_jornada720.c
+> drivers/pcmcia/sa1111_neponset.c
+> drivers/pcmcia/sa11xx_base.c
+> drivers/pcmcia/sa11xx_base.h
+> drivers/pcmcia/soc_common.c
+> drivers/pcmcia/soc_common.h
+> drivers/phy/phy-lpc18xx-usb-otg.c
+> drivers/pinctrl/freescale/pinctrl-imxrt1050.c
+> drivers/pinctrl/freescale/pinctrl-imxrt1170.c
+> drivers/pinctrl/pinctrl-lpc18xx.c
+> drivers/pinctrl/stm32/pinctrl-stm32f429.c
+> drivers/pinctrl/stm32/pinctrl-stm32f469.c
+> drivers/pinctrl/stm32/pinctrl-stm32f746.c
+> drivers/pinctrl/stm32/pinctrl-stm32f769.c
+> drivers/pinctrl/stm32/pinctrl-stm32h743.c
+> drivers/power/reset/axxia-reset.c
+> drivers/power/supply/collie_battery.c
+> drivers/power/supply/da9030_battery.c
+> drivers/power/supply/ipaq_micro_battery.c
+> drivers/power/supply/lp8788-charger.c
+> drivers/power/supply/twl4030_madc_battery.c
+> drivers/power/supply/wm8350_power.c
+> drivers/pwm/pwm-lpc18xx-sct.c
+> drivers/regulator/88pm800-regulator.c
+> drivers/regulator/da903x-regulator.c
+> drivers/regulator/lp3971.c
+> drivers/regulator/lp3972.c
+> drivers/regulator/lp8788-buck.c
+> drivers/regulator/lp8788-ldo.c
+> drivers/regulator/max8649.c
+> drivers/regulator/rc5t583-regulator.c
+> drivers/regulator/wm8350-regulator.c
+> drivers/regulator/wm8400-regulator.c
+> drivers/reset/reset-lpc18xx.c
+> drivers/rtc/rtc-88pm80x.c
+> drivers/rtc/rtc-lp8788.c
+> drivers/rtc/rtc-lpc24xx.c
+> drivers/rtc/rtc-rc5t583.c
+> drivers/rtc/rtc-wm8350.c
+> drivers/scsi/arm/Kconfig
+> drivers/scsi/arm/Makefile
+> drivers/scsi/arm/acornscsi-io.S
+> drivers/scsi/arm/acornscsi.c
+> drivers/scsi/arm/acornscsi.h
+> drivers/scsi/arm/arm_scsi.h
+> drivers/scsi/arm/arxescsi.c
+> drivers/scsi/arm/cumana_1.c
+> drivers/scsi/arm/cumana_2.c
+> drivers/scsi/arm/eesox.c
+> drivers/scsi/arm/fas216.c
+> drivers/scsi/arm/fas216.h
+> drivers/scsi/arm/msgqueue.c
+> drivers/scsi/arm/msgqueue.h
+> drivers/scsi/arm/oak.c
+> drivers/scsi/arm/powertec.c
+> drivers/scsi/arm/queue.c
+> drivers/scsi/arm/queue.h
+> drivers/spi/spi-tle62x0.c
+> drivers/tty/serial/21285.c
+> drivers/tty/serial/8250/8250_acorn.c
+> drivers/tty/serial/8250/8250_lpc18xx.c
+> drivers/tty/serial/mps2-uart.c
+> drivers/tty/serial/sa1100.c
+> drivers/usb/host/ohci-sa1111.c
+> drivers/usb/host/sl811-hcd.c
+> drivers/usb/host/sl811.h
+> drivers/usb/host/sl811_cs.c
+> drivers/usb/musb/tusb6010.c
+> drivers/usb/musb/tusb6010.h
+> drivers/usb/musb/tusb6010_omap.c
+> drivers/usb/phy/phy-mv-usb.h
+> drivers/video/backlight/adp5520_bl.c
+> drivers/video/backlight/adp8860_bl.c
+> drivers/video/backlight/adp8870_bl.c
+> drivers/video/backlight/ams369fg06.c
+> drivers/video/backlight/bd6107.c
+> drivers/video/backlight/corgi_lcd.c
+> drivers/video/backlight/da903x_bl.c
+> drivers/video/backlight/ep93xx_bl.c
+> drivers/video/backlight/ipaq_micro_bl.c
+> drivers/video/backlight/jornada720_bl.c
+> drivers/video/backlight/jornada720_lcd.c
+> drivers/video/backlight/lm3639_bl.c
+> drivers/video/backlight/lms501kf03.c
+> drivers/video/backlight/locomolcd.c
+> drivers/video/backlight/lp8788_bl.c
+> drivers/video/backlight/tdo24m.c
+> drivers/video/fbdev/acornfb.c
+> drivers/video/fbdev/acornfb.h
+> drivers/video/fbdev/arcfb.c
+> drivers/video/fbdev/broadsheetfb.c
+> drivers/video/fbdev/core/fb_notify.c
+> drivers/video/fbdev/ep93xx-fb.c
+> drivers/video/fbdev/hecubafb.c
+> drivers/video/fbdev/metronomefb.c
+> drivers/video/fbdev/mmp/Kconfig
+> drivers/video/fbdev/mmp/Makefile
+> drivers/video/fbdev/mmp/core.c
+> drivers/video/fbdev/mmp/fb/Kconfig
+> drivers/video/fbdev/mmp/fb/Makefile
+> drivers/video/fbdev/mmp/fb/mmpfb.c
+> drivers/video/fbdev/mmp/fb/mmpfb.h
+> drivers/video/fbdev/mmp/hw/Kconfig
+> drivers/video/fbdev/mmp/hw/Makefile
+> drivers/video/fbdev/mmp/hw/mmp_ctrl.c
+> drivers/video/fbdev/mmp/hw/mmp_ctrl.h
+> drivers/video/fbdev/mmp/hw/mmp_spi.c
+> drivers/video/fbdev/mmp/panel/Kconfig
+> drivers/video/fbdev/mmp/panel/Makefile
+> drivers/video/fbdev/mmp/panel/tpo_tj032md01bw.c
+> drivers/video/fbdev/n411.c
+> drivers/video/fbdev/pxa168fb.c
+> drivers/video/fbdev/pxa168fb.h
+> drivers/video/fbdev/s1d13xxxfb.c
+> drivers/video/fbdev/sa1100fb.c
+> drivers/video/fbdev/sa1100fb.h
+> drivers/watchdog/lpc18xx_wdt.c
+> drivers/watchdog/rdc321x_wdt.c
+> drivers/watchdog/wdt285.c
+> drivers/watchdog/wdt977.c
+> drivers/watchdog/wm8350_wdt.c
+> sound/soc/codecs/si476x.c
+> sound/soc/codecs/wm8350.c
+> sound/soc/codecs/wm8350.h
+> sound/soc/codecs/wm8400.c
+> sound/soc/codecs/wm8400.h
+> sound/soc/pxa/pxa2xx-i2s.c
+> sound/soc/pxa/pxa2xx-i2s.h
+> sound/soc/pxa/spitz.c
+> sound/soc/ti/n810.c
+> sound/spi/Kconfig
+> sound/spi/Makefile
+> sound/spi/at73c213.c
+> sound/spi/at73c213.h
 
-After writing this out I realized there might also be another way:
-In max_des_init_link_ser_xlate() skip disabling links that have already 
-had their serializer changed to a new, unique address. This would also 
-require changing select_links to not reset all links connected to the 
-deseralizer. Not sure if that is possible.
+Other drivers from this list seem to not be used in any of my devices.
 
-- Quentin
-
-<snip>
-
-
-
+Best regards,
+Svyatoslav R.
