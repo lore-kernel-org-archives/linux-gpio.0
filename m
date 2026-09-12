@@ -1,175 +1,160 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDD234F497
-	for <linux-gpio@vger.kernel.org>; Sat, 12 Sep 2026 22:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C630F39061C;
+	Sat, 12 Sep 2026 22:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789251583; cv=none; b=MKGAjNZbZzOJbpehbWOgSWyo+2omoacnMSF7zlYYJb3W1HhweWKVln3SHKkI8NVMUCstt2H4ObFWSqn3xIiaTcvN3vwip0ejZgJgyQFx99SpUiTUfaFNl9I095/0nAs65thbGcELLC1gZpe1NbTGM7GdRErac4Nl3FBx8ZpIYBc=
+	t=1789251664; cv=none; b=HRLRBqlPqXYQKn/0NcNlQkpYv84aS2xuk409J784xaqmGKsfTVoAxex7+hamY3Z1mezMhEopbiTCz+kmLaBvWMBQ0RMRNyHkjQEg6uh7idme378XZ855juxaC3xPyFKWc/wIHFB3L2W9QGlub2SzXSbdCAPNJHVmg2Hx6wxZuX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789251583; c=relaxed/simple;
-	bh=0uT0VgkWN10sGGCdjOU9H1z6SM5oHkGT3yRKAlBYR2U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CpVU5R4/0LRweAchh1vuspCGe7mVnDmaLB8ihLFI7Sd/OsJreo0TqdHbaK9v1dWWsFa/eYgA4wTq93IU6qjd4m0KbVqRbM1Bc738WcOtPNyB68Nnov7lMJyrNA4+Kzeg/d5fNCb7XPbwGnXKbJRXU9YeDdc0ze6n8jINgCh6qfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JCj6Endl; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789251664; c=relaxed/simple;
+	bh=jJN5bbmJG6+W8ZaAl9RR52OiGtP0jEKBmRMAckxoXiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aJe6HCLeEcaYPMYTJDo6bj52O4C4tN9/S/pJQ+nuxskJRaZYMGv/KJlET++t6zOUyeerAhGe7S1q8c9iuQ3BMZPp4tgAzfaoYtqM/d2uJ+98i0Myg33FwevRkgp9GRgF1P/rzFIYzEFpyw8oWzz9UatbWIXSpAj7k4XKeWMNeXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHhPvzDn; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JCj6Endl"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2d715f4a587so29025285ad.2
-        for <linux-gpio@vger.kernel.org>; Sat, 12 Sep 2026 15:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789251581; x=1789856381; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Q6Xs676NlWL1Mj/zcxdmFLfPMSO9k6Bt3Fs8MUumDew=;
-        b=JCj6Endlerp/AN0HgyS+TQCA7fl16pSqhA8QLKv6hYr9NoSVy7AOd39BifbHpLmdm/
-         o9+RP2weU8IxHpFW4yx2ArUtRdM74mfQcguog+pCTH4Mw0K+/rXtk/mVWvKsljQfYcLU
-         +vQ7/N6o73XOMRQz7VIMNWjZ/tCYNb5QwfAOs49Nogv2INvsqFhSxEfazW9UvlbLcLEo
-         nxNf2XURKk4U66gpv+/zfXhVom0RA9ddsY+ROLu7bmFxRQVf8hMOosDHl9k/qPtqGOFB
-         /nZwR6a9xu5Mt7isGQQW2WiHo1OPxhuBhT5waUqTUW3j8Jp/KG6dtaA/a+oJc7izXMGU
-         1ScQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789251581; x=1789856381;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Q6Xs676NlWL1Mj/zcxdmFLfPMSO9k6Bt3Fs8MUumDew=;
-        b=BgaPSn3arbSKusS2ij7zcpUz0KyXFgNFUogILdHdZDLGiUm4KhGMNI9EQ+4VtHJhkd
-         g+JOFFbskxudkwKn8R6GcpDQgkkIIfwIbCz+toc9i+7GYNccSP9vjIJBV7emHtdu1x28
-         NqtTtVFpOnw79KMdW5OS4lkW+RPe5k9YIPM9+fBUzuNQs26ZzELoFokVFqm2TDBqD8bj
-         U5/Sd5gaFb/V+T17oJpbBB6wKvnGlgAb69xQWF2XaHds+o/5JlQWtNgJcvHzD8Lf80vr
-         ZeXLH6yU5elNnYPl1fLa7L2o0/89+paY5w7DnzHPvTGkU8CJCzri/m0EHTIPc3ZdNDOA
-         1wmg==
-X-Gm-Message-State: AFuF++m5bVTAbQRVdRAspbbJpdxuzozrYGFKze3Xv6uRlJEIGqfaHrat
-	lYgFbYLSJcEbltqfo/EDFYU5lhcXxUqFc8wPZAYrdT6O89XGSwPprS6SDowdJg==
-X-Gm-Gg: AYBFou2SjFOdgHlhucOpRFv4irugFwLWeAtTCv7gxwVVWtyDDsskQG1Iu/rrZpbWamF
-	eJ073XDoVlSm07MeeCsPvGLWqRpwRry9xYBQ+GvcvCThmFtvCPTe+xQZyHXP/MSlS96VKqG0yRz
-	elPaTYN7bq2se9W+mZPiMwIbgeBVGFatUNz+rdNjErmo/uzUjaKGuJ23zYUFLTus772Ll0oGQ7L
-	4vBeUar/u5CoCvDBpbiQJCM8Dk8qkt8sEAeha2p2O2f6STpqRxUC40EcwhE2gVki0jVpfvi1JDt
-	0ikGLWXlJI/vcf/TCGo7Qljevgyh0FnR7RuVk8OYPb6uUddoRStq4JAGM3XOWq+fYb1Pt1CDC90
-	xqTKMbzTfhDTHPzthJh5qC9fyv7NKI41ptAyF9Z66HO89iZe7FI42x07GPE+dCCYe+ZJK/YHuQh
-	0bEfRq4FOFBpD12Apn1xgVYSE6VjoZgTQg0mg3Jve+lnTzSmCPx3RfFH7mIDdiloqDr2ozhEOJB
-	ZnSnlHRMjxhEMUN/jXrMVTwHHTaBks/e6YpxSSo3k+GUif8cICMMB73qdN+9FeZLbzpXnS9lvDu
-	fjnj8DMVplLO93eY+Lodee5uymHGqFl7dS2Z6XaaBU0o+ezX
-X-Received: by 2002:a17:90b:4b0e:b0:398:9be5:b41d with SMTP id 98e67ed59e1d1-39d9c368348mr17660307a91.24.1789251581216;
-        Sat, 12 Sep 2026 15:19:41 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8000:7a86::e34])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39d98e602e7sm13437631a91.5.2026.09.12.15.19.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Sep 2026 15:19:39 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] gpio: mvebu: keep resume masks within the irqchip cache
-Date: Sat, 12 Sep 2026 15:19:37 -0700
-Message-ID: <20260912221937.71403-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHhPvzDn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434821F000FF;
+	Sat, 12 Sep 2026 22:20:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789251662;
+	bh=A9T5TqugoZpwriYm80tITfJ7eL5e79XFR+RGRlWT3Yo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References;
+	b=BHhPvzDnmzwpQttZFmPMZf/UutFNeY/Degy6vahXXbV7Z6hNGc9MkvFE+rdhQJ6MU
+	 VAw3b4RYQvofx2lNTbeX4zkZRnpelNzwDei0UTSd3ZGNIs/4odMQ67B9LiiARuySxb
+	 U6BER7d7wfXohAn2tXbzGwa2wiTRgp4c4+hrPC/Fg2mvopBtYwKpfuJcqo2gQktz/i
+	 UBA340zyHxS9IBLWpHZ7ZP/iBROp/81WLbTAUh34hL3mGOOjez8TZZyGHIC4Q8vD6X
+	 SvDJPAFOvk+SgEr6vR+aGc41krBbPQbYbAOql8ew7alD2jpnrmyuGLi/805cAMk+g3
+	 S6DFuxrkx8D2Q==
+Date: Sat, 12 Sep 2026 23:20:47 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Svyatoslav Ryhel" <clamor95@gmail.com>, "Arnd Bergmann"
+ <arnd@kernel.org>, "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Bartosz Golaszewski" <brgl@kernel.org>, "Mark Brown" <broonie@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Daniel Thompson"
+ <danielt@kernel.org>, "Helge Deller" <deller@gmx.de>,
+ devicetree@vger.kernel.org, "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
+ dri-devel@lists.freedesktop.org, "Jingoo Han" <jingoohan1@gmail.com>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Lee Jones" <lee@kernel.org>,
+ "Liam Girdwood" <lgirdwood@gmail.com>, "Linus Walleij" <linusw@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, "open list:GPIO SUBSYSTEM"
+ <linux-gpio@vger.kernel.org>, linux-hwmon@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, "Guenter Roeck" <linux@roeck-us.net>,
+ linuxppc-dev@lists.ozlabs.org, llvm@lists.linux.dev, "Mauro Carvalho
+ Chehab" <mchehab@kernel.org>, mfd@lists.linux.dev, "Michael Hennerich"
+ <michael.hennerich@analog.com>, patches@opensource.cirrus.com, "Pavel
+ Machek" <pavel@kernel.org>, "Rob Herring" <robh@kernel.org>, "Sebastian
+ Reichel" <sre@kernel.org>, "Support Opensource"
+ <support.opensource@diasemi.com>
+Subject: Re: [PATCH 08/14] mfd: remove unused aat2870 driver
+Message-ID: <20260912232047.19c4cb10@jic23-hlaptop>
+In-Reply-To: <11652e5e-053e-45b0-98a0-0c1cb2aeedc4@app.fastmail.com>
+References: <CAPVz0n0ryOns2sCJE_jFana9MVzwEj1QZuPEa8FNhGbHXnMB+A@mail.gmail.com>
+	<11652e5e-053e-45b0-98a0-0c1cb2aeedc4@app.fastmail.com>
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-mvebu_gpio_resume() writes the edge/level mask registers saved at
-suspend time straight back to hardware, bypassing the irqchip's
-mask_cache_priv.  genirq skips mask_irq() for a line it already
-considers masked, so restoring a bit in hardware that genirq thinks
-is still masked leaves that line unmasked behind genirq's back.  An
-asserted level line then has nobody to ack it, and the moment
-interrupts are re-enabled the chained handler storms, hanging resume.
+On Thu, 10 Sep 2026 20:14:15 +0200
+"Arnd Bergmann" <arnd@arndb.de> wrote:
 
-AND the restored mask values with the matching irqchip mask cache so
-only lines genirq currently considers unmasked are unmasked again.
-Read the caches under gc->lock to keep them consistent with the
-mask/unmask handlers.
+> On Thu, Sep 10, 2026, at 18:40, Svyatoslav Ryhel wrote:
+> > __ 
+> > Hello Arnd! May you please spare AAT2870 from being removed? I have a 
+> > device which uses aat2870 (LG Optimus 2X P990 Tegra 2, not upstreamed 
+> > yet, but in process as well) and atm I am working on converting this 
+> > driver to use OF. Thank you!  
+> 
+> Sure, I have removed this patch from my series now.
+> 
+> > P. S. If you are planning to remove more old drivers, please CC me in 
+> > since I may be interested in some additional driver upgrades for 
+> > devices I own.  
+> 
+> Please have a look at
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/log/?h=board-remove-7.3
+> 
+> I tried to be careful about figuring out exactly which drivers are
+> unused, but I'm sure there are still a few false positive and false
+> negative ones in there. I've added the current list of driver files below,
+> let me know if you see something that shouldn't be there.
+Hi Arnd
 
-Tested on Helios4 5 suspend cycles woken by magic packet, no hang;
-mvebu_gpio_resume() returns in 6 usecs.
+For I2C and SPI at least, there doesn't need to be explicit
+device tree support as long as they have defaults when platform
+data isn't there. Those two buses will happily bind based on
+a dt-compatible and their i2c_device_id or spi_device_id tables
+for example.
 
-Assisted-by: LLM
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/gpio/gpio-mvebu.c | 30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+So unless they fail to probe (some might?) we don't have
+a clear signal on whether they are in use via DT or not.
 
-diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
-index c57758019e92..988f2cf24f59 100644
---- a/drivers/gpio/gpio-mvebu.c
-+++ b/drivers/gpio/gpio-mvebu.c
-@@ -1049,6 +1049,9 @@ static int mvebu_gpio_suspend(struct platform_device *pdev, pm_message_t state)
- static int mvebu_gpio_resume(struct platform_device *pdev)
- {
- 	struct mvebu_gpio_chip *mvchip = platform_get_drvdata(pdev);
-+	struct irq_chip_generic *gc = NULL;
-+	u32 edge_cache = ~0U, level_cache = ~0U;
-+	unsigned long flags = 0;
- 	int i;
- 
- 	regmap_write(mvchip->regs, GPIO_OUT_OFF + mvchip->offset,
-@@ -1060,38 +1063,53 @@ static int mvebu_gpio_resume(struct platform_device *pdev)
- 	regmap_write(mvchip->regs, GPIO_IN_POL_OFF + mvchip->offset,
- 		     mvchip->in_pol_reg);
- 
-+	/*
-+	 * genirq skips mask_irq() for a line it already considers masked, so
-+	 * unmasking one behind its back leaves an asserted level line that
-+	 * nobody masks. Restore only bits the irqchip cache still has set.
-+	 */
-+	if (mvchip->domain) {
-+		gc = irq_get_domain_generic_chip(mvchip->domain, 0);
-+		raw_spin_lock_irqsave(&gc->lock, flags);
-+		level_cache = gc->chip_types[0].mask_cache_priv;
-+		edge_cache = gc->chip_types[1].mask_cache_priv;
-+	}
-+
- 	switch (mvchip->soc_variant) {
- 	case MVEBU_GPIO_SOC_VARIANT_ORION:
- 	case MVEBU_GPIO_SOC_VARIANT_A8K:
- 		regmap_write(mvchip->regs, GPIO_EDGE_MASK_OFF + mvchip->offset,
--			     mvchip->edge_mask_regs[0]);
-+			     mvchip->edge_mask_regs[0] & edge_cache);
- 		regmap_write(mvchip->regs, GPIO_LEVEL_MASK_OFF + mvchip->offset,
--			     mvchip->level_mask_regs[0]);
-+			     mvchip->level_mask_regs[0] & level_cache);
- 		break;
- 	case MVEBU_GPIO_SOC_VARIANT_MV78200:
- 		for (i = 0; i < 2; i++) {
- 			regmap_write(mvchip->regs,
- 				     GPIO_EDGE_MASK_MV78200_OFF(i),
--				     mvchip->edge_mask_regs[i]);
-+				     mvchip->edge_mask_regs[i] & edge_cache);
- 			regmap_write(mvchip->regs,
- 				     GPIO_LEVEL_MASK_MV78200_OFF(i),
--				     mvchip->level_mask_regs[i]);
-+				     mvchip->level_mask_regs[i] & level_cache);
- 		}
- 		break;
- 	case MVEBU_GPIO_SOC_VARIANT_ARMADAXP:
- 		for (i = 0; i < 4; i++) {
- 			regmap_write(mvchip->regs,
- 				     GPIO_EDGE_MASK_ARMADAXP_OFF(i),
--				     mvchip->edge_mask_regs[i]);
-+				     mvchip->edge_mask_regs[i] & edge_cache);
- 			regmap_write(mvchip->regs,
- 				     GPIO_LEVEL_MASK_ARMADAXP_OFF(i),
--				     mvchip->level_mask_regs[i]);
-+				     mvchip->level_mask_regs[i] & level_cache);
- 		}
- 		break;
- 	default:
- 		BUG();
- 	}
- 
-+	if (gc)
-+		raw_spin_unlock_irqrestore(&gc->lock, flags);
-+
- 	if (IS_REACHABLE(CONFIG_PWM) && mvchip->mvpwm)
- 		mvebu_pwm_resume(mvchip);
- 
--- 
-2.55.0
+For vast majority of IIO drivers we don't have an upstream
+DTS as there is no clear motivation for anyone to upstream
+the dts for a random industrial control board or similar.
+
+> drivers/iio/adc/ad7266.c
+No to dropping this.
+
+Has fallbacks and should bind just fine  No one ever
+bothered adding an of_device_id table because it isn't
+needed. Fine to rip out the platform data support as nothing is
+using that.
+
+This is a production part that is likely being used in new designs.
+
+> drivers/iio/adc/ad7791.c
+No to dropping this one.
+
+I'm fine with ripping out the platform data but this again
+has defaults and may well be in use via DT. Antoniu from
+Analog was doing some cleanup on this recently so I'd guess
+they probably still at least somewhat care and some of the
+supported parts are still in production (e.g. the AD7788)
+
+> drivers/iio/adc/ad7793.c
+Maybe. Analog devices ack needed.
+
+Production part but this one indeed fails to probe.  Analog
+folk, do you want to fix this one up?
+
+> drivers/iio/adc/ad7887.c
+No to dropping this.
+
+Production part - should work fine with defaults in driver.
+Could like the others drop the platform data handling.
+
+> drivers/iio/adc/lp8788_adc.c
+Probably
+
+Sub driver of an MFD.  I'm fine with that going if we know
+the mfd is no longer in use.
+
+> drivers/iio/adc/lpc18xx_adc.c
+> drivers/iio/dac/lpc18xx_dac.c
+Probably
+
+Likewise these two.
+
+> drivers/iio/frequency/ad9523.c
+Maybe. Analog Devices ack needed.
+
+Fails to probe without platform data and marked not recomended
+for new designs. If we get an Ack from Analog devices folk
+I'm fine with this one going away.
+
+Jonathan
 
