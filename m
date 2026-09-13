@@ -1,160 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk2-f13.google.com (mail-qk2-f13.google.com [74.125.230.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C630F39061C;
-	Sat, 12 Sep 2026 22:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4458719C54E
+	for <linux-gpio@vger.kernel.org>; Sun, 13 Sep 2026 04:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789251664; cv=none; b=HRLRBqlPqXYQKn/0NcNlQkpYv84aS2xuk409J784xaqmGKsfTVoAxex7+hamY3Z1mezMhEopbiTCz+kmLaBvWMBQ0RMRNyHkjQEg6uh7idme378XZ855juxaC3xPyFKWc/wIHFB3L2W9QGlub2SzXSbdCAPNJHVmg2Hx6wxZuX0=
+	t=1789272206; cv=none; b=HLyIHrAbChK8NaxfV0V5au4YsdutTLbR1vsJfOuBiM0+pntv1xpo7X1XiNsyCdHem+chj0SrbWvradqOuLjVnTk3C6t4YsjNDafldlkElU6uOR0f2iMcTT691VuI3Hg1PCbtC2R46wKUvgZwylmi3JfvxPPhiy3lDZREPt6S/M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789251664; c=relaxed/simple;
-	bh=jJN5bbmJG6+W8ZaAl9RR52OiGtP0jEKBmRMAckxoXiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aJe6HCLeEcaYPMYTJDo6bj52O4C4tN9/S/pJQ+nuxskJRaZYMGv/KJlET++t6zOUyeerAhGe7S1q8c9iuQ3BMZPp4tgAzfaoYtqM/d2uJ+98i0Myg33FwevRkgp9GRgF1P/rzFIYzEFpyw8oWzz9UatbWIXSpAj7k4XKeWMNeXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHhPvzDn; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789272206; c=relaxed/simple;
+	bh=4eRp9ovMmpBudHPEfFmH+GHalK0lB41ROHYez3TAZNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E/3TtvtPEGliur3B5RNpiWjeHYHg3bCyJ8s3MZ4ZmBhv3qvgvfkEPXYdgOpqNi1Fl0DTbxryLivk+eSKfje57OiBvOfcl8+Rl1X1yD5QLdz5yGOQrQQ5m5Y82C5lRxzGTJGkBDMtHOafcKIUoZLxwe5t6ULnPXqU5UlG0Cu7nC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TMhXzdm6; arc=none smtp.client-ip=74.125.230.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHhPvzDn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 434821F000FF;
-	Sat, 12 Sep 2026 22:20:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789251662;
-	bh=A9T5TqugoZpwriYm80tITfJ7eL5e79XFR+RGRlWT3Yo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=BHhPvzDnmzwpQttZFmPMZf/UutFNeY/Degy6vahXXbV7Z6hNGc9MkvFE+rdhQJ6MU
-	 VAw3b4RYQvofx2lNTbeX4zkZRnpelNzwDei0UTSd3ZGNIs/4odMQ67B9LiiARuySxb
-	 U6BER7d7wfXohAn2tXbzGwa2wiTRgp4c4+hrPC/Fg2mvopBtYwKpfuJcqo2gQktz/i
-	 UBA340zyHxS9IBLWpHZ7ZP/iBROp/81WLbTAUh34hL3mGOOjez8TZZyGHIC4Q8vD6X
-	 SvDJPAFOvk+SgEr6vR+aGc41krBbPQbYbAOql8ew7alD2jpnrmyuGLi/805cAMk+g3
-	 S6DFuxrkx8D2Q==
-Date: Sat, 12 Sep 2026 23:20:47 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Svyatoslav Ryhel" <clamor95@gmail.com>, "Arnd Bergmann"
- <arnd@kernel.org>, "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Bartosz Golaszewski" <brgl@kernel.org>, "Mark Brown" <broonie@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Daniel Thompson"
- <danielt@kernel.org>, "Helge Deller" <deller@gmx.de>,
- devicetree@vger.kernel.org, "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- dri-devel@lists.freedesktop.org, "Jingoo Han" <jingoohan1@gmail.com>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Lee Jones" <lee@kernel.org>,
- "Liam Girdwood" <lgirdwood@gmail.com>, "Linus Walleij" <linusw@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-fbdev@vger.kernel.org, "open list:GPIO SUBSYSTEM"
- <linux-gpio@vger.kernel.org>, linux-hwmon@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-watchdog@vger.kernel.org, "Guenter Roeck" <linux@roeck-us.net>,
- linuxppc-dev@lists.ozlabs.org, llvm@lists.linux.dev, "Mauro Carvalho
- Chehab" <mchehab@kernel.org>, mfd@lists.linux.dev, "Michael Hennerich"
- <michael.hennerich@analog.com>, patches@opensource.cirrus.com, "Pavel
- Machek" <pavel@kernel.org>, "Rob Herring" <robh@kernel.org>, "Sebastian
- Reichel" <sre@kernel.org>, "Support Opensource"
- <support.opensource@diasemi.com>
-Subject: Re: [PATCH 08/14] mfd: remove unused aat2870 driver
-Message-ID: <20260912232047.19c4cb10@jic23-hlaptop>
-In-Reply-To: <11652e5e-053e-45b0-98a0-0c1cb2aeedc4@app.fastmail.com>
-References: <CAPVz0n0ryOns2sCJE_jFana9MVzwEj1QZuPEa8FNhGbHXnMB+A@mail.gmail.com>
-	<11652e5e-053e-45b0-98a0-0c1cb2aeedc4@app.fastmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TMhXzdm6"
+Received: by mail-qk2-f13.google.com with SMTP id d75a77b69052e-52fb76ef19aso13538411cf.2
+        for <linux-gpio@vger.kernel.org>; Sat, 12 Sep 2026 21:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789272202; x=1789877002; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=q0RPsG5ANJXum6qiiDCl2HWvCcb2vrljQ6NDoFmQS7k=;
+        b=TMhXzdm6RzpAgkxS+iTTvqN3G5kSltF00lFB5Kbi/uQR198rm9I0AR3iXHxhppdPDs
+         McHXclarAr14t49ntxVMGEkvpWBKPwtsC2u3zDE6gezdWZq8ja5FJ1X3OOaSBAtzlum+
+         HxutLO2DEmZM+6ZRcPK2oS1oKo1tNQ32jgK2ZJuURQEDWvqFsJafhUGVFJQ8UNKW6XKm
+         9AHa1lKrQmRjoB+gnH3go/BvzbPnyW5M4YKOrZyFkbKenk2/oIXRTI7PxdT6jezfayZu
+         Ip1RsZQ+Pm4wrfCJMJryenGrNSoAAPz7HBkKbp3mzNBHyV72NUBSpjNOLd095WHAASla
+         vjmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789272202; x=1789877002;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=q0RPsG5ANJXum6qiiDCl2HWvCcb2vrljQ6NDoFmQS7k=;
+        b=FBIg+4NadtUj9TfgE+Nx1Sh0n0LSXaFnZUG1EIFTgFfvQKc0EPGCR3+gPPNCAks/cp
+         BNc4Te76JgLdQT491U0CpuuNN51/9SY2z93lKUcMEjJy7pMgUWhu/j4ySq4w0ymgswHJ
+         ZwYKrtXrADuxwtlkxoQyDkL92lwKolVQ7wAEqFQ0VxqKNqQJi2SZCqL97moN4SBub9DW
+         UkkR9eeYDB/N31/tgtvfHfupXwzBSc0ghUWSYMV7ZYQeLD4z46WeyQkK2LZrE3eS8RAZ
+         8nlacwGaro4hktnVI5UGQQ4yZkguXiR/mkncaBFsxmkFP0O3tPHCgEGDhSpvA1Umeiro
+         FXUQ==
+X-Forwarded-Encrypted: i=1; AKwUvByhcHoQXhglTLRSSf93YRCFRbBOMg1vk6bta8uH9cgS217y+QUa7W+SZjol0OupHbLqChUUuy9aOzSy@vger.kernel.org
+X-Gm-Message-State: AFuF++kwAoDc+PTnLXeN+0ExhsNOvA+9O8N/kbs4XPC7pmC7KOCLP+jf
+	8WCQw971aCxtiX9LZW2WfhZxBUVUd6F0FNuwLfx8hSsiYSlKG7pzd9l0QwwFTPm/kA==
+X-Gm-Gg: AYBFou2bonFaoreDiYqaRjIaD+63aNA3E7yhjP0bgDeqdMi4n8mhw2VfExzTzmHOxFJ
+	ylT4DfyTi/6xw+mg1XxprpZyGsIbfYVOhMyGXMqM+ga5mGn0Y9uMpXp2NJKzmjqk6Jr7TeRHZQH
+	B7aTvhz1ycL0e3v1wu3IFCmlmcXQNZ/PeBisLFBJSwqOsoeJB8J+3NAMikpBsub6+wBWRRD0I7W
+	bCL1+RWOlt+MdBlGqNO/qkURbwqbdUUppmaK/8cSN20fu0G1ddIssxvN//CJsnPROburzs7tQPK
+	Sa0RUKc7nhk6oMIwJ2jAsOtxrzJ6yR8gOSOIxRgutGwWUN02W+kVBhMU0vGkYRMzxhZn4D/UU6x
+	4AQcpi2Q4i/d+hi2kqhVGI/5KlrL55elcD3ITe40oj4pz3MVlG46oUww6CnF4Ij8KFkLVXTFmMz
+	vBNNT+dywBjgnYCT/ZqZvecC2GGWKMBXXWPaMDp+qu7EjAGG0+G1MIISnUXw1AurVeP4Ik4zN+r
+	9DnWBzb9IS23il0ZN4FM12uqRGmrpftbfUNrR+43vvc/sDRQBOD8vTRHMYYnV594QWArHZJGjc7
+	wefYPsh/hjiNAp6peRkHjcQzWAlDnMg0dQ==
+X-Received: by 2002:a05:622a:507:b0:527:631:8d6 with SMTP id d75a77b69052e-530c859b38fmr160895371cf.25.1789272202056;
+        Sat, 12 Sep 2026 21:03:22 -0700 (PDT)
+Received: from localhost.localdomain ([104.39.73.78])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-530ca460a32sm62329021cf.9.2026.09.12.21.03.20
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sat, 12 Sep 2026 21:03:20 -0700 (PDT)
+From: Myeonghun Pak <mhun512@gmail.com>
+To: Tony Lindgren <tony@atomide.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Linus Walleij <linusw@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-omap@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Ijae Kim <ae878000@gmail.com>
+Subject: [PATCH] pinctrl: single: free the IRQ on domain creation failure
+Date: Sun, 13 Sep 2026 00:03:12 -0400
+Message-ID: <20260913040312.21966-1-mhun512@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 10 Sep 2026 20:14:15 +0200
-"Arnd Bergmann" <arnd@arndb.de> wrote:
+pcs_irq_init_chained_handler() requests a shared IRQ on affected SoCs, but
+its domain creation failure path only removes a chained handler. That does
+not release the action installed by request_irq(). The probe can continue
+without interrupt support while leaving the shared IRQ action registered.
 
-> On Thu, Sep 10, 2026, at 18:40, Svyatoslav Ryhel wrote:
-> > __ 
-> > Hello Arnd! May you please spare AAT2870 from being removed? I have a 
-> > device which uses aat2870 (LG Optimus 2X P990 Tegra 2, not upstreamed 
-> > yet, but in process as well) and atm I am working on converting this 
-> > driver to use OF. Thank you!  
-> 
-> Sure, I have removed this patch from my series now.
-> 
-> > P. S. If you are planning to remove more old drivers, please CC me in 
-> > since I may be interested in some additional driver upgrades for 
-> > devices I own.  
-> 
-> Please have a look at
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/log/?h=board-remove-7.3
-> 
-> I tried to be careful about figuring out exactly which drivers are
-> unused, but I'm sure there are still a few false positive and false
-> negative ones in there. I've added the current list of driver files below,
-> let me know if you see something that shouldn't be there.
-Hi Arnd
+Use pcs_irq_free() to undo the appropriate type of handler registration.
+At this point pcs->domain is NULL, so the helper only releases the parent
+IRQ handler. Then mark the IRQ invalid, as the other initialization error
+paths already do, to prevent another release from a later probe unwind or
+remove.
 
-For I2C and SPI at least, there doesn't need to be explicit
-device tree support as long as they have defaults when platform
-data isn't there. Those two buses will happily bind based on
-a dt-compatible and their i2c_device_id or spi_device_id tables
-for example.
+This issue was identified during our ongoing static-analysis research while
+reviewing kernel code.
 
-So unless they fail to probe (some might?) we don't have
-a clear signal on whether they are in use via DT or not.
+Fixes: 3e6cee1786a1 ("pinctrl: single: Add support for wake-up interrupts")
+Cc: stable@vger.kernel.org
+Assisted-by: OpenAI:GPT-5.6
+Co-developed-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Ijae Kim <ae878000@gmail.com>
+Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
+---
+ drivers/pinctrl/pinctrl-single.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-For vast majority of IIO drivers we don't have an upstream
-DTS as there is no clear motivation for anyone to upstream
-the dts for a random industrial control board or similar.
-
-> drivers/iio/adc/ad7266.c
-No to dropping this.
-
-Has fallbacks and should bind just fine  No one ever
-bothered adding an of_device_id table because it isn't
-needed. Fine to rip out the platform data support as nothing is
-using that.
-
-This is a production part that is likely being used in new designs.
-
-> drivers/iio/adc/ad7791.c
-No to dropping this one.
-
-I'm fine with ripping out the platform data but this again
-has defaults and may well be in use via DT. Antoniu from
-Analog was doing some cleanup on this recently so I'd guess
-they probably still at least somewhat care and some of the
-supported parts are still in production (e.g. the AD7788)
-
-> drivers/iio/adc/ad7793.c
-Maybe. Analog devices ack needed.
-
-Production part but this one indeed fails to probe.  Analog
-folk, do you want to fix this one up?
-
-> drivers/iio/adc/ad7887.c
-No to dropping this.
-
-Production part - should work fine with defaults in driver.
-Could like the others drop the platform data handling.
-
-> drivers/iio/adc/lp8788_adc.c
-Probably
-
-Sub driver of an MFD.  I'm fine with that going if we know
-the mfd is no longer in use.
-
-> drivers/iio/adc/lpc18xx_adc.c
-> drivers/iio/dac/lpc18xx_dac.c
-Probably
-
-Likewise these two.
-
-> drivers/iio/frequency/ad9523.c
-Maybe. Analog Devices ack needed.
-
-Fails to probe without platform data and marked not recomended
-for new designs. If we get an Ack from Analog devices folk
-I'm fine with this one going away.
-
-Jonathan
-
+diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
+index 4d5f85b7e..e0eb7240a 100644
+--- a/drivers/pinctrl/pinctrl-single.c
++++ b/drivers/pinctrl/pinctrl-single.c
+@@ -1628,7 +1628,8 @@ static int pcs_irq_init_chained_handler(struct pcs_device *pcs,
+ 					       &pcs_irqdomain_ops,
+ 					       pcs_soc);
+ 	if (!pcs->domain) {
+-		irq_set_chained_handler(pcs_soc->irq, NULL);
++		pcs_irq_free(pcs);
++		pcs_soc->irq = -1;
+ 		return -EINVAL;
+ 	}
+ 
