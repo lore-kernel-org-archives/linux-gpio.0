@@ -1,28 +1,28 @@
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010029.outbound.protection.outlook.com [52.101.228.29])
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011000.outbound.protection.outlook.com [40.107.74.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C9A3F9F3B;
-	Sun, 13 Sep 2026 19:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735D4371D1F;
+	Sun, 13 Sep 2026 19:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.0
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789329497; cv=fail; b=b6ARvcLhLHwvLC4W6qN6yemcp9mCqFY7rBSUG5fHtCZXH10mriR4EJZcYjJvML+0RiXfMQWoVAtzRAhUnpX2e3V9T3S70zDlirpe4r1TXxCB20JVP9l3k0k87nWl1BjOgikiGD+HRajwHsBUjV197klpJEzfZ0WqoYx8AwI3A8I=
+	t=1789329500; cv=fail; b=JiGBwRJhGHUXY29Khr6eBm8IVFCAAo7/7+0XiP8OXVUK3Eq1e+oq0k1lMhf+/yRnwPq6Sx4+YyyAG7WMPH0tN5py2QKPFR/mi019ke9Jo6BA/jV664LmdHZY9kAWaARhK5YGjqsZ6n+13bspPgo3TzE1w0N7NSbGaGh9RCuynnU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789329497; c=relaxed/simple;
-	bh=16rVZZFKH0FtNaQsPENJFgXGWs/qvJX9bF8ItOiu/Og=;
+	s=arc-20240116; t=1789329500; c=relaxed/simple;
+	bh=4pxzAZlZHnbJ3Mg3iGhMnv9OwVtTV3SQAymDSaeYbOI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AONMy28RMZURZDV24LfMiUMC/AoAheXJPXGOLgv2mwUmyq43nph0eniod5ncKPioLzjosHfV6+U4EsZOaJJyrBbdt/BrQ977gqIJlL8qK1TR9G0nXLTn7vg0R6I985/QzmZhcQgAC9Rmh73qaXnPegSzGN6DIRFjLuKz1tYPWV0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=hlks9dEx; arc=fail smtp.client-ip=52.101.228.29
+	 MIME-Version:Content-Type; b=U4gZJhzzlCsr3bgNKOS/u8OSHP+P7UCm4oBwqQYWQ2ELoR4cHiEJcfxUfq1wCQ8SgqzfE6ZjchqYQPnMfCPD3M4FsGsvqXG8zulSUq9L9okw73SHuIlNI0B6UTmQTOvNLglE9EbWtxDe5mMBsWBjFNg802euSKtU3k+1OcKZ+0c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=h4/Jgy8a; arc=fail smtp.client-ip=40.107.74.0
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="hlks9dEx"
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="h4/Jgy8a"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ESr4UDNYY1OlKwe+md3HG4c9ylkXdXtjZyP+EWdP3ItGwyWnzTWFUIT/BEmuR5NKjGNVrEnPufCrVrpsvrOjcfqHYO0MnykkhCeivFjghpPgsIJW4pKN4zqK5ng3oh4UsQ4E4HsxWWKPX9pqqU5ea6aLqIsp8b9zYx+lFWbGqzQhP9Bw5xYVNuqdx3z59C1rA2Yws2SuSJmHUAt6dtFuKqGDW/UYTFWIdIwXg6xN+HUrE/9ysE2miF6Atw2JDd24e/cbxVAe1Y4b0SPZcuGIuCP6O0G6SlEFPI3iOF6Tmzzfwl+jS7VvKZYbe3RSMn8oFeQDRTu+17y4M8nTaQ041A==
+ b=oG2yRz5s0w9DX1baqkSWLs1NdtIjauk8mRoz3xSXFDdfbZfnOthdSVnWqzNOcwFWujhSgFthn9uzOEu6vfMf7eAtVZ23OwAfn2n9dipgRjQkWmyXGqXQlCWBKT9hvbppeLSZGcp22TwM9qQ1heoMugWTmIKJs/PrDG6Qa0xbnviLYELF0v68FV5+d0e6zu55Kx39/AUgOciSusE/aS99TlVI4zrmoIhPabhEJjkWCqtP9ex9mClWiiwUc3aDTiAfYtByzvv2BxUJvHmL11ljxR5YjOuXSYsJGX3vkbDio6qj1rxFOu83zBmTGF0u3DFhNJ/EJJHwjx2BfJNSBBFJsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BHYjWSJPgfb4vu0RnSY5OkJRD31g93tK8aA1IYsDMB8=;
- b=B390fmZiAR5aQWuFtSpBXQ7IKUP0DiCA2cD53uHAyFelwSgUw9ChZ1lpTLTlex8NUBLwgw+BdEC7n6hRMX6On6ihwM2j/uRMoS7rInA0uHKJUgSudQ+i+/nI4A74UWySr7Qm44AbkvRZn76sgZRtGk5W+6RZndOO0pLO+jNENoxLxosC0T8M+3EC7rHVmdduySNB1ibAihaQH5v0UrxY7e/PqZm8JIeKAgQIlB1/UQ+gMnDyVkhN7Y9HLrdurkkvUrJgmeuV8qzx6a30i/tMo2NwPc0uiyTE8ngGOxMG0kYTwq9/HFArPjIAFhaE8Y8KhsIlK2D5arc9lrc2aGNkeA==
+ bh=7cqXP860+wwnRl4zPm2QtmsbhfhTPbASOgWabWGvyXw=;
+ b=Ypc0VNDXMgPa8XlGhU7PEkn8CkACU4GC8NF9Sb2wyb7p1CqxjSx2w+nnNH82cepEcI/xeUUBZd9pNT2E+Zv+CSSr6Y/8u9Xyx1iFZLZ3Sah8TpnpwXRtessSV8VqSNhtCMI9+e+DQqo4VWHYrKa4yzUGibfIanT4vZ/R7qC3yamBCoCm5d8jofo8KL8Hm+urfkBUu92ips0ufNxhZNTvjilMXQZLbYtIXqT+I1GTtxVBoL6jEjX4bbD3TXtOay4pVdjPLriy+ACwP4QmbuOGvYvxqpU113h1dnl5eTyqSVh96tBwWsQfSgBrCtWFpW+B7yVyuUfEOANH6rhefjO/kw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  8.62.32.50) smtp.rcpttodomain=glider.be smtp.mailfrom=renesas.com; dmarc=pass
  (p=none sp=none pct=100) action=none header.from=renesas.com; dkim=none
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BHYjWSJPgfb4vu0RnSY5OkJRD31g93tK8aA1IYsDMB8=;
- b=hlks9dEx+dLNEdNnVYG7e5gKYte9SzVcUeUDLWjs74PAbHQgOIpilI+YSVTyTIeQJEcBbH1vGFT/UkCgvny5ioJYCnakcvlBPm75kJdwcRwmHnwm3mChFnxQoyayufITUu+XZ5fAMdxIBuhw9oM0sGx58+/G20xQpkxyB847Okg=
-Received: from TYCP286CA0209.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:385::12)
- by OS9PR01MB15774.jpnprd01.prod.outlook.com (2603:1096:604:3d5::14) with
+ bh=7cqXP860+wwnRl4zPm2QtmsbhfhTPbASOgWabWGvyXw=;
+ b=h4/Jgy8aPVSEF1wEmyllci2utaQJhJxpN8vJULtiP81fNjltGFbwva7iXxrH98uZNXPqIoA5UP02tzJNrzCEx/G9YYkf0khDtFNbjQomZXGlEZkqnbAyE5Hs8+GMnQjSp15Tzg9a9Yf9E6Vkb52nsuQQux8P0UzfROah8KQNx4Y=
+Received: from TYCP286CA0200.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:385::6)
+ by TYYPR01MB13055.jpnprd01.prod.outlook.com (2603:1096:405:1c6::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.12; Sun, 13 Sep
- 2026 19:58:06 +0000
+ 2026 19:58:08 +0000
 Received: from TYO1EPF00005026.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:385:cafe::23) by TYCP286CA0209.outlook.office365.com
- (2603:1096:400:385::12) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:1096:400:385:cafe::43) by TYCP286CA0200.outlook.office365.com
+ (2603:1096:400:385::6) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.12 via Frontend Transport; Sun,
- 13 Sep 2026 19:58:06 +0000
+ 13 Sep 2026 19:58:08 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.62.32.50)
  smtp.mailfrom=renesas.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=renesas.com;
@@ -51,10 +51,10 @@ Received-SPF: Pass (protection.outlook.com: domain of renesas.com designates
 Received: from ejcrelay004p.adwin.renesas.com (8.62.32.50) by
  TYO1EPF00005026.mail.protection.outlook.com (10.167.240.23) with Microsoft
  SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.7
- via Frontend Transport; Sun, 13 Sep 2026 19:58:05 +0000
+ via Frontend Transport; Sun, 13 Sep 2026 19:58:08 +0000
 Received: from demon-pc.localdomain (DEU-5CG5050QD0.adwin.renesas.com [10.226.92.2])
-	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id E2091300009E;
-	Mon, 14 Sep 2026 04:58:02 +0900 (JST)
+	by ejcrelay004p.adwin.renesas.com (Postfix) with ESMTP id 8336530000A8;
+	Mon, 14 Sep 2026 04:58:06 +0900 (JST)
 From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Linus Walleij <linusw@kernel.org>,
@@ -63,9 +63,9 @@ To: Geert Uytterhoeven <geert+renesas@glider.be>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/5] pinctrl: renesas: rzt2h: reuse helpers
-Date: Sun, 13 Sep 2026 22:56:53 +0300
-Message-ID: <20260913195654.3371385-5-cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH v3 5/5] pinctrl: renesas: rzt2h: add a helper for reading PFC
+Date: Sun, 13 Sep 2026 22:56:54 +0300
+Message-ID: <20260913195654.3371385-6-cosmin-gabriel.tanislav.xa@renesas.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260913195654.3371385-1-cosmin-gabriel.tanislav.xa@renesas.com>
 References: <20260913195654.3371385-1-cosmin-gabriel.tanislav.xa@renesas.com>
@@ -78,134 +78,82 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYO1EPF00005026:EE_|OS9PR01MB15774:EE_
+X-MS-TrafficTypeDiagnostic: TYO1EPF00005026:EE_|TYYPR01MB13055:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 7b577319-83d1-47e7-b4af-08df11d1535a
+X-MS-Office365-Filtering-Correlation-Id: 98739d7e-bd60-4398-a966-08df11d15564
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|23010399003|36860700016|376014|10067099003|3023799007|22082099003|18002099003|56012099006|11063799006;
+	BCL:0;ARA:13230040|23010399003|82310400026|1800799024|376014|36860700016|10067099003|22082099003|18002099003|56012099006|11063799006;
 X-Microsoft-Antispam-Message-Info:
-	EIWUK1mU3JwJjb8DCL7li4dtMo9TYarkY+NtXBQr6j/Cl7W2einuCdOvu08vFJaMcJkJXolydn8k2QVnz4mts+GuljZsk57kE0VwteuW7YIxZ8gpp4gTtbVx0f77bJ2/6x7Kk08UAQK9CqBFTyWqzaQbtmqmEGPFZeFJJ/qyCoHPU/xvE2fLxwr3Jf4g2pZO0UG1oUoVm95XB0ZvM0IkCYlt76erdoHFx7zH/i1umk4lbVtAyx1tVFah1VhdjqyFrMTsFtJ2nUy686Z3tmD4T8/DalEYhPpWOHvOzNthC1shXjQpePn2i1qdllyEjjnD5EG1wjZYWyTUBRbpV4VqFbgwLD4tGtVsB5JwBkmR52oxWSeOBtQrQYtaSSDzqL0eJoVQzSYNynTS2ci8/zCznW2zVcc3GJsP+Zm1d+ppbrvc85H8iwVsAzybFdo9LehspQAcyg/75ffqfUZZ2ucFGhBSqZWJEnui1d6uSqLfnEWpNXcJX0dWhdNv6vmbwjGg42JjyP+gn8DgRQxDMsLTdu9NehtJDDsJslEmymaH9yEnTZeAkzQyb6DgXzG5XPqx/9Nt/wmaTKcEFKrkiZ5h4B8z8FZL8GOLLPN583inzFW6JQC8O0vmz3mmE7d6P4tN3XtSbGCKHszGB/3lnm/J3VJiMzES8bB3pzE4oah0himH/dX8ziSysYk/Bc9tdGHTOiZs3d2pMYhFychOJfKEyw==
+	GfOZqMC1dv1gE0l34fOWjGX1MpuzHiTgwXHhYl3IYXmiJVg8d5xn5nUeZ6vm35bHomvHfi+DUdfCpNd86fyze1b79N/zYL7fu0QSLB8boOVPp4Qzg5crL1qaQt6FKAqbbH3tG93gebQS4cTKrvTi8QwLi48Zthze+q4Y2JAZtAZcjQtoOsPiEPNVFylaDo38lGorp9YtsXPNx30j0AMCe8/ZU1VPj8LgoKVPUJJVxvmyOiCtMsj04zi3XfpD2jGJ01hwteLToyFGwBojJFi6bKjsOVGTX4Tf/qi+NZ9DxgiJ2YTFEb6w5VnzAbk7dqQvn94FxJ82fhphYEgjJX5+l2jS/jXX8VlQ38zuly1gHbVtglkaLsbQC8NVH/cst68vXaSduWblM6SuZZatUpHgLhtUVf5MOYxzW53tSzGvacL93ZuNH0yXvXU7bsh4hU1cEF4zWqHt2OTR8J+EADWh9F4u5NOEPHItyLMEN9oSdKh4cx9pSq6S4LpAOTCeTkN0jPV0YKcwic+hQaP2kSEODYLdq4FrgRc3tciHglfuli29X8csbFIn8SUDHzFZJPcFYy5lPfpCZ1k6RHW/bhX4yGn7jkSkodpMl079dGnODi+d9w6Nv+5jIuMXmmA1hXoSULiFNTEnlE2dOeAenZTQg6gBFHSX4rnsd4XKwueLYzE2vXM7gluYKoZ9GkvBN47pp6Olrq3/+Z0Qf+iS/Dg/YQ==
 X-Forefront-Antispam-Report:
-	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(23010399003)(36860700016)(376014)(10067099003)(3023799007)(22082099003)(18002099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+	CIP:8.62.32.50;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ejcrelay004p.adwin.renesas.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(82310400026)(1800799024)(376014)(36860700016)(10067099003)(22082099003)(18002099003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	ewmODWTaQH6qf0EBr8daGb9V1oCUaqTXY3r0jLdZFtxnIhWijP1ynTYYUfYWw86YVXku74y83Ifz70QgEpCIpKAT7kvdjSF5tPzqtfliGZOd2aXGdMnAgXCHteVdqFu3kxouyT2vi37XeQs7hFXFhsnnasQCSmLKFoMlp5l0fTQa8urxjOtDbInWMneVKMC4L57DLxa/lKqRKoE+LZLLqC/LLlEGD2rXhGaDV4qsjCEMP5x0Xb+jJHTA00spC31f3mm7FeT5ikGk1nv3UBrMiPQUjEjr84WMu6HbtvimKKBw9TuClVjZX8wSHrk9w9jid4xYK396cGSyxrk1i+QfgEaR9IsQh0Tv3aGNcbdPXKf5DDL2Z6aC+th6ifbj83BqF9WZ8MkJJZQz+04EuoXI8iedBytisVUFqLg61yWIEGg/Xk2+9G7EtfOQVvjSYQiA
+	a9o3OPyZmarRXhNH7vZINv7p3w0gstOmGr2zeA14E+yJzkfRynLXHz1FNfeB+uBGDUNDmVHCA0WIE0KtMFfaU61Hv7uv7+jWZWoN+pmTSAkurlW/8pbkyppTFJuR/IdAewQ4+prBQLmu1IFRPL1JFkuKqZhMSzQwJJn0W/tI5Lxjd3VUMr0I2dtBkqBmah6uDJRWtYI81pNVhvKiDgd3bBiO2Oja6GOYPPEDhv89gM/jZ2/WFsAVdF3IwRkjKKSQClEbJOP28FVYzHVZfDX51rhTBXI1BkzmAuXMIubtqRuATq50lo8BoV40ku8jUtHqhHzQUpHMsYtce3UbkrJQ4mtDP5Zt2RwQ1POdqHj4Tdi0kyWYwfD5p6tIulD4sfx1UTSN53z5Ssk1j5yBlrGk5hky37QrFFDX7QRrqevLhm6d+ymCOGLHrqAbcmV+tqu1
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2026 19:58:05.3698
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2026 19:58:08.7903
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b577319-83d1-47e7-b4af-08df11d1535a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98739d7e-bd60-4398-a966-08df11d15564
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=53d82571-da19-47e4-9cb4-625a166a4a2a;Ip=[8.62.32.50];Helo=[ejcrelay004p.adwin.renesas.com]
 X-MS-Exchange-CrossTenant-AuthSource: TYO1EPF00005026.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB15774
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB13055
 
-The PMCm peripheral-mode test, the PINm input read, the PMm write, and
-the PMm read are open-coded in several places.
+Introduce a rzt2h_pin_read_pfc() helper and replace the open-coded
+implementation inside rzt2h_gpio_get_direction() to simplify the code.
 
-Reuse the already existing helpers.
+While at it, use field_get() with PFC_PIN_MASK to avoid the manual shift
+and mask.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 ---
 
 V3:
- * move the PFC read helper reusal to a later patch
+ * new patch
 
-V2:
- * pick up Geert's Reviewed-by
-
- drivers/pinctrl/renesas/pinctrl-rzt2h.c | 34 +++++++++----------------
- 1 file changed, 12 insertions(+), 22 deletions(-)
+ drivers/pinctrl/renesas/pinctrl-rzt2h.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/pinctrl-rzt2h.c b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-index 9d7e4cba85c9..80a581fdef37 100644
+index 80a581fdef37..4872a208e0c3 100644
 --- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
 +++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-@@ -223,7 +223,7 @@ static void rzt2h_pinctrl_set_pfc_mode(struct rzt2h_pinctrl *pctrl,
- 
- 	reg64 = rzt2h_pinctrl_readq(pctrl, port, PFC(port));
- 	/* Check if pin is already configured to the desired function */
--	if ((rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(pin)) &&
-+	if (rzt2h_pin_mode_is_peripheral(pctrl, port, pin) &&
- 	    field_get(PFC_PIN_MASK(pin), reg64) == func)
- 		return;
- 
-@@ -777,15 +777,7 @@ static int rzt2h_gpio_request(struct gpio_chip *chip, unsigned int offset)
- static void rzt2h_gpio_set_direction(struct rzt2h_pinctrl *pctrl, u32 port,
- 				     u8 bit, bool output)
- {
--	u16 reg;
--
--	guard(raw_spinlock_irqsave)(&pctrl->lock);
--
--	reg = rzt2h_pinctrl_readw(pctrl, port, PM(port));
--	reg &= ~PM_PIN_MASK(bit);
--
--	reg |= (output ? PM_OUTPUT : PM_INPUT) << (bit * 2);
--	rzt2h_pinctrl_writew(pctrl, port, reg, PM(port));
-+	rzt2h_pin_write_pm(pctrl, port, bit, output ? PM_OUTPUT : PM_INPUT);
+@@ -175,6 +175,13 @@ static bool rzt2h_pin_mode_is_peripheral(struct rzt2h_pinctrl *pctrl, u8 port, u
+ 	return rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(bit);
  }
  
- static int rzt2h_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
-@@ -794,8 +786,8 @@ static int rzt2h_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 	u8 port = RZT2H_PIN_ID_TO_PORT(offset);
- 	u8 bit = RZT2H_PIN_ID_TO_PIN(offset);
- 	u64 reg64;
--	u16 reg;
- 	int ret;
-+	u8 pm;
- 
- 	ret = rzt2h_validate_pin(pctrl, offset);
- 	if (ret)
-@@ -803,7 +795,7 @@ static int rzt2h_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 
- 	guard(raw_spinlock_irqsave)(&pctrl->lock);
- 
--	if (rzt2h_pinctrl_readb(pctrl, port, PMC(port)) & BIT(bit)) {
-+	if (rzt2h_pin_mode_is_peripheral(pctrl, port, bit)) {
- 		/*
- 		 * When a GPIO is being requested as an IRQ, the pinctrl
- 		 * framework expects to be able to read the GPIO's direction.
-@@ -821,11 +813,10 @@ static int rzt2h_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 		return -EINVAL;
- 	}
- 
--	reg = rzt2h_pinctrl_readw(pctrl, port, PM(port));
--	reg = (reg >> (bit * 2)) & PM_MASK;
--	if (reg & PM_OUTPUT)
-+	pm = rzt2h_pin_read_pm(pctrl, port, bit);
-+	if (pm & PM_OUTPUT)
- 		return GPIO_LINE_DIRECTION_OUT;
--	if (reg & PM_INPUT)
-+	if (pm & PM_INPUT)
- 		return GPIO_LINE_DIRECTION_IN;
- 
- 	return -EINVAL;
-@@ -855,16 +846,15 @@ static int rzt2h_gpio_get(struct gpio_chip *chip, unsigned int offset)
++static u8 rzt2h_pin_read_pfc(struct rzt2h_pinctrl *pctrl, u8 port, u8 pin)
++{
++	u64 reg64 = rzt2h_pinctrl_readq(pctrl, port, PFC(port));
++
++	return field_get(PFC_PIN_MASK(pin), reg64);
++}
++
+ static bool rzt2h_pin_read_input(struct rzt2h_pinctrl *pctrl, u8 port, u8 bit)
+ {
+ 	return rzt2h_pinctrl_readb(pctrl, port, PIN(port)) & BIT(bit);
+@@ -785,7 +792,6 @@ static int rzt2h_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
  	struct rzt2h_pinctrl *pctrl = gpiochip_get_data(chip);
  	u8 port = RZT2H_PIN_ID_TO_PORT(offset);
  	u8 bit = RZT2H_PIN_ID_TO_PIN(offset);
--	u16 reg;
-+	u8 pm;
+-	u64 reg64;
+ 	int ret;
+ 	u8 pm;
  
- 	if (rzt2h_pin_mode_is_peripheral(pctrl, port, bit))
- 		return rzt2h_pin_read_input(pctrl, port, bit);
+@@ -805,9 +811,7 @@ static int rzt2h_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+ 		 * called to enable the IRQ function.
+ 		 * Default to input direction for IRQ function.
+ 		 */
+-		reg64 = rzt2h_pinctrl_readq(pctrl, port, PFC(port));
+-		reg64 = (reg64 >> (bit * 8)) & PFC_MASK;
+-		if (reg64 == PFC_FUNC_INTERRUPT)
++		if (rzt2h_pin_read_pfc(pctrl, port, bit) == PFC_FUNC_INTERRUPT)
+ 			return GPIO_LINE_DIRECTION_IN;
  
--	reg = rzt2h_pinctrl_readw(pctrl, port, PM(port));
--	reg = (reg >> (bit * 2)) & PM_MASK;
--	if (reg & PM_INPUT)
--		return !!(rzt2h_pinctrl_readb(pctrl, port, PIN(port)) & BIT(bit));
--	if (reg & PM_OUTPUT)
-+	pm = rzt2h_pin_read_pm(pctrl, port, bit);
-+	if (pm & PM_INPUT)
-+		return rzt2h_pin_read_input(pctrl, port, bit);
-+	if (pm & PM_OUTPUT)
- 		return !!(rzt2h_pinctrl_readb(pctrl, port, P(port)) & BIT(bit));
- 
- 	return -EINVAL;
+ 		return -EINVAL;
 -- 
 2.55.0
