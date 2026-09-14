@@ -1,204 +1,139 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D14C46AA8C
-	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 12:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1156246C837
+	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 13:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789389795; cv=none; b=O/gNkciO9jUr81LMLVlsBLxEbg+7C/GF0WV7jesAXi2HwF92yrkLeSBtaHs+w9YJOJeED4cpjN/xCJ5fwKOCWMpc7BGOD20dKv/P9Bvj7Erk3k6LBgv3D16wLQhlxrY0Z5HLnPhol4QmOMESY7ld6Mq5O06qHp6MPrp7c3R5jFM=
+	t=1789391466; cv=none; b=NrCJgGPQmB9YfnLmBaP8/usFZV6u1OGdmRfKLxhm79/XHsz0UjEJXTFXC6u/zQpR67atntAdlHuJr6TCZrVnkNbpmkefGmUpGFJRvDAPMbm14bMwZmb7gmyDhijhPk5nMCpdaPaOVNXuKkiw2ag5C3MxfXNto5Jr5wVCXiSl4+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789389795; c=relaxed/simple;
-	bh=DyJgJINGrj/Oi16BQyI0xHNXSqfTphHOzT8kolkMIn4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WTC+afB9R85OhqWsKT7/S+DPgzfbqOY98JJnzFcCWJC/guDiTGIDEiQFJZNxxohZM4yoD3q87YyZt/uIDJAhVw16u1kDg35P5bcwxGbN4b8+8q5RyTVS1Kg71859/k+mi1GMyGCr21bWLTI0sRh0QpWec45zrpKnR2g4BWsCEjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FMyEGFpi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1789391466; c=relaxed/simple;
+	bh=iwfdzr2iy+sC6+czneLHwr8xAhX/X+iDimNm1BSeY5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hsKVnHw4jFWRMzAelHxeJaLindHKcXp4FeTLmrNohIiT9F3rVsp1oZG0Kf3CHNBTYxUvelr2DwPYBYgmniu+1YwmkBKVrjkLP9U5x1juKWLYU0lKuAtuWeEVCilwBDwnfd6Qi7KktGYDBz8s+ZzuzhrDV+LQVcHxDCMhEpuMd+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nVHq8lnG; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FMyEGFpi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1789389791;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yh4LTMrVgvTWawuhXeGz+7PzkeHy1e2QB0EjAsyshR4=;
-	b=FMyEGFpiLVe5LDgX1qNKWk3HuPRBsGRyGZY+kJPNvwckx2/fFHU4YFo6kF/h2ClYlMFckW
-	G8fcTRp57X1F2wxB0TFQFSxrlj9CMVcITZ2JEzyug8YQkvbwsPtQBhTWI+9C9v59GuR3cu
-	jpT39YNuOuSMIspv4XsKHq0JvvD4mHI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-269-kSfBeXNOMre5BB8CfOjCmw-1; Mon,
- 14 Sep 2026 08:43:10 -0400
-X-MC-Unique: kSfBeXNOMre5BB8CfOjCmw-1
-X-Mimecast-MFC-AGG-ID: kSfBeXNOMre5BB8CfOjCmw_1789389788
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 78692180062D;
-	Mon, 14 Sep 2026 12:43:08 +0000 (UTC)
-Received: from aesteve-thinkpadp1gen8.rmtes.csb (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
-	by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 57E2F426;
-	Mon, 14 Sep 2026 12:42:56 +0000 (UTC)
-From: Albert Esteve <aesteve@redhat.com>
-Date: Mon, 14 Sep 2026 14:41:56 +0200
-Subject: [PATCH 3/3] firmware: qcom: scm: drop the __scm global
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVHq8lnG"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-c2949ed8cc3so530897666b.2
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 06:11:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789391462; x=1789996262; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=rHHo4dn4rFwPjLFZeXv9ABL/gp9nPfJCU+f+sXBzG+Y=;
+        b=nVHq8lnGBWVdBIdc67fVSPaF9/cTT9t83+WwvFjCZ3e2vWzufeOFAFVzjl8BQfIOsU
+         CRfMhurFa0ylgZJz5eLBuOgzgWQEaC9rY2FNq0ZrStS2+N7U+g19uKbja1+6Fqn+Sa4i
+         hnCbFeHPG0r2dqbgPEtMrcH5v6gA9qaV/7MXUON3EyLpUgxePSovlba9oZP3+KjDZT1Y
+         McY+xoXtLVziazvga6QWylC8adQuQIdaz373IZLIsofvg2/JVKaxkfCz7uY0ypXTFvxw
+         dimuIr3vDJ2XfZjxov0ssqBLtwdHAzuzetldEkVd1dIbo6lxpAQIHRnpLQ4skyJ19Ptr
+         zo1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1789391462; x=1789996262;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=rHHo4dn4rFwPjLFZeXv9ABL/gp9nPfJCU+f+sXBzG+Y=;
+        b=rQph4TLjVtO5RxpEwp6SXvlNfdfnTC67GcWvunRW5+8BZSd5bWVxqfyxfUQiXbKdXl
+         g0+Zapo90Lf6I1aYVgOIsj/lAOd01o80XDWCdIkwkRXR89DmVj7W3IKKRHDP4yyvi8oY
+         y5OLupaB210pV7ouEEXshtAfqIPfznfYY/4h5Zj2CjHvnBpjWiIUUjHJJftGL9W5u0L1
+         DjhACTflXLrQD6Wh3ml1LNYHKKAP78tgKavwiX5DKHLjIN0nmejtCNVW0M7CJxaF7HZP
+         XRx5wcVc7e+iFycxZ0gT7OqRyY/0XJXhcHLS9+9OgqrvxVV7IttDoUdZSYXO/p6fVKgB
+         /o5Q==
+X-Forwarded-Encrypted: i=1; AKwUvBx9LGxZ+FQEh37e7+16XMapetfrkRrHv1osDsLvM91aOSoz1uNqyXalsOojPy8CxnmUGtPHX4LyznBW@vger.kernel.org
+X-Gm-Message-State: AFuF++mnnSpx8DCQcL/+xGyRP7xs3UzZh8BX8/lpF73Tk2BbKVQmpSDN
+	NdmSZUWv1pJE+LlIWhUgz3JW7HsEYR0EupDqbNTQtNlIfBM0+bdl/0DE
+X-Gm-Gg: AYBFou2wQJVKj5+rnF6/SJO5T558WRudgqpta5VhDg6S8xjsGin8DQSpS7tB+mVYWdD
+	siZ1bq+rYfpF1uDN9fVTIClYf+KQAoNxngWSvgj6V+DkKlG1M025FZvIcqpgUqBnjfXNVmiYLjG
+	690bZdtmZluLtdLubMAkKLIzYCXn30swvZ+rKr4kYFVP9UJT67RNsXPzZEVCc4eyucLiQ7CNK+r
+	bmuprNrZKsJHB/3afuaOhgZeK6FMTYp8X/yMvdI5faAp5fyydQglfiB+OEU94D3Si8/uDiyC7Im
+	hhj2LmLSLzZetkJ2zhlQeqOhBcoOYn+9sPUFeHJ4ic8tMDJjFYdDku6xA+zyhn3Q3plhZhj9IQs
+	FSrAbOeNJPA0WxkPpoFJ5fcemhWID4uKKM9JJR6Lne1ctM+wyZ9vVlAARIqWKC/bdvU+zEiEqGf
+	XGHjmFdqFOXhX82AWjwo3pD7G/adV9tVMHNg/mJuDQxZpfvCgVrTSeZxeTotiCbnW8qEHndV9je
+	g357w==
+X-Received: by 2002:a17:907:f497:b0:c26:19de:912c with SMTP id a640c23a62f3a-c29b86f1102mr156986966b.31.1789391461783;
+        Mon, 14 Sep 2026 06:11:01 -0700 (PDT)
+Received: from localhost ([2c0f:3d00:6be:8900:ce5e:9212:ea4b:f30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2966021ae8sm429403566b.22.2026.09.14.06.11.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Sep 2026 06:11:00 -0700 (PDT)
+Date: Mon, 14 Sep 2026 16:10:57 +0300
+From: Dan Carpenter <error27@gmail.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Ceclan Dumitru <mitrutzceclan@gmail.com>, dumitru.ceclan@analog.com,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Julien Massot <julien.massot@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-gpio@vger.kernel.org,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Martin Hecht <Martin.Hecht@avnet.eu>,
+	Andrian Suciu <Adrian.Suciu@analog.com>,
+	Cosmin Tanislav <demonsingur@gmail.com>,
+	Vivekananda Dayananda <vivekana@amd.com>,
+	Cory Keitz <ckeitz@amazon.com>
+Subject: Re: [PATCH v16 00/22] media: i2c: add Maxim GMSL2/3 serializer and
+ deserializer drivers
+Message-ID: <aqfyYSagcejWb4xD@stanley.mountain>
+References: <20260831-gmsl2-3_serdes-v16-0-4fa6e08bb514@analog.com>
+ <apqGlTiybdvQX3Ao@kekkonen.localdomain>
+ <eff6fe78-cc4b-4192-93ed-53a738fc3c3a@gmail.com>
+ <aqU5QFGmYlCtbdiE@kekkonen.localdomain>
+ <CANiDSCv=cwm=aHLfO_ccPfc-XyK3gS8Y+8DZpbb3gcXX0n8mqQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260914-scm-device-api-v1-3-3573e2596c51@redhat.com>
-References: <20260914-scm-device-api-v1-0-3573e2596c51@redhat.com>
-In-Reply-To: <20260914-scm-device-api-v1-0-3573e2596c51@redhat.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Russell King <linux@armlinux.org.uk>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@kernel.org>, 
- Christian Loehle <christian.loehle@arm.com>, 
- Maximilian Luz <luzmaximilian@gmail.com>, 
- Bartosz Golaszewski <brgl@kernel.org>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
- Akhil P Oommen <akhilpo@oss.qualcomm.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Abhinav Kumar <abhinav.kumar@linux.dev>, 
- Jessica Zhang <jesszhan0024@gmail.com>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
- "Joerg Roedel (AMD)" <joro@8bytes.org>, Thomas Gleixner <tglx@kernel.org>, 
- Radu Rendec <radu@rendec.net>, 
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, 
- Bryan O'Donoghue <bod@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>, Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jeff Johnson <jjohnson@kernel.org>, Linus Walleij <linusw@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>, 
- Jens Wiklander <jenswi@kernel.org>, Sumit Garg <sumit.garg@kernel.org>, 
- Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
- Brian Norris <briannorris@chromium.org>, 
- Govind Singh <govinds@codeaurora.org>, 
- Niklas Cassel <niklas.cassel@linaro.org>, Kalle Valo <kvalo@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- iommu@lists.linux.dev, linux-media@vger.kernel.org, 
- linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
- linux-gpio@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- op-tee@lists.trustedfirmware.org, Maxime Ripard <mripard@kernel.org>, 
- Albert Esteve <aesteve@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789389733; l=3324;
- i=aesteve@redhat.com; s=20260827; h=from:subject:message-id;
- bh=DyJgJINGrj/Oi16BQyI0xHNXSqfTphHOzT8kolkMIn4=;
- b=2E/njtRQDI7qg6KhOX02E6Kl8NSZnKke0TKHePsDGKL5/0MukpgBGJfWN70DxUsg7WRIuQpoA
- /xIDnhDFsgGDyONBfr/Sih+/SjlyEaAmyySnb2O8dlDdWfLuFgovspB
-X-Developer-Key: i=aesteve@redhat.com; a=ed25519;
- pk=zI2RBeZgocwYm3AkJW4CtjoJnKoDZrfBl1xe5Ed6h+U=
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANiDSCv=cwm=aHLfO_ccPfc-XyK3gS8Y+8DZpbb3gcXX0n8mqQ@mail.gmail.com>
 
-Stop publishing a driver-wide singleton. Mark the instance
-ready with scm->available, look it up from the platform driver
-for module-parameter stores, and use platform_get_drvdata() on
-shutdown.
+On Mon, Sep 14, 2026 at 02:10:10PM +0200, Ricardo Ribalda wrote:
+> Hi Sakari
+> 
+> On Sat, 12 Sept 2026 at 13:36, Sakari Ailus
+> <sakari.ailus@linux.intel.com> wrote:
+> >
+> > Hi Dumitru, Dan, Ricardo,
+> >
+> > On Tue, Sep 08, 2026 at 01:35:05PM +0300, Ceclan Dumitru wrote:
+> > > > Can you check this
+> > > > <URL:https://linux-media.pages.freedesktop.org/-/users/sailus/-/jobs/109521830/artifacts/junit/test-smatch.log.txt>
+> > > > please? If there's a single patch that needs to be modified, I can squash a
+> > > > patch into that, otherwise v17 it is.
+> > > >
+> > >
+> > > These are the same warns reported by Niklas in V13. Dan fixed them in
+> > > smatch in devel branch but fix is not in master. Testing with smatch on
+> > > that branch yields no warnings.
+> >
+> > Dan: any plans to merge these things to master some time soon? Or:
+> >
+> > Ricardo: could we use devel branch of smatch for some time?
+> 
+> Do you know what patch fixes it? If it is easy to cherry pick I can
+> add it to our list of smatch patches
+> https://gitlab.freedesktop.org/linux-media/media-ci/-/tree/main/third_party?ref_type=heads
+> 
 
-Signed-off-by: Albert Esteve <aesteve@redhat.com>
----
- drivers/firmware/qcom/qcom_scm.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+Commit d12183645a31 ("precedence: silence some false positives")
 
-diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-index 73e9752e3cca..68cd8dc622c6 100644
---- a/drivers/firmware/qcom/qcom_scm.c
-+++ b/drivers/firmware/qcom/qcom_scm.c
-@@ -63,6 +63,9 @@ struct qcom_scm {
- 
- 	struct qcom_tzmem_pool *mempool;
- 	unsigned int wq_cnt;
-+
-+	/* Published with smp_store_release() once the SCM API is usable. */
-+	int available;
- };
- 
- struct qcom_scm_current_perm_info {
-@@ -174,8 +177,6 @@ static const char * const download_mode_name[] = {
- 	[QCOM_DLOAD_BOTHDUMP]	= "full,mini",
- };
- 
--static struct qcom_scm *__scm;
--
- static int qcom_scm_clk_enable(struct qcom_scm *scm)
- {
- 	int ret;
-@@ -1962,7 +1963,7 @@ EXPORT_SYMBOL_GPL(qcom_scm_lmh_dcvsh_available);
-  * This is only supposed to be called once by the TZMem module. It takes the
-  * SCM struct device as argument and uses it to pass the call as at the time
-  * the SHM Bridge is enabled, the SCM is not yet fully set up and doesn't
-- * accept global user calls. Don't try to use the __scm pointer here.
-+ * accept global user calls.
-  */
- int qcom_scm_shm_bridge_enable(struct device *scm_dev)
- {
-@@ -2657,7 +2658,7 @@ static void qcom_scm_qtee_init(struct qcom_scm *scm)
- bool qcom_scm_is_available(struct qcom_scm *scm)
- {
- 	/* Paired with smp_store_release() in qcom_scm_probe */
--	return scm && scm == smp_load_acquire(&__scm);
-+	return scm && smp_load_acquire(&scm->available);
- }
- EXPORT_SYMBOL_GPL(qcom_scm_is_available);
- 
-@@ -2817,7 +2818,7 @@ static int set_download_mode(const char *val, const struct kernel_param *kp)
- 
- 	download_mode = ret;
- 	/* Pairs with smp_store_release() in qcom_scm_probe(). */
--	scm = smp_load_acquire(&__scm);
-+	scm = qcom_scm_get();
- 	if (scm)
- 		qcom_scm_set_download_mode(scm, download_mode);
- 
-@@ -2858,7 +2859,7 @@ static int set_minidump_dest(const char *val, const struct kernel_param *kp)
- 	minidump_dest = minidump_dest_map[i].val;
- 
- 	/* Pairs with smp_store_release() in qcom_scm_probe(). */
--	scm = smp_load_acquire(&__scm);
-+	scm = qcom_scm_get();
- 	if (scm && scm->minidump_sram && (download_mode & QCOM_DLOAD_MINIDUMP))
- 		writel_relaxed(minidump_dest, scm->minidump_sram);
- 
-@@ -2983,7 +2984,7 @@ static int qcom_scm_probe(struct platform_device *pdev)
- 	 * be called after the TrustZone memory pool is initialized and the
- 	 * waitqueue interrupt requested.
- 	 */
--	smp_store_release(&__scm, scm);
-+	smp_store_release(&scm->available, 1);
- 
- 	__get_convention(scm->dev);
- 
-@@ -3033,8 +3034,10 @@ static int qcom_scm_probe(struct platform_device *pdev)
- 
- static void qcom_scm_shutdown(struct platform_device *pdev)
- {
-+	struct qcom_scm *scm = platform_get_drvdata(pdev);
-+
- 	/* Clean shutdown, disable download mode to allow normal restart */
--	qcom_scm_set_download_mode(__scm, QCOM_DLOAD_NODUMP);
-+	qcom_scm_set_download_mode(scm, QCOM_DLOAD_NODUMP);
- 	qcom_pas_ops_unregister();
- }
- 
+Sorry, I felt like I was close to merging devel but then I started
+another major surgery to the core and got stuck.
 
--- 
-2.55.0
+regards,
+dan carpenter
+
 
