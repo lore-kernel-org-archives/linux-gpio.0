@@ -1,111 +1,95 @@
-Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com [74.125.226.204])
+Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3B449159C
-	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 16:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.226.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F7348D89B
+	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 16:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789404762; cv=none; b=hcztUF4eqUpQz1nGCW7gAMxFKwv7Ru5gZ+bncA+x+5GpfG0I0yQAppx6rElo/TI2xGunbIATGLgHy+noBx1fEz9VJd7EGK0zQ4Cim+2RswxAvQWcun/HeEUsSYPoa1VbquqhPPeTdtyE9i53xwm/IvV0UFx5QX4Xa2lIQqz3xQQ=
+	t=1789404795; cv=none; b=DuSfTP1XXuT6MpeTFmiQA0Q/Ahpr2wrf1exlJ8+jiwElf2XWL/P0uDAdzZ9iFlSQ836og+NGLDkxiKveNUaO9gTcOTLjyJVn7p8UBjp3WJCmKgi1xV7Ah5KMYDfmaYjozOMkQbb1LO7P8vwsxm6SODjRMEQivEUQ2lGZ+CW5Jbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789404762; c=relaxed/simple;
-	bh=Fd2S2NXGFBalIowiEWphlMNoSm/GpBg0YH4nqBrZ3ls=;
+	s=arc-20240116; t=1789404795; c=relaxed/simple;
+	bh=MHRL5BbXVh3Yy4fuiiJxCc1O6s3ax5adZDowYCUDKEo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LqRiAC2T57vGAtEPK9YS1XPxqfYpig4p6rp6npmXY1Z36EWmnt0UY/jEJahHghH/lvjudSz1OgtznrCFT8BhHcJckNJWTWUDLLo73hyG4ryPSfk76gQnolQ6wFHA6p/zQbOncLgO9Nb1d+gaWrRkS2/t//2tnScV6lleLfwMWsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.226.204
+	 To:Cc:Content-Type; b=qXMYzBExbxM/0R/NOu/7mq/UAPLY1OqMALiiJCZ6iE0MYWm5EW3HTP6s57CEOabvDGSuXxRezPK1QDO4sYEn82p6KgHUAbTDXugPwz9LitqpQpPg11tOQhIHcZknzmo2BFK4enz32HgvCYfyMC1oS+Hq/hhmYAF7lZSs1ddnNbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97e7c62dde3so786451241.3
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:52:39 -0700 (PDT)
+Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c67e5059faso566088e0c.0
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:53:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1789404759; x=1790009559;
+        d=1e100.net; s=20251104; t=1789404793; x=1790009593;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=W3a3IBWWzJToy5a1Wctoyn07sbyxrLzeKnit0JiQFO8=;
-        b=doD/UveB8UydDTL0LTySmv53C7/X++lCdXi27XHjkAPhwx0sJZRMJ2d8zr+8uyzIV7
-         OXyobAVUEaP8pvfJa1M0JdZeTXrn+9FoMD72z6I0MLLYxeCK/e5/a31MFGfwH49WUSw9
-         aQqCcNXVNsnQXL+/2/oxRZbdAFg0x8UcHAnJ2vn/02Wgtc1Atg+NqAF6ZjKKmSsaX+1r
-         8D28efn1t3KrmVzmWLqgPdlRs6y5ogoNgPJvU+3eUx6S5LFjjEMgMvv98yCz2Fp2+jiE
-         QWHCubCILylVrZP+QZF8I5u1IlKRD2GINSxkH68ntRx3rFwy1gCzkmB3+RmdKvU7KD++
-         etEQ==
-X-Forwarded-Encrypted: i=1; AKwUvByrVtKHVy8uH1yB/ay33qVqDzXhtypfP0lRTMW9yWqaNIu0Byno42JCSICKIAVc08kWpZAs/bmgT2bT@vger.kernel.org
-X-Gm-Message-State: AFuF++kzeAUA7WkTAwF6KabLJZpychH8y6UTzOgpNXGVA2RANESsnL+F
-	GqxtxmUqnHYvEgEm6uUfX175lFX06Y5oKZwO1HZSMeJ+DZj3TyOU99wLmc4W+s6v
-X-Gm-Gg: AYBFou0DMNe6q03CO1sP5xUiL2mZgW4qtYj55k4lyhhS4ajyHwweaz43UjT5jtcf9Eq
-	xfovCjU+GpUIyPMZT1MWuQO48i0jM8tRHOcXVl8RrnvTvPdk3/ptlSFt8OU/H8oBgT1mfbzeqHX
-	8O8W1aAQU5T+mNBahB/M/uoKbaX8kdgzIcIVubjL9Z9UpYiWWNDMiy0G9/+hsFDj40xeAdBTjmM
-	KCBPxyzOC19+0gl+t5my1KqDg7LlY6SZzB6Bn2+YfTaonTmxSiFG7JzQ9+WY2DphIbjhUI1BuOC
-	Fj7OukSiT4Uu1z5vtRHjsXEsWXNcpsD9yt4aFXpSGO0s0MoQYZPDN/5nYFTvgKNh2VSzqDzRicc
-	peUbKkMuFmPfURFFHO3d76vRtUOZz/E8dw41qWk1tHsoegNHK82gQIi78mb+SSwtK92kwZcEAw+
-	qmuFEhIk90TMk5h+m1qnm/yadc/1UIr/BZ+91GJGftb+BwZeAw5iy6NRgOPwmupOdpxJhwXd6QJ
-	t48bh07qH9iATkIW7xWkJjTcVac8RHljriwdTlIAz87NF8=
-X-Received: by 2002:a05:6122:e266:b0:5c8:4409:602a with SMTP id 71dfb90a1353d-5c981e978a6mr4572542e0c.8.1789404758692;
-        Mon, 14 Sep 2026 09:52:38 -0700 (PDT)
+        bh=NfxIiMuQDiqgQaAeq2yHqZdFbQc/UNrumMADff4NP9I=;
+        b=o3tebvYKMIE3dA8Wj1M8f1zRreMJ29BR86D+9GwDu4KKZjgwtkuxt0QXM1QtEhDm7G
+         gUwu+Bth/i4lc7GpPq/RzkjoYBxUAKXcnzHNNtEynny+wpgUwsh5xjR1ljYXvbjO4Yce
+         LIqLHcI1yAKz+BEz0Ws6QUZvxEpaCO+u8+sBDruj5j9fYXMqfltS2noVKUOkSYLdnYQ2
+         28ah9SYTOLZ8kptnCPHp1GfG7e2uhuTNz/OEWc9I9vLmTfBQjS6AcXjYvZBcODo673mP
+         hSPxbFCYizNf4oHn9yasZJNXEf5fs8/KNrd4P2IZ0+Oq69+1GHjj6bftPWFYvMSlzm+m
+         e+rw==
+X-Forwarded-Encrypted: i=1; AKwUvBwXjftSVFktXBD+sgluAO1YU77Cj0BNlIDcETT/R/H8isB+fSXsbOdCH5hRX69bQ1u2V3NuUdSXOCuj@vger.kernel.org
+X-Gm-Message-State: AFuF++l9bRU/GcsIm0eWLbrJIA607X19IDv4a3mydpX36FTb0dQ1Nwnh
+	ecXwC/gEpnubrtg3gOHaroFkbo4UNLRos2ztZoZi18BEL9R/msNff5/9LJZyUveV
+X-Gm-Gg: AYBFou3q3RuuQdR2/2UmZWNSQtOZ3omA5JiDDkUjuZAcdP1hNREcToNa7ngIflEJpgp
+	AQLaaq5k1j9DqWnwbmeliYy1oF1Ihjw/LSyTFP1BnWC4Cx4w+MESDnJ+j3w4st8vAbYU96QNk7z
+	CIkBdKjoz1RYpwlXzQ1EkNtjkCsfVQbK/3kau5R0M4bEEzPs6FQyiEp0sKDu0CiVz84VwWRTcJ6
+	duDn5ZEFsZvde7dMe1RyhO4tSTQqOfpBuU9pNYT6ORyjCqDkfZDFPFeSXE22tQNfFrQv7IaURZn
+	V1ZXYAcEFuG8FbMKgdkh9bFIPwPujZ9zwugUkBCbM+xoSik2fUz0WcGOH3jPW2mIyucM04XEcBo
+	jQv7CldmYWp3PYPXq1o+BzOXWBI2Aia87VY+bACChWjL9XgG959q4wFXA6JVwyVtPFENyVHIpsW
+	tsG4J4tns3IYrQ9OM2sDyaj+bhVgmNyajhvgD0bfrsocxOk7Jkaz0Zak6VujeDyOjPgY4gNRQ3y
+	lJn5aE4gTi5/+1nIYsXc72pG7BRGn1/BkGIa3vE0WclNeM=
+X-Received: by 2002:a05:6122:50d:b0:5bf:4522:fca7 with SMTP id 71dfb90a1353d-5c981eb1da6mr4170706e0c.4.1789404792754;
+        Mon, 14 Sep 2026 09:53:12 -0700 (PDT)
 Received: from mail-vs2-f43.google.com (mail-vs2-f43.google.com. [74.125.227.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c8470e7ef4sm12828663e0c.9.2026.09.14.09.52.38
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c8470f4e30sm11977378e0c.10.2026.09.14.09.53.12
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Sep 2026 09:52:38 -0700 (PDT)
-Received: by mail-vs2-f43.google.com with SMTP id ada2fe7eead31-785643199baso728617137.0
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:52:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxKX9Wk+AfNwptG8tHhFsIheuGX/GtsYTpmsFIs1jTw7PEedZHkMPtR0Q6hS5p8HUErgCQlOrcUrFMc@vger.kernel.org
-X-Received: by 2002:a05:6102:e0f:b0:799:b918:687b with SMTP id
- ada2fe7eead31-79b5878ab25mr4331172137.7.1789404757823; Mon, 14 Sep 2026
- 09:52:37 -0700 (PDT)
+        Mon, 14 Sep 2026 09:53:12 -0700 (PDT)
+Received: by mail-vs2-f43.google.com with SMTP id 71dfb90a1353d-5c67e5059f8so619367e0c.1
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:53:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByb3utIYf0SQeZ/WW4vjHjoRL4El1K4HL8avBolRvJ4us5v6oZX/pj0o5fmn9m0rAMVpMGW0r9k2XBc@vger.kernel.org
+X-Received: by 2002:a05:6122:d21:b0:5c8:2dc9:f8d2 with SMTP id
+ 71dfb90a1353d-5c981898b18mr4839334e0c.0.1789404791699; Mon, 14 Sep 2026
+ 09:53:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260913195654.3371385-1-cosmin-gabriel.tanislav.xa@renesas.com> <20260913195654.3371385-4-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20260913195654.3371385-4-cosmin-gabriel.tanislav.xa@renesas.com>
+References: <20260913195654.3371385-1-cosmin-gabriel.tanislav.xa@renesas.com> <20260913195654.3371385-5-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20260913195654.3371385-5-cosmin-gabriel.tanislav.xa@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Sep 2026 18:52:27 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWi8Jz6GVGJj0VsXOEiOw4ghJgz895m36m2hDvVCkxpxA@mail.gmail.com>
-X-Gm-Features: AcwNN1Unuk-LkzOotScnYJj-MKknR-KC4le6kfYxk1N80HhcIpZu4mg1zP5BRtg
-Message-ID: <CAMuHMdWi8Jz6GVGJj0VsXOEiOw4ghJgz895m36m2hDvVCkxpxA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] pinctrl: renesas: rzt2h: fix reading pin value in
- IRQ function
+Date: Mon, 14 Sep 2026 18:52:59 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW8oHnOZtaZEhT6ARw4jv8E8TCW1oj3=-st=H5DGYP0Qg@mail.gmail.com>
+X-Gm-Features: AcwNN1VTw_3ezXn2Sdyot4rz-bUBb_2ZP2fpOPg3aubUSTj19P58---m_IGsxkg
+Message-ID: <CAMuHMdW8oHnOZtaZEhT6ARw4jv8E8TCW1oj3=-st=H5DGYP0Qg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] pinctrl: renesas: rzt2h: reuse helpers
 To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
 	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@kernel.org
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
 On Sun, 13 Sept 2026 at 21:58, Cosmin Tanislav
 <cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> rzt2h_gpio_get() only reports a level for pins in input or output mode
-> and returns -EINVAL otherwise. When a pin is requested as an interrupt
-> it is switched to IRQ function and its I/O mode is set to Hi-Z, so its
-> value can no longer be read.
+> The PMCm peripheral-mode test, the PINm input read, the PMm write, and
+> the PMm read are open-coded in several places.
 >
-> gpiolib calls gpiod_get_value_cansleep() to determine the edge's
-> direction when a line is watched with GPIO_V2_LINE_FLAG_EDGE_BOTH.
-> Non-zero values are translated to a rising edge, zero to a falling edge.
+> Reuse the already existing helpers.
 >
-> Since gpiod_get_value_cansleep() ends up calling rzt2h_gpio_get() which
-> returns -EINVAL when the pin is in IRQ function, every edge is reported
-> as rising.
->
-> When using the IRQ function, the input buffers are enabled and the PINm
-> registers reflect the live state of the input.
->
-> Report the input level even when the pin is used as an IRQ.
->
-> Cc: stable@kernel.org
-> Fixes: 829dde3369a9 ("pinctrl: renesas: rzt2h: Add GPIO IRQ chip to handle interrupts")
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
 > ---
 >
 > V3:
->  * move leftover unused function to a later patch
+>  * move the PFC read helper reusal to a later patch
 >
 > V2:
->  * remove the PFC_FUNC_INTERRUPT check in rzt2h_gpio_get()
+>  * pick up Geert's Reviewed-by
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v7.4.
+Thanks, will queue in renesas-pinctrl for v7.4.
 
 Gr{oetje,eeting}s,
 
