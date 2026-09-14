@@ -1,161 +1,97 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E31F414413
-	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 08:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2936419314
+	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789376246; cv=none; b=imMsuRPR2fCH+0H/WC3Kcrgtd9b/0CzwHSjc6qrsI/J1Eb5gfowwp5g1ih6ddvBIEB3KmU9Xq1iWjyZHsGuOyOK3lujS04sc+JRMy7TIFwITWjuv9IsY+S0Ccj5vYAedLzAAB7e8UydTP0TNPknXiO2ajvNG9gEjxVjaKh8Btgo=
+	t=1789376434; cv=none; b=EM0eDIt8cuMS5xco4eX7jM2vS9j+FdG2dikbY+eD2NJk05Oe+UBvAXrvhvZD6wx/QuEdSAHHWywxEfpY40lTBi6S7kUOGi1cndHPYI5Nc7Kn5fSPNcV6cZU2KXik5FCH5VPCjdcubTpG43DAPZVxC+el64D93AqMhO/Axt5xsFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789376246; c=relaxed/simple;
-	bh=JCvFHGCA4rHUgkn8fPq4I3sbSzAZ4NWsrmGMQGr7b3g=;
+	s=arc-20240116; t=1789376434; c=relaxed/simple;
+	bh=Sp6yCaNOU6D36IYfo4LZXO9ayD+FqlfUmdMqZKlPKAQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gULTtz1vjBKw00KzV7V9+rNjNZJ/dHZIU5zDaM57pGDvUi3FFY/VWKau5TWcb9EA/Hpz8qVq/ANeB1432g6ryklCgrOeey5BAFWL2DoypOEx2DC42CQR0EeqSiKfWtueYURVtuJkhxN6BPQdFuZoelYVKndr2ZuLDnlxusmxlVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aIuB5y36; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=Sfpv9W6Fgcje0BE4d0oJYi4Bu8HVIM5sRjEyaDl2Zatrc4D5zDRIIVfNYHpUriDzO32aw9WgPONzgElELAlxwjc3cSck1MW27N58vP5YdXtqc5Y4WkIm7T8WwL/Y20K4CuaBFVTTQ3MNSqAFtCCRUgU04e6adqmo1zJNjWBIf5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmiFeC57; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aIuB5y36"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 637801F0089A
-	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 08:57:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmiFeC57"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E95D1F0089A
+	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789376237;
-	bh=xKdkdtTMOIdPI1/d4Upir9+jkNvwkE+aa7zOe3c/KSU=;
+	s=k20260515; t=1789376429;
+	bh=B4ztkW1Okj1yGPF8RnnaTFZyUekE6CEG7rfr7FQh/R8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=aIuB5y36Tax6rIEyx6gsawh+nmQi+CfR7FHrKZuLBVJ4edweefoGKhuMVg5N3UqNj
-	 w8WPgPnmc6SnBOWB/RoqfAFiNTtkcDcqqluau4qWXwkvQejYkikrsevok8AeItp24r
-	 w0NOEcSf13yoJ2z5Izs7lRKIHTY19wMhPVvqFYbRrR/skINOBT2ElFCdNrfHv7CZYD
-	 cBf8v/VGY/WFbjHPjlmFdEGdxzLGcUvOnyNI7DAZfPtF75ROZI9XIHTqQgZ5MT+tEC
-	 Eg9x1EkAZ0Uzc+gabb3oL2Xea10cpHDZIq9Vvp9rfnkzUvPOW06wQB24AMnMPSJV/B
-	 B8xN1hI9PqiNQ==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5b2b92065ffso3557515e87.1
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 01:57:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwf6UF0dgK5iG50A5N3yCNeSFNWo2SzgCVXNsmC6jzddKNsGO65BnMoKL8G9htnglTrpOUubsjHySaW@vger.kernel.org
-X-Gm-Message-State: AFuF++mE0kR/fvtKKULez/xYBO7djVB0kDxPy+yFIB6Q6LzJoTbkys6+
-	3t9i6AbNnvrrw9lREKG3VlBnkolBM/U7XVTNtiTBf3bKfQ/NbfJedcqj3Akq701ElnnbrwU30Fj
-	iv6dDW28bkikawZsd45EQZbKKr3tvOCA=
-X-Received: by 2002:a05:6512:1293:b0:5b6:1a7c:aa12 with SMTP id
- 2adb3069b0e04-5b8ae6acc3dmr443850e87.42.1789376236013; Mon, 14 Sep 2026
- 01:57:16 -0700 (PDT)
+	b=lmiFeC57Qlcphe+dLmol+E1ble8uqPT7WC3Nw43acN6MEDWBJ5GtI5Y8eNcOp64YB
+	 xeNn/qqojOacSCYyhb1zPNdTCt/8vfE4F3BNgnSJgADMOj4xgkvkYsKdp7hUv5eksF
+	 TumSRArpae4UWysWYpjm8an9Q4Fj3eAkMMEMThwzkKRNeQaivGyRUFsedXEiTo/rSD
+	 NDtdjss4/Sdo9nI2Yrxfz09iKk3NOc1OktQCi/aeee+HvNbc46ScmXoytrfg2Q7d1t
+	 HNRM8kkCCZSlrRHSnOQdrWZHZEsUofNiEqmkMquyX71T41nYBQjMEgaVRB539iPtNN
+	 zvV80bH9lxBVg==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b76462aae9so1299518e87.2
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 02:00:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBydaAbDNtCumvJ7ECKcXoyLTgkuJLoifhfC0D1jTSddbrNgaGK9lZUtLWu5/GQ+7SNq/IhYeLOkAvpc@vger.kernel.org
+X-Gm-Message-State: AFuF++n4j7R/9OEMtmzBJVB3LcZNWo0NDeBmrZwErKDTBNxt1RwAtkiN
+	Q2GW5IbWIfGdZi+A9tNaAoaD6tpMH0ZOnvIutCAqcLuQiCWMnvDSA7onMWrfQR/K/m7krcy89sB
+	40Y2XWeLoMizlXCcfB4RIRO+CrGsQlOA=
+X-Received: by 2002:ac2:51c3:0:b0:5b4:ac1b:89bc with SMTP id
+ 2adb3069b0e04-5b8ae66c59amr467116e87.24.1789376428079; Mon, 14 Sep 2026
+ 02:00:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAD++jLnKXqbV0xB3wvTF9Ri7g1MuWV6csO0MGzCtv5LBwmSr4g@mail.gmail.com>
- <20260827220805.23112-1-michael.zaidman@gmail.com>
-In-Reply-To: <20260827220805.23112-1-michael.zaidman@gmail.com>
+References: <20260828155820.4002492-1-sarah.emery@canonical.com>
+In-Reply-To: <20260828155820.4002492-1-sarah.emery@canonical.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 14 Sep 2026 10:57:03 +0200
-X-Gmail-Original-Message-ID: <CAD++jLksAPyfZz6d--n7a1KhPackigEucQJqbYiA-e9S835seA@mail.gmail.com>
-X-Gm-Features: AcwNN1W0b8mgLF0Lz5Bd-fzU0UbPDLmwUn7TUmgZbPxFYpvvpI8bzXM8UFvEfRo
-Message-ID: <CAD++jLksAPyfZz6d--n7a1KhPackigEucQJqbYiA-e9S835seA@mail.gmail.com>
-Subject: Re: [PATCH 08/13] HID: ft260: uart: add modem pins control via ioctl
-To: Michael Zaidman <michael.zaidman@gmail.com>
-Cc: jikos@kernel.org, bentiss@kernel.org, brgl@kernel.org, 
-	germain.hebert@ca.abb.com, rio@r26.me, brunoceg1@gmail.com, 
-	contact@christina-quast.de, daniel.beer@igorinstitute.com, 
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	linux-serial@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+Date: Mon, 14 Sep 2026 11:00:14 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmi8q1xduxj_y3hq=8s_0533VPhCknzewBN=w9FmoZKxQ@mail.gmail.com>
+X-Gm-Features: AcwNN1WNB9oxZwGTAu8hR8E4yJHjKHse8FPgibB3-3nuDSKB-nChRVnEc8wW69k
+Message-ID: <CAD++jLmi8q1xduxj_y3hq=8s_0533VPhCknzewBN=w9FmoZKxQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: generic: serialise pinctrl_generic_dt_node_to_map()
+To: Sarah Emery <sarah.emery@canonical.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>, 
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>, Yixun Lan <dlan@kernel.org>, 
+	Jia Wang <wangjia@ultrarisc.com>, Emil Renner Berthing <kernel@esmil.dk>, linux-gpio@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Michael,
+On Fri, Aug 28, 2026 at 5:58=E2=80=AFPM Sarah Emery <sarah.emery@canonical.=
+com> wrote:
 
-On Fri, Aug 28, 2026 at 12:08=E2=80=AFAM Michael Zaidman
-<michael.zaidman@gmail.com> wrote:
-
-[Me]
-> > On Kconfig, so that gpiolib is always available and you can use
-> > the generic modem control helpers for modem control over GPIO.
+> pinctrl_generic_add_group() documents that the caller must take care of
+> locking, and pinmux_generic_add_function() needs it too, but
+> pinctrl_generic_dt_node_to_map() calls them without holding
+> pctldev->mutex, and the core caller in create_pinctrl() does not take it
+> either.
 >
-> I looked into this, and it does not work for the FT260 without
-> changing serial_mctrl_gpio.c first. Three blockers:
+> The driver core calls pinctrl_bind_pins() before probing a device, so
+> two devices that reference the same pin controller can run
+> pinctrl_generic_dt_node_to_map() on one pctldev at the same time.
 >
-> - Every GPIO access on this chip is a USB transfer, so the
->   gpiochip has can_sleep =3D true. mctrl_gpio_set() calls
->   gpiod_set_array_value() and mctrl_gpio_get() calls
->   gpiod_get_value(), and gpiolib does WARN_ON(can_sleep) in both,
->   so every TIOCMGET/TIOCMSET would give a WARN backtrace.
-
-Can't you just patch mctrl to use gpiod_set_array_value_cansleep()
-and gpiod_get_value_cansleep()?
-
-I don't think any of the users depend on call thing this
-in atomic context.
-
-> - mctrl_gpio_init() takes a struct uart_port and its IRQ handler
->   needs it: uart_port_lock_irqsave(), uart_handle_dcd_change(),
->   port->icount, delta_msr_wait. This UART is a plain tty_driver
->   with a tty_port, so only mctrl_gpio_init_noauto() is left - and
->   the FT260 GPIO lines have no interrupts anyway.
-
-I don't understand this :D
-But hopefully the TTY/serial maintainer does.
-
-> - mctrl_gpio_init_noauto() only picks up lines that exist as
->   firmware properties: device_property_present(dev, "cts-gpios")
->   and friends. A gpiod_add_lookup_table() table is the machine
->   lookup path, so every line would be skipped, all descriptors
->   would stay NULL and both helpers would silently do nothing.
->   Software nodes could satisfy that check, but there is no
->   PROPERTY_ENTRY_GPIO in the tree to build them with.
-
-Using software nodes is the way to go I think,
-<linux/gpio/property.h> contains PROPERTY_ENTRY_GPIO.
-
-> serial_mctrl_gpio.h is also private to drivers/tty/serial - all
-> eleven users are serial_core drivers in that directory.
-
-Well having serial drivers in drivers/hid and having all kinds
-of misc drivers in drivers/hid has made it a dumping ground
-for anything HID.
-
-> Registering a uart_port instead was tried for this device and
-> turned down. Daniel Beer's 2022 FT260 UART patch was built on
-> serial_core and called uart_add_one_port(); Greg asked for
-> usb-serial, and Johan Hovold answered that "neither USB-serial or
-> serial (core) is a good fit for such a HID device", pointing at
-> Christina Quast's tty driver as the right approach - which patch
-> 1 of this series is a port of.
+> Both `add` functions take the new selector from pctldev->num_groups or
+> pctldev->num_functions, and radix_tree_insert() at that index.
+> Two racing callers can read the same selector before either
+> has inserted, so the second insert collides and fails:
 >
->   https://lore.kernel.org/lkml/638c51a2.170a0220.3af16.18f8@mx.google.com=
-/
->   https://lore.kernel.org/lkml/Y6WNl6+ySy8zcSyg@hovoldconsulting.com/
-
-Well if it absolutely has to live in drivers/hid then do the
-ugly thing and
-
-include "../tty/serial/serial_mctrl_gpio.h"
-
-It's perhaps the lesser evil then?
-
-Otherwise we just bite the bullet and move
-drivers/tty/serial/serial_mctrl_gpio.h
-to
-include/linux/serial_mctrl_gpio.h
-?
-
-(Unless Greg want some new subdir such as
-include/linux/serial/serial_mctrl_gpio.h)
-
-> > The core idea is that the serial modem control should look
-> > up the GPIOs from its own gpiochip and use the MCTRL
-> > library helpers, then this should result in very little and
-> > compact code that is easy to read.
+>   k1-pinctrl d401e000.pinctrl:
+>   error -EEXIST: error adding function pcie2-0-cfg
+>   k1-pinctrl d401e000.pinctrl:
+>   does not have pin group pcie0-0-cfg.pcie0-0-pins
 >
-> No argument with the goal - I would rather have that than my own
-> TIOCM handling. But making it usable here means work inside the
-> serial helpers: cansleep set/get, a path that does not require a
-> uart_port, a lookup that works without firmware properties, and
-> the header moved to include/linux. That is a serial subsystem
-> series to agree with Greg and Jiri Slaby, so I propose keeping
-> the ioctl implementation in this series and doing the conversion
-> as a follow-up.
+> leaving one consumer without its pin configuration.
+>
+> This was hit on a SpacemiT K3 board, where PCIe devices probe in parallel
+> against the single shared pin controller.
+>
+> Take pctldev->mutex across the whole function, so that the groups and the
+> function referring are in a single critical section.
+>
+> Fixes: 43722575e5cd ("pinctrl: add generic functions + pins mapper")
+> Signed-off-by: Sarah Emery <sarah.emery@canonical.com>
 
-These things have a tendency to never happen and it's
-not like we have a shortage of technical debt.
+Patch applied for fixes, sorry for taking so long to respond.
 
 Yours,
 Linus Walleij
