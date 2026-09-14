@@ -1,74 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B07F40F743
-	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE61286D4D
+	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789376819; cv=none; b=mszgcmWDyoKwLLT8wsPk8fQ3x/bbdBH6QSXnxZm3TRu383M7XyvuWi3ePun7T2buEcoaVTQr/nYT8FlgKW6dDYdVYZoIjqReLAjq8ZotYLOAHxYoAt86CEXtupVKc1H/Lx2K/W5cyOKXVcJgeJNirX+1lU5itW/ikyCF5rXr8o4=
+	t=1789377026; cv=none; b=GO5m9wFx8C4G6FKTQ1UVN0gSHqH7otIxIGWuwVXrrJTJP0yJ2awoZHc3+hsSb4MXsZZriF/syM/Pji3pOkKEzeA/iWcjxSNEzUXzTHnlzlOaDGIf2o9gKd/OAo+rM3Ih1/0W95BR7hB6+1ITMsROPgTNztsHdCVSXkEWBgYjZeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789376819; c=relaxed/simple;
-	bh=XXqdFfm2oi60CilFBpYaMXmU2C/cnVtVxjiWgELSSf0=;
+	s=arc-20240116; t=1789377026; c=relaxed/simple;
+	bh=HiF6kaoY0vmI5yZ0jUaC6VsOtStEetN5jUYUzI7+c/s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wq0rsV4M+66i26l199fI7+Oz3h+ZpN7OoKzNGqrLdBOekS17iJg2yk8eW2UPsam4emnXx+6TkH6UG94kqHCISNMYeIKq3w5FXV0exqQgwgIsayjQofFJBkqX03NFnXaiuNB9nxMD8rglZoAMeR5ISwuxnn5+ABROxezl1HcHU8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O9CgMr9a; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=ipMNbCjkuNzb2SjYO9mNqRBXV7GXi89DgjX7fsrZhZvvUiMNID/sXDRt1ybDc6C6LgU5x1X+iqcoyG8OacNiSS5fFrobR5Ml9bZK/JNSAeM4BUHkjTAlyXYI+5n7AnqtcWialf14FntULLbZMlAglLAxfvog7DwAvQNQra1Q6dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Md4rnTmK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O9CgMr9a"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3D3C1F0089C
-	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:06:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Md4rnTmK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAEAB1F0089A
+	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789376816;
-	bh=XXqdFfm2oi60CilFBpYaMXmU2C/cnVtVxjiWgELSSf0=;
+	s=k20260515; t=1789377025;
+	bh=eM8Qgu6NYAz2KlTImTDOnkezDzsEl+drhOjvzifcCQs=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=O9CgMr9a9PpnUA6uJDLNSprc5BQZ6BBNdbQ+CCidyW5qqIIccOCSQC6TAMDVtT4Th
-	 JEadJ2pjqcR2OreerVqke/q5nM8OUyNRAEZhPlzGjd5Ce0rNrAyYYhHRgxPostUS6L
-	 4pjtkye+HpP+sqEpgdfmdI126RTP5DtHlWMBNlE9vmHUP+/wQWSS1c28JoNoky667c
-	 3LMaziHemqDsM/sYqenEg2l11Stgg9L20+as3M+0bdKRZLyM2xWzFt7rv7NkVKAMVK
-	 zkl84kaXAoBRtJPrWXzmsgMVTzmBhGIf80HZMsSN/vGlNViLVfnwC2w5y2K2vy1w8/
-	 b2uVLg35M8rTA==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5b2b92065ffso3569609e87.1
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 02:06:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBx1BjQL8N24GcJKA1qyt8BHe5FJGpK95QRNFpx/R2zWztdHWM9ukzpOKqp0DbEro+ez6vBlJITMtEnB@vger.kernel.org
-X-Gm-Message-State: AFuF++lKwTjSzwVgqjW8pZMlts0UYFTw/qubvOgZjDXqzWmqaV4NTR8n
-	a81TnI+dDQLssPWCyOrASvybRQJbskGA+WDZMTbwW78d2nakpjW3IV+r26gsJPhC5P6975Ofdec
-	qFlfRfmVHEfRHWIR34axYkoCH8ntKqs8=
-X-Received: by 2002:a05:6512:1293:b0:5b6:1a7c:aa12 with SMTP id
- 2adb3069b0e04-5b8ae6acc3dmr453888e87.42.1789376815593; Mon, 14 Sep 2026
- 02:06:55 -0700 (PDT)
+	b=Md4rnTmKu+8ZHcpPlO1k029rTa7aHBYDxtFakKljBYWfvc0s6Rg2C1Y+nZ1AtwVQg
+	 BDmUAalaph70nl+ULxhmI6rZvjHpJmeuDOdLK1Tgy/0o9JNhg27B6yzv3uu6HcsVr1
+	 z5pEBOYA85TPfIvDk9g5j8fa5xm7i0UA4lzloHDDV/RvarIRnylF2GMHTuqob+mDAg
+	 l1TmXRVnZifJ2EQKuxuEHu0EyALc4pMuy4q2GUdr+6xLdq6SJxcQ7cGvP8GQogxznj
+	 Q052T5FBKCiLlwJ7T5+e0y9aG9n0r2DQ7km6d5+Q3uIFsFfnR9kHlXWu/NrCF0FMl8
+	 sHxVNkSXzjRFg==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f16f15so1985872e87.3
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 02:10:24 -0700 (PDT)
+X-Gm-Message-State: AFuF++mg+nQBbhE6Ip4e+BbBUjh7S6OdelbEe1aafx9ypVuJlCxkEOii
+	A4foWpcYOwCYpAl4pp5RhPRHzZ1c9Pxg4blhZM/uMpSAyhCKqzEP8U3DmDNmM7fmwGYQLgALJpp
+	c6DoqO0AhUxp5Ht9zTUlDUaCVIPDqvbA=
+X-Received: by 2002:a05:6512:1389:b0:5b4:ab2f:5bd5 with SMTP id
+ 2adb3069b0e04-5b8ae68c4d8mr760395e87.8.1789377023628; Mon, 14 Sep 2026
+ 02:10:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260822-ti-pinctrl-palmas-v3-1-f92cd3b773fd@gmail.com>
-In-Reply-To: <20260822-ti-pinctrl-palmas-v3-1-f92cd3b773fd@gmail.com>
+References: <20260831105056.756259-5-conor@kernel.org>
+In-Reply-To: <20260831105056.756259-5-conor@kernel.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 14 Sep 2026 11:06:43 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=TG8TQbDZhxDTsZXwR=WhxjF-H9eGDbtZd0qvtiE=MAw@mail.gmail.com>
-X-Gm-Features: AcwNN1XDEoJDTBd-1-U2gQTcxDtwimIocXKyJkSK1zdIyDo_BPhYufwlnitpmMY
-Message-ID: <CAD++jL=TG8TQbDZhxDTsZXwR=WhxjF-H9eGDbtZd0qvtiE=MAw@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: pinctrl: ti,pinctrl-palmas: Convert to DT schema
-To: Bhargav Joshi <j.bhargav.u@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	goledhruva@gmail.com, m-chawdhry@ti.com, daniel.baluta@gmail.com, 
-	simona.toaca@nxp.com
+Date: Mon, 14 Sep 2026 11:10:10 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=F5efmf+b8wvNRcBq3ORB03f+Zue5A5NiaMP=Deu5vAg@mail.gmail.com>
+X-Gm-Features: AcwNN1UxwLBklInMTDkL86Qeyshy5Z5cOuZdxURaH6Lw5kZs_qB3HVR-u2maOv8
+Message-ID: <CAD++jL=F5efmf+b8wvNRcBq3ORB03f+Zue5A5NiaMP=Deu5vAg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] pinctrl: mpfs-mssio: three fixes
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-gpio@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Valentina.FernandezAlanis@microchip.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 22, 2026 at 6:39=E2=80=AFPM Bhargav Joshi <j.bhargav.u@gmail.co=
-m> wrote:
+Hi Conor,
 
-> Convert TI Palmas pin control text binding to DT schema. The legacy
-> binding allowed any subnode name. Restrict them to standard prefixes to
-> prevent the validator from accidentally evaluating standard integer
-> properties (like phandle) as child nodes.
->
-> Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
+On Mon, Aug 31, 2026 at 12:51=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+ote:
 
-Patch applied.
+(...)
+> Conor Dooley (3):
+>   pinctrl: mpfs-mssio: fix whitespace in debugfs output
+
+Applied for next.
+
+>   pinctrl: mpfs-mssio: fix width of unused bank voltage setting
+>   pinctrl: mpfs-mssio: use correct regmap function to set bank voltage
+
+Applied for fixes.
+
+Sorry for slowness on my side :/
 
 Yours,
 Linus Walleij
