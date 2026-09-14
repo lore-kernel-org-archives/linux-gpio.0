@@ -1,185 +1,421 @@
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010040.outbound.protection.outlook.com [40.93.198.40])
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022090.outbound.protection.outlook.com [40.107.75.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507D1242D88;
-	Mon, 14 Sep 2026 01:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABCC2D73A0;
+	Mon, 14 Sep 2026 02:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.90
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789350098; cv=fail; b=oQuGtfNaSPyzCf5cF3n9aIJD6MUcKqMCXsHVv4y8lvgko7GxV9oECeHqWwbs65jKqcVgd6a12wOKZMgTuvKFKaVs1cJpNrlvygbCSc6tBZQx/QQP5NJ9apUqxqvRzrX8U7LXRLcVrE9IpLTkhMNsWKTgFk6VHzjonoN5LAXWXRk=
+	t=1789352524; cv=fail; b=jHenOMicC/ctE/FkUVVpbX2OVp1irnf1/uhfJfm6sp8dJ7i1PbfB2DDIuylobopV0+YF9SWHanKmazE0fs6txH60u2HCvtwM4V7ygVgarNN0cCP+yqy99Z1CRLN7vo3tYDYqxkhpuGJLq3RB2hA2Z7e5o2hSZ9LAEqX+OqOPwFY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789350098; c=relaxed/simple;
-	bh=xMkb/bUM5p5+9FEIdztrbvDHO3OVI5AYlswN5lH/PU4=;
-	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
-	 In-Reply-To:MIME-Version; b=HwQVbHiOLN+BmBWj30GbrLJ1u3s1JyMVolxD7psYCrQfo9x6f5Ax8KMctmU15F4S3EgA6CiAO7rU6pUzV3lQGGTwFeECJAXunwm/e1YacNAqydShs3iYf4nUQM4RcSgIzmHNA9nPZerQQZ25vCIPo1d+hlouHMNXuP8mZcgB5KE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uF5hKPPi; arc=fail smtp.client-ip=40.93.198.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uF5hKPPi"
+	s=arc-20240116; t=1789352524; c=relaxed/simple;
+	bh=shuJ44nN2TbhdkiogL8b2ljF5OSU8hK+kig6w1pjg4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CqYyDfiXJm04LO6T3AW1VX70W5hH0AA+juJSyBf5aUJpOa2lEuL/oq/LVlIt6fH8WeuFHHSspCx3uQHdzSsfPmnzsOg4YzaTpe9mT6j/jw/iZ3wHpkCH/HBjDAT9K3lkz4qxVWRGzudX+b++0QNS2ksn+X2XJj8H2BRl+WDHRlY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.75.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VUyN6pb8exGA0u71i2uKiXlBEDhI1S7/A8aPMNtNaZfryHaN/nQufwEsrUsPtRrS/2Pf8hzIicPwdAASIvh4zH9Uv4/L2rErm4/dSeOuxscIyEbMyKNvxT7YWUGEQTJQ/CpCJ9utm6NvfC+ijgGSh4YN93WRKOL0ULw/57UumZdye3bY6x+/4ATCZQ+wuZotesesBaWpQ8q4yrzZSM6SQHLx6RrYadOmBcPxv30wkURtagsukVIGX64XY7c0P4GRA+Wv53UfgLLzWtJ0uuuaRcidFqBW7ryUipe+pSIknsqIDi5Uk3+dbPjNuMhw56+tgGFVRf0eVH74vlwaDazsng==
+ b=n2fAuA5nFwsL/ms606WSMHYPGwe2Jo1bAW0OzmLFFeEevxdH0uPPC/qGtzOl1SkaDlKISO/oOe/m24F5yfij7KMD8gw4l2oIrM4BZI1xKsnRELgUOPUYdaLXR0avOCGaVWAKr+epSVocNO6K7iVCeokSjsaiqz2Qa1obeX+Z5SXMYhwIgr4Kr9lQSeR2stig8Wv2OcpBx50jH3fnr0oVaVppfgFtmYoelz/HHQXk55y4Q2BTa7PobKHLpjviAv/AynWXdeGAMqc6sqPiGC0ewZg9LkorgN9DQOJ+pq7fipRO7o7qTEvPpSTMHadwl6eU8d53W/Uzd28I2HeLxItfvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xMkb/bUM5p5+9FEIdztrbvDHO3OVI5AYlswN5lH/PU4=;
- b=KDF42At+d9SvIjmYxcdDdcnJdhwnARC/0uc4kz2XFIicVqWMaLr86qmYhoASQQYvmrJLZKTE2V3bj47cqXtqS1fuug85u+NCjWoqhxkuWJvm1Uk3afCRdGMjbm7W+l6gbCwXtte180xaFHz7mnMKs9RrSXtr/Nu455EvKpYZrHdj0tnR24x8n+uxqis83PQKcXUntTamKQRk20WckHzgnGVeEsWHqQl0M9oHoUHc9S417FN7Uth48pxPHNY9FiDBOA2TbnZfgpRKHrvd9sIA3E+FpiqEPQsinFhYw1HRbyDvzBSl5W2m5Kp+2oq8T+IULLUERYLg+EokI3Bm2oDE9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xMkb/bUM5p5+9FEIdztrbvDHO3OVI5AYlswN5lH/PU4=;
- b=uF5hKPPi1lY7HdHVB2B9sn1uoHH1abkFXjpk56SOkfJEKdqy/FbbP6owL7Md2KJc7gRNPNX4+7QIHgrEtuXoygXCGeAzM3R4Mu4Xh4Csa/z3iPnuPU1fECJquega2jKB2JUo7PEwf92SRondcdc5BC2Al7j2mEO4z8tfwY4OvS3ujoaGeP/Skp3c7uJwuToiV7niPhYXsyL55MRE72SuQHfC1IiH28S50ChCJgaXrsPxVcBHuBIKi7BBCq9kkNkQVLZ4TXx55ywKiI1+D8mXfR4mH/4vVu114q7uCLtvmNU68R5rpNurWCGRJTlnOJvmJ3NRaKO5u+NkpH5PX9HiVg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MW4PR12MB6873.namprd12.prod.outlook.com (2603:10b6:303:20c::17)
- by DM6PR12MB4386.namprd12.prod.outlook.com (2603:10b6:5:28f::21) with
+ bh=3tEjgAAbHV/rvWkki0Kg0WXaYwrNIughZ7yXhBTXOcY=;
+ b=NOUhGfUNcuXZdRyjRe2T14EVyuvupn8+xuYTO+i+vcLQFj8v6x+e5X6Eycwh5Bgm9DCWhrpdi08EcbSpw8UCgANnYfOKptcIY9UoDwS6TX9cE6799Dvsx0haIt6tuBORsbej0le4pbjpSXJnktuFk/bAAaDxTdxVV3UhUR4RFlM8NUDsOBLfxYv3xEyMepwlCHEOAYV20APl0STRl2zwjcsgTyzhEaDMpu1+T1Gs9cMHn0WBsx7u8cLT50tWaFDXjk2inWi8a890bSuXpVR7kWneKu0bankhJTklxH+rkTZq/MDRbFWRCdcwc/3r8u+S3Vtwql7AZwBS31kdXlsOxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=amd.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SG2PR02CA0124.apcprd02.prod.outlook.com (2603:1096:4:188::9) by
+ TYNPR06MB8997.apcprd06.prod.outlook.com (2603:1096:405:3c4::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.12; Mon, 14 Sep
- 2026 01:41:32 +0000
-Received: from MW4PR12MB6873.namprd12.prod.outlook.com
- ([fe80::a338:bd2c:3a38:ece1]) by MW4PR12MB6873.namprd12.prod.outlook.com
- ([fe80::a338:bd2c:3a38:ece1%5]) with mapi id 15.21.0406.007; Mon, 14 Sep 2026
- 01:41:32 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 14 Sep 2026 10:41:29 +0900
-Message-Id: <DLENO35F39LL.2YNA66D9FCXYH@nvidia.com>
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Kohei Ito" <koheiito.dev@gmail.com>
-Cc: "Bartosz Golaszewski" <brgl@kernel.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-gpio@vger.kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun@kernel.org>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Daniel Almeida" <daniel.almeida@collabora.com>, "Tamir Duberstein"
- <tamird@kernel.org>, =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-Subject: Re: [PATCH 3/3] sample: rust: Add GPIO consumer sample driver
-Content-Transfer-Encoding: quoted-printable
-References: <20260906-add-rust-gpio-consumer-v1-0-24d192f93760@gmail.com>
- <20260906-add-rust-gpio-consumer-v1-3-24d192f93760@gmail.com>
- <CAMRc=Meei7Z1f1n0M_Hy1LdxG=NVhkFeEiT3=p5QVpw6BTv3EA@mail.gmail.com>
- <6aa662d7.0ca013b1.1575e3.0a60@mx.google.com>
-In-Reply-To: <6aa662d7.0ca013b1.1575e3.0a60@mx.google.com>
-X-ClientProxiedBy: TY4P301CA0108.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:37b::11) To MW4PR12MB6873.namprd12.prod.outlook.com
- (2603:10b6:303:20c::17)
+ 2026 02:21:56 +0000
+Received: from SG1PEPF000082E8.apcprd02.prod.outlook.com
+ (2603:1096:4:188:cafe::2b) by SG2PR02CA0124.outlook.office365.com
+ (2603:1096:4:188::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.12 via Frontend Transport; Mon,
+ 14 Sep 2026 02:21:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG1PEPF000082E8.mail.protection.outlook.com (10.167.240.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.428.7 via Frontend Transport; Mon, 14 Sep 2026 02:21:56 +0000
+Received: from gary-System-Product-Name (unknown [172.16.64.196])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id B5031427F209;
+	Mon, 14 Sep 2026 10:21:55 +0800 (CST)
+Date: Mon, 14 Sep 2026 10:21:54 +0800
+From: Gary Yang <gary.yang@cixtech.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Fugang Duan <fugang.duan@cixtech.com>,
+	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
+	Del Regno <angelogioacchino.delregno@somainline.org>,
+	Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Krishna Potthuri <sai.krishna.potthuri@amd.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pinctrl: Use consistent indentation in the
+ example
+Message-ID: <aqdaQgd2zD7p5GDU@gary-System-Product-Name>
+References: <20260913123223.99893-2-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260913123223.99893-2-krzysztof.kozlowski@oss.qualcomm.com>
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR12MB6873:EE_|DM6PR12MB4386:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2da19f8c-c968-4dfc-32cc-08df12014dfb
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E8:EE_|TYNPR06MB8997:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8ba692ce-7cbb-437c-4565-08df1206f2fe
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|1800799024|23010399003|7416014|376014|366016|6133799003|56012099006|11063799006|4143699003|18002099003|22082099003|10067099003;
+	BCL:0;ARA:13230040|23010399003|7416014|376014|1800799024|82310400026|36860700016|22082099003|18002099003|3023799007|10067099003|56012099006;
 X-Microsoft-Antispam-Message-Info:
-	OzEJw5MO+o6cInoaRTDDRzHiT66V0goYRNh63yJDAJcwvkz0Af4ZkGi6I8ckxpXdBHStMp+acZ0Wn1gyzq0bCh53lpccyz1S2kBtk0IrRR54xWYDe0533GOfF7APquLdSkQHC+ktxj9gqbDSveNaOoxthcGmuWaosGfVnmO1NHTS/vPJeG3sCAxctohq4q9ICmHqGpnL1IdL7bOfCb55CQF5ng9424ycJ5FdB38Ngmbjfu0V4lqgR1p8P0h93XjhTJmoAYDsohVpTZ8kncgWJCJxEGktwXLeWfBRPM9k1XOvG/yhTm+YyJeUceJBEOOlyK9dxUqleTXkIF7p24Hkm1Rehw9GNPsvHA5OKvRGh8wwC7Jezmti/YO6DOrIUb3Zwh5x9BuPVcR5waERZaDuQQkWv0wrrKEBf1bRwvKXurkN8H4vwZ2bTPS0C0yv/6wpAhHKoyLZ7FoiLZtz2eRxeSG6rVJ35Gi9AiC8lTraFOAjGOihK+bITfill1hGzqNqLcXfG3Mqb+GEpl3tGItTjhKmWmeXe3yCi59CQvTIqv+HNP01b0PaLS5unb1n1pEj/IAe1jvBnZ0uU3jkig62tybDtLK3HGHrId8OPK74/i7xPL1arWyd2UA/xEdU5DfPcudukPIBod+oP4ovJTf9B437Q+LR41deSnWZ5GBDUmA=
+	aWkdQLddGLsxkMstMEUMdsyDfguVp4YV/4ik0FSJS9fiVZE0JS/94ZLu+1Bzj3OI0ZS66oWOgZ2TH5XYPjVvK+8m5rmniOM0ZjL+kna9wC8V/qeUPZXpuFvRphGzFGMwSAtvCdu1MTY6D+0zHgCqsrc5aZAxO/8ksnQgaQs4p/WLkpbEWqLFqtGheEp4oitKI8fy0VGDaFmdGq+MeDNpmrFH46rTfnkQr2hemBMaKgoVIHwXxgKqt8UrRE/AlnGpMOeL0we2rlrEZ99IsBBIq5FMA/pxhOrBh9Wi6n9j4zKR0X3XkaD8pTtb3XjhLZIQjzBgrbbfvyLTZC9Qj/49cn+bW09wj8MmPSC1kXXnJM/U0QQGffwtq7hePeXboZ9o9s3gpr8/pGCowrCTKjgRt6/ep8Q6nJ94EwppGQ7brvCVwiG4H6i+Nuq9LnNoQi5xClXWdZ+xwu3NagjGjiB+N/98rhnIbDDB2/8Vv6TascRfKawtJb2Vj+MslnBtl9fUzsQwlyTnusKJGkcY23CrmxH4qD62UlGSJ/MmSru0hGlWbultUdmOfNM4hxC1DfeuTLOIBI9FnJ5KYJZMajBNL+ggkBgEkQ5Hx1fbhlQaRSbfK7Qt0GWIzky5k9IFdsdXFp8MOJSPNgJDumznryVNoNPudl31FsPs18hErSsYV11DOTTvp4hqMCWhdwMLn8NUfPsxoZbbZZ07QtI3VNKj+g==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR12MB6873.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(23010399003)(7416014)(376014)(366016)(6133799003)(56012099006)(11063799006)(4143699003)(18002099003)(22082099003)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(1800799024)(82310400026)(36860700016)(22082099003)(18002099003)(3023799007)(10067099003)(56012099006);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R1ZJbjRnMWE0VzBZNmZaNTdueHBWVHJaOUp1NVRCeHFPOVZUVVZmTXltUHFo?=
- =?utf-8?B?RDVhbGpPQlFWYW54MjJVZ3ljb1JtTCtSRG5RQldIamVVbmdZSUR4T3ZIaXds?=
- =?utf-8?B?TXBWdWUvbU1LTjZ6NFVOUkhub0ZlNEJlUjNKTE1BdjlzL29lUXVGbFhQU2lO?=
- =?utf-8?B?NEoxbXdPTTdxM1lFSlcreWVNR2pjQXNvVGN2cm5HVmhmYTd2RmxCQ011VVp0?=
- =?utf-8?B?VEI0TWpTRlZSeEpoY0xWbVdrbVBwZ3JTYXplcEN4bnBqQ3ZobVBrOWFxNi90?=
- =?utf-8?B?MnVmZlNxd0lqTURuYXNVbzdrVzI0MVlQN25VSjFUUWg5bGtNUTRHcEYxUEtm?=
- =?utf-8?B?eHUrMXJ4K3V1VHhjQm5rVExyR0tJbk9GQ3o5c3lPN2ZMZGp6Ym9JMFhLYTJi?=
- =?utf-8?B?MHk5N0V1MHBOSzBIUGRnQVNnOC83aVFaaDJVZEdqa29zK0NDTU4zcTBYZnhp?=
- =?utf-8?B?emlnbWpmYy9NSlFWOTUxS2VMUzlRYUFTbUJ5NzhHTTQrTlhZTzdBbWk3V1Mv?=
- =?utf-8?B?WmQ0Sm5XZzNSVENpdVZJQlRPY0RFMHQ3NnROMW5ycmoyV29VSnl5KzhoTE5V?=
- =?utf-8?B?M2pSZVVaRGFxOHhpRkZpTzhyWTFFVFlZaTA4ejRFZDFCRjgzKys4OHRyWWpp?=
- =?utf-8?B?eGFZaElHaytRZjgyK0NRaEdvU3pzVEFVTzQxZGgvUHBmUUsxVkNFaGxGN2hT?=
- =?utf-8?B?WDErVEZwaXVuYVozVUVlYld3NmNub3V0U21iRDBKdmdyOTlkQ3Vsd1ZxdVB6?=
- =?utf-8?B?dDZPT3ZtbCtFL2FraGlFa2swYjBHRG5pMTdXUlQ4aFcwNGE4Q0kwQzlKbUtG?=
- =?utf-8?B?UWROcFdsdHloMENtbmp3Z3RSTTNSdGd6VDg5THJydE83ZHRsdlNYSEt0Q2JI?=
- =?utf-8?B?SGdDeHROdUllV3NtUEExUUR5MFRnOFlUbVQwOExkRmNDZDI0VmxEMU5jYU1V?=
- =?utf-8?B?NlM4bkFPV1JYNERONCtTcHFmaGFZOW1aYnl3TVFvQ3FwTDJMNFd0T1BIVXZw?=
- =?utf-8?B?aTRCU2wyTnhoTmM1TlltSXlxMVNDWUw1RWEvQzdYNytOamJ0REtNMDJzSjA4?=
- =?utf-8?B?Qm94WTNEdEJYWkIzK1c2eWFCVWZ2d21ZK0tBNTRzK0JJYW1Pc3JKZXRuWHJu?=
- =?utf-8?B?aEJwVWlySDNqK0hJNS9WbFJIZWMzNjZnZHVod014YUxvNkhGZEZHMHlzOXlX?=
- =?utf-8?B?TTV2UW5ZUkpGdUtjSVpOOFdrcE1XcWszc2lRWHR4bHBBTmYzRDh6WlVTaFo0?=
- =?utf-8?B?SE1LOG5ZZzZNNHpVVkVlc0c1ekZIRW96SUwySXlVZXdtcFJSK0pGUk8xcEpM?=
- =?utf-8?B?Tlprbi84cDNoZVFmeEJ3RU90cEFNUUVoQjR0ZENJaEV6R1E0bXlTSEZrQitW?=
- =?utf-8?B?WDNVM3dmZkFhRm9LNkxUYVpDdzBrYVFkYys2T0ZKbDNoaDdEeFJsOFdFanRs?=
- =?utf-8?B?cWI2L2g4d3hHZEY2MEY5YXBwM1Y3cGIzTTEzQmpneUEvQ1VLQ2J6TGRMQTYz?=
- =?utf-8?B?aEo3QXBYSVlDTlpVVjZKREI3cks2Qy9GU2Vsc0FxTHlKd1VoWUUvdnd0RmNG?=
- =?utf-8?B?ZnAvbTVSUjRVOVJXRmV4Wk9ia0ZrcGFReVVDTVlQMEF0d1FYZWVsUGQ1V0NS?=
- =?utf-8?B?TWpkdWlqR1hGa0JGNW5wMFRhcW5Ob0kyZWpuOCs4MHRkTE5ENVJPQktlRlJY?=
- =?utf-8?B?N0E0Wm1pak05OVJQT1NmaDkwQkhCVldvVU5ERmQ0Ny9TZlN6R01oRldQWll3?=
- =?utf-8?B?ZnljOGUzVHB1N0w2NGt4dUw3eTFQNlpQUmVmYTJmL01uN1dWWFg4UjhrTC9w?=
- =?utf-8?B?V1B6ZWQzSlpsTWttSW52UjRlcW55Z2JTc0pTd1NlWmRvM0VXN0hLWDIyck5r?=
- =?utf-8?B?eXVYT24rMVYzMGdEc0hndlA5REZYRS9FUzRmVWdqeWF3eDJ5SC8zWE5mUENH?=
- =?utf-8?B?RnhqWGxnSldLVUFubnZrSktIMDhGakMxYmd4eFh5YWlBOUgwWnRRV20yMDhh?=
- =?utf-8?B?UjFUQit3TDlzUlJjbHZnYktZaU80Q1gyM3o4bU52VW83YzNmMmszM3p1ZStP?=
- =?utf-8?B?ck1EN2xLMm9mclBNeVRRRVdmY0VBaGozcmpnUjcrNDNYRGxtZEdnNStxc25B?=
- =?utf-8?B?QWpydlE0aEF0SFEzRXdZc2laaGUvOEdIeEthSmY2RXZETE1yRG04d2xKeFVD?=
- =?utf-8?B?czVOTGljbnlrR0xHZk1WYjlCRm01Qi9uQmQ5WlY3UmtmbEpzRzVMWmtMN1Ev?=
- =?utf-8?B?aTZxRzcrZU1CMnBvZkQ5OEs0b3FNbWdBN0xTbjhUd3QyNGt5NVpOdTc1ZFdh?=
- =?utf-8?B?cHR1dGNyajgwdURGVmVCbWZmN0xxTjErd2hEdjBsMEJ4TlJvaW5Kb0d5R3Ir?=
- =?utf-8?Q?8pwVV7zolETcqqu6yXdevIKlShqLEdqllEhPeTdZfdZdh?=
-X-MS-Exchange-AntiSpam-MessageData-1: wQtJAhd/J8Jhmg==
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2da19f8c-c968-4dfc-32cc-08df12014dfb
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB6873.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2026 01:41:32.3974
+	F/79DqLaazRwUbD86GoJJ7cC8g4ftG4fKHYIMyvQWnpFbvcZ1Dpjzu46frkHE6frKlGOX9itotiyrcWeuRWeqmn4BH+Kd8If6rw5QeTkrQ9wBMrPrr6k4JFy4xEqA31EeAcBc9wdknEVjibm7FGI2RgBJLfPGFSCc+IJN1+QcrQalV9+zu8we7zcFruF54tXn1umPiy0uwiZT/2NONNYiy0rmYgtBB+0XrldmXS0qkSGWmauPVM4CsL5y9VrMy0wHvF/2/0qjNEXGGmGkEcZIIh6T1aaJZ2oaWYf3Xkh4fKummeAyYC5uVSKMVT7KvstKQm65CF6KNreG+oIj/ibI+cthHLVhoITOJ9jkMvntYI+zLTSj3XQsyIUtSo64dFu8vMzlm6jdLVF2yfGckDPRLhfzeHMxwA7/4klbCQEPyDEQGNtantIJ5teSe9rEGOh
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2026 02:21:56.3984
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PDSzpvXtggegoEWIjnqJKeECUu0p5tW9XEZ7MuBcflOm3IS66jH2o+XO0kNuaLcPKc8gdXDl5ZzGUBNsAJVwzg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4386
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ba692ce-7cbb-437c-4565-08df1206f2fe
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG1PEPF000082E8.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYNPR06MB8997
 
-On Sun Sep 13, 2026 at 5:46 PM JST, Kohei Ito wrote:
-> Hi, Bartosz,
->
-> On Thu, Sep 10, 2026 at 12:37:17AM -0700, Bartosz Golaszewski wrote:
->> On Sun, 6 Sep 2026 10:45:51 +0200, Kohei Ito <koheiito.dev@gmail.com> sa=
-id:
->> > Add a sample driver to demonstrate the use of the Rust GPIO APIs.
->> >
->> > Signed-off-by: Kohei Ito <koheiito.dev@gmail.com>
->> > ---
->>=20
->> I don't like samples as they rarely get built or tested. We seem to alre=
-ady
->> have kunit support for rust, wouldn't it make more sense to implement a =
-kunit
->> module for rust GPIO abstractions? If we don't have provider abstraction=
-s, you
->> should be able to reuse gpio-sim as the GPIO controller for testing just=
- by
->> instantiating simulated GPIO devices.
->
-> Thank you for your suggestion.
->
-> I assume the kunit module you have in mind would be implemented like
-> `gpiolib-kunit.c`. Based on your comment, I agree that a kunit-based
-> approach is more appropriate than a sample driver.
->
-> However, as far as I know, we don't yet have Rust abstractions for
-> platform_device registration and software_node, which are required to
-> implement a kunit-based module for testing GPIO consumer APIs. Given the
-> current state of Rust for Linux, I think creating a sample driver is a
-> more practical approach for now. I would like to consider migrating to a
-> kunit-based module as future work.
+On 2026-09-13 14:32, Krzysztof Kozlowski wrote:
 
-The problem is that this sample driver never probes, so in effect it is
-only ever compile-tested. Without support for the provider API, you need
-to include a small C fixture providing a GPIO chip for it to be actually
-runtime-tested.
+> EXTERNAL EMAIL
+> 
+> Correct indentation in the examples to consistent 2- or 4-spaces
+> indentation to fix dt-check-style warnings ("example 0
+> [indent-consistent] indent mismatch ...").  Preferred is 4-spaces, but
+> re-indenting entire example just for that is too much churn.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Doing the same using KUnit would involve building the `gpio_chip` using a
-bunch of unsafe statements working with the C bindings (which would then
-in turn require `gpio/driver.h` to be added), so I guess we'll want to
-wait until we have a proper Rust provider API to go that direction.
+For the cix part:
 
-But if we add a sample driver, we need to make sure it is exercised.
+Reviewed-by: Gary Yang <gary.yang@cixtech.com>
+
+> ---
+>  .../pinctrl/awinic,aw9523-pinctrl.yaml        | 50 +++++++++----------
+>  .../bindings/pinctrl/cix,sky1-pinctrl.yaml    |  2 +-
+>  .../bindings/pinctrl/fsl,imx7d-pinctrl.yaml   |  8 +--
+>  .../bindings/pinctrl/intel,lgm-io.yaml        | 14 +++---
+>  .../pinctrl/mediatek,mt8183-pinctrl.yaml      |  4 +-
+>  .../pinctrl/mediatek,mt8195-pinctrl.yaml      |  2 +-
+>  .../bindings/pinctrl/qcom,hawi-tlmm.yaml      |  4 +-
+>  .../bindings/pinctrl/qcom,kaanapali-tlmm.yaml |  4 +-
+>  .../bindings/pinctrl/qcom,maili-tlmm.yaml     |  4 +-
+>  .../bindings/pinctrl/semtech,sx1501q.yaml     |  4 +-
+>  .../bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml | 46 ++++++++---------
+>  11 files changed, 71 insertions(+), 71 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/awinic,aw9523-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/awinic,aw9523-pinctrl.yaml
+> index 98c310a3c63c..1c09c0fd4930 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/awinic,aw9523-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/awinic,aw9523-pinctrl.yaml
+> @@ -108,32 +108,32 @@ examples:
+>          #size-cells = <0>;
+> 
+>          aw9523: gpio-expander@58 {
+> -                compatible = "awinic,aw9523-pinctrl";
+> -                reg = <0x58>;
+> -                interrupt-parent = <&tlmm>;
+> -                interrupts = <50 IRQ_TYPE_EDGE_FALLING>;
+> -                gpio-controller;
+> -                #gpio-cells = <2>;
+> -                gpio-ranges = <&tlmm 0 0 16>;
+> -                interrupt-controller;
+> -                #interrupt-cells = <2>;
+> -                reset-gpios = <&tlmm 51 GPIO_ACTIVE_HIGH>;
+> +            compatible = "awinic,aw9523-pinctrl";
+> +            reg = <0x58>;
+> +            interrupt-parent = <&tlmm>;
+> +            interrupts = <50 IRQ_TYPE_EDGE_FALLING>;
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +            gpio-ranges = <&tlmm 0 0 16>;
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+> +            reset-gpios = <&tlmm 51 GPIO_ACTIVE_HIGH>;
+> 
+> -                keyboard-matrix-col-pins {
+> -                        pins = "gpio8", "gpio9", "gpio10", "gpio11",
+> -                               "gpio12", "gpio13", "gpio14", "gpio15";
+> -                        function = "gpio";
+> -                        input-disable;
+> -                        output-low;
+> -                };
+> +            keyboard-matrix-col-pins {
+> +                pins = "gpio8", "gpio9", "gpio10", "gpio11",
+> +                       "gpio12", "gpio13", "gpio14", "gpio15";
+> +                function = "gpio";
+> +                input-disable;
+> +                output-low;
+> +            };
+> 
+> -                keyboard-matrix-row-pins {
+> -                        pins = "gpio0", "gpio1", "gpio2", "gpio3",
+> -                               "gpio4", "gpio5", "gpio6", "gpio7";
+> -                        function = "gpio";
+> -                        bias-pull-up;
+> -                        drive-open-drain;
+> -                        input-enable;
+> -                };
+> +            keyboard-matrix-row-pins {
+> +                pins = "gpio0", "gpio1", "gpio2", "gpio3",
+> +                       "gpio4", "gpio5", "gpio6", "gpio7";
+> +                function = "gpio";
+> +                bias-pull-up;
+> +                drive-open-drain;
+> +                input-enable;
+> +            };
+>          };
+>      };
+> diff --git a/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+> index 8ed53496c386..4ab1f00775cc 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/cix,sky1-pinctrl.yaml
+> @@ -86,6 +86,6 @@ examples:
+>                  pinmux = <CIX_PAD_GPIO012_FUNC_GPIO012>;
+>                  bias-pull-up;
+>                  drive-strength = <8>;
+> -           };
+> +            };
+>          };
+>      };
+> diff --git a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.yaml
+> index 948160cfbc5f..7275215918bb 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.yaml
+> @@ -106,8 +106,8 @@ examples:
+>        fsl,input-sel = <&iomuxc>;
+> 
+>        pinctrl_gpio_lpsr: gpio1-grp {
+> -          fsl,pins =
+> -            <0x0008 0x0038 0x0000 0x0 0x0 0x59>,
+> -            <0x000C 0x003C 0x0000 0x0 0x0 0x59>;
+> -        };
+> +        fsl,pins =
+> +          <0x0008 0x0038 0x0000 0x0 0x0 0x59>,
+> +          <0x000C 0x003C 0x0000 0x0 0x0 0x59>;
+> +      };
+>      };
+> diff --git a/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml b/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml
+> index 1144ca2896e3..96c405711f65 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml
+> @@ -64,13 +64,13 @@ examples:
+>          reg = <0xe2880000 0x100000>;
+> 
+>          uart0-pins {
+> -             pins = <64>, /* UART_RX0 */
+> -                    <65>; /* UART_TX0 */
+> -             function = "CONSOLE_UART0";
+> -             pinmux = <1>,
+> -                      <1>;
+> -             groups = "CONSOLE_UART0";
+> -          };
+> +            pins = <64>, /* UART_RX0 */
+> +                   <65>; /* UART_TX0 */
+> +            function = "CONSOLE_UART0";
+> +            pinmux = <1>,
+> +                     <1>;
+> +            groups = "CONSOLE_UART0";
+> +        };
+>      };
+> 
+>  ...
+> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.yaml
+> index 3db2438fadc7..4bcee7741fcd 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8183-pinctrl.yaml
+> @@ -221,8 +221,8 @@ examples:
+> 
+>              i2c0_pins_a: i2c0-pins {
+>                  pins1 {
+> -                  pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
+> -                           <PINMUX_GPIO49__FUNC_SDA5>;
+> +                    pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
+> +                             <PINMUX_GPIO49__FUNC_SDA5>;
+>                      mediatek,pull-up-adv = <3>;
+>                      drive-strength-microamp = <1000>;
+>                  };
+> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8195-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8195-pinctrl.yaml
+> index 33cb71775db9..0bcafa78acb2 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt8195-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt8195-pinctrl.yaml
+> @@ -234,7 +234,7 @@ examples:
+>    - |
+>      #include <dt-bindings/pinctrl/mt8195-pinfunc.h>
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+> -    #
+> +
+>      pio: pinctrl@10005000 {
+>        compatible = "mediatek,mt8195-pinctrl";
+>        reg = <0x10005000 0x1000>,
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,hawi-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,hawi-tlmm.yaml
+> index 3b3961789860..2b1354e212e5 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/qcom,hawi-tlmm.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,hawi-tlmm.yaml
+> @@ -113,8 +113,8 @@ examples:
+>          #interrupt-cells = <2>;
+> 
+>          qup-uart7-state {
+> -          pins = "gpio62", "gpio63";
+> -          function = "qup1_se7";
+> +            pins = "gpio62", "gpio63";
+> +            function = "qup1_se7";
+>          };
+>      };
+>  ...
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,kaanapali-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,kaanapali-tlmm.yaml
+> index 53534a07a1f0..ea7d4768483d 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/qcom,kaanapali-tlmm.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,kaanapali-tlmm.yaml
+> @@ -120,8 +120,8 @@ examples:
+>          #interrupt-cells = <2>;
+> 
+>          qup-uart7-state {
+> -          pins = "gpio62", "gpio63";
+> -          function = "qup1_se7";
+> +            pins = "gpio62", "gpio63";
+> +            function = "qup1_se7";
+>          };
+>      };
+>  ...
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,maili-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,maili-tlmm.yaml
+> index 64fe90b2391b..a0b56adb3388 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/qcom,maili-tlmm.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,maili-tlmm.yaml
+> @@ -113,8 +113,8 @@ examples:
+>          #interrupt-cells = <2>;
+> 
+>          qup-uart7-state {
+> -          pins = "gpio62", "gpio63";
+> -          function = "qup1_se7";
+> +            pins = "gpio62", "gpio63";
+> +            function = "qup1_se7";
+>          };
+>      };
+>  ...
+> diff --git a/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml b/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
+> index 39d7dad3313b..f7a7551d7f50 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/semtech,sx1501q.yaml
+> @@ -244,8 +244,8 @@ examples:
+>              interrupt-controller;
+> 
+>              gpio1-cfg {
+> -                  pins = "gpio1";
+> -                  bias-pull-up;
+> +                pins = "gpio1";
+> +                bias-pull-up;
+>              };
+>          };
+>      };
+> diff --git a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
+> index ce66fd15ff9c..300d38f87f2d 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/xlnx,zynqmp-pinctrl.yaml
+> @@ -317,37 +317,37 @@ examples:
+>      #include <dt-bindings/pinctrl/pinctrl-zynqmp.h>
+>      zynqmp_firmware: zynqmp-firmware {
+>          pinctrl0: pinctrl {
+> -          compatible = "xlnx,zynqmp-pinctrl";
+> +            compatible = "xlnx,zynqmp-pinctrl";
+> 
+> -          pinctrl_uart1_default: uart1-default {
+> -             mux {
+> -                 groups = "uart0_4_grp", "uart0_5_grp";
+> -                 function = "uart0";
+> -             };
+> +            pinctrl_uart1_default: uart1-default {
+> +                mux {
+> +                    groups = "uart0_4_grp", "uart0_5_grp";
+> +                    function = "uart0";
+> +                };
+> 
+> -             conf {
+> -                groups = "uart0_4_grp";
+> -                slew-rate = <SLEW_RATE_SLOW>;
+> -                power-source = <IO_STANDARD_LVCMOS18>;
+> -             };
+> +                conf {
+> +                    groups = "uart0_4_grp";
+> +                    slew-rate = <SLEW_RATE_SLOW>;
+> +                    power-source = <IO_STANDARD_LVCMOS18>;
+> +                };
+> 
+> -             conf-rx {
+> -                pins = "MIO18";
+> -                bias-pull-up;
+> -             };
+> +                conf-rx {
+> +                    pins = "MIO18";
+> +                    bias-pull-up;
+> +                };
+> 
+> -             conf-tx {
+> -                pins = "MIO19";
+> -                bias-disable;
+> -                input-schmitt-disable;
+> -             };
+> -          };
+> +                conf-tx {
+> +                    pins = "MIO19";
+> +                    bias-disable;
+> +                    input-schmitt-disable;
+> +                };
+> +            };
+>          };
+>      };
+> 
+>      uart1 {
+> -         pinctrl-names = "default";
+> -         pinctrl-0 = <&pinctrl_uart1_default>;
+> +        pinctrl-names = "default";
+> +        pinctrl-0 = <&pinctrl_uart1_default>;
+>      };
+> 
+>  ...
+> --
+> 2.53.0
+> 
