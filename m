@@ -1,91 +1,70 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0849434E5F
-	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A6E41A93A;
+	Mon, 14 Sep 2026 09:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789378060; cv=none; b=h9Nvs3v7OpUwlrAJWDsJFJe/7JRSYm4DilN1jCSZg9qGHPK5M4hzm1chA3e9suAnNOpurDbF61cUBgPA9MaYZocrTCkZ9a5JehRhXaGsMHIylXbh2Oo4kyljeKPg6xqIzBSsCHwt5Zc/9kdyV4Tz7eTwP2VTjkoPLWM6sxbo6x0=
+	t=1789379093; cv=none; b=J06O2y+B3FNLNuU11s1p3Vv1Xp5AgiTEv2vqzdM+84bfIkqgPkWoKMj+zJIECCtPfGwlRRWVzVe00tXKEocWVfKraA11xM88Z+DC9zBCGeuZVOQqz9hxr/gcq5QG3YeTHfGwKe0vQTtA3U0Nlna+tGNhDNhvfYAcL9Db72YjvOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789378060; c=relaxed/simple;
-	bh=mP/l5Do4YJ7IRKmOSzDfTfkwiYAM0VDD1IfC3wKE9Js=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fecopnPIQnGBe6+JpjvT+dyHb379g4brDYuONF3/pZbO2CYj+rN/K2ajMeckKnH5RdO1A7+lQf3oAbiickcAgjWl+2qkUcGeWLhwyHa0OWsp9qo67c386o8T+BbGeWCyqTcswibYChLQm+/y4yGOBY0tMIDHxe6aCzzm3jLNfKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ur1HjN52; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789379093; c=relaxed/simple;
+	bh=6nYt2qmvQiwbF8zdA1cWcafihjBF9zdHKhaWCkPbVsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PffzBM2Rlkek4/BENBDcC+5wehVpbMt8q+MB/dxCHseNSU2WcbrHJu0+tXPAd4VeTExtbiLvC/y9DEwEnPDSg6BYEzumkZqTM5/pnKeorIsUsPY5OKC2IlBame4az2hDV4SDVfqIe/JmqDSZOx+E2iLeOXgTdb+tdv7PHSlAIA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AwJKXUYx; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ur1HjN52"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89C611F00893
-	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:27:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AwJKXUYx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C06121F000FF;
+	Mon, 14 Sep 2026 09:44:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789378055;
-	bh=+EKK5mZN/Z88F3qSalRQdpIe1kQRO9isxPVk2e1xkaU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Ur1HjN52JEtDmwrp6C07kQ1Cdpj2A7qLwlCyaGMqCRBwBTb0j0t9NXb6d4Dfj0HCt
-	 qnpk1JIh7nfUVx05gtYhalu0y7MzZI2YnpC00qbhPCU+0+9RoZckVt/Sj/ZLnx0ufL
-	 6ii9jXER2PZDBgECWm1KvYn9ws0YM650hyvoHJPPNZ2boS1Ae4xnbFSorHjm6jEUJW
-	 KIrrELf1a8Itan7p2MupPgw1b0LLHXDY7BfVQfOHcAtbCxj4jZDzoFz/6qE03UBd8M
-	 4krfBaEPt4RPBi4qtw05JSIBwnPbKMTdrC0J6fUI55GWFTZtsW3CDJb/TeVyium0GX
-	 lLocGxPvSI9uQ==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5b76694fb7aso2742004e87.0
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 02:27:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwXxvg/4X9SRieEJx7ZyGgmC+sviKVXqxBzs4AKYq/Y/zRyzpF8XI3xm98nQUgskt3ZYIkpo7s5vG88@vger.kernel.org
-X-Gm-Message-State: AFuF++mOml8d48LLF5t20Qa8yD7uUdXmfKTXWLSpIAIlHTnwpFUzsic5
-	Fpxb9dT4t8ra5/hC0dR7F/nzr1OJj2tbt9Ygs1289JDv4p9eot68QhqQWNq7yV7k0KfDbzYGncr
-	8tszzZ81aaanGcStZqOIf+0vs6QjM6iw=
-X-Received: by 2002:a05:6512:3ba2:b0:5b8:9a95:e251 with SMTP id
- 2adb3069b0e04-5b8abb02f33mr1155329e87.25.1789378054325; Mon, 14 Sep 2026
- 02:27:34 -0700 (PDT)
+	s=k20260515; t=1789379092;
+	bh=7oTu0d+0Fng6387kjjfZt62xlgG4iwEnpYsY40VG/Ho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=AwJKXUYxu2mk018JrvfobY4v2/1iitVaMT3IPdoEL9Dhptuk86dYWjE1hmwbGweip
+	 G9YbI8JCD/Roai2iKXzafYLn7VJDIHvKI17gT5I1gWWOYsXmzjqZSQhQNBsHzuyGDq
+	 1nK49n33KIeUVVdWn+taXyyAGZw0xq1efG6Py78j/samC5nea2i9H9TTuc80epxaRb
+	 hEp+8O4fOix1UsVy6dGnIcKEFqv+Mw9K0Dj4cnmNokkpRtYaxF3FRPeXgCa14aUi+9
+	 YahzdtRk++xKNYA3nR/U1gK6j6YXyqdOQR2zE9s0nL4s6nHAK0u6hyNkk9s1fTEPoH
+	 y8gLqWQpfryXQ==
+Date: Mon, 14 Sep 2026 11:44:48 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Long Zhao <longzhao@ambarella.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, Lee Jones <lee@kernel.org>, 
+	mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 04/13] dt-bindings: pinctrl: add Ambarella CV75 pinctrl
+Message-ID: <20260914-refined-elite-seriema-0f7eaa@quoll>
+References: <20260904-cv75-v5-v6-0-e918514cb3b1@ambarella.com>
+ <20260904-cv75-v5-v6-4-e918514cb3b1@ambarella.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260827205116.GJ2943942@google.com> <20260827222550.24634-1-michael.zaidman@gmail.com>
- <apaLLD4ZXhNV-Dph@beelink>
-In-Reply-To: <apaLLD4ZXhNV-Dph@beelink>
-From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 14 Sep 2026 11:27:21 +0200
-X-Gmail-Original-Message-ID: <CAD++jLng_gdqoehT+c8sXoqy+tdUc7eAXXpAvhC_zJZwnX5tzA@mail.gmail.com>
-X-Gm-Features: AcwNN1XIGrJI8kEt6FJvsnfO1yo_Nk4ZdgQyT1yCMtF0ThsxbTGwmmYyu4htGIU
-Message-ID: <CAD++jLng_gdqoehT+c8sXoqy+tdUc7eAXXpAvhC_zJZwnX5tzA@mail.gmail.com>
-Subject: Re: [PATCH 00/13] HID: ft260: add UART and GPIO support, plus I2C fixes
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Michael Zaidman <michael.zaidman@gmail.com>, lee@kernel.org, jikos@kernel.org, 
-	brgl@kernel.org, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260904-cv75-v5-v6-4-e918514cb3b1@ambarella.com>
 
-Hi Benjamin, Lee,
+On Fri, Sep 04, 2026 at 02:38:11PM +0800, Long Zhao wrote:
+> Document the CV75 pin controller binding using generic function and
+> groups properties for pinmux configuration.
+> 
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+> ---
+>  .../bindings/pinctrl/ambarella,cv75-pinctrl.yaml   | 239 +++++++++++++++++++++
+>  1 file changed, 239 insertions(+)
 
-On Tue, Sep 1, 2026 at 4:03=E2=80=AFPM Benjamin Tissoires <bentiss@kernel.o=
-rg> wrote:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-> TBH, I'm not a big fan of having multiple subsystems children into HID.
-> Mostly because I can't review the best practive in each of them. However,
-> for quite a long time, HID was mostly for input devices, and input is a
-> different subsystem.
->
-> That being said, there are 2 types of HID devices:
-> - ones with defined standard usages (keyboards, mice, touchscreen,
->         battery, etc) and using MFD for those would certainly be overthin=
-king
-> - others use raw HID device with a custom protocol (cp2112, mcp2221,
->         ft260), these could be MFD candidates
+Best regards,
+Krzysztof
 
-Surely, as HID start to attract chips which clearly fall into the MFD
-category of things, with a plethora of subsystems hooking into the
-same HID device, we must find a way for HID devices to spawn
-MFD cells?
-
-MFD solved and evolved a system for handling exactly this type
-of situation.
-
-Whether there should be an MFD device in the middle spawning
-each a HID, GPIO, I2C, UART cell or whether HID device itself should
-sit in the nexus and gain the ability to simply spawn out MFD cells
-from itself is what we need to figure out.
-
-Yours,
-Linus Walleij
