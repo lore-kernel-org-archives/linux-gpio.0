@@ -1,88 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F0B9463
-	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0849434E5F
+	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789377637; cv=none; b=OBLZB1zHjvQYZLHQt+7LlyfiDiVsQuQqk/a7SazW2W4Pf6KCbFl2NCyf+fkIPgbcCnwDNKdwCWfBMy3SSdbd3lexevy2p+zAmwha2qLr3nXHLwVWgZIQCo1q9ahdr9CZ4s09Cx4553wv2WLVZLwC71D9PguUn8EhfyQVNHvLk0k=
+	t=1789378060; cv=none; b=h9Nvs3v7OpUwlrAJWDsJFJe/7JRSYm4DilN1jCSZg9qGHPK5M4hzm1chA3e9suAnNOpurDbF61cUBgPA9MaYZocrTCkZ9a5JehRhXaGsMHIylXbh2Oo4kyljeKPg6xqIzBSsCHwt5Zc/9kdyV4Tz7eTwP2VTjkoPLWM6sxbo6x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789377637; c=relaxed/simple;
-	bh=eSQwvXbrhVlLDZxIrriKTdW+rss+Xx2YD8/ACro1PUs=;
+	s=arc-20240116; t=1789378060; c=relaxed/simple;
+	bh=mP/l5Do4YJ7IRKmOSzDfTfkwiYAM0VDD1IfC3wKE9Js=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TNB7Z+28DAnJ/fn56LVELvnU6BcAjc9r2daWiXm0uWrxtNJAhJHhy5i0cI7cp3wW+XjxJ2J9QTGc/3Rvd+5klnNuEvzyfqtvnFgylrxwPp0sottrjQx7WHG3IZGkzVrHdJRNtpzXmRD93N1A6eBQsmUb+9+gvJaV9PV4LASAc/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T7nOBQMp; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=fecopnPIQnGBe6+JpjvT+dyHb379g4brDYuONF3/pZbO2CYj+rN/K2ajMeckKnH5RdO1A7+lQf3oAbiickcAgjWl+2qkUcGeWLhwyHa0OWsp9qo67c386o8T+BbGeWCyqTcswibYChLQm+/y4yGOBY0tMIDHxe6aCzzm3jLNfKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ur1HjN52; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T7nOBQMp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 287C91F000FF
-	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:20:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ur1HjN52"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89C611F00893
+	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 09:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789377636;
-	bh=eSQwvXbrhVlLDZxIrriKTdW+rss+Xx2YD8/ACro1PUs=;
+	s=k20260515; t=1789378055;
+	bh=+EKK5mZN/Z88F3qSalRQdpIe1kQRO9isxPVk2e1xkaU=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=T7nOBQMpu8MFJX3q5HikToJULayNVBtbpg834o4bVi4c8F+5QYQbHUc8NCAJevaiz
-	 UNlR6cuGO6BUGhnos/Nq/yiSsMcJEvEXfQqEzPGdFULa9aB2TJ9yGNWdLg8+R1Fl+0
-	 6bfqh3iY3KIS0OtPqFTqDReMp4P0lYqCKVYeeQE10tpMh28Mu6iaRrURlZZQT+bEtm
-	 y4KsaDuy4kXLqXXtGTz5jQ23kftt9T6U5q8Ctajp/yvy6QUSLkPbjKuWqr+frSirYp
-	 m/zNWEGCR9xeh6i/sjBLGGtQAxf3WIye0ZWanVosQ/3gcsTUqgniw4mOSHk8HMYY1M
-	 5RwuIxWndA4fA==
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b76668f4ddso825640e87.1
-        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 02:20:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzK4osXlExdIAN1/c8CXzL8cckIflbdDWKmz2Q1erggQxk7oCYJdDOEETpEhQVpLIKRIBbZ301xHMb3@vger.kernel.org
-X-Gm-Message-State: AFuF++m9NW8bB2239YFgN4/QDhtxzPDo7BnZ+n9mOjhFzCPJvDB/xtCb
-	q/CEMetbkpk1iVvhS3WiA7qJ8Wh0CDyOvI7di6h9IjFNYp5i1Z3f5TLSgIGCm1tieAyiS/jok3l
-	rJ3o3KOg1Af2xqrJGhfsb82Wn+cjHmZg=
-X-Received: by 2002:ac2:5681:0:b0:5b7:5cbb:661a with SMTP id
- 2adb3069b0e04-5b8ae4df066mr421235e87.0.1789377634893; Mon, 14 Sep 2026
- 02:20:34 -0700 (PDT)
+	b=Ur1HjN52JEtDmwrp6C07kQ1Cdpj2A7qLwlCyaGMqCRBwBTb0j0t9NXb6d4Dfj0HCt
+	 qnpk1JIh7nfUVx05gtYhalu0y7MzZI2YnpC00qbhPCU+0+9RoZckVt/Sj/ZLnx0ufL
+	 6ii9jXER2PZDBgECWm1KvYn9ws0YM650hyvoHJPPNZ2boS1Ae4xnbFSorHjm6jEUJW
+	 KIrrELf1a8Itan7p2MupPgw1b0LLHXDY7BfVQfOHcAtbCxj4jZDzoFz/6qE03UBd8M
+	 4krfBaEPt4RPBi4qtw05JSIBwnPbKMTdrC0J6fUI55GWFTZtsW3CDJb/TeVyium0GX
+	 lLocGxPvSI9uQ==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5b76694fb7aso2742004e87.0
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 02:27:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwXxvg/4X9SRieEJx7ZyGgmC+sviKVXqxBzs4AKYq/Y/zRyzpF8XI3xm98nQUgskt3ZYIkpo7s5vG88@vger.kernel.org
+X-Gm-Message-State: AFuF++mOml8d48LLF5t20Qa8yD7uUdXmfKTXWLSpIAIlHTnwpFUzsic5
+	Fpxb9dT4t8ra5/hC0dR7F/nzr1OJj2tbt9Ygs1289JDv4p9eot68QhqQWNq7yV7k0KfDbzYGncr
+	8tszzZ81aaanGcStZqOIf+0vs6QjM6iw=
+X-Received: by 2002:a05:6512:3ba2:b0:5b8:9a95:e251 with SMTP id
+ 2adb3069b0e04-5b8abb02f33mr1155329e87.25.1789378054325; Mon, 14 Sep 2026
+ 02:27:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260901-pci-tc9563-aux-v1-0-dd9b80738e70@oss.qualcomm.com> <20260901-pci-tc9563-aux-v1-4-dd9b80738e70@oss.qualcomm.com>
-In-Reply-To: <20260901-pci-tc9563-aux-v1-4-dd9b80738e70@oss.qualcomm.com>
+References: <20260827205116.GJ2943942@google.com> <20260827222550.24634-1-michael.zaidman@gmail.com>
+ <apaLLD4ZXhNV-Dph@beelink>
+In-Reply-To: <apaLLD4ZXhNV-Dph@beelink>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 14 Sep 2026 11:20:21 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=8FUodyGzBM3_1L2n1McL098h=CqXGQyqcunoYeJrtvA@mail.gmail.com>
-X-Gm-Features: AcwNN1VdI7CJOO0ZcprZb2VpGFj8KzkqAPZgo_YE0VXWhh_YZRttmpamlhFeCrg
-Message-ID: <CAD++jL=8FUodyGzBM3_1L2n1McL098h=CqXGQyqcunoYeJrtvA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] PCI/pwrctrl: tc9563: switch per-port reset to GPIO
- descriptor API
-To: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Michael Walle <mwalle@kernel.org>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Date: Mon, 14 Sep 2026 11:27:21 +0200
+X-Gmail-Original-Message-ID: <CAD++jLng_gdqoehT+c8sXoqy+tdUc7eAXXpAvhC_zJZwnX5tzA@mail.gmail.com>
+X-Gm-Features: AcwNN1XIGrJI8kEt6FJvsnfO1yo_Nk4ZdgQyT1yCMtF0ThsxbTGwmmYyu4htGIU
+Message-ID: <CAD++jLng_gdqoehT+c8sXoqy+tdUc7eAXXpAvhC_zJZwnX5tzA@mail.gmail.com>
+Subject: Re: [PATCH 00/13] HID: ft260: add UART and GPIO support, plus I2C fixes
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Michael Zaidman <michael.zaidman@gmail.com>, lee@kernel.org, jikos@kernel.org, 
+	brgl@kernel.org, linux-input@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 1, 2026 at 12:28=E2=80=AFPM Lorenzo Bianconi
-<lorenzo.bianconi@oss.qualcomm.com> wrote:
+Hi Benjamin, Lee,
 
-> Remove the local TC9563_GPIO_MASK and TC9563_GPIO_DEASSERT_BITS
-> definitions, which are no longer used after switching to the GPIO
-> descriptor API.
->
-> Replace the direct regmap-based per-port reset logic in
-> assert_deassert_reset() with gpiod_direction_output() calls, falling
-> back to the legacy regmap approach only when no reset-gpios DT
-> property is present for a given port.
->
-> Add the reset GPIO pointer to struct tc9563_pwrctrl_cfg and introduce
-> tc9563_pwrctrl_parse_reset_line() to look up reset-gpios from each
-> PCI downstream port child node. The lookup is done lazily at the
-> beginning of power_on(), returning -EPROBE_DEFER until the GPIO chip
-> is registered.
->
-> Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+On Tue, Sep 1, 2026 at 4:03=E2=80=AFPM Benjamin Tissoires <bentiss@kernel.o=
+rg> wrote:
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+> TBH, I'm not a big fan of having multiple subsystems children into HID.
+> Mostly because I can't review the best practive in each of them. However,
+> for quite a long time, HID was mostly for input devices, and input is a
+> different subsystem.
+>
+> That being said, there are 2 types of HID devices:
+> - ones with defined standard usages (keyboards, mice, touchscreen,
+>         battery, etc) and using MFD for those would certainly be overthin=
+king
+> - others use raw HID device with a custom protocol (cp2112, mcp2221,
+>         ft260), these could be MFD candidates
+
+Surely, as HID start to attract chips which clearly fall into the MFD
+category of things, with a plethora of subsystems hooking into the
+same HID device, we must find a way for HID devices to spawn
+MFD cells?
+
+MFD solved and evolved a system for handling exactly this type
+of situation.
+
+Whether there should be an MFD device in the middle spawning
+each a HID, GPIO, I2C, UART cell or whether HID device itself should
+sit in the nexus and gain the ability to simply spawn out MFD cells
+from itself is what we need to figure out.
 
 Yours,
 Linus Walleij
