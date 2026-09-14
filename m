@@ -1,158 +1,76 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA6341D22C
-	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 10:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A752F442FA0
+	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 11:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789380476; cv=none; b=k+8/79W3e7v0zTtS4hQsBEfpX8ZOxVEjAosUdG01CxBomdnylE8RMH8MT9wg4BpKOr6qROLX833Iy/UQ3kptrZ75BqhgYVIOLBkQCtiBMd6JzkLWQxGD/am8Welq6DfT2x3bPxy8sSxHS8r4h1rmpPGXd7vyc3cUytAYNcaC2LI=
+	t=1789387000; cv=none; b=STfROaQxO2ljpjeBO0kj0hSQmVe61qYLVqLZC272ouLqrQ6cRrNFb55mJFHLU5oSKHGx4gEbBOQkkSYCd4SyFuBaiJ3j5NCG4ICpYTdO/MLX7d5epTaqupR0rqsTvL4VazdMdB/otbGP17uqlClfL1s8cB/5F6jtJ+I0M1Bf+o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789380476; c=relaxed/simple;
-	bh=bhzDysUXJICZl4HNbtJ5X4V1LqWu56fbacBAFiJlnow=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bJow9RWG1WH9D4sZ/eO00KyzeafNKY/hvgIg88lvyS/h9RQ9QoEfeZwCyfxR/SJlixNW29utHkysaJ6fTVYmvRYMJYZ2GwmoBoeH4tYRm5OexQ7GifBhRqvci2F2spz79EaDohdDu+sVcR2ydB5TBHWdOFHgdR/SFwS5QbO2WQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=s2sD3+9j; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1789387000; c=relaxed/simple;
+	bh=zl6RLbN0ehdwyMkDD+LioONhrz2f2sfFDQCznJm/0No=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EgSCs4/+xpEYY1S6cmQmYYJGqbtncih7fbk4GrSG1QeoMuUAFXdMLcNqTejXWaAVpgCs2A9Got5qVc83AYLNe9t/v9Lf8dGVWsB4gYyd0JNt4cOVX7ez33mzDicXWq9KCGKBt0wZTU7zMPEMNHi83M2iVMNysLcwYyCWnYwWYQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dAm70dYH; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="s2sD3+9j"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F0E261570;
-	Mon, 14 Sep 2026 03:07:49 -0700 (PDT)
-Received: from e142021.arm.com (unknown [10.57.9.62])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 330613F7B4;
-	Mon, 14 Sep 2026 03:07:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1789380473; bh=bhzDysUXJICZl4HNbtJ5X4V1LqWu56fbacBAFiJlnow=;
-	h=From:To:Cc:Subject:Date:From;
-	b=s2sD3+9jTNlgFv1NggzXPIaf+b0VAmi72PP4mTnukXKdJfjYJab5PNdMWKr0Z2EuM
-	 PG043kOuFqIsn22mAZCcR3t2F41jH8ZqU9fiKv7bl1L6MBoKQrvS4is7lgG9sCtCEA
-	 Ibdje8hB6rl0ySp3xFIWEHiRwzDzKj15nT0t6Js0=
-From: Andre Przywara <andre.przywara@arm.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: [PATCH v2] pinctrl: sunxi: A523: fix voltage withstand encoding
-Date: Mon, 14 Sep 2026 12:07:44 +0200
-Message-ID: <20260914100744.1039050-1-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAm70dYH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53F171F00893
+	for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 11:56:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789386999;
+	bh=zl6RLbN0ehdwyMkDD+LioONhrz2f2sfFDQCznJm/0No=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=dAm70dYHClYU7L6N3HHcMKcXK2SKNwMxQmtKxNStuqY+eLHCIflpglYUx6VXWcBHS
+	 vRTx4moxiZdr1TUOFoLOJPlXHb6Ix3vMQGv6RK/AOptd3wuQJBqa+QrF59EYbiih1S
+	 4u2hNN/GSKEOB++Tjk6nIJHBhI+0p2cwUOmab2b9gP9Rb7Hhf5M0rs3Vo1qGsZ11e5
+	 XipfrtvzHy+bBsmDYSlYJ03PNk0bnmkzQt01k12mJh7V7uoxSR4JPqjVRvnRh80OLz
+	 MrTbwv6nbzpJqQwurjLg0bGNwf8QUeB0URTL1guABxcvf9j2WLYxKlyLnMdtxskP0Q
+	 Y1sQWjddaUgPA==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b79784a6edso1778160e87.1
+        for <linux-gpio@vger.kernel.org>; Mon, 14 Sep 2026 04:56:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBy2S9VZCurGoK/WeJYddf/GuXqWe/v4Qayq6VuYKFyJnNhXMGrEvIuUavrCTUbcMgfkT0r6aQpxR3IQ@vger.kernel.org
+X-Gm-Message-State: AFuF++ng1Al9Nmn0vZ64qnimc/zrYFng00MrNmN3/VA1cBtDUj/ku+4X
+	moSWcdh7bqyvrjE9WucJ3K7cdSCvv2gh68cf56x+0NGngJfcGuEK2SskDN+2C1nMhJh/mj9Munm
+	ikUmaBer9AnmBCBP/7HfwCP3HMLRNqX4=
+X-Received: by 2002:a05:6512:1316:b0:5b4:a9e1:b8a4 with SMTP id
+ 2adb3069b0e04-5b8ae68de4dmr607304e87.25.1789386998045; Mon, 14 Sep 2026
+ 04:56:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260814043028.12548-1-phucduc.bui@gmail.com>
+In-Reply-To: <20260814043028.12548-1-phucduc.bui@gmail.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Mon, 14 Sep 2026 13:56:26 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmyJyGYmTh5fNQWfXMfaNpxyDVuNgYMoKqLDDNrno7VqA@mail.gmail.com>
+X-Gm-Features: AcwNN1Um4x_GuLYTshuoggwXFWR_LD0P7MNh968APH0FnapvyZbiYjgof-pZSJE
+Message-ID: <CAD++jLmyJyGYmTh5fNQWfXMfaNpxyDVuNgYMoKqLDDNrno7VqA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] gpio: realtek-otto: Handle errors from optional IRQ lookup
+To: phucduc.bui@gmail.com
+Cc: Adrian Ng <adrianhoyin.ng@altera.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Allwinner A523 uses the same GPIO voltage "withstand" programming
-(setting the input level voltage thresholds) as the previous SoCs, but
-for some odd reason inverts the encoding of 1.8V vs. 3.3V.
+On Fri, Aug 14, 2026 at 6:30=E2=80=AFAM <phucduc.bui@gmail.com> wrote:
 
-Add a new bias voltage type to note this difference, and select it for
-the A523. At the same time also use the newer "CTL" version, which in
-addition allows to turn off the withstand programming for I/O voltages
-other than exact 1.8V or 3.3V (for instance for 2.5V sometimes used for
-Ethernet PHYs). The A523 has that enable register, but didn't use it
-so far.
+> From: bui duc phuc <phucduc.bui@gmail.com>
+>
+> platform_get_irq_optional() returns a positive IRQ number on success or
+> a negative error code on failure. For an optional IRQ, -ENXIO indicates
+> that no optional IRQ is available. Other errors, such as -EPROBE_DEFER
+> and -EINVAL, should be propagated so that the caller can handle them
+> appropriately.
+>
+> Propagate negative errors other than -ENXIO.
+>
+> Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
 
-This fixes eMMC and reportedly Ethernet operation on some A523 boards.
+Looks good to me.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-Fixes: 648be4cd9517 ("pinctrl: sunxi: Add support for the Allwinner A523")
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Tested-by: Per Larsson <per@palvencia.se>
-Tested-by: Juan Manuel Lopez Carrillo <juanmanuellopezcarrillo@gmail.com>
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
-Tested-by: Chen-Yu Tsai <wens@kernel.org> # Fixes eMMC on Orange Pi 4A
----
-Hi,
-
-just added tags and rebased on v7.3-rc1 (but just a context change).
-Linus, my apologies, I missed you on the first post, instead CC:ed DT
-people for some odd reason.
-Can you please take this as a fix ASAP?
-
-Cheers,
-Andre
-
- drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c | 2 +-
- drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c   | 2 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c         | 6 ++++++
- drivers/pinctrl/sunxi/pinctrl-sunxi.h         | 2 ++
- 4 files changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
-index 462aa1c4a5fa6..e27e4945def26 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
-@@ -26,7 +26,7 @@ static const u8 a523_r_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
- static struct sunxi_pinctrl_desc a523_r_pinctrl_data = {
- 	.irq_banks = ARRAY_SIZE(a523_r_irq_bank_map),
- 	.irq_bank_map = a523_r_irq_bank_map,
--	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
-+	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_CTL_INV,
- 	.pin_base = PL_BASE,
- };
- 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c
-index b6f78f1f30ac4..88d8acd5bc245 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c
-@@ -26,7 +26,7 @@ static const u8 a523_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
- static struct sunxi_pinctrl_desc a523_pinctrl_data = {
- 	.irq_banks = ARRAY_SIZE(a523_irq_bank_map),
- 	.irq_bank_map = a523_irq_bank_map,
--	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
-+	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_CTL_INV,
- };
- 
- static int a523_pinctrl_probe(struct platform_device *pdev)
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 25489beeb3125..7b33bcb7f840a 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -728,6 +728,7 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct sunxi_pinctrl *pctl,
- {
- 	unsigned short bank;
- 	unsigned long flags;
-+	bool inverted = false;
- 	u32 val, reg;
- 	int uV;
- 
-@@ -766,6 +767,9 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct sunxi_pinctrl *pctl,
- 		reg &= ~IO_BIAS_MASK;
- 		writel(reg | val, pctl->membase + sunxi_grp_config_reg(pin));
- 		return 0;
-+	case BIAS_VOLTAGE_PIO_POW_MODE_CTL_INV:
-+		inverted = true;
-+		fallthrough;
- 	case BIAS_VOLTAGE_PIO_POW_MODE_CTL:
- 		val = uV > 1800000 && uV <= 2500000 ? BIT(bank) : 0;
- 
-@@ -780,6 +784,8 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct sunxi_pinctrl *pctl,
- 		fallthrough;
- 	case BIAS_VOLTAGE_PIO_POW_MODE_SEL:
- 		val = uV <= 1800000 ? 1 : 0;
-+		if (inverted)
-+			val = !val;
- 
- 		raw_spin_lock_irqsave(&pctl->lock, flags);
- 		reg = readl(pctl->membase + pctl->pow_mod_sel_offset);
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-index 0daf7600e2fb0..b09df32a3073a 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
-@@ -116,8 +116,10 @@ enum sunxi_desc_bias_voltage {
- 	 * Bias voltage is set through PIO_POW_MOD_SEL_REG
- 	 * and PIO_POW_MOD_CTL_REG register, as seen on
- 	 * A100 and D1 SoC, for example.
-+	 * Some SoCs invert the encoding for 1.8V vs. 3.3V.
- 	 */
- 	BIAS_VOLTAGE_PIO_POW_MODE_CTL,
-+	BIAS_VOLTAGE_PIO_POW_MODE_CTL_INV,
- };
- 
- struct sunxi_desc_function {
--- 
-2.43.0
-
+Yours,
+Linus Walleij
