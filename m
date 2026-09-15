@@ -1,117 +1,130 @@
-Received: from mail-ed2-f12.google.com (mail-ed2-f12.google.com [74.125.228.76])
+Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com [74.125.228.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC8137B3F2
-	for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 22:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789511079; cv=pass; b=Ha31T7+Yn2lj1kiKSphVIWYKufoa3smzAt13LVyU1iL5cHO2yAX+rv9T1FfmkZlIAprKO/lskAPjp73AvxpoNJaVR0sH/G2+yNxT7GKnJO6VBaTUKODylt7RrF0IXcvgyH47dKelFUCa4yQ9I5QkCAWokmOacnLTAbsrlXIswqs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789511079; c=relaxed/simple;
-	bh=glk4hLZeB8BNV8FJN1ZJEgfUHPNFsCJRMeqWRnKIk5w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lXTHQk60jgDnEC0BIhUXRDlPNfASpAX6TSuI6qIuMMnrCnY7K3g+vRoLr9m9rpLuaUCUYXV4WYDpMgNJdCK5utvnqT/8k9MZvw1qQJ8Yo0j70QRcB4F0l+Ojj690QIqMW5sB3yjzqat9y8ouXTRdpBX5gZ0MgjtRq3V7HjYHAZg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WmS+vzDh; arc=pass smtp.client-ip=74.125.228.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FE537B3F2
+	for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 22:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789511173; cv=none; b=pxS84vDEmfkN1dy9Jv2/9zpBNLNrUjGfWLyny8iWqtgtcu/xe4nWeSwbBOrL5NfcNEdAYZM4b0xQytLDP7mtMTlPVgkyqFbcVxx6VZwfEmMb67UrcpMpFrilnpBG2I4y9fxePSeVB+xJ2sxIQVrfliBTU4DwfQOjxXX3dbMh36k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789511173; c=relaxed/simple;
+	bh=VQB79XU5ha3TH3L1StabFfXEj3XgXRoI6dRfp1doGPU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NqaMWja+i//oO+PzUxl43w0ngfDR/TjR4TAIs3fjArXHs0FihGgpZgOFT63UFXZZo5vteSsk6GgiVEigPUqCWItp/oqaQE0vWJt+rcPF+vMgJ4qXeKE/At4CbAc9ZKuxImCjJ6BGkwlgdf7OKMCBUXEN30INycTq58IFizf2zr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O0nCYR9t; arc=none smtp.client-ip=74.125.228.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WmS+vzDh"
-Received: by mail-ed2-f12.google.com with SMTP id 4fb4d7f45d1cf-6a98dfb8002so465454a12.2
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 15:24:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789511076; cv=none;
-        d=google.com; s=arc-20260327;
-        b=TDci/tEQEoGu8iEuNV1Al/lvndwcNKwZ3/by0KMRTRNejnBpc1KcNywF2oaabNxFX+
-         7ZRKivfl7WqvGtpR6352k/uVsYa2NI2aPD3BDoO5HeDy8mXqnEPNhEgkM+U0gI7LLZv0
-         YSf5TE12Fqx+Uq7HLw17fmi281IAx18yH1HuwDVuBCQxZOlp0z76ctsaL8uhP+5PfmNV
-         dORm7LR0ecFJMeJqUt7FneXbKJ77LXv/RrYdAUh1MB4F0mLRVwdFP1oduenjBq3bkPKC
-         AoRqWZy0P5coE1tuLbJgpWY3p1EQ5up5k0jZ3IUWhyRxhmM/e1DEaZe1q0hPQwmRAmGh
-         hjAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=fLnNBMG5QZIWbGY+kDvGdV9CDFonw3WRgIqwznl2sBU=;
-        fh=k4EbfWxYJ5aMdkKyZEK6w1n9hQJznp4+9c0GiwNcjNs=;
-        b=q+m3yb41vs3zDluvdIbeOGGEN1JBKAkHq6QDBzPaEzJ4ZMBldrWqL22D+kr6MM6nBG
-         R5dbDMI9dddIUIRwcA1eTlEopf4NBbygDDqNvXTpcdULi9N+ebxJM+aNAHNUl274qUK/
-         7Yvj23lbAvL4MBTHn58tkVuBAx1oRKJYnCH1vt5DcJvx402yRXFNQZ53OvO/Wsmx9sKT
-         /99HTaYsqegetan0Un9GG/VST0C2YPvrS9cOjbM4QrXokWrlFZKT9z2n52IAzcvFHwPt
-         Mqvc4uFDlTPJXMJboDeem3IfsD0sCUNvFB/VeVXjxGt++7lYyGHYpx2FSCXvdGar9S6C
-         qZ+Q==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O0nCYR9t"
+Received: by mail-pz2-f43.google.com with SMTP id d2e1a72fcca58-8674704dab1so316186b3a.2
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 15:26:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789511076; x=1790115876; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=fLnNBMG5QZIWbGY+kDvGdV9CDFonw3WRgIqwznl2sBU=;
-        b=WmS+vzDhtKSAP1T3o2albshqftmO4o34Wgl03JMuAY41BGbogAxhIp6Cm36PUjS5Ou
-         e9t4JqZC92WqM+jGcIlEMR/eGDSh/1arQhwcjUiZXMHzz0QYoI4BYp3rKBHzLvNnMiqO
-         jSarpH1uE9vr/ZJKZnAnbe2T0bv6qpQ7+sLreL7tqlTzA/XGnhOt4LlMNG64xVuz9z2/
-         OWJL1ssYBgtMUlPUpYMdbh1V/zdJHRGk8woav+nD8v8j2EBkBzGUHyb6lobGLbjNGE27
-         iN9zP86GzVKQ+U1pPK8Q90V+WQb+oRNdJaB6PLhgUzZEJ+3If8Uj0Y8pvNj+5euwFeO+
-         C37w==
+        d=gmail.com; s=20251104; t=1789511172; x=1790115972; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ozbdljbJWhuPCjAs3/0Yc8dEEkoSWPAnbLbDIm9pqjk=;
+        b=O0nCYR9t5CXA5OEGWgIFp9eKNYAegQnuAJRK0ALJHvnRQHK97dM8TbQd+0mBfHP1jt
+         vi0X9ryJsQD8ZVUMdseNZRfkN8iI9HolVEkUU9+2uKQZu6Z87v+ril6dmEbBvLS0aSPf
+         hu38Mkg1FLiodPunw5HwElKnOsSBSlXwuIGmTMBiImr89VUW/gpk9eq9VjwDJu3Ug0tw
+         6BasFvVLlEDkHOX6kcWbnDDL6EZr2lB0Ndzj+sLu/X2GZ2PVy4ny3Zb16bnbl7rRRQwC
+         te729oCQt3+ciu4LqYtlbCJtPXlAKGLyOHzWD8mj3iml7eM69G0pmlWSAyF6wfdqDe6c
+         aWmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789511076; x=1790115876;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=fLnNBMG5QZIWbGY+kDvGdV9CDFonw3WRgIqwznl2sBU=;
-        b=NWM3vmPcpdtTIHKsYuxyjza08Fs3IeE0PSe0VvY5US2l3s1xLSN5NjuKR9V4d/nJDT
-         KhVmvefdVrqxaiccX/pt/LWkIOeZpij3x2ytfLDFtJUT7DYz722SOO1FhSLQKUR3w+Uq
-         f3ykmPQWApnqRDoGuDmVmL12CO48TIojoQxXtH0/Lg9h2zGTvHwYIZklQDavtrT+rm7M
-         u8Tfw57qF91mdDpUViMQHt3Sb1vVmKGY7VLZzmBB3ycBcUpWEZrxb3YdYN5TFtZFx4hA
-         EHOGvhkRisO/bsWD/ZHSWxjvfy2EdiOG+cF8GbJCe/YrhMzrCf1FvFIKfXGIF0VZGGK/
-         mJsw==
-X-Gm-Message-State: AFuF++kqMRTFyy1fhP4UuEKrxbhpjDxr92MMywt9t+vasQyJqMuLtfDQ
-	rWK3iLokV8zectKyDMmA5X4/GFtgEjiMbhJiRUOGICoVqLR6ycmREUppUE0M8Ts2Vj6joohZMpB
-	zjXifL9pb+MdBTdItZVj0BTcRZ0PZUiY6eKJJ
-X-Gm-Gg: AYBFou0vpOkzoB9AlFHpyuSjo4ohpIfTqZLnqjDCaWtZ+Vt1WZtBm1tPGH4osar6Pca
-	YUopP36GwQINLkjG+hbnwWbifDmCTMru5bFrlDJAOJQGg5QELilJpCbcUJ8p9Zv8UBJdUc8AD8N
-	+161NJCk+nOL9vrnRmeFq8RKyMsUDmq92OAer8dQeUd2nEXaZJVYiUUfHsFuJJ8h7yw398l9RLK
-	HSdFw3C7n97fSLNRMeWUqkR7gJ9cyZoM0LxP8IuuvKcUMNog+f/6wRWRbmThSfloFFQimmLASNy
-	O4QnPRExdX/GpcG52OVvxHz48OkCHVW74n+AINmcH8MC21d/iSwCbXQEaCefal/RQP/137NXttj
-	v9VZAMeDBTNcmWQsOkfwfzYpPzmZn+t0N7b4tDx/NwbBIpGUDDSAkg+hvyF3hvr+F4eA0XTpNfz
-	9rqt9OC3CQKW2mRefr+70ROpcV3ClNBl79KkJmwg9nDI68YB/Db3NdBU7Y5I2sQJSpAOsllg9yc
-	CzX
-X-Received: by 2002:a17:907:d26:b0:c29:c356:6984 with SMTP id
- a640c23a62f3a-c29e51dbfdamr6340166b.8.1789511076181; Tue, 15 Sep 2026
- 15:24:36 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1789511172; x=1790115972;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ozbdljbJWhuPCjAs3/0Yc8dEEkoSWPAnbLbDIm9pqjk=;
+        b=Elxe+S3OurbwJC1jRgKQrfV/vNNG0q4/IuBDpVdKKhBv9xF2DYaEepOS+PqZS/hj5Y
+         kGmXxF68targ2+yjOE+EzYB7k5Vv66FCN0UV0wyWkmTeAFnEJlXUvmTx42Tv6sYu3Vve
+         uCM6o4E/3EJ01/yY4cEjQurjMhiqrbSAF5j3rXdmStD1W9euKo/rZgHohSAMTp/hAP++
+         dtBgrYMY2aysR0yGcYzRla2XkpfL3tJxk+qK2/ZSqslZB5rnGaeNflIqI+X+aNWWwrWe
+         4W4tuGGlZA+pMeep676m7+Fg/DvJSQLStKGtYOwKQaWbvQcA3u+Mo7QhBjylbOIjKNb1
+         OBYw==
+X-Gm-Message-State: AFuF++l+8zGzGf3q0AZcoLaVD17haU6hl6oBhoKnMw4D93r1uAWJFdle
+	FfbOWReuHYdviackBSy1m6qevAQZONZCJPHVro5L9glSa/IqJfJmrjy41dnY5Q==
+X-Gm-Gg: AYBFou0kj8j3bJuKsp1TRH6TxRsZGpAY/QhYRrWOLntEYo/UgUjw3PXpRibR/oOkv5u
+	t3dkDCH+PMZmRpSav47iXk6SrOnX8Sl6QT0HbQSvfWctqIR8IwbJeoZMCdqLXSICjaSk0hySps1
+	gXxR8TCCU99p7NdXTz7OEtNMsd3cctsc56kguMhAUtkXOy+9G2oDAfLIVlpjxMILzWHM7y81Rpc
+	KFulmJnQT5Sc4N9ZLTbYFe3TIoJaCsC9Z92BzQ1GxkbE0v1hI4E8r2lNAWrf2jo17UrGaVCkwJQ
+	Q/8nTyeP38U80warvEJL4E+Gon7RE1qN+syaHWys4sU6I745j//WzdmGk8ul1GfFmaSFGVh4RA1
+	/vxttq7tvM6hYc3/nHyAK1Aj1w7RKID7qDO2Irxvcpm41dQBkOpzzfVr/JjFc1RkLj2qgldfSby
+	CDuEmf79hZYPLtG9Em39SZmzl3oQCCk0dPenh2fhJxHu7jofK9dM+vO7dGOjICIfz7lDEiwQ6pm
+	IHHIEFXJnRTNZju2T41QiM7HjxqR7Z0Q9AMq9EC9TKPH17GUUeRZPW3evOm62D3XVtsjGzPUr+1
+	SgPUgF//LQXQFOKo22Upt21/u7f2pG73F7uw1wWLtfjg3l+D86HSaWqMi8A=
+X-Received: by 2002:a05:6a00:908d:b0:868:e11b:d859 with SMTP id d2e1a72fcca58-8723adb237bmr222206b3a.2.1789511171577;
+        Tue, 15 Sep 2026 15:26:11 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8000:7a86::e35])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-871febde2ecsm224189b3a.8.2026.09.15.15.26.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Sep 2026 15:26:10 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-rt-devel@lists.linux.dev (open list:Real-time Linux (PREEMPT_RT):Keyword:PREEMPT_RT)
+Subject: [PATCH] gpio: mvebu: use raw spinlock for MMIO regmaps
+Date: Tue, 15 Sep 2026 15:26:09 -0700
+Message-ID: <20260915222609.194216-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260915004406.115230-1-rosenp@gmail.com> <20260915064352.T4HiPnt_@linutronix.de>
-In-Reply-To: <20260915064352.T4HiPnt_@linutronix.de>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Tue, 15 Sep 2026 15:24:24 -0700
-X-Gm-Features: AcwNN1UmrBuelDzySu3Or0uOP888_AzAr6sVGxMbhPLw-5AZIgjqW0vcNetLvrU
-Message-ID: <CAKxU2N_+H50zy7V0FR-_4KiyAG8+_x4kg2QZBsumHEXgdwmqKQ@mail.gmail.com>
-Subject: Re: [PATCHv2] gpio: mvebu: keep resume masks within the irqchip cache
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:Real-time Linux (PREEMPT_RT):Keyword:PREEMPT_RT" <linux-rt-devel@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 14, 2026 at 11:43=E2=80=AFPM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
->
-> On 2026-09-14 17:44:06 [-0700], Rosen Penev wrote:
-> > mvebu_gpio_resume() writes the edge/level mask registers saved at
-> > suspend time straight back to hardware, bypassing the irqchip's
-> > mask_cache_priv.  genirq skips mask_irq() for a line it already
-> > considers masked, so restoring a bit in hardware that genirq thinks
-> > is still masked leaves that line unmasked behind genirq's back.  An
-> > asserted level line then has nobody to ack it, and the moment
-> > interrupts are re-enabled the chained handler storms, hanging resume.
->
-> Why is the mask value changed after suspend?
-In order to keep genirq and the hardware in sync.
->
-> Sebastian
+The mask/unmask handlers run with the generic irqchip's raw spinlock
+held and call regmap_read()/regmap_write() on the GPIO regmaps. By
+default regmap protects itself with a plain spinlock, which becomes a
+sleeping rt_mutex on CONFIG_PREEMPT_RT; taking it while holding the raw
+irqchip lock trips might_sleep(), and PROVE_RAW_LOCK_NESTING flags the
+same nesting on non-RT builds.
+
+Configure both GPIO regmaps with .use_raw_spinlock = true so the MMIO
+accesses stay atomic in hardirq and raw-locked context.
+
+Assisted-by: LLM
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/gpio/gpio-mvebu.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 03e977c2a629..674feeb31774 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -598,11 +598,18 @@ static void mvebu_gpio_irq_handler(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
++/*
++ * These regmaps are accessed from the mask/unmask handlers while the
++ * irqchip's raw spinlock is held, so they must use a raw spinlock
++ * internally. A plain spinlock becomes a sleeping rt_mutex on
++ * CONFIG_PREEMPT_RT and would trip might_sleep() from that context.
++ */
+ static const struct regmap_config mvebu_gpio_regmap_config = {
+ 	.name = "gpio",
+ 	.reg_bits = 32,
+ 	.reg_stride = 4,
+ 	.val_bits = 32,
++	.use_raw_spinlock = true,
+ };
+ 
+ static const struct regmap_config mvebu_gpio_percpu_regmap_config = {
+@@ -610,6 +617,7 @@ static const struct regmap_config mvebu_gpio_percpu_regmap_config = {
+ 	.reg_bits = 32,
+ 	.reg_stride = 4,
+ 	.val_bits = 32,
++	.use_raw_spinlock = true,
+ };
+ 
+ static const struct regmap_config mvebu_pwm_regmap_config = {
+-- 
+2.55.0
+
