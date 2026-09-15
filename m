@@ -1,57 +1,57 @@
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEE6477E21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96182476CFF
 	for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 08:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.199
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789460486; cv=none; b=ffb+I6b9seZoDHUchy/D6DK65AAqtQP++be3U7JLM9R4EU3fYAQz1OLTu9HfQUnTyb6xuXYgKhG+opYiEIGMD9o0+SHVAqROLF66LoRgEwwQWrty8ScTM1dTomBz8ME7z1r6MBDAP/eWv6JJQ1Cf4/fRDNTX8f3VVT/pYAlPFvY=
+	t=1789460486; cv=none; b=t807o4l0lreUgfS1FS9xfHngVTio44VYsljwiNIDgGVEHfpsspmCeI0cZ0qh0C8BXoKCzpeftn00QUFDRw9lTvM6SUFvU9NIn8dIPD+8Wh+FpCaJxNZiTNWrkC5xdaMpkkD94Io3RQxHTZPkaD7arn+jZxKqbcGziGL+M/FC9AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1789460486; c=relaxed/simple;
-	bh=Uf7uxHQ/vmaAoZCZZPN2XUoRZ9miHwSqTeOUYXKdUpY=;
+	bh=RwAdEk8GoMG+Ylv02Q78v2tXMpN+9oITjoSVCa+/lcI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=G5RNRnJh/kU3Up37tEIOl+HAtDamegHDhLy0ehYhmVnb6SnxpPMFhLfv4Pp8fDSEoccRJ62GbLpiMXJ3WmAImw9WTgjzqK5gKge/z24nTqbV+2WntT2lVjTIXFqpoJVlLQv4r5+ETOCMaGpybQiSQFMLd1fOv2r66yotlVP8P5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=V7UUeOII; arc=none smtp.client-ip=209.85.214.199
+	 To:Cc:Content-Type; b=IApj+jgn7niz3tVrZl0Os9ZTb5Ro4Rv2GzgR7urVobR8gfk3JgNxleJRPp5vnS8xwiWhLqFqwZjI4kWKaTzl8oAJinoLJC3HmNnaPAljaejZzLVUydW9QHPQi0AZ+i1qIP4zh0jaWaTZiQqA4wRWaTvIil7KCbHEPDzDdzXGsU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KmARG9aJ; arc=none smtp.client-ip=209.85.215.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V7UUeOII"
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2d9336581a2so80768865ad.3
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 01:20:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KmARG9aJ"
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-c89704da8c7so5652968a12.0
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 01:20:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1789460417; x=1790065217; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1789460419; x=1790065219; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=LcsuffwFDxj4u6SThnIq1nFzZdsoWr9GB9tsbe2KVjo=;
-        b=V7UUeOIIrhGwYVtEqbpWOvRKFF4P0YgQ7spv8MvFsnWMeHK7iy1WtUCKVihc7423rf
-         l6Y7JhQOhQFd6iPj1gFz6XkRleM4dxagJxmNX90zTk5ZnBkpQZKtVOtqwy7Jt1TKuZ8m
-         /ODki2xnDQiHzHN6cRtsJbjnSVtNUXRjDipX5nYkFO7TEVdMOkxSv3ELtfadpQfvRfzM
-         4bFZkZZf9Oi4TvBhpr+p3QA09/nxRfXsUdiKK58AAHvTK0Fcosb5NnAE3WT8CvCgMoKn
-         BNpGG+6qeThV1zUrw9974zD5zDfHwDojVC2tlnNbA4enZR2Btgw2kbPvbm6149JOG+ab
-         ZK3A==
+        bh=3R1bHblX/YSNAoDVuSots2jijK47BJf7ndWg1gXSC20=;
+        b=KmARG9aJw+EfrxjNpwdI07LN4CIXUR8sFQ6kkwPFhACadzvxbNPSIDqr//33Alc4UY
+         R52INMML5LN0aTuN8HjZxDuM76h1AAPcVXn64yUT5rjit5U+iGgl1MF/BPOb2cuiZPyE
+         Wv+fQiUqjwl3D7XanEH4V1189fAZLMrNUiH5L4sX194GyKiZUpMsh1fcaGDV5CYbubY9
+         zj839tWYTRKD3DVNfwMII7er+yQ1vrEDArJ2YZCq2Nc1++mCm4429OPTjsrTlmItPsPN
+         +wzv3LuzLp959vh3m2lMJbDvEUvDqQ7gTJ7C0wDgVReew1uK7PhFLz5ZO2mKQArH31TA
+         dF6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789460417; x=1790065217;
+        d=1e100.net; s=20260707; t=1789460419; x=1790065219;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=LcsuffwFDxj4u6SThnIq1nFzZdsoWr9GB9tsbe2KVjo=;
-        b=2k+VmPlHOGna6uCFyaR1sUgbE4eui7NL/0lMLtJd47iPqM5nyj/m2cCSy1ulLYYFfC
-         yxEOF6AxHOkYAeVhMsDDuX3ucEgUSpzzHqDjMc1oz3vaAhWYTewu7WX9yArCydhbrJgr
-         JC1PnHb0dqFLJ3+HA84iFBMdsOelpJq+ZOlBIuiIi2FxTSwxMYf5eSjoAMiJag3q3MHl
-         Sab5ZFjPwBp6iebS9zQh+AjgQdK9sE97PpxIvbPnRjvedkd9Y4lIdQ5DNND0z/cjFm4h
-         7uMPmV0pseZneimCgQJ8ZUGlDKtYATFRngZe2bshNgBdElF0Yn7Cur4qS+56dVRRu5m5
-         3M8w==
-X-Forwarded-Encrypted: i=1; AKwUvBxRRcyfv+E7RUwEG+B0xiunj+ouaiuD5k5Pp525SHBII1X1BU6WdbSCa1awdtbW0fKtuIdGRQa6weTL@vger.kernel.org
-X-Gm-Message-State: AFuF++m8XeZJQLLJQrztdjXiiTIO3QB02p2RzWxxjj9pEAVYs4AUtEtv
-	twOnjZHgw0dpvCeHgBcIVrknmpRrklS6udS2Pmyf3b1KcZXIgM81e9bqxbg0bN4VaTu0Cop8xFc
-	F
-X-Received: from plxm10.prod.google.com ([2002:a17:902:db0a:b0:2d9:7bf:6891])
- (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1b50:b0:2db:8ae7:a5d2
- with SMTP id d9443c01a7336-2dd6c5f39camr129000865ad.9.1789460415373; Tue, 15
- Sep 2026 01:20:15 -0700 (PDT)
-Date: Tue, 15 Sep 2026 08:18:41 +0000
+        bh=3R1bHblX/YSNAoDVuSots2jijK47BJf7ndWg1gXSC20=;
+        b=jp7mO3JuukzstmA/T+nWUqwOl2gj8A4LrLKb44+DKLOBiDYlII0RZFtAIynNGnM+L3
+         kIw8wsOKJAVkuFxozhFDfVrZZTbXj5BfsYD9ThgAuTyzipAqtkbn/HbkAkUS87+Dt7Vd
+         BX+25jXmB8qDfE5CZs8DunRhHtdvI3moXDkP8hOQ0YAfrhOu/BO84UBcg8vjlKjy3GI0
+         p5/zikOE625gIwAKQCVlUT6dFJd69SSASqVZ/0DCMC1FEiupkv63siDx3N1huUiFeVjr
+         OFAq9C9Fypnaza/65uje+pIfYjjHaGvWqleBvw3+mInme1mFhaP/n07knmy4erOhmYBg
+         ehfQ==
+X-Forwarded-Encrypted: i=1; AKwUvBw7HHN2r+s/PYkd2YpqFrp+0eUWk0eUPjoujU6D9xZ38DKdX0w3fZq7bcb6GJNVIgVf5RHFGcBhnrsE@vger.kernel.org
+X-Gm-Message-State: AFuF++kYkDrjnf3ckkAgBxdDAp1SqaaD1iBzlXEGs+FcdGzKZNjuLS5J
+	pcbYx09fqW7zYT3jNbXU0WkYIWEf7F5jyT/OqUMtQheawmLjcNDWrEgk127fB6zQhc6VbsaLBYP
+	T
+X-Received: from pghu21.prod.google.com ([2002:a63:ef15:0:b0:cc4:da05:ef4c])
+ (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3315:b0:3d3:aec2:4dcd
+ with SMTP id adf61e73a8af0-3db40623e61mr13262094637.25.1789460418341; Tue, 15
+ Sep 2026 01:20:18 -0700 (PDT)
+Date: Tue, 15 Sep 2026 08:18:44 +0000
 In-Reply-To: <20260915081910.4142719-1-morbo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -61,13 +61,13 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260915081910.4142719-1-morbo@google.com>
 X-Mailer: git-send-email 2.55.0.1032.g73a4cd73de-goog
-Message-ID: <20260915081910.4142719-25-morbo@google.com>
-Subject: [PATCH 24/28] EDAC/thunderx: Fix stale error context in thunderx_l2c_threaded_isr()
+Message-ID: <20260915081910.4142719-28-morbo@google.com>
+Subject: [PATCH 27/28] drm/xe/pf: Convert strlcat() to seq_buf in control_read()
 From: Bill Wendling <morbo@google.com>
 To: linux-kernel@vger.kernel.org
-Cc: Bill Wendling <morbo@google.com>, Russell King <linux@armlinux.org.uk>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+Cc: Bill Wendling <morbo@google.com>, codemender-patching+linux@google.com, 
+	Russell King <linux@armlinux.org.uk>, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
 	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
 	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
@@ -123,17 +123,17 @@ Cc: Bill Wendling <morbo@google.com>, Russell King <linux@armlinux.org.uk>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-thunderx_l2c_threaded_isr() computes "tail" and "ctx" once before entering
-the loop that drains the L2C error ring, and never updates them on
-subsequent iterations. When multiple errors are queued, every iteration
-reports the first ring entry rather than advancing through the ring,
-causing subsequent hardware errors in a batch to go unreported.
+control_read() builds a list of supported SR-IOV VF control commands in a
+stack buffer by calling strlcat() twice per command in a loop.
 
-Recompute "tail" and "ctx" at the start of each loop iteration, matching
-the sibling thunderx_ocx_com_threaded_isr() and
-thunderx_ocx_lnk_threaded_isr() handlers.
+In preparation for removing the deprecated strlcat() API[1], use struct
+seq_buf and seq_buf_printf() to format each command line and pass
+seq_buf_used() directly to simple_read_from_buffer().
 
-Fixes: 41003396f932 ("EDAC, thunderx: Add Cavium ThunderX EDAC driver")
+Link: https://github.com/KSPP/linux/issues/370 [1]
+Cc: codemender-patching+linux@google.com
+Assisted-by: CoT-Agent:Gemini-2.0-Flash [editor_update_file, shell_command_=
+run]
 Signed-off-by: Bill Wendling <morbo@google.com>
 ---
 Cc: Russell King <linux@armlinux.org.uk>
@@ -247,24 +247,44 @@ Cc: devel@lists.orangefs.org
 Cc: linux-hardening@vger.kernel.org
 Cc: linux-sound@vger.kernel.org
 ---
- drivers/edac/thunderx_edac.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/xe/xe_gt_sriov_pf_debugfs.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/edac/thunderx_edac.c b/drivers/edac/thunderx_edac.c
-index 9c0a1e48f96f..e7c335ca0c36 100644
---- a/drivers/edac/thunderx_edac.c
-+++ b/drivers/edac/thunderx_edac.c
-@@ -1880,6 +1880,9 @@ static irqreturn_t thunderx_l2c_threaded_isr(int irq,=
- void *irq_id)
+diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_debugfs.c b/drivers/gpu/drm/=
+xe/xe_gt_sriov_pf_debugfs.c
+index 0f242db775e1..5db7fc067c4d 100644
+--- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_debugfs.c
++++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_debugfs.c
+@@ -4,6 +4,7 @@
+  */
 =20
- 	while (CIRC_CNT(l2c->ring_head, l2c->ring_tail,
- 			ARRAY_SIZE(l2c->err_ctx))) {
-+		tail =3D ring_pos(l2c->ring_tail, ARRAY_SIZE(l2c->err_ctx));
-+		ctx =3D &l2c->err_ctx[tail];
-+
- 		snprintf(msg, L2C_MESSAGE_SIZE,
- 			 "%s: %s: %016llx, %s: %016llx",
- 			 l2c->edac_dev->ctl_name, reg_int_name, ctx->reg_int,
+ #include <linux/debugfs.h>
++#include <linux/seq_buf.h>
+=20
+ #include <drm/drm_print.h>
+ #include <drm/drm_debugfs.h>
+@@ -663,15 +664,15 @@ static ssize_t control_write(struct file *file, const=
+ char __user *buf, size_t c
+ static ssize_t control_read(struct file *file, char __user *buf, size_t co=
+unt, loff_t *ppos)
+ {
+ 	char help[128];
++	struct seq_buf s;
+ 	size_t n;
+=20
+-	help[0] =3D '\0';
++	seq_buf_init(&s, help, sizeof(help));
+ 	for (n =3D 0; n < ARRAY_SIZE(control_cmds); n++) {
+-		strlcat(help, control_cmds[n].cmd, sizeof(help));
+-		strlcat(help, "\n", sizeof(help));
++		seq_buf_printf(&s, "%s\n", control_cmds[n].cmd);
+ 	}
+=20
+-	return simple_read_from_buffer(buf, count, ppos, help, strlen(help));
++	return simple_read_from_buffer(buf, count, ppos, help, seq_buf_used(&s));
+ }
+=20
+ static const struct file_operations control_ops =3D {
 --=20
 2.55.0.1032.g73a4cd73de-goog
 
