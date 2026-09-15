@@ -1,172 +1,170 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7964247F3A0
-	for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 09:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C57447D444
+	for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 10:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789466288; cv=none; b=S9LMGtTFdXZvpWNAbg66L9OYMpGgIJDEjmpyykadm2Fl2aX5vMeTChiz8iYc2/JR5jlhNAoklRbrWtKtT5tIkhXlkfcq/J2+85rYAtgwh8CBBGwwOTDPRXa0ZgvFLUQxN8/cgfIgs/vXnhBy6yw07gzugtdq5LzenWsRsTSOVhE=
+	t=1789466405; cv=none; b=OvuA2HzY3VJiE/nQzxI4ZcCndXZMIcNl5aAw8MQYotxqG88FHfiERKk2UDjH8lHzdSSfcoUrCuxNzToMjcpNvLVA3lsXoJ9X4x4p7Ov2++lfhAFZGCKSZQ4Z4/G3+sp6sJf9gkqy7pqucFf1heEYH/OBWcaHKTqJ4sH/5BOi/HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789466288; c=relaxed/simple;
-	bh=Trb2SHXmeQz6WNLbypoh9yODUxidliRbA6km03ET91k=;
+	s=arc-20240116; t=1789466405; c=relaxed/simple;
+	bh=Lw4HWLxXAbkOxKF0yYYDd4vzq4ymNwy31AhCN1Hq1Yw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e6lFT01IrzKgoUiKoTkQQGCp2lq2zGY7VsUezhV5Bbo3ZpJVl3Fr2+7lnjsss/kPJcOn5YVnJ8dy90VjBAOJcrFoSoH0CPa0KuI/snTDkovN03PYkzOS857RcAQ4HPuwQ1uSBwPk4/Cq7qXcsZmqjRQKNbsnh555VkrJpCWM6DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oumBPpti; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=cJgl2Qfs5WDifJAAACSwHDCkUFeq+/HipIllSeYNpoWtQ58LoSeXNEs2/wBiaUpkdO8zRW4MWyRFKqB/NHqy1RCRlhA8JCQwBv13mGdyflz9Ynr48HxoL2uxH5NkDcO+RMBSuP+R5aPaWTEN0s90zkteZ0gmIKDlbGtzF3xiOw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GkKMAjZ4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oumBPpti"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27DC81F00893
-	for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 09:58:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GkKMAjZ4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD7191F000FF
+	for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 10:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789466285;
-	bh=ZCWZE6nYnnZ/ZXDZt2kLzP5VUjl1Q/mjEy5qyS28Nqc=;
+	s=k20260515; t=1789466403;
+	bh=KUWhQOKpsVTzJc+LOgdU897R5lhBLPaZmUG1+ydEkq8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=oumBPptigm3xi/2/VSp1AURpUYUYJ/VwAGr488tBAEXZpX0RlwCNAXJnTHUALlx72
-	 X0qVsU3n7Gqbp4Qmb6RUaA1H3TlmupUihRCmtH1ZXfMtr8KLr2o6DftI09bQyiA+fz
-	 14tsfxH3kbS/7sgF3HYP35Osq+aWsDzanxWQjW7rdXZ0kveHqhyLOr80c4buv4w2JN
-	 mRnH5079ZLXePkrjfbG4cv8ZYgibhKKDpYOYYHgqr4raqJdiibWfDG2Uizxes8qeUK
-	 qNTmfLjPvJw+4d5sNXtet21ZAktzxrOUSj2XcKQvBAPv4VO7uB1V2g8DzUwMGJM/Fp
-	 N8A4OYs4iEMAQ==
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f1744fso4471950e87.2
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 02:58:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzrQimOaiypL1LtdOaG4I/L6sLHUmu2n8gslx99PditPqXpJsRdWU+qYDepns2wk9G7Y8SA6UbvSo1k@vger.kernel.org
-X-Gm-Message-State: AFuF++mbYQx8yu8Tq00anv9+yzqNfdDWwed66iAkAjuhxyCPHAtsaNuq
-	Ay851b4vuhmcdJc1/EG7QhFIHqKFzbA6k0I4Qs/7wXYm9eeWM7+wSlmRIz9gAuREAIB8eGjy8/e
-	6nm7MItFM8mwzq7NEbX6nxUICNuDLWSmDjEz5Lp2/hw==
-X-Received: by 2002:a05:6512:2287:b0:5b8:b37f:164 with SMTP id
- 2adb3069b0e04-5b8b37f0300mr491722e87.48.1789466283784; Tue, 15 Sep 2026
- 02:58:03 -0700 (PDT)
+	b=GkKMAjZ4JyoeLDX/lNoz4JFfbaDdnu+WvrqPZ79EbUTTWuAv/5HS5L7euTd03ijYW
+	 b/F7uJY/B4ZpZIYmFIe8NKpq0AaEv704aFJKdIy7Dk3FMlKTaPR9Bj+iP9wE2Cle3s
+	 5B7uCJK0/QSjQQq37aCSNKf5MnaQwBzEKxYb0H2rUQwe3hHSyClWI1BiLiJuXmAPLM
+	 CEdf//nedjCEC1aNmddsJ2sKiyVqohnpjah8O+LfQY9I8yl9YKM3klMfhWdUx0xwHu
+	 /UV9NsDQuJKELN9IbjLcybDZyClQpjHyAUVpRnCQTUXGgI5Fz6j6PbFEyVg7AXXVlk
+	 rcyZH/OWC1L0w==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f1651cso2550303e87.0
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 03:00:03 -0700 (PDT)
+X-Gm-Message-State: AFuF++m7lBjabKtTVrMyOq8A0QtGRNtj/zEd56zjaNDtCrOhaLngJPKY
+	fvted+ehL/pgaqjOX3LQdH4RbHQiXmRlaNxvR6drGM8OfgNN2/TEfGGgpzRgETnDafXqIl2LiEp
+	q5fvLM3+rTj2xOomkg+9U4Ukjx7Xjr4g=
+X-Received: by 2002:a05:6512:10cb:b0:5b7:674f:caba with SMTP id
+ 2adb3069b0e04-5b8ae684479mr1733011e87.13.1789466402548; Tue, 15 Sep 2026
+ 03:00:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260915092046.931449-1-alban.bedel@lht.dlh.de>
- <20260915092046.931449-3-alban.bedel@lht.dlh.de> <CAMRc=MfARu1c4Coks-Bn8W4eRueh1oDU47691+NR_o2weKy0BQ@mail.gmail.com>
-In-Reply-To: <CAMRc=MfARu1c4Coks-Bn8W4eRueh1oDU47691+NR_o2weKy0BQ@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@kernel.org>
-Date: Tue, 15 Sep 2026 11:57:51 +0200
-X-Gmail-Original-Message-ID: <CAMRc=MeS9Afk+C249ZXKsjchbgMwt_nzvTyZgYDsZ9+R1hjsqQ@mail.gmail.com>
-X-Gm-Features: AcwNN1UYHJdnR2BKfs8WcM_KjDKlaLv-CNF0gRvZB_uEMMYIBE8TVTdoc3eAUQA
-Message-ID: <CAMRc=MeS9Afk+C249ZXKsjchbgMwt_nzvTyZgYDsZ9+R1hjsqQ@mail.gmail.com>
+References: <20260915092046.931449-1-alban.bedel@lht.dlh.de> <20260915092046.931449-3-alban.bedel@lht.dlh.de>
+In-Reply-To: <20260915092046.931449-3-alban.bedel@lht.dlh.de>
+From: Linus Walleij <linusw@kernel.org>
+Date: Tue, 15 Sep 2026 11:59:49 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=ybSUyzX2YmaQnnuPz0EHJCucmc_dOSiGft-=ZzRkViQ@mail.gmail.com>
+X-Gm-Features: AcwNN1W45AomASaWe_arqgDjsGJM8N_Ec_sdw3mERG3MRAQyLKGPHcbSSql0Hxw
+Message-ID: <CAD++jL=ybSUyzX2YmaQnnuPz0EHJCucmc_dOSiGft-=ZzRkViQ@mail.gmail.com>
 Subject: Re: [PATCH 2/2] gpio: Support ON Semi CAT9532
 To: Alban Bedel <alban.bedel@lht.dlh.de>
-Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 15, 2026 at 11:51=E2=80=AFAM Bartosz Golaszewski <brgl@kernel.o=
-rg> wrote:
->
-> On Tue, 15 Sep 2026 11:20:46 +0200, Alban Bedel <alban.bedel@lht.dlh.de> =
-said:
-> > Add support for the CAT9532 LED dimmer from On Semiconductor. Altought
-> > marketed as an LED dimmer it is a bit limited in this regard as it
-> > only has 2 PWM for 16 pins. As explained in the datasheet it can also
-> > be used as an open-drain GPIO controller, and that's how it is used on
-> > the hardware I have at hand. This chip doesn't really map to what the
-> > gpio-regmap driver expect so it is implemented as it own driver. This
-> > approch also allow to later add support for the LED dimmer if desired.
-> >
-> > Signed-off-by: Alban Bedel <alban.bedel@lht.dlh.de>
-> > ---
-> >  drivers/gpio/Kconfig        |  10 +++
-> >  drivers/gpio/Makefile       |   1 +
-> >  drivers/gpio/gpio-cat9532.c | 173 ++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 184 insertions(+)
-> >  create mode 100644 drivers/gpio/gpio-cat9532.c
-> >
-> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> > index a48586bb8edba..05b7af675677b 100644
-> > --- a/drivers/gpio/Kconfig
-> > +++ b/drivers/gpio/Kconfig
-> > @@ -1180,6 +1180,16 @@ config GPIO_ADNP
-> >         enough to represent all pins, but the driver will assume a
-> >         register layout for 64 pins (8 registers).
-> >
-> > +config GPIO_CAT9532
-> > +     tristate "CAT9532 GPIO support"
-> > +     select REGMAP_I2C
-> > +     help
-> > +       GPIO driver for ON Semiconductor CAT9532 LED dimmer.
-> > +       Say yes here to enable the GPIO driver for the CAT9532 chip.
-> > +
-> > +       To compile this driver as a module, choose M here: the module w=
-ill
-> > +       be called gpio-cat9532.
-> > +
-> >  config GPIO_FXL6408
-> >       tristate "FXL6408 I2C GPIO expander"
-> >       select GPIO_REGMAP
-> > diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> > index dc9e6d643b5bc..e94d2f57a1f93 100644
-> > --- a/drivers/gpio/Makefile
-> > +++ b/drivers/gpio/Makefile
-> > @@ -51,6 +51,7 @@ obj-$(CONFIG_GPIO_BRCMSTB)          +=3D gpio-brcmstb=
-.o
-> >  obj-$(CONFIG_GPIO_BT8XX)             +=3D gpio-bt8xx.o
-> >  obj-$(CONFIG_GPIO_BY_PINCTRL)                +=3D gpio-by-pinctrl.o
-> >  obj-$(CONFIG_GPIO_CADENCE)           +=3D gpio-cadence.o
-> > +obj-$(CONFIG_GPIO_CAT9532)           +=3D gpio-cat9532.o
-> >  obj-$(CONFIG_GPIO_CGBC)                      +=3D gpio-cgbc.o
-> >  obj-$(CONFIG_GPIO_CLPS711X)          +=3D gpio-clps711x.o
-> >  obj-$(CONFIG_GPIO_SNPS_CREG)         +=3D gpio-creg-snps.o
-> > diff --git a/drivers/gpio/gpio-cat9532.c b/drivers/gpio/gpio-cat9532.c
-> > new file mode 100644
-> > index 0000000000000..973ff74a15b89
-> > --- /dev/null
-> > +++ b/drivers/gpio/gpio-cat9532.c
-> > @@ -0,0 +1,173 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +#include <linux/gpio/driver.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/module.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/spinlock.h>
-> > +
-> > +struct cat9532 {
-> > +     struct regmap *regmap;
-> > +     struct gpio_chip gpio;
-> > +
-> > +     spinlock_t lock;
-> > +     unsigned int direction;
-> > +};
-> > +
-> > +#define CAT9532_REG_INPUT0   0
-> > +#define CAT9532_REG_LS0              6
-> > +
-> > +/* Set output to Hi-Z, LED is OFF */
-> > +#define CAT9532_LED_OUT_HIZ  0
-> > +/* Set output low  */
-> > +#define CAT9532_LED_OUT_LOW  1
-> > +#define CAT9532_LED_OUT_MASK 3
-> > +
-> > +static const struct regmap_config cat9532_regmap_cfg =3D {
-> > +     .reg_bits =3D 8,
-> > +     .val_bits =3D 8,
-> > +     .max_register =3D 9,
-> > +     /*
-> > +      * Auto increment can be enabled by setting bit 4 in the
-> > +      * register address, but we don't really need bulk access.
-> > +      */
-> > +     .use_single_read =3D true,
-> > +     .use_single_write =3D true,
-> > +     .can_sleep =3D true,
-> > +};
->
-> This looks like it would perfectly fit the gpio-regmap helper and allow f=
-or
-> code reuse. Maybe except for the locally tracked direction. How reliable =
-is it?
-> What if the GPIOs were put into some specific state by the bootloader?
->
-> Bart
+Hi Alban,
 
-Ah, nevermind, you commented on not being able to use it. My question
-still stands, how reliable is direction tracking here? Does reading
-back the registers you write in direction setters not give you
-anything?
+thanks for your patch!
 
-Bart
+overall if it should be possible to use the same component as a LED dimmer
+then some DT property flag such as onn,gpio-mode; or so is needed to make
+sure only the GPIO mode driver is probed?
+
+I'm not sure about how to flag this in DT, check with the binding maintaine=
+rs.
+
+On Tue, Sep 15, 2026 at 11:21=E2=80=AFAM Alban Bedel <alban.bedel@lht.dlh.d=
+e> wrote:
+
+> Add support for the CAT9532 LED dimmer from On Semiconductor. Altought
+> marketed as an LED dimmer it is a bit limited in this regard as it
+> only has 2 PWM for 16 pins. As explained in the datasheet it can also
+> be used as an open-drain GPIO controller, and that's how it is used on
+> the hardware I have at hand. This chip doesn't really map to what the
+> gpio-regmap driver expect so it is implemented as it own driver. This
+> approch also allow to later add support for the LED dimmer if desired.
+>
+> Signed-off-by: Alban Bedel <alban.bedel@lht.dlh.de>
+(...)
+
+> +static int cat9532_gpio_direction_input(struct gpio_chip *chip,
+> +                                       unsigned int offset)
+> +{
+> +       struct cat9532 *cat9532 =3D container_of(chip, struct cat9532, gp=
+io);
+> +       unsigned int reg =3D CAT9532_REG_LS0 + (offset >> 2);
+> +       unsigned int shift =3D (offset & 3) << 1;
+> +       int err;
+> +
+> +       err =3D regmap_update_bits(cat9532->regmap, reg,
+> +                                CAT9532_LED_OUT_MASK << shift,
+> +                                CAT9532_LED_OUT_HIZ << shift);
+> +       if (err < 0)
+> +               return err;
+> +
+> +       scoped_guard(spinlock, &cat9532->lock)
+> +               cat9532->direction &=3D ~BIT(offset);
+> +
+> +       return 0;
+> +}
+> +
+> +static int cat9532_gpio_get(struct gpio_chip *chip,
+> +                           unsigned int offset)
+> +{
+> +       struct cat9532 *cat9532 =3D container_of(chip, struct cat9532, gp=
+io);
+> +       unsigned int reg =3D CAT9532_REG_INPUT0 + (offset >> 3);
+> +       unsigned int mask =3D BIT(offset & 7);
+> +       unsigned int val;
+> +       int err;
+> +
+> +       err =3D regmap_read(cat9532->regmap, reg, &val);
+> +       if (err < 0)
+> +               return err;
+> +
+> +       return !!(val & mask);
+> +}
+> +
+> +static int cat9532_gpio_set(struct gpio_chip *chip,
+> +                           unsigned int offset, int value)
+> +{
+> +       struct cat9532 *cat9532 =3D container_of(chip, struct cat9532, gp=
+io);
+> +       unsigned int reg =3D CAT9532_REG_LS0 + (offset >> 2);
+> +       unsigned int shift =3D (offset & 3) << 1;
+> +       unsigned int val;
+> +
+> +       val =3D value ? CAT9532_LED_OUT_HIZ : CAT9532_LED_OUT_LOW;
+> +       return regmap_update_bits(cat9532->regmap, reg,
+> +                                 CAT9532_LED_OUT_MASK << shift,
+> +                                 val << shift);
+> +}
+
+So clearly all GPIO lines are open drain, requiring an external
+pull-up resistor.
+
+I would handle things this way:
+
+1. Implement .set_config for this gpio_chip.
+2. In the .set_config() callback, reject anything except PIN_CONFIG_OPEN_DR=
+AIN
+   pinconf_to_config_param(config) !=3D PIN_CONFIG_OPEN_DRAIN return -EINVA=
+L;
+3. If setting open drain succeeds, mark the line offset as configured
+in a bitmap
+4. Do not accept any get/set calls until the line has been configured as
+  open drain.
+
+This forces users to always properly configure the line as open drain befor=
+e
+usage.
+
+Maybe it is possible to also add restrictions in the YAML DT bindings
+to enforce consumers to set open drain, I'm not sure. But we can at least
+enforce it at runtime.
+
+> +       chip =3D &cat9532->gpio;
+> +       chip->label =3D "cat9532";
+> +       chip->parent =3D &client->dev;
+> +       chip->owner =3D THIS_MODULE;
+> +       chip->can_sleep =3D true;
+> +       chip->base =3D -1;
+> +       chip->ngpio =3D 16;
+
+This is right, no using ngpio :)
+
+Yours,
+Linus Walleij
