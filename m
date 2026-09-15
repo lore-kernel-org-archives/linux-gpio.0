@@ -1,57 +1,57 @@
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA442476CF1
-	for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 08:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB40247F79E
+	for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 08:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789460729; cv=none; b=BmxiXpiPU8662xa9T+LuWR9mrhExx8o1dx3eYlqtOlXUd25UT9UTs9OuA9eWZkloHhaOnFqVFHXF4kyU7fHY2ohF6dLhsfjzVUPEIWgXvsd6M3iMKwKoxABcD/TeRT1sTK9eIL42cXWLMGEwx8q1n6PxLVSVj/Fa22pjI++9alQ=
+	t=1789460734; cv=none; b=Z0DX0jqTdGX0jKZuuw/mHH5BFyufJ4xu/qZvUTLIAVroyOYNQtWbk5sEINn8X61I0NLMqON+CgV+2DMmClFRsVPQoWP6vbnK8NOyiIWFoXj/gQ01fOSumKmEu0JN53vK4RA6lndZU//sWtHMjPBMa4I6c6iQ5hhCNkeRTFf3jKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789460729; c=relaxed/simple;
-	bh=Te8HD9YkwxCOhstie9EUJ32KLA4oNHtDIGXeNIM9YkI=;
+	s=arc-20240116; t=1789460734; c=relaxed/simple;
+	bh=lI3TjsMof+VUseu3jlc4aD2v6CaqWDV2PaTkxHX+GRE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZOoclqSeVcYlcxz3lFcueSfLkyO0mWuakEpCLA2z05J1hW5a71mQ4IGl3pktyK695npgRAqLSidebpMY3OOezHL6E4xsa8owy5B+5c9ZplGvV+pFu8dY5dzwuzmWhK7AYZSjmFp7u3cVpjMgM4lYe+XMAzAzDmXzVtY9jQn+kXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ObCtfBr0; arc=none smtp.client-ip=209.85.160.69
+	 To:Cc:Content-Type; b=HjaybNgK1u2tXFmyw/CZIC81TZTLREqiizjIzfGlXXFoNq2o7Ruxe1wSFLyJBYZhvSwomnzwT5YZBBOa05NXrAU1OojRTQVSsHfuCrGwoJQwdzzP6RamjaZptZFh661rOUl1nPe9e272oMpwJYiVqxUD6UJYrcmV5rPu64oQHsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uSQwqUGp; arc=none smtp.client-ip=209.85.222.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ObCtfBr0"
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-44899f99756so6603284fac.2
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 01:25:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uSQwqUGp"
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-939f3426a7cso749000685a.0
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 01:25:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1789460726; x=1790065526; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1789460731; x=1790065531; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=aUeRHnlHuLyd8Os/OfUYHyanuI/6gSGpcAdXKzgjG1A=;
-        b=ObCtfBr04w6iVY57Zur/lnmheGwiFWKZMUCUTgGfGxu8BYv3zWC4DAs/RGDTobyayN
-         fZ+ftSJn1WhP9tblva/QHWYS/W/18yqWrIxpyd7dGTMoG7TVaBso83dD+V1YhrUTXg+H
-         QMWIzsIYBE2hfS44zGUle41MbVcehwrVd5My3oNh89Ts/1wRtd+/sFF8dUBukYV9EOxD
-         7XUj5EvEtEYJy3B1K7371NoJpQnaX9GeFuhxb3RTffOZpRsaGlMrtgak244klNj/7QPQ
-         BNtmAuwxGfGTCtwnzZzr6iUDF9IL18rCGN9mO8DkMTVNLbb1T67SsvYMYflMKMc6E+Qk
-         TxUA==
+        bh=jD1fGYdmSfmtHfbCTu69NC0iIcRgu3QWne7aaYuG46g=;
+        b=uSQwqUGpNIXdYDJ7X2YxpKbn8k7ggkMMJ9fUaKDu8R+cqnyMa20yAmFKBvtPah0pch
+         DKLPqKggOqMRbNmMf9b6pG6z1WDOX+8CtmSLXavijC0b0DLHhOtDZ2K64cH7l53JCtsS
+         ds/4xoJANS+L2dHr0Lq1A5OdkXqgtQdfAM9nxqXsEwgkQSViENeSMIkqmXBNNmlQV6Yg
+         WmE10rSOxo3QsIJT2Z9hU/JRaiFnn5AWm5gotYOz0U4OdVMwFQBQ2PEc0HUHvbghvrkt
+         U+swSKfn4zCt12krMPWD+49/95hGs609Vtx0EHeWeYrqNmnPnDcZOpvPs84oAJ1hZVxF
+         nuow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789460726; x=1790065526;
+        d=1e100.net; s=20260707; t=1789460731; x=1790065531;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=aUeRHnlHuLyd8Os/OfUYHyanuI/6gSGpcAdXKzgjG1A=;
-        b=hn3t7G9Hbt4rPQHQv9Jy/VqZYVYYxe3qZyEsVzwTpXS7RC1fMy+N+jfFq1X8r0Fx4C
-         YwWiptNV6meYtHD16E0UVNw7cE0d1pdih26nI63AcDTzA5aDhfWMyhNNxtRys8brRAKE
-         LoJBpno7U5jIrN2SOmQRBYwrZ6fPxWZTWjUYOZN6rYrVQ2DIJ6ITKf5Y7lakCNfz10kz
-         OD6NPB6B3pPBDeUAlA97D/YQprdkPcEYvshMI6xncygNbDUPG6/wL3BpqAFN6fdaD+yF
-         Kigp8aNJuFfOd41oId9uLqPzSbma2Jj6pIV/k41lOVZWcJykK8A6jnm3NUfJXatrRAUR
-         Qtug==
-X-Forwarded-Encrypted: i=1; AKwUvByhZlSq59M5Z+NZFQeOU7DcAIsJnu1zBvObrP+n4bHz2kYS31a7W2dGmirdy5WvdKlG6JYmdkpAimbq@vger.kernel.org
-X-Gm-Message-State: AFuF++nXS9cSctk4CMHxzcwqflwQHxdpx9tonC9ZrDIEuFiINfJw74Wy
-	wbQYEU3VEzgRi7pv1nfJQoIq+DHij2Mi3CF8YnyqOXDYF4bEvf/epcgMSzursIuOxx83d7biDqX
-	T
-X-Received: from plbmz16.prod.google.com ([2002:a17:903:3510:b0:2dd:2adc:aa80])
- (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:a8b:b0:2d9:26b3:547
- with SMTP id d9443c01a7336-2dd83882243mr420135ad.20.1789460414438; Tue, 15
- Sep 2026 01:20:14 -0700 (PDT)
-Date: Tue, 15 Sep 2026 08:18:40 +0000
+        bh=jD1fGYdmSfmtHfbCTu69NC0iIcRgu3QWne7aaYuG46g=;
+        b=09GuAz7lxPxhRHzXww3q6zPUqs/qrAAT9vRHZ/9wU5i6GMmMy+Lr3KOUlB9TchnPEk
+         zH7Wn8zdxbTh9rtjxyJ4Eg2N7sVhK7l8w/qjzB/gqL55mN1FQdtP+fqqGo98aFSzSWN8
+         cGHPv3OlqeoHFDD8i7N2Rb15/SHwwg2WIcZwrlUp6NNQH8KdehYCka7gDd2tx2OEO5T2
+         z9W54DjINTTgbZrNG88TlH7bBn9m3a+GQm7zVmYOUlUhkGFT9A2ysTQepgs4crtB5peI
+         2qiTkTi62H7CuQiuNBw7K9fVZki0e5CFvOoOKB13K5czmtDW002B4a+ULAhRuy9KjaSB
+         BHqg==
+X-Forwarded-Encrypted: i=1; AKwUvBz3DzRetmgFQ+Ajyz6j24UFeWVMd4lytT8uursCyYNt+DfMv5gxfPzpCI2KhST9WUsHbpoFPzcHxEKY@vger.kernel.org
+X-Gm-Message-State: AFuF++m3KdV7V0X4ZYrJ0uOAUsQkZq8x3rPD2y/EgK0OhTpGdYpeZeNJ
+	MZPolPjNbjoxSmrSfvL0FUC9Z779tabE92OmsLvbGgGyrE8DNc/0i4BJG6DlswQ60rJVikvz3A7
+	V
+X-Received: from plbkq15.prod.google.com ([2002:a17:903:284f:b0:2dd:1c44:fe2])
+ (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1a0c:b0:2d9:464f:d45f
+ with SMTP id d9443c01a7336-2dd6c5ba2f0mr129830935ad.5.1789460408347; Tue, 15
+ Sep 2026 01:20:08 -0700 (PDT)
+Date: Tue, 15 Sep 2026 08:18:33 +0000
 In-Reply-To: <20260915081910.4142719-1-morbo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -61,9 +61,8 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260915081910.4142719-1-morbo@google.com>
 X-Mailer: git-send-email 2.55.0.1032.g73a4cd73de-goog
-Message-ID: <20260915081910.4142719-24-morbo@google.com>
-Subject: [PATCH 23/28] Input: synaptics_usb - use seq_buf and snprintf() for
- name and phys
+Message-ID: <20260915081910.4142719-17-morbo@google.com>
+Subject: [PATCH 16/28] pinctrl: samsung: Use snprintf() to construct pin bank names
 From: Bill Wendling <morbo@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: Bill Wendling <morbo@google.com>, codemender-patching+linux@google.com, 
@@ -124,17 +123,17 @@ Cc: Bill Wendling <morbo@google.com>, codemender-patching+linux@google.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-synusb_probe() constructs the device name and physical path using a mix of
-strscpy(), strlcat(), and snprintf().
+samsung_banks_node_get() constructs each pin bank node name by copying
+bank->name with strscpy() and appending the suffix with strlcat().
 
-In preparation for removing the deprecated strlcat() API[1], use struct
-seq_buf to incrementally build synusb->name, and format synusb->phys with
-snprintf() after generating the USB path.
+In preparation for removing the deprecated strlcat() API[1], format the
+node name in a single snprintf() call, which preserves the existing
+truncation check against sizeof(node_name).
 
 Link: https://github.com/KSPP/linux/issues/370 [1]
 Cc: codemender-patching+linux@google.com
-Assisted-by: Gemini:1.5-Pro-002 [editor_update_file, make_kernel_build_sing=
-le_file, test_runner_run_kunit_test]
+Assisted-by: Gemini:Pro [editor_update_file, make_kernel_build_single_file,=
+ checkpatch_run]
 Signed-off-by: Bill Wendling <morbo@google.com>
 ---
 Cc: Russell King <linux@armlinux.org.uk>
@@ -248,73 +247,26 @@ Cc: devel@lists.orangefs.org
 Cc: linux-hardening@vger.kernel.org
 Cc: linux-sound@vger.kernel.org
 ---
- drivers/input/mouse/synaptics_usb.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/input/mouse/synaptics_usb.c b/drivers/input/mouse/syna=
-ptics_usb.c
-index 880a0c79148c..d13d2d6202ee 100644
---- a/drivers/input/mouse/synaptics_usb.c
-+++ b/drivers/input/mouse/synaptics_usb.c
-@@ -41,6 +41,7 @@
- #include <linux/usb.h>
- #include <linux/input.h>
- #include <linux/usb/input.h>
-+#include <linux/seq_buf.h>
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/sa=
+msung/pinctrl-samsung.c
+index 5ecc9ed4c44d..0d639eec689c 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1155,8 +1155,7 @@ static void samsung_banks_node_get(struct device *dev=
+, struct samsung_pinctrl_dr
 =20
- #define USB_VENDOR_ID_SYNAPTICS	0x06cb
- #define USB_DEVICE_ID_SYNAPTICS_TP	0x0001	/* Synaptics USB TouchPad */
-@@ -278,6 +279,8 @@ static int synusb_probe(struct usb_interface *intf,
- 	struct input_dev *input_dev;
- 	unsigned int intf_num =3D intf->cur_altsetting->desc.bInterfaceNumber;
- 	unsigned int altsetting =3D min(intf->num_altsetting, 1U);
-+	struct seq_buf s;
-+	char path[64];
- 	int error;
-=20
- 	error =3D usb_set_interface(udev, intf_num, altsetting);
-@@ -334,27 +337,29 @@ static int synusb_probe(struct usb_interface *intf,
- 			 ep->bInterval);
- 	synusb->urb->transfer_flags |=3D URB_NO_TRANSFER_DMA_MAP;
-=20
-+	seq_buf_init(&s, synusb->name, sizeof(synusb->name));
-+
- 	if (udev->manufacturer)
--		strscpy(synusb->name, udev->manufacturer,
--			sizeof(synusb->name));
-+		seq_buf_puts(&s, udev->manufacturer);
-=20
- 	if (udev->product) {
- 		if (udev->manufacturer)
--			strlcat(synusb->name, " ", sizeof(synusb->name));
--		strlcat(synusb->name, udev->product, sizeof(synusb->name));
-+			seq_buf_puts(&s, " ");
-+		seq_buf_puts(&s, udev->product);
- 	}
-=20
--	if (!strlen(synusb->name))
--		snprintf(synusb->name, sizeof(synusb->name),
--			 "USB Synaptics Device %04x:%04x",
--			 le16_to_cpu(udev->descriptor.idVendor),
--			 le16_to_cpu(udev->descriptor.idProduct));
-+	if (!seq_buf_used(&s))
-+		seq_buf_printf(&s, "USB Synaptics Device %04x:%04x",
-+			       le16_to_cpu(udev->descriptor.idVendor),
-+			       le16_to_cpu(udev->descriptor.idProduct));
-=20
- 	if (synusb->flags & SYNUSB_STICK)
--		strlcat(synusb->name, " (Stick)", sizeof(synusb->name));
-+		seq_buf_puts(&s, " (Stick)");
-=20
--	usb_make_path(udev, synusb->phys, sizeof(synusb->phys));
--	strlcat(synusb->phys, "/input0", sizeof(synusb->phys));
-+	seq_buf_str(&s);
-+
-+	usb_make_path(udev, path, sizeof(path));
-+	snprintf(synusb->phys, sizeof(synusb->phys), "%s/input0", path);
-=20
- 	input_dev->name =3D synusb->name;
- 	input_dev->phys =3D synusb->phys;
+ 	bank =3D d->pin_banks;
+ 	for (i =3D 0; i < d->nr_banks; ++i, ++bank) {
+-		strscpy(node_name, bank->name, sizeof(node_name));
+-		len =3D strlcat(node_name, suffix, sizeof(node_name));
++		len =3D snprintf(node_name, sizeof(node_name), "%s%s", bank->name, suffi=
+x);
+ 		if (len >=3D sizeof(node_name)) {
+ 			dev_err(dev, "Too long pin bank name '%s', ignoring\n",
+ 				bank->name);
 --=20
 2.55.0.1032.g73a4cd73de-goog
 
