@@ -1,176 +1,175 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from smtp3-g21.free.fr (smtp3-g21.free.fr [212.27.42.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C923C9EF3;
-	Tue, 15 Sep 2026 13:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1B143A80B;
+	Tue, 15 Sep 2026 13:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789478855; cv=none; b=EIyC9R7LQ7BJnWNJg3mg7CZHebmiOKPvMjSjFy4ZSZpQilIOmr7pND8BtXjgzX2q5alSrvV3+uYOpmdkXWc/vFG5iJB1KNlM5t0po0ZuuhTKbalYbyGufgm3E4ibwbPV/dRlZJSAViMuwDVfFSas6uqqnH1ZcrB5ezWeuU78xLI=
+	t=1789480104; cv=none; b=mZHXQjk+9qOqTU4UKn3OSavk+F6Z5mWomAvi18kwvTLGnJm1StWfwfFatMlKQUzXKRFJkIkOqgm17eKuLemtL37Fo7wG4OPPcsXnWZfHAR8MNSUYKoBp2H4njpDnVRwYRPVtm/itvEv1yBQdRYcfi7ditnH+gcq+7Gga8hOA5TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789478855; c=relaxed/simple;
-	bh=LvQZ0lj3BE7qSBpR37PGrtquuI5nJqHwIN8zYY7oDdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mClTwhKDduYgQBpvY2Ny7ojPKPBBpOvvKjnvUtG7C0RjtzAZLmvAWpCmCJtCy7sLyKWuzb6q9zoPUYvnXmmv+ZVXZ/DX6t4fVnRgVWzg4NMnJt01GB1IMmVyLl6HHi5FrRo+beUs9L7R7t+Eyr3KIOkOgzsAgCy9KYFXbvKAhdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M3XZFW4Y; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M3XZFW4Y"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789478853; x=1821014853;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LvQZ0lj3BE7qSBpR37PGrtquuI5nJqHwIN8zYY7oDdM=;
-  b=M3XZFW4Y8Ot96Tp8FZ2rM2KmE9djZYK4pogsqrzgLb5s8nsL+6GON9tI
-   UMSJpFE5ZhZHu5KkxjqGICbP1JYjJAq7iCo3PgJHQFR5cBHg5B/jQfj25
-   w8kC/MRY0ins8AQ4CRA7IEtlj/jT5v00xbXjgZlWH2h1662q078CWdhzU
-   /92SS2jctWOoCaji49AnK6CLIM6n5ncN67kn7VSAqOZZj0AzHClNczqpU
-   USDfyIWDEC6uQJuLG+9s38T97QGfLX8gbZOn8z6wgMUL9K5Tq2bqttERj
-   q6c2L/k8lB0ypfaAWRhlru0L/+/pO+4UneM2c+YsSN+3iLE1U5Xns/RvF
-   Q==;
-X-CSE-ConnectionGUID: YpaGc43yTW+/pplXs6ujSg==
-X-CSE-MsgGUID: lfE6j+XaQ/SwNdzH3AJ9qQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="107353189"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="107353189"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2026 06:27:32 -0700
-X-CSE-ConnectionGUID: ZNMsbKv1RnuiE3ZxRK2M1Q==
-X-CSE-MsgGUID: B+6W7utzQDKDtDV+XQ1KUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="296513770"
-Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.57])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2026 06:27:26 -0700
-Date: Tue, 15 Sep 2026 16:27:24 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: longzhao@ambarella.com
-Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>,
-	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 07/15] clk: ambarella: add CV75 RCT clock controller
-Message-ID: <aqlHvB2FkpBdlEBT@ashevche-desk.local>
-References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
- <20260915-cv75-v5-v7-7-3297d3fbc9c0@ambarella.com>
+	s=arc-20240116; t=1789480104; c=relaxed/simple;
+	bh=K5IxCznysTCoC6HCoKj/1le70C8uo9aj/mlyw9VpPsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zr43sl9o8vudPwWFgqXmZFxraMoATZHQxKuc/MGzrr2DoGeAlIZagerhwCoBDkQaj3lHYB+hJIvZx0Kb4gouoS2nmxRtc4KB89PUgmH7jZ+th2kS/uYdbuEkotIdviwXYE20B/V4L2wC8RtG6IXb9a3YIuiA41ocCYY1+Ry2ZxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=lht.dlh.de; spf=fail smtp.mailfrom=lht.dlh.de; arc=none smtp.client-ip=212.27.42.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=lht.dlh.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=lht.dlh.de
+Received: from OMT-CWNXR4TFW5-LHT (unknown [213.61.137.106])
+	(Authenticated sender: albeu@free.fr)
+	by smtp3-g21.free.fr (Postfix) with ESMTPSA id 0FE7F13F8C0;
+	Tue, 15 Sep 2026 15:48:09 +0200 (CEST)
+Date: Tue, 15 Sep 2026 15:48:02 +0200
+From: Alban Bedel <alban.bedel@lht.dlh.de>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Alban Bedel
+ <alban.bedel@lht.dlh.de>
+Subject: Re: [PATCH 2/2] gpio: Support ON Semi CAT9532
+Message-ID: <20260915154802.675b2408@OMT-CWNXR4TFW5-LHT>
+In-Reply-To: <CAMRc=MeS9Afk+C249ZXKsjchbgMwt_nzvTyZgYDsZ9+R1hjsqQ@mail.gmail.com>
+References: <20260915092046.931449-1-alban.bedel@lht.dlh.de>
+	<20260915092046.931449-3-alban.bedel@lht.dlh.de>
+	<CAMRc=MfARu1c4Coks-Bn8W4eRueh1oDU47691+NR_o2weKy0BQ@mail.gmail.com>
+	<CAMRc=MeS9Afk+C249ZXKsjchbgMwt_nzvTyZgYDsZ9+R1hjsqQ@mail.gmail.com>
+Organization: Lufthansa Technik AG
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; aarch64-apple-darwin25.4.0)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260915-cv75-v5-v7-7-3297d3fbc9c0@ambarella.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 15, 2026 at 07:15:37PM +0800, Long Zhao via B4 Relay wrote:
+On Tue, 15 Sep 2026 11:57:51 +0200
+Bartosz Golaszewski <brgl@kernel.org> wrote:
 
-> Add a table-driven CCF driver for the CV75 root clock tree. Register
-> the core PLL, AHB/APB fixed factors and UART0 composite clock, with
-> osc supplied via clk_parent_data.
+> On Tue, Sep 15, 2026 at 11:51=E2=80=AFAM Bartosz Golaszewski <brgl@kernel=
+.org> wrote:
+> >
+> > On Tue, 15 Sep 2026 11:20:46 +0200, Alban Bedel <alban.bedel@lht.dlh.de=
+> said: =20
+> > > Add support for the CAT9532 LED dimmer from On Semiconductor. Altought
+> > > marketed as an LED dimmer it is a bit limited in this regard as it
+> > > only has 2 PWM for 16 pins. As explained in the datasheet it can also
+> > > be used as an open-drain GPIO controller, and that's how it is used on
+> > > the hardware I have at hand. This chip doesn't really map to what the
+> > > gpio-regmap driver expect so it is implemented as it own driver. This
+> > > approch also allow to later add support for the LED dimmer if desired.
+> > >
+> > > Signed-off-by: Alban Bedel <alban.bedel@lht.dlh.de>
+> > > ---
+> > >  drivers/gpio/Kconfig        |  10 +++
+> > >  drivers/gpio/Makefile       |   1 +
+> > >  drivers/gpio/gpio-cat9532.c | 173 ++++++++++++++++++++++++++++++++++=
+++
+> > >  3 files changed, 184 insertions(+)
+> > >  create mode 100644 drivers/gpio/gpio-cat9532.c
+> > >
+> > > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> > > index a48586bb8edba..05b7af675677b 100644
+> > > --- a/drivers/gpio/Kconfig
+> > > +++ b/drivers/gpio/Kconfig
+> > > @@ -1180,6 +1180,16 @@ config GPIO_ADNP
+> > >         enough to represent all pins, but the driver will assume a
+> > >         register layout for 64 pins (8 registers).
+> > >
+> > > +config GPIO_CAT9532
+> > > +     tristate "CAT9532 GPIO support"
+> > > +     select REGMAP_I2C
+> > > +     help
+> > > +       GPIO driver for ON Semiconductor CAT9532 LED dimmer.
+> > > +       Say yes here to enable the GPIO driver for the CAT9532 chip.
+> > > +
+> > > +       To compile this driver as a module, choose M here: the module=
+ will
+> > > +       be called gpio-cat9532.
+> > > +
+> > >  config GPIO_FXL6408
+> > >       tristate "FXL6408 I2C GPIO expander"
+> > >       select GPIO_REGMAP
+> > > diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> > > index dc9e6d643b5bc..e94d2f57a1f93 100644
+> > > --- a/drivers/gpio/Makefile
+> > > +++ b/drivers/gpio/Makefile
+> > > @@ -51,6 +51,7 @@ obj-$(CONFIG_GPIO_BRCMSTB)          +=3D gpio-brcms=
+tb.o
+> > >  obj-$(CONFIG_GPIO_BT8XX)             +=3D gpio-bt8xx.o
+> > >  obj-$(CONFIG_GPIO_BY_PINCTRL)                +=3D gpio-by-pinctrl.o
+> > >  obj-$(CONFIG_GPIO_CADENCE)           +=3D gpio-cadence.o
+> > > +obj-$(CONFIG_GPIO_CAT9532)           +=3D gpio-cat9532.o
+> > >  obj-$(CONFIG_GPIO_CGBC)                      +=3D gpio-cgbc.o
+> > >  obj-$(CONFIG_GPIO_CLPS711X)          +=3D gpio-clps711x.o
+> > >  obj-$(CONFIG_GPIO_SNPS_CREG)         +=3D gpio-creg-snps.o
+> > > diff --git a/drivers/gpio/gpio-cat9532.c b/drivers/gpio/gpio-cat9532.c
+> > > new file mode 100644
+> > > index 0000000000000..973ff74a15b89
+> > > --- /dev/null
+> > > +++ b/drivers/gpio/gpio-cat9532.c
+> > > @@ -0,0 +1,173 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > > +#include <linux/gpio/driver.h>
+> > > +#include <linux/i2c.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/regmap.h>
+> > > +#include <linux/spinlock.h>
+> > > +
+> > > +struct cat9532 {
+> > > +     struct regmap *regmap;
+> > > +     struct gpio_chip gpio;
+> > > +
+> > > +     spinlock_t lock;
+> > > +     unsigned int direction;
+> > > +};
+> > > +
+> > > +#define CAT9532_REG_INPUT0   0
+> > > +#define CAT9532_REG_LS0              6
+> > > +
+> > > +/* Set output to Hi-Z, LED is OFF */
+> > > +#define CAT9532_LED_OUT_HIZ  0
+> > > +/* Set output low  */
+> > > +#define CAT9532_LED_OUT_LOW  1
+> > > +#define CAT9532_LED_OUT_MASK 3
+> > > +
+> > > +static const struct regmap_config cat9532_regmap_cfg =3D {
+> > > +     .reg_bits =3D 8,
+> > > +     .val_bits =3D 8,
+> > > +     .max_register =3D 9,
+> > > +     /*
+> > > +      * Auto increment can be enabled by setting bit 4 in the
+> > > +      * register address, but we don't really need bulk access.
+> > > +      */
+> > > +     .use_single_read =3D true,
+> > > +     .use_single_write =3D true,
+> > > +     .can_sleep =3D true,
+> > > +}; =20
+> >
+> > This looks like it would perfectly fit the gpio-regmap helper and allow=
+ for
+> > code reuse. Maybe except for the locally tracked direction. How reliabl=
+e is it?
+> > What if the GPIOs were put into some specific state by the bootloader?
+> >
+> > Bart =20
+>=20
+> Ah, nevermind, you commented on not being able to use it. My question
+> still stands, how reliable is direction tracking here? Does reading
+> back the registers you write in direction setters not give you
+> anything?
 
-...
+This is an exclusively open-drain chip, you can either driver the line
+low or leave it in hi-z mode to be driven by an external circuit. There
+is no direction register, the input register just report the current
+line state. As such the direction is only something that exists in the
+driver.
 
-> +#include <linux/array_size.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/bits.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/container_of.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/math64.h>
+But as Sashiko pointed out this chip is a clone of the PCA9532 for
+which there is already a driver. I will instead look into making this
+driver usable in my use case.
 
-> +#include <linux/mod_devicetable.h>
+Thanks, for the review.
 
-No new driver should use this, ID tables are provided by...
-
-> +#include <linux/module.h>
-> +#include <linux/overflow.h>
-> +#include <linux/platform_device.h>
-
-^^^...this one.
-
-> +#include <linux/slab.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/types.h>
-
-...
-
-> +struct cv75_fixed_factor {
-> +	const char *name;
-> +	u32 id;
-
-> +	u16 mult;
-> +	u16 div;
-
-There is struct u16_fract in math.h. Can you use it instead of these two?
-
-> +};
-
-...
-
-> +static int cv75_rct_probe(struct platform_device *pdev)
-> +{
-> +	struct clk_hw_onecell_data *data;
-> +	struct device *dev = &pdev->dev;
-> +	int ret;
-> +
-> +	spin_lock_init(&cv75_ccu.lock);
-> +
-> +	cv75_ccu.base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(cv75_ccu.base))
-> +		return PTR_ERR(cv75_ccu.base);
-
-> +	data = devm_kzalloc(dev, struct_size(data, hws, CV75_NUM_CLKS),
-> +			    GFP_KERNEL);
-
-I think it's okay to have this on a single line.
-
-> +	if (!data)
-> +		return -ENOMEM;
-> +	data->num = CV75_NUM_CLKS;
-> +
-> +	ret = cv75_register_plls(dev, data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register plls\n");
-> +
-> +	ret = cv75_register_fixed_factors(dev, data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register fixed factors\n");
-> +
-> +	ret = cv75_register_composites(dev, data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to register composites\n");
-> +
-> +	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to add clock provider\n");
-> +
-> +	return 0;
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Alban
