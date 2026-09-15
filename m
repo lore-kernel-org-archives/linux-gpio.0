@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD78496D2B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4274496D3F;
 	Tue, 15 Sep 2026 11:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789470941; cv=none; b=jncPAq+xsH8EznswoQoC0nr+tx3k9f4u3VCp38BDghVcsyF2j4qmdr//HC/O9O79aGYc1hA/5ZO63krjyXm7W/jO4XC68kA6rcHhgnnIQEUPxbej25v1gfIPZzYL2bvy3PXKcKOCQcwYQq8W3caJI235xreynH79MMvjlJ6pIwQ=
+	t=1789470941; cv=none; b=ChE68L+JXnJO/YgydU189sfVa/BcVdZVChM6vY61A6Mrh+uFNXgMVAxhzkwvAgdmNlvtbWU4UoKC7MrRWmGadsrMhi+n2A94gJWO8Dny4BQJiij0gRFf9UD3dHoqCwt7YqlvWXa28OmI+/Xig2P/q9WcWlOss3iWHrmX2llFC8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1789470941; c=relaxed/simple;
-	bh=vqJg9MCrHhTQ3dSYeAuOSHwl+5KNi8MVa3c/QFLqYsE=;
+	bh=VayeLJi6dF/5DfY+Xg7ilDAh5xT1Cx0pCzYaDRReLiU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KJf/b/4MmYjupmr3AK1TmjjRaGU96vhIm3NIzYGY5syNP+G+4btpealMG99kpfM7CgeWqboedsFDTmJKaJVKBtoO6FPa7z5i0cAVBSK5mUAQsjOiLzicQclS66e0oAN7fpq/GElR1hompPdKcbCHc9ZylM3S1WvGohC2/YNudFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQ0+Mw53; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=pMPhXIDQ/LRMzJ70OVpgjBeaIu0S3DJNkZvIX4j6CncZFY0kXNlX9XFrM8trEM4iVm6xvtayFUZKN21E0U6mDypaiCRZt3+g2mCxEEYZOf5wtmMf0RNJplQQfk6M4nRa4fjCIBTI/q7VvAglk9VTGV/fLY5+3Q7hlPr3DaZgQ1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOLJaYpd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQ0+Mw53"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3F44DC4AF19;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOLJaYpd"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 530F0C4AF65;
 	Tue, 15 Sep 2026 11:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1789470941;
-	bh=vqJg9MCrHhTQ3dSYeAuOSHwl+5KNi8MVa3c/QFLqYsE=;
+	bh=VayeLJi6dF/5DfY+Xg7ilDAh5xT1Cx0pCzYaDRReLiU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=QQ0+Mw53flsx3x+3g5e0cV1XTfIPhHJvZVAkC4O0CwM+fbljr4k8jFa8EPaWzsweF
-	 rYET0qeq2Qst9xPPL8JpJevsMrytnfnJXJTFrSgguXHqyzHyEJ7J/PKQ0g2oUNs/Uz
-	 j1s6t7V7FQkRYaQRDvAbZgXgex4YhwYrXk2lemnpcOwFE2Sf57zvMafuhnpCTeW6nx
-	 StVyl6CyHeoU7qxUrK0Ug1pjRYWtncc9plQUXQDvqQVhCll3hYKyR+Yt1XRmexn62+
-	 pLxWKCtI7vaVk6OJpSxprgZqxlFtWfPWEGJ3a7VLFdg8cG0KjZKojoMZEn5kMcTvp9
-	 /maMgw3LnQM4A==
+	b=WOLJaYpdfs4XlGqHDPe6PaqUJv60fneV2vOF9lS5avSdaeDFyucf8iSg2DkArz2nm
+	 1opbFJnZYV8yFtZiwOKCrjQQLoK3BUgUX6IX/XFqzJkQHeYRrjaOuW7FcL2fBV6nYA
+	 m8+ZJWeyDaulFnuTAqcykeg8VKfzD4GlvNYQTry+2XWa73q/2AqJOD/rK1ag4o53Bf
+	 HSC9irI1limkbn/fnLwtVzRlBo+gcH3pxjQzsoj9xMkHsPBB53FQlv8L76FAW7e3oW
+	 kgztNwLKR1MCKUy3/gFJ2WWcEU8dWAcifGGd6mUP9tKddbZw7k7/vMZ1Fmc9K/Vvcj
+	 EjsCy8uxcQirg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E37AC982C4;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F686C88E7F;
 	Tue, 15 Sep 2026 11:15:41 +0000 (UTC)
 From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Tue, 15 Sep 2026 19:15:36 +0800
-Subject: [PATCH v7 06/15] dt-bindings: serial: snps-dw-apb-uart: add
- ambarella,cv75-uart
+Date: Tue, 15 Sep 2026 19:15:38 +0800
+Subject: [PATCH v7 08/15] gpiolib: regmap: add write_data_after_dir quirk
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,7 +40,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260915-cv75-v5-v7-6-3297d3fbc9c0@ambarella.com>
+Message-Id: <20260915-cv75-v5-v7-8-3297d3fbc9c0@ambarella.com>
 References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
 In-Reply-To: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
 To: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -61,14 +60,13 @@ Cc: Long Zhao <longzhao@ambarella.com>, Rob Herring <robh@kernel.org>,
  Long Zhao <zl020895@163.com>, Lee Jones <lee@kernel.org>, 
  mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
  linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+ linux-kernel@vger.kernel.org
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789470938; l=1072;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789470938; l=3083;
  i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=aI42/QWFrT0q/wEmjSA5wdZvhIPXU9faQz3G+ySJ344=;
- b=w61i85kPUWtRPCLdL5wd37zWTqD5HNu/dPSEKTo91hSaguKMPeWDi30NhvwCDuk44pGCs0KgH
- /4Xp7kmpHDWA0ekKbM18jJ5j0T/WeMEVmf7PxZzf24HluqHBY06J3nC
+ bh=G8eJneH1FEGvIrQmo2BCujbmuD8SZZsDUEFPHDAW3B8=;
+ b=I0+BtY/IonIrgaL+mpBYWVB7SCJp5ipOngd4RH40wiQK4hLcT8kkwCrhV9Ovw0BQ6IEPAVEMN
+ E6hTkDzmqnlAso1wmlTsMAiehCpESh997U4Ue2sXCIOaE/LCS6p5a8M
 X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
  pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
 X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
@@ -78,29 +76,88 @@ Reply-To: longzhao@ambarella.com
 
 From: Long Zhao <longzhao@ambarella.com>
 
-Add the Ambarella CV75 compatible string to the Synopsys DW APB UART
-binding. The block is Ambarella IP with a DW-like register map, so it
-is described as a DW APB UART variant.
+Some controllers ignore data-register writes while a line is still an
+input. Optionally write the output value again after switching the
+direction, matching the existing PL061 behaviour.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Reviewed-by: Linus Walleij <linusw@kernel.org>
 Signed-off-by: Long Zhao <longzhao@ambarella.com>
 ---
- Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpio/gpio-regmap.c  | 20 ++++++++++++++++++--
+ include/linux/gpio/regmap.h |  8 ++++++++
+ 2 files changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-index 49f51b002879..cec5c679f1a9 100644
---- a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-@@ -51,6 +51,7 @@ properties:
-           - const: renesas,rzn1-uart
-       - items:
-           - enum:
-+              - ambarella,cv75-uart
-               - anlogic,dr1v90-uart
-               - brcm,bcm11351-dw-apb-uart
-               - brcm,bcm21664-dw-apb-uart
+diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+index 51b4d69b8740..dfcc1f1122ec 100644
+--- a/drivers/gpio/gpio-regmap.c
++++ b/drivers/gpio/gpio-regmap.c
+@@ -31,6 +31,7 @@ struct gpio_regmap {
+ 	unsigned int reg_clr_base;
+ 	unsigned int reg_dir_in_base;
+ 	unsigned int reg_dir_out_base;
++	bool write_data_after_dir;
+ 	unsigned long *fixed_direction_mask;
+ 	unsigned long *fixed_direction_output;
+ 
+@@ -271,9 +272,22 @@ static int gpio_regmap_direction_output(struct gpio_chip *chip,
+ 			return ret;
+ 	}
+ 
+-	gpio_regmap_set(chip, offset, value);
++	ret = gpio_regmap_set(chip, offset, value);
++	if (ret)
++		return ret;
++
++	ret = gpio_regmap_set_direction(chip, offset, true);
++	if (ret)
++		return ret;
+ 
+-	return gpio_regmap_set_direction(chip, offset, true);
++	/*
++	 * gpio value is set again, because pl061 doesn't allow to set value of
++	 * a gpio pin before configuring it in OUT mode.
++	 */
++	if (gpio->write_data_after_dir)
++		return gpio_regmap_set(chip, offset, value);
++
++	return 0;
+ }
+ 
+ void *gpio_regmap_get_drvdata(struct gpio_regmap *gpio)
+@@ -376,6 +390,8 @@ struct gpio_regmap *gpio_regmap_register(const struct gpio_regmap_config *config
+ 			    config->fixed_direction_output, chip->ngpio);
+ 	}
+ 
++	gpio->write_data_after_dir = config->write_data_after_dir;
++
+ 	/* if not set, assume there is only one register */
+ 	gpio->ngpio_per_reg = config->ngpio_per_reg;
+ 	if (!gpio->ngpio_per_reg)
+diff --git a/include/linux/gpio/regmap.h b/include/linux/gpio/regmap.h
+index 06255756710d..d7ffc12b00a2 100644
+--- a/include/linux/gpio/regmap.h
++++ b/include/linux/gpio/regmap.h
+@@ -48,6 +48,13 @@ struct regmap;
+  *			(Optional) Bitmap representing the fixed direction of
+  *			the GPIO lines. Useful when there are GPIO lines with a
+  *			fixed direction mixed together in the same register.
++ * @write_data_after_dir:
++ *			(Optional) Write the output value again after
++ *			switching a line to output in ->direction_output().
++ *			Needed for hardware which ignores data register
++ *			writes while the line is configured as an input.
++ *			This is a legacy quirk (e.g. ARM PL061); new hardware
++ *			must not use it. Direction changes will glitch.
+  * @drvdata:		(Optional) Pointer to driver specific data which is
+  *			not used by gpio-remap but is provided "as is" to the
+  *			driver callback(s).
+@@ -94,6 +101,7 @@ struct gpio_regmap_config {
+ 	unsigned int reg_dir_out_base;
+ 	int reg_stride;
+ 	int ngpio_per_reg;
++	bool write_data_after_dir;
+ 	struct irq_domain *irq_domain;
+ 	unsigned long *fixed_direction_mask;
+ 	unsigned long *fixed_direction_output;
 
 -- 
 2.34.1
