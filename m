@@ -1,179 +1,388 @@
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EE2442FA4
-	for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 19:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.227.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789500653; cv=pass; b=Gs2ATCbAxqy2mquaz5BK6BZxKBH7Y4ZDyaN+lKHiqOFqtphzHYa9p5k5oioB6bbS9nUKODrKLb1hioUzQ3xYgG7B773H0nf86gnHpE3Ef4ETj+P4hyARqR7ttq9Xt54dO1UcLLknCcXiKztFewR1dM2IhvHLDXML6UoZPze9AQ0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789500653; c=relaxed/simple;
-	bh=RfxsKW+gWzHzPnl0VGV4sp1JrOew5XduTAso8G35GXs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PO6XK3Z2rpMA1H6rvEu882ZnM88avKun2Una91Gj2dirs3UfLwW/FawkJRXqtfGyNLowBJSUuiZ+SjBW6Q2Akf26t4Tf9Xymn72tsJv7Flk4daBA+UXyWqxOz+LaoTUVFTx/bQs1PJbK5WnBKZx1dwv6sTEDXl70S4SxlqohGBE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mHQpOIQY; arc=pass smtp.client-ip=74.125.227.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C80114A4CC;
+	Tue, 15 Sep 2026 19:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789500932; cv=none; b=Oqu4T1V/OpLN9A1UCU/ZoIpHd/2VOruqxHpR9+vqm5HBpVzhW3BD+rsCUvxHQrPu1wC9EpivyLA8nN201DJhM1QaLn4hewIFA/dkqSkt4K66cTL777vThf/5KntqGrND43PMsG6qx65R3+6TLPYMM2SsHbaFRrQe8EDdrPBtI9c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789500932; c=relaxed/simple;
+	bh=+1jO1G9pEIadIfdkhFiyVdmDofc9A1wlRMRON1cqsn8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KPRSxqsB5Gi0V5sMtvkDPam9O/WtNscR4+IbqVdr7ZsAz6KMvngapD+AYGv2NsrpRwayIs/ObJuPTPg37da1H5psX4Vku11GppstplljLXRCOP38KEDU6P0Y2Dp0FEzPfRRCXuDtFJozspRRL5rJHjHJF8eL4bBfsOgjV++CKF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSEeeHs0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mHQpOIQY"
-Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c67e504d59so53887e0c.1
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 12:30:50 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789500649; cv=none;
-        d=google.com; s=arc-20260327;
-        b=fjyxEaCOt2gu+OqxNUC7cikHduMsigngr3gjyhejJksWPNWxCmKk7RqX9kNFuUuA7N
-         elozzIH7uffl7p9Lt9wWXpGWC4rZiOvWdXqILz6mB0n0cVlCYa4TX+Bo7LhgwMfFKVaz
-         53flETLjJf1iHXTsils4ouH7+asLqYjdvAY26P3Sv+GLGLT9KAKOkbIL0vhu+AKUnrZE
-         w4+oBv9bVe8oalIZYzeG8SEzBcDP28E37yOhluwXgJeRCLXX3aNbyq9FYUbAj1rOVMBy
-         dqbdcH+XsMRwp24FJb3Ct9/4FjpPyoeF2wXMM5PfUssUV7D+P00NIiAsbJX15C1Bylo5
-         LByA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=bRLtXj28C7ZetbPCXePmHpMel3/nm53ij0hFxwsbjIQ=;
-        fh=ue8H5YYaCpZiwDArmiyLLp7MX4h4hm2bN6ocHe/Prpo=;
-        b=Uh1Em7sLdBBETWxi8EU/WuddU9yyAtOw7F3MLEMQdcNDhHAP1LGvWA1mQywAJO3r9a
-         R0Mag2LwliVafDWu2OgSgM163I2TU9ij38m5semNIjz3vUorCfvdL1B1x/5REudFvtbp
-         tUpSEKsYd78fW7sOWaoJ+vtp2r0wDqFAZcOo19UGF8ity5g4gpJPoTeCTE5ZaGNSLPgk
-         F/bh6RclYhZoelsHx0cnRol9O/hmLZL3giI86AAW3VbSK1OReGhmhwbxwPdMynfPMri0
-         y2BEFkAVDwk3Z5Kyi8X/PrZWD9l8VU8ktqn95xUW+bPPj1FmInPY7y6s2H++GkqkEEFF
-         0IzA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1789500649; x=1790105449; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=bRLtXj28C7ZetbPCXePmHpMel3/nm53ij0hFxwsbjIQ=;
-        b=mHQpOIQYcK/f3LO6suOWFn0Cy720wLrLpDZ76Y2mpOM3+C9DQTQajqMKss2+8vswyu
-         6kP5JbXC/uQnmjFeNyvbn7ykDMjEjp2433FP2tusVe+U1jFmELny3ub1VOqaeQk4+bmw
-         tGfgnCt0FH77KKNFK/CBvajJjeEiwDPenSWUOdNQWc6FxW5qw9OoucUz3vPurhja7+2W
-         SRX2li+U/pB+n68jTLoULDYN4LWrOMyMYUPvz3nmRdNTo7uPdox+mGt4Z2VuXMis+C7M
-         e3WQC4JCEtRXPwtZDWEutENmL8gBQ5snBkXOOLsO675Xs4UrytQv+QbVij8iLiq/Acss
-         xb9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789500649; x=1790105449;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bRLtXj28C7ZetbPCXePmHpMel3/nm53ij0hFxwsbjIQ=;
-        b=HP5OGG0/bUF5oI1zgRCPcRVsk1qS8VHXHt1+tZLiBhheXydajKPUei7JgxJmUVuKkv
-         0JUfHAbzYD1/QT3iHDQ5hWn6YS/xhQt6Zyq5ThNMIwqXxHWkWnaxJlXBH7UwQOhz988f
-         jE4YDA+ubjvsgNUAQ55DBAoheDLwm0uP4n62o9nZdt/NBAIn2vEVABSTau1slKw1mapo
-         HMjMBDrYLRq+mxXc35l5d36U+mfud+s18No3lBwdY2R2vnxa7Nl3OXUMEpTr9vIVBEYn
-         6zY7CBE9w1BJwBPRhpsP/9lWzW5EdTIhZBt4eLa5yljPU21eb+t6WRI/mR6uK6ySC4/X
-         lnjw==
-X-Forwarded-Encrypted: i=1; AKwUvBwwCwyjst8UA4nLj0b23b8PRvulZCQUxZR8VMjp0fCwsekrXvsOmgeMPPQVvvFH+6lLuRCIFnllSVpF@vger.kernel.org
-X-Gm-Message-State: AFuF++kGCS+098t1oR9TfVnMF3EHRDpEvK3rUng9g866Eg7wDk9pjBOJ
-	Zo7FGX+FGv2BGSTRE2a9ypXRv4fLtPlPL7qS3kptQ8TQXPHXRyLjQMFd3f5b23REhFyxvEAJt/E
-	flJjSkx6FOHtqp5PYbJK3WpvfTSlthw4xTg91sxY=
-X-Gm-Gg: AYBFou3wS4pboJXTSbaFgscsR3pCFpHFRHtgriC4nkcdbnvdbuU9jd9rjqOasA4q4tr
-	1rI8eA9BY8YKE2j7Z0+kzMCRtBAZt5l4Xvizb1R+7B/CbVb/T+/Nqb99DADfZqDUbdT22qzj6Bj
-	/kp9EFuN8Og3nOux5UKvOzmO7g5kiKxz3sx2Xekl5a4+480K8LNTGBhSt89jDEFbd7rOAlSGJ4e
-	CN6+7R89kbJEjlaHVzCO4CabWgsC9OVT8I/o3ZLbS6Ol8juyjeDg0t09X/YLuXMpP3QHDen4piB
-	GxA4czwPOLZyeGbRBrFydOv6ARl3P4yRkOryIvxLEPa/R2dtv/0YWvnz3zWeBB8Dkk07OZ9ChPl
-	INdE7kMBhp7Oc6s1zEwTQo2ABZjmHcqMiKzJnfTBU+e+J49BWA2Q28lP9r1NDyJs=
-X-Received: by 2002:a05:6122:8d4:b0:5c8:3697:9289 with SMTP id
- 71dfb90a1353d-5c993b49b7cmr4231155e0c.8.1789500648289; Tue, 15 Sep 2026
- 12:30:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSEeeHs0"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2CCC0C2BCB8;
+	Tue, 15 Sep 2026 19:35:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1789500932;
+	bh=+1jO1G9pEIadIfdkhFiyVdmDofc9A1wlRMRON1cqsn8=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=dSEeeHs0D/UmBbTwPG9Z1dv7OlmuEjCwkqP/E/NBHsc1QKvRvvrvw0aKHFSp2Xmce
+	 u1Kp92sMuCFxBK4stVsNuKCxOhd8PeDj67d6kljtjy1CEWMIEL5cgUqnz/sxSsTMIo
+	 5KQYDBXpQq5eGCk9yOhDFPhSxvRqhQpjuz1pps+CS03T2EggTZ80dMSWRG4Lu+c82L
+	 ec7yzrdWdpQdprugqJqZvfD3mh4Gw7HgCZf3q5amZm2gqheu/CWP+ccZwdUEp9/Cnd
+	 tSWRNAdUwH9E3Kjr/4SWW5Dg6gtiIL9KhFgGukR6z3Fanc0z4dInPpcv/HfbkCHcge
+	 36FRPNIQ2LXcQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 004E0C88E7D;
+	Tue, 15 Sep 2026 19:35:31 +0000 (UTC)
+From: Fabio Forni via B4 Relay <devnull+development.redaril.me@kernel.org>
+Date: Tue, 15 Sep 2026 21:35:21 +0200
+Subject: [PATCH] mux: convert to use fwnode interface
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260915081910.4142719-1-morbo@google.com> <20260915081910.4142719-22-morbo@google.com>
- <202609151147.C5B45CB@keescook>
-In-Reply-To: <202609151147.C5B45CB@keescook>
-From: Bill Wendling <morbo@google.com>
-Date: Tue, 15 Sep 2026 12:30:31 -0700
-X-Gm-Features: AcwNN1W7vYosDgc2DMy2_OinBNj1qeEQ35WOY6PL8-NHlzjaHMOKmE1leyIGWNs
-Message-ID: <CAGG=3QXYtmJqE5oy5ZD0-G0=GNxK71KKYurusNJvLQNqR-o6+A@mail.gmail.com>
-Subject: Re: [PATCH 21/28] NFS: nfsroot: Refactor root_nfs_cat() to use snprintf()
-To: Kees Cook <kees@kernel.org>
-Cc: nikitash.mariiaw@gmail.com, linux-kernel@vger.kernel.org, 
-	codemender-patching+linux@google.com, Russell King <linux@armlinux.org.uk>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Thomas Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Ian Abbott <abbotti@mev.co.uk>, 
-	H Hartley Sweeten <hsweeten@visionengravers.com>, Tony Luck <tony.luck@intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Matthew Brost <matthew.brost@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Matthias Schwarzott <zzam@gentoo.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Arend van Spriel <arend.vanspriel@broadcom.com>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>, 
-	Anil Gurumurthy <anil.gurumurthy@qlogic.com>, 
-	Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>, "Martin K. Petersen" <mkp@kernel.org>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Mike Marshall <hubcap@omnibond.com>, Martin Brandenburg <martin@omnibond.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Simon Horman <horms@kernel.org>, Chuck Lever <cel@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
-	NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Tom Talpey <tom@talpey.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>, 
-	Kanglong Wang <wangkanglong@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
-	Qiang Ma <maqianga@uniontech.com>, Randy Dunlap <rdunlap@infradead.org>, 
-	Pengpeng Hou <pengpeng@iscas.ac.cn>, Ard Biesheuvel <ardb@kernel.org>, Breno Leitao <leitao@debian.org>, 
-	Thorsten Blum <blum@kernel.org>, Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lyude Paul <lyude@redhat.com>, 
-	Ashutosh Desai <ashutoshdesai993@gmail.com>, Imre Deak <imre.deak@intel.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Johan Hovold <johan@kernel.org>, 
-	Johannes Berg <johannes.berg@intel.com>, 
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, 
-	Cryolitia PukNgae <cryolitia@uniontech.com>, Jiaming Zhang <r772577952@gmail.com>, 
-	Will Porter <mrwillporter@gmail.com>, Cen Zhang <zzzccc427@gmail.com>, 
-	=?UTF-8?Q?C=C3=A1ssio_Gabriel?= <cassiogabrielcontato@gmail.com>, 
-	Rong Zhang <i@rong.moe>, Arun Raghavan <arunr@valvesoftware.com>, 
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linux-edac@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, linux-input@vger.kernel.org, 
-	linux-media@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, 
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, devel@lists.orangefs.org, 
-	linux-hardening@vger.kernel.org, linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260915-mux_fwnode-v1-1-ed5a6d8202d4@redaril.me>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDS0NT3dzSivi08rz8lFTdREMzU0vjZGPLtLQUJaCGgqLUtMwKsGHRsbW
+ 1AFe/s/9cAAAA
+X-Change-ID: 20260915-mux_fwnode-a16593c39ffd
+To: Peter Rosin <peda@lysator.liu.se>, Linus Walleij <linusw@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ xu.yang_2@nxp.com, Fabio Forni <development@redaril.me>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12642;
+ i=development@redaril.me; h=from:subject:message-id;
+ bh=JNk4y1gUu8yNoKSpP9Cw+3Zk597uwGKQpVC+yDgTGnU=;
+ b=owGbwMvMwCXWeKho1tqFWemMp9WSGLJWzmPijRNYnXrLUl/so8MNJjfjsy/D5Pwmdqdt+zFpc
+ rq20xK5jlIWBjEuBlkxRZb/Tkabus1MjG71S9TCzGFlAhnCwMUpABP5lM/wv2C9iKt6cIWup6hX
+ Tl/Kv8UVl7aw3lzg9HFR1aKnnm76FYwMV+TlZq+qFptx9PCxq0mL1Rfd8ZgXP7F149uI/9Xz6tf
+ sZAcA
+X-Developer-Key: i=development@redaril.me; a=openpgp;
+ fpr=FF4232B28B363432DA8F187D81C2729AADA16A67
+X-Endpoint-Received: by B4 Relay for development@redaril.me/default with
+ auth_id=1033
+X-Original-From: Fabio Forni <development@redaril.me>
+Reply-To: development@redaril.me
 
-On Tue, Sep 15, 2026 at 11:52=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
->
-> On Tue, Sep 15, 2026 at 08:18:38AM +0000, Bill Wendling wrote:
-> >  fs/nfs/nfsroot.c | 11 +++++++----
-> >  1 file changed, 7 insertions(+), 4 deletions(-)
->
-> This collides with:
-> https://lore.kernel.org/all/27956255dde39f58d73a7b51cb53cbe3d7804f54.1786=
-411026.git.mariianikitash@google.com/
->
-> > +     ret =3D snprintf(dest + len, destlen - len, "%s%s",
-> > +                    (len && dest[len - 1] !=3D ',') ? "," : "", src);
->
-> I prefer Mariia's version because this inline ternary is difficult
-> to read.
->
-Agreed. I was trying to not stomp on her work. Please ignore this patch.
+From: Fabio Forni <development@redaril.me>
 
--bw
+As firmware node is a more common abstract, this will convert the whole
+thing to fwnode interface.
 
-> I was expecting to land hers soon if the NFS folks don't pipe up. It is
-> one of the rare cases of still being open-coded, but the strlen() usage
-> was pre-existing to check for the trailing comma, so it's not a clean
-> seq_buf() conversion candidate...
->
-> --
-> Kees Cook
+Co-developed-by: Xu Yang <xu.yang_2@nxp.com>
+Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+Signed-off-by: Fabio Forni <development@redaril.me>
+---
+This patch migrates the multiplexer subsystem from using the of_*          
+family of functions and structs, to the more generic fwnode framework.     
+                                                                           
+It is a rebase of a single commit[1] contained in a old patch series[2]
+submitted by Xu Yang. The original commit plus follow-up comments were
+tested on kernel v6.12 on an arm64-based board, but this current rebase
+isn't tested yet.                                                  
+                                                                           
+Link: https://lore.kernel.org/all/20220823195429.1243516-3-xu.yang_2@nxp.com [1]
+Link: https://lore.kernel.org/all/20220823195429.1243516-1-xu.yang_2@nxp.com [2]
+---
+ drivers/mux/core.c                    | 96 ++++++++++++++++++-----------------
+ drivers/pinctrl/pinctrl-generic-mux.c |  4 +-
+ include/linux/mux/consumer.h          |  6 ++-
+ 3 files changed, 57 insertions(+), 49 deletions(-)
+
+diff --git a/drivers/mux/core.c b/drivers/mux/core.c
+index 5083e3d19606..2de0d1fd43d0 100644
+--- a/drivers/mux/core.c
++++ b/drivers/mux/core.c
+@@ -18,7 +18,7 @@
+ #include <linux/module.h>
+ #include <linux/mux/consumer.h>
+ #include <linux/mux/driver.h>
+-#include <linux/of.h>
++#include <linux/property.h>
+ #include <linux/slab.h>
+ 
+ /*
+@@ -118,6 +118,7 @@ struct mux_chip *mux_chip_alloc(struct device *dev,
+ 	mux_chip->dev.type = &mux_type;
+ 	mux_chip->dev.parent = dev;
+ 	mux_chip->dev.of_node = dev->of_node;
++	mux_chip->dev.fwnode = dev->fwnode;
+ 	dev_set_drvdata(&mux_chip->dev, mux_chip);
+ 
+ 	mux_chip->id = ida_alloc(&mux_ida, GFP_KERNEL);
+@@ -517,11 +518,11 @@ int mux_state_deselect(struct mux_state *mstate)
+ EXPORT_SYMBOL_GPL(mux_state_deselect);
+ 
+ /* Note this function returns a reference to the mux_chip dev. */
+-static struct mux_chip *of_find_mux_chip_by_node(struct device_node *np)
++static struct mux_chip *mux_chip_find_by_fwnode(struct fwnode_handle *fwnode)
+ {
+ 	struct device *dev;
+ 
+-	dev = class_find_device_by_of_node(&mux_class, np);
++	dev = class_find_device_by_fwnode(&mux_class, fwnode);
+ 
+ 	return dev ? to_mux_chip(dev) : NULL;
+ }
+@@ -533,17 +534,17 @@ static struct mux_chip *of_find_mux_chip_by_node(struct device_node *np)
+  * @state: Pointer to where the requested state is returned, or NULL when
+  *         the required multiplexer states are handled by other means.
+  * @optional: Whether to return NULL and silence errors when mux doesn't exist.
+- * @node: the device nodes, use dev->of_node if it is NULL.
++ * @node: the device nodes, use dev's fwnode if it is NULL.
+  *
+  * Return: Pointer to the mux-control on success, an ERR_PTR with a negative
+  * errno on error, or NULL if optional is true and mux doesn't exist.
+  */
+ static struct mux_control *mux_get(struct device *dev, const char *mux_name,
+ 				   unsigned int *state, bool optional,
+-				   struct device_node *node)
++				   struct fwnode_handle *node)
+ {
+-	struct device_node *np = node ? node : dev->of_node;
+-	struct of_phandle_args args;
++	struct fwnode_handle *fwnode = node ? node : dev_fwnode(dev);
++	struct fwnode_reference_args args;
+ 	struct mux_chip *mux_chip;
+ 	unsigned int controller;
+ 	int index = 0;
+@@ -551,11 +552,13 @@ static struct mux_control *mux_get(struct device *dev, const char *mux_name,
+ 
+ 	if (mux_name) {
+ 		if (state)
+-			index = of_property_match_string(np, "mux-state-names",
+-							 mux_name);
++			index = fwnode_property_match_string(fwnode,
++							     "mux-state-names",
++							     mux_name);
+ 		else
+-			index = of_property_match_string(np, "mux-control-names",
+-							 mux_name);
++			index = fwnode_property_match_string(fwnode,
++							     "mux-control-names",
++							     mux_name);
+ 		if (index < 0 && optional) {
+ 			return NULL;
+ 		} else if (index < 0) {
+@@ -566,39 +569,40 @@ static struct mux_control *mux_get(struct device *dev, const char *mux_name,
+ 	}
+ 
+ 	if (state)
+-		ret = of_parse_phandle_with_args(np,
+-						 "mux-states", "#mux-state-cells",
+-						 index, &args);
++		ret = fwnode_property_get_reference_args(fwnode, "mux-states",
++							 "#mux-state-cells", 0,
++							 index, &args);
+ 	else
+-		ret = of_parse_phandle_with_args(np,
+-						 "mux-controls", "#mux-control-cells",
+-						 index, &args);
++		ret = fwnode_property_get_reference_args(fwnode,
++							 "mux-controls", "#mux-control-cells",
++							 0, index, &args);
++
+ 	if (ret) {
+ 		if (optional && ret == -ENOENT)
+ 			return NULL;
+ 
+-		dev_err(dev, "%pOF: failed to get mux-%s %s(%i)\n",
+-			np, state ? "state" : "control",
+-			mux_name ?: "", index);
++		dev_err(dev, "%pfw: failed to get mux-%s %s(%i)\n",
++			fwnode, state ? "state" : "control", mux_name ?: "",
++			index);
+ 		return ERR_PTR(ret);
+ 	}
+ 
+-	mux_chip = of_find_mux_chip_by_node(args.np);
+-	of_node_put(args.np);
++	mux_chip = mux_chip_find_by_fwnode(args.fwnode);
++	fwnode_handle_put(args.fwnode);
+ 	if (!mux_chip)
+ 		return ERR_PTR(-EPROBE_DEFER);
+ 
+ 	controller = 0;
+ 	if (state) {
+-		if (args.args_count > 2 || args.args_count == 0 ||
+-		    (args.args_count < 2 && mux_chip->controllers > 1)) {
+-			dev_err(dev, "%pOF: wrong #mux-state-cells for %pOF\n",
+-				np, args.np);
++		if (args.nargs > 2 || args.nargs == 0 ||
++		    (args.nargs < 2 && mux_chip->controllers > 1)) {
++			dev_err(dev, "%pfw: wrong #mux-state-cells for %pfw\n",
++				fwnode, args.fwnode);
+ 			put_device(&mux_chip->dev);
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 
+-		if (args.args_count == 2) {
++		if (args.nargs == 2) {
+ 			controller = args.args[0];
+ 			*state = args.args[1];
+ 		} else {
+@@ -606,21 +610,21 @@ static struct mux_control *mux_get(struct device *dev, const char *mux_name,
+ 		}
+ 
+ 	} else {
+-		if (args.args_count > 1 ||
+-		    (!args.args_count && mux_chip->controllers > 1)) {
+-			dev_err(dev, "%pOF: wrong #mux-control-cells for %pOF\n",
+-				np, args.np);
++		if (args.nargs > 1 ||
++		    (!args.nargs && mux_chip->controllers > 1)) {
++			dev_err(dev, "%pfw: wrong #mux-control-cells for %pfw\n",
++				fwnode, args.fwnode);
+ 			put_device(&mux_chip->dev);
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 
+-		if (args.args_count)
++		if (args.nargs)
+ 			controller = args.args[0];
+ 	}
+ 
+ 	if (controller >= mux_chip->controllers) {
+-		dev_err(dev, "%pOF: bad mux controller %u specified in %pOF\n",
+-			np, controller, args.np);
++		dev_err(dev, "%pfw: bad mux controller %u specified in %pfw\n",
++			fwnode, controller, args.fwnode);
+ 		put_device(&mux_chip->dev);
+ 		return ERR_PTR(-EINVAL);
+ 	}
+@@ -714,14 +718,14 @@ EXPORT_SYMBOL_GPL(devm_mux_control_get);
+  * @dev: The device that needs a mux-state.
+  * @mux_name: The name identifying the mux-state.
+  * @optional: Whether to return NULL and silence errors when mux doesn't exist.
+- * @np: the device nodes, use dev->of_node if it is NULL.
++ * @node: the device nodes, use dev's fwnode if it is NULL.
+  *
+  * Return: Pointer to the mux-state on success, an ERR_PTR with a negative
+  * errno on error, or NULL if optional is true and mux doesn't exist.
+  */
+ static struct mux_state *
+ mux_state_get(struct device *dev, const char *mux_name, bool optional,
+-	      struct device_node *np)
++	      struct fwnode_handle *node)
+ {
+ 	struct mux_state *mstate;
+ 
+@@ -729,7 +733,7 @@ mux_state_get(struct device *dev, const char *mux_name, bool optional,
+ 	if (!mstate)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	mstate->mux = mux_get(dev, mux_name, &mstate->state, optional, np);
++	mstate->mux = mux_get(dev, mux_name, &mstate->state, optional, node);
+ 	if (IS_ERR(mstate->mux)) {
+ 		int err = PTR_ERR(mstate->mux);
+ 
+@@ -771,7 +775,7 @@ static void devm_mux_state_release(struct device *dev, void *res)
+  * @dev: The device that needs a mux-state.
+  * @mux_name: The name identifying the mux-state.
+  * @optional: Whether to return NULL and silence errors when mux doesn't exist.
+- * @np: The device nodes, use dev->of_node if it is NULL.
++ * @node: The device nodes, use dev's fwnode if it is NULL.
+  * @init: Optional function pointer for mux-state object initialisation.
+  * @exit: Optional function pointer for mux-state object cleanup on release.
+  *
+@@ -779,7 +783,7 @@ static void devm_mux_state_release(struct device *dev, void *res)
+  * errno on error, or NULL if optional is true and mux doesn't exist.
+  */
+ static struct mux_state *__devm_mux_state_get(struct device *dev, const char *mux_name,
+-					      bool optional, struct device_node *np,
++					      bool optional, struct fwnode_handle *node,
+ 					      int (*init)(struct mux_state *mstate),
+ 					      int (*exit)(struct mux_state *mstate))
+ {
+@@ -787,7 +791,7 @@ static struct mux_state *__devm_mux_state_get(struct device *dev, const char *mu
+ 	struct mux_state *mstate;
+ 	int ret;
+ 
+-	mstate = mux_state_get(dev, mux_name, optional, np);
++	mstate = mux_state_get(dev, mux_name, optional, node);
+ 	if (IS_ERR(mstate))
+ 		return ERR_CAST(mstate);
+ 	else if (optional && !mstate)
+@@ -821,23 +825,23 @@ static struct mux_state *__devm_mux_state_get(struct device *dev, const char *mu
+ }
+ 
+ /**
+- * devm_mux_state_get_from_np() - Get the mux-state for a device, with resource
++ * devm_mux_state_get_from_swnode() - Get the mux-state for a device, with resource
+  *				  management.
+  * @dev: The device that needs a mux-control.
+  * @mux_name: The name identifying the mux-control.
+- * @np: the device nodes, use dev->of_node if it is NULL.
++ * @node: the device nodes, use dev's fwnode if it is NULL.
+  *
+  * Return: Pointer to the mux-state, or an ERR_PTR with a negative errno.
+  *
+  * The mux-state will automatically be freed on release.
+  */
+ struct mux_state *
+-devm_mux_state_get_from_np(struct device *dev, const char *mux_name,
+-			   struct device_node *np)
++devm_mux_state_get_from_swnode(struct device *dev, const char *mux_name,
++			       struct fwnode_handle *node)
+ {
+-	return __devm_mux_state_get(dev, mux_name, false, np, NULL, NULL);
++	return __devm_mux_state_get(dev, mux_name, false, node, NULL, NULL);
+ }
+-EXPORT_SYMBOL_GPL(devm_mux_state_get_from_np);
++EXPORT_SYMBOL_GPL(devm_mux_state_get_from_swnode);
+ 
+ /**
+  * devm_mux_state_get_optional() - Get the optional mux-state for a device,
+diff --git a/drivers/pinctrl/pinctrl-generic-mux.c b/drivers/pinctrl/pinctrl-generic-mux.c
+index 202b72351efb..bb6681753727 100644
+--- a/drivers/pinctrl/pinctrl-generic-mux.c
++++ b/drivers/pinctrl/pinctrl-generic-mux.c
+@@ -50,7 +50,9 @@ mux_pinmux_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	if (!group_names)
+ 		return -ENOMEM;
+ 
+-	function->mux_state = devm_mux_state_get_from_np(pctldev->dev, NULL, np_config);
++	function->mux_state = devm_mux_state_get_from_swnode(pctldev->dev,
++							     NULL,
++							     of_fwnode_handle(np_config));
+ 	if (IS_ERR(function->mux_state))
+ 		return PTR_ERR(function->mux_state);
+ 
+diff --git a/include/linux/mux/consumer.h b/include/linux/mux/consumer.h
+index 449e38e6e2c5..ceb6858cdce8 100644
+--- a/include/linux/mux/consumer.h
++++ b/include/linux/mux/consumer.h
+@@ -11,6 +11,7 @@
+ #define _LINUX_MUX_CONSUMER_H
+ 
+ #include <linux/compiler.h>
++#include <linux/device.h>
+ 
+ struct device;
+ struct mux_control;
+@@ -62,7 +63,8 @@ void mux_control_put(struct mux_control *mux);
+ struct mux_control *devm_mux_control_get(struct device *dev, const char *mux_name);
+ 
+ struct mux_state *
+-devm_mux_state_get_from_np(struct device *dev, const char *mux_name, struct device_node *np);
++devm_mux_state_get_from_swnode(struct device *dev, const char *mux_name,
++			       struct fwnode_handle *node);
+ 
+ struct mux_state *devm_mux_state_get_optional(struct device *dev, const char *mux_name);
+ struct mux_state *devm_mux_state_get_selected(struct device *dev, const char *mux_name);
+@@ -165,6 +167,6 @@ static inline struct mux_state *devm_mux_state_get_optional_selected(struct devi
+ #endif /* CONFIG_MULTIPLEXER */
+ 
+ #define devm_mux_state_get(dev, mux_name)		\
+-	devm_mux_state_get_from_np(dev, mux_name, NULL)
++	devm_mux_state_get_from_swnode(dev, mux_name, NULL)
+ 
+ #endif /* _LINUX_MUX_CONSUMER_H */
+
+---
+base-commit: f6e7b42bf05b2427fb8a7a1d1c387a86638bb413
+change-id: 20260915-mux_fwnode-a16593c39ffd
+
+Best regards,
+-- 
+Fabio Forni <development@redaril.me>
+
+
