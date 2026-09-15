@@ -1,184 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761803DA7F8;
-	Tue, 15 Sep 2026 15:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F073DD520;
+	Tue, 15 Sep 2026 15:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789484715; cv=none; b=n9cgZtmnJDObiTU3Dzaz31+a0VE8p5ZkvWNSAbO1BqKOoJRmIWji1QNFhKzdEI2MX0bJ9F/YXI3uyOZdhlfOELsxpQ5knNY/dhvubvT5UW5SBu9uY6EXcsd12KPYAIcKqFSX5y1I4It5zBqPrpVF2mzx2metov7nPf0Tsp3C8wk=
+	t=1789484722; cv=none; b=T2lof1Mybx2PoY/AqZ+/Oxj5zMH6HlUA3442YD6Bbd5vmWteRDM3d61RggZ6XfKKKXtJoBow33QJu4xFHDgwMWZEZ491rAWEWo2fwZGnC+wcZL2Y+sEudgwj0i5mWFrc5BtEy7L8CR3MGBU/7oA5yxVPYMwIV3EJK/0DV2cJ6so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789484715; c=relaxed/simple;
-	bh=DAmlGFJZYAmgnOIvR39oev84RuA6yc2k24v0yU66UX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iv6os0/vSp83JQmPUZT3K8t+sCZv2X60CfX89bJcHxd7tH+hEYtWoG0HV/va1SvJDRZ2I+AyXHKMpAP7G/BJeqN4JAOpZN+SfcdLpV3ADIj9hW6BriMLtKaaFKvMPLPutnyRNXNBS0v0kDuSOoCng4cAiHqi+5c4xOXLqYRZLs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gf5L5wnm; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gf5L5wnm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609DE1F00893;
-	Tue, 15 Sep 2026 15:05:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789484714;
-	bh=92Jyv3r5iRKPp9A+0MWzJBMIdxeAT/qbE/UD5yjhWE0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=gf5L5wnmtccLwoqcVRv226Jxh21B1B//39SXNk9kc4N8OS1FTlhq9PWO0oO0C2lV5
-	 /puLCofTcTcdOq9gexMECkzKA3ObUOxFvtdLZex77Bqia2hDmeu6n908Nd0hiX8iF9
-	 qTYQDbAMbNgjSO8+cNHSBskD1SEuiooBkMWuneDZS5c3lKtRyIRRattmm2nfwDtRhi
-	 /vDHelzWwxEEbNDJ6m9bDtWIf3Gi0xBkpoRi48jhIlvmxyg1p97zwYUvcCDIpP4GL2
-	 89RyOdTBK97/VTtSVGn5HnnYF5QSg1YyyyGBUWH6C6xYN7eMiLrpeTG7VTkcG879bb
-	 BqI5RrgGxycEw==
-Date: Tue, 15 Sep 2026 10:05:11 -0500
-From: Rob Herring <robh@kernel.org>
-To: Bill Wendling <morbo@google.com>
-Cc: linux-kernel@vger.kernel.org, codemender-patching+linux@google.com,
-	Russell King <linux@armlinux.org.uk>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Thomas Gleixner <tglx@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Matthias Schwarzott <zzam@gentoo.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Arend van Spriel <arend.vanspriel@broadcom.com>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
-	Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>,
-	"Martin K. Petersen" <mkp@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Kees Cook <kees@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
-	Simon Horman <horms@kernel.org>, Chuck Lever <cel@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
-	Kanglong Wang <wangkanglong@loongson.cn>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Qiang Ma <maqianga@uniontech.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Pengpeng Hou <pengpeng@iscas.ac.cn>,
-	Ard Biesheuvel <ardb@kernel.org>, Breno Leitao <leitao@debian.org>,
-	Thorsten Blum <blum@kernel.org>,
-	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lyude Paul <lyude@redhat.com>,
-	Ashutosh Desai <ashutoshdesai993@gmail.com>,
-	Imre Deak <imre.deak@intel.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Johan Hovold <johan@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Cryolitia PukNgae <cryolitia@uniontech.com>,
-	Jiaming Zhang <r772577952@gmail.com>,
-	Will Porter <mrwillporter@gmail.com>,
-	Cen Zhang <zzzccc427@gmail.com>,
-	=?iso-8859-1?Q?C=E1ssio?= Gabriel <cassiogabrielcontato@gmail.com>,
-	Rong Zhang <i@rong.moe>, Arun Raghavan <arunr@valvesoftware.com>,
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linux-edac@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, linux-input@vger.kernel.org,
-	linux-media@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-	brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
-	linux-hardening@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 10/28] of/fdt: Replace strlcat() with snprintf() in
- early_init_dt_scan_chosen()
-Message-ID: <20260915150511.GB1926857-robh@kernel.org>
-References: <20260915081910.4142719-1-morbo@google.com>
- <20260915081910.4142719-11-morbo@google.com>
+	s=arc-20240116; t=1789484722; c=relaxed/simple;
+	bh=jiOkmYLs4VxfvywQ+bTqIfHcZP74j27nq8IimI7aauw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HQGrRcrXItqTTOsFI2tt3CFX4kdYcwVMWYgp57ERwdKyceBQGq+L9Xki65QTn80Gd9p6J6JVkKfgmIoC64b5C/OV87wW4enOkFhA9h/AU9iUhExGi0ZvmPmphnEM5YFsdxC5OgPZx8ytsjNBhP3grOQ0zs8h/PRSbeJKyEfmNQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpsz6t1789484670t67a17d3f
+X-QQ-Originating-IP: VtDu49u5oeW10uTnOj34xIDXGh1ZJrJR14GaSySw/yc=
+Received: from [127.0.0.1] ( [180.159.160.209])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 15 Sep 2026 23:04:26 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 3756391934278307056
+EX-QQ-RecipientCnt: 29
+Message-ID: <811E4CAAE0EC3103+2a53ade9-4b52-49a5-945d-2364fbce3c82@radxa.com>
+Date: Tue, 15 Sep 2026 23:04:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260915081910.4142719-11-morbo@google.com>
+User-Agent: Mozilla Thunderbird
+Reply-To: sophon@radxa.com
+Subject: Re: [PATCH 1/6] PCI: of: Avoid config reads for disabled bridge nodes
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Bartosz Golaszewski
+ <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Stephen Chen <stephen@radxa.com>, Junhao Xie <bigfoot@radxa.com>
+References: <20260901-q8b-dts-v1-0-7de0b6a73d08@radxa.com>
+ <20260901-q8b-dts-v1-1-7de0b6a73d08@radxa.com>
+ <xfwoa4jjigdx46lunasf5ze23ihm6qcvbhge7n27mxst5fxyzj@3ovbxzp4wzkk>
+Content-Language: en-US
+From: Xilin Wu <sophon@radxa.com>
+Organization: Radxa Computer (Shenzhen) Co., Ltd
+In-Reply-To: <xfwoa4jjigdx46lunasf5ze23ihm6qcvbhge7n27mxst5fxyzj@3ovbxzp4wzkk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:radxa.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: MgRO26CFjEybZlJVhxv+F6oTGh6RwEw9a9Yr08/wwObhmQKJSNI8H8Ed
+	emIjA6ZBXgUHKO2GJ+bmUXd2zIzim6nwffUAlZ0eq0CxvE3E3LFueGxSSLNCQ2lFQJxsoy1
+	Vfh6ARSKbWwxYgr7mh9Tze3b+wNEsvUXLZTcfXYl1okm7cTuzEbKM5jjUeexs+mTfmTQJrK
+	YuYB2eqmMS/AeO3DLo+x/oMLHFvrXl2aFvRpGlFzzuq3A1roKVC3KIZNS7ORYYip+CBDqvH
+	fN2pvEPP6bSLqww1tDsNmwRnEcgkxzqyr57lywT3nawrWme0UURgaMwcUADWfJyRE/oprYT
+	xmKm/ckzepQkwUE9jJWQr9UdHVfyrfvmmgT7kVLc4YZnGs6mUDPniDZIOHjlRL1k4sEUKZa
+	NNY1pCUO1ye7jjA+7MqzNywT5kc/breoGDpSqKprfdj0bIKNybqb7jA1Zsu3tyFlGi8uIff
+	Zc4Q0ta9e6yVUKlkUwX21IfNMfR+5elpwqeBS1bQToyhKsmm85Q7a5iLfulPHRrfQrxLkF6
+	dwPmu9KUUOkpfHgbY8l/qBKYBgC3dg54SDGu5ghzRlxrDmfhCCKH6r0YTwejyRvheKeS0S2
+	b+eyQb9FLi7F59naIrtwrQZsZxrzVeHD56KhTRBX5JToNq/sPjjO4tvcEs06QtqCsdgMY+R
+	TOGQKjcvTihRfuYuLf38tdvSbV2mvvqlMQPykZC1uCLrOTqgC0OG/ZmYIkRnO69hGfxp5jS
+	WveqivrgG/bwxM3TpqWG0nGLOuRtoiS70P53X8D0sBuEqlTPwe8RWGMzaSnLmQyMf+YYloi
+	JOP07Uk8MVhAWNTI9jgdfqxZLYrCLIjZMC/kh8nEfCxZOc5hx74yxHtgdgZpu2EMpNf0Hk1
+	FlnCZkk4sU83ydrQaGEvCpITfTrDYVhhG6FkBIj44S6Xxgrbc7D5ziFBasdKZgrj1ycj/Zz
+	IeEK3la1XcY5pHQ2IXFsD8Rh3GKmERiIPp1G8yAf/usmXM+Xyb9MXHcu938G+U08Ncj+9pz
+	42SwIsOlp8Dhzcv56hcOSfsoSq+AON67u3etr/0eXFNAX62Yq2WeYD4kPpjaiBfKurYpXZi
+	FUhawLu6B0v
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
+X-QQ-RECHKSPAM: 0
 
-On Tue, Sep 15, 2026 at 08:18:27AM +0000, Bill Wendling wrote:
-> When CONFIG_CMDLINE_EXTEND is enabled, early_init_dt_scan_chosen() uses
-> two strlcat() calls to append a space and CONFIG_CMDLINE to the command
-> line buffer.
+On 9/10/2026 11:04 PM, Manivannan Sadhasivam wrote:
+> On Tue, Sep 01, 2026 at 04:47:54PM +0800, Xilin Wu wrote:
+>> The TC9563 PCI power-control driver powers off external downstream ports
+>> whose device tree nodes have status = "disabled".
+>>
+>> On the Radxa Dragon Q8B, reading the Vendor ID from one of these
+>> powered-off port functions during PCI enumeration raises an Arm SError
+>> instead of returning an all-ones PCI error response. This prevents the
+>> board from completing boot.
+>>
+>> Commit 1a8c251cff20 ("PCI: move OF status = "disabled" detection to
+>> dev->match_driver") made disabled PCI functions remain discoverable so
+>> PCI fixups can still be applied, while suppressing driver binding later.
+>> Preserve that behavior for endpoint functions.
+>>
+>> For an unavailable node describing a PCI-to-PCI bridge, however, the
+>> node also represents a subordinate bus that must not be enumerated.
+>> Check the device tree node before reading the Vendor ID and return a PCI
+>> error response without accessing config space when such a bridge is
+>> disabled.
+>>
+>> Functions not described by device tree and disabled endpoint functions
+>> remain discoverable.
+>>
+>> Signed-off-by: Xilin Wu <sophon@radxa.com>
 > 
-> In preparation for removing the deprecated strlcat() API[1], replace the
-> strlcat() calls with a single snprintf() call using the existing string
-> length.
+> Does this patch help?
+> https://lore.kernel.org/linux-pci/20260819-ecam_blocker-v2-1-e7a8fdc1c5cb@oss.qualcomm.com/
 > 
-> Additionally, check for a NULL initial_boot_params pointer and jump to
-> "handle_cmdline" so that CONFIG_CMDLINE handling still occurs without
-> dereferencing a NULL FDT pointer in fdt_path_offset().
+> - Mani
 > 
-> Link: https://github.com/KSPP/linux/issues/370 [1]
-> Cc: codemender-patching+linux@google.com
-> Assisted-by: Assistant:Claude-3.5-Sonnet [editor_update_file, shell_command_run]
-> Signed-off-by: Bill Wendling <morbo@google.com>
-> ---
 
-> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-> index a64afc3ded3d..311021a83f03 100644
-> --- a/drivers/of/fdt.c
-> +++ b/drivers/of/fdt.c
-> @@ -1095,6 +1095,9 @@ int __init early_init_dt_scan_chosen(char *cmdline)
->  	const void *rng_seed;
->  	const void *fdt = initial_boot_params;
->  
-> +	if (!fdt)
-> +		goto handle_cmdline;
-> +
->  	node = fdt_path_offset(fdt, "/chosen");
->  	if (node < 0)
->  		node = fdt_path_offset(fdt, "/chosen@0");
-> @@ -1133,8 +1136,12 @@ int __init early_init_dt_scan_chosen(char *cmdline)
->  	 */
->  #ifdef CONFIG_CMDLINE
->  #if defined(CONFIG_CMDLINE_EXTEND)
-> -	strlcat(cmdline, " ", COMMAND_LINE_SIZE);
-> -	strlcat(cmdline, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
-> +	{
+Thanks for the pointer. I don't think it helps in this case. That patch 
+enables the Qualcomm ECAM blocker when the Root Port link goes down. 
+Here, the link between the Root Port and the TC9563 remains up; only 
+some TC9563 downstream port functions are powered off, and probing those 
+functions triggers the SError. Therefore, we still need to avoid these 
+config-space reads.
 
-No need for brackets.
-
-> +		size_t len = strlen(cmdline);
-> +
-> +		if (len < COMMAND_LINE_SIZE)
-> +			snprintf(cmdline + len, COMMAND_LINE_SIZE - len, " %s", CONFIG_CMDLINE);
-> +	}
->  #elif defined(CONFIG_CMDLINE_FORCE)
->  	strscpy(cmdline, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
->  #else
-> -- 
-> 2.55.0.1032.g73a4cd73de-goog
-> 
+-- 
+Best regards,
+Xilin Wu <sophon@radxa.com>
