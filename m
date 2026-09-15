@@ -1,57 +1,57 @@
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96182476CFF
-	for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 08:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA334457C6
+	for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 08:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789460486; cv=none; b=t807o4l0lreUgfS1FS9xfHngVTio44VYsljwiNIDgGVEHfpsspmCeI0cZ0qh0C8BXoKCzpeftn00QUFDRw9lTvM6SUFvU9NIn8dIPD+8Wh+FpCaJxNZiTNWrkC5xdaMpkkD94Io3RQxHTZPkaD7arn+jZxKqbcGziGL+M/FC9AA=
+	t=1789460488; cv=none; b=g5lVB1m+Jm29+jRN6J4hHHPtXG4a7gOuDr5e2Vx/qCjJSCSFMlu0Pr8ISxQFTygo+lxvZyJZ1U+5xrqd35/2wbwk0q6loQgrJnB8TETnPIBjE/gpsUcsQ0cYenOHojJYSAmHo9S/zxyDClcBiLhdGtijbq4jm6R+EI6AkNIm+Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789460486; c=relaxed/simple;
-	bh=RwAdEk8GoMG+Ylv02Q78v2tXMpN+9oITjoSVCa+/lcI=;
+	s=arc-20240116; t=1789460488; c=relaxed/simple;
+	bh=r5g1LIk48i14U2vfSIgapr+8j4d1ay+VHM72YHjOSgk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IApj+jgn7niz3tVrZl0Os9ZTb5Ro4Rv2GzgR7urVobR8gfk3JgNxleJRPp5vnS8xwiWhLqFqwZjI4kWKaTzl8oAJinoLJC3HmNnaPAljaejZzLVUydW9QHPQi0AZ+i1qIP4zh0jaWaTZiQqA4wRWaTvIil7KCbHEPDzDdzXGsU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KmARG9aJ; arc=none smtp.client-ip=209.85.215.200
+	 To:Cc:Content-Type; b=OGWNTa/ZCYTYMC/44VBDr870kkowhgEw6Q6KPJi/xPDUvtITrUdCeA28tuVb4D/r8KLxbGrwAEhGc1hWpUPvy0v8tnqvZfcG2i2egDVHukNwniVXiSHcQIFNaW03n7RKJgtkA/5NDqI+IiYZhMXniPuzr9l7V/YyjhCJ3+dY3ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IlizX6tn; arc=none smtp.client-ip=209.85.210.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KmARG9aJ"
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-c89704da8c7so5652968a12.0
-        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 01:20:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IlizX6tn"
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-8699b293a80so4337578b3a.0
+        for <linux-gpio@vger.kernel.org>; Tue, 15 Sep 2026 01:19:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1789460419; x=1790065219; darn=vger.kernel.org;
+        d=google.com; s=20251104; t=1789460394; x=1790065194; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=3R1bHblX/YSNAoDVuSots2jijK47BJf7ndWg1gXSC20=;
-        b=KmARG9aJw+EfrxjNpwdI07LN4CIXUR8sFQ6kkwPFhACadzvxbNPSIDqr//33Alc4UY
-         R52INMML5LN0aTuN8HjZxDuM76h1AAPcVXn64yUT5rjit5U+iGgl1MF/BPOb2cuiZPyE
-         Wv+fQiUqjwl3D7XanEH4V1189fAZLMrNUiH5L4sX194GyKiZUpMsh1fcaGDV5CYbubY9
-         zj839tWYTRKD3DVNfwMII7er+yQ1vrEDArJ2YZCq2Nc1++mCm4429OPTjsrTlmItPsPN
-         +wzv3LuzLp959vh3m2lMJbDvEUvDqQ7gTJ7C0wDgVReew1uK7PhFLz5ZO2mKQArH31TA
-         dF6A==
+        bh=eIty82Ymjj64Fl6mn4Z3/QHhmY1e0QRFUR4BQSE5AwY=;
+        b=IlizX6tnKtgYFaGIKggOEAU2LQqycnAmmrVln7UMgoNkc+T3fXFyfxtrWR9Ftg7E6u
+         NlqIBdMVkiA44X97gEFiNhQASx0UkfsXPVQ+FsqT24P1pREp+Xm2LDPK/+zfzIMc7zqj
+         LoyncqWo6VVJYN/TV9c2xaxXd5yvg298+BfthtSxZjpkjJF/wWHG0JuB/4ijrS0f/Qn0
+         HyUa1kqS3stgXr3i0ePOnkDm5p5Vy8IMWICFQyyVHLGKUaOBx/awlv+b3wEcKtCTZYTS
+         E89xOGGbSQvl96lOxBnGGWkdXKUsBxmd/wSJzfDtH1vcxlblp5XwWwOG4RXKnIhq5HfM
+         S7ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789460419; x=1790065219;
+        d=1e100.net; s=20260707; t=1789460394; x=1790065194;
         h=content-transfer-encoding:content-type:cc:to:from:subject
          :message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=3R1bHblX/YSNAoDVuSots2jijK47BJf7ndWg1gXSC20=;
-        b=jp7mO3JuukzstmA/T+nWUqwOl2gj8A4LrLKb44+DKLOBiDYlII0RZFtAIynNGnM+L3
-         kIw8wsOKJAVkuFxozhFDfVrZZTbXj5BfsYD9ThgAuTyzipAqtkbn/HbkAkUS87+Dt7Vd
-         BX+25jXmB8qDfE5CZs8DunRhHtdvI3moXDkP8hOQ0YAfrhOu/BO84UBcg8vjlKjy3GI0
-         p5/zikOE625gIwAKQCVlUT6dFJd69SSASqVZ/0DCMC1FEiupkv63siDx3N1huUiFeVjr
-         OFAq9C9Fypnaza/65uje+pIfYjjHaGvWqleBvw3+mInme1mFhaP/n07knmy4erOhmYBg
-         ehfQ==
-X-Forwarded-Encrypted: i=1; AKwUvBw7HHN2r+s/PYkd2YpqFrp+0eUWk0eUPjoujU6D9xZ38DKdX0w3fZq7bcb6GJNVIgVf5RHFGcBhnrsE@vger.kernel.org
-X-Gm-Message-State: AFuF++kYkDrjnf3ckkAgBxdDAp1SqaaD1iBzlXEGs+FcdGzKZNjuLS5J
-	pcbYx09fqW7zYT3jNbXU0WkYIWEf7F5jyT/OqUMtQheawmLjcNDWrEgk127fB6zQhc6VbsaLBYP
-	T
-X-Received: from pghu21.prod.google.com ([2002:a63:ef15:0:b0:cc4:da05:ef4c])
- (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3315:b0:3d3:aec2:4dcd
- with SMTP id adf61e73a8af0-3db40623e61mr13262094637.25.1789460418341; Tue, 15
- Sep 2026 01:20:18 -0700 (PDT)
-Date: Tue, 15 Sep 2026 08:18:44 +0000
+        bh=eIty82Ymjj64Fl6mn4Z3/QHhmY1e0QRFUR4BQSE5AwY=;
+        b=d9aUpuzl5rMg5oiMCwXYQRrMEQzjnkcOHHuyX8gpyC731PvEKfNOWt5O/QgG0FdWgw
+         qboqB3o+SA9kbHzeluUTx2JJhLeYu0BMOMLsT6Ht4Ksym0zCrOE61jSgtu/nQgY40DV8
+         7jxaL4zBkWod2OZqGbTyiVykbTbtAJ2KpgBWRqUApdlEikHLp7ea155iLm95P7vwRWCL
+         NHbC33NSz9xQAyC6NCvZ2OdU9cRYH1ERiZkHoB2O+Jb2eHf1XeFdH4TGP5k+L9bODXZe
+         U0SP5M/h4JmbNyN7cEQaYSRbycep704dH+ffi00KvE4CH4V+kMYbgGR6sAmAj8glML9+
+         qhGA==
+X-Forwarded-Encrypted: i=1; AKwUvBwxNjXkHYTN+Ybfz7Cm/+3YkWhipiSd4iXe4LAr0VWb5y3eGMLPwS5vnrgvGCSc59rYqYnbvzWaQJsD@vger.kernel.org
+X-Gm-Message-State: AFuF++kdz9gCd+R7MYMJN6ko6Khi3w/c95/T0jqLjQc1XqxV+7gJQw6c
+	MTz/8LQ5Lt+H4aTtrbTWL+K07Pr8XurRkPCxxNEdeDD32QrjQne5igezHgvjN8I2RDS2JL8OLXw
+	Z
+X-Received: from pghd13.prod.google.com ([2002:a63:fd0d:0:b0:cc4:37f6:e897])
+ (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:12c7:b0:3d3:ae1f:d7f4
+ with SMTP id adf61e73a8af0-3dd528bd7dbmr272615637.20.1789460393063; Tue, 15
+ Sep 2026 01:19:53 -0700 (PDT)
+Date: Tue, 15 Sep 2026 08:18:22 +0000
 In-Reply-To: <20260915081910.4142719-1-morbo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -61,8 +61,9 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20260915081910.4142719-1-morbo@google.com>
 X-Mailer: git-send-email 2.55.0.1032.g73a4cd73de-goog
-Message-ID: <20260915081910.4142719-28-morbo@google.com>
-Subject: [PATCH 27/28] drm/xe/pf: Convert strlcat() to seq_buf in control_read()
+Message-ID: <20260915081910.4142719-6-morbo@google.com>
+Subject: [PATCH 05/28] ALSA: usb-audio: Refactor usb_audio_make_longname() to
+ use seq_buf
 From: Bill Wendling <morbo@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: Bill Wendling <morbo@google.com>, codemender-patching+linux@google.com, 
@@ -123,17 +124,18 @@ Cc: Bill Wendling <morbo@google.com>, codemender-patching+linux@google.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-control_read() builds a list of supported SR-IOV VF control commands in a
-stack buffer by calling strlcat() twice per command in a loop.
+usb_audio_make_longname() builds card->longname incrementally from the
+vendor/manufacturer name, shortname, USB device path, and USB speed using
+strscpy(), strlcat(), and manual buffer offset calculations for
+usb_make_path().
 
-In preparation for removing the deprecated strlcat() API[1], use struct
-seq_buf and seq_buf_printf() to format each command line and pass
-seq_buf_used() directly to simple_read_from_buffer().
+In preparation for removing the deprecated strlcat() API[1], refactor
+usb_audio_make_longname() to use struct seq_buf to track the buffer
+position and remaining space across these operations.
 
 Link: https://github.com/KSPP/linux/issues/370 [1]
 Cc: codemender-patching+linux@google.com
-Assisted-by: CoT-Agent:Gemini-2.0-Flash [editor_update_file, shell_command_=
-run]
+Assisted-by: Gemini:3.5-pro [git, make, checkpatch]
 Signed-off-by: Bill Wendling <morbo@google.com>
 ---
 Cc: Russell King <linux@armlinux.org.uk>
@@ -247,44 +249,114 @@ Cc: devel@lists.orangefs.org
 Cc: linux-hardening@vger.kernel.org
 Cc: linux-sound@vger.kernel.org
 ---
- drivers/gpu/drm/xe/xe_gt_sriov_pf_debugfs.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ sound/usb/card.c | 58 ++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 39 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf_debugfs.c b/drivers/gpu/drm/=
-xe/xe_gt_sriov_pf_debugfs.c
-index 0f242db775e1..5db7fc067c4d 100644
---- a/drivers/gpu/drm/xe/xe_gt_sriov_pf_debugfs.c
-+++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf_debugfs.c
-@@ -4,6 +4,7 @@
-  */
-=20
- #include <linux/debugfs.h>
+diff --git a/sound/usb/card.c b/sound/usb/card.c
+index 9307da95efbe..bdca8085fca6 100644
+--- a/sound/usb/card.c
++++ b/sound/usb/card.c
+@@ -25,6 +25,7 @@
+ #include <linux/list.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
 +#include <linux/seq_buf.h>
+ #include <linux/ctype.h>
+ #include <linux/usb.h>
+ #include <linux/moduleparam.h>
+@@ -651,7 +652,9 @@ static void usb_audio_make_longname(struct usb_device *=
+dev,
+ 	struct snd_card *card =3D chip->card;
+ 	const struct usb_audio_device_name *preset;
+ 	const char *s =3D NULL;
+-	int len;
++	struct seq_buf sb;
++	char *buf;
++	size_t size;
 =20
- #include <drm/drm_print.h>
- #include <drm/drm_debugfs.h>
-@@ -663,15 +664,15 @@ static ssize_t control_write(struct file *file, const=
- char __user *buf, size_t c
- static ssize_t control_read(struct file *file, char __user *buf, size_t co=
-unt, loff_t *ppos)
- {
- 	char help[128];
-+	struct seq_buf s;
- 	size_t n;
+ 	preset =3D lookup_device_name(chip->usb_id);
 =20
--	help[0] =3D '\0';
-+	seq_buf_init(&s, help, sizeof(help));
- 	for (n =3D 0; n < ARRAY_SIZE(control_cmds); n++) {
--		strlcat(help, control_cmds[n].cmd, sizeof(help));
--		strlcat(help, "\n", sizeof(help));
-+		seq_buf_printf(&s, "%s\n", control_cmds[n].cmd);
+@@ -667,44 +670,61 @@ static void usb_audio_make_longname(struct usb_device=
+ *dev,
+ 		s =3D preset->vendor_name;
+ 	else if (quirk && quirk->vendor_name)
+ 		s =3D quirk->vendor_name;
+-	*card->longname =3D 0;
+-	if (s && *s)
+-		strscpy(card->longname, s);
+-	else if (dev->manufacturer && *dev->manufacturer)
+-		strscpy(card->longname, dev->manufacturer);
+=20
+-	if (*card->longname) {
+-		strim(card->longname);
+-		if (*card->longname)
+-			strlcat(card->longname, " ", sizeof(card->longname));
++	seq_buf_init(&sb, card->longname, sizeof(card->longname));
++
++	if (s && *s)
++		seq_buf_puts(&sb, s);
++	else if (dev->manufacturer && *dev->manufacturer)
++		seq_buf_puts(&sb, dev->manufacturer);
++
++	if (seq_buf_used(&sb)) {
++		char *trimmed;
++
++		seq_buf_str(&sb);
++		trimmed =3D strim(card->longname);
++		if (trimmed !=3D card->longname)
++			memmove(card->longname, trimmed, strlen(trimmed) + 1);
++		sb.len =3D strlen(card->longname);
++		if (sb.len)
++			seq_buf_putc(&sb, ' ');
  	}
 =20
--	return simple_read_from_buffer(buf, count, ppos, help, strlen(help));
-+	return simple_read_from_buffer(buf, count, ppos, help, seq_buf_used(&s));
+-	strlcat(card->longname, card->shortname, sizeof(card->longname));
++	seq_buf_puts(&sb, card->shortname);
+=20
+-	len =3D strlcat(card->longname, " at ", sizeof(card->longname));
++	seq_buf_puts(&sb, " at ");
+=20
+-	if (len < sizeof(card->longname))
+-		usb_make_path(dev, card->longname + len, sizeof(card->longname) - len);
++	size =3D seq_buf_get_buf(&sb, &buf);
++	if (size > 0) {
++		int path_len =3D usb_make_path(dev, buf, size);
++
++		if (path_len >=3D 0)
++			seq_buf_commit(&sb, path_len);
++		else
++			seq_buf_set_overflow(&sb);
++	}
+=20
+ 	switch (snd_usb_get_speed(dev)) {
+ 	case USB_SPEED_LOW:
+-		strlcat(card->longname, ", low speed", sizeof(card->longname));
++		seq_buf_puts(&sb, ", low speed");
+ 		break;
+ 	case USB_SPEED_FULL:
+-		strlcat(card->longname, ", full speed", sizeof(card->longname));
++		seq_buf_puts(&sb, ", full speed");
+ 		break;
+ 	case USB_SPEED_HIGH:
+-		strlcat(card->longname, ", high speed", sizeof(card->longname));
++		seq_buf_puts(&sb, ", high speed");
+ 		break;
+ 	case USB_SPEED_SUPER:
+-		strlcat(card->longname, ", super speed", sizeof(card->longname));
++		seq_buf_puts(&sb, ", super speed");
+ 		break;
+ 	case USB_SPEED_SUPER_PLUS:
+-		strlcat(card->longname, ", super speed plus", sizeof(card->longname));
++		seq_buf_puts(&sb, ", super speed plus");
+ 		break;
+ 	default:
+ 		break;
+ 	}
++
++	seq_buf_str(&sb);
  }
 =20
- static const struct file_operations control_ops =3D {
+ static void snd_usb_init_quirk_flags(int idx, struct snd_usb_audio *chip)
 --=20
 2.55.0.1032.g73a4cd73de-goog
 
