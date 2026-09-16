@@ -1,86 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999E43DEAC8
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 18:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94773CF96B;
+	Wed, 16 Sep 2026 18:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789582698; cv=none; b=NIXiLbZNH2ODUGOe4h/nIRIXCpQik8mLw0gDC9KOaj9wBbkuK28cnePd/vzPI+M869ZS9YMGhiJPFsJ1nl8NaQ3PEwYfZb7D/bBAp4wazxBRQ9kLLgGB+YJFzBcdgZ4tnju+9y0Jk39gM55Z81/nGs+ccOWThr9KLCoG488Errs=
+	t=1789582811; cv=none; b=ayNMiM8h/hUqIYxFn2S/a/7HoWuDXkNIehE78VrM4muccq+EKT6Wo9T5qarvxEcnLhu1mSO8DZP5mg/VOLoYZCtHrggpdRv8A5z4AqyZ3aHAg4wvgmM6fIVuv10epZebbmLeUq953kZj8auReUSz1hb2a0VvWoQ7wpq9ePCxvFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789582698; c=relaxed/simple;
-	bh=qmNHsftrPigc6z9lAhD5TrQ9HA5z1cFLq5Fdk1Pby1Q=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E42+oSXHpOlNrh/ISTJr/a6X4UExoQLiON9mo40SBiT+PpxSi6QFS9Li8DEwKtaHhllBbTuqv1BWPNeYUnw48WnHzTFNaqYwGfrnfXVGLSiTiU9gJekL8OY3G8aZvFyjhRSpC/PMHnYvcTXCMg0oD/qDWy9euefU5aV026119HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=luD3KYPt; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789582811; c=relaxed/simple;
+	bh=rxT8OqLJ31FEIFu+AVrtNB+EaZiDH17h68FhErDeN9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RalgTX1MerTVxtnDVUUY8qnXz2pTNmxJv5XYgF16DujwCeksjfk7Ds8UBzjlzPFWVT8DMSK+T1Hp5XKMSnDliDdUnpWvlBFG7SQMdPzHhiKjTDknyaMGYiER4XisCccgp2bhhHVCAd00y+Gf5ZSGjPV0X4RIG3G8k03RQ6wtDOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YYw0SmUq; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="luD3KYPt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8AF51F0089B
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 18:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789582674;
-	bh=NcQe03qyUu7W4K18zVzWNwv6MgOA45mAnb9g7/iXl8I=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=luD3KYPtQ6rVMU3canU+kY6TJZHae8NyVUBeWdM/TSLcgcyFEK9fHqsZ1Lf/ggrPJ
-	 +AQ62gV/2VLSfGIbVcm3QyD+DhZTf1ZWcGCI+LJQ5f8blfGn637DLQd0cvnGT8nR5V
-	 g1Drbzd11p8TrUI3uM7g39+m4LS3EYGDxxxRnlAdstpY2wJHyzZCTpO+IfOal5J/F1
-	 IhOMNQ/BmPqwUx/8F18mbeqf7+0srQYWLOOcOIyIjE97ZzzOG5bAR3gkXLMMQ1c7xF
-	 pl4hKbBH7Vkr6CLJK70t3r2GEdvHpXocftmnMqRKAftqA2OQmV6mJUzUgehhuO6z5y
-	 6qlQanImIhZkQ==
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f15cfdso1308450e87.3
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 11:17:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxtkQGdU1DP7J7tVJWwphHgKkc/D2BbRVskwqNzLtfTYnY5JKtRERBfrRDigCT5d1o1Z/xPAwibgxaR@vger.kernel.org
-X-Gm-Message-State: AFuF++mjHZ+EvWc5BfiRUlHJN3J4q5wrlVR7cAQVFxSf7Sed79b3tFzO
-	QoON01GAGgMYHniIgQuXg6RenEOmQXCZUOujeLbdAkZWTthVFGJvW2jlIl2UzZdCrs8E7EhCZ/y
-	wPqkb5ijfcj218bE8Rd/u3nPbpA86+cw5acxHf5mMOg==
-X-Received: by 2002:a05:6512:3345:b0:5b7:f0b9:ea7c with SMTP id
- 2adb3069b0e04-5b8b6605f11mr972331e87.8.1789582673568; Wed, 16 Sep 2026
- 11:17:53 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 16 Sep 2026 14:17:51 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 16 Sep 2026 14:17:51 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260907090956.2825703-1-arnd@kernel.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YYw0SmUq"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 7B5D94E40757;
+	Wed, 16 Sep 2026 18:19:49 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 1E99460337;
+	Wed, 16 Sep 2026 18:19:49 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6853411C7B00D;
+	Wed, 16 Sep 2026 20:19:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1789582787; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=U7J/mha/vyoFLlNNVH4h4FCmPvf41iQDGOaDHu79fqs=;
+	b=YYw0SmUqgK0SDDwSStx/seLZ1MC/bDXvVn5c1k7ZXfly8akIrh4xlRzjzhA/bQtYYLFnjC
+	2Ahd/xg1rWoaEn5dHg2AOiCXO2QwQT5Lqs1BrE0maT19M5ipwwr+AzF1T5esnhhXen00/l
+	MxTQhHbOoqrGrDzr9cahGFJ1ISRNbIu3OeHhF6A6vgzbNejanIn4H3dhNl9V/gE0MzZ1QO
+	/dJFoOVmDyeXP7QfAkQYdnl+/YTeEC/fpsufL5y9SJ0PqZ/aglzMb0DalOGa4r8x7oxSgv
+	JLnOtqlva1ms9MZBMtlY8JXqQi0U5hop5q+nsm9hnHrYbFkNDa6xdD04YnHx2w==
+Date: Wed, 16 Sep 2026 20:19:44 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
+ "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li
+ <Frank.li@oss.nxp.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Linus Walleij
+ <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Leonardo Costa <leonardo.costa@toradex.com>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Ernest Van Hoecke
+ <ernest.vanhoecke@toradex.com>
+Subject: Re: [PATCH v2 7/7] of: unittest: Test fw_devlink with clock nexus
+ maps
+Message-ID: <20260916201944.650c83be@bootlin.com>
+In-Reply-To: <20260910-fw-devlink-nexus-ready-v2-7-17ac82dbe226@toradex.com>
+References: <20260910-fw-devlink-nexus-ready-v2-0-17ac82dbe226@toradex.com>
+	<20260910-fw-devlink-nexus-ready-v2-7-17ac82dbe226@toradex.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260907090956.2825703-1-arnd@kernel.org>
-Date: Wed, 16 Sep 2026 14:17:51 -0400
-X-Gmail-Original-Message-ID: <CAMRc=McRc9Aw-5WBipW5QhqqHp4+UKch15ui3E8a0srk2CUN7g@mail.gmail.com>
-X-Gm-Features: AcwNN1WT39KCCBGzK8bB5OYELfDMzkO3xawenRbklBZjDzeHGIgp80Nbi0LahYQ
-Message-ID: <CAMRc=McRc9Aw-5WBipW5QhqqHp4+UKch15ui3E8a0srk2CUN7g@mail.gmail.com>
-Subject: Re: [PATCH 0/2 v7] gpiolib: finish the legacy cleanup
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Kent Gibson <warthog618@gmail.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-sh@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, 7 Sep 2026 11:09:54 +0200, Arnd Bergmann <arnd@kernel.org> said:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> These two patches are left from my cleanup series, finishing off the
-> work to turn off CONFIG_GPIOLIB_LEGACY by default, and removing the
-> include/linux/gpio.h header.
->
-> I had originally planned to send these during the merge window after all
-> the prerequisites made it in, but didn't finish that before my vacation,
-> so I'm sending it now.  I suppose this makes them 7.4 material now,
-> but at least the first one could stil be fast-tracked to 7.3 if there
-> is a good reason.
->
-> The second patch has to remove a few more leftover <linux/gpio.h>
-> inclusions that made it into 7.3-rc1 either from new code or from
-> conflicts with other changes.
->
+Hi Ernest,
 
-With acks from SH and MIPS maintainers, I can take it for v7.4 through the
-GPIO tree.
+On Thu, 10 Sep 2026 16:16:48 +0200
+Ernest Van Hoecke <ernestvanhoecke@gmail.com> wrote:
 
-Bart
+...
+
+>  				fwdevlink_nexus: nexus {
+> +					#clock-cells = <1>;
+>  					#gpio-cells = <2>;
+>  					#pwm-cells = <2>;
+> +					clock-map = <0 &clock_provider 1>;
+
+No map-mask for clocks ?
+
+And also same comment as for GPIOs (i.e. multiple items in map)
+
+>  					gpio-map = <0 0 &gpio_provider 1 0>;
+>  					gpio-map-mask = <0xffffffff 0>;
+>  					gpio-map-pass-thru = <0 0xffffffff>;
+> @@ -100,6 +106,14 @@ fwdevlink_nexus: nexus {
+>  					pwm-map-pass-thru = <0 0xffffffff>;
+>  				};
+>  
+
+Best regards,
+Hervé
