@@ -1,54 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE0F4C33F3
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A152D0C72
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789578893; cv=none; b=vAiXhuIFfICVyOGDb2OO0updPjVqCx5h/uXjKMGIypt3jOG9AwSOnsBDBU12XVd58pgzVfJtHfUE7slmz5Gt6tXn/O6gIaSas3jKg0pxuLMYPuRPBCrYZqEBotZwO7E9Ef4Kq5Ft4A27XGEDyq/Wy7WmL8g/vndUh9O8Nz6Qdg8=
+	t=1789578913; cv=none; b=Fuh5MCDQK7X5mtSSOX6L0kMof41mnP2WxgkgnpQx47NBX04yy8nd8d57mvt7R0/N3OGmt6n5XRc86COQqSWzWRze013W4qDJrekFxOOIR7EiBZgWDIevNeQitEXPaVK1V48nIbQ4oIOTBGNES25kJWMd4aSijYSYC+qx7O+3vMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789578893; c=relaxed/simple;
-	bh=Q3hFAz21Puk4qp5OVNLkTKvWHULbnjoIhvvfucWc9Ik=;
+	s=arc-20240116; t=1789578913; c=relaxed/simple;
+	bh=x+RzZmHnqaIFv/afq4EE1msbYj1HqtHQnuxnErsonnM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i1j2PsHJsHvyKZqJJIgqO2/Y6jm1QAxkDVPlnxTym/ZKNCwwV4cypVquHkS6EWo6Fm3WJUk7a8P6wapSWUQkdQXkRdJpKOOKbLFUirKeGCDHGC331B1p2kFoEcnqUp6BFE9TO+V876yDf5uFGsvPbvsNeBIAD3V0CRXVGwnEEQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWRxEyan; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=JjKK4/HHprt90d2a43evROm37bXEZlk5dzuTqk30GE3U9ahRfy/7NWWozKYoZm8HH4HIDttcAioDRWYsFj9MrZg+niTfsuoiurIDZ+oFpCIMP/1CYEQOr3nch59USL83892jiwKw2SZt+e7Ds3JINfYa4/2hFo232nz6ukjCWyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJWKyUQG; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWRxEyan"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 969B31F008A7
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:14:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJWKyUQG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 192321F00899
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:15:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789578890;
-	bh=Q3hFAz21Puk4qp5OVNLkTKvWHULbnjoIhvvfucWc9Ik=;
+	s=k20260515; t=1789578911;
+	bh=x+RzZmHnqaIFv/afq4EE1msbYj1HqtHQnuxnErsonnM=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=LWRxEyanij8iyqFWzVauR5rek7ibzKqMag8JkJWqC/D54WCmt5VYct+MySEMYaj99
-	 FLCBuo7/Bpwy4Ae1rF2ZbimIwE/QVqVVl71hzAUfipJcFri3oLsxI5PfUuurnWv+QI
-	 rASRh8bgfT30BPoA3AO0pKgOWDRpEuzc+7pr7MBh3ozCsc8oM3NMOXovnp4QhF0Te/
-	 yZTu2HOaFRg4N5y7rDwnmG340Db7yiIYAklQZauANCYZtf1ypWnBoOwcJQYaSVWHNu
-	 SLx7GBjhBdebWM4eGY3rICp9mq2G4fKqHN9Uk9WlCESVE5DC+x7VpTbesUZAw5o945
-	 MQH6UxWBXWELQ==
-Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b5e4f15b79so1167860e87.1
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 10:14:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBznOQfNR0htiCHkesX+v7l2OoGe3d3wcmgSKlnz8FMNBRZso1SW4IiTbfszNpCYC1/AcYXQQzoeSulH@vger.kernel.org
-X-Gm-Message-State: AFuF++lkTdlaUcdNzwCo6BuLxp4DCHGCw7YKDSPG/dubl9Dv1O0K206R
-	7dhAggMjpUo+o2C+8T4IG0/xrvRqEYN+NSDiZIhSbt1p39NGH0tToMIQGAuhvFcLJKooMWEGgYN
-	RE9H7AIfvk8QsXs3zqJhRly4RmnsE8qk=
-X-Received: by 2002:a05:6512:3c94:b0:5b4:97db:b740 with SMTP id
- 2adb3069b0e04-5b8b6646174mr1819762e87.20.1789578889250; Wed, 16 Sep 2026
- 10:14:49 -0700 (PDT)
+	b=fJWKyUQGkPoGP6Y6CKkbMqnqk0M61nrKSbxnHjagrEGHJbkxh2gmxnq+2sBMXzN1Z
+	 Qz2mT0p9yrfu8kVSu40m5cIhXgOSeqCmYnNDCC+rciMkhrLs0p+dcBdoN1vVayVBVt
+	 N+d6tLIHjwuKx2KEFKfarXY6aKGGJQr9I6ZxAlXvUMMZLLUY5kv5hwPIysLW2BsVeg
+	 MGNEuRRKp8UVTSz51bvHgHX3WwwSqqMl3q7XHvNdY/hy9VyasfbQH6PYP0ppfJjeZb
+	 gqM4N2Sy8rxyPTLehUtbIuvkIJakxSI/S6RjBJZmFFESkhSMFGoXksEure1UOiIk8f
+	 Gq8jo4oKDZJDg==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f13d7aso1650591e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 10:15:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBypInXhJyLPNu2dX7A4tqdvNtKKHIe22+wzHtBkEjwV1uGeUbZTjUsryCAzXkSdHYTCq39L0KSjFt4D@vger.kernel.org
+X-Gm-Message-State: AFuF++mhpzn7QVC+V7PXJ/RpyCt4977/WjPpXzskjfS4Q9x6dyZ5Mv4V
+	cBynZiUq0sUYIBbHJU0ePlgC5fpNwQ3D0atn4IFnu3KKgDk2dkD+npjMaJSIOrbtqqHVcCOevgX
+	xYCC4y/PreD0RdhB/yzzM4dvJvlUEpkY=
+X-Received: by 2002:a05:6512:4023:b0:5b8:b419:c8ad with SMTP id
+ 2adb3069b0e04-5b8b6617917mr991899e87.17.1789578909833; Wed, 16 Sep 2026
+ 10:15:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260910-fw-devlink-nexus-ready-v2-0-17ac82dbe226@toradex.com> <20260910-fw-devlink-nexus-ready-v2-1-17ac82dbe226@toradex.com>
-In-Reply-To: <20260910-fw-devlink-nexus-ready-v2-1-17ac82dbe226@toradex.com>
+References: <20260910-fw-devlink-nexus-ready-v2-0-17ac82dbe226@toradex.com> <20260910-fw-devlink-nexus-ready-v2-3-17ac82dbe226@toradex.com>
+In-Reply-To: <20260910-fw-devlink-nexus-ready-v2-3-17ac82dbe226@toradex.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 19:14:37 +0200
-X-Gmail-Original-Message-ID: <CAD++jLn2LmvsO2PNh0AVcTJULTRFazANBaTOJCYcL5TgvyoDFA@mail.gmail.com>
-X-Gm-Features: AcwNN1WrC5AS_PRz3Sq427sJhJfk8k29uqMAQRw-Dbr4KzlXEKv1HU-8tHH5OjQ
-Message-ID: <CAD++jLn2LmvsO2PNh0AVcTJULTRFazANBaTOJCYcL5TgvyoDFA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] of: property: fw_devlink: Follow GPIO nexus maps
+Date: Wed, 16 Sep 2026 19:14:57 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=PV_BEw6pa=M7dDEMNMg2xfbBESGanXE2sajTav5hPBg@mail.gmail.com>
+X-Gm-Features: AcwNN1VY_W0_it0rWdRRWdWtRhIbKagoTA3QAM941QSR0htK7aD0JhAkkSfT2YY
+Message-ID: <CAD++jL=PV_BEw6pa=M7dDEMNMg2xfbBESGanXE2sajTav5hPBg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] of: unittest: Test fw_devlink with GPIO nexus maps
 To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
 Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
 	"Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li <Frank.li@oss.nxp.com>, 
@@ -61,7 +61,7 @@ Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
 	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
 	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, 
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, stable@vger.kernel.org
+	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -70,28 +70,13 @@ On Thu, Sep 10, 2026 at 4:16=E2=80=AFPM Ernest Van Hoecke
 
 > From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 >
-> GPIO consumers use of_parse_phandle_with_args_map() to resolve
-> specifiers through gpio-map properties. fw_devlink instead parses GPIO
-> properties as direct phandle references, so it records the nexus node as
-> the supplier rather than the mapped GPIO provider.
+> Add OF unit tests that call the fw_devlink add_links operation for GPIOs
+> routed through nexus maps. Verify that each mapped consumer has exactly
+> one link to the final GPIO provider rather than to the nexus.
 >
-> A nexus is a translation node, not the GPIO provider, and need not be
-> populated as a device. The resulting fwnode link can therefore remain
-> unresolved and indefinitely defer the consumer while
-> device_links_check_suppliers() waits for the nexus.
+> Also cover direct references and all GPIO property spellings recognized
+> by fw_devlink, including the deprecated singular and unprefixed forms.
 >
-> Use the map-aware parser for all supported GPIO property spellings. This
-> makes fw_devlink resolve the same provider as the GPIO consumer API.
-> Direct GPIO references continue to work because the map-aware parser
-> returns the original provider when no gpio-map property is present.
->
-> Fixes: 7f00be96f125 ("of: property: Add device link support for interrupt=
--parent, dmas and -gpio(s)")
-> Reported-by: Leonardo Costa <leonardo.costa@toradex.com>
-> Link: https://lore.kernel.org/all/juuc4af7ndbajcl7gzf4tg5qz2q2j5tt3rvql4j=
-bauradujrre@gc5nbdhhixaf/
-> Tested-by: Leonardo Costa <leonardo.costa@toradex.com>
-> Cc: stable@vger.kernel.org
 > Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
