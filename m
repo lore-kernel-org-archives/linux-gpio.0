@@ -1,57 +1,51 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D716A3E9F8E;
-	Wed, 16 Sep 2026 06:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16178404BE3;
+	Wed, 16 Sep 2026 07:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789541729; cv=none; b=ujVfO1k9D+DCtDNzO9mKMllR4gDgan1idQppW9RaarCdBEWknpSy1lj42kJpOSuGPeLbvUWARU+/5l39igPgKF9Y/RZEqA27lgmlpWCH+jbeT4pIXU2xmF6ThJ/8NNLFj5Z09jba1vI6YsKKdEmJxrajZDnmdQ1jWmbVd0xYvrQ=
+	t=1789542618; cv=none; b=K38diUVL614ge1960I66gxJrCS8ArwcadhKgbWgc0JoeQK8ZZW/x56DQt3sOVKJI/t6ZoHvgvMoyKW5qhbR2UkwnnTYFEDCbCiSugUEzy/VnUcXf6ifjSPBNMh7td5Cy7FGf8n4a7jZHt83rdE+6CbDbvFTiu6BJx6yRe86OE7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789541729; c=relaxed/simple;
-	bh=QXTe48Zea/Trvazz/Pkd3exaoVKlULQahD22GQ0/e4g=;
+	s=arc-20240116; t=1789542618; c=relaxed/simple;
+	bh=TbkgiRjWeQ8a0xpMBTTJK/KlAo0wUUGLv0byzFa/anY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s8tbM3PIKOc4p9hQspTdQJeagSrYdzLuunRoa6L/BNXbg3WfII8r7+eqkE3Gy6eYWReGf34PWvuAxw4TH1GOV8W7eqPJ0Ui6gRE/9G1n54he3Vmzb0gxixXyGrHMCRRkSi8be2um9krjxtkY+GFfVpZ9R76+Re12sT9FuUCCUzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=d8KzTUND; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nTqE4oSa; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	 Content-Type:Content-Disposition:In-Reply-To; b=maegKj806eAP7zNa/awQgawtiLuCg4C//pqdq3NX71oYTywYUnxXTdiscCN7oUVZlXSRUl0dEEapa6VFvuxpBqbribxgk+7hF7AMc54dsy7oNNyoI9SZfPGWjxrOw6uk/Ms9LMwCgxpb/Glw/sUca16Q1m0lHqd67+tbWDSxkro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K7SwAZ5T; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="d8KzTUND";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nTqE4oSa"
-Date: Wed, 16 Sep 2026 08:55:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1789541725;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y9JO/nXJM4LsTI15Dh6R6P3Rqfh7Ru0q6bmBLCp4g7U=;
-	b=d8KzTUND03j3NdeVuY3GH23jIk5brwhQtdraM7PikkrUR4bKEOI2aB9YfQwuZwQF9ijVF5
-	Hs+RE6lvS9GCn5qsmyrtGKXmAnuHYp8WGtSEHKxoONTuB3V/USNkwbUYN/DVmXTyvNbYQb
-	g8xtIBUmvAN3MZa8RQB3dm759d9QjiRjhmHXiY2W2NmzLVO7myiEc+g8m++eEAB9TFGO1Q
-	VwtqPrukbNv0l5EdXExKtnWbIQxqCBdB3+f0PjrDQUnbNEJTJmhDNndPSQ8e8zQ8lmdS9L
-	1CQM9VL4nxU+PV7idppSNyCZ9Tw18esIW2cpzrxAfoGNfhb57ggLzXCV64ZUMg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1789541725;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y9JO/nXJM4LsTI15Dh6R6P3Rqfh7Ru0q6bmBLCp4g7U=;
-	b=nTqE4oSalnbUJXQjhv1kggMWeeRiI+xO13V29BwxV1TwdkgYL7rTZ6g0zU+oZLqhxLFISo
-	sqmSlQs+UFZPJsBA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:Real-time Linux (PREEMPT_RT):Keyword:PREEMPT_RT" <linux-rt-devel@lists.linux.dev>
-Subject: Re: [PATCHv2] gpio: mvebu: keep resume masks within the irqchip cache
-Message-ID: <20260916065523.ZJKAHHyW@linutronix.de>
-References: <20260915004406.115230-1-rosenp@gmail.com>
- <20260915064352.T4HiPnt_@linutronix.de>
- <CAKxU2N_+H50zy7V0FR-_4KiyAG8+_x4kg2QZBsumHEXgdwmqKQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K7SwAZ5T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 165081F000FF;
+	Wed, 16 Sep 2026 07:09:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789542593;
+	bh=p2gx8+1v2YG2nXZ5rZ43ZGOVbgNWYwB+4lHcBSPfXX4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=K7SwAZ5TQox94KhnzDZgdWak9JeascnEJT6tgsdFitx13oH/yvHVurs3emFIQIidi
+	 xcR0gIE20GLza50nMYtjBg//0e7WD22sTKu3OHciVTO0Egw6dpfNvS97BoC4LpWgvN
+	 ZD0aZmUahuws0zfu0FGKie6dskhpn2wDFZH1gLvxR0Y/XLP3PDKD59Q3XEFPNj3iGd
+	 l3nMpo+kKycUGKylVUc5DFObZlUBNTgMifgw32kRkszA3iFJ9ppTn7CES9cJYrH1JE
+	 XD/gyr3hXov/6xjsaqqL1FGY+8ZmWmmW0Gqlh80XrHJbwZzvXyNf+hmB3sQ+DilGUR
+	 S0XyD3cx8I3Gw==
+Date: Wed, 16 Sep 2026 09:09:41 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jann Horn <jannh@google.com>, 
+	Jan Kara <jack@suse.cz>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Oleg Nesterov <oleg@redhat.com>, linux-alpha@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
+	linux-hexagon@vger.kernel.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-um@lists.infradead.org, Jens Axboe <axboe@kernel.dk>, 
+	io-uring@vger.kernel.org, netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	bpf@vger.kernel.org, David Airlie <airlied@redhat.com>, 
+	virtualization@lists.linux.dev, kvm@vger.kernel.org, kexec@lists.infradead.org, 
+	linux-hyperv@vger.kernel.org
+Subject: Re: [PATCH RFC POC 00/50] file: handle files on syscall exit
+Message-ID: <20260916-seilbahn-heimvorteil-edelmut-bad3637b3a95@brauner>
+References: <20260915-work-fd-reserve-unify-folded-v1-0-4d5217d6b246@kernel.org>
+ <CAHk-=wjeamU=_RYT9cR3dZJ2N-Teo-N1+aYh7jwhrB=iWXD0cg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -60,25 +54,30 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAKxU2N_+H50zy7V0FR-_4KiyAG8+_x4kg2QZBsumHEXgdwmqKQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wjeamU=_RYT9cR3dZJ2N-Teo-N1+aYh7jwhrB=iWXD0cg@mail.gmail.com>
 
-On 2026-09-15 15:24:24 [-0700], Rosen Penev wrote:
-> On Mon, Sep 14, 2026 at 11:43=E2=80=AFPM Sebastian Andrzej Siewior
-> <bigeasy@linutronix.de> wrote:
+On Tue, Sep 15, 2026 at 09:02:31AM -0700, Linus Torvalds wrote:
+> On Tue, 15 Sept 2026 at 04:31, Christian Brauner <brauner@kernel.org> wrote:
 > >
-> > On 2026-09-14 17:44:06 [-0700], Rosen Penev wrote:
-> > > mvebu_gpio_resume() writes the edge/level mask registers saved at
-> > > suspend time straight back to hardware, bypassing the irqchip's
-> > > mask_cache_priv.  genirq skips mask_irq() for a line it already
-> > > considers masked, so restoring a bit in hardware that genirq thinks
-> > > is still masked leaves that line unmasked behind genirq's back.  An
-> > > asserted level line then has nobody to ack it, and the moment
-> > > interrupts are re-enabled the chained handler storms, hanging resume.
-> >
-> > Why is the mask value changed after suspend?
-> In order to keep genirq and the hardware in sync.
+> > TL;DR, this lets arch code handle fd install and cleanup. fd_prepare()
+> > allocates a descriptor like get_unused_fd_flags() does and records it in
+> > a slot on the task. fd_stage() attaches the file to that slot and
+> > returns the number.
+> 
+> Honestly, I am *not* a fan. At all.
 
-There seems to be write after suspend took place or before resume.
+I'm really glad that you don't like it! I hate it too.
 
-Sebastian
+To quote back from the cover letter:
+
+> The idea in this series is old-ish and really never let go of me and so
+> I wanted to at least dump it onto the list once even if it's just for
+> illustrative purposes.
+
+I think the cleanup-based solution we've added a couple of releases ago
+is the better appraoch. Which is why I chose it over this.
+
+But this install-on-the-way-out idea has been brought up quite a few
+times as the "better approach". I never really believed it would work
+nicely. Now we have an implementation on the list that we can point to
+and we can move on from this.
