@@ -1,105 +1,124 @@
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CECF49E5E6;
-	Wed, 16 Sep 2026 10:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AB94CA77D;
+	Wed, 16 Sep 2026 10:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789554219; cv=none; b=H51GxYYmVmflQOzOhJ1ON4V87c0RKm2NnFKJhi5CzTtGbFdgr+7PPamW1jD01drDnZtQTN0gQ9s2FH57Yhh8owlvCFmN/lMa0CxeqLQzhgEKzAirUKwQWbBmCTFcQcOGS+15q6NvIiEhcOSfCdx08GgudGadZN2GSoh7ti5n4j0=
+	t=1789554241; cv=none; b=VrVxW1/5U8Z7n8dkb+Xw2yhFkvmVbO4PkLaPLr1tL8UOa/luQ728kM6h1YIo1EtJTGEOPhTAxYkfH64007+7xVCUBSC82p4j+C6JQTQuweYTVQMIDYn86Zw3HCRQOhokjdViRJpy8j5bsZ75xXQA4SzhM52XX8brbRE56/7qILg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789554219; c=relaxed/simple;
-	bh=uFQjaP6Ot+RC8020d5qhZIUj9k2STd3WAVm0TM1m108=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uNmc5FgsfNOFGitZ1cE7c5x35w7m7sbvbvIF03XzrRqIb6iZbrBo3Q/oRH61sLD3EQsehq9/r5MzpwMgJz59aXHTFyc9C+9VDYEVWz+Bz9GC/kpMCWvuS/Nj4HbAyn5Ipbx+LTuAObPaDNWTsSshe/SiryE0AOI4Z5Y8+tlYsLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
-	by APP-03 (Coremail) with SMTP id rQCowACXmjgebqpqawfhBw--.61860S2;
-	Wed, 16 Sep 2026 18:23:26 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: andriy.shevchenko@linux.intel.com
-Cc: brgl@kernel.org,
-	heiko@sntech.de,
-	linusw@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
+	s=arc-20240116; t=1789554241; c=relaxed/simple;
+	bh=PeVfyJvNsLA4HGK44/YoeVENKrqs3ZCDtZ1Sly+fN/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gDmxmpZtJxFShK6UkTjFx1QU4uAKovXS5bAhVCRzef2s6lwMgAPVoAYoiAKhEZ0xJoBF5eo8+QPt13gPsGgeKwBKkFDvuNbrlpBwatM1nq4QTTKk5aflzNCFbu3BhWj1w2fTfyc94CavdGreqPFJHTpPioB+B+iqcUDLvnmTw4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fj9zoMMd; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fj9zoMMd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1789554239; x=1821090239;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=PeVfyJvNsLA4HGK44/YoeVENKrqs3ZCDtZ1Sly+fN/8=;
+  b=Fj9zoMMdt5ussF0KzS6nC6Q4a8nJDG3jKtQI1P32gVm0MklvO2Zs4wvk
+   YiPl2I0FEzabybjWdxsMhtTI6Q1DtQbDDTr7B6q2EL9sQAUyLoXPr7/mC
+   X3zAcZ0uYMT5btOk4n1N0hwhuXsFxmeOqJ8gUUw2VfgwdNOoooeSjHEkK
+   T32+i7Dw6GkqroKTOOe6KzJa+k+WpIgYqWuQ/FIFpqfbus8tNZky6nDZa
+   6L8hXxLudV9FcXyE8tHa+gZKqiH7VGfim4XXnTMkKFZZLqJ8C1hfP9Ojx
+   2loFuwc+x59E5LFOpbht9Vmxe2ixrerLHluKHkoFvmTaF+2IPAZJCG46Y
+   w==;
+X-CSE-ConnectionGUID: J0khVd5RQwuhVEidff6kAw==
+X-CSE-MsgGUID: oIDTHnrZTxinrenKwLYopA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="93798672"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
+   d="scan'208";a="93798672"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 03:23:54 -0700
+X-CSE-ConnectionGUID: zZTsqc9USHyL5sqH2UfPDg==
+X-CSE-MsgGUID: 8JRWbhnbR4S5o23MCxAirA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
+   d="scan'208";a="311581967"
+Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.145])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 03:23:48 -0700
+Date: Wed, 16 Sep 2026 13:23:45 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, soc@lists.linux.dev,
+	longzhao@ambarella.com,
+	Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>,
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	sebastian.reichel@collabora.com,
-	ye.zhang@rock-chips.com,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] gpio: rockchip: Fix bank clock leak in rockchip_get_bank_data()
-Date: Wed, 16 Sep 2026 10:22:58 +0000
-Message-Id: <20260916102258.2018689-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 00/15] Ambarella CV75 SoC minimal bring-up
+Message-ID: <aqpuMcqbra9i6UDq@ashevche-desk.local>
+References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
+ <CAMRc=McEOcWq8i3B01AR1PnfBzSQaLEaOzE6Qa+QdVXrvS_YrA@mail.gmail.com>
+ <CAD++jLnRL_s9zPNkSj2UnHWPx+QHAXV19DA7dEmGZu0AkxxyaA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACXmjgebqpqawfhBw--.61860S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CrykZr47uw4UKrWrXr1kZrb_yoW8WFy7pF
-	s0kFyFkrsrJFnFgF1DAFZ3Ar4FyanrJFW3GFyxG3WxCw13tFyUtay5uayv9FWUArWIkw4a
-	9r1DJFy8WrW7Zr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9S14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
-	628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCV
-	W8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_
-	Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6r
-	xdYxBIdaVFxhVjvjDU0xZFpf9x0JUJWrAUUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRUMA2qqP4e3zAAAsQ
+In-Reply-To: <CAD++jLnRL_s9zPNkSj2UnHWPx+QHAXV19DA7dEmGZu0AkxxyaA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-rockchip_get_bank_data() obtains the bank clock with of_clk_get() and
-enables it before reading the GPIO version ID.  The reference returned
-by of_clk_get() is never dropped on the error paths that follow:
+On Wed, Sep 16, 2026 at 11:42:56AM +0200, Linus Walleij wrote:
+> On Wed, Sep 16, 2026 at 11:14 AM Bartosz Golaszewski <brgl@kernel.org> wrote:
+> > On Tue, 15 Sep 2026 13:15:30 +0200, Long Zhao via B4 Relay
+> > <devnull+longzhao.ambarella.com@kernel.org> said:
+> > > This series adds minimal Ambarella CV75 support for early bring-up with
+> > > a serial console: DT bindings, RCT clocks, pinctrl, PL061 GPIO via
+> > > gpio-regmap, 8250_dw UART quirks, ARCH_AMBARELLA, CV75 EVK DT, and
+> > > MAINTAINERS.
+> > >
+> > > This is a single unified series. Please apply via the SoC
+> > > tree; subsystem maintainers are Cc'd for their pieces.
+> >
+> > I would prefer to take the GPIO regmap bits through the GPIO tree and provide
+> > an immutable branch to the SoC tree as it has potential for conflicts that
+> > early into the cycle.
+> 
+> Queue them up and send us the IB if you think they are ready!
+> 
+> Long can probably send a PR based on that IB for the rest to the
+> SoC tree, a bit tricksy but it works.
 
-When the debounce clock is missing, the bank clock is disabled with
-clk_disable_unprepare() but the reference is never released with
-clk_put().  When the version ID is unsupported, the function returns
--ENODEV leaving the bank clock prepared, enabled and referenced.
+I'm still unsure why we can't use IRQ facility from gpio-regmap.
+Can you have a look there?
 
-Drop the reference with clk_put() on both error paths and disable and
-unprepare the bank clock on the unsupported version path so that probe
-failures no longer leak the clock.
+With that being said, I'm not sure that the patch that exposing gpio_chip
+from gpio-regmap is justified.
 
-Fixes: 41209307cad7 ("gpio: rockchip: change the GPIO version judgment logic")
-Cc: stable@vger.kernel.org
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/gpio/gpio-rockchip.c | 3 +++
- 1 file changed, 3 insertions(+)
+The whole GPIO rework needs a bit more routine work (resplitting, refactoring,
+et cetera), so later we may see clearer what's going on.
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 44d7ebd12724..69a7cd8c9a1a 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -673,6 +673,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
- 		if (IS_ERR(bank->db_clk)) {
- 			dev_err(bank->dev, "cannot find debounce clk\n");
- 			clk_disable_unprepare(bank->clk);
-+			clk_put(bank->clk);
- 			return -EINVAL;
- 		}
- 		break;
-@@ -682,6 +683,8 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
- 		break;
- 	default:
- 		dev_err(bank->dev, "unsupported version ID: 0x%08x\n", id);
-+		clk_disable_unprepare(bank->clk);
-+		clk_put(bank->clk);
- 		return -ENODEV;
- 	}
- 
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
