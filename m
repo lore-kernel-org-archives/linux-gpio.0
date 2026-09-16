@@ -1,89 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2380351E452
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 16:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E89D495AD9
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 16:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789576538; cv=none; b=iZSrkTKgTW23TUgEVLsDQvr+t1fvRBqYvfi8O8UD1byvMwNC+Ors00nVYgthOIalA4UQJu5MjCl5mCenizDFVbGgjg5ek5e9hi9NsOFJlC7v6QkZuFIAdn+887sctoaX7mzWurrDhm1IZjKpNQIsdICw+v96+yp/EuYTa0riZtE=
+	t=1789576949; cv=none; b=gYJerNmm5uIX+fOeKt9zKPF8fuSvJARrtVPwJ+FLq2hdtNUYa2MhWKTSl9hnky+HdMP8LUiPtG3LIBUk5druWvdKCkTQDsLvxkAoFNsJW71ObnR4RytI94UVZY1DgdI/tnVVZglZw6qJqQj5puNk+uQlJR8Cf9p6sFeMavNTqoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789576538; c=relaxed/simple;
-	bh=044CrMqm1hX472GyboH+P8q+RWHr3VuP6wQdlD4joxs=;
+	s=arc-20240116; t=1789576949; c=relaxed/simple;
+	bh=aon2dbJnCr/S2AeRAdi+xJK6D/wc/t0gWjIMopRk3mY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tJT4ZJdHGhelBMOsS/sFeyXmD9kFnGC1O32hzE7ZJxKET5BGlC1eopLWlcs0UweyBcWmslSPDl2XgNEtCnsx4dOOG9D3z5+13pb+Z/za13Lew24Ri3HrloPiKcMhwcv2iMKy2afDBZMTNKIJGPnBKpi76QCXK6CoAgLG7UkH0BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ev8qH/Sx; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=I95sd4F2NiNBtMWf5fdodElpXnr+IJh4pGRdFX3F5febNLfa7gm7RqBaREuVhv3SC45gkcFjXyMc1ciLDKGEYcXLZt6Jzm9t5SA3ZH3N3uiGoJ6mZMn1V45XUAo75nBfwxlU6+jXEUMQ3UXMxQZZwn5uVu9yUqUnRa5mlVHAw3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LmpZX2of; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ev8qH/Sx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3239A1F0089F
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 16:35:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LmpZX2of"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0573F1F0089E
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 16:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789576532;
-	bh=044CrMqm1hX472GyboH+P8q+RWHr3VuP6wQdlD4joxs=;
+	s=k20260515; t=1789576933;
+	bh=aon2dbJnCr/S2AeRAdi+xJK6D/wc/t0gWjIMopRk3mY=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ev8qH/SxBCpyuGF3HU5REG17ahp3YJOMTf5VMWq89VmLTcd29cME/my0j+xE39SBh
-	 753CcdI1sS4+tA6b9wrI4PtI4S0Juz6E7sXIBeOvJQRwVcMP3knbNwUQOjO0aypvo8
-	 i2Ah48QVlUpeykjmGRWTci0GzvQU8w1ZY9GoZEaN4zUkY07aA3+VjZ7eJL/jH2yZ4f
-	 x/oA2Hr74NxP5/ed70hXaRmYNJhbqYxKPxjo2CWTAXqlUHBaJnUPY2Fu4Mq41e5p/0
-	 bMZ6JEMmisL3sPEO14aYX+EVc6AkO0TMRDh1/7HE/WPIAE5whK0oCWO/zbmOyOtxrV
-	 6VngY2T8yyjEA==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5b8997bc6e6so1830413e87.1
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 09:35:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzhP+D6iO2JYTl8KNTuMdQBkJMBLd7/0Zr+rVqMRnW4PYQH4odyT/lRM/JwXnF2PBbVUvk7qG6vCXYK@vger.kernel.org
-X-Gm-Message-State: AFuF++n7sh0cnXddD1ntB+Eo8+hO/ex34YK2Xwh2miPvW7fFfPuPJ9Gi
-	VK0ykcr5NxIRr15SgtTLZompp2n5+ZGOdiGbKbHqHiAPkg4asRGJ7tDTogkrubusD9AwcwcS2lb
-	/9snFwtzYi3LlNHuSJ4nDneNj59j5XJ4=
-X-Received: by 2002:a05:6512:63d7:20b0:5b8:9999:2f14 with SMTP id
- 2adb3069b0e04-5b8ba5eba89mr50407e87.19.1789576530843; Wed, 16 Sep 2026
- 09:35:30 -0700 (PDT)
+	b=LmpZX2of13S/6KVObhaOb4/ezUF9BOl2ZBn3oI+UabvrNP/MuVjZlkdwzKswKJ0YT
+	 2frPNdkEs75UvwL05GEhlIm+sbYW0bZreMufLpWKG1yETNfWd7mhq/JF9x3Ez/5j2K
+	 IYpigV1vdVaVCP9oAG0o2FjlWOqy+haqutQrjyDDyJMMYbCmeqXwR8QENib2V1MiFg
+	 jSP3a9KwW0n5G/yqqY6Er7YYCqMbHnfepVGakNrssd1Wmcrkk69kyYW7bSTqpTGyia
+	 hBdw03sEpx7SgY97mKseZouE+w3i66pVKCgef0VVnuE/WL6XLy6CxoWmOoMDZutD+R
+	 OqvlKsrOun1qQ==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b5e4f15cfdso1205178e87.3
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 09:42:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzWixt0V/sskjqtnWBiTPg03UCNGO0sfd6Tkb/vdTMNr4TJhbTnxS5fZ8jWo5jCZQqIl2tDuuuk+AIT@vger.kernel.org
+X-Gm-Message-State: AFuF++nuzN9z2f9PVHlpoaNeYJ6ig0CeCHJ+RuD5I8c9IzatcD4ZwNq3
+	l64mug8iqKQeljNTKCKwlQr6HhDC3WLZf+mqUq+H54dPG5fc/QnNVmuo/YzcG5eUHP26fkJcZc9
+	+srTze0P7ojl6G0jO2YwS2l6tF7j0GcY=
+X-Received: by 2002:a05:6512:3188:b0:5b6:1a7c:59c8 with SMTP id
+ 2adb3069b0e04-5b8b6643a5bmr963863e87.34.1789576931685; Wed, 16 Sep 2026
+ 09:42:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260723035823.2041832-1-justin.yeh@mediatek.com> <20260723035823.2041832-2-justin.yeh@mediatek.com>
-In-Reply-To: <20260723035823.2041832-2-justin.yeh@mediatek.com>
+References: <20260905080235.33785-1-kmehltretter@gmail.com>
+In-Reply-To: <20260905080235.33785-1-kmehltretter@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 18:35:18 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=3YWAQsYZUTiRUpX_WOkeNYe5NdADwNeoFky+gY=OX5w@mail.gmail.com>
-X-Gm-Features: AcwNN1VvaG_CTHc5Gx7LSXS7f1odDC4A4LezNnphRUFVM6XIRyS7EcYx1dfz_o0
-Message-ID: <CAD++jL=3YWAQsYZUTiRUpX_WOkeNYe5NdADwNeoFky+gY=OX5w@mail.gmail.com>
-Subject: Re: [PATCH v7 1/5] pinctrl: mediatek: use devm_gpiochip_add_data()
- for GPIO chip
-To: Justin Yeh <justin.yeh@mediatek.com>
-Cc: Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com, 
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Chen-Yu Tsai <wenst@chromium.org>
+Date: Wed, 16 Sep 2026 18:41:56 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=U6TmJm8ALpv8m78XC2wvCFqQDbto7UcSLoZ9udJ7vMA@mail.gmail.com>
+X-Gm-Features: AcwNN1Xzz7Vr8iQ0kYrCMzI5XzKo9WytuY39-tP1Q1YM7-T14r0eH_M3K4Ta9tk
+Message-ID: <CAD++jL=U6TmJm8ALpv8m78XC2wvCFqQDbto7UcSLoZ9udJ7vMA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: stm32: Drop the nonexistent CONFIG_MACH_STM32MP25
+ from the STM32MP257 default
+To: Karl Mehltretter <kmehltretter@gmail.com>
+Cc: Antonio Borneo <antonio.borneo@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-gpio@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 23, 2026 at 5:58=E2=80=AFAM Justin Yeh <justin.yeh@mediatek.com=
-> wrote:
+On Sat, Sep 5, 2026 at 10:02=E2=80=AFAM Karl Mehltretter <kmehltretter@gmai=
+l.com> wrote:
 
-> The gpio_chip is allocated with device-managed memory but registered with
-> the non-managed gpiochip_add_data(). This was harmless while the drivers
-> were built-in, but once they can be built as modules and unbound/rmmod'd,
-> devm frees the gpio_chip's memory while it is still registered, causing a
-> use-after-free.
+> Commit 619f8ca4a73d ("pinctrl: stm32: add stm32mp257 pinctrl support")
+> made CONFIG_PINCTRL_STM32MP257 default to MACH_STM32MP25, following the
+> MACH_* pattern of the arm32 entries above it, but no Kconfig symbol of
+> that name exists and git log -S finds no Kconfig file that ever defined
+> one: the STM32MP25 family is arm64 only, where CONFIG_ARCH_STM32 covers
+> it. Commit dba0aff2b89b ("pinctrl: stm32: Allow compile as module for
+> stm32mp257") added "|| (ARCH_STM32 && ARM64)" next to it, so the first
+> half now evaluates to n and changes no configuration.
 >
-> Register it with devm_gpiochip_add_data() so it shares the same
-> device-managed lifecycle, which also lets the manual gpiochip_remove()
-> error paths go away.
+> Drop the first half.
 >
-> Fixes: a6df410d420a ("pinctrl: mediatek: Add Pinctrl/GPIO driver for mt81=
-35.")
-> Fixes: 805250982bb5 ("pinctrl: mediatek: add pinctrl-paris that implement=
-s the vendor dt-bindings")
-> Fixes: e78d57b2f87c ("pinctrl: mediatek: add pinctrl-moore that implement=
-s the generic pinctrl dt-bindings")
-> Signed-off-by: Justin Yeh <justin.yeh@mediatek.com>
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> Fixes: 619f8ca4a73d ("pinctrl: stm32: add stm32mp257 pinctrl support")
+> Assisted-by: LLM
+> Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
 
-This patch does not apply to current v7.3-rc1.
-Please rebase and resend!
+Patch applied as nonurgent fix.
 
 Yours,
 Linus Walleij
