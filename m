@@ -1,86 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1514BD35C
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70A73630BE
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789578514; cv=none; b=udIcgYmUX8q5KHSfLAkDkjg1XEh/RzwF1rLKe6dhWwdt6pvRc6+sNKhVXCKirouikHG0DwiMP9DTk7HAXvwXjFssnvxx0W5TdPmhCuB/vPIAFxBuwKPn/GqWqla4rg2X4tPc6NZ02+H+MHMMOKG+Utc9KMf/N1lhEo3eGLETJ5c=
+	t=1789578665; cv=none; b=HZJkQhHgimwK0zRZvdPfDhS6jnBPw3Ba+qFWViVcAlg9nvxfV0AS7ma7F6Lu3gZGMIxK8podVPk3QL/BqCZzWWTImvhHLLv0fatrnyAlVJ+QkLKED+l9b9k6sVpftF5XWKGJNYqYEIiZcvLqKoNfc0yHHSAcgR89xlmB5uzZuHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789578514; c=relaxed/simple;
-	bh=E5wNtv0wDkIe9aO5f3le6LmPTDNX74MWkohjzIuB+hQ=;
+	s=arc-20240116; t=1789578665; c=relaxed/simple;
+	bh=Ljrz3/ym5aL3W5hSXMvMnSrl28+5TPjOO+yW6zlyHRo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rt7qWPip+Rj/ji3ZTkb5JCGQV3eHHxsN2LoG1OpT+eLNP66bXMHRO6wWEHJG0nyIBhR+KUc38Ho8YnNcizY0GaAbtnupXdAKGvTw3LEI3chv00ViLwcDN8PR/khw82wnJAu75N2RXbQac0ig553+Y6fikhk55Z23WSV+To7V+kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvQIKcZ0; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=I+ZrlgAsOjQUNn3NLKqPoULvnDUztq7OZ9Oeuxc5iGNaMX8RMfnpY+mlsPtNZHXPScSonu3qO8feqboyF5zTBtg88JrvFyTKhh4dPoXvFsz+nPCzGr492dqwJl3hkBfEApoX9TTse4Ovr1LcDN0HY8AP9Onjmocw2v+N1Z6XGR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bkqqu8zp; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvQIKcZ0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CEDF1F0089A
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:08:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bkqqu8zp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 172CA1F0089E
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:10:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789578502;
-	bh=E5wNtv0wDkIe9aO5f3le6LmPTDNX74MWkohjzIuB+hQ=;
+	s=k20260515; t=1789578658;
+	bh=Ljrz3/ym5aL3W5hSXMvMnSrl28+5TPjOO+yW6zlyHRo=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=fvQIKcZ0BSExGtlyc2FZkuUme8eICV13j8MfU6a/QfHlpMnHaAxJF+/NOvji76qW0
-	 tXDpoH+2uenQ0cyGKI5VeS5JqKmGqCq5xFHCE86dc8wVE2pX9JJLVTYSRJc+qE4tpj
-	 JeEN1KJWH/OyQsBVPCSSGU9MLXqPPZgwCWdTmOCEgW7/uTyJCiPg7za1pw6/aKXL+2
-	 Nup06Hm2bqpJLZg/KuQd5AWgIS+8G5q4mxHzrtdSnNSA5AHVhrHzyybYkLsaftXVIJ
-	 bNVSZT4qqXAXnOHll3Wqq2UDapA3vUEKkHKLqDh2YbIdVmCwEDY7c997RSw66OGPxw
-	 WNgI1685s3eiQ==
-Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b89a0e69dfso1126031e87.3
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 10:08:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBw5gto5OCUehevXkXaPiE2eVZXTnuxDsfGG8NcYS1KGoqnkeXJOubMsTFqaECNDWIx6BFhvql5ppBy/@vger.kernel.org
-X-Gm-Message-State: AFuF++ma8UkoeQ6QTZHSg+tEXwlPqGC6Vgey8gZaSLMrmlXKS7GKlSIl
-	JHRirC0YZwzRtmIs4NiIDyJIU4CmnWthmAUc5SCcQJtEw/6ksvyiuoGay5KjHMRbBYmqqgyhSt1
-	rqgg3BT8UA8dwlPCa9dhiIPgfxSvB75k=
-X-Received: by 2002:a05:6512:3a85:b0:5b6:183b:d215 with SMTP id
- 2adb3069b0e04-5b8b6666edbmr1065811e87.60.1789578501266; Wed, 16 Sep 2026
- 10:08:21 -0700 (PDT)
+	b=bkqqu8zpSudVqSwPAfClBSGzFquPbiDxvce8sshFCNObsZ20EVP/0+iQzww+yfp8h
+	 Knbx0yTBFbbg49xHF8gW8s+G3B1aFJGWbztT0XAQo30gHGaiqTduMHKVHXb7kB+H6c
+	 mvn+fXe6B9Bz6mDWQt54CzQN3zDlB8QudJtk3YxqvGM41WtbLCgA8GZ3SFkd3DzgTj
+	 cDE5eAQR4RDiHyjmkUOBumOtsbxf0ByycNeNrGtmIcoPk44EridtqKqIQbfeAXkKup
+	 qO7xUIYCvHiXN41Z9HY9sqJ/dg4bKfxhSrL6uuSJx6mY/Bt5IyiN8xytKMeVJebbia
+	 27Eoxxefe5HTw==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b74e0c2e4dso1332936e87.0
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 10:10:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzdrE0ZXzMAuAqGbfq6Es9EZ20vM1B/SCjaSr712VArOa6INA9eDYukaFRmhH4AD9pUL37CFY5cfDpk@vger.kernel.org
+X-Gm-Message-State: AFuF++m+PLSU5TASKaNKzM0QJs7kk4O7dD5iWWSv+buJ3OuXhWPPhIE8
+	qb0y/TsEPsLqO+dxdIdYh68KedNciUb26VUygSXQRPtJfXfMfeKifzpsuaRZcOxhbTXtEpuhRjd
+	ktZTE8/paQjiO7/rkchQg57zaGNcBEjo=
+X-Received: by 2002:a05:6512:1329:b0:5b7:65c0:8b92 with SMTP id
+ 2adb3069b0e04-5b8b6624616mr2095448e87.12.1789578656776; Wed, 16 Sep 2026
+ 10:10:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260914100744.1039050-1-andre.przywara@arm.com>
-In-Reply-To: <20260914100744.1039050-1-andre.przywara@arm.com>
+References: <20260910133519.459011-1-andre.przywara@arm.com>
+In-Reply-To: <20260910133519.459011-1-andre.przywara@arm.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 19:08:08 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnMB_Fr0i=FgjsqoBj3tOc=nrKy89zsZLMQGup_+Xh0FA@mail.gmail.com>
-X-Gm-Features: AcwNN1UmIpTpGrnLd6YNTpMeKuWu3aLaJO6OkS3CIGZ1a2xTye0vQ771yZj10e0
-Message-ID: <CAD++jLnMB_Fr0i=FgjsqoBj3tOc=nrKy89zsZLMQGup_+Xh0FA@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: sunxi: A523: fix voltage withstand encoding
+Date: Wed, 16 Sep 2026 19:10:43 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnR-pyB8ZZXwn0ffDBQ5n3eWoqMnbxH59B1U6oDHDiRTA@mail.gmail.com>
+X-Gm-Features: AcwNN1WMRMLXV0VY47rk_rDL7ZhlcD1BjU6erIZy7wdE15mC-YpMq3fTzq6SO-U
+Message-ID: <CAD++jLnR-pyB8ZZXwn0ffDBQ5n3eWoqMnbxH59B1U6oDHDiRTA@mail.gmail.com>
+Subject: Re: [PATCH 0/7] pinctrl: sunxi: Add Allwinner A733 support
 To: Andre Przywara <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Yixun Lan <dlan@gentoo.org>, 
+	Enzo Adriano <enzo.adriano.code@gmail.com>, 
+	Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 14, 2026 at 12:07=E2=80=AFPM Andre Przywara <andre.przywara@arm=
-.com> wrote:
+On Thu, Sep 10, 2026 at 3:35=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
+com> wrote:
 
-> The Allwinner A523 uses the same GPIO voltage "withstand" programming
-> (setting the input level voltage thresholds) as the previous SoCs, but
-> for some odd reason inverts the encoding of 1.8V vs. 3.3V.
->
-> Add a new bias voltage type to note this difference, and select it for
-> the A523. At the same time also use the newer "CTL" version, which in
-> addition allows to turn off the withstand programming for I/O voltages
-> other than exact 1.8V or 3.3V (for instance for 2.5V sometimes used for
-> Ethernet PHYs). The A523 has that enable register, but didn't use it
-> so far.
->
-> This fixes eMMC and reportedly Ethernet operation on some A523 boards.
->
-> Fixes: 648be4cd9517 ("pinctrl: sunxi: Add support for the Allwinner A523"=
-)
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> Tested-by: Per Larsson <per@palvencia.se>
-> Tested-by: Juan Manuel Lopez Carrillo <juanmanuellopezcarrillo@gmail.com>
-> Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
-> Tested-by: Chen-Yu Tsai <wens@kernel.org> # Fixes eMMC on Orange Pi 4A
+> more than a year(!) after the RFC, now the first "proper" version of the
+> pinctrl and GPIO IP support for the new Allwinner A733 SoC.
 
-Patch applied for fixes!
+Perseverance and grit!
+
+Patches applied for 7.4.
+
+Look into Sashikos comments and address with follow-up
+patches if applicable, I'm not a friend of the perpetual back-and-forth
+Sashiko causes and prefer to just apply and fix in-tree.
 
 Yours,
 Linus Walleij
