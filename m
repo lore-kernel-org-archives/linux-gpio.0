@@ -1,104 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D404A92F1
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 09:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7377D4A2062
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 09:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789551788; cv=none; b=iTF/gASRfe63yRe9Cxihl2AbzuELPgMUJIS/vTgRAqd51XabqDX6fWcjiH1qDbzGACI+pISl+pzG/eAuGTMjAtI7YhQn0ZfkrUiiiW17ZNI0lLTKAnV6zaDSf1IjfvFiE+uW6+rkHyY6icz2tSFv0Vie1Gd8IwZ87J9VDfznqtY=
+	t=1789551806; cv=none; b=i8cT7YSZoOafzipRNWEE1avOFZNrC8G5ly8qdjPyFdlxbagJgnQYj32owxoujxvhcrk4CVH3c1pPGZAOx7fcaSSSbHADTo9dyPh88a0eZsvaE5Bj0lESCC98gIxleBehn6m0w4GV1reOHVKTPZE8qmHx0u8hJUHFpBF0S7XOs/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789551788; c=relaxed/simple;
-	bh=+d2rwBd9L/2P+3bTXWEw3A/quPbHyjs1eqqNq98RdUI=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fv3WnTZxhCOm6CA4ZdQBM3sHYFarpgHX0c3k0E/SIAEnP6iD0uV2NPsakpiAKSrrzM8fizg9P1uTtgV/Uh7jmtOs8WAUPABTIUbV4Nr+oofxO0fCY6HP6ftaNtbWIY1YeSB6VveRrcb7kpX2t15irDLD9qkZ/eXCmsNjkZcBmmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NDgL1nDz; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789551806; c=relaxed/simple;
+	bh=F3XAkt71bhIAWEC1ICnSKPfvdKIX/T9WRczYZnwW3iw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YQXvcVLPVyun2otPCCyw38y9qSWTnwTzufsOSWD3/NEqhc/EDyNmrIvvuuyWwXcP9xElSpSIlpNK9aQFMapN7IjyQ2myoK9oWXiwX/UXUNMZcDF5IEIHG3Cx3ZTzqm9wfOO6puhL3Sg9HNgKAPOKuGyAvLycoJ+V+tiwv7Av1Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IXl8q9ZC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NDgL1nDz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 835611F00898
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 09:42:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXl8q9ZC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAA8C1F008BD
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 09:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789551778;
-	bh=+d2rwBd9L/2P+3bTXWEw3A/quPbHyjs1eqqNq98RdUI=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=NDgL1nDztzT3b99qDW5rxvU+khu2/ScW2MGLR2B0FMNlxuvLxPEVhfA63msQPcy07
-	 hr1xHJhU5D8glCJ3gGzPtaW3urm99W+SrNOWUbFGHCUtC4dYKxKNoYKmKdrqL2QtTG
-	 j+WYpf6s+J1XrgD3Sqv9nUc8J93UIkI6XCtOLwRBAhA0hUhIOXbU9pyJLXl+UET+f8
-	 r5XyT9jPnS+tUOHS9pQhdzfMZMr5+rLJozkgwiRBOc56ZH4CYi67w8Sf9Q3DErwVNL
-	 vV85Y7enK90oDAe3HHi+WUiKoIbKLg0IFP3A+2Gzv07wmYMRowm2Fb3uHcm8L/Kh6x
-	 I6mrvWWdj3ltQ==
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f1801fso774860e87.2
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 02:42:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwpRL/lCxadJ8Tb31jME80mKOyJpSavc35aehV7FbXryMGjIM5jS5m2wN5D4qm/a1tqGguh5yTTjVRA@vger.kernel.org
-X-Gm-Message-State: AFuF++mmW+sCVKVuNj/vYQgUSS6GL6taJOJh6FPFEK1gZUkWAI0iKwR2
-	Dof29pk6Z9EBnqRZ34IJncs7FiD14SihFGGi+iJM7Umt6hKdTXSUt42DbzQKgq8ZSu9QbRAEXkv
-	4BmEjfJnQ/UCKonDb7+USaQLm+/MFX7xpvIfeaNVZSQ==
-X-Received: by 2002:a05:6512:1595:b0:5b6:183b:d218 with SMTP id
- 2adb3069b0e04-5b8b6673321mr483127e87.63.1789551777198; Wed, 16 Sep 2026
- 02:42:57 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 16 Sep 2026 05:42:55 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 16 Sep 2026 05:42:55 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260915080501.329424-3-mehmet.fide@gmail.com>
+	s=k20260515; t=1789551790;
+	bh=F3XAkt71bhIAWEC1ICnSKPfvdKIX/T9WRczYZnwW3iw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=IXl8q9ZCD1dvSn2KHw7LYsq5TamJfBC9svJngVUoPtAjGvN3AGOWjcegBVIRcvmFF
+	 XT6NrbG9olT/96quf46Aj1p5TW/bOlRJqGEpKc2DvnnTXZ7qmrFaUvn7S/QkLAj9xA
+	 VTA9+RM2dRfHk3re3CEfd0MoKCHcUNuhj2uVDlfmDu5vlNWPRtjDIjCN7m2aK4dKa+
+	 vri7E5HQr9oevAF/INz6el1lZ/EqryyIvvWL5AuaOv2lDJ9wQjNtc9HTuu5uI9yeIU
+	 jvNRYpp4RADOHSwGl1NXhGtH8HhW4PYN63KmDV1bs399TWMPA2ZvEm7XDa38cyNSOc
+	 fNkQ+oRZi1HCA==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f1801fso775061e87.2
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 02:43:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzAes/PaNvDuphcwKESazcVzGuRuHz7VP1T81F7iC5wXuimF7JoRTRsb3ahZ0X7D58V5MqXSrAu8ZEW@vger.kernel.org
+X-Gm-Message-State: AFuF++maDKooM5X74CGsbvF1syfR152E1pfsgHYqWLSHmxC5yUjAe+eY
+	6ojdDBNN217SaekQKqo6G6MQrsi74xkzHX/MI4ELcop1aYFobVsmd8LZM8ClHL2ZTaKIF8p2/M2
+	hJqP97DxaZMn/aHMzGclOtZPG2lZvabk=
+X-Received: by 2002:a05:6512:318d:b0:5b4:b03e:b17 with SMTP id
+ 2adb3069b0e04-5b8b6611fb9mr542523e87.4.1789551789409; Wed, 16 Sep 2026
+ 02:43:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260915080501.329424-1-mehmet.fide@gmail.com> <20260915080501.329424-3-mehmet.fide@gmail.com>
-Date: Wed, 16 Sep 2026 05:42:55 -0400
-X-Gmail-Original-Message-ID: <CAMRc=Md9k5a3U7byvxcxWVszpJVcx=eCFszHmGzxVB7N48LFYg@mail.gmail.com>
-X-Gm-Features: AcwNN1VVR3zQcU79J0CrfIz7pAuC2sbh3U4dChm-X7VfMngINZ-ASjxADQI1Faw
-Message-ID: <CAMRc=Md9k5a3U7byvxcxWVszpJVcx=eCFszHmGzxVB7N48LFYg@mail.gmail.com>
-Subject: Re: [PATCH v6 2/4] pinctrl: imx: answer OUTPUT_ENABLE/INPUT_ENABLE
- queries from the pad register
-To: Mehmet Fide <mehmet.fide@gmail.com>
-Cc: Haibo Chen <haibo.chen@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>, 
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Mehmet Fide <mehmet.fide@screeningeagle.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>
+References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com> <CAMRc=McEOcWq8i3B01AR1PnfBzSQaLEaOzE6Qa+QdVXrvS_YrA@mail.gmail.com>
+In-Reply-To: <CAMRc=McEOcWq8i3B01AR1PnfBzSQaLEaOzE6Qa+QdVXrvS_YrA@mail.gmail.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Wed, 16 Sep 2026 11:42:56 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnRL_s9zPNkSj2UnHWPx+QHAXV19DA7dEmGZu0AkxxyaA@mail.gmail.com>
+X-Gm-Features: AcwNN1WkFxjMauP_yhzfkji573cflVZ6I3z5YLnNlcrQliI-kEo2Pckshh4B6Vw
+Message-ID: <CAD++jLnRL_s9zPNkSj2UnHWPx+QHAXV19DA7dEmGZu0AkxxyaA@mail.gmail.com>
+Subject: Re: [PATCH v7 00/15] Ambarella CV75 SoC minimal bring-up
+To: Bartosz Golaszewski <brgl@kernel.org>, soc@lists.linux.dev
+Cc: longzhao@ambarella.com, 
+	Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 15 Sep 2026 10:04:59 +0200, Mehmet Fide <mehmet.fide@gmail.com> said:
-> From: Mehmet Fide <mehmet.fide@screeningeagle.com>
+On Wed, Sep 16, 2026 at 11:14=E2=80=AFAM Bartosz Golaszewski <brgl@kernel.o=
+rg> wrote:
+> On Tue, 15 Sep 2026 13:15:30 +0200, Long Zhao via B4 Relay
+> <devnull+longzhao.ambarella.com@kernel.org> said:
+> > This series adds minimal Ambarella CV75 support for early bring-up with
+> > a serial console: DT bindings, RCT clocks, pinctrl, PL061 GPIO via
+> > gpio-regmap, 8250_dw UART quirks, ARCH_AMBARELLA, CV75 EVK DT, and
+> > MAINTAINERS.
+> >
+> > This is a single unified series. Please apply via the SoC
+> > tree; subsystem maintainers are Cc'd for their pieces.
+> >
 >
-> The mmio pinconf get callback ignores which parameter was requested and
-> returns the raw conf register, so a generic query through
-> pinctrl_gpio_get_config() gets register bits back instead of the packed
-> parameter it asked for.
->
-> Decode the requested parameter and answer PIN_CONFIG_OUTPUT_ENABLE and
-> PIN_CONFIG_INPUT_ENABLE on SoCs that declare where those bits live in
-> the pad register; Vybrid has OBE at bit 1 and IBE at bit 0. The answer
-> is 0 with the bit value as the argument, which is what the
-> pinctrl_gpio_get_config() users (gpio-by-pinctrl, and gpio-mmio in the
-> next patch) expect. Other parameters and the SCU based SoCs, whose
-> firmware call returns the raw pad value as well, get -ENOTSUPP; a pin
-> the device tree never configured gets -EINVAL, as the raw helper already
-> does, so a caller can tell "no answer for this pin" from "this
-> controller never answers".
->
-> The only in-tree user of the raw register was the debugfs group dump,
-> which called the callback with an uninitialized config; it now reads
-> the register through its own helper, like the single pin dump already
-> did.
->
-> The set callback is not touched: the fsl,pins binding hands it the raw
-> pad register value and that stays the only thing it accepts. Nothing
-> in-tree sends generic parameters to it on these SoCs; making it
-> understand them is a separate change.
->
-> This gives gpio-mmio a way to read back the line direction on chips
-> whose direction lives in the pin controller.
->
-> Suggested-by: Bartosz Golaszewski <brgl@kernel.org>
-> Signed-off-by: Mehmet Fide <mehmet.fide@screeningeagle.com>
-> Reviewed-by: Haibo Chen <haibo.chen@nxp.com>
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> ---
+> I would prefer to take the GPIO regmap bits through the GPIO tree and pro=
+vide
+> an immutable branch to the SoC tree as it has potential for conflicts tha=
+t
+> early into the cycle.
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Queue them up and send us the IB if you think they are ready!
+
+Long can probably send a PR based on that IB for the rest to the
+SoC tree, a bit tricksy but it works.
+
+Yours,
+Linus Walleij
