@@ -1,155 +1,161 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78BF3DAADD
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 09:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789552245; cv=none; b=Pg5BeUzqTcwzlSubYqz8BTzo3FecmKMHTc6bI1EeopwvWaBZWNEdrO/izad/R0Rptguz5A/8BttkZ/rVpUirxo9fA+plX6UXYZryVti2XbKiCHgk6AtH7UuixX0Vm6aduRAjNFmzLkHM42E9nyXRp/5WU9bZnQPWkWfTexcACII=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789552245; c=relaxed/simple;
-	bh=zVftL0e6KTn1Fup/RmgkkUqXURXldH56P13A6WLi8KQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l0Kkn2jGP+Infb34cFt6cUC2d8urDe46xbCvzkrjLaTG1KPfl08KFE4IrD52DU7uycpw4TeRkzQvoiczF8mVA19PVO/FWLo6OdSRlrAjAp9yL8AUfiUN2P7rMarXu17nsUC6gCoo+WjTnZuwQmGE+ztEbQIEqlLGCQHgdeTx6Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dzby88uf; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8FC4C14E3;
+	Wed, 16 Sep 2026 10:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.152.168
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789552908; cv=fail; b=cVcP4w2pFRpqhZEjSMRivEFpvoGWosMeAK6neHoIRWMNYI5nMhg5/7qbYXCKLi29hL/56hcKIxtNtPR/BkhZXBYggDiLJGJ7qk+5hn0zyZBPRNZDrmE3U3Pq4VdWPP4lia5f+s9omRzL8thxNm6C9usOiz3zpu/YAxRRbQlO7c8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789552908; c=relaxed/simple;
+	bh=02oy9Fqo4Buh1OL7/tx8DRHO3WLmNiczba5r110gY8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZFAQ7/kpJfXDGFvLB2xLw35efA5UiCIhTES9RJshYinFzu4PS2OlliccUtfkFhm/p1K7jn1zX4w3vWiJZxeN+DvyP6CpzHYYOT5XTBg9LgQyvdAuHLWCEPbOce75RyK/HN7nnVpVVm/92Zab02R1TaBxy8fqUYsXA6jsujGn9k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=PGnGKjS2; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=ztf+P0R4; arc=fail smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dzby88uf"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49e8185e037so3877825e9.3
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 02:50:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="PGnGKjS2";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="ztf+P0R4"
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68G4dx6h969533;
+	Wed, 16 Sep 2026 05:01:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=SVOHUAcNXzFz/nVUe8
+	5A+VXA0vVFemtiovIHXlfqowM=; b=PGnGKjS2PNCDgfcC+Iz4T8cvLQBAbtrI3P
+	NOKGtZpPalM6RbBRFcy35ljoB1/CPewiFBJZLGbOS6Wy8ZuZethNsj+ulidgGKg2
+	HyH2SvcDpo0tkm/Ulvps2PJqAaILhKBJPdK7BDkIGBNa4ZvDMkFJhBSoKychuhur
+	MYQ5iGhJfLYRYAYLrw83dvsY/UF76sc3uJL/16O+riQFgp7dw1sifgd4v8sAB412
+	MuHBq2ohJzb4tRDfBHfY7z/sAbwZXOaqaWG0XK2UIgoI9PnIAKJ972zP34bPXB90
+	fkY+S6gA5AZARgw1uWELI3JIptLmfvM+CpnKJcg5ce3UIwfAhIDQ==
+Received: from sn4pr2101cu001.outbound.protection.outlook.com (mail-southcentralusazon11022099.outbound.protection.outlook.com [40.93.195.99])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 4gn35hcus0-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 16 Sep 2026 05:01:24 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Z+wsHuKv6+nQe3/TfNU+/6IqQafYR8oggYM9UKGr4pNpTJa/4udqGv+Oq7ATxh/4jMdWtn6lrhBCzL71O5yN07k8Rea95VUBVwVYhR7SvEUN5Ueu0/23if839eUXRYQxK6NYyw5+akCJZuqC2eNoQUbIBZFkIyse8SUtbivgzUsrOrAzSq3mccBKn44Td9OH4QtFG1d4fXJ1rwf7ctqMjjmVUJNeEmpFTG7VZmBdiekeWpj2tAaHUJiUxMA3Mg+VFr41Z8X2qIKF81zzd/xLUAYePfLVDrmRi2jARaqjZjuWrUYMJfreTiTsVGUncSufsR16u2DnrdGAaSOfIkCNZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SVOHUAcNXzFz/nVUe85A+VXA0vVFemtiovIHXlfqowM=;
+ b=k5keeqAv9/YJTx51eIIgp1OKRrbp99dD4wH29imt/2cdseZhdXV6x7vDVBFwexSij+/5LVXyJ2nozLDRs2QUktGYf0onmh3r9fHVSIK/1pUP+5s+iugW4PIO2Qic4lZCT1+z3xgkXSzsmbJ36eV6ls7elYzxTspGvTQxMniRaaZSY4hAvQgAIx7s9unACGlrxgbdunQw2vc6TfYAvIl3gFiXJS3GueSPq3FWAtH6K+J+Qfka1eNi5jz51oOHrqtzdn/meWZS131wMTTKzf6gVf6v7QTSOhcp2zPYWqEOYt7PwJ/h44yRLiD4yjlLMOwLsIhtonCnlG2LGNwVDoK4dg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 84.19.233.75) smtp.rcpttodomain=cirrus.com
+ smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
+ action=oreject header.from=opensource.cirrus.com; dkim=none (message not
+ signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789552219; x=1790157019; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=79YAdtaHEv3S3nDvYc6X9C5ar06F3FncZEtUncQdJQ4=;
-        b=Dzby88ufsV19pEuHSQnO0Z3r75FgiJ44qF/jXgKTm3w+wAYVSGDUH6LyexeTQiqa/g
-         mb7EWvB3UuhKI7YAj+i2TOZr9/Z0Jn4HnQ3SO6kUkIrvAwSnRTzKzvfGb0So06LetuEf
-         Ts3VEs9CM5zHiWBu1V4JZ71jpXN6ZkETnLDwqKE7PV3aA5kY0+ABvWOim6YHWnbq5cCK
-         nHzOneSJDYvvXY/C7BkTDDo/hN/r3+9IBjrwRhsKYcoz9kdWM+uOTg6K8qjcDaH6D7EX
-         KA0rYEGGzwyipB5cM3imDGmhTpbUuWgcSiyW3ZIBr1TR7/Q7dN5mD7jr++kuJyreI5UR
-         skeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789552219; x=1790157019;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=79YAdtaHEv3S3nDvYc6X9C5ar06F3FncZEtUncQdJQ4=;
-        b=KAesLZH6+IZ5DodUWDAzc+napY/qgKs81zgaXpOpFXd4XQKs0Cd8zmvuLWbPZfZJwq
-         7KsWvQ3kQqRWRWhLYZ//UyiKKecUgdFj9/YnuZmeFqGyeqRu17jgCEi6rsxBlEVF1y6B
-         mhIuh5w9sZ2lJ9ib0Isk02x0Hq8tyLxci/vOM18Jzd8Au6Zxb9LXT2miEsoExzzLax1W
-         cwBh2i8Sq1mVtrcxX6DOCHJ028MnvuTEhEPaY8CuKV1Sz+s9rrmgss5b0kbZeZW8II2W
-         Psh9WFqk0srXjMjldISm6yvbs6nqNxj8roRBg+VpuaEKeMyRe5EogLj1p+hAp+QNlftW
-         Y/JQ==
-X-Forwarded-Encrypted: i=1; AKwUvByvUoTP5QRhD1F+aOcTEaxVu9nKppvo8YSxnMda3/j/dP+TyUlo2uNMq60cPTQCeB4N6rD0YLyfCNrU@vger.kernel.org
-X-Gm-Message-State: AFuF++kieV/QgPLhVKIE4OvJggIGajuAt1/Nt517OsxJkm+F9JiNawnQ
-	GpDHvFYGFMWJ5AchauaUWj8vlj/mMfnxF+d6JDiSXb7ZD+cASz91KbJH
-X-Gm-Gg: AYBFou0yqrb6r7cyR5UjHGxwqxv9u4MLRUKGoDDtezOcsQVmGw4IfM37yt9AAH78eDs
-	LHoQ45WI5KVpMFY32VuU2FtXkZLfVSBHjnTkjryBmehoH7el0lKhi1AiJoQOkU+2jG6cj3tFpaN
-	EbhipnSQeyAY/GiENKR4+FcqB32V3XVlXWo5UMZKCZYfiGU+sjSCb6lfnk+yCfLK+X7+dFqlwYZ
-	NrJVQ8hWgMrJ3UuTGxRJLTghYbOwGrIqvKuhzV82S9VbVMhFyJkQupTDwxtAabUSMD2k3GdTXl2
-	ulId426AtwXG/gwqVw0WmbtsG8R7w0w3hnshrU3GSJwM6f1hCEr42LT5E0ZYVnfHVzvwObaRf85
-	tQsQYh/OXDSc3eyiCdyGRxHzEiV7v+5tIkSujsvV+qyXU+oB/Ep/1C0UlHiiCcY3dHceq3O14GR
-	yqBXKsEOAN0wFsn0RZiD2GVOxYi1gKa+9wX3r+NWM9Aghuoo26wEwfjrYJKLkei3aUdkX/P6CAa
-	dygldy0k3YNjCQyJ6Gv48ZeGM7TCQacJwribyBHIDNRb/8=
-X-Received: by 2002:a05:600c:4ec6:b0:49c:fea3:8633 with SMTP id 5b1f17b1804b1-49eb732aec0mr19444455e9.24.1789552219000;
-        Wed, 16 Sep 2026 02:50:19 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49e83b02245sm84055225e9.10.2026.09.16.02.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 02:50:18 -0700 (PDT)
-Date: Wed, 16 Sep 2026 10:50:17 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Ingo
- Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Oleg Nesterov <oleg@redhat.com>,
- linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- linux-hexagon@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org,
- linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-um@lists.infradead.org, Jens Axboe
- <axboe@kernel.dk>, io-uring@vger.kernel.org, netdev@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-gpio@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- bpf@vger.kernel.org, David Airlie <airlied@redhat.com>,
- virtualization@lists.linux.dev, kvm@vger.kernel.org,
- kexec@lists.infradead.org, linux-hyperv@vger.kernel.org
-Subject: Re: [PATCH RFC POC 00/50] file: handle files on syscall exit
-Message-ID: <20260916105017.13ea5e36@pumpkin>
-In-Reply-To: <CAHk-=wi3Kkqgfg6zUTHpQoZNL2VOB4vYqpi6RX0WNO++29UtyQ@mail.gmail.com>
-References: <20260915-work-fd-reserve-unify-folded-v1-0-4d5217d6b246@kernel.org>
-	<CAG48ez1RsdT=O=-0city3vjgWhDvY424KtTmrCJntWy5ds3HBQ@mail.gmail.com>
-	<CAHk-=wi3Kkqgfg6zUTHpQoZNL2VOB4vYqpi6RX0WNO++29UtyQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SVOHUAcNXzFz/nVUe85A+VXA0vVFemtiovIHXlfqowM=;
+ b=ztf+P0R4+leThrDVQY8Muoq3ZL4+ZF5rKH9cVi+VAVni4o3A0pySTWZZfs/mOpPyQ2FnY9eJG1eMwmeUIWiMCIN5RpPaAsFZMpi1Rs+RxPzAouKL/uDTv0fjBC9bWnBqYHe2AeFMDjjAzj7qvEAf05pyURG2+6/VwDOgU/Kv3tY=
+Received: from DS7PR03CA0315.namprd03.prod.outlook.com (2603:10b6:8:2b::10) by
+ MW4PR19MB5632.namprd19.prod.outlook.com (2603:10b6:303:169::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.11; Wed, 16 Sep
+ 2026 10:01:17 +0000
+Received: from CH3PEPF00000014.namprd21.prod.outlook.com
+ (2603:10b6:8:2b:cafe::88) by DS7PR03CA0315.outlook.office365.com
+ (2603:10b6:8:2b::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.428.9 via Frontend Transport; Wed, 16
+ Sep 2026 10:01:16 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=softfail (sender
+ IP is 84.19.233.75) smtp.mailfrom=opensource.cirrus.com; dkim=none (message
+ not signed) header.d=none;dmarc=fail action=oreject
+ header.from=opensource.cirrus.com;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ opensource.cirrus.com discourages use of 84.19.233.75 as permitted sender)
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ CH3PEPF00000014.mail.protection.outlook.com (10.167.244.119) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.0
+ via Frontend Transport; Wed, 16 Sep 2026 10:01:15 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id D6428406543;
+	Wed, 16 Sep 2026 10:01:14 +0000 (UTC)
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id C5A8C820247;
+	Wed, 16 Sep 2026 10:01:14 +0000 (UTC)
+Date: Wed, 16 Sep 2026 11:01:13 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: brgl@kernel.org, ckeepax@opensource.wolfsonmicro.com, linusw@kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com, stable@vger.kernel.org
+Subject: Re: [PATCH] gpio: arizona: Fix runtime PM leak in
+ arizona_gpio_direction_out()
+Message-ID: <aqpo6Uyw8ZbGsx0g@opensource.cirrus.com>
+References: <20260916094701.2007509-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260916094701.2007509-1-vulab@iscas.ac.cn>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF00000014:EE_|MW4PR19MB5632:EE_
+X-MS-Office365-Filtering-Correlation-Id: c51f8517-a2ca-455b-63e2-08df13d97298
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|23010399003|61400799027|36860700016|16102099003|22082099003|18002099003|3023799007|56012099006|10067099003|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	Hb6JIKTR7WUiex9uBUW5tJplCxUJwegY76mRE4hKT5/CrVBaH0a+FtpGh84DhclWCvLsBXElcA10hhPIUjWtf2GI2PV91kcgaxrQcO6ZlwH0mkkpIh8iAJAPuUgahw36g3g7zWw7ph5EokSSJEYO/VO3dCLiBdx4f3zpDCXNZ4KDRoUcUe2vYj36l2Iwxd3PREGFD+JZz3ZrZ0zFmwnggoV4a1imBGhKsngQ7iLIJgSnXcf+m0sp0EwQshzgTO/qAmYWdkdi7sRTrJxY93QijzhzcgfGrwIsIOOH5QBLNgZXHTLezp//ol+RUEM0FW8dZ2EiAm83KCFSUPknTJsU4fcSMx7XgJTJhxcv4NeimIjYvNIuCGG84YsDwrZNRj4J3wEQ+dHYV21bMsZvamrpHy92EoQObarXsiMLSBfHSkLc9J87DIHBHtXSbvUYO63fJAOJzCx0reO7Y35Wz5+z303pjd4F1zRg+RuyzpdHTFTXETXt+BHIN+BlybMmf2Cplt0DE0hqN8kSFwEckpJRq/QpY0Z8R5f9UEP1He33mHXmng9AXUbMvwXphzDt8fFluUsppImHmnBHn1zHoEGiFI6l+A53CgbzPnhYcP/EuK8+HYKUAtCIvpOl7C7wK+gS9RojHyYXxM6QMysN+SHgUnOK4MrY7hH8xHvxHYoaNXTpGkfAwyaRvTlbJL0KlwrUWjN2cDknh+yf5EdeOJOtIw==
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(23010399003)(61400799027)(36860700016)(16102099003)(22082099003)(18002099003)(3023799007)(56012099006)(10067099003)(11063799006);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	5Ub02w9i+K5pKBYO0i2tbglpMwNWE+xoonkDncQ0dlWGcm9oaQrmlHfpewV9OPV3JqI/TAph1pPqYIG72zC4O92IymkKZ2xymiSNWY0T1Cn5zxoPQCKv2XXiFULxwicCgFOCBPFPLQEudUabt8jGhIQD2n0jWYDPm3YbYrIFT9WSvgutbjVk/FGWRKG5UpJ6Xim0DsuqDgU8U0G/ozxAVGEvQAEFzLuNGQVef5YyYy2WGAik5G/G2UyElGATEPXblk+m+uDGbswW7LYvIvB+i7gbM4580+EtGQpQeeXToekRgKSxyZUjQhws5M2vW6m9Y1VRQwQ1uWMPYMnyaFn1cj8S43MYDfXc3GBHK2HT5ZnXQZCiVcbmjYAGkX9PvFwd/mkTPWeRnszvAD0JTzCtmoIPGsFT4JgYwVMygdL+wPAR47HpxZe5I0mHOVkxN5Us
+X-Exchange-RoutingPolicyChecked:
+	cQ5SrdIHHz5zLlBDS9CKiexYPV7uzf3XfgQhwv8BT2Z6x4kJZ6iNmHmE0IPFi15/usZKtwzCQUcIQi2bDog96OtBQxaNVkp7SoGCF/y6GaLAozoZp8SCTyPO2Ls/omVDajOtCHTb/YnC3DUaFRiclIwvU5ssOeZIwD9H67eZP5ra60K/+uzl4ORYBSt+8zFjGHyKgxXIu9g2XZ/1hsP+Do15e3Dtdf2GgP59pobWUJ9B9P/TOnLmPpfoei7tV/1yD0XcR44Dtn553HYqtyZOOMiz9GjLtxAzRaYlI1U/NDyPH6fX4e1smBHN43R+Kh5QrysGwlDgQmMc8UvpH83XzQ==
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 10:01:15.8929
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c51f8517-a2ca-455b-63e2-08df13d97298
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-CH3PEPF00000014.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR19MB5632
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE2MDEzMCBTYWx0ZWRfXwCpRQuqb3aED
+ 593q3zBrxkOO0C2gnSCCw5pXbQ0YUL3MD8q5leBsS4ftu9rzkS53KuEU4hfLmGAxLt2avubZOXY
+ cvpIzCwtkyZIwIHRmuREKxgeOs8DXzI=
+X-Proofpoint-GUID: _gCUDJFPIU5wTQq5QcF5akEwzpR-tvxI
+X-Proofpoint-ORIG-GUID: _gCUDJFPIU5wTQq5QcF5akEwzpR-tvxI
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE2MDEzMCBTYWx0ZWRfX7OegUrKbpnk8
+ 1cFHU3hGGt3ydZMVo0Bdtv4dLr8bg1krBl1aBYoGhvm1sB0/U2hY7U6LRgZH3M0/8dsfsVrTfGW
+ 2s2giuj2rBarVIPGfBmfBqZ7/eVMLSXyo5UsqMS03xww2E5KXvYFofMVFXLV4nlX4hbaooHFYv0
+ sa51au4qieLJ6vpgUFeFDz4hP2lQra7K2M9+w7dcpzWWL8JEx9t8VvKsXU/r1SQeOfRMcepind0
+ q4IOfvrAhMfAiGYxRGYOt1OzRqDNmeYGQk5hrWw+S9DrW7oFsHnVLKDgvy2HDdD3YpRthKZO4My
+ w9o3jrctKqk3Tn8TkP6/CiiOk1YB9z1koLQPU2zFWSdzchbA2iontaL45i+/OHUo9MIr3O5FqB2
+ AhTn6nfHUW+U2b9o7XXgYoeSRh0ZpFvB3ID1B6BApHNDPuZwjmT3ByG7TZ7WsiODqZtOxjCjHRo
+ M4gTnmfZ/WKmeuWZQIw==
+X-Authority-Analysis: v=2.4 cv=It6L47/g c=1 sm=1 tr=0 ts=6aaa68f4 cx=c_pps
+ a=QfAu5cRUQmedtNjS8psswA==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=kj9zAlcOel0A:10 a=VdqzKS8jKosA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=iX4cTi3TZMoOKdANLEfx:22 a=KfkQE9S9VqCBgivYGm0O:22
+ a=VwQbUJbxAAAA:8 a=w1d2syhTAAAA:8 a=zdfkEsTY1p9MyvE_A2wA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Reason: safe
 
-On Tue, 15 Sep 2026 12:08:57 -0700
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Wed, Sep 16, 2026 at 09:47:01AM +0000, Wentao Liang wrote:
+> Switching a persistent GPIO line from input to output acquires a
+> runtime PM reference on the parent device, but if the subsequent
+> regmap_update_bits() fails the reference is never dropped and no later
+> direction_in() can balance it since the direction was never changed.
+> Drop the reference on the update failure path.
+> 
+> Fixes: 27a49ed17e22 ("gpio: arizona: Add support for GPIOs that need to be maintained")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
 
-> On Tue, 15 Sept 2026 at 10:52, Jann Horn <jannh@google.com> wrote:
-> >
-> > Is this mainly about stuff like "we installed a file descriptor and
-> > then the following put_user() failed"? Because if so, I think a nicer
-> > fix would be to have a policy of "if userspace provides unwritable
-> > memory to a syscall, just keep going and pretend the access worked",
-> > and maybe have a sysctl that kills the process when this happens to
-> > emphasize that userspace should not be doing this.  
-> 
-> We've done that before, where we just ignore put_user() errors and the
-> user gets whatever the user gets.
-> 
-> It is maybe not optimal, but it's fine. You can find quite a lot of
-> unchecked put_user() calls with a pattern like
-> 
->         git grep '^[[:space:]]*put_user(.*);'
-> 
-> and some of them are in core code - see the two in kernel/fork.c, for example.
-> 
-> One of them says "if userspace has not set up a proper pointer then
-> tough luck". The other one doesn't even bother with a comment.
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-I think the code should try to return EFAULT (IIRC that is too hard
-in one of the exec cases).
-Otherwise very unexpected things might happen if the memory is just
-readonly.
-If you ignore the error and the pointer is invalid the application will
-get a SIGSEGV and (usually) die.
-But winding back kernel data because a user copy failed is likely to
-be problematic/difficult and at best have error path code that isn't
-really tested.
-
-As well as writing fd numbers to userspace, some sockopt code tries to
-wind back if the write to optlen fails (which has been read earlier).
-
-I've forgotten which Unix converted EFAULT to SIGSEGV in the system
-call exit code - I'm sure one of the ones I've used did.
-
-David
-
-> 
-> The scheduler has two cases too, although one of them is admittedly
-> for another error case.
-> 
-> So yes, saying "if you pass bogus arguments, you get what you get" is
-> a valid model. It's perhaps not the *preferred* model, but it's not
-> wrong.
-> 
-> It *would* be wrong to take code that already has error handling and
-> remove the error handling, though.
-> 
->                   Linus
-> 
-
+Thanks,
+Charles
