@@ -1,97 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2DE4B829A
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA5C4AB3A1;
+	Wed, 16 Sep 2026 17:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789579888; cv=none; b=qcv2lzn1WdwWGHq5L9soCfAJyjqIcsTbwEg5jwVpnz1ArbAK3WbLWlMzAei/kDf8CqcWGtMPVrKP5oQOjCXmJBuLA7tBMKJhZNS41JdUmcfFTKEHq8In1Np1CEldWJkgaGusA5iuEgnBGWn9pM7hAAM3b9A4GviGn2ZcvkwLP3I=
+	t=1789580655; cv=none; b=AZPgeHN0tOQkX93B2qJ6X1Wwpdx1Q74dFXX6rIU85lgp+zay5rvymO7WU2YJL7jinflkQ2cu6MtuwhcmnqogyPc6Xs42g+bX45YdegtW/SfHJBNpC+G46sW/m8/IlzTH6mFvfSy8XOd18oLcSqq1taEH+nnqOLEtJNLFUtbM4qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789579888; c=relaxed/simple;
-	bh=4h7CNgUTqPbXfiRuvyW7wmuQ+iQWLkvSQv8cBspOfWk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gw53iQesdoSn/jey+QyCCn2gHfZDzlytLRsvYpOA+6uBsoml6bi6U7FBkWcvgPIza0i1NsQ04UNUZT63gGWqGLr8R28DvoA6tABCY1cQWfRwwmm+effJtaoEhNtTaT+6MCvZenrKz9N9CrZ1Ua8Eje2DHNCiV0BAnnl71LIrGj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAF9f1rQ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789580655; c=relaxed/simple;
+	bh=2OOP0JMYk+pJMTU5YtIeYOi3WP98ynR3TaVSUbH3E5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XYFUOpsPdMXmstDR219a6NNRNxo68g1j7QFYsToIb1QlGV4b+LdqMNiyUqXdpePy1C3hBTzAqwLLob2TwyD5enOvv5V1H2+c6yhaz2yhJPbT4R7kNy4j6ybpRGYDJXmFp61nNFlp/IQyeVg+BaFyKDXlxEfpDyEtNBDImhcDlII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZFytWn1U; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAF9f1rQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 154A41F0089B
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:31:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789579881;
-	bh=4h7CNgUTqPbXfiRuvyW7wmuQ+iQWLkvSQv8cBspOfWk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=UAF9f1rQ3RvSfZjIEqrlyW9dpvtTHzRlQsqmgoLfqbBKfdJE7bx/9Xbh6u24HkdJ6
-	 MO8I4JRR3WNK8FS95CzQN6qdgKxWqm4/5n9yn7RhbtGg9Ynq0W6S6ZP+pCswZQdkoy
-	 CytIJJ4vLyXKl+QhsSETsZaq3SKk5hFj4HlEy3fyVj16tC3Qv8hXGU6ugvw5Zc1zXV
-	 JU2mqnPMMc8h7dFG+cj+uqqpBCIo0RiVuoTjPGi6knnpN0nt2Ouh5htwMCbducer7F
-	 x/DYblxIKrXDArxzR69SXuBV+0IO5fF8z5yvpuwi42+3gUP4wm7Oki7MUKJz/MVKRP
-	 Awxp3goEzwOHQ==
-Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b74d0133e0so1162077e87.2
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 10:31:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwVbCKOIcjLGy1LTI5DKrT1C/vQlUUKAvx7js9CsUd6BoY5WYOapf4YfJhoWDkF6QDsQ5hUBX476XWZ@vger.kernel.org
-X-Gm-Message-State: AFuF++kBYq9EtwUX3YemOf8wqghXYR+AFjeOqzTMhdOBBbQHJOMNLf1g
-	sdwWYw7i7ei472orbchbB3HHeqVdmS7nUZDu0nqd6GdBT9Hhzdase4OuCwIT8eoX9e3bpZ3KUPo
-	Xv8c21S7znjcRH4jDPTYjSDW3hQtZQhM=
-X-Received: by 2002:a05:6512:39c7:b0:5b5:e86f:3550 with SMTP id
- 2adb3069b0e04-5b8b65ffbecmr902064e87.9.1789579879753; Wed, 16 Sep 2026
- 10:31:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZFytWn1U"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 8562B4E40762;
+	Wed, 16 Sep 2026 17:43:58 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 46F2C60337;
+	Wed, 16 Sep 2026 17:43:58 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 12BE811C7B00D;
+	Wed, 16 Sep 2026 19:43:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1789580637; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=aFDP0OtgM04h6KpMbOI+Vccp+f6xtWNikAv+ehWoG/4=;
+	b=ZFytWn1UGFS/jQkA89BYHexak702dnf2Egu/30bERPXEWYD07TVUJjPrnmnfMhDB+INGts
+	SK+VPXHqXplI8/zwluditU33qOejUfRiub6ylKwwW4chdH2yYKHbtzErrLG2YBuFHZJc+Z
+	C2lyD22nIPilgg5036KKI3Zjhc7tvCclFKjK8tm4RbWceFcxeYnqJdV+hDxKPtBd3aJHSx
+	p3i7LXLZmOEiB0AakhWAik/semEGcc74QB7Swv/CtfL9o5I/NwT2zCqrVT1cXSERQaxzuw
+	x5+BF2EjWTfQACUNF+BbjSDWO/xNWmVAbzNvZEohhK9qy8m6q0uPmUg1zY32SQ==
+Date: Wed, 16 Sep 2026 19:43:51 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
+ "Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li
+ <Frank.li@oss.nxp.com>, Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Stephen Boyd
+ <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, Linus Walleij
+ <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Leonardo Costa <leonardo.costa@toradex.com>, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Ernest Van Hoecke
+ <ernest.vanhoecke@toradex.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] of: property: fw_devlink: Follow GPIO nexus maps
+Message-ID: <20260916194351.1fa06403@bootlin.com>
+In-Reply-To: <20260910-fw-devlink-nexus-ready-v2-1-17ac82dbe226@toradex.com>
+References: <20260910-fw-devlink-nexus-ready-v2-0-17ac82dbe226@toradex.com>
+	<20260910-fw-devlink-nexus-ready-v2-1-17ac82dbe226@toradex.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1789538455.git.mazziesaccount@gmail.com> <e3e6ac712519326cc25fcdd0a0c8e3cc42ef55ab.1789538455.git.mazziesaccount@gmail.com>
-In-Reply-To: <e3e6ac712519326cc25fcdd0a0c8e3cc42ef55ab.1789538455.git.mazziesaccount@gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 19:31:06 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=vZr+naVBaixNkDbgx4_EpL8MosSyXYb9jg2hgKu+QNg@mail.gmail.com>
-X-Gm-Features: AcwNN1UIPEmUSS-eZ1VYSwu7-QImd7lzaWBhLtT17uVLR3LAyc5U_ziRVEemM5c
-Message-ID: <CAD++jL=vZr+naVBaixNkDbgx4_EpL8MosSyXYb9jg2hgKu+QNg@mail.gmail.com>
-Subject: Re: [PATCH v4 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
-	Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, Sverdlin@mva-rohm.smtp.subspace.kernel.org, 
-	Alexander <alexander.sverdlin@siemens.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Sep 16, 2026 at 8:12=E2=80=AFAM Matti Vaittinen
-<matti.vaittinen@linux.dev> wrote:
+Hi Ernest,
 
-> From: Matti Vaittinen <mazziesaccount@gmail.com>
->
-> The ROHM BD73800 PMIC has 4 pins (named GPIO1, CLKOUT, FAULT_B and
-> EXTEN_OUT) which might have been set to operate as a GPI or GPO when OTP
-> (One Time Programmable memory) is written at device manufacturing.
-> Support the GPI/GPO use-case via GPIO framework.
->
-> The default OTP for these pins is to not use any of them as GPI or GPO.
-> (The GPIO1 defaults as an ADC input regardless the naming). Hence the
-> driver assumes none of these pins is a GPI/GPO unless explicitly pointed
-> as GPI or GPO via device tree.
->
-> Furthermore, pin's direction can't be changed after OTP configuration is
-> done. Also the default drive type for a GPO (CMOS / Open Drain) is set
-> by the OTP configuration. The BD73800 has a set of undocumented test
-> registers which should allow changing the drive type. Access to the test
-> register area or the test registers aren't documented and so this driver
-> does not support configuring the drive type even though it might be
-> doable.
->
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+On Thu, 10 Sep 2026 16:16:42 +0200
+Ernest Van Hoecke <ernestvanhoecke@gmail.com> wrote:
 
-Looks really nice now!
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> 
+> GPIO consumers use of_parse_phandle_with_args_map() to resolve
+> specifiers through gpio-map properties. fw_devlink instead parses GPIO
+> properties as direct phandle references, so it records the nexus node as
+> the supplier rather than the mapped GPIO provider.
+> 
+> A nexus is a translation node, not the GPIO provider, and need not be
+> populated as a device. The resulting fwnode link can therefore remain
+> unresolved and indefinitely defer the consumer while
+> device_links_check_suppliers() waits for the nexus.
+> 
+> Use the map-aware parser for all supported GPIO property spellings. This
+> makes fw_devlink resolve the same provider as the GPIO consumer API.
+> Direct GPIO references continue to work because the map-aware parser
+> returns the original provider when no gpio-map property is present.
+> 
+> Fixes: 7f00be96f125 ("of: property: Add device link support for interrupt-parent, dmas and -gpio(s)")
+> Reported-by: Leonardo Costa <leonardo.costa@toradex.com>
+> Link: https://lore.kernel.org/all/juuc4af7ndbajcl7gzf4tg5qz2q2j5tt3rvql4jbauradujrre@gc5nbdhhixaf/
+> Tested-by: Leonardo Costa <leonardo.costa@toradex.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> ---
+>  drivers/of/property.c | 38 ++++++++++++++++++++++++++++----------
+>  1 file changed, 28 insertions(+), 10 deletions(-)
+> 
 
-Yours,
-Linus Walleij
+Reviewed-by: Herve Codina <herve.codina@bootlin.com>
+
+Best regards,
+Hervé
