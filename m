@@ -1,103 +1,156 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from sender5-op-o11.zoho.com (sender5-op-o11.zoho.com [165.173.182.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822D13D75C7;
-	Wed, 16 Sep 2026 10:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789555897; cv=none; b=UmysfNHFZzhdU2o4fESCmlne3D2fUwjG4XqRWuCC3poQzKdaVJ844siFzIAm6jpmmCRkYaaUhFByT7RdF3oLsLci4Ch/vQqK/O78cawYzWYBFZildnFCh/knPwKO+Z65X61FvxoTcAaoJIDoX4p8IhxT37bic65JTBfCd560gy4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789555897; c=relaxed/simple;
-	bh=3dnspZBBhdBbFMeM0WCDXZI0ml0DomVOCTSEv9AUE24=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA374CDA25;
+	Wed, 16 Sep 2026 10:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=165.173.182.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789556159; cv=pass; b=lFtIN+40MOFXM8Kvgweynl4B8KsN2nsj3kc2d0O48c04oZYQeeB03GJ3Lb+XdA4fCmmeGDD+0ZtmN7H7cH2GktOH4kMbdUqGgQUZZeN+eUnKAVoAWrPNOUkQC7Vj17mhoryCRPGL7NQar7163eTb9EuvDQpeqwR3/U9U63H8LM8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789556159; c=relaxed/simple;
+	bh=h7hwrBNm9KgLCgtXSIfqFteBSYkIeeEyEYqo+xhafss=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MERw4ZdlVtJ4j1vuYsKxNQKPQuWxy4hR6s8tIIxe+6qnLudwus2MA6JOa+pP1le+H7Awrg53g5zRCG6HC5F3ZN6djfVmacADDDvWE0bal12IDAt95U0T5crsepf5GvXO1sKOq5eqMNP/u1Vgucs/qkxQQ0Vg/WTVjIfIGdt7rGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cm/FmKsO; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=DWwtoM1qs2nga6CR5dw7qSkfFmbFxccOEk1AFzzWJ1SCYUCMyxBgNHnLRmHcjeXoaXLuwKdzK3M8HxPEAlyYKjlgXT14JQclqdOpOoq06iw7FG3PrSnBmJwKxz+icYKUEc/7VVmmzoK7yWmgRA1zzLpCAEu0MqeWk3zJQQ5Q9w0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=kaM1Hf24; arc=pass smtp.client-ip=165.173.182.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cm/FmKsO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789555893; x=1821091893;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3dnspZBBhdBbFMeM0WCDXZI0ml0DomVOCTSEv9AUE24=;
-  b=cm/FmKsO4r56xmyw3V8634rjSzKxu5BEPdFClWZy+PZemvHd1cC8z1wS
-   fr2MW29eNy09nFkS4t/iis/2a6TsoDqwsmJBwOx5LZjJ7Gookj6frZSNK
-   ahZjKBQt/mXDv2Kg3L1EQHhUY1+in5qDY8tNivNcVU0fAiGykmho4WC9Z
-   Ck3+1rpsg1cjwxPMF+wSb6T7yEA9OIT9s1TQ9D84C9Rz3niv7m/MSz6zS
-   X1QJVxZ/uYDJfpoM45YyMgFGefawzJ5dvoO7Cajyq2KEBdSFILYPNouNf
-   m/jf/YCln9v4qZrORUsIM6WDikavocyZPQbv6/UoXCiEWVYNsRrHEaHuv
-   A==;
-X-CSE-ConnectionGUID: JNq96Cb6Tf69CoAG7FiUMw==
-X-CSE-MsgGUID: p4+S35ejTQ+60TVTOzHZxg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="90063471"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="90063471"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 03:51:27 -0700
-X-CSE-ConnectionGUID: f53uaTkgRHSVd4aHVEbG+w==
-X-CSE-MsgGUID: siQuExozT/yqdlSyeZN/dw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="296795155"
-Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.145])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 03:51:21 -0700
-Date: Wed, 16 Sep 2026 13:51:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: longzhao@ambarella.com
-Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>,
-	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 11/15] gpio: pl061: add Ambarella register-layout
- variant
-Message-ID: <aqp0pxBOc-amrmCz@ashevche-desk.local>
-References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
- <20260915-cv75-v5-v7-11-3297d3fbc9c0@ambarella.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="kaM1Hf24"
+ARC-Seal: i=1; a=rsa-sha256; t=1789556121; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jEaBHBWW5yD1J0TV/UbG5j9Ewwl04zZ0anGKtYuxZaxWTDAnAaAn9hIMaKxRayNED76FPKo9p4NTfRBSMdROVlzvQ8TJazYtmd9JoZffPyuH8Ys6Ryl7awiwFy0rutLa6WlEAaob6pyrymdltl3Sf1UC+CoeOu0EpWOGZwCu7OA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1789556121; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Uva0NgB3KxuwVZLkt485f87mZRbvUkG56Nz1XWwQ3aQ=; 
+	b=ZBAYs5YLuR0GEBF34x5oeX6OxtXp/UjG18mSMlftfgaxj3TTDJ9YyL/Jpba/oammHpNpGGF5XPhCfv8YoZdGWcKbyoSBCrWVAfVAuuN15TjyZdwuNAn16r1DMYQuKU5lFtLBxZHf4xjfiatE58u9aqr0pGegHFXo9ycFJPy04bc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1789556121;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=Uva0NgB3KxuwVZLkt485f87mZRbvUkG56Nz1XWwQ3aQ=;
+	b=kaM1Hf24gWrC/DYDPNrI1n9Mt7jEguW0zimgpIshelsPRysqaJLfZKM+rwO/tiPl
+	Q06kEQNpxhH8w/ZzLv5vXZ31v0cgwiyrNMTY6XH8pWKqVCuU/fROC9nVNp7ellxtBM0
+	UCW+fqrJkMfkzireW/BhnOYPIWmXGVWmgklpDe34=
+Received: by mx.zohomail.com with SMTPS id 1789556120046516.7994642098594;
+	Wed, 16 Sep 2026 03:55:20 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id EBB86180918; Wed, 16 Sep 2026 12:55:15 +0200 (CEST)
+Date: Wed, 16 Sep 2026 12:55:15 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: andriy.shevchenko@linux.intel.com, brgl@kernel.org, heiko@sntech.de, 
+	linusw@kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, ye.zhang@rock-chips.com, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] gpio: rockchip: Fix bank clock leak in
+ rockchip_get_bank_data()
+Message-ID: <aqpxJaYqJ5NHG1No@venus>
+References: <20260916102258.2018689-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pceyosqab754y6el"
 Content-Disposition: inline
-In-Reply-To: <20260915-cv75-v5-v7-11-3297d3fbc9c0@ambarella.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
-
-On Tue, Sep 15, 2026 at 07:15:41PM +0800, Long Zhao via B4 Relay wrote:
-
-> Add a 32-bit, 32-line layout with DAT/DIR/IS/IBE/IEV/IE/MIS/IC plus
-> MASK and ENABLE. Probe unmasks the bank and enables the controller.
-> IRQ type changes also clear the pending bit. This derivative does not
-> need write-after-direction or system suspend save/restore.
-> 
-> Match the part with designer AMBA_VENDOR_AMBARELLA (JEP106 identity
-> 0x68, bit 7 set) and part number 0x061.
-
-Yep, this one looks nice now!
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
--- 
-With Best Regards,
-Andy Shevchenko
+In-Reply-To: <20260916102258.2018689-1-vulab@iscas.ac.cn>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-0.2.13.1.5.4/289.544.40
+X-ZohoMailClient: External
 
 
+--pceyosqab754y6el
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] gpio: rockchip: Fix bank clock leak in
+ rockchip_get_bank_data()
+MIME-Version: 1.0
+
+Hi,
+
+On Wed, Sep 16, 2026 at 10:22:58AM +0000, Wentao Liang wrote:
+> rockchip_get_bank_data() obtains the bank clock with of_clk_get() and
+> enables it before reading the GPIO version ID.  The reference returned
+> by of_clk_get() is never dropped on the error paths that follow:
+>=20
+> When the debounce clock is missing, the bank clock is disabled with
+> clk_disable_unprepare() but the reference is never released with
+> clk_put().  When the version ID is unsupported, the function returns
+> -ENODEV leaving the bank clock prepared, enabled and referenced.
+>=20
+> Drop the reference with clk_put() on both error paths and disable and
+> unprepare the bank clock on the unsupported version path so that probe
+> failures no longer leak the clock.
+>=20
+> Fixes: 41209307cad7 ("gpio: rockchip: change the GPIO version judgment lo=
+gic")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+
+This got fixed in 3e46c18d5d87 ("gpio: rockchip: convert bank->clk
+to devm_clk_get_enabled()") and 950007767823 ("gpio: rockchip:
+teardown bugs and resource leaks") already. Please make sure to use
+latest kernel trees.
+
+Greetings,
+
+-- Sebastian
+
+>  drivers/gpio/gpio-rockchip.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+> index 44d7ebd12724..69a7cd8c9a1a 100644
+> --- a/drivers/gpio/gpio-rockchip.c
+> +++ b/drivers/gpio/gpio-rockchip.c
+> @@ -673,6 +673,7 @@ static int rockchip_get_bank_data(struct rockchip_pin=
+_bank *bank)
+>  		if (IS_ERR(bank->db_clk)) {
+>  			dev_err(bank->dev, "cannot find debounce clk\n");
+>  			clk_disable_unprepare(bank->clk);
+> +			clk_put(bank->clk);
+>  			return -EINVAL;
+>  		}
+>  		break;
+> @@ -682,6 +683,8 @@ static int rockchip_get_bank_data(struct rockchip_pin=
+_bank *bank)
+>  		break;
+>  	default:
+>  		dev_err(bank->dev, "unsupported version ID: 0x%08x\n", id);
+> +		clk_disable_unprepare(bank->clk);
+> +		clk_put(bank->clk);
+>  		return -ENODEV;
+>  	}
+> =20
+> --=20
+> 2.34.1
+>=20
+
+--pceyosqab754y6el
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmqqdZAACgkQ2O7X88g7
++powAQ//a5Z8xeBh85w663VZhDaGQvR2X2ve7juhsvd1Tnd6nC8HkT0qj226YZIg
+RyT32AJg6xMJwpXYFHljIdJURzWF71WB/qIEn+JPwEeYM2pBrqcFK9ULt7fgeJ1N
+Jas1rkSyeFmHajw+9Hq3uWyLAcPLV7qJKZJcuuTFu4EtxDG9gmZTr1WxXk9x/wRe
+bGEAGtgmCqeXUiizIc1OklUVQ+mG3RxxckCd/KrmFQH1MPfTtAElPWI+kCaB018C
+4myy1GtEisUSYe4Oy9j8FR+d1olFCFVz2gtSWE7I/7U6E5zOAH0oJcY3wrdZ2UnQ
+kOtGhlU2lnyUtAvbhCpSx8P3Kv/9/sfBKKNW2g616VsV5ISco2tQMByEc+2f7yF8
+5iDs3ItxwmjTWuV4FTUPhOkjfm55ObQbK8TinY1GseG2ZZchJKuSnzMbkOKsxi2h
+pt62dmxrSpNR8DVL4o9kibM+ro/rjPTgCbWmTjq5oA2bL5/S28rATmewYcxS53Op
+9k1QWa5p+3++gRENV0RyswrGMB0KLbiGjR8lWbI1nrZGtYC7tSDRYfoMWTATx/YM
+R+Sh5hSDEZJXs8uLA0cFCPjWP7sz0FX0mA5VXY2FUhO1zxSWqAynsPNVrIz7MvIa
+r1Vo0ZPa5snWt7h0JRm7eYw64w4/raHcfk2PZlqu9pLwt8392kg=
+=JxUH
+-----END PGP SIGNATURE-----
+
+--pceyosqab754y6el--
