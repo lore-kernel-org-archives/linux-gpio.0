@@ -1,71 +1,108 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46784F6493
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 13:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7075374A0E
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 13:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789564912; cv=none; b=pJLYrGJhOVwSHwhVJdNcgxCBLpgBaJjsp5SK2g5jVJ5ha4qDSEDpwlo9ULTRaM323OUZu/uDvX57D3KDBzxjXCL1rbqYaOrUfgFh6/f6sOTGuzaelhOLw303bAiDXJ2jW81N2rRxCG2LTv5IrNIMjnGDrh+xIqAmoqZHufY2VWE=
+	t=1789565394; cv=none; b=eL+B9P1d910IGu/c75Gktzn5f8NRdIlVTbMhrEJgpvt5Tk5se0jm0Tuy/85CoSartZvAQTu1RUZs83fMZQEyUFCjDJ6djanRPStb4kdUcdiFI/dW1Sppe9C1cLtwKADwCSN0mTPK4hw1Fp5djUZCYeSjy5I9CNEyLKr8UIucvYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789564912; c=relaxed/simple;
-	bh=LoAF8Un9d1MzpIm7nHgSZ11oIbJfR+68cK5tUNKEllc=;
+	s=arc-20240116; t=1789565394; c=relaxed/simple;
+	bh=IORbvXx/c6Gpc8K78W23rNHJdpN4+xG3DMovp/3gbmY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AbF7DsnZP5RAxUNfM0BuAINi/pyfPkTEQzqTWjRI7FePGbNa35i85xknYlTRJWsSeGIhJ6on9iuJC4Dri3GvOkaHEa66xBS+XDcoUOVw8mDNDGuzq4VdtJPQRfrfMfsy5NzhxKiR4sK3PomCVdAnDON2qOOAIZvYkhm7sskmLXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=km321WLz; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=D6wCS6EsPyFCZfwOmbpEfjGkeLKVG+M43Ir51gT5mNNJ0GvB9cZV4R0hRZw+XslOZ5MdPs8acn6eo2bTb5AwyCpVhXAAY2fCWQM2zBHC5fAfREezhvK8PbB2Y5hAsQnawkv98Y14vtlBMtSX/F6Dyz25JFTRdXQm48M9CfXd9dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BWrnUMQ8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="km321WLz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A02571F0089A
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 13:21:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWrnUMQ8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3FD31F00898
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 13:29:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789564909;
-	bh=9ubbqQ2iB10rGBdoO3Svw7T5tJwvgFmsSmZq/yCqK/Q=;
+	s=k20260515; t=1789565392;
+	bh=z/P7t1wuWNLiDcXonxKrexE65u9JMyjIm7e9Rdjj4pg=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=km321WLzzHyls9sxQEghrtdim+/Y/mD/Cbc1rMcn9s5lw9yHfBVNNFFGKDwxsu4pP
-	 0l4YhHqLSkr6CRviA0/nRJlSpAIz65UIwt3hy6iVUnSAbCmUNgU3Xo7th4MzA6FOxP
-	 6B0yXahgMgJn7DhVzsrzv16m5NUvB+EHa4aNMaeNI2G7Y0gKBzcobi3XUnwU5G1IiO
-	 xxgktVnShsU6CnFDn1d86WQhgZSsCuKP9pA1mGmDeJ2uMbO6rkMcwXrzQdTWQGjYqh
-	 FSQbFNcDT7B1IE4f2/b/W69rtWZdFlE0w/z7c/yvm24YVZGvxjQ4aUpLibS5f8+s3b
-	 x9xoX9OOJL5fw==
-Received: by mail-lr2-f30.google.com with SMTP id 38308e7fff4ca-3a318299b38so8487501fa.0
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 06:21:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBz2CwFC97yT0vMFDoWf7SVnCwXkm+c6xiyOKPXL7w8pVe151S108CWRJKKKWeFqYhBp51Zwz6QjaLCc@vger.kernel.org
-X-Gm-Message-State: AFuF++mmlN3E8tFG7+qUoNv4yowcKZHsTfjj75D+jA8f7OJVEk61a/dh
-	HDn7Lct99Z74AKzKHLUzNGXw0rlYydIvi0QcWDLExT3kO23Z8g3+C1STsTmRe3I1+zgKazqncsu
-	hONo/aYXnvhX/otSsSLVFwm9x79ifHYY=
-X-Received: by 2002:a05:6512:3b2a:b0:5b7:6568:3039 with SMTP id
- 2adb3069b0e04-5b8b665e8cemr751267e87.60.1789564908290; Wed, 16 Sep 2026
- 06:21:48 -0700 (PDT)
+	b=BWrnUMQ88bd4s/Nz5kkkM+Eri8bZ84hiEsAP9Cf7sY+gzwua6EcpXYyDSqJ4VajPl
+	 hwbjkh+NPz24CSDzFfduQpLJ1wbfbGO55wpcZhFG+ePEfTFRx3l7wJErGQYzdKHK36
+	 zEY+An5zIC1QzLgAKlr2eSIleHn4w4YljrTkWQFcO1R+T7+k6IFdQ13fziqZ+isvsh
+	 qzTIwNOPJUSvePyAzoGzH24Fmhu4Vlyi/5FhL5LseDI2/PjTiqPX43LLv6aKbjnxo5
+	 WrsfUlQTQJNSRJ+Gnz6DXkCCfwXR/hI77Za+sSpke6sNUDX/0zCAKIM3C4TQPwhn2W
+	 Dj40z9ICYDxKA==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b76ff64d78so831167e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 06:29:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByp3Bmw9gRlwgxSYbLyXDMRTqTn9/SBZxlFmMc//whCfTol6Yg2dDZRafhcVQH1JmQyzaEmbSzqn8WT@vger.kernel.org
+X-Gm-Message-State: AFuF++nI+nh0A4oscmfmbj36GmCquESGdJWT7kvjHQrJNZJ5J9Zy3wuD
+	EG1uLgabnaksg4sYgxQ11gTNhSIXx2EMvHLKHne8x6ORdfs7zmA+AtXNT1PAJSxZ9kdwxeIXbGi
+	rlFWVdYg40JtZ5ZFK2CH73aiWjJFq26I=
+X-Received: by 2002:a05:6512:1384:b0:5b7:58c6:d808 with SMTP id
+ 2adb3069b0e04-5b8b6643968mr754988e87.35.1789565391450; Wed, 16 Sep 2026
+ 06:29:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260904123300.36778-1-hemanth.selam@gmail.com> <20260904123300.36778-2-hemanth.selam@gmail.com>
-In-Reply-To: <20260904123300.36778-2-hemanth.selam@gmail.com>
+References: <20260906-add-rust-gpio-consumer-v1-0-24d192f93760@gmail.com> <20260906-add-rust-gpio-consumer-v1-1-24d192f93760@gmail.com>
+In-Reply-To: <20260906-add-rust-gpio-consumer-v1-1-24d192f93760@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 15:21:36 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnaygOq04Nq=GVEoeQUBmODxteKzeQb7Zy910Jkf2c5Tg@mail.gmail.com>
-X-Gm-Features: AcwNN1V9RDrjA4DEzm9jSbGNXjjK-Vlq7xZKmf757u08wUHaWSwZ2dAMEx9qn0I
-Message-ID: <CAD++jLnaygOq04Nq=GVEoeQUBmODxteKzeQb7Zy910Jkf2c5Tg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: fix typos in comments
-To: Hemanth Selam <hemanth.selam@gmail.com>
-Cc: Patrice Chotard <patrice.chotard@foss.st.com>, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date: Wed, 16 Sep 2026 15:29:39 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=pZG1ddc+v3ebeTKe-ZTKOTh-L0uXshaZWqOqyuqAYxQ@mail.gmail.com>
+X-Gm-Features: AcwNN1XEpBQxV9-NVG6C5eZyZpBeebdnhpFCnie_jIo-7R_YWcKi8M1ApASGFcs
+Message-ID: <CAD++jL=pZG1ddc+v3ebeTKe-ZTKOTh-L0uXshaZWqOqyuqAYxQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] rust: gpio: add GPIO module with common definitions
+To: Kohei Ito <koheiito.dev@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Tamir Duberstein <tamird@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, 
+	=?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 4, 2026 at 2:33=E2=80=AFPM Hemanth Selam <hemanth.selam@gmail.c=
-om> wrote:
+Hi Kohei,
 
-> Fix typos in comments, reported by scripts/checkpatch.pl using the
-> misspelling list in scripts/spelling.txt.  Only touches comments, no code
-> changes.
->
-> Assisted-by: Cursor:claude-opus-5
-> Signed-off-by: Hemanth Selam <hemanth.selam@gmail.com>
+thanks for your patch!
 
-Patches applied. Assisted tags changed to LLM.
+On Sun, Sep 6, 2026 at 10:46=E2=80=AFAM Kohei Ito <koheiito.dev@gmail.com> =
+wrote:
+
+> Add the top-level GPIO module with minimal common definitions. This
+> module is the basis for future Rust GPIO extensions.
+
+Describe what you want to enable by this patch.
+
+- Enabling in-kernel Rust code to use things from the
+  GPIO subsystem? (It looks like so.)
+
+- Writing GPIO drivers in rust? (It seems like not.)
+
+> Signed-off-by: Kohei Ito <koheiito.dev@gmail.com>
+(...)
+
+> +/// Describes the logical GPIO level, i.e. taking the ACTIVE_LOW status =
+into account.
+> +#[derive(Clone, Copy, PartialEq, Eq)]
+> +pub enum LogicalLineLevel {
+
+Neat!
+
+> +/// Describes the raw GPIO level, i.e. the value of its physical line wi=
+thout regard for its
+> +/// ACTIVE_LOW status.
+> +#[derive(Clone, Copy, PartialEq, Eq)]
+> +pub enum PhysicalLineLevel {
+
+No thanks.
+
+We want to hide the actual physical line level inside the
+gpiolib (encapsulation).
+
+We should not expose the physical line level at all
+unless there is a consumer in the kernel that absolutely
+needs this, and there is none.
 
 Yours,
 Linus Walleij
