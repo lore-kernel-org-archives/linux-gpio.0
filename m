@@ -1,102 +1,105 @@
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CE84DF4D7;
-	Wed, 16 Sep 2026 10:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9416B509EEC
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 10:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789554389; cv=none; b=YSiq5Mf9VL8QLG1kDuY3WOf2RrKwnf6NvscMoJ7niIFfyemM06vWGs27DLgMJdSaaK7fyRHKcbYpsvZuDqZp29kU1NYWDEkXKjvTty/bl6fOAAV/FtUdLn50yKe6H4ytB1ChAXFwFhqcfZZ9FNlPCm6m1tfaxuP20oQfK4620yI=
+	t=1789554674; cv=none; b=DQXk/IWX4IXttCKTeTZoh0mRdYCf3ChBcPLAqJjcBnuAybFfzop3FPj2N9fraIasbbQK6n/zL4Q/CtEUn0XNv06CMekFZOR+jpCxTKrgNlGEwfzOec8m7arkJ4N/UYLClyQnMif4/74+mWqQVMV8J3vmlMmlT/+4UPZwGQnRVSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789554389; c=relaxed/simple;
-	bh=LmLa9GYYojBO6JjdUuWQyCWYT9dH4opPHgxeBmT7i9A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G9hAdqpFEPdkdUs4yrx5BJR3XO26/sQVe5C8OYpWL1t5ub0x/7B2rJCo+cbxSvqA5+Mu0hP7k/rRMGr2ZiRE2Uip83NtC3gLW4JN6+mHsWcCC3csvmAxsJLtMzCVTZydyZesrUMOdnow/7waTaNDA8CSEFI69Bmsm4ekAdIvZ/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
-	by APP-03 (Coremail) with SMTP id rQCowAD3+Te1bqpq6A3hBw--.1939S2;
-	Wed, 16 Sep 2026 18:25:58 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: brgl@kernel.org
-Cc: heiko@sntech.de,
-	jay.xu@rock-chips.com,
-	linusw@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] gpio: rockchip: Fix debounce clock leak in rockchip_get_bank_data()
-Date: Wed, 16 Sep 2026 10:25:29 +0000
-Message-Id: <20260916102529.2019277-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1789554674; c=relaxed/simple;
+	bh=KI2Il4P7f/4Gh6q3rtxLJcODMETR787SYpqX4hUjLRY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=K0J4TZ9e10v04Sadkc+R5EVshfzNq13mnnvTVj8PEb24xh8nP4WnAxp66lqS3/i0feTledsf2LKYEuTZ+I5kqcLPpOklBN5m8pDxIggiOTeN+P5CKOUyLsnGAXcm6bgjRBxhdGdO/Cy98rONth7UBYjlbQfxnoA81B9ErzsMYNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffroot.co.za; spf=none smtp.mailfrom=ffroot.co.za; dkim=pass (2048-bit key) header.d=ffroot-co-za.20251104.gappssmtp.com header.i=@ffroot-co-za.20251104.gappssmtp.com header.b=vM3EVsxU; arc=none smtp.client-ip=74.125.225.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffroot.co.za
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffroot.co.za
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ffroot-co-za.20251104.gappssmtp.com header.i=@ffroot-co-za.20251104.gappssmtp.com header.b="vM3EVsxU"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49b912e4b11so4373295e9.3
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 03:31:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffroot-co-za.20251104.gappssmtp.com; s=20251104; t=1789554666; x=1790159466; darn=vger.kernel.org;
+        h=content-type:mime-version:message-id:date:user-agent:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=t3FEA+oyST18v1zQTtRjBsrs8LKBIAI2sSiAsUdrn1Q=;
+        b=vM3EVsxUYRizuV/KfRTwWwwgppaZXhA0XIhWPngNRoXSGNcJnV5x4ncZPObmFPyuHy
+         rlXNNLkOZpieusJaK1kGyac+AF2xs5xpsKZLFTNbU7djXUWylIkqEbLvdJ4cmlNgieAa
+         UdwUecOJO5HVXYV/tiHgl5fR1Gg6A9tIubVdqmtt+rp/lDt2BoHOU38RAVCdEr95304e
+         XH04t40AZdWDzCPRfAYpY4KxQsx1gIu9iRKdD3U8LW0/uHrq//KqgqNSzn3O7HjHndmA
+         TNbL7D9/LEpyQ+82bJQfwAxpdCxN0keD2qUc4uX36Hz3AbWZXdxXJASd4lkivZrS3I/s
+         XIew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789554666; x=1790159466;
+        h=content-type:mime-version:message-id:date:user-agent:references
+         :in-reply-to:subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=t3FEA+oyST18v1zQTtRjBsrs8LKBIAI2sSiAsUdrn1Q=;
+        b=vN6OdX+9RKoL6r2+a18Xh7nAqvzk4aClltyPSBmQPqj0m7KkkKDQSH8/YwXhQupvcX
+         vUOVCmkaddX6S14K0vgWE3jkCoiWktASfa+L7Xjeu7Do2R9D75j+q2bC952nech3S1G9
+         IxMmewZHDanamIHlAOttmTzz+vJdnvMDXlbZtvtsh+b8V2F2bW3IcsBYbuPaEzEx43u4
+         KCR9BdBo6Vfxaij58wvMXJmEdsj4lRQ1r1W98iJk8lwClATY3fcP90Ypmpr51mwCv++g
+         cQwQl0Eh46Bphr7nyncVWdDDoIsrphZ/fEyshyKIPE9gRpY6gjGoUbRaGSNFlXdmn+HG
+         qWhA==
+X-Forwarded-Encrypted: i=1; AKwUvBz8lFsYsVuY2B3/9DvPjVhyEQ0o9gaJrouJlhiYgJfWemAowpCdVhjj6GLFFzxD37FiiqWILzzdfqUG@vger.kernel.org
+X-Gm-Message-State: AFuF++k5K9rVpt4/6c1vtwJhKIVkMXGrgn0C6i4jd47uPd+OTjtcV8va
+	vJkcgpQ0Js3XuduIkvXGjdLRJYUql6f8dYzMa4QfY4tvvRh9ueS+Knfe9a2eE3Wl3VqY+FiwZdY
+	cy4lPvVw=
+X-Gm-Gg: AYBFou1x9WbtzIWM1t9tp8TlEPhoEIIJHLX/D86Jms5atbjjnet2gJ9gzYu6yT9Xc03
+	p9Sa9UMrfI5ebLQjQ0G7tXRvjW4igFoVXi49KV2j5x7+dgaYMrJL3N8EZsxgKrsl5kVmonrapux
+	+EbDFSB5wsZwrRMEznAWmxLQhYejlSemeTjGr3DyzaYB8+A3D66TfQSxsjfdZyvS8prmjw86b7I
+	E+zq8PyLMjhkzTv1ZTmdDbA8hLElWCsFmmIMiqxeNfeMDUsg9OnSqsIswJWdY08H4BYrNEQ3VlH
+	KDNZwPN2sLm3fvpxmawQEBdBmzV7LtwZyJMMkCWeyQqcp3xDTao9fizM2+X3w6RyNY8EISGAkjD
+	0NKBxM6Jh2h2oMdBYZLh5YF45B7AT0gnn3c+MNfUkW5QIpRbmRAjKL724pGL2hbnPeIOEkwWPV0
+	yhogOn0O/qYUvypBGZoBWJAllFczJwMA0D2y8yG+zBuSQwDs4AqJK1pvb+otOFGpDQKvdCfJyPe
+	MRRQ+QYqMwjM78=
+X-Received: by 2002:a05:600c:3492:b0:49e:7c4b:1753 with SMTP id 5b1f17b1804b1-49eb72fb6c2mr20631655e9.12.1789554665907;
+        Wed, 16 Sep 2026 03:31:05 -0700 (PDT)
+Received: from dev-ag ([102.33.165.38])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49e83dbb0c1sm71813665e9.14.2026.09.16.03.31.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2026 03:31:05 -0700 (PDT)
+From: Andrew Gaylard <ag@ffroot.co.za>
+To: Julian Braha <julianbraha@gmail.com>
+Cc: linux@armlinux.org.uk,  dvorkin@tibbo.com,  wellslutw@gmail.com,
+  linusw@kernel.org,  arnd@arndb.de,  afd@ti.com,  aaro.koskinen@iki.fi,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: fix PINCTRL_SPPCTL=m
+In-Reply-To: <20260904121825.43320-1-julianbraha@gmail.com> (Julian Braha's
+	message of "Fri, 4 Sep 2026 13:18:25 +0100")
+References: <20260904121825.43320-1-julianbraha@gmail.com>
+User-Agent: mu4e 1.12.14; emacs 30.2
+Date: Wed, 16 Sep 2026 12:31:00 +0200
+Message-ID: <sa6fqz9ij2z.fsf@dev-ag>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAD3+Te1bqpq6A3hBw--.1939S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uFy8KrW7tw4UZF13WFW3KFg_yoW8WF13pa
-	n8WrW5Kwn7GFn2gF1DAF15AFWFv3ZFyay3Wrn7G3WxCw13tFy7tFWUWFWvqF45Aryvkay5
-	Ar43Ga4UGr43Zr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9S14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
-	628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCV
-	W8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_
-	Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6r
-	xdYxBIdaVFxhVjvjDU0xZFpf9x0JUJWrAUUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAEMA2qqP7m20QAAsj
+Content-Type: text/plain
 
-rockchip_get_bank_data() obtains the debounce clock with of_clk_get()
-for GPIO v2 banks and stores it in bank->db_clk for later use by the
-debounce handling, but the reference is never released anywhere in the
-driver.  When rockchip_gpiolib_register() fails in rockchip_gpio_probe()
-or when the device unbinds, the debounce clock reference leaks.
+Julian Braha <julianbraha@gmail.com> writes:
 
-Release the references returned by of_clk_get() with clk_put() when
-probe fails after the gpiochip registration and when the device is
-removed.  The bank clock reference is dropped as well since it suffers
-from the same problem.
+> The PINCTRL_SPPCTL option is defined as a tristate in Kconfig, and the
+> help text suggests that the user can build it as a module by setting to
+> 'm'.
+[...]
+> Note that I have only compile-tested this change, since I do not have the
+> hardware to runtime-test it. Please advise if it would be better to change
+> PINCTRL_SPPCTL to 'bool' and remove the help text suggesting that it can
+> be set to 'm'.
 
-Fixes: 3bcbd1a85b68 ("gpio/rockchip: support next version gpio controller")
-Cc: stable@vger.kernel.org
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/gpio/gpio-rockchip.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Hi Julian,
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index 69a7cd8c9a1a..cab1ac78c48f 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -755,6 +755,8 @@ static int rockchip_gpio_probe(struct platform_device *pdev)
- 	ret = rockchip_gpiolib_register(bank);
- 	if (ret) {
- 		clk_disable_unprepare(bank->clk);
-+		clk_put(bank->clk);
-+		clk_put(bank->db_clk);
- 		mutex_unlock(&bank->deferred_lock);
- 		return ret;
- 	}
-@@ -797,6 +799,8 @@ static void rockchip_gpio_remove(struct platform_device *pdev)
- 
- 	clk_disable_unprepare(bank->clk);
- 	gpiochip_remove(&bank->gpio_chip);
-+	clk_put(bank->clk);
-+	clk_put(bank->db_clk);
- }
- 
- static const struct of_device_id rockchip_gpio_match[] = {
+I've tested this on real hardware, and it fails to boot.  I don't think
+it makes sense for this to be a module, since most of the devices in
+this SoC are pin-mappable and need muxing to be configured before they
+can be probed.
+
+Let's rather fix this by making it a bool.  I'll send a patch shortly.
+
 -- 
-2.34.1
-
+Andrew
