@@ -1,95 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7377D4A2062
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 09:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C584D4AC155;
+	Wed, 16 Sep 2026 09:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789551806; cv=none; b=i8cT7YSZoOafzipRNWEE1avOFZNrC8G5ly8qdjPyFdlxbagJgnQYj32owxoujxvhcrk4CVH3c1pPGZAOx7fcaSSSbHADTo9dyPh88a0eZsvaE5Bj0lESCC98gIxleBehn6m0w4GV1reOHVKTPZE8qmHx0u8hJUHFpBF0S7XOs/U=
+	t=1789552067; cv=none; b=YXFqfrOCkLSBm5puwnD4t6874Zj8v8md7ixsAWv9qLnc7KvVmcX/l90v9utNVrmKrF73EhQn+4h6S/Chc9YgTKoFH3EKWA7u3HDE/r0O/N4sIwSlzze/d4VUnsbcLnp+i3XT7NyR/px8qiz7niHkmaBRpg7zxabi6V3/kyRlRrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789551806; c=relaxed/simple;
-	bh=F3XAkt71bhIAWEC1ICnSKPfvdKIX/T9WRczYZnwW3iw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YQXvcVLPVyun2otPCCyw38y9qSWTnwTzufsOSWD3/NEqhc/EDyNmrIvvuuyWwXcP9xElSpSIlpNK9aQFMapN7IjyQ2myoK9oWXiwX/UXUNMZcDF5IEIHG3Cx3ZTzqm9wfOO6puhL3Sg9HNgKAPOKuGyAvLycoJ+V+tiwv7Av1Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IXl8q9ZC; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXl8q9ZC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAA8C1F008BD
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 09:43:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789551790;
-	bh=F3XAkt71bhIAWEC1ICnSKPfvdKIX/T9WRczYZnwW3iw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=IXl8q9ZCD1dvSn2KHw7LYsq5TamJfBC9svJngVUoPtAjGvN3AGOWjcegBVIRcvmFF
-	 XT6NrbG9olT/96quf46Aj1p5TW/bOlRJqGEpKc2DvnnTXZ7qmrFaUvn7S/QkLAj9xA
-	 VTA9+RM2dRfHk3re3CEfd0MoKCHcUNuhj2uVDlfmDu5vlNWPRtjDIjCN7m2aK4dKa+
-	 vri7E5HQr9oevAF/INz6el1lZ/EqryyIvvWL5AuaOv2lDJ9wQjNtc9HTuu5uI9yeIU
-	 jvNRYpp4RADOHSwGl1NXhGtH8HhW4PYN63KmDV1bs399TWMPA2ZvEm7XDa38cyNSOc
-	 fNkQ+oRZi1HCA==
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f1801fso775061e87.2
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 02:43:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzAes/PaNvDuphcwKESazcVzGuRuHz7VP1T81F7iC5wXuimF7JoRTRsb3ahZ0X7D58V5MqXSrAu8ZEW@vger.kernel.org
-X-Gm-Message-State: AFuF++maDKooM5X74CGsbvF1syfR152E1pfsgHYqWLSHmxC5yUjAe+eY
-	6ojdDBNN217SaekQKqo6G6MQrsi74xkzHX/MI4ELcop1aYFobVsmd8LZM8ClHL2ZTaKIF8p2/M2
-	hJqP97DxaZMn/aHMzGclOtZPG2lZvabk=
-X-Received: by 2002:a05:6512:318d:b0:5b4:b03e:b17 with SMTP id
- 2adb3069b0e04-5b8b6611fb9mr542523e87.4.1789551789409; Wed, 16 Sep 2026
- 02:43:09 -0700 (PDT)
+	s=arc-20240116; t=1789552067; c=relaxed/simple;
+	bh=ujR+fO7LDMYfWlYYuykajoiD8rKB1XvwX0zioPI/lsw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VS+qNytq50MIZUQM+ujR14JyG7twxtmqtN4dVReegPCpOoG2zWW69+tmezbexE3kaYmd/Pu+hYqHDBYM32Kvl1AYuFv1KZPJSpAr4JprtGou0phbDCH0xTneUIM9M/94Yt8aIWLcY9Ann1gPXkgpOMHZwVqh5ov3xe9e2Y38rxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
+	by APP-03 (Coremail) with SMTP id rQCowABHUT+wZapq4aHgBw--.14706S2;
+	Wed, 16 Sep 2026 17:47:29 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: brgl@kernel.org
+Cc: ckeepax@opensource.wolfsonmicro.com,
+	linusw@kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] gpio: arizona: Fix runtime PM leak in arizona_gpio_direction_out()
+Date: Wed, 16 Sep 2026 09:47:01 +0000
+Message-Id: <20260916094701.2007509-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com> <CAMRc=McEOcWq8i3B01AR1PnfBzSQaLEaOzE6Qa+QdVXrvS_YrA@mail.gmail.com>
-In-Reply-To: <CAMRc=McEOcWq8i3B01AR1PnfBzSQaLEaOzE6Qa+QdVXrvS_YrA@mail.gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 11:42:56 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnRL_s9zPNkSj2UnHWPx+QHAXV19DA7dEmGZu0AkxxyaA@mail.gmail.com>
-X-Gm-Features: AcwNN1WkFxjMauP_yhzfkji573cflVZ6I3z5YLnNlcrQliI-kEo2Pckshh4B6Vw
-Message-ID: <CAD++jLnRL_s9zPNkSj2UnHWPx+QHAXV19DA7dEmGZu0AkxxyaA@mail.gmail.com>
-Subject: Re: [PATCH v7 00/15] Ambarella CV75 SoC minimal bring-up
-To: Bartosz Golaszewski <brgl@kernel.org>, soc@lists.linux.dev
-Cc: longzhao@ambarella.com, 
-	Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
-	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABHUT+wZapq4aHgBw--.14706S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF13Aw13tF1DJF4DKr1UAwb_yoW8GF45pF
+	Z0k3y29FW8Jw17K340v3Z3Z3Z0ka47KFyfKay8Kw10v34jq3yktFWDtFWFgr1UCr98Zr45
+	Zw13tFyDu3WkZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8
+	JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUb
+	khL5UUUUU==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAEMA2qqP7mb8gAAst
 
-On Wed, Sep 16, 2026 at 11:14=E2=80=AFAM Bartosz Golaszewski <brgl@kernel.o=
-rg> wrote:
-> On Tue, 15 Sep 2026 13:15:30 +0200, Long Zhao via B4 Relay
-> <devnull+longzhao.ambarella.com@kernel.org> said:
-> > This series adds minimal Ambarella CV75 support for early bring-up with
-> > a serial console: DT bindings, RCT clocks, pinctrl, PL061 GPIO via
-> > gpio-regmap, 8250_dw UART quirks, ARCH_AMBARELLA, CV75 EVK DT, and
-> > MAINTAINERS.
-> >
-> > This is a single unified series. Please apply via the SoC
-> > tree; subsystem maintainers are Cc'd for their pieces.
-> >
->
-> I would prefer to take the GPIO regmap bits through the GPIO tree and pro=
-vide
-> an immutable branch to the SoC tree as it has potential for conflicts tha=
-t
-> early into the cycle.
+Switching a persistent GPIO line from input to output acquires a
+runtime PM reference on the parent device, but if the subsequent
+regmap_update_bits() fails the reference is never dropped and no later
+direction_in() can balance it since the direction was never changed.
+Drop the reference on the update failure path.
 
-Queue them up and send us the IB if you think they are ready!
+Fixes: 27a49ed17e22 ("gpio: arizona: Add support for GPIOs that need to be maintained")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/gpio/gpio-arizona.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Long can probably send a PR based on that IB for the rest to the
-SoC tree, a bit tricksy but it works.
+diff --git a/drivers/gpio/gpio-arizona.c b/drivers/gpio/gpio-arizona.c
+index a7e98d395d8e..88cf013f0d90 100644
+--- a/drivers/gpio/gpio-arizona.c
++++ b/drivers/gpio/gpio-arizona.c
+@@ -115,8 +115,12 @@ static int arizona_gpio_direction_out(struct gpio_chip *chip,
+ 	if (value)
+ 		value = ARIZONA_GPN_LVL;
+ 
+-	return regmap_update_bits(arizona->regmap, ARIZONA_GPIO1_CTRL + offset,
+-				  ARIZONA_GPN_DIR | ARIZONA_GPN_LVL, value);
++	ret = regmap_update_bits(arizona->regmap, ARIZONA_GPIO1_CTRL + offset,
++				 ARIZONA_GPN_DIR | ARIZONA_GPN_LVL, value);
++	if (ret < 0 && (val & ARIZONA_GPN_DIR) && persistent)
++		pm_runtime_put_autosuspend(chip->parent);
++
++	return ret;
+ }
+ 
+ static int arizona_gpio_set(struct gpio_chip *chip, unsigned int offset,
+-- 
+2.34.1
 
-Yours,
-Linus Walleij
