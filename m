@@ -1,122 +1,446 @@
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5694EC674
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 10:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03394C67F3;
+	Wed, 16 Sep 2026 10:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789555783; cv=none; b=G68TRpxPlLQyxcUjuxArtSkG15rq45AQWtIjMWYhxQLpkHde/rlgDxR6DKPHSjQhosf4Sj+h0Kut9FdfstkRi/CalfYqfVExc4hjSn74GPZ0riE8bpnIV50aZrJarelUIP/eLwRCI8cCtym+emQ3mRwspuJAAL8Qi5PS2cgXzfw=
+	t=1789555837; cv=none; b=TX9HEgCgxkBYzWGST+v8uqTfUrw8oZgbLAsieHJ8YRSiAMbdyG+9vQuImtULNqSMEd21iwngea6WS3CfwjszGVmUuFpAXQ2+ChQQSfE+7yaEsR6QAkPlqtE8yJPjxiV3dhJ9rTwBLINEPx7HMELiseGWOgCBmDODwsHsU7X2fXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789555783; c=relaxed/simple;
-	bh=srp3ADG1b1oZGPE/2ZFZo640T4qzsA76NYnMKoCWgn0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fIGDYBoAB9gBFwW2SZgcn1aK4UpugUJwgUv6xuIlYwFLjHzt16Zv9I5l2dJ66Z5FMj7fgcLgzMleHkc1rwvj3HjblvbKJvUlpmBBfkDUsXDHzrAzYsVZGjyRokn/31r7Rx3PTwGCmyeeTF09CAEQ5DiC2rNf9qmAQY3eN7w5uU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffroot.co.za; spf=none smtp.mailfrom=ffroot.co.za; dkim=pass (2048-bit key) header.d=ffroot-co-za.20251104.gappssmtp.com header.i=@ffroot-co-za.20251104.gappssmtp.com header.b=tCOOCu9+; arc=none smtp.client-ip=74.125.225.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffroot.co.za
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffroot.co.za
+	s=arc-20240116; t=1789555837; c=relaxed/simple;
+	bh=OT3IE4Z8J1dRKbh31nrw/ExOCgfzBzB9bdPinP6gAls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WjEg2pEcv4YwEY7GkNO5j1hzua7B9ZntsyYj3ePe6WrCayYKjw9F3VTNDXYCqSV7WqHVMWsSJeMN+ynx9OuVvbMFLTvQxCRTQP8eIZlygJssfktSCHdFEK0VunT1VbeXO46cXiq2mEJ3PO7ylSz4I1zFz9zztHfI2Wk5msuEeRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C3QIg/i1; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ffroot-co-za.20251104.gappssmtp.com header.i=@ffroot-co-za.20251104.gappssmtp.com header.b="tCOOCu9+"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49b912d37b5so4693815e9.2
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 03:49:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffroot-co-za.20251104.gappssmtp.com; s=20251104; t=1789555765; x=1790160565; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:user-agent:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=lPrmKt6fjdtzKQMfjHOce8MoH8Mwpyf4BPOVo+W5EYI=;
-        b=tCOOCu9+ZnksjUB4LpWPRNhpcKunYzj9FHBdc2MJcWFDA6eGqyHSjPChu88/GSAzxQ
-         oS4qoHurJQYh/tiHcO6zqk5lhdDXNFl2cTmvezZVk3MHeWqCoaFg1mXA5of0wz6SIcFy
-         t0X0KCs8R7ttSXm0t/tcauCGP05+PEeQ2Nlq3SGGPH/a8NnhX9qTwarRe35fo8XjFZ4X
-         dvypzwfSaL9KshmEbFt00LVO427/Obkz9ddgW3PZtutm5MgZLdMvboBuBK7NVUCevWCn
-         x8d1jUNCC+acNoPwLbleSBvIGHqEMS5GC/iarkOuTVAFtyQfcVU5YXd/JDugoLDgXRHu
-         r1uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789555765; x=1790160565;
-        h=content-type:mime-version:message-id:date:user-agent:subject:cc:to
-         :from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=lPrmKt6fjdtzKQMfjHOce8MoH8Mwpyf4BPOVo+W5EYI=;
-        b=ohCAwpH1wLyUODLQchZCYh5pIFEmOYuplmMrZ8iYL9jWVWcid4QVC0jACrkK34zY1a
-         IZKytUjF3JkXBNzwugbjFfWkQi+CiJbfjnIZ4ydRMnfNMXRUX/jYtcOjV/oHbIQY0a+m
-         Xwptzr8DsePVQlFuoP+L/WEhPl6k0Er0ixWV3u3vTO/emUT3DkyVmuf7oc8TwdBtupMA
-         nn97tn3MFDNGodrcE3oYFK3Aej16Y/xlv722uasz0tII31qWpP/ktLUgs2edZ8jAIIAH
-         UGJHSjgw0c3GvvGUwRsWHeAD+z8HzNRrVAyeR4NzsRSp29dMYkbNY2o8KrRA9rPshWRX
-         Z2WQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxWkCwneI1/+/M7aEfbQmJSzt4F9DGbI7xW9+NgFK2l3Cb8i9q0SEMSFVpsr4UB4U9jePlJBFiekoF5@vger.kernel.org
-X-Gm-Message-State: AFuF++mGWJjda7ZYoOnvk3/lNanGjaPDP/+JJN1j7NvIGmn/3DgyYtk3
-	U4PpeEBkX7C85negzc40ypKhvBsMTqZfPjob2BRMsjlXu5qzYboGKUJRkDl9xLXCOiM=
-X-Gm-Gg: AYBFou0Md52YuCgJUFc7qWhqyUsknBxf/z5m8DudFKe5VU3F6evINUxirLWXAylsZRC
-	puDNDvyN0Ru7bxpmuIgbRL4j52gEU+Z77UW/8Lf/vo7XuCD4MYwnmfQQzT3sZojZZdf9Sz2zQAs
-	qbZspiWczLa7G9OliWwfnpDfTQ3h7Xd8eIbyslb6QpOVRmrCPZMieDwXQa8sLgHfUjVZp8uR4/J
-	Aie1VGB+mVuVYKRzv8uOh1zv03ldt9pVxwbtrUlLd+FHoGNpbPvaQz9wVpP/ifCw3HSTAKfUP5y
-	ocJKmNzeHUaG3qwCwagVQDtUglcduHnUsqwfmQwFexM2dA54Ta25E55MLg4YmZFABmLyj46eCTe
-	QocoJdJkBSFBDzfJ596JHyYahdNL/W3+RDRbPrvXcyQzwQh44E8B7QNzH+XOCJFJlAWprd13X05
-	hlugCuW0SbqQZXuGlzeYKPkSuwuFrjNzAthfkzLopJFvL7+XIrlDbtfMWoqRx4CnWavWDXSrnna
-	uc7QPCJVtkwuJI=
-X-Received: by 2002:a05:600c:46ce:b0:49c:dca4:94c with SMTP id 5b1f17b1804b1-49eb7339895mr43206945e9.13.1789555765101;
-        Wed, 16 Sep 2026 03:49:25 -0700 (PDT)
-Received: from dev-ag ([102.33.165.38])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4870bef766dsm6157208f8f.4.2026.09.16.03.49.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 03:49:24 -0700 (PDT)
-From: Andrew Gaylard <ag@ffroot.co.za>
-To: linux@armlinux.org.uk, dvorkin@tibbo.com, wellslutw@gmail.com,
- linusw@kernel.org
-Cc: arnd@arndb.de, afd@ti.com, aaro.koskinen@iki.fi,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Julian Braha <julianbraha@gmail.com>
-Subject: [PATCH] pinctrl: fix PINCTRL_SPPCTL=m
-User-Agent: mu4e 1.12.14; emacs 30.2
-Date: Wed, 16 Sep 2026 12:49:19 +0200
-Message-ID: <sa6bj9x31zk.fsf@dev-ag>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C3QIg/i1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1789555815; x=1821091815;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OT3IE4Z8J1dRKbh31nrw/ExOCgfzBzB9bdPinP6gAls=;
+  b=C3QIg/i1AtzRm2b96wOoGZKDn/6lT/WA3WamY4/xp5nR6Gv0Cc1xcic3
+   mzBmBofvnN0c4UbyAp1xMXufV70rlMJkCJrf4snNV7eJBZuHvCyVVlyAP
+   7OgqXieCUWo9K1eRToAVDa4yg8H2z1WKm2WrvSygGWjz6T+YzqhFdUaWz
+   OXNErJVdVP9uje8pCbT++8Rd7Cg1k2WMBJuADkb8rYIJnS1mKuVqa8WQy
+   kTZRaQ4KgUya79IYV9MFe0VCm3TMR2pczxoHtkyEsQRxWsJJXtrJEkv1b
+   bmBSV8wZIXKnN0HO9INTMDZoiDVoFhvvmBANdWlQYd33CXKASHt/ELSmi
+   w==;
+X-CSE-ConnectionGUID: lHP8btBuQw+mfU43gtPFzg==
+X-CSE-MsgGUID: ZRvJ3IS/R3axDGytKF7OBQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="93632217"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
+   d="scan'208";a="93632217"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 03:50:06 -0700
+X-CSE-ConnectionGUID: gmfebdBYSwujWMTLn9OVRw==
+X-CSE-MsgGUID: 6NotP4dCSS2ky5FSZxb+vA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
+   d="scan'208";a="267093716"
+Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.145])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 03:50:00 -0700
+Date: Wed, 16 Sep 2026 13:49:58 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: longzhao@ambarella.com
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>,
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 12/15] pinctrl: ambarella: add CV75 pin controller
+Message-ID: <aqp0VlwWotnuK9t7@ashevche-desk.local>
+References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
+ <20260915-cv75-v5-v7-12-3297d3fbc9c0@ambarella.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260915-cv75-v5-v7-12-3297d3fbc9c0@ambarella.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The PINCTRL_SPPCTL option is defined as a tristate in Kconfig, and the
-help text suggests that the user can build it as a module by setting to
-'m'.
+On Tue, Sep 15, 2026 at 07:15:42PM +0800, Long Zhao via B4 Relay wrote:
 
-However, it cannot currently be set to 'm', because SOC_SP7021, the only
-platform that supports it, is a bool option that uses 'select' on it.
-Also, the SP7021 requires this driver to be built in, in order to boot.
+> Add an Ambarella pinmux-only pinctrl driver with CV75 function/group
+> tables. GPIO is handled by the PL061 driver.
 
-Change the tristate to bool and fix the help text.
+...
 
-Tested on linux-next-2026-09-14 on a LTPP3G2 board.
+> +#define CV75_GROUP(_name)						\
+> +	{								\
+> +		.name = #_name,						\
+> +		.mux = cv75_##_name##_pinmux,				\
+> +		.nmux = ARRAY_SIZE(cv75_##_name##_pinmux),		\
+> +	}
 
-This impossible tristate was detected by kconfirm, a static analysis tool
-for Kconfig, by Julian Braha <julianbraha@gmail.com>.
+Can't we use PICTRL_PINGROUP()? Why not?
 
-Fixes: aa74c44be19c ("pinctrl: Add driver for Sunplus SP7021")
-Signed-off-by: Andrew Gaylard <ag@ffroot.co.za>
----
- drivers/pinctrl/sunplus/Kconfig | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+...
 
-diff --git a/drivers/pinctrl/sunplus/Kconfig b/drivers/pinctrl/sunplus/Kconfig
-index 69f82590f6d2..aa9435d023d8 100644
---- a/drivers/pinctrl/sunplus/Kconfig
-+++ b/drivers/pinctrl/sunplus/Kconfig
-@@ -4,8 +4,8 @@
- #
- 
- config PINCTRL_SPPCTL
--	tristate "Sunplus SP7021 PinMux and GPIO driver"
--	depends on SOC_SP7021
-+	bool "Sunplus SP7021 PinMux and GPIO driver"
-+	depends on SOC_SP7021 || COMPILE_TEST
- 	depends on OF && HAS_IOMEM
- 	select GENERIC_PINCTRL_GROUPS
- 	select GENERIC_PINMUX_FUNCTIONS
-@@ -16,6 +16,4 @@ config PINCTRL_SPPCTL
- 	help
- 	  Say Y here to support Sunplus SP7021 pinmux controller.
- 	  This driver requires the pinctrl framework.
--	  GPIO is provided by the same driver.
--	  To compile this driver as a module, choose M here.
--	  The module will be called sppinctrl.
-+	  This driver also provides GPIO.
+> +#define CV75_FUNCTION(_name)						\
+
+> +	PINCTRL_PINFUNCTION(#_name, cv75_##_name##_groups,		\
+> +			    ARRAY_SIZE(cv75_##_name##_groups))
+
+I would dare to make it a single line.
+
+...
+
+> +#include <linux/array_size.h>
+> +#include <linux/bits.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/errno.h>
+
+I don't see the need to use errno.h, err.h provides the basic ones.
+
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/types.h>
+
+...
+
+> +static void amb_pinmux_set_altfunc(struct amb_pinctrl *ipc, u32 bank,
+> +				   u32 offset, u32 altfunc)
+> +{
+> +	if (bank >= ipc->data->nr_banks)
+> +		return;
+> +
+> +	for (unsigned int i = 0; i < 3; i++) {
+> +		u32 data;
+> +
+> +		data = readl_relaxed(ipc->iomux_base + IOMUX_REG(bank, i));
+> +		data &= ~BIT(offset);
+> +		data |= ((altfunc >> i) & 1U) << offset;
+
+		data |= ((altfunc & BIT(i)) >> i) << offset;
+
+Or even
+
+		unsigned long data;
+		...
+		__assign_bit(offset, &data, altfunc & BIT(i));
+
+> +		writel_relaxed(data, ipc->iomux_base + IOMUX_REG(bank, i));
+> +	}
+> +}
+
+...
+
+> +static int amb_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+> +			   unsigned long *configs, unsigned int num_configs)
+> +{
+> +	struct amb_pinctrl *ipc = pinctrl_dev_get_drvdata(pctldev);
+> +	u32 bank = PINID_TO_BANK(pin);
+> +	u32 offset = PINID_TO_OFFSET(pin);
+> +	int ret;
+> +
+> +	if (bank >= ipc->data->nr_banks)
+> +		return -EINVAL;
+> +
+> +	for (unsigned int i = 0; i < num_configs; i++) {
+> +		enum pin_config_param param = pinconf_to_config_param(configs[i]);
+> +		u32 arg = pinconf_to_config_argument(configs[i]);
+> +		int ds;
+> +
+> +		switch (param) {
+> +		case PIN_CONFIG_BIAS_DISABLE:
+> +			ret = regmap_update_bits(ipc->pull_regmap,
+> +						 ipc->data->pull_en[bank], BIT(offset), 0);
+> +			if (ret)
+> +				return ret;
+> +			break;
+> +		case PIN_CONFIG_BIAS_PULL_DOWN:
+> +		case PIN_CONFIG_BIAS_PULL_UP:
+> +			ret = regmap_update_bits(ipc->pull_regmap,
+> +						 ipc->data->pull_dir[bank], BIT(offset),
+> +						 (param == PIN_CONFIG_BIAS_PULL_UP) ?
+> +						 BIT(offset) : 0);
+
+_assign_bits()?
+Ditto for the rest of the similar cases.
+
+> +			if (ret)
+> +				return ret;
+> +			ret = regmap_update_bits(ipc->pull_regmap,
+> +						 ipc->data->pull_en[bank], BIT(offset),
+> +						 BIT(offset));
+> +			if (ret)
+> +				return ret;
+> +			break;
+> +		case PIN_CONFIG_DRIVE_STRENGTH:
+> +			ds = amb_drive_strength_to_reg(ipc, arg);
+> +			if (ds < 0)
+> +				return ds;
+> +			if (ipc->data->have_ds2) {
+> +				ret = regmap_update_bits(ipc->ds_regmap,
+> +							 ipc->data->ds0[bank], BIT(offset),
+> +							 (ds & BIT(0)) ? BIT(offset) : 0);
+> +				if (ret)
+> +					return ret;
+> +				ret = regmap_update_bits(ipc->ds_regmap,
+> +							 ipc->data->ds1[bank], BIT(offset),
+> +							 (ds & BIT(1)) ? BIT(offset) : 0);
+> +				if (ret)
+> +					return ret;
+> +				ret = regmap_update_bits(ipc->ds_regmap,
+> +							 ipc->data->ds2[bank], BIT(offset),
+> +							 (ds & BIT(2)) ? BIT(offset) : 0);
+> +				if (ret)
+> +					return ret;
+> +			} else {
+> +				ret = regmap_update_bits(ipc->ds_regmap,
+> +							 ipc->data->ds0[bank], BIT(offset),
+> +							 (ds & BIT(1)) ? BIT(offset) : 0);
+> +				if (ret)
+> +					return ret;
+> +				ret = regmap_update_bits(ipc->ds_regmap,
+> +							 ipc->data->ds1[bank], BIT(offset),
+> +							 (ds & BIT(0)) ? BIT(offset) : 0);
+> +				if (ret)
+> +					return ret;
+> +			}
+> +			break;
+> +		default:
+> +			return -EOPNOTSUPP;
+
+Is it indeed what we use in pin control? I think the correct one here is
+ENOTSUPP (and in that case errno.h is required, yes). Yeah, some drivers
+has a mixture and they probably didn't get how this error code is used.
+
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int amb_pinconf_get(struct pinctrl_dev *pctldev,
+> +			   unsigned int pin, unsigned long *config)
+> +{
+> +	struct amb_pinctrl *ipc = pinctrl_dev_get_drvdata(pctldev);
+> +	enum pin_config_param param = pinconf_to_config_param(*config);
+> +	u32 bank = PINID_TO_BANK(pin);
+> +	u32 offset = PINID_TO_OFFSET(pin);
+> +	u32 pull_en, pull_dir, ds0, ds1, ds2, ds;
+> +	int ret, strength;
+> +
+> +	if (bank >= ipc->data->nr_banks)
+> +		return -EINVAL;
+> +
+> +	switch (param) {
+> +	case PIN_CONFIG_BIAS_DISABLE:
+> +	case PIN_CONFIG_BIAS_PULL_DOWN:
+> +	case PIN_CONFIG_BIAS_PULL_UP:
+> +		ret = regmap_read(ipc->pull_regmap, ipc->data->pull_en[bank],
+> +				  &pull_en);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_read(ipc->pull_regmap, ipc->data->pull_dir[bank],
+> +				  &pull_dir);
+> +		if (ret)
+> +			return ret;
+
+> +		pull_en = (pull_en >> offset) & 1;
+> +		pull_dir = (pull_dir >> offset) & 1;
+
+Seems to me they can be boolean?
+In any case, use ' & BIT(offset)' instead of the above.
+
+> +		if (param == PIN_CONFIG_BIAS_DISABLE) {
+> +			if (pull_en)
+> +				return -EINVAL;
+> +			*config = pinconf_to_config_packed(param, 0);
+> +			return 0;
+> +		}
+> +
+> +		if (!pull_en)
+> +			return -EINVAL;
+> +		if (param == PIN_CONFIG_BIAS_PULL_UP && !pull_dir)
+> +			return -EINVAL;
+> +		if (param == PIN_CONFIG_BIAS_PULL_DOWN && pull_dir)
+> +			return -EINVAL;
+> +
+> +		*config = pinconf_to_config_packed(param, 1);
+> +		return 0;
+> +
+> +	case PIN_CONFIG_DRIVE_STRENGTH:
+> +		ret = regmap_read(ipc->ds_regmap, ipc->data->ds0[bank], &ds0);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = regmap_read(ipc->ds_regmap, ipc->data->ds1[bank], &ds1);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ds0 = (ds0 >> offset) & 1;
+> +		ds1 = (ds1 >> offset) & 1;
+> +		if (ipc->data->have_ds2) {
+> +			ret = regmap_read(ipc->ds_regmap, ipc->data->ds2[bank],
+> +					  &ds2);
+> +			if (ret)
+> +				return ret;
+> +
+> +			ds2 = (ds2 >> offset) & 1;
+> +			ds = (ds2 << 2) | (ds1 << 1) | ds0;
+> +		} else {
+> +			ds = (ds0 << 1) | ds1;
+> +		}
+
+Same here, use BIT(offset). For example,
+
+			ds2 = !!(ds2 & BIT(offset));
+
+> +		strength = amb_reg_to_drive_strength(ipc, ds);
+> +		if (strength < 0)
+> +			return strength;
+> +
+> +		*config = pinconf_to_config_packed(param, strength);
+> +		return 0;
+> +
+> +	default:
+> +		return -EOPNOTSUPP;
+
+Same Q about the error code.
+
+> +	}
+> +}
+
+...
+
+> +	for (unsigned int pin = 0; pin < ipc->data->npins; pin++) {
+> +		pindesc[pin].number = pin;
+> +		pindesc[pin].name = devm_kasprintf(ipc->dev, GFP_KERNEL,
+> +						   "io%u", pin);
+> +		if (!pindesc[pin].name)
+> +			return -ENOMEM;
+> +	}
+
+Use devm_kasprintf_strarray().
+
+...
+
+> +static int amb_pinctrl_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct amb_pinctrl *ipc;
+> +	int ret;
+> +
+> +	ipc = devm_kzalloc(dev, sizeof(*ipc), GFP_KERNEL);
+> +	if (!ipc)
+> +		return -ENOMEM;
+> +
+> +	ipc->dev = dev;
+> +	ipc->data = device_get_match_data(dev);
+> +	if (!ipc->data)
+> +		return dev_err_probe(dev, -EINVAL, "missing SoC data\n");
+
+-ENODATA
+
+> +	if (!ipc->data->nr_banks || ipc->data->nr_banks > AMBA_MAX_BANKS ||
+> +	    !ipc->data->npins ||
+> +	    !ipc->data->groups || !ipc->data->ngroups ||
+> +	    !ipc->data->functions || !ipc->data->nfunctions)
+> +		return dev_err_probe(dev, -EINVAL, "invalid SoC data\n");
+> +
+> +	ipc->iomux_base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(ipc->iomux_base))
+> +		return PTR_ERR(ipc->iomux_base);
+> +
+> +	ipc->ds_regmap = syscon_regmap_lookup_by_phandle(dev_of_node(dev),
+> +					"ambarella,drive-strength-syscon");
+> +	if (IS_ERR(ipc->ds_regmap))
+> +		return dev_err_probe(dev, PTR_ERR(ipc->ds_regmap),
+> +				     "missing drive-strength syscon\n");
+> +
+> +	ipc->pull_regmap = syscon_regmap_lookup_by_phandle(dev_of_node(dev),
+> +					"ambarella,pull-syscon");
+> +	if (IS_ERR(ipc->pull_regmap))
+> +		return dev_err_probe(dev, PTR_ERR(ipc->pull_regmap),
+> +				     "missing pull syscon\n");
+> +
+> +	spin_lock_init(&ipc->lock);
+> +
+> +	ret = amb_pinctrl_register(ipc);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to register pinctrl\n");
+> +
+> +	platform_set_drvdata(pdev, ipc);
+> +
+> +	return 0;
+> +}
+
+...
+
+> +#include <linux/types.h>
+
+> +#include <linux/pinctrl/pinctrl.h>
+
+Not really used. Can be replaced with forward declarations.
+
+> +#define AMBA_MAX_BANKS			8
+> +
+> +#define AMBA_PINMUX(pin, alt)		(((alt) << 12) | (pin))
+> +#define AMBA_PINMUX_TO_PIN(mux)		((mux) & 0xfff)
+> +#define AMBA_PINMUX_TO_ALT(mux)		(((mux) >> 12) & 0x7)
+> +
+> +struct amb_pinmux_group {
+> +	const char *name;
+> +	const u32 *mux;
+> +	unsigned int nmux;
+> +};
+> +
+> +struct amb_pinctrl_data {
+> +	const struct amb_pinmux_group *groups;
+> +	const struct pinfunction *functions;
+> +	unsigned int ngroups;
+> +	unsigned int nfunctions;
+> +	unsigned int nr_banks;
+> +	unsigned int npins;
+> +	unsigned int ds0[AMBA_MAX_BANKS];
+> +	unsigned int ds1[AMBA_MAX_BANKS];
+> +	unsigned int ds2[AMBA_MAX_BANKS];
+> +	unsigned int pull_en[AMBA_MAX_BANKS];
+> +	unsigned int pull_dir[AMBA_MAX_BANKS];
+> +	bool have_ds2;
+> +};
+> +
+> +extern const struct amb_pinctrl_data ambarella_cv75_pinctrl_data;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
