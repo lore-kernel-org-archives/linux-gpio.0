@@ -1,105 +1,81 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D497C4D7945
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 16:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0894D7D25
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789577963; cv=none; b=r7aLWHK3dqRUmEzO0SK8tuRPPtFdEcaOvBOTafKmxdvO3S4csiU8vwl3Ts3mVEU10opwcPBSmAqugaQxTvtjWLMtBLKKCVeE4rMyFpha7fAl6qF4SH4CqiPhK+SML+vqBsMe67fS4+mxxS6Y708fN66a089nEJTjZbyhyiauFtQ=
+	t=1789578131; cv=none; b=PELunbE7J38l5kYF41uMcuw7SoY65NO4IRNQD6OmGKYsvx2qnL6FxoNCF2R2IFbdoPGowzX20iDkT2HbZn/Nyob9BKnUt1/WnYZ/Dmt3kujfSaMLpl3WEXk5gYLPTADFNerR8ErToWdFPAIzee3Ok/FOAVqbvi2/Hs3l4qK+0qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789577963; c=relaxed/simple;
-	bh=sCKOAQ6q3IOv9589d5+TMd6PkNK0d6K2VF/Jj1/not0=;
+	s=arc-20240116; t=1789578131; c=relaxed/simple;
+	bh=3+ba1dWQqlCn0VGEMRoPDI5/l6FQ5LQxW2qM1EAes+Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fs0QkgYtPtesFcjDxRP5CyCdzFcx+wM4E8KFLypHqOWkbfr07GoewguWEyJIgl2/VlmCpyIZDV7dkj3mvM0iO4wbwJpZiU2Mn3RN4G/qUcdL1cWy5irB6EMUZKt24b4B6zbUrWoTNBHZ25Y0msMjiBQIwQOQZ/h/uNIVMS6BDt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxLjr/zq; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=mdNcuYM5V/yV2bpQVcp/deQMTojksrR8+HpHgJ6pcmDSurmMcWNfdcphF7hXaOHrK0/m2ppbDsLV4pOPqaHybR5uH9fX2PLXUbs5/xgrpQLVTwCpMsYeRuOy8vtEOXFjwVyskLDJ5b72Nm1tg7mc45fy2+Z//afxc/lMwI4RqCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2l/ivNl; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxLjr/zq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DF821F0089D
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 16:59:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2l/ivNl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 312CF1F0089C
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:02:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789577950;
-	bh=sCKOAQ6q3IOv9589d5+TMd6PkNK0d6K2VF/Jj1/not0=;
+	s=k20260515; t=1789578122;
+	bh=3+ba1dWQqlCn0VGEMRoPDI5/l6FQ5LQxW2qM1EAes+Q=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=CxLjr/zq5awXlYm+A6e8PszYPrvbuv8SEElAf89XU+RnAaUGpDAC+Zytljrmr8o4c
-	 FdRa8ABvsvHgBgv89JlsWP+7z8iuGavV5m7vpz//I6rO8eNC44uZQU7PU5QdOdx5W7
-	 IISe0CKSxyFhix/cCxUb2PdWGNTpQt2DktI7EQAIBQj2TqFkgJVn+jjQ4XHKitDyMI
-	 NSFFSeuCNI6YGkfR6ywrtyBa3O0bsLn7Agw1owLnBTu5d6UPyAYI+NVvK0EEL3Dv++
-	 HNo/gzrXU9fBP8YQkbEjKIP18tM3bn/pmm+zMmv/XdYc311NCPTkviMs061ksUSOpC
-	 ly7dmMgw8T+Ag==
-Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b5e4f13d76so1346532e87.3
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 09:59:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxN8/sx8ke/1yKWbHo3uA40U1XyClrS3YqK5sQFcgu5B8HDbx9C9G1ORYVjI4fRbzD8FjOWBQkxG6Q3@vger.kernel.org
-X-Gm-Message-State: AFuF++mhJJvTv8RyC58p5ZtklFwNhRDWalbV//STxnV3C1xOJkhC8cTz
-	Lzasya7TFlkRRNdONp/9zk1yxM3yCHG19uy/6VgPqEVyadZJdjNnpzeocqsefcnAU2twN08tBBZ
-	53r2qY4Sl8Lojj5ODhBfqFlfZyAS1Umo=
-X-Received: by 2002:a05:6512:3347:b0:5b7:6735:260f with SMTP id
- 2adb3069b0e04-5b8b6671067mr785119e87.67.1789577949266; Wed, 16 Sep 2026
- 09:59:09 -0700 (PDT)
+	b=m2l/ivNlNmDCG2Y/itJCFaUgxFkT//D8sC77L/tO2L0XzMqGSBTNjnGYif1oPareL
+	 QP+Q+rWC2jwfdKzL6WfuaLSOIYXV7jLzconjF88RnxFxNUUac/7jS2CtUHmkcR3UC1
+	 BrD/sAOlVhUFw/6kEZFQivyDQVFXD02A8yNfptzEHa/WPpym96fBGuDqK4jhbT1/0F
+	 YH8HSDPJEGwQxrAAaQi9YC6TCes+eoQp6zluJmmnbxe6ClSs85p1ScH02WbKi5wPFo
+	 NW92SBGmfg4YW7lTLDnwbuqXwh44VtNQ+CGcWHXlztmpHywyXSBTCIW6fCrilBExTu
+	 8kBg5tizF2GcA==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b5e4f15b7aso1252871e87.3
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 10:02:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByLqormFX6mETfICkPSalmVSzA7dT7X40hMW22uc2C/LtXR4q04B0cAW4vhSrnSShwGLr/iFf8rSc9U@vger.kernel.org
+X-Gm-Message-State: AFuF++kuwlnq2LWeo0ng58OdrM6x2RFGFs5vcZZnExO/jBsh3NIytL45
+	z6cZiIIqJQ5YYmw2qszhGJQtw+u1BalSM2lIIVarkT90CZjnPdH1DObbwH5NaWcnBEbW5lD/by5
+	lumXDfkw3LjYR+QtiX0MJU35AOSt6VnY=
+X-Received: by 2002:a05:6512:304e:b0:5b6:421:a8fd with SMTP id
+ 2adb3069b0e04-5b8b6660222mr1907091e87.29.1789578120849; Wed, 16 Sep 2026
+ 10:02:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260902-fw-devlink-nexus-ready-v1-0-68fe1996e78a@toradex.com> <20260902-fw-devlink-nexus-ready-v1-1-68fe1996e78a@toradex.com>
-In-Reply-To: <20260902-fw-devlink-nexus-ready-v1-1-68fe1996e78a@toradex.com>
+References: <alUyZ2zVWCPhyHHX@google.com>
+In-Reply-To: <alUyZ2zVWCPhyHHX@google.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 18:58:56 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=qaXxEr_sVnAF7BLUvp4ik+f8Zsg2sKY6n0=DwWqEYYw@mail.gmail.com>
-X-Gm-Features: AcwNN1W08ixPUt1OAFzYlOyj5ELEgdAq-l8aLJH_GmHSe9MLq2CYRkq-wafwNZs
-Message-ID: <CAD++jL=qaXxEr_sVnAF7BLUvp4ik+f8Zsg2sKY6n0=DwWqEYYw@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/2] of: property: fw_devlink: Follow GPIO nexus maps
-To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
-	"Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li <Frank.li@oss.nxp.com>, 
-	Kieran Bingham <kieran.bingham@ideasonboard.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney@redhat.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Herve Codina <herve.codina@bootlin.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Leonardo Costa <leonardo.costa@toradex.com>, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, stable@vger.kernel.org
+Date: Wed, 16 Sep 2026 19:01:47 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnAF7c=bBh2ihXEiG55twpj6seEGU-2R2GhWsGfC7NCyw@mail.gmail.com>
+X-Gm-Features: AcwNN1WpNQw2_PBz6JfQIF44TXbYdMUvRldRpzZFmjSOxvBrSvVfNotOz2MCBgs
+Message-ID: <CAD++jLnAF7c=bBh2ihXEiG55twpj6seEGU-2R2GhWsGfC7NCyw@mail.gmail.com>
+Subject: Re: [RESEND PATCH] sh: ecovec24: use static device properties to
+ describe the touchscreen
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mark Brown <broonie@kernel.org>, 
+	jacopo mondi <jacopo@jmondi.org>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 2, 2026 at 1:42=E2=80=AFPM Ernest Van Hoecke
-<ernestvanhoecke@gmail.com> wrote:
+On Mon, Jul 13, 2026 at 11:41=E2=80=AFPM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 
-> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> Convert the board to use static device properties instead of platform
+> data to describe the touchscreen, so that support for platform data can
+> be removed from tsc2007 driver (ecovec24 is the last board using this
+> mechanism of describing tsc2007).
 >
-> GPIO consumers use of_parse_phandle_with_args_map() to resolve specifiers
-> through gpio-map properties. fw_devlink instead parses GPIO properties as
-> direct phandle references, so it records the nexus node as the supplier
-> rather than the mapped GPIO provider.
+> Device properties do not allow custom board methods, so the method for
+> getting "pen down" state was removed (the driver is capable of working
+> without it). If this functionality is needed proper pin control/gpio
+> support needs to be implemented so that the same pin can serve as an
+> input GPIO and an interrupt.
 >
-> A nexus is a translation node, not the GPIO provider, and need not be
-> populated as a device. The resulting fwnode link can therefore remain
-> unresolved and indefinitely defer the consumer while
-> device_links_check_suppliers() waits for the nexus.
->
-> Use the map-aware parser for all supported GPIO property spellings. This
-> makes fw_devlink resolve the same provider as the GPIO consumer API. Dire=
-ct
-> GPIO references continue to work because the map-aware parser returns the
-> original provider when no gpio-map property is present.
->
-> Add OF unittest coverage for mapped and direct GPIO suppliers, including
-> the deprecated singular and unprefixed property spellings.
->
-> Fixes: 7f00be96f125 ("of: property: Add device link support for interrupt=
--parent, dmas and -gpio(s)")
-> Reported-by: Leonardo Costa <leonardo.costa@toradex.com>
-> Link: https://lore.kernel.org/all/juuc4af7ndbajcl7gzf4tg5qz2q2j5tt3rvql4j=
-bauradujrre@gc5nbdhhixaf/
-> Tested-by: Leonardo Costa <leonardo.costa@toradex.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-I feel it needs a compulsory review by Rob, but AFAICT this is
-in line with the Nexus ideas.
-Acked-by: Linus Walleij <linusw@kernel.org>
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
