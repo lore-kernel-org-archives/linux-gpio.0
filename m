@@ -1,106 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CE9477E31
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 08:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44EF485939;
+	Wed, 16 Sep 2026 08:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789548590; cv=none; b=Pnotp398t93z5ggsYzhzi/FQzHAYxk54dKh4vPrB8pWnaLdrJKdTACCcJQyspnWqIY4E7QbflL9bx+yPd681c7oEDeBi4+YBp9Z7+pEy+jY1wGi4z0MDD0ErUdINQfOHGBTG8y1Sy9LWWCAR4KoYyshHMygzUgcGd0CSq4qEcNE=
+	t=1789549072; cv=none; b=eVYNrvss2qAvmXOiaB7LwaYz4udH5+jcAn1QCxAKMVlC5WS9zUmBgX6P4rl4J4vwup6GGnpsL7Zx4NvIwf9rqXaeTWtfDt4OO5qxSw4eoRidlT0iteUyKQocy8tfTsE2HZiDftFqsyyv9UlLQ5qG+F8cnfePISrd4NHvc+bW6FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789548590; c=relaxed/simple;
-	bh=czz0IwIOVpzhTrWGhbbRXjGCqr+0eQQqu+6ERxijrVo=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yvw2oK5WPY2tJLd+6OX3giv8+ish37yfxTp8WYj/fBOPI4gRFq2uz0x9/TTl0mWgz07EeHxKvKN6C/2DLsRp4QR/qFSBvIQVRD9+Kzwuz9qMg1LiJig716VnOVvB9UYKg5fKW4W4LFBMFMBMbbRQZwoUJad4Kjgi3IsfqwP1DPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5kCQuPf; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789549072; c=relaxed/simple;
+	bh=ZFsnv10b3I7EdjKsa23Ymp+lKDaNuAm+7Mdrw4VcRvo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tKa60cNeRHFMD/N1tLmSE4yg2KbJFAXM9nqVdbiLaTQrM/GyAEH436NipaAEUnGWf39xRlkPQAff3hbhT3kNqDxWCgn/koFKzOIqDNjRZPkwD3rfhAMsE9GAhjaarhNToJeRgYovT0vioo8P4hylIKs9JoC4CBLmsCacmXXF1jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mz3NSDTE; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5kCQuPf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA971F0089E
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 08:49:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789548588;
-	bh=XZufHBxWjYLc5kcpKxhUOODtlXpCA55rAwXnXUObZ/A=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=n5kCQuPfECtjhVx+Ju9vZ48VmOdR62mUikjiHskPstgyStn0Ds4NaUTwprz5uFLwX
-	 WubDgdl1aN59nxjxlhzlZF6SbgXxh30qA7HsTyTCHgJQhKkTtLPScUNReUGIUR2jXk
-	 qBAXm9UM5IyFk9ypeVWMV6T1WFuOvSEjDKxgLllyIybfm3816FJJrZON529SJDEqQ9
-	 X7OUceiQy/pv7OEuFVnFqVxVtuESZXxf/eOswdVa9XUXaEVUe0q7Q2RvmJaLeFNzaQ
-	 /c8DAeF98LjvzKaU6YqAwyCYgrHGFm0H/FgqxFRaIYxJQ4rY9t+8lZ1O/xdLs3T24F
-	 TJ5v3/7avr5Jg==
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f1b846so803790e87.0
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 01:49:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxB5Y/deKBVtb3Fdg8kX4osmS9Ie4MJKuimZNQesVRUpKM0bj6AaSgzU0NiJGfC0fwW9zFDR2eoWfEv@vger.kernel.org
-X-Gm-Message-State: AFuF++lA2ugssURR0QyhK3cXLU+qvXdUZD6JukovxvILs/xdwdeASAMH
-	yK9hvPJcy6Zwh5H+Fdw514UWmj56f8htSlG9eMHZukBtvPFjMiE/ALkO8Bbb0TY9SkZt+TnGeMs
-	U3shkH5MvcDQNlFbcCB97KRl4dLKypBQhGRAPmunU2g==
-X-Received: by 2002:a05:6512:238a:b0:5b6:1a7c:aa14 with SMTP id
- 2adb3069b0e04-5b8b6643b61mr425058e87.44.1789548587447; Wed, 16 Sep 2026
- 01:49:47 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 16 Sep 2026 03:49:44 -0500
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 16 Sep 2026 03:49:44 -0500
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260915014447.282121-1-shengchao.guo@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mz3NSDTE"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68G69dNa1163413;
+	Wed, 16 Sep 2026 08:57:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=bdM4hjbMxAysnl7GgPyr+jTaRcFsj7rj26I
+	X2wnPqL0=; b=mz3NSDTEAMnqvQ2T0a41VRg9gZo0GsHfOMC2tihFYqRHSawPayo
+	2vJnxwX38gO4qmTGZ+bdrURDrMHZOMLwAnN9HoFGaHesYdW4wUeyCKsatB96y4AW
+	mkvfy0M3R2EVulLY9DRsp5YjtDf1Yk7Zupwir6Ak/QWR9UZJA0yVkSE7H3GEmNne
+	5P0o3BgFJBY6GSQB+DDdJkbjM5EizpAmiEA3GoDbRaOSoX2CVfdinOLijkbVLgHo
+	fkZ/5nfBYIAFz62JGk18wAfLJ41KFzHPSmmtFd6nS1VuXTlQtZZ7LoZ3fCxrsEZw
+	hjAhe4Hbc6vJ6Kz+oGnsRcGYBugmdMzIL5g==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gq9n63rd4-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 16 Sep 2026 08:57:27 +0000 (GMT)
+Received: from pps.filterd (aptaippmta01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.11/8.18.1.11) with ESMTP id 68G8vPex1071615;
+	Wed, 16 Sep 2026 08:57:25 GMT
+Received: from ap-kernel-sh03-lnx.qualcomm.com (smtphost-taiwan.qualcomm.com [10.249.136.33])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 68G8vOum1071606
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 16 Sep 2026 08:57:24 +0000 (GMT)
+Received: from ap-kernel-sh03-lnx.qualcomm.com (localhost [127.0.0.1])
+	by ap-kernel-sh03-lnx.qualcomm.com (Postfix) with ESMTP id A90D94055A;
+	Wed, 16 Sep 2026 16:57:23 +0800 (CST)
+From: Zhangfei Gao <zhangfei.gao@oss.qualcomm.com>
+To: linusw@kernel.org, andersson@kernel.org, brgl@kernel.org
+Cc: pankaj.patil@oss.qualcomm.com, maulik.shah@oss.qualcomm.com,
+        dmitry.baryshkov@oss.qualcomm.com, shengchao.guo@oss.qualcomm.com,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Zhangfei Gao <zhangfei.gao@oss.qualcomm.com>
+Subject: [PATCH] pinctrl: qcom: nord: fix GPIO interrupt target width
+Date: Wed, 16 Sep 2026 16:57:20 +0800
+Message-ID: <20260916085720.771498-1-zhangfei.gao@oss.qualcomm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260915014447.282121-1-shengchao.guo@oss.qualcomm.com>
-Date: Wed, 16 Sep 2026 03:49:44 -0500
-X-Gmail-Original-Message-ID: <CAMRc=MdO+6xKy_=uLnw26bJV=9yhiakpzh0E6nt5jchVYHSk0g@mail.gmail.com>
-X-Gm-Features: AcwNN1VamhLvznLMmE2uvYmINQFIFBQa5sGbvxcCFdh2dKkSiAOnLUPmIyJHqfs
-Message-ID: <CAMRc=MdO+6xKy_=uLnw26bJV=9yhiakpzh0E6nt5jchVYHSk0g@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Fix sharing a PMIC GPIO between multiple consumers
-To: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Yu Zhang <yu.zhang@oss.qualcomm.com>, 
-	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Authority-Analysis: v=2.4 cv=BdVNQbt2 c=1 sm=1 tr=0 ts=6aaa59f7 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22
+ a=YMgV9FUhrdKAYTUUvYB2:22 a=EUspDBNiAAAA:8 a=6wNvA0c_i9Qvwz773BMA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE2MDExNSBTYWx0ZWRfX6ml1FjNllDsi
+ FW/hPti4+p2XwmsknSGfcMjNdsHSjWf5l2BBlbM0TgtY3luSwtAO3y3VYEFVs8rYS7vpTeNl6wQ
+ /mdbpNXH8EKcayqaiNM6rufVFYlyiYGvdC5Li2Hg7upaUt/1UDayTTFnFaWfuA8B4ZbqTrrH4HM
+ W7I2C+m4J0jDSJjygUAMpmkYNVqJTvbIfrMl0H+5ZLIdVJF4qIlsZ1OHYfwXcJL49FKXGs9XYkS
+ qRbrAQLdWOrSoe3bBk57WgAn6vsEPqmdHu4Mdk5nZDxYqo6mmmczmSXzisIFKRI1HExsPrLtYN4
+ 8mqF9bunGzMt/S4g1MITMh1IBs0/BOqcQZ1DCYuGZNaLNw7ofExH4R8qasrs6i/pUIq6Ohjlpke
+ mOfjrIeVtBPZqMav4c3MYLKG2piI/v9ag1TqdG5qUihGqQ1DM8BmRwIEqQsEfOoBboTqx0v5CMA
+ iTqZj6YIZAkh7xc5XMw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE2MDExNSBTYWx0ZWRfXyppRl0kUMhQZ
+ jxM6IL66OSchp0qMPFzKBG9UAnNvzuPh35MZR4Q2lcfRkSivwYN3lLC1APdKcEJruutntw79BD2
+ 1CiCWh6/0NPDPS569yc/qyqQ1D5VMC8=
+X-Proofpoint-GUID: vIZQKhA0YrCzai_QXubsuD7EongZcgrV
+X-Proofpoint-ORIG-GUID: vIZQKhA0YrCzai_QXubsuD7EongZcgrV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-15_05,2026-09-15_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 priorityscore=1501 adultscore=0 spamscore=0 clxscore=1011
+ impostorscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609160115
 
-On Tue, 15 Sep 2026 03:44:45 +0200, Shawn Guo
-<shengchao.guo@oss.qualcomm.com> said:
-> On the Qualcomm Nord boards, three discrete regulators feeding a WCN7850
-> module are gated by a single PMIC GPIO (pmau0102_e GPIO6), so the board DT
-> describes three regulator-fixed nodes pointing at the same GPIO.  Only the
-> first of them probes:
->
->   reg-fixed-voltage regulator-wcn-core-vm-1p35: setup of GPIO (default) failed: -1
->   reg-fixed-voltage regulator-wcn-core-vm-1p35: error -EPERM: can't get GPIO
->   platform wcn7850-pmu: deferred probe pending: supplier regulator-wcn-core-vh-1p95 not ready
->
-> ARCH_QCOM selects HAVE_SHARED_GPIOS, so gpiolib creates shared GPIO proxies
-> for the line rather than taking the legacy nonexclusive path.  The failure
-> turns out to have two independent causes, one on each side of that
-> interface.
->
-> On the provider side, neither of spmi-gpio's direction callbacks clears the
-> opposite buffer: .direction_output() only sets output_enabled and
-> .direction_input() only sets input_enabled.  A pad left in DIGITAL_INPUT
-> mode by the bootloader therefore ends up in DIGITAL_INPUT_OUTPUT mode on
-> the first direction change, after which .get_direction() reports
-> GPIO_LINE_DIRECTION_IN even though the driver is driving the line.  The
-> same asymmetry means gpiod_direction_input() never stops driving a pad that
-> was previously an output, which is a bug in its own right.
->
-> On the consumer side, gpio_shared_proxy_direction_output() reads the
-> direction back for every requester after the first and refuses with -EPERM
-> if it sees an input.  The readback is not needed, since the proxy is the
-> only entity configuring the line and already knows which direction it
-> asked for.  It is also not robust: a provider without .get_direction() at
-> all makes gpiochip_get_direction() return -EOPNOTSUPP under a WARN_ON,
-> which the proxy propagates just the same.
->
-> Either patch on its own is enough to make the board work; both are sent
-> because both describe real bugs.  Patch 1 is what makes shared GPIOs work
-> irrespective of the provider, so I would consider it the more important of
-> the two.  There is no build or apply dependency between them and they
-> touch different subsystems, so they can go through separate trees.
->
+The TARGET_PROC field in the Nord GPIO_INTR_CFG registers occupies bits
+11:8. Describe it as four bits wide so the common Qualcomm pinctrl code
+clears the complete field before routing an interrupt to the application
+processor.
 
-I responded to patch 1/2 before reading this bit. Ok, I'm not against 1/2,
-I'll queue it for fixes.
+Without intr_target_width, the common code uses its three-bit default
+mask. Since GPIO_INTR_CFG resets with TARGET_PROC set to 0xf (NONE), bit
+11 remains set when the driver programs HMSS target 3. The resulting
+target is 0xb (HPASS_DSP_1), observed as an interrupt configuration value
+of 0xb1b instead of 0x31b.
 
-Bart
+The GPIO interrupt status is consequently latched, but the HMSS TLMM
+summary interrupt at GIC SPI 208 is never asserted. This affects all Nord
+GPIO interrupts using the TLMM summary path, including the Ethernet PHY
+interrupts on GPIO55 and GPIO141.
+
+Fixes: c24dd0826f06 ("pinctrl: qcom: add the TLMM driver for the Nord platforms")
+Signed-off-by: Zhangfei Gao <zhangfei.gao@oss.qualcomm.com>
+---
+ drivers/pinctrl/qcom/pinctrl-nord.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/qcom/pinctrl-nord.c b/drivers/pinctrl/qcom/pinctrl-nord.c
+index 7f37f8e819ba..010760cf0bf5 100644
+--- a/drivers/pinctrl/qcom/pinctrl-nord.c
++++ b/drivers/pinctrl/qcom/pinctrl-nord.c
+@@ -32,6 +32,7 @@
+ 		.intr_wakeup_present_bit = 6,                         \
+ 		.intr_wakeup_enable_bit = 7,                          \
+ 		.intr_target_bit = 8,                                 \
++		.intr_target_width = 4,                               \
+ 		.intr_target_kpss_val = 3,                            \
+ 		.intr_raw_status_bit = 4,                             \
+ 		.intr_polarity_bit = 1,                               \
+-- 
+2.43.0
+
