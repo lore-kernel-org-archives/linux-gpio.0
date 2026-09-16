@@ -1,316 +1,105 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426B94E80BF;
-	Wed, 16 Sep 2026 10:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CECF49E5E6;
+	Wed, 16 Sep 2026 10:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789554112; cv=none; b=OsmLvLZc1XJ2dv9bj4F3prYAtC5Yesjrmvro5+d0TgeDT3KCl7bUa3vInAM9Eh38GvzwAh811mHmCDSl9zQ3OyA/PGZITXfVs8WasdFYIiqT8noYI+M1fg3pPFvmzq163zXxgQufWBUHtywdJ1cFYxLeT4abgA6DbAl7/K7s9qs=
+	t=1789554219; cv=none; b=H51GxYYmVmflQOzOhJ1ON4V87c0RKm2NnFKJhi5CzTtGbFdgr+7PPamW1jD01drDnZtQTN0gQ9s2FH57Yhh8owlvCFmN/lMa0CxeqLQzhgEKzAirUKwQWbBmCTFcQcOGS+15q6NvIiEhcOSfCdx08GgudGadZN2GSoh7ti5n4j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789554112; c=relaxed/simple;
-	bh=n152J+oW0inBpcepl+1yWkdMqbhm6d/xZ403pWrV3Ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T5O3pF5JLmMFyV74eljYMuqeHIHUtIRNdjLbHb5Ur8HW8UXbTj+w1fgnfyVqCIFXUrHfPu6CPtsTDJTz4riNYguiCsOJSKEVGbxJBTJ0DRw12QLuNcLzNN95yjfYigWFbrwHUypn1XfP2Ynm8I/j2mNT643/djgX90tWuR3w7Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iNz56Cnk; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iNz56Cnk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789554094; x=1821090094;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=n152J+oW0inBpcepl+1yWkdMqbhm6d/xZ403pWrV3Ew=;
-  b=iNz56CnkopDNW1QLXWeZ72rrUCZndyI3DOTe7pKnXKArlq1SvHhhffwq
-   ih5iolx4Y9dPQRIttQQeDzwNxngOsAGsGxhurv42Y7XdLuW8T4T9ro37q
-   JBVtwDWAWloAFxI19HdR2ziT4wlnIfTiMB6cVjIDDgYw4Sl6scxJEvjhc
-   fCUNhChcRltb3fEOVf1FvwssKqHVsT0rLj92i/1UceEHHY52x2piUwQZu
-   VwPiPGeicNqEfgMNe3pRySXZ3QQy/nro417nMQDj3Dt/9HBpcIhaoWnld
-   088iFY3lQXOVGtFJ29DjmjWo0WbDizOvLkuPW8H1m8TD14Lr/yHxZzBlT
-   A==;
-X-CSE-ConnectionGUID: vXszHvNLRh+aZdznTx1vVQ==
-X-CSE-MsgGUID: /M0pCoGMRUeYk4eRSvs0rA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="89062964"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="89062964"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 03:21:29 -0700
-X-CSE-ConnectionGUID: DcsR/rdNR8SqKlqBIDDynw==
-X-CSE-MsgGUID: 6lqV8nerQouNtUP4U2SofA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="273266901"
-Received: from ettammin-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.145])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 03:21:24 -0700
-Date: Wed, 16 Sep 2026 13:21:21 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: longzhao@ambarella.com
-Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>,
-	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 10/15] gpio: pl061: convert to gpio-regmap and a
- custom irqchip
-Message-ID: <aqptoZYyclWSE_-A@ashevche-desk.local>
-References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
- <20260915-cv75-v5-v7-10-3297d3fbc9c0@ambarella.com>
+	s=arc-20240116; t=1789554219; c=relaxed/simple;
+	bh=uFQjaP6Ot+RC8020d5qhZIUj9k2STd3WAVm0TM1m108=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uNmc5FgsfNOFGitZ1cE7c5x35w7m7sbvbvIF03XzrRqIb6iZbrBo3Q/oRH61sLD3EQsehq9/r5MzpwMgJz59aXHTFyc9C+9VDYEVWz+Bz9GC/kpMCWvuS/Nj4HbAyn5Ipbx+LTuAObPaDNWTsSshe/SiryE0AOI4Z5Y8+tlYsLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from dfae2b116770.home.arpa (unknown [36.110.52.2])
+	by APP-03 (Coremail) with SMTP id rQCowACXmjgebqpqawfhBw--.61860S2;
+	Wed, 16 Sep 2026 18:23:26 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: andriy.shevchenko@linux.intel.com
+Cc: brgl@kernel.org,
+	heiko@sntech.de,
+	linusw@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	sebastian.reichel@collabora.com,
+	ye.zhang@rock-chips.com,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] gpio: rockchip: Fix bank clock leak in rockchip_get_bank_data()
+Date: Wed, 16 Sep 2026 10:22:58 +0000
+Message-Id: <20260916102258.2018689-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260915-cv75-v5-v7-10-3297d3fbc9c0@ambarella.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACXmjgebqpqawfhBw--.61860S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CrykZr47uw4UKrWrXr1kZrb_yoW8WFy7pF
+	s0kFyFkrsrJFnFgF1DAFZ3Ar4FyanrJFW3GFyxG3WxCw13tFyUtay5uayv9FWUArWIkw4a
+	9r1DJFy8WrW7Zr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9S14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+	628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCV
+	W8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_
+	Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Cr1j6r
+	xdYxBIdaVFxhVjvjDU0xZFpf9x0JUJWrAUUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCRUMA2qqP4e3zAAAsQ
 
-On Tue, Sep 15, 2026 at 07:15:40PM +0800, Long Zhao via B4 Relay wrote:
-> 
-> Move line get/set/direction onto gpio-regmap. Keep the existing ARM
-> masked data addresses and write-after-direction behaviour.
-> 
-> Do not use gpiochip irqchip setup (girq) or regmap-irq. gpio-regmap
-> owns gpiochip registration, so girq would have to be plumbed through
-> that helper. PL061 IRQ type programming needs IS/IBE/IEV, including
-> both-edge, plus a hardirq chained demux from the parent AMBA IRQ;
-> regmap-irq is a poor fit for that.
-> 
-> Create a linear irq_domain with gpio_chip as host data, attach it with
-> gpiochip_irqchip_add_domain(), and chain the parent IRQ in this driver.
+rockchip_get_bank_data() obtains the bank clock with of_clk_get() and
+enables it before reading the GPIO version ID.  The reference returned
+by of_clk_get() is never dropped on the error paths that follow:
 
-Besides some comments below about splitting more of this patch to better
-isolated logical changes, this one can also be split to a few stages. For
-example, one stage is to move to regmap (from direct MMIO access) without
-really switching over to gpio-regmap.
+When the debounce clock is missing, the bank clock is disabled with
+clk_disable_unprepare() but the reference is never released with
+clk_put().  When the version ID is unsupported, the function returns
+-ENODEV leaving the bank clock prepared, enabled and referenced.
 
-...
+Drop the reference with clk_put() on both error paths and disable and
+unprepare the bank clock on the unsupported version path so that probe
+failures no longer leak the clock.
 
-> +#include <linux/err.h>
->  #include <linux/errno.h>
+Fixes: 41209307cad7 ("gpio: rockchip: change the GPIO version judgment logic")
+Cc: stable@vger.kernel.org
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/gpio/gpio-rockchip.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Now errno.h can be removed as basic errno is provided by err.h.
-
-...
-
-> -#include <linux/irqchip/chained_irq.h>
-
-> +#include <linux/irqchip/chained_irq.h>
-
-Unneeded churn.
-
-...
-
-> -	if ((trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) &&
-> -	    (trigger & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING)))
-> -	{
-
-> +	if ((trigger & IRQ_TYPE_LEVEL_MASK) && (trigger & IRQ_TYPE_EDGE_BOTH)) {
-
-See below, this belongs to a separate change.
-
-...
-
-> @@ -142,14 +121,19 @@ static int pl061_irq_type(struct irq_data *d, unsigned trigger)
->  		return -EINVAL;
->  	}
->  
-> -
->  	raw_spin_lock_irqsave(&pl061->lock, flags);
-
-Stray change. If required, should be in a separate patch.
-
-...
-
-> -	if (trigger & (IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW)) {
-> +	if (trigger & IRQ_TYPE_LEVEL_MASK) {
-
-This change should be in a separate patch.
-
-...
-
-> -	writeb(gpiois, pl061->base + GPIOIS);
-> -	writeb(gpioibe, pl061->base + GPIOIBE);
-> -	writeb(gpioiev, pl061->base + GPIOIEV);
-> +	ret = regmap_write(pl061->regmap, regs->is, gpiois);
-> +	if (ret)
-> +		goto out;
-> +	ret = regmap_write(pl061->regmap, regs->ibe, gpioibe);
-> +	if (ret)
-> +		goto out;
-> +	ret = regmap_write(pl061->regmap, regs->iev, gpioiev);
-> +	if (ret)
-> +		goto out;
-> +	if (pl061->data->clear_irq_on_type)
-> +		ret = regmap_write(pl061->regmap, regs->ic, bit);
->  
-> +out:
->  	raw_spin_unlock_irqrestore(&pl061->lock, flags);
-> -
-> -	return 0;
-> +	return ret;
-
-Make an additional patch to move current driver to use cleanup.h, id est
-guard()() and possibly scoped_guard() from there.
-
-Then in this patch those ton's of goto:s should be replaced with simple
-'return ret;'.`
-
->  }
-
-...
-
-> +	if (!regmap_read(pl061->regmap, pl061->data->regs->mis, &mis) && mis) {
-
-Why not handling error properly here?
-
-	ret = regmap_read(...);
-	if (ret)
-		goto out_irq_exit;
-
-> +		pending = mis;
-> +		for_each_set_bit(offset, &pending, pl061->data->ngpio)
-> +			generic_handle_domain_irq(pl061->irq_domain, offset);
->  	}
-
-...
-
-> +static int pl061_irq_domain_map(struct irq_domain *d, unsigned int virq,
-> +				irq_hw_number_t hwirq)
-> +{
-> +	struct gpio_chip *gc = d->host_data;
-> +	struct pl061 *pl061 = pl061_from_gpio_chip(gc);
-> +
-> +	irq_set_chip_data(virq, gc);
-> +	irq_set_chip_and_handler(virq, &pl061_irqchip, handle_bad_irq);
-> +	irq_set_noprobe(virq);
-> +	irq_set_parent(virq, pl061->parent_irq);
-
-
-Is lockdep happy with this?
-
-> +	return 0;
-> +}
-
-...
-
-> +static void pl061_remove_irq(void *data)
-> +{
-> +	struct pl061 *pl061 = data;
-> +
-> +	irq_set_chained_handler_and_data(pl061->parent_irq, NULL, NULL);
-> +
-> +	for (unsigned int i = 0; i < pl061->data->ngpio; i++) {
-
-> +		unsigned int virq = irq_find_mapping(pl061->irq_domain, i);
-
-Split assignment
-
-		unsigned int virq;
-
-		virq = irq_find_mapping(pl061->irq_domain, i);
-		if (virq)
-
-> +		if (virq)
-> +			irq_dispose_mapping(virq);
-> +	}
-> +
-> +	irq_domain_remove(pl061->irq_domain);
-> +}
-
-...
-
->  	struct device *dev = &adev->dev;
-> +	const struct pl061_drvdata *data = id->data;
-
-Split assignment as it is validated later on.
-
-> +	const struct pl061_regs *regs;
-> +	struct gpio_regmap_config config = {};
-> +	struct gpio_regmap *gpio_regmap;
-> +	struct gpio_chip *gc;
->  	struct pl061 *pl061;
-> -	struct gpio_irq_chip *girq;
-> +	void __iomem *base;
->  	int ret, irq;
->  
-> +	if (!data)
-> +		return -EINVAL;
-
--ENODATA?
-
-> +	regs = data->regs;
-
-...
-
-> +	for (offset = 0; offset < pl061->data->ngpio; offset++) {
-> +		if (!(dir & BIT(offset)))
-> +			continue;
-
-for_each_set_bit(), but make sure the type of the variable is unsigned long
-(might require a temporary one).
-
-> +		ret = regmap_read_bypassed(pl061->regmap,
-> +					   BIT(offset + PL061_DATA_OFFSET),
-> +					   &val);
-> +		if (ret)
-> +			return ret;
-> +		pl061->saved_dat |= val;
->  	}
-
-...
-
-> +	for (offset = 0; offset < pl061->data->ngpio; offset++) {
-> +		if (!(dir & BIT(offset)))
-> +			continue;
-
-Ditto.
-
-> +		ret = regmap_write(pl061->regmap,
-> +				   BIT(offset + PL061_DATA_OFFSET),
-> +				   !!(pl061->saved_dat & BIT(offset)) << offset);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return regcache_sync_region(pl061->regmap, regs->is, regs->ie);
->  }
-
-...
-
-> static const struct amba_id pl061_ids[] = {
->  	{
->  		.id	= 0x00041061,
->  		.mask	= 0x000fffff,
-> +		.data	= (void *)&pl061_arm,
-
-Oh, this is something that needs to be fixed (but it's not your issue).
-Why on earth this is not const?
-
->  	},
->  	{ 0, 0 },
->  };
-
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 44d7ebd12724..69a7cd8c9a1a 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -673,6 +673,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+ 		if (IS_ERR(bank->db_clk)) {
+ 			dev_err(bank->dev, "cannot find debounce clk\n");
+ 			clk_disable_unprepare(bank->clk);
++			clk_put(bank->clk);
+ 			return -EINVAL;
+ 		}
+ 		break;
+@@ -682,6 +683,8 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
+ 		break;
+ 	default:
+ 		dev_err(bank->dev, "unsupported version ID: 0x%08x\n", id);
++		clk_disable_unprepare(bank->clk);
++		clk_put(bank->clk);
+ 		return -ENODEV;
+ 	}
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
