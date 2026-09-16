@@ -1,83 +1,76 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5594F475A
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 13:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA24489FAE
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 13:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789564506; cv=none; b=HPUARMbDk7hNcSNadzEFZTShGBikokgQLoYS+oMRPP0cxnohpUYxOlzp6JsflzmtvzTN+LqQTxJgCo7KLPvnCAUPCwHqJNCri0vWjQiStHlhU3mRpCYU8VGA+wm97V3FeUU1MQaMTVLx0XELc/lheP5KE5KY6pj+985kR2k5Qbk=
+	t=1789564628; cv=none; b=q1n986Snzw349h3sPb5dTSYTgoWUGo23K1ZydGPeWuE5MhnAGM+5ziB3HCsJehd+UBN6omh2IL/tt4pbofcSBJr1fTXmsLVq97+tVx077BcYZ4aQlFtc0k1rSTS1p9d5s/jPdp0DohVhyKCbLE/ctW2tkLRhxrgrWjMXSNI/njQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789564506; c=relaxed/simple;
-	bh=oNYnZX2UBCSp/tvXl18XeMRCJO6e6jfLpgd4ZUSJ7jk=;
+	s=arc-20240116; t=1789564628; c=relaxed/simple;
+	bh=+kyCv6bJNSWwBrYebpLS4iOUPj8BX1dz4Wo/hlQuDvw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ROqZpioPbhLb/Ir6AsFz/PvbUqE8r535Uoi8mnfuNbr/DA3nWt5D9q0j6T2rAPR8r0e3qejwKi1EAnXMDvS2uF1DxqkYap3S6T+FeocRsHxO5WyxmRICGwMb98d6QxAMMg221Ts8pxH/ceYzK1CPsdU6UUBsZpyHVvJ5swa0PBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6PL8XKO; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=UYKHn/XsfaRL+bXmMLjY4A4B7xtQ2ZZ6o2S/T6znieeuWCMP3FiXFw6aBnsfM1r4anzUyDIfGvRhYpLrfUCJWIEs0A4kBplcBrmGYmo6mSsTv5ar7npzF6m94Hc6MJUhwHfKenJQAVlc1JBPuZBkCn/y4ZUmOBMk2OMPh22qg/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O31hSwe9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6PL8XKO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E45C21F00903
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 13:15:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O31hSwe9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 966B51F000FF
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 13:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789564504;
-	bh=oNYnZX2UBCSp/tvXl18XeMRCJO6e6jfLpgd4ZUSJ7jk=;
+	s=k20260515; t=1789564626;
+	bh=+kyCv6bJNSWwBrYebpLS4iOUPj8BX1dz4Wo/hlQuDvw=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=G6PL8XKOrkIn03t8JqQWPJ2NAC39e0Trk2zATbJOoc9TFl6FPoHhuQL4i3yCn4qqo
-	 WgTt7FB712Ztn/32IukjjAUOkuYQTVDgdP6Rwbu++RbkdZtUj37WzBa7msnJxPdaOq
-	 BYt0nVrPYUo0temYhkYJ07JRD8KbZ2W+FzRYcTe2rBb7OZM1iae9Wa6tJYp5QgINdI
-	 buYQlE5FOc/CezkIvqCbymEQ8bqwPaeTTgLKINYVjm8Biulxx1r9VgQ6v3D/TGjzpu
-	 VlXPZWdQRYY4YkRmfPRNi5VHuO+IapyNuWWGv4g/MmbAssdB6mP8tFtNrh5FseFNPm
-	 oWt1eKkIKCk0Q==
-Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b5e4f16cd1so852843e87.3
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 06:15:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxTPNz3Y/myyxyASvb1Dq31CTW2t4t9JYbjY+s/VfxfpyUMne/+J/jO9um6u54AL5IDAMf6EfLyTtq/@vger.kernel.org
-X-Gm-Message-State: AFuF++kRWlYJMXMHPbJkvmSH0flmPHhlIR/6sbuowsw1O4MO5nlKoAo0
-	MIms7sE09+PEU/MAoTcdd+ob3Y7UgXgimehHIZvhABSoKIOWAuk3Nwd8GTgaiKfnNdw0fXA9MNC
-	z0vDS7aKRrbWJOYY5OfCp+EkSuSTBEV4=
-X-Received: by 2002:a05:6512:6c8:b0:5b6:1a7c:fd7c with SMTP id
- 2adb3069b0e04-5b8b66528fbmr794684e87.34.1789564503565; Wed, 16 Sep 2026
- 06:15:03 -0700 (PDT)
+	b=O31hSwe9PZ6czSgEapHj5kQm+vZZ8IELen3TpFZoE1Qe3is37POqQC/nNo6lb++lp
+	 f/QIbJ21UrezQmOs0jP4bdVuQbz2zjBIflKtTiQ+bJ9pP5/O8b6wwrRNIPI1eNSCiZ
+	 CWBuprmfAFM8Rn+J0ap0daSLFW+Aac67uOObKCusCaIkPHAHp+pwCcapkHllhTX2vQ
+	 sUMZ9UphJHj51JdsoHIPxqkO8128wWapY8yypwm8IQtDMsZS0W6JM63xA/3eAwT9zT
+	 i5cArYucvZYmY00nmtAzSnvdYFANI7zsDsHxW7+NYOK9Mn5pYuoW5b8FrpbsYY/97E
+	 cj//8NotDImoQ==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b5e4f15b79so871161e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 06:17:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBx6I4XdSiPtCg4vRHAjl5EhVKR6ntgnI0iaUbfqQI2WdZjy+oJmaefU/yzf4PA7jZeiVci4b3AJa9Fr@vger.kernel.org
+X-Gm-Message-State: AFuF++ns3RWn+oIc13n529MkMF9Q1YlOqyU4Uuv6wXiv0mIMu00m4b7B
+	H3dXl0z8vUjDi4SE0wrqVfdJLaEUuzBms5IVl3kgf2xuiq32DpFi9l70HYsE9R2zSGQJwFTrDLH
+	k1oy3ZLiFRaS4F3mi4zs96B5BEah3730=
+X-Received: by 2002:ac2:51ca:0:b0:5b6:19c9:d7b7 with SMTP id
+ 2adb3069b0e04-5b8b6654a6emr1504278e87.26.1789564625362; Wed, 16 Sep 2026
+ 06:17:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260903-pci-tc9563-aux-v2-0-34c625b542c1@oss.qualcomm.com> <20260903-pci-tc9563-aux-v2-5-34c625b542c1@oss.qualcomm.com>
-In-Reply-To: <20260903-pci-tc9563-aux-v2-5-34c625b542c1@oss.qualcomm.com>
+References: <20260903-ad7768-gpio-v6-0-4254ef6c9b38@analog.com> <20260903-ad7768-gpio-v6-2-4254ef6c9b38@analog.com>
+In-Reply-To: <20260903-ad7768-gpio-v6-2-4254ef6c9b38@analog.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 15:14:51 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=bNxOwFVkGjcv+Ux7LbUDD7EwqeMbp1Pvb_p9G4e5XcQ@mail.gmail.com>
-X-Gm-Features: AcwNN1XhOMGQi9DQBoWhea-391wB_SiJ6zDiVvp77goi9CMg6KcYgTlkBlAoV8M
-Message-ID: <CAD++jL=bNxOwFVkGjcv+Ux7LbUDD7EwqeMbp1Pvb_p9G4e5XcQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: qcom: qcs6490-rb3gen2: enable TC9563
- embedded GPIO controller
-To: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Michael Walle <mwalle@kernel.org>, Alex Elder <elder@riscstar.com>, 
-	Daniel Thompson <daniel@riscstar.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Date: Wed, 16 Sep 2026 15:16:51 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkBnfBn9N7rczP5sRktoi9Mf1dqT7ji+dw8hACHHffPHg@mail.gmail.com>
+X-Gm-Features: AcwNN1Vj-JRJZ0Qz3UU00kAP8Xx7SzY2VVnqCz5HLqBcAKmTyA5dpswVrtBEXyM
+Message-ID: <CAD++jLkBnfBn9N7rczP5sRktoi9Mf1dqT7ji+dw8hACHHffPHg@mail.gmail.com>
+Subject: Re: [PATCH v6 2/3] gpio: regmap: Add optional runtime PM support
+To: Janani Sunil <janani.sunil@analog.com>
+Cc: Michael Walle <mwalle@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	Janani Sunil <jananisunil.dev@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 3, 2026 at 9:53=E2=80=AFAM Lorenzo Bianconi
-<lorenzo.bianconi@oss.qualcomm.com> wrote:
+On Thu, Sep 3, 2026 at 2:01=E2=80=AFPM Janani Sunil <janani.sunil@analog.co=
+m> wrote:
 
-> The Toshiba TC9563 PCIe switch embeds a GPIO controller providing 37 GPIO
-> lines.
-> The controller is registered as an auxiliary device by the TC9563 power
-> controller and accessed through the same i2c device.
-> Describe the controller as a "gpio" child node of the switch and use it
-> to control the PERST# reset lines of the two external downstream ports
-> (pcie@1,0 and pcie@2,0), as expected by the TC9563 power controller after
-> switching to the GPIO descriptor API for per-port resets.
+> Some gpio-regmap consumers share their regmap with a parent device that
+> may be runtime suspended. GPIO register accesses must resume that device
+> first.
 >
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+> Add an optional pm_dev field and acquire it before register translation
+> or access. Release it using runtime autosuspend after each operation.
+> Keep the device active across the complete direction-output sequence and
+> propagate failure when setting the initial output value.
+>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> Signed-off-by: Janani Sunil <janani.sunil@analog.com>
 
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
