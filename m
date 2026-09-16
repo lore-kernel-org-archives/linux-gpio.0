@@ -1,85 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190414F0558
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 13:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D8D41C71
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 13:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789565569; cv=none; b=DMui6YcDFobqpR5wgbMD37UpkahpKu9PzPfdZv5CjSMJ21bYJm2NELwuKnJ3i3uW5aQ05W5dHU9bfuXKAe01SUjlgNDaLJPyyjYCO1Fk7T0s2iTQ0XBwFnAi9p/YGUiOnP6aHyin02loMAEfhTTArjvegNHcTm3EfgbINqIrUXo=
+	t=1789565656; cv=none; b=t+YhQbcRoN5KlrFxyvYHBC0EK4b0rL/WTnr49xNhDZJs/WkK3slSIvwD7xIZ+gF2J8HKo2J0Uu549S47mtkl/F0R2Z58t3GNTbhUtj3hUK0sfua6JdPI6i7qlVjQ0DUFU5N2iSXmJsBLMMoENjAPn1voC9NvmhzBIA9N+1X2iYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789565569; c=relaxed/simple;
-	bh=2J7eRse2ylA7RXRuyP+C8aDAe5OYglmpzhcByI0nxjk=;
+	s=arc-20240116; t=1789565656; c=relaxed/simple;
+	bh=SL0N0err1nZrZl0HktBhkPwZ7Ptdym3maQuJxgqRR3Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a7Ti47FxlQBFF+jeDd2ATuSdNgB3SYdTMFN4J/dedFwbpVTPagPUosdyRpUaH7Ai/isDDFai4w4coTKKVl02gKT+MWOaaY/nqZQ/b6Mjjup7ZqKc4MlzKYS8jKJ2yBVrV3rjhQQDTJjauXEQfi75NvUpQS1DxVv/m4+/xDBGKnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLqrYtAv; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=pfzndbAXwGeGTvWCORz+gq+Y+8nfhsnklKnfGo//lKkjgALtUMy9Z6RIZBFYXF7LGkjCWtF5jEw4y/KfRnTBxoKjwSG2TIzhrctI+z/wt09T9aSdYIUK2FO/YkfMOGnNrVPPbqHVdvAFEH9p53n2Gl+pk9IeZG94YFVroehwpAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDKwF6Zt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLqrYtAv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8BD01F00898
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 13:32:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDKwF6Zt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FA8B1F00899
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 13:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789565563;
-	bh=2J7eRse2ylA7RXRuyP+C8aDAe5OYglmpzhcByI0nxjk=;
+	s=k20260515; t=1789565646;
+	bh=SL0N0err1nZrZl0HktBhkPwZ7Ptdym3maQuJxgqRR3Q=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=iLqrYtAvCORrfWkMnaxWGhkFy/obOPO1OQebmIS0SH7yAJQmONQhmO1lIRRNkgfrV
-	 v8VHEcDJ/Qr5onPHRQ+CYvKCnAH4pgIL4teOvcTvJlTJ//8/r6Kp86sP1jYC2CXleB
-	 2kInprLXPeGnqT0xyJo3XDvRu7aQOmecF2UNUnN6jrEieEx+UT/TZn1oGB2gTtgYop
-	 76XIUMODsMXZRz6gFmwoVzUTuA8UBdMh4D8s0aAsg4iWn/HFp+RDQMcVD9lA+PSxUi
-	 EsgaxUDuVmWEFWXL5AhgzlIQgcJ2mP4dgJlHO2ITeeNojc8pWeM6POxgWoD7Eihl9i
-	 4oT+XrbxnGSRQ==
-Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f15d00so934711e87.2
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 06:32:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByhw1f0xgcOl7EfJGqu3SK8Fj4dALH73qMgBmIWHzdjVHUA3xlk/uSqzjpBkKTgvqNOyasFWJLwhUqQ@vger.kernel.org
-X-Gm-Message-State: AFuF++nNo/Gfj7RzCQLQmEmncnq9B6mTmYvqpgEA+TPDYOiEANtpA057
-	i7U4nv9LN6pJa115sLiCQQSKCN8qnXkauazBc1hv28jECEi1aSpdN4DkRF92Ds1eNeP8FLq7U0X
-	xtG7Xwo7eg85rht31dd3Wn/gql06qWlA=
-X-Received: by 2002:ac2:51ca:0:b0:5b6:1a7c:59d7 with SMTP id
- 2adb3069b0e04-5b8b664ffd5mr746249e87.49.1789565562592; Wed, 16 Sep 2026
- 06:32:42 -0700 (PDT)
+	b=FDKwF6Zt3xrnR3aWoFDJkCUoc9ezuYstdOCdmN6nfFTim2tUb8Y/IGV+QJF02tLsk
+	 MQ1NhY4/57rbKFdPTCZqyM0S1b3mdez8IMD0hdcdIRT17TMIEHTlNx/N9gCQqAXW+L
+	 ed0MV5gFtaueFtcdzpAeG1f/SspnY88X59cx3ZdYYGRZSNgqfr+BE+ZAEAbuZC6zcw
+	 6URCygR/n3IG1HVsgk1WCVrWQ7cfa4ROJM+UyIP9NwmePXLiOZJbuKrSpl27k7+58k
+	 GWqhxoT3gqj8Bym8Lter+/gCrjeRW9v+TCD9237yUKNq/bJ0kI13C8w61BeFKpNhYM
+	 LIXH45rYSm9Ww==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5b5f21afe8cso2142073e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 06:34:06 -0700 (PDT)
+X-Gm-Message-State: AFuF++mZvIU36fxCO6t8tfpItacJ0hK9CviTVvGL2w9Hmrmb5kdHFSh5
+	kiuCvt4nUNFML1SrZRPtgmSlNVySdDLiFc/U4icJcTq56yETZZY0oPDSn8Po2c64K8PEAmP483C
+	R8+7jKpkZWmQ37I6bfj5MvIE6i0Kwqmk=
+X-Received: by 2002:a05:6512:250f:b0:5b6:19c9:e53 with SMTP id
+ 2adb3069b0e04-5b8b2a5e29bmr2267729e87.12.1789565645091; Wed, 16 Sep 2026
+ 06:34:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <55267dce42a63e5210c34e49747f564f5cc0b0cf@linux.dev>
-In-Reply-To: <55267dce42a63e5210c34e49747f564f5cc0b0cf@linux.dev>
+References: <20260710070704.60680-1-rosenp@gmail.com>
+In-Reply-To: <20260710070704.60680-1-rosenp@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 15:32:30 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=KoKd4gLcyxuTTT904oR=EFeVkqQF-iD6qcc-GwQ39ug@mail.gmail.com>
-X-Gm-Features: AcwNN1XIhauDEL53Qu0WeLNzQx2IVlVzXQcgLWnShIejgmghe2oHxiaISiq4Li8
-Message-ID: <CAD++jL=KoKd4gLcyxuTTT904oR=EFeVkqQF-iD6qcc-GwQ39ug@mail.gmail.com>
-Subject: Re: gpio-hog names
-To: Frank Wunderlich <frank.wunderlich@linux.dev>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Wed, 16 Sep 2026 15:33:53 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkpAi3Vh=YYMckM7z8SmRFeHUUeXS4wPLfciOyMZpZ1Hg@mail.gmail.com>
+X-Gm-Features: AcwNN1X8gayhrt9XNUrdZms7Iwl96lHZC5Mt4H7hlL-SMLIPUbFfIIGz_mTVQm8
+Message-ID: <CAD++jLkpAi3Vh=YYMckM7z8SmRFeHUUeXS4wPLfciOyMZpZ1Hg@mail.gmail.com>
+Subject: Re: [PATCHv2] gpio: mvebu: convert to noirq suspend/resume to prevent
+ interrupt storm on resume
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 6, 2026 at 9:05=E2=80=AFPM Frank Wunderlich
-<frank.wunderlich@linux.dev> wrote:
+On Fri, Jul 10, 2026 at 9:07=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wrot=
+e:
 
-> Until v7.0, GPIO hogs inherited the DT node name
-
-Where? In debugfs? /sys/kernel/debug/gpio?
-
-> when no line-name
-> property was specified. This was implemented as a fallback in
-> of_parse_own_gpio().
+> The driver uses the legacy .suspend/.resume callbacks, but sets
+> IRQCHIP_MASK_ON_SUSPEND on the irq_chip. During resume, the PM core
+> runs dpm_resume_noirq() first, which calls irq_pm_resume() to unmask
+> interrupts, and only then runs dpm_resume() which invokes the driver's
+> .resume callback to restore GPIO registers (GPIO_IN_POL, GPIO_IO_CONF,
+> mask registers).
 >
-> Commit d1d564ec4992 ("gpio: move hogs into GPIO core") moved hog parsing
-> into the GPIO core and removed this fallback.
+> This ordering means interrupts are unmasked while the hardware is still
+> in its reset state, potentially with incorrect polarities, causing
+> spurious level-triggered interrupts before local IRQs are re-enabled.
 >
-> Consequently, GPIO hogs without a line-name property are now displayed
-> with a ? in /sys/kernel/debug/gpio.
+> Convert the driver from legacy .suspend/.resume callbacks to noirq
+> callbacks via dev_pm_ops. The noirq phase runs before resume_device_irqs(=
+)
+> on resume and after suspend_device_irqs() on suspend, ensuring GPIO
+> registers are restored before interrupts are unmasked.
+>
+> Assisted-by: opencode:big-pickle
 
-It seems like so...
+Should be
+Assisted-by: LLM
+these days (Bartosz can probs fix when applying)
 
-> Is this an intentional change, or should the fallback to the DT node name
-> be retained?
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-No reason to since debugfs is not ABI.
-
-But if you think that *looks better* then by all means send a patch!
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
