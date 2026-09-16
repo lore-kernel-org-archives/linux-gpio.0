@@ -1,57 +1,55 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2D93DFC80
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 12:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A923E4AA02C
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 12:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789560878; cv=none; b=KwcR3hBFeRej6XY7vfDojmtaKw3bEBldP6KUboyZN7zUjKC2H9GVuB3uxDiDTuZh5qNAaFBvFaScelcU4uqLYqbBgMmqX39kwW6+MExZteMEoCrW+CzfEhZgxDKRxCWYiUKpYmUWHpkAyRbPKUKh4c+e69KrYzpVFq6X6a/iNZk=
+	t=1789560932; cv=none; b=UYpNG3R/TFpM8jowUn7OvlWTW7qsBWYNoeNjnkg5Uh2Oorh603wfaHqVjbOlrtYO4EXg1cAGqTp+V1LbeYTaccCcFrpfQ8H2NdVSM9hg8A71rqJjNbBGzaW9dunXGmAZcAS1+4duHMsKSvIl4XVFDJujL9ukqgQTl6LTqREHwek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789560878; c=relaxed/simple;
-	bh=gpt7EWeFXl6SUrHhCys5pEpFmfWPrpqjqmqw+nCoPv4=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=ks4oyp75JAqLMi8vssOZKYx0Kbgunu8HU2ojbmTySkJO9eLeapHrykpn7X6zo1HZkr8X/6A7HnRS4C2ICpa4657HULI1mUPR6Y5I2tjnSw6OuS3BVMER04WMw98rgXlb5chngaQkGHILkX3+Cr5zFHwn4u1IrXDEZVDvkXyluUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NrAoUB48; arc=none smtp.client-ip=192.198.163.18
+	s=arc-20240116; t=1789560932; c=relaxed/simple;
+	bh=Ee+Idd77dnaXrsLzjlmMIu8LGI2+KeGs6GKsLLh6Tu8=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Ohs6wN7FoHEKgA4M9O0RLQu+NVtcEvCYlya+GO1LsTWmoy/ZW/kE0D0ar3aVSYgBlw8ia081fPHxgYmr4Ttk2Htmhfzq1WWzeSih06j+BKwcwJ1J5Y0oegAXH4RCZPkz8OnCznWmeoa9Q42CGXNkkKkeCbMEqJ7R05SrA1xplqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IMPy+Nfw; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NrAoUB48"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IMPy+Nfw"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789560875; x=1821096875;
+  t=1789560931; x=1821096931;
   h=date:from:to:cc:subject:message-id;
-  bh=gpt7EWeFXl6SUrHhCys5pEpFmfWPrpqjqmqw+nCoPv4=;
-  b=NrAoUB48gYPK2jEdBzWNo4nfnTSRZcDTsLK4L8gy1ogCpy6qaJDYjLQR
-   YfkO90movcNZPXdb7J3vtga3O6AEffgdGenHex5ie6bTUIZA01l3CpO+l
-   qZHM7g7lHYH2JXbEyv5DaSewk0YeYDcwLQrcS1/2fH9XNQxFCbfTGO7Fr
-   KSLQ86SUKhYuOJelsPMIebkVzmc9isTqeR3nrGr31AF5UEMz1R2qnnksW
-   S+wPugbVOXHU3X4TxqwW2XMZ2E3yGbFF9Gdzdq9nK1itNdEh/qBdhMakC
-   fGfh2DxWluRRpsaHP7pQQHojekU8dP/UVz6BGQNrhrf9858GK0YipFpqD
-   A==;
-X-CSE-ConnectionGUID: +8vEJxRQQtCIdTvjD1P4vg==
-X-CSE-MsgGUID: 8ZvQNIukQ6eJh6j6xZyMYA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="89071883"
+  bh=Ee+Idd77dnaXrsLzjlmMIu8LGI2+KeGs6GKsLLh6Tu8=;
+  b=IMPy+NfwtRaCN3VzZK83o6Q8rd5TNrMSHPJWtOsRNy32t5IBPOAhUWHw
+   crLNqkK/sbv/u+KbfvWSBfrx7wzxovJ+rchhGt1KNVQDDL5Giunfq7RmQ
+   RJQl9OIxmwqiFHKcN+6FHeMtcsEUi87AndPH7yMP1B+N6yvut5zU5vcmj
+   RXUkffvFHlSKQ1UXHChnt1/OOIoLIkkPndAZM9UU0Br5ARAtCGmfcEXfs
+   95TxbTW0agmOhbJW8g/Q+3Uluwu7jie4fhcxYI+AK9w6ohvV4u+41lDYW
+   kD0dwR+7uE033GqR3EsUimlqY6JKp38COjhPJPojuIa1HBZGGNgoicSit
+   w==;
+X-CSE-ConnectionGUID: CmIWTN7KT9mKG8ej66PSXA==
+X-CSE-MsgGUID: UazGJz1SQO6ucpbGqiIG2g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="93638128"
 X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="89071883"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 05:14:30 -0700
-X-CSE-ConnectionGUID: yfbjSUysRryKQ2SnEUv/cA==
-X-CSE-MsgGUID: fk0+T1r7SlSYD4MhiASyrg==
+   d="scan'208";a="93638128"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2026 05:15:30 -0700
+X-CSE-ConnectionGUID: lc/DJSTsS0Kee66AbQtVlg==
+X-CSE-MsgGUID: acRlLT55Rr6oiUPzFLWHQQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="273864475"
 Received: from lkp-server01.sh.intel.com (HELO 462990a40a85) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 16 Sep 2026 05:14:29 -0700
+  by fmviesa003.fm.intel.com with ESMTP; 16 Sep 2026 05:15:28 -0700
 Received: from kbuild by 462990a40a85 with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1x6oWw-0000000062B-1Nxy;
-	Wed, 16 Sep 2026 12:14:26 +0000
-Date: Wed, 16 Sep 2026 20:14:01 +0800
+	id 1x6oXu-0000000062N-1euK;
+	Wed, 16 Sep 2026 12:15:26 +0000
+Date: Wed, 16 Sep 2026 20:14:58 +0800
 From: kernel test robot <lkp@intel.com>
 To: Linus Walleij <linusw@kernel.org>
 Cc: linux-gpio@vger.kernel.org
-Subject: [linusw-pinctrl:devel] BUILD SUCCESS
- f3db268c44e0900d2e8330de2cbff744766213ff
-Message-ID: <202609162057.UByotIBg-lkp@intel.com>
+Subject: [linusw-pinctrl:fixes] BUILD SUCCESS
+ 8039b75af5808572ff3656eaed07d348aed3989a
+Message-ID: <202609162055.uWQjjaqX-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -59,10 +57,10 @@ List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-branch HEAD: f3db268c44e0900d2e8330de2cbff744766213ff  dt-bindings: pinctrl: fsl: Replace tabs with spaces
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git fixes
+branch HEAD: 8039b75af5808572ff3656eaed07d348aed3989a  pinctrl: mpfs-mssio: use correct regmap function to set bank voltage
 
-elapsed time: 2282m
+elapsed time: 2281m
 
 configs tested: 287
 configs skipped: 5
