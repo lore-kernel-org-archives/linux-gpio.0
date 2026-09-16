@@ -1,82 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF20495AD7
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCF74CDA35
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789579060; cv=none; b=A2Y6auNIfHTJNvzbq5hfY50eEMeVX3r5AL2wH+4N7Gm+OWd9JttlDnFLkuTdT/GaccjlqVnlEeXVPPt/g7HRgB7E4X0eTrPbH2vFlk7mqx7THT+drWj18WxERMW/TbHuFJYNzqMTqm04kp/KOHZFfC9Dn3eHGjOhqzKISSJAMkc=
+	t=1789579192; cv=none; b=JoHGnsVYYX45QvuT6t0ibx4Ho5pM0U5o2CA+e7t0S8PWAfQYAbI3J9hG6G4Ob0KrTzly73Xasj8XNUdWL7zwf1VfnevZxblgLZZSr9FpfmRcJK7nYNqBtVmpJ61wyi2CcuGSwMFZwEV52wUO+S1fy5U1oLs8VpNfGMBa3XMiqQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789579060; c=relaxed/simple;
-	bh=f+Lf6ZoxPvjRg281Rf6Ji6QGaQvezrbwHJsXrETsPp0=;
+	s=arc-20240116; t=1789579192; c=relaxed/simple;
+	bh=GvpDqPtcVDHmIGNRN5Cwdl96zxBMwJm//wszUGDWEyE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qP0LzaYYEKOADae8BciLOEdv/2HJLTi26eP+zpkgD0ty6jWnDcN/6WamsidYN3IL0cSAc+FaliGE5g7Zw5jXcb6KLwyEiC5u2OHRGfjpe+k3EcNj42PB12u+OA4Aordu4tRn9XqXJ+yuyCJ3z8FISZ7zX2CqFzSW2GMUQmswTU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCu3gRzK; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=ZzDrh/+4FDFOuVO6A37W1vdo2LGR8UwcR/+ww1YI+NoGePhvOEzpyGa844xCOimP/eJaJNTlYDXPY5WZWgH9g5Fa2ry9o1rKJmmevEDHJX6AUsMMF2CtKfDWHyxZ9sEJazSmuu9g+8nFbWLWEjTmvGrtPowMYK+rVROOOGMQPG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UoJeGhwP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCu3gRzK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07B131F00899
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:17:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UoJeGhwP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 939931F00893
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789579059;
-	bh=/xHXJhnXAE5g7vU5PogSY0vNjsvxNtdc1LTOWODzVNs=;
+	s=k20260515; t=1789579189;
+	bh=GvpDqPtcVDHmIGNRN5Cwdl96zxBMwJm//wszUGDWEyE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=PCu3gRzKlPDcTasRgWOZU9mKi2dhCGrd3CsZ8wt8B9R/NTtWPonLReVBPYL2Fnadr
-	 aZy9jPuFwG2rE42xiIuF7E0dHVi1tsw/cN7ede6PyYhagnKaDso6JOIQgiuosbRrzx
-	 uLhMLZCo4Lf23+JQx22/Q4xEVr/keqwbZDf+o3kdSpJcVKeII36v2bqhKt11xAZId0
-	 KyGCNcTCFHHmbUeKJAU2Ad6ObVDnx1+SpSNwXWOhj+inqhlo70uCvTluOwoUmmVGsl
-	 RKgnMTJ6bsmjkMVZ94HItdMM8inxrMQ6KnzUYHhp47bP+lQB23V86ng59pzp+SVSfX
-	 5SSw4j/hM99yw==
-Received: by mail-lr2-f12.google.com with SMTP id 38308e7fff4ca-3a2ff148dfdso9545751fa.1
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 10:17:38 -0700 (PDT)
-X-Gm-Message-State: AFuF++mGQQnpChENWyZOkxtSFbLLSbJ89XAMuHZkIQ0p1kyKGBqEtAjI
-	YdcZRGOHQDrj2ouHLAD17qUzAbIJOcZjKh+mDKq4sKIddpsFIO1kQL7HXW4LQbFuEi2VrRD04cH
-	6Hb2puElmzo0ZDfcew9RYx9blvAGMZi4=
-X-Received: by 2002:a05:6512:33c6:b0:5b4:ac1b:89bc with SMTP id
- 2adb3069b0e04-5b8b6619f44mr1034081e87.24.1789579057719; Wed, 16 Sep 2026
- 10:17:37 -0700 (PDT)
+	b=UoJeGhwPyLW8ilCTa6I+PhjeWrHSN2Q49sMY1cb2yvVyBm48OIxmEr+3pNizbM9HR
+	 KZ2HcdqhA8GwzgeVhykmzvBdvqkCWZlVMhQx8Fk0K6ZYTgpiX7bVpw6c9WxbY2Q4tP
+	 vuTO5kH1hYhqq3ycpDvHsjNvnePStrU1wPMe/qPkF8THXf4VZRpAklw/Zs9J2ljoTj
+	 muwXBbm33JRjDsM7wjxzvPrffatvwAxi2tNORvSuaQtDvVobNj9FjyFjL8T8dgd6p5
+	 OfmTLfC7/u+jTpq5MRqWsNOq9fH2UEOSHVkg1xYClXQtsi4lrUEmKbfbbMU/6yj20e
+	 CdNVnepyCtiNA==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b74e0c2e4dso1342568e87.0
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 10:19:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwOMbqtdoC9Ag6o9FobmCuI8bUdqMxUN3V8kDIieJ8ICXIxtEbnu+g1ADYfgU/XM2946zkzVKQotPui@vger.kernel.org
+X-Gm-Message-State: AFuF++liaHpg+Zt6ra1oadr1wLjaNGKTsosydfRsTcCjivNIh1Pd2EPi
+	8p2M0gygp7qUoW9+d8kUC3fyo129zFOQnstuxotMumF84jSy32wtrnSs2Lt4l5dsYQUYClbU5wf
+	0t0STD0v1ESrr6Yu9YNm/aVP6A6LcFWM=
+X-Received: by 2002:a05:6512:2388:b0:5b5:e7a8:9b1d with SMTP id
+ 2adb3069b0e04-5b8b6625ba5mr1991668e87.13.1789579188303; Wed, 16 Sep 2026
+ 10:19:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260912221937.71403-1-rosenp@gmail.com>
-In-Reply-To: <20260912221937.71403-1-rosenp@gmail.com>
+References: <20260913040312.21966-1-mhun512@gmail.com>
+In-Reply-To: <20260913040312.21966-1-mhun512@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 16 Sep 2026 19:17:24 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=n6jV-n+x1x_GUm3RohdbfmdfhTrWj9rz5HL41-vjz-g@mail.gmail.com>
-X-Gm-Features: AcwNN1WBxldUn8CW9skNsvXHFR1xVkVV9jESkCKvczcNPvemm0T94MYp4QiaaGo
-Message-ID: <CAD++jL=n6jV-n+x1x_GUm3RohdbfmdfhTrWj9rz5HL41-vjz-g@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mvebu: keep resume masks within the irqchip cache
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>
+Date: Wed, 16 Sep 2026 19:19:35 +0200
+X-Gmail-Original-Message-ID: <CAD++jLn=6K7EZLuXnP7vcNe2s1TpNF+gVCnGqh2e0AnPeB=r+A@mail.gmail.com>
+X-Gm-Features: AcwNN1VsVf0Ab2PJqc6NKhxiLm0epWqyyaiftJvVfZNznCffNKfZ2aSXL8uXvug
+Message-ID: <CAD++jLn=6K7EZLuXnP7vcNe2s1TpNF+gVCnGqh2e0AnPeB=r+A@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: single: free the IRQ on domain creation failure
+To: Myeonghun Pak <mhun512@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Ijae Kim <ae878000@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 13, 2026 at 12:19=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wro=
-te:
+On Sun, Sep 13, 2026 at 6:03=E2=80=AFAM Myeonghun Pak <mhun512@gmail.com> w=
+rote:
 
-> mvebu_gpio_resume() writes the edge/level mask registers saved at
-> suspend time straight back to hardware, bypassing the irqchip's
-> mask_cache_priv.  genirq skips mask_irq() for a line it already
-> considers masked, so restoring a bit in hardware that genirq thinks
-> is still masked leaves that line unmasked behind genirq's back.  An
-> asserted level line then has nobody to ack it, and the moment
-> interrupts are re-enabled the chained handler storms, hanging resume.
+> pcs_irq_init_chained_handler() requests a shared IRQ on affected SoCs, bu=
+t
+> its domain creation failure path only removes a chained handler. That doe=
+s
+> not release the action installed by request_irq(). The probe can continue
+> without interrupt support while leaving the shared IRQ action registered.
 >
-> AND the restored mask values with the matching irqchip mask cache so
-> only lines genirq currently considers unmasked are unmasked again.
-> Read the caches under gc->lock to keep them consistent with the
-> mask/unmask handlers.
+> Use pcs_irq_free() to undo the appropriate type of handler registration.
+> At this point pcs->domain is NULL, so the helper only releases the parent
+> IRQ handler. Then mark the IRQ invalid, as the other initialization error
+> paths already do, to prevent another release from a later probe unwind or
+> remove.
 >
-> Tested on Helios4 5 suspend cycles woken by magic packet, no hang;
-> mvebu_gpio_resume() returns in 6 usecs.
+> This issue was identified during our ongoing static-analysis research whi=
+le
+> reviewing kernel code.
 >
-> Assisted-by: LLM
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> Fixes: 3e6cee1786a1 ("pinctrl: single: Add support for wake-up interrupts=
+")
+> Cc: stable@vger.kernel.org
+> Assisted-by: OpenAI:GPT-5.6
+> Co-developed-by: Ijae Kim <ae878000@gmail.com>
+> Signed-off-by: Ijae Kim <ae878000@gmail.com>
+> Signed-off-by: Myeonghun Pak <mhun512@gmail.com>
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
