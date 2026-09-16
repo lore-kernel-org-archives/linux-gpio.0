@@ -1,135 +1,86 @@
-Received: from mail-ej2-f12.google.com (mail-ej2-f12.google.com [74.125.228.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30673DEAEC
-	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 18:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.140
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789582688; cv=pass; b=mBM9X4lXI9ROCf+SshLAq80xGgKbA4A9MGbMg9SIv1lAC7ZIAt0ipKf/FndJeVmg7JAfGSiXt/MYu7Ry+yQQU0OyFq59m0/dg2KZuDTCEjRSlBOKqtIbmGdRvmASoalRdLYjl7Fa8AQFeUDE8LY9D1yH/b2vaPYP/7JHdbg+un8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789582688; c=relaxed/simple;
-	bh=Cru63pCpKSNAK6GcDnmrPULFBGS/XE5+CwZYiPLRCD4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PYKDJT/eCf85JEZic2/u5ZKwk+s/746XJkJTxkxwZ5B9RWUybY9brJ+vkmRq/n1HZCQR7BQ33KOe8yBmXA9KrtqoG0hNzmfQgvN8PuOljxXRVFY1ybEIlIWofGJrGDS4mEaA0fmaykCGK91L+R6tlUmBaL3st+NUQxOQd3RMEv4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CXcumD2j; arc=pass smtp.client-ip=74.125.228.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999E43DEAC8
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 18:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789582698; cv=none; b=NIXiLbZNH2ODUGOe4h/nIRIXCpQik8mLw0gDC9KOaj9wBbkuK28cnePd/vzPI+M869ZS9YMGhiJPFsJ1nl8NaQ3PEwYfZb7D/bBAp4wazxBRQ9kLLgGB+YJFzBcdgZ4tnju+9y0Jk39gM55Z81/nGs+ccOWThr9KLCoG488Errs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789582698; c=relaxed/simple;
+	bh=qmNHsftrPigc6z9lAhD5TrQ9HA5z1cFLq5Fdk1Pby1Q=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E42+oSXHpOlNrh/ISTJr/a6X4UExoQLiON9mo40SBiT+PpxSi6QFS9Li8DEwKtaHhllBbTuqv1BWPNeYUnw48WnHzTFNaqYwGfrnfXVGLSiTiU9gJekL8OY3G8aZvFyjhRSpC/PMHnYvcTXCMg0oD/qDWy9euefU5aV026119HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=luD3KYPt; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CXcumD2j"
-Received: by mail-ej2-f12.google.com with SMTP id a640c23a62f3a-c254f55eff0so5456366b.0
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 11:17:55 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789582673; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Iiy/3burVxEEK59ND7J9dVDyRnfAU7zKvNUaA+ZNVEjDSepD0YVaqDptXz8jSeMwFD
-         BWlmf4xN5WBldz1S/qAJ2pmfdCdbPKAxTFjpsy7XIpN/i9HmFeUtPQMZlOfnedV5y963
-         cgqtUPCDlVnwPpXPZiQaBudHgVluqrrWgeVlS7JFJ/UdfLEFer2E0fj+8HigsFKMFJaD
-         pAp7eGfqg1iiXk5/ie5Vkz0bUMYAggWK1WU2w4YbNJlrfrKZe+ps15N8FAy4hSYchEWI
-         qf61dUmxwRKo9au4x7k1PvVmTUQzkVphT/ApGeNMRCeR1Bp3ZhHA0Zfwat7Vk6taecfb
-         aubg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=Cru63pCpKSNAK6GcDnmrPULFBGS/XE5+CwZYiPLRCD4=;
-        fh=GhFBK1QHscPorqKcv7qc/2De2HLu4y4MN6w8EmDacAY=;
-        b=l9q4UQz8A/8jhmFumE4ER+VlzTMa14SEYP284BqcpPgIqX7f5y0oCAie/khNoloF0q
-         LkXt6dIWonxMr5yJ7oDlU9oxG9xP1L22ulds923CmT6hKDuKZcPKFJOKi5s0+o5UHJbL
-         y9AW6LznTxYekaV514ytBcl+XjI8CkZP9EPwM/XwPkcmMTXPAXrSjT5zkj969YPIb8J+
-         Lnqx++wluVYqDOJweJiWSZXM7IhhznebeomR6F1e2o6eihym6TDCjFwzKNVxL/tB0v4M
-         aqJL15BuRZRXVeMs5CMlCIFrmmfaZiFauKAJpuZKTVuISSn+Pdkw5BgmGkzmNoS/nXBt
-         Ih9w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789582673; x=1790187473; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Cru63pCpKSNAK6GcDnmrPULFBGS/XE5+CwZYiPLRCD4=;
-        b=CXcumD2jlVFHfZ89Zeg+Xn3s5LF/hPeXp09HUu/akJWzuiucL+4im1wGg4kY4QRUxC
-         HjQplmd96cC5kn6D7gwQrijreAYPofGW4TiTtA2lghtgg2e2WCaDar3tv93SMRPVBlIC
-         HXPxjH66ca9jHPEwP7Gp6vYVjHgklmeSWBJGPJfY9FmmXGMRTP5r1BKcOEWS5lT3EnOV
-         ntrG9JFK7cshIYwQq+KM1Zsw92v0S2tOx/+Hj3KmU7p0GQMxS+VaHy4ul/MLCgWdzNcf
-         mggrPYYZYcOVmE4vdux3QCOXs7aeOVnT4LP7dbEX9p4sH5TcxYbmi9JGAZa/t3rUMM1/
-         hSRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789582673; x=1790187473;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Cru63pCpKSNAK6GcDnmrPULFBGS/XE5+CwZYiPLRCD4=;
-        b=Fq11AlAxMgAbKVh1CLvkCMwNJz8vUlq2nlGBU5S1pqmVI/eVhkwtNZwtkSJrUyL/Kx
-         rZjDV2zU4nHlqI0c2/pcbMNXOYtwa1SDyIU51DdTaV6DYlG1KKuYFCdyDAjKXzeCIg/L
-         z+Ezv8E12d2IhGb2qH4iw07yGlbBXvrsaaqCq2nacJOMUop7uj+2HvVQgnO8hqS4Ltu3
-         +4dc4KZf+JCJumlDXahjv5PLD4PWuFTExbnv5TPfRSGGRAbORswo1e/fHsW7eqwm9OQ+
-         W0iLWFyuyQSsi4Qj/i/uOUjaF0VdS1FGQ+OUItUuAovoJJOJfh8wri9YLE0UN8umFVJt
-         x+Nw==
-X-Gm-Message-State: AFuF++n2NST/ZUJH3ZoFU24sdHP+XTInxKSPlKEN9SFpEFy5DvK2rul0
-	0ea+CeYHiQQN0mgf2IqTtLN+Btdm0+p2yEY9Hoeq6Gf1C/Jgew/3gBW4XOqsUEkE73QhK+5ygft
-	FM3p2XHU+aEER14vn8Kl66xlmJMny9k6MlA==
-X-Gm-Gg: AYBFou3Zkd7CMuc/Ybdp0JTw2YPTKyKaJUv6et9/jO5sBdjwRnJ8Yj8lkCx++xEEUrq
-	Yur3GWQI9C1pul4Fdg67x896sMv+UnfnuuuIV7vvDgfR1rkpjlQXOUhrGoSsfs0VppjdNTKyAew
-	FBEW8kqVOSh1siZhxIkE3HkhAcNI6ePUVVnnHUTbzxFgWGjF5lEGHi9kGwxOWuYfdWBTS4I9xgN
-	YgJD1tUqRr1rtrHe0X3KJaQpU0AtCv6Uax6JEDfEmYJpb3Nndwrz2G2FbPbPqe0TH/Vdl6IRlVY
-	4eciDe3XEJojNhRN1vA6yH7OQEM9yUzT1t89PMGw9OC8zL0ilSKdBfyt11s3+CO52jaPCR0+838
-	hBbVRUZodxf90RVA6r1QSv2B+Xx+a8UO/SjvqJlMCuNu/54fbvWcgLJylf08pK3oAJVm1174wJK
-	Wpwa6x/TxEv0sOi10NfmXiL7Hhawi0x1Z2FmANzISkDcg0HwznL/KG1MQ5vWi/ihTZuQ==
-X-Received: by 2002:a17:906:6a28:b0:c24:4128:c19f with SMTP id
- a640c23a62f3a-c29e51f0ec4mr299577866b.11.1789582672999; Wed, 16 Sep 2026
- 11:17:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="luD3KYPt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8AF51F0089B
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 18:17:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789582674;
+	bh=NcQe03qyUu7W4K18zVzWNwv6MgOA45mAnb9g7/iXl8I=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=luD3KYPtQ6rVMU3canU+kY6TJZHae8NyVUBeWdM/TSLcgcyFEK9fHqsZ1Lf/ggrPJ
+	 +AQ62gV/2VLSfGIbVcm3QyD+DhZTf1ZWcGCI+LJQ5f8blfGn637DLQd0cvnGT8nR5V
+	 g1Drbzd11p8TrUI3uM7g39+m4LS3EYGDxxxRnlAdstpY2wJHyzZCTpO+IfOal5J/F1
+	 IhOMNQ/BmPqwUx/8F18mbeqf7+0srQYWLOOcOIyIjE97ZzzOG5bAR3gkXLMMQ1c7xF
+	 pl4hKbBH7Vkr6CLJK70t3r2GEdvHpXocftmnMqRKAftqA2OQmV6mJUzUgehhuO6z5y
+	 6qlQanImIhZkQ==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f15cfdso1308450e87.3
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 11:17:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxtkQGdU1DP7J7tVJWwphHgKkc/D2BbRVskwqNzLtfTYnY5JKtRERBfrRDigCT5d1o1Z/xPAwibgxaR@vger.kernel.org
+X-Gm-Message-State: AFuF++mjHZ+EvWc5BfiRUlHJN3J4q5wrlVR7cAQVFxSf7Sed79b3tFzO
+	QoON01GAGgMYHniIgQuXg6RenEOmQXCZUOujeLbdAkZWTthVFGJvW2jlIl2UzZdCrs8E7EhCZ/y
+	wPqkb5ijfcj218bE8Rd/u3nPbpA86+cw5acxHf5mMOg==
+X-Received: by 2002:a05:6512:3345:b0:5b7:f0b9:ea7c with SMTP id
+ 2adb3069b0e04-5b8b6605f11mr972331e87.8.1789582673568; Wed, 16 Sep 2026
+ 11:17:53 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 16 Sep 2026 14:17:51 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 16 Sep 2026 14:17:51 -0400
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260907090956.2825703-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260710070704.60680-1-rosenp@gmail.com> <CAD++jLkpAi3Vh=YYMckM7z8SmRFeHUUeXS4wPLfciOyMZpZ1Hg@mail.gmail.com>
-In-Reply-To: <CAD++jLkpAi3Vh=YYMckM7z8SmRFeHUUeXS4wPLfciOyMZpZ1Hg@mail.gmail.com>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Wed, 16 Sep 2026 11:17:41 -0700
-X-Gm-Features: AcwNN1WJVvzdnVOZHo3lmjytRPKjTBA3ddruZMUBzOzR06ZUxhHvHvqAjdwZQVk
-Message-ID: <CAKxU2N_cLWq2KHGGsbJhcm-EC66TNbwshV9wTetub9_cWJFqaA@mail.gmail.com>
-Subject: Re: [PATCHv2] gpio: mvebu: convert to noirq suspend/resume to prevent
- interrupt storm on resume
-To: Linus Walleij <linusw@kernel.org>
-Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>
+References: <20260907090956.2825703-1-arnd@kernel.org>
+Date: Wed, 16 Sep 2026 14:17:51 -0400
+X-Gmail-Original-Message-ID: <CAMRc=McRc9Aw-5WBipW5QhqqHp4+UKch15ui3E8a0srk2CUN7g@mail.gmail.com>
+X-Gm-Features: AcwNN1WT39KCCBGzK8bB5OYELfDMzkO3xawenRbklBZjDzeHGIgp80Nbi0LahYQ
+Message-ID: <CAMRc=McRc9Aw-5WBipW5QhqqHp4+UKch15ui3E8a0srk2CUN7g@mail.gmail.com>
+Subject: Re: [PATCH 0/2 v7] gpiolib: finish the legacy cleanup
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Kent Gibson <warthog618@gmail.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, linux-kernel@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-sh@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-wireless@vger.kernel.org, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 16, 2026 at 6:34=E2=80=AFAM Linus Walleij <linusw@kernel.org> w=
-rote:
+On Mon, 7 Sep 2026 11:09:54 +0200, Arnd Bergmann <arnd@kernel.org> said:
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> On Fri, Jul 10, 2026 at 9:07=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wr=
-ote:
+> These two patches are left from my cleanup series, finishing off the
+> work to turn off CONFIG_GPIOLIB_LEGACY by default, and removing the
+> include/linux/gpio.h header.
 >
-> > The driver uses the legacy .suspend/.resume callbacks, but sets
-> > IRQCHIP_MASK_ON_SUSPEND on the irq_chip. During resume, the PM core
-> > runs dpm_resume_noirq() first, which calls irq_pm_resume() to unmask
-> > interrupts, and only then runs dpm_resume() which invokes the driver's
-> > .resume callback to restore GPIO registers (GPIO_IN_POL, GPIO_IO_CONF,
-> > mask registers).
-> >
-> > This ordering means interrupts are unmasked while the hardware is still
-> > in its reset state, potentially with incorrect polarities, causing
-> > spurious level-triggered interrupts before local IRQs are re-enabled.
-> >
-> > Convert the driver from legacy .suspend/.resume callbacks to noirq
-> > callbacks via dev_pm_ops. The noirq phase runs before resume_device_irq=
-s()
-> > on resume and after suspend_device_irqs() on suspend, ensuring GPIO
-> > registers are restored before interrupts are unmasked.
-> >
-> > Assisted-by: opencode:big-pickle
+> I had originally planned to send these during the merge window after all
+> the prerequisites made it in, but didn't finish that before my vacation,
+> so I'm sending it now.  I suppose this makes them 7.4 material now,
+> but at least the first one could stil be fast-tracked to 7.3 if there
+> is a good reason.
 >
-> Should be
-> Assisted-by: LLM
-> these days (Bartosz can probs fix when applying)
-I'll post a v3. There's a better way than __maybe_unused.
+> The second patch has to remove a few more leftover <linux/gpio.h>
+> inclusions that made it into 7.3-rc1 either from new code or from
+> conflicts with other changes.
 >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
->
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
->
-> Yours,
-> Linus Walleij
+
+With acks from SH and MIPS maintainers, I can take it for v7.4 through the
+GPIO tree.
+
+Bart
