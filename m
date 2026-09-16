@@ -1,114 +1,158 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084134B5CC3;
-	Wed, 16 Sep 2026 11:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55CB4772A7;
+	Wed, 16 Sep 2026 11:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789556584; cv=none; b=s8WPQrf3/f6FS5ujLGpx1/btV99iMtNHh2bpsFcDHc4NJ/+AHEZagkZInMUnSWJm0hkCW11WRNDPyI5u3yDZeAU/nVQp4DQBdgRHCo3qWK5hxxahLI/MlSIaddPc29b6KdYi5Qbj30ijh0lYmHoOCuIAtU4K1RDkPPoGg99uHrs=
+	t=1789557329; cv=none; b=DUjnrRDIpvLRPIEtU9Fxqae/mK06C1sI7PQ68HwYAuVC/a73HHkeGneks4Rblz8PFnQKettx/j5fH+v1fiHMkl3h+jGXHPnGm9GHDmH0GBJFqC4dDmr94xlyJnITajsobbItKitAI3bAFOHWdn7SRB5OsfC5JHe94SK0NHdNJ/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789556584; c=relaxed/simple;
-	bh=XWYr4ENYidcskbtv9TLVflYBJ2nrgan0itQw24BVLf4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=iU2xz+6M4EU3HWFo1MN+b5+P5/7Ei1duFiQgVdwTDi1f1A+CI3peDmadXdpmwmC+6N7//KGxo+Gl3/832lJ92DlqkjwhQwYT44Z8r7DlaJC8RprRWLJz4wUOveci4wOzrMABjL34egEKaiKrSsLJOlU1FhMDyGz9qCFjDjMYf+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QXJHNWlt; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1789557329; c=relaxed/simple;
+	bh=FGQG3DmM+7X/giTmbo/iKtzgJp69jhePuib7JGtlpCY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=BhpcYzSf2DjyfvwM4ZJvieDhoQA2Xf+GdDtBBwJJTKyNUS1ds7hJLfYIPfnBk5PAuTENk7Arz0/vDwg4/4gCyrUlhO5seqShFI2hBQbAnnm23k+XvVWdgnQfYdIUZK7FKHLyHdNaXerWKjWT6Tg0h3gCyJYezzntYBfmNsDt7Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=YmS0yIM7; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QXJHNWlt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=XWYr4ENYidcskbtv9TLVflYBJ2nrgan0itQw24BVLf4=; b=Q
-	XJHNWltJ0xSQ2jiM+iN+TKdx/QfKg5EV2QfGCCC7ecN9ytw5qTQGeyoQSRXfXT77
-	Mb0SBvpZRv6x4NjIJ1X7n8qKqfQfcw/OEN8q2EGHfn3rUe3/LYnW4kH9sj1lXB7w
-	Prdy6/f38S5VaZxWVmvZMZs2mJDy2dYjcORs+da+x0=
-Date: Wed, 16 Sep 2026 19:01:10 +0800 (CST)
-From: zl020895  <zl020895@163.com>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: "Linus Walleij" <linusw@kernel.org>,
-	"Bartosz Golaszewski" <brgl@kernel.org>, soc@lists.linux.dev,
-	longzhao@ambarella.com,
-	"Long Zhao via B4 Relay" <devnull+longzhao.ambarella.com@kernel.org>,
-	"Rob Herring" <robh@kernel.org>,
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-	"Conor Dooley" <conor+dt@kernel.org>,
-	"Michael Turquette" <mturquette@baylibre.com>,
-	"Stephen Boyd" <sboyd@kernel.org>,
-	"Jerome Brunet" <jbrunet@baylibre.com>,
-	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-	"Jiri Slaby" <jirislaby@kernel.org>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Catalin Marinas" <catalin.marinas@arm.com>,
-	"Will Deacon" <will@kernel.org>, "Lee Jones" <lee@kernel.org>,
-	mfd@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>,
-	"Arnd Bergmann" <arnd@arndb.de>,
-	"Krzysztof Kozlowski" <krzk@kernel.org>,
-	"Alexandre Belloni" <alexandre.belloni@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re:Re: [PATCH v7 00/15] Ambarella CV75 SoC minimal bring-up
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
-In-Reply-To: <aqpuMcqbra9i6UDq@ashevche-desk.local>
-References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
- <CAMRc=McEOcWq8i3B01AR1PnfBzSQaLEaOzE6Qa+QdVXrvS_YrA@mail.gmail.com>
- <CAD++jLnRL_s9zPNkSj2UnHWPx+QHAXV19DA7dEmGZu0AkxxyaA@mail.gmail.com>
- <aqpuMcqbra9i6UDq@ashevche-desk.local>
-X-NTES-SC: AL_Qu2TC/meuUws5iaYYOkcn0wRhug/UMa4u/sm3YNXc+0EmQv84jsnW19JAXbm4NmSDCydmwSSfylD1ctrZLJSSmM9ix4F2GWSJfiNOy6P3A==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="YmS0yIM7"
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68G6M7BX1591671;
+	Wed, 16 Sep 2026 07:14:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=rxmPy
+	wnjcLCbFsxSJFUDwnHHA1K7/8xkNzN+tJwpQgI=; b=YmS0yIM7TCumd78ujF69v
+	mx68d6xNFnePhILvx3oGxiOTvl/rTUB+Ig47rUfPgcuowL1tWrQXoQYNw1bdkl42
+	DT3joPWoFLDa0P9UwNZ0iLbq3dGtAHHe1HKO/8tzmu3n4JBOElE4fytx8KvMK3G2
+	s2Uyz5bEPpa/GgR7wNGEW/LT2ov7Cgby2IMmyqtUwWoGNv4UwOwibrZ9LEIs40w9
+	hPhLqhtIEkuJKXDyS3A6Ocs6ZQ42KNX5nyxJT4rUeU8WbpYzYth4zGAuf9lwlNXE
+	1zUsJBu6kVIniOE9NL/kCLScoXyNyacQYoMzfo57PbFG+1hrrvhW6ZYLW6pwJEAB
+	w==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4gq98c4cka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 16 Sep 2026 07:14:51 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 68GBEnc2047080
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 16 Sep 2026 07:14:49 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.37; Wed, 16 Sep
+ 2026 07:14:49 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Wed, 16 Sep 2026 07:14:49 -0400
+Received: from HYB-e1y2fvUQ3cx.ad.analog.com (HYB-e1y2fvUQ3cx.ad.analog.com [10.44.3.69])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 68GBENDr004263;
+	Wed, 16 Sep 2026 07:14:44 -0400
+From: Janani Sunil <janani.sunil@analog.com>
+Date: Wed, 16 Sep 2026 13:13:50 +0200
+Subject: [PATCH v8 01/17] iio: adc: adi-axi-adc: Initialize state mutex
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <23d61058.962b.1a0a9e0b355.Coremail.zl020895@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:ZigvCgB3r9v2dqpqhlJIAA--.26232W
-X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbCxhYgkWqqdvZsNQAA34
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20260916-ad7768-driver-v8-1-27aa24db5225@analog.com>
+References: <20260916-ad7768-driver-v8-0-27aa24db5225@analog.com>
+In-Reply-To: <20260916-ad7768-driver-v8-0-27aa24db5225@analog.com>
+To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        David
+ Lechner <dlechner@baylibre.com>,
+        Andy Shevchenko <andy@kernel.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Olivier Moysan <olivier.moysan@foss.st.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linus Walleij <linusw@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Michael Walle <mwalle@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+CC: <linux@analog.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <jananisunil.dev@gmail.com>,
+        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@baylibre.com>,
+        Janani Sunil <janani.sunil@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1789557263; l=1021;
+ i=janani.sunil@analog.com; s=20260507; h=from:subject:message-id;
+ bh=FGQG3DmM+7X/giTmbo/iKtzgJp69jhePuib7JGtlpCY=;
+ b=3NF9YSr1uhZXTI4uhTPVd140uuoMhVOj4hBi1tp7xzc3JZQ5JPYKVF+vvUsOImB1juWqdjEc0
+ qdZMxEG6YSPBKtJiJRBaMYc0PKKg9ZcjF9J9Rl/Z8mDNLrEvukmQlbz
+X-Developer-Key: i=janani.sunil@analog.com; a=ed25519;
+ pk=e25MyjRLPY3RWrYm/LrJ+/+t1MZJUbkgIW5CZg+g+hA=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE2MDE0OCBTYWx0ZWRfX+yTo8+eBL/cI
+ wRKQ9DYFt17/XemTFHmWecTcD+L04v3Gte0zvyHhx4pzCew2PMs8Y9jXeyjTeQS6LKLELUtiqCb
+ YJbhASRX58F5aoJ/bdF49IUD6VJc5KN85ywRqetWozOiSvK02cJE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE2MDE0OCBTYWx0ZWRfX4HGhHnQGNp7+
+ lnrh8eKR1Alg43OArVvQR5Y8a+jnSBKJDoN5bdtXaIZhkTQ6oYJo8iN7u4ydI6LN6OZLz/AcZJ/
+ 9+43JxB1kZffYtDB5YfFo33V18p6MegKtriAi3M5sRrutq/N6BQGgCZNcH94xsPQtSQiSakPGut
+ nizvwH6mTqQzqNAsMa0iTQcXVwmGElSUfQh/aiYHwr/rWo0dqPMOFyGrp4DgG8JkJuqQyDkRYdn
+ SUt/01o3dgCYLzkT7B22zw8Q+R96fThdVnwE89u2tp8xi2rV9QQOfgvXWb0C1BVniFEpHU5a3w3
+ wvCnP+XgCXK+zaEaB9NIBKqn4dElBoxEbCnJMBkc3rhMBmBDIm9MJjAr7z9vbTUT0NziCMnRdPe
+ h2ujPwoeB8SBAN51jVz38tQOeZ1n+p5/6pHxvdbyIR5Nr/ydSZfeEhMsX/80mIILdLhfTIzWCVZ
+ 2vTVBr474AUdlyka2mg==
+X-Proofpoint-GUID: 6GAPAxElF6rPkokv2DrLVlHo5P8zqyr5
+X-Proofpoint-ORIG-GUID: 6GAPAxElF6rPkokv2DrLVlHo5P8zqyr5
+X-Authority-Analysis: v=2.4 cv=KKvPn1Fo c=1 sm=1 tr=0 ts=6aaa7a2b cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=0sLvza09kfJOxVLZPwjg:22 a=Z0pTeXoby7EwIRygza74:22 a=gAnH3GRIAAAA:8
+ a=_ljTvifiVFBlT2kRk7cA:9 a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-15_05,2026-09-15_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 priorityscore=1501 impostorscore=0 phishscore=0
+ bulkscore=0 lowpriorityscore=0 adultscore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609160148
 
-VGhhbmtzIEJhcnQsIExpbnVzLCBBbmR5LgoKQUNLOiBHUElPIGJpdHMgdGhyb3VnaCB0aGUgR1BJ
-TyB0cmVlLCB0aGVuIGFuIElCIGZvciB0aGUgU29DIHRyZWUuCkkgd2lsbCBrZWVwIGEgdW5pZmll
-ZCBzZXJpZXMgZm9yIG5vdy4KCnJlZ21hcC1pcnEgY2Fubm90IGRvIFBMMDYxIHR5cGUgKElTL0lC
-RS9JRVYsIGJvdGgtZWRnZSkgcGx1cyB0aGUKQU1CQSBjaGFpbmVkIGRlbXV4LgoKVHdvIG9wdGlv
-bnMgZm9yIHY4IOKAlCBBbmR5LCB3aGljaCBkbyB5b3UgcHJlZmVyPwogIDEpIENvbnZlcnQgUEww
-NjEgTU1JTyB0byByZWdtYXAgb25seS4gS2VlcCB0aGUgZXhpc3RpbmcgZ3Bpb19jaGlwCiAgICAg
-YW5kIGlycWNoaXAvZ2lycSAoZG91YmxlLXdyaXRlIHN0YXlzIGluIHRoZSBkcml2ZXIpLiBBbWJh
-cmVsbGEKICAgICBsYXlvdXQgY2FuIGJlIGEgZm9sbG93LXVwIG9uIHRoYXQuIE5vIGdwaW8tcmVn
-bWFwIHlldC4KCiAgMikgQWZ0ZXIgKDEpLCBhbHNvIG1vdmUgZ2V0L3NldC9kaXJlY3Rpb24gdG8g
-Z3Bpby1yZWdtYXAuIElSUQogICAgIHdvdWxkIHN0YXkgYSBjdXN0b20gUEwwNjEgaXJxY2hpcCAo
-bm90IHJlZ21hcC1pcnEpLiBJIGFtIG5vdAogICAgIHN1cmUgd2UgY2FuIGF2b2lkIGEgd2F5IHRv
-IGdldCB0aGUgZ3Bpb19jaGlwIGZvcgogICAgIGdwaW9jaGlwXypfaXJxKCkgLyB0aGUgY2hhaW5l
-ZCBoYW5kbGVyLgoKSSBhbSBsZWFuaW5nIHRvICgxKSBmb3IgdjguCgpCZXN0IHJlZ2FyZHMsCkxv
-bmcgWmhhbwoK5ZyoIDIwMjYtMDktMTYgMTg6MjM6NDXvvIwiQW5keSBTaGV2Y2hlbmtvIiA8YW5k
-cml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29tPiDlhpnpgZPvvJoKPk9uIFdlZCwgU2VwIDE2
-LCAyMDI2IGF0IDExOjQyOjU2QU0gKzAyMDAsIExpbnVzIFdhbGxlaWogd3JvdGU6Cj4+IE9uIFdl
-ZCwgU2VwIDE2LCAyMDI2IGF0IDExOjE04oCvQU0gQmFydG9zeiBHb2xhc3pld3NraSA8YnJnbEBr
-ZXJuZWwub3JnPiB3cm90ZToKPj4gPiBPbiBUdWUsIDE1IFNlcCAyMDI2IDEzOjE1OjMwICswMjAw
-LCBMb25nIFpoYW8gdmlhIEI0IFJlbGF5Cj4+ID4gPGRldm51bGwrbG9uZ3poYW8uYW1iYXJlbGxh
-LmNvbUBrZXJuZWwub3JnPiBzYWlkOgo+PiA+ID4gVGhpcyBzZXJpZXMgYWRkcyBtaW5pbWFsIEFt
-YmFyZWxsYSBDVjc1IHN1cHBvcnQgZm9yIGVhcmx5IGJyaW5nLXVwIHdpdGgKPj4gPiA+IGEgc2Vy
-aWFsIGNvbnNvbGU6IERUIGJpbmRpbmdzLCBSQ1QgY2xvY2tzLCBwaW5jdHJsLCBQTDA2MSBHUElP
-IHZpYQo+PiA+ID4gZ3Bpby1yZWdtYXAsIDgyNTBfZHcgVUFSVCBxdWlya3MsIEFSQ0hfQU1CQVJF
-TExBLCBDVjc1IEVWSyBEVCwgYW5kCj4+ID4gPiBNQUlOVEFJTkVSUy4KPj4gPiA+Cj4+ID4gPiBU
-aGlzIGlzIGEgc2luZ2xlIHVuaWZpZWQgc2VyaWVzLiBQbGVhc2UgYXBwbHkgdmlhIHRoZSBTb0MK
-Pj4gPiA+IHRyZWU7IHN1YnN5c3RlbSBtYWludGFpbmVycyBhcmUgQ2MnZCBmb3IgdGhlaXIgcGll
-Y2VzLgo+PiA+Cj4+ID4gSSB3b3VsZCBwcmVmZXIgdG8gdGFrZSB0aGUgR1BJTyByZWdtYXAgYml0
-cyB0aHJvdWdoIHRoZSBHUElPIHRyZWUgYW5kIHByb3ZpZGUKPj4gPiBhbiBpbW11dGFibGUgYnJh
-bmNoIHRvIHRoZSBTb0MgdHJlZSBhcyBpdCBoYXMgcG90ZW50aWFsIGZvciBjb25mbGljdHMgdGhh
-dAo+PiA+IGVhcmx5IGludG8gdGhlIGN5Y2xlLgo+PiAKPj4gUXVldWUgdGhlbSB1cCBhbmQgc2Vu
-ZCB1cyB0aGUgSUIgaWYgeW91IHRoaW5rIHRoZXkgYXJlIHJlYWR5IQo+PiAKPj4gTG9uZyBjYW4g
-cHJvYmFibHkgc2VuZCBhIFBSIGJhc2VkIG9uIHRoYXQgSUIgZm9yIHRoZSByZXN0IHRvIHRoZQo+
-PiBTb0MgdHJlZSwgYSBiaXQgdHJpY2tzeSBidXQgaXQgd29ya3MuCj4KPkknbSBzdGlsbCB1bnN1
-cmUgd2h5IHdlIGNhbid0IHVzZSBJUlEgZmFjaWxpdHkgZnJvbSBncGlvLXJlZ21hcC4KPkNhbiB5
-b3UgaGF2ZSBhIGxvb2sgdGhlcmU/Cj4KPldpdGggdGhhdCBiZWluZyBzYWlkLCBJJ20gbm90IHN1
-cmUgdGhhdCB0aGUgcGF0Y2ggdGhhdCBleHBvc2luZyBncGlvX2NoaXAKPmZyb20gZ3Bpby1yZWdt
-YXAgaXMganVzdGlmaWVkLgo+Cj5UaGUgd2hvbGUgR1BJTyByZXdvcmsgbmVlZHMgYSBiaXQgbW9y
-ZSByb3V0aW5lIHdvcmsgKHJlc3BsaXR0aW5nLCByZWZhY3RvcmluZywKPmV0IGNldGVyYSksIHNv
-IGxhdGVyIHdlIG1heSBzZWUgY2xlYXJlciB3aGF0J3MgZ29pbmcgb24uCj4KPi0tIAo+V2l0aCBC
-ZXN0IFJlZ2FyZHMsCj5BbmR5IFNoZXZjaGVua28KPgo=
+The AXI ADC register access paths serialize transactions with st->lock,
+but probe does not initialize it. Initialize the mutex before registering
+the backend.
+
+Fixes: 7ecb8ee5c93b ("iio: adc: adi-axi-adc: support digital interface calibration")
+Signed-off-by: Janani Sunil <janani.sunil@analog.com>
+---
+This patch is already queued in the IIO fixes-togreg branch as commit
+040c2514b25b ("iio: adc: adi-axi-adc: Initialize state mutex").
+---
+ drivers/iio/adc/adi-axi-adc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/iio/adc/adi-axi-adc.c b/drivers/iio/adc/adi-axi-adc.c
+index 589f03618ecf..fc7cc92b35f0 100644
+--- a/drivers/iio/adc/adi-axi-adc.c
++++ b/drivers/iio/adc/adi-axi-adc.c
+@@ -714,6 +714,10 @@ static int adi_axi_adc_probe(struct platform_device *pdev)
+ 	if (!st)
+ 		return -ENOMEM;
+ 
++	ret = devm_mutex_init(dev, &st->lock);
++	if (ret)
++		return ret;
++
+ 	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+
+-- 
+2.43.0
+
