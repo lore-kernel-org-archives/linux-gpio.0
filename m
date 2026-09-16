@@ -1,99 +1,100 @@
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE4549B45A;
-	Wed, 16 Sep 2026 17:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE0F4C33F3
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789578674; cv=none; b=A3zN7QT6/zNKljTd9iab0GR2yYXUMV3sbD9hPlnYlX01NNV4dImAp6ZhDHKhYMmEApKhYOumc0c7KaGxCSPnErUZs1iWga/eXjZNEQgjAaHTk5RZNegj+kKHXragYfwqZE1yx3h81aAF/qegAQ8lQCs0vFeHAJjPFAvRi0u33+Q=
+	t=1789578893; cv=none; b=vAiXhuIFfICVyOGDb2OO0updPjVqCx5h/uXjKMGIypt3jOG9AwSOnsBDBU12XVd58pgzVfJtHfUE7slmz5Gt6tXn/O6gIaSas3jKg0pxuLMYPuRPBCrYZqEBotZwO7E9Ef4Kq5Ft4A27XGEDyq/Wy7WmL8g/vndUh9O8Nz6Qdg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789578674; c=relaxed/simple;
-	bh=FVl4jZRAq4po6F02Gpx2eYDptt54Fs0noMsH5nGZugY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EkyEWvvtkFZUD5MVijXYDdSkcIFTFow+xit/WacCabh7jwCCOYvHoVfGUOsH79UJFHqOsqK19grl70tqxPypwMgHwMuHMCdUvtGyHSzX/cPZ5ihwQg0QA/JW0xNKHiKhzfDFxEhidBABRInA38+HIbKrVpkvzXuLyEmdh1uuOKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=YlFwVP5P; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+	s=arc-20240116; t=1789578893; c=relaxed/simple;
+	bh=Q3hFAz21Puk4qp5OVNLkTKvWHULbnjoIhvvfucWc9Ik=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i1j2PsHJsHvyKZqJJIgqO2/Y6jm1QAxkDVPlnxTym/ZKNCwwV4cypVquHkS6EWo6Fm3WJUk7a8P6wapSWUQkdQXkRdJpKOOKbLFUirKeGCDHGC331B1p2kFoEcnqUp6BFE9TO+V876yDf5uFGsvPbvsNeBIAD3V0CRXVGwnEEQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWRxEyan; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="YlFwVP5P"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:From:
-	Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=L6SwzphsrreNsIdosvNBrNqsY0SnqqVKbcSjY0NO71M=; t=1789578665;
-	x=1790183465; b=YlFwVP5PIwofdsIy+fpvkkfYdFxLuBo+IaZxvtVb/v93Ckt5mM6/kwYsV/BwS
-	ku/Wk+Rpe/ZGOIGLTk5touExuUpMRfw6s3lifmuHRmOrZfMqXZRH06dx8COZzDuPYZ6D9HH+wvi95
-	hDr+mE2O6+84aQ9tltxElSBUjsOl7K86TlX3hcnP1F8wShouajHI1hWDNPGZr4dLbqPibtoPIu9zL
-	42knxwM6MZrLgYCcX59Uyk+KkF0pINPnyO98jLpNhEdERolVawl3Sxcqo65fvKaqGNDzonehYb0je
-	TXf7iOeaxD1erqiNtckGRSc12/FNtd7QfbT9SaSwR+8q7B7Wwg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.99)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1x6t9m-00000000eCO-0jIA; Wed, 16 Sep 2026 19:10:50 +0200
-Received: from p5dc55206.dip0.t-ipconnect.de ([93.197.82.6] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.99)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1x6t9l-00000002liV-3w7V; Wed, 16 Sep 2026 19:10:50 +0200
-Message-ID: <76db667b04eefe1a4f3f3af4354f98f0858069eb.camel@physik.fu-berlin.de>
-Subject: Re: [RESEND PATCH] sh: ecovec24: use static device properties to
- describe the touchscreen
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Linus Walleij <linusw@kernel.org>, Dmitry Torokhov
-	 <dmitry.torokhov@gmail.com>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker
- <dalias@libc.org>,  Bartosz Golaszewski	 <brgl@kernel.org>, Kuninori
- Morimoto <kuninori.morimoto.gx@renesas.com>,  Mark Brown
- <broonie@kernel.org>, jacopo mondi <jacopo@jmondi.org>,
- linux-sh@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org
-Date: Wed, 16 Sep 2026 19:10:49 +0200
-In-Reply-To: <CAD++jLnAF7c=bBh2ihXEiG55twpj6seEGU-2R2GhWsGfC7NCyw@mail.gmail.com>
-References: <alUyZ2zVWCPhyHHX@google.com>
-	 <CAD++jLnAF7c=bBh2ihXEiG55twpj6seEGU-2R2GhWsGfC7NCyw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.60.2 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWRxEyan"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 969B31F008A7
+	for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 17:14:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789578890;
+	bh=Q3hFAz21Puk4qp5OVNLkTKvWHULbnjoIhvvfucWc9Ik=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=LWRxEyanij8iyqFWzVauR5rek7ibzKqMag8JkJWqC/D54WCmt5VYct+MySEMYaj99
+	 FLCBuo7/Bpwy4Ae1rF2ZbimIwE/QVqVVl71hzAUfipJcFri3oLsxI5PfUuurnWv+QI
+	 rASRh8bgfT30BPoA3AO0pKgOWDRpEuzc+7pr7MBh3ozCsc8oM3NMOXovnp4QhF0Te/
+	 yZTu2HOaFRg4N5y7rDwnmG340Db7yiIYAklQZauANCYZtf1ypWnBoOwcJQYaSVWHNu
+	 SLx7GBjhBdebWM4eGY3rICp9mq2G4fKqHN9Uk9WlCESVE5DC+x7VpTbesUZAw5o945
+	 MQH6UxWBXWELQ==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b5e4f15b79so1167860e87.1
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 10:14:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBznOQfNR0htiCHkesX+v7l2OoGe3d3wcmgSKlnz8FMNBRZso1SW4IiTbfszNpCYC1/AcYXQQzoeSulH@vger.kernel.org
+X-Gm-Message-State: AFuF++lkTdlaUcdNzwCo6BuLxp4DCHGCw7YKDSPG/dubl9Dv1O0K206R
+	7dhAggMjpUo+o2C+8T4IG0/xrvRqEYN+NSDiZIhSbt1p39NGH0tToMIQGAuhvFcLJKooMWEGgYN
+	RE9H7AIfvk8QsXs3zqJhRly4RmnsE8qk=
+X-Received: by 2002:a05:6512:3c94:b0:5b4:97db:b740 with SMTP id
+ 2adb3069b0e04-5b8b6646174mr1819762e87.20.1789578889250; Wed, 16 Sep 2026
+ 10:14:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+References: <20260910-fw-devlink-nexus-ready-v2-0-17ac82dbe226@toradex.com> <20260910-fw-devlink-nexus-ready-v2-1-17ac82dbe226@toradex.com>
+In-Reply-To: <20260910-fw-devlink-nexus-ready-v2-1-17ac82dbe226@toradex.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Wed, 16 Sep 2026 19:14:37 +0200
+X-Gmail-Original-Message-ID: <CAD++jLn2LmvsO2PNh0AVcTJULTRFazANBaTOJCYcL5TgvyoDFA@mail.gmail.com>
+X-Gm-Features: AcwNN1WrC5AS_PRz3Sq427sJhJfk8k29uqMAQRw-Dbr4KzlXEKv1HU-8tHH5OjQ
+Message-ID: <CAD++jLn2LmvsO2PNh0AVcTJULTRFazANBaTOJCYcL5TgvyoDFA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] of: property: fw_devlink: Follow GPIO nexus maps
+To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@kernel.org>, 
+	"Miquel Raynal (Schneider Electric)" <miquel.raynal@bootlin.com>, Frank Li <Frank.li@oss.nxp.com>, 
+	Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Brian Masney <bmasney@redhat.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Herve Codina <herve.codina@bootlin.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Leonardo Costa <leonardo.costa@toradex.com>, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus and Dmitry,
+On Thu, Sep 10, 2026 at 4:16=E2=80=AFPM Ernest Van Hoecke
+<ernestvanhoecke@gmail.com> wrote:
 
-On Wed, 2026-09-16 at 19:01 +0200, Linus Walleij wrote:
-> On Mon, Jul 13, 2026 at 11:41=E2=80=AFPM Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
->=20
-> > Convert the board to use static device properties instead of platform
-> > data to describe the touchscreen, so that support for platform data can
-> > be removed from tsc2007 driver (ecovec24 is the last board using this
-> > mechanism of describing tsc2007).
-> >=20
-> > Device properties do not allow custom board methods, so the method for
-> > getting "pen down" state was removed (the driver is capable of working
-> > without it). If this functionality is needed proper pin control/gpio
-> > support needs to be implemented so that the same pin can serve as an
-> > input GPIO and an interrupt.
-> >=20
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->=20
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
+> From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+>
+> GPIO consumers use of_parse_phandle_with_args_map() to resolve
+> specifiers through gpio-map properties. fw_devlink instead parses GPIO
+> properties as direct phandle references, so it records the nexus node as
+> the supplier rather than the mapped GPIO provider.
+>
+> A nexus is a translation node, not the GPIO provider, and need not be
+> populated as a device. The resulting fwnode link can therefore remain
+> unresolved and indefinitely defer the consumer while
+> device_links_check_suppliers() waits for the nexus.
+>
+> Use the map-aware parser for all supported GPIO property spellings. This
+> makes fw_devlink resolve the same provider as the GPIO consumer API.
+> Direct GPIO references continue to work because the map-aware parser
+> returns the original provider when no gpio-map property is present.
+>
+> Fixes: 7f00be96f125 ("of: property: Add device link support for interrupt=
+-parent, dmas and -gpio(s)")
+> Reported-by: Leonardo Costa <leonardo.costa@toradex.com>
+> Link: https://lore.kernel.org/all/juuc4af7ndbajcl7gzf4tg5qz2q2j5tt3rvql4j=
+bauradujrre@gc5nbdhhixaf/
+> Tested-by: Leonardo Costa <leonardo.costa@toradex.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 
-Thanks a lot for the review! I'm working on them now.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Yours,
+Linus Walleij
