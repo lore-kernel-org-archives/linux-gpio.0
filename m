@@ -1,269 +1,139 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lr2-f35.google.com (mail-lr2-f35.google.com [74.125.230.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04822D0602;
-	Thu, 17 Sep 2026 03:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B923C3450
+	for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 04:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789617295; cv=none; b=IM7/LPKzEhb89vNgYu+Nnf/lUT/L8A0w88WvljBus6pEhwxdKcY+eEkGmFhGYWNfxV9ScR5fiY/0Ilc2Vhb+TxqiWUSusiFpI2HaIyupjtvFAqDwb6Ac7++aCkuR+56pUjpFYX7c4d1RtPOjKtGUHxd1cZqXWYtnyepdtWVOWXE=
+	t=1789620457; cv=none; b=mrpIg6InD4h+F9PhgHSUQgWZRqIUMVLMFvjp7xGk5bLi42UBywUG1ZzqhDs/JSJJE1AHNiuZ4Z0OfkzJAp5AfAYV2Q24WKGLIwGmckUBryp6BCNAPeKar9DeV+8GX4gWclXEKgVfBsixePSWldL60jbPVzlJpkMZXxrP2jAj5+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789617295; c=relaxed/simple;
-	bh=E+xogdY4XER2/Hrcsesycndagk+BwAkx7mbXnK0Y5X4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G8PmC1Kjbr8EpXeTl91OVwqI1zf1k5iiSMR51KI9KoecHwV2BkhrDhJ3s/JZofxAUJ8DxFPmzTnZV8g5pCOdKkm2YFbC/VrZdxqPUfYZsHy7LJciMDPMGPj1FvuXqOjlNv3LHaN01za7owQOBRAIPb1bPYleC/N+q025ToGdGkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=K2FuFSiO; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Qz1lbPNc; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1789620457; c=relaxed/simple;
+	bh=Lrt6YFfTcQjqGuU5FoLFJmGH0jhGaULcXBP69mPmyDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t7mmUg4KytvISNOwtKAsZNAA24zF3wjwN9XG0Akdwej+RH5f8ezR8hBmWygetWQg3J3iHP9SvXu+2nRlDjd6aOG12a2fVSvTiC35j8JwzVggNsDuJAmp6FPi+qopoOaUKIrvTm89wKurWfL60adC4WGXY7rkSdQXFQzphRCt5SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WPdMPb2N; arc=none smtp.client-ip=74.125.230.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="K2FuFSiO";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Qz1lbPNc"
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4hlhj810gHzMlGl;
-	Thu, 17 Sep 2026 05:54:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1789617292;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+XUo82aiMUG/Gw2pErtwjbOk+Awz5CZglC/AwJMYymw=;
-	b=K2FuFSiOJ8OQnr/NhsjPqaq7HK4rdbp1n7ft4P/osmoAp4imw0fvfrcU8SijSD2hKDRKzj
-	vihVg7EX/VjAbXHu6owGH6Cox1okTsGbm3eUW/hpN8xgIr9NFlG1zLePaBVeegPMwyKnBK
-	/8GI75hDcMOqG40ggmXEjAnTBlxm7BNtvbtGLTCn3dt+Mm+uyITCOY1QP5dYX1K9HK8UzF
-	dJZ36JjNvGyBqApeu1oMh8Nwb9dDwhbZmIVFHmIxuLV15jPJyNTtARJgLPkMzztPI5wjjp
-	CmCFZGczmJE62OOngYUlTAO449Ox4uQKV+i2/s1kl+KjkAo3+bnq6jkKBWdhpA==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1789617291;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+XUo82aiMUG/Gw2pErtwjbOk+Awz5CZglC/AwJMYymw=;
-	b=Qz1lbPNc3LWok4T12PA+Wi1QM0tBY5TQyHHPso+dl9x6p3oFXEXHyWNyZJ9BKPE/T9zuUy
-	Nh1k+pNb4cFSRcLOcfmUaJZzvpzrzx2w5TpFIojSUrqWj6ayGrfrMGr0eTw293F+X0Cltt
-	gXH7+GHH/Qw1CzjoahuwA2Drvn4FjggXtPPxOVy+y6KmLeeJQHDfuy9XCk7Gz4Nj5xhjMj
-	3nx5pqTA1KRUDHS28TDHxegjELUDVnEsLAZJXAGAAtMe1gZpfzodiuGw78PsHQfIg40iHS
-	VpuNzMMwH5Xu6JVPS1uVAVXioq/eS0iG39nJr+TaoP6RSvHO6orAlSt2U3imOw==
-To: linux-gpio@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 2/2] gpio: rcar: Add R-Car X5H (R8A78000) support
-Date: Thu, 17 Sep 2026 05:54:17 +0200
-Message-ID: <20260917035438.523010-2-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20260917035438.523010-1-marek.vasut+renesas@mailbox.org>
-References: <20260917035438.523010-1-marek.vasut+renesas@mailbox.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPdMPb2N"
+Received: by mail-lr2-f35.google.com with SMTP id 38308e7fff4ca-3a49bc59559so3319571fa.2
+        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 21:47:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789620453; x=1790225253; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=dDYu3bsth7oi/7LPOhDffulZAY7dt7QNkv+9w7yWBC0=;
+        b=WPdMPb2NDyFx/VSYB/zGk1kF7EV/kHr3gS31Q75FBV2ml2PiJZ7G5HKWX2Mb1O+d0Q
+         +UOOxCDJ5mG1+0+PHRnOgZK2SuhZwZaaz+HpZFBzwuMrqcroJoW07iSpp41S5v8f1wGu
+         89FEguVN6c8XaNZpc9YOCwTF9sr0mhQvsXoU2R4soG8YCU2oOpcX9dRLCHLJzMt235lQ
+         QjKV/0Eem2pDaRNS1jMvxq4LG8HBoII7LDLNDsYidKD0B+9FigcsA2YXOAQMkaph7LaD
+         fd75Wv5vKLrFeAslhgfFMbch8txttcKS6OpsJnEX7AiLM0HLrgJNLqWtzss1jPwEfT8+
+         I25w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789620453; x=1790225253;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=dDYu3bsth7oi/7LPOhDffulZAY7dt7QNkv+9w7yWBC0=;
+        b=Y3QeQNaltFjTmpLGptAoyYDXAWC0olG9da3JKndunGfC1hSRcQP7fcmfDgkojghsFd
+         SuezrBi/hIUWCwgJ9w9mg6ubgS4CDVZKLtCjEAnfy/RPB7bXX6YBltDHmXjKCTq9imv/
+         yxNEJtwsLjhI2Us72OcITrhbPFhuBHh5JBFypcKXIqYZLlzvz4bVj61oM8ASN8KPo/SI
+         AS88ubJ3zeaWkTj+d6fnC0tfSuW/3TyWdwrKLT3RX+a92V3jKsxrWeYUGUpjKubTnXPo
+         j9Kuz6vSVD0ISyFdgcMQlhj1CLgkloRScBVtOqMi7peBhinRMBO3TPhnsBQJywHoSgB5
+         6ooA==
+X-Forwarded-Encrypted: i=1; AKwUvBymRFIAN5a1lh8dRuKJq095+ziBJq3iI1ZGb8QZJzWdGXz/S2Dw8Lig4zwXrFsKIne+s9VFkr6GS1Er@vger.kernel.org
+X-Gm-Message-State: AFuF++kBIqqaItpKIO6EjP1UaqSQ/mrT5im8XhCfXnKJPOSEvNzduTZv
+	yZNRfC5IDLIOlAV/2c/qDtCpqlrQPjrooOh4Fp2jojd7xdhtxuXBGOONCjIY+xtl
+X-Gm-Gg: AYBFou21oY2uxZK0a9yqvtJNdKsZQrsI28YPa0xgsVbi/Abn+oJ+zHxU1BOQOxMiTmT
+	/He4zk8r/FXFnTwTbW1lQjR5DiM88mDn1fWgcVES7XfZNTkrzNNr/ubBoOWsWglpMSI31FzxL5s
+	yQlTXxYZtBJKxMJL27IFR855s8QFrVrv99UE2AsMKd0MnKrjxyZGKdxTDQdIN7QZySjheLcgJK8
+	5SUNoB8d90mA0lJAJ5Yvx9GzHTWfv2KfYsC9I7dfQICIqWeoXnZ6x89NzNf9YbGjXlicDY1ywOI
+	vw3o9sCHWcpOamkwHv6lX0peaFxKo/hsmy9PFzCeS63BKoved2/0VacELlEb6fh92E4BwOzr/3r
+	ya9sNwfymD4lz/EWccAhb/rO4tAoEhIKRFAaw9nvzMdHsLonzQXHwiBTEsKvo5cDK99+mud61yH
+	2VHe/0SAOVP+Z/yTzZC7hnwfDQ/kmJLXnHjG1kseEJaLPmq+I49u5dTLPN60rVOMi7avgKDO8IC
+	O/SlYdZx2UkN5PG6neVLef+hzof5v+7FqaNGlblAfrVQWAbEoDrEBU=
+X-Received: by 2002:a05:651c:2107:b0:3a5:a106:ee0 with SMTP id 38308e7fff4ca-3a5dca17909mr10468881fa.24.1789620453050;
+        Wed, 16 Sep 2026 21:47:33 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3a5dafdc6fcsm11590281fa.33.2026.09.16.21.47.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Sep 2026 21:47:32 -0700 (PDT)
+Message-ID: <f50e6a88-3436-424a-8df7-8d5e01ee531d@gmail.com>
+Date: Thu, 17 Sep 2026 07:47:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
+To: Linus Walleij <linusw@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-rtc@vger.kernel.org, Sverdlin@mva-rohm.smtp.subspace.kernel.org,
+ Alexander <alexander.sverdlin@siemens.com>
+References: <cover.1789538455.git.mazziesaccount@gmail.com>
+ <e3e6ac712519326cc25fcdd0a0c8e3cc42ef55ab.1789538455.git.mazziesaccount@gmail.com>
+ <CAD++jL=vZr+naVBaixNkDbgx4_EpL8MosSyXYb9jg2hgKu+QNg@mail.gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <CAD++jL=vZr+naVBaixNkDbgx4_EpL8MosSyXYb9jg2hgKu+QNg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 6nx67apaccpqdecjtcjw6cqd7u3cy7dw
-X-MBO-RS-ID: 98672e705871782abde
 
-R-Car X5H (R8A78000) is the first member of the R-Car Gen5 family.
-Add support for R-Car X5H, which has slightly different GPIO block
-register layout compared to previous generations. Introduce offset
-remap table which performs 1:1 remap for R-Car Gen1..4 and a bit
-more complex remap for R-Car Gen5.
+On 16/09/2026 20:31, Linus Walleij wrote:
+> On Wed, Sep 16, 2026 at 8:12 AM Matti Vaittinen
+> <matti.vaittinen@linux.dev> wrote:
+> 
+>> From: Matti Vaittinen <mazziesaccount@gmail.com>
+>>
+>> The ROHM BD73800 PMIC has 4 pins (named GPIO1, CLKOUT, FAULT_B and
+>> EXTEN_OUT) which might have been set to operate as a GPI or GPO when OTP
+>> (One Time Programmable memory) is written at device manufacturing.
+>> Support the GPI/GPO use-case via GPIO framework.
+>>
+>> The default OTP for these pins is to not use any of them as GPI or GPO.
+>> (The GPIO1 defaults as an ADC input regardless the naming). Hence the
+>> driver assumes none of these pins is a GPI/GPO unless explicitly pointed
+>> as GPI or GPO via device tree.
+>>
+>> Furthermore, pin's direction can't be changed after OTP configuration is
+>> done. Also the default drive type for a GPO (CMOS / Open Drain) is set
+>> by the OTP configuration. The BD73800 has a set of undocumented test
+>> registers which should allow changing the drive type. Access to the test
+>> register area or the test registers aren't documented and so this driver
+>> does not support configuring the drive type even though it might be
+>> doable.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> 
+> Looks really nice now!
+> Reviewed-by: Linus Walleij <linusw@kernel.org>
 
-The GPIO block register offsets on R-Car Gen5 changed and the change
-can be divided into five groups, registers which remained at the
-same offset, INDT register shifted by +0x10, OUTDTSEL register
-shifted by -0x34, INEN register shifted by -0x38 and the rest of
-the registers used by the driver shifted by +0x70 .
+Sorry Linus! I dropped your tag from v3 by mistake. I hope you didn't 
+waste too much time re-reviewing this :( Well, thanks anyways and again!
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
-V2: Rewrite this into a table look up
-V3: - Use enum gpio_rcar_reg
-    - Drop the IOINTSEL initializer
-    - Drop REG_COUNT
-    - s/int offs/enum gpio_rcar_reg reg/
-    - Make offsetmap into two maps, and static const
-    - Use C99-style initializers
-    - Drop BUILD_BUG_ON
-    - Store a pointer to the offset map table to use in priv
-V4: Rebase on current next-20260916
----
- drivers/gpio/gpio-rcar.c | 86 +++++++++++++++++++++++++++++++---------
- 1 file changed, 68 insertions(+), 18 deletions(-)
+Yours,
+	-- Matti.
 
-diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
-index 09bebde5c4260..54dc47d45de7e 100644
---- a/drivers/gpio/gpio-rcar.c
-+++ b/drivers/gpio/gpio-rcar.c
-@@ -36,6 +36,7 @@ struct gpio_rcar_info {
- 	bool has_both_edge_trigger;
- 	bool has_always_in;
- 	bool has_inen;
-+	const u8 *offsetmap;
- };
- 
- struct gpio_rcar_priv {
-@@ -49,34 +50,68 @@ struct gpio_rcar_priv {
- 	struct gpio_rcar_bank_info bank_info;
- };
- 
--#define IOINTSEL	0x00	/* General IO/Interrupt Switching Register */
--#define INOUTSEL	0x04	/* General Input/Output Switching Register */
--#define OUTDT		0x08	/* General Output Register */
--#define INDT		0x0c	/* General Input Register */
--#define INTDT		0x10	/* Interrupt Display Register */
--#define INTCLR		0x14	/* Interrupt Clear Register */
--#define INTMSK		0x18	/* Interrupt Mask Register */
--#define MSKCLR		0x1c	/* Interrupt Mask Clear Register */
--#define POSNEG		0x20	/* Positive/Negative Logic Select Register */
--#define EDGLEVEL	0x24	/* Edge/level Select Register */
--#define OUTDTSEL	0x40	/* Output Data Select Register */
--#define BOTHEDGE	0x4c	/* One Edge/Both Edge Select Register */
--#define INEN		0x50	/* General Input Enable Register */
-+enum gpio_rcar_reg {
-+	IOINTSEL,	/* General IO/Interrupt Switching Register */
-+	INOUTSEL,	/* General Input/Output Switching Register */
-+	OUTDT,		/* General Output Register */
-+	INDT,		/* General Input Register */
-+	INTDT,		/* Interrupt Display Register */
-+	INTCLR,		/* Interrupt Clear Register */
-+	INTMSK,		/* Interrupt Mask Register */
-+	MSKCLR,		/* Interrupt Mask Clear Register */
-+	POSNEG,		/* Positive/Negative Logic Select Register */
-+	EDGLEVEL,	/* Edge/level Select Register */
-+	OUTDTSEL,	/* Output Data Select Register */
-+	BOTHEDGE,	/* One Edge/Both Edge Select Register */
-+	INEN,		/* General Input Enable Register */
-+};
-+
-+static const u8 gpio_rcar_offsetmap_gen1[] = {
-+	[IOINTSEL]	= 0x00,
-+	[INOUTSEL]	= 0x04,
-+	[OUTDT]		= 0x08,
-+	[INDT]		= 0x0c,
-+	[INTDT]		= 0x10,
-+	[INTCLR]	= 0x14,
-+	[INTMSK]	= 0x18,
-+	[MSKCLR]	= 0x1c,
-+	[POSNEG]	= 0x20,
-+	[EDGLEVEL]	= 0x24,
-+	[OUTDTSEL]	= 0x40,
-+	[BOTHEDGE]	= 0x4c,
-+	[INEN]		= 0x50,
-+};
-+
-+static const u8 gpio_rcar_offsetmap_gen5[] = {
-+	[IOINTSEL]	= 0x00,
-+	[INOUTSEL]	= 0x04,
-+	[OUTDT]		= 0x08,
-+	[INDT]		= 0x1c,
-+	[INTDT]		= 0x80,
-+	[INTCLR]	= 0x84,
-+	[INTMSK]	= 0x88,
-+	[MSKCLR]	= 0x8c,
-+	[POSNEG]	= 0x90,
-+	[EDGLEVEL]	= 0x94,
-+	[OUTDTSEL]	= 0x0c,
-+	[BOTHEDGE]	= 0xbc,
-+	[INEN]		= 0x18,
-+};
- 
- #define RCAR_MAX_GPIO_PER_BANK		32
- 
--static inline u32 gpio_rcar_read(struct gpio_rcar_priv *p, int offs)
-+static inline u32 gpio_rcar_read(struct gpio_rcar_priv *p, enum gpio_rcar_reg offs)
- {
--	return ioread32(p->base + offs);
-+	return ioread32(p->base + p->info.offsetmap[offs]);
- }
- 
--static inline void gpio_rcar_write(struct gpio_rcar_priv *p, int offs,
-+static inline void gpio_rcar_write(struct gpio_rcar_priv *p, enum gpio_rcar_reg offs,
- 				   u32 value)
- {
--	iowrite32(value, p->base + offs);
-+	iowrite32(value, p->base + p->info.offsetmap[offs]);
- }
- 
--static void gpio_rcar_modify_bit(struct gpio_rcar_priv *p, int offs,
-+static void gpio_rcar_modify_bit(struct gpio_rcar_priv *p, enum gpio_rcar_reg offs,
- 				 int bit, bool value)
- {
- 	u32 tmp = gpio_rcar_read(p, offs);
-@@ -399,6 +434,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
- 	.has_both_edge_trigger = false,
- 	.has_always_in = false,
- 	.has_inen = false,
-+	.offsetmap = gpio_rcar_offsetmap_gen1,
- };
- 
- static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
-@@ -406,6 +442,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
- 	.has_both_edge_trigger = true,
- 	.has_always_in = false,
- 	.has_inen = false,
-+	.offsetmap = gpio_rcar_offsetmap_gen1,
- };
- 
- static const struct gpio_rcar_info gpio_rcar_info_gen3 = {
-@@ -413,6 +450,7 @@ static const struct gpio_rcar_info gpio_rcar_info_gen3 = {
- 	.has_both_edge_trigger = true,
- 	.has_always_in = true,
- 	.has_inen = false,
-+	.offsetmap = gpio_rcar_offsetmap_gen1,
- };
- 
- static const struct gpio_rcar_info gpio_rcar_info_gen4 = {
-@@ -420,6 +458,15 @@ static const struct gpio_rcar_info gpio_rcar_info_gen4 = {
- 	.has_both_edge_trigger = true,
- 	.has_always_in = true,
- 	.has_inen = true,
-+	.offsetmap = gpio_rcar_offsetmap_gen1,
-+};
-+
-+static const struct gpio_rcar_info gpio_rcar_info_gen5 = {
-+	.has_outdtsel = true,
-+	.has_both_edge_trigger = true,
-+	.has_always_in = true,
-+	.has_inen = true,
-+	.offsetmap = gpio_rcar_offsetmap_gen5,
- };
- 
- static const struct of_device_id gpio_rcar_of_table[] = {
-@@ -438,6 +485,9 @@ static const struct of_device_id gpio_rcar_of_table[] = {
- 	}, {
- 		.compatible = "renesas,rcar-gen4-gpio",
- 		.data = &gpio_rcar_info_gen4,
-+	}, {
-+		.compatible = "renesas,rcar-gen5-gpio",
-+		.data = &gpio_rcar_info_gen5,
- 	}, {
- 		.compatible = "renesas,gpio-rcar",
- 		.data = &gpio_rcar_info_gen1,
 -- 
-2.53.0
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
 
+~~ When things go utterly wrong vim users can always type :help! ~~
