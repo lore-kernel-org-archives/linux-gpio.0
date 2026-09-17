@@ -1,79 +1,70 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8694BA1D8
-	for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 09:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D3F4BCAA5;
+	Thu, 17 Sep 2026 10:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789639155; cv=none; b=joXEwZK6wmLx+lMltZdLX858GAZmUgBFPebO0K+NOEfMmZPMZxTcH2XN2EkHLmZVehrs6vlD5n7D6b3Pb0aKXTQXfe+JV0sLq1pbKrWgcyoPjjoFaYsbNLHd1JYswuLMOabhW/vZd0+glWjdh8PQg6/q8RhfnvuLbU7OYunhrQ8=
+	t=1789639476; cv=none; b=YOP40xukKfzFRKOBgMVWRP2Bh1fhMCcxDeG91nx0tx59Ey0akXjDFje/ASjW0r3DMuOyB+I50uwVSr4CMBM50fpL5guhCo3S/knAZt6MFn8NhAKv2tdYlCD1rKHs+JK0QjS2/S4BWzWX35gduEME8VKhUpSEX2aaB9RKjeqBUek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789639155; c=relaxed/simple;
-	bh=1C100L8bLcVs1OmCDJ5ExHbei+nHSxHlT2hyva+aaWA=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s1hqVrDuTjQ13rX89Gd9pvGv+rpRNmDLThexG9oo2MAxHOOPUkzogY1gU1FMkqGhIil6JcFyxTIt6Ef49BlzEtFjSChpYmXC2UDfu0n3EcA7SlYgvfTcyHmv0POZEz/83QHBCZ0HWkbAWITw2wJW705+o7IbIdXBP/ibImyt8LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C+bjroZK; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789639476; c=relaxed/simple;
+	bh=Zw0go1bY/h0Fvnvwmo4x3hJ1ZrAO60jCIR7sgEMVdwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fydl4SKzYv6HbWclmbu05/zpejY/2mbKvJ6eMEVhV+CIyJIGcWR/o3xda5RksCehwOf0y4HSzkF0D/4mt16R7fETcWg2c+6dSXTInM9Wrdma1aFZuuYVAEA5XbM9SaSo/jsKdCXS1dz9+/DkvltLfa0OrD/rqtmOf7GXvWDLz5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ASAy3Hp1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ij3Pu7oW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C+bjroZK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64EE91F0089C
-	for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 09:58:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789639127;
-	bh=1C100L8bLcVs1OmCDJ5ExHbei+nHSxHlT2hyva+aaWA=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=C+bjroZKmJEkCHvSXNw/CXxjY+JkwBuhMzng5AA3YvtwfNyvFqFK+/WOLXWJ6PS4H
-	 9TZ776QZpY25/FdhzqTWV2ig2qOJthZcrz+5E0/DgTv/dTtQhI+LATRFpJZ0meWmZs
-	 XwyLfbxTQ6nhTukV8+YrEiKVCn4U+nLSPwm+/vZ/iISkucA0mgZNHHStcLgVJ2rh+4
-	 1kj2uVYrE9bH8m+H3xoG7DnGECFMbbGoYLQbu/NJgct3JjmkwAQqiNXKI3usq9ALhb
-	 dSw/uTMPtNHogu4/cr5nSAp62I6bKV7tBAhrrqzLYodYDnbkpbZsJwiXMjv7mdEs9T
-	 9ySJKNx7qEs/Q==
-Received: by mail-lr2-f12.google.com with SMTP id 38308e7fff4ca-3a302c23fb2so5980461fa.2
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 02:58:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByCkmjtuS2a28NQkvFJD0O2xkHLq7gw+L/MpIV1V1zhd/P6zFZm3F3CaaPwkfb3zbs/Bt0uN/BHLWUh@vger.kernel.org
-X-Gm-Message-State: AFuF++kgrx2/b7zipkxrz5RzWYdVAcwWC1vAO9gM9xxoKMx/AZ45C0Xw
-	inMpFwZ73UZdZAcPvGX0pqYJ4RsrmHUFYHUqH6F8GBK4Bdocg/W1+VShvWaaTEZT4FSYfZaKp2n
-	Sz2sN66nKmp20Lz3m8bJ1ZdwXsiC8tjHG+RAQdfs7ew==
-X-Received: by 2002:a2e:8a86:0:b0:3a5:cee6:940b with SMTP id
- 38308e7fff4ca-3a5dc9be4acmr11717551fa.7.1789639126058; Thu, 17 Sep 2026
- 02:58:46 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 17 Sep 2026 05:58:44 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 17 Sep 2026 05:58:44 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260917075611.47881-2-farbere@amazon.com>
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ASAy3Hp1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ij3Pu7oW"
+Date: Thu, 17 Sep 2026 12:04:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1789639469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gUoSclQfN4Mc0MDUxCK/MPlKgNaoIFGqLPM9QL3S5wM=;
+	b=ASAy3Hp1LHtsIx0mSVn6CabihAkqnMmSrWieGr/JGKWUdSJzwsQqo8ZASmhkXEYLeSLCMY
+	N7qhGDncA037YRWVuqQ57D9cPHojsnnti6VNH6BLX8y4eQ0X/9+RzKnQ2TGaDKQdABB0hD
+	3mvqRz/4CouIIzK5BbIha/N4VrbactnScER7ixCG6ReylFcwemlHxwiyX5OI93Ld8IjpSw
+	z/yKvKNUHVjyH6i6vX2ISl0NouDZHj417OoRJ3McTR0DfB+Hf+/ulPQyVnMQmc44C9a6sz
+	RLXWb4nxHBrKqa6YFhcKujhCks621Jl1DdyArHSv7lDDPprfytDzA2RhcJ7H8g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1789639469;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gUoSclQfN4Mc0MDUxCK/MPlKgNaoIFGqLPM9QL3S5wM=;
+	b=Ij3Pu7oWy/cj3245y6NTY1PjubHosGSwrvK0hDjS7Iejv/SciM8DeKelAi0wnUWdWeZoCu
+	IptkBDZXc/5dxWAg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: linux-gpio@vger.kernel.org, Rosen Penev <rosenp@gmail.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCHv2] gpio: mvebu: keep resume masks within the irqchip cache
+Message-ID: <20260917100428.LT2ZUBVd@linutronix.de>
+References: <20260915004406.115230-1-rosenp@gmail.com>
+ <178963874726.7902.8784965092061133801.b4-ty@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260916182641.9768-1-farbere@amazon.com> <20260917075611.47881-1-farbere@amazon.com>
- <20260917075611.47881-2-farbere@amazon.com>
-Date: Thu, 17 Sep 2026 05:58:44 -0400
-X-Gmail-Original-Message-ID: <CAMRc=Mff_Lyt6-0qQ2U1aG_CBG=xD2NxoCbw2dhmCffX5s_h1g@mail.gmail.com>
-X-Gm-Features: AcwNN1XWj9I0TdBuyBZglQXFeft5zXi_OVwexcXK0RKPOD6pE-syCJpIOfCJxh8
-Message-ID: <CAMRc=Mff_Lyt6-0qQ2U1aG_CBG=xD2NxoCbw2dhmCffX5s_h1g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] pps: clients: gpio: propagate probe error codes
-To: Eliav Farber <farbere@amazon.com>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Rodolfo Giometti <giometti@enneenne.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <178963874726.7902.8784965092061133801.b4-ty@oss.qualcomm.com>
 
-On Thu, 17 Sep 2026 09:56:09 +0200, Eliav Farber <farbere@amazon.com> said:
-> On the two probe error paths that map and request the interrupt, probe
-> overwrote the error from gpiod_to_irq() and request_threaded_irq() with a
-> hardcoded -EINVAL, hiding meaningful codes such as -EBUSY, -ENOMEM or
-> -EPROBE_DEFER from the caller. The request_threaded_irq() failure message
-> also logged the IRQ number but not the errno.
->
-> Return the actual error code from both paths, and add the errno to the
-> request_threaded_irq() failure message.
->
-> Signed-off-by: Eliav Farber <farbere@amazon.com>
-> ---
+On 2026-09-17 11:52:29 [+0200], Bartosz Golaszewski wrote:
+> Applied, thanks!
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+This looks like a hack with no explanation about the root cause.
+
+> [1/1] gpio: mvebu: keep resume masks within the irqchip cache
+>       https://git.kernel.org/brgl/c/02af7eac17bc62a72335c1fc8c4af4471654f6cc
+
+Sebastian
