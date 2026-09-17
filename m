@@ -1,202 +1,189 @@
-Received: from smtpcmd03116.aruba.it (smtpcmd03116.aruba.it [62.149.158.116])
+Received: from pdx-out-005.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-005.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.13.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2CF4582E6
-	for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 07:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.158.116
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789629426; cv=none; b=e1SASwVuyDqAAU6XVVRHzHb3pFqVtB1ShbaLqXxrIN66iipwO3ac1ztERz2min26IDLIdBw6/iQvybmH34tinModvmbue/9WkjRulI82QmS3F0RLzTL6IdgE0vfu+mDlZNfEX7dWNVVd/gu20ECMtX5BmgGX/9T5K33CF8myk4c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789629426; c=relaxed/simple;
-	bh=+gsryGw/r20fFSejZZzmEhrcFY3p4MApLE+pXLRWKs4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OrzuY7e1W6dCe0UCami+5sYaEK6bsok7R4HfWCjiA0oWM7KPAbmAeitpqnD0jGA/ePrMLu9qzPNC6Vb96LDi3D4zhyIetb7iPFn3eRmHVEyEGxfH9B48qy2jFhJZBMv18feNokLoZoA8a1GEoZARMnv7HPAmh8iZOrE6BHQFfY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=UawBDCAm; arc=none smtp.client-ip=62.149.158.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCF9372662;
+	Thu, 17 Sep 2026 07:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.13.214.179
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1789631318; cv=fail; b=JpZvWmN/EveL9nz+lPXkOkRH4zHjqmpPGdxocgVp8fYi9i/QiOuCtZPjkQ/ojKgqUIKkDrkydrst1SfeYPLAFYejI3gghla8rEIQ2YO5XwDfL3NIsJFcJd9Sl4BdLaDd6FPrXiVIvZ0cbhOtFA9pMCN6/ckZ8YP3/gCtf4Yi9o0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1789631318; c=relaxed/simple;
+	bh=d7N1mH9z+GW8vZ2W9IPMhNPEZrxkEC1dtuIkaNHybJ8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=K3CGIzNLhclt9J7mz+g5W+bbzcAkEqEEJTtIRRlCQ7bSWi/nXsGRCCLddnqs1y1DrFcSwbmMykjV3ay46o1nCL0GX4Cass6LFs3bz6MoMiBHsoH6suYEBBlL4smn6xS3eQkXi5ffIoY3LYHUplWRNG6fUal7z83IqYZl2NvyLqk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=n51+bXxN; arc=fail smtp.client-ip=52.13.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="UawBDCAm"
-Received: from [192.168.0.186] ([101.57.122.26])
-	by Aruba SMTP with ESMTPSA
-	id 76JnxtAXKGd7876JnxGCzj; Thu, 17 Sep 2026 09:14:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1789629244; bh=+gsryGw/r20fFSejZZzmEhrcFY3p4MApLE+pXLRWKs4=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=UawBDCAmPc7hwNtL0XqelMUd4zhzYZXkFTSaID2ISH1qq0T4YFjzxizw5OangzLpo
-	 hLtd2QPjjcr7Khfw55Riog/2o3ZWaK6dTzEqkQ2vfiD514R+s0Mk/kcR+b1IFIde5W
-	 2SGn3L4LjaQsNB9K3GQIXZhWV3rIwka3xWsAaThcZSdYTf6+s4wKLE0b+41wGY/EET
-	 Sv/rVtBdYwi6b0L7KU4S7jV9gTqN1HC/RN+tjgHGQ3Y3PZeU7gms6/PoxHs+UCs+d/
-	 X3DVC1XWi0o06xWp6tOW4FbSeJYVjbfbuUfdXGZOdG5sJ+XwCyEw95ffyq4H2ecsHE
-	 GLtMNoXAaJYtQ==
-Message-ID: <1b25ba28-c53e-4425-8165-8205eab60e22@enneenne.com>
-Date: Thu, 17 Sep 2026 09:14:03 +0200
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="n51+bXxN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1789631316; x=1821167316;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=d7N1mH9z+GW8vZ2W9IPMhNPEZrxkEC1dtuIkaNHybJ8=;
+  b=n51+bXxNCYoO5g5z321ABRU1Dcx68N7w7Nc63V0wxVX5Y7VeBm2hsm3g
+   M7c4oaBPXOYMK9pZZ4h6W/4Lk/LbGjh5piN+WmqC+oB3rbub3iH/cx4bZ
+   gKANu9daA0GFIdvYHxWktBF8km0BiGSC84QDrJOZorQcZnYp0sKa7I1YW
+   3yBlDMQ7N590wd0VoY1K+5Q/pl7FF8loG4bu66TXi5vZKCTZak64C6pPf
+   r9AoaPekpghtTn6sS958tDgQvx9bdNSsyT7UiPDHc/aqEe8LjEuHqwfEE
+   eM+cneecclwmVXGUKI00XXTwpUGvW7GYdB/uMSpI6tq0R/nwGlGpH78H/
+   w==;
+X-CSE-ConnectionGUID: 5mzQqvpMTAa27SL6lI+qrQ==
+X-CSE-MsgGUID: RCgCSnxaT3aTm+ROrxCWHQ==
+X-IronPort-AV: E=Sophos;i="6.27,103,1787011200"; 
+   d="scan'208";a="28880001"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-005.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2026 07:48:32 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [205.251.233.111:27618]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.16.195:2525] with esmtp (Farcaster)
+ id 0c47cadb-0a27-4b39-9b68-8d1123109c9c; Thu, 17 Sep 2026 07:48:32 +0000 (UTC)
+X-Farcaster-Flow-ID: 0c47cadb-0a27-4b39-9b68-8d1123109c9c
+Received: from EX19EXOUWA002.ant.amazon.com (10.250.64.216) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.46;
+ Thu, 17 Sep 2026 07:48:32 +0000
+Received: from EX19EXOUWB002.ant.amazon.com (10.250.64.247) by
+ EX19EXOUWA002.ant.amazon.com (10.250.64.216) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.46;
+ Thu, 17 Sep 2026 07:48:32 +0000
+Received: from PH0PR07CU006.outbound.protection.outlook.com (10.250.64.206) by
+ EX19EXOUWB002.ant.amazon.com (10.250.64.247) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.46
+ via Frontend Transport; Thu, 17 Sep 2026 07:48:32 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c/gVwybKQwuENUMsif0kDCk3Imxo2BSUVisBCi8V1kUb7rnlNamKZa41eEJIjpOyrSXESy4HAYHDcLi8Z72uklc8eaz/k0EiIOUjp5ZzT4AGfp3zNybDhF0uR5y1afC3vrcVKaVYE7NKsE/9R8K0KXa9RsbSeIFnXrJMghHFGoQ7R4ZYpKrm8YYf65bDns8MsLUPhxaxqqwQI8EvDI170rEvdEgJVk4Tu4baA4Y51GmLaxOFuSHkRsJRydz9cCXexOuVD54MMv3/iBEMqORt8p0Hc79Yoy0GojoboMQRndYJFzqk5bmzTq3vkmTSn+silMdRjDrPLES7nOlXG6EzDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d7N1mH9z+GW8vZ2W9IPMhNPEZrxkEC1dtuIkaNHybJ8=;
+ b=qSGF5rLdqPwxddEw9kGvvcFjFoErrNb9xFdRIV+1IHjo8KInpg2u+UeVw4/ABGqCuiH+NvqlFwbz54GvUiarFqBDmGNxF1dTEqlItyygibs9bfteVx+puLzvT0nBzvC784xKZaSGCRK7ZgwjcHdPYjpp2bEkMF0DTgGz4IxwzkIUdqf7Axrb7LRgG3XkeaVad33m0TXVAqh7kFZKzzibSJ59F5Di/w19uEdS3D/ld5w+OkOMZtLS+JUyk1PNyN6wnGuFa0tcZLD1ZKGL4jGXMO/BKNq2KmkoAokQVf/XZBMws/gN4JUfBxkEmGmwe5tnq2SubBJy8HzJZScaCM9Xsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amazon.com; dmarc=pass action=none header.from=amazon.com;
+ dkim=pass header.d=amazon.com; arc=none
+Received: from BY3PR18MB4722.namprd18.prod.outlook.com (2603:10b6:a03:3c9::19)
+ by SA5PR18MB927602.namprd18.prod.outlook.com (2603:10b6:806:474::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.12; Thu, 17 Sep
+ 2026 07:48:30 +0000
+Received: from BY3PR18MB4722.namprd18.prod.outlook.com
+ ([fe80::e307:5f61:2694:b219]) by BY3PR18MB4722.namprd18.prod.outlook.com
+ ([fe80::e307:5f61:2694:b219%4]) with mapi id 15.21.0406.007; Thu, 17 Sep 2026
+ 07:48:30 +0000
+From: "Farber, Eliav" <farbere@amazon.com>
+To: Rodolfo Giometti <giometti@enneenne.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 1/2] dt-bindings: pps: pps-gpio: document optional
+ pinctrl states
+Thread-Topic: [PATCH v2 1/2] dt-bindings: pps: pps-gpio: document optional
+ pinctrl states
+Thread-Index: AQHdRnjuUZeGYNJw40+qpO6HeDgNiw==
+Date: Thu, 17 Sep 2026 07:48:29 +0000
+Message-ID: <BY3PR18MB47222E5923622B6831A98316C6B82@BY3PR18MB4722.namprd18.prod.outlook.com>
+References: <20260916134744.46354-1-farbere@amazon.com>
+ <20260916182641.9768-1-farbere@amazon.com>
+ <20260916182641.9768-2-farbere@amazon.com>
+ <34ecbb41-0cf9-417b-9562-fc31726d8a35@enneenne.com>
+In-Reply-To: <34ecbb41-0cf9-417b-9562-fc31726d8a35@enneenne.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amazon.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BY3PR18MB4722:EE_|SA5PR18MB927602:EE_
+x-ms-office365-filtering-correlation-id: ced15c47-70b8-4e78-ba60-08df149010ef
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|23010399003|376014|1800799024|7416014|366016|56012099006|18002099003|22082099003|38070700021|4143699003|11063799006|10067099003;
+x-microsoft-antispam-message-info: rflRgEUUz+7Dhhjsyfeud0w2AWJxwXL6Bpmvgb4FuSeBRz8GvBCDP9+Wld+YVh40NDKZTSs+9l9+wTI1vhA2yljqjMJzYRjwgBENhrulvWGIDvmPSQV/ePhMgDrtMAUWWi2pJ45AFf3xgfzj3F69zC1mbfxHpCvyYJCtj1dAIUhHYZzXCBEtiz/Pab9cOfBp76ZVdVzLBhil2FUCg5oaYhJtKgJtyaG+9ValMyGNGE1Nl2QNbJa7AwXWtkmB0YP6S3mLvBgzXAeCNMpHfL+T9NMMfPxLrskhPqS8qM1XkkH1OhHB1xjtfaz3oacSVFDZWm+UC2aAzU46Vl0fOPJzeMB3LlSoD8YETszRfADOVSmRq0hy7BRriIKHXdxLGbVsOkO6Zum+UREz36F3UL4jdyUbghiPv7jacDUGDoei9qa+vlPT344MZg2BF6GWPAE8ZLMCK5yVUiTzs7YX619b+8ZcTULmOw70k0J1o9YzTxNVG9bOhowiPz2h+Iz468ViORN1opZv9LtWb7CQ+BoEeusuAjmcKzr+3f1UeGc7V4zqM31dTujmEesd3sjbXNwBF8Tr/Te0rqKbMakLxAsul/x4jK0mmGrbZoKq3FoICUhlNfScS74UjAiPBFhTRtpk/jLtsCfpANEOd1H6MopoA9ST2Ngj5dSS0c5E0PEFi1Jk1ETt0Hs+hXcSvJUqJLAk3uuICr6jGBSH0Gz252vT1cHWFzomS920eeAJdhEZeYM=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY3PR18MB4722.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(376014)(1800799024)(7416014)(366016)(56012099006)(18002099003)(22082099003)(38070700021)(4143699003)(11063799006)(10067099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?N3djZlZWc1hUaWlCODV5K1RXTDFZbm9MUWt4SFdWbmRTTGJmOUVDQzZ5SllZ?=
+ =?utf-8?B?SHJhRWdCZ1p4cFJOcU9OaXEvaWJMbnFIS3MzYmxQS043Sm4wUG5UUDNNWDN1?=
+ =?utf-8?B?SEVwTVdJT1EyS3lVUUNLZTE0Q1MvN2dQaWtjK2p2enBXRTc4M0dnUWRlMHlq?=
+ =?utf-8?B?L1lURXo2MlUrbHcyb0tnUFYzVjg1ekpWS213NVhLeWZ0UThLRlcvRnh0NHF3?=
+ =?utf-8?B?M2VuWjNOSTNhc0RoQWtKTFJuMjJQK1Y3OXJaY2tCbFliaHQ4aHh4NWNNVzN0?=
+ =?utf-8?B?aUN4QWpDcTQ1THdhVW5qRC9LMFZwOHcycEhYdVVXdlRnRVViUzh6RTVxUmVR?=
+ =?utf-8?B?S2wwTGRkMFZsam9mbFNvOFIrRkxVMkhNTVdLT0lVVXdvaFZqKzM0Z2hnZm9V?=
+ =?utf-8?B?NXg2cXJLME1rRDgyYktTaDAwYS9BdUZhM2tnckNtMVJYRGFDcW9vMGhDcG9Q?=
+ =?utf-8?B?c0d2U0tXOHgzUVRwb3R3cjdnckFoakdhRWY2dU1YS1NZWnFBUVdjd3p5MVRE?=
+ =?utf-8?B?b2lpeUlqUm9va21mN01QTjlxZ05oWkdxQW8vTEw3SzkxRnovdWJ4MTFQcFN3?=
+ =?utf-8?B?aElCU05vOTVKK3VKbTRoeDJBemlRc2hYTTY4NDZ1aHpMQ2g1WTZLTHRaVkoy?=
+ =?utf-8?B?MDVJNTlPZkkrYU01WlhrY2F1MUd0YU5NejExQld0dlJIUERtSHA2NDZjdWll?=
+ =?utf-8?B?VWhIV0hYNGt4UWdPNDFycVNqRmJibkhNODFIVkE0eXJJRkx6c1hIQmFKZUVp?=
+ =?utf-8?B?R3QxcFpWMks3R1l1SnBSc21WVUNVN2FJM0owOFNtbTNXYk1YNE9WOGh2c2dT?=
+ =?utf-8?B?eDZhYStXY1Z2Zzd1d1psb2ZHSEx3S09yaHRLTkU2QUNDUjFSR3ZLRlhWQXpQ?=
+ =?utf-8?B?ajcwSG53TzBvY0p0dHRSeFVma216U3MyUWZWQ042dnNPVFU4K2k4ZDhuUi9E?=
+ =?utf-8?B?dXIzNWtmNVpSMFdFd0IvL1pWRC81YjV5OXpYcVZldm85RzZkRjRwYys3SGF3?=
+ =?utf-8?B?emFrV0FVTTI4b21jSGE4NXNQSjVIVFIvam00amQwb2NtanVNWWVxeTgrWEZ2?=
+ =?utf-8?B?QlBieWtGOGcvR2JTbE1OVTdqTTU2QmUrREZLY0tjV0NNYXF2WlVJeUc0WG1m?=
+ =?utf-8?B?d3R4MFpnTlFrZWE2LzZKMlQ2SDRzSFVleEVmZmJIWG1ZLzRnSWhoVUdpWmVJ?=
+ =?utf-8?B?QzRYVUwzZVZGdlpLczdTRzBHdmp1VkRHeHloYTdkaWNhMzVEd0tCS2t0YjZw?=
+ =?utf-8?B?SHc0aGxWdU9WcnhFeWlqanU2VldnTmU1NjdROFlQSmNGRUwvVlNMV1AzMktr?=
+ =?utf-8?B?SzZrcHB0TmdvVzU2cnZtYlh2QWtwSmcvUUlXWFlWQlNQSnJETmRIcFp4cnZI?=
+ =?utf-8?B?cVl4eWRrQmJHTk9EU3FIalU0T1M2RnFnVVBsaU1Oa09WY1c2V1Y3REF2MkhR?=
+ =?utf-8?B?dDBwKzU5elVySGlyQ2NhMEd4eUNPNlJwTlRjaWFsdnF5RnlURmwxams4WWpM?=
+ =?utf-8?B?WUJtWkg5a3pkMDVMTHl5UUdXMkNyT25CSXhUb3BBbjUweFJPMVZzdHN3SkU5?=
+ =?utf-8?B?clJ5MW9XSDRrY2JWNkdnN01XRVJkdXRkTTFzT1VrWlRzdkc2S0gzTXVacFJt?=
+ =?utf-8?B?QTVldWVLdVdiY3ZLUVFlTERCUTlmR204NjVISjVkaTdQcitXL3pQVW55SlZF?=
+ =?utf-8?B?ZFBxSkUzdXIxZnVxQys2djZUYU9Jai9MSlN5Umh4NE5TUFdheGdBbkNlVXB0?=
+ =?utf-8?B?RDcvSnhvdTNYUFNCc0dra1d3UGNXemNxSjkvV0lFeEVnazk4cERQNE02S1Jk?=
+ =?utf-8?B?U3kySlFEVDdndXBqaFR1TjloeDkwa3dyRUpaWTZLRHNmZDJraFJZVHRIOVNz?=
+ =?utf-8?B?Um1MR3o5OStmRW8vcEtCN1I4bjkxZFpzOW5GYW8xNllWdE8zNHI2VXBPN2E1?=
+ =?utf-8?B?WjBoWUJKdHowUk5CWWJ2T0gwcDBnY01aVGRLZUZuUEJ5am1zdDNkQm44SkpG?=
+ =?utf-8?B?Q3ROSXVoaVN2anlOeHpEMjgvaG4yemNSQUtnTU1RckxYeGVGcktaeFNTajht?=
+ =?utf-8?B?WEdvek5xQldWTlpZMFRmRVVHZ0x1UVU5em5VU25lbS9zaStVV2R1cnVxczYx?=
+ =?utf-8?B?MWJ0VWQxWlpCQ2ZSd1h5eVFtOHI5MWRvZDhCUXMyMXFUd2NpaHJ3dys0VmhK?=
+ =?utf-8?B?Y1RJVVFzbWxzdGRIQkt3T0FoYW9RUDdPT09UdWhneFdIZWVHczhVSGJWY01j?=
+ =?utf-8?B?ZjMrV0lPSVNiM2lCTFRzdzVieHI3MkpISW9uRkFQMEdkb3FCclpQUDE4aE9q?=
+ =?utf-8?Q?lEDQrhicaIRKlS74NJ?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] pps: clients: gpio: release pins to an inactive
- state on remove and shutdown
-Content-Language: en-US
-To: Eliav Farber <farbere@amazon.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Andrew Morton
- <akpm@linux-foundation.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260916134744.46354-1-farbere@amazon.com>
- <20260916182641.9768-1-farbere@amazon.com>
- <20260916182641.9768-3-farbere@amazon.com>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <20260916182641.9768-3-farbere@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfFTSlHHow1unu5ybyCLAoKq1GdSRHESb6WKOb4SkPGFtuX/Tqs5SbXiw3KNOeHsKl1bsPRTEUTIGoh0B0CnltegUoYhrf+xKWjEMC8VhR+nry+XArQsX
- 9X01a3VI1uP8enitE2vllHccWE0tRNYD6BQQpd7Bhj0qKda/r36H0161s1nEN/Kz1Jc75TAoDlG1XUVrM/ULYnQUq0yinnj81lti4Tos8Ep+8a5Su5XXmEjW
- j5Clyn6rN0K1euV8MahmtfvumtpYJiBriHynWkQ+ud6Rmfhd6Tyz5p05Q029GZ56AWmlrEwggpRxNUEPhM4tiPtgdHQamX+UPDqWOTNPAvXHWegyGumQMJLV
- F03CSBQLIs4UTVbbxla5DJHEBGGgnKDOG98c+rGL09yZgVYlezl3M/sXYcWpTvpjJILsapF1rJ2EOD4biINMS6CEZaeJXUCySvuQqNLbizIoy6B8cCPMDAbD
- RM2m73Sr3DZLyBSZvT5WW+S/xih8KFNcE2i5rmBuTL8cbAZI9HX5vCfetqvkgV9JZkykC0tywy/F2FDBRxQhA6jpfDOEGiTGPhUHWg==
+X-Exchange-RoutingPolicyChecked: bEkk9jEghxeqXR7gjhsSjqZKcCqf3Szytd8omHcC1o5DAVIhFLGYK6yJr5KJGxf+/dOhPnIcmE+hVvVoUgEDwLNOvYdIVGeBP/ongCoHbxiuLeAOxIYKt1nfHtA5qWgUpAl5i6kulCV+ROQq+PRTcZqb1uTIYqiGBzLssWss3H1d6QIoFTjWnLp3wooB1JtcdK9F5lmqFIdvA/58h1CaNKsJtztwgjecw8nat4FqOgLcjbFa0aTHWgxxxqKR37fvbfOHqmGFLiaxYmOAdJEDipwbgSqp6SzL+kO954hLw6zoEgJLkTSjFadYfu3ut17cuJxmNm0YAzXbYZ2qrt1OKw==
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BY3PR18MB4722.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ced15c47-70b8-4e78-ba60-08df149010ef
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2026 07:48:30.1677
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5280104a-472d-4538-9ccf-1e1d0efe8b1b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: KD845QgJVdOp+L8HYBMqoKCsaoxXndAPvdaPieMrKKDmqsTfgk+liSGFBZsHiRlRzxym1V0NMxYpeLo1xIcLJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PR18MB927602
+X-OriginatorOrg: amazon.com
 
-On 16/09/2026 20:26, Eliav Farber wrote:
-> diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
-> index 73ec2c7335e5..e619c7bb2f78 100644
-> --- a/drivers/pps/clients/pps-gpio.c
-> +++ b/drivers/pps/clients/pps-gpio.c
-> @@ -17,6 +17,7 @@
->  #include <linux/slab.h>
->  #include <linux/pps_kernel.h>
->  #include <linux/gpio/consumer.h>
-> +#include <linux/pinctrl/consumer.h>
->  #include <linux/list.h>
->  #include <linux/property.h>
->  #include <linux/timer.h>
-> @@ -30,6 +31,8 @@ struct pps_gpio_device_data {
->  	struct gpio_desc *gpio_pin;	/* GPIO port descriptors */
->  	struct gpio_desc *echo_pin;
->  	struct timer_list echo_timer;	/* timer to reset echo active state */
-> +	struct pinctrl *pinctrl;	/* pin control handle */
-> +	struct pinctrl_state *pins_inactive;	/* pins released when unbound */
->  	bool assert_falling_edge;
->  	unsigned int echo_active_ms;	/* PPS echo active duration */
->  	unsigned long echo_timeout;	/* timer timeout value in jiffies */
-> @@ -96,6 +99,51 @@ static void pps_gpio_echo_timer_callback(struct timer_list *t)
->  	gpiod_set_value(info->echo_pin, 0);
->  }
->  
-> +/*
-> + * Look up the optional "inactive" pinctrl state: the mux to restore when
-> + * pps-gpio is unbound or the system is shut down. It is only meaningful
-> + * paired with a "default" state, which the driver core applies before probe
-> + * to mux the pins for PPS use. A board that describes neither is unaffected;
-> + * one that describes "inactive" without "default" is rejected, since
-> + * releasing pins that were never put into a defined PPS state is incoherent.
-> + */
-> +static int pps_gpio_get_pins(struct device *dev)
-> +{
-> +	struct pps_gpio_device_data *data = dev_get_drvdata(dev);
-> +	struct pinctrl_state *pins_default;
-> +
-> +	data->pinctrl = devm_pinctrl_get(dev);
-> +	if (IS_ERR(data->pinctrl))
-> +		return dev_err_probe(dev, PTR_ERR(data->pinctrl),
-> +				     "failed to get pinctrl\n");
-> +
-> +	/* The "inactive" state is optional; without it there is nothing to do. */
-> +	data->pins_inactive = pinctrl_lookup_state(data->pinctrl, "inactive");
-> +	if (IS_ERR(data->pins_inactive)) {
-> +		data->pins_inactive = NULL;
-> +		return 0;
-> +	}
-> +
-> +	/* "inactive" requires a "default" state to release back from. */
-> +	pins_default = pinctrl_lookup_state(data->pinctrl, "default");
-> +	if (IS_ERR(pins_default))
-> +		return dev_err_probe(dev, PTR_ERR(pins_default),
-> +				     "\"inactive\" pinctrl state requires a \"default\" state\n");
-> +
-> +	return 0;
-> +}
-
-pinctrl_dt_to_map() returns -ENODEV when the node has no pinctrl-0 and
-create_pinctrl() forwards it. So this fails the probe on every pps-gpio
-board that describes no pinctrl at all, which is most of them; your
-setup has one, so the test does not show it. Shouldn't -ENODEV simply
-mean "no pinctrl here, nothing to do"?
-
-> +
-> +/*
-> + * Release the pins to their "inactive" state, if the board describes one, so
-> + * they are handed back to whatever function uses them while pps-gpio is not
-> + * driving PPS. Boards without an "inactive" state are unaffected.
-> + */
-> +static void pps_gpio_release_pins(struct pps_gpio_device_data *data)
-> +{
-> +	if (data->pins_inactive)
-> +		pinctrl_select_state(data->pinctrl, data->pins_inactive);
-> +}
-
-The return value is the only sign that the mux was not restored, which
-is what the whole series is for. Why drop it?
-
-> +
->  static int pps_gpio_setup(struct device *dev)
->  {
->  	struct pps_gpio_device_data *data = dev_get_drvdata(dev);
-> @@ -161,6 +209,11 @@ static int pps_gpio_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	/* pinctrl setup (optional states) */
-> +	ret = pps_gpio_get_pins(dev);
-> +	if (ret)
-> +		return ret;
-> +
->  	/* IRQ setup */
->  	ret = gpiod_to_irq(data->gpio_pin);
->  	if (ret < 0) {
-> @@ -216,9 +269,30 @@ static void pps_gpio_remove(struct platform_device *pdev)
->  	timer_delete_sync(&data->echo_timer);
->  	/* reset echo pin in any case */
->  	gpiod_set_value(data->echo_pin, 0);
-> +	/* release the pins last, once nothing can drive them anymore */
-> +	pps_gpio_release_pins(data);
->  	dev_info(&pdev->dev, "removed IRQ %d as PPS source\n", data->irq);
->  }
->  
-> +static void pps_gpio_shutdown(struct platform_device *pdev)
-> +{
-> +	struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
-> +
-> +	/*
-> +	 * Quiesce the hardware before touching the mux: stop the IRQ and the
-> +	 * echo timer first so nothing can drive the pins, then hand them back
-> +	 * to their "inactive" function. The kernel keeps running after
-> +	 * device_shutdown() (for example to load and start a kexec image), so
-> +	 * the pins must not be released while an IRQ or timer callback can
-> +	 * still reach them. The PPS source is left registered; unregistering
-> +	 * it is a remove-time concern and is unnecessary on shutdown.
-> +	 */
-> +	free_irq(data->irq, data);
-> +	timer_delete_sync(&data->echo_timer);
-> +	gpiod_set_value(data->echo_pin, 0);
-> +	pps_gpio_release_pins(data);
-> +}
-> +
->  static const struct of_device_id pps_gpio_dt_ids[] = {
->  	{ .compatible = "pps-gpio", },
->  	{ /* sentinel */ }
-> @@ -228,6 +302,7 @@ MODULE_DEVICE_TABLE(of, pps_gpio_dt_ids);
->  static struct platform_driver pps_gpio_driver = {
->  	.probe		= pps_gpio_probe,
->  	.remove		= pps_gpio_remove,
-> +	.shutdown	= pps_gpio_shutdown,
->  	.driver		= {
->  		.name	= PPS_GPIO_NAME,
->  		.of_match_table	= pps_gpio_dt_ids,
-
-Ciao,
-
-Rodolfo
+T24gMTYvMDkvMjAyNiwgUm9kb2xmbyBHaW9tZXR0aSB3cm90ZToNCj4+ICsgICAgICBiYWNrIHRv
+IHRoZWlyIGFsdGVybmF0ZSBmdW5jdGlvbi4gQXMgImluYWN0aXZlIiBpcyB0aGUgc3RhdGUgdG8g
+cmVzdG9yZQ0KPj4gKyAgICAgIGFmdGVyICJkZWZhdWx0IiwgaXQgbWF5IG9ubHkgYXBwZWFyIGFz
+IHRoZSBzZWNvbmQgZW50cnkuDQo+DQo+IFRoZSBkcml2ZXIgbG9va3MgdGhlIHN0YXRlcyB1cCBi
+eSBuYW1lLCBub3QgYnkgaW5kZXgsIGFuZCBvbmx5IHJlcXVpcmVzDQo+IHRoYXQgImRlZmF1bHQi
+IGV4aXN0cy4gV2h5IHlvdSBzYXkgdGhhdD8NCg0KWW91J3JlIHJpZ2h0LCB0aGF0IHdhcyB3cm9u
+Zy4gVGhlIGRyaXZlciBsb29rcyBib3RoIHN0YXRlcyB1cCBieSBuYW1lDQoocGluY3RybF9sb29r
+dXBfc3RhdGUoKSksIHNvICJpbmFjdGl2ZSIgY2FuIGJlIGF0IGFueSBpbmRleDsgaXQgb25seQ0K
+cmVxdWlyZXMgdGhhdCBhICJkZWZhdWx0IiBzdGF0ZSBhbHNvIGV4aXN0cy4gSSdsbCBkcm9wIHRo
+ZSAic2Vjb25kDQplbnRyeSIgd29yZGluZy4NCg0KPj4gKyAgICBtaW5JdGVtczogMQ0KPj4gKyAg
+ICBpdGVtczoNCj4+ICsgICAgICAtIGNvbnN0OiBkZWZhdWx0DQo+PiArICAgICAgLSBjb25zdDog
+aW5hY3RpdmUNCj4NCj4gQUZBSUsgdGhlIHR1cGxlIHJ1bGVzIG91dCBbImRlZmF1bHQiLCAic2xl
+ZXAiXSBhbmQgWyJpbml0IiwgImRlZmF1bHQiXQ0KPiBmb3IgZ29vZCwgYW5kIHRoaXMgaXMgQUJJ
+Lg0KDQpBZ3JlZWQsIHRoZSB0dXBsZSBpcyB0b28gc3RyaWN0IGFuZCB3b3VsZCBiYWtlIHRoYXQg
+aW4uIEluIHYzIEkgZHJvcCBpdA0KYW5kIG9ubHkgYXNzZXJ0IHRoYXQgYSAiZGVmYXVsdCIgc3Rh
+dGUgaXMgcHJlc2VudDoNCg0KICAgIG1pbkl0ZW1zOiAxDQogICAgY29udGFpbnM6DQogICAgICBj
+b25zdDogZGVmYXVsdA0KDQpzbyBbImRlZmF1bHQiLCAic2xlZXAiXSwgWyJpbml0IiwgImRlZmF1
+bHQiXSwgZXRjLiBhbGwgcmVtYWluIHZhbGlkLCBhbmQNCnRoZSBkZXNjcmlwdGlvbiBqdXN0IG5v
+dGVzIHRoYXQgYW4gb3B0aW9uYWwgImluYWN0aXZlIiBzdGF0ZSwgaWYgcHJlc2VudCwNCnJlcXVp
+cmVzICJkZWZhdWx0IiBhbmQgbWF5IGFwcGVhciBpbiBhbnkgcG9zaXRpb24uDQoNClRoYW5rcywN
+CkVsaWF2DQo=
