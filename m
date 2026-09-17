@@ -1,122 +1,87 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C8B4E4318
-	for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 12:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D264F647C;
+	Thu, 17 Sep 2026 12:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789648195; cv=none; b=WHAycsLyBlNFneynIfiWzimCDkaxGjUxa8NqAO5fFY/8a++y7+yGmtxh7Q8FdKnpL7d6WtEgUtwm6w4KtWJtvoEZVKQV9YJaF4bZ5NzbYdKI/KRE487yTTEbCr82HL7uB4UTPl2dVBTuus0scdVqaG+pNzGdUl5HfV4q1mlw+iU=
+	t=1789648593; cv=none; b=oJdlxw6MQJwRYJ0bWTHsbP4Y/UD0CTQ5PUCm0kHdn5lF/049W9iJGDbv8VD1dYXGnXkQyfi3m/1gLKuZm2JfT4+642I1MWzEvdT3cUFedsJBMTSslxky7XpSFn86+YcAFHdsCha52FnVNFna11zTrFWxX7FFZ933MBNS+q2lPkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789648195; c=relaxed/simple;
-	bh=NiBLOa+Ivz/MGMdtQtUORvBhVtPqCwg0j5rxwwVjFZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iNfGfrbauQw59tNE3aocNjlxYO4ZokSDijqpMpHDgecQARb0ES/wQrwoTIHmGTXJefm3v+LIk/6sppFMBbhHAP2b6A5ReB6OaGUx99tQ22qS3VDjB2/pVTPmCMfPFsgJeXxTCZEH6YBKHWX0dJz2kFp7XwdEFZdpVXFkguddqL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gU+5HCb6; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789648593; c=relaxed/simple;
+	bh=vDFNqr6wrO5a5WZ86wEzQNtQWw7SNvsqbvr6B1fcDcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pjTgibw+O9q5V/ILdWqZU65dcGQc+4N5pv/91tonKsqu1WctpJMrhoeywvsZA1rppJHX+X8ggKnS4RjrlYRzjcI7XPfms0Uug/+Z+ORPYIXlZOi01SYAqO7RVy/0MMtq0R68RpQxEcQ/J71NuzqzZ0im/czzal7OLCLDMu78IwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=UN5CSL9u; arc=none smtp.client-ip=134.0.28.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gU+5HCb6"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49cd38e0f79so4647905e9.3
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 05:29:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789648180; x=1790252980; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Dtz+Uqi8FvhezfQGwgUreP+CufNocr9p+NqbDN0Xcok=;
-        b=gU+5HCb6NEhmBQLVaLIqnXzYCbuW3y+9zP3j/sbrylZD7lHYyFw9pFNkQiORNKn2+9
-         ecpocjM18AVXqhmb2SxpKUeXm8j+Y5YY0eqe95Ju9PSzoqQDNVvagBBBRiHmAyaNxoSO
-         yrF2knA4eFqyBkfUVMqfIAaC170alJV/Ke3NfGe5vcT8LsMUz1AkGiyw4nqOt58DrBeH
-         edFMUx8EXzNK34fToowfRsGPhAcUCtwcD78tvPUV2sxZL80o7IO0qH+1j5wD8x1fouxk
-         3I6nNpgWk3sZfc3RW+iF7VrURE/zt9+KM6ybjY5XT/davL5nsM4B5Uuztt8JxBvsRJbA
-         86GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789648180; x=1790252980;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Dtz+Uqi8FvhezfQGwgUreP+CufNocr9p+NqbDN0Xcok=;
-        b=NDrOpFilYDSjr4rajkGzs3/MSQQzltVUNHZiGDvLOmeIZGzfdiwvajTEBIFPfUUZjC
-         t6Rgk7MEO0KXDBTSFwhsTG3+OUmYazNW+CZqc6VOMCmifphEN+94otjYq+6dCEnnbQBf
-         PF9UwVxpqdqoXkLwiE+QTpo74ajzCv+AJnlcNpt9wsWM5Br9IqEYlznUOqkyUs6i8YTH
-         Qcc5AoYtG4LGgwa8qF3yHPSFK9iwAZfhsykEjEGkHIHLLEvOJOH1plpE2zDXUiWiNcuA
-         a8RDka38ORUepqvUKas3j9sTJ9yXMD6lZet/Q/vloO+Wk/cb0lr/uLwPlyHgW11MGr3W
-         xADQ==
-X-Forwarded-Encrypted: i=1; AKwUvByg32fmwfkqsfeRrRvLqVLe1gScb0Ip5vwJmS78O31mgcXI/d4YalheCyjfiXM6glSrUcnfjPC7nbPD@vger.kernel.org
-X-Gm-Message-State: AFuF++me+QHHhbvDD10HmY1It5oSW4bP/DS3O/HslpPWjUno4p4nNFcK
-	F+A+dijI1YKu4sdECoLxvceYCAwDM6lEvUOufNUqfYoBrvcdcocgnLXc
-X-Gm-Gg: AYBFou0ip1RG3U7OdVxV4m5Netmo0zbvdX4rRBiZYHvQZJHy7Jg3/H4puBsjgkrqbWv
-	e/NFFze+UNvu6DWIQzJrjARCvAp6FRfOFdZH/1O0zyRqYvbWHdPCKeD9M7fJqQEWdhxjRD9BwwJ
-	x8Cl4HLMiJYMfM9tF743nEpkg7g+ohN5NnHX5JuAJH+YpP/r6PWhAwisY/WDaFQLCjQEkWEeOYr
-	ZCB8A9pAL5H4anXUK+LhSPZ+W0jiCifMneNLy8wAdY1XOhN94nz0dktSm1WTSVfizg5K7uQlONL
-	GuZmf27PO+6rMtgen13L2QbiLdcYqfToFocDWNWBrZNTbe102re7H6/KB6G3rfd6jPr+b57QN7Y
-	weouwwCx/Z/m+HAttniycTPXLA1JR/P/zfHyV5f5J/Ot8I+aoXWGhIMlQCsW93giodioSgPDwc1
-	q8dbqX+3lnMS274c3Fi9v5h7J9gZ338JwB2ypN2POolkkzlB4+8GkFWn/VjpKXZBCzTaBNQh7U4
-	unSxcRgJWRawb5EHuDfeypp7994v+T0AJnJ
-X-Received: by 2002:a7b:c35a:0:b0:49f:bcb7:8e9 with SMTP id 5b1f17b1804b1-49fbcb70a1bmr64001725e9.9.1789648179633;
-        Thu, 17 Sep 2026 05:29:39 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fbd1ce79csm82621135e9.0.2026.09.17.05.29.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2026 05:29:39 -0700 (PDT)
-Date: Thu, 17 Sep 2026 13:29:37 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Jan Kara <jack@suse.cz>, linuxppc-dev@lists.ozlabs.org,
- linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-media@vger.kernel.org, wine-devel@list.winehq.org,
- linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org,
- linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] file: make struct fd_prepare const and kill its err
- field
-Message-ID: <20260917132937.5a15904e@pumpkin>
-In-Reply-To: <20260917-work-file-fd_prepare-v1-4-b87534ca49f3@kernel.org>
-References: <20260917-work-file-fd_prepare-v1-0-b87534ca49f3@kernel.org>
-	<20260917-work-file-fd_prepare-v1-4-b87534ca49f3@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="UN5CSL9u"
+Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
+	by mxout4.routing.net (Postfix) with ESMTP id 93F65101037;
+	Thu, 17 Sep 2026 12:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=routing; t=1789648109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=P65DvSEjF/5oOd6NhkSx9EnAFvz8DzcFYjVCih46KL8=;
+	b=UN5CSL9uGT6IFiFSyNo9bivUJyMMhrkAIrMIyNdsQ523FQAskZe80dAX/fZlBQADNyKmJx
+	YTtqUC6Ye2gkpY09VxAzfCEI6JgRZ3c5wZxp1j8/f73rPNuMrmB/EdWWiSwZoklIGnc02D
+	EXPeJ6zQ4tPH3d8Yt+RvChkKNoSVobE=
+Received: from frank-G5-5590 (fttx-pool-217.61.148.160.bambit.de [217.61.148.160])
+	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id 72F131200CB;
+	Thu, 17 Sep 2026 12:28:29 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] gpiolib: use of_node_name if line-name is missing
+Date: Thu, 17 Sep 2026 14:28:13 +0200
+Message-ID: <20260917122815.88601-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 17 Sep 2026 11:09:45 +0200
-Christian Brauner <brauner@kernel.org> wrote:
+From: Frank Wunderlich <frank-w@public-files.de>
 
-> FD_PREPARE() releases the fd as soon as the file expression fails. The
-> fd either holds the descriptor or the error. The separate field is
-> redundant. Make fd and file plain members and struct fd_prepare simpler.
-> 
-> Callers of FD_PREPARE() get a const pointer to the guard. Simplify all
-> users as they can now easily access the trivial struct.
-> 
-...
-> @@ -191,35 +175,39 @@ static __always_inline struct fd_prepare __fd_prepare(int fd, struct file *file)
->   * was allocated. If fd_publish() was called the fd and file are
->   * published and cleanup becomes a nop.
->   *
-> - * @_fdf: name of struct fd_prepare variable to define
-> + * @_fdf: name of the const struct fd_prepare pointer to define
->   * @_fd_flags: flags for get_unused_fd_flags()
->   * @_file_owned: struct file to take ownership of (can be expression)
->   */
-> -#define FD_PREPARE(_fdf, _fd_flags, _file_owned)			\
-> -	struct fd_prepare _fdf __cleanup(__fd_prepare_cleanup) = ({	\
-> +#define __FD_PREPARE(_guard, _fdf, _fd_flags, _file_owned)		\
-> +	struct fd_prepare _guard __cleanup(__fd_prepare_cleanup) = ({	\
->  		int __fd = get_unused_fd_flags(_fd_flags);		\
->  		__fd_prepare(__fd, __fd < 0 ? NULL : (_file_owned));	\
-> -	})
-> +	});								\
-> +	const struct fd_prepare *const _fdf = &_guard
+Until v7.0, GPIO hogs inherited the DT node name when no line-name
+property was specified. This was implemented as a fallback in
+of_parse_own_gpio().
 
-Since the struct is only written by its initialiser, can't it just
-be 'const' ?
+Commit d1d564ec4992 ("gpio: move hogs into GPIO core") moved hog parsing
+into the GPIO core and removed this fallback.
 
-David
+Consequently, GPIO hogs without a line-name property are now displayed
+with a ? in /sys/kernel/debug/gpio. Restore the old fallback.
+
+Fixes: d1d564ec4992 ("gpio: move hogs into GPIO core")
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+ drivers/gpio/gpiolib.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index ef8ccaf17c9c..acf41cfbcf10 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1013,6 +1013,9 @@ int gpiochip_add_hog(struct gpio_chip *gc, struct fwnode_handle *fwnode)
+ 
+ 	fwnode_property_read_string(fwnode, "line-name", &name);
+ 
++	if (!name && is_of_node(fwnode))
++		name = to_of_node(fwnode)->name;
++
+ 	for (unsigned int i = 0; i < num_hogs; i++) {
+ 		if (is_of_node(fwnode)) {
+ 			/*
+-- 
+2.53.0
+
