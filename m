@@ -1,57 +1,57 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.6])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4684A6CE6
-	for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 23:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3D749B44F
+	for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 23:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789687275; cv=none; b=ATlJZ3tI+VNTJNkPNpqMn/MvVjAccT18qjSwI1rLwIZleaECLKq9sxTPM5ABmFx5JDNAPBtHJb9cy/7p1HoTtnvOrApqNBlwaP5rLxgwWqUoiygDRFzXFs5KUf5DrDFobCP8/Moy4mYNGYKti2273qDOfRLXriceGUCBk4iktf4=
+	t=1789689105; cv=none; b=nqPjnnU0cnxbQrmbJOn2y7fZ/4Lp5LgebRGe54qX3h7654PyNvTzHD73aj9j+8LwAOmM/An1bZcQqV/GCod1wfwvCsmYWssSPHvbl0K4QJRpMKLmR6alGhD56VavKQ5tLw6zDCDp/HdmaEzw+U1RsfA6gH3ZIWuGmOA9RCbb/8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789687275; c=relaxed/simple;
-	bh=U4RSV4mgSfDjBUOZfjm/w+0kT6+C9dXViO0aD0Vhcyc=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=XP7k+xftiwWro4a5txNy+Am8IGMGOrL/lZrV4ZslbYwnN7jFP5MZqgqAnwlRtTRGLu2WzSfZPOQkd7NONeRDTjUUAyT81mQd78ZsdpPk2L6DI1Q1N1EtwDdLh5JJt926gOnQGQJCeZtu6yEHSFq5rI3P7NHLicrWACXNRodmvYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=khiADOkK; arc=none smtp.client-ip=192.198.163.6
+	s=arc-20240116; t=1789689105; c=relaxed/simple;
+	bh=sczA1XUNJjNcYFASjYfooGowBhmfcZ/uyTGtPtFXVOk=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=Z1w765udkzc/C+s2RNy58ttvbSxq/zokyUKUHIiXUKyo+EhkU30W6JZRoD3C7LA8+SQYPvOf1BciCMIq6zdXmrNydo0MhY6doVhT88DL6XnN8YM5yFKejtziufbPvcIUStwDb8V7orcZRUyvkEbKGx0MP1M1bdK3wB7Tr/AMcQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GBH+DYaI; arc=none smtp.client-ip=192.198.163.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="khiADOkK"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GBH+DYaI"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789687269; x=1821223269;
+  t=1789689104; x=1821225104;
   h=date:from:to:cc:subject:message-id;
-  bh=U4RSV4mgSfDjBUOZfjm/w+0kT6+C9dXViO0aD0Vhcyc=;
-  b=khiADOkKTu01Tv2tCDhYqIN7Zt6tqP/4EzLgcN2VkFbhU4uYF2PSpexM
-   eSbWv4tyTqf468L+Pw5JNWxLrMW2tl1ilUNL6F8qYTzVyuVUNSZ4EL0aa
-   bIvitRvC8fVlnqqVWHPt6vFK7dk9mcaT6raHftgzp9P0j1bK72fvSP5tj
-   71cRU5XM12GcB28uHgGHmwjfsW4w0v2oOTqzQnB9lAtJ9DLatGSBrs50z
-   jttC5R+uEddCU2knYE+CazHPa5lzCmBtvJjSmx3DM3pY+wSxnQtvqfzJ5
-   F4Vk5xnFxBBdyGYo0MJgKp2VfoVtfrRCKpoLX27t3hssMdTV8GeQsb2X6
+  bh=sczA1XUNJjNcYFASjYfooGowBhmfcZ/uyTGtPtFXVOk=;
+  b=GBH+DYaIOf2ZEzICFxS6uNHLgdkxRFZbtGq/fsF5ejM8O1opDubz51gW
+   L70gWBwLivXoNKdiZ0/Mo0hkVCT/cMpjcqAolvNesX36tLZGjCbd0npYw
+   V/Lik2ogVit5lRY+pkaLSwhTvSKvK+EP1B2vqCYxEFsWT74W+d0h0pi/N
+   KgM9ZTtmrGtLN062xaoItyMYhZn3NL0A88DvBDNtin4QOJGVdTwPenVHm
+   ZokgmftWKQWgTldVWQQLvVW/2JpNmDfOxsjjUIuHZP1WlqwyXryOhgBLd
+   8Gs5r6PNcLORnXfsirT2JI8O12ipO0gn/aRQA+jZlDFFjElJQZ0pQc2c+
    Q==;
-X-CSE-ConnectionGUID: J2bYB+rTQG2stuNZjKvCvg==
-X-CSE-MsgGUID: SFm2mWTWQaid3n1b+a+Ncg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="678198"
+X-CSE-ConnectionGUID: iclFQwlbQLi9NxLfwbswsA==
+X-CSE-MsgGUID: kI1q6fR0TaqKSFDssyFYUg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="674148"
 X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="678198"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa116.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2026 16:21:06 -0700
-X-CSE-ConnectionGUID: 1RtZwwbRTB6hBT4iBvGEbw==
-X-CSE-MsgGUID: OPoclT4RScirPyx73dTHsQ==
+   d="scan'208";a="674148"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa114.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2026 16:51:43 -0700
+X-CSE-ConnectionGUID: UWrNyAJZQWKvo4uzyuCm/g==
+X-CSE-MsgGUID: ZoanjAWxS+ORJxR2i+BPTA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="267837873"
+   d="scan'208";a="297565302"
 Received: from lkp-server01.sh.intel.com (HELO 462990a40a85) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 17 Sep 2026 16:21:05 -0700
+  by fmviesa002.fm.intel.com with ESMTP; 17 Sep 2026 16:51:41 -0700
 Received: from kbuild by 462990a40a85 with local (Exim 4.98.2)
 	(envelope-from <lkp@intel.com>)
-	id 1x7LPa-000000008hr-1RzT;
-	Thu, 17 Sep 2026 23:21:02 +0000
-Date: Fri, 18 Sep 2026 07:20:36 +0800
+	id 1x7LtD-000000008it-1fte;
+	Thu, 17 Sep 2026 23:51:39 +0000
+Date: Fri, 18 Sep 2026 07:51:01 +0800
 From: kernel test robot <lkp@intel.com>
 To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Cc: linux-gpio@vger.kernel.org
-Subject: [brgl:gpio:for-next] BUILD SUCCESS
- ea4f5a734cd7625ab161ead75403aded18c0c5ab
-Message-ID: <202609180732.9L3VxFpa-lkp@intel.com>
+Subject: [brgl:pinctrl-qcom:for-next] BUILD SUCCESS
+ d29bfb93a19771b822dab6d7adbbbaf188cb1db5
+Message-ID: <202609180756.FecvKg49-lkp@intel.com>
 User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -59,8 +59,8 @@ List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-branch HEAD: ea4f5a734cd7625ab161ead75403aded18c0c5ab  gpio: ad7768: Add AD7768 GPIO auxiliary driver
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git pinctrl-qcom/for-next
+branch HEAD: d29bfb93a19771b822dab6d7adbbbaf188cb1db5  pinctrl: qcom: lpass-lpi: Include value in debugfs output
 
 elapsed time: m
 
