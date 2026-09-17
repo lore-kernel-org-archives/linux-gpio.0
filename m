@@ -1,93 +1,109 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947633890F6;
-	Thu, 17 Sep 2026 15:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF574B44AA;
+	Thu, 17 Sep 2026 15:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789658253; cv=none; b=Hka2ORkNgy0GNzdXaJUD3fp7X3EA2P+FSbIZqxeoaDxwQIG1Whf4PBtEI/d6UPsukih/W+5mU4IaUw57S1spHWH/yA4a69h1ndmZAhIuAb4rVWr3crtV/MNe2/l/9CE28AOA5vcfcu7Jm4jR/XL4gIodMLziRUtd5TKWAkRcnQw=
+	t=1789659316; cv=none; b=VoP//a98Dsih2h+akgnw98h7ywh7/kbYDCmMIcHnZxDTGdI8OoSgwwJxOChGuRHrNS6Jt1AKlJWVVH5rF9wPdTJE/BiKtjTl0/5JPzLbMacLOagX5O3wwfL18kXteqmYfgcgvz2FKAZzBoakfTyte/i7Uk3V9f/yTuJlWmSYetw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789658253; c=relaxed/simple;
-	bh=NT3+ATGeONp3oK/FSMfxmNCRnlixycSJ6Gkz34ZYjfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIXOiejKELYcD8e0BQUbBVP7tNhXbG5EqvpNbqCj07F5GXonK+LLopm+IxeDbGHjhNGToOggDwItyfcU9yned1DL8SRxqYbHwILWyh1vHewF1vzLVlVtZ09+11HZn6rEb0SDj7D5c2cdt3cD6E7VScogO8iZknJ2vJFgLjLTOtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oAa8WcM1; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1789659316; c=relaxed/simple;
+	bh=Dh6tUyQP9xyXhZWsWYa7WA4mu0Sws+dL1p7Kflb1hFk=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Em68y6F+iLDxZAOSNj9E+Wl6qAGAj2CKRmKrRR6YIoObVDmfINcVDvqOT0Fn6ifbc3aojc5gLoREkAG1Kwz9EplmcnGevmH9IAKy13Ze89EUz9FHdWD7Sg2y5S3mNyMkSC6bWt0MDRzKY/QqjHbLsZKjPak5bvz9urilJJniTbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvHb8BnH; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oAa8WcM1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789658245; x=1821194245;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NT3+ATGeONp3oK/FSMfxmNCRnlixycSJ6Gkz34ZYjfA=;
-  b=oAa8WcM1ZSzk3yiUysZnZDBs6jHcCMvFVbdTwCuB8Yssh1NGFhTz0ysB
-   QsZDZYoveaPBF00SB8/sNcaD8Zeu+mpfADFEnLxzWP9/8llYDvPc0dSLt
-   bs8k7CeAej2dZZeJTXaLRZnTlFJTpjinBc2TrBdjHzkKaifl3aNqk8Hzc
-   KjnP1FEZO4BWxI1TTAsgarNkOc+sS82VLUlxQgfe9Len4dTihtKfJt3Tr
-   kD8rPr0dGgzP0vBEvVeV2iJeWod5i2BWzbQs8E0cCUJpM01Y4yEgkDtds
-   QdDiFev5LATs6GGe7yTBm/5Og1/Ab1Iz/sNtKblU7bfApDxKqHXEnsCoe
-   A==;
-X-CSE-ConnectionGUID: NE5o52KpQsWe9KPz0ed1Jg==
-X-CSE-MsgGUID: AqlkBajiT3+UjFys79mhvg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="101436946"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="101436946"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2026 08:17:17 -0700
-X-CSE-ConnectionGUID: y+czv+RFS/upre1CRvYDWQ==
-X-CSE-MsgGUID: yA8acciLQymRCApaAYukRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="269590351"
-Received: from abityuts-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.11])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2026 08:17:15 -0700
-Date: Thu, 17 Sep 2026 18:17:12 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
-	Kent Gibson <warthog618@gmail.com>,
-	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Sashiko <sashiko-bot@kernel.org>
-Subject: Re: [PATCH] gpio: cdev: fix kernel stack leak to user-space in error
- path
-Message-ID: <aqwEeLLuIC1AoLQ1@ashevche-desk.local>
-References: <20260917-gpio-cdev-stack-leak-fixes-v1-1-2bb52879e49c@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvHb8BnH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA7571F000FF;
+	Thu, 17 Sep 2026 15:35:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789659302;
+	bh=byzDL3MM3tw9yBCOxQadk27VtOlUpG08zfgZFmn7Qx4=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject;
+	b=nvHb8BnHVmnWvOPaWQkbtOqXe6xbAv1B7uJUuoCalSS+Qba3wk76RY0ZerNxby6an
+	 bLvpuY9NlPw8aUMhvSt5nMI8G5EmKxxCsXmPplY0DFI44mCa/a1gRta6L+AVUNfdLo
+	 oXLvPZ//YDLxV71wXesQxGrK10oSq7Dxv6laFaE6R+Iju4lkbH0Pqm/l7AfK6Xd8Tx
+	 8AAby4VCZ7A5mzJ7cVtZEEYz2eWQEYRdfWWsbDjCBCQoX8cJ52iuGFJst6VXhS+5H1
+	 r2J1u/qaANTp4Nbiif2sA/uOsSctgGh7sSAULQJUIqh0nMKaigRHZMYuqAMZxBecHi
+	 fF3nEK+Ti+6/A==
+Date: Thu, 17 Sep 2026 10:35:00 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260917-gpio-cdev-stack-leak-fixes-v1-1-2bb52879e49c@oss.qualcomm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>, 
+ devicetree@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+ Linus Walleij <linusw@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+ Takashi Sakamoto <o-takashi@sakamocchi.jp>, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Rodolfo Giometti <giometti@enneenne.com>
+To: Eliav Farber <farbere@amazon.com>
+In-Reply-To: <20260917075611.47881-3-farbere@amazon.com>
+References: <20260916182641.9768-1-farbere@amazon.com>
+ <20260917075611.47881-1-farbere@amazon.com>
+ <20260917075611.47881-3-farbere@amazon.com>
+Message-Id: <178965920965.2201509.11424324343969407479.robh@kernel.org>
+Subject: Re: [PATCH v3 2/3] dt-bindings: pps: pps-gpio: document optional
+ pinctrl states
 
-On Thu, Sep 17, 2026 at 04:39:05PM +0200, Bartosz Golaszewski wrote:
-> If we fail to acquire the GPIO chip guard in gpio_desc_to_lineinfo(), we
-> return immediately before zeroing the info struct we'll end up passing
-> to the user-space later in lineinfo_get_v1(). This may leak the kernel
-> stack contents. Move the memset() before trying to acquire the SRCU read
-> lock.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Thu, 17 Sep 2026 07:56:10 +0000, Eliav Farber wrote:
+> When the PPS input GPIO is routed through a pin controller, a board may
+> need to mux those pins to a different function while pps-gpio is not
+> driving PPS (for example after the driver is unbound or across a kexec).
+> 
+> Document the optional "default" and "inactive" pinctrl-names and show
+> both in the example. The "default" state selects the PPS/GPIO function
+> and is applied by the driver core before probe; the optional "inactive"
+> state, when present, describes the mux to restore when the driver is
+> unbound or the system is shut down. The driver looks the states up by
+> name, so "inactive" may appear in any position; it only requires that a
+> "default" state also exists.
+> 
+> Signed-off-by: Eliav Farber <farbere@amazon.com>
+> ---
+> Changes in v3:
+> - Do not constrain pinctrl-names to a fixed ["default", "inactive"]
+>   tuple. The driver looks the states up by name, so "inactive" may
+>   appear in any position and other states may coexist; only require
+>   (via "contains") that a "default" state exists, and reword the
+>   description accordingly
+> 
+> Changes in v2:
+> - Rename the released state from "idle" to "inactive"
+> 
+>  .../devicetree/bindings/pps/pps-gpio.yaml        | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
 
-...
+My bot found errors running 'make dt_binding_check' on your patch:
 
->  	unsigned long dflags;
->  	const char *label;
+yamllint warnings/errors:
 
-It might be not obvious for a reader, perhaps a short comment why it's done
-here?
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/pps/pps-gpio.example.dtb: pps (pps-gpio): pinctrl-names: ['default', 'inactive'] is too long
+	from schema $id: http://devicetree.org/schemas/pps/pps-gpio.yaml
 
-> +	memset(info, 0, sizeof(*info));
+doc reference errors (make refcheckdocs):
 
--- 
-With Best Regards,
-Andy Shevchenko
+See https://patchwork.kernel.org/project/devicetree/patch/20260917075611.47881-3-farbere@amazon.com
 
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
