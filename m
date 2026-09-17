@@ -1,109 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF574B44AA;
-	Thu, 17 Sep 2026 15:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA18B358D27;
+	Thu, 17 Sep 2026 15:37:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789659316; cv=none; b=VoP//a98Dsih2h+akgnw98h7ywh7/kbYDCmMIcHnZxDTGdI8OoSgwwJxOChGuRHrNS6Jt1AKlJWVVH5rF9wPdTJE/BiKtjTl0/5JPzLbMacLOagX5O3wwfL18kXteqmYfgcgvz2FKAZzBoakfTyte/i7Uk3V9f/yTuJlWmSYetw=
+	t=1789659466; cv=none; b=tjVjejus4FVvkC/bCMQN42QFKQzhIQjPRkDtbJWurlu5e121egffAAN9HLZjnUL2WRGSJhUfNRrSxnBcy1FzhlFnfLheaKZxDeIbY1ZxYBR9+Q/M8Xkt28V5FG6j/tkAm6OCrb1HoNuMCnIYqVwRxJDYmwHvMjybbkzLlSulhB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789659316; c=relaxed/simple;
-	bh=Dh6tUyQP9xyXhZWsWYa7WA4mu0Sws+dL1p7Kflb1hFk=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Em68y6F+iLDxZAOSNj9E+Wl6qAGAj2CKRmKrRR6YIoObVDmfINcVDvqOT0Fn6ifbc3aojc5gLoREkAG1Kwz9EplmcnGevmH9IAKy13Ze89EUz9FHdWD7Sg2y5S3mNyMkSC6bWt0MDRzKY/QqjHbLsZKjPak5bvz9urilJJniTbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvHb8BnH; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789659466; c=relaxed/simple;
+	bh=VUAW9NKlxqOK7RBxed3VuAlb3pspvJ59kI354N187dA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ASaLFojCU+xM2iTuiPd+w1ClpT+p1W8yulQS7oMSlwfLuUg4upCPEJm1K94Wh3iTnz+M+v8h1UG9nfqDHFeDCjIYMIqH/6K11JrGYJ4HS7QfdLbRsyK011f4duG6aCCEdWi1fdIE5vBN7HDqoI2PQPT4aQuVSC9G9zJ6KFkWtkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=kklYlwvY; arc=none smtp.client-ip=134.0.28.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvHb8BnH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA7571F000FF;
-	Thu, 17 Sep 2026 15:35:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789659302;
-	bh=byzDL3MM3tw9yBCOxQadk27VtOlUpG08zfgZFmn7Qx4=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=nvHb8BnHVmnWvOPaWQkbtOqXe6xbAv1B7uJUuoCalSS+Qba3wk76RY0ZerNxby6an
-	 bLvpuY9NlPw8aUMhvSt5nMI8G5EmKxxCsXmPplY0DFI44mCa/a1gRta6L+AVUNfdLo
-	 oXLvPZ//YDLxV71wXesQxGrK10oSq7Dxv6laFaE6R+Iju4lkbH0Pqm/l7AfK6Xd8Tx
-	 8AAby4VCZ7A5mzJ7cVtZEEYz2eWQEYRdfWWsbDjCBCQoX8cJ52iuGFJst6VXhS+5H1
-	 r2J1u/qaANTp4Nbiif2sA/uOsSctgGh7sSAULQJUIqh0nMKaigRHZMYuqAMZxBecHi
-	 fF3nEK+Ti+6/A==
-Date: Thu, 17 Sep 2026 10:35:00 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="kklYlwvY"
+Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
+	by mxout3.routing.net (Postfix) with ESMTP id F0ACD60F04;
+	Thu, 17 Sep 2026 15:37:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=routing; t=1789659448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EWj9VioosLpk74B6lLbbnxdtdzOYxaz/vgqW8+QGFb4=;
+	b=kklYlwvYL8g1oev0DSOJQEztAdXsmgJv3jQklz8IGD9p8DqqQ13WlUgt/xuvoq3XbbTRxz
+	mgy5FaqVWJ/7TR5pKqoERZ32OeYvnGnlOs7MWmMZWD/JE4KaXOfnkZwBU+0Qe+f6wffbqw
+	ktP+ey2jn3ZJGf/DQx53ipzD3cR4RzM=
+Received: from frank-G5-5590 (fttx-pool-217.61.148.160.bambit.de [217.61.148.160])
+	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id CFEC01200CB;
+	Thu, 17 Sep 2026 15:37:27 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	frank.wunderlich@linux.dev
+Subject: [PATCH v2] gpiolib: use of_node_name if line-name is missing
+Date: Thu, 17 Sep 2026 17:37:11 +0200
+Message-ID: <20260917153712.134367-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>, 
- devicetree@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
- Linus Walleij <linusw@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
- Takashi Sakamoto <o-takashi@sakamocchi.jp>, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Rodolfo Giometti <giometti@enneenne.com>
-To: Eliav Farber <farbere@amazon.com>
-In-Reply-To: <20260917075611.47881-3-farbere@amazon.com>
-References: <20260916182641.9768-1-farbere@amazon.com>
- <20260917075611.47881-1-farbere@amazon.com>
- <20260917075611.47881-3-farbere@amazon.com>
-Message-Id: <178965920965.2201509.11424324343969407479.robh@kernel.org>
-Subject: Re: [PATCH v3 2/3] dt-bindings: pps: pps-gpio: document optional
- pinctrl states
+Content-Transfer-Encoding: 8bit
 
+From: Frank Wunderlich <frank-w@public-files.de>
 
-On Thu, 17 Sep 2026 07:56:10 +0000, Eliav Farber wrote:
-> When the PPS input GPIO is routed through a pin controller, a board may
-> need to mux those pins to a different function while pps-gpio is not
-> driving PPS (for example after the driver is unbound or across a kexec).
-> 
-> Document the optional "default" and "inactive" pinctrl-names and show
-> both in the example. The "default" state selects the PPS/GPIO function
-> and is applied by the driver core before probe; the optional "inactive"
-> state, when present, describes the mux to restore when the driver is
-> unbound or the system is shut down. The driver looks the states up by
-> name, so "inactive" may appear in any position; it only requires that a
-> "default" state also exists.
-> 
-> Signed-off-by: Eliav Farber <farbere@amazon.com>
-> ---
-> Changes in v3:
-> - Do not constrain pinctrl-names to a fixed ["default", "inactive"]
->   tuple. The driver looks the states up by name, so "inactive" may
->   appear in any position and other states may coexist; only require
->   (via "contains") that a "default" state exists, and reword the
->   description accordingly
-> 
-> Changes in v2:
-> - Rename the released state from "idle" to "inactive"
-> 
->  .../devicetree/bindings/pps/pps-gpio.yaml        | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
+Until v7.0, GPIO hogs inherited the DT node name when no line-name
+property was specified. This was implemented as a fallback in
+of_parse_own_gpio().
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Commit d1d564ec4992 ("gpio: move hogs into GPIO core") moved hog parsing
+into the GPIO core and removed this fallback.
 
-yamllint warnings/errors:
+Consequently, GPIO hogs without a line-name property are now displayed
+with a ? in /sys/kernel/debug/gpio. Restore the old fallback.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/pps/pps-gpio.example.dtb: pps (pps-gpio): pinctrl-names: ['default', 'inactive'] is too long
-	from schema $id: http://devicetree.org/schemas/pps/pps-gpio.yaml
+Fixes: d1d564ec4992 ("gpio: move hogs into GPIO core")
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+v2:
+- move code into loop as suggested by Andy and add comment about the reason
+---
+ drivers/gpio/gpiolib.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/20260917075611.47881-3-farbere@amazon.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index ef8ccaf17c9c..28f7265c5d56 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1029,6 +1029,13 @@ int gpiochip_add_hog(struct gpio_chip *gc, struct fwnode_handle *fwnode)
+ 			ret = of_gpiochip_get_lflags(gc, &gpiospec, &lflags);
+ 			if (ret)
+ 				return ret;
++
++			/*
++			 * If no line-name property is present, fall back to the OF
++			 * node name as in the previous implementation.
++			 */
++			if (!name)
++				name = to_of_node(fwnode)->name;
+ 		} else {
+ 			/*
+ 			 * GPIO_ACTIVE_LOW is currently the only lookup flag
+-- 
+2.53.0
 
