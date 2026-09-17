@@ -1,68 +1,35 @@
-Received: from mail-lr2-f35.google.com (mail-lr2-f35.google.com [74.125.230.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpcmd03116.aruba.it (smtpcmd03116.aruba.it [62.149.158.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B923C3450
-	for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 04:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1110B41B8F1
+	for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 07:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.158.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789620457; cv=none; b=mrpIg6InD4h+F9PhgHSUQgWZRqIUMVLMFvjp7xGk5bLi42UBywUG1ZzqhDs/JSJJE1AHNiuZ4Z0OfkzJAp5AfAYV2Q24WKGLIwGmckUBryp6BCNAPeKar9DeV+8GX4gWclXEKgVfBsixePSWldL60jbPVzlJpkMZXxrP2jAj5+o=
+	t=1789629421; cv=none; b=sfUqvnB/MCo/zR56ZjZl08NEv51hRere8ofKp57ncFdXweu2NeGXadMlr0hYgsOkCuA7z1fh6b2Ou0veVPxxuIAwjPo3twXx8O3h56bu2Wxa/Y1M4shNpIzR6RZUii+d3VHpdH90Lc62NP/Jmy3zrwMlWdWhfmzVobjsQxOhAAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789620457; c=relaxed/simple;
-	bh=Lrt6YFfTcQjqGuU5FoLFJmGH0jhGaULcXBP69mPmyDI=;
+	s=arc-20240116; t=1789629421; c=relaxed/simple;
+	bh=dqFYgL67SMUIOT+q7ezzhOZSFcUErpOaOgJkh1aCdbs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t7mmUg4KytvISNOwtKAsZNAA24zF3wjwN9XG0Akdwej+RH5f8ezR8hBmWygetWQg3J3iHP9SvXu+2nRlDjd6aOG12a2fVSvTiC35j8JwzVggNsDuJAmp6FPi+qopoOaUKIrvTm89wKurWfL60adC4WGXY7rkSdQXFQzphRCt5SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WPdMPb2N; arc=none smtp.client-ip=74.125.230.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 In-Reply-To:Content-Type; b=ZkpDQCsnMHsxpYYdzUEv+fiQtZLPA8KJYX1E9KFOkMk5xwd+hysbHS+Bdl1ib2evLcWa301iyth9/01C8kXh55F5AKMp4RD1ciWr9Csx6JzuVJ7NOtCfBhzkUzfv0E65+oTMKzNxdwpnhi09MLnwXvMLvs9suKs26bkxs3DHMKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=D21ANzwg; arc=none smtp.client-ip=62.149.158.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPdMPb2N"
-Received: by mail-lr2-f35.google.com with SMTP id 38308e7fff4ca-3a49bc59559so3319571fa.2
-        for <linux-gpio@vger.kernel.org>; Wed, 16 Sep 2026 21:47:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789620453; x=1790225253; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=dDYu3bsth7oi/7LPOhDffulZAY7dt7QNkv+9w7yWBC0=;
-        b=WPdMPb2NDyFx/VSYB/zGk1kF7EV/kHr3gS31Q75FBV2ml2PiJZ7G5HKWX2Mb1O+d0Q
-         +UOOxCDJ5mG1+0+PHRnOgZK2SuhZwZaaz+HpZFBzwuMrqcroJoW07iSpp41S5v8f1wGu
-         89FEguVN6c8XaNZpc9YOCwTF9sr0mhQvsXoU2R4soG8YCU2oOpcX9dRLCHLJzMt235lQ
-         QjKV/0Eem2pDaRNS1jMvxq4LG8HBoII7LDLNDsYidKD0B+9FigcsA2YXOAQMkaph7LaD
-         fd75Wv5vKLrFeAslhgfFMbch8txttcKS6OpsJnEX7AiLM0HLrgJNLqWtzss1jPwEfT8+
-         I25w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789620453; x=1790225253;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=dDYu3bsth7oi/7LPOhDffulZAY7dt7QNkv+9w7yWBC0=;
-        b=Y3QeQNaltFjTmpLGptAoyYDXAWC0olG9da3JKndunGfC1hSRcQP7fcmfDgkojghsFd
-         SuezrBi/hIUWCwgJ9w9mg6ubgS4CDVZKLtCjEAnfy/RPB7bXX6YBltDHmXjKCTq9imv/
-         yxNEJtwsLjhI2Us72OcITrhbPFhuBHh5JBFypcKXIqYZLlzvz4bVj61oM8ASN8KPo/SI
-         AS88ubJ3zeaWkTj+d6fnC0tfSuW/3TyWdwrKLT3RX+a92V3jKsxrWeYUGUpjKubTnXPo
-         j9Kuz6vSVD0ISyFdgcMQlhj1CLgkloRScBVtOqMi7peBhinRMBO3TPhnsBQJywHoSgB5
-         6ooA==
-X-Forwarded-Encrypted: i=1; AKwUvBymRFIAN5a1lh8dRuKJq095+ziBJq3iI1ZGb8QZJzWdGXz/S2Dw8Lig4zwXrFsKIne+s9VFkr6GS1Er@vger.kernel.org
-X-Gm-Message-State: AFuF++kBIqqaItpKIO6EjP1UaqSQ/mrT5im8XhCfXnKJPOSEvNzduTZv
-	yZNRfC5IDLIOlAV/2c/qDtCpqlrQPjrooOh4Fp2jojd7xdhtxuXBGOONCjIY+xtl
-X-Gm-Gg: AYBFou21oY2uxZK0a9yqvtJNdKsZQrsI28YPa0xgsVbi/Abn+oJ+zHxU1BOQOxMiTmT
-	/He4zk8r/FXFnTwTbW1lQjR5DiM88mDn1fWgcVES7XfZNTkrzNNr/ubBoOWsWglpMSI31FzxL5s
-	yQlTXxYZtBJKxMJL27IFR855s8QFrVrv99UE2AsMKd0MnKrjxyZGKdxTDQdIN7QZySjheLcgJK8
-	5SUNoB8d90mA0lJAJ5Yvx9GzHTWfv2KfYsC9I7dfQICIqWeoXnZ6x89NzNf9YbGjXlicDY1ywOI
-	vw3o9sCHWcpOamkwHv6lX0peaFxKo/hsmy9PFzCeS63BKoved2/0VacELlEb6fh92E4BwOzr/3r
-	ya9sNwfymD4lz/EWccAhb/rO4tAoEhIKRFAaw9nvzMdHsLonzQXHwiBTEsKvo5cDK99+mud61yH
-	2VHe/0SAOVP+Z/yTzZC7hnwfDQ/kmJLXnHjG1kseEJaLPmq+I49u5dTLPN60rVOMi7avgKDO8IC
-	O/SlYdZx2UkN5PG6neVLef+hzof5v+7FqaNGlblAfrVQWAbEoDrEBU=
-X-Received: by 2002:a05:651c:2107:b0:3a5:a106:ee0 with SMTP id 38308e7fff4ca-3a5dca17909mr10468881fa.24.1789620453050;
-        Wed, 16 Sep 2026 21:47:33 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3a5dafdc6fcsm11590281fa.33.2026.09.16.21.47.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Sep 2026 21:47:32 -0700 (PDT)
-Message-ID: <f50e6a88-3436-424a-8df7-8d5e01ee531d@gmail.com>
-Date: Thu, 17 Sep 2026 07:47:29 +0300
+	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="D21ANzwg"
+Received: from [192.168.0.186] ([101.57.122.26])
+	by Aruba SMTP with ESMTPSA
+	id 76JXxtAOsGd7876JXxGCvG; Thu, 17 Sep 2026 09:13:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1789629228; bh=dqFYgL67SMUIOT+q7ezzhOZSFcUErpOaOgJkh1aCdbs=;
+	h=Date:MIME-Version:Subject:To:From:Content-Type;
+	b=D21ANzwgOrMYQippvrouIoSYF+ISA8Jg+0jJt3bTFUVWSej/vTwr1am85fq91LqXX
+	 LhMV5QFZ9SRfR36iyyTA2ZQOWP2X9EzoW+4tgACaDG36Me5xYX9ZEsWCl77sD3byS9
+	 rEWIpvzuYHAS1RxQt1Zy/PjcsxhsDCjHERE6tbIDFgY0rMax5HWPnYlLNQIR6qUsc/
+	 uywvA0cOtR5uGWETl3mSPhJzY28TKh+D+1Ha+i8Com8F83yYeRdUn6BbyhXtPfuhwT
+	 UBsrnYFnT0Xscx/WiUKeAFOtSr3uIQ/MQ5O8w+daT88oJGW7nfKyJ4iOgcqml9xqW6
+	 un1V4r/p0kojw==
+Message-ID: <34ecbb41-0cf9-417b-9562-fc31726d8a35@enneenne.com>
+Date: Thu, 17 Sep 2026 09:13:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -70,70 +37,74 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/10] gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
-To: Linus Walleij <linusw@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Matti Vaittinen <matti.vaittinen@linux.dev>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org, Sverdlin@mva-rohm.smtp.subspace.kernel.org,
- Alexander <alexander.sverdlin@siemens.com>
-References: <cover.1789538455.git.mazziesaccount@gmail.com>
- <e3e6ac712519326cc25fcdd0a0c8e3cc42ef55ab.1789538455.git.mazziesaccount@gmail.com>
- <CAD++jL=vZr+naVBaixNkDbgx4_EpL8MosSyXYb9jg2hgKu+QNg@mail.gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <CAD++jL=vZr+naVBaixNkDbgx4_EpL8MosSyXYb9jg2hgKu+QNg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: pps: pps-gpio: document optional
+ pinctrl states
+Content-Language: en-US
+To: Eliav Farber <farbere@amazon.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260916134744.46354-1-farbere@amazon.com>
+ <20260916182641.9768-1-farbere@amazon.com>
+ <20260916182641.9768-2-farbere@amazon.com>
+From: Rodolfo Giometti <giometti@enneenne.com>
+In-Reply-To: <20260916182641.9768-2-farbere@amazon.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfIpz3j/B7k4mwxb15UfXD960CzMBiOv2Dp+pyieXKRx0pf/ZD6sm2tHLLk0GOLH9jj1Mhj9Fwevt0X8XOjsQCqnzkD+L3CTa7mQKDO94CdNggQcnJfRl
+ zae1o4YxZEC4U5pVS8RyRkFvSIbkRC6ihAx7919HjtR6rRwi7ShlBrEOPgHck+fnwch/buFdOn5C79DT2+IruuEQI6Ao6NdVljn61SXfhLozMS+OxT8PL0Qr
+ ASg1s3SwjMfkgH3cuGDxvnwLUFA+BqUmK9a0AV3ki3SRjjlROc9A8axqZICjhlhqJPhF5wPrOZaQI4o71qLFWJEOH61OQFsJln2Lx8jWR2LUwOQp3xt9lbaF
+ 5dmPANSHmVvGNQzweIihNyVHWbSCzGCpsy19vKz1xxw5SQOpjEd+uArxsSBlO/C0l2KBkfMV+jzwWLhsOHel5WdSP97oVMbkZhcxE4G1T0Px+c4gnxu6kSK3
+ qsuhKVp1BJwjsM1zXA/x+6o+s/bdqsSy9HANEgm846BOKFGS1TVgay2jll2bgeXr73FQX8RhicOeyphSYjtv86xWtuA4G8tl1cO1sw==
 
-On 16/09/2026 20:31, Linus Walleij wrote:
-> On Wed, Sep 16, 2026 at 8:12 AM Matti Vaittinen
-> <matti.vaittinen@linux.dev> wrote:
-> 
->> From: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> The ROHM BD73800 PMIC has 4 pins (named GPIO1, CLKOUT, FAULT_B and
->> EXTEN_OUT) which might have been set to operate as a GPI or GPO when OTP
->> (One Time Programmable memory) is written at device manufacturing.
->> Support the GPI/GPO use-case via GPIO framework.
->>
->> The default OTP for these pins is to not use any of them as GPI or GPO.
->> (The GPIO1 defaults as an ADC input regardless the naming). Hence the
->> driver assumes none of these pins is a GPI/GPO unless explicitly pointed
->> as GPI or GPO via device tree.
->>
->> Furthermore, pin's direction can't be changed after OTP configuration is
->> done. Also the default drive type for a GPO (CMOS / Open Drain) is set
->> by the OTP configuration. The BD73800 has a set of undocumented test
->> registers which should allow changing the drive type. Access to the test
->> register area or the test registers aren't documented and so this driver
->> does not support configuring the drive type even though it might be
->> doable.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> 
-> Looks really nice now!
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
+On 16/09/2026 20:26, Eliav Farber wrote:
+> diff --git a/Documentation/devicetree/bindings/pps/pps-gpio.yaml b/Documentation/devicetree/bindings/pps/pps-gpio.yaml
+> index 383a838744eb..7d11ec4656ee 100644
+> --- a/Documentation/devicetree/bindings/pps/pps-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/pps/pps-gpio.yaml
+> @@ -28,6 +28,19 @@ properties:
+>      description: Indicates a falling edge assert, when present. Rising edge if absent.
+>      type: boolean
+>  
+> +  pinctrl-names:
+> +    description:
+> +      When the PPS input is muxed through a pin controller, the "default"
+> +      state selects the PPS/GPIO function and is applied by the driver core
+> +      before probe. The optional "inactive" state, when present, is selected
+> +      when the driver is unbound or the system is shut down, handing the pins
+> +      back to their alternate function. As "inactive" is the state to restore
+> +      after "default", it may only appear as the second entry.
 
-Sorry Linus! I dropped your tag from v3 by mistake. I hope you didn't 
-waste too much time re-reviewing this :( Well, thanks anyways and again!
+The driver looks the states up by name, not by index, and only
+requires that "default" exists. Why you say that?
 
-Yours,
-	-- Matti.
+> +    minItems: 1
+> +    items:
+> +      - const: default
+> +      - const: inactive
 
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+AFAIK the tuple rules out ["default", "sleep"] and ["init", "default"]
+for good, and this is ABI.
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+> +
+>  required:
+>    - compatible
+>    - gpios
+> @@ -40,8 +53,9 @@ examples:
+>  
+>      pps {
+>          compatible = "pps-gpio";
+> -        pinctrl-names = "default";
+> +        pinctrl-names = "default", "inactive";
+>          pinctrl-0 = <&pinctrl_pps>;
+> +        pinctrl-1 = <&pinctrl_pps_inactive>;
+>          gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
+>          assert-falling-edge;
+>          echo-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
+
+Ciao,
+
+Rodolfo
