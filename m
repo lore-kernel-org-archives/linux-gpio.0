@@ -1,144 +1,121 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FC94E2F19
-	for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 12:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B2E4D0CE1;
+	Thu, 17 Sep 2026 12:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789647768; cv=none; b=JS6W0gW264sTOn/jSBXFSmMDBCz6Bx7tRImf947hijt+kQE5CARiP874ypdH9/avD+6VlYCOllS+wggd0SmJIpo7WUutne00x26OoXshNd0rtIXnQLUTTTOfT4bJnnA8FVPG9qu1Vf9MRF6fdyiea40g3Mk7ii5DztG4jNgzRpo=
+	t=1789647769; cv=none; b=Bnx/9LBU/rVQqmot8lPifp7Pgq5ls55NI4ODHPMI49h67yfagLz6H+fgpPZlUKNqi3Nd27Nr9SP8amXvB9gcORPuFOfkJSq3M6ngrhsWSQl+DIfdc1D3g4cU+Z6b23+3m639aElzU/xxRxkwRi0HnQLsUvrg2ybTud1plP5H8TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789647768; c=relaxed/simple;
-	bh=OJmskDiFOgBotmQnXQAOWrnTyjAq3r/ZPkOzXCktDOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KDs6OqidypYkFTA2H5fF/jI92QatlKf/KU1R4dv/zadXxdnpDvGUTqS6x5kgnR9Xrv+Zr99mIRUvhSunZRhYmh52iydHW8yTU+vOE1PAUbZInT26xcLvthGuFyfdxN7p7PGpv0cCrOfwuUrbgS/3Ta/v2oEw2fDQVZODvmsibIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W8MWUiGW; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789647769; c=relaxed/simple;
+	bh=Zo57ptsMztytzJ66q7w7TElsqXFNRm3Xo9NSI9URBfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tdYfMgM+M9M7LRaJIntLKZoKIRzU4zLjc5KNOPzMS5mR4tVp6PLSk6Jq5Z/w+JZCtwDy3J0N3slhNEHkCIT1CvXAbw8JKVsLjpW0Hm4na1d8YGsnJK7nwJcvxzfvNwpBFt5c0UfWBXWqTAtIp2iOtiv+YUC+rS+ByZ74V/gGmRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WUoFjf/D; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W8MWUiGW"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49e79a408deso3846595e9.2
-        for <linux-gpio@vger.kernel.org>; Thu, 17 Sep 2026 05:22:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789647757; x=1790252557; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=p0zmU2W+3BnffNO8O4v0JPRgPOvlhktXL05mpLnU1xo=;
-        b=W8MWUiGWkLnPE3LZwZMs+M6hjewk3bifMXlRxyzDreqvti1vU2oOe8kuHIJilh+a4j
-         avmi0gE2ouNHVuMutBqsR46ibWdW2hMSUIg+O7ewEblQDSqXn5oywiAzmcEOAAbnHJh9
-         CowIX7j0Z9oM0FI7AJhmCimPMAgxALlDijVAFCnLuHoqmAoi4nozpd09gBGC/BiDrVMP
-         v8CWYPOQj7wYPLWd3xvspz5rrIP7ZmsQlXq/fr57voEYreoEfZ0jpBHODcwFTuLtahTp
-         5Ork4vvRYVxbjDbbXem88rlm5er/r+K8QtAMln4o0OqF8zBcjtvMGd0fo9MP/8kOij+L
-         7TVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789647757; x=1790252557;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=p0zmU2W+3BnffNO8O4v0JPRgPOvlhktXL05mpLnU1xo=;
-        b=A21HhiAhIKLxNWmiStqh8aMe6bqfGgjVY7NxJJLxasYptl4f6SWdvjMll0LEjevdaA
-         uG8OrzWfmFRwrybkhIqdV1WDXi8jPtoFvGCSGUAprGz6NEc9JQ9RVN5zMsp2ATr9ZTIv
-         Igmx5j546/Qn2krEqJwhiCXWLkAuIBADEG0pTw6cbhVjyqHVhp41utWt20YfGdIUN6qX
-         pgZydUfu+FWSjuxENG5HMCnLYzsvUQBaMQISqLJR7ZOf8If7v4aGIUa6wDiAJa78BPae
-         qXmXhHRg7gn1cmvRwcfxDorUglFPY1nQ6xp0/ysMU5oY+jK/tE4aZg9RJaaTp7H0kTQv
-         sY9w==
-X-Forwarded-Encrypted: i=1; AKwUvBxnK4S5ovrTi/kRb8xjHWc9+ytB6/myj7+KZUfoaGCyFKxE31mSiKgq69rS0CVDcoMqxxL7oAhKGtEc@vger.kernel.org
-X-Gm-Message-State: AFuF++kVBgl8tSUu4HEO3DQIOXQ9jTHw8N29gxgApuRiMu+Hm6r4qxyA
-	dIERu496K1wwJMRGl84Z7WHs4K9W1kRnweb96qAOFb8755fjFGO8ls2e
-X-Gm-Gg: AYBFou1VwyURt52mx/gE09ppECaSrWho7M/Lef7si3FIgjn7K7o7v/U++9glQ18x+mn
-	GLgdqfiDH1Js2xFMRxLlrhEmTOEQBslycrrMCOywhPe96VxGy3/uW9fkiHe74966FzHnK0pvfEF
-	+7LGKdRO/B7qsqCec33v6erxwlU33rHrW/S4wKIIgcVbEeXpB3iFBTPRiJNUHq+z0PMB+n7n+q+
-	t9hSVQkFvV3OhayN4BfTigEuELiPKj6NNgP9xOaaEutKuss5+oOaMDXDQaBhjnJettzhy+Z0SdU
-	Lt4Lq5QsvAwlOjWFBgzAEg/+iCSJL+571Tl8HoAE/NBZJqpyg5E0yVH9nqbP+IgMhCIUm3rChl/
-	i2spwMUw1bTvOsg8Q3so8DhPmlUq53NTMCDW2L13dgbtp+fPPtVdY9y1zb+oW/nHpxT5DSn9r4p
-	SU4kbWhLx0S11vXnOauDddoTMxoPEUUIAn3YHUmMFV2AcBpzdGY7zYCzt4Ae0o00dGNee/FviwX
-	WHfTE8qaUz+s5pwaYMM0O/OEPvD/KxXowpf
-X-Received: by 2002:a05:600c:4ed4:b0:49c:de80:b833 with SMTP id 5b1f17b1804b1-49eac462571mr73688225e9.2.1789647756735;
-        Thu, 17 Sep 2026 05:22:36 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4870bef7678sm15969081f8f.2.2026.09.17.05.22.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Sep 2026 05:22:36 -0700 (PDT)
-Date: Thu, 17 Sep 2026 13:22:31 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Jan Kara <jack@suse.cz>, linuxppc-dev@lists.ozlabs.org,
- linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-media@vger.kernel.org, wine-devel@list.winehq.org,
- linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org,
- linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] file: declare the FD_PREPARE() variable with
- __cleanup() directly
-Message-ID: <20260917132231.26314015@pumpkin>
-In-Reply-To: <20260917-work-file-fd_prepare-v1-2-b87534ca49f3@kernel.org>
-References: <20260917-work-file-fd_prepare-v1-0-b87534ca49f3@kernel.org>
-	<20260917-work-file-fd_prepare-v1-2-b87534ca49f3@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WUoFjf/D"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1789647758; x=1821183758;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Zo57ptsMztytzJ66q7w7TElsqXFNRm3Xo9NSI9URBfc=;
+  b=WUoFjf/D+A8cGMwOHsbcFnVmlQDGG/GCwFTp6irPIqvQlhGHOIYhmOpG
+   DrJtMmpjmZfmD1TyB0rU3/8kJDhFQGxaPDpSn1l6/JfA/RyULr6jIeMDS
+   Yc9xGBGTguRpjL/WFGdJDJSRL/EsSdIcTKaH6Sr63M/i3HB9lrN86EiJr
+   lwnEcw1pY2yfJpqGA6fM4hKIKAqs+gmwJFugtnZnOHaRz1RcR07FFGweb
+   qz1uAyKhlkZ3OQYEGMBecVai82X17g6HpfvrFdow23a5+RT730r2J6JPs
+   dbDhQ4VcO4bDKmDzyvhV9H3CgCLfrYoZwSJcxAIZnN3G/Ck+gFnUVVgq8
+   Q==;
+X-CSE-ConnectionGUID: dsJS1BZTRnexRAiWhT3Bbg==
+X-CSE-MsgGUID: /5swGE2nQs6ADQzOSYCRLw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="107569071"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
+   d="scan'208";a="107569071"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2026 05:22:28 -0700
+X-CSE-ConnectionGUID: BfjX0q2oSlax1Hx0fa4JPQ==
+X-CSE-MsgGUID: C6UIlR4DSgmHmuVzv984bA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
+   d="scan'208";a="270450345"
+Received: from abityuts-desk1.ger.corp.intel.com (HELO localhost) ([10.245.245.11])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2026 05:22:22 -0700
+Date: Thu, 17 Sep 2026 15:22:20 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: zl020895 <zl020895@163.com>
+Cc: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Lee Jones <lee@kernel.org>,
+	mfd@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH v7 12/15] pinctrl: ambarella: add CV75 pin controller
+Message-ID: <aqvbfCQ6cxfGYJeC@ashevche-desk.local>
+References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
+ <20260915-cv75-v5-v7-12-3297d3fbc9c0@ambarella.com>
+ <aqp0VlwWotnuK9t7@ashevche-desk.local>
+ <40f1f819.7f85.1a0ae9e4dae.Coremail.zl020895@163.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <40f1f819.7f85.1a0ae9e4dae.Coremail.zl020895@163.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, 17 Sep 2026 11:09:43 +0200
-Christian Brauner <brauner@kernel.org> wrote:
-
-> The whole CLASS_INIT() detour isn't needed. Use __cleanup() directly and
-> give the destructor a private name.
-
-It also makes the code enormously easier to read.
-
-David
-
+On Thu, Sep 17, 2026 at 05:06:45PM +0800, zl020895 wrote:
+> Thanks for the review. The small comments will be in v8,
+> including pinconf set via regmap_assign_bits.
 > 
-> No functional changes.
-> 
-> Signed-off-by: Christian Brauner (Amutable) <brauner@kernel.org>
-> ---
->  include/linux/file.h | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/file.h b/include/linux/file.h
-> index 2b864f457211..926cc58d0b7f 100644
-> --- a/include/linux/file.h
-> +++ b/include/linux/file.h
-> @@ -146,9 +146,6 @@ struct fd_prepare {
->  	struct file *__file; /* do not access directly */
->  };
->  
-> -/* Typedef for fd_prepare cleanup guards. */
-> -typedef struct fd_prepare class_fd_prepare_t;
-> -
->  /*
->   * Accessors for fd_prepare class members.
->   * _Generic() is used for zero-cost type safety.
-> @@ -160,7 +157,7 @@ typedef struct fd_prepare class_fd_prepare_t;
->  	(_Generic((_fdf), struct fd_prepare: (_fdf).__file))
->  
->  /* Do not use directly. */
-> -static __always_inline void class_fd_prepare_destructor(const struct fd_prepare *fdf)
-> +static __always_inline void __fd_prepare_cleanup(const struct fd_prepare *fdf)
->  {
->  	if (unlikely(fdf->__fd >= 0)) {
->  		put_unused_fd(fdf->__fd);
-> @@ -199,10 +196,10 @@ static __always_inline struct fd_prepare __fd_prepare(int fd, struct file *file)
->   * @_file_owned: struct file to take ownership of (can be expression)
->   */
->  #define FD_PREPARE(_fdf, _fd_flags, _file_owned)			\
-> -	CLASS_INIT(fd_prepare, _fdf, ({					\
-> +	struct fd_prepare _fdf __cleanup(__fd_prepare_cleanup) = ({	\
->  		int __fd = get_unused_fd_flags(_fd_flags);		\
->  		__fd_prepare(__fd, __fd < 0 ? NULL : (_file_owned));	\
-> -	}))
-> +	})
->  
->  /* Do not use directly. */
->  static __always_inline int __fd_publish(struct fd_prepare *fdf)
-> 
+> PINCTRL_PINGROUP does not fit here: groups carry
+> AMBA_PINMUX(pin, alt), not a pin-number list, so I will keep
+> CV75_GROUP.
+
+I didn't get. It takes a pin as a parameter and adds the function on top
+of it. It is a combo, but I think it still fits the purpose. Please, use
+existing data structure and a macro.
+
+> At 2026-09-16 18:49:58, "Andy Shevchenko" <andriy.shevchenko@linux.intel.com> wrote:
+> >On Tue, Sep 15, 2026 at 07:15:42PM +0800, Long Zhao via B4 Relay wrote:
+
+...
+
+> >> +#define AMBA_PINMUX(pin, alt)		(((alt) << 12) | (pin))
+> >> +#define AMBA_PINMUX_TO_PIN(mux)		((mux) & 0xfff)
+> >> +#define AMBA_PINMUX_TO_ALT(mux)		(((mux) >> 12) & 0x7)
+> >> +
+> >> +struct amb_pinmux_group {
+> >> +	const char *name;
+> >> +	const u32 *mux;
+> >> +	unsigned int nmux;
+> >> +};
+
+^^^ left for the context.
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
