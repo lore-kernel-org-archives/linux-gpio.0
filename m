@@ -1,118 +1,153 @@
-Received: from smtpdh17-1.aruba.it (smtpdh17-1.aruba.it [62.149.155.116])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F054A6CFB
-	for <linux-gpio@vger.kernel.org>; Fri, 18 Sep 2026 07:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.155.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946302749DA
+	for <linux-gpio@vger.kernel.org>; Fri, 18 Sep 2026 07:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789717998; cv=none; b=cfeaEeqahfCUDrr/v9iWcjwRpINUGyFpt8e/cS9O2+tmIGzOsaobn/Ygi0pJFsEoRtdiCe8ycb57rm8urHU5FskM1a7fRQTKgKWx25C95kYANtibxwucPZQ0hgaFrVIfAz52fL8P702zFt8R3z4y0TA/BI7OGcDkTbG8Ns9YJfs=
+	t=1789718379; cv=none; b=eCH6c+svF7acGXKppW2elY6RAunaaGnwBd4GHpx7fywqSdciHm0dJBOdpqF/G7hWjqHEz5EK9q1WQPMBZSFIgnKqWu//acGHr8d/BcTcUTZn/j4fF3UPxPgWfrXWKQWLTvntvvpvSCE9dcTw/iuaHHDrozgscBqZKhrevGQcBz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789717998; c=relaxed/simple;
-	bh=rs7o5fyQ69KDrE4c+f68M3f72xhlbarCxw5Wnu1QAAE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c5rIRQXzQh6OLhgOf5aEFgs3rm1Rr5teAAwpJo+cHtBRox/VHur74STEemfoqW1SBjsHqRFBMWEdNvJj8xxH/FcsI1EES/j2mHOCdo/izYIMgg6dbuTUOOpXmp2QIdoYxgWmGYTCdXNGLgXaY/pmiZ3qgR83oOF92csQRs31m5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=kjEtN2hu; arc=none smtp.client-ip=62.149.155.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+	s=arc-20240116; t=1789718379; c=relaxed/simple;
+	bh=TgzAnU/9GcL2OUaDzZzcoxSazgXpxCCn2FZR9xAtA0g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CdHQT1FOheYWi6E0QF3TccZC7Z0qWK29AWe+pLaT8vJcAANcE7NqvEUfkcMCpVyZI5nBChMiBNqxwbNzfxa6qn0qhh714x937vpGOZYqC7HE7v7K8o6PM7VvJwFd1ZykoJu+CBL7psMtpkND64/NnuFWXYJeHJRuSrUwQFaOC5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=I4Rz5zCX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YqXYZ/mf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="kjEtN2hu"
-Received: from [192.168.0.186] ([101.57.122.26])
-	by Aruba SMTP with ESMTPSA
-	id 7TM8xO8s9r6Qv7TMExPQZT; Fri, 18 Sep 2026 09:50:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1789717806; bh=rs7o5fyQ69KDrE4c+f68M3f72xhlbarCxw5Wnu1QAAE=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=kjEtN2huOHW3xgbhld+RwCowjLq2BuNcwUVVX3tgTJY0Ci1NBStJrRJO389DsmEki
-	 rJm1Pgnmy/i3wfBfCwFk4gu7VJ/29P/WUaBeiyjG/T3C3Vyuq3LvNXR08m/2BNCeTv
-	 RrrxKf9drcDOASh9bAPANwV4OnTJl9PNZSCvS296C9tqEDnhSmqkcTzyVwQFhhA7D5
-	 U5FYrLL4sO/iQe3TebkeuIgMKVVEcYybxeGuXLm3/4pH0YNfGFzMPonYwvFqMwXiI8
-	 NCOhP4lTLiIjICNrgQ3hnA4v+pJbvQZXW6z8EMULbH+eSVLUhqLp5EcEm4290F9fY/
-	 uHHfV1pwHTwVg==
-Message-ID: <78b01d9f-5551-4bb8-8fe1-9a992f624810@enneenne.com>
-Date: Fri, 18 Sep 2026 09:50:06 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="I4Rz5zCX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YqXYZ/mf"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68I5xwxB3254919
+	for <linux-gpio@vger.kernel.org>; Fri, 18 Sep 2026 07:59:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7H8+qVFCgEbhZNN14kB3tTwnx4DooRfea+gEM4MvUho=; b=I4Rz5zCXrC8Tkl75
+	tMtl99QGUjyhWez+pRToyZDtV3LhRQ9bFVS0qHyopIuthhAySkiZwdx+YspS/Q24
+	zLbELXcvPkJ+ewNLtLhVc4X7bJ0mpH20NgnzFtYoZQ6GgK1/RaddsyEoiKtOvtpo
+	Mas/lgv6mXAN6/q/gUp7KlCcgdXwhMeo9x6OF4RknpaB9rxAE6A5lOCl5I6ljsxr
+	kvu8bVKYxFYMUGBLhJeJeqqAk9MijR67ePqvrVkS7lYNnLzLwCwARGj0+q3RkH8N
+	YaAgSrsf2PNjL3LdDH1s7+hn7r0mg2VmO/mmqaZEfkbP3+lh8DVerLWjhEKgN1U1
+	mbk+sw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4grmv5k3vn-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Fri, 18 Sep 2026 07:59:37 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-93a01d1d1b6so75446585a.1
+        for <linux-gpio@vger.kernel.org>; Fri, 18 Sep 2026 00:59:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1789718376; x=1790323176; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=7H8+qVFCgEbhZNN14kB3tTwnx4DooRfea+gEM4MvUho=;
+        b=YqXYZ/mf7GyK6rXNoLInyMXjlTn/cr0oi0iN95a32k0Ac1eg7MgAw23r5AnBjZ1Dbn
+         6fY5wCbgH1IxZENX/Ddy8bocvNKkF/VOiSNK8PAvZWiCnMPoJrym0urtj6K3jDUxgDZc
+         6VOTQgLozHZt+mtjde0+wCNqqB1YuZkDgscjaW2C6mnjuTogr18sjQLNkjBALTCz0r/+
+         OdLaPvWsIcVTyYv/MGflOOAuyqfc0bNvY3LjyHG5Hi25uXuFst4m0etQ7XTpfFiYzcFc
+         mQ7e2cUYaS5Aq3FMhg9khqeNRGDq8cbgIYXYUai132edi1fNT4ccZxSQfv46TaSVtO1F
+         GBxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789718376; x=1790323176;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=7H8+qVFCgEbhZNN14kB3tTwnx4DooRfea+gEM4MvUho=;
+        b=hNwALJ1QrrSowCg+o3WlxwdfW+LB5l/jt8J/wNywGBcZPgP6JJ6DWaIseqKo0Vr5pL
+         klmT+7y0tPZV7BYXSOuQ/ivsd0LyfoBqzmfkEvsVKcE6nJ/WCf+kCXDPABkiFhy89lcT
+         MZL+HqgKOfFPxbyuBzZmXQO5GZ+VG7H5QJGm4G3gsqKxi7ffiD3rDIzxCGverzpjLV6d
+         jAP+4jC4hUF/P5xOp3IzYIQvcvfRfw2WrafrTXqgGr6oM5ykwWTcrxbLLYwu42l/Wp88
+         SN8HQW4TZXeBwkWmIJJVLuHCrAuTRcrtP+T4tqq94nIoy8DfTi7Z73pWZ+lcmzwF35At
+         tMGg==
+X-Forwarded-Encrypted: i=1; AKwUvBy9ghgeoduxHwSloz2pUkLciWprO1kwnqCYqoKbzl4oYPRVNQf8QoNuQv6QLS1VvainCLjsCl17ZZzT@vger.kernel.org
+X-Gm-Message-State: AFuF++n1ka7IDIpN1iIG/uUWs5fouGFkC3VHD2ikgy57pSDLWap92oBr
+	0SlkyGK9D6On61RHnFGAwLSCdqqjoxLtNSa8a1fLUEsUkwvnL3VRVoeDoKjgxY4/pxxK7NNIm7K
+	NJ0EBisgY6QTNpAcRpzDpkGcqBNXS+IFUgXyN4sx8mVveGkDudLF05i+2pql22x/r
+X-Gm-Gg: AYBFou1g/apiwrw66wXckdn2WaKpXFFLf6atnde7sVA5dw2ol6+6CjVX/ef2EgRfxZV
+	Ehb/QGYmbpSvREvrawBGIbV8l+hLEW9/OUL/6zGNJ0iui5SNEF2uTuQ1EGreLiOmftOsPmDlZW9
+	ib/INHQYeej+ShyYf+91YM9oFG/0no+oL1sq+tWukgI2yxX7tPUkGUkCEEAa9cy6J7amb6RGf74
+	Q0ReqiPnpd6GJiSBTgBOLHwFocix/N917iW9INr3cLzj4cWZzUvcmoYTvC5buHCY6Ie0+gsVxTm
+	kviFMRi3Ah26yXxlb0gEWAz5yr41RmKD95sW1pjgOWcPnNVaRTUQoYNCnxaiBOYMdi9DK+xin1D
+	EOtSPVs9YU/+kLY+t7VNL4HxBBEQ6rFLk3A/EVjBZIQcZFCb/RD/8ReAtVuEw
+X-Received: by 2002:a05:620a:8399:b0:93b:d8b3:f9ca with SMTP id af79cd13be357-93bdc6db3b6mr214413585a.21.1789718376427;
+        Fri, 18 Sep 2026 00:59:36 -0700 (PDT)
+X-Received: by 2002:a05:620a:8399:b0:93b:d8b3:f9ca with SMTP id af79cd13be357-93bdc6db3b6mr214411785a.21.1789718376036;
+        Fri, 18 Sep 2026 00:59:36 -0700 (PDT)
+Received: from brgl-qcom.local (185.pool62-37-34.static.orange.es. [62.37.34.185])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4871feb5de3sm2358157f8f.1.2026.09.18.00.59.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Sep 2026 00:59:34 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Linus Walleij <linusw@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Frank Wunderlich <linux@fw-web.de>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        frank.wunderlich@linux.dev
+Subject: Re: [PATCH v2] gpiolib: use of_node_name if line-name is missing
+Date: Fri, 18 Sep 2026 09:59:32 +0200
+Message-ID: <178971836797.4310.16876510471798115989.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260917153712.134367-1-linux@fw-web.de>
+References: <20260917153712.134367-1-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] dt-bindings: pps: pps-gpio: document optional
- pinctrl states
-Content-Language: en-US
-To: Eliav Farber <farbere@amazon.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Andrew Morton
- <akpm@linux-foundation.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260916182641.9768-1-farbere@amazon.com>
- <20260917075611.47881-1-farbere@amazon.com>
- <20260917075611.47881-3-farbere@amazon.com>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <20260917075611.47881-3-farbere@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfLgmRDpKuM+x+ItopsDtC5jCo5SJhcfgPi3w64jVBCfoRUs58T6+lOO33oI0jbFPoZAN8bhO2nDKqmhAkjMtZWw438wPSNR8k6lM22RgKFFl8Ma7W588
- 6+a2UFHEFz7T+21W9dfOmdU07HwCmM8XKY7je7q9TjbkYOw8f3zAQwbivq5qR6Q1D3e232Kg3tiaSiUcr1HTvWa53z/xYVNgx3arwOkONjLx7VrEUQebf/50
- w5vKYO6K3cCSQZQovs5UfbT3F+91oQ2eXOWssy1M50Fd/237JxGzUkVq200tJSdU9MjQVJM2lWwXQmZfQXY4smMIBbRLq56n0GFeMMHe1wPh9Tt73B+2idJt
- G+R9zIWkfY9Y4Z5d8EbvntHU10OCya0WYwO3/bmBXkoxqc5asc+BtUqtClnpNiWRVprkF45DWunk+3f/4e2nKzomzuZAip3QIfht7BZ8sMSYx4RPRoh08I5z
- xHIVwJJdAKE/sgeKhAJm1VkQzFrlm2bXb9eRXy/ZmmxAKGy+Tkd2V+J2NkBm9GGthKBAZ3soW1kP+DvP2J4pbx6ja7tIzzFBD8Ihgw==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE4MDEwOSBTYWx0ZWRfX1bkKrVOymXQ5
+ CSi51u8FAw/9I7PF/Dsi8wXJEiQUQ15wTXzsjAldhq7wC4xv1C/LkliXw5BpzJUCLvLIuxypm6q
+ OGvXLRraTTNzOIoKX9pfBIg5/w66NVOJ7F8dquCgisFulOJ/rABCz9pr/YVbL/253+aYTSbv4V+
+ +X/X0GE4wau0l4wvQ14f+gAlRfP12zGAQ3fm+PhyZxC4+fY1pJD+go3rzs04pKzV/MZ5cmL/yUb
+ 6TbL9p4xuj9IpTF0v8/ZOefSGxibNf1T0v+q3UmVL+rVFtLzTMSfwl9sxdS1v6ejhb9ouXj27Bp
+ BBIThQ/2AMykSsuZnjunGQtJcgZosxG4l4+tPOF1c6hgBblcPNM8gZOuhdsWc/GE4PsCYCsIx/r
+ 6M+ToSNE8FG9KSbM1qNYuGYF+fIvgsPlD/Ur5Fb2GHiByw62f8/HpEBNJKwRYjS5Qj19U5FXA9F
+ 7YqmfmXGK3GHVMmHV9A==
+X-Authority-Analysis: v=2.4 cv=E+5YNqdl c=1 sm=1 tr=0 ts=6aacef69 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=gMXnIfcteCbZVvXnpe26Ng==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=31KojLRLK06XSZVqnngA:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-ORIG-GUID: lF1bbwAXufc-RyguL5dLYqQoeLfeSBil
+X-Proofpoint-GUID: lF1bbwAXufc-RyguL5dLYqQoeLfeSBil
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE4MDEwOSBTYWx0ZWRfX1muS6sFPB9ZD
+ EyrU600RRPqcoCbLWZTYzFZzklPzP/Kum6CPJvc30VvOScbzJT7QpFGIG608QAMhCnaEvo/u/kQ
+ fpI+6+stXz0K2vi4PmMdhmy3YL/GqQ8=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-18_02,2026-09-16_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
+ impostorscore=0 spamscore=0 phishscore=0 adultscore=0 bulkscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2609040000
+ definitions=main-2609180109
 
-On Thu, Sep 17, 2026 at 07:56:10AM +0000, Eliav Farber wrote:
-> Document the optional "default" and "inactive" pinctrl-names and show
-> both in the example.
->
-> Signed-off-by: Eliav Farber <farbere@amazon.com>
-> ---
-> diff --git a/Documentation/devicetree/bindings/pps/pps-gpio.yaml b/Documentation/devicetree/bindings/pps/pps-gpio.yaml
-> index 383a838744eb..db6ecb17cb54 100644
-> --- a/Documentation/devicetree/bindings/pps/pps-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/pps/pps-gpio.yaml
-> @@ -28,6 +28,19 @@ properties:
->      description: Indicates a falling edge assert, when present. Rising edge if absent.
->      type: boolean
->
-> +  pinctrl-names:
-> +    description:
-> +      When the PPS input is muxed through a pin controller, the standard
-> +      "default" state selects the PPS/GPIO function and is applied by the
-> +      driver core before probe. If a state named "inactive" is also present,
-> +      it is selected when the driver is unbound or the system is shut down,
-> +      handing the pins back to their alternate function. The "inactive"
-> +      state, if used, requires a "default" state; its position among the
-> +      names does not matter.
-> +    minItems: 1
-> +    contains:
-> +      const: default
-> +
->  required:
->    - compatible
->    - gpios
-> @@ -40,8 +53,9 @@ examples:
->
->      pps {
->          compatible = "pps-gpio";
-> -        pinctrl-names = "default";
-> +        pinctrl-names = "default", "inactive";
->          pinctrl-0 = <&pinctrl_pps>;
-> +        pinctrl-1 = <&pinctrl_pps_inactive>;
->          gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
->          assert-falling-edge;
->          echo-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
 
-I tried:
+On Thu, 17 Sep 2026 17:37:11 +0200, Frank Wunderlich wrote:
+> Until v7.0, GPIO hogs inherited the DT node name when no line-name
+> property was specified. This was implemented as a fallback in
+> of_parse_own_gpio().
+> 
+> Commit d1d564ec4992 ("gpio: move hogs into GPIO core") moved hog parsing
+> into the GPIO core and removed this fallback.
+> 
+> [...]
 
-   $ make DT_SCHEMA_FILES=Documentation/devicetree/bindings/pps/pps-gpio.yaml \
-          dt_binding_check
+Applied, thanks!
 
-and it gave me:
+[1/1] gpiolib: use of_node_name if line-name is missing
+      https://git.kernel.org/brgl/c/d54a489c8c4b627775445d54a6cbd32f209bda8f
 
-   pps-gpio.example.dtb: pps (pps-gpio): pinctrl-names:
-         ['default', 'inactive'] is too long
-         from schema $id: http://devicetree.org/schemas/pps/pps-gpio.yaml
-
-Ciao,
-
-Rodolfo
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
