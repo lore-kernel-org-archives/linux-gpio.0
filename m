@@ -1,62 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.6])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A1851B161;
-	Fri, 18 Sep 2026 17:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0B951DDF4;
+	Fri, 18 Sep 2026 18:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789753107; cv=none; b=GRylwTsgHVW5aiHzfG9sy3poU0ZPF9Z+Qf3dfijY8OhTYYG9Bm3jROwTcgWHAnaGIidFYU+i1Rc6yjIuMVCES7dLa+JhBqg4FGEdh74W7uDXf5hBGA0xByD83f/8dJv2x5cZerjix/bvh9/xYukUk6jguJ5Uhcn+Q5TU6Z6K7bE=
+	t=1789756537; cv=none; b=o59SJuTmNDKcaQp+dOcd6rbXLeurpNlZp9liu4tbC7pUcYboo1Yq2INSYtMoizeNmBmgIAsfIj76IU8iDbTHj9HmzZXVI0rnmwLKKd0DiIxHxsIol78t7gAgs5lGYtbaVhdoi58uNJhuuvONbfSOZ6cysrc27lfzOjUTMyMqSxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789753107; c=relaxed/simple;
-	bh=J3bYaEWyyYv31Nix/vTbMEEAr9eEVvvLHflmIWHKVJ8=;
+	s=arc-20240116; t=1789756537; c=relaxed/simple;
+	bh=QMno9KKPDPhvcpIBjVhQ1ViQib8xi+nRQ20CysC5foE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d99GsZrDfa+luvPP5UvBm4X9IuMFfgN5vitNeAjZY/sJR4VXdpKSiuCTlb0b9o9jO1DI7JCzpl1p/68lWgwFDejS0cms4nE0bbvqHQ69ZvBvKhYCucIX0rnHfhfft3MhmZR9mKGWgTJGCOV33e7hvI/bDYkDTy0wq3/QpjnxFOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kI4eT2+f; arc=none smtp.client-ip=192.198.163.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z+TSkUO/oyQpjXDrZF8dlDRkdUqNAzIdD26mNPwleeYgVRmu5Xhc7v1slmkX3UpGnvtzqaapiqSW3UT7EG35gPiN5oaXL4i3nZyu2lvD/P/wdDbc0pDYc2KamLdDMnW3qMwVjVvqf+iZfzcEyxdwE3n8+kZLwTMeZ4f72PgJ8Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+aaC1Eh; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kI4eT2+f"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789753104; x=1821289104;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J3bYaEWyyYv31Nix/vTbMEEAr9eEVvvLHflmIWHKVJ8=;
-  b=kI4eT2+feKJKqVVBzVPA2vu0FNxpFjveeqVjp1DXr1OAOBNF0yg86ZQ+
-   krROOyMa5LM8KCTTaR6PjC8bN0xuVRrvQs4wWnEAnl7jgXgrd6uaf7HPv
-   3wvsqhsugmFnzOqwqCV4fGf0SgTAAK+iyEDDBrFWkAexZWXQ+nZEyyTFN
-   ZIdosVXPH4eVsFUSmmaQfuBJdkr9JLGxwW24FX8bMPuEPVHV/Be79M9nT
-   quMOzCbNLVxKBNYW3MPCKrUU9C+gvXaOfPfEj9D+1ODyEXWZ07lBG8cAh
-   i00xidxO1cNsq9BwhUvVbacxJLSa2thLIlGzhsTJfWdRKMJWS8pEmHHfT
-   w==;
-X-CSE-ConnectionGUID: mxiVi5UBQ+e1L4wqKNoLYw==
-X-CSE-MsgGUID: 6xiQ1ztHRK6B7ruaaqK8iQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11909"; a="788109"
-X-IronPort-AV: E=Sophos;i="6.27,109,1787036400"; 
-   d="scan'208";a="788109"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa116.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Sep 2026 10:38:19 -0700
-X-CSE-ConnectionGUID: FHUY+oYITFKMtiG9ag3XJw==
-X-CSE-MsgGUID: dSSX9EITS2WMVXmCCZaTYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,109,1787036400"; 
-   d="scan'208";a="270796387"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.47.46])
-  by fmviesa010.fm.intel.com with ESMTP; 18 Sep 2026 10:38:16 -0700
-Date: Sat, 19 Sep 2026 01:37:51 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Heiko Schocher <hs@nabladev.com>
-Cc: linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Bartosz Golaszewski <brgl@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+aaC1Eh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6336C1F000FF;
+	Fri, 18 Sep 2026 18:35:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789756532;
+	bh=zL3zf/Mxv25j31UU57durVN7+v90+sc0FJoRGvW0bLM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=O+aaC1EhcNhwSVV6edxB8w7RjETC+qhUgcUbhqETv1XF4VnvSt22MYjSZkh4W2PnF
+	 ++bdTsPpa2BSkhqIQAIkuZv3miG+fwxi33gbZyv9vdtgil8GTIopbAnFSpD9G+8GLJ
+	 EMPM4TvwIvTeaqAacnKCs31+x9SgQVkj6PklT1NK2ghTud++y3nPQ4ajJB4bs2wrah
+	 7kPfDugWq/2nTH6ysSmdIF5Me/dbx2Lcj/MrbUtGarWhZaC2wMxE62l+4+RsOnijOK
+	 MauJY+TyCxZnyeXyr3dHIZzj84MPibUg7B8Gtr41ia5/b+HAuKv0Vg9WuTYiabca3H
+	 mTe7xvgb0UTrg==
+Date: Fri, 18 Sep 2026 13:35:30 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Emil Renner Berthing <kernel@esmil.dk>, linux-kernel@vger.kernel.org,
 	Linus Walleij <linusw@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Moritz Fischer <mdf@kernel.org>, Tom Rix <trix@redhat.com>,
-	Xu Yilun <yilun.xu@intel.com>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5] fpga: xilinx-selectmap: control CSI_B and RDWR_B
- during configuration
-Message-ID: <aq1270NA95AERKQp@yilunxu-OptiPlex-7050>
-References: <20260909112200.13256-1-hs@nabladev.com>
+	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-gpio@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org,
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>
+Subject: Re: [PATCH v8 03/22] dt-bindings: pinctrl: Add
+ starfive,jhb100-sys0-pinctrl
+Message-ID: <178975652969.1333472.11106750466244695151.robh@kernel.org>
+References: <20260910100357.130134-1-changhuang.liang@starfivetech.com>
+ <20260910100357.130134-4-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -65,29 +53,19 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260909112200.13256-1-hs@nabladev.com>
+In-Reply-To: <20260910100357.130134-4-changhuang.liang@starfivetech.com>
 
-On Wed, Sep 09, 2026 at 01:21:54PM +0200, Heiko Schocher wrote:
-> The driver requests the optional CSI_B and RDWR_B GPIOs with
-> GPIOD_OUT_HIGH and never touches them again. That flag carries a
-> logical value, so both signals end up asserted from probe on, whatever
-> polarity the device tree states, and they stay asserted for the
-> lifetime of the device.
-> 
-> Neither signal belongs to the driver's lifetime. CSI_B (Chip Select)
-> selects the device on the SelectMAP port, RDWR_B (Read/Write) selects
-> the transfer direction, so both belong to the data transfer. A device
-> that is never deselected never lets go of the port, and a port pinned
-> to write mode cannot be read back.
-> 
-> Keep the two descriptors in the driver private data, request them
-> deasserted, and assert them only around the configuration data
-> transfer. RDWR_B is asserted first, UG470 describes in chapter
-> "SelectMAP ABORT" that changing it while the device is selected aborts
-> the configuration on the next CCLK.
-> 
-> Signed-off-by: Heiko Schocher <hs@nabladev.com>
 
-Reviewed-by: Xu Yilun <yilun.xu@intel.com>
+On Thu, 10 Sep 2026 03:03:38 -0700, Changhuang Liang wrote:
+> Add pinctrl bindings for StarFive JHB100 SoC System-0(sys0) pinctrl
+> controller.
+> 
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> ---
+>  .../pinctrl/starfive,jhb100-sys0-pinctrl.yaml | 164 ++++++++++++++++++
+>  1 file changed, 164 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/starfive,jhb100-sys0-pinctrl.yaml
+> 
 
-Applied to for-next.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
