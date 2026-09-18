@@ -1,107 +1,126 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8838C5C613;
-	Fri, 18 Sep 2026 06:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED02391842;
+	Fri, 18 Sep 2026 07:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789713514; cv=none; b=A/4qeuVjqvCtUlHrmVPe5dNvn0MYxU+mGkMqWf0vuLpa7rhCTI/a7WXSEcfJjCFyhynNJ8ZR6mXOIDmrkrMlHJt9n48lXPsaL0Ws/6F8gSmvd/egz0Z9ULNqUtnRF07f+KN5+hsqM5lAxPVxx7s00V3GO056/baNsFOhB9Jljbk=
+	t=1789715738; cv=none; b=ulj98p/qUCG9J1ztGJdFgfhL3P1TO69oIu8Pny+xHb2unEKAfNO3H3jzahWmtP7kZLRXSOmUhMGMYlzIUS2fBOKU/qLb/znfPSSipi/7Lr4+Ywoq+1JIXRkYQgSl22Xcuagzc3vge/ojdcFVpc50zd0eE5sEiGkeukOxGiEstH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789713514; c=relaxed/simple;
-	bh=L9bvzIPM+ftK2bxDWRtS5jd/RgMKrldKEwiztXhRBqA=;
+	s=arc-20240116; t=1789715738; c=relaxed/simple;
+	bh=IyQG4uF4U2HMYFS0whlenRlq0+4izpBq85YAFExkrKM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DxMjRZGmYnVUMnwvKGxMpImDbA9kDdKQ76pK7XGER6BhM1R4nsOQkrXHrbxHavBelAsgbs5c3piejX1DcjvXOyI/i/1sNlHXkUD2XKHq0j1texgDelqVM78jx2/v/5MTBZ0O6xmCM3B9QGCKGE/OLsN+iVAVB+FqnFtGCreXb0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TncbaiR6; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=sDjMH4h+zmyPI1Af5WNUMlsKY/qPyC1fOYokACApIey0BCZHAFftodUORbt4P0Czg59AFqPXpZTratSABZ3XhspF+50p9/67exnLZ3SvZavZsrHR/6xKdd23skUVz85ZhR/p5EyNmL7im0yeSAf/+Quadc8OwecOShkGCf9GMb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hhrdEkJP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TncbaiR6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1789713512; x=1821249512;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=L9bvzIPM+ftK2bxDWRtS5jd/RgMKrldKEwiztXhRBqA=;
-  b=TncbaiR6o2E0XC19all3o+N8MhLwQ4DxYdXodXt/zNciIg7aE9xQRpJ7
-   aBDCk+GANTkCrkl6Re1WC0Nb5X8Y/d8xnXwYeVoiORFFpjB+Zj535AX4y
-   Zs2j3jmHtqKp7tSJfqSn4PPq6tGIH0Mz2SD07OGCMz+B0zygBlLyZjoeq
-   OUoIWWd0z8HOSdMtja5WKulL6b7a16LALW7VJ1rvi7kNrOWNJ9WfTzpi3
-   FC4YYyrIYKc6roPwH+JxUwezudo1iaHfnqykdBdUWMeJdgxICJubiMtuR
-   FRBvIMfoepIkLTgyIrmIGdkFXVK3da3RM+0I+9IgourBHO4jqI507Onu+
-   g==;
-X-CSE-ConnectionGUID: 9xHbcQQnSXq6aZlSfNoExA==
-X-CSE-MsgGUID: sFMWokhASFSryUJNrxiZ3g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="90063035"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="90063035"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2026 23:38:31 -0700
-X-CSE-ConnectionGUID: 16zabr9TRyyP+M/QWOEnIQ==
-X-CSE-MsgGUID: bsmVT5NNRnqbrTyfZQM6Yg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="299344374"
-Received: from carterle-desk.ger.corp.intel.com (HELO localhost) ([10.245.245.170])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Sep 2026 23:38:29 -0700
-Date: Fri, 18 Sep 2026 09:38:22 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Sashiko <sashiko-bot@kernel.org>
-Subject: Re: [PATCH] gpio: cdev: fix kernel stack leak to user-space in error
- path
-Message-ID: <aqzcXsWQnhOprEHp@ashevche-desk.local>
-References: <20260917-gpio-cdev-stack-leak-fixes-v1-1-2bb52879e49c@oss.qualcomm.com>
- <aqwEeLLuIC1AoLQ1@ashevche-desk.local>
- <20260918032743.GA29370@rigel>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhrdEkJP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 559BC1F00893;
+	Fri, 18 Sep 2026 07:15:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789715725;
+	bh=yGXP8T1zvW5Ml5ZoTKLO3915Guu8fl2jGwWEp0ekuH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=hhrdEkJPsCM1e0xAT8nx+2dL6Mk346k4lOVF4xldrlPrjN5pRcKLlC36i5umsgAEX
+	 Mp9h8oSRLYPkXnX0ofmhNPnYdlFaaDlt75luOA2LPxQMGglwZYxE8YneYoFFIrm9VI
+	 BlQBv75lqp6fBDi3G2QcfvUEtdAqHwbvPo2DdlOaS6Q4KNMSO4H/eGby5OJ08w8Jj5
+	 Rqe5dl6AsQrb2fKQkEJpUbf3d2BeXzwkYnUjSNr6T93S99i6Iv352HA7tpVBA4Q3UO
+	 Lgv9HZaeycMuaLOLue3xeMnw41S7U8WqPV4QoW/jUnIAui9ss1pj6XqDza7wqdaL1k
+	 YsEo9YjVPbeIw==
+Date: Fri, 18 Sep 2026 09:15:21 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Long Zhao <longzhao@ambarella.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 05/15] dt-bindings: gpio: pl061: add Ambarella CV75
+ variant
+Message-ID: <20260918-affable-aardvark-of-superiority-6a5ed2@quoll>
+References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
+ <20260915-cv75-v5-v7-5-3297d3fbc9c0@ambarella.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260918032743.GA29370@rigel>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20260915-cv75-v5-v7-5-3297d3fbc9c0@ambarella.com>
 
-On Fri, Sep 18, 2026 at 11:27:43AM +0800, Kent Gibson wrote:
-> On Thu, Sep 17, 2026 at 06:17:12PM +0300, Andy Shevchenko wrote:
-> > On Thu, Sep 17, 2026 at 04:39:05PM +0200, Bartosz Golaszewski wrote:
+On Tue, Sep 15, 2026 at 07:15:35PM +0800, Long Zhao wrote:
+> Add ambarella,cv75-gpio as a PrimeCell-compatible PL061 variant, with
+> arm,primecell-periphid and gpio-ranges required. Reference
 
-...
+You just described the diff, but this should explain why you do these
+changes. Why a fixed periphid is needed? Isn't it implied by compatible?
 
-> > It might be not obvious for a reader, perhaps a short comment why it's done
-> > here?
+> primecell.yaml and use unevaluatedProperties.
 > 
-> So we should always add comments highlighting initialisation of return values?
-> No problem with adding one here btw, as we do it elsewhere, just
-> wondering if you think this should always be the case.
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+> ---
+>  .../devicetree/bindings/gpio/pl061-gpio.yaml       | 25 +++++++++++++++++++---
+>  1 file changed, 22 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
+> index 4d970e55104b..00d0d8ddd2c9 100644
+> --- a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
+> +++ b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
+> @@ -15,17 +15,36 @@ select:
+>    properties:
+>      compatible:
+>        contains:
+> -        const: arm,pl061
+> +        enum:
+> +          - arm,pl061
+> +          - ambarella,cv75-gpio
+>    required:
+>      - compatible
+>  
+> +allOf:
 
-Yes, when return value is initialised in case of error. We know that we are
-going to return an error, why would we initialise? So, the answer here is
-because we don't want to leak kernel memory to the user space. A short comment
-makes sense to me.
+allOf should be placed after "required:" block.
 
-> Hmmm, after some sleep and taking another look, what does bother me is that
-> when the guard was added the behaviour of gpio_desc_to_lineinfo() changed,
-> in that it can now fail, but its signature did not.
-> As a consequence, lineinfo_get() and lineinfo_get_v1() now return
-> empty/zeroed line info and success when the guard has failed.
-> Elsewhere when the guard fails the operations return -ENODEV.
-> So, while this patch no longer leaks stack, it would be better to propagate
-> the failure.  That could also make the memset ordering mute, or even a
-> trivial waste of CPU time, as it could prevent ANY line info being copied
-> to user in the failure case.
+> +  - $ref: /schemas/arm/primecell.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: ambarella,cv75-gpio
+> +    then:
+> +      properties:
+> +        arm,primecell-periphid:
+> +          const: 0x000e8061
+> +      required:
+> +        - arm,primecell-periphid
+> +        - gpio-ranges
+> +
+>  properties:
+>    $nodename:
+>      pattern: "^gpio@[0-9a-f]+$"
+>  
+>    compatible:
+>      items:
+> -      - const: arm,pl061
+> +      - enum:
+> +          - ambarella,cv75-gpio
+> +          - arm,pl061
 
-Right, this can be done to cover all cases at once.
+So a PrimeCell-compatible PL061 variant which is not compatible with
+PL061? You have entire commit msg to explain that and say something
+non-obvious about the hardware.
 
--- 
-With Best Regards,
-Andy Shevchenko
+>        - const: arm,primecell
+>  
 
+Best regards,
+Krzysztof
 
