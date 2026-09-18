@@ -1,126 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from smtpdh17-1.aruba.it (smtpdh17-1.aruba.it [62.149.155.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED02391842;
-	Fri, 18 Sep 2026 07:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1120849F120
+	for <linux-gpio@vger.kernel.org>; Fri, 18 Sep 2026 07:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.155.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789715738; cv=none; b=ulj98p/qUCG9J1ztGJdFgfhL3P1TO69oIu8Pny+xHb2unEKAfNO3H3jzahWmtP7kZLRXSOmUhMGMYlzIUS2fBOKU/qLb/znfPSSipi/7Lr4+Ywoq+1JIXRkYQgSl22Xcuagzc3vge/ojdcFVpc50zd0eE5sEiGkeukOxGiEstH4=
+	t=1789717996; cv=none; b=g3U+L0LrjH1InxsqPYDylApTBE875vga5B6Uli3buhufOhWqswTxE8d+804+juEqfzv2L2YXx1qcBgtan4mPkvlJvddY0owqp5o1s75j9tBfWy75CXUOdlIGyVSk0v0A/4w8GpHkqsUoswtuVJZ7XzI5AdptbCNZfKZu8RutP5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789715738; c=relaxed/simple;
-	bh=IyQG4uF4U2HMYFS0whlenRlq0+4izpBq85YAFExkrKM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sDjMH4h+zmyPI1Af5WNUMlsKY/qPyC1fOYokACApIey0BCZHAFftodUORbt4P0Czg59AFqPXpZTratSABZ3XhspF+50p9/67exnLZ3SvZavZsrHR/6xKdd23skUVz85ZhR/p5EyNmL7im0yeSAf/+Quadc8OwecOShkGCf9GMb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hhrdEkJP; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789717996; c=relaxed/simple;
+	bh=4y2+ZhFdCjg9e0v9XAtB+1izgIjBbJixC6kPLXMZnV8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LvnwsaijCnynSt8eB6fK4ckGhLIHSCdkcYAn8vSMIKV7E84SI3BNITgPoW2CtH+PjG0eP6f2bTUUp0W7n4gzN2abZmV5Se0jt0DcMPnO4+hH/QkOVOEJOo+3ildouDDNaOKj/PgiGVfJ2Qvf+Zs3INFVFdCTln2hY+LswR0FiyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=Ooay3tPb; arc=none smtp.client-ip=62.149.155.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhrdEkJP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 559BC1F00893;
-	Fri, 18 Sep 2026 07:15:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789715725;
-	bh=yGXP8T1zvW5Ml5ZoTKLO3915Guu8fl2jGwWEp0ekuH8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=hhrdEkJPsCM1e0xAT8nx+2dL6Mk346k4lOVF4xldrlPrjN5pRcKLlC36i5umsgAEX
-	 Mp9h8oSRLYPkXnX0ofmhNPnYdlFaaDlt75luOA2LPxQMGglwZYxE8YneYoFFIrm9VI
-	 BlQBv75lqp6fBDi3G2QcfvUEtdAqHwbvPo2DdlOaS6Q4KNMSO4H/eGby5OJ08w8Jj5
-	 Rqe5dl6AsQrb2fKQkEJpUbf3d2BeXzwkYnUjSNr6T93S99i6Iv352HA7tpVBA4Q3UO
-	 Lgv9HZaeycMuaLOLue3xeMnw41S7U8WqPV4QoW/jUnIAui9ss1pj6XqDza7wqdaL1k
-	 YsEo9YjVPbeIw==
-Date: Fri, 18 Sep 2026 09:15:21 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Long Zhao <longzhao@ambarella.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
-	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 05/15] dt-bindings: gpio: pl061: add Ambarella CV75
- variant
-Message-ID: <20260918-affable-aardvark-of-superiority-6a5ed2@quoll>
-References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
- <20260915-cv75-v5-v7-5-3297d3fbc9c0@ambarella.com>
+	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="Ooay3tPb"
+Received: from [192.168.0.186] ([101.57.122.26])
+	by Aruba SMTP with ESMTPSA
+	id 7TM8xO8s9r6Qv7TM8xPQVa; Fri, 18 Sep 2026 09:50:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
+	t=1789717801; bh=4y2+ZhFdCjg9e0v9XAtB+1izgIjBbJixC6kPLXMZnV8=;
+	h=Date:MIME-Version:Subject:To:From:Content-Type;
+	b=Ooay3tPb2eF7PB4ABd7/AcrIjO7Z+i54rdSdi+wQ8XLX0Js+8MAqqfAXPITAEPF0V
+	 pgSbDEXMNIpJzla7OeZ2R4IKMXTEVtbtZOqM1xZyFXgzFL/qgEcJsznqr7GjHYmMrV
+	 z7w4CuUJL7teY+ej4k4tdMwJ04UafYW15BAnY5EmX506x94PwB2vsW5bubRNiDXYbE
+	 OX/Y5rOUySJjdP+BbhQBm6sZuw4ZxDfJcw2UVOpc7/w392B3vEFu/vC8DyMN/JGU5G
+	 FiBzHCPy+gEBKd8dT0NRerBXqr7Xumntqf+AxYKkgmhm0Zb5Nwc5g6aYS1IXFQNzpL
+	 yKxbBGDAqUDSw==
+Message-ID: <bea71814-e4e4-48a3-84e5-901d2b3a5c48@enneenne.com>
+Date: Fri, 18 Sep 2026 09:50:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260915-cv75-v5-v7-5-3297d3fbc9c0@ambarella.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] pps: clients: gpio: propagate probe error codes
+Content-Language: en-US
+To: Eliav Farber <farbere@amazon.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260916182641.9768-1-farbere@amazon.com>
+ <20260917075611.47881-1-farbere@amazon.com>
+ <20260917075611.47881-2-farbere@amazon.com>
+From: Rodolfo Giometti <giometti@enneenne.com>
+In-Reply-To: <20260917075611.47881-2-farbere@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfCe20FSGwlBxOEtP1bnumqe76TRik6QpO4ZDmQiRUA9pclUN6lTp7vgMMSinnBRBuHcWn5XAmMG+oDiAy4MYTEFV3p/K6ATmXQ3w333iRQon9DrA8WIH
+ m+zf+GaXTtPrlMc59QnHYJ6xdKE0gWuIFhVXbklh6pUNrSI1YdYa4Eo3S9e4B87ThIE1B5qtJINTzR8/ehrnaScF6IT8G/wx/mEPMiP+yvPkZxNYcVqBncM0
+ d7io3yaWfmffN4Evih1Sw7EEsj7dpfMf+ILBRFCTCYX1HSt52n5cVBJfR2F5OkeBVyRZs/MQuCZOqy1hQZpWFAygrgwnYbuqQLJZVKngLZwS7ZKiIZetmnbl
+ eoNStTPY/3iJ0T8bmzlfp0JkgLil4TQzB9EMxydj+qilyu1xp+Un2GfhvRArV20k4lj2QTK20hdfzE7ybw+Ciiqe0FL0Sl4OItdJkRvBbVonMuz8KuZ0md2v
+ lSUfTyCVVKr00zlMyFhWZ+ZbS/tmsNLXnp/zinircgksftip8pyaNBn6y+ac7LPd0qcr0Yxts2wqqdNXsvKXPWvgkUVHT8X/A5n9Mw==
 
-On Tue, Sep 15, 2026 at 07:15:35PM +0800, Long Zhao wrote:
-> Add ambarella,cv75-gpio as a PrimeCell-compatible PL061 variant, with
-> arm,primecell-periphid and gpio-ranges required. Reference
-
-You just described the diff, but this should explain why you do these
-changes. Why a fixed periphid is needed? Isn't it implied by compatible?
-
-> primecell.yaml and use unevaluatedProperties.
-> 
-> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+On Thu, Sep 17, 2026 at 07:56:09AM +0000, Eliav Farber wrote:
+> Return the actual error code from both paths, and add the errno to the
+> request_threaded_irq() failure message.
+>
+> Signed-off-by: Eliav Farber <farbere@amazon.com>
 > ---
->  .../devicetree/bindings/gpio/pl061-gpio.yaml       | 25 +++++++++++++++++++---
->  1 file changed, 22 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-> index 4d970e55104b..00d0d8ddd2c9 100644
-> --- a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-> @@ -15,17 +15,36 @@ select:
->    properties:
->      compatible:
->        contains:
-> -        const: arm,pl061
-> +        enum:
-> +          - arm,pl061
-> +          - ambarella,cv75-gpio
->    required:
->      - compatible
->  
-> +allOf:
+> diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
+> index 73ec2c7335e5..038c55c5f7d4 100644
+> --- a/drivers/pps/clients/pps-gpio.c
+> +++ b/drivers/pps/clients/pps-gpio.c
+> @@ -165,7 +165,7 @@ static int pps_gpio_probe(struct platform_device *pdev)
+>  	ret = gpiod_to_irq(data->gpio_pin);
+>  	if (ret < 0) {
+>  		dev_err(dev, "failed to map GPIO to IRQ: %d\n", ret);
+> -		return -EINVAL;
+> +		return ret;
+>  	}
+>  	data->irq = ret;
+>
+> @@ -197,8 +197,8 @@ static int pps_gpio_probe(struct platform_device *pdev)
+>  			  data->info.name, data);
+>  	if (ret) {
+>  		pps_unregister_source(data->pps);
+> -		dev_err(dev, "failed to acquire IRQ %d\n", data->irq);
+> -		return -EINVAL;
+> +		dev_err(dev, "failed to acquire IRQ %d: %d\n", data->irq, ret);
+> +		return ret;
+>  	}
+>
+>  	dev_dbg(&data->pps->dev, "Registered IRQ %d as PPS source\n",
 
-allOf should be placed after "required:" block.
+Looks good to me.
 
-> +  - $ref: /schemas/arm/primecell.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: ambarella,cv75-gpio
-> +    then:
-> +      properties:
-> +        arm,primecell-periphid:
-> +          const: 0x000e8061
-> +      required:
-> +        - arm,primecell-periphid
-> +        - gpio-ranges
-> +
->  properties:
->    $nodename:
->      pattern: "^gpio@[0-9a-f]+$"
->  
->    compatible:
->      items:
-> -      - const: arm,pl061
-> +      - enum:
-> +          - ambarella,cv75-gpio
-> +          - arm,pl061
+Since this restores the -EPROBE_DEFER that gpiod_to_irq() can return,
+which the hardcoded -EINVAL was turning into a permanent probe failure,
+it is probably worth adding:
 
-So a PrimeCell-compatible PL061 variant which is not compatible with
-PL061? You have entire commit msg to explain that and say something
-non-obvious about the hardware.
+   Fixes: 4461d65176b4 ("pps: descriptor-based gpio")
 
->        - const: arm,primecell
->  
+Ciao,
 
-Best regards,
-Krzysztof
-
+Rodolfo
