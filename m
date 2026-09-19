@@ -1,64 +1,66 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3E528DB54
-	for <linux-gpio@vger.kernel.org>; Sat, 19 Sep 2026 17:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82690377023
+	for <linux-gpio@vger.kernel.org>; Sat, 19 Sep 2026 17:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789837868; cv=none; b=pT8GextMirYmN47OULsQDWq/aqtQ7e/+eoLz9XMEiLnm2mO6sV/A/Q/whgIRjR+RuqbwK5BkerjBTpjdEeV50ZywUrdKpoLBEmjKCTKU7GcJMh5NlY+cELsaYGjtptmA0gOerXm4d8QwUlRfquixHssxYMD4hD2XspGsO5vAPqY=
+	t=1789837870; cv=none; b=osMZTM3qU3ycwChO4VdzHHlnEm4qo/OV5cX+xCorAJagT2CC9eMoP//nq+7ybCeqpzjjQ5fEh3wLfJtFZQSwv1uNf+m633ZyZIEZ5S8LB/xrslq9uKOdYWXmFG3LBaiyH3Jj7iTQF3wm1Vy0Eufcap4NJ0KDi9U2dD955aGbvRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789837868; c=relaxed/simple;
-	bh=dHkZRLWtlQaSHjeSXr42g7Q+eXX0UFEmGROzXfKyUJ8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rvLUJM7ikX5wgi9QPbO4cFEs/od8C8gKZRm/61qmYaUqUf/Tz07PmpEcGe/lSn2EU+78D53DiD2aXhstsMUO8MZqwdxhzsjKQq/IzZX+qa2U0Ycj79DDTWoxRncozQWIzIypwe1bEwX1qeudLbU5q5zsYI++2Uyt6HAw//75/k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lxr4ODfY; arc=none smtp.client-ip=74.125.225.76
+	s=arc-20240116; t=1789837870; c=relaxed/simple;
+	bh=cnELjqd1Pl7f/0JTN+K6wmbhpcxee0KU5jbx2ycb1p8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=L0hUGN+ejWXebx29etWcedPSZgBSrt6imZo4lqM5eDvnq41rdq7kpp8aHq7usm7rEMC6wvufbbpk0Zdyh+KaLS8B9dCaHUBXby3i3f/ci+jPUli39qB5Ux3Do0asExdrDPdkyb40DHCpvs2dTcoaaGlbTD1IgDj8I77ejFTWrIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTVKXYZT; arc=none smtp.client-ip=74.125.225.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lxr4ODfY"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-4834977ae75so917410f8f.3
-        for <linux-gpio@vger.kernel.org>; Sat, 19 Sep 2026 10:11:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTVKXYZT"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49ccf3ca626so8018945e9.0
+        for <linux-gpio@vger.kernel.org>; Sat, 19 Sep 2026 10:11:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789837865; x=1790442665; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=bOIVDTJSR3DD2SJCi7iFUDKjBfcaQ+nLmnWw0gGBUpE=;
-        b=Lxr4ODfYmauH7rsz1xUu7ScH56pOVVzCi9U7DJBuxFiIMSK/Y2k0uwqDs3pqF5s4LJ
-         CMvZSr/BG0HQDyy3mRDsrNgh8GLi+HDs4+LtjBwzh73jY+U95WGEe2AWrC/3vvZcZAcD
-         WFqkCpK3oBVxrd1/Pk4Nzih9dIbOj2mXyR+fFX28TqlvXrJQIfkqOmLkf/BHvtLc8NZm
-         FLGY5oil0NCm0s+EH3ziY2ORcTFHnOJVFzctGGxzU/E2iNRKOngDdKLj0wLoIFj+u4fb
-         jeCgFyym4fzcd2Oxwy2R03M8MH7FliB7obyz+wY9Mo4nARKqHQlAuo1eNUw9hBJQLVaa
-         eXKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789837865; x=1790442665;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1789837867; x=1790442667; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=bOIVDTJSR3DD2SJCi7iFUDKjBfcaQ+nLmnWw0gGBUpE=;
-        b=cjY4uxS8kj0LyfeCHU5dn3d7p4GfBXjFU6Pw92BbUzM5tkf5k4TEvayYoueF7FXTxN
-         GBdIvBg4DbF4cogPEGRUWnS7sB7W/0DcjWmpUoSMRG2bupuI4/6w3O+Wx8QvFpq3NyTG
-         IvQrI7t6h/4XLbA9tSnknE+olFwWooFguGHexFFrippXfYvbucs03wHRuMsxhXRnUGGt
-         ayv0yv9HgDbaBhKRfbFtnRMoZiXMnHT998qMXfipVhTJQDMd75btOyUG2778+TW9NLlT
-         c/BMtKtPNfe/Z8/8REm/MZtpAGM3tGKKWn32OuEQKAIkxPXUAK4hH1G7cKR/4H9bEtdf
-         Ef7g==
-X-Forwarded-Encrypted: i=1; AKwUvBy0G8U16i1sRAFG2qZHZk2Ku9O+iF2PNnuLtrYj7SrmXXnhGDXJMO2DenTiqp1Asih+wpkr0XWMlOqE@vger.kernel.org
-X-Gm-Message-State: AFuF++kCUqkz7h4MOdrOmLorMRQAptu+NKhoi+8sjT2dylONYZuyXNai
-	bCbkutIl0uc6JNnvU6TVl5w9+VJYdxElm6CC0yyEdjV9V9TjfxD7sLXu
-X-Gm-Gg: AYBFou2TzOlLxUnA047s8nvCune7/R8ba88c9gB3/bdpeEaV7mNM6AUmZIw8Oi1a8q/
-	jGwGLvopWT2glsRkHcmszwvjr9iYXP5JXnhIAonOJB8edA68+oHYxC/VVz8YNpxEr4V7EV9AQZ1
-	TxQhAUnSqfetgOnh4u56FAHgm9IaqAzT5k9bbp2Lmfm5/2NzUbG5mZE+TokNQPg07wWFfOAqcpn
-	ChVnOGJsJDWEJ28yRwPeJglxjVAg+CvcG8+NtHX9NxJkGP9nlG3Q0LvdTzwUpPYDTketcP1HmWv
-	MOvM3/X18xbg7TghK5R/SIu7ABwG+pxnzl2cT052IS/EEIKwpK8NVXg/3OpmRgKRp7DsfP2Nelq
-	F2Ned9jPp/CHhxCJh0HGMoaV8Dm0/YJfn8Y2+MxZbwRzVi0LND7ocKLMdbuBrEsw1qfE3vajKIz
-	+waXpE46OYHciZ/3cNlqIXq8H2dAJLQMrmv3stG/n74m76rb/fTd78oTNEEdX03Uu0xxLnZidb6
-	nvhGLhoyDyraM48ugTRvDhfp8hNBeP6ATsx2wejIs6+Rvp49akTEviwTCgVEVvp/xAEqOeZTBFB
-	hTRJCGUEZK1VEt7lRVwkJW3tC5f3VCo5bPLUXiPAQFA0YnkzvLLiC0cQd9UuX/yWArnColI92cm
-	9XWn4LsduxWJV+CA=
-X-Received: by 2002:a05:600c:620e:b0:49f:ce78:3560 with SMTP id 5b1f17b1804b1-49fce7835e0mr32486945e9.17.1789837864986;
-        Sat, 19 Sep 2026 10:11:04 -0700 (PDT)
+        bh=DfqMrkAh22cdKYOtoUtJ+Se8srdrCdZTjCyOvlrBsnY=;
+        b=PTVKXYZTzpVBkuYsalNCIu17XXvZky34ZiJ/nx7qavLPtQUx8Wt38QB7nIUNHALYjo
+         A3TugXHZXAbrQUWDE6OzRcC+Ni2U7GOpxAa/fIDFq987+Pjm+Sfaw+/ECh7K+esK6BVS
+         MxvTq/Wy4E0dtH9QMDZEkUGzhJ1+PPB+nl/bV9F1AUMufowWdgvXwclfNc++bUbeB3fo
+         gX4jCk+/DJmu9Trw5Z4kXJwPo1edIz6SxvaPa7RLxnXqZTsOzoD5KxfOsqz4talWEuUz
+         89ZZWcrXzLftpcssJ4/BjZtoHMjbtCpRMP9rrzj4oj/PuASQ6hlb27C0G7oCkGYbsHEh
+         eXvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789837867; x=1790442667;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=DfqMrkAh22cdKYOtoUtJ+Se8srdrCdZTjCyOvlrBsnY=;
+        b=RgEy3Nn+tjJtBE4YHoz2IS4AxE2/32BnuXJQ0dgzVSweu0o4PdPsBtPwbL+0PBL9E5
+         bRke/RWc+DiTM+cy6evDj1nFouqbm5MzBv0QNhQ5HRaLJjyjrNSjjTqN6HkrLzTVeZt4
+         EM9I8mK/qJqsRHIc+lYqj7W1tWpSvIgIYAs3PuatNWFIDDyj7TT1zpcx5fSxjsvXzooz
+         5ipZpJuO6btoh+auKd4BciEhKAU6dLHUVx8N1YCoaa110yYxg6YReC+qoMqvefpE3E9q
+         au++Id6Kt/OX1vMS3STSH/TzpOcUDy53TN4exxZL0H6kfcqZN5Ve0vHexaXphOtsdj2N
+         z/uQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxEhcts+OW8b7DGSSyueAQNBHyPEbJUqah8yOADGNbaVogBRREWoubnLLsIboYoim8N46KDQpni81WH@vger.kernel.org
+X-Gm-Message-State: AFuF++mr4+O6NG8wstaf7Zelqb00y9rnzt2AMwcexDO88MHWcTEGwo04
+	ExCsg/FB1IkAgCyU334hY2T2uFrhHloODh3uQ6wkbjtpl9dg/IzzZPEv
+X-Gm-Gg: AYBFou1Jyvwc28U7ROYQGrXBiC8Hh18lZHM+XzMFtFq1BnVHVyeal5AXSdJ6APIO5lz
+	NzuoaRQ7OqtBxYdzP8vTfRQ1fSse+pGWXKHB3xkBn2Z2msXq8GJNxGyVg6ZQNDt13dI5WQLwkkQ
+	B5ExU+qX84rethNGzJIpd9rvD5RgwIZwfxofMhtx46YIW6ByYaLZnDzVwhRaZqp2LBoD3zgUymt
+	mrGsjfI7qabLXKXW37CZvbrHPI0QuTm5HRUoFlqA2ReqLQQcL7d3WoFFmBQK/6o07FptYqwKqCK
+	C4rjoNLP8F04U9tXru4embixm3qNlzWk4O1YBqyZe4XhrsQXlSxR0+w9NFgHLWRvnrJJcOW3QN2
+	RFgk4I0KpHWGIX7TX8NWffHxH/0lOhdl6nJoMdbHV2n+MBFIkIeaawn566oW3K7rozLXhIsMYr7
+	J8xDboEywRevjvl7p+ORIidIN0YoUSPZpV5Zr9L8gEzjUOIanJNcWdiHJZTw4aSM+Pms41xL+u9
+	4VlwXevXP3eNgTmu5hX2260dTS01oxNqUczT+9aPavDbDBLTFCpmYSCjsiXTxidlv+J9Wx6kxG5
+	v/sOnKdkGWoJ1foM/jRlWUdp0f3jsa1uev1bFmf3E7mcDddb8oAQK24HVe45Xfvgta2w63Mn60W
+	E847AcG/BcfS0pAQ=
+X-Received: by 2002:a05:600c:358a:b0:49c:fa20:cc08 with SMTP id 5b1f17b1804b1-49fc5741844mr94051495e9.31.1789837866288;
+        Sat, 19 Sep 2026 10:11:06 -0700 (PDT)
 Received: from MacBook-Pro-von-Karl.localdomain (dynamic-2a02-3100-a017-2b01-05fe-203b-7cd2-a640.310.pool.telefonica.de. [2a02:3100:a017:2b01:5fe:203b:7cd2:a640])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fcd0f8563sm98714425e9.6.2026.09.19.10.11.03
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fcd0f8563sm98714425e9.6.2026.09.19.10.11.05
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 19 Sep 2026 10:11:04 -0700 (PDT)
+        Sat, 19 Sep 2026 10:11:05 -0700 (PDT)
 From: Karl Mehltretter <kmehltretter@gmail.com>
 To: Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>
@@ -75,10 +77,12 @@ Cc: Karl Mehltretter <kmehltretter@gmail.com>,
 	linux-omap@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] gpio: tps65219: Fix TPS6521x GPIO handling
-Date: Sat, 19 Sep 2026 19:10:57 +0200
-Message-Id: <20260919171100.90430-1-kmehltretter@gmail.com>
+Subject: [PATCH 1/3] gpio: tps65219: Fix GPIO input value reads
+Date: Sat, 19 Sep 2026 19:10:58 +0200
+Message-Id: <20260919171100.90430-2-kmehltretter@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20260919171100.90430-1-kmehltretter@gmail.com>
+References: <20260919171100.90430-1-kmehltretter@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -87,32 +91,40 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-I found patch 1 while looking through the tree for code that mixes up
-bit numbers and bit masks. Patches 2 and 3 turned up while checking the
-nearby TPS65214 code.
+TPS65219_MFP_GPIO_STATUS_MASK is already BIT(4). Passing it to BIT()
+again tests bit 16, which cannot be set in the 8-bit MFP_CTRL register,
+so GPIO0 is always reported low when configured as an input.
 
-Patch 1 fixes TPS65219 input reads. Patches 2 and 3 fix TPS65214
-direction handling.
+Test the register value with the mask directly.
 
-I tested the series under x86_64 QEMU 10.2.1 with a temporary KUnit
-suite and a RAM-backed regmap. Both tests failed on the base commit.
-The TPS65219 input-high test returned low, and the TPS65214
-direction-output test left GPIO_CONFIG clear. Both tests pass with this
-series. A W=1 build of drivers/gpio/gpio-tps65219.o also passes.
+Fixes: 57e30e00bd5b ("gpio: tps65219: add GPIO support for TPS65219 PMIC")
+Cc: stable@vger.kernel.org
+Assisted-by: LLM
+Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
+---
+Testing:
 
-The KUnit suite is not included. It tests the driver logic, not real
-PMIC hardware. I have not tested this on real hardware. Testing on
-affected hardware is welcome.
+  - A temporary KUnit test instantiated the driver with a RAM-backed
+    regmap under x86_64 QEMU 10.2.1.  The TPS65219 input-high test
+    failed on the base commit and passes with this series.
+  - This has not been tested on real hardware; testing on affected
+    hardware is welcome.
 
-Karl Mehltretter (3):
-  gpio: tps65219: Fix GPIO input value reads
-  gpio: tps65219: Use the variant-specific direction callback
-  gpio: tps65219: Fix TPS65214 GPIO direction programming
+ drivers/gpio/gpio-tps65219.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/gpio/gpio-tps65219.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-
-base-commit: 40288c9206c17eb66a603262e06a58d300d0f279
+diff --git a/drivers/gpio/gpio-tps65219.c b/drivers/gpio/gpio-tps65219.c
+index 457fd8a589e89..b25c6f7277680 100644
+--- a/drivers/gpio/gpio-tps65219.c
++++ b/drivers/gpio/gpio-tps65219.c
+@@ -79,7 +79,7 @@ static int tps65219_gpio_get(struct gpio_chip *gc, unsigned int offset)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = !!(val & BIT(TPS65219_MFP_GPIO_STATUS_MASK));
++	ret = !!(val & TPS65219_MFP_GPIO_STATUS_MASK);
+ 	dev_warn(dev, "GPIO%d = %d, MULTI_DEVICE_ENABLE, not a standard GPIO\n", offset, ret);
+ 
+ 	/*
 -- 
 2.53.0
