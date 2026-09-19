@@ -1,88 +1,67 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.42.203.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB7338E11C
-	for <linux-gpio@vger.kernel.org>; Sat, 19 Sep 2026 17:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F447377023;
+	Sat, 19 Sep 2026 17:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.42.203.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789837873; cv=none; b=DTHD2BCAlyZkt95IVgD9HXm26OSqaamPQbyWSp9oMjmjbjZY9X+A9k6AJFoTskYzj9Krv9NlqS7VEF2K2CVShZXyMBbfBPz8K4NOrc7qybATLf/d02MzX7VEoXKZWAa3FFB/7GnXGe/nlFDiEqLvriN0BplBzIprhRDQxh32pIs=
+	t=1789837929; cv=none; b=JR7GRFU39LbM8Q4hikv3kzKnY2Y8lKlwBqQpVeFm7oOY6cMWmJsK191HgOQAz69XPJmPJMpJMnmshVhV2cv+jXKcui3P/7Fw7E+oplWj7u534fZbO0e1h4oK8vW095IHLRGMhOrXMqehZyRh8Ll4sHgbEjMZvoxi2HgWiXf5vNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789837873; c=relaxed/simple;
-	bh=mWJYfjoWJeRQg0RSy1KWzp8U/jgGnfAzAM3nmAcJAFc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KsZF76VB5ASx5Ai5TZdEWEfycju216Svq9xj7e7xgiSHF1vrLQ1p8J3+W8lLCG9M1Tk+gs6yiKQkL5QhOfmVXXilE8LcpK4c/R0BeiOMM1IriXwLPttm8Lrfl9CKzJ5LI1PkEhlbx3/q33kaUrkp4TbNemE4DR42HALZ29NSB4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6RXmapZ; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789837929; c=relaxed/simple;
+	bh=YKZin5QxfewXSYMIhfYSZoq62qqHbGB19BPh2rZv7/4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e6xALO9o46CrjoR99JaVup2N6kcz4GvY3GYnqpJ7+DajZ5sElSU5cPeGjDPOG9KqEoovykzzhX7V0BDe/dNYq1KxEF5S/RrXxKe7x1ORBxrqi9s51Ko9odBofQ9/WL09rOT0Nf62srbHvPxaauF5cwvudhG2L9vwUlGGGPBKQhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=R/5dX5Vp; arc=none smtp.client-ip=52.42.203.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6RXmapZ"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-49e71cdb22bso12926055e9.2
-        for <linux-gpio@vger.kernel.org>; Sat, 19 Sep 2026 10:11:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="R/5dX5Vp"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789837870; x=1790442670; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=bdFmbxbENO0f+YbfOMbLsRbUwI3Z1sE3E+vQ+A1a+Ps=;
-        b=O6RXmapZPq9Z29bZ7zP2TVftyb2g865qn3ziLdnteUrU2zCYzz93WwZP+6txu9lveu
-         HFSl3arNgzqjZ4w7DJJrtoOHBBju9x2zLWOqz7pFsdK30ncsWx/bQiDrSZn/Ibfwi+/Q
-         4JI2Es1FmlUtla8XqFATmq8Bg4BQQsBZrsDX3of0HSfMSxwshRsP8mRZo5Aj6k1SKH6A
-         YKzZPm8zWt8Pezem7jNeLiK2NDexiOZDk9ajSa/OUJgSrRhs2iuCssg+kfcOrKCct24K
-         sjn4Zg++ZgH2voszijium27ZF3ioOFmMKHnxuQVHY7f60ARnbLOyrwLQuS1gHqPkCxTG
-         6tWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789837870; x=1790442670;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=bdFmbxbENO0f+YbfOMbLsRbUwI3Z1sE3E+vQ+A1a+Ps=;
-        b=a8+nUvUMsNEo4dcjC8IGlflXDwBgWwzhBDpNUZqTAf33x9lO2wLSO1eMWuuQApc4e0
-         3hdbk6ssQXTI4DqS3J4jep4zuQuqYY4+bnE61Id4dYDIanjEvSDuo0i2ZXfNTCAqdEVp
-         Yjvirutij+dvVOJZC4PGZiDazxF14jetMc6DIJ9S7WJcfKwc1dyzWShCIqtt9O+TrzIC
-         RN4moFvtYOkKYpvLavTC4P/8cCtS3NnBbaGwRV87VAWINoz0rVkfsetlAQ9PcN6NWIXl
-         Zf+vpYkLCTQjChZ85eJSpeLIQU+pYCEdv35uZAYvy8mkE9uZdy4ULFRyP5pAMKORCJgZ
-         tdSA==
-X-Forwarded-Encrypted: i=1; AKwUvByvhDJEFhH4ASuBbTFqr9Oup2xhkKqiBHBJHC1/Satyn7GQBIJlL22dUVpvbFAqqSoUggiJ900gI5ak@vger.kernel.org
-X-Gm-Message-State: AFuF++kT5uRB2GwDmJhKmMRainwPbGLkkr/KKkdwxYA2dx32L9ojDsTL
-	KE98tFhG7zl84ram9Rz5q0YmfWGg4w/kjEEDQqSSCX3BffYrnuPloXFD
-X-Gm-Gg: AYBFou1iIgEEjrlSS/5TVgIog0hvZZtPvZjSxcDc9UpFfTzWpCO4X8Eupu1P07I4rZO
-	e4M6pYDSNAPd0CN5iffQMvUmwk5+j5bmRs9VThub19YLeommDRYSfWEitgFQEuBNCZ/TNyrepkh
-	InJE3eAwSfOXMU69ijxxJXMyqtpHakq+0HRavmwGoLAk8aaj+XB/UbrbtomBYlbEYhMY3oQAwx8
-	se2s32ZOxDvN3C6/331F/Nkj0em1mPb52MBDJVxaqFFXU7Qixi1yPn/xURkN22BxYF3N5en7L4j
-	wea8fny0X/iJ6LI83WUwPTYDHk3taypWDdV/M7oEbtxO4eXzJYgQYIg70BB8YJJk+RuzObBax04
-	aJjt77nqMVzESTzzNTxhRq6Y2zT9VdMFvmmOKzn9i5nrClC01U53Bd9I1aY1YcaXX3AFauMkRXX
-	6ZnnGAD1K1w6n9XCqAQoAHRPaOraw7vCuC1fVoav9w4uGIFJxKxdiBn47XCapG57L8LL+7FK+jz
-	5m8/KxtY9NIFXLio7IYHqWV5hToQWL1My0nlxo5P5DsiP8KfI5cwF63Vl26XTCEwihcqBd7Rney
-	nfITI4ToxPi/r3tA8lwU49pakRZnVTnAYOIVtLLwsDuVM0GgLpu3Re5lkp4LxSwqhjy7tez361p
-	+7/9hgJkK0FnrZ/8=
-X-Received: by 2002:a05:600c:a00f:b0:49e:645e:2616 with SMTP id 5b1f17b1804b1-49fc56692e0mr84074825e9.5.1789837869581;
-        Sat, 19 Sep 2026 10:11:09 -0700 (PDT)
-Received: from MacBook-Pro-von-Karl.localdomain (dynamic-2a02-3100-a017-2b01-05fe-203b-7cd2-a640.310.pool.telefonica.de. [2a02:3100:a017:2b01:5fe:203b:7cd2:a640])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fcd0f8563sm98714425e9.6.2026.09.19.10.11.08
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 19 Sep 2026 10:11:09 -0700 (PDT)
-From: Karl Mehltretter <kmehltretter@gmail.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: Karl Mehltretter <kmehltretter@gmail.com>,
-	Jerome Neanne <jneanne@baylibre.com>,
-	Jonathan Cormier <jcormier@criticallink.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Shree Ramamoorthy <s-ramamoorthy@ti.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
-	linux-omap@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] gpio: tps65219: Fix TPS65214 GPIO direction programming
-Date: Sat, 19 Sep 2026 19:11:00 +0200
-Message-Id: <20260919171100.90430-4-kmehltretter@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20260919171100.90430-1-kmehltretter@gmail.com>
-References: <20260919171100.90430-1-kmehltretter@gmail.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1789837928; x=1821373928;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=jl/UmkuU1Kk2puKbD9FgSHPvWH0KYxx8quuxvr6bGs4=;
+  b=R/5dX5VpBGAx9GskHEiVVNf/WikDIklbnIwUr4Eo5RghBU56y8YHQd6G
+   oa+aUmryqseNCSml/eqyi91q8jtu4ZpTiISgswKELVszCn5fFh3f5YArB
+   WDSe2/3lYXm59inJj3vLA7LCdwOZj+U2/TTXubU7vHj0vYShhZSNNra2p
+   hQ8R/jdGZ+z8qzq0kbFNVHsIlceXDvckS6e29dtykT9q+I2IWrRnt1Gpb
+   kHPV5DE1HdIa32QNCQy7CfYc93RE2wBYI7YXcHtEnLdsvg/w75JvaDgFN
+   RJLDpdzfyy/AfdeO9nwrtkmSxIY1nSpcMjV8M3KIo1ASFn4geeY0UfhG7
+   Q==;
+X-CSE-ConnectionGUID: rG/1sQX7RaiOtY+Ebxmtmw==
+X-CSE-MsgGUID: +hvfO1qeRj2YWGs/wMcNpg==
+X-IronPort-AV: E=Sophos;i="6.27,111,1787011200"; 
+   d="scan'208";a="29146811"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Sep 2026 17:12:06 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [205.251.233.51:25178]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.16.195:2525] with esmtp (Farcaster)
+ id aedfb6b3-42fb-4df0-ade6-458558e1be8e; Sat, 19 Sep 2026 17:12:05 +0000 (UTC)
+X-Farcaster-Flow-ID: aedfb6b3-42fb-4df0-ade6-458558e1be8e
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.46;
+ Sat, 19 Sep 2026 17:12:05 +0000
+Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
+ (172.19.116.181) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49; Sat, 19 Sep 2026
+ 17:12:03 +0000
+From: Eliav Farber <farbere@amazon.com>
+To: Rodolfo Giometti <giometti@enneenne.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Eliav Farber <farbere@amazon.com>, <devicetree@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/3] pps-gpio: restore pin mux on unbind and shutdown
+Date: Sat, 19 Sep 2026 17:11:54 +0000
+Message-ID: <20260919171157.5502-1-farbere@amazon.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260917075611.47881-1-farbere@amazon.com>
+References: <20260917075611.47881-1-farbere@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -90,48 +69,139 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D035UWA002.ant.amazon.com (10.13.139.60) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-GPIO_LINE_DIRECTION_OUT and GPIO_LINE_DIRECTION_IN have the values 0
-and 1, respectively, while the TPS65214 GPIO_CONFIG field is BIT(1).
-regmap_update_bits() masks the supplied value, so passing either
-direction value clears the field and selects input mode.
+Some boards route the PPS input GPIO through a pin controller and mux the
+pins to a different function when the pps-gpio driver is not active.
 
-Translate the GPIO direction to the register encoding used by
-tps65214_gpio_get_direction(), setting GPIO_CONFIG for output and
-clearing it for input.
+The driver core already selects the "default" pinctrl state before probe,
+so the pins can be muxed for GPIO/PPS use while the driver is bound without
+any driver change. Nothing, however, hands the pins back when the driver
+is unbound or the system is shut down (for example before kexec), leaving
+them stuck in the GPIO mux for the next kernel.
 
-Fixes: 1b6ab07c0c80 ("gpio: tps65219: Add support for TI TPS65214 PMIC")
-Cc: stable@vger.kernel.org
-Assisted-by: LLM
-Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
----
-Testing:
+This series lets pps-gpio select an optional "inactive" pinctrl state in
+remove() and shutdown(), so a board can describe the alternate mux there
+and have it restored. The state is looked up and selected by the driver
+itself (devm_pinctrl_get() + pinctrl_lookup_state() + pinctrl_select_
+state()), so its meaning is unambiguous and it does not depend on
+CONFIG_PM. It is a no-op for boards that do not describe an "inactive"
+state.
 
-  - This register programming was exercised together with patch 2 by a
-    temporary KUnit test using a RAM-backed regmap under x86_64 QEMU
-    10.2.1.  The TPS65214 direction-output test failed on the base
-    commit and passes with this series.
-  - This has not been tested on real hardware; testing on affected
-    hardware is welcome.
+Patch 1 is a small preparatory fix to propagate the gpiod_to_irq() and
+request_threaded_irq() error codes (rather than a hardcoded -EINVAL) on
+the probe error paths that patch 3 then converts to gotos. Patch 2
+documents the optional "default"/"inactive" pinctrl-names in the binding;
+patch 3 implements the driver side.
 
- drivers/gpio/gpio-tps65219.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Tested on an AL11 K2V6 JRD10 board: binding/unbinding each pps-gpio device
+toggles the corresponding PBS pin-mux register between the GPIO function
+and the alternate ec_ptp_trigger_in function as expected, and re-binding
+restores the GPIO function via the core-applied "default" state. Reading
+the mux register with the devices left unbound confirms the "inactive"
+mux persists. Also tested with a pps-gpio node that describes no pinctrl
+at all, where probe, remove and shutdown behave as before.
 
-diff --git a/drivers/gpio/gpio-tps65219.c b/drivers/gpio/gpio-tps65219.c
-index 479a80ef76543..6958466455d04 100644
---- a/drivers/gpio/gpio-tps65219.c
-+++ b/drivers/gpio/gpio-tps65219.c
-@@ -158,8 +158,10 @@ static int tps65214_gpio_change_direction(struct gpio_chip *gc, unsigned int off
- 	if (ret)
- 		dev_err(dev, "GPIO%d configured as VSEL, not GPIO\n", offset);
- 
-+	val = direction == GPIO_LINE_DIRECTION_OUT ?
-+		TPS65214_GPIO0_DIR_MASK : 0;
- 	ret = regmap_update_bits(gpio->tps->regmap, TPS65219_REG_GENERAL_CONFIG,
--				 TPS65214_GPIO0_DIR_MASK, direction);
-+				 TPS65214_GPIO0_DIR_MASK, val);
- 	if (ret)
- 		dev_err(dev, "Fail to change direction to %u for GPIO%d.\n", direction, offset);
- 
+Open question for the maintainers (patch 3): a probe that fails before
+pps_gpio_get_pins() has run -- devm_kzalloc() or pps_gpio_setup() -- returns
+without going through err_release_pins, so the pins are left in the
+core-applied "default" state rather than "inactive". I did not change this
+in v4 as I would like your guidance on the preferred approach; the trade-offs
+are laid out at the end of patch 3's changelog. In short:
+
+  A. Move pps_gpio_get_pins() to the top of probe and route the
+     pps_gpio_setup() failure through err_release_pins too, so every path
+     the driver can act on restores "inactive". (The devm_kzalloc() failure
+     is inherently before the driver holds any pinctrl handle, so it cannot
+     be covered by the driver in any option.)
+  B. Keep v4 as-is and treat "inactive" as a successful-ownership concern:
+     a probe that never looked up the state never took the pins, so leaving
+     the core-applied "default" (long-standing behaviour) is acceptable.
+  C. As A, but keep the release helper's existing NULL guard so it is robust
+     regardless of ordering (belt and braces).
+
+I lean towards B (the restore is meaningful only once the driver has taken
+ownership), but I am happy to implement A/C if you prefer uniform failure
+paths.
+
+Changes in v4:
+- Patch 1: add "Fixes: 161520451dfa (\"pps: new client driver using
+  GPIO\")" and Bartosz Golaszewski's Reviewed-by. See the reply on the v3
+  1/3 thread for why the tag points at the original driver rather than the
+  descriptor conversion (4461d65176b4) Rodolfo suggested: the hardcoded
+  -EINVAL on both error paths predates 4461d65176b4, which only switched
+  gpio_to_irq() to gpiod_to_irq() and left those returns as context
+- Patch 2: rework the binding per Rob Herring. Do not express the
+  ordering in prose; use an ordered "items" list ("default" then
+  "inactive") with minItems: 1, since pinctrl-0 is already implicitly
+  "default" and its position is fixed. This also fixes the
+  "['default', 'inactive'] is too long" dt_binding_check error seen on v3.
+  Reword the commit message accordingly
+- Patch 3: unchanged from v3
+
+Changes in v3 (addressing Sashiko's and Rodolfo Giometti's
+review):
+- New preparatory patch 1: propagate the gpiod_to_irq() and
+  request_threaded_irq() error codes instead of overwriting them with
+  -EINVAL, and log the errno on the request_threaded_irq() failure. The
+  pinctrl patch only converts those returns into gotos, so fixing the
+  discarded errors separately keeps them out of the pinctrl change
+- Do not constrain pinctrl-names to a fixed ["default", "inactive"] tuple
+  in the binding. The driver looks the states up by name, so "inactive"
+  may appear in any position and other states may coexist; the binding
+  now only requires that a "default" state exists
+- Treat -ENODEV from devm_pinctrl_get() as "no pinctrl described" rather
+  than a probe failure. A DT device without a "pinctrl-0" property gets
+  -ENODEV from the pinctrl core; that is expected, not an error. Real
+  errors, including -EPROBE_DEFER, are still propagated
+- Restore the "inactive" mux on probe failure too. The error paths after
+  pps_gpio_get_pins() now go through a new err_release_pins label, so a
+  probe that fails in gpiod_to_irq(), pps_register_source() or
+  request_threaded_irq() no longer leaves the pins stuck in the
+  core-applied "default" state
+- Warn if applying the "inactive" state fails rather than ignoring the
+  pinctrl_select_state() return silently
+- Trim and de-duplicate the comments added in v2
+
+Changes in v2 (all addressing Rodolfo Giometti's review):
+- Rename the released state from "idle" to "inactive". "idle" is the
+  runtime-PM state in pinctrl-state.h; overloading it for "driver not
+  active" would clash with any future runtime PM or .suspend() and was
+  being baked into the binding as ABI. "inactive" is not a well-known
+  state, so no generic PM helper will ever auto-select it -- the driver
+  drives it explicitly
+- Look the state up in the driver (devm_pinctrl_get() +
+  pinctrl_lookup_state() + pinctrl_select_state()) instead of
+  pinctrl_pm_select_idle_state(), removing the CONFIG_PM dependency so a
+  CONFIG_PM=n kernel that describes an "inactive" state now honors it
+  instead of silently doing nothing
+- Fix shutdown(): tear down in the same order as remove() -- free_irq()
+  and timer_delete_sync() first, the mux change last -- so no IRQ or echo
+  timer callback can drive a pin after it has been handed back to another
+  function; shutdown() no longer changes the mux while the hardware is
+  still live
+- Require a "default" state whenever "inactive" is present and reject the
+  mismatch, rather than releasing pins that were never put into a defined
+  PPS state
+
+Link: https://lore.kernel.org/all/20260916134744.46354-1-farbere@amazon.com/ [v1]
+Link: https://lore.kernel.org/all/20260916182641.9768-1-farbere@amazon.com/ [v2]
+Link: https://lore.kernel.org/all/20260917075611.47881-1-farbere@amazon.com/ [v3]
+
+Eliav Farber (3):
+  pps: clients: gpio: propagate probe error codes
+  dt-bindings: pps: pps-gpio: document optional pinctrl states
+  pps: clients: gpio: release pins to an inactive state on remove and
+    shutdown
+
+ .../devicetree/bindings/pps/pps-gpio.yaml     |  14 ++-
+ drivers/pps/clients/pps-gpio.c                | 102 +++++++++++++++++-
+ 2 files changed, 111 insertions(+), 5 deletions(-)
+
+
+base-commit: 4982d3552a3bf94de503acf93433277d08421de6
 -- 
-2.53.0
+2.47.3
+
