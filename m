@@ -1,84 +1,87 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0A635C691
-	for <linux-gpio@vger.kernel.org>; Sun, 20 Sep 2026 22:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245B2485CF5
+	for <linux-gpio@vger.kernel.org>; Sun, 20 Sep 2026 22:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789943032; cv=none; b=dYzpRo+4naf8PEEaVLn6bV5r7QIWdpp3ge6cyPPh1QOCa6N6OGvk1bKF5ISi87sP4iQ31wDIxH1gjUV/7ryczXJMd4R8tFiLHwd3KDiSQIsaGnbJ81CJLWVpV/OJxCjhV+tagZEuE9JYx643H/mLRjf1Xy/72JMVZ8wopjq5lo8=
+	t=1789943095; cv=none; b=nZAmW3eoTW2oOgkbqH8oJCjerlUQM5MKxVt3e9ytgNcCB78DkD694RgvH0rL71qRAAjgQ+1oqZSKE2UJcRPuFj4Is078o2TjB2bX3eQv9OzETarVkagwzRIauNfV1TTIdfcut5dAbuFHwwsvG3Cv/U5Lw6+N61TzP+t618kE564=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789943032; c=relaxed/simple;
-	bh=XcpS2C5b2gU7B0ckmofHcYCfd23MRKzruBLpc8zPt4g=;
+	s=arc-20240116; t=1789943095; c=relaxed/simple;
+	bh=WUPInYN4PL/yK9hW5R5yIfO87gDLK/c9FX+2yDiavu8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cxpM22jo70Yskng40Y64HMzMBEOYps6mpjsaK5iAGaeHBe9uvNGyCh1T6Gls0823s5adt7HBl9RDpjE6wQlykdnA5GOQMvciJ1euALkpq6TqpGrzdU1TvCEEUvYdEZio/Hj2Oym2PWufyxUiFqkXyz3kQDLTxjAC/YB4RxXh22Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jUzB1v3j; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=X5wBQ0r1Y9G/0qsvJkPbLpUahk0SWRm6amYugqn3+/ArPt9iW/0lB9rCmer5Vn5QpOTMXumXK6asbC5E8sZIBrxX9qh1TjTaz8Jg15SYDJMoC0NU0VenwA+sAVi33zxV3hbv2Bh7+eM6HxOEfJuBsp5/CVDLsn9nvAF2uRE2Pcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZdIrP5z; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jUzB1v3j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2D9C1F00893
-	for <linux-gpio@vger.kernel.org>; Sun, 20 Sep 2026 22:23:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZdIrP5z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0F3F1F00899
+	for <linux-gpio@vger.kernel.org>; Sun, 20 Sep 2026 22:24:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789943030;
-	bh=XcpS2C5b2gU7B0ckmofHcYCfd23MRKzruBLpc8zPt4g=;
+	s=k20260515; t=1789943090;
+	bh=WUPInYN4PL/yK9hW5R5yIfO87gDLK/c9FX+2yDiavu8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=jUzB1v3ju2gDsG4RCi219Fw+ggbv3vozCq7XFlY4FfIB4lO1HvzH6kLVZOIrJ58Ui
-	 aXFZMbVFbCuXt9iTZowfHhsE13QMJ2kLwna2vZIDvMH8SladHk1cFsQqDfJ8VZbMLw
-	 MKVn17XruoxrYdYGf+o3MKTjVNMliRCZ1/3/6iaKFxcXUNsv+ezKCECnNqypuZXBa1
-	 Gj1D0yGOKZ60uU8bPKhHiSld8jIxnqLgoL3gnlDm3I1P2LQ1LvitRbKuihVJPqFs4R
-	 0NVu0hDG16s1iS/cMnNmsvnhx4WYVa/lvRwNGBlWWx4Ca2Di16YLAeRBGcjiaQb221
-	 rN1RrqyX/EIDQ==
-Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b5e4f16f15so2488415e87.3
-        for <linux-gpio@vger.kernel.org>; Sun, 20 Sep 2026 15:23:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwDgiBpgcgbkYN49Gwdpb5eYBrCJaw4UL/zu0U2k9K2/wQkFQvhDUJNjE6t/oiH2spbZkb5dO61Spo2@vger.kernel.org
-X-Gm-Message-State: AFuF++l79J2AQbreLK8uS4QAgYF+4P5db7GE8VDO9Qk95bpjz9xfvajW
-	02Bppw/yAjbr0sQeUnBx04B6fUacm+7o94V/zJCsW2tht7VSMWeWLViZ/9ArMQ6bsDo9fDCEL70
-	m/6rIiqT+ctXHq7Fo5lR4Jmoi/PktBQg=
-X-Received: by 2002:a05:6512:1293:b0:5b8:9ee1:10fd with SMTP id
- 2adb3069b0e04-5b8c195b2a3mr2596776e87.32.1789943029592; Sun, 20 Sep 2026
- 15:23:49 -0700 (PDT)
+	b=bZdIrP5zvfwLap8QfgPC6COgqkkxn0Rp0hb4PQKz9GA5pE0+W/gBasPcsR/EvdFSt
+	 UXm6945/ajbswS+4XQ+4dx7fZeirRuIc+eZIGHIAumn/joKyaWlX0hyYa+o71uUG10
+	 AIdFA1c7JncyvouIlGceLHUvQwE3Cf+5H3xPuexO1N/xCbK2b8EjoGGNqBgV16XJTs
+	 MFWpLEeSjom1yw8Bz/I9F2JDOetHNwbGFCMbEnrt8GPy2HiXcaLxcva//65OIZKiBq
+	 C2P5cn1+tlcTLioHtUKEGVz/r7KfY7fmx+OnX+W2CU8cI5BaUMibP55Z3XY37kQhmZ
+	 ENLiItDcfxrmg==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f16cd1so2180636e87.3
+        for <linux-gpio@vger.kernel.org>; Sun, 20 Sep 2026 15:24:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwFFboOSoxSgPt4YP2M+AVgePdd1sueC4qN+3r9xNxNIyU6SfZCyPHOFiSE6RL4NXX+LOckxghUudlJ@vger.kernel.org
+X-Gm-Message-State: AFuF++nZDD93dQ6FPLu1qeYbHzcgd0/m8l0eWJ1Z3PVj4kKof0fOZgLK
+	28LndZC+1U6/jEOLv3ALOpNFZlgAaNSQqfeHbFa4bTgbAk+x+WDSWtiK1rg7g6fofQ5tqsnUurk
+	pu27ngsVyLVdBc0T88L3Adtr8gAMBRLI=
+X-Received: by 2002:a05:6512:4023:b0:5b6:1a7c:fd96 with SMTP id
+ 2adb3069b0e04-5b8c197532bmr2591380e87.60.1789943089466; Sun, 20 Sep 2026
+ 15:24:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <sa6bj9x31zk.fsf@dev-ag>
-In-Reply-To: <sa6bj9x31zk.fsf@dev-ag>
+References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com> <20260915-cv75-v5-v7-11-3297d3fbc9c0@ambarella.com>
+In-Reply-To: <20260915-cv75-v5-v7-11-3297d3fbc9c0@ambarella.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Mon, 21 Sep 2026 00:23:37 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnh9UwMd_opPfhWrkOssDUJQkqmADa9Re_hqnGqHdnKrQ@mail.gmail.com>
-X-Gm-Features: AcwNN1WxZQUUkn6BXksV0q35G5hTDHGJ7iW3Og4fCiJ7c6yi5T8Bf6oe0W8b92g
-Message-ID: <CAD++jLnh9UwMd_opPfhWrkOssDUJQkqmADa9Re_hqnGqHdnKrQ@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: fix PINCTRL_SPPCTL=m
-To: ag@ffroot.co.za
-Cc: linux@armlinux.org.uk, dvorkin@tibbo.com, wellslutw@gmail.com, 
-	arnd@arndb.de, afd@ti.com, aaro.koskinen@iki.fi, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Julian Braha <julianbraha@gmail.com>
+Date: Mon, 21 Sep 2026 00:24:34 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmbK8AHth2qQ6O-Yh8m4_8uKL1cJdNFqBjnP1ssUe3+Pw@mail.gmail.com>
+X-Gm-Features: AcwNN1WFNRVHMkwoIIIv3cjD7Ln9bstVj0LBZyLRdnKTtq0jQLXH6pVRP5eDyRQ
+Message-ID: <CAD++jLmbK8AHth2qQ6O-Yh8m4_8uKL1cJdNFqBjnP1ssUe3+Pw@mail.gmail.com>
+Subject: Re: [PATCH v7 11/15] gpio: pl061: add Ambarella register-layout variant
+To: longzhao@ambarella.com
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 16, 2026 at 12:49=E2=80=AFPM Andrew Gaylard <ag@ffroot.co.za> w=
-rote:
+On Tue, Sep 15, 2026 at 1:15=E2=80=AFPM Long Zhao via B4 Relay
+<devnull+longzhao.ambarella.com@kernel.org> wrote:
 
-> The PINCTRL_SPPCTL option is defined as a tristate in Kconfig, and the
-> help text suggests that the user can build it as a module by setting to
-> 'm'.
+> From: Long Zhao <longzhao@ambarella.com>
 >
-> However, it cannot currently be set to 'm', because SOC_SP7021, the only
-> platform that supports it, is a bool option that uses 'select' on it.
-> Also, the SP7021 requires this driver to be built in, in order to boot.
+> Add a 32-bit, 32-line layout with DAT/DIR/IS/IBE/IEV/IE/MIS/IC plus
+> MASK and ENABLE. Probe unmasks the bank and enables the controller.
+> IRQ type changes also clear the pending bit. This derivative does not
+> need write-after-direction or system suspend save/restore.
 >
-> Change the tristate to bool and fix the help text.
+> Match the part with designer AMBA_VENDOR_AMBARELLA (JEP106 identity
+> 0x68, bit 7 set) and part number 0x061.
 >
-> Tested on linux-next-2026-09-14 on a LTPP3G2 board.
->
-> This impossible tristate was detected by kconfirm, a static analysis tool
-> for Kconfig, by Julian Braha <julianbraha@gmail.com>.
->
-> Fixes: aa74c44be19c ("pinctrl: Add driver for Sunplus SP7021")
-> Signed-off-by: Andrew Gaylard <ag@ffroot.co.za>
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
 
-I applied this patch as a nonurgent fix.
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
