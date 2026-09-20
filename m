@@ -1,120 +1,127 @@
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9343146D543
-	for <linux-gpio@vger.kernel.org>; Sun, 20 Sep 2026 17:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DF4481672
+	for <linux-gpio@vger.kernel.org>; Sun, 20 Sep 2026 22:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789926001; cv=none; b=OyPqG/BfGRezFTVteKBwvlksXh7Foh11m+L4g3748G4QzOgPMxfsU9H3VrP940r7df3l9CyTuZsIOveFkO7AFrx6tB0AOjCEdRrgtHB5dNQ3An7XEHqGS1A5o/X7/LAOOgFsURe+zygHsE8ALtBBGAIQ35qpbVkWgOMmdlZOr7o=
+	t=1789941787; cv=none; b=tf9XiYfIO0ZaWx3Tl88QC1D5xAGH3de5ktIwFKRauuS2ywa3R3CbFH6Nud0b6p6QWCRBe/hYX8l/8BJgIz339zYpQM4etV7XIAcePhp9P54IDFex484+RqtkYOqrC6PmGkqWzgYsfE61wNnuWgvg3E4Ii0sZUXZRAxqAaF0PzqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789926001; c=relaxed/simple;
-	bh=PuPjUAhVCvIyLt+F8HbC8M3l3dqN94RplXe2tL04gsI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bdgZxBFelA78AR61sL+6NgSlZKUjFNP8VTO8vbBnnANEm2WU3d11v/Rhhz72iAqxc3iRueg+07YOXbeOc/XBflMDMeZIjKnxWTYfHIaDgTJ/lFCn2iZ+b+Yy5acIkFegpeWcXwVeF9hEMUjp5zoM297pcZnq4PqGVTXa+yHbW6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRtJe/FP; arc=none smtp.client-ip=74.125.227.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789941787; c=relaxed/simple;
+	bh=w9PyPvHqvQlU5tUctmkjZAK8hcqetTA3tQ6r+T/tHxg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KEIM1y+KleYflO+4scIBg9+igvvYDZG5k1PoGglBQpyhURvixC20w8AbJ2JBpCpasc98hvjpOYgzQorQiD+SgOHwaCDSguQHJZwK+AhyOlKANyeA6k47l4f9Td1feP0He69tp4wyHTjLwgVuQnUpQF1hEWJwuPfVjSmIrFf7r4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Odb9mBnE; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRtJe/FP"
-Received: by mail-vs2-f12.google.com with SMTP id ada2fe7eead31-785692e5907so1424489137.0
-        for <linux-gpio@vger.kernel.org>; Sun, 20 Sep 2026 10:39:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789925998; x=1790530798; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=BfkoR1nBKmYEzeoAan0z3MBTr6L2D2UKk4WaZHViN3Y=;
-        b=bRtJe/FPg0NQwEZ7u4CbOmh+qhfF7gws0hM/L1ByxSDxFLXmnJMwYy2PLUh2D+LchN
-         1KIVKY7TMVphCVqaCXc4urW+uIc0Nvcy1ucC6GOgOV1TtBdPwyheAcDLbUsdx903n9fx
-         yAHqXle/FWkeqPjfo3de6jLm2qcSqLvxtVs9vU2zjvLnPU3H/7nkqe2hGCcN1/lDsm99
-         y4pHPNOFBRJsXWeNKjHloR2UMvwCa1u0BX76WPJdY/S07j1LolqKtLZh1wqMS38Hr9BO
-         OC+Ap2sSmc6adV7eGCvfx67Fbgqu0+9o8KQ8ZbXShg4LnoDpS7r4+EjiQZ0vXFEblvOY
-         i4Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789925998; x=1790530798;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=BfkoR1nBKmYEzeoAan0z3MBTr6L2D2UKk4WaZHViN3Y=;
-        b=j/D6m7QOuYplk6DG8mRrlveOiend7LjiWB7apmMK3F/DjpmkUr6SSeZ/2zDgbwkpAT
-         /78xDNoWdh1kTMzAtzmm3sudBqyTe5zN6M3xGKcKU8pknhHncWajzwFKqKjib3s4SMHA
-         WhbJDRaWSLO/xQUmuYOnmOeG1HwH4T12itVgZxe1ZhcNhCPV6IXNPUl/nXnr6mP1qU21
-         CgAfRPe+EQw0AlQs+4pUMGKn8HCeoAAG/dU6agGCvi9XIBsXxNbfA1qWArFQ6gxiaIRj
-         fa4qvLNd2tSQ0QssxjJPwhXTs27Keqf0p5FwwpjUWq0XbHaLjMpx0m99m/M5is5IV5np
-         C2FQ==
-X-Gm-Message-State: AFuF++kmhg2B6MYHF66qvmX8GboH5D+PJXtnrfugQiElUnPCKJWp1AV5
-	JC6sekbp8q2lTMw0Y7yVhQVVbgJ4GCdGezArLhMBQhKZt6iy2U7An4YG
-X-Gm-Gg: AYBFou1tb0Gccfx/7IE8kefKYhwMqioS/3CAm76ku6lcR46yio5uhD2ZD4hZvyxcMbq
-	4ij2WRxU7/fI+TN5SbH208L/RmG7udMQSfz1F2qSp2M86z4xJVUA86AYVrmplNOh61O0IKu0oSA
-	pn4bxN2Yw++9oAp4tkHX9G1GTv9PpR/OF5fivNQThg7jm0du+KlR6pryEmK5muPj0yVGUJ+duWu
-	AMQLTeIv6B6TEqokTDOT3VmZoBiRNBhjDJovdnk+8TYQLvtPNnDdGAvaVR17nmUnjUydN2tLNwB
-	qZOQaWJKsNxA7iJ/q1cXlGgWtRpS+HAIZzZGidhwJZGfsscbkmO8HfyCTdZRKlJRX1tj0+ecsGg
-	e2FCBs4Gkb/XS5u9Gy9wK5j9jhOp8zh8k2FGqpEi+T+JZm7uSMz/xGwehiRh/SUq92uZn1ZFhep
-	geu4Gnzw4KTvPxIWnhscs2SDLBnzCLc67O37qSHu5S9qpUK9W4aOj1GFmIcPnUkZ5RCruq/aTFC
-	ylYMQJioQ==
-X-Received: by 2002:a05:6102:441b:b0:7a7:19aa:8a87 with SMTP id ada2fe7eead31-7a719aa9106mr1590422137.34.1789925998477;
-        Sun, 20 Sep 2026 10:39:58 -0700 (PDT)
-Received: from cachyos-x8664.lan ([2803:9810:39e5:6c08:c254:b3de:1d81:c052])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7a6accecc7esm5578973137.10.2026.09.20.10.39.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Sep 2026 10:39:57 -0700 (PDT)
-From: Mateo Borda <mateob226@gmail.com>
-To: Mika Westerberg <westeri@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mateo Borda <mateob226@gmail.com>
-Subject: [PATCH] gpiolib: acpi: Add quirk for Lenovo IdeaPad Slim 3 15ABR8
-Date: Sun, 20 Sep 2026 14:39:04 -0300
-Message-ID: <20260920173904.6221-1-mateob226@gmail.com>
-X-Mailer: git-send-email 2.55.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Odb9mBnE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01E981F008A2
+	for <linux-gpio@vger.kernel.org>; Sun, 20 Sep 2026 22:03:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789941783;
+	bh=EazSi67AnEMmbq7ZltUkvWuYuiRsVKn0Z1eUsxsbxC4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=Odb9mBnELzaw24K1UcUT8uXVAHUxcedvTAMwVYAKd8qPcru4vQ8oHv0OcEWZHmuDQ
+	 GVyie1fX5aT6tLNj+dKXe7GfGFTCwNODwRUgj6i3fK+0TsyF3SLdn9lsQOKac+xwFY
+	 6re2xKuGhSJgdCzW1ApSW9yDpqjldoqq9Mq+jTkKzBdjz0PS4PMRPb8d27C6VmGTLI
+	 Z0tABMrvg8ISfrfLCpizMmTICWJf4cW9DU4vU5lxEF/FSiunVuBEqQbDs7nYf8uwyn
+	 9zlEOsikWW6GmfvORAEcSXH/RNBtAsVspYiPB12k+AEqJgjFTcryYyt/JPkWYmtOJp
+	 yEEEJ7hVjtevA==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f1651bso2094323e87.3
+        for <linux-gpio@vger.kernel.org>; Sun, 20 Sep 2026 15:03:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBx9znXGSOuiiz5ma45RTnpXjwGJD61jp+h8tjGxwqgnS3ZBXxOMt8yIr0Bia8hD5+XuN2OU6YKIbrGr@vger.kernel.org
+X-Gm-Message-State: AFuF++kywIhjjgcaFd5ml0zIH69jYxqTKCZpTNyr2FE3eyfvECui0g1Z
+	zU5C89n9bKEi6ul/8pF/c6PFoZPWVOpl2tI7YnuJARVoX2Qe73xb25P+kEAytGKypPrzGueO1gx
+	PlZ+9LDGIHrBCvgIJX2VdFlCg6DfWb5c=
+X-Received: by 2002:a05:6512:12cd:b0:5b1:5fb6:5cf6 with SMTP id
+ 2adb3069b0e04-5b8c17ffa65mr2546885e87.17.1789941781599; Sun, 20 Sep 2026
+ 15:03:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com> <20260915-cv75-v5-v7-8-3297d3fbc9c0@ambarella.com>
+In-Reply-To: <20260915-cv75-v5-v7-8-3297d3fbc9c0@ambarella.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Mon, 21 Sep 2026 00:02:48 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkHfgu_V8i_fhE1WQe+qwJ=ictQSONWPq1fPuYYb8tSRA@mail.gmail.com>
+X-Gm-Features: AcwNN1V2pdLiyksjZ1x3Z_llNdAeXu21UqDUc6FoZVDqEvbXB8LwaNWdrYSQU-A
+Message-ID: <CAD++jLkHfgu_V8i_fhE1WQe+qwJ=ictQSONWPq1fPuYYb8tSRA@mail.gmail.com>
+Subject: Re: [PATCH v7 08/15] gpiolib: regmap: add write_data_after_dir quirk
+To: longzhao@ambarella.com
+Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On the Lenovo IdeaPad Slim 3 15ABR8 (82XM), the touchscreen
-(GTCH7503:00) GPIO interrupt on pin 10 is armed as a wake source. As
-soon as the system enters s2idle suspend the interrupt fires, causing
-an immediate spurious resume, so suspend is unusable.
+Hi Long,
 
-Disabling wakeup for the device via sysfs or booting with
-gpiolib_acpi.ignore_wake=GTCH7503:00@10 avoids the problem, so add
-a DMI quirk that ignores wakeup on that pin.
+thanks for your patch!
 
-Signed-off-by: Mateo Borda <mateob226@gmail.com>
----
- drivers/gpio/gpiolib-acpi-quirks.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+On Tue, Sep 15, 2026 at 1:15=E2=80=AFPM Long Zhao via B4 Relay
+<devnull+longzhao.ambarella.com@kernel.org> wrote:
 
-diff --git a/drivers/gpio/gpiolib-acpi-quirks.c b/drivers/gpio/gpiolib-acpi-quirks.c
-index a0116f004..22c5fb149 100644
---- a/drivers/gpio/gpiolib-acpi-quirks.c
-+++ b/drivers/gpio/gpiolib-acpi-quirks.c
-@@ -392,6 +392,19 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
- 			.ignore_wake = "VEN_0488:00@355",
- 		},
- 	},
-+	{
-+		/*
-+		 * Lenovo IdeaPad Slim 3 15ABR8: the touchscreen wake IRQ fires as soon
-+		 * as the system enters suspend, causing an immediate spurious resume.
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "82XM"),
-+		},
-+		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
-+			.ignore_wake = "GTCH7503:00@10",
-+		},
-+	},
- 	{} /* Terminating entry */
- };
- 
--- 
-2.55.0
 
+> From: Long Zhao <longzhao@ambarella.com>
+>
+> Some controllers ignore data-register writes while a line is still an
+> input. Optionally write the output value again after switching the
+> direction, matching the existing PL061 behaviour.
+>
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+
+OK I see.
+
+(...)
+
+
+> @@ -271,9 +272,22 @@ static int gpio_regmap_direction_output(struct gpio_=
+chip *chip,
+>                         return ret;
+>         }
+>
+> -       gpio_regmap_set(chip, offset, value);
+> +       ret =3D gpio_regmap_set(chip, offset, value);
+> +       if (ret)
+> +               return ret;
+
+if (!gpio->write_data_after_dir) {
+     ret =3D gpio_regmap_set(chip, offset, value);
+     if (ret)
+             return ret;
+}
+
+There is no point in doing something you know will not
+work.
+
+> +       ret =3D gpio_regmap_set_direction(chip, offset, true);
+> +       if (ret)
+> +               return ret;
+>
+> -       return gpio_regmap_set_direction(chip, offset, true);
+> +       /*
+> +        * gpio value is set again, because pl061 doesn't allow to set va=
+lue of
+> +        * a gpio pin before configuring it in OUT mode.
+> +        */
+> +       if (gpio->write_data_after_dir)
+> +               return gpio_regmap_set(chip, offset, value);
+
+Then there is Andy's comment as well.
+
+The rest looks good.
+
+Yours,
+Linus Walleij
