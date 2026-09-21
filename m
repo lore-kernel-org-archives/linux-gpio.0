@@ -1,122 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com [74.125.227.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ABDE4A5C35
-	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 14:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD03C4A4EFC
+	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 15:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790002306; cv=none; b=ZqrbXtlrpfzrQPPsR/0I/zUwDMNRWQHXN3FLhhrOOusxa17/QJCOw/ssEPNImkZw/OmGBUx+6S90qEOoHzrvlo9p4/V2FkraqzuulHnMKe8ML63kzTF+em/f6FLXTWvY/uubsk9efUhwS+G6qb+VrYko2tDLuOHQHTtFQtiB9QM=
+	t=1790003309; cv=none; b=Xc69VLzxXXyCww9FJZfztVGrgilrt91xDk8lM+g7DPb8mb8fXhmwFC+mxzCeYz1tcO7inCtSnOy9349TiIX6uONWhJfwFGJ34VLVEBjYq0PwznQ9EpgQsPbNSskKCVIelOg88gV2wZF/PpZUeyKW+pQ4ONssYwm7sMYyvMUHx4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790002306; c=relaxed/simple;
-	bh=J/dVafMLo+higmRBi49yI0qBk9RLrQcNkd4edlOSrNE=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PJ6TBR2LBUmlbhh7rpCquFfRQrZJz7M6WQduz91H8VfALO43wQ9tIEesqd1yAFTJD8wEcr9vkYBRF7cNTmL3v42xFax8ObSYxTXvfhP4YKH6NbAIe/BDGF/y0h+EDO/suva+ysalYFkf1wzGk2LqxvSsNxgyzANlYFKzMgQ/2To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ncsoyAZs; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790003309; c=relaxed/simple;
+	bh=fCwNagdtC+xERup0Duo928kSAFipPyTqeVZkicCq3Ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZADfU2O4yRVqUfDMjFz8Ecq4JAnVS76eJTOyk0aoSYkJ+rXWXnM0Y6K/Ty59VWjbZEhazKH5XZgPUhyM7x8TsO4QcCHt3AzBrgd4Ux+HW2uK6Hbcm6AR3fAfMCGRV8DbJmTxDjzXSV2oNLNwZawUEV1XkdNXpYH4YCHcS8NyoQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuILohad; arc=none smtp.client-ip=74.125.227.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ncsoyAZs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0EF41F0089B
-	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 14:51:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790002305;
-	bh=Ts7fPQfO6L1Xr5sR8XD5bM5e85VTo6NwQNgErntbsS0=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=ncsoyAZsOjViu+mkmVP6cMOZ5KKn8c0jeBYHjxXGMG0OoWdQB027j6R1gTq4ry+UM
-	 ETQLPWS4lEv7AD1XzJvoG6HZ7n5SzeepHNLGh0YitmUGh+2w7QLbK43WzY4KtVt0Fc
-	 7y8ib4Py2aWCZWqBlgQiB2vesddJplJ2Y8q02VUu40CH2ooTR3YVNovLfqGwvLPaG9
-	 7SpL6TQJZXQL4DbWAYf4BJvWJh0RB/PcRvu42cmLhWxim8QoPMBOOI17lP3C7c78Dz
-	 lyTuK/Ueu2I/JEoiASOhqQh8/AtA1oPSh3Y5AfToxDAVJKDH0YBtWprGIxKTw7VgY3
-	 4QifKN9z5dzYA==
-Received: by mail-lr2-f35.google.com with SMTP id 38308e7fff4ca-3a5e548cd7dso23945171fa.3
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 07:51:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByajLi4fgvxpTMo2/fk7/SDYqEyaSieC6y+rc6sKTmdZpV5W22dZ+BsjhaTtGb/45Dv9uBy1XM5OpIh@vger.kernel.org
-X-Gm-Message-State: AFuF++n3L3edpFNS4VCk0wi4eX9BW0EB+4z67gnPkCwc7VfjOCSg82S/
-	vTah4oaQbwYbPDmIsVZtxdqerXGR1pK6ecYzLixrHrv6t2k0WRNwdRugb9YPQTlyiYegHxE/r7n
-	e1Z/Q7CvgCSxsfxUfFLksN9h+cOk7cezmRMpRduoGtA==
-X-Received: by 2002:a2e:be10:0:b0:3a5:b6af:2973 with SMTP id
- 38308e7fff4ca-3a5fbe86f32mr23860151fa.5.1790002303600; Mon, 21 Sep 2026
- 07:51:43 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 21 Sep 2026 10:51:42 -0400
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 21 Sep 2026 10:51:42 -0400
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260921133505.GA90171@rigel>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuILohad"
+Received: by mail-pj2-f43.google.com with SMTP id 98e67ed59e1d1-396ccd5cf03so3006804a91.1
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 08:08:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790003307; x=1790608107; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=DrCsmsL1F3ijYyM+yKS8GEyh5q7PmZK50G+TP1F0Yl0=;
+        b=kuILohadCCbbVPonCn+2mtTtdRwx0XPIyBwiGf8Yz3h9aYb3vOnRCuZmVbNb/33ItF
+         Xr7fzCNj2bm3vAjNRvEpekzVjT0rShmVFy02/DnA3JmOz7oy/Yc1eBIYMiZ7CQQCkhR1
+         KZkIPIujfriukXrLphXMKToelkRnUW/3ZJYGEiPJqBzayE5SfMaL+UvXe+nXCqf8ydqY
+         J1T4r5C7t3Noe55qr6L8LhlGCRfhS86Ht+bOAhDwD1x7VrX7RUoZbHB+j5b+c5E055Z/
+         sx0I7nY2t8A70O9YghongSdUL9b7BhN5FPmrOXhu7v1M7P3ak2N/GlBR2BAEGGvU8ctH
+         tl5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790003307; x=1790608107;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=DrCsmsL1F3ijYyM+yKS8GEyh5q7PmZK50G+TP1F0Yl0=;
+        b=I2+w9AV3EmOGGxDCa8eEmQWzficPfKWPrPjm+L9FHhuPBI4z8T2FaAnLp2wNXp8mAH
+         UPvvUB5jXyMpkzZgzM+KGZ2qJEZvs87m8Jd/tSeR31hDQBaNhjC8X9Nmzmfbumpm9s4p
+         GHpcrQbXjgeG4mP1roB4ZWa+t7LFqoz3dlcWQo3iStBPq5ByB32BCsnvlB6AQ/Qoqarx
+         wjEcKmsHyst8TY+Ke9tOhmNpR4YAtEaz1n3Stk5gvdV1WBfbT/A7oCWohvc4YmBMnzqU
+         +djtfwqcOBU38ZnovJbQ+WYC6/8iadREXOPv9xiocc1LxnlgIC+G+6D8820aeSW2Q/5r
+         Zl0Q==
+X-Forwarded-Encrypted: i=1; AKwUvBy+XqxcVTuXxrKXukMoO2cUh+i6MoxKJPmXjm0WsWR5ei+AmNUYITKQgoVW+KbNA7uO2Evj4d0yn7hA@vger.kernel.org
+X-Gm-Message-State: AFuF++nmkEbp8v3tEs4okjvBj9pLUAmkX7CoHuObWYiJX93nhsqKV4Gr
+	xr5VuCudT3pfqg7U4Ye8kDbXr3tUq4X2Mq3hPAsouz+G+pMIJWc4gmpp
+X-Gm-Gg: AYBFou29ex3djQYCNSIBJ4WX+wkQgAl9s8+WZB6r7xEVXiJTE35B4b6Jo62yYJ4sHsT
+	kx7zRW8Uh6ko/6D650YnDizHgA5rnTE3ipNN5NmUbOnTJ90WwJtnx+dAQw7Ab3pmWmoVl8fU5ZY
+	31SgZ30yq6MvWo2Zr/H6+gmdr9XAo6C6xQYA4tjK76A+v9o7I6+r9pNKRA/Btlu1mXq893u/ib0
+	ucYE+s7efI19lGYlVUCTYKilKXeC/hREfsVDUwBiyvTENsQbgSDmYLqNmuYnXNjtRmFTEhQ4uab
+	wAQ9LezUwlAVHEj1soclLU9E4qqHj7G0vXsGMDnoWqtvLA5RC8LeDnC2Ff1wzZv7g3O/LJ99yBi
+	q1nRmWJtm/3EfRAV05h/lpao/nM72rvjVdRKW65yopfpEFREUQ+uG2m61BSGLXESqPDm4Fn53hD
+	8tO0gDTA6Q0R4ChQh7YK3VtcmCj7IbC3YugOwL+RwhN0Bc26/52m0sQ4bNLeL68x9s6lbFCk8AU
+	7aA2tpQ+RMv2kvoE2I=
+X-Received: by 2002:a17:90b:586f:b0:39e:6a81:f34d with SMTP id 98e67ed59e1d1-39e6a81fcedmr11166715a91.39.1790003307043;
+        Mon, 21 Sep 2026 08:08:27 -0700 (PDT)
+Received: from rigel (194-223-74-160.tpgi.com.au. [194.223.74.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a063c1994esm523953a91.17.2026.09.21.08.08.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Sep 2026 08:08:25 -0700 (PDT)
+Date: Mon, 21 Sep 2026 23:08:16 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v2] gpio: cdev: fix kernel stack leak to user-space in
+ error path
+Message-ID: <20260921150816.GA103369@rigel>
+References: <20260921-gpio-cdev-stack-leak-fixes-v2-1-3307c4320352@oss.qualcomm.com>
+ <20260921133505.GA90171@rigel>
+ <CAMRc=MeeVLALF6DU70DMwg7=F6d0kVdWEz=ugYJFt2dOR2T9YQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260921-gpio-cdev-stack-leak-fixes-v2-1-3307c4320352@oss.qualcomm.com>
- <20260921133505.GA90171@rigel>
-Date: Mon, 21 Sep 2026 10:51:42 -0400
-X-Gmail-Original-Message-ID: <CAMRc=MeeVLALF6DU70DMwg7=F6d0kVdWEz=ugYJFt2dOR2T9YQ@mail.gmail.com>
-X-Gm-Features: AcwNN1WNwd2vGvSwTAltFFQ82w381AeNA2BKm3xzOM8thzpgNI5Tc8azTbhAE_Q
-Message-ID: <CAMRc=MeeVLALF6DU70DMwg7=F6d0kVdWEz=ugYJFt2dOR2T9YQ@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: cdev: fix kernel stack leak to user-space in
- error path
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Sashiko <sashiko-bot@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MeeVLALF6DU70DMwg7=F6d0kVdWEz=ugYJFt2dOR2T9YQ@mail.gmail.com>
 
-On Mon, 21 Sep 2026 15:35:05 +0200, Kent Gibson <warthog618@gmail.com> said:
-> On Mon, Sep 21, 2026 at 02:56:58PM +0200, Bartosz Golaszewski wrote:
->> If we fail to acquire the GPIO chip guard in gpio_desc_to_lineinfo(), we
->> return immediately before zeroing the info struct we'll end up passing
->> to the user-space later in lineinfo_get_v1(). This may leak the kernel
->> stack contents. Make gpio_desc_to_lineinfo() return int so that the
->> -ENODEV returned on failure to acquire the guard can be propagated to
->> the callers.
->>
->> While not strictly necessary: move the memset() before trying to acquire
->> the SRCU read lock too for good measure.
->>
->> Fixes: d83cee3d2bb1 ("gpio: protect the pointer to gpio_chip in gpio_device with SRCU")
->> Cc: stable@vger.kernel.org
->> Reported-by: Sashiko <sashiko-bot@kernel.org>
->> Closes: https://sashiko.dev/#/patchset/20260912123529.7951-1-tzungbi%40kernel.org?part=3
->> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
->> ---
->> Changes in v2:
->> - Make gpio_desc_to_lineinfo() return an integer return value so that
->>   the error code returned in case of a failure to acquire the guard can
->>   be propagated down the stack
->> - Link to v1: https://patch.msgid.link/20260917-gpio-cdev-stack-leak-fixes-v1-1-2bb52879e49c@oss.qualcomm.com
->
->> @@ -2521,7 +2533,14 @@ static int lineinfo_changed_notify(struct notifier_block *nb,
->>
->>  	ctx->chg.event_type = action;
->>  	ctx->chg.timestamp_ns = ktime_get_ns();
->> -	gpio_desc_to_lineinfo(desc, &ctx->chg.info, true);
->> +
->> +	ret = gpio_desc_to_lineinfo(desc, &ctx->chg.info, true);
->> +	if (ret) {
->> +		fput(fp);
->> +		pr_err("GPIO controller that generated the line info notification was removed\n");
->> +		return NOTIFY_DONE;
->> +	}
->> +
->
-> Does resolving a race warrant an error?
->
+On Mon, Sep 21, 2026 at 10:51:42AM -0400, Bartosz Golaszewski wrote:
+> On Mon, 21 Sep 2026 15:35:05 +0200, Kent Gibson <warthog618@gmail.com> said:
+> > On Mon, Sep 21, 2026 at 02:56:58PM +0200, Bartosz Golaszewski wrote:
+> >> If we fail to acquire the GPIO chip guard in gpio_desc_to_lineinfo(), we
+> >> return immediately before zeroing the info struct we'll end up passing
+> >> to the user-space later in lineinfo_get_v1(). This may leak the kernel
+> >> stack contents. Make gpio_desc_to_lineinfo() return int so that the
+> >> -ENODEV returned on failure to acquire the guard can be propagated to
+> >> the callers.
+> >>
+> >> While not strictly necessary: move the memset() before trying to acquire
+> >> the SRCU read lock too for good measure.
+> >>
+> >> Fixes: d83cee3d2bb1 ("gpio: protect the pointer to gpio_chip in gpio_device with SRCU")
+> >> Cc: stable@vger.kernel.org
+> >> Reported-by: Sashiko <sashiko-bot@kernel.org>
+> >> Closes: https://sashiko.dev/#/patchset/20260912123529.7951-1-tzungbi%40kernel.org?part=3
+> >> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> >> ---
+> >> Changes in v2:
+> >> - Make gpio_desc_to_lineinfo() return an integer return value so that
+> >>   the error code returned in case of a failure to acquire the guard can
+> >>   be propagated down the stack
+> >> - Link to v1: https://patch.msgid.link/20260917-gpio-cdev-stack-leak-fixes-v1-1-2bb52879e49c@oss.qualcomm.com
+> >
+> >> @@ -2521,7 +2533,14 @@ static int lineinfo_changed_notify(struct notifier_block *nb,
+> >>
+> >>  	ctx->chg.event_type = action;
+> >>  	ctx->chg.timestamp_ns = ktime_get_ns();
+> >> -	gpio_desc_to_lineinfo(desc, &ctx->chg.info, true);
+> >> +
+> >> +	ret = gpio_desc_to_lineinfo(desc, &ctx->chg.info, true);
+> >> +	if (ret) {
+> >> +		fput(fp);
+> >> +		pr_err("GPIO controller that generated the line info notification was removed\n");
+> >> +		return NOTIFY_DONE;
+> >> +	}
+> >> +
+> >
+> > Does resolving a race warrant an error?
+> >
+> 
+> I guess not, we can just not do anything in this case.
+> 
 
-I guess not, we can just not do anything in this case.
+You could log a debug rather than an error, but I'm not sure that adds anything
+- I have no problem with quietly discarding the notify if the chip has been
+removed.
 
-> Also, compared to the kzalloc_obj() error path earlier in the function, here
-> you flip the order of the fput() and pr_err(). Is that significant?
+> > Also, compared to the kzalloc_obj() error path earlier in the function, here
+> > you flip the order of the fput() and pr_err(). Is that significant?
+> >
+> 
+> No, if anything this version is more correct as we drop the no-longer-needed
+> resource before printing a log. But with the above it's irrelevant anyway.
 >
 
-No, if anything this version is more correct as we drop the no-longer-needed
-resource before printing a log. But with the above it's irrelevant anyway.
+I was thinking the same, and wondering if we should flip the other case, but
+small potatoes and not part of this patch.
 
-Bart
-
-> Other than that, looks good to me.
->
-> Cheers,
-> Kent.
->
+Cheers,
+Kent,
