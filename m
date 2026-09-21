@@ -1,90 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F72344A3E2
-	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 08:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0354A468C06
+	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 09:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789980672; cv=none; b=ovHTLumaKmkn9SMTAo0+bxF5c4/OWXihu6+t411g6sTvoa16yOAOKOX4UCSzdESPkOw3fSYMcixXffcjbT9MzEa2Garbj+A1Vi/iaRUJc2Jl6g8G/fjEfKSsoUKu+uIbX0j5zeCIdxbuiY426TLvO3+ofvSPsDt/NGU1sZy05PU=
+	t=1789981487; cv=none; b=sEDjABZmxzrZW48YQpFCpyeGR3e97SDRwW1gFFv8h1+2f7RD4iCQXtpOaMn8CHKYLL0s3+vCnYlpp940vBG/XYeAGWY2MRtRIo/ywDw2w1MwK+rrCvZpoDuO7ZpZZBe3DRrEIU/L7ab/jatqjHvMg6EeG76Xm+aA0bmffwPtyCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789980672; c=relaxed/simple;
-	bh=sdZW/G8qTawlI/Os8mwlWWAIJQkgOz0cUTS2dlNUP1U=;
+	s=arc-20240116; t=1789981487; c=relaxed/simple;
+	bh=VFKHHGpF6NRAqi8ddCzmD3/jk7OUJuPZ01kFQLdlvxM=;
 	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ESz/U83DSDRtNy2TS5nUq+hA4tjNEPLppzDe59UXe7lRSVlpJ3IBJtGNQ8pnFiNCPfrigDB4uWCmi5q+zAv9Ys3AYYmzlGR8l9agBbHYISsEfECCM52lhMV34s2KQI11LJhZhWan6kuFbEGHaRirvmyH8IAxC8MnF0PvRAXVSWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MXqYUPvK; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=JdvmIFykzq8U/IILcqbofWw03Jv8zBwLlJtJojvf2XKbOVbTmCgexmimvWfvUaYNa7Rf4PxnFfFlqTgJgViNivRqR98qLKcxwTfZF/OZPmhV86fFLLFntFOntlEUlFInN5stGFo7NhVQ9EdIB9g5Gmoke5eJLKiR9aPkw9I420U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUBoma+p; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXqYUPvK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3AB31F0089B
-	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 08:51:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUBoma+p"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5BB31F0089B
+	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 09:04:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789980670;
-	bh=sdZW/G8qTawlI/Os8mwlWWAIJQkgOz0cUTS2dlNUP1U=;
+	s=k20260515; t=1789981485;
+	bh=VFKHHGpF6NRAqi8ddCzmD3/jk7OUJuPZ01kFQLdlvxM=;
 	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=MXqYUPvKAgR085cW94Z8DHy54J+3pL3X/exQadl6PU7Q85Xr02cOgZXBL4dtF3w1e
-	 mod5y+70xA3azeolPBOOAlPQwFLe/4yRmh1hSryThYizd0+PK+lnii51zRkZPts/dv
-	 wBrFEj1hBdsDVeqF1rodhCTIKVpS12G0cn/cNnQ1lbzA6OgBIiHTChsq/xQmraG3xk
-	 0bt7SRQfualzAPJrMjUvzrNUngxWZsVtXqCHThXui1eyShNWFdUh2Yb0zyailFookS
-	 FRjcR8f+cRKVNQtzkqVJLD1BS+Z1cVHZLVCJdKXd+8+Abe0x7QgiK6Vnnrxc88l8Av
-	 4kJXUz7kyjprg==
-Received: by mail-lr2-f12.google.com with SMTP id 38308e7fff4ca-3a2ff176d5eso23513911fa.0
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 01:51:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBx4IJ34S/+aMDa+N3CXSt+TkOsyUDui+jdq5y2VRrseHfPrIPZBMrqFNMuTDLzii0euynKEN8sc2fyk@vger.kernel.org
-X-Gm-Message-State: AFuF++n2nHJ81J10S46pqs52LEEim9zRLaZpGjIYDDoERxfovRDoE5+2
-	FKblVIANljc+BXqNqnmyvSThpI1OzWtkSxMVUqhJN1A3Y8ICdqfFc+oRTXxlzRAJnqkpnWQtPHU
-	JmYsuvGhW3tnV6MEHdI2q0NFf8FxYWLiHpAtUop0dIA==
-X-Received: by 2002:a2e:be86:0:b0:3a5:f6e2:47d2 with SMTP id
- 38308e7fff4ca-3a5fc10f251mr22211991fa.29.1789980668654; Mon, 21 Sep 2026
- 01:51:08 -0700 (PDT)
+	b=oUBoma+pcuy/bPEkSxFM1/Kl3td60ypI5Gdcoul0w503NCROA3iXjr0C2AoszRrZt
+	 dp5jvzL2CHfOnUBrYYUrOCJNHsq8xk3VRkyO4KN4YulSYrwi4Q4JCrDb8Mx4Yt5pc7
+	 VeJY4k30NNaOlVpPyTO681h5a71kuIP2Sp9PaB1N7kyKpEDZTXxdz3IBv0kQlVrx0j
+	 umertCdCxeVAdS8FmiPaD9LUAE8EPJFZjPJTbogY27SsWM0F6+ceU+Ld+oRhvi8G/T
+	 zaN0Yp5zQmSd1whd7UglMT2a8kz3FWlzhb0ID1ALFsO4w/dmYKkVHEwtB1yadKVyHk
+	 Gnh4okw2Fvtgw==
+Received: by mail-lr2-f35.google.com with SMTP id 38308e7fff4ca-3a6124046f0so8792931fa.3
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 02:04:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzsh6u79OdTs3v5KB4CqHg8Sn7O77RwUnynYBkuBttrZNrqhdT8r1XigV8mOWi5cyarPnV+BlQF3E9k@vger.kernel.org
+X-Gm-Message-State: AFuF++lYR6QeCA3ib4ApDMmlvd4P21Tg0FWSA0eZLHT26IlRQwdID5py
+	kao+IslzOFnGsRrWG5O7KpUdUBwxVPllrpz4AIebcukhuzqF9n4ANl2sHqau1sDGQjqQyn3CRaO
+	QF6LSJO78ciGIJh4m/JZoLOUrrbQ4LNqbZ4e1CsKHEA==
+X-Received: by 2002:a05:651c:19a8:b0:3a6:95a:52ab with SMTP id
+ 38308e7fff4ca-3a6095a546emr13661581fa.18.1789981484353; Mon, 21 Sep 2026
+ 02:04:44 -0700 (PDT)
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 21 Sep 2026 04:51:06 -0400
+ HTTPREST; Mon, 21 Sep 2026 05:04:42 -0400
 Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 21 Sep 2026 04:51:06 -0400
+ HTTPREST; Mon, 21 Sep 2026 05:04:42 -0400
 From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <CAD++jLmuuLXpWsiZAFEA-QWZsB_6qcaM3PomhtKhHFHbzse5iw@mail.gmail.com>
+In-Reply-To: <CAD++jLmB-sEea0rVNAE7Lnw4N4n69iutY_xU-CEOCBoT_8HnNw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260919083655.586922-1-enelsonmoore@gmail.com> <CAD++jLmuuLXpWsiZAFEA-QWZsB_6qcaM3PomhtKhHFHbzse5iw@mail.gmail.com>
-Date: Mon, 21 Sep 2026 04:51:06 -0400
-X-Gmail-Original-Message-ID: <CAMRc=Me3-cFQr2kqHyPHYx63Aht3kK2Y0-h0--WjeZGpbsGDFA@mail.gmail.com>
-X-Gm-Features: AcwNN1WueoBLY3SSKN39I0nyHfXknArX0yblXzJ6NPhctoeMb5IuaBrvm_4Jo9o
-Message-ID: <CAMRc=Me3-cFQr2kqHyPHYx63Aht3kK2Y0-h0--WjeZGpbsGDFA@mail.gmail.com>
-Subject: Re: [PATCH] Input: gpio_mouse - remove driver that has never been
- used in the kernel
+References: <20260917094356.7040-1-bartosz.golaszewski@oss.qualcomm.com> <CAD++jLmB-sEea0rVNAE7Lnw4N4n69iutY_xU-CEOCBoT_8HnNw@mail.gmail.com>
+Date: Mon, 21 Sep 2026 05:04:42 -0400
+X-Gmail-Original-Message-ID: <CAMRc=Mdkd2ksvx+4FgC2Pv00Q+dR_iUc=WV-VuTkuqAdFq6Z6Q@mail.gmail.com>
+X-Gm-Features: AcwNN1WrYJAoBHNr3ytSsgTaT7gy6peMzoBxhqJfrKvkq013nvGw7rfxcxp8Dm4
+Message-ID: <CAMRc=Mdkd2ksvx+4FgC2Pv00Q+dR_iUc=WV-VuTkuqAdFq6Z6Q@mail.gmail.com>
+Subject: Re: [GIT PULL] Qualcomm pin control fixes for v7.3-rc4
 To: Linus Walleij <linusw@kernel.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andres Salomon <dilinger@queued.net>, 
-	Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-input@vger.kernel.org, 
-	Hans-Christian Egtvedt <hans-christian.egtvedt@atmel.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Ethan Nelson-Moore <enelsonmoore@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, brgl@kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, 19 Sep 2026 14:12:05 +0200, Linus Walleij <linusw@kernel.org> said:
-> On Sat, Sep 19, 2026 at 10:37=E2=80=AFAM Ethan Nelson-Moore
-> <enelsonmoore@gmail.com> wrote:
+On Fri, 18 Sep 2026 19:01:35 +0200, Linus Walleij <linusw@kernel.org> said:
+> On Thu, Sep 17, 2026 at 11:44=E2=80=AFAM Bartosz Golaszewski
+> <bartosz.golaszewski@oss.qualcomm.com> wrote:
 >
->> The gpio_mouse driver was added in 2007, but it has never been
->> referenced by any platform data or DTS files in the kernel, and it does
->> not support ACPI probing. Therefore, it has clearly never been used by
->> any users of unmodified mainline Linux. Remove it.
->>
->> Signed-off-by: Ethan Nelson-Moore <enelsonmoore@gmail.com>
+>> Please pull the following set of Qualcomm pin controller fixes for the
+>> next RC.
 >
-> Why though? It is fully modernized and probably has a value
-> for people like "makers" who just want to connect an oldschool
-> mouse to their random Raspberry Pi.
->
-> I think it's better if we focus on removing code that is just
-> using platform devices and hacks and is hopeless
-> to maintain. For example the OLPC...
+> This was not based on -rc1 like my tree so I just pulled off
+> the two commits and signed them off on top of my existing
+> patch stack so I don't have to pull in -rc2.
 >
 
-Agreed. I support removing drivers tied to specific architectures that were
-also removed but this is very generic and may see some use.
+Ah, I think we never discussed the upstream tag policy. I typically base my
+pull-requests targeting the *current* release (in this case: v7.3) on whate=
+ver
+the latest upstream tag is. I try to base my for-next trees on top of the
+current rc1 unless there are conflicting commits already upstream, in which
+case I pull the earliest required upstream tag.
 
-Bart
+Do you want me to prefer rc1 even for fixes for pinctrl PRs?
+
+Bartosz
