@@ -1,123 +1,90 @@
-Received: from mail-ed2-f12.google.com (mail-ed2-f12.google.com [74.125.228.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AD635B63C
-	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 08:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F72344A3E2
+	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 08:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789980409; cv=none; b=InIcFpcv6dL+UDL/yBkEIzRA7BXVGqdhKmD45OtB5fPhgH1klYJesvmw/NLHttmSMQoozR56hKoC4M6NVMwB0KT6NHPyEos4BI9ze4xcM7+OUPoPOZ1teCZ3IK9ZLHLW7RPOHg2ReIzbTJGCnDrngVZ0ocdPmoD1qwYCipqJW9M=
+	t=1789980672; cv=none; b=ovHTLumaKmkn9SMTAo0+bxF5c4/OWXihu6+t411g6sTvoa16yOAOKOX4UCSzdESPkOw3fSYMcixXffcjbT9MzEa2Garbj+A1Vi/iaRUJc2Jl6g8G/fjEfKSsoUKu+uIbX0j5zeCIdxbuiY426TLvO3+ofvSPsDt/NGU1sZy05PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789980409; c=relaxed/simple;
-	bh=KyBH7dhUVR4B0av3A00svT+cy5avMnDRCt6F/8hLFiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AIXpqNEEDLRbX6nQ/4I+jNqfPQOWWZaIg68aa+OvRQb1kX/eKYF3CwWH9RqgewkUZtusclEhZP2iFGjZrxQD5Mv+9R2TnUw7dg8BlBJwoiT92tAH6O42OFaJcQykfjOlSN+G/mzHvCBsIFsQE7WdNNttpPwb20GRHD3cQqIcZKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xde7lvO7; arc=none smtp.client-ip=74.125.228.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1789980672; c=relaxed/simple;
+	bh=sdZW/G8qTawlI/Os8mwlWWAIJQkgOz0cUTS2dlNUP1U=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ESz/U83DSDRtNy2TS5nUq+hA4tjNEPLppzDe59UXe7lRSVlpJ3IBJtGNQ8pnFiNCPfrigDB4uWCmi5q+zAv9Ys3AYYmzlGR8l9agBbHYISsEfECCM52lhMV34s2KQI11LJhZhWan6kuFbEGHaRirvmyH8IAxC8MnF0PvRAXVSWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MXqYUPvK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xde7lvO7"
-Received: by mail-ed2-f12.google.com with SMTP id 4fb4d7f45d1cf-6a6056ac81fso4511734a12.2
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 01:46:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1789980406; x=1790585206; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=U83Tc5sQYnzc1MW72+9l9dJyYEc+FCbzixyfv/lGGEw=;
-        b=Xde7lvO7wONq4WdJWo6Y4+36q0sugLQo7GicQlDObrmem8LfZ/gVLYU/J2MK+8WLTZ
-         2ivBumskyL28bEmZAOVzELbUmX0SnMH2rRtgT8ZvVnuv9C+/LaB8PBlEvN25ATL+s6HL
-         HAlIUK8ZHxacglxHdq09BfHLZi3O7HtmLllOlabGi8HV2sSF0qDwi4GiTMTSvu0XQFze
-         /ALoNlmiU//wJL4Ff2F2H+fKfGxyYHQdxbD+vQG/CrRcMIgsedNa7QjQAlOUH5Mh31zI
-         0WxL4FtQR5Ou2ds7yFd36eo+aXzqVdxNC8gcglkdlE1OnduVKtj+79o7rx0BNls/GL2A
-         XFBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789980406; x=1790585206;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=U83Tc5sQYnzc1MW72+9l9dJyYEc+FCbzixyfv/lGGEw=;
-        b=j4eJvwTMLt+URSsNGyY5/sZ9b2XP3kc0+q8a6y3bFy5E+WENbDQKga6mVUd3lYS87O
-         AbJR8rIzn55/XEYigQk97wUXX07a8bKDaQfAflNWKuBbSFl6NZ3b/GohnxKiNnioLopW
-         4tlUve2NuOVOcRYd02X0HaoCh620p0bfOu9r+Sy+QjWAfzz+P6tdOt7QJC6XTGg2gDUO
-         sLtfBM9bA7PrTzzdnYBAF6CYeJ4mAOrEnxWDEuk/eWYm7/WzMGyBMRFXO0o+DIQ94sNf
-         8E9YnjSwvgIn8mdiWgqVTiInZsTwasfbfhE6Yn7hGSyd+K8Ozw3LL20RtZdNFFndLTlF
-         o7dQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzIbxCQ8H6qKdox7pacsFaC2M2yn/p7HA9CmLLK2xCBScgYhYG4LlZ+r/F4fqPs24uecb+yaltPwsNg@vger.kernel.org
-X-Gm-Message-State: AFuF++npJgotNTVMU87v/be6oVhVrUOrzT7kGUePWELHPZK6NAdJ0ZYU
-	adzfNku41aDO9uWyWzxgSNW2pNKQCrcqAmEhPlmuegkSDcWYHM/Y+lEe
-X-Gm-Gg: AYBFou0WWRGYwWvw551orsqBjaS7srcJNHW/RG2IWR2FRvEYcF5TQkLnvi2VVLo7jqg
-	2UWT/z5LchDa74YHul07IzKy0Z83h3RHcDOdsrhOzPvWXLvDeTID9G0QQQTfzQyqg1t8krGnFn1
-	omLpt7S8UL8VhkNFWsA4AlGxSfXnoPHjsxiY2fmiMOwuEU0YcUboK1Bxo8EljxFClwyHWydmAnY
-	phxegm3DhT4hbZESUtP2m4vfC/+SLhz1R12QQ2hj051LF4i5ljC8iELxlUPpKfDd8/MPKv0tHEG
-	60k5MHmcHds07FEOVBU1135m1/Oj+DEtDMjSQgwxubnfrb8KWtOE4aZXx8V0b3n5c68YiHc2Sur
-	EZoyPoi/FoOL8JAFnRgnOURNqiNidANIv3atyKpA3dY6eHJvamDYqUI90nK00KE6QDm6Ots+CzX
-	nKO6HGwJNgOnmKTw+ZhzEBXWEfL5xmiUbDDySH/92bDShuSWqkUWZp5DuAZyMkSzskvI+Ae8MKM
-	0c910wN38Q=
-X-Received: by 2002:a05:6402:23c7:b0:6aa:4529:4cb7 with SMTP id 4fb4d7f45d1cf-6aa53135128mr7228644a12.16.1789980405879;
-        Mon, 21 Sep 2026 01:46:45 -0700 (PDT)
-Received: from [172.24.138.145] ([137.71.226.102])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6aa67d821efsm3882322a12.10.2026.09.21.01.46.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Sep 2026 01:46:44 -0700 (PDT)
-Message-ID: <457da50e-a633-4508-a8e9-7e000933623c@gmail.com>
-Date: Mon, 21 Sep 2026 10:46:41 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXqYUPvK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3AB31F0089B
+	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 08:51:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1789980670;
+	bh=sdZW/G8qTawlI/Os8mwlWWAIJQkgOz0cUTS2dlNUP1U=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=MXqYUPvKAgR085cW94Z8DHy54J+3pL3X/exQadl6PU7Q85Xr02cOgZXBL4dtF3w1e
+	 mod5y+70xA3azeolPBOOAlPQwFLe/4yRmh1hSryThYizd0+PK+lnii51zRkZPts/dv
+	 wBrFEj1hBdsDVeqF1rodhCTIKVpS12G0cn/cNnQ1lbzA6OgBIiHTChsq/xQmraG3xk
+	 0bt7SRQfualzAPJrMjUvzrNUngxWZsVtXqCHThXui1eyShNWFdUh2Yb0zyailFookS
+	 FRjcR8f+cRKVNQtzkqVJLD1BS+Z1cVHZLVCJdKXd+8+Abe0x7QgiK6Vnnrxc88l8Av
+	 4kJXUz7kyjprg==
+Received: by mail-lr2-f12.google.com with SMTP id 38308e7fff4ca-3a2ff176d5eso23513911fa.0
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 01:51:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBx4IJ34S/+aMDa+N3CXSt+TkOsyUDui+jdq5y2VRrseHfPrIPZBMrqFNMuTDLzii0euynKEN8sc2fyk@vger.kernel.org
+X-Gm-Message-State: AFuF++n2nHJ81J10S46pqs52LEEim9zRLaZpGjIYDDoERxfovRDoE5+2
+	FKblVIANljc+BXqNqnmyvSThpI1OzWtkSxMVUqhJN1A3Y8ICdqfFc+oRTXxlzRAJnqkpnWQtPHU
+	JmYsuvGhW3tnV6MEHdI2q0NFf8FxYWLiHpAtUop0dIA==
+X-Received: by 2002:a2e:be86:0:b0:3a5:f6e2:47d2 with SMTP id
+ 38308e7fff4ca-3a5fc10f251mr22211991fa.29.1789980668654; Mon, 21 Sep 2026
+ 01:51:08 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 21 Sep 2026 04:51:06 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 21 Sep 2026 04:51:06 -0400
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <CAD++jLmuuLXpWsiZAFEA-QWZsB_6qcaM3PomhtKhHFHbzse5iw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 00/17] iio: adc: Add AD7768/AD7768-4 ADC driver support
-To: Jonathan Cameron <jic23@kernel.org>,
- Janani Sunil <janani.sunil@analog.com>
-Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <skhan@linuxfoundation.org>, Michael Walle <mwalle@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>, linux@analog.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>, Conor Dooley <conor.dooley@microchip.com>,
- Andy Shevchenko <andriy.shevchenko@intel.com>,
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-References: <20260916-ad7768-driver-v8-0-27aa24db5225@analog.com>
- <20260921013732.6c5399e7@jic23-hlaptop>
-Content-Language: en-US
-From: Janani Sunil <jananisunil.dev@gmail.com>
-In-Reply-To: <20260921013732.6c5399e7@jic23-hlaptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20260919083655.586922-1-enelsonmoore@gmail.com> <CAD++jLmuuLXpWsiZAFEA-QWZsB_6qcaM3PomhtKhHFHbzse5iw@mail.gmail.com>
+Date: Mon, 21 Sep 2026 04:51:06 -0400
+X-Gmail-Original-Message-ID: <CAMRc=Me3-cFQr2kqHyPHYx63Aht3kK2Y0-h0--WjeZGpbsGDFA@mail.gmail.com>
+X-Gm-Features: AcwNN1WueoBLY3SSKN39I0nyHfXknArX0yblXzJ6NPhctoeMb5IuaBrvm_4Jo9o
+Message-ID: <CAMRc=Me3-cFQr2kqHyPHYx63Aht3kK2Y0-h0--WjeZGpbsGDFA@mail.gmail.com>
+Subject: Re: [PATCH] Input: gpio_mouse - remove driver that has never been
+ used in the kernel
+To: Linus Walleij <linusw@kernel.org>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andres Salomon <dilinger@queued.net>, 
+	Bjorn Helgaas <bhelgaas@google.com>, linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-input@vger.kernel.org, 
+	Hans-Christian Egtvedt <hans-christian.egtvedt@atmel.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Ethan Nelson-Moore <enelsonmoore@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 9/21/26 02:37, Jonathan Cameron wrote:
-> On Wed, 16 Sep 2026 13:13:49 +0200
-> Janani Sunil <janani.sunil@analog.com> wrote:
+On Sat, 19 Sep 2026 14:12:05 +0200, Linus Walleij <linusw@kernel.org> said:
+> On Sat, Sep 19, 2026 at 10:37=E2=80=AFAM Ethan Nelson-Moore
+> <enelsonmoore@gmail.com> wrote:
 >
->> Add support for Analog Devices AD7768 and AD7768-4, 24-bit simultaneous
->> sampling Sigma-Delta ADCs with automatic power mode selection.
->> Changes in v8:
->> - Introduce the DCLK divider helper in the core patch to avoid moving its
->>    register-programming logic later in the series.
->> - Document why register caching is not used
-> Other than open question on regcache vs volatile registers
-> this series looks good to me now.  So let us get that resolved
-> nice and quickly.  If it turns out regcache can be used I don't mind
-> just tweaking that comment for now and taking a follow up patch to
-> turn regcache on when you have it ready.
+>> The gpio_mouse driver was added in 2007, but it has never been
+>> referenced by any platform data or DTS files in the kernel, and it does
+>> not support ACPI probing. Therefore, it has clearly never been used by
+>> any users of unmodified mainline Linux. Remove it.
+>>
+>> Signed-off-by: Ethan Nelson-Moore <enelsonmoore@gmail.com>
 >
-> Jonathan
+> Why though? It is fully modernized and probably has a value
+> for people like "makers" who just want to connect an oldschool
+> mouse to their random Raspberry Pi.
+>
+> I think it's better if we focus on removing code that is just
+> using platform devices and hacks and is hopeless
+> to maintain. For example the OLPC...
+>
 
-volatile_reg would handle the live GPIO and status registers. I will remove the regcache sentence from the comments, leaving just the SPI framing explanation. I'll look at enabling regcache in a separate patch.
+Agreed. I support removing drivers tied to specific architectures that were
+also removed but this is very generic and may see some use.
 
-Best Regards,
-Jan
-
+Bart
