@@ -1,86 +1,168 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116ED49B45C
-	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 13:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290D23C198D
+	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 13:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789996168; cv=none; b=QHGJSOn1WPD+gaw4nxizXw20rqHawz9F64ykGlZURM4ZCAYYqlQ0cho/twp103dtdGPwUHIlqShlcdbMODeLlLqZ8mIM16Kout11dIkx+7615P7VwtL8DieQAVELgFJJQam+kol1hxG442y50tWxJDE8OOTjqV9ujUGwif/d8M0=
+	t=1789996326; cv=none; b=UtY5Hta3DNn/wPEzhEP3Y2Lu+UufSG8CiJqPlNanCXwQ0rQLp10m3AsI15KozTErgyhP8HiWE5/sfpRcqKkXROhFHvSHYcBmO0sNUMATiB7y179f/6EV0zc6QvtIJAtlVaibTmLG9R+5WMru7YmRLX9lDXHdX1JWyvkwFZCSEII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789996168; c=relaxed/simple;
-	bh=YDs7MIlX8JsGIUo3tbwX046GT9jZ2L7QPkHJbAmrkgg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RDATIPAXWaGZnrnxr1EvRNdeveLfjaqBUU0Q24vghmjTcmwqkEMmC7gRa22dUm5azNRJ3kKqKWXXH2gr1vh2ozBp5UtpQB+6VHP+FMY3bFJTWZXlou5o06Ns+ivrppL9gkUjSqzFcCFvQWaXV3674R3oEatS1o3yNZg9SVAcWqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QzMGr6GA; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1789996326; c=relaxed/simple;
+	bh=KtA6CCgEGQ3a4yGA8b1nCQGctfJ7eca30X6UAxq4SCU=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LCDyzzrHx1rJ3JOBl9nkfz8+gzjC6pF0fYJdKI12fSbyftY31WVvCjWRINxXSVmUPPg2AG5zfOkBEbOr2BBIOhtYqkDz/zYGvmAFVFbxvFnMX7qv+VnUKF/O5xz7ICoQ1LOMeU30rKdxytD9WAhWdaQAnbNx5RbToRU12kbn4NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IL4AucZ2; arc=none smtp.client-ip=74.125.227.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzMGr6GA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E81E1F00898
-	for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 13:09:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1789996166;
-	bh=q/C+TkovrfS7xh0NX0AU1j6790V/SQ+1uydnthmXsm4=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
-	b=QzMGr6GAr2rUGswl3cxf536nnRbMwyHgvVG6g2aKIicA0h9TD1UXobSJE3/MC1X4R
-	 Uk0r6WVokXmoqsW/PplRTS/M6gGwttVdtMCvNcAwlopLNM3AvZdJ3Rs5xl/AY1enbl
-	 hGZyncdrztkEFEd3z5upbOG/36V+9y+SYc06tBvXWV6emOg3WFHBKqvZ9FFOpZZl4N
-	 QxWxHebn56T3LwZ9z71FetDU/MGpyon3UanWrfm9y+aWsgknxvOLgwT29IPgfZ8z0k
-	 Ui89wvxHHBHg8qb2wvsUAbtNSCwMTByTwgKcvsSfscXtx5YRqxHG7AzBpvc3B3dblG
-	 0LOm8cq7+/hsQ==
-Received: by mail-lr2-f14.google.com with SMTP id 38308e7fff4ca-3a5b2864f1cso25551421fa.3
-        for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 06:09:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBweBgXQMsC8FhjBIExcQhRDjG8JrWGsQyd/+mLJgVYUTqBE1t6xVvkgjVfXrKoI+WM2W0i65mQoa03I@vger.kernel.org
-X-Gm-Message-State: AFuF++n4kabYIQw2I8PFQ8aBSgeWeunsLQtM2/a4bfJPgeDvNnrP0ytY
-	zrncrCEFJYMdrXfepuMLHhPM107nUjTS3VRCJELWU/JmJzRw6t6wueCDCGB9yfVlYj171D2N6gf
-	xQ0B4eYqg6XTZ4IDkEt7UBcNIBQld1vA=
-X-Received: by 2002:a05:651c:509:b0:3a3:7682:49a0 with SMTP id
- 38308e7fff4ca-3a5fc0a87b3mr23796891fa.21.1789996164981; Mon, 21 Sep 2026
- 06:09:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IL4AucZ2"
+Received: by mail-pj2-f12.google.com with SMTP id 98e67ed59e1d1-396ccb1a98fso2654628a91.1
+        for <linux-gpio@vger.kernel.org>; Mon, 21 Sep 2026 06:12:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1789996324; x=1790601124; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:subject:cc:to:from:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=5oybhTT8x8wzwm9sXDQfRxO2voeNpjpX34zHsWmu+2w=;
+        b=IL4AucZ2W1FKt726U0Llfpi6vvYQljpUQpO24I+AePHBGltZ9X+F6K1SxOW4ivCOaO
+         zEwb9U3K0chq6uIXiHcnDXwVfVBlMIsahm9XUvR63MMdXb0x60fxKEa53K48ZHd7TV73
+         avUicnGfjk/1fO3n065EeYFap1WuKj6A1bLeSRgh/YpQtjTwfY93v87uzcw6UCfaOUi8
+         6caZSI4nfyekafS9N7Jt4oN0Eldd0MXNt46pM56nMw1e/ndeVU9JDQ0JBTOI9buWZgP6
+         6YhgwejhXE9oDiNwWYcT23NTV0n6mKwCm5bUrFHt7Rku7NbzNzB/ZWJ3DtH0DGzUJPX0
+         P1cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1789996324; x=1790601124;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:subject:cc:to:from:date:message-id:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=5oybhTT8x8wzwm9sXDQfRxO2voeNpjpX34zHsWmu+2w=;
+        b=bHR3vzdYCdMZFsoq+0+ZrOUaoGYzp6lKNtZGQNue8VRIhAXl4Iq7gvhA66YHgD1raN
+         1Q3PDkOEPXN3PuSWBkRQmRSJrfMOUbGm9ReZqgfzKGwbBocV22Jf9z7z8Ji1SUNbSmzc
+         8TpOd98MWNmRIwccm8PPUEYNSxEMRz1vLZjvkrr90vUfaT2pkgmB8fBrmxVrg8wyqvOH
+         fP90mcNSSatXDQ9TNzAy2ATMAmnKmDlJTGLvJOge+EOeUkRxryEI20nnSnFYYhgRgG0Q
+         0IszrReyUaPKTf4rQcD/faTUu8/21+EymBPLduIAq7nXExKsvLyRwdo521mXx6HZCjtx
+         StZg==
+X-Forwarded-Encrypted: i=1; AKwUvBxtHY71H6VGmTomDf1KzxQ2bhoY02xaC1+PHTTyFljdL+nlXflY4BIYdhr7OfiE3MUi6SFLNvfHKTCe@vger.kernel.org
+X-Gm-Message-State: AFuF++lUsLVLEoNO8ro+q/uzRTfCBAEM5azQsV79YdP1i8Ya/I5AOL0O
+	315EAZnpBP0rI97cgRk6zK009csCJAln5dN7WNDjHArVG0B9F5poUcXbhoOGdKDV
+X-Gm-Gg: AYBFou14HflwO7Rb93wYWUIZC6iK/UGylyuJnFG8SeYne+nOQzVOd7QuiVsUpWsPp+q
+	s3cd/bt1Mvyic/B1D0g8Vfyr9sSc6uMUMuEXuxiA57tN8ugVXw8COMzq4vCp0i8ScQZ6W03nnrb
+	Qkv7PxH1CZWoAxpklP8lo1miorXDEJ+JNMPrclc8VPhXSGQa2ZwXfEhXsmDkEqPoaTzooui7v+V
+	d0TuSzrJSyDhlirxyEcHd9r6CAJRTC60BCgsDXajMREEeWNrsiT+xOYdkyaLWyucyWNqENaJmsG
+	73zr6sB+dv1slimubkDHiQ0dQXOB7jC4XLqgh3Ou0ffgnlpy/4RAbL+x0c6fH2qvc2kOUOeIfcd
+	Sa+xF6SiMTrQQIN9Hsv7sGmWHT8DO+5TD6659zRAkP1bqLosygeO9cUdggEOpDNNXYpj4cwEyhP
+	uJMjrP4DFhnmgnbNS9SD351FQbJjxZgAKjaWNP1li3rUqZrhwfUwDFXCydGFIxYQxes3PUdeSRw
+	FY97hQdNbJr0RagdwA=
+X-Received: by 2002:a17:90a:da90:b0:39e:6a80:b796 with SMTP id 98e67ed59e1d1-39e6a80b849mr10966388a91.38.1789996324410;
+        Mon, 21 Sep 2026 06:12:04 -0700 (PDT)
+Received: from localhost (madb688426.ap.nuro.jp. [219.104.132.38])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39e6d83e253sm5812738a91.1.2026.09.21.06.12.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Sep 2026 06:12:04 -0700 (PDT)
+Message-ID: <6ab12d24.a3d4836d.3b68e.d0f8@mx.google.com>
+X-Google-Original-Message-ID: <20260921131201.u2sxphwziumenyfh@DESKTOP-1P5QNTF.>
+Date: Mon, 21 Sep 2026 22:12:01 +0900
+From: Kohei Ito <koheiito.dev@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Boqun Feng <boqun@kernel.org>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Tamir Duberstein <tamird@kernel.org>,
+	Onur =?utf-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
+Subject: Re: [PATCH 3/3] sample: rust: Add GPIO consumer sample driver
+References: <20260906-add-rust-gpio-consumer-v1-0-24d192f93760@gmail.com>
+ <20260906-add-rust-gpio-consumer-v1-3-24d192f93760@gmail.com>
+ <CAMRc=Meei7Z1f1n0M_Hy1LdxG=NVhkFeEiT3=p5QVpw6BTv3EA@mail.gmail.com>
+ <6aa662d7.0ca013b1.1575e3.0a60@mx.google.com>
+ <DLENO35F39LL.2YNA66D9FCXYH@nvidia.com>
+ <CAMRc=McV2YKgbmnknLZTSGoSa_9eCHDiOLzuPPyPHHnj=vRuvw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1789983244.git.ukleinek@debian.org>
-In-Reply-To: <cover.1789983244.git.ukleinek@debian.org>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Mon, 21 Sep 2026 21:09:10 +0800
-X-Gmail-Original-Message-ID: <CAGb2v655yJYigaqNFeUxXiz+yXMG0SgBPjb0k=AyuMqq66tGYQ@mail.gmail.com>
-X-Gm-Features: AcwNN1VfEIiQSwKSNJjpSkRCEsb6EEJxj7KXX0abnLdITfYeVbNwAdMJfk3TyV4
-Message-ID: <CAGb2v655yJYigaqNFeUxXiz+yXMG0SgBPjb0k=AyuMqq66tGYQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Drive-by changes to axp20x drivers
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@debian.org>
-Cc: Linus Walleij <linusw@kernel.org>, Sebastian Reichel <sre@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMRc=McV2YKgbmnknLZTSGoSa_9eCHDiOLzuPPyPHHnj=vRuvw@mail.gmail.com>
 
-On Mon, Sep 21, 2026 at 5:42=E2=80=AFPM Uwe Kleine-K=C3=B6nig <ukleinek@deb=
-ian.org> wrote:
->
-> Hello,
->
-> while trying to help a Debian user debugging why USB doesn't work in the
-> installer on a bananapi, I discovered these patch opportunities. They
-> are only build tested.
->
-> The first patch touches a different subsystem than the other three, but
-> given that maintainership overlaps and the first two patches are
-> identical in spirit, I still created a single series only. The two
-> subsets are orthogonal, so can be picked up individually by their
-> respective subsystem maintainers (and please do so assuming you're happy
-> with the patches).
->
-> Best regards
-> Uwe
->
-> Uwe Kleine-K=C3=B6nig (4):
->   pinctrl: axp209: Drop check for disabled devices
->   power: supply: axp20x*: Drop check for disabled devices
->   power: supply: axp20x_usb: Introduce a helper variable for &pdev->dev
->   power: supply: axp20x_usb: Improve probe error reporting
+Hi Bartosz, Alexandre,
 
-Whole series is
+Thanks both for the feedback.
 
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+On Mon, Sep 14, 2026 at 04:36:48AM -0400, Bartosz Golaszewski wrote:
+> On Mon, 14 Sep 2026 03:41:29 +0200, Alexandre Courbot
+> <acourbot@nvidia.com> said:
+> > On Sun Sep 13, 2026 at 5:46 PM JST, Kohei Ito wrote:
+> >> Hi, Bartosz,
+> >>
+> >> On Thu, Sep 10, 2026 at 12:37:17AM -0700, Bartosz Golaszewski wrote:
+> >>> On Sun, 6 Sep 2026 10:45:51 +0200, Kohei Ito <koheiito.dev@gmail.com> said:
+> >>> > Add a sample driver to demonstrate the use of the Rust GPIO APIs.
+> >>> >
+> >>> > Signed-off-by: Kohei Ito <koheiito.dev@gmail.com>
+> >>> > ---
+> >>>
+> >>> I don't like samples as they rarely get built or tested. We seem to already
+> >>> have kunit support for rust, wouldn't it make more sense to implement a kunit
+> >>> module for rust GPIO abstractions? If we don't have provider abstractions, you
+> >>> should be able to reuse gpio-sim as the GPIO controller for testing just by
+> >>> instantiating simulated GPIO devices.
+> >>
+> >> Thank you for your suggestion.
+> >>
+> >> I assume the kunit module you have in mind would be implemented like
+> >> `gpiolib-kunit.c`. Based on your comment, I agree that a kunit-based
+> >> approach is more appropriate than a sample driver.
+> >>
+> >> However, as far as I know, we don't yet have Rust abstractions for
+> >> platform_device registration and software_node, which are required to
+> >> implement a kunit-based module for testing GPIO consumer APIs. Given the
+> >> current state of Rust for Linux, I think creating a sample driver is a
+> >> more practical approach for now. I would like to consider migrating to a
+> >> kunit-based module as future work.
+> >
+> > The problem is that this sample driver never probes, so in effect it is
+> > only ever compile-tested. Without support for the provider API, you need
+> > to include a small C fixture providing a GPIO chip for it to be actually
+> > runtime-tested.
+> >
+> > Doing the same using KUnit would involve building the `gpio_chip` using a
+> > bunch of unsafe statements working with the C bindings (which would then
+> > in turn require `gpio/driver.h` to be added), so I guess we'll want to
+> > wait until we have a proper Rust provider API to go that direction.
+> >
+> 
+> No, I was thinking about the gpio-sim module which is implemented as a platform
+> driver which you can describe with a software node and then register to create
+> a simulated GPIO provider against which the consumer APIs in rust could be
+> tested.
+> 
+> To that end, we'd need to just register a platform device from rust and AFAICT,
+> there are already APIs for that, except for the software nodes.
+> 
+> Bart
+
+I looked into this further, but couldn't find any Rust abstraction for
+registering a new `platform_device` (no file contains a platform device
+registration function such as `platform_device_register()`,
+`platform_device_register_*()`, or `platform_device_alloc()`/
+`platform_device_add()`). So, we can't write a fully Rust kunit module
+for the GPIO consumer API, at least for v7.3-rc3.
+
+The best approach I think is a combination of a Rust consumer driver and
+a C kunit module dedicated to testing the consumer driver. This is
+almost the same as `drivers/gpio/gpiolib-kunit.c`, except that instead
+of directly exercising the GPIO consumer APIs, the module I'm suggesting
+exercises them indirectly, through the Rust consumer driver.
+
+Best regards,
+Kohei Ito
