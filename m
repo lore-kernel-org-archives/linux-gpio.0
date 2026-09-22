@@ -1,144 +1,130 @@
-Received: from mail-pj2-f24.google.com (mail-pj2-f24.google.com [74.125.227.152])
+Received: from mail-pz2-f40.google.com (mail-pz2-f40.google.com [74.125.228.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D075275AD
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 09:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165C043A80B
+	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 09:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790068204; cv=none; b=ajzxC0zHoYQnfGgYLufessR7jJ0VoR7MpOrjfn1SXAux/kd/SRdSqsm5Pyu3xiI8gHoBpmEA7F/u3LRxy7bknUPYfIiPDysHRoh1krKPHZxwbtAG/AxiE8ULdl1BQcXOGBTQg8fIWpWCLo+oaGwqF7SYY4urefpdmMoF8hjrgkU=
+	t=1790068876; cv=none; b=L/D7BYgfvjO9Aid4kggJiWnQxKKLn416o9xCFb5yAcN2oup5s8yQKyzvTQ+XXSv+X+d5NrzJh0HLUM3lPk+Tki/PYcPNZMAGVL/gYTOLHmgrw9vDyuQ8Kpe/f3NboqbGiF+Ovu0YRwrnYj9qel+YFOs5n+amHaX43AXv38sjX0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790068204; c=relaxed/simple;
-	bh=mBKCdwfTWDIJbik3smJ3FVVaENLpL49N6QgmGQgMO0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aZb49aUBH7srpNhOjmODQSN+sjuCRbPf0+jf0omIamA0Y0TnGadEzjx3ezxsfg6ziqr+DxzqYZrYSiZpzh46D3BIPGZmOvxqhRZFnJ+u9yKZU7MDE5yj+NEaA+AjdZ8yyqFAvfZvuRjOvoHzLMQ+4NKITHrBjYGeIsc6kMrVNqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjoHib4E; arc=none smtp.client-ip=74.125.227.152
+	s=arc-20240116; t=1790068876; c=relaxed/simple;
+	bh=QwgutwokZ3b0qwkGY6l4hQt9JqC8neMMcSvmNTqPuqQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=duktn2b5oMBuvuxWNUPp0MW+puCcmaNlQCoYG8WzhD/LCnRE3AG5qrN3FecSY40sKVBMebq4dVM3Wbf6GRMxD1n1XWcRKQd65M0YpxbffdE4juwDll+E6y1u3bpIirZulUkjwcMaegxmnI+pSrvcYgUyTLnysycMIN0ysYVvkMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aG6M8SOG; arc=none smtp.client-ip=74.125.228.40
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjoHib4E"
-Received: by mail-pj2-f24.google.com with SMTP id d9443c01a7336-2dd77300816so11505035ad.1
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 02:10:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aG6M8SOG"
+Received: by mail-pz2-f40.google.com with SMTP id 41be03b00d2f7-cc5121bcf1aso3164359a12.1
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 02:21:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790068202; x=1790673002; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=6sUggSTSWzovoPTvZ/2iI6ZTqKPXi6q928x/LkDAbDk=;
-        b=PjoHib4E0Surftr+HNkx/qSOVU2BvH0cmRGEy62GPQtup708OWvVQ/ZWG1q04yhuUe
-         Cfrw7CzLQuY+zCX5gBifNDWqmiJvVqC2vMayMfpzvzJ2UyLlqS+crtbpa92UbkUU3D8E
-         KDgohJw1X0ZeQs1IWm29KeDTdu9Vjk83mx5rfj6ITtIsAqawD/JD1Ufqrs2CcotG1B7w
-         WeVKQM4eKAy83XMrEHIUiOjuasHiNJQ4HhldGtGF6e0uqcEnw1nblOk30PAr3gDjhvX9
-         itIpYwByB9cy1u+78ELhSI04J+HBW+E5CiF2uZ0DsVaiw1fDDiIWYBMCIE57HJP+c1Yh
-         XEiA==
+        d=gmail.com; s=20251104; t=1790068873; x=1790673673; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=VhqwyCXWCrR9ZsZI79xSj7TfrvM5uh6vx6A8zPKncw8=;
+        b=aG6M8SOGcJZfavB4ZpeKV6X4E1aIu1Wtd1lllaL3XcYPExup7XC/7Sy6LoRQ8MdJ2X
+         3TtZSJ74pVC8+2nhy+6T4LML2GvA5wlTyNewTXRXMIbOsEmd1ZvEWTxwfEfBS86MDPNW
+         ozz3tMk3iUh7/0NbAAf7TeUKmjYHMBy6PS8FhJnCG86pPTYSADEBvVg9htupuH5NoQ9g
+         QXUbY+z+xQ4Th7ezB5NJ3rTYLhw9KWwXRdhsIJZyuzqNJYY16V7dS+Q8Y8ZH/+cFitgD
+         Rt/RQvceVtT9RiB0PIg3+V75ZzWBoisY8axXq7rNyk7coRuCaSKSeAigJX5tkfNRfQ/z
+         cBAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790068202; x=1790673002;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=6sUggSTSWzovoPTvZ/2iI6ZTqKPXi6q928x/LkDAbDk=;
-        b=DVdUAlgzwfPnUxuAjqewTwI8NL8EI3zzq+dsy2zjoKMiOj4SgGkHR1Ieqv/1g7ml1q
-         +Or1KwoOYttay6g3X6HfX7Otvnk3XS2bA8wkOxbTRaVevHtrUb+nDmt114Q+xX1oxAAV
-         Q/UE7zXyHIT0v9sV1MKxgaP4wavoJSFmD0o9MEinYgfflLPVUMNysK8U6aCcO+8GCBF0
-         q2cSCZBxD7Id/TVYpPVI+6n4+hkUuh/5FldNMJj5moDTRbpWJNYjdXlom0mqcp0vAicp
-         5m3kbqTP/rtQfl3dqYMX4r+GmRZEw3xAIC8hAK+OoL+dq5D/RXN+dXV+/m+mJWS23+wE
-         jAZA==
-X-Forwarded-Encrypted: i=1; AKwUvBykUe3xEQd8ZWWvWtWFqkZw7q5Lo40GKMYOXuB+9caGI5cWwMOzPjmjLeF4g+U/TSR1Fyh8XK2oIFQE@vger.kernel.org
-X-Gm-Message-State: AFuF++nNIKLZpZboQ4vipIsMPalWCaiLPWYUgEpErzZwxtP+36oqHLFX
-	Bkva62isFUMrO6azsU+XW0xDhh1FsxYT06yqGE6ju1iITxs0PotBpBB6
-X-Gm-Gg: AYBFou31KsOO3z1X1rVVwbeWAYz00NgGpCyhz1XFH5p9fRKmNSctANCJ3TsKPs8vJAM
-	HUVGQ6YyjoF6Kq/s9YJty3tAT6MEL2oTtz9XOQhWSUh4d2g9szevuejsnzuicN91oHMvyLPxivd
-	r+HQpPSOCrDCszebY2QN/vE+0tfDORSle9qqojper/QQJijgAIGuPjlMtFZpBMzHlv7Rp9H3ha/
-	4kSmm+E9N7dMtJPV1FtFb0pC4WYEZqhWdp9+z25mL6WCWG8kyX0kUWv7MTWDpqH4y907BuRM4FF
-	WSrxezCoddyD3+3Eo/RGUP3LmTSuC4tgb/IqLdERIOVrv+AehlQY0FQeLEPDv0FTmog0gzFddco
-	P+pN9+gFlLhS3AhFgxM+QvxOQR9Dp0Ex33qSG9iJ53osQuOxfn/cAHVeKmddbojhG25SG0caZnJ
-	2fxuMYm2+F/cFXpKnRa/7vDKDbFW7kwX39MBK0NxFVby0MY3Hj6JMUqfNqZXBa6DAxJIPdT1TJg
-	CGY3MhApJIcUm2Wqny3emFS922d9A==
-X-Received: by 2002:a17:902:e892:b0:2dd:c053:b9c8 with SMTP id d9443c01a7336-2df60ee2fc6mr3676585ad.25.1790068202190;
-        Tue, 22 Sep 2026 02:10:02 -0700 (PDT)
-Received: from rigel (194-223-74-160.tpgi.com.au. [194.223.74.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2df5cf84150sm6490615ad.6.2026.09.22.02.09.58
+        d=1e100.net; s=20260707; t=1790068873; x=1790673673;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=VhqwyCXWCrR9ZsZI79xSj7TfrvM5uh6vx6A8zPKncw8=;
+        b=C+SyxGy0tMvHDIwadqodfdHtd2wHnvLB9kU3TQ1JZbqEcOs1lALRi9YT1a21nR85np
+         wGuGmgs2P+DwVYqZ8dRuV+IT0dZJtAz4SQoyVJQLLHENc/o7Qyv6V7THbIR6m3Fg0Afy
+         9EqR/cRR0OHzvirxvAmMU8+uKdQJmD02jEU0/suXop7KZiGYUXZfOI+CnKvqqNRfE0ep
+         ekJnl2NN/LTlZsMM50yY0sYsCThrcMsbh1hIPR2+6/+UN7sXt1h696p+A3PNjiaz0s5H
+         cOnzn/6SOc3gb9Smx2ycWbhslp1GA7yVu1CE822qOW+lJCydAQvjmLNYAqhrHOE6Mx8p
+         pUsg==
+X-Forwarded-Encrypted: i=1; AKwUvBxoH/PcMhkcQuc+0P7TxBd5jUh3bbPoGKbTz1qNW9rlAOH37G0V3heVV+B9mjSAxOOp0PMBPWjHcZWK@vger.kernel.org
+X-Gm-Message-State: AFuF++nCDrjUE/Tpt3hbT5oEQ5UzrK0BOLnBoOzBYLkERIzuhV2PbVnx
+	v1/MA5EBUsho7q1N3IH0S7OUoZM1kPsvDHYWe5bjd6DQOpKlPdAgJ3K9
+X-Gm-Gg: AYBFou0BNCCw6wezJlqZwuAPAtwYJhc0bM0HNMIhVWxV8tBJLLQXX1vdwisHjGJFQE1
+	2I7k5kmg+FuYvRa51AiXc3McNVYk2y8p9EBnDCbE57KtRXmkUd5U/mhW3V8dgD4sOj/frGJVizN
+	xPrmBLUAtYHuT5iGSJFBng2Cm+NFlxlTQetLSBbSTNTjNPeHO3S5B2TSevkCWky0HQ6hXiAnjdA
+	LTvwUqfUxX/08a//umOrXXO9kEvIX8LNicCA07Xgato+d2/S2WChpoh4mezO6cUhFd9K71BW0RV
+	5EtFKIPgPbMGET4wLuTzdHWmuKOo+nZnKS/XlFYA4lnAkjMu5X0/6yn0YRLkMKHDeIi3B6rrCrO
+	UVdrWXenBIQIYqg7Rbv9bm3nyIXqbba57VNT9TFvDXZdarlx77aA+obRI/sb7+HUDtGpuad9MX5
+	bDVxdDG82GnPEdlbDKJX85SYofDHYqImIl1eO7KIoMNl8F6FnoKNBhXlagTC3FReQqu9Q+0Aijo
+	yjd0sjifWM6uwBSGi8=
+X-Received: by 2002:a17:90b:2686:b0:39e:4546:fb26 with SMTP id 98e67ed59e1d1-3a072e96de0mr714758a91.0.1790068873149;
+        Tue, 22 Sep 2026 02:21:13 -0700 (PDT)
+Received: from cfarm424.jing.rocks (cfarm424.jing.rocks. [2600:3c18:e002:2e11::c424])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a06caf4a73sm899819a91.2.2026.09.22.02.21.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2026 02:10:01 -0700 (PDT)
-Date: Tue, 22 Sep 2026 17:09:55 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
+        Tue, 22 Sep 2026 02:21:12 -0700 (PDT)
+From: Ridham Khurana <khurana.ridham222@gmail.com>
+To: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
 	Linus Walleij <linusw@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
-Subject: Re: [PATCH v3] gpio: cdev: fix kernel stack leak to user-space in
- error path
-Message-ID: <20260922090955.GA35938@rigel>
-References: <20260922-gpio-cdev-stack-leak-fixes-v3-1-7a0c7a4299d5@oss.qualcomm.com>
+	Bartosz Golaszewski <brgl@kernel.org>
+Cc: Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Shuah Khan <shuah@kernel.org>,
+	Jori Koolstra <jkoolstra@xs4all.nl>,
+	Brigham Campbell <me@brighamcampbell.com>,
+	linux-kernel-mentees@lists.linux.dev,
+	Ridham Khurana <khurana.ridham222@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] gpio: zynq: fix runtime PM leak on request error path
+Date: Tue, 22 Sep 2026 09:20:58 +0000
+Message-ID: <20260922092102.1053513-1-khurana.ridham222@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260922-gpio-cdev-stack-leak-fixes-v3-1-7a0c7a4299d5@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 22, 2026 at 10:52:28AM +0200, Bartosz Golaszewski wrote:
-> If we fail to acquire the GPIO chip guard in gpio_desc_to_lineinfo(), we
-> return immediately before zeroing the info struct we'll end up passing
-> to the user-space later in lineinfo_get_v1(). This may leak the kernel
-> stack contents. Make gpio_desc_to_lineinfo() return int so that the
-> -ENODEV returned on failure to acquire the guard can be propagated to
-> the callers.
-> 
-> While not strictly necessary: move the memset() before trying to acquire
-> the SRCU read lock too for good measure.
-> 
-> Fixes: d83cee3d2bb1 ("gpio: protect the pointer to gpio_chip in gpio_device with SRCU")
-> Cc: stable@vger.kernel.org
-> Reported-by: Sashiko <sashiko-bot@kernel.org>
-> Closes: https://sashiko.dev/#/patchset/20260912123529.7951-1-tzungbi%40kernel.org?part=3
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> ---
-> Changes in v3:
-> - Don't emit an error log message from the line info notifier if we fail
->   to acquire the chip guard
-> - Link to v2: https://patch.msgid.link/20260921-gpio-cdev-stack-leak-fixes-v2-1-3307c4320352@oss.qualcomm.com
-> 
-> Changes in v2:
-> - Make gpio_desc_to_lineinfo() return an integer return value so that
->   the error code returned in case of a failure to acquire the guard can
->   be propagated down the stack
-> - Link to v1: https://patch.msgid.link/20260917-gpio-cdev-stack-leak-fixes-v1-1-2bb52879e49c@oss.qualcomm.com
-> ---
->  drivers/gpio/gpiolib-cdev.c | 32 +++++++++++++++++++++++++-------
->  1 file changed, 25 insertions(+), 7 deletions(-)
-> 
+pm_runtime_get_sync() leaves the usage counter incremented even when it
+fails, and zynq_gpio_request() returns the error without dropping it.
 
-> @@ -2491,6 +2502,7 @@ static int lineinfo_changed_notify(struct notifier_block *nb,
->  	struct lineinfo_changed_ctx *ctx;
->  	struct gpio_desc *desc = data;
->  	struct file *fp;
-> +	int ret;
->  
->  	if (!test_bit(gpiod_hwgpio(desc), cdev->watched_lines))
->  		return NOTIFY_DONE;
-> @@ -2521,7 +2533,13 @@ static int lineinfo_changed_notify(struct notifier_block *nb,
->  
->  	ctx->chg.event_type = action;
->  	ctx->chg.timestamp_ns = ktime_get_ns();
-> -	gpio_desc_to_lineinfo(desc, &ctx->chg.info, true);
-> +
-> +	ret = gpio_desc_to_lineinfo(desc, &ctx->chg.info, true);
-> +	if (ret) {
-> +		fput(fp);
-> +		return NOTIFY_DONE;
-> +	}
-> +
+gpiolib does not call ->free() when ->request() fails, so zynq_gpio_free(),
+which holds the only matching pm_runtime_put(), never runs. The reference
+is leaked and the controller can no longer runtime-suspend, so its clock
+stays enabled.
 
-Drop the ret and just test the return directly?
+Switch to pm_runtime_resume_and_get(), which only increments the usage
+counter on success.
 
-Sorry - should've picked that up in the previous version.
+Fixes: 3242ba117e9b ("gpio: Add driver for Zynq GPIO controller")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ridham Khurana <khurana.ridham222@gmail.com>
+---
+Build-tested on arm64 with CONFIG_GPIO_ZYNQ=m. Not tested on Zynq hardware.
 
-Cheers,
-Kent.
+ drivers/gpio/gpio-zynq.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index 15a79d9a2e9e..13e4c5f0e297 100644
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -798,15 +798,7 @@ static int zynq_gpio_runtime_resume(struct device *dev)
+ 
+ static int zynq_gpio_request(struct gpio_chip *chip, unsigned int offset)
+ {
+-	int ret;
+-
+-	ret = pm_runtime_get_sync(chip->parent);
+-
+-	/*
+-	 * If the device is already active pm_runtime_get() will return 1 on
+-	 * success, but gpio_request still needs to return 0.
+-	 */
+-	return ret < 0 ? ret : 0;
++	return pm_runtime_resume_and_get(chip->parent);
+ }
+ 
+ static void zynq_gpio_free(struct gpio_chip *chip, unsigned int offset)
+-- 
+2.47.3
 
