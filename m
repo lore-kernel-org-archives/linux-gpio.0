@@ -1,358 +1,155 @@
-Received: from pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.42.203.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FF74F7970;
-	Tue, 22 Sep 2026 10:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.42.203.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824625383E7
+	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 10:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790073080; cv=none; b=Iu3zPyjj33zaQ37jmING25PDHU2cU4Azd+j/v6u1g787tZxzGSD7Pe76sJsDl0P2wsX+3lHgO2Y4l2ZmKONROts7eQVzD2Ra4ICreCTC2wS2hA24UwztTOHNvSZBJpC7OVREOSIzYsToaMPQoa8DY/fVxlITRzvBEVrvYEsfz4I=
+	t=1790073420; cv=none; b=c6HQkPh9dp0W9mAZPZYlWQecbWdOT3wXAQ99kmO7llPJcZ4tYEo2/ZNy+AXt/zkscrx8RkucyMvn21RqlQyBujTNVEofIty7Lqdrf3rLLc+yF0mslHj5TVzZcUKBx1eNCMp8qmu1XFKAcqmd8oo5CFM2c3y3pAbzQLbyzZegWHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790073080; c=relaxed/simple;
-	bh=fzZrqq/3EIZzhNmmYznawxf13JvsJDAwsHKRhcXlRLM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WPalNVOGPWWto2RdQjfu7F2zZ4swTqlBdrmcYoz5Rvy+MNZkBQ3Tc/EPz4xjM1QIEE9yLLZV/lUMa2E67V6PAQnBS1MTm4C45CN+/iaJuZn6hmO3UyjvHVnMmBOpnuGxOAW0D+iGTeBYcLHpGKiPETNLYEJZibo4my2XdV6zKp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=DLhV+wvx; arc=none smtp.client-ip=52.42.203.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1790073420; c=relaxed/simple;
+	bh=LQPPbzzWnknT0Aq/BgJ4252Y/IZhijSk4u33zoimweA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tROZsnjZ5k4h8NeSVfSFCkPU3JtuVNtSXwtbMu6Pj66KjlRtBtYH7W2QAgYNlWWTYARXIXQ0os15fHVB4cII6Jf8XL16gfzv8AzLhLnn1lWcOSUIuveoTxWRuB3KdZ9oUf0dKvlaK3Up/hrUn7oP1zcJs+DgCdGkqxw3c5Udvqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBC/wQOu; arc=none smtp.client-ip=74.125.227.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="DLhV+wvx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBC/wQOu"
+Received: by mail-pj2-f12.google.com with SMTP id d9443c01a7336-2d90ba1d807so48380855ad.3
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 03:36:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1790073075; x=1821609075;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cIK6DEOkfPf2hQxSaOZnF2IvrXaG24SQpmzVgtKhpNM=;
-  b=DLhV+wvxPSeJpa1ee8J5yRfRg5Ejn/Phz5EVqlyGvithF2W/KCNd2Tg4
-   jFMx8q5Mthdi9efLx1hGo6xMTiAtt0fEG/5VJXrEvLbp90q/KmTQRysng
-   5jF9NBRXkiFYvqa3a0BCY68A/uLNpqYWUyTChYRxyLHnNLLa626LX+yj6
-   C8kpbCSbCpTN62WBWsh3T2IVmOzqdbkmTg8aJyDRakwDtsyuEv0CXCBca
-   kpWwug3XkIi/UQCQaUITdDWRZrBlXAuUTBG67LdKnDk/Oo2Q4jsDvYJXE
-   HVAUwgPPOj+s6gJoU+2vqbLAFYJWVXVXcuN4IDRLDs73s3pdoO/Cd39eK
-   g==;
-X-CSE-ConnectionGUID: 3NcB0qSiSrqJMjp4odgTRg==
-X-CSE-MsgGUID: CnKAZHUFQDqm1/CrpJhEzA==
-X-IronPort-AV: E=Sophos;i="6.27,116,1787011200"; 
-   d="scan'208";a="29360550"
-Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
-  by internal-pdx-out-008.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2026 10:31:08 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [205.251.233.53:10527]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.5.10:2525] with esmtp (Farcaster)
- id 3086d706-52b0-438c-8a6d-69fb231f5751; Tue, 22 Sep 2026 10:31:08 +0000 (UTC)
-X-Farcaster-Flow-ID: 3086d706-52b0-438c-8a6d-69fb231f5751
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
- Tue, 22 Sep 2026 10:31:08 +0000
-Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
- (172.19.116.181) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49; Tue, 22 Sep 2026
- 10:31:06 +0000
-From: Eliav Farber <farbere@amazon.com>
-To: Rodolfo Giometti <giometti@enneenne.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-CC: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Eliav Farber <farbere@amazon.com>, <devicetree@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 4/4] pps: clients: gpio: release pins to an inactive state on remove and shutdown
-Date: Tue, 22 Sep 2026 10:30:51 +0000
-Message-ID: <20260922103051.5257-5-farbere@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260922103051.5257-1-farbere@amazon.com>
-References: <20260919171157.5502-1-farbere@amazon.com>
- <20260922103051.5257-1-farbere@amazon.com>
+        d=gmail.com; s=20251104; t=1790073410; x=1790678210; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=xFrSw8g6pQMY5U3KRpdjAipvB+Vk/2tHlUyOShfJMpQ=;
+        b=MBC/wQOufI1Q/iyrmXnGNQX5U8OQ301jMEyzLOgznQ+in7jqNBEDig7wFjsQVRm8dw
+         sJfyplay0ysDXH2c4g7AyMeiqyYw9NBpBfjIy+95cIjPzwOOORHEUdiVnxHeePTxLdQJ
+         rFMTrzcGbVx2Yb/lXKl9T1K8A9zd/D60rjyLXghtca+lY0FtJXP6j+g1lOi83ltOuqpl
+         lTisRiyS4rowTYK08iBc6uJS+5gBaIU6trXlSvAWB1KsKWoI66Ars01KK+HTO9nDrcoK
+         YQHYi/rxoeuRUY9MPeYxqclvmioaP9/eC638EyxilJ07gtOIJV+gRyoSFWPI9c7tkStg
+         ALQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790073410; x=1790678210;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=xFrSw8g6pQMY5U3KRpdjAipvB+Vk/2tHlUyOShfJMpQ=;
+        b=g+GJF8cjT3x+/NdicebegwTQ0MKg1jwvHNI4EofcbCJY84rMGBQBe/Xnl6wVghZ+3m
+         w25RjWjXQF95HirO77DnBJ+WuJFmBjU8VXKQ3d0s0owL1CkX2ABsHxZ1Pw6yGeo4LHL8
+         mpY2LyEmA5q0eMvVHKjBsZ5AZYg4bBT6XjQYVBiCT9VqWdiiDCptbeisQkK8XjY+5AaV
+         oxp+d3xTYgqNpSObhechz2zRamQeNklgH29CNA01s8XN1qKJfmDEUH+XlSu5UWqASaK4
+         J0tbBb3nROrnAUO/HImeEORNb2gCqjssLhMblSDf3UlxXSQ7AehLgmMdvlJV7+fHeIcs
+         HcMQ==
+X-Forwarded-Encrypted: i=1; AKwUvBy0WnFOM/PyDvusaXLawmpP5AdG6eO8nDvL+iFQZamP6JSHvxe8v38IFFpXLY9DnY/e6JZCS3ju0s7I@vger.kernel.org
+X-Gm-Message-State: AFuF++kHpmvlv/o6aV6M4tMWnNO3yZcnUXIAC2CtulYutxRQmU6miNDz
+	Xixrmf4dFK80y18z8gVKVbgIrJQzYiARqXOh4lkt+wo3EB+eu/KEIz/Z
+X-Gm-Gg: AYBFou3kpWlz4YP6tr+R99ekFnSB2tz7gX2KLcphQFl4hff9urvUllFlMB50xUhiNp6
+	/RLoEmRNBvP8i1iU0OxmAKme0QOs73MnnQFgz0wETXIJzgj2UeNfGv6PhAwlt+Dls1i5LMCreA5
+	IhFZeDj3aiOsucafpNpGaoq+Dw+Be65H0pF9Xaz8XLQo1ZXw7YS/SzEMGtcaH0Nx+fYIPQ1jseU
+	hrVjrkRnp5yiHfXFKDuqjSYfby+t5jdo6esPOk3Nst2igG4Dp2K1n9BZ4e230r1EiiPUBKXcUn+
+	eiKNwdd3AcWVCzveK3EkuFL0Gw2MA0cMcX0TmJn5J9tsqZSng00G7rz09pYFcI4w+K+SDZx1Z40
+	avslTXF6z9HwSnxN0BOj32IrKmrgvvN2/Kl0+EFDJ5e8bj5vZC7QHPbBfxpcgBHYFIKad5xP/Ap
+	vBfGysy6p4lstKrNFSeM66v0HtCRUnxYAtYBXM4V34lf7/SzQ/LqZrJ5ba4FdAwHeyjlm+Eff7g
+	fykfeCU/ZE98yzGxA==
+X-Received: by 2002:a17:903:19ec:b0:2d9:216a:cdd3 with SMTP id d9443c01a7336-2df609d11f5mr8150535ad.18.1790073410417;
+        Tue, 22 Sep 2026 03:36:50 -0700 (PDT)
+Received: from rigel (194-223-74-160.tpgi.com.au. [194.223.74.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2df5cf827b7sm7575295ad.4.2026.09.22.03.36.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Sep 2026 03:36:49 -0700 (PDT)
+Date: Tue, 22 Sep 2026 18:36:43 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: Re: [PATCH v3] gpio: cdev: fix kernel stack leak to user-space in
+ error path
+Message-ID: <20260922103643.GA40044@rigel>
+References: <20260922-gpio-cdev-stack-leak-fixes-v3-1-7a0c7a4299d5@oss.qualcomm.com>
+ <20260922090955.GA35938@rigel>
+ <CAMRc=MfT-T0pQTvB3a_1BeOhPHztPh5pGs1Br225GVm1pFN_Yw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D036UWB002.ant.amazon.com (10.13.139.139) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=MfT-T0pQTvB3a_1BeOhPHztPh5pGs1Br225GVm1pFN_Yw@mail.gmail.com>
 
-Some boards route the PPS input GPIO through a pin controller and need to
-mux it to another function when pps-gpio is not driving PPS. The driver
-core applies the "default" pinctrl state before probe, so the pins are
-muxed for GPIO/PPS use while the driver is bound. Nothing, however, hands
-the pins back when the driver is unbound or the system is shut down, so
-they stay stuck in the GPIO function for whatever runs next, kexec
-included.
+On Tue, Sep 22, 2026 at 02:33:35AM -0700, Bartosz Golaszewski wrote:
+> On Tue, 22 Sep 2026 11:09:55 +0200, Kent Gibson <warthog618@gmail.com> said:
+> > On Tue, Sep 22, 2026 at 10:52:28AM +0200, Bartosz Golaszewski wrote:
+> >> If we fail to acquire the GPIO chip guard in gpio_desc_to_lineinfo(), we
+> >> return immediately before zeroing the info struct we'll end up passing
+> >> to the user-space later in lineinfo_get_v1(). This may leak the kernel
+> >> stack contents. Make gpio_desc_to_lineinfo() return int so that the
+> >> -ENODEV returned on failure to acquire the guard can be propagated to
+> >> the callers.
+> >>
+> >> While not strictly necessary: move the memset() before trying to acquire
+> >> the SRCU read lock too for good measure.
+> >>
+> >> Fixes: d83cee3d2bb1 ("gpio: protect the pointer to gpio_chip in gpio_device with SRCU")
+> >> Cc: stable@vger.kernel.org
+> >> Reported-by: Sashiko <sashiko-bot@kernel.org>
+> >> Closes: https://sashiko.dev/#/patchset/20260912123529.7951-1-tzungbi%40kernel.org?part=3
+> >> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> >> ---
+> >> Changes in v3:
+> >> - Don't emit an error log message from the line info notifier if we fail
+> >>   to acquire the chip guard
+> >> - Link to v2: https://patch.msgid.link/20260921-gpio-cdev-stack-leak-fixes-v2-1-3307c4320352@oss.qualcomm.com
+> >>
+> >> Changes in v2:
+> >> - Make gpio_desc_to_lineinfo() return an integer return value so that
+> >>   the error code returned in case of a failure to acquire the guard can
+> >>   be propagated down the stack
+> >> - Link to v1: https://patch.msgid.link/20260917-gpio-cdev-stack-leak-fixes-v1-1-2bb52879e49c@oss.qualcomm.com
+> >> ---
+> >>  drivers/gpio/gpiolib-cdev.c | 32 +++++++++++++++++++++++++-------
+> >>  1 file changed, 25 insertions(+), 7 deletions(-)
+> >>
+> >
+> >> @@ -2491,6 +2502,7 @@ static int lineinfo_changed_notify(struct notifier_block *nb,
+> >>  	struct lineinfo_changed_ctx *ctx;
+> >>  	struct gpio_desc *desc = data;
+> >>  	struct file *fp;
+> >> +	int ret;
+> >>
+> >>  	if (!test_bit(gpiod_hwgpio(desc), cdev->watched_lines))
+> >>  		return NOTIFY_DONE;
+> >> @@ -2521,7 +2533,13 @@ static int lineinfo_changed_notify(struct notifier_block *nb,
+> >>
+> >>  	ctx->chg.event_type = action;
+> >>  	ctx->chg.timestamp_ns = ktime_get_ns();
+> >> -	gpio_desc_to_lineinfo(desc, &ctx->chg.info, true);
+> >> +
+> >> +	ret = gpio_desc_to_lineinfo(desc, &ctx->chg.info, true);
+> >> +	if (ret) {
+> >> +		fput(fp);
+> >> +		return NOTIFY_DONE;
+> >> +	}
+> >> +
+> >
+> > Drop the ret and just test the return directly?
+> >
+> > Sorry - should've picked that up in the previous version.
+> >
+> 
+> I actually prefer the assignment, I find it more readable.
+> 
 
-Look up an optional "inactive" pinctrl state in probe via
-devm_pinctrl_get() and pinctrl_lookup_state(), and select it with
-pinctrl_select_state() in remove() and shutdown(). The state is looked up
-and selected by the driver itself rather than reusing the runtime-PM
-"idle"/"sleep" states, so its meaning is unambiguous and it does not
-depend on CONFIG_PM. Boards that do not describe an "inactive" state are
-unaffected.
+I'm the reverse, but I can live with it.
 
-Since "inactive" is only meaningful as the mux to restore after the
-core-applied "default" state, reject an "inactive" state that is not
-paired with a "default" one rather than releasing pins that were never
-put into a defined PPS state.
+Reviewed-by: Kent Gibson <warthog618@gmail.com>
 
-Look up the pinctrl states first in probe(), before pps_gpio_setup(), and
-route every subsequent failure through a common err_release_pins label.
-The driver core applies the "default" mux before probe(), so a probe that
-fails after this point would otherwise leave the pins stuck in "default";
-releasing them to "inactive" on the error path is the symmetrical
-counterpart to what the core did on the driver's behalf. A failure in
-pps_gpio_get_pins() itself returns directly, as no state was taken yet;
-pps_gpio_release_pins() is a no-op when no "inactive" state was found.
-
-The mux must not change while something can still drive the pins. On
-shutdown() the requested IRQ and the echo timer would otherwise outlive
-the mux change -- device_shutdown() is not the end of the road, the
-kernel keeps running to load and start the kexec image -- so a timer
-callback or the PPS handler could poke a line that by then belongs to
-another function. Tear down in the same order as remove(): free_irq()
-first, then the echo timer (only when the board has an echo GPIO, as in
-remove()), and the mux change last. shutdown() does not unregister the
-PPS source, which is a remove-time concern.
-
-Signed-off-by: Eliav Farber <farbere@amazon.com>
----
-Changes in v5:
-- Resolve the v4 probe-failure open question by taking option "A + keep
-  the NULL guard": look the pinctrl states up first in probe(), before
-  pps_gpio_setup(), and route the pps_gpio_setup() failure through
-  err_release_pins too, so every path the driver can act on restores
-  "inactive". pps_gpio_release_pins() keeps its NULL guard, so it is a
-  no-op when no "inactive" state was found. Verified on the AL11 K2V6
-  JRD10 with a forced-defer test: the pins are released to "inactive" on
-  each failed attempt, the core re-applies "default" before the next, and
-  the mux settles at "default" on the eventual success, with no spurious
-  PPS event (Rodolfo Giometti)
-- Clear data->pins_inactive when rejecting an "inactive" state that has no
-  "default", so a board deliberately rejected here can never have its pins
-  released to "inactive"
-- Guard the echo-timer teardown in the new shutdown() with data->echo_pin,
-  matching remove() after the preceding patch (Rodolfo Giometti)
-- Convert the gpiod_to_irq()/request_threaded_irq() error paths to the
-  log-only dev_err_probe() + goto err_release_pins form, following patch 1
-
-Changes in v4:
-- No functional change (probe-failure raised as an open question, now
-  resolved in v5 above)
-
-Changes in v3:
-- Treat -ENODEV from devm_pinctrl_get() as "no pinctrl", not a probe
-  failure; keep propagating everything else, e.g. -EPROBE_DEFER
-- Restore the "inactive" mux on probe failure via a new err_release_pins
-  label
-- Warn if pinctrl_select_state() fails to apply the "inactive" state
-  rather than silently ignoring the error
-- Trim and de-duplicate the added comments
-
-Changes in v2:
-- Rename the released state from "idle" to "inactive"
-- Look the state up in the driver with devm_pinctrl_get() +
-  pinctrl_lookup_state() + pinctrl_select_state() instead of
-  pinctrl_pm_select_idle_state(), removing the CONFIG_PM dependency
-- Fix shutdown() to free_irq() and the echo teardown before the mux
-  change, matching remove()
-- Require a "default" state whenever "inactive" is present and reject the
-  mismatch
-
- drivers/pps/clients/pps-gpio.c | 117 +++++++++++++++++++++++++++++++--
- 1 file changed, 111 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
-index aec534c246af..203bf465ed8b 100644
---- a/drivers/pps/clients/pps-gpio.c
-+++ b/drivers/pps/clients/pps-gpio.c
-@@ -17,6 +17,7 @@
- #include <linux/slab.h>
- #include <linux/pps_kernel.h>
- #include <linux/gpio/consumer.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/list.h>
- #include <linux/property.h>
- #include <linux/timer.h>
-@@ -30,6 +31,8 @@ struct pps_gpio_device_data {
- 	struct gpio_desc *gpio_pin;	/* GPIO port descriptors */
- 	struct gpio_desc *echo_pin;
- 	struct timer_list echo_timer;	/* timer to reset echo active state */
-+	struct pinctrl *pinctrl;	/* pin control handle */
-+	struct pinctrl_state *pins_inactive;	/* pins released when unbound */
- 	bool assert_falling_edge;
- 	unsigned int echo_active_ms;	/* PPS echo active duration */
- 	unsigned long echo_timeout;	/* timer timeout value in jiffies */
-@@ -96,6 +99,68 @@ static void pps_gpio_echo_timer_callback(struct timer_list *t)
- 	gpiod_set_value(info->echo_pin, 0);
- }
- 
-+/*
-+ * Look up the optional "inactive" pinctrl state. It requires a "default"
-+ * state (applied by the driver core before probe) and is rejected without
-+ * one. Absent pinctrl, or an absent "inactive" state, is not an error.
-+ */
-+static int pps_gpio_get_pins(struct device *dev)
-+{
-+	struct pps_gpio_device_data *data = dev_get_drvdata(dev);
-+	struct pinctrl_state *pins_default;
-+
-+	data->pinctrl = devm_pinctrl_get(dev);
-+	if (IS_ERR(data->pinctrl)) {
-+		/*
-+		 * A DT device without "pinctrl-0" yields -ENODEV, which
-+		 * is not an error here; propagate anything else.
-+		 */
-+		if (PTR_ERR(data->pinctrl) == -ENODEV) {
-+			data->pinctrl = NULL;
-+			return 0;
-+		}
-+		return dev_err_probe(dev, PTR_ERR(data->pinctrl),
-+				     "failed to get pinctrl\n");
-+	}
-+
-+	/* The "inactive" state is optional. */
-+	data->pins_inactive = pinctrl_lookup_state(data->pinctrl, "inactive");
-+	if (IS_ERR(data->pins_inactive)) {
-+		data->pins_inactive = NULL;
-+		return 0;
-+	}
-+
-+	/* "inactive" requires a "default" state to return from. */
-+	pins_default = pinctrl_lookup_state(data->pinctrl, "default");
-+	if (IS_ERR(pins_default)) {
-+		data->pins_inactive = NULL;
-+		return dev_err_probe(dev, PTR_ERR(pins_default),
-+				     "\"inactive\" pinctrl state requires a \"default\" state\n");
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Restore the "inactive" pinctrl state, handing the pins back to whatever
-+ * function uses them while pps-gpio is not driving PPS. This undoes the
-+ * "default" state the driver core applied before probe. A no-op for boards
-+ * that describe no "inactive" state.
-+ */
-+static void pps_gpio_release_pins(struct device *dev)
-+{
-+	struct pps_gpio_device_data *data = dev_get_drvdata(dev);
-+	int ret;
-+
-+	if (!data->pins_inactive)
-+		return;
-+
-+	ret = pinctrl_select_state(data->pinctrl, data->pins_inactive);
-+	if (ret)
-+		dev_warn(dev, "failed to select inactive pinctrl state: %d\n",
-+			 ret);
-+}
-+
- static int pps_gpio_setup(struct device *dev)
- {
- 	struct pps_gpio_device_data *data = dev_get_drvdata(dev);
-@@ -156,15 +221,25 @@ static int pps_gpio_probe(struct platform_device *pdev)
- 
- 	dev_set_drvdata(dev, data);
- 
-+	/*
-+	 * pinctrl setup (optional states) first, so the "inactive" mux can be
-+	 * restored on any later probe-failure path via err_release_pins.
-+	 */
-+	ret = pps_gpio_get_pins(dev);
-+	if (ret)
-+		return ret;
-+
- 	/* GPIO setup */
- 	ret = pps_gpio_setup(dev);
- 	if (ret)
--		return ret;
-+		goto err_release_pins;
- 
- 	/* IRQ setup */
- 	ret = gpiod_to_irq(data->gpio_pin);
--	if (ret < 0)
--		return dev_err_probe(dev, ret, "failed to map GPIO to IRQ\n");
-+	if (ret < 0) {
-+		dev_err_probe(dev, ret, "failed to map GPIO to IRQ\n");
-+		goto err_release_pins;
-+	}
- 	data->irq = ret;
- 
- 	/* initialize PPS specific parts of the bookkeeping data structure. */
-@@ -185,7 +260,8 @@ static int pps_gpio_probe(struct platform_device *pdev)
- 	if (IS_ERR(data->pps)) {
- 		dev_err(dev, "failed to register IRQ %d as PPS source\n",
- 			data->irq);
--		return PTR_ERR(data->pps);
-+		ret = PTR_ERR(data->pps);
-+		goto err_release_pins;
- 	}
- 
- 	/* register IRQ interrupt handler */
-@@ -195,14 +271,20 @@ static int pps_gpio_probe(struct platform_device *pdev)
- 			  data->info.name, data);
- 	if (ret) {
- 		pps_unregister_source(data->pps);
--		return dev_err_probe(dev, ret, "failed to acquire IRQ %d\n",
--				     data->irq);
-+		dev_err_probe(dev, ret, "failed to acquire IRQ %d\n",
-+			      data->irq);
-+		goto err_release_pins;
- 	}
- 
- 	dev_dbg(&data->pps->dev, "Registered IRQ %d as PPS source\n",
- 		data->irq);
- 
- 	return 0;
-+
-+err_release_pins:
-+	/* Restore the inactive mux on probe failure; safe to do last here. */
-+	pps_gpio_release_pins(dev);
-+	return ret;
- }
- 
- static void pps_gpio_remove(struct platform_device *pdev)
-@@ -216,9 +298,31 @@ static void pps_gpio_remove(struct platform_device *pdev)
- 		timer_delete_sync(&data->echo_timer);
- 		gpiod_set_value(data->echo_pin, 0);
- 	}
-+	/* release the pins last, once nothing can drive them */
-+	pps_gpio_release_pins(&pdev->dev);
- 	dev_info(&pdev->dev, "removed IRQ %d as PPS source\n", data->irq);
- }
- 
-+static void pps_gpio_shutdown(struct platform_device *pdev)
-+{
-+	struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
-+
-+	/*
-+	 * The kernel keeps running after device_shutdown() (e.g. to load and
-+	 * start a kexec image), so quiesce the hardware before touching the
-+	 * mux: free the IRQ and stop the echo timer first, then release the
-+	 * pins last, so no callback can drive a pin after it is handed back.
-+	 * The PPS source is left registered; that is a remove-time concern.
-+	 */
-+	free_irq(data->irq, data);
-+	/* reset the echo state, if the board has an echo GPIO */
-+	if (data->echo_pin) {
-+		timer_delete_sync(&data->echo_timer);
-+		gpiod_set_value(data->echo_pin, 0);
-+	}
-+	pps_gpio_release_pins(&pdev->dev);
-+}
-+
- static const struct of_device_id pps_gpio_dt_ids[] = {
- 	{ .compatible = "pps-gpio", },
- 	{ /* sentinel */ }
-@@ -228,6 +332,7 @@ MODULE_DEVICE_TABLE(of, pps_gpio_dt_ids);
- static struct platform_driver pps_gpio_driver = {
- 	.probe		= pps_gpio_probe,
- 	.remove		= pps_gpio_remove,
-+	.shutdown	= pps_gpio_shutdown,
- 	.driver		= {
- 		.name	= PPS_GPIO_NAME,
- 		.of_match_table	= pps_gpio_dt_ids,
--- 
-2.47.3
-
+Cheers,
+Kent.
