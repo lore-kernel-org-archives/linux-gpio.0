@@ -1,108 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B2C3BCD28
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 20:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9554D552952
+	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 21:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790107616; cv=none; b=W7E6vETmpFOys3hUIeeihcJKW4HIlTdA5hV5mIN1IBdaNmjb5kXiu9neMPSoqGlWPu9WQX3CsOMMeekcnwtwJwg2tIKMeL9ANv6L5IYgp7+81ZfYev37heZ75ap61gcHDXJrTv4Ea7oTAIiGyYAwnRDQK1oWLNZA6QhIUZc1i0s=
+	t=1790111839; cv=none; b=WQlUbEN/Qcc5NgrC8D2I6iCP3CRO6RmfoddN9mKaH55VzNOLc9JmAmN0WuXu1KiSUNlzJHEleMw9k1xzRgLOQtEq2CsZHbQwixVTayQxZGu/MDmR1bhTR2qr/EI3GqROVB0DqckOjRz1EqPtCFZVwNrPzxnznkkXzz02NGvP1Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790107616; c=relaxed/simple;
-	bh=DQ6pOyH9/gwI9NGnOmICJ+Z+AjY+ewLm9COTYSgD430=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gOQuTu8yLy0N0lFtY20GIFX46xacnWXHH3Dt/2uvZsfVznGUbEXXcIW/BAMq+Rc+qoynb8qAkqwDqrGB4EGCo2Yk4abmZtgeeoguNuq11WLl2UwcqeK5CBTs+FFbVCoxyqOBRzgIFYARmpvOzjEd6OBqFG8b3DnVn9WozxrR0lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPnEarB3; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790111839; c=relaxed/simple;
+	bh=eqQky4L6vFtBRd5JuCtAYhYItfEVb6bBoMxiAflUToY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IdrapWC0Id8GJjGUxUKPj5e442pu14VgnMKHGUD1XXWOjShIv40nluhcJ2bdIvfaSuSvdwM12Yn0Xx+tK6INchRaU86C/274QZNtswdAw9y9q35/p3zDsRnCMjT1spMsb7EEE7+0OkvAYHTWkUUHWDuUoX8TVBuT/NH1F87ZECc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PB5/g00o; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPnEarB3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 140801F0089A
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 20:06:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790107600;
-	bh=DQ6pOyH9/gwI9NGnOmICJ+Z+AjY+ewLm9COTYSgD430=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=IPnEarB3y99S7CqDKkxw5Iqqacm0mKqK4TbmtiBYyoy/FwO/rFFWqFlNWnIZLD5Rs
-	 Ti+IwcjjF/1K0OsZDqnS42lYA6eZsR3D0ea4Ccx/AULS+dvkOajeAgEU867nrklSzs
-	 O/wS2tpW5ivg2skIolqvpBsibb+CQ/LcFeuTDXr/qmm1WMUULaK0H8nD4LgdxfLCcJ
-	 vWs1LdbMkUlThPbjuQ4KfyzxY+T8RZaRIl9Uk/ovWH3fhFVLgPr/mJ5Buafzt5+AXT
-	 vUaqMgrntVyCGuVfRPy7S/8q/Zs3cjdi3tAno55AkBl8dGesfcaCqDvpfr4Xg7Bw39
-	 gxZa3DzwNWtAQ==
-Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b5e4f1e419so64797e87.0
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 13:06:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByx5QPgLqTjE9GloXfoJ4AhQyKjb3+OwU4oJHZpbua+LJ46rztj80sYrwCSuIZNST1+6d7yt0ODKJvf@vger.kernel.org
-X-Gm-Message-State: AFuF++noqUJ6fisLCW4VxCvHDPee4IhOHmjGDIJg9lw9Ley+gZnCZhSv
-	nhBbIjX+JxtCRPh5ZOcSe1aRTsjXBG+SGmRLC24XW/rA42AipL6Go4ol1C2FlkdXB4BQCqTPuzy
-	NsjEp0t1oEHzw9w8cd8eYcGWqQ3OmheE=
-X-Received: by 2002:ac2:5452:0:b0:5b8:9a95:e259 with SMTP id
- 2adb3069b0e04-5b8d87955b0mr117714e87.27.1790107598761; Tue, 22 Sep 2026
- 13:06:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PB5/g00o"
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-cc52c1b8286so181326a12.1
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 14:17:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790111834; x=1790716634; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=iBiLSQPmd8h7HPBJ0oHvFXtAParwes62y7xIdG7uRP8=;
+        b=PB5/g00ovBKpheSksDTf+D2zSdyEaCb4ZGl9D1+0QJg9j+57VCJjtNEgOaqWu6lIK3
+         GDKuoIlHz2KN6DusGQAT48Ucit3RphTDZuUiTgeB8Ulrs/LJejq0V9jB0ewtd+TH3bRf
+         UKm0B8GWMAhx0ks0+0C9za5+VRy0YMTiwOfI9rI5RyZSVs5fuc7lBJS6M6/oFI9OghBc
+         Ecf2rV8wDbL6OPU4txjp2B7JOvjMZaK08ZhArUl8QiV9LQKR9V+uVWXZSPTJ1ML0hKnl
+         iAYkD2hcIuO7ZA6Y5SaMF2EumFbrX4Gwjhgd67GGEhD4w9TkBVqLr3UgBGsWwvEn/5Ne
+         pXow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790111834; x=1790716634;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=iBiLSQPmd8h7HPBJ0oHvFXtAParwes62y7xIdG7uRP8=;
+        b=s9k/eXGa3N+aU0dZTDib/NgQrvfibLDu9JzgVhYcamIqCXY4JsLP0PDaRG2zjXrN57
+         oXx4sX3zhMXMLJS4qLO0g9SJchQ/CwY2HVcp0hz/WgzhAozFYEeuuNW0WjUUJkjlTUZl
+         /3hYM26vvfZEApTxC+im2FB49GYDgreS7U+xd/fdapYOSKJyCeh9D1PlsHOHSDmhyWof
+         ZnXj0XUMVf6+1eZWa4X8jHjLhG3Y4ZqYdli8hIKELbmff7XTwPgXb+EgKTXGE4pGb9F/
+         OvlnPxoYDygeIMOyEWQbqbax6LNu200ONdwoNe22YpT+YFEfHean32oa7kXD1J8lbEq7
+         pEeQ==
+X-Forwarded-Encrypted: i=1; AKwUvBw44o+6o2+OuWINc56VLmVOr3V3kI+wkJnkf9301bLSoN779k42DhijY47sRfkA9oLjtHZjAnlusi6O@vger.kernel.org
+X-Gm-Message-State: AFuF++lUXgDMJUtcTZiTcIHady/QWbrD5h2oD6QuXPtdP/XFsHJyaVzk
+	nt6eUXkH3Ki1vlbtohsoXLnVPky6/DEDFacktHuFBCBonk2IjTcBPB0S
+X-Gm-Gg: AYBFou2T1ZvlqTLoEZEhPcLSViwshctACFOi9VVTPC2OOJScnf6Y8FTNyh0B9hP+gfo
+	I7cQzb/0az2FFVDGUZGAN3aYNAbC1MQ9IcosiHv4PVxZihN/+0Z1S1r5ixB9foVGZi69b36knSd
+	HNwRSSCjpUK4PZjiKj4mlhDJPq67sNZF5+cIDcoI0YFqdXEOjoedT5g6ceW/glRNXbh/tjABaSt
+	XwHH2ltDv2GT43QHXQAMO+bAOfj5FLszT1/iKdSGYz+mYTialh5OdyA03tD9MGGdGt3y5FdZbLe
+	mBZ6A22vn5YKxMniLhvLHMFd/XPyWY42nlZNJhr0xr94l7b8IOcNuWOiP4VDU3iCP4fGZl5PoRv
+	2CFcGMSLGoczOVAx09VaGSPRLfSBpzTDCPy9TufPgDPFtRxcT0q+1sUNvHD8cEEpLRU3eJgxIdE
+	a7SmzrTST/0vYgTODwLulSEsPffujscX4h15kW6zghEsAVV+q6Io5Vu6hXweIKKnTMJYMHi8QUl
+	V9x2SLwzMO/Lf2YhcQ=
+X-Received: by 2002:a05:6a00:288b:b0:878:3705:5720 with SMTP id d2e1a72fcca58-87c857f2d1dmr1780277b3a.44.1790111833487;
+        Tue, 22 Sep 2026 14:17:13 -0700 (PDT)
+Received: from cfarm424.jing.rocks (cfarm424.jing.rocks. [2600:3c18:e002:2e11::c424])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-87d1afb8e37sm320280b3a.5.2026.09.22.14.17.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Sep 2026 14:17:13 -0700 (PDT)
+From: Ridham Khurana <khurana.ridham222@gmail.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Thorsten Scherer <t.scherer@eckelmann.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Shuah Khan <shuah@kernel.org>,
+	Jori Koolstra <jkoolstra@xs4all.nl>,
+	Brigham Campbell <me@brighamcampbell.com>,
+	linux-kernel-mentees@lists.linux.dev,
+	Ridham Khurana <khurana.ridham222@gmail.com>
+Subject: [PATCH] gpio: siox: normalize return value of gpio_get
+Date: Tue, 22 Sep 2026 21:16:58 +0000
+Message-ID: <20260922211702.1480614-1-khurana.ridham222@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260909-pci-tc9563-aux-v5-0-c9b33f56c8d3@oss.qualcomm.com>
- <20260909-pci-tc9563-aux-v5-2-c9b33f56c8d3@oss.qualcomm.com> <fratyclnf6t232dg5s2kvsysw3gbovkwnrzfhnlblsax3wb6qy@debn6qdpp7jh>
-In-Reply-To: <fratyclnf6t232dg5s2kvsysw3gbovkwnrzfhnlblsax3wb6qy@debn6qdpp7jh>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 22 Sep 2026 22:06:26 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmDTR8hTqEaL+4MkYpNyJM1Xqw_yDVXWk37j0U_EXW8vQ@mail.gmail.com>
-X-Gm-Features: AclHuK9hkx-ggz7G0g38jTqdTsuWa6o6XzZhAY7sBjdJ2ocCBPHQ5wBU56tnIRc
-Message-ID: <CAD++jLmDTR8hTqEaL+4MkYpNyJM1Xqw_yDVXWk37j0U_EXW8vQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/5] gpio: tc9563: Add support for the embedded GPIO controller
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Michael Walle <mwalle@kernel.org>, 
-	Alex Elder <elder@riscstar.com>, Daniel Thompson <daniel@riscstar.com>, 
-	Sushrut Shree Trivedi <sushrut.trivedi@oss.qualcomm.com>, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 22, 2026 at 6:19=E2=80=AFPM Manivannan Sadhasivam <mani@kernel.=
-org> wrote:
-> On Wed, Sep 09, 2026 at 04:55:54PM +0200, Lorenzo Bianconi wrote:
-> > From: Alex Elder <elder@riscstar.com>
-> >
-> > Add a driver for the GPIO controller embedded in the Toshiba TC9563
-> > PCIe switch (and the Qualcomm QPS615). The device implements 35
-> > GPIOs using two register banks: three registers control the first 32
-> > GPIOs (20 and 21 are reserved) and three more control GPIOs 32-36.
-> > GPIOs 22-24, 27-28, 31, and 34 are input-only.
-> >
-> > The driver is registered as an auxiliary device driver. The TC9563
-> > power controller creates the auxiliary device and provides a regmap
-> > that gives access to the GPIO registers, so the gpio-regmap helpers
-> > are used to implement the GPIO chip.
-> >
-> > Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.=
-com>
-> > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > Co-developed-by: Daniel Thompson <daniel@riscstar.com>
-> > Signed-off-by: Daniel Thompson <daniel@riscstar.com>
-> > Co-developed-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
-> > Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
->
-> Linus, Bart, what is the merge strategy for this patch? Since Bart has Ac=
-ked
-> this patch, can I assume that this along with pwrctrl patches can be merg=
-ed
-> through PCI tree?
+gpio_siox_get() returns the masked bit from the cached input or output
+byte, so for most lines a high level reads back as a value between 2
+and 128 instead of 1. The GPIO get callback is expected to return 0 or
+1 (or a negative error code).
 
-That works for me but Bart manages the tree and any conflicts would
-be his problem so it's better if he says what to do. The MFD subsystem
-ususally produce an immutable branch that we can pull in if something
-would conflict, despite it nearly never does. I don't know if the PCI
-maintainer does immutable branches.
+Since commit 86ef402d805d ("gpiolib: sanitize the return value of
+gpio_chip::get()"), gpiolib rejected such values with -EBADE and reads
+of a high line failed. Commit ec2cceadfae7 ("gpiolib: normalize the
+return value of gc->get() on behalf of buggy drivers") made gpiolib
+clamp the value instead, but it now warns on every such read.
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+Normalize the value returned by gpio_siox_get() to the [0, 1] range.
 
-Yours,
-Linus Walleij
+Signed-off-by: Ridham Khurana <khurana.ridham222@gmail.com>
+---
+Build-tested on arm64 with CONFIG_GPIO_SIOX=m on next-20260922. Not tested on hardware.
+
+ drivers/gpio/gpio-siox.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-siox.c b/drivers/gpio/gpio-siox.c
+index 958034b9f3f3..d60680ace144 100644
+--- a/drivers/gpio/gpio-siox.c
++++ b/drivers/gpio/gpio-siox.c
+@@ -148,11 +148,11 @@ static int gpio_siox_get(struct gpio_chip *chip, unsigned int offset)
+ 	if (offset >= 12) {
+ 		unsigned int bitpos = 19 - offset;
+ 
+-		ret = ddata->setdata[0] & (1 << bitpos);
++		ret = !!(ddata->setdata[0] & (1 << bitpos));
+ 	} else {
+ 		unsigned int bitpos = 11 - offset;
+ 
+-		ret = ddata->getdata[bitpos / 8] & (1 << (bitpos % 8));
++		ret = !!(ddata->getdata[bitpos / 8] & (1 << (bitpos % 8)));
+ 	}
+ 
+ 	mutex_unlock(&ddata->lock);
+-- 
+2.47.3
+
