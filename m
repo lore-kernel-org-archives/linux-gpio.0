@@ -1,89 +1,118 @@
-Received: from smtpcmd01-sp1.aruba.it (smtpcmd01-sp1.aruba.it [62.149.158.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs2-f15.google.com (mail-vs2-f15.google.com [74.125.227.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D52544D76
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 12:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.158.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5713F442FAA
+	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 13:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790081394; cv=none; b=fTVNiv7uBOOkp1OZS1sfQF4RAPOmrB0MIV+dYTdE5lkvAoN5QfLfSRpH2ublrE1AdOgHGSgMXGFFZ62rCVLx4ukKgjhl01bj8cg4T5ix37BwdRjkE94NVwBudTynMBxw5K9BfAINfPWPV8KDL/yaCZaUIGWBj/QNGYkZ1YYVs2g=
+	t=1790083149; cv=none; b=LUzQFYk3vrbKp528w+WptrLWyLqFp2ng4EnQgaUf7JNlJlluo+wvWSuzeP9YwUOOz5uRClHCQrx4RkA440Err/vp6TbFSf7BY4GUtOc7TkBJWNcQT0Hck2aEcNrrPwAEvcc8J/oRDYHC8yFOw7tBrxO8xZDkNbHQD61MQYGCvrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790081394; c=relaxed/simple;
-	bh=f0q0cC6lq7vVx5O0zXmTQLlKcPPRMuFaHUE0gETvub4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T/7AojjQtnchzNU89h+9a1fy/CZv8v5RUn3oDCLJcQlvogqzkzpb4f3DzanQB8qWlRbi/mvcVmsLMFLHMW38zHDfYKHL+XhlGoNwY1MkIs3GQSb/kU6GjTCxmbPjUzzubhpOXZa9ohTJ25R6M8iOa2d8DzOfFqG/IVk0WdDPrbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=ddxPrJDG; arc=none smtp.client-ip=62.149.158.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="ddxPrJDG"
-Received: from [172.18.100.99] ([109.238.20.116])
-	by Aruba SMTP with ESMTPSA
-	id 8ztQxxvaCXmot8ztTxj4ap; Tue, 22 Sep 2026 14:46:44 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1790081204; bh=f0q0cC6lq7vVx5O0zXmTQLlKcPPRMuFaHUE0gETvub4=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=ddxPrJDGD2qAjkF/lIOWHPLnKqeC8ApMgVyA6B/MdfZb5wDnHiU53ep91aSq3RJB7
-	 TkEh8iElX2sr+XrAVtdRoGt711MsERhM2r2Ti3FP81+EAk/m28ynvgYbM0TIlwA8az
-	 jKdXd4sqYAoR/N2XdHoMo4PEC/5BRQ6Z6242/C4S4lmWBS9dTmoZuvoPdj8kLyzMUN
-	 +m3wa0am+w0M9gmouPVoTcTF4VNEEU0mFZdlKlvfq3hmm+Wawpo7Tj72teYMXQMS1g
-	 dSGCWJrRRZgNTpboZmcTj1Ah7ge1TD3073682msj9ubA7eANbP9yGR2DyKPMgFq/+C
-	 a6aDS3Tf2nt+g==
-Message-ID: <d9a9ecdf-8e29-4595-aedd-e62afa7ebb4c@enneenne.com>
-Date: Tue, 22 Sep 2026 14:46:43 +0200
+	s=arc-20240116; t=1790083149; c=relaxed/simple;
+	bh=cL+fI7yP1z+214KskulSw5sR9ItYHUC3I/G1UL4DIWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ke7q7XZus/Y4s4dcWXb3FPesyFEwxxk/cy6xGrZtNDQXc1rEigYZyvL7rctezoY0RYyCLZDu3PwSiVh9pTZVC9rA1LEeCchFgUNiW3nKVawbXEQC0grWOID4qPDaUIykiqE2sjA1eSByfuW8M190yeGFeF3PouNU6RzmIb8iDd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs2-f15.google.com with SMTP id 71dfb90a1353d-5c981b0d59cso2602261e0c.3
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 06:19:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790083146; x=1790687946;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=1bNH0lrL2XpOj9M8wxgD6IqfQ0UbYYfZkklr2oZ0W2I=;
+        b=G8YUb7JFmRRUbyCIbLyUGsa+cvSArbL2TV1YHB8UyvrLHVfyyzSfAanBEoPb2fLYhY
+         5JZsISnqKIAyNN8ye5HNHDdS49BSuNkXBQYHGE3YGR/I5VpvBxqiy5rODEoHMWmWzbdE
+         3YyratNcPI42oo+GSoad3u7aaO5pvsTfkzoPksEbiyj7vdAeS/upKq8m7QA0n+mc9H1S
+         rUqamQeLCni81SFUDqcn9qKTZb1MPZJR9R90AGAMX159cIMGGaudvIJ5qAMrCBc5STUF
+         32Q9zhPCIVybwmFbFvUz5lZD2DVmNoYomMF+emBM3nASCb8CV3ZbEhWIoCv0rLjB7kzu
+         yCag==
+X-Forwarded-Encrypted: i=1; AKwUvBxRyn00YVS01OEXZWsiF0hgzWoQx7NrM4bfY3ywtNFFSTUVKJkyzvsUfa+mASoMF4kBrin8TJuSbZyl@vger.kernel.org
+X-Gm-Message-State: AFuF++mLTzKIDIvOeLyRt53KUmAt890t1uttk3zFwB3uCu55pb9H4NfW
+	P+LDLHMmhZFGShtt+Lmm3LzoQ1InC+HWDj0nOUf5FwYK3I/kqT0hXA5dolB2F9LK
+X-Gm-Gg: AYBFou1W/EJ61+8v/4Bu8GhC1+iCtZZvp+4BLT1DfOVmpLTrL4eALm2DW/wPi/ZiPNS
+	50SsgdzDSSDTeyix4kbeRZYcDZsDOWp8XX1duFKH3SpESOEsOiakvd/XFAJApD2vztIYXjZNzHs
+	zZY1mh1lwsW9qSqi8v6OYS1AuqDnljSju+5hCvXDuVLEztxhi99Of6Lf2bmSOHBdo7lfqGhOkiz
+	FwGU6YS+064p6FynpM11pIJutqdMXz3E1HoFhd0wdnVeseqy4pEZuO2jiLooaNjSc3doGUhUSh7
+	rAiSBOe0Xc4UNc5IcG8v7eDKK1cOxNUwFdm0o4oeMdOLjtBQZTmg6d/Io0UvgRj+DghIxTaea8f
+	IwnDG13sILox0CZEgzBv3yYl39Evy1azzC0vZCEKQD7VdolTt6vj7Fhm6n/66m2+qzDDOQwkU40
+	H8vTuQYrJQWJoM2tFl4Z6Q8fZruJfWjoFZ5P/EFLZaoTLS3mcA6yEY6CeHgbOIxBLRI7rD2itwo
+	ZeUyVidBJSTJDev3cVZBwYdmDybODU0nTPe
+X-Received: by 2002:a05:6122:4909:b0:5c8:2852:36cf with SMTP id 71dfb90a1353d-5c9b58810c0mr9718578e0c.4.1790083146000;
+        Tue, 22 Sep 2026 06:19:06 -0700 (PDT)
+Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com. [74.125.227.12])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9850d694f62sm1689854241.10.2026.09.22.06.19.05
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Sep 2026 06:19:05 -0700 (PDT)
+Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c67e53002bso2406854e0c.0
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 06:19:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwuhW+YhVXInqk3opUp2ddokeF6HnGtBXO26ZhDI27sZjIIvpqagrG4ZiWRlbfgO9yaHTlj6iuQSpGp@vger.kernel.org
+X-Received: by 2002:a05:6122:468e:b0:5c7:9445:f468 with SMTP id
+ 71dfb90a1353d-5c9b58a57a9mr8626707e0c.6.1790083145505; Tue, 22 Sep 2026
+ 06:19:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/4] pps: clients: gpio: release pins to an inactive
- state on remove and shutdown
-Content-Language: en-US
-To: Eliav Farber <farbere@amazon.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Andrew Morton
- <akpm@linux-foundation.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260919171157.5502-1-farbere@amazon.com>
- <20260922103051.5257-1-farbere@amazon.com>
- <20260922103051.5257-5-farbere@amazon.com>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <20260922103051.5257-5-farbere@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfA2aDaQVKEbpTse9f45LNzMHDuaD8AVcB9Q6rWN6/9PL1cCiGJ1KVqZN0qipJb4HZhbBqy3tMhRLIrMCve4As6O9ENPY/28xGi7HGWyXmFtKnxyDx73c
- TvGPEchO0vACmVImkv1+RVPZQilda5M+fA3K/TwlWBzlk93Lv2GYL/tQyAaVuvo+dZNbouokZzBsjGtkFFTK0Dpv5FlwIm053uYqguRgMolFbGteZ7T6LFaa
- Z6n1K6zLbmgjeVf7BVU7SVZZfz6aTNh0C9CQxDS9UJFivwBTA+isBGBSEBmXTcQI1OqoC+Pkvvbxslf0BCg03aOqHjketpbWw351JfQDl1bKqOKcoR7yKgh2
- dgBOwj2bQMv3JytP51yKpvf2CrpW0BKdP0TZuP6KBKUGQxn8kKMxxqVGz+0sg/BzLflLmt1Chuf5pBzg5G/IOzZSQx43e+6RUHksKVigKOWZi2RG+P1jAo5Y
- 3gXDcfnYMrdi1HFydeDxIo0bZRpq/11v+Gbs+6Y+n/6Mm6tnL5bjySvY4MZBqlVdCsG8KR7Im/XvSfyRgCxElXXbZ+k1qvpTC7sCYA==
+References: <20260921232551.3129244-1-robh@kernel.org>
+In-Reply-To: <20260921232551.3129244-1-robh@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 22 Sep 2026 15:18:53 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV7D4RZ6zA_0jBqnCz8gee2=9bbNAXETbbNQxANhJ5pZg@mail.gmail.com>
+X-Gm-Features: AclHuK8ei4T-jqiTZlN6RJORisuwZufxDS4cn_ittDTbFNHhpoPmq30pEuWosgI
+Message-ID: <CAMuHMdV7D4RZ6zA_0jBqnCz8gee2=9bbNAXETbbNQxANhJ5pZg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: pinctrl: renesas: Allow power-source
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 22, 2026 at 10:30:51AM +0000, Eliav Farber wrote:
+Hi Rob,
 
-The probe-failure path looks right to me now.  Only small things left.
+Thanks for your patch!
 
-> +static void pps_gpio_shutdown(struct platform_device *pdev)
+On Tue, 22 Sept 2026 at 01:26, Rob Herring (Arm) <robh@kernel.org> wrote:
+> RZ/V2M pin configuration nodes describe the I/O voltage with
+> power-source. Add the property and allow the 1800 mV and 3300 mV
+> values used by the DTS.
+>
+> Assisted-by: LLM
 
-This runs on every board, including the ones that describe no "inactive"
-state, where the free_irq() and the echo teardown buy nothing.  Harmless
-as far as I can see, but the commit message only speaks about the mux --
-worth a line there?
+Dear LLM: please consider the actual driver source code, too.
 
->  	if (IS_ERR(data->pps)) {
->  		dev_err(dev, "failed to register IRQ %d as PPS source\n",
->  			data->irq);
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-This stayed dev_err() while both its neighbours became dev_err_probe().
-Nothing is broken, but "matches the rest of the file" was the argument
-for patch 1.
+> --- a/Documentation/devicetree/bindings/pinctrl/renesas,rzv2m-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzv2m-pinctrl.yaml
+> @@ -73,6 +73,9 @@ additionalProperties:
+>          bias-disable: true
+>          bias-pull-down: true
+>          bias-pull-up: true
+> +        power-source:
+> +          description: I/O voltage in millivolts.
+> +          enum: [ 1800, 3300 ]
+>          drive-strength-microamp:
+>            # Superset of supported values
+>            enum: [ 1600, 1800, 2000, 3200, 3800, 4000, 6400, 7800, 8000,
 
-I would keep timer_delete_sync() here rather than moving to
-timer_shutdown_sync(): the kernel-doc motivates the latter with the
-circular-dependency case, which does not apply here -- the only rearm
-path is the echo, behind free_irq().
+drivers/pinctrl/renesas/pinctrl-rzv2m.c does not implement support
+for PIN_CONFIG_POWER_SOURCE yet.  So I'd rather not advertise the
+power-source property in the DT bindings until the driver is fixed.
 
-Ciao,
+Gr{oetje,eeting}s,
 
-Rodolfo
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
