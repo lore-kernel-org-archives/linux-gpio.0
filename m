@@ -1,127 +1,214 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B77A4AF169
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 09:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D4244F54B;
+	Tue, 22 Sep 2026 09:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790069620; cv=none; b=f8PBT1AbPH0tG0tT1n+H79aMw3IRKXRzoIzuuI1SmJd1Q++mG9fALtSlgWMvb27xp9T8QSWxZhL9sy+/YL1lTbmfdPOKeBkYREcQTIPLUFrffxk5AG+pMxVcsOYl+UUKR9aiYn186XpKjiqgD5LRdcyTcJXJdD9yD9KgQMR68Gw=
+	t=1790070924; cv=none; b=ZU7/Bh7YlNsJAce3YoHLBhorUWTgac4NQG4vhgU4/J2U9dGXCnEAE8NDtnX7JxLY3uDvtJ5RT0pNZptxgk0+ZOlv/n4GO2fjGOBI7Hynn2zDGSYTgz15pY2wvSDdnoAe3GZHrcLc4AFyhj87kquu5PXRVPU3rNZXtS3Shgw/BAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790069620; c=relaxed/simple;
-	bh=Ydb8A5IsSmXFv8QsCXm2Zg3ISAVzToCc4PjSnCMZxDY=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UlDQbilHu+K+IRAGDe5qhJ/23WqgtIpePOjfRIFekIgD5mDbhYtK955+/CzwnexrQBJimNdqn0BAYzenQr8vhHBzsCN511dVFxwFUVW26paR9qaIwsD0wo9zQEs6gJ0Sy5seeUALu3ktaxbYPgF0ZPEhnzKIZKq/7VaJVlNnNt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdrZ9XjI; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdrZ9XjI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0319A1F00898
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 09:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790069619;
-	bh=069+GQ/DIF+/n6F/rVAvVoNM7EVQnIJJNnVPO8L6lWU=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc;
-	b=cdrZ9XjIRkpQIxdl0l0Y+Jl9JSLQgRL7EE8hm/8hwWobiOGtRN1xti+y2R36t3vM3
-	 PgrgnSlhugjy9OdzTSAfLw0T6pOagpps8Kg5gVmsmGefUfyxgvGDBc6LXfENuI7KOf
-	 LzcQHIYS3iF7e5RCYjZwWJE2IXptY+UhR/2LL4QvHpgRN86QFkf3Hd6ieKZntHJyKs
-	 CcbnjwXg7ZLXkLRn4bAGUGB1w4eIYbuULh37WWo6mdKaCbFPGrNNDaGKfA8vh68CTo
-	 Ijb+B/Oe/jNu1sP1b7/3piCHmYJpqjY4IT2rMs9rdr9LKKrBgDPwedBX7H1DO4Pi78
-	 PH5kULd5VW9fg==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3a5a0703ae7so5075711fa.0
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 02:33:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzsC8kEZu22Wfl233Z3nog4QTmqZQE8fd8oiBZI0LQN8aiUulkA5G/7xVQ65uDe1nTwUynxpjfJfSeo@vger.kernel.org
-X-Gm-Message-State: AFuF++nQsw9Ck9qbvR/CrhTbe4yjl8XAuAtMUF/s2Z/Be0G570k95gGv
-	4mFpdtG5vPfrE8w8w15mFG9Kq+HdH52kT5VPBxnzDIzPOLBtdeZWHLmuon322SKY+HEds74XsBK
-	NPlo3dTpZTxbqLNCbD9TAFdlAvKUhQqHk8dCMIcZxPA==
-X-Received: by 2002:a05:651c:a189:b0:3a5:eacf:9811 with SMTP id
- 38308e7fff4ca-3a624d70958mr4810711fa.14.1790069617628; Tue, 22 Sep 2026
- 02:33:37 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 22 Sep 2026 02:33:35 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 22 Sep 2026 02:33:35 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260922090955.GA35938@rigel>
+	s=arc-20240116; t=1790070924; c=relaxed/simple;
+	bh=1USIA3QuKT3HfWYjrwytG+eI3HrgQopFvJxZ0ymZ0DU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BNMiYeJExEwEP8g1PYYW36ojyRUTVomZO4OZegs0UmAnT7GoROYECB8CzV0Y3nd8yuV/T2BL24HgWTOPGb12GWbKwOTUaZBdLcTSqgZ5PI9HUZT04BUaJOCk6Bu8mX06S0+rHlyz1IAVa9CW4Vh/DvaFqvRCgGNctH8yaB0JZTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.159])
+	by gateway (Coremail) with SMTP id _____8CxvtKGULJqIpkOAA--.42672S3;
+	Tue, 22 Sep 2026 17:55:18 +0800 (CST)
+Received: from [10.161.0.102] (unknown [223.64.68.159])
+	by front1 (Coremail) with SMTP id qMiowJAx3c6CULJqSbcjAA--.10868S2;
+	Tue, 22 Sep 2026 17:55:15 +0800 (CST)
+Message-ID: <52183cd9-4b43-456d-896d-ee2fea6d5d72@loongson.cn>
+Date: Tue, 22 Sep 2026 17:55:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260922-gpio-cdev-stack-leak-fixes-v3-1-7a0c7a4299d5@oss.qualcomm.com>
- <20260922090955.GA35938@rigel>
-Date: Tue, 22 Sep 2026 02:33:35 -0700
-X-Gmail-Original-Message-ID: <CAMRc=MfT-T0pQTvB3a_1BeOhPHztPh5pGs1Br225GVm1pFN_Yw@mail.gmail.com>
-X-Gm-Features: AcwNN1XpWe_ilycObMRbYUBy0psjXERCXkaGG5VxtWxmcE7WWxLhXalMicOFPN0
-Message-ID: <CAMRc=MfT-T0pQTvB3a_1BeOhPHztPh5pGs1Br225GVm1pFN_Yw@mail.gmail.com>
-Subject: Re: [PATCH v3] gpio: cdev: fix kernel stack leak to user-space in
- error path
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	Sashiko <sashiko-bot@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Binbin Zhou <zhoubinbin@loongson.cn>
+Subject: Re: [PATCH RFC v9 0/8] mfd: ls2kbmc: multiple fixes for this driver
+To: shankerwangmiao@gmail.com, Chong Qiao <qiaochong@loongson.cn>,
+ Lee Jones <lee@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+ Corey Minyard <corey@minyard.net>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>
+Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
+ Yinbo Zhu <zhuyinbo@loongson.cn>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ mfd@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+ Corey Minyard <cminyard@mvista.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+References: <20260811-ls2kbmc-mod-v9-0-4fa9a5584406@gmail.com>
+In-Reply-To: <20260811-ls2kbmc-mod-v9-0-4fa9a5584406@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAx3c6CULJqSbcjAA--.10868S2
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/1tbiAgESCGqx8fgGjgAAsD
+X-Coremail-Antispam: 1Uk129KBj93XoWxuFW7uF1UCw43Xw43Kr45Arc_yoWxtry7pF
+	Z0kFW3Cr4DJr4xKFsa93WxuFya9an7JF43GrnrK3s8ua45uFyxZrW3KFyY9FyDArZ3uF1S
+	vF15tFnrGFyDA3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	AVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
+	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
+	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
+	0xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
+	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
+	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8loGPUUUUU==
 
-On Tue, 22 Sep 2026 11:09:55 +0200, Kent Gibson <warthog618@gmail.com> said:
-> On Tue, Sep 22, 2026 at 10:52:28AM +0200, Bartosz Golaszewski wrote:
->> If we fail to acquire the GPIO chip guard in gpio_desc_to_lineinfo(), we
->> return immediately before zeroing the info struct we'll end up passing
->> to the user-space later in lineinfo_get_v1(). This may leak the kernel
->> stack contents. Make gpio_desc_to_lineinfo() return int so that the
->> -ENODEV returned on failure to acquire the guard can be propagated to
->> the callers.
->>
->> While not strictly necessary: move the memset() before trying to acquire
->> the SRCU read lock too for good measure.
->>
->> Fixes: d83cee3d2bb1 ("gpio: protect the pointer to gpio_chip in gpio_device with SRCU")
->> Cc: stable@vger.kernel.org
->> Reported-by: Sashiko <sashiko-bot@kernel.org>
->> Closes: https://sashiko.dev/#/patchset/20260912123529.7951-1-tzungbi%40kernel.org?part=3
->> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
->> ---
->> Changes in v3:
->> - Don't emit an error log message from the line info notifier if we fail
->>   to acquire the chip guard
->> - Link to v2: https://patch.msgid.link/20260921-gpio-cdev-stack-leak-fixes-v2-1-3307c4320352@oss.qualcomm.com
->>
->> Changes in v2:
->> - Make gpio_desc_to_lineinfo() return an integer return value so that
->>   the error code returned in case of a failure to acquire the guard can
->>   be propagated down the stack
->> - Link to v1: https://patch.msgid.link/20260917-gpio-cdev-stack-leak-fixes-v1-1-2bb52879e49c@oss.qualcomm.com
->> ---
->>  drivers/gpio/gpiolib-cdev.c | 32 +++++++++++++++++++++++++-------
->>  1 file changed, 25 insertions(+), 7 deletions(-)
->>
->
->> @@ -2491,6 +2502,7 @@ static int lineinfo_changed_notify(struct notifier_block *nb,
->>  	struct lineinfo_changed_ctx *ctx;
->>  	struct gpio_desc *desc = data;
->>  	struct file *fp;
->> +	int ret;
->>
->>  	if (!test_bit(gpiod_hwgpio(desc), cdev->watched_lines))
->>  		return NOTIFY_DONE;
->> @@ -2521,7 +2533,13 @@ static int lineinfo_changed_notify(struct notifier_block *nb,
->>
->>  	ctx->chg.event_type = action;
->>  	ctx->chg.timestamp_ns = ktime_get_ns();
->> -	gpio_desc_to_lineinfo(desc, &ctx->chg.info, true);
->> +
->> +	ret = gpio_desc_to_lineinfo(desc, &ctx->chg.info, true);
->> +	if (ret) {
->> +		fput(fp);
->> +		return NOTIFY_DONE;
->> +	}
->> +
->
-> Drop the ret and just test the return directly?
->
-> Sorry - should've picked that up in the previous version.
->
+Hi:
 
-I actually prefer the assignment, I find it more readable.
+On 2026/8/11 16:07, Miao Wang via B4 Relay wrote:
+> Previously, the driver has been introduced to support the Loongson 2K
+> BMC running on the Loongson Servers, which is essential to prevent
+> the system from hanging when the BMC is being reset and the default
+> efi-framebuffer is being used. However, there are some drawbacks in the
+> driver.
+> 
+> Firstly, the driver tries to read and write to the connected PCI-E host
+> controller registers, assuming that the BMC is connected to LS7A PCI-E
+> host controller. This assumption should be true for real products, but
+> to prevent from accidentally reading and writing to the wrong PCI-E host
+> controller, this driver should be modified to check this before
+> accessing the registers.
+> 
+> Secondly, the driver uses non-exported functions to tell the vt
+> subsystem to redraw the screen, preventing the driver from being
+> compiling as a module. This can be fixed by using the exported
+> functions instead.
+> 
+> Thirdly, the driver directly accesses the GPIO controller registers
+> using hard-coded addresses, which might conflict with the loaded GPIO
+> controller driver for the same GPIO controller. This is fixed in this
+> series by using the GPIO subsystem APIs instead. To associate a GPIO pin
+> with a certian PCI device, it should be declared in the firmware level,
+> i.e. in the ACPI table or the device tree, and thus the firmware
+> interface should be discussed and coordinated with Loongson personnels.
+> Despite of this, the proposed solution in this series should be the
+> minimum necessary change to express such association. Furthermore, the
+> conventional GPIO pin number and the controller address are also
+> provided, to be used as a fallback when the GPIO pin is not declared.
+> 
+> Finally, there is a minor issue in the driver where it changes the
+> mode string describing the screen resolution during probing, which
+> prevents the device from being probed again if -EPROBE_DEFER is
+> returned by the probe function.
+> 
+> I have tested the changes in this series on a single-socket Loongson
+> 3C6000 server with a Loongson 2K BMC, and the driver works as expected
+> when the corresponding GPIO driver is additionally loaded.
+> 
+> Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
+> ---
+> Changes in v9:
+> - Extend the kernel docs for gpio_device_get_fwnode() to describe the
+>    usage of this function, as suggested by Bartosz.
+> - Link to v8: https://lore.kernel.org/r/20260810-ls2kbmc-mod-v8-0-16e44f7322f4@gmail.com
 
-Bartosz
+I’m deeply sorry for the delayed response due to personal reasons.
+
+Regarding Patch-1, I don’t mind using your current version as is—it’s 
+more complete. However, I received another email from lkp[1] a few days 
+ago, and I still hope this patch can be merged sooner.
+
+The current discussion is focused on the GPIO-related patch, but in 
+reality, it isn’t closely tied to the other patches; it’s more of an 
+optimization. If possible, I personally think we could set it aside for 
+now and treat it as a separate set of feature optimization patches.
+
+[1]: https://lore.kernel.org/all/202608230816.ifMzE0No-lkp@intel.com/
+> 
+> Changes in v8:
+> - Address issues found by the Sashiko AI review bot
+>    - Fix the error path of the probe function, preventing unintentionally
+>      returning 0 on failure
+>    - Reorder the patches in the series to make the change to the Kconfig
+>      entry for ls2kbmc to be the last patch, to satisfy the AI bot's
+>      concern on failure to clean up when the driver is built as a module
+>      and is being removed.
+> - Link to v7: https://lore.kernel.org/r/20260810-ls2kbmc-mod-v7-0-8aa0fb5a5462@gmail.com
+> 
+> Changes in v7:
+> - When parsing the mode string, require the mode string to start with
+>    "video=", reverting the change in v5. Add a comment to describe the
+>    reason for this change to satisfy the AI bot's concern.
+> - When printing the invalid mode string, use %*pE to print the string
+>    to prevent the string from printing garbage characters, as suggested
+>    by the AI bot.
+> - When calculating the stride, check that the multiplication of width
+>    and depth does not overflow, as suggested by the AI bot.
+> - Add gpio_device_get_fwnode() into gpiolib.c as a library function to
+>    get the fwnode of a GPIO device, as suggested by Bartosz.
+> - Adjust the coding style of the patch as suggested by Bartosz.
+> - Link to v6: https://lore.kernel.org/r/20260805-ls2kbmc-mod-v6-0-16ccde412d86@gmail.com
+> 
+> Changes in v6:
+> - Ajdust the Kconfig entry for IPMI_LS2K, moving the dependency on
+>    MFD_LS2K_BMC_CORE to the IPMI_SI Kconfig entry, as discussed with
+>    and agreed by Corey.
+> - Link to v5: https://lore.kernel.org/r/20260804-ls2kbmc-mod-v5-0-e6bc5cdd9a93@gmail.com
+> 
+> Changes in v5:
+> - Address issues found by the Sashiko AI review bot
+>    - Maintain the compatibility with possible unexpected mode string when
+>      parsing, although such mode string is actually not expected, to
+>      satisfy the AI bot's concern.
+>    - Add a comment to point out that the adjustment of the Kconfig entry
+>      for ls2kbmc is in the following patch, to satisfy the AI bot's
+>      concern.
+> - Link to v4: https://lore.kernel.org/r/20260731-ls2kbmc-mod-v4-0-d201502ba239@gmail.com
+> 
+> Changes in v4:
+> - Use a better way to get the GPIO device fwnode.
+> - Add a comment to describe a problem found by AI bot which is actually
+>    intended.
+> - Link to v3: https://lore.kernel.org/r/20260710-ls2kbmc-mod-v3-0-ef718636e78e@gmail.com
+> 
+> Changes in v3:
+> - Check the return value of devm_add_action_or_reset when registering
+>    the cleanup hook of the work queue
+> - Use swnode to create the link between the device to the GPIO chip,
+>    and prevent borrowing the legacy GPIO APIs
+> - Link to v2: https://lore.kernel.org/r/20260708-ls2kbmc-mod-v2-0-2afdd1741766@gmail.com
+> 
+> Changes in v2:
+> - Several fixes suggested by the Sashiko AI review bot
+> - Add a cleanup function for the wq on removal of the device
+> - Relax the reverse dependency from CONFIG_IPMI_LS2K to
+>    CONFIG_MFD_LS2K_BMC_CORE to allow the driver to be built as a module
+> - Link to v1: https://lore.kernel.org/r/20260708-ls2kbmc-mod-v1-0-c344bf5defa3@gmail.com
+> 
+> ---
+> Miao Wang (8):
+>        mfd: ls2kbmc: Make a copy when parsing mode string
+>        mfd: ls2kbmc: Sanity check for the connected pci port
+>        mfd: ls2kbmc: Redraw using exported functions
+>        mfd: ls2kbmc: Cancel the work queue on removal
+>        ipmi: ls2k: adjust dependency to its mfd driver
+>        gpiolib: add gpio_device_get_fwnode() helper
+>        mfd: ls2kbmc: Capture the reset event of BMC through GPIO
+>        mfd: ls2kbmc: Able to be compiled as a module
+> 
+>   drivers/char/ipmi/Kconfig   |   2 +-
+>   drivers/gpio/gpiolib.c      |  17 +++
+>   drivers/mfd/Kconfig         |   2 +-
+>   drivers/mfd/ls2k-bmc-core.c | 247 ++++++++++++++++++++++++++++++++++----------
+>   include/linux/gpio/driver.h |   1 +
+>   5 files changed, 210 insertions(+), 59 deletions(-)
+> ---
+> base-commit: 11028ab62899e4191e074ee364c712b77823a9c4
+> change-id: 20260626-ls2kbmc-mod-5209193009b2
+> 
+> Best regards,
+
+-- 
+Thanks.
+Binbin
+
