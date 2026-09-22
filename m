@@ -1,78 +1,47 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9554D552952
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 21:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3914F51616C;
+	Tue, 22 Sep 2026 22:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790111839; cv=none; b=WQlUbEN/Qcc5NgrC8D2I6iCP3CRO6RmfoddN9mKaH55VzNOLc9JmAmN0WuXu1KiSUNlzJHEleMw9k1xzRgLOQtEq2CsZHbQwixVTayQxZGu/MDmR1bhTR2qr/EI3GqROVB0DqckOjRz1EqPtCFZVwNrPzxnznkkXzz02NGvP1Ao=
+	t=1790115903; cv=none; b=XmDXgU1xUxNDtYJ2hQA8RHD0P+MeoyPHI4bTv3M2vT7ybOI36TKpR3Lxd0r0StukB7BYBAC6iLDUUZj3RtK61TNj2KMhztYae5hTVYvtRbwsmKOrfz6TqWEw9Yf/NOhr3FyMDDxa6S8pLDoz7eZxx5eZUsIwd+kZ0gKohwbJze0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790111839; c=relaxed/simple;
-	bh=eqQky4L6vFtBRd5JuCtAYhYItfEVb6bBoMxiAflUToY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IdrapWC0Id8GJjGUxUKPj5e442pu14VgnMKHGUD1XXWOjShIv40nluhcJ2bdIvfaSuSvdwM12Yn0Xx+tK6INchRaU86C/274QZNtswdAw9y9q35/p3zDsRnCMjT1spMsb7EEE7+0OkvAYHTWkUUHWDuUoX8TVBuT/NH1F87ZECc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PB5/g00o; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790115903; c=relaxed/simple;
+	bh=+mGzfvcGRvvDxMhn1pdz8wAXxa1sKYRxsMNMo4xftkQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DJJhNo1fp6LyE9DRW93eZccYnlGK9eRINgwU0lABe7u4ywlFrKXnYJ2KHfAQeHyOQbg91jRN2spzGbxZV2OY6LbIEuHr8+SpbZnODmRyy0gC6VFaVJkZNXeW0J90usAgUD+u4T7zlRe64kMjbUMIarslEoHyZR+kHMf8CpXSOIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cjCKBqcK; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PB5/g00o"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-cc52c1b8286so181326a12.1
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 14:17:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790111834; x=1790716634; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=iBiLSQPmd8h7HPBJ0oHvFXtAParwes62y7xIdG7uRP8=;
-        b=PB5/g00ovBKpheSksDTf+D2zSdyEaCb4ZGl9D1+0QJg9j+57VCJjtNEgOaqWu6lIK3
-         GDKuoIlHz2KN6DusGQAT48Ucit3RphTDZuUiTgeB8Ulrs/LJejq0V9jB0ewtd+TH3bRf
-         UKm0B8GWMAhx0ks0+0C9za5+VRy0YMTiwOfI9rI5RyZSVs5fuc7lBJS6M6/oFI9OghBc
-         Ecf2rV8wDbL6OPU4txjp2B7JOvjMZaK08ZhArUl8QiV9LQKR9V+uVWXZSPTJ1ML0hKnl
-         iAYkD2hcIuO7ZA6Y5SaMF2EumFbrX4Gwjhgd67GGEhD4w9TkBVqLr3UgBGsWwvEn/5Ne
-         pXow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790111834; x=1790716634;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=iBiLSQPmd8h7HPBJ0oHvFXtAParwes62y7xIdG7uRP8=;
-        b=s9k/eXGa3N+aU0dZTDib/NgQrvfibLDu9JzgVhYcamIqCXY4JsLP0PDaRG2zjXrN57
-         oXx4sX3zhMXMLJS4qLO0g9SJchQ/CwY2HVcp0hz/WgzhAozFYEeuuNW0WjUUJkjlTUZl
-         /3hYM26vvfZEApTxC+im2FB49GYDgreS7U+xd/fdapYOSKJyCeh9D1PlsHOHSDmhyWof
-         ZnXj0XUMVf6+1eZWa4X8jHjLhG3Y4ZqYdli8hIKELbmff7XTwPgXb+EgKTXGE4pGb9F/
-         OvlnPxoYDygeIMOyEWQbqbax6LNu200ONdwoNe22YpT+YFEfHean32oa7kXD1J8lbEq7
-         pEeQ==
-X-Forwarded-Encrypted: i=1; AKwUvBw44o+6o2+OuWINc56VLmVOr3V3kI+wkJnkf9301bLSoN779k42DhijY47sRfkA9oLjtHZjAnlusi6O@vger.kernel.org
-X-Gm-Message-State: AFuF++lUXgDMJUtcTZiTcIHady/QWbrD5h2oD6QuXPtdP/XFsHJyaVzk
-	nt6eUXkH3Ki1vlbtohsoXLnVPky6/DEDFacktHuFBCBonk2IjTcBPB0S
-X-Gm-Gg: AYBFou2T1ZvlqTLoEZEhPcLSViwshctACFOi9VVTPC2OOJScnf6Y8FTNyh0B9hP+gfo
-	I7cQzb/0az2FFVDGUZGAN3aYNAbC1MQ9IcosiHv4PVxZihN/+0Z1S1r5ixB9foVGZi69b36knSd
-	HNwRSSCjpUK4PZjiKj4mlhDJPq67sNZF5+cIDcoI0YFqdXEOjoedT5g6ceW/glRNXbh/tjABaSt
-	XwHH2ltDv2GT43QHXQAMO+bAOfj5FLszT1/iKdSGYz+mYTialh5OdyA03tD9MGGdGt3y5FdZbLe
-	mBZ6A22vn5YKxMniLhvLHMFd/XPyWY42nlZNJhr0xr94l7b8IOcNuWOiP4VDU3iCP4fGZl5PoRv
-	2CFcGMSLGoczOVAx09VaGSPRLfSBpzTDCPy9TufPgDPFtRxcT0q+1sUNvHD8cEEpLRU3eJgxIdE
-	a7SmzrTST/0vYgTODwLulSEsPffujscX4h15kW6zghEsAVV+q6Io5Vu6hXweIKKnTMJYMHi8QUl
-	V9x2SLwzMO/Lf2YhcQ=
-X-Received: by 2002:a05:6a00:288b:b0:878:3705:5720 with SMTP id d2e1a72fcca58-87c857f2d1dmr1780277b3a.44.1790111833487;
-        Tue, 22 Sep 2026 14:17:13 -0700 (PDT)
-Received: from cfarm424.jing.rocks (cfarm424.jing.rocks. [2600:3c18:e002:2e11::c424])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-87d1afb8e37sm320280b3a.5.2026.09.22.14.17.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2026 14:17:13 -0700 (PDT)
-From: Ridham Khurana <khurana.ridham222@gmail.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Thorsten Scherer <t.scherer@eckelmann.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cjCKBqcK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3EEB1F000FF;
+	Tue, 22 Sep 2026 22:24:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790115891;
+	bh=vWi2Axh0FHWZnYR9ulxCow+anQdMaqgalXbk9rXUqks=;
+	h=From:To:Cc:Subject:Date;
+	b=cjCKBqcKEru9zM97pqeXmgjpuIsJTYOlXU65lbCzviwU1uTCQc7/jP5GAGwVB8bC3
+	 bAIdF0wadiIt0JD/TxosSvXCWr9Whe6gR35sjbdMUGcXYb5w48YTA1eC9WXRva11H/
+	 cqrhIh6itFZQlEK/IePJv8OzC1ogosWKzq0KXyXGdcAFPwNgDB3B3mP4DHYUQk52eb
+	 56ZMiCgnM3aN1iAVCpEznT0im7FSJv1scneOxejhud4uCnr/3PEpA5l1d9caLkTxgp
+	 TC113L05PJvZN8TUmOE1ja4cEkgoSNn97JzZLn8IuKqKPH5qSA2ojJ93x92ZILsL9K
+	 CUM0Xnq6unQRA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Sean Wang <sean.wang@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Andy Teng <andy.teng@mediatek.com>
+Cc: linux-mediatek@lists.infradead.org,
 	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Shuah Khan <shuah@kernel.org>,
-	Jori Koolstra <jkoolstra@xs4all.nl>,
-	Brigham Campbell <me@brighamcampbell.com>,
-	linux-kernel-mentees@lists.linux.dev,
-	Ridham Khurana <khurana.ridham222@gmail.com>
-Subject: [PATCH] gpio: siox: normalize return value of gpio_get
-Date: Tue, 22 Sep 2026 21:16:58 +0000
-Message-ID: <20260922211702.1480614-1-khurana.ridham222@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] dt-bindings: pinctrl: Fix MT6797 pin nodes
+Date: Tue, 22 Sep 2026 17:24:39 -0500
+Message-ID: <20260922222439.1682749-1-robh@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -81,44 +50,36 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-gpio_siox_get() returns the masked bit from the cached input or output
-byte, so for most lines a high level reads back as a value between 2
-and 128 instead of 1. The GPIO get callback is expected to return 0 or
-1 (or a negative error code).
+Allow MT6797 pinctrl state nodes named *-pins directly under the
+pinctrl controller. The existing mt6797.dtsi uses nodes such as
+i2c0-pins and uart0-pins, each with pins-* child nodes, while the
+conversion only allowed numbered state nodes such as foo-0.
 
-Since commit 86ef402d805d ("gpiolib: sanitize the return value of
-gpio_chip::get()"), gpiolib rejected such values with -EBADE and reads
-of a high line failed. Commit ec2cceadfae7 ("gpiolib: normalize the
-return value of gc->get() on behalf of buggy drivers") made gpiolib
-clamp the value instead, but it now warns on every such read.
-
-Normalize the value returned by gpio_siox_get() to the [0, 1] range.
-
-Signed-off-by: Ridham Khurana <khurana.ridham222@gmail.com>
+Assisted-by: LLM
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
-Build-tested on arm64 with CONFIG_GPIO_SIOX=m on next-20260922. Not tested on hardware.
-
- drivers/gpio/gpio-siox.c | 4 ++--
+ .../devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml  | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-siox.c b/drivers/gpio/gpio-siox.c
-index 958034b9f3f3..d60680ace144 100644
---- a/drivers/gpio/gpio-siox.c
-+++ b/drivers/gpio/gpio-siox.c
-@@ -148,11 +148,11 @@ static int gpio_siox_get(struct gpio_chip *chip, unsigned int offset)
- 	if (offset >= 12) {
- 		unsigned int bitpos = 19 - offset;
+diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
+index f4bab7a132d3..dba2dec15477 100644
+--- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
+@@ -111,12 +111,12 @@ allOf:
+         - "#interrupt-cells"
  
--		ret = ddata->setdata[0] & (1 << bitpos);
-+		ret = !!(ddata->setdata[0] & (1 << bitpos));
- 	} else {
- 		unsigned int bitpos = 11 - offset;
+ patternProperties:
+-  '-[0-9]*$':
++  '(-pins|-[0-9]+)$':
+     type: object
+     additionalProperties: false
  
--		ret = ddata->getdata[bitpos / 8] & (1 << (bitpos % 8));
-+		ret = !!(ddata->getdata[bitpos / 8] & (1 << (bitpos % 8)));
- 	}
- 
- 	mutex_unlock(&ddata->lock);
+     patternProperties:
+-      '-pins*$':
++      '.*pins.*':
+         type: object
+         description:
+           A pinctrl node should contain at least one subnodes representing the
 -- 
-2.47.3
+2.53.0
 
