@@ -1,61 +1,68 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5485F47ECEE
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 07:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CEB45DF47
+	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 07:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790061817; cv=none; b=CHa3mmu6t9x1rT/7wGuO+BKzHsre+WzUoQih9N4gwZtsUGqLGkiQ6AMB7MKm63fKSrDOoN9Xz2ddUPBMTyDI/weG2wvHFp0Fsrnns/p8fk0mwYSz8iDjbMcmf30o2t6egg3EyeYNLRmPytBAlgSHj8jamQirCtGBvKrwkzMLrns=
+	t=1790061868; cv=none; b=Qo0980+XUm+0qzfLQb4dnTegP98JnOU+U1qbz3UNTjELsDwc1/RCl3+pl29ucPykkx6+JKzNDnBatarHBLnMuSCU2BOj3K6YmpZ/fzz0j9LhUu1aaciIpYxv+J/DfpQUmn6mGkoiyM7nYBsehBP0fAQwKm2Z+fbPu8hZprqyxps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790061817; c=relaxed/simple;
-	bh=JNI2RG1atsZurFMJdOXWnbYTlb5ko4psBeGMfQ+vVKE=;
+	s=arc-20240116; t=1790061868; c=relaxed/simple;
+	bh=dnHoQ9hJxT1jx4dONrAt87VQ3Ef84mxygQ9fqqx65vM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RxKz7GyXmkQBkpkb+UR2/RG0U/WfwwyAiuz/d4jsl6QLfBIWqYrHVRtnQfzTCtGO/0U+IIa2yM+iRMYmKJYm/GT+M3UzCiNMpU1B69B4DVaRvPGsFN4Q9CSbvWoQ1H1IRfDEMgS425vRYUyKwuBlGt9eqOG7EsnQlAaVIzlq0IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GgsZ+1AE; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=lnXWN/34XdO8tNAm5EZrLA57T3fYxqn2/tLLCbRZ2+CrImhSaY46WYJMOkkQZCUaRFy5AbviPTdpSLgCQ82ibX4Rpxh1TUP3PwMIjTgDk4rUxNLlQ2Jdy7fI/fpq0OH4FvyE8MaoEkmouZbnwEhE0hxLwI/O0rQ8alz7VZJ/+xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+ZiLe9N; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgsZ+1AE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1DEC1F00893
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 07:23:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+ZiLe9N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A1F31F0089A
+	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 07:24:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790061815;
-	bh=JNI2RG1atsZurFMJdOXWnbYTlb5ko4psBeGMfQ+vVKE=;
+	s=k20260515; t=1790061867;
+	bh=dnHoQ9hJxT1jx4dONrAt87VQ3Ef84mxygQ9fqqx65vM=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=GgsZ+1AEMjRJwSfkiR0nxogFHIfZxkwVrO6h+drKPrhm52Inw7a/2BUu9hGz72soF
-	 6Yjmf68SPWjSLpK3g2CYAxzVnBYu2TbgAHfCFgS8T7uAw8HF5CQKPqDcVrOO+9MqBE
-	 3kWbF0nnx9/hU7ZHYxl6x42Q7+83ZLjgv16sA5YRKERb82rAptvmVE0mmJMM+t/on5
-	 5dwmwRMgdgjBxrKnFxDy4UQQS4qOFaIqRn7b7OXDRfAkgZEjJqtsbM6r5pBWfBQDeq
-	 5EROBxXv/jCPsX8BkBspfjATYttY43Bzk/hQTGfVsTFNkZZcR2lBDlFSBawKTqurzm
-	 pQcHkMLsbxhHw==
-Received: by mail-lr2-f35.google.com with SMTP id 38308e7fff4ca-3a59fa3112cso33699941fa.3
-        for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 00:23:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBw4So3nvwYa/q+5Nf8MQuTx3c7nanAevHXrOZ7lF1CZy2nMNXZUKTVjDeqL8IGcxajXT36VUmPapY5D@vger.kernel.org
-X-Gm-Message-State: AFuF++mMu+xlbOZVPWD/zGDS/Su0SRkVVPM5MKikN32ySo4wcrm9/tL9
-	wmT0wDdtmV/qlyLzNNrS4KWV4SJt2vJ4Jv/rTyiE7OqHgb1zTu7fGawJUVuQwVlSrb2hSzIdc/U
-	OeVkbpLC1NQe6r2Pz3TKIGSyzk0oOsMs=
-X-Received: by 2002:a05:6512:1301:b0:5b6:1a7c:59e3 with SMTP id
- 2adb3069b0e04-5b8c19503fbmr4179618e87.61.1790061814621; Tue, 22 Sep 2026
- 00:23:34 -0700 (PDT)
+	b=f+ZiLe9N+4HhobIOiXEkHSOzJPiavcqREHehqAwNFiC6345vzVqQ0XkFyy0KZLSon
+	 mL8vlDLDMcccOzT/PVl1scbUyc58IKW+EpJhksVggpBN7qVRYVOFrfk1dfoi8DTMLq
+	 XTsyDObN9lrEAZIOn9ddRz8TKaRrnEs+mS0QUYuqlPXuQqg0i/3o4HQSnBnBN2RlkL
+	 t/d7Mf/CRnjOGt/CFEOYqI1b2ZQ3umC3r4HNuAtWJ9HEwmjNVNMvGGPEdmhDctmzKK
+	 /MlckJ13teVFVlHezc3sFsPaWvdMGeBM/MWBUTpKBBKPDweGpMgVU1disO8Pej0Myh
+	 3y51cbIY09riw==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b8d47b5987so247693e87.2
+        for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 00:24:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByUZw7M6CQeWHmrc8e0/d/K2pNPgBqDSqnslr5jsjbcDDm8AlBTfyIJLCSCQi5bNxTiIPAqlpHIdS6j@vger.kernel.org
+X-Gm-Message-State: AFuF++kKIGKntTASS+FEzEkPlT/Pfvxc7qX/zpPUr2meeBu+aeBIhHTo
+	KZ8HDHgKVz2NOGnlPiXZWkCckpmTs0EU9x/aIg13GY/EKC3xAuEHY0e5AK9H5ZKcobGBAZTeWNn
+	bd+1ULDsKUiCs00EUr+D7Rx3+v1/YzXE=
+X-Received: by 2002:a05:6512:b95:b0:5ae:ba8f:f9fa with SMTP id
+ 2adb3069b0e04-5b8c18411aemr4246334e87.18.1790061865764; Tue, 22 Sep 2026
+ 00:24:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260921-cv75-v5-v8-0-282ff5d98dda@ambarella.com> <20260921-cv75-v5-v8-10-282ff5d98dda@ambarella.com>
-In-Reply-To: <20260921-cv75-v5-v8-10-282ff5d98dda@ambarella.com>
+References: <20260921-cv75-v5-v8-0-282ff5d98dda@ambarella.com> <20260921-cv75-v5-v8-11-282ff5d98dda@ambarella.com>
+In-Reply-To: <20260921-cv75-v5-v8-11-282ff5d98dda@ambarella.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 22 Sep 2026 09:23:21 +0200
-X-Gmail-Original-Message-ID: <CAD++jLm8fWyAFY=Uv-O3-9joU+HiKjMAzmd0s6Hc=QEu51wCGA@mail.gmail.com>
-X-Gm-Features: AclHuK-GGgIaNnG4Ini06bdUeHp1yMKnL8W3pPhlAeCPufbAr8VMtoLalY_Q0rU
-Message-ID: <CAD++jLm8fWyAFY=Uv-O3-9joU+HiKjMAzmd0s6Hc=QEu51wCGA@mail.gmail.com>
-Subject: Re: [PATCH v8 10/18] gpio: pl061: convert register access to regmap
-To: longzhao@ambarella.com, Wei Xu <xuwei5@hisilicon.com>, 
-	Chanho Min <chanho.min@lge.com>
+Date: Tue, 22 Sep 2026 09:24:14 +0200
+X-Gmail-Original-Message-ID: <CAD++jLk1WEwWRFdLjkbY3YSJmbQ3oLaoNAv3Ca6ZJ2ebubp2jA@mail.gmail.com>
+X-Gm-Features: AclHuK9erJBC7wstRYz1ZiKk7AbclZKt0-cY_QBUwQ7InLcjPRkXXHSAcSuac_8
+Message-ID: <CAD++jLk1WEwWRFdLjkbY3YSJmbQ3oLaoNAv3Ca6ZJ2ebubp2jA@mail.gmail.com>
+Subject: Re: [PATCH v8 11/18] gpio: pl061: use IRQ_TYPE_LEVEL_MASK and IRQ_TYPE_EDGE_BOTH
+To: longzhao@ambarella.com
 Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-arm-kernel@lists.infradead.org, 
-	Conor Dooley <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Long Zhao <zl020895@163.com>, linux-gpio@vger.kernel.org
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
+	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -64,20 +71,11 @@ On Mon, Sep 21, 2026 at 6:23=E2=80=AFAM Long Zhao via B4 Relay
 
 > From: Long Zhao <longzhao@ambarella.com>
 >
-> Replace readb()/writeb() with a MMIO regmap while keeping the existing
-> gpio_chip and girq irqchip. Use a raw spinlock so irq_ack() can run
-> under the irq descriptor lock.
+> Use the standard IRQ_TYPE_LEVEL_MASK and IRQ_TYPE_EDGE_BOTH helpers
+> instead of open-coded edge and level comparisons.
 >
 > Signed-off-by: Long Zhao <longzhao@ambarella.com>
 
-It would be good if some critical users of the PL061 could
-test this patch.
-
-Wei, can you test this on HiSilicon?
-
-Chanho, can you test on LGE hardware?
-
-but it looks good!
 Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
