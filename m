@@ -1,105 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C272228726E;
-	Tue, 22 Sep 2026 00:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDE53BCD01;
+	Tue, 22 Sep 2026 04:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790036034; cv=none; b=VYfL8Lg/4pSUdrXacVM+IWtPSe7OjOQd+WI9npDL0LYJUCfDBIJA7GEH6vh1eggkkta3HOjD7dvQMB12qctJKo4bRWsrrs0tJbHY89DspvVeOk/f7aMfcsg+1uYCqYi//7h/pRX4amS1VnzSzfVQZNFKu2BV+jalpkYPpip6Bo8=
+	t=1790050845; cv=none; b=vCqC08UWqsklponm8GoGi4r2wxnm/YynD3MNLr44rDEED89w4UDCa0jhmhKtl1pBo5EdBVapFTc2xyWSZhuNWIeNMd3WFS+ZpQJp1z+OaMreI4n8YZhkhvl9Z10VqjdSX32Xr4ivvMueulgNYTTCL+TuJg6LUPN88cj4L7v+76o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790036034; c=relaxed/simple;
-	bh=EjV9dfHR2y7DqcxoV4cR9MIh6oreQRkK5gMDxJTWYus=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OJKOtujZ/y2k5GjB39DylOocCO+jvBDjD7pnPo+Ap8GyYjl+l5491vp4quJrj68n/1JENSEAZEz9nJb6kav+ZGfi2DHZ3LgoCLJ39I4hGpWXqTlgKxxm8khPQe0eQz6pubvE3Z4tw+JXhnPj4+JG9GRj+Xj5LTs3hepgCapbrYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bnXnzWIN; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790050845; c=relaxed/simple;
+	bh=ad1foQTOYEXLcLgFQr70P3Xj3nYeLN3dA9t+EM+hdhM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=jhiRB3NRiXMBgcsjkMH2dU62quC4pJ5RL/UnjZ1UKXsMZQzgM/87YoDHkLgDnFGLkuRs7InIvAzRRuFWPHHMoJpPgbZgvsV480a1R72ksf8dTw9yOG3Z9htD5XrUCMcbUPc0qF5AjKdaHSRqGaQNqnAZlcyoTgFp5llamS1q7hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WH5CGQT7; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bnXnzWIN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 932DB1F00898;
-	Tue, 22 Sep 2026 00:13:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790036021;
-	bh=RmkLO6VWEOj6U21HO13TxLisuarthLMORrQkVWFvFJc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=bnXnzWINCxRnonXQCHU5sXqtlxUISGd7GxjvEHhB6cY3ImR6m0fsys/kmmCDl48LT
-	 BT84i84S4whbQC1AdJMD5L2lvSKEgAjEnaJK7fIyddcuRgddKPxPsSAsSZBbEfbLL4
-	 8LDKMPwQ8qZGrKp5JOF4WVhYtXKT0CWd/vqDvCtlbHf/ZHsKp39EqCcgNwdGNFHIEr
-	 RUynKX24N7LU50F+iAePbbXVz6VrvX2enR6IkrVwHLPdXNi33u17QRB+WxpxN/XypA
-	 1hdLWGdqGcbU2FqvjhnoCzSwi/6EkFJXbrfoy2pVnTmzWeKdt0Wd3vyG5sAd4rKYNy
-	 kZPA2bhtGaV1Q==
-Date: Tue, 22 Sep 2026 01:13:36 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Janani Sunil <jananisunil.dev@gmail.com>
-Cc: Janani Sunil <janani.sunil@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
- David Lechner <dlechner@baylibre.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Olivier Moysan
- <olivier.moysan@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, Linus
- Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Michael Walle <mwalle@kernel.org>, Randy Dunlap <rdunlap@infradead.org>,
- linux@analog.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@baylibre.com>, Conor Dooley <conor.dooley@microchip.com>,
- Andy Shevchenko <andriy.shevchenko@intel.com>, Bartosz Golaszewski
- <bartosz.golaszewski@oss.qualcomm.com>
-Subject: Re: [PATCH v8 00/17] iio: adc: Add AD7768/AD7768-4 ADC driver
- support
-Message-ID: <20260922011336.3a52aa05@jic23-hlaptop>
-In-Reply-To: <457da50e-a633-4508-a8e9-7e000933623c@gmail.com>
-References: <20260916-ad7768-driver-v8-0-27aa24db5225@analog.com>
-	<20260921013732.6c5399e7@jic23-hlaptop>
-	<457da50e-a633-4508-a8e9-7e000933623c@gmail.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WH5CGQT7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=ad1foQTOYEXLcLgFQr70P3Xj3nYeLN3dA9t+EM+hdhM=; b=W
+	H5CGQT7XIildbReuFWgF+cx7krTqSVujXM9OadX60oIyUIQn/KxvC6NoGQNPDoQ6
+	Euvsdpsk4u5+2MPnNPVi0AIAaYL86fGg1VLMFirppLIo2Wb0zdk/Mofg5lJ61IDy
+	gqK7T8VWSKJtv+7y87YaaYr1iISs7ryKsgMu1R72ow=
+Date: Tue, 22 Sep 2026 12:19:04 +0800 (CST)
+From: zl020895  <zl020895@163.com>
+To: "Michael Walle" <michael@walle.cc>
+Cc: longzhao@ambarella.com, "Arnd Bergmann" <arnd@arndb.de>,
+	"Krzysztof Kozlowski" <krzk@kernel.org>,
+	"Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	"Rob Herring" <robh@kernel.org>,
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+	"Conor Dooley" <conor+dt@kernel.org>,
+	"Michael Turquette" <mturquette@baylibre.com>,
+	"Stephen Boyd" <sboyd@kernel.org>,
+	"Jerome Brunet" <jbrunet@baylibre.com>,
+	"Linus Walleij" <linusw@kernel.org>,
+	"Bartosz Golaszewski" <brgl@kernel.org>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	"Jiri Slaby" <jirislaby@kernel.org>,
+	"Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Catalin Marinas" <catalin.marinas@arm.com>,
+	"Will Deacon" <will@kernel.org>, "Lee Jones" <lee@kernel.org>,
+	mfd@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>
+Subject: Re:Re: [PATCH v7 00/15] Ambarella CV75 SoC minimal bring-up
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
+In-Reply-To: <DLL07DMYQ9EN.3I5OQJ93M8J1O@walle.cc>
+References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
+ <DLL07DMYQ9EN.3I5OQJ93M8J1O@walle.cc>
+X-NTES-SC: AL_Qu2SAvyev08v4iacYukcn0wRhug/UMa4u/sm3YNXc8IFsjzg4iUlVkNgBVjUyuKtIgyxmweLaAZBxvZ/ZKZCuTITU4LEoOcwLgmvwt6CaA==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Message-ID: <523f60f4.3f39.1a0c756b94f.Coremail.zl020895@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:hCgvCgDXf+K4AbJquzFMAA--.1123W
+X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbCxRi1J2qyAbiL5AAA3B
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Mon, 21 Sep 2026 10:46:41 +0200
-Janani Sunil <jananisunil.dev@gmail.com> wrote:
-
-> On 9/21/26 02:37, Jonathan Cameron wrote:
-> > On Wed, 16 Sep 2026 13:13:49 +0200
-> > Janani Sunil <janani.sunil@analog.com> wrote:
-> >  
-> >> Add support for Analog Devices AD7768 and AD7768-4, 24-bit simultaneous
-> >> sampling Sigma-Delta ADCs with automatic power mode selection.
-> >> Changes in v8:
-> >> - Introduce the DCLK divider helper in the core patch to avoid moving its
-> >>    register-programming logic later in the series.
-> >> - Document why register caching is not used  
-> > Other than open question on regcache vs volatile registers
-> > this series looks good to me now.  So let us get that resolved
-> > nice and quickly.  If it turns out regcache can be used I don't mind
-> > just tweaking that comment for now and taking a follow up patch to
-> > turn regcache on when you have it ready.
-> >
-> > Jonathan  
-> 
-> volatile_reg would handle the live GPIO and status registers. I will remove the regcache sentence from the comments, leaving just the SPI framing explanation. I'll look at enabling regcache in a separate patch.
-
-I was in process of taking this series and applying that tweak
-so you could build on top and found something curious.
-The ad7768-1 driver. However, I asked claude to tell me if they
-were similar and indeed it provided a bunch of evidence
-to support your statement that they aren't that close.
-So fair enough and someone should talk to your chip naming
-department :)  Applied to the testing branch of iio.git for
-the bots to take a look.
-
-Thanks,
-
-Jonathan
-
-
-> 
-> Best Regards,
-> Jan
-> 
+SGkgTWljaGFlbCwKClNvcnJ5IGFib3V0IHRoYXQuIFRoZSBzZXJpZXMgc3RhcnRlZCBhcyBTb0Mg
+YnJpbmctdXAgYW5kIHRoZSBUby9DYyBsaXN0CndhcyBmcm96ZW4gZnJvbSB0aGF0LiBncGlvLXJl
+Z21hcCB3YXMgYWRkZWQgbGF0ZXIgYW5kIEkgZGlkIG5vdCByZS1ydW4KZ2V0X21haW50YWluZXIg
+b24gdGhvc2UgcGF0Y2hlcywgc28gSSBtaXNzZWQgeW91IGFzIHRoZSBncGlvLXJlZ21hcAptYWlu
+dGFpbmVyLgoKWW91IGFyZSBDYydkIGZyb20gbm93IG9uLgoKQmVzdCByZWdhcmRzLApMb25nIFpo
+YW8KCkF0IDIwMjYtMDktMjEgMjA6NDY6NTQsICJNaWNoYWVsIFdhbGxlIiA8bWljaGFlbEB3YWxs
+ZS5jYz4gd3JvdGU6Cj5PbiBUdWUgU2VwIDE1LCAyMDI2IGF0IDE6MTUgUE0gQ0VTVCwgTG9uZyBa
+aGFvIHZpYSBCNCBSZWxheSB3cm90ZToKPj4gVGhpcyBpcyBhIHNpbmdsZSB1bmlmaWVkIHNlcmll
+cy4gUGxlYXNlIGFwcGx5IHZpYSB0aGUgU29DCj4+IHRyZWU7IHN1YnN5c3RlbSBtYWludGFpbmVy
+cyBhcmUgQ2MnZCBmb3IgdGhlaXIgcGllY2VzLgo+Cj5XZWxsLCBub3QgcmVhbGx5LiBJIHdhc24n
+dCBDQydlZCBvbiBhbnkgb2YgdGhlIGdwaW8tcmVnbWFwIHBhdGNoZXMuCj4KPi1taWNoYWVsCg==
 
