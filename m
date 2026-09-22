@@ -1,35 +1,35 @@
 Received: from smtpcmd13147.aruba.it (smtpcmd13147.aruba.it [62.149.156.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402E743498B
-	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 07:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B076247CC6F
+	for <linux-gpio@vger.kernel.org>; Tue, 22 Sep 2026 07:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.156.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790062995; cv=none; b=Q/6/H/76Xpur5luIaSoEjN0jT+35RK1ZFax13Qpx/I1H/SrHZ1b/kDmMCQ83CP+M8jQdwFNKonwi66VPEYTUJzzYInMnbEfpzIPo55V1WMiYnd7aM1w6P178g0XtU6eudg9uV9a521ksK7lqMd+02yUhAs7vZ0se9hcd5CKSg4A=
+	t=1790062996; cv=none; b=q52jZDkaGk875RkhyvdauyXxNsnrJrWnetzdcXQeMqZsPwQoN7Wkmr6zVe+PyX1V7U4qHdzc5LPRsY1rAuvoKktHYvQYsTgGi48NpQTCmrZCrjdSaoGTu2ynVe3eEklyBSr1GHbpjtnlM3cbg0P7hVaUvHLixvhVWFCdE+VVmAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790062995; c=relaxed/simple;
-	bh=Grkpg6QwvGEub0FOHWQG+hEYsY3k1eI0F0dR26tBMeQ=;
+	s=arc-20240116; t=1790062996; c=relaxed/simple;
+	bh=llzfaO1V/laqmSK4HM6q0DcoPobUmUNb+6+M74TTYUA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ojy+XGCqGMbGhkRl0Z9KChyp91ngE8Hu96J9P4P8+KYt9rjYprWydEO1vQIHHyuIkNpA0bTtw82WsHr+nOng/+UgfYiyQAqTzYT4uoDrdopVqtE2xTBW2z3CLov1PW8pLFb7dNfyeGn1SZHNwiw86eOhYM6s9vj+1jyAlggCzw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=MqnwknVN; arc=none smtp.client-ip=62.149.156.147
+	 In-Reply-To:Content-Type; b=nEWMRJVi4Pjvi75+Ghmlu6zbH/vX+p5aJQ+RSC1LPb22upRt4TiINcvPD1t7fwfLJYAVog5db52m2iPR72yG1q41BC8G+WweMuyiCTkrrC3wSdc6/iLDj1aaaJ437CWejUdH3sa4/cFmRCmKKyWWxMS2ywiRgqUWU8zaYD4aNfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=SbYlkDj0; arc=none smtp.client-ip=62.149.156.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="MqnwknVN"
+	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="SbYlkDj0"
 Received: from [172.18.100.99] ([109.238.20.116])
 	by Aruba SMTP with ESMTPSA
-	id 8v6gxQEfXbk7m8v6gxujqZ; Tue, 22 Sep 2026 09:40:03 +0200
+	id 8v6gxQEfXbk7m8v6qxujud; Tue, 22 Sep 2026 09:40:13 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1790062803; bh=Grkpg6QwvGEub0FOHWQG+hEYsY3k1eI0F0dR26tBMeQ=;
+	t=1790062813; bh=llzfaO1V/laqmSK4HM6q0DcoPobUmUNb+6+M74TTYUA=;
 	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=MqnwknVNCIwe/LMq9j8eGuY7KR83AP/iKBJ0ZfsPjFjdTTgwGbzMbrlfGQtLpefql
-	 Q1DscbwnJfxik2uaUsqGBWe1mab8OLvwWxVZHCYUTRZ+q0GEzwBK2GyrwZERvwQXMV
-	 PsfjkMrrwUghzvpaETWeR4rAwhdCScG5pOi90SA1JEuUxUR4/uUs4GtiJZbOGVQgFf
-	 G6Ce6Z5f1mDZS53bdwJ0whP5tBqRk4JkvulEie17LZn7gRl8HIlqj1HjXhyBLJ4xPV
-	 +Y69vHdVLSBL525Tj7wO8cWgeSUJZtL3qB/yjgjSKkVqkqLnviu/g8H560ZAV3mvC/
-	 PV2/9fwv5nuVA==
-Message-ID: <6ffa766f-9a99-41d0-b5df-6c517d1e94e6@enneenne.com>
-Date: Tue, 22 Sep 2026 09:40:02 +0200
+	b=SbYlkDj0Cds1cHMpY24YqoYmVLUN6UJT8IwjqPsEA6I5L9deYxfMfjAm59EgXqS+k
+	 VZcitHaxM8S8zLGELTTmdlp9c7ALEoL4M6xIoYbdwwY/SaX4wCWnVzST3y8+iKmgJT
+	 tAFTCoCKjJHjenC05xfkBDeYf+fLVxk2YD3N0fTMOg914XVSP4I+LmVrjk5SOToZYx
+	 rPQ0NJgvw49elF0jSUbPNEkrcHQDRBPqDSkha3x/yRWFZkGl2L2JYvf2kNy6VOMHiK
+	 Rw/d+Ya8q/sD6dNyXH7lqu8yIcC6zEKHUDAxgNcQl/AZzgmcYru6VfIKM0b+NeEKSa
+	 uYhKe4RkTi7jw==
+Message-ID: <01f30877-07df-460a-94f0-e655485b156b@enneenne.com>
+Date: Tue, 22 Sep 2026 09:40:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -37,7 +37,9 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] pps-gpio: restore pin mux on unbind and shutdown
+Subject: Re: [PATCH v4 2/3] dt-bindings: pps: pps-gpio: document optional
+ pinctrl states
+Content-Language: en-US
 To: Eliav Farber <farbere@amazon.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
 Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
@@ -46,56 +48,26 @@ Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
  devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20260917075611.47881-1-farbere@amazon.com>
- <20260919171157.5502-1-farbere@amazon.com>
+ <20260919171157.5502-3-farbere@amazon.com>
 From: Rodolfo Giometti <giometti@enneenne.com>
-Content-Language: en-US
-In-Reply-To: <20260919171157.5502-1-farbere@amazon.com>
+In-Reply-To: <20260919171157.5502-3-farbere@amazon.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfKe5A5lEJTTmrC4MYyp1N8ycdHvrlcy/UeRZEGvfMgfp7Taj3aM+znC1YaQZ30GLUxBYTYURwiymJHBmwcXUN/HqOcdVRVx5ThX+5/U7YBoIjKZlwq6A
- IAV8lvQTh5AAIcVHMNxX0IUQPdJAKvIQvH8jV4XNlOD0y24zkcitq7AaEw5vSIEptCNdNT3S+GWZ+qN35QEWsLM0kZcmGZAolbaWn02ezu4Bv6xpdKbPJXaB
- o5q829u1cEzOpdm6j6+8FE0F4XkDUCZkBTjAbDFING/1K1OXc+7F1O/JHUMqNNTIPvPf257RtBVUFy5JArUeDpvoteqz69aLuhAuhhHNO0E9DTfvMa60MTry
- wpKpQ/i4Y70Pl3KQeR8p3Oigxv9RqGgHFRb2vwqO+HVB9cWaQlPxgjkZn9nUQZcEcugD9hJIOyl0rNWh0sRa3Sv3q+jiCub6vJ2yXnxPCB1sWuVzF0frt6sN
- rl0b0Ye4UvzhaISQr5anp/iJSjKybkWWO1HEMGXZaYdGJe7S5D26wA/kxmoi4UwEQ2uq9QlDpNd6jrIVF1shHMiQ21DtcqzQcnKM9Q==
+X-CMAE-Envelope: MS4xfAXhmN9VZ+cI7qgXN+FYxYuo8sNQjY4cjcJgPcoyTqqWm22W7aebxnAz4340tN505E/lwSp+IRo6OimR16fSP9SlTL8bTn8XMRVxqKroRVGQwtQ+QAvB
+ fWQ/1kDd058LzdMpMRK4wxCebYil6LLqrGCJWyELhBDjIcyDBxmxlfcTPC6Y3ooSx0CpSnqlK77qy3PmYRwu24Ex1i2BRU1wzux6JevBWa8dPd1VE+JHqUgs
+ il8XtizrU7Jaxrk8e+sNV6wmCsqPVhD+PHX9Ziv+rqtDZ0v4hHTwQ2zyAE0/CHjrVjrKYFqM5dqxO5x2lvdD7WyvhASDeh8IsWmQa2RfSwX6LVJPTPp9EnOa
+ c8ktqqoXqruO+pezuf1RK4mp1V60ZS6eIRW5Ty8fjM4ljFba0srwM6cQa6w6kN0RW5HBDwkINJGHJQ6wZulJ8oW7uQvPLBqtXeNLJ7y00xTzlOPiB40N2ECn
+ AiYGjyNYxSJoaHPDWEehlEySWYaie/qsI3CvXa6X3gebRA4nzgdWphlnDtTUAMo2LhrEYMVu/beOVdvzCeKGMcui+6LNfmiXfY/2cQ==
 
-On Sat, Sep 19, 2026 at 05:11:54PM +0000, Eliav Farber wrote:
-> Open question for the maintainers (patch 3): a probe that fails before
-> pps_gpio_get_pins() has run -- devm_kzalloc() or pps_gpio_setup() -- returns
-> without going through err_release_pins, so the pins are left in the
-> core-applied "default" state rather than "inactive". I did not change this
-> in v4 as I would like your guidance on the preferred approach; the trade-offs
-> are laid out at the end of patch 3's changelog. In short:
->
->   A. Move pps_gpio_get_pins() to the top of probe and route the
->      pps_gpio_setup() failure through err_release_pins too, so every path
->      the driver can act on restores "inactive". (The devm_kzalloc() failure
->      is inherently before the driver holds any pinctrl handle, so it cannot
->      be covered by the driver in any option.)
->   B. Keep v4 as-is and treat "inactive" as a successful-ownership concern:
->      a probe that never looked up the state never took the pins, so leaving
->      the core-applied "default" (long-standing behaviour) is acceptable.
->   C. As A, but keep the release helper's existing NULL guard so it is robust
->      regardless of ordering (belt and braces).
->
-> I lean towards B (the restore is meaningful only once the driver has taken
-> ownership), but I am happy to implement A/C if you prefer uniform failure
-> paths.
+On Sat, Sep 19, 2026 at 05:11:56PM +0000, Eliav Farber wrote:
+> +    minItems: 1
+> +    items:
+> +      - const: default
+> +      - const: inactive
 
-I would choose option A, keeping the NULL check in the release helper;
-I believe this corresponds to your option C. In fact, to me, it
-represents the symmetrical counterpart to what the core did on the
-driver's behalf.
-
-One thing I would verify on your board before proceeding is this: with
-option A, an -EPROBE_DEFER error returned by pps_gpio_setup() would
-result in the "inactive" state being selected, and the core would
-re-apply "default" on the next attempt. I assume this mux switching is
-harmless, but the hardware is available to you, not me.
-
-I wouldn't worry too much about the devm_kzalloc() case.
-
-I also have a couple of observations regarding patches 1/3 and 3/3; I
-will send them directly in response to the patches themselves.
+Just to close what I reported on v3: I ran the binding check on this
+one and the "['default', 'inactive'] is too long" failure is gone, so
+consider my objection withdrawn.  The binding itself is Rob's call.
 
 Ciao,
 
