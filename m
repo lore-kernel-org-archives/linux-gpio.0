@@ -1,214 +1,188 @@
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D4244F54B;
-	Tue, 22 Sep 2026 09:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790070924; cv=none; b=ZU7/Bh7YlNsJAce3YoHLBhorUWTgac4NQG4vhgU4/J2U9dGXCnEAE8NDtnX7JxLY3uDvtJ5RT0pNZptxgk0+ZOlv/n4GO2fjGOBI7Hynn2zDGSYTgz15pY2wvSDdnoAe3GZHrcLc4AFyhj87kquu5PXRVPU3rNZXtS3Shgw/BAo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790070924; c=relaxed/simple;
-	bh=1USIA3QuKT3HfWYjrwytG+eI3HrgQopFvJxZ0ymZ0DU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BNMiYeJExEwEP8g1PYYW36ojyRUTVomZO4OZegs0UmAnT7GoROYECB8CzV0Y3nd8yuV/T2BL24HgWTOPGb12GWbKwOTUaZBdLcTSqgZ5PI9HUZT04BUaJOCk6Bu8mX06S0+rHlyz1IAVa9CW4Vh/DvaFqvRCgGNctH8yaB0JZTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.159])
-	by gateway (Coremail) with SMTP id _____8CxvtKGULJqIpkOAA--.42672S3;
-	Tue, 22 Sep 2026 17:55:18 +0800 (CST)
-Received: from [10.161.0.102] (unknown [223.64.68.159])
-	by front1 (Coremail) with SMTP id qMiowJAx3c6CULJqSbcjAA--.10868S2;
-	Tue, 22 Sep 2026 17:55:15 +0800 (CST)
-Message-ID: <52183cd9-4b43-456d-896d-ee2fea6d5d72@loongson.cn>
-Date: Tue, 22 Sep 2026 17:55:13 +0800
+Received: from iad-out-005.esa.us-east-1.outbound.mail-perimeter.amazon.com (iad-out-005.esa.us-east-1.outbound.mail-perimeter.amazon.com [3.211.80.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47542931DC;
+	Tue, 22 Sep 2026 10:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=3.211.80.218
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790071620; cv=fail; b=L5p3f87NpZhkrDhTp3LqZheyv0eVIcguzQf1WQA6Vk8FB3MIpXCLoeNSL2TGFmMKKUSOr3H4szEQFeqMB32klAz11hl7NjPqRm4G/rFbzwJkkfUw/79WSm+5q9fMd8e1eeO5dGYoh6pjuQzD2+PsjAdQ1McPmwXCVLdngsRjLZs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790071620; c=relaxed/simple;
+	bh=Zkxe8TKIFt52WpED6R01s0NPXgsKzW/CE3ex6f6aFbg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=klnXLyqg7e2D4/5EdNZ+08IWkFKT3Z0bCU2Cx6UxTOZTfF57P/NmGo/MMm5gLhGOz8h9zB42cvVabhBsayeTnnB+uwcSEEiGF89qqE7OBf/tVVx9m+LCoawkSnKgkC4hdY9KtcIOQGlI+ORY6AyhVF/raQDBmXiMKNVds+Li98A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=bx74QQU4; arc=fail smtp.client-ip=3.211.80.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="bx74QQU4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1790071619; x=1821607619;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Zkxe8TKIFt52WpED6R01s0NPXgsKzW/CE3ex6f6aFbg=;
+  b=bx74QQU4JX9kOMXYvCtrMYbVCai+F4KCbk3V6TEo6wHN58eTDLMi3J0v
+   n0NRHuRjJHDZV3T+JLg0QBKa9rCCndvS3m83/EZzTll4serDP9EWcaQPa
+   ht/DmWhtWRPfNeJsvEIwshZThjQ54+sCKsWcMZrLRAEaiHXk0Go5QNIHU
+   vaoCXgW685LHrjJlPxtUZF8+iqNlvxNUJQZDFd1D5QQe/bdBGZUWRfzck
+   RTso0IdJfLoOv0ywphmlgdMIcZyZZAMiirwxskobhKeHGMhi+5Jdn+R0w
+   RBmQJBroxshDnK/EWbPyfxNjfVVPLiwzt6Q8bMWc6GH2rpcjCF+bIWM6L
+   A==;
+X-CSE-ConnectionGUID: j2v4juUTQLuYE4XDAvVUXQ==
+X-CSE-MsgGUID: zaB937lzTc2QvrMKkeUkqA==
+X-IronPort-AV: E=Sophos;i="6.27,116,1787011200"; 
+   d="scan'208";a="27873013"
+Received: from ip-10-4-7-229.ec2.internal (HELO smtpout.naws.us-east-1.prod.farcaster.email.amazon.dev) ([10.4.7.229])
+  by internal-iad-out-005.esa.us-east-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Sep 2026 10:06:54 +0000
+Received: from EX19MTAUEC002.ant.amazon.com [52.94.133.130:27183]
+ by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.4.190:2525] with esmtp (Farcaster)
+ id 31256f21-8f48-40e8-8dc5-68260118c44f; Tue, 22 Sep 2026 10:06:54 +0000 (UTC)
+X-Farcaster-Flow-ID: 31256f21-8f48-40e8-8dc5-68260118c44f
+Received: from EX19EXOUEB001.ant.amazon.com (10.252.135.46) by
+ EX19MTAUEC002.ant.amazon.com (10.252.135.253) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
+ Tue, 22 Sep 2026 10:06:54 +0000
+Received: from EX19EXOUEA001.ant.amazon.com (10.252.134.47) by
+ EX19EXOUEB001.ant.amazon.com (10.252.135.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
+ Tue, 22 Sep 2026 10:06:53 +0000
+Received: from SN1PR07CU001.outbound.protection.outlook.com (10.252.135.42) by
+ EX19EXOUEA001.ant.amazon.com (10.252.134.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49
+ via Frontend Transport; Tue, 22 Sep 2026 10:06:53 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t4uXRieMr4C5U8bQFHVdaRPzDlyfVRxuBLdpj43Cft1rQ1XrBFqFI/E74dwgd0sUKQzNd53zfEBcUs6ollr+GhD8nN/CQx9fnCINAslvXX2Tf2Qd+OjVJa9Qwz5tilnSa5ZrNYPHBH9m1SrUBdc+xtHogyGK3vvG2piTzCgZ/+BDfEWdZUZCLq/37d5ZuZxAewtT50t+5TvHRnMFik5sAA1tVWPQMuWMBJssSVoe1W++TEQ74Op9IW64m8kXveoxTrSD9S8PrIc+2KU0HtixLwRxygN/aubdJziw/5g/c4nuApXU3kGOF0pxv+4cfreEu1U0VyvI5RWX23+fUbCNKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Zkxe8TKIFt52WpED6R01s0NPXgsKzW/CE3ex6f6aFbg=;
+ b=EQyWHpBzZmdrp4m3XXRzSCdyNEs9G0+CU1ycCaGhjynufejIZ4M967T5jB65yanE2jUqF7oNonE6jTbfRJJsUlj4WbpJbpRKxsYfVPny3SdATVvMogQO+b8mdO9zuMq11qcTzD2GAMgo9Ald+MBQx7setv+IPCF2bqjEg3C6nJLS0nmc18Nl9dbZMsiLlj3YANMT28VSn836dkfJcTPYHo0qRbtGMlZxrXLbRvKN+NOLEWfmUOqg7wXRXxQeip40V025pQ7/MhiNor8jtMRvVr1PxpOpY+RR6/hY3FqLaGEtgZ0qwKk2j6ygvZBQjG4ESJS4qvypnop26dIcLZMt4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amazon.com; dmarc=pass action=none header.from=amazon.com;
+ dkim=pass header.d=amazon.com; arc=none
+Received: from BY3PR18MB4722.namprd18.prod.outlook.com (2603:10b6:a03:3c9::19)
+ by PH0PR18MB4508.namprd18.prod.outlook.com (2603:10b6:510:e6::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.13; Tue, 22 Sep
+ 2026 10:06:50 +0000
+Received: from BY3PR18MB4722.namprd18.prod.outlook.com
+ ([fe80::e307:5f61:2694:b219]) by BY3PR18MB4722.namprd18.prod.outlook.com
+ ([fe80::e307:5f61:2694:b219%4]) with mapi id 15.21.0451.012; Tue, 22 Sep 2026
+ 10:06:50 +0000
+From: "Farber, Eliav" <farbere@amazon.com>
+To: Rodolfo Giometti <giometti@enneenne.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Bartosz
+ Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
+Subject: [PATCH v4 1/3] pps: clients: gpio: propagate probe error codes
+Thread-Topic: [PATCH v4 1/3] pps: clients: gpio: propagate probe error codes
+Thread-Index: AQHdSnoVLE9MH5Ndq0av8MA0GPhZDA==
+Date: Tue, 22 Sep 2026 10:06:50 +0000
+Message-ID: <BY3PR18MB4722C9F2BFAD0736215CDD48C6832@BY3PR18MB4722.namprd18.prod.outlook.com>
+References: <20260917075611.47881-1-farbere@amazon.com>
+ <20260919171157.5502-2-farbere@amazon.com>
+ <9eb4bd5c-39f5-4236-a0e0-3c3679bf7f8c@enneenne.com>
+ <BY3PR18MB4722454B7A78A0E47345EBE8C6832@BY3PR18MB4722.namprd18.prod.outlook.com>
+ <235b34e3-2eee-4904-9cdb-490859dabda7@enneenne.com>
+In-Reply-To: <235b34e3-2eee-4904-9cdb-490859dabda7@enneenne.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amazon.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BY3PR18MB4722:EE_|PH0PR18MB4508:EE_
+x-ms-office365-filtering-correlation-id: 9f185aab-35a0-44a2-2d7a-08df1891386a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|7416014|23010399003|1800799024|38070700021|10067099003|11063799006|4143699003|56012099006|18002099003|22082099003;
+x-microsoft-antispam-message-info: Wg1DbWEGmXZoZgDHsnd31OilW/9uc4OmBA2HkuZq81sBhGxnITH62Y/vMEmX9o77qk4u2jKkgoavACZ9al1pS+EG8kgD42jQmoYNgve6IoDyXd2TI60LbSvSKHJrV0qJ6mIUZE00ycbt3b/5Xt5xcWaVW8ijz3kTYbnXzSsjbS4Fi8o8vs7Gr1uHtGS4L7bU7aPrhX29iQfuq8EUvlpZF2/nMmN976RWLFWHaP+KwmsIoglWww2Wb2NnvETXOdtb1MKjyxqcvob3gH58iJMpB1jVwyRLymqArAzRe6+REPx6V5VmwA2KrijNRYdgdYfi18luAoXyaWUSYxHRWcIAjGuMSd06VkRUfXgCa+ksakiukJt7ofJeclgyqLL1ZQQ5r6mrEnEXPEeePMDmYsLiNqJ9uiSe5zZ4VMwBj7mc6b9Cyab9QQhnzGWj/tnDk61ko/WpJQ2UMaLVymzkLRQhhtv3wnatC3zQHOq9TrnApMFVVdeYAVqbS6icreXtqWdMoho5o/yDZp6m8VDXvM6Jpxr/ulv9G2AdXhrbNLE8MzIO6XqxkFOKcytT0fv89MxwR6llHxIRRbxiG9WNQDMveuaSAP8mShH33LcaNRlvDF62udM8gPSq8xS0k7xj2N5fCofoNjdg7Y4cKBYxeFxBnQBAWX3eeY/Un6RqiZYxHka0pKT82CqYI9zWelY4LcFsb7lK5dnDc4yRRrIPN4XKntPVnFEPISVqgIRrGVEjz8s=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY3PR18MB4722.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(23010399003)(1800799024)(38070700021)(10067099003)(11063799006)(4143699003)(56012099006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?K09hUm85eE1WT1pZbDRkRTQra1JpbUJPNnk4V2YvQzJuOUtFdG5raFkydWhr?=
+ =?utf-8?B?YzN3SUtmUG1PN3daTWMrWkVHaFhkVjdoUkZYdlZOMVNTdnhONTlmemtxNXd4?=
+ =?utf-8?B?OWNaYlhrK0UvMzQ0VlBmY2xIZG9VRFg0K2JvdW9NN1k1Mk5FSVNGQU5nOFUz?=
+ =?utf-8?B?OU1GaFlpL1hQOTN0VE5iTktoQ1dKamkwQmZZWG9ieEpFVjZiVjd5UHJDdXpR?=
+ =?utf-8?B?dzM2dDdpVDl2TDVQRDNqZHJxV254SlZtZ2xYRnI3eGF1bU00MXREV0ZnVi82?=
+ =?utf-8?B?SEF1TjUrYWpnamJyejA3ZHdTc3duRWc1NEgxdnJ4NHczMXI5STVlQmcvaFpl?=
+ =?utf-8?B?cFdrTjg2MG9sY2U1YzVuQlNqdUNnM0hMb1lEWlJnMEJ5UHcyYlBVclY2RWJn?=
+ =?utf-8?B?WjhqVTl4T0Q0alVKaTRZdng2N0NVV2pYWmVpbURhbGhaSWhlQ1lmWVZTdDVY?=
+ =?utf-8?B?REM5eXdjdy92VGpTT3BRT25hUzNTTnN0enRWSmJpTVdwcWxzeE52cm1oUTNE?=
+ =?utf-8?B?d2h3US8xQ1RJOGd2QklCUXdXenY0dTU5RkJmNjIwL2Y5SHdEVkpWdFZJMW43?=
+ =?utf-8?B?b2htelJWOVAyT2ErTWhxbE0vdE9Jcm45dUNQWi9aNTdQam5PRHhMZkozUmJt?=
+ =?utf-8?B?azA0aitBWDVNRWNnTU5DVzgrMFgwYnhQRm8vbDhkZ3RDVW9tTGgrOVNvaXN2?=
+ =?utf-8?B?elBwWE9LSVFNUStKYi92cmJTa281bkpEUjRqUmZCcDNHaUVNZHY2RVRGQkc4?=
+ =?utf-8?B?azZhUEJhRy9vSTFRaVRGa1oreWlQeWtFai90dnZUUjU5MmRETURXK25GWXFC?=
+ =?utf-8?B?L3BPUjJ1bFk1ZlBqNUlETzlrWlMyU1pwbkhIc0tTWFQ1MHhTTFllSXZOdXpI?=
+ =?utf-8?B?SW1ySHpRRlRFQXJoeWFtRU5xZWY1d0FGQnZySWVOWTJLRzVNL2NBUUdjWE4y?=
+ =?utf-8?B?eTgvZUhFN0tBMFB2cU5iLzEyTkpCL2w4ZVlUaHpXd0VOSlRidE1SRmhjbjdD?=
+ =?utf-8?B?emRnSXMxWlk3U2kyUFNVdHF4aDFhcUQ3YkRmL1p5MjhPSmhsbHlxcThVQmdy?=
+ =?utf-8?B?WDd4Z1hFUGNEemxrbE5oSnZTVTlGekZSeVIxK2JHeFhDdStlV1RzTUwrejRC?=
+ =?utf-8?B?MlpCN2IwRnN0Q1ZvTjY3eXdsZzVGdURDbDJlTE1hWG1QVjJLM3pDaW5MVVpZ?=
+ =?utf-8?B?SWxUayt6R0tNU3hOTHllRlIwK3N2M3JzV0pINjlYMEUrNWR3Vm1vc3h5V0Zq?=
+ =?utf-8?B?MWFUM3N1M3o1a3BvRGxVNzVFZHltQmQxLzFRNzhqUDZ5eENCa1pmeHhwemc0?=
+ =?utf-8?B?TEgzdmJvS3RFZXhyMEhtNXZyd05nRmZCTi9LVVNXWWhBOTZBNlVmU0lLdENS?=
+ =?utf-8?B?VkRyQkRLYzdsUVVRbDRodjRIcDBzaGNIU3RvV0w2WlluVEFkeEZpTHNxQjll?=
+ =?utf-8?B?VlZIdGwrVFd2R1MwdkxRZ3dsalB4TmkveE9aMkpkTW5GMzRFQW5qQ0JJU0Fn?=
+ =?utf-8?B?clMySGdRcWRqdzZzcHg0QlF3T2NpWVUxYzFyYnVjbjRBR3pNaWpuWTBMS0RS?=
+ =?utf-8?B?VzN3dUFqbEd1dEhnSjk5amVwRU54YXltMGhxZHdGSkdSbVR3b1RQNDhQZXJ4?=
+ =?utf-8?B?MXJDRGZGcFZKcFVEdTVEUkZWbmZDT043VDlBdVFOdXg5SU1aQUV6UklUTWIw?=
+ =?utf-8?B?bnpKdFNmZXRkRUR3Mk5QcEdDb2NwMlJuODMyem1VVTlTbFhibHNVT0U3ajlt?=
+ =?utf-8?B?TnNmc0NQUWg2VUUwWVB0UzhrbWFWNVBJbFQyWGM4b0lGR24yRXNyczg2d05n?=
+ =?utf-8?B?WWtibDNScUx6M0JpcldLRGozWmdWeDgrSWtWaFFPbzFCUEl1ekdIVzBJOHlQ?=
+ =?utf-8?B?Qi9Rd1dDOFBJSjB0TVAxMm5uaEF6aERHRjdWNjcwQVRUZTBabW1ZakVaUWpN?=
+ =?utf-8?B?RmNoeHpTVmVEcHpCMmlsOVh2OURuQ000U2xVNC9NNGtQNE40R1hobTRyU1Zk?=
+ =?utf-8?B?K091NjhFTFB1QWtrOXZQWVdoc0c0RWJENUJIY0loeng0U0ZjMURVd0pGSWJY?=
+ =?utf-8?B?WkpCYXYwUEl1Y2lVNjd3Y1AycmwyaTRtVzhSdy85d09yMC9GUThtZXJENytW?=
+ =?utf-8?B?OXh0Zkw1QVV0L0sxckY4dk1LZmxRQkRFdkpTWTVQcUUzUGtHTzhkSjJTV1Qr?=
+ =?utf-8?B?QmJqdVlzR2ozWStjYUo0S3dUOEhzR0ZHYUlZK043b0g0d3pWdWtnSUdZVm1R?=
+ =?utf-8?B?Mldza3dtOUNnQmFIUFBlZ2t1ZEJSRllHNEdWUTFMb2NOVE5SVkc0NVBvb1JX?=
+ =?utf-8?Q?ZgM0yEd8Xwpyys5LAk?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-Subject: Re: [PATCH RFC v9 0/8] mfd: ls2kbmc: multiple fixes for this driver
-To: shankerwangmiao@gmail.com, Chong Qiao <qiaochong@loongson.cn>,
- Lee Jones <lee@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
- Corey Minyard <corey@minyard.net>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>
-Cc: Xi Ruoyao <xry111@xry111.site>, WANG Xuerui <kernel@xen0n.name>,
- Yinbo Zhu <zhuyinbo@loongson.cn>, Jiaxun Yang <jiaxun.yang@flygoat.com>,
- mfd@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
- Corey Minyard <cminyard@mvista.com>,
- Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-References: <20260811-ls2kbmc-mod-v9-0-4fa9a5584406@gmail.com>
-In-Reply-To: <20260811-ls2kbmc-mod-v9-0-4fa9a5584406@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAx3c6CULJqSbcjAA--.10868S2
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/1tbiAgESCGqx8fgGjgAAsD
-X-Coremail-Antispam: 1Uk129KBj93XoWxuFW7uF1UCw43Xw43Kr45Arc_yoWxtry7pF
-	Z0kFW3Cr4DJr4xKFsa93WxuFya9an7JF43GrnrK3s8ua45uFyxZrW3KFyY9FyDArZ3uF1S
-	vF15tFnrGFyDA3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUf529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	AVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AK
-	xVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8loGPUUUUU==
+X-Exchange-RoutingPolicyChecked: hZ5/qmgvI9wtqQiEtWTFQiBo57Ja4qOwo8tAWN7VFrGe9Z/Kh96QmrMULidJU9lh6drJ0ieZhPJ0QQAmUp7YQzJMzykDOCLD1SbSAthbop2CNKVN1K1ASKFWSmL/zbXtRJCr91EmTgChR/T2jT0l1KTwN3BaIthTu8psFk/J9gwD7ITBF1Sj99v4VbDvA2Nf0wVcaf72kRcHvMEwOokaW5EODfLkhrszuiv6Zy/DvKETLkhd8Ei6GPVAKA5f+VpIldz08WfB787QmaGD2OQoNOIqxoOko1UJOMisTtga7qfoyCdws2f8ZspKyyxl09++FpKZLZDHcHRhrgG+xRtXcA==
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BY3PR18MB4722.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f185aab-35a0-44a2-2d7a-08df1891386a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Sep 2026 10:06:50.5611
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5280104a-472d-4538-9ccf-1e1d0efe8b1b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: F5lOvFvnCubVtM1GSu+XwKhAasYEItI9iCYaSA2llTw2hNNFek9EozIyMjp/j2ntqMfkdng6sYLPGgzfLn/sXg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR18MB4508
+X-OriginatorOrg: amazon.com
 
-Hi:
-
-On 2026/8/11 16:07, Miao Wang via B4 Relay wrote:
-> Previously, the driver has been introduced to support the Loongson 2K
-> BMC running on the Loongson Servers, which is essential to prevent
-> the system from hanging when the BMC is being reset and the default
-> efi-framebuffer is being used. However, there are some drawbacks in the
-> driver.
-> 
-> Firstly, the driver tries to read and write to the connected PCI-E host
-> controller registers, assuming that the BMC is connected to LS7A PCI-E
-> host controller. This assumption should be true for real products, but
-> to prevent from accidentally reading and writing to the wrong PCI-E host
-> controller, this driver should be modified to check this before
-> accessing the registers.
-> 
-> Secondly, the driver uses non-exported functions to tell the vt
-> subsystem to redraw the screen, preventing the driver from being
-> compiling as a module. This can be fixed by using the exported
-> functions instead.
-> 
-> Thirdly, the driver directly accesses the GPIO controller registers
-> using hard-coded addresses, which might conflict with the loaded GPIO
-> controller driver for the same GPIO controller. This is fixed in this
-> series by using the GPIO subsystem APIs instead. To associate a GPIO pin
-> with a certian PCI device, it should be declared in the firmware level,
-> i.e. in the ACPI table or the device tree, and thus the firmware
-> interface should be discussed and coordinated with Loongson personnels.
-> Despite of this, the proposed solution in this series should be the
-> minimum necessary change to express such association. Furthermore, the
-> conventional GPIO pin number and the controller address are also
-> provided, to be used as a fallback when the GPIO pin is not declared.
-> 
-> Finally, there is a minor issue in the driver where it changes the
-> mode string describing the screen resolution during probing, which
-> prevents the device from being probed again if -EPROBE_DEFER is
-> returned by the probe function.
-> 
-> I have tested the changes in this series on a single-socket Loongson
-> 3C6000 server with a Loongson 2K BMC, and the driver works as expected
-> when the corresponding GPIO driver is additionally loaded.
-> 
-> Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
-> ---
-> Changes in v9:
-> - Extend the kernel docs for gpio_device_get_fwnode() to describe the
->    usage of this function, as suggested by Bartosz.
-> - Link to v8: https://lore.kernel.org/r/20260810-ls2kbmc-mod-v8-0-16e44f7322f4@gmail.com
-
-I’m deeply sorry for the delayed response due to personal reasons.
-
-Regarding Patch-1, I don’t mind using your current version as is—it’s 
-more complete. However, I received another email from lkp[1] a few days 
-ago, and I still hope this patch can be merged sooner.
-
-The current discussion is focused on the GPIO-related patch, but in 
-reality, it isn’t closely tied to the other patches; it’s more of an 
-optimization. If possible, I personally think we could set it aside for 
-now and treat it as a separate set of feature optimization patches.
-
-[1]: https://lore.kernel.org/all/202608230816.ifMzE0No-lkp@intel.com/
-> 
-> Changes in v8:
-> - Address issues found by the Sashiko AI review bot
->    - Fix the error path of the probe function, preventing unintentionally
->      returning 0 on failure
->    - Reorder the patches in the series to make the change to the Kconfig
->      entry for ls2kbmc to be the last patch, to satisfy the AI bot's
->      concern on failure to clean up when the driver is built as a module
->      and is being removed.
-> - Link to v7: https://lore.kernel.org/r/20260810-ls2kbmc-mod-v7-0-8aa0fb5a5462@gmail.com
-> 
-> Changes in v7:
-> - When parsing the mode string, require the mode string to start with
->    "video=", reverting the change in v5. Add a comment to describe the
->    reason for this change to satisfy the AI bot's concern.
-> - When printing the invalid mode string, use %*pE to print the string
->    to prevent the string from printing garbage characters, as suggested
->    by the AI bot.
-> - When calculating the stride, check that the multiplication of width
->    and depth does not overflow, as suggested by the AI bot.
-> - Add gpio_device_get_fwnode() into gpiolib.c as a library function to
->    get the fwnode of a GPIO device, as suggested by Bartosz.
-> - Adjust the coding style of the patch as suggested by Bartosz.
-> - Link to v6: https://lore.kernel.org/r/20260805-ls2kbmc-mod-v6-0-16ccde412d86@gmail.com
-> 
-> Changes in v6:
-> - Ajdust the Kconfig entry for IPMI_LS2K, moving the dependency on
->    MFD_LS2K_BMC_CORE to the IPMI_SI Kconfig entry, as discussed with
->    and agreed by Corey.
-> - Link to v5: https://lore.kernel.org/r/20260804-ls2kbmc-mod-v5-0-e6bc5cdd9a93@gmail.com
-> 
-> Changes in v5:
-> - Address issues found by the Sashiko AI review bot
->    - Maintain the compatibility with possible unexpected mode string when
->      parsing, although such mode string is actually not expected, to
->      satisfy the AI bot's concern.
->    - Add a comment to point out that the adjustment of the Kconfig entry
->      for ls2kbmc is in the following patch, to satisfy the AI bot's
->      concern.
-> - Link to v4: https://lore.kernel.org/r/20260731-ls2kbmc-mod-v4-0-d201502ba239@gmail.com
-> 
-> Changes in v4:
-> - Use a better way to get the GPIO device fwnode.
-> - Add a comment to describe a problem found by AI bot which is actually
->    intended.
-> - Link to v3: https://lore.kernel.org/r/20260710-ls2kbmc-mod-v3-0-ef718636e78e@gmail.com
-> 
-> Changes in v3:
-> - Check the return value of devm_add_action_or_reset when registering
->    the cleanup hook of the work queue
-> - Use swnode to create the link between the device to the GPIO chip,
->    and prevent borrowing the legacy GPIO APIs
-> - Link to v2: https://lore.kernel.org/r/20260708-ls2kbmc-mod-v2-0-2afdd1741766@gmail.com
-> 
-> Changes in v2:
-> - Several fixes suggested by the Sashiko AI review bot
-> - Add a cleanup function for the wq on removal of the device
-> - Relax the reverse dependency from CONFIG_IPMI_LS2K to
->    CONFIG_MFD_LS2K_BMC_CORE to allow the driver to be built as a module
-> - Link to v1: https://lore.kernel.org/r/20260708-ls2kbmc-mod-v1-0-c344bf5defa3@gmail.com
-> 
-> ---
-> Miao Wang (8):
->        mfd: ls2kbmc: Make a copy when parsing mode string
->        mfd: ls2kbmc: Sanity check for the connected pci port
->        mfd: ls2kbmc: Redraw using exported functions
->        mfd: ls2kbmc: Cancel the work queue on removal
->        ipmi: ls2k: adjust dependency to its mfd driver
->        gpiolib: add gpio_device_get_fwnode() helper
->        mfd: ls2kbmc: Capture the reset event of BMC through GPIO
->        mfd: ls2kbmc: Able to be compiled as a module
-> 
->   drivers/char/ipmi/Kconfig   |   2 +-
->   drivers/gpio/gpiolib.c      |  17 +++
->   drivers/mfd/Kconfig         |   2 +-
->   drivers/mfd/ls2k-bmc-core.c | 247 ++++++++++++++++++++++++++++++++++----------
->   include/linux/gpio/driver.h |   1 +
->   5 files changed, 210 insertions(+), 59 deletions(-)
-> ---
-> base-commit: 11028ab62899e4191e074ee364c712b77823a9c4
-> change-id: 20260626-ls2kbmc-mod-5209193009b2
-> 
-> Best regards,
-
--- 
-Thanks.
-Binbin
-
+T24gTW9uLCBTZXAgMjIsIDIwMjYgYXQgMTA6MjI6MDBBTSArMDIwMCwgUm9kb2xmbyBHaW9tZXR0
+aSB3cm90ZToNCj4gT24gVHVlLCBTZXAgMjIsIDIwMjYgYXQgMDg6MDg6MDlBTSArMDAwMCwgRmFy
+YmVyLCBFbGlhdiB3cm90ZToNCj4gPiBBZ3JlZWQgb24gc2lsZW5jaW5nIHRoZSBkZWZlcnJhbCBz
+cGFtLiBJIGF2b2lkZWQgcmV0dXJuDQo+ID4gZGV2X2Vycl9wcm9iZSgpIGJlY2F1c2UgcGF0Y2gg
+MyB0dXJucyBib3RoIHJldHVybnMgaW50byBnb3RvDQo+ID4gZXJyX3JlbGVhc2VfcGlucywgYW5k
+IGRldl9lcnJfcHJvYmUoKSdzIGlkaW9tIGlzIHRvIHJldHVybiB0aGUgZXJyb3IsIG5vdCBnb3Rv
+Lg0KPg0KPiBZb3UgZG9uJ3QgaGF2ZSB0byByZXR1cm4gaXQuICBDYWxsaW5nIGl0IGp1c3QgZm9y
+IHRoZSBtZXNzYWdlIGFuZCB0aGVuDQo+IGp1bXBpbmcgaXMgZmluZSwgYW5kIHJldCBhbHJlYWR5
+IGNhcnJpZXMgdGhlIGNvZGUgdGhlIGxhYmVsIG5lZWRzOg0KPg0KPiAgICAgICAgIGlmIChyZXQg
+PCAwKSB7DQo+ICAgICAgICAgICAgICAgICBkZXZfZXJyX3Byb2JlKGRldiwgcmV0LCAiZmFpbGVk
+IHRvIG1hcCBHUElPIHRvIElSUVxuIik7DQo+ICAgICAgICAgICAgICAgICBnb3RvIGVycl9yZWxl
+YXNlX3BpbnM7DQo+ICAgICAgICAgfQ0KPg0KPiBCdXQgcGxlYXNlIGRvbid0IG9wZW4tY29kZSBp
+dDogb24gdGhlIC1FUFJPQkVfREVGRVIgYnJhbmNoIGl0IGFsc28NCj4gY2FsbHMgZGV2aWNlX3Nl
+dF9kZWZlcnJlZF9wcm9iZV9yZWFzb24oKSwgc28gdGhlIGhhbmQtd3JpdHRlbiB2ZXJzaW9uDQo+
+IHNpbGVudGx5IGRyb3BzIHRoZSByZWFzb24gZnJvbSAvc3lzL2tlcm5lbC9kZWJ1Zy9kZXZpY2Vz
+X2RlZmVycmVkLg0KDQpEb25lIGluIHY1OiB0aGlzIHBhdGNoIHVzZXMgcmV0dXJuIGRldl9lcnJf
+cHJvYmUoKSwgYW5kIHRoZSBwaW5jdHJsIHBhdGNoDQp0dXJucyBpdCBpbnRvIHRoZSBsb2ctb25s
+eSBkZXZfZXJyX3Byb2JlKCkgKyBnb3RvIGZvcm0geW91IHNob3cgYWJvdmUuDQpBbHNvIGRyb3Bw
+ZWQgdGhlICI6ICVkIiBmcm9tIGJvdGggbWVzc2FnZXMgKGtlcHQgZGF0YS0+aXJxKS4NCg0KVGhh
+bmtzLA0KRWxpYXYNCg==
