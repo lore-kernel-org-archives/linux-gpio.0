@@ -1,211 +1,159 @@
-Received: from mail-vs2-f40.google.com (mail-vs2-f40.google.com [74.125.227.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59315335B4
-	for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 14:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A1D5383CF
+	for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 14:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790174267; cv=none; b=lBv6DXnEynM+ahfqzWV0kKc3O8Jznjoui1NeyqBa1Koy74rdMHVdpdBz2Z4BEJbVcQTEQJ+q3zitDj7wrXUFWYm+6uHm6REQWtXJg2NHizeQxDiPUs7KbcHs5MF1qzVQHcVg+V8N/LX6j/D8a4Uz9j/GCMYR8kloCLNsmKJkKbQ=
+	t=1790174536; cv=none; b=pajcXJIHUBp/vv9TU6Mw1urpqFAfGV7+2WNyeQpgrrvxXXnSX8Wi7Wbn/iJCC72864B+U14zf+jfkNEwxyKGl6MDzeAfoLotZLrvT5Dhn8dx7WH5FeIRt7VqQmHi6Jw/U7mvMP2lkGHjKd16jr2TF3SbFXIB1Tl7C4FcWg22uAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790174267; c=relaxed/simple;
-	bh=/U1MgBD6VoBqJ/8qiTtjqod/dz4JUJFqpqKojTxWot0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iXPH265H2fbC0iwYDSiMt3WKAoWcQ3Kip/svysNw0Dj9Ye9OixdBcWjaFfxhYLWl9ouWPuRFP9xSzbePS9roEqAwApkXuB40zEAuq62QSMtrvC2OXCQeHWc4TMNzRaGud2+jgD6maeoxVIIjL16PCOBBKGMdXcpyAANFLAKnfm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f40.google.com with SMTP id ada2fe7eead31-7ac5b4011a4so413349137.2
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 07:37:45 -0700 (PDT)
+	s=arc-20240116; t=1790174536; c=relaxed/simple;
+	bh=3Uj+B1NgxgU58OpZlj2YX/Lnv7Y6GkrNPSxd8oQ7guQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sqARw3zjkT9bXfAs8U8iM9hdBuUtxGorK4gn42+QjOPPDxjEa2lwFaabahwjoAHedPkZcQBHHMVYvCprLinJBRgmKnudpByElfln91jCEyCybcDs35Ww4UXLDcdckcSZWB9Uh6t/CmbK3gugXOdmsdR810cKObEE8BIfzk4yans=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ksc0vwm0; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=akgVYc5s; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ksc0vwm0";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="akgVYc5s"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68NDKm0c322352
+	for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 14:42:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zGf+MRsaXm8VLXvKHe+lyfwUTfJuXmVtuDhAYC8JphA=; b=ksc0vwm0bbTIijxq
+	3o5bW273wzguMNDnOnaaZrH9ilPdnHjTF9CD1yX8g1i3r3N77Afg+gZSbXduibkn
+	1zbn20CVDYWevvd6RYf91VEELDjvX+94i0ePS9kITvm9seFjLZjqNM8V4EtTwgKG
+	qFzgsVqkPS//FdCWRWTGmXR33ziGGz55vtbEoedQQ0gSP2bKiS0LqZoOREJAr53f
+	ExSzqfCD5nSOlvRuacxMi5HfMtNM2nGzfIjxnqaaDFs193CcfhHY8tjsvQLmB9/A
+	tWM2I7wfd3ePtcqBveN4zXkof3+gY0zxBoeYSsz2evUdu662gj2m+C9zGj8ssc+h
+	FEylNg==
+Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com [209.85.217.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gvfjsgbw3-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 14:42:14 +0000 (GMT)
+Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-78a6d5cc851so287439137.0
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 07:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1790174534; x=1790779334; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=zGf+MRsaXm8VLXvKHe+lyfwUTfJuXmVtuDhAYC8JphA=;
+        b=akgVYc5sovooQs1vCGcu6LhOAcSl2ohO/1OuoMdaaqYAS4ZfSqL8nUGN2CIzvxsYn+
+         28I/Ys+cPniX/fx434JtSQ9BvNRP9N4tKiBDYFYNasdWK1wNzWaZDCAiH+4duPyG2564
+         uzThh0CrZnhH9TSujlZaw8qPWvQMN2UzY2dOlvlvflmNeD+c9i0judB1O5HZTEkjXooc
+         Jpy/fg2lO1vwWMEhsyCwmLIDc+iJKtbm7ZKKLIAu2rPBEJxIWnDmD+6+RbZmd8eIWnwq
+         XG/4Avi93gqH+qZ6TISFHccmsKUo0Xw+yQ7Ds9LGkNvD05q9uUYr9OwhVscgcYsg14MI
+         gqXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790174265; x=1790779065;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=uSSwLrH/CqP5v9Ad6ht8i1AuRmzB1BOZysjgQqfiEm0=;
-        b=jgIV2I7UUQlmh/e2zyIStobVH7/e1qe2hYzLF/obavm1WIqgjF1P1+IMwm1p2rY76E
-         jQxswSTBtFB2y0HHzMNjGfu8YPKHLHLQKMT7IuuOKOY0FSbPdph0+hQUET4UQnmANRMB
-         jiIclM2SXNFT3Q3b7xa4Kl8g8Va6pPKbd9AhnOSrTsh3mACVxWMZ8dbQEWF93UQB3SNI
-         OnoqRNygraY7cOckfUaP1mJ0GMuXHe6JeZy5m9tjB+l40I7GqBjGYnIM22OL/3O1hGYe
-         ly14yYZOI91yh6V8S/K8VKJOvtqI0Y9j//ZoZQLdYjE+W/UUj+sCn85ssrXhjGQOwp+0
-         oGJA==
-X-Forwarded-Encrypted: i=1; AKwUvByqgnR88qjBay1jAB2OGik1m2JWAM+e5kK4PvnrU8LiFXYIt6CSMd+BcJVq68W9Z2kWiUfDuMFn5wCi@vger.kernel.org
-X-Gm-Message-State: AFuF++kGxlsJfXYKZJk5dq//GD9u+V4ZnBQ6P/h1nBz3FhbRG5ODhI8s
-	LjZfn+D0MdY7M3epnMmUP6G5L8O+nASusIWTZE5113wNoEM6ZVVegoifb5/ZFgFcE8c=
-X-Gm-Gg: AYBFou0XuD5HS4+EOT3VGKiPPZmtpQmIyasmQlRZVKlAf6zYX7o5PnhkbZaXh3JPmLW
-	58CxadTHB6h0lh4JtJ0/STlgsxm3XxmRDvgzW7SzJrV9lqFmG9icar/8PnxNRyUereYA0o20Jqt
-	g6Q/A5Sabm+IQk/C5OgUVmw64v16T0zO2TRqXOSfOrnZrXuEARLQm7KWYtuz6nEWz8Lyc9hnJyN
-	UX2R/Nco4IaJfKqmCVbMK9zu5ez2ZZUhjZVM/xy31i3XdijVZ54xqAQK8POen6sjR0ti7344ymj
-	c2iXb4o6u9u6Hc7ynpDSHimQm43N4k9vtkyeXzQzbUcMSj+MhrGv8zWtZBgWdZ3KPCy7COy793c
-	95KfyhYRkJM5gFJj1ETj3bisOVxTyKHWNsb+1X0Nos0cV7G0nAbv/hn2dXmbcSsRZdPUpIUtzlK
-	AcAHVsazEhrLJ1HjgJziiN8AQoeZ2T9Uier+XIQW1cCTISXgFcJXh9TifNjT/voThgh0/FPvBft
-	IlosyavCZRMpHWl1txme7dgiU5hSYSENroy98sDQdivoNEf
-X-Received: by 2002:a05:6102:26c5:b0:7a5:2427:ecc1 with SMTP id ada2fe7eead31-7ac1c998ff2mr2594812137.19.1790174264660;
-        Wed, 23 Sep 2026 07:37:44 -0700 (PDT)
-Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com. [74.125.226.204])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7abf5a7fb17sm3692106137.7.2026.09.23.07.37.42
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Sep 2026 07:37:43 -0700 (PDT)
-Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97eaa1155b1so521936241.3
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 07:37:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxtf0nkInuQ2h5xvOXEoqYRFtja3i4piXJLiYJlhuUox+OMFEeNd88nBgUvG3zOE+biWuRHhg/VeO7b@vger.kernel.org
-X-Received: by 2002:a05:6102:2922:b0:7a7:198a:c2bd with SMTP id
- ada2fe7eead31-7ac1da2015fmr2739749137.37.1790174262272; Wed, 23 Sep 2026
- 07:37:42 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1790174534; x=1790779334;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=zGf+MRsaXm8VLXvKHe+lyfwUTfJuXmVtuDhAYC8JphA=;
+        b=zVPBQrOwQDWwJvL3UA2xRZCwj9Q9bjpdB309WSpr/+NH9ntuGIJ/41RfhAfQoFQxat
+         q5cESVUH2M+FHzr1bOf1QWoWEbE+/WgJjc8z/GF05rnkU94rcZT+V6UCA+iORnzskb3T
+         8eOeWHXS1CXnnKA7Ivr95p05ha+wP5oIF/M/wsQMw75pZM1+xXg9C0mHHaGXnjXwLvtR
+         JIlNHvsjXe/p/CemG7EdjlKDyIgfQ7CbiFCDBy7dMiKzhI0/Epv6bFrE4zMkFF02kPHc
+         bo8Lutjzx2qj23rRvdBpFJAf3O4QnNMJQ7V+Jzdv/i/gwRNJwsJA/GcozcmzD1Okg/L1
+         xD6g==
+X-Forwarded-Encrypted: i=1; AKwUvBxtHygnm1k/kIurnq8/TRyFIER57vwkNPOQW9SMatvVGwC5Kgabem27t00ZZyFWNwSECStJrSimsRI4@vger.kernel.org
+X-Gm-Message-State: AFuF++nUazOYGeEqCZc3ZRI3MCepdlEweu8AiS2zkPFJVVfpi/q6pZGe
+	BuKwT0eBDaxqVWDw6VIyKwruRliENZA784RUE9HtIxMO0EksSs/MI3DQw490F2yDF6lI3uMauam
+	EAscDGjr2k0Qczjwne8/D5gVgJkTS8qnE/91nSjMFesGOX4QbPLVnuToYHEfsGQdK
+X-Gm-Gg: AYBFou2Dm8sQr0DI1ozqtI1mwrKeBnKBli8PL0AwilytNYrDTuOJ7pENOVQA5MpNzUA
+	JbTpQmp1Ruwlr3R0FAgWDjg9HsRUfvWkmRBGt5T/NYiKBkRL8TM0o484voBJskomWH3KW//yro4
+	m0aJc77FtHPFHNV7HbZIkPHb9RLtnSO7Ik8jhxULVXD++QMo8ZxSKyH3hfZZz4//RVwOc7KbCNC
+	RaX+STve7l1FWXTNuBv+t9ZDv9d18/q6IF36Kt6+mbx/p8gTaqgENuuj8H5ebUNIq5Uh62X8d03
+	V/Q5ii/wLxuT7k6I0I4gaH7gyysQHjDtbDv35wViEzhAT5MIzJtfIGx+oFdHyIv5FJr6zyYtx3g
+	Z6pVZkeKk8kX3qrc1+XTZYo61+6o=
+X-Received: by 2002:a05:6102:162a:b0:7a8:2a34:432e with SMTP id ada2fe7eead31-7ac1b81cb78mr2670598137.9.1790174533704;
+        Wed, 23 Sep 2026 07:42:13 -0700 (PDT)
+X-Received: by 2002:a05:6102:162a:b0:7a8:2a34:432e with SMTP id ada2fe7eead31-7ac1b81cb78mr2670574137.9.1790174533193;
+        Wed, 23 Sep 2026 07:42:13 -0700 (PDT)
+Received: from brgl-qcom.home ([2a01:cb1d:dc:7e00:34c6:dbd6:5b58:a3fe])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49fde134739sm76935275e9.0.2026.09.23.07.42.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Sep 2026 07:42:12 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+        Karl Mehltretter <kmehltretter@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        Jerome Neanne <jneanne@baylibre.com>,
+        Jonathan Cormier <jcormier@criticallink.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Shree Ramamoorthy <s-ramamoorthy@ti.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>,
+        Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] gpio: tps65219: Fix TPS6521x GPIO handling
+Date: Wed, 23 Sep 2026 16:42:09 +0200
+Message-ID: <179017452737.62498.16565807565260585932.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260919171100.90430-1-kmehltretter@gmail.com>
+References: <20260919171100.90430-1-kmehltretter@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260904-rzg2-sr-boards-v8-0-94c4674927e8@solid-run.com> <20260904-rzg2-sr-boards-v8-4-94c4674927e8@solid-run.com>
-In-Reply-To: <20260904-rzg2-sr-boards-v8-4-94c4674927e8@solid-run.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Sep 2026 16:37:31 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUGOLr6TQvfS9i2W1ihBWUUuTG0=TcfyZ-Seb02+XW_3w@mail.gmail.com>
-X-Gm-Features: AclHuK-Y4yRPc5ygPTDjA1xgXgYnA6hz3s-S6a8gc_ggzPpYCTe_qr4a-TZ4I5w
-Message-ID: <CAMuHMdUGOLr6TQvfS9i2W1ihBWUUuTG0=TcfyZ-Seb02+XW_3w@mail.gmail.com>
-Subject: Re: [PATCH v8 04/11] arm64: dts: renesas: add support for solidrun
- rzg2l som and hb-iiot evb
-To: Josua Mayer <josua@solid-run.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
-	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIzMDA1OCBTYWx0ZWRfXxUV9ZwllqrTe
+ fILEV8D7BcBDyG5Ulq78PgYv64dXxMWxakduBr0ZVeCl1NUR1TVMjmpuBLFIQ0qN7YoEEquvvSD
+ 44m3MHLpqsEkN33n1Tg7paYuNx6+hJ591BnijjIh1rA2mNeGm5llIVrSXxvfTS8UDgN9SH0q174
+ DC+3ucLKSntVR+tQ45zZVHkFISBCvz0lpoUX364LBw4dVCvRf/awBXenON27i0eoJHJrM0+YL2r
+ C6YM5NKqoMPyTaIx+hTCvRy/9KxP0dQM3wzh5Bfjaa4EdO3aHekkKuDCDmlGuhCWIM7NMORPKB+
+ KRXcJ+9aOuMpBnaiBQQv3Ht+muDfOkXRr0bdERVtWBcbKlSeOvmBlfYJ0w/Vft/lxY0Yd27aPx7
+ EB5JT0kTI2PqoJ5xIIKjV5mysQ1qPyvcGzOZl0FGbi9NT1RFqG/O49bz5BB/Q56yK+BSXG3hOSL
+ bTXZAthjklfDnzeZq8g==
+X-Proofpoint-GUID: njL6dUyPY88WMVI2jvmBQgelYp00LV0a
+X-Proofpoint-ORIG-GUID: njL6dUyPY88WMVI2jvmBQgelYp00LV0a
+X-Authority-Analysis: v=2.4 cv=K4+3jCWI c=1 sm=1 tr=0 ts=6ab3e546 cx=c_pps
+ a=5HAIKLe1ejAbszaTRHs9Ug==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=ZxkUJIZQlAJGTDoIxtwA:9 a=QEXdDO2ut3YA:10 a=zgiPjhLxNE0A:10
+ a=gYDTvv6II1OnSo0itH1n:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIzMDA1OCBTYWx0ZWRfX3gJ8ZBoXOov9
+ 6BGrpkyI/TQDgXqj5SfJEXEY0YSiFXKzYHmNNrOLEsqt/ocSezbIneEaUPSt8xXSsSruXGFl9u6
+ jb2ij67k1aNLNZSoHmy84st3CyYj3yM=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-23_04,2026-09-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 suspectscore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 bulkscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609230058
 
-Hi Josua,
 
-On Fri, 4 Sept 2026 at 13:56, Josua Mayer <josua@solid-run.com> wrote:
-> Add support for the SolidRun RZ/G2L SoM [1] on HummingBoard IIoT [2].
->
-> The SoM features:
-> - 2x 1Gbps Ethernet with PHY
-> - eMMC
-> - 1/2GB DDR
-> - WiFi + Bluetooth
-> - SDHI Mux switching between eMMC and Carrier Board
->
-> The HummingBoard IIoT features:
-> - 3x USB-2.0 Type A connector
-> - 2x 1Gbps RJ45 Ethernet
-> - USB Type-C Console Port
-> - microSD connector
-> - RTC with backup battery
-> - RGB Status LED
-> - 1x M.2 B-Key connector with USB-2.0 + SIM card holder
-> - 1x DSI Display Connector
-> - GPIO header
-> - 2x RS232/RS485 ports (configurable)
-> - 2x CAN
->
-> Descriptions for eMMC, microSD and RS485 are provided as overlays due to
-> their dependency on configurable mux states.
->
-> [1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2l-som/
-> [2] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2l-iot-sbc/
->
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
+On Sat, 19 Sep 2026 19:10:57 +0200, Karl Mehltretter wrote:
+> I found patch 1 while looking through the tree for code that mixes up
+> bit numbers and bit masks. Patches 2 and 3 turned up while checking the
+> nearby TPS65214 code.
+> 
+> Patch 1 fixes TPS65219 input reads. Patches 2 and 3 fix TPS65214
+> direction handling.
+> 
+> [...]
 
-Thanks for your patch!
+Applied, thanks!
 
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-iiot-common.dtsi
+[1/3] gpio: tps65219: Fix GPIO input value reads
+      https://git.kernel.org/brgl/c/4cbe530c0233c7413aaaeb029a4f32dd6aadacbb
+[2/3] gpio: tps65219: Use the variant-specific direction callback
+      https://git.kernel.org/brgl/c/93cf8cedeaaa05714f709b539cfb976e0b80c830
+[3/3] gpio: tps65219: Fix TPS65214 GPIO direction programming
+      https://git.kernel.org/brgl/c/270437f3fe62516f16482742a7762a075e7a9457
 
-> +       aliases {
-> +               gpio1 = &tca6408_u48;
-> +               gpio2 = &tca6408_u37;
-> +               gpio3 = &tca6416_u20;
-> +               gpio4 = &tca6416_u21;
-
-The TCA64xx driver does not seem to support gpio aliases, so please
-drop these.
-
-> +               i2c3 = &i2c_exp;
-> +               i2c4 = &i2c_csi;
-> +               i2c5 = &i2c_dsi;
-> +               i2c6 = &i2c_lvds;
-> +               rtc0 = &carrier_rtc;
-> +               rtc1 = &pmic;
-> +               serial3 = &scif3;
-> +       };
-
-> +       v_1_2: regulator-1-2 {
-
-Preferred node name is "regulator-1v2"...
-
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "1v2";
-> +               regulator-max-microvolt = <1200000>;
-> +               regulator-min-microvolt = <1200000>;
-> +       };
-> +
-> +       v_3_3: regulator-3-3 {
-
-... "regulator-3v3".
-
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "3v3";
-> +               regulator-max-microvolt = <3300000>;
-> +               regulator-min-microvolt = <3300000>;
-> +       };
-
-> +&i2c0 {
-> +       /* highest i2c clock supported by all peripherals is 400kHz */
-
-We have a DT propery for that ;-)
-
-    clock-frequency = <400000>;
-
-Same for i2c1.
-
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/rzg2l-sr-som.dtsi
-> @@ -0,0 +1,480 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +/*
-> + * Device Tree Source for the RZ/G2L Solidrun SoM
-> + *
-> + * Copyright 2023 SolidRun Ltd.
-> + * Copyright 2025 Josua Mayer <josua@solid-run.com>
-> + */
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
-> +
-> +/ {
-> +       aliases {
-> +               ethernet0 = &eth0;
-> +               ethernet1 = &eth1;
-> +               gpio0 = &pinctrl;
-
-The pin control driver does not support gpio aliases, so please
-drop this.
-
-> +               i2c0 = &i2c0;
-> +               i2c1 = &i2c1;
-> +               i2c2 = &i2c3;
-> +               mmc0 = &sdhi0;
-> +               mmc1 = &sdhi1;
-> +               rtc0 = &pmic;
-> +               serial0 = &scif0;
-> +               serial1 = &scif1;
-> +               serial2 = &scif2;
-> +       };
-
-I didn't compare with the board schematics, but the rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
