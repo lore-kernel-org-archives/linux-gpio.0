@@ -1,133 +1,123 @@
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B092BE035;
-	Wed, 23 Sep 2026 03:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
+Received: from 0001.3ffe.de (0001.3ffe.de [159.69.201.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1777A13D53C;
+	Wed, 23 Sep 2026 06:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790133007; cv=none; b=hwCLfdQQGyEvgUiJLUZypNFnBQnVhY4aobMB1hcEYDQ0Wq7td3TpG/DAct4Q8s0NCmNAZya2BR3QGgjSSonA3JT7cyD14cCWk8FmNq9rzmVv2/Hn1HXP/zDWS+kEJ/JCISPfYvDoYY+/Uirzq+W06Qg8GrR+duAAH6pWyPGDEcc=
+	t=1790146636; cv=none; b=etsuM0vxZrPBt4rot3QEoxYlo+yJ7Om8b7AI0SmkB3r4WxiVnD5vW3jJIZWljk//n0XIbg9eVFCtslHOnWJzGsEA+IePElnxsWxACs4Xwne4tCshpwYo0xVZby97ozCCLFlVmRGZzW2kL2XYkL27WSnnllqtz02q/V1nL1CfBW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790133007; c=relaxed/simple;
-	bh=KBfwRrxQmXFx6cB+cPahj+jCcHBorjBdywUPAz9Bhtk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Oh7lR8S0IDGNmuGnyiB83vL4wdhFsDELbS8D3M1WjchYBH71ErnIHJDZcfsQe1n510IeiROLMoa79+l7GsT7fDqyAjRMmJ6/I1NX3931QZUj6REG0Ugvz1pwR3aEaBhHPi/uu0EyxitP4WLQd0YgO7agDPizEQd4ZeeKpUIE1ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=162.243.161.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [10.98.66.117])
-	by mtasvr (Coremail) with SMTP id _____wBHIX7_QrNqtyMwAQ--.4618S3;
-	Wed, 23 Sep 2026 11:09:51 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.98.66.117])
-	by mail-app2 (Coremail) with SMTP id zC_KCgC3_cH+QrNqRXGVBA--.63972S2;
-	Wed, 23 Sep 2026 11:09:50 +0800 (CST)
-From: Fan Wu <fanwu01@zju.edu.cn>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Fan Wu <fanwu01@zju.edu.cn>,
-	Song Li <songl@zju.edu.cn>
-Subject: [PATCH] gpio: mpsse: fix race when arming the IRQ poll worker
-Date: Wed, 23 Sep 2026 03:08:55 +0000
-Message-Id: <20260923030855.410109-1-fanwu01@zju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1790146636; c=relaxed/simple;
+	bh=Aplh7dJTViOVzCjHVkbCEOKv4UcGtIR4VW/U3iKThjc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Subject:Cc:
+	 References:In-Reply-To; b=eaG+8aIRRh23YnAg9FKiCIlgvLoHZ/orKZBCRfVkHWtYx6ZeYoiaNTdHHV92SorEJFb66fA9naBjFyMM/d4dnjcGy+el78SeIuBfdO9s40l8TLcD1RUKD850JDToFJEg66xIj5ckbG24y/qDVkNl9nZp+qaCV6NutyeH9uIHobI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=a6C66Cms; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=walle.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="a6C66Cms"
+Received: from localhost (unknown [213.135.10.150])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id DEC2A5D;
+	Wed, 23 Sep 2026 08:57:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
+	t=1790146623;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Aplh7dJTViOVzCjHVkbCEOKv4UcGtIR4VW/U3iKThjc=;
+	b=a6C66CmseqidgmeBJlOBRw5wwOqfckQBCRM2EHmuSQ/tjDoUJVjdWa2uhEz2Q4mmrOA7RK
+	BW6A+P9gGreJnsPw8EJSE+Bqvzjxyapc7ICNjHyyCA535LH730HY9e4T1hykVEOAnUDvHi
+	i4VLXnxOHEFFImpmkRqu7Jkw5ng5DJuhnexpycD1ULRnQBacxQqEynR+TLkDGa6vHFGwmU
+	36QfKryCCcIFwMv0FEcfsONjPbdAJ/nsz0Qsa3cTN5p79f7hbbHPOwWdeQey9efHdNRoeu
+	hVrtQ/uGMgF7JMEFmmVoXg2Xl5QJ2K8bOjKFcmsFX28SrKZS27zNsozce6Kigg==
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zC_KCgC3_cH+QrNqRXGVBA--.63972S2
-X-CM-SenderInfo: qrstjiaswqq6lmxovvfxof0/
-X-CM-DELIVERINFO: =?B?C1GYSgXKKxbFmtjJiESix3B1w3vZ3A9ovKVTomAyoQazvoRs/NHSP8GI2EvgeEEW7R
-	sfncGSG+szpQCInt5Y8rbJUI05NtnwIq4RzbwzD0Du8Iyoqb96jW8/ZuSBCIlyq23hAcee
-	JHp3dW57KwFrOHlVpGTN5RPxYw6l01w8CbPzC/8w
-X-Coremail-Antispam: 1Uk129KBj93XoWxWr1fKFW8CrWkXr45Kr4rZwc_yoW5GF43pF
-	ZxKr1rGr4kJrySv3ZxuFy7uF98u39xAry7Ww1xWw4xur4YvFyYyrWrtryjvF1j9FykJFnI
-	yrs8WrWxKFs3A3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6x
-	kI12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v2
-	6r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2
-	Ij64vIr41lF7xvr2IYc2Ij64vIr40E4x8a64kEw24l42xK82IYc2Ij64vIr41l4I8I3I0E
-	4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGV
-	WUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_
-	Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rV
-	WUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4U
-	JbIYCTnIWIevJa73UjIFyTuYvjxU2VWlDUUUU
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=66e4aab55ce6c10e65aac407de2f18ed76c4de06773e522fce8193b51364;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Wed, 23 Sep 2026 08:57:00 +0200
+Message-Id: <DLMI0KJW4743.2J11ZTFS2FUH0@walle.cc>
+From: "Michael Walle" <michael@walle.cc>
+To: "zl020895" <zl020895@163.com>
+Subject: Re: [PATCH v7 09/15] gpiolib: regmap: add gpio_regmap_get_chip()
+Cc: <longzhao@ambarella.com>, "Arnd Bergmann" <arnd@arndb.de>, "Krzysztof
+ Kozlowski" <krzk@kernel.org>, "Alexandre Belloni"
+ <alexandre.belloni@bootlin.com>, <soc@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Jerome Brunet" <jbrunet@baylibre.com>,
+ "Linus Walleij" <linusw@kernel.org>, "Bartosz Golaszewski"
+ <brgl@kernel.org>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Jiri
+ Slaby" <jirislaby@kernel.org>, "Andy Shevchenko"
+ <andriy.shevchenko@linux.intel.com>, =?utf-8?q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, "Catalin Marinas"
+ <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>, "Lee Jones"
+ <lee@kernel.org>, <mfd@lists.linux.dev>, <devicetree@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+ <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.20.0
+References: <20260915-cv75-v5-v7-0-3297d3fbc9c0@ambarella.com>
+ <20260915-cv75-v5-v7-9-3297d3fbc9c0@ambarella.com>
+ <DLL08SC6PWNS.2BUBIQYMBWIKQ@walle.cc>
+ <650e4694.3f81.1a0c7598840.Coremail.zl020895@163.com>
+In-Reply-To: <650e4694.3f81.1a0c7598840.Coremail.zl020895@163.com>
 
-gpio_mpsse_irq_enable() arms the poll worker before publishing it:
-schedule_work() runs before the worker is added to priv->workers. If
-gpio_mpsse_disconnect() walks the list in that window it misses the
-worker, and once disconnect returns, the USB core frees mpsse_priv
-while the orphaned gpio_mpsse_poll() work keeps accessing it, causing
-a use-after-free.
+--66e4aab55ce6c10e65aac407de2f18ed76c4de06773e522fce8193b51364
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Fix this by publishing and arming the worker in one irq_spin
-critical section. Teardown walks the same list under irq_spin, so a
-worker found on the list is guaranteed to be armed, and
-cancel_work_sync() handles it whether it is queued or running.
+Hi,
 
-A worker armed after the disconnect walk would still be missed, so
-also set a new priv->dying flag under irq_spin before the teardown
-walk, and check it in the same critical section, freeing the worker
-instead when the device is going away. schedule_work() is safe to
-call with irq_spin held, and the next probe gets a fresh mpsse_priv,
-so the flag never needs to be cleared.
+On Tue Sep 22, 2026 at 6:22 AM CEST, zl020895 wrote:
+> gpio-regmap can already attach a domain via config.irq_domain or
+> regmap_irq_chip. PL061 cannot use regmap-irq: type is programmed in
+> IS/IBE/IEV (including both-edge) and the parent IRQ is an AMBA chained
+> demux.
+>
+> In v8 the custom linear domain used the gpio_chip as host_data, and
+> that chip only exists after gpio_regmap_register(), so I added
+> gpio_regmap_get_chip().
+>
+> I can drop the helper: create the domain with the PL061 private data as
+> host_data, pass it in config.irq_domain, and let gpio-regmap register
+> it. I will do that in the next revision if you agree.
 
-This issue was found by an in-house static analysis tool.
+Yes please. You shouldn't need any of gpio_chip members.
 
-Fixes: 179ef1127d7a ("gpio: mpsse: ensure worker is torn down")
-Cc: stable@vger.kernel.org
-Co-developed-by: Song Li <songl@zju.edu.cn>
-Signed-off-by: Song Li <songl@zju.edu.cn>
-Signed-off-by: Fan Wu <fanwu01@zju.edu.cn>
----
- drivers/gpio/gpio-mpsse.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+-michael
 
-diff --git a/drivers/gpio/gpio-mpsse.c b/drivers/gpio/gpio-mpsse.c
-index 12191aeb6566..9efa7dfc9332 100644
---- a/drivers/gpio/gpio-mpsse.c
-+++ b/drivers/gpio/gpio-mpsse.c
-@@ -24,6 +24,7 @@
- 	raw_spinlock_t irq_spin;     /* protects worker list */
- 	atomic_t irq_type[16];	     /* pin -> edge detection type */
- 	atomic_t irq_enabled;
-+	atomic_t dying;		     /* no new workers after disconnect */
- 	int id;
- 
- 	u8 gpio_outputs[2];	     /* Output states for GPIOs [L, H] */
-@@ -525,10 +526,16 @@
- 		worker->priv = priv;
- 		INIT_LIST_HEAD(&worker->list);
- 		INIT_WORK(&worker->work, gpio_mpsse_poll);
--		schedule_work(&worker->work);
- 
--		scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
-+		scoped_guard(raw_spinlock_irqsave, &priv->irq_spin) {
-+			if (atomic_read(&priv->dying)) {
-+				kfree(worker);
-+				return;
-+			}
-+
- 			list_add(&worker->list, &priv->workers);
-+			schedule_work(&worker->work);
-+		}
- 	}
- }
- 
-@@ -715,6 +722,9 @@
- {
- 	struct mpsse_priv *priv = usb_get_intfdata(intf);
- 
-+	scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
-+		atomic_set(&priv->dying, 1);
-+
- 	/*
- 	 * Lock prevents double-free of worker from here and the teardown
- 	 * step at the beginning of gpio_mpsse_poll
+> At 2026-09-21 20:48:44, "Michael Walle" <michael@walle.cc> wrote:
+>>On Tue Sep 15, 2026 at 1:15 PM CEST, Long Zhao via B4 Relay wrote:
+>>> From: Long Zhao <longzhao@ambarella.com>
+>>>
+>>> Let drivers that implement a custom irqchip retrieve the gpio_chip
+>>> after registration. Attach a caller-provided irq_domain only when it
+>>> is present.
+>>
+>>So why do we need this? Why can't gpio-regmap register the
+>>irq_domain?
+>>
+>>-michael
 
+
+--66e4aab55ce6c10e65aac407de2f18ed76c4de06773e522fce8193b51364
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCarN4PREcbWljaGFlbEB3
+YWxsZS5jYwAKCRASJzzuPgIf+EqJAYCURfSHF28/wy7zcS9T5rqwQKdtr6Vi+fm6
+FKEPiUj0ESQUaJWITdtLmMhXUYTwU4sBgKrlZbW1f9Nl/NmxVqpSp5Yv9aq5pAEe
+oRACiSMyH2ZwhTvQKxQkjpEcDZZyx4q0Fw==
+=oMt8
+-----END PGP SIGNATURE-----
+
+--66e4aab55ce6c10e65aac407de2f18ed76c4de06773e522fce8193b51364--
