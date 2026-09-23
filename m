@@ -1,72 +1,72 @@
-Received: from mail-oa2-f12.google.com (mail-oa2-f12.google.com [74.125.231.76])
+Received: from mail-vs2-f41.google.com (mail-vs2-f41.google.com [74.125.227.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525C2414422
-	for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 14:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77C0524B1C
+	for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 14:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790175184; cv=none; b=bqTGIBrTl0ZligSx1UXsHT93eORSIoZ5R7/21iK6WpWcrYggpSnKvY6bmxC/BTDweuyIlVhfl5A36CvD/s7srgvZLaG1rSprZyOXzuqgAIbMb/Op46wku30uGZILBXfv1VhQjwW2CScPMdGGZrUXcHWlsPzUHEIO1iZ4MULtqaI=
+	t=1790175384; cv=none; b=IlsXusvFpJn0rKDRgTgULtgs5KyOjDqthRWqSkb3EwYgjLmd3MVdjRpTtFHIv9LTI9s2Ks4eutL257oOr2DfXd7oRS+cU0YINMiDq97mDHqve34v6Qw5n74DJST9CzwlW+pBq+MsV0eVuW5aM1zYb5uhjF7/Sl9dGn9dZ66X+1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790175184; c=relaxed/simple;
-	bh=FXzg6hBNBXZZsScdwtGeM5Pmqbhre7BC03zd4cLn0Yo=;
+	s=arc-20240116; t=1790175384; c=relaxed/simple;
+	bh=R0Hl1uM+B2TCFyzAh2mRelpWA1TgmI+2NQ2VkDXBKN4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZWXTliq/f3R3HoOYsLDqTG0urIkObjg0XOLw5bfC2QSaVaJ1zWT1ovyPkcpmo7HbSwmynOPL1c9KYP33SB6AwR7sju5j96ORwLLITvQI4ZiNUTkI038Vdf0mnfJNMKYzct/V2stxfA10BOK9sqZX3qqfQlBl8yam5LqIpQjj9i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.231.76
+	 To:Cc:Content-Type; b=N5fQUz1YCMGiSmFFhm4BrKlO0z6SQSnrKAcyubgSRaP8bAV8rKr+llPBujblp6WI2kAGsVx8NDL0+wZrvv8c9hRYlB6Gyue8vppauipKmEpOfqGn+M/nbw1ZiQHme29zOZNP0X+4Sxoi5xjqRLFkTVb9fj7txWon40Oyt1eOTkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa2-f12.google.com with SMTP id 586e51a60fabf-47b8afe046dso660803fac.2
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 07:53:03 -0700 (PDT)
+Received: by mail-vs2-f41.google.com with SMTP id ada2fe7eead31-78569cf871bso614378137.2
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 07:56:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790175182; x=1790779982;
+        d=1e100.net; s=20260707; t=1790175382; x=1790780182;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=ONYGJu27lrhOYpsTIFykGbM1Hkv2j9YTc036/0zk0Ug=;
-        b=nmgyl9sB6eFsZ1h5CBrzhV2aFVulu/rQNTdZYKwYNpjUaVveMyuLtZ9Ve0dkVz+2g/
-         T9s3XTJ/OQ+bxffGpQfKhT0zKOxdvAmMjoRz8d8E/YacL/ZgyqQOks9k1SPXknhG+uhu
-         ntJ8YE1ftcVQX5rSxCO4OW+I6jFsV63pQL7isTTPRfQSAAyQ5mFKxDI3EtyCw2e9ha8l
-         NlY5JrTrM7LKrCu7G0vRoQOJIx86zPfrjGT3lxhK7GAiEU6NHeKL5cKyjbnSxhAH578G
-         DCZXq1NVspsfBkKgyW/sF0yvnUBIMWho1s9MmHkxRSnKg1QGziiMaEOLVeBGnyrzLVEi
-         E8Tw==
-X-Forwarded-Encrypted: i=1; AKwUvByP2/UewOYduxVHuSlAPYXUQ6S7DHReFkMo6GjmRMyUxFNAkIhav8F46LYlDroi6pSfSjsTQSK+CXrA@vger.kernel.org
-X-Gm-Message-State: AFuF++n368iIOu1B9hrtsLo5RosucjcjkCK4zhKx996ekD0MaS9PESE7
-	+J8dR3ko914O4/FAN7CvFKvRYMS9ET1KTAbZbXUV2KWjlZK036iWLM5/YlK6caWgp64=
-X-Gm-Gg: AYBFou1vKvQ2RrCqsNyddA3wiPBb3FV8WEoyy+Dc2Njz09uLS7poTEXxo4iWA/50Con
-	4lYB8eEwsSwqn/u1VJ9rTXxeWd/4fP5tv6+47w0v7mEIhOKU7Af1MaS8RkyV21UgH5R6iGvEFwz
-	crwI0L2s9UgD2JechR8njwZCbCtqEVjv4LygjGCGYsbfmrJudeObuR08GDrhETYsJpOZPhpLQtX
-	4/bDYU7qrvTKTcnyWaCcKxanNDVfcEsRHs/cTsmOjivV82Ojxaju4beIYZ+uCUP8O9WHmrSdcNn
-	f+CklS66COaXQD79jgeAtDbRbA6PkRXY6xuDyRkWBUvE7VJvnp81paPqx1yUen/yLh09KQNA49Y
-	UCh8Sp5PoMC4dUEhBABfoOuS2xk6ypgRkx3k0ZrBe5oLsHLCofi1r0mpIlsNTM8jw0+tGLdjdAF
-	gSuUsDb0Ej4raMKnDzyWKmlRRjOJ0j0eFw7IM8uRaqv8aFpi0GIShZLZdlWRk9t3/LbQocvAy2x
-	exq/kn1XfLCCQx6Poa8Q6c6A0dH0oqsPkYrTg==
-X-Received: by 2002:a05:6820:81c2:b0:6cd:3fbd:1d6d with SMTP id 006d021491bc7-6d2d34071d5mr2812053eaf.87.1790175180911;
-        Wed, 23 Sep 2026 07:53:00 -0700 (PDT)
-Received: from mail-oi2-f13.google.com (mail-oi2-f13.google.com. [74.125.231.205])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6d2ce25c058sm2578238eaf.5.2026.09.23.07.53.00
+        bh=u4gaNTKxdC+sW3aviG7p02o1OWtFZhqrn2Ys43SAJgs=;
+        b=Z6Azit90pJbZ7plWyxu9GQxnySk+lLVERoHX60erOwmk7D4VLliVfnJ39jlmaKT5b+
+         jY8pXGE2aqBhg6hGWithWsep2nXjO4YMGASt7VjYmnTMqqZ6QUN1aXyn3r/MWpNSXDw0
+         3TgWc9iTAiY0kdSb1hbEGFEgJg3jKcnH8FmbDpj4AX3uItrvqW8mFK0eXY55v9emATr8
+         Xs7XfQhi6ERtVrZU0lSZJt+9znfknuaX5HxdCAiYZdVxjl33KdpXylODQcfftdq1o7J/
+         m3MR4MpJNG3Gdk1oJaL6O175uFLQBsAJXf/fYn1gMWuqwI82Ae42j2LYD+59ThfjsLs3
+         /Sgw==
+X-Forwarded-Encrypted: i=1; AKwUvBy6gyAgCAXoNsYTuCx7TtSJxRcWo1fIU1Ae/VQTijOTcoiNas5HlJPQKSwNxRqWnBceuKV11gvzdnOW@vger.kernel.org
+X-Gm-Message-State: AFuF++niHKK/9zkEUKQ6KXdle+V6Xu0dqOOBLaJMywgHOjMvCtaJxZAn
+	PpmLMn8xfjKLzgvGhNASTs390iSueVD+pDVEDoA0lzxNfczG3TS4WHjEUiNCT3EhGFc=
+X-Gm-Gg: AYBFou0+kntAGsfbwB8JF5q/+YFmubCwA0xtXjsCtJWIQ6b2iOyuO1kBCml+q6m+QTU
+	misXpWaTAX3gDYbe8fmCcvusobPoVGLhxeM57oLjSaBr4nyXqbipH80plNpFPDQ9xm98NMoLvvT
+	YH4V8UPjBKc0PqZIGXD98+w7bRwKm781PzaB6YlhLbZelWg+YSZesJSeKaShw1zXg/nOKMqW1Ys
+	+3JKTvHZ10V5wRT+/UrG4sijlR32XYS0FfSVyboNFYK3Jbq2vdPXCk+vBCdUwXtUtzVhF2Kq06F
+	kQIlbU3yxMi/dLJmWNzKi1GMDfjzESfcQJpTcsfwheh7QRx3PrwE4O5b4TF+fzA8dMBcT99DBPw
+	3fPGcefASVH4ygY1Xwu2gMdcBMs2J71jfFNCsZyQSP560/ik/CQ9DYV03tFPlRJYs91HfZSmIry
+	Fv7x+q0uvefD1yMbAYYCu0jsbNzfzqxGAzuTmlk2tjJBlM/SASPU5EbEw71yevAhJ3mdbZXQQez
+	s0IfMQTwlDLrTBOdNm4Cnc5tuLaHQHRBoRHSNLKzcJccgSG
+X-Received: by 2002:a05:6102:b12:b0:7a7:1db6:c75f with SMTP id ada2fe7eead31-7ac1d3de69amr2830607137.17.1790175381776;
+        Wed, 23 Sep 2026 07:56:21 -0700 (PDT)
+Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com. [74.125.226.204])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-98516acaad8sm3563306241.13.2026.09.23.07.56.20
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Sep 2026 07:53:00 -0700 (PDT)
-Received: by mail-oi2-f13.google.com with SMTP id 5614622812f47-4c6ed1de994so731526b6e.0
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 07:53:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwA33MPaAje0JPtnoRyrWcTqbwLlt8FR9zywKTrPzwv5VeO0MeBKKtNEztUwnyAl6g07bA8hE13q4sZ@vger.kernel.org
-X-Received: by 2002:a05:6102:5709:b0:7a1:f7e2:aadf with SMTP id
- ada2fe7eead31-7ac1d0cb10emr2412732137.17.1790174811407; Wed, 23 Sep 2026
- 07:46:51 -0700 (PDT)
+        Wed, 23 Sep 2026 07:56:20 -0700 (PDT)
+Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97e7c8c8602so538701241.0
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 07:56:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByZ5cuXXKYcIc4yi0ICx88gGwziQSMz2GeMkoO9SOVloKEMO0xPgWI6B264NrK8uN2qzQPUcAv3SaQ7@vger.kernel.org
+X-Received: by 2002:a05:6102:5e93:b0:7a1:f7d2:e827 with SMTP id
+ ada2fe7eead31-7ac1e25c9a0mr2449263137.32.1790175380384; Wed, 23 Sep 2026
+ 07:56:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260904-rzg2-sr-boards-v8-0-94c4674927e8@solid-run.com> <20260904-rzg2-sr-boards-v8-5-94c4674927e8@solid-run.com>
-In-Reply-To: <20260904-rzg2-sr-boards-v8-5-94c4674927e8@solid-run.com>
+References: <20260904-rzg2-sr-boards-v8-0-94c4674927e8@solid-run.com> <20260904-rzg2-sr-boards-v8-7-94c4674927e8@solid-run.com>
+In-Reply-To: <20260904-rzg2-sr-boards-v8-7-94c4674927e8@solid-run.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Sep 2026 16:46:38 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWUt7w8Y=fmX2PtdJhZJ0k0YaKkoaC2ifx+LSYL5PijHg@mail.gmail.com>
-X-Gm-Features: AclHuK_0TFDwROATeFWc5QcEb9bj6YWPyy6x8RXwybT5t7YWLi1_s9QYUiwmNRs
-Message-ID: <CAMuHMdWUt7w8Y=fmX2PtdJhZJ0k0YaKkoaC2ifx+LSYL5PijHg@mail.gmail.com>
-Subject: Re: [PATCH v8 05/11] arm64: dts: renesas: add support for solidrun
- rzv2l som and hb-iiot evb
+Date: Wed, 23 Sep 2026 16:56:09 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUYm-hG5RcQpa4GGF=r07Lrgc5t5=Nu9qPhJTyx5kebzA@mail.gmail.com>
+X-Gm-Features: AclHuK_46aJgUmbOx6pmISWhWZ74QNKHCsrv6CnnvbaLCpF8u6RT7TH__uXbV0M
+Message-ID: <CAMuHMdUYm-hG5RcQpa4GGF=r07Lrgc5t5=Nu9qPhJTyx5kebzA@mail.gmail.com>
+Subject: Re: [PATCH v8 07/11] arm64: dts: renesas: rzg2l(c)/rzv2l hb-iiot: add
+ dsi panel dt overlay
 To: Josua Mayer <josua@solid-run.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -78,37 +78,14 @@ Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
 	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 4 Sept 2026 at 13:56, Josua Mayer <josua@solid-run.com> wrote:
-> Add support for the SolidRun RZ/V2L [1] SoM on HummingBoard IIoT [2].
+On Fri, 4 Sept 2026 at 13:57, Josua Mayer <josua@solid-run.com> wrote:
+> The SolidRun HummingBoard IIoT features a DSI connector supporting
+> touch-screen displays and is usable with RZ/G2L, RZ/G2LC and RZ/V2L
+> SoMs.
 >
-> The SoM features:
-> - 2x 1Gbps Ethernet with PHY
-> - eMMC
-> - 1/2GB DDR
-> - WiFi + Bluetooth
-> - SDHI Mux switching between eMMC and Carrier Board
+> Provide addon for the Winstar WJ70N3TYJHMNG0 1024x600 dsi panel.
 >
-> The HummingBoard IIoT features:
-> - 3x USB-2.0 Type A connector
-> - 2x 1Gbps RJ45 Ethernet
-> - USB Type-C Console Port
-> - microSD connector
-> - RTC with backup battery
-> - RGB Status LED
-> - 1x M.2 B-Key connector with USB-2.0 + SIM card holder
-> - 1x DSI Display Connector
-> - GPIO header
-> - 2x RS232/RS485 ports (configurable)
-> - 2x CAN
->
-> The RZ/V2L SoM shares PCB with RZ/G2L, differing only in the SoC itself.
-> RZ/V2L is adding a powerful DRP-AI NPU which G2L lacks.
->
-> Due to the similarities most code is shared, including DT overlays for
-> eMMC, microSD, and RS485.
->
-> [1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-v2l-som/
-> [2] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2l-iot-sbc/
+> Add the addon in Makefile for all supported SoMs SoC targets.
 >
 > Signed-off-by: Josua Mayer <josua@solid-run.com>
 
