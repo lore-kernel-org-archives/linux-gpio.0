@@ -1,104 +1,120 @@
-Received: from mail-vs2-f41.google.com (mail-vs2-f41.google.com [74.125.227.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77C0524B1C
-	for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 14:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2CD218ADD;
+	Wed, 23 Sep 2026 14:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790175384; cv=none; b=IlsXusvFpJn0rKDRgTgULtgs5KyOjDqthRWqSkb3EwYgjLmd3MVdjRpTtFHIv9LTI9s2Ks4eutL257oOr2DfXd7oRS+cU0YINMiDq97mDHqve34v6Qw5n74DJST9CzwlW+pBq+MsV0eVuW5aM1zYb5uhjF7/Sl9dGn9dZ66X+1k=
+	t=1790175508; cv=none; b=Ip5IyKaYC+ZBfgrScmurDNQnyimudqPw8Eu66F53/t/zErtwEmKWXhd6gpH1ZHiV8n454FrdZpV+uvf+SN/WPmuuVrRwjT5qrGNWI7Qaad577bwfPccFLZTDgQBgPoGb0W+DPUYJ0CIEPcFW6LaMTWH7GjNsp2M+WIINcF1rtZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790175384; c=relaxed/simple;
-	bh=R0Hl1uM+B2TCFyzAh2mRelpWA1TgmI+2NQ2VkDXBKN4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N5fQUz1YCMGiSmFFhm4BrKlO0z6SQSnrKAcyubgSRaP8bAV8rKr+llPBujblp6WI2kAGsVx8NDL0+wZrvv8c9hRYlB6Gyue8vppauipKmEpOfqGn+M/nbw1ZiQHme29zOZNP0X+4Sxoi5xjqRLFkTVb9fj7txWon40Oyt1eOTkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f41.google.com with SMTP id ada2fe7eead31-78569cf871bso614378137.2
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 07:56:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790175382; x=1790780182;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=u4gaNTKxdC+sW3aviG7p02o1OWtFZhqrn2Ys43SAJgs=;
-        b=Z6Azit90pJbZ7plWyxu9GQxnySk+lLVERoHX60erOwmk7D4VLliVfnJ39jlmaKT5b+
-         jY8pXGE2aqBhg6hGWithWsep2nXjO4YMGASt7VjYmnTMqqZ6QUN1aXyn3r/MWpNSXDw0
-         3TgWc9iTAiY0kdSb1hbEGFEgJg3jKcnH8FmbDpj4AX3uItrvqW8mFK0eXY55v9emATr8
-         Xs7XfQhi6ERtVrZU0lSZJt+9znfknuaX5HxdCAiYZdVxjl33KdpXylODQcfftdq1o7J/
-         m3MR4MpJNG3Gdk1oJaL6O175uFLQBsAJXf/fYn1gMWuqwI82Ae42j2LYD+59ThfjsLs3
-         /Sgw==
-X-Forwarded-Encrypted: i=1; AKwUvBy6gyAgCAXoNsYTuCx7TtSJxRcWo1fIU1Ae/VQTijOTcoiNas5HlJPQKSwNxRqWnBceuKV11gvzdnOW@vger.kernel.org
-X-Gm-Message-State: AFuF++niHKK/9zkEUKQ6KXdle+V6Xu0dqOOBLaJMywgHOjMvCtaJxZAn
-	PpmLMn8xfjKLzgvGhNASTs390iSueVD+pDVEDoA0lzxNfczG3TS4WHjEUiNCT3EhGFc=
-X-Gm-Gg: AYBFou0+kntAGsfbwB8JF5q/+YFmubCwA0xtXjsCtJWIQ6b2iOyuO1kBCml+q6m+QTU
-	misXpWaTAX3gDYbe8fmCcvusobPoVGLhxeM57oLjSaBr4nyXqbipH80plNpFPDQ9xm98NMoLvvT
-	YH4V8UPjBKc0PqZIGXD98+w7bRwKm781PzaB6YlhLbZelWg+YSZesJSeKaShw1zXg/nOKMqW1Ys
-	+3JKTvHZ10V5wRT+/UrG4sijlR32XYS0FfSVyboNFYK3Jbq2vdPXCk+vBCdUwXtUtzVhF2Kq06F
-	kQIlbU3yxMi/dLJmWNzKi1GMDfjzESfcQJpTcsfwheh7QRx3PrwE4O5b4TF+fzA8dMBcT99DBPw
-	3fPGcefASVH4ygY1Xwu2gMdcBMs2J71jfFNCsZyQSP560/ik/CQ9DYV03tFPlRJYs91HfZSmIry
-	Fv7x+q0uvefD1yMbAYYCu0jsbNzfzqxGAzuTmlk2tjJBlM/SASPU5EbEw71yevAhJ3mdbZXQQez
-	s0IfMQTwlDLrTBOdNm4Cnc5tuLaHQHRBoRHSNLKzcJccgSG
-X-Received: by 2002:a05:6102:b12:b0:7a7:1db6:c75f with SMTP id ada2fe7eead31-7ac1d3de69amr2830607137.17.1790175381776;
-        Wed, 23 Sep 2026 07:56:21 -0700 (PDT)
-Received: from mail-ua2-f12.google.com (mail-ua2-f12.google.com. [74.125.226.204])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-98516acaad8sm3563306241.13.2026.09.23.07.56.20
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Sep 2026 07:56:20 -0700 (PDT)
-Received: by mail-ua2-f12.google.com with SMTP id a1e0cc1a2514c-97e7c8c8602so538701241.0
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 07:56:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByZ5cuXXKYcIc4yi0ICx88gGwziQSMz2GeMkoO9SOVloKEMO0xPgWI6B264NrK8uN2qzQPUcAv3SaQ7@vger.kernel.org
-X-Received: by 2002:a05:6102:5e93:b0:7a1:f7d2:e827 with SMTP id
- ada2fe7eead31-7ac1e25c9a0mr2449263137.32.1790175380384; Wed, 23 Sep 2026
- 07:56:20 -0700 (PDT)
+	s=arc-20240116; t=1790175508; c=relaxed/simple;
+	bh=+IIrL5QThjsSts6zmHG5ZD1cdZ8aN7uZxwvZydP3Mr0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B18g3OxImt1bDszN1JG7o6noMwYDOaSXK77VO1N1pTb+HsXfeZygSo4byZIOGNtN2JCFsyQIE4oOixTi8PK7+aFkbjT2b107wI0NVWSAdZEnNmzCt0ROL+Y5B9QJM/d0tWEyXKD/slGoTbaG5/I4LTlUeX64QaA2HSqNUBM+XXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QlXCLtMX; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QlXCLtMX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FBDD1F00893;
+	Wed, 23 Sep 2026 14:58:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790175506;
+	bh=2tSma755doQXgisFXpc1rjnkqUYE4hLhMKOMVJp038k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=QlXCLtMXO0lx6ggG/M32bSj/9SaDsDMcW83bC/TW4iomSPcy0kvYOgMTc2GkgUTS9
+	 GYBrpX7pZjOfh3Sw077GPFQ0dVKMG5wbRehQSNe4XLv1LjqMMp3vc/CwG+v5I94A1g
+	 sNxAr8LbqxGymdK5mPplTXTrsjFooxuZpLysZHunwIxWdr50GBQ+DbGM26HqQSUrxc
+	 hCZ270/ADiSUkWvZZXBoase7pGIDs3sjAugxFyN2wOz2JlIC03tzJLIKgTBmElLFPa
+	 4HPEia0scyAmqbsERKXr8/tORk9PV9fK+nCzrNEU1AYi7qoSxukoiRVqyE6TorUyNO
+	 yVQhMuguqlwRg==
+Message-ID: <d679c0e9-febe-4069-9c2f-a2173a5218aa@kernel.org>
+Date: Wed, 23 Sep 2026 16:58:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260904-rzg2-sr-boards-v8-0-94c4674927e8@solid-run.com> <20260904-rzg2-sr-boards-v8-7-94c4674927e8@solid-run.com>
-In-Reply-To: <20260904-rzg2-sr-boards-v8-7-94c4674927e8@solid-run.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Sep 2026 16:56:09 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUYm-hG5RcQpa4GGF=r07Lrgc5t5=Nu9qPhJTyx5kebzA@mail.gmail.com>
-X-Gm-Features: AclHuK_46aJgUmbOx6pmISWhWZ74QNKHCsrv6CnnvbaLCpF8u6RT7TH__uXbV0M
-Message-ID: <CAMuHMdUYm-hG5RcQpa4GGF=r07Lrgc5t5=Nu9qPhJTyx5kebzA@mail.gmail.com>
-Subject: Re: [PATCH v8 07/11] arm64: dts: renesas: rzg2l(c)/rzv2l hb-iiot: add
- dsi panel dt overlay
-To: Josua Mayer <josua@solid-run.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
-	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: pinctrl: samsung: Require clocks for
+ Exynos9610 pinctrl nodes
+To: Alexandru Chimac <alex@chimac.ro>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linusw@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260922-exynos9610-pinctrl-patch-v1-1-f6d816696591@chimac.ro>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260922-exynos9610-pinctrl-patch-v1-1-f6d816696591@chimac.ro>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 4 Sept 2026 at 13:57, Josua Mayer <josua@solid-run.com> wrote:
-> The SolidRun HummingBoard IIoT features a DSI connector supporting
-> touch-screen displays and is usable with RZ/G2L, RZ/G2LC and RZ/V2L
-> SoMs.
->
-> Provide addon for the Winstar WJ70N3TYJHMNG0 1024x600 dsi panel.
->
-> Add the addon in Makefile for all supported SoMs SoC targets.
->
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
+On 22/09/2026 14:15, Alexandru Chimac wrote:
+> All Exynos9610 pin controllers (except PINCTRL_TOP) have clocks assigned
+> to them, so force the nodes to have clocks assigned to them.
+> 
+> Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+> ---
+> Most Samsung Exynos9610 pin controllers (except TOP) have clocks
+> designated for them, so allow the device tree node to include clock
 
-LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I don't understand above. It's contradictory to commit msg which says
+ALL. Here you say most.
 
-Gr{oetje,eeting}s,
 
-                        Geert
+Why two commit msgs?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> information for the driver.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+that's ABI break without reason.
+
+
+Best regards,
+Krzysztof
