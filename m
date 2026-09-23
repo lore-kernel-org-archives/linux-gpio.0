@@ -1,72 +1,72 @@
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
+Received: from mail-vs2-f26.google.com (mail-vs2-f26.google.com [74.125.227.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE2C3914EB
-	for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 15:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A5B3AB284
+	for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 15:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790176232; cv=none; b=d6qHYBnIGRwRUEzlfOw7MrboeEtc5F0OveaN6T5idZBJVAu81B9Bt0pZDcp4f0BgKB2yXsniXU9DxrP7m3fULScPDgYtRSqvOMZqesSChw/OM1rIkOKxYjvixedcWj7hiMJd1Byfa8S9VFBZdIFzhwVaufMReS2lhwsLjPfVetY=
+	t=1790176258; cv=none; b=LsNWohNXB5fCI+V5OhncAeh3hBP8DN6hpYIT1c3uNvwYJ4aDkDe+zv53qua7Lh9t9JB51WDF4sdHbjqPVDChrDB/iFXNC+GxQVCu2b7GMRFBQxi6ey/9CkPUh47zic/hFZhFe6c+NmfZpVAyMfT0jLAYbMua3SQ7+w1ybMC4TTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790176232; c=relaxed/simple;
-	bh=EhjWSKImZwoAXYfqAyTmCpINsx0oSO9M/RawkNvcdAI=;
+	s=arc-20240116; t=1790176258; c=relaxed/simple;
+	bh=4At2W+U2/moj7AT8T+hicJRX9oknEhtMUmhLAdjqwNM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZjrghEErWR8B4GwXS/FiEvS8Qet3x1NjiKs0Qna2L0oprq1b4FE7BXNg4py+h7K9M5An40aSVuiLxGcjotk2zYWS4AcHHckHRx8PhzhJS3lc54uzx330wUOnvKfJkocLkjywiE0n7bGwuL9Tvv06uPbnOkb6sCM9Q163SSRKFo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.12
+	 To:Cc:Content-Type; b=MzY4N6qOprGVh46lNnz54MoNHB966jGvXl+cfZ4eTj3DEz+SqtnqFsekmxDnUwX5L6oZRGlt2vgLU6G2j3g6DFlO2usR2kmhienJxwI3oONj1hCrDhjXx34N3na0h2HKxyd+3NXTJ5rhN1BEYIN0XgIctqk03djGuViXIaSPTac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.26
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f12.google.com with SMTP id ada2fe7eead31-79028ca9371so403099137.0
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 08:10:30 -0700 (PDT)
+Received: by mail-vs2-f26.google.com with SMTP id 71dfb90a1353d-5c67e529da9so415152e0c.2
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 08:10:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790176229; x=1790781029;
+        d=1e100.net; s=20260707; t=1790176256; x=1790781056;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=sDvgyyoRqIDDfI9/dyDxtj/9kppA0KcEIyfQ/4/NmrM=;
-        b=ZyL+kpnmbvgv6eSCLx+T+yxEr1lDrO+itCBDdPhFOvBBRvym6bps0oRmkyTLdWeahg
-         w4IYk3RhvFimQ5tfSFoO9a4ZsXBN4Lj+B18oBAYcudzRp0ovSJ7i48Ab6NBxYhHQ05bC
-         0mRqf9bCqgj+0pdi9+U8yVQLCHlmycdYsqpxvxE/2RCG8dhXN6VLDdv/mtuZOkhoLU9I
-         Oi6ndCIr11QQc1mZYTHXZE8KwPvUi3Lo4iHcTqABlc7GghqGojRZ03lJsq0QdElgrUfs
-         WPOahGuX0WtdSf2L1SqwUi47MxuiLbAQ4ULCDJFbzg2UCrGbW9xe4EKOQO/BsjqM3Tbs
-         LZtg==
-X-Forwarded-Encrypted: i=1; AKwUvBwSX7d2nEQg/DMIAcpcTJz40Z/xUKaDPkKaONx7FvORbTcTHSknjerCWmdEzoSpptySQ+jJqCfxlncO@vger.kernel.org
-X-Gm-Message-State: AFuF++kvF8n4vkLm4qALjK4zvU6ZNlvK6978nwUIHLr7LqzUTld1bUTY
-	09AI8xmm3sHszsEdMw+Fb5vHFoiprhbC3mOHbLQ2LLHDKlalZDGa5stiuxnAQ8rvfO8=
-X-Gm-Gg: AYBFou0I37hKFC7o7iOoi/uyGXDBuGE22gnmSOhd2x6Qh+Uoaxe0dgobLy6/m4qGfqN
-	O5ySHbg2KTZlbbbqEP1I5HIy+xZ8fvevKixDO5/NBOLhXFSoEe3uTX4TLCemHstozX8t1mBVd1k
-	r9AgY01YAO9dMFGOySIpN/52YitKI5zJyk1H2IaAk+krYd4o9eLVh/LfXEjUPnSSXs/UfC/cEcz
-	yzyvF3L+hbS2rrSEtE7gSsPM2wu1RsV0IVN3GytB83FUPg9xfG8Kbpo9YGDBfGEU+kpC+xF+KXE
-	F7PzUleuEV+wVSDf4hm9FpGJW16zykjLRLtQv63OL3FtvjU50Q9gZlsH5zOQP7KhoTJjA+5keaL
-	kuBo/vZ2Qrr3QcwarBorfXTo84g59Gc3NDXUY6/rvOst29GIQIX79ocPjhqGMoM3AUdiokpFtI6
-	aTxwTOlZx3rhd8kcx12pwTQRxvmvEjHvh0rqLbHJi4hqoBw//14fe7NNVoaTBIfMudm5FtQzjzF
-	UE29eUmWn1AlCa8IpbebQ==
-X-Received: by 2002:a05:6102:91c:b0:7a5:7282:1994 with SMTP id ada2fe7eead31-7ac1acd6c58mr2343352137.7.1790176229256;
-        Wed, 23 Sep 2026 08:10:29 -0700 (PDT)
+        bh=cCnq/zzLYRUWzxPlHY5tjdaCgBAl1dYFcApPP+PgMMU=;
+        b=KzCHqwm7SmalJe/AI9wGgrjumMi+sYAv0dJDKNOnuIRAkFY+zyHLgV7SGLDXbNu9AR
+         F6HQnn7LZNN1i0shD7qdks5ZDP4H15G/StmsZAv/emM2MjCWRM85A6rBmh/FVw0i2H/u
+         EKRZMBRudMCI7H9HZry2iO0zZSwzqx0xB9vNJ2t0gnip9JTHjHwa266gMychidf7+jZN
+         TnMEmjveDH3oOvLK2HUaRM4hZDgWIKv6fsetFUxUmGY71QcHF/diPfAb7X1oul/FvHV8
+         ulBWhK2XAtJ3anQ0AeTwspbbX8WML6aRwnSOcqvE7pZnYeHFMrPez7r95mIzdSkSgltA
+         3U6Q==
+X-Forwarded-Encrypted: i=1; AKwUvBwhx78KzvwBZP+qBlt9Q73NMC1w0Toawczulu5kg/vK7UnHFi5gYjtrSRBt4dJ5ttOTDcGvboeIZdo9@vger.kernel.org
+X-Gm-Message-State: AFuF++ky2IOqYLsVIE7Tq5XoUMmZu37bjiQxENhzsq8/O0sntQ1wKnd1
+	91x4cbESAgHDnxTz/UmMyG3kZPLXEDAnsXdHT7IQ/d8BYOxOZDVMf23F5rGyEKd2Iow=
+X-Gm-Gg: AYBFou2jdU6iGZoyV7PIuYsyWnMuJvAb3KhNguRDkEU01rYCeUyze2n2v45/OECiOwg
+	QEtcn6XHTmycWG2KMJHseEoI9Sc2wwgchbX+5Egh+Cn2G+/JYut7wjo0j2N2g7aSaBWM5SRxABh
+	pC14Fk73Qtrpa/t+lKIFd50LyGmnNyV9V6/Y3qOz+qHJrLRgoMUPJxMm0TtYgbMNWD6uIM/kX3A
+	Y9nFd7H2tFYgQyLiHKLONVq1ILPsogihcHJpPCylEITLSbwYvFGFWPjTPawyif9HaZpraBqvhA/
+	JnRWC1IC/nDZZs88KIsSm3xcU4k0BFYyYM7aIy2bx51VEJ9Iv8Z8b71oH2TRKwxlsER6Kg2DNcd
+	qc4qxJJbkClYVtv4zPqtowEfVA1t8VbVMnE2LV7km7WhHpKeXapALcYKWHex2G49VfJojyu736k
+	EcVptjyMWcANvNYBLZu2XyRmwQ3NHZipY8eCyteGc6DnfQPcQ5tdyDyL14M/6shKFnK/2JNAQuQ
+	QgQviQ/fjOuBSYyU/bFQlD4N9GK6LbIG+fah/VkRTGTDo8i
+X-Received: by 2002:a05:6122:6e09:b0:5c9:a60b:e5d8 with SMTP id 71dfb90a1353d-5c9f168afb0mr3344762e0c.18.1790176255862;
+        Wed, 23 Sep 2026 08:10:55 -0700 (PDT)
 Received: from mail-vs2-f41.google.com (mail-vs2-f41.google.com. [74.125.227.41])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-9851691693asm3869059241.2.2026.09.23.08.10.27
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5c9f0537ec5sm3315329e0c.12.2026.09.23.08.10.55
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Sep 2026 08:10:27 -0700 (PDT)
-Received: by mail-vs2-f41.google.com with SMTP id ada2fe7eead31-79028ca9371so403068137.0
-        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 08:10:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByqjvCfjzgGFwT9n4Ny8xsbpSh2SAoKuyvgycO9Uo2h47NNDKQpHz/N1ef3ro43JP8pzg3qg1+YPJr+@vger.kernel.org
-X-Received: by 2002:a05:6102:26d3:b0:7a6:accf:72c1 with SMTP id
- ada2fe7eead31-7ac17ff1a5cmr2593444137.0.1790176226764; Wed, 23 Sep 2026
- 08:10:26 -0700 (PDT)
+        Wed, 23 Sep 2026 08:10:55 -0700 (PDT)
+Received: by mail-vs2-f41.google.com with SMTP id 71dfb90a1353d-5c67e5292fdso435649e0c.3
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 08:10:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvByhAl7rej8TLhulstxRvxPSLpY+Ly8bmSjhg2Yb51Qb2URPIwQ5lIzsimbFnTk46AJCkYDUVhTt5rNz@vger.kernel.org
+X-Received: by 2002:a05:6122:1d06:b0:5c9:a60b:e5d1 with SMTP id
+ 71dfb90a1353d-5c9f165640fmr3422858e0c.11.1790176255382; Wed, 23 Sep 2026
+ 08:10:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260904-rzg2-sr-boards-v8-0-94c4674927e8@solid-run.com> <20260904-rzg2-sr-boards-v8-9-94c4674927e8@solid-run.com>
-In-Reply-To: <20260904-rzg2-sr-boards-v8-9-94c4674927e8@solid-run.com>
+References: <20260904-rzg2-sr-boards-v8-0-94c4674927e8@solid-run.com> <20260904-rzg2-sr-boards-v8-10-94c4674927e8@solid-run.com>
+In-Reply-To: <20260904-rzg2-sr-boards-v8-10-94c4674927e8@solid-run.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Sep 2026 17:10:15 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVQ47vaVRKRGvwSY1Sy5B9VADC6YOJ7XMt9ruPZdd+hrg@mail.gmail.com>
-X-Gm-Features: AclHuK9nr5QPs8sC-PMKUOwR3cdMhCa7cZVvTQqDSW5Li8NuNQleAMbNnooakSU
-Message-ID: <CAMuHMdVQ47vaVRKRGvwSY1Sy5B9VADC6YOJ7XMt9ruPZdd+hrg@mail.gmail.com>
-Subject: Re: [PATCH v8 09/11] arm64: dts: renesas: add support for solidrun
- hb-ripple with rzv2l som
+Date: Wed, 23 Sep 2026 17:10:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWjRu+cPZo7V0jErowLp6n2xinAXtw9Pt=On-nshBH-Eg@mail.gmail.com>
+X-Gm-Features: AclHuK-BF50Mc9e7D97YaSRELj5RHb8ahiU8YbPOF3bWrJ1zKR2oLG_CwN8d9Yc
+Message-ID: <CAMuHMdWjRu+cPZo7V0jErowLp6n2xinAXtw9Pt=On-nshBH-Eg@mail.gmail.com>
+Subject: Re: [PATCH v8 10/11] arm64: dts: renesas: add support for solidrun
+ hb-ripple with rzg2lc som
 To: Josua Mayer <josua@solid-run.com>
 Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
@@ -79,13 +79,13 @@ Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 
 On Fri, 4 Sept 2026 at 13:56, Josua Mayer <josua@solid-run.com> wrote:
-> Add support for the SolidRun HummingBoard Ripple [2] with RZ/V2L
+> Add support for the SolidRun HummingBoard Ripple [2] with RZ/G2LC
 > SoM [1].
 >
 > The HummingBoard Ripple is a reduced version of HummingBoard Pulse,
 > featuring:
 > - 2x USB-2.0 Type-A connector
-> - 1x 1Gbps RJ45 Ethernet
+> - 1x 100Mbps RJ45 Ethernet
 > - micro-HDMI connector
 > - microSD connector
 > - mini-PCI-E connector with SIM slot supporting USB-2.0 interface
@@ -95,13 +95,17 @@ On Fri, 4 Sept 2026 at 13:56, Josua Mayer <josua@solid-run.com> wrote:
 > The carrier board is identical between RZ/G2L, RZ/G2LC, RZ/G2UL and
 > RZ/V2L SoMs, yet only the RZ/G2LC combination has a product page [2].
 >
-> The RZ/V2L SoM shares PCB with RZ/G2L, differing only in the SoC itself.
-> RZ/V2L is adding a powerful DRP-AI NPU which G2L lacks.
+> RZ/G2LC SoM shares SCIF2 pins between on-SoM Bluetooth and carrier
+> board. Provide dt overlay changing pin function from uart to gpio led
+> control.
 >
-> Due to the similarities, all descriptions except SoC are shared with
-> RZ/G2L.
+> While the variant being supported here is named "Ripple", the overlay
+> still carries the "pulse" suffix as it would fit all its variants.
 >
-> [1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-v2l-som/
+> Descriptions for eMMC and microSD are shared with G2L SoM and
+> HummingBoard IIoT.
+>
+> [1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2lc-som/
 > [2] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2lc-base/
 >
 > Signed-off-by: Josua Mayer <josua@solid-run.com>
