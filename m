@@ -1,216 +1,147 @@
-Received: from pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.1.125])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs2-f43.google.com (mail-vs2-f43.google.com [74.125.227.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B3252E07F;
-	Wed, 23 Sep 2026 13:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=44.246.1.125
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790169199; cv=fail; b=h3uLGY8TzQwe7Y9yzA6eiO6KJBwcgH1F3dH1jd/qaFw+zxNP7wBBvXu9qcqKMKmnec5jUOK0hCEDvRELpljsxYeQgZik/o4v/WajBHL+H+EeSx5qc1CSOxBOTwoHK1gidmhtpSkOe/GXgqAzhILxfDObXNnp/cNq++pWmq/BWrA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790169199; c=relaxed/simple;
-	bh=w2hqRCOs1FRnAKz2s6K6YgfJodSZiSzyjtQLmisIs7k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZSb2/YeAyx7DiW7zwXaIr7YY6hFjisZSbAonlKokp94Mwd75OoaOsrVgsKqJ47vMNUkaH1234r0DxVyPclHux9iJQKpVqQrkNbzItcMcwP/nZKakxJRvsxkn2HUKN4XDZHHNakqOOgu5aFbN5P2SuVWH9mPUJaJjirSgZ4PTg9o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=ehjIwgiO; arc=fail smtp.client-ip=44.246.1.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="ehjIwgiO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1790169198; x=1821705198;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=BWEIj0xh6osCsfK7HHwylodNHNlcikd1BkITodAAIW8=;
-  b=ehjIwgiOHAfNZF/0qMrQy8wbll7AO/+16K5/nnu++3ZnCNru6MMq8rsg
-   bVnD/GzFu1ttRIRkSem3Emhh/QDuRr1c+kk7Bu6b5WGex7ZmD0cicfWhD
-   wT06c1+IOhEFtGnmKT1tXYZzwI6YnCnu0RXAYkCvGm5TXxoNHrHT1WNrE
-   1ApdCjNTPjIy0wUTHDkp7VMjP7quva384i2s3XHjoOHyJKPTd/ieOya8f
-   g7nFBhCkB94uF9SQPJ2Sm5Kn8aXMgc6ZqGSlFKNoNT9sPpgFinCwOy4zc
-   k3VtD9FHipemJOun4sf3ib6Xkvrsfx6fCaHeF00sQQUwQxo00sQyvFTvK
-   w==;
-X-CSE-ConnectionGUID: pPo+PqJLT0eGxvCK8SD2Rw==
-X-CSE-MsgGUID: XJhLjLPgSMiurObNeqfR2g==
-X-IronPort-AV: E=Sophos;i="6.27,118,1787011200"; 
-   d="scan'208";a="29438056"
-Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
-  by internal-pdx-out-002.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Sep 2026 13:13:15 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [205.251.233.53:8173]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.40.18:2525] with esmtp (Farcaster)
- id e01f5bc7-e49b-4b5d-92a4-61cdc1ff6ac2; Wed, 23 Sep 2026 13:13:15 +0000 (UTC)
-X-Farcaster-Flow-ID: e01f5bc7-e49b-4b5d-92a4-61cdc1ff6ac2
-Received: from EX19EXOUWB001.ant.amazon.com (10.250.64.229) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
- Wed, 23 Sep 2026 13:13:14 +0000
-Received: from EX19EXOUWC002.ant.amazon.com (10.250.64.172) by
- EX19EXOUWB001.ant.amazon.com (10.250.64.229) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49;
- Wed, 23 Sep 2026 13:13:14 +0000
-Received: from SJ0PR08CU001.outbound.protection.outlook.com (10.250.64.168) by
- EX19EXOUWC002.ant.amazon.com (10.250.64.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.49
- via Frontend Transport; Wed, 23 Sep 2026 13:13:14 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JS/DV5SwhIf86vhQ8z4M10tf6bL20OHF1gC6GI8ugXoqMNOMfNM++OHsgeG0IhQrTG25HxZ/YFTB54qXekFyI3frhKHgCMAvWJIhKIEVuM7Vb37uOHWx9Ud2Sg4QTGWVd5Ms29a9ZeSGYHagUJbazqm5I0kvz66ez00pyvWR9Cl3znQu1VgNgoYd+GmqB2pnusX/yPvZPrW8Db6IzUAtJoo1uLXY5Zve7mC/9H0Qa6pfXdV/F7vyHctXTJ1Sm8Au4pprJOb/8RBjhY93P8Ml5EhPt0qUYJnOqz/Tu9CKOYbSZmoRLsMzpvUs6UVUJ3vIeztdXY5XHHPN8ZNrvq2cIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BWEIj0xh6osCsfK7HHwylodNHNlcikd1BkITodAAIW8=;
- b=NbvcX7y6HdrlFpMcbDBmH99zSN4vdbWTlFjn/ZnwFpwbDRC+iWqcG2Ux4U9dNl+/5JElyGYwduWbyaenhadqVIInDudtgmcYW+j48EA4vuKwtrNi+Zkbx7B7fh59IFbuO2DOW4bjuphGy7QCGSpPGMq02U3axqdW/mDf+AkVcBbjqnJtLbJSyey8qK1JyBzm2FQPYP7wh53K7fkkSwSfekGdGDeuSSQeD2nx+aL3WO43JlANJF74govCGciuNUYdLT+n5tR+ik354O5IjXobjsgWyQQn3Ob7tN8EyeUip/uMKXaPKQNrknXM3Bj2VUFGwoDVo++OXdhs2wXPFCm+IQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amazon.com; dmarc=pass action=none header.from=amazon.com;
- dkim=pass header.d=amazon.com; arc=none
-Received: from BY3PR18MB4722.namprd18.prod.outlook.com (2603:10b6:a03:3c9::19)
- by IA3PR18MB6163.namprd18.prod.outlook.com (2603:10b6:208:526::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.13; Wed, 23 Sep
- 2026 13:13:10 +0000
-Received: from BY3PR18MB4722.namprd18.prod.outlook.com
- ([fe80::e307:5f61:2694:b219]) by BY3PR18MB4722.namprd18.prod.outlook.com
- ([fe80::e307:5f61:2694:b219%4]) with mapi id 15.21.0451.012; Wed, 23 Sep 2026
- 13:13:10 +0000
-From: "Farber, Eliav" <farbere@amazon.com>
-To: Rob Herring <robh@kernel.org>, Rodolfo Giometti <giometti@enneenne.com>
-CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski
-	<brgl@kernel.org>, Fabio Estevam <festevam@gmail.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 3/4] dt-bindings: pps: pps-gpio: document optional
- pinctrl states
-Thread-Topic: [PATCH v5 3/4] dt-bindings: pps: pps-gpio: document optional
- pinctrl states
-Thread-Index: AQHdS11HPl/d1iMljEuOyfwYfu7vGQ==
-Date: Wed, 23 Sep 2026 13:13:10 +0000
-Message-ID: <BY3PR18MB4722A1298789CA9897B834F4C6822@BY3PR18MB4722.namprd18.prod.outlook.com>
-References: <20260919171157.5502-1-farbere@amazon.com>
- <20260922103051.5257-1-farbere@amazon.com>
- <20260922103051.5257-4-farbere@amazon.com>
- <67e6d618-f94e-426f-aabc-304078fda5c2@enneenne.com>
- <20260923123605.GB27237-robh@kernel.org>
-In-Reply-To: <20260923123605.GB27237-robh@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amazon.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BY3PR18MB4722:EE_|IA3PR18MB6163:EE_
-x-ms-office365-filtering-correlation-id: 3ee02776-249b-4275-7b50-08df19746a73
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|23010399003|376014|7416014|1800799024|38070700021|22082099003|18002099003|11063799006|4143699003|56012099006|10067099003|3023799007;
-x-microsoft-antispam-message-info: hDX3aykv5UnGTFEvCxQ+rzWYd5G3zY4Dvjp09eKmeQCNncWlB79PyE21yfNK2c3Wddr+vkU66cjTD8xvr9Ppz4PYNEXt2kgBRwyj43ISnCI1HFLV5lHYhJNm7+944nVtd1N6mzSy76U5WsBzWEQSRhNuN4daGh3Sy0LtVW6XWsktK71f40n+qSnlBron6rTRhdcyMxy7589o0MYV3wD0O7S5pyUF5h/FwPdqaCfcnd0Nyp2nYf9cR053+rH+cFJi1qgHgtIQaboi6KldGjIy/FL0zVFxgSkAAfje720yU55j3pBiAPTHgUAspuGEYJvu789ZwU0/cldWYvgyzGzJJyfqkjjTD760FT6xte9dAXF7EENzSOiHsNXv/UDtmhkB4cR0y8oZXs1VopyU+4hX3n+WQdmJWoA74HioLRbEm1bAaSDTg8voIXe0ojk/4mPhybF9cbpGOOy74tWinMYhjsiIQ86moLQotCoqOo7KLcatOoxgABEy4tcIvLDm2zLUw6lfpHCG7UDeDyYEFobVeDHolzqsM5FbTP+uaU95K3Y3bmBw67pJrRqs6o3khzSrLYUzYgOJIwP2oZ7oZp+O8VNW4QmolLhzwAO8S5U5nTuj2ZWf0h1q+GyCZRwXOLuqh3t75VhPjYa0NB7r98agPk92/+NTObflRJdJDIyV4EAtGgG6Y+yqncZb+s4vXUYFjtfDbV03fyZSFjYUP6HN/QksaXPnBxxxEAiQ/vWm3qk=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY3PR18MB4722.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(23010399003)(376014)(7416014)(1800799024)(38070700021)(22082099003)(18002099003)(11063799006)(4143699003)(56012099006)(10067099003)(3023799007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?LH6WTDy+dLi4cysmZU2B9Q+Oau7WS7hWXBg3lYdgTTQ33Om0eYNOYuaE8xXY?=
- =?us-ascii?Q?Wp36lTKTDKsqACdLRKRGz8H5WIFWouQrap7SbO08oyIyJ/O9BA76/ibs5H6F?=
- =?us-ascii?Q?Ip9Qt0XcnOBn/wMe9eOUdUUKfmBfmk8NL6Qu9cEPBfp05q0BdP5xA/qbkfxh?=
- =?us-ascii?Q?xTpF3iA/WNgtIJzPHMuhXKOauTi/TuK2g94O+u7qi3WKY31MmVsejjWi3A3f?=
- =?us-ascii?Q?icG40zeUAszVZi7zuNvUtBsFpNKUvF9Qwc/qn8h99Dttu3OwQ2GM/XkKao7k?=
- =?us-ascii?Q?63hJ7S/RGNitsnyD4qE3IsjVIF23YFq9FmyluqStXoJtwVnhREaF4YrEeHvE?=
- =?us-ascii?Q?KjL1NKmwl7cTh1LqjPn1Q9wVxVEPhEpUA72J20I0gik8CffNsMW4dPEsSOEX?=
- =?us-ascii?Q?SvVzlhp9uen+wVQveYmjmvW8GeU2xJj+/+td432gvcAaLxwgzi5Sy8+7eeW+?=
- =?us-ascii?Q?7cgSmrNPGDAYMNYxQnSLGcuDO+eU0xQsbq8slfk/94HJN0vV08OeCnilyh1q?=
- =?us-ascii?Q?ZSNiJVVZ1yli67f0SIH0IqvAPj04uVH4CUmh7QvkHAXC2sSc8A8nMVuB9Dpw?=
- =?us-ascii?Q?wQj7+sX6ioQTKxlssid8I80O/BkUYPeVPN9YWHWdgYhHSy57U0OT+5VHz51f?=
- =?us-ascii?Q?1dYADmdyDduGWVcg8g7ffCKD7NSWGgBrszjTagYGrPbUlffg7co4Ede3Jrmc?=
- =?us-ascii?Q?+kwYpFw+3LG/qPnn8EkmEHAxZtsk+oX9Ckh0oA/NFx7k39LjKPmC3KZUgchg?=
- =?us-ascii?Q?RB6mK6eny7GqI/WFb9JT+Hj7hV7MF0GtJqrn8nhzsvJ4mnqyOJk1+2foRuNX?=
- =?us-ascii?Q?YvDtxxhueYLd9zamM+HkP1Mhv2ugF2uYhczcVOospv1g/Af0HDcAbgMBF1+s?=
- =?us-ascii?Q?XIrNjRpbtWKM67Qp8y0YMw5KxAaV8+6cuBv292JXGpCznc8KGkk3YmuQ+QgH?=
- =?us-ascii?Q?XJy3aaAnzC5SsMxZbCuMrpeOLVNLu7dS717tjJYmvVR8JNeGIkQZN+ZbDPT/?=
- =?us-ascii?Q?agn9xbsPCkorEp9HnXxGBpHz4tZLupT019MQ04tLEg5gW9XxYuDwZjTwSF80?=
- =?us-ascii?Q?N8en5NRLgReComPJihLsSmaWIDm6s1ZtKR/h8l+3ZlbyyjwePYulEzjvXJKP?=
- =?us-ascii?Q?TWslDzMiUNQCqmmjx09n+cdr3uuhtj/7MBn2cXnHrZ9JH7gOOM+n7XHyLLHo?=
- =?us-ascii?Q?FhqhVekLHIvYWn8NxYsLnn3bQ9J/OrjfsPDXhuf1Zyq0H6uZO0IhZAQG0gpt?=
- =?us-ascii?Q?0jnJ61SaFxUxDqeu2PEsR3iP9RLg2rl9qe2AKc044V3Zia7QWdWVhHHNSAKX?=
- =?us-ascii?Q?yogtkEJK0+FRPTkjRgPr/Diztg8pMbBDt8//VeHauyYu8nHxBsOiFG4TkVZE?=
- =?us-ascii?Q?T9Ij83B4vWqw5i5XmQiaLyDrAiNXTYNKQTlzGy1K2/4hH5YdrsCy+TSVcrYH?=
- =?us-ascii?Q?VvNIAntSAk26mApsrcm7XRdXrlu6ElaHWZp1QVS6lbdCPvb+s7k9ShmLdHFW?=
- =?us-ascii?Q?pPkOY0Cdzm/3mAYGhR/aN42QV8hAsvpCP6x+ys2Z8ZxOZjs8Y6gBH0qSCeje?=
- =?us-ascii?Q?U9jjR8LgNUI12UU59a7vbHuVC+hn7ERKvw8nRAdrfcHcfoYwGnTpYMVo33IG?=
- =?us-ascii?Q?Qh40WgQvS0HmCTB9miZUI5QtGYAi+uyg4BAI/TJ/qCpyyfN9cZFCC078kGMw?=
- =?us-ascii?Q?9YlzkDknlfcONu7J/u1KF/k1yFQOsLSAKW5gFdP0t5wpSjaz?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD1952E07A
+	for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 13:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790170954; cv=none; b=ZIuCzNihGAPQv4IozyoNtj3cH6q6fZX6/FzaTQDffER7s/vBl3cpppcqyTHr6YXibWXbSyb5Sz3/YTMpbtwpPIdkHJL6IFWNOqB/JkxGST8KPZDgAPsFgicjwlkvXiIi8GMJkc2OLPKZk4102rfEBvUy6f7lwd7cSjjVTe3HMxc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790170954; c=relaxed/simple;
+	bh=zQLNcKwt8lnNKrUhZWYc0UbpzKFARTsV6kXIZiSRVZ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IWYCOFkwDi565oGgPs0xsUwIt8XW9TrMQBEPaloz64fdwuhTHnlc5tGFGVMZfO4vpVIrJ+yufepSKAxZMPBER/bHOSqCOBhMpZ4g6Ro3NiqiuKr7WxUMTWcgk8tjtKZK7+jGcVgq/KYJW7EWqf3U3r9U+oHVkVdfmyEn20/5BxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs2-f43.google.com with SMTP id ada2fe7eead31-785643199baso349222137.0
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 06:42:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790170951; x=1790775751;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=cZcaHlSLoWG/YlsEmorJF69zsl7G8OYYQpV3ToGZCjU=;
+        b=b3TB0rvLRq8tm9RZDoGxtgGx6er3UayEpGNc2APd0c5MwbD90c9wkBwh0c6GE+aU6Y
+         +wNfUChV0m3Nb3qvrlZMoYo0FiKj1jqniQDc/T9JY/w40Yf4/EXd719/8yzJiMy/uRr8
+         8QoHioZSKyRUfKhXP//7JAVgD6KLwTXShqtlOl43+mA8ZLUssBkP6BjxTpIsQ0GKTbem
+         +nO2pmDMCBWhh5xqlIwc7GTMP2qhPatfzTjf7/wZU0K0iEdlEIkYdEd+qC2B+hFU5cj0
+         oKFzqf08KNyuEPOdPcoxpHtO/Xtof0cbEEfnQxxaqSDF9jTW3qpd/ksofIlfvIUzTT2A
+         lfcA==
+X-Forwarded-Encrypted: i=1; AKwUvBy8p7uAyeN0ivvn/NZhp/cddgT30UTGeAIL4wxGyfqlZnOcBfdDiyu7gDEMa9TEsaCN8YpZM6wrB5uN@vger.kernel.org
+X-Gm-Message-State: AFuF++l7w2oTu4z3HPcBht6pnlSZgQo+lNOxxoJOEAcNLtcAZxHROP59
+	UL1BZxu+juy9z8kiQYsPNsE/HN0c23K6yVMa33l4nl0dXSRmZPKIN4FsaYI/zjbwm+M=
+X-Gm-Gg: AYBFou3Odst9p8yclWeS57up/L0HXn3J5eoL2PmAEaQ7fFheGKhzxWj12dRjWboj7nG
+	sus9fUDvm1Zfm7Odtm5n66ZXQZ2/JZMESUm2YqQ5pZKYK1M7IuT6XOK/yEMNbiD4B+284fP4B2L
+	raw6rA1Dv2IR19WX144+tfyBdNUtVu5Cb8tlED0k8FOlJbRZPvskAu40i6Hv9U1mSmEzMXOIlfV
+	1Z2sjc34whA9nZB8xKWBO8pXV2FsKickNo6ijpItkAVJI15vl6c9JeuBlEAYj2dPEyPqzpYLpwU
+	Pzht0e3yIB/l4uOVTDDcVYCYTktWA2WGv9MhQ5DBLTn8HMTW5gM8jHkU39a0Mo01sfQMCc6qyVE
+	aQgH+Xh6drN+Sk7jUD9t5ZzFFZvR5JR3lgyeg3NEFuxr3eEWBI1keC+csmnxu4cwITfjBmwBHCq
+	66R0LvRvxHFqMBoXhBa0EEEU7hzQwkkNQehvCVjrR1rp9deyorbsQzQNlw8pfuwyG/kZPkRKM71
+	yhxLdNEEYD03e7VHVYtuaHyhTIZGUwE21742gOF/pScLLg=
+X-Received: by 2002:a05:6102:3711:b0:785:c643:a415 with SMTP id ada2fe7eead31-7ac1bb45468mr2275463137.12.1790170950964;
+        Wed, 23 Sep 2026 06:42:30 -0700 (PDT)
+Received: from mail-vs2-f42.google.com (mail-vs2-f42.google.com. [74.125.227.42])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-98516acaad8sm3326505241.13.2026.09.23.06.42.30
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Sep 2026 06:42:30 -0700 (PDT)
+Received: by mail-vs2-f42.google.com with SMTP id 71dfb90a1353d-5c8319dd4a5so441007e0c.1
+        for <linux-gpio@vger.kernel.org>; Wed, 23 Sep 2026 06:42:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwlIEPADIvkBh6UmKC6UMSmlGKw/YEAv2oRfLwQMAs5ET0cYjKJTgLUoNuHUGDZ8kRq2ifBanfqm2U9@vger.kernel.org
+X-Received: by 2002:a05:6102:390e:b0:7a7:195a:1b26 with SMTP id
+ ada2fe7eead31-7ac1de3a707mr2471914137.32.1790170950472; Wed, 23 Sep 2026
+ 06:42:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: 3kfn/JXstoJBKV+TL948rZboU+wS8hio6Gp7jlXbsu1O0ILwM8vmqlQMXw888DHywROiGE38eQi2zIH9Fye8E00W+ZsUtGpulenmN5kJqe1yLflZTLq+PE7jc0KMnIDIxSAcMPIwnh3yYPfCnu7M8Ik6IFghZ6JzDT5T/KEjuQhsjng7gFAjd1KgbN5RFXVJ6GzRrHzbXEmNWJtUc6xXZs5c85AWL1F4Baa+MRgfCFBM61NJFZ/2EEStfMSPtJAY+ClxRyWicfJhuY+MmMRFY7Tc4Io4vqqa0u32E/ok1spMuXRiJBquZZWoqp9lv0FpospcJXpS6//TDgqAbRGT/w==
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BY3PR18MB4722.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ee02776-249b-4275-7b50-08df19746a73
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Sep 2026 13:13:10.2441
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5280104a-472d-4538-9ccf-1e1d0efe8b1b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hUoUC9k8wG/POzuezoCYxqW0bIiDB93PJUX867TDFzgSr8Eiy3r95dyquRUMctjrUpUwW/47cgVnr02oA+LJIw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR18MB6163
-X-OriginatorOrg: amazon.com
+References: <20260904-rzg2-sr-boards-v8-0-94c4674927e8@solid-run.com> <20260904-rzg2-sr-boards-v8-1-94c4674927e8@solid-run.com>
+In-Reply-To: <20260904-rzg2-sr-boards-v8-1-94c4674927e8@solid-run.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Sep 2026 15:42:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXtcxyD4Zh+HyM1D43zu8KND-18FiLhi9OXTHZPojRH=A@mail.gmail.com>
+X-Gm-Features: AclHuK-TckegHvHKUKBwHK2truVsVTBXY6gTl27m7I0mB2ihxriiWdVUDyPODHw
+Message-ID: <CAMuHMdXtcxyD4Zh+HyM1D43zu8KND-18FiLhi9OXTHZPojRH=A@mail.gmail.com>
+Subject: Re: [PATCH v8 01/11] dt-bindings: soc: renesas: Add various SolidRun
+ RZ/G2 based boards
+To: Josua Mayer <josua@solid-run.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
+	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
+	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 23, 2026 at 07:36:05AM -0500, Rob Herring wrote:
-> On Tue, Sep 22, 2026 at 02:46:40PM +0200, Rodolfo Giometti wrote:
-> > On Tue, Sep 22, 2026 at 10:30:50AM +0000, Eliav Farber wrote:
-> > > +    minItems: 1
-> > > +    items:
-> > > +      - const: default
-> > > +      - const: inactive
-> >
-> > One observation while testing the series, entirely a devicetree call:
-> > dtschema derives maxItems from the items list, so this also caps
-> > pinctrl-names at two and fixes the order --
+Hi Joshua,
+
+On Fri, 4 Sept 2026 at 13:56, Josua Mayer <josua@solid-run.com> wrote:
+> Add bindings for various SolidRun boards and System on Module built
+> around Renesas RZ/G2 family of SoCs:
 >
-> Yes, that's exactly what was said was needed here.
+> - RZ/G2L SoM [1]
+> - RZ/V2L SoM [2]
+>   (shares PCB with G2L and has very similar programming model)
+> - RZ/G2LC SoM [3]
+> - RZ/G2UL SoM [4]
+>   (shares PCB with G2LC but programming model differs largely)
+> - HummingBoard IIoT [5] (RZ/G2L, RZ/V2L, RZ/G2LC)
+> - HummingBoard Pro [6] (RZ/G2L, RZ/V2L)
+> - HummingBoard Base (Ripple) [7] (RZ/G2L, RZ/V2L, RZ/G2LC, RZ/G2UL)
 >
-> >   "default", "inactive", "sleep"   ->  'is too long'
-> >   "default", "sleep"               ->  'inactive' was expected
+> [1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2l-som/
+> [2] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-v2l-som/
+> [3] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2lc-som/
+> [4] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2ul-som/
+> [5] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2l-iot-sbc/
+> [6] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2l-sbc/
+> [7] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2lc-base/
 >
-> Well, that's something different.
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
+
+Thanks for your patch!
+
+> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> @@ -508,6 +508,14 @@ properties:
+>                - renesas,r9a07g043u12 # RZ/G2UL Type-2
+>            - const: renesas,r9a07g043
 >
-> items:
->   - const: default
->   - enum: [ inactive, sleep ]
->   - const: sleep
->
-> The common pinctrl-names schema should require unique names so 'sleep'
-> can't be repeated.
+> +      - description: SolidRun RZ/G2UL based boards
+> +        items:
+> +          - enum:
+> +              - solidrun,rzg2ul-hummingboard-ripple # SolidRun RZ/G2UL HummingBoard Ripple
 
-Thanks. Just so I pick the right thing for v6 -- do you want me to
-change patch 3 to that form, or is the current
+As RZ/G2UL is pin-compatible with RZ/G2LC, I guess you could have an
+RZ/G2UL-based HummingBoard IIoT, too?
 
-    minItems: 1
-    items:
-      - const: default
-      - const: inactive
+> +          - const: solidrun,rzg2ul-sr-som
 
-fine as-is?
+Is there any special meaning of the "sr" in the middle of this and all
+other SoM compatible values?
+If it just means "SolidRun", I think it can be dropped.  However,
+you already have that for various SoMs with non-Renesas SoCs.
 
-This binding only defines "default" and "inactive"; the driver looks
-both up by name and does not use a "sleep" state, so I had deliberately
-capped the list at those two. Your snippet reads to me as how the common
-pinctrl-names schema would accommodate a "sleep" state in general,
-rather than something this binding needs -- but I would rather confirm
-than guess.
+> +          - const: renesas,r9a07g043u12 # RZ/G2UL Type-2
+> +          - const: renesas,r9a07g043
 
-If you would prefer the more permissive form so a board can also declare
-"sleep", I will switch to it (with unique-name enforcement) in v6.
-Otherwise I will keep the two-entry list.
+The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> We don't even require pinctrl properties to be documented. They are
-> implicitly allowed, but good to document what users (drivers)
-> expect/require.
+Gr{oetje,eeting}s,
 
-Right -- documenting the two names the driver actually consumes was the
-intent here.
+                        Geert
 
-Thanks,
-Eliav
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
