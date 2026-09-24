@@ -1,195 +1,129 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej2-f29.google.com (mail-ej2-f29.google.com [74.125.228.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161954A2079
-	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 15:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6026E4A483F
+	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 15:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.157
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790264543; cv=pass; b=FaFpLX5ZA0X2Au2VVfqZYOThT+qudhSk3YOamlwUKiPfY+CnNEkoJAhN6etAMO0Atk/Xc8ZaogXCp+VIqBbY5XOWPujoRP98EayUuPeb0AmMmH/+2okX5o31MIsZx6A1+mBC/6/LYki/JTZHZi433kBaANARZAzXpc+LE1PlPPk=
+	t=1790264837; cv=pass; b=G5fDxMRfjrT8mqswJSP7gGXmHDvkF85se7yAZB/fs7YUKyP/weJKAgJHLNPZTYMLV5N84zB8bT3d3H826wyyDkGVal/Eh+y9CaQ/YjrZoxJRSegQKA3l6x2ZL9weqEFfIqsyyLqp2iMgEUaRirTsMqVpC11udvvKWsAinccKn7s=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790264543; c=relaxed/simple;
-	bh=PyIrnipvkBWRV4hHOpoG3qPK65aPl0bzHYIyrKbgTzM=;
+	s=arc-20240116; t=1790264837; c=relaxed/simple;
+	bh=ngFJLjCIxCAeT7eexOCKSDLrNT1g5/NSYXpxJa6UjHg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gv5y0SgYEgIZzVCxZbGO2qx8o4ZkVxP09uDY2fR+ZPtZbgU3KseVwyWnS2dTYaHkzMapfCYrCM0vIFRsSSjJ4ejb6a7tazsfpfgxGWmsZ4Wj5CY/e7+Y0M3i3vjBUlr5CZnyGBIJQet5YZuI/8EgLAJt73DV4O59p+mUiVHelD0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N5nJqjG+; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=UiSN36fQ; arc=pass smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 To:Cc:Content-Type; b=HjDDWHjQvWd/cHQHAN+ui7QnOrgOOk6URlkxi+TmMMS46nvvxCKADV+94fHUL9IBxuYyrDc68sdwyV4gz1UKrQ3WX5mV0YMqkkX+xL7KEzJhbo1qpwRQyDH6Em6cGpHx9QEB2GdwBdG6mVXeTF0BcOu9K9rVA/anHYMJW/cUAxQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N7gK6hFH; arc=pass smtp.client-ip=74.125.228.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N5nJqjG+";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="UiSN36fQ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1790264541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/64YUvNMf9EIe8aZXp3DzyY+LbONkg5uQf4LZYgGwC0=;
-	b=N5nJqjG+CCqiKOUMIy+cAq9Ow0QOH/g8y7qkqripLHY+xA52Ulvj6QjC4UgfhNAE8f/NTQ
-	ERP4l6jY5/34bDLO8j/YOXLeTbisjpqVsIkISSyPKLuKvnUmIF7dbd50s+oyMss6RvkYIO
-	Gvg68S8FqYiBPUh24USVfCB6mx3/9Ew=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-461-f3lK1SnpM_y5mk-QJP40_Q-1; Thu, 24 Sep 2026 11:42:19 -0400
-X-MC-Unique: f3lK1SnpM_y5mk-QJP40_Q-1
-X-Mimecast-MFC-AGG-ID: f3lK1SnpM_y5mk-QJP40_Q_1790264539
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-88322409239so44777697b3.1
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 08:42:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790264539; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N7gK6hFH"
+Received: by mail-ej2-f29.google.com with SMTP id a640c23a62f3a-c294496989aso285073766b.3
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 08:47:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790264833; cv=none;
         d=google.com; s=arc-20260327;
-        b=s3ri8t1YmVdv6ohQxrIy5z6BkyJ5MUjx9hBuDdb8dQpu62NiCHYi6M3gD4ptcVJr+1
-         0MDHNCYjSMq0BOS3pm3MZ2Sk3JiF6wqI2CTbLJXaVPAYqa11jPd5D04znKZuhvSdOVvY
-         99ZkShe++fnDIk8CGjYecsKnlImPNSZ311VUeZEABezeFouBaqhLuPJg4ofRLxq2uIzG
-         5I9Dconcy5R9UvPr1FLLgkNl87yeo0mtyJRKLd5+pYAD5b9sTYkbaOdxWo6hM/ahR7sh
-         kfaaOMD/vYpXVgWQS33tABqTopt9Faefp0vEjG3f7tNKhqJCUsLd+vGBaZ6ekskgblGj
-         QCNg==
+        b=q0opa2DnUZo1YGm+IgBccWrvwqG7tGX8YkWb0OeKnn0zyrPM6NDMOhP+ZvTs2mxWWq
+         Wjj1WI33Q9zqbTbTZmskXzBaXAxHxnqxng/vspw7ffmoV8NaaLzHJ+QzZ5H76gUlxcEg
+         01K0QzQ2Qz3Y7w9MYkslGYJVnvZWRwm+spfYhMltMhHQnWVI/OLd98HNXhH8VlyWjyS3
+         oeBRydR6wEtOQtv60pDGa6/a3A31XVFocH+I7/YynHF4MTuatStnNUPpZWaJcP3PJ7nv
+         wtxcT2EwDc95TTlkfk9EFaI9ZjSocmyjFBXLgtfWZCunh3cbP8k6XXOaae16GGafNwy3
+         ZNCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=/64YUvNMf9EIe8aZXp3DzyY+LbONkg5uQf4LZYgGwC0=;
-        fh=Nt8BRlmupCr5j/D9UakeZ1DDZepMG3PcEgZslhEc7lA=;
-        b=VHCHPOWzizpvs0OFp/gcHfp6WqRjsQ6qlVTN997xyEjSnPAlZ6ZS6Mhf+Ip0qKX2Ko
-         ypvm0cxCeAfQIGPMM/9ZQXaGmPtCaCpl+CihtTR4asITwUe4gpV18VgJxRK7i57sy+ce
-         LzHQvhdJmOJ532PQl8H4OPut/jMpZXVYus3qDc21EsAfrNtroKFf9Xh8W+ZOP6yop+CU
-         wSMosFDM9aBDBERMlV9c/8SOT+yWCXlrcPWpXm+gfarq8GNXCqp+q8gxb23ptBF6J1dY
-         NtO+JCw82f0QujY9nJOHZQXLkuH7DvCeYhcD6gbbSrpR+VkHxT9vngSkEPePRgiZemPn
-         Ai7w==;
+        bh=NjMgt0ZpdQg2knSU2JXbBhhsf0Kx0wU7rhre5Y0cyIw=;
+        fh=Zmgc1GuYbgYdifj5PDgWcDE86Hsu4+d2vAp9BeU+85Q=;
+        b=MilyT5fAarz9PP2dy0F4uQ3hqXgnrBAWtWXLqMFmwHZu4MGZ6o82VrLSfCYG0L7hzW
+         u8l43xmKNXsxNoqZHqtgZBh87qDO88i/0qnML0LLdTOOlCpklEMGfK73kRc7Xv2ftHqR
+         6njWBHFcHDz0ZdX7MP6KLJeFj5+EbzRLsCO55qmMxPx8YB96NpKmoCfGINL0kyef/Kis
+         N+3KcAYr+S5UnLCjz97Bkq27wMVY27NsO2hx8nSyUBLzCRIijGu6aCNq94hJBxOqfMMY
+         A8m/MwfUd+o+KbqJ5CDj2mJDsEt2KDnh0b/AOehhrlb/snjNdoNJod54Gz2iUIgWCieL
+         srJA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1790264539; x=1790869339; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790264833; x=1790869633; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=/64YUvNMf9EIe8aZXp3DzyY+LbONkg5uQf4LZYgGwC0=;
-        b=UiSN36fQL6QI7gOFKIRAXpB32KZvpgTZ0bYV/KBNmlIN6qm7jax60KwKrEHg+eMqa9
-         udWcnbLBthounfjlspUNpVzA/a3M/L6qNzbO4BzIhnzqgD6x4PLAtrz7dbs16BVvHAlv
-         kRf0aJ8GyBaHFCXd5a/GnXw3AuBUbbSzs4kH5Omcg1UxWjIYTVTLXFzBfq911Hg0J1v4
-         jdF3NvIiJCHTWsgehT5JMOrPtI/KTgdCt2uGvHlNfNm1ZXHO0vFWZ9SJQXMWytDuNWZh
-         54MEXb0EiRLNWgTC8Fbnwm5byWnbinwmAgKv+DglBTsNlbOPHxpIWgvG4r8ffXv1kwBs
-         rFqA==
+        bh=NjMgt0ZpdQg2knSU2JXbBhhsf0Kx0wU7rhre5Y0cyIw=;
+        b=N7gK6hFHAihZOUZORT213j1fI5UtgijwWWtFSyC6oQpnkkFWe94kgpQZ+SxEVStIYN
+         FGLWMWh7BqtzktIHG+ONODHaxdkY2XJ4p903wAtdsgGSG3fRe3Fc7yXDx2qkfWvnmalR
+         qGXfx7Vz5MJrFvHrqgQ2msKlyg7q2qGLLfFd8jT3Zbz3v7vwd5hWOqysbRx0mLZUGeZh
+         ibkywErp2mP/mLyhzAz7/X7BUrPi2XO4xw9r7J9hcRsg9Cxx+fDE3jB61Ekn43dIPlne
+         G1JJTXPRT8PQwCJ4QHMvzwxqMrXDQ1302yhimmqSPAFb1rh3e+JOOTykL3BRmIbtc5id
+         5yQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790264539; x=1790869339;
+        d=1e100.net; s=20260707; t=1790264833; x=1790869633;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=/64YUvNMf9EIe8aZXp3DzyY+LbONkg5uQf4LZYgGwC0=;
-        b=MK08Z0dIP1ZLGibaQrrTp2Hp7k836aozLBeIjZiJHO0tcDPZ4dJOeTVZZ/mE74R1TK
-         2ARVUnEY7igCKkqC6WtHGIt71CQkH8nEc/Y0exTHFsab1dy3gfNaCAVdV/Q1ttNQvE+A
-         M8DS2+UOwJpMYMrG006/L/ez1VyBgsdJL790G00I/DsgzmXOxmXr/uabLqMbhIzWu/YW
-         z5DV65eoqcMzSg8NeHyFlQXZk4G8Kxtpbo6LiCeBiKd54OIMFgHU70v2ENCgn8kY2irb
-         EfaXVDrv9Csqdm/34Znu8V8D5BuxCgASoFKmvKSGCjHE9qvhv5NVNooxkSK/QvwWaYzi
-         lL5g==
-X-Forwarded-Encrypted: i=1; AKwUvBwKJM3ERlIrLwp/RufaHKf3tQGkX1tyBSGaHf3fqdUqZK5bFSd6M2XM6WhWZoR4byGc5mfI+tmdXk/y@vger.kernel.org
-X-Gm-Message-State: AFuF++k9LKCZIFi9nCDk3ru/4HONsEJ2wMs/BGEhR0mPSJnNvZcBvrD9
-	k2YkWmqkXHwyN0xBkcMY7T5l9Tj5bXGJWMj3MAPCnunm6KzzG9fdPnetJlbZqrHOyKJ4fTKaizv
-	/5FKYsYCu+V+7d8zo96UDdBQHcIqcb7SGqtUR2AfOcqZr+41sKNFAISHkXg2YrBXECQeGH/NYmu
-	WGjG8qn3THsPc14JA0gR+Imp8fQtCWJb96T8reMQ==
-X-Gm-Gg: AYBFou0YYEWJK+YvCpCuQp5DK4RxRTwON05G0QpisbCwEHqpeTE25IGjqYlh3qd+dPH
-	bx6ysCxEC3pJG8+UCruc1X04N++dI3pF/3xpPQootQTE6V8Ludpb6dvay+BFEVtJ7DxudbkygGL
-	wz/YcZ+mApYPf6oCZi/WLxdffhFEdSWBSllM4ucUbYerZ3/E3jfehW0w==
-X-Received: by 2002:a05:690c:6e87:b0:8a7:91f8:1e8d with SMTP id 00721157ae682-8a791f82a3bmr9357347b3.53.1790264538875;
-        Thu, 24 Sep 2026 08:42:18 -0700 (PDT)
-X-Received: by 2002:a05:690c:6e87:b0:8a7:91f8:1e8d with SMTP id
- 00721157ae682-8a791f82a3bmr9357067b3.53.1790264538368; Thu, 24 Sep 2026
- 08:42:18 -0700 (PDT)
+        bh=NjMgt0ZpdQg2knSU2JXbBhhsf0Kx0wU7rhre5Y0cyIw=;
+        b=PM/RfjU5dAlRiMZSvQTJ+pNk6ivwzmLVTR8WBfyYTiOvq+IpFsEvagvKpkfLwX7Jq2
+         QJZjULReawDEFqfgQP5RAvi6JU2RB3x4YaK0RfDDzy8HbTsQB92clj63aajD3xZ8Z/al
+         /AAqr6oj6zbd9UuZlwkEhqaQ1dd0gNFZWXlzVKy7pOqTWeQFAZM9EHZOJm1SzSetmBuQ
+         ELPTcmha+KopBw6P45q8mHSLoIVDNsMJm5K3PMBMcwL8TkLS8I/4a9pibZcN/45Wx4+v
+         nMilpvaOhOsqxFuXkPF72Dy7lbuQDTbQZFWfl8JRySUYhYotTiaviD539K6ffJ8XrgPh
+         vhnQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwLoxGRJSJH9UsCWwwESK/qiZvm/futdsbWGqlb/efeV8OkWJk6GrwlF8AhrJtbi8majaO5QepcDy8I@vger.kernel.org
+X-Gm-Message-State: AFuF++k9wyP/e5bEtd2WdvKl/eSI7547217lNBOCJAiyEHcVoD06TwUs
+	xQGfhlfoJgR5CzdNJh6u6iyw81eUj7vin2XHJ1M4YqMU2oHWQmkbk/RF8VbOoRkZaR/nvZyS6/I
+	AfsHJHbOeu+DCetqGnkcFK4l2nTIonvY=
+X-Gm-Gg: AYBFou0d44XLvvnw6J6exnvmZ40wo7+JymbxusG4yRKPl7D/GmphtLzIlJhHLjDp40W
+	Z6jy6sgS3JaQoGB8sfj0cPHph49UxWIIJXRrkfdTJMEcoan/sdQSfSo+wrBlGsLnhvLLb0ZuNef
+	Zv74T46bXnPyj+YgOFwwYlFgJfIneRlNReM8FakEIEwtV/QRXfDyib68wgdJbItnhMsUN37ZM6/
+	MskoOeM1h/LVvqlaypQ2t9Mqp05FGuq0SBM3exN1c8+Sh2cZRODeoLaWbasjyoudoY7BCmphEIM
+	vGT314pP8wAhqoSY2XMlU7F1R97GlZOT03CTFWMPzQxkOcfTbGgYVU5T69wb+qIqz1bX4maDr5N
+	U1Ax+YB5vhXV6Rf5vykV9Tk5Tzud2FAfelWmGFBJy+JK5X1ZE7sXLmqS9170/6JfwIJaBTG5iAM
+	KoqFFhIaqbTV/9ngfLyS7cKHODZW7a2b+ERkA/Cw0QZQ==
+X-Received: by 2002:a17:907:1ca2:b0:c29:6de8:d143 with SMTP id
+ a640c23a62f3a-c2ac23d7742mr270801666b.19.1790264832926; Thu, 24 Sep 2026
+ 08:47:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260914-scm-device-api-v1-0-3573e2596c51@redhat.com>
- <bRb6NzJiFvNGB0X3BeiVytgZNlRv88LFlcaBwwFIFa3GtVZhn5bh9EoRRDliRtgsnlQNMddvcIPK-5HK9x7z9Q==@protonmail.internalid>
- <20260914-scm-device-api-v1-2-3573e2596c51@redhat.com> <49153dff-b4e0-43ac-aa82-15175fea6445@kernel.org>
-In-Reply-To: <49153dff-b4e0-43ac-aa82-15175fea6445@kernel.org>
-From: Albert Esteve <aesteve@redhat.com>
-Date: Thu, 24 Sep 2026 17:42:05 +0200
-X-Gm-Features: AclHuK8NibWpN40MLtS8tk1TsaU8ZJKSI8cLr02zuHOUyaXDRMTCkw3xFezOa38
-Message-ID: <CADSE00JcFOY0r6doD1Qpc0xtZ6HKsa4kFGsV0_FsNbb+yemmKg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] firmware: qcom: scm: pass qcom_scm through the
- exported API
-To: "Bryan O'Donoghue" <bod@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@armlinux.org.uk>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@kernel.org>, 
-	Christian Loehle <christian.loehle@arm.com>, Maximilian Luz <luzmaximilian@gmail.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>, 
-	Sean Paul <sean@poorly.run>, Akhil P Oommen <akhilpo@oss.qualcomm.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
-	Jessica Zhang <jesszhan0024@gmail.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, "Joerg Roedel (AMD)" <joro@8bytes.org>, 
-	Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
-	Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
-	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Srinivas Kandagatla <srini@kernel.org>, 
-	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jeff Johnson <jjohnson@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>, Jens Wiklander <jenswi@kernel.org>, 
-	Sumit Garg <sumit.garg@kernel.org>, Amit Kucheria <amitk@kernel.org>, 
-	Thara Gopinath <thara.gopinath@gmail.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Brian Norris <briannorris@chromium.org>, 
-	Govind Singh <govinds@codeaurora.org>, Niklas Cassel <niklas.cassel@linaro.org>, 
-	Kalle Valo <kvalo@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, iommu@lists.linux.dev, 
-	linux-media@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	ath10k@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
-	Maxime Ripard <mripard@kernel.org>
+References: <20260919171100.90430-1-kmehltretter@gmail.com> <20260919171100.90430-4-kmehltretter@gmail.com>
+In-Reply-To: <20260919171100.90430-4-kmehltretter@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 24 Sep 2026 18:46:36 +0300
+X-Gm-Features: AclHuK-80m-884TG7yfw_6rikpHBOHTr9J36QiRQ2iE519ZRagEJv1so03yiKVQ
+Message-ID: <CAHp75VfOwZG0htxs7LJ5X4cdTMApESRpDaGCQqJpD3RSap+-6w@mail.gmail.com>
+Subject: Re: [PATCH 3/3] gpio: tps65219: Fix TPS65214 GPIO direction programming
+To: Karl Mehltretter <kmehltretter@gmail.com>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Jerome Neanne <jneanne@baylibre.com>, Jonathan Cormier <jcormier@criticallink.com>, 
+	Shree Ramamoorthy <s-ramamoorthy@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 23, 2026 at 11:08=E2=80=AFPM Bryan O'Donoghue <bod@kernel.org> =
-wrote:
+On Sat, Sep 19, 2026 at 8:11=E2=80=AFPM Karl Mehltretter <kmehltretter@gmai=
+l.com> wrote:
 >
-> On 14/09/2026 13:41, Albert Esteve wrote:
-> >   static int spm_cpuidle_drv_probe(struct platform_device *pdev)
-> >   {
-> > +     struct qcom_scm *scm =3D qcom_scm_get();
-> >       int cpu, ret;
-> >
-> > -     if (!qcom_scm_is_available())
-> > +     if (!scm)
-> >               return -EPROBE_DEFER;
+> GPIO_LINE_DIRECTION_OUT and GPIO_LINE_DIRECTION_IN have the values 0
+> and 1, respectively, while the TPS65214 GPIO_CONFIG field is BIT(1).
+> regmap_update_bits() masks the supplied value, so passing either
+> direction value clears the field and selects input mode.
 >
-> Is this equivalent code ?
->
-> Its also a bit confusing to me that the next patch adds a .available
-> field to the qcom_scm struct.
+> Translate the GPIO direction to the register encoding used by
+> tps65214_gpio_get_direction(), setting GPIO_CONFIG for output and
+> clearing it for input.
 
-I can see how this can be confusing. The problem with
-qcom_scm_is_available(scm) is that callers did not have an SCM handle
-yet. So drivers needed to search for it beforehand. Once I had to
-repeat that a few times, I instead added qcom_scm_get(), which looks
-up the bound instance and returns NULL if it is not ready (and still
-uses qcom_scm_is_available() internally). So, !scm is the same check
-as before, while we obtain the pointer for the following calls.
+...
 
-scm->available in the following patch replaces the __scm publication
-flag when the global is removed. Until then, readiness is still based
-on the static __scm validity.
+> +       val =3D direction =3D=3D GPIO_LINE_DIRECTION_OUT ?
+> +               TPS65214_GPIO0_DIR_MASK : 0;
+>         ret =3D regmap_update_bits(gpio->tps->regmap, TPS65219_REG_GENERA=
+L_CONFIG,
+> -                                TPS65214_GPIO0_DIR_MASK, direction);
+> +                                TPS65214_GPIO0_DIR_MASK, val);
 
->
-> I see where you do get drvdata but I haven't managed to find in the
-> series where the data gets set - haven't asked an LLM either - I think
-> the logic to associate the scm pointer and get it should live together
-> in one patch so that the logic is easier to find and reason about.
+regmap_assign_bits()
 
-platform_set_drvdata() is already in qcom_scm_probe(); this series
-only adds the dev_get_drvdata() / qcom_scm_get() lookups. I can
-clarify this in the commit message so the set/get pairing is more
-obvious.
-
-BR,
-Albert
-
->
-> ---
-> bod
->
-
+--=20
+With Best Regards,
+Andy Shevchenko
