@@ -1,75 +1,119 @@
-Received: from smtpcmd03116.aruba.it (smtpcmd03116.aruba.it [62.149.158.116])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E4D48032C
-	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 12:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.149.158.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAE0459AC7;
+	Thu, 24 Sep 2026 13:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790254756; cv=none; b=EDoSy+amAWfXiA60w4NMOnePV6/Lk7Qvx2fLagvBXZu0T/mlt2FpR5W2syzDK7d79RESKCpdQWzQEfFhj7MceZXugjPWFhk9lq0jcearUt5mlz9x0RntgViwR/oZoiaQz9bb8SX3u7lF9rq9dLTL3wlySYUfkYyF+EWXTFPBm4A=
+	t=1790254846; cv=none; b=acMJwNgEK6h8vtE78D2N0UsDx7fkbSI51WQNyIhybFGYI9tn8etsCAQ3OSoPduZUriFcFF8v2JmZ717Ux8Ie6NlIfEWzQ+eqUFGBTsVOqNp+fYSnSrcFAKtVJgAumnEu5OrIZZff0b9zCgebeuu4gsFGxbhgQhojqWOjukr4gAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790254756; c=relaxed/simple;
-	bh=saaJAsHl1r1u7VWi/mwJDLeoO4wgnHrHNat/fSaqdRs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pDn1jmDMA9BHYVsijb50BRbb7vapQyI27UBG45v5x+krteiN6pctOYr+bAG+eYx/YMzPfJhy2Cw62he0oHpSk7boI1kWSqigTsU1Ewhx9uDYcotosItPEB+GyzON+/kjUy2fMF59r1YKgo+la4YCTmF2EbIC6R15kCeNbDma8is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com; spf=pass smtp.mailfrom=enneenne.com; dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b=LEcw1TG8; arc=none smtp.client-ip=62.149.158.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=enneenne.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enneenne.com
+	s=arc-20240116; t=1790254846; c=relaxed/simple;
+	bh=lQ9iv3yD0ptTA54gnXaolzRlm7/dGGbiYR5tFbAgAcM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pnw6+ERmTJ7L4551Tvw2pkizxFnSjB8JJNplAFoSraBb4vtcMymsjkkb7AwwIOLVAHJFuKXl/KY2jr4wcxDhMV2iowr+UPdwSUA5pcfsuDzX0C162P37/L1+tUq3H0nCXXm4NxiLFG5AC1cgBz61txKTxsPaMVa9OvMqzIgi8Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZENFdU2; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aruba.it header.i=@aruba.it header.b="LEcw1TG8"
-Received: from [192.168.0.186] ([101.57.122.26])
-	by Aruba SMTP with ESMTPSA
-	id 9j2exBOsldVTC9j2fxSpwD; Thu, 24 Sep 2026 14:59:13 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruba.it; s=a1;
-	t=1790254753; bh=saaJAsHl1r1u7VWi/mwJDLeoO4wgnHrHNat/fSaqdRs=;
-	h=Date:MIME-Version:Subject:To:From:Content-Type;
-	b=LEcw1TG8ZiVudimjNmveOmvS/l0T3xfXyQmP5/Tv5u2ctzvPxoyhrN7sJ1lsXw3cE
-	 +154sf/YTr/v92YGoucWpC0rZ4m1U59xsw2QwSJkaF2V7MNbMERh7ZIhjgCPcWZTY1
-	 va5eLcSxbdHt5PwZAOjoxUMnHHwFtQdheNvSJV1E60u+mrS4Vu0SRCciAFMZwqrND8
-	 B0Fmf6pv3DzqjaNkv+wTWUIpCE30bUB7I/DVFRcf1vypnA+0Eih7UH9hXiI81XRTS+
-	 RLxv1JSG0vS2gLKzFThrMjXaOUpVcKgzn7yMa3h/DF0UZOE8IO/ACt7JnZZkVzRUlu
-	 r9ku1OUOgg8tQ==
-Message-ID: <85e1e7ba-1b1a-4f27-9931-48966cde7de3@enneenne.com>
-Date: Thu, 24 Sep 2026 14:59:12 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZENFdU2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35BA1F000FF;
+	Thu, 24 Sep 2026 13:00:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790254845;
+	bh=wgAsGxjOI4SZCAEuxYRxPYQum9DEyKkKsyTbJWwoLNg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=eZENFdU2E/XV9I//8XRof0Mq2OyiVVh/IlQYRFrXsBhkHGKKPhe5wUEUVv6HNtiIm
+	 mWvLeogoTBMmpwV8w2W9zVk9Ty52RU1vRPH0eegRfZBbAD7HKKfLf4jL8+ps8Un8BG
+	 C4YS3wdM+pettGiXmC1s6w8gu7RlIvZJBIoLtmzRiD0lJvWZ5hMtmrkWLfx4iVcgPL
+	 tN0QOtsa/0JK1E7lPPn/hdF/6o7hodvclldHr8c6jLr4hicJ5SAIVUHkAsTPkf4hLX
+	 2wQTlHmzlzQlUTxSidJ1F2/4AvRwUa0iutemQnEWGljyDfSbgZfQqoHwn66fS1rBsk
+	 ziOjnLv15akpQ==
+Date: Thu, 24 Sep 2026 14:00:38 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <matti.vaittinen@linux.dev>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Michael Walle <mwalle@kernel.org>, mfd@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org, Sverdlin@mva-rohm,
+	Alexander <alexander.sverdlin@siemens.com>
+Subject: [GIT PULL] Immutable branch between MFD, Clk, GPIO, Regulator and
+ RTC due for the v7.4 merge window
+Message-ID: <20260924130038.GB453446@google.com>
+References: <cover.1789538455.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/4] pps: clients: gpio: release pins to an inactive
- state on remove and shutdown
-Content-Language: en-US
-To: Eliav Farber <farbere@amazon.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Fabio Estevam <festevam@gmail.com>, Andrew Morton
- <akpm@linux-foundation.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260922103051.5257-1-farbere@amazon.com>
- <20260923182243.41060-1-farbere@amazon.com>
- <20260923182243.41060-5-farbere@amazon.com>
-From: Rodolfo Giometti <giometti@enneenne.com>
-In-Reply-To: <20260923182243.41060-5-farbere@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfGKjO74BqyaYtiPPREZI9wg/8H+XkcPHZgLGrTkQ8swRk6uoTWQ77W1O+rNcw3H/Kc2WVsSWgkwnCkeiktu5Lv8fEWyNszc0zJ6iXST/VK0YeSBG6IkI
- JDvhlwt6MbkGfvxA8pizDkaKojo/MrfksrU4yyguQLhL/iqM8BbwNBo/MoFMpKZFIDMp4+Ni4We87Glmr/TOZ1SpzXI9ke9Vt8meJCjokLrhOmBvNnjRPNui
- FmnzYWrQ08Dp0RqQxS0qURIeZZY9WoAWFX1UsfrI/+PmVkWag8DM1lcwqJZ/nSBs/VgVrXTuA3hn3xObYyzYZ6CEdbeS3/ozIyv6FLRhUWIAyrrqHO7Z4XUV
- b18JM1b7yeGjFZZvkyUGlV+FsYhqeAtC5Gn9wJL75GrlcLX9N2a/r4J7zYzuhK2A0FU6zZaEvKKEHHehHqx3zGF6jXwpKxKIWDmjE9CjNDItgnCWs9mZAiBV
- HXWwFafkTkVGEtGXpnB/ej+yss34Vcv2oK5sCAAh8tYkbRcnBro5uA1ltjeBdFzs4mNzFCiUzIDU0pbIimPPdgTOvhNfbgyNTf1GhA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1789538455.git.mazziesaccount@gmail.com>
 
-On Wed, Sep 23, 2026 at 06:22:43PM +0000, Eliav Farber wrote:
-> Convert the pps_register_source() failure path to dev_err_probe() too,
-> so all three probe error paths that share err_release_pins log the same
-> way. This path already returned PTR_ERR(data->pps), so this is a logging
-> change, not a fix.
+Enjoy!
 
-That reads right, thanks.
+The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
 
-Acked-by: Rodolfo Giometti <giometti@enneenne.com>
+  Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
 
-Ciao,
+are available in the Git repository at:
 
-Rodolfo
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-clk-gpio-regulator-rtc-v7.4
+
+for you to fetch changes up to e8e8d60fe8cc35340f6110ff70ef7959de1c3c0b:
+
+  MAINTAINERS: Add ROHM BD73800 PMIC files (2026-09-23 11:32:19 +0100)
+
+----------------------------------------------------------------
+Immutable branch between MFD, Clk, GPIO, Regulator and RTC due for the v7.4 merge window
+
+----------------------------------------------------------------
+Matti Vaittinen (10):
+      dt-bindings: mfd: Common ROHM PMIC properties
+      dt-bindings: rohm,bd*: Ref common ROHM bindings
+      dt-bindings: regulator: ROHM BD73800 regulators
+      dt-bindings: mfd: ROHM BD73800 PMIC
+      mfd: Support for ROHM BD73800 PMIC core
+      rtc: bd70528: Support RTC on ROHM BD73800
+      regulator: bd71828: Support ROHM BD73800
+      clk: bd718x7: Support ROHM BD73800
+      gpio: bd73800: Support ROHM BD73800 PMIC GPIOs
+      MAINTAINERS: Add ROHM BD73800 PMIC files
+
+ .../devicetree/bindings/mfd/rohm,bd71815-pmic.yaml |   9 +-
+ .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml |   9 +-
+ .../devicetree/bindings/mfd/rohm,bd72720-pmic.yaml |  29 +-
+ .../devicetree/bindings/mfd/rohm,bd73800-pmic.yaml | 218 ++++++++
+ .../devicetree/bindings/mfd/rohm,pmic-pins.yaml    |  72 +++
+ .../bindings/regulator/rohm,bd73800-regulator.yaml |  99 ++++
+ MAINTAINERS                                        |   2 +
+ drivers/clk/clk-bd718x7.c                          |   8 +
+ drivers/gpio/Kconfig                               |  12 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-bd73800.c                        | 209 ++++++++
+ drivers/mfd/Kconfig                                |  15 +-
+ drivers/mfd/rohm-bd71828.c                         | 147 +++++-
+ drivers/regulator/Kconfig                          |   4 +-
+ drivers/regulator/bd71828-regulator.c              | 558 ++++++++++++++++++++-
+ drivers/rtc/rtc-bd70528.c                          |   8 +
+ include/linux/mfd/rohm-bd73800.h                   | 306 +++++++++++
+ include/linux/mfd/rohm-generic.h                   |   1 +
+ 18 files changed, 1661 insertions(+), 46 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd73800-pmic.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,pmic-pins.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd73800-regulator.yaml
+ create mode 100644 drivers/gpio/gpio-bd73800.c
+ create mode 100644 include/linux/mfd/rohm-bd73800.h
+
+-- 
+Lee Jones
