@@ -1,126 +1,80 @@
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EB3386C08
-	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 14:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170803D88E0
+	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 14:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790258588; cv=none; b=IBv2pPFX8Ce8ujqkLHvV1Jtj6GO4ynoISFHbCSFYxUWWlg3SIBaXme/3jWGMM3JHlNYLthg9Qoaiy3b800TJhAZkuXJGxt369sfPmBeNvHHouFbf98KXzy+67rYtEiX8GYSLwA+M6ewgiDdPU6QbeA7IfCGzFAE+MtBgkondX5s=
+	t=1790261219; cv=none; b=OAOvLDVocgFz9hQCzcKE4a6xa/jIGlgxkA7zyqb+djn5wgA+NSysJCK/n63SnsaZwygHbPHCVSgXrIpcgrs0Fejsx26t5IvVoPnA/QpCiUPcKQv23innmL1nAVONOT3+vs+x+OXtQzaTfuyOpUxgEGDYnRnULANn1NhVyoKbeKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790258588; c=relaxed/simple;
-	bh=vgPaatv/nuuMB3kArXx0HJa/hPvxZmi/7qbO2VHTEFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qSklHk7kKjaCYkG9Ik46j+AlIy/9Ay1jZ9TcSx+ZdBJ2Ba+oQQDq1W7umdo3XUVzFpvqyWzCKOG2ZX3FKn+oqJJ98VMwCvQJCjW5Qx+wn4d96ZcY7M2HGCZdEx99Q1W4e178CyQ/UJabdClAsNiSaUtVJGGFQRc9gI4kfGpLgPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gs3elWvW; arc=none smtp.client-ip=74.125.225.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790261219; c=relaxed/simple;
+	bh=/GJ8GnOfRx0puU2ZCnCuvCEi8zSIK970ER6rdDhYSpQ=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tgNibpXd+NSRj6uY1RgnZxrc0BCkl+e5HvGDM8p9S951qJd2mG5wXlPZStodzaccyNf0WurgCT6a0UB/VQJYkV/zsBESuGkFvbfTUTa/YwDG4bkmHpLCzUz6TPckgVIiFSqXnrTyrpnaeaPnQ/F8vL1zSvOYGMOZxdOzvIFcqJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AhJ8/GyZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gs3elWvW"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-48449f62b93so858122f8f.0
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 07:03:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790258585; x=1790863385; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=esKDI064jHsR20UuoDXImNuPdjmJM/k8p4cbmXH1qsk=;
-        b=Gs3elWvWKeRY0J20jtnX6+M3qmB7nrZ4L+y3R3RS5wU1TlH0JuMe/HeYnT0Co60uId
-         Qn0durQopaYBC9mBGoP9CZQuAoFZzJbV/Jmw5CnBWbD7RqRL4iKgtjQTw6k/6I0yJ63D
-         tobNWffexYOrQYfaVxhOEE+8lQNcbRvohb9VHxsHVCfRive+RSOsKwvx1NeVone8U/Sl
-         V21W5V9y3vm3WRkcCuB4gQc+p4QgsZK7P8z2iHSc6iMPL9PmoijeDEDEZiEVzRQgd/HK
-         cmAWr0l6F5ZC+axDkyw8Rpd2as/yMUVEuK/3DwAaVT/+dmk1o/NGvSIjRmnZZCFGBydZ
-         lihQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790258585; x=1790863385;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=esKDI064jHsR20UuoDXImNuPdjmJM/k8p4cbmXH1qsk=;
-        b=S9639Jr8CDIR7Qk2EHhgWm6ggIgPIjt4vAyifwSbe6fLXyG8gi+S2FyOLdI78zcVRP
-         KBZ659xuVs+g0WOWtRWc2/PmM0zTCzwag2iQ02y3pzjcdrPtK8zJIJZerFvscKOyE1Q4
-         bdqO6guxCcgggKzSCJDbzDZyDskoVSuV3EDazthZ0C3nzRM4gJ42pJtuzQn4BIjatecC
-         dBL7rQrGnPHUq2L4d9nznfoTT/jR94NiNv+slzIh8wftWdxGLScy1lkDPCU3h19fcqAU
-         5CKqq4EprdXWOgfpSJehCE1tccBiih0m3YwWjhLSaeiwuv0JpNd1xNHzosr8Ed/n53Nt
-         uttQ==
-X-Gm-Message-State: AFuF++nJ0NjpkMH7yyI41B+NgAyy+mhn3c3YPbhBxpG/Kjy45EuUGnMf
-	3oQcaeYiMCbehX7W6lHEhNnkT0XGz/5tQR13m9gjjzwGtDyyTlmQimAI
-X-Gm-Gg: AYBFou1cJrZ8OmpnwbX2N987i+TUXoXUd7Jv7s2eJl2cznPNL+zc1eg6epBVT0rP0Ri
-	+lHherm19KNAweVDtaBZYdyH4FryZA7ESZUVrLsWVnbfzC1jCHrzNDkHASMmleM9gtVCNWD4iAr
-	n6WuWbUY5uYYMhZ8OH1RPrSJAUKK0tovtz8M/mFvOxlSLBFS2rNlLAEq81w5kGOgYc787GXARuE
-	NTloz6TV3PRlnAIQ92DSekwvR9BgMaxyJnlYnCCIR1GYfYiDWcRct7F137KQ1sHdU7NVS1TOO6+
-	gkily5JZSIFBtQVw650BdqqXOapPuw8o8GO6qN+a/BPBAQXf46Kw8sSMNA49P3qPG2G/65hJSl8
-	6FJM1+MCGfGzT8FerAkM53mxSyVudzYs6uNzNHz4oTWFSfysCOY/zBsBCdsGgWxqomBIKNVRXhs
-	QzyEWClgIojvUkJNav9e87qVo0ro+aXIXGo+ibTYpFierA/+FrL7Ib1qkin2jPHObNXvuc40jLd
-	15jLoGCrDBJsOfpH1F2H42ahh2qWXvn0h+wbcPT2JatCMVoZHLUtnSGPg80K6Ox34wyJdGii/PD
-	tw==
-X-Received: by 2002:a05:6000:26d3:b0:486:fed6:d7e with SMTP id ffacd0b85a97d-488716d3d3fmr4957139f8f.22.1790258584350;
-        Thu, 24 Sep 2026 07:03:04 -0700 (PDT)
-Received: from localhost.localdomain (host86-148-231-190.range86-148.btcentralplus.com. [86.148.231.190])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4886877a247sm15542626f8f.28.2026.09.24.07.02.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Sep 2026 07:03:00 -0700 (PDT)
-From: Areeb Ul Haq Mirza <auhmirza02@gmail.com>
-To: Robert Jarzmik <robert.jarzmik@free.fr>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Areeb Ul Haq Mirza <auhmirza02@gmail.com>
-Subject: [PATCH] gpio: pxa: stop reading gpio_chip::base in direction callbacks
-Date: Thu, 24 Sep 2026 15:02:42 +0100
-Message-ID: <20260924140242.126159-1-auhmirza02@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AhJ8/GyZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C81E01F0089F
+	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 14:46:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790261217;
+	bh=/GJ8GnOfRx0puU2ZCnCuvCEi8zSIK970ER6rdDhYSpQ=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=AhJ8/GyZED80rFlcMiQhdOPpsFu7XF+zMquWmMmlilezsDzEoPszQoRMg/8HLu3k1
+	 eOXi8YlSGPu5gchsD7pdo4SQFuM+k0l+oc5DvuL6lmhtdd2apPKiD5U1ZWW2B9rFQK
+	 L/YkxGUOuewmv4HZqmQoE/RU6MALIljAY7YXrOpbcSebitWjyhuRELpqPAMvIsQEdI
+	 BsEq9HMQYdarSDlzx43AgP/Pd/z6RmPRJpSbP/9krvRPeNI/pjAu6B+j6DDPR3L+Ne
+	 IeL14YxXH9lMBxPpAkf9Q4Fj+XZx2l1BZ21xSLDe9ACObeslznezsxkhESqLSeZdcz
+	 IhDA7fXwPApiQ==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b5e4f16c72so1866076e87.0
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 07:46:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzCT4SJjehPR4uP85ELvqRnGEIJE6Q/EYIs48lEpmq8xRp0zHfeyNKdMVopdsis46aERfWSVzyHzNOU@vger.kernel.org
+X-Gm-Message-State: AFuF++nGLD5Nmcaj5AsFMn1S07J5VSSXLAgqMC3IlDFgNnER3Nslwlhv
+	bGn6ZAKe3GG+Id2/PQ8SD/hlIkw5rd1hapL5zQThkYpWR7D1OXW0TM61ShPdlXU20+0UabAQ9Yn
+	OO5U9bZhH5ytKDz7xW8fjpm1JBso7pupIbbHWcVfU1g==
+X-Received: by 2002:a05:6512:130b:b0:5b6:1a7c:fd86 with SMTP id
+ 2adb3069b0e04-5b8df0dbc90mr1281593e87.44.1790261216402; Thu, 24 Sep 2026
+ 07:46:56 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 24 Sep 2026 07:46:53 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 24 Sep 2026 07:46:53 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260923182243.41060-2-farbere@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260922103051.5257-1-farbere@amazon.com> <20260923182243.41060-1-farbere@amazon.com>
+ <20260923182243.41060-2-farbere@amazon.com>
+Date: Thu, 24 Sep 2026 07:46:53 -0700
+X-Gmail-Original-Message-ID: <CAMRc=MeYjKY2gjXorrSKvoT4JQxGnyUAyaEqG1N4+mMR5BkFhg@mail.gmail.com>
+X-Gm-Features: AclHuK8DlJ5hNJm6JMzivbmwyqHAxKbZhQr31gcttS4XGGEHTD93hUStry5s9Rg
+Message-ID: <CAMRc=MeYjKY2gjXorrSKvoT4JQxGnyUAyaEqG1N4+mMR5BkFhg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/4] pps: clients: gpio: propagate probe error codes
+To: Eliav Farber <farbere@amazon.com>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Fabio Estevam <festevam@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Rodolfo Giometti <giometti@enneenne.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-__gpio_is_inverted() identifies GPIO86-89 on PXA26x by comparing its
-argument against hardware line numbers, and its other callers pass the
-hardware index from irqd_to_hwirq(). The direction_input() and
-direction_output() callbacks instead pass chip->base + offset.
+On Wed, 23 Sep 2026 20:22:40 +0200, Eliav Farber <farbere@amazon.com> said:
+> On the two probe error paths that map and request the interrupt, probe
+> overwrote the error from gpiod_to_irq() and request_threaded_irq() with a
+> hardcoded -EINVAL, hiding meaningful codes such as -EBUSY, -ENOMEM or
+> -EPROBE_DEFER from the caller. The request_threaded_irq() failure message
+> also logged the IRQ number but not the errno.
+>
+> Switch both paths to dev_err_probe() so the actual error code is returned
+> and logged symbolically, and so a repeated -EPROBE_DEFER during boot is
+> logged at debug level rather than spamming the console. This also matches
+> pps_gpio_setup() in the same file, which already uses dev_err_probe().
+>
+> Fixes: 161520451dfa ("pps: new client driver using GPIO")
 
-Pass the offset directly, which is the same conversion that commit
-566e684e70cb ("gpio: pxa: use new pinctrl GPIO helpers") made for the
-pinctrl calls in these functions.
-
-No functional change: the driver never sets chip->base, which stays
-zero because struct pxa_gpio_chip is allocated with devm_kzalloc().
-This removes a dependency on gpio_chip::base,
-as tracked in drivers/gpio/TODO.
-
-Signed-off-by: Areeb Ul Haq Mirza <auhmirza02@gmail.com>
----
-Compile-tested only (arm64, COMPILE_TEST, W=1 and sparse clean).
-
- drivers/gpio/gpio-pxa.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index 2b5da973f51f..3ff21e899278 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -268,7 +268,7 @@ static int pxa_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	value = readl_relaxed(base + GPDR_OFFSET);
--	if (__gpio_is_inverted(chip->base + offset))
-+	if (__gpio_is_inverted(offset))
- 		value |= mask;
- 	else
- 		value &= ~mask;
-@@ -297,7 +297,7 @@ static int pxa_gpio_direction_output(struct gpio_chip *chip,
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	tmp = readl_relaxed(base + GPDR_OFFSET);
--	if (__gpio_is_inverted(chip->base + offset))
-+	if (__gpio_is_inverted(offset))
- 		tmp &= ~mask;
- 	else
- 		tmp |= mask;
-
-base-commit: cee9395acd8043be0644b25c34bfa86623f2b935
--- 
-2.43.0
-
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
