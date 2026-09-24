@@ -1,249 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx2-f42.google.com (mail-yx2-f42.google.com [74.125.224.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8227E542EC1;
-	Thu, 24 Sep 2026 17:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790271324; cv=none; b=WvTy4oRjKHQPrYbQ+2+axCrim8EWC2PVuQUVy/lcEPiBor+e3igRnw8hFEaiRN4pWBcpOb+eXtwPEWNc9/sIPL4ZujZf/BQf4h6pqBLezM5LLgDKJjeC9Kvuy1DaU1CycwgG4qfn6FG8w1N5clc2eesKdIe5KlxETrsx/Ueg9+g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790271324; c=relaxed/simple;
-	bh=FyRJz4YMDl6mBag9t5YIg0D7B1oafB2JS5XVdDQ/FJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZRFPz+9IGzH5+hIhCf4DAZjLq9M0hZXgFXRwc71lm67ZBnZFxq+S83ivuk1Fc/7AfucfuI0EsFcFCFGi/9CHao/fRWxmJc9oWy1nakZW5R504cu02JnCWozlf08NPk/eyMsGv7heop/k+H91RVIflbAODTrdlDQMI04cIHoQXrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QVyqtnTF; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E64415F1D
+	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 18:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.170
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790273039; cv=pass; b=rAMFF5OeHXgUEI9ELp4uGs7W6P1HNVfQjsFN46aUAOhgJ/ja6HXQTOhcK5iBi4BqBZRyYCXnYruPqZ2nwTaGUymXMJo5yvXyu2BfOhUtHmZWGURX+k7B2hrLpJgM7QyZrPWcypnT0UYUpTSVDyNmN16dppJnVRxEvZyUTN7F9Jg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790273039; c=relaxed/simple;
+	bh=be7ui7RFb4TvlxRvgKCPBiOHLIe8vlOIGLT6VBBiuVM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N8QZP+LHGXs+YRDgFnGVTWllzs4SrwVxw74FwtP1qYgMSiIEQ3BlL6gF230GV4WLmF+X9Z7HWHWKe0+rGm4eV60yop6Hcq6aDvLznttmFGqitdZu0igqAwjqdlv89dOJYj4MlESzT1eGa8iB7Z9it7iNaTcYo9emvqTJzPLsgZs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com; spf=pass smtp.mailfrom=criticallink.com; dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b=WZIaYYIU; arc=pass smtp.client-ip=74.125.224.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=criticallink.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=criticallink.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVyqtnTF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F4951F000FF;
-	Thu, 24 Sep 2026 17:35:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790271322;
-	bh=iB1GdzP+8thSPMeWIKodQA64CDM1Tul3nzGc9hJIyLg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=QVyqtnTFgJ1OrhUvXnt/50bN1+ev4REPE0V4chjSMh13CZFHvUBTT5udqrxIr2sY8
-	 sNsv0BtIkH9cZoYfmEQBe27Tw126iuARvLFcEaSAxrphRluLxrjP0IpR+8suOdUhG4
-	 8zo9ZasonLhEGey91Jt/Kpdk9ZWULkRnFoGb1mAVxQqSDhfg0+xoxxDMgastegnav2
-	 8P5nj0/wHesA9muawmp952KPVhNTLUVVwKy4MVje607sHePwR3KTIqg1rex39+j12h
-	 XLNUl3glZOsmG195yNaJ/gypajXXCZ+DWILZHIMOm6Tbx+vL6HFyMbOlyimvHankhJ
-	 f9VNlg0LCsRgA==
-Date: Thu, 24 Sep 2026 18:35:15 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Shenwei Wang <shenwei.wang@oss.nxp.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-imx@nxp.com, Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-	b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v16 2/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
- subnode support
-Message-ID: <20260924-bonding-chill-81ae9424c06d@spud>
-References: <20260923184255.299034-1-shenwei.wang@oss.nxp.com>
- <20260923184255.299034-3-shenwei.wang@oss.nxp.com>
+	dkim=pass (2048-bit key) header.d=criticallink.com header.i=@criticallink.com header.b="WZIaYYIU"
+Received: by mail-yx2-f42.google.com with SMTP id 956f58d0204a3-672f5240195so159972d50.0
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 11:03:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790273037; cv=none;
+        d=google.com; s=arc-20260327;
+        b=UelpB2yDJ9b30khZ4Bq43zKEd77ahJVGUQzB55DEjxCEhpOW2RT6URFaqNAtSxyR/E
+         4T7oSr/s8cMGGB58EiqfqvWUKLW4gFxBKw3wBehzMLP8iUmVlgP0ozDhA2HcQiEVXtgM
+         fOlZa9X8SsCyyFO256qHlkLhnvX7jn2Dl960adRSib+DcgLDfLcB8FTLVd52vYc9ww85
+         sxUr+FVEzzdTscbMisgm3Y97PsNEGGQCk9QdPv5KglUS/ssi/v3ciw9GlqP4HTVm7dbj
+         VB3vFv3d72MxJYyrJk0yxKGmvQxBVaZLdr4QEYEMrdnOKkiz/XNEOBC08UOmylUqX6pu
+         AsYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=GbI6rbvHDi76XEhVIPPpSzJuZ9OLSAAQszp6JpdmYTs=;
+        fh=8X7Pe70oDgSShsKbHCX5BWBg1SbksJ0waLsmuBr7Pss=;
+        b=V1mqp7ReMxirJZV12Y/SG2h15qGyifxpPEo2RD6FQ8FPKlVGsXJWCidpzIMNX6aXoj
+         w4Cjt2mNMK9g4Z5cIRXLiTYQ9RXGN9SMSpRhmLdnkRlhcBmi/CFWmIXUwKK4s/KT9Psj
+         9KPv7zk5ZxZM5jUCZIJ2NMT/HpkYaknvKsMdY9cV1Q85KZLkB7H4Td5AnaUjd9/pl3uC
+         JJpLXiYe/T8ENLP6Xxiy/4EjnDJeqCuFFUu45wc155u0cfg8T7LbkV/mZ/SH53JuAh1k
+         TiKQBCId8kGFHyBXZtK6pRJXCEu/BMvfaqaXS+cBYYPWIdVy2t6OknKlJMgyMEvWjCXD
+         x+pQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=criticallink.com; s=google; t=1790273037; x=1790877837; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=GbI6rbvHDi76XEhVIPPpSzJuZ9OLSAAQszp6JpdmYTs=;
+        b=WZIaYYIUrhggBj14kbMNE2jUvKrQx2cHcMiohtn2FCsaxpFxg9UIJ+dUThGKS5jhPt
+         /Wv8zBVj9jFG5+S6bLh9c8B8qwX1c+5gfNEBRQ3cBVq3tl0gm6AmI8vI7kBpRX9vs8MX
+         agOX/5WAdMW8991YygMO3I+s0lR3S26qhBfMXSEE4UX5Rv5E9bBfK0bSwvK1WJpifCgo
+         xorSvrRgOSiK+kiZHBGVssfXaa7kceWRIApzDTjuDF9Gp7BNX53LsQgaj/xdaVhshw7q
+         8n4AFHZJC+bQhwPXycW4mZ/eyD7VocSoN5RYFSKLg5YYEjoYtFIF3tKBH9ZhsEJvij0h
+         2CJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790273037; x=1790877837;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=GbI6rbvHDi76XEhVIPPpSzJuZ9OLSAAQszp6JpdmYTs=;
+        b=sRuTz47LKopn7vB715sOD5uU1MTl0UBNdlG+W10gr7ZOEtMK3mhOeplC6VHmHfZJ3c
+         qh9pX07mQo8GH6iuRVyxdMefgMf3azhlDbjm7nAFY8uNaCH07P01/N3HaZOSbsxv573l
+         pAlwoYqK+0wl2jL79GMC/NhxwiWTidFhNZ7SJpAgyGNFWg3OlYY0DjS4OXI2XlcS9hDF
+         hSvdThN2mfzCZwx7juiGCWXhvm3ySZ7/UCyPpJowSEaRmqxAdJXWBx+sNOt5obMZzf6H
+         ffRcJ5Rbc5rKDV/zdvC5LeJzyal34N4AZIzk8weadbz6OWN5Ki7qU0hN/4n3Y59dExbC
+         XJbQ==
+X-Forwarded-Encrypted: i=1; AKwUvBw8IZhGLVBO/lc29o2oC2By6HBVu9ssVG9OvgJUrvs2y3pxhPTsKP3DZC/Wo2qKxPrxGuBb8PIAnjcp@vger.kernel.org
+X-Gm-Message-State: AFuF++lhyi7mV2QaZjkfHfBjgE0dn2Q5Fr9BCm0DswAVv20fEvCD3v+9
+	8GmWuWEiqCe3zyae0NnqP4PQhsQCYSwAbb/MdDw3kqrmglPaPGgt7aMUngkNdCxHv4fEc64aasB
+	ZwnhVvcCc96JUkCUgLCgeJmZq/M6/2lw/H78ZGO70
+X-Gm-Gg: AYBFou0KZZB185/6cHmtyOXE1hJafZQZj2p0qokkYBtJrnm2QW3svrKrXDsH6ZrjWKV
+	myslMZ+ritaqWetwjip+A7GHsG5jRxSuuDimS6OYDpBeO4KMDBX6bddZ0TNbkLTWeYX7B9WhdzY
+	3nLbeTq82UivuF5oiJNrcotqty1zi/qIOn57Y1R+o5QJYlPmkVkm7T4B3IjydwKf66SECVF8C+4
+	bhIqvVWsJUs0VZSW3EFiYyFQkxBJ8FBABrvKFeJcGAU191gWtXR2zEXKqKkOg2ebtJN32wvQiCk
+	lg2kKPoj9bXpRf9Gmqc9VzQJlUDESsd5dj5iQ0qJc6lX+rMKj0aYXCDJ2Vm3CX3o
+X-Received: by 2002:a05:690e:4893:20b0:673:1df3:a6f8 with SMTP id
+ 956f58d0204a3-6731df4bb08mr827628d50.27.1790273034957; Thu, 24 Sep 2026
+ 11:03:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="C56Zomom5CajsRz1"
-Content-Disposition: inline
-In-Reply-To: <20260923184255.299034-3-shenwei.wang@oss.nxp.com>
-
---C56Zomom5CajsRz1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20260919171100.90430-1-kmehltretter@gmail.com>
+ <20260919171100.90430-4-kmehltretter@gmail.com> <CAHp75VfOwZG0htxs7LJ5X4cdTMApESRpDaGCQqJpD3RSap+-6w@mail.gmail.com>
+In-Reply-To: <CAHp75VfOwZG0htxs7LJ5X4cdTMApESRpDaGCQqJpD3RSap+-6w@mail.gmail.com>
+From: Jon Cormier <jcormier@criticallink.com>
+Date: Thu, 24 Sep 2026 14:03:43 -0400
+X-Gm-Features: AclHuK9W-13IkypRQ3w-qHAtFYIaLjYWqfxyZOrezr6nxGY3oYYuRteiyYlIevs
+Message-ID: <CADL8D3aLAViH=5gVVRz7==M0T6rVuksNSgcoZCCTAJjroUnuxw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] gpio: tps65219: Fix TPS65214 GPIO direction programming
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Karl Mehltretter <kmehltretter@gmail.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Jerome Neanne <jneanne@baylibre.com>, 
+	Shree Ramamoorthy <s-ramamoorthy@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 23, 2026 at 01:42:29PM -0500, Shenwei Wang wrote:
-> From: Shenwei Wang <shenwei.wang@nxp.com>
->=20
-> Remote processors may announce multiple GPIO controllers over an RPMSG
-> channel. These GPIO controllers may require corresponding device tree
-> nodes, especially when acting as providers, to supply phandles for their
-> consumers.
->=20
-> Define an RPMSG node to work as a container for a group of RPMSG channels
-> under the imx_rproc node. Each subnode within "rpmsg" represents an
-> individual RPMSG channel. The name of each subnode corresponds to the
-> channel name as defined by the remote processor.
->=20
-> All remote devices associated with a given channel are defined as child
-> nodes under the corresponding channel node.
->=20
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
-> ---
->  .../devicetree/bindings/gpio/gpio-rpmsg.yaml  | 55 +++++++++++++++++++
->  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 46 ++++++++++++++++
->  2 files changed, 101 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml b/Doc=
-umentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
-> new file mode 100644
-> index 000000000000..41eb2e149942
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
-> @@ -0,0 +1,55 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/gpio-rpmsg.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Generic RPMSG GPIO Controller
-> +
-> +maintainers:
-> +  - Shenwei Wang <shenwei.wang@nxp.com>
-> +
-> +description:
-> +  On an AMP platform, some GPIO controllers are exposed by the remote pr=
-ocessor
-> +  through the RPMSG bus. The RPMSG GPIO transport protocol defines the p=
-acket
-> +  structure and communication flow between Linux and the remote firmware=
-=2E Those
-> +  controllers are managed via this transport protocol. For more details =
-of the
-> +  protocol, check the document below.
-> +  Documentation/driver-api/gpio/gpio-rpmsg.rst
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - fsl,rpmsg-gpio
+On Thu, Sep 24, 2026 at 11:47=E2=80=AFAM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Sat, Sep 19, 2026 at 8:11=E2=80=AFPM Karl Mehltretter <kmehltretter@gm=
+ail.com> wrote:
+> >
+> > GPIO_LINE_DIRECTION_OUT and GPIO_LINE_DIRECTION_IN have the values 0
+> > and 1, respectively, while the TPS65214 GPIO_CONFIG field is BIT(1).
+> > regmap_update_bits() masks the supplied value, so passing either
+> > direction value clears the field and selects input mode.
+> >
+> > Translate the GPIO direction to the register encoding used by
+> > tps65214_gpio_get_direction(), setting GPIO_CONFIG for output and
+> > clearing it for input.
+>
+> ...
+>
+> > +       val =3D direction =3D=3D GPIO_LINE_DIRECTION_OUT ?
+> > +               TPS65214_GPIO0_DIR_MASK : 0;
+> >         ret =3D regmap_update_bits(gpio->tps->regmap, TPS65219_REG_GENE=
+RAL_CONFIG,
+> > -                                TPS65214_GPIO0_DIR_MASK, direction);
+> > +                                TPS65214_GPIO0_DIR_MASK, val);
+>
+> regmap_assign_bits()
+That would make sense, it would simplify the diff.  I think something
+like this, right.
 
-Is this even used? Your dts patch doesn't have it.
+-        ret =3D regmap_update_bits(gpio->tps->regmap,
+TPS65219_REG_GENERAL_CONFIG,
+ -                                TPS65214_GPIO0_DIR_MASK, direction);
++        ret =3D regmap_assign_bits(gpio->tps->regmap,
+TPS65219_REG_GENERAL_CONFIG,
+ +                                TPS65214_GPIO0_DIR_MASK, direction
+=3D=3D GPIO_LINE_DIRECTION_OUT);
 
-> +          - const: rpmsg-gpio
-> +      - const: rpmsg-gpio
 
-Sounds like, if linux are the arbiters of what this protocol is,
-"linux," should be used as a vendor prefix.
+--=20
+Jonathan Cormier
+Senior Software Engineer
 
-> +
-> +  reg:
-> +    description:
-> +      The reg property represents the index of the GPIO controllers. Sin=
-ce
-> +      the driver manages controllers on a remote system, this index tells
-> +      the remote system which controller to operate.
-> +    maxItems: 1
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  gpio-controller: true
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 2
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#gpio-cells"
-> +  - gpio-controller
-> +
-> +allOf:
-> +  - $ref: /schemas/gpio/gpio.yaml#
-> +
-> +unevaluatedProperties: false
-> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.y=
-aml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> index c18f71b64889..5c82255b92a5 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> @@ -88,6 +88,29 @@ properties:
->        This property is to specify the resource id of the remote processo=
-r in SoC
->        which supports SCFW
-> =20
-> +  rpmsg:
-> +    type: object
-> +    additionalProperties: false
-> +    description:
-> +      Represents the RPMSG bus between Linux and the remote system. Cont=
-ains
-> +      a group of RPMSG devices running on the bus.
-> +    properties:
-> +      '#address-cells':
-> +        const: 1
-> +
-> +      '#size-cells':
-> +        const: 0
-> +
-> +    patternProperties:
-> +      "^gpio@[0-9a-f]+$":
-> +        type: object
-> +        $ref: /schemas/gpio/gpio-rpmsg.yaml#
-> +        unevaluatedProperties: false
-> +
-> +    required:
-> +      - '#address-cells'
-> +      - '#size-cells'
-> +
->  required:
->    - compatible
-> =20
-> @@ -150,5 +173,28 @@ examples:
->                  &mu 3 1>;
->        memory-region =3D <&vdev0buffer>, <&vdev0vring0>, <&vdev0vring1>, =
-<&rsc_table>;
->        syscon =3D <&src>;
-> +
-> +      rpmsg {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        gpio@0 {
-> +          compatible =3D "rpmsg-gpio";
-> +          reg =3D <0>;
-> +          gpio-controller;
-> +          #gpio-cells =3D <2>;
-> +          #interrupt-cells =3D <2>;
-> +          interrupt-controller;
-> +        };
-> +
-> +        gpio@1 {
-> +          compatible =3D "rpmsg-gpio";
-> +          reg =3D <1>;
-> +          gpio-controller;
-> +          #gpio-cells =3D <2>;
-> +          #interrupt-cells =3D <2>;
-> +          interrupt-controller;
-> +        };
-> +      };
->      };
->  ...
-> --=20
-> 2.43.0
->=20
+Office:  315.425.4045 x222
 
---C56Zomom5CajsRz1
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCarVfUwAKCRB4tDGHoIJi
-0i0GAP97j+i7FWor0B5kx0k5Y61hsIbG5rpgbILtHtQonkqb+gD+Jw/HBv1cg7JV
-KEqTudUMhBrAYU4Cx+DsgAN/vYAzRgU=
-=ljte
------END PGP SIGNATURE-----
-
---C56Zomom5CajsRz1--
+http://www.CriticalLink.com
+6712 Brooklawn Parkway, Syracuse, NY 13211
