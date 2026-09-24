@@ -1,133 +1,87 @@
-Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com [74.125.227.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7023138F949
-	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 09:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0A7314B6D
+	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 11:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790242721; cv=none; b=AL72//7tmonrM95IRouacaYGgoz3rMmdfoWSs5x4buJ9K0LoY6d+7R8OSupWslPEUL/Ac4IowdZ5zaMZyYSlbpZiXS4WBjQCffp8yHjkkaf5bJ5sUcaf1/vF+HKVfT8382XaEW2NZ6+Ja8fWm0q1CmBicVeziiPcQbYO6HmD4yg=
+	t=1790248720; cv=none; b=sgqYDKK16iHcBnByLsJBwg5yzO2lRx0ptysJx7ODFeJo2qAxOJzPX2IA7sReJHrlAsNrFx8NZZs00sk0gjqZ5uqUcmP9KKIVWGN7YXNtCj8KCr2EQi7SS/sfrctVLY3UTgmGW6+VDNYgAvuygUxC70CANlYbc+fGEafU15tSch4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790242721; c=relaxed/simple;
-	bh=gU+WI2i7LDEKT6RINnzIXgb5K5O4tS+U3cDvjUwa9t0=;
+	s=arc-20240116; t=1790248720; c=relaxed/simple;
+	bh=lcdubPlHtoDIjRt+QuMoY5OpbtDK10iEJXOyO3ON3QE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eFBBqeTyAQ2pA9Sn6jidZk7klsA9daHYS2PdWw3NlXL+goMEqPou49evP0Fhcupp2tmHk2FSEpcsnVWBb8zQFml9HnsOtDzb6OvepmKhYHNkr7UN/rKjF3I+ttQUfl7IdigmLPhg7HsCsV0wZW5C1SbaHrcY3JeSddkJSrTo6Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f12.google.com with SMTP id 71dfb90a1353d-5c67e512ee5so715493e0c.2
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 02:38:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790242718; x=1790847518;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=kpeffu0mh4OhtQGcEkTfxWhGK7BSRsx5zqS/No2TWCY=;
-        b=WotViUVzApsJ8wjAEpWYpBPcThpHZj9LRh6Fo/xBGks99ZxqxqCLSUoASwCwCKqKnN
-         fD2XSBVoV/+eoyeMS0pcb7xdg7uOj4FMyytiww9HrVJ28OFsSqUetlBk7fCRqjw/bN5t
-         +Rjkc7rdwabygJARBqzaV+VnIhIhdTPW3KNrgTeu1Golg0wK1kpzGaoM6R0wLQDPhZw0
-         WGJ7F4g1NIkPcbMr5SvGlibDD19pc1JOgkbpoS8bSCjg5pP4thw2pk0Sa8YL7rhoCtFd
-         2gZJE200A+2UoQNEmIxwF+/dp/TTzmwB+fX/hw4cIBlVxNxl40OPePxUMwCgexUb2xOa
-         Xr/w==
-X-Forwarded-Encrypted: i=1; AKwUvBxf2WOFXul9xixNw/tH+PvpuS50upbhts3eNRJpvqmxD1AaoYsTYFW7OqbA5zcdsjPKLu/rjIi2nJlg@vger.kernel.org
-X-Gm-Message-State: AFuF++llzDO+VbpolKV9I5/68mr0wZjVWmxZzUwzdM81zw6AFbH+fZb9
-	H+yEtN+MiF9a2q3Ea49TS6E0ryfQUczkkUFgemkitLwq+5hqzaW952k61XOMKKkrFBc=
-X-Gm-Gg: AYBFou2PUGyqVAwH0NDPePy+aWFEP8oTBwByaZ6sk3IOd3csPnrEplnmO9x+33uibKn
-	emni7SehG9uQFQFqFFZ39T6KW0nMgt0EQdN2j3OmBIOI9RRcyIR1rcwcnPlxqw1Cv8RpFcfb3kx
-	zArCf5hG9uzLtbDUKJ6ykAS4eMfHsQY6C2v6gHBEl1l8Y3TcLOESTTTUkDVLzJPD8168kJ3T/s2
-	A+qOR7g9cqd+RIdCaiHXLQAHuJW1vNu9mUE3bfilZU8bBQbxqmIBBv69nXbk9u08+vYn5pdSrrQ
-	vVk3ksKu7/qw6DIHeHa1VtHY/Qd3PMKFnBoaP8cmRNE595sWFUNGgdcgP7CoVKRuFfn08jHYhwm
-	2H+QlSQyT+zme0Die5QRuPZRxnNutOmPmqIrprxkZliW37qs+IzIiwCuG8WGuwAkc81DRStxdwj
-	n6EKqT1tFUxruq0iKY6zNO2q//PP0h3MuD1HsKrFJ59dox0K1DglXIwRF+vP5m1krxj34aU8nAN
-	6bltGdwf/w2AIN3Szh9tkjcznYznkMjGNP2KtVQoVcNhg4x
-X-Received: by 2002:a05:6102:6882:b0:7a7:198a:c2c6 with SMTP id ada2fe7eead31-7af1f0ffd39mr829831137.36.1790242718142;
-        Thu, 24 Sep 2026 02:38:38 -0700 (PDT)
-Received: from mail-ua2-f24.google.com (mail-ua2-f24.google.com. [74.125.226.216])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-98516a42fe6sm6074172241.7.2026.09.24.02.38.37
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Sep 2026 02:38:37 -0700 (PDT)
-Received: by mail-ua2-f24.google.com with SMTP id a1e0cc1a2514c-97e7c72bfe9so617375241.2
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 02:38:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwlIHTXvSQdt+eUcMXU2p2lR3YRHmj7ERD/MAKCaJNjgBq20C2xWrenQ/CWZQpAxi1K/ooJ8sDJ7Zns@vger.kernel.org
-X-Received: by 2002:a05:6102:524a:b0:7a7:12c0:f061 with SMTP id
- ada2fe7eead31-7af1cb979b6mr924094137.12.1790242717699; Thu, 24 Sep 2026
- 02:38:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=K1rw5O6aOj1n12jc3RGRS8ltTKyyAecjPShPnGiVwXxgFYKkPVbeLhDlJVIqI6ds4+BdzdnXb5IOak3H0vE4OoXdmE+oob8IUZTkfpus4qbLQefuAqjuXjfMfPUX130MZ57gJBWSm+XdT76ZL28O3/HRApDrEasSPUOCjbqKhtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlTT6M8O; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlTT6M8O"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93AF61F0089B
+	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 11:18:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790248719;
+	bh=OcTJOje/LLFPmLDozu5uW9vUgvKXaCAXc1Kv5yqHgEY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=nlTT6M8OvbsHbEHGwTYPMuwjrN7Q/Uruo3nKeyD1kjnw4SClY67Dp9aFTeJ4z1hxb
+	 kDGiJ0DbVctMGXpe89VW8pCl4mmHUPmqM9pGZNo8N2GRwuIyBH7H8P3esO2HZEPVDu
+	 duXIbt4NTnpl4p4mwInYqx6wtPSYMjs/GfqRtis8XK4akoxk/wTg/f2WLZMd0ce0XI
+	 YbhUKCnvUurRfKXCexB4IkY0evNBeglmH1lDicU05hz9gkvScA67QgjiOTSMoEhGwk
+	 kk/4lzFJ4xqOhXmE6vSk0mnM1VwkTpEh+oDA4xYC/p8920CvrbTHnFPtEz5VIBlURF
+	 /6zu7qAPx6OJA==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5b8997bc6e6so582036e87.1
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 04:18:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwh/rjDI6pUnhSVqwtuRQoB5iLDpxRX//DKSQSBo03M4I9zQg0sGY4nRb0MZ93QO19m4xc0YAxwstMs@vger.kernel.org
+X-Gm-Message-State: AFuF++man8j4ajYgO1KkWaUlr3FYXiF1MRdczZHpjE8DdG5wbA/VGEQO
+	Vq+cynSVopN8iL6TsA00F/H6WKTRWoJ/OLtNhNHvzE85S6BW07aEAe/U53q1iCWGHWACYk8Xwtp
+	ffXW6+DrcwqeMlZWI6mAO75pkhBHNlSM=
+X-Received: by 2002:a05:6512:378c:20b0:5b8:c15a:6ce3 with SMTP id
+ 2adb3069b0e04-5b8df1f2b2bmr492740e87.29.1790248718275; Thu, 24 Sep 2026
+ 04:18:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260921232551.3129244-1-robh@kernel.org> <CAMuHMdV7D4RZ6zA_0jBqnCz8gee2=9bbNAXETbbNQxANhJ5pZg@mail.gmail.com>
- <CAD++jLmvZAen+p_Z-aVSqUnXMChAa7qbNvgv=mEQr9tFMiJFwQ@mail.gmail.com>
-In-Reply-To: <CAD++jLmvZAen+p_Z-aVSqUnXMChAa7qbNvgv=mEQr9tFMiJFwQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 24 Sep 2026 11:38:26 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWe0vGnyT9E1abK5cFTJgA8=U4mMsaMJAFJsXCAcJf9qw@mail.gmail.com>
-X-Gm-Features: AclHuK-4KFW8W7QHV9HlBHDtlVrNb0OLmBx3KedI1dCvkL0eI5l2kFSSP5LQI3w
-Message-ID: <CAMuHMdWe0vGnyT9E1abK5cFTJgA8=U4mMsaMJAFJsXCAcJf9qw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: renesas: Allow power-source
-To: Linus Walleij <linusw@kernel.org>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20260924065514.3678640-1-mehmet.fide@gmail.com>
+In-Reply-To: <20260924065514.3678640-1-mehmet.fide@gmail.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 24 Sep 2026 13:18:25 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmth4fewBX7FCEJooDuwHWtGv+XvvQas6Y5iStpTwAy9Q@mail.gmail.com>
+X-Gm-Features: AclHuK95jx6rtMJfElg8F2gKY3_L62ve5zcmLjc1yqjBoxFNa2u9t59lm0nJBi8
+Message-ID: <CAD++jLmth4fewBX7FCEJooDuwHWtGv+XvvQas6Y5iStpTwAy9Q@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: include linux/errno.h in consumer.h for ENOTSUPP
+To: Mehmet Fide <mehmet.fide@gmail.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Haibo Chen <haibo.chen@nxp.com>, 
+	kernel test robot <lkp@intel.com>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Thu, Sep 24, 2026 at 8:55=E2=80=AFAM Mehmet Fide <mehmet.fide@gmail.com>=
+ wrote:
 
-On Thu, 24 Sept 2026 at 09:25, Linus Walleij <linusw@kernel.org> wrote:
-> On Tue, Sep 22, 2026 at 3:19=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
+> From: Mehmet Fide <mehmet.fide@screeningeagle.com>
 >
-> > > +        power-source:
-> > > +          description: I/O voltage in millivolts.
-> > > +          enum: [ 1800, 3300 ]
-> (...)
-> > drivers/pinctrl/renesas/pinctrl-rzv2m.c does not implement support
-> > for PIN_CONFIG_POWER_SOURCE yet.  So I'd rather not advertise the
-> > power-source property in the DT bindings until the driver is fixed.
+> The CONFIG_PINCTRL=3Dn stubs of pinctrl_gpio_get_config() and
+> pinctrl_gpio_set_config() return -ENOTSUPP, but the header only pulls in
+> linux/err.h, which provides asm/errno.h and not the kernel-internal
+> ENOTSUPP from linux/errno.h. A translation unit that includes
+> pinctrl/consumer.h before anything else fails to build:
 >
-> The DT bindings are used by U-Boot and BSD too, what if
-> their drivers use it?
+>   include/linux/pinctrl/consumer.h:110:10: error: use of undeclared ident=
+ifier 'ENOTSUPP'
+>
+> Include linux/errno.h explicitly.
+>
+> Fixes: b44aec87658e ("pinctrl: make the CONFIG_PINCTRL=3Dn gpio config st=
+ubs return -ENOTSUPP")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202609240855.U59akHDO-lkp@i=
+ntel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202609241240.61Hz5rix-lkp@i=
+ntel.com/
+> Signed-off-by: Mehmet Fide <mehmet.fide@screeningeagle.com>
 
-As this property controls voltage, I am mostly worried that having
-a user without implementation may cause ill-effects (damage?) on the hardwa=
-re.
-With the property missing in the DT bindings, we at least get a
-warning with dtbs_check.
+Patch applied!
 
-Fabrizio: do you have access to the hardware?
-Does it work? Perhaps the SDHI driver fails to probe due to the
-unhandled property?
-
-> It's a bit confusing but we're essentially maintaining the bindings
-> for those other projects as well, and it's why, for a good reason,
-> DT maintainers originally wanted to split out the bindings to a
-> separate repo. (This didn't happen because nobody wants the
-> job of driving and maintaining that, binding maintainers have
-> enough trouble as it is.)
-
-Sure.
-
-> I'd say just apply the patch.
-
-I can't seem to find registers to implement the voltage switching,
-so perhaps it's purely controlled externally, and the property should
-not be described at all?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
