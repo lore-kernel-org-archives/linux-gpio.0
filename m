@@ -1,149 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B70C46D57D
-	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 11:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D85547D444
+	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 12:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790249030; cv=none; b=mfNzZTGU3BNGPiVUwfH/xoe9sSDPY7Ge56bklnzG9X0/MVREGrbRkOGXb4yvg37LQc/ftqL7um8LlpKV0gwWTRS8BsA6oMwSF1JS1UXyZ73ro0BaeOgel/oX3t4hlnuw7Jzu0ssArYJWV15xO1m+GAl5yJwnvR0JcVNF4szbGjM=
+	t=1790251592; cv=none; b=ofUpVequpSiwAzMBm40JmWS4vFc1Dm9Blc1j0/Aw00yqmNShGzR8pYti55v90/GwkrlKbe4nVO3mDfHIFRaxuk7k6xDHfLYtMIdf76T/wOElm6MG1BG6jOFIkd5baQDlCMLX39tbOHh9CVjnLK1uUPRxZjwMAtcB4ZKKDEShPlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790249030; c=relaxed/simple;
-	bh=OjkUmDAD4oz+xbzZpBjuR9oWr5XlqS+v3UAsqgqWTLU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ZtQ5g6grTjpS2aVUE1E/5l4BtWj9g57Cnag5Sms/HVvLNF4+JaPYfLCTVLcoXsGN2DHYc2ifsD+d/k6wXOLPuXNkJ4AOFiKDIhAZYA5GHqwyYLFKaVfFk4mpZESfZXs4R85AOK8Rv0dcgwY/wWwt+Vlvq62416exoVJ1U8WZ0uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B4E+CWfB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790251592; c=relaxed/simple;
+	bh=AMda9b2M0HE7bDg1/E+8Yg0zmUKaV5CLAKi97xEwv68=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sSp2/JbZtzLe8h20I2P4AF0Pn9tYtGiNk5KWO3NeNceJfNn55FrLQHw1jgxjsrTQrzOJ6xoHJ6oy4aneQkfrnEDqPU8DGJnltn9nBFAdVuo+iXQjYkX44ec06IfWAg4Td3CY/9yEAU7O9m1Fgoq4FikqU2cNr6SUeHs5kOp0+gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AN2eipIw; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B4E+CWfB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30A431F0089A
-	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 11:23:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AN2eipIw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 120B21F008A0
+	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 12:06:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790249029;
-	bh=CTU8Ogs42D+dXZMfPUs99jOT2Cxtsrhzqaj0v6zLINg=;
-	h=From:Date:Subject:To:Cc;
-	b=B4E+CWfBXgRV9MSkJ7xnY0CqF4p85wE8OCoXJ98nmNpMzcJCwh7ys3JzYiqA5kiG6
-	 pOWSeR2zRkaC3If/whLu1VXG89eQQouZGhtgD72VVqExu0TK5r0gBSeyw9GOFMARHk
-	 tdCkJ+prmtuOOQpu7rQ8a4lEZk9XOb1/0HJbtBItz8A0UrdVtSWh6r7dIw3t405JIb
-	 UEwmsxpE+aptDEOvalt6eHqB3EgCBSelVsQ1O0PlS2xC3YqktK43qnfdvq/InLcVtj
-	 sBJKuLWs3DwfggvpjcMOMeMTElF60JWP8jUyfx45HouxF3oqZU8j6jsMQYlnp2Yn1y
-	 oZxyJLeymiRbw==
-Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b8d879752fso1524721e87.2
-        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 04:23:49 -0700 (PDT)
-X-Gm-Message-State: AFuF++kDpWSAl1419bX0uDSH4ifq1aQ8+vCAujRrbx2+HlYCwUWiJrLP
-	P7UDo1OJtHUGZ/O9D55sA0WnMlORljBJkEtGonUt+uFfDuRV2G6JS5BC9p/clNrVlzfkMxDWslY
-	His9SeffDp5eyT3qM12uwsImPiFNj078=
-X-Received: by 2002:a05:6512:3f06:b0:5b6:1a7c:27 with SMTP id
- 2adb3069b0e04-5b8df06f8e1mr816426e87.42.1790249027932; Thu, 24 Sep 2026
- 04:23:47 -0700 (PDT)
+	s=k20260515; t=1790251591;
+	bh=AMda9b2M0HE7bDg1/E+8Yg0zmUKaV5CLAKi97xEwv68=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=AN2eipIwmtVZ4M5Ny3OwliN67dMXjEm7YmJn4+ad6DexfVZp3CDJtiYnaoFksqodn
+	 mwZ1b4SVH63NPUXV2EYeIbJRRnrYEqDgJ1aM+hTpYkpLxQ5NV73qb7D1u2ByBnsLeP
+	 Zl/DJDHTqT6OiaH1vubVrlpERsPaD3Mgx1WPdPuV2fXw3E7nHMRQJbcEbRckmRj7yG
+	 gAfxCXLubigONN5I0PrBpD2HatKrJBxPWMsz/eb3BPSEVakQ0QFCs7J7hyRnjtVFT/
+	 4LqPzByO1QeWXrKGOuxdQ7j+UV3m6HYuvu8nlQbIgjj6b8xSrvdI9ggm13W8104LNs
+	 lIZXxp6e0q25g==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b8c7a1aeecso1696067e87.3
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 05:06:30 -0700 (PDT)
+X-Gm-Message-State: AFuF++mXFMcpSygq+z+SFI39rp9V3v1LMnTwFWqiOc9mqfyk0GNntUT5
+	lQROmKLZQTlJG+leWhANPP/Ap1uWqJfYny+Sd4+xM7DcotSyfHcqC6Igk/odubyD7FH4WLuKyhH
+	xY95lu2TmfO60P/oyk8QHNKWOBmG/sU8fS3z8oeWUfw==
+X-Received: by 2002:a05:6512:1192:b0:5b6:423:9fa7 with SMTP id
+ 2adb3069b0e04-5b8df1f3ec5mr826739e87.31.1790251589716; Thu, 24 Sep 2026
+ 05:06:29 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 24 Sep 2026 05:06:28 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 24 Sep 2026 05:06:28 -0700
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260921-axiado-ax3000-sgpio-controller-v4-0-79c444be7faf@axiado.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 24 Sep 2026 13:23:36 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmSO0q+PnZRo2cOE02P6sQubU0ZYvgrx2sskm1Py-aQcA@mail.gmail.com>
-X-Gm-Features: AclHuK9_TBH5d_zYCtFMkyhTuN0r2OWG1lnmkelwMJd_YLu1Ajk2Ug68WJDjqqU
-Message-ID: <CAD++jLmSO0q+PnZRo2cOE02P6sQubU0ZYvgrx2sskm1Py-aQcA@mail.gmail.com>
-Subject: [GIT PULL] Pin control fixes for the v7.3 series
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux pin control <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, "hpp.iscas" <hppiscas@163.com>
+References: <20260921-axiado-ax3000-sgpio-controller-v4-0-79c444be7faf@axiado.com>
+Date: Thu, 24 Sep 2026 05:06:28 -0700
+X-Gmail-Original-Message-ID: <CAMRc=Mdx6zH16Ej-7EDVw0cKix7+h2tOxSL8pc1PiXhptA_R-A@mail.gmail.com>
+X-Gm-Features: AclHuK_9ekJ2IaIbciUj6wKN51mS4Pn8kPTOGKYEK1UcTaHgO2MIe0OH-x_Yx30
+Message-ID: <CAMRc=Mdx6zH16Ej-7EDVw0cKix7+h2tOxSL8pc1PiXhptA_R-A@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] gpio: Add support for Axiado AX3005 SGPIO controller
+To: Petar Stepanovic <pstepanovic@axiado.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, Conor Dooley <conor.dooley@microchip.com>, 
+	Tzu-Hao Wei <twei@axiado.com>, Swark Yang <syang@axiado.com>, 
+	Prasad Bolisetty <pbolisetty@axiado.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Harshit Shah <hshah@axiado.com>, SriNavmani A <srinavmani@axiado.com>, 
+	Karthikeyan Mitran <kmitran@axiado.com>, Michael Walle <mwalle@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+On Mon, 21 Sep 2026 09:20:21 +0200, Petar Stepanovic
+<pstepanovic@axiado.com> said:
+> Each SGPIO position provides one input GPIO and one output GPIO with
+> fixed directions, along with interrupt support for input GPIOs.
+>
+> This series adds support for the SGPIO controller found on the Axiado
+> AX3005 SoC.
+>
+> The series includes:
+> - Devicetree binding documentation
+> - GPIO driver implementation
+>
+> The driver uses gpio-regmap for GPIO operations and provides
+> controller-specific interrupt handling.
+>
+> Tested on Axiado AX3005 platforms.
+>
 
-here are some pin control fixes for v7.3. I guess I should have
-sent some earlier but I was procrastinating.
+The series looks good to me so if there are no objections I'll queue it for
+v7.4 in the next days.
 
-The serialization patch is the only one which is not a driver fix,
-but that one is really important.
-
-I noticed now that one of the Qualcomm fixes seems to have a
-weird name as committer (or maybe people are actually named
-"hpp iscas" all lowercase, I don't know), it's just a oneliner but if
-that's a problem  then tell me and I'll send a new pull request
-with that patch dropped.
-
-Please pull them in!
-
-Yours,
-Linus Walleij
-
-The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
-
-  Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v7.3-2
-
-for you to fetch changes up to ae2c5bf969573708cd5b6bb6393631255d83c3fe:
-
-  pinctrl: tegra238: Fix register bank for AON pin groups (2026-09-21
-00:06:32 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for the v7.3 series:
-
-- Serialize the calls to pinctrl_generic_dt_nod_to_map()
-
-- Fix a typo in S4 group in the Meson driver.
-
-- Fix bank width and regmap usage in the MPFS-SSIO driver.
-
-- Data register output latch behavior and voltage encoding
-  fixes in the Sunxi driver.
-
-- Free the IRQ domain on the error path in the single driver.
-
-- Fix some QUP1 SE2/SE3 groups and a missing OF module
-  alias in the Qualcomm drivers.
-
-- Fix up the register banks for AON (I guess always-on)
-  pins in the Tegra238 driver.
-
-Signed-off-by: Linus Walleij <linusw@kernel.org>
-
-----------------------------------------------------------------
-Andre Przywara (1):
-      pinctrl: sunxi: A523: fix voltage withstand encoding
-
-Conor Dooley (2):
-      pinctrl: mpfs-mssio: fix width of unused bank voltage setting
-      pinctrl: mpfs-mssio: use correct regmap function to set bank voltage
-
-Ilya Titov (1):
-      pinctrl: sunxi: keep a shadow copy of the data register output latches
-
-Myeonghun Pak (1):
-      pinctrl: single: free the IRQ on domain creation failure
-
-Prathamesh Shete (1):
-      pinctrl: tegra238: Fix register bank for AON pin groups
-
-Sarah Emery (1):
-      pinctrl: generic: serialise pinctrl_generic_dt_node_to_map()
-
-Sean Anderson (1):
-      pinctrl: meson: Fix typo in s4 group name
-
-Shawn Guo (1):
-      pinctrl: qcom: nord: Split QUP1 SE2/SE3 into lane-pair functions
-
-hpp.iscas (1):
-      pinctrl: qcom: ipq5210: Publish the OF module alias
-
- .../bindings/pinctrl/qcom,nord-tlmm.yaml           |   7 +-
- drivers/pinctrl/meson/pinctrl-meson-s4.c           |   2 +-
- drivers/pinctrl/microchip/pinctrl-mpfs-mssio.c     |   6 +-
- drivers/pinctrl/pinctrl-generic.c                  |   4 +
- drivers/pinctrl/pinctrl-single.c                   |   3 +-
- drivers/pinctrl/qcom/pinctrl-ipq5210.c             |   1 +
- drivers/pinctrl/qcom/pinctrl-nord.c                |  34 ++--
- drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c      |   2 +-
- drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c        |   2 +-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c              |  82 +++++++--
- drivers/pinctrl/sunxi/pinctrl-sunxi.h              |   9 +
- drivers/pinctrl/tegra/pinctrl-tegra238.c           | 204 ++++++++++-----------
- 12 files changed, 218 insertions(+), 138 deletions(-)
+Bart
