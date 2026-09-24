@@ -1,98 +1,149 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B9E47532F;
-	Thu, 24 Sep 2026 11:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B70C46D57D
+	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 11:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790248802; cv=none; b=WPAcaHur+NJ4kLnVLHDfyFN5yUpaWA8BhAQmUb/k3hIlyYFDwdexooEKCp36cSj24Gb6B8OpnWzvUgYczcuHgG6pJ0HZU/3wnfjphUuVcxUQvvgQx4OKRjEuvYNH/XyopzOLD/x5V6W8DeKZKhXGJPEeJqdOo56eIyQiph/Oxkw=
+	t=1790249030; cv=none; b=mfNzZTGU3BNGPiVUwfH/xoe9sSDPY7Ge56bklnzG9X0/MVREGrbRkOGXb4yvg37LQc/ftqL7um8LlpKV0gwWTRS8BsA6oMwSF1JS1UXyZ73ro0BaeOgel/oX3t4hlnuw7Jzu0ssArYJWV15xO1m+GAl5yJwnvR0JcVNF4szbGjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790248802; c=relaxed/simple;
-	bh=Vysm+icGgK7H4xcGeRUT6Ch0LBzrulaifTQ3FyHrP3c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=brUNNbaXjsr2HxWVD4mKejDxeLSre+beb6xkhFuftaNk7iXWgRowOM/PqMG/T6I6Hb64D6L5x425zVR3Amv11mHeT8kQtQ4rYm7rgSOio37KMMpoOdUib0+wOoe96EcAD7IcwqE9fUreXWOHDb8Tesv08FPSXm6JT91B1llUV/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=QfuNysFB; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1790249030; c=relaxed/simple;
+	bh=OjkUmDAD4oz+xbzZpBjuR9oWr5XlqS+v3UAsqgqWTLU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ZtQ5g6grTjpS2aVUE1E/5l4BtWj9g57Cnag5Sms/HVvLNF4+JaPYfLCTVLcoXsGN2DHYc2ifsD+d/k6wXOLPuXNkJ4AOFiKDIhAZYA5GHqwyYLFKaVfFk4mpZESfZXs4R85AOK8Rv0dcgwY/wWwt+Vlvq62416exoVJ1U8WZ0uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B4E+CWfB; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="QfuNysFB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Lb
-	x9oOJe1vCt74S61mr2+KNKZUBRXoORtffgn7/9dpc=; b=QfuNysFB0RpLuj8h9T
-	9jmEx2jeP5//DPVPjeOBrJLAt6f/MmGHgHlCz+7L0Tx7A+XZFEvwdrIfkWF10JQQ
-	tXYY1MO+R2/yRwYxsppdQMRpRTdP4Ui2HAnxrZK78LxZ2jlFVJZfkqEMKHSknbZD
-	2MKnvsuylfq1qkTLopSMwLT8c=
-Received: from pc.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3H4YqB7Vqww4oAg--.65098S5;
-	Thu, 24 Sep 2026 19:19:21 +0800 (CST)
-From: Jiale Yao <yaojiale02@163.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linusw@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: Jiale Yao <yaojiale02@163.com>
-Subject: [PATCH 3/4] pinctrl: tegra: xusb: free maps on DT map failure
-Date: Thu, 24 Sep 2026 19:18:51 +0800
-Message-Id: <20260924111856.622898-4-yaojiale02@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260924111856.622898-1-yaojiale02@163.com>
-References: <20260924111856.622898-1-yaojiale02@163.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B4E+CWfB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30A431F0089A
+	for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 11:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790249029;
+	bh=CTU8Ogs42D+dXZMfPUs99jOT2Cxtsrhzqaj0v6zLINg=;
+	h=From:Date:Subject:To:Cc;
+	b=B4E+CWfBXgRV9MSkJ7xnY0CqF4p85wE8OCoXJ98nmNpMzcJCwh7ys3JzYiqA5kiG6
+	 pOWSeR2zRkaC3If/whLu1VXG89eQQouZGhtgD72VVqExu0TK5r0gBSeyw9GOFMARHk
+	 tdCkJ+prmtuOOQpu7rQ8a4lEZk9XOb1/0HJbtBItz8A0UrdVtSWh6r7dIw3t405JIb
+	 UEwmsxpE+aptDEOvalt6eHqB3EgCBSelVsQ1O0PlS2xC3YqktK43qnfdvq/InLcVtj
+	 sBJKuLWs3DwfggvpjcMOMeMTElF60JWP8jUyfx45HouxF3oqZU8j6jsMQYlnp2Yn1y
+	 oZxyJLeymiRbw==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b8d879752fso1524721e87.2
+        for <linux-gpio@vger.kernel.org>; Thu, 24 Sep 2026 04:23:49 -0700 (PDT)
+X-Gm-Message-State: AFuF++kDpWSAl1419bX0uDSH4ifq1aQ8+vCAujRrbx2+HlYCwUWiJrLP
+	P7UDo1OJtHUGZ/O9D55sA0WnMlORljBJkEtGonUt+uFfDuRV2G6JS5BC9p/clNrVlzfkMxDWslY
+	His9SeffDp5eyT3qM12uwsImPiFNj078=
+X-Received: by 2002:a05:6512:3f06:b0:5b6:1a7c:27 with SMTP id
+ 2adb3069b0e04-5b8df06f8e1mr816426e87.42.1790249027932; Thu, 24 Sep 2026
+ 04:23:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3H4YqB7Vqww4oAg--.65098S5
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtr1fAF1UCF17Ww4DtF1DJrb_yoWkArX_CF
-	W5ZryUJryUKFWUua4UKF1fZFyIkayjqr1S9rZYqF9xC34xXw1DArykZr43uw4xWw4DJFyf
-	Jry3ZF1fZr4xujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7xRQXo2JUUUUU==
-X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbC8BrXEmq1BzqmBgAA3t
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 24 Sep 2026 13:23:36 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmSO0q+PnZRo2cOE02P6sQubU0ZYvgrx2sskm1Py-aQcA@mail.gmail.com>
+X-Gm-Features: AclHuK9_TBH5d_zYCtFMkyhTuN0r2OWG1lnmkelwMJd_YLu1Ajk2Ug68WJDjqqU
+Message-ID: <CAD++jLmSO0q+PnZRo2cOE02P6sQubU0ZYvgrx2sskm1Py-aQcA@mail.gmail.com>
+Subject: [GIT PULL] Pin control fixes for the v7.3 series
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux pin control <linux-gpio@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, "hpp.iscas" <hppiscas@163.com>
+Content-Type: text/plain; charset="UTF-8"
 
-tegra_xusb_padctl_parse_subnode() can append mappings before a later
-child or configuration operation fails.  The top-level callback currently
-returns the error while retaining all mappings allocated for earlier
-children.
+Hi Linus,
 
-Free the accumulated map and clear the output parameters on failure.
+here are some pin control fixes for v7.3. I guess I should have
+sent some earlier but I was procrastinating.
 
-Signed-off-by: Jiale Yao <yaojiale02@163.com>
----
- drivers/pinctrl/tegra/pinctrl-tegra-xusb.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+The serialization patch is the only one which is not a driver fix,
+but that one is really important.
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-index c6a51bb21215..8873d7068867 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-@@ -248,10 +248,16 @@ static int tegra_xusb_padctl_dt_node_to_map(struct pinctrl_dev *pinctrl,
- 						      &reserved_maps,
- 						      num_maps);
- 		if (err < 0)
--			return err;
-+			goto err_free_map;
- 	}
- 
- 	return 0;
-+
-+err_free_map:
-+	pinctrl_utils_free_map(pinctrl, *maps, *num_maps);
-+	*maps = NULL;
-+	*num_maps = 0;
-+	return err;
- }
- 
- static const struct pinctrl_ops tegra_xusb_padctl_pinctrl_ops = {
--- 
-2.34.1
+I noticed now that one of the Qualcomm fixes seems to have a
+weird name as committer (or maybe people are actually named
+"hpp iscas" all lowercase, I don't know), it's just a oneliner but if
+that's a problem  then tell me and I'll send a new pull request
+with that patch dropped.
 
+Please pull them in!
+
+Yours,
+Linus Walleij
+
+The following changes since commit cee9395acd8043be0644b25c34bfa86623f2b935:
+
+  Linux 7.3-rc1 (2026-08-30 13:34:40 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v7.3-2
+
+for you to fetch changes up to ae2c5bf969573708cd5b6bb6393631255d83c3fe:
+
+  pinctrl: tegra238: Fix register bank for AON pin groups (2026-09-21
+00:06:32 +0200)
+
+----------------------------------------------------------------
+Pin control fixes for the v7.3 series:
+
+- Serialize the calls to pinctrl_generic_dt_nod_to_map()
+
+- Fix a typo in S4 group in the Meson driver.
+
+- Fix bank width and regmap usage in the MPFS-SSIO driver.
+
+- Data register output latch behavior and voltage encoding
+  fixes in the Sunxi driver.
+
+- Free the IRQ domain on the error path in the single driver.
+
+- Fix some QUP1 SE2/SE3 groups and a missing OF module
+  alias in the Qualcomm drivers.
+
+- Fix up the register banks for AON (I guess always-on)
+  pins in the Tegra238 driver.
+
+Signed-off-by: Linus Walleij <linusw@kernel.org>
+
+----------------------------------------------------------------
+Andre Przywara (1):
+      pinctrl: sunxi: A523: fix voltage withstand encoding
+
+Conor Dooley (2):
+      pinctrl: mpfs-mssio: fix width of unused bank voltage setting
+      pinctrl: mpfs-mssio: use correct regmap function to set bank voltage
+
+Ilya Titov (1):
+      pinctrl: sunxi: keep a shadow copy of the data register output latches
+
+Myeonghun Pak (1):
+      pinctrl: single: free the IRQ on domain creation failure
+
+Prathamesh Shete (1):
+      pinctrl: tegra238: Fix register bank for AON pin groups
+
+Sarah Emery (1):
+      pinctrl: generic: serialise pinctrl_generic_dt_node_to_map()
+
+Sean Anderson (1):
+      pinctrl: meson: Fix typo in s4 group name
+
+Shawn Guo (1):
+      pinctrl: qcom: nord: Split QUP1 SE2/SE3 into lane-pair functions
+
+hpp.iscas (1):
+      pinctrl: qcom: ipq5210: Publish the OF module alias
+
+ .../bindings/pinctrl/qcom,nord-tlmm.yaml           |   7 +-
+ drivers/pinctrl/meson/pinctrl-meson-s4.c           |   2 +-
+ drivers/pinctrl/microchip/pinctrl-mpfs-mssio.c     |   6 +-
+ drivers/pinctrl/pinctrl-generic.c                  |   4 +
+ drivers/pinctrl/pinctrl-single.c                   |   3 +-
+ drivers/pinctrl/qcom/pinctrl-ipq5210.c             |   1 +
+ drivers/pinctrl/qcom/pinctrl-nord.c                |  34 ++--
+ drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c      |   2 +-
+ drivers/pinctrl/sunxi/pinctrl-sun55i-a523.c        |   2 +-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c              |  82 +++++++--
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h              |   9 +
+ drivers/pinctrl/tegra/pinctrl-tegra238.c           | 204 ++++++++++-----------
+ 12 files changed, 218 insertions(+), 138 deletions(-)
