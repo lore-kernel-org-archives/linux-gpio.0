@@ -1,52 +1,53 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4C24AFE06;
-	Fri, 25 Sep 2026 14:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4163A3839A3;
+	Fri, 25 Sep 2026 14:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790346908; cv=none; b=rAEWG3oj7mKUck1x6UF4Wje7HxhUw9G0G275V17L4dBPsx+9UnCBmGYHY00iyiyLbwi/tFMCghiKxysi/W+OUYkPXFLOgO6HEL9ULzQ1Nw13jHIBuwcQ76SporDl/fw6zl9wVC/sOPEM2ChloYUU0HzTAOhBKL+ePi+fvOA0lY0=
+	t=1790347203; cv=none; b=e0q+95605LMXgyPfxFP3WxgEl9sMnfF3TjMdStLlbJ01MbC0BQeb5mo7WAV8PZh4rGiAeOu/cwDKowM7IvPB2uiJap+925LN/L72Q23pcpbbX6GN20y9Z7OZm+rZ4s0I1iYblN8TrGYOsKKatBkWWZQfkOa+JX7r0nmGtpuZweM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790346908; c=relaxed/simple;
-	bh=Qf7+4/XEy4gfcrID7Y9uVea9tKpcqJHcArCN95VCJeA=;
+	s=arc-20240116; t=1790347203; c=relaxed/simple;
+	bh=ZNCaqWYHkMcMJtSBAsHa3/QgjTH0lQK9PSQVOBQqUcE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0DmFsqfzRlkFfCKQleizb0YCqSo7WQ8Wc4xDpPZG5BHWraJB4xDKsue9Nv2Gfg4papZyJnaHtg212vumc08vOh++zGY3NuiUj1JL+5tnjAgmxOufsDPu1wgF15BRvUczbZUL+BJw8NS+xbr30JZyhNcGRTfqblAyLEqztBoI9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nQ2g00yO; arc=none smtp.client-ip=198.175.65.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=H2yw40djSa2ge/b4OVq+w71TOBBhRXwKodpyUyE6HQPEGFiI2fKyse6R+keet0nknfVoV9WjI0sIJP1V+cAzAV9CvG7fofpwQnJYHpFhQSH1NLLKDJvLP8XFQ0Ut6SY+uQzTgth+o2kiZUPjGXhFojRGWGAcNi1q7Ar4JUCYePI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dxe4ZfL4; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nQ2g00yO"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dxe4ZfL4"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790346902; x=1821882902;
+  t=1790347199; x=1821883199;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Qf7+4/XEy4gfcrID7Y9uVea9tKpcqJHcArCN95VCJeA=;
-  b=nQ2g00yOUNFpiZB9mbSDYAfsto/ExFmJouJTrz/5o6O2ziUCzicnK+UY
-   2xu9zZ1cOJLK3dGPi/tu/zilZ/WKoJeHMdryyuFTVwTNFdzKCCNby0ogS
-   10whvDSDiRLTZF5lMVfYOHc0vDUNW+3UVNd+Iaxo5VVgWDEJ4LYfRPd8l
-   amvUCNGx2O1ef/X0WmrDrmyBWVK08dnCPd1HavpfL6THMswTeuTP9AdAy
-   w1Txgma9Qpy6NhpeuiqtFYqR0kywNMXs835T3lm+56C75VRA9Mkp7+471
-   q8vD0lLHQ78k+DukdSL2F4QS8DniqNdWMcn3yxevAnI4mMJ50HEPqt2EB
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ZNCaqWYHkMcMJtSBAsHa3/QgjTH0lQK9PSQVOBQqUcE=;
+  b=dxe4ZfL4+kaEqmaYPAPsCMVIGQRHdjlp/XyJ2D5KKW7anNSm4wXNvVSq
+   /1nC34+Xq1MbIqjhuIA7Q0hUeuyG8VzXH3ydhK9vc2oHiSaPZ8sjDnpH+
+   +CTURrFSpVzb5TLnW1hcr8i57ujqK+RfBY9C6TjF9WF5GqeFSCL+yT3Z6
+   fIAaW+oERJ7v/i/cvu41pyTgn8XIKQLEvRaQxeMBuXJ4TeXM2iDR+Wuae
+   Z0pEJW6EyqCO9enzJOrGMGC55OLnWgFxbRo4ds3FGNn1CENJ6IiJpF8P5
+   BjjNstfB6oQzQAcXaeDFAG7r4tn5OfEZNzfRePA6ax6YQcHjmVh50/+qS
    Q==;
-X-CSE-ConnectionGUID: bF0eMc7QQsyH+Ox5PzRSDA==
-X-CSE-MsgGUID: tX8LbLDAQ0aJKTe3SkT1jQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11915"; a="94015966"
+X-CSE-ConnectionGUID: RbW0gjBEQ6u8xGd6v/iebg==
+X-CSE-MsgGUID: 2jcLUxjWT/yZPNBh6A+wlg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11916"; a="93851651"
 X-IronPort-AV: E=Sophos;i="6.27,122,1787036400"; 
-   d="scan'208";a="94015966"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2026 07:34:58 -0700
-X-CSE-ConnectionGUID: j1HgCI0pSCK6NUylNhPyAw==
-X-CSE-MsgGUID: W6mfThgWQs239BAbRhHUTw==
+   d="scan'208";a="93851651"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2026 07:39:51 -0700
+X-CSE-ConnectionGUID: 83/v7uwGTFuK1wXJTlt9Dg==
+X-CSE-MsgGUID: Gp6MQwW1QKa6viyMVCzRyQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,122,1787036400"; 
-   d="scan'208";a="272488656"
+   d="scan'208";a="273910080"
 Received: from mkosciow-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.27])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2026 07:34:55 -0700
-Date: Fri, 25 Sep 2026 17:34:53 +0300
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2026 07:39:44 -0700
+Date: Fri, 25 Sep 2026 17:39:41 +0300
 From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
 	Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
 	Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>,
@@ -55,55 +56,57 @@ Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
 	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
 	Mika Westerberg <westeri@kernel.org>,
 	Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
-	Hans de Goede <hansg@kernel.org>,
 	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
 	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 Subject: Re: [PATCH RFC] gpio: move intel drivers into their own directory
-Message-ID: <araGjQoaffMhDMLz@ashevche-desk.local>
+Message-ID: <araHrdsDyBwF-26R@ashevche-desk.local>
 References: <20260925-gpio-organize-by-vendor-v1-1-8feefd60581b@oss.qualcomm.com>
  <arZRZfa7AmDxmwoJ@ashevche-desk.local>
- <20260925125433.GY106095@black.igk.intel.com>
+ <1299262d-a9f0-4f2d-8456-bb40a3078f95@kernel.org>
+ <CAHp75Ve4hCd-WVrNvdmSOiCo8j0jXBbnvOvxoFh7-Rj1ctnybQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260925125433.GY106095@black.igk.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75Ve4hCd-WVrNvdmSOiCo8j0jXBbnvOvxoFh7-Rj1ctnybQ@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
  krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Fri, Sep 25, 2026 at 02:54:33PM +0200, Mika Westerberg wrote:
-> On Fri, Sep 25, 2026 at 01:48:05PM +0300, Andy Shevchenko wrote:
-> > On Fri, Sep 25, 2026 at 12:22:15PM +0200, Bartosz Golaszewski wrote:
-> > > In order to avoid maintainer mistakes on patch ownership: move all the
-> > > Intel drivers into their own dedicated directory under
-> > > drivers/gpio/intel. Don't touch Kconfig options as we historically sort
-> > > GPIO drivers by type, not by vendor.
+On Fri, Sep 25, 2026 at 03:48:53PM +0300, Andy Shevchenko wrote:
+> On Fri, Sep 25, 2026 at 2:42 PM Hans de Goede <hansg@kernel.org> wrote:
+> > On 25-Sep-26 12:48, Andy Shevchenko wrote:
+> > > On Fri, Sep 25, 2026 at 12:22:15PM +0200, Bartosz Golaszewski wrote:
 
 ...
 
-> > >  drivers/gpio/{ => intel}/gpio-graniterapids.c   |  0
-> > >  drivers/gpio/{ => intel}/gpio-novalake-events.c |  0
-> > 
-> > These are interesting drivers, not sure where to put them
+> > >>  drivers/gpio/{ => intel}/gpio-graniterapids.c   |  0
+> > >>  drivers/gpio/{ => intel}/gpio-novalake-events.c |  0
+> > >
+> > > These are interesting drivers, not sure where to put them
+> > >
+> > >>  drivers/gpio/{ => intel}/gpio-ljca.c            |  0
+> > >>  drivers/gpio/{ => intel}/gpio-usbio.c           |  0
+> > >
+> > > These are definitely not going to intel subfolder, they have nothing to do with
+> > > Intel HW, they are against some custom external (to Intel SoC) HW.
+> >
+> > Hmm, those "external" SoCs are only found on Intel IPU6/IPU7 laptops
+> > and come from camera designs for OEMs done by Intel's camera team.
+> >
+> > I don't care much either way, but for all intent and purposes these
+> > really are Intel USB GPIO expander drivers.
 > 
-> IMHO they should be there too. We are maintaining them both.
+> Fair enough, I can move them in a separate patch.
 
-Do you send PRs to Bart or you just rely on him to take the patches?
-
-The whole problem started from clashing in MAINTAINERS. If you plan to
-be part of the intel/ subfolder then I assume you want to be part of
-some common Intel GPIO repository / maintenance. So far I have the majority
-of the Intel GPIO drivers to go via my tree.
-
-TL;DR: whatever is related to Intel, but not currently goes via my tree,
-I leave to the respective maintainers to decide what to do.
-
-So USB/novalake/graniterapids all have own maintainers, so for now I leave
-them under drivers/gpio.
+After looking at the MAINTAINERS, they are not on me. I leave them for the
+respective maintainers to decide what to do. The whole thingy was started from
+clashes in MAINTAINERS, so far the only ones I have a dedicated tree are
+affected, The USB are not among them.
 
 -- 
 With Best Regards,
