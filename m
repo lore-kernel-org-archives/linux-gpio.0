@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE184D0A12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93874DD3C4
 	for <linux-gpio@vger.kernel.org>; Fri, 25 Sep 2026 16:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790353721; cv=none; b=uYMZxIgx9DizHCKPX12bGVlXZGA/u0Y88ZoBd2cDerCRFZ/mK8YjV5zxE8q29JX41BcmFeKH4rNDycQWWpLgBTfpQ2QCpgpXa97rwXmDsCOodaz5PWLkG9SGRSniw44jO0GpKKi5LWkC8Ls0qgtAOnzEYMqmaiIlsczkRHFv79g=
+	t=1790353721; cv=none; b=WteBM68Ary9w6qHgcHVp8A3GSZ3D9dCSrYlBRrRmCbiijt+CVEufDz5lsyLo9hKo9oE9PyeB8v7RpQ1GFBNYe5LADdmLxFJS00DWGR9kgXocs0eqwUxn106u8Q3PIjubqOgw/eXJeqgDUljngyIdpnmKT4aOJNrKbK84wezApyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1790353721; c=relaxed/simple;
-	bh=XzL7Uv8CKAnxpcOUO6KGyIQeIGCAlJYhjueKwobecP8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BjZ236N7ttNJXRau+QaP9AqB6wEVxvDwoYanJrjG200Htl5PPumnlap5PMHokFXH10nMAmPQUdi0ughufeBgLZLqHbs24JW14Wl9WaqH6nThfh/MRQ/8NIQmV6WkLyYeu/2BD7JZVTY9hi/5AqZX8//k0hYuLOIIwxwz2WKeHHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/H+bdDq; arc=none smtp.client-ip=10.30.226.201
+	bh=pCpCsjlEb7SWdfsRcbX5NY4Fz9Kw79uaF/cDRMQQJxE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=sUamxwUYAXUDPEbU7YeMBSyBvCDERlmCWQ+5F86zfOFaVTUAHBJ9AV0N4yVAsQ72OhyjF9puLeF2gau0kQh4y8PKf3dJ3+9K+HiQrdyS3e/4RcVDkXi1jioPtTCA4yAu5Q8VzKqaIScvYqweZ33Nya1LmjvqB9cn2Y2pdvYFf7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TnieM5ji; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/H+bdDq"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 847ACC2BCF4;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TnieM5ji"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9E57AC2BCF7;
 	Fri, 25 Sep 2026 16:28:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1790353721;
-	bh=XzL7Uv8CKAnxpcOUO6KGyIQeIGCAlJYhjueKwobecP8=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=D/H+bdDqMKI1fHSEOxgnA170SGmVhUvqhxppiU4Y0Bzf99T4J+p5nNUWB2rIOmjsa
-	 keAmdoVF39/6vPt2Ny9RJYTe9g1uNnpwpd+VRjJAft+4K65O3YDpblNJD5mEGqRU6B
-	 ZPnlqDiitFehv7fEFMWB9ikJ8GYYkGf78rQzvvaHiRqVa/Sk1/DnxuaQ6f0z53jeH9
-	 a7Mndd3GMH6R29jDZvwbIedNu79Uy6sYQh8IRmIlSW8yiQ0nppd1r0hQMMknYpGnkc
-	 49L6fyKXkxKPGx614P5bU373gFk6qHNes41IZY/Nkw77J5qK4+MBe5D1othTK27cnN
-	 sAcE5W5xzWdXg==
+	bh=pCpCsjlEb7SWdfsRcbX5NY4Fz9Kw79uaF/cDRMQQJxE=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=TnieM5jiIZd7+EJEOspdFW/Trq3zgRJPePl7dC98HRloyAZir6rFOYBM/Tx3C5nQy
+	 BrpfdbF8BHu58w02UY63Zq67WdCuvu6N0IAbeNx6X8AQT/CO/C0KiJ9QcEJ/JUKOty
+	 MJBCe1cR0J7qlAJ8g/f9nnb77wZWckCjWcf716/Nh1jmlTkWUx+hUg6tBMzOrmnzZ6
+	 JeTAOhfaUmTCticiwewp1/kpwGANjQAJKTc3fwa4ZhnTaG9LXzLU39MDZrzr+NGGJt
+	 Q9bM1h67Uf/rmhEZh/q+XGHbkEH8qujQAowQuLd+PRj/yhdsCNNe0JQBr+UFhytRpb
+	 dE2Y1j1axY1Rw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C7AC98321;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F534C9830E;
 	Fri, 25 Sep 2026 16:28:41 +0000 (UTC)
 From: Miao Wang via B4 Relay <devnull+shankerwangmiao.gmail.com@kernel.org>
-Subject: [PATCH RFC 0/4] gpio: loongson-64bit: add interrupt support for
- more models
-Date: Sat, 26 Sep 2026 00:28:35 +0800
-Message-Id: <20260926-loongsongpio-v1-0-71de7ebebb76@gmail.com>
+Date: Sat, 26 Sep 2026 00:28:37 +0800
+Subject: [PATCH RFC 2/4] gpio: loongson-64bit: Generalize interrupt
+ controller initialization
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,30 +41,29 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADOhtmoC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDSyNT3Zz8/Lz0YiAuyMzXtTCytDAySTROMTUzUgJqKShKTcusABsXrRT
- k5qwUW1sLALMPZFBjAAAA
-X-Change-ID: 20260925-loongsongpio-829824a3d562
+Message-Id: <20260926-loongsongpio-v1-2-71de7ebebb76@gmail.com>
+References: <20260926-loongsongpio-v1-0-71de7ebebb76@gmail.com>
+In-Reply-To: <20260926-loongsongpio-v1-0-71de7ebebb76@gmail.com>
 To: Yinbo Zhu <zhuyinbo@loongson.cn>, Linus Walleij <linusw@kernel.org>, 
  Bartosz Golaszewski <brgl@kernel.org>
 Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-gpio@vger.kernel.org, 
  Miao Wang <shankerwangmiao@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1176;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3061;
  i=shankerwangmiao@gmail.com; s=20250715; h=from:subject:message-id;
- bh=XzL7Uv8CKAnxpcOUO6KGyIQeIGCAlJYhjueKwobecP8=;
- b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqtqE2JujRZUCyC6KX9QaiH2qAoWySkeDG5n9Ds
- 6tikP123AWJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCarahNgAKCRCwMePKe/7Z
- bg4DEACUXZQYjwzsQM0NCgYvsKPlPWuNhNA1DFLA51kocQYra3b+e6TDYQchzJPKIodRpZztaiZ
- sfnmNbj6my3pB3kTt/t6Z0icri5osvY8suxJCjcfxX9qUzb+pZ52C2gB6F0O8m78WIAyy20W2nx
- gDCZ6lcuidr3ZklrvAGuaw00CLrhafjakTr3ZfATUj+6ah1XomLI69Y35MitCtrUlEYWuaZCtJ2
- I5AbS5s1I/pmuqPSWYXHrWZtrh1aJoCNbrY4oEuYUoiG2S2KY4D+dYyj8k6CByLONK3wpsMxJrh
- QIhQAtRBQuv2Pa9rqxFdUu3odB8s4mB+qaCSoQcsSi6QmDsV7RCPj/IQRFYe/Y6yLrV7hQkchmW
- dksRL201pXxPy8ppdO5BsKNmI4lEhQrTdcY6nOPYDPGnSfj2ea2QimVrF1XXqFzcgM7DNiBI0e4
- rJubbht0Ck4r7kzu+fi6kFnUTtyDysbPnlw04R4lEZNwnARkuFqxwCxfVm8d6PUNNGRSwPDUwSh
- xqlY7CbE/VlUFrFT3Q674kNQGbUVT9PiOfBfzhqxVuvkHzHhooONRnQCYuiWFo4D2CoUgYx/WgZ
- BSXcfnxXVb+DlYTeHf+oG0oZexmBeSefgj0T2sfavXGsZ2mZrD4l+sWlCScmdOwRSpxG9UBONmm
- bNPCzIpRC0QRNHA==
+ bh=Tohr21ylADcfkrkF/OTrTcdHRhHyD3gjMBKgED9OAJ8=;
+ b=owEBbQKS/ZANAwAKAbAx48p7/tluAcsmYgBqtqE2LVncI4UIjwrQc2is/303XqOoH1jrOUd/a
+ 1xvaR9SNmuJAjMEAAEKAB0WIQREqPWPgPJBxluezBOwMePKe/7ZbgUCarahNgAKCRCwMePKe/7Z
+ bhS8EAClxl1YtGJEwVoq2aRUyrOhusJmM/nfJGpQfyjWurA4Apu+v+9hJza3VsYePu2GBq7zS7s
+ CoIIcyh2fBFwhzYuC56CohSCBo8p/qV8LbYWPi3wpS0jY/qgcxAOAeA6p9B3vgWCbOxFIeP7aNT
+ 3r6EdBX97YRdcIn0930w9xN5VKPFEs1CQ5J5vjCJxfiVx1i3t9mOZZ3y0RwXslYN8lJ1hKCWpmK
+ vxcZhTBRUPkUwIsjbfGhZyx7PjkYyLVwC1BbRP+eipASTrYgHAfnp625cwt1q1K730Iqqx1fIG3
+ SotD47bBmY8eev/b2qv1PE0iGl/1+esz2rtZplNarEavuO2vbEZLcHXS5e10x5BFJTcdbTn/qxm
+ rzKeNRKYjSrPvCWvcIjRQW9LuSJ+dbRR8HzYqa7z4PmpEROns4WAR3/97yTs6CGIgYfz8ZAdDIY
+ lAPr4ZhZOpWroouP761sj0bvzNILkjpp+6N6ZZQKUmD7LKIOZH95xqbY2ptGsOYKSIG18cBhPZ4
+ 8NSRFNO8AnkQztWaOeKpElPSprPRCr45s1zD24MFTbBnRcqD3cgLJnyu4vr5WHCbQZ6LJv68jFg
+ wUkWB0o3Lsyv9ErSvZGc7xHJ5aGd9ac8IJaIB+mI7Z9lTZWqJAn1NLq13jHoVCJOttjNksXh7WO
+ rFs0V9xBTps27+w==
 X-Developer-Key: i=shankerwangmiao@gmail.com; a=openpgp;
  fpr=6FAEFF06B7D212A774C60BFDFA0D166D6632EF4A
 X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/20250715
@@ -72,31 +71,84 @@ X-Endpoint-Received: by B4 Relay for shankerwangmiao@gmail.com/20250715
 X-Original-From: Miao Wang <shankerwangmiao@gmail.com>
 Reply-To: shankerwangmiao@gmail.com
 
-This patch series aims to correctly add interrupt support for GPIO
-controllers found on more Loongson CPUs. The GPIO controllers in such
-models do not have a complete intgrated interrupt controller, but choose
-to delegate interrupt handling to their parent interrupt controller.
-This sounds like a heirarchical interrupt setup, but what makes it
-more complex is that multiple GPIO lines in these controllers may share
-one interrupt line on the parent interrupt controller. The details is
-described in the third patch.
+From: Miao Wang <shankerwangmiao@gmail.com>
+
+This patch turns the interrupt controller initialization function into
+a handler in struct loongson_gpio_chip_data, which will be called by
+loongson_gpio_init(), so that we can add support for different types
+of interrupt controllers.
 
 Signed-off-by: Miao Wang <shankerwangmiao@gmail.com>
 ---
-Miao Wang (4):
-      gpio: loongson-64bit: Support for irq controller on 2k2000 and 7a2000
-      gpio: loongson-64bit: Generalize interrupt controller initialization
-      gpio: loongson-64bit: Add shared interrupt support
-      gpio: loongson-64bit: remove gpio_to_irq() handler
+ drivers/gpio/gpio-loongson-64bit.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
- drivers/gpio/gpio-loongson-64bit.c | 708 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 683 insertions(+), 25 deletions(-)
----
-base-commit: 481ed5dd3ed7136f627b8ec372ba39f5b2e7d27f
-change-id: 20260925-loongsongpio-829824a3d562
+diff --git a/drivers/gpio/gpio-loongson-64bit.c b/drivers/gpio/gpio-loongson-64bit.c
+index 64eb9f46ce31cc289f236af44311ff39f05de3b0..a1b23ba21f64162af2096131520d1dac27798983 100644
+--- a/drivers/gpio/gpio-loongson-64bit.c
++++ b/drivers/gpio/gpio-loongson-64bit.c
+@@ -39,6 +39,8 @@ struct loongson_gpio_chip_data {
+ 	unsigned int		intr_num;
+ 	irq_flow_handler_t	irq_handler;
+ 	const struct irq_chip	*girqchip;
++	int			(*irq_init)(struct platform_device *pdev,
++					    struct loongson_gpio_chip *lgpio);
+ };
+ 
+ struct loongson_gpio_chip {
+@@ -286,11 +288,6 @@ static int loongson_gpio_init_irqchip(struct platform_device *pdev,
+ 		writeb(0x1, lgpio->reg_base + data->intclr_offset + i);
+ 	}
+ 
+-	if (chip->irq.num_parents == 0) {
+-		dev_warn(&pdev->dev, "no parent IRQs have been found, GPIO IRQs will not be available\n");
+-		gpio_irq_chip_set_chip(&chip->irq, NULL);
+-	}
+-
+ 	return 0;
+ }
+ 
+@@ -329,9 +326,13 @@ static int loongson_gpio_init(struct platform_device *pdev, struct loongson_gpio
+ 	lgpio->chip.gc.label = lgpio->chip_data->label;
+ 	lgpio->chip.gc.can_sleep = false;
+ 	if (lgpio->chip_data->girqchip) {
+-		ret = loongson_gpio_init_irqchip(pdev, lgpio);
++		ret = lgpio->chip_data->irq_init(pdev, lgpio);
+ 		if (ret)
+ 			return dev_err_probe(&pdev->dev, ret, "failed to initialize irqchip\n");
++		if (lgpio->chip.gc.irq.num_parents == 0) {
++			dev_warn(&pdev->dev, "no parent IRQs ha been found, GPIO IRQs will not be available\n");
++			gpio_irq_chip_set_chip(&lgpio->chip.gc.irq, NULL);
++		}
+ 	} else if (lgpio->chip_data->inten_offset) {
+ 		lgpio->chip.gc.to_irq = loongson_gpio_to_irq;
+ 	}
+@@ -387,6 +388,7 @@ static const struct loongson_gpio_chip_data loongson_gpio_ls2k0300_data = {
+ 	.intr_num = 7,
+ 	.irq_handler = loongson_gpio_ls2k0300_irq_handler,
+ 	.girqchip = &loongson_gpio_ls2k0300_irqchip,
++	.irq_init = loongson_gpio_init_irqchip,
+ };
+ 
+ static const struct loongson_gpio_chip_data loongson_gpio_ls2k0500_data0 = {
+@@ -430,6 +432,7 @@ static const struct loongson_gpio_chip_data loongson_gpio_ls2k2000_data1 = {
+ 	.intr_num = 8,
+ 	.irq_handler = loongson_gpio_ls2k0300_irq_handler,
+ 	.girqchip = &loongson_gpio_ls2k0300_irqchip,
++	.irq_init = loongson_gpio_init_irqchip,
+ };
+ 
+ static const struct loongson_gpio_chip_data loongson_gpio_ls2k2000_data2 = {
+@@ -473,6 +476,7 @@ static const struct loongson_gpio_chip_data loongson_gpio_ls7a2000_data0 = {
+ 	.intr_num = 5,
+ 	.irq_handler = loongson_gpio_ls2k0300_irq_handler,
+ 	.girqchip = &loongson_gpio_ls2k0300_irqchip,
++	.irq_init = loongson_gpio_init_irqchip,
+ };
+ 
+ /* LS7A2000 ACPI GPIO */
 
-Best regards,
 -- 
-Miao Wang <shankerwangmiao@gmail.com>
+2.55.0
 
 
