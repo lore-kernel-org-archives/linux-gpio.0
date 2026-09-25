@@ -1,40 +1,44 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+Received: from relay.virtuozzo.com (relay.virtuozzo.com [130.117.225.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531EB49E148;
-	Fri, 25 Sep 2026 13:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92A325B091;
+	Fri, 25 Sep 2026 13:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.117.225.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790343514; cv=none; b=pfweJsCjRsaDcCxjo3hwM6PuwdkfVcdttqWTvzAma8mh9uGYCaShyBwJXPrJR31ItOD9gFB6Y0+WM/OTPE+ZK0mUnCx2r5gM0QIYQZkLFjCLu8UG8l0CxoN1487mNB012Sb5eS7qv19crRY+ac/uaZeH/EiZDjCHB3LPQJY+JRE=
+	t=1790343677; cv=none; b=KDsHZ2j0YYiqMYgni4DlmjLwwFKID4DdFjMkuvurt06rQBiG3tzNAFLlgvU9LRNQ+p/sPG+g/74iLN5rw8SSQwW1xa7VzS2HmdLQjQ7VMtNm+hzM8QTzNzIXZvxnRSGAeZDRUBZFo9q+rA/TtDJ8ecYXTCKvXjYa/UFnyj6bJOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790343514; c=relaxed/simple;
-	bh=PUKasSWL2RitJ5nHj2tqE7JdYBV8ERftRPezkgwUyAE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aFzWfxhJRjYI7l8QfoPDmZiCS2Wz8zJm7wCa5sH0MMy3XhiZkBbP49FfSVFFnsgNfDOkTlRu4yp/UB2FVSS2A27HsRktA4md+1bNj9eGgoL2tteKxW0daguoZKB3FcWlL4AO6t0BX0j8kiQrD3eXgKum58+UkQfUPF9F+P2YYtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hlRFwrMe; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1790343677; c=relaxed/simple;
+	bh=cF7jc1nVYRIWGVc/b+yVIIHibDRKSv908JY2L+yakdM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iu3EGW4xNJEzxxK5IPhnvUfq5C1CSNcchQ2K59uJ00az/RSLq0/Xx+vUPlgn2Xsk/SENY18v2EnVOsn5kXtFDIOzecKoN1QJDUNs7H8VhQbA4nvwU7B5LD76ml7VITDVZs0usPZR1yAxQ9gX/OeR8ApT7Ir2Jpb32SRc8VYmxFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=virtuozzo.com; spf=pass smtp.mailfrom=virtuozzo.com; dkim=pass (2048-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b=jqJ7jAqd; arc=none smtp.client-ip=130.117.225.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=virtuozzo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=virtuozzo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hlRFwrMe"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=pa
-	LEJk90FeCzQuR6VwX1fOt4b0tKpFek7mwb/9zcrQs=; b=hlRFwrMe8znFxVWx9e
-	B+iXT2iDpG2Wlyiik/tnXySynkYq+5FOB/r7f9rP52Q7E81qy6mzzXNcSJ7U4PAW
-	JMyl9QtCjmADa6sKbcDZ4EdA/OqfRpEONCBGeCeVeXx1l/dYTLRIzltIDhMPRy2l
-	mINJyG0tZxuViopVMr4rw5uI0=
-Received: from pc.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDnZ649ebZqlabTAg--.10528S2;
-	Fri, 25 Sep 2026 21:38:06 +0800 (CST)
-From: Jiale Yao <yaojiale02@163.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	dkim=pass (2048-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="jqJ7jAqd"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=virtuozzo.com; s=relay; h=MIME-Version:Message-ID:Date:Subject:From:
+	Content-Type; bh=GMeDjkmrnv5U67T0HjGa2Rn2lljMP+XcyMR8GGFZPnY=; b=jqJ7jAqdFml+
+	/DYafl50UMAqEjBe86u/X2XU2/XhUl6Fp/8HI4+zhUXw/c1VobS/y6pMwWhDVTFHin15/cZEgjCwx
+	/VEA7Mz9sKIuT7LZ6ixJ5Cw9CabzQwfkN7H5CzHiXNZkQ7WcuYTz2yhuyVOPvzFM2AhLXlbMkZHeA
+	Izei1tDHsZzH+ZYCAItnnfBCDsxXvBdtYgRXbFMgrYtODi+rNRInGzX63DYSwopdY0Rr2YWqGmT4S
+	UAswVIgoVFBViXpEMR5h8b9fxJBe96KVv71BGGL1wvT3vuw+wUe0kTrbK/jdvGMXjb90w2JgMV8lH
+	h1AjqTugw3XZy6P+VZbcxQ==;
+Received: from ch-vpn.virtuozzo.com ([130.117.225.6] helo=LekKit-T14)
+	by relay.virtuozzo.com with esmtp (Exim 4.96)
+	(envelope-from <eva.kurchatova@virtuozzo.com>)
+	id 1xA67s-008akx-2u;
+	Fri, 25 Sep 2026 15:41:09 +0200
+From: Eva Kurchatova <eva.kurchatova@virtuozzo.com>
+To: Bamvor Jian Zhang <bamv2005@gmail.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Eva Kurchatova <eva.kurchatova@virtuozzo.com>,
 	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jiale Yao <yaojiale02@163.com>
-Subject: [PATCH] pinctrl: mcp23s08: reject devices without match data
-Date: Fri, 25 Sep 2026 21:38:03 +0800
-Message-Id: <20260925133804.2231004-1-yaojiale02@163.com>
-X-Mailer: git-send-email 2.34.1
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH] selftests/gpio: skip when gpio-mockup is not available
+Date: Fri, 25 Sep 2026 16:37:10 +0300
+Message-ID: <20260925134103.3636519-1-eva.kurchatova@virtuozzo.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -42,39 +46,38 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnZ649ebZqlabTAg--.10528S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWruFWDGFykuF1UGw15uw17Jrb_yoWDKrc_Ca
-	4xury8X3s5Ga10gr4xtF13ZFyvyFsrtrnYvrsaqan3CFy3Xa45XF95Wr1rGws3urWYyr9x
-	Ar1rXw4FyF1xCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRuLvutUUUUU==
-X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzh6172q2eT5fUgAA3c
 
-A device bound through driver_override need not match an entry in the
-driver tables. In that case spi_get_device_match_data() returns NULL,
-but mcp23s08_probe() later passes the result to the regmap setup and
-dereferences it while setting up each device.
+The test drives the gpio-mockup debugfs interface, but checks only that
+debugfs is mounted. On a kernel built without the driver every case
+fails on a missing device rather than reporting that the driver is not
+there:
 
-Reject devices without match data before reading device properties.
+  # ls: cannot access '/sys/kernel/debug/gpio-mockup': No such file
+  # GPIO gpio-mockup test FAIL
 
-Fixes: 2e44555b05c0 ("pinctrl: mcp23s08: Simplify probe()/mcp23s08_spi_regmap_init()")
-Signed-off-by: Jiale Yao <yaojiale02@163.com>
+Skip instead. Accept the driver either as a module modinfo can find, or
+as one already loaded or built in, which /sys/module/gpio-mockup reports;
+the test runs perfectly well in the built-in case.
+
+Signed-off-by: Eva Kurchatova <eva.kurchatova@virtuozzo.com>
 ---
- drivers/pinctrl/pinctrl-mcp23s08_spi.c | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/testing/selftests/gpio/gpio-mockup.sh | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08_spi.c b/drivers/pinctrl/pinctrl-mcp23s08_spi.c
-index bacebcff67ef..926034fcd512 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08_spi.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08_spi.c
-@@ -146,6 +146,8 @@ static int mcp23s08_probe(struct spi_device *spi)
- 	u8 v;
+diff --git a/tools/testing/selftests/gpio/gpio-mockup.sh b/tools/testing/selftests/gpio/gpio-mockup.sh
+index fc2dd4c24d06..b13ccecd4a71 100755
+--- a/tools/testing/selftests/gpio/gpio-mockup.sh
++++ b/tools/testing/selftests/gpio/gpio-mockup.sh
+@@ -51,6 +51,9 @@ prerequisite()
+ 	DEBUGFS=$(grep -w debugfs /proc/mounts | cut -f2 -d' ')
+ 	[ -d "$DEBUGFS" ] || skip "debugfs is not mounted"
  
- 	info = spi_get_device_match_data(spi);
-+	if (!info)
-+		return -ENODATA;
++	modinfo $module >/dev/null 2>&1 || [ -d /sys/module/$module ] ||
++		skip "$module module is not available"
++
+ 	GPIO_DEBUGFS=$DEBUGFS/$module
+ }
  
- 	ret = device_property_read_u8(dev, "microchip,spi-present-mask", &v);
- 	if (ret) {
 -- 
-2.34.1
+2.55.0
 
