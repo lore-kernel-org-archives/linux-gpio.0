@@ -1,93 +1,80 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F67A481255;
-	Fri, 25 Sep 2026 12:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C774143B3F5;
+	Fri, 25 Sep 2026 13:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790340879; cv=none; b=h4rsmmKXLacFo1Qhx385nt4JI8S4QJ5vK/0YAgAiluyPkiFPxLJc1HwTy6zixkH50HlmTBIvhrkDvlGQV5pMkxVqfqkh+hy2XU83c0wCxnjEsmZ1yrJwvxD9Wb7Y69ySjkwG6iQUGkefXmEL2dnUwT6jsL5IIv/4mw7Lo739yVc=
+	t=1790341231; cv=none; b=Uc9Zs/gjRzRNSpcgq61JnGiFd87JMzWVM0Ghw9WlIworsOROFlymSaFbYjdoHfe4S2sOOQU8Bo3mNF6GKAfF+UymRlVlzg+GfWHqHL4hzErRSQMVKNuEKbEfOsdIJHBgBdx2E2ZndJ8HXj0L/H4VgzFCei/UzgBhtzmVof5jxgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790340879; c=relaxed/simple;
-	bh=I72GnDGaHtaDHRKp6yPa7hGD+z05A+lQsyVNib1yehk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JFjl4T0YTdtKdq71Qdx92KhrYsK0c2v4KN09xSdXfbmsmALvpOmgWPNZ8CoFxCvTkoEUo4/E0JbloyiaFNPu/8bokwLyW4Bw5AOoFrQa4ABvnKad6+dplW9l1kbP+Clm79Te9v3XAVKoIs4n+pAOLlMFIstV2JyDjcSuDhiybMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BuOTVcj/; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1790341231; c=relaxed/simple;
+	bh=gN0ashIWDVSBSbqxfYsqOHjt6M1nRjQf6HcAMer7uh4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SK0K1U5xB6i37IW3/QqvdGqRssN63zqat+Bynb1o2PByJY8mAz8Lmao8SB30DQBr/PUqZajnELJrTIiCvXJxYdGBa1YmRoG/gJenhtsoI9jJ6JUWXBwr7SPEDQoEzFaUHmtCkURUmZZjQ8I1roozrkRxQjjAEPdTQ/qblgKeFTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1+SZLTT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BuOTVcj/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790340878; x=1821876878;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=I72GnDGaHtaDHRKp6yPa7hGD+z05A+lQsyVNib1yehk=;
-  b=BuOTVcj/KN7TiwULIfgnDf3ZcjUfcXgxxQnj5RvQsH4xMzczJrKh0d4n
-   scDMLYTcBPOtrw7mpY0t4sjS+4Ffx/Ef9T47b2XX9BdmNRl+JiCCpMZPS
-   hZfvLKiH/unFuRRjnlNDR5XVc1XCWLsPNWimBZIwSkhuISfMofVHkEw1+
-   BWf4ypG0lgIulB76TqiKoiqvPKOt54ANrWwkWcU+0GnVZZnym3eLRNKUz
-   ZKAyPF1HnK+CfVKZixjhDjlvHSIkA9g3TLJPHuAcHukUDsUjZCUH6CLCt
-   mOOVSt4yIFQQltO4vLpY9sMLt4y5k3WlVPcTkLOmSYB2GS/5CWVE0b8NQ
-   g==;
-X-CSE-ConnectionGUID: +RLHaOHKQd+oHOoq5oFlMA==
-X-CSE-MsgGUID: DQQ7UhhiRb+o8XrsSfUjGA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11915"; a="90185911"
-X-IronPort-AV: E=Sophos;i="6.27,122,1787036400"; 
-   d="scan'208";a="90185911"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2026 05:54:38 -0700
-X-CSE-ConnectionGUID: dZv9edWETZeqMuyoP3OM0w==
-X-CSE-MsgGUID: +INsS4aKSWK/hvCevuV/3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,122,1787036400"; 
-   d="scan'208";a="273880604"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa007.jf.intel.com with ESMTP; 25 Sep 2026 05:54:35 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 91E1E99; Fri, 25 Sep 2026 14:54:33 +0200 (CEST)
-Date: Fri, 25 Sep 2026 14:54:33 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>,
-	Lixu Zhang <lixu.zhang@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH RFC] gpio: move intel drivers into their own directory
-Message-ID: <20260925125433.GY106095@black.igk.intel.com>
-References: <20260925-gpio-organize-by-vendor-v1-1-8feefd60581b@oss.qualcomm.com>
- <arZRZfa7AmDxmwoJ@ashevche-desk.local>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1+SZLTT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3C901F000FF;
+	Fri, 25 Sep 2026 13:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790341230;
+	bh=5nFLL35mDRLIoBcpxCM7z4kgquNZRaEA2pnvh23+BwY=;
+	h=From:To:Cc:Subject:Date;
+	b=I1+SZLTTPfAMaYRVEHBQ/SThcxg30AL08VU0cJGgGx29bfnWCS2OmOivfnuAViAaw
+	 7NbyzDpUPGMLDF27HRG90uXiX+a0aBd7mGIkwkWg2/z7gzIA4Qx72q9zTEXjpexwTN
+	 7sE+LMpUHlsa9w7KSdlM9dDQzln3AeKQbq57n4Y3ykqc2jFwCWLLqUwY/YJgviwHA1
+	 DUS4ZtiZEranVj4J7upGCpLkfQsMaRf+3QMCyAoTcwQm/7HYkAplusqdoE04PrtWZc
+	 VNIPWBPwoxOL/9OYOa2cMS974Bt58orzOPyIcI0wCBDzYfrL/6QygKlVxHDYh3Oy5d
+	 sq2v+/yikxrAg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Linus Walleij <linusw@kernel.org>,
+	Mehmet Fide <mehmet.fide@screeningeagle.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <error27@gmail.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: fix CONFIG_PINCTRL=n build failure
+Date: Fri, 25 Sep 2026 14:59:58 +0200
+Message-ID: <20260925130025.3882279-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <arZRZfa7AmDxmwoJ@ashevche-desk.local>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Arnd Bergmann <arnd@arndb.de>
 
-On Fri, Sep 25, 2026 at 01:48:05PM +0300, Andy Shevchenko wrote:
-> On Fri, Sep 25, 2026 at 12:22:15PM +0200, Bartosz Golaszewski wrote:
-> > In order to avoid maintainer mistakes on patch ownership: move all the
-> > Intel drivers into their own dedicated directory under
-> > drivers/gpio/intel. Don't touch Kconfig options as we historically sort
-> > GPIO drivers by type, not by vendor.
-> 
-> ...
-> 
-> >  drivers/gpio/{ => intel}/gpio-graniterapids.c   |  0
-> >  drivers/gpio/{ => intel}/gpio-novalake-events.c |  0
-> 
-> These are interesting drivers, not sure where to put them
+If pinctrl/consumer.h is included before linux/errno.h, the missing
+error number macros cause a build failure:
 
-IMHO they should be there too. We are maintaining them both.
+In file included from drivers/gpu/drm/tilcdc/tilcdc_drv.c:9:
+include/linux/pinctrl/consumer.h:110:10: error: use of undeclared identifier 'ENOTSUPP'
+  110 |         return -ENOTSUPP;
+      |                 ^~~~~~~~
+
+Include linux/errno.h indirectly.
+
+Fixes: b44aec87658e ("pinctrl: make the CONFIG_PINCTRL=n gpio config stubs return -ENOTSUPP")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/linux/pinctrl/consumer.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
+index 7be49d447426..81e7866bd2e3 100644
+--- a/include/linux/pinctrl/consumer.h
++++ b/include/linux/pinctrl/consumer.h
+@@ -12,6 +12,7 @@
+ #define __LINUX_PINCTRL_CONSUMER_H
+ 
+ #include <linux/err.h>
++#include <linux/errno.h>
+ #include <linux/types.h>
+ 
+ #include <linux/pinctrl/pinctrl-state.h>
+-- 
+2.53.0
+
