@@ -1,110 +1,119 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from sender-op-o10.zoho.eu (sender-op-o10.zoho.eu [136.143.169.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8F6367B72;
-	Sat, 26 Sep 2026 05:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790401351; cv=none; b=fcNwgUnay0jgsyH6nPPA61rrmzloFD1iJhyjGJvgD1vNCgCQTEw2pQzU1jT5pgZgReZWVznP3vFk4aki1Ksn4kv1+bektQF2k7KJA/r5nx5kzGXbFT+8W7Z5EC5xQGPwxVjTBFfQGUtSTVmf/6c3fsnUu8tNWY34bsNYBouUTJY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790401351; c=relaxed/simple;
-	bh=dZ3lNZ98ohXvLya75m4DQmZEbMsVqt7sY1iKQ2ppqL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pm9+rLNx07AGgcBSVV4R+Q2ADwKCM86yhbtSux3383PK4oHyg0HKPHBEn6aQ3UYkT0CNLldrzZq4iKPkcQJ+aqUi7eZM91QaofmVA1RXPPP5Lh5uj8m+TFHGkpqGbM1AmsTqVIpQ/Vup8FhSklUuJnh/bfieCrzPnRVHU9s3umM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nNAgiwHN; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202F4547059
+	for <linux-gpio@vger.kernel.org>; Sat, 26 Sep 2026 10:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.169.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790416847; cv=pass; b=BVMFIyOz0RygnHGEfW/qHg67hY2+MllexcAsHmJr71YuBZVbutkT0MBumj81WtDo5I9vKQA4RS0nW+xPxTIELnNecketnJ9aXOb1LbPY+39XL2RPtxS+b2LzAQqUrpmY+BnuqEjK1reu+6Pbrm2Wsib1fkRn4RMfxvFDtoIU55o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790416847; c=relaxed/simple;
+	bh=CGnPmNrRi/C3b+y0/yeV3fEWnNxxwpkDlCp6VUb4Roc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=O0ED/Bqn2cgQiJf5gdRtsJaaOxrNPSo9X3Ya66MNHbPyqkctKzftqLDrlv6zBG7Y+snBx5n1ZX1Pdob0X6BDRsnmeOxi6ALhx9AD7EF0mv+ffFft7hFiU15TY5H51jegG1vEGLkH72604E3rK1k7U4+wg4rb4FznNDkczBsv8SQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redaril.me; spf=pass smtp.mailfrom=redaril.me; dkim=pass (1024-bit key) header.d=redaril.me header.i=development@redaril.me header.b=HurcRjDQ; arc=pass smtp.client-ip=136.143.169.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redaril.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redaril.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nNAgiwHN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790401348; x=1821937348;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dZ3lNZ98ohXvLya75m4DQmZEbMsVqt7sY1iKQ2ppqL8=;
-  b=nNAgiwHNCAD90Q2FmiwtVhPjIM401p+vOr42tkqHJKWMsOdAi+T2Jwo+
-   cVl20yDTz3krsIdLts/SfBo8eQ0KX5+v3gFG71BkYCcID+/nmW29YmNhj
-   RwLakE6aFtxlJFkTb59OUEVrWJNlFRCWghB7phPoe/n8O11At9mmpTpJ8
-   3rJs4un92YxBurHLnIjj9XSA3BI0tqIVP8/4VjEmaWrAqMiRJ6n/D6l3p
-   veNmmIOeiumvNBZM74EfhQTcNcC6JfyofFNga68dFSyU7fBwOrva1v5T+
-   nrVgy4da6rZ4oxyhTWdjM46HL2dCrzDwZWqeP6RJoJNlAnV2vfcR81YAu
-   w==;
-X-CSE-ConnectionGUID: aMTdCMtaTledLSHqnPKy6A==
-X-CSE-MsgGUID: OlhMSD1pTdqc69kJC3hZGQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11916"; a="112968247"
-X-IronPort-AV: E=Sophos;i="6.27,123,1787036400"; 
-   d="scan'208";a="112968247"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2026 22:42:28 -0700
-X-CSE-ConnectionGUID: Jfx69RieSL66IMT+9d8hpA==
-X-CSE-MsgGUID: D06XQDR8SfiEYtC0O+iY/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,123,1787036400"; 
-   d="scan'208";a="273719570"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2026 22:42:24 -0700
-Date: Sat, 26 Sep 2026 07:42:21 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Junjie Cao <junjie.cao@linux.dev>,
-	Runyu Xiao <runyu.xiao@seu.edu.cn>,
-	Maulik Shah <maulik.shah@oss.qualcomm.com>,
-	Peng Fan <peng.fan@nxp.com>, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
-	William Breathitt Gray <wbg@kernel.org>,
-	Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
-	Hans de Goede <hansg@kernel.org>, Lixu Zhang <lixu.zhang@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v1 1/5] gpio: Move Intel GPIO drivers to the dedicated
- subfolder
-Message-ID: <ardbPbkc5IyZWsZo@black.igk.intel.com>
-References: <20260925160913.1648565-1-andriy.shevchenko@linux.intel.com>
- <20260925160913.1648565-2-andriy.shevchenko@linux.intel.com>
+	dkim=pass (1024-bit key) header.d=redaril.me header.i=development@redaril.me header.b="HurcRjDQ"
+ARC-Seal: i=1; a=rsa-sha256; t=1790416805; cv=none; 
+	d=zohomail.eu; s=zohoarc; 
+	b=CxZZZ+OQ+mTWaKKbXOSX3gby081KfFggc7jrvcZXncWyH5u6angmUOMcP3+zIQU9o91B2wBP7EucQwRq1kY2JOgDT1Y8/hhPLoLxUIRqj23FkY1ZOS4/ipvvMYs0X0JLiY2oRQKok7ubgUjVIVHXn4FbuQpILnQxMnYXjvvGvfM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
+	t=1790416805; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=wWAYD7hM9uoXDMeoHMfgdsnAKhjV8aF2ErHrkT+OIZM=; 
+	b=cPXXQDOtrj4f6wqGsqrHZmY3p5K3iMTWbfo3Wqa5hZvbmXcGC1HHLLRGuOATDoNYQArDknirWK2krW5mih3XEWPqcfzijY8ti6MhOE7G/yX/0DPmZtIjlx7Ev5ujg5l0QIe5hYG3L0jX23GFMFisXbYSCeQxKyFXG9IljrYykLE=
+ARC-Authentication-Results: i=1; mx.zohomail.eu;
+	dkim=pass  header.i=redaril.me;
+	spf=pass  smtp.mailfrom=development@redaril.me;
+	dmarc=pass header.from=<development@redaril.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1790416805;
+	s=zmail; d=redaril.me; i=development@redaril.me;
+	h=Message-ID:Date:Date:MIME-Version:From:From:Subject:Subject:To:To:Cc:Cc:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=wWAYD7hM9uoXDMeoHMfgdsnAKhjV8aF2ErHrkT+OIZM=;
+	b=HurcRjDQyJGdLCuZ2lvQb9QwxphS1Eqr9fvYNJHr56sbWiNFIWaAbldn6dbahZkh
+	MHUrgd4IfGtQ0n99fVN2zKh0BN40QJ1MxIHFL7CH8/LKz3Da/5F1txCMmk7w3qpLYvr
+	aMvN937gmTUOju/Lsb8Tpomca+iVl+NWTgva8oPs=
+Received: by smtp.zoho.eu with SMTPS id 1790416804412828.3370933618166;
+	Sat, 26 Sep 2026 12:00:04 +0200 (CEST)
+Message-ID: <b16be8d9-eadf-47df-86b6-4a982c665f9f@redaril.me>
+Date: Sat, 26 Sep 2026 12:00:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260925160913.1648565-2-andriy.shevchenko@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+From: Fabio <development@redaril.me>
+Subject: Re: [PATCH v2] mux: convert to use fwnode interface
+To: =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alvin.sipraga@analog.com>,
+ Fabio Forni <development@redaril.me>
+Cc: Peter Rosin <peda@lysator.liu.se>, Linus Walleij <linusw@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, xu.yang_2@nxp.com
+References: <20260916-mux_fwnode-v2-1-58f1d85b9dde@redaril.me>
+ <araS8BpKyYI-nkxM@analog.com>
+Content-Language: en-US
+In-Reply-To: <araS8BpKyYI-nkxM@analog.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 25, 2026 at 05:57:03PM +0200, Andy Shevchenko wrote:
-> For better maintenance and development experience, move Intel GPIO
-> drivers to the dedicated subfolder. This starts with Intel MID
-> and Elkhart Lake ones that share the same core part.
+>> @@ -566,39 +569,40 @@ static struct mux_control *mux_get(struct device *dev, const char *mux_name,
+>>   	}
+>>   
+>>   	if (state)
+>> -		ret = of_parse_phandle_with_args(np,
+>> -						 "mux-states", "#mux-state-cells",
+>> -						 index, &args);
+>> +		ret = fwnode_property_get_reference_args(fwnode, "mux-states",
+>> +							 "#mux-state-cells", 0,
+>> +							 index, &args);
+>>   	else
+>> -		ret = of_parse_phandle_with_args(np,
+>> -						 "mux-controls", "#mux-control-cells",
+>> -						 index, &args);
+>> +		ret = fwnode_property_get_reference_args(fwnode,
+>> +							 "mux-controls", "#mux-control-cells",
+>> +							 0, index, &args);
+>> +
+>>   	if (ret) {
+>>   		if (optional && ret == -ENOENT)
+>>   			return NULL;
+>>   
+>> -		dev_err(dev, "%pOF: failed to get mux-%s %s(%i)\n",
+>> -			np, state ? "state" : "control",
+>> -			mux_name ?: "", index);
+>> +		dev_err(dev, "%pfw: failed to get mux-%s %s(%i)\n",
+>> +			fwnode, state ? "state" : "control", mux_name ?: "",
+>> +			index);
+>>   		return ERR_PTR(ret);
+>>   	}
+>>   
+>> -	mux_chip = of_find_mux_chip_by_node(args.np);
+>> -	of_node_put(args.np);
+>> +	mux_chip = mux_chip_find_by_fwnode(args.fwnode);
+>> +	fwnode_handle_put(args.fwnode);
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> I'm actually not sure why there was an of_node_put() here in the first
+> place. It seems wrong to me. Any idea what it's for?
+> 
+> I want to give a Reviewed-by here for the rest of the code, but if the
+> above _put() erroneous, it might be better to add a patch before this
+> one to remove it (and cc the stable list with that patch).
 
-Reviewed-by: Raag Jadav <raag.jadav@intel.com>
+I don't think it's wrong, because fwnode_property_get_reference_args() documents that:
 
-> ---
->  MAINTAINERS                                 |  9 ++---
->  drivers/gpio/Kconfig                        | 31 ++---------------
->  drivers/gpio/Makefile                       |  5 ++-
->  drivers/gpio/intel/Kconfig                  | 37 +++++++++++++++++++++
->  drivers/gpio/intel/Makefile                 |  6 ++++
->  drivers/gpio/{ => intel}/gpio-elkhartlake.c |  0
->  drivers/gpio/{ => intel}/gpio-merrifield.c  |  0
->  drivers/gpio/{ => intel}/gpio-tangier.c     |  0
->  drivers/gpio/{ => intel}/gpio-tangier.h     |  0
->  9 files changed, 50 insertions(+), 38 deletions(-)
->  create mode 100644 drivers/gpio/intel/Kconfig
->  create mode 100644 drivers/gpio/intel/Makefile
->  rename drivers/gpio/{ => intel}/gpio-elkhartlake.c (100%)
->  rename drivers/gpio/{ => intel}/gpio-merrifield.c (100%)
->  rename drivers/gpio/{ => intel}/gpio-tangier.c (100%)
->  rename drivers/gpio/{ => intel}/gpio-tangier.h (100%)
+     The caller is responsible for calling fwnode_handle_put() on the returned
+     @args->fwnode pointer.
 
-These are already in good hands but I'd like to be atleast informed
-about these. Although I'm not sure if it's worth a dedicated entry,
-so I'll leave it upto you.
+What is wrong though, is passing args.fwnode to the dev_err() calls below after it was freed.
+Or that's what I'm inclined to say; I doubt put() would free everything but fwnode's name.
+If I had to guess, fwnode_handle_put is (erroneously) where it is to avoid gotos/calling mux_chip_find_by_fwnode()
+in the sad path.
 
-Raag
+If you agree with the above, I'll be happy to write a patch to fix it.
+
+Regards,
+Fabio.
+
+
