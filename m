@@ -1,137 +1,182 @@
-Received: from mail-ed2-f34.google.com (mail-ed2-f34.google.com [74.125.228.98])
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54127361940
-	for <linux-gpio@vger.kernel.org>; Sat, 26 Sep 2026 16:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.98
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790441777; cv=pass; b=queuuMkkyPuBMZy7h9s5pdfnoi+Dq1ZyBPzBIuh+Pta/UDRT7+eOEQYKa3tqJKZrKT81TP6upqvNYX1uKYak3wz0kSBxh3kdutsoBbtzmRloZpuZJQU6iyUbjsvn5xY0jyoPwuPTxUqqn73PaFHxe5SnxfMr/G/p1FfjVccmo44=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790441777; c=relaxed/simple;
-	bh=BFLuuX4oE73MpHMuvzlTcQtgZLxzLskCRkVBezS9eyU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fOuPpZ+YY91spKqQDXZU0BG/ZTz6smovwDH3ki3Nlvykh3vCTxzLM3CuFwdGa6CsbPkgNYjkf01TyLICXzcCnxJadAkNb5bCsu3lnAWnolMG/7ObQXiL83le55Z6pSZcvrUwLG7KU/TfbUUabHRndjdpGElkgnd5qZ3I/duz4Nc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WWTgj+tf; arc=pass smtp.client-ip=74.125.228.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5662137475D
+	for <linux-gpio@vger.kernel.org>; Sat, 26 Sep 2026 18:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790447244; cv=none; b=PYVykwi8SdOJuBqLZ0UKpD8KrL+26ihhrgY3IJmLY7SY94JrhJMNXpVSrftZTD7yxLg/7h4QilKNIKVOURu1gEuwMjZJMEi+F84MkEhtwLsZreTsFrM3np1+Kld04hJHE0aJyXpCb+G+FqziBHa2lA5i+Z4hA3M9qC8MP7L3tNc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790447244; c=relaxed/simple;
+	bh=qzwNqOoq5gIEteD6ff9IatsKKQaGCWKJS6LMm1QwduY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Z8O+mPZQNiKZGatUh2vlIUG1SOxhfJ2qee7fwdnqFYxoBEk3cdfabGg1TEeyrLpaCCn4yiaFewdXEaT+aFqMzND3mDeKd0c8QTfTbZjTEiVHQmGxAQUY2Tzf5Cj57qBRsVeqvty+zVYWN1MjWDXOy12HqX8UsmZ87PLs3U8KLm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=pr9e0W8B; arc=none smtp.client-ip=74.125.225.140
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WWTgj+tf"
-Received: by mail-ed2-f34.google.com with SMTP id 4fb4d7f45d1cf-6aaea1cb2e4so1988956a12.2
-        for <linux-gpio@vger.kernel.org>; Sat, 26 Sep 2026 09:56:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790441774; cv=none;
-        d=google.com; s=arc-20260327;
-        b=BSjGX68QgygUnzij9pizg779kUC/lAhnQgL2Q4pflHAApTsOnVqpu+R0WprDekeRYF
-         MAOdUm7h53MHaBtAJHkDie0a+tcclIJClvQfba7ykf5dVYPnKsXu/a/EilUN3/o3csCO
-         papsIdwhXV5xFc4+HQLYeZVRyMCJGj8u0bR9So3XUvhxRXKCNPDZrBgrW5UvEszt71WS
-         YZkTgkWlGOm2PMY9HWBWaw7js3NHjUH9D4vOcNes58rSL7fM3+Q3D1R1T0Znn6HFag5T
-         RYeSnsnV4wRVxn3O9tp6zxLNYuI69Q/Co91URR9R39BuVip9xYRqkdSmiX3oaryobWLM
-         pQTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=/jNPRD3oMVaVsh6veaw1NKnURjzIQQ+FNTYBf29LQZ0=;
-        fh=ZrsZc1DtOln3JfTPuU0ssjXtjnEp72ed/bOmsluFe1c=;
-        b=DAut/wfvfvwzOzFauVekqD2H0zScBqd1MWMxJP+4jiTpbfYxsTdawmcpoIbLxoMYs+
-         OKxFzrMeRfKhJLD4k+++LUKqN+Ap1j1XSjtMa6FFKt/xn6tyiqGCf3gjsqJyGRes3f8u
-         uxTbCgAa4wFZQ8hAxLhC61zqlMDIdJbrgKXU5TQxTWxD5UsYQ7CTMtO3EJSYOfScBrev
-         5E122f/MnKQeDSF8/Yuaav7d35dhRPpxh/va42J3Yg+dpQMK5e6IorDt/RBhrXOEK23t
-         q6STlf7y/qKA5DdfmdUr+zTI2xDBdz9HxyE7cM6kyplsiSTxIK5PSB52/Aj38q7ulcjV
-         28ig==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pr9e0W8B"
+Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49ccf3ca626so10558585e9.0
+        for <linux-gpio@vger.kernel.org>; Sat, 26 Sep 2026 11:27:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790441774; x=1791046574; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=/jNPRD3oMVaVsh6veaw1NKnURjzIQQ+FNTYBf29LQZ0=;
-        b=WWTgj+tfnSi0s6N5lHGiT/XRCdCfI3g0HaQu/G8o5aTo+Wc7GlINB9zMtywfVuOpjY
-         uMPAp72AcPHc7adl5gWmtot8ylurOcNZhYHzFv/HEjFiR6jcGNUsYJqtW6ZNE4DjVMxZ
-         TsqZgz3NG6sFN7Du9hwbgSmUQLslsSJddjafQVoJ2LuXiGuuXNuIElX3l5G46nU6wDgP
-         GZicBk241AHgrOY+PcEvRbMSm8wCCm34ShgNoEEKDsf8D8quo6bBT8ZdAbs30WzRE0+o
-         pcS9zMQiVc5OhPXde3BCTsQofBsaqcT8JYWfCCIYV2VB9BnrSYdoC2caXxdeVb3s8P+0
-         5LnQ==
+        d=gmail.com; s=20251104; t=1790447240; x=1791052040; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=6zdetyxBKfTailvjdRzmjKkVNkh5L3fgaPZNlolghpE=;
+        b=pr9e0W8BwBr+4bE4dLBrjXu491trlOXwULzGbiRhh/qygDhLJEC54qeUjBs2W2n6Aw
+         UkLtVWVPfeZkYRjU+C1/s116TY25w8IO5AwD6WJsJMKd/e5WY1DPlWAPkVKpZo48idgL
+         BLdCgX1hDaMJSh9X7nYO5ddVmod0BJc/cXyv10n1ZMaMIgMEnHtkaalociCKn3tP2j9I
+         iEQW6DtA1+xMmAt0SlhXmqSb9wIaWZ7luTGM+LdW1DAcpV/meY2ZSBqsSt28G9PuHvUt
+         1P4NkI7+pomYFdIZ5+O2KUwiUvnYLunvjvyyrE2ipRahtuCAmZ4R7TcU0Mb+7EZiDKrO
+         251w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790441774; x=1791046574;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=/jNPRD3oMVaVsh6veaw1NKnURjzIQQ+FNTYBf29LQZ0=;
-        b=kZd9ToFRi7vseXmmFzTQrcmPrqIH8b2Q9ba83WpYEwxgPZZLPlznJmktKfkloAnP4h
-         jqqnRCqydVOSd4e9yR+IpRACr+ndgGvL+sWSY0/6NvC2t4s3zsOY+XcVHeCMAB3ar4D+
-         sS7q48AEtZP2cH7hNG35P0mHA+RdePdDVJBeIU6x7Mf3xYjTmbx3UODGbMdEg0LQ+iyd
-         7ZGpsYjW3YARd6XO2jsMakmo6lZf22UytobnJEiVKIadZjNOdDcZhDM+dk5YzovymPx1
-         JDJFVSuuXfq9QYpD+bNvjToPIcetIdmbmqIRlm0iszLLmGrT6retsgGKdpizk/LCgHpN
-         21Qw==
-X-Forwarded-Encrypted: i=1; AKwUvBytBB4DYIsiHSLBbvNN32mz/nxuC4FaVn/PpOXzEZLQXDcoEYvAfSZEJec7slaATcyxoclufOOz+E0A@vger.kernel.org
-X-Gm-Message-State: AFq9FYIhqGNmOz/WfA1VpajpUIqQd362erx7fCFxpCCH2dl+wBZOX06m
-	IOudSh+Hy6vXpjNTMIx2IH+g1KYfxBradmaXN93K7E6d6s0pt3JsDVKW+k+t3gkEqn5sfF2MjD0
-	0p10VVrLIxlc/WEEjBY+9IC9TwEyw/Vo=
-X-Gm-Gg: AYBFou3/DtlZbsmE1ccroQnmTwCSlICXiO26B717LY7Hw9CAELickr9gPP7obrOiLy0
-	2/n8MFr9ujQTXz+sgIYZAV2kqUKyzFeEzLXaTMKVPt0PJ4jo35iYq2W7eS8zwUF/AiH1Qi/h2N/
-	qtJEf0v6T0g2n+ZpbFcOHU9Q6aFs1DhC2TCqjpuJZITHFvHDmfeNW6jGxdXkUZRBRTRM+CF60LI
-	Z1Gim3LXatsRxpf5DJ05dnhHz8VCDGzxJdzgyZW+L09BAFAtVN3BpJfzScvVDbrYoqdqZdgX2s3
-	XwDlcRZYdZBzIgUQu8QPCem0VpV5/mUkJzfL/0QDzf1s+eIP/2ttcDpOfYriLARYWZhBmCs57BV
-	iYZBKw2WBXVZIZ+vNc7dPZz5/XSdkS+dFjfmhKz6q6ef22//heucJSrynjg/fKVlJHBEm/z7naW
-	X1dPetx4uTYVP/wrMwfy0VjwlQR7sDMJUV55qm3izfArxfYbt7T4Q=
-X-Received: by 2002:a17:907:e153:b0:c2a:c793:be00 with SMTP id
- a640c23a62f3a-c2ac793c83bmr563678266b.15.1790441774263; Sat, 26 Sep 2026
- 09:56:14 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1790447240; x=1791052040;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=6zdetyxBKfTailvjdRzmjKkVNkh5L3fgaPZNlolghpE=;
+        b=BnyXlHTGE2ZfTKvM50nMjiuUTb3/YfQy7l/V0JeFTOzu789IW3TQBoEvKzzfkY12Te
+         6MahyLQeQIxF1jsleEWj1o0U15qJgIPO0Z3LicQ1W/5Y+0tGHf8txvO5Wpd/YTnevUcH
+         V9vvjf3L74JGuJO+YuVw1gvGsjvNecp1LDrNRjaXuLVr+xYTHTM+VVSmtZY96whF67ik
+         cp47PRV/6yizMcuDVXDAM3HfS8E3t3VOODAYaUbUuthMKL3VCIoIimQLFsPiSX9aqUrC
+         pJFnt0izBB8+pWDF734KRvhoawIskUY4p5MYFLIVsojgR0pW8GHaiE2ju+UOjlkxNWGp
+         oLow==
+X-Forwarded-Encrypted: i=1; AKwUvBzX0f4Q2ClUZPdRQHXL8hlO4W6cU62DTBN3713CqT5PTLc9G8dsczFBF23RjZhttQqNdRjzi6BQ2NQW@vger.kernel.org
+X-Gm-Message-State: AFuF++laf7bt1x67rO0F8XG7xzHTpmZJTnQ/+LPtzjW1nxY1AE7wTSQ5
+	SKCyeKRnOwZKv9oBroaIDoLLxu/eexYtLOgxr1MIlpo/X9z7XFZ5gO1W
+X-Gm-Gg: AYBFou1X99cSAfHJFkEaRzowffVWkmwN2YBLMR0HcEkSeT90/8r7eJDHI9O5f3CeO5Y
+	hLDqIoSRbPLaKRtypVIwo/qBqFybdsTuZ8e06NPnxQ3c8SC0gwFa81w0yAz4BPcKzUYRMpArsF/
+	KGcyIoXFXNKG1Fq9a3I3YBwU794Nx6LnkiPAdwssV811irdl3e8k0rQ2GXC74UoYEfy9qc4qz7J
+	R/aXHDUU0Uiw+ZV+965GY2kirqYRQGPPwg2tyKDM5rPdBhMqu1Ts7ZCG7SwvpSpvNNzfuhodaym
+	Bx8sEFxeMVL83Vlon6kvWevu+dB+ZnKkijpXzyHhiBil4NkZ+KDShGPaevs0H1mMv7lKk4uv8pw
+	i3yjz8P0xc+3Oh6TL/POoyCwGjOLx2FHbO/fzPwm5B02llwvW7RiB/CkTaqIbQgb5IV/hIh+fmh
+	2GvoPgSaSNz2uk/WLCjfPZaRbvFtEsgxZUVL8yNEvU9u5JZ8/DhXEcK3DmlJ5WM/L41dqKWmoHW
+	43AUEYq
+X-Received: by 2002:a05:600c:138f:b0:49f:cbf3:551c with SMTP id 5b1f17b1804b1-49fe66cc5camr155431025e9.12.1790447240357;
+        Sat, 26 Sep 2026 11:27:20 -0700 (PDT)
+Received: from m2.. ([37.142.154.181])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4a000901b07sm11834725e9.9.2026.09.26.11.27.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 26 Sep 2026 11:27:19 -0700 (PDT)
+From: Michael Zaidman <michael.zaidman@gmail.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: jikos@kernel.org,
+	bentiss@kernel.org,
+	brgl@kernel.org,
+	germain.hebert@ca.abb.com,
+	rio@r26.me,
+	brunoceg1@gmail.com,
+	contact@christina-quast.de,
+	daniel.beer@igorinstitute.com,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/13] HID: ft260: uart: add modem pins control via ioctl
+Date: Sat, 26 Sep 2026 21:27:09 +0300
+Message-ID: <20260926182712.24576-1-michael.zaidman@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAD++jLksAPyfZz6d--n7a1KhPackigEucQJqbYiA-e9S835seA@mail.gmail.com>
+References: <CAD++jLnKXqbV0xB3wvTF9Ri7g1MuWV6csO0MGzCtv5LBwmSr4g@mail.gmail.com> <20260827220805.23112-1-michael.zaidman@gmail.com> <CAD++jLksAPyfZz6d--n7a1KhPackigEucQJqbYiA-e9S835seA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260925160913.1648565-1-andriy.shevchenko@linux.intel.com>
- <20260925160913.1648565-2-andriy.shevchenko@linux.intel.com> <ardbPbkc5IyZWsZo@black.igk.intel.com>
-In-Reply-To: <ardbPbkc5IyZWsZo@black.igk.intel.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 26 Sep 2026 19:55:38 +0300
-X-Gm-Features: AclHuK9n5gUoraVKhWUuGL_-FGzi6edyz4lY6gv-HdsfU8bjWPEV9o9jeXqIE0A
-Message-ID: <CAHp75VdUHTZstgOWTGxyYua_PayNXnikgo=iM6kUCWjsTkqb8w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/5] gpio: Move Intel GPIO drivers to the dedicated subfolder
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Junjie Cao <junjie.cao@linux.dev>, 
-	Runyu Xiao <runyu.xiao@seu.edu.cn>, Maulik Shah <maulik.shah@oss.qualcomm.com>, 
-	Peng Fan <peng.fan@nxp.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Bartosz Golaszewski <brgl@kernel.org>, Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>, 
-	William Breathitt Gray <wbg@kernel.org>, Israel Cepeda <israel.a.cepeda.lopez@intel.com>, 
-	Hans de Goede <hansg@kernel.org>, Lixu Zhang <lixu.zhang@intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 26, 2026 at 8:42=E2=80=AFAM Raag Jadav <raag.jadav@intel.com> w=
-rote:
-> On Fri, Sep 25, 2026 at 05:57:03PM +0200, Andy Shevchenko wrote:
+Hi Linus,
 
-...
+On Mon, 14 Sep 2026 at 10:57 +0200, Linus Walleij wrote:
 
-> >  drivers/gpio/{ =3D> intel}/gpio-elkhartlake.c |  0
-> >  drivers/gpio/{ =3D> intel}/gpio-merrifield.c  |  0
-> >  drivers/gpio/{ =3D> intel}/gpio-tangier.c     |  0
-> >  drivers/gpio/{ =3D> intel}/gpio-tangier.h     |  0
-> >  9 files changed, 50 insertions(+), 38 deletions(-)
-> >  create mode 100644 drivers/gpio/intel/Kconfig
-> >  create mode 100644 drivers/gpio/intel/Makefile
-> >  rename drivers/gpio/{ =3D> intel}/gpio-elkhartlake.c (100%)
-> >  rename drivers/gpio/{ =3D> intel}/gpio-merrifield.c (100%)
-> >  rename drivers/gpio/{ =3D> intel}/gpio-tangier.c (100%)
-> >  rename drivers/gpio/{ =3D> intel}/gpio-tangier.h (100%)
+> Can't you just patch mctrl to use gpiod_set_array_value_cansleep()
+> and gpiod_get_value_cansleep()?
 >
-> These are already in good hands but I'd like to be atleast informed
-> about these. Although I'm not sure if it's worth a dedicated entry,
-> so I'll leave it upto you.
+> I don't think any of the users depend on call thing this
+> in atomic context.
 
-The patch adding the respective entry to MAINTAINERS is welcome, if
-you think it worth doing.
+That change is in drivers/tty/serial/serial_mctrl_gpio.c, not in
+hid-ft260.c. mctrl_gpio_set() calls gpiod_set_array_value() there, and
+both mctrl_gpio_get() and mctrl_gpio_get_outputs() call
+gpiod_get_value(). The FT260 gpiochip sets can_sleep, so calling those
+three functions from this driver warns until that file uses the
+_cansleep variants.
 
---=20
-With Best Regards,
-Andy Shevchenko
+The switch is not only a rename. serial_core.c calls ops->set_mctrl()
+under uart_port_lock_irqsave() in uart_update_mctrl(), and
+ops->get_mctrl() under uart_port_lock_irq() in uart_tiocmget().
+imx_uart_set_mctrl() and atmel_set_mctrl() call mctrl_gpio_set() from
+there, and serial8250_do_get_mctrl() calls mctrl_gpio_get() from
+there. These callers do run in atomic context, so _cansleep alone
+would put a sleeping call under a spinlock with interrupts off. A
+sleeping gpiochip also needs the serial core to call set_mctrl and
+get_mctrl outside the port lock. I will not put that in the FT260 v2
+series.
+
+> > - mctrl_gpio_init() takes a struct uart_port and its IRQ handler
+> >   needs it: uart_port_lock_irqsave(), uart_handle_dcd_change(),
+> >   port->icount, delta_msr_wait. This UART is a plain tty_driver
+> >   with a tty_port, so only mctrl_gpio_init_noauto() is left - and
+> >   the FT260 GPIO lines have no interrupts anyway.
+>
+> I don't understand this :D
+> But hopefully the TTY/serial maintainer does.
+
+mctrl_gpio_init() in drivers/tty/serial/serial_mctrl_gpio.c takes a
+struct uart_port. Its interrupt handler, mctrl_gpio_irq_handle(), uses
+that port for uart_port_lock_irqsave(), uart_handle_dcd_change(),
+port->icount and delta_msr_wait.
+
+The FT260 UART is a tty_driver with a tty_port. It has no struct
+uart_port, so it cannot call mctrl_gpio_init(). The function it can
+call is mctrl_gpio_init_noauto(), which takes a struct device and does
+not set up that handler.
+
+The GPIO chip in hid-ft260.c registers no interrupt callback, so there
+is no GPIO interrupt for that handler to bind to.
+
+> Using software nodes is the way to go I think,
+> <linux/gpio/property.h> contains PROPERTY_ENTRY_GPIO.
+
+You are right. PROPERTY_ENTRY_GPIO has been available in
+include/linux/gpio/property.h since v6.2-rc1, and hid-ft260.c does not
+use it.
+
+mctrl_gpio_init_noauto() skips a line if the device lacks the
+corresponding property, such as cts-gpios. Providing these properties
+requires registering a software node using PROPERTY_ENTRY_GPIO. I will
+register that node in the patch that switches this driver to the
+serial_mctrl_gpio.c helpers, so it is not part of v2 either.
+
+> include "../tty/serial/serial_mctrl_gpio.h"
+>
+> Otherwise we just bite the bullet and move
+> drivers/tty/serial/serial_mctrl_gpio.h
+> to
+> include/linux/serial_mctrl_gpio.h
+
+That move belongs to the same serial core patches, not to v2. I will
+ask Greg to say if he wants the relative include instead.
+
+> > That is a serial subsystem
+> > series to agree with Greg and Jiri Slaby, so I propose keeping
+> > the ioctl implementation in this series and doing the conversion
+> > as a follow-up.
+>
+> These things have a tendency to never happen and it's
+> not like we have a shortage of technical debt.
+
+Fair point, a follow-up can stall. I will send the serial core
+RFC as its own thread, after this series is merged, and I ask that it
+not gate this series: it changes drivers/tty/serial, and the FT260
+UART works without it. If the serial core does not take it, what
+stays is ft260_uart_tiocmget() and ft260_uart_tiocmset() in
+hid-ft260.c, and nothing in drivers/tty.
+
+Thanks,
+Michael
