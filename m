@@ -1,176 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6918854707C;
-	Sat, 26 Sep 2026 00:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8F6367B72;
+	Sat, 26 Sep 2026 05:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790383585; cv=none; b=dLdi8PnfzFA190ekXf+kke53otqI3zJUvpdk9hOoNqegyhi9c1djRpeZD6/HhF5DE981pjxAf0wmiApObGc4jcvQlLm0PebxtL0ovWqwddgoAV1PDrerbnDK9yaxkPv0+HJznJEqSM8sua1CyR/bK6MeektFc5o3MYB3XqS9vP4=
+	t=1790401351; cv=none; b=fcNwgUnay0jgsyH6nPPA61rrmzloFD1iJhyjGJvgD1vNCgCQTEw2pQzU1jT5pgZgReZWVznP3vFk4aki1Ksn4kv1+bektQF2k7KJA/r5nx5kzGXbFT+8W7Z5EC5xQGPwxVjTBFfQGUtSTVmf/6c3fsnUu8tNWY34bsNYBouUTJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790383585; c=relaxed/simple;
-	bh=mnyTyMpKZYo0kiEZ8uizCOYZ+lB18jykjeKqir4AWuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PkB5KBl/j0w30PSmmKQU6+TYv5wrP/wD9GnUd4xMD5R/WcZPIZ07tn5xgCgFNfv4ZajXWGiMcGSh+yMsBSMcfR2hpsB/UHkqzJRoQAvzD++a4M2gSUDsetqD2sMfHi6OFOLlFLQJ075TgSls76blMRVT+0SnsDxzGnjBayYByeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kM04wztB; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790401351; c=relaxed/simple;
+	bh=dZ3lNZ98ohXvLya75m4DQmZEbMsVqt7sY1iKQ2ppqL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pm9+rLNx07AGgcBSVV4R+Q2ADwKCM86yhbtSux3383PK4oHyg0HKPHBEn6aQ3UYkT0CNLldrzZq4iKPkcQJ+aqUi7eZM91QaofmVA1RXPPP5Lh5uj8m+TFHGkpqGbM1AmsTqVIpQ/Vup8FhSklUuJnh/bfieCrzPnRVHU9s3umM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nNAgiwHN; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kM04wztB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1971D1F000FF;
-	Sat, 26 Sep 2026 00:46:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790383584;
-	bh=zhUd/UIVaGPK1OS/xr4lPfCgqoDRv+CzJXrl2rMMcsE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=kM04wztBCqCqWuqBr4Y+MjIGfWJ82vsbCQPGQZVMuwAT6OhnQvUxqwklHODoKyPBG
-	 wE4ATOTLcimREg5mvwTzoUmC9aHuemaP0cYjGZSl2eAVVL0NNyL/PufrAgboOlMkzL
-	 6rKWdLn23cWQurdx5TOU8c5MiarQacskNKU8vECFoWnqzZdRREebmlf7U9wn31noXC
-	 ph7c6DwVQdeUd/DEmFaELaWxeF9XZGvuyWjpIN9xEJy0ec1v3zlatki+r1/NrtZgEt
-	 el9sTae29jp1AuVZTwvmxdAHEc0v73nMVG5kzA0dsmz7qXuLsfOtESsLGLPFmvQlpE
-	 tggvNr4cuiD3g==
-Date: Sat, 26 Sep 2026 01:46:20 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "David Lechner (TI)" <dlechner@baylibre.com>
-Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski
- <brgl@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, Chris Hall <c-hall@ti.com>, Patrick Edwards
- <pedwards@ti.com>, Kurt Borja <kuurtb@gmail.com>
-Subject: Re: [PATCH] iio: adc: ti-ads112c14: add gpio support
-Message-ID: <20260926014620.3b07660f@jic23-hlaptop>
-In-Reply-To: <20260925-iio-adc-ti-ads112c14-gpio-v1-1-2a2b218ebf3a@baylibre.com>
-References: <20260925-iio-adc-ti-ads112c14-gpio-v1-1-2a2b218ebf3a@baylibre.com>
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nNAgiwHN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1790401348; x=1821937348;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dZ3lNZ98ohXvLya75m4DQmZEbMsVqt7sY1iKQ2ppqL8=;
+  b=nNAgiwHNCAD90Q2FmiwtVhPjIM401p+vOr42tkqHJKWMsOdAi+T2Jwo+
+   cVl20yDTz3krsIdLts/SfBo8eQ0KX5+v3gFG71BkYCcID+/nmW29YmNhj
+   RwLakE6aFtxlJFkTb59OUEVrWJNlFRCWghB7phPoe/n8O11At9mmpTpJ8
+   3rJs4un92YxBurHLnIjj9XSA3BI0tqIVP8/4VjEmaWrAqMiRJ6n/D6l3p
+   veNmmIOeiumvNBZM74EfhQTcNcC6JfyofFNga68dFSyU7fBwOrva1v5T+
+   nrVgy4da6rZ4oxyhTWdjM46HL2dCrzDwZWqeP6RJoJNlAnV2vfcR81YAu
+   w==;
+X-CSE-ConnectionGUID: aMTdCMtaTledLSHqnPKy6A==
+X-CSE-MsgGUID: OlhMSD1pTdqc69kJC3hZGQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11916"; a="112968247"
+X-IronPort-AV: E=Sophos;i="6.27,123,1787036400"; 
+   d="scan'208";a="112968247"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2026 22:42:28 -0700
+X-CSE-ConnectionGUID: Jfx69RieSL66IMT+9d8hpA==
+X-CSE-MsgGUID: D06XQDR8SfiEYtC0O+iY/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,123,1787036400"; 
+   d="scan'208";a="273719570"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2026 22:42:24 -0700
+Date: Sat, 26 Sep 2026 07:42:21 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Junjie Cao <junjie.cao@linux.dev>,
+	Runyu Xiao <runyu.xiao@seu.edu.cn>,
+	Maulik Shah <maulik.shah@oss.qualcomm.com>,
+	Peng Fan <peng.fan@nxp.com>, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
+	William Breathitt Gray <wbg@kernel.org>,
+	Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
+	Hans de Goede <hansg@kernel.org>, Lixu Zhang <lixu.zhang@intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v1 1/5] gpio: Move Intel GPIO drivers to the dedicated
+ subfolder
+Message-ID: <ardbPbkc5IyZWsZo@black.igk.intel.com>
+References: <20260925160913.1648565-1-andriy.shevchenko@linux.intel.com>
+ <20260925160913.1648565-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260925160913.1648565-2-andriy.shevchenko@linux.intel.com>
 
-On Fri, 25 Sep 2026 16:50:47 -0500
-"David Lechner (TI)" <dlechner@baylibre.com> wrote:
-
-> Add support for using the AIN4/GPIO0 to AIN7/GPIO3 pins as GPIOs when
-> the gpio-controller property is present.
+On Fri, Sep 25, 2026 at 05:57:03PM +0200, Andy Shevchenko wrote:
+> For better maintenance and development experience, move Intel GPIO
+> drivers to the dedicated subfolder. This starts with Intel MID
+> and Elkhart Lake ones that share the same core part.
 > 
-> Pins that are already used for something else according to the
-> devicetree are excluded from the valid GPIO mask. This includes analog
-> inputs and excitation current outputs used by channels, REFP/REFN when
-> an external reference is used, the /FAULT and /DRDY interrupts and the
-> external clock input.
-> 
-> The per-pin register field macros are replaced with parameterized ones
-> so that they can be used with the GPIO offset.
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Can we pull that out as a trivial precursor? Feels like it will
-reduce the noise for the more interesting new stuff.
+Reviewed-by: Raag Jadav <raag.jadav@intel.com>
 
-Otherwise, only thing is a suggestion on how to perhaps
-couple using the pins with reserving them in the parse function.
-
-Thanks,
-
-Jonathan
-
-
-> 
-> Signed-off-by: David Lechner (TI) <dlechner@baylibre.com>
 > ---
->  drivers/iio/adc/ti-ads112c14.c | 198 +++++++++++++++++++++++++++++++++++++----
->  1 file changed, 180 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ti-ads112c14.c b/drivers/iio/adc/ti-ads112c14.c
-> index 3c877126b0be..1c0519716faa 100644
-> --- a/drivers/iio/adc/ti-ads112c14.c
-> +++ b/drivers/iio/adc/ti-ads112c14.c
+>  MAINTAINERS                                 |  9 ++---
+>  drivers/gpio/Kconfig                        | 31 ++---------------
+>  drivers/gpio/Makefile                       |  5 ++-
+>  drivers/gpio/intel/Kconfig                  | 37 +++++++++++++++++++++
+>  drivers/gpio/intel/Makefile                 |  6 ++++
+>  drivers/gpio/{ => intel}/gpio-elkhartlake.c |  0
+>  drivers/gpio/{ => intel}/gpio-merrifield.c  |  0
+>  drivers/gpio/{ => intel}/gpio-tangier.c     |  0
+>  drivers/gpio/{ => intel}/gpio-tangier.h     |  0
+>  9 files changed, 50 insertions(+), 38 deletions(-)
+>  create mode 100644 drivers/gpio/intel/Kconfig
+>  create mode 100644 drivers/gpio/intel/Makefile
+>  rename drivers/gpio/{ => intel}/gpio-elkhartlake.c (100%)
+>  rename drivers/gpio/{ => intel}/gpio-merrifield.c (100%)
+>  rename drivers/gpio/{ => intel}/gpio-tangier.c (100%)
+>  rename drivers/gpio/{ => intel}/gpio-tangier.h (100%)
 
->  #define   ADS112C14_DIGITAL_CFG_CODING			BIT(1)
->  
->  #define ADS112C14_REG_GPIO_CFG				0x0B
-> -#define   ADS112C14_GPIO_CFG_GPIO3_CFG			GENMASK(7, 6)
-> -#define   ADS112C14_GPIO_CFG_GPIO2_CFG			GENMASK(5, 4)
-> -#define   ADS112C14_GPIO_CFG_GPIO1_CFG			GENMASK(3, 2)
-> -#define   ADS112C14_GPIO_CFG_GPIO0_CFG			GENMASK(1, 0)
-> +#define   ADS112C14_GPIO_CFG_GPIO_CFG(n)		(GENMASK(1, 0) << (2 * (n)))
+These are already in good hands but I'd like to be atleast informed
+about these. Although I'm not sure if it's worth a dedicated entry,
+so I'll leave it upto you.
 
-Trivial but I'd have slightly preferred to have seen these
-macros all done as a precursor patch.
-
->  #define     ADS112C14_GPIO_CFG_GPIO_CFG_DISABLED	  0
->  #define     ADS112C14_GPIO_CFG_GPIO_CFG_INPUT		  1
->  #define     ADS112C14_GPIO_CFG_GPIO_CFG_OUTPUT_PUSH_PULL  2
-> @@ -147,10 +142,7 @@
-
-> @@ -393,6 +390,135 @@ struct ads112c14_data {
->  						 ARRAY_SIZE(ads112c14_sys_mon_channels));
->  };
->  
-> +static void ads112c14_reserve_gpio_for_ain(unsigned long *gpio_reserved_mask,
-> +					   u32 ain)
-> +{
-
-See below - but maybe this should return ain.
-
-> +	if (ain >= 4 && ain <= 7)
-> +		set_bit(ain - 4, gpio_reserved_mask);
-> +}
-
-
->  static irqreturn_t ads112c14_drdy_irq_handler(int irq, void *private)
->  {
->  	struct iio_dev *indio_dev = private;
-> @@ -1913,7 +2039,8 @@ static int ads112c14_populate_idac_mag(u32 current_nA, u8 *idac_mag)
->  }
->  
->  static int ads112c14_parse_channels(struct iio_dev *indio_dev,
-> -				    bool *need_avdd_ref, bool *need_ext_ref)
-> +				    bool *need_avdd_ref, bool *need_ext_ref,
-> +				    unsigned long *gpio_reserved_mask)
->  {
->  	struct ads112c14_data *data = iio_priv(indio_dev);
->  	struct device *dev = indio_dev->dev.parent;
-> @@ -1981,6 +2108,8 @@ static int ads112c14_parse_channels(struct iio_dev *indio_dev,
->  			 * for single-ended channels when taking measurements.
->  			 */
->  			spec->channel2 = ADS112C14_MUX_CFG_AIN_GND;
-> +
-> +			ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[0]);
->  		} else if (fwnode_property_present(child, "diff-channels")) {
->  			ret = fwnode_property_read_u32_array(child, "diff-channels",
->  							     pair, ARRAY_SIZE(pair));
-> @@ -1995,6 +2124,9 @@ static int ads112c14_parse_channels(struct iio_dev *indio_dev,
->  			spec->differential = 1;
->  			spec->channel = pair[0];
->  			spec->channel2 = pair[1];
-> +
-> +			ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[0]);
-> +			ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[1]);
->  		} else {
->  			return dev_err_probe(dev, -EINVAL,
->  					     "channel node missing channel type property\n");
-> @@ -2026,6 +2158,10 @@ static int ads112c14_parse_channels(struct iio_dev *indio_dev,
->  			measurement->idac1_mux = pair[0];
->  			measurement->idac2_mux = measurement->iadc_count > 1 ? pair[1] : 0;
->  
-> +			ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[0]);
-> +			if (measurement->iadc_count > 1)
-
-Put this and the setting of measurement->iadc2_mux under the same if()
-Currently the mix of styles are making the match up of the two harder to spot.
-Hmm. I wonder if we can do something fun like.
-
-			meaurement->idac1_mux =
-				ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[0]);
-			if (measurement->iadc_count > 1)
-				meaurement->idac2_mux =
-					ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[1]);
-
-Even better if we give that helper and the mask shorter names.  resv probably enough for
-reserve for instance.
-
-
-> +				ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[1]);
-> +
-
-
+Raag
