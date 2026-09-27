@@ -1,82 +1,77 @@
 Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com [74.125.225.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E761917CD
-	for <linux-gpio@vger.kernel.org>; Sun, 27 Sep 2026 15:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EB039099C
+	for <linux-gpio@vger.kernel.org>; Sun, 27 Sep 2026 15:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790521920; cv=none; b=PkRNXA32O8iAfo6W0yOqUopOVe4i6uHmT4B+PgiLigDqp4qPxcNUecGmn8Jr1bm0SU0szkHh52YQaTZIOzQ9q1n8oD+bugSGU9XJi+W1faCtlwaj9gFzEfIGwTY88mF/NC3vs8/AZ8NdPshZZynht2jPFYmw300F/ADNDZEa31w=
+	t=1790521933; cv=none; b=DcegIT8soNe/0AKRURnONeAiP3izi2foQW+kACnj+mxw9XTITxioyNHyXaAEm+wg8pUdFuU2O1XSq+PoU4PiOQi9RVr9O2KsqKQAKGyhyBEGg2QAMeYSQZR61hyFm9rtHH7vzfJcx0VJE08RuH9QRMGg1APB81Rto2/Bwa0JqdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790521920; c=relaxed/simple;
-	bh=Ai/Pt6iwST/hPrf66UHaVA/fpcI2B9b/ey70FIEcV90=;
+	s=arc-20240116; t=1790521933; c=relaxed/simple;
+	bh=96ftkQ5iFQxw5QZ9xU7GhEsTXdenW99uAU0uo70hPRk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iqn9z162JvnpjcVJVDc+u/znQprOd0hbVRCZB7uayGb+wYFZfTDuC3ievkMnY2LnjpVSR8tcwVZC8hS5y8c9Dqd+rUew9LsOtvc1ueqN2hcZC1koEA/FZrUn7S1Bi3JdUlrbBLDpPkAhw5Gps49AQmxgJFxR8iuws5ozbL6ovks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LBXDhaxA; arc=none smtp.client-ip=74.125.225.76
+	 MIME-Version; b=aeQWc2LVIvM2Ce0wleP14x+nJb5TpNwaPfIuEoi+Fl4FtLNeClmx+GmPoiLRGKrsbtyX2eEtpj0YlHopEA2S1/Bts3a81DMHXkBrSYp8IN+i+PmuQISjLmnNPxLdHNwZG/4oG1rUVkqqv7aPo9j4avvMXyHiQhaexi1zBDXTivA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C+10zngu; arc=none smtp.client-ip=74.125.225.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LBXDhaxA"
-Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-4843c3ee4cfso1023793f8f.2
-        for <linux-gpio@vger.kernel.org>; Sun, 27 Sep 2026 08:11:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C+10zngu"
+Received: by mail-wr2-f12.google.com with SMTP id ffacd0b85a97d-482f6350f89so1404271f8f.3
+        for <linux-gpio@vger.kernel.org>; Sun, 27 Sep 2026 08:12:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790521918; x=1791126718; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790521929; x=1791126729; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=lKsiUf1zswQ5v01inYZcqNF5S6iWN3Iz43ERd6nymQA=;
-        b=LBXDhaxA/zY4Lt4EOvastsQwONNivTIQJvXQScEFwlsk8HtyM+MLZL1y3rl0UqbsNx
-         y9Xnq36gPGzTqD/W2249ztRGNGXWEFQZJLDbLfJmwQ6Ky2SWr10c2bvbDNV39v09OVZa
-         m7Wv1ybejZQQwOGDtK6Qu9Srcd/l1+5cjFXRc4jRMkpZNhQg+1MEdvJzbDeC7fdx3YOQ
-         VcIh8eOtUunvAjuY+WxwY5vz6Gw5gr4G5DF9upQD2dqt9HbKgQI6LRo1GtJv1Lj3/xJI
-         kNn5SkBROaBBsM4pzmXGhjFbExpIn4b8DjOAqaoyR7oU0E7KFK2BlheuLYf+nBxQr2YL
-         +evQ==
+        bh=rs4mPvhdimrxqSm9i6pYQocUZNbH6k7UKi/I3AiX7uM=;
+        b=C+10zngupgJRPawUWP6hk1l2BugPzDBBk9XslUX8nk97WlQZsPBXDS21c7T3uPFINJ
+         ybE2GKx9qHT8yCq6e23YJJRd/OCb9JmFOB6WTnrgzu2QhCDoMM0FoXPWuwR5hulDy8Ji
+         KSwvNEVGo0nLRrQoQImnDm5AYs57Y3fzZHHkREqbCLv7hwIeVsXAvER7VT28nGhJ3nh/
+         9fnOTroN1smfnk1MBQMW/3HhLqfIfCJNRbEeK++2tHC3m4lyyaNf/aLjKoiP4Ttj24OO
+         bJRtarMmt0h9BCud0uTkESJDgoBnoFZicB+q5YFTQAlMNTBDIFmCXYcmLOIZL5y0P1Wn
+         ehww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790521918; x=1791126718;
+        d=1e100.net; s=20260707; t=1790521929; x=1791126729;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=lKsiUf1zswQ5v01inYZcqNF5S6iWN3Iz43ERd6nymQA=;
-        b=oi/Vt7mDwsUHoj/dbvJK5doi7yizdFzHuaxuUrD2o7p13tISBDU3/2ZjK6evNYWVmr
-         WVEEbOaqtsvbIIMdf1SqgeCwAbhIA234yY14Z/XMMyak2rmlFYvl+pfCmt5TWn3xdS8G
-         5HMtCSk+ZLxJqO7gTBRENJAd9B+4m5RxRbUe+MgUQkYp2QGCq6EKzOjJGme2SBaHYoIh
-         6ZWMAv3XH2jS/6yrrnOt+aceBzefsFWNLldoAESLhbwnX75RvQ5i2GfdTieBvY4yYP56
-         Ln5fpcRG23cMyjBZxapAAeOMKd3UnZYDYQ3RQuYTQ8NKxLz4jcbZnLiZsCmKYJouskYF
-         myVQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwc5GkLDbAFra/VaXwg8REBRcq90FWo9aZF/RuQtohPS8/rpy3MoQNyiwKf5EAJ+dAUP4aIyfl4rZv7@vger.kernel.org
-X-Gm-Message-State: AFq9FYIOr9zD8JpBOe6FIR3pI9Hh5eUrD6V8PNSPSCovk/me6Vf1qZF8
-	T+4mHeDPOoe1mLh3CPowW9Ks7rTN1+B0li/3cbtBQhaZXRwRkeTpIR7c
-X-Gm-Gg: AYBFou3YnD1JlhE36OTHhlNsCKvRz3X1w8m8f963edGAoxrIDTQXiPVO123dsR3aeOd
-	tw1SqlFh3Zsy70dwk2/rpOwrLxcItKj7zr4aouXpSoP1Z4AzS4shjwEzHycgLMOQu8wejaMl0LX
-	nhvvPa71djuMWMUmkPYveeaPcoCTGr2Aijh4slBZv5ou2ub2xkyA2tQovvb120DAfQK682rIHxf
-	auDe0ZdoGy/HI1tZp9Mx4SavXDWFNAdpu1pXpqdAEeHM0H03IwYQOlqNYyzpl6bLN4o28yNqf/P
-	FJyrKN5r9Qv9V4nXS+zY4zvG//XQ2SxWvAgnYgvEGiMY+S2+EeVlAAMA8EsMxsZPHlXb05+kQVu
-	wdHMalrFjJ0j8OxnU1wjYVfKZ8G+QV0Xuo+qMyfMxzFIvuLBA6M8p932h+wgP3yaNmQLrWmqcQo
-	JNnMf2Nw1Edz+oNezPbB/KD3QOOPkbHYC6OJ+X+a6E7iiOwhDdqQOwtNnXkAVvicv30621syf1o
-	T0jIQ7BV0xGKg+SyouJA9l7/w16cGI0
-X-Received: by 2002:a05:6000:288e:b0:488:820b:7e24 with SMTP id ffacd0b85a97d-488820b7fedmr12875064f8f.28.1790521917582;
-        Sun, 27 Sep 2026 08:11:57 -0700 (PDT)
+        bh=rs4mPvhdimrxqSm9i6pYQocUZNbH6k7UKi/I3AiX7uM=;
+        b=cmyrHfGszAB2xjOD5Ta91Jy2GjfBxR8FkLKDyUbAS0BRzGjt9m8mKtsIamOOl4CXjW
+         GEms2JtjmbWUtGvLJC7U98e7ACnQlm8AEOEW4EpqxhJGu9bS9hMp6tJZBM7POcRJSrF4
+         iDbHjFpDRCNv0MRzvQsltmcogVsO1Lvaw7pAa0xY8CBPbhU8tYDVz1DRDtfWsqm+mVVE
+         rvMBSzLqkQghLjA7RTOvL6S0asILnzSjwzx2D40UohbS1isyiAS8XWqn5l41ZzmJ2C5B
+         UPa890JeVVXrRRZzyIHRb7qKcg6pS0CxLsHi2ULAM9IWRF9AYhVAxHCzSbPk+PLmHf/2
+         Aj7A==
+X-Forwarded-Encrypted: i=1; AKwUvBzOVuth1Qxv/lzrnJHp9OH9AaZynFgtgNOxDYKzoSPCxma/fE7fjUbW82xLjnJ06+64ep9f0wkzlNOU@vger.kernel.org
+X-Gm-Message-State: AFq9FYI2Xc57IBjl+lIRfFMrlj9Wo7aeV1hVqooy1bG4Bhq59Lgiq9O3
+	Hh1DaXVeEjXAcRKMt3+Z9CBa+bTna60f+Ev+I7SHCT2fi/VwyGtWKiql
+X-Gm-Gg: AYBFou0ngqc19ZH7PQOvYqUvR12iQEYOSis1Hyq38PVYBp51jWtx9mSgPamccAFs0fk
+	l1qGeKMerzSu7htwztECWZiTdCVZjlzZylrirCRi/dV3ps2RSd8m0YzKFEMpRB8xkluW+6/cCL2
+	j4HpJvFTGiERmTy5NIT8dbO06bw/uMoj8dHx/3Ew3qXHxitmZy1eNcUaVhjoXJqN75jCaVd77zW
+	6Jdl1WTaKP5o0hzWhSY19siVwSxNamRliWh/3kEcb34sUnxNRROuiA4Qu7/wamVsnolv9tS2gEp
+	8Y6Fhj+QTWBU6AhyzeEi1nXJgDmrQGaxG/s8gS16/uNm4YwzLFrI9rdvlMxIz7vjkb230Xgflh4
+	IIOUK2EwpsIYtrexau4B7gRdkYsdCIStRbSkcwscyu1d5fUNhmmeSfLNhjMBofGH35bDjXRwBZR
+	1YSG85nO+cv9QiC9dzlXiGarP+5NCCn1NYo3/nSss9+A+tjFGMm07R/K8oApvY6hWiNM09ufgup
+	dGOQ6sxafTYGKcWA7q5YwyGQcSCkZHB
+X-Received: by 2002:a05:6000:4692:b0:488:6ed9:b11d with SMTP id ffacd0b85a97d-48884e0d903mr5840808f8f.52.1790521929459;
+        Sun, 27 Sep 2026 08:12:09 -0700 (PDT)
 Received: from debian (ip-78-137-176-146.broadband.digiweb.ie. [78.137.176.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4887a746c57sm19764208f8f.35.2026.09.27.08.11.56
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4887a746c57sm19764208f8f.35.2026.09.27.08.12.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Sep 2026 08:11:56 -0700 (PDT)
+        Sun, 27 Sep 2026 08:12:08 -0700 (PDT)
 From: Pablo Mazzini <pmazzini@gmail.com>
 To: Chen-Yu Tsai <wens@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
 	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Linus Walleij <linusw@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Rob Herring <robh@kernel.org>,
 	Samuel Holland <samuel@sholland.org>
 Cc: Pablo Mazzini <pmazzini@gmail.com>,
-	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-sunxi@lists.linux.dev
-Subject: [PATCH v2 03/11] dt-bindings: pinctrl: sun4i-a10: add Allwinner B288
-Date: Sun, 27 Sep 2026 16:10:08 +0100
-Message-ID: <20260927151016.186493-4-pmazzini@gmail.com>
+Subject: [PATCH v2 04/11] pinctrl: sunxi: add Allwinner B288 pin controller driver
+Date: Sun, 27 Sep 2026 16:10:09 +0100
+Message-ID: <20260927151016.186493-5-pmazzini@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260927151016.186493-1-pmazzini@gmail.com>
 References: <20260927151016.186493-1-pmazzini@gmail.com>
@@ -88,62 +83,109 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The B288 driver takes its mux values from the DT, so allwinner,pinmux
-becomes an allowed property here, required for this compatible only.
+80 pins across ports B, C, D, F and G; the mux values come from the DT.
+Port C has no external interrupts. PH0 is BSP FPGA-only and omitted.
 
 Signed-off-by: Pablo Mazzini <pmazzini@gmail.com>
 ---
- .../pinctrl/allwinner,sun4i-a10-pinctrl.yaml  | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/pinctrl/sunxi/Kconfig              | 10 ++++
+ drivers/pinctrl/sunxi/Makefile             |  1 +
+ drivers/pinctrl/sunxi/pinctrl-sun8i-b288.c | 53 ++++++++++++++++++++++
+ 3 files changed, 64 insertions(+)
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun8i-b288.c
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
-index 45b7a0b6c626..6fe3b6410734 100644
---- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
-@@ -39,6 +39,7 @@ properties:
-       - allwinner,sun8i-a33-pinctrl
-       - allwinner,sun8i-a83t-pinctrl
-       - allwinner,sun8i-a83t-r-pinctrl
-+      - allwinner,sun8i-b288-pinctrl
-       - allwinner,sun8i-h3-pinctrl
-       - allwinner,sun8i-h3-r-pinctrl
-       - allwinner,sun8i-r40-pinctrl
-@@ -120,6 +121,15 @@ patternProperties:
-         $ref: /schemas/types.yaml#/definitions/uint32
-         enum: [10, 20, 30, 40]
+diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
+index dc62eba96348..a08186133090 100644
+--- a/drivers/pinctrl/sunxi/Kconfig
++++ b/drivers/pinctrl/sunxi/Kconfig
+@@ -56,6 +56,16 @@ config PINCTRL_SUN8I_A23_R
+ 	default MACH_SUN8I
+ 	select PINCTRL_SUNXI
  
-+      allwinner,pinmux:
-+        $ref: /schemas/types.yaml#/definitions/uint32-array
-+        description:
-+          Pinmux selector value, for each pin. Only used by SoCs whose
-+          driver takes the mux values from the DT instead of an in-driver
-+          table. Almost every time this value is the same for all pins, so
-+          any array shorter than the number of pins will repeat the last
-+          value, to allow just specifying a single cell, for all cells.
++config PINCTRL_SUN8I_B288
++	bool "Support for the Allwinner B288 PIO"
++	default MACH_SUN8I
++	select PINCTRL_SUNXI
++	help
++	  Say Y here to enable pin controller and GPIO support for the
++	  Allwinner B288 (sun8iw10p1) SoC, as used in e-book readers such
++	  as the PocketBook Verse. This covers ports B, C, D, F and G,
++	  including the four banks of external interrupt capable pins.
 +
-     required:
-       - pins
-       - function
-@@ -144,6 +154,19 @@ allOf:
-   # warnings.
- 
-   - $ref: pinctrl.yaml#
+ config PINCTRL_SUN8I_H3
+ 	bool "Support for the Allwinner H3 PIO"
+ 	default MACH_SUN8I
+diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
+index 951b3f1e4b4f..5129c0f19f3e 100644
+--- a/drivers/pinctrl/sunxi/Makefile
++++ b/drivers/pinctrl/sunxi/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_PINCTRL_SUN50I_A100)	+= pinctrl-sun50i-a100.o
+ obj-$(CONFIG_PINCTRL_SUN50I_A100_R)	+= pinctrl-sun50i-a100-r.o
+ obj-$(CONFIG_PINCTRL_SUN8I_A83T)	+= pinctrl-sun8i-a83t.o
+ obj-$(CONFIG_PINCTRL_SUN8I_A83T_R)	+= pinctrl-sun8i-a83t-r.o
++obj-$(CONFIG_PINCTRL_SUN8I_B288)	+= pinctrl-sun8i-b288.o
+ obj-$(CONFIG_PINCTRL_SUN8I_H3)		+= pinctrl-sun8i-h3.o
+ obj-$(CONFIG_PINCTRL_SUN8I_H3_R)	+= pinctrl-sun8i-h3-r.o
+ obj-$(CONFIG_PINCTRL_SUN8I_V3S)		+= pinctrl-sun8i-v3s.o
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-b288.c b/drivers/pinctrl/sunxi/pinctrl-sun8i-b288.c
+new file mode 100644
+index 000000000000..98dd4ead4c32
+--- /dev/null
++++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-b288.c
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Allwinner B288 (sun8iw10p1) SoC pinctrl driver.
++ *
++ * Bank sizes and the interrupt mux derived from Allwinner's BSP driver
++ * pinctrl-sun8iw10p1.c, which is:
++ * Copyright (C) 2014 Jackie Hwang <huangshr@allwinnertech.com>
++ */
 +
-+  # The B288 driver has no in-driver pin table, so the mux values have to
-+  # come from the DT.
-+  - if:
-+      properties:
-+        compatible:
-+          const: allwinner,sun8i-b288-pinctrl
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/pinctrl/pinctrl.h>
 +
-+    then:
-+      patternProperties:
-+        "^([rs]-)?(([a-z0-9]{3,}|[a-oq-z0-9][a-z0-9]*?)?-)+?(p[a-ilm][0-9]*?-)??pins?$":
-+          required:
-+            - allwinner,pinmux
-   - if:
-       not:
-         properties:
++#include "pinctrl-sunxi.h"
++
++/* PH0 exists only on the BSP's FPGA platform and is omitted. */
++static const u8 b288_nr_bank_pins[SUNXI_PINCTRL_MAX_BANKS] =
++/*	  PA  PB  PC  PD  PE  PF  PG */
++	{  0, 17, 15, 29,  0,  7, 12 };
++
++/* Port C has no external interrupts. */
++static const unsigned int b288_irq_bank_map[] = { 1, 3, 5, 6 };
++
++static const u8 b288_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
++/*	  PA  PB  PC  PD  PE  PF  PG */
++	{  0,  6,  0,  6,  0,  6,  6 };
++
++static struct sunxi_pinctrl_desc b288_pinctrl_data = {
++	.irq_banks	= ARRAY_SIZE(b288_irq_bank_map),
++	.irq_bank_map	= b288_irq_bank_map,
++};
++
++static int b288_pinctrl_probe(struct platform_device *pdev)
++{
++	return sunxi_pinctrl_dt_table_init(pdev, b288_nr_bank_pins,
++					   b288_irq_bank_muxes,
++					   &b288_pinctrl_data, 0);
++}
++
++static const struct of_device_id b288_pinctrl_match[] = {
++	{ .compatible = "allwinner,sun8i-b288-pinctrl", },
++	{}
++};
++
++static struct platform_driver b288_pinctrl_driver = {
++	.probe	= b288_pinctrl_probe,
++	.driver	= {
++		.name		= "sun8i-b288-pinctrl",
++		.of_match_table	= b288_pinctrl_match,
++	},
++};
++builtin_platform_driver(b288_pinctrl_driver);
 -- 
 2.53.0
 
