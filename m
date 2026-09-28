@@ -1,83 +1,83 @@
-Received: from mail-ej2-f23.google.com (mail-ej2-f23.google.com [74.125.228.151])
+Received: from mail-ej2-f43.google.com (mail-ej2-f43.google.com [74.125.228.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A9F43A7FD
-	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 13:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702604968F3
+	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 13:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.171
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790601180; cv=pass; b=YdBg6QPyRArsygwFpB2sqjKVXQMAMw/J63YBF47NnzhC6x8v4fG0mQ1pdR5kz3g3g7shZCNt7FWqqbhzTOggwfrT63WZzAuLbBg03kEl0WNLHqxemWNc6ZwE9Li774ueOIMYusht7iLzEstlrRlaawCKl5SqhOq3NCA+F3quxCI=
+	t=1790601271; cv=pass; b=BqgvL5puq9cJE5/uEWpuED86+LUEf4XLknsxsH6OHfTplDvsZ1uO0SuiD/aetbNxlGLT7VSN80ko0w56/QdFl8guf3xdu0QKPxqjjlWKb3TvORMG/qOvCsJC6QUOcgXYlIfEO0GsVjBpzXb97Kd2MSe14bScnU14hKE/PGIIBm4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790601180; c=relaxed/simple;
-	bh=TY+ThFmrQAsZNlvu7YOZWhJoc8nJAE/C5wpQs0phEYQ=;
+	s=arc-20240116; t=1790601271; c=relaxed/simple;
+	bh=7FMXwn6+GHUh4aNYqqrblQkMwpNa3JC+tTZQDMGtYtA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E9q7A+2+fY1CcuuevcPxJN7d7wrOFy224Z7uTKQnouoaIqxiHaGLAYs/0OrfP8KO6arbO95khMk/Y+iv3us8jfuvTl+sqQTzmnvJHusgU8A13U1QuYyjSG7MmhaYVR5ssE1XStANpeOIGR9dFX+3yzf9M1uf8r/dj6GA9h4Z4dc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFoKVZb5; arc=pass smtp.client-ip=74.125.228.151
+	 To:Cc:Content-Type; b=PHN927YcNMCUZGBFqEh93CPcJuHR8alU2DeEicUimhUmoU59WG0vODcOwNA/hJfctufUDlKHvM1onMNU4W/8TgRZjZKn+v65gCGDHg2WqNAMaKbibMrEAo3x8qDFnYJLYkHA23I7uKBJZ8BKFzxcvq9krIbCqNc++lUmbuGjqqU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oenhC3Gf; arc=pass smtp.client-ip=74.125.228.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFoKVZb5"
-Received: by mail-ej2-f23.google.com with SMTP id a640c23a62f3a-c2db9cc3b45so197717266b.1
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 06:12:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790601176; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oenhC3Gf"
+Received: by mail-ej2-f43.google.com with SMTP id a640c23a62f3a-c2af43c5b0cso356413466b.1
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 06:14:30 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790601268; cv=none;
         d=google.com; s=arc-20260327;
-        b=nu96lBXXcHNBbCm3h78FS4luErTJOPoVsSiuqt04Nio+eKHLwOnt20pOddoPcF641y
-         OCXaBOjbNk3NxbDWfKNAOOJwLISW6QZccbe9eIz8HRO6JU59awqLL0P7nOYDqq4YrHRg
-         3nZ+mVFowZUjdLCSy6a2xE4aHPiqZv+qXY7PHStJUcIgFQ+Hgb4byYBw9yg5Ow651tuU
-         gf9PzavrrRldmd4tO9NBkN45Gh8+vw0THDne+ptVsLk2wI6ib3kyaAg6HAD0sGzNa3ji
-         1NNTrhpFx8QQr3t1e9qCihytEFVBAIlMhDtChzIjpkpugrEI7PdXgjd52PN5Sbi1Xve3
-         LbHA==
+        b=aoYbovWtt6XyXKqSL/khn205NV6u4fZZ/nlr50pyPAjjDuQ4ltEAu2MrL7R7Q9gywr
+         ASi8LS/KWBOLIGi/WELO7WaEw2uHcYLy/aVsNNzPO51Fn8jVUoMkQwl1VRYuyaN8VIfE
+         yfPD1fjuAfrgn9t3Xj2zOvFrWZiqbMp1V+TpljjOBpEq7AkRuB1+OKlk3u14MUvkelNS
+         orueRzV5xe8/LmdnQNgT30hiYbqNuwpw8U1zYc0HCes79GNu8UcmyPcTM9NHB5z/urLv
+         HLAEuX5rd9uXHN6Lf8iw2bvPGWSstlXd/S6yFhOC6bibnApq7ao89ET5Ez02ga2jeijg
+         Roxw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=rDASPrdfaubIXsRWgoMkCtVEaCp5Ede6IMXhIica92c=;
-        fh=TucZ28uwidA0cMsNchpN6DcjF1kEpBgdtSXfXSkJ6jQ=;
-        b=rSUwBzfJQNvdGSTl72l9dHCKwHxaeSSgi81aIoFNc7kMUKG3D+oxCrPISzV0lsvw5y
-         CNfdfQLq1uYAfGMQ1SmxxTBq2D8BVzfHQ16bSLxhvpcPK7yUzS4aW6ZKyx6+uPOLzCpQ
-         1C+Zci665dlJsGgfoIfRxIJYq/5YroR2AI/WESvm872AxebUVDIw5yfVJKEQOZpTKaNC
-         S7u+sB++o6bUPCeWg7flrfzv8ISXBzRr+wrv5qOw+36LBvmNpd+LpNydEhjbA0CQh2st
-         siQrHxZ1uGS68xjIYH0/JNf0Zp9zF/MGjoHZkCp/lgOCoq3Z9TvhwKdbxCr6mL+3zZg2
-         rZnA==;
+        bh=FhsZECsOB6gnXC6gOibbQkmy4eQeDXFt2prA07YbYQI=;
+        fh=HOT+2Pc3I8rCySFbmCwvBjw9vBd+G8e8/u005Z3wfEg=;
+        b=IFyM58eK1Exz9AjGTLXi7sXHPe/35Qu4JK2OsHpUEpqXH2C8kPeT84ik2AKdMBHjRP
+         UriVw4e8YTnZ1BgxH8p8mWemGJ87lLJmRY90qI1PXhEOgOd2oy97vBwv/s4wnySDA8mJ
+         QnmaZnpsc4jNlyAELztszlhErU8M6mpITZzsF4CKp0FPZOuHapqx8grM0sSDZC43sa6B
+         FGPOi0ptSsilSKY7ubvypQsZKC3Lc/1RDCnwSP3LNNx1dybUV5Pt8kZEc+u9pV2/6ULz
+         N6IdrjnywdadyD4s57H5lEpl+oicDAl4ze5zsDig4RmoUQ7Hha1UoTEUhlpg3FoMqg/I
+         t6Mw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790601176; x=1791205976; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790601268; x=1791206068; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=rDASPrdfaubIXsRWgoMkCtVEaCp5Ede6IMXhIica92c=;
-        b=bFoKVZb5SiEakBwou8iSQuv1E8tDT42VM7+9rP81L1PPziZA4AuB1JBN3qt7aNoyQF
-         tgBqOtaMJ8b1kk7OZDMvIfKD4PmdTk1Lr7mgDwrWagUTd7Ztjq4SRqYSpFu6xDhvlEtD
-         RN7ORZ0If7DdEKX3+JtyeoIiINCJavCiU8iAezEXsSHJ41eopMeyKrRXcvHoz75HBlUJ
-         RqDE74+p0BozDbiGitggooqD1NVku7znnNUN2pHmNrbX3xz6e1N4xz1JORMa6MNtAp4P
-         f4gS247HQMjLISiACIyJGkU8SUqcgi0jDwMia8dknjuaB4IyAAt2CSrjKtCC+QDKN0VP
-         hIoA==
+        bh=FhsZECsOB6gnXC6gOibbQkmy4eQeDXFt2prA07YbYQI=;
+        b=oenhC3GfofzeeGFTLIHtLq/IwCBUdsm7TKQCqAb8Ky0IGJc+B4rSMevqgq4sBh/hSH
+         ACWLPlchPXG3EPgMCHETdKPTETxrkpDNXBPGu6at1uHPAf7Bs3H1/4l4rUO6C562cSAm
+         P2zNaTDJqSCmTUOOJlLY1y1QcmtK4HokMD93701XwFP3Dwqx6g1UmsgpWayAwH139xPM
+         Ln68e33cbL5FeRLkn3m/OD8Dv1SX/3MD8KUai5twDf8IoIEoiSfqO8E6XttctHe+IRId
+         Vtu8rLoIPEQjr0vhsTnSEk0EiEAdfimrydaF/qCyWDy35bEgRmYP6PhdrPMIZZhDg8YT
+         KXvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790601176; x=1791205976;
+        d=1e100.net; s=20260707; t=1790601268; x=1791206068;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=rDASPrdfaubIXsRWgoMkCtVEaCp5Ede6IMXhIica92c=;
-        b=J0sQIDfWGaEC64H4s8IskttpHQ5SL4EVgzd7U5snC8IYIdEo3J+CLRyIuJXZs1Leiy
-         iacVYWgYb+Pkp2qtjPKaQIol9zwiZh73UN46Oq725mdcpZec4T2RfvP/x2jLLgCkQ/uI
-         qFoDjuhIhnRSAcodfLHNT1RvBP73fuHESuEUBjZQtWdWX/tOEKGhnxEa5EcXu2huuKmY
-         u1GhWYXIsJXLhbtzKBAOAg2K7zBW0EiN0/K8LpnuZVvpsBuHer8dwT3emRjCP0ty4NAC
-         T1QSoEzFZupB4xCTjljhgHcV9FeEe6lZBeSyg8jCZZaXLkce24ocyPl3UAWeKEdZLbuH
-         +Drw==
-X-Forwarded-Encrypted: i=1; AKwUvByj5WOWDaBwIO9GTxlfVHjAuEbbPkz2CLu71AaojqwRIl+REbL1z6vTRYMFpco0IPzQ1nDnXSmZhA6o@vger.kernel.org
-X-Gm-Message-State: AFuF++niCgHgWICRN0cNswt3Rb3zU3i31qqg8YQVajM1Gv9Q4qUD4f0W
-	bRix96mg4H8gBueV3WIZcxwWV1h0lWhEcDNZNhas8KYJtSVOGjHVCWUiX3iMGa/C7PtQKInhuIJ
-	7RvTDY9VKe6rhXvQc23LiATDGfHhsOM8=
-X-Gm-Gg: AYBFou3w62wVp3iUvHayaW9tjzC5y3x6+zD5uC7oHiURCckbwY+XctlBouOdwwVTu/i
-	D/nVruzn1EgH+jsrgxplIEGhjQma7vCFg/INp9nvHUtVMq+gC6E54TE3sSrFgPAJkAAS2KRr2Pt
-	R5VQBfwxotZLAMfi10OCg/qHyEi0hOBL5zXoJecmm4gr4cSLzq7tJcav9wI5VRWf/22bWdqnmlX
-	H2RQW2r+Z3QwocMP1Gmm5ujXfAY5QbCTT5M+4IDOENkMvoK+BoUBbp/6mmjwG7ErKhQrmnnuhr7
-	gn3yA+F06qJrdA7YpOVeXlPs38ijqNTkCBpPNN/Gche8i9ksRxzokWV+Z3Vp5s4vTP4HKrLR7uZ
-	PKXZ5hZTbdq/MTYSkKJoW3Q5r1wBByM03RXjNjAbjCZtij2uw33awP9LbYFGJQIiIsh7caX4FBB
-	cOHbuP39Li+335Y0FTxYTSE97Xooa9XrSc0aNMDza6
-X-Received: by 2002:a17:907:1909:b0:c25:2c70:50ed with SMTP id
- a640c23a62f3a-c2ac241d7ebmr1055032066b.5.1790601176429; Mon, 28 Sep 2026
- 06:12:56 -0700 (PDT)
+        bh=FhsZECsOB6gnXC6gOibbQkmy4eQeDXFt2prA07YbYQI=;
+        b=nkzrXleg+5Hz/NmWLsVCNXTAh4FaNfiRcJ/YVSvFCasLDNpMkhyZd1wimm6vRzwQ+B
+         Y6YzrTasHow/5xadnWIWpAb/hndpe5vgkpTbvx8vUVe8/X7coEUH9AEzgRtv+gIhYgsQ
+         u15s+s0Zf1iia9OxQbwGid1ir+ITjXBdAkO5YsjkwsoEAPWIbiYxqXbvL/4xEV2Fjqw1
+         9OTqTKXs1SrNDjZf1A+a5BRh2P6zd1nWGIZDatxUXP+SE9JW5W9UUeL/j2ru3uu/PIZF
+         m4PjLaesZKq3bMkIgpbS2hTg68HxPLLk270vYdAHP14PKypE7K0dk2Lx7t9xitf9xEg4
+         39VQ==
+X-Forwarded-Encrypted: i=1; AKwUvByLW/Vi9PIApZ9FjScFVKCSjwITB2XJ9fq1BftNllGbyRBC0808ThcDkR7jOMJRIo4Hh3YUBX4UZvgv@vger.kernel.org
+X-Gm-Message-State: AFuF++kdShmWZb+G1LNj8DQkSIXZihN4XNp6pduHAXxKkU1j7uFEzsD/
+	7729xBvIFs1BzibdtWCvraVwJa1fc9bnjhItk86n04jqSGvdFA+wPW2Db3yn9eIww2J88qD6npC
+	OdLb41cXPSPkgR6jzyB6a7TbibbQI5lE=
+X-Gm-Gg: AYBFou1HpusiRl2FxmYTOiyxRPEF5EleF5T15Rerp1U5twajS+GTXdVp2yGwaGYmoIQ
+	r1UwPOsiA1oIdJ2zuZoNMEsuRDMziMFk+AQGO8/py2lyXGxtUHyAXQBg7bl3foyJVyfpzL4bJwL
+	1GYL4726+hes8oT1WgNjGSlYTf05VwmEsOoCzBaeyB6lwzULRSUbrps4ggvnuom6wHcaIBVaTmb
+	osOWI86AnhPD9hK06SWllrw4z4VRERmtMhjpqKmmNBC3B0oImcLrd/gEEjCaJfrnRngcB3vBrvW
+	MhgChEUcaKsSOsxEyvAqtEtnEyUEytchSMnho2byx1JuBZHKuIcrkVOzZCWUeYKvd9CtW5naqPZ
+	GWpr6uZRSZ4gcQIasAxH73oPmXPFBiB88gLY0vV//9dFmT8ObC1P7Dzd1XJ/XY1xr0Dn9/u6V4Y
+	9XAuTMhP9KH4z+8YhpPCXoFMCvgxKSD0iGsNn7G9c/
+X-Received: by 2002:a17:907:e1c1:20b0:c2d:bd95:874a with SMTP id
+ a640c23a62f3a-c2dbd958b3cmr281456466b.17.1790601268525; Mon, 28 Sep 2026
+ 06:14:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -88,15 +88,15 @@ References: <20260925-gpio-organize-by-vendor-v1-1-8feefd60581b@oss.qualcomm.com
  <arZRZfa7AmDxmwoJ@ashevche-desk.local> <20260925125433.GY106095@black.igk.intel.com>
  <araGjQoaffMhDMLz@ashevche-desk.local> <20260926100727.GB106095@black.igk.intel.com>
  <CAMRc=Mc-C4ptY5phhAkpq7DbE-+=G5h4XByYdj2Xx5sVS-vvrQ@mail.gmail.com>
- <CAHp75VcctaQpSpKbr8i+LPfE8Ukazyn8=KhwsSa+4sbhvQ=WVQ@mail.gmail.com> <CAMRc=McKAR7VadTYtTfU1kAHSRidj_AdhBbDh+2zNpFWhjA2mw@mail.gmail.com>
-In-Reply-To: <CAMRc=McKAR7VadTYtTfU1kAHSRidj_AdhBbDh+2zNpFWhjA2mw@mail.gmail.com>
+ <CAHp75VcctaQpSpKbr8i+LPfE8Ukazyn8=KhwsSa+4sbhvQ=WVQ@mail.gmail.com> <20260928123446.GH106095@black.igk.intel.com>
+In-Reply-To: <20260928123446.GH106095@black.igk.intel.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 28 Sep 2026 16:12:18 +0300
-X-Gm-Features: AclHuK9kaWFJSBjdPxIHqf-E6ip7w6ANRaAz8QcchZ0uEi2iA2EKPRa6rY_CF9Q
-Message-ID: <CAHp75VdGwVf2pCXzmQoY5zvgSf0KsRH8hU9Qt45iZmEG0KMzCA@mail.gmail.com>
+Date: Mon, 28 Sep 2026 16:13:50 +0300
+X-Gm-Features: AclHuK--Ilfy_nPKbrnV7apmqqwQGd71tXmOohH_PP2JNPHku9hQX5r2VX8JdS0
+Message-ID: <CAHp75VfxMwLMPDQr9f=3ea8Z+5zja=kT01o-fhkyrc-V1rh3Hg@mail.gmail.com>
 Subject: Re: [PATCH RFC] gpio: move intel drivers into their own directory
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, 
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, 
 	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, 
 	Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>, Lixu Zhang <lixu.zhang@intel.com>, 
 	Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -107,64 +107,54 @@ Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 28, 2026 at 3:25=E2=80=AFPM Bartosz Golaszewski <brgl@kernel.or=
-g> wrote:
-> On Mon, 28 Sep 2026 13:34:44 +0200, Andy Shevchenko
-> <andy.shevchenko@gmail.com> said:
+On Mon, Sep 28, 2026 at 3:34=E2=80=AFPM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+> On Mon, Sep 28, 2026 at 02:34:44PM +0300, Andy Shevchenko wrote:
 > > On Mon, Sep 28, 2026 at 2:13=E2=80=AFPM Bartosz Golaszewski <brgl@kerne=
 l.org> wrote:
-> >> On Sat, 26 Sep 2026 12:07:27 +0200, Mika Westerberg
-> >> <mika.westerberg@linux.intel.com> said:
-> >> > On Fri, Sep 25, 2026 at 05:34:53PM +0300, Andy Shevchenko wrote:
-> >> >> On Fri, Sep 25, 2026 at 02:54:33PM +0200, Mika Westerberg wrote:
-> >> >> > On Fri, Sep 25, 2026 at 01:48:05PM +0300, Andy Shevchenko wrote:
-> >> >> > > On Fri, Sep 25, 2026 at 12:22:15PM +0200, Bartosz Golaszewski w=
-rote:
+> > > On Sat, 26 Sep 2026 12:07:27 +0200, Mika Westerberg
+> > > <mika.westerberg@linux.intel.com> said:
+> > > > On Fri, Sep 25, 2026 at 05:34:53PM +0300, Andy Shevchenko wrote:
+> > > >> On Fri, Sep 25, 2026 at 02:54:33PM +0200, Mika Westerberg wrote:
+> > > >> > On Fri, Sep 25, 2026 at 01:48:05PM +0300, Andy Shevchenko wrote:
+> > > >> > > On Fri, Sep 25, 2026 at 12:22:15PM +0200, Bartosz Golaszewski =
+wrote:
 
 ...
 
-> >> >> > > >  drivers/gpio/{ =3D> intel}/gpio-graniterapids.c   |  0
-> >> >> > > >  drivers/gpio/{ =3D> intel}/gpio-novalake-events.c |  0
-> >> >> > >
-> >> >> > > These are interesting drivers, not sure where to put them
-> >> >> >
-> >> >> > IMHO they should be there too. We are maintaining them both.
-> >> >>
-> >> >> Do you send PRs to Bart or you just rely on him to take the patches=
-?
-> >> >
-> >> > I don't expect these two drives to get too much attention, and they =
-could
-> >> > be contained nicely inside intel folder and that would help Bart to
-> >> > identify that these are Intel drivers. So your bandwidth would not s=
-uffer
-> >> > even if these two are added there. Your call.
-> >>
-> >> I'd like to avoid a situation where we have Andy's Intel drivers under
-> >> drivers/gpio/intel/ and other Intel drivers under drivers/gpio/. I'd p=
-refer
-> >> to move all of intel GPIO drivers into drivers/gpio/intel/ and have An=
-dy
-> >> gather changes to them if he agrees.
+> > > >> > > >  drivers/gpio/{ =3D> intel}/gpio-graniterapids.c   |  0
+> > > >> > > >  drivers/gpio/{ =3D> intel}/gpio-novalake-events.c |  0
+> > > >> > >
+> > > >> > > These are interesting drivers, not sure where to put them
+> > > >> >
+> > > >> > IMHO they should be there too. We are maintaining them both.
+> > > >>
+> > > >> Do you send PRs to Bart or you just rely on him to take the patche=
+s?
+> > > >
+> > > > I don't expect these two drives to get too much attention, and they=
+ could
+> > > > be contained nicely inside intel folder and that would help Bart to
+> > > > identify that these are Intel drivers. So your bandwidth would not =
+suffer
+> > > > even if these two are added there. Your call.
+> > >
+> > > I'd like to avoid a situation where we have Andy's Intel drivers unde=
+r
+> > > drivers/gpio/intel/ and other Intel drivers under drivers/gpio/. I'd =
+prefer
+> > > to move all of intel GPIO drivers into drivers/gpio/intel/ and have A=
+ndy
+> > > gather changes to them if he agrees.
 > >
 > > Okay, we have two parts missing:
-> > - Nova Lake driver (I would need Adam or Mika to step in as at least a
+> > - Nova Lake driver (I would need Alan or Mika to step in as at least a
 > > designated reviewer for that)
 >
-> Acked.
->
-> > - USB IO (I think we need to agree which tree it will go through, my
-> > bet that media tree is the best), for that we need Hans' consent
->
-> So far the initial commit was picked up by Greg and the other two were
-> signed-off by me with Acks from intel people.
->
-> I'd do the same thing as for nova lake: Israel, Hans and Sakari as review=
-ers
-> and you queue the changes?
+> I suggest Alan to be the reviewer if that's okay for him :)
 
-I'm fine with this route as well. Since Hans replied, this all depends
-on Sakari's answer.
+If he agrees, he can provide a patch on top of my series to move Nova
+Lake and add himself to the MAINTAINERS at the same time.
 
 --=20
 With Best Regards,
