@@ -1,68 +1,54 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E3C2EA15C;
-	Mon, 28 Sep 2026 12:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E457B2652B2;
+	Mon, 28 Sep 2026 12:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790598893; cv=none; b=ALdFTx1cxIXf8w/bbtQoJQ9PbviiYzSJRCvzBWyjSArwYsgXRlO89UtepNJ0xkHd2cZFUabbjrZX/N8q7hhBEVY4wYJhPSQQTOOM3sVGpVoy7xx54y0x7B7/RqpYl9lI/hd5KAvs4ROzioIUE178F0VuVzX/X0dJqMjh4P+7swI=
+	t=1790598940; cv=none; b=R0zTB2jEbKV1Hd5anzeZV+yVCHzvODrTfLJcn2oxynSRX4QezXGx+zJnmcgZVl7kuoN/OFOmGc+VzZiXVeT3rAecEPCxW60aaNZf/+ReM9aPw03pVbC5mQmgi49PUpVaVpNj+zNGTLEgKIDs/DmnJlkoUCXajV8RcCjk6eCUN+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790598893; c=relaxed/simple;
-	bh=UAERZc0VWsoHsglV8hW2+ES4BVE6bj5HEztfpuNBZSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s4Dpiuzmn97BxQj0UeCoTlTyT13fI9mZNgf/QZ8bZp3OSE57H99fn5mqdLPi8caQzJqJm16NX4+cbxTJY77dp787U4UojOVyWte512ZdcbQ7MNGlBus/UxC4BwZyuOSaJPB4i1jPHeIMNQPKPZ7PqeHRrOX64snbd950NaniDaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vh7Lf28W; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1790598940; c=relaxed/simple;
+	bh=H24roAJp+vCjQVHv6wRP9EPeCNzTPxvuhr35p8rEDws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WG21UP34Q2KL9laDiK/C0VMahznDpSQDiOKj1EO1VXIS1mmHt4XpQ2WJIlPE+liKPxfIwfM1crDft5xtBDqBNQm7EiaErmGLnP3UDXJjMx+6l/TeW2zcuEjf7O9iJgeAnTvcAry8oC9PE7J0++u3EixbWd5PEOxItrAqKxezEng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFfwbhob; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vh7Lf28W"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790598891; x=1822134891;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=UAERZc0VWsoHsglV8hW2+ES4BVE6bj5HEztfpuNBZSk=;
-  b=Vh7Lf28Woop7KLAr2/iwmRfkJ1xl4+C+tk+0YBtp1Ns7GlRXODRy3ha+
-   9ZvhHBVzq6SOlEKvWjQ9OawPsdo91jBrtA8wEr3UBHVhtUmPSszapyrST
-   j7Ii8zdumEbPIw+rdrOLdG8P8zuwYiCI07/O/pScYIbkO7nBGfGu9UFTm
-   RnABVKGmaD6g3tzEyDvU1d2Bpynlk+iP4T968CSbEmKXRlhoFhJtPCjzo
-   3e/dq/BCejDyN2baniwfssMV8aMgFMDSQa8GS0JdmFq7uNU8kHR+f8Tbz
-   Dx2gv/sD6hcjSib0FHLLFvcLHnSBVlM/eQQrMFpaEvqiL/kThtCrJBoyW
-   Q==;
-X-CSE-ConnectionGUID: aPImuK7ZR6KekiomQh7Fxg==
-X-CSE-MsgGUID: bfSuji90Th2EvMExeFhnAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11918"; a="94010743"
-X-IronPort-AV: E=Sophos;i="6.27,128,1787036400"; 
-   d="scan'208";a="94010743"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2026 05:34:50 -0700
-X-CSE-ConnectionGUID: KV7WbxmBSoqFy8VlGEBmsQ==
-X-CSE-MsgGUID: GTLjeB0oRa+jc/xv/3dHdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,128,1787036400"; 
-   d="scan'208";a="304536640"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa002.jf.intel.com with ESMTP; 28 Sep 2026 05:34:47 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id BC19599; Mon, 28 Sep 2026 14:34:46 +0200 (CEST)
-Date: Mon, 28 Sep 2026 14:34:46 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Bartosz Golaszewski <brgl@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>,
-	Lixu Zhang <lixu.zhang@intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFfwbhob"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8739C1F000FF;
+	Mon, 28 Sep 2026 12:35:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790598938;
+	bh=t7LY7ktrQJ8QXo3xFvGKBjl5VTLPDDNmg60z6LmB0sY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=dFfwbhobxA+e9rhDHspclTNLgFe977jTcN7t7S7NkasgOeq6a/tlQZe0yYUiAUETK
+	 Ph9sD9RE14GNXAShTKyG3yKIQxoqLA5ZN4tfWI4VOGSfXk2uMg7C0MSqUrl6Cpu33S
+	 W9p2dlsVDTPI3DaEjQE6UomGoVqta09ClR3jTsg2Q4warqGqBiIYqhcKPLkNifXE4V
+	 XB7iaCO3KZKJFl+PraniIZCiKIwI3p+AUUvYmB1SYfDHCe6HTAs3BqEoH7L5vwyqF4
+	 ypIeYqq5c9Gt3DWsz+4T2JES0TA3sx6QUC2q5gkMpN6/3eZLqNE8bRM8ArD/1gigaa
+	 XLuVVoKPcQHGw==
+Message-ID: <50a29ae4-bae1-44be-9dbe-79a1147accf0@kernel.org>
+Date: Mon, 28 Sep 2026 14:35:33 +0200
+Precedence: bulk
+X-Mailing-List: linux-gpio@vger.kernel.org
+List-Id: <linux-gpio.vger.kernel.org>
+List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH RFC] gpio: move intel drivers into their own directory
-Message-ID: <20260928123446.GH106095@black.igk.intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Linus Walleij <linusw@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ Peter Tyser <ptyser@xes-inc.com>, Lixu Zhang <lixu.zhang@intel.com>,
+ Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
+ Mika Westerberg <westeri@kernel.org>,
+ Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@intel.com>
 References: <20260925-gpio-organize-by-vendor-v1-1-8feefd60581b@oss.qualcomm.com>
  <arZRZfa7AmDxmwoJ@ashevche-desk.local>
  <20260925125433.GY106095@black.igk.intel.com>
@@ -70,49 +56,58 @@ References: <20260925-gpio-organize-by-vendor-v1-1-8feefd60581b@oss.qualcomm.com
  <20260926100727.GB106095@black.igk.intel.com>
  <CAMRc=Mc-C4ptY5phhAkpq7DbE-+=G5h4XByYdj2Xx5sVS-vvrQ@mail.gmail.com>
  <CAHp75VcctaQpSpKbr8i+LPfE8Ukazyn8=KhwsSa+4sbhvQ=WVQ@mail.gmail.com>
-Precedence: bulk
-X-Mailing-List: linux-gpio@vger.kernel.org
-List-Id: <linux-gpio.vger.kernel.org>
-List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
 In-Reply-To: <CAHp75VcctaQpSpKbr8i+LPfE8Ukazyn8=KhwsSa+4sbhvQ=WVQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 28, 2026 at 02:34:44PM +0300, Andy Shevchenko wrote:
+Hi,
+
+On 28-Sep-26 13:34, Andy Shevchenko wrote:
 > On Mon, Sep 28, 2026 at 2:13 PM Bartosz Golaszewski <brgl@kernel.org> wrote:
-> > On Sat, 26 Sep 2026 12:07:27 +0200, Mika Westerberg
-> > <mika.westerberg@linux.intel.com> said:
-> > > On Fri, Sep 25, 2026 at 05:34:53PM +0300, Andy Shevchenko wrote:
-> > >> On Fri, Sep 25, 2026 at 02:54:33PM +0200, Mika Westerberg wrote:
-> > >> > On Fri, Sep 25, 2026 at 01:48:05PM +0300, Andy Shevchenko wrote:
-> > >> > > On Fri, Sep 25, 2026 at 12:22:15PM +0200, Bartosz Golaszewski wrote:
+>> On Sat, 26 Sep 2026 12:07:27 +0200, Mika Westerberg
+>> <mika.westerberg@linux.intel.com> said:
+>>> On Fri, Sep 25, 2026 at 05:34:53PM +0300, Andy Shevchenko wrote:
+>>>> On Fri, Sep 25, 2026 at 02:54:33PM +0200, Mika Westerberg wrote:
+>>>>> On Fri, Sep 25, 2026 at 01:48:05PM +0300, Andy Shevchenko wrote:
+>>>>>> On Fri, Sep 25, 2026 at 12:22:15PM +0200, Bartosz Golaszewski wrote:
 > 
 > ...
 > 
-> > >> > > >  drivers/gpio/{ => intel}/gpio-graniterapids.c   |  0
-> > >> > > >  drivers/gpio/{ => intel}/gpio-novalake-events.c |  0
-> > >> > >
-> > >> > > These are interesting drivers, not sure where to put them
-> > >> >
-> > >> > IMHO they should be there too. We are maintaining them both.
-> > >>
-> > >> Do you send PRs to Bart or you just rely on him to take the patches?
-> > >
-> > > I don't expect these two drives to get too much attention, and they could
-> > > be contained nicely inside intel folder and that would help Bart to
-> > > identify that these are Intel drivers. So your bandwidth would not suffer
-> > > even if these two are added there. Your call.
-> >
-> > I'd like to avoid a situation where we have Andy's Intel drivers under
-> > drivers/gpio/intel/ and other Intel drivers under drivers/gpio/. I'd prefer
-> > to move all of intel GPIO drivers into drivers/gpio/intel/ and have Andy
-> > gather changes to them if he agrees.
+>>>>>>>  drivers/gpio/{ => intel}/gpio-graniterapids.c   |  0
+>>>>>>>  drivers/gpio/{ => intel}/gpio-novalake-events.c |  0
+>>>>>>
+>>>>>> These are interesting drivers, not sure where to put them
+>>>>>
+>>>>> IMHO they should be there too. We are maintaining them both.
+>>>>
+>>>> Do you send PRs to Bart or you just rely on him to take the patches?
+>>>
+>>> I don't expect these two drives to get too much attention, and they could
+>>> be contained nicely inside intel folder and that would help Bart to
+>>> identify that these are Intel drivers. So your bandwidth would not suffer
+>>> even if these two are added there. Your call.
+>>
+>> I'd like to avoid a situation where we have Andy's Intel drivers under
+>> drivers/gpio/intel/ and other Intel drivers under drivers/gpio/. I'd prefer
+>> to move all of intel GPIO drivers into drivers/gpio/intel/ and have Andy
+>> gather changes to them if he agrees.
 > 
 > Okay, we have two parts missing:
 > - Nova Lake driver (I would need Adam or Mika to step in as at least a
 > designated reviewer for that)
+> - USB IO (I think we need to agree which tree it will go through, my
+> bet that media tree is the best), for that we need Hans' consent
 
-I suggest Alan to be the reviewer if that's okay for him :)
+Routing the USBIO / LCJA GPIO drivers to the media-tree, with
+Sakari likely doing the merging for both works for me.
+
+Now that I'm working for Qualcomm I don't have much time anymore
+for working on IPU6 / IPU7 related drivers.
+
+Regards,
+
+Hans
+
+
