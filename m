@@ -1,156 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A9F3CFF49;
-	Mon, 28 Sep 2026 09:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F0544E650;
+	Mon, 28 Sep 2026 09:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790588931; cv=none; b=lz6nhY5zA1eBZ4heXhTaEDpSnNhBaEYUo3ZNndW6v6et/mDCaWH//+TYGSynB5DsjoMuuMSQtGz5wABKjtV7Z/bXo4vGKDJkDadmK+HBGg6IZ9FedrAbqEF53AQsgUVsXiknt0YAHywrRU0FwcE3fhMK9xVrxyPRpE1fU30I+go=
+	t=1790589102; cv=none; b=r0g8dV6emNjivEtwi1VoSZ04TjJx7me2uyHSuS4blgxgIRoRgtrAVuF5llWN1ieHmmEy+sbKxCAXsUbQf2xdWilHjhx/jjEeLf/d4XqPL/FTcxED0peUl/2Tx+77JZR0e2f2ZoeC5cUrDoA4aWZsB6ADMObkck/A2OTToyj1DUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790588931; c=relaxed/simple;
-	bh=hF95EN/AY0O9BeW6PyO06bXHa+vhGl02HfCgvZqYHJs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PHRmm1MZWJk7FvcE4PRERWxvdWEHRe5q/B63VQUyHJ8PwEJKSVSF4kve35xJR9nfkbMOJ6+fAtuYeaYCeb2ftp4T7s5BDoqP3WjsVJLO15jD6C72VgQIOygp1vhvc+PPgeVFfHZwtCPS9YdODa59spFWfrqR7rJyuo8d/IiMW2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qyk7gJFl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1790589102; c=relaxed/simple;
+	bh=LBnh838ywoUlbEhzOjyGsHjS/fWu7vNnA0vlRJWfpQA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JpDc2velr0rurbEJDGabkI4wzRrJ1v/25N/SnF47rsFdku9jghW/ZdpXcj5fFfMG84lQ85CkiJqmHBGS6WkaofCq8OFLcCzqrcg3etM3zCBaqWief0poK/4P/zDdMfKl3TRSPKQGbeJJzGa0YmDZxgz4CjXvm6/xAOvOiUGqyWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lPCxr/Y0; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qyk7gJFl"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 039B6C2BCB3;
-	Mon, 28 Sep 2026 09:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1790588931;
-	bh=hF95EN/AY0O9BeW6PyO06bXHa+vhGl02HfCgvZqYHJs=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=Qyk7gJFlbyV89cghFTvvs5MIUrvLVxWHsa5MRGTWJeTA8xfO5f2niLJngpSp3zIVu
-	 jyC9vHUU+HMj5E8liO3F1A+yKPdjg7JjV1Fgz8B14WaXBQsyD20XuVGinnWE2wiXVJ
-	 layFnxfJv5WKM3rHoWtGZ/Hq+O2LOVcAjPE1EC+NMHuYUnKQkiOl7JBYPb6zJJyLPp
-	 /HlnqB2Q+/Y3wJSJIkR6RCbuBNEWPTJVHnb3grHkGwzEvO0A7cFVfJLpw/7mKDryj9
-	 9+WQNEUCal46+a0nllp25c3fZowz8EszHqYEO0E8KNkeDkKTZa9MD/J+unqbpxkXwS
-	 SXcgAiGiVMemg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6713CA5FA2;
-	Mon, 28 Sep 2026 09:48:50 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Mon, 28 Sep 2026 13:48:47 +0400
-Subject: [PATCH v2] pinctrl: qcom: ipq5018: update PWM groups and
- corresponding pin functions
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lPCxr/Y0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1790589100; x=1822125100;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LBnh838ywoUlbEhzOjyGsHjS/fWu7vNnA0vlRJWfpQA=;
+  b=lPCxr/Y0hCit6+aRbFB0JGIoo+2RH+1OTcGDKEq7XqkMR5l1ZIJWU261
+   Zc+ANrw80xSxI7bi6/UIYRKV/K9irTqalKsCVk6lWE6NFz1ZTYiCQNfeb
+   JCu34aHnZ4UmMCHt3BcxRUbhzy9OYsrwnq/4ie981NeC2N6TVPKdoh0oP
+   SOw9YD3fJDzF20Rvxu03Zo4/gueQi+I1qM8vTPVSCmgZC5Js8d41F65u2
+   W5oCRLlXk7EB+5x71zDi9tzYaBx0DLdWtM0yBiUgoluA1l6uIo2c8rb+n
+   C6mkO8JLiGtHW7ZJ2+7LGvkUHbIppza1tECxuNNY3T5XEeDdgwGzDO9sg
+   Q==;
+X-CSE-ConnectionGUID: LO2wGStCRySkGq81mTPPVA==
+X-CSE-MsgGUID: D2DwRpsvS2G65P/vhcJd3Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11918"; a="95099109"
+X-IronPort-AV: E=Sophos;i="6.27,128,1787036400"; 
+   d="scan'208";a="95099109"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2026 02:51:39 -0700
+X-CSE-ConnectionGUID: vCc0sieiTQSOjmr0SBQ9Zw==
+X-CSE-MsgGUID: id350Q6MRjiC3UZfX2yyqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,128,1787036400"; 
+   d="scan'208";a="272804455"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa006.jf.intel.com with ESMTP; 28 Sep 2026 02:51:38 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 07ECD99; Mon, 28 Sep 2026 11:51:37 +0200 (CEST)
+Date: Mon, 28 Sep 2026 11:51:37 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Rustam Adilov <adilov@disroot.org>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Sander Vanheule <sander@svanheule.net>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] gpio: realtek-otto: make the driver work with
+ SWAP_IO_SPACE
+Message-ID: <aro4qbhcd3X6wTvP@black.igk.intel.com>
+References: <20260815094451.31792-1-adilov@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260928-ipq5018-pwm-functions-v2-1-87bbcd706bc6@outlook.com>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4WNQQ6CQAxFr0K6tmbaAAFX3sOwwKFIozA4A6gh3
- N2RC7h8P3nvrxDEqwQ4JSt4WTSoGyLwIQHb1cNNUJvIwIZzU3KKOj4zQwWOrx7bebBTFAKyWMN
- ETZ5ZguiOXlp9791LFbnTMDn/2W8W+q3/igshYVGWpk6lyK7cnt08PZy7H63rodq27QuFtTu5v
- AAAAA==
-X-Change-ID: 20260924-ipq5018-pwm-functions-2ec0211d65c1
-To: Bartosz Golaszewski <brgl@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- George Moussalem <george.moussalem@outlook.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790588929; l=3984;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=bdNTTmgNNZzHtCyMcXaP+/5YczTyR2tEZAgMtevFbFU=;
- b=2UCGNtGW7pfm1fEyAW1VzrN5fppGbdd/7aXd8LKKnjNStfGN3AzMNmGl6cGKbbbfO6sv9iHQy
- CDhB4z9wOhABY1h/5rWh3fNVzyrQbzzzUytbjqjqWxoeYKQufvBwy1J
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260815094451.31792-1-adilov@disroot.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: George Moussalem <george.moussalem@outlook.com>
+On Sat, Aug 15, 2026 at 02:44:49PM +0500, Rustam Adilov wrote:
+> This patch series changes gpio-realtek-otto to be functional around
+> SWAP_IO_SPACE config.
+> 
+> Firstly the ioread32 and iowrite32 in realtek_gpio_update_line_imr()
+> have to be changed to their __raw variants as it is the only point in
+> the driver where both devices with ports reversed and without meet.
+> 
+> Secondly, the bank_read/write and the flag for generic gpio config
+> have to be able to be changed to the opposite one when SWAP_IO_SPACE
+> is enabled. To avoid breaking any existing device tree out in the wild,
+> make them overridable by endian properties from the device tree node and
+> keep the current GPIO_PORTS_REVERSED quirk as it is.
+> 
+> I have tested it on my RTL9607C machine with SWAP_IO_SPACE enabled
+> and with big-endian property set under gpio controller node and it
+> was working fine.
 
-On multiple Linksys routers, GPIOs 1, 30, and 46 drive the PWM LED on
-the PWM1, PWM3, and PWM0 channels, respectively.
-Update the corresponding PWM groups to include these GPIOs and allocate
-the PWM functions to empty slots in the relevant pin groups.
+Convert the driver to use regmap MMIO and most of the code in this series won't
+be needed. Also it will give some benefits (like register caching and debugfs
+monitoring).
 
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
----
-Changes in v2:
-- Updated the commit title and message to reflect this isn't a fix for a
-  regression but rather an update for specific IPQ5018 boards.
-- Link to v1: https://lore.kernel.org/r/20260924-ipq5018-pwm-functions-v1-1-8990a4e85b2f@outlook.com
----
-Changes in v2:
-- Updated the commit title and message to reflect this isn't a fix for a
-  regression but rather an update for specific IPQ5018 boards.
-- Link to v1: https://lore.kernel.org/r/20260924-ipq5018-pwm-functions-v1-1-8990a4e85b2f@outlook.com
----
- drivers/pinctrl/qcom/pinctrl-ipq5018.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-ipq5018.c b/drivers/pinctrl/qcom/pinctrl-ipq5018.c
-index 84392fe258c9..74fccdd5146a 100644
---- a/drivers/pinctrl/qcom/pinctrl-ipq5018.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ipq5018.c
-@@ -539,7 +539,7 @@ static const char * const qdss_tracectl_b_groups[] = {
- };
- 
- static const char * const pwm0_groups[] = {
--	"gpio42",
-+	"gpio42", "gpio46",
- };
- 
- static const char * const qdss_cti_trig_out_b0_groups[] = {
-@@ -547,7 +547,7 @@ static const char * const qdss_cti_trig_out_b0_groups[] = {
- };
- 
- static const char * const pwm1_groups[] = {
--	"gpio43",
-+	"gpio43", "gpio1",
- };
- 
- static const char * const qdss_cti_trig_in_b0_groups[] = {
-@@ -563,7 +563,7 @@ static const char * const qdss_cti_trig_out_b1_groups[] = {
- };
- 
- static const char * const pwm3_groups[] = {
--	"gpio45", "gpio13",
-+	"gpio45", "gpio30", "gpio13",
- };
- 
- static const char * const qdss_cti_trig_in_b1_groups[] = {
-@@ -677,7 +677,7 @@ static const struct pinfunction ipq5018_functions[] = {
- 
- static const struct msm_pingroup ipq5018_groups[] = {
- 	PINGROUP(0, atest_char, _, qdss_cti_trig_out_a0, wci_txd, wci_rxd, xfem, _, _, _),
--	PINGROUP(1, atest_char, _, qdss_cti_trig_in_a0, wci_txd, wci_rxd, xfem, _, _, _),
-+	PINGROUP(1, atest_char, pwm1, qdss_cti_trig_in_a0, wci_txd, wci_rxd, xfem, _, _, _),
- 	PINGROUP(2, atest_char, _, qdss_cti_trig_out_a1, wci_txd, wci_rxd, xfem, _, _, _),
- 	PINGROUP(3, atest_char, _, qdss_cti_trig_in_a1, wci_txd, wci_rxd, xfem, _, _, _),
- 	PINGROUP(4, sdc1_data, qspi_data, blsp1_spi1, btss, dbg_out, qdss_traceclk_a, _, burn0, _),
-@@ -706,7 +706,7 @@ static const struct msm_pingroup ipq5018_groups[] = {
- 	PINGROUP(27, audio_txmclk, wsa_swrm, audio_txmclk, blsp2_spi, btss, _, qdss_tracedata_b, _, _),
- 	PINGROUP(28, audio_txbclk, wsa_swrm, blsp0_uart1, btss, qdss_tracedata_b, _, _, _, _),
- 	PINGROUP(29, audio_txfsync, _, blsp0_uart1, _, qdss_tracedata_b, _, _, _, _),
--	PINGROUP(30, audio_txd, led2, led0, _, _, _, _, _, _),
-+	PINGROUP(30, audio_txd, led2, led0, pwm3, _, _, _, _, _),
- 	PINGROUP(31, blsp2_spi0, blsp1_uart1, _, qdss_tracedata_b, eud_gpio, _, _, _, _),
- 	PINGROUP(32, blsp2_spi0, blsp1_uart1, _, qdss_tracedata_b, eud_gpio, _, _, _, _),
- 	PINGROUP(33, blsp2_i2c0, blsp2_spi0, blsp1_uart1, _, qdss_tracedata_b, eud_gpio, _, _, _),
-@@ -722,7 +722,7 @@ static const struct msm_pingroup ipq5018_groups[] = {
- 	PINGROUP(43, pwm1, qdss_cti_trig_in_b0, wci_txd, wci_rxd, xfem, _, _, _, _),
- 	PINGROUP(44, pwm2, qdss_cti_trig_out_b1, wci_txd, wci_rxd, xfem, _, _, _, _),
- 	PINGROUP(45, pwm3, qdss_cti_trig_in_b1, wci_txd, wci_rxd, xfem, _, _, _, _),
--	PINGROUP(46, led0, _, _, _, _, _, _, _, _),
-+	PINGROUP(46, led0, pwm0, _, _, _, _, _, _, _),
- };
- 
- static const struct msm_pinctrl_soc_data ipq5018_pinctrl = {
-
----
-base-commit: 3d7783543c2646af69ad65825e810060494bea21
-change-id: 20260924-ipq5018-pwm-functions-2ec0211d65c1
-
-Best regards,
 -- 
-George Moussalem <george.moussalem@outlook.com>
+With Best Regards,
+Andy Shevchenko
 
 
