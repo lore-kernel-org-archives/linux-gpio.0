@@ -1,141 +1,153 @@
-Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B201A4A5C39;
-	Mon, 28 Sep 2026 11:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790594818; cv=none; b=UpK3QNLovkdAiUzjcZ0d0wF0lksN/VkvBQZyedwkMfzjtAPBrwt8cg1K5zUEO04MSOqvgJaYJ4ICDSfYpRzsc5L7HXVyoFInaG5RPsg+PQ9vmdP9230lkdE3U4kWd46p070YGauzCrAoeOWb772Ex6kVdjL3pSLWoFLSjfZTKMI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790594818; c=relaxed/simple;
-	bh=SqqSHpTVaFTGp7yew8wil1yGbcjDwt8M5trdScYW15k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QSiOG5kfUhIjxBcXb2pT8RYkMrhd1CsQabshSSpEp3t/RTWZo6vDdIg8m+3TzP644xe5958BGH4W8siE9bvhK4wzU9ayd3b0RuRkSTMWoUAWNMa917OxJz4hu2FRpEUhx8icDCg9xA665fsDmny5y+JLl4gxfmP26rjVN3SrMFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=162.243.161.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [10.98.66.117])
-	by mtasvr (Coremail) with SMTP id _____wCnYj30TrpqyExCAQ--.23692S3;
-	Mon, 28 Sep 2026 19:26:45 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.98.66.117])
-	by mail-app2 (Coremail) with UTF8SMTPA id zC_KCgA3jnz0TrpqupcSAA--.16008S2;
-	Mon, 28 Sep 2026 19:26:44 +0800 (CST)
-From: Fan Wu <fanwu01@zju.edu.cn>
-To: linusw@kernel.org,
-	brgl@kernel.org
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	songl@zju.edu.cn,
-	Fan Wu <fanwu01@zju.edu.cn>
-Subject: [PATCH v2] gpio: mpsse: fix race when arming the IRQ poll worker
-Date: Mon, 28 Sep 2026 11:25:46 +0000
-Message-Id: <20260928112546.631440-1-fanwu01@zju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+Received: from mail-ed2-f35.google.com (mail-ed2-f35.google.com [74.125.228.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CEB4AA3F5
+	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 11:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.99
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790595325; cv=pass; b=WMUMsMXT5QRBt6/rRlurjifzKgFyry0H4yp85zkiMEQ1taTPyCzFOH/BXtljAxFZtyWJ29WiggYTXd9OwXmurYbK1XVsNC29RonDtYZcZYu9v5xi9I/EK23fBwbLEzzCJLUvD8p/kYMy9PPSDHZMySSBPoaDoPHNtRG+VcHqFgA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790595325; c=relaxed/simple;
+	bh=DhRO3jiEisFREUCpoPPDrLxkhHUHJj9Nmc4vEnpDsDc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fpx7nx2g2JlG6iDu4/4EROdXr8Nh20wPueP4ddeh6+AI/XohbV/neCfIvrBJ4EBJ1b5/V1qWS54hzu7SnKMUe71GMaMDCDPOldobAsmotZoK72GAFQCfS7Nw6OIaWE/SmkJH6Xfrjfg0+wfIiYV+Gkt4hp74+wIHvW0s4q1xuME=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VI7xR6X2; arc=pass smtp.client-ip=74.125.228.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VI7xR6X2"
+Received: by mail-ed2-f35.google.com with SMTP id 4fb4d7f45d1cf-6aaf10bf094so3547850a12.2
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 04:35:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790595322; cv=none;
+        d=google.com; s=arc-20260327;
+        b=jcy9MjAT+z728b64WI+pgFdrgDBJ2o16MX4hDhIerUcwYrnUTRTho3k4UIf7Gc7y/l
+         0jtiuTdG3uMWjNZugC9zkTSXgzIo4igyWXETzQpaju6qkJQWG/KHbBVOw7Ts/ghTRTY9
+         cYqPM3wiBtD9rHGJm80SU+XcFqpHoTGsRHlWSmByiTZDuj47yNtMbaoqZYSsiKIxzG3i
+         KT/YWe4UtoYWLZFvjKIfN4MggWzf6bROXmOuMXSGLcbycfBRCGiydEe6WwQ3OHXuM/A4
+         0XK64ib31+SswDkmq8AoxC/3VKq9zYSG/Rk+yU5kCr9zSpAvCoOR1QaFGeapef3yY7jQ
+         4xaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=xKQihEndGsBnwilqhNl/3eRhz/IoC8GE9Y3qmXrQaP8=;
+        fh=ABkTl1IUFPIqEysaZmyvl3xu4LXxcOHeOlyK+/tNFhU=;
+        b=nAjmCY1NTIeGuBfiNK8w9vemS3xY1BDmlWQzPLh3CDvOi0Xiu6oPX3eYihuzvBc9aq
+         Ysomv4NJenXduUG8Mgpg1zsRBvLOCtUEsH/P5iTEYFaob1zhK7NiWD0kSQdQgKnvs0mV
+         wrIe67Q082EMKKcQB6RF5dFbT64hIj+gKuyy6xmQusWqR6r7zpaqDY0qXreYOmWL6NDN
+         9FeAP3VD3sn4PxLfSZdGW1AHwVDQdCogqnY2jl7m8qXWVl8wEfRYp3G+OUwZd8uozPBt
+         EtLpEXAlAhyW5aNq0UmASrgKpO0AJHJfGN5LR8/tXwjDVv5TqbbeOgy6OWdHen6iOY1/
+         rNyQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790595322; x=1791200122; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=xKQihEndGsBnwilqhNl/3eRhz/IoC8GE9Y3qmXrQaP8=;
+        b=VI7xR6X2DwCvODgEVD3vRWLRCgBk9mAjeUa63XQNKK063KrtS8BeEcFiGjETCT5mdX
+         gZEXEE+i5mZYDUeudEb85euZSZtJzXlOsMgiZ8UQYKNoqL0CBHAFeUPSR4BhJqX0Cwb5
+         YsoRSg/OIofy4mmx9l+XWK4IGLsB39Ope3AcbKiDy0KipZ5z2OtM6ikdQV12O6jAuch/
+         GJcwCGkUiC3P2z+uUwdxZxpbCejYO5gwZlyx1Bvd5IsYwvk06r7Z2P242cNIBRQMfICn
+         dfe0X9JSYxGoDY8Fdf/rr/2VK/OSq5hpND9go3UNVXjd115mSVxnDlMwUAWVCENtRXW5
+         ecSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790595322; x=1791200122;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=xKQihEndGsBnwilqhNl/3eRhz/IoC8GE9Y3qmXrQaP8=;
+        b=CdrsABfjiAQTGxTYtiLSIgldkbcLtV0JnVgJimnpoVQDazasoE3xkgwJpiR6CAmLw/
+         8rS64S0YWtnfts9zNRRvvE6zAiu2kNcGPdBzqQ9SPkXpR4rhZ8P3UoWd++DrU3xhkSsE
+         JaWOiRWKMhTdqLkfSAt5cyZNPATxL6gd3aWAEHrMVS6Q9cu+Vm8ndU7I14DzVzDjG7GG
+         lJpFuTjYUuH96Uy2Eg3YYT+LnS7FUxbTpvi40JJaX4JFyT9GvG2yP/+Hpg7UQwwzDk3p
+         GUCg7evmcF2BKbw6UL/GJQysTrUX4yugOfc19OMY5AjEY3gtBwLF9WPDOOSXuJpqhkuN
+         ZX+Q==
+X-Forwarded-Encrypted: i=1; AKwUvBwazmtx2qvV2ZGTjRYxjFFkyhJxb5Ue8TmiRMh3U3DDvtBNAgulsBvuxIMQheP0ceOkDKIxLq+x6L2S@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ2WRktYniFkQVOe9p1COBebkaK62eubNoX6XKq9vT2ckdiRlkv
+	V95LVwXB68WJtvYxcTtfHMBnn+JfQmPaG64SqkiW0XhvmV4A62tUjuSF+q99UMjEVVk3z7tfnb7
+	94tiyWZp6VAhhX/YpGLEPQHmmZWbZgc4=
+X-Gm-Gg: AYBFou28buYZlcX8v2YgJFkx2D8Gm0gChgwOiscYBaoUOvw/kL79mhKL+nVdK6SVc0d
+	3ztbe+Suu8/ln0rny8338xSohEjmIe9OQA7bNU5sybQaG/bpgnkrKevyWQB7oZfJINCIuEgG4iZ
+	jcTBe6NfIqUsssPeKD+65ddlsBMIyv4NlZofkNzcgbzgvYMNCUEIMS3CtknKgoIv2y6SIaScZn1
+	UcDjffb5h4tDgzP0wn2smqmyVvN9VE/95Q6A+7brAZfH+OmLCoXgO1n54/4a1hGN75yZiuXbiAz
+	3mr2RbEKgE2VVhWl3Bs/7Lgx9a/FzWviZaNgb40si7++Y9VNSDk5HuUn+B3KiAGBWplJ/1U569b
+	1QfUzpKf8iciqLp6KWks9OpadILaMDJWKPvBr8XNTvV0bu5LtqaPCLnkqX/kgqsObvEiKUObe6q
+	KSBlXxkx/EK0unBus5PR9ybbcW3shzmtpXvGAH8C3k
+X-Received: by 2002:a17:906:dc8a:b0:c25:2e93:289e with SMTP id
+ a640c23a62f3a-c2ac233f3e8mr999649066b.16.1790595321284; Mon, 28 Sep 2026
+ 04:35:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zC_KCgA3jnz0TrpqupcSAA--.16008S2
-X-CM-SenderInfo: qrstjiaswqq6lmxovvfxof0/
-X-CM-DELIVERINFO: =?B?EQNgHQXKKxbFmtjJiESix3B1w3vZ3A9ovKVTomAyoQazvoRs/NHSP8GI2EvgeEEW7R
-	sfnVvLbuoOKy0xUR2OEh/Lyhmb2J4R14AQ5aua09c1TMHWWZNzjWtWAkItiV16dpR6RS7l
-	FAOxNOXOfvatp8iSH8Sp9E6mavGmQbzmcFsnzP86
-X-Coremail-Antispam: 1Uk129KBj93XoWxCrW3Aw1UXw48KFyxGFWkKrX_yoW5Xw4kpF
-	ZxKw4rGrs5JryI9Fnxuay0vry5uws5Cry2ga4xWw4xXr4akr90ya4kGr98ZF15uFykCFnx
-	Ar4DKr4xKFsxAFcCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Gb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc804V
-	CY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AK
-	xVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48Icx
-	kI7VAKI48JM4x0Y48IcxkI7VAKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s02
-	6xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_Jr
-	I_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v2
-	6r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj4
-	0_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8
-	JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Tv3UUUUUU==
+References: <20260925-gpio-organize-by-vendor-v1-1-8feefd60581b@oss.qualcomm.com>
+ <arZRZfa7AmDxmwoJ@ashevche-desk.local> <20260925125433.GY106095@black.igk.intel.com>
+ <araGjQoaffMhDMLz@ashevche-desk.local> <20260926100727.GB106095@black.igk.intel.com>
+ <CAMRc=Mc-C4ptY5phhAkpq7DbE-+=G5h4XByYdj2Xx5sVS-vvrQ@mail.gmail.com>
+In-Reply-To: <CAMRc=Mc-C4ptY5phhAkpq7DbE-+=G5h4XByYdj2Xx5sVS-vvrQ@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 28 Sep 2026 14:34:44 +0300
+X-Gm-Features: AclHuK8L4MxeaZZDRTg8AatUimH9WZuruRjftd0tMiE0swMuhwk9WFLPmKj4EeM
+Message-ID: <CAHp75VcctaQpSpKbr8i+LPfE8Ukazyn8=KhwsSa+4sbhvQ=WVQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] gpio: move intel drivers into their own directory
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>, Lixu Zhang <lixu.zhang@intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>, Mika Westerberg <westeri@kernel.org>, 
+	Israel Cepeda <israel.a.cepeda.lopez@intel.com>, Hans de Goede <hansg@kernel.org>, 
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-gpio_mpsse_irq_enable() schedules a poll worker before adding it to
-priv->workers. gpio_mpsse_disconnect() can miss the worker while
-tearing down the list, after which the worker can access freed priv.
+On Mon, Sep 28, 2026 at 2:13=E2=80=AFPM Bartosz Golaszewski <brgl@kernel.or=
+g> wrote:
+> On Sat, 26 Sep 2026 12:07:27 +0200, Mika Westerberg
+> <mika.westerberg@linux.intel.com> said:
+> > On Fri, Sep 25, 2026 at 05:34:53PM +0300, Andy Shevchenko wrote:
+> >> On Fri, Sep 25, 2026 at 02:54:33PM +0200, Mika Westerberg wrote:
+> >> > On Fri, Sep 25, 2026 at 01:48:05PM +0300, Andy Shevchenko wrote:
+> >> > > On Fri, Sep 25, 2026 at 12:22:15PM +0200, Bartosz Golaszewski wrot=
+e:
 
-Publish and schedule the worker while holding irq_spin. Set dying under
-the same lock before disconnect tears down the list, so a worker created
-after teardown starts is neither published nor scheduled. Use
-kfree_rcu() for such a worker because irq_enable() runs with the IRQ
-descriptor raw lock held.
+...
 
-This issue was found by an in-house static analysis tool.
+> >> > > >  drivers/gpio/{ =3D> intel}/gpio-graniterapids.c   |  0
+> >> > > >  drivers/gpio/{ =3D> intel}/gpio-novalake-events.c |  0
+> >> > >
+> >> > > These are interesting drivers, not sure where to put them
+> >> >
+> >> > IMHO they should be there too. We are maintaining them both.
+> >>
+> >> Do you send PRs to Bart or you just rely on him to take the patches?
+> >
+> > I don't expect these two drives to get too much attention, and they cou=
+ld
+> > be contained nicely inside intel folder and that would help Bart to
+> > identify that these are Intel drivers. So your bandwidth would not suff=
+er
+> > even if these two are added there. Your call.
+>
+> I'd like to avoid a situation where we have Andy's Intel drivers under
+> drivers/gpio/intel/ and other Intel drivers under drivers/gpio/. I'd pref=
+er
+> to move all of intel GPIO drivers into drivers/gpio/intel/ and have Andy
+> gather changes to them if he agrees.
 
-Fixes: 179ef1127d7a ("gpio: mpsse: ensure worker is torn down")
-Cc: stable@vger.kernel.org
-Co-developed-by: Song Li <songl@zju.edu.cn>
-Signed-off-by: Song Li <songl@zju.edu.cn>
-Signed-off-by: Fan Wu <fanwu01@zju.edu.cn>
----
- drivers/gpio/gpio-mpsse.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+Okay, we have two parts missing:
+- Nova Lake driver (I would need Adam or Mika to step in as at least a
+designated reviewer for that)
+- USB IO (I think we need to agree which tree it will go through, my
+bet that media tree is the best), for that we need Hans' consent
 
-diff --git a/drivers/gpio/gpio-mpsse.c b/drivers/gpio/gpio-mpsse.c
-index a859deab2..958d74427 100644
---- a/drivers/gpio/gpio-mpsse.c
-+++ b/drivers/gpio/gpio-mpsse.c
-@@ -10,6 +10,7 @@
- #include <linux/cleanup.h>
- #include <linux/gpio/driver.h>
- #include <linux/mutex.h>
-+#include <linux/rcupdate.h>
- #include <linux/spinlock.h>
- #include <linux/usb.h>
- 
-@@ -24,6 +25,7 @@ struct mpsse_priv {
- 	raw_spinlock_t irq_spin;     /* protects worker list */
- 	atomic_t irq_type[16];	     /* pin -> edge detection type */
- 	atomic_t irq_enabled;
-+	atomic_t dying;		     /* no new workers after disconnect */
- 	int id;
- 
- 	u8 gpio_outputs[2];	     /* Output states for GPIOs [L, H] */
-@@ -46,6 +48,7 @@ struct mpsse_worker {
- 	atomic_t       cancelled;
- 	struct list_head    list;   /* linked list */
- 	struct list_head destroy;   /* teardown linked list */
-+	struct rcu_head      rcu;   /* deferred free for dying path */
- };
- 
- struct bulk_desc {
-@@ -525,10 +528,17 @@ static void gpio_mpsse_irq_enable(struct irq_data *irqd)
- 		worker->priv = priv;
- 		INIT_LIST_HEAD(&worker->list);
- 		INIT_WORK(&worker->work, gpio_mpsse_poll);
--		schedule_work(&worker->work);
- 
--		scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
-+		scoped_guard(raw_spinlock_irqsave, &priv->irq_spin) {
-+			if (atomic_read(&priv->dying)) {
-+				/* irq_enable() runs under the IRQ descriptor raw lock. */
-+				kfree_rcu(worker, rcu);
-+				return;
-+			}
-+
- 			list_add(&worker->list, &priv->workers);
-+			schedule_work(&worker->work);
-+		}
- 	}
- }
- 
-@@ -704,6 +714,9 @@ static void gpio_mpsse_disconnect(struct usb_interface *intf)
- {
- 	struct mpsse_priv *priv = usb_get_intfdata(intf);
- 
-+	scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
-+		atomic_set(&priv->dying, 1);
-+
- 	/*
- 	 * Lock prevents double-free of worker from here and the teardown
- 	 * step at the beginning of gpio_mpsse_poll
+The rest is done in the mini-series I sent earlier (last week).
 
+--=20
+With Best Regards,
+Andy Shevchenko
