@@ -1,242 +1,81 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218723F7AAC;
-	Mon, 28 Sep 2026 08:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1F647F77B
+	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 08:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790584580; cv=none; b=oxl2aYS85uQjEJq55tcJE4Y857RnqCb9rF8hiXI1YHOjMusqa+y7HnBLTJq5amfmhgQpEdrsOb//EEM2eQtS17TE5+YqkpZfc+YZsGJ28rdYItM+jmSWcUQU7+USWxnvPsCI4Q21EX6gl2UUFPLh4YwvPu3gAxLDZ5cOqVeNwXE=
+	t=1790584707; cv=none; b=J2r8LG3VBWFrGW41s7Kcxd7JIRmYmv4QGC9zU5vkxF0cDJ9cueAqr0YdGUc2yA8XPZRoDQqXkbOXRYTG0iUnreFJogceyIG/S3LaTSJ3eY+OtsTN2RlwRgI1YlvEQe60jA6HXMON2ewkL/vVVQJJ0099zBsKck93RvR4PFyWF1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790584580; c=relaxed/simple;
-	bh=pwLgxTRQaJbAuoKRIW3dy1IbXKeQfhH90VKCp8hXN8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=txvh8lIctcLEqD3BJZPB+m+2uf5vF/LxkutorqjVx/0oa0PcHBIjgnzD/U1UTjuKOycJLjo8OBgs+PRaViYcZw+H3dggKmdsjuPB4DN1klH9qZgs5aGmi5tuZIdzo0GtrGB6Vd/gwQAB6n/A3oF37KPJ7HSiEbrTFSBXR3bOy1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nFahcXac; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1790584707; c=relaxed/simple;
+	bh=KzmtaBx/W7Qo6eJlSIglcMY97ok4d4GtoRfvLF0hscI=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VnqL/jSTxylOKRgWa9omLeni5pq/n2rUly3Tm2up4D9thR8lIFFi5g2BZfPEiaXkLU/sZJzmrVkdYtk4wFSXKNxFMyq34xQHOu6zNKnpV42B5us3dBc/voxMUvwwFOvgIcAXqcJ0dlETapdEMT9EPWG4A62kzwG8BTFX1sTLa1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fk3TfVQ8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nFahcXac"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790584576; x=1822120576;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pwLgxTRQaJbAuoKRIW3dy1IbXKeQfhH90VKCp8hXN8s=;
-  b=nFahcXacqmu+/qjRWvoL4wsV48VfJGJYtDO9r+W4NiRtk481o1taHkYz
-   lATsJuryA7eTN1YY/WYysgoa7wCRdBN+rK898S4k5AKvqqkIUtQGKO7xx
-   Ek1xVj3CQGRLt/740XpEpTEaUQgwUmf3OLkPrSdOfJPP+6G2Yj7Rn8hsa
-   hxH1xOSfI4GFfZQQk0PdreTmLbrgkkn2H3t0GPAzce1Q4g3JhqPEnYFku
-   E1wV91nl8bcgyO1JIrezGzde4P3xblO99ZP6lExriBpjpr40ebfcY84QK
-   4+kClTd0AeYLzY4qcrQ2Xfk00EoF6s98RhsmgUPk1DMn9DoNwOsN/UG/a
-   Q==;
-X-CSE-ConnectionGUID: FGtI81RhTy+Utlz7KfFgVA==
-X-CSE-MsgGUID: rCG4kHalR4OKgVEHcfYU8w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11918"; a="90180917"
-X-IronPort-AV: E=Sophos;i="6.27,128,1787036400"; 
-   d="scan'208";a="90180917"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2026 01:36:11 -0700
-X-CSE-ConnectionGUID: CuTZjTB9R6CR8m3nW+zr6A==
-X-CSE-MsgGUID: 3XwqWEF9QJu/lQ3auDbLLQ==
-X-ExtLoop1: 1
-Received: from conormcd-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.244.42])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2026 01:36:08 -0700
-Date: Mon, 28 Sep 2026 11:36:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: "David Lechner (TI)" <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Chris Hall <c-hall@ti.com>, Patrick Edwards <pedwards@ti.com>,
-	Kurt Borja <kuurtb@gmail.com>
-Subject: Re: [PATCH] iio: adc: ti-ads112c14: add gpio support
-Message-ID: <arom9T0azKX9jV5m@ashevche-desk.local>
-References: <20260925-iio-adc-ti-ads112c14-gpio-v1-1-2a2b218ebf3a@baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fk3TfVQ8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07BC21F0089D
+	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 08:38:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790584705;
+	bh=KzmtaBx/W7Qo6eJlSIglcMY97ok4d4GtoRfvLF0hscI=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=fk3TfVQ8MwNrWU6IzYBQXGVhC+7X8nYQZRYw+k3Yoy5mHGBU5bsNSttCLOn4tIcf6
+	 alM50OyxM2mXVJpsTVzS0j8N4MhabhzahjBjUpa77Lr2VzbbC0MPDef8EPEsa1zqQf
+	 27EY3yixr6k0zTBpNh6+HLvn3ATCMb47fylmkf1oStT9Z+N4SO0XLMAyzdptmYGOSQ
+	 WMyb2fXIyw/tYnaqM2N+emPTnuAuj+NAYgE6L0y7VBunrm8/IIqV433U+3aQVTcILL
+	 d8mKJCXoh3WoDHK0RRMTxhaSae9ZsSgrIUs9YbFGjYYcWka8e5T5LCUxBQU8JoFq2s
+	 jdGTbhUN0h73g==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b8f490bb27so709235e87.2
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 01:38:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxD/XcSPe1JZWph8xY4A1YdGR7TIuNx7NOSLMJ7hq57J3MPeKJqKs8L/z82JTl1F7oUSlhawXuxLRrz@vger.kernel.org
+X-Gm-Message-State: AFq9FYK2Gu3roC/C8fZZWYaCnS32A/jLXb0OiaAWKiap7OZLYx/dxaLW
+	q6Xcy2i1ZfYqMbJlbAN5BbOmHEInMr3pT9xRr6pne+wj3/ArjCllgH1sbAd8noTkAe3e6krtx80
+	uLmhJnu3v0UcRDdwKIPxZ4cSpJsLQe6//GdE0Dnec5A==
+X-Received: by 2002:a05:6512:2c86:b0:5b8:9978:a2bc with SMTP id
+ 2adb3069b0e04-5b8e6d91f8cmr2796693e87.23.1790584703696; Mon, 28 Sep 2026
+ 01:38:23 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 28 Sep 2026 03:38:21 -0500
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 28 Sep 2026 03:38:21 -0500
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260924-ipq5018-pwm-functions-v1-1-8990a4e85b2f@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260925-iio-adc-ti-ads112c14-gpio-v1-1-2a2b218ebf3a@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20260924-ipq5018-pwm-functions-v1-1-8990a4e85b2f@outlook.com>
+Date: Mon, 28 Sep 2026 03:38:21 -0500
+X-Gmail-Original-Message-ID: <CAMRc=MeJcYezVbqVq4cM2RuAtP3mxCuKKLMS3z+XqyS4DEa5qA@mail.gmail.com>
+X-Gm-Features: AclHuK9pVuYMjJOL3S9OWFCVZ-No99gs9AaKgirufX3RDkqpWzOUGcwSuUMSUDU
+Message-ID: <CAMRc=MeJcYezVbqVq4cM2RuAtP3mxCuKKLMS3z+XqyS4DEa5qA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: ipq5018: add required gpios and missing
+ PWM functions
+To: george.moussalem@outlook.com
+Cc: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 25, 2026 at 04:50:47PM -0500, David Lechner (TI) wrote:
-> Add support for using the AIN4/GPIO0 to AIN7/GPIO3 pins as GPIOs when
-> the gpio-controller property is present.
-> 
-> Pins that are already used for something else according to the
-> devicetree are excluded from the valid GPIO mask. This includes analog
-> inputs and excitation current outputs used by channels, REFP/REFN when
-> an external reference is used, the /FAULT and /DRDY interrupts and the
-> external clock input.
-> 
-> The per-pin register field macros are replaced with parameterized ones
-> so that they can be used with the GPIO offset.
+On Thu, 24 Sep 2026 14:22:11 +0200, George Moussalem via B4 Relay
+<devnull+george.moussalem.outlook.com@kernel.org> said:
+> From: George Moussalem <george.moussalem@outlook.com>
+>
+> On multiple Linksys routers, GPIO 1, 30, and 46 are used to drive the
+> PWM led on PWM1, PWM3, and PWM0 channels respectively, so let's update
+> the pwm# and pingroups accordingly.
+>
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
 
-...
+Are we *updating* or *adding missing*? Depending on the answer, this can be
+interpreted as a fix that should be backported or a new feature that should
+be queued for v7.4.
 
-> +	DECLARE_BITMAP(gpio_reserved_mask, ADS112C14_NUM_GPIO);
+If this is a fix, can you add a Fixes tag?
 
-Why not use valid_mask in GPIO chip directly?
-
-...
-
-> +static void ads112c14_reserve_gpio_for_ain(unsigned long *gpio_reserved_mask,
-> +					   u32 ain)
-> +{
-> +	if (ain >= 4 && ain <= 7)
-> +		set_bit(ain - 4, gpio_reserved_mask);
-
-Why atomic op is needed?
-
-> +}
-
-...
-
-> +static int ads112c14_gpio_init_valid_mask(struct gpio_chip *gc,
-> +					  unsigned long *valid_mask,
-> +					  unsigned int ngpios)
-> +{
-> +	struct iio_dev *indio_dev = gpiochip_get_data(gc);
-> +	struct ads112c14_data *data = iio_priv(indio_dev);
-
-> +	bitmap_fill(valid_mask, ngpios);
-
-It's already filled by GPIOLIB, isn't it?
-
-> +	bitmap_andnot(valid_mask, valid_mask, data->gpio_reserved_mask, ngpios);
-> +
-> +	return 0;
-> +}
-
-> +static int ads112c14_gpio_init(struct iio_dev *indio_dev)
-> +{
-> +	struct ads112c14_data *data = iio_priv(indio_dev);
-> +	struct device *dev = indio_dev->dev.parent;
-> +
-> +	for (unsigned int i = 0; i < ADS112C14_NUM_GPIO; i++) {
-> +		data->gpio_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%s:GPIO%u",
-> +						     dev_name(&indio_dev->dev), i);
-> +		if (!data->gpio_names[i])
-> +			return -ENOMEM;
-
-Wondering if you can utilise devm_kasprintf_strarray().
-
-> +	}
-> +
-> +	data->gc = (struct gpio_chip) {
-> +		.owner = THIS_MODULE,
-> +		.label = dev_name(dev),
-> +		.parent = dev,
-> +		.base = -1,
-> +		.ngpio = ADS112C14_NUM_GPIO,
-> +		.names = data->gpio_names,
-> +		.can_sleep = true,
-> +		.init_valid_mask = ads112c14_gpio_init_valid_mask,
-> +		.get_direction = ads112c14_gpio_get_direction,
-> +		.direction_input = ads112c14_gpio_direction_input,
-> +		.direction_output = ads112c14_gpio_direction_output,
-> +		.get = ads112c14_gpio_get,
-> +		.set = ads112c14_gpio_set,
-> +	};
-> +
-> +	return devm_gpiochip_add_data(dev, &data->gc, indio_dev);
-> +}
-
-...
-
->  static int ads112c14_parse_channels(struct iio_dev *indio_dev,
-> -				    bool *need_avdd_ref, bool *need_ext_ref)
-> +				    bool *need_avdd_ref, bool *need_ext_ref,
-> +				    unsigned long *gpio_reserved_mask)
->  {
-
-> +			ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[0]);
-
-> +			ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[0]);
-> +			ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[1]);
->  		} else {
-
-> +			ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[0]);
-> +			if (measurement->iadc_count > 1)
-> +				ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[1]);
-
-Can't this be done afterwards at init_valid_mask() stage?
-
-...
-
->  static int ads112c14_probe(struct i2c_client *client)
->  {
-> +	DECLARE_BITMAP(gpio_reserved_mask, ADS112C14_NUM_GPIO);
-
-Hmm... But you have one already in the struct, why another one here?
-
-
-...
-
-> +	/* FAULT shares a pin with GPIO2. */
-> +	if (fwnode_property_match_string(dev_fwnode(dev), "interrupt-names", "fault") >= 0)
-> +		set_bit(2, gpio_reserved_mask);
-
-Non-atomic?
-
-...
-
->  	if (fwnode_property_match_string(dev_fwnode(dev), "interrupt-names", "drdy") >= 0) {
->  		data->drdy_irq = fwnode_irq_get_byname(dev_fwnode(dev), "drdy");
->  		if (data->drdy_irq < 0)
->  			return dev_err_probe(dev, data->drdy_irq,
->  					     "failed to get drdy interrupt\n");
->  
-> +		/* DRDY shares a pin with GPIO3. */
-> +		set_bit(3, gpio_reserved_mask);
-
-Ditto.
-
-
->  		if (clk)
->  			return dev_err_probe(dev, -EINVAL,
->  					     "cannot use both DRDY and CLK - they share the same pin\n");
-
-...
-
->  	if (clk) {
-> +		/* CLK shares a pin with GPIO3. */
-> +		set_bit(3, gpio_reserved_mask);
-
-Ditto.
-
->  		ret = regmap_update_bits(data->regmap, ADS112C14_REG_GPIO_CFG,
-> -					 ADS112C14_GPIO_CFG_GPIO3_CFG,
-> -					 FIELD_PREP(ADS112C14_GPIO_CFG_GPIO3_CFG,
-> +					 ADS112C14_GPIO_CFG_GPIO_CFG(3),
-> +					 FIELD_PREP(ADS112C14_GPIO_CFG_GPIO_CFG(3),
->  						    ADS112C14_GPIO_CFG_GPIO_CFG_INPUT));
->  		if (ret)
->  			return ret;
-
-...
-
-> +	if (device_property_read_bool(dev, "gpio-controller")) {
-> +		bitmap_copy(data->gpio_reserved_mask, gpio_reserved_mask,
-> +			    ADS112C14_NUM_GPIO);
-> +
-> +		ret = ads112c14_gpio_init(indio_dev);
-> +		if (ret)
-> +			return ret;
-> +	}
-
-This all smells like it should be refactored to nicely have it in one place in init_valid_mask().
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Bart
