@@ -1,102 +1,156 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9268348BD5B;
-	Mon, 28 Sep 2026 09:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A9F3CFF49;
+	Mon, 28 Sep 2026 09:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790588522; cv=none; b=gabbJ7u9YThXbq55EgCVqsBXirtGS6h0SHN9ldDOqINufomq+IWxdd8xJURo3r2t+kXcpdxTnSC+8B7B8Uh8rL2vHGT9oQd5JfKT8WZjlFlqj6mvbmk0D/tlljp20F7ZVO94NpHCHk4wd1h+RSdJTN6Q5xXSQS2G/XCWryXuCNg=
+	t=1790588931; cv=none; b=lz6nhY5zA1eBZ4heXhTaEDpSnNhBaEYUo3ZNndW6v6et/mDCaWH//+TYGSynB5DsjoMuuMSQtGz5wABKjtV7Z/bXo4vGKDJkDadmK+HBGg6IZ9FedrAbqEF53AQsgUVsXiknt0YAHywrRU0FwcE3fhMK9xVrxyPRpE1fU30I+go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790588522; c=relaxed/simple;
-	bh=u/7ok1URphFvd0R1Kj9k7YkKWqpAOEXGIJcbB2FPtzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ELw2StTtCEbdvMABTbtWSeHjd/GJ6sRaHVcFg1vklm4D2SpeRGbq/zcZo7jM2W8YahZv5TPgWvDCRcRi4wX6CzBg5sdTWXcJEoqOXRF3VPJMQgoPswbfhH4opPR5Ov0TMBmCQOURH0Hw5JV/LI31anUyFAK5/4G37RQIueQlV2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wrb1RJhf; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1790588931; c=relaxed/simple;
+	bh=hF95EN/AY0O9BeW6PyO06bXHa+vhGl02HfCgvZqYHJs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PHRmm1MZWJk7FvcE4PRERWxvdWEHRe5q/B63VQUyHJ8PwEJKSVSF4kve35xJR9nfkbMOJ6+fAtuYeaYCeb2ftp4T7s5BDoqP3WjsVJLO15jD6C72VgQIOygp1vhvc+PPgeVFfHZwtCPS9YdODa59spFWfrqR7rJyuo8d/IiMW2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qyk7gJFl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wrb1RJhf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790588520; x=1822124520;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=u/7ok1URphFvd0R1Kj9k7YkKWqpAOEXGIJcbB2FPtzM=;
-  b=Wrb1RJhfop2nlNqBkH2jWXUCCqeclatmMj+5zlL5JznHdWmat5/F0Ins
-   AX6BapA66qM7Z2w1Wsh31hUUGgYumtMjaiGYf2Y3pMqwB/t8+sbXgQbxq
-   pew86xm0vIvm6mK8PP4fVzL8eRjLrcyTK7sc/sg/SpWwXueh9XanA5lkx
-   XR607m8OAClj5xaLdKun8wgq23BTenx4MNnMMwwySxuiKdYD5UWSGmyFH
-   cTSMlJUHtw9WrkjYXfKqSNHAnWaDyVT+k0J5sGKshjxIXxmJtdy0uQBqc
-   Ak4uMqGZmgm6Nb6PoqEin7T3mslZ98ofFSAffBTo52j+f6YOVa4KqtpRJ
-   Q==;
-X-CSE-ConnectionGUID: ehfSdM/uRpWbZt4ScGPyWg==
-X-CSE-MsgGUID: axkT5WUvRM6iuiLarywB9Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11918"; a="90151882"
-X-IronPort-AV: E=Sophos;i="6.27,128,1787036400"; 
-   d="scan'208";a="90151882"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2026 02:42:00 -0700
-X-CSE-ConnectionGUID: lchMWD7GTHefn9ax3cPCjg==
-X-CSE-MsgGUID: ddnefMPfRSqY5+LjVd9Qwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,128,1787036400"; 
-   d="scan'208";a="301286089"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa002.fm.intel.com with ESMTP; 28 Sep 2026 02:41:58 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id CBAD999; Mon, 28 Sep 2026 11:41:56 +0200 (CEST)
-Date: Mon, 28 Sep 2026 11:41:56 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Bartu Alev <bartualev@gmail.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Mario Limonciello <superm1@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>, linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: acpi: Ignore AC adapter wakeup on ASUS FA507
-Message-ID: <20260928094156.GG106095@black.igk.intel.com>
-References: <20260927014212.302743-1-bartualev@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qyk7gJFl"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 039B6C2BCB3;
+	Mon, 28 Sep 2026 09:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1790588931;
+	bh=hF95EN/AY0O9BeW6PyO06bXHa+vhGl02HfCgvZqYHJs=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=Qyk7gJFlbyV89cghFTvvs5MIUrvLVxWHsa5MRGTWJeTA8xfO5f2niLJngpSp3zIVu
+	 jyC9vHUU+HMj5E8liO3F1A+yKPdjg7JjV1Fgz8B14WaXBQsyD20XuVGinnWE2wiXVJ
+	 layFnxfJv5WKM3rHoWtGZ/Hq+O2LOVcAjPE1EC+NMHuYUnKQkiOl7JBYPb6zJJyLPp
+	 /HlnqB2Q+/Y3wJSJIkR6RCbuBNEWPTJVHnb3grHkGwzEvO0A7cFVfJLpw/7mKDryj9
+	 9+WQNEUCal46+a0nllp25c3fZowz8EszHqYEO0E8KNkeDkKTZa9MD/J+unqbpxkXwS
+	 SXcgAiGiVMemg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6713CA5FA2;
+	Mon, 28 Sep 2026 09:48:50 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Date: Mon, 28 Sep 2026 13:48:47 +0400
+Subject: [PATCH v2] pinctrl: qcom: ipq5018: update PWM groups and
+ corresponding pin functions
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260927014212.302743-1-bartualev@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260928-ipq5018-pwm-functions-v2-1-87bbcd706bc6@outlook.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/4WNQQ6CQAxFr0K6tmbaAAFX3sOwwKFIozA4A6gh3
+ N2RC7h8P3nvrxDEqwQ4JSt4WTSoGyLwIQHb1cNNUJvIwIZzU3KKOj4zQwWOrx7bebBTFAKyWMN
+ ETZ5ZguiOXlp9791LFbnTMDn/2W8W+q3/igshYVGWpk6lyK7cnt08PZy7H63rodq27QuFtTu5v
+ AAAAA==
+X-Change-ID: 20260924-ipq5018-pwm-functions-2ec0211d65c1
+To: Bartosz Golaszewski <brgl@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790588929; l=3984;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=bdNTTmgNNZzHtCyMcXaP+/5YczTyR2tEZAgMtevFbFU=;
+ b=2UCGNtGW7pfm1fEyAW1VzrN5fppGbdd/7aXd8LKKnjNStfGN3AzMNmGl6cGKbbbfO6sv9iHQy
+ CDhB4z9wOhABY1h/5rWh3fNVzyrQbzzzUytbjqjqWxoeYKQufvBwy1J
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-Hi,
+From: George Moussalem <george.moussalem@outlook.com>
 
-On Sun, Sep 27, 2026 at 04:42:12AM +0300, Bartu Alev wrote:
-> The ASUS TUF Gaming A15 FA507 wakes from s2idle whenever the AC
-> adapter is plugged in or unplugged.
-> 
-> In the CPMGPIO0 SSDT, GPIO pin 23 (0x0017) is declared in the
-> \_SB.GPIO._AEI resource template as:
-> 
->     GpioInt (Edge, ActiveBoth, ExclusiveAndWake, PullNone, 0x0000,
->              "\\_SB.GPIO", 0x00, ResourceConsumer, ,)
->              { 0x0017 }
-> 
-> and the corresponding \_SB.GPIO._EVT handler issues a device wake
-> notification for the AC adapter on pin 23 events:
-> 
->     Case (0x17)
->     {
->         Notify (\_SB.ACAD, 0x02) // Device Wake
->         Sleep (0x05)
->         Notify (\_SB.ACAD, 0x80) // Status Change
->     }
-> 
-> Both AC plug and unplug transitions therefore trigger a spurious
-> wakeup from s2idle. Add an ignore_wake quirk for this pin.
+On multiple Linksys routers, GPIOs 1, 30, and 46 drive the PWM LED on
+the PWM1, PWM3, and PWM0 channels, respectively.
+Update the corresponding PWM groups to include these GPIOs and allocate
+the PWM functions to empty slots in the relevant pin groups.
 
-I would think this is by design like that.
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+Changes in v2:
+- Updated the commit title and message to reflect this isn't a fix for a
+  regression but rather an update for specific IPQ5018 boards.
+- Link to v1: https://lore.kernel.org/r/20260924-ipq5018-pwm-functions-v1-1-8990a4e85b2f@outlook.com
+---
+Changes in v2:
+- Updated the commit title and message to reflect this isn't a fix for a
+  regression but rather an update for specific IPQ5018 boards.
+- Link to v1: https://lore.kernel.org/r/20260924-ipq5018-pwm-functions-v1-1-8990a4e85b2f@outlook.com
+---
+ drivers/pinctrl/qcom/pinctrl-ipq5018.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-What is the issue? You unplug the device from AC with lid closed and it
-wakes up? Userspace should put it back to sleep in these cases. In Windows
-and ChromeOS there is something called "dark resume" that deals with this
-but I'm not sure if generic distros have that yet.
+diff --git a/drivers/pinctrl/qcom/pinctrl-ipq5018.c b/drivers/pinctrl/qcom/pinctrl-ipq5018.c
+index 84392fe258c9..74fccdd5146a 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ipq5018.c
++++ b/drivers/pinctrl/qcom/pinctrl-ipq5018.c
+@@ -539,7 +539,7 @@ static const char * const qdss_tracectl_b_groups[] = {
+ };
+ 
+ static const char * const pwm0_groups[] = {
+-	"gpio42",
++	"gpio42", "gpio46",
+ };
+ 
+ static const char * const qdss_cti_trig_out_b0_groups[] = {
+@@ -547,7 +547,7 @@ static const char * const qdss_cti_trig_out_b0_groups[] = {
+ };
+ 
+ static const char * const pwm1_groups[] = {
+-	"gpio43",
++	"gpio43", "gpio1",
+ };
+ 
+ static const char * const qdss_cti_trig_in_b0_groups[] = {
+@@ -563,7 +563,7 @@ static const char * const qdss_cti_trig_out_b1_groups[] = {
+ };
+ 
+ static const char * const pwm3_groups[] = {
+-	"gpio45", "gpio13",
++	"gpio45", "gpio30", "gpio13",
+ };
+ 
+ static const char * const qdss_cti_trig_in_b1_groups[] = {
+@@ -677,7 +677,7 @@ static const struct pinfunction ipq5018_functions[] = {
+ 
+ static const struct msm_pingroup ipq5018_groups[] = {
+ 	PINGROUP(0, atest_char, _, qdss_cti_trig_out_a0, wci_txd, wci_rxd, xfem, _, _, _),
+-	PINGROUP(1, atest_char, _, qdss_cti_trig_in_a0, wci_txd, wci_rxd, xfem, _, _, _),
++	PINGROUP(1, atest_char, pwm1, qdss_cti_trig_in_a0, wci_txd, wci_rxd, xfem, _, _, _),
+ 	PINGROUP(2, atest_char, _, qdss_cti_trig_out_a1, wci_txd, wci_rxd, xfem, _, _, _),
+ 	PINGROUP(3, atest_char, _, qdss_cti_trig_in_a1, wci_txd, wci_rxd, xfem, _, _, _),
+ 	PINGROUP(4, sdc1_data, qspi_data, blsp1_spi1, btss, dbg_out, qdss_traceclk_a, _, burn0, _),
+@@ -706,7 +706,7 @@ static const struct msm_pingroup ipq5018_groups[] = {
+ 	PINGROUP(27, audio_txmclk, wsa_swrm, audio_txmclk, blsp2_spi, btss, _, qdss_tracedata_b, _, _),
+ 	PINGROUP(28, audio_txbclk, wsa_swrm, blsp0_uart1, btss, qdss_tracedata_b, _, _, _, _),
+ 	PINGROUP(29, audio_txfsync, _, blsp0_uart1, _, qdss_tracedata_b, _, _, _, _),
+-	PINGROUP(30, audio_txd, led2, led0, _, _, _, _, _, _),
++	PINGROUP(30, audio_txd, led2, led0, pwm3, _, _, _, _, _),
+ 	PINGROUP(31, blsp2_spi0, blsp1_uart1, _, qdss_tracedata_b, eud_gpio, _, _, _, _),
+ 	PINGROUP(32, blsp2_spi0, blsp1_uart1, _, qdss_tracedata_b, eud_gpio, _, _, _, _),
+ 	PINGROUP(33, blsp2_i2c0, blsp2_spi0, blsp1_uart1, _, qdss_tracedata_b, eud_gpio, _, _, _),
+@@ -722,7 +722,7 @@ static const struct msm_pingroup ipq5018_groups[] = {
+ 	PINGROUP(43, pwm1, qdss_cti_trig_in_b0, wci_txd, wci_rxd, xfem, _, _, _, _),
+ 	PINGROUP(44, pwm2, qdss_cti_trig_out_b1, wci_txd, wci_rxd, xfem, _, _, _, _),
+ 	PINGROUP(45, pwm3, qdss_cti_trig_in_b1, wci_txd, wci_rxd, xfem, _, _, _, _),
+-	PINGROUP(46, led0, _, _, _, _, _, _, _, _),
++	PINGROUP(46, led0, pwm0, _, _, _, _, _, _, _),
+ };
+ 
+ static const struct msm_pinctrl_soc_data ipq5018_pinctrl = {
+
+---
+base-commit: 3d7783543c2646af69ad65825e810060494bea21
+change-id: 20260924-ipq5018-pwm-functions-2ec0211d65c1
+
+Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
+
+
