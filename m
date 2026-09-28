@@ -1,153 +1,83 @@
-Received: from mail-ed2-f35.google.com (mail-ed2-f35.google.com [74.125.228.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CEB4AA3F5
-	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 11:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.99
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790595325; cv=pass; b=WMUMsMXT5QRBt6/rRlurjifzKgFyry0H4yp85zkiMEQ1taTPyCzFOH/BXtljAxFZtyWJ29WiggYTXd9OwXmurYbK1XVsNC29RonDtYZcZYu9v5xi9I/EK23fBwbLEzzCJLUvD8p/kYMy9PPSDHZMySSBPoaDoPHNtRG+VcHqFgA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790595325; c=relaxed/simple;
-	bh=DhRO3jiEisFREUCpoPPDrLxkhHUHJj9Nmc4vEnpDsDc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fpx7nx2g2JlG6iDu4/4EROdXr8Nh20wPueP4ddeh6+AI/XohbV/neCfIvrBJ4EBJ1b5/V1qWS54hzu7SnKMUe71GMaMDCDPOldobAsmotZoK72GAFQCfS7Nw6OIaWE/SmkJH6Xfrjfg0+wfIiYV+Gkt4hp74+wIHvW0s4q1xuME=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VI7xR6X2; arc=pass smtp.client-ip=74.125.228.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935183C1D4A
+	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 12:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790598154; cv=none; b=fEul176vkemeWQZEsGi0N3mhwDiGLcNVAp1XSL3r6+fmVTN9mWamyjluoRyMHSZBv/3lrk4rTiuqrxcZlNfiFf8KZwRP+Y7y1qlRJ1VW8S+SBATDqaCsGlKBWSxLTBqg5M17KhFI/akJDTfnwn0kfS5NUYoPUcXlDLJ2JgwEY50=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790598154; c=relaxed/simple;
+	bh=CYr46wE5XAX7Y1vwDFvlJRJLa3xImyeWpZgtt6PYaaY=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tq47YMELeJpYLuKDh5qFINkWc6Dfe8TncqrTBb7KCqz4aGWneKGvimfzjLKTnk9GCE1jUUAnGEhCiAYl6nrC91CeSheibHUBlN7hE33XI+83J0jmY423iLh7uulymr54uC+jq3/N8vwgy2qM57J0lCHJFDvvo5uD4rM5Ue85GpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yp5pldoC; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VI7xR6X2"
-Received: by mail-ed2-f35.google.com with SMTP id 4fb4d7f45d1cf-6aaf10bf094so3547850a12.2
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 04:35:23 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790595322; cv=none;
-        d=google.com; s=arc-20260327;
-        b=jcy9MjAT+z728b64WI+pgFdrgDBJ2o16MX4hDhIerUcwYrnUTRTho3k4UIf7Gc7y/l
-         0jtiuTdG3uMWjNZugC9zkTSXgzIo4igyWXETzQpaju6qkJQWG/KHbBVOw7Ts/ghTRTY9
-         cYqPM3wiBtD9rHGJm80SU+XcFqpHoTGsRHlWSmByiTZDuj47yNtMbaoqZYSsiKIxzG3i
-         KT/YWe4UtoYWLZFvjKIfN4MggWzf6bROXmOuMXSGLcbycfBRCGiydEe6WwQ3OHXuM/A4
-         0XK64ib31+SswDkmq8AoxC/3VKq9zYSG/Rk+yU5kCr9zSpAvCoOR1QaFGeapef3yY7jQ
-         4xaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=xKQihEndGsBnwilqhNl/3eRhz/IoC8GE9Y3qmXrQaP8=;
-        fh=ABkTl1IUFPIqEysaZmyvl3xu4LXxcOHeOlyK+/tNFhU=;
-        b=nAjmCY1NTIeGuBfiNK8w9vemS3xY1BDmlWQzPLh3CDvOi0Xiu6oPX3eYihuzvBc9aq
-         Ysomv4NJenXduUG8Mgpg1zsRBvLOCtUEsH/P5iTEYFaob1zhK7NiWD0kSQdQgKnvs0mV
-         wrIe67Q082EMKKcQB6RF5dFbT64hIj+gKuyy6xmQusWqR6r7zpaqDY0qXreYOmWL6NDN
-         9FeAP3VD3sn4PxLfSZdGW1AHwVDQdCogqnY2jl7m8qXWVl8wEfRYp3G+OUwZd8uozPBt
-         EtLpEXAlAhyW5aNq0UmASrgKpO0AJHJfGN5LR8/tXwjDVv5TqbbeOgy6OWdHen6iOY1/
-         rNyQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790595322; x=1791200122; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=xKQihEndGsBnwilqhNl/3eRhz/IoC8GE9Y3qmXrQaP8=;
-        b=VI7xR6X2DwCvODgEVD3vRWLRCgBk9mAjeUa63XQNKK063KrtS8BeEcFiGjETCT5mdX
-         gZEXEE+i5mZYDUeudEb85euZSZtJzXlOsMgiZ8UQYKNoqL0CBHAFeUPSR4BhJqX0Cwb5
-         YsoRSg/OIofy4mmx9l+XWK4IGLsB39Ope3AcbKiDy0KipZ5z2OtM6ikdQV12O6jAuch/
-         GJcwCGkUiC3P2z+uUwdxZxpbCejYO5gwZlyx1Bvd5IsYwvk06r7Z2P242cNIBRQMfICn
-         dfe0X9JSYxGoDY8Fdf/rr/2VK/OSq5hpND9go3UNVXjd115mSVxnDlMwUAWVCENtRXW5
-         ecSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790595322; x=1791200122;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=xKQihEndGsBnwilqhNl/3eRhz/IoC8GE9Y3qmXrQaP8=;
-        b=CdrsABfjiAQTGxTYtiLSIgldkbcLtV0JnVgJimnpoVQDazasoE3xkgwJpiR6CAmLw/
-         8rS64S0YWtnfts9zNRRvvE6zAiu2kNcGPdBzqQ9SPkXpR4rhZ8P3UoWd++DrU3xhkSsE
-         JaWOiRWKMhTdqLkfSAt5cyZNPATxL6gd3aWAEHrMVS6Q9cu+Vm8ndU7I14DzVzDjG7GG
-         lJpFuTjYUuH96Uy2Eg3YYT+LnS7FUxbTpvi40JJaX4JFyT9GvG2yP/+Hpg7UQwwzDk3p
-         GUCg7evmcF2BKbw6UL/GJQysTrUX4yugOfc19OMY5AjEY3gtBwLF9WPDOOSXuJpqhkuN
-         ZX+Q==
-X-Forwarded-Encrypted: i=1; AKwUvBwazmtx2qvV2ZGTjRYxjFFkyhJxb5Ue8TmiRMh3U3DDvtBNAgulsBvuxIMQheP0ceOkDKIxLq+x6L2S@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ2WRktYniFkQVOe9p1COBebkaK62eubNoX6XKq9vT2ckdiRlkv
-	V95LVwXB68WJtvYxcTtfHMBnn+JfQmPaG64SqkiW0XhvmV4A62tUjuSF+q99UMjEVVk3z7tfnb7
-	94tiyWZp6VAhhX/YpGLEPQHmmZWbZgc4=
-X-Gm-Gg: AYBFou28buYZlcX8v2YgJFkx2D8Gm0gChgwOiscYBaoUOvw/kL79mhKL+nVdK6SVc0d
-	3ztbe+Suu8/ln0rny8338xSohEjmIe9OQA7bNU5sybQaG/bpgnkrKevyWQB7oZfJINCIuEgG4iZ
-	jcTBe6NfIqUsssPeKD+65ddlsBMIyv4NlZofkNzcgbzgvYMNCUEIMS3CtknKgoIv2y6SIaScZn1
-	UcDjffb5h4tDgzP0wn2smqmyVvN9VE/95Q6A+7brAZfH+OmLCoXgO1n54/4a1hGN75yZiuXbiAz
-	3mr2RbEKgE2VVhWl3Bs/7Lgx9a/FzWviZaNgb40si7++Y9VNSDk5HuUn+B3KiAGBWplJ/1U569b
-	1QfUzpKf8iciqLp6KWks9OpadILaMDJWKPvBr8XNTvV0bu5LtqaPCLnkqX/kgqsObvEiKUObe6q
-	KSBlXxkx/EK0unBus5PR9ybbcW3shzmtpXvGAH8C3k
-X-Received: by 2002:a17:906:dc8a:b0:c25:2e93:289e with SMTP id
- a640c23a62f3a-c2ac233f3e8mr999649066b.16.1790595321284; Mon, 28 Sep 2026
- 04:35:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yp5pldoC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9B81F0089C
+	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 12:22:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790598151;
+	bh=CYr46wE5XAX7Y1vwDFvlJRJLa3xImyeWpZgtt6PYaaY=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc;
+	b=Yp5pldoCFMC0JiPqxHh8tvKEvJMqEfjGcdYwitMww7msuDHlhnzLKPuqYuY6lT7se
+	 AHqdAuyLRQrDytmaSft8DRu++0XgkLYotdvumKjgj+KQzmjyAAa0BcG4H73IgnEspg
+	 b/b9pZQqK5CNqWN2Ko3lVBRBaaucOlBINUQldz8jS67WEaaeUqihakEe67vfUoPsSu
+	 P40c62EYrnIsRCfIoJlV1plUMP9fEE684fE5J0FDyuR2uJbkDcR4lSj3Rev7VprgWg
+	 OvHoyzhSDRxeT0h8pkIJTzoZFWNp59gMfiqHGUg0R+QTyWDJdfMWnMXZvlLI1dPmm5
+	 4KEJ6lHU8MQig==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5b8ea203e5bso2171756e87.1
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 05:22:31 -0700 (PDT)
+X-Gm-Message-State: AFq9FYJu3OGgxYGedryBQjEfQ9Yup1ZVsmozaKlaSQZlu6ncXmMG0jyp
+	B37ReFXMwdlSzDS22VhBgfJKafltnurQ8CHWg7mCObYls8tc+Jig7Ws8+Kx045p/De4X6b5Emdv
+	5qL1O0IgijbBaz/uKtDbuti46T7SOVW2CarUHi37RAA==
+X-Received: by 2002:a05:6512:3c84:b0:5b8:e2de:6f67 with SMTP id
+ 2adb3069b0e04-5b8e2de6feamr3570218e87.33.1790598149932; Mon, 28 Sep 2026
+ 05:22:29 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 28 Sep 2026 12:22:28 +0000
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 28 Sep 2026 12:22:28 +0000
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260928112546.631440-1-fanwu01@zju.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260925-gpio-organize-by-vendor-v1-1-8feefd60581b@oss.qualcomm.com>
- <arZRZfa7AmDxmwoJ@ashevche-desk.local> <20260925125433.GY106095@black.igk.intel.com>
- <araGjQoaffMhDMLz@ashevche-desk.local> <20260926100727.GB106095@black.igk.intel.com>
- <CAMRc=Mc-C4ptY5phhAkpq7DbE-+=G5h4XByYdj2Xx5sVS-vvrQ@mail.gmail.com>
-In-Reply-To: <CAMRc=Mc-C4ptY5phhAkpq7DbE-+=G5h4XByYdj2Xx5sVS-vvrQ@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 28 Sep 2026 14:34:44 +0300
-X-Gm-Features: AclHuK8L4MxeaZZDRTg8AatUimH9WZuruRjftd0tMiE0swMuhwk9WFLPmKj4EeM
-Message-ID: <CAHp75VcctaQpSpKbr8i+LPfE8Ukazyn8=KhwsSa+4sbhvQ=WVQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] gpio: move intel drivers into their own directory
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>, Lixu Zhang <lixu.zhang@intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>, Mika Westerberg <westeri@kernel.org>, 
-	Israel Cepeda <israel.a.cepeda.lopez@intel.com>, Hans de Goede <hansg@kernel.org>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
+References: <20260928112546.631440-1-fanwu01@zju.edu.cn>
+Date: Mon, 28 Sep 2026 12:22:28 +0000
+X-Gmail-Original-Message-ID: <CAMRc=Mf0+O7393fxkcupH2Gs3q9L4-hZn=ORE_zC_c9FFM67KQ@mail.gmail.com>
+X-Gm-Features: AclHuK-nfTnJntkhEiDwnqhH1uYRFQ3P8cKjQ9tdRKoWajTwO1i7cEA4_kF9RF8
+Message-ID: <CAMRc=Mf0+O7393fxkcupH2Gs3q9L4-hZn=ORE_zC_c9FFM67KQ@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: mpsse: fix race when arming the IRQ poll worker
+To: Fan Wu <fanwu01@zju.edu.cn>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, songl@zju.edu.cn, linusw@kernel.org, brgl@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 28, 2026 at 2:13=E2=80=AFPM Bartosz Golaszewski <brgl@kernel.or=
-g> wrote:
-> On Sat, 26 Sep 2026 12:07:27 +0200, Mika Westerberg
-> <mika.westerberg@linux.intel.com> said:
-> > On Fri, Sep 25, 2026 at 05:34:53PM +0300, Andy Shevchenko wrote:
-> >> On Fri, Sep 25, 2026 at 02:54:33PM +0200, Mika Westerberg wrote:
-> >> > On Fri, Sep 25, 2026 at 01:48:05PM +0300, Andy Shevchenko wrote:
-> >> > > On Fri, Sep 25, 2026 at 12:22:15PM +0200, Bartosz Golaszewski wrot=
-e:
-
-...
-
-> >> > > >  drivers/gpio/{ =3D> intel}/gpio-graniterapids.c   |  0
-> >> > > >  drivers/gpio/{ =3D> intel}/gpio-novalake-events.c |  0
-> >> > >
-> >> > > These are interesting drivers, not sure where to put them
-> >> >
-> >> > IMHO they should be there too. We are maintaining them both.
-> >>
-> >> Do you send PRs to Bart or you just rely on him to take the patches?
-> >
-> > I don't expect these two drives to get too much attention, and they cou=
-ld
-> > be contained nicely inside intel folder and that would help Bart to
-> > identify that these are Intel drivers. So your bandwidth would not suff=
-er
-> > even if these two are added there. Your call.
+On Mon, 28 Sep 2026 13:25:46 +0200, Fan Wu <fanwu01@zju.edu.cn> said:
+> gpio_mpsse_irq_enable() schedules a poll worker before adding it to
+> priv->workers. gpio_mpsse_disconnect() can miss the worker while
+> tearing down the list, after which the worker can access freed priv.
 >
-> I'd like to avoid a situation where we have Andy's Intel drivers under
-> drivers/gpio/intel/ and other Intel drivers under drivers/gpio/. I'd pref=
-er
-> to move all of intel GPIO drivers into drivers/gpio/intel/ and have Andy
-> gather changes to them if he agrees.
+> Publish and schedule the worker while holding irq_spin. Set dying under
+> the same lock before disconnect tears down the list, so a worker created
+> after teardown starts is neither published nor scheduled. Use
+> kfree_rcu() for such a worker because irq_enable() runs with the IRQ
+> descriptor raw lock held.
+>
+> This issue was found by an in-house static analysis tool.
+>
+> Fixes: 179ef1127d7a ("gpio: mpsse: ensure worker is torn down")
+> Cc: stable@vger.kernel.org
+> Co-developed-by: Song Li <songl@zju.edu.cn>
+> Signed-off-by: Song Li <songl@zju.edu.cn>
+> Signed-off-by: Fan Wu <fanwu01@zju.edu.cn>
+> ---
 
-Okay, we have two parts missing:
-- Nova Lake driver (I would need Adam or Mika to step in as at least a
-designated reviewer for that)
-- USB IO (I think we need to agree which tree it will go through, my
-bet that media tree is the best), for that we need Hans' consent
+Please always include the changelog between iterations of the same series. I
+have no idea what changed since v1.
 
-The rest is done in the mini-series I sent earlier (last week).
-
---=20
-With Best Regards,
-Andy Shevchenko
+Bart
