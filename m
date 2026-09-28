@@ -1,137 +1,102 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0611265621
-	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 12:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC6C2652B2;
+	Mon, 28 Sep 2026 13:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790599692; cv=none; b=DRAc6zfugPQrpFd6CZL/5QqB18Gz3hGQCjYBFkS9/uVfNtJJRueao80JNWI9gRuDdd1Y5f/NMLzElnz0K3r7wemndU3Xt+gVwdhWoQuUpj/IXjzBc22Oi7tqlewo09ar+G3fqvaPr48xxgm0JOWmTxl9X201sg875LLAgvt55dU=
+	t=1790600758; cv=none; b=dehRSJPbKsa31jx1pdN5w64RAvmymnnXxLVNyYHxlc7GAEUW08LVwZUGLdE6Wr+gFd5PRV9mWzTAiN/A4DkfJ92Dk1X0QeZ4wXND67lsvZitpHi9kVHcEKQzKOpJiadbHwzPAO0PhRNTICJqXMPeolfyISwEG68ieIOnM4A1K9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790599692; c=relaxed/simple;
-	bh=WRrHKN7WS6CU3szpAnwqN6arE25wCNm4qSpSXHirqF0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UP5bNg4DPGkfC74Zti87gUDlRxlOrpvMgOuVrlneuq7KBIpXWeEoAStnjHmW24LzEV2E6CaTi8qkRP2QG/jvtLxp2IIvW4FbIQUCTd+U3cATxTcc1oodpgCc8UQBtItO5Br7Yk9jb/WTqrW2MX8O7l9RQPt3+3uSsXxBV2oNkfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFU79ugF; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790600758; c=relaxed/simple;
+	bh=d8bbmK/oVnzTlH8czD0/aDae1ZS2ChfTJ8lU6AwPsA0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OibR9G53aU/naDcAi1T/acy5q+3pxMI5p1idrhrG83pdzpzedd/9je5mNHqcyAwf8iuhT/v5FUlr3W7l5MWBCLkY+OjmoAgUvg2wGQTLI0aj1M7+CriqNL5k+lg08NTjkyz8VOhAW5mjwzXjz44u2rX+iUSbvRKdf9uzfY6tcQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQmrwUZ9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFU79ugF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75BDC1F0089C
-	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 12:48:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQmrwUZ9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE3721F000FF;
+	Mon, 28 Sep 2026 13:05:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790599690;
-	bh=xGy2+KwG2xa0Vm9wtyBTEIzklyb+frkgVaySwHrLSDQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=mFU79ugF+OnQi51o72qzbzQvi3tAB+900eE4h3aV+AESAfJaDiA001yb/s73fhV62
-	 JkT+4fsNAjwb6jvIYzLvRP0XS9Rx3zmsG24XlbKhMSC6ujUmpIDIlivOZcFs9NNaja
-	 gAjaG8hRqeRfrdAXi/zkqk0pEgK3HoQt7CWdKWxrb6VzybWew+x73eXYDB2aeoASfJ
-	 afA8Im+puUlMUInyKUvuxc3Apu0WhaiDAGhc+4nKpkLl0lotWegF1Sgktr8lIXyelr
-	 FhpbJMjizr7kztopaxGtHnsZ9k80W57CmRfOdkqkt185hj3kiQx+3IqOkvv1xs1xsX
-	 LyMBxXtBhXn0Q==
-Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5b8cbb7b9cfso2327913e87.0
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 05:48:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByNo5gqgrdWGqFBDLMuLAvLIR22NwhSl7Fok6XL26ZKqL9BjitUGft5LDd8gyQWfuSDKx/zXJZuHMhr@vger.kernel.org
-X-Gm-Message-State: AFq9FYIZbU9MxDkUSAVunj8fZ5yZQlkSp7/1UfxZR/DHgOaH/FOXsV8a
-	1NrFNQqgJA5pM0SyaOihwVQPY7kqBDLmVlCO1g5yrDEFV39j9LcSgWZsHMMc0suAqyWOYfYeE+I
-	Egwc2e94yDZvqLqGx+wdawQ42BC5pQpU6WoY8wCBWjg==
-X-Received: by 2002:ac2:4f11:0:b0:5b9:6603:d459 with SMTP id
- 2adb3069b0e04-5b96603d5eamr771988e87.15.1790599689164; Mon, 28 Sep 2026
- 05:48:09 -0700 (PDT)
+	s=k20260515; t=1790600756;
+	bh=VkfJhLqjOEWNYqVuFiE1DZPDqUocEdeEndWTP6Qnuu8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=GQmrwUZ9xYW1McRQ2inTkmfOE7Nddf8wRTe9Co580fjFyY6RPsER/8MpwhO5pLV2Y
+	 0HpGQTKmUrMxFWyWg1gVYmg+mGXvmKUmYk76IwKTT5xV6yHxQk0/JqfChDl6I+0lnu
+	 MWt3P6gOm3XLe6d9OMS8Z4JtCXTCZkA8yclyVySh19hnnmXxCg44QGWBDRrcK5lQ/h
+	 I2AbtM8R+2dQdsZMpDCLFeXKKqWCIF79AwXoA7rvJjL82ZNWoxf9wcC8fikrecJqqh
+	 TOvizhCVwemA9eP5+gS0BEsHAJPxF1itjvvp0zO/I/rJE+gLdRMFTQV0d/aiD3F7zz
+	 u4hRo3Omt4bQg==
+Message-ID: <a7099b6b-bd80-4fdd-8d03-ba95107a65e1@kernel.org>
+Date: Mon, 28 Sep 2026 08:05:53 -0500
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260923-upstream-tda54-gpio-v1-0-d1a0a199c836@ti.com> <20260923-upstream-tda54-gpio-v1-2-d1a0a199c836@ti.com>
-In-Reply-To: <20260923-upstream-tda54-gpio-v1-2-d1a0a199c836@ti.com>
-From: Bartosz Golaszewski <brgl@kernel.org>
-Date: Mon, 28 Sep 2026 14:47:56 +0200
-X-Gmail-Original-Message-ID: <CAMRc=MdJZgut-46b20n7o51_MKqLk4uHsyRzs+QYoj9++5ydoA@mail.gmail.com>
-X-Gm-Features: AclHuK_maJeTNYzE5sPFRlRRgsB0tWXlBskNGsjfDNcIyFUCc5LRWDeNnbLPX6M
-Message-ID: <CAMRc=MdJZgut-46b20n7o51_MKqLk4uHsyRzs+QYoj9++5ydoA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: davinci: Add level support via extended registers
-To: Aniket Limaye <a-limaye@ti.com>
-Cc: Keerthy <j-keerthy@ti.com>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, vigneshr@ti.com, 
-	u-kumar1@ti.com, nm@ti.com, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpiolib: acpi: Ignore AC adapter wakeup on ASUS FA507
+Content-Language: en-US
+To: Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Bartu Alev <bartualev@gmail.com>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mika Westerberg <westeri@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260927014212.302743-1-bartualev@gmail.com>
+ <20260928094156.GG106095@black.igk.intel.com>
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20260928094156.GG106095@black.igk.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 23, 2026 at 2:58=E2=80=AFPM Aniket Limaye <a-limaye@ti.com> wro=
-te:
->
-> Add support for level-triggered interrupts (IRQ_TYPE_LEVEL_HIGH and
-> IRQ_TYPE_LEVEL_LOW) for TDA54 GPIO controller via extended register sets.
->
-> Signed-off-by: Aniket Limaye <a-limaye@ti.com>
-> ---
->  drivers/gpio/gpio-davinci.c | 103 ++++++++++++++++++++++++++++++++++++++=
-+++---
->  1 file changed, 97 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-> index cccbaea1dec2..e5a3abe6b9d3 100644
-> --- a/drivers/gpio/gpio-davinci.c
-> +++ b/drivers/gpio/gpio-davinci.c
-> @@ -39,12 +39,20 @@ struct davinci_gpio_regs {
->         u32     intstat;
->  };
->
-> +struct davinci_gpio_regs_ext {
-> +       u32     set_high;
-> +       u32     clr_high;
-> +       u32     set_low;
-> +       u32     clr_low;
-> +};
-> +
->  typedef struct irq_chip *(*gpio_get_irq_chip_cb_t)(unsigned int irq);
->
->  #define BINTEN 0x8 /* GPIO Interrupt Per-Bank Enable Register */
->
->  static void __iomem *gpio_base;
->  static unsigned int offset_array[5] =3D {0x10, 0x38, 0x60, 0x88, 0xb0};
-> +static unsigned int offset_array_ext[5] =3D {0xd8, 0xe8, 0xf8, 0x108, 0x=
-118};
->
->  struct davinci_gpio_irq_data {
->         void __iomem                    *regs;
-> @@ -58,9 +66,11 @@ struct davinci_gpio_controller {
->         /* Serialize access to GPIO registers */
->         spinlock_t              lock;
->         void __iomem            *regs[MAX_REGS_BANKS];
-> +       void __iomem            *regs_ext[MAX_REGS_BANKS];
->         int                     gpio_unbanked;
->         int                     irqs[MAX_INT_PER_BANK];
->         struct davinci_gpio_regs context[MAX_REGS_BANKS];
-> +       struct davinci_gpio_regs_ext    context_ext[MAX_REGS_BANKS];
->         u32                     binten_context;
->  };
->
-> @@ -168,6 +178,7 @@ static int davinci_gpio_probe(struct platform_device =
-*pdev)
->         unsigned int ngpio, nbank, nirq, gpio_unbanked;
->         struct davinci_gpio_controller *chips;
->         struct device *dev =3D &pdev->dev;
-> +       bool ext_reg =3D false;
->
->         /*
->          * The gpio banks conceptually expose a segmented bitmap,
-> @@ -190,6 +201,9 @@ static int davinci_gpio_probe(struct platform_device =
-*pdev)
->         if (ret)
->                 return dev_err_probe(dev, ret, "Failed to get the unbanke=
-d GPIOs property\n");
->
-> +       if (device_is_compatible(dev, "ti,tda54-gpio"))
-> +               ext_reg =3D true;
-> +
+On 9/28/26 04:41, Mika Westerberg wrote:
+> Hi,
+> 
+> On Sun, Sep 27, 2026 at 04:42:12AM +0300, Bartu Alev wrote:
+>> The ASUS TUF Gaming A15 FA507 wakes from s2idle whenever the AC
+>> adapter is plugged in or unplugged.
+>>
+>> In the CPMGPIO0 SSDT, GPIO pin 23 (0x0017) is declared in the
+>> \_SB.GPIO._AEI resource template as:
+>>
+>>      GpioInt (Edge, ActiveBoth, ExclusiveAndWake, PullNone, 0x0000,
+>>               "\\_SB.GPIO", 0x00, ResourceConsumer, ,)
+>>               { 0x0017 }
+>>
+>> and the corresponding \_SB.GPIO._EVT handler issues a device wake
+>> notification for the AC adapter on pin 23 events:
+>>
+>>      Case (0x17)
+>>      {
+>>          Notify (\_SB.ACAD, 0x02) // Device Wake
+>>          Sleep (0x05)
+>>          Notify (\_SB.ACAD, 0x80) // Status Change
+>>      }
+>>
+>> Both AC plug and unplug transitions therefore trigger a spurious
+>> wakeup from s2idle. Add an ignore_wake quirk for this pin.
+> 
+> I would think this is by design like that.
+> 
+> What is the issue? You unplug the device from AC with lid closed and it
+> wakes up? Userspace should put it back to sleep in these cases. In Windows
+> and ChromeOS there is something called "dark resume" that deals with this
+> but I'm not sure if generic distros have that yet.
 
-Don't do it this way please. Instead: split this patch into three:
+I tend to agree with Mika.  If there is dedicated GPIO being triggered 
+on AC adapter events with a Notify(0x02) it was OEM intended to wake the 
+system.
 
-1. Add a new match data struct and move the get_irqchip() callback
-into it instead of passing it directly via the of_device_id field.
-2. Add support for level interrupts and extend the match data struct
-with the ext_reg flag.
-3. Add the new compatible with its dedicated match data entry.
+FWIW I did have a design proposal to systemd for generic distros to add 
+some behavior around dark resume.
 
-Bart
+https://github.com/systemd/systemd/issues/27077
+
+I also had started a PR but didn't really garner interest:
+
+https://github.com/systemd/systemd/pull/37142
+
+As you have a system this can strongly benefit, feel free to take the 
+torch on trying to develop a userland solution.
