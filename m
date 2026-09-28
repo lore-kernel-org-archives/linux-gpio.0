@@ -1,186 +1,162 @@
-Received: from mail-ej2-f17.google.com (mail-ej2-f17.google.com [74.125.228.145])
+Received: from mail-vs2-f39.google.com (mail-vs2-f39.google.com [74.125.227.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4104E5331
-	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 15:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.145
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790608386; cv=pass; b=NG+RVLdN9b5kXlUEUH9Z9zUckvHDOmFVgmgIi3arf+NcrD5V9TIuHhYf0vbUuZBLO6Zdk8wxujFZa1DYHNnq5P1W/An1ha1HPBlp2baZACxx8tNWChc+E9vu1VGHoBb1guaC4gfd6sdHecZ7uwz2VzwmpHM8h0ck7ytAx4YRQWI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790608386; c=relaxed/simple;
-	bh=xGXH8gA4YLaFLlzq3NLaecAhmu6TsaN59vOAD8sxWAQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0003D4E73DA
+	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 16:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.39
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790611842; cv=none; b=AVSn9JMZbJKHLwehL8Bev4FS/mlezemg8IJ6g9KFpwAYPa55eac52BO7AUlj7eczqm+8bUSyCv4bynKH7OTzJxX5rwTJADa9R1jg4BIxUpFNXTcxQaA6f3XYRpA0i1ZbZEzV7u8u3NqTZVtSTnrDblsNHv/gAZvVX96HZ14v9Bk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790611842; c=relaxed/simple;
+	bh=S5jmAjj9EtbV2wtaU3tPzm8z57h4Nf5RYtIBVSwNH7c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rEfYGt30GqS2pOh8MciDWy4uKzFp1YnFtNZpWJ93yyKiZpw66Md1souzDR63zv/G5MwtddlHhiGp13YWd60g3rDYVDhPCf0ZEHkg+UUwtY+rVrnHQsuQt+WNfoYasFaA2/xUow3QgXtydpibnJsaZz7yzlXE1wlfloL5Mpp7Pos=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOhGv+nt; arc=pass smtp.client-ip=74.125.228.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=ZUqA6HdOOjMv11FwMZuqxCIUDX+L02yjkcjJZA9OiOB5gK9KT/fnuMzC4zsci6toacWPzCDz10gCVDr9ayYqWPm0uQ74pzg3ya3FVj+kyYMVE7FVrn2VzLADmxhUY0QHrp5iMKZEEmcJH8J/Sr/qDm2o74rlGbVCi9fpQbwamC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOhGv+nt"
-Received: by mail-ej2-f17.google.com with SMTP id a640c23a62f3a-c29d50b7cf9so464798866b.2
-        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 08:13:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790608382; cv=none;
-        d=google.com; s=arc-20260327;
-        b=A7CCRhU2luc6h9Le87rlccQ6b19vzNjsD7JVGJsar5lsc5EHHLYt9re6d8csWf6e1K
-         DVeBh3F3Yuwdy1+yOU+IF6XpNIZ52+IA04s8V1YSnrTG5sx8+vqEXILRNBMVdQp8XieE
-         La5Ka/E0T1KsVPcR/n3mM406hpDcFzNg/kkpf7ARXRghexepyxO52Mfgza68xpickCtN
-         H9SGQg+BrrpEc87WnNsXUGZLS8gYRC/cWv0+oU6lqKwKz9IYls9IVUbkhxJyo9P/CdGM
-         zY45a6ecOyvbQDydiLUXlyLF8tk89/PNtLed6C58A1uCvwlnzzH+YAMiBaFz7jJHQws3
-         SdIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=5E4PEyWO836dD+odQ7JIg00tViBX/8MB5nfEafgD1g0=;
-        fh=aJ+vosYEVRI/SVgGof72hRGOVKB+pmpietCyA+RpIW8=;
-        b=VdAMYK+WiFGZsqrBKmffpGjWJWEt8a9vJ1Qums27VE7JDFZoBIlZG5Nl+lt9F2CRX9
-         cjOgnefvc1CN8ZSNM30EYxZ45Gum4iR7avf+jRQiQeKocukMnQ+ihXrG056UwYNqXWI7
-         ct1LBTx/YVlxvTA8uPkRXshDgHS43jQ9btZ+BTIJbODcUbwc/Yedwuqb7+PeGtH6Zq0b
-         HuVgooSrOkiJWEoOL5inI8TFxdbkx5AWBJxYu/RH3E7+u4nfTrRw27sgH5mzo8Ylho0C
-         p9mfPPquLzvszPyxUV1eHWw3monU230SfQpGu80j36+jsmMg3K/0F9ezEoji5fuDGIrs
-         LKjg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790608382; x=1791213182; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=5E4PEyWO836dD+odQ7JIg00tViBX/8MB5nfEafgD1g0=;
-        b=JOhGv+ntB9jLJ/1Dn4p78pWXRZupcrUafzEz6rVIjfSd3H266tc8y9AWqLG+1lRUoW
-         Hv2r/8ppahCzzLuXmeZ9fQ04IL+qVEi4ZElWuCA+KdZI2Kzc8wAr0McRfhqpAN/gZtr9
-         l0mQAYagxxM5b+dATcTMT/9ane7O9P18b+D78U+645mU4t3qoiDdQdyDzwt6plZI96li
-         9cu07w/02ryl8Hfy22h/GFL+w4QGiE4j/aWxqw5BCYkL7q0fELhbytBo6p9hU0eAz4CE
-         FdnyN9vUND7g9v32GfVibyN2TeP38t5WCCaA/YVoemcUedCgQ1HUbAIKdmVqOpRMevJp
-         4QhA==
+Received: by mail-vs2-f39.google.com with SMTP id 71dfb90a1353d-5cd1d9d65e2so2023870e0c.0
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 09:10:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790608382; x=1791213182;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=5E4PEyWO836dD+odQ7JIg00tViBX/8MB5nfEafgD1g0=;
-        b=mnLevHWgvDKLGUZ+dbbCOb/ocTd9Xznh5JhG/yhch8pDmw8ag/Vw4Zis8P6MRDsXiO
-         ArSNAbxg/aonqDRFn6g/Fv6YLHSpUgo+cdvgPAnHjoVgD1PDm5sgdi4ZnI6IgDzCtIGU
-         u6bit/boEwhQST2ZjtRAUbNWumJEEHDY8VLGH2jZr6mOsup9MlIbxwXhDh5v1XxGRh96
-         P9qvfp4wGrvlGCN5XDIUce3I+V4ZsE9I4M2tdsbrVl8Dpme+PC9zXWEBrvMTcavbCt48
-         rdshLYJva62AC9lOaf9CQlC11gXC5ey9opJbfa5iu3QyeDDJ0xZIX1WRao1RUr5OfE2D
-         4o0A==
-X-Forwarded-Encrypted: i=1; AKwUvBw7HWuL6GVjYzD3mStoUlQIj3ngGGmy2Jntpxr8wXSRgpfjRPP5hQBBVsds+hcH1nLLAf3KUPHr5iBo@vger.kernel.org
-X-Gm-Message-State: AFuF++lioG7R+g9tGMNAJBNVaRz4EAD3AcyV7/0S41li41Va+7tp7KnV
-	ob7jUwuNY5qOp18ahzfhGOsiDBEw4jl/cvco9y4WH+2OE7WxaYt4jizBQvOUx3AkC4xhK/a8F/9
-	vVqmPuyLsCDIsTZX2rVmvK3AizNS/UHg=
-X-Gm-Gg: AYBFou2rGLEXoVa1hkZvxIUVzCIBXsxCgnc1AppvVmG6EFElAdo7Z2ZuJC9Cjpa0boS
-	5i73z/h8UYAPbzPMqx7z/3/FmqiAxn3pc0KyQ/BMhiAagLkG5kFahig1nKcthuYHkwzqq74UJxl
-	wx0HJ1IbHLfSOY1lGRFG8SorOUSI/Jf5LGWMZt3w04uKvHVQIzKt85pG+gk+oK1eCXwvIIA95S0
-	s047nyAv1p+QEmW46vIR6sUwrBioK6tG+XlsTfJOTUK4a+Kf3UgQiS2rl6wRTawZGtpUZcodwP8
-	FHx4rXRfjxVgCMhP1Kgl8eMNXanfaMvPn8qMkJ9Ud8If0qis0mVg1/kKQ1cqKw+UA5CaUURuK+c
-	UtCXwmuMSbTNXvSkX1YLE3IbhNrYY3UrzvNJk2UlK96bxSROAd9ODZN1KpJDMsdf8RI2/z+CDhI
-	fxUzoRLz3cKCRqWSqe+OQJpseblQe+9oKiP6cjvdWZ
-X-Received: by 2002:a17:907:c589:b0:c2d:c6e7:9ea5 with SMTP id
- a640c23a62f3a-c2dc6e832a2mr406896066b.48.1790608382274; Mon, 28 Sep 2026
- 08:13:02 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1790611840; x=1791216640;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=8Q0b6nlsGqU/6knVqqPIUET6/nAm7GVMX2LsazzutA0=;
+        b=YfwncTcWdA/11JvCHa5SSSxWS6/lfgQHah+8YxQuUPTrJEmMiGzNSnGb2lTrdwBFDf
+         9GH6orqU2HD2EBk35/dVfqfAQjU7nriPhHrxiKarqZ9A91r1PbBzsQw/lOROKCEOmZli
+         ImoIaBAEU+mN8qBfC043hd6KPo7smDRJe/9ZmgLEdcuxJcR53TzYlW4dGc9mwm55N/SJ
+         32Ev4w83Crx4xsZgzRYeUc1NC2gYwJ4Kr1k46PfOy4LhPQNbe0Usquz6FiuHhYrEj0+T
+         DNmBPdrgNE6Op4HdCY8LIBq+vp2LR85Sb6TTABQiDgFZzE2tZdEHz44S2hKTjlD1lf3k
+         p/KQ==
+X-Forwarded-Encrypted: i=1; AKwUvBw0RC6FUYkKuNxiHLclGqf0qqllmViDYhOE0SoVeSW2btzMsbt6V7o65V/x1h+wU/8ZHnAavDaPtoXt@vger.kernel.org
+X-Gm-Message-State: AFq9FYIZRqHDtZ1Nx3MT2zIlZTqVXtieJ9TUp7dRCYIN5hGwsrOqW2j1
+	O406nafqYTp9U9ammJJ3HUtGHg+A3S4ehCoStHHyUYV6ykwYt51/XN/S/EUnZznN8Sc=
+X-Gm-Gg: AYBFou1OxkCXAx6epk79jHABm4mYimFHMIzDI+3Kns4v17C0/NbaxsqpIeiduZttFVD
+	LIx/obxsz9FSfLKLMt3tzko5kKbzzPHTY8O3CN7sg37ElN7Ksfmus90QESXhzBZHMLL/3CCfa77
+	QaaPCoL1Td3UhkLUJdyA7V55D93EPuoRd4vtB7MH4WaY1qqguf6AcwUKjxIFlZWuB35EZa+S37A
+	zaPoGOUGRIiOUXGO7WfEA1ILXqbMuYZoEMx72BCBtQyRGIFRI2B9WM0P7mzNZXc36aKlEzhoU/1
+	NqNRVQaF4Dm7GVq9gjSOrf918G/OY59NvynwE/+koy53Co+Vqyx7HHSBFUSh8I3EqkOzvxmkGDf
+	jYYQOEDZmw5Jg1ji5FQqyyApKYYiTvS9C1s5QTYXGRcS+0yl4ol1ntlMklZB6iQt42Gaoot2YAB
+	yFwJrdoFC3g1CNdhjKNKVTuLtXhCqPZraDUNKcdFwt7sS4IByQWT2iszEnWjx9WVZwx9wLmbRdw
+	1XdWzjs1DxzdFyxZY1au97xZwpbnUt9z3dL2Q==
+X-Received: by 2002:a05:6102:4b12:b0:7a7:19aa:8a84 with SMTP id ada2fe7eead31-7af1edec48amr4975952137.31.1790611839753;
+        Mon, 28 Sep 2026 09:10:39 -0700 (PDT)
+Received: from mail-vs2-f42.google.com (mail-vs2-f42.google.com. [74.125.227.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7b398ee9869sm10010042137.1.2026.09.28.09.10.34
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Sep 2026 09:10:35 -0700 (PDT)
+Received: by mail-vs2-f42.google.com with SMTP id 71dfb90a1353d-5c979c5eca8so2412399e0c.2
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 09:10:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxpzwXyZIe52Z+b63B+ZGvkLtgQuu1oKXoFAAWxgDPrNvRv9MPmpi0IjLsk3YQ6vCRRLp2A5MNpMJbn@vger.kernel.org
+X-Received: by 2002:a05:6102:3f46:b0:7a7:19aa:8a89 with SMTP id
+ ada2fe7eead31-7af1f2fdbe0mr4785652137.36.1790611833554; Mon, 28 Sep 2026
+ 09:10:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260925-gpio-organize-by-vendor-v1-1-8feefd60581b@oss.qualcomm.com>
- <arZRZfa7AmDxmwoJ@ashevche-desk.local> <20260925125433.GY106095@black.igk.intel.com>
- <araGjQoaffMhDMLz@ashevche-desk.local> <20260926100727.GB106095@black.igk.intel.com>
- <CAMRc=Mc-C4ptY5phhAkpq7DbE-+=G5h4XByYdj2Xx5sVS-vvrQ@mail.gmail.com>
- <CAHp75VcctaQpSpKbr8i+LPfE8Ukazyn8=KhwsSa+4sbhvQ=WVQ@mail.gmail.com>
- <CAMRc=McKAR7VadTYtTfU1kAHSRidj_AdhBbDh+2zNpFWhjA2mw@mail.gmail.com>
- <CAHp75VdGwVf2pCXzmQoY5zvgSf0KsRH8hU9Qt45iZmEG0KMzCA@mail.gmail.com> <CAMRc=Me_sAdbqLq6s9sQ+Ti2_CfE8uHbAVqhe=PPpu8kPGkn9g@mail.gmail.com>
-In-Reply-To: <CAMRc=Me_sAdbqLq6s9sQ+Ti2_CfE8uHbAVqhe=PPpu8kPGkn9g@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 28 Sep 2026 18:12:23 +0300
-X-Gm-Features: AclHuK8lJS10KkKdFcCgLuRsXmydms__7cM4iW5YRwldJw9VEyq9-un9oy7m0aY
-Message-ID: <CAHp75Vf=2nN1xX=2jB5nj8AO4VQSAcXBg+xFQe5qk_A+Z0Uq_w@mail.gmail.com>
-Subject: Re: [PATCH RFC] gpio: move intel drivers into their own directory
-To: Bartosz Golaszewski <brgl@kernel.org>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>, Linus Walleij <linusw@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>, Lixu Zhang <lixu.zhang@intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>, Mika Westerberg <westeri@kernel.org>, 
-	Israel Cepeda <israel.a.cepeda.lopez@intel.com>, Hans de Goede <hansg@kernel.org>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>
+References: <20260928-rzg2-sr-boards-v9-0-5901e0fc9e44@solid-run.com> <20260928-rzg2-sr-boards-v9-8-5901e0fc9e44@solid-run.com>
+In-Reply-To: <20260928-rzg2-sr-boards-v9-8-5901e0fc9e44@solid-run.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 28 Sep 2026 18:10:22 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUEC9YoZySP3+-UMP0s9XHg4OOsS1Lh65ew2zka=5RC+Q@mail.gmail.com>
+X-Gm-Features: AclHuK-UMUf9NZIHGIv0UWf0z0Dz2lXiorAQQxBHpxwCZfCPbVVPhasZYdlvx6s
+Message-ID: <CAMuHMdUEC9YoZySP3+-UMP0s9XHg4OOsS1Lh65ew2zka=5RC+Q@mail.gmail.com>
+Subject: Re: [PATCH v9 08/11] arm64: dts: renesas: add support for solidrun
+ hb-ripple with rzg2l som
+To: Josua Mayer <josua@solid-run.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
+	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
+	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 28, 2026 at 5:13=E2=80=AFPM Bartosz Golaszewski <brgl@kernel.or=
-g> wrote:
+Hi Josua,
+
+On Mon, 28 Sept 2026 at 16:40, Josua Mayer <josua@solid-run.com> wrote:
+> Add support for the SolidRun HummingBoard Ripple [2] with RZ/G2L
+> SoM [1].
 >
-> On Mon, 28 Sep 2026 15:12:18 +0200, Andy Shevchenko
-> <andy.shevchenko@gmail.com> said:
-> > On Mon, Sep 28, 2026 at 3:25=E2=80=AFPM Bartosz Golaszewski <brgl@kerne=
-l.org> wrote:
-> >> On Mon, 28 Sep 2026 13:34:44 +0200, Andy Shevchenko
-> >> <andy.shevchenko@gmail.com> said:
-> >> > On Mon, Sep 28, 2026 at 2:13=E2=80=AFPM Bartosz Golaszewski <brgl@ke=
-rnel.org> wrote:
-> >> >> On Sat, 26 Sep 2026 12:07:27 +0200, Mika Westerberg
-> >> >> <mika.westerberg@linux.intel.com> said:
-> >> >> > On Fri, Sep 25, 2026 at 05:34:53PM +0300, Andy Shevchenko wrote:
-> >> >> >> On Fri, Sep 25, 2026 at 02:54:33PM +0200, Mika Westerberg wrote:
-> >> >> >> > On Fri, Sep 25, 2026 at 01:48:05PM +0300, Andy Shevchenko wrot=
-e:
-> >> >> >> > > On Fri, Sep 25, 2026 at 12:22:15PM +0200, Bartosz Golaszewsk=
-i wrote:
-
-...
-
-> >> >> >> > > >  drivers/gpio/{ =3D> intel}/gpio-graniterapids.c   |  0
-> >> >> >> > > >  drivers/gpio/{ =3D> intel}/gpio-novalake-events.c |  0
-> >> >> >> > >
-> >> >> >> > > These are interesting drivers, not sure where to put them
-> >> >> >> >
-> >> >> >> > IMHO they should be there too. We are maintaining them both.
-> >> >> >>
-> >> >> >> Do you send PRs to Bart or you just rely on him to take the patc=
-hes?
-> >> >> >
-> >> >> > I don't expect these two drives to get too much attention, and th=
-ey could
-> >> >> > be contained nicely inside intel folder and that would help Bart =
-to
-> >> >> > identify that these are Intel drivers. So your bandwidth would no=
-t suffer
-> >> >> > even if these two are added there. Your call.
-> >> >>
-> >> >> I'd like to avoid a situation where we have Andy's Intel drivers un=
-der
-> >> >> drivers/gpio/intel/ and other Intel drivers under drivers/gpio/. I'=
-d prefer
-> >> >> to move all of intel GPIO drivers into drivers/gpio/intel/ and have=
- Andy
-> >> >> gather changes to them if he agrees.
-> >> >
-> >> > Okay, we have two parts missing:
-> >> > - Nova Lake driver (I would need Adam or Mika to step in as at least=
- a
-> >> > designated reviewer for that)
-> >>
-> >> Acked.
-> >>
-> >> > - USB IO (I think we need to agree which tree it will go through, my
-> >> > bet that media tree is the best), for that we need Hans' consent
-> >>
-> >> So far the initial commit was picked up by Greg and the other two were
-> >> signed-off by me with Acks from intel people.
-> >>
-> >> I'd do the same thing as for nova lake: Israel, Hans and Sakari as rev=
-iewers
-> >> and you queue the changes?
-> >
-> > I'm fine with this route as well. Since Hans replied, this all depends
-> > on Sakari's answer.
+> The HummingBoard Ripple is a reduced version of HummingBoard Pulse,
+> featuring:
+> - 2x USB-2.0 Type-A connector
+> - 1x 1Gbps RJ45 Ethernet
+> - micro-HDMI connector
+> - microSD connector
+> - mini-PCI-E connector with SIM slot supporting USB-2.0 interface
+> - MIPI-CSI Camera Connector (not described without specific camera)
+> - RTC with backup battery
 >
-> Does this include moving this driver under drivers/media/ as well?
+> The carrier board is identical between RZ/G2L, RZ/G2LC, RZ/G2UL and
+> RZ/V2L SoMs, yet only the RZ/G2LC combination has a product page [2].
+>
+> While the variant being supported here is named "Ripple", shared include
+> files are still named according to the full board for consistency with
+> schematics, silk screen labels and other SoMs on same board.
+>
+> Description for microSD is shared with HummingBoard IIoT.
+>
+> [1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2l-som/
+> [2] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2lc-base/
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
 
-I didn't consider that. But if Sakari wants that as well, I won't object.
+Thanks for the update!
 
---=20
-With Best Regards,
-Andy Shevchenko
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r9a07g044l2-hummingboard-ripple.dts
+> @@ -0,0 +1,17 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/*
+> + * Copyright 2025 Josua Mayer <josua@solid-run.com>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "r9a07g044l2.dtsi"
+> +#include "rzg2l-sr-som.dtsi"
+> +#include "rzg2l-hummingboard-ripple.dtsi"
+> +#include "rzg2l-hummingboard-pulse-micro-hdmi.dtsi"
+
+This new include is not needed, as rzg2l-hummingboard-ripple.dtsi
+already includes it:
+
+
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/rzg2l-hummingboard-ripple.dtsi
+> @@ -0,0 +1,125 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +/*
+> + * Copyright 2025 Josua Mayer <josua@solid-run.com>
+> + */
+> +
+> +#include "rzg2l-hummingboard-pulse-common.dtsi"
+> +#include "rzg2l-hummingboard-pulse-micro-hdmi.dtsi"
+
+Same for patch [09/11].
+
+Patch [10/11] is fine, as that one does not share
+rzg2l-hummingboard-ripple.dtsi.
+
+As the rest LGTM, I can fix that while applying, so no need to send
+a v10.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
