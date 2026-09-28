@@ -1,149 +1,212 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137552DF137;
-	Mon, 28 Sep 2026 21:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA2D4848A6;
+	Mon, 28 Sep 2026 21:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790630418; cv=none; b=UUJ4q6CJFupcuPYmVl+/S2wfEAmvK7s/RNXSr2eS684aqNQfayOWpbJOgDMlCidHghLVfMRknYJ98zocLZfv3NFZc6WnOZbMjJqElSiihzM6eFRkg6mDI3zvZWtiRuMygvL0ntDAAs5LT/SJEWedf4K2UyIhto3sb5a5TTLbrZk=
+	t=1790630892; cv=none; b=rDFUwmwxMwXBpCJc7cZIlOMsUP2KDTIYoI7iW98uQyGgAAC3NDDnNaYZCnr/EftMFojlazdd/z/IIgof/kkk+51EWvG/yjC5NFwjBgTvhIgtSvT3YgNiCykYFHa7NcrKR95S0kIKqmCO7Q7Qrvr2EU2EgRFx5Tun02BeodlbcCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790630418; c=relaxed/simple;
-	bh=0wSVDTCo6Cmwys7tnYEeKLwVKpVfZlfujTiInN+fmU0=;
+	s=arc-20240116; t=1790630892; c=relaxed/simple;
+	bh=5cY3Loxrz+aQoEE5dRtjAknUbuyx+/jkMLJCVs2R+0s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sHmj2tKgVKLDeKCSEJghQj6l8R5fKiGrgpsaPEBseeaA35tSLf1U+PGswZz5ZdFsb262yOsHur+o5jjw2h2Kjv8bh2ZPwcNG8qvHHLHCar4+7+RjNUmsIYzWWYkzRMq2XMp+GVqt62JgfK9FyaVV+mHoRn+iC9mYxyKHh2csZ7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n958H5Up; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=IUcJnokf1IFfaqSDlFWHqpArYcf+sIGKsDpaSzxtXV7+BzJlNDoKofO4E8FXALQNXrl/XAB02dEvK2IPC4cveBMzUfc89VtongKZcSB4OUasLQVf8xm0eVT8GzvvU1dAe/yf4dezovlKmHAAxkH28MAk5+04ZH1R5T4UVoyXssg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LT6OLFBT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n958H5Up"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1790630416; x=1822166416;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=0wSVDTCo6Cmwys7tnYEeKLwVKpVfZlfujTiInN+fmU0=;
-  b=n958H5UpR8Az89BLZVIhnjHieXggGbuXWm3PH1TBbsvvLvauCnbzChFH
-   Qw+NFOmLOegdujH6fBllP4T9qgFbQ0SzzgW+fvuvqVEosxeqvMUT9LhEJ
-   yGKgAIjMB4BjdISDo6r1XxBLEG29OLg8qilPNHuQEygvP67vSUqjm4Uhc
-   PG7QpU4YQYTGSAmyuFJhgBWdP5amM/B8EVICGg2xRrACy3DVsB1Im+Qf2
-   xAFft6CeKLbTIHaL/X5uu8gZ/C5ODdG9rVyIun1K4J5hs2oQgamoL6PMD
-   gYIIJE6bN/zX1lIK5fSlW3qkFZ2/5oMrfIuwytvlgD5O/HG/USbnyUJ5j
-   w==;
-X-CSE-ConnectionGUID: KUJ/8WjbS0aeI0uKboUm0A==
-X-CSE-MsgGUID: f6VshuGhSlSadxay0XRVZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11919"; a="90241512"
-X-IronPort-AV: E=Sophos;i="6.27,129,1787036400"; 
-   d="scan'208";a="90241512"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2026 14:20:15 -0700
-X-CSE-ConnectionGUID: AGZ5CZMOQNOYeMPPTm7j0Q==
-X-CSE-MsgGUID: VLHkZjNMQqGymVNuLkchfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,129,1787036400"; 
-   d="scan'208";a="274274161"
-Received: from amilburn-desk.amilburn-desk (HELO kekkonen.fi.intel.com) ([10.245.244.174])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2026 14:20:12 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id E9D8E11FBD1;
-	Tue, 29 Sep 2026 00:20:12 +0300 (EEST)
-Date: Tue, 29 Sep 2026 00:20:12 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Hans de Goede <hansg@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>,
-	Lixu Zhang <lixu.zhang@intel.com>,
-	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Miguel Vadillo <miguel.vadillo@intel.com>
-Subject: Re: [PATCH RFC] gpio: move intel drivers into their own directory
-Message-ID: <arraDNEO5NuxgTz6@kekkonen.localdomain>
-References: <20260925-gpio-organize-by-vendor-v1-1-8feefd60581b@oss.qualcomm.com>
- <arZRZfa7AmDxmwoJ@ashevche-desk.local>
- <20260925125433.GY106095@black.igk.intel.com>
- <araGjQoaffMhDMLz@ashevche-desk.local>
- <20260926100727.GB106095@black.igk.intel.com>
- <CAMRc=Mc-C4ptY5phhAkpq7DbE-+=G5h4XByYdj2Xx5sVS-vvrQ@mail.gmail.com>
- <CAHp75VcctaQpSpKbr8i+LPfE8Ukazyn8=KhwsSa+4sbhvQ=WVQ@mail.gmail.com>
- <50a29ae4-bae1-44be-9dbe-79a1147accf0@kernel.org>
- <CAHp75VeHupSXCBUyoUdPXY-GvBcupQ9kczhr-M3=WLkEzDKyvw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LT6OLFBT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B20481F000FF;
+	Mon, 28 Sep 2026 21:28:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790630890;
+	bh=NwacZ9pPcRCMIBHxhyeWDNBEuogXcwr5zpJ51dE66kc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=LT6OLFBT6h/+I1tRgEjs5NFf6ABdzzof70WqRxhgSuqYRPpEbDIbDIJH9owX2EDRd
+	 9JeKi+rDuk8EWdvrzI3/Xfe+A7KlA2niG844qWsNSYySpEOdORneodIq1rZG8fIhok
+	 KZpJotf6EbMOUiwaqoDc8vsvpia3Iv8KSVPstTBGB+ahtvpnRdsfuSerWiWZ7Gaxlq
+	 Lx7IO0nDUtmKnLnfNmP2lviN2rb8lOxjGukwDOBgbD7UKdDu9d08QHHXnirJtLtSb3
+	 wA1VP5j4btkQRLBz7Hkd8a9TdoT0B8UlEqN9fZFVfIVd4Yp8+OzpB/or0lIhx2GbHa
+	 CDtuRfJw1/2Ow==
+Date: Mon, 28 Sep 2026 16:28:09 -0500
+From: Rob Herring <robh@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: devicetree@vger.kernel.org, Linus Walleij <linusw@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	"open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] dt-bindings: pinctrl: convert nsp-gpio binding
+Message-ID: <20260928212809.GA733508-robh@kernel.org>
+References: <20260927212748.123558-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VeHupSXCBUyoUdPXY-GvBcupQ9kczhr-M3=WLkEzDKyvw@mail.gmail.com>
+In-Reply-To: <20260927212748.123558-1-rosenp@gmail.com>
 
-Hi Andy,
-
-On Mon, Sep 28, 2026 at 04:10:41PM +0300, Andy Shevchenko wrote:
-> On Mon, Sep 28, 2026 at 3:35 PM Hans de Goede <hansg@kernel.org> wrote:
-> > On 28-Sep-26 13:34, Andy Shevchenko wrote:
-> > > On Mon, Sep 28, 2026 at 2:13 PM Bartosz Golaszewski <brgl@kernel.org> wrote:
-> > >> On Sat, 26 Sep 2026 12:07:27 +0200, Mika Westerberg
-> > >> <mika.westerberg@linux.intel.com> said:
-> > >>> On Fri, Sep 25, 2026 at 05:34:53PM +0300, Andy Shevchenko wrote:
-> > >>>> On Fri, Sep 25, 2026 at 02:54:33PM +0200, Mika Westerberg wrote:
-> > >>>>> On Fri, Sep 25, 2026 at 01:48:05PM +0300, Andy Shevchenko wrote:
-> > >>>>>> On Fri, Sep 25, 2026 at 12:22:15PM +0200, Bartosz Golaszewski wrote:
+On Sun, Sep 27, 2026 at 02:27:48PM -0700, Rosen Penev wrote:
+> The brcm,nsp-gpio-a compatible used by the NSP GPIO controller was only
+> documented in the legacy text binding, so dtbs_check reported "failed to
+> match any schema" for the gpio@20 node present in the bcm958625 and
+> related broadcom boards.
 > 
-> ...
+> Convert Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.txt to
+> a YAML schema and drop the text binding. Keep the existing required and
+> optional properties (reg, #gpio-cells, gpio-controller, ngpios, and the
+> optional interrupt/gpio-ranges support), including the generic pinconf
+> child nodes with pin bias and drive-strength.
 > 
-> > >>>>>>>  drivers/gpio/{ => intel}/gpio-graniterapids.c   |  0
-> > >>>>>>>  drivers/gpio/{ => intel}/gpio-novalake-events.c |  0
-> > >>>>>>
-> > >>>>>> These are interesting drivers, not sure where to put them
-> > >>>>>
-> > >>>>> IMHO they should be there too. We are maintaining them both.
-> > >>>>
-> > >>>> Do you send PRs to Bart or you just rely on him to take the patches?
-> > >>>
-> > >>> I don't expect these two drives to get too much attention, and they could
-> > >>> be contained nicely inside intel folder and that would help Bart to
-> > >>> identify that these are Intel drivers. So your bandwidth would not suffer
-> > >>> even if these two are added there. Your call.
-> > >>
-> > >> I'd like to avoid a situation where we have Andy's Intel drivers under
-> > >> drivers/gpio/intel/ and other Intel drivers under drivers/gpio/. I'd prefer
-> > >> to move all of intel GPIO drivers into drivers/gpio/intel/ and have Andy
-> > >> gather changes to them if he agrees.
-> > >
-> > > Okay, we have two parts missing:
-> > > - Nova Lake driver (I would need Adam or Mika to step in as at least a
-> > > designated reviewer for that)
-> > > - USB IO (I think we need to agree which tree it will go through, my
-> > > bet that media tree is the best), for that we need Hans' consent
-> >
-> > Routing the USBIO / LCJA GPIO drivers to the media-tree, with
-> > Sakari likely doing the merging for both works for me.
+> Pin configuration nodes may be direct children of the controller or
+> grouped under a "-pins" node; both forms are recognized, and each "-pins"
+> node may group further pin configuration children. Child nodes named
+> "-hog" are supported as GPIO hogs.
 > 
-> Sure, Sakari, would it work for you?
+> The generic pinconf and pinmux helper schemas end in
+> "additionalProperties: true" and cannot close the node from an in-place
+> applicator, so spell out the supported subset and set
+> "additionalProperties: false" in the local pin configuration node schema.
+> Without it misspelled or unsupported properties such as "bias-pullup" or
+> "slew-rate" are silently accepted.
+> 
+> Controller children are matched with "anyOf" against the pin
+> configuration node schema and against "not: { type: object }". The
+> latter keeps non-node properties such as #pinctrl-cells or clocks from
+> being forced through the pin configuration schema, while still rejecting
+> pin configuration child nodes that do not look like one. A plain
+> "additionalProperties: false" cannot be used here because it would also
+> reject the directly nested pin configuration nodes.
+> 
+> Assisted-by: LLM
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  v3: add additionalProperties
+>  v2: don't drop gpio-hog
+>  .../bindings/pinctrl/brcm,nsp-gpio.txt        |  80 ----------
+>  .../bindings/pinctrl/brcm,nsp-gpio.yaml       | 144 ++++++++++++++++++
+>  2 files changed, 144 insertions(+), 80 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.yaml
 
-Yes.
 
-That being said, the USBIO driver(s) come in three parts, this one (GPIO),
-I²C and the main USB USBIO driver. Patches (or at least the set they're in)
-often touch more than one and then they're routed through the USB tree in
-practice. It'd be practical all would be merged via the media tree, unless
-there are dependencies to other parts of the respective tree.
+> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.yaml
+> new file mode 100644
+> index 000000000000..e5144da1bf57
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.yaml
+> @@ -0,0 +1,144 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pinctrl/brcm,nsp-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Broadcom Northstar Plus (NSP) GPIO/PINCONF Controller
+> +
+> +maintainers:
+> +  - Ray Jui <rjui@broadcom.com>
+> +  - Scott Branden <sbranden@broadcom.com>
+> +
+> +description: |
+> +  The chipCommonA GPIO block also provides generic pin configuration for the
+> +  pins it controls: bias, pull up/down and drive strength. Pin configuration
+> +  child nodes may be direct children of the controller, or grouped under a
+> +  '-pins' node. In both cases the pin configuration nodes are referenced by
+> +  the consuming device through the standard pinctrl-0/pinctrl-names
+> +  properties. Child nodes named '*-hog' are treated as GPIO hogs.
+> +
+> +properties:
+> +  compatible:
+> +    const: brcm,nsp-gpio-a
+> +
+> +  reg:
+> +    items:
+> +      - description: GPIO base registers
+> +      - description: IO control registers
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +    description: |
+> +      The first cell is the GPIO pin number (within the controller's pin
+> +      space) and the second cell is used for the following:
+> +      bit[0]: polarity (0 for active high and 1 for active low)
+> +
+> +  gpio-controller: true
+> +
+> +  ngpios:
+> +    description: Number of GPIOs supported (58x25 supports 32 and 58x23 supports 24)
+> +    maximum: 32
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  "#interrupt-cells":
+> +    const: 2
+> +
+> +  interrupt-controller: true
+> +
+> +  gpio-ranges: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#gpio-cells"
+> +  - gpio-controller
+> +  - ngpios
+> +
+> +$defs:
+> +  nsp-gpio-pinconf:
+> +    type: object
+> +    allOf:
+> +      - $ref: pincfg-node.yaml#
+> +      - $ref: pinmux-node.yaml#
+> +
+> +    properties:
+> +      pins:
+> +        $ref: /schemas/types.yaml#/definitions/string-array
+> +        items:
+> +          pattern: '^gpio-'
+> +
+> +      bias-disable: true
+> +      bias-pull-up: true
+> +      bias-pull-down: true
+> +
+> +      drive-strength:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        enum: [ 2, 4, 6, 8, 10, 12, 14, 16 ]
+> +
+> +    required:
+> +      - pins
+> +
+> +    additionalProperties: false
+> +
+> +patternProperties:
+> +  '-pins$':
+> +    oneOf:
+> +      - $ref: '#/$defs/nsp-gpio-pinconf'
+> +      - type: object
+> +        additionalProperties:
+> +          $ref: '#/$defs/nsp-gpio-pinconf'
+> +
+> +  '-hog(-[0-9]+)?$':
+> +    type: object
+> +    required:
+> +      - gpio-hog
+> +
+> +additionalProperties:
+> +  anyOf:
+> +    - $ref: '#/$defs/nsp-gpio-pinconf'
 
-Perhaps we should still do this to GPIO first and then think about the
-rest.
+This is a superset of what '-pins$' allows in the first oneOf entry. Not 
+much point in defining '-pins' if any name is allowed unless '-pins' is 
+only for container nodes.
 
-Also cc Miguel.
+> +    - not:
+> +        type: object
 
--- 
-Kind regards,
+sashiko comment is correct here.
 
-Sakari Ailus
+Rob
