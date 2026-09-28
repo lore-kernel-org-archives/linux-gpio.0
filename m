@@ -1,212 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com [209.85.167.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA2D4848A6;
-	Mon, 28 Sep 2026 21:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA114FD7B2
+	for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 21:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790630892; cv=none; b=rDFUwmwxMwXBpCJc7cZIlOMsUP2KDTIYoI7iW98uQyGgAAC3NDDnNaYZCnr/EftMFojlazdd/z/IIgof/kkk+51EWvG/yjC5NFwjBgTvhIgtSvT3YgNiCykYFHa7NcrKR95S0kIKqmCO7Q7Qrvr2EU2EgRFx5Tun02BeodlbcCM=
+	t=1790631816; cv=none; b=ijbtDA1JQAPpBNGv5OVXhoPXpxIBXpqtvsxHUlZ3OfO6EMKIc4TpH3X/GQeYb5MpoGlkjfjvRObO2CrQQ6Qm78CuGDQjDfUOZaN5qk5Q26v+x9QRpkOqfRvDhGthrKhhNPbvZ0Vpl6Ot3GBRH+mvx8X/LKXrb982+F6WJZrWQtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790630892; c=relaxed/simple;
-	bh=5cY3Loxrz+aQoEE5dRtjAknUbuyx+/jkMLJCVs2R+0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUcJnokf1IFfaqSDlFWHqpArYcf+sIGKsDpaSzxtXV7+BzJlNDoKofO4E8FXALQNXrl/XAB02dEvK2IPC4cveBMzUfc89VtongKZcSB4OUasLQVf8xm0eVT8GzvvU1dAe/yf4dezovlKmHAAxkH28MAk5+04ZH1R5T4UVoyXssg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LT6OLFBT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790631816; c=relaxed/simple;
+	bh=lolwbi7BzgsmuaWUMs8RXInBeiNA5YPYs075xjDFuJI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=BU7DifSyzVHXOXq3wahXI0YqJOgRlAEvL7Gc7dP6/BXW/CxhVdzhr8Jjn1TUwnQmcec3OUa5MP4lC+sJqfRMFu1MtFsXpX6++Hvje3nV9U9usBDOg8+NHOtlxaSiX1h5DI3daLtKIXNotKzEEX9AuvnVqjdcVPXT2R/FkErvpVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EDpUH6gT; arc=none smtp.client-ip=209.85.167.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LT6OLFBT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B20481F000FF;
-	Mon, 28 Sep 2026 21:28:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790630890;
-	bh=NwacZ9pPcRCMIBHxhyeWDNBEuogXcwr5zpJ51dE66kc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=LT6OLFBT6h/+I1tRgEjs5NFf6ABdzzof70WqRxhgSuqYRPpEbDIbDIJH9owX2EDRd
-	 9JeKi+rDuk8EWdvrzI3/Xfe+A7KlA2niG844qWsNSYySpEOdORneodIq1rZG8fIhok
-	 KZpJotf6EbMOUiwaqoDc8vsvpia3Iv8KSVPstTBGB+ahtvpnRdsfuSerWiWZ7Gaxlq
-	 Lx7IO0nDUtmKnLnfNmP2lviN2rb8lOxjGukwDOBgbD7UKdDu9d08QHHXnirJtLtSb3
-	 wA1VP5j4btkQRLBz7Hkd8a9TdoT0B8UlEqN9fZFVfIVd4Yp8+OzpB/or0lIhx2GbHa
-	 CDtuRfJw1/2Ow==
-Date: Mon, 28 Sep 2026 16:28:09 -0500
-From: Rob Herring <robh@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: devicetree@vger.kernel.org, Linus Walleij <linusw@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	"open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] dt-bindings: pinctrl: convert nsp-gpio binding
-Message-ID: <20260928212809.GA733508-robh@kernel.org>
-References: <20260927212748.123558-1-rosenp@gmail.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EDpUH6gT"
+Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-4e778acdbc6so3423107b6e.3
+        for <linux-gpio@vger.kernel.org>; Mon, 28 Sep 2026 14:43:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20251104; t=1790631813; x=1791236613; darn=vger.kernel.org;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=7aUgUJEFAJxW4Agj9ChYhUj4PsOMZgwR99tcMvPKR8w=;
+        b=EDpUH6gTM7vM1OXi8yCTQOJUlAk/wImBdnFMDHyWScmSsaINBtuqhN9t24V+TkRZ4G
+         wrUopqNcx950PmvmYTAqNHnrNiiGGRoP+G5ITiZG07vDxCxxyP8HczxwCwYt+oC7Azpl
+         jN9oM/XtAY9vsHIJ+pVysOpuLDYDmhIbKPhtJyDveDJJL8EohMV3j/0QYXZ25QBLH4N3
+         oH5VO4CAM52pBqVuaQUv13G234gv84Qy5id5gLGltXF/VJYqa0ryHWitihsFrfs2PUCN
+         F2NLwjpd3grGM4Y+Re/Afv3Gsb/yeeqezgAXScS56N9oN6xc8h7dFwS/2TgPi0cOnsQ/
+         QMEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790631813; x=1791236613;
+        h=content-type:cc:to:from:subject:message-id:references:mime-version
+         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=7aUgUJEFAJxW4Agj9ChYhUj4PsOMZgwR99tcMvPKR8w=;
+        b=N9ZkJfV0/7ZzMTY7vL6YVZ5tJds2Q640+ZU+tP0y5ykrOLnTlhLzclb512oiriCOG7
+         z6oJ07ZfCTDziPIgl/VcCdWfwnwWSRacGRwyBkdtkXUFoLIdp5oHdEBdc+pLVBSzLnQC
+         ELgx9Vf7VRRrrJsrZMJ3Vp7+euYjgBI+cdqOZwkOz/YSVbrdHZTpW1iuBLA1z3Wgcz5Z
+         ji+sTkwxqkvOTz0J35dfq2SSrJ6zCLQR5aVWE9kb5kbc6jvvJF99QmnaFd4WXi2k4Q56
+         V1vT5zeSqK7BS86IIlTnnesBZ6e2CUtQwd8RI+eyfu0zIoOk2A8cd2Msn1KG9XFbRFhV
+         hK8g==
+X-Forwarded-Encrypted: i=1; AKwUvBxSbHT1eP0Oz1JafJeQaKPt1mHX+ymT2tlu+E5DfYnTX0w6TUtTAsh4wS26rLurfLbLLDhkT846vCwR@vger.kernel.org
+X-Gm-Message-State: AFuF++lC0fpasLH+ItZRZyfToNJ4Xhge23zjSjI+UMImzhDD2K6v87sx
+	ba2V2uLVs0EgpWC3xPbglhlwXmDdyLZ2AXi4GEn8/+J3OaZr3vW7X63iMI7pltLV0tt/bMj372u
+	O+8TESnDf/HusVnsj6r+iqVzrjQ==
+X-Received: from jaes22.prod.google.com ([2002:a05:6638:aed6:b0:5ec:8614:b65a])
+ (user=justinstitt job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6808:1a03:b0:4cb:f21c:a795 with SMTP id 5614622812f47-4d72982efa6mr13977211b6e.29.1790631812905;
+ Mon, 28 Sep 2026 14:43:32 -0700 (PDT)
+Date: Mon, 28 Sep 2026 14:43:32 -0700
+In-Reply-To: <20260927190758.609156-1-nikitash.mariiaw@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260927212748.123558-1-rosenp@gmail.com>
+Mime-Version: 1.0
+References: <20260927190758.609156-1-nikitash.mariiaw@gmail.com>
+Message-ID: <arrfZ5CYyLt0vwu5@google.com>
+Subject: Re: [PATCH] pinctrl: samsung: Use snprintf() to construct pin bank names
+From: Justin Stitt <justinstitt@google.com>
+To: Mariia Nikitash <nikitash.mariiaw@gmail.com>
+Cc: krzk@kernel.org, s.nawrocki@samsung.com, peter.griffin@linaro.org, 
+	linusw@kernel.org, alim.akhtar@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, morbo@google.com, kees@kernel.org, 
+	aleksandr.loktionov@intel.com, codemender-patching+linux@google.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Sun, Sep 27, 2026 at 02:27:48PM -0700, Rosen Penev wrote:
-> The brcm,nsp-gpio-a compatible used by the NSP GPIO controller was only
-> documented in the legacy text binding, so dtbs_check reported "failed to
-> match any schema" for the gpio@20 node present in the bcm958625 and
-> related broadcom boards.
+Hi,
+
+On Sun, Sep 27, 2026 at 12:07:58PM -0700, Mariia Nikitash wrote:
+> From: Bill Wendling <morbo@google.com>
 > 
-> Convert Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.txt to
-> a YAML schema and drop the text binding. Keep the existing required and
-> optional properties (reg, #gpio-cells, gpio-controller, ngpios, and the
-> optional interrupt/gpio-ranges support), including the generic pinconf
-> child nodes with pin bias and drive-strength.
+> samsung_banks_node_get() constructs each pin bank node name by copying
+> bank->name with strscpy() and appending the suffix with strlcat().
 > 
-> Pin configuration nodes may be direct children of the controller or
-> grouped under a "-pins" node; both forms are recognized, and each "-pins"
-> node may group further pin configuration children. Child nodes named
-> "-hog" are supported as GPIO hogs.
+> In preparation for removing the deprecated strlcat() API[1], format the
+> node name in a single snprintf() call, which preserves the existing
+> truncation check against sizeof(node_name).
 > 
-> The generic pinconf and pinmux helper schemas end in
-> "additionalProperties: true" and cannot close the node from an in-place
-> applicator, so spell out the supported subset and set
-> "additionalProperties: false" in the local pin configuration node schema.
-> Without it misspelled or unsupported properties such as "bias-pullup" or
-> "slew-rate" are silently accepted.
-> 
-> Controller children are matched with "anyOf" against the pin
-> configuration node schema and against "not: { type: object }". The
-> latter keeps non-node properties such as #pinctrl-cells or clocks from
-> being forced through the pin configuration schema, while still rejecting
-> pin configuration child nodes that do not look like one. A plain
-> "additionalProperties: false" cannot be used here because it would also
-> reject the directly nested pin configuration nodes.
-> 
+> Link: https://github.com/KSPP/linux/issues/370 [1]
+> Cc: codemender-patching+linux@google.com
 > Assisted-by: LLM
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> Signed-off-by: Bill Wendling <morbo@google.com>
+> Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+> Signed-off-by: Mariia Nikitash <nikitash.mariiaw@gmail.com>
+
+Are you forwarding this patch on behalf of Bill? I see Bill as the
+author of the commit and I recall seeing this in some series he sent
+earlier [1] and this patch you've sent doesn't seem to be a v2.
+
+Let me know what your role is on this patch and why it has been
+separated out from Bill's series.
+
+It is entirely possible that I am lacking context. Please fill me in :)
+
 > ---
->  v3: add additionalProperties
->  v2: don't drop gpio-hog
->  .../bindings/pinctrl/brcm,nsp-gpio.txt        |  80 ----------
->  .../bindings/pinctrl/brcm,nsp-gpio.yaml       | 144 ++++++++++++++++++
->  2 files changed, 144 insertions(+), 80 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.yaml
+>  drivers/pinctrl/samsung/pinctrl-samsung.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index 5ecc9ed4c44d..0d639eec689c 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1155,8 +1155,7 @@ static void samsung_banks_node_get(struct device *dev, struct samsung_pinctrl_dr
+>  
+>  	bank = d->pin_banks;
+>  	for (i = 0; i < d->nr_banks; ++i, ++bank) {
+> -		strscpy(node_name, bank->name, sizeof(node_name));
+> -		len = strlcat(node_name, suffix, sizeof(node_name));
+> +		len = snprintf(node_name, sizeof(node_name), "%s%s", bank->name, suffix);
+>  		if (len >= sizeof(node_name)) {
+>  			dev_err(dev, "Too long pin bank name '%s', ignoring\n",
+>  				bank->name);
+> -- 
+> 2.43.0
+> 
+>
 
+[1]: https://lore.kernel.org/all/20260915081910.4142719-17-morbo@google.com/
 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.yaml b/Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.yaml
-> new file mode 100644
-> index 000000000000..e5144da1bf57
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/brcm,nsp-gpio.yaml
-> @@ -0,0 +1,144 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/brcm,nsp-gpio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Broadcom Northstar Plus (NSP) GPIO/PINCONF Controller
-> +
-> +maintainers:
-> +  - Ray Jui <rjui@broadcom.com>
-> +  - Scott Branden <sbranden@broadcom.com>
-> +
-> +description: |
-> +  The chipCommonA GPIO block also provides generic pin configuration for the
-> +  pins it controls: bias, pull up/down and drive strength. Pin configuration
-> +  child nodes may be direct children of the controller, or grouped under a
-> +  '-pins' node. In both cases the pin configuration nodes are referenced by
-> +  the consuming device through the standard pinctrl-0/pinctrl-names
-> +  properties. Child nodes named '*-hog' are treated as GPIO hogs.
-> +
-> +properties:
-> +  compatible:
-> +    const: brcm,nsp-gpio-a
-> +
-> +  reg:
-> +    items:
-> +      - description: GPIO base registers
-> +      - description: IO control registers
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +    description: |
-> +      The first cell is the GPIO pin number (within the controller's pin
-> +      space) and the second cell is used for the following:
-> +      bit[0]: polarity (0 for active high and 1 for active low)
-> +
-> +  gpio-controller: true
-> +
-> +  ngpios:
-> +    description: Number of GPIOs supported (58x25 supports 32 and 58x23 supports 24)
-> +    maximum: 32
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  "#interrupt-cells":
-> +    const: 2
-> +
-> +  interrupt-controller: true
-> +
-> +  gpio-ranges: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#gpio-cells"
-> +  - gpio-controller
-> +  - ngpios
-> +
-> +$defs:
-> +  nsp-gpio-pinconf:
-> +    type: object
-> +    allOf:
-> +      - $ref: pincfg-node.yaml#
-> +      - $ref: pinmux-node.yaml#
-> +
-> +    properties:
-> +      pins:
-> +        $ref: /schemas/types.yaml#/definitions/string-array
-> +        items:
-> +          pattern: '^gpio-'
-> +
-> +      bias-disable: true
-> +      bias-pull-up: true
-> +      bias-pull-down: true
-> +
-> +      drive-strength:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [ 2, 4, 6, 8, 10, 12, 14, 16 ]
-> +
-> +    required:
-> +      - pins
-> +
-> +    additionalProperties: false
-> +
-> +patternProperties:
-> +  '-pins$':
-> +    oneOf:
-> +      - $ref: '#/$defs/nsp-gpio-pinconf'
-> +      - type: object
-> +        additionalProperties:
-> +          $ref: '#/$defs/nsp-gpio-pinconf'
-> +
-> +  '-hog(-[0-9]+)?$':
-> +    type: object
-> +    required:
-> +      - gpio-hog
-> +
-> +additionalProperties:
-> +  anyOf:
-> +    - $ref: '#/$defs/nsp-gpio-pinconf'
-
-This is a superset of what '-pins$' allows in the first oneOf entry. Not 
-much point in defining '-pins' if any name is allowed unless '-pins' is 
-only for container nodes.
-
-> +    - not:
-> +        type: object
-
-sashiko comment is correct here.
-
-Rob
+Thanks
+Justin
