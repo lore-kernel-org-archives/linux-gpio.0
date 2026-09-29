@@ -1,166 +1,116 @@
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com [74.125.225.140])
+Received: from mail-pj2-f38.google.com (mail-pj2-f38.google.com [74.125.227.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA39A3D7D97
-	for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 15:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326E037AA9E
+	for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 17:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790696098; cv=none; b=F4/BJlQv4bFVyybV5v4HMLgJ5hENGhl+xMt9Tk15K4I9SUCwSHkSsk16fbMvE0GJAg5s/CfNTT5bgabTa190GbwSoPY6EV1jBzWyWa7/grLcIN9Vll4mrdGZyvB18sEaixAaS4TNMQaJu0TctIF5Smj1IEF1+NskGQVYVhKr1so=
+	t=1790703463; cv=none; b=s9vZk6rBUmsjVIaVjX70jo8CiRiaNSatvPlYIYjXeLAszQcht/XTVTkvuFb9yA015JW/pvP4IwCi1BICJGNWAxQApe18yeRE8OLUVTitr/eNrg+BMdUqdq1w4yA0LYg2k40kAOzUkSamEDOfvJ0KWJt/qYimcX6iu9GY71xmtAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790696098; c=relaxed/simple;
-	bh=CSu1cXiqbY/jfZtGsZTi+5MN622ll/b5t0C05YWaEAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LdMqrHHrpOcmVo/uH5+E1ZuatdWPz51BxDGAIIv+q88fwM3jl2ocEIxFy1bzpnB346jXQAiFUF0CUSp1bdJWR21GsIi/GtF/gXsSLJDXD4RbP+9ND7Sb7ZArxHRyHXUbP6anyj4oabi6eVAv/WTqtydvvRffYmTGjLhi9/RixIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=TNanFD3t; arc=none smtp.client-ip=74.125.225.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1790703463; c=relaxed/simple;
+	bh=WuUcAzxORAi/NvzLQhHihO2F18b29yojE4KRQaUUVOo=;
+	h=From:To:Cc:Date:Message-ID:Subject:MIME-Version:Content-Type; b=bsf1f9fa0A3mt+rpKaUBWB7UEZIw8TycfP2LQomi9369ep+RyGSav+jcT7BolC0TcJrVzH0zKj24hWCahVTJXqIZ4SnCoURIYbjGUbEpnQP59PlOznlCSOhBUJGuEEavK0PhYo9H7X7rtgDNJ8nF4L6/48OFfj82+JFt3yjzs6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aRuQ88z8; arc=none smtp.client-ip=74.125.227.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="TNanFD3t"
-Received: by mail-wm2-f12.google.com with SMTP id 5b1f17b1804b1-49cd5462b69so24799075e9.1
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 08:34:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aRuQ88z8"
+Received: by mail-pj2-f38.google.com with SMTP id 98e67ed59e1d1-3a4bb1ed012so244086a91.3
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 10:37:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1790696094; x=1791300894; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=bK1kRsPsOXdZFtj24JVUR5GYlNpzvwaq05tohnScRrQ=;
-        b=TNanFD3tMdr3qxAyG/YamAhZSglLIl5FKaJrSDYj3abZDaBc0mrzSec56Jxqg9ozyi
-         1UAtNVpfVKKpeOLRJ1ihZ/7COJaHHi1xI9wObDFnW7xk/pWit6WnXByryLHp24hGNnr0
-         omrUzZKQjLvnrbe2S2hmegXU0vtK3pJlR6AicRXo6OhFH/Ur3OYgHRHgIGFzb5Nde13q
-         E0pSLXG4nZ2FopCw4gMiMyVtHML0ZKiRpC2rGuJXTdopgVdSHANKP4QxPWJlUruSKASF
-         wjpNv9/928m0/QJE9r78PF2k4B8gIi8MnOrgtXNhnefcdJB73fFJ9J7EagfDZ8vGGkM9
-         OOdA==
+        d=gmail.com; s=20251104; t=1790703461; x=1791308261; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:subject
+         :message-id:date:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=1LgjjHuZM7hv4U9FzcsiGLGTjI70HTgY6uQOec3GLSE=;
+        b=aRuQ88z8fZHvQpiFGI6XBaukcHlzIQd0e0RT6Sf7gu4IhmSTfwjljs3oJwHpM1d32J
+         swGltt+lF7Wu9Tp1RuB/2pRSLg7UXR/WyqzWz1iXndeCIGss1428Roq4AfNfAxbcF8Kh
+         Taa3yquPITU2MLfbAX9TLISo0bMl+xzCXYdsHrM4pZ+yrhvDksRyxrAx5VbYfMIbdDxy
+         szT6+6+qVM3qWZWyIrMYg41rRiJqp/Yj7XOR97kBQT3Uu12vfvwr7Fl8kpbMQpIHraUM
+         /2JfoYcZ5ip+P0C7ZdDmuNbIR0bA9j2hYFUi71bn2/QfF/oM2aOqM5Z1wM8HBtgZObzv
+         NkRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790696094; x=1791300894;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bK1kRsPsOXdZFtj24JVUR5GYlNpzvwaq05tohnScRrQ=;
-        b=oOwa3S98NLvf5HKiFResOvdT3kP1uGAjum7aTGV1GpVq49LB4UF8HvfWQWfT4v+166
-         EfeWPLHFrh1YvQJEJeFMmvZiAZBlbHjesUzXr88pab5jWJZGILbwTPOy0XaRQLNzB4Ld
-         sMGbDC4rUQgezcH8Q01FtmeBRLZIzVsN1kbb8SgUYNzk69RzvnxYnoJKu5BOmkUVASYk
-         U5LHo8ACeIvD1r2i/90A5/QoVt96hsx2rtitBmBLQQg0v2DiGyB8PGWFgnHHhKrJfPwz
-         HiNdPytsruZYYqsslxJVHzW/UdqfqnhAUTLEfvvtb1kC5mJSHk2gopIgSpLieC/1WAO3
-         vmgw==
-X-Forwarded-Encrypted: i=1; AKwUvBzoIHTcfYkRzY0jSjFkkI5olX/ZBz2A1IRHYdvzaUq2XkAEQHejr1EALpvup6h6MhGXUE5LKXtPUkmZ@vger.kernel.org
-X-Gm-Message-State: AFuF++mRV3q7NPtXoOWBT4XkqjDmlL6nd8la7L9QWCx0OsnOGk6SM6ap
-	ylEKkgSDcgBjdWtRwcv+QfpBq5YDdkr5IhKTwSBrV2Vl9O+yV5Z9FanVp9yNaKx/rlQ=
-X-Gm-Gg: AYBFou3LIcE95Ng14gKFeOa4GMBpYzsj30LDL6cTmlaWGEzKXN9ZGC0DdUiOfr7TSoQ
-	mzDC6DxQh+S+bQ+eGGh0BOOtpUeHypKytKZREfoVzzDCBkXRp54M68+ePNvIQoDjuhX/bSDjwfO
-	nFWEYC6BRXX++dYn1rjTn9/TxC0aY9pIHTkR1g7njB6PCX2uLOKafks5Ky8etfjfAKpeJPPA356
-	e3BKfQhQLb32qq7eFqcaFqc0F75HvGjDOFKqYbE9uZLQ/p7U0fVDz1Y1ljjWp640iBmGQ+3pOvY
-	Ppr5LMleV2bTxjOavYluo6UFUDZfIQZWrAhD91eOqFgrUHBv1Ml5LCpn5/fm+f90OMUwcR0mW7D
-	9sv1YQgzBmInYtuQW03o5chBM3ieSSS/FtnNcd/NTX79vbdtOSFz10PyATlxO1VK/FyWpPQPWPe
-	3UgHE09mmR9sqrlvqQUYO4gFP3kIJxkuJRLDIl94DU+yzRb5w40DcntlHhclRw7ePs10WqCnwPB
-	Y6ZawbzPiw71686WTNpueB+AHuBIFMCKaP5UpSnvspq3dQsKoAnOGlGMc1SBHRsr9KsQxUS
-X-Received: by 2002:a05:600c:8b6c:b0:49f:ffd0:9a9a with SMTP id 5b1f17b1804b1-49fffd09b09mr145822235e9.25.1790696094266;
-        Tue, 29 Sep 2026 08:34:54 -0700 (PDT)
-Received: from localhost (p200300f65f19a904123cb16e9a8bb736.dip0.t-ipconnect.de. [2003:f6:5f19:a904:123c:b16e:9a8b:b736])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a00d0f442dsm81897025e9.13.2026.09.29.08.34.53
+        d=1e100.net; s=20260707; t=1790703461; x=1791308261;
+        h=content-transfer-encoding:content-type:mime-version:subject
+         :message-id:date:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=1LgjjHuZM7hv4U9FzcsiGLGTjI70HTgY6uQOec3GLSE=;
+        b=plPtrN+mNyo7+UHYw1M6FsmN6sr5qkNO1778L+QjzFTo2ASZWF4HnpXWvWaYiYJ3W/
+         dj7/djw+Nx1fhBriOQxKkgdyZr42Dcl2OcmR+EdwxAlLXLPWz6XQG4CRLs6bvKw0yCOQ
+         Vy8AzDAXBAytvT/FJXo4QTcZkfi0zreM9jYo/EEhd5gMakqT+1oFYTFdUwlX6cAkRo2o
+         IK41fXEXc3/v+LCNz7xKRBXPyiNR6l/gOb1An4H+JGbcLFf887iIG58VoxhBXKGgXCPn
+         hVJqY68t+m6NfrgX7GeyOxksTimMsm08iV+kMvvpyECP2tPzLde1Bs+2YduFrgFXYx4K
+         zB2Q==
+X-Gm-Message-State: AFq9FYLp79hKY7btZI8huB26g4t3zJagMlzBkymdXOMqq0qjK7PCyR5U
+	AuIEbU6S8UkguhPMc/szkYHopjgT/q8qqsZMwVbo+yMiEgvYE1CMbnyNEX9T5w==
+X-Gm-Gg: AYBFou1PO3BQEKWfY92TUNs4vWdWkZMq9ZCdNuFbV82cMVNpNVD21fclLYLnU+U6TmS
+	n5u8c0qxHXK/CaE5tko1m/So2CunDS3PdjU+BI2MuW82HMqYr8R21TJZztbm2KuCkGYrWA9Z7BD
+	JV10UYxVVarJbDh7Cqi+8THWQRXzFl5bcUZjyv5L/CFHgqrK0HTVNPQXNkhb/Kd7njqiR6+PI4N
+	6FHLZW9phG7RCHezZyG2Em/XIfmLBhGoKHNeLM/psQdf2RwemIS1zGm5jun2qTR84zkHt8A34LP
+	SUa7ZWkRvutMCwfxcOUQEsChHdOxfdhN+qvbd77jIAyxjcWTl7Oip/6Yj+4MI1DuIYK0eNhx+RU
+	TC0dSnnSHfWtPe/saen+7PMBGtuF9abrAqbnolF0FS8C3Cc6i64K8WajNuVFvW0y9L6Euf59ocz
+	KDoPQOT3j2/LB4YcNlhycmjJ8W/Sxl8038cbJhUjlhsVd3FfxNSrFdRmrlxOzZ3TzjpQv+N5GUP
+	5EAuZ+yMpDEJG3dgfAS5v4=
+X-Received: by 2002:a17:90b:5343:b0:39e:5cd8:2140 with SMTP id 98e67ed59e1d1-3a4bfe25da9mr87041a91.20.1790703461517;
+        Tue, 29 Sep 2026 10:37:41 -0700 (PDT)
+Received: from SANGHOON. ([1.220.132.212])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a4bf19bf4asm124187a91.2.2026.09.29.10.37.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Sep 2026 08:34:53 -0700 (PDT)
-Date: Tue, 29 Sep 2026 17:34:52 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
-	Jerome Brunet <jbrunet+clk@baylibre.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, Lee Jones <lee@kernel.org>, 
-	Linus Walleij <linusw@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, linux-i3c@lists.infradead.org, 
-	mfd@lists.linux.dev, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 14/20] pinctrl: berlin: support Synaptics SL261X SoCs
-Message-ID: <arvZnEsAdJ5R9mBi@monoceros>
-References: <20260929061417.20733-1-jszhang@kernel.org>
- <20260929061417.20733-15-jszhang@kernel.org>
+        Tue, 29 Sep 2026 10:37:40 -0700 (PDT)
+From: Sang-Hoon Choi <csh0052@gmail.com>
+To: Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>
+Cc: linux-gpio@vger.kernel.org, Changyul Lee <lcy8047@gmail.com>
+Date: Wed, 30 Sep 2026 02:37:31 +0900
+Message-ID: <179070265834.12871.48183786512201899.idr-bug-79@gmail.com>
+Subject: [PATCH] gpio: exar: initialize the ID before registering its cleanup
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qdr5pu2vmyb2k4sk"
-Content-Disposition: inline
-In-Reply-To: <20260929061417.20733-15-jszhang@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
+devm_add_action_or_reset() invokes the cleanup action immediately when
+registering the action fails.  gpio_exar_probe() currently stores the
+allocated ID in exar_gpio only after registering the action, so that
+failure makes exar_devm_ida_free() release ID 0.  If the allocated ID is
+nonzero, this leaks that ID and can free ID 0 belonging to another device.
 
---qdr5pu2vmyb2k4sk
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 14/20] pinctrl: berlin: support Synaptics SL261X SoCs
-MIME-Version: 1.0
+Store the ID before registering the cleanup action so both the immediate
+failure path and normal device teardown release the correct allocation.
 
-Hello,
+Fixes: 5300ebb695fa ("gpio: exar: use devm action for freeing the IDA and drop remove()")
+Reported-by: Changyul Lee <lcy8047@gmail.com>
+Assisted-by: LLM
+Signed-off-by: Sang-Hoon Choi <csh0052@gmail.com>
+---
+Compile-tested with x86_64 allmodconfig and W=1.
+I have not tested the devres allocation failure with fault injection.
 
-On Tue, Sep 29, 2026 at 02:14:11PM +0800, Jisheng Zhang wrote:
-> +#include <linux/mod_devicetable.h>
+ drivers/gpio/gpio-exar.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please rely on <linux/platform_device.h> to pull in the definition of
-of_device_id and drop the inclusion of <linux/mod_devicetable.h>.=20
-
-Including <linux/mod_devicetable.h> creates a bunch of unneeded
-dependencies on subsystems you will never need in this driver.
-
-> [...]
-> +static const struct of_device_id sl261x_pinctrl_match[] =3D {
-> +	{
-> +		.compatible =3D "syna,sl261x-soc-pinctrl",
-> +		.data =3D &sl261x_soc_pinctrl_data,
-> +	},
-> +	{
-> +		.compatible =3D "syna,sl261x-system-pinctrl",
-> +		.data =3D &sl261x_sysmgr_pinctrl_data,
-> +	},
-> +	{}
-
-Please use { } (with a space) to match the most common style for these
-arrays.
-
-> +};
-> +MODULE_DEVICE_TABLE(of, sl261x_pinctrl_match);
-> +
-> +static int sl261x_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	return berlin_pinctrl_probe(pdev, device_get_match_data(&pdev->dev));
-> +}
-> +
-> +static struct platform_driver sl261x_pinctrl_driver =3D {
-> +	.probe	=3D sl261x_pinctrl_probe,
-
-Not a fan on aligning the =3D, still more if it's done inconsistently in a
-single struct. If you ask me, just use a single space before the =3D.
-
-> +	.driver	=3D {
-> +		.name =3D "sl261x-pinctrl",
-> +		.of_match_table =3D sl261x_pinctrl_match,
-> +	},
-> +};
-> +module_platform_driver(sl261x_pinctrl_driver);
-
-Best regards
-Uwe
-
---qdr5pu2vmyb2k4sk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmq72pkACgkQj4D7WH0S
-/k6pzAf+PhNU58V7LTtOu13Q7FpXZuGYfITE5o06ZTODsXEE48OgW8ZdwP7VY1Rr
-OASvkk8I0b2igulZlmDQF6y/Uo8vr7BFFtBnDNLOlskSrwtGlRdlA+OxtblggT3/
-ZtDs4aXeswkygIA/WvR5ypgSrpFZbf3ulmLpJxoG7wyWd2z20AE0RMgHMxWnRRRK
-u1HPQWxqFS3vW0NsDLIGQ8yxAhuvL3DkQrfMVQONTNlqb9YbbJ5Ei9pHPDcYiggC
-2NvAR0+Iczq3x7p1plWpq1ism4qNBPatzP3vOw+KMQXMHzNrOEICQ0lR54jlGDtd
-U3aErEDsuZZpCY/HwikxQiabfzr3uA==
-=ieOW
------END PGP SIGNATURE-----
-
---qdr5pu2vmyb2k4sk--
+diff --git a/drivers/gpio/gpio-exar.c b/drivers/gpio/gpio-exar.c
+index 9053662f18177f735db2cb33fd690b39dcf3fb0b..f629cc526f3ee71ae20e88ec1979f93bc04841e5 100644
+--- a/drivers/gpio/gpio-exar.c
++++ b/drivers/gpio/gpio-exar.c
+@@ -199,6 +199,7 @@ static int gpio_exar_probe(struct platform_device *pdev)
+ 	index = ida_alloc(&ida_index, GFP_KERNEL);
+ 	if (index < 0)
+ 		return index;
++	exar_gpio->index = index;
+ 
+ 	ret = devm_add_action_or_reset(dev, exar_devm_ida_free, exar_gpio);
+ 	if (ret)
+@@ -214,7 +215,6 @@ static int gpio_exar_probe(struct platform_device *pdev)
+ 	exar_gpio->gpio_chip.set = exar_set_value;
+ 	exar_gpio->gpio_chip.base = -1;
+ 	exar_gpio->gpio_chip.ngpio = ngpios;
+-	exar_gpio->index = index;
+ 	exar_gpio->first_pin = first_pin;
+ 
+ 	ret = devm_gpiochip_add_data(dev, &exar_gpio->gpio_chip, exar_gpio);
+-- 
+2.43.0
