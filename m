@@ -1,106 +1,76 @@
-Received: from mail-vs2-f43.google.com (mail-vs2-f43.google.com [74.125.227.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7A54E3EF8
-	for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 09:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.43
+Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DE43A8753;
+	Tue, 29 Sep 2026 09:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.164.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790672501; cv=none; b=XGm+NUtP7tFsXHj5Y+0pz0S3109kAwkCsM43ENWZWg7Q2LFLIW00k24BqdpbvoidUryYbFmhwlXOhbWEEyCnI4ZwR9h7XBPhEE8TDZ0ebS5n0znzuCDbRR6br8qw4K9B96mqKtUlZc2zsvmIwmqsErtDVqfT/s6WtD1kgxmTqSg=
+	t=1790674611; cv=none; b=BPEYLIPSVaepy4ZNNPVKs3sVqJ6IIGxsFKz5+YzQtlIlHXyuVMlxWobMekI6YK0EhlAfwdijhAgIX2FaMKN9rdqt7g3NozjLFw/b6R5U9q6taSLHYuQSjA7oXikRTSvqOw9uCiBrYKtR8Hq+KJkqpe4xgHyvu3B4BbLwpB4ZacI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790672501; c=relaxed/simple;
-	bh=yGRUq+NkeA2wCzaT3ddrS1lhHL4f/8v2x/N+ptJUPEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jP6iU/Tk8UtLKP+33itbUoTkD9+x5BcdADhMmHQxX/NsGpRO/mLS1VwuvfiaRyJUvHWWYdp4aPwjaYGtfJzc/VWdnISQadVAtC81oLvX1R6d1sxeeVJnoyvvShgBX4QX6bAqcKZlPr/j38V8R5Wty4lw351FZHq8oUFpCxQBS4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f43.google.com with SMTP id 71dfb90a1353d-5d3dc9b7f45so29097e0c.2
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 02:01:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790672498; x=1791277298;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=M48abSoMOPLnpPLpLH2wH9c2xeQ/JgdDngp0dUmsb3o=;
-        b=p3nCAkByvupfVK/Tq9s3uyg/1Rqc2BWFwvmjNwXU+cTfVwJNuQuS5AbUS6jDyYmE2i
-         VXIN3JJIB5uGiUcW/oF2DB2MNhVOcS0QgXyHA599UuE30z3UNrF+u+4HxYJCjEmN5KMf
-         F3qlvK2gjcoN03d3zFEk3lre/5e26TjMboX/wlXEE0j2m3og7sji/JQYvtoCO5679eif
-         8fjkryPGUdOHRWnRrtcCBm95Q3rIOg5J88PzglDZdXSFUfKDhK8tdFg5jyAl971DiFJV
-         B/QioKu22QzDl19Lc8l14qx56Vl7Qxr9l1VvwLOw3jflf+5X4pIHObnKcgkl9XvSQ5ul
-         EvhQ==
-X-Forwarded-Encrypted: i=1; AKwUvBznCiYps69iQb3n4XtUS1wwDrqw5p+d+CLxZ4Hn025szKrqIRK2UfajX+RJUp/cp8CH3ljC43Cbda+z@vger.kernel.org
-X-Gm-Message-State: AFq9FYIwp8dFceeu5GVS2H91tZyptOCyjgO8LxFkKHqiql1UDekIUe0V
-	UcJu/6S7DpPg9zqho5HQCW5scmRi7yJCIeqoSIIZTEzk0xixJuKzG//Mjtc2TwmIPR0=
-X-Gm-Gg: AYBFou0OoTZ/7g3yCeZ/rXzzp4BsN3zuJgqIP6NIcCT8hd9THcEz3+0YCt4FZmMWjkf
-	hpKTyfeDoAz4srdTdwgJJs8zZgPBu47AfNq5tkSQefaLvS1jY/VZt444iuQcXTtgNTChDWH81lv
-	zjWQ2zZt70gMBqE8EhkvlsJRTOcnEp2Xhr5pl6/iOR92qMVKe09g79SFiba0g3+InTjELQX/94I
-	SS1VGRzwVwo2f5MvQoNA1h2nE/KMoukuJWBm4esftv5EXP1nZtlVDZlKUIIJatGVv2ND3Sy8CGJ
-	DYkzJ6OFZYt+YdcVhDc/vL/27QGPGufwOWomi20eZ7l+AtcVQZABZ+Q2a4Y8MsptSiknI3R4eIM
-	71HNtXMSTnNlH9qtQt/3xSrKXKxdfO53qpM1ZkSvr1TEJw7poRp2qBUuUjHAhpEdXPzedF57HPd
-	850hkQlV1xNg6yqPlQiSTeA2zJ2H6Kl1UTQqa2kqyRmtUJDeFmz2/7c+bs9/Q2ymK43Z67KQ4Jo
-	hCzNjQiQHFIjrnDqNPGQ2YI3SWXW16cNiJP/qBxSnxu63/m
-X-Received: by 2002:a05:6102:570a:b0:7a6:96d6:f791 with SMTP id ada2fe7eead31-7af1d3af54emr4613691137.16.1790672497911;
-        Tue, 29 Sep 2026 02:01:37 -0700 (PDT)
-Received: from mail-ua2-f43.google.com (mail-ua2-f43.google.com. [74.125.226.235])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7b398ee9869sm12849540137.1.2026.09.29.02.01.36
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Sep 2026 02:01:37 -0700 (PDT)
-Received: by mail-ua2-f43.google.com with SMTP id a1e0cc1a2514c-97ea1a712deso878115241.3
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 02:01:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxVJ8jF+8Y/ZH2Bpqg8KH3XrhMf9wn86FCF5wrRYpV2ueilQg6IBjLdhhbjk2ykGt+FDDvwjJw3gEDw@vger.kernel.org
-X-Received: by 2002:a05:6102:2d04:b0:7a6:accf:72c1 with SMTP id
- ada2fe7eead31-7af19740319mr5405907137.0.1790672496458; Tue, 29 Sep 2026
- 02:01:36 -0700 (PDT)
+	s=arc-20240116; t=1790674611; c=relaxed/simple;
+	bh=h91sJdvhM7q216OZHwfDSWOw4W5YEZquMkBzf6TLKqI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aLU6tYiuCxKf0g3lQYBACntiK48TRstvDPvFbguHH7FJdALp2/XLbm2vlzrhzCvxX1shHfn8dRFLTMMJsaR8LXheAy/aNkbft6JP48kIa4BdIIFmwp9n5i2ggX37kaFe9FzijTfhKWPgiRFjJqQrDPrDuMgozmPIqhG+dxPGFdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=162.243.164.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from zju.edu.cn (unknown [10.98.66.117])
+	by mtasvr (Coremail) with SMTP id _____wCXQz2hhrtq7ztGAQ--.39143S3;
+	Tue, 29 Sep 2026 17:36:34 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.98.66.117])
+	by mail-app2 (Coremail) with UTF8SMTPA id zC_KCgCX7nyhhrtq2QsWAA--.19477S2;
+	Tue, 29 Sep 2026 17:36:33 +0800 (CST)
+From: Fan Wu <fanwu01@zju.edu.cn>
+To: brgl@kernel.org
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	songl@zju.edu.cn,
+	linusw@kernel.org,
+	Fan Wu <fanwu01@zju.edu.cn>
+Subject: Re: [PATCH v2] gpio: mpsse: fix race when arming the IRQ poll worker
+Date: Tue, 29 Sep 2026 09:35:36 +0000
+Message-Id: <20260929093536.18396-1-fanwu01@zju.edu.cn>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CAMRc=Mf0+O7393fxkcupH2Gs3q9L4-hZn=ORE_zC_c9FFM67KQ@mail.gmail.com>
+References: <20260928112546.631440-1-fanwu01@zju.edu.cn> <CAMRc=Mf0+O7393fxkcupH2Gs3q9L4-hZn=ORE_zC_c9FFM67KQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260928-rzg2-sr-boards-v10-0-91752ea39cbc@solid-run.com> <CAMuHMdWWoH-m972X1Emo6gis81-_TUs819gOPkUwtgnR3aQhGA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWWoH-m972X1Emo6gis81-_TUs819gOPkUwtgnR3aQhGA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 Sep 2026 11:01:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUMURt52wR7kM3=7GKv7x-3O77MLwSuUDt7KJEf9e+hqg@mail.gmail.com>
-X-Gm-Features: AclHuK98mw98nJ3_l_Mt7cVTGbvizjI_Q30Ugi6pttPN_xWKMIDQnQGX1HfBaig
-Message-ID: <CAMuHMdUMURt52wR7kM3=7GKv7x-3O77MLwSuUDt7KJEf9e+hqg@mail.gmail.com>
-Subject: Re: [PATCH v10 00/11] arm64: dts: renesas: Add various SolidRun RZ/G2
- based boards
-To: Josua Mayer <josua@solid-run.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
-	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zC_KCgCX7nyhhrtq2QsWAA--.19477S2
+X-CM-SenderInfo: qrstjiaswqq6lmxovvfxof0/
+X-CM-DELIVERINFO: =?B?YPRd7gXKKxbFmtjJiESix3B1w3vZ3A9ovKVTomAyoQazvoRs/NHSP8GI2EvgeEEW7R
+	sfnVvLbuoOKy0xUR2OEh/Lyhlr+l17lfOb9luG9nUURQsfQnozS4PQS7OmbKlSFdaBJfy9
+	PIj7FnqIhDcjlHOtZvGp9E6mavGmQbzmcFsnzP86
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
+	BjDU0xBIdaVrnRJUUU9Gb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
+	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
+	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxV
+	AFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x02
+	67AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc
+	804VCY07AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY
+	67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y4
+	8IcxkI7VAKI48JM4x0Y48IcxkI7VAKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC2
+	0s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI
+	0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE
+	14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20x
+	vaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8
+	JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Tv3UUUUUU==
 
-On Tue, 29 Sept 2026 at 10:12, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Mon, 28 Sept 2026 at 19:34, Josua Mayer <josua@solid-run.com> wrote:
-> > Add support for a variety of SolidRun RZ/G2 based SoMs and both
-> > HummingBoard IIoT and HummingBoard Ripple Evaluation boards.
->
-> Thanks, will queue in renesas-devel for v7.4.
+On Mon, 28 Sep 2026 12:22:28 +0000, Bartosz Golaszewski <brgl@kernel.org> said:
+> Please always include the changelog between iterations of the same series. I
+> have no idea what changed since v1.
 
-Except for:
+Sorry about that. v3 (fresh thread) spells out the changes since v1 in
+the changelog below the ---.
 
-  - dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Allow input-/output-disable
-    Already queued in renesas-pinctrl for v7.4
+When comparing with the posted v2: v3 expands the comment above the
+deferred free and rewords the commit message; there is no functional
+change since v2.
 
-  - dt-bindings: usb: cypress,hx3: make peer-hub property optional
+Thanks,
+Fan Wu
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
