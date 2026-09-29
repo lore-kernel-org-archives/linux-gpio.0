@@ -1,97 +1,100 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo2-f36.google.com (mail-oo2-f36.google.com [74.125.231.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C77135DA65;
-	Tue, 29 Sep 2026 08:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0593AE191
+	for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 08:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790669258; cv=none; b=AEX8sIaCf62yZ5/3xWC16NbzBiOEwyYf5F0I0oLv4EqM2nDYwuZfTe8M7qZ6dSH5UM9GhvLvM/NGiSNyKvJl2ZYmRTPBa+b0maUFBCrB1+hbg8awb6KQJDIot8wJjrmd3L5dYiXMoc8rYWy1raayzo8D5TpLmItRnpVZiJ7bJO8=
+	t=1790670040; cv=none; b=gmw9IUTG6WyOc0Mz9Jz+CPd6QxwIPaKzSpDHcGR6njRTKm9Jv4OzboYgA3vf+1WHqGKitzgsrZIDp5m3Q3fKYLIXJxNuwF7Pegk+BC9YbB0HYEg9IKHO7svL0meyTgOdYY1aq5Ec08lrg1+lOUKIu/n0c+YQI4SqA8j1Ad+NX1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790669258; c=relaxed/simple;
-	bh=W7pWGyIFWfSRwTenFC+kxlF6f7RHYKGnoGxGmhPpFhk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=L+kHtrIXV98KflW0LJjba7g5WK4Lp/9h5lNm90vXwgIlnhTJhymxTIpoApDEEJeiHe8RyLgJh/jKv2aolCedu26MxyjQpjVp6iK0OQ2FYcF0MyH3ra5+/DNWXqCThzIJL1JFm8cGFF2M2a5zdnPcxMbLyprZGwrcPZktqLhNito=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=F6lSj/eM; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="F6lSj/eM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=W7pWGyIFWfSRwTenFC+kxlF6f7RHYKGnoGxGmhPpFhk=; b=F
-	6lSj/eMzw835BoVC3Q6FH1CfuYqHlNX9eo2OadyqJymccQwECyxlu+VE0cNgo3ej
-	X0Yklf+p6bHiljUM04tWmDeAbJcNRWIThzgSetGR5uabGIBgDKE5kGN7hyk5YPRf
-	q9+W8xE2/j0DOwh8XJo4x7Wu8i79xU6WiVWFe6MwB0=
-Date: Tue, 29 Sep 2026 16:07:05 +0800 (CST)
-From: "jiale yao" <19888972804@163.com>
-To: "Geert Uytterhoeven" <geert@linux-m68k.org>
-Cc: "Linus Walleij" <linusw@kernel.org>, "Orson Zhai" <orsonzhai@gmail.com>,
-	"Baolin Wang" <baolin.wang@linux.alibaba.com>,
-	"Chunyan Zhang" <zhang.lyra@gmail.com>,
-	"Thierry Reding" <thierry.reding@kernel.org>,
-	"Jonathan Hunter" <jonathanh@nvidia.com>,
-	"Krzysztof Kozlowski" <krzysztof.kozlowski@oss.qualcomm.com>,
-	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re:Re: [PATCH 2/4] pinctrl: renesas: rzn1: free maps on DT map
- failure
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
-In-Reply-To: <CAMuHMdUaPuhy==YAKxUsBTCddCu9pEixPckkYYgoy=LXprnYog@mail.gmail.com>
-References: <20260924111856.622898-1-yaojiale02@163.com>
- <20260924111856.622898-3-yaojiale02@163.com>
- <CAMuHMdUaPuhy==YAKxUsBTCddCu9pEixPckkYYgoy=LXprnYog@mail.gmail.com>
-X-NTES-SC: AL_Qu2SAvqdtkop4ymbZukcn08ShO49XMOyvfoi2YFTc8MFoxLcyAchcG9YH1nL69uIMwuytx2UahhMyPlwXJZ5wsxbVvgI55oxk3OffQq9dw==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1790670040; c=relaxed/simple;
+	bh=e8jTQ59tb4Ke+Zmo+wcDDbIer2Daet/lCXTrHvU+JBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XcnK/K1QNqibrS4Jv6uLT+eDBaBtb+2Lu5QeavvbkDJUFPUNdccMzzky8ryvmLGWKCVUgUWDTQfPHKAuVeLih7Gcu9Vaq5TFNqBd0LqOHcKkZur4dNKXQ5zjmoDTEvq+sYT9H/FQubfCwqJb8/5aGEjbzic9OmEs12hxMIq74Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.231.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo2-f36.google.com with SMTP id 006d021491bc7-6d73f71a49bso1210079eaf.3
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 01:20:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790670037; x=1791274837;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=wKTPnbd7pHw8WKn97YDxHbj3C025J4UMPNethHoNt9I=;
+        b=BJpnnjfBWf8Evb/azxsGqPf4+zqbVh+TlCiNINMT6MGaZUhEEJtZvCsYQcO/NKqx43
+         qdFVsY4n0cf8Q8RLhah8rEGEKb5WkHrczIxfPLdLUj0RdgIllGqT/2bQpfgNBHLwf4aY
+         VSh3TPhRGcDg1Xx5ekHfRe/g0DIuD58CtD3YwHuFAZFr+OV9wZ9MzVq93JoQw7wCtfKP
+         hifqawYMWGBOOrmvnjt7Gloc/qD/mW5tx2q3vRLBRKl671dVt7ZsZlXgTiAP8IUmG3BD
+         Q6I4SYPaHGR67uYcq7tJRbx7FyNTFz/exdwL9wfCXI0hiXuqfWQjOjFWV1GIU5Isarm2
+         UYaQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxyWiWjVfxVwltrUOq5zaPfZPUBBgXYE7rRnt78AekbgRX6KxcDohpgmV8picQjrGTUt6/RGGCtm81B@vger.kernel.org
+X-Gm-Message-State: AFuF++lU8DxopKhjqIka3ZXWwzKhDhNVgC9dzBRi6qEr5Nl/37ChUfDZ
+	WDtQNgoFCw7GGQSUsCX3H0w7U2JZ88xJXBblbsYi3vL1oIoEbqxA9ODkk4veFqGIWhE=
+X-Gm-Gg: AYBFou18VL1+NJRsjW1HqN3YQJkA3AmSJyEw6h3yBE0SHAtoePSZfmlphZe3QA3LLea
+	ORsmXGbkU9Ohx6hTuZ/vPlgY+O/k3fm3mtbEcVZEU+KRDUoPz97n4rdpTsqmfEkcTxPP9dJj86i
+	0SJimyO+cqy4e5kpaS8igMV6ggYgAZUnsZVEj3XGKMUmsizU+gXWIrBJNs8enH7b1QyXzQkEUA2
+	+SN2DYeRtuVvNPpXogMUYctWpPxbK5VWcP6cuRG8KFeKl9qfJrIiRz3jd4gfD+0/kByCJ6tkRHz
+	HODzKBM/ACfwQsYJdPtatPAznPZihVCMHFYsKTzfzXVdBV5YvxaNdHo59K6Oncyk+2364ms9XLg
+	uJO6yUK/xzP64i0MCrkojrMejARQ6WypJipR8ihCxD/hbU1ZsT6Pw9u0eV4l8dteXyoDIvUdAlM
+	IcpIWETjbr3CzbqNcBrrUZeElwRY2WojiHUESAFtB6u6DeliNBGmbQKq6fkIDDsZlOoH9jwH1QF
+	6dSZej0kmQS1oErnMvuyoiYHdbJs54AxofOtA==
+X-Received: by 2002:a05:6820:618:b0:6d8:92b9:4399 with SMTP id 006d021491bc7-6d892b945fdmr5715513eaf.27.1790670037421;
+        Tue, 29 Sep 2026 01:20:37 -0700 (PDT)
+Received: from mail-oa2-f26.google.com (mail-oa2-f26.google.com. [74.125.231.90])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6d88221983fsm7966081eaf.3.2026.09.29.01.20.36
+        for <linux-gpio@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Sep 2026 01:20:37 -0700 (PDT)
+Received: by mail-oa2-f26.google.com with SMTP id 586e51a60fabf-466cc88a9b9so2551712fac.2
+        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 01:20:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwsIHYtYriSfovJcHtYaXbQ5d4oWGfgBJ6HvMGPkfl0UMskJO9Kco2jlen93KhtuqkRLS4eiArVtSDi@vger.kernel.org
+X-Received: by 2002:a05:6102:5346:b0:7a8:15b9:dd34 with SMTP id
+ ada2fe7eead31-7af1c58fb71mr6318332137.2.1790669548884; Tue, 29 Sep 2026
+ 01:12:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7eaa18c1.6909.1a0ec33ffd4.Coremail.19888972804@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:higvCgD3n2aqcbtq78JQAA--.53787W
-X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzQoQSmq7caoFZgAA30
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+References: <20260928-rzg2-sr-boards-v10-0-91752ea39cbc@solid-run.com>
+In-Reply-To: <20260928-rzg2-sr-boards-v10-0-91752ea39cbc@solid-run.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 Sep 2026 10:12:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWWoH-m972X1Emo6gis81-_TUs819gOPkUwtgnR3aQhGA@mail.gmail.com>
+X-Gm-Features: AclHuK9FhwKj6JL-kiqTsnzPxsKOECrpai_keY8LaopHP5dfC3Vjj3Wu8JulErc
+Message-ID: <CAMuHMdWWoH-m972X1Emo6gis81-_TUs819gOPkUwtgnR3aQhGA@mail.gmail.com>
+Subject: Re: [PATCH v10 00/11] arm64: dts: renesas: Add various SolidRun RZ/G2
+ based boards
+To: Josua Mayer <josua@solid-run.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
+	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
+	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-SGkgR2VlcnQsCgpBdCAyMDI2LTA5LTI4IDIxOjE5OjQ4LCAiR2VlcnQgVXl0dGVyaG9ldmVuIiA8
-Z2VlcnRAbGludXgtbTY4ay5vcmc+IHdyb3RlOgo+SGkgSmlhbGUsCj4KPk9uIFRodSwgMjQgU2Vw
-dCAyMDI2IGF0IDEzOjE5LCBKaWFsZSBZYW8gPHlhb2ppYWxlMDJAMTYzLmNvbT4gd3JvdGU6Cj4+
-IHJ6bjFfZHRfbm9kZV90b19tYXBfb25lKCkgYXBwZW5kcyBtYXBwaW5ncyBmb3IgZWFjaCBEVCBu
-b2RlLiAgSWYgYQo+PiBub2RlIGZhaWxzIGFmdGVyIG1hcCBzdG9yYWdlIGhhcyBiZWVuIHJlc2Vy
-dmVkLCB0aGUgdG9wLWxldmVsIGNhbGxiYWNrCj4+IHJldHVybnMgd2l0aG91dCByZWxlYXNpbmcg
-bWFwcGluZ3MgYnVpbHQgZm9yIHRoZSBjdXJyZW50IGFuZCBwcmV2aW91cwo+PiBub2Rlcy4KPj4K
-Pj4gRnJlZSB0aGUgYWNjdW11bGF0ZWQgbWFwIGFuZCBjbGVhciB0aGUgb3V0cHV0IHBhcmFtZXRl
-cnMgb24gZXZlcnkgZXJyb3IKPj4gcGF0aC4KPj4KPj4gU2lnbmVkLW9mZi1ieTogSmlhbGUgWWFv
-IDx5YW9qaWFsZTAyQDE2My5jb20+Cj4KPlRoYW5rcyBmb3IgeW91ciBwYXRjaCEKPgo+PiAtLS0g
-YS9kcml2ZXJzL3BpbmN0cmwvcmVuZXNhcy9waW5jdHJsLXJ6bjEuYwo+PiArKysgYi9kcml2ZXJz
-L3BpbmN0cmwvcmVuZXNhcy9waW5jdHJsLXJ6bjEuYwo+PiBAQCAtNDExLDE1ICs0MTEsMjEgQEAg
-c3RhdGljIGludCByem4xX2R0X25vZGVfdG9fbWFwKHN0cnVjdCBwaW5jdHJsX2RldiAqcGN0bGRl
-diwKPj4KPj4gICAgICAgICByZXQgPSByem4xX2R0X25vZGVfdG9fbWFwX29uZShwY3RsZGV2LCBu
-cCwgbWFwLCBudW1fbWFwcyk7Cj4+ICAgICAgICAgaWYgKHJldCA8IDApCj4+IC0gICAgICAgICAg
-ICAgICByZXR1cm4gcmV0Owo+PiArICAgICAgICAgICAgICAgZ290byBlcnJfZnJlZV9tYXA7Cj4+
-Cj4+ICAgICAgICAgZm9yX2VhY2hfY2hpbGRfb2Zfbm9kZV9zY29wZWQobnAsIGNoaWxkKSB7Cj4+
-ICAgICAgICAgICAgICAgICByZXQgPSByem4xX2R0X25vZGVfdG9fbWFwX29uZShwY3RsZGV2LCBj
-aGlsZCwgbWFwLCBudW1fbWFwcyk7Cj4+ICAgICAgICAgICAgICAgICBpZiAocmV0IDwgMCkKPj4g
-LSAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsKPj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgZ290byBlcnJfZnJlZV9tYXA7Cj4+ICAgICAgICAgfQo+Pgo+PiAgICAgICAgIHJldHVy
-biAwOwo+PiArCj4+ICtlcnJfZnJlZV9tYXA6Cj4+ICsgICAgICAgcGluY3RybF91dGlsc19mcmVl
-X21hcChwY3RsZGV2LCAqbWFwLCAqbnVtX21hcHMpOwo+Cj5OaWNlIGNhdGNoIQo+Cj4+ICsgICAg
-ICAgKm1hcCA9IE5VTEw7Cj4+ICsgICAgICAgKm51bV9tYXBzID0gMDsKPgo+SXMgdGhlIHJlc2V0
-dGluZyBhY3R1YWxseSBuZWVkZWQ/Cj5Pbmx5IHBpbmN0cmwtZ2VuZXJpYy5jLCBwaW5jdHJsLXNw
-cmQuYywgYW5kIHBpbmN0cmwtdGVncmEteHVzYi5jIHNlZW0KPnRvIGRvIHRoYXQKCk5vLCB0aGUg
-cmVzZXR0aW5nIGlzIG5vdCBuZWVkZWQsIGFzIHRoZSBjYWxsZXIgZG9lcyBub3QgaW5zcGVjdCB0
-aGUKb3V0cHV0IHBhcmFtZXRlcnMgd2hlbiBkdF9ub2RlX3RvX21hcCgpIHJldHVybnMgYW4gZXJy
-b3IuCgpJJ2xsIGRyb3AgYm90aCBhc3NpZ25tZW50cyBhbmQgdXBkYXRlIHRoZSBjb21taXQgbWVz
-c2FnZSBpbiB2Mi4KCi4KPgo+PiArICAgICAgIHJldHVybiByZXQ7Cj4+ICB9Cj4+Cj4+ICBzdGF0
-aWMgY29uc3Qgc3RydWN0IHBpbmN0cmxfb3BzIHJ6bjFfcGN0cmxfb3BzID0gewo+Cj5HcntvZXRq
-ZSxlZXRpbmd9cywKPgo+ICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQKPgo+Cj4tLQo+R2Vl
-cnQgVXl0dGVyaG9ldmVuIC0tIFRoZXJlJ3MgbG90cyBvZiBMaW51eCBiZXlvbmQgaWEzMiAtLSBn
-ZWVydEBsaW51eC1tNjhrLm9yZwo+Cj5JbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdpdGggdGVj
-aG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0Cj53aGVuIEknbSB0YWxr
-aW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNvbWV0aGluZyBs
-aWtlIHRoYXQuCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExpbnVzIFRvcnZh
-bGRzCgpKaWFsZQo=
+Hi Josua,
+
+On Mon, 28 Sept 2026 at 19:34, Josua Mayer <josua@solid-run.com> wrote:
+> Add support for a variety of SolidRun RZ/G2 based SoMs and both
+> HummingBoard IIoT and HummingBoard Ripple Evaluation boards.
+
+Thanks, will queue in renesas-devel for v7.4.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
