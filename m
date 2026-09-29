@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522EC3E2777;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A844718D0;
 	Tue, 29 Sep 2026 22:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790721715; cv=none; b=Tz2dMvX69IVVB/KNNMLPYLd6B+OVHyPq1GNxpFlbYphQrfQIlLUCaMvapbxQYw8o8svfKISDLv2xS43knmud+zQK0qf0Uu7fcR3ZzfDLSKobNqfdGI4v4FXomFW4E0QwaUgFOnoA3y1dDggU5IxUUwgA1/CRf6sfoMReZfUkdOQ=
+	t=1790721715; cv=none; b=uZkgtFnT5FYl5Ew2+W0Fg9U6/o4MgscDZJYEEIs5nZEBLegab6iGw2LAvKmfPH1obME3iQV4DPfUQsj7Twzc8oVKnRZZ1NlaGuXqNZT18/aM7+xtgsrwvALnY1jqcdRuTCLBePewL0gNUCTDHQgzOmc4Wtdhg3M/6Flb9anim1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1790721715; c=relaxed/simple;
-	bh=Zxq7CSZS7IRj/mkk9CE95P6m2A/xkyNeCy3VW+GIdiE=;
+	bh=VrWfsW6CjpQfvmN0zpYVVCQqhqmgmSoGOWEyw+Ndxts=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EYNqoyM8Fc0/Vd0vHVOhhJSIhxqzz6Q3yclRhb6KIJa/rXD1w45EvULnwvbGyyeS5S4BBM8sMPmiATAafRuY6OfF7pYq7bBMnpMX11qkVFuCGiWSKkWvmsGOBLlmpIT31HgokxZlZ5orXl1zebHsEJ9JmdNh3jPZe9KZD/kd3bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y4C3NASf; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=WsWn2PBIDpY7q7EfWd+DdoDAnfgXrASFiQSTUq7938AWklGmmHGmEmwjRTwXt3hWy3Q7RcfT/pXIuq0Gv/MGlPp53Lwm9S/DQs7CjBFEeX9EWehNqIku9HPrYUFFLBSoWHqumx8spp3xzmBNwTjZCbS/nSJyhtV1iHV5DTNDVGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LaJfl/De; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4C3NASf"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0F354C4AF18;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LaJfl/De"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 56EABC4AF53;
 	Tue, 29 Sep 2026 22:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1790721715;
-	bh=Zxq7CSZS7IRj/mkk9CE95P6m2A/xkyNeCy3VW+GIdiE=;
+	bh=VrWfsW6CjpQfvmN0zpYVVCQqhqmgmSoGOWEyw+Ndxts=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Y4C3NASfXRIrGQKhGPIx+gXzIZRDkG9cuGeTtPXxTq6w6csy2jJrD4N44gV4noE0l
-	 t2sJKjd07hyvO44A8JXWdmDVjTddAKo05kXPJy6hAuHY6FFvKKLdyhsJetcRmm/0Pj
-	 o/zJOOiBMAKIbhV0FesCRKiXs3nZPfzDIvAICghwAn/6yByjHr5cA5RUjkCfFiuprB
-	 A+0sMePgLcAkPleF9lMWLDcC0x9NlLcyqj8f0PY8QBpDgbvThhEczkAre77IS4s43k
-	 5x3bVtqCe/P7HnbKi6bWfX++k7V2WBPAMwDH1LX7jJVx5+t5/eBcr1bMlD3IKmVZiV
-	 q3etDQnOXCKzg==
+	b=LaJfl/DeDDKeJp3v1ojavPkN9j5AAwxWr5we79clepFZpVV4EmaV6xbYBEL20Muqt
+	 uT/iNY8zXk49MHxL442d/N55wGLn6drsQl7gvw62jLrtRmzR0q8n39JJr5axbkjcof
+	 60nvM0Z48KN92X6mLivaE6zHWEU/9TWEkxX6m2wU6vexqKInAsIxBcqtoDy0Dl9mL/
+	 0WEIcGGcfSgRqd5Qc+dLKc5DOTiiqkD7Etli6oMy7jiZpfPytJOvUnnlBQVhYiEev/
+	 f+OAXwL0VVeXnLt3C/tK4X5F90pKq7T7qgiFNNpr2Kpq9OZWtGGtgI2qeiVz7WVxBw
+	 mxm3+jjMJCr1g==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E38CA5FB3;
-	Tue, 29 Sep 2026 22:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4310BCA5FB3;
+	Tue, 29 Sep 2026 22:41:55 +0000 (UTC)
 From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Wed, 30 Sep 2026 01:41:37 +0300
-Subject: [PATCH v18 03/23] dt-bindings: media: i2c: max96717: add support
- for pinctrl/pinconf
+Date: Wed, 30 Sep 2026 01:41:42 +0300
+Subject: [PATCH v18 08/23] dt-bindings: media: i2c: max96712: add support
+ for POC supplies
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,8 +40,8 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260930-gmsl2-3_serdes-v18-3-43117818f499@analog.com>
+Content-Transfer-Encoding: 8bit
+Message-Id: <20260930-gmsl2-3_serdes-v18-8-43117818f499@analog.com>
 References: <20260930-gmsl2-3_serdes-v18-0-43117818f499@analog.com>
 In-Reply-To: <20260930-gmsl2-3_serdes-v18-0-43117818f499@analog.com>
 To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
@@ -61,11 +61,11 @@ Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
  Andrian Suciu <Adrian.Suciu@analog.com>, 
  Cosmin Tanislav <demonsingur@gmail.com>, Martin Hecht <mhecht73@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790721712; l=4277;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790721712; l=1044;
  i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=XmNfnPnMBgMsa4uvJKmiItZY2cGgIGo1m0KOSL56acE=;
- b=Obbkwjo+mgR2F7eO5CgpvSzF1S45Lw/7ziR6Pk4VIV7bqANikE12gF92rIlMh+LSB9kfBBrzC
- 6hrkPhTbhheAA9qIAE6lrQZ3NJ5a9WeDxUCX1Lou+GiamH2CLR03Si3
+ bh=p9KjT6ikJkH8J/D1ap0cHBnQIHGqhwXx31a5tBGD8+I=;
+ b=SUWszkAXLNOFD3noO/dxGm/XLvku8l3CR+T6Mk3b+PSKztm+k5tWQBBwUU7XwacWyurXeSDzm
+ 4JIuTEN1DBFDX/HCApNMt9OyYk/brSpabNaekylXbwc8ZQVe01+ADET
 X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
  pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
 X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
@@ -75,142 +75,34 @@ Reply-To: dumitru.ceclan@analog.com
 
 From: Cosmin Tanislav <demonsingur@gmail.com>
 
-MAX96717 is capable of configuring various pin properties.
+The GMSL links can carry power to the serializer when using coaxial
+cables.
 
-Add pinctrl/pinconf properties to support this usecase.
+Document this capability.
 
 Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Tested-by: Martin Hecht <mhecht73@gmail.com>
 ---
- .../bindings/media/i2c/maxim,max96717.yaml         | 114 +++++++++++++++++++++
- 1 file changed, 114 insertions(+)
+ Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-index 976f6dd2c164..d73a98085b7f 100644
---- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-@@ -120,6 +120,120 @@ required:
-   - reg
-   - ports
+diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
+index abacc3c874a9..d2dd72f2e924 100644
+--- a/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
+@@ -95,6 +95,10 @@ properties:
+       - required: [port@6]
+       - required: [port@7]
  
 +patternProperties:
-+  '-pins$':
-+    type: object
-+    additionalProperties: false
++  '^port[0-3]-poc-supply$':
++    description: Regulator providing Power over Coax for GMSL ports
 +
-+    properties:
-+      function:
-+        enum: [gpio, rclkout]
-+
-+      pins: true
-+      drive-open-drain: true
-+      drive-push-pull: true
-+      bias-disable: true
-+      output-disable: true
-+      output-enable: true
-+      output-low: true
-+      output-high: true
-+      input-enable: true
-+
-+      slew-rate:
-+        description: |
-+          Slew rate.
-+          Rise and fall times represent the time needed for a GPIO to go
-+          from 20% to 80% of VDDIO.
-+          0 - Fastest
-+              rise:  1.0ns @ 1.8V,  0.6ns @ 3.3V,
-+              fall:  0.8ns @ 1.8V,  0.5ns @ 3.3V
-+          1 - Fast
-+              rise:  2.1ns @ 1.8V,  1.1ns @ 3.3V,
-+              fall:  2.0ns @ 1.8V,  1.1ns @ 3.3V
-+          2 - Slow
-+              rise:  4.0ns @ 1.8V, 2.3ns @3.3V,
-+              fall: 10.0ns @ 1.8V, 5.0ns @3.3V
-+          3 - Slowest
-+              rise:  9.0ns @ 1.8V, 5.0ns @3.3V,
-+              fall: 10.0ns @ 1.8V, 5.0ns @3.3V
-+        maximum: 3
-+
-+      bias-pull-up:
-+        oneOf:
-+          - type: boolean
-+            description: Enable regular 40kOhm pull-up
-+          - enum: [ 40000, 1000000 ]
-+            description: Enable either the 40kOhm or the 1MOhm pull-up
-+
-+      bias-pull-down:
-+        oneOf:
-+          - type: boolean
-+            description: Enable regular 40kOhm pull-down
-+          - enum: [ 40000, 1000000 ]
-+            description: Enable either the 40kOhm or the 1MOhm pull-down
-+
-+      maxim,jitter-compensation:
-+        type: boolean
-+        description: |
-+          Enables jitter compensation.
-+          Jitter compensation is used to minimize the jitter of the
-+          signals transmitted from the deserializer to the serializer
-+          by adding a fixed delay to every transition on the serializer
-+          side. This can be used for pulse generation where timing is
-+          critical.
-+
-+      maxim,tx-id:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description:
-+          Enable transmission of the pin state from the serializer to
-+          the deserializer using the specified identifier.
-+        maximum: 31
-+
-+      maxim,rx-id:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description:
-+          Enable transmission of the pin state from the deserializer to
-+          the serializer using the specified identifier.
-+        maximum: 31
-+
-+    required:
-+      - pins
-+      - function
-+
-+    allOf:
-+      - $ref: /schemas/pinctrl/pincfg-node.yaml#
-+      - $ref: /schemas/pinctrl/pinmux-node.yaml#
-+
-+      - if:
-+          properties:
-+            function:
-+              const: gpio
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [mfp0, mfp1, mfp2, mfp3, mfp4, mfp5, mfp6, mfp7,
-+                       mfp8, mfp9, mfp10]
-+
-+      - if:
-+          properties:
-+            function:
-+              const: rclkout
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [mfp2, mfp4]
-+
-+      - if:
-+          required:
-+            - slew-rate
-+        then:
-+          properties:
-+            pins:
-+              items:
-+                enum: [mfp0, mfp1, mfp2, mfp3, mfp4, mfp7, mfp8]
-+
- additionalProperties: false
- 
- allOf:
+ required:
+   - compatible
+   - reg
 
 -- 
 2.53.0
