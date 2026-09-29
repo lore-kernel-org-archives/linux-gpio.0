@@ -1,192 +1,240 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811E04FD29F
-	for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 09:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790675901; cv=none; b=Z890KHlQjoR/r5iXkoMtvfmqGo/IyZ4QYzos8uL+602hRlXAlcH7tvTb7s1xwODNoMxcmK+UskeUI8h0647znwEE8TxnsGX9TZlzc6IQjqpdPX1Lz2Zu3QY0ebHVFYfbNgKBZJplh1AGg39sjhHDPJ0q0r7+REnY+iesaYlsSXI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790675901; c=relaxed/simple;
-	bh=AyQlhHn/ZGofFAIPNVNLtAHbPpfbmqfVZrPlxdgxWDU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GOntJt3myToWe1lHyobsr9hWfejIZNR40Ei7eYDcB0Ou/zlUrgPvWc6qeKWbXbSc2C56eAaBY75ZhXuWyUtAXRGR8qPbRyEqXcDAujMXmcU3zff5WUa4rTxZUtR+bnbfVm8TT3gzTAlDYpw+fsGu2DJHSgI+qstuq9HCn/2ammI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QK5JIihT; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=UP4Qsvup; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D65517BC0;
+	Tue, 29 Sep 2026 10:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.203.200.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790678625; cv=pass; b=MGhyVoQpikReJL9oEkbiiBoZ2lL0CKL38wYarvloMQH4wYhJ+IMi7T/kip1E+pk5hWgYdJrfplx/C578N18JVPEiXtSX3YS2x3Zs0lIZgkFuYzEdK93sgS1KXC2wd49DejkNOEKwWEGkbWwi03YySZS/u/yMwoz6lMoxlBK/Kjc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790678625; c=relaxed/simple;
+	bh=5J514lza0krHJitGl9UfuUtC5FyE9os6vFOtREHBAv4=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=I84O3BitSOEewJCJ7WIe6zg+6tC01bRAbw5TGPhcM5O6FxOz5Isoqaokkp/hqP563jc0219JWayjPyzPFeYW4QVgsJc5TK4zxvOTR3icxf01TMhZtS6p+216rNzDpFrtdRhpNEf1ooPEM7L60ZVpjVLxJ0WyLk35OFp6pGPGlNs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b=DT1p7VkP; arc=pass smtp.client-ip=185.203.200.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QK5JIihT";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="UP4Qsvup"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68T7TrUR3684709
-	for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 09:58:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Hrf/BRu9vxuRgHvHJCDyLhP6Fml6xeXWnXwjv05Uq5M=; b=QK5JIihTRv/kofqt
-	4QaoUpy65LqzTQHfXDhdtFjOwFKUi6/+nsI95VEXDSggZ6Vc9mnegaKosyoeccz/
-	FhGi/AKvkoqLzJtIDjpJ1DdwBoIR1gxXqFLYpz9n2yNbqfMpuBlhVwqVykDWWGgO
-	lRVFWKWRqUj9gFFdfJxdwvD5glXbu90v8CaRD+zz1DEiXOJmGXpHtdV3kIVxaOKI
-	m0R4Y7o+Tj2ulR5f8dDNeSeWvX+bKhSECwaSUT43d5g9yhzn6GwdKpNBnGqcfPjQ
-	Zd6/gS8utn/fuhwPpsZM1L/t2KeCMG4GhjnF2baHaDUkLpiEamySAi85hRi0AwdL
-	nKkJHw==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h0144tb2s-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 09:58:18 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-38ecc48b3c2so8974068a91.1
-        for <linux-gpio@vger.kernel.org>; Tue, 29 Sep 2026 02:58:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1790675897; x=1791280697; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Hrf/BRu9vxuRgHvHJCDyLhP6Fml6xeXWnXwjv05Uq5M=;
-        b=UP4Qsvuplc3TWyDX7e9qHDigqDhHaPfPJAWb0zOJxuQz8fk3b87R0NMvnwH7DCcCAu
-         dKFFRmjJMzXV09C6rXSXFiCyJH0OXtRePLbYpiuo0R7N/PWnggYc+pvNZTJEea/KiEbU
-         RTAcFG4aba29vgFdGwwvMMN290Vtai4iodeQPkQl/5ooTzKruwLZjF5eWQgDcuPoSvLg
-         WUeCEZdKfqrkznMx3JAadB75IqLBti2mRpRzYQmpeML3b6ddie9gdIX+ShO+rLnmJo78
-         iI3jE/LXX6JpvPKI41t+X2LfuD1gaCQNkGwlKEhL2Pt4ZJOQalMWfYmtqn5TwKsU+2gG
-         gbeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790675897; x=1791280697;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Hrf/BRu9vxuRgHvHJCDyLhP6Fml6xeXWnXwjv05Uq5M=;
-        b=x+QlZ8kQxoijh/v7sfAeRktxukjHZQmZce4Yo7hxiVD71eGviSzRJZvcdNay8ggKGV
-         f4E4p4grVhYVxosM0oFJ+LFgXZCOPo+jhsOBX9ISVt0skagqawwmKMO7UeWnL3xqvUzw
-         yRtBcRAQWWEaaTV7bYw31z+M2jp6T+3bI6NAYS9aFVMnbpoEo4/om/eLaE4H20PHdil1
-         gacp44bdXbZXyNvs+It5aCbJuTwZD0mv7+ogCdOJGSDLwtSpfnbKx3ZPg3LakAe0Mz41
-         orBNYtFX/vIv7bR4mtRHucsJIWNQ8XLTjBdGPiiltFNGX965oX+03zehxy1QEvUNQgv7
-         f6CQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzjiQ02AFwl+Zj6GmD1MTebH/VV9Fpd2Z1MuXOfo7S+KpcOep+E+NZRQJA7DoKoEj6Z10Wcg8UXvhAb@vger.kernel.org
-X-Gm-Message-State: AFq9FYI2Kr+MRD979AmVrwcTs03zIrs0RXI+hTJ72L5WhrA9EvzDJPT/
-	4yPHuHeURvsNXV8ctCWHa/q1UOY76eCmVx7lsDiIH57hhj99W4SbPrvv+jY4WSkb4IP/ikmMRUv
-	ogz4SIqojTISPbxYJd4Xr2SO4oLgzzRLFlBKP7lScIQT9K1Q5DZtAa3lfuB4Y9ZUC
-X-Gm-Gg: AYBFou3w9JQlo+Ui7TkgJ9hHI5l2HtPSDkCVQ50Vt6Reqg7E9zjcC9JilFeDogRgYWj
-	l36mUf57Owtbr8jRVtMH7x/C5kCzg7OLtQ6z+yzuoy0aBQZdzVl3B/fp9E80S2eWDmmVJyiqqZO
-	giih3u09CtmUx4Khfdf1n7gaOfgfd4EPpbKYmzxSwlYWDzH6cNpHPZEKJnuJwu/I+CG+M8nv6g0
-	0IB/KOx12uefNUXlWybz3bNUAbLArJR3hXJyOVhHIiKEpML7YZWf6X+XObVkiwFH/sOWS8XrXrq
-	59xMEJQs6Gk9b4USZqJ0ljnVuSXxVhtxJNADXrp41isgv5X68HKuNXtlDlERj/fSsMc0hKs3sYX
-	A2GmRXQLVwG4hEclOkhK8ir4AXGeuvi50oz5k8OreGECO9347QNI4viU7BQoIblnzQalhsQUqlD
-	NMvoMtOOeFo49ShJY7XSxC
-X-Received: by 2002:a17:90a:ec8c:b0:39e:2e7c:d43c with SMTP id 98e67ed59e1d1-3a0bb552ff6mr9601332a91.7.1790675897475;
-        Tue, 29 Sep 2026 02:58:17 -0700 (PDT)
-X-Received: by 2002:a17:90a:ec8c:b0:39e:2e7c:d43c with SMTP id 98e67ed59e1d1-3a0bb552ff6mr9601308a91.7.1790675897013;
-        Tue, 29 Sep 2026 02:58:17 -0700 (PDT)
-Received: from [10.149.102.240] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a498057a62sm4634983a91.13.2026.09.29.02.58.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Sep 2026 02:58:16 -0700 (PDT)
-Message-ID: <ca8e656a-50b5-4cb2-a2e6-c6b275fb7b5d@oss.qualcomm.com>
-Date: Tue, 29 Sep 2026 15:28:07 +0530
+	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.b="DT1p7VkP"
+Received: from [127.0.0.1] (unknown [IPv6:2a02:560:5dd5:4b00:9ebf:dff:fe00:fdb5])
+	(Authenticated sender: sha@pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id A4B3C200D2A;
+	Tue, 29 Sep 2026 12:43:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1790678608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8eqC9HECkZKv+r9GsTkWdSv68RlAX6I5shyNDqW9P6s=;
+	b=DT1p7VkP/+svnE1aXJpl9neD2EF/pMzrVJBxKPudplyCaNaze8p8cPFVkQ2I9CJ0IlJ6v8
+	QCCOuxO5jRXSXqgUAUA4X7U+p/vWvkbDJwwdUDqzxlUnpqozwrxU5f4BgWGEjWM/onlyqa
+	lCXOMQeO0o5tCZYbL/XuJ5f1qpBzrLtoK5/XiFpYmEGsZr6hfcREjOML/teLePuQk07LiV
+	RH8b+Zp5ltCnc5Y0XV9xlglTMSlCzl6/fXFBazHIafXddELdJX4NGSNPnbTgE3Dj3k4Mci
+	9mSuxb/ybMOzDVTgbXGy54ZU5j+Uhnp8MXYTpgaz9mQ/HpasQ33r5rUcY/sRzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1790678608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8eqC9HECkZKv+r9GsTkWdSv68RlAX6I5shyNDqW9P6s=;
+	b=fSvLa3xJhpuwvPHq3EPxV+H1qfWMY3WWJQLXe819ljo+0V0pOLypft7VyDAKJq+jF7Qetk
+	CS2FYl1YruIRWcFHqe8lmOp64JFDMsqHwaqeYvYPDe6GCTZVzPXzY959lyYcrObh+KADxF
+	m7s7qCGDzM8E85euAVHmxMNHOrW8RqW4qzD/8qp9yrKzaJtpT/OjvbDCqkyV325DtXUJcM
+	OEBJFA8gE8VuGJuxhH5ZXWXu/r2bBkDhSI/0ug9YgESeDVi1Qc8AewQmj3OcRpN2zl21ht
+	TUGMnNOOoIYR5I9+UwrJKg8hhPyLSnqHzZadu+wF+ZCUUyBW4yeaXgqEG1BjLA==
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1790678608; a=rsa-sha256;
+	cv=none;
+	b=NxXa8ydWaRiw34+wpF5HajG9GqvcG87aa+b8/veOZrxrOFn3fBVudb7mJXipccjMf7Pk4I
+	TaDCaks7vN/HxFXRBnafqoM3dPFednm25TnJrmScfQTeQXsFT4CyhVp9NhbGF+h4DuhTNq
+	U0M594bWVq2tqJQZFvFFwTI6x+PXZ2kkAocyQbcBK/k5hSg29/8S67BfSnHkb96fZuy2+v
+	R1JofyV7ZVepVv1IxEn5hqUhSc9SvQQp2Jqd4neR1Yzer6A4rRwzIHADivzvbjnGdbTtJ+
+	GFQjccHUJS6PWvFV1ALyCVKVlZdxjyT+aGeyf0mf09jGolFpiKM3o50baBdw/Q==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sha@pengutronix.de smtp.mailfrom=s.hauer@pengutronix.de
+Message-ID: <97e38914-bd04-4e01-8e5a-a729dfe0c7f5@pengutronix.de>
+From: "Sascha Hauer" <s.hauer@pengutronix.de>
+Subject: Re: [PATCH v9 2/2] clk: add TI CDCE6214 clock driver
+To: "Jerome Brunet" <jbrunet@baylibre.com>
+Cc: "Sascha Hauer" <s.hauer@pengutronix.de>, "Michael Turquette" <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Brian
+ Masney" <bmasney+clk@redhat.com>, "Jerome Brunet" <jbrunet+clk@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, linux-gpio@vger.kernel.org, "Sascha
+ Hauer" <s.hauer@pengutronix.de>, "Linus Walleij" <linusw@kernel.org>,
+ =?utf-8?b?QWx2aW4gxaBpcHJhZ2E=?= <alvin.sipraga@analog.com>
+In-Reply-To: <1jcxu18xme.fsf@starbuckisacylon.baylibre.com>
+References: <20260921-clk-cdce6214-v9-0-f2ea74fd38a2@pengutronix.de>
+ <20260921-clk-cdce6214-v9-2-f2ea74fd38a2@pengutronix.de>
+ <1jcxu18xme.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 29 Sep 2026 10:43:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 15/15] ARM: dts: qcom: Add initial device tree for Kuno
- SoC
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Ulf Hansson <ulfh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>,
-        Georgi Djakov <djakov@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Linus Walleij <linusw@kernel.org>, Thomas Gleixner <tglx@kernel.org>,
-        Radu Rendec <radu@rendec.net>, Robert Marko <robimarko@gmail.com>,
-        Guru Das Srinagesh <linux@gurudas.dev>,
-        Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Abel Vesa <abel.vesa@oss.qualcomm.com>
-References: <20260827-kuno-soc-support-v5-0-6d47636a8f09@oss.qualcomm.com>
- <20260827-kuno-soc-support-v5-15-6d47636a8f09@oss.qualcomm.com>
- <97fd5a30-9469-482b-be0c-0ed6da6424e8@oss.qualcomm.com>
- <5a55edf8-bbcd-4e2e-aa08-c9b62e527a43@oss.qualcomm.com>
- <c341b7ab-fc59-4234-a25f-715035fc1779@oss.qualcomm.com>
-Content-Language: en-US
-From: Hardeep Sharma <hardeep.sharma@oss.qualcomm.com>
-In-Reply-To: <c341b7ab-fc59-4234-a25f-715035fc1779@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTI5MDAzOSBTYWx0ZWRfX2L6td7mcXxbr
- 7qbleigCFNtyHAn2gIidg6MWtkfKq25B8RmUNyE2PJA1Ot5Gt5zzxm7kZdlmXymw7ghrrJKESid
- gcoJXNUmf2WFNKSqmTpej560JZ9xEKiM4KjNE6YKKqkdcE4GNx3jR/P2ueKivYHuq5mAasWcQAE
- Q9XYX5U6Lt7R9WZn1TV/AuL7vgcuyfqz8lPN0ZDxvd3AqQw9oBLzX/emgXL5WFKpr7e3PzEcUdY
- D52FNQb/Rc5qWE9+DNo0SHrkAue67ZlBMs3SFLHOguI7HBnCTHgTUmvvGzXKE/RNEQQsgE/2TKp
- BM7m8PM/l7sSWPMxNECUMsZJoJhg6caalansa0MF+FoX+lvI5z4WJmQ3VVI/ThnYK3Br9vYHBas
- Ow2KMjHp7VUXXNbE5EDKFvkEbopPQh1rmsFlkkqV/A6Ltc6GKdpe4ErdPTUOGgYPGbv8VpXLfJG
- Jno0cTJ8rsCaGVKSQ7g==
-X-Authority-Analysis: v=2.4 cv=FJSOVOos c=1 sm=1 tr=0 ts=6abb8bba cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=eAyIkxj0YKcLyhwK4dIA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-ORIG-GUID: KVQDL1i8mCgEkAGP0w8goDcXzw0ZrdPb
-X-Proofpoint-GUID: KVQDL1i8mCgEkAGP0w8goDcXzw0ZrdPb
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTI5MDAzOSBTYWx0ZWRfX7a5f8+lTiGyQ
- UESggzIKIhTthdz3Mp1E1+zKqBc2adTjoYGCgnRdSCsUfj34l+cLsuxLouKaeIzrH4dkFRGcx6R
- /oAsOsV4wYj1jcTimFGBCc6OXGdHZaQ=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-29_03,2026-09-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 clxscore=1015 malwarescore=0 bulkscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609290039
 
+Hi Jerome,
 
-On 9/29/2026 1:56 PM, Konrad Dybcio wrote:
-> On 9/29/26 8:59 AM, Hardeep Sharma wrote:
->> On 9/3/2026 4:27 PM, Konrad Dybcio wrote:
->>> On 8/27/26 7:51 PM, Hardeep Sharma wrote:
->>>> Add SoC-level DTSI (qcom-kuno.dtsi) and IDP board DTS
->>>> (qcom-kuno-idp.dts) for the Qualcomm Kuno SoC.
-> [...]
->
->>>> +            ranges = <0x0 0x0 0x0 0x0 0x1000000>;
->>> likewise here, you don't need to precisely limit this.
->>>
->>> Konrad
->> Hi Konrad
->>
->> Here I cannot use ranges;
->>
->> An empty ranges; only works when the child node uses the same number of address and size cells as its parent. That can't happen here:
->>    - The binding fixes qup0 at 2/2. qcom,geni-se.yaml requires #address-cells and #size-cells to be 2.
-> Fix the binding please
->
-> Konrad
+On 2026-09-25 11:54, Jerome Brunet wrote:
+> > +
+> > +#define R0	0
+> > +#define RO_I2C_A0			BIT(15)
+> > +#define RO_PDN_INPUT_SEL		BIT(14)
+> > +#define RO_GPIO4_DIR_SEL		BIT(13)
+> > +#define RO_GPIO1_DIR_SEL		BIT(12)
+> > +#define RO_ZDM_CLOCKSEL			BIT(10)
+> > +#define RO_ZDM_EN			BIT(8)
+> > +#define RO_SYNC				BIT(5)
+> > +#define RO_RECAL			BIT(4)
+> > +#define RO_RESETN_SOFT			BIT(3)
+> > +#define RO_SWRST			BIT(2)
+> > +#define RO_POWERDOWN			BIT(1)
+> > +#define RO_MODE				BIT(0)
+> > +
+> > +#define R1	1
+>=20
+> I don't really get the point of those defines
 
-Thanks Konrad for review.
+It was requested by Stephen [1]:
 
-Fixed in v7 : 
-https://lore.kernel.org/all/20260929-kuno-soc-support-v7-0-530f62dc4020@oss.qualcomm.com/
+> Maybe it would be better to have '#define R30 30' just so we can easily
+> jump to the fields like R30_PLL_NDIV. I see that the datasheet doesn't
+> give a name to these registers besides prefixing the decimal offset with
+> the letter 'R'.
 
-Best Wishes
+I don't have any personal preference.
 
-Hardeep Sharma
+[1] https://lore.kernel.org/all/e5858fe5d4276a735c5354e955358f27@kernel.org/
 
->
->>    - soc is 1/1. It uses 1 cell for addresses and sizes, like the other 32-bit Qualcomm SoCs.
->>
->> Best Wishes
->>
->> Hardeep Sharma
+> > +static int cdce6214_clk_out_set_parent(struct clk_hw *hw, u8 index)
+> > +{
+> > +	struct cdce6214_clock *clock =3D hw_to_cdce6214_clk(hw);
+> > +	struct cdce6214 *priv =3D clock->priv;
+> > +
+> > +	switch (clock->index) {
+> > +	case CDCE6214_CLK_OUT1:
+> > +		regmap_update_bits(priv->regmap, R56, R56_CH1_MUX, FIELD_PREP(R56_CH=
+1_MUX, index));
+> > +		break;
+> > +	case CDCE6214_CLK_OUT2:
+> > +		regmap_update_bits(priv->regmap, R62, R62_CH2_MUX, FIELD_PREP(R62_CH=
+2_MUX, index));
+> > +		break;
+> > +	case CDCE6214_CLK_OUT3:
+> > +		regmap_update_bits(priv->regmap, R67, R67_CH3_MUX, FIELD_PREP(R67_CH=
+3_MUX, index));
+> > +		break;
+> > +	case CDCE6214_CLK_OUT4:
+> > +		regmap_update_bits(priv->regmap, R72, R72_CH4_MUX, FIELD_PREP(R72_CH=
+4_MUX, index));
+> > +		break;
+>=20
+> Can you properly describe your clock rather than doing this sort of
+> matching ?
+
+You mean something like:
+
+struct cdce6214_clk_data {
+        unsigned int pd_reg;
+        u32 pd_mask;
+        unsigned int reg;
+        u32 mux_mask;
+        u32 div_mask;
+};
+
+static const struct cdce6214_clk_data cdce6214_clk_data[CDCE6214_NUM_CLOCKS=
+] =3D {
+        [CDCE6214_CLK_OUT1] =3D {
+                .pd_reg =3D R4,
+                .pd_mask =3D R4_CH1_PD,
+                .reg =3D R56,
+                .mux_mask =3D R56_CH1_MUX,
+                .div_mask =3D R56_CH1_DIV,
+        },
+        ...
+};
+
+If yes, I can do that.
+
+> > +static int cdce6214_get_psx_div(unsigned long rate, unsigned long pare=
+nt_rate)
+> > +{
+> > +	unsigned int div =3D DIV_ROUND_CLOSEST(parent_rate, max(rate, 1UL));
+> > +
+> > +	return clamp(div, 4, 6);
+> > +}
+>=20
+> Can't you just use a regular divider operation ? split you clocks in
+> different entities ?
+
+I can switch to use the generic divider helpers (divider_recalc_rate,
+divider_determine_rate). Is that where you aiming at or do you want me
+to register the clocks as composite clocks?
+
+> > +static int cdce6214_probe(struct i2c_client *client)
+> > +{
+> > +	struct device *dev =3D &client->dev;
+> > +	struct cdce6214 *priv;
+> > +	struct pinctrl_dev *pctl;
+> > +	int ret;
+> > +
+> > +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +	if (!priv)
+> > +		return -ENOMEM;
+> > +
+> > +	priv->client =3D client;
+> > +	priv->dev =3D dev;
+> > +	i2c_set_clientdata(client, priv);
+> > +	dev_set_drvdata(dev, priv);
+> > +
+> > +	priv->reset_gpio =3D devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_=
+LOW);
+> > +	if (IS_ERR(priv->reset_gpio)) {
+> > +		return dev_err_probe(dev, PTR_ERR(priv->reset_gpio),
+> > +				     "failed to get reset gpio\n");
+> > +	}
+> > +
+> > +	priv->regmap =3D devm_regmap_init_i2c(client, &cdce6214_regmap_config=
+);
+> > +	if (IS_ERR(priv->regmap))
+> > +		return dev_err_probe(dev, PTR_ERR(priv->regmap),
+> > +				     "failed to init regmap\n");
+> > +
+> > +	ret =3D cdce6214_configure(priv);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret =3D devm_pinctrl_register_and_init(dev, &cdce6214_pdesc, priv, &p=
+ctl);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "pinctrl register failed");
+> > +
+> > +	ret =3D pinctrl_enable(pctl);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "pinctrl enable failed");
+>=20
+> It feels like it should an MFD driver. half the driver belong in pinctrl
+
+I'd rather not go that way as it means splitting a relatively straight
+forward driver into three subsystems with different maintainers. Also it
+means getting cross device dependencies right.
+
+Taking "Multi Function Device" by its name it means it's a device with
+multiple functions. The CDCE6214 is not that, it's only purpose is to
+generate clocks, only that the pins need some configuration. Most other
+devices of this type just have device specific properties in the device
+tree for configuring their pins (which I was rightfully pushed away from
+in earlier reviews).
+
+Sascha
+
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
