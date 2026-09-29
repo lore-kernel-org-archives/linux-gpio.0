@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B20F47CC87;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF7B48AE0F;
 	Tue, 29 Sep 2026 22:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790721715; cv=none; b=uKBOub+5BudoZ7XnmhHpllvtrTZzcDrM64EtAll1WB/m0w/+vfRNZRPDBl6QSG1eCU8BdQUkjWZCkUVgNE0t4TvSQl4LXtSH9rpPQAuKdGuWEcoNJAUVMM4gEJvji3d73iLpnT3mSXPxPQsRPXYfH3jCJHyB2mfbaGz/tNmxHyA=
+	t=1790721715; cv=none; b=rrlwaDF6gevA1mUH+VaLsQRc81JcTLl5QmiMMhBDKINhmLBBcm2aPgnyn+3PgMkYq3RtLv01vlvmbkWKyhk01j+2ikc5vN44e+vUmA/o/5iIQ2CaXGXb+J1FAx6y2LUdIA7O8i57OAJvcXlTG1Cl1Gk6OKWoCwLBWmU7QmxGGR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1790721715; c=relaxed/simple;
-	bh=Lj8trtWQfaFBHXdt0QqGJtFpFf56yIwo4fW2wTI2b7Y=;
+	bh=UrrKPntd8pKjX8A0W7uxId0B5R7t3LfBfdro11a+7Y4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aGOnsm8AIX0fLiYL/O9Rp2bcDRYTGSAU/BxUKOWkDxLfKJ/26qGsT5GpzBVQY2v250MXnCyWZSIsxQ99IylTS/76HjD6GPEo64mNgMGlR1okI1yy93XoC9kMP0gICdE2CAG1K0wxWKmTmbcxPNAy2jGycnw/rYxmXaDh0zHKrSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NkJhn/Mi; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=mGXYRJg2oDRvtqR4T/NrYJdAvS8vK6k2A7U+1Gu95LJ8UG2nrGaOi81t73yyvIeFYT7Deem8QP6ZZXyWmSYAfBdNETmTV3A3e8sLRbALtGRkakg6uUmKxxyMalpN5Y+jqCsM1BLffpiJaJZm3KJ+C3GtzhzyKxcwK4XFtENQsZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkY44rwM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkJhn/Mi"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 36577C4AF19;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkY44rwM"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2B9C2C4AF48;
 	Tue, 29 Sep 2026 22:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1790721715;
-	bh=Lj8trtWQfaFBHXdt0QqGJtFpFf56yIwo4fW2wTI2b7Y=;
+	bh=UrrKPntd8pKjX8A0W7uxId0B5R7t3LfBfdro11a+7Y4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=NkJhn/MiQHFSb5iiGBM4K5XbVvirLc2GDhWHlcseCrm/EzJHL9Z3ilkFJPmLODcBi
-	 ZCwoPkKc9CdHM9bjoj4McI6EV13oJcCR6mbLUPJhJwsuf/Gg8cM0A3EYM5UhBWxjgP
-	 Q0l9cJWAOu19J0HiBQP/Bq4OGxb+IrHxO4ZPAteLSO8Hr9vUgoxF3y6OHWIWlmUldU
-	 6FP7p4YTKOYam4VrdzFb55TLGPHFWof1L1ijoc3YxO6jgfW95Si/m8JqVlZ254l7CC
-	 vBQLWaZIMFUbjAav1uj8CYKB87oYE/KHIo70z2g24bp3bJ65MFfcvsXreVF8w5SxbG
-	 94YaLrHMKT42A==
+	b=pkY44rwMz+au7RAtx8NqpZnnkL8afiwrYnVtT4R5jl/4f8Qm7bkWtfYcCQFklWOL+
+	 fD94d3m9BkKaKj896a4MwPJEplgdf4sBz7dXlRg62i+/XPsIMPeIMlqvX0IBv9aZIZ
+	 45sVe96xlOj8/3I/XlTSejkmp+VszalSDyvn17L7ob0gBQTC0CgV5k0VOy79gAnAEP
+	 9gVzPpaGR2Lawa2wSw1wzPy08AxaCNJuBYrz7q7Lk0j6w+PRdcQFRrKXDCZWLBn11z
+	 ACOwESIbyYQW9IXlLWTBBW9TiPbMDVhU/F/cOeWEn3gVH9GBAc1bJLiLDzGaye4dp4
+	 6B5H0l+vz7lpQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24566CA5FA7;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 137CECA5FB6;
 	Tue, 29 Sep 2026 22:41:55 +0000 (UTC)
 From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Wed, 30 Sep 2026 01:41:40 +0300
-Subject: [PATCH v18 06/23] dt-bindings: media: i2c: max96712: use pattern
- properties for ports
+Date: Wed, 30 Sep 2026 01:41:39 +0300
+Subject: [PATCH v18 05/23] dt-bindings: media: i2c: max96717: add support
+ for MAX96793
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -40,8 +40,8 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20260930-gmsl2-3_serdes-v18-6-43117818f499@analog.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260930-gmsl2-3_serdes-v18-5-43117818f499@analog.com>
 References: <20260930-gmsl2-3_serdes-v18-0-43117818f499@analog.com>
 In-Reply-To: <20260930-gmsl2-3_serdes-v18-0-43117818f499@analog.com>
 To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
@@ -61,11 +61,11 @@ Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
  Andrian Suciu <Adrian.Suciu@analog.com>, 
  Cosmin Tanislav <demonsingur@gmail.com>, Martin Hecht <mhecht73@gmail.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790721712; l=2103;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790721712; l=1074;
  i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=m0o3H8TQMy5eBukVge3aDky1f03UCMkFBStUWV3bDPc=;
- b=9Pi4aRjCbFjYWz5jTOjc0+A0p/1vMnDkHfmzi1vGOEytlIoUArOPat938s85fDmfj7cBtrOX6
- 9pyFopUvwIuBQ9MvQmKq0OH4b6F6RDjSVp8NR3yKt0A3OqRHsvqXWln
+ bh=m5jA1gg0q41gyUvWTef61o5rcopXPb/mVs+RuRWcN4s=;
+ b=8htDbpdHe1eWwFTdyIOwn7j/0WEDWKXn6iUJKMkY/qQkWQzt2HVsLARplTkj8uprLn6o7MaG/
+ yqwfICVM9H8AVrOimAkcQMtRX5aNrp+fla3ynv/xR31/4BsoFwEgVSn
 X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
  pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
 X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
@@ -75,70 +75,39 @@ Reply-To: dumitru.ceclan@analog.com
 
 From: Cosmin Tanislav <demonsingur@gmail.com>
 
-The MAX96712 and MAX96724 support up to 4 separate PHYs, depending on
-the selected PHY configuration. Use patternProperties to document this.
+MAX96793 is a newer variant of the MAX96717 which also supports GMSL3
+links.
 
-The input ports are all the same, use patternProperties for them.
+Document this compatibility.
 
 Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Tested-by: Martin Hecht <mhecht73@gmail.com>
 ---
- .../bindings/media/i2c/maxim,max96712.yaml         | 29 ++++++++--------------
- 1 file changed, 10 insertions(+), 19 deletions(-)
+ Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
-index 26f85151afbd..583bbd60157c 100644
---- a/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96712.yaml
-@@ -39,27 +39,15 @@ properties:
-   ports:
-     $ref: /schemas/graph.yaml#/properties/ports
+diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+index 2159fd85a9bf..eea0f974874f 100644
+--- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+@@ -29,6 +29,8 @@ description:
  
--    properties:
--      port@0:
-+    patternProperties:
-+      '^port@[0-3]$':
-         $ref: /schemas/graph.yaml#/properties/port
--        description: GMSL Input 0
-+        description: GMSL Input ports 0-3
+   MAX9295A only supports pixel mode.
  
--      port@1:
--        $ref: /schemas/graph.yaml#/properties/port
--        description: GMSL Input 1
--
--      port@2:
--        $ref: /schemas/graph.yaml#/properties/port
--        description: GMSL Input 2
--
--      port@3:
--        $ref: /schemas/graph.yaml#/properties/port
--        description: GMSL Input 3
--
--      port@4:
-+      '^port@[4-7]$':
-         $ref: /schemas/graph.yaml#/$defs/port-base
-         unevaluatedProperties: false
--        description: CSI-2 Output
-+        description: CSI-2 Output port 0-3
++  MAX96793 also supports GMSL3 mode.
++
+ properties:
+   compatible:
+     oneOf:
+@@ -38,6 +40,7 @@ properties:
+       - items:
+           - enum:
+               - maxim,max96717
++              - maxim,max96793
+           - const: maxim,max96717f
  
-         properties:
-           endpoint:
-@@ -77,8 +65,11 @@ properties:
-               - data-lanes
-               - bus-type
- 
--    required:
--      - port@4
-+    anyOf:
-+      - required: [port@4]
-+      - required: [port@5]
-+      - required: [port@6]
-+      - required: [port@7]
- 
- required:
-   - compatible
+   '#gpio-cells':
 
 -- 
 2.53.0
