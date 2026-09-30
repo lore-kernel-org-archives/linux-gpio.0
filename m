@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D90F3C13E6;
-	Wed, 30 Sep 2026 10:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425AF3B14A8;
+	Wed, 30 Sep 2026 10:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790762630; cv=none; b=eiAH4vRO+HzpZFOGc11qneyeg2t7DmyrKDuGrzcEOqqXbDMNcskI8SR7vnime0xVUP3cKX3munzQmOpC6ytm+Pn/lzr3HgHAWZeDQ2yQzBUozLq4HDp1LGIIdP4rSd8tb+V0fyc9CB/+h0M9TwF/CAo1Le/E2sAnmFcVv13XAOc=
+	t=1790762754; cv=none; b=KKU5JKYaTCJSSVCRepWMSB9LIXz8qNztRynri0zlhGx/F2nxRbmeaay06tB2HLFhvdc6mcG2pZsSjKQSnfBzyl4PVLbqtSJTzyRKsLajy4m4GXGf+p4DheAVpeUVxVL20GhVSiXKtpzAmFIwRxc3TaWSWfUOrv+HryYWl5B5yCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790762630; c=relaxed/simple;
-	bh=2IZub5rWrQgbvTsxzc33LagoFCpIhC+j8FKe4M1IxoU=;
+	s=arc-20240116; t=1790762754; c=relaxed/simple;
+	bh=dRWq2jhj3fTwKQpiIWjJjY4RKZzPSum1JDagtM6SU50=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BbAxIqNKj2daWGPcEc+/zA8f9OFNljK3urkQpcDLy5+wG1A0NgX6I4KdL0Cc/C+cSmRUhjAXB9fbZkSjUDpn0spA/sB9Xd/+8lAfe4RyiJD+ygE5WHY55I2K+Kxigqlm+H9k+x7kSWNoAKxBrlAUdLYGB0zKiR71vceS+i1sKjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cEaDkVo6; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqvLZr8t6RL2ol6wHsnwlwpSK1Um0R70jMvIijtP4ffIcw4qTFQoYobZjBLm4vMIBpsOVqMc6L37HQELvmCbZo0sL7lByTkrxLZECI1DWWDSYSYK2DY0J/VIAaBKm0xo8Vcte+9gd2crwd2N33vIqeU0VcKctHyWW7OhoClakB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O5z20A5w; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEaDkVo6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3DA71F000FF;
-	Wed, 30 Sep 2026 10:03:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O5z20A5w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D3F91F00899;
+	Wed, 30 Sep 2026 10:05:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790762629;
-	bh=td3g3mrxc06WlDh86pjy3W/s60pLo2ohFiXwCP79lTw=;
+	s=k20260515; t=1790762752;
+	bh=Wr3MnKORYjw0k60zOQ7zLIpbcvMSgn1uQ9GeSEwtzWw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=cEaDkVo65JymLBwnlB0ZoVvzsO7MKlS1CZaoSq/TzEZOC+3fDqT036Al+gNL7Zydd
-	 VqUBoL6VKQXuiVE/QLOlLgJU38rHrUMg2Apm7AzAP1mNVunNLwXHi8ASw0QRuALsAQ
-	 TCT5MXq/W52qtT8re2QrgnXtMotv7CSJvCK88Qja2MtL7xou/8pwSC1CDnSrW7TqBl
-	 /S673P6bopkqpgR4GxIP0fnNiEoiLnLj7Gc3kvO4MV5tldPK5gO46bC+mVltLV6WnB
-	 NMDt6EG+cAF2cWRoVgnWGsPznWahFc9ExEoqkEuX3+pNcO6irdjP9bRcXKKlk2J8sR
-	 LRAMghu99XhOQ==
-Date: Wed, 30 Sep 2026 12:03:45 +0200
+	b=O5z20A5wSlEu+8/1fQdXDXKdPHRJKjo9ebIR6wIsBiREict0d69W/zZ6/ecIgH022
+	 ZoqdIuSFfVDb3Bf/0HXE0ZZreAo0lQ5YNtGn2iaBCmStKz5pkUM9OfhTWgZHuChfBQ
+	 RSdQdq475q3KSVFrk2ebrHOYXgjgmMUSp5A5jCgrBTexrZ4XRVKeaxFMgTS+1HwHHH
+	 1BxNQl6uRqOucuF4Uo/Sjm8WDQCjIB2nJibjZsxeHHJMXm/SMB9EHYD5yxY3f2hzZ8
+	 /H1MsL0Fn0yRIzGq+5oriX5NGkXSfM21FPj5W0DIgEp+zsgvJNXZr7h2C4b4svu1og
+	 5G8Tneolekd4g==
+Date: Wed, 30 Sep 2026 12:05:49 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Yureka Lilian <yureka@cyberchaos.dev>
 Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
@@ -34,9 +34,11 @@ Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
 	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] pinctrl: apple: Add t8140-pinctrl support
-Message-ID: <20260930-fascinating-armored-sunfish-ddcb59@quoll>
+Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: apple,pinctrl: Add t8140
+ compatible
+Message-ID: <20260930-warping-vivacious-dragonfly-fddfbc@quoll>
 References: <20260926-apple-pinctrl-t8140-v2-0-620bd11cd2a1@cyberchaos.dev>
+ <20260926-apple-pinctrl-t8140-v2-1-620bd11cd2a1@cyberchaos.dev>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -45,27 +47,19 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260926-apple-pinctrl-t8140-v2-0-620bd11cd2a1@cyberchaos.dev>
+In-Reply-To: <20260926-apple-pinctrl-t8140-v2-1-620bd11cd2a1@cyberchaos.dev>
 
-On Sat, Sep 26, 2026 at 04:51:44PM +0200, Yureka Lilian wrote:
-> This patch series has fixes for probing the pinctrl_ap GPIO controller
-> on the MacBook Neo. The previous code would crash in the regmap_init on
-> this device, since reading the REG_GPIOx for certain pins causes an
-> SError.
-> To mitigate this, we adapt the gpio-reserved-ranges property to describe
-> pins which are unusable and whose REG_GPIOx should not be accessed.
-> 
-> Also add the new t8140 base compatible to the dt-bindings, signifying
-> the different behavior of the t8140 pinctrl_ap device, and make the
-> driver accept it since it now respects the gpio-reserved-ranges property.
+On Sat, Sep 26, 2026 at 04:51:45PM +0200, Yureka Lilian wrote:
+> The pinctrl_ap GPIO controller on the MacBook Neo crashes upon reading
+> REG_GPIOx for certain pins. These pins, which are also listed in Apple's
+> device tree, are described by the gpio-reserved-ranges property.
 > 
 > Signed-off-by: Yureka Lilian <yureka@cyberchaos.dev>
 > ---
-> Changes in v2:
-> - EDITME: describe what is new in this series revision.
-> - EDITME: use bulletpoints and terse descriptions.
+>  Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 
-EDITME is here on purpose.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
 Krzysztof
