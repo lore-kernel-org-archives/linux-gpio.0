@@ -1,109 +1,120 @@
-Received: from mail-vs2-f36.google.com (mail-vs2-f36.google.com [74.125.227.36])
+Received: from mail-vs2-f43.google.com (mail-vs2-f43.google.com [74.125.227.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56D041DE18
-	for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 07:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F0D44F54E
+	for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 07:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790751957; cv=none; b=BydFaHj2hggtO7BdcanKl4R/1W5Y/nro6atDuW1LXEjAcejybX4YsJ7zcBqDtk+jiT2LwheuXzKk+WIc0rETcXgMoy5KzxnDyopu2Gy4ycxvp8afsxvyAfDsvR2nqJfIna3NNhqkoItjViMO4BzggmqtmIgWQtRrIOsPev8Rg0w=
+	t=1790751992; cv=none; b=AvPKjWeTigOB+2YLT9Ku5XAPqqYqA7fMMACtDbHrK7MU4E22buVLUjQYcWM/DL9ozZb20Ts+rdIYAHFJLV3QnpBNsT+tNrX4KUsahQi0lCV6CHjXsUJkiDvmcXqBSZLX8MF7pGc87wgjIPwCRxzITBZdr0jO4hFZXRsCnTVaFF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790751957; c=relaxed/simple;
-	bh=6x6zUfX3HAgCXeFMP5IQJ8hlZ04cJus+Y81jg3rYM3c=;
+	s=arc-20240116; t=1790751992; c=relaxed/simple;
+	bh=wch8nfNOZ3yz6W478LNk2PKlIPZ2op/sL1/5uWaDjYY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iIkD8WAV8FdERd96JS2d4m0mEy8YOjgThkP/oBtq3w4baOeDatQu05xh2K4Hdkn7cXVrV9m4AW/qgfFC7BZLP9PS+OC0gt9r9x55+UuHkCqgmH/eb4vs4VluT/JUDE45a5ZSW4BvMyU3xcUDRYTfhVVHliUzJDxBXsUzT2Hhtfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.36
+	 To:Cc:Content-Type; b=LnWn5zA8oYgEMweVi42shkRRNQjY7dGNsZAefgAvr6V5iVnaa2fwrdHKE2hieOfo0IQvQl0l8teZuIXHQrzRYLQJeRE/bUieZf5DxHj+9am+Tlbws8wYB8NxzNwba75gk+3lJ7zR967OXTCUIMDC21CPp2YjL8ONgbONa3fJ7/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f36.google.com with SMTP id ada2fe7eead31-7ba8b67f74eso256332137.0
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 00:05:52 -0700 (PDT)
+Received: by mail-vs2-f43.google.com with SMTP id 71dfb90a1353d-5d330f80f3bso515355e0c.1
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 00:06:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790751951; x=1791356751;
+        d=1e100.net; s=20260707; t=1790751987; x=1791356787;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=KRLyqaFR+2tvKEVGCS6TXPlesufaQZLklH2Mpn/Gp60=;
-        b=Dx+ldh/RIvC07DJ4rLEqLf0XP8IN5Ji4RYR0DMB0sj8SrzI6CnnpxVbps4di26IUZx
-         i78YDD/oud9OHGpAKXWB8LF82oYPjs81TYMwq5Vb0+MZ76MpegGhyGAGe5ZwyeKUqYGS
-         hhfgyHQGyzS6GmpJA97BBsoZV3HAUsVYIUIg/itt+Yr1vsHid2facpplalonYncpkxUi
-         Bbld1pPTBtdrMge9z7yVdVYtrFxMEgbpIBk5+8KGXE0oYF1jELTYW4VdimsCSCNda3nM
-         0pa87zdTK/+BzNjXLk3au9JAdNQSvYqGpji4gznJ/v9rvVYhDYa6+OnR9I6rVJg7An/h
-         J4Og==
-X-Forwarded-Encrypted: i=1; AKwUvBwEThsAGvPh2pQg2T2SFX9PWKXt62/o4zQZ/hsorrQiKYMYJF2UZqb8egBTdQVGmCFTf2IBfY55EVdN@vger.kernel.org
-X-Gm-Message-State: AFq9FYK+xRCLrcE01/VuvHXYSWcnUxaXvdOkBCChPnxyczTtLjJkI+MF
-	RRugXph2Kwu5rDj6uY1J5n+jkqw1n4Q5qUwp4EhQ7HfXoo0KZrKhQwyZU5IXWi4l
-X-Gm-Gg: AYBFou2IAqBj9fU2OIr8EZBvZdpnHEzWpGFV/hJtV3aeiWL1Mn67b2AlsYi3y2EEoqW
-	KGardw+Bv0VHCpWbZR/yIL1ENrfWC494dYJzwFtc5A79SbltFuadiXRP0cG2aGCb7KRhYMuwaaa
-	hV/bAlrBC2pGQtT5arGSjKOD7JxS2SI7dUhO6UwmJ8yUsRrbxLbjw7e61GeLbEQi6q30aaNKz7T
-	TGar8TFpA7+o1G8sz58w6bJE8ePeCIPDq+GQIcNgJoLklc6KcBTBd27Tmv8PYGCHyoeb1AMai1t
-	3yRKKFD7pM+0smtQsoiggOzdZD2WSFKmjsIiRHFuHT4oWPtSwvziwEl2eNSGXDngvyY6inza/1N
-	eCHZzMXb2LUA6QFRJ0veEz6CHw3lz2AVBl5VP8I9OMTLL6o9LR2Hd0LuNhao6pBrc+YZ+STSFJ9
-	88Vh4bNySr+iALSwboQGa9P0wKF/4Kv7ITymkB2nt4otoiX4YFZ9mvYqvFTCT7GBPrt6SUxrhAA
-	qtmCl9kRG4TlNChBArDdbjBprgo/jGKIyrw
-X-Received: by 2002:a05:6102:4494:b0:7bb:64cc:1362 with SMTP id ada2fe7eead31-7be85b2bda3mr40601137.6.1790751950826;
-        Wed, 30 Sep 2026 00:05:50 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7be13848a28sm449048137.3.2026.09.30.00.05.48
+        bh=XVZnJOotlaaUATBE8LN5Zb2VdzLY7iJmIqLqFopSb08=;
+        b=DrGcK6ag+DStcN1hPhes6M0OapkFbdD7+xkzDEHUGZt4VblqTo9BRbbcY4z3klx2LH
+         ZXxpOL2gM0JG48BwtY/0IbWZ2RpLofK9OqtU/FX48bTWaXu9g0O87BkFOzaNVJwUH3hC
+         uIW7ZnXTn/7jQdtZPrRtAcfpsafDXr4FeeGj80BMf/D7uy5hVmXMf8ivpWYU0XHkgebv
+         qvkTk7g5sXrfttmbKyfp4VQg9vn/ZGUQutOVhneS4kYppba2BXVTQ/NYNLFw0E/wwnMX
+         sqP0jfmzKEuYoSeTxlXfVT7jP4P8D9MIRhoEldw2u1Ver8jpe40/z02JE+MAE/1BKSrh
+         pt9A==
+X-Forwarded-Encrypted: i=1; AKwUvByaD7TsL5Sg2mqujDUTUXQDO0uDTq7YPznYQsyDLcX8kApOZepvyHbOaBkbhg5bcsXk7m8A6m4iBhCS@vger.kernel.org
+X-Gm-Message-State: AFq9FYJAKS5k4P5IT/c7QLP0FKltIyJ4zXCsSiWnghd6sF9yG/ngiKDz
+	YtweNmwPj4sxrAU5bdMFedo/hKk5nVrjZ+V3Ovy7upPFhpZEPPkVKNcqOO23dQVy
+X-Gm-Gg: AYBFou1PVxeUsXpjjJfCqAnp7FuRM3w9DFdHSFnPq9wgZW08R4veGhk5SBd9Urn304/
+	mu4WU87urn+zazqsCvj3JugTV2pglZSXgeDdF6BzTo37k9jRShqqJ+knWVnmRihKG2Be3aFubTt
+	IT/LwLGVyHFXApLi8VyMtfOWGSCfPgf6xh8QLSquoFMeV7nOLl7VtRpq0/wMuLPG4KIKBt1oPJW
+	J9ljRXXwcQpXDY8BIW4BHLKaDjGuOwkc8IrqKPbPq2kwkwc4hLGh7R5ut24wlLqNla88n1doO3l
+	w7Hkfuve9DaMVCm2ahUuizmXRffyWDEEPohBhHviVYmoyCudQWUSRHIbQAcK7R5KpLyTnNGdGUL
+	JOfScrXv+TcWdSI8rHfKlzxmvtR+HtRosYv3oJTA7hjxnWuY9HnkiajpxPvR5ojZ0lm0Td1NG+i
+	PJwAgz+K09gm3Ks7aY9+m+7kVa5iIqXixqb/01nR2OBsVLkzpInZdmioIBHm6JOvGpSmMt4oeRA
+	T7RWg/etcww9VRsG2CLgZL5/GcQm9ib+g40
+X-Received: by 2002:a05:6122:46a8:b0:5c8:4831:1539 with SMTP id 71dfb90a1353d-5d67abadbfcmr59658e0c.5.1790751986711;
+        Wed, 30 Sep 2026 00:06:26 -0700 (PDT)
+Received: from mail-vs2-f30.google.com (mail-vs2-f30.google.com. [74.125.227.30])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5d611ef8956sm830825e0c.4.2026.09.30.00.06.24
         for <linux-gpio@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Sep 2026 00:05:49 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-98536aec408so1289650241.0
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 00:05:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwZ1Ja/pRdL5TNyGTtYP2xgyAXlZJeTUDkZtn7kEH/gv4pK5zQRdYkZEeim7727sV2uhDpNLkrufI0+@vger.kernel.org
-X-Received: by 2002:a05:6102:6112:10b0:7ab:9152:1c6e with SMTP id
- ada2fe7eead31-7be733a556emr39198137.27.1790751948220; Wed, 30 Sep 2026
- 00:05:48 -0700 (PDT)
+        Wed, 30 Sep 2026 00:06:25 -0700 (PDT)
+Received: by mail-vs2-f30.google.com with SMTP id ada2fe7eead31-7b45e9d5aecso786180137.3
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 00:06:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwHPbRWNj5YwYRfE2CkGwy/92kT+IhlIi1vvtnZ37ELoCwH7Du6947lQdRd2Z/2BFVUZr1lM3ZXZtf2@vger.kernel.org
+X-Received: by 2002:a05:6102:3e8d:b0:7a7:3485:33ea with SMTP id
+ ada2fe7eead31-7be72ca2a93mr42702137.19.1790751984641; Wed, 30 Sep 2026
+ 00:06:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260929-rsk7203-properties-v3-0-02f84aeb8e47@gmail.com> <20260929-rsk7203-properties-v3-1-02f84aeb8e47@gmail.com>
-In-Reply-To: <20260929-rsk7203-properties-v3-1-02f84aeb8e47@gmail.com>
+References: <20260929-rsk7203-properties-v3-0-02f84aeb8e47@gmail.com> <20260929-rsk7203-properties-v3-4-02f84aeb8e47@gmail.com>
+In-Reply-To: <20260929-rsk7203-properties-v3-4-02f84aeb8e47@gmail.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 30 Sep 2026 09:05:36 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVpevoQLHepf06K1=YLRr+BUF9s3W_zaQkO24qiY2_DOg@mail.gmail.com>
-X-Gm-Features: AclHuK9T_GF3rRYO4h8sYrJYvPsih0XtUnox4vMWY5UxSoWqqC_FxwtdTdbQ_M0
-Message-ID: <CAMuHMdVpevoQLHepf06K1=YLRr+BUF9s3W_zaQkO24qiY2_DOg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] pinctrl: renesas: gpio: isolate function gpiochip
- from parent fwnode
+Date: Wed, 30 Sep 2026 09:06:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXwVWhPhn=vH-FbDX41Hnshg7V6S+pg8kreOHpTgRWeHA@mail.gmail.com>
+X-Gm-Features: AclHuK9VR6aoLpU0Amx9qCakt-f_1gjDC5BvwgyzYKux3uxlHlNiLggGev2T8tA
+Message-ID: <CAMuHMdXwVWhPhn=vH-FbDX41Hnshg7V6S+pg8kreOHpTgRWeHA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] pinctrl: renesas: gpio: support software nodes for
+ function GPIOs
 To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: Rich Felker <dalias@libc.org>, 
 	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@kernel.org>, 
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Arnd Bergmann <arnd@kernel.org>, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
 	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 
 On Wed, 30 Sept 2026 at 06:58, Dmitry Torokhov
 <dmitry.torokhov@gmail.com> wrote:
-> The sh-pfc driver registers two separate gpiochip instances: one for
-> real GPIOs and another for function GPIOs. Since both share the same
-> parent platform device, gpiolib's fallback logic causes both chips to
-> share the same firmware node (fwnode).
+> This patch extends the sh-pfc GPIO driver to support software-node-based
+> configuration for the secondary 'function' GPIO chip.
 >
-> This causes ambiguity when using software nodes to describe GPIOs, as
-> gpiolib may apply hogs meant for one chip to the other if they share the
-> same node.
+> While the primary GPIO chip typically uses the firmware node attached to
+> the parent platform device, the secondary chip should target a specific
+> child node to avoid ambiguity when defining GPIO hogs or properties.
 >
-> Explicitly set gc->fwnode to ERR_PTR(-ENODEV) for the function GPIO
-> chip. This satisfies gpiolib's check for an existing fwnode and prevents
-> it from falling back to the parent device's node, while ensuring that no
-> actual properties or hogs are found on the function chip unless
-> explicitly assigned later.
+> Update gpio_function_setup() to look for a child node named 'functions',
+> but only when the parent is a software node. This ensures the behavior
+> is restricted to legacy platforms being migrated to software nodes.
 >
 > Assisted-by: LLM
-> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 > Reviewed-by: Linus Walleij <linusw@kernel.org>
 > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-
+> ---
+>  drivers/pinctrl/renesas/gpio.c | 28 +++++++++++++++++++++++++---
+>  1 file changed, 25 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/pinctrl/renesas/gpio.c b/drivers/pinctrl/renesas/gpio.c
+> index 4e59dadb7364..b49a3e14da91 100644
 > --- a/drivers/pinctrl/renesas/gpio.c
 > +++ b/drivers/pinctrl/renesas/gpio.c
-> @@ -278,6 +278,12 @@ static int gpio_function_setup(struct sh_pfc_chip *chip)
+> @@ -271,18 +271,40 @@ static int gpio_function_request(struct gpio_chip *gc, unsigned offset)
+>         return ret;
+>  }
+>
+> +static void sh_pfc_fwnode_put(void *data)
+> +{
+> +       fwnode_handle_put(data);
+> +}
+> +
+>  static int gpio_function_setup(struct sh_pfc_chip *chip)
+>  {
 
-As this function is only used on SH:
+As these function are only used on SH:
 Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
