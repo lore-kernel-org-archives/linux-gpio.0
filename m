@@ -1,61 +1,76 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF343B3C17;
-	Wed, 30 Sep 2026 08:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DD333B6CC;
+	Wed, 30 Sep 2026 08:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790755574; cv=none; b=Aq59Se40RK+wv6ykqR9iIZ54HdHNtNeTh776f2UuJldwnFZsoWEhSRJ725MUHbHLIYNasgIJx7LJTkq2TGwNEInQZNHwZBvVP0+0X9U2qfCeZ7XmUb4hBPEXEsxrHES59jsG7VoyRusVv8txMkCSxXqsZO/VI3g+Kvu4ZucmHLQ=
+	t=1790755690; cv=none; b=PK/5hHy3bgKLwx8prOdt9VLhSdPJTdce2b7t7N1HnAB0s2KPBxy9IdOvg5NvRIB5nAnpeLLklFvzO82S2vEACNIeFPsi8Pa+rygKDROBNdUIGeCOW0YLMrGNYfwgfZxq9CxAUZba+dkz6oXujQO19Nj+lwAAp5IXGCaxwPQKfU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790755574; c=relaxed/simple;
-	bh=thT8FOHMx8EN3Ef5eA7mkWMP0+U/Okgf8Atb04obE0E=;
+	s=arc-20240116; t=1790755690; c=relaxed/simple;
+	bh=zMTLFhhNl8tcGnAVHgj20uCYU6JP6rD5KzbE/DhQ6RY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IdW4s+LpFY3v5Hs8FJO2PeLfdwuvKYZOdGS0DkwPrOEzxsyR29VbQhTG6msZgKYzzJF4ue7SgpwaBRO78Ls5cq6aXew9Qww8c1jVpSkLvtfH7wxI2buDxmIdByqSJZVqJyLB83XyOG5VbE1dirbvOLZL/JiRdHXYF+2pKSR3izQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FptX7Lt5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rFq1cy6y; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	 Content-Type:Content-Disposition:In-Reply-To; b=ia1AHgJ9WhziYJlUi3pmopN6R6MYOp91rzdlMxC7hGsG1rI6dWXhqYFWphBTO9ypZPSqz1h4hKlD86PBlzpHuHaymyJoDw1K2V5MvUE53uFfr5UanDel5oFFIdkcEHxUMFylPdNssq6YiEtE4k0JNHiTmBNlHQTkylb/ehWwsAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hvI2uYCv; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FptX7Lt5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rFq1cy6y"
-Date: Wed, 30 Sep 2026 10:06:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1790755570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UecwsZ20I3O30f5XLk1sV/Ve+pnFPjnLqcHVoMGHPzM=;
-	b=FptX7Lt5BoYgw7PcLLJRCSzi7pBxC6jN8Nayud/BufCUUTkLz2M76fZ438lyT1nytPzwpS
-	AuiHJIUaNUjQKExIOzEFm7aSZgoEezLNXFxWqXeWB07semdmRR/nJS1LbYkOiCVdUiXgLE
-	pGuBE+3MeuUz92lFnjLeHIn9ebJYGKGahdBN64jwUeg2No2JFCPt7b5uBigjWR0YAjpEZI
-	N0QQav/JkfJjMMYyGtIc5t8Gqu/Ny5dSoWoK0SJHrJRpBE4JCi2pJmWWJfk59DsBlUWglD
-	n7s5DCDmK0HG8ca8eCM2cxHIHZu99oleofBuexW2tGrrQZb3RxVKEIJ3TaZz9w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1790755570;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UecwsZ20I3O30f5XLk1sV/Ve+pnFPjnLqcHVoMGHPzM=;
-	b=rFq1cy6yhPf0MDw2t1d8vHFY61wCZ5eoTKiQI8olkMeNbi+aZUIWaZmw5xd9kbjlcC3YyG
-	54LSeD9rQxa4BYDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Ryan Brue <ryanbrue.dev@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linusw@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hvI2uYCv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1790755689; x=1822291689;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=zMTLFhhNl8tcGnAVHgj20uCYU6JP6rD5KzbE/DhQ6RY=;
+  b=hvI2uYCv/VOqirDgWtj5aA9p6LOLV9F/mMq/n/q/Rr4hN1Hu51pd/2zZ
+   RGfEcnfiZNK7BYz/ko7N05wgHfkVSnPGns+IjDrejpHNNYSkdGOXo+i8m
+   ZZ4hxix26W2tdmzMG8R3o4l08OK4d4p2g6ngHHNCQ82QIrGA8wFN3I3Zg
+   n5WcQIgYleqCbW2b8FXHLzCO2jmo+D46u5jKDDLyMgDKv5tLCgslEkxYs
+   D9CRZmakcXrrZ0SKGonE1RtQbN2LRhFJakIWwJUgb3AsWChdBkcdLIMO7
+   rR38ST1I2faICXxlgMu9YjZrK571Z22kpa0zr2cmPQgQcIPcqqq+WFJJM
+   g==;
+X-CSE-ConnectionGUID: GZI0BudLQainFwyDBs7tMA==
+X-CSE-MsgGUID: fEioKn9RQXKXSmy82CcTMQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11920"; a="107873691"
+X-IronPort-AV: E=Sophos;i="6.27,132,1787036400"; 
+   d="scan'208";a="107873691"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2026 01:08:08 -0700
+X-CSE-ConnectionGUID: nL6c7xIUT2OF3zQp2APcCQ==
+X-CSE-MsgGUID: xRPYioFETp+kRJAFDNznEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,132,1787036400"; 
+   d="scan'208";a="275762294"
+Received: from spandruv-desk1.amr.corp.intel.com (HELO localhost) ([10.245.245.137])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2026 01:08:04 -0700
+Date: Wed, 30 Sep 2026 11:08:02 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
 	Bartosz Golaszewski <brgl@kernel.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Yingjoe Chen <yingjoe.chen@mediatek.com>,
-	Chaotian Jing <chaotian.jing@mediatek.com>,
-	Hongzhou Yang <hongzhou.yang@mediatek.com>,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rt-devel@lists.linux.dev, mfd@lists.linux.dev
-Subject: Re: [PATCH] pinctrl: mediatek: common-v1: Use a raw spinlock for the
- pinctrl regmap
-Message-ID: <20260930080609.dnK1-Uta@linutronix.de>
-References: <20260929-rbrue-suez-upstreaming-mtk-pinctrl-raw-regmap-v1-1-db92943f42cb@gmail.com>
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>, Peter Tyser <ptyser@xes-inc.com>,
+	Lixu Zhang <lixu.zhang@intel.com>,
+	Mika Westerberg <westeri@kernel.org>,
+	Israel Cepeda <israel.a.cepeda.lopez@intel.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Alan Borzeszkowski <alan.borzeszkowski@linux.intel.com>
+Subject: Re: [PATCH RFC] gpio: move intel drivers into their own directory
+Message-ID: <arzDYjM78QJYhbQS@ashevche-desk.local>
+References: <CAHp75VcctaQpSpKbr8i+LPfE8Ukazyn8=KhwsSa+4sbhvQ=WVQ@mail.gmail.com>
+ <20260928123446.GH106095@black.igk.intel.com>
+ <CAHp75VfxMwLMPDQr9f=3ea8Z+5zja=kT01o-fhkyrc-V1rh3Hg@mail.gmail.com>
+ <8fa77d7021ddf66f344c139d3bbeebcdb47ebfa8.camel@linux.intel.com>
+ <CAHp75VcqqsTSiyGxeZeNXHAVM2ujux26Nmc5C4CNJA-Fqxn5Kg@mail.gmail.com>
+ <CAMRc=McV2tpejQp_400B9u1ZJ9M4To2-uJYJp3D+XZzNeO+_jw@mail.gmail.com>
+ <CAHp75VejKaoUvCYnOErrk8AYy1dLDA-u8jZghZqi5rX6hSQY7A@mail.gmail.com>
+ <CAMRc=MciOaDqMtY7nb7Zz=XZJpqUKrfiSTJGZyBzfFTw10OjXA@mail.gmail.com>
+ <CAHp75VcpK-Kv2tfR+fAuTWE15b2j34M8X+_UEkBGz_V=QJPbEA@mail.gmail.com>
+ <arwXRBDZI5ottKmL@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -64,165 +79,75 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260929-rbrue-suez-upstreaming-mtk-pinctrl-raw-regmap-v1-1-db92943f42cb@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <arwXRBDZI5ottKmL@kekkonen.localdomain>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 2026-09-29 12:57:51 [-0500], Ryan Brue wrote:
-> The EINT irq_chip emulates both-edge interrupts by reading the pin's
-> level through mtk_gpio_get() and the pinctrl regmap. It does so from its
-> unmask and set_type callbacks, under the raw irq_desc lock, and from the
-> chained handler, in hard interrupt context. The regmap comes from syscon
-> and locks with a spinlock_t, which may sleep on PREEMPT_RT. With
-> CONFIG_PROVE_LOCKING, the first request of a both-edge EINT prints
-> "[ BUG: Invalid wait context ]" and turns lockdep off for the rest of
-> the boot.
+On Tue, Sep 29, 2026 at 10:53:40PM +0300, Sakari Ailus wrote:
+> On Tue, Sep 29, 2026 at 06:09:20PM +0300, Andy Shevchenko wrote:
+> > On Tue, Sep 29, 2026 at 5:05 PM Bartosz Golaszewski <brgl@kernel.org> wrote:
+> > > On Tue, Sep 29, 2026 at 3:31 PM Andy Shevchenko
+> > > <andy.shevchenko@gmail.com> wrote:
 
-This duplicates syscon node and creates a new one with the
-.use_raw_spinlock=true attribute. Now, syscon is always low-level access
-with MMIO access, right?
+...
 
-I've been wondering if we could make drivers/mfd/syscon.c use the
-raw_spintlock_t instead making this sort of change for every driver that
-has this "requirement".
-
-If this is all MMIO reads/ writes then it should work. I'm not sure why
-we have the lock to begin with. Probably due to the cache/ async writes.
-Cache wise just the flat-cache works since the other (like rbtree)
-allocates memory on write under the lock. So this does not work.
-What I am bit worried about are the bulk_write and multi_reg_write where
-multiple writes happen under the lock.
-
-> Create the regmap for the "mediatek,pctl-regmap" nodes here instead,
-> with use_raw_spinlock set, and register it with syscon so that other
-> users of a node, such as the ethernet on MT2701 and MT7623, share its
-> lock. If the node already has a syscon regmap, keep using it. Select
-> REGMAP_MMIO, which the driver now uses directly.
+> > > > > > in any case my series is blocked as I have not seen
+> > > > > > a consensus on what to do. Or do we? Bart, Sakari?
+> > > > >
+> > > > > If I didn't make myself clear: I would love it if there was a single source
+> > > > > of intel GPIO pull-requests (most likely Andy) for *all* intel GPIO drivers
+> > > > > even if they have additional reviewers. I'd also love for them to live in
+> > > > > a single subdirectory at drivers/gpio/intel/. Otherwise, it's still chaos like
+> > > > > right now, just worse.
+> > > > >
+> > > > > This is in line with pinctrl vendor directories. I also don't see a reason for
+> > > > > moving Kconfig options into their own vendor submenus if we keep the top-level
+> > > > > entries sorted by driver type.
+> > > >
+> > > > So, as of now it doesn't seem like an agreement among all parties. My
+> > > > opinion is that it's good to have PMIC be separated from the other
+> > > > code, although I don't know if the camera PMIC GPIO driver that is
+> > > > used with IPUx is good to go under the intel/pmic subfolder. I also
+> > > > believe that camera related drivers are the best to be handled by the
+> > > > media tree (as it's done, exempli gratia, for int3472).
+> > > >
+> > > > At the end of the day you will have a single PR from me, but it won't
+> > > > include camera stuff unless Sakari agrees to send a PR to me (which I
+> > > > think won't be the case).
 > 
-> Fixes: 3221f40b7631 ("pinctrl: mediatek: emulate GPIO interrupt on both-edges")
-> Assisted-by: LLM
-> Signed-off-by: Ryan Brue <ryanbrue.dev@gmail.com>
-> ---
-> Found on the Amazon Fire HD 10 (2017), an MT8173 tablet that is not
-> upstream yet, where usb_extcon_probe() requests the USB ID pin's
-> both-edge EINT. With this patch lockdep stays on through boot, CPU
-> hotplug, suspend to RAM, and lid open/close edges on the hall sensor's
-> both-edge EINT. Only MT8173 was tested. Nothing else uses the node
-> there, so the -EEXIST fallback was not exercised.
+> That'd work, sure, but there are often dependencies between all three USBIO
+> related drivers (main, I²C and GPIO) so they'll all go typically via usb
+> tree in that case. Having them all be merged via the media tree would
+> require more discussions.
 > 
-> checkpatch warns that the regmap_config should be const. It is copied
-> per node to set name and max_register, as syscon does.
-> ---
->  drivers/pinctrl/mediatek/Kconfig              |  1 +
->  drivers/pinctrl/mediatek/pinctrl-mtk-common.c | 59 ++++++++++++++++++++++++++-
->  2 files changed, 58 insertions(+), 2 deletions(-)
+> > > I thought we agreed usbio would be moved out of drivers/gpio/ and into
+> > > media? That leaves intel/pmic as the only subdirectory IIUC.
+> > 
+> > Hmm... I cited the int3472 MAINTAINERS record to point exactly on the
+> > variant where it's left under drivers/gpio. Also IIUC Hans' opinion is
+> > that GPIO drivers even being USB GPIO expanders for camera are still
+> > GPIOs.
 > 
-> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-> index 30ef3dc5dfb1..764256901d6a 100644
-> --- a/drivers/pinctrl/mediatek/Kconfig
-> +++ b/drivers/pinctrl/mediatek/Kconfig
-> @@ -17,6 +17,7 @@ config PINCTRL_MTK
->  	select GENERIC_PINCONF
->  	select GPIOLIB
->  	select EINT_MTK
-> +	select REGMAP_MMIO
->  
->  config PINCTRL_MTK_V2
->  	tristate
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> index 1a977acd6883..65b1e3096183 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common.c
-> @@ -9,6 +9,7 @@
->  #include <linux/gpio/driver.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/of_address.h>
->  #include <linux/of_irq.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/pinctrl/machine.h>
-> @@ -1057,6 +1058,60 @@ static int mtk_eint_init(struct mtk_pinctrl *pctl, struct platform_device *pdev)
->  	return mtk_eint_do_init(pctl->eint, NULL);
->  }
->  
-> +static const struct regmap_config mtk_pctrl_regmap_config = {
-> +	.reg_bits = 32,
-> +	.val_bits = 32,
-> +	.reg_stride = 4,
-> +	.use_raw_spinlock = true,
-> +};
-> +
-> +/*
-> + * The EINT irq_chip reads a pin's level through this regmap from callbacks
-> + * that run under the raw irq_desc lock, so the regmap has to use a raw
-> + * spinlock too, which syscon's own does not. Register one with syscon for the
-> + * node instead, so that any other user of the node shares its lock.
-> + */
-> +static struct regmap *mtk_pctrl_syscon_regmap(struct device_node *np)
-> +{
-> +	struct regmap_config config = mtk_pctrl_regmap_config;
-> +	struct regmap *regmap;
-> +	struct resource res;
-> +	void __iomem *base;
-> +	int ret;
-> +
-> +	ret = of_address_to_resource(np, 0, &res);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-> +
-> +	base = ioremap(res.start, resource_size(&res));
-> +	if (!base)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	config.name = kasprintf(GFP_KERNEL, "%pOFn@%pa", np, &res.start);
-> +	if (!config.name) {
-> +		iounmap(base);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
-> +	config.max_register = resource_size(&res) - config.reg_stride;
-> +	regmap = regmap_init_mmio(NULL, base, &config);
-> +	kfree(config.name);
-> +	if (IS_ERR(regmap)) {
-> +		iounmap(base);
-> +		return regmap;
-> +	}
-> +
-> +	ret = of_syscon_register_regmap(np, regmap);
-> +	if (ret) {
-> +		regmap_exit(regmap);
-> +		iounmap(base);
-> +		/* An earlier probe, or another user of the node, got there first. */
-> +		return ret == -EEXIST ? syscon_node_to_regmap(np) : ERR_PTR(ret);
-> +	}
-> +
-> +	return regmap;
-> +}
-> +
->  /* This is used as a common probe function */
->  int mtk_pctrl_init(struct platform_device *pdev,
->  		const struct mtk_pinctrl_devdata *data,
-> @@ -1076,7 +1131,7 @@ int mtk_pctrl_init(struct platform_device *pdev,
->  
->  	node = of_parse_phandle(np, "mediatek,pctl-regmap", 0);
->  	if (node) {
-> -		pctl->regmap1 = syscon_node_to_regmap(node);
-> +		pctl->regmap1 = mtk_pctrl_syscon_regmap(node);
->  		of_node_put(node);
->  		if (IS_ERR(pctl->regmap1))
->  			return PTR_ERR(pctl->regmap1);
-> @@ -1089,7 +1144,7 @@ int mtk_pctrl_init(struct platform_device *pdev,
->  	/* Only 8135 has two base addr, other SoCs have only one. */
->  	node = of_parse_phandle(np, "mediatek,pctl-regmap", 1);
->  	if (node) {
-> -		pctl->regmap2 = syscon_node_to_regmap(node);
-> +		pctl->regmap2 = mtk_pctrl_syscon_regmap(node);
->  		of_node_put(node);
->  		if (IS_ERR(pctl->regmap2))
->  			return PTR_ERR(pctl->regmap2);
-> 
-> ---
-> base-commit: 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e
-> change-id: 20260925-rbrue-suez-upstreaming-mtk-pinctrl-raw-regmap-154d6225b977
-> 
-> Best regards,
+> Indeed.
 
-Sebastian
+So as I see now there is a consensus that
+1) it's good to have Intel related GPIO drivers to be in 'intel' folder;
+2) the USB GPIO drivers are still a GPIO and should reside under drivers/gpio/ (somewhere beneath that, subfolder or not).
+
+We do not have a consensus on:
+1) PMIC separation to the 'intel/pmic' subfolder;
+2) USB GPIO route for patches (with them still be somewhere under drivers/gpio/).
+
+Unanswered question:
+1) do we need to consider gpio-tps68470 (camera PMIC on Intel HW) as part of
+'intel/pmic' or even 'intel' in general? Currently the Intel HW is the only
+user of it.
+
+P.S. It seems a big deal to move the drivers from one folder to another :-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
