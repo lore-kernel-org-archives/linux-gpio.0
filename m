@@ -1,93 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066894F3EAA
-	for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 20:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9775F4E430E
+	for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 20:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790799761; cv=none; b=N0Rw+qjpz0YJUVGv21n8Zv91vKdt4vD2NvpfaMgKIUy6Qq0Y9xSUcpvMGEZLlLtqSTPMg54yU/UY9nubVUi9px7EPEMOJ3EikfuLQ0/0MXA+xHf2zG3TyTFWaJJ+OtkpwAKqbEHP19o+uTm7WuM8lrzbJlWlcQ5Et5O+zbr4soU=
+	t=1790799828; cv=none; b=DF1WZz8dpI6UFzxrdxJsODH18OmVLG+8//Br1Unyn0MFQehg017ERsw9G8f+zzdVq3xCHJT+ywnogHmx8w5uajSwLnKwzp8RGU8ZkHmTiP1MIAgfAX2fb3HEyr8z3rDNu6Sm5KRI8i+Hs1C8YphPAYk/uHYivGija0Tpkqu1PW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790799761; c=relaxed/simple;
-	bh=fo7ptHyG+tnhAXsNDsN1giB7oOY5HkLN0hn/ghVCrng=;
+	s=arc-20240116; t=1790799828; c=relaxed/simple;
+	bh=L0dkaVtfuTmg4syEz+TKVgAz2olc/AFTXSrqZmU60Ts=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Eyj6mFeZMmS8oz+AgEcu6ApH8ARbykiyv/jhSaGMJ8aTTghNo81p54JmdqXJvKTkIH5n4l7fIgWuKLigSUgmadbpodDHBDWXFsyga/0eh7+geH5y947hkt0kNzRUfprCE4WitQZFIrDb3oUgQS0wvbJoVhYHWPbq7o7iLdtDPxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D2//S1D4; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=S1alNUUYIjEPFnA3c3cZalpc8+qeG8P18G4P4AYr5aAY0tqTxPcpPLD3IBVFwiiMzpdWybAjcCEsUqsGBd28BF0ii0NOPiQXqu7lKS2n34OC/QNDd+46y4bZFw4ZgPjKqw2Rm6KXwI12+wCVcLM2y/auiRUv+XbpiuTy6DWD518=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dUpy1nhL; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2//S1D4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEA3E1F0089A
-	for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 20:22:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dUpy1nhL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23BEB1F0089E
+	for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 20:23:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790799757;
-	bh=fo7ptHyG+tnhAXsNDsN1giB7oOY5HkLN0hn/ghVCrng=;
+	s=k20260515; t=1790799827;
+	bh=JC5D0IodTmhx+Qqdo7Ut3cyuUHNGM6ZCDDWIRKx287A=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=D2//S1D4E4clN2WDOS7AQ/nU3fsyWubsuSQJiWA/aegLoRV/ra3M21K1jiBI/9eeP
-	 ytyDGumt7SPzQg+f6QrJancpOEKj1YNGI16gatcJhrQYWxRuPs497WNS18bA7tra8T
-	 VLNu+rplaB2whFlA7asglYsB8Dp06is/89i3QAuf0oquuC3Ev5odg8mWQy5+BJwD/q
-	 49N5bu5tAdbVU2fgjTWogRWeuHrPN1NnbcamzBaHwCQAw2is3zvUuSoGSLoNd/+WdV
-	 jb/LHQ/a3fxeauZSOwioSUN8wQsqsHq0/QRBLmh3TtFhd6pnHXhgNZ0Eo9IbQ4v4zs
-	 3QWpEi4J+BDYw==
-Received: by mail-lr2-f40.google.com with SMTP id 38308e7fff4ca-3a5da7416f9so49678071fa.2
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 13:22:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBx4mA0NzLifN5tg6L2Sbxm7t/AfW0eSOU/5ewa4Jal+o+m+BK6w7Virtio8s4/GjLByineLc8r9bXLz@vger.kernel.org
-X-Gm-Message-State: AFq9FYIbfxYkJVbqm9TPN60J+Ux2XVmTsDdj9aOWtf+ZbPHSZz/LOyOp
-	q+7IqZCVBhHCYYjhcvRLQAOnJllvhM6EqUv0x+HBgj3xeQ1lKd6b2no2Pno4x6lUY3ivpYUBmVo
-	LhVPpCYeJ96O4lVr0ohVOBFKZvl431X0=
-X-Received: by 2002:a05:651c:a387:10b0:3a6:4726:7c5d with SMTP id
- 38308e7fff4ca-3a7791aec2amr5600681fa.14.1790799756662; Wed, 30 Sep 2026
- 13:22:36 -0700 (PDT)
+	b=dUpy1nhLiGtHY4IS64mmd8OmhGtv+U3xlEzHQGblmSlZ/5rVUE13SRqkmLPlO/0ub
+	 nqkiPsMdRlBRXxBqBmL3fCCtw28Roar7IMmzJomqCML9nm9oNZSM01naapmcSZppN4
+	 HFZArhhJtu0H1Ooof1Z1ezGQwHIg0feSZRfWVkDNwf8eguFDDrhkT9C6UGlIRwy/q6
+	 R6zLCr/kVRnyR69sqlVx3ShFZz6BEf2leglXMKM06ExhlmMsebjLeEZqsB2g/Ey/e1
+	 hd/9O0bUB9ov/4M0YqqWzikGULbncc35QNQDK12rLFSfX52D8jAPam2SflbfPKQ/9/
+	 T/grxnuXFMvEQ==
+Received: by mail-lf2-f12.google.com with SMTP id 2adb3069b0e04-5ba390408cdso1955735e87.0
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 13:23:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBzUVZNI8r+E9VIJV+ItqcsR35p1VGRJwFT+CR1YmgQsJmmqrjUiIUyAuQfho2trrPhd8lNur0WgfNKQ@vger.kernel.org
+X-Gm-Message-State: AFq9FYJP295/o5BmO0ZhwSDskFM1fnpPnjisBM1Xr+LV/A0fBFFB+K8a
+	wJnYchz9v2TpEkbAkgI1ZLyI+0ALe3FwlJMSOESACZTXNBzacBlmqaoJze1+43qKHuskUTEkoFL
+	xZnkgDDHjBKoTiccIUiLmTXztrJk7NrM=
+X-Received: by 2002:ac2:42cd:0:b0:5b8:99b1:4889 with SMTP id
+ 2adb3069b0e04-5ba406062c6mr881138e87.57.1790799825916; Wed, 30 Sep 2026
+ 13:23:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260930111505.1108-1-theflyingrahul@gmail.com>
-In-Reply-To: <20260930111505.1108-1-theflyingrahul@gmail.com>
+References: <179070265834.12871.48183786512201899.idr-bug-79@gmail.com>
+In-Reply-To: <179070265834.12871.48183786512201899.idr-bug-79@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 30 Sep 2026 22:22:22 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=45ZdTbHsLDTAmTt3f+=VBVK014TLJyd5Drdba3V=dSQ@mail.gmail.com>
-X-Gm-Features: AclHuK-W8ctlswVDSA5k2LnKOTD2F2jW84eCsuIgLPSKz2kwZeTcb2gNv9ENqzk
-Message-ID: <CAD++jL=45ZdTbHsLDTAmTt3f+=VBVK014TLJyd5Drdba3V=dSQ@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: GED: Support GpioInt event resources
-To: Rahul Pon <theflyingrahul@gmail.com>, Andy Shevchenko <andy@kernel.org>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Wed, 30 Sep 2026 22:23:33 +0200
+X-Gmail-Original-Message-ID: <CAD++jL=qHEKW=yjdRU4Fbd+4EV0JGh6pYzdF+aECPmKwEU1Qow@mail.gmail.com>
+X-Gm-Features: AclHuK_yrvfJH-yn1NxioOIIm32U-2QzAW1MTjJdswvtLfvL-cvqOP0MdqHNx10
+Message-ID: <CAD++jL=qHEKW=yjdRU4Fbd+4EV0JGh6pYzdF+aECPmKwEU1Qow@mail.gmail.com>
+Subject: Re: [PATCH] gpio: exar: initialize the ID before registering its cleanup
+To: Sang-Hoon Choi <csh0052@gmail.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, 
+	Changyul Lee <lcy8047@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 30, 2026 at 1:16=E2=80=AFPM Rahul Pon <theflyingrahul@gmail.com=
-> wrote:
+On Tue, Sep 29, 2026 at 7:37=E2=80=AFPM Sang-Hoon Choi <csh0052@gmail.com> =
+wrote:
 
-> The Generic Event Device accepts only Interrupt and ExtendedInterrupt
-> resources in _CRS. Some ACPI firmware signals GED events through GPIO
-> controllers instead: the HP OmniBook 5 16-bf1xxx (Snapdragon X2) describe=
-s
-> its lid (LIGE) and embedded-controller event device (ECGE) as ACPI0013 wi=
-th
-> GpioInt resources, and both currently fail to probe with "unable to parse
-> IRQ resource".
+> devm_add_action_or_reset() invokes the cleanup action immediately when
+> registering the action fails.  gpio_exar_probe() currently stores the
+> allocated ID in exar_gpio only after registering the action, so that
+> failure makes exar_devm_ida_free() release ID 0.  If the allocated ID is
+> nonzero, this leaks that ID and can free ID 0 belonging to another device=
+.
 >
-> Handle GpioInt resources: get the Linux IRQ with acpi_dev_gpio_irq_get(),
-> which applies the trigger and polarity and returns -EPROBE_DEFER until th=
-e
-> GPIO controller is registered, and evaluate _EVT with the GPIO pin number=
-,
-> as done for GSIs above 255. GpioIo resources are skipped. On a failed wal=
-k,
-> free the events already requested and propagate the GPIO error (including
-> -EPROBE_DEFER) instead of -EINVAL.
+> Store the ID before registering the cleanup action so both the immediate
+> failure path and normal device teardown release the correct allocation.
 >
-> Tested on the HP OmniBook 5 16-bf1xxx: lid close/open run _EVT and reach
-> the ACPI button driver and logind.
->
+> Fixes: 5300ebb695fa ("gpio: exar: use devm action for freeing the IDA and=
+ drop remove()")
+> Reported-by: Changyul Lee <lcy8047@gmail.com>
 > Assisted-by: LLM
-> Signed-off-by: Rahul Pon <theflyingrahul@gmail.com>
+> Signed-off-by: Sang-Hoon Choi <csh0052@gmail.com>
 
-I don't understand the patch at all, but I understand that Andy or Mika mus=
-t
-review it otherwise it's not going anywhere, so looping them in.
+This looks right.
+
+Reviewed-by: Linus Walleij <linusw@kernel.org>
 
 Yours,
 Linus Walleij
