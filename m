@@ -1,153 +1,258 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C343B5E15
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 21:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB8349BD86;
+	Thu,  1 Oct 2026 21:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790889912; cv=none; b=lVhVdR/+Hx4pwnDwcohXSnLb8mUfIJApoVbI4IPm/XEes52eEtlqNyIvm0bkt1CPxQ/B7qfSOrnje4vjzOfAvAxVAq4MjrbaaoOfxPoPRMBcofsUERKShdzeKiCSSiByHt5kVG9UdazAfKrDfQAUVDiyFFS9bT2mZZ1rmDfjNME=
+	t=1790889984; cv=none; b=PSVuooFGK3ZOx0Ua+kC+KEMKilmXdXMwOt9vtqWOnpY9YhJTzUjm0en9vJCAqRx4ib2z6tILTPk7hEjsC21MIBykJxKz8DhGf6oyPgJH2GYjbXKeqsbIp76Q8+WDR+YdmuiGLa7uSC6ONiekqXon3wJv0xvwMjpirThm6uSj3rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790889912; c=relaxed/simple;
-	bh=H56gwjziJywH3m5Bz2P+G9ZTWG7bfHpXRO40aJaL4hA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mqhC8EE6fIm2Sj7PTGvnFPm4pwahPWvUsaBD+bCcUqVScrbZCOep6dMi0kf7c7VLdmph0n/MNYeYrG3UxfXMvRkeLYkxWb3ZFaIe5PuMkcu/CY5TXsVJahnSQ2tU9YFcWcJSbb4NDn3l95zMr2flu6v6/j6+xokGhKLmauJZEbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JSR6adbr; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790889984; c=relaxed/simple;
+	bh=Ltf9gyvxefy0jVtFroAsd8q6bJwDNy/upbuhU7Hcc9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y6DzuwHJOZGAFAVD2DzxK8BYoeq9DiRcsTHVsAmT1itrF1eB3p6Zyf6zTNM5UwyDOSVLpbQK19BCfzEfTRWnY/3c316lJl/2ZjsjBY8AG6cqHVWvUiXrnonldm92f+NzH1iGN2eF0M+zDjIMStxZK90iItlImKSxN24nXBWhDTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n3jDF5yT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSR6adbr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85DB91F000FF
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 21:25:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n3jDF5yT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E12C1F000FF;
+	Thu,  1 Oct 2026 21:26:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790889910;
-	bh=Tvs6fkP3/Le/Tutf9udarKKG9JiN4dlqSpw4nvMlQag=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=JSR6adbr+/D+zLJm/9W+9CMYKU6h73aJ5gKupkKP9hpTDpJD6RsQKbYMmu9euWDGJ
-	 h15Sa90syJKnJwFC5PAemEmtRcuIHbVUEUFb7DqnitfRmAFm5WiTzH2tygsnFcWURR
-	 esinUCy9eT24BclYaO9HOVjvmBc+ifETiwk+LEumVDifx9mh8ECOJriOs5wNzLhObq
-	 uXpMcZ9YEboKTbijNPZDdmjZxHScAizu4O66PsDW+irDMf2p/MIJ39Y6hGYqTG6TZU
-	 Z1/JX4EK5Z8hxWKWWbmVmO/1DshMw199ZMxnqPw9C9x99Vp0o7nu7kHdxDRt01e2WZ
-	 4KEd5PQbqMyfQ==
-Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5ba40cb7246so1845143e87.1
-        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 14:25:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBw0pO3fz0ZWM/Brl3XUcrqNgLzYxT57Aw+Hdh6KlR7gOVuQfg0fr5Cs+xuvIfbpz/pMMYePK4Zje/dg@vger.kernel.org
-X-Gm-Message-State: AFq9FYK4c0Lr9wnbGrxSo+WElhFmvOw06r6GeiHEmnB+orUJaMsyCrgo
-	QPZj0MhgjYP9qK7m3Wx0VKM/YUiLs29HV7W1axWutO6+rW7vMwnaUrNM3rWJBiul9JFO5bkoMMI
-	g1wC3DPAIpvEA5/CdT9NNxbOCsMWrx2c=
-X-Received: by 2002:ac2:4898:0:b0:5b6:4ad:77b3 with SMTP id
- 2adb3069b0e04-5bb9bb0c0d4mr124079e87.27.1790889909323; Thu, 01 Oct 2026
- 14:25:09 -0700 (PDT)
+	s=k20260515; t=1790889980;
+	bh=J4TV0b49DMUb4s9V8THpO/dg6QtAbKgGa71G1KGPoyA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=n3jDF5yTTCRtYHGZjtnQoy+aLpc2DV3zJ1hz+/EaO9CigQgY+GkwuJp0NMjjkliiz
+	 hj4GNE7xq90PbAco6Sq7zU/SqiS5MwC8eSx68tY9YXuIPiYsw/aycw/qA2lIi07V9o
+	 +oABAnkS9gmTt+G1ZCbr/fUUiGw0hVRbvxhYUgPbmLCD7YvGrAETnp6KxygOrERXYL
+	 5uh8S9LYcm5YX0E1fBRwFvjmecEa5ihSc+MmetuPbznuX9hQp//b2mrKXK2EeR25D/
+	 aNqnLx9haoIDbOTSWf35oa10NUAXxQLz7qGpYCim4Fg1o60zK6b6OLAcF+biOr9XT5
+	 pi4uV9OpsasAg==
+Date: Thu, 1 Oct 2026 22:26:15 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, nm@ti.com, vigneshr@ti.com,
+	kristo@kernel.org, brgl@kernel.org, linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, afd@ti.com, u-kumar1@ti.com
+Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: Add TI TDA54 pin controller
+Message-ID: <20261001-repost-reselect-2b597c627c11@spud>
+References: <20260930092020.1047221-1-y-abhilashchandra@ti.com>
+ <20260930092020.1047221-2-y-abhilashchandra@ti.com>
+ <CAD++jLnok0bz9kXiW=O8+4fPBYvm9nG-AA-8CopDpc-DBvBiJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260928063824.1386524-1-morbo@google.com> <CAGG=3QWCmQ+LVvn2dtjEauj5WFwvx=pvg4Q6man_A2imdjRe7A@mail.gmail.com>
- <CAD++jLk2pFCpbpGVCQg2AdrwQecpb=wsehhwSuwTbKAXNeyfoQ@mail.gmail.com> <CAGG=3QV2k-nsZHNSuKEixZb+-LcxvhQsG379ghgyOpiDLTJWzw@mail.gmail.com>
-In-Reply-To: <CAGG=3QV2k-nsZHNSuKEixZb+-LcxvhQsG379ghgyOpiDLTJWzw@mail.gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 1 Oct 2026 23:24:56 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnOm3ua7hom_L4YQwN5z81M17WmL_VGqx+-ugrAJ-6_Dg@mail.gmail.com>
-X-Gm-Features: AclHuK_3CuY_lvP3v92lNOvBLIMvkbfO2hErlC_rqJvappsJIFQnzmPZMMVY-s8
-Message-ID: <CAD++jLnOm3ua7hom_L4YQwN5z81M17WmL_VGqx+-ugrAJ-6_Dg@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: annotate struct acpi_gpio_mapping with __counted_by_ptr
-To: Bill Wendling <morbo@google.com>, Ard Biesheuvel <ardb@kernel.org>, Jeremy Kerr <jk@ozlabs.org>
-Cc: Bartosz Golaszewski <brgl@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	codemender-patching+linux@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dVB2jDxu3m4Tk3Ds"
+Content-Disposition: inline
+In-Reply-To: <CAD++jLnok0bz9kXiW=O8+4fPBYvm9nG-AA-8CopDpc-DBvBiJA@mail.gmail.com>
+
+--dVB2jDxu3m4Tk3Ds
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 1, 2026 at 10:05=E2=80=AFPM Bill Wendling <morbo@google.com> wr=
-ote:
-> On Thu, Oct 1, 2026 at 12:56=E2=80=AFPM Linus Walleij <linusw@kernel.org>=
- wrote:
-> > On Mon, Sep 28, 2026 at 9:22=E2=80=AFAM Bill Wendling <morbo@google.com=
-> wrote:
-> > > On Sun, Sep 27, 2026 at 11:38=E2=80=AFPM Bill Wendling <morbo@google.=
-com> wrote:
-> > > >
-> > > > The 'data' pointer field in 'struct acpi_gpio_mapping' is associate=
-d
-> > > > with the 'size' field, which represents the number of elements of
-> > > > type 'struct acpi_gpio_params' allocated for 'data'.
-> > > >
-> > > > To improve bounds checking via CONFIG_UBSAN_BOUNDS and
-> > > > CONFIG_FORTIFY_SOURCE, annotate 'data' with the __counted_by_ptr
-> > > > attribute.
-> > > >
-> > > > Analysis of allocation, assignment, and access points shows that th=
-e
-> > > > pointer is never accessed before the count is set, which guarantees=
- that
-> > > > this annotation is safe and will not cause runtime panics or
-> > > > false-positive bounds checks.
-> > > >
-> > > > Cc: codemender-patching+linux@google.com
-> > > > Assisted-by: LLM
-> > > > Signed-off-by: Bill Wendling <morbo@google.com>
-> > > > ---
-> > > >  include/linux/gpio/consumer.h | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/con=
-sumer.h
-> > > > index fceeefd5f893..2b80cf7aa7e7 100644
-> > > > --- a/include/linux/gpio/consumer.h
-> > > > +++ b/include/linux/gpio/consumer.h
-> > > > @@ -667,7 +667,7 @@ struct acpi_gpio_params {
-> > > >
-> > > >  struct acpi_gpio_mapping {
-> > > >         const char *name;
-> > > > -       const struct acpi_gpio_params *data;
-> > > > +       const struct acpi_gpio_params *data __counted_by_ptr(size);
-> > > >         unsigned int size;
-> > > >
-> > > >  /* Ignore IoRestriction field */
-> > >
-> > > There's a problem with 'drivers/firmware/efi/libstub/Makefile'. Clang
-> > > needs a compiler flag to support the "__counted_by_ptr" attribute
-> > > referencing a field *after* the pointer, like in this patch. However,
-> > > the Makefile blasts the flag away for x86 platforms. Below is a hack
-> > > that copies the part of the top-level Makefile that adds the flag. I
-> > > don't think that's a good solution. The comment in the driver's
-> > > Makefile says that the stub code executes before the kernel does,
-> > > which I assume is why a lot of the flags are blown away... In any
-> > > event, I'm not sure how best to address this.
-> >
-> > But is this a problem with the current patch?
-> >
-> > Does libefistub use <linux/gpio/consumer.h> in any way, shape
-> > or form?
-> >
-> It's being #included transitively:
->
-> In file included from drivers/firmware/efi/libstub/efi-stub-helper.c:12:
-> In file included from ./include/linux/efi.h:20:
-> In file included from ./include/linux/rtc.h:18:
-> In file included from ./include/linux/nvmem-provider.h:16:
-> ./include/linux/gpio/consumer.h:670:55: error: use of undeclared
-> identifier 'size'; did you
->       mean 'ksize'?
->   670 |         const struct acpi_gpio_params *data __counted_by_ptr(size=
-);
->       |                                                              ^~~~
->       |                                                              ksiz=
-e
-> ././include/linux/compiler_types.h:392:64: note: expanded from macro
-> '__counted_by_ptr'
->   392 | #define __counted_by_ptr(member)
-> __attribute__((__counted_by__(member)))
->       |
->        ^~~~~~
-> ./include/linux/slab.h:602:8: note: 'ksize' declared here
->   602 | size_t ksize(const void *objp);
->       |        ^
+On Thu, Oct 01, 2026 at 11:10:34PM +0200, Linus Walleij wrote:
+> Hi Yemike,
+>=20
+> thanks for your patch!
+>=20
+> On Wed, Sep 30, 2026 at 11:21=E2=80=AFAM Yemike Abhilash Chandra
+> <y-abhilashchandra@ti.com> wrote:
+>=20
+> > +      ti,debounce-select:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        enum: [0, 1, 2, 3, 4, 5, 6]
+> > +        description:
+> > +          Selects which DBOUNCE_CFGn period register in the control mo=
+dule
+> > +          drives the debounce filter for this pad. 0 disables debounci=
+ng,
+> > +          1 to 6 select DBOUNCE_CFG1 to DBOUNCE_CFG6.
+>=20
+> What's wrong with the existing input-debounce property?
+>=20
+>   input-debounce:
+>     $ref: /schemas/types.yaml#/definitions/uint32-array
+>     description: Takes the debounce time in usec as argument or 0 to disa=
+ble
+>       debouncing
+>=20
+> Just translate usec:s into your custom format in the code, problem solved.
+>=20
+> > +      ti,virt-gpio-instance:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        enum: [0, 1, 2, 3, 4, 5, 6, 7]
+> > +        description:
+> > +          Selects which virtual GPIO instance controls this pad, allow=
+ing
+> > +          protection between multiple virtual views of the GPIO control
+> > +          registers. Has no effect unless the pad is muxed to GPIO mode
+> > +          (muxmode 7).
+>=20
+> Wow crazy stuff. OK keep it :D
+>=20
+> > +      ti,wakeup:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        enum: [0, 1, 2, 3]
+> > +        description: |
+> > +          Wakeup event configuration for this pad.
+> > +          0 - wakeup disabled
+> > +          1 - wakeup triggered by any change of the pin input value
+> > +          2 - wakeup triggered by a low value on the pin
+> > +          3 - wakeup triggered by a high value on the pin
+>=20
+> I just have the feeling this should be a generic property. It seems so us=
+eful.
+>=20
+> Can you just add this as wakeup-mode =3D <custom value> in
+> Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
 
-Hm I see.
+And I think it should probably be strings, so that there's some hope of
+commonality, since obviously any user is going to invent different
+mappings.
 
-Certainly Jeremy or Ard will have an idea about how to solve this,
-so paging them in.
+>=20
+> > +      ti,retention-bias:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        enum: [0, 1, 2]
+> > +        description: |
+> > +          Enables the internal I/O pullup/pulldown resistor when pin e=
+nters
+> > +          TDA54 I/O retention mode, and configures the I/O pull resist=
+or
+> > +          direction.
+> > +          0 - OFF mode pad pull resistor disable
+> > +          1 - Select OFF mode pulldown resistor
+> > +          2 - Select OFF mode pullup resistor
+>=20
+> Use names inspired by the generic config types and flags instead
+> of enums.
+>=20
+> ti,retention-bias-disable;
+> ti,retention-bias-pull-down;
+> ti,retention-bias-pull-up;
+>=20
+> > +      ti,retention-offmode:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        enum: [0, 1]
+> > +        description: |
+> > +          I/O behaviour when retention mode is active.
+> > +          0 - I/O maintains its previous state
+> > +          1 - I/O state is forced to the OFF mode value
+>=20
+> Behaviour of *what*?
+>=20
+> The driver stage?
+>=20
+> I suspect you should make two bool flags
+> ti,retention-output-hold;
+> ti,retention-output-disable;
+>=20
+> > +      ti,retention-output:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        enum: [0, 1, 2]
+> > +        description: |
+> > +          Output driver behaviour while the pad is in retention mode.
+> > +          0 - output driver disabled
+> > +          1 - output driver enabled, pad driven low
+> > +          2 - output driver enabled, pad driven high
+>=20
+> Make three flags:
+> ti,retention-output-disable;
+> ti,retention-output-low;
+> ti,retention-output-high;
+>=20
+> > +      ti,retention-force:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        enum: [0, 1]
+> > +        description: |
+> > +          I/O retention controls.
+> > +          0 - gated by the Device Manager logic
+> > +          1 - forced active, overriding the Device Manager gating logic
+>=20
+> This is clearly a bool flag. It should contain device-manager as that
+> magic entity is involved.
+>=20
+> ti,retention-device-manager-enable;
+> ti,retention-device-manager-forced-active;
+>=20
+> Both seems to be related to the device manager whatever that is.
+>=20
+> > +      ti,isolation-bypass:
+> > +        $ref: /schemas/types.yaml#/definitions/uint32
+> > +        enum: [0, 1]
+> > +        description: |
+> > +          I/O isolation for this pad.
+> > +          0 - isolation preserved
+> > +          1 - isolation bypassed
+>=20
+> What does this even mean electronically speaking? Explain in a descriptio=
+n:
+> statement.
+>=20
+> ti,isolation-preserve;
+> ti.isolation-bypass-enable;
 
-Yours,
-Linus Walleij
+Is this not just an either or, so there should only be one property
+here.
+
+>=20
+> perhaps?
+>=20
+> Some of the retention settings seem *very* generic, c.f. this
+> from include/dt-bindings/pinctrl/nomadik.h that has been
+> around forever:
+>=20
+> #define SLPM_DISABLED           0
+> #define SLPM_ENABLED            1
+> #define SLPM_INPUT_NOPULL       0
+> #define SLPM_INPUT_PULLUP       1
+> #define SLPM_INPUT_PULLDOWN     2
+> #define SLPM_DIR_INPUT          3
+> #define SLPM_OUTPUT_LOW         0
+> #define SLPM_OUTPUT_HIGH        1
+> #define SLPM_DIR_OUTPUT         2
+> #define SLPM_WAKEUP_DISABLE     0
+> #define SLPM_WAKEUP_ENABLE      1
+>=20
+> SLPM means "sleep mode", yeah pretty much retention...
+>=20
+> I think the corresponding retention settings for things that are really
+> quite generic should just be added to the generic pin config bindings.
+
+Additionally, if any of the custom properties are gonna be kept as
+numerical values, they're all missing defaults. In the case where you're
+advocating for multiple boolean properties, one of them is gonna have to
+be required as otherwise we're looking at indeterminate states based on
+reset values or what a prior stage may or may not have done? The reset
+values should probably be considered default, but the cleanest way to
+make this work with separate booleans is have a
+oneOf:
+ - required:
+    - a
+ - required:
+    - b
+ - required:
+    - c
+
+and you've also got to deal with people potentially making mistakes and
+adding multiple properties for the same feature or trying to overwrite a
+$som.dtsi/$soc-common.dtsi config and not realising that they've got to
+do a /delete-property/ on the other property for the feature.
+
+--dVB2jDxu3m4Tk3Ds
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCar7P9wAKCRB4tDGHoIJi
+0uEAAP0cOa24ZA8ax0vvN2MZDigQznH1gU0puuf6fxAIdRKxqAEA6GNLdXqZI5TS
+PaTfG4xs2OTP1gaXawTbAfNC3RY0/Ac=
+=fHVV
+-----END PGP SIGNATURE-----
+
+--dVB2jDxu3m4Tk3Ds--
