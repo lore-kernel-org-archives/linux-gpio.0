@@ -1,148 +1,102 @@
-Received: from mail-oa2-f34.google.com (mail-oa2-f34.google.com [74.125.231.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD2E3A7D6F
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 02:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED46B431A4A;
+	Thu,  1 Oct 2026 04:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790820976; cv=none; b=gLL1mQlQuj9hNH6Hdh135z52WiSIjNI/y+NJ/h9S7rYeeAWGZD+4/qYjTbcrf7PCrfHMueZibDHMoZ9bAbTJs327n7H+j1Hy70A0kQw9/IeOHJUuiFtZbdsvAuCBPmbSqi4ZAA6dU+6XuZ1zpNl/gsfArpGI3zzao/dvEkO8Y/U=
+	t=1790827467; cv=none; b=D2pEkVDCfD9sHcROUSXN0D7PWsa7HD6JQ43YpsD3u7WtvExHf6Z9TEkmNk8sC4lBpyUihZKbrUj1uMDSo84djYyK4TQzrwusJ9w07HicwRHJB6cBgYP0vFDWPCrLtHVRqstLtDPs7vmfRgdpvaBGZ//MmGL7hc2TCYzC1X76MeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790820976; c=relaxed/simple;
-	bh=H9hlt5LIq6CQ+Hvl9dPS/oQ9rjWnF0oD3NbRGBl38cs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E3Y9xjvemsUjvCeQs3mGedfU8uvJPrTQ8ty1/X72opG5NRhJAIdaOEod96n+N5bP636YBybR0SVeEfQ4p9dYOhjrTbVKPmXBnxDdtGsHkSNZtpmA7xbEp5rJO3TZqO9kqoaCZSQLfxaFz5M6J+5JvVzaBI89a49QS6eCbtOgXHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xz0pJKVM; arc=none smtp.client-ip=74.125.231.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790827467; c=relaxed/simple;
+	bh=FObhEVNrHO2VKVsKpHwvIPfW2vuPInhiqvtBgfbU9Y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q2lEmRgTrJUPi/MFPDA54jsL0wUyrzvAJrxp6euu2/J+dRRzGGVed+FywK4pkzM+ffxhm4qk9CJCHJtLOtUjnPiUc95dh6CIPNvaeRMArIGdyNI7A7RYUYENQpcHh0wHGsM+VTWjaQBGgEX8bLkIGy+z3PAmkI0LsXoixSF+q4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=myvAIiJj; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xz0pJKVM"
-Received: by mail-oa2-f34.google.com with SMTP id 586e51a60fabf-49499f845edso1681622fac.0
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 19:16:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790820974; x=1791425774; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=LY4KZd5gnCBsiB5lJDdI1p1NOkBm3cXEpWyWeVy2l6Y=;
-        b=Xz0pJKVMwII9ls083GLkYpeJ+Y3/aRB+0dC2spz1TEh3I/m8vnwJd2oPYhsReK5o9Z
-         R1TiB0B7kCzht9rryjO7Nj+T5Tv/bre1HHt/Kva0mvyc7ffDPZv5sDrrNVS/ChP9qt32
-         XP876WJY0vYSiBosCuvj8uO3QclILqW8Oy2wYLYNtSXowJZtScdXva0ENjkEfY1Pl08b
-         LAhRRS2RnbiGD5JKfn1kTuevcVlH0uhyuDvVXJgWFcPe2i7AtUVizKBpxQExUKg71a2u
-         Kt8xIXY33MFzCoCqf9SKB8LPpAT637f7aJN/oEeyIQ5CTsiEK/Ck8sKZVbqQ5Jz628c/
-         nJyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790820974; x=1791425774;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=LY4KZd5gnCBsiB5lJDdI1p1NOkBm3cXEpWyWeVy2l6Y=;
-        b=AgZ2g5y5yTSGKbvc396hNOPjtzeyVeP6LLupaYGZ04yoHv7RcTjRJfYxRyYoK+rJHU
-         MHebIUVnnSGpOz1ZWOvXaU8ppQzbhyNevwdF4hRuZcO8xatXI83PIeGcHDPcRwyKAe9v
-         H7lb1fqn4j2Et2TJYvAVYgbhl+rBetJNdXXr8EdrDU7vWLYx9Ck6vu6vRn46pWsI/wdV
-         /qLlWkfg/OG92XVyLfREQIA4Z4eD30WLo4uzbkuVLNLwuW+jrZlWfTEz/bCRVf085lie
-         xetFYYG/vbYaR46W93JynlLxZwB+7NdlMd1dW8B1WEcWSEUOT0OIxGm1WqG3Hkc+D7+7
-         ylkw==
-X-Forwarded-Encrypted: i=1; AKwUvByxtWY9uULyteI5qhfu9EOAcZEMXtz/W3BkSWafseqfSLTkwwY/8DVcYaprklKjjLFIFMwcxG3CbiUF@vger.kernel.org
-X-Gm-Message-State: AFuF++msQa/6zLlApNPg6xab81kqgwwCLB4KReQh/ML6XQfy2m4hMGcY
-	X/1Xm5pq3WWbv57uu1UKrj1lj4fYsKDLwA5nsdXoRoEGLfnWIJLtyZm8
-X-Gm-Gg: AYBFou2RkCYHQ5E0eWIMeISp41oVz9v8V/xxp3Furhgk9c1pBgQ9iCkaQpJ2jYWdSWH
-	ipuoOpYSw7XhUBYjfYTn/KagCS159Xh/nYmIc/71f/4e20WWsSCyqk+bYCEyJ8KVTxS7FUwW2e/
-	8ymdxKOxUe3tuYOCWb3+baEGw3IYnER8BkFzyUuy3E3GFR6vDuGLE9lL4L1w5OggTajUyEgHPNh
-	agh5gEemATmcWu3FBNUXCX+jwGoC2IhKLc/LWHxY1vETJMcm3sSwIpaIMScewwJa0zo6oilI66M
-	XAlwti4qnOzwAuJGVmlJnxfyrvIMou2XDl325ZDoOXRP/wSM9UtDuv7d8xSS6ZScrW7JzeldfLB
-	LVSjNdIq0DgW34A1mdExvOubFmM4OqpGoAxSaD0TVeXvANNNpscjN5gT/erLyHxw9+8M/XtUcMc
-	FbHBmzSJ2DNEmWVTEQNh0YeKp76peSw0vz7AahZE/ttnhy+NhkvtPr0l1HOwc9Mt7NZNiM2CuGe
-	1RlmIgRKOAM1+9leU3seKww3chKgZQrvFk7ltPv
-X-Received: by 2002:a05:6809:306:10b0:4f3:9349:15e with SMTP id 5614622812f47-4f393490d3fmr630456b6e.41.1790820973868;
-        Wed, 30 Sep 2026 19:16:13 -0700 (PDT)
-Received: from archlinux.lan ([136.34.156.120])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4f345b14325sm1208801b6e.1.2026.09.30.19.16.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 19:16:12 -0700 (PDT)
-From: Danish Khateeb <danishkhateeb03@gmail.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	Linus Walleij <linusw@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>,
-	Bamvor Jian Zhang <bamv2005@gmail.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Samuel Moelius <sam.moelius@trailofbits.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Danish Khateeb <danishkhateeb03@gmail.com>
-Subject: [PATCH 2/2] selftests: gpio: expect gpio-mockup to reject a range with no lines
-Date: Wed, 30 Sep 2026 21:16:09 -0500
-Message-ID: <20261001021609.167505-2-danishkhateeb03@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20261001021609.167505-1-danishkhateeb03@gmail.com>
-References: <20261001021609.167505-1-danishkhateeb03@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="myvAIiJj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1790827464; x=1822363464;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=FObhEVNrHO2VKVsKpHwvIPfW2vuPInhiqvtBgfbU9Y4=;
+  b=myvAIiJjRjPdb3zz+AkDz9oURmy+tkDHjK/wo6xmZ5/3qi3xTL5LPidr
+   5aRJJfmJo7t9SMsN3PFGhBu/lTzsUr5gg4dZl4gS0aShbcyq5oVXvPAdT
+   46pTqFg+2wYFR9+kY2p3Qa/OeUYwGtnBTX8JWMoCNItSv0mSslEPs44wE
+   4XZl6Gv211XFp6DPLQY24F+xnWGC07rsR30p9PI7lQ/kp/4ONJslBk+Ky
+   2Rj5yPzGGUPTMQc5pYAjPKLVMJ5XXP7yNgShkeAQe6GkZLLq85156qYc1
+   n/bjELH2/pfab4jSrby/jX4DMq39btSioHYcWd/6GjHNF1Skq7xanA7Xa
+   w==;
+X-CSE-ConnectionGUID: GJFn1BwdQmCpI3oThngYUg==
+X-CSE-MsgGUID: bFQzNUqWQvqw+8Y5BZyh2g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11921"; a="90343374"
+X-IronPort-AV: E=Sophos;i="6.27,133,1787036400"; 
+   d="scan'208";a="90343374"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2026 21:04:23 -0700
+X-CSE-ConnectionGUID: KWI7QV0RS0ahnguAXRPcIw==
+X-CSE-MsgGUID: E923JTlTTP6nUpt5pgNuWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,133,1787036400"; 
+   d="scan'208";a="275424517"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa007.fm.intel.com with ESMTP; 30 Sep 2026 21:04:21 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id 23B0499; Thu, 01 Oct 2026 06:04:20 +0200 (CEST)
+Date: Thu, 1 Oct 2026 06:04:20 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Rahul Pon <theflyingrahul@gmail.com>, Andy Shevchenko <andy@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+	linux-acpi@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ACPI: GED: Support GpioInt event resources
+Message-ID: <20261001040420.GB176164@black.igk.intel.com>
+References: <20260930111505.1108-1-theflyingrahul@gmail.com>
+ <CAD++jL=45ZdTbHsLDTAmTt3f+=VBVK014TLJyd5Drdba3V=dSQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD++jL=45ZdTbHsLDTAmTt3f+=VBVK014TLJyd5Drdba3V=dSQ@mail.gmail.com>
 
-Since commit 446e8c31d0fc ("gpio: mockup: reject invalid
-gpio_mockup_ranges widths"), gpio-mockup refuses to load when a range
-has no lines. The "no lines defined" case of gpio-mockup.sh still
-expects gpio_mockup_ranges=0,0 to load and create no chip, so the test
-now fails there:
+Hi,
 
-  # 2.  Module load error tests
-  # 2.1 no lines defined
-  # test failed: insert gpio-mockup failed with error 1
-  # GPIO gpio-mockup test FAIL
+On Wed, Sep 30, 2026 at 10:22:22PM +0200, Linus Walleij wrote:
+> On Wed, Sep 30, 2026 at 1:16 PM Rahul Pon <theflyingrahul@gmail.com> wrote:
+> 
+> > The Generic Event Device accepts only Interrupt and ExtendedInterrupt
+> > resources in _CRS. Some ACPI firmware signals GED events through GPIO
+> > controllers instead: the HP OmniBook 5 16-bf1xxx (Snapdragon X2) describes
+> > its lid (LIGE) and embedded-controller event device (ECGE) as ACPI0013 with
+> > GpioInt resources, and both currently fail to probe with "unable to parse
+> > IRQ resource".
+> >
+> > Handle GpioInt resources: get the Linux IRQ with acpi_dev_gpio_irq_get(),
+> > which applies the trigger and polarity and returns -EPROBE_DEFER until the
+> > GPIO controller is registered, and evaluate _EVT with the GPIO pin number,
+> > as done for GSIs above 255. GpioIo resources are skipped. On a failed walk,
+> > free the events already requested and propagate the GPIO error (including
+> > -EPROBE_DEFER) instead of -EINVAL.
+> >
+> > Tested on the HP OmniBook 5 16-bf1xxx: lid close/open run _EVT and reach
+> > the ACPI button driver and logind.
+> >
+> > Assisted-by: LLM
+> > Signed-off-by: Rahul Pon <theflyingrahul@gmail.com>
+> 
+> I don't understand the patch at all, but I understand that Andy or Mika must
+> review it otherwise it's not going anywhere, so looping them in.
 
-Check that the module rejects that range instead.
-
-Fixes: 446e8c31d0fc ("gpio: mockup: reject invalid gpio_mockup_ranges widths")
-Assisted-by: LLM
-Signed-off-by: Danish Khateeb <danishkhateeb03@gmail.com>
----
-
-Notes:
-    Tested on v7.3-rc5 (x86_64, KASAN and lockdep, virtme-ng):
-    - before: gpio-mockup.sh fails at 2.1, both by default and with -f.
-    - after: it passes by default, with -f, and with -t cdev_v1 and
-      -f -t cdev_v1 (on a GPIO_CDEV_V1=y kernel).
-    - control: with "-1,32" in place of "0,0", the new check fails with
-      "insert gpio-mockup with ranges <-1,32> did not fail".
-
- tools/testing/selftests/gpio/gpio-mockup.sh | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/gpio/gpio-mockup.sh b/tools/testing/selftests/gpio/gpio-mockup.sh
-index fc2dd4c24d06..41c8a1c1502e 100755
---- a/tools/testing/selftests/gpio/gpio-mockup.sh
-+++ b/tools/testing/selftests/gpio/gpio-mockup.sh
-@@ -310,6 +310,16 @@ insmod_test()
- 	remove_module || fail "failed to remove module with error $?"
- }
- 
-+# Load the module with the given ranges and check that it is rejected.
-+insmod_fail_test()
-+{
-+	local ranges=$1
-+
-+	if modprobe -q $module "gpio_mockup_ranges=$ranges"; then
-+		fail "insert $module with ranges <$ranges> did not fail"
-+	fi
-+}
-+
- while getopts ":frvt:" opt; do
- 	case $opt in
- 	f)
-@@ -378,7 +388,7 @@ if [ "$full_test" ]; then
- fi
- echo "2.  Module load error tests"
- echo "2.1 no lines defined"
--insmod_test "0,0"
-+insmod_fail_test "0,0"
- if [ "$full_test" ]; then
- 	echo "2.2 ignore range overlap"
- 	insmod_test "0,32,0,1" 32
--- 
-2.55.0
-
+ACPI GED specifically is supposed to use interrupts only (hence the name,
+Interrupt -signaled ACPI events). I think this one should really use the
+GPIO signaled ACPI events instead and probably just has the ACPI0013 there
+by accident. Can you share the ASL around this device?
