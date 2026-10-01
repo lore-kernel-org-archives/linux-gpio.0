@@ -1,90 +1,159 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011000.outbound.protection.outlook.com [52.101.57.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EEE4B95BA;
-	Thu,  1 Oct 2026 12:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790859139; cv=none; b=W3vrnJVBy9tyiXy0IMWGa/xC0EFfYo2Xa+7n9Qp1kevRCKUhE2E1PqLrQZy6AVLSTKbVW+DdRdpApLzVbr2Aimp7bv10McXpSucBqnvQ9fZlUdC6xyXu9YyTUmjeSQTqgLB+ALcHnB6LWkdFR0R/zwsdwapH3VJwc9KV5nos1YA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790859139; c=relaxed/simple;
-	bh=wzwl3gw5e+db5oZR4+r5voy+RDCC4J5Putz8q+zjj7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eJ1/5uFKqrly3P6vCPG0lfN737p3GSN7zppJoLgTjkZuvJUIuayYOXXa/uB2TrPQac2tRhMoOJFbo5OaRaNMeIAziONOMhFzjwCN/tXYv3HP3ha1SnatqQWT19Hgf2ZGx82CpiiAkeNU26JDVnZSfb0Z+8tVCp4f90o9dcqObok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=K2poqIT9; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394C03ED3D8
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 13:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790861581; cv=fail; b=EtGNovyu0KJT9UIdNAr6Ur4/dwEIeafdnWDvMY+SDN2c6qGtDZBp/kYTINm2Lr1I9PRXfPJeNfJw3JliARPXhU79IAHi6/4pbjnONYWSFOYcjti/VXbjR0UGHTlN3TohdEsOkVhSrThWjcR3DShZxleOoIbNCwIEe2Mm31Z/4rA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790861581; c=relaxed/simple;
+	bh=06N+q+fAq+lbTnnu99RzDmnlyPvKhehP0Ro2zxh/yWU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KXtIxNrilDyF1aJ7+AvybtTQyIJ3qStNq4934eyrn64xegyJTW/UQgCMbep7F/RLbIx/Xs5KbPIXixAIRqa9QSCMfzzSe2ltxUlMJb8NfZNoWkeolm42urSlgrslFQVe3meupCh1UgKJLwdWIvKl/+LDXyeEbq7Q8deFqEYptBc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=j3H15UHn; arc=fail smtp.client-ip=52.101.57.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="K2poqIT9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5D3E1F000FF;
-	Thu,  1 Oct 2026 12:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxfoundation.org;
-	s=korg; t=1790859135;
-	bh=tec5FQuLPRbdVVuUIDCytMknbBana/Hua8s4K23aD0c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=K2poqIT9ceZq6Ra4TaTezpspNG6viPMERp45zFObidAykvZxZAxoOQIIzK3ssGp/Q
-	 CcwazjuaWGcA0ukfuqOP8DNdB4JdI9P43/U/uh6t4wGs5l1U5D3VfcJsaZHbxjZUgv
-	 I1xPQL6NDREljq3owZtVIHgwzvv9UWf6XJUC1uWY=
-Date: Thu, 1 Oct 2026 14:52:09 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: longzhao@ambarella.com
-Cc: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>,
-	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 13/15] serial: 8250_dw: add Ambarella CV75 quirks
-Message-ID: <2026100140-overbite-mundane-fc79@gregkh>
-References: <20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com>
- <20261001-cv75-v5-v9-13-486cc289a4b8@ambarella.com>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="j3H15UHn"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PFDd6kXrm16mk00toRu/ihWzf3lwI27SiDXNmSI7Zoq0D/WPvKOJ4oB9Th4i7iT9+YaXvjxSVmJOI+Acz9zuc3QW6ZFGIomBObZ6Kep7a5qTJQoEjGP9rVDPsW3SqmoxWFEoVgI7ZAoq2JP0edX+zmjqOTAmWd6tq/18NZRVMPfRmYZr2eSLL+GhWhF0sYmbQItaQ7DH3MiH5fMZ5IcBIgwck1qmvNBDyPnhzKJ4kjxVD8UKMj3J4yTPlpsV6qTTIp/FcVt4QZqOgoh5ty+kFeACSdX+42CmduTPkbqgg5jWSsb+TKLgIgxlMEZF4M3TXqJTHst/1oOCgVT9lK7k8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IAu77YDKa4kFIg+/ztnOWCqqFRIt1o70ItRK7Fk4IeE=;
+ b=mSk1G86WfJGZRu/umIcrz9vVTNc36U4DHebKRaKqOHyrHvouFb5wGPuqpKyy5gRJKETlmB8MS1kqrqagtEmQ07qykjbE9L93pMTatA1Mv3S1cu+sscusGE8T0bjx1KaweX91WK68fAbKymfnoVr59crwln5w0h7iagfNLr0PtwWc1jIoXhDTSEanBa09B5nWYE9hBV+Xg87+6IVlVA6sWjWM9VA89XEUDObLxKh5Dkf/VerYKXa40qSRmz7pTemSo3D9SLkh4M/MS4JgoIS5REWLr+HIFvTs9GZfAX9Wdh3YVpAaWo5H3vLLZIbtDYytWvSdguMY70v/nzLnk14Q4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IAu77YDKa4kFIg+/ztnOWCqqFRIt1o70ItRK7Fk4IeE=;
+ b=j3H15UHn1gmivz7nd+6PHl1flNfny+E1UzqAbmWq05uh7D4mZmdW7WH8IH2cgCKtCy9Nsa3fqyL1W7E5OjJX4R5H4/2gQ/Yd/d8XfRPEycdH+QVrNqAv+/NIPAyuqtWfN18Uy1rWwbBS0niOJES5KgfHswCEDfRsa7wEvehtFl4=
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH8PR12MB6914.namprd12.prod.outlook.com (2603:10b6:510:1cb::21)
+ by LV5PR12MB9828.namprd12.prod.outlook.com (2603:10b6:408:304::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.18; Thu, 1 Oct
+ 2026 13:32:57 +0000
+Received: from PH8PR12MB6914.namprd12.prod.outlook.com
+ ([fe80::2893:177a:72b0:6000]) by PH8PR12MB6914.namprd12.prod.outlook.com
+ ([fe80::2893:177a:72b0:6000%7]) with mapi id 15.21.0472.016; Thu, 1 Oct 2026
+ 13:32:57 +0000
+Message-ID: <5cdc49d9-cd19-4f8f-a301-705d595f0a39@amd.com>
+Date: Thu, 1 Oct 2026 08:32:54 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] pinctrl: amd: Add Remote GPIO (RGPIO) bank support
+Content-Language: en-US
+To: Linus Walleij <linusw@kernel.org>,
+ Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+Cc: Shyam-sundar.S-k@amd.com, Matt.Devillier@amd.com,
+ Guruvendra.Punugupati@amd.com, linux-gpio@vger.kernel.org
+References: <20260921052745.1056249-1-Basavaraj.Natikar@amd.com>
+ <CAD++jLmq45JVz73npFH-dKAWwGwf3_EH+Na_es8C2VmM72wv-Q@mail.gmail.com>
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <CAD++jLmq45JVz73npFH-dKAWwGwf3_EH+Na_es8C2VmM72wv-Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: CH0PR03CA0287.namprd03.prod.outlook.com
+ (2603:10b6:610:e6::22) To PH8PR12MB6914.namprd12.prod.outlook.com
+ (2603:10b6:510:1cb::21)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20261001-cv75-v5-v9-13-486cc289a4b8@ambarella.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB6914:EE_|LV5PR12MB9828:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec0892f5-41b3-4c58-5b71-08df1fc0811f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|1800799024|366016|376014|10067099003|56012099006|4143699003|6133799003|11063799006|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	d/gYQRaDyFvU7kFJR8hK/ipJh4yoxbfH1bfh+//uWeSRCT3jK4gLm+oyvzFiI5cRJ0Eqsb+xsCPiIQPD4RmlbbiC1cD996Z3DPoKiKcqqOzLIZvaDWTYhyGkqYUWVOqgHgvymktOO1LcSGAkpZ5UToNaj1cnLOkpZtjQtFe+5tyo5pRQl3IFsM1TpI3S+9vb3zj/mF5UF4V+xvAm99B88rVpBq8BpdK9SO0ocKEhb0hoKw/82NxtrD3ohwTbs2ZxTqwQyVz5FGTVTUU6Sxa7f7Gzsb1eKBz37v6NvyLFT/ryQbjNvNr+ePrrgUhRD1OgaT5OtzZ7C5NcudqK9bClFph9HMRJjvhBqie52rXeiiTBT1xvsD1GZRLA699HPxHR/zcZ7NepKwSDQ1xs6z1leu+/XN1BRueY2BoFQg9KKCrVEjt+oCbRXLZNj2DJpFTBsYzWOmMBy1p9L+fv7Ig1CAObM2asbOCmY0yoBlgOHeb9tDCJElajrrGoq9qfOq8oMOzqpwEPUoNd/bYHfaJY+BWnRV+xDQpnpR993aCdPWG14c+Oha40Ea4N5rNjZhDdQj7Q5AZiswXt7YpfzOcwbRFOhEIQZkav1ryTkH/VtcSmRxd1VRf09a4HADorXEQFaK15r/YEc7z89OV9huY206NtJLUCNGI/hp7kXf5ju/M=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB6914.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(1800799024)(366016)(376014)(10067099003)(56012099006)(4143699003)(6133799003)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YTRIVFAwUGhpSjA4NWJHcVM2N1JYNmUvRXJFemt0ZStUQmJhRE81WWJ0S2Fp?=
+ =?utf-8?B?NTF2T0NXRjNBMlJvYkticWwwc0NPNFpwZTM0QnM4M3llaFpVYzlURW5kV0Nk?=
+ =?utf-8?B?YWYzWTZrc1RyZ2lQVFRnYlN3aFBEMWs5T1VYeHpDL3IzSG9YOWVySlBjMmdp?=
+ =?utf-8?B?M01vRC9xcjYyVzNZUGpFckg1bXZ2dS83V3ZQZjVHVDlhZEY0Y1krcnJFMGIw?=
+ =?utf-8?B?RDJmQjlBZ1hwb3ZWZkFSZVMvZXU0djVrRGJZVFhsQlRoWHVjNUxwRFJvUWJ6?=
+ =?utf-8?B?dVhkb2VDZXAyZWtIVi9HOE9sQXo5WTFJTkNIWjRaTFRzaVJ5c1NFTTVLci9N?=
+ =?utf-8?B?VzdUT1VCYTA1N3V1NE1POHRyU2Q1MWlYbmlsQmRxNUdHSXkrNUNZdno3SXhU?=
+ =?utf-8?B?bWFNdXY1dFVkczhQWnhxbzdlNTJ2b3hSQThOUHk0UjZXT0phQ1NjOEt1WlU2?=
+ =?utf-8?B?Sy9hR0hIVUNQeXJLb2Z0eFhmakZvNWMxQTArUFRPcTQzbGJ5bFhhcnBPajNS?=
+ =?utf-8?B?ZldZSi9tQnFMVjZNV1h0SVZFQWRkWWliRnY1bnFBdTl1VjRMQWtDZ05qOGYz?=
+ =?utf-8?B?cFJob29qMndlOXBCSzR5MVdEbDBoTi92WGVFOGc1bW5BYm5vV3lXUnpmOGE2?=
+ =?utf-8?B?bzIrc0JIMm1GU203UktQbDZudTh0cDYvcjhCblhhVVRyV1M1OUkrMFBjYXl4?=
+ =?utf-8?B?UUp0TGg0bHdXWkRYYnNaMlVyT1huZkpZeXlkOXJCQTl6QmRQaDE4L3ZoSTVr?=
+ =?utf-8?B?RXBOWDkzLytOOVdoMCsxM1Vad29ZSmlYTTBNUGt6K0tyNU90R3hDOTdFeGJn?=
+ =?utf-8?B?eWRncjFqMmRPWTBYaUlsa3JtWFdWdjNCRDVxak9tNzN3VWM0QlVZVHc4ZUVW?=
+ =?utf-8?B?eTBxSy9DL1prYW8rZi95L1c0ZldNbXdUK2NmQ3FaUlp1b2hUc1o3dDdMbnBr?=
+ =?utf-8?B?bnF4YkhEV1BxSjVic0JwSkRMYXZsTU1UTmlxQkhMN2EweUJkakkvallMazRy?=
+ =?utf-8?B?SlM3VGpIUnp2djZraWpXVFAzK1FXV01FbFVKd0hOWWxMNEtrK1dJa0UzUHRL?=
+ =?utf-8?B?RGxZekl6S2xNY0dGWGE1ZDE2REFQcmZBbVVRNUhkZTNNYTNZbzZjNTFVSm85?=
+ =?utf-8?B?TVJIOWpnSVJtNm5vTi9LWFQzcjc0ZFA2OUlHa0tpM29oYmE1V3gyOFRCbmlB?=
+ =?utf-8?B?WkJkaUwzRzdLK2FnYVhrZ1B4ZVRxNUtJcTZxaXp3MTg5UEhDZmkzejV0TUZa?=
+ =?utf-8?B?SXhaMVFtS1pDUXE2aUVNT0NWcTREcWRweWUvT1FsRUpBQlA0QUpvOWozazlJ?=
+ =?utf-8?B?K0diS3JKRGlEYjZ6endsM28rQ2VRWVNlSmhMcGticjRnc3lrdGtvTGp4VStn?=
+ =?utf-8?B?Ly9yVGpOVnFrTVNMR2NOTXpHNVMyNFhqY2NwNHhpUnliSTYxYTh6MnpVK296?=
+ =?utf-8?B?U1BiQWZpdy9OWEhDY1BBS0VHYzdCeldxUDlOMGVjT0RPNmZHRU5UZ3gzZG1l?=
+ =?utf-8?B?ZUh1VlN2WlRRK01TTVBFZVM0YVBaM0l5V3hSblhqNVVuaThQMTBVeWM2VjlX?=
+ =?utf-8?B?bUowQ0ZzSnZLMHVsZDBVOHhIOUJPREdDbXYrbDN2WldVUFJFV2NLQmhVWEpW?=
+ =?utf-8?B?L1BzS0ZaaFlGaG5EOVBKdm5HU1RtWU41M1hTS1ExQnlwaDZhSkZLaUVsbVBX?=
+ =?utf-8?B?VHFiNU02UjhRVWUvZlNvdFVNN0FVZWhlbVJ1czJrbk5TbXNkeHNuRlBQVjZw?=
+ =?utf-8?B?ajVEOVVjNkhObUhiODgyY0Foc0tiMFNzWU1SWXVDNTZ6WGoxZE5ndGJPYTJj?=
+ =?utf-8?B?MDVydGNEUUx2dXh1VE5DQTlNdzMrcWtuWlpEMndxWkhISEJOSW5uSE0xU1F3?=
+ =?utf-8?B?ZmVqWlkwNjZQaWxPRS9nc3lzNERITCtNUjM3ZlRlNUo0YXlOQ3NEQ3NHMW11?=
+ =?utf-8?B?U0JOYmwzTTZhdFo1bzNkLzdTd1VFR1lMMkt5blpsUCtzUmdYZDNKWkthRFls?=
+ =?utf-8?B?YW9KUDhtKzd1ckZlUm9Oc3V3RnIyakg0K3hnWlEvdnlqa3haZmlCcERNR3Rp?=
+ =?utf-8?B?aVpNbVRtZFViM0lXWmtieEdSVHlVbDhibFZOTW4rSGZmaFc4N3BOdFc0bFB6?=
+ =?utf-8?B?UXk0WlgrNTdodUpPK3UwTTRzR0JhcXIrUDJ2NTNXbkJxVVVxR1lvSTBvZDd6?=
+ =?utf-8?B?WXMwckJFYjVIdEJFekxVUm5RejVXWDNhY0RNMlByRTVIRjRKOE1CMHJ3WC9N?=
+ =?utf-8?B?dkZmMHZPckRCNjBVUGc5Ykw5QmNlc05DelFldFNndnkvVGRKWG5hSC9IOFl0?=
+ =?utf-8?Q?/bPAbi5d3PXsK5ky8q?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec0892f5-41b3-4c58-5b71-08df1fc0811f
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB6914.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2026 13:32:57.4274
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Pf/VO6+5NuRm1RkaS7Iuz7kJE5qxC7mpQOc07//kEGLCbh5LLpaT6EvM7tVVQzhTTMiDbl5cSsiw/wErdIxw+w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV5PR12MB9828
 
-On Thu, Oct 01, 2026 at 08:41:02PM +0800, Long Zhao via B4 Relay wrote:
-> From: Long Zhao <longzhao@ambarella.com>
+
+
+On 10/1/26 01:48, Linus Walleij wrote:
+> On Mon, Sep 21, 2026 at 7:28â€¯AM Basavaraj Natikar
+> <Basavaraj.Natikar@amd.com> wrote:
 > 
-> The Ambarella CV75 UART is Ambarella IP, not a Synopsys DesignWare
-> licensed block. At the register level it is close enough to DW APB UART
-> that a full custom UART driver is unnecessary: reuse 8250_dw with a
-> small platform quirk.
+>> Some AMD platforms expose a second GPIO register bank, Remote GPIO
+>> (RGPIO), covering pins 256-271 through a separate MMIO region that the
+>> platform advertises by name. This series adds support for it.
+>>
+>> The first two patches are preparation: one centralizes per-pin register
+>> access behind a single helper, the other factors the optional
+>> named-resource lookup into a reusable helper with a minimum-size check.
+>> The last patch adds the RGPIO bank itself, including its pins, groups,
+>> pinmux and interrupts.
+>>
+>> The RGPIO pins are registered only when the platform advertises the
+>> region and the main bank spans the expected number of registers, so
+>> platforms that do not expose it are unaffected.
 > 
-> Quirks:
-> - keep IER ETOI (bit 5) set for RX timeout behaviour
-> - skip set_rate; baud clock is managed outside the UART block
+> Patches applied tentatively, I see Mario isn't on CC for the
+> patch series so adding him now. If he sees some issue with them
+> I can still take them out.
 > 
-> Reviewed-by: Linus Walleij <linusw@kernel.org>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> Signed-off-by: Long Zhao <longzhao@ambarella.com>
-> ---
->  drivers/tty/serial/8250/8250_dw.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
+> Yours,
+> Linus Walleij
 
-When you submit lots of different subsystem patches all in one series,
-it's hard, if not impossible, for subsystem maintainers to take them :(
-
-thanks,
-
-greg k-h
+No concerns on my side, thanks!
