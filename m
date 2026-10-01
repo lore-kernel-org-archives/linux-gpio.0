@@ -1,127 +1,153 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F474C33C4;
-	Thu,  1 Oct 2026 21:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C343B5E15
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 21:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790889379; cv=none; b=gPMBUfFUfk5hCp34JN4pkwiW97YF60HQTV36/W64FD5psxnqNF87rsT185+N8JIQrvBSAUQ6RDN66ueS+tQCOZOSC+cpp4tEHVaARUa06D/3QzpPrm2ZoayaXZhFTXd4doDhotzYKU+So+VjQzR+D2Wy32QlqzfL5uzFNymsLAk=
+	t=1790889912; cv=none; b=lVhVdR/+Hx4pwnDwcohXSnLb8mUfIJApoVbI4IPm/XEes52eEtlqNyIvm0bkt1CPxQ/B7qfSOrnje4vjzOfAvAxVAq4MjrbaaoOfxPoPRMBcofsUERKShdzeKiCSSiByHt5kVG9UdazAfKrDfQAUVDiyFFS9bT2mZZ1rmDfjNME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790889379; c=relaxed/simple;
-	bh=j3tZSe6EjWvLL4etfciKqeLMj4yhwYHePqQZXrAv+es=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OpeviNuzI4POAtAoUfcNAT2AYtXsB52ylsS+LjfZ772RnRtMpYmWe7Gf8juluIbYgTxS9mwzZwJAvr5VISACgPUOdIvAcXMyG08RmLn1PL3lpDymLZKpCg3Y16CcFXYEXs9OS9JUb7CD3hjGnckKSS6edAcjG2Wp7v+3y6HhqnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+jof2y/; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790889912; c=relaxed/simple;
+	bh=H56gwjziJywH3m5Bz2P+G9ZTWG7bfHpXRO40aJaL4hA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mqhC8EE6fIm2Sj7PTGvnFPm4pwahPWvUsaBD+bCcUqVScrbZCOep6dMi0kf7c7VLdmph0n/MNYeYrG3UxfXMvRkeLYkxWb3ZFaIe5PuMkcu/CY5TXsVJahnSQ2tU9YFcWcJSbb4NDn3l95zMr2flu6v6/j6+xokGhKLmauJZEbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JSR6adbr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+jof2y/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924FB1F000FF;
-	Thu,  1 Oct 2026 21:16:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSR6adbr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85DB91F000FF
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 21:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790889368;
-	bh=j3tZSe6EjWvLL4etfciKqeLMj4yhwYHePqQZXrAv+es=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=P+jof2y/i9vG8bCW/VDqxjV0fYlsPcFcvV28SPkTi5EJkbAwebXlyhwbk/MQ368pc
-	 rdm8EYPgjhCtlAZJs+7OoyURvkpvTWYf0ZfXp/jnS9jZ3s4Y2Fewt00mMzHcQ5VguI
-	 7RvKWaUmQzXZBW/5JrzHPjcFhjVnANeuN260qA5Go4yg3zxY7w7j0IDgr3mgnUOO6Y
-	 GnY7M1Z7c17LDioDVv3RS0hpTYkR1+Neb4KRV4RwLnQqDDjnU29kwFjoJjx76cK42i
-	 7CDncrEAwGN+7bD0jTKHlNIdDigTs+QFArBhFGJjTbFUmE3GpONC/CHQarPyJYhOO8
-	 mcUX60w2LtQKg==
-Date: Thu, 1 Oct 2026 22:16:01 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Michael Walle <mwalle@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>,
-	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 04/15] dt-bindings: gpio: pl061: add Ambarella CV75
- variant
-Message-ID: <20261001-snuggle-flying-e7180d4ac1e8@spud>
-References: <20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com>
- <20261001-cv75-v5-v9-4-486cc289a4b8@ambarella.com>
- <20261001-attempt-savior-5d4a0eed4320@spud>
- <CAD++jL=tsETOFvC-AdethTdrGtet5neVanj3KyyB4EtEOpJ_Gg@mail.gmail.com>
+	s=k20260515; t=1790889910;
+	bh=Tvs6fkP3/Le/Tutf9udarKKG9JiN4dlqSpw4nvMlQag=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=JSR6adbr+/D+zLJm/9W+9CMYKU6h73aJ5gKupkKP9hpTDpJD6RsQKbYMmu9euWDGJ
+	 h15Sa90syJKnJwFC5PAemEmtRcuIHbVUEUFb7DqnitfRmAFm5WiTzH2tygsnFcWURR
+	 esinUCy9eT24BclYaO9HOVjvmBc+ifETiwk+LEumVDifx9mh8ECOJriOs5wNzLhObq
+	 uXpMcZ9YEboKTbijNPZDdmjZxHScAizu4O66PsDW+irDMf2p/MIJ39Y6hGYqTG6TZU
+	 Z1/JX4EK5Z8hxWKWWbmVmO/1DshMw199ZMxnqPw9C9x99Vp0o7nu7kHdxDRt01e2WZ
+	 4KEd5PQbqMyfQ==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5ba40cb7246so1845143e87.1
+        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 14:25:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBw0pO3fz0ZWM/Brl3XUcrqNgLzYxT57Aw+Hdh6KlR7gOVuQfg0fr5Cs+xuvIfbpz/pMMYePK4Zje/dg@vger.kernel.org
+X-Gm-Message-State: AFq9FYK4c0Lr9wnbGrxSo+WElhFmvOw06r6GeiHEmnB+orUJaMsyCrgo
+	QPZj0MhgjYP9qK7m3Wx0VKM/YUiLs29HV7W1axWutO6+rW7vMwnaUrNM3rWJBiul9JFO5bkoMMI
+	g1wC3DPAIpvEA5/CdT9NNxbOCsMWrx2c=
+X-Received: by 2002:ac2:4898:0:b0:5b6:4ad:77b3 with SMTP id
+ 2adb3069b0e04-5bb9bb0c0d4mr124079e87.27.1790889909323; Thu, 01 Oct 2026
+ 14:25:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1WD25rPQ8gIjRFJm"
-Content-Disposition: inline
-In-Reply-To: <CAD++jL=tsETOFvC-AdethTdrGtet5neVanj3KyyB4EtEOpJ_Gg@mail.gmail.com>
-
---1WD25rPQ8gIjRFJm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20260928063824.1386524-1-morbo@google.com> <CAGG=3QWCmQ+LVvn2dtjEauj5WFwvx=pvg4Q6man_A2imdjRe7A@mail.gmail.com>
+ <CAD++jLk2pFCpbpGVCQg2AdrwQecpb=wsehhwSuwTbKAXNeyfoQ@mail.gmail.com> <CAGG=3QV2k-nsZHNSuKEixZb+-LcxvhQsG379ghgyOpiDLTJWzw@mail.gmail.com>
+In-Reply-To: <CAGG=3QV2k-nsZHNSuKEixZb+-LcxvhQsG379ghgyOpiDLTJWzw@mail.gmail.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Thu, 1 Oct 2026 23:24:56 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnOm3ua7hom_L4YQwN5z81M17WmL_VGqx+-ugrAJ-6_Dg@mail.gmail.com>
+X-Gm-Features: AclHuK_3CuY_lvP3v92lNOvBLIMvkbfO2hErlC_rqJvappsJIFQnzmPZMMVY-s8
+Message-ID: <CAD++jLnOm3ua7hom_L4YQwN5z81M17WmL_VGqx+-ugrAJ-6_Dg@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: annotate struct acpi_gpio_mapping with __counted_by_ptr
+To: Bill Wendling <morbo@google.com>, Ard Biesheuvel <ardb@kernel.org>, Jeremy Kerr <jk@ozlabs.org>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	codemender-patching+linux@google.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 01, 2026 at 09:36:50PM +0200, Linus Walleij wrote:
-> On Thu, Oct 1, 2026 at 9:23=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+On Thu, Oct 1, 2026 at 10:05=E2=80=AFPM Bill Wendling <morbo@google.com> wr=
 ote:
-> > On Thu, Oct 01, 2026 at 08:40:53PM +0800, Long Zhao via B4 Relay wrote:
-> > > From: Long Zhao <longzhao@ambarella.com>
+> On Thu, Oct 1, 2026 at 12:56=E2=80=AFPM Linus Walleij <linusw@kernel.org>=
+ wrote:
+> > On Mon, Sep 28, 2026 at 9:22=E2=80=AFAM Bill Wendling <morbo@google.com=
+> wrote:
+> > > On Sun, Sep 27, 2026 at 11:38=E2=80=AFPM Bill Wendling <morbo@google.=
+com> wrote:
+> > > >
+> > > > The 'data' pointer field in 'struct acpi_gpio_mapping' is associate=
+d
+> > > > with the 'size' field, which represents the number of elements of
+> > > > type 'struct acpi_gpio_params' allocated for 'data'.
+> > > >
+> > > > To improve bounds checking via CONFIG_UBSAN_BOUNDS and
+> > > > CONFIG_FORTIFY_SOURCE, annotate 'data' with the __counted_by_ptr
+> > > > attribute.
+> > > >
+> > > > Analysis of allocation, assignment, and access points shows that th=
+e
+> > > > pointer is never accessed before the count is set, which guarantees=
+ that
+> > > > this annotation is safe and will not cause runtime panics or
+> > > > false-positive bounds checks.
+> > > >
+> > > > Cc: codemender-patching+linux@google.com
+> > > > Assisted-by: LLM
+> > > > Signed-off-by: Bill Wendling <morbo@google.com>
+> > > > ---
+> > > >  include/linux/gpio/consumer.h | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/con=
+sumer.h
+> > > > index fceeefd5f893..2b80cf7aa7e7 100644
+> > > > --- a/include/linux/gpio/consumer.h
+> > > > +++ b/include/linux/gpio/consumer.h
+> > > > @@ -667,7 +667,7 @@ struct acpi_gpio_params {
+> > > >
+> > > >  struct acpi_gpio_mapping {
+> > > >         const char *name;
+> > > > -       const struct acpi_gpio_params *data;
+> > > > +       const struct acpi_gpio_params *data __counted_by_ptr(size);
+> > > >         unsigned int size;
+> > > >
+> > > >  /* Ignore IoRestriction field */
 > > >
-> > > The CV75 GPIO banks sit on the AMBA PrimeCell bus but are not
-> > > register-compatible with the ARM PL061. Each bank is 32-bit and 32
-> > > lines, with extra mask/enable registers, so arm,pl061 must not be used
-> > > as a fallback compatible.
+> > > There's a problem with 'drivers/firmware/efi/libstub/Makefile'. Clang
+> > > needs a compiler flag to support the "__counted_by_ptr" attribute
+> > > referencing a field *after* the pointer, like in this patch. However,
+> > > the Makefile blasts the flag away for x86 platforms. Below is a hack
+> > > that copies the part of the top-level Makefile that adds the flag. I
+> > > don't think that's a good solution. The comment in the driver's
+> > > Makefile says that the stub code executes before the kernel does,
+> > > which I assume is why a lot of the flags are blown away... In any
+> > > event, I'm not sure how best to address this.
 > >
-> > What has this got in common with the pl061 beyond using the PrimeCell
-> > bus? Current reason for putting them together is a bit tenuous to me.
->=20
-> It was determined in early review that this is very clearly a modified
-> PL061 block. The basic registers are even named the same.
-> https://lore.kernel.org/linux-arm-kernel/CAD++jLk0LoOJk=3DTXin42AL3_z_7eV=
-VkvMnYr1S8090C6A_B+dQ@mail.gmail.com/
+> > But is this a problem with the current patch?
+> >
+> > Does libefistub use <linux/gpio/consumer.h> in any way, shape
+> > or form?
+> >
+> It's being #included transitively:
+>
+> In file included from drivers/firmware/efi/libstub/efi-stub-helper.c:12:
+> In file included from ./include/linux/efi.h:20:
+> In file included from ./include/linux/rtc.h:18:
+> In file included from ./include/linux/nvmem-provider.h:16:
+> ./include/linux/gpio/consumer.h:670:55: error: use of undeclared
+> identifier 'size'; did you
+>       mean 'ksize'?
+>   670 |         const struct acpi_gpio_params *data __counted_by_ptr(size=
+);
+>       |                                                              ^~~~
+>       |                                                              ksiz=
+e
+> ././include/linux/compiler_types.h:392:64: note: expanded from macro
+> '__counted_by_ptr'
+>   392 | #define __counted_by_ptr(member)
+> __attribute__((__counted_by__(member)))
+>       |
+>        ^~~~~~
+> ./include/linux/slab.h:602:8: note: 'ksize' declared here
+>   602 | size_t ksize(const void *objp);
+>       |        ^
 
-Right. I think that'd be good to have in the commit message, because as
-an outsider reading this it sounds like it could well be an entirely
-different device.
+Hm I see.
 
-With that explanation,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-but as things stand,
-pw-bot: changes-requested
+Certainly Jeremy or Ard will have an idea about how to solve this,
+so paging them in.
 
-Thanks,
-Conor.
-
->=20
-> PL061 is different and quirky and could not use gpio-mmio, while
-> with these changes to gpio-regmap it can handle its pecularities
-> and use a library which is a good thing on its own.
->=20
-> Yours,
-> Linus Walleij
-
---1WD25rPQ8gIjRFJm
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCar7NkQAKCRB4tDGHoIJi
-0iH7AQC+o17BgBwJe3k2EAZcRXfzE2tgNWgAPkP28V9wBeNGDwD/UAU1TinKSygv
-MtUtKTvPb1iV01w1PpMHV1VZJCr5NA8=
-=TwJs
------END PGP SIGNATURE-----
-
---1WD25rPQ8gIjRFJm--
+Yours,
+Linus Walleij
