@@ -1,38 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8474A64D4;
-	Thu,  1 Oct 2026 12:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B45E50B8C8
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 12:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790858461; cv=none; b=NhqN5mb8LeR5o7e+CrgYxFFj41m6I7FjY6eo7+3/ePuRWaCiegH2/sYN0worCcU+IUCtrS0+LnF4fLc6YIymK9+mrGqI1LaG7yXr8mtwmY8l4Y5EFRTM3Jtq3/VeUgIizQl/EJMFYK83nf/UIQ6qFL0zX1DYGCAJaf1ptwWz+18=
+	t=1790858473; cv=none; b=q0Da8A83ygZelP085iePl6vUzTLY3WeL3564nnfilkNX/32sh5VbxvsDmf48C5eigOanRrCW3vxse5+Mqrxk9bqNur6RUMnDGYmXtAhDHuRXls/gVhvCxfxq0X+UNVrq7rxZler0g/jcuStfwGTLWPcL7tSOCf/C+5l9k4m2hzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790858461; c=relaxed/simple;
-	bh=+gPK4YaQ6wkQB/Gz2SEXT2tTE6dm0Abvvb1HwTdmHE8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KLR6MaBK6yBSyTDw9omNthM1nJQYYh+Ra7HESUPMjRCUZqhQJoUJJTHSgHxhhGh8jjKN68gFBKWQn1bgDDdVA4SZCU3T/Xn4pEJK2MqBQqJlF6S4cHN8E/4/8FsyPVyYwgMPeQ007gKORB6+oFq3I6GppqOlrLOVg2kFJIu6Fv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BRQRRbjv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1790858473; c=relaxed/simple;
+	bh=i6CdXMNIsX9AsS85jR1xBRf2i9VEOJL+1YUH8Bqd8iI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uZYZUrAHu69Ml1T9QdEoJ5+i9kgcjypZu1ammLTUBaQWNZwNLBMtvGN28fWqaYi9eBsYItUjQWRPWX9it6SNhY1i3R4iNM9JBKYc6AmrA2rt7uGiBAhoAvIyLcXDi0MyHaOekN5MvtQhX6ODXMGA1qh4LVScIRTLCzGX4wvYV9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GuDYYJFM; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=HJ/DKmih; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BRQRRbjv"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5EC20C4DDFA;
-	Thu,  1 Oct 2026 12:41:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1790858461;
-	bh=+gPK4YaQ6wkQB/Gz2SEXT2tTE6dm0Abvvb1HwTdmHE8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=BRQRRbjvdcXArmet6HpqZ4joYxpo0W+Kji6WJyUGGoprB4cikAcpr59NY0YgispIb
-	 FZcsbSTOEnIzjrKrN6xZ9ZmSM1JmARTkbFiK0JsQhzOfvj3lhsh5iZtXPlH/+GFg8f
-	 cuOpkJBy4o5osIp7F05mjMjAArsYGgqtlManxmP0XsfQE1osqjuU7Jn8bWtHwNtMqL
-	 8s+Uj3Xp6auqr2SvCHqGmKJxAPYZYj+eYpXA6CTORTH+TTLtgL3MuFMlF9aCHgS79Q
-	 3reJXxuUzuKGkgz8j2VDGD6t3RlfMVEhh07YDmJTL3qPWHs2OfV/ww4EGtjVmcvaPL
-	 gv9EnMPT4a/IA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B087CA5FDB;
-	Thu,  1 Oct 2026 12:41:01 +0000 (UTC)
-From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
-Date: Thu, 01 Oct 2026 20:41:03 +0800
-Subject: [PATCH v9 14/15] arm64: ambarella: add ARCH_AMBARELLA and CV75 EVK
- DT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GuDYYJFM";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="HJ/DKmih"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6916xaLL962450
+	for <linux-gpio@vger.kernel.org>; Thu, 1 Oct 2026 12:41:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=pn9ZIrIwLLod9PpiKc2jm0
+	af3QLi76hVkznb5/Ig6B4=; b=GuDYYJFMdI0+eAvuUOEvWRcpF4lhddJKuq5Vci
+	/pppO86AX1NGtRsJPDq72nDZCMSkJnl8eZNcLIqCh9MX+hXbPvxsvX4m0ZTfOyRi
+	Q2ESs/EEftjvcqTBaKwAYoeAEv2ihLxmE2fv2YrmMgZsREX3VjZmKo+zlusGRI9Q
+	AaqGLsqomCOM5lMKiwV/HO3KcqKVNpcK/yA/ua1CljyxFLFj69haK5UFalK+9lB1
+	VbVRW6pVWVUChNOG/YQhliHh65Q/3CubkX7Ku/Ifjp3tgVvrvTwjr5lLvT353mTt
+	Kc0lAS8/f3KRJc2BangKXUJYKGtvCBi/LO+sVyrXay+6vDvQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h16wcv6xs-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 12:41:09 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-93cb93c874bso83634285a.0
+        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 05:41:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1790858469; x=1791463269; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=pn9ZIrIwLLod9PpiKc2jm0af3QLi76hVkznb5/Ig6B4=;
+        b=HJ/DKmihU5t0kusfTC7Vc6IUF3mo4dIXdCm71bXMvkjNebbpcuPq9ViUSocTBi8K2R
+         QMMSViQVGAHl0jxsMl/OSit9pqTOFcfj85Bf2UI/KCbuOngLNvAK1eCW4ocBUDatuH28
+         q8XUHYJKllLHCWhly9buUAIRzwBRig2B2uZiBWH+b23rxgFhAEcKH/HzUnPG/EqoIp9q
+         cS/t1YvLwTg7vnqAPv9dmN3I3teljQKPBRr02k9Kg2R/7DZK/IVm3u5QHEkDRFtZXMYp
+         Rs0zvKyoTNnUbL6xJ+w2dxAV15rZyeaxoLhoHqBxdmTfC7znqs+iAekIUzXHeCYo5qob
+         Om3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790858469; x=1791463269;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=pn9ZIrIwLLod9PpiKc2jm0af3QLi76hVkznb5/Ig6B4=;
+        b=rNDXw+9CWsWLRpfgKUXtau8e8VHZN7VnJfHQoI4xJnnCucvO04Gtz8+UNfol+GKf4l
+         Ip6uhhrpNBPZN474DeL50kgQ6Y2t+Bui+n45tKuhQter03MsIDtPFYvEGqJV1aMUu4pb
+         0K3V4Scc7kRS6bk0Ioze1wnGPOle2MXVK042nf9moLAyOD5oMEjJhd22bfCxu+FmUjwe
+         nBLEsoRtQiNWZwKWSk4pI6FUNvU6enqRo/GilYOTqcLOCYEMq9aDhlx/dv5ks/6M+iwL
+         l9cVQ0fCFwWObJ1333vn6v5oWuuLUSt55GC6uVtM/dBdpx0bllIwo2hT4wBT1fpN05k5
+         6GdA==
+X-Gm-Message-State: AFuF++neyMc0KTE5O1NPAz7bxHZY2BPsidhwGFudbVuk7R530Rdw2dhV
+	s3e0qLSB9fTObAGwAD+mpHRswzPUHKLkyaEA0CCR1T+t7g/EZSqxGrS2NmQxbHcyivEtOdSk7Kt
+	jx7lHlOQsUUoOoV8jz3aNH1uPj5y3kgG0J/0BQGTTt5yIhaGXAeansOesxcMR9Cjy
+X-Gm-Gg: AYBFou3k8eH9m6Ys/M5k6mfGjzKSJq97YEgwXnBF16IGOpPsj5W4ciiCc2HVPxwz8Ae
+	zwvHxfQptlfksMdhwRzbT1uGS8w5Unybs6aTGMdGeyFeGNjwcwIOkCbjZu1IEv0w+E6waGi75DV
+	Hp6v39JghZs8vWmnBtB/IdCMBQ7OFGjqG8T+XraWqyLrhJMTFosMAvNxYjQZvLVnXuVEJvhv7Zo
+	P6XEagQBWI4ZQX0YIjd/dJ95lnS15sbfAnn1r6JLU2tpSpNlniHqtz6K9Ib/LTocBrQ7KlT7EXy
+	bzF1oCN5HBTQD/TRgNoG3s5xdBrLws6UUdv/PuU+0333HGZ1G8CWfuWjRZ3uo66VhWZ6obY0kyw
+	lnlYo58r6RbehZgmZwdaH6668pazF
+X-Received: by 2002:a05:620a:2956:b0:93c:6e1d:96b0 with SMTP id af79cd13be357-93cb5abb8bemr491931885a.17.1790858468960;
+        Thu, 01 Oct 2026 05:41:08 -0700 (PDT)
+X-Received: by 2002:a05:620a:2956:b0:93c:6e1d:96b0 with SMTP id af79cd13be357-93cb5abb8bemr491925585a.17.1790858468263;
+        Thu, 01 Oct 2026 05:41:08 -0700 (PDT)
+Received: from brgl-qcom.local ([2a01:cb1d:dc:7e00:8916:7b9b:97a2:6c96])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48b0691c4c4sm6978867f8f.22.2026.10.01.05.41.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Oct 2026 05:41:05 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: [PATCH 0/4] gpio: kunit: add test cases for platform lookup tables
+Date: Thu, 01 Oct 2026 14:40:52 +0200
+Message-Id: <20261001-gpio-kunit-plat-lookup-v1-0-03bfa84c5dd1@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -41,328 +87,76 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261001-cv75-v5-v9-14-486cc289a4b8@ambarella.com>
-References: <20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com>
-In-Reply-To: <20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com>
-To: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org
-Cc: Long Zhao <longzhao@ambarella.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, 
- Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
- Michael Walle <mwalle@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Long Zhao <zl020895@163.com>, Lee Jones <lee@kernel.org>, 
- mfd@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1790858457; l=8107;
- i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
- bh=DEAMc2vofaBUV896UxD87q9HiCotMrVdpC7L4SePgqQ=;
- b=gMUhRvVsooteiO91gN6VHmeL4sr01gdREvC0cmsbgXCHk7UlQcNEjjrM8hPECBo5VVDrEKhmn
- 9LT9KUgSkB1ABvvzfkPC6vfxcxd3vnDOcQznbOALCATUiQWwjl0nMdg
-X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
- pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
-X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
- auth_id=903
-X-Original-From: Long Zhao <longzhao@ambarella.com>
-Reply-To: longzhao@ambarella.com
+X-B4-Tracking: v=1; b=H4sIANVUvmoC/x3MTQqAIBBA4avErBvQMvu5SrSIGmsoVLQiiO6et
+ PwW7z0QKTBF6LIHAl0c2dkEmWcwraNdCHlOhkIUWgohcfHscDstH+j38cDdue30qFWpqrYmrU0
+ DKfaBDN//uB/e9wPG4qu8aAAAAA==
+X-Change-ID: 20261001-gpio-kunit-plat-lookup-6434597e66f8
+To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=804;
+ i=bartosz.golaszewski@oss.qualcomm.com; h=from:subject:message-id;
+ bh=i6CdXMNIsX9AsS85jR1xBRf2i9VEOJL+1YUH8Bqd8iI=;
+ b=owEBbQKS/ZANAwAKAQWdLsv/NoTDAcsmYgBqvlTXP7BA/vuHaXHw0Z2IT3wm8rABjCC+myTBH
+ DAzh53u6/2JAjMEAAEKAB0WIQSR5RMt5bVGHXuiZfwFnS7L/zaEwwUCar5U1wAKCRAFnS7L/zaE
+ w+ixD/9Ebp7qyHEQLv6oofC5tinCSJXDMUIrDr0BBKOenGLUHyn0eNl5Uny9sRjn7ZDdhC3Xnqs
+ gC9JMOidDEdvTuvGjNjKP0Nvrr9l8gLXHeE/ko3WpYBmx1UhR2szFIRPzeqZEv9I7FXIM7u2Xqt
+ ZmmzZl6iH261U3ajuVO4NLRbXyCrNAVXtIKm5M1Us2/wy8WNsKSkcJK8n5mmLc0xYkefdN92Qov
+ O/uXv5uPeeYHOqZa/fA3pG+aT8PwpYCXuwWs2iePcitGdG/UgkTxTTcdYCkpY+bKpkoM0Tvs3XN
+ xzKHBsAIWqUyVoxW9MWMMY0bt0QYTEwZkFv1U+9Ah1j5ZvH0/WT1fmubmsO6Fhsi/mUMCooJ0HI
+ 3m+Elc90zuj+peyCKQPL9oKEmfU8tZtDGl3JEJbGRVQsEO3cmYZXckLivbELD48SPWKc0lhC+I0
+ Q8479W9Hyd3tL6Kz6MCQBw/oDOJWZl46BQAtx//++fX5VWPvX/zIX4Y/0V0BIzXAdElrSU6wrgS
+ ujjgD7Rr6vpBxMvnlVp10w+qZOqmcdAhC21rHpGQceIH48ei/qPxIwrG2qndFtN0G/49+GlReCf
+ 9KGNtd8eDEBlrVh66gFel824lLgzEeZz5xj+d1BhYSVPVKDiBbpgcI8CsfImmHUrJkgf3fk3McD
+ D3UOqtMrdJqyGDQ==
+X-Developer-Key: i=bartosz.golaszewski@oss.qualcomm.com; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDAxMDA1MCBTYWx0ZWRfXzxbD3MuLcgSC
+ Nqgn8QEUagHG+KtSiwPC87M6RXUPWPfnnwThI6vSZT+EeCGq5Rr4j+v+1qqNVtfrfj0C1pyCvTa
+ 4RuSGUVXrxxEtAP1V8A0f7hqvzBzI1NY8crTdF672CGnbaNZKLTyyu4eOpyxR6Nqn81GJpepj5F
+ ZDsOcuqoBZUrt5Si6t8+Qp8b0vu4C8MrLyQmvGAm1hciZVtLOVdY/IqfOcbRAm74j7MIUAJI6pW
+ dWl91zwFpiDH1iXJueWSq/fauDjWgOlVc09qlPlfVuap0kRSWiZLgMnw//pAmDfbdJa0Nt/e4dB
+ ujgCVVfNu8K4oL4I1b8toAYYsd+mBriEECQckLpnQ0IcMjjMbpljnop/Iu5kqE5/1KIKfe+KHYG
+ bCUnQz3IdYGKsGUx7aTphXvxWZq4RHVsTvUJNfwskRk92CJAba5ZfYHZKjyPd3843y1FIV5+bSO
+ r5UTWjnh+zeq0BSYxeA==
+X-Proofpoint-GUID: cpE1i5xJhXQ507Om3mCf4Zb8GlDgj5e1
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDAxMDA1MCBTYWx0ZWRfX94v4Li/YFqXA
+ rHJeLzZWDuL78BEMWaOIGtL9masER0wkwwKAQdSYyGBbT6hasSSE/j+5t2N3F0hoNgMd9Qv31P2
+ 5ZNVNSq3pzupHhFhHPt+aeEcEFR0fLg=
+X-Authority-Analysis: v=2.4 cv=S51MU4sP c=1 sm=1 tr=0 ts=6abe54e5 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22 a=EUspDBNiAAAA:8
+ a=WHK2wXdqtRXZzuKitUcA:9 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-ORIG-GUID: cpE1i5xJhXQ507Om3mCf4Zb8GlDgj5e1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-01_03,2026-09-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 priorityscore=1501 clxscore=1015 impostorscore=0
+ lowpriorityscore=0 spamscore=0 adultscore=0 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2610010050
 
-From: Long Zhao <longzhao@ambarella.com>
+Add test cases for platform machine lookup for GPIOs along with some
+minor refactoring.
 
-Enable ARCH_AMBARELLA and add a minimal CV75 SoC / EVK device tree for
-console bring-up with the RCT clocks, UART, pinctrl and GPIO banks.
-
-Reviewed-by: Linus Walleij <linusw@kernel.org>
-Signed-off-by: Long Zhao <longzhao@ambarella.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 ---
- arch/arm64/Kconfig.platforms               |   6 +
- arch/arm64/boot/dts/Makefile               |   1 +
- arch/arm64/boot/dts/ambarella/Makefile     |   3 +
- arch/arm64/boot/dts/ambarella/cv75-evk.dts |  30 +++++
- arch/arm64/boot/dts/ambarella/cv75.dtsi    | 177 +++++++++++++++++++++++++++++
- arch/arm64/configs/defconfig               |   1 +
- 6 files changed, 218 insertions(+)
+Bartosz Golaszewski (4):
+      gpio: kunit: fix the label of the dummy GPIO chip
+      gpio: kunit: factor out common code for waiting for device probe
+      gpio: kunit: rename the swnode consumer to a more generic test consumer
+      gpio: kunit: add a test case for platform lookup tables
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index d2acfac73003..16d7e3a4c2d6 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -26,6 +26,12 @@ config ARCH_SUNXI
- 	help
- 	  This enables support for Allwinner sunxi based SoCs like the A64.
- 
-+config ARCH_AMBARELLA
-+	bool "Ambarella SoC family"
-+	select PINCTRL
-+	help
-+	  This enables support for the ARM64 based Ambarella SoCs like CV75.
-+
- config ARCH_ALPINE
- 	bool "Annapurna Labs Alpine platform"
- 	select ALPINE_MSI if PCI
-diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-index fc726b215f12..f1709eb5d915 100644
---- a/arch/arm64/boot/dts/Makefile
-+++ b/arch/arm64/boot/dts/Makefile
-@@ -4,6 +4,7 @@ subdir-y += airoha
- subdir-y += allwinner
- subdir-y += altera
- subdir-y += amazon
-+subdir-y += ambarella
- subdir-y += amd
- subdir-y += amlogic
- subdir-y += apm
-diff --git a/arch/arm64/boot/dts/ambarella/Makefile b/arch/arm64/boot/dts/ambarella/Makefile
-new file mode 100644
-index 000000000000..ddca3d7b18cc
---- /dev/null
-+++ b/arch/arm64/boot/dts/ambarella/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+dtb-$(CONFIG_ARCH_AMBARELLA) += cv75-evk.dtb
-diff --git a/arch/arm64/boot/dts/ambarella/cv75-evk.dts b/arch/arm64/boot/dts/ambarella/cv75-evk.dts
-new file mode 100644
-index 000000000000..42a0fe24b83b
---- /dev/null
-+++ b/arch/arm64/boot/dts/ambarella/cv75-evk.dts
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Ambarella CV75 EVK board
-+ */
-+
-+/dts-v1/;
-+
-+#include "cv75.dtsi"
-+
-+/ {
-+	model = "Ambarella CV75 EVK Board";
-+	compatible = "ambarella,cv75-evk", "ambarella,cv75";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = &uart0;
-+	};
-+
-+	memory@200000 {
-+		device_type = "memory";
-+		reg = <0x0 0x00200000 0x0 0x07e00000>;
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/ambarella/cv75.dtsi b/arch/arm64/boot/dts/ambarella/cv75.dtsi
-new file mode 100644
-index 000000000000..c36b6af48237
---- /dev/null
-+++ b/arch/arm64/boot/dts/ambarella/cv75.dtsi
-@@ -0,0 +1,177 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Ambarella CV75 SoC
-+ *
-+ * Boot peripheral: UART0 console.
-+ * Clocks: a single ambarella,cv75-rct provider.
-+ */
-+
-+#include <dt-bindings/clock/ambarella,cv75-rct.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "ambarella,cv75";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			compatible = "arm,cortex-a76";
-+			device_type = "cpu";
-+			reg = <0x000>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu@1 {
-+			compatible = "arm,cortex-a76";
-+			device_type = "cpu";
-+			reg = <0x100>;
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	osc: oscillator {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <24000000>;
-+		clock-output-names = "osc";
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		ahb@ffe0000000 {
-+			compatible = "simple-bus";
-+			reg = <0xff 0xe0000000 0x0 0x01000000>;
-+			ranges = <0xe0000000 0xff 0xe0000000 0x01000000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			s_scratchpad_syscon: scratchpad@e002e000 {
-+				compatible = "ambarella,cv75-sec-scratchpad", "syscon";
-+				reg = <0xe002e000 0x1000>;
-+			};
-+		};
-+
-+		apb@ffe4000000 {
-+			compatible = "simple-bus";
-+			reg = <0xff 0xe4000000 0x0 0x01000000>;
-+			ranges = <0xe4000000 0xff 0xe4000000 0x01000000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			uart0: serial@e4000000 {
-+				compatible = "ambarella,cv75-uart", "snps,dw-apb-uart";
-+				reg = <0xe4000000 0x1000>;
-+				clocks = <&rct CV75_GCLK_UART0>;
-+				interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
-+				reg-shift = <2>;
-+				reg-io-width = <4>;
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&uart0_pins>;
-+
-+				status = "disabled";
-+			};
-+
-+			pinctrl: pinctrl@e4010000 {
-+				compatible = "ambarella,cv75-pinctrl";
-+				reg = <0xe4010000 0x1000>;
-+				ambarella,drive-strength-syscon = <&rct>;
-+				ambarella,pull-syscon = <&s_scratchpad_syscon>;
-+
-+				uart0_pins: uart0-pins {
-+					function = "uart0";
-+					groups = "uart0";
-+				};
-+			};
-+
-+			gpio0: gpio@e4013000 {
-+				compatible = "ambarella,cv75-gpio", "arm,primecell";
-+				reg = <0xe4013000 0x1000>;
-+				clocks = <&rct CV75_GCLK_APB>;
-+				clock-names = "apb_pclk";
-+				interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 0 32>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				arm,primecell-periphid = <0x000e8061>;
-+			};
-+
-+			gpio1: gpio@e4014000 {
-+				compatible = "ambarella,cv75-gpio", "arm,primecell";
-+				reg = <0xe4014000 0x1000>;
-+				clocks = <&rct CV75_GCLK_APB>;
-+				clock-names = "apb_pclk";
-+				interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 32 32>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				arm,primecell-periphid = <0x000e8061>;
-+			};
-+
-+			gpio2: gpio@e4015000 {
-+				compatible = "ambarella,cv75-gpio", "arm,primecell";
-+				reg = <0xe4015000 0x1000>;
-+				clocks = <&rct CV75_GCLK_APB>;
-+				clock-names = "apb_pclk";
-+				interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+				gpio-ranges = <&pinctrl 0 64 32>;
-+				interrupt-controller;
-+				#interrupt-cells = <2>;
-+				arm,primecell-periphid = <0x000e8061>;
-+			};
-+		};
-+
-+		rct: clock-controller@ffed080000 {
-+			compatible = "ambarella,cv75-rct", "syscon";
-+			reg = <0xff 0xed080000 0x0 0x1000>;
-+			clocks = <&osc>;
-+			clock-names = "osc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			assigned-clocks = <&rct CV75_GCLK_UART0>;
-+			assigned-clock-parents = <&osc>;
-+			assigned-clock-rates = <24000000>;
-+		};
-+
-+		gic: interrupt-controller@fff0101000 {
-+			compatible = "arm,gic-400";
-+			reg = <0xff 0xf0101000 0x0 0x1000>,
-+			      <0xff 0xf0102000 0x0 0x2000>,
-+			      <0xff 0xf0104000 0x0 0x2000>,
-+			      <0xff 0xf0106000 0x0 0x2000>;
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupts = <GIC_PPI 9
-+				      (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 12 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index ad3bd3d9507b..454f07a6a6a6 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -36,6 +36,7 @@ CONFIG_CRASH_DUMP=y
- CONFIG_ARCH_ACTIONS=y
- CONFIG_ARCH_AIROHA=y
- CONFIG_ARCH_SUNXI=y
-+CONFIG_ARCH_AMBARELLA=y
- CONFIG_ARCH_ALPINE=y
- CONFIG_ARCH_APPLE=y
- CONFIG_ARCH_ARTPEC=y
+ drivers/gpio/gpiolib-kunit.c | 221 ++++++++++++++++++++++++++++---------------
+ 1 file changed, 147 insertions(+), 74 deletions(-)
+---
+base-commit: 6c2cb8b8b843d216ab549b678a0d8831c43153e0
+change-id: 20261001-gpio-kunit-plat-lookup-6434597e66f8
 
+Best regards,
 -- 
-2.34.1
-
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 
