@@ -1,96 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566A437188B
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 20:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDFA2E06EF
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 20:14:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790885264; cv=none; b=jFJ2TNdDxdJhaR5uxg9LJgQvKofzlzNJp3Qq3fOTzNbECxM3SgnSqtkeWO+0ct5ASqpFZAhPGr7fMRVuLkUcKEjtGhPUDTMhJzcmCzghXmcgWxhWiUs1oYyFYdBmYUAzUaWdbZypoAWO6s11Shsiivzu6qh7VOr4GUwoZ708j14=
+	t=1790885699; cv=none; b=SqiVLGElxBvfGZinYGX8gZPcZI3/Kyy9rn+EtTr8J3lH4NbJRQFsB1GiEq80OJwaWy/uLe+4NhU6QJw9OCK9TES6qq7nzWE/ZLkCXV6X9FMV3icE3G5Vvps0cCAaLbxGKoZX+K3bf70tzfji2s/sWlewrPKsA9FWE5zG/Gl9ioc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790885264; c=relaxed/simple;
-	bh=+WIOHI3QmtDUPGRU34uGTrPgPXVtS+GgJA2+HRUOD0c=;
+	s=arc-20240116; t=1790885699; c=relaxed/simple;
+	bh=DnZISwCpr+LQVTkvk2yva6QizXkNr7Iyq/yM8SVg5fk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qIBnr62qvlfkWmvMCnIi9FUmcKcRRuk+m6fwe8MPnnzpNueo/vd9dnDitGw9kvIi11nvy6KAErcsLSTk7kqUnGkHHZ3FzGHGsZf8sVpyIhdDO/kj73rouoXNlEwWrS57mQaYRiopTQcL4sY4RU6PAffWufvOaiYQ8jvLKAILlkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYGoVkHj; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=X0L6+Tb6TypqjyEQIIqVq9moCLNKgoWs4E3fHZNlEZ3523ll0u+6Io7v/QFBzykIsL4IbwZik21e2PUkOXDKUuBDVqV2V8QgWA6zZBz8lFT0EkZTZlqz67djjg9hjmBT5YK3ZHaPQxn9pOsIRQ5iCwZzS5gMK6un+zPMFP/wwHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fd1HI3Bu; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYGoVkHj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 098E71F00893
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 20:07:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fd1HI3Bu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 492741F0089C
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 20:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790885263;
-	bh=pHEjxeUGrGpUE2oT3OzLHarA0aOnh6BNDf3suT1GWYM=;
+	s=k20260515; t=1790885698;
+	bh=DnZISwCpr+LQVTkvk2yva6QizXkNr7Iyq/yM8SVg5fk=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=ZYGoVkHjMwWeUzCo5r8PVaQw+FKVZ+r9qZHsFxQKtlqdM0HV6oupbZuVVVqRNsE3T
-	 GFGTLLCsjIE2S7qG0mXNrD+7wFPDf0vCMi+Y199NdpJdlqiqqqjDxifrwDJ72WxX9k
-	 kzvI7rrSo3SNGB8Vrx/nAatlTcsf5/5URIDj0QdoAtVXk5cQqIEl7kYAswA/63LGvd
-	 BwLr5mxWrzmKvU/ie7Z7o9UcWadrFbXIqEwT6C7bsb3BWMQlUxBmf1YKXIPwGsEl5L
-	 bi05oHNUY+CpqKYkQqTqsQYO69o/kOQWWiE+NKic7e11MHD2t6yUCWP2tJRwHa9w+H
-	 nv9KITnDFt/VQ==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5b8f69a0af6so1074507e87.1
-        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 13:07:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzszSejvjr3gTZA4hW796ttJgpHIyps504KA87mMpkqduI24FmcqlJnI+2WLa2TOTHsmrj+HcYhxxnF@vger.kernel.org
-X-Gm-Message-State: AFq9FYLJvlZIry6AW4BGSVEHNbNam9+DgPHnkevgIa2hWClzmSaz0thf
-	ndPDRNHhc18mP0bnqibWGfSbO2yZRvZSSeoV5jVTNWGKqRRTW/7ZYeLa7a6JCYwRQEP7MHtLaZn
-	dEux4AeOH76+hc/KcmM5esbjPKhQHrLg=
-X-Received: by 2002:a05:6512:2388:b0:5b0:6343:a298 with SMTP id
- 2adb3069b0e04-5ba433db176mr1377640e87.7.1790885261809; Thu, 01 Oct 2026
- 13:07:41 -0700 (PDT)
+	b=Fd1HI3Bu7yprMs6oDACgFPB3GLjdn+fERXMeE78XxgfAtWuvpEiYyaSRJhiWf38n6
+	 xzAJc0UZPYJXTrK+zOEXPzVn61aB5xXy+egtumHCuGyiST2TKz9t10y7cemSWBpzPE
+	 FiNTh3selJtN1qQOZM9Jgv7mdqhN7tg/cqR/49uaauAiC1tfrviy2YyaE9AoioR567
+	 g734b+8VWXzGnAE9H54IW+1NsrTCyFAmNOCRChOrWVYlpoY3nkgaG+ruVdNo9YSZDI
+	 oYLJIaJRBOAF/SiFoN4PdzK0An1RmgnvM9HoIVYUnyU2hi2mNwyJYXqKT2nVTUztbf
+	 axg+eiZ9VDYCA==
+Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5ba4415869aso1101787e87.2
+        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 13:14:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBynrjxyFsnMOO5/cbdOIxFuSuf7s9P7lXoEMsoalGq9n0NXyEb2v61kkVYc4Y65VGCpjQKOuoUp8rXU@vger.kernel.org
+X-Gm-Message-State: AFq9FYKJ7R6qd5+CNZLw2ravAH7JlCGRbNrvYQqaOG+q8h7oGGKC5BR8
+	03BUlhZotgpVpXupzVD5vTlM7FOxwf2mMdCmeVJMhMLVbWyN43SONX4QEebjM+67Xf5+4fX6eJ3
+	M0g2AzQ0Pr+NYiRUP9C4hMxRq484ah28=
+X-Received: by 2002:a05:6512:6281:b0:5ba:3a9d:2cbf with SMTP id
+ 2adb3069b0e04-5bb93811921mr129887e87.1.1790885697067; Thu, 01 Oct 2026
+ 13:14:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260925133804.2231004-1-yaojiale02@163.com> <TY3PR01MB11346E0C01A9337A3AF4D97DC868F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <34472b57.1961.1a0dd3dff12.Coremail.19888972804@163.com> <TY3PR01MB113461CE3C9EB4A175879F5BD868D2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <1186ef64.63b1.1a0e6e70a59.Coremail.19888972804@163.com>
-In-Reply-To: <1186ef64.63b1.1a0e6e70a59.Coremail.19888972804@163.com>
+References: <20260815094451.31792-1-adilov@disroot.org> <aro4qbhcd3X6wTvP@black.igk.intel.com>
+In-Reply-To: <aro4qbhcd3X6wTvP@black.igk.intel.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 1 Oct 2026 22:07:29 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnVna-E61Z1GiKKX9G0Q+1CMq4GYi8p7vjKzeEtroAFdA@mail.gmail.com>
-X-Gm-Features: AclHuK8iXXRgLnubLh6Art37FUrWTj2bfBNLg2EQj4uLxZ4XaQGVjy5EmCuy5W8
-Message-ID: <CAD++jLnVna-E61Z1GiKKX9G0Q+1CMq4GYi8p7vjKzeEtroAFdA@mail.gmail.com>
-Subject: Re: RE: Re:RE: [PATCH] pinctrl: mcp23s08: reject devices without
- match data
-To: jiale yao <19888972804@163.com>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date: Thu, 1 Oct 2026 22:14:44 +0200
+X-Gmail-Original-Message-ID: <CAD++jLk8gCAy+SbGffttCQ7dM9x6gzVRBwRppCByzwYdm_5kGw@mail.gmail.com>
+X-Gm-Features: AclHuK8qQQj1mnz8DJlVh5QAxTl-dYaN8Xr0iMkE4L7QV1OtRUXp3ZaQAtSCIQE
+Message-ID: <CAD++jLk8gCAy+SbGffttCQ7dM9x6gzVRBwRppCByzwYdm_5kGw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] gpio: realtek-otto: make the driver work with SWAP_IO_SPACE
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Rustam Adilov <adilov@disroot.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Sander Vanheule <sander@svanheule.net>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 28, 2026 at 9:25=E2=80=AFAM jiale yao <19888972804@163.com> wro=
-te:
+On Mon, Sep 28, 2026 at 11:51=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+> On Sat, Aug 15, 2026 at 02:44:49PM +0500, Rustam Adilov wrote:
+> > This patch series changes gpio-realtek-otto to be functional around
+> > SWAP_IO_SPACE config.
+(...)
+> Convert the driver to use regmap MMIO and most of the code in this series=
+ won't
+> be needed. Also it will give some benefits (like register caching and deb=
+ugfs
+> monitoring).
 
-> I reproduced this deterministically with KASAN on arm64 QEMU.
-> The SPI device has an unmatched compatible and a valid microchip,spi-pres=
-ent-mask property, and is then bound with:
->
-> echo mcp23s08 > /sys/bus/spi/devices/spi0.0/driver_override
-> echo spi0.0 > /sys/bus/spi/drivers/mcp23s08/bind
+Andy is right.
 
-[KASAN splat from spi_get_device_match_data() returning NULL]
+Make an attempt on top of the merged patches to convert this to regmap MMIO
+and see what happens, and if that works consider regmap GPIO as
+well.
 
-But hey look in the driver:
-
-static const struct spi_device_id mcp23s08_ids[] =3D {
-        { "mcp23s08", (kernel_ulong_t)&mcp23s08_spi },
-        { "mcp23s17", (kernel_ulong_t)&mcp23s17_spi },
-        { "mcp23s18", (kernel_ulong_t)&mcp23s18_spi },
-        { }
-};
-MODULE_DEVICE_TABLE(spi, mcp23s08_ids);
-
-Why doesn't the override find the right data from the match table?
-
-This looks more like a bug in the SPI bus implementation,
-surely the bus should match a driver_overrid and return a
-valid match data from spi_get_device_match_data()?
-
-I think this is just papering over the real issue, you need
-to dig into the SPI bus implementation and see why this isn't
-working.
+Everyone will be happier, because less code.
 
 Yours,
 Linus Walleij
