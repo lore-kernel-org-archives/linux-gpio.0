@@ -1,102 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F003C1983
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 07:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD273C76AD
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 07:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790839867; cv=none; b=Gfq9tog5JMxImdr83jeSJP5hY3PNBP2HMmc5n02ujEGoCrWCFDflU76avwMcbKnrJ0GSEZhcRMrrsT2IJ94yF0QGg5Lg2BnpbJRPgTElS0/sIJCRYIWdGp27gZtlKJAhIOEPHY/CJR5tX4ivaIvSqnWf7OieNhn/JuPq7FzzFLw=
+	t=1790840963; cv=none; b=r1qeUcDRdJHOHWbNkrT8jOpFX7nrc7pyLuumgMCtRsmbJsY67F5ZEMQ9bSyo3SUBc9BCSQ+trLffjsrsFdc5x2sGE1VqmudzkrEL0CN04JzxP4VIWRLwtCco6bK8pWdOrGdh/hbeMI4Ms3b0HmkRnMSiP9baKFg11GEYR84uh+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790839867; c=relaxed/simple;
-	bh=7n4ZA/xYyMniwHGliLaK8FHlgywkD9r7KnUFP53t6Go=;
+	s=arc-20240116; t=1790840963; c=relaxed/simple;
+	bh=VMgkYTMwlnokU6dZQE3Ao5kciYSZAnjVYhrCiDpeP9M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SgZrFFN9fr8nm6obNu+C6GxR5Vm+M5559K4ZeXDbPXoZcQqKqv/fORUQbTkETTEI8jQU6iCBqw9WPQdALelFMfTR9JuGlf3aQ0d7A1YwgOQRanz2CXM+/lm9PR8w9gGV5bReLCpskySNF+RiFTcjP69+Xx99XSxmtwup0zNwBJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=olLM1V6Z; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=Xvzspq415wH0hmftWSRLe/8rdcJwv6DykklxMCLirpvTUMd9O9jNLg806PNPrLdeToBFvc45b1c/AgBcmeOqVVfd4MCfU6W08qFdDOVjno3OjiENgYu1vEJ1aPTsiB+I+SJjGj4csxuqOGe2v2g41qxIbyCzl/7ym1+/C6zfA6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I3Vu0oI5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="olLM1V6Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C69CF1F000FF
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 07:31:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3Vu0oI5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 329C51F0089F
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 07:49:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790839865;
-	bh=7n4ZA/xYyMniwHGliLaK8FHlgywkD9r7KnUFP53t6Go=;
+	s=k20260515; t=1790840962;
+	bh=XyIJKYtW/j5VljRhmLkukvVpN5gok3I2d7ghV/kcy1E=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=olLM1V6ZaHOiESnj4TnYewEHncHyQ3RtXTJ3SYZvPtCqYgwszpWhwZWPbaaYxdjEP
-	 4VrwH2dQ0tcq7fjAUytnUhl2R8hrd0Uj0j3nnNvUTz/v9h2Lwfatx6jueZEHisEH2t
-	 ZeIX98maYWHhWtRkuXuEWrN8k7r9HN4+Q4qqx55m3md55wJkDfQlw3mtE652jTLg5P
-	 4fr6RaLKoecE5La1W+sNb+5VQVA+2fMOA0x6JyL45lIHQ5gpxoCyL3G3ejEZCACbNn
-	 iRYWsp0FJfDDwMoaBhVofzmhN4QiMcjumfv0MhZCV1OnTDsG3aSVGtZw6VkCqpATz1
-	 pvdre1ngRlPrQ==
-Received: by mail-lr2-f33.google.com with SMTP id 38308e7fff4ca-3a7be75eb9bso2583041fa.1
-        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 00:31:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxIL37TiOij3BUPyq6JsINylyViPayj3Ji4OaAkxxWqmf28xeXvt76/+ojZsy0PpMzFtOVDNPLHa+Ee@vger.kernel.org
-X-Gm-Message-State: AFq9FYJqLo6ZqEWlzwyuTcRkrBT+cRb70/GU3bBKwJgpfwD1JQ8UzdeV
-	vfO89VBZ3bxjON7wzQ4x4iblN8+RUJsFqO6BZQpuo+uccKLEbSbU+0CS2O4bM81dCXmsOJI7XvP
-	eUnjMgUxsiURl5wuoCCuzslPecL7X54o=
-X-Received: by 2002:a2e:bc14:0:b0:3a7:82cf:1784 with SMTP id
- 38308e7fff4ca-3a782cf187fmr6070701fa.2.1790839864539; Thu, 01 Oct 2026
- 00:31:04 -0700 (PDT)
+	b=I3Vu0oI5eq1gVVYF93rqxGyoRroHzr0LsZRAonM4/0ax5TxlN4C/DEGe7XMWrKMyJ
+	 oEKkgnU7fm3a8/XWcqo7vLUURR/CxJ80mCgdNXt1bkHBDFCRzB+L7EFBqR9A5+egF8
+	 1AEFjSCmavksALbn6p1Nd6pDYqxOvhStZCgZIYVHi0dTH6ZEN7HDRD7tDOwdtK/zHW
+	 NPvzimi2Auqqv1uvsfnj5zHLC7hdeTwqQL+rvcCoSpKcfdM9tYrnfJBEp0zPEbC+/3
+	 cbTpMygUomPs6rtXJbPbMiomMWqrzFIXTovqbCnyKSMTMVZC3ZuzaBMjD7Cmnrgf99
+	 7/ahLzMkfuwUg==
+Received: by mail-lr2-f14.google.com with SMTP id 38308e7fff4ca-3a783ec301dso4410971fa.1
+        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 00:49:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxW+S1x1vcXy/LX06D15RNrybSYRpkg8bKd3TrifwfawgtOoj/fQ5oiszQUiCS1q9mGdRBReJdT+c4g@vger.kernel.org
+X-Gm-Message-State: AFq9FYL+tBdc8coF/ymhnGRwpblHKs6sFdb3utDE4w/sWPnaa7aoJ+0a
+	8qYGXtSWWxe1fHAt2sDC1xLUivcC7bgQCwR9K4rLnzgxA1YytflgC6zqQ/vzbyiAWLAG4y/nX7V
+	aRP5ZYQ8JZmLIO7aSwHgMDZP/TLypOFI=
+X-Received: by 2002:a2e:a99f:0:b0:3a7:60f3:40ab with SMTP id
+ 38308e7fff4ca-3a7791db9d9mr10505361fa.8.1790840960901; Thu, 01 Oct 2026
+ 00:49:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260916030435.4089460-1-chancel.liu@oss.nxp.com>
-In-Reply-To: <20260916030435.4089460-1-chancel.liu@oss.nxp.com>
+References: <20260924111856.622898-1-yaojiale02@163.com>
+In-Reply-To: <20260924111856.622898-1-yaojiale02@163.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 1 Oct 2026 09:30:52 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnTvNEtQRGEXRZjzHhgSZWgEFoiDaDxt3Jooa-SUrOsqA@mail.gmail.com>
-X-Gm-Features: AclHuK-4qYG4ASHCH0qYBns-SykiY0Tbcbii1qM199ro88Ougv95ZxDCOE5UYyQ
-Message-ID: <CAD++jLnTvNEtQRGEXRZjzHhgSZWgEFoiDaDxt3Jooa-SUrOsqA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: pinctrl-generic-mux: Fix provider resource leak
- on re-parse
-To: Chancel Liu <chancel.liu@oss.nxp.com>
-Cc: Frank.Li@nxp.com, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 1 Oct 2026 09:49:09 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkTzLm00UKdUZuxWidNUppQM=Fge-dUgDJGB-NdRVEn9w@mail.gmail.com>
+X-Gm-Features: AclHuK94BUrWP3xIZVDdzHiy75M55G8Bf6SCaXSllBatpDtlnoRY7lIcGNcpU_0
+Message-ID: <CAD++jLkTzLm00UKdUZuxWidNUppQM=Fge-dUgDJGB-NdRVEn9w@mail.gmail.com>
+Subject: Re: [PATCH 0/4] pinctrl: free maps on DT mapping failures
+To: Jiale Yao <yaojiale02@163.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 16, 2026 at 5:04=E2=80=AFAM Chancel Liu <chancel.liu@oss.nxp.co=
-m> wrote:
+On Thu, Sep 24, 2026 at 1:19=E2=80=AFPM Jiale Yao <yaojiale02@163.com> wrot=
+e:
 
-> From: Chancel Liu <chancel.liu@nxp.com>
+> Several pinctrl drivers reserve map storage before appending mux and
+> configuration entries while translating device tree nodes.  If a later
+> operation fails, their error paths free only temporary configuration data
+> and leave the partially built map allocated.
 >
-> The pinctrl core re-parses a consumer's pinctrl on every probe attempt
-> (pinctrl_bind_pins() runs before the driver's probe(), and again on each
-> deferred-probe retry or re-bind), so .dt_node_to_map() must be side-effec=
-t
-> free and safe to call repeatedly.
+> Commit 17007cd700601777d9ee203a13d97e64ece3a10f fixed the same cleanup
+> problem in the generic mapping helper.  These drivers use their own mappi=
+ng
+> callbacks and need equivalent error handling.
 >
-> mux_pinmux_dt_node_to_map() instead allocated provider-side resources on
-> every call - the mux_pin_function, the group name table and a mux_state
-> reference, plus a group name and a pinctrl_generic_add_group()
-> registration via pinctrl_generic_to_map(). All of these are allocated
-> with devm_*() against the provider device, so they live for the provider'=
-s
-> lifetime and are only released when the provider itself is unbound. The
-> .dt_free_map() path never touches them; it frees the per-consumer
-> pinctrl_map only. Every re-parse therefore adds another set of
-> provider-side allocations that are never reclaimed, so a consumer that
-> repeatedly defers probe or is re-bound leaks memory and mux_state
-> references on the provider without bound.
->
-> The groups and functions of a board-level mux are static and fully
-> described by the device tree, so build them once at probe time in the new
-> mux_pinctrl_probe_dt(). mux_pinmux_dt_node_to_map() then only looks up th=
-e
-> already registered group and builds the per-consumer mux map, which the
-> core frees via .dt_free_map. As the mux has no pin electrical
-> configuration, no config map is emitted.
->
-> Reported-by: Sashiko <sashiko-bot@kernel.org>
-> Closes: https://sashiko.dev/#/patchset/20260824022020.2812810-1-chancel.l=
-iu%40oss.nxp.com
-> Fixes: 34acc5a8adfb ("pinctrl: add generic board-level pinctrl driver usi=
-ng mux framework")
-> Signed-off-by: Chancel Liu <chancel.liu@nxp.com>
-> Assisted-by: VeroCoder:claude-opus-4-8
+> Free the accumulated map and clear the output parameters on every failure
+> path in the Spreadtrum, Renesas RZ/N1, Tegra XUSB, and Samsung drivers.
+> Each patch changes one driver and remains independently buildable.
 
-Patch applied, we can think about other solutions, but that
-can be handled by new patches, this works.
+Patches applied as nonurgent fixes.
 
 Yours,
 Linus Walleij
