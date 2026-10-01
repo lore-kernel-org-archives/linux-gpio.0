@@ -1,120 +1,143 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D3448F84E
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 11:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2565494800
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 12:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790855696; cv=none; b=ptFghjYPstlIezuwU8nzOoHzpwaZr/bNLD7zJ2aSmuPQ8MV85uVxzSrUweqv3SrLFRGxGZDzU2BtfidIQm0TGC+pIt1fC94dZhzV2K7L4lyNc+zKdDemfA90ZFk3Nf2TTf860EPdOqwbYz0Rf4uyaPunmmvWOH7dkVPzJZuhXz4=
+	t=1790856369; cv=none; b=ZosM8RtewNZ1PqN4npcOBGAdQ+15KGJXHKLq7f3N81BnaOmdNNKTfx78QdUrvyZ18ebEbqMce6yqjDBJqA3ulNXjvVJHpCPqXwkg1XUMPM1PJJAKJRVybofsvQeJBJiYeWVY0Tyk3wRbnfboosuFzXo/CIxosAJb8O0HhiMGGLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790855696; c=relaxed/simple;
-	bh=L2YbbDdrkfdYTO9VzAQIghPl/rK8+xAMRVPGf2nYFyE=;
+	s=arc-20240116; t=1790856369; c=relaxed/simple;
+	bh=thlMrSAfZjJdaePwpmv4u4sZ/CzX4mYkiYj7X3E0Toc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XqU7zAGH40kG4F3H6V5CGoNq3T0qRE94W/gyNmpirBJbA9Y323/ve31h3bY2pyg2kNcyi4UCamC6SoLBDS9GXOimvMAtjeYH9GdDHyby9i8h9XVrnBKGIN4dcRZvpqmFf6UnVPS5pPwQ3z8oH400YqXHziA9KzI1hQqukWdXw5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvVQ3sEX; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=tqC0CJAayCpxjB+etBFT2yJR0HE/GhA2WnGflqHoZK434ej4lOF4IV26sn4rJEQdUoX0OfpW00mY31e7VrQmYHS4EvyL6n19ddMl/oBGkfwwlysoljZ27iGMfgSnOrghB+1WSHXpoertmCnoS0J7+5tlbedcRSy+ziI02R3djxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyX5P91v; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvVQ3sEX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 575031F0089B
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 11:54:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyX5P91v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D1781F0089C
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 12:06:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790855688;
-	bh=pjyzI5rwxIaoECQwhB7XgQl4m694DaznJskJ8ZjOlbo=;
+	s=k20260515; t=1790856360;
+	bh=oFflTVwPFgB5wC1sBWWWQyP2hcLqKZXoXqnWK6jB09I=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=mvVQ3sEXIJnK5HyTrjuhpQLrnaCp4quFWsZ0TSGvcZo4wgkfvtZlGyOPZ4kaHZ9yG
-	 gb/GcOYUfQZwBNiu4M+uhpmW19P8URsq1KzlKJjcJeGrBzGN48Zg9l/iUlPDuQ0xy3
-	 lXRQdzHU/0O2TAsX1enSvEhhQlNyhhARkT/X62q0o8+gQMlL1PoYyhMO2u3tP2hBCU
-	 EX4o/hJKakY6izPu3Ixm3oIccnysZzLgSpz6Q0R3gKXfr2fFwoTzjUNnZoQ3S2IN+7
-	 Zs4A+d+f/gPCgTU6EYCc7TzhPwAy/c6iNUTTs5nwv25Mid1Qx7Rx+nKLLFSCc3TtR8
-	 Yx45SE8byalUw==
-Received: by mail-lf2-f13.google.com with SMTP id 2adb3069b0e04-5baf6f2c3a3so476182e87.0
-        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 04:54:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxgNHRob/4c+lyeOIRNmjCV8K9VoZH7fLUzGk35jlxxlK9zFB/alC2uT+WVwpc4jG+fq6dzmy7CbH0C@vger.kernel.org
-X-Gm-Message-State: AFq9FYKJNn74JHXSENdDbBRa7avEnt9lEHFAvISOERC8CdUH+fcIqN+X
-	2op4s1vOQ2EkVo8Y1IPqNcDVy/Tnmwm5rBAmUre/wMS7Gt69sJWXc/yjCgZQXo9ipZ+igM4JrvN
-	mNDE3QeXtAul0rtSSC20xRDdUvgLRpRY=
-X-Received: by 2002:a2e:be06:0:b0:3a7:812b:d10 with SMTP id
- 38308e7fff4ca-3a7812b1f0amr11677091fa.4.1790855687038; Thu, 01 Oct 2026
- 04:54:47 -0700 (PDT)
+	b=NyX5P91vzbFhZN0U9vod7AAB3LWbMk0HZEqkXoUBF5HXDkw5sYemUmd/UbuefNcOq
+	 gCKRb67oKrelFaOIFra81n5va1cR3oPq7hmPFx5OO0YotIiw5P5ZgSkukv73b8uy+j
+	 oP+gTucqufGnSIYUgz/4YzNXHCquafhqk1uPW9ghF7kEcy4yVrqTmtjmNg551p8jgz
+	 GUbE+mxI1I94RMkSzSnNGUSYpcAY+24Qwjh8P3kViddZyWTgLlKyB0duYyuS45Phk5
+	 p6pwpWdq6ieSVtlszgIWoy9qFdLq717gPQcNbweqMVM2ywOeleHmqYNyS5TaWr6RII
+	 xIf/J6vx6jHnQ==
+Received: by mail-oa2-f35.google.com with SMTP id 586e51a60fabf-4938dd40902so3988862fac.3
+        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 05:06:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwtCp3ArMsfVb/U52CE0jdyqBgd/wJDppjzm+lWGugRl0Z4sO/W3tnruMEi5TLBa6vKAyakxw3DEZl4@vger.kernel.org
+X-Gm-Message-State: AFuF++nA8dZYpZQv8FAfpo66I5W1/UW9VZMwuLy6/6WqEGSsDMFXzjUF
+	Bep76oSG91TaeGlPBCBm2RPQKysIhK5873UGvFqDlbRQxry3HQcgGh7mDxQVZUSQsQnws6x68jB
+	Lhc8inisAcnBTiRP1aZMtPQWGXtsOYS4=
+X-Received: by 2002:a05:6870:3226:b0:448:89e3:4c58 with SMTP id
+ 586e51a60fabf-49ddd47f26fmr4458014fac.18.1790856359785; Thu, 01 Oct 2026
+ 05:05:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260926-loongsongpio-v1-0-71de7ebebb76@gmail.com>
- <20260926-loongsongpio-v1-3-71de7ebebb76@gmail.com> <CAD++jLmRWGXBo8UP6RKt+HHCTam0NxaN6F1DK4XAjoQpoNujjg@mail.gmail.com>
- <C6A08AB5-069E-4CC6-8CA0-DEF22F369208@gmail.com>
-In-Reply-To: <C6A08AB5-069E-4CC6-8CA0-DEF22F369208@gmail.com>
+References: <20260929203634.32998-1-pmazzini@gmail.com>
+In-Reply-To: <20260929203634.32998-1-pmazzini@gmail.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 1 Oct 2026 13:54:34 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmvFi6siLH3Fug2ZsKLK0mfHW6jeC+KWFW-iOD4-Yabbw@mail.gmail.com>
-X-Gm-Features: AclHuK_a0L8-Kt9wAWfDOLC2i4J_NqlRf0PIyb00_Bx9lLV_u9L4dHWCw9UtZVE
-Message-ID: <CAD++jLmvFi6siLH3Fug2ZsKLK0mfHW6jeC+KWFW-iOD4-Yabbw@mail.gmail.com>
-Subject: Re: [PATCH RFC 3/4] gpio: loongson-64bit: Add shared interrupt support
-To: Miao Wang <shankerwangmiao@gmail.com>
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-gpio@vger.kernel.org
+Date: Thu, 1 Oct 2026 14:05:45 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkJidyettiPkFAh9BNaPVKMxyJzgNnaH8qfMc9=HutaQQ@mail.gmail.com>
+X-Gm-Features: AclHuK_kjtaxNY-Iy7s6smCT08kvmYV1w1aOxLf8dIwxCcC_POGl6GaEEQo_Grk
+Message-ID: <CAD++jLkJidyettiPkFAh9BNaPVKMxyJzgNnaH8qfMc9=HutaQQ@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sunxi: dt: number the IRQ banks from the first
+ one that has IRQs
+To: Pablo Mazzini <pmazzini@gmail.com>
+Cc: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Andre Przywara <andre.przywara@arm.com>, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 1, 2026 at 10:59=E2=80=AFAM Miao Wang <shankerwangmiao@gmail.co=
-m> wrote:
+On Tue, Sep 29, 2026 at 10:37=E2=80=AFPM Pablo Mazzini <pmazzini@gmail.com>=
+ wrote:
 
-> > Here again some crazy function header.
-> >
-> > I think some helpers need to be broken out so the code becomes more
-> > readable, see what you can do with it to make it easier to follow.
+> prepare_function_table() assumes the first pin is in bank 0. On the
+> A523, which has no PA pins, every IRQ bank is numbered one too high:
+> the last bank writes past the end of irq_array,
+
+Why don't you add a patch to protect against that?
+
+Something like this (completely untested, not even compiled)
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 31cd142ce0f7..c0c90d9e3215 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -1632,9 +1632,10 @@ int sunxi_pinctrl_init_with_flags(struct
+platform_device *pdev,
+        else
+                pctl->pow_mod_sel_offset =3D PIO_POW_MOD_SEL_REG;
+
++       pctl->irqs =3D IRQ_PER_BANK * pctl->desc->irq_banks;
+        pctl->irq_array =3D devm_kcalloc(&pdev->dev,
+-                                      IRQ_PER_BANK * pctl->desc->irq_banks=
+,
+-                                      sizeof(*pctl->irq_array),
++                                      pctl->irqs,
++                                      sizeof(unsigned int),
+                                       GFP_KERNEL);
+        if (!pctl->irq_array)
+                return -ENOMEM;
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+index 8bd00c6ff628..9e0ed9c0c1ee 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+@@ -176,7 +176,8 @@ struct sunxi_pinctrl {
+        struct sunxi_pinctrl_group      *groups;
+        unsigned                        ngroups;
+        int                             *irq;
+-       unsigned                        *irq_array;
++       unsigned                        irq_array[] __counted_by(irqs);
++       unsigned                        irqs;
+        raw_spinlock_t                  lock;
+        /*
+         * Output latch shadow, one word per bank.  Seeded lockless at
+
+
+> and interrupts are
+> looked up at the wrong offsets.
 >
-> I did notice that the header of these functions are duplicated and are a =
-bit long.
-> However, multiple of the variables defined here will be used later. It is=
- not
-> obtaining B from A, C from B, and D from C and only using D later, so tha=
-t we can
-> introduce a helper to obtain D from A. The problem here is that C and D w=
-ill both
-> be used later. What's your idea about the styling here?
+> Count the IRQ banks from the first bank that has interrupts.
+(...)
+>         irq_bank =3D 0;
+> -       last_bank =3D 0;
+> +       last_bank =3D -1;
+>         for (i =3D 0; i < npins; i++) {
+>                 struct sunxi_desc_pin *pin =3D &pins[i];
+>                 int bank =3D (pin->pin.number - pin_base) / PINS_PER_BANK=
+;
+> @@ -221,16 +221,14 @@ static int prepare_function_table(struct device *de=
+v, struct device_node *pnode,
+>                 func[1].muxval =3D 1;
+>
+>                 if (irq_mux) {
+> -                       if (bank > last_bank)
+> +                       if (last_bank >=3D 0 && bank > last_bank)
+>                                 irq_bank++;
+>                         func[lastfunc].muxval =3D irq_mux;
+>                         func[lastfunc].irqbank =3D irq_bank;
+>                         func[lastfunc].irqnum =3D pin->pin.number % PINS_=
+PER_BANK;
+>                         func[lastfunc].name =3D "irq";
+> -               }
+> -
+> -               if (bank > last_bank)
+>                         last_bank =3D bank;
+> +               }
 
-Maybe struct loongson_gpio_shared_per_parent_irq_data is an uneccesary
-long struct name? It obscures the view. On the other hand it is clear what
-it is doing...
-
-I usually use minimalist variable names to make thing less cloudy, it is
-probably a personal preference. For example I would do:
-
-> +static int loongson_gpio_shared_irq_set_type(struct irq_data *data, unsi=
-gned int type)
-> +       struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
-> +       struct loongson_gpio_chip *lgpio =3D to_loongson_gpio_chip(chip);
-> +       irq_hw_number_t hwirq =3D irqd_to_hwirq(data);
-> +       unsigned int parent_irq_index =3D lgpio->chip_data->irq_mapping(l=
-gpio, hwirq);
-> +       struct loongson_gpio_shared_per_parent_irq_data *ppid =3D
-> +               &lgpio->shared_irq_data->per_parent_irq_data[parent_irq_i=
-ndex];
-> +       unsigned int intpol_offset =3D lgpio->chip_data->intpol_offset;
-> +       struct irq_data *parent_irq_data =3D ppid->parent_irq_data;
-> +       struct irq_chip *parent_irq_chip =3D parent_irq_data->chip;
-> +       int ret =3D 0;
-
-static int loongson_gpio_shared_irq_set_type(struct irq_data *d,
-unsigned int type)
-{
-    struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-    struct loongson_gpio_chip *lg =3D to_loongson_gpio_chip(gc);
-    irq_hw_number_t hwirq =3D irqd_to_hwirq(d);
-    unsigned int parent =3D lgpio->chip_data->irq_mapping(lg, hwirq);
-    struct loongson_gpio_shared_per_parent_irq_data *ppid =3D
-       &lgpio->shared_irq_data->per_parent_irq_data[parent];
-    unsigned int off =3D lgpio->chip_data->intpol_offset;
-    struct irq_data *pirqd =3D ppid->parent_irq_data;
-    struct irq_chip *pic =3D parent_irq_data->chip;
-    int ret =3D 0;
-
-Then I would have already from the beginning (yeah...) used lightweight
-struct and member names and it would all be less cluttered.
-
-Admittedly this is a matter of taste. It's not like I would NACK it.
+This looks reasonable.
 
 Yours,
 Linus Walleij
