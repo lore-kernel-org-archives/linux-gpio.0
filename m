@@ -1,304 +1,174 @@
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com [74.125.228.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011034.outbound.protection.outlook.com [52.101.70.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94EF3DEAD6
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 08:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790845160; cv=none; b=RvdBy4LtkOKnXJP+JGiD/Wl5YCvA8u24YvkiUtlv1sNUZqJQxYZmsK//3HYI2QnsWUf0/thh/jYYyOlQNHFrAQ7oiH6vBvQ58C2m3tCKCopERRM3VtdABXTodlaT5HQVLdtm+hK+FrdzEYvYkum/Euf7Rd02bhXdvKGyI/hVQhI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790845160; c=relaxed/simple;
-	bh=DS7OLlNSCK3vQg+TDkp83MQ8PB2bb4TRuWhxWsFboCk=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=W/gApKrK3dLJxOUoU2mtIAaR+tdl8JJSXzVg58e+Mu8N4afXRU7HtEbxcFYbTfNgLfrSpz5/bnYJxu2MZYcXHzD5YuD9zNMibSQ/0OUrMkwH+ZQxQ5QehY/r9I+vW5cfeHq1ilQuga5RRaHWX/y49KpabjtsdWsEBQVdg314FFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V2s+dNdw; arc=none smtp.client-ip=74.125.228.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EF24A0901;
+	Thu,  1 Oct 2026 09:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790847821; cv=fail; b=IXMLG7iLuJ7FtJtMAlhENm9a/i3eytHdKnR1M9B8e0EWxPHJ8BxQfUS3FNZ5fhUB8UXtnKYISMykUUBeYVhp8xE0t2ct+z7R9KlH95ncCPHEu0ueVObppNxTgR/26H5zwo06MTh9pcf9xS5p/xc8/1PRFpsmba0Pj/F3IIEOT/M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790847821; c=relaxed/simple;
+	bh=S99VT5CN1kBERmTEIEoWH64R8RA7AdAVlfuUNN29+aU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ab/5dHM04h+qqNIZcYBOmogUCP4s2ekPUiTACjpcR2ndbrlprCYuC3uYQzKfNvIDvGvAtohnj0zDy3S+GjDCPm5NUL/r5TxJgxCgnhuviNyXcf7PeuKolhthFQSz7/Oefc7SuN5llmZyRAkvBKPRCua7rYii9VNoNxxKUkkHmaM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=oPGe6fC4; arc=fail smtp.client-ip=52.101.70.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V2s+dNdw"
-Received: by mail-pz2-f12.google.com with SMTP id d2e1a72fcca58-8523cc8262cso188199b3a.3
-        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 01:59:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790845158; x=1791449958; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:content-type:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=cUMI2RP09NUYenxs9TLo0y20PPiTrdi7Sx8OcZ7KL9Q=;
-        b=V2s+dNdwmbnh8cNa1S3wYGo5hj4hU4mY6R0yXhuNWj1xOUrlmxMh2EJxYtfpvxHc9q
-         G3h+8VAZm46YYMF7/WIUJkwLiS62XNsSU9ko5VVCon7TXQaUVejfzcG08jPbc/stQ8G2
-         d/1cKcgYxC2SA5kWapIuABDvslnFTsoVQDNVGk8o/S8T7OwUW0Rlsrl2+stF81qC2eXI
-         B3g4cGlDUIZ3Ho4aMYCbNW05Md1TyXOXWyDy9h+dZoat7yeqonnUXZS6jhZ0seWy/mmi
-         oewz3w/VqUCUF5/DAhKkkYDAgwYLdyTIJjQWbsUYtelxx9jHqDgglj/mwirLifpaKZUu
-         PT4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790845158; x=1791449958;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:content-type:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=cUMI2RP09NUYenxs9TLo0y20PPiTrdi7Sx8OcZ7KL9Q=;
-        b=Q/yta+/WbZXPGRkEjx9zsZ/ZUQVNMtZ5kj4O111MMpOiyg8DTVHEII6HUZksEC1Jsu
-         g3xBkq9mxONVN3f0xXTllZ8mMi1LduPSDMX4a4HejHgBvzWaXjTf4wAk3EtsO0vtQf6J
-         M/cqDi7WLuWM0rfKUS42IrTCvkeOVO6KL9oSG5XUvoimP/ZrxpCb8zCyndl2QMiY26qH
-         IzAH9rJ2RnDXWKI+jmmOz4eJD32POYr15CWv543E+gPSU06oMdXIs01gegQ4J1a7n8gP
-         5v3eNJ4w9giWSExBfNVbaG8eAcl9Cm1z9aFeNB1/T6ingYjGZ7nAqdmk+IpQ4Y2EcHBi
-         SXew==
-X-Forwarded-Encrypted: i=1; AKwUvBztSSdVQ/B7A8VoydGEbFjcajVimx/ZRcDMHGMipQcYXlYeBWbBDwWq5FKgD0jnS8UzI10boJ59pRoH@vger.kernel.org
-X-Gm-Message-State: AFuF++kSCKfA0E/8F17UqDvM+e6ZFaM8cKqhl5JGXCHRFBceA5YPDNVQ
-	HC31bY1TPviCrynkfgI6SSuZVEwLFFPVbRj2IwrJ4bXZp534as7TYPZ3eHxUNg==
-X-Gm-Gg: AYBFou3DO8+DOeXnvTj7kb96VyXwqkQYvvAvVhQBs0pFEdrCDANc0/mARGk7EQ6Tklf
-	KB/eFYaZLL4QXCGZcI28iWCXVtk+ohwUsCQ8bTnwlRtJnjHA/RFBj89SU53IkTomKMcDX4ocQmo
-	BOoa3jBHitgO94lp2mkDPHZkFw/t+GVM1fnwVBFRB1URwfrpG4DCNKLzlUjZQD2VQ8lFBFR2Gai
-	zbPrYMzGT+4K4MY1C97sqky4efAFqwPEJfRD5DGVDrQk5D56zLwmkp/JOQVwjcpcWWeG6eMBiZg
-	n05qSnuVsma37uj5Rsax3yWKNaJr2WwrnhzjN5WRZRugLHPI7biuoqqpupW3JIn4o+Di1ijpqg8
-	uhKh9rXVygSQE9E0GxhdmrxWYZ2TJLGXbNUU8u7M5RNKgy0nBi+ELB2bU1pQF5pdmMs/KrrwMhh
-	fP12pQu66uELK/n1fZvqACYrjf+sNt1GvOUnf3J6d97FnCZR28L4zJ/8QmYuGOHVL3ey92vLxsW
-	0rFcMEeO+kwPJ/4LRAHeAcqvKZFSg==
-X-Received: by 2002:a05:6a00:4a06:b0:881:f876:1f38 with SMTP id d2e1a72fcca58-88749513901mr3262525b3a.1.1790845157798;
-        Thu, 01 Oct 2026 01:59:17 -0700 (PDT)
-Received: from [10.7.1.8] ([23.247.139.92])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-888197d337dsm736928b3a.51.2026.10.01.01.59.15
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Oct 2026 01:59:17 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="oPGe6fC4"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A79zMjvfTkaFOZyOwjVGQPbN1vbUJJ2h5+BawzG8H9LNUO1Bjh8odlL9UmRi8tCT1WRUXR0t+GGeYBICku4JgmWBBnQMfb5jQ+Z5YYyxvvUrC5JsTVYuLjmYfqCEyhf2G7ZcwORHlxDzbf88F5SeSQspBB+Fso3ApI5t6FxDZHN1zSh46WINm8tJrjmvAwCcp6AtXJTNs4JybztxXZPvJRg2pxbqR9g79Q6yPtivxwSwEacym1qVRx37J4X28jieYhZTIs7SMJnPR2bSwmqGWT3Fx02pmBDtHyyZDuZSf4FWyBHFLg4aY4tfirQfS4fH7Z4Jt52rfPabGXTs6jLHOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3n0CnZvo+6eTpzF1nBxQ1ccBSLbwhr/WCDc8ErOCpL8=;
+ b=V6BO5v3RLy9eKWmCB08f9Rh74dmTV1KIKxBlDMVvEUNvpO6ILfnKZQZm+hCIzR02UTLjSNZ5Me0ATl/NbZQdvpA/T2dXdLO1wBntgkeDFcZaXrLABq7obPTlWTB+/8FF8Pfq9aNi/Knl99HZCtRU58/h1rcgS6gX0da5HI/hZfyj0vjuQPxFQfR0oSuFESbI4OcZ7RmkCKDY+oY0IG4EINfhGX3CY91VltjeE41JV+0bs9R+TIhaKM4fMR8HR6yxFsXHPhQMiIv1qn/R9sugGFKkWNGBnfn9Q9RA1rsvF3MD7y3ATWBOPMd43arjqLNTrCL3GDj+oCC+PSEcncvG4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.59) smtp.rcpttodomain=nabladev.com smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3n0CnZvo+6eTpzF1nBxQ1ccBSLbwhr/WCDc8ErOCpL8=;
+ b=oPGe6fC4jtROPYSL7/ztUof++UoKSooX5IAvnzHjaybcA8AGt1X8BkLz7R2c24FiyXVVmwvyCit2yprW6guFvNvHogW9Tfdy8aGnxPT2gAebDlK/7Z89S/7U8zML+upls4IATIplDwTc9tTx46TKcaMhY9J44MTGB3aVQtR+yNTK+DciA4DrTz7htTGI3v/p+a6YwI5DIrjnCtxWCv3jKmE47GbpEvupbXodV3FR+Bcw1suiUNKaXXjpFvWKYNucF7nbV4z/irYvpWXWo6rvKZyVym1wuz8IVA+JeR5J6fikluL/LInRkIBoLNONBlJlZGztG0mmFqc+U+rATP9Gyw==
+Received: from PAZP264CA0201.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:237::8)
+ by VI1PR10MB8134.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:1df::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.451.24; Thu, 1 Oct
+ 2026 09:43:34 +0000
+Received: from ZR1PEPF0000E6B6.eurprd07.prod.outlook.com
+ (2603:10a6:102:237:cafe::b) by PAZP264CA0201.outlook.office365.com
+ (2603:10a6:102:237::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.16 via Frontend Transport; Thu, 1
+ Oct 2026 09:43:34 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=fail (sender IP
+ is 164.130.1.59) smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.59; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.59) by
+ ZR1PEPF0000E6B6.mail.protection.outlook.com (10.167.241.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.472.14 via Frontend Transport; Thu, 1 Oct 2026 09:43:34 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
+ (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Thu, 1 Oct
+ 2026 11:50:06 +0200
+Received: from [10.48.86.79] (10.48.86.79) by STKDAG1NODE2.st.com
+ (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.43; Thu, 1 Oct
+ 2026 11:43:32 +0200
+Message-ID: <f404d273-352c-436c-87f1-885297b01418@foss.st.com>
+Date: Thu, 1 Oct 2026 11:43:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.7\))
-Subject: Re: [PATCH RFC 3/4] gpio: loongson-64bit: Add shared interrupt
- support
-From: Miao Wang <shankerwangmiao@gmail.com>
-In-Reply-To: <CAD++jLmRWGXBo8UP6RKt+HHCTam0NxaN6F1DK4XAjoQpoNujjg@mail.gmail.com>
-Date: Thu, 1 Oct 2026 16:59:03 +0800
-Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>,
- linux-gpio@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C6A08AB5-069E-4CC6-8CA0-DEF22F369208@gmail.com>
-References: <20260926-loongsongpio-v1-0-71de7ebebb76@gmail.com>
- <20260926-loongsongpio-v1-3-71de7ebebb76@gmail.com>
- <CAD++jLmRWGXBo8UP6RKt+HHCTam0NxaN6F1DK4XAjoQpoNujjg@mail.gmail.com>
-To: Linus Walleij <linusw@kernel.org>
-X-Mailer: Apple Mail (2.3608.120.23.2.7)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] arm64: dts: st: Do not encode path in
+ sdmmc2_*_pins_a/pins2 phandle
+To: Marek Vasut <marex@nabladev.com>, <linux-arm-kernel@lists.infradead.org>
+CC: Bartosz Golaszewski <brgl@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
+	Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>,
+	<kernel@dh-electronics.com>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>
+References: <20260929194035.496244-1-marex@nabladev.com>
+ <20260929194035.496244-5-marex@nabladev.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20260929194035.496244-5-marex@nabladev.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
+ (10.75.128.133)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ZR1PEPF0000E6B6:EE_|VI1PR10MB8134:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8ccc822a-c6a9-4fcb-12b5-08df1fa075ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|82310400026|7416014|23010399003|376014|1800799024|10067099003|11063799006|56012099006|4143699003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	vU7mAdSS+VnyzDRVITBacqKHruGXjCJhG8YiCeQTF/FsP0Qz/ZTcI/ZFn3O0C75PUz26qYma9vDDvosZuPF7LeaacSKp2XGPyqVt/h6k3GhmcBDUq6g/Bi5H3uYWOuxVg8O//4ArNJuWYEAOjMKXTUqhUFTJviedsMGnceyj2P1i61mN6x2HeDk6mWmYeACJ8FfGTU7Daztvs9E/LSUCL+ImqxGErhJ5fTc5YQX9HVcR/bzJg3yR5KDeJ8VDMmyQkzhSBb9rl/b0qy5Z+y0wJ6AhiF2xJ/MdecZimI+CJbWh4AyjCvgsr/DCrdeJcum7HSX3jUNblrMEmIHRNDLHsLt9gwTiXoD9r1O11KVsD9RfXWVY7MP8WnvhTvRXiA+2ZEqPOQd/gL2mIg35fbUHNXEDFFYPpeKJCiXluVvatI1cHEai9PTxS3GGz4UXDLcg/uknf2Gvdqx7XsvMdaum3p/bI6jcq5IHlk8/8KjcuuTO/aqKucLNOlzyX8MeT21vl61ut3AjbnsoocR+KGBsW9Oa+QVHthO0076kZvrY3P+pDolQtCoXKc41fjK0knmL20qXXXA2fV5rUTsiunuDlsdkU37GQukenz59m1wn/ulIACCNAQhWbty0LNYeBJOLc44Za8S8nFYjN4Q+LvB8cSIl0rhBY993iYx4WviwIWfsuJwfM7OHQJv0cURzdq4p2k7uq9SzsCndCiAWqqI1Sg==
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(7416014)(23010399003)(376014)(1800799024)(10067099003)(11063799006)(56012099006)(4143699003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	2hROHqvPEYBCqwjTFmD2b6Qw5Oh0Dw+x8/OWtAm91W4PkMI7RJqyN/I51dNvm/RP7rld0EbwzdbXHfGoGO8GKiyfZBqKTIctH4fokm95Mnx2sJiShV774E3jvBFj6N2n7WUrRojndZIpneHaXfgni2Atthl3MJAUe+3MFnoKdUOcqCCOLxZjcPN53duudzYEH4GlJbCGfBuW/udek7hdkos2I+9QapqpWpLeDY1Q3o9rLQxqoZarCZq3VOEUx1cJm59DiW9apOZK72uD/4wYtYxGV+9PYd/S41s29yVMoDVctNVVb9PXtlXZxbC6Fu1m8rwlLqMzWe+pnQeZc/EG0NLdgRjysfjzkaWmLNxNwF8KkcfJcAhgvb3hrUAMn4XftvrJcKHbmKadw4Wr2JwUtzKTS3tNdud5bEIHqokvZmWD+aK/LwG22Yj4/sezvPc1
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2026 09:43:34.2819
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ccc822a-c6a9-4fcb-12b5-08df1fa075ec
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	ZR1PEPF0000E6B6.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB8134
 
-Hi Linus,
+Hi Marek
 
-Thanks for your suggestions.
+On 9/29/26 21:39, Marek Vasut wrote:
+> Do not encode node path in phandles, describe subnodes instead.
+> This is only a consistency change, no functional change.
+> 
+> Fixes: 9b584c92f94f ("arm64: dts: st: Add support for DH electronics STM32MP23xx/STM32MP25xx DHCOS SoM and Breakout Board and DHSBC")
+> Signed-off-by: Marek Vasut <marex@nabladev.com>
+> ---
+> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> Cc: Bartosz Golaszewski <brgl@kernel.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Linus Walleij <linusw@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: kernel@dh-electronics.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-stm32@st-md-mailman.stormreply.com
+> ---
+>   .../arm64/boot/dts/st/stm32mp2xxx-dhcos-som.dtsi | 16 ++++++++++------
+>   1 file changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/st/stm32mp2xxx-dhcos-som.dtsi b/arch/arm64/boot/dts/st/stm32mp2xxx-dhcos-som.dtsi
+> index 80d829c55d9d8..bcf63e2ea9898 100644
+> --- a/arch/arm64/boot/dts/st/stm32mp2xxx-dhcos-som.dtsi
+> +++ b/arch/arm64/boot/dts/st/stm32mp2xxx-dhcos-som.dtsi
+> @@ -389,14 +389,18 @@ &scmi_vddio4 {
+>   	regulator-always-on;
+>   };
+>   
+> -&{sdmmc2_b4_pins_a/pins2} {
+> -	/delete-property/ bias-disable;
+> -	bias-pull-up;
+> +&sdmmc2_b4_pins_a {
+> +	pins2 {
+> +		/delete-property/ bias-disable;
+> +		bias-pull-up;
+> +	};
+>   };
+>   
+> -&{sdmmc2_b4_od_pins_a/pins2} {
+> -	/delete-property/ bias-disable;
+> -	bias-pull-up;
+> +&sdmmc2_b4_od_pins_a {
+> +	pins2 {
+> +		/delete-property/ bias-disable;
+> +		bias-pull-up;
+> +	};
+>   };
+>   
+>   &sdmmc2 {
 
-> 2026=E5=B9=B410=E6=9C=8801=E6=97=A5 16:33=EF=BC=8CLinus Walleij =
-<linusw@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> Hi Miao,
->=20
-> thanks for your patch!
->=20
-> On Fri, Sep 25, 2026 at 6:28=E2=80=AFPM Miao Wang via B4 Relay
-> <devnull+shankerwangmiao.gmail.com@kernel.org> wrote:
->=20
->> +struct loongson_gpio_shared_per_parent_irq_data {
->> +       unsigned int parent_index;
->> +       unsigned int parent_irq;
->> +       /*
->> +        * The lock of the irq_desc of the parent irq also protects
->> +        * exclusive/usedby below. It must be taken before
->> +        * lgpio->shared_irq_data->lock.
->> +        */
->> +       struct irq_data *parent_irq_data;
->> +       struct loongson_gpio_chip *lgpio;
->> +
->> +       /*
->> +        * exclusive: exclusive usage, only one gpio pin can use this =
-parent irq.
->> +        *   It will happen in two cases:
->> +        *     - The parent irq is used by a gpio pin which is edge =
-triggered, and
->> +        *       thus cannot be used by other gpio pins which are =
-mapped to the same
->> +        *       parent irq.
->> +        *     - The parent irq is used by a gpio pin which is level =
-triggered, and
->> +        *       the gpio chip lacks the polarity control register, =
-and thus the
->> +        *       interrupt polarity is controlled by the parent irq =
-controller, and
->> +        *       thus cannot be used by other gpio pins which are =
-mapped to the
->> +        *       same parent irq.
->> +        *   When set, the request for other gpio pins which are =
-mapped to this
->> +        *   parent irq will be rejected.
->> +        */
->> +       unsigned int exclusive : 1;
->=20
-> So use bool exclusive;
->=20
->> +       /*
->> +        * usedby: When exclusive is set, these bits indicate the =
-gpio pin which
->> +        *   is using this parent irq. When exclusive is cleared, =
-these bits
->> +        *   indicate the number of gpio pins which are using this =
-parent irq.
->> +        * When both exclusive and usedby are 0, it means that the =
-parent irq is not
->> +        * used by any gpio pin.
->> +        */
->> +       unsigned int usedby : 31;
->=20
-> Is this a bitmap? Then use a bitmap abstraction.
+Patches 1 to 5 applied on stm32-next. Note that all patches have been squashed.
 
-When exclusive is 1, it is a pure number while when exclusive is 0,=20
-it is a bitmap.
-
->=20
->> +static void loongson_gpio_shared_irq_unmask(struct irq_data *data)
->> +{
->> +       struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
->> +       struct loongson_gpio_chip *lgpio =3D =
-to_loongson_gpio_chip(chip);
->> +       irq_hw_number_t hwirq =3D irqd_to_hwirq(data);
->> +       unsigned int parent_irq_index =3D =
-lgpio->chip_data->irq_mapping(lgpio, hwirq);
->> +       struct loongson_gpio_shared_per_parent_irq_data *ppid =3D
->> +               =
-&lgpio->shared_irq_data->per_parent_irq_data[parent_irq_index];
->> +       struct irq_data *parent_irq_data =3D ppid->parent_irq_data;
->=20
-> Just look at this code.
->=20
-> Clearly this needs refactoring, we can't have function heads looking
-> like this.
->=20
->> +
->> +       if (!lgpio->shared_irq_data->irq_in_use[hwirq])
->> +               return;
->> +
->> +       =
-guard(raw_spinlock_irqsave)(&irq_data_to_desc(ppid->parent_irq_data)->lock=
-);
->> +
->> +       if (ppid->exclusive)
->> +               parent_irq_data->chip->irq_mask(parent_irq_data);
->> +
->> +       scoped_guard(raw_spinlock_irqsave, =
-&lgpio->shared_irq_data->lock)
->> +               loongson_gpio_write_register(lgpio, =
-lgpio->chip_data->inten_offset,
->> +                                            hwirq, 1);
->=20
-> This locking is ... really hard to follow, what is going on?
-> It looks like code written by an LLM.
-
-No, it is written by my hand. lgpio->shared_irq_data->lock is used to =
-protect
-the irq related registers of the GPIO controller. It is necessary =
-because writing
-to a bit of a register may involve RMW, which is not atomic. As a =
-result, every
-call to loongson_gpio_{read,write}_register is protected by this lock.
-
->=20
->> +static int loongson_gpio_shared_irq_set_type(struct irq_data *data, =
-unsigned int type)
->> +{
->> +       struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
->> +       struct loongson_gpio_chip *lgpio =3D =
-to_loongson_gpio_chip(chip);
->> +       irq_hw_number_t hwirq =3D irqd_to_hwirq(data);
->> +       unsigned int parent_irq_index =3D =
-lgpio->chip_data->irq_mapping(lgpio, hwirq);
->> +       struct loongson_gpio_shared_per_parent_irq_data *ppid =3D
->> +               =
-&lgpio->shared_irq_data->per_parent_irq_data[parent_irq_index];
->> +       unsigned int intpol_offset =3D =
-lgpio->chip_data->intpol_offset;
->> +       struct irq_data *parent_irq_data =3D ppid->parent_irq_data;
->> +       struct irq_chip *parent_irq_chip =3D parent_irq_data->chip;
->> +       int ret =3D 0;
->=20
-> Again, what is this? I can't read functions that look like this,
-> even less maintain them.
->=20
->> +       /*
->> +        * When the irq is not exclusively used and is currently =
-shared by
->> +        * more than one gpio pin; or is currently used by single =
-gpio pin and
->> +        * the gpio pin is not the one requesting to set the irq =
-type, then the
->> +        * irq type can only be set to level triggered.
->> +        */
->> +       if (!ppid->exclusive &&
->> +           (ppid->usedby > 1 ||
->> +            (ppid->usedby =3D=3D 1 && =
-!lgpio->shared_irq_data->irq_in_use[hwirq]))) {
->> +               if (type !=3D IRQ_TYPE_LEVEL_HIGH && type !=3D =
-IRQ_TYPE_LEVEL_LOW)
->> +                       return -EBUSY;
->> +
->> +               /*
->> +                * When exclusive is not set and usedby at least one, =
-the gpio chip must
->> +                * have intpol register to control the interrupt =
-polarity. We will never
->> +                * reach here if the gpio chip lacks intpol register, =
-because in that
->> +                * case, exclusive will be set no matter what trigger =
-type is requested.
->> +                */
->> +               BUG_ON(!intpol_offset);
->> +               /*
->> +                * Since only level triggered irqs are allowed to be =
-shared, we can
->> +                * safely set the intpol register without first =
-disabling the pin in
->> +                * inten register.
->> +                */
->> +               scoped_guard(raw_spinlock_irqsave, =
-&lgpio->shared_irq_data->lock)
->> +                       loongson_gpio_write_register(lgpio, =
-intpol_offset, hwirq,
->> +                                                    type =3D=3D =
-IRQ_TYPE_LEVEL_HIGH);
->> +
->> +               if (!lgpio->shared_irq_data->irq_in_use[hwirq])
->> +                       ppid->usedby++;
->> +
->> +               irq_set_handler_locked(data, handle_level_irq);
->=20
-> I like the attention to detail here though!
->=20
->> +static void loongson_gpio_shared_irq_shutdown(struct irq_data *data)
->> +{
->> +       struct gpio_chip *chip =3D irq_data_get_irq_chip_data(data);
->> +       struct loongson_gpio_chip *lgpio =3D =
-to_loongson_gpio_chip(chip);
->> +       irq_hw_number_t hwirq =3D irqd_to_hwirq(data);
->> +       unsigned int parent_irq_index =3D =
-lgpio->chip_data->irq_mapping(lgpio, hwirq);
->> +       struct loongson_gpio_shared_per_parent_irq_data *ppid =3D
->> +               =
-&lgpio->shared_irq_data->per_parent_irq_data[parent_irq_index];
->=20
-> Here again some crazy function header.
->=20
-> I think some helpers need to be broken out so the code becomes more
-> readable, see what you can do with it to make it easier to follow.
-
-I did notice that the header of these functions are duplicated and are a =
-bit long.
-However, multiple of the variables defined here will be used later. It =
-is not
-obtaining B from A, C from B, and D from C and only using D later, so =
-that we can
-introduce a helper to obtain D from A. The problem here is that C and D =
-will both
-be used later. What's your idea about the styling here?
-
-Cheers,
-Miao Wang
-
+Thanks
+Alex
