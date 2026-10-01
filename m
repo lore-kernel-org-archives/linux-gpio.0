@@ -1,79 +1,86 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBDD339376
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 07:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBD23CC7CD
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 07:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790841288; cv=none; b=WUAbdtPu7kQNQi04YPGk5a56x6+lh52oq/6xG8AMJHceA0h3UsoNo30xCXuBInR+Vb/jTK3ErpHDP3dnNSBjIjD24+7/4tAKT9e0Zku6IsJfha8/Y9FC0ccAxQn47nk52IJ7UJIb37ObCRm73bQOnivcdCl/dGDTrIxow4QgHY8=
+	t=1790841417; cv=none; b=D7i/77MBO98MLLQagHSfChVc5eWC8UwA3lbjZE4RAsu6t1aM4StLcY2UExjV9WhNIbqy4ztkoElGiDpTT6rR8cfaY/O25VW2Fe5Nu/3RD87KkF/umRzulArYZZbUT07bTs0R3wFtSphtZgqgDhNUi79Kz9p+ed4Uk6q+xsTNpEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790841288; c=relaxed/simple;
-	bh=ETwbRn26H7UqXroidy9rgI+SsdhQGimrEFnPy/6ATxU=;
+	s=arc-20240116; t=1790841417; c=relaxed/simple;
+	bh=A/Xpv/Ld+mjY+s1jwjSTwM7Z2N6DMmA39ET1qM/P03U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eXlFmgRT/rSlqUoDY67X9rzwAz+lZElcboMW35k+eOkoUeX7V1UKBc33Mi2/0/m99Xbu6s/0L75cUgwkoEkyvyto1l1bWsBMuugC8G61FtAf/bCfsjnDHhIHM0OJfATC3dHoodX9wSERmazdN7EEdfmJeSYQhSoTvaYDsI4h44Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fq+SjKEg; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=jxrFrhUbRK8N+/EcPtqWgeW2IHjJRctpfxtzFNgoRcWlJprbEnYll1ofLMQHpj6bTnYiOCXvaAyPpFV1Li/VJ+iGMOC64yZNsGbVgex4JnYj3AvuLK01uRrsBPsEjToLKOvQTr/e3rx9wcfblhsBdN4ozxMQbozvQ6eBQXxFa+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fany3a8H; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fq+SjKEg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B516D1F0089A
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 07:54:46 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fany3a8H"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DA621F0089A
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 07:56:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790841286;
-	bh=ETwbRn26H7UqXroidy9rgI+SsdhQGimrEFnPy/6ATxU=;
+	s=k20260515; t=1790841416;
+	bh=A/Xpv/Ld+mjY+s1jwjSTwM7Z2N6DMmA39ET1qM/P03U=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Fq+SjKEgQn9P3yHrzs/atgdjR4PcXMgC5vF27cpyXZks1jQNP35sr5v3RgOOM9sec
-	 FY2rEoDDVMyDYvK4nt3oXav1J44etrXW5LciseZo01vY3xXmZ/Cy8AgtE5m2h2e9QF
-	 NoSJVX9Owbl7Ujq01F47Ovt0xxszViF9DDwxmb9fu2QgBVg4B+jxCAw6vAhUeSah9o
-	 MmW7Z9E6IvG6xCljJvaZTT5BjixPYunphoI4k29WgWV/nHPBe08cbR3RIF1cn4zPXZ
-	 4Gztwh0Z/Jw6EKD0bbTnCSqTM6SzLnrpssTMgkXQbRZjtDGNUTLl+IrWfJpVPVJDU/
-	 1Wd9KXmQFLUxg==
-Received: by mail-lr2-f34.google.com with SMTP id 38308e7fff4ca-3a783ec301dso4446471fa.1
-        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 00:54:46 -0700 (PDT)
-X-Gm-Message-State: AFq9FYIaD0dqu751d2eawoT+S0fdm/7eKCawmMe8BZ/CMmijA/oO0JnZ
-	hGn4LzaQAu3zi8cmMOgPy/AQLFCcyqs9b9EZi7ayDnJQBfB53Up0AUgZmkJ82Thqrv3/lN02apA
-	eDL+/tCgT1UIIArnZFqEAIgMLj102o20=
-X-Received: by 2002:a05:651c:418d:b0:3a7:6d4a:1c9f with SMTP id
- 38308e7fff4ca-3a779208624mr10196971fa.15.1790841285508; Thu, 01 Oct 2026
- 00:54:45 -0700 (PDT)
+	b=Fany3a8Hrfdl8cgiWkQqWcAGusDt67p1Z0IHYWxTvyk86an+cHLwyu+xLvPQzxEVc
+	 ecHKlv5ZwsYCqAQ+hyjt6y6radJlHOKBOkl22sNX78Mhw8fb6Aqj/3Et5havmkUkgU
+	 VbxGwZHkQJqO9uHlZTP3zAZAin67yZxFGVECdqhYUa7jyE3jCh2KMFAjxTBYwKy6Yo
+	 4N0VZzBJ+pkAoTWtH35xw4ACJe2KOYaKW2RdoTsj6E3TNDzocDMDxFJj2I1YdYFeYi
+	 ij7tasuUVt2JA6F1I8L9nDUoGfErzhMUrDlErOeOaAApPjmD0ZmyezyGgY3r4v3vlS
+	 s/j3Kj46bX2rA==
+Received: by mail-lr2-f34.google.com with SMTP id 38308e7fff4ca-3a76b373054so22426521fa.0
+        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 00:56:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBz+xTj+7I6P2ucD20wXy3emsYjAD+EHqi35+WvfvOFLWes6k1qGgOzgAVKMLBRTdo+dX5zhiXKAtYs/@vger.kernel.org
+X-Gm-Message-State: AFq9FYJuZTJxtTePsAICWCbVnYB4hps+er9bmNLivPgm0RTw+IRSffwU
+	plxELMP6/c2jezH0BuCvsal5PHQ0J43EFpuVAdk/psml+nY0mcO4WBjslT1VxRcDdN0HIajUmjS
+	sfO4SyPK5sdKSSICO3o/FX/Q5iZBYOvI=
+X-Received: by 2002:a05:651c:19aa:b0:3a6:7094:b41d with SMTP id
+ 38308e7fff4ca-3a779732efamr12637801fa.10.1790841415198; Thu, 01 Oct 2026
+ 00:56:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260924160344.109727-1-ag@ffroot.co.za>
-In-Reply-To: <20260924160344.109727-1-ag@ffroot.co.za>
+References: <20260917211452.i.365-kees@kernel.org>
+In-Reply-To: <20260917211452.i.365-kees@kernel.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 1 Oct 2026 09:54:33 +0200
-X-Gmail-Original-Message-ID: <CAD++jLn75jCXJ=ctAYYp_jUaEmSqWfDrcTTT_wmd+xxQ6ednZA@mail.gmail.com>
-X-Gm-Features: AclHuK9F1au3yqxI_3whPEzzbCAt4NHBvQy8QV8gno-5Vu1puBjqF3KkK0x1aHA
-Message-ID: <CAD++jLn75jCXJ=ctAYYp_jUaEmSqWfDrcTTT_wmd+xxQ6ednZA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sunplus: fix kernel-doc parameter descriptions
- in sppctl.c
-To: Andrew Gaylard <ag@ffroot.co.za>
-Cc: linux-gpio@vger.kernel.org, wellslutw@gmail.com, dvorkin@tibbo.com, 
-	linux-arm-kernel@lists.infradead.org, kernel test robot <lkp@intel.com>
+Date: Thu, 1 Oct 2026 09:56:43 +0200
+X-Gmail-Original-Message-ID: <CAD++jLm=rWBqRT=SQGfj6D0jYoU1H8HSX3Cy+expg17W71xFvA@mail.gmail.com>
+X-Gm-Features: AclHuK9DtT1wfkmby2eLKl-7MGj8F-6aYEGT9yi4ELgmjp-n_Oto8Rs1ZdDaY-s
+Message-ID: <CAD++jLm=rWBqRT=SQGfj6D0jYoU1H8HSX3Cy+expg17W71xFvA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: s32cc: Remove const from groups allocation type
+To: Kees Cook <kees@kernel.org>
+Cc: Chester Lin <chester62515@gmail.com>, Kees Cook <kees+treewide@kernel.org>, 
+	Matthias Brugger <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
+	NXP S32 Linux Team <s32@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Frank Li <Frank.Li@nxp.com>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, linux-arm-kernel@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 24, 2026 at 6:03=E2=80=AFPM Andrew Gaylard <ag@ffroot.co.za> wr=
-ote:
+On Thu, Sep 17, 2026 at 11:14=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
 
-> Add missing parameter descriptions to kernel-doc comments for
-> sppctl_func_set(), sppctl_gmx_set(), sppctl_first_get(),
-> sppctl_master_get(), and sppctl_fully_pinmux_conv(), fixing all
-> W=3D1 kernel-doc warnings in this file.
+> From: Kees Cook <kees+treewide@kernel.org>
 >
-> Improve the phrasing of some the other comments in this file, while
-> we're at it.
+> In preparation for making the devm_kmalloc family of allocators type
+> aware, we need to make sure that the returned type from the allocation
+> matches the type of the variable being assigned. (Before, the allocator
+> would always return "void *", which can be implicitly cast to any
+> pointer type.)
 >
-> The warnings for sppctl_func_set() (@val) and sppctl_gmx_set() (@pctl)
-> were newly introduced by commit 7dcf87d2dbbe ("pinctrl: fix
-> PINCTRL_SPPCTL=3Dm"); the rest were pre-existing.
+> The assigned type is "const char **", but the converted allocation type
+> would be "const char * const *", as the size was taken from
+> "*func->groups", whose type "const char * const" is const qualified. As
+> there is no general way to remove const qualifiers, take the size from
+> the assignment target instead. No change in allocation size results.
 >
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202609240204.VHoUp5qw-lkp@i=
-ntel.com/
-> Signed-off-by: Andrew Gaylard <ag@ffroot.co.za>
+> Build tested ARCH=3Darm64 allmodconfig with GCC aarch64-linux-gnu 16.1.0:
+> drivers/pinctrl/nxp/pinctrl-s32cc.o
+>
+> Assisted-by: LLM coccinelle
+> Signed-off-by: Kees Cook <kees+treewide@kernel.org>
 
 Patch applied!
 
