@@ -1,62 +1,64 @@
-Received: from mail-oi2-f12.google.com (mail-oi2-f12.google.com [74.125.231.204])
+Received: from mail-oa2-f34.google.com (mail-oa2-f34.google.com [74.125.231.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6B61F1932
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 02:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.204
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD2E3A7D6F
+	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 02:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790820975; cv=none; b=heeSIcv6PJAU9ow2+H1dPhbaA5zvpr9EphugNcpa0OZLJ8iJbyx0zD/eCWBaAHcv5DviPWIHShrmyFE162pD+j0A9aW58xfXROjpsB3DOzo+WLBJG1G8YRJy7TX5aA8pra7Kc5XnP3ut4XVpRyPnOUb/hWxQOJ7bA6kbtNDINxw=
+	t=1790820976; cv=none; b=gLL1mQlQuj9hNH6Hdh135z52WiSIjNI/y+NJ/h9S7rYeeAWGZD+4/qYjTbcrf7PCrfHMueZibDHMoZ9bAbTJs327n7H+j1Hy70A0kQw9/IeOHJUuiFtZbdsvAuCBPmbSqi4ZAA6dU+6XuZ1zpNl/gsfArpGI3zzao/dvEkO8Y/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790820975; c=relaxed/simple;
-	bh=nX2jBnvYS8wUE2Qbi8u0pjLWxyB9s0VVXYISCK8NbOg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=knXogtmS7gZBCCQP3j+fUXbXTfO5vaWesHsmzFnZX3MLynvWhqmB7fZ1jrsG2n8KxVsqNOIBk5N53h8/DfU06epLUYv3hBxjL0eQhUsjgkb+Cvtwye7gqgAjCpuO4IJcgeWCoih2q5KUewi3+YYWde75/f5j5pcdbuc9nD6Ct5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O5jB6y4R; arc=none smtp.client-ip=74.125.231.204
+	s=arc-20240116; t=1790820976; c=relaxed/simple;
+	bh=H9hlt5LIq6CQ+Hvl9dPS/oQ9rjWnF0oD3NbRGBl38cs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=E3Y9xjvemsUjvCeQs3mGedfU8uvJPrTQ8ty1/X72opG5NRhJAIdaOEod96n+N5bP636YBybR0SVeEfQ4p9dYOhjrTbVKPmXBnxDdtGsHkSNZtpmA7xbEp5rJO3TZqO9kqoaCZSQLfxaFz5M6J+5JvVzaBI89a49QS6eCbtOgXHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xz0pJKVM; arc=none smtp.client-ip=74.125.231.98
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O5jB6y4R"
-Received: by mail-oi2-f12.google.com with SMTP id 5614622812f47-4b37a368895so3327878b6e.3
-        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 19:16:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xz0pJKVM"
+Received: by mail-oa2-f34.google.com with SMTP id 586e51a60fabf-49499f845edso1681622fac.0
+        for <linux-gpio@vger.kernel.org>; Wed, 30 Sep 2026 19:16:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790820972; x=1791425772; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=bQJet65ckrbNTaiHK5Z2CMeUS22oqKRz0qD2/TS3z8g=;
-        b=O5jB6y4RZhB+mnHOi3LCSpZga3aOSGizh/o3pVnBgyzKjIVbbrPf8/yq0SlSlSmEBx
-         TvsEV4kRL/+Ztkn/56MVChpKslJXkcCLSvOgqjC1RLhQJfSTyum607hgiND7v4f8cwow
-         zK/XFPXxNFjg53I3fVOp7w5No5WawsWljDTe0oiI6J/urpTKmHsCIidPnsN31LEGCItv
-         42L33wemIg9lxmeEHs+8JCl56PyMygDSE23D/2y5o9JLaQturfJM20l49DmQWpbUC3zn
-         9vwUYi5YvD+bqL+jQB4TM0mo2wXn9EraWd8VFepAodbPwyoIvbIvoY9Kj6Y8AjiKn8WV
-         AHiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790820972; x=1791425772;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1790820974; x=1791425774; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=bQJet65ckrbNTaiHK5Z2CMeUS22oqKRz0qD2/TS3z8g=;
-        b=CDeTfqtkHW+SQ4YAHiN+atm2GnwX28P/9/EPdb0Or+oJ/mnypRS2Wesupo0PeeaTjp
-         bA+GIhZ5p4pCVGls9nNL7CgLMp34vtHOhdCypjtF6CfXqCRWq9L4XmUIRYPnMDQGvlIW
-         gXhfjRRZ7XdI35s8u9Lo+3LqwIdRohrzsCu9W6ftp4K05gsRJmTxRrLsArNC2mC/tOBP
-         v49E+bIJn6g98pWDCdp6fZW1aT9Y6trnQI0nzbxAdGroLK8uoBuTk6sgrgG0CKbawR8p
-         5Q2tWJDafH94UbEkfqLb6KDLV8e+YLvKLclxf/cYTNKyzZMPao2WzwbxZlQtHeI5d955
-         ZwPg==
-X-Forwarded-Encrypted: i=1; AKwUvByl1J/ZMniUUADCuv4MzZqfc2MN9hShTStgjN0Lo9ykM2Sa7Yw65wi85LDWf84w6r+e8o2x5kxgnUsg@vger.kernel.org
-X-Gm-Message-State: AFuF++mynQz6MRp+CNnLxXXZjQwZie/pAQAGml0D9ADZNMpnbp6qGB0U
-	eRRSD2SSuDO6c1H02L0aJsCPlmPXjk2szPSZ/4QdND55kFv4Sy736xzk
-X-Gm-Gg: AYBFou0rXcvjGcnVHfAkwz6Qlrni2yliZRDcA9J9UJJxfSBnQ1F8yq19cnuiQkswpTY
-	qRWCjSwyLOpn5krxcSGfjzuG9F/owv3hyvX8BTlwbE654ET1yEHanSekTMAnoWeD9kI9V0sCD+u
-	fYVk/gJJttAK0MjhMoFf0vBVVaFAQQfpjmLHMd4loxS7iB92PniPbyrZlbjr+DKTHbZQ0uMbRyd
-	jGxv8j1nZTgdnxzD3VE1eWIC5fFy6tIGkvtF9RrmEnO7zESyhP7QWcjdabhft7fEbg1dLD9Ii3/
-	5krBaXangbqxVekQROzs6YkPTVfk9etBbcZ4uinMfrkpqm2bGjE5vK1u2TvLXOjb54OTeDUnkXL
-	vrZBvVS8+2+0DJcI9qj0ITtHBFSHzNPSHBpFkFEBuzQjf5BgboN72h4vtheCdYKY00PbzNGDCpz
-	sp8M5+sfG0B/cYGYBJ2GT+biw4daGqlXNdf90WdU8Krgh6eB8wPdRpx/GTSt2sp1KlEymV6eY+5
-	ZxWRj2WFIwtJP9Du+/lFQZqpxZdnFu4KvxlbUql
-X-Received: by 2002:a05:6808:1489:b0:4b1:b83a:5878 with SMTP id 5614622812f47-4f1b688af5dmr4764409b6e.14.1790820972123;
-        Wed, 30 Sep 2026 19:16:12 -0700 (PDT)
+        bh=LY4KZd5gnCBsiB5lJDdI1p1NOkBm3cXEpWyWeVy2l6Y=;
+        b=Xz0pJKVMwII9ls083GLkYpeJ+Y3/aRB+0dC2spz1TEh3I/m8vnwJd2oPYhsReK5o9Z
+         R1TiB0B7kCzht9rryjO7Nj+T5Tv/bre1HHt/Kva0mvyc7ffDPZv5sDrrNVS/ChP9qt32
+         XP876WJY0vYSiBosCuvj8uO3QclILqW8Oy2wYLYNtSXowJZtScdXva0ENjkEfY1Pl08b
+         LAhRRS2RnbiGD5JKfn1kTuevcVlH0uhyuDvVXJgWFcPe2i7AtUVizKBpxQExUKg71a2u
+         Kt8xIXY33MFzCoCqf9SKB8LPpAT637f7aJN/oEeyIQ5CTsiEK/Ck8sKZVbqQ5Jz628c/
+         nJyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790820974; x=1791425774;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=LY4KZd5gnCBsiB5lJDdI1p1NOkBm3cXEpWyWeVy2l6Y=;
+        b=AgZ2g5y5yTSGKbvc396hNOPjtzeyVeP6LLupaYGZ04yoHv7RcTjRJfYxRyYoK+rJHU
+         MHebIUVnnSGpOz1ZWOvXaU8ppQzbhyNevwdF4hRuZcO8xatXI83PIeGcHDPcRwyKAe9v
+         H7lb1fqn4j2Et2TJYvAVYgbhl+rBetJNdXXr8EdrDU7vWLYx9Ck6vu6vRn46pWsI/wdV
+         /qLlWkfg/OG92XVyLfREQIA4Z4eD30WLo4uzbkuVLNLwuW+jrZlWfTEz/bCRVf085lie
+         xetFYYG/vbYaR46W93JynlLxZwB+7NdlMd1dW8B1WEcWSEUOT0OIxGm1WqG3Hkc+D7+7
+         ylkw==
+X-Forwarded-Encrypted: i=1; AKwUvByxtWY9uULyteI5qhfu9EOAcZEMXtz/W3BkSWafseqfSLTkwwY/8DVcYaprklKjjLFIFMwcxG3CbiUF@vger.kernel.org
+X-Gm-Message-State: AFuF++msQa/6zLlApNPg6xab81kqgwwCLB4KReQh/ML6XQfy2m4hMGcY
+	X/1Xm5pq3WWbv57uu1UKrj1lj4fYsKDLwA5nsdXoRoEGLfnWIJLtyZm8
+X-Gm-Gg: AYBFou2RkCYHQ5E0eWIMeISp41oVz9v8V/xxp3Furhgk9c1pBgQ9iCkaQpJ2jYWdSWH
+	ipuoOpYSw7XhUBYjfYTn/KagCS159Xh/nYmIc/71f/4e20WWsSCyqk+bYCEyJ8KVTxS7FUwW2e/
+	8ymdxKOxUe3tuYOCWb3+baEGw3IYnER8BkFzyUuy3E3GFR6vDuGLE9lL4L1w5OggTajUyEgHPNh
+	agh5gEemATmcWu3FBNUXCX+jwGoC2IhKLc/LWHxY1vETJMcm3sSwIpaIMScewwJa0zo6oilI66M
+	XAlwti4qnOzwAuJGVmlJnxfyrvIMou2XDl325ZDoOXRP/wSM9UtDuv7d8xSS6ZScrW7JzeldfLB
+	LVSjNdIq0DgW34A1mdExvOubFmM4OqpGoAxSaD0TVeXvANNNpscjN5gT/erLyHxw9+8M/XtUcMc
+	FbHBmzSJ2DNEmWVTEQNh0YeKp76peSw0vz7AahZE/ttnhy+NhkvtPr0l1HOwc9Mt7NZNiM2CuGe
+	1RlmIgRKOAM1+9leU3seKww3chKgZQrvFk7ltPv
+X-Received: by 2002:a05:6809:306:10b0:4f3:9349:15e with SMTP id 5614622812f47-4f393490d3fmr630456b6e.41.1790820973868;
+        Wed, 30 Sep 2026 19:16:13 -0700 (PDT)
 Received: from archlinux.lan ([136.34.156.120])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-4f345b14325sm1208801b6e.1.2026.09.30.19.16.09
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-4f345b14325sm1208801b6e.1.2026.09.30.19.16.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 19:16:10 -0700 (PDT)
+        Wed, 30 Sep 2026 19:16:12 -0700 (PDT)
 From: Danish Khateeb <danishkhateeb03@gmail.com>
 To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
 	Linus Walleij <linusw@kernel.org>
@@ -68,10 +70,12 @@ Cc: Shuah Khan <shuah@kernel.org>,
 	linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Danish Khateeb <danishkhateeb03@gmail.com>
-Subject: [PATCH 1/2] selftests: gpio: enable GPIO_CDEV_V1 for gpio-cdev-uaf
-Date: Wed, 30 Sep 2026 21:16:08 -0500
-Message-ID: <20261001021609.167505-1-danishkhateeb03@gmail.com>
+Subject: [PATCH 2/2] selftests: gpio: expect gpio-mockup to reject a range with no lines
+Date: Wed, 30 Sep 2026 21:16:09 -0500
+Message-ID: <20261001021609.167505-2-danishkhateeb03@gmail.com>
 X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261001021609.167505-1-danishkhateeb03@gmail.com>
+References: <20261001021609.167505-1-danishkhateeb03@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -80,49 +84,65 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-gpio-cdev-uaf.sh also tests linehandle and lineevent file descriptors,
-which only exist with CONFIG_GPIO_CDEV_V1. Since commit 7673e4c7f7f9
-("Do not enable the v1 uAPI by default") that option is off unless
-asked for, and the gpio selftest config doesn't ask for it. Built with
-that config, GPIO_GET_LINEHANDLE_IOCTL fails with EINVAL and the test
-stops at its second step:
+Since commit 446e8c31d0fc ("gpio: mockup: reject invalid
+gpio_mockup_ranges widths"), gpio-mockup refuses to load when a range
+has no lines. The "no lines defined" case of gpio-mockup.sh still
+expects gpio_mockup_ranges=0,0 to load and create no chip, so the test
+now fails there:
 
-  # 2. linehandle
-  # 2.1. ioctl
-  # failed to get handle FD
-  # failed to test handle ioctl
-  # GPIO gpio-cdev-uaf test FAIL
+  # 2.  Module load error tests
+  # 2.1 no lines defined
+  # test failed: insert gpio-mockup failed with error 1
+  # GPIO gpio-mockup test FAIL
 
-Add the option to the config.
+Check that the module rejects that range instead.
 
-Fixes: c7f92042d3f3 ("selftests: gpio: Add gpio-cdev-uaf tests")
+Fixes: 446e8c31d0fc ("gpio: mockup: reject invalid gpio_mockup_ranges widths")
 Assisted-by: LLM
 Signed-off-by: Danish Khateeb <danishkhateeb03@gmail.com>
 ---
 
 Notes:
-    Tested on v7.3-rc5 (x86_64, KASAN and lockdep, virtme-ng) with a
-    kernel config merged with tools/testing/selftests/gpio/config:
-    - current config (GPIO_CDEV_V1 not set): gpio-cdev-uaf.sh fails at
-      "2.1. ioctl" as above.
-    - with this patch (GPIO_CDEV_V1=y is the only config change):
-      gpio-cdev-uaf.sh passes, as does gpio-mockup.sh -t cdev_v1 (with
-      2/2). No KASAN or lockdep reports.
+    Tested on v7.3-rc5 (x86_64, KASAN and lockdep, virtme-ng):
+    - before: gpio-mockup.sh fails at 2.1, both by default and with -f.
+    - after: it passes by default, with -f, and with -t cdev_v1 and
+      -f -t cdev_v1 (on a GPIO_CDEV_V1=y kernel).
+    - control: with "-1,32" in place of "0,0", the new check fails with
+      "insert gpio-mockup with ranges <-1,32> did not fail".
 
- tools/testing/selftests/gpio/config | 1 +
- 1 file changed, 1 insertion(+)
+ tools/testing/selftests/gpio/gpio-mockup.sh | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/gpio/config b/tools/testing/selftests/gpio/config
-index 1287abeaac7e..54cf6484441b 100644
---- a/tools/testing/selftests/gpio/config
-+++ b/tools/testing/selftests/gpio/config
-@@ -1,5 +1,6 @@
- CONFIG_GPIOLIB=y
- CONFIG_GPIO_CDEV=y
-+CONFIG_GPIO_CDEV_V1=y
- CONFIG_GPIO_MOCKUP=m
- CONFIG_GPIO_SIM=m
- CONFIG_GPIO_AGGREGATOR=m
+diff --git a/tools/testing/selftests/gpio/gpio-mockup.sh b/tools/testing/selftests/gpio/gpio-mockup.sh
+index fc2dd4c24d06..41c8a1c1502e 100755
+--- a/tools/testing/selftests/gpio/gpio-mockup.sh
++++ b/tools/testing/selftests/gpio/gpio-mockup.sh
+@@ -310,6 +310,16 @@ insmod_test()
+ 	remove_module || fail "failed to remove module with error $?"
+ }
+ 
++# Load the module with the given ranges and check that it is rejected.
++insmod_fail_test()
++{
++	local ranges=$1
++
++	if modprobe -q $module "gpio_mockup_ranges=$ranges"; then
++		fail "insert $module with ranges <$ranges> did not fail"
++	fi
++}
++
+ while getopts ":frvt:" opt; do
+ 	case $opt in
+ 	f)
+@@ -378,7 +388,7 @@ if [ "$full_test" ]; then
+ fi
+ echo "2.  Module load error tests"
+ echo "2.1 no lines defined"
+-insmod_test "0,0"
++insmod_fail_test "0,0"
+ if [ "$full_test" ]; then
+ 	echo "2.2 ignore range overlap"
+ 	insmod_test "0,32,0,1" 32
 -- 
 2.55.0
 
