@@ -1,93 +1,162 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD5D46F48C
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 19:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC0D3BFE2B;
+	Thu,  1 Oct 2026 19:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790883430; cv=none; b=ZIfy8ljqhHuCZAXhtkMa1RxD33Pw+syqWY3CKI5zZYPgPRF0lD6XHERYorKtPb1oG/BNwTsOBckxCT304EWEnt2ZZBjITWQTzgbY7DmH7Sxg73aMWUcgxIWmhImeAwrE5h+Kb7+XuuSvzyuWe0pSr80lBIktiEbgeZ+kerdMzlU=
+	t=1790883450; cv=none; b=mZH4I3gERdUOfQdpEe2JxFsTnyHIvWPOIKBLoKB/Va8D7zWrtUEf4i/YTDD/iK32n6GtDY4nLVxPutLMvu20Z6Fk1aocozuv/qZ0oO88FNOyqwzV6ts7Ff2+tSHK30XqBCmYhGW0PyRmcTcqxzzXRRR8wa6awIgne8eDGxse+r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790883430; c=relaxed/simple;
-	bh=qvwz9H5czi1T2bET1rcGtlq0MACGNFWYAMQiSkHpdX8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pj5p6MyqAwHRwS2XM+YPCWuMZdgYyKy4MAiGodSK/oIqhBbc8oLHoJ5KgMkULxtDra3BYMoMR1prK/7V9mCTErIwlC9jMgoaN2Wi4i7wo76qB8HrB/0llNyTNV+bg9jlgzf/uRmTdy4Sv8gErdocOmK+ncrPUtSTkE3Qk81W0vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OYEkWZSG; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790883450; c=relaxed/simple;
+	bh=IwlDC8wn5b8kCP6Z/TFT1NMXwzbGOW7GKSvw2JJYln4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B6qgytD/VzHvEeeApgnweU0KnIA54xWJB/f7WYHl07v47bZp06yeBf0v2o/ByQEYjgeEoDgR3qwEVE9lQXQGKQe5Bb9vWql7RCozZvt/pbnejjdqSRFTOk1LIdb/NGkrFcSnWXVsdHO0GlOr94AYVA7in2wr9SX2SfnVJXydlh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YsyRrOev; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYEkWZSG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C2901F00893
-	for <linux-gpio@vger.kernel.org>; Thu,  1 Oct 2026 19:37:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790883425;
-	bh=qvwz9H5czi1T2bET1rcGtlq0MACGNFWYAMQiSkHpdX8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=OYEkWZSGIPm9u5E7vvPyKgWBtWXoYDM0EGPIKCETLZ8/uJTQU6+6fMwQSj1CEDMG9
-	 FEEP8B3Z/9kj0+e2SotAzqmeMPnIBCHDFQOFg0xrbc0jJCUxSPgWEOcUbRie4b8j5c
-	 9RR+PHZ9l26jsi2i043ZuZn3uXED1Mm6U72f7Wijc09/6J0y8vHBHdIG+USOiIeFYj
-	 WC2zyQWU2k7Jb9PHARWTCN6M6FeE34OaK28p/Q8j2R9egjckrpBv7vM0mfRN6kDiDO
-	 yqsl0jruXuftKkvxc23FjyHcIjhLyHLPY+6FKwA1j8tONQgQTIt7IgO9/dMkXJJsOc
-	 PxPefttg9aAyw==
-Received: by mail-lr2-f34.google.com with SMTP id 38308e7fff4ca-3a76cedd9baso27457991fa.2
-        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 12:37:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBxi4R2SR+qO59V8+gBcuHRgmmMqssYumxkv4bbjXDrj0xESXT+gHVRWcUTT9X4w2L8UdH2K+ylsNTTe@vger.kernel.org
-X-Gm-Message-State: AFq9FYKK9Ddc0uRsyTrl5XDDbsBZbr+/K63ZacllOr/oKsxH1B1ONE84
-	rtHTpYDbpfd8PusPxjG+LqVnMZSAFdC/uMwAxaFG8FDScCkRgFbSS8J3A990VX5I8BuqHaCRWL3
-	PsyY8C97lH8XU32x/ZYCborFb66epFPk=
-X-Received: by 2002:a05:6512:3a8e:b0:5ba:3db3:66d6 with SMTP id
- 2adb3069b0e04-5bb9bc3baeemr71428e87.38.1790883423882; Thu, 01 Oct 2026
- 12:37:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YsyRrOev"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1790883449; x=1822419449;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IwlDC8wn5b8kCP6Z/TFT1NMXwzbGOW7GKSvw2JJYln4=;
+  b=YsyRrOev2ZbWt2pk1rzhKRGabeFOwhlmeXCSz7sSM476fNOGUKyFfabD
+   VpTC1WN7sL5GVtkBjwEm83JB6OVgU+6wL//hKSLa4mcSjk40qrz8/KOGt
+   InRTxbMRBwTx4lsyjAtkHo7EUCr0VvHh6o8URIm4wt7bE58jM94Eq9PQl
+   pQ0fucYB11d/OhZIJC4g8PZoCCO/N8i3yrPo/eJSE1mcaHz3jyyAE/MhS
+   QaBwPVmdSGtEtI1yBNk/1NtdmoZisatruvP5pbgcphVSkLP4KUs6sLKHu
+   dirOdZ9kKb/aEgWYnDZV+njFrflf1CHP+tK2BGkPqDCdn4V5RV7sJT3Px
+   A==;
+X-CSE-ConnectionGUID: zv0dbStlQzyoYTD/wfMG9g==
+X-CSE-MsgGUID: 1Szc+1izSCKygmcVz/FIdQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11922"; a="113439128"
+X-IronPort-AV: E=Sophos;i="6.27,135,1787036400"; 
+   d="scan'208";a="113439128"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2026 12:37:28 -0700
+X-CSE-ConnectionGUID: 5saRle/kR5GVopSKB8UEhQ==
+X-CSE-MsgGUID: drHUxuAESCitOMFVcMcoBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,135,1787036400"; 
+   d="scan'208";a="279837423"
+Received: from abityuts-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.27])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2026 12:37:18 -0700
+Date: Thu, 1 Oct 2026 22:37:16 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Richard Cheng <icheng@nvidia.com>, Andrew Lunn <andrew@lunn.ch>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bartosz Golaszewski <brgl@kernel.org>, Len Brown <lenb@kernel.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <djbw@kernel.org>, Ira Weiny <iweiny@kernel.org>,
+	Li Ming <ming.li@zohomail.com>, Lizhi Hou <lizhi.hou@amd.com>,
+	driver-core@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	stable+noautosel@kernel.org
+Subject: Re: [PATCH v12 10/10] PCI: of: Avoid np->data usage for the node
+ changeset
+Message-ID: <ar62bJzBEAhGL2iu@ashevche-desk.local>
+References: <20261001142815.277550-1-herve.codina@bootlin.com>
+ <20261001142815.277550-11-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com>
- <20261001-cv75-v5-v9-4-486cc289a4b8@ambarella.com> <20261001-attempt-savior-5d4a0eed4320@spud>
-In-Reply-To: <20261001-attempt-savior-5d4a0eed4320@spud>
-From: Linus Walleij <linusw@kernel.org>
-Date: Thu, 1 Oct 2026 21:36:50 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=tsETOFvC-AdethTdrGtet5neVanj3KyyB4EtEOpJ_Gg@mail.gmail.com>
-X-Gm-Features: AclHuK8gO_d9ZPMvc-1W1f079XpNQoWfhmnQkIh3LHrwFtzhfvV51TArzhkyp58
-Message-ID: <CAD++jL=tsETOFvC-AdethTdrGtet5neVanj3KyyB4EtEOpJ_Gg@mail.gmail.com>
-Subject: Re: [PATCH v9 04/15] dt-bindings: gpio: pl061: add Ambarella CV75 variant
-To: Conor Dooley <conor@kernel.org>
-Cc: longzhao@ambarella.com, Arnd Bergmann <arnd@arndb.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, soc@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Michael Walle <mwalle@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Long Zhao <zl020895@163.com>, 
-	Lee Jones <lee@kernel.org>, mfd@lists.linux.dev, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261001142815.277550-11-herve.codina@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Oct 1, 2026 at 9:23=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
-e:
-> On Thu, Oct 01, 2026 at 08:40:53PM +0800, Long Zhao via B4 Relay wrote:
-> > From: Long Zhao <longzhao@ambarella.com>
-> >
-> > The CV75 GPIO banks sit on the AMBA PrimeCell bus but are not
-> > register-compatible with the ARM PL061. Each bank is 32-bit and 32
-> > lines, with extra mask/enable registers, so arm,pl061 must not be used
-> > as a fallback compatible.
->
-> What has this got in common with the pl061 beyond using the PrimeCell
-> bus? Current reason for putting them together is a bit tenuous to me.
+On Thu, Oct 01, 2026 at 04:28:10PM +0200, Herve Codina wrote:
+> of_pci_remove_node() and of_pci_remove_host_bridge_node() check
+> whether the node is dynamic but not whether it has valid private data.
+> 
+> During the node creation, an OF changeset is used and this changeset is
+> stored in np->data to be available for removal functions.
+> 
+> If, for instance, a PCI host bridge is created using a device-tree
+> overlay, the related node will have the dynamic flag set but np->data
+> will be NULL. This leads to NULL pointer dereferences.
+> 
+> Checking for a non-NULL np->data pointer to determine if the node has
+> been created by the PCI node creation process is not enough. Indeed,
+> on some platforms like PowerPC, the OF_RECONFIG_ATTACH_NODE notifier
+> (e.g., in the pci_dn_reconfig_notifier() function) intercepts node
+> additions and populates np->data with its own structure, such as a
+> struct pci_dn. In that case, np->data is not NULL but it is not related
+> to our changeset stored during the PCI node process creation.
+> 
+> Avoid the usage of np->data to store the changeset used during the PCI
+> node creation. Store our changeset in a more relevant structure: either
+> struct pci_dev when the node is created for a PCI device or struct
+> pci_host_bridge when the node is created for the PCI host bridge.
+> 
+> With that done, no ambiguity remains on removal. Indeed, this changeset,
+> if non-NULL, is the one used during PCI node creation. Check and use
+> this changeset on the removal process.
 
-It was determined in early review that this is very clearly a modified
-PL061 block. The basic registers are even named the same.
-https://lore.kernel.org/linux-arm-kernel/CAD++jLk0LoOJk=3DTXin42AL3_z_7eVVk=
-vMnYr1S8090C6A_B+dQ@mail.gmail.com/
+...
 
-PL061 is different and quirky and could not use gpio-mmio, while
-with these changes to gpio-regmap it can handle its pecularities
-and use a library which is a good thing on its own.
+>  void of_pci_remove_node(struct pci_dev *pdev)
 
-Yours,
-Linus Walleij
+>  	struct device_node *np;
+>  
+>  	np = pci_device_to_OF_node(pdev);
+> -	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
+> +	if (!pdev->cset || !np)
+>  		return;
+
+Wouldn't be better to split this conditional to two?
+
+	if (!pdev->cset)
+		return;
+
+	np = pci_device_to_OF_node(pdev);
+	if (!np)
+		return;
+
+>  	fw_devlink_set_device(&np->fwnode, NULL);
+>  	device_remove_of_node(&pdev->dev);
+> -	of_changeset_revert(np->data);
+> -	of_changeset_destroy(np->data);
+> +	of_changeset_revert(pdev->cset);
+> +	of_changeset_destroy(pdev->cset);
+>  	of_node_put(np);
+> +	kfree(pdev->cset);
+> +	pdev->cset = NULL;
+>  }
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
