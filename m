@@ -1,35 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44733B83F9;
-	Fri,  2 Oct 2026 09:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5019B3B83F9;
+	Fri,  2 Oct 2026 09:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790933817; cv=none; b=cm7OrRi2D5nddTWZf3wAl4mkO0l8rvWzI2OrWNkLskXz2sviwCv7s4SlCE2lyoY14GnPTWBCPJCektcjaU8G3VHinvU1mUGEdbG2Rp8IFscYCLc1O6h9AKey9VvxDaf42fxmSq1u766KuGqlpZ9k9Ri+YpjMcNI7YvtMUKE6FzM=
+	t=1790933821; cv=none; b=U3Ko+i4NnMoq+S2/+wLUuYv0eD3WXSlUpI8OJ62tKaiwcP4lriu+aNl7fcKl8ZNS2QJokXixhYkd2Wy8VWB3RMpibfFm/uALE4MLWqlq80CC8J7CymcePrTxC2jus0tFPlG/p757RBTbZNAkfHzl0FdtfLf4BLB2SYhsSPnTYg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790933817; c=relaxed/simple;
-	bh=/GfNECuJdkqXezhYinA+FNDEzAtfy42UYelDqdwBooY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jJYlNBOdst4yPGeUBe/7Vi+1+Ge+nt3cB7z0pciudZNVNXNongwXkKDF4Btxfd5eS2wv/49sdDC5Bs2JnZNghkBvS21UhWe9jOEgXOtC5v+KKawHGCFRrAqaPbVkN7oHpK6E+u5tyImJB4LeoLdgR47FhMM4z9EyYkksy0PdgoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebB/JMfz; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790933821; c=relaxed/simple;
+	bh=wxPxDzf60NfDkRRwcf/rD6BY9TZOdvJTYEIsqJGwCh4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=dkYEMhxrnnnl0ttjyAldwuv+v8U/DZFQK7NIJtbeVjlaaYy2QFrqyQdJF4sBBL+WuOnaZgdpBy71tYyl3xASedUVii0FrBBkOziz9dXM7bPtFdyf4KvGE72RLReB/U8uDXIMtvrmA289BFJNIaP3tDf/jXVOh5qd7ADR2WVjJAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ss2uvRC3; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebB/JMfz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFB5C1F00893;
-	Fri,  2 Oct 2026 09:36:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ss2uvRC3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5DD61F00898;
+	Fri,  2 Oct 2026 09:36:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790933816;
-	bh=2zacSBy3pWdNyxuOzW8QLLGA2yw/df9t7jn7f0sl3BI=;
-	h=From:Subject:Date:To:Cc;
-	b=ebB/JMfzi8Ja4MzJOV4Ds2U2MBGdex/OgXnTfGu4Yn4u/a5YGDeF982pt3dF1Hsvo
-	 ClqcIi0aETsb17xAGjDrRCakq8YFio8lYwmNYZPaG10sBN6saWbVFquSJnLYB2+oCN
-	 dU+AvQX6UiVn1nYr6ZgrHOwTx65ED6Fgjm7h3/V1g9JmLjqKCZSZEq5/Udm/25TNyQ
-	 kXlFPx/AzNFFJUCqg0Yv3N+HKLJq6Mn1stoC6bFz5bP0VAvctHXWm/XtM9C3mB/TFZ
-	 nK/hMWn9VKm/+YyG7lJZ8/3nln/iDlBu2SUEkzHmBYM41d61v0kDhpZHdRfk9pP1VH
-	 RlLCEUNf+UpxA==
+	s=k20260515; t=1790933820;
+	bh=C91pYmqwoCPj5ds5y0XPr6mBfKnGNebX4Pwv2DLP2PQ=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=Ss2uvRC37JZSY1BrSGhwbaQsoLYNu6MWmjNlyNFcLJqqsepxnoMw2ddT8G33PwmE9
+	 zY+Egi6u5jDQnOd3tmvjHzeqIpWVok9ypfnLVx3MMOqKasAa8kPe2rWcqOEzVnuUjj
+	 xwzvPOSICzD9MgKaG873G8LBIZggqLzpPb14U23TFF7m/sh/WU9wPInsLKfEsd/SgY
+	 qmdWjKtkbCarXAeu/Y2ztNBsmaMK+BPAw5vilj/1fNBMWTpMZBLLGIv1mkNxbVXq6j
+	 nsL59JUuW6vZk2cR8k4iKjZ5askx7l0KHxMAOsZMuPrkDHDmMzd9wVO0oGOsRBoN54
+	 Nn58CQju/sGqA==
 From: Sudeep Holla <sudeep.holla@kernel.org>
-Subject: [PATCH 0/4] firmware: arm_scmi: Some fixes to address conflicts
- with fw_devlink
-Date: Fri, 02 Oct 2026 10:36:29 +0100
-Message-Id: <20261002-scmi_bus_fixes-v1-0-8695cbab3fe7@kernel.org>
+Date: Fri, 02 Oct 2026 10:36:32 +0100
+Subject: [PATCH 3/4] pinctrl: imx: Match the standard SCMI pinctrl device
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -37,57 +36,62 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAB97v2oC/yXMUQrCMBCE4auUfTaQrCC1VylSTDLVFVol24gQc
- ndTffwY/imkSAKloSuU8BaV59rgDh2F+3W9wUhsJrZ8ctay0bDI5LNOs3ygxp39jD4eQw+mFr0
- SfkNrxsvfmv0DYdtfqNYvPvJ1JnIAAAA=
-X-Change-ID: 20261002-scmi_bus_fixes-19bfe8d3c8e2
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261002-scmi_bus_fixes-v1-3-8695cbab3fe7@kernel.org>
+References: <20261002-scmi_bus_fixes-v1-0-8695cbab3fe7@kernel.org>
+In-Reply-To: <20261002-scmi_bus_fixes-v1-0-8695cbab3fe7@kernel.org>
 To: arm-scmi@vger.kernel.org
 Cc: Sudeep Holla <sudeep.holla@kernel.org>, Peng Fan <peng.fan@oss.nxp.com>, 
- Hans de Goede <johannes.goede@oss.qualcomm.com>, 
  Pengutronix Kernel Team <kernel@pengutronix.de>, 
  NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>, 
  linux-gpio@vger.kernel.org, imx@lists.linux.dev
 X-Mailer: b4 0.16.0
 
-Peng’s [1] identified the problem of multiple SCMI devices sharing one
-protocol fwnode. His [2] shows the consequence: the first device owns
-the fwnode but does not bind, so fw_devlink can leave consumers deferred
-even when another device binds successfully.
+Use the standard "pinctrl" SCMI device name instead of the i.MX-specific
+"pinctrl-imx" name. Standard devices no longer have exclusive request
+tracking, so the i.MX and generic pinctrl drivers can register for the
+same protocol/name pair. Their probe checks select the appropriate
+driver for the platform.
 
-This four-patch series reduces those cases within SCMI. It prevents
-protocol device creation in exclusive raw mode, stops treating core
-created standard devices as driver owned requests, and makes the i.MX
-pinctrl driver match the standard `pinctrl` device instead of creating
-a second device for the same fwnode. It also omits the `perf` device
-when the firmware node does not describe a performance domain provider,
-without changing `cpufreq` device creation. IIO/HWMON don't have any
-fw_devlink dependency and having two devices shouldn't be an issue.
+This solves the issue that occurs when both "pinmux" and "pinmux-imx"
+devices that share the same fwnode as only the first device registered
+is assigned as the owner of the fwnode. If this owner device fails to
+probe (e.g., its driver is blocklisted or missing), it never reaches
+the driver_bound() stage and the system skips cleaning up its supplier
+links. Even if a alternative device binds successfully, the system
+still looks to the broken original owner. As a result, all dependent
+hardware components (I2C, SPI, UART, USB, MMC, PCIe) defer probing
+forever, halting the boot process.
 
-These changes address the SCMI cases above; they do not provide a
-general driver core solution for devices that share a fwnode.
+Note that the solution doesn't support same fwnode being shared by
+multiple devices and associated fw_devlink feature.
 
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: NXP S32 Linux Team <s32@nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>
+Cc: linux-gpio@vger.kernel.org
+Cc: imx@lists.linux.dev
+Reported-by: Peng Fan <peng.fan@oss.nxp.com>
+Closes: https://lore.kernel.org/all/20260928-driver-core-v1-1-0846bb8e0f32@nxp.com
 Signed-off-by: Sudeep Holla <sudeep.holla@kernel.org>
-
-[1] https://lore.kernel.org/all/20250120-scmi-fwdevlink-v2-0-3af2fa37dbac@nxp.com
-[2] https://lore.kernel.org/all/20260928-driver-core-v1-1-0846bb8e0f32@nxp.com
-
 ---
-Sudeep Holla (4):
-      firmware: arm_scmi: Avoid protocol devices in exclusive raw mode
-      firmware: arm_scmi: Skip requests for standard protocol devices
-      pinctrl: imx: Match the standard SCMI pinctrl device
-      firmware: arm_scmi: Skip unused performance-domain devices
+ drivers/pinctrl/freescale/pinctrl-imx-scmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/firmware/arm_scmi/bus.c              | 107 +++++++++++++++++----------
- drivers/pinctrl/freescale/pinctrl-imx-scmi.c |   2 +-
- 2 files changed, 68 insertions(+), 41 deletions(-)
----
-base-commit: aac4e67d6eb93118cfa70c6562b5f9c81a7042ef
-change-id: 20261002-scmi_bus_fixes-19bfe8d3c8e2
-
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx-scmi.c b/drivers/pinctrl/freescale/pinctrl-imx-scmi.c
+index 613552e35070..b259a526ccc1 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx-scmi.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx-scmi.c
+@@ -354,7 +354,7 @@ static int scmi_pinctrl_imx_probe(struct scmi_device *sdev)
+ }
+ 
+ static const struct scmi_device_id scmi_id_table[] = {
+-	{ SCMI_PROTOCOL_PINCTRL, "pinctrl-imx" },
++	{ SCMI_PROTOCOL_PINCTRL, "pinctrl" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(scmi, scmi_id_table);
 
 -- 
-Regards,
-Sudeep
+2.43.0
 
