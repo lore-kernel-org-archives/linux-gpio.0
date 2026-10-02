@@ -1,137 +1,135 @@
-Received: from mail-oa2-f34.google.com (mail-oa2-f34.google.com [74.125.231.98])
+Received: from mail-ej2-f43.google.com (mail-ej2-f43.google.com [74.125.228.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BAC469846
-	for <linux-gpio@vger.kernel.org>; Fri,  2 Oct 2026 10:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94412455615
+	for <linux-gpio@vger.kernel.org>; Fri,  2 Oct 2026 10:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790935354; cv=none; b=eaxz3DGFxSvM4X67kUnnyqLbIbDdYLUnMJl6Fmvznt2PBIGQeGHhwv24dWIcaSkDx3UFsyjA5X5iSIgKmrh+1ma/TsqZfHEawdRisZcIR6SjV0yPFGyUiBdjBwwkBCHHYFSKxgYcCDG9dvQre0GecTWhtcy89dAULRiRCZYxXBs=
+	t=1790936320; cv=none; b=girW53IpJL2fzP+HZx4VJsYh+u3B9nKUefY2AdYUB6CSaU9COLVFCUsHfAlmGvbWnGnVM19SgxgdlBlcEIsRsca1ro42icbOJezvRwdwYQfExXco1wBMFyrXb8EZAGC5dHH19EszOm1T4hBFYP26APQB5ReynUD6Cfej8dXX6FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790935354; c=relaxed/simple;
-	bh=GzAnx2xBXfEPO5tzd00AnUoKCvkCiQ5XrGLMnwGIK18=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=chcBB48BVNbqMev3sBZN7AadEPzMCUJj/duCRslhUbSzKIoObObEouVuhQw6+ZeG1ZZux7bWFSXfotbzDoT32h72fhzR5SZbSfglRvdxkKJ/sRFXkHmq9+jZ0eFpHOqA2pNWDlFXhv/AMV5y2pO3ubQIjCqd5a8Xh6EwvUnV8ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.231.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1790936320; c=relaxed/simple;
+	bh=Mibw2iCp18VIFMlhV/kjcqAYiFGLy8WWeb9id2+XlQA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cNfnUogCDzpKfDRyw0/CapeyrzTRWrEi+wRm7aTpqGS00xCQeD2vVzpg4fl9GacZSyhFHxGLsYbZgtbqw8VpO2nW5bEhG/XlXiwsVnnpNvyu1+2opjayYAdcbKzkyAOgbgBQ76X9fAlXgxG3Sjnw+6iUdyCKByYmKEl0Z/gbPmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eLIIqjJf; arc=none smtp.client-ip=74.125.228.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa2-f34.google.com with SMTP id 586e51a60fabf-49e0ff50821so670147fac.1
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2026 03:02:32 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eLIIqjJf"
+Received: by mail-ej2-f43.google.com with SMTP id a640c23a62f3a-c2e2218e711so33527466b.1
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2026 03:18:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790936317; x=1791541117; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=3ff/XvzxY93KOQfzC3a54rsMSJuWp3rTdaJjJYBq0PA=;
+        b=eLIIqjJfBCrYJLZZ5hQPmrBDOcHmEYfy7iQOgabtezoB5zSYeqLqroPxVlnLkBVEg8
+         C5s3RaHGIkG6d4Hf36KGrS1fV/qOWLk9V/wBIzj+I9pfqSDbVFoaEQdHApSqxfGQ7qq5
+         238y3mB63WU2a2bsijV3wYy/i2MwMZbx1PmpJ/j/3EXmR+suri5SAHtZtgN8zRZVUsX9
+         Lzzs5z1KTXozTmBImliEk0oFHCizPb4BHmNVCEJ0akEtVp3GjJfNigMUqF3oMMdsaBEb
+         Kpl7lldlAcHQWeP9EXETFtbSlzjb3ZSxW9Dy39ArLbD+nGUZiXtc1OS0fgKosAjNSX0B
+         zkhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790935352; x=1791540152;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Z0fxwGjBjqcCfabEbDLAIlWYoRpsrY3klbqZYJ/Lvy0=;
-        b=L8HlyhLaJGo9hcfCJnEIaITQJtbaQ8yzW0dwVtgrtH5PR9ycgyxuzld5N73Y8WzMQl
-         5uIgjedu7VXGz69MH9k2PbiLdWyBfyme+i+MNW4NHBBnHZL4wjPIeUDy4/kEmmlqc7pe
-         PgbW986PNLor9nfiiZSijxIObKBynjz/thG/xw8At4mqytUEiZ4c27GyQmlEmgZDTJA7
-         Aio31/T70pv2dHPbtLD2IJ2YdOKFF5NN21cTV3z6DOkRPIqoSYQm3fXbkYILcVEq93HU
-         5ZmV1GWsOD/K1UNnUuEO8RHODYR0p3b5aQ+WA/XqhE6BsgHRDoOiCwr1ldtaHy7IDmSq
-         VSvQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwdRgsbIEaOSzaQW6FFMf8VJPH7+0rKcLA98Oik86SihjprPBZSSwMlN0/C54d2JjCo1cz+AS1u3iWH@vger.kernel.org
-X-Gm-Message-State: AFuF++lRKONmOMHTlQiuRDZlaO0BVyuxuPPhfcMJruKZJenisXrfA8Ej
-	5+pAxWdJOu3DpKswPoRC3lwuxRj3NTj8XlCCAKQlNcYm54SX8OoEgejYXYGXGk1d
-X-Gm-Gg: AYBFou3g+J8PvQIC5/ff73vLzbI9sI9yJw0ezCrkqSZAEOJttB4uJmMS/ePQru7E2UA
-	CMhKgvBTI1qnAZT0iW8zGsi3Hqyh/zCkOCPl48FmsswIYhq+CRXlh1nAaaCkxLoqjEKnlxkHfs9
-	47hMZbDJsR5sYyW5/2GBbAgLqsAtHeydnKNx2r5TS43JBvpZ/FWD3fw1nsq7MgZTj6guHxNONOj
-	QKEJxAPNBM+Wf0oRF6oE1WLFS3YFa3ZKBKE7zUoxtn+1XAfuGdNNRgCuJbG0aYak7L1W01zIRCo
-	kvImZVZ5UDWnXmAQfPpz8ieSNAREv7LxS9fDMw9M/bjdXVZMLeTFSL4ByqiNJ591wu6+ubtoDog
-	nSZISXJlxfYElwY9TnuWYlSCM84DZHWmeQvGPh1FMksp3F+ekX5NDd96Oyl+i1z2NDvnbsZKqlK
-	fB9hBswSZv5MzUeetT3BiYG31Js88VDSKxWhd024S/jUbPlouyfk8kaN5WZAk+h7DPh6eBhfblY
-	yagonCFIi/ACg+q5FxKD4N91Xs1B44AV3XVIoNkGLvZNn/W
-X-Received: by 2002:a05:6870:de07:b0:465:8554:94b7 with SMTP id 586e51a60fabf-49e15c3e941mr2097659fac.12.1790935351920;
-        Fri, 02 Oct 2026 03:02:31 -0700 (PDT)
-Received: from mail-oi2-f12.google.com (mail-oi2-f12.google.com. [74.125.231.204])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-49e16e3caafsm1912781fac.9.2026.10.02.03.02.28
-        for <linux-gpio@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Oct 2026 03:02:29 -0700 (PDT)
-Received: by mail-oi2-f12.google.com with SMTP id 5614622812f47-4b5c61966d0so3999003b6e.3
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2026 03:02:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBycRn1lY0vEIRqRtANzoTzN3iJIFt+vsqZwW+dt7zEd6ByIF6wwvMR0RzlIlkbixdb35vCvtewhmDMH@vger.kernel.org
-X-Received: by 2002:a05:6102:162c:b0:7b5:6bb2:53a3 with SMTP id
- ada2fe7eead31-7c0f498afacmr661636137.10.1790934890369; Fri, 02 Oct 2026
- 02:54:50 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1790936317; x=1791541117;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=3ff/XvzxY93KOQfzC3a54rsMSJuWp3rTdaJjJYBq0PA=;
+        b=fm8xwIfI1QHBVx+h/5zYmo+oekL9D6oK+UpPPAJ4aLmD4y6737MnpxBVfU62/xurng
+         TOVGKYPCqoYOYVYSnbThUmZ1PC/+36GvBSoelA/reMcKWHl4tMDXBBZOxNShe6A+srSo
+         r7KcNIL6X28h2vZkRfXEJqdLOV1+WjUOQuxLhKIkikd8LJcr4Il4lh4tDDAF5W6bPny5
+         F6G9ZhzwjDE4t47M6Wo1YcGbNmMdEnH2xnLKYS4+2lJDWl6HSu3BT17PVVFXwChz6q75
+         2XDiQzx8JJrtOpKqlaFka2MlNURYYZgBOdXc4ZXuggBt8BrBKfp7QkkfotroexXqKfVf
+         8CaA==
+X-Gm-Message-State: AFuF++mTHx38BEFs5vrTgKgn8S+uKJ+P2LCOaAuPQLQs86klwnF5fGmC
+	46FEHK0Jmcu17w40ZAXsuok8GPdCqZ8D01XRtqBiBI7u6Hbq91CGusmE
+X-Gm-Gg: AYBFou0NGmZtuSPBNe4eIVL7PDkw18RSGxJ3hGHGpOmmRJZxsUj8FmSt2/hJuxMsUYc
+	Ow+nypxy/57c8MQOZNZK8EnFv85sL/FFB0JZq0M18qF0INkaJWANhz2GcYWFr0HEpzUNmc5Z+/I
+	tx9SAD+Mwjb44HwNH3vf48smmXlQlCFjZ0RkiuuYcptWsczuqAdiIkoFFGC5TvqmoR/7c6Ait9b
+	OC7Z0y2NGvncNhAxe/W3Uu0lWpdJ0Eww+s1NhaH9rF0grenyQVssXKUs9FDBO+bzQBC2Cx3Bf9L
+	7dBSLDqMdM+L8ufozjIKjt/0daUFOYyswZBxlgMyeslwjVO/ddey28JD4ct6XmiuK1Hs1wODcaK
+	vdqkt+XuimECLisLT+CSBP1xev0fujW5WJjthuFX14gGQtBvrXzSv8hPhKPJJD4AzYCrL7v+2N3
+	B5nJlfAE+9sEgj09HrG2Yq9glLoMxL6o29vOOWwTrX8OKSVo9GLkg7bBLMYVpHQCdPKJvd6h//3
+	Hwenf2jeKGN42nPXxv8aPnCQq72
+X-Received: by 2002:a17:907:3f90:b0:c25:ca8a:8e25 with SMTP id a640c23a62f3a-c2e4a92bfffmr195136666b.1.1790936316710;
+        Fri, 02 Oct 2026 03:18:36 -0700 (PDT)
+Received: from omarchy.onca-albacore.ts.net ([185.139.138.218])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2e4ca4d8a7sm74934866b.1.2026.10.02.03.18.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Oct 2026 03:18:36 -0700 (PDT)
+From: Abduvaliy Abdulazizov <abduvaliy.hbai@gmail.com>
+To: Mika Westerberg <westeri@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Abduvaliy Abdulazizov <abduvaliy.hbai@gmail.com>
+Subject: [PATCH] gpiolib: acpi: Ignore GPIO 11 interrupt on Acer Nitro V 16S AI
+Date: Fri,  2 Oct 2026 15:18:00 +0500
+Message-ID: <20261002101800.51506-1-abduvaliy.hbai@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260928-rzg2-sr-boards-v10-0-91752ea39cbc@solid-run.com> <20260928-rzg2-sr-boards-v10-4-91752ea39cbc@solid-run.com>
-In-Reply-To: <20260928-rzg2-sr-boards-v10-4-91752ea39cbc@solid-run.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 2 Oct 2026 11:54:38 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXZMcdpgmZ8r3khF2er_ZNLsHJOXULbPmWj8ikCyeigew@mail.gmail.com>
-X-Gm-Features: AclHuK95-pOI_InJ83kxtHngxLL78Cpy4C0cuDPVuyEs-ntx9z4X1Kg0cbn21cw
-Message-ID: <CAMuHMdXZMcdpgmZ8r3khF2er_ZNLsHJOXULbPmWj8ikCyeigew@mail.gmail.com>
-Subject: Re: [PATCH v10 04/11] arm64: dts: renesas: add support for solidrun
- rzg2l som and hb-iiot evb
-To: Josua Mayer <josua@solid-run.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benjamin Bara <benjamin.bara@skidata.com>, 
-	Linus Walleij <linusw@kernel.org>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Josua,
+On the Acer Nitro V 16S AI (ANV16S-41) the internal USB camera
+(0408:4035) works on Windows but never shows up on Linux.
 
-On Mon, 28 Sept 2026 at 19:34, Josua Mayer <josua@solid-run.com> wrote:
-> Add support for the SolidRun RZ/G2L SoM [1] on HummingBoard IIoT [2].
->
-> The SoM features:
-> - 2x 1Gbps Ethernet with PHY
-> - eMMC
-> - 1/2GB DDR
-> - WiFi + Bluetooth
-> - SDHI Mux switching between eMMC and Carrier Board
->
-> The HummingBoard IIoT features:
-> - 3x USB-2.0 Type A connector
-> - 2x 1Gbps RJ45 Ethernet
-> - USB Type-C Console Port
-> - microSD connector
-> - RTC with backup battery
-> - RGB Status LED
-> - 1x M.2 B-Key connector with USB-2.0 + SIM card holder
-> - 1x DSI Display Connector
-> - GPIO header
-> - 2x RS232/RS485 ports (configurable)
-> - 2x CAN
->
-> Descriptions for eMMC, microSD and RS485 are provided as overlays due to
-> their dependency on configurable mux states.
->
-> [1] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/rz-g2l-som/
-> [2] https://www.solid-run.com/embedded-industrial-iot/renesas-rz-family/hummingboard-rz-series-sbcs/hummingboard-rz-g2l-iot-sbc/
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
+The firmware drives GPIO 11 of AMDI0030 high to power the camera. The
+same pin is listed in \_SB.GPIO._AEI as an edge-triggered, active-low
+wake interrupt whose _EVT case only writes a debug code. gpiolib-acpi
+requests _AEI pins as inputs, which clears the output enable bit, so
+the camera loses power during boot.
 
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/rzg2l-sr-som.dtsi
+After boot the pin register reads 0x00447a00 (output value 1, output
+enable 0, line low). With the xHCI controller kept away from Linux
+(pci-stub), the camera port shows CSC=1, CCS=0: the camera was
+connected during boot and then dropped off.
 
-> +       sdhi0_4bit_pins: sdhi0-4bit {
-> +               sd0_ctrl_dat03 {
+Booting with gpiolib_acpi.ignore_interrupt=AMDI0030:00@11 keeps the
+camera powered; it enumerates and works with uvcvideo. Add a DMI quirk
+so this works out of the box, like the existing one for the Acer
+Nitro V 14 on the same pin.
 
-> +               sd0_dat47 {
+Closes: https://lore.kernel.org/linux-usb/CAPGafdkBb49YFV+d0rYjbi4QjifCUr1Wos6C5TZtDQzN6-pn+g@mail.gmail.com/
+Assisted-by: LLM
+Signed-off-by: Abduvaliy Abdulazizov <abduvaliy.hbai@gmail.com>
+---
+ drivers/gpio/gpiolib-acpi-quirks.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Node names should not use underscores.  I  will replace them by
-dashes.
-
-> +       };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpio/gpiolib-acpi-quirks.c b/drivers/gpio/gpiolib-acpi-quirks.c
+index a0116f0..5cb0d5f 100644
+--- a/drivers/gpio/gpiolib-acpi-quirks.c
++++ b/drivers/gpio/gpiolib-acpi-quirks.c
+@@ -343,6 +343,22 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
+ 			.ignore_interrupt = "AMDI0030:00@11",
+ 		},
+ 	},
++	{
++		/*
++		 * GPIO 11 is the power enable of the internal USB camera.
++		 * The firmware drives it high but also lists it in _AEI with
++		 * an empty handler. Requesting it as an input turns the camera
++		 * off, so it never enumerates.
++		 * Found in BIOS V1.14
++		 */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
++			DMI_MATCH(DMI_PRODUCT_FAMILY, "Acer Nitro V 16S AI"),
++		},
++		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
++			.ignore_interrupt = "AMDI0030:00@11",
++		},
++	},
+ 	{
+ 		/*
+ 		 * Wakeup only works when keyboard backlight is turned off
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.55.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
