@@ -1,211 +1,165 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010037.outbound.protection.outlook.com [52.101.201.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8881F4AB1D0;
-	Fri,  2 Oct 2026 13:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790949127; cv=none; b=OYaH490Axl9E+BMJadkScppg8/f13zcBYHPWzMFkl2zyTQ1WH2bDubUwmQDh2km/4wkz/aDQ+j2cAGRXF6/8+fjWlGebEntI0o0FLI92ZqrKMLwo/BSCsYZ73bZ7Bhu/KbpGl/rqjTfwU/+mtFrLIcfYAbiQihEh+/V8fodX0qE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790949127; c=relaxed/simple;
-	bh=vQn/UvxJai8olpk7tjD6vcaqv6ea4A8jc/8qu8mr2j0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=JsBx/NdSz32qrfHblpKZxlpz1D1IIVD/OSZwLoXZcrKo5VdYgqObdb6iGvpBZqaSrtNZEEqVdY12xxrFLaQsrXLbcvcPqRrBUvIvO2X0dvF+OBgTYki19ZU3rFJJFkHn79arffLbdSW9aYiFY3/Mt7LYVsxzdwBe0BYD8UAzQUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oDwcXx2G; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0EA4CDDE9;
+	Fri,  2 Oct 2026 14:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790951470; cv=fail; b=Dwot99SFvLbo81w3ekan3jfcoZeD54ldCyZjDpi2PmfrWAhRwsGRN6AwzKOKrCf+ax3ul3kD7AKN3ScHY3/a+82zp2Bl6laQaoMLezL9pGI3q1jZW4UaofnIA+Dz1d1wyoVWdwnSCFxspBtYixmcJ73PeSQwhhkSjqUlIzUJmUk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790951470; c=relaxed/simple;
+	bh=ripgC/bj+tKbQpKJuRP/dQFQlV1A/NNECi8gpQQEsS0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t0IUiLjf5fBGurC7ByYKFBthOMcuU8dugkgU1JUkhb9DSuTZwXsc+NJWVmDxccxOA2orprk9iuQWd2yrW59WY/htbqj6+hYSkdru8IFbY08jjLoBw5JpkXD1MaENYcmRkmRJkhytxHsj2gvZQLutvMw5ZXoBaPpoJQJWGkTpweA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=04UH8YcU; arc=fail smtp.client-ip=52.101.201.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDwcXx2G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C1DF1F000FF;
-	Fri,  2 Oct 2026 13:52:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790949126;
-	bh=9ajHiX0c3BZlGKVhGi19LA0Q3JMxAbGSQmVWKZD04Kc=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject;
-	b=oDwcXx2GLDQvmlZEnFZUok1dadGokJvmlO4QZ0TOXRknYvc2czHs8uDvOszmb4Xtu
-	 VM20MJt+mFwj/8U17JF/X7WSUtJZnoC3HLXYs3RGbDLvuJBhd66F8ON0+p6u+EyRmU
-	 RrURfaKHEtme/WXTOBBiKw23k7mNp5ZsH1EOsGz9I0cxLmfh/CeojZPxPyL4PoBvyG
-	 7gseyg9/grFeEhvq1bffRZHbZbXNEmc6tTO6iovRphr258HMbIdh0mxvl+lGj5xmdA
-	 Cr0auWhnno4zdoqpyBkpu6QURrMXnJdsLfInD1uVqC7atB3p48QACk5YHt10WQQVtQ
-	 CgAZSTmwcg2LQ==
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailfauth.ams.internal (Postfix) with ESMTP id 8AA41198003A;
-	Fri,  2 Oct 2026 09:52:03 -0400 (EDT)
-Received: from ams-imap-11 ([10.64.2.31])
-  by ams-compute-02.internal (MEProxy); Fri, 02 Oct 2026 09:52:03 -0400
-X-ME-Sender: <xms:Abe_avHHQaBIk_Kyd-HZmoQarPXkbP3vcarq6wv32pmNXPA8VyizFg>
-    <xme:Abe_anJ7X4FdkGzKv6ldOc0cuvZx2wyQVMWXgukiZBdLFfzNlA9PToYGwLaFWt_oD
-    tbyvlVtMFOyy0nbnKL0Fl9vyWOL789cuFA1eFfCBJ98MRdCXMdRIYNG>
-X-ME-Proxy-Cause: dmFkZTG2SSBU1HgYU8SrPtS3kHNUyFjkNQvrAXFQxeRX8qWJTtNZLjMsW3FnZ0iC6MYfOy
-    rAwjazHrYGy/mElACwfLCAwHkbqCJ2WW4+7xYcCrvqeig1Z0tTUGx7Ss65vbH/rNbwSI2h
-    FjuArhUdWk+87U8t0m0mnNLagvIM0sxR7S0VStKZq99NUWfCr0jCWQmtbJM4YmcQpzkj+j
-    nEcnidtTdgXVMOGibVaPQjcs+AyO4gRKxc2D2xRt+YG7eL0t9Jl6c6tLmqC6aRj7L/PR3Y
-    KqqKvWbUwQywfZrwcGu3+/KzldX6/1pLck64ueEoWz8cMAQWOxHzybeyHLbFdivCglVbBH
-    L87AljYz/+Y31wVP4HNEf/N+D3fHik+ZXIG+J0rnmOf2JfOY9COo1zUey8SAY4ZKe4Kj1N
-    GAoHhDUTIwjIGk0cb65X7vdeCWquehLOYYc/b3VIRS7qiBrCu1/WBkd0jgeZCOpwt0mgqh
-    9wjsCKrDTbyN3A+IlaJSDSd1O/qZNAKPXNAinDNGuNGpaJAqki5CETKNMO2XNnURg+IO1x
-    XPZgIiaa/1OrerB8LnOWb7bKYcPS+8vXd2hqcf21ZLoQ7sypj3tm3LgXfZjgBFTvv9ut15
-    +EMf/yn+AffDgEwx0WgWQzRiDu+5tVi4GJMBdZUqNbgR6SDp9GoCwG3qWEbQ
-X-ME-Proxy: <xmx:A7e_ajrfhb4LSYXmjhYe2Np45yl3qm9DtiRLJPqdjmAgYfCn47p_5Q>
-    <xmx:A7e_al04eD3Qs0bFUexXCETGwQuySv7w7YJlzcQQFzLgaqgjfkATjw>
-    <xmx:A7e_arxPClRhNYvSdS3J-9nNZivWZH-uJWb-y5UMO2O_C531QSqzsg>
-    <xmx:A7e_ahhhz_d1AlIwOBSeFHBheOwQxeLU9t26EexMW6zcB-8t2t3kIg>
-    <xmx:A7e_auoq9h3Jg2KeZNLjpX59OARLq7wA8Sg5S5bwlK2xcyAUSxdIZN8z>
-Feedback-ID: ice86485a:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id B111DF8008E; Fri,  2 Oct 2026 09:52:01 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="04UH8YcU"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gJQ00RacdoY+BQkHL9NuIDVBH7nlnGwUOdh/yJJyiYxwgUCQtG0xUQpPJlJilynPJlNuvKlzPcJdfASJdjrnbsEfIgfEDQu8EK9A6Ef4Vya91z9WpaB9ByHlgM/0DEENqoJV5WHx/L8JUiVvdRKAoufmsajXPp5QUZsxtPO+pPbKBzOg0qSC+2xrZG9rBgpGTIyCvULiOg19BTlDUPwCsD2RmkWhLFzyO0CHZmAWl8sl7+Io93TR4cTkt6jomOXdY5DS8As6YHHZpSJed+eU8eRWtQ3N/wpdLWbfthDd3tjq9UAAocGtuHpxrxgPVQfyLPUqK3Ib8fsm/rrih0aSdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cJjKaW5Fmcq9XOEg3gklfAkg90rpz3yIzVcvADifBlY=;
+ b=vgGbfdnug9CoNyeX4Byjp8oN8WG21uvLtKKqXxQclCAfYv7PR7P1+WV3Nxj9ddAJO3n+JoEHOtgDovdWSWkNN7mz/O10BMAaQjIihfY0iBdi7ChIom8+7SPNUgnmQKcfaoiuZSjzOTkzbT/nXPuzTw7cF5kF/CQmYooSCYvCBR7vy7GHUZeEi/LPDYJkke+pxk+Ob19RZwz0uLE63kfBdrqKPVObeVvKY06daynIEsX9kYlmRR++3o91nkvgxpIvVZ1UhdYTs5rTib8oPri3y3+yowuy7b7A71pjT7ON0H17gc0RXxQpNxocjceQKKUXBoQmrA+kN4d0kc44HfJ11w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cJjKaW5Fmcq9XOEg3gklfAkg90rpz3yIzVcvADifBlY=;
+ b=04UH8YcUt8WNIRPsXAt3gV+w4YRP7U1DVMnO6GHzE3fqEbJ3vLx9qlNsoT3UnopcMhifgtCgkg4vwWyvsH2Zirec/SCYfz9ms1b5XzGHlY3PLz0plF+GnvgIeNzi2PbukI+Pm2pAiyBBk/oA0xoUpeJEhpEhWS4Poqbq7WE38PM=
+Received: from BN0PR03CA0004.namprd03.prod.outlook.com (2603:10b6:408:e6::9)
+ by LV0PR12MB999092.namprd12.prod.outlook.com (2603:10b6:408:32e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.18; Fri, 2 Oct
+ 2026 14:31:04 +0000
+Received: from BN7PEPF000000A7.namprd05.prod.outlook.com
+ (2603:10b6:408:e6:cafe::f) by BN0PR03CA0004.outlook.office365.com
+ (2603:10b6:408:e6::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.17 via Frontend Transport; Fri, 2
+ Oct 2026 14:31:03 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BN7PEPF000000A7.mail.protection.outlook.com (10.167.245.231) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.472.14 via Frontend Transport; Fri, 2 Oct 2026 14:31:03 +0000
+Received: from ausmlimonci-lx1.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Fri, 2 Oct
+ 2026 09:31:01 -0500
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: <Basavaraj.Natikar@amd.com>, <Shyam-sundar.S-k@amd.com>,
+	<linusw@kernel.org>, <mario.limonciello@amd.com>
+CC: Olzhas Marat <marat.olzhas@gmail.com>, <stable@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>
+Subject: [PATCH] pinctrl: amd: Clear S4 wake bits when firmware has _AEI
+Date: Fri, 2 Oct 2026 09:30:37 -0500
+Message-ID: <20261002143040.37200-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 02 Oct 2026 15:51:40 +0200
-From: "Ard Biesheuvel" <ardb@kernel.org>
-To: "Bill Wendling" <morbo@google.com>
-Cc: "Linus Walleij" <linusw@kernel.org>, "Jeremy Kerr" <jk@ozlabs.org>,
- "Bartosz Golaszewski" <brgl@kernel.org>, "Kees Cook" <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- codemender-patching+linux@google.com
-Message-Id: <4c92ca0e-c502-4a63-a2a2-bbf53db5e40f@app.fastmail.com>
-In-Reply-To: 
- <CAGG=3QWKEgeggp+OcVsS4QLOX1zxN23HHZp1SfHX0rQVA_7nDQ@mail.gmail.com>
-References: <20260928063824.1386524-1-morbo@google.com>
- <CAGG=3QWCmQ+LVvn2dtjEauj5WFwvx=pvg4Q6man_A2imdjRe7A@mail.gmail.com>
- <CAD++jLk2pFCpbpGVCQg2AdrwQecpb=wsehhwSuwTbKAXNeyfoQ@mail.gmail.com>
- <CAGG=3QV2k-nsZHNSuKEixZb+-LcxvhQsG379ghgyOpiDLTJWzw@mail.gmail.com>
- <CAD++jLnOm3ua7hom_L4YQwN5z81M17WmL_VGqx+-ugrAJ-6_Dg@mail.gmail.com>
- <7e847715-6bd5-4f69-a9a6-339788810fec@app.fastmail.com>
- <CAGG=3QWKEgeggp+OcVsS4QLOX1zxN23HHZp1SfHX0rQVA_7nDQ@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: annotate struct acpi_gpio_mapping with __counted_by_ptr
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN7PEPF000000A7:EE_|LV0PR12MB999092:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6ec94395-812a-43dc-bcdd-08df2091c9b8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|23010399003|376014|1800799024|36860700016|6133799003|18002099003|10067099003|13003099007|56012099006|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	w4RM4FBOA+/yvwtbBWwTQR+b+iD3upz2QNpf9BKrnTff9Lz7FR80gKUi9IhSMx562lXwbXftECHBYXnrPzRIBH4trbVDeUrTLB9411Hd8hoWZgfG4mA/Xh/5953VID623Bf3oA+9AsF0ZVhakxZxL/paKHy7oamb2wrFZoz2buCpuqsa0jeNz+Z938GBwybbn+SWLrVIGz2r5mu67I49SIkXnHaiu5yd98J59xQ4pe9gkfyqpy3TSbiviYV63pzW6y2cxhL4bSDs9w3IUyY5otfZtY/D4u3WGyon8/soxVxngnNS5n9j2L8w5U8BMss7JQNVm9gtqCGku9zlbi9CHK1fviXun8+Yxt1dR88oeTfukPIkqBvD183hOjeZlBWXZQcdjMLxYnYF2eRLlliiFaUmi4kYPhiXmvFxlSYFRJb9/GAzfBtpajgPm+5/ATpVkBXW/EhrJJICA6WAFrOGVSQzje76rSGwREu8FxWecSlMKdDyDa55r+PoGs8F5lUJXTtXlNNNBR0M9c2pLN/E0QuiXJV9rHD77MooJbPaPQWJ7CZ6WuswUU5j0XC3LEsrJugOcxUtoRnF6/WT1a6kDxiYatD/zJWnH/k88gHmVQATLuy+wszW2joYm1p1HYTbKVQmOUD4vg9qwZjCIO0vCOmcr+s2k4KqeQ/eHJ2tAZ0=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(23010399003)(376014)(1800799024)(36860700016)(6133799003)(18002099003)(10067099003)(13003099007)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	3w+sOwmC2+1Ekuc/aTjt7hMXqBvM9bw8vxNUxvLZdA63apRRb8un2dtd+1wNr5qoWqlkp9ROR9pVqWvllVyVUeiFBnsb6XcVr/sYldbIQM3AiWKWkfc9X6aWkSZhBaEgPJzKyUuc2v3XsmMfv3vZ6NHGbw4bNohqmFyyF7AaJZU+Ee2RbA3uL4pgd2nywp3au6PPx0SIugcM79A3FARXc6sTWiABfvl67hVgq2Q0bB7vefvnZwI76bpqcdtbRybvD41IHPjM1QGfW6KeBd4lcjJUvHn4B2PlDrpaJ3wXxa+PxzflNJDDwhpckVOwS9Efwc4gVEC4WV2E1l1nwZRLUOgvQI3jqFZGp4jXiUzom5uI6BovNugeNj9Tbtutimp9QKwm5uAhLxVUs2/pHNbOBsUny7o0tF6nDPAph+0hRc95FjOIkYVITahfdFskyLjW
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2026 14:31:03.6071
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ec94395-812a-43dc-bcdd-08df2091c9b8
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN7PEPF000000A7.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV0PR12MB999092
 
+Commit ffe8a0c6b552 ("pinctrl-amd: Don't clear S4 wake bits at probe")
+preserves firmware-programmed S4 wake sources because some PCIe devices
+rely on them for Wake-on-LAN. The system that motivated that change does
+not expose ACPI GPIO events through _AEI.
 
+On a Chuwi CoreBook Plus, firmware exposes _AEI but also leaves the S4/S5
+wake bit set for GPIO 24. This causes the machine to power back on
+immediately after shutdown even though Wake-on-LAN is not enabled.
 
-On Fri, 2 Oct 2026, at 14:44, Bill Wendling wrote:
-> On Fri, Oct 2, 2026 at 12:38=E2=80=AFAM Ard Biesheuvel <ardb@kernel.or=
-g> wrote:
->> On Thu, 1 Oct 2026, at 23:24, Linus Walleij wrote:
->> > On Thu, Oct 1, 2026 at 10:05=E2=80=AFPM Bill Wendling <morbo@google=
-.com> wrote:
->> >> On Thu, Oct 1, 2026 at 12:56=E2=80=AFPM Linus Walleij <linusw@kern=
-el.org> wrote:
->> >> > On Mon, Sep 28, 2026 at 9:22=E2=80=AFAM Bill Wendling <morbo@goo=
-gle.com> wrote:
->> >> > > On Sun, Sep 27, 2026 at 11:38=E2=80=AFPM Bill Wendling <morbo@=
-google.com> wrote:
->> >> > > >
->> >> > > > The 'data' pointer field in 'struct acpi_gpio_mapping' is as=
-sociated
->> >> > > > with the 'size' field, which represents the number of elemen=
-ts of
->> >> > > > type 'struct acpi_gpio_params' allocated for 'data'.
->> >> > > >
->> >> > > > To improve bounds checking via CONFIG_UBSAN_BOUNDS and
->> >> > > > CONFIG_FORTIFY_SOURCE, annotate 'data' with the __counted_by=
-_ptr
->> >> > > > attribute.
->> >> > > >
->> >> > > > Analysis of allocation, assignment, and access points shows =
-that the
->> >> > > > pointer is never accessed before the count is set, which gua=
-rantees that
->> >> > > > this annotation is safe and will not cause runtime panics or
->> >> > > > false-positive bounds checks.
->> >> > > >
->> >> > > > Cc: codemender-patching+linux@google.com
->> >> > > > Assisted-by: LLM
->> >> > > > Signed-off-by: Bill Wendling <morbo@google.com>
->> >> > > > ---
->> >> > > >  include/linux/gpio/consumer.h | 2 +-
->> >> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >> > > >
->> >> > > > diff --git a/include/linux/gpio/consumer.h b/include/linux/g=
-pio/consumer.h
->> >> > > > index fceeefd5f893..2b80cf7aa7e7 100644
->> >> > > > --- a/include/linux/gpio/consumer.h
->> >> > > > +++ b/include/linux/gpio/consumer.h
->> >> > > > @@ -667,7 +667,7 @@ struct acpi_gpio_params {
->> >> > > >
->> >> > > >  struct acpi_gpio_mapping {
->> >> > > >         const char *name;
->> >> > > > -       const struct acpi_gpio_params *data;
->> >> > > > +       const struct acpi_gpio_params *data __counted_by_ptr=
-(size);
->> >> > > >         unsigned int size;
->> >> > > >
->> >> > > >  /* Ignore IoRestriction field */
->> >> > >
->> >> > > There's a problem with 'drivers/firmware/efi/libstub/Makefile'=
-. Clang
->> >> > > needs a compiler flag to support the "__counted_by_ptr" attrib=
-ute
->> >> > > referencing a field *after* the pointer, like in this patch. H=
-owever,
->> >> > > the Makefile blasts the flag away for x86 platforms. Below is =
-a hack
->> >> > > that copies the part of the top-level Makefile that adds the f=
-lag. I
->> >> > > don't think that's a good solution. The comment in the driver's
->> >> > > Makefile says that the stub code executes before the kernel do=
-es,
->> >> > > which I assume is why a lot of the flags are blown away... In =
-any
->> >> > > event, I'm not sure how best to address this.
->> >> >
->> >> > But is this a problem with the current patch?
->> >> >
->> >> > Does libefistub use <linux/gpio/consumer.h> in any way, shape
->> >> > or form?
->> >> >
->> >> It's being #included transitively:
->> >>
->> >> In file included from drivers/firmware/efi/libstub/efi-stub-helper=
-.c:12:
->> >> In file included from ./include/linux/efi.h:20:
->> >> In file included from ./include/linux/rtc.h:18:
->> >> In file included from ./include/linux/nvmem-provider.h:16:
->> >> ./include/linux/gpio/consumer.h:670:55: error: use of undeclared
->> >> identifier 'size'; did you
->> >>       mean 'ksize'?
->> >>   670 |         const struct acpi_gpio_params *data __counted_by_p=
-tr(size);
->> >>       |                                                           =
-   ^~~~
->> >>       |                                                           =
-   ksize
->> >> ././include/linux/compiler_types.h:392:64: note: expanded from mac=
-ro
->> >> '__counted_by_ptr'
->> >>   392 | #define __counted_by_ptr(member)
->> >> __attribute__((__counted_by__(member)))
->> >>       |
->> >>        ^~~~~~
->> >> ./include/linux/slab.h:602:8: note: 'ksize' declared here
->> >>   602 | size_t ksize(const void *objp);
->> >>       |        ^
->> >
->> > Hm I see.
->> >
->> > Certainly Jeremy or Ard will have an idea about how to solve this,
->> > so paging them in.
->> >
->>
->> libstub code never executes in the context of the kernel, but only in
->> the context of the boot firmware. Generally, we disable instrumentati=
-on
->> there that has a significant runtime component, basically because we
->> cannot crash or panic the kernel before we have even booted it.
->>
->> Can we just #define __counted_by_ptr(...) to nothing when building
->> from that Makefile?
->>
-> Doing it in the Makefile is tricky, because of how the "c_flags"
-> variable is defined and used. I couldn't find a good way to do it.
-> Instead, I inserted "#undef __counted_by{_ptr}" at the top of the
-> affected files. It's gross. If there's a way I'm missing, please let
-> me know.
->
+GPIO register dumps show that the only relevant difference is bit 15 on
+GPIO 24. Clearing that bit makes the machine remain off. However, GPIO 24
+is not itself listed in _AEI, so clearing only the pins described there
+would not fix the problem.
 
-Does that even build?
+Use the presence of _AEI to distinguish the platform's GPIO event model.
+Continue clearing S0i3/S3 bits on every system. Clear S4 bits when firmware
+exposes _AEI, indicating that the platform uses OS-managed ACPI GPIO
+events, but preserve S4 bits when _AEI is absent for firmware-programmed
+sources such as PCIe PME that bypass the GPIO IRQ wake API.
+
+Fixes: ffe8a0c6b552 ("pinctrl-amd: Don't clear S4 wake bits at probe")
+Reported-by: Olzhas Marat <marat.olzhas@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=222041
+Cc: stable@vger.kernel.org
+Tested-by: Olzhas Marat <marat.olzhas@gmail.com>
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/pinctrl/pinctrl-amd.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 15a398bb3be23..dca01c5d2231b 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -880,12 +880,25 @@ static const struct pinconf_ops amd_pinconf_ops = {
+ static void amd_gpio_irq_init(struct amd_gpio *gpio_dev)
+ {
+ 	const struct pinctrl_desc *desc = gpio_dev->pctrl->desc;
++	acpi_handle handle = ACPI_HANDLE(&gpio_dev->pdev->dev);
+ 	unsigned long flags;
+ 	u32 pin_reg, mask;
+ 	int i;
+ 
+ 	mask = BIT(WAKE_CNTRL_OFF_S0I3) | BIT(WAKE_CNTRL_OFF_S3);
+ 
++	/*
++	 * _AEI indicates that the platform uses OS-managed ACPI GPIO events.
++	 * Without it, preserve S4 wake bits for firmware-programmed sources
++	 * such as PCIe PME that bypass the GPIO IRQ wake API.
++	 */
++	if (handle) {
++#ifdef CONFIG_ACPI
++		if (acpi_has_method(handle, "_AEI"))
++			mask |= BIT(WAKE_CNTRL_OFF_S4);
++#endif
++	}
++
+ 	for (i = 0; i < desc->npins; i++) {
+ 		int pin = desc->pins[i].number;
+ 		const struct pin_desc *pd = pin_desc_get(gpio_dev->pctrl, pin);
+-- 
+2.43.0
+
