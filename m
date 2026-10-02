@@ -1,93 +1,109 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD62D36606A;
-	Fri,  2 Oct 2026 12:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9669A46A5EE
+	for <linux-gpio@vger.kernel.org>; Fri,  2 Oct 2026 12:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790945249; cv=none; b=BEAARrnkZjQIKj2hoTKVUFtskRz/r2J8qWrvuEE0q9JRhTCqNRK//2s/hJT94EF3uKUboLkgTwKR1jfchd8mOzMt0ZhjT+fg5Pd1Ms5LWq3pWvZJEFPfeyTNrJ+qbE4B/L+LN2C/1OYbGCnU+HbWPQPj5kWhYZqzwGe8cOKPDLY=
+	t=1790945713; cv=none; b=gRYxFo4qjx0TPkXXecsu50NhED0gKP15cTKj8xyRCo2AJTGrYmkqCo+Ut/Y12OG/loqdnlTnZujXHPx0gYfiYM4A5bA6H1AU8Fr7NwdhJQp84DHW1zx41rtK25QICEXXyDKqQZuaL3DaZjSMJbDB7gGI5xWtXh0nXNS/CJ7Yg74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790945249; c=relaxed/simple;
-	bh=DFJixfsIIsAGQ1MSX9PuJBKchNKJqzGO0iLvyteoq8M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tLevi8iSUUz8l85IM46liKSFY9TRyPtu9YiN65csdwaAQTClQQfP/ENlqfZ2Kh2rHGQxxeLM4OWy3zcdiVcBy/8JwulzKquG6xxNimOeRp6JjCnZ2oH0Xd0TxQUbKZY3C4X+2eZ/vVmTTzJn56yI930Y057YfSBna1brNahfpL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GA7YOjRb; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790945713; c=relaxed/simple;
+	bh=vwFoyYFNblHuOjQD2wTs82kHOetNQh5rkCkHM/W68VM=;
+	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
+	 Message-Id; b=I6GUE+Gu5HnfjiRW278DecagJTw3HaAzDKe/IlsID5TZdgjcm36HYUxBwjIL1V+a1iYYo/lM5xBDiLL7NLTCPeaaeTyHD1DZ6eH4XqzBORyJKrYJAZGJAQdMDpNQATF1h9jFLF06JNtgtXg4vJYPjUUa4K7q7UAHg2gTw5A3Bb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IwGy6LC1; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GA7YOjRb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D03A1F000FF;
-	Fri,  2 Oct 2026 12:47:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IwGy6LC1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16EDE1F000FF;
+	Fri,  2 Oct 2026 12:55:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790945247;
-	bh=R2xU9ceQc0e8UmIXLVO9+Apn4tm7FqEhaNqlTP4GigE=;
-	h=From:To:Cc:Subject:Date;
-	b=GA7YOjRbHeW6/SiKhyawvhfHXc3OlriUbi7gLKA4gyOzSPw90yY03h4O8y1oIHmtB
-	 qFH2R5FNHcDJAtdvTMMmR8fBDom7YXQjdTb9HZtxTVGAyEXPrh5fs6sN7HNQa33sQF
-	 EABr/gsESBU7J2qNRYJ8zjiK3yPCvk7rmsOl1/XB+HsHalQm5Ni2ilbYV3pIhVDR6J
-	 aS/cyGvsMuukoLRSfqvEhSyVrOAIU0wj5tY/0jGEFKmPC+cqnmRLbQ3YvjCgsbHb7k
-	 frnlSQKwHP2BwbH5kxdVrdlwskA6VVjKY2Jzw9fHg4iy0k75s4F4kXprXaCgHxPv1b
-	 VBzX93wWD1fWQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Linus Walleij <linusw@kernel.org>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>,
-	Lianfeng Ouyang <lianfeng.ouyang@starfivetech.com>,
-	Alex Soo <yuklin.soo@starfivetech.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: starfive: fix missing CONFIG_OF dependencies
-Date: Fri,  2 Oct 2026 14:47:15 +0200
-Message-ID: <20261002124722.3545736-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	s=k20260515; t=1790945712;
+	bh=kcIzxiRw5j/Q7N0XZjGQiEgSRJ2+Okdi8LPzKUU6yPs=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=IwGy6LC1YJ+1XIgjfX36OQGEFE+HySHHG7mpCf6Y1ORqBSNEl4p05MXAHpEMuZbfm
+	 hLeZgr5PNzoxh+EquamMbrMLsfg0XbomE8iwC2eSVRNwKxrfb698p5QrQFgiwCah/x
+	 0kiYlfx9il7s48MHFAJONpcEkOKs3/RmXSre7rIWIqkDrvpcUn6H3n7y/cPZ1k2b6m
+	 Vo2GwMVzZCefETsu30gYnCJvWMyFwkCmhrS/AaL+p5B4aPrlRZEJbBylR9P7aEOMZN
+	 7qDk41N3MipwrNTpPOQbzj+7LT8xceP+T/8BvSh4NpzPoVia9SC2BSSvJp7Y6rI+nF
+	 p3yX+FjP7M/OA==
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH v2] gpiolib: annotate struct acpi_gpio_mapping with
+ __counted_by_ptr
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Bill Wendling" <morbo@google.com>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <20261002124226.435265-1-morbo@google.com>
+References: <20260928063824.1386524-1-morbo@google.com>
+ <20261002124226.435265-1-morbo@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 02 Oct 2026 12:55:11 +0000
+Message-Id: <20261002125512.16EDE1F000FF@smtp.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [High] efi/libstub: incomplete removal of __counted_by attribute
+--
 
-The common driver portion requires CONFIG_OF, but the drivers
-selecting it do not, so we get random warnings:
+commit db43ca0ac71b2e4fee34adfbd304bb5744b340e2
+Author: Bill Wendling <morbo@google.com>
 
-WARNING: unmet direct dependencies detected for PINCTRL_STARFIVE_JHB100
-  Depends on [n]: PINCTRL [=y] && OF [=n]
-  Selected by [y]:
-  - PINCTRL_STARFIVE_JHB100_PER1 [=y] && PINCTRL [=y] && (ARCH_STARFIVE || COMPILE_TEST [=y])
-  - PINCTRL_STARFIVE_JHB100_PER2POK [=y] && PINCTRL [=y] && (ARCH_STARFIVE || COMPILE_TEST [=y])
-  - PINCTRL_STARFIVE_JHB100_SYS1 [=y] && PINCTRL [=y] && (ARCH_STARFIVE || COMPILE_TEST [=y])
-  Selected by [m]:
-  - PINCTRL_STARFIVE_JHB100_PER0 [=m] && PINCTRL [=y] && (ARCH_STARFIVE || COMPILE_TEST [=y])
-  - PINCTRL_STARFIVE_JHB100_SYS0 [=m] && PINCTRL [=y] && (ARCH_STARFIVE || COMPILE_TEST [=y])
+gpiolib: annotate struct acpi_gpio_mapping with __counted_by_ptr
 
-Apparently the problem is selecting CONFIG_OF_GPIO, which is a mistake
-the newly added driver copied from others. This was recently cleaned up
-with commit e785c990adcc ("pinctrl: Kconfig: drop unneeded dependencies
-on OF_GPIO"). Do the same here for consistency and to avoid the warning.
+This commit annotates the data pointer in struct acpi_gpio_mapping with the
+__counted_by_ptr attribute to improve bounds checking. It also undefines the
+__counted_by and __counted_by_ptr macros in some of the EFI stub library
+source files to prevent unsupported bounds-checking instrumentation that co=
+uld
+crash the boot firmware.
 
-Fixes: 9c4d0c8fc4c1 ("pinctrl: starfive: Add StarFive JHB100 sys0 controller driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/pinctrl/starfive/Kconfig | 2 --
- 1 file changed, 2 deletions(-)
+> diff --git a/drivers/firmware/efi/libstub/alignedmem.c b/drivers/firmware=
+/efi/libstub/alignedmem.c
+> index 31928bd87e0ff..36248a13f15b4 100644
+> --- a/drivers/firmware/efi/libstub/alignedmem.c
+> +++ b/drivers/firmware/efi/libstub/alignedmem.c
+> @@ -1,5 +1,13 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> =20
+> +/*
+> + * The EFI stub doesn't execute in the context of the kernel, only in the
+> + * context of boot firmware, which isn't the time or place to crash the =
+kernel.
+> + * Therefore, disable the __counted_by__ attribute.
+> + */
+> +#undef __counted_by
+> +#undef __counted_by_ptr
 
-diff --git a/drivers/pinctrl/starfive/Kconfig b/drivers/pinctrl/starfive/Kconfig
-index 11bd429b45b7..7ff506a15dd8 100644
---- a/drivers/pinctrl/starfive/Kconfig
-+++ b/drivers/pinctrl/starfive/Kconfig
-@@ -50,11 +50,9 @@ config PINCTRL_STARFIVE_JH7110_AON
- 
- config PINCTRL_STARFIVE_JHB100
- 	bool
--	depends on OF
- 	select GENERIC_PINCTRL
- 	select GPIOLIB
- 	select GPIOLIB_IRQCHIP
--	select OF_GPIO
- 
- config PINCTRL_STARFIVE_JHB100_PER0
- 	tristate "StarFive JHB100 SoC Peripheral-0 pinctrl and GPIO driver"
--- 
-2.53.0
+[Severity: High]
+Are there other EFI stub library files that need these attributes disabled?
 
+The #undef directives appear to be applied to only 14 out of 45 source files
+in drivers/firmware/efi/libstub/. Architecture-specific EFI stub files for
+non-x86 platforms (e.g., drivers/firmware/efi/libstub/arm64-stub.c,
+drivers/firmware/efi/libstub/riscv-stub.c) and generic core files
+(e.g., drivers/firmware/efi/libstub/vsprintf.c, drivers/firmware/efi/libstu=
+b/fdt.c,=20
+drivers/firmware/efi/libstub/zboot.c) were not updated.
+
+These files still include <linux/efi.h>, which ultimately pulls in
+<linux/compiler_attributes.h> and defines the macros globally. Compiling the
+EFI stub for non-x86 architectures or enabling generic features like zboot
+could leave the unsupported annotations active, potentially causing build
+errors or fatal boot-time panics.
+
+Could this be solved by passing -U__counted_by and -U__counted_by_ptr via
+KBUILD_CFLAGS in drivers/firmware/efi/libstub/Makefile, or by adding the
+directives to a common header like efistub.h?
+
+> +
+>  #include <linux/efi.h>
+>  #include <asm/efi.h>
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261002124226.4352=
+65-1-morbo@google.com?part=3D1
