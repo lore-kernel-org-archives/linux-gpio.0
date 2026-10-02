@@ -1,113 +1,126 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f41.google.com (mail-pj2-f41.google.com [74.125.227.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151DC23D295;
-	Fri,  2 Oct 2026 02:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56299205E29
+	for <linux-gpio@vger.kernel.org>; Fri,  2 Oct 2026 04:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790907570; cv=none; b=ALJUYlisybwj107d8HRNXxFZqrvhaRFQvXb9nMmux2o/1StgEfEbHrlkDXNO+ebZuTlLm8KD2db6u3rs4a9uUmCfevH6Vl02aC28XuSREPVg9lLtmRn5jvORZnP1p5GPBA+ceUAgwzDpJJ1uDwy5+t6oakvGiNVw7A+NuEN3t+U=
+	t=1790913803; cv=none; b=DkOzlajAvgXoO+3WrAG44x1GEjnrx0S4nE8gZ2lMeyNHQwnmgZ3M5USzH7+IMhLiuQ9QfwrMxYV1dctAY5AsvgpKH1Bxux/jGBF2bqpKn506w9W317/tuJE8uKQ0pHGhobVDJ5kjsF7UkkMtq0hbbMrxVgXlgy1n2SZlEQvxz6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790907570; c=relaxed/simple;
-	bh=6M+UKP95uOCXtlBZBQ87VI3/zEbKTPu8471WPinWG1E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=V9NPcKX8VRuZi4g6Hemwg/hRuHuO7x2Wa57xzeiUo1dhi/lrXgncv3jwZYY/vQXgR7e9xWDKMlSJaLVmXOERMKueAnmr+E1vxCYwoa6uJHq5lZIHAvRCNst0fyhTeA8wyED+NcxB8fhdoKxVg1CZk64CTvaFBEhFYtfNs29ZKUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=S2vsJkv3; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1790913803; c=relaxed/simple;
+	bh=g9rjyBFKyz8/fT6X0ihutSjref47BDZAXNIuWZ++R2Q=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Htrfz+EYKoOiaa8nv9Zv+/WvzBoTiPCnRMM7qc3td/mJMJSOh82XSdirBZpXPBH7gfmF5ZUVHNbGlchk1hnxm9/V0YZoicCmLB5+k1lUAf3cs01CcZ0qA8fmbcE+nNOGMPQQSX8c0ErIdZtCF/g9hF/gOdkNcG9Z2KBWTJIOd0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X84moNtB; arc=none smtp.client-ip=74.125.227.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="S2vsJkv3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=6M+UKP95uOCXtlBZBQ87VI3/zEbKTPu8471WPinWG1E=; b=S
-	2vsJkv3QYTUZBtD4qZ5KKZEy3Wt7v3iZeooJeD4KK2ke6DeaeheqnjTGWi3fTUPi
-	rwnPBv4Z8+0MkGSomU+EFbbuTRRSqfWH3UqDpcEkcrx4bodZ1jwgTt1kaFf1XP2t
-	EicZ4QercFKgb/7D/E8TZnHrd96UoQu5HugL1ZjGVs=
-Date: Fri, 2 Oct 2026 10:17:53 +0800 (CST)
-From: zl020895  <zl020895@163.com>
-To: "Linus Walleij" <linusw@kernel.org>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-	longzhao@ambarella.com, "Arnd Bergmann" <arnd@arndb.de>,
-	"Krzysztof Kozlowski" <krzk@kernel.org>,
-	"Alexandre Belloni" <alexandre.belloni@bootlin.com>,
-	soc@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	"Rob Herring" <robh@kernel.org>,
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-	"Conor Dooley" <conor+dt@kernel.org>,
-	"Michael Turquette" <mturquette@baylibre.com>,
-	"Stephen Boyd" <sboyd@kernel.org>,
-	"Jerome Brunet" <jbrunet@baylibre.com>,
-	"Bartosz Golaszewski" <brgl@kernel.org>,
-	"Michael Walle" <mwalle@kernel.org>,
-	"Jiri Slaby" <jirislaby@kernel.org>,
-	"Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Catalin Marinas" <catalin.marinas@arm.com>,
-	"Will Deacon" <will@kernel.org>, "Lee Jones" <lee@kernel.org>,
-	mfd@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH v9 13/15] serial: 8250_dw: add Ambarella CV75 quirks
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
-In-Reply-To: <CAD++jLnv1Q7ChHuLo=ad9edqhZL8MNaMab8huMAepK_LwqVzGQ@mail.gmail.com>
-References: <20261001-cv75-v5-v9-0-486cc289a4b8@ambarella.com>
- <20261001-cv75-v5-v9-13-486cc289a4b8@ambarella.com>
- <2026100140-overbite-mundane-fc79@gregkh>
- <CAD++jLnv1Q7ChHuLo=ad9edqhZL8MNaMab8huMAepK_LwqVzGQ@mail.gmail.com>
-X-NTES-SC: AL_Qu2SAvWbuEws5SSebekcn0wRhug/UMa4u/sm3YNXc8AFnCHm4xgjUkF5HHHP+cSgBSmMqBeOdRZX299KTblabN9UUWfBtPNqeWUCoV4bFw==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X84moNtB"
+Received: by mail-pj2-f41.google.com with SMTP id d9443c01a7336-2e49fc73a7cso621435ad.3
+        for <linux-gpio@vger.kernel.org>; Thu, 01 Oct 2026 21:03:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790913801; x=1791518601; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:content-type:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=l/y9SA8Xp9ypUT4pM/+vyMouDzNX0kvEm0OBvzyJrUg=;
+        b=X84moNtBWtdv/+pZTIpu9mbM3989a/WMuQe/tqjMoZcvqUUbkufrDpGCFi3YSGsz/1
+         Aa5F+rYXWwZLMhXDciKqAF2Adl0zavFNSwH7m6RQSqoOY9y8tF5z1uhGS12APneYS18H
+         NcfQ+RDdaRf2i2vuYmjy0T+Z2HwO8oxUeFekQsoixdy9XPuWWq1j+9hgUzKPZlaqJT1o
+         G7CNfCoJxVQ0/fPaHSqwlFYVw8Z1ES8g2umkgLLcmr2gKtkCRvVlgaGr+4CH1uBH3l/1
+         8/yn+wjO9ML84QRY3di5B5HovKywyZMyogALj3ietAPA1apUN3Iiiik+ysImKlYeHNFz
+         RomQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790913801; x=1791518601;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:content-type:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=l/y9SA8Xp9ypUT4pM/+vyMouDzNX0kvEm0OBvzyJrUg=;
+        b=cN0VchKIryv/WAeEadFYaei5FLvn+Qv3QvfNflcnKL4NfZUUGBsWad/Zx6QO/tz1Zw
+         k39eNOoLmFM3losgOvjXRSBOQfvg9cMaL7oU3Yndv+rmIn79yUdqGEqmyPIKbH38+vHE
+         aU/J3qIhVP9g3Jhq2ghO4B8kSoM/sZ0gjJyC/vgEJiLxtISBY+QOHhesvbBIQImXC0dQ
+         GTPhxt5yZ9PSS0PFLOvEQPEE7gKSP4oG80/+MvQWD1rpfBJ2rZ6xTQLxEMhhJ6z4oE2t
+         A/Yrh580fND9tEqA1KviEmeWOPBkCRE+YJ3JwVk4eKZAzYwYgxnazfY6lu6DYGP8zZmL
+         x2PQ==
+X-Forwarded-Encrypted: i=1; AKwUvBz95uUjgOjhkaWMzNrDF9j2uLuvYjE4BiBDzn07FXDDHkYpPU7+yfum4g0sgotS/Mv0dU1lVO1m+XXX@vger.kernel.org
+X-Gm-Message-State: AFq9FYI/gDb026XTu3/kPIk0TwN7Gt411qdM4mkVuwKg5fq4T7PO3mHe
+	sM4f1daJZQglFzh3ae+aPm/sy9K2n/bw8wGUmSPVwGuoN+d/AMaRH6ZekVukVw==
+X-Gm-Gg: AYBFou1IzCf2zcxI+iYV6xdPm9kXBld0iuzcM2h3OXdpvaDTaMt1d/bBExOtD7mHR62
+	MEvASXJZpInGFZ6dWGYHqm+yDirtNAeEkoDGVJQDlScdrm1X68d4B4JvbFGLMrmBPeDldZ2Os9x
+	OzsrAP85TAuYQufIxLJk14sHavIygd0/642GGUsJ5qksdxQXoRur2/vty8c21bKekfYYpk2Ttpp
+	QRtDO1Kel5/zrG4zfXUr2F1vdfBAzSDv5WieZGnej/DiKw1JZB04A5zKCsjtA1DKbiE13H8hjon
+	xjoG0q8Ut2wcgnere/fXNoIk9uztMyD2eNKZgx49qZRG68df8VatAncDGTCB+7v6Z/4bG/Hsq09
+	mCBLcqyqOaFWsXC8ICZPIRvtKLBS1eWuSkKioxqwHBd/qZdAx7pSYXCDzy/78KDKi5KILqk0zMS
+	2xTvWBakAO35gtcGQ8xVI7/2w/0QKa3za92WiBTG2VxZtedPTWJGlyWUEt/iwjAKDl9c4rRTnTe
+	jg0KrxH6saZ0h8MwePI
+X-Received: by 2002:a17:90a:2c84:b0:3a6:e61f:74a5 with SMTP id 98e67ed59e1d1-3a6e61fd172mr606098a91.2.1790913801473;
+        Thu, 01 Oct 2026 21:03:21 -0700 (PDT)
+Received: from smtpclient.apple ([23.247.139.92])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a4f4747100sm7013550a91.11.2026.10.01.21.03.19
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Oct 2026 21:03:20 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <4405a61f.505.1a0fa675e43.Coremail.zl020895@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:hSgvCgDnL_tRFL9qW95RAA--.9580W
-X-CM-SenderInfo: d2oqjiqyzvqiywtou0bp/xtbCxhGjFWq-FFEAigAA37
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81.1.8\))
+Subject: Re: [PATCH RFC 3/4] gpio: loongson-64bit: Add shared interrupt
+ support
+From: Miao Wang <shankerwangmiao@gmail.com>
+In-Reply-To: <CAD++jLn54ts=136H2SXtOfx2n7PukYCQJY9VyKm_h+uxR4=gDw@mail.gmail.com>
+Date: Fri, 2 Oct 2026 12:03:06 +0800
+Cc: Yinbo Zhu <zhuyinbo@loongson.cn>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ linux-gpio@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1E8C13A3-5203-4516-987C-867690208D09@gmail.com>
+References: <20260926-loongsongpio-v1-0-71de7ebebb76@gmail.com>
+ <20260926-loongsongpio-v1-3-71de7ebebb76@gmail.com>
+ <CAD++jLmRWGXBo8UP6RKt+HHCTam0NxaN6F1DK4XAjoQpoNujjg@mail.gmail.com>
+ <C6A08AB5-069E-4CC6-8CA0-DEF22F369208@gmail.com>
+ <44D04759-C409-4C4C-9FD0-737A8CF9B79A@gmail.com>
+ <CAD++jLn54ts=136H2SXtOfx2n7PukYCQJY9VyKm_h+uxR4=gDw@mail.gmail.com>
+To: Linus Walleij <linusw@kernel.org>
+X-Mailer: Apple Mail (2.3826.700.81.1.8)
 
-SGkgR3JlZywgTGludXMsCgpUaGFua3MuCgpUaGlzIHNlcmllcyBmb2xsb3dzIHRoZSBuZXctdmVu
-ZG9yLCBuZXctU29DIHByb2Nlc3MgYW5kIGlzIHNlbnQKYXMgb25lIHNldCwgc28gdGhlIG5ldyBL
-Y29uZmlnIHN5bWJvbCBhbmQgdGhlIGRyaXZlcnMgdGhhdCB1c2UgaXQKbGFuZCB0b2dldGhlci4K
-CklmIGl0IGhhcyB0byBiZSBzcGxpdCwgdGhlIEdQSU8gcGF0Y2hlcyBhbmQgdGhlIFVBUlQgcGF0
-Y2hlcyBjYW4KZ28gb3V0IGFzIHRoZWlyIG93biBzZXJpZXMuIFRoZSBTb0MgcGF0Y2hlcyBhbmQg
-dGhlIENWNzUgY2xvY2sKZHJpdmVyIHNob3VsZCBzdGF5IGluIG9uZSBzZXJpZXM6IHRoZSBjbG9j
-ayBLY29uZmlnIGRlcGVuZHMgb24KQVJDSF9BTUJBUkVMTEEsIHdoaWNoIGlzIGFkZGVkIGJ5IHRo
-ZSBhcm02NCBwYXRjaC4KCldvdWxkIHRoYXQgc3BsaXQgYmUgYWNjZXB0YWJsZSBmb3IgeW91PwoK
-QmVzdCByZWdhcmRzLApMb25nIFpoYW8KCkF0IDIwMjYtMTAtMDIgMDM6MjA6NTEsICJMaW51cyBX
-YWxsZWlqIiA8bGludXN3QGtlcm5lbC5vcmc+IHdyb3RlOgo+T24gVGh1LCBPY3QgMSwgMjAyNiBh
-dCAyOjUy4oCvUE0gR3JlZyBLcm9haC1IYXJ0bWFuCj48Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5v
-cmc+IHdyb3RlOgo+PiBPbiBUaHUsIE9jdCAwMSwgMjAyNiBhdCAwODo0MTowMlBNICswODAwLCBM
-b25nIFpoYW8gdmlhIEI0IFJlbGF5IHdyb3RlOgo+Cj4+ID4gRnJvbTogTG9uZyBaaGFvIDxsb25n
-emhhb0BhbWJhcmVsbGEuY29tPgo+PiA+Cj4+ID4gVGhlIEFtYmFyZWxsYSBDVjc1IFVBUlQgaXMg
-QW1iYXJlbGxhIElQLCBub3QgYSBTeW5vcHN5cyBEZXNpZ25XYXJlCj4+ID4gbGljZW5zZWQgYmxv
-Y2suIEF0IHRoZSByZWdpc3RlciBsZXZlbCBpdCBpcyBjbG9zZSBlbm91Z2ggdG8gRFcgQVBCIFVB
-UlQKPj4gPiB0aGF0IGEgZnVsbCBjdXN0b20gVUFSVCBkcml2ZXIgaXMgdW5uZWNlc3Nhcnk6IHJl
-dXNlIDgyNTBfZHcgd2l0aCBhCj4+ID4gc21hbGwgcGxhdGZvcm0gcXVpcmsuCj4+ID4KPj4gPiBR
-dWlya3M6Cj4+ID4gLSBrZWVwIElFUiBFVE9JIChiaXQgNSkgc2V0IGZvciBSWCB0aW1lb3V0IGJl
-aGF2aW91cgo+PiA+IC0gc2tpcCBzZXRfcmF0ZTsgYmF1ZCBjbG9jayBpcyBtYW5hZ2VkIG91dHNp
-ZGUgdGhlIFVBUlQgYmxvY2sKPj4gPgo+PiA+IFJldmlld2VkLWJ5OiBMaW51cyBXYWxsZWlqIDxs
-aW51c3dAa2VybmVsLm9yZz4KPj4gPiBSZXZpZXdlZC1ieTogQW5keSBTaGV2Y2hlbmtvIDxhbmRy
-aXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+Cj4+ID4gUmV2aWV3ZWQtYnk6IElscG8gSsOk
-cnZpbmVuIDxpbHBvLmphcnZpbmVuQGxpbnV4LmludGVsLmNvbT4KPj4gPiBTaWduZWQtb2ZmLWJ5
-OiBMb25nIFpoYW8gPGxvbmd6aGFvQGFtYmFyZWxsYS5jb20+Cj4+ID4gLS0tCj4+ID4gIGRyaXZl
-cnMvdHR5L3NlcmlhbC84MjUwLzgyNTBfZHcuYyB8IDMyICsrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrCj4+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzMiBpbnNlcnRpb25zKCspCj4+Cj4+IFdo
-ZW4geW91IHN1Ym1pdCBsb3RzIG9mIGRpZmZlcmVudCBzdWJzeXN0ZW0gcGF0Y2hlcyBhbGwgaW4g
-b25lIHNlcmllcywKPj4gaXQncyBoYXJkLCBpZiBub3QgaW1wb3NzaWJsZSwgZm9yIHN1YnN5c3Rl
-bSBtYWludGFpbmVycyB0byB0YWtlIHRoZW0gOigKPgo+SW4gbXkgZXhwZXJpZW5jZSBwZW9wbGUg
-ZG8gdGhpcyBpbiBjYXNlcyBsaWtlIHRoaXMgaXQgaXMgYmVjYXVzZSB0aGV5Cj5lc3NlbnRpYWxs
-eSBkdW1wIG91dCB0aGVpciAiYnJpbmctdXAiIHRyZWUsIHRoZSB0aGluZyB0aGV5IGhhdmUKPmJv
-b3Rpbmcgb24gdGhlIGhhcmR3YXJlIHNvIHRoZXkga25vdyB0aGUgcGllY2VzIHdvcmsgdG9nZXRo
-ZXIuCj4KPkxvbmc6IGNhbiB5b3Ugc3BsaXQgaXQgdXAgaW4gdG9waWMgYnJhbmNoZXMgYW5kIHdv
-cmsgb24gZS5nLiB0aGUKPnNlcmlhbCBkcml2ZXIgb24gYSBzZXBhcmF0ZSBicmFuY2g/Cj4KPkEg
-YmV0dGVyIHdheSB0byB0ZXN0IHRoZSB3aG9sZSBzZXQgb2YgcGF0Y2VzIGlzIHRvIGp1c3QgY3Jl
-YXRlIGEKPm1peGRvd24gYnJhbmNoIHdoZXJlIHlvdSBtZXJnZSBhbGwgdGhlIHRvcGljIGJyYW5j
-aGVkIGludG8KPm9uZSAidGVzdCIgYnJhbmNoLCB0aGVuIHlvdSBib290IGFuZCB0ZXN0IHRoaXMg
-YmVmb3JlIHNlbmRpbmcKPm91dCBlYWNoIGJyYW5jaCBzZXBhcmF0ZWx5Lgo+Cj5FYWNoIHRvcGlj
-IGJyYW5jaCBjYW4gYmUgdmVyc2lvbmVkIHNlcGFyYXRlbHkgd2l0aCBiNC4KPgo+WW91cnMsCj5M
-aW51cyBXYWxsZWlqCg==
+Hi,
+
+> 2026=E5=B9=B410=E6=9C=882=E6=97=A5 03:43=EF=BC=8CLinus Walleij =
+<linusw@kernel.org> =E5=86=99=E9=81=93=EF=BC=9A
+>=20
+> On Thu, Oct 1, 2026 at 7:47=E2=80=AFPM Miao Wang =
+<shankerwangmiao@gmail.com> wrote:
+>=20
+>>>>> +       unsigned int usedby : 31;
+>>>>=20
+>>>> Is this a bitmap? Then use a bitmap abstraction.
+>>>=20
+>>> When exclusive is 1, it is a pure number while when exclusive is 0,
+>>> it is a bitmap.
+>>=20
+>> To correct my self, usedby is not a bitmap. When exclusive is 1, it =
+stores the using pin
+>> id, while when exclusive is zero, it is a counter which stores the =
+number of using pins.
+>=20
+> But what is this mess with using 31 bits for the pin ID?
+>=20
+> How many bits does it *actually* need, using 31 bits looks
+> like some way to try to help the compiler to optimize the struct
+> which is pointless because the struct isn't even suffixed with
+> __packed...
+
+Ah, you are right about it. I intended to reduce the memory that
+is needed to hold the struct. However I realized that by using
+bit fields, the memory cannot be saved due to the alignment. Will
+change in next version.
+
+Cheers,
+
+Miao Wang
+
