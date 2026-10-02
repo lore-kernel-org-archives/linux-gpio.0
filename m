@@ -1,390 +1,222 @@
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+Received: from mail-vs2-f35.google.com (mail-vs2-f35.google.com [74.125.227.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C2A3F661D
-	for <linux-gpio@vger.kernel.org>; Fri,  2 Oct 2026 12:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790944952; cv=none; b=gGtCYpGxh7v56aSy1WKcYurATzt6ho0gpo/YilAOCc9QrdcZHnIoFF0Nd9yU/2c5alBXkNFE8VaFiahQC0eLpxqjZekGcV8sBgWzAzLr2H/tc/DNcPKPH2IuAhH/4hWEqh1HrR0kGEeOCxHF4XX5cC0J9XRyd2FWmRFdJLwXYL8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790944952; c=relaxed/simple;
-	bh=XSRr2dcamW9s+xK37mZQf/IP9nzTt+hMu0KI7ww4FIE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=n0GNkl1AkE2y2wNG/AjBADZG/p/oO9jBYpP8w+Ht2l3HVNRBKfwTSTKjzJ5g0YZnUXeljqY9OzFLjxFz6akemJwxEK/sWifjTr5yh3cafko/a3DcDt9kP6JBz3evS7QPHRe0dkC6OSwfyDN/LaTxdVqKMSRYBUV2Vg68hvHp+6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IiN0rBjn; arc=none smtp.client-ip=209.85.214.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9121A424679
+	for <linux-gpio@vger.kernel.org>; Fri,  2 Oct 2026 12:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.227.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790945094; cv=pass; b=euyaWMrIYO3E9guKcpKV4f/j/HwfBEzeYbnH/ix46RI0en8cQeV44r/FHMXZNTbrgNH5wSeyQTM+RoTvjAxxdLfVf0qeRpdjZhJ+j7TLR/jiMuf6TFhMqMjf7q6Ogdf64VYsERzi1xJ/9H+9ohMAplKA4mTAkvsnxT/JZ8epi/c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790945094; c=relaxed/simple;
+	bh=g9QfHi8EzjRCWHnUBkrwS8yo0cu4ylZ5SZytJAxSQ9Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lUJsSkfS1yBpSd34AHeQ+nuvdSqT8lpIka/QlszvYI1hGj7sg3rDu3EGhXi56FZI4y7AhTyiGnzr7yaGg8yHXNXCKrb6EGC63+j1+17kjTqXn2jvYSQZ8Vv3ZvoS6xRxgeKfdZkM87cC0LaNNC8nea3+NHUFSmiMt1iWcQi+FP4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t1/SzPtT; arc=pass smtp.client-ip=74.125.227.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--morbo.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IiN0rBjn"
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2d6f75c1219so96125865ad.3
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2026 05:42:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t1/SzPtT"
+Received: by mail-vs2-f35.google.com with SMTP id ada2fe7eead31-7bf9002ce96so699857137.0
+        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2026 05:44:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790945086; cv=none;
+        d=google.com; s=arc-20260327;
+        b=GVeLakqoY0iSFbrWqGD8yvDHO8UDwpqWjE8NRqY5nJvXdKel7c1uEVwqH5TS8J/EPW
+         ypt8yPqJCzFtW3CgSw+LEnQNpW79XJ0psYb0k7pv72M051nrLqBU1/QncUFWEy4qFVfR
+         rwD9r51StoiLof5SmTka66Cx2KQJ9/CrOoodDnXAw+mOncM08uWXo9rM3Uj8Ho6DoI1v
+         gIlzbEDPwCASSAZ9LOoXp62vSDUaMJO+nrekTYwlsqKWmlWabyYGwpX+FJ/JLtKFFIz0
+         uigoN1+g5s/ldDogV+KGUOfhqjB271gFvGfZt7cO8XSC+OMcZX6nMeVW+JswQB6j2hjD
+         Nmiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=ErdmA/wWdWdz3Q1T8+D4rKzpmGRrXQnnjgGThiMrKlY=;
+        fh=UUkFDNGRcDVHgDvvny9jFQoM0GFindAbs2nl1Ek4OSM=;
+        b=G0hgkvIZSS89ZFtp0bEv640KVUi8ZzeqNxVz8BXd0hjLIS5fgEyTET7vBHuQt4KNi9
+         RmmEklYnDDf7RY1HX3ey3UkSt7mhf1ogbwV4e57eD4Y7WURW+sBvFsnK+fkz7Jo8skW2
+         ZHBZGYi72BfxDSGi743VREMOX8zP/eiKbywG5QlqLLn0UFhqVgUj25PyYcQT59GjW6fl
+         Y0zXO1Nz/bjk0ZMR6BEpYRy9gi1YKCqD1VQivA151xn8/KxyxendQ7Hm8KLzWXm6Nre7
+         Rww2GkJSXJhl5E+mEEjZ3WXdmobi5wdy0CTR338wVPgoF4XSFjKfwnvDZI5bjUw5uMJX
+         XeHA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1790944950; x=1791549750; darn=vger.kernel.org;
-        h=content-type:cc:to:from:subject:message-id:references:mime-version
-         :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=bqiEufa+6Y7AKpg1CmFTqo5DDymUPYRzxbg/Z7GvGSg=;
-        b=IiN0rBjn9n9NfYnYHd/bY0vueyAQWm2I1KrzKgjwaRfL+Ad2ElQt+d9eG+Xgs5NaQY
-         S3kTwAODlyHmZu7TKsq9EHjXuO2ZocuX+UPxBNCgtsLH2peyfSEcujkXW9EF1vu80bUn
-         DgCxvtTEfhe9Vfbr0knSmOAA/3NEM5zBy+HO6Ib7F/tI8Kkyl/ybywYaRRSVjssUtYMq
-         EKTeAau4Cw27Yrmuh2B/Fx/Fjj6sq+jl8vPsRbNkXSAIvXh6vMOVeWVvQAHP00MsM4Zn
-         eyAgrhpXUeUtStf2mEcgogJYpH5m74saKiQj/8caE6I+tc0Q0zMCAHWxFXSg/loxtWpG
-         au6w==
+        d=google.com; s=20251104; t=1790945086; x=1791549886; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=ErdmA/wWdWdz3Q1T8+D4rKzpmGRrXQnnjgGThiMrKlY=;
+        b=t1/SzPtTPzxep1BpfG4ZxuzMwcZhlOV8lonbOZJjpLt8BIkNabFrrClCPnLuwm9wgX
+         7b/Q54+InRgujDMldIQbuRpNEDEVdVrEaIKduFeWASu+EqbCP303a5W9V/Q0FqcwVtQW
+         MjpoT6nfFsYXna6FGQRm7AZgduLyS1RLFtondxXTYTiZJBIQ2efi/ngcgfyKq5gIzH0V
+         f49/V/UMDn5+6u/BtcDgXrqEtYNuJZI1ANmnKd8usg8guJ9VsGjhzfGqUmnMojWYT+2i
+         3r9ln59xaOjxoedKcXKTtjnRlnp5BdRkeLRKzbwaBqt+1zItyOIoTGq7JtRVel5L7fPn
+         XM4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790944950; x=1791549750;
-        h=content-type:cc:to:from:subject:message-id:references:mime-version
-         :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=bqiEufa+6Y7AKpg1CmFTqo5DDymUPYRzxbg/Z7GvGSg=;
-        b=csyR5RGXWI4ZVO3m7zjLGZtp/Lkcu3E15Mx1TT4TnJRmLO5dFz58ZdU+NVKHXh6/Sy
-         xKu5BtuXcggF8ZE/OtM5ecZBvd8Gzgfa0SwFEosJGTPlq0IQVO7nY2FNlNNoDf6hQVlT
-         lGwI4vtKWrE0QvT7z8pUo86D2pof4+Yl+su9pj8WxcMjKYQrcEyHhohi7X3tGu7xZyGY
-         1GQDSidAcdPOTrNm1hmLW6QHr6tkXD40oN6lUHrr0UP64RcKwBDqSWdwWw4NPikjU817
-         5+qoIP8wy8a9OUky5gQascpx+sPu3u9XXFNSjR2+aAG+qyRbbcYWaFIP6AjzgFc9u9xS
-         xd4A==
-X-Forwarded-Encrypted: i=1; AKwUvBxbWXMi8szLg6uICf90CkwpeUfYlf9UrCvq5wNrGhrTyyd5eFNOaO2jRnqRCNTUQt4Bkz7gQoUwyYqO@vger.kernel.org
-X-Gm-Message-State: AFq9FYINbbAIZ4JDcO+rW08X8LiEwHMGnoCgkX0yIA24Hx1B3KE3w8xH
-	YK860Y4AxtcqKpb5vGIaox82jke7F6UBEqptSBW7tuy/jM6lEKkQwAGp9IqONsUNUt4TYf1o5sA
-	q
-X-Received: from plbko11.prod.google.com ([2002:a17:903:7cb:b0:2e3:180e:ba6e])
- (user=morbo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e892:b0:2e2:d77b:e586
- with SMTP id d9443c01a7336-2e49b6cee8cmr25721005ad.60.1790944949342; Fri, 02
- Oct 2026 05:42:29 -0700 (PDT)
-Date: Fri,  2 Oct 2026 12:42:25 +0000
-In-Reply-To: <20260928063824.1386524-1-morbo@google.com>
+        d=1e100.net; s=20260707; t=1790945086; x=1791549886;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=ErdmA/wWdWdz3Q1T8+D4rKzpmGRrXQnnjgGThiMrKlY=;
+        b=jmIFOIy1rtKnc9gjM2T8vUwhSna8I4/sJYhCvkMR5vhLVEnS95S9Dxg/SkChTsy2xr
+         kwdB2IY3bYMFNMrO+EvkSu2hu143VZtu6VCAV8QpE8SDVDrF56uYwBenqaJ4YsVlRHxd
+         6GsLYE51wxh1H9NshM23+a8WPBoUEcVEskQrugMUGmELbT79X8H85+pbD4j2qYQ8xol1
+         mjPyiagSzUb1RBdmj9+/CUuMYXVFH8BAIZl3nB1laZCgkQCHfEoaWJcrKYiRpUzoD5Dr
+         WCsVxEaOnFZ9Yp3u09nKWy4PDG4PyethMjQ1i56/a01DRF3jJbg8H72teLXusdV0siis
+         CmLw==
+X-Forwarded-Encrypted: i=1; AKwUvBwQh+/uhakd93PS+q7uzJ7BJr0/G1wU0ZkESVLXou4Ba1K8TD9yyFUzxex0B5Z4CkqJ8DFD6+9p2xNI@vger.kernel.org
+X-Gm-Message-State: AFq9FYL1gaFjE0kmogM+jl8CzCeDPXk+uEKJirafh3X8hLPGW9JUbKEh
+	Y6lsIqx2lu/tRvpv2JMSlXtFZl8jQk0rxYx+ncTw/a8D84sYIOlgOtLa6FDroKyqKVLGyYjCB0+
+	sC885nzjQ7+ALLI+rzZrjA59D58ZSp+aRnjvHAMw=
+X-Gm-Gg: AYBFou2bU6yqIv/kvOKosYQF1i/mMMENrjZ+3OzHRUfi4Ta5jSjSiAI0pmvZOV67k7P
+	i1xNfsENekxWTI2YjWLBka68f882+KM6nSByYy/F5w5bELsY2BRG6yu9WqB9wKRma4KHukhF8N1
+	EvSlqxjsSXX0RSgc7tPsOFVQ17PV4PltK/cIYwsXBQlUT53V3+JQpsly2krUJXBSTlB4QGpmAO3
+	2RlbEppc0sL8aPiBvSOiLYIt9gh2ZwzjKJETQaqjijE/du1SQDp92opCzKxIvMKnIdBFWz2oeH2
+	RfFqK2gvbgq2BqscD8pp2sTypZ4fuoC53UONutHxM73v8oU+fYGgWWSj14CJCckDZ1xBasoOeCP
+	D3fC9UhjQkQuL+Ppbc4jW
+X-Received: by 2002:a05:6102:1627:b0:779:5049:87b2 with SMTP id
+ ada2fe7eead31-7c0ef026e4fmr542712137.0.1790945085222; Fri, 02 Oct 2026
+ 05:44:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260928063824.1386524-1-morbo@google.com>
-X-Mailer: git-send-email 2.56.0.rc1.315.gc6ed9934b7-goog
-Message-ID: <20261002124226.435265-1-morbo@google.com>
-Subject: [PATCH v2] gpiolib: annotate struct acpi_gpio_mapping with __counted_by_ptr
+MIME-Version: 1.0
+References: <20260928063824.1386524-1-morbo@google.com> <CAGG=3QWCmQ+LVvn2dtjEauj5WFwvx=pvg4Q6man_A2imdjRe7A@mail.gmail.com>
+ <CAD++jLk2pFCpbpGVCQg2AdrwQecpb=wsehhwSuwTbKAXNeyfoQ@mail.gmail.com>
+ <CAGG=3QV2k-nsZHNSuKEixZb+-LcxvhQsG379ghgyOpiDLTJWzw@mail.gmail.com>
+ <CAD++jLnOm3ua7hom_L4YQwN5z81M17WmL_VGqx+-ugrAJ-6_Dg@mail.gmail.com> <7e847715-6bd5-4f69-a9a6-339788810fec@app.fastmail.com>
+In-Reply-To: <7e847715-6bd5-4f69-a9a6-339788810fec@app.fastmail.com>
 From: Bill Wendling <morbo@google.com>
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	Jeremy Kerr <jk@ozlabs.org>
-Cc: Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-gpio@vger.kernel.org, 
+Date: Fri, 2 Oct 2026 05:44:28 -0700
+X-Gm-Features: AclHuK_2BHsoBwbSP1Le028scX0dX0GO_oD4fcefHQV9KFQAl-gpbu7HNCV6U34
+Message-ID: <CAGG=3QWKEgeggp+OcVsS4QLOX1zxN23HHZp1SfHX0rQVA_7nDQ@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: annotate struct acpi_gpio_mapping with __counted_by_ptr
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Linus Walleij <linusw@kernel.org>, Jeremy Kerr <jk@ozlabs.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-gpio@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	Bill Wendling <morbo@google.com>, codemender-patching+linux@google.com
+	codemender-patching+linux@google.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The 'data' pointer field in 'struct acpi_gpio_mapping' is associated
-with the 'size' field, which represents the number of elements of
-type 'struct acpi_gpio_params' allocated for 'data'.
+On Fri, Oct 2, 2026 at 12:38=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
+> On Thu, 1 Oct 2026, at 23:24, Linus Walleij wrote:
+> > On Thu, Oct 1, 2026 at 10:05=E2=80=AFPM Bill Wendling <morbo@google.com=
+> wrote:
+> >> On Thu, Oct 1, 2026 at 12:56=E2=80=AFPM Linus Walleij <linusw@kernel.o=
+rg> wrote:
+> >> > On Mon, Sep 28, 2026 at 9:22=E2=80=AFAM Bill Wendling <morbo@google.=
+com> wrote:
+> >> > > On Sun, Sep 27, 2026 at 11:38=E2=80=AFPM Bill Wendling <morbo@goog=
+le.com> wrote:
+> >> > > >
+> >> > > > The 'data' pointer field in 'struct acpi_gpio_mapping' is associ=
+ated
+> >> > > > with the 'size' field, which represents the number of elements o=
+f
+> >> > > > type 'struct acpi_gpio_params' allocated for 'data'.
+> >> > > >
+> >> > > > To improve bounds checking via CONFIG_UBSAN_BOUNDS and
+> >> > > > CONFIG_FORTIFY_SOURCE, annotate 'data' with the __counted_by_ptr
+> >> > > > attribute.
+> >> > > >
+> >> > > > Analysis of allocation, assignment, and access points shows that=
+ the
+> >> > > > pointer is never accessed before the count is set, which guarant=
+ees that
+> >> > > > this annotation is safe and will not cause runtime panics or
+> >> > > > false-positive bounds checks.
+> >> > > >
+> >> > > > Cc: codemender-patching+linux@google.com
+> >> > > > Assisted-by: LLM
+> >> > > > Signed-off-by: Bill Wendling <morbo@google.com>
+> >> > > > ---
+> >> > > >  include/linux/gpio/consumer.h | 2 +-
+> >> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >> > > >
+> >> > > > diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/=
+consumer.h
+> >> > > > index fceeefd5f893..2b80cf7aa7e7 100644
+> >> > > > --- a/include/linux/gpio/consumer.h
+> >> > > > +++ b/include/linux/gpio/consumer.h
+> >> > > > @@ -667,7 +667,7 @@ struct acpi_gpio_params {
+> >> > > >
+> >> > > >  struct acpi_gpio_mapping {
+> >> > > >         const char *name;
+> >> > > > -       const struct acpi_gpio_params *data;
+> >> > > > +       const struct acpi_gpio_params *data __counted_by_ptr(siz=
+e);
+> >> > > >         unsigned int size;
+> >> > > >
+> >> > > >  /* Ignore IoRestriction field */
+> >> > >
+> >> > > There's a problem with 'drivers/firmware/efi/libstub/Makefile'. Cl=
+ang
+> >> > > needs a compiler flag to support the "__counted_by_ptr" attribute
+> >> > > referencing a field *after* the pointer, like in this patch. Howev=
+er,
+> >> > > the Makefile blasts the flag away for x86 platforms. Below is a ha=
+ck
+> >> > > that copies the part of the top-level Makefile that adds the flag.=
+ I
+> >> > > don't think that's a good solution. The comment in the driver's
+> >> > > Makefile says that the stub code executes before the kernel does,
+> >> > > which I assume is why a lot of the flags are blown away... In any
+> >> > > event, I'm not sure how best to address this.
+> >> >
+> >> > But is this a problem with the current patch?
+> >> >
+> >> > Does libefistub use <linux/gpio/consumer.h> in any way, shape
+> >> > or form?
+> >> >
+> >> It's being #included transitively:
+> >>
+> >> In file included from drivers/firmware/efi/libstub/efi-stub-helper.c:1=
+2:
+> >> In file included from ./include/linux/efi.h:20:
+> >> In file included from ./include/linux/rtc.h:18:
+> >> In file included from ./include/linux/nvmem-provider.h:16:
+> >> ./include/linux/gpio/consumer.h:670:55: error: use of undeclared
+> >> identifier 'size'; did you
+> >>       mean 'ksize'?
+> >>   670 |         const struct acpi_gpio_params *data __counted_by_ptr(s=
+ize);
+> >>       |                                                              ^=
+~~~
+> >>       |                                                              k=
+size
+> >> ././include/linux/compiler_types.h:392:64: note: expanded from macro
+> >> '__counted_by_ptr'
+> >>   392 | #define __counted_by_ptr(member)
+> >> __attribute__((__counted_by__(member)))
+> >>       |
+> >>        ^~~~~~
+> >> ./include/linux/slab.h:602:8: note: 'ksize' declared here
+> >>   602 | size_t ksize(const void *objp);
+> >>       |        ^
+> >
+> > Hm I see.
+> >
+> > Certainly Jeremy or Ard will have an idea about how to solve this,
+> > so paging them in.
+> >
+>
+> libstub code never executes in the context of the kernel, but only in
+> the context of the boot firmware. Generally, we disable instrumentation
+> there that has a significant runtime component, basically because we
+> cannot crash or panic the kernel before we have even booted it.
+>
+> Can we just #define __counted_by_ptr(...) to nothing when building
+> from that Makefile?
+>
+Doing it in the Makefile is tricky, because of how the "c_flags"
+variable is defined and used. I couldn't find a good way to do it.
+Instead, I inserted "#undef __counted_by{_ptr}" at the top of the
+affected files. It's gross. If there's a way I'm missing, please let
+me know.
 
-To improve bounds checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE, annotate 'data' with the __counted_by_ptr
-attribute.
-
-Analysis of allocation, assignment, and access points shows that the
-pointer is never accessed before the count is set, which guarantees that
-this annotation is safe and will not cause runtime panics or
-false-positive bounds checks.
-
-Cc: codemender-patching+linux@google.com
-Assisted-by: LLM
-Signed-off-by: Bill Wendling <morbo@google.com>
----
-v2: Undefine "__counted_by" and "__counted_by_ptr" in the EFI stub
-    library as it doesn't need it and Clang is missing a flag to
-    enable them.
----
- drivers/firmware/efi/libstub/alignedmem.c      | 8 ++++++++
- drivers/firmware/efi/libstub/efi-stub-helper.c | 8 ++++++++
- drivers/firmware/efi/libstub/file.c            | 8 ++++++++
- drivers/firmware/efi/libstub/gop.c             | 8 ++++++++
- drivers/firmware/efi/libstub/mem.c             | 8 ++++++++
- drivers/firmware/efi/libstub/pci.c             | 8 ++++++++
- drivers/firmware/efi/libstub/printk.c          | 8 ++++++++
- drivers/firmware/efi/libstub/random.c          | 8 ++++++++
- drivers/firmware/efi/libstub/randomalloc.c     | 8 ++++++++
- drivers/firmware/efi/libstub/secureboot.c      | 9 +++++++++
- drivers/firmware/efi/libstub/smbios.c          | 8 ++++++++
- drivers/firmware/efi/libstub/tpm.c             | 9 +++++++++
- drivers/firmware/efi/libstub/x86-5lvl.c        | 9 +++++++++
- drivers/firmware/efi/libstub/x86-stub.c        | 8 ++++++++
- include/linux/gpio/consumer.h                  | 2 +-
- 15 files changed, 116 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/efi/libstub/alignedmem.c b/drivers/firmware/efi/libstub/alignedmem.c
-index 31928bd87e0f..36248a13f15b 100644
---- a/drivers/firmware/efi/libstub/alignedmem.c
-+++ b/drivers/firmware/efi/libstub/alignedmem.c
-@@ -1,5 +1,13 @@
- // SPDX-License-Identifier: GPL-2.0
- 
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/efi.h>
- #include <asm/efi.h>
- 
-diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
-index 8e43eb3f418b..a97d086a76a1 100644
---- a/drivers/firmware/efi/libstub/efi-stub-helper.c
-+++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
-@@ -7,6 +7,14 @@
-  * Copyright 2011 Intel Corporation; author Matt Fleming
-  */
- 
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/stdarg.h>
- 
- #include <linux/efi.h>
-diff --git a/drivers/firmware/efi/libstub/file.c b/drivers/firmware/efi/libstub/file.c
-index b2601e284695..e845dc2e7aa0 100644
---- a/drivers/firmware/efi/libstub/file.c
-+++ b/drivers/firmware/efi/libstub/file.c
-@@ -7,6 +7,14 @@
-  * Copyright 2011 Intel Corporation; author Matt Fleming
-  */
- 
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/efi.h>
- #include <asm/efi.h>
- 
-diff --git a/drivers/firmware/efi/libstub/gop.c b/drivers/firmware/efi/libstub/gop.c
-index b800a6c2290c..f9736d2eff22 100644
---- a/drivers/firmware/efi/libstub/gop.c
-+++ b/drivers/firmware/efi/libstub/gop.c
-@@ -5,6 +5,14 @@
-  *
-  * ----------------------------------------------------------------------- */
- 
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/bitops.h>
- #include <linux/ctype.h>
- #include <linux/efi.h>
-diff --git a/drivers/firmware/efi/libstub/mem.c b/drivers/firmware/efi/libstub/mem.c
-index fec561e3a792..65bea615420c 100644
---- a/drivers/firmware/efi/libstub/mem.c
-+++ b/drivers/firmware/efi/libstub/mem.c
-@@ -1,5 +1,13 @@
- // SPDX-License-Identifier: GPL-2.0
- 
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/efi.h>
- #include <asm/efi.h>
- 
-diff --git a/drivers/firmware/efi/libstub/pci.c b/drivers/firmware/efi/libstub/pci.c
-index 5daa7a0a0e87..a4c9bf67d5e0 100644
---- a/drivers/firmware/efi/libstub/pci.c
-+++ b/drivers/firmware/efi/libstub/pci.c
-@@ -6,6 +6,14 @@
-  * Copyright 2019 Google, LLC
-  */
- 
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/efi.h>
- #include <linux/pci.h>
- 
-diff --git a/drivers/firmware/efi/libstub/printk.c b/drivers/firmware/efi/libstub/printk.c
-index 0a18cfe32528..e2ae89a27b78 100644
---- a/drivers/firmware/efi/libstub/printk.c
-+++ b/drivers/firmware/efi/libstub/printk.c
-@@ -1,5 +1,13 @@
- // SPDX-License-Identifier: GPL-2.0
- 
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/stdarg.h>
- 
- #include <linux/ctype.h>
-diff --git a/drivers/firmware/efi/libstub/random.c b/drivers/firmware/efi/libstub/random.c
-index d63262d36e47..d370f0d79c07 100644
---- a/drivers/firmware/efi/libstub/random.c
-+++ b/drivers/firmware/efi/libstub/random.c
-@@ -3,6 +3,14 @@
-  * Copyright (C) 2016 Linaro Ltd;  <ard.biesheuvel@linaro.org>
-  */
- 
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/efi.h>
- #include <asm/efi.h>
- 
-diff --git a/drivers/firmware/efi/libstub/randomalloc.c b/drivers/firmware/efi/libstub/randomalloc.c
-index fd80b2f3233a..b09a26aa51e9 100644
---- a/drivers/firmware/efi/libstub/randomalloc.c
-+++ b/drivers/firmware/efi/libstub/randomalloc.c
-@@ -3,6 +3,14 @@
-  * Copyright (C) 2016 Linaro Ltd;  <ard.biesheuvel@linaro.org>
-  */
- 
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/efi.h>
- #include <linux/log2.h>
- #include <asm/efi.h>
-diff --git a/drivers/firmware/efi/libstub/secureboot.c b/drivers/firmware/efi/libstub/secureboot.c
-index 516f4f0069bd..07c9782e0c44 100644
---- a/drivers/firmware/efi/libstub/secureboot.c
-+++ b/drivers/firmware/efi/libstub/secureboot.c
-@@ -7,6 +7,15 @@
-  * Copyright (C) 2013 Red Hat, Inc.
-  *     Mark Salter <msalter@redhat.com>
-  */
-+
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/efi.h>
- #include <asm/efi.h>
- 
-diff --git a/drivers/firmware/efi/libstub/smbios.c b/drivers/firmware/efi/libstub/smbios.c
-index efbbfc3c2c0d..98dc3ee40958 100644
---- a/drivers/firmware/efi/libstub/smbios.c
-+++ b/drivers/firmware/efi/libstub/smbios.c
-@@ -2,6 +2,14 @@
- // Copyright 2022 Google LLC
- // Author: Ard Biesheuvel <ardb@google.com>
- 
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/efi.h>
- 
- #include "efistub.h"
-diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
-index 73f001114732..27bc0ccc2a2b 100644
---- a/drivers/firmware/efi/libstub/tpm.c
-+++ b/drivers/firmware/efi/libstub/tpm.c
-@@ -7,6 +7,15 @@
-  *     Matthew Garrett <mjg59@google.com>
-  *     Thiebaud Weksteen <tweek@google.com>
-  */
-+
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/efi.h>
- #include <linux/tpm_eventlog.h>
- #include <asm/efi.h>
-diff --git a/drivers/firmware/efi/libstub/x86-5lvl.c b/drivers/firmware/efi/libstub/x86-5lvl.c
-index c3da05c0df8b..3112ab4b2623 100644
---- a/drivers/firmware/efi/libstub/x86-5lvl.c
-+++ b/drivers/firmware/efi/libstub/x86-5lvl.c
-@@ -1,4 +1,13 @@
- // SPDX-License-Identifier: GPL-2.0-only
-+
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/efi.h>
- 
- #include <asm/boot.h>
-diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-index f4799e29f4cf..77e806c2b016 100644
---- a/drivers/firmware/efi/libstub/x86-stub.c
-+++ b/drivers/firmware/efi/libstub/x86-stub.c
-@@ -6,6 +6,14 @@
-  *
-  * ----------------------------------------------------------------------- */
- 
-+/*
-+ * The EFI stub doesn't execute in the context of the kernel, only in the
-+ * context of boot firmware, which isn't the time or place to crash the kernel.
-+ * Therefore, disable the __counted_by__ attribute.
-+ */
-+#undef __counted_by
-+#undef __counted_by_ptr
-+
- #include <linux/efi.h>
- #include <linux/pci.h>
- #include <linux/stddef.h>
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index fceeefd5f893..2b80cf7aa7e7 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -667,7 +667,7 @@ struct acpi_gpio_params {
- 
- struct acpi_gpio_mapping {
- 	const char *name;
--	const struct acpi_gpio_params *data;
-+	const struct acpi_gpio_params *data __counted_by_ptr(size);
- 	unsigned int size;
- 
- /* Ignore IoRestriction field */
--- 
-2.56.0.rc1.315.gc6ed9934b7-goog
-
+-bw
