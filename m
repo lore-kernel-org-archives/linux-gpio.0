@@ -1,42 +1,44 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD7D39FCC4;
-	Sat,  3 Oct 2026 08:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F75376BD7;
+	Sat,  3 Oct 2026 08:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791016362; cv=none; b=oYv5Bi1hL7IScvlwDLHND59G7KkUCTP7qZbyn1JBLvG+TTeZW5AEkG90ks/fOPR9KgPPD2q8xeY47bFgVE8U3uMiagBkoWlCX6VuDiQVYkZEDHxJA7r06apBrUUqsCkQ3cUdiR71MpGIXpcaj3zsAf9H13tJHjYlzlgsSM9vAms=
+	t=1791016364; cv=none; b=h175DZKjmu8vNnHGkX4q9ZzQgVWdH/nlgtV8gaMeBekRY9u3LtUfVpl5/CaB8tVsm8dGbUE24HduwUh+CM5lBjdE2R5CaE1cXgJb6N3i3J1uryrxBb64x2/uASVFAAZMb66OHRtHkWRObGsEQdW42roZqoV5NaYvCn0DFRdzTzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791016362; c=relaxed/simple;
-	bh=8qOSFA2sJUv+KWHHvj42fQUNUgEEifG6QWugdgJf2bk=;
+	s=arc-20240116; t=1791016364; c=relaxed/simple;
+	bh=gJ+GFtq0JoC+0RTUYDC53MlPTRfkewr246fshdHSNgA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iKQhqajQWXPKc/Mb9OmX6XJ6WS3n/7GCebh+qNPxdmktK+zzo7xQb//met1VjanafkVCdkqNDxgNGXicJFryzsY18Ik2QcBLSeEW4oMWosPLR9IwfyXCGODyP+CKTtQ7wyUACm4xM7yXYQeJext1o69cYgb5C+FIMnJTpXagmwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dyZ6hlmR; arc=none smtp.client-ip=220.197.31.4
+	 MIME-Version; b=Rfvc/Nz5y7RaNmZIpK9Lu7WgVxgRaO5azCeftneapxTjrVkbS79YLAwRXNynSYQOvQx7ybVInEAiY3gY3XJiiEHtIsMrTMr7W/MZ2DTYbtq/lw/i4+b/YNedyWlyL9G5rU/PhAPGKGczQWhv5B7mRnC939yiSXqxaIkzpY8daiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kwPa6m3D; arc=none smtp.client-ip=220.197.31.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dyZ6hlmR"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kwPa6m3D"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=/u
-	TRQAtLsELjQBXidvufTqqYcCEYm891ddHU7+TMhqc=; b=dyZ6hlmR8+xRnyV0w4
-	r2XSqDobmjswlaPlC5SOzec8ffLlhp/GZlXj9HgMyjZTlWe4onXQiGNzR9Z66VF5
-	6E9w/v0RGXsosQBkcRomNzMmzSH1psMdOlSFkHDjihHuXOVzaW+D2qpe9iu37m/X
-	8lPuzi03AuptAuUJfHQD4vyv4=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=Ci
+	x4msqcfYVv2/RRfXCskI530PrFprT29dvCwItO168=; b=kwPa6m3DwPYSmXluy2
+	0/PqfQsbYJeRXaxzRXqmG5OieA+gu5Ox7ll8xUqgwrsfqG9qAZysMef3x5fbbw1n
+	9H+tUnPiq/mZ7XjCcUdGtGYw7xwA6hOIhywalJ0s6qN2Y8Pv+4U3LfiihVMwJBWq
+	xUGSqSlicY4jWIUt8+ry1vQ1M=
 Received: from pc.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3dzGDvcBqKMk7CA--.47308S5;
-	Sat, 03 Oct 2026 16:32:11 +0800 (CST)
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3dzGDvcBqKMk7CA--.47308S6;
+	Sat, 03 Oct 2026 16:32:13 +0800 (CST)
 From: Jiale Yao <yaojiale02@163.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Linus Walleij <linusw@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Jiale Yao <yaojiale02@163.com>
-Subject: [PATCH v2 3/4] pinctrl: tegra: xusb: free maps on DT map failure
-Date: Sat,  3 Oct 2026 16:31:56 +0800
-Message-Id: <20261003083200.459705-4-yaojiale02@163.com>
+Subject: [PATCH v2 4/4] pinctrl: samsung: free maps on DT map failure
+Date: Sat,  3 Oct 2026 16:31:57 +0800
+Message-Id: <20261003083200.459705-5-yaojiale02@163.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261003083200.459705-1-yaojiale02@163.com>
 References: <20261003083200.459705-1-yaojiale02@163.com>
@@ -47,47 +49,68 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3dzGDvcBqKMk7CA--.47308S5
-X-Coremail-Antispam: 1Uf129KBjvJXoWrtr1fAF1UCF17Ww4DtF1DJrb_yoW8Jr17pF
-	4fWFy5Jrn8Jw4fGF9xJw47ZFy3Can3A34Uua4rK342vFs8CryDtF1UKFy8ZFWkCrWktr13
-	ur15AFy7uFy5uaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zi8wIDUUUUU=
-X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzQxdl2rAvYz8VwAA37
+X-CM-TRANSID:_____wD3dzGDvcBqKMk7CA--.47308S6
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Kw1rurWrXF1rZF18tryUGFg_yoW8ArWxpr
+	s3WFsxJF4rJ3Z3GFWft345Zry3Aan3JryUWayjg348ZFs8AFsru34UKFyUZF1DKrZ5Wr4S
+	9rZxCFyYkayYq3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRy5l8UUUUU=
+X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzg1dl2rAvY0SVwAA3W
 
-tegra_xusb_padctl_parse_subnode() can append mappings before a later
-child or configuration operation fails.  The top-level callback currently
-returns the error while retaining all mappings allocated for earlier
-children.
+samsung_dt_subnode_to_map() can reserve map storage before adding
+configuration entries.  The no-child path returns its error directly, and
+the child path frees mappings on failure.
 
-Free the accumulated map on failure.  The caller ignores the output
-parameters when the mapping callback returns an error, so they do not need
-to be reset after freeing the map.
+Use one error path that frees the accumulated map in both cases.  The
+caller ignores the output parameters when the mapping callback returns an
+error, so they do not need to be reset after freeing the map.
 
 Signed-off-by: Jiale Yao <yaojiale02@163.com>
 ---
- drivers/pinctrl/tegra/pinctrl-tegra-xusb.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 24 ++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-index c6a51bb21215..fb70f8aee56b 100644
---- a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-@@ -248,10 +248,14 @@ static int tegra_xusb_padctl_dt_node_to_map(struct pinctrl_dev *pinctrl,
- 						      &reserved_maps,
- 						      num_maps);
- 		if (err < 0)
--			return err;
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index 5ecc9ed4c44d..0a1e6063fb5f 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -259,22 +259,28 @@ static int samsung_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	*map = NULL;
+ 	*num_maps = 0;
+ 
+-	if (!of_get_child_count(np_config))
+-		return samsung_dt_subnode_to_map(drvdata, pctldev->dev,
+-							np_config, map,
+-							&reserved_maps,
+-							num_maps);
++	if (!of_get_child_count(np_config)) {
++		ret = samsung_dt_subnode_to_map(drvdata, pctldev->dev,
++						np_config, map, &reserved_maps,
++						num_maps);
++		if (ret < 0)
++			goto err_free_map;
++
++		return 0;
++	}
+ 
+ 	for_each_child_of_node_scoped(np_config, np) {
+ 		ret = samsung_dt_subnode_to_map(drvdata, pctldev->dev, np, map,
+ 						&reserved_maps, num_maps);
+-		if (ret < 0) {
+-			samsung_dt_free_map(pctldev, *map, *num_maps);
+-			return ret;
+-		}
++		if (ret < 0)
 +			goto err_free_map;
  	}
  
  	return 0;
 +
 +err_free_map:
-+	pinctrl_utils_free_map(pinctrl, *maps, *num_maps);
-+	return err;
++	samsung_dt_free_map(pctldev, *map, *num_maps);
++	return ret;
  }
  
- static const struct pinctrl_ops tegra_xusb_padctl_pinctrl_ops = {
+ #ifdef CONFIG_DEBUG_FS
 -- 
 2.34.1
 
