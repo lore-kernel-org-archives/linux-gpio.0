@@ -1,238 +1,202 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013064.outbound.protection.outlook.com [40.107.159.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A93D3ACF0B;
-	Sat,  3 Oct 2026 09:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791018629; cv=none; b=ZI9+HG5On0c25gLRjI+HVibr/dznOJit2wEUlJ68HH7TJ+/gy/Su1w4N5OBE4R0Ka1v+qqx34LUNb4+Gyne+k64J60CNwcucVb0KdY0KoyrPbEJEX5iG91T5n+hiiQjnGpXAS3Q2+YQrEZ8Hy0Eo/uRsBYIDS7P35xYLBWaL0WI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791018629; c=relaxed/simple;
-	bh=V3DDxben52YB+3AC4H3p4SJSHBjayiswKy/T0MPzYuY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=kOfB7cjjfkEnum2aDX5d+hoUhPDYHNrjv2wWufUeYiNNj9pLpkbk/YKPIl0JDXlh2T9rqZmE6PfvNWrz+dZLoH/ldZ5x5VrSLWz4bRW2NMaWyGbxFYwEnSMIX5+PY+07B8cqW20mzaIn6ory6ZadUnlsBU59WnhSsW8UKZdJwh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KEmmfL2y; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0D941DEF7;
+	Sat,  3 Oct 2026 12:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791029367; cv=fail; b=QCCKlotQBQD/SLg6Q/JJ0Bt2QLaqgwGYNYnea9SMa4xFTqKpnr9sGHJn0J6Gn2L03IM4ua3hdY3tZ8Fo6msd7TzCDrAWljMjrwv5IEwPqsTzQUokoz4iBi5fCEunpt4CYHWiJjgE1zcmsyUlz3sR9nEhF4SpPEw1uXPu8V+ZDMs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791029367; c=relaxed/simple;
+	bh=0tkmyGuP2QU6KrjjYoiycUYEGS0r4gv3y+hrr139GCI=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=e5OAHU7wdgVf0XJWURmts1Lkr161x0LYh7hsaQMZGlYzMg4+I0nWzS2eYee/RptF7IHRPiavL4kWy+ozwzhDlrg22dJMcaS/IsKBP1y5GDNxcVnpdERlgFqxpKRWu4q30Y5t+lQQHMto98r4Gc6CY1Tt1lFQpCUo0+iY81CMZds=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=hks5eLve; arc=fail smtp.client-ip=40.107.159.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KEmmfL2y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EB321F0089C;
-	Sat,  3 Oct 2026 09:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791018624;
-	bh=40Q+BQhPV/7YJVdU18+bv68+lD9vaTDMHUJymM/7aLQ=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject;
-	b=KEmmfL2yy2NIQQxxXN88AR/pQ4ACMoBZPI+6rm01SsszkIvJEymsl8qJCC+8NSzyC
-	 p2D82uHCaip6GbOdLRn1IZKpXFfGGy4OqTElpvexQQ1RGDtKfmznUPqRXK5O853BZQ
-	 PfEUoBcuDJkWxFKcpNywycaNXnGD0vtp06HWvKFj0rwjptOHz6B/v9KAw6slR/tcz0
-	 fbJYK9cpbdENIGQJFEFw1AeuD4Lzlkqb6DyZpuxO04eIObbvCWN4w04PGDL1hwDM8l
-	 dzGB7LmjrwNyUb2/aYLfrGbSia3gsXMffdSXtwGCiv/7QQemEUJT9kJtqbEjUMU3HQ
-	 cX9FzSvKN3WeA==
-Received: from ams-compute-02.internal (ams-compute-02.internal [10.64.2.62])
-	by mailfauth.ams.internal (Postfix) with ESMTP id 7D490198003A;
-	Sat,  3 Oct 2026 05:10:22 -0400 (EDT)
-Received: from ams-imap-11 ([10.64.2.31])
-  by ams-compute-02.internal (MEProxy); Sat, 03 Oct 2026 05:10:22 -0400
-X-ME-Sender: <xms:fMbAaruZ1p-31pg-gMtQwhQWuzehRey1eUGN9eWRiyqGs2vNPVpoIw>
-    <xme:fMbAanRKcJpno_hJ9lbiRqrpAVrNVDhZoF349jxFfvGwkK6rPsjDcw1xtATfqRFOJ
-    0jEiSiRqcUuUGCf7bGP6OBKVmMRUFVBkbfRPFSNgOZJHTJxPMAX85Y>
-X-ME-Proxy-Cause: dmFkZTFmKcJLX6AWSkxpp210h4B+6lLradu3bnF4Q01CservSTw0v2jNi6VPk5jhgwelyw
-    5jjkZDZlZDrxnh2URU5j3djsIB+gLBfZqjhdGZ+m4Zjf8/+LpwZOYwiXqXEhuGBUDAEVt6
-    9NBV7vf3jExfvSSBmlb/NQnvcKN2sRghAAw82nxYZ3Quv+l86FbVe3P19cwahCCCzOCja3
-    6Y2CnyXVW/QWDT1lz7g2xapBrOu4HIrF0aHCgrQNVZvejgRCeWD1hRm8e43cmWWBb9De3C
-    VD/oS0BmbVwIJs0TbQNbSXNZPdf9Iy7ERRQgTgygSsmwZfwNoadpIf9rWGbBydKyQbmTES
-    4b7esYAuBHX7zZMxDcWhBx/EvulexwoBOlqscb9GuHFwTYHrLSwCBiBRNdAIgoDjKNz55m
-    GprJWXnd+mxMYJfTgaW66WzmUyIZWUd4ZibaXEX7FSUub9RDEGer3v3I0Lrg+EcR9D9QaA
-    CVgFojxP0gPZTVJdnSYP1CiKdBNFhnZMpF6gYdTr6MMu4mI2xrOtmGqpjW0QOjBVLeLDKa
-    ajVxZbjKP4BPv8wZqkTHNctSk2lOBr5LQ2UTFE5HqaW6PKx84h86aiO3TKjXEWc+rXgOOW
-    xH5EwxE776HhKnNOCj1zYNh3NPFm65stLONF9hSLTI9wA8+CE4Cpg74Exl+A
-X-ME-Proxy: <xmx:fsbAaqQ91dKPz1cAUJIEcPPINLOq604fWPMh-6RH3HSysU_M0dDXWg>
-    <xmx:fsbAan-nzifUTJGOrBk3-6pb7ZgwpOWo9ziQQAyNuStz4o2RJN-Y4w>
-    <xmx:fsbAajYtCLJlOqpcXEvZ66tr-XCaXO05dZ868E8xCucQQYA8SEj_Qw>
-    <xmx:fsbAagpKWgpSWG8-VDa4LRVCwEWFOZpBKMi4JElvsarjv7yEdIIyqg>
-    <xmx:fsbAavTFfGvmira1W7GbP-0RQBRPX53E92k3I6pbKGh5JFApjvPmwE84>
-Feedback-ID: ice86485a:Fastmail
-Received: by mailuser.ams.internal (Postfix, from userid 501)
-	id 40384F80090; Sat,  3 Oct 2026 05:10:20 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="hks5eLve"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OoF1rs0b8GCg+0wrbF0/D3+UPHnbE0ogMol/WQVYPQ/ExKVjtwx34dK6wU0049J81Wm5JTZwThxjU30z3OVosejHrGC9uhErWib2uPoI5AXbw+/M+Unyvy+bO9gaxes8zvN2oqfjJdCWPrDihGOBmjVPoXkswyeUxmIIQ9PFkz+hMqN4svJwpzDqaISSgcAqlhMQThOO0Yyus3pLEcby7aHjbRdNOFQD07CTMBhDTA0FkUVA/QwZu0/67pzyvIMUrLTLoYBq0JMzDGRdUeL3Wtl4nb5c9i8WQyj5YmQz+Mk98cuxLPhMMwlwemv0yJnRb94jQ6IZOUNTZ12XQt5ewQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Nn4tgKa/1gY0XiPW5QOQcb+gqFFSEOIKNWuttitTVFk=;
+ b=PzI+9PNUsGenpYrzjnJemQkc1qd48vMWc5hQEbfBY27ltUH16HpC0J+TRual0q+uZHhNSxJeR6QomABGHAIwpVOu94qEs2XszHgV33juBBOwmcod1n2QX7E1iJSAR64vyesecY/pDiNolT2t1SfBZzPbu+FtDnvG30eHZVRFN/aBl/SfyB4hVVLCnCxEd5JXnBRHprwbeSf6AXOVdgNEOI7XLnkD7BgXeNGWJfq+etCNaaEHpl/g+/VaspK3KOQyANwj4EMP+qCW2dvBe+ayAbt39QYfqakXiMk/RDEORZdC+UudqU0ShTMLhV9jv3G1M1EATMIkUJ1mjdMj/3Kyig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Nn4tgKa/1gY0XiPW5QOQcb+gqFFSEOIKNWuttitTVFk=;
+ b=hks5eLveyXHgzHdVSoz5ZRmaMZwZZR/fEFK5xEIHFsMHqCDRXJLj9yIIXXqRPvEs1ElVW+FA9Ks9bteRwunDEuoJBvZs+OWHGZeDAn5gKIZbKhXeifv5Rw9GbCopdsBhwOYHzSFjikXaygZXbpVWxhhM6E9jYZJvcAuHNmw1vgNDTawgff/KDN0adTTBNewbD2YwSqdT8eflMz7pDigWoxYdXZExn87DwKlp9aMtz9BxQhT8/J4FDWMerUEb8q4CJiB7ucs+5OFxjZBWIUxC0HWPZh9nd/R1W4uAvUcSL5+/D4WFzUh9GEyvh3n5mgDpsSwabnLCYI7f5J29pf8Ryw==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
+ by DU0PR04MB9467.eurprd04.prod.outlook.com (2603:10a6:10:35b::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.20; Sat, 3 Oct
+ 2026 12:09:21 +0000
+Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
+ ([fe80::ac38:1699:6f18:c5d9%6]) with mapi id 15.21.0451.022; Sat, 3 Oct 2026
+ 12:09:21 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH 0/9] gpio: mxc: bug fixes and probe cleanup
+Date: Sat, 03 Oct 2026 20:06:42 +0800
+Message-Id: <20261003-gpio-mxc-cleanup-v1-0-dad728ce27f2@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANLvwGoC/yXMQQ6CMBBG4auQWTtJW6SJXsW4gPEHx2hpWiAkh
+ LtTdfkt3tsoIykyXauNEhbNOoYCe6pInm0YwPooJmect8bUPEQd+bMKyxttmCPjfBHxzktjQSW
+ LCb2uv+Xt/neeuxdk+n5o3w/nUIz8dAAAAA==
+X-Change-ID: 20261003-gpio-mxc-cleanup-e49cc626c51e
+To: Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
+ Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-gpio@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.15.2
+X-ClientProxiedBy: MA5PR01CA0110.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:1d1::9) To AM8PR04MB7874.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24d::9)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 03 Oct 2026 11:10:00 +0200
-From: "Ard Biesheuvel" <ardb@kernel.org>
-To: "Bill Wendling" <morbo@google.com>
-Cc: "Linus Walleij" <linusw@kernel.org>, "Jeremy Kerr" <jk@ozlabs.org>,
- "Bartosz Golaszewski" <brgl@kernel.org>, "Kees Cook" <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- codemender-patching+linux@google.com
-Message-Id: <05f1ea67-e6c1-4660-83a5-89550af259b9@app.fastmail.com>
-In-Reply-To: 
- <CAGG=3QXtYajLg-W21R=52FB151wbnAYr7a7rJMJL9krq0-fTyw@mail.gmail.com>
-References: <20260928063824.1386524-1-morbo@google.com>
- <CAGG=3QWCmQ+LVvn2dtjEauj5WFwvx=pvg4Q6man_A2imdjRe7A@mail.gmail.com>
- <CAD++jLk2pFCpbpGVCQg2AdrwQecpb=wsehhwSuwTbKAXNeyfoQ@mail.gmail.com>
- <CAGG=3QV2k-nsZHNSuKEixZb+-LcxvhQsG379ghgyOpiDLTJWzw@mail.gmail.com>
- <CAD++jLnOm3ua7hom_L4YQwN5z81M17WmL_VGqx+-ugrAJ-6_Dg@mail.gmail.com>
- <7e847715-6bd5-4f69-a9a6-339788810fec@app.fastmail.com>
- <CAGG=3QWKEgeggp+OcVsS4QLOX1zxN23HHZp1SfHX0rQVA_7nDQ@mail.gmail.com>
- <4c92ca0e-c502-4a63-a2a2-bbf53db5e40f@app.fastmail.com>
- <CAGG=3QXtYajLg-W21R=52FB151wbnAYr7a7rJMJL9krq0-fTyw@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: annotate struct acpi_gpio_mapping with __counted_by_ptr
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|DU0PR04MB9467:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87119eed-d615-4957-9892-08df21472812
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|19092799006|23010399003|366016|6133799003|18002099003|10067099003|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info:
+	zo+BHp9abOr5BhPGa8eP7OAyyVbCUf0X5B9fVC0lLyj4xTePF6FOVmxOl4sxjA5WqevFkUnCSsPOdt88085zbsQmPHSS2py3geQL5eVybD/rhmsvr9MJbgzVZQHBjgwytj0c3YrAFY9AwWbJbQG6C6Pk92nug8HsdoKAh4syjD+I3jUggjg1ptWTlt7nLfyGK4LK4O6PX/eSqGmS2bNma4bTyJAxhOz6+ahFvsLhAlmGBEyQOX5YFsYRL4GFS/3nTKc/9hWrXG5JFfQF36jSYx8ZZm5B/DMcM3GCnHRGKrn20J5etKeI9fZBBeKwL5JVgu0SX01jGs8b0wrAnOCDM+c+kkqcOe5ApzwCBiL9xQaOvOKBTyGdMAl+5EBDJ8GJRQoP+yXUTQ3auO7Jvnr4j3XZ4m4s8wTFuZApnl2GD9vgHTNe1m72bG8IF7SRwxgKKygRA1Q7tSAsyLL5llgvO2v/lmLLKcD6Qy4jOfA4nYUZiOBJ/tUEgEr2ZoczusrjK4mjkBZH7uL40teDd1MK+eZxRuB75VwjvNyGWtxUQ0JA292OwpR3LXCaXFWuDq069r0L8mt0yv630MBsrIHGRR6yRO/bmegHGElhroHkXVA/Yelpvh/deozjWCkjdU2BzqpvESsk1HntmKx0OJ9I47kldWINUUZzk3yDH96o5dc=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(19092799006)(23010399003)(366016)(6133799003)(18002099003)(10067099003)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UzRGcUNtcm95b0poZnZuMTdPTHpvWUtBWU53OTRJZ1JXWXorZndEd1AxYzNr?=
+ =?utf-8?B?TnhCSDJ3NDEzOXJaZWJlVW80Q0RJaHhBaFdLOEVrWWR0R0NvRWJOVVRLZmc3?=
+ =?utf-8?B?NzBGN0ZSYURhUnpCUHFMcFhkRXNvSm9lTjcya1k3QjlsL1dIRUEraXBldkJQ?=
+ =?utf-8?B?dUtVTkhoci9LblR5akhOSGJGZFhKclJsVTZpZ1UyVmhHdk1mbENwSldEODlY?=
+ =?utf-8?B?SW55eEJEWmtCTnVOSUV0Y2pRTzJHZkczZXYrSk5Oa0k3L1FhcG9BMHNwWEtm?=
+ =?utf-8?B?emRuYXFsT0xRM3dmTUp5U2dOYjg0TTRCQTBZeTQ1MUtML1V6WXN5RXpHeWFj?=
+ =?utf-8?B?bWNTZmk2aWVRVnZXbXdsTG1CeE1BMTc2cU0yZUNCVG9wOFp0NnFlZlJWMnZR?=
+ =?utf-8?B?dzc2c1ZmdnNvSE9WSFF2dnp6OUNCYys3QU1PZ0ZDbktqNFFzeEV6d2FnSVFD?=
+ =?utf-8?B?b0FMVFU0dktGRzI5QnB1Q2JtV0pXdit4OFJGU1c4eWtHMzAxRStVczY3MnpZ?=
+ =?utf-8?B?SWw0ZUNVS0NDTCtXcDlaMktxZ2I2R3lKQnVCMy9YZlNtZnlybC9RQ1YyTkxE?=
+ =?utf-8?B?TWNMRFltUytCZTl4TEIrSDlRbkw2aHlTTHZYdmtnYzJ6WTh6QXd6Mnp6SUFz?=
+ =?utf-8?B?QUhZNUR1NTg0WU9UTGpIUGFuZ20zQlREM0ZPRjNiY2pkNFN6eGJXVTczYzJO?=
+ =?utf-8?B?VGFDeCtwTWJJRFBOUTJiT2RlMTFLUkdXQlpjWWkycWpLY1paYUQvOXFBVWg4?=
+ =?utf-8?B?ZERUZkNnTWpMcDBFNktMSmEzWDRCWC9IUUlZVWcvV3VGdDFHeGZNN21uVitC?=
+ =?utf-8?B?SU9QcUZQVVkxYmJ5cGd2d2UxQzhrV0MwYmJVZEZRODVsdStZSmRMY3JIWmJv?=
+ =?utf-8?B?ZU55YVpaekRFUUg0ZlpzSVFqUXlvbjQ1cDh6MHdYMXYyT2JNY0VXT1dLQitP?=
+ =?utf-8?B?azg4b1E0aVhERGJidVgvSW5DT1ZUTFZpa1NmUGgydlZ5eng4bjF6UnRVYkU0?=
+ =?utf-8?B?N2E1YTl2S0ZKYlo5TnhZNXZqK3pIeDdnUzByNHk4N25CNEVBV2JnekxreUNy?=
+ =?utf-8?B?U1hsOWpZVnlQb1Z6SGVFWENaMFpFSzhNSzk5U3FNSE5HTWR5YmRJNzk1cHpI?=
+ =?utf-8?B?ZkR3azI4ZnhzbVVIamY1ZUk2M2UrYUNpNEhtcjZYb0loNkFQTFg3NzkreEdh?=
+ =?utf-8?B?VWd2TW9mYTBXMnFzMzdYTDdpQjZxZElqcnJ4YkxpMWdBYzQ1OTFISE11ZjFN?=
+ =?utf-8?B?cmpoMXBYSndpaHovSFFQY0pvMXd5RnhaUzd5OU9kNUg4RmU1SHB2ZXlqTDVY?=
+ =?utf-8?B?R3BGU3gyVEZ5SzdiRksycmsrVEIzeFFNRTBlcTBrdzFCMmF2OTRja3RPZkJR?=
+ =?utf-8?B?NiswRndNR09JYzRQakVyNVJMWHMxOCtvSDhydFgvK09aVFFZcGVjN0x0VXNB?=
+ =?utf-8?B?TjQ5MWlxWXpUenhjQzQ4cFBUdmpnTFdadi94Nmt6MzRSQmNNcGp0Mkdma0t2?=
+ =?utf-8?B?QnBFQTRUdVkyRmhHQjlXZFJibXZJVVhzR3RxM1NLOE56WnVadWRHa0FITjZN?=
+ =?utf-8?B?Rm1mMFBETHo3VExlUkhwZmdxVkdlcXFMck1UMTZqZnlzeXc2SG9UendRdktL?=
+ =?utf-8?B?SXlvTE1LUlBybnpaMUNiSDRldVRzSnNtalIwU2RiRnVzYVRZTkJ2cTdrYUln?=
+ =?utf-8?B?aGpQSitUbmFHMExnRmJYVGZNMXBzR3EybTR5SFA1MGFxcHltNk0zWEtzREd1?=
+ =?utf-8?B?WUp4dDhqeVNLWnU1RFZDZXZnbUNFOTdwWE1mZkVRTTM2Qkt6US9oSGhRZEVW?=
+ =?utf-8?B?TUhwUXZOUWpXWGtlcnFEZTdzeWF1dUFjM2NrSFpleC9YSkNTMzRVOUFqaDF5?=
+ =?utf-8?B?dDcycjRmQ2NWa1M1T29Ndis5VXZIQlhpcFZFMDY4YnJrbVV2TjRpT3hJbUVl?=
+ =?utf-8?B?TkREY1NJb3VqbmpCQ2RvSWM2SEV3alFtbkdORXlCbWRKMTljcCt5a3ErU1JM?=
+ =?utf-8?B?S2dJSnVxYWh5R0cwQVA4NHFTYzV4R0srSTIybEVsVzBFZVNUWXVJa2IxRjhV?=
+ =?utf-8?B?K1lRSmFnK3NsUTJ6d2lYMUVFTHlEZnJIcENlVGFMR09YVHlnMlZ2eGNnaFBs?=
+ =?utf-8?B?N0FCVzNKSXFZSEU2TmdCc2Q0ZmxGN3ZzQWZIQlhiSnl5dS9iVjJUNUR2SSts?=
+ =?utf-8?B?YXVjNHVYSTlLTTUvZzZNdlBRdGxHQi9iSVNibjErc2dhMnFhS0ZUL2tJaG1n?=
+ =?utf-8?B?M0pPVE1vTGhjUVlneUt2NmM5UWRtK1NUWDdOVUplTlpscGlWTEFWdWxQWkgr?=
+ =?utf-8?B?NTZvU0FraUUzTWZGOXhVWmVrZWFIWVltZVREZFMweUtGb0REd2NPNS9ZUlIr?=
+ =?utf-8?Q?LfLthy2XO6enGGWZW5iB1nLmq6hktGDZeWC/A?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87119eed-d615-4957-9892-08df21472812
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2026 12:09:21.1419
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CTj8K/AQGwPrxZWfOHzP1DOIMhtunk+7RuEYiA+AzJwAJggWtsPzHiC6BQRN6T1Prn5YunP6KeAEErWFvggtZntxj2i0KL91uhMZX+RNIVoY4VSNxYXxNTn+FV8BxzJl
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9467
 
+Two bug fixes and follows up with probe modernization and bitops cleanup.
 
+We not receive bug report and met issues during our test, so patch 1&2
+are not critial for now.
 
-On Sat, 3 Oct 2026, at 10:54, Bill Wendling wrote:
-> On Fri, Oct 2, 2026 at 6:52=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org=
-> wrote:
->> On Fri, 2 Oct 2026, at 14:44, Bill Wendling wrote:
->> > On Fri, Oct 2, 2026 at 12:38=E2=80=AFAM Ard Biesheuvel <ardb@kernel=
-.org> wrote:
->> >> On Thu, 1 Oct 2026, at 23:24, Linus Walleij wrote:
->> >> > On Thu, Oct 1, 2026 at 10:05=E2=80=AFPM Bill Wendling <morbo@goo=
-gle.com> wrote:
->> >> >> On Thu, Oct 1, 2026 at 12:56=E2=80=AFPM Linus Walleij <linusw@k=
-ernel.org> wrote:
->> >> >> > On Mon, Sep 28, 2026 at 9:22=E2=80=AFAM Bill Wendling <morbo@=
-google.com> wrote:
->> >> >> > > On Sun, Sep 27, 2026 at 11:38=E2=80=AFPM Bill Wendling <mor=
-bo@google.com> wrote:
->> >> >> > > >
->> >> >> > > > The 'data' pointer field in 'struct acpi_gpio_mapping' is=
- associated
->> >> >> > > > with the 'size' field, which represents the number of ele=
-ments of
->> >> >> > > > type 'struct acpi_gpio_params' allocated for 'data'.
->> >> >> > > >
->> >> >> > > > To improve bounds checking via CONFIG_UBSAN_BOUNDS and
->> >> >> > > > CONFIG_FORTIFY_SOURCE, annotate 'data' with the __counted=
-_by_ptr
->> >> >> > > > attribute.
->> >> >> > > >
->> >> >> > > > Analysis of allocation, assignment, and access points sho=
-ws that the
->> >> >> > > > pointer is never accessed before the count is set, which =
-guarantees that
->> >> >> > > > this annotation is safe and will not cause runtime panics=
- or
->> >> >> > > > false-positive bounds checks.
->> >> >> > > >
->> >> >> > > > Cc: codemender-patching+linux@google.com
->> >> >> > > > Assisted-by: LLM
->> >> >> > > > Signed-off-by: Bill Wendling <morbo@google.com>
->> >> >> > > > ---
->> >> >> > > >  include/linux/gpio/consumer.h | 2 +-
->> >> >> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >> >> > > >
->> >> >> > > > diff --git a/include/linux/gpio/consumer.h b/include/linu=
-x/gpio/consumer.h
->> >> >> > > > index fceeefd5f893..2b80cf7aa7e7 100644
->> >> >> > > > --- a/include/linux/gpio/consumer.h
->> >> >> > > > +++ b/include/linux/gpio/consumer.h
->> >> >> > > > @@ -667,7 +667,7 @@ struct acpi_gpio_params {
->> >> >> > > >
->> >> >> > > >  struct acpi_gpio_mapping {
->> >> >> > > >         const char *name;
->> >> >> > > > -       const struct acpi_gpio_params *data;
->> >> >> > > > +       const struct acpi_gpio_params *data __counted_by_=
-ptr(size);
->> >> >> > > >         unsigned int size;
->> >> >> > > >
->> >> >> > > >  /* Ignore IoRestriction field */
->> >> >> > >
->> >> >> > > There's a problem with 'drivers/firmware/efi/libstub/Makefi=
-le'. Clang
->> >> >> > > needs a compiler flag to support the "__counted_by_ptr" att=
-ribute
->> >> >> > > referencing a field *after* the pointer, like in this patch=
-. However,
->> >> >> > > the Makefile blasts the flag away for x86 platforms. Below =
-is a hack
->> >> >> > > that copies the part of the top-level Makefile that adds th=
-e flag. I
->> >> >> > > don't think that's a good solution. The comment in the driv=
-er's
->> >> >> > > Makefile says that the stub code executes before the kernel=
- does,
->> >> >> > > which I assume is why a lot of the flags are blown away... =
-In any
->> >> >> > > event, I'm not sure how best to address this.
->> >> >> >
->> >> >> > But is this a problem with the current patch?
->> >> >> >
->> >> >> > Does libefistub use <linux/gpio/consumer.h> in any way, shape
->> >> >> > or form?
->> >> >> >
->> >> >> It's being #included transitively:
->> >> >>
->> >> >> In file included from drivers/firmware/efi/libstub/efi-stub-hel=
-per.c:12:
->> >> >> In file included from ./include/linux/efi.h:20:
->> >> >> In file included from ./include/linux/rtc.h:18:
->> >> >> In file included from ./include/linux/nvmem-provider.h:16:
->> >> >> ./include/linux/gpio/consumer.h:670:55: error: use of undeclared
->> >> >> identifier 'size'; did you
->> >> >>       mean 'ksize'?
->> >> >>   670 |         const struct acpi_gpio_params *data __counted_b=
-y_ptr(size);
->> >> >>       |                                                        =
-      ^~~~
->> >> >>       |                                                        =
-      ksize
->> >> >> ././include/linux/compiler_types.h:392:64: note: expanded from =
-macro
->> >> >> '__counted_by_ptr'
->> >> >>   392 | #define __counted_by_ptr(member)
->> >> >> __attribute__((__counted_by__(member)))
->> >> >>       |
->> >> >>        ^~~~~~
->> >> >> ./include/linux/slab.h:602:8: note: 'ksize' declared here
->> >> >>   602 | size_t ksize(const void *objp);
->> >> >>       |        ^
->> >> >
->> >> > Hm I see.
->> >> >
->> >> > Certainly Jeremy or Ard will have an idea about how to solve thi=
-s,
->> >> > so paging them in.
->> >> >
->> >>
->> >> libstub code never executes in the context of the kernel, but only=
- in
->> >> the context of the boot firmware. Generally, we disable instrument=
-ation
->> >> there that has a significant runtime component, basically because =
-we
->> >> cannot crash or panic the kernel before we have even booted it.
->> >>
->> >> Can we just #define __counted_by_ptr(...) to nothing when building
->> >> from that Makefile?
->> >>
->> > Doing it in the Makefile is tricky, because of how the "c_flags"
->> > variable is defined and used. I couldn't find a good way to do it.
->> > Instead, I inserted "#undef __counted_by{_ptr}" at the top of the
->> > affected files. It's gross. If there's a way I'm missing, please let
->> > me know.
->> >
->>
->> Does that even build?
->
-> It did for me...
->
-> Let me look into Sashiko's comments.
->
+Patches 1-2 are bug fixes:
 
-When you #undef __counted_by(), it is passed straight to the compiler
-rather than being turned into whichever __attribute__(()) it is supposed
-to resolve to by the preprocessor.
+  1. Fix a race where the chained IRQ handler is installed before the
+     IRQ domain, generic IRQ chip, and port list entry are ready.
+     Also fixes a latent use-after-free on probe failure paths that
+     never unregistered the handler.
 
-Hence my surprise that it actually builds.
+  2. Fix wakeup_pads being typed as u32 while accessed through
+     set_bit/clear_bit (unsigned long *), causing adjacent field
+     corruption on 64-bit platforms. Switch to atomic bitops for
+     concurrency safety and fix the disable path to preserve the
+     wakeup_pads bit on disable_irq_wake() failure.
 
-In any case, this should be done in the Makefile or in a header, not in
-each individual C source file.
+Patches 3-9 are cleanups, each building on the previous:
 
+  3. Cache of_device_is_compatible() results at probe into struct
+     fields, avoiding repeated DT string comparisons in suspend/resume.
 
+  4. Use devm_add_action_or_reset() for irq_domain_remove(), removing
+     manual cleanup in error paths.
+
+  5. Switch to devm-managed PM runtime and dev_err_probe(), eliminating
+     the remaining goto error labels entirely.
+
+  6. Introduce a local 'dev' variable and migrate to
+     device_is_compatible() for firmware-agnostic matching.
+
+  7. Introduce MXC_ICR_REG/MXC_ICR_MASK macros and use
+     field_prep()/field_get() for ICR register access, replacing
+     duplicated magic-number arithmetic in gpio_set_irq_type() and
+     mxc_flip_edge().
+
+  8. Replace open-coded '1 << n' with BIT() throughout the driver.
+
+  9. Simplify gpio_set_wake_irq() using irq_set_irq_wake() and
+     assign_bit().
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Peng Fan (9):
+      gpio: mxc: fix race between chained IRQ handler install and probe completion
+      gpio: mxc: fix wakeup_pads bit operations for correctness
+      gpio: mxc: cache compatible checks at probe time
+      gpio: mxc: use devm action for irq_domain cleanup
+      gpio: mxc: use devres-managed PM runtime and dev_err_probe
+      gpio: mxc: use local dev variable and device_is_compatible()
+      gpio: mxc: introduce MXC_ICR macros and use field_prep/field_get
+      gpio: mxc: use BIT() macro for single-bit operations
+      gpio: mxc: simplify gpio_set_wake_irq() with irq_set_irq_wake and assign_bit
+
+ drivers/gpio/gpio-mxc.c | 158 ++++++++++++++++++++++++------------------------
+ 1 file changed, 79 insertions(+), 79 deletions(-)
+---
+base-commit: f0406245cb9855e6318335a8a223551354291a46
+change-id: 20261003-gpio-mxc-cleanup-e49cc626c51e
+
+Best regards,
+--  
+Peng Fan <peng.fan@nxp.com>
 
