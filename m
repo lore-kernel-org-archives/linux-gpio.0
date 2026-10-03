@@ -1,71 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A802C3BB138
-	for <linux-gpio@vger.kernel.org>; Fri,  2 Oct 2026 21:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66212798F8;
+	Sat,  3 Oct 2026 08:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790977719; cv=none; b=Kxx05wM0ZVIjVHd6oFr/wzJJw4lsxMq7yUWagDFScFQWPcTkxJm1H/O+u4i9EWoJeQYANG3sJmg7cLmV/Iy8L7VQq+24XUjfu3KXa2DptJK0z6UPGmlEgpvo1kaQMnaGk6Dd5fZep9po9uaa1xyiXWZP7FKJpadz5WgoHTZ+QWM=
+	t=1791016352; cv=none; b=lVsPxQVpciSJJN3opuUs9aBb/uFk+fPyKQIS2drQjmC6QYV1DJW8Zeitww7VrHvi4x1bTm37bldBYLWSATNc63DaCV4Oi30hLLK617UGdJoPIgJc11UDx6xInYNOlU/FHTulBnsCMQLUGL2nxQZX8J66eX5/SfmkO4+BcztdPAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790977719; c=relaxed/simple;
-	bh=h4tzRSfqBRqXyOAYKXIuoOevRer/dmHlMJ0X0TEMoGc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VawmQzM+5Qz5S61Mpi2vt/R7anPoDaqaDC+L2MQRUyg1VFSnwvSe/za17wmxgvt8LhNfcHHKhq5OlJqofd1kCWkWlO/7PHlpl7J+LSspR+lZqDsH7RjdOCxH6xEX82TkLxuxHgs/Ybn7ongYxRfvUyfZhR08kaop0eu2L9xSUHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ic2E88SZ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791016352; c=relaxed/simple;
+	bh=R5XW0maL54N7BXAB4gQ48NB7+9a55aFyLFMQBe35o1A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DZJgWC1/QvSaT3lnzXlD0UH6uvrBoVwMB+qUpZFnxiCVySdJhiWS8O/0U4sD4r/kDgqCviPtQRDL0m39k2NEqOLzdCtpSmZB1UjYNTLFCQx/gcZ2Tl88IMoesO13Vx0v2gTkR7W2OKz9aew0mM9//5e4mO64IfaBe7BglPHW7mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RHykOafi; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ic2E88SZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BF211F0089A
-	for <linux-gpio@vger.kernel.org>; Fri,  2 Oct 2026 21:48:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790977717;
-	bh=ZB7mOpsPUkzF7dalAkbNpndV1E/i3MYqWvc6K2eVWyg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=Ic2E88SZb1K+vD1bgcTslxISdxrRDt8UeAfceBjitl4wvFzTVX9ZSpKm3vhoZiU3s
-	 P+r2BzZfL2ORqYimdiM3MQkbNvfeWNB+gkN1wuPgn9gHxnJPz+WTYR1vH7V7ye984o
-	 5ell4C/KU2bESsqoFEKpc9Ik+jmQwrS8G+pFT5om0BVx0XFkxYGEV/KjRZ4RjIsoyl
-	 qwmW3xGlOLZXmpZRhnqvNe0J1NZ313omqD0FM2xiqkKms3VxXIVIIKTAxPYSuisINA
-	 GrMWLqTFSJ/L/KX+DSdECyzZRIfjYIIvpSEU+qSyWFACQDdozbq9h1fu2eTUyVtieX
-	 Cs2NjOMPcDViQ==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5ba35c0df4fso1671e87.0
-        for <linux-gpio@vger.kernel.org>; Fri, 02 Oct 2026 14:48:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBx4XkNmYWgdc9yIaafqjkwZyfWYAzB/ofSRUYWL8TcsV/xPhdL5tlbwGZOMpwnzWZCuc7sbURDbdzJ0@vger.kernel.org
-X-Gm-Message-State: AFq9FYJNoKb2AZb4wnLZXRJ7zUTFR0NcgLdNza/LdjYSKLUa2DHBUTqi
-	hRQUwBsD6iM1JdW+h/4GB59sevJTr1AgTSlN8wC7/ThIkTATI1s/rH5ZfjToefev/+pDP7d3uth
-	vaem/h4Kr0R3phi5k39Js+D+eGRhskUE=
-X-Received: by 2002:a05:6512:10cb:b0:5b8:e99c:cfa1 with SMTP id
- 2adb3069b0e04-5bcb544447amr267076e87.31.1790977716056; Fri, 02 Oct 2026
- 14:48:36 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RHykOafi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=oI
+	BAjJv3rl8M8ZGbNQVG3tG7cwyjlet+0J+w7M2quTk=; b=RHykOafiCsdKeABmqc
+	9esV2deB3WK8z41dYIuZAxWfeGj8QXXzzoF9uYBU/Pk7HydK5bzECAsp7kH33IQI
+	1ri5SokeVWnVFeUEBn91Owr2Z4avA2xr48Rq1HbyFftQhGUtzklJk0E+ITD53G6+
+	2H3XqTLQuhvOr0jJVEQyJktLQ=
+Received: from pc.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3dzGDvcBqKMk7CA--.47308S3;
+	Sat, 03 Oct 2026 16:32:08 +0800 (CST)
+From: Jiale Yao <yaojiale02@163.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jiale Yao <yaojiale02@163.com>
+Subject: [PATCH v2 1/4] pinctrl: sprd: free maps on DT map failure
+Date: Sat,  3 Oct 2026 16:31:54 +0800
+Message-Id: <20261003083200.459705-2-yaojiale02@163.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20261003083200.459705-1-yaojiale02@163.com>
+References: <20261003083200.459705-1-yaojiale02@163.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ar_CvNPWBA42BAlx@stanley.mountain>
-In-Reply-To: <ar_CvNPWBA42BAlx@stanley.mountain>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 2 Oct 2026 23:48:24 +0200
-X-Gmail-Original-Message-ID: <CAD++jL=FwSNH2Y8_Gz==cn360o8DiFSBCyp65bKJcRR5aO=G2w@mail.gmail.com>
-X-Gm-Features: AclHuK9gOIwCfQRk6B1NpY0k_i_KdwiwJl2gDSLxnU8603oCAaR39Uu5TRPvpYY
-Message-ID: <CAD++jL=FwSNH2Y8_Gz==cn360o8DiFSBCyp65bKJcRR5aO=G2w@mail.gmail.com>
-Subject: Re: [PATCH next] pinctrl: ambarella: fix NULL vs IS_ERR() bug in amb_pinctrl_register()
-To: Dan Carpenter <error27@gmail.com>
-Cc: Long Zhao <longzhao@ambarella.com>, linux-gpio@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3dzGDvcBqKMk7CA--.47308S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XF13uryDCryfCrWDCF45Wrg_yoWkCrg_CF
+	Z5Z34UJ34UGrWS9w1j9r43ZFW0ya1UXr1I9r1qqry3A347Z3W8Jr93ZF15Gw1xGw1fAr9x
+	GryIvwnYvry7CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRMoGQDUUUUU==
+X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzQhclmrAvYj8FQAA35
 
-On Fri, Oct 2, 2026 at 4:42=E2=80=AFPM Dan Carpenter <error27@gmail.com> wr=
-ote:
+sprd_dt_node_to_map() reserves map storage before adding mux and
+configuration entries.  If a later operation fails, the error path only
+frees the temporary configurations and leaves the map allocation reachable
+through the output pointer.
 
-> The devm_kasprintf_strarray() function never returns NULL, it returns
-> error pointers on error or a valid pointer on success.  Fix the error
-> checking to match.
->
-> Fixes: b40e9d140c24 ("pinctrl: ambarella: add CV75 pin controller")
-> Signed-off-by: Dan Carpenter <error27@gmail.com>
+Free the partially built map on failure.  The caller ignores the output
+parameters when the mapping callback returns an error, so they do not need
+to be reset after freeing the map.
 
-Patch applied!
+Fixes: 41d32cfce1ae ("pinctrl: sprd: Add Spreadtrum pin control driver")
+Signed-off-by: Jiale Yao <yaojiale02@163.com>
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+---
+ drivers/pinctrl/sprd/pinctrl-sprd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
+index 16cf9d15f247..a565d4fd4233 100644
+--- a/drivers/pinctrl/sprd/pinctrl-sprd.c
++++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
+@@ -326,6 +326,9 @@ static int sprd_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 
+ out:
+ 	kfree(configs);
++	if (ret < 0)
++		pinctrl_utils_free_map(pctldev, *map, *num_maps);
++
+ 	return ret;
+ }
+ 
+-- 
+2.34.1
+
