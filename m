@@ -1,41 +1,40 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66212798F8;
-	Sat,  3 Oct 2026 08:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE80377EA1;
+	Sat,  3 Oct 2026 08:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791016352; cv=none; b=lVsPxQVpciSJJN3opuUs9aBb/uFk+fPyKQIS2drQjmC6QYV1DJW8Zeitww7VrHvi4x1bTm37bldBYLWSATNc63DaCV4Oi30hLLK617UGdJoPIgJc11UDx6xInYNOlU/FHTulBnsCMQLUGL2nxQZX8J66eX5/SfmkO4+BcztdPAg=
+	t=1791016358; cv=none; b=EnxyYQct1zfzxO61f/nc1seQp6YqwPY4ERyA5fihWTtuC3Nfhc6jv0AS5Y6jKNv1hnyKnVtVrQrQoL/tYLGeZzH+VEfX8nqElWuEc4ILiP2FG+mK1E+oLYfAfRnXpWyBYSbGL/suUR0g36gE//acvBCczmXFWy1OrwcByZdNn88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791016352; c=relaxed/simple;
-	bh=R5XW0maL54N7BXAB4gQ48NB7+9a55aFyLFMQBe35o1A=;
+	s=arc-20240116; t=1791016358; c=relaxed/simple;
+	bh=Hxb5epFuXqTg9dBWHKuafB2Oc3MBSA/CMmAwOQXr1sc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DZJgWC1/QvSaT3lnzXlD0UH6uvrBoVwMB+qUpZFnxiCVySdJhiWS8O/0U4sD4r/kDgqCviPtQRDL0m39k2NEqOLzdCtpSmZB1UjYNTLFCQx/gcZ2Tl88IMoesO13Vx0v2gTkR7W2OKz9aew0mM9//5e4mO64IfaBe7BglPHW7mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RHykOafi; arc=none smtp.client-ip=117.135.210.5
+	 MIME-Version; b=CojDK43rx1rluOBCdjslNMnFhDLmSFrsF90f0oA/5/hkKyrYPpqRuMzw+MlZJsgEUYqA9RRXFRmR9fxxK5FLbcWhU6glJQ+BNeWlOJQzKmXtMWa4Sj9fS71dKy6IQuGCa287zifeoAXl96spbM9TCtH4BXeVUYjjr2cCrLsyGcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MdVXgcdF; arc=none smtp.client-ip=220.197.31.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RHykOafi"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MdVXgcdF"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=oI
-	BAjJv3rl8M8ZGbNQVG3tG7cwyjlet+0J+w7M2quTk=; b=RHykOafiCsdKeABmqc
-	9esV2deB3WK8z41dYIuZAxWfeGj8QXXzzoF9uYBU/Pk7HydK5bzECAsp7kH33IQI
-	1ri5SokeVWnVFeUEBn91Owr2Z4avA2xr48Rq1HbyFftQhGUtzklJk0E+ITD53G6+
-	2H3XqTLQuhvOr0jJVEQyJktLQ=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=I4
+	IgVJEGt2OAuMgU1whO6TJN4Dt+z7L4yrdnwx/WPAc=; b=MdVXgcdF4ZZKw7C9pN
+	Nn7BFgQtP0Sy+wSXZjX7huqQh2YwQiW0cUcDMggtUktDcDi24CIismYr5Sf0uRUv
+	XN335Zf8go/ER/Sij2P5YoB5izllYG4htRrWPS+IBl6QeVQFEFMkH3PqxUzDa9Po
+	MOfbgVvp7/+2/245U9+zn/vfc=
 Received: from pc.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3dzGDvcBqKMk7CA--.47308S3;
-	Sat, 03 Oct 2026 16:32:08 +0800 (CST)
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3dzGDvcBqKMk7CA--.47308S4;
+	Sat, 03 Oct 2026 16:32:09 +0800 (CST)
 From: Jiale Yao <yaojiale02@163.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linusw@kernel.org>,
+	linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Jiale Yao <yaojiale02@163.com>
-Subject: [PATCH v2 1/4] pinctrl: sprd: free maps on DT map failure
-Date: Sat,  3 Oct 2026 16:31:54 +0800
-Message-Id: <20261003083200.459705-2-yaojiale02@163.com>
+Subject: [PATCH v2 2/4] pinctrl: renesas: rzn1: free maps on DT map failure
+Date: Sat,  3 Oct 2026 16:31:55 +0800
+Message-Id: <20261003083200.459705-3-yaojiale02@163.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261003083200.459705-1-yaojiale02@163.com>
 References: <20261003083200.459705-1-yaojiale02@163.com>
@@ -46,43 +45,53 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3dzGDvcBqKMk7CA--.47308S3
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XF13uryDCryfCrWDCF45Wrg_yoWkCrg_CF
-	Z5Z34UJ34UGrWS9w1j9r43ZFW0ya1UXr1I9r1qqry3A347Z3W8Jr93ZF15Gw1xGw1fAr9x
-	GryIvwnYvry7CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRMoGQDUUUUU==
-X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbCzQhclmrAvYj8FQAA35
+X-CM-TRANSID:_____wD3dzGDvcBqKMk7CA--.47308S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw4DJw45KFyUXF1rAFWkJFb_yoW8Gr43pF
+	s3GFy5Ar45GwsagFWftw48XF98Can7Jry5W3yUK34fZFsxArn2yF1Y9FWYqrs5CFWfAr1a
+	9r45Aa4ru3s8AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEG-niUUUUU=
+X-CM-SenderInfo: x1dryxhdohiji6rwjhhfrp/xtbC8AlclmrAvYmQ1AAA3p
 
-sprd_dt_node_to_map() reserves map storage before adding mux and
-configuration entries.  If a later operation fails, the error path only
-frees the temporary configurations and leaves the map allocation reachable
-through the output pointer.
+rzn1_dt_node_to_map_one() appends mappings for each DT node.  If a
+node fails after map storage has been reserved, the top-level callback
+returns without releasing mappings built for the current and previous
+nodes.
 
-Free the partially built map on failure.  The caller ignores the output
-parameters when the mapping callback returns an error, so they do not need
-to be reset after freeing the map.
+Free the accumulated map on every error path.  The caller ignores the
+output parameters when the mapping callback returns an error, so they do
+not need to be reset after freeing the map.
 
-Fixes: 41d32cfce1ae ("pinctrl: sprd: Add Spreadtrum pin control driver")
 Signed-off-by: Jiale Yao <yaojiale02@163.com>
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 ---
- drivers/pinctrl/sprd/pinctrl-sprd.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pinctrl/renesas/pinctrl-rzn1.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
-index 16cf9d15f247..a565d4fd4233 100644
---- a/drivers/pinctrl/sprd/pinctrl-sprd.c
-+++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
-@@ -326,6 +326,9 @@ static int sprd_dt_node_to_map(struct pinctrl_dev *pctldev,
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzn1.c b/drivers/pinctrl/renesas/pinctrl-rzn1.c
+index fb874867dbfb..64a89e307191 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzn1.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzn1.c
+@@ -411,15 +411,19 @@ static int rzn1_dt_node_to_map(struct pinctrl_dev *pctldev,
  
- out:
- 	kfree(configs);
-+	if (ret < 0)
-+		pinctrl_utils_free_map(pctldev, *map, *num_maps);
+ 	ret = rzn1_dt_node_to_map_one(pctldev, np, map, num_maps);
+ 	if (ret < 0)
+-		return ret;
++		goto err_free_map;
+ 
+ 	for_each_child_of_node_scoped(np, child) {
+ 		ret = rzn1_dt_node_to_map_one(pctldev, child, map, num_maps);
+ 		if (ret < 0)
+-			return ret;
++			goto err_free_map;
+ 	}
+ 
+ 	return 0;
 +
- 	return ret;
++err_free_map:
++	pinctrl_utils_free_map(pctldev, *map, *num_maps);
++	return ret;
  }
  
+ static const struct pinctrl_ops rzn1_pctrl_ops = {
 -- 
 2.34.1
 
