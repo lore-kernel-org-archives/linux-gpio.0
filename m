@@ -1,96 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C8B3C3BF7;
-	Sun,  4 Oct 2026 19:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B25722FDE6;
+	Sun,  4 Oct 2026 21:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791143139; cv=none; b=QiWMwIwdQoyLG/L2tyR7QNzAhltnFDuxMCuDyMICCZwggP3ZVokX8gPmzBRTPWm7x8MVuW4bTiLAzvoj7DzzzdBEzOZ0EjWGU/MdOnqkQQOjZFt1sKi4B4NOidC1egCalFqClSROf1kLDITt2mjgaiNw8pcxIaetUqRJMHP81xI=
+	t=1791147746; cv=none; b=D6tAB5Pdr/4V8bgaWVJKkyhdxQ9TD23PteeCUB/+CFUqBYeaLf4UG9I0wef4ECL+yByB0K0o7pZK1Q1sj4c+uWjNvfv9Nt/2bbgyRt5u8UVVlHBIyGAaoW0otPkJ/KMpVy/+JoE3RbRKPJvIJLpO0OQ3rH14noNSneBpBFZunMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791143139; c=relaxed/simple;
-	bh=W/m4BXAPtaXV9qlKPDGDaJok2KwyRdNXSvtRhQ89TEU=;
-	h=From:Subject:To:Cc:In-Reply-To:References:Content-Type:Date:
-	 Message-Id; b=ZO56Iq+4aqLGNGYsRkS6brWWQ22OLOdXPqc5Cco2zEf9hw8ufNjelZv3+jvWQNs79mrjs1s6aR1To8r/eni4rNzCLbq1UACmQz7Lt5xTjwSqGTxI6jjzQ+UP5g5fIwncfxxlRPO3Ned5HUf5IARKKm4jNGnNPKeeqch0Vyza++U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZGaCjY8E; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791147746; c=relaxed/simple;
+	bh=L8CykEMHJYwOt0EHko7Ar+PdxNSESH4QKQqzSpPvsyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mYBDMcJFY0e/1rNkooHmHoPo8fuj5gMN/fSUWWe/zMPaqJsMQ0s0R/hXRFZd29PyPNHBFCu8Vpz4WXDVxjVZLbBM69eIFEYZbdSKlX38m/NDIce50c0arBtsPFccA8zUYeXE/EVMTDV31xD++aCRWRbka5O/8aydU1NxgQ1Ib+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=XrryI15A; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZGaCjY8E"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D32EA1F000FF;
-	Sun,  4 Oct 2026 19:45:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791143138;
-	bh=W/m4BXAPtaXV9qlKPDGDaJok2KwyRdNXSvtRhQ89TEU=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ZGaCjY8E9ztvKVSPeiHf4Dj98lMLVzdbf+Ri/LTWkKTmJBxKYkS6ZQfIIxU8d4cxE
-	 1sbOZxWxNOkP/CDve179jweoRS6ZoReJF/21DehTcKvA8Wn33innII+VcIbI0HOaKP
-	 6fxvH0sBfsm74JkAyn6ogp4cxOyHsBlbE8a6Uv343qT/HkoF7Lxbq44AVlMycwVYND
-	 4FOiVMmgRhZmK5Fi9AMNFC7e+CitDq5C6jugn1v0AQVfAD0A3XjEs4ZpYGQKkvgcxt
-	 a4LfVgdPBZiDN14gL89h3teOzTOdbe4ejQ2majT20hMt+UyiG/1w65ny1EklV0YnWf
-	 PHAfjiEwenn2g==
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 3/3] pinctrl: tegra: Add support for Tegra268
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Prateek Agarwal" <praagarwal@nvidia.com>
-Cc: devicetree@vger.kernel.org, conor+dt@kernel.org, robh@kernel.org, linux-gpio@vger.kernel.org
-In-Reply-To: <20261004192921.2460405-4-praagarwal@nvidia.com>
-References: <20261004192921.2460405-1-praagarwal@nvidia.com>
- <20261004192921.2460405-4-praagarwal@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sun, 04 Oct 2026 19:45:37 +0000
-Message-Id: <20261004194537.D32EA1F000FF@smtp.kernel.org>
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="XrryI15A"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4317152B;
+	Sun,  4 Oct 2026 14:02:18 -0700 (PDT)
+Received: from ryzen.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C7A23F86F;
+	Sun,  4 Oct 2026 14:02:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1791147742; bh=L8CykEMHJYwOt0EHko7Ar+PdxNSESH4QKQqzSpPvsyY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XrryI15AkdfMkkPNwFILx0swrNyjbuIaMUS1pbP0xtTUgafj9UJT/dqcGwLtN3Lqr
+	 2LjD/EQAXPO3wVbXCPVYrPR14QDX+k1Xtg9ifhAy+5ANP7tF004Axj09sdlXcdBuWt
+	 Ys+zRjqxbh0HYYhb8+daShac9XyV4/GqwB9z3dZY=
+Date: Sun, 4 Oct 2026 22:57:24 +0200
+From: Andre Przywara <andre.przywara@arm.com>
+To: Norman Herms <dockseed@proton.me>
+Cc: Linus Walleij <linusw@kernel.org>, Pablo Mazzini <pmazzini@gmail.com>,
+ Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, "linux-gpio@vger.kernel.org"
+ <linux-gpio@vger.kernel.org>, "linux-sunxi@lists.linux.dev"
+ <linux-sunxi@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+Subject: Re: pinctrl: sunxi: a733: irq_banks too small for port K
+Message-ID: <20261004225724.0b821e9c@ryzen.lan>
+In-Reply-To: <lqyUiTS5jK5vqN8dT8ByLl8sBPTW6eSDG_13v8UAkVIUCnnxLv4UBrlHTm0c7f4brqOd5ur4sDdgld0Ol4usnXOHgJscjqwJl2BrzPpJk5Y=@proton.me>
+References: <lqyUiTS5jK5vqN8dT8ByLl8sBPTW6eSDG_13v8UAkVIUCnnxLv4UBrlHTm0c7f4brqOd5ur4sDdgld0Ol4usnXOHgJscjqwJl2BrzPpJk5Y=@proton.me>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] pinctrl: tegra: missing -1 initialization in PIN_PINGROUP_ENTRY_Y =
-corrupts pinmux
-- [Medium] pinctrl: tegra: missing hardware pins (SDMMC1, UART9) from confi=
-guration arrays
-- [Medium] pinctrl: tegra: NULL pointer dereference in tegra268_pinctrl_pro=
-be()
---
+On Sun, 04 Oct 2026 06:38:56 +0000
+Norman Herms <dockseed@proton.me> wrote:
 
-commit 6edd21c4b852f6086992a569432d8b85b70c1f2d
-Author: Prathamesh Shete <pshete@nvidia.com>
-Subject: pinctrl: tegra: Add support for Tegra268
+Hi Norman,
 
-This commit adds the Tegra268 pinctrl driver supporting the MAIN, AON, and
-UPHY pin controllers.
+> Andre, Linus,
+> 
+> Observation on "pinctrl: sunxi: add support for the Allwinner A733"
+> (Andre's series [2], now in linusw/devel for 7.4):
+> the A733 pinctrl description sets .irq_banks = 10, but PA does not
+> exist there, and prepare_function_table() in pinctrl-sunxi-dt.c counts
+> IRQ banks from PA, so PB is 1 and PK is 10. This is the same
+> numbering problem as in Pablo's thread [1].
+> 
 
-[Severity: High]
-In the file drivers/pinctrl/tegra/pinctrl-tegra268.c, looking at the
-PIN_PINGROUP_ENTRY_Y macro around line 1475, does this leave unsupported
-pinconf fields like odrain_bit, ioreset_bit, and rcv_sel_bit
-zero-initialized? Since omitted fields in a designated initializer default
-to zero, they might pass the validity check in tegra_pinconf_reg() which
-verifies if the bit is less than zero. If a device tree node attempts to
-write an unsupported parameter, could this end up writing to bit 0 of the
-register and silently corrupt the active pin multiplexing configuration
-because mux_bit is also explicitly set to 0?
+So I blame AI, but that below is a lot of words for a simple problem:
+the number of IRQ banks should be 11, not 10. If we go with the dummy
+IRQ. There are no official DTs for the A733 yet, so we need to decide
+there, and I guess that depends on the outcome of the A523 problem.
+I will send a fix after -rc1, with one of the solutions - unless you
+beat me to it.
 
-[Severity: Medium]
-Also in drivers/pinctrl/tegra/pinctrl-tegra268.c, are the hardware pins for
-SDMMC1, UART9, and PU0-PU7 missing from the tegra268_main_pins array around
-line 275 and the tegra268_main_groups array around line 1737? The driver
-defines pin ID enumerations like TEGRA_PIN_SDMMC1_CLK_PX0 and the
-associated drive group helpers, but omitting them from the tracking arrays
-means they will never be registered with the pinctrl core. Could this
-prevent these pins from being configured and render critical peripherals
-like the SDMMC1 interface unusable?
+Thanks,
+Andre
 
-[Severity: Medium]
-In the tegra268_pinctrl_probe function around line 1909 of the same file,
-is it possible for device_get_match_data() to return a NULL pointer if the
-platform device is manually created and bound via sysfs without a matching
-device tree node? Passing a NULL soc pointer into the core
-tegra_pinctrl_probe() function might lead to a kernel panic when it
-unconditionally dereferences soc_data->ngroups. Would adding a validation
-check before passing the pointer to the core prevent this?
+> With irq_banks = 10, PK (26 pins, bank 10):
+>  - sunxi_pinctrl_init_with_flags() allocates irq_array for 320
+>    entries but sunxi_pinctrl_build_state() writes PK to 320..345
+>    (104 bytes past the end) at every probe;
+>  - PK gets no parent interrupt and its hwirqs are outside the IRQ
+>    domain, so there are no GPIO interrupts on port K.
+> 
+> Measured on two Radxa Cubie A7S boards, same kernel (v7.3-rc5 plus
+> this series), once as is and once with irq_banks = 11. Requesting
+> edge detection on PK0 through the GPIO v2 character device fails
+> with ENXIO as is and works with irq_banks = 11. PB0 as a control
+> works in both cases.
+> 
+> KASAN (generic) does not report the overflow on either board. devres
+> rounds the allocation up to the whole kmalloc bucket, so the 104
+> bytes still lie inside the object. The out-of-bounds write is
+> therefore invisible to KASAN here.
+> 
+> Regarding Pablo's thread: with the convention Andre preferred there
+> (count from PA, placeholder interrupt in the DT), the A733 needs
+> irq_banks = 11, which also matches the binding (exactly 11
+> interrupts). 10 would only be right with the renumbering from
+> Pablo's patch, which is not applied.
+> 
+> I am not a kernel developer. The measurements were run on my boards
+> by AI agents, and the analysis was done with the help of an AI
+> assistant (Claude). This is a report, not a Tested-by.
+> 
+> [1] https://lore.kernel.org/linux-sunxi/20260929203634.32998-1-pmazzini@gmail.com/
+> [2] https://lore.kernel.org/linux-sunxi/20260910133519.459011-1-andre.przywara@arm.com/
+> 
+> Thanks,
+> Norman
+> 
 
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261004192921.2460=
-405-1-praagarwal@nvidia.com?part=3D3
