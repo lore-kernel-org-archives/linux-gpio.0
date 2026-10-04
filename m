@@ -1,103 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pz2-f38.google.com (mail-pz2-f38.google.com [74.125.228.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCD335C6A7
-	for <linux-gpio@vger.kernel.org>; Sat,  3 Oct 2026 23:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791068781; cv=none; b=JhziFkhsdYtvDqXgvl7aDuvWgZwtl2lvlCc/bBYvT4Oygr+Z+B29wb3lf+ORT70L278BUMo1HZYyBfG4eNto8ZtEFJ9DdgbxrPbAzu67rZ3sM9WsRUd4U1RMZy4lV5rmgpBWofFy8gU7EHCKbFMg/fELjirJdx2bIpAx2H7FJIk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791068781; c=relaxed/simple;
-	bh=80niw2N7lxvLTbY/N7Pl2CavNQXYd7wRoXm5V/EOgLc=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4262D384CC6
+	for <linux-gpio@vger.kernel.org>; Sun,  4 Oct 2026 01:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791076111; cv=pass; b=KISmTB6W2O6bguKyNRspQdMNU/9zZe31/C+FkdrjnkFT1Pk/8pCt4Nh5Vte229xzo2h0+TsVQ13SrKzj0xwkjZ8Q2UMpJxH8mvcZ4HGNG6bgSb2DG9fbESEdhIWbMRTDqgII4+tmU5dOauO8GG5W+eHLRvwEQ93esvPpD33eXI4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791076111; c=relaxed/simple;
+	bh=H2EzKxBStvluvfBbLZlJzC5SzXZqcUJVtJyLqt4MO7k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gYQ4MBSggSK9G0UKbL2hT/DjLTmXrEnXOCW/VrMQRzqZqSnm/OqGRJk5I+ruCBlr9VpHSFhnX6CAw2SzfUHI5XCRRxPmB9pSIr6adVgng72tA5S3sD4+LHVSpJ+ocrj2RKy0qHF8yqAgMzDCOy9bb90ASY33lMAzn3Mi7JdhCVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvCy7+T8; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=vENhQSpif+dS9UBb9nyPkD6g+5b4zsN4Zx+oB3zUbSYNvT/Cpx9VF4xNYiWAE7lUyr5GzMQ1s5RGgiAM0FNLIGNng5hnsXF3nwKSMEbASkR1XJwfcteYUHN2Ol7DU7cYGldgClVUhvtu/xe27Uws2GVcu7jQ+UjRKFgY8SbwU8I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mzY2vk2T; arc=pass smtp.client-ip=74.125.228.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvCy7+T8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2626C1F0089C
-	for <linux-gpio@vger.kernel.org>; Sat,  3 Oct 2026 23:06:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791068780;
-	bh=XoMKQaijiXb6bV9K46MHf7KnOmtPSTWMU1bFRM5nW9U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=MvCy7+T8JrPxEODCa8NT+EA4IltXRP9i2JW3KPxAZNvqGvv7EwzqOPcDo4V4qowVQ
-	 PpSnkxU1DsRHH2kzLL5pzA0FFnc/Uu/O4SEauzB7y9TuwCU/JI0YSBX5zHoUcSS6tF
-	 cl9FA6+5viNJA/kkiBYOWxp7TLWecu3A23MBXc0lQdMgZ7A9uxIr7T+JIddwDe45uG
-	 Q1zqVdZ1enmjVb+t0GxJ39ncQtHbtbo1mc4Lq5VQ3HFEIBNZNiVsSaTJRYi/E/Ssno
-	 NlXMYqbJJdE9h2KBj1x+Z0x/+r8p+22hqoKw10L5nSp6q2LmcUIM8rDU9QtUGYO7dK
-	 hwyJHec/XC9BA==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3a6497365beso11634051fa.1
-        for <linux-gpio@vger.kernel.org>; Sat, 03 Oct 2026 16:06:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzO4bduIMZfZC4WorXs4IkMI5FRsL564hd7c5IVGm+Mowq7PYk0PVp1QES1cIGIsdkmTNR8iZWH1UPR@vger.kernel.org
-X-Gm-Message-State: AFq9FYLiFQ6qfCqkkhjAp/HwOfD6Ly0bK32kJ74L22f9jDwP97aYYrTP
-	glE6O1lfSnvN206VjXaAJJmTj58LJ6+Ab1d9gv/1Et1OZrcSEal8Fs3AvZR45tpHN3hM+Uj+ifE
-	9Sv+oJ6Ksug/PlUZWcGj61AhXqCYvQhc=
-X-Received: by 2002:a2e:be2a:0:b0:3a7:812b:cfc with SMTP id
- 38308e7fff4ca-3a974f44829mr8481631fa.14.1791068778934; Sat, 03 Oct 2026
- 16:06:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mzY2vk2T"
+Received: by mail-pz2-f38.google.com with SMTP id d2e1a72fcca58-882c2bcef77so293518b3a.3
+        for <linux-gpio@vger.kernel.org>; Sat, 03 Oct 2026 18:08:30 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791076109; cv=none;
+        d=google.com; s=arc-20260327;
+        b=ft9O2IIvyaxVOzQG83iis3UoPND+/uReg5oLOeTBfzo4ovBS4KcYYBZ8M98OsT65uM
+         YTE+2XFM5C9AYGn56ZQUIrBJc9aYkSZxHLmoZHXJKGM/3hnAbwUqyq5AyDB6xcdJzWfe
+         p0ngfYMYL/ZFeUdljN2nuuDaNaxQHjd9kqVNCIHMHxilz4Di2wOEcRXPiizbMLYYEN+/
+         yTsKPCXy3ZUfX+9QTODVIhpuMJ4OSqFj8bChRagZ7u7KQEdgrplxidnsDeNkFdUslV+S
+         rtHRfUxLXUJAYLmEONqczOG4UrBMyB5taw5QdTvOkpON1gfIh7ilqZq0K+QmaYb3QN48
+         eXug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=H2EzKxBStvluvfBbLZlJzC5SzXZqcUJVtJyLqt4MO7k=;
+        fh=GAPlUnCkZXQDGfyFzG85T6+nvWY2GouBCiAGKyCJEe0=;
+        b=RVVdch4TF36VYHRGcGcC2kdBGk3qa7qX+lOE5JoLmsK82Z0hVNeSNehXzDa3sgoZIh
+         hCFluzUFjS0eO7QE5kVB7Qt7z2MbRZUSlReyF2equjbvemZIYvZNOlFP66kp/m8ofkhw
+         EuGrj7DkJtw8SaheiyqysX3ii0wS/R6EMu5T/1Xm9MAGW3fwagSSRz8CtZ22ITtBxk/n
+         coTMJ9uiX5qBgHdscJ12FwCfnXBvD2ALAWMhqFjuNNQPIuV5VrDStGKrqwgsOf12TnWT
+         fLEjevklHNfAIjfBxmn1mF3gR/1iGH0haxpRITwJiAVnCQ2wKwUBds0mVaXgk/giQHgf
+         9m8A==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791076109; x=1791680909; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=H2EzKxBStvluvfBbLZlJzC5SzXZqcUJVtJyLqt4MO7k=;
+        b=mzY2vk2TFGGVC86GKQK9tv31m/zA+ShbspF5huJai4M+/b7WtKtNkEoZC4PPPOj6P8
+         uJl8w0hIQPLq2fw5+EVps1oLEXcl/Dyh0p7CS8KvO7TAuzym36AxUa8M8zBsgF8EUT9H
+         3KKGB5ZQ/FOtPqNXTT9hJusHgD313/QFjIh7WTLg5WPhMjJMmmxN71ToADhveemJ7nXK
+         hvYr3mBgqeKhkyrDvc/QfJbBgYTPICqcgbZ7BEWv5M54wrXX2uvgiEfNiUWZm6YkL4/Y
+         7tDfKchtLtjdvz6ZDHHJGgS96f1+qk9OFecZn/mdKzGUnfqYhE3WPvd8g/+oM/C5J2Su
+         Sncw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791076109; x=1791680909;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=H2EzKxBStvluvfBbLZlJzC5SzXZqcUJVtJyLqt4MO7k=;
+        b=BQxQUKff3CjrNXnYPpoUPOyHLdHjKCXlotx0/yGYd9ff7LL3xQZRDjtXDJF/FSTwb5
+         EaYZZ8uXv6fH93r4IZfjJMFU2m6bCz9LHlCTC4HoML2FUnUnhP6vzXzkNZJOzr5tVT6L
+         PnzO36UuVOu4G4O4g8HttW9n/VTMxZfUnOuwum4LjSTsN9TXKm4Pg887TQ85lOCKYMYC
+         8RP55wI8nngKU7Jk6G0VZF3R1OahCQVNtfHFrdI8UObnyqdf7Nev0waw96Nnt+wW7J15
+         Vck3Yn4wP9H4oDFbOwaeQsuboG6JtCNWrNSs9WThxiYg6voGZntAcX/WBQVv4N7WaNOl
+         PUPA==
+X-Forwarded-Encrypted: i=1; AKwUvBx6OjfZoKF6b197wQCFVsLJcXLNZQK58+3mj+Kido1P0X3zGHUOweTbAsYikW2IkUWn6QCJq9F9Leoo@vger.kernel.org
+X-Gm-Message-State: AFuF++niEyiKnpqpFDetLjqIHq3/sH86W0wecC5A1msanfXn5tV2qiiu
+	ySN7wRnqvsq5mEXJhiAJNyFCXdTxaoSJh1OTi4aSzF4jHcabHsAI9xzNC2kOCoOlJ/Ju0ZCoXDP
+	fAOKZIt7j56cX/jjTcK5BPgVDoSSLeus=
+X-Gm-Gg: AYBFou1/RdAzBMVzYlVFMLwjdDT7GttBxaMmsyW5128HBRMq00gVKIR1lA9RHX/WZ0r
+	3ZGRfN3Ok2y9txb4J2WUuIjJsOxMykIIAiV960JJN/LBMV7KKG7X3WgxncJs2iWu2Ocodl3LNE2
+	9phz0ovTv5EAh7cuGXiydoouhg2e1/B8ewvOkNBIT5d26ouudlWwk4W7JclddX+VQrWEW1/5Vrn
+	ckmKHZH/UJDruxtTBYyQARQ0cVM3BouvFFXO2urrswkYBbUEWoKIzJhER+Hgm4r5A4IGgrZ6XOR
+	ThXJ7mVJ9z3IMYJXxggLbH+sGNrB6VrybF4KH6H7vYD3GmoK+fxsjomciWSB+5EyIW2/pkEl0Y9
+	li91FXTcpXmd3s4h2aX23BvKOhsl8rJecyi+mjw6cKRSzo887c/Z6St+Z0YXxRj5NvxmOGhm7K6
+	ZWVRZGOCVtLwVkaApT1u5ptay/yw==
+X-Received: by 2002:a05:6a00:928d:b0:881:b008:12dc with SMTP id
+ d2e1a72fcca58-88af6d23112mr6680413b3a.51.1791076109507; Sat, 03 Oct 2026
+ 18:08:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260925133804.2231004-1-yaojiale02@163.com> <TY3PR01MB11346E0C01A9337A3AF4D97DC868F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <34472b57.1961.1a0dd3dff12.Coremail.19888972804@163.com> <TY3PR01MB113461CE3C9EB4A175879F5BD868D2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <1186ef64.63b1.1a0e6e70a59.Coremail.19888972804@163.com> <CAD++jLnVna-E61Z1GiKKX9G0Q+1CMq4GYi8p7vjKzeEtroAFdA@mail.gmail.com>
- <ar9WM0ZtDJD2H5Ii@ashevche-desk.local> <CAD++jL=eGjhCM8Xa=T08rPSGpH4p5dsajZa569gsObJma3yZ6g@mail.gmail.com>
- <ar-FDqxMC3F-zkPB@ashevche-desk.local>
-In-Reply-To: <ar-FDqxMC3F-zkPB@ashevche-desk.local>
-From: Linus Walleij <linusw@kernel.org>
-Date: Sun, 4 Oct 2026 01:06:07 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnia-GyvS57-q2NOTWrqXWC12-HDbU6qsUiWEqOgTPX_Q@mail.gmail.com>
-X-Gm-Features: AclHuK-5AEJyRGaRQgwlbZwH8IWgs02BQM4XCc69kj2X4lPnBZkNjbek4q63et0
-Message-ID: <CAD++jLnia-GyvS57-q2NOTWrqXWC12-HDbU6qsUiWEqOgTPX_Q@mail.gmail.com>
-Subject: Re: RE: Re:RE: [PATCH] pinctrl: mcp23s08: reject devices without
- match data
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Kim Phillips <kim.phillips@freescale.com>
-Cc: jiale yao <19888972804@163.com>, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20260814043028.12548-1-phucduc.bui@gmail.com> <aro6C_SWBGF44z5E@black.igk.intel.com>
+In-Reply-To: <aro6C_SWBGF44z5E@black.igk.intel.com>
+From: Bui Duc Phuc <phucduc.bui@gmail.com>
+Date: Sun, 4 Oct 2026 08:08:18 +0700
+X-Gm-Features: AclHuK9IG0a55vjRJ0Ls9cn7wrTw42YZDJM-IfJVm55MhbZJ8YTIhAXFCbeNeC4
+Message-ID: <CAABR9nEmXm2UwOWHDR2=A_62LuFxjgN4En=8Jcn2r_on0XmROA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] gpio: realtek-otto: Handle errors from optional IRQ lookup
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Adrian Ng <adrianhoyin.ng@altera.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 2, 2026 at 12:19=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Fri, Oct 02, 2026 at 11:52:41AM +0200, Linus Walleij wrote:
-> > On Fri, Oct 2, 2026 at 8:59=E2=80=AFAM Andy Shevchenko
+Hi Andy,
 
-> > The entire name of the thing feels like debugfs-footgun
-> > territory for example.
+Thank you for pointing me to the discussion.
+
 >
-> Yeah, I can't find neither a thing on LWN.net nor in the in-tree document=
-ation.
-> The only useful piece of information is (in kernel-doc of struct bus_type=
-):
+> Have you read the discussion [1]?
+> It would be better to make platform_get_irq_optional() to be actually opt=
+ional.
 >
->   driver_override
->     Set to true if this bus supports the driver_override mechanism, which
->     allows userspace to force a specific driver to bind to a device via a=
- sysfs
->     attribute.
+> [1]: https://lore.kernel.org/lkml/20220212201631.12648-1-s.shtylyov@omp.r=
+u/
+>
 
-This whole thing is weird, but OK.
+However, Regardless of how the API might be redesigned in the future
+to return 0
+or negative error codes, the fundamental requirement at the driver
+level remains
+the same: real errors must be propagated properly.
 
-Since we have a ton of drivers depending on match data we either
-have to patch them all to bail out if match data is NULL (like this
-patch does) or, which is equivalent, opt out of driver_override
-that much is certain.
+This patch isn't concerned with the API style discussion, but rather
+with ensuring
+that driver probe doesn't silently swallow genuine errors like =E2=81=A0-EP=
+ROBE_DEFER=E2=81=A0.
+Proper error reporting is necessary under any reasonable API design.
 
-What I don't get is what this is intended for. What is the use case?
-The commit says this is for VFIO. Shouldn't it be opt-in and turned
-on only for VFIO then?
-
-Kim Phillips is listed as contract for the platform bus driver_override
-so let's ask! Kim: what is this for?
-
-All of the device tree drivers use the platform bus, what's yhe
-Unique Selling Point of this for our devices?
-
-Yours,
-Linus Walleij
+Best regards
+Phuc
