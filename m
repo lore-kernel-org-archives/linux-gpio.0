@@ -1,67 +1,89 @@
-Received: from mta0.migadu.com (out-197.mta0.migadu.com [91.218.175.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA8E12B94
-	for <linux-gpio@vger.kernel.org>; Sun,  4 Oct 2026 05:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD193F39E2
+	for <linux-gpio@vger.kernel.org>; Sun,  4 Oct 2026 06:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791092912; cv=none; b=B+Y98qgu/M9CIJvVFDtUQ/nLLshcOjbMIrl47pfVNwyfJZMD+Dsqtjzc1uMGMLiKKVpI+ZFz1If7lm82A+vY1wEqj0uNAIsGA6oOK3gpSxErEANC2THxIynGwQRyWeNcScQOrF1CI1n2gtiNk4Du8G0olY5kO3bhaqTaaaBHXGM=
+	t=1791095948; cv=none; b=Z9JvGkzMkC0H+6katlcY6nB8Xf/39uAJX5KuZrcflOfO402Si2XMAQTg8kpEV62TXUDEib5omljSqAbLGTD9mkbEoumglqLVs6PvT0ZiqHjeDG5yr0gipHK49nVtvZlYFIP0XknbhaY3/9cbptqeNfPdVaJe8YAj6J8ScuFZhSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791092912; c=relaxed/simple;
-	bh=kA/0ZRcsInKEz1O5HLXQCbexw69M1ReXszXBjKEpfzM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kJy/BXaaDrYUv28Msqfo5cvxcisiaB2Ca8Mqs8CFSz/290Rcnv3JNCQ2tjY+0d0ZryfQqUY8qG1LXz0IZv1Whv4lrNX3zYwAQhwOdjnHNYxDgBDVNO8xPxV8ziKdthv5GJUGkmlA01E9IfYW4t+xoyLCbVdDaJouskTXWcnJs2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ft7N4p2F; arc=none smtp.client-ip=91.218.175.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1791095948; c=relaxed/simple;
+	bh=Y7EjX751Z2kdVCaCpsvCYVebDfqPAwGp3Im7F4WlXSk=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=E66JgMcdOCX/uOokIxrXJ4dZiCv+K466MitEUCZ1Tf8PhtoAX8EU4fOKzdP5sVdpvv8Ttjr/8DUBLbaBIxsX3M1FwWV0VDWvm906oL/Fm+fFvik35eHleTqZCKS++UhvbZOSxNLCNlr9mvBp+IxcQ6TWwyh9BDLF+Z9yVGENEqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=E2Ez0S4t; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ft7N4p2F"
-X-Envelope-To: linux-gpio@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=kA/0ZRcsInKEz1O5HLXQCbexw69M1ReXszXBjKEpfzM=;
- c=simple/simple; d=linux.dev;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1791092907; v=1; x=1791697707;
- b=ft7N4p2F0eMJdPReAvsSm5Lta3lnFPtARYO0h/Mvqhin5IYX9lNgYPoLjpga69KTdU20dlZs
- 9soBZsL3P0yHSIwUXYTiPj938yozmKQOYdPdGfOVkUDUAXvYgL1xLjWRLmiTFIALKZBqbPNN04L
- 1Kg49EsLIcyYkBsEYMIKxcNQ=
-X-Envelope-To: linux-gpio@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id ae07ef5e9ef0dcf3;
-	Sun, 04 Oct 2026 05:48:17 +0000
-X-Mizu-Trace-ID: ae07ef5e9ef0dcf3
-X-Migadu-Flow: FLOW_OUT
-From: Junjie Cao <junjie.cao@linux.dev>
-To: andriy.shevchenko@linux.intel.com
-Cc: brgl@kernel.org,
-	linusw@kernel.org,
-	ptyser@xes-inc.com,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	junjie.cao@linux.dev
-Subject: Re: [PATCH v1 3/5] gpio: Move Intel PCH type of GPIO drivers to the intel subfolder
-Date: Sun,  4 Oct 2026 05:48:09 +0000
-Message-ID: <20261004054809.24211-1-junjie.cao@linux.dev>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260925160913.1648565-4-andriy.shevchenko@linux.intel.com>
-References: <20260925160913.1648565-1-andriy.shevchenko@linux.intel.com> <20260925160913.1648565-4-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="E2Ez0S4t"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=ypm3tercgjcidctqjyemeslyim.protonmail2; t=1791095940;
+	x=1791355140; bh=jkeBQXMC0mxk0cVDHkusiZ0VJqmjJ/qXxgzgEOL765k=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=E2Ez0S4tFO8YVQ8T5qWnVIic2lvgr3uh0+BneFzPTl3KOrw/shTnKvF9OrARpxbl9
+	 p03kHEZDlviTZPO3vjguFBd1Fd/ypPxNdH3jJdwBq/RoGgCD4YK1TeIN2sWZEIpEhw
+	 OL7zWysttLIM+ka6wB+hWoWgcf9VkX7OMObcCozhI68Ej6WGmu3oN4uBs+pFH9Z22E
+	 8F7Elywq9okdORKCk22Y2YHkvW3uHjZb98eHXULmXerj47t2Mfu2TcwSdPb/iccbxm
+	 /CpXcM5zZ3l+WhTyr4imdHXixLGOKvyKTTAb3Om5fQgXWaU1SWErzz5YSU8zImtvjp
+	 84KUwJA+ryfFg==
+Date: Sun, 04 Oct 2026 06:38:56 +0000
+To: Andre Przywara <andre.przywara@arm.com>, Linus Walleij <linusw@kernel.org>
+From: Norman Herms <dockseed@proton.me>
+Cc: Pablo Mazzini <pmazzini@gmail.com>, Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: pinctrl: sunxi: a733: irq_banks too small for port K
+Message-ID: <lqyUiTS5jK5vqN8dT8ByLl8sBPTW6eSDG_13v8UAkVIUCnnxLv4UBrlHTm0c7f4brqOd5ur4sDdgld0Ol4usnXOHgJscjqwJl2BrzPpJk5Y=@proton.me>
+Feedback-ID: 144388465:user:proton
+X-Pm-Message-ID: 9d76db5c45f7d18900f3d56a77fb38acbbf9487a
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+Andre, Linus,
 
-One small note: moving GPIO_ICH under "if PCI"
-also excludes its existing COMPILE_TEST &&
-HAS_IOPORT path when PCI=n.
+Observation on "pinctrl: sunxi: add support for the Allwinner A733"
+(Andre's series [2], now in linusw/devel for 7.4):
+the A733 pinctrl description sets .irq_banks =3D 10, but PA does not
+exist there, and prepare_function_table() in pinctrl-sunxi-dt.c counts
+IRQ banks from PA, so PB is 1 and PK is 10. This is the same
+numbering problem as in Pablo's thread [1].
 
-I checked that gpio-ich.o builds with W=1 in that
-configuration before the move. Could we keep
-GPIO_ICH outside the PCI conditional to preserve
-that coverage?
+With irq_banks =3D 10, PK (26 pins, bank 10):
+ - sunxi_pinctrl_init_with_flags() allocates irq_array for 320
+   entries but sunxi_pinctrl_build_state() writes PK to 320..345
+   (104 bytes past the end) at every probe;
+ - PK gets no parent interrupt and its hwirqs are outside the IRQ
+   domain, so there are no GPIO interrupts on port K.
+
+Measured on two Radxa Cubie A7S boards, same kernel (v7.3-rc5 plus
+this series), once as is and once with irq_banks =3D 11. Requesting
+edge detection on PK0 through the GPIO v2 character device fails
+with ENXIO as is and works with irq_banks =3D 11. PB0 as a control
+works in both cases.
+
+KASAN (generic) does not report the overflow on either board. devres
+rounds the allocation up to the whole kmalloc bucket, so the 104
+bytes still lie inside the object. The out-of-bounds write is
+therefore invisible to KASAN here.
+
+Regarding Pablo's thread: with the convention Andre preferred there
+(count from PA, placeholder interrupt in the DT), the A733 needs
+irq_banks =3D 11, which also matches the binding (exactly 11
+interrupts). 10 would only be right with the renumbering from
+Pablo's patch, which is not applied.
+
+I am not a kernel developer. The measurements were run on my boards
+by AI agents, and the analysis was done with the help of an AI
+assistant (Claude). This is a report, not a Tested-by.
+
+[1] https://lore.kernel.org/linux-sunxi/20260929203634.32998-1-pmazzini@gma=
+il.com/
+[2] https://lore.kernel.org/linux-sunxi/20260910133519.459011-1-andre.przyw=
+ara@arm.com/
 
 Thanks,
-Junjie
+Norman
