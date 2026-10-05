@@ -1,35 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E9B427F91;
-	Mon,  5 Oct 2026 09:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC00428495;
+	Mon,  5 Oct 2026 09:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791191217; cv=none; b=S7RkBvVlnAG3u+ccAUx7bXbB2QVxI25tPGOoUSZo9MB2xVIWZ2U4uYn+oVKCT2b+/zF5RwHy2R0dBPFvAkN/VYw27PYIjfOgjlThjFEOwdlosSKeMONPOhadw+n2LkVpnR/4Y/sTsFOnspw3ZaJWrbFBagC2nPQIqllnCGWm/QM=
+	t=1791191220; cv=none; b=KhnIJwylGjAlSPt9JQaMTjIOQGHVtbbQTyoaewk6ABpROQF7rRcWncKRzruT52Bcim9aBYiY5aQXNBgRGPHJG7bWqeFGs2my4gILe1L/eYwdrGrD8FWcpMsVpc2QGHF/KBkTDcPO3swms1jLCnZDxxjRCYum0XpKaANgk8q0Snw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791191217; c=relaxed/simple;
-	bh=inJt3EGfGVQJHz1e0ZblfPPrcPmGqgU+SdI8/LHJocE=;
+	s=arc-20240116; t=1791191220; c=relaxed/simple;
+	bh=Z4UjjnP4c2rqqazNRMisYxkWuQLGy9xyRGBsyjg/sN8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Oyq1wIQAubyJdt5uuFLnW9AIEOz27P/0JlRTgOjgkxTn6tqwBG9CCXamfvTkM+Eiz69rqgWqfnO1O/afuo7n02r518VzyZDJwcF8JUMzCiux5rZzCnnvYkbH62KYnPP83avYIKIwO+65v0JFoXT97ZZ9qsmiKIKkc9PMy77WdpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjJoWloR; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:To:Cc; b=aOAPAxKfNTzGkinEGQUcPBkO9E0xYMrYIJz8iMU9o2dCW00YFeBGFn7cTvKafADLXGIO7WSP8NY4vIUfBrYwgdooJ0Oev6/3TJ5IwAmDdv0arZDy2ONLpcS/yLrbm4pk8k2xTj0nzgkcXS4RREZGrKooLJSPt9ckXQ44iGllyPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLCVyhvU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjJoWloR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1420F1F0089C;
-	Mon,  5 Oct 2026 09:06:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLCVyhvU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC9FD1F000FF;
+	Mon,  5 Oct 2026 09:06:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791191216;
-	bh=gxbS28SntsMUQyXM5E13ugMcWQINhgsovIcMpFDcwJ4=;
+	s=k20260515; t=1791191218;
+	bh=S9LLP3L3r4GfzGbBu98Bx9XvNPWkG8mpmi7bZfdLOis=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=DjJoWloRFZNFBdWo3TyOVpX8PmVPTpKiT4yzrRJ5apizSOE41FzvGpytITen5Tn12
-	 wLpb8UGqtY8sjDFl9A7e/4tOG8eCNvI7rV9AEzpW9ZtHvaSFbAHkb8WKy7hlI4olFu
-	 oJjH3/PsPE8DwKg9hTYpGJZVHGHkHK/hC1lw0KbaM9wzl4kGf+gRf3cldzNuAMrhR+
-	 tCuHvZhUZuLoIXOvyAg7cHCiRv/Oy2G+fmQLgA/1w5cY4DDBW3o5mC19lwvJ3FS6BP
-	 OYujNII2UpyflFLbtpXG1nMuIgsMSVtH9waetva2nBHgfDvz4esDiKG3v8oEfz1qGR
-	 oWrh2uYpOfIhQ==
+	b=fLCVyhvUW0Y6Hyh3TwXYubczgHA0pJplKACRk1toqj5MpXSNhfeRy472sDjnFJayv
+	 HAsRLWfDjGw2wohTx8CaOpL3aiyHf3CrMAgREgF0M7McBOlfTeGzd1d9pHi29+L8ki
+	 GrQbWtXWfNIs9SSfxl968lLIJsuTIfAOUDtVNsH98ySQ55JVOoPnvmPBOPz8+/PPhB
+	 k5bc76vmM/1z9mBRcJxp2+mZXp6FAOL5Qe0u91CEkG7QaIs8O9YTWY8/jq70lxb17y
+	 zTkx9PPasc/Qcwf3pfgxuig5COONhnLut0gMunougeLkT/EzVxeBL5NrauK/PveE5+
+	 CI95gakIcm4ng==
 From: Sudeep Holla <sudeep.holla@kernel.org>
-Date: Mon, 05 Oct 2026 10:04:33 +0100
-Subject: [PATCH v2 2/4] firmware: arm_scmi: Skip requests for standard
- protocol devices
+Date: Mon, 05 Oct 2026 10:04:34 +0100
+Subject: [PATCH v2 3/4] pinctrl: imx: Match the standard SCMI pinctrl
+ device
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -38,147 +38,74 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261005-scmi_bus_fixes-v2-2-34a51338875a@kernel.org>
+Message-Id: <20261005-scmi_bus_fixes-v2-3-34a51338875a@kernel.org>
 References: <20261005-scmi_bus_fixes-v2-0-34a51338875a@kernel.org>
 In-Reply-To: <20261005-scmi_bus_fixes-v2-0-34a51338875a@kernel.org>
 To: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Sudeep Holla <sudeep.holla@kernel.org>, 
  Cristian Marussi <cristian.marussi@arm.com>, Peng Fan <peng.fan@nxp.com>, 
  Hans de Goede <johannes.goede@oss.qualcomm.com>, imx@lists.linux.dev, 
- linux-gpio@vger.kernel.org
+ linux-gpio@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>
 X-Mailer: b4 0.16.0
 
-The SCMI core creates devices for the standard protocol IDs during
-protocol enumeration, without waiting for an SCMI driver request.
-Recording a request for one of these devices also rejects a second
-driver registering the same protocol/name pair.
+Use the standard "pinctrl" SCMI device name instead of the i.MX-specific
+"pinctrl-imx" name. Standard devices no longer have exclusive request
+tracking, so the i.MX and generic pinctrl drivers can register for the
+same protocol/name pair. Their probe checks select the appropriate
+driver for the platform.
 
-When the first driver unregisters, unrequesting that pair destroys the
-core-created device. No other driver can be bound to it at that point,
-but removing it also removes the device that a later driver could bind
-to or use for module autoloading.
+This solves the issue that occurs when both "pinmux" and "pinmux-imx"
+devices that share the same fwnode as only the first device registered
+is assigned as the owner of the fwnode. If this owner device fails to
+probe (e.g., its driver is blocklisted or missing), it never reaches
+the driver_bound() stage and the system skips cleaning up its supplier
+links. Even if a alternative device binds successfully, the system
+still looks to the broken original owner. As a result, all dependent
+hardware components (I2C, SPI, UART, USB, MMC, PCIe) defer probing
+forever, halting the boot process.
 
-Skip request tracking for standard devices. Keep request tracking and
-rollback for nonstandard devices unchanged.
+Note that the solution doesn't support same fwnode being shared by
+multiple devices and associated fw_devlink feature.
 
-Reviewed-by: Hans de Goede <johannes.goede@oss.qualcomm.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: NXP S32 Linux Team <s32@nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>
+Reported-by: Peng Fan <peng.fan@nxp.com>
+Closes: https://lore.kernel.org/all/20260928-driver-core-v1-1-0846bb8e0f32@nxp.com
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
 Tested-by: Peng Fan <peng.fan@nxp.com> #i.MX95 EVK
 Signed-off-by: Sudeep Holla <sudeep.holla@kernel.org>
 ---
- drivers/firmware/arm_scmi/bus.c | 73 +++++++++++++++++++++++------------------
- 1 file changed, 41 insertions(+), 32 deletions(-)
+ drivers/firmware/arm_scmi/bus.c              | 1 -
+ drivers/pinctrl/freescale/pinctrl-imx-scmi.c | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
-index f2e2ed56bc32..230ee9f6f1aa 100644
+index 230ee9f6f1aa..6be31b5121b3 100644
 --- a/drivers/firmware/arm_scmi/bus.c
 +++ b/drivers/firmware/arm_scmi/bus.c
-@@ -186,12 +186,44 @@ static void scmi_protocol_device_unrequest(const struct scmi_device_id *id_table
- 	}
- }
- 
-+/* Standard protocols table */
-+static const struct scmi_device_id scmi_std_id_table[] = {
-+	{ SCMI_PROTOCOL_POWER, "genpd" },
-+	{ SCMI_PROTOCOL_SYSTEM, "syspower" },
-+	{ SCMI_PROTOCOL_PERF, "perf" },
-+	{ SCMI_PROTOCOL_PERF, "cpufreq" },
-+	{ SCMI_PROTOCOL_CLOCK, "clocks" },
-+	{ SCMI_PROTOCOL_SENSOR, "hwmon" },
-+	{ SCMI_PROTOCOL_SENSOR, "iiodev" },
-+	{ SCMI_PROTOCOL_RESET, "reset" },
-+	{ SCMI_PROTOCOL_VOLTAGE, "regulator" },
-+	{ SCMI_PROTOCOL_POWERCAP, "powercap" },
-+	{ SCMI_PROTOCOL_PINCTRL, "pinctrl" },
-+	{ SCMI_PROTOCOL_PINCTRL, "pinctrl-imx" },
-+	{ },
-+};
-+
-+static bool scmi_device_id_in_std_id_table(const struct scmi_device_id *id)
-+{
-+	for (int i = 0; scmi_std_id_table[i].name[0]; i++) {
-+		if (scmi_std_id_table[i].protocol_id == id->protocol_id &&
-+		    !strcmp(scmi_std_id_table[i].name, id->name))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- static int scmi_protocol_table_register(const struct scmi_device_id *id_table)
- {
- 	const struct scmi_device_id *entry;
- 	int ret;
- 
- 	for (entry = id_table; entry->name[0]; entry++) {
-+		/* Skip standard devices as they are created unconditionally */
-+		if (scmi_device_id_in_std_id_table(entry))
-+			continue;
-+
- 		ret = scmi_protocol_device_request(entry);
- 		if (ret)
- 			goto err_unrequest;
-@@ -200,8 +232,11 @@ static int scmi_protocol_table_register(const struct scmi_device_id *id_table)
- 	return 0;
- 
- err_unrequest:
--	while (entry != id_table)
--		scmi_protocol_device_unrequest(--entry);
-+	while (entry != id_table) {
-+		--entry;
-+		if (!scmi_device_id_in_std_id_table(entry))
-+			scmi_protocol_device_unrequest(entry);
-+	}
- 
- 	return ret;
- }
-@@ -211,8 +246,10 @@ scmi_protocol_table_unregister(const struct scmi_device_id *id_table)
- {
- 	const struct scmi_device_id *entry;
- 
--	for (entry = id_table; entry->name[0]; entry++)
--		scmi_protocol_device_unrequest(entry);
-+	for (entry = id_table; entry->name[0]; entry++) {
-+		if (!scmi_device_id_in_std_id_table(entry))
-+			scmi_protocol_device_unrequest(entry);
-+	}
- }
- 
- static bool scmi_device_name_is_transport(const char *name)
-@@ -542,34 +579,6 @@ _scmi_device_create(struct fwnode_handle *fwnode, struct device *parent,
- 	return sdev;
- }
- 
--/* Standard protocols table */
--static const struct scmi_device_id scmi_std_id_table[] = {
--	{ SCMI_PROTOCOL_POWER, "genpd" },
--	{ SCMI_PROTOCOL_SYSTEM, "syspower" },
--	{ SCMI_PROTOCOL_PERF, "perf" },
--	{ SCMI_PROTOCOL_PERF, "cpufreq" },
--	{ SCMI_PROTOCOL_CLOCK, "clocks" },
--	{ SCMI_PROTOCOL_SENSOR, "hwmon" },
--	{ SCMI_PROTOCOL_SENSOR, "iiodev" },
--	{ SCMI_PROTOCOL_RESET, "reset" },
--	{ SCMI_PROTOCOL_VOLTAGE, "regulator" },
--	{ SCMI_PROTOCOL_POWERCAP, "powercap" },
--	{ SCMI_PROTOCOL_PINCTRL, "pinctrl" },
+@@ -199,7 +199,6 @@ static const struct scmi_device_id scmi_std_id_table[] = {
+ 	{ SCMI_PROTOCOL_VOLTAGE, "regulator" },
+ 	{ SCMI_PROTOCOL_POWERCAP, "powercap" },
+ 	{ SCMI_PROTOCOL_PINCTRL, "pinctrl" },
 -	{ SCMI_PROTOCOL_PINCTRL, "pinctrl-imx" },
--	{ },
--};
--
--static bool scmi_device_id_in_std_id_table(const struct scmi_device_id *id)
--{
--	for (int i = 0; scmi_std_id_table[i].name[0]; i++) {
--		if (scmi_std_id_table[i].protocol_id == id->protocol_id &&
--		    !strcmp(scmi_std_id_table[i].name, id->name))
--			return true;
--	}
--
--	return false;
--}
--
- /**
-  * scmi_device_create  - A method to create one or more SCMI devices
-  *
+ 	{ },
+ };
+ 
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx-scmi.c b/drivers/pinctrl/freescale/pinctrl-imx-scmi.c
+index 613552e35070..b259a526ccc1 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx-scmi.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx-scmi.c
+@@ -354,7 +354,7 @@ static int scmi_pinctrl_imx_probe(struct scmi_device *sdev)
+ }
+ 
+ static const struct scmi_device_id scmi_id_table[] = {
+-	{ SCMI_PROTOCOL_PINCTRL, "pinctrl-imx" },
++	{ SCMI_PROTOCOL_PINCTRL, "pinctrl" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(scmi, scmi_id_table);
 
 -- 
 2.43.0
