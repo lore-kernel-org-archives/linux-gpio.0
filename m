@@ -1,35 +1,35 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AEB428495;
-	Mon,  5 Oct 2026 09:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF8D429037;
+	Mon,  5 Oct 2026 09:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791191214; cv=none; b=nRqIrB75oA6spOdzLxpUjEiNnY9U6iSK+lgPFX6ARU9vFzVOQM1yvF9YhzossW/bduPjZMMNnDx5kyi/Ofa02RnEnrQ2YLTJpgQ0PqKu1dFTvmDskVxDu0Obs2fdUiZnpKUG02i0zVIoijEoNnEnPmZOHKULy0MPIE7lqOQYH/4=
+	t=1791191216; cv=none; b=BFFCpWHpQfU1RnHcYV/DEwEMEPgZGEHXs/Cpo7QrIKAsCp7LSYiUHT90EIRwubsBUeajRGoTIxUY6mrHz2tZ3mdyfUK/uRQ9yodYtohYD7oFKbBbMjcxORl6aabg6VaYfmnTPGC3chPveSdTGtWjctZ4kBmAJqD5P9SyM4SCCb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791191214; c=relaxed/simple;
-	bh=nZ13JfYgmC5Nh75Rcrs7KdvHmuRtJIHDPQ3CpS/qYxY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LdLsdDaRfngCGE3/MjIdNPWyxjyhLBnB8y4buhW9UxSpqjCMIF3DrxG2h9m/P4WiSbSC4ntWNn29PZMRKqvjyT734lTOE17nNbaJjAftWkj45h6O4b/oG9yml7Ffx/6oAuRaipFkg0/AuOthE768IS4f365YRxJALUnrO3gjEdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tow8CwkU; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791191216; c=relaxed/simple;
+	bh=WRCAdGrlwZpRxS6P/rxVdY8CqltOT6G5hLnP5O3+36A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=fN2j21/Sa1WwuQzFZKSHjrbVoxl8bnN+tbMRA4Bfq4NyCRfWf6z5OJNCFGljmT9mvMa8JU5BqgtELbg4hb155JjQqwf6hsy1Lf2MtJxm8yh8JCN+5cCdqjKTemw6KABLlH6pQd0TyR3FyPLUrh5te2WcLQ9LCnUb92k6QTtjDsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KnaA65Jh; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tow8CwkU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E2461F0089A;
-	Mon,  5 Oct 2026 09:06:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnaA65Jh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 604EC1F000FF;
+	Mon,  5 Oct 2026 09:06:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791191213;
-	bh=SlhXGKnnb8pkhO4y+zbXadXuhtCrpqlVnwCc1gI5uHM=;
-	h=From:Subject:Date:To:Cc;
-	b=Tow8CwkUFBMBAh7+TdtIPzcALsDlLwpqGDEcsyyNKPPeUcv+v1BsgAX3FPPgQ/Pne
-	 ZzENzdRiY5O1FU7YaFcVheh9ts7OuNKOEaHIHzHMUTV56HVuH0V/KCHpVFYlReePlD
-	 rhT/cPgFsdUwGHbP6H0fdHgVOBZEEpV+jQ/HsxBLAppWJjU0UFPlZFpWB+LD1WoxWz
-	 7viAKx3sl7ADYHY/BFW67vCOe5xMX+32+m8oUimkKzg7A3O4VxjjW+5oMJU/LdS9cp
-	 spvrc3KCgfcu+Oy1Nk3FFgs4eKotnoCKCZAYjEU+/gSGIrFR2m14x4BNQUeZrId18/
-	 Xz/naMtFszbGg==
+	s=k20260515; t=1791191214;
+	bh=16n94nUYvcbZLV31vzIlAiIN4TxVfADG8ToDHtsscB8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=KnaA65Jhvg7gL4Wx4MErzEzjUOOxIccacYr2g1qgir0itF1CJO3MsISY4E/yYvg2w
+	 hbhXsNLgiyX/57uXsPIynO2frc4KCnz58PmxFfZGRMv8J8DCtrPCmW3zP3aKatr0bL
+	 ei3gsTjBCplbiTa0AsaH+WkgFSF4xwLFrHzUQpa+VlV9LgOHxi7f6U1LrRa++uZ9YB
+	 e+E4M2Jz+UaCharqnM5basbvqKrkSjQIoy8Qb8M9s1uKc1IBfQBIx284x+URLwLupQ
+	 8CLpEpT5HIam2XELNejuKHBsfflXUOTr0a9OpGG0KOFOkkJB8DqknOqSBpnryB5Lfa
+	 RL9Gndb5vIMVA==
 From: Sudeep Holla <sudeep.holla@kernel.org>
-Subject: [PATCH v2 0/4] firmware: arm_scmi: Some fixes to address conflicts
- with fw_devlink
-Date: Mon, 05 Oct 2026 10:04:31 +0100
-Message-Id: <20261005-scmi_bus_fixes-v2-0-34a51338875a@kernel.org>
+Date: Mon, 05 Oct 2026 10:04:32 +0100
+Subject: [PATCH v2 1/4] firmware: arm_scmi: Avoid protocol devices in
+ exclusive raw mode
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -37,64 +37,100 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIACFow2oC/3WNwQ6CMBBEf4Xs2Zq2RARP/ochhJYFVgVMF4iG9
- N9t8ezxZebNbMDoCBkuyQYOV2KaxgD6kIDt67FDQU1g0FJnSkot2A5UmYWrlt7IQhWmxbxJbY4
- agvRyuAfBuZU/5sXc0c5xJTZ64nlyn/1xVbH3d3xVQoo8K07W1CZt8Xx9oBvxeZxcB6X3/gthT
- gd8vwAAAA==
-X-Change-ID: 20261002-scmi_bus_fixes-19bfe8d3c8e2
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261005-scmi_bus_fixes-v2-1-34a51338875a@kernel.org>
+References: <20261005-scmi_bus_fixes-v2-0-34a51338875a@kernel.org>
+In-Reply-To: <20261005-scmi_bus_fixes-v2-0-34a51338875a@kernel.org>
 To: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Sudeep Holla <sudeep.holla@kernel.org>, 
  Cristian Marussi <cristian.marussi@arm.com>, Peng Fan <peng.fan@nxp.com>, 
  Hans de Goede <johannes.goede@oss.qualcomm.com>, imx@lists.linux.dev, 
- linux-gpio@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
- NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>
+ linux-gpio@vger.kernel.org
 X-Mailer: b4 0.16.0
 
-Peng’s [1] identified the problem of multiple SCMI devices sharing one
-protocol fwnode. His [2] shows the consequence: the first device owns
-the fwnode but does not bind, so fw_devlink can leave consumers deferred
-even when another device binds successfully.
+Since standard protocol devices are created without a driver request,
+rejecting SCMI driver registration is no longer enough to prevent them
+from appearing when raw mode is enabled without coexistence.
 
-This four-patch series reduces those cases within SCMI. It prevents
-protocol device creation in exclusive raw mode, stops treating core
-created standard devices as driver owned requests, and makes the i.MX
-pinctrl driver match the standard `pinctrl` device instead of creating
-a second device for the same fwnode. It also omits the `perf` device
-when the firmware node does not describe a performance domain provider,
-without changing `cpufreq` device creation. IIO/HWMON don't have any
-fw_devlink dependency and having two devices shouldn't be an issue.
+When raw-mode debugfs setup succeeds, scmi_probe() returns success
+before protocol enumeration, so it does not normally create those
+devices. That early return is not sufficient: scmi_device_create() is
+exported and can be called later.
 
-These changes address the SCMI cases above; they do not provide a
-general driver core solution for devices that share a fwnode.
+Skip protocol-device creation in exclusive raw mode, including named
+non-transport requests. Keep named transport devices so raw mode can
+still set up its channels. Share the raw-mode condition and transport
+name check with the existing bus paths.
 
+Cc: Hans de Goede <johannes.goede@oss.qualcomm.com>
+Fixes: aac4e67d6eb9 ("firmware: arm_scmi: Always create devices for standard protocols")
+Reviewed-by: Hans de Goede <johannes.goede@oss.qualcomm.com>
+Tested-by: Peng Fan <peng.fan@nxp.com> #i.MX95 EVK
 Signed-off-by: Sudeep Holla <sudeep.holla@kernel.org>
-
-[1] https://lore.kernel.org/all/20250120-scmi-fwdevlink-v2-0-3af2fa37dbac@nxp.com
-[2] https://lore.kernel.org/all/20260928-driver-core-v1-1-0846bb8e0f32@nxp.com
-
 ---
-Changes in v2:
-- Dropped "pinctrl-imx" from scmi_std_id_table array correctly this time.
-- Updated the trailers received so far(Thanks Peng Fan and Hans de Goede)
-- Link to v1: https://patch.msgid.link/20261002-scmi_bus_fixes-v1-0-8695cbab3fe7@kernel.org
+ drivers/firmware/arm_scmi/bus.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
----
-Sudeep Holla (4):
-      firmware: arm_scmi: Avoid protocol devices in exclusive raw mode
-      firmware: arm_scmi: Skip requests for standard protocol devices
-      pinctrl: imx: Match the standard SCMI pinctrl device
-      firmware: arm_scmi: Skip unused performance-domain devices
-
- drivers/firmware/arm_scmi/bus.c              | 106 +++++++++++++++++----------
- drivers/pinctrl/freescale/pinctrl-imx-scmi.c |   2 +-
- 2 files changed, 67 insertions(+), 41 deletions(-)
----
-base-commit: aac4e67d6eb93118cfa70c6562b5f9c81a7042ef
-change-id: 20261002-scmi_bus_fixes-19bfe8d3c8e2
-
+diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
+index 25197197db8e..f2e2ed56bc32 100644
+--- a/drivers/firmware/arm_scmi/bus.c
++++ b/drivers/firmware/arm_scmi/bus.c
+@@ -36,6 +36,12 @@ struct scmi_requested_dev {
+ /* Track globally the SCMI SystemPower protocol device. */
+ static struct scmi_device *scmi_syspower_registered;
+ 
++static bool scmi_raw_mode_only(void)
++{
++	return IS_ENABLED(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT) &&
++	       !IS_ENABLED(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT_COEX);
++}
++
+ /**
+  * scmi_protocol_device_request  - Helper to request a device
+  *
+@@ -60,8 +66,7 @@ static int scmi_protocol_device_request(const struct scmi_device_id *id_table)
+ 	pr_debug("Requesting SCMI device (%s) for protocol %x\n",
+ 		 id_table->name, id_table->protocol_id);
+ 
+-	if (IS_ENABLED(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT) &&
+-	    !IS_ENABLED(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT_COEX)) {
++	if (scmi_raw_mode_only()) {
+ 		pr_warn("SCMI Raw mode active. Rejecting '%s'/0x%02X\n",
+ 			id_table->name, id_table->protocol_id);
+ 		return -EINVAL;
+@@ -210,12 +215,17 @@ scmi_protocol_table_unregister(const struct scmi_device_id *id_table)
+ 		scmi_protocol_device_unrequest(entry);
+ }
+ 
+-static bool scmi_device_is_transport(const struct scmi_device *scmi_dev)
++static bool scmi_device_name_is_transport(const char *name)
+ {
+-	return !strncmp(scmi_dev->name, SCMI_TRANSPORT_DEVNAME_PREFIX,
++	return !strncmp(name, SCMI_TRANSPORT_DEVNAME_PREFIX,
+ 			strlen(SCMI_TRANSPORT_DEVNAME_PREFIX));
+ }
+ 
++static bool scmi_device_is_transport(const struct scmi_device *scmi_dev)
++{
++	return scmi_device_name_is_transport(scmi_dev->name);
++}
++
+ static int __scmi_dev_match_by_id_table(struct scmi_device *scmi_dev,
+ 					const struct scmi_device_id *id_table,
+ 					bool skip_transport)
+@@ -591,6 +601,11 @@ struct scmi_device *scmi_device_create(struct fwnode_handle *fwnode,
+ 	struct scmi_requested_dev *rdev;
+ 	struct scmi_device *sdev, *scmi_dev = NULL;
+ 
++	/* Exclusive raw mode still needs transport devices for its channels. */
++	if (scmi_raw_mode_only() &&
++	    (!name || !scmi_device_name_is_transport(name)))
++		return NULL;
++
+ 	if (name)
+ 		return _scmi_device_create(fwnode, parent, protocol, name);
+ 
 
 -- 
-Regards,
-Sudeep
+2.43.0
 
