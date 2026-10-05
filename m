@@ -1,269 +1,166 @@
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com [74.125.225.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010062.outbound.protection.outlook.com [52.101.61.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44004C33E5
-	for <linux-gpio@vger.kernel.org>; Mon,  5 Oct 2026 15:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.225.141
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791213363; cv=none; b=ko0Wr2c4un7+ehbt+5SwioHdwYE2+S7i+JnsO0rmJ4Zz8gTAkdpzW+grTL1PKlXBkszmmlrdeALWumed06wnLuwTcyYLW+BFNdpWCyOH+AshVBb5p5++7M/zhdhqfCd3zeaT7FKCZLXiLr2x6nmm/zKf29x68DM88QdJ7KRxDGw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791213363; c=relaxed/simple;
-	bh=di9sLD7L59euqQ5+ItFDihe1+WHuLOg9s6IkVVktlX4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=olJwjBVghAebEBYHSSgshLLJDvNbTyZAxhv/wi0VuMqkPOHGuyI8f28hPkPYvSI/NFpmvP3Ai3vipXebJ0wQd07AwXIZhJowfKy47o61h3uhd03l/Q4q3OirYNDYsEHGRWHnvc77PwjoHxhRMo7vRA0UguupgRd7V+VvDxJHwII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Z/cwPz6g; arc=none smtp.client-ip=74.125.225.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3342E2DDD;
+	Mon,  5 Oct 2026 18:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791223358; cv=fail; b=JspsFyssMofmiPsopscADmjaD6g9tjekaI0LCwyHzyB81DZ7wcmyi4QrcPum+72eNPRt8FeXaD/q4qwCRTEoqdwQAVqXtOlaPGCrRUxxWGkvzFqmb2b95xXBNgpad+BNwdKh30W5xFmX7kf1tIwTQG/61mJjLvNxPri7lwMNejo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791223358; c=relaxed/simple;
+	bh=qPqteqKqJKnfJGjmTS+92EKFez+DvYnWK22SRgaj7I8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P5eBOVXAwCd9yCLku2W6uqNX2/yQOokUlQMAvuykDQH+M1FrI3OfxkvKQ3kFas7K70OJh65tgEZh4hzDtpEEGMHkQtj+h++t1JpCAiPiHzNru2Zbgg4c+4OCwP68vWA88Z5oQx2B3YdV5OcHc3RVli6LbPWPMfMLgG/K9O9g26s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EYxO7m3b; arc=fail smtp.client-ip=52.101.61.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Z/cwPz6g"
-Received: by mail-wm2-f13.google.com with SMTP id 5b1f17b1804b1-4a0977b9c20so24713855e9.2
-        for <linux-gpio@vger.kernel.org>; Mon, 05 Oct 2026 08:16:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791213359; x=1791818159; darn=vger.kernel.org;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=E6x/AsX38zbMGVV1Hr2xi2v0Hi8bQK/pkRp82/YE/O4=;
-        b=Z/cwPz6gOjPH2qGmog0V1op0cNOtj7fEu8Kc5JuI5cfp0g/4FVpPFN03PNEA1bVxIO
-         orLTtwSbnhLzStMtZ5dL5HI0g0W2/u2QL9hRLPFLE0RoGUWuWPtIeJApA5TPm4ZIKTyQ
-         vlnVev76/wpMF/y8F89L5HSV9029MLxsvF4mv3iC7gXop5OkAlaKHCrQN9QzFBW/EGKT
-         RcK6pKLWIQ378Cim1wxPu2cH5a1D0lxEcx4cAGCBUWHnwyTZXNy/YB99xNp98aZwXMoO
-         sxJBrMnHgUeyBIzx4p3v1WvdCNEKRbL4cQYuIRyoSC0K0VAROK7svoovkqkozPU81gia
-         cs3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791213359; x=1791818159;
-        h=content-type:mime-version:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=E6x/AsX38zbMGVV1Hr2xi2v0Hi8bQK/pkRp82/YE/O4=;
-        b=nFJcU2EyvK4IravWMyV/YfmGYnDcK4guuQA5eVT+nVo+dg3aM4tJFSP/1lN0u1g4qk
-         6K3N14wYJ8n8M45dmJ+k8jh/oAVCbmYALDqMcdlUd8E+/gfDl6lUfjHv6ZtCSS1MnuBD
-         x9ADfXBKrjAVxnvn3+bWaHNSnKd/s2mI4dRUNpVo1HfVs+6mVp+ZGxqjD/53Igwc93Nz
-         FGnf0gIIQeIYhlAUXqN/Lm3+HvLWesHjL2QMQfgzk1S6c/IkMtJDdWVhWDmbvJ2mklfO
-         67T7X/hyDRE0/OK+IGSYlyJzfzNV9brFIgXUiGCjdTqyck9jJ7NOLxuRNZvfY477dpUK
-         upuA==
-X-Forwarded-Encrypted: i=1; AKwUvBzp5tTAG4nPg9Uag+KrsFuVQ3xSBug9fux83njSVW73O62qZHe1wRsvaF9uaoNe5vkDGV6kWAqC7bxX@vger.kernel.org
-X-Gm-Message-State: AFuF++lq1YJube2xOKsXU6+ypR6/Rg6eibz+CkBP/mgAOFnevC/y7JqD
-	VhdCY37Fzd+s68qFMuRocIUlUsbJz2CW4k0kbUVyBOTPb+uilAKDSe8Qv+wVLeR2XeA=
-X-Gm-Gg: AYBFou14myrgfQRW1xfbxnQZY2Fc82NGmwG9wAvDeGbNV4Uw+ANPMimcVl+1cacRLXa
-	54Z80cZO7jyw8unJPxjqqemii8Y1n2dZRRzTEr2b1sa0qROWmrugaUmDLZ8Qa2KoPIHAJXr7GhO
-	AVWKYuxN2UN43GHHisIm6Nm71hIRnwuRDrxIrzTt8/amJnj4nMOIF0fssCMm0439rUAs2CG5B+a
-	dW6PHndv7mIoeoIVQuXWDvYaY3Ph6tYcbgpApQnmCkOa2ObmMmDp7lOqqoFlr61rOlsR1C/2KKM
-	lKIkPafWz6pP9bU8N1FOla7ooqx8DOKpuxfsYonniQXEyY9IlLbJuru5updYiMiRIM1wb6z9lwG
-	kaFZgNF71geLqaT0DTeqV4A2F4Fojb5rFRAeZZmVOIOeKyFApB99vMLTSZ+Xinsxh16Z1w63VNb
-	DiIEyIomgFLgtxKXXSbHdDIMQSBgXSkR3D1tugAi82bOzyW0zJw8hQbgA6TycHICdoERazeQiCF
-	TGDiBsjKUIQaNw4
-X-Received: by 2002:a05:600c:4594:b0:4a0:394f:d4d1 with SMTP id 5b1f17b1804b1-4a0394fd57bmr148733425e9.20.1791213358892;
-        Mon, 05 Oct 2026 08:15:58 -0700 (PDT)
-Received: from localhost (90-182-211-1.rcp.o2.cz. [90.182.211.1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48c622bb17esm4076218f8f.45.2026.10.05.08.15.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2026 08:15:58 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, Michael Turquette
- <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Brian
- Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, kernel@pengutronix.de,
- linux-gpio@vger.kernel.org, Sascha
- Hauer <s.hauer@pengutronix.de>, Linus Walleij <linusw@kernel.org>, Alvin
- =?utf-8?Q?=C5=A0ipraga?= <alvin.sipraga@analog.com>
-Subject: Re: [PATCH v9 2/2] clk: add TI CDCE6214 clock driver
-In-Reply-To: <97e38914-bd04-4e01-8e5a-a729dfe0c7f5@pengutronix.de>
-References: <20260921-clk-cdce6214-v9-0-f2ea74fd38a2@pengutronix.de>
- <20260921-clk-cdce6214-v9-2-f2ea74fd38a2@pengutronix.de>
- <1jcxu18xme.fsf@starbuckisacylon.baylibre.com>
- <97e38914-bd04-4e01-8e5a-a729dfe0c7f5@pengutronix.de>
-Date: Mon, 05 Oct 2026 17:15:55 +0200
-Message-ID: <1j33uki3f8.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EYxO7m3b"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R/8xKiiGkYsJt6BIU2KzunrQhgLTfYD47/1oeBE3ckwR1Qz/N6ZKWceNfYyBJEbBEALRqUpIIXyOzyO+A0QxEqfLIEq1NspOeP9c9dFKJVwN7pbrm5iMMMHaT8aVIKcsV2kEGrJ+8SPknfXzWdOWh++z9U6/nEXqYcpfmupa1GdK8l4VAMN6hL6ouI+Ir0XaGL3paYpzLW0Wf+0bdngimK4Dn0nKRrYEqWM6YmyVZ5xqeQZ5wyFOjDNg8969DSWwHJmVYQYhCbKy2m0JmeYp3ActPCC6ENqGWzEqsux14TRPDQ8aOTU3fHYRaB56mTa4FN8L0C5JAdchtojDvUhqng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CrRbQQfyxavAMqZJL4v4XhKo7k/c+9n8pNe8GCoKdHI=;
+ b=fZkr13v5jDop4hJIAsGIsDXMdURPqR5F3vwJ4tHC/sajfe7JevxVjZOZ41Zn40eLhHkLJ30Oftpp8RBAzAz8E4yflMPsWBsoP+7GNlEOy8mdvsmorAiWqMufAVbxBLzNZhAWGEgkzNDR54/4Ed+l9l5Tf9bKvTnawG3NtCwVFHOMbZYSD5p496MOiSLQM8zCGpf9BxMuvvSWKb5yUN0u1wFXkwqfqr8gsvnoeU1MW5ui442xxqDGCL5IS2Zvw9FHGZSCfap87SbbtHxwcFYhOngARC2OR+5kU+OrWrRPDh15WAH6qsiEOhSnnLS3gjfSoetwj/blMRf7Mw93DkZ7uQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CrRbQQfyxavAMqZJL4v4XhKo7k/c+9n8pNe8GCoKdHI=;
+ b=EYxO7m3bway3c+JkOzW4oYmed4X7irj6s3mIwba5bJCWEAkGX7viy4NR2yHrdyGuPpxYdNzYxkQbCun6hxGC/MnRIDYi330Xf2c4s9by78qszxMHmih5cyNg+GP8dWN+lMZ+MExbRucj62fDCEw/uf9X46pimxYmrvdPyVTi40Y=
+Received: from DS7PR06CA0040.namprd06.prod.outlook.com (2603:10b6:8:54::28) by
+ BY5PR12MB4097.namprd12.prod.outlook.com (2603:10b6:a03:213::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.472.20; Mon, 5 Oct
+ 2026 18:02:08 +0000
+Received: from DM3PEPF000265B7.namprd04.prod.outlook.com
+ (2603:10b6:8:54:cafe::46) by DS7PR06CA0040.outlook.office365.com
+ (2603:10b6:8:54::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.472.20 via Frontend Transport; Mon, 5
+ Oct 2026 18:02:06 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
+ is 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ DM3PEPF000265B7.mail.protection.outlook.com (10.167.23.244) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.496.14 via Frontend Transport; Mon, 5 Oct 2026 18:02:05 +0000
+Received: from ausmlimonci-lx1.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Mon, 5 Oct
+ 2026 13:02:04 -0500
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: <Basavaraj.Natikar@amd.com>, <Shyam-sundar.S-k@amd.com>,
+	<linusw@kernel.org>, <mario.limonciello@amd.com>
+CC: Olzhas Marat <marat.olzhas@gmail.com>, <stable@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>
+Subject: [PATCH v2] pinctrl: amd: Clear S4 wake bits when firmware has _AEI
+Date: Mon, 5 Oct 2026 13:01:47 -0500
+Message-ID: <20261005180150.1024336-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM3PEPF000265B7:EE_|BY5PR12MB4097:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02e20fee-705c-475b-c27f-08df230ac438
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|23010399003|36860700016|376014|6133799003|18002099003|13003099007|56012099006|10067099003|11063799006|5023799004;
+X-Microsoft-Antispam-Message-Info:
+	q5RQZKZhcp51kYmsa6cBqkaRG2GzjUB3YTB8YcQNAcHBr2vxDivmPZGWbIQ+8K8p6EHCGNrrP9DeHI5zq6fY9uXD4D0+oBr1d37rcjAzXU8MpjWmk19NpO53Gxoq5osA1uWsRdcwuHj1xnydrOl4UzBvYC3EmirTWn+4gfCYFmY3JIjJcYlpD0LpUNX3xfdf2d+/8w+bM1B9JHJRypqjeZgVhvEYdkzUZsP8RNsviKhTr9y0/TqxYI36nuInVB8Rwm4iZXgCXznS9A1pXti77Jlwx0E32MbxYB5xDKASe/30hapohBKLJwH/Sfy1p55+wutzH6XbbIyG/yL2VJLQxcFwG2mVVP7V/D7k9Y4h6JOmOP8XwWmAoTHYJ6/sDHgL3TA3WVxNBU90wrY5e/1vr4cIkeKXmWR5XQT1Lrn6cN8jOGKcuJJuQ2LHLW7nYjXJB/OqaDpO1rLDSiW7Tf+W9KkpHBFvNbQcNjc4bqGiUPhnKKlj2MVMkhXYry+yXpV4f1G859nEyCz8pzajhhQWa8EifPfm42CVQ5WHuM2r0PKho/Dqy4ZrW/YkbJirNJ19oxC6m046CBctds2/PHLABCc+zQLXu7M/T4hya1KgTb2R+Yvw6b7w08Ss7dZo2fA7DYW2Vn+NX+WL3LqvuLlyauLvjIG+EIOib+8CwYbQOHq5LNHxqeLXGfBXFG/E3NTKP/I0mMzT1VwlXXaKA+IzPw==
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(23010399003)(36860700016)(376014)(6133799003)(18002099003)(13003099007)(56012099006)(10067099003)(11063799006)(5023799004);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	zFvhbz1Hn5uq9eMPY26v3HWBI7wal+zBKSSFQsthQxkzd/7+1b5XwyGyUD2Ers36gNP7zRZntU16jjs4kUkU1FH+y1h/Z3CMoW2eXmxYDaBforJukCgpbsLi3MIBBcYIn4HQdCy2nfJy1sjRMkrvpO6QCKUoV9dqFfVanZAtaZqMmp35UdJbVgGMOGVaBXh/Z/C4Crjzh+2UVYQfrq5KUJFcy37WwS1nqreQtSzptcU7kwLIAyziPW0wUC0ZnfvOfJUBzE5K7CZxmDPVVP0Zr3a2gYIckuGHys+a7X0DBcO6uH9pQQvfkxQRhD+2TOzIGOvy2LtwGf4HKWBKSo56LeVA6bK4AROyjmOAPZEemTjKXft4AsVlYZrMY8DXccDfMwYxaWDftZ6BtKIf526IZkCpkRU38OENN5scmbmgSsOovJfuYYUJVPt4haqc+L+d
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2026 18:02:05.8189
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02e20fee-705c-475b-c27f-08df230ac438
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DM3PEPF000265B7.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4097
 
-On Tue 29 Sep 2026 at 10:43, "Sascha Hauer" <s.hauer@pengutronix.de> wrote:
+Commit ffe8a0c6b552 ("pinctrl-amd: Don't clear S4 wake bits at probe")
+preserves firmware-programmed S4 wake sources because some PCIe devices
+rely on them for Wake-on-LAN. The system that motivated that change does
+not expose ACPI GPIO events through _AEI.
 
-> Hi Jerome,
->
-> On 2026-09-25 11:54, Jerome Brunet wrote:
->> > +
->> > +#define R0	0
->> > +#define RO_I2C_A0			BIT(15)
->> > +#define RO_PDN_INPUT_SEL		BIT(14)
->> > +#define RO_GPIO4_DIR_SEL		BIT(13)
->> > +#define RO_GPIO1_DIR_SEL		BIT(12)
->> > +#define RO_ZDM_CLOCKSEL			BIT(10)
->> > +#define RO_ZDM_EN			BIT(8)
->> > +#define RO_SYNC				BIT(5)
->> > +#define RO_RECAL			BIT(4)
->> > +#define RO_RESETN_SOFT			BIT(3)
->> > +#define RO_SWRST			BIT(2)
->> > +#define RO_POWERDOWN			BIT(1)
->> > +#define RO_MODE				BIT(0)
->> > +
->> > +#define R1	1
->> 
->> I don't really get the point of those defines
->
-> It was requested by Stephen [1]:
->
->> Maybe it would be better to have '#define R30 30' just so we can easily
->> jump to the fields like R30_PLL_NDIV. I see that the datasheet doesn't
->> give a name to these registers besides prefixing the decimal offset with
->> the letter 'R'.
->
-> I don't have any personal preference.
->
-> [1] https://lore.kernel.org/all/e5858fe5d4276a735c5354e955358f27@kernel.org/
->
+On a Chuwi CoreBook Plus, firmware exposes _AEI but also leaves the S4/S5
+wake bit set for GPIO 24. This causes the machine to power back on
+immediately after shutdown even though Wake-on-LAN is not enabled.
 
-I've sync with him. keep it that way
+GPIO register dumps show that the only relevant difference is bit 15 on
+GPIO 24. Clearing that bit makes the machine remain off. GPIO 24 is not
+itself listed in _AEI, so _AEI is not a per-pin indication of which pins
+the OS manages; it is a platform level signal of which wake model the
+firmware follows.
 
->> > +static int cdce6214_clk_out_set_parent(struct clk_hw *hw, u8 index)
->> > +{
->> > +	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
->> > +	struct cdce6214 *priv = clock->priv;
->> > +
->> > +	switch (clock->index) {
->> > +	case CDCE6214_CLK_OUT1:
->> > +		regmap_update_bits(priv->regmap, R56, R56_CH1_MUX, FIELD_PREP(R56_CH1_MUX, index));
->> > +		break;
->> > +	case CDCE6214_CLK_OUT2:
->> > +		regmap_update_bits(priv->regmap, R62, R62_CH2_MUX, FIELD_PREP(R62_CH2_MUX, index));
->> > +		break;
->> > +	case CDCE6214_CLK_OUT3:
->> > +		regmap_update_bits(priv->regmap, R67, R67_CH3_MUX, FIELD_PREP(R67_CH3_MUX, index));
->> > +		break;
->> > +	case CDCE6214_CLK_OUT4:
->> > +		regmap_update_bits(priv->regmap, R72, R72_CH4_MUX, FIELD_PREP(R72_CH4_MUX, index));
->> > +		break;
->> 
->> Can you properly describe your clock rather than doing this sort of
->> matching ?
->
-> You mean something like:
->
-> struct cdce6214_clk_data {
->         unsigned int pd_reg;
->         u32 pd_mask;
->         unsigned int reg;
->         u32 mux_mask;
->         u32 div_mask;
-> };
->
-> static const struct cdce6214_clk_data cdce6214_clk_data[CDCE6214_NUM_CLOCKS] = {
->         [CDCE6214_CLK_OUT1] = {
->                 .pd_reg = R4,
->                 .pd_mask = R4_CH1_PD,
->                 .reg = R56,
->                 .mux_mask = R56_CH1_MUX,
->                 .div_mask = R56_CH1_DIV,
->         },
->         ...
-> };
->
-> If yes, I can do that.
+Use that signal to decide what to clear. Continue clearing S0i3/S3 bits on
+every system. Clear S4 bits when firmware exposes _AEI, indicating that the
+platform hands GPIO events to the OS, but preserve S4 bits when _AEI is
+absent so that firmware-programmed sources such as PCIe PME that bypass the
+GPIO IRQ wake API keep working.
 
-The way you've done it above is duplication of code. Each clock appears
-to have an offset and a field, those data should be associated to clock
-then your function is just a single regmap_update_bits.
+A platform that exposes _AEI for some pins while routing a wake capable
+device through a raw GPIO not listed in _AEI would lose that wake source
+unless firmware re-arms it during the sleep transition. No such system has
+been reported.
 
->
->> > +static int cdce6214_get_psx_div(unsigned long rate, unsigned long parent_rate)
->> > +{
->> > +	unsigned int div = DIV_ROUND_CLOSEST(parent_rate, max(rate, 1UL));
->> > +
->> > +	return clamp(div, 4, 6);
->> > +}
->> 
->> Can't you just use a regular divider operation ? split you clocks in
->> different entities ?
->
-> I can switch to use the generic divider helpers (divider_recalc_rate,
-> divider_determine_rate). Is that where you aiming at or do you want me
-> to register the clocks as composite clocks?
+Fixes: ffe8a0c6b552 ("pinctrl-amd: Don't clear S4 wake bits at probe")
+Reported-by: Olzhas Marat <marat.olzhas@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=222041
+Cc: stable@vger.kernel.org
+Tested-by: Olzhas Marat <marat.olzhas@gmail.com>
+Reviewed-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+v2:
+ * Add tag
+ * Drop handle declaration
+---
+ drivers/pinctrl/pinctrl-amd.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-No I don't mean composite, I mean use helper functions such has
-divider_determine_rate(), divider_recalc_rate(), etc ...
-
->
->> > +static int cdce6214_probe(struct i2c_client *client)
->> > +{
->> > +	struct device *dev = &client->dev;
->> > +	struct cdce6214 *priv;
->> > +	struct pinctrl_dev *pctl;
->> > +	int ret;
->> > +
->> > +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->> > +	if (!priv)
->> > +		return -ENOMEM;
->> > +
->> > +	priv->client = client;
->> > +	priv->dev = dev;
->> > +	i2c_set_clientdata(client, priv);
->> > +	dev_set_drvdata(dev, priv);
->> > +
->> > +	priv->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
->> > +	if (IS_ERR(priv->reset_gpio)) {
->> > +		return dev_err_probe(dev, PTR_ERR(priv->reset_gpio),
->> > +				     "failed to get reset gpio\n");
->> > +	}
->> > +
->> > +	priv->regmap = devm_regmap_init_i2c(client, &cdce6214_regmap_config);
->> > +	if (IS_ERR(priv->regmap))
->> > +		return dev_err_probe(dev, PTR_ERR(priv->regmap),
->> > +				     "failed to init regmap\n");
->> > +
->> > +	ret = cdce6214_configure(priv);
->> > +	if (ret)
->> > +		return ret;
->> > +
->> > +	ret = devm_pinctrl_register_and_init(dev, &cdce6214_pdesc, priv, &pctl);
->> > +	if (ret)
->> > +		return dev_err_probe(dev, ret, "pinctrl register failed");
->> > +
->> > +	ret = pinctrl_enable(pctl);
->> > +	if (ret)
->> > +		return dev_err_probe(dev, ret, "pinctrl enable failed");
->> 
->> It feels like it should an MFD driver. half the driver belong in pinctrl
->
-> I'd rather not go that way as it means splitting a relatively straight
-> forward driver into three subsystems with different maintainers. Also it
-> means getting cross device dependencies right.
-
-... and then the trouble is for us maintainers to sort things out
-whenever the framework needs change.
-
->
-> Taking "Multi Function Device" by its name it means it's a device with
-> multiple functions. The CDCE6214 is not that, it's only purpose is to
-> generate clocks, only that the pins need some configuration. Most other
-> devices of this type just have device specific properties in the device
-> tree for configuring their pins (which I was rightfully pushed away from
-> in earlier reviews).
-
-It may have a single purpose but it is still providing multiple functions
-and we will not have this pinctrl driver under clock. Please submit it
-to pinctrl where it will receive proper review and maintainance.
-
-IMO MFD is proper way to do it.
-
->
-> Sascha
->
-> -- 
-> Pengutronix e.K.                           |                             |
-> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
->
-
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 15a398bb3be23..6835e943909ca 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -886,6 +886,15 @@ static void amd_gpio_irq_init(struct amd_gpio *gpio_dev)
+ 
+ 	mask = BIT(WAKE_CNTRL_OFF_S0I3) | BIT(WAKE_CNTRL_OFF_S3);
+ 
++#ifdef CONFIG_ACPI
++	/*
++	 * Platforms without _AEI leave GPIO wake sources to firmware, so
++	 * preserve their S4 wake bits.
++	 */
++	if (acpi_has_method(ACPI_HANDLE(&gpio_dev->pdev->dev), "_AEI"))
++		mask |= BIT(WAKE_CNTRL_OFF_S4);
++#endif
++
+ 	for (i = 0; i < desc->npins; i++) {
+ 		int pin = desc->pins[i].number;
+ 		const struct pin_desc *pd = pin_desc_get(gpio_dev->pctrl, pin);
 -- 
-Jerome
+2.43.0
+
