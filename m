@@ -1,112 +1,107 @@
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447754334B9
-	for <linux-gpio@vger.kernel.org>; Mon,  5 Oct 2026 09:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B338946AF08;
+	Mon,  5 Oct 2026 09:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791192672; cv=none; b=eYGs1xvng1iYc/PPPMxHn1eMY25mjTuO0TQg9Uz15NgqTJ2VB5mv74tX6QNpAGZULQRp4DgJZPNOc5RwrVkKoEdTNizx7ZBLu77DXCrI91/gzBdTGgAkHVtD/nvNODpxT0DxhKH8thJgdFFcQlIfJHjszGiE3YhhuCvOmGQpg0E=
+	t=1791194008; cv=none; b=O/QhpPGrl6l6yL83fxdQME0mwdNyr86/UY3x79BPsTHhusgPbVHq0XwX2oj+FySXvC27LraZqoZd0PmMjGeX5xAPnHy/JpVNZxjKNC0HXYVyOB0dzvzbPDU8t8oqdRCS85kKSVyLKgOdPQ5lRILr5CfXrWeGPWHJC7ppmiDYCU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791192672; c=relaxed/simple;
-	bh=I1FOVBU197Mzny6/azVFseqcvToUfn4RjS+DXV/3QO4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=K2ZG4j68ACLaj7K/XpXWVfL1BjVXhoKBvWy1e6HI/3yZpRL47uJ0W5fOkjceLsgYAF60ENgEDB0/I/j96XAAJb1pq/sF6SSn2tUHFK1O7/Af1U7a639B6zewM/ooNmbeRWFz5bxBpgRZoqLu595Uqv0WwOsAHjaNEjVfaFUa8RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pxu6bwom; arc=none smtp.client-ip=209.85.160.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+	s=arc-20240116; t=1791194008; c=relaxed/simple;
+	bh=LNqzIQN12+KevA3Fefu7eyIahVYCN1xTaJ2lsyhNSfA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F9EFxVePoCHT3Sm4fuxKmbwGIbLh6N25xuDBHH6H132DfLXKJbTOZZlTwaEIBPuVKpQRs1Bk2TuMTFjopZJs1yB6mcIMy4BIC4F2xFuUt30u6c7PZZmwCwVJ0mzxu7HarrHx7d32PuoodsbzO8kV8Vn+9GvpPczYSKVIj0cb3aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4PK+X+X; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pxu6bwom"
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-4566537e644so2424716fac.0
-        for <linux-gpio@vger.kernel.org>; Mon, 05 Oct 2026 02:31:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1791192670; x=1791797470; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=biDZcx3VDN+hEHh4NXBE6TAaQj8s5MFRl03+ZPkW57Q=;
-        b=pxu6bwomkRoqZh/wO98IkJefS4Pheb7psQu/JchMD4ikRdGVaOIT5pyAuhSEYb8xoX
-         86rlCi1KpJJf3xc+4iAZfZy7NHjdnRUh94p+qRxXSxvvlkcyu+1bpilXkBRiHlGd0sew
-         U1dUm8GWIuBp398vrqzbLN8A+6S4ml6/PGJU+zf7ivY2TkXqKsUbbQPO5pFbbHFrQjWF
-         H9dublZU7hz6uS41K+fZyQfNaCeKh6a+gm2C/pflb5Yqsr8Rj4DSXiY47fM+JHzOYnbX
-         IozBzlpI05WT6G0dPBcOMS3yU9Ih29E8MKUOLauIoxYd+fxmEJ2rtEahHuZwnWwnkknv
-         lNKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791192670; x=1791797470;
-        h=content-transfer-encoding:content-type:cc:to:from:subject
-         :message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=biDZcx3VDN+hEHh4NXBE6TAaQj8s5MFRl03+ZPkW57Q=;
-        b=tW4aRBAppGtJ1bCX8VEFpx1Vcix0SMj7aGBHf2AdYzaLsrssBIEiWq9qnJGWCUTVdb
-         eCJUKtTG2rP/pfPdKGlZicwlsqmEgTbXY38urP6S+AoGixbdSxUn0a724TkCHcdfhsBa
-         xtIEZjjwFKMVazw9k2KWGJWH2y0V0h38gx0hx05VC2ZYTLWq8IhOJwPGfzcKMXwZRtiX
-         JE1V5xHtUe2vxoow9LTCVmpXiWG22x+ftnv1vE95nzjkFXeEmXWB1/jRMbqcCuUEuBIv
-         6y8EwzyMH4sja+WKLQyac7mCTuj3A8L1OBX3CC/r6TXDT/YIRWh546oj0fQgCqprXEBo
-         Kecw==
-X-Forwarded-Encrypted: i=1; AKwUvBxELsZl81IXLTyiJ+zfpKJnkw0oI2SMBKgiKWzF6+yqbCzloJx+bBwl3PDX+X22DIoc/Wwa+bnlrVd2@vger.kernel.org
-X-Gm-Message-State: AFuF++kDzLe29lxH0vU7dwcx086cvkpbhUYEI1qV957R06ujWcdDO/rx
-	ovWDD3LDT7UxGIfgUuaii+HtBFlw/rA33ozkIHtgafObLJFpakf8e7UA4t+6xa1OSI3SeBqrQyu
-	ckVxYqVHcOULVbvZh2wiW7NuPfw==
-X-Received: from jabfq15.prod.google.com ([2002:a05:6638:650f:b0:5fa:8360:37f0])
- (user=justinstitt job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6808:4443:b0:4f4:8bec:ace3 with SMTP id 5614622812f47-4f52ac8ceb7mr8199054b6e.57.1791192669709;
- Mon, 05 Oct 2026 02:31:09 -0700 (PDT)
-Date: Mon, 5 Oct 2026 02:31:09 -0700
-In-Reply-To: <CAGG=3QV2k-nsZHNSuKEixZb+-LcxvhQsG379ghgyOpiDLTJWzw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4PK+X+X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 970491F000FF;
+	Mon,  5 Oct 2026 09:53:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791194006;
+	bh=aUTU86Aq6p6cPLwOLgflfpEbmUAAgBX3kPIXjRKq4JM=;
+	h=From:Subject:Date:To:Cc;
+	b=n4PK+X+XI3hb7SFrCgZwZnhcnmMEzeBBY4a5oZOM/IAaW/oTL4P/+8cUcGRWRq6Lu
+	 vRjT8noThGv7CC4zPqk5O/KxBqx6Xr0dwhc215sK0VPc7EzQaCK1t1NUaiDMLXNA3O
+	 lm+kuIHjQE2sLN7B/LBalyTbn36LdnHYxqcv4RPMinJl0iFrFD4BvdxZ2uEG7cgZzg
+	 jTolNDIsPorjy60cix/ix5p6hufIPt9359fB23Lq+QIPUZbmVBF//Iubm3PqqmPyUE
+	 SefLhAi7xTXI5fui5IwIdIgKAkimTYCRM4yONFrxFE8V0aLrahFnffkeLzQxo31VcW
+	 nZ7BOBYPRP56A==
+From: Sudeep Holla <sudeep.holla@kernel.org>
+Subject: [PATCH v3 0/4] firmware: arm_scmi: Some fixes to address conflicts
+ with fw_devlink
+Date: Mon, 05 Oct 2026 10:53:09 +0100
+Message-Id: <20261005-scmi_bus_fixes-v3-0-d9bada32ed38@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20260928063824.1386524-1-morbo@google.com> <CAGG=3QWCmQ+LVvn2dtjEauj5WFwvx=pvg4Q6man_A2imdjRe7A@mail.gmail.com>
- <CAD++jLk2pFCpbpGVCQg2AdrwQecpb=wsehhwSuwTbKAXNeyfoQ@mail.gmail.com> <CAGG=3QV2k-nsZHNSuKEixZb+-LcxvhQsG379ghgyOpiDLTJWzw@mail.gmail.com>
-Message-ID: <asNuMzqz3G-gmIiD@google.com>
-Subject: Re: [PATCH] gpiolib: annotate struct acpi_gpio_mapping with __counted_by_ptr
-From: Justin Stitt <justinstitt@google.com>
-To: Bill Wendling <morbo@google.com>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	codemender-patching+linux@google.com
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAIhzw2oC/3WNyw6CMBBFf4V0bU0fFoor/8MY0pYB6gNMC42G8
+ O+2uNEYlydzz5kZeXAWPNpnM3IQrLdDH4FvMmQ61beAbR0ZMcJySgjD3txspSdfNfYBHtNSNyB
+ rbiQwFKW7g/UQnePpzX7SZzBjqqRFZ/04uOf6MdC0+xsPFBMs81IYrTRvoDhcwPVw3Q6uRake2
+ KcvfnwWfb5TgnIuZSHUl78sywssqFLU/wAAAA==
+X-Change-ID: 20261002-scmi_bus_fixes-19bfe8d3c8e2
+To: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Sudeep Holla <sudeep.holla@kernel.org>, 
+ Cristian Marussi <cristian.marussi@arm.com>, Peng Fan <peng.fan@nxp.com>, 
+ Hans de Goede <johannes.goede@oss.qualcomm.com>, imx@lists.linux.dev, 
+ linux-gpio@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ NXP S32 Linux Team <s32@nxp.com>, Linus Walleij <linusw@kernel.org>
+X-Mailer: b4 0.16.0
 
-Hi,
+Peng’s [1] identified the problem of multiple SCMI devices sharing one
+protocol fwnode. His [2] shows the consequence: the first device owns
+the fwnode but does not bind, so fw_devlink can leave consumers deferred
+even when another device binds successfully.
 
-On Thu, Oct 01, 2026 at 01:04:47PM -0700, Bill Wendling wrote:
-> On Thu, Oct 1, 2026 at 12:56=E2=80=AFPM Linus Walleij <linusw@kernel.org>=
- wrote:
+This four-patch series reduces those cases within SCMI. It prevents
+protocol device creation in exclusive raw mode, stops treating core
+created standard devices as driver owned requests, and makes the i.MX
+pinctrl driver match the standard `pinctrl` device instead of creating
+a second device for the same fwnode. It also omits the `perf` device
+when the firmware node does not describe a performance domain provider,
+without changing `cpufreq` device creation. IIO/HWMON don't have any
+fw_devlink dependency and having two devices shouldn't be an issue.
 
-<snip>
+These changes address the SCMI cases above; they do not provide a
+general driver core solution for devices that share a fwnode.
 
-> It's being #included transitively:
->=20
-> In file included from drivers/firmware/efi/libstub/efi-stub-helper.c:12:
-> In file included from ./include/linux/efi.h:20:
-> In file included from ./include/linux/rtc.h:18:
-> In file included from ./include/linux/nvmem-provider.h:16:
-> ./include/linux/gpio/consumer.h:670:55: error: use of undeclared
-> identifier 'size'; did you
->       mean 'ksize'?
->   670 |         const struct acpi_gpio_params *data __counted_by_ptr(size=
-);
->       |                                                              ^~~~
->       |                                                              ksiz=
-e
-> ././include/linux/compiler_types.h:392:64: note: expanded from macro
-> '__counted_by_ptr'
->   392 | #define __counted_by_ptr(member)
-> __attribute__((__counted_by__(member)))
->       |
->        ^~~~~~
-> ./include/linux/slab.h:602:8: note: 'ksize' declared here
->   602 | size_t ksize(const void *objp);
->       |        ^
->=20
+Signed-off-by: Sudeep Holla <sudeep.holla@kernel.org>
 
-I wonder if we could have a better warning here guiding you towards
--fexperimental-late-parse-attributes?
+[1] https://lore.kernel.org/all/20250120-scmi-fwdevlink-v2-0-3af2fa37dbac@nxp.com
+[2] https://lore.kernel.org/all/20260928-driver-core-v1-1-0846bb8e0f32@nxp.com
 
-Thanks
-Justin
+---
+Changes in v3:
+- Removed a redundant check when creating requested SCMI devices: standard
+  protocol/name pairs are no longer recorded as requests, so they cannot
+  appear in this list. No functional change - reported by sashiko
+  https://sashiko.dev/#/message/20261005091843.13F271F000FF%40smtp.kernel.org
+- Link to v2: https://patch.msgid.link/20261005-scmi_bus_fixes-v2-0-34a51338875a@kernel.org
+
+Changes in v2:
+- Dropped "pinctrl-imx" from scmi_std_id_table array correctly this time.
+- Updated the trailers received so far(Thanks Peng Fan and Hans de Goede)
+- Link to v1: https://patch.msgid.link/20261002-scmi_bus_fixes-v1-0-8695cbab3fe7@kernel.org
+
+---
+Sudeep Holla (4):
+      firmware: arm_scmi: Avoid protocol devices in exclusive raw mode
+      firmware: arm_scmi: Skip requests for standard protocol devices
+      pinctrl: imx: Match the standard SCMI pinctrl device
+      firmware: arm_scmi: Skip unused performance-domain devices
+
+ drivers/firmware/arm_scmi/bus.c              | 110 ++++++++++++++++-----------
+ drivers/pinctrl/freescale/pinctrl-imx-scmi.c |   2 +-
+ 2 files changed, 67 insertions(+), 45 deletions(-)
+---
+base-commit: aac4e67d6eb93118cfa70c6562b5f9c81a7042ef
+change-id: 20261002-scmi_bus_fixes-19bfe8d3c8e2
+
+
+-- 
+Regards,
+Sudeep
+
