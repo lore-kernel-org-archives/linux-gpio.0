@@ -1,81 +1,81 @@
-Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
+Received: from mail-yx2-f43.google.com (mail-yx2-f43.google.com [74.125.224.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7314D221FD4
-	for <linux-gpio@vger.kernel.org>; Mon,  5 Oct 2026 14:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D674BC006
+	for <linux-gpio@vger.kernel.org>; Mon,  5 Oct 2026 15:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.224.171
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791211749; cv=pass; b=dGQ7oQEm2WEpn1MChZW2G/sAFe6X66PKouVlIlhq+bp1j/fO1FWk+Wn3z3HV2uXZ4ptGX/5ljUwawP5w/QmIZrSHSXI8lyvpUOcRVq0byEm+XA5lzHSHXYEV6hfVWl2ZmirSJasWneLIJu7qdDmriXFyW2SsRANJMy7ECzxcr7c=
+	t=1791212620; cv=pass; b=fltr0/W3Af2DQbgNMCgihr/k5JhWsGGl8isDjr+kIJt/FwMmf878T+9mMYyyQYBVRwtvwYBwoo84J7vrmxzw+ETMuVZASDgPNWNDb6Y60212CBZjMxWC//I3K3kHj8wpkGtGbze6VP0wIWaaMdAibL1/V9F2pm3AWPZBPxJ/TOc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791211749; c=relaxed/simple;
-	bh=fB2EelR9jUud/JtAYG8OEIPQSZV00QMO8xof8XIZq/s=;
+	s=arc-20240116; t=1791212620; c=relaxed/simple;
+	bh=kABzR26FUddzoC8F3veFCKtMWyeoXM1NVTRtaYeniwY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ql9hdwwlxL4WTn1nMe2AywTvnx2dWXVdjZAmcPV9CcDsrPXY9wff/HwbR3y9HDHYwEPjgiSVi5cgRls5x/N2vFcMdkh6oTU7gkFXfBEVcrM4GxCRM50lxKkNSK+Jlx4b476s886lplCnsNJB62+8awGI/vPhRZyXMoPqLWI+YDU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HFWLWfds; arc=pass smtp.client-ip=74.125.224.51
+	 To:Cc:Content-Type; b=JOJEvq6+S6w+tJk1zXt+tXC/CDao5NmS1Z3ILLJAkjhU07SlbgffVcctisvM8/uKnOf/4kfHFCmEjvwAqfDTYy1GwwvctDsRXQI2DjuCLzX+AlHnWlntDAIV9EXYd8Ne0B2xVju0EKqXuTaIatvujnFp9phIKHpAZu5eDfIo2cw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JgzP4+Ec; arc=pass smtp.client-ip=74.125.224.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HFWLWfds"
-Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-66fca0709caso1334422d50.1
-        for <linux-gpio@vger.kernel.org>; Mon, 05 Oct 2026 07:49:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791211742; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JgzP4+Ec"
+Received: by mail-yx2-f43.google.com with SMTP id 00721157ae682-895353e9051so15361877b3.0
+        for <linux-gpio@vger.kernel.org>; Mon, 05 Oct 2026 08:03:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791212618; cv=none;
         d=google.com; s=arc-20260327;
-        b=Mq2x+9nZSXxW620nyGmATTqo9/Glx37RNLvQwb1lmZMR8X1tLHZXc8ezIwIJohtOdD
-         EvLPqND3DN9KmPoCmOmE8+9z+O1tfvqwBcaZNfXf2Rc3O4DcAv13KxRu4Zgmsx4qtj7v
-         CCBuSf581mwZp6ABMhroK0mLmOrm+dBnXcvhoySTj1HNTYV4SX+YUI00w+uEbtXjPpBQ
-         Awdf6sX8TGfQQGHSPhwjoCRckDjMyRWSH29W2ejVDxs8cwJ48N4vjSPZLRgd0SoZsfVV
-         HFXZVBhn294WvtEUG2oKEoSQ+Aj/xPjaU6Re+2Qv0cUFMJzjUv4TbXe9dIyJ3JLUnHGN
-         2hYg==
+        b=kxzqvvN2jiZXBSKobBstoB+zRDQk8MDqWX6RyQLmZwfurwZAz4deHb8OO2f26iqEb+
+         dDWCO+zXftgwJzP5aR1nARQOqrw/g4C0xwjrE25Vz/TCPmj7wbPadTQssmNBenoViVjF
+         Ej0EYnJn9jPHrpf9jtiKMDLtO3uhikRvIvliwWwU1S7hsWIBj2gAyP5gbHvC3fHf3QlA
+         eaBKWzVV+Bofb1+eoUGdbgkfsbThExnBTRmekwfzEZOG4skLJVp37M6/DEPPQOq7+xx3
+         ATrxZrRp8T9t7vTPXwhY0mnznzjG5kTIM3fnEFvN98LnIYQl6hR8WdAHetBiK9D9uX9G
+         t9dA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=fB2EelR9jUud/JtAYG8OEIPQSZV00QMO8xof8XIZq/s=;
-        fh=WeSJWZWk/JB7Gw94Ste3k6lljqOjRB8xmK9XjPNvnN8=;
-        b=ZDwW6HzIAmGSHYhM1Qx9ELoGBnNQk/m6O9qhqN8bekTNi0Yp1LeKuA8DdhcgsK9OG4
-         cCyIZxNst/K2qv5KTgPcPC97OSt42GOXXtoi7BTM6M7awDuBiajBvxD11UjW/ahUjYvA
-         fsTjdTjM4l/fhPOt/kzegMcKg5QZ4HSC27kIhJWtCU1fxekQvFe7ciQo99na3/1ugYiv
-         Jbq6sCevg8q7SwvXS/WTqJvDcN7zjcNVG6cg8sK1qazWxhnAF6ucwe2xj1/qXEDtqqrO
-         akxSPw7iIejAOYUCYZjGUyL9CVXH5h267p41S4ky0bN04MdJ/0nJa9lmmXY/Ute00Ckg
-         EUrw==;
+        bh=kABzR26FUddzoC8F3veFCKtMWyeoXM1NVTRtaYeniwY=;
+        fh=d5+Cqs+Jq5Yj4x36lvB0frJMXP6X6ee9P2AUzefxjlI=;
+        b=k4bDL4j2bOV2FcvnhMlRbzhYtCbyOXOB4vIVP47Ij1E327zePeWQrmS8gs07QX9m4L
+         /jAdk7zu9JSUkwL+of2WRWGyYbTF5YNBZr1ZDQKRZrr3ObRIgOGmeeiD+2Lu1ZuGY4D6
+         +xirjhgAnBtR8CQLbieHd49jgRXRGYGedooxkD2i7+hUsGcinStMK/E/Wv4uJczioFSO
+         OSAx6rJJ1KpG8YiuYTKwMKJ8X08ZvCwARP3+AvckzhbpQIElpGnWnfAsaI7vn0fcHkTR
+         +1ZAn11eBiPX0OP/FFrpEuP2i+axhtkkw4OLtcA9R0ma3RxADkFGRG7XxdKMj9le2veS
+         iWOA==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791211742; x=1791816542; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791212618; x=1791817418; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=fB2EelR9jUud/JtAYG8OEIPQSZV00QMO8xof8XIZq/s=;
-        b=HFWLWfdsikQXKQIit4Z4T8nS0yZBOA16ZYycOCOAXHaVF9Quozd2z0y4JfWcBIfjVP
-         OXuSpwEO/CDca88djqC3Ffj9pn1N+GO/kjkTx8SG95nNTg78riohfwE1FvRuUopzlATn
-         2HI3p5VN8/qOWmUMj5a21MCy5COZhlWLPFk19SI6hRUwE099Obc0Fr4MgIUvCINHu6pf
-         FxXY6GqWWp1hlD2n81QKcpcrIlalUJKfJhzxmxMqhqv40mL0dWHHOIc0lTxprMs5d3eO
-         FArpiwZAk5EU3iW0EvkCBEiYTLgMyjCYiXzvHO79ulYcUzkWBq/7mHbIdWyvcAvL1WTe
-         Azgg==
+        bh=kABzR26FUddzoC8F3veFCKtMWyeoXM1NVTRtaYeniwY=;
+        b=JgzP4+EcKnKXVfAcwXs4VJ/FBNS0mi2QGeastASyxHI9cq6SIZaYJpv09oZwQMSVKF
+         YMQI9bvKH4tPh/NFffnFFekmZDS5ZRVlmcGATyg7wfdq/I31cXm+61qbPSA9vKY0atyG
+         /BJZGJuuxzhdMT8YfKDoEtUzG01vpJDCa95525GCg1+kOdN9282NUd3D2NpF/t1YISGT
+         fiAn2Pm6tQmOuGHViIQIubkTymNKkJ62THEMMxioLIYLN9t6YMwNiuMgq+cseHfQbig0
+         fj+rySET1mW/EmIqzpDogNBqYrD1IbwQJVybLwLDv1k3n9cK3k1HBKyJmeMmdNAg3l/Z
+         +JGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791211742; x=1791816542;
+        d=1e100.net; s=20260707; t=1791212618; x=1791817418;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=fB2EelR9jUud/JtAYG8OEIPQSZV00QMO8xof8XIZq/s=;
-        b=PsiTXD10vKmIqup0KKhT7rqwCTGDLhPMnljrIVmGyQ3lsPeM4YgdjS4ae3yvy1w/zp
-         jVuicC6l1ntQHXmsR4q2ZBV3v9Txx+Dii8DSWmq+g/106xlq/ZMWCiAx5G7+QI1WCko3
-         2/cWObzmYrnN9ARo2W4XyHo+MDuHPmHgWLstkQqFrZbiqqw6Lb7hapS0trx0nCbIGSkL
-         ud6uSiaQnGY+dEdV+f+Ew1+vsXc1N3BOzvzdvAnAFuQ4B9uw4TXoLlkZgSRV69ZJ8Vjt
-         4yU4UBL+W6VQs4VrYbBRRE1nZcGrVkjKV6EGEWTpobbhSY6uYLRdgUoDxBFF4SxJtWhl
-         S1Wg==
-X-Forwarded-Encrypted: i=1; AKwUvByN0gFkUg/EbzKBlvgRltZtH3XYbwnmBX2teWRqrAuDz8/QjgPXgXp1+xPzxMaDi9Rq/u2VfYDQa3Sb@vger.kernel.org
-X-Gm-Message-State: AFuF++mdGoZx00D0jTRpkLIliWlH+3SsU8X+IZ8G0sfKAogKZb+fTDu/
-	N+YG8k5zgKOv/fhR1H3rHFLgNYuUw6osmdnla9LnpuGEdLhh8rOUKSYpitYhdiNz5v++hNIlxJk
-	XXWnQF41qTL+/Si+iWzFxXynWRrE1sUY=
-X-Gm-Gg: AYBFou1xTa1shQbaqtHCdCJdnqnT/mcKQ8PTTncPJvVMfkjtKyGaRd+cW9g2wBJOxEt
-	3Wz+72BS48oI5Gst1suZkqK0P/Xzi/6iOG/ZZd3G4VLkQ6G4697fE4FW84xxUkeBizOtj4OUhfa
-	kEM+tCTH5wcKjrSvs5RJrpk6clLBTobixigNvjrqU+5In7rrGv9SgNVTthzreCczI2pslCtDEqx
-	z/vj9BAJU+Fyfm3DiMyCsa7H/M7zMiz94ahyguFtGj7mCMSR/F+7m8P6+gT0D/1Lr7kett2YFi0
-	yVi9SfTwoqQ1MhYrmbUGiY98rSLH6SdPWNwSBBM82D9r++MxA1nCDaGY4LvoDRABo1i9
-X-Received: by 2002:a05:690e:480c:b0:677:b1be:b19e with SMTP id
- 956f58d0204a3-677bd373b92mr1921206d50.42.1791211742356; Mon, 05 Oct 2026
- 07:49:02 -0700 (PDT)
+        bh=kABzR26FUddzoC8F3veFCKtMWyeoXM1NVTRtaYeniwY=;
+        b=FFTyMi+jKtMU6fSHOISphkwuEuAYzS/rGdfA/ErSEj4GFW2olQWcQuR/lvcxxfGRSn
+         aL9l2i37JBYoMn61wAxFIEpkHS/SkxnrjMcluc13lMR9HfLjLfoD9ad2EWAe04AJig92
+         +xu8OJs51VTSmiJRUqKcJdItQoftMEZ2LsfWutj5nIFWUqRHcRgpcDA0ME0Ak8uHrOPO
+         uGXgu9zpj1Gp1WQUkVy32SJeHHxARd4oCv8LmHvFCMXihMMJWlICClMXsSoOHfRzpyP+
+         DSTZQa2y+0TwZwhszDVU0h2yL4qttmAQrx4otGuexpcj5H3e6DbITBDJ5yvQ8rClJPz9
+         XWvw==
+X-Forwarded-Encrypted: i=1; AKwUvBweli1c2PZKHC/dr/AzmdpiEa35m+QWKI0piiYxooU4CyWvQpK7PutMzuprRBpWsHiDgptboDn6yovQ@vger.kernel.org
+X-Gm-Message-State: AFq9FYJX8/MVdgzWY0FFmCrhXGjnocoXEq1IcbP25AdRegHb4ykq9IFa
+	gv+kgYzXpoXyc4zOBEuk6RWlB3wtdFD/Oze5pu9VO1xxHFOiANiZZFZwVcm+uedA9YK8SR3p8SZ
+	7piu53TKyHJZUbEueDroWykQHFNMmzhk=
+X-Gm-Gg: AYBFou3IYGwC4PiOwzqzhXxbb23duyKJYMLXlkD9idIKm4FDizB2TAEV07NFnGg+glp
+	+RhKzYL6BJuvID/sw6gLdjHybouFM9aY7e+9PNSACFXNElORLxFHeYslrFMHsHOSy5EcU3chXL8
+	feQD7DmF2zNCQRwr9QzMVjUaHw0DvfY05DQcjY06BT6L86H6/UGVcQmFUjP3Q0XqTIfM6tHvVgR
+	mMDv5bXDCOdqW7si3sLjU9lQFAEgXHxdFN4sa6HhpClhj2nVSHHH0Jlr2yaxp/YBDEY+XbQQ3RO
+	4hWezOV7Gutjov0pO1DOhFHYdlZMt5XWLPF8LrYWB8euxzfWd2jc4O+84w==
+X-Received: by 2002:a05:690c:9988:b0:81f:64e8:cac5 with SMTP id
+ 00721157ae682-8ae3690bfd6mr39572787b3.7.1791212618431; Mon, 05 Oct 2026
+ 08:03:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -86,9 +86,9 @@ References: <CAMFFDGh6XwYD-axu3brX0Tdt3PteJHHGo6oJaghzpvnEyzT58g@mail.gmail.com>
  <OSQPR06MB7252CC7FC2131D45457A1FA98B962@OSQPR06MB7252.apcprd06.prod.outlook.com>
 In-Reply-To: <OSQPR06MB7252CC7FC2131D45457A1FA98B962@OSQPR06MB7252.apcprd06.prod.outlook.com>
 From: Prasanth <prasanth.padarthi10@gmail.com>
-Date: Mon, 5 Oct 2026 20:18:51 +0530
-X-Gm-Features: AclHuK8FXl1Xi-TJ1LO2CDPJEBnrHjPYEMHi6FAYBhWO1gMQvCkpvwAC2mRCkhQ
-Message-ID: <CAMFFDGjK8xg=S+f3MyaV+6hQ+6x=g-NQhEAzKMu+X=vdkauq6A@mail.gmail.com>
+Date: Mon, 5 Oct 2026 20:33:26 +0530
+X-Gm-Features: AclHuK_6E3giw7DMVtI3NjFHjcW3o3GAmqzSvLwH6NZdDb9tYMvxI8L2SsjXb4U
+Message-ID: <CAMFFDGi-Zzwk33Rb2LPVOSz+XJa51iBQ3ZWEP6mLg4C362F=VQ@mail.gmail.com>
 Subject: Re: [RFC QUESTION] AST2600 GPIOP2/GPIOP3 pass-through with gpiolib ownership
 To: Billy Tsai <billy_tsai@aspeedtech.com>
 Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, 
@@ -99,23 +99,10 @@ Cc: Andrew Jeffery <andrew@codeconstruct.com.au>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Billy,
-Thank you, that explains the behavior we observed.
-The use case is that GPIOP2 is the physical power-button input and
-GPIOP3 is the host power-control output. The board normally keeps
-THRU1 enabled so the physical button is passed through from P2 to P3.
-For a BMC-initiated power operation, the vendor temporarily disables
-THRU1, configures GPIOP3 as a normal output, generates the short
-active-low pulse, and then restores THRU1. Our OpenBMC tests reproduce
-the SCU4BC transition and GPIO123 logical pulse, but the host
-power-good signal still does not assert.
-Since THRU1 and GPIO123 are mutually exclusive, this cannot be
-represented as simultaneous gpiolib ownership. Would the appropriate
-upstream model be a dedicated power-sequencing consumer that
-temporarily switches the pinmux/routing around the GPIO pulse, while
-the GPIO lines remain owned by that consumer?
-Regards,
-Prasanth
+Since THRU1 claims both pins and is mutually exclusive with GPIO
+control, should the power-control consumer acquire GPIO122/123
+normally and select a temporary pinctrl state that disables THRU1
+before driving GPIO123, then restore THRU1 afterward?
 
 On Mon, Oct 5, 2026 at 8:04=E2=80=AFAM Billy Tsai <billy_tsai@aspeedtech.co=
 m> wrote:
