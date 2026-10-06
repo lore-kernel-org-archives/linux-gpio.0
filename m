@@ -1,56 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87D223F40D;
-	Tue,  6 Oct 2026 03:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FB72E719B;
+	Tue,  6 Oct 2026 03:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791256062; cv=none; b=MzWQbw5KxNCiTXAjCK569WvIHmbwA5PK53SeakgoWgoybYRf/+IKCSLNIydQGWGhsfE1g8xmzTVJRzTZoqKbycjCznb054PQPmKd5QparaZwCCACDNKkIqXzpJP0nzCueVhAvk9VpIVeOMgOqhQFzktLvtvD3++fmTBwsAGVckk=
+	t=1791257320; cv=none; b=aXj+c9UZYsDM2hBlelQhmfKblSl+hDttjT65xMigavcCVdEvWeUSqkbzQY4pYYGdSOysOdGTc64FGKaOkep34AJfBAZOVPfzsOiBc6sVPMhioxx/IYklKE4hZzoFUlJ2UYdVmdeCcgfNJjk+FS2awOZE8cE+kVJ8vrUs7w+qEx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791256062; c=relaxed/simple;
-	bh=u2XCzotyA0eoBElwqJaT+54SCaHMsrFBPsSNw3/z2m0=;
+	s=arc-20240116; t=1791257320; c=relaxed/simple;
+	bh=5/xEe9ZY7LvDk12TJWB6eUs6yjUPa1o1k8kTJLBYE10=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uZWt0WsgkvPuUbSZVRyV34llSYrkb6wxxW2JRFEEyqgmcddBv+tOs64gSt4Xu3BxI/0EvYz65EW1gzhVJuWmH0a2h4gmNn5ABH3LBMi3QbEu9o9JLogNllYqVPa+yACbZ54QR3o5MHyib/tgkEfzOxL5hFM7P/wDC43CuGzp2Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E54qJJP2; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=VjmCHp9cVRpYvFb7jIOEu4TAP1DQHMAP1zPnJGpWv2xPIl1d9rCA2ZppPyBtFnAYmwxj4QP0KksaGG+TcVgp6e62F+QhvO5+Yco9dNbknCEGVI1k92hKU8tCv7YaQiPnNq9m7ds+WTEsh1wVu3Sz0Sfpc2pRodd7DoT3cGGk6HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aByZ6N+Y; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E54qJJP2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A291F000FF;
-	Tue,  6 Oct 2026 03:07:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aByZ6N+Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38B3C1F000FF;
+	Tue,  6 Oct 2026 03:28:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791256060;
-	bh=HT4hgzsRMKonUz0r7afTuTXPpo+Txgw6N/Uo97ww8Bg=;
+	s=k20260515; t=1791257318;
+	bh=+fFNT/jIRKqZt2GOjyGpl20xr+ofqYq34um4V5iP/PE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=E54qJJP28qC99NMZ0qdbLZhIg9vlRfrTPOR4d7Cb6K1eiSttfjFpIbEZJkioPJLyQ
-	 q7IDB6EDOVNlYQDXr12O3myoiSIGc7B1BZED5b2/Ee/WoNkHcYNCDeTwm/chRL1OJW
-	 oDuLTqzx7Kv1sk6k56EZ+X70uK9ENLVZEzY3hZ1NKBvJZ5GIeQ75ymDGvCO2zqb3oU
-	 3OSvSRbu9vRoZdzW1mlxKzwXeVBZ0uNA7p8FGeuiNuIO6g07kqlMl6viI2Wengv3Bc
-	 FhnmWHa2F8MayuOMNOs55uow6joWJzqCEnv767UbJlGDaZicYCNxi8kVvRn55z5xCr
-	 75MR4aTQI4xYA==
-Date: Mon, 5 Oct 2026 22:07:39 -0500
-From: Rob Herring <robh@kernel.org>
-To: Shenwei Wang <shenwei.wang@oss.nxp.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-imx@nxp.com, Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-	b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v16 2/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
- subnode support
-Message-ID: <20261006030739.GA3457522-robh@kernel.org>
-References: <20260923184255.299034-1-shenwei.wang@oss.nxp.com>
- <20260923184255.299034-3-shenwei.wang@oss.nxp.com>
+	b=aByZ6N+YfMd1MiyIZ6/1T1tjY/eJ1fZTbSzo/IVLDJQMDO8GJDiCdje1+5mQxp5Ow
+	 yYm7chlF3mA4BoO6CALulEVdLLMexr99QBUGZ80/MoHofmM7/JBRY7qaIYF6SWas5r
+	 4uC1PhnR8+okcJc8d5/otaL4oDHINC36ZahDe5K4h4tJ0j9snR5LFatqdt4Rgh205Z
+	 Y3hVgMDMfi5pSg1vPcJQKCpNgiflAVG54+yFF+LRqgjLZsc/CDPQDxlNJTXo2ydBUb
+	 0qL6SIH8rwXndTfQgd5SLfRdqCIUmCO1Xxo5JOMSExil+YL4HoZaOHIPlN59qPVzUI
+	 TOs5gRnyhatCw==
+Date: Mon, 5 Oct 2026 22:28:37 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Andy Teng <andy.teng@mediatek.com>, linux-kernel@vger.kernel.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v10 3/6] dt-bindings: pinctrl: mediatek,mt6779-pinctrl:
+ Add MT6795
+Message-ID: <179125731179.3556841.9854336212355847521.robh@kernel.org>
+References: <20260925-mt6735-pinctrl-v9-v10-3-cc042983c565@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -59,28 +50,26 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260923184255.299034-3-shenwei.wang@oss.nxp.com>
+In-Reply-To: <20260925-mt6735-pinctrl-v9-v10-3-cc042983c565@protonmail.com>
 
-On Wed, Sep 23, 2026 at 01:42:29PM -0500, Shenwei Wang wrote:
-> From: Shenwei Wang <shenwei.wang@nxp.com>
+
+On Fri, 25 Sep 2026 18:53:10 +0000, Yassine Oudjana wrote:
+> Combine MT6795 pin controller document into MT6779 one. In the
+> process, amend the example with comments and additional pinctrl
+> nodes from the MT6795 example, replace the current interrupts
+> property description with the one from the MT6795 document since
+> it makes more sense and define its items using conditionals
+> as they now vary between variants. Also use conditionals to define
+> valid values for the drive-strength property as well as items of
+> the interrupts property for each variant since they are different
+> on MT6795.
 > 
-> Remote processors may announce multiple GPIO controllers over an RPMSG
-> channel. These GPIO controllers may require corresponding device tree
-> nodes, especially when acting as providers, to supply phandles for their
-> consumers.
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> ---
+>  .../bindings/pinctrl/mediatek,mt6779-pinctrl.yaml  |  72 ++++++-
+>  .../bindings/pinctrl/mediatek,mt6795-pinctrl.yaml  | 236 ---------------------
+>  2 files changed, 70 insertions(+), 238 deletions(-)
 > 
-> Define an RPMSG node to work as a container for a group of RPMSG channels
-> under the imx_rproc node. Each subnode within "rpmsg" represents an
-> individual RPMSG channel. The name of each subnode corresponds to the
-> channel name as defined by the remote processor.
 
-Sorry, but DT defines the names of nodes. If it's a gpio-controller, 
-then 'gpio'.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-I still don't understand where the unit address gets defined. 0 and 1 
-look a bit made up. I'm sure you explained it before, but *this patch* 
-needs to explain it. When you define a second protocol, the 0 and 1 
-addresses are taken already, so you can't have 'clock-controller@0' for 
-example.
-
-Rob
