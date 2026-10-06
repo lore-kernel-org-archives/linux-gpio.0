@@ -1,125 +1,138 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D58F49A3A9;
-	Tue,  6 Oct 2026 15:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791299265; cv=none; b=I/ryrRRJL9ubRChk1VSN70pYC66Nx1YzIkFmtW0hSf3TF43iSkvE2lb7wJCsUFoMRvXB3kpnnjozp+SyjQsRdIRZVIDf8LMmPl2uuQ4Zzr+GPmgaJyGkzNzRy8iI1rg518purdoCA2UKyYWPmjSNJWbuuZVeLQZviWUBvzr/fBA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791299265; c=relaxed/simple;
-	bh=Mu0l+SUlsRUVlSKFEMWbDB8rqATQHy+rTSDBCFcHIbw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=deEtac9BQ+Goj0qu6MUOw4UMz54Zn7nafvZt8cj+t0VoLVl96a0M3d3wjzvwSC+z843WM7AeoPWwcsO+20zoWWb4QSc5A98WeXYBlXe8KRdCumhKhN062Pbpm881CrlA7WTPmuuIZH4A1dKzs4phr0TGJkLPlFv17nx5ofM6DBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7aCCt9S; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D3448A8DB
+	for <linux-gpio@vger.kernel.org>; Tue,  6 Oct 2026 15:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791299919; cv=pass; b=IsBJB9jycinxIvKEBW8fv/dM5go6QSFEPcYzV8vIeJOMQebiR9ewV2IzvDneXkl0y3A864QuilVr/Nvp1rzE491AKec8fLt7OHB+K/BCXs7z4aFxzBG0XkQxkM9hKsCoF25TzdlUt1wGHWRWJc86gW3finB0dKSTlbeHnhUGiqg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791299919; c=relaxed/simple;
+	bh=Z6WbsAnp0/k5TRam8CoApQG5u2b0ang3JjfGRsR4/LE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U5vYT/WAjvm3Q4owQUPHkIbQHcMcIzCmlTkPtbDsdljdWi/cGCYqr/3k9lTpw41FGLLhZty8jy923G6a7JHNls1OAfpYzIg1TAVoNhebHrRI6LFTjOMVSpp1wRsOS52D2Xn5GIxAI6U1p5gRBSfmL5OHHB6xA7/KbIvjHkqa6U4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vinJemxj; arc=pass smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7aCCt9S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDC851F0089B;
-	Tue,  6 Oct 2026 15:07:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791299263;
-	bh=3t5fyjcu9jt8udNnpaVavo8D/lr6s+BSeBi73L5XHOE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=V7aCCt9SE6o2AWpQb99cC+NOeSsXlWmw4Zrri1RcMNuMURBoMdNe+R/hXUa+Q5gTd
-	 CDRdh8cZM8y7QBnmjyRFJTgtDyquTT5erY4x9OuNN82WEjvN4wWBRTBpatxPCTcuUa
-	 DmN7sLd50UIECqDAxGVxHjsDqDST24mirojq5QK7FM/WoO+mdehze+8UytDHkwBkL+
-	 mbKUc0urfHs928bPrO4hG07IBgL6yXvta10Jykbif7s3xvMnMMOwxEYHcjRhnE6N6Q
-	 Fb2bbktmQlb6dtEWxLq6wgLrvokl33ho9JjMrLk14LSHu4JZ2VJOoy6+v+5yA1mxki
-	 RbQAQgTsqHPsA==
-Message-ID: <340729c9-1cef-4060-874e-43b6d3bdeb04@kernel.org>
-Date: Tue, 6 Oct 2026 17:07:37 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vinJemxj"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6acb57c2b88so4221792a12.2
+        for <linux-gpio@vger.kernel.org>; Tue, 06 Oct 2026 08:18:37 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791299916; cv=none;
+        d=google.com; s=arc-20260327;
+        b=hXP3WQfNAZUcfVaPCEPgAtfQhdNhWpWK3jwI/6rEr1EsxxUmE6GTJnI8LfkW4OLnRf
+         bit88DUqXdR018S8r7gPpo7oaP07P1+hDeyMXdL2pUsQ+j8HKynf4Nvf4lYFRf+xHEsn
+         rjHzf6WFFEGnpuYfXnkNFjvfltrSiBBzllseHAiwZu5AJ7KaXRevearafJesjWpxlWiN
+         n8u8sOY/6kkRFw4HX/fx6eETUkUUqeIsQSyIruU1sDpKTJ01ieirAKQIm2bB3dSVd5VO
+         3n29W4iHH8F+suUH5yWYbN+Egxp5l+k1b42UeFoHYEFTNJ0qgAqFOvHKmwy45k6MAVC2
+         nZLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=S8HNQKq2PFFrdWWXN5HW5t8uFb87m5DPyp4zd5PK5G0=;
+        fh=iq6BKR/1Rvyx31I6g3l9RNf0VvjhIgxrdBqCIrdL36E=;
+        b=UcZF5RtEFZ158tSV5AcBzXsvOm0ioJK0ceoMMWujGZZPabQ1HyefTM2gUbQOjxduFZ
+         FsZ6p7mj1c/By/kRala5XwBMoGbojGXEA3h1MsYtmLSFEuIzpRIjFoDsuzS2o/Nj/b6f
+         n2gbnv8goe40aqbgJQGfi//7qM+ZihSijAaXjjZuIKA7TIMlfjPbiCGhZ4v/1GOz9Iqq
+         QbrodS5+6ujh87pCVWbqMrRolhWq3lsCmZ2Pp7c6zffuEe3m2B3YkKSIBoxeRyd3x5kF
+         UlQ/PANhdhJkKlGXv4FE9pJRqnw+xX1RGXMP6bWD+GQB4cWZhGr5sI2yl6ewIR7ngJS3
+         Fu8Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1791299916; x=1791904716; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=S8HNQKq2PFFrdWWXN5HW5t8uFb87m5DPyp4zd5PK5G0=;
+        b=vinJemxjfo0wtpRpFAgFolIEmK5h1JEjPQcX/AMCwCwhdtc+zvrWlULgduJ50Pr9VO
+         xJX9/pmQZFWu0hcikEmrYOWlRLmLDMxRZuf60EZ+XAlxd8fuVz7tyIxfQcxqxTAOq021
+         qh0RQqMV161mW7VccuYWu+k8wFFtFyKkK5sgM0yybLeW5h0iOBx/RmkZyTLDOY0segSM
+         +24sbA92JaazYatCvTIfx3KBp2ZyoGvIwavOILBdB7oYuVHNCayu1x3d7J4dP02weV2z
+         N99S/vtuJlv34K4IhkZSwh8a/JPfbU8CbQGg1p0CTAJLX0L4vsAGNozXrFWsb9OngU22
+         h9jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791299916; x=1791904716;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=S8HNQKq2PFFrdWWXN5HW5t8uFb87m5DPyp4zd5PK5G0=;
+        b=0xrRKgJ0RiXGcPaFH1wAxAHxlH/Qx/YlLTqMhSlT+Djlh1MTJIX5q1cCCv9bzzwd2s
+         wz8PCEY4WVmtjeUngu8KQ08j04Is0NPlxZJ5qfhiYtxLlpP7w1SKl0r0hSqAZ2rA04yb
+         RFphd0jfif0l8MStG1U2iM9x2vaeFBO0QNVMxeD84FiRbMxKQQHelWJ6ur3hKBVbfUih
+         O0K9TAS7pQnuqfinAETkDPZrmaNHrEjqbDrzaW2EHzrO/fjAFiOPTcD3rYzlMsIDTVE3
+         Dtsd1yIFcZc6UYFnYsYjRsv3aPnW+sdzjo+S84UXqRmZk2InPcnEWEVqOumvV/Y5vXFf
+         GGzQ==
+X-Forwarded-Encrypted: i=1; AKwUvBznv90xdE+SS/PJ+tl2P5e78k2TL82sgj2KpZbJHMgl/eUUxa/eRbl3SoH5uek7jEl4skN8hh3wNZ2u@vger.kernel.org
+X-Gm-Message-State: AFq9FYKfagHe3xDfU74MGpzx1N7J/bimO83/hBSjezgCGOdY0b7m29/0
+	bomwzBav8CXlex5c4Msw4AfuDVvlRsvtPwU671m/il32vW6jOwDv6MOTX3S5rY6T9eH3YGZ/tsk
+	prTYsM4iePC91NJnTcIc1m2wN5qUKLJsmS3I7sX2gpg==
+X-Gm-Gg: AYBFou2SlJBlUSXNge8+CqMx51qBds88ARFLrdJZcc2WbMm2gyzFI6HOxPHXhUDH4Tt
+	GkWa6HHmoM1oVl9zkgotft48k9iyc5ZHvP0ULJcfmbvVU3G0Z0xFZUeV1a4uNhYD0ND2MC8Y9Fc
+	NB1USy09xdnwf0Q/7ZA1VdlksfMMi2G7QVhAFKhN3EIaUwFsqbbzcsO+TEmR7XYEEBRhtCPSVCR
+	IQAay+aZPqzDeIjjKa+eS2Obza1RW/YebQNhBTh0T94WydrekBWs0k+IaGuzXCChh1FX8lgED9C
+	OmI/kqXS/DjMqxYUG7CdGvanuX02NtbJYsiQCcjY2r7HyMTpZSgydA==
+X-Received: by 2002:a05:6402:52d2:b0:6a9:a5d6:622d with SMTP id
+ 4fb4d7f45d1cf-6afad731ef8mr8879468a12.3.1791299916262; Tue, 06 Oct 2026
+ 08:18:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v18 11/23] dt-bindings: media: i2c: max96714: add support
- for MAX96714R
-To: dumitru.ceclan@analog.com,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Julien Massot <julien.massot@collabora.com>, Rob Herring <robh@kernel.org>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- mitrutzceclan@gmail.com, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
- Martin Hecht <Martin.Hecht@avnet.eu>, Andrian Suciu
- <Adrian.Suciu@analog.com>, Cosmin Tanislav <demonsingur@gmail.com>,
- Martin Hecht <mhecht73@gmail.com>
-References: <20260930-gmsl2-3_serdes-v18-0-43117818f499@analog.com>
- <20260930-gmsl2-3_serdes-v18-11-43117818f499@analog.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260930-gmsl2-3_serdes-v18-11-43117818f499@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20260923184255.299034-1-shenwei.wang@oss.nxp.com>
+ <20260923184255.299034-3-shenwei.wang@oss.nxp.com> <20261006030739.GA3457522-robh@kernel.org>
+In-Reply-To: <20261006030739.GA3457522-robh@kernel.org>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Tue, 6 Oct 2026 09:18:23 -0600
+X-Gm-Features: AclHuK9X3bTaGpN7i7UclAS_3sT01qVYKxTd90Hh58vpFwo0cpRNFUaLVMAbBaM
+Message-ID: <CANLsYkzcqapDYvKAEa2ZjA=q07iO=RM4TVNUbSqDrB0EmjeKyQ@mail.gmail.com>
+Subject: Re: [PATCH v16 2/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
+ subnode support
+To: Rob Herring <robh@kernel.org>
+Cc: Shenwei Wang <shenwei.wang@oss.nxp.com>, Linus Walleij <linusw@kernel.org>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>, 
+	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, 
+	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
 
-On 30/09/2026 00:41, Dumitru Ceclan via B4 Relay wrote:
-> From: Cosmin Tanislav <demonsingur@gmail.com>
-> 
-> MAX96714R is a lower capability variant of the MAX96714 which only
-> supports a fixed rate of 3Gbps in the forward direction.
-> 
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> Tested-by: Martin Hecht <mhecht73@gmail.com>
+On Mon, 5 Oct 2026 at 21:07, Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, Sep 23, 2026 at 01:42:29PM -0500, Shenwei Wang wrote:
+> > From: Shenwei Wang <shenwei.wang@nxp.com>
+> >
+> > Remote processors may announce multiple GPIO controllers over an RPMSG
+> > channel. These GPIO controllers may require corresponding device tree
+> > nodes, especially when acting as providers, to supply phandles for their
+> > consumers.
+> >
+> > Define an RPMSG node to work as a container for a group of RPMSG channels
+> > under the imx_rproc node. Each subnode within "rpmsg" represents an
+> > individual RPMSG channel. The name of each subnode corresponds to the
+> > channel name as defined by the remote processor.
+>
+> Sorry, but DT defines the names of nodes. If it's a gpio-controller,
+> then 'gpio'.
+>
+> I still don't understand where the unit address gets defined. 0 and 1
+> look a bit made up. I'm sure you explained it before, but *this patch*
+> needs to explain it. When you define a second protocol, the 0 and 1
+> addresses are taken already, so you can't have 'clock-controller@0' for
+> example.
+>
 
-This is a fake test, you cannot test bindings how we understand Linux
-kernel testing. Please drop such blanket-fake test tags from all patches
-where this is not relevant.
+I had a conversation with Krzysztof about this here in Prague.  We
+have decided to adopt the bindings proposed by Francesco in this
+thread [1].
 
-In the future, please do not apply blindly blanket tags, but actually
-verify what they mean.
+[1].  https://lore.kernel.org/all/20260916-remoteproc_virtio_map-v1-8-dac8c5eb4aa9@valla.it/
 
-Best regards,
-Krzysztof
+> Rob
