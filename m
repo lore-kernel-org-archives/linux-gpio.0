@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F099472F81;
-	Tue,  6 Oct 2026 15:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D58F49A3A9;
+	Tue,  6 Oct 2026 15:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791299213; cv=none; b=WyuLDsEr3QVUZCKKClDxcpq5BTJC7VrbxwLu6vNP+qGRGvkKtWQD+SfkqUFhObQZwwxIWO0O+4YJqU1MsOQVjj+0IAS1jrBIl4vn7FySloOyN1pc3PIy7yapw27a2wep4ZW+HK5vQoxuYPdiKwDyN/UHqBMLttFNhNCwCtmAV0I=
+	t=1791299265; cv=none; b=I/ryrRRJL9ubRChk1VSN70pYC66Nx1YzIkFmtW0hSf3TF43iSkvE2lb7wJCsUFoMRvXB3kpnnjozp+SyjQsRdIRZVIDf8LMmPl2uuQ4Zzr+GPmgaJyGkzNzRy8iI1rg518purdoCA2UKyYWPmjSNJWbuuZVeLQZviWUBvzr/fBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791299213; c=relaxed/simple;
-	bh=IHf3nZpjL87Z6VWmVYrDWfpBWzDYqnG5yvHqluTl7ls=;
+	s=arc-20240116; t=1791299265; c=relaxed/simple;
+	bh=Mu0l+SUlsRUVlSKFEMWbDB8rqATQHy+rTSDBCFcHIbw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VACFm1cNSBB4XNfdsopsJFMd3ujaA+izQzeWXa/egdI+QKty/qEss2TO4fosdtUVWsRSGhlfEfJQ7rPkjJMecptYUqc/I9AtZ/pO0nvzI9irv8HX5Mr0jO0QdJGkMGeWC6Cf/YQ1QQIOHkTc4axL0HkZzVXYrKTORF8lzzWbyYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYD7NtYi; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=deEtac9BQ+Goj0qu6MUOw4UMz54Zn7nafvZt8cj+t0VoLVl96a0M3d3wjzvwSC+z843WM7AeoPWwcsO+20zoWWb4QSc5A98WeXYBlXe8KRdCumhKhN062Pbpm881CrlA7WTPmuuIZH4A1dKzs4phr0TGJkLPlFv17nx5ofM6DBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7aCCt9S; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYD7NtYi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E441F0089B;
-	Tue,  6 Oct 2026 15:06:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7aCCt9S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDC851F0089B;
+	Tue,  6 Oct 2026 15:07:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791299212;
-	bh=0fJ26XE1TvdwldcwM047xqNjWPwWFHsQ3DnqXb/Rf3Q=;
+	s=k20260515; t=1791299263;
+	bh=3t5fyjcu9jt8udNnpaVavo8D/lr6s+BSeBi73L5XHOE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=TYD7NtYiAWRI7Iw1iROGD0lQSPqlnM9MXgZV4uGemYtENuD1HByTUaOIqZo8Q4W6O
-	 RYbfr0sx8Gev4hjiGnnPGQ0Gf4RMLurU3och9ICRjbt0K6Aq4/4YXvkU+dX+jHnms+
-	 SGfzVXaXEg786nogqsSZoJpP02ZHTFHsXmjY3oxitrviIC1q8XuPCUJAWY5QOlsB+x
-	 bdbY0gy36LtxUg1zeyZggGgG85Mbv7lDertKFw66ddiwpONgkOPbaP9quDyCVelBvG
-	 oOJI89D7Cy14viPFVXrNfCsLFwybibddk8keMywl3JV2kS/CIHxPqdCk69G9tmVTnR
-	 BJR0dqVtoCQFw==
-Message-ID: <b622b5f5-859f-47db-95fb-daf5cb22720f@kernel.org>
-Date: Tue, 6 Oct 2026 17:06:43 +0200
+	b=V7aCCt9SE6o2AWpQb99cC+NOeSsXlWmw4Zrri1RcMNuMURBoMdNe+R/hXUa+Q5gTd
+	 CDRdh8cZM8y7QBnmjyRFJTgtDyquTT5erY4x9OuNN82WEjvN4wWBRTBpatxPCTcuUa
+	 DmN7sLd50UIECqDAxGVxHjsDqDST24mirojq5QK7FM/WoO+mdehze+8UytDHkwBkL+
+	 mbKUc0urfHs928bPrO4hG07IBgL6yXvta10Jykbif7s3xvMnMMOwxEYHcjRhnE6N6Q
+	 Fb2bbktmQlb6dtEWxLq6wgLrvokl33ho9JjMrLk14LSHu4JZ2VJOoy6+v+5yA1mxki
+	 RbQAQgTsqHPsA==
+Message-ID: <340729c9-1cef-4060-874e-43b6d3bdeb04@kernel.org>
+Date: Tue, 6 Oct 2026 17:07:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v18 03/23] dt-bindings: media: i2c: max96717: add support
- for pinctrl/pinconf
+Subject: Re: [PATCH v18 11/23] dt-bindings: media: i2c: max96714: add support
+ for MAX96714R
 To: dumitru.ceclan@analog.com,
  Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
  Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -54,7 +54,7 @@ Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
  <Adrian.Suciu@analog.com>, Cosmin Tanislav <demonsingur@gmail.com>,
  Martin Hecht <mhecht73@gmail.com>
 References: <20260930-gmsl2-3_serdes-v18-0-43117818f499@analog.com>
- <20260930-gmsl2-3_serdes-v18-3-43117818f499@analog.com>
+ <20260930-gmsl2-3_serdes-v18-11-43117818f499@analog.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -100,25 +100,26 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20260930-gmsl2-3_serdes-v18-3-43117818f499@analog.com>
+In-Reply-To: <20260930-gmsl2-3_serdes-v18-11-43117818f499@analog.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 30/09/2026 00:41, Dumitru Ceclan via B4 Relay wrote:
 > From: Cosmin Tanislav <demonsingur@gmail.com>
 > 
-> MAX96717 is capable of configuring various pin properties.
-> 
-> Add pinctrl/pinconf properties to support this usecase.
+> MAX96714R is a lower capability variant of the MAX96714 which only
+> supports a fixed rate of 3Gbps in the forward direction.
 > 
 > Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 > Tested-by: Martin Hecht <mhecht73@gmail.com>
 
 This is a fake test, you cannot test bindings how we understand Linux
 kernel testing. Please drop such blanket-fake test tags from all patches
 where this is not relevant.
 
+In the future, please do not apply blindly blanket tags, but actually
+verify what they mean.
 
 Best regards,
 Krzysztof
