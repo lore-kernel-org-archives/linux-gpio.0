@@ -1,133 +1,234 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACD954707A
-	for <linux-gpio@vger.kernel.org>; Tue,  6 Oct 2026 21:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05CE4FB9CE
+	for <linux-gpio@vger.kernel.org>; Tue,  6 Oct 2026 23:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791320611; cv=none; b=Zba1thU7z/iFK37YA1pTlptFCySCl7yLVrA6RpadiYr02/dj+1DBxxmRYGLgnOc4DTK9CRulFoUKNN+xPn9NYRL52zQ50caDeoTs8SA6qTOUTxnlINQE7qSldOCmT+scSTp3oHMyHs5T0OXRok4o6ldKBz83AyzAdLnfOSS+O4w=
+	t=1791328799; cv=none; b=r9af8wvE8bCgHZFt9UoZUY0wB+x/tUHavg1R+T6LHQwE8TnDGFnnWRMQJCGlfgfBOnSNGbUBRXUSm+7vjlTH0azLBe1Q2Ub5h6uelIc2RABPQLLvZlFkr0gysjVbk2z/xF+qhPy69jmAcCf9OPQdbtFCdh5UlgREaOOWViFpuPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791320611; c=relaxed/simple;
-	bh=ISf7Lb0t6b8ylOEcWRDSL9BmaWLi8p6rYhKIlR06ZHE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eopD4WvLdalX/5CfcWlLJK5LsqiDx400aLh4Evbut8cAjJOOgBDtcWVTDfBmFUCbrOlgbhfKOO9hedU+qjuwgc4AZ9F/zkNWr3AjRWkZafgmfuyor4QFkeA3RBCXrw3uMWziJ45IArw7mIm+rIHiwMYkeb5Nha/dNrozBqK0CW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IKqmtzUQ; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791328799; c=relaxed/simple;
+	bh=P7oecALR/wCKBNyKL3ajEPimn0nV+l81GMYEnAFRGkM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HpPm40esrZbEpwvPHqIY6Xe0SewyRWlzRPw9oesGMljIWgvXTJMYqV9Z7I/TjudlkeDdbkhzLIYvRmjduT1C9EX096zKrt84+2ETmndHvhhiawwu/SJWOqGa84hfaprnXg2kn/dQiiHSLfAT/85tSEMDRewHWtomS3f4E6GJ5wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Qu9oONBi; arc=none smtp.client-ip=74.125.82.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IKqmtzUQ"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-c2e36c3478aso502974366b.0
-        for <linux-gpio@vger.kernel.org>; Tue, 06 Oct 2026 14:03:29 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Qu9oONBi"
+Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-150f88d22aeso2234768c88.0
+        for <linux-gpio@vger.kernel.org>; Tue, 06 Oct 2026 16:19:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791320608; x=1791925408; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ylT2JTUORypj+MjhE+jQDW+T/v8WU4XCGcgTDo3Q5yQ=;
-        b=IKqmtzUQB7WmQxcEW/YAAzrXsgpHIm0PThTUoXrUS8PGBGb9mXomqqCXqAo9bgAMRj
-         U2UUJMWDikgRQ8v3Dl2b1/A+qze7pPFRPgZHFyxatnY9iscLK987ristcBlzDLYBAeHD
-         l2ZVQRmmLCYufP06ERngwu0R5hcqhkPCYJk8Xl9TFRQEX9db4+4Iv9S16Tk2iU/V3z/A
-         CXl2oDDOocTogggMbdlQDluXxWDna7v3bxt4yN9OpAi86yI6ainUCl2dD0+gZrqxeD06
-         pBup341hPMmhMFRyZY8dBSDSv2ilOf58qoZPREVvS++jq44XIDTWbWTlbf2eESkKkx8/
-         LYvQ==
+        d=chromium.org; s=google; t=1791328786; x=1791933586; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=L71GPMsk4GSIdxEygBnLFVf0LVf2CMTomc/BzDysxCo=;
+        b=Qu9oONBiAHrYHtYN59RK9IbVZz92On8/5XjZdNEzonq5e1IqjPuwZEdtTmph05NdrQ
+         5g94TMWmD8iMlaMNgcRDdfgiVz+Y17r6mMsFj5fydMDQjuaUQcDIPEiv7EWrgOUVrtRZ
+         WzAFxBPuNT41Z9M7b4SaudPb3WlMfkyeQadlg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791320608; x=1791925408;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ylT2JTUORypj+MjhE+jQDW+T/v8WU4XCGcgTDo3Q5yQ=;
-        b=gj/sNrod4LqlXQ8BD0VgNBGXDF/eGs5mew/fLEnBAuDO3wL+LVSt57e1HU6s3h7Rcq
-         o2iup1zZBm6vIxmWTjaKWY/deUx1EsrNvBUYRHCOUFFHecEMt4GrAuzK1eKGNmElQyxU
-         borpQZi9q5JqrFw/LL6DDf3LpFLURsStMA16Zktgfh9VAP1+uSxx4WqR9+BrSZr74YpF
-         vCFmXqoG/9Ljy6Qw5/R1WklKpWnAxxMmxAcAF8psNlgOKtb1yjKjSq+CR+mTHswDjv75
-         9Eop+EmilIdw2tarIRfg0QoScIPLcpGyjPkThdoNs2pMZ8Y//03exGzUqpU4Gbqgqy0F
-         FcLw==
-X-Forwarded-Encrypted: i=1; AKwUvBxrrGyWgo3yqZtBMlBI4d0YvUpxpTmpELFPnTCJcWCFWasgkz4EWp4Q6DG494hcGqSFjOyprQQaVj1L@vger.kernel.org
-X-Gm-Message-State: AFuF++ldcLnLv570nuK6+O6OTNoCowDCxyVxliWlk58skzVDekzTUXTp
-	K8AzYDktew2/uuIp+y/3qXLYgiN3bzsPFeWxhzl/Vj1CuIONcdkyrNF+
-X-Gm-Gg: AYBFou0YqLonO5ByBMPx0obJZCed6tFPfdF+riX+Zui76LAJDKcsokTaSwHAxg5HLy0
-	f4X4m5RMMiBUs1JG5DamE+wSQorTma+72vGhGew7xkEaVpjfPuK6Ub23KUN9OTXiwbVWBkuAdIa
-	8QVX8e44fi7FAvCw/06OxGFQUuI51g6NI5NZJpAwdLEAL/lsBltLg6R0QhxuF/W6m3smNtQnz2o
-	f06nIuMQ/1+dydDIOBQ0VsNqMufOPyNACI2TBXLFgBIW5FhelA9Dxt4qUMPcJp4IluD66fDlE/T
-	Kzb6joSRllILqUp2J0xg2wRFomOOM6916dmrGXq8HpqvY6aqN7kI/zV36dRMGU4+IceqAFJaNxr
-	GVrXXepzLiTo3kzY0elLkkseGZWq2nO6vCm8UqsfzSq6n07gdsSs9FvHtnZoV0W4eezaiuJp+HK
-	5ng2kNXv9jamIeNHxgSoi6fN7uRiNuQnRKSBzBsLupxXoBsRRHZ3l0DR0W0Eg4bVFHFAPUDsInq
-	kJ0lDoaxvWoO0l73s2xA6igg+u0FS7c
-X-Received: by 2002:a17:907:8992:b0:c29:5021:f6f8 with SMTP id a640c23a62f3a-c317c0bc3a7mr23014166b.36.1791320607819;
-        Tue, 06 Oct 2026 14:03:27 -0700 (PDT)
-Received: from debian (ip-78-137-176-146.broadband.digiweb.ie. [78.137.176.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c317c2f9938sm8483166b.50.2026.10.06.14.03.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Oct 2026 14:03:26 -0700 (PDT)
-From: Pablo Mazzini <pmazzini@gmail.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
+        d=1e100.net; s=20260707; t=1791328786; x=1791933586;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=L71GPMsk4GSIdxEygBnLFVf0LVf2CMTomc/BzDysxCo=;
+        b=sD54cEHm2RXywzMOK3PVQ37Tj3DmPDNkNt7Jq/pekT/WtFmcJYl/GerUd4UQUCucWF
+         6yglgcwOQIIcgWnU/ex0/a5nMTeieAIy1MXVqaNCC8oajYTHaq6yZk6I5RkI2WPbRg7S
+         Sr7Lsf1+8Vj3fChq6fjD3D6Dk76Khi18shU5qXT0c+2QWxoM+ioH1nzNoruPgTlHYo2M
+         TqYLauPCr6VksXUEs7+LwVSz/sWUdKDQOf5QAKaVY7sUGVWtlzp7lXg3DDkPoVpck1nB
+         Iz2VGww8hoy0aveWIBCmPsqaodT+YWp4mhC+mn1Y2dD689roRybYpo1FDvNfA3jFsiFy
+         /x/g==
+X-Forwarded-Encrypted: i=1; AKwUvBzlXdQ48c2Wuz3jiWUV6a8M2pG7OGykx67CIJpk1Thn3O2dYNKq/irvw5FoE66qQKsJtUSVZYyYLYX2@vger.kernel.org
+X-Gm-Message-State: AFuF++nLD4/YJxRgzs8hq5N/EH2NuTL9X43fT83TVKzMn+vGJM4ab/fK
+	OBoiwVAKLRXv0J4lNw+7PVFth38g5KwCZDFwES6PlXbcwtx92l2987FMSA3Xpf8Uuw==
+X-Gm-Gg: AYBFou0kmtjLjUOnAobQZk9TwGRITprxAQ7K0mzz+aOsVI7owBfVHRvYyFOmbLSdYMc
+	U/ZX0cjnK628RE8vwETGwT6kADcM1qBHqb8wBp1YQKzWtz+95YqxwU9nfWIwIAoH6MjrWnlLU9E
+	kAfyZHyj26I+1SFnOrbu5K7TH+8OhqfBj5VZ2D87TMefNcZxgu5IO2BzT8o8olelCr/FGF8A7bn
+	PKH7Qy9YdPeXSHdcevn+2URIwX7FDHmoqEZGaKwZEmnE595DsOz/9kL8Poy8Dq1wP9CcanW/ngu
+	h6sLEIC9sUMzSStnFpboNWlJBZnzCPCBc8d7LXw/GietyvdZPxOf0JPVoXfs7rdM/zcpzVzMqrX
+	/vYT1gdEM4zv7EemCJjeLgQtBRal/T07NUn2w4Mby4YQmMIH9h0JMXEALga8/GdjNm4WNAJEvzX
+	BdwJq9hQqRJ+N9WNPv33XQ0qOXLnkFi+pxbsqmKzROKsWFX5JUhzmVE/kt7rLy7OdPaPHlAJeGj
+	JwbqsfaiccMeZobB5K3q15QI3Lr0j9a7ThGWA==
+X-Received: by 2002:a05:701b:4553:10b0:151:7831:e401 with SMTP id a92af1059eb24-162045b8dcfmr323314c88.15.1791328785498;
+        Tue, 06 Oct 2026 16:19:45 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e7c:8:63eb:e7f9:1d47:7d47])
+        by smtp.gmail.com with UTF8SMTPSA id a92af1059eb24-161680e191esm1583634c88.11.2026.10.06.16.19.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Oct 2026 16:19:44 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org,
+	Ulf Hansson <ulfh@kernel.org>,
 	linux-kernel@vger.kernel.org,
-	Pablo Mazzini <pmazzini@gmail.com>
-Subject: [PATCH] pinctrl: sunxi: dt: do not accumulate npins across probe attempts
-Date: Tue,  6 Oct 2026 22:03:13 +0100
-Message-ID: <20261006210313.43163-1-pmazzini@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	Brian Norris <briannorris@chromium.org>,
+	"Bryan O'Donoghue" <bod@kernel.org>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Alex Elder <elder@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hadar Gat <hadar.gat@arm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Jessica Zhang <jesszhan0024@gmail.com>,
+	Johan Hovold <johan@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Mark Brown <broonie@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Melissa Wen <mwen@igalia.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Olivia Mackall <olivia@selenic.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Takashi Iwai <tiwai@suse.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+	dri-devel@lists.freedesktop.org,
+	greybus-dev@lists.linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	sound-open-firmware@alsa-project.org
+Subject: [PATCH 00/13] PM: runtime: Convert pm_runtime_put_autosuspend() and friends to a void function
+Date: Tue,  6 Oct 2026 16:13:28 -0700
+Message-ID: <20261006231900.3230373-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.56.0.360.g66cac248cb-goog
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-init_pins_table() adds to npins in the driver's static descriptor, so
-after a probe deferral the count doubles and the next probe fails with
-"pin 0 already registered". Count into a local instead.
+Similar to this effort:
 
-Signed-off-by: Pablo Mazzini <pmazzini@gmail.com>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+  Subject: [PATCH v1 00/23] PM: runtime: Convert pm_runtime_put() to a void function
+  https://lore.kernel.org/all/6245770.lOV4Wx5bFT@rafael.j.wysocki/
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-index 50a16f3bd131..1c1888394cf1 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-@@ -75,7 +75,7 @@ static struct sunxi_desc_pin *init_pins_table(struct device *dev,
- 					      struct sunxi_pinctrl_desc *desc)
- {
- 	struct sunxi_desc_pin *pins, *cur_pin;
--	int name_size = 0;
-+	int name_size = 0, npins = 0;
- 	int port_base = desc->pin_base / PINS_PER_BANK;
- 	char *pin_names, *cur_name;
- 	int i, j;
-@@ -85,7 +85,7 @@ static struct sunxi_desc_pin *init_pins_table(struct device *dev,
- 	 * Also work out how much memory we need to store all the pin names.
- 	 */
- 	for (i = 0; i < SUNXI_PINCTRL_MAX_BANKS; i++) {
--		desc->npins += pins_per_bank[i];
-+		npins += pins_per_bank[i];
- 		if (pins_per_bank[i] < 10) {
- 			/* 4 bytes for "PXy\0" */
- 			name_size += pins_per_bank[i] * 4;
-@@ -98,12 +98,14 @@ static struct sunxi_desc_pin *init_pins_table(struct device *dev,
- 		}
- 	}
- 
--	if (desc->npins == 0) {
-+	if (npins == 0) {
- 		dev_err(dev, "no ports defined\n");
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	pins = devm_kcalloc(dev, desc->npins, sizeof(*pins), GFP_KERNEL);
-+	desc->npins = npins;
-+
-+	pins = devm_kcalloc(dev, npins, sizeof(*pins), GFP_KERNEL);
- 	if (!pins)
- 		return ERR_PTR(-ENOMEM);
- 
+i.e., commit 3afd8df02433 ("PM: runtime: Change pm_runtime_put() return
+type to void") and friends.
+
+As with pm_runtime_put(), there is very little value in return-code
+checking for any of the other async __pm_runtime_suspend() and
+__pm_runtime_idle() APIs:
+
+  pm_runtime_put_autosuspend()
+  pm_request_idle()
+  pm_request_autosuspend()
+
+Checking the return code is more likely to
+produce a race condition (fighting with user space writing "on" to the
+"control" attribute) than to tell a consumer useful info.
+
+Nobody outside KUnit tests checks pm_request_idle() or
+pm_request_autosuspend() return codes, but there are a number of
+pm_runtime_put_autosuspend() callers that check its return code. Thus,
+this series largely deals with pm_runtime_put_autosuspend().
+
+Patches 1-11 are independent of each other, and similarly to the last
+series, I expect the respective maintainers can pick them up. We can
+apply patch 12 later. Patch 13 is also independent, but included in this
+topic for completeness. It can be applied any time.
+
+This touches a lot of trees/maintainers, so I tried to keep CC's only
+for the relevant patch(es), plus the cover letter. I hope that's not too
+noisy.
+
+- Brian
+
+
+Brian Norris (13):
+  hwrng: cctrng: Discard pm_runtime_put_autosuspend() return value
+  drm: Discard pm_runtime_put_autosuspend() return values
+  iio: Discard pm_runtime_put_autosuspend() return values
+  media: venus: Discard pm_runtime_put_autosuspend() return values
+  pinctrl: qcom: lpass-lpi: Discard pm_runtime_put_autosuspend() return
+    values
+  spi: ti-qspi: Discard pm_runtime_put_autosuspend() return value
+  greybus: Discard pm_runtime_put_autosuspend() return value
+  ALSA: hda: Discard pm_runtime_put_autosuspend() return value
+  ASoC: codecs: lpass: Discard pm_runtime_put_autosuspend() return
+    values
+  ASoC: intel: atom: Discard pm_runtime_put_autosuspend() return value
+  ASoC: SOF: Discard pm_runtime_put_autosuspend() return values
+  PM: runtime: Drop pm_runtime_put_autosuspend() return code
+  PM: runtime: Drop pm_request_{idle,autosuspend}() return codes
+
+ drivers/base/power/runtime-test.c             |  8 ---
+ drivers/char/hw_random/cctrng.c               |  6 +-
+ drivers/gpu/drm/panel/panel-simple.c          |  8 +--
+ drivers/gpu/drm/tidss/tidss_drv.c             |  7 +--
+ drivers/gpu/drm/v3d/v3d_drv.h                 |  4 +-
+ drivers/iio/accel/bmc150-accel-core.c         | 14 ++---
+ drivers/iio/accel/fxls8962af-core.c           | 11 +---
+ drivers/iio/accel/kxcjk-1013.c                | 15 ++---
+ drivers/iio/accel/mma8452.c                   | 15 +++--
+ drivers/iio/accel/mma9551_core.c              | 15 +++--
+ drivers/iio/adc/rcar-gyroadc.c                |  4 +-
+ drivers/iio/adc/ti-ads1015.c                  |  8 +--
+ drivers/iio/chemical/atlas-sensor.c           |  4 +-
+ .../common/hid-sensors/hid-sensor-trigger.c   | 14 ++---
+ drivers/iio/gyro/bmg160_core.c                | 17 +++--
+ drivers/iio/gyro/fxas21002c_core.c            | 12 ++--
+ drivers/iio/imu/kmx61.c                       | 17 +++--
+ drivers/iio/light/apds9960.c                  |  2 +-
+ drivers/iio/light/isl29028.c                  | 15 +----
+ drivers/iio/light/pa12203001.c                |  3 +-
+ drivers/iio/light/rpr0521.c                   | 15 +++--
+ drivers/iio/light/tsl2583.c                   | 27 ++------
+ drivers/iio/light/us5182d.c                   |  3 +-
+ drivers/media/platform/qcom/venus/vdec.c      | 10 ++-
+ drivers/media/platform/qcom/venus/venc.c      | 10 ++-
+ drivers/pinctrl/qcom/pinctrl-lpass-lpi.c      | 16 +++--
+ drivers/spi/spi-ti-qspi.c                     |  6 +-
+ drivers/staging/greybus/power_supply.c        |  8 +--
+ include/linux/greybus/bundle.h                | 12 +---
+ include/linux/pm_runtime.h                    | 63 +++----------------
+ include/sound/hdaudio.h                       |  8 +--
+ sound/hda/core/device.c                       | 13 ++--
+ sound/soc/codecs/lpass-rx-macro.c             |  4 +-
+ sound/soc/codecs/lpass-tx-macro.c             |  4 +-
+ sound/soc/codecs/lpass-va-macro.c             | 17 ++---
+ sound/soc/codecs/lpass-wsa-macro.c            |  8 +--
+ sound/soc/intel/atom/sst/sst.h                |  2 +-
+ sound/soc/intel/atom/sst/sst_drv_interface.c  |  4 +-
+ sound/soc/intel/atom/sst/sst_pvt.c            |  9 +--
+ sound/soc/sof/control.c                       |  6 +-
+ sound/soc/sof/sof-client-ipc-flood-test.c     |  5 +-
+ .../soc/sof/sof-client-ipc-kernel-injector.c  |  4 +-
+ sound/soc/sof/sof-client-ipc-msg-injector.c   |  6 +-
+ sound/soc/sof/sof-client-probes.c             | 18 ++----
+ 44 files changed, 152 insertions(+), 325 deletions(-)
+
 -- 
-2.52.0
+2.56.0.360.g66cac248cb-goog
 
