@@ -1,75 +1,75 @@
-Received: from mail-ed2-f31.google.com (mail-ed2-f31.google.com [74.125.228.95])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031EA484250
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 12:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30DC495ADC
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 12:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791375003; cv=none; b=oH+EhzYkRk5KDcaee0BeMzhW/h+jKDETDJEusfbu/Uq1VLKHtS+fbXI/IW+tboiIoIUh+bCUhvDB+c0SecMhT4YNbyLV3Q2eARIqUzre6VZvJmXrZH4Zo7t9KNakFVKyxuyCuZeIlyygMNjw+x7bQPoYuo+6z7rf0tQDIUSZnb0=
+	t=1791376817; cv=none; b=GvhnUHNaCEESZ7HaHtbjPlLAE9kTQlrDwpeLJmflovOdW0m0vZxlmBDCQyGkxTEVZKNT7vub3f9zn7825R00g8hNAvpz+qtlhYtedFzNzJGGUMk124cwEWz8gofK4mm6KNV/yoemGNbv8/gD6Pf8emARWSkE2xzz6wBPTfJFLBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791375003; c=relaxed/simple;
-	bh=O5youO8u2fWJhbGf7dva3f94Sn+gozOkXy/DzZwSTnY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XWPBFn4WR7Xfg5SyqRDyqEUn1UwxSqZaLVTJB4K88ukBNnG8MeMo35fhFfxDEKEW23bnikyGdyGO/xOCSXMEPs7VbHU+lDG9CDtrcYKS8xCUHSd7qIEOL+D5f73sh0tMYaGhwCNeUPSPRzP76r4mv8rZq7+Q6wSyssjPgraINWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i7/dPJZY; arc=none smtp.client-ip=74.125.228.95
+	s=arc-20240116; t=1791376817; c=relaxed/simple;
+	bh=gvlnRPbIuQpBNlIetJA1tcoffwd0qPM41kLziATxBNQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cfGI1lQeHhKa4xuEMG5RYyZOhkFoC5On1jchK94F/Q7tp7oObEUuuleQ4XyguwFshMtiiwegK6PdmiFthLYed1tKXNM2hB88JqVTCPx4Hd0+s2VTYZcHDUtze5ZzpDFvIKAZQK3Ml4ZTCmuWk7J1v4BbYBZ7pyWFa7WnUnYrKpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XTPXz2PY; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i7/dPJZY"
-Received: by mail-ed2-f31.google.com with SMTP id 4fb4d7f45d1cf-6ae19bcd2faso692027a12.2
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Oct 2026 05:09:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XTPXz2PY"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2dfa54c8ccfso10190005ad.0
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Oct 2026 05:40:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791374990; x=1791979790; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791376807; x=1791981607; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=7nlgaOQ7l/QuiqX+4bpqCa78LDT4CEiIeuVR98Vr9YE=;
-        b=i7/dPJZYAbY5taE7kTTaUgoD8R7dPcQ1TFolGKtsPl8ScnB18BrlQ+xK0iZEGrOEPW
-         QBfnLnYbJJxxY17DC65NcfcUb5FdvGsDNL3NhgAGKgOoO+fpiHTdHWAcNVm4GANFmPBs
-         M+mfKtozQ0HyVng7b9pifmmv6Qm/p9nW9OHI/1gtORpVqFU9s6Dl7Puqq4UFXPkAq+4A
-         QycldKq5dZZdWniiyMKKJYZmkPBo6zhYEyC0TqR4Wv9abTs/kx+deZROd9rh1VnHrnQ9
-         2xyAfYbU1RrL0Dd63/dHhVEi6CO4tARu4jTdWBHKoVytMPrp97rg2I7aNMeDRa4gmbLO
-         r/jg==
+        bh=lJssbI+xGs6ktfsC6Xw3DX5y7Ljs3Vvy25+XSMvy+cY=;
+        b=XTPXz2PYjgwqLYr/+KzYv1mgR6TQ93ZOQ85RnJchI3nMOQx5cq/fwUHtAESlF71XpC
+         a3xa3vUXerbShiA9FAbBNBLA47tv0zHBqfvwnYMXCEFXNCgParFFax+RUqNx3AjCjVoW
+         a/in+Mqzf8rnhDp+F5+FP0kff69nmS8C+JjFAXj8LESgMPc6xbSbl3NxHFzpIKRx/c/S
+         Pl+AjSa3nVsP3qpxY4EiXrtTVAgU1bwLS1J0EATgr6XHYJNAx/gnIjAaxPdp7kfV07bf
+         dnT/SZlAA+VmrdCp0JLcachYIElvHzfo1Tmzc0wTVF0Cxe2GIDOdbfev4TmWuHZa7mIQ
+         qF4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791374990; x=1791979790;
+        d=1e100.net; s=20260707; t=1791376807; x=1791981607;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=7nlgaOQ7l/QuiqX+4bpqCa78LDT4CEiIeuVR98Vr9YE=;
-        b=KYUSPVfBmantNIEIGub49PzgY0yYsbxhU+g+3lndvW/73Ium9Y0MHgaGO+M9JDMykw
-         xFFAIwFqwH/aVKOZZZuOQ+pwoz8jQPj03Qnk8wC150b2m2sHYUUZMGh9XTdEvVYNu17D
-         VdUK0kfFz0Ip9iFoWn/ppx2F0PXTojfdQraXVmbkq57xpqVn55rF5LkO6iUo7sEiVFmJ
-         Dv5Os7y39eoX+2qAme1DMGTmhgzTrK4KGo/O2eB3sMuI/jBemvW59iNUicuU68U06HE9
-         j2QlB9D+FxaesUi4U5cF46jc7qfWG+9l4N25Css1ily6hdkQZSKb3//ZhmwOM3Rn3e7a
-         iOog==
-X-Gm-Message-State: AFq9FYJqYFVLA5PewQtx7DzB5RY3mfV2PRMk1HF3e0rlAAhWDrTDekiZ
-	6xec+BYy7llqgYtT2IYgg4eMLLpVDJR5Z4/QkAuRs8DbEiW5+J/oqfL1
-X-Gm-Gg: AYBFou0+VL3iYuOBmWHc+qjPCJ4nsWxtRiPt587iPzQhLuDGFXeSrq6pMDvnuuLBh3F
-	w15fqgIyR+Phz6msOfW946Sgo0WkDDdnazurTAcOwbk/i1/x5bCO3zn2Q0Cy44oavT5pIKyLrDM
-	Go5QTm+mw7/F+DQXWNq9FM24MWKeNqOJllUi+Yc9QiBmzT3GvGK+tJZBY8sTIsFmATWyuq3SJZX
-	xV/+OAMgdebtqzqOetlTPt4DsHy8Dx6P4+P7CnAYriepT7aPiIV5ANjLY0pukFBQlBvpW/odSyi
-	xN+gIt7enuVNtOEkvWhmCsJgqw2dNKoy+0B5BEZTPxx8/Ew8GS0mzkQrbetUfEpxumnOYW7AJXv
-	kzCLXpl8AriB37UPBTTgAf+1807bm0eH1ACJd1bs3GgPjNo+jX8XV5ZjcwKwGBtiSziB7JxPtFq
-	grPzFMLk9bcDTFtmQzTacbX7otDI0uO0pRyAF1TdRGAjYw+zi1OZlosAD+hw+3B8I19YH3Tzb6u
-	vYUSUCQ9ZTINpzxfqw8WIhRk3y7CZQgEVMQCg==
-X-Received: by 2002:a05:6402:11c8:b0:6ad:723:1d6c with SMTP id 4fb4d7f45d1cf-6aff3f4c199mr2172139a12.2.1791374989721;
-        Wed, 07 Oct 2026 05:09:49 -0700 (PDT)
-Received: from omarchy.onca-albacore.ts.net ([87.192.248.72])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6aff2e1e406sm975245a12.18.2026.10.07.05.09.47
+        bh=lJssbI+xGs6ktfsC6Xw3DX5y7Ljs3Vvy25+XSMvy+cY=;
+        b=MN4qUFm5Cp1+VPXETvMLv8K0yrPOurYZ19rSugKWxZgUjsSc8B9NjPz5zOVeImn4Z4
+         3ekBkWO/Dxdzbf3eVFcAcO6CsrQu8Zh7skeKRIPEHJr5m6ZwWNc4w3vAbaaEAGewLsA5
+         FEkqYg1b2HZe+fbJEnsyQr27BRDmvFwbhKrlp0F2ZBJh/G3Z9rJ1naozDVZzc+iPyDqd
+         JiAcsXscbi7mUHUdxv2WIeQSIonIeqCFZxnhXrx2rBl0fjC7kMqXa0OBvjRxTRlXiPRl
+         5CELMNH38s8TVRkjDj+U5V+H6lsy8sEvHVoK3WZUTerP9f8DMnRuFmjWUAmiM9JM4MhF
+         kxrQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxx44f3vieb1i4CRiT0nzp8w5ZhDjocNK40jPJNoGC/vSD54YXdqnYj5GwYgSbAm10V5CqVEGSk2Y7H@vger.kernel.org
+X-Gm-Message-State: AFq9FYKEFifAWpgcUDFTyFJp3x61D9IH1kuKw/rNF/oYXPRxKq2xYphn
+	JsBj+7VlJ75CIAjj1QPnV5/39K6Hss/uK6z0blsztYDMm7WPCNl0VHsq
+X-Gm-Gg: AYBFou2JBwv7LHLbyeENXlNu8HZUXbw/c5Fi/k9sSyfU0YYVmYLFzy8t/zf+dEKiWjb
+	8PhahjPe57R2W5x1qL52ftSqmGCHx6soJi9EHzi6+B6M++292Raf4kybVLpAKn8tnUnaWIgMbQq
+	BYJ/DjwwVzDRoTds1PMA/IWHrEoHaXTJLp+r6jD580Cp5e3bRz8MbEuLD1wBhMUr/J2gvN5qTlb
+	IlSqCVaq3LU/MCnm0j5yw3fa+JX4lledUeG8XoxTpJI53oxl36PXDNKAjMzu/yZNISARGFephOV
+	Tr31xwJiQPL67ddqPJTkSU4zrssSDWjlodhqAGzROEps8WMAXE3VCN+jfAjTenxkMaCiEUQryF1
+	BxTYKhNp6RgrbQp7UvYImx9dIXrSZ7CaSYPT6BZvRdSabLqjmxfz69xDEijyOgPSF62IYuXGDpi
+	fJQUirV92bZbTUZPtBR4NCbZ1F15l9e1VGsLS8qm2ISbNI5HZqBo4GvWA2Fifj7SXReuAo6soDT
+	vjEVISLnPMvlTo=
+X-Received: by 2002:a17:903:248:b0:2e3:cac:3868 with SMTP id d9443c01a7336-2e60050922cmr15218765ad.24.1791376806392;
+        Wed, 07 Oct 2026 05:40:06 -0700 (PDT)
+Received: from DESKTOP-NM9EKIA ([125.134.240.130])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e6046fd284sm9675095ad.15.2026.10.07.05.40.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Oct 2026 05:09:49 -0700 (PDT)
-From: Abduvaliy Abdulazizov <abduvaliy.hbai@gmail.com>
-To: Mika Westerberg <westeri@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Abduvaliy Abdulazizov <abduvaliy.hbai@gmail.com>,
-	Trijan Koju <trijankoju11@gmail.com>
-Subject: [PATCH] gpiolib: acpi: Ignore GPIO 11 interrupt on Acer Nitro 16S AI
-Date: Wed,  7 Oct 2026 17:09:44 +0500
-Message-ID: <20261007120944.1705014-1-abduvaliy.hbai@gmail.com>
-X-Mailer: git-send-email 2.55.0
+        Wed, 07 Oct 2026 05:40:05 -0700 (PDT)
+From: Joonhoe Kim <26rote@gmail.com>
+To: andersson@kernel.org,
+	linusw@kernel.org,
+	brgl@kernel.org
+Cc: konrad.dybcio@oss.qualcomm.com,
+	jingyi.wang@oss.qualcomm.com,
+	linux-arm-msm@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: qcom: kaanapali: add the I2C strong pull-up bit
+Date: Wed,  7 Oct 2026 21:40:01 +0900
+Message-ID: <20261007124001.1724-1-26rote@gmail.com>
+X-Mailer: git-send-email 2.55.0.windows.5
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -78,58 +78,44 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Acer Nitro 16S AI (AN16S-61) has the same problem as the Acer Nitro
-V 16S AI: the firmware powers the internal USB camera (0408:4059)
-through GPIO 11 of AMDI0030, but also lists that pin in _AEI. Requesting
-it as an input cuts the power, so the camera never enumerates. On this
-model the same rail also powers the internal microphones, so they do
-not work either.
+The Kaanapali TLMM has the I2C pull-up control in bit 13 of the pin
+config register, like SM8550, SM8650 and X1E80100, but the driver does
+not describe it, so "bias-pull-up = <2200>" cannot select the strong
+pull-up.
 
-Booting with gpiolib_acpi.ignore_interrupt=AMDI0030:00@11 fixes both
-the camera and the microphones. Add a DMI quirk for this family too.
+The downstream kernel sets it on the camera CCI pins (config 0x2007).
+On a Lenovo TB323FU tablet, with only the weak pull-up every CCI
+transfer on the two sensor buses times out; with bit 13 set the sensors
+answer and their chip IDs read correctly.
 
-Tested-by: Trijan Koju <trijankoju11@gmail.com>
+Fixes: 35ff9c6b318a ("pinctrl: qcom: add the tlmm driver for Kaanapali platforms")
 Assisted-by: LLM
-Signed-off-by: Abduvaliy Abdulazizov <abduvaliy.hbai@gmail.com>
+Signed-off-by: Joonhoe Kim <26rote@gmail.com>
 ---
-This goes on top of commit 6da1f3437435 ("gpiolib: acpi: Ignore GPIO 11
-interrupt on Acer Nitro V 16S AI") in the gpio-intel fixes branch.
+The board uses it as "bias-pull-up = <2200>" on the CCI pin states; the
+Kaanapali CCI nodes in the CAMSS series (v18) use plain bias-pull-up,
+which keeps the weak pull-up.
 
-DMI of the tested machine:
-  sys_vendor:     Acer
-  product_name:   Nitro AN16S-61
-  product_family: Acer Nitro 16S AI
-  board_name:     EV3_SKF
-  bios_version:   V1.53
+Tested on v7.3-rc4 with a test switch that clears bit 13 when the pin
+state is applied, rebinding both CCI controllers each time: with bit 13
+cleared the two sensors and the VCM on those buses failed with CCI
+timeouts 3 times out of 3, with it set they probed 3 times out of 3.
 
- drivers/gpio/gpiolib-acpi-quirks.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-kaanapali.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpio/gpiolib-acpi-quirks.c b/drivers/gpio/gpiolib-acpi-quirks.c
-index dbfd820..9f2ede4 100644
---- a/drivers/gpio/gpiolib-acpi-quirks.c
-+++ b/drivers/gpio/gpiolib-acpi-quirks.c
-@@ -359,6 +359,20 @@ static const struct dmi_system_id gpiolib_acpi_quirks[] __initconst = {
- 			.ignore_interrupt = "AMDI0030:00@11",
- 		},
- 	},
-+	{
-+		/*
-+		 * Same camera power enable on GPIO 11 as the Acer Nitro V 16S AI
-+		 * above. It also powers the internal microphones.
-+		 * Found in BIOS V1.53
-+		 */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Acer"),
-+			DMI_MATCH(DMI_PRODUCT_FAMILY, "Acer Nitro 16S AI"),
-+		},
-+		.driver_data = &(struct acpi_gpiolib_dmi_quirk) {
-+			.ignore_interrupt = "AMDI0030:00@11",
-+		},
-+	},
- 	{
- 		/*
- 		 * Wakeup only works when keyboard backlight is turned off
+diff --git a/drivers/pinctrl/qcom/pinctrl-kaanapali.c b/drivers/pinctrl/qcom/pinctrl-kaanapali.c
+index e95ac064b84c..e9351e29d38e 100644
+--- a/drivers/pinctrl/qcom/pinctrl-kaanapali.c
++++ b/drivers/pinctrl/qcom/pinctrl-kaanapali.c
+@@ -37,6 +37,7 @@
+ 		.mux_bit = 2,			\
+ 		.pull_bit = 0,			\
+ 		.drv_bit = 6,			\
++		.i2c_pull_bit = 13,		\
+ 		.egpio_enable = 12,		\
+ 		.egpio_present = 11,		\
+ 		.oe_bit = 9,			\
 -- 
-2.55.0
+2.43.0
 
