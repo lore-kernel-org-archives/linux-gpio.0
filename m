@@ -1,172 +1,107 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE973AD50B
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 05:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.172
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791352738; cv=pass; b=r48WCUerrkTqV1xrvwonnGh1wuxiXhtdSpewUE+UlRj30ohmYKK4x1QTysAbgX8yqtsthLSlw2tLMeFF+m56HLI1oAD05yIZcjF6PZrY3++j4H61y0jopmCTXIEtvT6Y0VB0OceRRMo7FZBtU8nBLSWLSRjPGx/JIwbSsnPY/Jw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791352738; c=relaxed/simple;
-	bh=egWNEyrcah0jamvRkd2t3iPlF/zp1CsncVLF5ZQhZ7E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UjRK79Fhqv7WcLvVLY33MFreI1JZZZCCca2znrrLfllLx3FH74Sme8upT9wY20OSYarw09LxvxQ+P+4GHvKVosd/Gi5W0MaqxE4X7s2lHFrGLiYL3xMzMwqVUQWvdQVH5zADONWMFacP6L+n0bZad6HO8pRg8JyL4jOhCu+fArU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niY9qG1p; arc=pass smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32A2353A7B
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 06:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791352889; cv=none; b=QMt8+KzSHa5fFlnig8bywtrLcjINve91rWsfElNORrRxRIONJQHKfBAxQhiujNhI89I0W8RGqH9hgph346vSYrWB0e+0o7G3YRbDrJPNBRSQwoJAbAmy0Rx5G0CQzLGU5v5SOCb5u7SukxSl1Z5g3ON+eYz6akP9Yib68fwxj7A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791352889; c=relaxed/simple;
+	bh=fUkZRVZThPrAIiUI7nNS/oPVIqZ1p+N6QBHZ5r01/C4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T8/MinHkcDuOSRslCvg61k1/8aSCJPSEKZ4INKv9F+3ULSrtg5hmc2wcaI4sf91ElovnkO1xZR+SGNfizRC/QcOC9Fa5sKvL2ewnVq6YDrCF1TyQUPEJu6CCslaRTvuvqIC+LuJwAf3AKdlBe1uvKF+hwnGvRXgKlDX+UnHrAA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eb4ZzBax; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niY9qG1p"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2e4a341d177so21063625ad.0
-        for <linux-gpio@vger.kernel.org>; Tue, 06 Oct 2026 22:58:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791352736; cv=none;
-        d=google.com; s=arc-20260327;
-        b=Q9CZ9ER7r5CExARG6XSnWxyU8ZHhkbrLSnBjw0eSiGcj9NGF/EHUzeEekByeJEfIHz
-         GN/Tl0mwaNOqgOTQV+bQshKTIQi5vQ58VvXFh+kiOpiPRTD4pBCj8fwZAEFKWgy3+5ht
-         wwTmQWqVJ/TQULPgbU9M0kOfpsJfljANLZarDNhVvh2E3U3/Nx+3b+n772jGpq73ibPR
-         Z7GR51/Ytcqibkgh0A/HMZ0qM44ry1e7FNK3xJpBn3skzik54DCNIDweE6pxQsEWWArj
-         GDYq7jUkOHovUyEFwvY0/lIEZ8Ve1Xw+WXOCVT3ZNM/UJcO3nnUi+BJFMK2Ygn4BmfHz
-         kHKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=fvX6CzIo0lUP4hTcnMKg9GH46W029kkAuFQl56PR8ug=;
-        fh=v1mCTOanqUOqsfR7psVVoaMF3J72wyILv74kqYIITGA=;
-        b=ICFe1RLPJ7ORT4cmthLH51OYtlqARots6WVr76EIcK1G6uUT7huaHvOiRW9ZbWKKz4
-         dQl67kcYX5VsA2N7FCw7ZASCG1weVSH4MtClS9z3x8cB/FyFd8xtVzZqoM5L+hU6+XIZ
-         aBc77alqcxSCAkZJ6Bh1ZzLlUR/DCZMfXSSGTIEbrEiX2hLcwGbBtYarpuhiIC3ckOWL
-         YTUB0JqAFCG90L0qKZP3vg5Jf/0c8CBldn7At2ExWSC4xBSadLTyR2E3Fu60P8l87mxl
-         2xZlOxlC7bP7psQzCHKuI2MnqArsJIx3Qm2bAfd+t3iM6p6ogDdPKJJD4OJIpN8+ytTQ
-         gLjg==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eb4ZzBax"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4a061a13884so11933005e9.3
+        for <linux-gpio@vger.kernel.org>; Tue, 06 Oct 2026 23:01:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791352736; x=1791957536; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=fvX6CzIo0lUP4hTcnMKg9GH46W029kkAuFQl56PR8ug=;
-        b=niY9qG1p64ghyWuaPLnACfNJft/Ut11dV/yx3JRfF9lgH7Hfvwp0iClP/vh4Fcq6GK
-         PnG+bqnwfd995Oj9pnohjEIV9t5//HDnI2//PUwKaUilrfqfkifCJ3LH63Q6jUnOSUtE
-         1/WbYHVoZLgVsaJ9vZy1KO0RN2MnagVeiK0fnMb4pC/2WqcrrzgU0Hc/BFdMPKX0pGSr
-         TeOoKSElrUDQDwVN3Hol5e6CHtmpzCqSFv/U1eZQwRp9jceITF5ISozaTpR/d83fsqkK
-         6rTyVFn0ycdGA64xRX2OYGOjYGxE1S1hAImFVC5Yj4hyFpGuOYz7aQmOz6eUTLFlzw2R
-         Npig==
+        d=gmail.com; s=20251104; t=1791352885; x=1791957685; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=xPj6yjALXRppnwgH/9Fv6hsVla0KxfcdinEDCye/m1I=;
+        b=eb4ZzBaxSsIZgNsCzuEUciBc8eJlHiZUF6gj+w3V5CmMPoasoVzd8Y1c7k8Cgs/4As
+         dagweCT/ii+MR8KGWokIuunxySksPKEiY6wQTqPSzd9efW8It5xaFNcjfMtNh8SWHV1t
+         3Oec1hVYVmEvl9YsZ1h41htpHiK0cja1PRgWMbu1wccBufvn26ym4CV/M0pN0GRHiwu3
+         696yj/ghTYcnnY5X4Bir/TUWIyP1UuSwh9jZLRAFDZ3xGImIPAcoBjb/wStfWCJK+1+9
+         Nn36/VWgklMg1NJixlGfhLwMMj+ReLCacQ38go3GtudMXV/ZsCEXdZK6jyxLRLqPaHmx
+         KkMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791352736; x=1791957536;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=fvX6CzIo0lUP4hTcnMKg9GH46W029kkAuFQl56PR8ug=;
-        b=08Ev2gV2bl1GzaqfJj3qKyO0MIHszzulNFMd120YK7HKlj+kxO9cpYapjS+5uDTlSr
-         wgAl9EpbjZf/UW/r05knwUc3Rhj1W/qKL0OEXxGSTrXsQYPatTXpDbbB1JGVeFA32WSz
-         glXUeuJzbP8NQOnfOQYQxChRe7znt7hYkuXEcm5iaFOpq/EgEa9PC7ueIRMQWyuhgSLn
-         Kuiot4tNGs79bRWjnERb/RiNB4MyJKTLF+PnxDTlaRD/4NXZSTo+Jh08x87Aw9ItIhX6
-         1GZcnXebe/GJ0X3VP3KxSAPnhrX/NY95NKqxrSoMGAdnpSkQIpL+8pCrBWmrFkuWOgOi
-         jiwA==
-X-Forwarded-Encrypted: i=1; AKwUvBym5gk6tw7s9hoJ9JwwplVEA3iGpMhI9eHrDJ77g4cIEvj/o7KFGThSYw5mOg4yzkB3kwWjAmpX0ZI8@vger.kernel.org
-X-Gm-Message-State: AFq9FYKojf63rBtao/BZaO4ZD93VmSjPHhSe+aYYoG4quSdW5nq/5Im0
-	ecGMOH35XJBYbSyxpi9J0VzPhEc5UJ1g14gsCa1Im33righUcI4jg0l7YhbZA2TagVbQGqTKrgj
-	lPBpthbCJEB9mwiClkgWPsz7Qc12s/vw=
-X-Gm-Gg: AYBFou0d/wylm1kpp0Q8iirIU396RMhjvVTt0VkR0bwOiV2rxkOAiilXyUFEB55z/YD
-	B6/lzVMYUov1ym1mxhmmY29eKcH1mmzO9UNNMBWeCtLxU+72IpXnkcw4dv9gE5CAdFI5aEmUIi5
-	iW9WfYpKUSLecnsCm6uSinxQV15jUosbCpkMAlUXpYIkvfleR6Itzd4NV1d7ycHLyMPU9GdLEzG
-	ulSa9N2GHJr6sV8fCdl6GxkSilYUMCzPGbOtGl2X3aT309nP59IV/ukb40naWzjBhqTUMZQTuRs
-	v5/UXCpZUlQZqxzHnLGt5luuTy5T1j8rfcoB3G9QemHivs+vHXK4dHfJlWEnz+LMzEYHAOY=
-X-Received: by 2002:a17:903:2c0f:b0:2e1:2ce5:677a with SMTP id
- d9443c01a7336-2e6003b5d0emr12356995ad.16.1791352736407; Tue, 06 Oct 2026
- 22:58:56 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1791352885; x=1791957685;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=xPj6yjALXRppnwgH/9Fv6hsVla0KxfcdinEDCye/m1I=;
+        b=UXt0npjjIbBVLPTbUIag2iMLJeHuYzjKjD0VameyOfH151i6YVaPHoP3qFT+S3qEdm
+         LLiCa8/rzbSwsFsypNAGPf1vxrXJXm3j1ZxK9Aww3YH9GDFf/tUVSIVSVkbRHJqnYf/F
+         LrWPhajOHPqM/c+9/Sz+vao67tGUNJ+nL7+69iqmYYIYujegCdMgDv3YOoKD2khfsUKg
+         cDyJpM6yDB/aywaEbR82pNAuG3w75H7rA04EWJyFm2BSDprQeezkejvEbP4W7X8TN3k+
+         m2m7dYHwLgYl57ZxHfK4OQxehjI0Sujtgi0EHPgxT7hWEQeDYsPV714s86/F7yQPUGqR
+         nk7A==
+X-Forwarded-Encrypted: i=1; AKwUvByfTDScizLc3XjphajQ69ZEtse7HjPsJSmK0zAAbxjcGQOaPJlN7P1mJwywdarauU/dXyq8sR9BVBuI@vger.kernel.org
+X-Gm-Message-State: AFuF++mbSVxeeRRNEHltmkdK85JYchNoZWp1tZcaL/B86GiEUKta5jct
+	fgkuARgV02qJTXi6P4CNsihhiZzqrjAITFIDlj/tJbZgxPzBuU+qnKno
+X-Gm-Gg: AYBFou27xesDaCz92JXbqSeXgpJXXp9KoGm7hXGReZv8XKw2QjBfA51M9xndcMxj3co
+	d1xlJQ11gTiqCYb8KyUrpSR13l12tqVOnZaJz2yXy+V777pULMXyqM5imk/TjNjj/QviJH2kKwk
+	rDWmZ0NPmjYZ1xUsoMh8fNg6+WAluP1Gd4LoK43GdEd7RRm/yImZd9QWi1NUlFGu9O91gr4Bbzi
+	ftJwvvqKX8hBoSvY+mw3W3qKyqJ0SWbgqXfN657vCt6XN+4cq6JCy1okWeNqs6VJWfi0ZY4gJOV
+	97WqzSuvCCcokcFnSpPY+Hnh23w3ak/vHe2N42bU8PZFMMWj/fMfEuUtQj9hlC8kI0sqV/SQ8pq
+	giECN4Fmn/PnXExg3fTmBBVNY7Sjx09/XIEKhh2Re7K5fSiFl95rijGuxyBgesN13juXwpkd+s/
+	ppya+IqLo0uHXOXncYMuQp6VKfCavMwF6yHWriEd9f259QvI/igqNEDe13kro=
+X-Received: by 2002:a05:600c:314f:b0:4a0:1c69:f607 with SMTP id 5b1f17b1804b1-4a1806509b5mr13094935e9.29.1791352884569;
+        Tue, 06 Oct 2026 23:01:24 -0700 (PDT)
+Received: from debian.tfbnw.net ([2620:10d:c092:400::4:711b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a17f4eac2csm49696235e9.0.2026.10.06.23.01.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Oct 2026 23:01:22 -0700 (PDT)
+From: Pablo Mazzini <pmazzini@gmail.com>
+To: Linus Walleij <linusw@kernel.org>
+Cc: Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Andre Przywara <andre.przywara@arm.com>,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Pablo Mazzini <pmazzini@gmail.com>
+Subject: [PATCH v2] pinctrl: sunxi: dt: do not accumulate npins across probe attempts
+Date: Wed,  7 Oct 2026 07:01:07 +0100
+Message-ID: <20261007060107.62221-1-pmazzini@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261006210313.43163-1-pmazzini@gmail.com> <20261007012337.6765eae7@ryzen.lan>
-In-Reply-To: <20261007012337.6765eae7@ryzen.lan>
-From: Pablo Mazzini <pmazzini@gmail.com>
-Date: Wed, 7 Oct 2026 06:58:40 +0100
-X-Gm-Features: AclHuK9so5s6SVHKBrMxWd9wydw_PDXudCltTNho_5K9L0MuDF1LhfNqIbWLxW0
-Message-ID: <CAAxh=jvd=dR4anQ9P=f=NtUePTfXY0SSR6PXxc8VvDcjP+ni2g@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sunxi: dt: do not accumulate npins across probe attempts
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Yes, that's simpler, thanks. Will do that in v2.
+init_pins_table() adds to npins in the driver's static descriptor, so
+after a probe deferral the count doubles and the next probe fails with
+"pin 0 already registered". Reset it first.
 
-On Wed, Oct 7, 2026 at 12:23=E2=80=AFAM Andre Przywara <andre.przywara@arm.=
-com> wrote:
->
-> On Tue,  6 Oct 2026 22:03:13 +0100
-> Pablo Mazzini <pmazzini@gmail.com> wrote:
->
-> Hi Pablo,
->
-> > init_pins_table() adds to npins in the driver's static descriptor, so
-> > after a probe deferral the count doubles and the next probe fails with
-> > "pin 0 already registered". Count into a local instead.
->
-> Can't we just initialise desc->npins to 0, at the beginning of
-> init_pins_table? I think Sashiko suggested that even...
->
-> Cheers,
-> Andre
->
-> >
-> > Signed-off-by: Pablo Mazzini <pmazzini@gmail.com>
-> > ---
-> >  drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c | 10 ++++++----
-> >  1 file changed, 6 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c b/drivers/pinctrl=
-/sunxi/pinctrl-sunxi-dt.c
-> > index 50a16f3bd131..1c1888394cf1 100644
-> > --- a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-> > +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-> > @@ -75,7 +75,7 @@ static struct sunxi_desc_pin *init_pins_table(struct =
-device *dev,
-> >                                             struct sunxi_pinctrl_desc *=
-desc)
-> >  {
-> >       struct sunxi_desc_pin *pins, *cur_pin;
-> > -     int name_size =3D 0;
-> > +     int name_size =3D 0, npins =3D 0;
-> >       int port_base =3D desc->pin_base / PINS_PER_BANK;
-> >       char *pin_names, *cur_name;
-> >       int i, j;
-> > @@ -85,7 +85,7 @@ static struct sunxi_desc_pin *init_pins_table(struct =
-device *dev,
-> >        * Also work out how much memory we need to store all the pin nam=
-es.
-> >        */
-> >       for (i =3D 0; i < SUNXI_PINCTRL_MAX_BANKS; i++) {
-> > -             desc->npins +=3D pins_per_bank[i];
-> > +             npins +=3D pins_per_bank[i];
-> >               if (pins_per_bank[i] < 10) {
-> >                       /* 4 bytes for "PXy\0" */
-> >                       name_size +=3D pins_per_bank[i] * 4;
-> > @@ -98,12 +98,14 @@ static struct sunxi_desc_pin *init_pins_table(struc=
-t device *dev,
-> >               }
-> >       }
-> >
-> > -     if (desc->npins =3D=3D 0) {
-> > +     if (npins =3D=3D 0) {
-> >               dev_err(dev, "no ports defined\n");
-> >               return ERR_PTR(-EINVAL);
-> >       }
-> >
-> > -     pins =3D devm_kcalloc(dev, desc->npins, sizeof(*pins), GFP_KERNEL=
-);
-> > +     desc->npins =3D npins;
-> > +
-> > +     pins =3D devm_kcalloc(dev, npins, sizeof(*pins), GFP_KERNEL);
-> >       if (!pins)
-> >               return ERR_PTR(-ENOMEM);
-> >
->
+Signed-off-by: Pablo Mazzini <pmazzini@gmail.com>
+---
+v2: reset npins instead of counting into a local (Andre)
+
+ drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
+index 50a16f3bd131..8bcd566593ae 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
+@@ -84,6 +84,7 @@ static struct sunxi_desc_pin *init_pins_table(struct device *dev,
+ 	 * Find the total number of pins.
+ 	 * Also work out how much memory we need to store all the pin names.
+ 	 */
++	desc->npins = 0;
+ 	for (i = 0; i < SUNXI_PINCTRL_MAX_BANKS; i++) {
+ 		desc->npins += pins_per_bank[i];
+ 		if (pins_per_bank[i] < 10) {
+-- 
+2.52.0
+
