@@ -1,75 +1,102 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8242149EC4A
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 11:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3E0499F1A
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 11:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791371997; cv=none; b=IsXz1Zi1xW/y4nZ58wrkGC7CmIl1A3yKRgZiGO7gYI82RfiVRAnrRELq0Cd+E7EAsioOfP1kkPT1+828mJgQ+ZB+KsT7w/AgRHzAJZ+tKdv1gzD6Hw5LFlKL2fwFoyz6c5FnZiXPd9ausgPn/QDKyVMn7aJjUTYBX6kHBrlZetc=
+	t=1791372474; cv=none; b=XWKpPl0lxihlsxWErWQLQEREnFJOh20HT33R/fqAVBvILWqZ4wYtWkB3upLWOYnKfK4U7iT7m2EQLS8kQUg5MpceM95icn+48eZOx7ZnQxrf+5/g1vRa9zTczkJ0MbjCS/rjxxqZZHxVbCeWDPojGvzZcVwTgPz+2N3T4k5c434=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791371997; c=relaxed/simple;
-	bh=Q1iSp05Y/GM79eVG3nz7d1/FrmFsX5eWbL5dWFDrKic=;
+	s=arc-20240116; t=1791372474; c=relaxed/simple;
+	bh=y02v7SVJT4K9c+u92pUX8aB0KOIWkjP5bkhyg0xDmak=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sh/9VoXpUD1Y9nyfUNCphNvI8gpXc/dQX6MszCI5JZX4w5O3Z+8DHvBQnTX07gpfQXT8+ci7voLlbrrG60p0mIViPo7I92FlzQDhSShq74cqnO5hQaYWkni/y4RAbf+VwrgfH+zeIS6LAn+ynkRzEHHwt6PsmJKFMSj0XOfwCzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UieuE4DJ; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=NQwyGHiPeax9mrhddJnxNA+cum3XKr4kuXwqIpP8uD/xlZWKNPAwxAAualu9MiFPBtbwxMHEc91KtWt8Y3GmUlBXvcvKWrzmxjFViGO2dO7l7Sv8hyHpPTbU2vcviu+1shtTEv50+zWC+vEce2Ee2HPaPhrGBJbhytN3cBEq+/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EkTxy+Xf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UieuE4DJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9C591F0089B
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 11:19:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EkTxy+Xf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B81981F0089D
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 11:27:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791371960;
-	bh=Q1iSp05Y/GM79eVG3nz7d1/FrmFsX5eWbL5dWFDrKic=;
+	s=k20260515; t=1791372458;
+	bh=y02v7SVJT4K9c+u92pUX8aB0KOIWkjP5bkhyg0xDmak=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=UieuE4DJ7bV+9VxNNwryNKeg0MN0hPzMzTtM1jOXJGyNNcRt8C1p1DkSgzOFrv/dh
-	 GceBH+aSm7o3g/eC98MAH8YloE5EXjZObB6L33Wccl9UO3XKPSSNeob2U2RJPH90Qs
-	 b1Gd/zp7OmUWlwzPUIVGdQY+9zn3fSmikXul4VpH3326uexxWvG6nfgxU0NSxm+1rL
-	 nRT7xP0niE443krUgcsAKafIVcsdr4CaMK4k6Za5LlQGQs67uWkLP8yAW6nCrQaNhU
-	 Q5q62VDigSakInLXu5yrleuJjVgCuzjMgERdzjRhYcGDIOnWDfgKsCfGhz2sUAo1S/
-	 k+uhr5QeLHj3g==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6aa9606ddadso2701880eaf.0
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Oct 2026 04:19:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBw+W/3G6x5ZKol8Wm58hMEEb4k6IZ+b9danJTW5wNOjehgbeAEho0L4Ps0b5NYQGrA8fefF6lMlk5Mt@vger.kernel.org
-X-Gm-Message-State: AFuF++mFHiaVSnbz5iZcGL1GCt345Bga6xyrh/ZryGW4x9K/d2GFLAFb
-	a1NV9OKxtthkQzVPc9gboenwf8HThpKv5O9Gwt3xBRoYqaJp62l3LfI4h+gAfcAcLXvTZ5u5Koz
-	ALgS/hEjMfcKB3+tBffslIGhY5jFjFbA=
-X-Received: by 2002:a05:6820:2d07:b0:6d3:402e:1fc4 with SMTP id
- 006d021491bc7-6e7a6e60903mr2071504eaf.48.1791371960255; Wed, 07 Oct 2026
- 04:19:20 -0700 (PDT)
+	b=EkTxy+XfvtPBwVrn3idS4VmccDY5FCRytKIvh0NA61Ncr8+N+gcZF4TC9If5cY88c
+	 1L7fXFonOYFxaJ0em0NwKivGyaew1+RG6+R4/3ULbvS0aTw6Yb95HuR/LvaI2OUrRP
+	 0RvpvXzX86klP60vEfinEPiLN7NT827tn7Z8uiqS7xUVB0XGLyKMW8mlr1kAe4vcS6
+	 y27MLU/UNdxQELjvnZHyTGoR0zssFKqbUeSO4BsHL5AV2WkvxNm9XH9GzPIpSKjfFD
+	 khwBPxZuzWZH24XaBx8C6f+pX2MP7DQgE2I4M3EyxGtbdGujESQKu6TCNw3tQXK2R2
+	 6eagT0I4auYIw==
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-4911df1e196so1878853fac.1
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Oct 2026 04:27:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBybi4620sF36SZI9uS+Zu3O5fScrIpEpCVZZOEBEVwY4L2VP3g24RDafCwhGsxbjZ5C4XKHQvtw4dcB@vger.kernel.org
+X-Gm-Message-State: AFuF++m9pJzgmJEWwmaOoc2GF0fIFjZ8BpY8BfJ0+7q/713PiZF3mlJc
+	KJCxtlCBQ8vZbl2mT1wKoDp6tPHf7d17DVlprWGS5iRaX2eud5JCdGPFhknznwFuPLnmvsb0Qfk
+	EouReJMYjyXrHzqm7bdMneIkrHjhj9HU=
+X-Received: by 2002:a05:6870:ac14:b0:490:ccdf:1931 with SMTP id
+ 586e51a60fabf-4a259692aa5mr1851883fac.55.1791372458102; Wed, 07 Oct 2026
+ 04:27:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260928063824.1386524-1-morbo@google.com> <CAGG=3QWCmQ+LVvn2dtjEauj5WFwvx=pvg4Q6man_A2imdjRe7A@mail.gmail.com>
- <CAD++jLk2pFCpbpGVCQg2AdrwQecpb=wsehhwSuwTbKAXNeyfoQ@mail.gmail.com>
- <CAGG=3QV2k-nsZHNSuKEixZb+-LcxvhQsG379ghgyOpiDLTJWzw@mail.gmail.com>
- <asNuMzqz3G-gmIiD@google.com> <CAGG=3QV1eLy-eAfi3Q49qwMw_Yw-BJ1tmd3J=SLJB_qWrx4bNg@mail.gmail.com>
-In-Reply-To: <CAGG=3QV1eLy-eAfi3Q49qwMw_Yw-BJ1tmd3J=SLJB_qWrx4bNg@mail.gmail.com>
+References: <20261005180150.1024336-1-mario.limonciello@amd.com>
+In-Reply-To: <20261005180150.1024336-1-mario.limonciello@amd.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 7 Oct 2026 13:19:03 +0200
-X-Gmail-Original-Message-ID: <CAD++jLmR3hmEYN+-YCAcNq_0Zk0=PijS9jhGaMppkNhvbs90JQ@mail.gmail.com>
-X-Gm-Features: AclHuK8-ODudQDmu_mYfAfdHUSYSOXtS3Zd0jQ7M0p6lH8u25CuCRiFtUDTCe7k
-Message-ID: <CAD++jLmR3hmEYN+-YCAcNq_0Zk0=PijS9jhGaMppkNhvbs90JQ@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: annotate struct acpi_gpio_mapping with __counted_by_ptr
-To: Bill Wendling <morbo@google.com>
-Cc: Justin Stitt <justinstitt@google.com>, Bartosz Golaszewski <brgl@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	codemender-patching+linux@google.com
+Date: Wed, 7 Oct 2026 13:27:18 +0200
+X-Gmail-Original-Message-ID: <CAD++jLnO6QuphZwOiT9kYpn=CiPFiQfxj9bdbDw08d=GdAhD=Q@mail.gmail.com>
+X-Gm-Features: AclHuK9nCczTq1ZItTciTo5UlMzbWPuWNOKhd7xeO3CKIGmd3JxncOU__rvXFoY
+Message-ID: <CAD++jLnO6QuphZwOiT9kYpn=CiPFiQfxj9bdbDw08d=GdAhD=Q@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: amd: Clear S4 wake bits when firmware has _AEI
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Basavaraj.Natikar@amd.com, Shyam-sundar.S-k@amd.com, 
+	Olzhas Marat <marat.olzhas@gmail.com>, stable@vger.kernel.org, linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 5, 2026 at 12:26=E2=80=AFPM Bill Wendling <morbo@google.com> wr=
-ote:
+On Mon, Oct 5, 2026 at 8:02=E2=80=AFPM Mario Limonciello
+<mario.limonciello@amd.com> wrote:
 
-> I sent a patch to add `__NO_COUNTED_BY` AND `__NO_COUNTED_BY_PTR`
-> macros to prevent this. They're similar to `__NO_FORTIFY`.
+> Commit ffe8a0c6b552 ("pinctrl-amd: Don't clear S4 wake bits at probe")
+> preserves firmware-programmed S4 wake sources because some PCIe devices
+> rely on them for Wake-on-LAN. The system that motivated that change does
+> not expose ACPI GPIO events through _AEI.
 >
-> https://lore.kernel.org/all/20261005102518.2400984-1-morbo@google.com/
+> On a Chuwi CoreBook Plus, firmware exposes _AEI but also leaves the S4/S5
+> wake bit set for GPIO 24. This causes the machine to power back on
+> immediately after shutdown even though Wake-on-LAN is not enabled.
+>
+> GPIO register dumps show that the only relevant difference is bit 15 on
+> GPIO 24. Clearing that bit makes the machine remain off. GPIO 24 is not
+> itself listed in _AEI, so _AEI is not a per-pin indication of which pins
+> the OS manages; it is a platform level signal of which wake model the
+> firmware follows.
+>
+> Use that signal to decide what to clear. Continue clearing S0i3/S3 bits o=
+n
+> every system. Clear S4 bits when firmware exposes _AEI, indicating that t=
+he
+> platform hands GPIO events to the OS, but preserve S4 bits when _AEI is
+> absent so that firmware-programmed sources such as PCIe PME that bypass t=
+he
+> GPIO IRQ wake API keep working.
+>
+> A platform that exposes _AEI for some pins while routing a wake capable
+> device through a raw GPIO not listed in _AEI would lose that wake source
+> unless firmware re-arms it during the sleep transition. No such system ha=
+s
+> been reported.
+>
+> Fixes: ffe8a0c6b552 ("pinctrl-amd: Don't clear S4 wake bits at probe")
+> Reported-by: Olzhas Marat <marat.olzhas@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D222041
+> Cc: stable@vger.kernel.org
+> Tested-by: Olzhas Marat <marat.olzhas@gmail.com>
+> Reviewed-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
-I see you are hashing this out with the right people, thanks for
-going the extra mile and fixing this properly!
+Patch applied for fixes.
 
 Yours,
 Linus Walleij
