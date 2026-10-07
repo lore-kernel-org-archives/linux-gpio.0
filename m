@@ -1,107 +1,84 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32A2353A7B
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 06:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A663546FC
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 06:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791352889; cv=none; b=QMt8+KzSHa5fFlnig8bywtrLcjINve91rWsfElNORrRxRIONJQHKfBAxQhiujNhI89I0W8RGqH9hgph346vSYrWB0e+0o7G3YRbDrJPNBRSQwoJAbAmy0Rx5G0CQzLGU5v5SOCb5u7SukxSl1Z5g3ON+eYz6akP9Yib68fwxj7A=
+	t=1791355753; cv=none; b=UlYT4LvlC22uYHAQQ1hMRJW1Ow0ORHDRJGZaiMRAR+ObE802S2/DZOVrQiksxEG6mjgvh3pc6iPaoPVohM+UlIbvX1ukymllgHhUppgjwOqjfJlulgVadRuwpAvYn348QcYK1UTLJ0g27cD8APCWWpzMuuz/LEZaA5rEHB0je8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791352889; c=relaxed/simple;
-	bh=fUkZRVZThPrAIiUI7nNS/oPVIqZ1p+N6QBHZ5r01/C4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T8/MinHkcDuOSRslCvg61k1/8aSCJPSEKZ4INKv9F+3ULSrtg5hmc2wcaI4sf91ElovnkO1xZR+SGNfizRC/QcOC9Fa5sKvL2ewnVq6YDrCF1TyQUPEJu6CCslaRTvuvqIC+LuJwAf3AKdlBe1uvKF+hwnGvRXgKlDX+UnHrAA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eb4ZzBax; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791355753; c=relaxed/simple;
+	bh=kVXuH7H4PDcskImrivyP/VtzUO54yTkMmhV+cSg/PdA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eEBW/ZRkTEqDV1Mby3+rc+6Re/0eQRVR5WoXAjqduWluvpHhidzYFk81VTeARryD9+/2Fr3BoNYreXWNBylCDrbEt8Bjq5Aj9Tryjj+zQmPzdpc9/E+n6DqzJtO5PhEquOsyXtbLB0kRUI2apNQgYRwEbRsnYbis6sBp1nPj1qM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dg/APZQ9; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eb4ZzBax"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4a061a13884so11933005e9.3
-        for <linux-gpio@vger.kernel.org>; Tue, 06 Oct 2026 23:01:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791352885; x=1791957685; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=xPj6yjALXRppnwgH/9Fv6hsVla0KxfcdinEDCye/m1I=;
-        b=eb4ZzBaxSsIZgNsCzuEUciBc8eJlHiZUF6gj+w3V5CmMPoasoVzd8Y1c7k8Cgs/4As
-         dagweCT/ii+MR8KGWokIuunxySksPKEiY6wQTqPSzd9efW8It5xaFNcjfMtNh8SWHV1t
-         3Oec1hVYVmEvl9YsZ1h41htpHiK0cja1PRgWMbu1wccBufvn26ym4CV/M0pN0GRHiwu3
-         696yj/ghTYcnnY5X4Bir/TUWIyP1UuSwh9jZLRAFDZ3xGImIPAcoBjb/wStfWCJK+1+9
-         Nn36/VWgklMg1NJixlGfhLwMMj+ReLCacQ38go3GtudMXV/ZsCEXdZK6jyxLRLqPaHmx
-         KkMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791352885; x=1791957685;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=xPj6yjALXRppnwgH/9Fv6hsVla0KxfcdinEDCye/m1I=;
-        b=UXt0npjjIbBVLPTbUIag2iMLJeHuYzjKjD0VameyOfH151i6YVaPHoP3qFT+S3qEdm
-         LLiCa8/rzbSwsFsypNAGPf1vxrXJXm3j1ZxK9Aww3YH9GDFf/tUVSIVSVkbRHJqnYf/F
-         LrWPhajOHPqM/c+9/Sz+vao67tGUNJ+nL7+69iqmYYIYujegCdMgDv3YOoKD2khfsUKg
-         cDyJpM6yDB/aywaEbR82pNAuG3w75H7rA04EWJyFm2BSDprQeezkejvEbP4W7X8TN3k+
-         m2m7dYHwLgYl57ZxHfK4OQxehjI0Sujtgi0EHPgxT7hWEQeDYsPV714s86/F7yQPUGqR
-         nk7A==
-X-Forwarded-Encrypted: i=1; AKwUvByfTDScizLc3XjphajQ69ZEtse7HjPsJSmK0zAAbxjcGQOaPJlN7P1mJwywdarauU/dXyq8sR9BVBuI@vger.kernel.org
-X-Gm-Message-State: AFuF++mbSVxeeRRNEHltmkdK85JYchNoZWp1tZcaL/B86GiEUKta5jct
-	fgkuARgV02qJTXi6P4CNsihhiZzqrjAITFIDlj/tJbZgxPzBuU+qnKno
-X-Gm-Gg: AYBFou27xesDaCz92JXbqSeXgpJXXp9KoGm7hXGReZv8XKw2QjBfA51M9xndcMxj3co
-	d1xlJQ11gTiqCYb8KyUrpSR13l12tqVOnZaJz2yXy+V777pULMXyqM5imk/TjNjj/QviJH2kKwk
-	rDWmZ0NPmjYZ1xUsoMh8fNg6+WAluP1Gd4LoK43GdEd7RRm/yImZd9QWi1NUlFGu9O91gr4Bbzi
-	ftJwvvqKX8hBoSvY+mw3W3qKyqJ0SWbgqXfN657vCt6XN+4cq6JCy1okWeNqs6VJWfi0ZY4gJOV
-	97WqzSuvCCcokcFnSpPY+Hnh23w3ak/vHe2N42bU8PZFMMWj/fMfEuUtQj9hlC8kI0sqV/SQ8pq
-	giECN4Fmn/PnXExg3fTmBBVNY7Sjx09/XIEKhh2Re7K5fSiFl95rijGuxyBgesN13juXwpkd+s/
-	ppya+IqLo0uHXOXncYMuQp6VKfCavMwF6yHWriEd9f259QvI/igqNEDe13kro=
-X-Received: by 2002:a05:600c:314f:b0:4a0:1c69:f607 with SMTP id 5b1f17b1804b1-4a1806509b5mr13094935e9.29.1791352884569;
-        Tue, 06 Oct 2026 23:01:24 -0700 (PDT)
-Received: from debian.tfbnw.net ([2620:10d:c092:400::4:711b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a17f4eac2csm49696235e9.0.2026.10.06.23.01.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Oct 2026 23:01:22 -0700 (PDT)
-From: Pablo Mazzini <pmazzini@gmail.com>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Pablo Mazzini <pmazzini@gmail.com>
-Subject: [PATCH v2] pinctrl: sunxi: dt: do not accumulate npins across probe attempts
-Date: Wed,  7 Oct 2026 07:01:07 +0100
-Message-ID: <20261007060107.62221-1-pmazzini@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dg/APZQ9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07FC61F008A0
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 06:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791355751;
+	bh=kVXuH7H4PDcskImrivyP/VtzUO54yTkMmhV+cSg/PdA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=dg/APZQ9ejy4HmKPDmWJ49DQjYI8eWTCX2U9HoU5cpY3x9Rp89PIqyA8NLJL0FwtJ
+	 GMzK4tUOwWk49yYln+oGbbud0wd+E1ne0Fmx4u/kimPS1vwfpbRml7GQ+ixnK3WLy5
+	 adZ7iVP2QncNkxmIKC3Dhq6N3u2YYx+tYwo97iXjIw81UJ7iupGbyvfRCJaeqOgE3+
+	 VTVO/i9lEVYeS//KnuemuoJQ9Bhbgdxg47sJreGtLXkIMBl+Vr5niUOqlFYNtkozg9
+	 mGCFqSQyXN8Tou3REIxsoHqM2zX/h5J9SJoWUqMbRVurUKh76v8oQHNBpM1OPIMfQC
+	 G4LuA1C3AaIVA==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5bcb4f23ddeso2507042e87.3
+        for <linux-gpio@vger.kernel.org>; Tue, 06 Oct 2026 23:49:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBywsUA6AW6NoyUTQbgfSsrxUGM1kA/PejgdF7Pvir7++px6HmHJJiDLdqZ/+LAWU+PWgQfuXXfRSl7r@vger.kernel.org
+X-Gm-Message-State: AFq9FYIMaB+f43LQLVgqBBUeIjnlEMXL7XvvXyL/1ZOj/wxqYz0aQbc3
+	ZDMmz9Y/WwBrag/DM4buy/lIfomm70OZ94mOiBLUtiGpezGJjhhtOGi64j0UxhxdRh3WkkrmOJS
+	MENUHaHj/66uHkhf8WierFkH/f7P+iAI=
+X-Received: by 2002:ac2:51cb:0:b0:5ba:3443:aa2e with SMTP id
+ 2adb3069b0e04-5bcd06dde9emr392580e87.21.1791355749772; Tue, 06 Oct 2026
+ 23:49:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260917-scmi-pinctrl-generics-v2-0-3eeee364257f@oss.qualcomm.com>
+In-Reply-To: <20260917-scmi-pinctrl-generics-v2-0-3eeee364257f@oss.qualcomm.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Wed, 7 Oct 2026 08:48:56 +0200
+X-Gmail-Original-Message-ID: <CAD++jLkgBKDvbxsnhsBE_Qqs6TA8how4J2jvKm=tdpx4P+4JdA@mail.gmail.com>
+X-Gm-Features: AclHuK9LebUk8FXXJTxUAdYqh6ANC6YbZR1Kg-AkYL0dvrplEgSlwXOq9S4AtEE
+Message-ID: <CAD++jLkgBKDvbxsnhsBE_Qqs6TA8how4J2jvKm=tdpx4P+4JdA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] pinctrl: scmi: Replace get function and group info
+ with generic callbacks
+To: Alex Tran <alex.tran@oss.qualcomm.com>
+Cc: Sudeep Holla <sudeep.holla@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-init_pins_table() adds to npins in the driver's static descriptor, so
-after a probe deferral the count doubles and the next probe fails with
-"pin 0 already registered". Reset it first.
+On Fri, Sep 18, 2026 at 12:56=E2=80=AFAM Alex Tran <alex.tran@oss.qualcomm.=
+com> wrote:
 
-Signed-off-by: Pablo Mazzini <pmazzini@gmail.com>
----
-v2: reset npins instead of counting into a local (Andre)
+> This series refactors the SCMI pinctrl driver to eliminate metadata
+> getter callbacks to be replaced with pinctrl and pinmux generics
+> provided by the pinctrl core.
+>
+> Previously, the driver implemented its own get_functions_count,
+> get_function_name, get_function_groups, get_groups_count,
+> get_group_name, and get_group_pins callbacks, which required
+> maintaining driver metadata like the functions and count.
+>
+> The pinctrl core already has support to store and manage this
+> topology in the pinctrl_dev via its own internal radix trees.
+> By registering functions and groups at probe time using
+> pinmux_generic_add_function and pinctrl_generic_add_group, the
+> driver can delegate group and function metadata management to
+> the core.
+>
+> Signed-off-by: Alex Tran <alex.tran@oss.qualcomm.com>
 
- drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c | 1 +
- 1 file changed, 1 insertion(+)
+Patches applied!
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-index 50a16f3bd131..8bcd566593ae 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-@@ -84,6 +84,7 @@ static struct sunxi_desc_pin *init_pins_table(struct device *dev,
- 	 * Find the total number of pins.
- 	 * Also work out how much memory we need to store all the pin names.
- 	 */
-+	desc->npins = 0;
- 	for (i = 0; i < SUNXI_PINCTRL_MAX_BANKS; i++) {
- 		desc->npins += pins_per_bank[i];
- 		if (pins_per_bank[i] < 10) {
--- 
-2.52.0
-
+Yours,
+Linus Walleij
