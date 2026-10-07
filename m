@@ -1,80 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEFE485957
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 10:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842F43B3893
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 10:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791369247; cv=none; b=W1nu8V9LV/NAcixs2qqrQdcDfo1i15Nin3tMuy3UPYyyB/9pWTErJ/4iBbdkeD54sgPSeTCPWQscv/MqlWpUvmz8Tps3vcij+HL3nUygkxPBE+1SNrHPrCecQb/R9DnQ1nUCZRlHej/pVeeMSNkkxljF9pVRef8KImBY5d2ZPpo=
+	t=1791369280; cv=none; b=URd14VdhYYC/gxrw0wMF7ZOy1+psA6GpouK2Hof+V3BUQ8Gyfx2yOZCwsDexvME2+HyzAhiSBY9H7lwRbDndSJtvc2pES8VHSpA9yXrPcALiH8yOEwAF604IzmKyv+06EUIzoU8tkxh2OjK0NeMl2bRu0bVq+L0I2p//qHcw38I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791369247; c=relaxed/simple;
-	bh=hwYZelGc2cJ4YCRonOqXHjwGmnal0btcIymMebtXd9g=;
+	s=arc-20240116; t=1791369280; c=relaxed/simple;
+	bh=U9IrEoBQVBwO19e1F+Rb7P6y3+fNsIUQk5OiPRca568=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cvODcidfFxaEit+4Hd0o2YDJOEBFh06sjLrAdzAcyTK0iGRFJl9Jmk9I9A9nxu6n2Zm/n3PEz+6r40CIvqeWKdPDbr0UIMZgeCPVUwLmHgiVTQKPRqElXtbt4KUYr8J4cv4Q3VA4UVrE3hR78W9s9Rm2ZR2KtvaIclyS6awWOmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IbPU636O; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=dFSLzj7ENELJYd2jlyLbiWRZR+i2gZajkmqDJ/tWiKXfuBkEmFsYMmKEZmuDc1vjusRIm/eHSfeqFxCjKYd24IyjOV3KqPoHC3preZEFKjsB/5TP9noVQOu+YNEp2GukeBYECBKjep87Ml/qmpYneYED3v8VhxL+8jvTmfqxsHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxfelJ0C; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IbPU636O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E93B1F0089B
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 10:33:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxfelJ0C"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E77331F0089E
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 10:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791369221;
-	bh=2pOrvtc34zjiHi7ArAWp0fsuOWQMob1icjSI0Sd/kJ4=;
+	s=k20260515; t=1791369246;
+	bh=Aa0rQrbop3hax8Vjke2ivUTPfY3ro4fUWMamHs2fjyc=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=IbPU636Ob5RgsbCstlDZc9of3OIg+ojp1VgPmaW+V6z0LO3SNCwVZfO0FVORGwQao
-	 xLBqmYyA7d4saiE2g4zwfpfDmnFi5PLJ9+TPb7iegvd0RtbUlXsiD1cvb5DsSJcEWc
-	 c2mzj2wRlqpUEthThuCtmaJ8a8kmKET82KqAXftVrU6VLVV3hRGCzqqSmc7AZlqcjn
-	 xm8Q5RZd4jI8IsLGjq8TH0MHKlvMYV8J6dO1RwBvYp8fFvC9VWll8dtvTPepacSUHe
-	 01cfV5fY6KLFcBpSwqknu/VmTnbezrrqksVMy+WTuDH3aq+WXlzHyGuzZ/Jw9VZRj5
-	 tIH2EJG0cqrUQ==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5bcb4f23ddeso2670942e87.3
-        for <linux-gpio@vger.kernel.org>; Wed, 07 Oct 2026 03:33:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBwhUtlsVMefrbEDBp/5hcWo6HLhfyXiOcvFgQZEtkgcxg7uhPsyNSUbZ4QAs+BLJiJrf9UhJVubt5iH@vger.kernel.org
-X-Gm-Message-State: AFq9FYK+Cbmswd72TKwbUPrs3QniCL5a9QCWoYxTTIKJvv6uaSmx3ezA
-	BBj5USuVuIRcfMix+91z5hrXFxYSgC8Ao+fL4ghnuQeZpGul1bIvu2QwwCsP8R+Z0SsNbqeUIho
-	2AUdekov1BGyV3POlfjipQRgApkOMl+Y=
-X-Received: by 2002:a05:6512:3186:b0:5bc:b659:2e11 with SMTP id
- 2adb3069b0e04-5bcd06faacemr713954e87.25.1791369220442; Wed, 07 Oct 2026
- 03:33:40 -0700 (PDT)
+	b=nxfelJ0CBKFkenxkqd1gZ6/hrqt6nMW6UFjAZG+Fz+y0rVlgEiRptouFoVhbrXZzs
+	 n3Z3Q1h5pFs/9g8zWk7NodEGsORoP3VPRLO0y0f0jQGTB+9sPhpALLH6bCA4EfE58/
+	 CQb4p1t99nOUoluTnEOcxuDyLUaQlhyE2n+wSDsQiawOrlLvfwMCath99bwYOVtwYF
+	 9jc89iDt3pX2gKq6MZlIwFFyz+i5VkCH0ToD2pZ6f438MhcCCzg947nIawI6xdjqsM
+	 tthfvagPWMv6rfbW2E5gm4EavHZcwNyLsNmzcpdxtZUREFssJA6HLoqsbN0EhP5rbm
+	 DK8+bzNFzbkVA==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-3a9761758adso13300591fa.0
+        for <linux-gpio@vger.kernel.org>; Wed, 07 Oct 2026 03:34:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxpZMkN4xhYnApOhDXXwoeg4b3SJ686e71T49m75uyqBlA9n4PoJe4h5PEoJsypx8qb8BWEqQrKZ532@vger.kernel.org
+X-Gm-Message-State: AFq9FYLM/YVmUfSFjE4oHJgld/j/AM8SjB+ZrTYh9KFFaVuPkqzMo9Qi
+	qiLCSMPqWz+Sy8fhBSFwGYQeQswWgkKQsQARgUUvbeohoVKu3UAdi4U+yzyqU39WAFSOV5GLZo9
+	iGyflfSp8pGkvfn0yoESsdhEy5Quu5mo=
+X-Received: by 2002:a05:651c:a20f:20b0:3a6:6d9a:4188 with SMTP id
+ 38308e7fff4ca-3a9a2cf45e1mr3189651fa.15.1791369245722; Wed, 07 Oct 2026
+ 03:34:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261003083200.459705-1-yaojiale02@163.com> <20261003083200.459705-2-yaojiale02@163.com>
-In-Reply-To: <20261003083200.459705-2-yaojiale02@163.com>
+References: <20261003083200.459705-1-yaojiale02@163.com> <20261003083200.459705-3-yaojiale02@163.com>
+In-Reply-To: <20261003083200.459705-3-yaojiale02@163.com>
 From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 7 Oct 2026 12:33:26 +0200
-X-Gmail-Original-Message-ID: <CAD++jLk_eLX=AekTrqSH7yB2vL_zL2jntAYchJehnxxQ_jALzw@mail.gmail.com>
-X-Gm-Features: AclHuK_J7REc7EOu2ICAHynEFqSp9Q5Bd9Te4ZdG3E7XUdnipn8Eecp9yHxk1kk
-Message-ID: <CAD++jLk_eLX=AekTrqSH7yB2vL_zL2jntAYchJehnxxQ_jALzw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] pinctrl: sprd: free maps on DT map failure
+Date: Wed, 7 Oct 2026 12:33:53 +0200
+X-Gmail-Original-Message-ID: <CAD++jLm6QnhOwZzCsJJkvYDkxhE-bRUvytjkEDzZJnKaJ5go6w@mail.gmail.com>
+X-Gm-Features: AclHuK9VzSEG96mQtUPQl6mYgcJWO0uGPLmiDvdU6LQqSE9k0_R11BxY9w5t8qY
+Message-ID: <CAD++jLm6QnhOwZzCsJJkvYDkxhE-bRUvytjkEDzZJnKaJ5go6w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] pinctrl: renesas: rzn1: free maps on DT map failure
 To: Jiale Yao <yaojiale02@163.com>
-Cc: Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-renesas-soc@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Sat, Oct 3, 2026 at 10:32=E2=80=AFAM Jiale Yao <yaojiale02@163.com> wrot=
 e:
 
-> sprd_dt_node_to_map() reserves map storage before adding mux and
-> configuration entries.  If a later operation fails, the error path only
-> frees the temporary configurations and leaves the map allocation reachabl=
-e
-> through the output pointer.
+> rzn1_dt_node_to_map_one() appends mappings for each DT node.  If a
+> node fails after map storage has been reserved, the top-level callback
+> returns without releasing mappings built for the current and previous
+> nodes.
 >
-> Free the partially built map on failure.  The caller ignores the output
-> parameters when the mapping callback returns an error, so they do not nee=
-d
-> to be reset after freeing the map.
+> Free the accumulated map on every error path.  The caller ignores the
+> output parameters when the mapping callback returns an error, so they do
+> not need to be reset after freeing the map.
 >
-> Fixes: 41d32cfce1ae ("pinctrl: sprd: Add Spreadtrum pin control driver")
 > Signed-off-by: Jiale Yao <yaojiale02@163.com>
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-Patch applied.
+Geert will look into this patch and handle it.
 
 Yours,
 Linus Walleij
