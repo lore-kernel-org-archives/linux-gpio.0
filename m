@@ -1,129 +1,172 @@
-Received: from mail-oo2-f11.google.com (mail-oo2-f11.google.com [74.125.231.139])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F0533F36D
-	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 00:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.139
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791334630; cv=none; b=euWzfToyhppe2gzGqkgAjaYaqZjJ6R5OMJcBqXmP7UWp+cYe8Rx/Rqyw7HKZ6N4OWcDdLRlJsYn90E2j58Z3L0rhbMKBHShB0zIXH1qp33PodYl/mLPNijTdO4pQH/rFCXEL7zufXC26q9GbnIRxQ+3gN39gl0V4JRUJfOF+IsE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791334630; c=relaxed/simple;
-	bh=7qihWULzhNXrMFY/3lzqq7H5HpmEEjJl5mAZAg5n+k0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BS3EJk4Ecq0epJJN9DuDFw1OzeAE8Fa79lSLhXthYuXpc/etY7PXCeuKFG0cexvl/zT9vgujKImxb4E22kWqC8qQWYi5L6ITfeq6C3aw/XePICaoO7/QOJOQ1XsF5WlhWig2JYLG8xDQR2LtlEohYIjZuAN8lAX7VXuQhWbyMME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGHVg9ZY; arc=none smtp.client-ip=74.125.231.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE973AD50B
+	for <linux-gpio@vger.kernel.org>; Wed,  7 Oct 2026 05:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.214.172
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791352738; cv=pass; b=r48WCUerrkTqV1xrvwonnGh1wuxiXhtdSpewUE+UlRj30ohmYKK4x1QTysAbgX8yqtsthLSlw2tLMeFF+m56HLI1oAD05yIZcjF6PZrY3++j4H61y0jopmCTXIEtvT6Y0VB0OceRRMo7FZBtU8nBLSWLSRjPGx/JIwbSsnPY/Jw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791352738; c=relaxed/simple;
+	bh=egWNEyrcah0jamvRkd2t3iPlF/zp1CsncVLF5ZQhZ7E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UjRK79Fhqv7WcLvVLY33MFreI1JZZZCCca2znrrLfllLx3FH74Sme8upT9wY20OSYarw09LxvxQ+P+4GHvKVosd/Gi5W0MaqxE4X7s2lHFrGLiYL3xMzMwqVUQWvdQVH5zADONWMFacP6L+n0bZad6HO8pRg8JyL4jOhCu+fArU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niY9qG1p; arc=pass smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGHVg9ZY"
-Received: by mail-oo2-f11.google.com with SMTP id 46e09a7af769-82890dea412so527570a34.0
-        for <linux-gpio@vger.kernel.org>; Tue, 06 Oct 2026 17:57:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niY9qG1p"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2e4a341d177so21063625ad.0
+        for <linux-gpio@vger.kernel.org>; Tue, 06 Oct 2026 22:58:56 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791352736; cv=none;
+        d=google.com; s=arc-20260327;
+        b=Q9CZ9ER7r5CExARG6XSnWxyU8ZHhkbrLSnBjw0eSiGcj9NGF/EHUzeEekByeJEfIHz
+         GN/Tl0mwaNOqgOTQV+bQshKTIQi5vQ58VvXFh+kiOpiPRTD4pBCj8fwZAEFKWgy3+5ht
+         wwTmQWqVJ/TQULPgbU9M0kOfpsJfljANLZarDNhVvh2E3U3/Nx+3b+n772jGpq73ibPR
+         Z7GR51/Ytcqibkgh0A/HMZ0qM44ry1e7FNK3xJpBn3skzik54DCNIDweE6pxQsEWWArj
+         GDYq7jUkOHovUyEFwvY0/lIEZ8Ve1Xw+WXOCVT3ZNM/UJcO3nnUi+BJFMK2Ygn4BmfHz
+         kHKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=fvX6CzIo0lUP4hTcnMKg9GH46W029kkAuFQl56PR8ug=;
+        fh=v1mCTOanqUOqsfR7psVVoaMF3J72wyILv74kqYIITGA=;
+        b=ICFe1RLPJ7ORT4cmthLH51OYtlqARots6WVr76EIcK1G6uUT7huaHvOiRW9ZbWKKz4
+         dQl67kcYX5VsA2N7FCw7ZASCG1weVSH4MtClS9z3x8cB/FyFd8xtVzZqoM5L+hU6+XIZ
+         aBc77alqcxSCAkZJ6Bh1ZzLlUR/DCZMfXSSGTIEbrEiX2hLcwGbBtYarpuhiIC3ckOWL
+         YTUB0JqAFCG90L0qKZP3vg5Jf/0c8CBldn7At2ExWSC4xBSadLTyR2E3Fu60P8l87mxl
+         2xZlOxlC7bP7psQzCHKuI2MnqArsJIx3Qm2bAfd+t3iM6p6ogDdPKJJD4OJIpN8+ytTQ
+         gLjg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791334627; x=1791939427; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=TAIWhhMv3PYHKISI/ix1jVDueQPVFVtzNluL37GORz0=;
-        b=AGHVg9ZYwJfjV02BrJFLN65pjF0Wy3Yc0huZcIkg3eDjzhLVyaHED4MNpMf5O2ysXS
-         i8OM/GNa/qPp2DU6uczvud/52AlFHNX/5uO1KobfRnivNjJpOhexl05Os5+1wb5c+cx8
-         DX2ql59xrtlqh0igIgozvRrSwB7pSa1ik3PNozvFwtH4gm4/KtLMKaf+Gn5bIEQXLfpK
-         FDbInxsBcrOUz2/CtHHPzI2/1GU29rTOAn0960hupQzWwqEJgvkQOLNzV1WWLI6/9pjS
-         JmiVUvYaKZgnJy1X8k48VbI2hBgYHY3GdFqAnthgOW0xUQ+J3+21fVrzveETcg94VXp1
-         zz7w==
+        d=gmail.com; s=20251104; t=1791352736; x=1791957536; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=fvX6CzIo0lUP4hTcnMKg9GH46W029kkAuFQl56PR8ug=;
+        b=niY9qG1p64ghyWuaPLnACfNJft/Ut11dV/yx3JRfF9lgH7Hfvwp0iClP/vh4Fcq6GK
+         PnG+bqnwfd995Oj9pnohjEIV9t5//HDnI2//PUwKaUilrfqfkifCJ3LH63Q6jUnOSUtE
+         1/WbYHVoZLgVsaJ9vZy1KO0RN2MnagVeiK0fnMb4pC/2WqcrrzgU0Hc/BFdMPKX0pGSr
+         TeOoKSElrUDQDwVN3Hol5e6CHtmpzCqSFv/U1eZQwRp9jceITF5ISozaTpR/d83fsqkK
+         6rTyVFn0ycdGA64xRX2OYGOjYGxE1S1hAImFVC5Yj4hyFpGuOYz7aQmOz6eUTLFlzw2R
+         Npig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791334627; x=1791939427;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=TAIWhhMv3PYHKISI/ix1jVDueQPVFVtzNluL37GORz0=;
-        b=FvwVgUvINWrozwmATnspUgu0NYHsUMCI+SYhhdEatGBpOz9hU5K5R5uHqZb8Mnt3lW
-         tDQdYbLyxV7h8EeRO6ABLDri+275vst+imGof44IVRCQ1TFHt1wpQbGLf3foWYokwes0
-         m0DljHCWZ4SH2C2iG/9fl8QLgYwxuyCYcD9uhgAJ67BPef77uVsXVNHqdrGl2B2SyJCr
-         H3khtqyzhIgfyskjFn4cd61sUYDBzYkmpdJhlVGg6JjGNw2U3S/mZqwX16FjnHYT/K4B
-         JJiu/+2DZBbAiRMTuCDGwpPxgfUl880Z6wfHmdAns617qDlqZcx4fdtpQUUjQFxsPa79
-         rs9g==
-X-Forwarded-Encrypted: i=1; AKwUvBxrqv3tCFmKZ793DW3bz20xvvmydbQ6f8bL2D+GF+QHDSD3stkC49kx6OT83VDjkgp0+HM5x6bsSVg/@vger.kernel.org
-X-Gm-Message-State: AFuF++kDYrjRfkVxI/DYuRjmOGE0sMn5pCLkhbl1QYssAr9qM1pWgcqS
-	a0idKodHmN3GqvMwlW8BsGhN6rhFtzyyg3vBmhcpYAFgAsDXOSBq9zI8
-X-Gm-Gg: AYBFou16KTZvDPG1Vk58MsweOkc0EUmRfXYVNriduxxWkBrHcTcVr8hXHN/s9owTYTZ
-	BwTsjuVeW1CJglgUp2EhxU9Y8TPCBK4g/VZX99ZkpTnfzYu0yFmfRO9nA9S9jhZwWHc8jyUw90+
-	rHTvVoBOXTn5TnEbIZqQdXrhtLRlrS79cfD9VXDROI+Qj6M/Xm31h+9UG3Add6rhe7K1/MZit/z
-	Jgy0EWzF89Y8OaTSCR0WJzRmNkzP62PkPBk3Y7NgKdGFyCypjaxiAEQEiPugNXWPziMk6eML28Y
-	iUekB9lsqCGCRtgC/HT7mPg1QsX6W45gzMVYe30nk1GIW3qeGRkGzfqRi4exNTCobhJACWkUx2O
-	dQtV9qc+2iogHlVPovJSSC6Is3k9jjYQzj58josoE1M3mfGwpPGZeR3HIbsdCHBa1JlhllUUcAL
-	vjBhoi92+/3Mk7HDSBELt+AZe0m5jDSEl4dN8TjSNYj/VkkEtay+B6VaDw48PKQ2DKk7BB+8L6f
-	dJphjUxkpW+JAxwoaR8AJhN7Ok2qpvJoEoGEzWRfVot3lG3QqDL
-X-Received: by 2002:a4a:e90d:0:b0:6dc:e1c3:b2d5 with SMTP id 006d021491bc7-6e7a913602amr915341eaf.75.1791334627605;
-        Tue, 06 Oct 2026 17:57:07 -0700 (PDT)
-Received: from ?IPV6:2600:100b:b034:8212:4cd5:c80f:ba72:80cb? ([2600:100b:b034:8212:4cd5:c80f:ba72:80cb])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4a25722e3d8sm1005183fac.15.2026.10.06.17.57.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Oct 2026 17:57:04 -0700 (PDT)
-Message-ID: <d3d3e7b3-eb8b-456d-9a2c-116334e86c14@gmail.com>
-Date: Tue, 6 Oct 2026 19:57:01 -0500
+        d=1e100.net; s=20260707; t=1791352736; x=1791957536;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=fvX6CzIo0lUP4hTcnMKg9GH46W029kkAuFQl56PR8ug=;
+        b=08Ev2gV2bl1GzaqfJj3qKyO0MIHszzulNFMd120YK7HKlj+kxO9cpYapjS+5uDTlSr
+         wgAl9EpbjZf/UW/r05knwUc3Rhj1W/qKL0OEXxGSTrXsQYPatTXpDbbB1JGVeFA32WSz
+         glXUeuJzbP8NQOnfOQYQxChRe7znt7hYkuXEcm5iaFOpq/EgEa9PC7ueIRMQWyuhgSLn
+         Kuiot4tNGs79bRWjnERb/RiNB4MyJKTLF+PnxDTlaRD/4NXZSTo+Jh08x87Aw9ItIhX6
+         1GZcnXebe/GJ0X3VP3KxSAPnhrX/NY95NKqxrSoMGAdnpSkQIpL+8pCrBWmrFkuWOgOi
+         jiwA==
+X-Forwarded-Encrypted: i=1; AKwUvBym5gk6tw7s9hoJ9JwwplVEA3iGpMhI9eHrDJ77g4cIEvj/o7KFGThSYw5mOg4yzkB3kwWjAmpX0ZI8@vger.kernel.org
+X-Gm-Message-State: AFq9FYKojf63rBtao/BZaO4ZD93VmSjPHhSe+aYYoG4quSdW5nq/5Im0
+	ecGMOH35XJBYbSyxpi9J0VzPhEc5UJ1g14gsCa1Im33righUcI4jg0l7YhbZA2TagVbQGqTKrgj
+	lPBpthbCJEB9mwiClkgWPsz7Qc12s/vw=
+X-Gm-Gg: AYBFou0d/wylm1kpp0Q8iirIU396RMhjvVTt0VkR0bwOiV2rxkOAiilXyUFEB55z/YD
+	B6/lzVMYUov1ym1mxhmmY29eKcH1mmzO9UNNMBWeCtLxU+72IpXnkcw4dv9gE5CAdFI5aEmUIi5
+	iW9WfYpKUSLecnsCm6uSinxQV15jUosbCpkMAlUXpYIkvfleR6Itzd4NV1d7ycHLyMPU9GdLEzG
+	ulSa9N2GHJr6sV8fCdl6GxkSilYUMCzPGbOtGl2X3aT309nP59IV/ukb40naWzjBhqTUMZQTuRs
+	v5/UXCpZUlQZqxzHnLGt5luuTy5T1j8rfcoB3G9QemHivs+vHXK4dHfJlWEnz+LMzEYHAOY=
+X-Received: by 2002:a17:903:2c0f:b0:2e1:2ce5:677a with SMTP id
+ d9443c01a7336-2e6003b5d0emr12356995ad.16.1791352736407; Tue, 06 Oct 2026
+ 22:58:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: mediatek: common-v1: Use a raw spinlock for the
- pinctrl regmap
-To: Chen-Yu Tsai <wenst@chromium.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Mark Brown <broonie@kernel.org>, Lee Jones <lee@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Sean Wang <sean.wang@kernel.org>,
- Linus Walleij <linusw@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Bartosz Golaszewski <brgl@kernel.org>, Clark Williams
- <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- Yingjoe Chen <yingjoe.chen@mediatek.com>,
- Chaotian Jing <chaotian.jing@mediatek.com>,
- Hongzhou Yang <hongzhou.yang@mediatek.com>,
- linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rt-devel@lists.linux.dev, mfd@lists.linux.dev
-References: <20260929-rbrue-suez-upstreaming-mtk-pinctrl-raw-regmap-v1-1-db92943f42cb@gmail.com>
- <20260930080609.dnK1-Uta@linutronix.de>
- <CAGXv+5FssQL3Go3VDFbLAT6HP12RS3U3OgxhYOeapzs64QTdUw@mail.gmail.com>
-Content-Language: en-US
-From: Ryan Brue <ryanbrue.dev@gmail.com>
-In-Reply-To: <CAGXv+5FssQL3Go3VDFbLAT6HP12RS3U3OgxhYOeapzs64QTdUw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20261006210313.43163-1-pmazzini@gmail.com> <20261007012337.6765eae7@ryzen.lan>
+In-Reply-To: <20261007012337.6765eae7@ryzen.lan>
+From: Pablo Mazzini <pmazzini@gmail.com>
+Date: Wed, 7 Oct 2026 06:58:40 +0100
+X-Gm-Features: AclHuK9so5s6SVHKBrMxWd9wydw_PDXudCltTNho_5K9L0MuDF1LhfNqIbWLxW0
+Message-ID: <CAAxh=jvd=dR4anQ9P=f=NtUePTfXY0SSR6PXxc8VvDcjP+ni2g@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sunxi: dt: do not accumulate npins across probe attempts
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Chen-Yu and Sebastian,
+Yes, that's simpler, thanks. Will do that in v2.
 
-Thanks for looking at this.
-
-On 9/30/26 3:17 AM, Chen-Yu Tsai wrote:
-> The syscon node is the provider of the regmap. You need to fix it there,
-> not duplicate it in the consumer.
-
-Unless I'm misunderstanding, no driver binds to that node, so its regmap 
-comes from the generic syscon code, and changing it there would affect 
-every syscon. Lee, Arnd, Mark, would that be acceptable?
-
-These are the options I see. Please let me know if there's a better one:
-
-- Do what Sebastian suggested and make syscon use a raw spinlock, except 
-when the node has a clock, since regmap-mmio calls clk_enable() under 
-the lock. Off PREEMPT_RT, nothing changes. On RT the lock would no 
-longer be preemptible for most syscons, including across bulk writes. 
-Most syscon users that do bulk writes only write a few registers, but 
-enabling the Amlogic G12A PCIe PLL writes a sequence with 40 us of 
-udelay() under the lock.
-- Have the pinctrl ioremap() the node a second time alongside syscon's 
-mapping and read the input register (DIN) with readl(). That read is the 
-only access the EINT code makes in raw context. This would go around the 
-syscon, and it requires that DIN never be written in a multi-step 
-sequence, which is currently the case.
-
-I'd like to know the best approach before sending out a v2.
-
-Best regards,
-Ryan Brue
+On Wed, Oct 7, 2026 at 12:23=E2=80=AFAM Andre Przywara <andre.przywara@arm.=
+com> wrote:
+>
+> On Tue,  6 Oct 2026 22:03:13 +0100
+> Pablo Mazzini <pmazzini@gmail.com> wrote:
+>
+> Hi Pablo,
+>
+> > init_pins_table() adds to npins in the driver's static descriptor, so
+> > after a probe deferral the count doubles and the next probe fails with
+> > "pin 0 already registered". Count into a local instead.
+>
+> Can't we just initialise desc->npins to 0, at the beginning of
+> init_pins_table? I think Sashiko suggested that even...
+>
+> Cheers,
+> Andre
+>
+> >
+> > Signed-off-by: Pablo Mazzini <pmazzini@gmail.com>
+> > ---
+> >  drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c | 10 ++++++----
+> >  1 file changed, 6 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c b/drivers/pinctrl=
+/sunxi/pinctrl-sunxi-dt.c
+> > index 50a16f3bd131..1c1888394cf1 100644
+> > --- a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
+> > +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
+> > @@ -75,7 +75,7 @@ static struct sunxi_desc_pin *init_pins_table(struct =
+device *dev,
+> >                                             struct sunxi_pinctrl_desc *=
+desc)
+> >  {
+> >       struct sunxi_desc_pin *pins, *cur_pin;
+> > -     int name_size =3D 0;
+> > +     int name_size =3D 0, npins =3D 0;
+> >       int port_base =3D desc->pin_base / PINS_PER_BANK;
+> >       char *pin_names, *cur_name;
+> >       int i, j;
+> > @@ -85,7 +85,7 @@ static struct sunxi_desc_pin *init_pins_table(struct =
+device *dev,
+> >        * Also work out how much memory we need to store all the pin nam=
+es.
+> >        */
+> >       for (i =3D 0; i < SUNXI_PINCTRL_MAX_BANKS; i++) {
+> > -             desc->npins +=3D pins_per_bank[i];
+> > +             npins +=3D pins_per_bank[i];
+> >               if (pins_per_bank[i] < 10) {
+> >                       /* 4 bytes for "PXy\0" */
+> >                       name_size +=3D pins_per_bank[i] * 4;
+> > @@ -98,12 +98,14 @@ static struct sunxi_desc_pin *init_pins_table(struc=
+t device *dev,
+> >               }
+> >       }
+> >
+> > -     if (desc->npins =3D=3D 0) {
+> > +     if (npins =3D=3D 0) {
+> >               dev_err(dev, "no ports defined\n");
+> >               return ERR_PTR(-EINVAL);
+> >       }
+> >
+> > -     pins =3D devm_kcalloc(dev, desc->npins, sizeof(*pins), GFP_KERNEL=
+);
+> > +     desc->npins =3D npins;
+> > +
+> > +     pins =3D devm_kcalloc(dev, npins, sizeof(*pins), GFP_KERNEL);
+> >       if (!pins)
+> >               return ERR_PTR(-ENOMEM);
+> >
+>
