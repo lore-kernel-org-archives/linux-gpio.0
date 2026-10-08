@@ -1,160 +1,102 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C06F3AAF43
-	for <linux-gpio@vger.kernel.org>; Thu,  8 Oct 2026 08:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51AF47C10D
+	for <linux-gpio@vger.kernel.org>; Thu,  8 Oct 2026 09:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791449717; cv=none; b=p/yxxVwLlDxKlg06d1+wAc90s/p+dWrjTh5tA+c2H+W6aXaeDBYzjmqMkp82vyC93CrV4OR90pg7F34e44ryKv5a9qZ18oNgLkoYH+CkUweAbrkfd3UyfZQrv36n7hDXmCQ71lRkTRkFVgBXAJ9ut3Ou0lWcWurtEte4J1JRib8=
+	t=1791450274; cv=none; b=QwvIti/4UQQyzOdVw3o/RcrX3g/hv5SHamTv4ohtJT1Th4WjRMxdW8EOME9FQ1qQ782Rqf0yqlrPwIUje9u0yzVbVrK1Ecc1dv6MnkR74eHgzQFqp9X89SaEtNSGWWCwiY9V7C9x/+kh8DqarkcSa8D3x1acp3Zi8I42lDWsXRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791449717; c=relaxed/simple;
-	bh=s3gC6gsgYrRYCi7vlJQcmCDW/z3riFeIcysrnzUXaVw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VxsgJFbmiC+zSpbdASbcP1vnam7bpiVXAi8uSJvFQgXQnkgOejpDnFaEB/tR7EooyCkSZcLJ4xT32vdr3oV0iD33wvWdDFaWgE1pAYIq7Vvnr6q1dNj55n3/XmXdvNmiccZg8atiM6+ngS5QnuO/djxLrRGzMMIOWz6UEQY+WBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cVYKGVqx; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aivxqoaI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1791450274; c=relaxed/simple;
+	bh=UITxWTPNyyI4Sr69UZtCDMKyyTgOTcLWLURy0ck0Z+c=;
+	h=Message-ID:Date:From:MIME-Version:To:CC:Subject:References:
+	 In-Reply-To:Content-Type; b=L6hRAMYSVUR3poR08SiH+ido33QZqI7q8IzG/Exs38FclDcMdohGuNWrGz9daTJUxQ1cosuNY8z5qlTuq15fvSyVFUWY967P27zO2F6ASUNN/h7sIxp3VRGoMIinVC0i2uqlQgCkL0kQGCQQ/R8ZAwM6xi/qNZbry1IqdBU3TWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=VlSde2ZN; arc=none smtp.client-ip=113.46.200.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cVYKGVqx";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aivxqoaI"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6987K3dT2189811
-	for <linux-gpio@vger.kernel.org>; Thu, 8 Oct 2026 08:55:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=FEjS5FEZuwM3ZCGKpsUAP1vOhfvNdfePeWt
-	JrPWwgQM=; b=cVYKGVqxKMSJTxFSbKsk6A/2goRNqzVdoaAzG6Gj4wMlsGLvlc/
-	jgnuwnBgblUcCzYRoAe0L5d+tfdIeeT6h3gFzA/LO5Gm9umulIAs2XWlZQrBgPDr
-	z+uKZAHSh4zIRc8kpxa/MmFcZi6l8xgnyiMfZ784d5YR6c7Br5Ywxzm+MXEivBdh
-	TB1aauxSFWn3aa4i923ewQBJDnkKlX+Bv4hbQkkLj8njnHU3C+4dseoZrhYogTc8
-	18M9q6dzayfqFaeZjyJPxJ5ClFCpyns1q/wGKTNmEq+rlHrdaK7U65Env+PDsiVg
-	/mGTIqdXXLhxhhrxaVWFCye7s8ZfV6F6AMQ==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h5xe3a04a-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Thu, 08 Oct 2026 08:55:15 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-93e92aad34aso558301985a.0
-        for <linux-gpio@vger.kernel.org>; Thu, 08 Oct 2026 01:55:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791449714; x=1792054514; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=FEjS5FEZuwM3ZCGKpsUAP1vOhfvNdfePeWtJrPWwgQM=;
-        b=aivxqoaI6nwPVnuIjzheu8hkR6uAEswzEeU84zRVRFPUBhnc5k0pzaz/jOhG+eoSrV
-         7GT90RdaoTywfioKU3u13zDvFw2Q1rASMwAD/cs4x/+1T9qALBBY1jsqNEs39UxB8Z+m
-         /7gHv/Bw+9JRgLTzRCgFHcmcoI0U+zWuuK5z5+amdV1TWNyOOjlMi9M4WMmqsuhczZvL
-         xSVA7V1df1nFOVFi15JKvNI94fbPjxL0rsbxNfOvmHesJP1YKjaxRswpCHa6Wedh0Ito
-         WPzyrk+5fUMW/bv8QeXmVOERcWFw4MBATSzPDzAZP0KFSPTYPicP4LCDnhZZQduApGW8
-         dvLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791449714; x=1792054514;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=FEjS5FEZuwM3ZCGKpsUAP1vOhfvNdfePeWtJrPWwgQM=;
-        b=amvocSgDoTY2vHq5jkgrtwjdCeniyUbKh21iYodpP+pw8OY4R/HI82QKgG65rguDk8
-         ahOQdWVxTBbo62KxdS526JKEpWozVAxEKoGko407KUCB41VZYPDCYc0LPsPAtw+9Qd0i
-         emuhsFgYtkRkpaE6G6Zx5W5H5Nyn2Jr2NVwIFACqGGdiKahch9OfARZ1ulAEc7zscrDB
-         hvMtjCSrw2i+wdj5tupbiROh1VpPrD2A0DGdHYCuxvptohil1BxKsQdSG+83VRxQyk1E
-         lZJjq+gHsD5RLQKBCW7qtR5atflRohSa7DR5WdC7fLTwWGeDZ+TQi0iucysKAYwrcu2l
-         lK5g==
-X-Forwarded-Encrypted: i=1; AKwUvBxOuvjbheVzNnncmdt5yHSh3mpNN1deCVp+pO4bjiIc9iCJQQknLvDa2GTgBIoULb+igZ6C3f/yOcDY@vger.kernel.org
-X-Gm-Message-State: AFuF++lvqxFuKs7FSWi7yR9LgnYmSCDSv9/tsNHBwkOLSy5BvsNYIyS/
-	Ji7/D6BA33iVBbdfULYyH6wRDYXgZRz28C1qkrpImpu3Ju6hBCtvdVct/4rguAwHSOLAL0UUIRu
-	3vhk1KjiUEwb0/SME45e5nT9hfvwaEvHjO8B6OVzF2MJZ9LHbJH2Di1scqdR/h9wEE1gwmDxX
-X-Gm-Gg: AYBFou032ZDk0NkL2AUqLKirClzTL+epFZhPbAS+hF+Rzh+Y5MXQdS0lFo4xXqYKV+H
-	Vl4W1ORPZdlX+UVL+4EK79cTU5gJJF3fwo/+tMsYYYnZg8MZAfrXV6IyBSt897y8RLlYG1Ms37M
-	jkXf8vt9hOh1u6M0w8r9+0HgdlM5gRa6lRQUKm1kvSsBBxfhx0MjYWp8rhiB2QwNf6z/0TNJIq8
-	yKfCtE+kkGtBQasnHR+pXjdjsA5MThnlosdg83z9dfqmu5v/ESoTsZEOzYifM8/tLDfxdU+CZgb
-	uSQMZCc1ZIOblIwixlNdxLov+IvKlej31wqsQ/G+Mnu/gO2Eugo3obAKzQOjXULtMJsEWFeyply
-	OPVjbXY3fmcrVVF2cyxvy2iCCxWDUmNiU6DgaH20q6rTvEQ==
-X-Received: by 2002:a05:620a:3726:b0:93e:9809:3366 with SMTP id af79cd13be357-93e9b839816mr943852285a.71.1791449714296;
-        Thu, 08 Oct 2026 01:55:14 -0700 (PDT)
-X-Received: by 2002:a05:620a:3726:b0:93e:9809:3366 with SMTP id af79cd13be357-93e9b839816mr943847985a.71.1791449713708;
-        Thu, 08 Oct 2026 01:55:13 -0700 (PDT)
-Received: from brgl-qcom.local (90-182-211-1.rcp.o2.cz. [90.182.211.1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48c71c0b65fsm9772393f8f.16.2026.10.08.01.55.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Oct 2026 01:55:12 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brgl@kernel.org,
-        Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: [GIT PULL] gpio fixes for v7.3-rc7
-Date: Thu,  8 Oct 2026 10:55:08 +0200
-Message-ID: <20261008085508.4815-1-bartosz.golaszewski@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="VlSde2ZN"
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=nZE5AyB6dfBQs8CS7mr3Fvb05uXEMPU3WMOtaMF71eU=;
+	b=VlSde2ZNOTBpzEllPbG5HUJgfQJ8E0gJkCy6Trswx4G+wVthH2Cr0HWMXhaAjbjNfpc0NmCl5
+	WQaLIr0pg9xJTdN/G4zcptmQnIgE93CTJ0vTlZUYZLbI12uJLhfc2xHybPSX7PbjD+tT7ghGklm
+	T5L6SoBGVzKxEB6MRiiedp4=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4j0kJT0g8fzRhQs;
+	Thu,  8 Oct 2026 16:52:09 +0800 (CST)
+Received: from kwepemk200006.china.huawei.com (unknown [7.202.194.72])
+	by mail.maildlp.com (Postfix) with ESMTPS id E6B2740538;
+	Thu,  8 Oct 2026 17:04:19 +0800 (CST)
+Received: from [10.67.112.178] (10.67.112.178) by
+ kwepemk200006.china.huawei.com (7.202.194.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Thu, 8 Oct 2026 17:04:19 +0800
+Message-ID: <6AC75C92.9090409@hisilicon.com>
+Date: Thu, 8 Oct 2026 17:04:18 +0800
+From: Wei Xu <xuwei5@hisilicon.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:24.0) Gecko/20100101 Thunderbird/24.2.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+To: Linus Walleij <linusw@kernel.org>, <longzhao@ambarella.com>, Chanho Min
+	<chanho.min@lge.com>
+CC: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	<linux-arm-kernel@lists.infradead.org>, Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>, Bartosz Golaszewski
+	<brgl@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Long Zhao <zl020895@163.com>,
+	<linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v8 10/18] gpio: pl061: convert register access to regmap
+References: <20260921-cv75-v5-v8-0-282ff5d98dda@ambarella.com> <20260921-cv75-v5-v8-10-282ff5d98dda@ambarella.com> <CAD++jLm8fWyAFY=Uv-O3-9joU+HiKjMAzmd0s6Hc=QEu51wCGA@mail.gmail.com>
+In-Reply-To: <CAD++jLm8fWyAFY=Uv-O3-9joU+HiKjMAzmd0s6Hc=QEu51wCGA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=J4s/fwnS c=1 sm=1 tr=0 ts=6ac75a73 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=zRh97aRZNhiOMYVz81Er1w==:17
- a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=VwQbUJbxAAAA:8
- a=Rr7pUO09KOWNFGsOlfYA:9 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA4MDAzNSBTYWx0ZWRfXyeYpzMPg8/BB
- hh+SKtJ4r6GmVQnYrIX4fAAvedrrWJLQ+cwIodKVc8szTh0e4RQv8HaFd7Y7WmANgSuVz3q0n30
- BqaSuT9/F/4uB2YOMhYkUdAQu/VX4hc=
-X-Proofpoint-GUID: cl5i0uTqJjPkKSDHip6KcfwXLIvJKQys
-X-Proofpoint-ORIG-GUID: cl5i0uTqJjPkKSDHip6KcfwXLIvJKQys
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA4MDAzNSBTYWx0ZWRfX/9EuDLvLEXqr
- +QGX4YZx6PWA2ZRQ9kp7HOhtkN7/C48SU9qxRRLGyqUfecoZKH/rwUPtPZvWhzHBV8ZSesORJbh
- 3BHFi0pFYY/Mv7vJlSSHSWFOWqVetThApJ9H4tDr/JRVwcac7vYVQCYpaPKuoKXysI3eWhIHNkv
- qRj4WmlNvw3Efqcw1s62X2ijpVuuBm8hKXHDTq587cfOJvTqcKPmVQVG9pAnKfKmIeXpz0YZ7gw
- UyUTNZdfVBnnmeQJVe0Z1BQuK31VNGgstkqUAPkAGx4CrAKg5POHZN0RHBjcHM7Fnozz/PJeVXF
- Vdzlwq3j00Lh9wWllmVFLTMSFYfOSzg5EnzldFhvBqV2k4HkeLvC+6PswRPdW+/WEFz/iOoEwIn
- ldrNWyZ7Nbzk685pkvzVbAi851TBk6F+WoqyEh6nOcUr1BmkHhPYcVuMnwylmyrdtN4FAZhvajh
- D/xIto8ettOk+ch9mQQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-08_03,2026-10-06_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 phishscore=0 clxscore=1015 lowpriorityscore=0
- adultscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610020000 definitions=main-2610080035
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemk200006.china.huawei.com (7.202.194.72)
 
-Linus,
+Hi Linus and Andy,
 
-Please pull the following set of GPIO driver fixes for the upcoming RC.
+On 2026/9/22 15:23, Linus Walleij wrote:
+> On Mon, Sep 21, 2026 at 6:23 AM Long Zhao via B4 Relay
+> <devnull+longzhao.ambarella.com@kernel.org> wrote:
+> 
+>> From: Long Zhao <longzhao@ambarella.com>
+>>
+>> Replace readb()/writeb() with a MMIO regmap while keeping the existing
+>> gpio_chip and girq irqchip. Use a raw spinlock so irq_ack() can run
+>> under the irq descriptor lock.
+>>
+>> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+> 
+> It would be good if some critical users of the PL061 could
+> test this patch.
+> 
+> Wei, can you test this on HiSilicon?
 
-Thanks,
-Bartosz
+Sorry for the late reply!
+I did not get the HiKey boards these past days.
+But I test the v9 patchset on the qemu sbsa-ref machine to verify the 
+gpio powerdown and it works after resolved some trivial merge conflicts.
 
-The following changes since commit 72d3fcf802c45d00b300f25b848a93c3a2bd7c7e:
+The detail could be found at below link:
+https://github.com/hisilicon/kernel-dev/commits/topic-test-pl061/ 
 
-  Linux 7.3-rc5 (2026-09-27 13:55:01 -0700)
+Best Regards,
+Wei
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio-fixes-for-v7.3-rc7
-
-for you to fetch changes up to 7efa1a1953cd6b20b23a3524d5b4b81789c6ef25:
-
-  gpio: mpsse: fix race when arming the IRQ poll worker (2026-10-01 14:28:45 +0200)
-
-----------------------------------------------------------------
-gpio fixes for v7.3-rc7
-
-- fix runtime PM leak in error path in gpio-xilinx
-- fix race when arming the IRQ poll worker in gpio-mpsse
-- fix devres cleanup path on probe error in gpio-exar
-
-----------------------------------------------------------------
-Fan Wu (1):
-      gpio: mpsse: fix race when arming the IRQ poll worker
-
-Ridham Khurana (1):
-      gpio: xilinx: fix runtime PM leak on request error path
-
-Sang-Hoon Choi (1):
-      gpio: exar: initialize the ID before registering its cleanup
-
- drivers/gpio/gpio-exar.c   |  2 +-
- drivers/gpio/gpio-mpsse.c  | 24 ++++++++++++++++++++++--
- drivers/gpio/gpio-xilinx.c |  9 +--------
- 3 files changed, 24 insertions(+), 11 deletions(-)
+> 
+> Chanho, can you test on LGE hardware?
+> 
+> but it looks good!
+> Reviewed-by: Linus Walleij <linusw@kernel.org>
+> 
+> Yours,
+> Linus Walleij
+> .
+> 
