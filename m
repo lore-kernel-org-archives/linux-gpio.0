@@ -1,64 +1,65 @@
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com [74.125.82.181])
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5923ACF0E
-	for <linux-gpio@vger.kernel.org>; Thu,  8 Oct 2026 19:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8177A3CB555
+	for <linux-gpio@vger.kernel.org>; Thu,  8 Oct 2026 19:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791487112; cv=none; b=V+4+u7A1lRHVuqXERdCC1yTpxDwHcaSYFaK3zzz7vbHLw0RXuqlKTvLi8XJ/05DDW9U07Yfs0YCeiTyFuezZp8eyJIGtnwuc3PXFaZKOFKCKo6oeHEpTHP7uloWc6IQ8eL7FNf0h7KTBg6UdUp9fUbPug5B9yGhiVkpiWPrj5lw=
+	t=1791487113; cv=none; b=dEc/dKe2BFNBCjxH10Mvznzw4jZkmncp1tvkIHRJ96pq2IZubCZbwg38BAVEf3JRFZvnv0Lzs6ilklSwFIubTgv7ZimZ/8RTis0p8C0tnm9ocE0ZI8HuyFpVh9eGyVANSk6NLsNRM06c2eWxsagYdVAD5jWJbasYEUPXZrzIqII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791487112; c=relaxed/simple;
-	bh=amUxH7dplBRK8duZIHd9DmmDP5zoeolOwFlBY/V0V8E=;
+	s=arc-20240116; t=1791487113; c=relaxed/simple;
+	bh=/9WsomfC2lAj9ZoN5Gi42D+1bJYjyuJE3VvFwcTOPt4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MWqU5lU9Jrr0Hk8fYc7/RF3t+2W2XzTI8NGc8UW28Fv3qmC+KMcT4p/6zBh7G2TR9sYV6iKPeIh5/DWEXb5LmETcfIIbESs6JkvqWHQj2RtyjnRAzsSuHKVWZBqnxqjYVnwi/G/ObRYJjtEPOdXe8YFYbNQ/IKlK+C3oNEMmPfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=trailofbits.com; spf=pass smtp.mailfrom=trailofbits.com; dkim=pass (2048-bit key) header.d=trailofbits.com header.i=@trailofbits.com header.b=Hs+SSw/p; arc=none smtp.client-ip=74.125.82.181
+	 MIME-Version; b=AQr8mtYXtNGlm+tvINhngpLudAFUZH4q0vAKYKY2IPhVfHE92AB9YMiThdU9pmXSeuX8jpx8h+2XQPme5R8bJQv5titvM/WYwAbt72eN57hO/J8rvd2jmGN6oYQnjFuoawOCf5t0pQNcrjikY98dKhFFzzqCYp0wiYSCzV+gv4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=trailofbits.com; spf=pass smtp.mailfrom=trailofbits.com; dkim=pass (2048-bit key) header.d=trailofbits.com header.i=@trailofbits.com header.b=FgYrS/Jl; arc=none smtp.client-ip=74.125.82.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=trailofbits.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trailofbits.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=trailofbits.com header.i=@trailofbits.com header.b="Hs+SSw/p"
-Received: by mail-dy1-f181.google.com with SMTP id 5a478bee46e88-35154cb9de2so4960137eec.1
-        for <linux-gpio@vger.kernel.org>; Thu, 08 Oct 2026 12:18:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=trailofbits.com header.i=@trailofbits.com header.b="FgYrS/Jl"
+Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-33bf40b0c8bso3153530eec.0
+        for <linux-gpio@vger.kernel.org>; Thu, 08 Oct 2026 12:18:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=trailofbits.com; s=google; t=1791487110; x=1792091910; darn=vger.kernel.org;
+        d=trailofbits.com; s=google; t=1791487112; x=1792091912; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=a14qc72yQKkzCAZ2CAoTwipNnd9qGKItgjyfXX9xZAw=;
-        b=Hs+SSw/p9qwN620ghvtdqdOQg0XSA8oWw6ui4jXXwEzxfjP12jOKkruaq6Y9ZvN86H
-         xEdM05WCjb13YC4A4nyo3GK70Fiwrx2WDkDkDaM0CyrV5DjD1BhywdbcNG1umJGtoeef
-         9CUEZUDUmGE/Da5r+xEsDo6CxdifP7BkyG60fq/Db4pbqCCqqG51RFd1nMPI5OmdpMJl
-         VqmzEb8hUTU2MOIGP/M4jyImzWht+RiVd3EcQ+d5vKzpPJF138/dgFvBXIBFFO3u7fjA
-         fLt9csy1setfzcRuYsReXsxwiRBtXrT+Tzj1jM9Poihw0rHrhvz8kSCnUo0L3m6oFEbZ
-         WaZA==
+        bh=RZKA77jm9kbpECwes2HBBFKfBcH0wMfdUgHPGsHOLoE=;
+        b=FgYrS/JlAyIB5cfsbiMDEMIXgvofotk8ehbMomRNVchsiLv6JruRMaAKoezGzL6684
+         KCNMsmYT0QAqIhuvW5WtVEGGgElvxjW8XxvsRremVEOLj4O7VxfO0b4x5wD6rBGGdd4p
+         Er+T4nmv+eHubQ64VMt9pQfT0iYSlTjPSdTdPBM2SUp8RfKf3X1K8UrxYbHBver4z2G7
+         9RXlLQMAS//x0XKwwzxOlplTOL7Iauni0HVIZvhgyFZG9RibHojx/PQRd7ZGth4g1znh
+         yInv6XTcpuFYjpoVwceO92jsvwmvKiIG/LT6LkeeL/4loStcjM74YVtxzICNWOCdaTzq
+         vbtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791487110; x=1792091910;
+        d=1e100.net; s=20260707; t=1791487112; x=1792091912;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=a14qc72yQKkzCAZ2CAoTwipNnd9qGKItgjyfXX9xZAw=;
-        b=S2TVq1UZEL50blqynaqe0xfVIj+Ckz8xLfiYYDz7YabWQSX8G52jR78JUw0QAZ2fcO
-         RTh1ei1gSXGcfI/PfdzWMwDG19tvA39k70zmZbsoy5L1AILYyWe62XG2QmeW9skYONZk
-         h5xV3i4OwEPjAn6+1PlkxzC5Oc4KOp2bTfKrpenoGcpOQ1xo1T2BRCLJrrmYkCnP0b7I
-         Lf5iEiBcDol9KFkejO8NSvLyE94McFNjmyfunL+GfRiZMH2BvHtNtho4S+GXXEQ5nbD2
-         l2u6x00eMQOQtq8cyUtHe5pmnItTh+e/hZOicvGSoTs0yX9CxaivFOwWu/a/om5uL9i+
-         yClw==
-X-Forwarded-Encrypted: i=1; AKwUvBz1q/d2p8O2dil96vcnbIjv/La5H3ojBZcDNEp7dOvLgmcJg6eJONdagZ5kfFd0TB1aMzz/1Rcm9Gu/@vger.kernel.org
-X-Gm-Message-State: AFq9FYKkfRKNhMbF1NGpOhfEqIQa7J8u/NboYtLtedFX5S6lC6RBzLQP
-	hexGnaLRcGGXf6Wma+RMzCAw4QLd89rbYeCiE5Qv/8060DLe4eZTnT6VFKLIwRvPRiw=
-X-Gm-Gg: AYBFou2QdLYHwHPioD1uhrHBorjJgKU5bShPO9949vdtQm0pUWvAc+P8WiMQaEAFDg9
-	/sGc6TdsYGrwQtrievZ/uLpYclkTjq4G4iLwyOy3g3FP/OReMSpx4fUPiZxc4+GMbYtZaw9+pIM
-	84hkEiGn0xL/lk4SQHFFt1qMsC8SoyEYZx+i/B4GI9LrnCMQMpVcryaik+Ey1hbEq1J1wSKIGdN
-	g4FJZmg8gz6UYGV/ZqEvjfQzUv8yom/7pEIxMHMxnWuPD5CmG7Ny3lakX/+pF8R5DXdT0TAaFg1
-	ZDzedjNp4v0E3vEVGPIwDJJHPpXe3oWO8Dpy0OkhLoSWqnH1qjjjLpIalXTsjSCNgg2Bx/u4j3e
-	V3n5iscf4mwLzoBCmpkOLDnApQs90cktd/bFpUCHM2EohyKljK1zw6R9+dOVbuj5hGErUuFeW9v
-	FBtsFqYsNHBxDPHXOjg5YhqnzJujNok+plj7TagXD9pVvfcKOmE/oehAf4/y7tzMsEPGi9uO0xS
-	G96YPLgRQk6aUYu/N/CGkc9BkI6P/yBuMa7/VW9aqgxpnhqaj7PYboeqXlERQnyFj/pCGU=
-X-Received: by 2002:a05:7300:8819:b0:33c:e72:5b3b with SMTP id 5a478bee46e88-3535f3cbcd4mr464739eec.25.1791487109863;
-        Thu, 08 Oct 2026 12:18:29 -0700 (PDT)
+        bh=RZKA77jm9kbpECwes2HBBFKfBcH0wMfdUgHPGsHOLoE=;
+        b=CLME2/T75LYp1CSj/aHueYraZB/u2Gh8qYHK9c2K5cAYyYFMu1PChVKJ23lLUJSD/F
+         qf7RF1+Q+9aF2iaxivqUEGGxEfUnZpisU1YmGH1RWs0mt81leYpeGgkNnmEk5NwnW6un
+         /66yM8tzAgoFRNj3Wus7B+zv2b5FNdPt/MxhHhiSORZPzbM5x2RNkKmDWUz4GgGak3aH
+         0sHZjhT7F7CKC1nztEqmpIOI0Mu+tiRZNn/T3cqBQNQqvoBNXK1LFIChk2oVcgderbod
+         nQKdF+nO7fdtfiGIYXl7msABKVpr4ktq6y6xMoxm+KJh/VkiwtGf8IiEx4bVQAizDmSr
+         j2DQ==
+X-Forwarded-Encrypted: i=1; AKwUvByFOYTchOKti2t++yDB7XbcuKq4mt9DIwap+EfXBH2gyh4pyERj/PcKxx3tbXWWM4Rw2DxHJE7IjphN@vger.kernel.org
+X-Gm-Message-State: AFq9FYIagroQ7pRIltnxqb2Q6AYoBh6JOGDPCVOkmi3IuSZ/Rk85yc9I
+	xJCW+0b8SI1452PeByTAOrc/IzwyaM4p7vzF20deh/yBgWS6qrV7vZD0r5crtrISTTQ8C13NIlY
+	FMVpY+TgMqg==
+X-Gm-Gg: AYBFou28UXnZuuxQrd4X7/gEsgwH27J86kvSAo1OK4MJKIyHVk4DVoEj/ySlFsTJE76
+	Hbrg9HH9kghYkS+aIM/D2SXfyn9qLHZaSsEaRc6r8y2saYJKHC/KK22K5zd1Cc7sC5NuQp0ISB+
+	6+tbo+30km/lC/hGxiC7eyQjCOXWkEybQeBam07dvKAoWmnrSsf3Z+d0jCWzrdvJWiwA/5HfmlK
+	4jXrz5ryKGYb6gWrc3F3/4XWIBRs6aySlAxPT8WP7Qs3hqoVQY7hSiMiffCbfud9vdKyV3zIq7Q
+	ccj0FAMj7deO1EhrGGl1Bgs/fXt6EO7f96eDWXb7+nuJq1J9E2ADMSofbDNUg7lChmeU+yAABsY
+	bL6nZmX2Px3z/lfNqDhFSpkQodcA+We4PCVDgn2E9tosyh6WgailS+pw9qMSNDP5YmDf+uWqdLz
+	8hRPtD7K0QIQ1xgh1luBAnItICbADcx6mtd7B582uGiYTOvV9I7XbDNgn3fumr6Haq3u/ipCVHJ
+	U5sv1xy31/wl9ncTrAX5o8+YhVKeTMSz20OTFC7pFw7AIshS0VZxSBW58R5fu2yC1O3zQc=
+X-Received: by 2002:a05:7301:5416:b0:351:58d9:7d9a with SMTP id 5a478bee46e88-3515e0066fdmr8007040eec.38.1791487111442;
+        Thu, 08 Oct 2026 12:18:31 -0700 (PDT)
 Received: from localhost.localdomain ([2603:8001:5f01:8bab:bc88:5ec1:4f8a:5b23])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3537c841579sm117933eec.4.2026.10.08.12.18.28
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3537c841579sm117933eec.4.2026.10.08.12.18.30
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 08 Oct 2026 12:18:29 -0700 (PDT)
+        Thu, 08 Oct 2026 12:18:30 -0700 (PDT)
 From: Artem Dinaburg <artem@trailofbits.com>
 To: stable@vger.kernel.org
 Cc: Artem Dinaburg <artem@trailofbits.com>,
@@ -77,9 +78,9 @@ Cc: Artem Dinaburg <artem@trailofbits.com>,
 	Linus Walleij <linusw@kernel.org>,
 	Bartosz Golaszewski <brgl@kernel.org>,
 	jay.xu@rock-chips.com
-Subject: [PATCH 6.6.y 1/2] gpio: rockchip: teardown bugs and resource leaks
-Date: Thu,  8 Oct 2026 15:18:20 -0400
-Message-ID: <20261008191824.98662-2-artem@trailofbits.com>
+Subject: [PATCH 6.6.y 2/2] gpio: rockchip: fix generic IRQ chip leak on remove
+Date: Thu,  8 Oct 2026 15:18:21 -0400
+Message-ID: <20261008191824.98662-3-artem@trailofbits.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261008191824.98662-1-artem@trailofbits.com>
 References: <20261008191824.98662-1-artem@trailofbits.com>
@@ -93,94 +94,59 @@ Content-Transfer-Encoding: 8bit
 
 From: Marco Scardovi <scardracs@disroot.org>
 
-[ Upstream commit 9500077678230e36d22bf16d2b9539c13e59a801 ]
+[ Upstream commit 1c1e0fc88d6ef65bf15d517853251f75ab9d18c3 ]
 
-Address several teardown issues and resource leaks in the driver's remove
-path and error handling:
+The driver allocates domain generic chips using
+irq_alloc_domain_generic_chips() during probe. However, on driver
+remove/teardown, the generic chips are not automatically freed when the
+IRQ domain is removed because the domain flags do not include
+IRQ_DOMAIN_FLAG_DESTROY_GC.
 
-1. Debounce clock reference leak: The debounce clock (bank->db_clk) is
-   obtained using of_clk_get() which increments the clock's reference
-   count, but clk_put() is never called. Register a devm action to
-   cleanly release it on unbind. Note that of_clk_get(..., 1) remains
-   necessary over devm_clk_get() because the DT binding does not define
-   clock-names, precluding name-based lookup.
+This causes both the domain generic chips structure and the associated
+generic chips to be leaked. Additionally, the generic chips remain on
+the global gc_list and may later be visited by generic IRQ chip suspend,
+resume, or shutdown callbacks after the GPIO bank has been removed,
+potentially resulting in a use-after-free and kernel crash.
 
-2. Unregistered chained IRQ handler: The chained IRQ handler is not
-   disconnected in remove(). If a stray interrupt fires after the driver
-   is removed, the kernel attempts to execute a stale handler, leading
-   to a panic. Fix this by clearing the handler in remove().
+Fix the resource leak by explicitly calling
+irq_domain_remove_generic_chips() before removing the IRQ domain in
+rockchip_gpio_remove().
 
-3. IRQ domain leak: The linear IRQ domain and its generic chips are
-   allocated manually during probe but never removed. Remove the IRQ
-   domain during driver teardown to free the associated generic chips
-   and mappings.
-
-[ Backport to 6.6.y: For 6.6.y, send with 1c1e0fc88d6e (CVE-2026-53226)
-  so generic chips are explicitly removed before irq_domain_remove().
-  6.1.y lacks irq_domain_remove_generic_chips(), so it needs a
-  separately reviewed older generic-chip teardown backport. ]
+[ Backport to 6.6.y: Use the upstream teardown helper on 6.6. Defer 6.1
+  because irq_domain_remove_generic_chips() is absent and needs a
+  prerequisite or reviewed target-native cleanup. ]
 
 Fixes: 936ee2675eee ("gpio/rockchip: add driver for rockchip gpio")
 Assisted-by: Antigravity:gemini-3.5-flash
 Signed-off-by: Marco Scardovi <scardracs@disroot.org>
-Link: https://patch.msgid.link/20260526171050.12785-3-scardracs@disroot.org
-[Bartosz: don't emit an error message on devres allocation failure]
+Link: https://patch.msgid.link/20260607230504.35392-2-scardracs@disroot.org
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 Assisted-by: LLM
 Signed-off-by: Artem Dinaburg <artem@trailofbits.com>
 ---
-This is patch 1 of 2 in the ordered 6.6.y backport series.
-This change addresses CVE-2026-64241. Releases the debounce-clock
-reference, disconnects the chained IRQ handler, and removes the IRQ domain
-during driver teardown.
+This is patch 2 of 2 in the ordered 6.6.y backport series.
+This change addresses CVE-2026-53226. The target creates generic IRQ chips
+and omits their removal; the prerequisite supplies a complete teardown
+helper and the CVE fix invokes it before removing the IRQ domain.
 
 The fix is already present in 6.12.y, 6.18.y, and 7.2.y, but not in 6.6.y.
 
- drivers/gpio/gpio-rockchip.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-rockchip.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index ff9a4b8611d7..e0e4f3ed5fdd 100644
+index e0e4f3ed5fdd..86cf3cbcdb40 100644
 --- a/drivers/gpio/gpio-rockchip.c
 +++ b/drivers/gpio/gpio-rockchip.c
-@@ -629,10 +629,17 @@ static int rockchip_gpiolib_register(struct rockchip_pin_bank *bank)
- 	return ret;
- }
- 
-+static void rockchip_clk_put(void *data)
-+{
-+	struct clk *clk = data;
-+
-+	clk_put(clk);
-+}
-+
- static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
- {
- 	struct resource res;
--	int id = 0;
-+	int id = 0, ret;
- 
- 	if (of_address_to_resource(bank->of_node, 0, &res)) {
- 		dev_err(bank->dev, "cannot find IO resource for bank\n");
-@@ -662,6 +669,11 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank)
- 			dev_err(bank->dev, "cannot find debounce clk\n");
- 			return -EINVAL;
- 		}
-+
-+		ret = devm_add_action_or_reset(bank->dev, rockchip_clk_put,
-+					       bank->db_clk);
-+		if (ret)
-+			return ret;
- 	} else {
- 		bank->gpio_regs = &gpio_regs_v1;
- 		bank->gpio_type = GPIO_TYPE_V1;
-@@ -773,6 +785,9 @@ static int rockchip_gpio_remove(struct platform_device *pdev)
- {
+@@ -786,8 +786,10 @@ static int rockchip_gpio_remove(struct platform_device *pdev)
  	struct rockchip_pin_bank *bank = platform_get_drvdata(pdev);
  
-+	irq_set_chained_handler_and_data(bank->irq, NULL, NULL);
-+	if (bank->domain)
-+		irq_domain_remove(bank->domain);
+ 	irq_set_chained_handler_and_data(bank->irq, NULL, NULL);
+-	if (bank->domain)
++	if (bank->domain) {
++		irq_domain_remove_generic_chips(bank->domain);
+ 		irq_domain_remove(bank->domain);
++	}
  	gpiochip_remove(&bank->gpio_chip);
  
  	return 0;
