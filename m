@@ -1,124 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EEE286A5
-	for <linux-gpio@vger.kernel.org>; Thu,  8 Oct 2026 19:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1F33A4510
+	for <linux-gpio@vger.kernel.org>; Thu,  8 Oct 2026 19:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791487857; cv=none; b=CBcD/Uxt4MFc/VpHYUm9NO0ueA87S9Ers9KnKva4vDs9YILafF0Kmn+j/t5Nm5loD2Y6XUiWR/CvVHq6NxtGcBOe+QLznGhTbi+/tri+Jrw7uWOCOfQu+vuiylVJfnTjBWOAn3nlB/YiAnn8wowKdDp6+jY8kHZ2CCY+1NEvAKY=
+	t=1791488864; cv=none; b=BIznaNh0GBMKfKVjSOsktb8fi1FDH6XfE62I5cHJbTGm6nLPoQleqxV7WvL2wb+JeMw1EWnK23Kn/O6BCTUiKYnccfykzJkXh/JfApws909PtICgdgaaFQXaKZeaKREf0hfSPUluyLAMB95G91iKCOcLr/KmgLJ2h/CBVNL8nSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791487857; c=relaxed/simple;
-	bh=tJ/7BtqnSM+WHfapPl6P07CLAernuZ0NbpPYeSfdMN8=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=Xl7RVcN9/ItS+kuxSWeaje5y5VbOpd1WKCvGIO+vCyIXWGcV22iwLSGga0Ob01n0RDvr5FHCNuOngDxBI3nw89uxsjNg0Tsd7IT94ijnrecB5wPl4obeqwJVfSSxv9WokYtHGKbzAFwx+TWqfYJOSuglAzF18ZaB0DtuJvrbRPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mf43w0l1; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791488864; c=relaxed/simple;
+	bh=6X2t7eJ5QBcElQzrzDWM1Xhhl94ovrcRm6oVdNZYXAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=R+36XW6yBxm7RdDNtLrug3bt9PvGL4IwEYSSihENsr07XBRIjVBg0YjiKuPU7P8rolXfkPbEC3qPVeG0SKlawRG9fcyvZ15QPdOPGALS7sFImSeBFFE+CPhV8bzV1P46JHhPs8IcTEm08YxUeBL+EQO4zxFtbj/wpajXHumsn40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGAMS8Vt; arc=none smtp.client-ip=74.125.82.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mf43w0l1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 928641F000FF;
-	Thu,  8 Oct 2026 19:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791487855;
-	bh=qY+63xLoOgNBsnHKXk1WpI9TdO15rKhx8U2BxJB8alE=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Mf43w0l1FJQwWoY5mA4bEQLi2QTf4vKXHkDBghUpKzOvfaMgBScsLVWn57jEFaZ7X
-	 c6Cpk4sFp/4cUPiAtxZEKCjfz8c8ekkx/8lSgR7hXY/g5j/8ji7R0DMp7zlkY5clhZ
-	 FK7Dw8z9kOz0EKNb56/CBGwPrvr/FBaprTCjVK5oeBTc6/wQcx6FniSouh36d1WhOV
-	 0blf2cQ5vYGBA8QRzVlv54PtLSG+d9NjkaA7fCENqQZ3MiM3JaeaGi6PnOSNb9cK+h
-	 L9IoB5KFuEVKIfFP5Qh1l5cQ7zkK8nbvoKrIkGp5yOgj8/szD4sM9HakwGdLqzCaDa
-	 khVdD0h6y63Zw==
-Message-ID: <sashiko-outbox-164526@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 6.6.y 2/2] gpio: rockchip: fix generic IRQ chip leak on
- remove
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Artem Dinaburg" <artem@trailofbits.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261008191824.98662-3-artem@trailofbits.com>
-References: <20261008191824.98662-1-artem@trailofbits.com>
- <20261008191824.98662-3-artem@trailofbits.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 08 Oct 2026 19:30:55 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGAMS8Vt"
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-33c2520ad38so8132844eec.1
+        for <linux-gpio@vger.kernel.org>; Thu, 08 Oct 2026 12:47:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791488862; x=1792093662; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=6X2t7eJ5QBcElQzrzDWM1Xhhl94ovrcRm6oVdNZYXAg=;
+        b=AGAMS8VtfTxOnkcYRBBjh+oBAdaOTUoeuHfMKEXZzWULPcQDZHwMUcD3WU5ki+9y8a
+         xS24aYvzp6T2U2fzS+y4vD+mZaAsbWkARDeZTolxjEtE9TokK3+4+LdITrbXo1sYQfe0
+         WgAYH8yJIrCOdl7zx/sAf+5guWpMZBCnvOEwixjTb+C2dPCeW65hHlcraO3G+o+E/atJ
+         ieYjhE0O5ecA+pmOd4LXukL+n5XoY5D9hsKRS/B/o1WFQuF+x51JxrHYt7cWhTyftKVP
+         DI3sSGiF5Ae4KUXT++/x/IHD9z5YX2MI8Fr9d/fDMFhoBn9bJDoM2n+4rNfIQSR6Cxhy
+         YEpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791488862; x=1792093662;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=6X2t7eJ5QBcElQzrzDWM1Xhhl94ovrcRm6oVdNZYXAg=;
+        b=nCQv1E6fhn1Csj5/8KVISIRszKCepFM2Du5MXaNj9zvqtgqgmhhDEh9ikzlqRLMaEI
+         J6xhVoNgi0/bmpCZ4Jjf/jSBRWkHhAqXlZCPveOwDYUjPYO15qZrpn/CQnU0wLdLUdHE
+         IqXz65zeb9AOimvwW9ypRdSZE9bGfcHzcC4YRVBkTffljFqwDj2SoSZXGNrPNjQxgTdT
+         kn5g0t1yy8vuAbT2MNylK9DjmQ8x8uZ8T/dkpK39ZaOYN1ugkNB7NKmpRMYtACO6Vufr
+         HlqylRqdulmGeOTBckYT/H1Twy6DFN68WazPrr9j4HTe3Adcqx42BcQyHIq8X1sXtSQs
+         MX9Q==
+X-Forwarded-Encrypted: i=1; AKwUvBxNSlK+SmOJsVr9J7z125Df6EayL7lnEQ+cbLPovKQWx8YtMafs7+k2YgbWWSx9xQOG0ZsUM3rJP5XB@vger.kernel.org
+X-Gm-Message-State: AFq9FYLwA9p+EFAnJg0g+UcL/6bT75dGI6WQtpTo/AlRLzCe3v1QYhIP
+	vnE81L2Eswc373xPyzti32NIscntHhWDS0jJaxnPvImJ0Rcku93ZADmN
+X-Gm-Gg: AYBFou15WUGaCpJ/ZLhpG6jluLQw3K8DwewYSB2mTYCRppji8kc/kkqCGEj8bCC2G6/
+	h8ry9tQq7cFqvmKs6E/oIfal06zDqi3DVrI+zauoP3jXCiM0Pn76VSUYaaZSJGB0h6cEimk5bge
+	e50bMBWz+sCEVOj9+JeFMIML1oftiNMFiNUS7p6emALjeqTRQ/nq8DFBvLLujlnGMkqCNp1JQGU
+	+3+0+uOhpaFFG59d2ArSrEf/JyoVhL8nKuy/lgrXf+JjUrnH27D9iylH3OvhpSe9ef0AGAu5Tbu
+	FihL9442VaTsZzBK2lPZo/joGNJ9yetEu3SLZQMWr06vQRk3bXO4QV++XzhlT0M5bg4XFZnbvc5
+	RPbocUuPodlTfLexKFWv9p6/YioMhveiv4Zcl+NBqahYX6XqnpaHK4NiygisAqUcDcc40kPYEvJ
+	ckI2ks/cQaxJ0tmhMYfRT3MU9muYU+qZ12CVOoSR3zNEp7BhsQKSoAf0EsNSF+nRuOnp+EMPqwj
+	bVmhj9PVNfn5+XADp/Rlvmn/rvSwlTmm3mwusjCq3BdbzFf4erhufyr9wzPXqy6VlOj7L9jfFd9
+	lDS97w==
+X-Received: by 2002:a05:7301:580b:b0:351:7ec1:a92c with SMTP id 5a478bee46e88-3517ec1b4d7mr4689953eec.28.1791488861717;
+        Thu, 08 Oct 2026 12:47:41 -0700 (PDT)
+Received: from MaquinaLab.. ([179.179.237.181])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3537ca1b556sm291906eec.9.2026.10.08.12.47.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Oct 2026 12:47:40 -0700 (PDT)
+From: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Yixun Lan <dlan@gentoo.org>,
+	Enzo Adriano <enzo.adriano.code@gmail.com>,
+	linux-gpio@vger.kernel.org,
+	linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 0/7] pinctrl: sunxi: Add Allwinner A733 support
+Date: Thu,  8 Oct 2026 16:47:19 -0300
+Message-ID: <20261008194719.328146-1-vinicius.eduardo.pedrosa@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260910133519.459011-1-andre.przywara@arm.com>
+References: <20260910133519.459011-1-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Thank you for your contribution! Sashiko AI review found 2 potential issue(=
-s) to consider:
-- [High] gpio: rockchip: UAF in rockchip_gpio_to_irq due to teardown order
-- [High] gpio: rockchip: missing irq mapping disposal causes UAF
---
+Hi Andre,
 
-commit 7ad98fc33c5f3a1c30b1b0722c11e01bbf5172c9
-Author: Marco Scardovi <scardracs@disroot.org>
-Subject: gpio: rockchip: fix generic IRQ chip leak on remove
+While bringing up the Radxa Cubie A7Z on mainline, I went through the
+A733 io-bias code against the user manual (v0.92). The register layout
+doesn't match, on both controllers.
 
-This patch addresses a resource leak by explicitly removing the generic
-chips and the IRQ domain in rockchip_gpio_remove().
+On the main PIO, GPIO_POW_MOD_SEL (0x040) has two-bit fields per supply
+domain: PF is bits 11:10, PK is 21:20, and PB falls under the VCC-IO
+field at 25:24. sunxi_pinctrl_set_io_bias_cfg() treats it as one bit
+per bank, so a PF request writes bit 5 (inside the PC field) and a PK
+request writes bit 10, the low bit of PF.
 
-Link: https://patch.msgid.link/20260607230504.35392-2-scardracs@disroot.org
+The R-PIO has the same layout, PL at 1:0 and PM at 3:2. The a733-r
+compatible shares the A523-R descriptor, so it also gets the inverted
+encoding and the RMW at 0x344, which the A733 manual doesn't list.
 
-> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-> index e0e4f3ed5fdd4..86cf3cbcdb403 100644
-> --- a/drivers/gpio/gpio-rockchip.c
-> +++ b/drivers/gpio/gpio-rockchip.c
-> @@ -786,8 +786,10 @@ static int rockchip_gpio_remove(struct platform_devi=
-ce *pdev)
->  	struct rockchip_pin_bank *bank =3D platform_get_drvdata(pdev);
-> =20
->  	irq_set_chained_handler_and_data(bank->irq, NULL, NULL);
-> -	if (bank->domain)
-> +	if (bank->domain) {
-> +		irq_domain_remove_generic_chips(bank->domain);
->  		irq_domain_remove(bank->domain);
+PL is the case I like least. Running the unmodified helper on the host
+with the R-PIO state I read on my board (SEL 0x000aaaaa, 0x344 = 0) and
+a 3.3 V vcc-pl supply, SEL becomes 0x000aaaab. Per the manual table PL
+goes from 10 (fixed 3.3 V) to 11 (fixed 1.8 V). I haven't run that
+path on the board. With no A733 board DT upstream yet, I don't think
+anyone hits it today.
 
-[Severity: High]
-Does removing the IRQ domain before calling gpiochip_remove() introduce a
-use-after-free race condition?
+Locally I set BIAS_VOLTAGE_NONE for the A733 and gave the A733-R its
+own descriptor with NONE, leaving A523/A523-R as they are. That's
+roughly what the vendor BSP does too: its kernel never programs these
+registers and keeps the firmware setup (all auto on the main PIO here,
+PL/PM fixed at 3.3 V).
 
-Because the GPIO chip is still registered and active in gpiolib, concurrent
-operations (like a sysfs write configuring an edge trigger) can still invoke
-gpiod_to_irq(). This triggers the driver's .to_irq callback:
+Tested on one board (the vendor kernel reports SoC version B),
+RAM-booted over FEL, with your pinctrl patches on an integration tree
+and fixed regulators for the 3.3 V PB and PM supplies. With a few
+printks I checked that UART0 (PB9) and a gpio-led on PM2 reach the
+helper on the first request of their bank and that SEL and SEL+4 stay
+unchanged. Same registers without the printks, and UART and the LED
+work. A523 is build-tested only.
 
-rockchip_gpio_to_irq() {
-    ...
-    virq =3D irq_create_mapping(bank->domain, offset);
-    ...
-}
+Would you be OK with disabling the io-bias programming for A733/A733-R
+as a fix for now, and doing proper voltage mode support later? If so
+I'll send the two patches, with Fixes: tags for 0535bfbfa97b and
+31d68e10381c.
 
-Since bank->domain has already been freed, this will dereference a dangling
-pointer. Would reversing the teardown order to call gpiochip_remove() before
-freeing the domain unregister sysfs nodes, drain pending operations, and
-safely close this race window?
-
-[Severity: High]
-Does removing the IRQ domain here without disposing of active mappings leak
-those mappings and cause a use-after-free in the core IRQ subsystem?
-
-When the domain is removed without iterating over active pins to call
-irq_dispose_mapping(), the core IRQ code hits a warning:
-
-irq_domain_remove() {
-    ...
-    WARN_ON(!radix_tree_empty(&domain->revmap_tree));
-    ...
-    irq_domain_free(domain);
-}
-
-Active IRQ descriptors will retain a dangling pointer to the freed domain in
-their irq_data->domain fields. When consumer drivers subsequently unbind and
-free their IRQ, irq_dispose_mapping() accesses the freed domain pointer to
-check hierarchy flags, leading to a crash.
-
-Should the active mappings be disposed of before removing the domain?
-
-> +	}
->  	gpiochip_remove(&bank->gpio_chip);
-> =20
->  	return 0;
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261008191824.9866=
-2-1-artem@trailofbits.com?part=3D2
+Thanks,
+Vinicius
