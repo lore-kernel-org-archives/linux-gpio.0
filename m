@@ -1,108 +1,105 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98344D0CD8
-	for <linux-gpio@vger.kernel.org>; Fri,  9 Oct 2026 11:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAE64C650B;
+	Fri,  9 Oct 2026 11:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791545224; cv=none; b=gC6KiC/LfPEMgQL4Qir7D2g68Oty0nzK/gYlFItyMpLsOnKbSi5oODswju9dwdneZsUIUe5K8e3dcIwmbdNBDYYx5YUpqMWxHAdd1zo+FrV8dNzlMPJebTbEQctgF78r2FTlplOCCovDJbMYDjTF/kXL8h0kUxO6XxXhFHtkUlw=
+	t=1791545244; cv=none; b=WNN7ttfW9AimLpmxsCaQgs0dK+OUnXb3rpZRAmqfbIHbIhMhDxDBsT1RQXH+bsPRjbiKsFM7JPfS5ShrhJx1s9Geh7mE5yhjLIqY9/aKfbCUmZWZSPaz26qfiXSz5dHUn1/i/WjENDHoymAIhJNierTqqXHdVLOfEsuwXzCBEI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791545224; c=relaxed/simple;
-	bh=7bW9zHBHf9MLFVFOP+2e6zwC7NkeCL7ilHfr8HYHFYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ktANWjhPgyr8AYNwtB51M7XRe6IrG8mt+zfifUsTVksjxWuz2Rr0E7bTJkwMizZtLYeVOArp9n+9/q+wdIMJiRJLbh1Fslzl1J/umf6yOPYyCe74RvHUGM9aH9uNUHxBzpGU8CPLO1N9CaIwZvnNv71lgft2L/vt3nTCQnfpTao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBTUl2GU; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791545244; c=relaxed/simple;
+	bh=l0vYMRi4bMydeWty5yPKwaYLMOBhsEAlhAmPQZbX43Q=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=UnFepvOXp4PD6jFxm6tYmTf8Zoe+XVkSgu/Xl+LvIh4nn6ZOhbIAP64qF9Q1y7HcfNWDc+pf16SLoOLXqmSYEGwYbcFMWn3wHTLJIWqRhY+h9iZwd7u6f91vfER6Jt68x2DnECxrYeY/FeHFdJzJaGyLpY6YIw2F2Fzil8Yn9wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cr9/6Y3k; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBTUl2GU"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-398a4dcf289so2841869a91.2
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Oct 2026 04:26:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791545216; x=1792150016; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=1xgJccrdau/8PmrM1/GKc8Z9lcJB5q1sjmJXVtgvUf4=;
-        b=KBTUl2GUaI42fkrGguPvb5VHUTy4y3ithQ8NlNPHN/LZj3ieKpIcg7iuHX5+wyXq8+
-         DcQJMdrczwNH3oyRsFeVziKW9B8qxXtxQkIK5xdt032AlaEhjgg5qTmXixqcrPKftCsG
-         bmIlwfv2fD+7iqrwgapDlIRITC+8wXno7EPgL1DFln7dcYPtXURV2EaTkZrbv//WEtEw
-         7A1uaB0QS0ol593t+ZkcPYBrcg88wH+2WL74G+H7DEuOecEbXjuEAeLbJc5z87Qu6UpU
-         AXhzCoZEnE0STVZ588E64ebTYwnIrtXsAxGoUgTlSXT7pcokhcEsXCdiTuutLdio4TIk
-         YF+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791545216; x=1792150016;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=1xgJccrdau/8PmrM1/GKc8Z9lcJB5q1sjmJXVtgvUf4=;
-        b=nTnSKzbTOU1MuXGnqTk1AFbl89vi//rs8UOBdT4bjsv+Pfckx764FbMgUWNKNFFxpt
-         q0Fi0/LSdj7oReTpbHoYlAc6d1tX4LfP3Dp1ACv/1Armv4mhtH2IGVbcSIUY/HZ1pAe9
-         4W8BJ/I0bCpxmbBLwuC+Uft5Zi9imbXYLpsSAwqrEI/Ez9ZdqkCtV+5TiiKRq2IuJPV5
-         0xLdT7vxSOssewfZVtHrH0alJLKONQ0Bbftau1RiJiUv8KSrb7fZvsPX25uKy3/b+H02
-         N311D5zmXM35pesnS+SbRf7LMgxO9hQ/Q/xEVYt4OQ8W+J0gxu6QyO9UheskoTlxljYN
-         92Nw==
-X-Forwarded-Encrypted: i=1; AKwUvBz8cK5WYWyP0dLNzBbqRxIeLt0/ISTvNJYDAqk7RUOi5QkqMXVR8fMEv6Xkxqo94FmFqXpu1BuaPoww@vger.kernel.org
-X-Gm-Message-State: AFq9FYJcSJq5i8lhEZhLlPK3aTaGmEUxe2mcvojtv+ScSVw7yb45qMNo
-	//t5iPPkn9L7dRjALWciht6a22FhuotSle2C5Ul8tvca+prdeQdpSxf2
-X-Gm-Gg: AYBFou2SyPB3rVl1V5XEzYnEY3uupPn8UwV8NEMM6WR/q/tUJFNsrbSk/f9cCbi9ot3
-	NTscny59sAc1/PV8wAKNSj7HTPbIJkyOwV4nHghUTWlQN4soBfNE3wYkMhIhmTpnNKZ/yBy1B4x
-	Hxegb2dsxU31hkBrrp7hn0Xc+95/23t5TuK+hV1UdLCFFRj4hTommVsj24afdocpVwC4LxTT1H+
-	tjBimJn6TpA+F9AqwXO27AYGJu+Fo/+m/A/dN8dxKnu4gr9DF5HVLKKnz1Ns9d41ob0q62UL7Wr
-	u7s+QbgmEHpjX9nGZJINO1ymuptUAYxMvipJNOidlBfDUUR0mxs/s1aQtR7LJwqZXCSQZydW7Pp
-	zRxDyqgIv/Byu7fs+8qK+x4Q6XXrLDrcoZ0UJ2HVHh3F2n7u7J8w1xOjrOqtT+69YbO24DSAran
-	RQDilAWxPzTZTN28PyVoEEYI30/60+voseAdU/z++NbN1yAWmqz6LYxq4wC9WaPSr+9QoRpqKoS
-	+5MS/n1h5PdUps2rssMJKarLEWrxc2LKOYOz5noFcQgklV6sB6xY3KDSDjo01Q9VagIxVopSGgG
-	fntjutOoZhfOFA==
-X-Received: by 2002:a17:90b:3c08:b0:3a4:d338:4156 with SMTP id 98e67ed59e1d1-3ab3ae6ae4amr1264452a91.52.1791545215931;
-        Fri, 09 Oct 2026 04:26:55 -0700 (PDT)
-Received: from phuc-desktop.. ([183.91.15.56])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ab371e2833sm3181148a91.17.2026.10.09.04.26.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2026 04:26:52 -0700 (PDT)
-From: phucduc.bui@gmail.com
-To: Linus Walleij <linusw@kernel.org>
-Cc: Darian Biastoch <d.biastoch@gmail.com>,
-	Andreas Kaessens <akaessens@gmail.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bui duc phuc <phucduc.bui@gmail.com>
-Subject: [PATCH] pinctrl: mcp23s08: Propagate reset GPIO errors
-Date: Fri,  9 Oct 2026 18:26:34 +0700
-Message-ID: <20261009112634.33436-1-phucduc.bui@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cr9/6Y3k"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C530E1F000FF;
+	Fri,  9 Oct 2026 11:27:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791545236;
+	bh=OVtPrF3V5ziQrs/6S9GBcEMyEm0qlKiaDAVZsKdUW9I=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=Cr9/6Y3kLk+FqMB6Ek42ByYsZ9uHu4x+IrDKWLLg36UMU6v1k2y861AI53XsnF7yY
+	 L3ZSePie/qYW+Qp6lhbyDiFE8MYAe2WIGkysYQ3oM2vxPPLuNr+g434kCwqDbrJAP2
+	 BFCJsxjMXJWzZAMyszpcTnvtmL1Bo2rtMfwrpalZsd6pmvXCU9nyn69cPeOTe+01vN
+	 +o+7wZilZbTfPcb7MhGkc/eTiEy4Skh00h/HHYmBsXJ1bllQFQoD0nUQ7qdjtEz9Wp
+	 Xan/FKTHMgqGmOnSF9USENdfnGAbAnLfO6pZUiWsRoB1LM8LMV46Nxg/Sp2aQAH90J
+	 CvVFaRz1zgTYA==
+Message-ID: <sashiko-outbox-165371@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [PATCH 2/7] gpiolib: regmap: add
+ GPIO_REGMAP_QUIRK_SET_AFTER_DIR
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Long Zhao" <longzhao@ambarella.com>
+Cc: devicetree@vger.kernel.org, conor+dt@kernel.org, robh@kernel.org, linux-gpio@vger.kernel.org
+In-Reply-To: <20261009-cv75-gpio-v1-2-5836bd438423@ambarella.com>
+References: <20261009-cv75-gpio-v1-0-5836bd438423@ambarella.com>
+ <20261009-cv75-gpio-v1-2-5836bd438423@ambarella.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 09 Oct 2026 11:27:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: bui duc phuc <phucduc.bui@gmail.com>
+Thank you for your contribution! Sashiko AI review found 1 potential issue(=
+s) to consider:
+- [Medium] gpio: regmap: missing return value check for gpio_regmap_set in =
+direction_output
+--
 
-devm_gpiod_get_optional() may return -EPROBE_DEFER or other errors,
-but mcp23s08_probe_one() currently ignores them.
+commit 4dfbff55c3fbea74424f90710c5b76efb22f738e
+Author: Long Zhao <longzhao@ambarella.com>
 
-Check the return value and propagate errors from the reset GPIO lookup.
+gpiolib: regmap: add GPIO_REGMAP_QUIRK_SET_AFTER_DIR
 
-Fixes: 4e73bfa3ee37 ("pinctrl: mcp23s08: Add optional reset GPIO")
-Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
----
- drivers/pinctrl/pinctrl-mcp23s08.c | 2 ++
- 1 file changed, 2 insertions(+)
+Some controllers ignore output writes while a line is still an input.
+Add a behaviour flag so the output value is written after the direction
+change. This is a legacy quirk. New hardware must not use it.
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index cc668f84bf8b..fab6d19a559e 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -613,6 +613,8 @@ int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 	mcp->chip.owner = THIS_MODULE;
- 
- 	mcp->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(mcp->reset_gpio))
-+		return dev_err_probe(dev, ret, "failed to get reset GPIO\n");
- 
- 	/* verify MCP_IOCON.SEQOP = 0, so sequential reads work,
- 	 * and MCP_IOCON.HAEN = 1, so we work with all chips.
--- 
-2.43.0
+> diff --git a/drivers/gpio/gpio-regmap.c b/drivers/gpio/gpio-regmap.c
+> index 51b4d69b87403..0a44deae3d01e 100644
+> --- a/drivers/gpio/gpio-regmap.c
+> +++ b/drivers/gpio/gpio-regmap.c
 
+[ ... ]
+
+> @@ -271,9 +272,17 @@ static int gpio_regmap_direction_output(struct gpio_=
+chip *chip,
+>  			return ret;
+>  	}
+> =20
+> -	gpio_regmap_set(chip, offset, value);
+> +	if (!(gpio->quirks & GPIO_REGMAP_QUIRK_SET_AFTER_DIR))
+> +		gpio_regmap_set(chip, offset, value);
+> =20
+> -	return gpio_regmap_set_direction(chip, offset, true);
+> +	ret =3D gpio_regmap_set_direction(chip, offset, true);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (gpio->quirks & GPIO_REGMAP_QUIRK_SET_AFTER_DIR)
+> +		gpio_regmap_set(chip, offset, value);
+> +
+> +	return 0;
+>  }
+
+[Severity: Medium]
+Does this code silently ignore hardware or bus errors?
+
+If gpio_regmap_set() fails due to an underlying I2C/SPI bus timeout or NACK,
+it returns a negative error code. However, the return value is dropped in t=
+he
+newly added GPIO_REGMAP_QUIRK_SET_AFTER_DIR path, just as it is in the
+pre-existing path.
+
+Could this falsely signal to the gpiolib framework that the output pin was
+successfully configured, leaving the hardware in an undefined state and
+masking the error from consumers?
+
+--=20
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261009-cv75-gpio-=
+v1-0-5836bd438423@ambarella.com?part=3D2
