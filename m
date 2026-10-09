@@ -1,109 +1,130 @@
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AAB3F3296
-	for <linux-gpio@vger.kernel.org>; Fri,  9 Oct 2026 23:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F9C48C3FF
+	for <linux-gpio@vger.kernel.org>; Fri,  9 Oct 2026 23:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791587646; cv=none; b=W0mXYKKWeIOvVM8YuPG+USt9STnv4ddqI5YLnP43L+RjFM+nuQROPGJItgY4stGwZwmfEpHVgQzgd0l+3+x6ol7Q0RFVINDjbY6j/1vSf5LM+iXesNGGKsK2bUv6NPoF7XC6XzxRIjWMCHirnZwVH6Wzob5FVe0ihk2YsYCMT2c=
+	t=1791588383; cv=none; b=H1w3YuaBja1bf6p2Zwt7uaqSXlA2KX3dni6MIZYSWkPWi9qhP1KEkxpar17m/8nX/D9rnB0IN8n6vB7t+usjdEvfVPS82Ko/XsYg2GjjKrcsb/vn7QLCORBDRf5j9dfbmW1v7UUft6OPPuJpYt6wBE25db7zKgfszU6+zpPig4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791587646; c=relaxed/simple;
-	bh=3ZSLLTasKr76GEJrzVSyl+Bcz5oJzIQqfkWykCzS+oI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ddLV9R89eZUkwxUZYLFLXECFz4RU+HysD4mNRzvlEumE7HAt0NVR1PBctWzae2X4QMA5mmuWESsSTxguRCRBp1HvCTJvMFHFXE1gMvvVKmvI9KE/fvUmd5BaLKe4gCSVuTvrqWXpzlIIy78BvoSzNU5hBNNb2kJTgHMQ5WPk97c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=KW2B4n4B; arc=none smtp.client-ip=209.85.160.48
+	s=arc-20240116; t=1791588383; c=relaxed/simple;
+	bh=V5O8dJGvVTHLXZ79IY3HVKNJHoLUT5+l5KbQEv9k3cQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TE9pRL5YggSKvV+/GT4nsPmzG1meOwXrj4+/aIXu/xqgnbAu75AJ1mRzFfsmssrEoKAtWPEZImLHrQeviFXJQ47MlXi9lc7oly3XARgecdfB/7BGCN6L1/l2LhXXXCeLGbZTjB8nrVFofHbKSXy3kHkMz3IgE/8lk64wZo8NKeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=cBZzdgLt; arc=none smtp.client-ip=209.85.210.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="KW2B4n4B"
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-499f20c7054so213088fac.0
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Oct 2026 16:14:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="cBZzdgLt"
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-82395ae2ea8so238388a34.1
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Oct 2026 16:26:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791587643; x=1792192443; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=JEvNFYjzpJm+hMocPX+GyMaf5UQXS7PHxcnAyw39Bg4=;
-        b=KW2B4n4BDcBYuF1mXpP0ncaOy9a8vjalps7Gm52gK1XwhuSSqRn2K/dHZzTOogsNTW
-         8wY9tsSBNKpM4/PyH3nGXJD1uxHWjQbN6VjwgbX8D3CntW+S+u+rdseAz9dV1FEhErHi
-         MYgTa0/cBBPIT7FtAmZkoHKJM0LdooJTT/shmanq93u378fXytodA0MIaXkD6zmElZNB
-         f6QN7e5HTIk2R3F+sVljUTyYY7O+ac2BB2O/ePpiKPv7QsDyh1IGXB7rVgY7lpJRlv4C
-         FtKmvOBhtwhzVzIbjobxi7KnGr5NTOSuELsvJK+6tfzBxT2qzoI9rbVntnW4xtbgEGI7
-         N8Rg==
+        d=baylibre.com; s=google; t=1791588378; x=1792193178; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=NszE5JWc8g05JKm5j8AkIMR178Aewhhb4qePMLYWK8g=;
+        b=cBZzdgLtrX386sodsiaUUI4v7KHRDIGmkBu1KOxdblm8e4tXEFmDhkxqiDLFc/Wmc6
+         LQyqoixFbVt9czaVJXflhJuTH71aQzd5SaPu2iqdLJ89DM7gQtH5ObzRLsiErfkx6g8e
+         oPNNCyJrqhUNozlrBhAbxKAQC5eDZyA6KAxO03S5pgi07UweVEaDpA1gJRSl8f+u7R7D
+         3MmkwZHD0gfyTNWd2o3CZgD+TGkjtzNz/N3ISC1G77n23da7xUZB9ZHweLmSdbF61q5K
+         hXPQ7vzi1RrPl7kCzRG6IwJwGXQKyK+JiUkliwBVybKvFszzw4/rMn8xZXUq7e0hmhF7
+         RPfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791587643; x=1792192443;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=JEvNFYjzpJm+hMocPX+GyMaf5UQXS7PHxcnAyw39Bg4=;
-        b=T+DkIctR6vNEPWRlMN7AMavQEZeEn1RxoYAHNnsZIdEaXSig0+84JWEtmqRXxp+NAV
-         l2/RgCgQyC3wUKnFQ3wRvWUDgAguAFqFATU2L9ppb6kCtRaoPI5Bw7XcmX4SLYl4d5m2
-         kkUQW7+E9OpdHpEYA32oc9z+BqiX+8eRapU99+01XqUzlzEqb1gndTUrwfRx9WglC/Pt
-         qa5FD4IWwKqVODINdOaFhvLoqUY6k9ESwE9CJPtBCCVB3sucroLVPh0me8B9j6H19fIw
-         TBKRJw3QKGA5sUGQz+jd37NdwFAvN9C5g+9SXTxBITeUUR2slahPSGFxCICLQVbokXoh
-         JVXA==
-X-Forwarded-Encrypted: i=1; AKwUvBy8GY8BDKgHotLreNkG46JydsbXppg2FoztnFSfjYJ9WW7VcD+FfW8k/ohaw+gBnb8HXiyFS45EiStD@vger.kernel.org
-X-Gm-Message-State: AFq9FYJGL0k/0D0IFYuggCnJi45uorxd3bTtYdJLtv6Qc5XfgigWdXGW
-	6jf7ArliT+ObWs9kdwkWPHFctS/upXfsOQG4fLiXbrzeUC2i29iYlMFlcHvq6wkpwXw=
-X-Gm-Gg: AYBFou08TDLhwPB0f6eeb7ahNKMWRaC9Sg9ln+PReYykjEZJUWILPXP8P9sgtb/CKw5
-	yUJF/KL8ypCdj2nNcjYP5APZniKq4/P/2zilfvAQWbfLMGOfHMrq+B6om9SGCiZmG3Z/jJGRoZz
-	KPPY2wrWRgswo1HzcAKXzsJlwbztpTBKbViayl3DmUd0jfXEdnTP9enFWcLFJh7LrVFlY6iuJcc
-	33fjGCYNk74ItGWflqcntW9AAueFNs6Ungl6thCkmLeqZr/cN/upsIaClR/nGFJ659qFT8G/bo0
-	cdnWS84HzwbsX5e+yKXkG8Q+8AHBIxYn6tnJWi/qg0bUb7/+5RVBPmsWOYJS9s9R98iopnzIvPn
-	rwBLA7GNhe/De4Pa+1vG+M1cotnKOX479DUf0Yh3ZgWjwRAOBRIatllafllQ6wWVa2Rf7sUemrQ
-	6zUYtBTj//8XD6/pKP2bOqbmKpqP1nOYdY21bb9IYv7N4z1mcZUKIUxrfCANfLIK17iKiBaTwFN
-	N1HjQtoCCBUhBIoEWo+/RK+IVYtfINS4vdbVUPYL0H/BnwX
-X-Received: by 2002:a05:6870:6586:b0:49e:16bf:1f87 with SMTP id 586e51a60fabf-4a2a8a7ad2cmr2643174fac.38.1791587643522;
-        Fri, 09 Oct 2026 16:14:03 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:500:29bd:56f6:5ae7:35d2? ([2600:8803:e7e4:500:29bd:56f6:5ae7:35d2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4a2a8592e2dsm2982529fac.13.2026.10.09.16.14.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Oct 2026 16:14:02 -0700 (PDT)
-Message-ID: <7d542de9-0c87-4a1f-9d9a-48af8431cba1@baylibre.com>
-Date: Fri, 9 Oct 2026 18:14:00 -0500
+        d=1e100.net; s=20260707; t=1791588378; x=1792193178;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=NszE5JWc8g05JKm5j8AkIMR178Aewhhb4qePMLYWK8g=;
+        b=yir0ebJ7xhJx3gzuDUZxruK+c/OGt3F6LbTlKrcyrtVGFnhB/mK7czSg7qw1RSGksd
+         K5Ob7HsCMnA0Da+ovRi4JvxvxO2c7BKTaR2Rygp3kq3Woj4wzp5MsYn4GS2uVEz33Ukr
+         IKtcvr2ssOrwb/HIDDHpWRtVzVFj7reKJjhCZ3oVj+uAaNcttqedAv8cIv55AIfG2G3Z
+         OircIDp2lKbzcufw1UBYQEVuCNQXsruJLJZqz0JU7miWAIvEKjVRfH0fpMM1AyyIzUJn
+         1nTmFLjLc7E3mAMekcuiYabNf55DRPJ8Tn6yubgwZyLmSGKk/6scW6HipTHWuEI9fwVo
+         2H7A==
+X-Forwarded-Encrypted: i=1; AKwUvBzNbh8I+nqQQd3TRLXHsRkgdn2o01tuWkX2LCtpSyUeYtCGM/T5beL3+EV32a49QHtvoveSoZDueUrb@vger.kernel.org
+X-Gm-Message-State: AFuF++mnK9gxr3eoixbvxCL6AxV5fY7atPlsF/Okdf1TfTGRnKR6hlhM
+	JEeIPyhQ/7bW8686dVSBHkMD14OZXbHHomgzODDRNMZkdAvqa9DL4RyPn2uCVigWVk4=
+X-Gm-Gg: AYBFou1ob62TQpjaMhrUe+Q9mYcAgNWw05yFO4gBcjUld1dtFvoG9mbKF5qHsge9DJ+
+	+p3mRLdJqqFA/QltFAbR5FruDKuyUEiACQUtBtk7nAorOX34JlAiFR9PJi7zJuVPgiqBf4LKmBC
+	m6USul3+onQmb264fYIHLu+QVeifPql5HLTYp3po0KWumBKMR0DmM4ZEjwNBiCHYeH5Gyu0QjQx
+	oe8RN9Yq8GKdKTEi7HI4l+96w9G85wlNg0/uSMMzu3JFuE8vY3LpYi+kWnNXnc9NKUI/gQlF6cY
+	peZ/A2xz2erNlx/7f6+knAO+h6/f/etg2Buw4bwRjcXhgPEIKIWlVwXcjt8j9WbFH4TfO10Uckr
+	rjf41B/V1hCy3CGGC4HBdtYqZcEuax4DBrUlFyceAXytylVghCxS93WNcwgxLPITtp6YM5wMGT1
+	oF5EKboZkSqoi28BvZjGekf4bCBwXL2QVfajjOtiisIeXm4+5DE7PYbXyIhJXlHiLMDR2N7UWkG
+	4U=
+X-Received: by 2002:a05:6830:3892:b0:822:6f0d:d04d with SMTP id 46e09a7af769-83095a32c5bmr2862182a34.16.1791588378320;
+        Fri, 09 Oct 2026 16:26:18 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:500:29bd:56f6:5ae7:35d2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-83038f82468sm3293817a34.11.2026.10.09.16.26.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Oct 2026 16:26:15 -0700 (PDT)
+From: "David Lechner (TI)" <dlechner@baylibre.com>
+Subject: [PATCH v2 0/2] iio: adc: ti-ads112c14: add gpio support
+Date: Fri, 09 Oct 2026 18:25:50 -0500
+Message-Id: <20261009-iio-adc-ti-ads112c14-gpio-v2-0-3231a795fa63@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: adc: ti-ads112c14: add gpio support
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- Chris Hall <c-hall@ti.com>, Patrick Edwards <pedwards@ti.com>,
- Kurt Borja <kuurtb@gmail.com>
-References: <20260925-iio-adc-ti-ads112c14-gpio-v1-1-2a2b218ebf3a@baylibre.com>
- <20260926014620.3b07660f@jic23-hlaptop>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20260926014620.3b07660f@jic23-hlaptop>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/42NTQ6CMBCFr0JmbQ0zoggr72FYtGWAMUpJi0RCu
+ LsFL+Dq5Xt5PwsE9sIBymQBz5MEcX0EOiRgO923rKSODJTSJS3orESc0rVVo0QJiGQxU+0QXSx
+ yYzKbpxkixP7guZHPvn2vfhze5sF23Aa3RCdhdH7ezyfccv/8TKhQkSZDeGXTnPTN6PkpxvPRu
+ hdU67p+AeVkziHXAAAA
+X-Change-ID: 20260925-iio-adc-ti-ads112c14-gpio-197bb4c70411
+To: Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Linus Walleij <linusw@kernel.org>, 
+ Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, Chris Hall <c-hall@ti.com>, 
+ Patrick Edwards <pedwards@ti.com>, Kurt Borja <kuurtb@gmail.com>, 
+ "David Lechner (TI)" <dlechner@baylibre.com>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1281; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=V5O8dJGvVTHLXZ79IY3HVKNJHoLUT5+l5KbQEv9k3cQ=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBqyXgDfeWsuBRQjv+CT9pO6s6OEFyD676vZm2ga
+ GSJXkFPbrGJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCasl4AwAKCRDCzCAB/wGP
+ wGdZB/0WnAcqSkRS2vhMq+W0Jowrz141X8ZHRI7AtfaLaNZm0BmDq7zZx4o7jDMMen2Xz7t2XEx
+ yWzLGWlkVf66Uo6v+smNKp4xQ2fyrOyvHf2TT2FpAZcgvnjLRgUI/4gH0r3zDs2G2m+a4L6e/Lo
+ PXl2hGW91KM7HUi9+x42I2tUS5U+GaO/yPP4fA+ykst6UpYUv8jnYYcmqOk5WoO94SJVuyo0kPb
+ KZZlr4mKt2XxTWbWdqTJG3JJH26wGo2m86YNMTHA9FIzqd51bwESDw3+TlEAnQvnsIGgOJ4cveW
+ g5mNPraa1GVb80IW0/7L1yw3FGBa/48CVOpy+8DqhsJ2LAzU
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On 9/25/26 7:46 PM, Jonathan Cameron wrote:
-> On Fri, 25 Sep 2026 16:50:47 -0500
-> "David Lechner (TI)" <dlechner@baylibre.com> wrote:
-> 
->> Add support for using the AIN4/GPIO0 to AIN7/GPIO3 pins as GPIOs when
->> the gpio-controller property is present.
->>
+Add GPIO controller support to the TI ADS112C14 driver. The first patch
+is a small cleanup to make the GPIO register field macros usable with a
+GPIO offset. The second patch adds the GPIO support.
 
+Signed-off-by: David Lechner (TI) <dlechner@baylibre.com>
+---
+Changes in v2:
+- Split out GPIO register field macro changes into a separate patch.
+- Make ads112c14_reserve_ain_pin() return ain and use it in assignments.
+- Shorten names of GPIO reservation helper and mask.
+- Set reserved bits directly in struct instead of copying from probe.
+- Use non-atomic bit ops.
+- Drop unneeded bitmap_fill() in init_valid_mask().
+- Add GPIOLIB dependency.
+- Link to v1: https://patch.msgid.link/20260925-iio-adc-ti-ads112c14-gpio-v1-1-2a2b218ebf3a@baylibre.com
 
-> Even better if we give that helper and the mask shorter names.  resv probably enough for
-> reserve for instance.
-> 
-> 
->> +				ads112c14_reserve_gpio_for_ain(gpio_reserved_mask, pair[1]);
->> +
-> 
+---
+David Lechner (TI) (2):
+      iio: adc: ti-ads112c14: parameterize GPIO register field macros
+      iio: adc: ti-ads112c14: add gpio support
 
-I tried the shorter name, but didn't like the way it looked (abbreviations
-didn't seem immediately clear what they meant to me). It only saved two line
-wraps anyway, so I kept reserve(d) spelled out everywhere.
+ drivers/iio/adc/Kconfig        |   2 +-
+ drivers/iio/adc/ti-ads112c14.c | 191 ++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 171 insertions(+), 22 deletions(-)
+---
+base-commit: a3b3580713f3ac5a32dc2874ee546828977a1d68
+change-id: 20260925-iio-adc-ti-ads112c14-gpio-197bb4c70411
+
+Best regards,
+--  
+David Lechner (TI) <dlechner@baylibre.com>
 
