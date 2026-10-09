@@ -1,159 +1,142 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F141F49B5CB
-	for <linux-gpio@vger.kernel.org>; Fri,  9 Oct 2026 09:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371B34C9DFC;
+	Fri,  9 Oct 2026 10:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791538236; cv=none; b=WujZi4LUsA4PjG0my8Y7StTEkU4IkRd+ENQ95bdZ+3rNSPiTb6Z92BJitGD4FM2prMsTI2xJv3oEQbaUUk6URUpvv341pKZmox1CknzD8W8vYqWVM36jOkOBdt8tUzkWFu80aQRf+L4cASWCSpXXh7cI3tIDCF+A/v410Vcgjnk=
+	t=1791543580; cv=none; b=QIrWTCfe5fPivwBw445YUbfM8GGNmakAengroJunfCs5JyBJvNzOqXQ5rj8zZuk/uXjHNoQ+7fCQHvR7c2LlRtJTfNVU4trFX2PIbqNqvoRCgDqClxbgdXPP0gaJQhPlgUohshmg92QUcRRW7KStih5Fx+PhoyScN4Hzs59o5kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791538236; c=relaxed/simple;
-	bh=0fZcDdjzml995T9oZE7SVaCVuqTaThJLBP842zH3xww=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IbyIuHd7RQnB+Co56LS7pSOLqRHtrT2lXcPYHC0bJPaMIZPnrCJHHt82bEpZhA3SHLw8faJ9tpv6u9LWIA/JzD6dvaru69StZOBTn9QwMdFbhcyZJgU/KjzK7T5LyKIIcdf8IEXKJfoO3+1locdRUDGmkTcO2QfAROCmBfp/+zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WT5YmW+C; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1791543580; c=relaxed/simple;
+	bh=6qmV5fP/ovYkMChG07yhC6ChgksYfCJp8P8sxHcAz/c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=PrMlX/lTyWT4TKHSDAbaqr5XBylhRVBBS8JKG0V+h31lM1/YXCiDnoMa/s8K1UTLLDsbJalaI8MWxXJ5Vduep9JXSOWwxwQl4cPvYdtYNEplOgdylrliUguawMSLPaDCbGFv9B1ZaXvJmjMZw6CYnRwWUdOIieO6OUAXH5hnozA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEIxy9+4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WT5YmW+C"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4956869750eso23196795e9.2
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Oct 2026 02:30:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1791538233; x=1792143033; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:content-language:references:cc:to:subject:reply-to:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=ySxG2l0k4bpp/Tb+8P52vg4ThV1MvpjerUMZY+o89W4=;
-        b=WT5YmW+CZri0kY3T6LyvGNKYhdk4kRw0luCH+HrEDUL3TcZPuM34HBrW6iX0I+Oide
-         JRys8xQCqUPdQJwT0w998GuJFLJHAX+WTEG4aNjjVxeFXJwwHb9ozoc5fRvTHpdQ/9Mk
-         91EM40r0e3ShZy4FAiV32Ihl9k7aHOTZhOG08vmb4Tx9uU/5esQnBpBBf+2dFxeOGnLd
-         gkkbuO7BfBLE0FOUP96+n7IrLT/Q7M7HlJdeHZ+z73M2ExX5ZPXjHSK0KUEnDO4+3TXZ
-         A79XEpizubWC3sm0n4EkJcITztUww0ZWNBNIp2ytYLAQLSj4WGk+tVTcc9RAYT8IXiYp
-         gIyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791538233; x=1792143033;
-        h=content-transfer-encoding:content-type:in-reply-to:organization
-         :autocrypt:content-language:references:cc:to:subject:reply-to:from
-         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=ySxG2l0k4bpp/Tb+8P52vg4ThV1MvpjerUMZY+o89W4=;
-        b=C2ZOdINZnlV7BpszpUQWgvhy8Xw+Liki7e590G1JCpYKJlOKWn+EwJtnoJIkcjhxUX
-         HyfjMg2K8S31Eo8gSdhdlPlukV6NqRRf9QO2Y/qi2HUU4vGN5/UQwSPbASrPqderhkff
-         SlebTteMW9bMapB8atv4NsP5D2KXfXPzxLdZx3xX5BRkptO8Sj7hwC0cI9hFFeaWpHjM
-         rDSQ1UjL/kU+m07t49BTmgB4zfGqezBsDqHuvP9GOvC8OMMu3HfjLPSaCSkvArGb7bxE
-         eavzT+lGYFkK22PulJa1cno9SveuVhygl+Ktjw05WxxKPsvLvh4odgviXLv+SHsG+ed+
-         cAuw==
-X-Forwarded-Encrypted: i=1; AKwUvBwwwMfAZ53DTzkaQMwM2h6un6VxaqQlEscYdmZRVcoX1w6VEmBYlbWvtsrcEZmUea27m7eFqjcbJDCd@vger.kernel.org
-X-Gm-Message-State: AFuF++kql6EfL9h/mexdKEAS4mUWCxIX3t+YQCbF+2NIZxoxYyM5cHAg
-	dD93wouh9UrD79wH/iJEkmZTqIviuAQqTGqLdOvsX6xoiHI3rAiXshB+lXCo84qcF0k=
-X-Gm-Gg: AYBFou1SXjSD/0KK1/JiDeYmWyie87VX/fJGzU990ik9+aaBJEPEKf4SEZ7oHhJde1L
-	JXxkrxyM2Zn0wuvDVYfIVLn+ZixqX6ZAs2UixgI4OCb6pDetl1fLLoMpRt6sK/u53cyI+7TJLAD
-	4Xl+9Ow4hE/Xylio86TPalvPmMrqgFz48mKKEoI3ZSIjmi111I7YyARY7CAgwVH9ACVeU9+hA4n
-	q5HwertTAHGD7/VUTdTq3PZLBVVabVK1fR/7x9GpilLIAC6+SP4W8e0RgK4qwbAMh+cV8Eeiflp
-	Uc++iHrfJUQ2/jQ210ymehO3Kgffs1iJcuCM1m+x4ft/0J+s49HhI40hEl99ZOgzwTBwX3nHRbg
-	aicavsxkiFb4qYNBAuggJZO73Zz23YjcvOqr/fVHE4bIUYvraP0bcU3PbTV27gJnEgr6BsUMvyb
-	+rI32uTF2een0Ct5pqNw120msT+JS/UbErryXS+HRVcjWKvmicEfNyG5YDoU+03bAP2RBeAQR1A
-	0EqwSw1dFHW4yobFc8Ncij1emLq69I=
-X-Received: by 2002:a05:600c:46cf:b0:4a1:7e1f:21bc with SMTP id 5b1f17b1804b1-4a18e4d6636mr23240285e9.29.1791538233076;
-        Fri, 09 Oct 2026 02:30:33 -0700 (PDT)
-Received: from [192.168.151.76] (90-182-211-1.rcp.o2.cz. [90.182.211.1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bf35930sm43922135e9.13.2026.10.09.02.30.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Oct 2026 02:30:32 -0700 (PDT)
-Message-ID: <6b9cdfd7-9f01-4ed9-a4d7-6b2949452b6c@linaro.org>
-Date: Fri, 9 Oct 2026 11:30:31 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEIxy9+4"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C2AD2C2BCF5;
+	Fri,  9 Oct 2026 10:59:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1791543579;
+	bh=6qmV5fP/ovYkMChG07yhC6ChgksYfCJp8P8sxHcAz/c=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=HEIxy9+4zeNPdq9qs44GB56GQavy/t14rjVo0RwGjA0/XfB2eSXiZWf5MV0JYf5j6
+	 xlFVzFJ2WIDHK3QSmf6vzQw7e2n9xyZYAsfruyM7dctLeHN/7E3fpu4CdojaA8zmLQ
+	 QKz7y8wK6bHH+0IZHR0jIB9Rx9ZpAjJoDKtHkrfyUnJRPV27uQursIek7B+YVOjPyy
+	 O5E4uafPq4TErBcSoTxsOba9sJ0zpg30BxoggYOzlZWwpvVhUpctkUCCd9xjzRcy94
+	 0DRptuDwXh+SLIGT4ABuZ8EcFWAcBngQWd/TZcO16QqdxleguNaXiMH/IKDTv+7Jk5
+	 V6evEsyZNni8Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D44CA6019;
+	Fri,  9 Oct 2026 10:59:39 +0000 (UTC)
+From: Long Zhao via B4 Relay <devnull+longzhao.ambarella.com@kernel.org>
+Date: Fri, 09 Oct 2026 18:57:54 +0800
+Subject: [PATCH 1/7] dt-bindings: gpio: pl061: add Ambarella CV75 variant
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH v2 2/4] drm/bridge: simple: add Chrontel CH7218A
-To: Xilin Wu <sophon@radxa.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Bartosz Golaszewski
- <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
- Stephen Chen <stephen@radxa.com>, Junhao Xie <bigfoot@radxa.com>,
- dragon@radxa.com, Daniele Briguglio <hello@superkali.me>
-References: <20261009-q8b-dts-v2-0-eda11e5dea8b@radxa.com>
- <20261009-q8b-dts-v2-2-eda11e5dea8b@radxa.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20261009-q8b-dts-v2-2-eda11e5dea8b@radxa.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20261009-cv75-gpio-v1-1-5836bd438423@ambarella.com>
+References: <20261009-cv75-gpio-v1-0-5836bd438423@ambarella.com>
+In-Reply-To: <20261009-cv75-gpio-v1-0-5836bd438423@ambarella.com>
+To: Bartosz Golaszewski <brgl@kernel.org>, linux-gpio@vger.kernel.org
+Cc: Linus Walleij <linusw@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Long Zhao <longzhao@ambarella.com>, Long Zhao <zl020895@163.com>, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1791543577; l=2127;
+ i=longzhao@ambarella.com; s=20260730; h=from:subject:message-id;
+ bh=BkO6pO1YpBBieaeL0yXFXs09zVgjmaMwMQO7kuG29w4=;
+ b=KpPiWFmqKcQNCeK2ynO0/hk6+stoqtqO0pM9jQTs9BILta6+GXNvmRnw9mnB/+mmvmztVvk4d
+ iEpglY3BpWCAoyl8c5SajRUA7RHyi0kcmvHQyJupuN8ogar8P6I9w3Z
+X-Developer-Key: i=longzhao@ambarella.com; a=ed25519;
+ pk=/xGhPTOX0/eYsyTWzyjjgAIW1Z/YD+IlnOnvcdRozow=
+X-Endpoint-Received: by B4 Relay for longzhao@ambarella.com/20260730 with
+ auth_id=903
+X-Original-From: Long Zhao <longzhao@ambarella.com>
+Reply-To: longzhao@ambarella.com
 
-On 10/9/26 09:55, Xilin Wu wrote:
-> The Chrontel CH7218A automatically boots its embedded firmware and
-> operates without host-side configuration.
-> 
-> Add the CH7218A to the simple bridge driver and expose its output as an
-> HDMI Type-A connector.
-> 
-> Tested-by: Daniele Briguglio <hello@superkali.me>
-> Signed-off-by: Xilin Wu <sophon@radxa.com>
-> ---
->   drivers/gpu/drm/bridge/simple-bridge.c | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
-> index 3fba7002322e..fab793fb12b5 100644
-> --- a/drivers/gpu/drm/bridge/simple-bridge.c
-> +++ b/drivers/gpu/drm/bridge/simple-bridge.c
-> @@ -275,6 +275,11 @@ static const struct of_device_id simple_bridge_match[] = {
->   		.data = &(const struct simple_bridge_info) {
->   			.connector_type = DRM_MODE_CONNECTOR_HDMIA,
->   		},
-> +	}, {
-> +		.compatible = "chrontel,ch7218a",
-> +		.data = &(const struct simple_bridge_info) {
-> +			.connector_type = DRM_MODE_CONNECTOR_HDMIA,
-> +		},
->   	}, {
->   		.compatible = "mstar,tsumu88adt3-lf-1",
->   		.data = &(const struct simple_bridge_info) {
-> 
+From: Long Zhao <longzhao@ambarella.com>
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+The CV75 GPIO is a modified PL061. The basic registers have the same
+names and roles (DAT/DIR/IS/IBE/IEV/IE/MIS/IC). Each bank is 32-bit
+and 32 lines and adds MASK and ENABLE, so it is not
+register-compatible with the ARM PL061 and arm,pl061 must not be
+used as a fallback.
 
-Thanks,
-Neil
+The AMBA core matches the PL061 driver by PrimeCell ID, not by the DT
+compatible string. These blocks do not implement the standard PL061 ID
+(0x00041061) in the ID registers, so arm,primecell-periphid is required
+and is fixed to 0x000e8061; the driver uses that ID to select the
+Ambarella layout. gpio-ranges is required because each bank is a slice
+of the SoC pinctrl pin space.
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Long Zhao <longzhao@ambarella.com>
+---
+ .../devicetree/bindings/gpio/pl061-gpio.yaml       | 25 +++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
+index 4d970e55104b..c22dd8a1d2c1 100644
+--- a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
+@@ -15,7 +15,9 @@ select:
+   properties:
+     compatible:
+       contains:
+-        const: arm,pl061
++        enum:
++          - arm,pl061
++          - ambarella,cv75-gpio
+   required:
+     - compatible
+ 
+@@ -25,7 +27,9 @@ properties:
+ 
+   compatible:
+     items:
+-      - const: arm,pl061
++      - enum:
++          - ambarella,cv75-gpio
++          - arm,pl061
+       - const: arm,primecell
+ 
+   reg:
+@@ -64,6 +68,21 @@ required:
+   - "#gpio-cells"
+   - gpio-controller
+ 
+-additionalProperties: false
++allOf:
++  - $ref: /schemas/arm/primecell.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: ambarella,cv75-gpio
++    then:
++      properties:
++        arm,primecell-periphid:
++          const: 0x000e8061
++      required:
++        - arm,primecell-periphid
++        - gpio-ranges
++
++unevaluatedProperties: false
+ 
+ ...
+
+-- 
+2.34.1
+
+
