@@ -1,64 +1,76 @@
-Received: from sender-op-o16.zoho.eu (sender-op-o16.zoho.eu [136.143.169.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CE85695;
-	Fri,  9 Oct 2026 21:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.169.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791579656; cv=pass; b=dwUapIiGnXsDzI5zRl1loMd88xf8LwKG45IJjqKyF4WDcsPNsilolbtsDatoSsQAn5JbvcpLeXBM7Blw5pYJXB5mbbGXCoN8i58g+jlKVdNY1cGnkE1gwpB1YHBMlItq/RKKbfMDMufdFycHLfd+gLOoGrHg8KHsHG1q2S4XGDQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791579656; c=relaxed/simple;
-	bh=THHPlO4JC0tD1q2XvL2U8lkPubxMa3QgqvsQ1Oyx/PE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Cqnd/7MvZRNAl4ypUjNcrFCvA6GjKs+uNg1rmT//qxPJXZWn63mv4nMKc3rXRcszkLPSN+Bw/XcJk5z0dZt/+efv1YkX1q05GOVF0tNGENXTIu4zQoV/FW6rHK2isBVZobDKURmoHruj6eKdXU1lj+wDn9sfUper/VpX/Yy7p7w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iav.lv; spf=pass smtp.mailfrom=iav.lv; dkim=pass (1024-bit key) header.d=iav.lv header.i=iav@iav.lv header.b=dwF5+Bw5; arc=pass smtp.client-ip=136.143.169.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iav.lv
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iav.lv
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDDB3D9674
+	for <linux-gpio@vger.kernel.org>; Fri,  9 Oct 2026 21:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791580717; cv=none; b=SBxSyThgV2uWbFv27tyrbrRg2MALW0JsMHTk+8pEq+NezaeKI+7miiapbiyCFiy+6tHp1dfusgmNUj06oJ1Ey2iOotRn0mP4hwPyMSuqm8fNi2rbspp2VbP1ajx4Jyeo6Yr5EARMv+ATbiY+7yWjatxSEcl1Lm1jvYq232d0sw8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791580717; c=relaxed/simple;
+	bh=FeULK5vu/iul2r5gyqoYMX7h+lAsKEhGANssEu+hq3M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HjsqsKbsHvcYp/cw1iDsjS0STP44Lh5ioo23V8zl2bM3NnkFZEnMRRURZNnDhB0/9y0pW4bZIOIKIliNZWlOoj2opvwer6gByRRpSDQgf6pzo9saalTaXXJk0ieh8Zq353lDYj3e9XxjHtl4ZQDd4KyZP6nKoAYaegkwICrjUOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZ19EhHm; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iav.lv header.i=iav@iav.lv header.b="dwF5+Bw5"
-ARC-Seal: i=1; a=rsa-sha256; t=1791579632; cv=none; 
-	d=zohomail.eu; s=zohoarc; 
-	b=ksf6vDbJanbUo8MV9/Kflb+kRZK0McKKlQ3ekDEJA5lGSqN86UEdjMSYeWR/7basWGl1g5VllMTenATsLwgB6ExIML0NLpkaQVIiMx1DanLLthK7xNZaitNq6usE2J6fggvTWdyb9JyTLhugpDqRNTzIpqP+CYCul3PZkbdAcV8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.eu; s=zohoarc; 
-	t=1791579632; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=THHPlO4JC0tD1q2XvL2U8lkPubxMa3QgqvsQ1Oyx/PE=; 
-	b=dyrsQNiFmdEpkAdEMyc3sM4ythwbXCJ+PgsKeDP5QJ4VHnQhIcZMB3oSnGLRK+r4x+AYIDITFu/ntc34fiSwMoiLSf9InIfV5ezmpAOVkZ4TQHiegt+bpHKZ718znXGGHAW+Qr0DBq2htAQaf2ZnlQd3L+lnuGBMGs/P1ndGwS4=
-ARC-Authentication-Results: i=1; mx.zohomail.eu;
-	dkim=pass  header.i=iav.lv;
-	spf=pass  smtp.mailfrom=iav@iav.lv;
-	dmarc=pass header.from=<iav@iav.lv>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1791579632;
-	s=zoho; d=iav.lv; i=iav@iav.lv;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=THHPlO4JC0tD1q2XvL2U8lkPubxMa3QgqvsQ1Oyx/PE=;
-	b=dwF5+Bw5orUlO2EFFBkqgxUyCPAsSK4BDAjNgDg0c4wcEHuHWszUIJK7twx8odsL
-	oI9XEciz8hE12Of+sMxsO1DltYddRDzmJFOYQK+dhEc6sZE9KCWaIGEIfsnrJ5SRjwN
-	d3Lgz4j/MMo0AMsyzcr4I+IfIbpDd7h0qGIYaiNM=
-Received: by smtp.zoho.eu with SMTPS id 1791579629038635.377955910694;
-	Fri, 9 Oct 2026 23:00:29 +0200 (CEST)
-From: Igor Velkov <iav@iav.lv>
-To: sashiko-reviews@lists.linux.dev
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org,
- robh@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- Igor Velkov <iav@iav.lv>
-Subject:
- Re: [PATCH 2/2] arm64: dts: rockchip: Add the GPIO expander to Kobol Helios64
-Date: Sat, 10 Oct 2026 00:00:11 +0300
-Message-ID: <179157961155.2005704.11909242880150287048@iav.lv>
-In-Reply-To: <sashiko-outbox-166062@kernel.org>
-References: <20261009-helios64-pca9655-v1-0-673ee4432650@iav.lv>
- <20261009-helios64-pca9655-v1-2-673ee4432650@iav.lv>
- <sashiko-outbox-166062@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZ19EhHm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B58981F00893
+	for <linux-gpio@vger.kernel.org>; Fri,  9 Oct 2026 21:18:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791580715;
+	bh=VO8929DcFxWMfDXWuB+aNiFWj3RVGm5opqvRhJip1dM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc;
+	b=KZ19EhHmkFoU9O/scMHv0XQVVS4qC7DpyvPZAeoVPhacyUTz7LLNkPwtIpVAyjSlA
+	 3KGi+fZO7F2L0xN5AN5+gcjRCEbeoTQEmIF3Tjyse6S13ri8stvD62zV16xZdj6UjU
+	 FmqrUOCxoGiGr0Zi+wKHNIk4mkkpDG/ziG8HpO1u56rpYqjVrdcJEBH2Ob6o9nhOx8
+	 0xZeG2Bnv4d8LCRNQ50TrA4RLPX75vTDhhJby1D9JVqCVcm80bYPTgpbUrbf+4nD0d
+	 l6CfeRJUtgHRnhrEHdD10ZHpBDqMVfF7Vg/3lAyglCfqEdBnCDd5Yw/yaXjtjYoMuX
+	 xAQ25W2WHeVxQ==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3a9cc82ef31so2151291fa.3
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Oct 2026 14:18:35 -0700 (PDT)
+X-Gm-Message-State: AFq9FYJnH/CIK0UUndoAqCCd7O24DifM48PVlhUTeYhBEbIiRn7elmx7
+	Gsamby4NZONSt5C9wqNOiVbZQI52+IP1JrdKkhlpKsqJb33urmgYEgGRLiFyEZNf4bsKqewy+iE
+	cCv6czH3iPwZG7fvkwT5dcPT4e8XM42M=
+X-Received: by 2002:a2e:b8c7:0:b0:3a9:7160:e83a with SMTP id
+ 38308e7fff4ca-3a9c5385024mr8277121fa.17.1791580714450; Fri, 09 Oct 2026
+ 14:18:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <202610092056.6NsErH0t-lkp@intel.com>
+In-Reply-To: <202610092056.6NsErH0t-lkp@intel.com>
+From: Linus Walleij <linusw@kernel.org>
+Date: Fri, 9 Oct 2026 23:18:22 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmQAnxhqkzfaC2st3ZF71Bodgg27HhEgGBENi-+kZhs8Q@mail.gmail.com>
+X-Gm-Features: AclHuK_LVk9AcZq5Ziw1kalFCEzJ4hebe3yuXUY47EWWhqqXahWC8POAc8e9mOI
+Message-ID: <CAD++jLmQAnxhqkzfaC2st3ZF71Bodgg27HhEgGBENi-+kZhs8Q@mail.gmail.com>
+Subject: Re: [linusw-pinctrl:devel] BUILD REGRESSION 2430546e8d00b1a00fa85f71b666777bc9e3db27
+To: kernel test robot <lkp@intel.com>
+Cc: linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Right, 2/2 depends on 1/2, which documents the pair; with both applied
-dt-validate on the built DTB is clean. So 2/2 should go in after 1/2.
+On Fri, Oct 9, 2026 at 2:49=E2=80=AFPM kernel test robot <lkp@intel.com> wr=
+ote:
 
-Igor
+> Unverified Error/Warning (likely false positive, kindly check if interest=
+ed):
+>
+>     drivers/pinctrl/sunplus/sppctl.c:980:1: internal compiler error: in f=
+inal_scan_insn_1, at final.cc:2823
+>
+> Error/Warning ids grouped by kconfigs:
+>
+> recent_errors
+> `-- csky-allmodconfig
+>     `-- drivers-pinctrl-sunplus-sppctl.c:internal-compiler-error:in-final=
+_scan_insn_1-at-final.cc
+
+"Likely" a false positive is an understatement, it literally says
+"internal compiler error"...
+
+Yours,
+Linus Walleij
