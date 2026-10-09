@@ -1,88 +1,109 @@
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077C32D8391;
-	Fri,  9 Oct 2026 05:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B4F42AF9B;
+	Fri,  9 Oct 2026 06:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791524758; cv=none; b=Vmoi/H3Tu/LKYNhcEg0qYPmiVf1i9luRn3e2qnYZ0yH5CIV8UDEwDnM+v2njsMCNQmumX+0oSxhhiM+CPX41CH2wzR6RNt+VleVXkXcbuCryvwh7UM1hVMUraklJZIJvMccxjA2sK9RWv9jnngIJhKmaDmKKv/psZEXIWBPzDH0=
+	t=1791526025; cv=none; b=tSNMNi854KoU1+RLTCUEvNVmBmQ9K9naeofeGM2Gi7X6eHJB7y06fpsfVxR8uokaeJchJMWZrYC6PwK9oMMr6MuEEjoCmpBN57urN17mN6NaRKCSemQ1rFWqltsv63aIkkPKFuK7K01GPmXYmytD39OPJzYx/wYMWt7Ol1Z25BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791524758; c=relaxed/simple;
-	bh=lyVy0pfJ6R6GUzVQef0B/Ra6Q+/nG/TdqyVcbWcL8Ig=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q7qpNgVAf+tan5YZz0+WBtYE0abfMfmwBOWEN408omdENfClS7tv+wbvVBSb0wXsMcTjutuawmjQJ8etgAjvdbOZGwBIAuZRptqqEalSezk1MxSBhaF6tsuXXfOQgxUHBKsjq1PRZrIfGWt/jdQIFn3KKL9Iyi3UhZYVNZFnsoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from fc87d0ffb700.home.arpa (unknown [36.110.52.2])
-	by APP-03 (Coremail) with SMTP id rQCowAB3gD6Rf8hqb1IdCg--.22265S2;
-	Fri, 09 Oct 2026 13:45:53 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: Linus Walleij <linusw@kernel.org>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: core: fix pin name leak on radix_tree_insert() error path
-Date: Fri,  9 Oct 2026 13:45:56 +0800
-Message-Id: <20261009054556.3151123-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1791526025; c=relaxed/simple;
+	bh=Phb4dHibtKdbOqzaPc1gD95N0uipgl57XLq6/ofO/c0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ArzdhMiOrL7LqSmDlhJdK4jgIWvlrQjJ8hP3wJ9gB1dXIwAPirMn2BfItYtJqQUPe/LKs5s3jhxi94dRKn2IBrC6t9Jr6LB8mV1wbwwWK3GRoEH6f8SHWDeVFiBabKSTNtGVfsFe9JfE8ayieqoCeIuQ0xcU2D9LQFT1al6b6mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSErbQ8l; arc=none smtp.client-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSErbQ8l"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E1141F000FF;
+	Fri,  9 Oct 2026 06:07:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791526023;
+	bh=OctUAXDPvUUqnQ5ahpqmNhSfJYP5MUZ5+RP5C0uhZuw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=YSErbQ8lf7gyDxCkWPCasNcpKZTiv8JY7s3eOp2RZweBQrVTlFQbPjLzhI25Kmf8m
+	 57hOYxXLyeF+oJ1TyogoN7EAtVMG0pRM5fljRUOW8DyKrjl2zbpOXyGe7EHwkhHAH4
+	 TvneSL9XUjegH6UOevIMa9bZXt2ngYSKnmJaxfYJtNEwjLLhrhTTUhGNKoS/jBUGKn
+	 6ZXc9QY9tnxNgY5EOPkwK9Edwm53smbACv99eIkkaHSG+T3ot9yaSRtyiESI+E64Qy
+	 kAZXTjZEEWuzGL/DnlKDFW64VlttbmTeunrRNFmG4lTZUHzaykNoj+OkOn3BTsAMcP
+	 QcISnRWEElEyA==
+Date: Fri, 9 Oct 2026 08:06:59 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Haotian Zhang <vulab@iscas.ac.cn>
+Cc: linux-kernel@vger.kernel.org, Sergey Shtylyov <s.shtylyov@omp.ru>, 
+	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: core: fix pin name leak on radix_tree_insert()
+ error path
+Message-ID: <20261009-lucky-lively-binturong-57ebe3@quoll>
+References: <20261009054556.3151123-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAB3gD6Rf8hqb1IdCg--.22265S2
-X-Coremail-Antispam: 1UD129KBjvJXoWruF4fKFyrJF18CFWrGr1kuFg_yoW8Jry3pF
-	ZxJFWYyr98Wr42va98Ja47XFy3Can7uryxGw4v93y3AF43uFyqgFWYk3W0gF4DCrWrA3Zx
-	XF4rA3y3uw15ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyvb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwV
-	C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F
-	4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l
-	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU8SoGJUUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwgPA2rIaDU-ZAAAsn
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261009054556.3151123-1-vulab@iscas.ac.cn>
 
-pinctrl_register_one_pin() allocates pindesc->name with kasprintf() when
-the pin has no static name, and marks it with pindesc->dynamic_name.  If
-the subsequent radix_tree_insert() fails, the function jumps to the
-failed label, which only calls kfree(pindesc) and never frees the
-dynamically allocated name, leaking it.
 
-Since the insertion failed, the pin is not in the radix tree, so the
-caller's pinctrl_free_pindescs() cleanup cannot find it and cannot
-release the name either.
+On Fri, 09 Oct 2026 13:45:56 +0800, Haotian Zhang wrote:
+> pinctrl_register_one_pin() allocates pindesc->name with kasprintf() when
+> the pin has no static name, and marks it with pindesc->dynamic_name.  If
+> the subsequent radix_tree_insert() fails, the function jumps to the
+> failed label, which only calls kfree(pindesc) and never frees the
+> dynamically allocated name, leaking it.
+> 
+> Since the insertion failed, the pin is not in the radix tree, so the
+> caller's pinctrl_free_pindescs() cleanup cannot find it and cannot
+> release the name either.
+> 
+> Release pindesc->name on the failed path when it was dynamically
+> allocated.
+> 
+> Fixes: ecfe9a015d3e ("pinctrl: core: handle radix_tree_insert() errors in pinctrl_register_one_pin()")
+> Assisted-by: DeepSeek-V4.1-Flash
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+> ---
+>  drivers/pinctrl/core.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Release pindesc->name on the failed path when it was dynamically
-allocated.
 
-Fixes: ecfe9a015d3e ("pinctrl: core: handle radix_tree_insert() errors in pinctrl_register_one_pin()")
-Assisted-by: DeepSeek-V4.1-Flash
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/pinctrl/core.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 1675dd36bd5c..3a1d1ff871ef 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -249,6 +249,8 @@ static int pinctrl_register_one_pin(struct pinctrl_dev *pctldev,
- 	return 0;
- 
- failed:
-+	if (pindesc->dynamic_name)
-+		kfree(pindesc->name);
- 	kfree(pindesc);
- 	return error;
- }
--- 
-2.25.1
+Multiple things here:
+1. Your team ignored completely previous feedback.
+
+2. You use multiple identities with this email, thus I actually doubt we speak
+   with actual person.
+
+3. Finally, same feedback:
+You sent multiple independent patches, to multiple independent
+subsystems. The amount of these patches clearly suggest this was
+AI generated and most likely not tested.
+
+More importantly, you sent all this work without properly organizing
+relevant patches into patchsets. This makes reviewing difficult
+and might cause multiple reviewers to address the same issue.
+Replying to the entire set is impossible and requires handling each
+patch independently, instead of applying or discarding the set.
+Maintainers also won't see the bigger picture of your work. Quite
+worrying.
+
+This is on the verge of hostile patch: bomb us with so many
+contributions, we won't be able to handle them in efficient manner,
+like responding ONCE to ask you to slow down.  Considering all this
+is untested and LLM generated, I have even more doubts whether this
+should be considered for review.
+
+Please read kernel documentation BEFORE posting more work. It will
+explain you how to identify subsystems, how to organize your work per
+subsystem (so a patchset grouping multiple patches with a short cover
+letter), how to document usage of LLM and how what you should not do
+if this was posted in a good faith.
+
+Best regards,
+Krzysztof
+
+
+
 
