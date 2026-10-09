@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE9F386441;
-	Fri,  9 Oct 2026 11:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9847A4CC631;
+	Fri,  9 Oct 2026 11:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791545547; cv=none; b=gvYJ144lX0kJHOsJkjl3J8JeVZ+dXlVAMRT0HShxhZC+n0M6Liaar/dvgtLX+kxat5HQJrbo6dJjwG7aAse5jLYwTU7/NJbuFO40GX6IHt/CLkVBaTH+L7EkRZ+zj43iLo5+nCb1+GzxrGN0UVD27abE3NtpcuUUHz+rA+ScSww=
+	t=1791545548; cv=none; b=A5wn1dJNDPPZ77Jh4iUeHQwpYlmnqkBX6UbQCxAmIDbt+JPX/VyGdeWnRm4QvvB28uaO4ixITwzvihjegrXeJnpnz8PvUfri+c1EpFChD+U8d3ec6MfJjANp0EOe0zC2k3kdmSwe1i3VYLZFUTPBS1tbk7iNfDwqTF6ld2VY6mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791545547; c=relaxed/simple;
-	bh=E69jiQ2nISn+JHu/wyX5TtxPQP8dU2v+0riPZKGEhl8=;
+	s=arc-20240116; t=1791545548; c=relaxed/simple;
+	bh=MBOiNRB32oVdZh6o/vzkMvlZaxEfx4xfH5DJJMTuLcM=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=QSYruNb6X6pCdF84aJ3F/W4I3TIgyR1H30ZCrCSCauEeksetvNiuJD0WTZjdWX3j73jDMOglw35KaTR8VcUvXd4xHVzAiYlnecJ05i2lXh8Ejsia2oT8MWaeF8x+O4njHcv7hTstmYTij7N5/sfS9FF7mSxwpao4VJK+aUUzT/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SUtLqUrY; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=jDvpMj0WujlNvpbDEKZQEnYDwP4ds9CyHglbGVvlLgRFQ01Dw3GgjaLUZE44E8vxbQCeeZhzLX3HIW1NpX/+ZavvLogpIFs8RRoG9YVOBerZ1gAl2o3IK13qkmYUeLQ/BTRex9oF4VRTpquUHenNFaPBs19O2IfhvOhd5B0CFHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZEMOjtf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUtLqUrY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54AE41F00898;
-	Fri,  9 Oct 2026 11:32:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZEMOjtf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 503DA1F00893;
+	Fri,  9 Oct 2026 11:32:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791545537;
-	bh=2/l6rLucsEuzWwe5pgFYjwPnNugIDoAs2GTFUF4weas=;
+	s=k20260515; t=1791545533;
+	bh=28aG/l7mzGXN3ym+NfIDafDZGmvX9IQ8uLI1KX5PaFs=;
 	h=Date:From:Subject:To:Cc:References:In-Reply-To;
-	b=SUtLqUrYuQ7Xg9FiQ9adP/AN0HLULzNoUKqwruWR8at0bjCoYsOD6jbJSmBFVHhVD
-	 l9X1KS91PAvHvV81KKKwJ4OdHW1pDA1FA/Ly3GGTzP8Px7KFMRI0BjnHYjey4hysEi
-	 tRmQrlZOrPwQTcJ0mPYZ27bdFuj8I8+a72OCFHddyRfRxJm9t/FQJi/QMyxDZVHu94
-	 jqeywsxeK7EANkxZ3ApY1xQzRm5LsiF6rhVsHZtNQSbs4TQoAESAjevfP+wi/82HKh
-	 ph1bb6+wjhSxDcYXvSnEX0BgtpYVj+No84/7SVBojuU9TNXkkcPjj3tEiMCCJt+R4/
-	 UQZx9msusnCeQ==
-Message-ID: <006e25c8-8058-4785-a11d-facb95de6e13@kernel.org>
-Date: Fri, 9 Oct 2026 13:32:07 +0200
+	b=lZEMOjtfTnqnqGVJxYpb1AL5KUROrPHdST63Dg6loILqr60B/u2Uqiu9Xlonskse3
+	 Mt9Dh6K5kt1U5y5h9ObxENBPDttQ1pYDmDE6N/zqevp6LAjTb2vY4FghGRWmTZ4lor
+	 MVOYAHPCwf9OGaNkMPvUj+kA4iGhG5pPuyWn7bXzwaaGfy+/ad39kcBbFY9Y7wTXBO
+	 s3vqJBriAi0trcNuVB/ATp2HkK0pTe18eCum7Gj+6OHIBcCmpi2V0Hyob6ywAxv2Xc
+	 omnpN2EZt2yY6GNaEu1I1ji5mUGGDFduHv8xteRF+qvr4ty7rT4IZACk+LeakhEPmq
+	 y94r9wgL1zDtQ==
+Message-ID: <a8b0729c-d6ff-4fa0-955e-deb0af0e726b@kernel.org>
+Date: Fri, 9 Oct 2026 13:32:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -36,7 +36,7 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 0/7] gpio: add Ambarella CV75 PL061 support
+Subject: Re: [PATCH 1/7] dt-bindings: gpio: pl061: add Ambarella CV75 variant
 To: longzhao@ambarella.com, Bartosz Golaszewski <brgl@kernel.org>,
  linux-gpio@vger.kernel.org
 Cc: Linus Walleij <linusw@kernel.org>, Michael Walle <mwalle@kernel.org>,
@@ -45,8 +45,9 @@ Cc: Linus Walleij <linusw@kernel.org>, Michael Walle <mwalle@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
  Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
  Long Zhao <zl020895@163.com>, linux-kernel@vger.kernel.org,
- Conor Dooley <conor.dooley@microchip.com>, Chanho Min <chanho.min@lge.com>
+ Conor Dooley <conor.dooley@microchip.com>
 References: <20261009-cv75-gpio-v1-0-5836bd438423@ambarella.com>
+ <20261009-cv75-gpio-v1-1-5836bd438423@ambarella.com>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -91,20 +92,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <20261009-cv75-gpio-v1-0-5836bd438423@ambarella.com>
+In-Reply-To: <20261009-cv75-gpio-v1-1-5836bd438423@ambarella.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 09/10/2026 12:57, Long Zhao via B4 Relay wrote:
-> Split from the combined CV75 bring-up series. These patches convert
-> the ARM PL061 data path to regmap, then add the CV75 layout.
+> From: Long Zhao <longzhao@ambarella.com>
 > 
-> Please take this series through the GPIO tree. The quirk, the PL061
-> conversion and the Ambarella layout belong together.
+> The CV75 GPIO is a modified PL061. The basic registers have the same
+> names and roles (DAT/DIR/IS/IBE/IEV/IE/MIS/IC). Each bank is 32-bit
+> and 32 lines and adds MASK and ENABLE, so it is not
+> register-compatible with the ARM PL061 and arm,pl061 must not be
+> used as a fallback.
 > 
+> The AMBA core matches the PL061 driver by PrimeCell ID, not by the DT
+> compatible string. These blocks do not implement the standard PL061 ID
+> (0x00041061) in the ID registers, so arm,primecell-periphid is required
+> and is fixed to 0x000e8061; the driver uses that ID to select the
+> Ambarella layout. gpio-ranges is required because each bank is a slice
+> of the SoC pinctrl pin space.
+> 
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Long Zhao <longzhao@ambarella.com>
+> ---
+>  .../devicetree/bindings/gpio/pl061-gpio.yaml       | 25 +++++++++++++++++++---
+>  1 file changed, 22 insertions(+), 3 deletions(-)
 
-Here - in the most visible place - you document the dependencies or
-merging restrictions.
+This depends on vendor prefix patch at least from the linux-next point
+of view.
 
 Best regards,
 Krzysztof
