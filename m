@@ -1,40 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432243C37A5;
-	Fri,  9 Oct 2026 06:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928944252A0;
+	Fri,  9 Oct 2026 06:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791526039; cv=none; b=bCdvQ7VoAw1curN4iytsCjCJRmFQ7g3R8n9Rw6P4EY2iRXbSew8+ncjoxQpSyJLQNgnjEmuMTkAO7IXcotHZxJjFA44PDtOcsK+4tN853q0V+GALJudnVZDg/ZvknVHFrFZC6+elHeo3HDcxA4eBHcm1hm29GLBSmlxL+tGpAZo=
+	t=1791526209; cv=none; b=NYsblugduhTINGdVwbdopOIRK7aWmQVQqm0GFYTr4Ha7XH5zdvH6W4+d4tl1pKcMSmr4DuHELd1TLjW1Ernd5mVNbNLttl5hR2ZkloaMzwMAJJ4k4otXkT6GWKuOfoyAxYlL1cjiXlfGwg6LduFjcItES0G39b1FjavZ0YdjUyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791526039; c=relaxed/simple;
-	bh=AfGdrVcInVn8OltiEeeb0wrAiP3D9f+zHtc/1flGMo4=;
+	s=arc-20240116; t=1791526209; c=relaxed/simple;
+	bh=eUmpRoTCt+2QLRgUkxx48SRPgHQaJ2nlhPBN+4rB0X8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OdyIg7v0dbk+9ETFTlsR+Di49HmkdOa7E/ndSM2kmkNIS1oMo860eE3s+G5Iw/dDtESHJ5Mr0g/uzEGSlqMwVl4AHBGZvdMzWlhpeAc86T6m1lCfrYKjAxUs0nFlJA2SPjCRx09Etg4piP7jrXmqrOAGENP2bpwdA56X2oZzVS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9SbowvT; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=NazFY+Hd6KgIveNm3Dv35t8Mfp4c/jvVKxjVf/Ia9yJ7316jGwGUJfFFnaqnzA5CaMtRmnV812z1x0NML4yKe9kZXK9bsvmZKpUX24grkIQXQ6YoLOCCjauj2FHRMoeyxKNoQHRp/Otxcyc9UERbR+WDMjNVo4+TMvW0DYzuUdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1+U/T1D; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9SbowvT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B8301F000FF;
-	Fri,  9 Oct 2026 06:07:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1+U/T1D"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA501F000FF;
+	Fri,  9 Oct 2026 06:10:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791526038;
-	bh=fVXd/ryyuCGlTuF396ZRb1pRlSClO/M0fMZ8Y7T938k=;
+	s=k20260515; t=1791526208;
+	bh=cpB4oW+VzOYkr7heF4ZAZX4wxYt/dyntVxClV6LD6MA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=b9SbowvTMqHwiFhxy5Wv+LhzKa5F12EZmSUMwK9OHAcw30fiQtg6srC27Q82MZNuf
-	 IkgSlPXftutJqOSsq8u5FaCrDRdmzoDWO2B28CjDlNfEYyc5Fq9aT7hOMIRwU7gF1C
-	 EDBqFmXQLGuOjBIB1AusmS5MgVKqvHsAXuSFH5lXCNxOCFXop9v4JeN69Gt6TkIbnl
-	 0ODdiFH78QXWLAYepLjLJVm6T1VdZMI6y8EdAKRLJtfqiivT2vtlyF7sHQ/1bYw8CP
-	 3JMY0KEu2K/5UTWWYDdqNq+BKEnuF7DeXUEYm4CxehPqx2wzfSlZUlI6Im6odQPbwm
-	 VngqIrET/phxg==
-Date: Fri, 9 Oct 2026 08:07:15 +0200
+	b=D1+U/T1DTXrKOdz8Lv6py/jO8w8IHJBD8IPmHKS0E1Y8KxayrpNP93hBJoSFgfSPV
+	 /hFFwtE9RsEYzqPbhs7yhLo8/6lkM9Bjp5autcvT5leBDIChFixFTFlbSGDXnWpkxx
+	 /pTSOAXNetSTkdVNPSCMinflG3TKFFJelcPyPyp4Hpm+GZGBogw9k0JTSNhHdFHwQ/
+	 JjQxCB0VsSVQq0J8BqxdMSsL/2LaAVfOY6POPlb+YWaldn7Cspw6fs6qIufLRsKsul
+	 Y5mb/3mUFgH6wo1ZSBQ8bJAbyVTqxVDIWixETHkd6GJqsb/SBGKHlbdlkxQtRy1+h4
+	 IWjOkCneuMW2g==
+Date: Fri, 9 Oct 2026 08:10:05 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Haotian Zhang <vulab@iscas.ac.cn>
-Cc: Linus Walleij <linusw@kernel.org>, linux-kernel@vger.kernel.org, 
-	Robert Jarzmik <robert.jarzmik@free.fr>, Bartosz Golaszewski <brgl@kernel.org>, 
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] gpio: pxa: propagate pxa_gpio_probe_dt() error code
-Message-ID: <20261009-arboreal-hare-of-fury-a74e03@quoll>
-References: <20261009050604.3128124-1-vulab@iscas.ac.cn>
+Cc: Billy Tsai <billy_tsai@aspeedtech.com>, linux-aspeed@lists.ozlabs.org, 
+	Linus Walleij <linusw@kernel.org>, openbmc@lists.ozlabs.org, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, "Chia-Wei, Wang" <chiawei_wang@aspeedtech.com>, 
+	linux-gpio@vger.kernel.org, Ryan Chen <ryan_chen@aspeedtech.com>, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Joel Stanley <joel@jms.id.au>
+Subject: Re: [PATCH] pinctrl: aspeed-g5: fix device node leak on LPC
+ compatible mismatch
+Message-ID: <20261009-practical-malachite-scorpion-0be0c5@quoll>
+References: <20261009041435.3096107-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -43,23 +47,24 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261009050604.3128124-1-vulab@iscas.ac.cn>
+In-Reply-To: <20261009041435.3096107-1-vulab@iscas.ac.cn>
 
 
-On Fri, 09 Oct 2026 13:06:04 +0800, Haotian Zhang wrote:
-> pxa_gpio_probe_dt() returns the negative errno produced by
-> devm_irq_alloc_descs(), which may be -ENOMEM, -EINVAL or -EEXIST. The
-> caller in pxa_gpio_probe() overwrites that value with a fixed -EINVAL, so
-> the actual reason for the failure is lost.
+On Fri, 09 Oct 2026 12:14:35 +0800, Haotian Zhang wrote:
+> aspeed_g5_acquire_regmap() takes a reference to the LPC device node with
+> of_parse_phandle() and then returns -ENODEV if the node's parent is not
+> compatible with "aspeed,ast2500-lpc-v2", without dropping that
+> reference. The function is called for every pin configuration, so the
+> leaked device_node reference accumulates on such systems.
 > 
-> Return irq_base so that the original error code is propagated.
+> Release the node with of_node_put() before returning from the error path.
 > 
-> Fixes: 384ca3c6a28d ("gpio: pxa: change the interrupt management")
+> Fixes: eaffd32bea0c ("pinctrl: aspeed-g5: Adapt to new LPC device tree layout")
 > Assisted-by: DeepSeek-V4.1-Flash
 > Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 > ---
->  drivers/gpio/gpio-pxa.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/pinctrl/aspeed/pinctrl-aspeed-g5.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
 
 
