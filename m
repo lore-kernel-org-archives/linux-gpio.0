@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204704FDE56;
-	Fri,  9 Oct 2026 18:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85CD4F3EA4;
+	Fri,  9 Oct 2026 18:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791569961; cv=none; b=GsIjooVxQK91uUKeHVz071SJ50nKlgiRaAxUXyQ4tIDKMtnbYT9unzikFl5BkscgxR/cB7EgiEBSvwJK4rAE1AztHUka0gb0AMgu2FAIdu3pk6l1T/mFmSsGNR2wZ8wo0qNbKU4kQsMphuZCESZ0AKRZbtDcYJHX33cUb5Dwn3o=
+	t=1791570106; cv=none; b=rpKFzQ6AYT0FnPcXfMvqj1I+wW9QzxFThDiJjQakLjvTFZwhN4GMyaId2sNKiZBEyoPsfL02wtT5jIRsj+K/4sOfajFWJAoV6xvVp5i+v/f9nIWl2BjWTEE7P8mQRwO3sMah/fL3fO4TTRXxflDXSdhHOxYtkSLjEQWhaR8lCaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791569961; c=relaxed/simple;
-	bh=RX84YMPrs1qwJb38gSYsPZ5lpaU2PHTYLk8DjOLrmXA=;
+	s=arc-20240116; t=1791570106; c=relaxed/simple;
+	bh=zMv1CIE+e1uA45lqu1PFfCVmzgBWgApxjsMep4fNiYs=;
 	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=DAdOEtlVJmDEtv/GuiKMhQLNDPcMV/Cwi5+NY0hR1E9jnAQHqo5gT5Kq+/YB6oFFDCdivW9sIgt05D2t3T/x7GtRT1iHtSS8cZDyid3+Qa3jeI7cUb4avKFV8tLUquj0ndU1gl55kFVFMx6rO7gxC/Mr70YX6bWuKjwK/4FZsLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDynWVvN; arc=none smtp.client-ip=100.103.45.18
+	 Date; b=kfUtZCvr7UKmFezTeSTSTdPoG+5g8GS4lONrPOYUh4ZTSaZLtNQzdAkXXFnwPx4Ux2pDoGyhnwPmQVaLM0p9gnEQnaX3iattwQv50fEBjhGrLuVa3/A+8vPJ7s52x5V1y8qncnxhGK1S5+geNAGWJebvHQcn1fDsj3rH88qROq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5UhcVZf; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDynWVvN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D0891F000FF;
-	Fri,  9 Oct 2026 18:19:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5UhcVZf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C76E1F000FF;
+	Fri,  9 Oct 2026 18:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791569958;
-	bh=A02iR0jkYleCC6lgytNB3nIYB8qHkP0T5ZFIQTHG+yc=;
+	s=k20260515; t=1791570105;
+	bh=0m6SnbfNP5wGO4K/hXNhWliXpdUuF8ZFDfAX5/kA8H0=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=hDynWVvNZ9VgdrWueBAgHd5wLpr0tBKtIhi+ogTEZNW15gHSRII+4HwDQs9ZS/3us
-	 pAktiQiQwUE/AKuhc+ALCL32aCrTJocztb14ZEsJ1L2o3EWQrzFbTbzHR2XUiTfYyj
-	 76Oma+FsgR+m4E5ZiGArhei6LgnYBIk5sWXF0wXwkQ6vPykWqFHvkp+xuVVmz+BcaU
-	 gkfYFTDS4+iPQZMVK0/LmPYK4kjS2pUc0mucVcDmwny+CjEwZ8SR6EQ0coLUirJngB
-	 gBqAYwe/1lzNh207loVqQQUwLNkBOVozm/mrOXm6+Z/Hp5M5uCGxEZQVjXbMO4anS4
-	 We+AqmNxwTiRw==
-Message-ID: <sashiko-outbox-165930@kernel.org>
+	b=L5UhcVZf9WcP58nK7v4O+FcrqWKvyAfUpKTu7WCOsaTndOT73LM7HYRy3+HCqhWAL
+	 ijlqacB5wX9ewFzy0uFnhXizMUuQ/ipfZVt/t2t/k4aCjGKMl1yMQKjUwOX+1uER18
+	 OtsQLWph41DIUoMN5KH8iMHN78lShH73Ygi+qlEhXH/XaFiAFLb3x1e4+ZRUnOJiXX
+	 /D1RvqrFzfHaJHKCTcPQJ0/LDi5BlMA9E52lMAoj6PaxdT5N3ebfUXFe7jwWXUHiAc
+	 dYDrulkWs4fnu6CV/4xAA6DZNZ3jCFjpaRPt/8/IDFyoc/5rF+aAaQyBhnHfpPlOvo
+	 /sy/Q4sNtMEDw==
+Message-ID: <sashiko-outbox-165935@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 09/13] gpio: mxc: use cleanup guard for
- pm_runtime_get_noresume() balance
+Subject: Re: [PATCH v5 11/13] gpio: mxc: switch probe error paths to
+ dev_err_probe()
 Reply-To: sashiko-reviews@lists.linux.dev
 To: =?utf-8?b?UGVuZyBGYW4gKE9TUyk=?= <peng.fan@oss.nxp.com>
-Cc: Frank.Li@kernel.org, imx@lists.linux.dev, linux-gpio@vger.kernel.org
-In-Reply-To: <20261010-gpio-mxc-cleanup-v5-9-1e59e6ddfa00@nxp.com>
+Cc: imx@lists.linux.dev, Frank.Li@kernel.org, linux-gpio@vger.kernel.org
+In-Reply-To: <20261010-gpio-mxc-cleanup-v5-11-1e59e6ddfa00@nxp.com>
 References: <20261010-gpio-mxc-cleanup-v5-0-1e59e6ddfa00@nxp.com>
- <20261010-gpio-mxc-cleanup-v5-9-1e59e6ddfa00@nxp.com>
+ <20261010-gpio-mxc-cleanup-v5-11-1e59e6ddfa00@nxp.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 09 Oct 2026 18:19:18 +0000
+Date: Fri, 09 Oct 2026 18:21:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -47,57 +47,53 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 
 Thank you for your contribution! Sashiko AI review found 1 potential issue(=
 s) to consider:
-- [High] pm: double put of usage counter due to no_free_ptr() self-assignme=
-nt
+- [Low] gpio: mxc: missed dev_err_probe() conversion for irq_count and clk
 --
 
-commit f4335cfd7512992cdd6d3fcb1a49da9aabbb176c
+commit 9d304bc479f48f3358f5e78d0a6c7c31a38cd860
 Author: Peng Fan <peng.fan@nxp.com>
 
-gpio: mxc: use cleanup guard for pm_runtime_get_noresume() balance
+gpio: mxc: switch probe error paths to dev_err_probe()
 
-This commit replaces the manual pm_runtime_put_noidle() error path cleanup
-with a __free scope-based guard in mxc_gpio_probe(). It also attempts to
-disarm the guard on the success path before calling
-pm_runtime_put_autosuspend().
+This commit converts the error handling paths in the probe function of the
+mxc gpio driver to use dev_err_probe(). It aims to provide consistent
+diagnostics and support for deferred probe tracking.
 
 > diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-> index 5ae9cdee6424d..3d5a6566d3f43 100644
+> index 6074b1e3d6834..1eb5cd148c28a 100644
 > --- a/drivers/gpio/gpio-mxc.c
 > +++ b/drivers/gpio/gpio-mxc.c
-
-[ ... ]
-
-> @@ -556,6 +561,8 @@ static int mxc_gpio_probe(struct platform_device *pde=
+> @@ -520,7 +520,7 @@ static int mxc_gpio_probe(struct platform_device *pde=
 v)
->  	mxc_update_irq_chained_handler(port, true);
 > =20
->  	platform_set_drvdata(pdev, port);
-> +
-> +	pm_guard =3D no_free_ptr(pm_guard);
->  	pm_runtime_put_autosuspend(dev);
+>  	err =3D gpio_generic_chip_init(&port->gen_gc, &config);
+>  	if (err)
+> -		return err;
+> +		return dev_err_probe(dev, err, "Failed to init gpio chip\n");
 
-[Severity: High]
-Does this self-assignment defeat the no_free_ptr() cleanup inhibition,
-causing a double-put of the usage counter?
+[Severity: Low]
+The commit message states that bare return statements are replaced across
+all probe error paths. Are there some that were missed in this conversion?
 
-Because no_free_ptr() is marked __must_check, assigning it back to the
-same variable is a common attempt to silence compiler warnings. However,
-no_free_ptr(pm_guard) internally sets pm_guard to NULL but evaluates to
-the original pointer value.
+Looking earlier in mxc_gpio_probe(), there are still bare returns for the
+IRQ count and clock setup:
 
-By assigning the evaluated result back to pm_guard, the NULL value is
-immediately overwritten with the original pointer, leaving the guard
-armed.
+	irq_count =3D platform_irq_count(pdev);
+	if (irq_count < 0)
+		return irq_count;
 
-When mxc_gpio_probe() returns successfully, the cleanup handler will execute
-pm_runtime_put_noidle(dev) because pm_guard is still armed. Since this path
-also explicitly calls pm_runtime_put_autosuspend(dev) right after the
-assignment, will this result in the usage counter being decremented twice?
+and:
 
-> =20
->  	return 0;
+	/* the controller clock is optional */
+	port->clk =3D devm_clk_get_optional_enabled(dev, NULL);
+	if (IS_ERR(port->clk))
+		return PTR_ERR(port->clk);
+
+Since platform_irq_count() and devm_clk_get_optional_enabled() can return
+-EPROBE_DEFER when their dependencies are not yet ready, should these paths
+also be converted to use dev_err_probe() to ensure those deferrals are
+properly logged to the deferred-probe debugfs tracking mechanism?
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261010-gpio-mxc-c=
-leanup-v5-0-1e59e6ddfa00@nxp.com?part=3D9
+leanup-v5-0-1e59e6ddfa00@nxp.com?part=3D11
