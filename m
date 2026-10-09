@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF812440A25;
-	Fri,  9 Oct 2026 13:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9707D3D34A2;
+	Fri,  9 Oct 2026 14:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791552550; cv=none; b=h7gPGiudHWXyhWsJ0163HEvcp6RRJgP1V6Y7+KMOBlsjnSUIzNzuUsTOY3jrrRtqI9smhXurbKmQJXKBpwB4J+eMcYjUb/ne/0hSr7QsVbaQelN7UFvdMLLbXheYk3tvv7oEv7PfwrZJBnTH7yHIS/PYeCWSeFDxeGcwi06PVOo=
+	t=1791556732; cv=none; b=OKW02FBpWp7jbw2E7uLphYDUSQetrohAjcS+p1p4b1Rf2hAcKZC613do5UMPrD4FxX7zz1voGSmfXHrJmS2xnv7ZvDH/bVwEVQIk9lJgKdl5eiKWu3idIZLgX7+vB8PhOu0xmX5IlEvFfHItlu7wAWE/ls6//1ldP9PgCeKqxEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791552550; c=relaxed/simple;
-	bh=1jTnUEsdcvUbJLAd7L9fp7UsDgG5VUa+4pUxDnYcRdU=;
+	s=arc-20240116; t=1791556732; c=relaxed/simple;
+	bh=tJJGweYTUnGRwc8WLh+RWM5btlh7SjUHCO3K3yv5egg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JmXlBFfXrpKCpgVyw/C8Bg2/Wwu7ZCn3PEy/M1n00H1Rw/Ui6wfhNSjQZBtEUi4nRpOg7LkFCGx1aVCJXC5fYbcf/VWhuuY8szyohV6sWNJ0haVS0gS5d8AjUKtg8SVr0L4I979pKCdh1lKSLPjoQWxfaexV5h2BrIzDDaAbDfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BK63iEBT; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=fW9u/oo70DYQOjus14xdgZpEmR15htT0VUa5dfvZqNc1c/aHgtHmFcpROJtX3HGgXqNvRYKmWJ3QxPA89NnGuouLtIsin/YsiQw3PNvQlSWYgU78zOIav4vsBr1a+JRwYGJiXmCw1U+tDEFZS0H9pNBbsn0meE4lhJ9B4LvkBLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5J66ouH; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BK63iEBT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C0341F000FF;
-	Fri,  9 Oct 2026 13:28:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5J66ouH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 773371F00893;
+	Fri,  9 Oct 2026 14:38:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791552549;
-	bh=Gatt45NA+CcG7C8Cl1B/ynhphZULT/ZIYDGwesp6iXI=;
+	s=k20260515; t=1791556731;
+	bh=SCBsfgZUxHW8yIrKeUAB0LX0uup67iHjwWbPDGYXOxw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=BK63iEBTcpVQ1vTmmKPQ1XqR4dGykGGSlD7kE+a+JLECBT0n+oco4VMfqxh9pc6NX
-	 0nHrXK9pkTN2XT/eQC64i6xjlw+8mwSRwiboAJp2X4Efcb5Mh5oRj1hxfASI/3jZ+P
-	 ut+t1EH646HGu0zqcHYB4Dd8pTeCm6l9PVeIYdItwnQnB5eWK79ZfEP30XUs9SMSFp
-	 FiDxnhsgvfywoKko6Kh3izyTaz4DCfg67uydNoSoJOk6b6TL/1Xw10nNzxBRpMbvSm
-	 //m5R9XdVcVXyp1UdQAIgCPRIWR4AU79nu5RcC5tpRyoWu35Ge224WYRLV1FFKonfs
-	 Ho4vh+q5EK5GA==
-Message-ID: <6a91df34-cd81-49f3-8923-6676bfedf1c1@kernel.org>
-Date: Fri, 9 Oct 2026 15:28:56 +0200
+	b=Q5J66ouHMBRcmi4uFPbcmivlL1qZBzOVGkBSAItu6RXRC5gjNAl/5kuBDjjB31/ax
+	 w8O00JoNb/1phP2ph+jORg6N5bFcjB6ui3zrBpuJCVt6EZ9DXRxu85cSTuW87D79pN
+	 CiiXDmr/g7Fi72PyuflBKQo+bQ2XvWFQDGtAl1mHdaRL2Oo8V269IQfCs+BcGhkwFv
+	 4LnGRwcIUPR5yoXrusM4hvLaeF/OGpA8MAGX0obheXfTXJwlZvXuNdEw2IxJDwGn1n
+	 Bgrqr9UPKWjlUpDhQMWk8r10CTrGUuFrT8Vra8KHSQD+YE2FH9v594Na9SVWsM42m0
+	 0UYT+A6a1wQYg==
+Message-ID: <0e741650-8f60-4273-a783-8dbe3aedf207@kernel.org>
+Date: Fri, 9 Oct 2026 16:38:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -61,6 +61,7 @@ References: <20261009-q8b-dts-v2-0-eda11e5dea8b@radxa.com>
  <20261009-q8b-dts-v2-3-eda11e5dea8b@radxa.com>
  <cd97e6ab-eac0-4482-8b85-455ac8730241@kernel.org>
  <kzqftw7lugumzzkafcnsa36n6nix3kmwee66bzlv67aoqrkovc@7lbdhwfchvp3>
+ <6a91df34-cd81-49f3-8923-6676bfedf1c1@kernel.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,34 +107,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <kzqftw7lugumzzkafcnsa36n6nix3kmwee66bzlv67aoqrkovc@7lbdhwfchvp3>
+In-Reply-To: <6a91df34-cd81-49f3-8923-6676bfedf1c1@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/10/2026 15:23, Dmitry Baryshkov wrote:
-> On Fri, Oct 09, 2026 at 01:42:11PM +0200, Krzysztof Kozlowski wrote:
->> On 09/10/2026 09:55, Xilin Wu wrote:
->>> The Radxa Dragon Q8B is a single-board computer based on the Qualcomm
->>> SC8280XP platform.
+On 09/10/2026 15:28, Krzysztof Kozlowski wrote:
+>>> Fake test, drop tag.
 >>>
->>> Document its radxa,dragon-q8b compatible.
->>>
->>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
->>> Tested-by: Daniele Briguglio <hello@superkali.me>
+>>> Why is this so problem to provide the tag ONLY to the patches which were
+>>>  actually tested?
 >>
->> Fake test, drop tag.
->>
->> Why is this so problem to provide the tag ONLY to the patches which were
->>  actually tested?
+>> Please teach b4 to skip to skip Tested-by on dt-bindings patches (or to
+>> have a flag / config to achieve that). This would solve 80% of these
+>> issues.
 > 
-> Please teach b4 to skip to skip Tested-by on dt-bindings patches (or to
-> have a flag / config to achieve that). This would solve 80% of these
-> issues.
+> That's an idea, although my complain stays - why author could not just
 
-That's an idea, although my complain stays - why author could not just
-add tested-by to relevant patches. That's the same with blanket reviews.
-Several people DID NOT review entire set, just LGTM and give the tag for
-everything.
+b4:
+https://lore.kernel.org/r/20261009143620.309848-1-krzysztof.kozlowski%40oss.qualcomm.com
 
+> add tested-by to relevant patches. That's the same with blanket reviews.
+> Several people DID NOT review entire set, just LGTM and give the tag for
+> everything.
 Best regards,
 Krzysztof
