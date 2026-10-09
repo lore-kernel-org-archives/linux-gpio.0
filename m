@@ -1,40 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B4F42AF9B;
-	Fri,  9 Oct 2026 06:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432243C37A5;
+	Fri,  9 Oct 2026 06:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791526025; cv=none; b=tSNMNi854KoU1+RLTCUEvNVmBmQ9K9naeofeGM2Gi7X6eHJB7y06fpsfVxR8uokaeJchJMWZrYC6PwK9oMMr6MuEEjoCmpBN57urN17mN6NaRKCSemQ1rFWqltsv63aIkkPKFuK7K01GPmXYmytD39OPJzYx/wYMWt7Ol1Z25BI=
+	t=1791526039; cv=none; b=bCdvQ7VoAw1curN4iytsCjCJRmFQ7g3R8n9Rw6P4EY2iRXbSew8+ncjoxQpSyJLQNgnjEmuMTkAO7IXcotHZxJjFA44PDtOcsK+4tN853q0V+GALJudnVZDg/ZvknVHFrFZC6+elHeo3HDcxA4eBHcm1hm29GLBSmlxL+tGpAZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791526025; c=relaxed/simple;
-	bh=Phb4dHibtKdbOqzaPc1gD95N0uipgl57XLq6/ofO/c0=;
+	s=arc-20240116; t=1791526039; c=relaxed/simple;
+	bh=AfGdrVcInVn8OltiEeeb0wrAiP3D9f+zHtc/1flGMo4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ArzdhMiOrL7LqSmDlhJdK4jgIWvlrQjJ8hP3wJ9gB1dXIwAPirMn2BfItYtJqQUPe/LKs5s3jhxi94dRKn2IBrC6t9Jr6LB8mV1wbwwWK3GRoEH6f8SHWDeVFiBabKSTNtGVfsFe9JfE8ayieqoCeIuQ0xcU2D9LQFT1al6b6mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSErbQ8l; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=OdyIg7v0dbk+9ETFTlsR+Di49HmkdOa7E/ndSM2kmkNIS1oMo860eE3s+G5Iw/dDtESHJ5Mr0g/uzEGSlqMwVl4AHBGZvdMzWlhpeAc86T6m1lCfrYKjAxUs0nFlJA2SPjCRx09Etg4piP7jrXmqrOAGENP2bpwdA56X2oZzVS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9SbowvT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSErbQ8l"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E1141F000FF;
-	Fri,  9 Oct 2026 06:07:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9SbowvT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B8301F000FF;
+	Fri,  9 Oct 2026 06:07:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791526023;
-	bh=OctUAXDPvUUqnQ5ahpqmNhSfJYP5MUZ5+RP5C0uhZuw=;
+	s=k20260515; t=1791526038;
+	bh=fVXd/ryyuCGlTuF396ZRb1pRlSClO/M0fMZ8Y7T938k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YSErbQ8lf7gyDxCkWPCasNcpKZTiv8JY7s3eOp2RZweBQrVTlFQbPjLzhI25Kmf8m
-	 57hOYxXLyeF+oJ1TyogoN7EAtVMG0pRM5fljRUOW8DyKrjl2zbpOXyGe7EHwkhHAH4
-	 TvneSL9XUjegH6UOevIMa9bZXt2ngYSKnmJaxfYJtNEwjLLhrhTTUhGNKoS/jBUGKn
-	 6ZXc9QY9tnxNgY5EOPkwK9Edwm53smbACv99eIkkaHSG+T3ot9yaSRtyiESI+E64Qy
-	 kAZXTjZEEWuzGL/DnlKDFW64VlttbmTeunrRNFmG4lTZUHzaykNoj+OkOn3BTsAMcP
-	 QcISnRWEElEyA==
-Date: Fri, 9 Oct 2026 08:06:59 +0200
+	b=b9SbowvTMqHwiFhxy5Wv+LhzKa5F12EZmSUMwK9OHAcw30fiQtg6srC27Q82MZNuf
+	 IkgSlPXftutJqOSsq8u5FaCrDRdmzoDWO2B28CjDlNfEYyc5Fq9aT7hOMIRwU7gF1C
+	 EDBqFmXQLGuOjBIB1AusmS5MgVKqvHsAXuSFH5lXCNxOCFXop9v4JeN69Gt6TkIbnl
+	 0ODdiFH78QXWLAYepLjLJVm6T1VdZMI6y8EdAKRLJtfqiivT2vtlyF7sHQ/1bYw8CP
+	 3JMY0KEu2K/5UTWWYDdqNq+BKEnuF7DeXUEYm4CxehPqx2wzfSlZUlI6Im6odQPbwm
+	 VngqIrET/phxg==
+Date: Fri, 9 Oct 2026 08:07:15 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Haotian Zhang <vulab@iscas.ac.cn>
-Cc: linux-kernel@vger.kernel.org, Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Linus Walleij <linusw@kernel.org>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: core: fix pin name leak on radix_tree_insert()
- error path
-Message-ID: <20261009-lucky-lively-binturong-57ebe3@quoll>
-References: <20261009054556.3151123-1-vulab@iscas.ac.cn>
+Cc: Linus Walleij <linusw@kernel.org>, linux-kernel@vger.kernel.org, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, Bartosz Golaszewski <brgl@kernel.org>, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] gpio: pxa: propagate pxa_gpio_probe_dt() error code
+Message-ID: <20261009-arboreal-hare-of-fury-a74e03@quoll>
+References: <20261009050604.3128124-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -43,29 +43,23 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261009054556.3151123-1-vulab@iscas.ac.cn>
+In-Reply-To: <20261009050604.3128124-1-vulab@iscas.ac.cn>
 
 
-On Fri, 09 Oct 2026 13:45:56 +0800, Haotian Zhang wrote:
-> pinctrl_register_one_pin() allocates pindesc->name with kasprintf() when
-> the pin has no static name, and marks it with pindesc->dynamic_name.  If
-> the subsequent radix_tree_insert() fails, the function jumps to the
-> failed label, which only calls kfree(pindesc) and never frees the
-> dynamically allocated name, leaking it.
+On Fri, 09 Oct 2026 13:06:04 +0800, Haotian Zhang wrote:
+> pxa_gpio_probe_dt() returns the negative errno produced by
+> devm_irq_alloc_descs(), which may be -ENOMEM, -EINVAL or -EEXIST. The
+> caller in pxa_gpio_probe() overwrites that value with a fixed -EINVAL, so
+> the actual reason for the failure is lost.
 > 
-> Since the insertion failed, the pin is not in the radix tree, so the
-> caller's pinctrl_free_pindescs() cleanup cannot find it and cannot
-> release the name either.
+> Return irq_base so that the original error code is propagated.
 > 
-> Release pindesc->name on the failed path when it was dynamically
-> allocated.
-> 
-> Fixes: ecfe9a015d3e ("pinctrl: core: handle radix_tree_insert() errors in pinctrl_register_one_pin()")
+> Fixes: 384ca3c6a28d ("gpio: pxa: change the interrupt management")
 > Assisted-by: DeepSeek-V4.1-Flash
 > Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 > ---
->  drivers/pinctrl/core.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/gpio/gpio-pxa.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
 
