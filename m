@@ -1,174 +1,159 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EAA3D75C7
-	for <linux-gpio@vger.kernel.org>; Fri,  9 Oct 2026 08:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F141F49B5CB
+	for <linux-gpio@vger.kernel.org>; Fri,  9 Oct 2026 09:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791534564; cv=none; b=AlabDYrIjGr7/p2C2lS4A/wew0H1rUZ3h4EP2j5FxPFrGwOrct90dsEu5RLezFQmFC9PHK51L6UHeNpt0Nmox0TDWTaJ1vTRuHXmd7BX44bTEe/at4PVFrEiyt5DsKvXQY3/x62dXhqacZ6p3GbhVFPGEAL83uVG9yQVq5gycpc=
+	t=1791538236; cv=none; b=WujZi4LUsA4PjG0my8Y7StTEkU4IkRd+ENQ95bdZ+3rNSPiTb6Z92BJitGD4FM2prMsTI2xJv3oEQbaUUk6URUpvv341pKZmox1CknzD8W8vYqWVM36jOkOBdt8tUzkWFu80aQRf+L4cASWCSpXXh7cI3tIDCF+A/v410Vcgjnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791534564; c=relaxed/simple;
-	bh=JwCvDd5YzyK7COQjFOilO+tgzZeBuXPZW2kTiC91m14=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nQg0l52prXm+0p+yQgXFJ75iLOO7fRRCLKuuIPEmoZE+AuUxMLvGtQPxJHakx2Ip3uD78HgbGNgOY60C/F086Bqwjh3wNOMzPQVh34vANiwYVyaNzcufPDqB8Xjdk0CMMlwe0F7rA5+Z03jLfR0lBd6TjNLeFuUPBmO58pdMcRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hvDTc0BZ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PexE9nYK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1791538236; c=relaxed/simple;
+	bh=0fZcDdjzml995T9oZE7SVaCVuqTaThJLBP842zH3xww=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IbyIuHd7RQnB+Co56LS7pSOLqRHtrT2lXcPYHC0bJPaMIZPnrCJHHt82bEpZhA3SHLw8faJ9tpv6u9LWIA/JzD6dvaru69StZOBTn9QwMdFbhcyZJgU/KjzK7T5LyKIIcdf8IEXKJfoO3+1locdRUDGmkTcO2QfAROCmBfp/+zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WT5YmW+C; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hvDTc0BZ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PexE9nYK"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6998KN4Y1103151
-	for <linux-gpio@vger.kernel.org>; Fri, 9 Oct 2026 08:29:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7Lfj6oSCKPER8z+P3DkIH58XgLvSuXtrBMTqgQC09sw=; b=hvDTc0BZhw3sQkyr
-	kLrYI23ohlUDBErsLIm4Af6CvSE/HSU6Ze/XKZtwOFHdtozaz07r4vOQEGgSpLSM
-	fM3UxiWrzFOzhvtFi4USRX4T5juE3F5TUm1lLWcW7+mTVOGEryu8DTbB0rPycUox
-	fBvVu6pw3x2ngMbQVyTINZAgAB8LXoiyObkKrR60JchD4F5+uhN2EjIPaRKB7r45
-	99qRoPVpNWMxxg/A2r9x8XBMU8lnna90ekEihJHWRNg8OzO6ypfoIqOqeP2AGqQh
-	MuUgB62Mck2892KtG0Xk9W6Qr+828c6clEvBBimRvJ8AUyCl2Fxau0ksjPoaqDBn
-	szWIww==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h6b9kktsx-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Fri, 09 Oct 2026 08:29:22 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93caf7856ffso1150373585a.3
-        for <linux-gpio@vger.kernel.org>; Fri, 09 Oct 2026 01:29:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WT5YmW+C"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4956869750eso23196795e9.2
+        for <linux-gpio@vger.kernel.org>; Fri, 09 Oct 2026 02:30:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791534562; x=1792139362; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1791538233; x=1792143033; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:organization
+         :autocrypt:content-language:references:cc:to:subject:reply-to:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=7Lfj6oSCKPER8z+P3DkIH58XgLvSuXtrBMTqgQC09sw=;
-        b=PexE9nYKFlqrUr90a1+bqh5ZRfideJCGxqXv7qn4Hob3irfhjLgcGld2ps4+hHra4F
-         7qAshmc8+voiwooKzqpPKfiE3pKATWozVs3YowoiUjUnFjv/rWS07Lb3/lxrb6CPItky
-         eMJC2a8MI8sZdNW61A6g3nsVHAPGCegnYQkKP9eppcY6qeby6oqgeDOtpdbfB+lRb2fI
-         00H7HNYxqz6kXdznvtuqy3pnm/HXVraKysadt7/dncOTZ1KkbqhzQ0wwcAjsp2rFzhF/
-         4sxjhBGmlG/8+ejGvNdkCqWveV0Z2sJYRn/JOHF3XgHdk/igpyaO4x/PyFXyUx7ZzSbE
-         hLNg==
+        bh=ySxG2l0k4bpp/Tb+8P52vg4ThV1MvpjerUMZY+o89W4=;
+        b=WT5YmW+CZri0kY3T6LyvGNKYhdk4kRw0luCH+HrEDUL3TcZPuM34HBrW6iX0I+Oide
+         JRys8xQCqUPdQJwT0w998GuJFLJHAX+WTEG4aNjjVxeFXJwwHb9ozoc5fRvTHpdQ/9Mk
+         91EM40r0e3ShZy4FAiV32Ihl9k7aHOTZhOG08vmb4Tx9uU/5esQnBpBBf+2dFxeOGnLd
+         gkkbuO7BfBLE0FOUP96+n7IrLT/Q7M7HlJdeHZ+z73M2ExX5ZPXjHSK0KUEnDO4+3TXZ
+         A79XEpizubWC3sm0n4EkJcITztUww0ZWNBNIp2ytYLAQLSj4WGk+tVTcc9RAYT8IXiYp
+         gIyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791534562; x=1792139362;
-        h=content-transfer-encoding:content-type:mime-version:date:message-id
-         :subject:references:in-reply-to:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=7Lfj6oSCKPER8z+P3DkIH58XgLvSuXtrBMTqgQC09sw=;
-        b=wtl9dnTHSmE0EYy8jAwhBRQxGPEmt50xmEpebzEHNMFPlzKXlpJBJpYurnr3O7CAgN
-         4VaOb15qrB95gfThUY6++Om42K/ggYGVN8ippMyhDAiURVbRGFE3eDGgKtUBTNfIlEAz
-         jWaMDoRerf35YDjhToDsA1m1Vk4faTQBItnPXWqFmWQusTZDexCmcArFBqX4TlqoUrzL
-         9PYCK6dHVTYtvqJ6LAKYDd/Eg7JeQ26NOq112AduPacjhsgVVhCEtWhI/KbffpkFmUXU
-         aqooHMIjOivC+lKEISgCO5XTQvQZLNlJvyrIzJym1tYMdfztvSexnYtGhxa0ajdHgjkV
-         IXGA==
-X-Forwarded-Encrypted: i=1; AKwUvBxUxsxXUcQ1fOCrVUvwc5zNxEZMug5ZR8RF9NPuxRdJLD4b8LB+H3mumHeO6qDEyVMb3ftPNwzL/1fK@vger.kernel.org
-X-Gm-Message-State: AFuF++nqDvFtu3SHO7I7UuXZiRAq3BmhrQBVfpY/VNv/lKpHyaz87byh
-	naMY6ULKzskcs+d/qhtw/XWC8TfcHFKw67gHOECOgr7d2KUDHyzBMeYP5J1sixCmG3bQatvanUI
-	U/a4ykD9E/ew8yg4fynuXdmeFaDE0Czi+IjsfIt/IbtRzJUM86OAvoKoAaAhghsB6
-X-Gm-Gg: AYBFou3rfK9KpCm6KsKN4p2MD18vLg1fDIFWMWobzaloK/VHTeFSkstk9xGLEd7koSd
-	OTODvn1+GYsxmn1dmNMOjkrjYNFwfggyCcFmrZyprz+cWB0SaTkoz3udCP3TdD7BTWYfQ1v02Ch
-	O2GWpa+1/15gCkyePAq0mE44LdvX30zUq31DfPzr08JvSFRivvLKk4e08gC9CVluw+2+TxDH3qm
-	XK9DOX+0P8XCvndVI5GbuG6hNeEJd6vQuNaO/3wqMY/kVBxr3CjVVtyGw1LZSNR9tUA3CM9bGKs
-	1JoG5y1v/rayIjuhI5z17Zzi1AGnysAYXZ1CgsbiBRHpDvIxgNz+HEsC+e3YUkcpNTB26sPsQ0O
-	8vOOl3Lbq5kw8BFClUrEnzLTPKGomfxBbXvpWSY74fighH5Rovq/wnSaVUUpWZZfwG9l63171KH
-	GG4yQx155fE2Hv
-X-Received: by 2002:a05:620a:8088:b0:93e:c12c:f11a with SMTP id af79cd13be357-93ec12d0581mr47268785a.70.1791534561638;
-        Fri, 09 Oct 2026 01:29:21 -0700 (PDT)
-X-Received: by 2002:a05:620a:8088:b0:93e:c12c:f11a with SMTP id af79cd13be357-93ec12d0581mr47264385a.70.1791534561145;
-        Fri, 09 Oct 2026 01:29:21 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3a9c3caab0asm4295171fa.18.2026.10.09.01.29.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2026 01:29:19 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Linus Walleij <linusw@kernel.org>, Xilin Wu <sophon@radxa.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Stephen Chen <stephen@radxa.com>, Junhao Xie <bigfoot@radxa.com>,
-        dragon@radxa.com,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-        Daniele Briguglio <hello@superkali.me>
-In-Reply-To: <20261009-q8b-dts-v2-0-eda11e5dea8b@radxa.com>
-References: <20261009-q8b-dts-v2-0-eda11e5dea8b@radxa.com>
-Subject: Re: (subset) [PATCH v2 0/4] arm64: dts: qcom: Add support for
- Radxa Dragon Q8B
-Message-Id: <179153455955.2970577.14103639336377928226.b4-ty@b4>
-Date: Fri, 09 Oct 2026 11:29:19 +0300
+        d=1e100.net; s=20260707; t=1791538233; x=1792143033;
+        h=content-transfer-encoding:content-type:in-reply-to:organization
+         :autocrypt:content-language:references:cc:to:subject:reply-to:from
+         :user-agent:mime-version:date:message-id:x-gm-gg:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ySxG2l0k4bpp/Tb+8P52vg4ThV1MvpjerUMZY+o89W4=;
+        b=C2ZOdINZnlV7BpszpUQWgvhy8Xw+Liki7e590G1JCpYKJlOKWn+EwJtnoJIkcjhxUX
+         HyfjMg2K8S31Eo8gSdhdlPlukV6NqRRf9QO2Y/qi2HUU4vGN5/UQwSPbASrPqderhkff
+         SlebTteMW9bMapB8atv4NsP5D2KXfXPzxLdZx3xX5BRkptO8Sj7hwC0cI9hFFeaWpHjM
+         rDSQ1UjL/kU+m07t49BTmgB4zfGqezBsDqHuvP9GOvC8OMMu3HfjLPSaCSkvArGb7bxE
+         eavzT+lGYFkK22PulJa1cno9SveuVhygl+Ktjw05WxxKPsvLvh4odgviXLv+SHsG+ed+
+         cAuw==
+X-Forwarded-Encrypted: i=1; AKwUvBwwwMfAZ53DTzkaQMwM2h6un6VxaqQlEscYdmZRVcoX1w6VEmBYlbWvtsrcEZmUea27m7eFqjcbJDCd@vger.kernel.org
+X-Gm-Message-State: AFuF++kql6EfL9h/mexdKEAS4mUWCxIX3t+YQCbF+2NIZxoxYyM5cHAg
+	dD93wouh9UrD79wH/iJEkmZTqIviuAQqTGqLdOvsX6xoiHI3rAiXshB+lXCo84qcF0k=
+X-Gm-Gg: AYBFou1SXjSD/0KK1/JiDeYmWyie87VX/fJGzU990ik9+aaBJEPEKf4SEZ7oHhJde1L
+	JXxkrxyM2Zn0wuvDVYfIVLn+ZixqX6ZAs2UixgI4OCb6pDetl1fLLoMpRt6sK/u53cyI+7TJLAD
+	4Xl+9Ow4hE/Xylio86TPalvPmMrqgFz48mKKEoI3ZSIjmi111I7YyARY7CAgwVH9ACVeU9+hA4n
+	q5HwertTAHGD7/VUTdTq3PZLBVVabVK1fR/7x9GpilLIAC6+SP4W8e0RgK4qwbAMh+cV8Eeiflp
+	Uc++iHrfJUQ2/jQ210ymehO3Kgffs1iJcuCM1m+x4ft/0J+s49HhI40hEl99ZOgzwTBwX3nHRbg
+	aicavsxkiFb4qYNBAuggJZO73Zz23YjcvOqr/fVHE4bIUYvraP0bcU3PbTV27gJnEgr6BsUMvyb
+	+rI32uTF2een0Ct5pqNw120msT+JS/UbErryXS+HRVcjWKvmicEfNyG5YDoU+03bAP2RBeAQR1A
+	0EqwSw1dFHW4yobFc8Ncij1emLq69I=
+X-Received: by 2002:a05:600c:46cf:b0:4a1:7e1f:21bc with SMTP id 5b1f17b1804b1-4a18e4d6636mr23240285e9.29.1791538233076;
+        Fri, 09 Oct 2026 02:30:33 -0700 (PDT)
+Received: from [192.168.151.76] (90-182-211-1.rcp.o2.cz. [90.182.211.1])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bf35930sm43922135e9.13.2026.10.09.02.30.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Oct 2026 02:30:32 -0700 (PDT)
+Message-ID: <6b9cdfd7-9f01-4ed9-a4d7-6b2949452b6c@linaro.org>
+Date: Fri, 9 Oct 2026 11:30:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v2 2/4] drm/bridge: simple: add Chrontel CH7218A
+To: Xilin Wu <sophon@radxa.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Bartosz Golaszewski
+ <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Stephen Chen <stephen@radxa.com>, Junhao Xie <bigfoot@radxa.com>,
+ dragon@radxa.com, Daniele Briguglio <hello@superkali.me>
+References: <20261009-q8b-dts-v2-0-eda11e5dea8b@radxa.com>
+ <20261009-q8b-dts-v2-2-eda11e5dea8b@radxa.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20261009-q8b-dts-v2-2-eda11e5dea8b@radxa.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15.2
-X-Proofpoint-ORIG-GUID: uJuCPP1l0RSWonjdKsdKUWlab_bk9do-
-X-Authority-Analysis: v=2.4 cv=U98Hnuru c=1 sm=1 tr=0 ts=6ac8a5e2 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22 a=qk-nXHHSopyJew9tVzIA:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA5MDAzMiBTYWx0ZWRfX7zsqwZs145nb
- 4fMETOJ9+uG+Eitp1P2dkspFHuGnzgdC5ZdCArBAcqkLGy/zHAGSkUkMoFeh3tpDUOxVAoBDTFQ
- 22Oky6I6qJkrSgZg1SAmK/VBibjzR9w=
-X-Proofpoint-GUID: uJuCPP1l0RSWonjdKsdKUWlab_bk9do-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA5MDAzMiBTYWx0ZWRfXx8yrr/08+BhW
- RYiPRP4C/0JlgBwR69OYqetq/Lzil/7JwJypzxW7xeUX8eCY5ireS6c5zJTtgZV0wDCeGsGAqki
- R2WGnCZy6Ocn+F0PMSt8moPVK1Yp3CoQaHfIZW/Sl9aOSlG8F5rky3CIcuVC6JTfzYtU3d1Ucoz
- xo0Q+7F5Nd2c4FUT4osfOoRJeYH5Q+zvB3vA/jn+capr9GgjNXoredXmZQlmu5hxrRtHcbqG/O2
- yKj8JfTLhGOERlX3M2KDjCgZHJJWdYUEjtdAsqdqGOeYppsVWpJ+HP94fCO4daebhe/LBoireyy
- WT/CrhZuIknm9rvnj2etNx24RUZQKPjFIBDDo+WPBphG/kONstl1LQyglf+BqNPcdBjHxLr86vq
- wRfngZb6F+QkKswXO6UtrZ2/mf3zZL3+4JbpUfKGmCfyuh+sNt/8T0IidCSZ4bL+ib0/pciyHoV
- BqRLFuEOA6rbAqeQZpA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-09_03,2026-10-08_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 adultscore=0 clxscore=1015 malwarescore=0
- spamscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610020000 definitions=main-2610090032
 
-On Fri, 09 Oct 2026 15:55:05 +0800, Xilin Wu wrote:
-> The Radxa Dragon Q8B is a single-board computer based on the Qualcomm
-> Snapdragon 8cx Gen 3 (SC8280XP) platform.
+On 10/9/26 09:55, Xilin Wu wrote:
+> The Chrontel CH7218A automatically boots its embedded firmware and
+> operates without host-side configuration.
 > 
-> The board provides UFS and microSD storage, two M.2 M-key slots, an M.2
-> E-key slot, a QPS615/TC9563 PCIe switch, USB Type-C ports with DisplayPort
-> alternate mode, USB Type-A ports, HDMI 2.1 output, headset audio and
-> a 40-pin expansion header.
+> Add the CH7218A to the simple bridge driver and expose its output as an
+> HDMI Type-A connector.
 > 
-> [...]
+> Tested-by: Daniele Briguglio <hello@superkali.me>
+> Signed-off-by: Xilin Wu <sophon@radxa.com>
+> ---
+>   drivers/gpu/drm/bridge/simple-bridge.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
+> index 3fba7002322e..fab793fb12b5 100644
+> --- a/drivers/gpu/drm/bridge/simple-bridge.c
+> +++ b/drivers/gpu/drm/bridge/simple-bridge.c
+> @@ -275,6 +275,11 @@ static const struct of_device_id simple_bridge_match[] = {
+>   		.data = &(const struct simple_bridge_info) {
+>   			.connector_type = DRM_MODE_CONNECTOR_HDMIA,
+>   		},
+> +	}, {
+> +		.compatible = "chrontel,ch7218a",
+> +		.data = &(const struct simple_bridge_info) {
+> +			.connector_type = DRM_MODE_CONNECTOR_HDMIA,
+> +		},
+>   	}, {
+>   		.compatible = "mstar,tsumu88adt3-lf-1",
+>   		.data = &(const struct simple_bridge_info) {
+> 
 
-Applied to drm-misc-next, thanks!
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
-[1/4] dt-bindings: display: bridge: simple: document Chrontel CH7218A
-      commit: 377682cf917027396211426c509cae5785305ba8
-[2/4] drm/bridge: simple: add Chrontel CH7218A
-      commit: f146c6086b792cb2c6b3ce5106f0cce62e408df8
-
-Best regards,
--- 
-With best wishes
-Dmitry
-
-
+Thanks,
+Neil
