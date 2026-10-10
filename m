@@ -1,152 +1,153 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F4B4503E6
-	for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2026 11:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA22A3FFF8E
+	for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2026 12:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791632227; cv=none; b=dtWwlAqg7pM+G/iVF5sMJOZY91VA0iQLYfXQBM5uIMI5wyTj/YIZ5Rbic/JDo8uGpoNuMLO8FrFeZzx7OEQk2MwLYLAzG2Bz1JSxjmYbLSTk798RVgaXCDFBqfEOg2iaBiXlcDU2K4OW5ERYP2sCCNnbvRGB+3PeXz6BrIqMk0Q=
+	t=1791637020; cv=none; b=htt17AAsco9pA2eFiPxeUCu0LjNFs29mOFjL+TRb84HZPh0K4tLFNFa59oMRGpyfp4W11bS2Um6MQkF+g2W6ZZCituSZn/dstYXqhOmYLs9KedfsCr/mN3/V5FJ5FtPmAoa/8iCKVwZLYYnL13e4vIAJbX00Ae6uQZOqk825B98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791632227; c=relaxed/simple;
-	bh=9f0cPTlHUdzx7Ohg8wZ9cNL+b7/B6ZisdWLmZKoZy48=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=rUMX9i9OYTxQ4JtTk+mMdEjRgk7bJY1r4TziGIMLUTAbif6bluKiz1wP+73eOgfDdUaCcs8IeRa12qlgqBdJsGq+hXIj6wOsN+L37fOQETHqW03lMNT8YsnE19ujO46EM1ExBpjtahFgaFgegFwoJ2zt0f7zzd+bdHLaB/W1NkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ajij8h+4; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791637020; c=relaxed/simple;
+	bh=W/UEILEHedjWzea26aThXcgblmNjNpWx4V4u/V5lw4k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J43cAg2fEgiWNfKEt6JjQAgnXrcwIqpxQNi1XBCfgMOVkR9RGeVvclPZ/9D1sDOt6y3SBZPZzdwsqm29BphAb4KLyIy8P0G/QB5n3TsBQYTLVS3THW8nI9fPJF1hIYIncUt72ECt/wIOjqyhBY0tQMWY2HNQN4a4kzlvpxJ2cF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FJk1JCwX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=EjG8JNKh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ajij8h+4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B76931F000FF;
-	Sat, 10 Oct 2026 11:37:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791632225;
-	bh=uQajuSWz9bNuGF4HXU2w/kzGvCmOK8GjkkG+tGHVwb4=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=Ajij8h+4V0S9AT3JHcfS2EwEzd78ODZIw9HxXhkwad2YsQBbn9tyw2jrWvWkQBcXS
-	 y3eOjVqSwZXXJXQHYZV0orj+bi7TwrTPi89X21mmHxfu1TAq+xkcjq2rdM5r75wJ1X
-	 pKBzRrkGrMnIjsBaR2IBzkjtioZU5wiu32SoLSvZwTB1Fmbj2pvAXM+WzOywflaBca
-	 BaJxSzBMNTSXbi5Ic9QOUEWIOkrUIDGd3rlhTBIkIbaz8k/V+UiO2BPDqM+eGaBjGV
-	 wxsiFDtT1qDmSzlCi5WMH8m3kXmIeCQa4ub3dnEdpIb9aF3XIlzM20ZSE3qyIa4t+p
-	 w4yiuCUmwt1vw==
-Message-ID: <sashiko-outbox-166471@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [RFC PATCH] pinctrl: qcom: Restore the pin configuration after
- hibernation
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Birk Skyum" <birk.skyum@pm.me>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <179163141354.18006.80461347454353634@pm.me>
-References: <179163141354.18006.80461347454353634@pm.me>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Sat, 10 Oct 2026 11:37:05 +0000
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FJk1JCwX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="EjG8JNKh"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69ACVSGK1138443
+	for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2026 12:56:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DdqTfmxv7RjX7a6pYYeAcFMXK1tEr0dFq6vCwkdGz5A=; b=FJk1JCwXsNzxLxct
+	4QIM4TwGSLRWJ+olwZ2yWHHIoln3g6Y2jeMLmBqmVKBYDmIX3cozXxhZAdDSHLNp
+	LxnyO+jgEUqY0CX3WJ1b0dPZoj9awMVdqWbRSoIIQIianSN7IVgHdXub4Q3i2yd2
+	2MQ+VZ384Jvpq8kJgCerM6AxEJHHAR9IKNKEg6DOEVzxfwz5ADAGfs6+UohDnE6L
+	pB1+eCbvYUCrO3LII2vFrPdUHa7haSpl7zi+QCPKsD61BazHAZMtW1BXbVPGZUBk
+	66FfaEE8QYrHYRTWP0K3UQB4WUNbFvnFea3bWJxmsGkrcozf9DDjxIryuB+c/pLj
+	ZaAnoQ==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h7cxxh3vn-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2026 12:56:58 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93cc7a6e4e1so178711885a.1
+        for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2026 05:56:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1791637018; x=1792241818; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=DdqTfmxv7RjX7a6pYYeAcFMXK1tEr0dFq6vCwkdGz5A=;
+        b=EjG8JNKhxhpw4QR42vSFCIdPfmzluMofsKpvyvOYvIzeGskQG20BATMzRaDEmltf2g
+         NOLKHq3noYPyFK/LY+pXLO+vuSETvXp4XJj6mkAUPfqz7L3rWEaZs06qWPqIcRB1tFvl
+         8W9Gnn+tPYPmUAILGeQl5/aYNWuvPEppYw40z4/l03wqX14AmAM+NBPlQHRN8wm2z4LR
+         RzCN9js+RnO1njgE/IClmI5W4oYyMV/sbuEN0WWJ0UKmLgENPPc6NU13+omEzQGsUMO/
+         x+ZYyZH5osJSU+8i/ZhN3dmQWfBo++pjwGIkhwa2NqvvkZNFQOuqW+RdMAInydcKliHF
+         CmtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791637018; x=1792241818;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=DdqTfmxv7RjX7a6pYYeAcFMXK1tEr0dFq6vCwkdGz5A=;
+        b=crRESkgJQb4O3y0u6K38/PhGya0yBawhpm3iMdCgJpX9/fWp0BsKlIK94ULg5IFiho
+         xBJ4l2+iy+YKDzzSuHoW67HxIPSVBOtb8Jq+HmQrme056i9s0DDfWdVff6/iKPLcpNS9
+         GUNncwCKfmHGleouVG79XU+VD8+wiBHgi1RQmPAIU66phONNCZmjVV542ED0jWqgL2A+
+         xHNvYgmntoTfjVwm7byrrMYvZIEcBAoowIR8Qu6HottOsQZtSEb2JOHHe3VRt9ORTgCn
+         1H4qz+9qXh/VGhtmhRDs2jv9ijlbJOD+zGahvMWdIgx1G2LQdqDxVWRNctmBJk3V/0N2
+         budQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzJvc0CD/6ycHOzKHhj5j6HC8pQq5MB4cSiHNVXYXl6ReuHjI0vjwd2y+S7p+CGnyusalkKG4YEUEuz@vger.kernel.org
+X-Gm-Message-State: AFq9FYKJgOFTYtKITv5740VHFXBCdLpprxo0axMdTLuehpM0/XxV8c8O
+	3mP5rxgJ+zCBWDrXiXv0kLpBuDcUkKKZ1yD337Wx7BEWOO4vrVRZKpKxquLnYIoOI4IgE5ES+CZ
+	Om2/6yVoyTYQE1WbIpHZl9ROE+luaKmGWL85PfYoAH0p/RYLcyJZQS6hU8x5eLK0g
+X-Gm-Gg: AYBFou05yfBHrEg+ugwfY5ojQTaVWhCOBizR3Y/NFlgpV8EPZK+ZJ2YOv/ZzE1/DT1d
+	oEkY4MYNuaMmexQS5QwE3m2NT69qzzaNzUq/JWS27owSSE/HE4l2PfYAOeIcpNgueSZCDYB5OIa
+	mdfMFHgTX/0X+bSmI185ZVLOgyX2qagri0nBjhGXDkFU7M/oX5+JzDeMTnTRIgPJJQRk1kXvUnS
+	cOYb+MdW8HTa7PnXMl7JtEpnaNI2bnpD93k5Z1TiyC0KTHdqKBm2v6nRhXlesbRovJRUc+LUTnY
+	0xB5RA1glvpDEr/WuGG/EbfmUmocAEPAMvNNmRZ6oXsxrHCwXX92Cyd8pqkaSiuRcWsyGqvODrL
+	oe19+R9pB9WC7uPyoZmzF133Cs9ZU9iOwpWLVVd5AxaQt85pyBMW5eYcpZxNT42u5h5IoofwPcU
+	xJxP5Ax/c/eGWPOnJS
+X-Received: by 2002:a05:620a:3947:b0:92e:8310:7369 with SMTP id af79cd13be357-93ebd248de4mr824665785a.37.1791637017889;
+        Sat, 10 Oct 2026 05:56:57 -0700 (PDT)
+X-Received: by 2002:a05:620a:3947:b0:92e:8310:7369 with SMTP id af79cd13be357-93ebd248de4mr824660085a.37.1791637017012;
+        Sat, 10 Oct 2026 05:56:57 -0700 (PDT)
+Received: from brgl-qcom.local (2a02-8440-350e-a8a7-dac7-41db-afca-de74.rev.sfr.net. [2a02:8440:350e:a8a7:dac7:41db:afca:de74])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48db97ce3aasm9014383f8f.21.2026.10.10.05.56.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Oct 2026 05:56:55 -0700 (PDT)
+From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+To: andersson@kernel.org, linusw@kernel.org, brgl@kernel.org,
+        Joonhoe Kim <26rote@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        konrad.dybcio@oss.qualcomm.com, jingyi.wang@oss.qualcomm.com,
+        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: qcom: kaanapali: add the I2C strong pull-up bit
+Date: Sat, 10 Oct 2026 14:56:52 +0200
+Message-ID: <179163700869.6835.2267810663519966879.b4-ty@oss.qualcomm.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20261007124001.1724-1-26rote@gmail.com>
+References: <20261007124001.1724-1-26rote@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: RZ3R-015wkQQKVoL_ymusuM8tFATLNWO
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDEwMDA1MSBTYWx0ZWRfX4rXsSWUopz82
+ 3bEEbVxquhjwqgyY0eS1n0Fqpjr1j6JoTukR49eUnFEumrX63HUyHi5CzP9sflUBAxq+GBUE40B
+ 7hcwJQbIAY5ESWQDb6XuvNU95lGexrg=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDEwMDA1MSBTYWx0ZWRfX51o87c4rYCeJ
+ R08R03Mou65F2+8Bs09opk5zBR66VibZJ8pdMB/IdIyLpCwJfGfBQZOQUdeeW1TUAm2mWp8a9Jp
+ WwAEZzaODw6J+5AfCm6PeR44JgWNUxZZTirXvJl3UcZEKFWOY4nHNppf7qrCY9KHLp4XoCAd29y
+ 3vwWE+kV5wSnu9XWWiMommYUpfiMxxlo526UBERWHcWrwmFsTNQZP2Oc7ZTaLwveDwoJaQIUV5w
+ C0LPOqZL5IDqggDJl9P/7mOuuhkIEz90qm0x7IjWq8cl5lvfJkKyV6qbFQSDNKt+DzetdgeJUej
+ ho8E10mNaocCvS+VmbnBXy0zqbaCzYOsm7PSE9LXHCAEHgNPBU7zfZ10mQqM8UC1n9PIqYPuKfU
+ qamvAFmGmiwTJ2EN3FfP127uTjPZn6Ab0OqbBTGKw9nLTK6vf7puhHoQOyLnUiJYenOz59NA7X3
+ rrJ/Yq/4jrP0b5GMPwA==
+X-Authority-Analysis: v=2.4 cv=AsJ7T+9P c=1 sm=1 tr=0 ts=6aca361a cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=buVoV1uq8FEZNaAFP7gA:9 a=QEXdDO2ut3YA:10 a=ZXulRonScM0A:10
+ a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: RZ3R-015wkQQKVoL_ymusuM8tFATLNWO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-10_02,2026-10-09_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
+ adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610100051
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [Medium] pinctrl: qcom: NULL pointer dereference in freeze_noirq under CO=
-NFIG_HIBERNATE_CALLBACKS=3Dy && CONFIG_HIBERNATION=3Dn
-- [Medium] pinctrl: qcom: lost edge wakeups due to unconditional ack in res=
-tore_noirq
-- [Medium] pinctrl: dual-edge interrupt missed after hibernation
---
 
-commit 0f4785b0198c4a184e8d48cdee17d396f8fd5f1c
-Author: Birk Skyum <birk.skyum@pm.me>
-Subject: pinctrl: qcom: Restore the pin configuration after hibernation
+On Wed, 07 Oct 2026 21:40:01 +0900, Joonhoe Kim wrote:
+> The Kaanapali TLMM has the I2C pull-up control in bit 13 of the pin
+> config register, like SM8550, SM8650 and X1E80100, but the driver does
+> not describe it, so "bias-pull-up = <2200>" cannot select the strong
+> pull-up.
+> 
+> The downstream kernel sets it on the camera CCI pins (config 0x2007).
+> On a Lenovo TB323FU tablet, with only the weak pull-up every CCI
+> transfer on the two sensor buses times out; with bit 13 set the sensors
+> answer and their chip IDs read correctly.
+> 
+> [...]
 
-This commit saves the control, output, and interrupt configuration registers
-of every valid pin during freeze_noirq. It then restores these saved values
-during restore_noirq to ensure pins untouched by the loading kernel regain
-their correct pre-hibernation state.
+Applied, thanks!
 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pi=
-nctrl-msm.c
-> index 27f06bbc113c9..fba8a41655261 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-[ ... ]
-> +/* Remember how the pins are set up when a hibernation image is taken. */
-> +static int msm_pinctrl_freeze_noirq(struct device *dev)
-> +{
-> +	struct msm_pinctrl *pctrl =3D dev_get_drvdata(dev);
-[ ... ]
-> +	raw_spin_lock_irqsave(&pctrl->lock, flags);
-> +	for (i =3D 0; i < pctrl->chip.ngpio; i++) {
-> +		if (!gpiochip_line_is_valid(&pctrl->chip, i))
-> +			continue;
-> +
-> +		g =3D &pctrl->soc->groups[i];
-> +		s =3D &pctrl->saved[i];
-> +		s->ctl =3D msm_readl_ctl(pctrl, g);
+[1/1] pinctrl: qcom: kaanapali: add the I2C strong pull-up bit
+      https://git.kernel.org/brgl/c/1df7f369075d7e8f7794981995a5103f1963bab7
 
-[Severity: Medium]
-Will this result in a NULL pointer dereference on kernels built with
-CONFIG_HIBERNATION=3Dn but CONFIG_HIBERNATE_CALLBACKS=3Dy?
-
-The pctrl->saved array is allocated strictly under CONFIG_HIBERNATION in
-msm_pinctrl_probe():
-
-    if (IS_ENABLED(CONFIG_HIBERNATION)) {
-        pctrl->saved =3D devm_kcalloc(&pdev->dev, pctrl->chip.ngpio, ...);
-
-However, the callbacks are guarded by pm_sleep_ptr() in
-msm_pinctrl_dev_pm_ops, which depends on CONFIG_PM_SLEEP (enabled if either
-SUSPEND or HIBERNATE_CALLBACKS is set). If a system (such as a Xen guest on
-x86 with COMPILE_TEST) triggers PM_EVENT_FREEZE, msm_pinctrl_freeze_noirq()
-could be called and unconditionally dereference the unallocated pctrl->saved
-array here.
-
-[ ... ]
-> +static int msm_pinctrl_restore_noirq(struct device *dev)
-> +{
-[ ... ]
-> +		msm_writel_ctl(s->ctl, pctrl, g);
-> +		if (!g->intr_cfg_reg)
-> +			continue;
-> +
-> +		if (msm_pin_has_own_intr_target(pctrl, g))
-> +			msm_writel_intr_target(s->intr_target, pctrl, g);
-> +		msm_writel_intr_cfg(s->intr_cfg, pctrl, g);
-
-[Severity: Medium]
-Could blindly restoring the saved intr_cfg cause missed dual-edge interrupt=
-s?
-
-QCOM hardware emulates dual-edge interrupts by dynamically setting the
-polarity opposite to the current physical line level. If the physical line
-toggled during hibernation, the restored polarity will match the current
-state rather than being opposite to it, causing the hardware to wait for
-an edge that already occurred.
-
-Should this re-evaluate the line level and update the polarity by calling
-msm_gpio_update_dual_edge_pos() for pins marked in pctrl->dual_edge_irqs
-during resume?
-
-> +
-> +		/* Enabling the raw status can latch an interrupt. */
-> +		if (s->intr_cfg & BIT(g->intr_raw_status_bit))
-> +			msm_ack_intr_status(pctrl, g);
-
-[Severity: Medium]
-Will unconditionally clearing the interrupt status here drop legitimately
-latched edge wakeups?
-
-The TLMM hardware can latch real edge interrupts while the loading kernel
-is active or during the suspend/resume window. Unconditionally calling
-msm_ack_intr_status() for every pin with RAW_STATUS_EN enabled, without
-checking if the configuration actually toggled (as is safely done in
-msm_gpio_irq_set_type()), might silently drop pending edge wakeups causing
-peripheral drivers to miss events.
-
-> +	}
-> +	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-> +
-> +	return 0;
-> +}
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/179163141354.18006.=
-80461347454353634@pm.me?part=3D1
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
