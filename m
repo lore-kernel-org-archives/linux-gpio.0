@@ -1,153 +1,134 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA22A3FFF8E
-	for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2026 12:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFAD372EEE
+	for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2026 13:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791637020; cv=none; b=htt17AAsco9pA2eFiPxeUCu0LjNFs29mOFjL+TRb84HZPh0K4tLFNFa59oMRGpyfp4W11bS2Um6MQkF+g2W6ZZCituSZn/dstYXqhOmYLs9KedfsCr/mN3/V5FJ5FtPmAoa/8iCKVwZLYYnL13e4vIAJbX00Ae6uQZOqk825B98=
+	t=1791639999; cv=none; b=RDen4rdmu9ymkQWMmPycl8Tnq8NSMbgem/M/IhKzmy3C28unTtdJ8u5dD9Vzw/qrn/o3yZIT1u9G5nT++kfVMMheBVQRXKA3V9xz9eowSzjvLEMfvLasOMPNP+hpp0RiTirAjOT3ALRl8WRhzclgpJ8EBMamEvpBE1c+3r6JSyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791637020; c=relaxed/simple;
-	bh=W/UEILEHedjWzea26aThXcgblmNjNpWx4V4u/V5lw4k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J43cAg2fEgiWNfKEt6JjQAgnXrcwIqpxQNi1XBCfgMOVkR9RGeVvclPZ/9D1sDOt6y3SBZPZzdwsqm29BphAb4KLyIy8P0G/QB5n3TsBQYTLVS3THW8nI9fPJF1hIYIncUt72ECt/wIOjqyhBY0tQMWY2HNQN4a4kzlvpxJ2cF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FJk1JCwX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=EjG8JNKh; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1791639999; c=relaxed/simple;
+	bh=7hRVs3BYbYMUWytBwA6CmbA7QnVq714J9oYUdi/KtgU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VEZ6VxNqyuXDvC7t3Qxf91CxxrAdP96MUykae4xXwlTnvmpU9KJo3xAFBa9QfctT8TE55dsLoedCmUFMvYGhXMhSsD+0aoV4p6+DZIChRnWnSBJ4l6rLVaUzlQLG/YRKp7gmFRljpe6LtSom+FEBC4bKq06pGZ0s7p7+0OgG/sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=PBwgq+q+; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FJk1JCwX";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="EjG8JNKh"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69ACVSGK1138443
-	for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2026 12:56:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DdqTfmxv7RjX7a6pYYeAcFMXK1tEr0dFq6vCwkdGz5A=; b=FJk1JCwXsNzxLxct
-	4QIM4TwGSLRWJ+olwZ2yWHHIoln3g6Y2jeMLmBqmVKBYDmIX3cozXxhZAdDSHLNp
-	LxnyO+jgEUqY0CX3WJ1b0dPZoj9awMVdqWbRSoIIQIianSN7IVgHdXub4Q3i2yd2
-	2MQ+VZ384Jvpq8kJgCerM6AxEJHHAR9IKNKEg6DOEVzxfwz5ADAGfs6+UohDnE6L
-	pB1+eCbvYUCrO3LII2vFrPdUHa7haSpl7zi+QCPKsD61BazHAZMtW1BXbVPGZUBk
-	66FfaEE8QYrHYRTWP0K3UQB4WUNbFvnFea3bWJxmsGkrcozf9DDjxIryuB+c/pLj
-	ZaAnoQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h7cxxh3vn-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2026 12:56:58 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93cc7a6e4e1so178711885a.1
-        for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2026 05:56:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="PBwgq+q+"
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-4f58dce2ad9so520922b6e.1
+        for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2026 06:46:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791637018; x=1792241818; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=DdqTfmxv7RjX7a6pYYeAcFMXK1tEr0dFq6vCwkdGz5A=;
-        b=EjG8JNKhxhpw4QR42vSFCIdPfmzluMofsKpvyvOYvIzeGskQG20BATMzRaDEmltf2g
-         NOLKHq3noYPyFK/LY+pXLO+vuSETvXp4XJj6mkAUPfqz7L3rWEaZs06qWPqIcRB1tFvl
-         8W9Gnn+tPYPmUAILGeQl5/aYNWuvPEppYw40z4/l03wqX14AmAM+NBPlQHRN8wm2z4LR
-         RzCN9js+RnO1njgE/IClmI5W4oYyMV/sbuEN0WWJ0UKmLgENPPc6NU13+omEzQGsUMO/
-         x+ZYyZH5osJSU+8i/ZhN3dmQWfBo++pjwGIkhwa2NqvvkZNFQOuqW+RdMAInydcKliHF
-         CmtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791637018; x=1792241818;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=baylibre.com; s=google; t=1791639994; x=1792244794; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=DdqTfmxv7RjX7a6pYYeAcFMXK1tEr0dFq6vCwkdGz5A=;
-        b=crRESkgJQb4O3y0u6K38/PhGya0yBawhpm3iMdCgJpX9/fWp0BsKlIK94ULg5IFiho
-         xBJ4l2+iy+YKDzzSuHoW67HxIPSVBOtb8Jq+HmQrme056i9s0DDfWdVff6/iKPLcpNS9
-         GUNncwCKfmHGleouVG79XU+VD8+wiBHgi1RQmPAIU66phONNCZmjVV542ED0jWqgL2A+
-         xHNvYgmntoTfjVwm7byrrMYvZIEcBAoowIR8Qu6HottOsQZtSEb2JOHHe3VRt9ORTgCn
-         1H4qz+9qXh/VGhtmhRDs2jv9ijlbJOD+zGahvMWdIgx1G2LQdqDxVWRNctmBJk3V/0N2
-         budQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzJvc0CD/6ycHOzKHhj5j6HC8pQq5MB4cSiHNVXYXl6ReuHjI0vjwd2y+S7p+CGnyusalkKG4YEUEuz@vger.kernel.org
-X-Gm-Message-State: AFq9FYKJgOFTYtKITv5740VHFXBCdLpprxo0axMdTLuehpM0/XxV8c8O
-	3mP5rxgJ+zCBWDrXiXv0kLpBuDcUkKKZ1yD337Wx7BEWOO4vrVRZKpKxquLnYIoOI4IgE5ES+CZ
-	Om2/6yVoyTYQE1WbIpHZl9ROE+luaKmGWL85PfYoAH0p/RYLcyJZQS6hU8x5eLK0g
-X-Gm-Gg: AYBFou05yfBHrEg+ugwfY5ojQTaVWhCOBizR3Y/NFlgpV8EPZK+ZJ2YOv/ZzE1/DT1d
-	oEkY4MYNuaMmexQS5QwE3m2NT69qzzaNzUq/JWS27owSSE/HE4l2PfYAOeIcpNgueSZCDYB5OIa
-	mdfMFHgTX/0X+bSmI185ZVLOgyX2qagri0nBjhGXDkFU7M/oX5+JzDeMTnTRIgPJJQRk1kXvUnS
-	cOYb+MdW8HTa7PnXMl7JtEpnaNI2bnpD93k5Z1TiyC0KTHdqKBm2v6nRhXlesbRovJRUc+LUTnY
-	0xB5RA1glvpDEr/WuGG/EbfmUmocAEPAMvNNmRZ6oXsxrHCwXX92Cyd8pqkaSiuRcWsyGqvODrL
-	oe19+R9pB9WC7uPyoZmzF133Cs9ZU9iOwpWLVVd5AxaQt85pyBMW5eYcpZxNT42u5h5IoofwPcU
-	xJxP5Ax/c/eGWPOnJS
-X-Received: by 2002:a05:620a:3947:b0:92e:8310:7369 with SMTP id af79cd13be357-93ebd248de4mr824665785a.37.1791637017889;
-        Sat, 10 Oct 2026 05:56:57 -0700 (PDT)
-X-Received: by 2002:a05:620a:3947:b0:92e:8310:7369 with SMTP id af79cd13be357-93ebd248de4mr824660085a.37.1791637017012;
-        Sat, 10 Oct 2026 05:56:57 -0700 (PDT)
-Received: from brgl-qcom.local (2a02-8440-350e-a8a7-dac7-41db-afca-de74.rev.sfr.net. [2a02:8440:350e:a8a7:dac7:41db:afca:de74])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48db97ce3aasm9014383f8f.21.2026.10.10.05.56.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Oct 2026 05:56:55 -0700 (PDT)
-From: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-To: andersson@kernel.org, linusw@kernel.org, brgl@kernel.org,
-        Joonhoe Kim <26rote@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
-        konrad.dybcio@oss.qualcomm.com, jingyi.wang@oss.qualcomm.com,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: qcom: kaanapali: add the I2C strong pull-up bit
-Date: Sat, 10 Oct 2026 14:56:52 +0200
-Message-ID: <179163700869.6835.2267810663519966879.b4-ty@oss.qualcomm.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261007124001.1724-1-26rote@gmail.com>
-References: <20261007124001.1724-1-26rote@gmail.com>
+        bh=JAKMj+KBQiZwjesAoVsZB7P+pgbWuimzGqrZ8oXnW4s=;
+        b=PBwgq+q+VXb1e2UWSFncuuXX8zVzNA/LEnkjvGi2ozydiaSkf0Ea3M6MVyQ1gPHB2O
+         eo0yJv5+UfD/xpLQ+rklosCEUCCTnEjBgLYQu4fRh4jHYDtwtXmjlsWyFIyq1XPyzdwB
+         178+X2cIrbX1t42m6gqR9ttKhToEfj9BPqcCJredL2eZlSQFKK8x2bv1kmS6NxGmUaPU
+         TnADhNLy4zBl9aDZKIGpoN5FYVz5Ijol0W0MqQ+T8Tq6LmpJry9KYbt22Xe6BJ9ZNTbb
+         AkF31lkBzhrRAIFx7e0q/JFry5XT0Yhx1A9FUANilRyNCkyjNB9+O+mrwS1YHxRa6fTc
+         KWSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791639994; x=1792244794;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=JAKMj+KBQiZwjesAoVsZB7P+pgbWuimzGqrZ8oXnW4s=;
+        b=pg20KzhYsSCcVZUuT1zlr+5m/Livag7vRWsYsIc5NRW9fVmJxs4FxFZruK8qSNkx18
+         st8BY3ujzz2z8PuRMn4HDmKpufVFRvtAZ9IJ5y8oiECOc58rVRA07AnZb3iDe729+364
+         J/+rt0mH8Rei9B9FLDXyYPaferw4MvYdpNGz8+M3eOUgQpIITfyjQgEUUyLnW8YAvBhW
+         g8sgQtEtmnOu99/6xhaa0N46CJWE2Z6ttxJ5nn2s0L3+hi2sH9knoNhEbHhJu2kd9siy
+         Oqr1+XPSskUG0RirA78HD3+uE9hVL88harDlRQUSjd9hLZ6VCm59KT2u5xr+L2C5FBvJ
+         auEw==
+X-Forwarded-Encrypted: i=1; AKwUvBw6dX8HLRaTD8WeFWhkLocLw7JozmWexlnlufyFMtUlFkm/xEnKu/gcn30/gQKUIallBTu0dcPq8oql@vger.kernel.org
+X-Gm-Message-State: AFq9FYIA8Rm4w5CK/UhWEOw5eVB0KQ0oKOaWQE3u7TEHAI8bNshbyYAa
+	OlHnEQxrEfnOn8XkfCT67MDwXL+vx+iU+ZZKfZsupX3t0EINcHb9aQQDn3ifKYn5D7A=
+X-Gm-Gg: AYBFou2r3KY4BriFx6qZkDHb0uB0bY2OCtjSFzPSG/57QZl6+vmfuErP1WEpPwtg929
+	Xt0tqPYUtU9u7vvsLaLGCznesoRDNb42lqrGRYS+k9YK4gjfEZ5+3JzEKEhHJmt8kiCBziBpieo
+	C/k4J7AbznVHCUo52FvqOX6OGdnYeRveTN7Y1Rquk2G0/JbcIHdcz0FTNnswHsxIE6HagZQfVrA
+	YUbrB3+ypsNdabeSqb4DOlDY+Yw7PDS9sYBwO8THlAt5VQkddcZkx/T3bcRkTzM5tGlTi2p/f9+
+	S77xePv/kg7ygg0nH4KetdqXlS1MYbHOTy5e2k7C+EqHxaU8qSgfyVAvY2AMIyMNgQHcShx31yD
+	G54W0ftZ/hQvorS1Uhbm7CU0t6b8GzpdjrvBVc17xkbHTs7DK5Zy9LH9cgxTgEtYoow2QfaTPMl
+	3kacwUCmPv4Z/IaNans1iDN1JWFM28mJZzX3edLH44rjK6277SqTRu4FlBGz/rOOx07/iJnJY4q
+	aYKOm8SHQ2GrhYs/vLhdkYKxd58/Zcomob4dxoRqaasYU7Q
+X-Received: by 2002:a05:6808:4fde:b0:4f3:e98f:fa26 with SMTP id 5614622812f47-50c56deebe6mr4606369b6e.58.1791639994282;
+        Sat, 10 Oct 2026 06:46:34 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:500:3b8a:e2db:776f:80fd? ([2600:8803:e7e4:500:3b8a:e2db:776f:80fd])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-50c1c120ae6sm4982338b6e.17.2026.10.10.06.46.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 Oct 2026 06:46:32 -0700 (PDT)
+Message-ID: <cde9d00a-bfe4-4093-b03d-f76a122e4ded@baylibre.com>
+Date: Sat, 10 Oct 2026 08:46:30 -0500
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: RZ3R-015wkQQKVoL_ymusuM8tFATLNWO
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDEwMDA1MSBTYWx0ZWRfX4rXsSWUopz82
- 3bEEbVxquhjwqgyY0eS1n0Fqpjr1j6JoTukR49eUnFEumrX63HUyHi5CzP9sflUBAxq+GBUE40B
- 7hcwJQbIAY5ESWQDb6XuvNU95lGexrg=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDEwMDA1MSBTYWx0ZWRfX51o87c4rYCeJ
- R08R03Mou65F2+8Bs09opk5zBR66VibZJ8pdMB/IdIyLpCwJfGfBQZOQUdeeW1TUAm2mWp8a9Jp
- WwAEZzaODw6J+5AfCm6PeR44JgWNUxZZTirXvJl3UcZEKFWOY4nHNppf7qrCY9KHLp4XoCAd29y
- 3vwWE+kV5wSnu9XWWiMommYUpfiMxxlo526UBERWHcWrwmFsTNQZP2Oc7ZTaLwveDwoJaQIUV5w
- C0LPOqZL5IDqggDJl9P/7mOuuhkIEz90qm0x7IjWq8cl5lvfJkKyV6qbFQSDNKt+DzetdgeJUej
- ho8E10mNaocCvS+VmbnBXy0zqbaCzYOsm7PSE9LXHCAEHgNPBU7zfZ10mQqM8UC1n9PIqYPuKfU
- qamvAFmGmiwTJ2EN3FfP127uTjPZn6Ab0OqbBTGKw9nLTK6vf7puhHoQOyLnUiJYenOz59NA7X3
- rrJ/Yq/4jrP0b5GMPwA==
-X-Authority-Analysis: v=2.4 cv=AsJ7T+9P c=1 sm=1 tr=0 ts=6aca361a cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=buVoV1uq8FEZNaAFP7gA:9 a=QEXdDO2ut3YA:10 a=ZXulRonScM0A:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: RZ3R-015wkQQKVoL_ymusuM8tFATLNWO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-10_02,2026-10-09_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0
- adultscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610100051
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] iio: adc: ti-ads112c14: add gpio support
+To: Bartosz Golaszewski <brgl@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Chris Hall <c-hall@ti.com>,
+ Patrick Edwards <pedwards@ti.com>, Kurt Borja <kuurtb@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Linus Walleij <linusw@kernel.org>
+References: <20261009-iio-adc-ti-ads112c14-gpio-v2-0-3231a795fa63@baylibre.com>
+ <20261009-iio-adc-ti-ads112c14-gpio-v2-2-3231a795fa63@baylibre.com>
+ <CAMRc=Mfn7+uQYvLjGLxU9wMOnRwx5pyPgaLp6oNx+ZcFXyXL=A@mail.gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <CAMRc=Mfn7+uQYvLjGLxU9wMOnRwx5pyPgaLp6oNx+ZcFXyXL=A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 10/10/26 4:00 AM, Bartosz Golaszewski wrote:
+> On Sat, 10 Oct 2026 01:25:52 +0200, "David Lechner (TI)"
+> <dlechner@baylibre.com> said:
+>> Add support for using the AIN4/GPIO0 to AIN7/GPIO3 pins as GPIOs when
+>> the gpio-controller property is present.
+>>
 
-On Wed, 07 Oct 2026 21:40:01 +0900, Joonhoe Kim wrote:
-> The Kaanapali TLMM has the I2C pull-up control in bit 13 of the pin
-> config register, like SM8550, SM8650 and X1E80100, but the driver does
-> not describe it, so "bias-pull-up = <2200>" cannot select the strong
-> pull-up.
+...
+
+>> @@ -2574,6 +2726,12 @@ static int ads112c14_probe(struct i2c_client *client)
+>>  	if (ret)
+>>  		return ret;
+>>
+>> +	if (device_property_read_bool(dev, "gpio-controller")) {
 > 
-> The downstream kernel sets it on the camera CCI pins (config 0x2007).
-> On a Lenovo TB323FU tablet, with only the weak pull-up every CCI
-> transfer on the two sensor buses times out; with bit 13 set the sensors
-> answer and their chip IDs read correctly.
+> I think the right one to use is device_property_present().
+
+I thought this was the one case where device_property_read_bool() is
+actually correct because gpio-controller property is a
+/schemas/types.yaml#/definitions/flag.
+
+Otherwise, we should just remove device_property_read_bool() from the tree
+because there would never be a reason to use it.
+
+My understanding is we should use device_property_present() for non-boolean
+properties when we want to know if it is present or not before reading the
+value of it.
+
 > 
-> [...]
+>> +		ret = ads112c14_gpio_init(indio_dev);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>> +
+>>  	return devm_iio_device_register(dev, indio_dev);
+>>  }
+>>
+>>
+>> --
+>> 2.53.0
+>>
+>>
+> 
+> Bart
 
-Applied, thanks!
-
-[1/1] pinctrl: qcom: kaanapali: add the I2C strong pull-up bit
-      https://git.kernel.org/brgl/c/1df7f369075d7e8f7794981995a5103f1963bab7
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
