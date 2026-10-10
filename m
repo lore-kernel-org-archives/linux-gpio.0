@@ -1,276 +1,152 @@
-Received: from mail-244122.protonmail.ch (mail-244122.protonmail.ch [109.224.244.122])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECCE46A60A;
-	Sat, 10 Oct 2026 11:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F4B4503E6
+	for <linux-gpio@vger.kernel.org>; Sat, 10 Oct 2026 11:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791631431; cv=none; b=XGWWivb+fsKNk9INsI+hNZiQjMGSMTc3dq69GM+pEFgKh8evtEjVCvfWAApLkiy9fWN3fZ0zI1qpj0W460+3lXSoxuPungYeI93SsTp2O8NBuzkL7WaVrQtOssToyKF4xdjNkcKIKrP3M+wBmrrune+Xyfyi4O2R+gbqi84+M/o=
+	t=1791632227; cv=none; b=dtWwlAqg7pM+G/iVF5sMJOZY91VA0iQLYfXQBM5uIMI5wyTj/YIZ5Rbic/JDo8uGpoNuMLO8FrFeZzx7OEQk2MwLYLAzG2Bz1JSxjmYbLSTk798RVgaXCDFBqfEOg2iaBiXlcDU2K4OW5ERYP2sCCNnbvRGB+3PeXz6BrIqMk0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791631431; c=relaxed/simple;
-	bh=29EACdLxzYRratyDbeWoNXVIHRUiUVtnepkFCk69mzE=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ERxiy6IzpwjXFnQgqGrA+agkNWDgxSlyJI1+oafeM2BXuAmslCkFzJPwlAk8vZwyISsbCRGRhKojvuvg4FU2WKRmtAya0FSK7ObDNsCUr/0HuTlHkTtnXR2WoOIqb3kHdWXxnGQYiR0piALEy6Ht+T5uQkUPJghYqH6sI6FCUSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=Ci6dayoF; arc=none smtp.client-ip=109.224.244.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+	s=arc-20240116; t=1791632227; c=relaxed/simple;
+	bh=9f0cPTlHUdzx7Ohg8wZ9cNL+b7/B6ZisdWLmZKoZy48=;
+	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
+	 Date; b=rUMX9i9OYTxQ4JtTk+mMdEjRgk7bJY1r4TziGIMLUTAbif6bluKiz1wP+73eOgfDdUaCcs8IeRa12qlgqBdJsGq+hXIj6wOsN+L37fOQETHqW03lMNT8YsnE19ujO46EM1ExBpjtahFgaFgegFwoJ2zt0f7zzd+bdHLaB/W1NkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ajij8h+4; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="Ci6dayoF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1791631421; x=1791890621;
-	bh=oo79LKWTx4aAtArHq4xXSoc7i/wEN7VwGdsWaQW6NV8=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=Ci6dayoFUMY/k81NymBOBaqSuC3q9llTEfP0Sh1/TyVzD0VdE/QJnnlpzaz2j7e+K
-	 hgk864ShChkLFGmLQkwf9CqHMIq8dNeNAfxxzn2Yqg7obJA9XI4DJtyXnxolUCIr5Y
-	 THfL5HTQyLigYecEPQop6RPkv3+BvH9rhyEqukKlI5WThxcNZW+GiwnUQt1puerxRj
-	 uCpXr0VBncgvXKPla3S9uLRjjNeSx33PWnp12Wdfoi++dtXXZ48oiXHosVNip8+qJc
-	 jmLSSNcNYDj/WTbynCKKFvwTqMsNHayJiYQzWkeo+IC/jV1maXaJrVNDkgIshY/vfd
-	 S6NbjfnkwwvIQ==
-Date: Sat, 10 Oct 2026 11:23:36 +0000
-To: Bjorn Andersson <andersson@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>
-From: Birk Skyum <birk.skyum@pm.me>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] pinctrl: qcom: Restore the pin configuration after hibernation
-Message-ID: <179163141354.18006.80461347454353634@pm.me>
-Feedback-ID: 21326998:user:proton
-X-Pm-Message-ID: 9005c5cbff3375a4d0631500baca45f5b1b2f650
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ajij8h+4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B76931F000FF;
+	Sat, 10 Oct 2026 11:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791632225;
+	bh=uQajuSWz9bNuGF4HXU2w/kzGvCmOK8GjkkG+tGHVwb4=;
+	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
+	b=Ajij8h+4V0S9AT3JHcfS2EwEzd78ODZIw9HxXhkwad2YsQBbn9tyw2jrWvWkQBcXS
+	 y3eOjVqSwZXXJXQHYZV0orj+bi7TwrTPi89X21mmHxfu1TAq+xkcjq2rdM5r75wJ1X
+	 pKBzRrkGrMnIjsBaR2IBzkjtioZU5wiu32SoLSvZwTB1Fmbj2pvAXM+WzOywflaBca
+	 BaJxSzBMNTSXbi5Ic9QOUEWIOkrUIDGd3rlhTBIkIbaz8k/V+UiO2BPDqM+eGaBjGV
+	 wxsiFDtT1qDmSzlCi5WMH8m3kXmIeCQa4ub3dnEdpIb9aF3XIlzM20ZSE3qyIa4t+p
+	 w4yiuCUmwt1vw==
+Message-ID: <sashiko-outbox-166471@kernel.org>
+From: sashiko-bot@kernel.org
+Subject: Re: [RFC PATCH] pinctrl: qcom: Restore the pin configuration after
+ hibernation
+Reply-To: sashiko-reviews@lists.linux.dev
+To: "Birk Skyum" <birk.skyum@pm.me>
+Cc: linux-gpio@vger.kernel.org
+In-Reply-To: <179163141354.18006.80461347454353634@pm.me>
+References: <179163141354.18006.80461347454353634@pm.me>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date: Sat, 10 Oct 2026 11:37:05 +0000
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-A hibernation image is restored after a power cycle. The TLMM registers
-then hold what the boot firmware and the kernel that loaded the image
-made of them. The restored kernel has the configuration it applied in
-memory only, and nothing writes it to the hardware again, so every pin
-that the loading kernel did not set up the same way stays wrong.
+Thank you for your contribution! Sashiko AI review found 3 potential issue(=
+s) to consider:
+- [Medium] pinctrl: qcom: NULL pointer dereference in freeze_noirq under CO=
+NFIG_HIBERNATE_CALLBACKS=3Dy && CONFIG_HIBERNATION=3Dn
+- [Medium] pinctrl: qcom: lost edge wakeups due to unconditional ack in res=
+tore_noirq
+- [Medium] pinctrl: dual-edge interrupt missed after hibernation
+--
 
-On a Lenovo Yoga Slim 7x (X1E80100) the Bluetooth and Wi-Fi enable lines
-are two of them. Their drivers are loaded from the root file system, so
-the kernel that loads the image never touches the pins. This is
-/sys/kernel/debug/gpio before the hibernation and after the resume:
+commit 0f4785b0198c4a184e8d48cdee17d396f8fd5f1c
+Author: Birk Skyum <birk.skyum@pm.me>
+Subject: pinctrl: qcom: Restore the pin configuration after hibernation
 
-  gpio116 : out low  func0 2mA no pull
-  gpio117 : out high func0 2mA no pull
+This commit saves the control, output, and interrupt configuration registers
+of every valid pin during freeze_noirq. It then restores these saved values
+during restore_noirq to ensure pins untouched by the loading kernel regain
+their correct pre-hibernation state.
 
-  gpio116 : in  low  func0 2mA pull down
-  gpio117 : out high func0 16mA no pull
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pi=
+nctrl-msm.c
+> index 27f06bbc113c9..fba8a41655261 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+[ ... ]
+> +/* Remember how the pins are set up when a hibernation image is taken. */
+> +static int msm_pinctrl_freeze_noirq(struct device *dev)
+> +{
+> +	struct msm_pinctrl *pctrl =3D dev_get_drvdata(dev);
+[ ... ]
+> +	raw_spin_lock_irqsave(&pctrl->lock, flags);
+> +	for (i =3D 0; i < pctrl->chip.ngpio; i++) {
+> +		if (!gpiochip_line_is_valid(&pctrl->chip, i))
+> +			continue;
+> +
+> +		g =3D &pctrl->soc->groups[i];
+> +		s =3D &pctrl->saved[i];
+> +		s->ctl =3D msm_readl_ctl(pctrl, g);
 
-The driver that owns gpio116 still believes it drives the line.
+[Severity: Medium]
+Will this result in a NULL pointer dereference on kernels built with
+CONFIG_HIBERNATION=3Dn but CONFIG_HIBERNATE_CALLBACKS=3Dy?
 
-Save the control, output and interrupt configuration registers of every
-valid pin in freeze_noirq and write them back in restore_noirq, the
-output level first, so that a pin drives the right level from the
-moment it becomes an output. Enabling the raw interrupt status can
-latch an interrupt, so the status is cleared afterwards, as
-msm_gpio_irq_set_type() does.
+The pctrl->saved array is allocated strictly under CONFIG_HIBERNATION in
+msm_pinctrl_probe():
 
-msm_pinctrl_dev_pm_ops gets the two callbacks and x1e80100 starts using
-these ops. With that x1e80100 also gets their suspend and resume
-callbacks, which apply the sleep and default state of the controller's
-own pins where a board defines them.
+    if (IS_ENABLED(CONFIG_HIBERNATION)) {
+        pctrl->saved =3D devm_kcalloc(&pdev->dev, pctrl->chip.ngpio, ...);
 
-Signed-off-by: Birk Skyum <birk.skyum@pm.me>
----
-RFC because the two callbacks go into msm_pinctrl_dev_pm_ops, which the
-sc7180, sc7280, sdm845 and sm7150 drivers use as well, and I can only
-test x1e80100. If you would rather have this for x1e80100 alone, or
-done another way, I am happy to redo it.
+However, the callbacks are guarded by pm_sleep_ptr() in
+msm_pinctrl_dev_pm_ops, which depends on CONFIG_PM_SLEEP (enabled if either
+SUSPEND or HIBERNATE_CALLBACKS is set). If a system (such as a Xen guest on
+x86 with COMPILE_TEST) triggers PM_EVENT_FREEZE, msm_pinctrl_freeze_noirq()
+could be called and unconditionally dereference the unallocated pctrl->saved
+array here.
 
-Tested on a Lenovo Yoga Slim 7x with Arch Linux ARM's v7.2 kernel plus
-this patch. The kernel also carried the PCI change in [1], without
-which this machine does not resume at all, the smp2p change in [2] and
-a GENI serial change that is not ready for the list. The patch is
-based on pinctrl/devel, where it builds without warnings (W=3D1,
-CONFIG_HIBERNATION=3Dy).
+[ ... ]
+> +static int msm_pinctrl_restore_noirq(struct device *dev)
+> +{
+[ ... ]
+> +		msm_writel_ctl(s->ctl, pctrl, g);
+> +		if (!g->intr_cfg_reg)
+> +			continue;
+> +
+> +		if (msm_pin_has_own_intr_target(pctrl, g))
+> +			msm_writel_intr_target(s->intr_target, pctrl, g);
+> +		msm_writel_intr_cfg(s->intr_cfg, pctrl, g);
 
-- Without the patch, gpio116 and gpio117 come back as shown above
-  after a hibernation with a real power-off. With it, in four such
-  hibernations, the TLMM part of /sys/kernel/debug/gpio differs only
-  in the level read on two inputs (gpio93 and gpio153).
-- pm_test=3Dcore and test_resume pass.
-- A suspend (deep) and wake still works. On x1e80100 it now goes
-  through msm_pinctrl_suspend() and msm_pinctrl_resume().
+[Severity: Medium]
+Could blindly restoring the saved intr_cfg cause missed dual-edge interrupt=
+s?
 
-Not covered here: the LPASS LPI pin controller, whose pins also came
-back at their reset values after a hibernation.
+QCOM hardware emulates dual-edge interrupts by dynamically setting the
+polarity opposite to the current physical line level. If the physical line
+toggled during hibernation, the restored polarity will match the current
+state rather than being opposite to it, causing the hardware to wait for
+an edge that already occurred.
 
-[1] https://lore.kernel.org/r/179157746908.73485.2343672865542690797@pm.me
-[2] https://lore.kernel.org/r/179158127177.70185.5691100900886332545@pm.me
+Should this re-evaluate the line level and update the polarity by calling
+msm_gpio_update_dual_edge_pos() for pins marked in pctrl->dual_edge_irqs
+during resume?
 
- drivers/pinctrl/qcom/pinctrl-msm.c      | 106 +++++++++++++++++++++++-
- drivers/pinctrl/qcom/pinctrl-x1e80100.c |   1 +
- 2 files changed, 105 insertions(+), 2 deletions(-)
+> +
+> +		/* Enabling the raw status can latch an interrupt. */
+> +		if (s->intr_cfg & BIT(g->intr_raw_status_bit))
+> +			msm_ack_intr_status(pctrl, g);
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinc=
-trl-msm.c
-index 27f06bbc1..fba8a4165 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -39,6 +39,14 @@
- #define MAX_NR_TILES 4
- #define PS_HOLD_OFFSET 0x820
-=20
-+/* Register values of one pin, kept across a hibernation. */
-+struct msm_pin_state {
-+=09u32 ctl;
-+=09u32 io;
-+=09u32 intr_cfg;
-+=09u32 intr_target;
-+};
-+
- /**
-  * struct msm_pinctrl - state for a pinctrl-msm device
-  * @dev:            device handle.
-@@ -58,6 +66,7 @@
-  * @soc:            Reference to soc_data of platform specific data.
-  * @regs:           Base addresses for the TLMM tiles.
-  * @phys_base:      Physical base address
-+ * @saved:          Pin registers kept while a hibernation image is taken.
-  */
- struct msm_pinctrl {
- =09struct device *dev;
-@@ -80,6 +89,8 @@ struct msm_pinctrl {
- =09const struct msm_pinctrl_soc_data *soc;
- =09void __iomem *regs[MAX_NR_TILES];
- =09u32 phys_base[MAX_NR_TILES];
-+
-+=09struct msm_pin_state *saved;
- };
-=20
- #define MSM_ACCESSOR(name) \
-@@ -1583,9 +1594,93 @@ static __maybe_unused int msm_pinctrl_resume(struct =
-device *dev)
- =09return pinctrl_force_default(pctrl->pctrl);
- }
-=20
--SIMPLE_DEV_PM_OPS(msm_pinctrl_dev_pm_ops, msm_pinctrl_suspend,
--=09=09  msm_pinctrl_resume);
-+static bool msm_pin_has_own_intr_target(struct msm_pinctrl *pctrl,
-+=09=09=09=09=09const struct msm_pingroup *g)
-+{
-+=09return !pctrl->intr_target_use_scm && g->intr_target_reg &&
-+=09       g->intr_target_reg !=3D g->intr_cfg_reg;
-+}
-+
-+/* Remember how the pins are set up when a hibernation image is taken. */
-+static int msm_pinctrl_freeze_noirq(struct device *dev)
-+{
-+=09struct msm_pinctrl *pctrl =3D dev_get_drvdata(dev);
-+=09const struct msm_pingroup *g;
-+=09struct msm_pin_state *s;
-+=09unsigned long flags;
-+=09unsigned int i;
-+
-+=09raw_spin_lock_irqsave(&pctrl->lock, flags);
-+=09for (i =3D 0; i < pctrl->chip.ngpio; i++) {
-+=09=09if (!gpiochip_line_is_valid(&pctrl->chip, i))
-+=09=09=09continue;
-+
-+=09=09g =3D &pctrl->soc->groups[i];
-+=09=09s =3D &pctrl->saved[i];
-+=09=09s->ctl =3D msm_readl_ctl(pctrl, g);
-+=09=09s->io =3D msm_readl_io(pctrl, g);
-+=09=09if (!g->intr_cfg_reg)
-+=09=09=09continue;
-+
-+=09=09s->intr_cfg =3D msm_readl_intr_cfg(pctrl, g);
-+=09=09if (msm_pin_has_own_intr_target(pctrl, g))
-+=09=09=09s->intr_target =3D msm_readl_intr_target(pctrl, g);
-+=09}
-+=09raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+
-+=09return 0;
-+}
-+
-+/*
-+ * The image is restored after a power cycle, when the pins are back at wh=
-at
-+ * the firmware and the kernel that loaded the image made of them. Nothing=
- else
-+ * writes the configuration again, so put back what was there.
-+ */
-+static int msm_pinctrl_restore_noirq(struct device *dev)
-+{
-+=09struct msm_pinctrl *pctrl =3D dev_get_drvdata(dev);
-+=09const struct msm_pingroup *g;
-+=09struct msm_pin_state *s;
-+=09unsigned long flags;
-+=09unsigned int i;
-+=09u32 val;
-+
-+=09raw_spin_lock_irqsave(&pctrl->lock, flags);
-+=09for (i =3D 0; i < pctrl->chip.ngpio; i++) {
-+=09=09if (!gpiochip_line_is_valid(&pctrl->chip, i))
-+=09=09=09continue;
-+
-+=09=09g =3D &pctrl->soc->groups[i];
-+=09=09s =3D &pctrl->saved[i];
-+
-+=09=09/* Set the level before the pin starts driving it. */
-+=09=09val =3D msm_readl_io(pctrl, g);
-+=09=09val &=3D ~BIT(g->out_bit);
-+=09=09val |=3D s->io & BIT(g->out_bit);
-+=09=09msm_writel_io(val, pctrl, g);
-+
-+=09=09msm_writel_ctl(s->ctl, pctrl, g);
-+=09=09if (!g->intr_cfg_reg)
-+=09=09=09continue;
-=20
-+=09=09if (msm_pin_has_own_intr_target(pctrl, g))
-+=09=09=09msm_writel_intr_target(s->intr_target, pctrl, g);
-+=09=09msm_writel_intr_cfg(s->intr_cfg, pctrl, g);
-+
-+=09=09/* Enabling the raw status can latch an interrupt. */
-+=09=09if (s->intr_cfg & BIT(g->intr_raw_status_bit))
-+=09=09=09msm_ack_intr_status(pctrl, g);
-+=09}
-+=09raw_spin_unlock_irqrestore(&pctrl->lock, flags);
-+
-+=09return 0;
-+}
-+
-+const struct dev_pm_ops msm_pinctrl_dev_pm_ops =3D {
-+=09SYSTEM_SLEEP_PM_OPS(msm_pinctrl_suspend, msm_pinctrl_resume)
-+=09.freeze_noirq =3D pm_sleep_ptr(msm_pinctrl_freeze_noirq),
-+=09.restore_noirq =3D pm_sleep_ptr(msm_pinctrl_restore_noirq),
-+};
- EXPORT_SYMBOL(msm_pinctrl_dev_pm_ops);
-=20
- int msm_pinctrl_probe(struct platform_device *pdev,
-@@ -1663,6 +1758,13 @@ int msm_pinctrl_probe(struct platform_device *pdev,
- =09if (ret)
- =09=09return ret;
-=20
-+=09if (IS_ENABLED(CONFIG_HIBERNATION)) {
-+=09=09pctrl->saved =3D devm_kcalloc(&pdev->dev, pctrl->chip.ngpio,
-+=09=09=09=09=09    sizeof(*pctrl->saved), GFP_KERNEL);
-+=09=09if (!pctrl->saved)
-+=09=09=09return -ENOMEM;
-+=09}
-+
- =09platform_set_drvdata(pdev, pctrl);
-=20
- =09dev_dbg(&pdev->dev, "Probed Qualcomm pinctrl driver\n");
-diff --git a/drivers/pinctrl/qcom/pinctrl-x1e80100.c b/drivers/pinctrl/qcom=
-/pinctrl-x1e80100.c
-index e4c0abcd9..bfe122fc7 100644
---- a/drivers/pinctrl/qcom/pinctrl-x1e80100.c
-+++ b/drivers/pinctrl/qcom/pinctrl-x1e80100.c
-@@ -1855,6 +1855,7 @@ static struct platform_driver x1e80100_pinctrl_driver=
- =3D {
- =09.driver =3D {
- =09=09.name =3D "x1e80100-tlmm",
- =09=09.of_match_table =3D x1e80100_pinctrl_of_match,
-+=09=09.pm =3D &msm_pinctrl_dev_pm_ops,
- =09},
- =09.probe =3D x1e80100_pinctrl_probe,
- };
+[Severity: Medium]
+Will unconditionally clearing the interrupt status here drop legitimately
+latched edge wakeups?
+
+The TLMM hardware can latch real edge interrupts while the loading kernel
+is active or during the suspend/resume window. Unconditionally calling
+msm_ack_intr_status() for every pin with RAW_STATUS_EN enabled, without
+checking if the configuration actually toggled (as is safely done in
+msm_gpio_irq_set_type()), might silently drop pending edge wakeups causing
+peripheral drivers to miss events.
+
+> +	}
+> +	raw_spin_unlock_irqrestore(&pctrl->lock, flags);
+> +
+> +	return 0;
+> +}
+
 --=20
-2.53.0
-
-
+Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/179163141354.18006.=
+80461347454353634@pm.me?part=3D1
