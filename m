@@ -1,83 +1,109 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE84C353A8E;
-	Sat, 10 Oct 2026 14:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE53137CD22;
+	Sat, 10 Oct 2026 14:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791641929; cv=none; b=LbkJyyiM6XrD9XQS321iXgXf1TSulF3UoDHBDy5AbpXDZfrXEVlZf1m+ZzN32/22VswCVtCn3/uvAGMh5pEbSYnb5bWeWpcRJucgKv7MWwJ/40SUeC1XffDzzuJo6yLr/j4iD1WNMQSKdeWKBbOrvJY0IJvGzkm0EPLe3E1RuNc=
+	t=1791642833; cv=none; b=PU20OvmVgFNkqb0k59EnD4kk42lMvgd9xQxCYPu9FyGG92AuECU68qbvylfRIBzhJl+cXFDatT7eXewIU52x48007CiiH0hQXr6vvhLWJV/Xl0DEGN5nRiaDG/phQ7cGQ+Q0ybuL7viigtxssIQrqr6CW9sVdWwJ1tnWnGcqF/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791641929; c=relaxed/simple;
-	bh=Ctfy8doPwyTmRah9VMrKFa13iKqAU6HP7+q684v8FQ0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Dakx17jnXzZrz8XKsRQiz4CE/LIpEo2XrIQxfPPOuGKb8MP2dVbrVCFZrSNoEmcwMvcWwWwwHfPhUvSju+PO7ie63zRDsRMhi9sJ/D6EvyK842bWp31zoOM9PQhABi/sBii3bieQeO24gvrwNjW3ZMNw4hIKAog7oFeUppZ2DgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=bOlTPzm4; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1791642833; c=relaxed/simple;
+	bh=n7gDfNG9Q+MVjqXjB4TtsbF2Yo4JB2nCAH6pKIZSPB8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z9A4Xc3cmWRfkzISdJUthdHg6xxNdHyBoPW8DnDX0oKN1Bpb9vPA4jgLT1HJ74R/5CIyZyLqgtx+j9pfGbUoKKcc8BuoSo4yvZAQmFg/6l+cca4JGfqG/dgUutdsDG03zuXZLeBryAiP5gOWT/RBWLzTvbfgB4o8c9HBV+sSSKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=ECUTovuc; arc=none smtp.client-ip=79.135.106.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="bOlTPzm4"
-Received: from mail01.layka.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 269E982B5C;
-	Sat, 10 Oct 2026 16:18:39 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id U1e4Zr0zClsP; Sat, 10 Oct 2026 16:18:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1791641918; bh=Ctfy8doPwyTmRah9VMrKFa13iKqAU6HP7+q684v8FQ0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=bOlTPzm4tenLVpzb+vjeHa8+j1ALMdeFUeP3ZiBphPg3BUPXEG+MaAETkIEUQCuiJ
-	 pROV2CNZsjZ6TieVysYSZ8HrZJMjJjmPBg7BbGCSsKBQY5Jx7S3HOH344pDLKQ8Whz
-	 WhpVebz2bhdAr0hmmOdao6uw39hXWqTJHeyBLNTWXV0MBbx6ZK3e58V48ex3tehOr4
-	 K+eXJGdUNlnxW9p9GEIa8MT+XjIlgl/l3AwKBaSnEf5KiEo257ricn6+r5oyuRjJ2z
-	 KwNQTO+i5fVvSIL3HQG6v5LWWzyJUccHLO64Iu2SZeUCaPPS8wfgVbj7kQtAHJ4Lee
-	 FPhjsLoXlmJ/g==
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="ECUTovuc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1791642829; x=1791902029;
+	bh=PXVc4olALIrNTwac4TDJs0rZIRrcHlvzXNA+n2MLKCI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=ECUTovuc0jfWnWjs7GzXRrDNf3fxOEZCGFMQvj1UDhOV8AKxr5k2IxzRm/gZ2MDpz
+	 ywg+ug9/UOl3DWKUe+/vpzaI16IoiXh7LlQhSvmztr0RddOTugcmmyikS30CCrlgsR
+	 QyWSKtFA9a1jkDYkBntcMCSJ1t1QQGfRWM9a8HQG5v/lVK7S/Ti5fky3I2sQOaulOa
+	 ZREAnewXKZNImSGmGAsebly6wbVCPcD/oNtT+hVTwUDwJsrxd+bcfh6K79SgAxcbFc
+	 JPWioybFUGHiR/xcXuD/YlXS6AFbirwWY8KOfYZGOdBsnG94/cQX3cW9/ZVWziac2i
+	 VVWaUKl7hfbuA==
+Date: Sat, 10 Oct 2026 14:33:44 +0000
+To: sashiko-bot@kernel.org
+From: Birk Skyum <birk.skyum@pm.me>
+Cc: Bjorn Andersson <andersson@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Linus Walleij <linusw@kernel.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] pinctrl: qcom: Restore the pin configuration after hibernation
+Message-ID: <179164282189.97158.2443151927663474607@pm.me>
+In-Reply-To: <sashiko-outbox-166471@kernel.org>
+References: <179163141354.18006.80461347454353634@pm.me> <sashiko-outbox-166471@kernel.org>
+Feedback-ID: 21326998:user:proton
+X-Pm-Message-ID: dea882c62d25aa2543fb2ce342a1e0d933d4401c
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 10 Oct 2026 14:18:37 +0000
-From: Rustam Adilov <adilov@disroot.org>
-To: Linus Walleij <linusw@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Bartosz Golaszewski
- <brgl@kernel.org>, Sander Vanheule <sander@svanheule.net>,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] gpio: realtek-otto: make the driver work with
- SWAP_IO_SPACE
-In-Reply-To: <CAD++jLk8gCAy+SbGffttCQ7dM9x6gzVRBwRppCByzwYdm_5kGw@mail.gmail.com>
-References: <20260815094451.31792-1-adilov@disroot.org>
- <aro4qbhcd3X6wTvP@black.igk.intel.com>
- <CAD++jLk8gCAy+SbGffttCQ7dM9x6gzVRBwRppCByzwYdm_5kGw@mail.gmail.com>
-Message-ID: <e1c0f3ff0c47fc7a2258bbb67f588f57@disroot.org>
-X-Sender: adilov@disroot.org
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2026-10-01 20:14, Linus Walleij wrote:
-> On Mon, Sep 28, 2026 at 11:51 AM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
->> On Sat, Aug 15, 2026 at 02:44:49PM +0500, Rustam Adilov wrote:
->> > This patch series changes gpio-realtek-otto to be functional around
->> > SWAP_IO_SPACE config.
-> (...)
->> Convert the driver to use regmap MMIO and most of the code in this series won't
->> be needed. Also it will give some benefits (like register caching and debugfs
->> monitoring).
-> 
-> Andy is right.
-> 
-> Make an attempt on top of the merged patches to convert this to regmap MMIO
-> and see what happens, and if that works consider regmap GPIO as
-> well.
-> 
-> Everyone will be happier, because less code.
+> Will this result in a NULL pointer dereference on kernels built with
+> CONFIG_HIBERNATION=3Dn but CONFIG_HIBERNATE_CALLBACKS=3Dy?
 
-As far as i remember, i thought of using regmap earlier but got stuck because
-the regmap has to not swap in realtek_gpio_update_line_imr() but potentially
-swap in other places by bank_read/write.
-Maybe i am missing something but i just couldn't figure it out.
+Yes, the two conditions do not match. The only other option that
+selects HIBERNATE_CALLBACKS is XEN_SAVE_RESTORE on x86, where no TLMM
+exists, but nothing in the driver says so. In v2 the array and the
+callbacks depend on the same option:
 
-Best,
-Rustam
+=09.freeze_noirq =3D PTR_IF(IS_ENABLED(CONFIG_HIBERNATE_CALLBACKS),
+=09=09=09       msm_pinctrl_freeze_noirq),
+=09.restore_noirq =3D PTR_IF(IS_ENABLED(CONFIG_HIBERNATE_CALLBACKS),
+=09=09=09=09msm_pinctrl_restore_noirq),
+
+and in msm_pinctrl_probe():
+
+=09if (IS_ENABLED(CONFIG_HIBERNATE_CALLBACKS)) {
+=09=09pctrl->saved =3D devm_kcalloc(&pdev->dev, pctrl->chip.ngpio,
+
+> Will unconditionally clearing the interrupt status here drop legitimately
+> latched edge wakeups?
+
+Yes. The kernel that loads the image can have set a pin up the same
+way, and an edge that is latched there is a real one. The commit message
+says the patch does what msm_gpio_irq_set_type() does, but that function
+clears the status only where it changed the register. v2 does that too:
+
+=09=09val =3D msm_readl_intr_cfg(pctrl, g);
+=09=09msm_writel_intr_cfg(s->intr_cfg, pctrl, g);
+=09=09if (val !=3D s->intr_cfg)
+=09=09=09msm_ack_intr_status(pctrl, g);
+
+> Could blindly restoring the saved intr_cfg cause missed dual-edge interru=
+pts?
+> [...]
+> Should this re-evaluate the line level and update the polarity by calling
+> msm_gpio_update_dual_edge_pos() for pins marked in pctrl->dual_edge_irqs
+> during resume?
+
+Not with the drivers that use these ops today. The polarity is flipped
+only for pins with one-bit detection (intr_detection_width =3D=3D 1), which
+apq8064, ipq8064, mdm9615, msm8660 and msm8960 have. sc7180, sc7280,
+sdm845, sm7150 and x1e80100 detect both edges in hardware. Where the
+parent emulates both edges (wakeirq_dual_edge_errata), the polarity is
+in the parent, and this patch does not touch it.
+
+I would not call msm_gpio_update_dual_edge_pos() for it either. It
+flips the polarity before it compares the levels, so for a line that
+did not change it would leave the opposite of what was primed. A driver
+with such pins would need the polarity set from the level instead. I
+have no such SoC to test that on, so v2 only gets a comment that says
+these pins are not primed again.
+
+Both changes ran on the Yoga Slim 7x before I wrote this, on the same
+kernel as before with v2 of the patch. pm_test=3Dcore and test_resume
+pass, and after a hibernation with a power-off the TLMM part of
+/sys/kernel/debug/gpio again differs only in the level read on gpio93
+and gpio153.
+
+I will hold v2 until a maintainer has had a look at the RFC question.
+
