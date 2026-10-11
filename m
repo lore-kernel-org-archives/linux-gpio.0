@@ -1,72 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6619535A395
-	for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2026 20:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018934657D0;
+	Sun, 11 Oct 2026 22:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791750480; cv=none; b=ArJ60y+nXuQYEW1msm20b21IbGGgV0j1BnW9zHsIlJMOljZ2S0OCPHiu9klTbr1kh3tQC34+RK5PffRqEo9Es2VpfGCWBJcFQIO5DUg8MaV7zYBdWJR4wFbbhJGl9LpOutsgUw2MjsDCpn5Xp2MhFpVJQ2HGKxMFMcuzteuOYbc=
+	t=1791758049; cv=none; b=LiPjJr0xhTYFxv85ugpz2WOYTVOgv8OX4YZRrpCfjeTC+HEj9zqQAT2w5r3O78ypAQ3p9ertDsUDR3cxpXl/lDrG7iQ4FjGbu7xgIAnSedaSmR0XbhvMgn4RKRzFGphbWI/Cif37WBI9KkesZ9Zv5swffmeJIY+44UCDWPDwKXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791750480; c=relaxed/simple;
-	bh=C4mwaLGCa57klLjJDqHf8uXMvhxCEah6UJYl7mGVUNc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R1BAN0bFwmKMnr1HR2ZlQ7zp4xWRd/tujcMf2sCDY4T6j7abdtXXVIVDB9iHbSp2lJ/q/gxynMKolSs/cbjFBBEeoDlmq/LDUERjH7Ce/7Je34+VX90lu+x6i7kYKFW4scogt4aktEB6JxzHULTMvp/PA1ZiBoo5LayExBff08s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMAyCurt; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791758049; c=relaxed/simple;
+	bh=o1+v7Sz1ngSUQFXjenftpDZyVoDzwAMbydX+OrkDo2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z4AIdudthnlk4iW3IPIsQWOViRbx/GqFnBBTU0qcokZu+loHR81jWUPgOr7YH7l2pF7J5VZ/mypaONCPYMEjdJxcO9k3L1hT9+yv9Dx2GDiQVAAcONr1/ekFkol6mvnY32JEJcyfpuWBiY4Bdj7guQAfYWUuhbIqISx18vpV+zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OU5yzbnI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMAyCurt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E94421F008A2
-	for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2026 20:27:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OU5yzbnI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4F2D1F0089C;
+	Sun, 11 Oct 2026 22:34:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791750478;
-	bh=C4mwaLGCa57klLjJDqHf8uXMvhxCEah6UJYl7mGVUNc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=fMAyCurttbzhgWTUnrXWc3iEZ9/89VpnCcCUd6twqlry2XlRD4jZPKzXoIjJtxUvK
-	 YntVcAybqLQJ+iyRPHOTj4SShhC4NHGwE4+w/ruEqMDXkk7XIHPha8RRbxGDG4/YCO
-	 +QIoIhs/NsRZfuqhbct5dHDVrY+1fkM7u+BrbQhEfD0PC5zbr9u39ZA3sFfgzcrJ4F
-	 dvZ2MticRw8bx5UfbzlDmH3ZHUzu4ssI0GaD4iZIAWhYyzC6tygdpA27yEOmpn+8ey
-	 xjBKiglMiQEbm1OfGbCDb7myeX7IVJE9xXGeUS71ckcNOMxLP4456QNkuoqJWb0ugg
-	 Xa6CkVYXbSxJA==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3a76ac0bdafso27987651fa.1
-        for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2026 13:27:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBzY27XoNg2Tk/KwCmPoLVLTL1GI//c0d9ya3K6W090itIj47aqYhRIrP+imCLUAoHS+snUZkKLg21tn@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ8dl2zBhb2dr359MvUTCKKKu8nTCd8CMLtWIsdLj2DcVNJ2DKI
-	R36dMKDPJ69TGsrfPz3a2X+0Uyp1jd7mXthbgDeLdsx6cs3PjbRIeIsw3CK+ESpkXMaR9+5l6UH
-	qbvk5Q9jG2mubJvA1rOLIxv+tyGcutXM=
-X-Received: by 2002:a05:651c:2121:b0:3a9:dd56:bc59 with SMTP id
- 38308e7fff4ca-3a9dd56c399mr6626541fa.13.1791750477604; Sun, 11 Oct 2026
- 13:27:57 -0700 (PDT)
+	s=k20260515; t=1791758048;
+	bh=FQ5LhxSlGfDYZPptBMBWJk+3azBNynEB4pGObOBbqno=;
+	h=From:To:Cc:Subject:Date;
+	b=OU5yzbnIo7CNHGCr/MNFPfuHWkQ2AdnE06NlLk6ZZ3S5m6J2OJUk9T9UOCCOF6W58
+	 dRQyHrZf17P+1jSsXAJe6sxk8R2G2hB/fM3emXheO/g0/93oGm0ep3YYtlFBD2FdsA
+	 HJjl9yUBAvNhBUZpExgbJFgqmiPqDA9vPUZ5NCffKQlWCs2BKdAqxQ0VhhsJ83DdpI
+	 AndzQP3KOyZa3kZF7WZzgH+RJd1FUW01f/AvXGrhUnZXCqsujEeWmgot+3lKwN+oB+
+	 xzy3nvBTmkSLRWtTsrjgz+1A1Bx956BoO5DuBvuqTtf4/wniw+K/iKkdnhaXKVR1uw
+	 XSDOiCtRsK/VQ==
+From: Sasha Levin <sashal@kernel.org>
+To: Bartosz Golaszewski <brgl@kernel.org>,
+	Kent Gibson <warthog618@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>
+Cc: Sasha Levin <sashal@kernel.org>,
+	stable@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH] tools: gpio: fix building from the top level with O=
+Date: Sun, 11 Oct 2026 18:33:33 -0400
+Message-ID: <20261011223358.2327625-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260910133519.459011-1-andre.przywara@arm.com> <20261008194719.328146-1-vinicius.eduardo.pedrosa@gmail.com>
-In-Reply-To: <20261008194719.328146-1-vinicius.eduardo.pedrosa@gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Sun, 11 Oct 2026 22:27:44 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnOmttzkrT7pa=o5pRq_o90p3a2_ssHX_odQ6dFS3_x_w@mail.gmail.com>
-X-Gm-Features: AclHuK-jhop6QweQuut3yS6CaY8pcraf3pdrsXYPB174sqV2QY9XVovESPN3qi0
-Message-ID: <CAD++jLnOmttzkrT7pa=o5pRq_o90p3a2_ssHX_odQ6dFS3_x_w@mail.gmail.com>
-Subject: Re: [PATCH 0/7] pinctrl: sunxi: Add Allwinner A733 support
-To: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
-Cc: Andre Przywara <andre.przywara@arm.com>, Chen-Yu Tsai <wens@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Yixun Lan <dlan@gentoo.org>, Enzo Adriano <enzo.adriano.code@gmail.com>, 
-	linux-gpio@vger.kernel.org, linux-sunxi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 8, 2026 at 9:47=E2=80=AFPM Vinicius Pedrosa
-<vinicius.eduardo.pedrosa@gmail.com> wrote:
+"make O=<dir> tools/gpio" fails:
 
-> Would you be OK with disabling the io-bias programming for A733/A733-R
-> as a fix for now, and doing proper voltage mode support later? If so
-> I'll send the two patches, with Fixes: tags for 0535bfbfa97b and
-> 31d68e10381c.
+  Makefile:27: /tools/build/Makefile.include: No such file or directory
 
-Just send the patches so we can review and discuss, no need to
-ask permission, if it's not OK we simply don't apply them. :D
+tools/Makefile clears srctree, and the gpio Makefile only works it out
+again when building_out_of_srctree is not set, which the top-level
+Makefile sets for O= builds.
 
-Yours.
-Linus Walleij
+Also work out srctree when it is empty, as tools/bpf/Makefile does
+since commit a89b2cbf71d64 ("tools, bpf: Fix build for 'make -s
+tools/bpf O=<dir>'").
+
+Fixes: 4a6a6f5c4aeed ("tools: gpio: Use !building_out_of_srctree to determine srctree")
+Cc: stable@vger.kernel.org
+Assisted-by: LLM
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/gpio/Makefile | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
+index 342e056c8c665..1cd7636b9cac5 100644
+--- a/tools/gpio/Makefile
++++ b/tools/gpio/Makefile
+@@ -7,7 +7,13 @@ bindir ?= /usr/bin
+ # isn't set and when invoked from selftests build, where srctree
+ # is set to ".". building_out_of_srctree is undefined for in srctree
+ # builds
++ifeq ($(srctree),)
++update_srctree := 1
++endif
+ ifndef building_out_of_srctree
++update_srctree := 1
++endif
++ifeq ($(update_srctree),1)
+ srctree := $(patsubst %/,%,$(dir $(CURDIR)))
+ srctree := $(patsubst %/,%,$(dir $(srctree)))
+ endif
+-- 
+2.53.0
+
