@@ -1,74 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3325A3451C6;
-	Sun, 11 Oct 2026 05:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2106036F909;
+	Sun, 11 Oct 2026 06:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791696666; cv=none; b=UXSMULH2Betg9oXMkRO8XcmgTntheWE3CiKtwnJAbU4CW8eO3ob5WcsaXk5N5+NABO+rup5Uhyt1qVFLhiDgxh2zjAXk1RiK8wuGRiFmltlsrLjuzxGpyJJI7fSJS4OATRvIX4HEQ2VzxUsVGVwPSSc67x0z78wzUVW1jH1LR8s=
+	t=1791699546; cv=none; b=BrhGvVqQKKETUo1UPttv4ftPiLqIj03gKVkcG+P6ugliAe4FNUUCnTwhVrRVD7R49x1L9XE0slQ26iR4qgLQ2JIabP8C/UMuTBTmiE6LWJDxhaUCGW4TleFDBzgo7t6GYa76+9ukWl7fq5qWE5ua16dfqRQfz7EmlWUxyHNe1Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791696666; c=relaxed/simple;
-	bh=mmkOBjydK8X1MPZjQ+oe1RAsEXoznMVWMyZLqangTok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dh3RavRJ5W4undoLaIumg24/FfKCKsRwSfHvlBnJYU3h/55s48SHX1nRe/12q670L00LzFNui5FnNxPBWirBnbT+KbILjstgG9y/BI3kfEbWQj2phovSV/mJ1sFvf3BR+B6F27E51lT31gueg4/qMQdpFWGJaG2qlbtUYmTwQNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SUrpTlgb; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791699546; c=relaxed/simple;
+	bh=MuWYjdaVT1yepwtgr2yHBEgjcM66qMMVSid18CYf9J4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dd3PxAEwkeMr9AabgLKXwWwKl3B4400VqZF+neePMT1Ma4AqUmWlW9+rDhC8vB5AoILj3WmQkl9GsA1u0tWAaJZCx+WKvJ9m5DYz+jn0N0TuOfOLwj8lQsKNL4nqvone11763w+LxM/1NnAUoz5jfv5Dwq+fXxBX9xDOKhYYy2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Ip664CDl; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUrpTlgb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7794E1F0089B;
-	Sun, 11 Oct 2026 05:31:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791696664;
-	bh=9UINK8Ylgw2POp8mtSoHe0NZ1kXpFn45FN0OmGDfuuM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=SUrpTlgbVIRHiOgX1oK0kAIDCT9ok7g9D7ot6DGNaGdldQ8dMwoTMyWHEUW2Zr3tl
-	 LjZzh+CTCCQZ8GMe0bNiKhEoLjwAnEIwx03ETzpI2XZxb2IwwvsjPmcFjrY/G6BLIF
-	 YIA+YfdQBEc2ODULd44o4sdIPv6ybChZsiy4J8Z8z+upgMuEY+uWJ4Rd/4ZYTnJHyN
-	 KLCaa5ih8LbhAKDSYc4ApgYFj09VtRR4/03ihFnO1vkNj6uoUpYwvpXqmSpjFY2Nnp
-	 COgoXU/tRd8qX2I5qH6NahXgFm63ClsTAtomQ38W23lWRw/UF21aWREG7xRJAe8IvZ
-	 Fi+6ju0AiZZJw==
-Date: Sun, 11 Oct 2026 07:30:59 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: a0282524688@gmail.com
-Cc: lee@kernel.org, Ming Yu <tmyu0@nuvoton.com>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Guenter Roeck <linux@roeck-us.net>, Marc Kleine-Budde <mkl@pengutronix.de>, 
-	Vincent Mailhol <mailhol@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, mfd@lists.linux.dev
-Subject: Re: [PATCH v8 06/13] mfd: nct6694: Move module type macros to shared
- header
-Message-ID: <asse8LZ76649tShM@zenone.zhora.eu>
-References: <20261007092102.3768818-1-a0282524688@gmail.com>
- <20261007092102.3768818-7-a0282524688@gmail.com>
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Ip664CDl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Xl
+	PPE6ZZY5T3PHV8A3Y8GqCesIvtKJSCm08ZYgXZh9o=; b=Ip664CDl9k8ge8BOcr
+	Bk3pQIeHiS32Bi5f536z8MaYRmAzm9HycFVee37BNUm68+38atxAHIk3lXRY2vZh
+	+mRtUi8iYiquxQuJzmgMU5Gzs1uF6c2B64aLBYBFncA784mkx9YZiMGGMgNgMpl7
+	KGvxn//yRvb+Jr7pVJbaYU5wY=
+Received: from ubuntu.. (unknown [])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wDHjyr0KctqdBPSDg--.48609S4;
+	Sun, 11 Oct 2026 14:17:33 +0800 (CST)
+From: Ma Ke <make_ruc2021@163.com>
+To: antonio.borneo@foss.st.com,
+	linusw@kernel.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	andriy.shevchenko@linux.intel.com,
+	fabien.dessenne@foss.st.com
+Cc: linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	Ma Ke <make_ruc2021@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] pinctrl: stm32: Fix fwnode reference leak in stm32_gpiolib_register_bank()
+Date: Sun, 11 Oct 2026 14:17:22 +0800
+Message-ID: <20261011061722.3159941-1-make_ruc2021@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261007092102.3768818-7-a0282524688@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHjyr0KctqdBPSDg--.48609S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw4DXFyDXw4fuF15CF4rZrb_yoW8CryfpF
+	W3Kr4YkFs8XrZ0k3yUAw1Y9ryagayxtrZxCF4Iy34fuFn0yay7Xw45uFWSvrs0kFWxXwn8
+	tryUJay5ZF1DAaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piGjg7UUUUU=
+X-CM-SenderInfo: 5pdnvshuxfjiisr6il2tof0z/xtbC9R0XImrLKf00YAAA38
 
-Hi Ming,
+stm32_gpiolib_register_bank() walks the "gpio-ranges" property with
+fwnode_property_get_reference_args().  As documented in
+drivers/base/property.c:
 
-On Wed, Oct 07, 2026 at 05:20:55PM +0800, a0282524688@gmail.com wrote:
-> From: Ming Yu <a0282524688@gmail.com>
-> 
-> Each sub-device driver defines the module type used by its own
-> commands. The upcoming HIF transport also needs to recognise
-> NCT6694_RPT_MOD, as report accesses are served from a separate
-> register space rather than through the command mailbox.
-> 
-> Move all module types into the shared header so that the transports
-> and the sub-device drivers use a single set of definitions.
-> 
-> No functional change.
-> 
-> Signed-off-by: Ming Yu <a0282524688@gmail.com>
+ * The caller is responsible for calling fwnode_handle_put() on the
+ * returned @args->fwnode pointer.
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+The returned reference is never put.  The function calls the helper
+twice, once directly and then repeatedly in a while loop, and each
+call overwrites args, so only the last reference is even reachable
+and all the earlier ones are leaked for good.
 
-Thanks,
-Andi
+Put the reference as soon as args.args[] has been consumed, both for
+the initial call and for every iteration of the loop.
+
+Found by code review.
+
+Cc: stable@vger.kernel.org
+Fixes: bb949ed9b16b ("pinctrl: stm32: Switch to use for_each_gpiochip_node() helper")
+Signed-off-by: Ma Ke <make_ruc2021@163.com>
+---
+ drivers/pinctrl/stm32/pinctrl-stm32.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+index 6a99708a5a23..93127da05d56 100644
+--- a/drivers/pinctrl/stm32/pinctrl-stm32.c
++++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+@@ -1666,8 +1666,12 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
+ 
+ 		/* get the last defined gpio line (offset + nb of pins) */
+ 		npins = args.args[0] + args.args[2];
+-		while (!fwnode_property_get_reference_args(fwnode, "gpio-ranges", NULL, 3, ++i, &args))
++		fwnode_handle_put(args.fwnode);
++
++		while (!fwnode_property_get_reference_args(fwnode, "gpio-ranges", NULL, 3, ++i, &args)) {
+ 			npins = max(npins, (int)(args.args[0] + args.args[2]));
++			fwnode_handle_put(args.fwnode);
++		}
+ 	} else {
+ 		bank_nr = pctl->nbanks;
+ 		bank->gpio_chip.base = bank_nr * STM32_GPIO_PINS_PER_BANK;
+-- 
+2.43.0
+
