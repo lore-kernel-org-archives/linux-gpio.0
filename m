@@ -1,145 +1,74 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18F0352032;
-	Sat, 10 Oct 2026 17:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3325A3451C6;
+	Sun, 11 Oct 2026 05:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791655070; cv=none; b=E43IcptDpikCPpSky/bsV3WuQ6XillvNQlRbvCEl7I52MeDhPE82QF6s3EmajsH0BzEFu5Pa4KsBwTXhCZLrZB8/qifgQS91o3TZ86100tzxHI2gwk2jE8Yv13C+2k2HngAJmx4mEkLtCdKKeCLSS3Um8B1xC4tHV3V0dkCsm30=
+	t=1791696666; cv=none; b=UXSMULH2Betg9oXMkRO8XcmgTntheWE3CiKtwnJAbU4CW8eO3ob5WcsaXk5N5+NABO+rup5Uhyt1qVFLhiDgxh2zjAXk1RiK8wuGRiFmltlsrLjuzxGpyJJI7fSJS4OATRvIX4HEQ2VzxUsVGVwPSSc67x0z78wzUVW1jH1LR8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791655070; c=relaxed/simple;
-	bh=amUnCp8nO/3YDfeN8K6fzquoB8WYxfrrFRaRFx4B9xI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QdMAbFThcDhDYsQaKeVGjzb1vVu6/IKao3AfjFp4eUJk9xucdqjEClGvk7CBbb9AclfZG495455ao8oZRkg8E1P361S7Z49EzFW7Dnr+OZI/dInPMbm3cOi7tm5ITYtUfADQuYrNjh/jZ8wOxLmQxeCY62YLr8oaXugddPZfq2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=MrP3MGdP; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1791696666; c=relaxed/simple;
+	bh=mmkOBjydK8X1MPZjQ+oe1RAsEXoznMVWMyZLqangTok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dh3RavRJ5W4undoLaIumg24/FfKCKsRwSfHvlBnJYU3h/55s48SHX1nRe/12q670L00LzFNui5FnNxPBWirBnbT+KbILjstgG9y/BI3kfEbWQj2phovSV/mJ1sFvf3BR+B6F27E51lT31gueg4/qMQdpFWGJaG2qlbtUYmTwQNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SUrpTlgb; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="MrP3MGdP"
-Received: from mail01.layka.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id B16AC82A48;
-	Sat, 10 Oct 2026 19:57:46 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id Kf6abI61CVjB; Sat, 10 Oct 2026 19:57:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1791655066; bh=amUnCp8nO/3YDfeN8K6fzquoB8WYxfrrFRaRFx4B9xI=;
-	h=From:To:Cc:Subject:Date;
-	b=MrP3MGdPHBjQqW2QKx9m5v0deClKQfdcmK9LQJneCnlLX4dTiA85kW4zToX1+OBgD
-	 Nv9UgAbpa9n2NCircHWkpemNXlfDVq6KT3W+y3m70soJDjfWUiROTlF765U41wPJbR
-	 rEgp1So5JXacGgX/2T7XyxQ3cdwcFmnHgz2mGopEpUmU+CCgXcqRuBzLe0iP+yI0bM
-	 UnNwVploy6zqmmYbu9O+1SBhkyBp4igeVfniPt9s5AB73itopgu+L+HTMO7/0QzLKN
-	 39GJbZlzhF6wcz4xjYTCVRu08gt1UudumKzPBh44UkTMXX8LP8iYVFWcPGqOuZrtyO
-	 kcl9jwQn7YCiw==
-From: Rustam Adilov <adilov@disroot.org>
-To: Tony Lindgren <tony@atomide.com>,
-	Haojian Zhuang <haojian.zhuang@linaro.org>,
-	Linus Walleij <linusw@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-omap@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Rustam Adilov <adilov@disroot.org>
-Subject: [PATCH v2] pinctrl: single: add big endian support
-Date: Sat, 10 Oct 2026 22:57:21 +0500
-Message-ID: <20261010175721.76213-1-adilov@disroot.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SUrpTlgb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7794E1F0089B;
+	Sun, 11 Oct 2026 05:31:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791696664;
+	bh=9UINK8Ylgw2POp8mtSoHe0NZ1kXpFn45FN0OmGDfuuM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=SUrpTlgbVIRHiOgX1oK0kAIDCT9ok7g9D7ot6DGNaGdldQ8dMwoTMyWHEUW2Zr3tl
+	 LjZzh+CTCCQZ8GMe0bNiKhEoLjwAnEIwx03ETzpI2XZxb2IwwvsjPmcFjrY/G6BLIF
+	 YIA+YfdQBEc2ODULd44o4sdIPv6ybChZsiy4J8Z8z+upgMuEY+uWJ4Rd/4ZYTnJHyN
+	 KLCaa5ih8LbhAKDSYc4ApgYFj09VtRR4/03ihFnO1vkNj6uoUpYwvpXqmSpjFY2Nnp
+	 COgoXU/tRd8qX2I5qH6NahXgFm63ClsTAtomQ38W23lWRw/UF21aWREG7xRJAe8IvZ
+	 Fi+6ju0AiZZJw==
+Date: Sun, 11 Oct 2026 07:30:59 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: a0282524688@gmail.com
+Cc: lee@kernel.org, Ming Yu <tmyu0@nuvoton.com>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Marc Kleine-Budde <mkl@pengutronix.de>, 
+	Vincent Mailhol <mailhol@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org, mfd@lists.linux.dev
+Subject: Re: [PATCH v8 06/13] mfd: nct6694: Move module type macros to shared
+ header
+Message-ID: <asse8LZ76649tShM@zenone.zhora.eu>
+References: <20261007092102.3768818-1-a0282524688@gmail.com>
+ <20261007092102.3768818-7-a0282524688@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261007092102.3768818-7-a0282524688@gmail.com>
 
-Add support for big endian pin controllers by taking into account
-a big-endian device tree property.
+Hi Ming,
 
-This is needed on big endian MIPS platforms like RTL930X, RTL931X
-and RTL9607C who use pinctrl-single, because when SWAP_IO_SPACE is
-enabled, the mmio accessors in pinctrl-single perform a byte swap.
+On Wed, Oct 07, 2026 at 05:20:55PM +0800, a0282524688@gmail.com wrote:
+> From: Ming Yu <a0282524688@gmail.com>
+> 
+> Each sub-device driver defines the module type used by its own
+> commands. The upcoming HIF transport also needs to recognise
+> NCT6694_RPT_MOD, as report accesses are served from a separate
+> register space rather than through the command mailbox.
+> 
+> Move all module types into the shared header so that the transports
+> and the sub-device drivers use a single set of definitions.
+> 
+> No functional change.
+> 
+> Signed-off-by: Ming Yu <a0282524688@gmail.com>
 
-Signed-off-by: Rustam Adilov <adilov@disroot.org>
----
-Change in v2:
-- Change to generic big endian io read/write functions.
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 
- drivers/pinctrl/pinctrl-single.c | 41 ++++++++++++++++++++++++++++----
- 1 file changed, 37 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-single.c b/drivers/pinctrl/pinctrl-single.c
-index e0eb7240a985..cdfe38f259b0 100644
---- a/drivers/pinctrl/pinctrl-single.c
-+++ b/drivers/pinctrl/pinctrl-single.c
-@@ -265,6 +265,26 @@ static void pcs_writel(unsigned int val, void __iomem *reg)
- 	writel(val, reg);
- }
- 
-+static unsigned int pcs_readw_be(void __iomem *reg)
-+{
-+	return ioread16be(reg);
-+}
-+
-+static unsigned int pcs_readl_be(void __iomem *reg)
-+{
-+	return ioread32be(reg);
-+}
-+
-+static void pcs_writew_be(unsigned int val, void __iomem *reg)
-+{
-+	iowrite16be(val, reg);
-+}
-+
-+static void pcs_writel_be(unsigned int val, void __iomem *reg)
-+{
-+	iowrite32be(val, reg);
-+}
-+
- static unsigned int pcs_pin_reg_offset_get(struct pcs_device *pcs,
- 					   unsigned int pin)
- {
-@@ -1785,6 +1805,7 @@ static int pcs_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct pcs_device *pcs;
- 	const struct pcs_soc_data *soc;
-+	bool byte_be;
- 	int ret;
- 
- 	soc = of_device_get_match_data(&pdev->dev);
-@@ -1860,18 +1881,30 @@ static int pcs_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pcs);
- 
-+	byte_be = device_is_big_endian(pcs->dev);
-+
- 	switch (pcs->width) {
- 	case 8:
- 		pcs->read = pcs_readb;
- 		pcs->write = pcs_writeb;
- 		break;
- 	case 16:
--		pcs->read = pcs_readw;
--		pcs->write = pcs_writew;
-+		if (byte_be) {
-+			pcs->read = pcs_readw_be;
-+			pcs->write = pcs_writew_be;
-+		} else {
-+			pcs->read = pcs_readw;
-+			pcs->write = pcs_writew;
-+		}
- 		break;
- 	case 32:
--		pcs->read = pcs_readl;
--		pcs->write = pcs_writel;
-+		if (byte_be) {
-+			pcs->read = pcs_readl_be;
-+			pcs->write = pcs_writel_be;
-+		} else {
-+			pcs->read = pcs_readl;
-+			pcs->write = pcs_writel;
-+		}
- 		break;
- 	default:
- 		break;
--- 
-2.56.0
-
+Thanks,
+Andi
