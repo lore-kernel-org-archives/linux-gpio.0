@@ -1,135 +1,97 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9344632F76D
-	for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2026 20:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9332DCBEC
+	for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2026 20:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791749670; cv=none; b=dTsDc4E4MAmgBGZEHZHYObDcMklsK4RMRkm/3Rv4VhN5eDMK44xw5byr+fz7GQJEid6UPhUs5pivQ7Pn5ZACXZw0ukKv0q4t2JUCYEppC0Wy+wtXmf6MipMv9ocNbAxuYfnBfEAeDB32ZGk1Vw2oX8g9PxNrNQBXCR6gh2yVhhw=
+	t=1791750143; cv=none; b=i7rZ15JVMXTnboBOP3b1S4S94prQ42DNXES2lxS5RX17gZwaQx/30w9lN7PsqRs+h7gmqHChHrTaYDkLT0llE1Hl+S8lrovi5QCSVAS68x8FyPgMmyOWH/ONarzJkU6gL12Ryq8l1pA0Nu47kaIYLSZ7A57mHomkaa8ZnYR1qe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791749670; c=relaxed/simple;
-	bh=wFATd3AKREDjpA0f6zO3k2HYKpHRpHqvKk6gTZrn6/0=;
+	s=arc-20240116; t=1791750143; c=relaxed/simple;
+	bh=HWTZ9bvPwdYwge/Hjf9waEWkT6bDPCEj4gdjt6lCfr0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EvzRDelOjsqUR8vzMsaCufnEXwkMPzoRWOk1qFTf9Kor0OMTcHl8/i/jVXkX+Ul0CeM/P1PH7ubo2/Antzs05o/jouhMSUGvU7AE0NHoHi+ldB79cIDQEpzjhkhYHmRSUWHMWu8oiBvrYe+S4urASC7q1SeMii9XZe/Vo0dWzK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHptSIYn; arc=none smtp.client-ip=100.103.45.18
+	 To:Cc:Content-Type; b=N78lieN/Q5BWrCgYQTJN/ynaisPelZJ52+nYkDBHrOGdhiZOwwcZPYS8aVW0bVAfYIWKXkzmMP7h+jNVBQx3DrwyVoSHpCOCaQX1udnhOeeO2xY5OyC0dmGQP637pG0B8lULOwufKC8kviVEfqp/yFD//hz2BIajZT0yJyDOqXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUgAkScV; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHptSIYn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AE781F0089D
-	for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2026 20:14:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUgAkScV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 535071F0089B
+	for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2026 20:22:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791749669;
-	bh=2B6yxoun5grNXYDPaHbatpr3XqvAdqs6leClJ2sd5R8=;
+	s=k20260515; t=1791750142;
+	bh=HWTZ9bvPwdYwge/Hjf9waEWkT6bDPCEj4gdjt6lCfr0=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc;
-	b=iHptSIYnEoXY75N5KOzg4E/xkRfjBaZIkYloNhEOKhQbrhZTB3u69gX372ImDPVVS
-	 Dm+InQ/5B9Nya4ueKj0KzFOwsMZk70RXneY/mpGcJ6AWHhgGx8hnMVli9xwNyQ6g0+
-	 0MZIIDTj1E+a8qGy2Suu/StXxvqCy52wB+Fx0r+Zktp3ifU2OAnqX+j9PDLcy+yLZa
-	 AbPSNM+89qrc4PwzdJEykbdom9hzduReaWJg5LUrVt8s3ArsQXd0Cl51g4jzMgUavZ
-	 a0Qbfiwv9XbC8CSwAa1O/iNpZs2YmWbdnPTTFMx3twMa0bdU8QpUcEw6xN6kdN2CA2
-	 6p2m8SXEcdyyQ==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5ba3ac592faso1487961e87.0
-        for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2026 13:14:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvByGGVxAyQY8Sipy+Qqm2bmPNrNU4GtrScIOzmzp/MlQOXcU6tJEtiCgBD/2GtMCUmxgiOc4nu0QMmz5@vger.kernel.org
-X-Gm-Message-State: AFq9FYLexLVntZqryEzF6GEaCgt3lNlPcSOu91SmisGMKO4YZyeL3pn1
-	9ty4c6PIhiemP+1ffYZMDTPWqdxtN4N47tYkwpNpWFdZReFgjGuNsnd5E5E7SW7LHDlu1L4k16K
-	Uag136YfKNVlM4FiZ+IGr+Ak0hb2/jWk=
-X-Received: by 2002:a05:6512:1155:b0:5bb:7beb:20c2 with SMTP id
- 2adb3069b0e04-5bcde8d90d7mr2470503e87.67.1791749668067; Sun, 11 Oct 2026
- 13:14:28 -0700 (PDT)
+	b=XUgAkScV0iStNQLlurQipy2y/Qrp4G+6JTOuygeyuQQBIkMAI7kdANa10lcrCYO3g
+	 e0Jex1uyGGtYr9D1g14BqX3GTqOaGjiRp5mhuTXdcBAVIiuEln9KXmfIwOYMa4v6cW
+	 5GWt+ovB/nLX5qUhf4PYqkv9SFc+pfIAWgi5C3pkGcLIzRghaT8Jv4a1ACpJskD8wF
+	 eUbYG14gl+ERmZ7tGSR1UpMm3K77Sl/6l9+zIbcNTUp11mmns9Z8vBDHVKJlTXJtLd
+	 /kF1GKR82wj3YMNRIRbAt8VYfg3/Efy3sY11ycqPoUjAyCQZqOpK9wGPo029lUKGwq
+	 MdNz/Ppm4BnXQ==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3a75f960be4so10123751fa.2
+        for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2026 13:22:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBxAKntaP+TzQauhr7c5hFrSn79qGjyNvLu6d3mqPieIrlT+mnnKUIXv4qjc5R4Rj/3rOH0RaPEthq0t@vger.kernel.org
+X-Gm-Message-State: AFq9FYJxM7gVM/gO7jl+wZY9NXjItM5CgtKHEPR2YnU9VwxwRh4HdDtP
+	OT/22dBTcKmjlQZhtItyHV48p1uCiMmqHFIRUMr9oHxdflQ0tX+Xd/t7goVLXJRSRybSf4AjnrK
+	LLxjVwKInXjdZez/6GqNndjtV2TMgpu8=
+X-Received: by 2002:a05:651c:510:b0:3a7:8372:61b7 with SMTP id
+ 38308e7fff4ca-3a9c56e47e1mr17356451fa.25.1791750141071; Sun, 11 Oct 2026
+ 13:22:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20261010175721.76213-1-adilov@disroot.org>
-In-Reply-To: <20261010175721.76213-1-adilov@disroot.org>
+References: <20260815094451.31792-1-adilov@disroot.org> <aro4qbhcd3X6wTvP@black.igk.intel.com>
+ <CAD++jLk8gCAy+SbGffttCQ7dM9x6gzVRBwRppCByzwYdm_5kGw@mail.gmail.com> <e1c0f3ff0c47fc7a2258bbb67f588f57@disroot.org>
+In-Reply-To: <e1c0f3ff0c47fc7a2258bbb67f588f57@disroot.org>
 From: Linus Walleij <linusw@kernel.org>
-Date: Sun, 11 Oct 2026 22:14:13 +0200
-X-Gmail-Original-Message-ID: <CAD++jLnTOc+n2PGpK1NDnNJXwgzTQ8shO_6NqNuADzxY8SyYsA@mail.gmail.com>
-X-Gm-Features: AclHuK-Ke9siXQxkd32F58VdGeapNv-uCnv-gmOvNgN2Tl6ULJ5GCCFCFZi_kuk
-Message-ID: <CAD++jLnTOc+n2PGpK1NDnNJXwgzTQ8shO_6NqNuADzxY8SyYsA@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: single: add big endian support
+Date: Sun, 11 Oct 2026 22:22:08 +0200
+X-Gmail-Original-Message-ID: <CAD++jLmVeCawRt+7ndiRXhjkPBPdhPTEfFUtd5pYtH1vG_77Zg@mail.gmail.com>
+X-Gm-Features: AclHuK_THDuU9J7npmtxHWGarItkiE4EjGzb5DoJK4Ky32lTjPybl5mmmrrInoI
+Message-ID: <CAD++jLmVeCawRt+7ndiRXhjkPBPdhPTEfFUtd5pYtH1vG_77Zg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] gpio: realtek-otto: make the driver work with SWAP_IO_SPACE
 To: Rustam Adilov <adilov@disroot.org>
-Cc: Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Sander Vanheule <sander@svanheule.net>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 10, 2026 at 7:57=E2=80=AFPM Rustam Adilov <adilov@disroot.org> =
+On Sat, Oct 10, 2026 at 4:18=E2=80=AFPM Rustam Adilov <adilov@disroot.org> =
 wrote:
+> On 2026-10-01 20:14, Linus Walleij wrote:
 
-> Add support for big endian pin controllers by taking into account
-> a big-endian device tree property.
+> > On Mon, Sep 28, 2026 at 11:51=E2=80=AFAM Andy Shevchenko
+> > <andriy.shevchenko@intel.com> wrote:
+> >> On Sat, Aug 15, 2026 at 02:44:49PM +0500, Rustam Adilov wrote:
+> >> > This patch series changes gpio-realtek-otto to be functional around
+> >> > SWAP_IO_SPACE config.
+> > (...)
+> >> Convert the driver to use regmap MMIO and most of the code in this ser=
+ies won't
+> >> be needed. Also it will give some benefits (like register caching and =
+debugfs
+> >> monitoring).
+> >
+> > Andy is right.
+> >
+> > Make an attempt on top of the merged patches to convert this to regmap =
+MMIO
+> > and see what happens, and if that works consider regmap GPIO as
+> > well.
+> >
+> > Everyone will be happier, because less code.
 >
-> This is needed on big endian MIPS platforms like RTL930X, RTL931X
-> and RTL9607C who use pinctrl-single, because when SWAP_IO_SPACE is
-> enabled, the mmio accessors in pinctrl-single perform a byte swap.
->
-> Signed-off-by: Rustam Adilov <adilov@disroot.org>
+> As far as i remember, i thought of using regmap earlier but got stuck bec=
+ause
+> the regmap has to not swap in realtek_gpio_update_line_imr() but potentia=
+lly
+> swap in other places by bank_read/write.
+> Maybe i am missing something but i just couldn't figure it out.
 
-I'm not so sure about expanding the usage of pinctrl-single, we have
-said that this is used in the cases when you want to stash all the
-hardware data into the device tree (such as which groups and functions
-that exist) and it seems mostly done to save memory for the kernel
-so you don't need to compile in that data for all systems.
-
-The argument that this is "simple" if you just have some hardware
-data in a file is moot these days IMO, because you can now just
-give that data to an LLM and it will spit out any group and function
-definitions you want.
-
-So I'd like to hear some of the reasoning about why you want to
-do this thing, we have other drivers doing this but without using
-pinctrl-single.
-
-One of the driver maintainers have to ACK it too.
-
-> +static unsigned int pcs_readw_be(void __iomem *reg)
-> +{
-> +       return ioread16be(reg);
-> +}
-> +
-> +static unsigned int pcs_readl_be(void __iomem *reg)
-> +{
-> +       return ioread32be(reg);
-> +}
-> +
-> +static void pcs_writew_be(unsigned int val, void __iomem *reg)
-> +{
-> +       iowrite16be(val, reg);
-> +}
-> +
-> +static void pcs_writel_be(unsigned int val, void __iomem *reg)
-> +{
-> +       iowrite32be(val, reg);
-> +}
-
-Why this indirection? Can't you just assign the standard
-accessors directly?
-
->         case 16:
-> -               pcs->read =3D pcs_readw;
-> -               pcs->write =3D pcs_writew;
-> +               if (byte_be) {
-> +                       pcs->read =3D pcs_readw_be;
-> +                       pcs->write =3D pcs_writew_be;
-> +               } else {
-> +                       pcs->read =3D pcs_readw;
-> +                       pcs->write =3D pcs_writew;
-
-Maybe they should all do that actually, can't we rewrite
-this so we just:
-
-if (byte_be) {
-  pcs->read =3D ioread16be;
-  pcs->write =3D iowrite16be;
-} else {
-  pcs->read =3D ioread16;
-  pcs->write =3D iowrite16;
-
-I don't see how the wrappers help and I hope the compiler
-just optimize them away anyway.
+Regmap can do any kind of cherry-picked exceptions in the callbacks,
+so I think it can deal with that, you just need a more custom than average
+regmap set-up.
 
 Yours,
 Linus Walleij
