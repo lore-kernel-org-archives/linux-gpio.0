@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E3344A701;
-	Sun, 11 Oct 2026 12:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FE83F1AAD;
+	Sun, 11 Oct 2026 12:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791720872; cv=none; b=Yp5nnjiOqCO/325R9t3arANRmY+gYmS4PgZCaX1TRYbFJNa3ZMaCbUWyg/mP5uSJ3Cs/HQNeHVRFLzFhf9CYUyyTcqwZ+KrrLMFOsHj8/AsZ48xUMz+Iog7BxI1EwkMGFxTSWcOoPR11Cuf9V3S7MZJdKmiqwxfJBvc5tGR7JLE=
+	t=1791720874; cv=none; b=r+7WptttwogX26vIrqP3ON3ZRYsGiE5p4u9PXLJTHYz8IopBdS976v8Cmh8A13dlw+9eoWbih8S8QnJpRgBiSaX/xUWlCXmcpOWKgJOg6AiPJCz6s57dTdf4hSY3hUZU5qso8pL6sUUr5ezKHATTLRZGz+xyZUmIFBquJesMMbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791720872; c=relaxed/simple;
-	bh=DAamR5mJ5enjU6q1VSlf0CL7QM28H43CyvX+vMy1e9U=;
+	s=arc-20240116; t=1791720874; c=relaxed/simple;
+	bh=/lQHVLEPno0id4+YZ63M4VTFsvW0kfT6IsrE5m8E4rM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=vCMb2DJm9fTWba+ZuvhhQxsT08L0El4beHoXiVjfGo9nypmjofthAm8wRY25hZ7vFMHK526hpi9ECalY+xGllU/HrqqSrIuZOQbabjrAXBT9EcC2Ib5D6mHGqYw1vpZKvdh2z0aDpWDrI5PHUf0OEL79AgNP5PWTiUnstOtaLoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmjQi4ex; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version; b=V8MR5gNEwRbDALBftYXXMArtnpPJ4ieCXvzqInThpQieYbBjzSYxtiROOngoty+cgcsKp7vkYD96BXz67wgWAdGQOyqvX5J28mHP+UohIxIv7dK0dMDIRNqgHKTSct4zJprjjzE7/qUzWEtnocdRDdaWerAe8OKWNo7CyXhTGRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzlXD8lz; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmjQi4ex"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C85ED1F0089C;
-	Sun, 11 Oct 2026 12:14:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzlXD8lz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C04E01F0089E;
+	Sun, 11 Oct 2026 12:14:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791720864;
-	bh=kOkDq6Qw+S7Y6AGcHJMe40XM5ws3eb2QUuy57io4e40=;
+	s=k20260515; t=1791720867;
+	bh=yzVi9i8q3m1d4DCORBtFuKOY8/KCrp6T899MdS/Ehvg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=VmjQi4exzk+dxZJZtGb2mWgGFOulg3DHozTHAaAv099c5OQa/UHWSVqEq7mKBy21K
-	 4uNYHzlLh3tMuNfgQEq1MjwF2RU78zcu7IJgmu01QWk40kNI/qSlWSCucOVar2Rmrd
-	 hoMv6JV+CAMpX1qDNzyFfqrnE9Z7FaRjMEABALUjQ3W1cL5oQH4IYC1rV+Nfl1/e8d
-	 fKlJ2DS1ztfmIHPyv9B7Ssc7HikEE5y/DRzU9hDnbXYY7BeCq758I6GdHJbRrF/Pci
-	 iNEFSh23ByEIw95/GqF3FlYs1x9EiSEKru2wFVHr+Q/KcIFB9qQMsrO60ci25e++gh
-	 qCaCeHjFmDhXA==
+	b=UzlXD8lzGBgq7UEKRmxhwYLpwi6taJVzRipfcuXzIwGMGp6bVAARF9MrSqtKD8piS
+	 KtkDwt6UBYox6/Pyt1vrWhCIqqON2CFkmBHPKzPzINTbKOQJGjCUgh3WajLD2m6BGT
+	 s/RAFQJFL4pIDHSdvthjEC/3GAGMqoU7zq7sbkeL8lrlIF+6GP+3RVKRL2KtqHRtyN
+	 w5vpKNxYd8jG/LAyDFCrqxSxS0wZ2m3B4pI8Uo85kOGApEKBeFe3BYlX8/HfRHzB+Z
+	 snbNnPlRWyFTa6usAKDyVTvNVeuK125nLIil4/zfdKkabS7cqYIXAAovyMXILsypgT
+	 Kn617Qtj2o2Aw==
 From: Tzung-Bi Shih <tzungbi@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
@@ -41,9 +41,9 @@ Cc: Jonathan Corbet <corbet@lwn.net>,
 	linux-kernel@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	tzungbi@kernel.org
-Subject: [PATCH v14 4/5] reset: Add KUnit test cases
-Date: Sun, 11 Oct 2026 20:12:44 +0800
-Message-ID: <20261011121246.162759-5-tzungbi@kernel.org>
+Subject: [PATCH v14 5/5] reset: Leverage revocable for accessing struct reset_controller_dev
+Date: Sun, 11 Oct 2026 20:12:45 +0800
+Message-ID: <20261011121246.162759-6-tzungbi@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261011121246.162759-1-tzungbi@kernel.org>
 References: <20261011121246.162759-1-tzungbi@kernel.org>
@@ -55,408 +55,275 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Since commit 9035073d0ef1 ("reset: convert reset core to using firmware
-nodes"), reset suppliers and consumers can be wired up using software
-nodes without requiring Device Tree or hardware devices.  Leverage this
-to add KUnit test cases for the reset controller framework.
+Commit 78ebbff6d1a0 ("reset: handle removing supplier before consumers")
+protected the `rcdev` pointer in `struct reset_control` with SRCU so
+that the reset core can handle suppliers unbinding while consumers still
+hold reset control handles.
 
-The test cases cover the following scenarios:
+Because `struct reset_control` handles can outlive `rcdev`, each of the
+N handles had to embed its own `srcu_struct` and call synchronize_srcu()
+on release, and reset_controller_unregister() had to call
+synchronize_srcu() N times in a loop.
 
-- Basic: Verifies that a consumer can acquire a reset control via
-  fwnode and perform reset, assert, deassert, status, release, and
-  acquire operations.
-- Use After Unregister: Verifies that after the supplier unregisters
-  the reset_controller_dev while a consumer still holds a reset_control
-  handle, subsequent consumer operations fail safely with -ENODEV.
-- Concurrent Unregister: Verifies that unregistering the
-  reset_controller_dev concurrently with an in-flight reset operation
-  waits for the active operation to complete before returning.
+Leverage dynamic revocable to allocate a single reference-counted
+`struct revocable` for `rcdev` shared across all N `struct reset_control`
+handles (1-to-N).  This reduces N `srcu_struct` instances per controller
+to 1, drops synchronize_srcu() from reset_control_put_internal(), and
+replaces the N synchronize_srcu() calls on unregistration with a single
+revocable_revoke().
+
+In addition, calling revocable_revoke() outside `rcdev->lock` avoids an
+ABBA lock inversion between `rcdev->lock` and SRCU, as
+reset_control_acquire() and reset_control_put_internal() acquire
+`rcdev->lock` inside the SRCU read-side critical section.
 
 Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
----
-Test:
-$ ./tools/testing/kunit/kunit.py run \
-        --kconfig_add CONFIG_RESET_CONTROLLER=y \
-        --kconfig_add CONFIG_RESET_KUNIT_TEST=y \
-        reset_test
-
-$ ./tools/testing/kunit/kunit.py run \
-        --kconfig_add CONFIG_RESET_CONTROLLER=y \
-        --kconfig_add CONFIG_RESET_KUNIT_TEST=y \
-        --kconfig_add CONFIG_PROVE_LOCKING=y \
-        --kconfig_add CONFIG_DEBUG_KERNEL=y \
-        --kconfig_add CONFIG_KASAN=y \
-        --arch=x86_64 \
-        reset_test
 ---
 v14:
 - New to the series.
 ---
- drivers/reset/Kconfig     |   5 +
- drivers/reset/Makefile    |   2 +
- drivers/reset/core-test.c | 329 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 336 insertions(+)
- create mode 100644 drivers/reset/core-test.c
+ drivers/reset/core.c             | 93 ++++++++------------------------
+ include/linux/reset-controller.h |  3 ++
+ 2 files changed, 26 insertions(+), 70 deletions(-)
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index eda9c698a95f..c7dceec8f58c 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -457,4 +457,9 @@ source "drivers/reset/starfive/Kconfig"
- source "drivers/reset/sti/Kconfig"
- source "drivers/reset/tegra/Kconfig"
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 38e189d04d09..788a235c3965 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -24,8 +24,8 @@
+ #include <linux/property.h>
+ #include <linux/reset.h>
+ #include <linux/reset-controller.h>
++#include <linux/revocable.h>
+ #include <linux/slab.h>
+-#include <linux/srcu.h>
  
-+config RESET_KUNIT_TEST
-+	tristate "KUnit tests for reset controller" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS
-+
- endif
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 489fafd6bbe3..bb01198d495b 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -55,3 +55,5 @@ obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
- obj-$(CONFIG_RESET_UNIPHIER_GLUE) += reset-uniphier-glue.o
- obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
- obj-$(CONFIG_RESET_ZYNQMP) += reset-zynqmp.o
-+
-+obj-$(CONFIG_RESET_KUNIT_TEST) += core-test.o
-diff --git a/drivers/reset/core-test.c b/drivers/reset/core-test.c
-new file mode 100644
-index 000000000000..834556322b23
---- /dev/null
-+++ b/drivers/reset/core-test.c
-@@ -0,0 +1,329 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2026 Google LLC
-+ *
-+ * KUnit tests for the reset controller.
-+ *
-+ * The test cases cover the following scenarios:
-+ *
-+ * - Basic: Verifies that a consumer can acquire a reset control via
-+ *   fwnode and perform reset, assert, deassert, status, release, and
-+ *   acquire operations.
-+ *
-+ * - Use After Unregister: Verifies that after the supplier unregisters
-+ *   the reset_controller_dev while a consumer still holds a reset_control
-+ *   handle, subsequent consumer operations fail safely with -ENODEV.
-+ *
-+ * - Concurrent Unregister: Verifies that unregistering the
-+ *   reset_controller_dev concurrently with an in-flight reset operation
-+ *   waits for the active operation to complete before returning.
-+ */
-+
-+#include <kunit/fwnode.h>
-+#include <kunit/test.h>
-+
-+#include <linux/completion.h>
-+#include <linux/fwnode.h>
-+#include <linux/iopoll.h>
-+#include <linux/kthread.h>
-+#include <linux/property.h>
-+#include <linux/reset-controller.h>
-+#include <linux/reset.h>
-+#include <linux/sched/task.h>
-+
-+struct reset_test_context {
-+	struct fwnode_handle *supp_fwnode;
-+	struct fwnode_handle *cons_fwnode;
-+	struct reset_controller_dev rcdev;
-+	struct reset_control *rstc;
-+
-+	int reset_count;
-+	int assert_count;
-+	int deassert_count;
-+	int status_count;
-+
-+	void *priv;
-+};
-+
-+static int reset_test_op_reset(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	struct reset_test_context *ctx = container_of(rcdev, typeof(*ctx), rcdev);
-+
-+	ctx->reset_count++;
-+	return 0;
-+}
-+
-+static int reset_test_op_assert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	struct reset_test_context *ctx = container_of(rcdev, typeof(*ctx), rcdev);
-+
-+	ctx->assert_count++;
-+	return 0;
-+}
-+
-+static int reset_test_op_deassert(struct reset_controller_dev *rcdev,
-+				  unsigned long id)
-+{
-+	struct reset_test_context *ctx = container_of(rcdev, typeof(*ctx), rcdev);
-+
-+	ctx->deassert_count++;
-+	return 0;
-+}
-+
-+static int reset_test_op_status(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	struct reset_test_context *ctx = container_of(rcdev, typeof(*ctx), rcdev);
-+
-+	ctx->status_count++;
-+	return 0;
-+}
-+
-+static const struct reset_control_ops reset_test_ops = {
-+	.reset = reset_test_op_reset,
-+	.assert = reset_test_op_assert,
-+	.deassert = reset_test_op_deassert,
-+	.status = reset_test_op_status,
-+};
-+
-+static int reset_test_init(struct kunit *test)
-+{
-+	static const struct property_entry supp_props[] = {
-+		PROPERTY_ENTRY_U32("#reset-cells", 1),
-+		{}
-+	};
-+	static const struct software_node supp_swnode = {
-+		.name = "reset-test-supplier",
-+		.properties = supp_props,
-+	};
-+	static const struct software_node_ref_args refs[] = {
-+		SOFTWARE_NODE_REFERENCE(&supp_swnode, 0),
-+	};
-+	static const struct property_entry cons_props[] = {
-+		PROPERTY_ENTRY_REF_ARRAY("resets", refs),
-+		{}
-+	};
-+
-+	struct reset_test_context *ctx;
-+	int ret;
-+
-+	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, ctx);
-+
-+	ctx->supp_fwnode = kunit_software_node_register(test, &supp_swnode);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx->supp_fwnode);
-+
-+	ctx->cons_fwnode = kunit_fwnode_create_software_node(test, cons_props,
-+							     NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx->cons_fwnode);
-+
-+	ctx->rcdev.ops = &reset_test_ops;
-+	ctx->rcdev.nr_resets = 1;
-+	ctx->rcdev.fwnode = ctx->supp_fwnode;
-+
-+	ret = reset_controller_register(&ctx->rcdev);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	ctx->rstc = __fwnode_reset_control_get(ctx->cons_fwnode, NULL, 0,
-+					       RESET_CONTROL_EXCLUSIVE);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx->rstc);
-+
-+	test->priv = ctx;
-+	return 0;
-+}
-+
-+static void reset_test_basic(struct kunit *test)
-+{
-+	struct reset_test_context *ctx = test->priv;
-+	struct reset_control *rstc = ctx->rstc;
-+
-+	KUNIT_EXPECT_EQ(test, ctx->reset_count, 0);
-+	KUNIT_EXPECT_EQ(test, reset_control_reset(rstc), 0);
-+	KUNIT_EXPECT_EQ(test, ctx->reset_count, 1);
-+
-+	KUNIT_EXPECT_EQ(test, ctx->assert_count, 0);
-+	KUNIT_EXPECT_EQ(test, reset_control_assert(rstc), 0);
-+	KUNIT_EXPECT_EQ(test, ctx->assert_count, 1);
-+
-+	KUNIT_EXPECT_EQ(test, ctx->deassert_count, 0);
-+	KUNIT_EXPECT_EQ(test, reset_control_deassert(rstc), 0);
-+	KUNIT_EXPECT_EQ(test, ctx->deassert_count, 1);
-+
-+	KUNIT_EXPECT_EQ(test, ctx->status_count, 0);
-+	KUNIT_EXPECT_EQ(test, reset_control_status(rstc), 0);
-+	KUNIT_EXPECT_EQ(test, ctx->status_count, 1);
-+
-+	reset_control_release(rstc);
-+	KUNIT_EXPECT_EQ(test, reset_control_acquire(rstc), 0);
-+
-+	reset_control_put(rstc);
-+	reset_controller_unregister(&ctx->rcdev);
-+}
-+
-+static void reset_test_use_after_unregister(struct kunit *test)
-+{
-+	struct reset_test_context *ctx = test->priv;
-+	struct reset_control *rstc = ctx->rstc;
-+
-+	KUNIT_EXPECT_EQ(test, ctx->reset_count, 0);
-+	KUNIT_EXPECT_EQ(test, reset_control_reset(rstc), 0);
-+	KUNIT_EXPECT_EQ(test, ctx->reset_count, 1);
-+
-+	/* Unregister supplier while consumer still holds rstc. */
-+	reset_controller_unregister(&ctx->rcdev);
-+
-+	KUNIT_EXPECT_EQ(test, ctx->reset_count, 1);
-+	KUNIT_EXPECT_EQ(test, reset_control_reset(rstc), -ENODEV);
-+	KUNIT_EXPECT_EQ(test, ctx->reset_count, 1);
-+
-+	KUNIT_EXPECT_EQ(test, reset_control_assert(rstc), -ENODEV);
-+	KUNIT_EXPECT_EQ(test, reset_control_deassert(rstc), -ENODEV);
-+	KUNIT_EXPECT_EQ(test, reset_control_status(rstc), -ENODEV);
-+
-+	reset_control_release(rstc);
-+	KUNIT_EXPECT_EQ(test, reset_control_acquire(rstc), -ENODEV);
-+
-+	reset_control_put(rstc);
-+}
-+
-+struct test_concurrent_unregister_context {
-+	struct kunit *test;
-+	struct completion started, enter;
-+	struct task_struct *thread;
-+
-+	/* Used by test consumer. */
-+	struct completion entered, exit;
-+	int expected_ret;
-+};
-+
-+static int test_concurrent_unregister_supplier(void *data)
-+{
-+	struct test_concurrent_unregister_context *ctx = data;
-+	struct reset_test_context *rtc = ctx->test->priv;
-+
-+	complete(&ctx->started);
-+
-+	wait_for_completion(&ctx->enter);
-+	reset_controller_unregister(&rtc->rcdev);
-+
-+	return 0;
-+}
-+
-+static int test_concurrent_unregister_consumer(void *data)
-+{
-+	struct test_concurrent_unregister_context *ctx = data;
-+	struct reset_test_context *rtc = ctx->test->priv;
-+	int ret;
-+
-+	complete(&ctx->started);
-+
-+	wait_for_completion(&ctx->enter);
-+
-+	ret = reset_control_reset(rtc->rstc);
-+	KUNIT_EXPECT_EQ(ctx->test, ret, ctx->expected_ret);
-+
-+	return 0;
-+}
-+
-+static int
-+reset_test_concurrent_unregister_op_reset(struct reset_controller_dev *rcdev,
-+					  unsigned long id)
-+{
-+	struct reset_test_context *rtc = container_of(rcdev, typeof(*rtc), rcdev);
-+	struct test_concurrent_unregister_context *ctx = rtc->priv;
-+
-+	rtc->reset_count++;
-+	complete(&ctx->entered);
-+
-+	wait_for_completion(&ctx->exit);
-+	return ctx->expected_ret;
-+}
-+
-+static const struct reset_control_ops reset_test_concurrent_unregister_ops = {
-+	.reset = reset_test_concurrent_unregister_op_reset,
-+};
-+
-+static void reset_test_concurrent_unregister(struct kunit *test)
-+{
-+	struct reset_test_context *rtc = test->priv;
-+	struct test_concurrent_unregister_context *ctx;
-+	int i, ret, val;
-+
-+	rtc->rcdev.ops = &reset_test_concurrent_unregister_ops;
-+
-+	ctx = kunit_kmalloc_array(test, 3, sizeof(*ctx), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, ctx);
-+
-+	for (i = 0; i < 3; ++i) {
-+		ctx[i].test = test;
-+		init_completion(&ctx[i].started);
-+		init_completion(&ctx[i].enter);
-+
-+		if (i == 0) {
-+			ctx[i].thread = kthread_run(
-+				test_concurrent_unregister_supplier, ctx + i,
-+				"supplier%d", i);
-+		} else {
-+			init_completion(&ctx[i].entered);
-+			init_completion(&ctx[i].exit);
-+
-+			ctx[i].thread = kthread_run(
-+				test_concurrent_unregister_consumer, ctx + i,
-+				"consumer%d", i);
-+		}
-+		KUNIT_ASSERT_FALSE(test, IS_ERR(ctx[i].thread));
-+		get_task_struct(ctx[i].thread);
-+
-+		wait_for_completion(&ctx[i].started);
-+	}
-+
-+	rtc->priv = &ctx[1];
-+	ctx[1].expected_ret = 0x12345678;
-+	/* consumer1 enters reset(). */
-+	KUNIT_EXPECT_EQ(test, rtc->reset_count, 0);
-+	complete(&ctx[1].enter);
-+	wait_for_completion(&ctx[1].entered);
-+	KUNIT_EXPECT_EQ(test, rtc->reset_count, 1);
-+
-+	/* supplier0 unregisters. */
-+	complete(&ctx[0].enter);
-+	ret = read_poll_timeout(reset_control_status, val, val == -ENODEV,
-+				1000, 100000, false, rtc->rstc);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+	/* supplier0 can't exit.  It's waiting for all consumers. */
-+
-+	ctx[2].expected_ret = -ENODEV;
-+	/* consumer2 must see -ENODEV. */
-+	complete(&ctx[2].enter);
-+	kthread_stop_put(ctx[2].thread);
-+
-+	/* consumer1 exits reset(). */
-+	complete(&ctx[1].exit);
-+	kthread_stop_put(ctx[1].thread);
-+	kthread_stop_put(ctx[0].thread);
-+
-+	/* Subsequent access must see -ENODEV. */
-+	KUNIT_EXPECT_EQ(test, reset_control_reset(rtc->rstc), -ENODEV);
-+	reset_control_put(rtc->rstc);
-+}
-+
-+static struct kunit_case reset_test_cases[] = {
-+	KUNIT_CASE(reset_test_basic),
-+	KUNIT_CASE(reset_test_use_after_unregister),
-+	KUNIT_CASE(reset_test_concurrent_unregister),
-+	{}
-+};
-+
-+static struct kunit_suite reset_test_suite = {
-+	.name = "reset_test",
-+	.test_cases = reset_test_cases,
-+	.init = reset_test_init,
-+};
-+
-+kunit_test_suite(reset_test_suite);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Tzung-Bi Shih <tzungbi@kernel.org>");
-+MODULE_DESCRIPTION("KUnit tests for the reset controller");
+ static DEFINE_MUTEX(reset_list_mutex);
+ static LIST_HEAD(reset_controller_list);
+@@ -37,9 +37,7 @@ static DEFINE_IDA(reset_gpio_ida);
+ 
+ /**
+  * struct reset_control - a reset control
+- * @rcdev: a pointer to the reset controller device
+- *         this reset control belongs to
+- * @srcu: protects the rcdev pointer from removal during consumer access
++ * @rev: revocable handle for accessing the reset controller device
+  * @list: list entry for the rcdev's reset controller list
+  * @id: ID of the reset controller in the reset
+  *      controller device
+@@ -54,8 +52,7 @@ static DEFINE_IDA(reset_gpio_ida);
+  * @lock: serializes the internals of reset_control_acquire()
+  */
+ struct reset_control {
+-	struct reset_controller_dev __rcu *rcdev;
+-	struct srcu_struct srcu;
++	struct revocable *rev;
+ 	struct list_head list;
+ 	unsigned int id;
+ 	struct kref refcnt;
+@@ -141,6 +138,10 @@ int reset_controller_register(struct reset_controller_dev *rcdev)
+ 			return -EINVAL;
+ 	}
+ 
++	rcdev->rev = revocable_alloc(rcdev);
++	if (!rcdev->rev)
++		return -ENOMEM;
++
+ 	if (rcdev->of_xlate)
+ 		rcdev->fwnode_reset_n_cells = rcdev->of_reset_n_cells;
+ 
+@@ -181,18 +182,14 @@ void reset_controller_unregister(struct reset_controller_dev *rcdev)
+ 	scoped_guard(mutex, &reset_list_mutex)
+ 		list_del(&rcdev->list);
+ 
++	revocable_revoke(rcdev->rev);
++
+ 	scoped_guard(mutex, &rcdev->lock) {
+-		/*
+-		 * Numb but don't free the remaining reset control handles that are
+-		 * still held by consumers.
+-		 */
+-		list_for_each_entry_safe(rstc, pos, &rcdev->reset_control_head, list) {
+-			rcu_assign_pointer(rstc->rcdev, NULL);
+-			synchronize_srcu(&rstc->srcu);
++		list_for_each_entry_safe(rstc, pos, &rcdev->reset_control_head, list)
+ 			reset_controller_remove(rcdev, rstc);
+-		}
+ 	}
+ 
++	revocable_put(rcdev->rev);
+ 	mutex_destroy(&rcdev->lock);
+ }
+ EXPORT_SYMBOL_GPL(reset_controller_unregister);
+@@ -382,11 +379,7 @@ int reset_control_reset(struct reset_control *rstc)
+ 	if (reset_control_is_array(rstc))
+ 		return reset_control_array_reset(rstc_to_array(rstc));
+ 
+-	guard(srcu)(&rstc->srcu);
+-
+-	rcdev = srcu_dereference(rstc->rcdev, &rstc->srcu);
+-	if (!rcdev)
+-		return -ENODEV;
++	revocable_try_access_or_return(rstc->rev, rcdev);
+ 
+ 	if (!rcdev->ops->reset)
+ 		return -ENOTSUPP;
+@@ -503,11 +496,7 @@ int reset_control_assert(struct reset_control *rstc)
+ 	if (reset_control_is_array(rstc))
+ 		return reset_control_array_assert(rstc_to_array(rstc));
+ 
+-	guard(srcu)(&rstc->srcu);
+-
+-	rcdev = srcu_dereference(rstc->rcdev, &rstc->srcu);
+-	if (!rcdev)
+-		return -ENODEV;
++	revocable_try_access_or_return(rstc->rev, rcdev);
+ 
+ 	if (rstc->shared) {
+ 		if (WARN_ON(atomic_read(&rstc->triggered_count) != 0))
+@@ -599,11 +588,7 @@ int reset_control_deassert(struct reset_control *rstc)
+ 	if (reset_control_is_array(rstc))
+ 		return reset_control_array_deassert(rstc_to_array(rstc));
+ 
+-	guard(srcu)(&rstc->srcu);
+-
+-	rcdev = srcu_dereference(rstc->rcdev, &rstc->srcu);
+-	if (!rcdev)
+-		return -ENODEV;
++	revocable_try_access_or_return(rstc->rev, rcdev);
+ 
+ 	if (rstc->shared) {
+ 		if (WARN_ON(atomic_read(&rstc->triggered_count) != 0))
+@@ -679,11 +664,7 @@ int reset_control_status(struct reset_control *rstc)
+ 	if (WARN_ON(IS_ERR(rstc)) || reset_control_is_array(rstc))
+ 		return -EINVAL;
+ 
+-	guard(srcu)(&rstc->srcu);
+-
+-	rcdev = srcu_dereference(rstc->rcdev, &rstc->srcu);
+-	if (!rcdev)
+-		return -ENODEV;
++	revocable_try_access_or_return(rstc->rev, rcdev);
+ 
+ 	if (rcdev->ops->status)
+ 		return rcdev->ops->status(rcdev, rstc->id);
+@@ -731,11 +712,7 @@ int reset_control_acquire(struct reset_control *rstc)
+ 	if (rstc->acquired)
+ 		return 0;
+ 
+-	guard(srcu)(&rstc->srcu);
+-
+-	rcdev = srcu_dereference(rstc->rcdev, &rstc->srcu);
+-	if (!rcdev)
+-		return -ENODEV;
++	revocable_try_access_or_return(rstc->rev, rcdev);
+ 
+ 	scoped_guard(mutex, &rcdev->lock) {
+ 		list_for_each_entry(rc, &rcdev->reset_control_head, list) {
+@@ -831,7 +808,6 @@ __reset_control_get_internal(struct reset_controller_dev *rcdev,
+ 	bool shared = flags & RESET_CONTROL_FLAGS_BIT_SHARED;
+ 	bool acquired = flags & RESET_CONTROL_FLAGS_BIT_ACQUIRED;
+ 	struct reset_control *rstc;
+-	int ret;
+ 
+ 	lockdep_assert_held(&rcdev->lock);
+ 
+@@ -862,19 +838,13 @@ __reset_control_get_internal(struct reset_controller_dev *rcdev,
+ 	if (!rstc)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	ret = init_srcu_struct(&rstc->srcu);
+-	if (ret) {
+-		kfree(rstc);
+-		return ERR_PTR(ret);
+-	}
+-
+ 	if (!try_module_get(rcdev->owner)) {
+-		cleanup_srcu_struct(&rstc->srcu);
+ 		kfree(rstc);
+ 		return ERR_PTR(-ENODEV);
+ 	}
+ 
+-	rcu_assign_pointer(rstc->rcdev, rcdev);
++	revocable_get(rcdev->rev);
++	rstc->rev = rcdev->rev;
+ 	list_add(&rstc->list, &rcdev->reset_control_head);
+ 	rstc->id = index;
+ 	kref_init(&rstc->refcnt);
+@@ -890,40 +860,23 @@ static void __reset_control_release(struct kref *kref)
+ {
+ 	struct reset_control *rstc = container_of(kref, struct reset_control,
+ 						  refcnt);
+-	struct reset_controller_dev *rcdev;
+-
+-	lockdep_assert_held(&rstc->srcu);
+-
+-	rcdev = rcu_replace_pointer(rstc->rcdev, NULL, true);
+-	if (rcdev) {
+-		lockdep_assert_held(&rcdev->lock);
+-		reset_controller_remove(rcdev, rstc);
+-	}
+ 
+ 	mutex_destroy(&rstc->lock);
++	revocable_put(rstc->rev);
+ }
+ 
+ static void reset_control_put_internal(struct reset_control *rstc)
+ {
+ 	struct reset_controller_dev *rcdev;
+-	int ret = 0;
+ 
+ 	if (IS_ERR_OR_NULL(rstc))
+ 		return;
+ 
+-	scoped_guard(srcu, &rstc->srcu) {
+-		rcdev = srcu_dereference(rstc->rcdev, &rstc->srcu);
+-		if (!rcdev)
+-			/* Already released. */
+-			return;
+-
+-		guard(mutex)(&rcdev->lock);
+-		ret = kref_put(&rstc->refcnt, __reset_control_release);
+-	}
++	revocable_try_access_or_return_void(rstc->rev, rcdev);
+ 
+-	if (ret) {
+-		synchronize_srcu(&rstc->srcu);
+-		cleanup_srcu_struct(&rstc->srcu);
++	guard(mutex)(&rcdev->lock);
++	if (kref_put(&rstc->refcnt, __reset_control_release)) {
++		reset_controller_remove(rcdev, rstc);
+ 		kfree(rstc);
+ 	}
+ }
+diff --git a/include/linux/reset-controller.h b/include/linux/reset-controller.h
+index 52a5a4e81f18..9abf5c59fd9a 100644
+--- a/include/linux/reset-controller.h
++++ b/include/linux/reset-controller.h
+@@ -28,6 +28,7 @@ struct reset_control_ops {
+ struct module;
+ struct device_node;
+ struct of_phandle_args;
++struct revocable;
+ 
+ /**
+  * struct reset_controller_dev - reset controller entity that might
+@@ -48,6 +49,7 @@ struct of_phandle_args;
+  *                :c:func:`fwnode_reset_simple_xlate`
+  * @nr_resets: number of reset controls in this reset controller device
+  * @lock: protects the reset control list from concurrent access
++ * @rev: revocable provider handle for itself
+  */
+ struct reset_controller_dev {
+ 	const struct reset_control_ops *ops;
+@@ -65,6 +67,7 @@ struct reset_controller_dev {
+ 			    const struct fwnode_reference_args *reset_spec);
+ 	unsigned int nr_resets;
+ 	struct mutex lock;
++	struct revocable *rev;
+ };
+ 
+ #if IS_ENABLED(CONFIG_RESET_CONTROLLER)
 -- 
 2.53.0
 
