@@ -1,180 +1,322 @@
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazhn15010011.outbound.protection.outlook.com [52.102.161.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957D9285058;
-	Sun, 11 Oct 2026 09:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.161.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791710873; cv=fail; b=C87cBsZftAlmFcJndasfCn3mYjPXGv9xNBTAuBYeEIGMx6CH/N4D0m7koN6OR+Lzhdpt2t04pjL0payj/ZFzQI+Ey6F8cJCKusySKlP7ghNzBMBFTIAY9m5iB56uamD7CtzqSNKn60urqv2Qs0BDWHPwkDOcrR+Ao3qFh7ltSng=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791710873; c=relaxed/simple;
-	bh=/VVMoAWI2wQB7xMlbDH0BELRynTsFTBPzhlEHRM8Ns4=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fBLLS8LJMbyOCWyZxkULJA3zog36itLHmtd+wFg4hqJtmwir0cHz0GaiUGsWGscSj/YWd0EO+Kc+ArSxHpr8TZIIJUhL9zsNyjn3AdrPnNEZ4hmdPaXp6a/3CDmywW8bEuhFr2Ue57Y/8V9T5AvzVPhaL25VJOqsRo6/3L34vws=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=D9rwkP4n; arc=fail smtp.client-ip=52.102.161.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6995C3164BA
+	for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2026 10:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791712896; cv=none; b=MfgT8wvMw3OL7xHaG2H/AyZTWeb+7hfktG9c43XQJKnbTyELjGdhuSOR/cfJ3gL392jQCxfaBCO8YeiFFL08lxfW2BQ6fK7UtS3dNQmE6NG7/JQ+7PQ4+eIaU/sHnQiQR0HPdvQL6a1npyIU+5sHbQWc7Y0Ck9FMDXeDVlo2m/0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791712896; c=relaxed/simple;
+	bh=hoKMSRawjwQBbwpZtC9X3vWBG8ZONIPpWs0BiloPsr8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N3y2x3tFlS4h0EPLsAJbETPBuXOeaDJGGhMTtoIMSnR7jjFyLxZPe8mkW5WysK4UcL0q9f+iNJYUXIv3MN3rKE0vMD9JH9lAJAiHzLu/cwDX4NNTVtM8XZ32hYUSnjmoveZedb4KeCyKpQ2RiVkfuRzuC61yKkxwMuzTWYRT68E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=tD5pSQxy; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="D9rwkP4n"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YTEyQLy+uRs7ZNvv64B52hbAEzS5f2kurbApPVyxic1+hv0K21dp/TLD7zcyML4vQHS5tu/sWgFAXHl2enpt+6MpS17kxBN0ZMUX8iaGT/IsdrD0Be8YeT+q96fMpIWFIMeJtOhL/2JEdghRswM+wf5ueXr4YI3ZuER5IRLoPT51wxkUnBbMWpq3OfCOPy2yq6fnNfpulxqs39+H8Pebfo0mFWvi0tWVdsgmP0ae55MaZbybjrpUoKb1oW4DsMhHucmYzx9w2sDHAhl7TAYGpaaT+v18KLgRSZqdd6EEZi15N/gwKdNcLWM1zgv4n8Eu1UFCIeu9xmqFEzBqg7bJQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/VVMoAWI2wQB7xMlbDH0BELRynTsFTBPzhlEHRM8Ns4=;
- b=Iqa+DHIRhX5AMLlJM/tx3lmt1uiZaAsZerlZKCQvHn9jo6FW/qsQ7CQa+/SXyBBhD2v27eEuH7TQ+vtUIfcQoPZiq1cxNzNAWk9+RB3GLLDpu78H/39X07l0+xQC5bkeINckSQcn1K+H96WJ/+9MCtYr3TdoP/NRICPVoXDL2QlqU4lfVLdl/zcovBUgwlV8+G59xmDDPCrJLbAb60YoA4qBJt6GiqSAinkF8aNqtO3qs1drgbGvXJXFE9BI7AmOH62tQmsn72KgcNdl2y2VfsVHtjnreflAXSx/H0uvBJqPA05DNaYmbPHn15OCeMwy1TVW6hAYXL+d5w2+pycyeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.59) smtp.rcpttodomain=163.com smtp.mailfrom=foss.st.com; dmarc=fail
- (p=none sp=none pct=100) action=none header.from=foss.st.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/VVMoAWI2wQB7xMlbDH0BELRynTsFTBPzhlEHRM8Ns4=;
- b=D9rwkP4n13W5PsKb9xothQLQEKjKZwp0qKkGeF/9ForIwqo3Ox8FpFBaP4VbeLvE8cclPfglu1D1zDN+UVDVPnZ1nlv/aH21O8euvUJEZeP8NR++2oTXEUjaSokT7T2eQ4U9F26N2W7ko3aCvVpCbu2p43GDhtAN2q38+GmfPPRMBYQVSTnPhY7HzAT32lnBMvRdHnmXesSP2eP9hA+jZWzGMb8JkkG08qL66NHFtpmpA6WEDBKR11ZAhGl9F2EVsr9ygyoBpz/rPxC8NPLyDtSbBeuWqxZCBj+uqnlv6Md2G+udnlv4issC20TXA2rtqLrn8gEKUzYE6xRAhy3STA==
-Received: from ZR0P278CA0031.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:1c::18)
- by GV1PR10MB8606.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1ce::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.20; Sun, 11 Oct
- 2026 09:27:45 +0000
-Received: from MI3PEPF00008482.eurprd02.prod.outlook.com
- (2603:10a6:910:1c:cafe::11) by ZR0P278CA0031.outlook.office365.com
- (2603:10a6:910:1c::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.496.5 via Frontend Transport; Sun, 11
- Oct 2026 09:27:45 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=fail (sender IP
- is 164.130.1.59) smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.59; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.59) by
- MI3PEPF00008482.mail.protection.outlook.com (10.167.240.169) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.522.6 via Frontend Transport; Sun, 11 Oct 2026 09:27:45 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
- (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Sun, 11 Oct
- 2026 11:27:57 +0200
-Received: from [192.168.8.15] (10.252.15.225) by STKDAG1NODE2.st.com
- (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Sun, 11 Oct
- 2026 11:27:43 +0200
-Message-ID: <1026b843380f4bcd6180f798b2f4f9c8a31c0c86.camel@foss.st.com>
-Subject: Re: [PATCH] pinctrl: stm32: Fix fwnode reference leak in
- stm32_gpiolib_register_bank()
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: Ma Ke <make_ruc2021@163.com>, <linusw@kernel.org>,
-	<mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-	<andriy.shevchenko@linux.intel.com>, <fabien.dessenne@foss.st.com>
-CC: <linux-gpio@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<akpm@linux-foundation.org>, <stable@vger.kernel.org>
-Date: Sun, 11 Oct 2026 11:27:40 +0200
-In-Reply-To: <20261011061722.3159941-1-make_ruc2021@163.com>
-References: <20261011061722.3159941-1-make_ruc2021@163.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tD5pSQxy"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-48afe75f055so956056f8f.2
+        for <linux-gpio@vger.kernel.org>; Sun, 11 Oct 2026 03:01:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791712892; x=1792317692; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=ADLgzzd+rEg7irK6OecpBoNcXr584HXbUOk26+seFz8=;
+        b=tD5pSQxyzFxMNYoVzRQuiPSWNXbfD/4O/Ga27lstMMezEAC7D2368KDYErtpM7jI/h
+         Y0pRo7JXlgOZqYXirCvLjM0pI7x8Isr8slV7inuoEqRa+HFeyQHTRxpmaZ9yJsxwYnaS
+         NTG2D8oTZylOx51uWum5WSvkwEFmMtLvxeMpFh0eBQFSjgtoXm8WEQENwfxMhn40wzWh
+         wCel+cf4w/gPeybdi7yDxUF0CJBeXts86is1CwQpahoKpzqfFuw+Hy8U/+q+7BKZ4Gh5
+         m2Zcl+jd1XbGj4CY/wDubWSZcBhVQZA3xofxm2ij835+L1gQxtuRizM1kzcN1G7yGCmY
+         uXgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791712892; x=1792317692;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ADLgzzd+rEg7irK6OecpBoNcXr584HXbUOk26+seFz8=;
+        b=kkPA2gFwuCvYFxaydbEDFZu8c7uYwAPwLgajI1TraB+ErD6ylcu7nugWhEsNNt0NaV
+         Rp9kZP42BEEcbPaaw9evEjYBeS5adq5Me/DWQfEkcWkqr4CsX7BN2TlhT/H8mZi4ZcqH
+         dR8W9+tAzmQpGS9I19hJDaznRZZ6ptquhX66gIN5DEGQIyG9K0/roEvvTMqbh9EAKFrd
+         noU+3xwpp47RVsxAkCMtgIgekhmII6J1UAdNU2uZsPfnV+NU3qHtMGq0+18NAHxp7+kM
+         vXxgoFFnGVwYtamM7EiZeuGxpFiMbZKDqeG467n5Xxe1R4/1fde0IscaCxtqFqxGTeGA
+         TQgA==
+X-Gm-Message-State: AFq9FYIWb4YOOcNt3C9GmxPA+8FghFyZiY3KQ90d4A1GHcnM0EBtcw2K
+	Oa834nCUVk0uMTVTELc6ST8faanfcj6zA/bRYe7aKON7oiEDJ1cUVU6gE3Vr7R/y
+X-Gm-Gg: AYBFou0KHBGXNRBKhY4Y75PjvT/Uchk/xKt3osVmllgoRc/2FRJW7CAhTSZ+9mk5FA6
+	0oiy204QcJlAnjl7Wh6qGEgStSeAh42XcLMwAT8E1fqWgyIqYe+qPtjhLGorQJU8Dop8RWb7KfL
+	eRNJgO2F/5Cr1zuIhC6TGXEiG0cfk2jLlkszBndGlzJRHqi2tLbN8xIjTQh3/3Tob3hde3ZchFW
+	ZtPig3+etYuB2+kZQUOYVGBAIOhZA2YmA9Te9pZSvYTHQdzJq8R7tMo4REqm2qf7AlqhyT7rv0A
+	YmA9xdMrNwqb9renrJTASWLaKwY+5wywCbr6EsNKIbTAJ4JNB/K5xvhki8l41xppBsTKpxMieU2
+	CySjpvzD8GCsQrxirEIF6Xx6EbYJVM0PcYRFb9a7WKW79Xs3IdDi2zthi/p4daz4Z485NXWHYIl
+	SVteiexQ8pA/otzE2ZO/ZnQQf/99+HNso1mL+v37D0ppvCOAG9fJIZ0eOVNmNsYvsg3VXKkN+g
+X-Received: by 2002:a05:6000:4552:b0:48c:7ee3:e091 with SMTP id ffacd0b85a97d-48dba7893fbmr7140329f8f.8.1791712892041;
+        Sun, 11 Oct 2026 03:01:32 -0700 (PDT)
+Received: from pc-21jvcto1ww.lan ([158.181.1.4])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48db9aac57fsm13884292f8f.23.2026.10.11.03.01.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Oct 2026 03:01:31 -0700 (PDT)
+From: tornilua@gmail.com
+To: linux-gpio@vger.kernel.org
+Cc: Ilya Kulaev <tornilua@gmail.com>
+Subject: [libgpiod][PATCH] treewide: replace malloc() and memset() with calloc()
+Date: Sun, 11 Oct 2026 16:00:59 +0600
+Message-ID: <20261011100059.29832-1-tornilua@gmail.com>
+X-Mailer: git-send-email 2.56.0
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
- (10.75.128.133)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MI3PEPF00008482:EE_|GV1PR10MB8606:EE_
-X-MS-Office365-Filtering-Correlation-Id: 984a2158-cd38-4866-8bf6-08df2779e83b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|82310400026|36860700016|376014|1800799024|7416014|34020700016|18002099003|22082099003|10067099003|261009223027099003|11063799006|56012099006|12100799066;
-X-Microsoft-Antispam-Message-Info:
-	U7Js78k86F4GvISpx5d3Q5Zl5LnsxPoSWzs832OexkIy4oO3ZNArVcD4aBj0VH8S1NZjzmoGTbjbt8CZ78nM4sIjdrW3KTqRMkG+OxnlSRe+RZlRkQW9K0awOxc3fsfoGbAj6PtYd/biCwGhSEHwFdETuQpbJMmS0Qmtj7SLRFOksVW35MzZqt9JoS7QrUm+PBJnUl2K8EeYCUyNmGN//obMOJuI/xQxCktZqQbb3thth8CH+qD89pfTKno32exNVvlcAGxdcStkGdXLmXyHU0s7dHcYfHlX5jP5TJ5OTECq3QmU/T+Gn28RbDXJP4JgNwAa8JLn0KUI/EuDIE+kEbRBA93b3xu9ugNwvREH8rpdzOy/WUKsLM/EtxP8KeczOg7x6mKQ1TYkS6Q1ZtP4H54DgAtKd5L5ttuuWwm9X1gddREeAndg7J7yzyTX/TMGCXg4wyaO1NgVVJ1+teq2mCEfnazQG7WlsGcM7wBFmzfko11X3IM+kFOVq3SnbyAVWP8Y8ioVziRW107MB/p1mBW6tY4S4lH6YV2kCDnTsPPericzY1Ev9O+SQte5rKJ7dyZ+UkDgFES+d+QTk4q3OKY70wcDFHmybacXenfRkbmpt39pIAJJXExeJeNPp65VJsKaRkxeMNmhY0nhgCTJnv20bLjsdW/tQ+wB6ys77mnEV/XB/xvajnF6QOgwHlNphkTlNulHwRWVSbgcNjeZbg==
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(23010399003)(82310400026)(36860700016)(376014)(1800799024)(7416014)(34020700016)(18002099003)(22082099003)(10067099003)(261009223027099003)(11063799006)(56012099006)(12100799066);DIR:OUT;SFP:1501;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	CiyDXOF4wfqvSZXHbyBAMsExCr3AuqkfNYA0D+NowldPaUR9lxQVsoM3f705h7+UHt5T187u3opCyjZRVKgJfdZgoH5ha3C3HkuxNlAjEJmAq3MsfWa/7XGTm89PtX9EEwS/bvhD711mFORoZ8A5l+xX5hgDzHwrzucQpeURXEl31FJxQKg7hELtdbBt06k3luWgWt6EDkJlmwHsWHbR+dyq5iqLnvGZ7QVFlqbcu04Fhh5hQRG5o3NDQJjaGEqHdV4Q7mSUlZnyizRsRmD7eGuOVlDau9Pt07bHfUsdUbP126u4qp797I6f+RbAgR0vryxjamg+vwx/cvZtnnaeyWb9HNbIbOEA+r8h0B4DOW2xYwr3aePycoVs512UtLYCImhOL92Z7x/yeFovbF3o1hjun/U9aaqJMQUTxocWBE3L4HZiMvyH4J4SJhQmTUBO
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2026 09:27:45.0313
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 984a2158-cd38-4866-8bf6-08df2779e83b
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MI3PEPF00008482.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB8606
+Content-Transfer-Encoding: 8bit
 
-On Sun, 2026-10-11 at 14:17 +0800, Ma Ke wrote:
-> stm32_gpiolib_register_bank() walks the "gpio-ranges" property with
-> fwnode_property_get_reference_args().=C2=A0 As documented in
-> drivers/base/property.c:
->=20
-> =C2=A0* The caller is responsible for calling fwnode_handle_put() on the
-> =C2=A0* returned @args->fwnode pointer.
->=20
-> The returned reference is never put.=C2=A0 The function calls the helper
-> twice, once directly and then repeatedly in a while loop, and each
-> call overwrites args, so only the last reference is even reachable
-> and all the earlier ones are leaked for good.
->=20
-> Put the reference as soon as args.args[] has been consumed, both for
-> the initial call and for every iteration of the loop.
->=20
-> Found by code review.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: bb949ed9b16b ("pinctrl: stm32: Switch to use for_each_gpiochip_nod=
-e() helper")
-> Signed-off-by: Ma Ke <make_ruc2021@163.com>
-> ---
-> =C2=A0drivers/pinctrl/stm32/pinctrl-stm32.c | 6 +++++-
-> =C2=A01 file changed, 5 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm3=
-2/pinctrl-stm32.c
-> index 6a99708a5a23..93127da05d56 100644
-> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> @@ -1666,8 +1666,12 @@ static int stm32_gpiolib_register_bank(struct stm3=
-2_pinctrl *pctl, struct fwnode
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0/* get the last defined gpio line (offset + nb of p=
-ins) */
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0npins =3D args.args[0] + args.args[2];
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0while (!fwnode_property_get_reference_args(fwnode, "gpio-=
-ranges", NULL, 3, ++i, &args))
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0fwnode_handle_put(args.fwnode);
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0while (!fwnode_property_get_reference_args(fwnode, "gpio-=
-ranges", NULL, 3, ++i, &args)) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0npi=
-ns =3D max(npins, (int)(args.args[0] + args.args[2]));
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0fwnode_ha=
-ndle_put(args.fwnode);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0}
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0} else {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0bank_nr =3D pctl->nbanks;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0bank->gpio_chip.base =3D bank_nr * STM32_GPIO_PINS_=
-PER_BANK;
+From: Ilya Kulaev <tornilua@gmail.com>
 
-Reviewed-by: Antonio Borneo <antonio.borneo@foss.st.com>
+Replace malloc() followed by memset() with a single calloc()
+call where zero-initialized memory is needed.
 
-Thanks!
-Antonio
+This reduces boilerplate without changing the intended behavior.
+
+Link: https://github.com/brgl/libgpiod/issues/154
+Signed-off-by: Ilya Kulaev <tornilua@gmail.com>
+---
+ lib/chip-info.c         |  4 +---
+ lib/chip.c              |  4 +---
+ lib/edge-event.c        |  3 +--
+ lib/info-event.c        |  3 +--
+ lib/line-config.c       |  4 +---
+ lib/line-info.c         |  4 +---
+ lib/line-request.c      |  4 +---
+ lib/request-config.c    |  4 +---
+ tests/gpiosim/gpiosim.c | 13 ++++---------
+ tools/gpiotools.c       |  4 +---
+ 10 files changed, 13 insertions(+), 34 deletions(-)
+
+diff --git a/lib/chip-info.c b/lib/chip-info.c
+index 972b2a8..786b8b5 100644
+--- a/lib/chip-info.c
++++ b/lib/chip-info.c
+@@ -45,12 +45,10 @@ gpiod_chip_info_from_uapi(struct gpiochip_info *uapi_info)
+ {
+ 	struct gpiod_chip_info *info;
+ 
+-	info = malloc(sizeof(*info));
++	info = calloc(1, sizeof(*info));
+ 	if (!info)
+ 		return NULL;
+ 
+-	memset(info, 0, sizeof(*info));
+-
+ 	info->num_lines = uapi_info->lines;
+ 
+ 	/*
+diff --git a/lib/chip.c b/lib/chip.c
+index 611eb32..8e210b4 100644
+--- a/lib/chip.c
++++ b/lib/chip.c
+@@ -33,12 +33,10 @@ GPIOD_API struct gpiod_chip *gpiod_chip_open(const char *path)
+ 	if (fd < 0)
+ 		return NULL;
+ 
+-	chip = malloc(sizeof(*chip));
++	chip = calloc(1, sizeof(*chip));
+ 	if (!chip)
+ 		goto err_close_fd;
+ 
+-	memset(chip, 0, sizeof(*chip));
+-
+ 	chip->path = strdup(path);
+ 	if (!chip->path)
+ 		goto err_free_chip;
+diff --git a/lib/edge-event.c b/lib/edge-event.c
+index be46dce..779af1f 100644
+--- a/lib/edge-event.c
++++ b/lib/edge-event.c
+@@ -99,11 +99,10 @@ gpiod_edge_event_buffer_new(size_t capacity)
+ 	if (capacity > EVENT_BUFFER_MAX_CAPACITY)
+ 		capacity = EVENT_BUFFER_MAX_CAPACITY;
+ 
+-	buf = malloc(sizeof(*buf));
++	buf = calloc(1, sizeof(*buf));
+ 	if (!buf)
+ 		return NULL;
+ 
+-	memset(buf, 0, sizeof(*buf));
+ 	buf->capacity = capacity;
+ 
+ 	buf->events = calloc(capacity, sizeof(*buf->events));
+diff --git a/lib/info-event.c b/lib/info-event.c
+index 0e3ef9b..8b456e8 100644
+--- a/lib/info-event.c
++++ b/lib/info-event.c
+@@ -20,11 +20,10 @@ gpiod_info_event_from_uapi(struct gpio_v2_line_info_changed *uapi_evt)
+ {
+ 	struct gpiod_info_event *event;
+ 
+-	event = malloc(sizeof(*event));
++	event = calloc(1, sizeof(*event));
+ 	if (!event)
+ 		return NULL;
+ 
+-	memset(event, 0, sizeof(*event));
+ 	event->timestamp = uapi_evt->timestamp_ns;
+ 
+ 	switch (uapi_evt->event_type) {
+diff --git a/lib/line-config.c b/lib/line-config.c
+index f00892e..34414b9 100644
+--- a/lib/line-config.c
++++ b/lib/line-config.c
+@@ -36,12 +36,10 @@ GPIOD_API struct gpiod_line_config *gpiod_line_config_new(void)
+ {
+ 	struct gpiod_line_config *config;
+ 
+-	config = malloc(sizeof(*config));
++	config = calloc(1, sizeof(*config));
+ 	if (!config)
+ 		return NULL;
+ 
+-	memset(config, 0, sizeof(*config));
+-
+ 	return config;
+ }
+ 
+diff --git a/lib/line-info.c b/lib/line-info.c
+index 1613c92..0bf1a38 100644
+--- a/lib/line-info.c
++++ b/lib/line-info.c
+@@ -141,12 +141,10 @@ gpiod_line_info_from_uapi(struct gpio_v2_line_info *uapi_info)
+ 	struct gpiod_line_info *info;
+ 	size_t i;
+ 
+-	info = malloc(sizeof(*info));
++	info = calloc(1, sizeof(*info));
+ 	if (!info)
+ 		return NULL;
+ 
+-	memset(info, 0, sizeof(*info));
+-
+ 	info->offset = uapi_info->offset;
+ 	strncpy(info->name, uapi_info->name, GPIO_MAX_NAME_SIZE);
+ 	info->name[GPIO_MAX_NAME_SIZE] = '\0';
+diff --git a/lib/line-request.c b/lib/line-request.c
+index 32ab9ae..2720d69 100644
+--- a/lib/line-request.c
++++ b/lib/line-request.c
+@@ -29,12 +29,10 @@ gpiod_line_request_from_uapi(struct gpio_v2_line_request *uapi_req,
+ 		return NULL;
+ 	}
+ 
+-	request = malloc(sizeof(*request));
++	request = calloc(1, sizeof(*request));
+ 	if (!request)
+ 		return NULL;
+ 
+-	memset(request, 0, sizeof(*request));
+-
+ 	request->chip_name = strdup(chip_name);
+ 	if (!request->chip_name) {
+ 		free(request);
+diff --git a/lib/request-config.c b/lib/request-config.c
+index cd22028..923c9e7 100644
+--- a/lib/request-config.c
++++ b/lib/request-config.c
+@@ -18,12 +18,10 @@ GPIOD_API struct gpiod_request_config *gpiod_request_config_new(void)
+ {
+ 	struct gpiod_request_config *config;
+ 
+-	config = malloc(sizeof(*config));
++	config = calloc(1, sizeof(*config));
+ 	if (!config)
+ 		return NULL;
+ 
+-	memset(config, 0, sizeof(*config));
+-
+ 	return config;
+ }
+ 
+diff --git a/tests/gpiosim/gpiosim.c b/tests/gpiosim/gpiosim.c
+index 920edb4..80b2da0 100644
+--- a/tests/gpiosim/gpiosim.c
++++ b/tests/gpiosim/gpiosim.c
+@@ -559,11 +559,10 @@ GPIOSIM_API struct gpiosim_ctx *gpiosim_ctx_new(void)
+ 	if (ret)
+ 		return NULL;
+ 
+-	ctx = malloc(sizeof(*ctx));
++	ctx = calloc(1, sizeof(*ctx));
+ 	if (!ctx)
+ 		return NULL;
+ 
+-	memset(ctx, 0, sizeof(*ctx));
+ 	refcount_init(&ctx->refcnt, ctx_release);
+ 
+ 	ret = ctx_get_configfs_fd(ctx);
+@@ -623,7 +622,7 @@ GPIOSIM_API struct gpiosim_dev *gpiosim_dev_new(struct gpiosim_ctx *ctx)
+ 	if (configfs_fd < 0)
+ 		goto err_unlink;
+ 
+-	dev = malloc(sizeof(*dev));
++	dev = calloc(1, sizeof(*dev));
+ 	if (!dev)
+ 		goto err_close_fd;
+ 
+@@ -632,7 +631,6 @@ GPIOSIM_API struct gpiosim_dev *gpiosim_dev_new(struct gpiosim_ctx *ctx)
+ 	if (ret)
+ 		goto err_free_dev;
+ 
+-	memset(dev, 0, sizeof(*dev));
+ 	refcount_init(&dev->refcnt, dev_release);
+ 	list_init(&dev->banks);
+ 	list_init(&dev->deferred_banks);
+@@ -920,12 +918,10 @@ GPIOSIM_API struct gpiosim_bank *gpiosim_bank_new(struct gpiosim_dev *dev)
+ 	if (configfs_fd < 0)
+ 		goto err_unlink;
+ 
+-	bank = malloc(sizeof(*bank));
++	bank = calloc(1, sizeof(*bank));
+ 	if (!bank)
+ 		goto err_close_cfs;
+ 
+-	memset(bank, 0, sizeof(*bank));
+-
+ 	refcount_init(&bank->refcnt, bank_release);
+ 	list_add(&bank->siblings, &dev->banks);
+ 	bank->cfs_dir_fd = configfs_fd;
+@@ -1017,7 +1013,7 @@ static int bank_make_line_dir(struct gpiosim_bank *bank, unsigned int offset)
+ 	if (ret && errno != ENOENT)
+ 		return -1;
+ 
+-	line = malloc(sizeof(*line));
++	line = calloc(1, sizeof(*line));
+ 	if (!line)
+ 		return -1;
+ 
+@@ -1027,7 +1023,6 @@ static int bank_make_line_dir(struct gpiosim_bank *bank, unsigned int offset)
+ 		return -1;
+ 	}
+ 
+-	memset(line, 0, sizeof(*line));
+ 	line->offset = offset;
+ 	list_add(&line->siblings, &bank->lines);
+ 
+diff --git a/tools/gpiotools.c b/tools/gpiotools.c
+index dda36da..48ba5ea 100644
+--- a/tools/gpiotools.c
++++ b/tools/gpiotools.c
+@@ -153,12 +153,10 @@ gpiotools_resolver_init(int num_lines, char **lines, int num_chips,
+ 	int i;
+ 
+ 	resolver_size = sizeof(*resolver) + num_lines * sizeof(*line);
+-	resolver = malloc(resolver_size);
++	resolver = calloc(1, resolver_size);
+ 	if (!resolver)
+ 		return NULL;
+ 
+-	memset(resolver, 0, resolver_size);
+-
+ 	resolver->chips = calloc(num_chips,
+ 				 sizeof(struct gpiotools_resolved_chip));
+ 	if (!resolver->chips) {
+-- 
+2.56.0
+
