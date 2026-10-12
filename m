@@ -1,122 +1,160 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA17E51E422
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B290352E07B
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791912997; cv=none; b=iskVwUeNLoUjSyJ1T7J03j1XX9PgSAyUXYoODhfFbkDO0z5mQrqGwF1v1SFxOghdnJa7LMB1YtUMJ/ooFJ2CJgvBqPEws4wu/Yc4hkbR2uDMFPKP+WaZ8hNT2zYA/j2xHkAyUH+A5gfS/FjzdkmIucyhjBn9fS8cjbupzwpjj4s=
+	t=1791913780; cv=none; b=f3vwPUON6CD7whcu942nPI67/Pfu1XKnafbe3b7Rbwjn0lhctMK6e/uadBZR1c6dA5e5hJ+cKtvEz6zVS/QSjs/PO1UE/RlprTys/KYv9IaBgipKqrEQKV/Xs9Zj99euK+ZEsbTvcbBJfHafLjVhRAcAC1MfKzCXBbel6X2VMro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791912997; c=relaxed/simple;
-	bh=Y3m+IiRPjHXlRcCy5kt0s5eCMwrp2C3UhEBDizZT22I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=F5jY8jt1RjTslhE3P5RsMtwdoTi+nszrKgg7Y5+D5/wwRJF0LHttC/T93utVQnFHrrzfbmWUOjLfB2FMC39fhZ+QmyUdslv85oydPYUjsT3V5pZEpZVqo60t5AhPQoHC9f3rUu6lfwA6qEoaRs7yOIPrdLwf2imvmIThQ4Ld+00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sWSKRDYf; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791913780; c=relaxed/simple;
+	bh=XfWNez3TZElIw3B+tobB5BSrfbaynnFmNqa9anO7WiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YKQWEQ4K+n41QbHKPZfvQs+UtzefCCAoH0lwnJg9byAB7i2gpbQivtOseIpzIgc89OL7WwEoHLpnHf8HxKNwwfXDg4FiWZdtGhQj23CWYW8+gvHz+PeHqeHcKNQGwByc1fsEFDceMxwXqD1d0MbhLsQLXccR89/Md+yrMC6jL1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lGc2uJhE; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sWSKRDYf"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3a7754c2471so28371341fa.2
-        for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 10:36:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791912994; x=1792517794; darn=vger.kernel.org;
-        h=content-type:mime-version:content-transfer-encoding:message-id:date
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Y3m+IiRPjHXlRcCy5kt0s5eCMwrp2C3UhEBDizZT22I=;
-        b=sWSKRDYfEI2zJ8ek2B8JekPO7bpouaU4ye6ZLMzaLhFtP1AhCCxqdVnUU1AvhKNrDd
-         v2MC0OEebHbDFaMpOxCzNS6pSlTBUtHQmanosOVAV1K4Zu71B+jUWzJz/COc5WxhFuWq
-         Ek78aoVLycp+SnFOteb/roZXxKhe3ULXz1tvDGSIGnbrBYDAzjAuiEdVdwxfPcQZgAXv
-         wCT1j3P5xVlnwX+G31vpUkkaO4ImQpP/FcajorsT+5mbbirQUlS4Y3GW3rHli3jtu1lv
-         s8V/49TqBiKHlLbI7Ltn08J0xb8u+qJiSyxKX4SGXaK4YjlXK3kxzIWa5tvhgxWXE14G
-         XlVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791912994; x=1792517794;
-        h=content-type:mime-version:content-transfer-encoding:message-id:date
-         :references:in-reply-to:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Y3m+IiRPjHXlRcCy5kt0s5eCMwrp2C3UhEBDizZT22I=;
-        b=EiylNdHo5vk18hvPj7VeE/FuJbr0UTOoD9rqGMvgmlgAXILRcQOpInbIxng5aKyDYo
-         MQFjMorQsSflKkfK3u6JO0nP8YV5487qDMw0Nw1jJsI7ZKDy0pYuxm41q2LWotSzE0eU
-         TbbtBSK+MY8dPSwjj+GxzlT3GhCjQZo8ovpX+EZy+VBav4gHKtAzxXwrcmymJVeXU+zP
-         ncE7KMuc60I384Mm40/+h+8ycqbxB387+LLx+bPPYpidg5c2t4li2vXsCbxjRh8JoqML
-         TyB8BtXMftbxnMgsiezJY88N7AAl6K6LpyFdFSvv/MCFx2yWW908CSqp6RMIvzNL51TZ
-         OBrg==
-X-Forwarded-Encrypted: i=1; AKwUvBycaBH7aRGUrtZeo4IS8GnQAW8aeZK826h37bZkFVq7toVyVIRlKPIr5PeUUnVJ8o4TXdDx1aqWcE3g@vger.kernel.org
-X-Gm-Message-State: AFq9FYLC2iWV8AXQyA/maMYq1gb4UF65Q8y0oE+Ut7JiFEPrd2Gu20DZ
-	EvJCmOu8t4j1c5ODPy2czoe2iH8XeBd77CZ91CyCp01nP9iC3SUj/Nr9
-X-Gm-Gg: AYBFou1/RyWVWkWloVWtXl+/89jT1I9xLHypsouwUBbOhgevGDlJA2shH23QLHiUjvi
-	fQNAsDCuGDS7V40+pEkuiVn4Z7C5qZK9nCMlFnXadzPqtZC3d8HJVzWiKUweHHjFgj984NbOoHd
-	wIdNv/eDycNSB5HqSgmo0bd+ufhejeVtPOeDIpAYoWLM+LtpcgP81XOtny06Eo93uB+gEWu8qd4
-	WA8zMijNk7emxaT7EyF+7ZHbRtRR2gW8dhha7ncsPR0MWM9S6bEUNrgS3Pm7UsXE7YXPzUglzVy
-	5EZgvCdYof3MrSEB4eYuysGd4lc+uBx6zCmiJODVdDO+VCktEizM2gQDDFymk3lLpNorHkrMMWI
-	WCv1g3GJSM/bSbryCUuDmefBnEbkrXWoCd9vOX4QRYCUE1sht6xhuH1POwsuf2Jvp7rpRqOZdWe
-	6B/dktTc+8ZF59La01BRXeNIuW22PDNg3O0eEBVqOnnsL+/p2nPrTRgKhJojqJmJol6E9rb3gal
-	6ffES2Godim+pII1BuK66qKaThWup8FDZcd6rGY6FM4WVjB8Td/m9PdDye9Ek8YmpfQ
-X-Received: by 2002:a2e:a585:0:b0:3a5:f982:9c62 with SMTP id 38308e7fff4ca-3a9c4eb6b77mr31027101fa.1.1791912993414;
-        Tue, 13 Oct 2026 10:36:33 -0700 (PDT)
-Received: from [127.0.1.1] (ip-024-215.users.dtel.ru. [91.210.24.215])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3a9c3cf7ffesm36421781fa.41.2026.10.13.10.36.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 10:36:31 -0700 (PDT)
-From: Fil Dunsky <filipp.dunsky@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>,
- Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 00/11] Cortina Systems CS75xx: interrupt controller, GPIO,
- I2C and TWD watchdog
-In-Reply-To: <20261013-plastic-dragging-8232efb058ef@spud>
-References: <20261012-b4-cs75xx-s2-v1-0-8a7641b7b79c@gmail.com>
- <20261012-dreamlike-hazily-19bb60326f0a@spud>
- <179187542217.3247897.4323160442877168450@gmail.com>
- <20261013-plastic-dragging-8232efb058ef@spud>
-Date: Tue, 13 Oct 2026 20:36:28 +0300
-Message-ID: <179191298807.12554.2183121269667635269@gmail.com>
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lGc2uJhE"
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id E7AE31A1218
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:49:34 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BBFEB60362
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:49:34 +0000 (UTC)
+Received: by mail.galae.net (Postcow, from userid 0)
+	id 40AA911D7183E; Tue, 13 Oct 2026 19:49:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1791913774; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=eAuhjWIHoJ+lPcsgkZ9ZICB7wFWD1mA0dcHUmJgisnU=;
+	b=lGc2uJhEAzwgNhCDgH8pClbsLaAPagg/hFzDZ6c2TuDMpgTV4IUz1FuBNB7W1viV6Y6dmu
+	MwXczTXkj186RMCXzsXWUIYscfF1KQ+Gc+gTMMdayYnAD2oQAzdkilrRn7Sy40sUac9oFg
+	tIplH61OwprVkT/TKXtIrBoe3zyJKMFUAmILaSnyfDMHhPrI3if2DP/VG5w0l57TUxZRXi
+	Qdv5sWBxdtsPNJXGRARVBITtr4UfUdDQlW2ykgJjdJ0oiFxSuGE6+wmIpJZvgrjbjxGNAA
+	9Gu93kgUeszDudQgXG1CeyMDRynjucui/bER6Rc5rDokHGhLOYFej/LZ/myDnw==
+Authentication-Results: mail.galae.net;
+	none
+AF:
+NF:0
+PS:10
+SRH:1
+SFN:
+DSR:
+MID:
+CFG:
+PT:0
+S:herve.codina@bootlin.com
+RQ:
+SSV:mail.galae.net
+NSV:
+SSH:
+R:<sashiko-bot@kernel.org>,<sashiko-reviews@lists.linux.dev>,<linux-gpio@vger.kernel.org>,<linux-cxl@vger.kernel.org>,<linux-pci@vger.kernel.org>
+MAID:1
+X-Claws-Privacy-System:
+X-Claws-Sign:0
+SCF:#imap/herve.codina@bootlin.com@mail.galae.net/Sent
+RMID:#imap/herve.codina@bootlin.com@mail.galae.net/INBOX	10571	sashiko-outbox-168281@kernel.org
+X-Claws-Auto-Wrapping:0
+X-Claws-Auto-Indent:0
+X-Claws-End-Special-Headers: 1
+Date: Mon, 12 Oct 2026 17:18:11 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: sashiko-bot@kernel.org
+Cc: sashiko-reviews@lists.linux.dev, linux-gpio@vger.kernel.org,
+ linux-cxl@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v13 08/10] PCI: of: Set fwnode device of newly created
+ PCI device nodes
+Message-ID: <20261012171811.50f6cb9f@bootlin.com>
+In-Reply-To: <sashiko-outbox-168281@kernel.org>
+References: <20261012142826.159178-1-herve.codina@bootlin.com>
+	<20261012142826.159178-9-herve.codina@bootlin.com>
+	<sashiko-outbox-168281@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="fixed"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: None
+X-Rspamd-Queue-Id: 40AA911D7183E
+X-Spamd-Result: default: False [0.50 / 30.00];
+	DATE_IN_PAST(1.00)[26];
+	BAYES_HAM(-0.40)[72.13%];
+	MIME_GOOD(-0.10)[text/plain];
+	BCC(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	DKIM_SIGNED(0.00)[bootlin.com:s=dkim];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	NEURAL_HAM(-0.00)[-1.000];
+	MAILCOW_DOMAIN_HEADER_FROM(0.00)[bootlin.com];
+	URIBL_BLOCKED(0.00)[bootlin.com:mid,bootlin.com:email,localhost:rdns,localhost:helo];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5]
 
-On Tue, Oct 13, 2026 at 05:52:36PM +0100, Conor Dooley wrote:
-> If things are just tightly packed, that's fine and you don't need to
-> make it a syscon. Just because something looks suspect doesn't mean that
-> it is actually wrong.
->
-> In your shoes, I think what I would do is leave i2c/interrupt
-> controller/gpios etc all as independent nodes.
->
-> I would however model the pinctrl as a single node, with
-> reg = <0xf000001c 0x14>
-> I think, rather than 5 instances 0x4 wide.
+On Mon, 12 Oct 2026 14:44:48 +0000
+sashiko-bot@kernel.org wrote:
 
-Thanks, that makes it simple: the interrupt controller, I2C and GPIO
-nodes stay as they are, and the pin controller, when it comes, gets one
-node for the five mux registers.
+> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
+> - [High] base: TOCTOU data race and UAF on fwnode->dev access
+> --
+> 
+> commit dc94be607770b564614555ac56ea83f070fa3dd4
+> Author: Herve Codina <herve.codina@bootlin.com>
+> 
+> PCI: of: Set fwnode device of newly created PCI device nodes
+> 
+> Device-tree node can be created when CONFIG_PCI_DYNAMIC_OF_NODES. Those
+> nodes are created and filled based on PCI core information but the
+> fwnode device field is not set.
+> 
+> > diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> > index 29b63a9090ae3..8914bfa25dc11 100644
+> > --- a/drivers/pci/of.c
+> > +++ b/drivers/pci/of.c
+> > @@ -736,6 +736,7 @@ void of_pci_remove_node(struct pci_dev *pdev)
+> >  	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
+> >  		return;
+> >  
+> > +	fw_devlink_set_device(&np->fwnode, NULL);  
+> 
+> [Severity: High]
+> Does this locklessly clear the fwnode device while another traversal might be
+> reading it?
+> 
+> If a PCI device is concurrently removed while a driver is being bound to
+> another device on the same system, of_pci_remove_node() clears fwnode->dev
+> locklessly here.
+> 
+> Concurrently, __fw_devlink_pickup_dangling_consumers() in drivers/base/core.c
+> can traverse the fwnode tree and read it locklessly:
+> 
+> 	if (fwnode->dev && fwnode->dev->bus)
+> 		return;
 
-I checked the boot loader's pin mux on the board: it leaves the reset
-button line and the touchscreen interrupt line muxed to GPIO, so the
-dts does not change with the mux register gone from the GPIO binding.
+I don't think so.
 
-> My take would probably be not sending new versions until at least 48h
-> has passed since the last reply on the current version, rather than 48h
-> or w/e from time of posting.
+__fw_devlink_pickup_dangling_consumers() can look at fwnode->dev but those
+fwnode->dev are not in the same branch in the tree as the one where the fwnode
+being modified is located.
 
-Noted. Arnd also asked to wait for the 7.4 merge window to close, so the
-next version comes on top of v7.4-rc1.
+I don't see any cases where __fw_devlink_pickup_dangling_consumers() can
+reach our fwnode.
 
-Thanks,
-Fil
+In other word I don't see any race condition on my side and so I will not try
+to fix that point except if this "potential" issue is confirmed by other people.
+Indeed, I could be wrong in my analysis but without further details, I don't
+think the issue reported here can happen.
 
+Best regards,
+Hervé
