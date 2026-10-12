@@ -1,70 +1,68 @@
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013006.outbound.protection.outlook.com [40.107.201.6])
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011007.outbound.protection.outlook.com [40.107.208.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D624BFE79;
-	Mon, 12 Oct 2026 17:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D044C10E7;
+	Mon, 12 Oct 2026 17:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.7
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791826624; cv=fail; b=GGy/3yDooi1MohSFgCrygNNewog4aIQc+EzTnU5fKeokKbGk/QR0gA8rwksFjR7RJGR+UVhuE0vSlvD5K6FAMbXhkvu14rdFRNggtpAZRvsWpH9CaiSlrXmfPiVC2JpLqAuxRV2cfHqKkJdIPqfbqx6BWqds4SRfuDj0LqpDnkg=
+	t=1791826639; cv=fail; b=e6sw1lQqINoukpGJALAeXj/vPoBlwu8f76O5dfwYjIttcbnTwAZh31szGRGvyWHac8DMRxD4P1Odu0yMOPd2kCX9ZKs5c61H6+M+cSFHAefHR9FjfMlyYCjhH3pBWIIEgSOOo/RVhO2oh7P3GEropEPJR/9PSrMQ6lK9+qqwd4c=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791826624; c=relaxed/simple;
-	bh=bl9eqfnLubEt4A8noss/F2B+bDZmNnaPBWlmcWQIjUg=;
+	s=arc-20240116; t=1791826639; c=relaxed/simple;
+	bh=QZ5Hjy3+bZlS9ZukKGu7Hv4VhUAGyuKQwLyeKqbhAHA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Bgee2LhuBzwgkLZ62ecXOL7eRmpPA+3azcBrasp/svXfud6XxcpRKxdz0uSRwWY4fmaeza8RcL8XRaQ27Qn1SCFEnOCLAgAcPWZYQcbPH3Z9rfcbjS9EVxDRfhUm/fHrZO2ncXb3zcfcbhhGRTi+YyJc3S5IWgQKXjEmW2LfTz0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AADPe89S; arc=fail smtp.client-ip=40.107.201.6
+	 Content-Type:MIME-Version; b=bJif6pDvbkShP1WP+mS+1C1MBYdxe6am+3/JUwPZlH7WtkYNSYbNIgwj4eiPggSKetph4aB+KZ0IE76Sn6huGyKj8zCE9lwCz7uwwFuiQ4Nw01xjNA1WWXMXyiyfC8yzvu0oFZxRaU8ev6MiT6fOTE+z6AggI+pUS/tcDxpCdZc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AQxHxlWv; arc=fail smtp.client-ip=40.107.208.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AADPe89S"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AQxHxlWv"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WKz6q/ooONV5QunKEG/QZByNgteD0u1XBii2qiSID99lgVGDnyMTFiqqjgM+FyKtHsDRGeOF9TRhOy3nwsHhsLSkPMrEuDe1J+Ib+INIE501bWO+6PeAxCBv/wyH66pdqTrn/TCicEM2oEKa2XTQtEg/GXw8vFiNKwaDzK3AC+CkCnXe84Ys8I6jLZg/HQMjGmC9QrMfDlf09EhQAY94Y3Ec0tuC1Vs51yGyyKaSzqX7xbpNm4dT1MEaVCj1pUEOOPEK5zC8OGqZG17C9hSNQ+rbBoTXgsQ0RU/dytaixer1Gz7wJh57vKcnkBC4vPPsy+H9+GwmGTdI3JJ9EKMbzw==
+ b=CXmPjV5vxU1LckNgbpICWAgwXC7Ur7hgzVASq8l//Xd/Ses7RxPRBR/whny4oUWTidLh0AZj52e5VzscflmHbTT4cdkqWhMoqjAgAphr7z6feRP8Xi6b9oQ15Z6Ax82nAvyFPFcyh0U239rl0y6JO2MF+8FAAbHGThA/n8ulvhaV5qSCe7rPlKEb8JK/Tbvznbc2Ka50bhS1tWwMY8NOi8d4k84o5Hhcd+gW1u2yJ0scrabn9yltEGfVn433nZNElbxh89Uu892TAwDt0p2MoOkPYf9dVfdzulGl7Bv8psUiuK9x8uVCWR/yZFiLqsGC3Crs3h9Ig47nWfn/4Ee7mw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lqT7Z5h1MRBvbtHEcVzCAPwL0cyDzHArpOujwHhM/q0=;
- b=UlFm9kAoEmhMXV5Wss1dwfawfSQu2b8DTEknjO9+yvIhLyydYGu4AoggTEdgK/r4zvBJTeGn/g1SyvwvDFBljqktlGDUQmI1HrJCPGSqNfwj1SiYrj0Leo0FbtMLrHbFVtO+2Uatko5SqnXlOnBMt+2b3SVGbnolK9vX8xoeImCi7i6BX4puYX+43PWlbY693ULhe6gsMhwzM9vfgdkaeVJ/6tjNxFqI/beLDT5j1UYWEFXdWE84p77TON32vBdmILYaeaBzSFCsg/CDYdbtNRpNid1vyq+8tINf/DkU7150hQCXM3PCaD4bQH1FahjJTciAYOeuly8Tnsaf8Sbntw==
+ bh=8LblvXgcBHcGCXfIxftXguxuojiuNYjmGqDbTMxFDSU=;
+ b=b9P3j6jSNaq8cSct8nJtP3TMw7n8oDyT91pWuKsLn71vpFierl+OXhCXhA1e+K7jVCGz8U44tGZOkmT9oj3smoLasqr8UHOqpQ4mUEd1aL/tBkKTsNx9KwSVmjGL+b0cinv4TE+lsotv0XQbUzxg78+1bREt163A5RioPqAviBYSqo5VAfOkxr/Fz41TgnCxA0v5ebFF/djlZv+xot2DbMig2bvXQVpxfp9ODQPJZIwQp4mzhzEl8kbonRrthhsro8sQIFtJSO91ZUG0av42LtYLqrorqvLP0opYWh4Zee14GLXVUT3O/gANXDaWgww1qL2+8SdgtCbqIGfTbg5gRw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lqT7Z5h1MRBvbtHEcVzCAPwL0cyDzHArpOujwHhM/q0=;
- b=AADPe89Sgxn7WT2fCyGp+Jjlp4kGJYjhG2Y/n0si2nu7GTqXo6uiFF+JvLnPckC9D8wIYJQLHMjZ3shSfJ1JJNkBqwaRbMdQeA/lsCUZUkH4hzyuykiV2HXqWw9rclNjCRoh+tletWuAxyMkhu4xaqjmasCrstQBC11kr7RHfzKOn+7iTeR+jYPbOudRHf8iA5Q1JjzMF+IY3eLevd1aMcp1LY5ge19q662ddg0phAv034WVubO/bGHXLpeyqelOHwkN08wou8xfVjav6q/OtCIUIverg+BoZR+DwBnwEX7oQRQexzC9spQfA2qRlXe/gWzhlAf761XBLn2o1+yycg==
+ bh=8LblvXgcBHcGCXfIxftXguxuojiuNYjmGqDbTMxFDSU=;
+ b=AQxHxlWv22p+NazsnSU1yCUpcuZtYuDHj6EOC+l/KqeaNM9kZYo+RHgf/jNjZtNDqSJyXOQYa2eafvsqMFObAddHkwbOdN5YBuVXV6K9N7Plqiwy06JXsGTqjCNCepEHgBH3XeblpP5b0ZDGCMmlFIcHRphYC7i9n6pfajc0/611SWPOrw8Kpz3UqXg/7a7Z3Tto9DTSuvGNrUGnXT3o6hxeuKWpvTU7Hf/kctWSzkpajAu4eecb6xPvcb+EOx1fssdjKbfwByd8kqYFlghd03IeupxGEWE+93j2ZmGVuNqm/8p5wjna8/Fqkcq90S0d5ddHuu2a22aNk0zSbGoKyA==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from PH7PR12MB5974.namprd12.prod.outlook.com (2603:10b6:510:1d9::19)
- by BL3PR12MB6378.namprd12.prod.outlook.com (2603:10b6:208:3b1::6) with
+ by PH0PR12MB7012.namprd12.prod.outlook.com (2603:10b6:510:21c::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.21; Mon, 12 Oct
- 2026 17:36:56 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.23; Mon, 12 Oct
+ 2026 17:37:04 +0000
 Received: from PH7PR12MB5974.namprd12.prod.outlook.com
  ([fe80::f5a5:bbc3:e9da:f8a0]) by PH7PR12MB5974.namprd12.prod.outlook.com
  ([fe80::f5a5:bbc3:e9da:f8a0%3]) with mapi id 15.21.0496.010; Mon, 12 Oct 2026
- 17:36:56 +0000
+ 17:37:04 +0000
 From: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>
 Cc: Donald Shannon <donalds@nvidia.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
 	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
+	linux-leds@vger.kernel.org,
 	linux-usb@vger.kernel.org,
-	llvm@lists.linux.dev,
+	linux-gpio@vger.kernel.org,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 06/11] gpio: Add NVIDIA LSTP GPIO driver
-Date: Mon, 12 Oct 2026 20:36:04 +0300
-Message-ID: <20261012-lstp-usb-adapter-v1-6-aambrozewicz@nvidia.com>
+Subject: [PATCH 07/11] leds: Add NVIDIA LSTP LED driver
+Date: Mon, 12 Oct 2026 20:36:05 +0300
+Message-ID: <20261012-lstp-usb-adapter-v1-7-aambrozewicz@nvidia.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20261012-lstp-usb-adapter-v1-0-aambrozewicz@nvidia.com>
 References: <20261012-lstp-usb-adapter-v1-0-aambrozewicz@nvidia.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0164.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:ba::11) To PH7PR12MB5974.namprd12.prod.outlook.com
+X-ClientProxiedBy: PN0PR01CA0002.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:4f::7) To PH7PR12MB5974.namprd12.prod.outlook.com
  (2603:10b6:510:1d9::19)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
@@ -73,1333 +71,534 @@ List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5974:EE_|BL3PR12MB6378:EE_
-X-MS-Office365-Filtering-Correlation-Id: 65953b4f-8cc3-4d17-c81e-08df28876953
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5974:EE_|PH0PR12MB7012:EE_
+X-MS-Office365-Filtering-Correlation-Id: 833fb199-663f-4506-a956-08df28876dd6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|23010399003|376014|7416014|366016|10067099003|3023799007|261009223027099003|5023799004|11063799006|6133799003|22082099003|18002099003|56012099006;
+	BCL:0;ARA:13230040|376014|366016|1800799024|23010399003|5023799004|11063799006|56012099006|22082099003|18002099003|6133799003|261009223027099003|10067099003;
 X-Microsoft-Antispam-Message-Info:
-	6Acr02YsMJWksYhiktkWUFp2JwwB8iM1xUydVOrK2PyLaNrGagXUGUyauNbhNOYWoFeNgVGmeohie2zQbDUqvPLdedw4KHeGPr9ZoabEPExeL3R4sQH3D0dB2aU5eaKnUmhBz9cxNNvDKraV6yGA6WFrVHktiGk6G4QDmK6P3dV3lk9jtudXt52i2dsiWZCItJRsE5jjgDMUSPHEVQdTKtHct4Peyj6NqFutKmW+WF8KuK+wyqrtMp1i/1ls+KRxBmb71ck4PGRewd3OAk25+rksoxU9BumXASz7kgJ6BeWLBS94KIk8kThk7A0V49OLEoGgjFmnwfSYX+xiBLwcC1ZwaVf5nyF2l6XQ+DpYpANJuNkb0M5SQZvdfAcVHW9JSzvP1+/2E/40bEslZLONrzu9IT/dvrndxJYuCN7sM4DoIWQwd1GWxOYcEw8mnjVarzApI/05XJgTkz0C6IBQHkYZK7lckJjyvGZpAV2AEW8fOu7MKUrr0Vh1KIQT3Vpuxk/Bw3xndAUxnGqGM4NNcW1UkOOCo9QXX4FmW3lcW8A14WMcDT22zhZzEy2LF1PeuByCU+SVwZzmB6uhT7lPWwbY0eJRR5cmR5jkGSBzVA7r+ucc1Wae6l/o9pmeXLXBa+l9wIyhY6d1UiVfyEJ5oM/N8s3SBCawE4gH3rmY+J4=
+	NWFJibRCatoSNJSMYdBFU/pp1eWg4YN5A7RsLe5wkAWr22XlrIh3ZdIDoTZFpk+JJ+GOc3a3bVYNq4NE3vsRGAeIfg2MwBZoWhjye/JQPQJ36DUPgmuutSwv/mFFeGiSjiZ6yDvSZ+KTVQ1f1/WcqKHEzhsunU99TUubdNLZgxURV54pmVrkVAOeR6ZG4LoDz62tSYXLfpFZwk7quz4KX/q3MLTl2SACYCYezwh7WZfweBm4yAEVAhNplM/F+zH3oayV1L1VWF7VYMVR+ZyGp9A9Gu801mgpDt2r/dHAHK17sU8X+lKlEoLZdpSRVy/C6qBZNFP8eQzAruo21/8+uZy72D1wYweRh5YoNQRAPAFHgzKBH81JN3DC/j6bwhmYSQO+/8hmKCZKWQmfg8IGlYUnvWMeMY3/K57wflOBvxKrJbKfcT5vd35/wsT35nDHJv4/Sc15XNjGsL0PxvXv1I8GW+GWOoxcW8xZH/oWxmULHfpN/ILfE69VDtLI5Ubu25W5Nd1W95bMaC1QgZQYOssMUtzoP+DmALqIw5gvVROex1aQ57YAIlkqIPtDsbksxz7vA7y5O2tWU6ePLUj2cRHbon/aXUjY8oDpk66bv8mIZjdz4ddZKEx+fMNMGQGxXYb479aQ4e/qwG1dXhZF6YQGgGVuN5VO/wmRSxyPvLY=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5974.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(376014)(7416014)(366016)(10067099003)(3023799007)(261009223027099003)(5023799004)(11063799006)(6133799003)(22082099003)(18002099003)(56012099006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5974.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(5023799004)(11063799006)(56012099006)(22082099003)(18002099003)(6133799003)(261009223027099003)(10067099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GLAyiW698QxP77QgLg3N+f1/OEGKfzeJmPlgf63O07Wu9lRCVFuiVRWrzze1?=
- =?us-ascii?Q?RiBvl2EuNyD3xlBTADwXhniByPBmqQuM+JfBOlcaFE0mkmIJx5/ZEBxaD68I?=
- =?us-ascii?Q?p1uumwUopqLCP2GJeUzMl6oYpJi/C1K4xg214NH0Z9AhCeM8aTb+lLhMmpPc?=
- =?us-ascii?Q?vO5rJX7fCgaQWX+QKRho5cUi8D9ZdWj2yBWLATEqJPo7Hc4WTDmV9eLlraZA?=
- =?us-ascii?Q?ybIOyE08uLrTvtc/D1qHeyersnM4lVLcHyYGdX1MyhGzepTYbr1BIfMWJm5W?=
- =?us-ascii?Q?j3V9Ydau4Loe0gVvh8ivnr0eP2zBhf1rXg00IUEkpyEz4CXv66BodZ2e0TjJ?=
- =?us-ascii?Q?z8pOS+wy4MX5KZ0ue+bgpn3FJAfzSwJVyWSuAP73Ncu1LQJC4IGB+TsQ7Uze?=
- =?us-ascii?Q?GLzccAcc2vdBJsIf3OrANzWgf5uUtKCj2Qb2jk3uSE/E1tjkXVDolrI/MSik?=
- =?us-ascii?Q?V/eYUDxv5b0uYJ8kqggRThVj1Ah6JxQo2/3IUXF6VsCZijbAhHcpAkTa9k24?=
- =?us-ascii?Q?ynPstx0tUfXSJwZc8SkTnz3k40oAXNArbRwLhfElL1VkwtKUKqxHsMY3L711?=
- =?us-ascii?Q?hzikE96SHn20E91GgadB61Wf9aHnjFuMymNF6lszlkC/Np/Mg1h5OkJaK40o?=
- =?us-ascii?Q?1EPtITCToRC4EEB9LkBavU7OeoA8EOA0C0qefuqjvwu8FkfgxhdP23aau+da?=
- =?us-ascii?Q?Q+/KdxAkynQ98aYvF8vYnzXDMUOetDyizDjqysLf+JOWHo7WA7oYDAy/nrQP?=
- =?us-ascii?Q?zY6D4vJZUDJWtainnD/W4I3CVS8vfymGT6VJhBTwiq/Mn8LhP/kaNnZav7Tq?=
- =?us-ascii?Q?XfmV2IO2QX+pPnen2eTnTxiwVpcmRTgrd8xaerH4RI4omwC+3hl79RoWkC9x?=
- =?us-ascii?Q?3wUJkswLlYs/v2fMQHXvwsHDTjZN7Q6mR2VikxDhDLWdJkqXckCsquIrF5aT?=
- =?us-ascii?Q?7YM4i2zaMhBf7WcdSXGfE7lZsv+ulheowB6ac847JenkM+f4GbhQl2ZJGPrx?=
- =?us-ascii?Q?ATrl7ySUFkV/k8D1rtvD6Zfc8v9HGBpv0NycUfnjCqBkn2ECXTfPhfQbH7f8?=
- =?us-ascii?Q?O9vTKZ5AIIAAUqWUUXyVcdLcQ80M12To0lXjGn5AtJ/upc1PBcZ69/AJxs27?=
- =?us-ascii?Q?FeYzH1U7f0td8R/N81/i4lxE094sbVAo8Cu8HXtyR17sxD61VUFZrEbCc+Ln?=
- =?us-ascii?Q?9WXiWSJbPU/6IO6hwEIUNH+rbcCZpcOeOuBt8n8vtBLL31jsDDDhZw4XGcc1?=
- =?us-ascii?Q?4EQZ7OW/1w38fcjrN3zIVb6OxswHxQopM/JGTWeiPeezy8Ao5GVlKzCqfhBE?=
- =?us-ascii?Q?3Hk1JgWoArujfZMrnh3KHgg3xRM20e8iuOe/Zthv9PRBopep83E27OfNOder?=
- =?us-ascii?Q?XHqPmv+QA+DetTGHDWoyOzevdv8cbxLsMrzsoL23fxo5B0fIBQThWESWKLT8?=
- =?us-ascii?Q?XREeTRU56Nr503Fu9Qo0McotbN1TjiZlj9oddV4rjsxufr/ZFJkOJdYxjHto?=
- =?us-ascii?Q?oNMG2jUJwpvyzRDS60i27juQRGiCkwRyj+eXfePQK3Xpg3YFsKZ+XWtiArmj?=
- =?us-ascii?Q?V9TZCbUzIfkyKdVmxYj/EfTYSFNXF7UHRkNHeC1aA0XQrh4iP9HGKkZKGVGZ?=
- =?us-ascii?Q?S9b/kpZYFHu7OeSOu1C/emI2cL+KdDspAym7422ze4FaTSNODBb5DOt1c9J8?=
- =?us-ascii?Q?RkTIIc87gULBFgwipBuoGkxoHQ/rLjlEdT20pJCOKQNndrylfMNlMXqim/oQ?=
- =?us-ascii?Q?mU1ipMoizw=3D=3D?=
+	=?us-ascii?Q?Jexf9yS8WPkmzcCeTlsC7Z+Y+dA4cEML94EuX0Xbw4C/Geb/hhzW+8mPqCnW?=
+ =?us-ascii?Q?9rqaE/KF1fxbrgueGyoWSixprabbqnH0FReMLMt81NKd/HG/q+p1vsR5mdHy?=
+ =?us-ascii?Q?6Y14JZ6ksWNATxEzWXprcI8swxBgezJqrVMbT0ypZc8OiZNcgbW3l18sttWQ?=
+ =?us-ascii?Q?XIkxUjW/wbrI1DBEWRELvIQXZqIS2ubqcXyzdBvPP890G2d1kRTmCZQ2xA/a?=
+ =?us-ascii?Q?3vBielOvHIpsiybryx2ENyOxclbSMQaIY6+yYmI2dcg9Wqbmzdz2dB8FCeSo?=
+ =?us-ascii?Q?k4x+tINdffXGuRDZnq/pLQ5M/TCl1eD3zm9NS9JTY8HinMfKSW+8E1OS+jYT?=
+ =?us-ascii?Q?dx4H1Plc3WizSYK9RViAl7Fx7XnjUDeZcGE2E2uDN43c/SEmgJ0mkQrVVv9o?=
+ =?us-ascii?Q?4Z3vJlfd5ilJv7Anas4FMnz05QAlUvU/qLMSXYaD27vThQvBaF6yPi1/PRGD?=
+ =?us-ascii?Q?NgeckXnxDFU8of3yCM+8ROv9oOkFMboGOLQ3qi3Mav2GCFe81dc6GoKdMTLY?=
+ =?us-ascii?Q?hOfbMsY/cBpxFhbvfHTCEsiQmfb5MSCuoBkQ8pQQKg+p7rafuedugObh//j1?=
+ =?us-ascii?Q?ZvNjfv85FLEnJV8k95b3UPG3kQo3tz1bNvgWxFS+qg6LhyiIaTpBvk9IM287?=
+ =?us-ascii?Q?eeU5Br7oxe1JMesTWNa5NJUPtTkqQNdRJyoefpQhQwW5F/YlOGAZbwwEQsU2?=
+ =?us-ascii?Q?Pf9gV6NpMtBW9H3kqgR2sOAB5Zn5QcocA12mmjlVIThtnVJ+CqpKlCXb5Ru9?=
+ =?us-ascii?Q?yhGJ1nWbgX7GMifVxWn1sZV2NzqXf3Jszj0jBID/Eh2dKU5ONRyvfLfKPfiO?=
+ =?us-ascii?Q?SKn0od3Ka7TKtkVx7nLLjixluCPvLha5CqBz3ArRp69ta6KAfxlT/Pu3os3O?=
+ =?us-ascii?Q?qcpaKGgpk2AX3Kb/088DMcAbj3ONXfWMdf/fWIDBBCZ9j09SWjFzajFfDw2n?=
+ =?us-ascii?Q?0wqC1TDXiEgy4YuY0F/9PtBnS2PJ9DBLbvR7f6Yr0IHolgEMSItlbc+8AJ4s?=
+ =?us-ascii?Q?OU3ETAPxIAQ7y/v4xjrU4MXbJdZISzpnowacDnyTI3j9l6nmydx/gjYDo9Ry?=
+ =?us-ascii?Q?KmriqGsZo7YOgB37jDvJS2DYeU00KVl3scntLwUVIkkEY/94VYzCv30Gs62i?=
+ =?us-ascii?Q?PQbkTIppc0T/N0s7x00MosAtIBhI8D64pLWdBFewOOZgK3OammFDPT117E4C?=
+ =?us-ascii?Q?12XN5Nsoz3AYPeKTi7SUOlZSH5n2zgx8xDanRWiuYNer4hzTo8KNhnlFcuP1?=
+ =?us-ascii?Q?cmzrd65xlaoBdyFK2ON8AE4eFh+Se46pFhJ14/eTlKz93NBHAgwBX7zlYo+a?=
+ =?us-ascii?Q?P4Y4xeDwQVs/hMdgqIUCaVu082M5m4y4oHQ8fyr9SnSQSqc80Nf2a5RGWhit?=
+ =?us-ascii?Q?0sjDEUrRK8cNbYdUsS2i5Y3H4odLfJAUWxBJuZevEDzyRn93e1dTfNZSAcbq?=
+ =?us-ascii?Q?49wdiKkQyaqYz2ktqEwX5AIPBOcMA7bjYehEV9BUx0dPpvZV05itenI3XUwl?=
+ =?us-ascii?Q?QC/0UtpUJmLvOznHwY6prSh5WFDkDTei1xTVtbvUjCBcP1J0AMSsAL44w6d2?=
+ =?us-ascii?Q?MJM4TmFYKlkGfihAuz5AK8AUYQSEA77Ns+INwgJ++pNd776/0VdT2kF0jJse?=
+ =?us-ascii?Q?W+n/+luo/ls/CLRBhhSbjsMCeqg8LvGchJB/SOtQqDoJ1IisEb5Z4v+p31Tl?=
+ =?us-ascii?Q?wDAehF95x5NSmnd8BlRGPU30FG7S+QttrL6pvNTFy9T3Fm4fBQnSOjnUFZ90?=
+ =?us-ascii?Q?T55Ekf4YcA=3D=3D?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65953b4f-8cc3-4d17-c81e-08df28876953
+X-MS-Exchange-CrossTenant-Network-Message-Id: 833fb199-663f-4506-a956-08df28876dd6
 X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5974.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2026 17:36:56.5817
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2026 17:37:04.0870
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aoA7U5+mfKOhqNuSiy9NEx62gwhU1zGXRd21KATLLKMJ8GKsXJ6IxltBjQSz+RxNkgT5ZH6ilDgXxSzN0VBE+Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6378
+X-MS-Exchange-CrossTenant-UserPrincipalName: FEZ+e+GXSCMX8veBReeAcoE4mJ1qav6UdzZzTJyCX0O0r034azhCjdtir2DoKibQlm2qWuiD0OJT5dN2QKleew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7012
 
-Add a driver for the GPIO channels of NVIDIA LSTP USB adapters. Each
-channel is registered as a GPIO chip with an interrupt controller for
-its pins; every line access is a USB transaction, so the chip can
-sleep. Pins the firmware reports as LEDs are not GPIO lines: the driver
-hands them to the LED driver as an auxiliary device.
-
-At probe the driver reads each pin's interrupt configuration from the
-device. A reply that misses the response timeout can answer a later
-request and shift every following pin's state by one, so a single read
-cannot simply be retried. After a timeout the driver reads all pins
-again, alternating ascending and descending order, until two
-consecutive passes without a timeout agree: at most five passes, ending
-within 10 s of the first timeout, after which the probe fails as
-before. The probe runs in the context that added the device, often the
-hub's worker, hence the bound.
+Add a driver for the LEDs of NVIDIA LSTP USB adapters: the pins of a
+GPIO channel that the firmware reports as LEDs, which the GPIO driver
+offers as an auxiliary device. Each is registered with the LED class;
+blink and pattern requests are handed to the adapter, which plays them
+on its own. A leds child node of the channel can name the LEDs and set
+their default state, trigger and pattern.
 
 Signed-off-by: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
 ---
- MAINTAINERS              |    1 +
- drivers/gpio/Kconfig     |   14 +
- drivers/gpio/Makefile    |    1 +
- drivers/gpio/gpio-lstp.c | 1194 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 1210 insertions(+)
- create mode 100644 drivers/gpio/gpio-lstp.c
+ MAINTAINERS              |   1 +
+ drivers/leds/Kconfig     |  14 ++
+ drivers/leds/Makefile    |   1 +
+ drivers/leds/leds-lstp.c | 404 +++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 420 insertions(+)
+ create mode 100644 drivers/leds/leds-lstp.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index e18d45bd7da5..639cd7b6b146 100644
+index 639cd7b6b146..c8ed59cd4b11 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -19577,6 +19577,7 @@ F:	Documentation/devicetree/bindings/spi/nvidia,lstp-spi.yaml
- F:	Documentation/devicetree/bindings/usb/nvidia,lstp.yaml
+@@ -19578,6 +19578,7 @@ F:	Documentation/devicetree/bindings/usb/nvidia,lstp.yaml
  F:	Documentation/driver-api/usb/lstp.rst
  F:	Documentation/firmware-guide/acpi/lstp.rst
-+F:	drivers/gpio/gpio-lstp.c
+ F:	drivers/gpio/gpio-lstp.c
++F:	drivers/leds/leds-lstp.c
  F:	drivers/usb/misc/lstp.c
  F:	include/linux/usb/lstp.h
  
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index a48586bb8edb..7ef6a9031475 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -2051,6 +2051,20 @@ config GPIO_USBIO
- 	  This driver can also be built as a module. If so, the module
- 	  will be called gpio_usbio.
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index d0d3182236be..aa843e72a28d 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -1050,6 +1050,20 @@ source "drivers/leds/flash/Kconfig"
+ comment "RGB LED drivers"
+ source "drivers/leds/rgb/Kconfig"
  
-+config GPIO_LSTP
-+	tristate "NVIDIA LSTP GPIO support"
-+	depends on USB_LSTP
-+	default USB_LSTP
-+	select GPIOLIB_IRQCHIP
++config LEDS_LSTP
++	tristate "LED support for NVIDIA LSTP adapters"
++	depends on LEDS_CLASS
++	depends on GPIO_LSTP
++	default GPIO_LSTP
 +	help
-+	  Say Y or M here to support the GPIO channels of NVIDIA LSTP USB
-+	  adapters. Each channel is registered as a GPIO chip, together
-+	  with an interrupt controller for its pins. Pins the firmware
-+	  reports as LEDs are left to the LEDS_LSTP driver.
++	  Say Y or M here to support the LEDs of NVIDIA LSTP USB adapters,
++	  the pins of the adapter's GPIO channels that the firmware reports
++	  as LEDs. They are registered with the LED class, with blink and
++	  pattern requests handed to the adapter.
 +
 +	  This driver can also be built as a module. If so, the module
-+	  will be called gpio-lstp.
++	  will be called leds-lstp.
 +
- endmenu
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
  
- menu "Virtual GPIO drivers"
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index dc9e6d643b5b..acd0cfae2914 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -101,6 +101,7 @@ obj-$(CONFIG_GPIO_LP873X)		+= gpio-lp873x.o
- obj-$(CONFIG_GPIO_LP87565)		+= gpio-lp87565.o
- obj-$(CONFIG_GPIO_LPC18XX)		+= gpio-lpc18xx.o
- obj-$(CONFIG_GPIO_LPC32XX)		+= gpio-lpc32xx.o
-+obj-$(CONFIG_GPIO_LSTP)			+= gpio-lstp.o
- obj-$(CONFIG_GPIO_LTC4283)		+= gpio-ltc4283.o
- obj-$(CONFIG_GPIO_MACSMC)		+= gpio-macsmc.o
- obj-$(CONFIG_GPIO_MADERA)		+= gpio-madera.o
-diff --git a/drivers/gpio/gpio-lstp.c b/drivers/gpio/gpio-lstp.c
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index a68244bd50fb..115b88c6b61a 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -60,6 +60,7 @@ obj-$(CONFIG_LEDS_LP8501)		+= leds-lp8501.o
+ obj-$(CONFIG_LEDS_LP8788)		+= leds-lp8788.o
+ obj-$(CONFIG_LEDS_LP8860)		+= leds-lp8860.o
+ obj-$(CONFIG_LEDS_LP8864)		+= leds-lp8864.o
++obj-$(CONFIG_LEDS_LSTP)			+= leds-lstp.o
+ obj-$(CONFIG_LEDS_LT3593)		+= leds-lt3593.o
+ obj-$(CONFIG_LEDS_LTC3220)		+= leds-ltc3220.o
+ obj-$(CONFIG_LEDS_MAX5970)		+= leds-max5970.o
+diff --git a/drivers/leds/leds-lstp.c b/drivers/leds/leds-lstp.c
 new file mode 100644
-index 000000000000..cc988a09582b
+index 000000000000..352e484eb919
 --- /dev/null
-+++ b/drivers/gpio/gpio-lstp.c
-@@ -0,0 +1,1194 @@
++++ b/drivers/leds/leds-lstp.c
+@@ -0,0 +1,404 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * GPIO driver for LSTP USB interface.
++ * LED driver for LSTP USB interface.
 + *
 + * Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
 + */
 +
-+#include <linux/atomic.h>
-+#include <linux/bitmap.h>
++#include <linux/auxiliary_bus.h>
 +#include <linux/build_bug.h>
-+#include <linux/delay.h>
 +#include <linux/device.h>
 +#include <linux/err.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/irq.h>
-+#include <linux/jiffies.h>
 +#include <linux/kernel.h>
++#include <linux/leds.h>
 +#include <linux/module.h>
 +#include <linux/mutex.h>
-+#include <linux/seq_file.h>
++#include <linux/property.h>
 +#include <linux/slab.h>
-+#include <linux/string.h>
-+#include <linux/wait_bit.h>
-+#include <linux/workqueue.h>
-+#include <uapi/linux/gpio.h>
 +
 +#include <linux/usb/lstp.h>
 +
-+enum lstp_gpio_cmd {
-+	LSTP_GPIO_CMD_GET_VALUE = 0x00,
-+	LSTP_GPIO_CMD_SET_VALUE = 0x01,
-+	LSTP_GPIO_CMD_GET_IRQ_CONFIG = 0x02,
-+	LSTP_GPIO_CMD_SET_IRQ_CONFIG = 0x03,
-+	LSTP_GPIO_CMD_IRQ_EVENT = 0x04,
-+	/* 0x05, SET_LED_PATTERN, is sent by the LED driver in leds-lstp.c */
++#define LSTP_LED_REPEAT_FOREVER 0 /* wire: repeats == 0 plays forever */
++#define LSTP_LED_LINUX_REPEAT_FOREVER (-1) /* LED-class pattern_set: repeat == -1 plays forever */
++#define LSTP_LED_DEFAULT_HOLD_TIME_MS 1 /* delta_t for single-step holds */
++#define LSTP_LED_DEFAULT_BLINK_MS 500 /* LED-class default when delay_on/off are both 0 */
++
++/* A GPIO channel command; the others are in gpio-lstp.c. */
++#define LSTP_GPIO_CMD_SET_LED_PATTERN 0x05
++
++struct lstp_led_pattern {
++	u8 brightness;
++	__le32 time_ms;
 +} __packed;
 +
-+struct lstp_gpio_get_value_req {
++struct lstp_gpio_set_led_pattern_req {
 +	__le16 pin;
++	__le32 repeats;
++	u8 num_steps;
++	struct lstp_led_pattern pattern[];
 +} __packed;
 +
-+struct lstp_gpio_set_value_req {
-+	__le16 pin;
-+	u8 value;
-+} __packed;
-+
-+struct lstp_gpio_get_irq_config_req {
-+	__le16 pin;
-+} __packed;
-+
-+struct lstp_gpio_set_irq_config_req {
-+	__le16 pin;
-+	u8 irq_type;
-+} __packed;
-+
-+struct lstp_gpio_irq_event_req {
-+	__le16 pin;
-+	u8 value;
-+} __packed;
-+
-+struct lstp_gpio_get_value_resp {
-+	u8 value;
-+} __packed;
-+
-+struct lstp_gpio_get_irq_config_resp {
-+	u8 irq_type;
-+} __packed;
-+
-+enum lstp_gpio_irq_type {
-+	LSTP_GPIO_IRQ_NONE = 0x00,
-+	LSTP_GPIO_IRQ_RISING = 0x01,
-+	LSTP_GPIO_IRQ_FALLING = 0x02,
-+	LSTP_GPIO_IRQ_BOTH = 0x03,
-+	LSTP_GPIO_IRQ_HIGH = 0x04,
-+	LSTP_GPIO_IRQ_LOW = 0x05,
-+	LSTP_GPIO_IRQ_MAX = LSTP_GPIO_IRQ_LOW,
-+} __packed;
-+
-+struct lstp_gpio_pin_config {
-+	u8 direction;
-+	u8 default_output;
-+	u8 output_drive_config;
-+	u8 output_persist_state; /* bool */
-+	u8 bias_pull_config;
-+	__le16 bias_pull_strength; /* 16 ohm increments */
-+	__le16 output_drive_strength; /* in mA */
-+	__le16 slew_rate; /* in 100 ps (0.1 ns) increments */
-+	__le16 input_debounce_time; /* in us */
-+	u8 led_support;
-+	u8 reserved_0xE;
-+	u8 reserved_0xF;
-+} __packed;
-+
-+struct lstp_gpio_pin {
-+	char pin_name[LSTP_GPIO_PIN_NAME_LEN];
-+	struct lstp_gpio_pin_config config;
-+} __packed;
-+
-+struct lstp_gpio_config {
-+	u8 npins;
-+	struct lstp_gpio_pin pin_info[];
-+} __packed;
-+
-+/* clang-format off */
-+enum lstp_gpio_direction {
-+	LSTP_GPIO_OUTPUT = 0x00,
-+	LSTP_GPIO_INPUT = 0x01
-+} __packed;
-+enum lstp_gpio_pin_state {
-+	LSTP_GPIO_LOW = 0x00,
-+	LSTP_GPIO_HIGH = 0x01
-+} __packed;
-+enum lstp_gpio_drive_config {
-+	LSTP_GPIO_PUSH_PULL = 0x00,
-+	LSTP_GPIO_OPEN_DRAIN = 0x01,
-+	LSTP_GPIO_OPEN_SOURCE = 0x02
-+} __packed;
-+enum lstp_gpio_bias_config {
-+	LSTP_GPIO_NO_PULL = 0x00,
-+	LSTP_GPIO_PULL_UP = 0x01,
-+	LSTP_GPIO_PULL_DOWN = 0x02
-+} __packed;
-+enum lstp_gpio_led_support {
-+	LSTP_GPIO_NOT_LED = 0x00,
-+	LSTP_GPIO_LED_MODE_HOLD = 0x01, /* pattern brightness jumps between steps */
-+	LSTP_GPIO_LED_MODE_INTERPOLATE = 0x02, /* pattern brightness interpolates between steps */
-+} __packed; /* clang-format on */
-+
-+struct lstp_gpio_priv {
++struct lstp_led {
++	struct led_classdev cdev;
 +	struct lstp_channel *ch;
-+	struct gpio_chip gc;
-+	struct workqueue_struct *wq; /* ordered: IRQ batches run in RX order */
-+	struct mutex irq_lock; /* Serializes irq_chip callbacks (irq_bus_lock/sync_unlock) */
-+	u8 *shadow_irq_type; /* Pending IRQ type per pin [npins] */
-+	u8 *hw_irq_type; /* Last successfully committed IRQ type per pin [npins] */
-+	const char **pin_names; /* Line names [npins] */
-+	unsigned long *led_pins; /* [npins] bitmap: pins handed to the LED driver */
-+	u16 npins; /* Pin count from device config */
-+	u16 ngpio; /* Non-LED GPIO pin count */
-+	u16 nleds; /* LED pin count */
++	u16 pin;
 +};
 +
-+/* One work item per unsolicited RX batch; raw payload parsed in process context */
-+struct lstp_gpio_irq_event_work {
-+	struct work_struct work;
-+	struct lstp_gpio_priv *priv;
-+	u16 payload_len;
-+	u8 payload[];
-+};
-+
-+/* Read @pin's direction byte out of the channel config descriptor. */
-+static int lstp_gpio_read_direction(struct lstp_gpio_priv *priv, unsigned int pin, u8 *direction)
++/* Send SET_LED_PATTERN. @num_steps 0 clears the pattern, 1 holds forever. */
++static int lstp_led_set_pattern(struct lstp_led *led, u32 repeats,
++				const struct led_pattern *pattern, u8 num_steps)
 +{
-+	if (pin >= priv->npins)
-+		return -EINVAL;
++	struct lstp_channel *ch = led->ch;
++	struct lstp_gpio_set_led_pattern_req *req;
++	size_t req_len = struct_size(req, pattern, num_steps);
++	/* The LED core applies a firmware-node max-brightness; the wire is 8-bit */
++	unsigned int max_brightness = min_t(unsigned int, led->cdev.max_brightness, U8_MAX);
 +
-+	struct lstp_channel *ch = priv->ch;
-+	struct lstp_ch0_read_resp *resp __free(kfree) = NULL;
-+	u16 pin_offset = sizeof(struct lstp_gpio_config) + pin * sizeof(struct lstp_gpio_pin);
-+	u16 offset = pin_offset + offsetof(struct lstp_gpio_pin, config) +
-+		     offsetof(struct lstp_gpio_pin_config, direction);
-+	size_t actual;
-+	int ret = lstp_ch0_read_config(ch, offset, sizeof(*direction), &resp, &actual);
-+
-+	if (ret) {
-+		if (ret != -ENODEV)
-+			dev_err_ratelimited(ch->dev,
-+					    "%s: ch_%d: Failed to read direction config for pin %u (%pe)\n",
-+					    __func__, ch->ch_id, pin, ERR_PTR(ret));
-+		return ret;
-+	}
-+
-+	*direction = *(const u8 *)resp->ch_config;
-+	return 0;
-+}
-+
-+static int lstp_gpio_get_value(struct gpio_chip *gc, unsigned int pin)
-+{
-+	struct lstp_gpio_priv *priv = gpiochip_get_data(gc);
-+	struct lstp_channel *ch = priv->ch;
-+	struct lstp_gpio_get_value_req req = { .pin = cpu_to_le16(pin) };
-+	struct lstp_gpio_get_value_resp resp;
-+
-+	int ret = lstp_request(ch, LSTP_GPIO_CMD_GET_VALUE, &req, sizeof(req), &resp, sizeof(resp),
-+			       NULL, NULL);
-+	if (ret) {
-+		if (ret != -ENODEV)
-+			dev_err_ratelimited(ch->dev,
-+					    "%s: ch_%d: Could not get value for pin %u (%pe)\n",
-+					    __func__, ch->ch_id, pin, ERR_PTR(ret));
-+		return ret;
-+	}
-+
-+	dev_dbg(ch->dev, "%s: ch_%d: pin=%u, value=%d\n", __func__, ch->ch_id, pin, resp.value);
-+	return !!resp.value;
-+}
-+
-+static int lstp_gpio_set_value(struct gpio_chip *gc, unsigned int pin, int value)
-+{
-+	struct lstp_gpio_priv *priv = gpiochip_get_data(gc);
-+	struct lstp_channel *ch = priv->ch;
-+	struct lstp_gpio_set_value_req req = {
-+		.pin = cpu_to_le16(pin),
-+		.value = !!value,
-+	};
-+
-+	int ret = lstp_request(ch, LSTP_GPIO_CMD_SET_VALUE, &req, sizeof(req), NULL, 0, NULL, NULL);
-+
-+	if (ret && ret != -ENODEV)
-+		dev_err_ratelimited(ch->dev, "%s: ch_%d: Could not set value %d for pin %u (%pe)\n",
-+				    __func__, ch->ch_id, value, pin, ERR_PTR(ret));
-+	else if (!ret)
-+		dev_dbg(ch->dev, "%s: ch_%d: pin=%u, value=%d\n", __func__, ch->ch_id, pin, value);
-+	return ret;
-+}
-+
-+/*
-+ * Chunked across packets when the pin count does not fit one request, one
-+ * lstp_request() each, so a concurrent access may observe state from between
-+ * two chunks.
-+ */
-+static int lstp_gpio_get_multiple(struct gpio_chip *gc, unsigned long *mask, unsigned long *bits)
-+{
-+	struct lstp_gpio_priv *priv = gpiochip_get_data(gc);
-+	struct lstp_channel *ch = priv->ch;
-+	struct lstp_gpio_get_value_req *req = NULL;
-+	struct lstp_gpio_get_value_resp *resp = NULL;
-+	int max_pins_per_tx = ch->max_tx_payload / sizeof(*req);
-+	int max_pins_per_rx = ch->max_rx_payload / sizeof(*resp);
-+	int max_pins_per_pkt = min(max_pins_per_tx, max_pins_per_rx);
-+	int total_pins = bitmap_weight(mask, gc->ngpio);
-+	unsigned int bit_off = 0;
-+	int pins_sent = 0;
-+	int ret;
-+
-+	/* Probe enforces bulk_*_size >= LSTP_USB_EP_MIN_SIZE; anchor it here. */
++	/* Probe enforces bulk_tx_size >= LSTP_USB_EP_MIN_SIZE; anchor base here. */
 +	BUILD_BUG_ON(sizeof(struct lstp_header) + sizeof(*req) > LSTP_USB_EP_MIN_SIZE);
-+	BUILD_BUG_ON(sizeof(struct lstp_header) + sizeof(*resp) > LSTP_USB_EP_MIN_SIZE);
 +
-+	if (total_pins == 0)
-+		return 0;
-+
-+	req = kmalloc_objs(*req, max_pins_per_pkt);
-+	if (!req) {
-+		ret = -ENOMEM;
-+		goto out_free;
-+	}
-+	resp = kmalloc_objs(*resp, max_pins_per_pkt);
-+	if (!resp) {
-+		ret = -ENOMEM;
-+		goto out_free;
++	for (u8 i = 0; i < num_steps; i++) {
++		if (pattern[i].brightness > max_brightness)
++			return -EINVAL;
 +	}
 +
-+	bitmap_zero(bits, gc->ngpio);
-+
-+	while (pins_sent < total_pins) {
-+		int pins_in_pkt = min(max_pins_per_pkt, total_pins - pins_sent);
-+
-+		for (int i = 0; i < pins_in_pkt; i++) {
-+			bit_off = find_next_bit(mask, gc->ngpio, bit_off);
-+			req[i].pin = cpu_to_le16(bit_off);
-+			bit_off++;
-+		}
-+
-+		ret = lstp_request(ch, LSTP_GPIO_CMD_GET_VALUE, req, pins_in_pkt * sizeof(*req),
-+				   resp, pins_in_pkt * sizeof(*resp), NULL, NULL);
-+		if (ret) {
-+			if (ret != -ENODEV)
-+				dev_err_ratelimited(ch->dev,
-+						    "%s: ch_%d: Could not get values for %d pins (%pe)\n",
-+						    __func__, ch->ch_id, pins_in_pkt, ERR_PTR(ret));
-+			goto out_free;
-+		}
-+
-+		for (int i = 0; i < pins_in_pkt; i++) {
-+			if (resp[i].value)
-+				__set_bit(le16_to_cpu(req[i].pin), bits);
-+		}
-+		pins_sent += pins_in_pkt;
++	if (req_len > ch->max_tx_payload) {
++		dev_err_ratelimited(ch->dev,
++				    "%s: ch_%d: SET_LED_PATTERN too long for led '%s' (%zu bytes, max %zu)\n",
++				    __func__, ch->ch_id, led->cdev.name, req_len,
++				    ch->max_tx_payload);
++		return -EMSGSIZE;
 +	}
 +
-+	dev_dbg(ch->dev, "%s: ch_%d: Get %d pins, mask=%*pb, bits=%*pb\n", __func__, ch->ch_id,
-+		total_pins, gc->ngpio, mask, gc->ngpio, bits);
-+	ret = 0;
++	req = kmalloc(req_len, GFP_KERNEL);
++	if (!req)
++		return -ENOMEM;
 +
-+out_free:
-+	kfree(resp);
++	req->pin = cpu_to_le16(led->pin);
++	req->repeats = cpu_to_le32(repeats);
++	req->num_steps = num_steps;
++	for (u8 i = 0; i < num_steps; i++) {
++		req->pattern[i].brightness = (u8)pattern[i].brightness;
++		req->pattern[i].time_ms = cpu_to_le32(pattern[i].delta_t);
++	}
++
++	int ret =
++		lstp_request(ch, LSTP_GPIO_CMD_SET_LED_PATTERN, req, req_len, NULL, 0, NULL, NULL);
++	if (ret && ret != -ENODEV)
++		dev_err_ratelimited(ch->dev,
++				    "%s: ch_%d: SET_LED_PATTERN failed for led '%s' (repeats=%u, num_steps=%u) (%pe)\n",
++				    __func__, ch->ch_id, led->cdev.name, repeats, num_steps,
++				    ERR_PTR(ret));
++
 +	kfree(req);
 +	return ret;
 +}
 +
-+/* Chunked like lstp_gpio_get_multiple(); same cross-chunk visibility caveat. */
-+static int lstp_gpio_set_multiple(struct gpio_chip *gc, unsigned long *mask, unsigned long *bits)
++/*
++ * blink_set: @delay_on 0 holds OFF, @delay_off 0 holds ON, both 0 selects the
++ * LED-class 500 ms default. On-brightness is cdev->brightness, falling back to
++ * max_brightness when the LED is currently off.
++ */
++static int lstp_led_blink_set(struct led_classdev *cdev, unsigned long *delay_on,
++			      unsigned long *delay_off)
 +{
-+	struct lstp_gpio_priv *priv = gpiochip_get_data(gc);
-+	struct lstp_channel *ch = priv->ch;
-+	struct lstp_gpio_set_value_req *req = NULL;
-+	int max_pins_per_pkt = ch->max_tx_payload / sizeof(*req);
-+	int total_pins = bitmap_weight(mask, gc->ngpio);
-+	unsigned int bit_off = 0;
-+	int pins_sent = 0;
-+	int ret = 0;
++	struct lstp_led *led = container_of(cdev, struct lstp_led, cdev);
++	u8 on_value = cdev->brightness ? (u8)cdev->brightness : (u8)cdev->max_brightness;
++	struct led_pattern steps[2];
++	u8 len;
 +
-+	/* Probe enforces bulk_tx_size >= LSTP_USB_EP_MIN_SIZE; anchor it here. */
-+	BUILD_BUG_ON(sizeof(struct lstp_header) + sizeof(*req) > LSTP_USB_EP_MIN_SIZE);
-+
-+	if (total_pins == 0)
-+		goto done;
-+
-+	req = kmalloc_objs(*req, max_pins_per_pkt);
-+	if (!req) {
-+		ret = -ENOMEM;
-+		goto done;
++	if (*delay_on == 0 && *delay_off == 0) {
++		*delay_on = LSTP_LED_DEFAULT_BLINK_MS;
++		*delay_off = LSTP_LED_DEFAULT_BLINK_MS;
 +	}
 +
-+	while (pins_sent < total_pins) {
-+		int pins_in_pkt = min(max_pins_per_pkt, total_pins - pins_sent);
-+
-+		for (int i = 0; i < pins_in_pkt; i++) {
-+			bit_off = find_next_bit(mask, gc->ngpio, bit_off);
-+			req[i].pin = cpu_to_le16(bit_off);
-+			req[i].value = test_bit(bit_off, bits) ? 1 : 0;
-+			bit_off++;
-+		}
-+
-+		ret = lstp_request(ch, LSTP_GPIO_CMD_SET_VALUE, req, pins_in_pkt * sizeof(*req),
-+				   NULL, 0, NULL, NULL);
-+		if (ret) {
-+			if (ret != -ENODEV)
-+				dev_err_ratelimited(ch->dev,
-+						    "%s: ch_%d: Could not set values for pins (mask=%*pb) (%pe)\n",
-+						    __func__, ch->ch_id, gc->ngpio, mask,
-+						    ERR_PTR(ret));
-+			goto out_free;
-+		}
-+		pins_sent += pins_in_pkt;
++	if (*delay_on == 0) {
++		steps[0].delta_t = LSTP_LED_DEFAULT_HOLD_TIME_MS;
++		steps[0].brightness = LED_OFF;
++		len = 1;
++	} else if (*delay_off == 0) {
++		steps[0].delta_t = LSTP_LED_DEFAULT_HOLD_TIME_MS;
++		steps[0].brightness = on_value;
++		len = 1;
++	} else {
++		steps[0].delta_t = *delay_on;
++		steps[0].brightness = on_value;
++		steps[1].delta_t = *delay_off;
++		steps[1].brightness = LED_OFF;
++		len = 2;
 +	}
-+
-+	dev_dbg(ch->dev, "%s: ch_%d: Set %d pins, mask=%*pb, bits=%*pb\n", __func__, ch->ch_id,
-+		total_pins, gc->ngpio, mask, gc->ngpio, bits);
-+
-+out_free:
-+	kfree(req);
-+done:
-+	return ret;
-+}
-+
-+/* Read @pin's IRQ type from the device; returns LSTP_GPIO_IRQ_* or -errno. */
-+static int lstp_gpio_get_irq_config(struct lstp_gpio_priv *priv, u16 pin)
-+{
-+	struct lstp_channel *ch = priv->ch;
-+	struct lstp_gpio_get_irq_config_req req = { .pin = cpu_to_le16(pin) };
-+	struct lstp_gpio_get_irq_config_resp resp;
-+
-+	int ret = lstp_request(ch, LSTP_GPIO_CMD_GET_IRQ_CONFIG, &req, sizeof(req), &resp,
-+			       sizeof(resp), NULL, NULL);
-+	if (ret) {
-+		dev_err(ch->dev, "%s: ch_%d: GET_IRQ_CONFIG failed for pin %u (%pe)\n", __func__,
-+			ch->ch_id, pin, ERR_PTR(ret));
-+		return ret;
-+	}
-+
-+	return resp.irq_type;
-+}
-+
-+static int lstp_gpio_set_irq_config(struct lstp_gpio_priv *priv, u16 pin, u8 irq_type)
-+{
-+	struct lstp_channel *ch = priv->ch;
-+	struct lstp_gpio_set_irq_config_req req = {
-+		.pin = cpu_to_le16(pin),
-+		.irq_type = irq_type,
-+	};
-+
-+	int ret = lstp_request(ch, LSTP_GPIO_CMD_SET_IRQ_CONFIG, &req, sizeof(req), NULL, 0, NULL,
-+			       NULL);
-+	if (ret && ret != -ENODEV)
-+		dev_err_ratelimited(ch->dev, "%s: ch_%d: SET_IRQ_CONFIG failed for pin %u (%pe)\n",
-+				    __func__, ch->ch_id, pin, ERR_PTR(ret));
-+	return ret;
++	return lstp_led_set_pattern(led, LSTP_LED_REPEAT_FOREVER, steps, len);
 +}
 +
 +/*
-+ * 0 if @pin's device-side direction matches @direction, else -EOPNOTSUPP: the
-+ * device owns pin direction and the driver never changes it.
++ * pattern_set: LED-class repeat -1 maps to the wire's repeats == 0 ("forever").
++ * repeat == 0 and anything below -1 are invalid.
 + */
-+static int lstp_gpio_require_direction(struct lstp_gpio_priv *priv, unsigned int pin, u8 direction)
++static int lstp_led_pattern_set(struct led_classdev *cdev, struct led_pattern *pattern, u32 len,
++				int repeat)
 +{
-+	u8 cur_direction;
++	struct lstp_led *led = container_of(cdev, struct lstp_led, cdev);
 +
-+	int ret = lstp_gpio_read_direction(priv, pin, &cur_direction);
-+
-+	if (ret)
-+		return ret;
-+
-+	if (cur_direction == direction)
-+		return 0;
-+
-+	return -EOPNOTSUPP;
-+}
-+
-+static int lstp_gpio_get_direction(struct gpio_chip *gc, unsigned int pin)
-+{
-+	struct lstp_gpio_priv *priv = gpiochip_get_data(gc);
-+	u8 direction;
-+
-+	int ret = lstp_gpio_read_direction(priv, pin, &direction);
-+
-+	if (ret)
-+		return ret;
-+
-+	if (direction == LSTP_GPIO_INPUT)
-+		return GPIO_LINE_DIRECTION_IN;
-+
-+	return GPIO_LINE_DIRECTION_OUT;
-+}
-+
-+static int lstp_gpio_direction_input(struct gpio_chip *gc, unsigned int pin)
-+{
-+	struct lstp_gpio_priv *priv = gpiochip_get_data(gc);
-+
-+	return lstp_gpio_require_direction(priv, pin, LSTP_GPIO_INPUT);
-+}
-+
-+static int lstp_gpio_direction_output(struct gpio_chip *gc, unsigned int pin, int value)
-+{
-+	struct lstp_gpio_priv *priv = gpiochip_get_data(gc);
-+	int ret = lstp_gpio_require_direction(priv, pin, LSTP_GPIO_OUTPUT);
-+
-+	if (ret)
-+		return ret;
-+
-+	return lstp_gpio_set_value(gc, pin, value);
-+}
-+
-+static int lstp_gpio_linux_irq_to_lstp(unsigned int type, u8 *irq_type)
-+{
-+	switch (type & IRQ_TYPE_SENSE_MASK) {
-+	case IRQ_TYPE_NONE:
-+		*irq_type = LSTP_GPIO_IRQ_NONE;
-+		break;
-+	case IRQ_TYPE_EDGE_RISING:
-+		*irq_type = LSTP_GPIO_IRQ_RISING;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		*irq_type = LSTP_GPIO_IRQ_FALLING;
-+		break;
-+	case IRQ_TYPE_EDGE_BOTH:
-+		*irq_type = LSTP_GPIO_IRQ_BOTH;
-+		break;
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		*irq_type = LSTP_GPIO_IRQ_HIGH;
-+		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		*irq_type = LSTP_GPIO_IRQ_LOW;
-+		break;
-+	default:
++	if (len > U8_MAX)
++		return -EMSGSIZE;
++	if (repeat == 0 || repeat < LSTP_LED_LINUX_REPEAT_FOREVER)
 +		return -EINVAL;
-+	}
-+	return 0;
++
++	u32 mapped_repeat = (repeat == LSTP_LED_LINUX_REPEAT_FOREVER) ? LSTP_LED_REPEAT_FOREVER :
++									(u32)repeat;
++	return lstp_led_set_pattern(led, mapped_repeat, pattern, (u8)len);
 +}
 +
-+/* Host-side filter against stale batches or firmware that skips filtering. */
-+static bool lstp_gpio_irq_event_matches(u8 irq_type, u8 value)
++static int lstp_led_pattern_clear(struct led_classdev *cdev)
 +{
-+	switch (irq_type) {
-+	case LSTP_GPIO_IRQ_NONE:
-+		return false;
-+	case LSTP_GPIO_IRQ_RISING:
-+		return value == LSTP_GPIO_HIGH;
-+	case LSTP_GPIO_IRQ_FALLING:
-+		return value == LSTP_GPIO_LOW;
-+	case LSTP_GPIO_IRQ_BOTH:
-+		return true;
-+	case LSTP_GPIO_IRQ_HIGH:
-+		return value == LSTP_GPIO_HIGH;
-+	case LSTP_GPIO_IRQ_LOW:
-+		return value == LSTP_GPIO_LOW;
-+	default:
-+		return false;
-+	}
++	struct lstp_led *led = container_of(cdev, struct lstp_led, cdev);
++
++	return lstp_led_set_pattern(led, LSTP_LED_REPEAT_FOREVER, NULL, 0);
++}
++
++/* brightness_set_blocking: a one-step pattern; @brightness is core-clamped. */
++static int lstp_led_brightness_set_blocking(struct led_classdev *cdev,
++					    enum led_brightness brightness)
++{
++	struct lstp_led *led = container_of(cdev, struct lstp_led, cdev);
++	struct led_pattern step = { .delta_t = LSTP_LED_DEFAULT_HOLD_TIME_MS,
++				    .brightness = brightness };
++
++	return lstp_led_set_pattern(led, LSTP_LED_REPEAT_FOREVER, &step, 1);
 +}
 +
 +/*
-+ * Read every GPIO pin's IRQ type into @types, in descending pin order if
-+ * @reverse. With @send_by, return -ETIME instead of sending a request after it.
++ * Send @fwnode's led-pattern once, repeating forever; the device then plays it
++ * without host involvement. A pattern that does not fit in one request is not
++ * sent at all.
 + */
-+static int lstp_gpio_read_irq_types(struct lstp_gpio_priv *priv, u8 *types, bool reverse,
-+				    const unsigned long *send_by)
++static void lstp_led_send_fwnode_pattern(struct lstp_led *led, struct fwnode_handle *fwnode)
 +{
-+	for (unsigned int i = 0; i < priv->npins; i++) {
-+		unsigned int pin = reverse ? priv->npins - 1 - i : i;
++	struct lstp_channel *ch = led->ch;
++	struct lstp_gpio_set_led_pattern_req *req;
++	size_t max_steps = min_t(size_t, U8_MAX,
++				 (ch->max_tx_payload - sizeof(*req)) / sizeof(req->pattern[0]));
++	int count = fwnode_property_count_u32(fwnode, "led-pattern");
++	struct led_pattern *steps = NULL;
++	unsigned int num_steps;
++	u32 *raw = NULL;
 +
-+		if (test_bit(pin, priv->led_pins))
-+			continue;
-+		if (send_by && time_after(jiffies, *send_by))
-+			return -ETIME;
-+
-+		int ret = lstp_gpio_get_irq_config(priv, pin);
-+
-+		if (ret < 0)
-+			return ret;
-+		types[pin] = ret;
-+	}
-+
-+	return 0;
-+}
-+
-+#define LSTP_GPIO_IRQ_SYNC_PASSES 5
-+#define LSTP_GPIO_IRQ_SYNC_BUDGET_MS 10000
-+
-+/*
-+ * Seed hw_irq_type and shadow_irq_type from the device at probe, so the driver
-+ * starts in sync even after a module reload with no device reset.
-+ *
-+ * A reply carries no tag; the first one after a request is its answer. The
-+ * reply to a timed-out request can therefore answer a later request, whose
-+ * own reply then answers the request after it, and every pin from there on
-+ * reads the type of the pin read before it. So once a pass times out, all
-+ * pins are read again until two consecutive passes without a timeout agree.
-+ * Each pass follows a response timeout with no request waiting, in which an
-+ * owed reply is dropped, and goes in the opposite pin order to the one before.
-+ * A pass that agrees with an unshifted one is right, so two passes can agree
-+ * on a wrong result only if both were shifted, in opposite directions.
-+ *
-+ * The probe runs in the context that added the device, often the hub's
-+ * worker, so the re-reads and the final wait end within
-+ * LSTP_GPIO_IRQ_SYNC_BUDGET_MS of the first timeout, or the probe fails.
-+ */
-+static int lstp_gpio_sync_hw_irq_state(struct lstp_gpio_priv *priv)
-+{
-+	struct lstp_channel *ch = priv->ch;
-+	u8 *types[2] = { priv->hw_irq_type, priv->shadow_irq_type };
-+	bool timed_out = false, have_prev = false;
-+	unsigned long send_by = 0;
-+	unsigned int active = 0;
-+	int pass, ret;
-+
-+	for (pass = 0; pass < LSTP_GPIO_IRQ_SYNC_PASSES; pass++) {
-+		if (timed_out)
-+			msleep(LSTP_USB_RESPONSE_TIMEOUT_MS);
-+
-+		ret = lstp_gpio_read_irq_types(priv, types[pass & 1], pass & 1,
-+					       timed_out ? &send_by : NULL);
-+		if (ret == -ETIME) {
-+			ret = -ETIMEDOUT;
-+			break;
-+		}
-+		if (ret == -ETIMEDOUT) {
-+			if (!timed_out) {
-+				dev_warn(ch->dev,
-+					 "%s: ch_%d: Reading the IRQ config of all pins again\n",
-+					 __func__, ch->ch_id);
-+				/* Leave room for the last request's timeout and the final wait. */
-+				send_by = jiffies +
-+					  msecs_to_jiffies(LSTP_GPIO_IRQ_SYNC_BUDGET_MS -
-+							   2 * LSTP_USB_RESPONSE_TIMEOUT_MS);
-+			}
-+			timed_out = true;
-+			have_prev = false;
-+			continue;
-+		}
-+		if (ret)
-+			return ret;
-+		if (!timed_out || (have_prev && !memcmp(types[0], types[1], priv->npins)))
-+			break;
-+		have_prev = true;
-+		ret = -EIO;
-+	}
-+	if (ret) {
-+		dev_err(ch->dev, "%s: ch_%d: No consistent IRQ config (%pe)\n", __func__, ch->ch_id,
-+			ERR_PTR(ret));
-+		return ret;
-+	}
-+	/* A reply a shifted pass left owed must not answer the first request after probe. */
-+	if (timed_out)
-+		msleep(LSTP_USB_RESPONSE_TIMEOUT_MS);
-+
-+	if (pass & 1)
-+		memcpy(priv->hw_irq_type, priv->shadow_irq_type, priv->npins);
-+	else
-+		memcpy(priv->shadow_irq_type, priv->hw_irq_type, priv->npins);
-+	for (unsigned int pin = 0; pin < priv->npins; pin++) {
-+		if (test_bit(pin, priv->led_pins))
-+			continue;
-+		if (priv->hw_irq_type[pin] > LSTP_GPIO_IRQ_MAX)
-+			dev_warn(ch->dev, "%s: ch_%d: pin %u has unknown IRQ type %u\n", __func__,
-+				 ch->ch_id, pin, priv->hw_irq_type[pin]);
-+		if (priv->hw_irq_type[pin] != LSTP_GPIO_IRQ_NONE)
-+			active++;
-+	}
-+
-+	if (active)
-+		dev_info(ch->dev,
-+			 "%s: ch_%d: Synced IRQ state, %u/%u pins with active IRQ config\n",
-+			 __func__, ch->ch_id, active, priv->ngpio);
-+
-+	return 0;
-+}
-+
-+/* Shadow only; SET_IRQ_CONFIG is sent from irq_bus_sync_unlock(). */
-+static void lstp_gpio_irq_mask(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct lstp_gpio_priv *priv = gpiochip_get_data(gc);
-+	unsigned int pin = irqd_to_hwirq(d);
-+
-+	priv->shadow_irq_type[pin] = LSTP_GPIO_IRQ_NONE;
-+	gpiochip_disable_irq(gc, pin);
-+}
-+
-+static void lstp_gpio_irq_unmask(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct lstp_gpio_priv *priv = gpiochip_get_data(gc);
-+	unsigned int pin = irqd_to_hwirq(d);
-+	unsigned int type = irqd_get_trigger_type(d);
-+	u8 irq_type;
-+
-+	if (lstp_gpio_linux_irq_to_lstp(type, &irq_type)) {
-+		dev_err_ratelimited(priv->ch->dev,
-+				    "%s: ch_%d: Invalid trigger type %u for gpio %u\n", __func__,
-+				    priv->ch->ch_id, type, pin);
++	if (count <= 0 || count % 2) {
++		dev_err(ch->dev,
++			"%s: ch_%d: led-pattern of LED '%s' is not a list of <brightness duration> pairs\n",
++			__func__, ch->ch_id, led->cdev.name);
 +		return;
 +	}
 +
-+	gpiochip_enable_irq(gc, pin);
-+	priv->shadow_irq_type[pin] = irq_type;
-+}
-+
-+/*
-+ * Validates the trigger type and nothing else. The callback still has to
-+ * exist: with no .irq_set_type, __irq_set_trigger() accepts whatever it was
-+ * given without asking the driver. IRQCHIP_SET_TYPE_MASKED makes the core
-+ * mask around this call and unmask after, and irq_unmask() is what puts the
-+ * type in the shadow.
-+ */
-+static int lstp_gpio_irq_set_type(struct irq_data *d, unsigned int type)
-+{
-+	u8 irq_type;
-+
-+	return lstp_gpio_linux_irq_to_lstp(type, &irq_type);
-+}
-+
-+static void lstp_gpio_irq_bus_lock(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct lstp_gpio_priv *priv = gpiochip_get_data(gc);
-+
-+	mutex_lock(&priv->irq_lock);
-+}
-+
-+/* Commit the shadow if it differs from hardware; revert the shadow on failure. */
-+static void lstp_gpio_irq_bus_sync_unlock(struct irq_data *d)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+	struct lstp_gpio_priv *priv = gpiochip_get_data(gc);
-+	u16 pin = irqd_to_hwirq(d);
-+
-+	if (priv->shadow_irq_type[pin] != priv->hw_irq_type[pin]) {
-+		if (lstp_gpio_set_irq_config(priv, pin, priv->shadow_irq_type[pin]))
-+			priv->shadow_irq_type[pin] = priv->hw_irq_type[pin];
-+		else
-+			priv->hw_irq_type[pin] = priv->shadow_irq_type[pin];
++	num_steps = count / 2;
++	if (num_steps > max_steps) {
++		dev_err(ch->dev,
++			"%s: ch_%d: led-pattern of LED '%s' has %u steps, the device takes at most %zu\n",
++			__func__, ch->ch_id, led->cdev.name, num_steps, max_steps);
++		return;
 +	}
 +
-+	mutex_unlock(&priv->irq_lock);
-+}
-+
-+static void lstp_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
-+
-+	seq_puts(p, gc->label ? gc->label : d->chip->name);
-+}
-+
-+static const struct irq_chip lstp_gpio_irq_chip = {
-+	.name = "lstp-gpio",
-+	.irq_mask = lstp_gpio_irq_mask,
-+	.irq_unmask = lstp_gpio_irq_unmask,
-+	.irq_set_type = lstp_gpio_irq_set_type,
-+	.irq_bus_lock = lstp_gpio_irq_bus_lock,
-+	.irq_bus_sync_unlock = lstp_gpio_irq_bus_sync_unlock,
-+	.irq_print_chip = lstp_gpio_irq_print_chip,
-+	.flags = IRQCHIP_SET_TYPE_MASKED | IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_IMMUTABLE,
-+	GPIOCHIP_IRQ_RESOURCE_HELPERS,
-+};
-+
-+/*
-+ * Deferred GPIO IRQ batch handler. handle_nested_irq() runs the line's
-+ * threaded handler inline in this context, and the ordered workqueue
-+ * serialises batches, so events reach handlers in USB receive order.
-+ */
-+static void lstp_gpio_irq_event_work(struct work_struct *work)
-+{
-+	struct lstp_gpio_irq_event_work *batch =
-+		container_of(work, struct lstp_gpio_irq_event_work, work);
-+	struct lstp_gpio_priv *priv = batch->priv;
-+	struct lstp_channel *ch = priv->ch;
-+	struct gpio_chip *gc = &priv->gc;
-+	const struct lstp_gpio_irq_event_req *event;
-+	const struct lstp_gpio_irq_event_req *end;
-+
-+	/* Probe enforces bulk_rx_size >= LSTP_USB_EP_MIN_SIZE; anchor base here. */
-+	BUILD_BUG_ON(sizeof(struct lstp_header) + sizeof(*event) > LSTP_USB_EP_MIN_SIZE);
-+
-+	if (batch->payload_len < sizeof(*event)) {
-+		dev_err_ratelimited(ch->dev,
-+				    "%s: ch_%d: IRQ event packet too small (got %u, need >=%zu)\n",
-+				    __func__, ch->ch_id, batch->payload_len, sizeof(*event));
++	raw = kcalloc(count, sizeof(*raw), GFP_KERNEL);
++	steps = kzalloc_objs(*steps, num_steps);
++	if (!raw || !steps || fwnode_property_read_u32_array(fwnode, "led-pattern", raw, count))
 +		goto out;
++
++	for (unsigned int i = 0; i < num_steps; i++) {
++		if (raw[2 * i] > led->cdev.max_brightness) {
++			dev_err(ch->dev,
++				"%s: ch_%d: led-pattern of LED '%s': step %u brightness %u exceeds %u\n",
++				__func__, ch->ch_id, led->cdev.name, i, raw[2 * i],
++				led->cdev.max_brightness);
++			goto out;
++		}
++		steps[i].brightness = raw[2 * i];
++		steps[i].delta_t = raw[2 * i + 1];
 +	}
 +
-+	if (batch->payload_len % sizeof(*event)) {
-+		dev_err_ratelimited(ch->dev,
-+				    "%s: ch_%d: Malformed IRQ event payload (len %u, record size %zu)\n",
-+				    __func__, ch->ch_id, batch->payload_len, sizeof(*event));
-+		goto out;
-+	}
-+
-+	end = (void *)(batch->payload + batch->payload_len);
-+	for (event = (void *)batch->payload; event < end; event++) {
-+		u16 pin = le16_to_cpu(event->pin);
-+
-+		if (pin >= priv->npins || test_bit(pin, priv->led_pins)) {
-+			dev_warn_ratelimited(ch->dev, "%s: ch_%d: IRQ on non-GPIO pin %u\n",
-+					     __func__, ch->ch_id, pin);
-+			continue;
-+		}
-+
-+		u8 value = event->value;
-+
-+		dev_dbg(ch->dev, "%s: ch=%d: IRQ event: pin=%u, value=%u\n", __func__, ch->ch_id,
-+			pin, value);
-+
-+		if (!lstp_gpio_irq_event_matches(priv->hw_irq_type[pin], value)) {
-+			dev_dbg(ch->dev, "%s: ch_%d: Skipping pin %u value %u (irq_type %u)\n",
-+				__func__, ch->ch_id, pin, value, priv->hw_irq_type[pin]);
-+			continue;
-+		}
-+
-+		int irq = irq_find_mapping(gc->irq.domain, pin);
-+
-+		if (irq) {
-+			handle_nested_irq(irq);
-+			dev_dbg(ch->dev, "%s: ch_%d: Nested IRQ %d handled for pin %u\n", __func__,
-+				ch->ch_id, irq, pin);
-+		} else {
-+			dev_warn_ratelimited(ch->dev,
-+					     "%s: ch_%d: No IRQ mapping found for pin %u\n",
-+					     __func__, ch->ch_id, pin);
-+		}
-+	}
-+
++	lstp_led_set_pattern(led, LSTP_LED_REPEAT_FOREVER, steps, num_steps);
 +out:
-+	kfree(batch);
++	kfree(steps);
++	kfree(raw);
 +}
 +
 +/*
-+ * ops->irq_packet: copy the payload out and queue it. IRQ_EVENT is never
-+ * answered, so a batch dropped here is a lost edge, not a deferred one.
++ * default-state is written once, and a missing one means "off". "keep" leaves
++ * the LED as the device firmware set it: the device cannot report its current
++ * state, so there is nothing to read back.
 + */
-+static void lstp_gpio_irq_event(struct lstp_channel *ch, struct lstp_packet *pkt)
++static void lstp_led_apply_default_state(struct lstp_led *led, struct fwnode_handle *fwnode)
 +{
-+	struct lstp_gpio_priv *priv = ch->priv;
-+
-+	/* No GPIO lines: no irqchip and no workqueue, so nothing to deliver. */
-+	if (!priv->ngpio) {
-+		dev_warn_ratelimited(ch->dev,
-+				     "%s: ch_%d: Dropping IRQ event on a channel without GPIO lines\n",
-+				     __func__, ch->ch_id);
++	switch (led_init_default_state_get(fwnode)) {
++	case LEDS_DEFSTATE_KEEP:
 +		return;
++	case LEDS_DEFSTATE_ON:
++		led->cdev.brightness = led->cdev.max_brightness;
++		break;
++	default:
++		led->cdev.brightness = LED_OFF;
++		break;
 +	}
 +
-+	u16 payload_len = le16_to_cpu(pkt->hdr.length);
++	lstp_led_brightness_set_blocking(&led->cdev, led->cdev.brightness);
++}
 +
-+	if (!payload_len)
-+		return;
-+
-+	if (payload_len > ch->max_rx_payload) {
-+		dev_warn_ratelimited(ch->dev,
-+				     "%s: ch_%d: Dropping IRQ payload too large (%u > %zu bytes)\n",
-+				     __func__, ch->ch_id, payload_len, ch->max_rx_payload);
-+		return;
-+	}
-+
-+	struct lstp_gpio_irq_event_work *batch =
-+		kzalloc_flex(*batch, payload, payload_len, GFP_ATOMIC);
-+	if (!batch)
-+		return;
-+
-+	batch->priv = priv;
-+	batch->payload_len = payload_len;
-+	memcpy(batch->payload, pkt->payload, payload_len);
-+
-+	INIT_WORK(&batch->work, lstp_gpio_irq_event_work);
-+	if (!queue_work(priv->wq, &batch->work)) {
-+		dev_warn_ratelimited(ch->dev,
-+				     "%s: ch_%d: Failed to queue IRQ event work (%u bytes)\n",
-+				     __func__, ch->ch_id, payload_len);
-+		kfree(batch);
-+	}
++static void lstp_led_put_fwnode(void *fwnode)
++{
++	fwnode_handle_put(fwnode);
 +}
 +
 +/*
-+ * HOLD and INTERPOLATE differ only in device-side rendering; the host treats
-+ * both as LED pins, which are excluded from the gpiochip.
++ * led_classdev_unregister() flushes set_brightness_work before it removes the
++ * sysfs files, and the LED core does not refuse brightness or trigger writes in
++ * between: such a write would queue work or attach a trigger that outlives
++ * @data. Disable sysfs first, under led_access, so they fail with -EBUSY.
 + */
-+static bool lstp_gpio_pin_is_led(u8 led_support)
++static void lstp_led_unregister(void *data)
 +{
-+	return led_support == LSTP_GPIO_LED_MODE_HOLD ||
-+	       led_support == LSTP_GPIO_LED_MODE_INTERPOLATE;
++	struct led_classdev *cdev = data;
++
++	mutex_lock(&cdev->led_access);
++	led_sysfs_disable(cdev);
++	mutex_unlock(&cdev->led_access);
++	led_classdev_unregister(cdev);
 +}
 +
-+static void lstp_gpio_clear_led_valid_mask(struct lstp_gpio_priv *priv, unsigned long *valid_mask,
-+					   unsigned int ngpios)
++static int lstp_led_classdev_register(struct device *dev, struct led_classdev *cdev,
++				      struct led_init_data *init_data)
 +{
-+	bitmap_andnot(valid_mask, valid_mask, priv->led_pins, ngpios);
-+}
-+
-+/* gpio_chip and gpio_irq_chip valid_mask callbacks: LED pins are not lines. */
-+static int lstp_gpio_init_valid_mask(struct gpio_chip *gc, unsigned long *valid_mask,
-+				     unsigned int ngpios)
-+{
-+	lstp_gpio_clear_led_valid_mask(gpiochip_get_data(gc), valid_mask, ngpios);
-+	return 0;
-+}
-+
-+static void lstp_gpio_irq_init_valid_mask(struct gpio_chip *gc, unsigned long *valid_mask,
-+					  unsigned int ngpios)
-+{
-+	lstp_gpio_clear_led_valid_mask(gpiochip_get_data(gc), valid_mask, ngpios);
-+}
-+
-+static void lstp_gpio_destroy_wq(void *wq)
-+{
-+	destroy_workqueue(wq);
-+}
-+
-+static int lstp_gpio_create_gpiochip(struct lstp_gpio_priv *priv)
-+{
-+	struct lstp_channel *ch = priv->ch;
-+	struct device *dev = ch->dev;
-+	struct gpio_chip *gc = &priv->gc;
-+
-+	gc->label = ch->display_name;
-+	gc->owner = THIS_MODULE;
-+	gc->names = priv->pin_names;
-+	gc->base = -1;
-+	gc->ngpio = priv->npins;
-+	gc->get = lstp_gpio_get_value;
-+	gc->set = lstp_gpio_set_value;
-+	gc->can_sleep = true;
-+	gc->get_multiple = lstp_gpio_get_multiple;
-+	gc->set_multiple = lstp_gpio_set_multiple;
-+	gc->get_direction = lstp_gpio_get_direction;
-+	gc->direction_input = lstp_gpio_direction_input;
-+	gc->direction_output = lstp_gpio_direction_output;
-+	gc->init_valid_mask = lstp_gpio_init_valid_mask;
-+	gc->parent = dev;
-+	gc->fwnode = ch->fwnode;
-+
-+	return 0;
-+}
-+
-+static int lstp_gpio_create_irq_chip(struct lstp_gpio_priv *priv)
-+{
-+	struct lstp_channel *ch = priv->ch;
-+	struct device *dev = ch->dev;
-+	struct gpio_chip *gc = &priv->gc;
-+	struct gpio_irq_chip *girq = &gc->irq;
-+
-+	if (!priv->ngpio)
-+		return 0;
-+
-+	priv->shadow_irq_type =
-+		devm_kcalloc(dev, priv->npins, sizeof(*priv->shadow_irq_type), GFP_KERNEL);
-+	if (!priv->shadow_irq_type)
-+		return -ENOMEM;
-+
-+	priv->hw_irq_type = devm_kcalloc(dev, priv->npins, sizeof(*priv->hw_irq_type), GFP_KERNEL);
-+	if (!priv->hw_irq_type)
-+		return -ENOMEM;
-+
-+	gpio_irq_chip_set_chip(girq, &lstp_gpio_irq_chip);
-+	girq->init_valid_mask = lstp_gpio_irq_init_valid_mask;
-+	girq->parent_handler = NULL;
-+	girq->num_parents = 0;
-+	girq->parents = NULL;
-+	girq->default_type = IRQ_TYPE_NONE;
-+	girq->handler = handle_simple_irq;
-+	girq->threaded = true;
-+
-+	mutex_init(&priv->irq_lock);
-+
-+	priv->wq = alloc_ordered_workqueue("lstp_gpio_wq", 0);
-+	if (!priv->wq) {
-+		dev_err(dev, "%s: ch_%d: Failed to create ordered IRQ workqueue\n", __func__,
-+			ch->ch_id);
-+		return -ENOMEM;
-+	}
-+
-+	int ret = devm_add_action_or_reset(dev, lstp_gpio_destroy_wq, priv->wq);
++	int ret = led_classdev_register_ext(dev, cdev, init_data);
 +
 +	if (ret)
 +		return ret;
-+
-+	return 0;
++	return devm_add_action_or_reset(dev, lstp_led_unregister, cdev);
 +}
 +
-+/*
-+ * Claim @pin for the LED driver if it is an output whose firmware config
-+ * reports HOLD or INTERPOLATE; otherwise -EINVAL, and the pin stays a GPIO.
-+ */
-+static int lstp_gpio_claim_led(struct lstp_gpio_priv *priv, u16 pin, u8 direction, u8 led_support)
++/* Register @led, initialised from @fwnode if any. A failure leaves the other LEDs up. */
++static int lstp_led_register(struct device *dev, struct lstp_led *led, struct fwnode_handle *fwnode)
 +{
-+	struct lstp_channel *ch = priv->ch;
-+
-+	if (!lstp_gpio_pin_is_led(led_support))
-+		return -EINVAL;
-+
-+	if (direction != LSTP_GPIO_OUTPUT) {
-+		dev_warn(ch->dev,
-+			 "%s: ch_%d: led_support=0x%02x for pin %u but direction is input, treating as GPIO\n",
-+			 __func__, ch->ch_id, led_support, pin);
-+		return -EINVAL;
-+	}
-+
-+	set_bit(pin, priv->led_pins);
-+	return 0;
-+}
-+
-+/*
-+ * LED children not yet released. Their release runs this module's code and
-+ * can come after the GPIO driver's unbind, so module exit, and an init that
-+ * fails, wait until none remain.
-+ */
-+static atomic_t lstp_gpio_live_leds = ATOMIC_INIT(0);
-+
-+/*
-+ * Deletion drops the child's parent reference, so the child pins the channel
-+ * itself: this release then runs before the channel's, which the core's
-+ * module exit waits for.
-+ */
-+static void lstp_gpio_leds_release(struct device *dev)
-+{
-+	struct lstp_leds *leds = container_of(to_auxiliary_dev(dev), struct lstp_leds, auxdev);
-+	struct device *parent = leds->ch->dev;
-+
-+	kfree(leds);
-+	put_device(parent);
-+	if (atomic_dec_and_test(&lstp_gpio_live_leds))
-+		wake_up_var(&lstp_gpio_live_leds);
-+}
-+
-+static void lstp_gpio_leds_remove(void *data)
-+{
-+	struct auxiliary_device *auxdev = data;
-+
-+	auxiliary_device_delete(auxdev);
-+	auxiliary_device_uninit(auxdev);
-+}
-+
-+/*
-+ * Hand the LED pins to the LED driver on an auxiliary child named after the
-+ * channel's instance @id. Best-effort: on failure the GPIOs stay up. The child
-+ * goes with this driver's devres, while the channel can still carry the LED
-+ * driver's last requests.
-+ */
-+static void lstp_gpio_add_leds(struct lstp_gpio_priv *priv, u32 id)
-+{
-+	struct lstp_channel *ch = priv->ch;
-+	struct lstp_leds *leds;
-+	unsigned int pin;
-+	u16 i = 0;
 +	int ret;
 +
-+	if (!priv->nleds)
-+		return;
-+
-+	leds = kzalloc_flex(*leds, pins, priv->nleds);
-+	if (!leds) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
-+	leds->npins = priv->nleds;
-+	leds->ch = ch;
-+	for_each_set_bit(pin, priv->led_pins, priv->npins) {
-+		leds->pins[i].pin = pin;
-+		strscpy(leds->pins[i].name, priv->pin_names[pin], sizeof(leds->pins[i].name));
-+		i++;
-+	}
-+
-+	leds->auxdev.name = "led";
-+	leds->auxdev.id = id;
-+	leds->auxdev.dev.parent = ch->dev;
-+	leds->auxdev.dev.release = lstp_gpio_leds_release;
-+
-+	ret = auxiliary_device_init(&leds->auxdev);
-+	if (ret) {
-+		kfree(leds);
-+		goto err;
-+	}
-+	atomic_inc(&lstp_gpio_live_leds);
-+	get_device(ch->dev);
-+	ret = __auxiliary_device_add(&leds->auxdev, LSTP_LEDS_AUXDEV_MODNAME);
-+	if (ret) {
-+		auxiliary_device_uninit(&leds->auxdev);
-+		goto err;
-+	}
-+	ret = devm_add_action_or_reset(ch->dev, lstp_gpio_leds_remove, &leds->auxdev);
-+	if (ret)
-+		goto err;
-+	return;
-+
-+err:
-+	dev_warn(ch->dev, "%s: ch_%d: Could not add the device for %u LEDs (%pe)\n", __func__,
-+		 ch->ch_id, priv->nleds, ERR_PTR(ret));
-+}
-+
-+/* lstp_read_config_table() callback: classify one pin entry as GPIO or LED. */
-+static int lstp_gpio_pin_setup_on_entry(struct lstp_channel *ch, unsigned int pin,
-+					const void *entry, void *ctx)
-+{
-+	struct lstp_gpio_priv *priv = ctx;
-+	const struct lstp_gpio_pin *pin_cfg = entry;
-+	u8 led_support = pin_cfg->config.led_support;
-+	char *name = devm_kzalloc(ch->dev, GPIO_MAX_NAME_SIZE, GFP_KERNEL);
-+
-+	if (!name)
-+		return -ENOMEM;
-+	snprintf(name, GPIO_MAX_NAME_SIZE, "%.*s", (int)LSTP_GPIO_PIN_NAME_LEN, pin_cfg->pin_name);
-+	priv->pin_names[pin] = name;
-+
-+	if (lstp_gpio_pin_is_led(led_support)) {
-+		if (!lstp_gpio_claim_led(priv, pin, pin_cfg->config.direction, led_support)) {
-+			priv->nleds++;
-+			return 0;
-+		}
-+		/* LED config rejected (claim_led logged why); fall back to GPIO. */
-+	} else if (led_support != LSTP_GPIO_NOT_LED) {
-+		dev_warn(ch->dev,
-+			 "%s: ch_%d: Unknown led_support=0x%02x for pin %u, treating as GPIO\n",
-+			 __func__, ch->ch_id, led_support, pin);
-+	}
-+
-+	priv->ngpio++;
-+	return 0;
-+}
-+
-+static void lstp_gpio_flush_irq_work(void *wq)
-+{
-+	flush_workqueue(wq);
-+}
-+
-+/* Classifies each configured pin as GPIO or LED, then registers both. */
-+static int lstp_gpio_probe(struct auxiliary_device *auxdev, const struct auxiliary_device_id *id)
-+{
-+	struct lstp_channel *ch = lstp_channel_from_auxdev(auxdev);
-+	const struct lstp_channel_init_info *info = dev_get_platdata(&auxdev->dev);
-+	int ret;
-+
-+	if (!info)
-+		return -ENODEV;
-+
-+	const struct lstp_gpio_config *config = info->config;
-+
-+	if (info->config_len < sizeof(*config)) {
-+		dev_err(ch->dev, "%s: ch_%d: GPIO config too short: %zu < %zu\n", __func__,
-+			ch->ch_id, info->config_len, sizeof(*config));
-+		return -EINVAL;
-+	}
-+	if (config->npins == 0) {
-+		dev_err(ch->dev, "%s: ch_%d: Invalid npins of 0\n", __func__, ch->ch_id);
-+		return -EINVAL;
-+	}
-+
-+	struct lstp_gpio_priv *priv = devm_kzalloc(ch->dev, sizeof(*priv), GFP_KERNEL);
-+
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->pin_names =
-+		devm_kcalloc(ch->dev, config->npins, sizeof(*priv->pin_names), GFP_KERNEL);
-+	if (!priv->pin_names)
-+		return -ENOMEM;
-+
-+	priv->led_pins = devm_bitmap_zalloc(ch->dev, config->npins, GFP_KERNEL);
-+	if (!priv->led_pins)
-+		return -ENOMEM;
-+
-+	priv->ch = ch;
-+	priv->npins = config->npins;
-+
-+	/* gpiolib bounds chip and line names by GPIO_MAX_NAME_SIZE. */
-+	if (strlen(ch->display_name) >= GPIO_MAX_NAME_SIZE) {
-+		dev_warn(ch->dev, "%s: ch_%d: display_name truncated to '%.*s' (max %d chars)\n",
-+			 __func__, ch->ch_id, GPIO_MAX_NAME_SIZE - 1, ch->display_name,
-+			 GPIO_MAX_NAME_SIZE - 1);
-+		ch->display_name[GPIO_MAX_NAME_SIZE - 1] = '\0';
-+	}
-+
-+	ret = lstp_gpio_create_gpiochip(priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = lstp_read_config_table(ch, sizeof(struct lstp_gpio_config),
-+				     sizeof(struct lstp_gpio_pin), priv->npins,
-+				     lstp_gpio_pin_setup_on_entry, priv);
-+	if (ret) {
-+		dev_err(ch->dev, "%s: ch_%d: Could not setup pins (%pe)\n", __func__, ch->ch_id,
-+			ERR_PTR(ret));
-+		return ret;
-+	}
-+	if (priv->ngpio == 0 && priv->nleds == 0) {
-+		dev_err(ch->dev, "%s: ch_%d: No GPIO or LED pins discovered\n", __func__,
-+			ch->ch_id);
-+		return -EINVAL;
-+	}
-+
-+	ret = lstp_gpio_create_irq_chip(priv);
-+	if (ret)
-+		return ret;
-+
-+	ch->priv = priv;
-+
-+	if (priv->ngpio) {
-+		ret = lstp_gpio_sync_hw_irq_state(priv);
-+		if (ret)
-+			return ret;
-+
-+		ret = devm_gpiochip_add_data(ch->dev, &priv->gc, priv);
-+		if (ret) {
-+			dev_err(ch->dev, "%s: ch_%d: Could not register GPIO chip (%pe)\n",
-+				__func__, ch->ch_id, ERR_PTR(ret));
-+			return ret;
-+		}
++	if (!fwnode) {
++		ret = lstp_led_classdev_register(dev, &led->cdev, NULL);
++	} else {
++		struct led_init_data init_data = { .fwnode = fwnode };
 +
 +		/*
-+		 * Booked after the chip so it runs before the chip goes: removal
-+		 * frees gc->irq.domain without clearing it, and
-+		 * lstp_gpio_irq_event_work() reads it. Dispatch is retracted
-+		 * before the auxdev's devres runs, so no batch is queued behind
-+		 * the flush.
++		 * The class device keeps @fwnode as its node, and default_trigger
++		 * points into it. Queued first, the put runs after unregistration.
 +		 */
-+		ret = devm_add_action_or_reset(ch->dev, lstp_gpio_flush_irq_work, priv->wq);
-+		if (ret)
-+			return ret;
++		ret = devm_add_action_or_reset(dev, lstp_led_put_fwnode, fwnode_handle_get(fwnode));
++		if (!ret) {
++			bool pattern = fwnode_property_present(fwnode, "led-pattern");
++			bool trigger = fwnode_property_present(fwnode, "linux,default-trigger");
++
++			/* A trigger takes precedence; the LED core applies it from @fwnode. */
++			if (pattern && trigger)
++				dev_err(dev,
++					"%s: ch_%d: Ignoring led-pattern of LED '%s': %pfw also sets linux,default-trigger\n",
++					__func__, led->ch->ch_id, led->cdev.name, fwnode);
++			if (pattern && !trigger)
++				lstp_led_send_fwnode_pattern(led, fwnode);
++			else
++				lstp_led_apply_default_state(led, fwnode);
++			ret = lstp_led_classdev_register(dev, &led->cdev, &init_data);
++		}
 +	}
 +
-+	lstp_gpio_add_leds(priv, auxdev->id);
++	if (ret)
++		dev_warn(dev, "%s: ch_%d: Could not register LED '%s', pin %u (%pe)\n", __func__,
++			 led->ch->ch_id, led->cdev.name, led->pin, ERR_PTR(ret));
++	return ret;
++}
 +
-+	dev_info(ch->dev, "%s: ch_%d: Started as %s with %u GPIOs and %u LEDs\n", __func__,
-+		 ch->ch_id, priv->gc.label, priv->ngpio, priv->nleds);
++static struct lstp_led *lstp_led_by_pin(struct lstp_led *leds, u16 nleds, u32 pin)
++{
++	for (u16 i = 0; i < nleds; i++) {
++		if (leds[i].pin == pin)
++			return &leds[i];
++	}
++	return NULL;
++}
++
++/*
++ * Register the LEDs described under the channel's "leds" node, then every other
++ * LED pin under its firmware pin name. A node that does not describe a
++ * firmware-reported LED pin, or that names no LED, is ignored.
++ */
++static int lstp_leds_probe(struct auxiliary_device *auxdev, const struct auxiliary_device_id *id)
++{
++	struct lstp_leds *pins = container_of(auxdev, struct lstp_leds, auxdev);
++	struct lstp_channel *ch = pins->ch;
++	struct device *dev = &auxdev->dev;
++	struct fwnode_handle *node;
++	struct fwnode_handle *child;
++	struct lstp_led *leds;
++
++	leds = devm_kcalloc(dev, pins->npins, sizeof(*leds), GFP_KERNEL);
++	if (!leds)
++		return -ENOMEM;
++
++	for (u16 i = 0; i < pins->npins; i++) {
++		leds[i].ch = ch;
++		leds[i].pin = pins->pins[i].pin;
++		leds[i].cdev.name = pins->pins[i].name;
++		leds[i].cdev.max_brightness = U8_MAX;
++		leds[i].cdev.flags = LED_HW_PLUGGABLE;
++		leds[i].cdev.brightness_set_blocking = lstp_led_brightness_set_blocking;
++		leds[i].cdev.blink_set = lstp_led_blink_set;
++		leds[i].cdev.pattern_set = lstp_led_pattern_set;
++		leds[i].cdev.pattern_clear = lstp_led_pattern_clear;
++	}
++
++	node = fwnode_get_named_child_node(ch->fwnode, "leds");
++	/*
++	 * Not the available-child iterator; see Documentation/driver-api/usb/lstp.rst.
++	 * On OF, fwnode_for_each_child_node() already skips disabled nodes.
++	 */
++	fwnode_for_each_child_node(node, child) {
++		struct lstp_led *led = NULL;
++		u32 pin;
++
++		if (!fwnode_property_read_u32(child, "reg", &pin))
++			led = lstp_led_by_pin(leds, pins->npins, pin);
++		if (!led) {
++			dev_warn(dev, "%s: ch_%d: Ignoring %pfw: not an LED pin\n", __func__,
++				 ch->ch_id, child);
++			continue;
++		}
++		if (led->cdev.dev) {
++			dev_warn(dev, "%s: ch_%d: Ignoring %pfw: pin %u is already described\n",
++				 __func__, ch->ch_id, child, pin);
++			continue;
++		}
++		if (!fwnode_property_present(child, "label") &&
++		    !fwnode_property_present(child, "function")) {
++			dev_warn(dev, "%s: ch_%d: Ignoring %pfw: neither label nor function\n",
++				 __func__, ch->ch_id, child);
++			continue;
++		}
++		lstp_led_register(dev, led, child);
++	}
++	fwnode_handle_put(node);
++
++	for (u16 i = 0; i < pins->npins; i++) {
++		if (!leds[i].cdev.dev)
++			lstp_led_register(dev, &leds[i], NULL);
++	}
++
 +	return 0;
 +}
 +
-+static const struct lstp_ops lstp_gpio_ops = {
-+	.irq_packet = lstp_gpio_irq_event,
++static const struct auxiliary_device_id lstp_leds_id_table[] = { { .name = "lstp.led" }, {} };
++MODULE_DEVICE_TABLE(auxiliary, lstp_leds_id_table);
++
++static struct auxiliary_driver lstp_leds_drv = {
++	.name = "led",
++	.probe = lstp_leds_probe,
++	.id_table = lstp_leds_id_table,
 +};
-+
-+static const struct auxiliary_device_id lstp_gpio_id_table[] = { { .name = "lstp.gpio" }, {} };
-+MODULE_DEVICE_TABLE(auxiliary, lstp_gpio_id_table);
-+
-+static struct lstp_auxiliary_driver lstp_gpio_drv = {
-+	.adrv = {
-+		.name = "gpio",
-+		.probe = lstp_gpio_probe,
-+		.id_table = lstp_gpio_id_table,
-+	},
-+	.ops = &lstp_gpio_ops,
-+};
-+
-+static int __init lstp_gpio_module_init(void)
-+{
-+	int ret = lstp_auxiliary_driver_register(&lstp_gpio_drv);
-+
-+	/* A registration that fails after binding has deleted LED children. */
-+	if (ret)
-+		wait_var_event(&lstp_gpio_live_leds, !atomic_read(&lstp_gpio_live_leds));
-+	return ret;
-+}
-+module_init(lstp_gpio_module_init);
-+
-+/* The unregister unbinds every channel, which deletes its LED child. */
-+static void __exit lstp_gpio_module_exit(void)
-+{
-+	lstp_auxiliary_driver_unregister(&lstp_gpio_drv);
-+	wait_var_event(&lstp_gpio_live_leds, !atomic_read(&lstp_gpio_live_leds));
-+}
-+module_exit(lstp_gpio_module_exit);
++module_auxiliary_driver(lstp_leds_drv);
 +
 +MODULE_IMPORT_NS("LSTP");
-+MODULE_DESCRIPTION("LSTP GPIO driver");
++MODULE_DESCRIPTION("LSTP LED driver");
 +MODULE_LICENSE("GPL");
 -- 
 2.43.0
