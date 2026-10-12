@@ -1,88 +1,89 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE2F44E642;
-	Mon, 12 Oct 2026 08:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CC846AA79;
+	Mon, 12 Oct 2026 08:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791794432; cv=none; b=L0NvAp35N53mQGWO+IJ7aN6grb7vJ6WSgO54NG6GBYnKVFHQnQF9mb3STWPPNW4fdjc2SxY6L+yfAxUhUSb1CCNtxi8qMIhPfLqDIfcUdKEVyHp38DG12vNqoe2PfeYUJ0hugyfsH+zG1K6oa8JAicKuyHD36KdDfUBQce0Lr6s=
+	t=1791794714; cv=none; b=AJxeeWGS3F0fhaYvtn5HLPLuLtaXfH/o7BPukk3HoWy9cs58rvdymndLmlXvfzW3GF9rzsILU/V0VsBQTBOl8bSiK1BzePNRVfaaIOyYAahCoD7t+zxj/tIqBGuDyJeY6ev8qI6BZOz7vMTJ99lRDnAIBBpL9Y8UJamHVlVvSQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791794432; c=relaxed/simple;
-	bh=3acPOqONrLSgFKsfMg1vrNwvcicAeebuv1jTEDu2lI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vtlsg3dI2chk5huSwnJ32D2fyesmnMKjZ0Pd0EpaL08SX/ZjbvASCivAbk2qC1kQJpf35L78DTifa8A4HC3LKR8XB1b7iuT/2dmBx5TUUK52BN8JeiGD/JbyJk/o2O8QP0qdu8wRQLZo/7N/LFYsc7kndP49IbxHSWfhTLxCQps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=QeBL8p1n; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1791794714; c=relaxed/simple;
+	bh=hig3XniRR/HDfZHucwWx80FgVL/trsWH9Wxj+J7sKOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NpAAt2TR0mc2ykv9ii9vLcYU3c0w4ulihGfH2FZIK5GXMbijaygdmvRY6MAds9w2zLzfVjEhnMzglqOuAh0+mxnA2lcGhmhKy2PR0XRoPivTPw0R97LvvqUf523pNaM7FKMwskdCFvdl0oXsIBOrBDFCosQ5VpbA3X/ZRtqVjeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5RvL1Sr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="QeBL8p1n"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF9EE1650;
-	Mon, 12 Oct 2026 01:40:25 -0700 (PDT)
-Received: from [192.168.178.24] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B41EA3F66F;
-	Mon, 12 Oct 2026 01:40:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1791794429; bh=3acPOqONrLSgFKsfMg1vrNwvcicAeebuv1jTEDu2lI0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QeBL8p1nmOxulVfYhZsdUz35b2f/XQND/DCDMC+Bx6ksy5y5X8n8d7OHCkX5tYh7U
-	 WKJP0q1BR+BZUlFPNboMC41r+nBKjwd2UjbDBx0GFAEswa7PGDy9/lhufIuApyGTnn
-	 wpsufSLGQhNPEmR1IUFb+1S8CDoUsbU0s5hCd4eI=
-Message-ID: <803c1787-999e-4239-bccd-b89e7a066961@arm.com>
-Date: Mon, 12 Oct 2026 10:40:26 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5RvL1Sr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F17EF1F0089B;
+	Mon, 12 Oct 2026 08:45:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791794712;
+	bh=mLq/ymuCxjQn6Fzuy7KDen+WF8JmVHF/Ne4WHKOpXH8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Y5RvL1SrOadQ661Atpug9vUhm8R68LIzDdNNQP6l/xanOO4p9RnJNrWjpdsH2fyh8
+	 AHv7N7XQHhr5E2H+q/DiKsUTsFNUMFfl3l5Oexgp7GGtVfXHZrlTkrRvINDnpIH1LF
+	 xBKJf4vXeUSYxcIO37YNI90Qo1tovx9xysOWB54fc23x8EecvHidGoiVTxfT1RWF++
+	 hILSrrQCZHzLz2O2iM09gbnvtyv45YrqtjEIK6uy4HwBEvX+8eIG4VkXzFqQ5lLF25
+	 Rh5ad5B+B2CE08yRfGAEdw/d7azKCkfmyOXzGZci21h+b1Tiuj/3susKvIA7vd5P3z
+	 9opJsy4OFHoSw==
+Date: Mon, 12 Oct 2026 14:14:59 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linusw@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Xu Yang <xu.yang_2@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
+	Vinod Koul <vkoul@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Peter Chen <peter.chen@kernel.org>, Pavankumar Kondeti <quic_pkondeti@quicinc.com>, 
+	Stephen Boyd <stephen.boyd@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-phy@lists.infradead.org, Greg Kroah-Hartman <gregkh@suse.de>, 
+	Peter Chen <peter.chen@nxp.com>
+Subject: Re: [PATCH 06/10] usb: chipidea: msm: keep the glue device
+ runtime-active
+Message-ID: <asydU5qSPDhJa65R@debian>
+References: <20260810-msm8974-usb-hsic-v1-0-e5f93ea76ffa@oss.qualcomm.com>
+ <20260810-msm8974-usb-hsic-v1-6-e5f93ea76ffa@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] pinctrl: sunxi: dt: do not accumulate npins across
- probe attempts
-To: Pablo Mazzini <pmazzini@gmail.com>, Linus Walleij <linusw@kernel.org>
-Cc: Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20261007060107.62221-1-pmazzini@gmail.com>
-Content-Language: en-GB
-From: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20261007060107.62221-1-pmazzini@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260810-msm8974-usb-hsic-v1-6-e5f93ea76ffa@oss.qualcomm.com>
 
-Hi,
+On Mon, Aug 10, 2026 at 06:42:10PM +0300, Dmitry Baryshkov wrote:
+> The msm chipidea glue enables runtime PM with pm_runtime_no_callbacks()
+> and nothing pinning it active. Right after a successful probe the
+> driver core's pm_request_idle() runtime-suspends the glue (the ci core
+> child has runtime PM disabled, so it does not hold its parent),
 
-On 10/7/26 08:01, Pablo Mazzini wrote:
-> init_pins_table() adds to npins in the driver's static descriptor, so
-> after a probe deferral the count doubles and the next probe fails with
-> "pin 0 already registered". Reset it first.
+Why does the child's runtime PM disabled first of all?
 
-Yes, thanks, this is what I had in mind. And I think it deserves some 
-backports:
-
-> Signed-off-by: Pablo Mazzini <pmazzini@gmail.com>
-
-Fixes: f5e2cd34b12f ("pinctrl: sunxi: allow reading mux values from DT")
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-
-Cheers,
-Andre
-
-> ---
-> v2: reset npins instead of counting into a local (Andre)
+> and
+> when the glue sits in a power domain - the HSIC instances live in the
+> USB_HS_HSIC GDSC on msm8974 - genpd then powers the domain off
+> underneath the running controller. The EHCI register file reads back
+> zeroes, an onboard hub's connect is never seen, and subsequent bus
+> accesses into the unpowered block wedge the interconnect, eventually
+> taking the whole SoC down.
 > 
->   drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c | 1 +
->   1 file changed, 1 insertion(+)
+> Pin the glue runtime-active so the domain stays powered for the
+> lifetime of the controller. Proper low-power handling can later be
+> built on the child's runtime PM together with the HSIC wakeup
+> interrupt.
 > 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-> index 50a16f3bd131..8bcd566593ae 100644
-> --- a/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c
-> @@ -84,6 +84,7 @@ static struct sunxi_desc_pin *init_pins_table(struct device *dev,
->   	 * Find the total number of pins.
->   	 * Also work out how much memory we need to store all the pin names.
->   	 */
-> +	desc->npins = 0;
->   	for (i = 0; i < SUNXI_PINCTRL_MAX_BANKS; i++) {
->   		desc->npins += pins_per_bank[i];
->   		if (pins_per_bank[i] < 10) {
 
+The commit message confuses between PM runtime 'active' and 'usage count'.
+Marking a device as runtime PM 'active' wouldn't prevent it from being
+suspended, but only increasing it's 'usage count' will. Which is what this patch
+is doing btw, but just that the terminology is not correct.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
