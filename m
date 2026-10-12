@@ -1,109 +1,139 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E35A48F827
-	for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 14:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0904A4830;
+	Mon, 12 Oct 2026 15:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791816497; cv=none; b=tBUaBPg7QAQNcBu7zweDIxQSTeMvmzNx40KD36JLZOBIzzQ0ilElXZku9c1o/JX8KPL8s1fwQ2Urb9PoUB0lWKpHmkM8j2w0aZ32E2Cq35aJ0J/tpPs6SYcwtjJJcjKhKocqs2Mr5XA+ImyMmFvXhuXDkzVnXxP0GksfP3ZU7Z8=
+	t=1791819965; cv=none; b=ekRk8jo4OU+VznqE0iVkANgVhX84vCclDqIIMBZwsFrsUVR+GBSK5NoTGu8JC031/Nq1bGXTCLmmt5YSzGWmKhzjXW6sgcMrnQsXw/vdr0OIv3SzvM4hgTtVdVWF+SLYK9AemGbaOkyNxLWGZMa5GfK/GsAJp/2CGXN5jTJqFOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791816497; c=relaxed/simple;
-	bh=4AN2vNqF0IOa54i8jQPH9ntPkhRDaWk6NYQNWT+8kk4=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=GN1jClm19WVup62VhbO4XaMPM/4WPeyaOq1hbVBmL5mm0sdsXmJnAJeFMSbbSNdsbxnWWjr/fEvKu/ZXnRpMr2JB/OxpnhekBhQzKHdf7naHUmoXIMldZhMTinswfK0Cd5ZH+tOcASAL3BQyTYmyEBohck2GCF6YYGf8mC8gJAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLN0ZvBL; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791819965; c=relaxed/simple;
+	bh=vAtwzVVEMN7ViYzjxev2teLqUJXMDTV8YhHJcC5YniU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IapCjC39moJbfNkyEHJBbJjr2Oe2M/GxfSkbXO0UJwpNPyhSfuy/S10f/DQyKjKDhfHP6tSKvGqho1jlcFhoXRLZhmda6TiLlwb+bQu4rr5q+wThgYL3r+QSHiXNLRIFAzHIt619aqPjk4pUH1+Xj5rTjneizXFQ5O0q5sCTKrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UjL2vW/I; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLN0ZvBL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8AA21F0089C;
-	Mon, 12 Oct 2026 14:48:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UjL2vW/I"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDE871F0089B;
+	Mon, 12 Oct 2026 15:46:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791816495;
-	bh=cARSwqn/qJJm/7Y99qZWN7JITyCtLuQQYNtxRxS+R44=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=ZLN0ZvBLIt8aopSD7G5dd2Mg1gLH+T9b0Ibe9uk7ztr20YdhM6Z0fRl2IWrD5falY
-	 VAU3MeQEirpSHq5wzhXNt3oyWgCbyVSJG72PHH4Cg2S5zV1cN42jdf1aLryFv7Fcrv
-	 73j447UQuaLp9DgFll2eh9F59B6A8Umxo8+Vy8R39LI6bex3QoP4kH7aLnKJ4sYA+Q
-	 LfDAT58FjLBeTl8+qZz2JLSR5GJO8ZoA+LuK86mQrkmH+zWpNUaV6IIhse3iU8GqzH
-	 SUtBc1Lo/5MqTLoONERib3Ti0ZyK9sthbT2aGo1qTD+NDjTz6WhUTNdMxUQ5jTJisU
-	 arkGktJnF6Lsg==
-Message-ID: <sashiko-outbox-168284@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v2 4/4] gpio: kunit: add a test case for platform lookup
- tables
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-gpio@vger.kernel.org
-In-Reply-To: <20261012-gpio-kunit-plat-lookup-v2-4-553b0d6446b9@oss.qualcomm.com>
-References: <20261012-gpio-kunit-plat-lookup-v2-0-553b0d6446b9@oss.qualcomm.com>
- <20261012-gpio-kunit-plat-lookup-v2-4-553b0d6446b9@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 12 Oct 2026 14:48:15 +0000
+	s=k20260515; t=1791819963;
+	bh=ka8TcM+6T34eu+vzuysDAS0t/Z43sjGbumdHzP6fyMc=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To;
+	b=UjL2vW/IBhWZlgwcwKaMOK1iF+A2BoAWP7OKl5zPfvSy/gRV1cLQgiaLlQIaO76td
+	 mGRXEnlPYsbacpBamv26npV5sJs5TxkI0Vi8pUMcQb4mINwUu7vgvgO3+XWuKI3SN5
+	 IhYDAvxzSMZPcTcy/ieOAG0TJQxUYe1TmjEcYt9QNWfliM7HlKmBvNmw/osG3Ih0Th
+	 Jz7fZGotExxzIknBeCqI3UH8Wto6/uCS0SSfJ0XDfB0SNSB0xvKg1Wd0QfuY73CSYT
+	 yBKLqM5OsJmZv9SbrNH13ge9CVjTQUFGIkXV8DWiyg2ypecwi+03J/Y9pel0jaxEAA
+	 +Xzxg98PkejrA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 6F5C3CE04A0; Mon, 12 Oct 2026 08:46:03 -0700 (PDT)
+Date: Mon, 12 Oct 2026 08:46:03 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jia Jia <physicalmtea@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/6] gpiolib: wait for pending label frees before
+ cleaning up desc_srcu
+Message-ID: <40aa9190-df23-449e-b547-165b8826db8d@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20261012-gpiolib-chip-removal-v1-0-aambrozewicz@nvidia.com>
+ <20261012-gpiolib-chip-removal-v1-1-aambrozewicz@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261012-gpiolib-chip-removal-v1-1-aambrozewicz@nvidia.com>
 
-Thank you for your contribution! Sashiko AI review found 1 potential issue(=
-s) to consider:
-- [Medium] gpio: kunit: test failure due to missing wait_for_device_probe()
---
+On Mon, Oct 12, 2026 at 04:49:55PM +0300, Adrian Ambrozewicz wrote:
+> desc_set_label() frees the old label with call_srcu() on gdev->desc_srcu.
+> gpiodev_release() calls synchronize_srcu() and then cleanup_srcu_struct()
+> on it, meaning to run the pending frees first, but synchronize_srcu()
+> only waits for a grace period, not for callbacks queued before it to be
+> invoked. Once the srcu_struct uses per-CPU callback lists, a label freed
+> on one CPU, for instance by gpiochip_free_hogs() at the start of
+> gpiochip_remove(), can still be waiting for its invocation timer there
+> when synchronize_srcu() returns on another, and cleanup_srcu_struct()
+> warns:
+> 
+>   WARNING: kernel/rcu/srcutree.c:706 at cleanup_srcu_struct+0x239/0x330, CPU#0: init/1
+>   Call Trace:
+>    <TASK>
+>    gpiodev_release+0x20/0x60
+>    device_release+0x3e/0x90
+>    kobject_put+0x67/0xf0
+>    release_nodes+0x3a/0x60
+>    devres_release_all+0x8a/0xf0
+>    device_unbind_cleanup+0x21/0xa0
+>    device_release_driver_internal+0x1c6/0x210
+>    bus_remove_device+0xea/0x180
+>    device_del+0x152/0x460
+>    platform_device_del+0x20/0x80
+>    platform_device_unregister+0xd/0x30
+>    gpio_sim_device_deactivate+0x26/0x80
+>    gpio_sim_device_config_live_store+0x254/0x3e0
+>    configfs_write_iter+0xc2/0x130
+>    vfs_write+0x252/0x530
+>    ksys_write+0x6c/0xe0
+>    do_syscall_64+0x109/0x5d0
+>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> cleanup_srcu_struct() then flushes the callbacks itself, so the label is
+> still freed, but the warning is what the comment above that check says
+> srcu_barrier() is for. Use it.
+> 
+> A gpio-sim chip with one hogged line, set live and back in a loop, warns
+> within 4 to 60 cycles in three runs on a 4-CPU guest booted with
+> srcutree.convert_to_big=1; with this change, three runs of 1000 cycles
+> pass. With the default srcutree parameters the srcu_struct only goes
+> per-CPU under contention and the loop did not hit it in 3000 cycles; the
+> warning was first seen that way, once, on a KCSAN arm64 guest unbinding
+> a USB-attached GPIO controller whose firmware node hogs a line, and
+> since then on real hardware with v7.3-rc5 arm64 KCSAN kernels, when
+> unbinding a USB GPIO expander whose driver is not yet upstream, built
+> both as an out-of-tree module and into the kernel.
+> 
+> Fixes: a86d27693066 ("gpiolib: fix the speed of descriptor label setting with SRCU")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
 
-commit 743d1cf187f180e4ac825a86d7858ccb06076671
-Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+From an SRCU viewpoint:
 
-gpio: kunit: add a test case for platform lookup tables
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
-Add a kunit test-case for retrieving GPIOs using platform lookup tables.
+In this, I am assuming that the comment is correct, and that we only
+need to wait for pending frees, not readers.
 
-> diff --git a/drivers/gpio/gpiolib-kunit.c b/drivers/gpio/gpiolib-kunit.c
-> index b662be88a0871..5d04b134d5774 100644
-> --- a/drivers/gpio/gpiolib-kunit.c
-> +++ b/drivers/gpio/gpiolib-kunit.c
-[ ... ]
-> @@ -828,11 +829,110 @@ static struct kunit_suite gpio_swnode_hog_test_sui=
-te =3D {
-[ ... ]
-> +static void gpio_lookup_table_global(struct kunit *test)
-> +{
-> +	struct platform_device_info pdevinfo;
-> +	struct platform_device *pdev;
-> +	struct gpio_desc *desc;
-> +	int ret;
-> +
-> +	ret =3D kunit_gpiod_add_lookup_table(test, &gpio_test_lookup_table_glob=
-al);
-> +	KUNIT_ASSERT_EQ(test, ret, 0);
-> +
-> +	pdevinfo =3D (struct platform_device_info){
-> +		.name =3D GPIO_TEST_PROVIDER,
-> +		.id =3D PLATFORM_DEVID_NONE,
-> +	};
-> +
-> +	pdev =3D kunit_platform_device_register_full(test, &pdevinfo);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pdev);
-> +
-> +	desc =3D gpiod_get_index(NULL, "foo", 0, GPIOD_OUT_HIGH);
-> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, desc);
+							Thanx, Paul
 
-[Severity: Medium]
-Will this test sporadically fail if the kernel is booted with system-wide
-asynchronous probing enabled (e.g., driver_async_probe=3D*)?
-
-The test queries the GPIO immediately after registering the provider device.
-If the provider's probe function runs concurrently, gpiod_get_index() could
-execute before the GPIO chip is registered and return -EPROBE_DEFER, failing
-the assertion.
-
-Is a call to wait_for_device_probe() or gpio_test_device_check_bound() need=
-ed
-here before calling gpiod_get_index() to ensure the probe completes?
-
-> +
-> +	gpiod_put(desc);
-> +}
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261012-gpio-kunit=
--plat-lookup-v2-0-553b0d6446b9@oss.qualcomm.com?part=3D4
+> ---
+>  drivers/gpio/gpiolib.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 772c6f04f489..1984f3416437 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -895,7 +895,7 @@ static void gpiodev_release(struct device *dev)
+>  	struct gpio_device *gdev = to_gpio_device(dev);
+>  
+>  	/* Call pending kfree()s for descriptor labels. */
+> -	synchronize_srcu(&gdev->desc_srcu);
+> +	srcu_barrier(&gdev->desc_srcu);
+>  	cleanup_srcu_struct(&gdev->desc_srcu);
+>  
+>  	ida_free(&gpio_ida, gdev->id);
+> -- 
+> 2.43.0
+> 
