@@ -1,160 +1,182 @@
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B290352E07B
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CA051AFEF
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791913780; cv=none; b=f3vwPUON6CD7whcu942nPI67/Pfu1XKnafbe3b7Rbwjn0lhctMK6e/uadBZR1c6dA5e5hJ+cKtvEz6zVS/QSjs/PO1UE/RlprTys/KYv9IaBgipKqrEQKV/Xs9Zj99euK+ZEsbTvcbBJfHafLjVhRAcAC1MfKzCXBbel6X2VMro=
+	t=1791913804; cv=none; b=jHHPYe89uA59JXox6WPMKUd1FMXH6OesEX1YvXWeXEjz56rvSFm+wqYHxT2BLz2arLRXwK357as84lbXciESdjBbMRHaWDbj3osCACq1fQlFKZ3RW/HtjlGJ0OdbnqTY5EVsuoet5EMpDt7oPl1zrtg/AtNZAn8Cw0Sj8P+yt9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791913780; c=relaxed/simple;
-	bh=XfWNez3TZElIw3B+tobB5BSrfbaynnFmNqa9anO7WiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YKQWEQ4K+n41QbHKPZfvQs+UtzefCCAoH0lwnJg9byAB7i2gpbQivtOseIpzIgc89OL7WwEoHLpnHf8HxKNwwfXDg4FiWZdtGhQj23CWYW8+gvHz+PeHqeHcKNQGwByc1fsEFDceMxwXqD1d0MbhLsQLXccR89/Md+yrMC6jL1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lGc2uJhE; arc=none smtp.client-ip=185.246.84.56
+	s=arc-20240116; t=1791913804; c=relaxed/simple;
+	bh=LeDPnBgrM7pNQ8OlNZHsJRQR3r2PXLGLegBZ2Qsqzf8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BUemhkkPypLmXIhv5X4iPIzOcpyMBI7dTxx4/NXtqCzzWca7uzBcDh3x0yPycw6aWCfghKoGul28pW/GNl2d68/hxSgSW+uCdXK+JlxH5TTsKogMG1TXGe7Jy0cqtiOo9iAFQESEAsAuYiw45lfENyQdY3+ncN7N/Qt5rHUm/Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=X+HI3QMJ; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FjGgQOgH; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lGc2uJhE"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="X+HI3QMJ";
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FjGgQOgH"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id E7AE31A1218
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:49:34 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 1E2F1C653F9
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:50:56 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BBFEB60362
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:49:34 +0000 (UTC)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 7AE296075C
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:50:00 +0000 (UTC)
 Received: by mail.galae.net (Postcow, from userid 0)
-	id 40AA911D7183E; Tue, 13 Oct 2026 19:49:05 +0200 (CEST)
+	id C659211D7188E; Tue, 13 Oct 2026 19:48:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1791913774; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1791913800; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=eAuhjWIHoJ+lPcsgkZ9ZICB7wFWD1mA0dcHUmJgisnU=;
-	b=lGc2uJhEAzwgNhCDgH8pClbsLaAPagg/hFzDZ6c2TuDMpgTV4IUz1FuBNB7W1viV6Y6dmu
-	MwXczTXkj186RMCXzsXWUIYscfF1KQ+Gc+gTMMdayYnAD2oQAzdkilrRn7Sy40sUac9oFg
-	tIplH61OwprVkT/TKXtIrBoe3zyJKMFUAmILaSnyfDMHhPrI3if2DP/VG5w0l57TUxZRXi
-	Qdv5sWBxdtsPNJXGRARVBITtr4UfUdDQlW2ykgJjdJ0oiFxSuGE6+wmIpJZvgrjbjxGNAA
-	9Gu93kgUeszDudQgXG1CeyMDRynjucui/bER6Rc5rDokHGhLOYFej/LZ/myDnw==
+	bh=kAb7NHjVc8QoTRTxUb1OG7thf2F5YhXlem84GhsJqnE=;
+	b=X+HI3QMJ73nhSHr5I0Pwp9VxSeqmN8no/A8oxhooEndDQv3XU4SEu2Ni9dZ9vqjFszql9u
+	iuUZ/PljjKL8smwWyqmmSY4EhHjhIksVGTWBxSwj9KNfffLJo6b/ABu2z9uAOGNJfNbk3q
+	4tYIsbidGu+eCqBGmChlV9G55HfXL2Dptq84dptzBDwkmL6mws6YGNQKGLbx0jj/ebyU9m
+	p495UU3RrO2Njocd+P0xnCCsx1LIaFeWa0C096OQ8yTfp1GID58vkDVxJ5J1R74pyK0N8R
+	UCI5UwELbKxRXXgt77APEMliC3tL65m+3B98UwxjtyuFH/Kxk3/jcE4iJ49OLQ==
 Authentication-Results: mail.galae.net;
 	none
-AF:
-NF:0
-PS:10
-SRH:1
-SFN:
-DSR:
-MID:
-CFG:
-PT:0
-S:herve.codina@bootlin.com
-RQ:
-SSV:mail.galae.net
-NSV:
-SSH:
-R:<sashiko-bot@kernel.org>,<sashiko-reviews@lists.linux.dev>,<linux-gpio@vger.kernel.org>,<linux-cxl@vger.kernel.org>,<linux-pci@vger.kernel.org>
-MAID:1
-X-Claws-Privacy-System:
-X-Claws-Sign:0
-SCF:#imap/herve.codina@bootlin.com@mail.galae.net/Sent
-RMID:#imap/herve.codina@bootlin.com@mail.galae.net/INBOX	10571	sashiko-outbox-168281@kernel.org
-X-Claws-Auto-Wrapping:0
-X-Claws-Auto-Indent:0
-X-Claws-End-Special-Headers: 1
-Date: Mon, 12 Oct 2026 17:18:11 +0200
+Received: from mail.galae.net ([172.22.1.253])
+	by 9e7fea892943 with LMTP
+	id SKPIALTuzGoYHxEAtaWaaQ
+	(envelope-from <herve.codina@bootlin.com>)
+	for <herve.codina@bootlin.com>; Mon, 12 Oct 2026 16:29:08 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F37FF11D708B4;
+	Mon, 12 Oct 2026 16:28:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1791815339; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=kAb7NHjVc8QoTRTxUb1OG7thf2F5YhXlem84GhsJqnE=;
+	b=FjGgQOgHcTUDDGnIbSuozwmNqeMTRdBQVZaPNnUfhfNiHolctNHx1hOE21Ll6aYc6zsp1v
+	tYfEnkKxdGOOtY680hMNAcNEJaM9GkRVagicVm8ou5DFrd5VuLmwgGbbtWaPBFa0nRcAW7
+	iuGKxtDnIWPKwfwaYZObdeJ9zckNqniI+KLN1vyuvrXhXy0sCRuVe0N2R2v06p+hCVJxzJ
+	Oxu6iH3orqfi6ElTPOegR+Wj2TpZlYb7tN7T2IqKprgAnyueowX5lDSHa/Zsq+QxXiQiAc
+	GNRjXOfG2P+7tWArtGJk8xGwxsp+opS6e8tVRR7Xqp4HXMpqP3lAkPgm74kLIg==
 From: Herve Codina <herve.codina@bootlin.com>
-To: sashiko-bot@kernel.org
-Cc: sashiko-reviews@lists.linux.dev, linux-gpio@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v13 08/10] PCI: of: Set fwnode device of newly created
- PCI device nodes
-Message-ID: <20261012171811.50f6cb9f@bootlin.com>
-In-Reply-To: <sashiko-outbox-168281@kernel.org>
+To: Richard Cheng <icheng@nvidia.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <djbw@kernel.org>,
+	Ira Weiny <iweiny@kernel.org>,
+	Li Ming <ming.li@zohomail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Lizhi Hou <lizhi.hou@amd.com>
+Cc: driver-core@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-gpio@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	stable@vger.kernel.org,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+Subject: [PATCH v13 01/10] driver core: fw_devlink: Introduce fw_devlink_set_device()
+Date: Mon, 12 Oct 2026 16:28:15 +0200
+Message-ID: <20261012142826.159178-2-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20261012142826.159178-1-herve.codina@bootlin.com>
 References: <20261012142826.159178-1-herve.codina@bootlin.com>
-	<20261012142826.159178-9-herve.codina@bootlin.com>
-	<sashiko-outbox-168281@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.4.0 (GTK 3.24.52; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 X-Last-TLS-Session-Version: None
-X-Rspamd-Queue-Id: 40AA911D7183E
-X-Spamd-Result: default: False [0.50 / 30.00];
-	DATE_IN_PAST(1.00)[26];
-	BAYES_HAM(-0.40)[72.13%];
+X-Rspamd-Queue-Id: C659211D7188E
+X-Spamd-Result: default: False [1.77 / 30.00];
+	DATE_IN_PAST(1.00)[27];
+	MID_CONTAINS_FROM(1.00)[];
+	BAYES_HAM(-0.73)[77.64%];
+	R_MISSING_CHARSET(0.50)[];
 	MIME_GOOD(-0.10)[text/plain];
+	RCVD_NO_TLS_LAST(0.10)[];
+	URIBL_BLOCKED(0.00)[linaro.org:email,qualcomm.com:email,cirrus.com:email,bootlin.com:mid,bootlin.com:email,intel.com:email,localhost:rdns,localhost:helo,nvidia.com:email];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	BCC(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	DKIM_SIGNED(0.00)[bootlin.com:s=dkim];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
-	MAILCOW_DOMAIN_HEADER_FROM(0.00)[bootlin.com];
-	URIBL_BLOCKED(0.00)[bootlin.com:mid,bootlin.com:email,localhost:rdns,localhost:helo];
-	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
+	FORWARDED(0.00)[herve.codina@bootlin.com];
+	RCPT_COUNT_TWELVE(0.00)[45];
+	PREVIOUSLY_DELIVERED(0.00)[herve.codina@bootlin.com];
+	DKIM_SIGNED(0.00)[bootlin.com:s=dkim];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5]
+	FREEMAIL_TO(0.00)[nvidia.com,lunn.ch,kernel.org,linuxfoundation.org,google.com,opensource.cirrus.com,cirrus.com,linux.intel.com,gmail.com,stgolabs.net,intel.com,zohomail.com,bootlin.com,amd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	MAILCOW_DOMAIN_HEADER_FROM(0.00)[bootlin.com]
 
-On Mon, 12 Oct 2026 14:44:48 +0000
-sashiko-bot@kernel.org wrote:
+Setting fwnode->dev is specific to fw_devlink.
 
-> Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
-> - [High] base: TOCTOU data race and UAF on fwnode->dev access
-> --
-> 
-> commit dc94be607770b564614555ac56ea83f070fa3dd4
-> Author: Herve Codina <herve.codina@bootlin.com>
-> 
-> PCI: of: Set fwnode device of newly created PCI device nodes
-> 
-> Device-tree node can be created when CONFIG_PCI_DYNAMIC_OF_NODES. Those
-> nodes are created and filled based on PCI core information but the
-> fwnode device field is not set.
-> 
-> > diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> > index 29b63a9090ae3..8914bfa25dc11 100644
-> > --- a/drivers/pci/of.c
-> > +++ b/drivers/pci/of.c
-> > @@ -736,6 +736,7 @@ void of_pci_remove_node(struct pci_dev *pdev)
-> >  	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
-> >  		return;
-> >  
-> > +	fw_devlink_set_device(&np->fwnode, NULL);  
-> 
-> [Severity: High]
-> Does this locklessly clear the fwnode device while another traversal might be
-> reading it?
-> 
-> If a PCI device is concurrently removed while a driver is being bound to
-> another device on the same system, of_pci_remove_node() clears fwnode->dev
-> locklessly here.
-> 
-> Concurrently, __fw_devlink_pickup_dangling_consumers() in drivers/base/core.c
-> can traverse the fwnode tree and read it locklessly:
-> 
-> 	if (fwnode->dev && fwnode->dev->bus)
-> 		return;
+In order to avoid having a direct 'fwnode->dev = dev;' in several
+place in the kernel, introduce fw_devlink_set_device() helper to perform
+this operation.
 
-I don't think so.
+Having this helper allows to hide the fwnode devlink related stuff
+behind the helper.
 
-__fw_devlink_pickup_dangling_consumers() can look at fwnode->dev but those
-fwnode->dev are not in the same branch in the tree as the one where the fwnode
-being modified is located.
+Cc: stable@vger.kernel.org
+Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Reviewed-by: Richard Cheng <icheng@nvidia.com>
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+---
+Cc stable because used by other patches with Fixes + Cc stable
+---
+ include/linux/fwnode.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-I don't see any cases where __fw_devlink_pickup_dangling_consumers() can
-reach our fwnode.
+diff --git a/include/linux/fwnode.h b/include/linux/fwnode.h
+index a9dcaf7e7076..3ce49575cf82 100644
+--- a/include/linux/fwnode.h
++++ b/include/linux/fwnode.h
+@@ -260,4 +260,10 @@ void fw_devlink_purge_absent_suppliers(struct fwnode_handle *fwnode);
+ void fw_devlink_refresh_fwnode(struct fwnode_handle *fwnode);
+ bool fw_devlink_is_strict(void);
+ 
++static inline void fw_devlink_set_device(struct fwnode_handle *fwnode,
++					 struct device *dev)
++{
++	fwnode->dev = dev;
++}
++
+ #endif
+-- 
+2.55.0
 
-In other word I don't see any race condition on my side and so I will not try
-to fix that point except if this "potential" issue is confirmed by other people.
-Indeed, I could be wrong in my analysis but without further details, I don't
-think the issue reported here can happen.
-
-Best regards,
-Hervé
