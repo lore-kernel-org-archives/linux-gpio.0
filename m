@@ -1,63 +1,64 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010027.outbound.protection.outlook.com [52.101.84.27])
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013042.outbound.protection.outlook.com [40.107.162.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996783750BE
-	for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 04:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9371D1D798E
+	for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 04:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791778115; cv=fail; b=s6PeJdHSf68TiVCBVTtO2UzHZX+N7G8BeCIg2e/0XaFKHLhi+xZIBDPtjDGpouEzEmk2e6rvi97lYRP5uqFIbiZ/AIReDQco9RPVobhPf+CicivtecteTz+6SCfgf8g010pEpm21qV54EnQ83oRJQWcsdPneWccaWycg65RgPw0=
+	t=1791778210; cv=fail; b=LWz9glFK0Ben93NGLmSO9teXD9Jnwj44+nMsB4Sef/746T2F9kzDtV9V45lnUp6Yj4yBKKFfzJd+R9aOwi5GiT7eaqRqhXCExShlOKjn806H+vE9AHS6/9cqnYkIAbJQG170Zs3a+spuhJnc/tPlku+QWUhqPSKzYLPMXX7CTno=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791778115; c=relaxed/simple;
-	bh=i0d2SXaD+q7WCBxuPJv7DpqEPP1VGxJS5t8LeB0DYnY=;
+	s=arc-20240116; t=1791778210; c=relaxed/simple;
+	bh=YEkYh8b75rQr14/+iYReb7uu0S2tyDS+cWFZ0H9SNbU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IL2tK27RZLScvwb/QaTebb7+dOWckCBTKYbA2PucPpfsp8eS0w7uYKzOB36EI1FloqZPVTKIHozPLUBztCaHgw5S40aFbVjKWDQjkJMjH/8aMxyvB3k4XxjvHhbyZ48HY4+Tc6sWX+xRIrT6GceMpRthZa7wFLCpb1dsgidg/D0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=fail (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=ZZNBZbPM reason="signature verification failed"; arc=fail smtp.client-ip=52.101.84.27
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ElbJtgdm/fpN38t0jiB4fSPjYIedb0LPWpkOMHQ1L+1O+mVctNEzL337+ueOOa5E0M4jxxyiFdA99S8QCl4aR1zIndrcOkQPfioPRjcXuOreNDzdzqFqdDcsGoJOqGVHYbZU7tsjc2z7qTbXz9D546/yuz9hLQwxsm4NnSkTfyA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=fail (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=suzPjP62 reason="signature verification failed"; arc=fail smtp.client-ip=40.107.162.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="ZZNBZbPM"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="suzPjP62"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fv1QnvpVn42CS2AehulRtJNJnmHu/fTsV2HWHR08HP0BQk3iTY9Ftn7hUY/LhWCFn65958L4p9TgMIIw5/nxzugUzOsSssnZ5et67tAgiDzkCj2b0sQBlJxKmOAQfaBZt48yzJzlAVbD5VLGJ5BCnWUrXv2t5s//TBj9p0RO4fVqNzt/DIDbbDkHl4TKa7/l2hTOpI7JgBXTKPbhRBJp5qWWz3g6idJHx9rauqEYTtRda00Fy3fFFSh29L3aJo+YUglROSPbWLZaTfGAFSim65sQ9NTlpQAj6yZ+KJMuFergdRFCxkZxE3DSLHt9vDuQLILhFV9ZxU2KeC9dUP4DNQ==
+ b=K7llccQwr8Dx0rgBFXCGYSXew4MOD2+ZAxRYhBp+6Otp6QDs65w1Rvkmck4oyUyfvCs1ZJJNmmjq1QxhIhfPchpwaf29BmAsamBR0kNAQQ2MeMM2NRJkzSd57CJdbm0HU1hILvmB+nm3rVvbr16kQTn6DvvG6q4ligDMRGUFKC6pq3V4OKWoFtLZY7QAeVOv0T7VnRBHXBMWMwBacDEvqeoX/dTl4INeKYfuVSc4BG0KLP7Bu3wYvuo4Qn1tFzLgnDEto77ueONByUVQQTvf54ZInXFlYm3fJum3/GZpPHYPVwZEGH+Tg94sVd8e4T/VXjM+w8/iZBN68HFjMQludw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GwmdgpzXMueTRkV7iiHV0JQ42nfd/YaJHjm2wYnkhPE=;
- b=pyd8f95E3D1jcfYOrI8+v4adqk4BjMNP7uOsjZkANtsNxK39E1Nv1bXAlq7ZnOC7cc1vDV5ndrVP6qPhXtja9rlcl6rx4ZVPaVPB5NZcsGkAQw/ky4QBTYA0Zq/Ff+k/QBSQKy9+0teWvJBifBeVngbuirBHluTjNn9i7fgfi2e0UVARvs49QFvAH3EJgUbAVCGUE3YlZnE7+Bl+TcL32tFkFRXYyNNkKDmLTx8vwRGlVYuG1OwFafMjx5nHA5s9Vx+vIEfGuVyUPLGaAqyg6EYie3o5jKoBwuCTMICHTbSirtp2yZPr6qIe4nsDFxagodCcUaSfJRlOMBAsWrX9ZQ==
+ bh=S8kg7+vIWks7oek28fxtelQ13v/vkxN0Jd6c1g0zv0w=;
+ b=dmguHNEQEr4fO7m5O6MQNlU6mI9LQ0ES3w6pUJr+6La63n2lJRyQkyr4C/gbeG/GQmzoqHyAaNmQVCObY1exShf8ry1bzZTmKBXCeyTzGIjolhAzoIxw8jTlG17YTvUsPtRGR9JNzghSU5HzVcaK+G6l4/Vf93hVpa1N06gqBkYI+93EpKuN3irtNALIhdLa3Gr7PQNtNUQHWwdBZg8gHAmAgsXyaRodaB5qA8TJZ/BzPCIGPfIJSocdy7WpY16WeisVJzIZr04tkBMd0zts/ylpRKA6XT/kKut+25xRd0gsmMiJcRdsbOYBGqqpo7YrN9pqf9SNy0UnYkHOKQtmkQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GwmdgpzXMueTRkV7iiHV0JQ42nfd/YaJHjm2wYnkhPE=;
- b=ZZNBZbPMW6oxXyYNFgbcz7ofIFNj4sCfI1HKYGAeSFhKAi9p9jj3xVcSDEb4+rQNGeeTW0iV+ocYSkMVeS4vQ6pCwB8D4PXaZ+V3eaQ3ev8B2JIbkWm3C5KSTW1WVpyW3FPcUSMPvFWi+WelIzc2iFiKhrDEKJadCk/mMGGPGSMDNLcL7gQTGE9bga9CIhKre8tz2U3NpRYV6t5DXzyrxJdup5Nx473yCi2tPbdUTFQHdrZFH3ZIl5g/f82as0y4KrSeF/MW3M9Dr8LGSN36HDaYJAAvDmlxQ42uEac8ym2id+NEcYiJuQAXVACE2u8SNkZKtSl7IHQbmRcaNyGffA==
+ bh=S8kg7+vIWks7oek28fxtelQ13v/vkxN0Jd6c1g0zv0w=;
+ b=suzPjP62405JXkfEt9JqvW8x0G2DcntKdmC96nuW1EsqAifPrtKK3rya9Rbxuf3riR/ILAYS95lmqxUmNE19pCZvSxxg/G5QNq9sQykjf7PEdRbjP/laVb7iv4qvDzVbDcO7F7KZg5V5KXvpWGyZBfym++WBdvkaZznNjqhZ4q0rCmM5Rtuf5uSx7azuRsxZJdy7IfsKFKM//ul8lbNsWMnDiRZ+dtaOF7y5rJNBFmq00qQ+pVjpEj/Zavt4aS4Rpvr4acvW/7mgYIsA0RB+MGf6I0CkWfPh9Aum9t8LGmiNJv7COXPYcbdm+UCw6E+KzpmlAEJ9Du1/rh0zxe+T6A==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
  by AS8PR04MB8707.eurprd04.prod.outlook.com (2603:10a6:20b:42a::24) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.21; Mon, 12 Oct
- 2026 04:08:30 +0000
+ 2026 04:10:07 +0000
 Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
  ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
  ([fe80::ac38:1699:6f18:c5d9%6]) with mapi id 15.21.0496.020; Mon, 12 Oct 2026
- 04:08:30 +0000
-Date: Mon, 12 Oct 2026 12:13:05 +0800
+ 04:10:07 +0000
+Date: Mon, 12 Oct 2026 12:14:41 +0800
 From: Peng Fan <peng.fan@oss.nxp.com>
 To: sashiko-reviews@lists.linux.dev
-Cc: Frank.Li@kernel.org, imx@lists.linux.dev, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v6 11/13] gpio: mxc: add dev_err_probe() for error paths
- to help diagnostics
-Message-ID: <asxeUcmsgeLTMHAC@shlinux89>
+Cc: linux-gpio@vger.kernel.org, Frank.Li@kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH v6 01/13] gpio: mxc: fix race between chained IRQ handler
+ install and probe completion
+Message-ID: <asxesWmhPRSeI63z@shlinux89>
 References: <20261011-gpio-mxc-cleanup-v6-0-cb47ce2ad758@nxp.com>
- <20261011-gpio-mxc-cleanup-v6-11-cb47ce2ad758@nxp.com>
- <sashiko-outbox-167210@kernel.org>
+ <20261011-gpio-mxc-cleanup-v6-1-cb47ce2ad758@nxp.com>
+ <sashiko-outbox-167213@kernel.org>
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <sashiko-outbox-167210@kernel.org>
-X-ClientProxiedBy: SG2P153CA0020.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::7)
- To AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
+In-Reply-To: <sashiko-outbox-167213@kernel.org>
+X-ClientProxiedBy: MA5P287CA0229.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:1b1::9) To AM8PR04MB7874.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24d::9)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -66,151 +67,131 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|AS8PR04MB8707:EE_
-X-MS-Office365-Filtering-Correlation-Id: 07a0b0b0-1599-4d5c-8608-08df28167993
+X-MS-Office365-Filtering-Correlation-Id: d638d370-d9c6-4a72-3710-08df2816b327
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|23010399003|1800799024|376014|366016|6133799003|20046099003|22082099003|18002099003|10067099003|261009223027099003|4143699003|260925021311599003|260925021911599003|260925022911599003|5023799004|11063799006|56012099006;
+	BCL:0;ARA:13230040|19092799006|23010399003|1800799024|376014|366016|6133799003|22082099003|18002099003|10067099003|261009221227099003|261009223027099003|4143699003|5023799004|11063799006|56012099006;
 X-Microsoft-Antispam-Message-Info:
-	jW5S4jkyP5EJD9qdLSYrbpztr11ZnNBSSnWu88oi3fa0Y9931jyZSrBwG4botR+V+RgcgpwrM2liHOzujkxfvzzfVCnpymWHJ2It5FcfrdggJKMb1Ssv9sM1mFquzUky/I+viDBeyhb3XPoReWUotc8QxVyv6vP7gwIuS2N2fNYeRgjBbmX0tvJ4cEfYvPCH+rVB6ms2KcaG5xNubiUVB2KRx3VHVH3AVV/ZqMTl/IVHd4nBKwTkkg5NyX+iZ7QspISEMskZM7R0dD138kQjY7sbfNMLJB+MkkbhnpbokEHYIQJRVT91D2pPpR3UGJQOBTRyROtJ5EAca0OcptrJav/vdv2BeJjCJyO8THFVXCRjw+o/9S3t3fJ3y/iWeUxJ+Brvxs49v/LZ4eGUs1RM1T7aWDkviUlr1NTugVqAR18daaQ+w33jhc/OCNV4hOkG7+7vdE631W7TdvGA+vj1oMuURqOmT2u4bzSK8usqnBBFkvxgF44xGNdGa3DzA56h8fS6LGMcK6Vbz/DvIGUo5kEW1n9Xmy4f9uKpTm6K2KWDTmuUa+lAjuJ0MPqTOz/ACGEwRXADlbqrxRJB42rEl1l+iJ+MpcMcA2ON5ITOnBg=
+	7w3rdBddJS1gDPRiisMiB+PBTyjPT5+BEd1chxO79Jil7K2YtSuo32CUIx1PT5zckvBjVb/xEjdTeefjdkEP7B6D2UbmRWK1rmPXAp2ShZLKyNq9RRKvnZhmlHgiiVIJbRjkE+Gs/Y66WFJa13wV1TIJEXaa05NvaPv9Bg6jfaQCeiNcbXHA+FegFUzDwnsz77+xYecqzSErd+2T70mch9aeZ+bUWkr3BxtNUyAlmnx78Dl3ca9r7nmG0QJEbs3VngTvW+4FSEf/EyWW+8tg6+60q7yyhZ3s4ViAqOu6IWRwPnUIOpf9ULMsMBZu+KufRfzl0rfSwxbDUbPzLcQm36KamhL3L5GATG+DwHXPNkCpG3Ta3RjCrtypE51ejGPt9OyQ524Nt/oXcxohQYkq9DaU8lWzZFEheb/yvBCnPc2bxk6TxT+U+cIwBNHdYkhKb6pUxWp40ckdJde3DzAatGUQsOA7qsz/cFe6dkCKeBTy2YYBOlf5+sTkVPb6dUtLY1uw8HVhpbYA2EI8jIJKTcrSYobH5Qb83SAiH/lhJonvZCMi8em8nmkB+LIHU45YmLO+3RP0QYGTKTur/mr9r07I5fMKWR5T1OuTzPsZjlw=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(23010399003)(1800799024)(376014)(366016)(6133799003)(20046099003)(22082099003)(18002099003)(10067099003)(261009223027099003)(4143699003)(260925021311599003)(260925021911599003)(260925022911599003)(5023799004)(11063799006)(56012099006);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(23010399003)(1800799024)(376014)(366016)(6133799003)(22082099003)(18002099003)(10067099003)(261009221227099003)(261009223027099003)(4143699003)(5023799004)(11063799006)(56012099006);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?1SthoC5+pU1MIrWNKqGg2EOwrWz3RqIjNzblWklKOZ8ITzyyLwm9V90WBr?=
- =?iso-8859-1?Q?KDVBegqFKlbxnUe6AAUHlQrG83de2SVMR2RZSuglQqJXjlw4LD+lk2SHuX?=
- =?iso-8859-1?Q?rFDfIEGGZkYwXY8HJUaruPefCSwL/vL5xm6pGHChqqfJvdEBRFguMCNrih?=
- =?iso-8859-1?Q?Xzon09M/GBFzGN3wbGfPhC/wBuptYKepBYrCmAxCTMsrGtt+euR+PIRPo0?=
- =?iso-8859-1?Q?/zBWvTWtVdEhnZy+JH6icS9vDzHAA/mpir4/xV5JcDGN3jn4CmWYFuaXLJ?=
- =?iso-8859-1?Q?QbumI4KeKSp7N4gZqo57M6IbOZbzVkhTCk23VYkytAmc00xN8Lx+1IVwWO?=
- =?iso-8859-1?Q?Jpj/P6XTspt3CO/cqu4VHz5WYiUActvxpVMmh76EznoEbYaJJCsKzHyVuq?=
- =?iso-8859-1?Q?MX9n3E35RZ1uKuo0b4jp5epMIGS34F+hgzADYJK5gZCJWt76MwcmnVc8jR?=
- =?iso-8859-1?Q?wNmJoX72znIpfPX8H3XUrrxSHi6NGi0LiJedL/kj08jKJ4FHw9OoaJ/ujt?=
- =?iso-8859-1?Q?NCxdTMVbaRHw8ti2QOIijWeBjSg0R9jn/Di1Snne0s9imBYpw0Og1sD/Jj?=
- =?iso-8859-1?Q?S1sKIFZF0AcKis29cPdFHzXP7pMukTNaHSP72IfJ4zDwi7N0Xzl2uFe4iu?=
- =?iso-8859-1?Q?sFDQzZ4BwSvbB+mvM922DjgEEtkZcrZyn50P8vFAAjOfKyCflUDMCI8orq?=
- =?iso-8859-1?Q?TEc4Dg1/33URc6nffNiy3t8haT8VBwuacV5PhZNLDVYNYWELghbhhgAUUF?=
- =?iso-8859-1?Q?pEPFWIqc7Q6tp2GJ9Gr3cPZ5gp+T2co1SOaOyypKa3ungcRv+Zu6NPk7Lt?=
- =?iso-8859-1?Q?/nXKesYIuQsDm4zgLApfOM/jqH2JgrjpWayQJHr0ThViuv5BqCiYQu5zYs?=
- =?iso-8859-1?Q?1cW5m3xsVECJilR4eKfIkrE+CkRAlLWOnTVZLUK4ltXd1bTFB/EhrjOi33?=
- =?iso-8859-1?Q?5k4TP8q/RFYY1gGmouKPIG/kkWN8bO+3qAWFTbEwCK2lZ46kRCN8wqg0/7?=
- =?iso-8859-1?Q?4MFYGm7LFwP7XoBrrSRNaH59QTJhmft5p9XKh7oHejb3Ta0sJhT9APEJM7?=
- =?iso-8859-1?Q?qo0jOlfebVk7C1pSBZMlzSUsfnEGUCblVxembylryRFe1oy3036rychI9M?=
- =?iso-8859-1?Q?Aqldv1URTyb25STb/RbvZwJXSc7gslhG3bAT4QvGZacHjfp0hdr36THO6m?=
- =?iso-8859-1?Q?m5Q0DCnEuvmY+4IiU62cg27jG/S4dooe2DEZLi5GgOsY9sVVJ33gh4KoZ6?=
- =?iso-8859-1?Q?YDv3KuTyPeABG+GLcS9v4Z2j3pKy4Y+xwUrojceDVag0/vJOdFSdX/NAq2?=
- =?iso-8859-1?Q?Zj93ha45zCAmL3NvSYSOuwZo9uzvnxKl+bax4V7SrbxdN/Bcv2Yfsh8F+1?=
- =?iso-8859-1?Q?glC3QwZ7/HZvxLvKKCO/ZedSOV+9RavclypiIw6FLfithfDHHDM6bqKzFM?=
- =?iso-8859-1?Q?cZcUOYhXieuPeAHtqHHMtv70dTpTZrxQfx3sUZ025mjLYIRZ9EnFRbIQj7?=
- =?iso-8859-1?Q?DsykArp9h7EfCytEPMN3KyNx40CLG6UbqxlgFJIYEvdss2hmk2FWc/yF0W?=
- =?iso-8859-1?Q?aoHKc/ruQsDw7sd0TGcqFkiC4SVOQjiwUtOUW4iUn/InBJCiLNSezk4TQG?=
- =?iso-8859-1?Q?MjUPm6MPZNelg4XHsriQ7NDlZecokxLQZxd339q1QsWZVAlWzCGGSGQ3Kl?=
- =?iso-8859-1?Q?vz8pMYfDSJtvbm2pOgkahj/S80o7b90QAcTRuJ2iWvNx+b7q+nlOCjqaDh?=
- =?iso-8859-1?Q?2mZrYofd6qA/T45jzHTkx2Yk4cprIXMzySUAaa5qPx/WGJsD/gDZQnddkF?=
- =?iso-8859-1?Q?Fa2TK2aJ+0dlaZcN4zu3tDudmn83ZCXewvldqJ4sWCuYjgzcAY0t?=
+	=?iso-8859-1?Q?IjMSLFGiTwJknL5VIFACqx2jJ86sOcaDtlgiBdj54Ch579K3IDmKRL2lBX?=
+ =?iso-8859-1?Q?sezhnoseTAAu5j/77GmaYOq00tZqt2tiF1EsRaY/9vZn0BMNPuxHwlNTqm?=
+ =?iso-8859-1?Q?DLkW0sw1tEMbEAjz/PpLUaN8LF4Dd05AEP2kbDRWrVKKK9Db5ByDSxrFMP?=
+ =?iso-8859-1?Q?/e0Ty2dZzgUM4Pj2TyOkBVuoFvF49ngIOCQKy2dPxq7ntoLtiNNoCli5VJ?=
+ =?iso-8859-1?Q?NaDD5SQPrHWpVwWHWgQQmNopanwvXK0CC2uyX73oG8Tld0iG9AZ+f0tqND?=
+ =?iso-8859-1?Q?J84MftmxLa8XYGBqsGRc+zdm03DcRShaIoNaO10Vx2NRAJqGbRr13IR8pl?=
+ =?iso-8859-1?Q?BrpYKpmDJHv3AU1t3w7KVhKuDrIhfZ+AAfOxWIzAfoKXsEQ2h9kM1Pjqln?=
+ =?iso-8859-1?Q?2pOJfJXHe+nbk5apYWMXIr17clNLzlSfjvgwI8dXUaJyPn23VSR4yvAxaz?=
+ =?iso-8859-1?Q?/6MUYwVqrcA+yeODndk6yEYYiF0VZd4HSTge3JT9VVcZG7MfnMyP5jahTG?=
+ =?iso-8859-1?Q?aWrj3MljlE3gVKe8UGI5mGr7CCIyGgXck7txqDp3iSHowt0N4a76wsgg+a?=
+ =?iso-8859-1?Q?2ljZ/o+ML5Y0nTaa6zcVPx8p/k2XCIrRxfAa4S6WpHg3/rzI61KDLAo+8k?=
+ =?iso-8859-1?Q?J72wnMMcgJrM2r4x1Xa63hRfR6WiaBr0gsUVAh2TW+0rgCTMkAPqMmojBt?=
+ =?iso-8859-1?Q?TX2Oo7kgRe13vSbEdJ4BshP6Qmgm+raD0Y02YwdavK43umg6XNd4DdL7Tj?=
+ =?iso-8859-1?Q?GQyH17qJubiHn0kvaBNuyiFyP+2VautZNcs36SsPh+HE+zPLQqOOSAFzql?=
+ =?iso-8859-1?Q?9H20PaHko8CTFKfWs9p7rPH0owZbTk7V8xMG2ZBKqv8uKFJdhnYmQhX98s?=
+ =?iso-8859-1?Q?qttZBVH6vVt2/3mV3XMWfdavud6aTA+f1z7n/S2ttPSfEC30orDNercPV5?=
+ =?iso-8859-1?Q?k+5oz6PMJZjPuXAH+5tzwXDL0xaBHoaUTfh/7NgJD0FDDR/7i65Zj43MPD?=
+ =?iso-8859-1?Q?QTCIvWAiD0B+nG1mhCG+cSX5LNOLrN2MwSqdGkF61lXx/rago75iBH0rWW?=
+ =?iso-8859-1?Q?tsY3oLxa1HHqB8KltiagbiPqKylh1/swz+JUcTQiwfy+rwLegKYwexWK6M?=
+ =?iso-8859-1?Q?U7bVPmIfeZ9Jf1bKKZBVD1Nh9HhUtt9lt+Mt14GsLlQzMriqhsPJZ0ygbV?=
+ =?iso-8859-1?Q?IMMLdD3V8+EBgl/ZK3Zh0/4A5WbEI0KClbExl/mcZedeEyYA/8IVE/k9yx?=
+ =?iso-8859-1?Q?oP3tJKd/hht3SPskmo/FnQN+2qdT9uS6yK1cOc/KM0sBvEIgbrRXOChkEv?=
+ =?iso-8859-1?Q?SOLlnx4J8AZUwLhsFaw0AXOIxnwf83ZmbIuPptQie4MDfcEor/BsustARE?=
+ =?iso-8859-1?Q?T+T89c6MbLQvhsR4lBUdz80QUs+bi4AFvJxz/fKeTjMg2JCtfDbKO4YUF6?=
+ =?iso-8859-1?Q?Hr2hKrAmW5IkTyhpFzFlYGqhtjXnzQy0cjogyzuGyt9QQF07O9w+gj6s/l?=
+ =?iso-8859-1?Q?yrhpa1z4r+4wz+8O6SZ+MD6bi3ZTHDX0FvVnIImNWKYh06bQaAiZ7MulNe?=
+ =?iso-8859-1?Q?uCM9/7c0oVbqahI6m5mG4Y5ZTO3cZUnnaghI2mAyFsTPzB/c815rpxjU0y?=
+ =?iso-8859-1?Q?iqJ1WuuZv48bOTI+egeFtp1pLTjyx8V8DcKDy+UVu3FQHIpGx97sYqUzfW?=
+ =?iso-8859-1?Q?5auDKsVFLaVPnsEKF8ZIt2/JQsEjIZIHfx7xh18StlTSPhvcxSybJZg50e?=
+ =?iso-8859-1?Q?MDcIZwjQ+R+gFo30FjXsDsntynRl5VrU3pVewrk1ddwByTa/2v6P0oY/aY?=
+ =?iso-8859-1?Q?IPhy1ZZgew/+u23WBN7HkDVvmuLc1Y7U8ko28XinRhGlNNRtOjvm?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07a0b0b0-1599-4d5c-8608-08df28167993
+X-MS-Exchange-CrossTenant-Network-Message-Id: d638d370-d9c6-4a72-3710-08df2816b327
 X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2026 04:08:30.4707
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2026 04:10:07.1154
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XUFZjh8TxJCM6JRbXJZSR51Z33eFgcTyX4r74GAtp8PkTw/mgKPbuBGYT20bYv5hG+Zo97TFlLWD5vumAbAMYQ3FcaTQhTcu524c2KnhmQy+uL53brstX1JBTKWwbzqS
+X-MS-Exchange-CrossTenant-UserPrincipalName: CWOQ2mSvB75XWSXKLaIpMGtfULucLzoV2XpV50vuS+DMxpQnN4g+yIWVyU+1G3SSJuJXwsOJ/XEzUjmJiJDFtHudEaw78jvAg0pB0oBS6ZBlL7Uah7Ve/Wq7uBmSRK9R
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8707
 
-On Sun, Oct 11, 2026 at 12:04:24PM +0000, sashiko-bot@kernel.org wrote:
->Thank you for your contribution! Sashiko AI review found 2 potential issue(s) to consider:
->- [Medium] gpio: mxc: race condition exposes uninitialized irq_domain to consumers
->- [Low] gpio: mxc: missing dev_err_probe() on clk and irq_count error paths
+On Sun, Oct 11, 2026 at 12:05:47PM +0000, sashiko-bot@kernel.org wrote:
+>Thank you for your contribution! Sashiko AI review found 1 potential issue(s) to consider:
+>- [High] gpio: mxc: data race on mxc_gpio_ports list during concurrent probe/interrupt
 >--
 >
->commit 7b3e39d56ce16597ec573873f31010421e588a2f
+>commit f3eaabd7240ce61fd8c78877e57457bbc5ad25e0
 >Author: Peng Fan <peng.fan@nxp.com>
 >
->    gpio: mxc: add dev_err_probe() for error paths to help diagnostics
+>gpio: mxc: fix race between chained IRQ handler install and probe completion
 >
->This commit replaces bare returns with dev_err_probe() across the probe error
->paths for consistent diagnostics and deferred-probe support.
+>This commit defers chained IRQ handler registration in mxc_gpio_probe() to
+>avoid executing the handler before mxc_gpio_ports is updated and other
+>probe steps complete.
 >
->>     Replace bare return statements with dev_err_probe() across all probe
->>     error paths for consistent diagnostics and deferred-probe support.
+>> diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+>> index 7e2690d92df6f..e05f276a50e8d 100644
+>> --- a/drivers/gpio/gpio-mxc.c
+>> +++ b/drivers/gpio/gpio-mxc.c
 >
->[Severity: Low]
->Is this description accurate?
+>[ ... ]
 >
->Looking at mxc_gpio_probe(), bare returns for platform_irq_count() and
->devm_clk_get_optional_enabled() are still present:
+>> @@ -525,6 +523,8 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+>>  
+>>  	list_add_tail(&port->node, &mxc_gpio_ports);
+>>  
+>> +	mxc_update_irq_chained_handler(port, true);
+>> +
 >
->	irq_count = platform_irq_count(pdev);
->	if (irq_count < 0)
->		return irq_count;
->
->	...
->
->	port->clk = devm_clk_get_optional_enabled(dev, NULL);
->	if (IS_ERR(port->clk))
->		return PTR_ERR(port->clk);
+>[Severity: High]
+>Is there a remaining data race here during probe for shared interrupts?
 
-I missed to update error path (:
+As replied before [1], this is false alarm.
+
+[1] https://lore.kernel.org/all/asg749Hk%2Fhaiis%2Fi@shlinux89/
 
 Regards
 Peng
 
 >
->Unlike platform_get_irq() or devm_platform_ioremap_resource(), neither of
->these functions logs errors or handles probe deferrals internally via
->dev_err_probe().
+>On i.MX21 compatible SoCs, all GPIO ports share the same parent IRQ. When the
+>first GPIO port finishes probing, the chained IRQ handler becomes active. 
 >
->If they fail or defer, the failure might propagate silently without being
->recorded in the deferred-probe debugfs list.
+>When the second GPIO port probes, it modifies the global list:
 >
->Does the commit message need to be updated, or should dev_err_probe() be
->added to these error paths?
->
->> diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
->> index 09acb186c84c1..2847304640f17 100644
->> --- a/drivers/gpio/gpio-mxc.c
->> +++ b/drivers/gpio/gpio-mxc.c
->[ ... ]
->> @@ -536,11 +536,11 @@ static int mxc_gpio_probe(struct platform_device *pdev)
->>  
->>  	err = devm_gpiochip_add_data(dev, &port->gen_gc.gc, port);
->>  	if (err)
->> -		return err;
->> +		return dev_err_probe(dev, err, "Failed to add gpiochip data\n");
->
->[Severity: Medium]
->Could this expose an uninitialized irq_domain to consumers?
->
->devm_gpiochip_add_data() exposes the GPIO chip to the system. If a consumer
->immediately attempts to translate a GPIO to an IRQ via gpiod_to_irq(),
->mxc_gpio_to_irq() is invoked.
->
->This creates a narrow window where mxc_gpio_to_irq() can be called before
->devm_irq_domain_instantiate() initializes port->domain.
->
->If this happens, mxc_gpio_to_irq() will pass a NULL domain to
->irq_find_mapping():
->
->drivers/gpio/gpio-mxc.c:mxc_gpio_to_irq() {
->	...
->	return irq_find_mapping(port->domain, offset);
+>mxc_gpio_probe() {
+>    ...
+>    list_add_tail(&port->node, &mxc_gpio_ports);
+>    ...
 >}
 >
->This can result in the consumer getting an incorrect IRQ mapping or a
->permanent -ENXIO failure from gpiod_to_irq(), leading to a permanent
->probe failure instead of -EPROBE_DEFER.
+>If a shared interrupt fires concurrently (either preempting the probe or
+>running in parallel), mx2_gpio_irq_handler() traverses this list in hardirq
+>context:
 >
->Could we instantiate the irq_domain before adding the GPIO chip?
+>mx2_gpio_irq_handler() {
+>    ...
+>    list_for_each_entry(port, &mxc_gpio_ports, node) {
+>        ...
+>    }
+>}
 >
->>  
->>  	irq_base = devm_irq_alloc_descs(dev, -1, 0, 32, numa_node_id());
->>  	if (irq_base < 0)
->> -		return irq_base;
->> +		return dev_err_probe(dev, irq_base, "Failed to alloc irq desc\n");
+>Since the traversal is done without any synchronization or RCU reader
+>protection, and list_add_tail() is called without locks or RCU primitives,
+>could the interrupt handler observe partially updated list pointers and
+>trigger a kernel panic?
+>
+>>  	platform_set_drvdata(pdev, port);
+>>  	pm_runtime_put_autosuspend(&pdev->dev);
+>>
 >
 >-- 
->Sashiko AI review · https://sashiko.dev/#/patchset/20261011-gpio-mxc-cleanup-v6-0-cb47ce2ad758@nxp.com?part=11
+>Sashiko AI review · https://sashiko.dev/#/patchset/20261011-gpio-mxc-cleanup-v6-0-cb47ce2ad758@nxp.com?part=1
+>
 >
