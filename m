@@ -1,160 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28E647C0ED;
-	Mon, 12 Oct 2026 10:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791800956; cv=none; b=FkoqBoLjTX2WfN6WE3LthlP1LjRoaPW4AZ0/f6be9uFiaYkr8c9PWiivLECiCgXWdfiIL5q/G69ANysPY6qGdAN4zJdTVaQb4M4GAQ76kggZVC/2mDzsVKkRHcmh1T6/cu4o3D6ixD9id2uNGroRiFTsBCEddUJ7LKNqJB506aU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791800956; c=relaxed/simple;
-	bh=FxX/DV3Hd+gdPs+NLTFar8Ial//uJec9/23QuYexUgk=;
-	h=Message-ID:From:Subject:To:Cc:In-Reply-To:References:Content-Type:
-	 Date; b=YgMiLez4VNQjFtQ+eUVLz/0+0UKEpaeI8/AD0BEUNsQnFUt1JYkhz0VmGiqLmQOQcWwq7aMevbIj8EPtiRCi1QVZvJcn763lfAQ6vuFG251Bf06aFZbY2ymlAA+ZTrHIfyT3cHQ8N6sWOnbloljJtOko8Wak9vLC2z5jfTfsL2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZPAzy3T; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B5841D624
+	for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 10:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791801050; cv=pass; b=nn7Cv1zVw3KB3Dk4uDdn8E1/2tQV8+lFayXoXwFWtbeIbd1UwfCC3IEpmDxpjxAQ2rM+1lrL1+gvVrBu8sKXBvXSWYoWkIkPbd+4wX4djUrcjOZioBQySz1bZiwhxh/dYxSAaNGqhJ7UC8rLilH0BDQqki/yEcYuR7pX2SoguUA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791801050; c=relaxed/simple;
+	bh=IB3vRWAv26Z0PCb3g+aKE9Rqo053txGYE69qpbQkWQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K2L7IX3EDpQtwAnqfBbErZeLF6J4E0XjF9QY9R2ShvDPMwuGtnkgn7YD1DQ8vMNfpKy0LxLCoj73pINLX8S0xn9+kfT2f1GUIkBc4texmXvh1CtqhSy7ZuFZZtfkOiROj2zOCWMhdCbxQwdilwwMYTYA/NBSlz207tb6vOOlBGU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JxDrdibd; arc=pass smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZPAzy3T"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27CD81F0089B;
-	Mon, 12 Oct 2026 10:29:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791800948;
-	bh=e6cS3WZpM3m966MAnnV/raCQy4PoeQp0AU6aTChnu3o=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=nZPAzy3TiZbmiQGPxGiKU1nSBPiirrXRAfpeXlBqz+YyM8ZUhIhhZ0HZFJT0wVrJm
-	 9erxLnHqhxmn1grTwysMSaVKvieIXng7hRNMQFWefgq7FlIu0oFo3XhU1kBlGimj5A
-	 0Gzb4y3Xp/h23zBPUSK2xz58T/DbYgbW1Ee/PyzdIWHXml5iJR/0yBB5bTQj5IfPsG
-	 dMDUFYIK9LFg7KXQqNTW0gpo+ig2ciLGzNLOCKzkPozwHz+5QtcnPwXIRTp2qf4GiH
-	 B6MkX29nuiwhxW2JFllVDoZRp2Cl0c/9hssBkUAU1TnWZNGLmkqoWqS14t/+CtnCG7
-	 NP822aCG5uUlQ==
-Message-ID: <sashiko-outbox-167955@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v4 04/11] pinctrl: sunxi: add Allwinner B288 pin
- controller driver
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Pablo Mazzini" <pmazzini@gmail.com>
-Cc: linux-sunxi@lists.linux.dev, linux-gpio@vger.kernel.org
-In-Reply-To: <20261012100816.331033-5-pmazzini@gmail.com>
-References: <20261012100816.331033-1-pmazzini@gmail.com>
- <20261012100816.331033-5-pmazzini@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 12 Oct 2026 10:29:07 +0000
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxDrdibd"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-c2e36c3478aso220089866b.0
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 03:30:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791801041; cv=none;
+        d=google.com; s=arc-20260327;
+        b=U45DRBe2keqQKr9vFbFRXiVYcIU38YimUCaGKf3tifJOaVT0ZqIqPhP03uLZCGW9NH
+         YsOSGvPc3otjWUs5qenZGJNlYocz4QMrUW6Pe7uTfVFQlMfYoWQUick//A3RlhluRbjd
+         jmYk+lsbAuku7vxDNmDA+1HmBiuinR6ztiBrMN3UAxdbaa7Sr2YT/bpUA8S3j/Rh6EVa
+         U7Xv57REqW2Q86aINvBISsyi8F886msmp/OtW9EwLBGROHOZ7hQin+U7AqdlVc31Kxsr
+         jGTfHXbzYpd1GIKP3WhL+LnxMQv2tV2cdVUTAe5VHlOYkjWhufUHOR0Va7HZLAvotAhV
+         F4Cg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=IB3vRWAv26Z0PCb3g+aKE9Rqo053txGYE69qpbQkWQc=;
+        fh=MRJBOegP4JXtGqOx9oz7/D1jlZP9Z2kp6pydV73EgeU=;
+        b=V1gjwnQ9Os4knc3ad0XzjHgFXFDaKeAh41DiZr5PYaPGiPZPLHRvPEsCW1UuD/bkSG
+         tv79mycIsMh191Qm72xFUeWZQ3a070TtmfLqhdYlCvgd8cKCKF5sl0leqV8jHOWerAh/
+         cCmZ7q1VQbD39OTtiUXyUqyvUmPuGaavD+DFt8GEhKNmg34aknSkhGkEqpn9EoaI6CaJ
+         4MbVzPJ8ik8zxuZ8HTsx2BLSayn5X76rQuQrt5nftfJv6U6n8CoADLZq4mhWL5lw4mdl
+         lIoE/7/VWx5X/6m/1PYL4TzULqu3UGgU73/85TSF9+7QLsuCJbfoO9Dt8N9VTLGSZYOx
+         MFGw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1791801041; x=1792405841; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=IB3vRWAv26Z0PCb3g+aKE9Rqo053txGYE69qpbQkWQc=;
+        b=JxDrdibdlfh4aeRXmzmgxuwDKumTFnNV5hbsVLB0Dk8K2AsIt5PppPNoOjJyM07sk/
+         pQMUikMfpfLU8Ch9VVa+3w2yC5hwQNVFfsLxuOoMqVuMP4rdrbvDXfncHtTNYl8nrBxb
+         4o/WGIpWXM3gR5iMBmEp9VjAfS8vv37e2ZsRMUJplSKfWiCIS3EEaewmcLa0ppZ1ylCZ
+         KKonEDcDKbRx4P6SdzQMeJctNngJj3lgyE4UcaNrMyNDUGzEqy0cmFcAyBKz62RWbTCK
+         N6ULrcbz7VIiOBlmE0DfhroWZz74/Pt8I0kwyzy7kTyhkweUaB118SLVzJo1iv2HeTSf
+         hEPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791801041; x=1792405841;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=IB3vRWAv26Z0PCb3g+aKE9Rqo053txGYE69qpbQkWQc=;
+        b=M/mAjuvq3g0c3jUUWLkZ+XPJCc24LRWISYcM8u67Hj2GnuuBCaUbEza4L5jmLfOoM2
+         /ACBKZ1s/XzcRxAGQD9IhV3Y+xZvxa4UjSI5anePs+2bE4f4h4ts3qthN+e3Y22DnyE5
+         H3nXx1Mm9YXN/Ufn2FBY5ibBe2gkPzkdDOBGwVz3j+ZrrOlv4R3E+WPAVkwLSsZmINbx
+         rWj7wGMNx64wOMWzQgwDqvLYJh0vxLByQjRlTA6GW2mjZihC2JpSgv2cBOU01rcGrNXc
+         exQyZ1QSm1STHL6vUiEyv9gNQ1noleSWs+Va3BQ21TFZMa0oy3HV4rgC7qWzo+EluzPb
+         xWCw==
+X-Forwarded-Encrypted: i=1; AKwUvByYnCGorymwpUQ8RE/Pv++8zMMAYsNLdsBPPYVv2Q9z4c0RhpB6vwDAZoUiqS1AEw+hl2fvHB6ua7Dp@vger.kernel.org
+X-Gm-Message-State: AFq9FYL0DpRIDXRy7EtKYZ4A/JtHKT4AWh+/BQKpii/QpzEZ/y/V3Iar
+	MUq4g7pUmcIbIP+n8wEc4BdjHoj6RDaSFRDthDLZMOUeABkIVU8cKKpr1fxQOnfZUsdaXxNNiwH
+	20z19/HEgXgeEHoXNlfZR9mOU6lZNyPETZJpV
+X-Gm-Gg: AYBFou0Q0TFnwK02pSkflxw+iz+5kIYAlRSnzy4qNXYaVrOmlEn93qnj/kLwgKslBEZ
+	tAWN3BB7uCsKX+KjaAD+Ho5a6aXVNc2EDXLpKAVdWw5v3ZHuu8HS9HliG8FO+Aio/qH1QPSWfcj
+	v6zg5RoNVLStMGOCwEsb2d8xP8ojCuCTC5dlyhECOF+fASQbUYP1g3Lu/5LSFuYyTNVZV/5Ecdf
+	Ep9bAU1x/z6JdsBrWhZwb3wibAWLknzDLozT8PjucsopvzTX7DnlUKcPW5PMCh9r8+/UphZb/IM
+	b/TACdcWY62pYhrYCHqtCt6SYwRl3HSak6tIFt/QO6JcTioMX/7/zqlBpE9mvrp6S1ViGeCnts7
+	jzdKlOR4Cn+Czh9xRhCdEhjdl0VKxx+N3F+8gh0Wl8wUD2f513SMSuWBybe7KVSfLfo7d1nx8dP
+	DA8zbqfpPlWGbyQqfJM3lQVgXyAErTK2TUAsFXMTZg
+X-Received: by 2002:a17:907:3d4f:b0:c26:19e3:e979 with SMTP id
+ a640c23a62f3a-c31aa02999amr829174566b.25.1791801040894; Mon, 12 Oct 2026
+ 03:30:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20261011-gpio-mxc-cleanup-v6-0-cb47ce2ad758@nxp.com>
+ <20261011-gpio-mxc-cleanup-v6-3-cb47ce2ad758@nxp.com> <CAHp75VfCrQAnVYV-7wiga-R8A4VKgjfV+EHo_7jy=FNmU=Ov6Q@mail.gmail.com>
+ <asytkrYip+v2vl/i@shlinux89>
+In-Reply-To: <asytkrYip+v2vl/i@shlinux89>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 12 Oct 2026 13:30:04 +0300
+X-Gm-Features: AclHuK89C5O-S_Ib4WjyrexO79x7Ht_pFlIF6GUEOqfiEQUn-PMquRFiuZzNiXE
+Message-ID: <CAHp75VfqdVAYCTi2j0sB=rxBYaJ709-Wq7-aprfZZiBxbu=U_A@mail.gmail.com>
+Subject: Re: [PATCH v6 03/13] gpio: mxc: fix wakeup_pads bit operations
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, linux-gpio@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for your contribution! Sashiko AI review found 3 potential issue(=
-s) to consider:
-- [High] pinctrl: sunxi: out-of-bounds write in irq_array when Bank 0 has 0=
- pins
-- [High] pinctrl: sunxi: Missing irq_bank_map breaks B288 IRQ offsets and d=
-omain size
-- [High] pinctrl: sunxi: probe deferral crash due to npins accumulation
---
+On Mon, Oct 12, 2026 at 12:46=E2=80=AFPM Peng Fan <peng.fan@oss.nxp.com> wr=
+ote:
+> On Mon, Oct 12, 2026 at 12:15:28PM +0300, Andy Shevchenko wrote:
+> >On Sun, Oct 11, 2026 at 2:54=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp=
+.com> wrote:
+> >>
+> >> gpio_set_wake_irq() can be called concurrently for different pins on
+> >> the same port, so use atomic bitops when modifying wakeup_pads.
+> >
+> >The code doesn't modify any reader part of this member. So, the above
+> >paragraph is incorrect, right? Otherwise it needs to be clarified how
+> >assign_bit() does change anything.
+>
+> I will replace with below:
+>
+> gpio_set_wake_irq() can be called concurrently for different pins on
+> the same port. The IRQ core serializes per irq descriptor, but
+> different pins have different descriptors, so concurrent calls for
+> pins on the same port run without mutual exclusion. The plain |=3D and
+> &=3D on wakeup_pads are non-atomic read-modify-write operations that
+> can lose updates when two CPUs modify different bits simultaneously.
+> Replace them with assign_bit() to make the modifications atomic.
 
-commit 6057aa70ee139132fe0176fd6bf4d482c87bdc64
-Author: Pablo Mazzini <pmazzini@gmail.com>
+Right, but the code does change only the writer side. There is no
+reader side that was changed. So this patch does *not* add any
+atomicity. You also need to check if the reader side already uses
+test_bit() or something like that. Otherwise it makes no sense.
 
-pinctrl: sunxi: add Allwinner B288 pin controller driver
+> >> wakeup_pads is a u32, while assign_bit() operates on unsigned long
+> >> pointers. On 64-bit platforms, this causes an 8-byte read-modify-write
+> >> on a 4-byte field, corrupting the adjacent is_pad_wakeup. So change
+> >> wakeup_pads to unsigned long and reorder to avoid wasting words.
+> >>
+> >> And fix the enable/disable path unconditionally sets/clears the
+> >> wakeup_pads bit even when enable_irq_wake()/disable_irq_wake() fails.
+> >> Only update the bit on success.
 
-This commit adds a new pin controller driver for the Allwinner B288 SoC,
-supporting 80 pins across ports B, C, D, F, and G. It uses DT-provided
-mux values and specifies 4 banks of external interrupts.
 
-> diff --git a/drivers/pinctrl/sunxi/pinctrl-sun8i-b288.c b/drivers/pinctrl=
-/sunxi/pinctrl-sun8i-b288.c
-> new file mode 100644
-> index 0000000000000..f973c2b3f2eba
-> --- /dev/null
-> +++ b/drivers/pinctrl/sunxi/pinctrl-sun8i-b288.c
-> @@ -0,0 +1,49 @@
-[ ... ]
-> +/* PH0 exists only on the BSP's FPGA platform and is omitted. */
-> +static const u8 b288_nr_bank_pins[SUNXI_PINCTRL_MAX_BANKS] =3D
-> +/*	  PA  PB  PC  PD  PE  PF  PG */
-> +	{  0, 17, 15, 29,  0,  7, 12 };
-
-[Severity: High]
-Since Bank 0 (PA) has 0 pins, does this cause an out-of-bounds write in
-the core sunxi pinctrl driver?
-
-In drivers/pinctrl/sunxi/pinctrl-sunxi-dt.c:prepare_function_table(),
-last_bank and irq_bank are initialized to 0. When processing PB (bank 1),
-the condition (bank > last_bank) evaluates to true (1 > 0), causing irq_bank
-to erroneously increment to 1.
-
-This shifts the logical IRQ bank indices for PB, PD, PF, and PG to
-1, 2, 3, and 4 instead of 0, 1, 2, and 3.
-
-Later, sunxi_pinctrl_build_state() configures the interrupts:
-
-    int irqnum =3D func->irqnum + func->irqbank * IRQ_PER_BANK;
-    pctl->irq_array[irqnum] =3D pin->pin.number;
-
-For PG (irqbank 4), irqnum will be between 128 and 139. However, irq_array
-is allocated for exactly 4 banks (128 elements) in
-sunxi_pinctrl_init_with_flags(), which would result in an out-of-bounds
-write past the end of the array.
-
-> +
-> +static const u8 b288_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =3D
-> +/*	  PA  PB  PC  PD  PE  PF  PG */
-> +	{  0,  6,  0,  6,  0,  6,  6 };
-> +
-> +static struct sunxi_pinctrl_desc b288_pinctrl_data =3D {
-> +	.irq_banks	=3D 4,
-> +};
-
-[Severity: High]
-Does omitting the irq_bank_map array break external interrupts?
-
-Without an irq_bank_map, drivers/pinctrl/sunxi/pinctrl-sunxi.h:
-sunxi_irq_hw_bank_num() returns the sequential logical irqbank indices.
-
-Because the irq_bank offset is already shifted to 1, 2, 3, and 4, these
-logical indices will be used as physical hardware bank offsets.
-
-This incorrectly maps PD, PF, and PG to hardware banks 2, 3, and 4 instead
-of their actual hardware indices 3, 5, and 6.
-
-Additionally, because PG receives irqbank 4, its out_hwirq is calculated
-as 4 * 32 + irqnum (>=3D 128), which exceeds the bounds of the 128-entry
-IRQ domain created during probe.
-
-> +
-> +static int b288_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	return sunxi_pinctrl_dt_table_init(pdev, b288_nr_bank_pins,
-> +					   b288_irq_bank_muxes,
-> +					   &b288_pinctrl_data, 0);
-> +}
-
-[Severity: High]
-Could this lead to a kernel panic during a probe deferral?
-
-The driver passes the static b288_pinctrl_data descriptor to
-sunxi_pinctrl_dt_table_init(), which calls init_pins_table() and
-accumulates the total pin count:
-
-    desc->npins +=3D pins_per_bank[i];
-
-If the driver probe defers, desc->npins will double on the next attempt
-(from 80 to 160) because the static descriptor is reused.
-
-The pins array is then allocated for 160 elements, but only the first 80
-will have their .pin.name populated.
-
-During DT parsing in fill_pin_function(), if an unrecognized pin name is
-encountered, the search loops over the oversized array and evaluates:
-
-    if (!strcmp(pins[pin].pin.name, name))
-        break;
-
-Iterating past index 79 would call strcmp() with a NULL pointer for
-.pin.name, causing a panic.
 
 --=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261012100816.3310=
-33-1-pmazzini@gmail.com?part=3D4
+With Best Regards,
+Andy Shevchenko
