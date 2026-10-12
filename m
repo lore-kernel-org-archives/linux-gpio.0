@@ -1,57 +1,57 @@
 Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CA051AFEF
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B4252B1E2
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791913804; cv=none; b=jHHPYe89uA59JXox6WPMKUd1FMXH6OesEX1YvXWeXEjz56rvSFm+wqYHxT2BLz2arLRXwK357as84lbXciESdjBbMRHaWDbj3osCACq1fQlFKZ3RW/HtjlGJ0OdbnqTY5EVsuoet5EMpDt7oPl1zrtg/AtNZAn8Cw0Sj8P+yt9g=
+	t=1791913857; cv=none; b=QTzn2tja8ZZU+CVaIZkOGQLwqzVYukcTk9jpLLgvMOhC+orK91ZLR1niF6HU2yVvUoX+GEeyZvjeRkoRZFPy9IU2PxJu9lkYGj33rbtLbliFVI9ZyI/TC1IOKIceZIDddNCACklaFNKeRoZ6SpT4Z417LGpy/s+bLWi95x9Wrmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791913804; c=relaxed/simple;
-	bh=LeDPnBgrM7pNQ8OlNZHsJRQR3r2PXLGLegBZ2Qsqzf8=;
+	s=arc-20240116; t=1791913857; c=relaxed/simple;
+	bh=yZqxjQ8fdgALToubPfisyGu29t7CZxxWw5oRM34RS1M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BUemhkkPypLmXIhv5X4iPIzOcpyMBI7dTxx4/NXtqCzzWca7uzBcDh3x0yPycw6aWCfghKoGul28pW/GNl2d68/hxSgSW+uCdXK+JlxH5TTsKogMG1TXGe7Jy0cqtiOo9iAFQESEAsAuYiw45lfENyQdY3+ncN7N/Qt5rHUm/Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=X+HI3QMJ; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FjGgQOgH; arc=none smtp.client-ip=185.171.202.116
+	 MIME-Version; b=a/kFTqGzcg/Q8nr0ykMS8MAhGNR4HyUlI3OJmu8XIpx9un7dTLAtPMVgsZ2qd0CbBaIuV7CGkD4GE7NMcTCDRqDHXmd+u4bS2vxvQzqojnV25cfLZ9fK6iZhciZYiutKxgYLgW2gVViiMg5A4qbdRbb2m9Psl1wvaEJJVp59UVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NUz0yOrV; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pwprrRku; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="X+HI3QMJ";
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FjGgQOgH"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NUz0yOrV";
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pwprrRku"
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 1E2F1C653F9
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:50:56 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 52708C653F9
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:51:50 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7AE296075C
-	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:50:00 +0000 (UTC)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id B21ED60362
+	for <linux-gpio@vger.kernel.org>; Tue, 13 Oct 2026 17:50:54 +0000 (UTC)
 Received: by mail.galae.net (Postcow, from userid 0)
-	id C659211D7188E; Tue, 13 Oct 2026 19:48:34 +0200 (CEST)
+	id 3BBFD11D7188E; Tue, 13 Oct 2026 19:48:57 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1791913800; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1791913854; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=kAb7NHjVc8QoTRTxUb1OG7thf2F5YhXlem84GhsJqnE=;
-	b=X+HI3QMJ73nhSHr5I0Pwp9VxSeqmN8no/A8oxhooEndDQv3XU4SEu2Ni9dZ9vqjFszql9u
-	iuUZ/PljjKL8smwWyqmmSY4EhHjhIksVGTWBxSwj9KNfffLJo6b/ABu2z9uAOGNJfNbk3q
-	4tYIsbidGu+eCqBGmChlV9G55HfXL2Dptq84dptzBDwkmL6mws6YGNQKGLbx0jj/ebyU9m
-	p495UU3RrO2Njocd+P0xnCCsx1LIaFeWa0C096OQ8yTfp1GID58vkDVxJ5J1R74pyK0N8R
-	UCI5UwELbKxRXXgt77APEMliC3tL65m+3B98UwxjtyuFH/Kxk3/jcE4iJ49OLQ==
+	bh=MZWIL+2PnnIxORtPMeMG5BPHqe/9YA3Fv4kBuRYMrA0=;
+	b=NUz0yOrV0DOvkevvSbILY9jHmtDJ8ZLIrVMq6CYhp2FIetVYDWenJsGdEM+lRum5XMZMYE
+	QcLvaWD9rH+ToOkvzR3a6oJseEq4eaPOuzitCqyipBGvmMJoY22VcH+CE0Xs4MbJIABGkz
+	aIU0QWWpzx+NSqr9l2Q1iHzykuchRjVUOK/h5an33peOSvrNS2LavK6SxbhNOqI9WstBxC
+	nRbkKqG2j5RubN+AnBHR7zayfT1a8Ky9oBmM1+o7rIDf6y7znACrkKMfkK8Tg/k+zQcW1m
+	JawfkRDGrpWG5wkTVWZnQrIxPUHtuKVi2p7ZSyIR5ImEFKRA4a0jL2EopMQg1Q==
 Authentication-Results: mail.galae.net;
 	none
 Received: from mail.galae.net ([172.22.1.253])
 	by 9e7fea892943 with LMTP
-	id SKPIALTuzGoYHxEAtaWaaQ
+	id 2EmzL93uzGof6hAAtaWaaQ
 	(envelope-from <herve.codina@bootlin.com>)
-	for <herve.codina@bootlin.com>; Mon, 12 Oct 2026 16:29:08 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F37FF11D708B4;
-	Mon, 12 Oct 2026 16:28:50 +0200 (CEST)
+	for <herve.codina@bootlin.com>; Mon, 12 Oct 2026 16:29:49 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 114E711D70C1C;
+	Mon, 12 Oct 2026 16:29:39 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1791815339; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1791815386; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=kAb7NHjVc8QoTRTxUb1OG7thf2F5YhXlem84GhsJqnE=;
-	b=FjGgQOgHcTUDDGnIbSuozwmNqeMTRdBQVZaPNnUfhfNiHolctNHx1hOE21Ll6aYc6zsp1v
-	tYfEnkKxdGOOtY680hMNAcNEJaM9GkRVagicVm8ou5DFrd5VuLmwgGbbtWaPBFa0nRcAW7
-	iuGKxtDnIWPKwfwaYZObdeJ9zckNqniI+KLN1vyuvrXhXy0sCRuVe0N2R2v06p+hCVJxzJ
-	Oxu6iH3orqfi6ElTPOegR+Wj2TpZlYb7tN7T2IqKprgAnyueowX5lDSHa/Zsq+QxXiQiAc
-	GNRjXOfG2P+7tWArtGJk8xGwxsp+opS6e8tVRR7Xqp4HXMpqP3lAkPgm74kLIg==
+	bh=MZWIL+2PnnIxORtPMeMG5BPHqe/9YA3Fv4kBuRYMrA0=;
+	b=pwprrRkuGlRzuirZZmLKVWh6e4LgDTANTovoi47CK9o+GtjaJVdqrN1cwm/P+QpQDpC08l
+	A7oowcQ4AcjWj5Z/FzllTUs3z1Ks9tIAYh4E0K1p31kcQMftZwGUSKArnIKjGP1+fapX4Y
+	0XYU3X8A047vaMIq2PBm+Zxe1v2kHzdWDMOjqh+0cSeQdHJpbHJZFNMfFwilumIhvTAyrK
+	17Jhb6ihxBQlUhAUyZ5aPuXCI6e3Gam4BR3LYbLNrlACPUX0NHmgfgbZxNvr4OdZBxIaEF
+	fcn1jefa21I5RIeJ2lCBnN5NKZVg6XpLpVr5sAi5ucygvrhuihBvoiwTdfUoAg==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Richard Cheng <icheng@nvidia.com>,
 	Andrew Lunn <andrew@lunn.ch>,
@@ -96,11 +96,11 @@ Cc: driver-core@lists.linux.dev,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 	stable@vger.kernel.org,
-	Ulf Hansson <ulf.hansson@linaro.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
 	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-Subject: [PATCH v13 01/10] driver core: fw_devlink: Introduce fw_devlink_set_device()
-Date: Mon, 12 Oct 2026 16:28:15 +0200
-Message-ID: <20261012142826.159178-2-herve.codina@bootlin.com>
+Subject: [PATCH v13 07/10] PCI: of: Clear fwnode->dev during root bridge node removal and error path
+Date: Mon, 12 Oct 2026 16:28:21 +0200
+Message-ID: <20261012142826.159178-8-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261012142826.159178-1-herve.codina@bootlin.com>
 References: <20261012142826.159178-1-herve.codina@bootlin.com>
@@ -113,15 +113,15 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 X-Last-TLS-Session-Version: None
-X-Rspamd-Queue-Id: C659211D7188E
-X-Spamd-Result: default: False [1.77 / 30.00];
+X-Rspamd-Queue-Id: 3BBFD11D7188E
+X-Spamd-Result: default: False [0.32 / 30.00];
+	BAYES_HAM(-2.18)[89.08%];
 	DATE_IN_PAST(1.00)[27];
 	MID_CONTAINS_FROM(1.00)[];
-	BAYES_HAM(-0.73)[77.64%];
 	R_MISSING_CHARSET(0.50)[];
 	MIME_GOOD(-0.10)[text/plain];
 	RCVD_NO_TLS_LAST(0.10)[];
-	URIBL_BLOCKED(0.00)[linaro.org:email,qualcomm.com:email,cirrus.com:email,bootlin.com:mid,bootlin.com:email,intel.com:email,localhost:rdns,localhost:helo,nvidia.com:email];
+	URIBL_BLOCKED(0.00)[bootlin.com:mid,bootlin.com:email,nvidia.com:email,localhost:rdns,localhost:helo,qualcomm.com:email];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
 	BCC(0.00)[];
 	NEURAL_HAM(-0.00)[-1.000];
@@ -140,43 +140,76 @@ X-Spamd-Result: default: False [1.77 / 30.00];
 	RECEIVED_HELO_LOCALHOST(0.00)[];
 	MAILCOW_DOMAIN_HEADER_FROM(0.00)[bootlin.com]
 
-Setting fwnode->dev is specific to fw_devlink.
+During the of_pci_make_host_bridge_node() call, an OF node is created
+dynamically and its fwnode device (fwnode->dev) is set to the PCI root
+bridge device using the fw_devlink_set_device(&np->fwnode, &bridge->dev)
+call.
 
-In order to avoid having a direct 'fwnode->dev = dev;' in several
-place in the kernel, introduce fw_devlink_set_device() helper to perform
-this operation.
+On removal, of_pci_remove_host_bridge_node() is called and calls
+device_remove_of_node() which in turn set to NULL the related
+dev->fwnode.
 
-Having this helper allows to hide the fwnode devlink related stuff
-behind the helper.
+Later in the removal sequence, device_del() is called and runs its
+cleanup logic:
 
+    if (dev->fwnode && dev->fwnode->dev == dev)
+        fw_devlink_set_device(dev->fwnode, NULL);
+
+Because dev->fwnode has been cleared earlier, fw_devlink_set_device()
+is not called and leaves fwnode->dev unchanged. This fwnode device
+(fwnode->dev) becomes an dangling pointer.
+
+If any reference to the OF node is held after this removal, the pointer
+is still accessible using the OF node (np->fwnode.dev) but points to a
+freed area.
+
+The exact same issue is present in the of_pci_make_host_bridge_node()
+error path leading to the exact same dangling fwnode->dev.
+
+Avoid this dangling fwnode->dev pointer by clearing it in
+of_pci_remove_host_bridge_node() and in of_pci_make_host_bridge_node()
+error path.
+
+Fixes: 1f340724419e ("PCI: of: Create device tree PCI host bridge node")
 Cc: stable@vger.kernel.org
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Reviewed-by: Richard Cheng <icheng@nvidia.com>
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
 ---
-Cc stable because used by other patches with Fixes + Cc stable
----
- include/linux/fwnode.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/pci/of.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/fwnode.h b/include/linux/fwnode.h
-index a9dcaf7e7076..3ce49575cf82 100644
---- a/include/linux/fwnode.h
-+++ b/include/linux/fwnode.h
-@@ -260,4 +260,10 @@ void fw_devlink_purge_absent_suppliers(struct fwnode_handle *fwnode);
- void fw_devlink_refresh_fwnode(struct fwnode_handle *fwnode);
- bool fw_devlink_is_strict(void);
+diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+index 0f45c5b72458..29b63a9090ae 100644
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -822,6 +822,7 @@ void of_pci_remove_host_bridge_node(struct pci_host_bridge *bridge)
+ 	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
+ 		return;
  
-+static inline void fw_devlink_set_device(struct fwnode_handle *fwnode,
-+					 struct device *dev)
-+{
-+	fwnode->dev = dev;
-+}
-+
- #endif
++	fw_devlink_set_device(&np->fwnode, NULL);
+ 	device_remove_of_node(&bridge->bus->dev);
+ 	device_remove_of_node(&bridge->dev);
+ 	of_changeset_revert(np->data);
+@@ -887,7 +888,7 @@ void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
+ 
+ 	ret = of_changeset_apply(cset);
+ 	if (ret)
+-		goto out_free_node;
++		goto out_clear_devlink_dev;
+ 
+ 	np->data = cset;
+ 
+@@ -909,6 +910,8 @@ void of_pci_make_host_bridge_node(struct pci_host_bridge *bridge)
+ out_revert_cset:
+ 	np->data = NULL;
+ 	of_changeset_revert(cset);
++out_clear_devlink_dev:
++	fw_devlink_set_device(&np->fwnode, NULL);
+ out_free_node:
+ 	of_node_put(np);
+ out_destroy_cset:
 -- 
 2.55.0
 
