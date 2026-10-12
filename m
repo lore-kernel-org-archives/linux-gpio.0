@@ -1,132 +1,130 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689BA42F709
-	for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 20:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD53C3D955C;
+	Mon, 12 Oct 2026 20:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791837185; cv=none; b=WSj5t4PRp8mumDyXStCBkjLYN9xdQA3yDLbMMPnbnc0wHdjix7MQa5vaBT+N+ljXeo3EL9tzu81JZxtFBzFy29osHVappPHyq7K6/Cba+1OV2tAtvOXdV2bJMzOgqlKPGTeGaXJOrLB1nLmtEO3JrLqbmv4qIZKDGGfYiLduzRg=
+	t=1791837762; cv=none; b=JLiKhw9amT/K5bHXdI0GgFlPQ16Jt7IC+PVIYgn9stWnz3Qb+kc1HdDLIOzgtIxVEQgq6v6x3yj93TCxOlOv9lnTZQGcrGFg8KgRk25uIrBbPVdNLNql06ocRbUfAw0Xs63949Wc0D9iICMoZXVbgcmtanznxi9wG0ZpCmqdQes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791837185; c=relaxed/simple;
-	bh=3dDzxAe3v4K6bmvY5Sku2I2OCIIKOOmdO2oWSS/8r5Q=;
+	s=arc-20240116; t=1791837762; c=relaxed/simple;
+	bh=T151PnLM20JA9oilHiiu6VZTXffmfYSckEjUlAEVRuE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tnFk8JHKcf0RUzCuE3Q/L5bOGuOZ4F2uKhuLFqrgiTLxY94uKoudvNDf/nVBmobjF8y3qn6CWwPjMvTiRGJKYHGRBBqdRjiVpoWn8vJ654ysRQZgH4IjYhA9pielz1n6bR1r/zX4E1ahsuzyf4DyKvuP3nxDl6JLzC1HoVg1H5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=C2J23s9U; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aa/Al+6OFL36GIN1/k00GbpcfsIVm4+avDr6OCqwVvo7KT/zrCWmLWSuS1RDJ4Axb0zk1I9oOeRm4tdRPHicGekI+aZdbM+Aa7v+5DQSWTiYCL73cPr8vOOdiodgnfBnqH+EW58wtlnx/yJ34PcPUfcI3skrfdZq2dXYDXDyGdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=as2dsfy3; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="C2J23s9U"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-48b042c0728so478756f8f.1
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 13:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1791837182; x=1792441982; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=3dDzxAe3v4K6bmvY5Sku2I2OCIIKOOmdO2oWSS/8r5Q=;
-        b=C2J23s9UubyCJcxmDzteye4q+6hArWUjeY0by9D4HK7rJ4tJ/yjt80Sn3eH2Y8Mugf
-         C+0VLmpl8CluoBNrRVGZgQ+9RyJ2KUX+4CzGVPjYQ64se1W7VwXcF/mA9f1TwZFIllat
-         uk2BrLSFFGedsU9cHS4U77FDx1AkQ4r1HA+wXXjWVWUHNb+kFiGaz3gsQiVCpELiipin
-         GbETdX2vsCCOn4yAfFBvh6A3V8yfWpasbWNCNTQ8uRZR1xKJQ1fsoYBoigTPR7ov1AqD
-         eZ7JIvALkWE86DjAepB7yvbJEOgRpvPFOdrpdXAMdD8BRGqKJQkQ9qYR3Bxrxnqlpt69
-         RpcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791837182; x=1792441982;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=3dDzxAe3v4K6bmvY5Sku2I2OCIIKOOmdO2oWSS/8r5Q=;
-        b=lxHKIru7Z+0A9O+amMrUr0uceGM4rmy5AMbLJzAwOd0if7eiel35uIRcdrCE6HqQRN
-         kFwEaYjFcu380Ne9a0zRr7EhQhtv1J3urdx40+K5JHxAUzGc3kg18ojaxnvSCDbHq6LZ
-         m6pqxlPqVSEfCcExdtGPbRQ+1Wuc6ApIhp5ZetZ3COTaHBp3r7GMGjAumXRxZpVRdfDo
-         USEuRbl4Y8taDbw0cyf2Lr4HOgAm5xqB931lVbdYfLQzGPjlwOXVlyCbg1a8xdkJLDXy
-         +ZJf6e6LPmGJW8h4fxB56pLJ1lZ50L7283rSYtZ56lNNa+27EVaqiQgmsY6sK0ZXMeL+
-         Nkpw==
-X-Forwarded-Encrypted: i=1; AKwUvBwM+TPldowOImP3GB66MA+Hq0ZRrvA5fPBGqEJOklMzabWe6Ib/a6Z81015qmXJhd2q5b5TepfFaJUm@vger.kernel.org
-X-Gm-Message-State: AFq9FYIqGT4wh3q5CuVLuiizq+EB2joKqLQBULg7H2OVGThoAZf22c/a
-	AxjilugVfJmVLCowbJLTs2iRog5Ci3sGq1wyEYigWXoB0Bc9a/VhzAgo1u3CMw7wjkM=
-X-Gm-Gg: AYBFou0J8Cnk8i3feaGxwTHwGZ4druM63VlwDWUfFnddQpElDgn8cDoHt27cxcZUjEV
-	Jkoh9oc2QYDJvCX/fnw/ASsV/a39yDcqDgp25+plz5tIsmpgMviFGJqD8zf5azyMLaLNluwHIYw
-	CVxPUy1mmfwiJuTo+4c4EMYXfZc+m1egkzgPzUwPBbABj37Cvrl5TeyDmuq2bd7CLHCm/ELu0h0
-	dmzQA+oUEYtdvAE1258ZJ1J2hdxT5IxglMIuAnScOL4aOMYoFhU0SyoOUs75BYul3JuWTsUYY5e
-	q9UUhpSzRwBj59C3fJd1acwn152WphT5RELro0Caiaworl9/ScmBWUJpIXTca1dsC4KL9vF1rVm
-	FnGCb/DBx+Gg++UIlgjgqBJs1JqLbmNxpcgut/DI6LWbC5vhL3Gq7tQoMB+JQM9lhsyaAOdS/tb
-	G6CKWNHmNbaemfzdnyf8T2U/lQ4152jUI1/DQjfEc2OFv8045bReXGkPlRdKtHnqsGsBHj8bhzN
-	CY=
-X-Received: by 2002:a05:6000:2610:b0:48b:60a:760c with SMTP id ffacd0b85a97d-48dbacdbca4mr19746116f8f.31.1791837181259;
-        Mon, 12 Oct 2026 13:33:01 -0700 (PDT)
-Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48de0967bf5sm1211973f8f.5.2026.10.12.13.32.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Oct 2026 13:33:00 -0700 (PDT)
-Date: Mon, 12 Oct 2026 22:32:58 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Fil Dunsky <filipp.dunsky@gmail.com>
-Cc: Thomas Gleixner <tglx@kernel.org>, Radu Rendec <radu@rendec.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Russell King <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH 04/11] gpio: Add Cortina Systems CS75xx GPIO driver
-Message-ID: <as1Dl08DwxOu-boF@monoceros>
-References: <20261012-b4-cs75xx-s2-v1-0-8a7641b7b79c@gmail.com>
- <20261012-b4-cs75xx-s2-v1-4-8a7641b7b79c@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="as2dsfy3"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1791837761; x=1823373761;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=T151PnLM20JA9oilHiiu6VZTXffmfYSckEjUlAEVRuE=;
+  b=as2dsfy3WGiSC2BgomCDqR89/OmxJ1Paw18Dpxdxqa2fcmqZejhD955b
+   2e1fs84IU9IFq2cTpDqyovqLA/QaJ4IxZH+xD3uZgnYyDsxlX2nkdk7XF
+   haUVrfC7RUrke5RV11eDESrFm8GmlMq4hSjRuF8Q/t0erT0RlAUWNeyh7
+   HkrlwULfHn8DRofHn92dAi7n/+EqCg5fQ4MbUVS06i1KaoxJNTjcHX9J6
+   jYq3e/sR28QGveK/RA/yNM92Stx6YDtSsV6vEpjU0nduVLiSPnat0DHhb
+   jngh/ZZ652x/TV2F0Iw2m/aT1Sp9ynh7q85yZ9Hr2H0SItEuoyNG0QY96
+   Q==;
+X-CSE-ConnectionGUID: 950tLytiTn63HCvsFALwCA==
+X-CSE-MsgGUID: vDCupysVRTyky7gCLCYagQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11933"; a="442682"
+X-IronPort-AV: E=Sophos;i="6.27,154,1787036400"; 
+   d="scan'208";a="442682"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2026 13:42:40 -0700
+X-CSE-ConnectionGUID: RDfzDRRAQu2pi1ArV0BWzQ==
+X-CSE-MsgGUID: tBtObo7lSruymUz/UC2Ggw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,154,1787036400"; 
+   d="scan'208";a="1078421"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.244.179])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2026 13:42:37 -0700
+Date: Mon, 12 Oct 2026 23:42:35 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Adrian Ambrozewicz <aambrozewicz@nvidia.com>
+Cc: Bartosz Golaszewski <brgl@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+	Kent Gibson <warthog618@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jia Jia <physicalmtea@gmail.com>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/6] gpiolib: wait for pending label frees before
+ cleaning up desc_srcu
+Message-ID: <as1GOweKHBq2HhpP@ashevche-desk.local>
+References: <20261012-gpiolib-chip-removal-v1-0-aambrozewicz@nvidia.com>
+ <20261012-gpiolib-chip-removal-v1-1-aambrozewicz@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
 List-Subscribe: <mailto:linux-gpio+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rf3tmjyx6r53tpru"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261012-b4-cs75xx-s2-v1-4-8a7641b7b79c@gmail.com>
+In-Reply-To: <20261012-gpiolib-chip-removal-v1-1-aambrozewicz@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
+
+On Mon, Oct 12, 2026 at 04:49:55PM +0300, Adrian Ambrozewicz wrote:
+> desc_set_label() frees the old label with call_srcu() on gdev->desc_srcu.
+> gpiodev_release() calls synchronize_srcu() and then cleanup_srcu_struct()
+> on it, meaning to run the pending frees first, but synchronize_srcu()
+> only waits for a grace period, not for callbacks queued before it to be
+> invoked. Once the srcu_struct uses per-CPU callback lists, a label freed
+> on one CPU, for instance by gpiochip_free_hogs() at the start of
+> gpiochip_remove(), can still be waiting for its invocation timer there
+> when synchronize_srcu() returns on another, and cleanup_srcu_struct()
+> warns:
+> 
+>   WARNING: kernel/rcu/srcutree.c:706 at cleanup_srcu_struct+0x239/0x330, CPU#0: init/1
+>   Call Trace:
+>    <TASK>
+>    gpiodev_release+0x20/0x60
+>    device_release+0x3e/0x90
+>    kobject_put+0x67/0xf0
+>    release_nodes+0x3a/0x60
+>    devres_release_all+0x8a/0xf0
+>    device_unbind_cleanup+0x21/0xa0
+>    device_release_driver_internal+0x1c6/0x210
+>    bus_remove_device+0xea/0x180
+>    device_del+0x152/0x460
+>    platform_device_del+0x20/0x80
+>    platform_device_unregister+0xd/0x30
+>    gpio_sim_device_deactivate+0x26/0x80
+>    gpio_sim_device_config_live_store+0x254/0x3e0
+>    configfs_write_iter+0xc2/0x130
+>    vfs_write+0x252/0x530
+>    ksys_write+0x6c/0xe0
+>    do_syscall_64+0x109/0x5d0
+>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
 
---rf3tmjyx6r53tpru
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 04/11] gpio: Add Cortina Systems CS75xx GPIO driver
-MIME-Version: 1.0
+Please, read Submitting Patches on the backtraces in the commit messages
+and act accordingly.
 
-Hello,
+> cleanup_srcu_struct() then flushes the callbacks itself, so the label is
+> still freed, but the warning is what the comment above that check says
+> srcu_barrier() is for. Use it.
+> 
+> A gpio-sim chip with one hogged line, set live and back in a loop, warns
+> within 4 to 60 cycles in three runs on a 4-CPU guest booted with
+> srcutree.convert_to_big=1; with this change, three runs of 1000 cycles
+> pass. With the default srcutree parameters the srcu_struct only goes
+> per-CPU under contention and the loop did not hit it in 3000 cycles; the
+> warning was first seen that way, once, on a KCSAN arm64 guest unbinding
+> a USB-attached GPIO controller whose firmware node hogs a line, and
+> since then on real hardware with v7.3-rc5 arm64 KCSAN kernels, when
+> unbinding a USB GPIO expander whose driver is not yet upstream, built
+> both as an out-of-tree module and into the kernel.
 
-On Mon, Oct 12, 2026 at 08:32:59PM +0300, Fil Dunsky wrote:
-> +#include <linux/mod_devicetable.h>
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Please don't include this file. It contains a plethora of defines for
-subsystems not in use here.
 
-> [...]
-> +#include <linux/platform_device.h>
-
-You can rely on <linux/platform_device.h> to yield definitions for
-of_device_id and so drop <linux/mod_devicetable.h> without a
-replacement.
-
-The same applies to patches 6 and 7.
-
-Best regards
-Uwe
-
---rf3tmjyx6r53tpru
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrNQ/cACgkQj4D7WH0S
-/k6KYQgAgMQZQqqATk7u8/7+zLh1eyfjz96I/KQyBnZbLC753ncNp95vppbzeXYB
-/6Xnb+1PMj4yifoVS9rR2GPW2P4F2cVCiv4ys86vtgjDRRS9qfpvIqAGD5bdkjpR
-AfIu4ZintCl+3dtuqg2yWsp/Njn0OkGzE115dAhtJMsZGrpiAbpkStIsB8lUqPSl
-H5jFp9iVNDnb+9rZe0ckSQeZwDR5JuTFUJq72G71eY2jfDyzjH02v8EejbZDDjqp
-vF/L57mOl847cYmA78hOqMnQrXpBaqqNs+uY6m8YLPt5Jgq+OkWhvGGit0ts5Mlt
-rdJZC0MMQbclAkv16e9nS/twKH5mPQ==
-=4pay
------END PGP SIGNATURE-----
-
---rf3tmjyx6r53tpru--
