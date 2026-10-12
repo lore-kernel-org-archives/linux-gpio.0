@@ -1,63 +1,65 @@
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E964C6531
-	for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 18:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B894D90B7
+	for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 18:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791830507; cv=none; b=A0xvPhYnTD07uINmQWHolmkdoaaZdYRSybRQgXzgGUGHikr9VhqhLfEK8+OSek/9wFax75ptoecaPiLpMpkWlbFznd4dfiQCGQwhVVydOQyDnjKR5kWvcjHBlhxndINVgQ29L8gATfO9dd2isaC9lHypg2XNxdDFQBBlGapgVFc=
+	t=1791830514; cv=none; b=qimNglI0kQtsgZrViactxtWmGS5XTA9ypQm72xrI4rIMQ5W5DVES2As5gzdG41f5Saf2q0A0ym3mXavyA+lLWZf7qA011TZklq6LieSdb7Y90bD1zmnGpg+0aaeW8L6exqgdd2AQ4wS5RLGAGEPbduRLSPxOajkEW4Efb3CCQbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791830507; c=relaxed/simple;
-	bh=OJr4F+tRV0On7Irv/rawfuCiJMAnPUX7BfkuP7XFgsI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nCWJeyvHXBENVyYbu/K1QEeehAY2XiIwgRETV4s+X1D97U22uDJyvkhkh8Bk7+RYqRVpi3Kd/qK2YPKbbYU/2Sam1LAhtTKaGBTL/GwY9j+dD4UhxKbl4my9BFnmbRCEkQUVDfFijpKuwEl9/MzPacnNGfDarerdMTvIJwv7jG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gcqrapjl; arc=none smtp.client-ip=209.85.222.54
+	s=arc-20240116; t=1791830514; c=relaxed/simple;
+	bh=1RrNnLhg06zNzdcDD9jk1F1qWL1NOpDhUSC0M07KyKE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SvAdFiqmSLCrdjCgK7aSPJNdNjstrZ7UTlHZInYF1/xoUbFf+FVapkhF5YUT8Nr+vd//raoxbdwiMCyKWybtYTCwyjS1exu/oUdx5SqQSME+6usWatZEmntq7FVbzDqQ6OFnA8yCigEx66/7jxQfvRHea7LR0p1vac+o8W5ijxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S4LM+dsC; arc=none smtp.client-ip=209.85.221.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gcqrapjl"
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-980c4258105so998374241.2
-        for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 11:41:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S4LM+dsC"
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5e931215e5fso1992563e0c.3
+        for <linux-gpio@vger.kernel.org>; Mon, 12 Oct 2026 11:41:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791830505; x=1792435305; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GtUsq1L4Qu4E3puscbHWcsTT+wvRggcMU4K+GsQC9fU=;
-        b=gcqrapjlMlahksyBmjXYnNSh31y+H31/MUknDTGUyXGwyqINyd7j6W2K+5acAa5zTq
-         cMKmseABjOg6HkM8XQwjpqcBRqDAGzY4ftqLg59kZ7LtxZmX69uC0JMzgBd+brY+J6ZJ
-         YSxre2go1IP2dSgWFzX2DYR+XVLb+fbeEBvaL8ppY2d9RkPhuHYH30LGQIZwpAX3WkdJ
-         9qplQFPuTO8NTvXAeScz1W3Z/eefIR/NB0GCzCNWjFCqDTEbtVOHEeHEmx3Bwiu2a7DU
-         pgqRzFi+IQlz77hpbi93cThVFZNmf/KNXJalYaKjPwS6qONUPvyWoomwMMkugefeWXdp
-         w6Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791830505; x=1792435305;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1791830511; x=1792435311; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=GtUsq1L4Qu4E3puscbHWcsTT+wvRggcMU4K+GsQC9fU=;
-        b=Ho+ajkiIZ55PXcGP4+FINZ9R2NuqILuhn+5wGBVxgOoPTGTPK3SUVdnNBdbqD6wA+7
-         iKoCPZyTaibmHc+j/dxeoW9cHu8guHDi7BjGXsBbjDRkC00g+HpepKmKIRPycxpN+DlX
-         MJCyICDL3zzWBdOzczkERyNl7Tpt1/GONwNIeZ595pPLPMzAb4Qmad6rfbxfT67rKj0/
-         KGoXmJyDQjbukY9IUGBudTvWr20q12OfRfCRNpHYnh71Y1QdsilAjOAZNsLc3ogFmZ3t
-         XzBCLA419Pgp4GHCU0qZ1WyyeFOgmWNr8iIGTKJFuqDBqJJ93laWvgNDcKEGjzt5p37C
-         sUbA==
-X-Forwarded-Encrypted: i=1; AKwUvBxhYuehAKPjJ7hCI8snMg4RlpJ8003cjdTlgZ2gSFCQ7+c6paALKdKMkjAtZnmaCL7RUmiPb7lDaBkB@vger.kernel.org
-X-Gm-Message-State: AFq9FYLi7gFGRvrGzP40PYVgjBoWmheeUn9NDDA6Ssh0tNlkDyzB8A97
-	rt5YmLcKu5phRyZdRtivyEL8uOe9cne5LSjl4DT5Jt91qOHb7w50zzb5
-X-Gm-Gg: AYBFou1sm5IxMHLi+XQvsbAMj5vLp+pw7veeUnqh0iWwTyAIyC2Zi3+jjUp3r1reQPk
-	1AI9XbCoA3tbivFaxuAMBc0QWBywA8/VDym8oQiBO3CObxoL/maKsZsCGauxtABKKD5NcJu7aJO
-	Vskoif+OuS6ZH2noSnOp3UsKjKGHpyQzqMnxOZ5IjSdtYHmfKnlZqnCax3ZRt4uAzqDnFabKf8W
-	Pjfw0P0Jc5CQGI3hKW/6xv45LC000Aza7GC7sceHDWOQcX54khadvW4UZwh3Wn/vovDt25nxPzn
-	1vJR7Q5SJao36DjL3vw1AyXvMLpNz8/VprCnmsKvAqOeJ8OK9XHxKT1Pl6jg410keI+PnRn4zx2
-	cLGkAITGzjUCXn1+pF2rt8jOTGCjuZDapmiY3gGiaUosai/aUftOXFfFvpx1JsekSe4ygoyHxVQ
-	6VgSKhDM0ktASKTdKqZ7On6oi7C6aWQJgY1jZ6N7aDS8NmCUcBP559f1Z+HSw/NiCp3xu5vGLRl
-	D0H1cHBSpidAxDeYZmZH4yuxvJTKU9WL0LyfTDncva8A6nhBaoHYlt3im6S0xIO51zhFSlvm5yX
-	KGkwRzMTO8G3R4gurQ==
-X-Received: by 2002:a05:6102:80a3:b0:7a8:d959:bd76 with SMTP id ada2fe7eead31-7cb37405c7amr3420126137.33.1791830505277;
-        Mon, 12 Oct 2026 11:41:45 -0700 (PDT)
+        bh=Nd4AtQBT76nHZ3omEOk4hVxLdCylSGw0mBdnNv1wzzw=;
+        b=S4LM+dsCvUCttFEcJLBXU49wZqAC1TKu8nvjL+IzogYD8r3d3tvCsSoEHVzPJSlpiK
+         t0JKrddMoMPF043IG6jf8ghOlsRm3/X0gZimAXcfhbV567XmIAky+jh0/Fk+8kUetqC6
+         Xpwk9LfPv2/EUMSVJxKSSfvzeCqryd/grdmViIp0vFxk0W2+aqhYrNWZpmt2ejrbdhiI
+         c8tyEbkHQQBS0NybDNJ4SNFCl96YrPPASye1IzvqzC6S81Xx0pOsCJd5WCjEechWtwDv
+         ToAH2nAi05KUUcsc/SBbuPnaT3Sre/Ch6Jx5f7txewbnBf/FcIcGAPx5pYiaSW+7iPct
+         f44w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791830511; x=1792435311;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Nd4AtQBT76nHZ3omEOk4hVxLdCylSGw0mBdnNv1wzzw=;
+        b=FBUqOwpfREwnFdbBf47QDIZMc7EVIKUn3kloYbEdUpTSxxbXHLDsgMC1pvhm+908ZR
+         tvEe9aph7PbD0U9KzwlqkZJ4tI4jV9DTqnyFtGPrJ1C/Q4cF/BJQR6cbhvDiRJNpUQV7
+         kBZsopsgHLsncntOb3sCOxiniy7NA7qfEkr2jZL4QgfrPouF+LThNqicjW/dYq+A06wQ
+         0pKZWZbQuoTlKQ+UMbUjhU8/WUQr0imu8wMVf/dAV8/4VQo6gcLFniYFrlkadB1yofQH
+         VE9kxWVLYhhHFBJBxaOBTa9y4jwrZT1v2Y3CriF/Gkrsssj0jjekRKGtn81CvjEmj6/3
+         hPxw==
+X-Forwarded-Encrypted: i=1; AKwUvBws5Qdrbe0fJiK1lLjPLATOiRiUi+AUCQ9r3BYCMsZhSJ2dpEVaXPL56CtoYWXJkMd7dfdI45Pc8dCb@vger.kernel.org
+X-Gm-Message-State: AFq9FYIUh5UeiTwcsZo6NaLqvpAAXYC9hWIWLvhH71atw++s7f2GUzPT
+	6lf5Y8WEM3lOOsZK4gwcj+C9KwVi/+1EaRYfr5X2c64kUd7wA7ECoI/d
+X-Gm-Gg: AYBFou3hxCh7KZzrqTfu+H9XjDkPLVzNPyE9cGIjGDVoxiydzi27uG1yEursGtUcQMs
+	30faUJBu+XVmJHAi0IMpbkgZP2SasZh3My2PL/NnaCjrwjYP+dPqM0UN3WhHL63KlGVVDYZfw/c
+	JxhDsEK92Zv6yEUYxFEi3HU/pVYe6x22NFHnsQMBviNn+IdyciyJ7LjNA9yPes0XcmOvfPl1X5A
+	TMt5Tc9x4vfMQ0knmPkNqDgPO3/TtvZcb187iojEoPlBVgcx9NcYaNg0ODEE2f6FD6EcRwrV6We
+	2DyFRIOhSLwidnlfVVlCp/i+cAnkdeM0u3oLdX6q04EH3JXwUKwkYl/Sq6K5fggUS9CnNcSGTxA
+	CI8Qs/7z/8GX8EfJqBEKmVpcCyqh4EomdukZQ+7iK+5kM1ZYstLLTp4RtrYrt1Hzqe8hhw3qAGO
+	d54O7eXgurXj+MbBPG6On4JuCQqoTUomVcHZqE/WzXYgNWkxcrCmhE67gCBg/kqsuk0iysn6nlX
+	LgM0FDxgQJ9F8qCD3Yq4SfOUwRSSW9WzCvfTIdgA9hJ/VhQcNdntt57U6CZ35IzQL+/dFK4pHbc
+	7fxk4Y0=
+X-Received: by 2002:a05:6102:5cc7:b0:7a7:198b:6748 with SMTP id ada2fe7eead31-7cb3735ff5cmr3147159137.29.1791830511319;
+        Mon, 12 Oct 2026 11:41:51 -0700 (PDT)
 Received: from MaquinaLab.. ([179.179.244.163])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99003f230b8sm6830180241.8.2026.10.12.11.41.41
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99003f230b8sm6830180241.8.2026.10.12.11.41.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Oct 2026 11:41:44 -0700 (PDT)
+        Mon, 12 Oct 2026 11:41:50 -0700 (PDT)
 From: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
 To: linusw@kernel.org
 Cc: wens@kernel.org,
@@ -68,10 +70,12 @@ Cc: wens@kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] pinctrl: sunxi: A733: use the two-bit I/O voltage fields
-Date: Mon, 12 Oct 2026 15:41:27 -0300
-Message-ID: <20261012184130.548261-1-vinicius.eduardo.pedrosa@gmail.com>
+Subject: [PATCH 1/2] pinctrl: sunxi: a733: program the two-bit I/O voltage fields
+Date: Mon, 12 Oct 2026 15:41:28 -0300
+Message-ID: <20261012184130.548261-2-vinicius.eduardo.pedrosa@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261012184130.548261-1-vinicius.eduardo.pedrosa@gmail.com>
+References: <20261012184130.548261-1-vinicius.eduardo.pedrosa@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-gpio@vger.kernel.org
 List-Id: <linux-gpio.vger.kernel.org>
@@ -80,51 +84,167 @@ List-Unsubscribe: <mailto:linux-gpio+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+The A733 GPIO_POW_MOD_SEL register has a two-bit field per bank, but
+the A733 uses the helper written for one bit per bank, so a request
+for one bank can change the field of another one. With the register
+as firmware leaves it on a Radxa Cubie A7Z (the fields of PB, PC, PD,
+PE, PG, PH, PJ and PK in automatic mode, 0x01155550), a PJ request at
+1.8 V turns the PE field into fixed 1.8 V (0x01155750).
 
-this follows my question in [1]. Andre asked why not extend the A733 I/O
-bias code to two bits instead of switching it off, so patch 1 does that
-for the main PIO and patch 2 gives the A733-R its own descriptor, as it
-cannot share the A523-R encoding.
+Add a variant that takes the field of each bank from a mask table. It
+keeps automatic mode and a fixed 3.3 V mode that already fits, and
+writes only the field of the requested bank. PF is left out: its field
+(11:10) is known, but it is tied to the MMC vqmmc voltage switching.
+PI is left out as well, since its supply domain is not documented.
+Only silicon revision B, as reported through SMCCC, is programmed,
+since the encoding is documented for that revision only.
 
-I have not seen the board fail with the current code, and no A733 board
-DT upstream uses these supplies yet. What I have is the old and the new
-helper, copied from the driver, run on the host with register values
-read (read-only) from a Cubie A7Z, silicon revision B:
+Computed with both helpers on that register value, the old one changes
+it and the new one leaves it as it is.
 
-  PIO SEL 0x01155550: a PJ request at 1.8 V gives 0x01155750 with the
-  old code (PE goes from automatic to fixed 1.8 V), unchanged with the
-  new one.
+Fixes: 0535bfbfa97b ("pinctrl: sunxi: add support for the Allwinner A733")
+Signed-off-by: Vinicius Pedrosa <vinicius.eduardo.pedrosa@gmail.com>
+---
+ drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c | 15 +++++-
+ drivers/pinctrl/sunxi/pinctrl-sunxi.c       | 57 +++++++++++++++++++++
+ drivers/pinctrl/sunxi/pinctrl-sunxi.h       |  6 +++
+ 3 files changed, 77 insertions(+), 1 deletion(-)
 
-  R-PIO SEL 0x000aaaaa: a PL request at 3.3 V gives 0x000aaaab with the
-  old code (fixed 1.8 V), plus a read-modify-write of +0x344 that the
-  manual does not list. The new code leaves both alone.
-
-With both patches the kernel boots on the A7Z (RAM boot of an rc6-based
-kernel): UART0 and MMC0 work and the voltage selection registers are
-unchanged.
-
-PF and PI are not programmed, and neither is any silicon revision other
-than B, as reported by SMCCC. The A523 variants behave as before.
-
-I found nothing to change in the DT binding: the a733-r compatible has
-no a523-r fallback and the schema checks pass for both controllers.
-Andre, if you meant something else there, please tell me.
-
-[1] https://lore.kernel.org/r/20261008194719.328146-1-vinicius.eduardo.pedrosa@gmail.com
-
-Vinicius Pedrosa (2):
-  pinctrl: sunxi: a733: program the two-bit I/O voltage fields
-  pinctrl: sunxi: a733-r: use the A733 I/O voltage fields
-
- drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c | 26 ++++++++-
- drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c   | 15 ++++-
- drivers/pinctrl/sunxi/pinctrl-sunxi.c         | 57 +++++++++++++++++++
- drivers/pinctrl/sunxi/pinctrl-sunxi.h         |  6 ++
- 4 files changed, 101 insertions(+), 3 deletions(-)
-
-
-base-commit: bdacd2542f3c1b2b411fa86ee1f39de19cce6562
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+index ca82f08a3a65..6f5757b8adea 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sun60i-a733.c
+@@ -21,10 +21,23 @@ static const u8 a733_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
+ /*	  PA  PB  PC  PD  PE  PF  PG  PH  PI  PJ  PK */
+ 	{  0, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14};
+ 
++/* PA is not implemented. PF and PI are left to the firmware, so are not listed. */
++static const u32 a733_io_bias_masks[SUNXI_PINCTRL_MAX_BANKS] = {
++	[1] = GENMASK(25, 24),	/* PB, VCC-IO */
++	[2] = GENMASK(5, 4),	/* PC */
++	[3] = GENMASK(7, 6),	/* PD */
++	[4] = GENMASK(9, 8),	/* PE */
++	[6] = GENMASK(13, 12),	/* PG */
++	[7] = GENMASK(15, 14),	/* PH */
++	[9] = GENMASK(19, 18),	/* PJ */
++	[10] = GENMASK(21, 20),	/* PK */
++};
++
+ static struct sunxi_pinctrl_desc a733_pinctrl_data = {
+ 	.irq_banks = 10,
+ 	.irq_read_needs_mux = true,
+-	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
++	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL_2BIT,
++	.io_bias_masks = a733_io_bias_masks,
+ };
+ 
+ static int a733_pinctrl_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+index 3ee5012463da..8e62111d3409 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+@@ -10,6 +10,8 @@
+  * warranty of any kind, whether express or implied.
+  */
+ 
++#include <linux/arm-smccc.h>
++#include <linux/bitfield.h>
+ #include <linux/clk.h>
+ #include <linux/export.h>
+ #include <linux/gpio/driver.h>
+@@ -722,6 +724,58 @@ static const struct pinconf_ops sunxi_pconf_ops = {
+ 	.pin_config_group_set	= sunxi_pconf_group_set,
+ };
+ 
++/*
++ * The two-bit encoding is documented for A733 silicon revision B, which
++ * firmware reports through the SMCCC SOC_ID call. Do not assume it for any
++ * other revision, or when the firmware does not tell.
++ */
++#define SUNXI_A733_SOC_ID		0x091e1903
++#define SUNXI_A733_REV_B		1
++
++static bool sunxi_pinctrl_a733_rev_b(void)
++{
++#ifdef CONFIG_HAVE_ARM_SMCCC_DISCOVERY
++	s32 id = arm_smccc_get_soc_id_version();
++
++	/* Bit 23 is the JEP106 parity bit. */
++	return id >= 0 && (id & ~BIT(23)) == SUNXI_A733_SOC_ID &&
++	       arm_smccc_get_soc_id_revision() == SUNXI_A733_REV_B;
++#else
++	return false;
++#endif
++}
++
++/*
++ * Fields: 0 and 2 fixed 3.3V, 1 automatic, 3 fixed 1.8V. Leave automatic
++ * mode and any other supply voltage to the firmware, and touch only the
++ * field of this bank.
++ */
++static void sunxi_pinctrl_set_io_bias_2bit(struct sunxi_pinctrl *pctl,
++					   unsigned int bank, int uV)
++{
++	u32 mask = pctl->desc->io_bias_masks[bank];
++	unsigned long flags;
++	u32 val, cur, reg;
++
++	if (!mask || !sunxi_pinctrl_a733_rev_b())
++		return;
++
++	if (uV >= 1620000 && uV <= 1980000)
++		val = 3;
++	else if (uV >= 2970000 && uV <= 3630000)
++		val = 2;
++	else
++		return;
++
++	raw_spin_lock_irqsave(&pctl->lock, flags);
++	reg = readl(pctl->membase + pctl->pow_mod_sel_offset);
++	cur = field_get(mask, reg);
++	if (cur != 1 && cur != val && !(val == 2 && cur == 0))
++		writel((reg & ~mask) | field_prep(mask, val),
++		       pctl->membase + pctl->pow_mod_sel_offset);
++	raw_spin_unlock_irqrestore(&pctl->lock, flags);
++}
++
+ static int sunxi_pinctrl_set_io_bias_cfg(struct sunxi_pinctrl *pctl,
+ 					 unsigned pin,
+ 					 struct regulator *supply)
+@@ -795,6 +849,9 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct sunxi_pinctrl *pctl,
+ 		       pctl->membase + pctl->pow_mod_sel_offset);
+ 		raw_spin_unlock_irqrestore(&pctl->lock, flags);
+ 		return 0;
++	case BIAS_VOLTAGE_PIO_POW_MODE_SEL_2BIT:
++		sunxi_pinctrl_set_io_bias_2bit(pctl, bank, uV);
++		return 0;
+ 	default:
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+index 7c2f29e75519..c37170b2e4f4 100644
+--- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
++++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+@@ -130,6 +130,11 @@ enum sunxi_desc_bias_voltage {
+ 	 */
+ 	BIAS_VOLTAGE_PIO_POW_MODE_CTL,
+ 	BIAS_VOLTAGE_PIO_POW_MODE_CTL_INV,
++	/*
++	 * Bias voltage is set through two-bit fields in PIO_POW_MOD_SEL_REG,
++	 * whose positions are given by io_bias_masks[], as seen on A733.
++	 */
++	BIAS_VOLTAGE_PIO_POW_MODE_SEL_2BIT,
+ };
+ 
+ struct sunxi_desc_function {
+@@ -155,6 +160,7 @@ struct sunxi_pinctrl_desc {
+ 	bool				irq_read_needs_mux;
+ 	bool				disable_strict_mode;
+ 	enum sunxi_desc_bias_voltage	io_bias_cfg_variant;
++	const u32			*io_bias_masks;
+ };
+ 
+ struct sunxi_pinctrl_function {
 -- 
 2.43.0
 
